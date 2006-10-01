@@ -53,10 +53,10 @@ class Rotation {
 	RealPoint trInv(const RealPoint& p) const;
 	
   private:
-	int angle;				//^ The angle of rotation in degrees (counterclockwise)
-	RealSize size;			//^ Size of the rectangle, in external coordinates
-	RealPoint origin;		//^ tr(0,0)
-	double zoom;			//^ Zoom factor, zoom = 2.0 means that 1 internal = 2 external
+	int angle;				///< The angle of rotation in degrees (counterclockwise)
+	RealSize size;			///< Size of the rectangle, in external coordinates
+	RealPoint origin;		///< tr(0,0)
+	double zoom;			///< Zoom factor, zoom = 2.0 means that 1 internal = 2 external
 	
 	/// Is the rotation sideways (90 or 270 degrees)?
 	// Note: angle & 2 == 0 for angle in {0, 180} and != 0 for angle in {90, 270)
@@ -75,11 +75,11 @@ class Rotation {
 
 /// An object that changes a rotation RIIA style
 /** Usage:
- *  \begincode
+ *  @code
  *     Rotation a, b;
  *     Rotater(a,b);
  *     a.tr(x) // now acts as a.tr(b.tr(x))
- *  \endcode
+ *  @endcode
  */
 class Rotater {
 	/// Compose a rotation by onto the rotation rot

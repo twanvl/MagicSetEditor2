@@ -253,8 +253,8 @@ class SinglePointRemoveAction : public Action {
   private:
 	SymbolPartP part;
 	UInt position;
-	ControlPointP point;               //^ Removed point
-	ControlPointUpdate point1, point2; //^ Points before/after
+	ControlPointP point;               ///< Removed point
+	ControlPointUpdate point1, point2; ///< Points before/after
 };
 
 SinglePointRemoveAction::SinglePointRemoveAction(const SymbolPartP& part, UInt position)
@@ -327,9 +327,9 @@ DECLARE_POINTER_TYPE(SinglePointRemoveAction);
 DECLARE_TYPEOF_COLLECTION(SinglePointRemoveActionP);
 
 
-/// Remove a set of points from a symbol part
-/// Internally represented as a list of Single Point Remove Actions
-/// Not all points mat be removed, at least two points must remain
+// Remove a set of points from a symbol part.
+// Internally represented as a list of Single Point Remove Actions.
+// Not all points mat be removed, at least two points must remain.
 class ControlPointRemoveAction : public Action {
   public:
 	ControlPointRemoveAction(const SymbolPartP& part, const set<ControlPointP>& toDelete);

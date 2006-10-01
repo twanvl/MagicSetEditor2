@@ -40,11 +40,11 @@ class SymbolPartMoveAction : public SymbolPartAction {
 	void move(const Vector2D& delta);
 	
   private:
-	set<SymbolPartP> parts;		//^ Parts to move
-	Vector2D delta;				//^ How much to move
-	Vector2D moved;				//^ How much has been moved
+	set<SymbolPartP> parts;		///< Parts to move
+	Vector2D delta;				///< How much to move
+	Vector2D moved;				///< How much has been moved
   public:
-	bool constrain;				//^ Constrain movement?
+	bool constrain;				///< Constrain movement?
 };
 
 // ----------------------------------------------------------------------------- : Rotating symbol parts
@@ -61,8 +61,8 @@ class SymbolPartMatrixAction : public SymbolPartAction {
 	/// Perform the transformation using the given matrix
 	void transform(const Vector2D& mx, const Vector2D& my);
 	
-	set<SymbolPartP> parts;		//^ Parts to transform
-	Vector2D center;			//^ Center to transform around
+	set<SymbolPartP> parts;		///< Parts to transform
+	Vector2D center;			///< Center to transform around
 };
 
 /// Rotate some symbol parts
@@ -80,9 +80,9 @@ class SymbolPartRotateAction : public SymbolPartMatrixAction {
 	void rotateBy(double deltaAngle);
 	
   private:
-	double angle;				//^ How much to rotate?
+	double angle;				///< How much to rotate?
   public:
-	bool constrain;				//^ Constrain movement?
+	bool constrain;				///< Constrain movement?
 };
 
 
@@ -100,10 +100,10 @@ class SymbolPartShearAction : public SymbolPartMatrixAction {
 	void move(const Vector2D& deltaShear);
 	
   private:
-	Vector2D shear;				//^ Shearing, shear.x == 0 || shear.y == 0
+	Vector2D shear;				///< Shearing, shear.x == 0 || shear.y == 0
 	void shearBy(const Vector2D& shear);
   public:
-	bool constrain;				//^ Constrain movement?
+	bool constrain;				///< Constrain movement?
 };
 
 
@@ -123,11 +123,11 @@ class SymbolPartScaleAction : public SymbolPartAction {
 	void update();
 	
   private:
-	set<SymbolPartP> parts;				//^ Parts to scale
-	Vector2D oldMin,     oldSize;		//^ the original pos/size
-	Vector2D newRealMin, newRealSize;	//^ the target pos/sizevoid shearBy(const Vector2D& shear)
-	Vector2D newMin,     newSize;		//^ the target pos/size after applying constrains
-	int scaleX, scaleY;					//^ to what corner are we attached?
+	set<SymbolPartP> parts;				///< Parts to scale
+	Vector2D oldMin,     oldSize;		///< the original pos/size
+	Vector2D newRealMin, newRealSize;	///< the target pos/sizevoid shearBy(const Vector2D& shear)
+	Vector2D newMin,     newSize;		///< the target pos/size after applying constrains
+	int scaleX, scaleY;					///< to what corner are we attached?
 	/// Transform everything in the parts
 	void transformAll();
 	/// Transform a single vector
@@ -135,7 +135,7 @@ class SymbolPartScaleAction : public SymbolPartAction {
 		return (v - oldMin).div(oldSize).mul(newSize) + newMin;
 	}
   public:
-	bool constrain;						//^ Constrain movement?
+	bool constrain;						///< Constrain movement?
 };
 
 // ----------------------------------------------------------------------------- : Change combine mode
@@ -149,7 +149,7 @@ class CombiningModeAction : public SymbolPartListAction {
 	virtual void perform(bool toUndo);
 	
   private:
-	vector<pair<SymbolPartP,SymbolPartCombine> > parts;	//^ Affected parts with new combining modes
+	vector<pair<SymbolPartP,SymbolPartCombine> > parts;	///< Affected parts with new combining modes
 };
 
 // ----------------------------------------------------------------------------- : Change name
@@ -163,14 +163,13 @@ class SymbolPartNameAction : public SymbolPartListAction {
 	virtual void perform(bool toUndo);
 	
   private:
-	SymbolPartP part;		//^ Affected part
-	String partName;		//^ New name
+	SymbolPartP part;		///< Affected part
+	String partName;		///< New name
 };
 
 // ----------------------------------------------------------------------------- : Add symbol part
 
-/// Adding a part to a symbol, added at the front of the list
-/// front = drawn on top
+/// Adding a part to a symbol, added at the front of the list (drawn on top)
 class AddSymbolPartAction : public SymbolPartListAction {
   public:
 	AddSymbolPartAction(Symbol& symbol, const SymbolPartP& part);
@@ -179,8 +178,8 @@ class AddSymbolPartAction : public SymbolPartListAction {
 	virtual void perform(bool toUndo);
 	
   private:
-	Symbol& symbol;			//^ Symbol to add the part to
-	SymbolPartP part;		//^ Part to add
+	Symbol& symbol;			///< Symbol to add the part to
+	SymbolPartP part;		///< Part to add
 };
 
 // ----------------------------------------------------------------------------- : Remove symbol part
@@ -221,8 +220,7 @@ class DuplicateSymbolPartsAction : public SymbolPartListAction {
 
 // ----------------------------------------------------------------------------- : Reorder symbol parts
 
-/// Change the position of a part in a symbol.
-/// This is done by swapping two parts.
+/// Change the position of a part in a symbol, by swapping two parts.
 class ReorderSymbolPartsAction : public SymbolPartListAction {
   public:
 	ReorderSymbolPartsAction(Symbol& symbol, size_t partId1, size_t partId2);
@@ -231,9 +229,9 @@ class ReorderSymbolPartsAction : public SymbolPartListAction {
 	virtual void perform(bool toUndo);
 	
   private:
-	Symbol& symbol;				//^ Symbol to swap the parts in
+	Symbol& symbol;				///< Symbol to swap the parts in
   public:
-	size_t partId1, partId2;	//^ Indeces of parts to swap
+	size_t partId1, partId2;	///< Indeces of parts to swap
 };
 
 

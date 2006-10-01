@@ -9,7 +9,8 @@
 
 /** @file util/for_each.hpp
  *
- *  Macros to simplify looping over collections.
+ *  @brief Macros to simplify looping over collections.
+ * 
  *  This header contains some evil template and macro hackery.
  */
 
@@ -80,26 +81,30 @@
 // ----------------------------------------------------------------------------- : Looping macros with iterators
 
 /// Iterate over a collection, using an iterator it of type Type
-/// Usage: FOR_EACH_IT_T(Type,it,collect) { body-of-loop }
+/** Usage: FOR_EACH_IT_T(Type,it,collect) { body-of-loop }
+ */
 #define FOR_EACH_IT_T(Type,Iterator,Collection)						\
 		for(Type Iterator = Collection.begin() ;					\
 		    Iterator != Collection.end() ;							\
 		    ++Iterator)
 
 /// Iterate over a collection whos type must be declared with DECLARE_TYPEOF
-/// Usage: FOR_EACH_IT(it,collect) { body-of-loop }
+/** Usage: FOR_EACH_IT(it,collect) { body-of-loop }
+ */
 #define FOR_EACH_IT(Iterator,Collection)							\
 		FOR_EACH_IT_T(TYPEOF_IT(Collection), Iterator, Collection)
 
 /// Iterate over a collection whos type must be declared with DECLARE_TYPEOF
-/// Uses a const_iterator
-/// Usage: FOR_EACH_IT(it,collect) { body-of-loop }
+/** Uses a const_iterator
+ *  Usage: FOR_EACH_IT(it,collect) { body-of-loop }
+ */
 #define FOR_EACH_CONST_IT(Iterator,Collection)						\
 		FOR_EACH_IT_T(TYPEOF_CIT(Collection), Iterator, Collection)
 
 /// Iterate over a collection in whos type must be declared with DECLARE_TYPEOF
-/// Iterates using a reverse_iterator
-/// Usage: FOR_EACH_REVERSE_IT(it,collect) { body-of-loop }
+/** Iterates using a reverse_iterator
+ *  Usage: FOR_EACH_REVERSE_IT(it,collect) { body-of-loop }
+ */
 #define FOR_EACH_REVERSE_IT(Iterator,Collection)					\
 		for(TYPEOF_RIT(Collection)									\
 		                        Iterator = Collection.rbegin() ;	\
@@ -109,8 +114,9 @@
 // ----------------------------------------------------------------------------- : Looping macros
 
 /// Iterate over a collection, with an iterator of type TypeIt, and elements of type TypeElem
-/// Usage: FOR_EACH_T(TypeIt,TypeElem,e,collect) { body-of-loop }
-/** We need a hack to be able to declare a local variable without needing braces.
+/** Usage: FOR_EACH_T(TypeIt,TypeElem,e,collect) { body-of-loop }
+ *
+ *  We need a hack to be able to declare a local variable without needing braces.
  *  To do this we use a nested for loop that is only executed once, and which is optimized away.
  *  To terminate this loop we need an extra bool, which we set to false after the first iteration.
  */
@@ -123,13 +129,15 @@
 				Elem##_IT.second = false)
 
 /// Iterate over a collection whos type must be declared with DECLARE_TYPEOF
-/// Usage: FOR_EACH(e,collect) { body-of-loop }
+/** Usage: FOR_EACH(e,collect) { body-of-loop }
+ */
 #define FOR_EACH(Elem,Collection)											\
 		FOR_EACH_T(TYPEOF_IT(Collection), TYPEOF_REF(Collection), Elem, Collection)
 
 /// Iterate over a collection whos type must be declared with DECLARE_TYPEOF
-/// Iterates using a reverse_iterator
-/// Usage: FOR_EACH_REVERSE(e,collect) { body-of-loop }
+/** Iterates using a reverse_iterator
+ *  Usage: FOR_EACH_REVERSE(e,collect) { body-of-loop }
+ */
 #define FOR_EACH_REVERSE(Elem,Collection)									\
 		for(std::pair<TYPEOF_RIT(Collection),bool> Elem##_IT(Collection.rbegin(), true) ;	\
 		    Elem##_IT.first != Collection.rend() ;							\
@@ -139,8 +147,9 @@
 				Elem##_IT.second = false)
 
 /// Iterate over two collection in parallel
-/// Usage: FOR_EACH_2_T(TypeIt1,TypeElem1,e1,collect1,TypeIt2,TypeElem2,e2,collect2) { body-of-loop }
-/** Note: This has got to be one of the craziest pieces of code I have ever written :)
+/** Usage: FOR_EACH_2_T(TypeIt1,TypeElem1,e1,collect1,TypeIt2,TypeElem2,e2,collect2) { body-of-loop }
+ *
+ *  Note: This has got to be one of the craziest pieces of code I have ever written :)
  *  It is just an extension of the idea of FOR_EACH_T.
  */
 #define FOR_EACH_2_T(TypeIt1,TypeElem1,Elem1,Coll1,TypeIt2,TypeElem2,Elem2,Coll2)	\
@@ -157,9 +166,9 @@
 					Elem1##_IT.second ;										\
 					Elem1##_IT.second = false)
 
-/// Iterate over two collections in parallel,
-/// their type must be declared with DECLARE_TYPEOF.
-/// Usage: FOR_EACH_2(e1,collect1, e2,collect2) { body-of-loop }
+/// Iterate over two collections in parallel, their type must be declared with DECLARE_TYPEOF.
+/** Usage: FOR_EACH_2(e1,collect1, e2,collect2) { body-of-loop }
+ */
 #define FOR_EACH_2(Elem1,Collection1, Elem2,Collection2)									\
 		FOR_EACH_2_T(TYPEOF_IT(Collection1), TYPEOF_REF(Collection1), Elem1, Collection1,	\
 		             TYPEOF_IT(Collection2), TYPEOF_REF(Collection2), Elem2, Collection2)

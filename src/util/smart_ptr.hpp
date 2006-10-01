@@ -7,9 +7,9 @@
 #ifndef HEADER_UTIL_SMART_PTR
 #define HEADER_UTIL_SMART_PTR
 
-/** @file util/shared_ptr.hpp
+/** @file util/smart_ptr.hpp
  *
- *  Utilities related to boost smart pointers
+ *  @brief Utilities related to boost smart pointers
  */
 
 // ----------------------------------------------------------------------------- : Includes

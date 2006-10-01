@@ -124,7 +124,7 @@ class EnumWriter {
 	}
 	
   private:
-	Writer& writer;  //^ The writer to write output to
+	Writer& writer;  ///< The writer to write output to
 };
 
 // ----------------------------------------------------------------------------- : EOF

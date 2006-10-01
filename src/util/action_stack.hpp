@@ -26,16 +26,19 @@ class Action {
 	virtual String getName(bool toUndo) const = 0;
 	
 	/// Perform the action
-	/// Must be implemented in derived class
-	/** Perform will only ever be called alternatingly with toUndo = true/false,
+	/** @param toUndo if true, undo the action instead of doing it
+	 *
+	 *  Must be implemented in derived class.
+	 *
+	 *  Perform will only ever be called alternatingly with toUndo = true/false,
 	 *  the first time with toUndo = false
 	 */
-	/// @param toUndo if true, undo the action instead of doing it
 	virtual void perform(bool toUndo) = 0;
 	
 	/// Try to merge another action to the end of this action.
-	/// Either: return false and do nothing
-	/// Or: return true and change this action to incorporate both actions
+	/** Either: return false and do nothing
+	 *  Or: return true and change this action to incorporate both actions
+	 */
 	virtual bool merge(const Action* action) { return false; }
 };
 

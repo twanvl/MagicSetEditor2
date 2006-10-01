@@ -26,9 +26,9 @@ DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 /** Specificly: the relation between deltaBefore and deltaAfter
  */
 enum LockMode
-{	LOCK_FREE		//^ no locking
-,	LOCK_DIR		//^ deltaBefore = x * deltaAfter
-,	LOCK_SIZE		//^ deltaBefore = -deltaAfter
+{	LOCK_FREE		///< no locking
+,	LOCK_DIR		///< deltaBefore = x * deltaAfter
+,	LOCK_SIZE		///< deltaBefore = -deltaAfter
 };
 
 /// Is the segment between two ControlPoints a line or a curve?
@@ -39,7 +39,7 @@ enum SegmentMode
 
 /// To refer to a specific handle of a control point
 enum WhichHandle
-{	HANDLE_NONE = 0	//^ point is not selected
+{	HANDLE_NONE = 0	///< point is not selected
 ,	HANDLE_MAIN
 ,	HANDLE_BEFORE
 ,	HANDLE_AFTER
@@ -48,9 +48,9 @@ enum WhichHandle
 /// A control point (corner) of a SymbolPart (polygon/bezier-gon)
 class ControlPoint {
   public:
-	Vector2D pos;			//^ position of the control point itself
-	Vector2D deltaBefore;	//^ delta to bezier control point, for curve before point
-	Vector2D deltaAfter;	//^ delta to bezier control point, for curve after point
+	Vector2D pos;			///< position of the control point itself
+	Vector2D deltaBefore;	///< delta to bezier control point, for curve before point
+	Vector2D deltaAfter;	///< delta to bezier control point, for curve after point
 	SegmentMode segmentBefore, segmentAfter;
 	LockMode lock;
 	
@@ -80,8 +80,8 @@ class ControlPoint {
 /// A specific handle of a ControlPoint
 class SelectedHandle {
   public:
-	ControlPointP point;  //^ the selected point
-	WhichHandle   handle; //^ the selected handle of the point
+	ControlPointP point;  ///< the selected point
+	WhichHandle   handle; ///< the selected handle of the point
 	
 	// SelectedHandle
 	SelectedHandle()                                                      : handle(HANDLE_NONE) {}

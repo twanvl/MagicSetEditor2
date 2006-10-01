@@ -43,11 +43,11 @@ class SymbolPointEditor : public SymbolEditorBase {
 	void drawHandleCircle(DC& dc, UInt px, UInt py);
 	
 	enum WhichPen {
-		PEN_NORMAL,		//^ Pen for normal handles
-		PEN_HOVER,		//^ Pen for hovered handles
-		PEN_LINE,		//^ Pen for the line to handles
-		PEN_MAIN,		//^ Pen for the main handle
-		PEN_NEW_POINT	//^ Pen for the new point
+		PEN_NORMAL,		///< Pen for normal handles
+		PEN_HOVER,		///< Pen for hovered handles
+		PEN_LINE,		///< Pen for the line to handles
+		PEN_MAIN,		///< Pen for the main handle
+		PEN_NEW_POINT	///< Pen for the new point
 	};
 	/// Retrieve a pen for the drawing of parts of handles
 	wxPen handlePen(WhichPen p, LockMode lock);
@@ -91,11 +91,11 @@ class SymbolPointEditor : public SymbolEditorBase {
 	
 	// Selection
 	enum Selection {
-		SELECTED_NONE,		//^ no selection
-		SELECTED_POINTS,	//^ some points are selected
-		SELECTED_HANDLE,	//^ a handle is selected
-		SELECTED_LINE,		//^ a line is selected
-		SELECTED_NEW_POINT	//^ a new point on a line (used for hovering)
+		SELECTED_NONE,		///< no selection
+		SELECTED_POINTS,	///< some points are selected
+		SELECTED_HANDLE,	///< a handle is selected
+		SELECTED_LINE,		///< a line is selected
+		SELECTED_NEW_POINT	///< a new point on a line (used for hovering)
 	};
 	Selection          selection;
 	//   points

@@ -156,9 +156,9 @@ class EnumReader {
 	inline bool isDone() const { return done; }
 	
   private:
-	String read;  //^ The string to match to a value name
-	bool   first; //^ Has the first (default) value been matched?
-	bool   done;  //^ Was anything matched?
+	String read;  ///< The string to match to a value name
+	bool   first; ///< Has the first (default) value been matched?
+	bool   done;  ///< Was anything matched?
 };
 
 // ----------------------------------------------------------------------------- : EOF

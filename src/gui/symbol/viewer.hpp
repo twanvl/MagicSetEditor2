@@ -32,7 +32,7 @@ class SymbolViewer : public SymbolView {
 
 	// --------------------------------------------------- : Point translation
 	
-	Rotation rotation; //^ Object that handles rotation, scaling and translation
+	Rotation rotation; ///< Object that handles rotation, scaling and translation
 	
 	// --------------------------------------------------- : Drawing
 

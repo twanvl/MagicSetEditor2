@@ -347,6 +347,12 @@
 			<Filter
 				Name="control"
 				Filter="">
+				<File
+					RelativePath=".\gui\control\card_list.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\card_list.hpp">
+				</File>
 			</Filter>
 			<Filter
 				Name="editor"

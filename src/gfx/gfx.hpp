@@ -101,9 +101,9 @@ void drawCombineImage(DC& dc, UInt x, UInt y, const Image& img, ImageCombine com
 
 // ----------------------------------------------------------------------------- : Utility
 
-inline int bot(int x) { return max(0,   x); } //^ bottom range check for color values
-inline int top(int x) { return min(255, x); } //^ top    range check for color values
-inline int col(int x) { return top(bot(x)); } //^ top and bottom range check for color values
+inline int bot(int x) { return max(0,   x); } ///< bottom range check for color values
+inline int top(int x) { return min(255, x); } ///< top    range check for color values
+inline int col(int x) { return top(bot(x)); } ///< top and bottom range check for color values
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

@@ -38,11 +38,11 @@ class ControlPointMoveAction : public Action {
 	void move(const Vector2D& delta);
 	
   private:
-	set<ControlPointP> points;  //^ Points to move
-	vector<Vector2D> oldValues; //^ Their old positions
-	Vector2D delta;				//^ Amount we moved
+	set<ControlPointP> points;  ///< Points to move
+	vector<Vector2D> oldValues; ///< Their old positions
+	Vector2D delta;				///< Amount we moved
   public:
-	bool constrain;				//^ Constrain movement?
+	bool constrain;				///< Constrain movement?
 };
 
 // ----------------------------------------------------------------------------- : Move handle
@@ -59,12 +59,12 @@ class HandleMoveAction : public Action {
 	void move(const Vector2D& delta);
 	
   private:
-	SelectedHandle handle;		//^ The handle to move
-	Vector2D oldHandle;			//^ Old value of this handle
-	Vector2D oldOther;			//^ Old value of other handle, needed for contraints
-	Vector2D delta;				//^ Amount we moved
+	SelectedHandle handle;		///< The handle to move
+	Vector2D oldHandle;			///< Old value of this handle
+	Vector2D oldOther;			///< Old value of other handle, needed for contraints
+	Vector2D delta;				///< Amount we moved
   public:
-	bool constrain;				//^ Constrain movement?
+	bool constrain;				///< Constrain movement?
 };
 
 // ----------------------------------------------------------------------------- : Segment mode
@@ -108,7 +108,7 @@ class LockModeAction : public Action {
 	virtual void perform(bool toUndo);
 	
   private:
-	ControlPointUpdate point;	//^ The affected point
+	ControlPointUpdate point;	///< The affected point
 };
 
 // ----------------------------------------------------------------------------- : Move curve
@@ -141,10 +141,10 @@ class ControlPointAddAction : public Action {
 	inline ControlPointP getNewPoint() const { return newPoint; }
 	
   private:
-	SymbolPartP   part;					//^ SymbolPart we are in
-	ControlPointP newPoint;				//^ The point to insert
-	UInt          insertAfter;			//^ Insert after index .. in the array
-	ControlPointUpdate point1, point2;	//^ Update the points around the new point
+	SymbolPartP   part;					///< SymbolPart we are in
+	ControlPointP newPoint;				///< The point to insert
+	UInt          insertAfter;			///< Insert after index .. in the array
+	ControlPointUpdate point1, point2;	///< Update the points around the new point
 };
 
 // ----------------------------------------------------------------------------- : Remove control point

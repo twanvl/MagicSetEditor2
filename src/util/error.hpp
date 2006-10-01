@@ -13,7 +13,7 @@
 
 /** @file util/error.hpp
  *
- *  Classes and functions for handling errors/exceptions
+ *  @brief Classes and functions for handling errors/exceptions.
  */
 
 // ----------------------------------------------------------------------------- : Error types
@@ -28,7 +28,7 @@ class Error {
 	virtual String what() const; 
 	
   private:
-	String message; //^ The error message
+	String message; ///< The error message
 };
 
 
@@ -42,7 +42,7 @@ class InternalError : public Error {
 
 // ----------------------------------------------------------------------------- : File errors
 
-// Errors related to packages
+/// Errors related to packages
 class PackageError : public Error {
   public:
 	inline PackageError(const String& str) : Error(str) {}
@@ -50,7 +50,7 @@ class PackageError : public Error {
 
 // ----------------------------------------------------------------------------- : Parse errors
 
-// Parse errors
+/// Parse errors
 class ParseError : public Error {
   public:
 	inline ParseError(const String& str) : Error(str) {}

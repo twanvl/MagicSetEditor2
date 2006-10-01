@@ -35,8 +35,8 @@ class SymbolWindow : public Frame {
 	/// Actual initialisation
 	void init(Window* parent, SymbolP symbol);
 	
-	SymbolControl*  control; //^ The control for editing/displaying the symbol
-	SymbolPartList* parts;   //^ A list of parts in the symbol
+	SymbolControl*  control; ///< The control for editing/displaying the symbol
+	SymbolPartList* parts;   ///< A list of parts in the symbol
 	
 	// when editing a symbol field
 //	SymbolValueP value
@@ -65,7 +65,7 @@ class SymbolWindow : public Frame {
 	/// Activating a part: open the point editor
 	void onActivateFromList(wxListEvent& ev);
 	
-	bool inSelectionEvent; //^ Prevent recursion in onSelect...
+	bool inSelectionEvent; ///< Prevent recursion in onSelect...
 	
   public:
 	void onSelectFromControl();

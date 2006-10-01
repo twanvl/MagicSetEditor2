@@ -9,7 +9,7 @@
 
 /** @file util/reflect.hpp
  *
- *  Reflection of classes, currently reflection is used for (de)serialization.
+ *  @brief Reflection of classes, currently reflection is used for (de)serialization.
  */
 
 // ----------------------------------------------------------------------------- : Includes
@@ -41,18 +41,18 @@
 // ----------------------------------------------------------------------------- : Implementing reflection
 
 /// Implement the refelection of a class type Cls
-/// Reflection allows the member variables of a class to be inspected at runtime.
-///
-/// Currently creates the methods:
-///  - Reader::handle(Cls&)
-///  - Writer::handle(Cls&)
-/** Usage:
- *    \begincode
+/** Reflection allows the member variables of a class to be inspected at runtime.
+ *
+ *  Currently creates the methods:
+ *  - Reader::handle(Cls&)
+ *  - Writer::handle(Cls&)
+ *  Usage:
+ *    @code
  *     IMPLEMENT_REFLECTION(MyClass) {
  *         REFLECT(a_variable_in_my_class);
  *         REFLECT(another_variable_in_my_class);
  *     }
- *    \endcode
+ *    @endcode
  */
 #define IMPLEMENT_REFLECTION(Cls)										\
 			REFLECT_OBJECT_READER(Cls)									\
@@ -80,12 +80,12 @@
 
 /// Implement the refelection of a enumeration type Enum
 /** Usage:
- *    \begincode
+ *    @code
  *     IMPLEMENT_REFLECTION_ENUM(MyEnum) {
  *         VALUE(value_of_enum_1);
  *         VALUE(value_of_enum_2);
  *     }
- *    \endcode
+ *    @endcode
  *
  *  When reading the first value declared is the default value
  *
