@@ -163,21 +163,15 @@ IMPLEMENT_REFLECTION(Symbol) {
 
 SymbolView::SymbolView() {}
 
-SymbolView::SymbolView(SymbolP symbol)
-	: symbol(symbol)
-{
-	if (symbol) symbol->actions.addListener(this);
-}
-
 SymbolView::~SymbolView() {
 	if (symbol) symbol->actions.removeListener(this);
 }
 
-void SymbolView::setSymbol(SymbolP newSymbol) {
+void SymbolView::setSymbol(const SymbolP& newSymbol) {
 	// no longer listening to old symbol
 	if (symbol) symbol->actions.removeListener(this);
 	symbol = newSymbol;
 	// start listening to new symbol
 	if (symbol) symbol->actions.addListener(this);
-	onSymbolChange();
+	onChangeSymbol();
 }

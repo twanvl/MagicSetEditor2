@@ -14,6 +14,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/for_each.hpp>
 #include <boost/shared_ptr.hpp>
 using namespace boost;
 
@@ -22,7 +23,8 @@ using namespace boost;
 /// Declares the type TypeP as a shared_ptr<Type>
 #define DECLARE_POINTER_TYPE(Type)			\
 	class Type;								\
-	typedef shared_ptr<Type> Type##P
+	typedef shared_ptr<Type> Type##P;		\
+	DECLARE_TYPEOF_COLLECTION(Type##P)
 
 // ----------------------------------------------------------------------------- : Creating
 

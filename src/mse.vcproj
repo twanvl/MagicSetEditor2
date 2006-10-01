@@ -320,28 +320,22 @@
 				RelativePath=".\gui\util.hpp">
 			</File>
 			<Filter
-				Name="main"
+				Name="set"
 				Filter="">
 				<File
-					RelativePath=".\gui\main\panel.hpp">
+					RelativePath=".\gui\set\panel.hpp">
 				</File>
 				<File
-					RelativePath=".\gui\main\window.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release Unicode|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
+					RelativePath=".\gui\set\stats_panel.cpp">
 				</File>
 				<File
-					RelativePath=".\gui\main\window.hpp">
+					RelativePath=".\gui\set\stats_panel.hpp">
+				</File>
+				<File
+					RelativePath=".\gui\set\window.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\set\window.hpp">
 				</File>
 			</Filter>
 			<Filter
@@ -535,19 +529,31 @@
 			Name="data"
 			Filter="">
 			<File
+				RelativePath=".\data\card.cpp">
+			</File>
+			<File
 				RelativePath=".\data\card.hpp">
 			</File>
 			<File
 				RelativePath=".\data\card_style.hpp">
 			</File>
 			<File
+				RelativePath=".\data\field.cpp">
+			</File>
+			<File
 				RelativePath=".\data\field.hpp">
+			</File>
+			<File
+				RelativePath=".\data\game.cpp">
 			</File>
 			<File
 				RelativePath=".\data\game.hpp">
 			</File>
 			<File
 				RelativePath=".\data\locale.hpp">
+			</File>
+			<File
+				RelativePath=".\data\set.cpp">
 			</File>
 			<File
 				RelativePath=".\data\set.hpp">
@@ -631,6 +637,9 @@
 			</File>
 			<File
 				RelativePath=".\util\action_stack.hpp">
+			</File>
+			<File
+				RelativePath=".\util\dynamic_arg.hpp">
 			</File>
 			<File
 				RelativePath=".\util\error.cpp">

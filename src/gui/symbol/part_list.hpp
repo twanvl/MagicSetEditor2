@@ -36,7 +36,7 @@ class SymbolPartList : public wxListCtrl, public SymbolView {
 	void selectParts(const set<SymbolPartP>& sel);
 	
 	/// Another symbol is being viewed
-	void onSymbolChange();
+	void onChangeSymbol();
 	
 	/// Event handler for changes to the symbol
 	virtual void onAction(const Action& a);

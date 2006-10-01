@@ -9,7 +9,7 @@
 
 /** @file util/prec.hpp
  *
- *  Precompiled header, and aliasses for common types
+ *  @brief Precompiled header, and aliasses for common types
  */
 
 // ----------------------------------------------------------------------------- : Compiler specific

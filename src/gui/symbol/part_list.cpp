@@ -16,7 +16,6 @@
 SymbolPartList::SymbolPartList(Window* parent, int id, SymbolP symbol)
 	: wxListCtrl(parent, id, wxDefaultPosition, wxDefaultSize,
 					wxLC_REPORT | wxLC_NO_HEADER | wxLC_VIRTUAL | wxLC_EDIT_LABELS)
-	, SymbolView(symbol)
 {
 	// Create image list
 	wxImageList* images = new wxImageList(16,16);
@@ -30,12 +29,13 @@ SymbolPartList::SymbolPartList(Window* parent, int id, SymbolP symbol)
 	AssignImageList(images, wxIMAGE_LIST_SMALL);
 	// create columns
 	InsertColumn(0, _("Name"));
-	update();
+	// view symbol
+	setSymbol(symbol);
 }
 
 // ----------------------------------------------------------------------------- : View events
 
-void SymbolPartList::onSymbolChange() {
+void SymbolPartList::onChangeSymbol() {
 	update();
 }
 

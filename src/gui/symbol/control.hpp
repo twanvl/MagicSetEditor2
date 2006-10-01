@@ -26,7 +26,7 @@ class SymbolControl : public wxControl, public SymbolViewer {
   public:
 	SymbolControl(SymbolWindow* parent, int id, const SymbolP& symbol);
 	
-	virtual void onSymbolChange();
+	virtual void onChangeSymbol();
 	
 	virtual void onAction(const Action&);
 	

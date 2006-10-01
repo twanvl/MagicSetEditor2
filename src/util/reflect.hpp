@@ -20,7 +20,8 @@
 // ----------------------------------------------------------------------------- : Declaring reflection
 
 /// Declare that a class supports reflection
-/// Reflection allows the member variables of a class to be inspected at runtime.
+/** Reflection allows the member variables of a class to be inspected at runtime.
+ */
 #define DECLARE_REFLECTION()											\
           protected:													\
 			template<class Tag> void reflect_impl(Tag& tag);			\

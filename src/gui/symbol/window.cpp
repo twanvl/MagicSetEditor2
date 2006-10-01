@@ -15,34 +15,6 @@
 #include <wx/filename.h>
 #include <wx/wfstream.h>
 
-// ----------------------------------------------------------------------------- : Window ids
-
-enum SymIDs 
-{	idFileNew		= wxID_NEW
-,	idFileOpen		= wxID_OPEN
-,	idFileSave		= wxID_SAVE
-,	idFileSaveAs	= wxID_SAVEAS
-,	idFileStore		= 0
-,	idFileExit		= wxID_EXIT
-
-,	idExtraTools	= 1000
-,	idExtraToolsMax	= idExtraTools + 500
-
-,	idEditUndo		= wxID_UNDO
-,	idEditRedo		= wxID_REDO
-,	idEditDuplicate	= 1100 // idExtraTools + 100
-
-,	idModeSelect	= idFileStore + 1
-,	idModeRotate
-,	idModePoints
-,	idModeShapes
-,	idModePaint
-,	idModeMax
-
-,	idPartList
-,	idControl
-};
-
 // ------------------------------------------------------------------------------------------------ : Default symbol
 
 // A default symbol part, a square, moved by d
@@ -218,17 +190,17 @@ void SymbolWindow::onExtraTool(wxCommandEvent& ev) {
 void SymbolWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 	switch(ev.GetId()) {
 		// file menu
-		case idFileStore: {
+		case ID_FILE_STORE: {
 		//	ev.Enable(value);
 			break;
 		// undo/redo
-		} case idEditUndo: {
+		} case ID_EDIT_UNDO: {
 			ev.Enable(control->getSymbol()->actions.canUndo());
 			String label = control->getSymbol()->actions.undoName();
 			ev.SetText(label + _("\tCtrl+Z"));
 			GetToolBar()->SetToolShortHelp(ID_EDIT_UNDO, label);
 			break;
-		} case idEditRedo: {
+		} case ID_EDIT_REDO: {
 			ev.Enable(control->getSymbol()->actions.canRedo());
 			String label = control->getSymbol()->actions.redoName();
 			ev.SetText(label + _("\tF4"));

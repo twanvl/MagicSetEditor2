@@ -43,9 +43,9 @@ class SymbolEditorBase {
 	
 	// --------------------------------------------------- : UI
 	
-	/// Init extra toolbar items and menus needed for this panel
+	/// Init extra toolbar items and menus needed for this editor
 	virtual void initUI(wxToolBar* tb, wxMenuBar* mb) {}
-	/// Destroy the extra items added by initUI
+	/// Destroy the extra items added by initUI.
 	virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb) {}
 	/// Update the UI by enabling/disabling items
 	virtual void onUpdateUI(wxUpdateUIEvent& ev) {}

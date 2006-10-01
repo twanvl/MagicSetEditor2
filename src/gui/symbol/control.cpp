@@ -24,7 +24,7 @@ SymbolControl::SymbolControl(SymbolWindow* parent, int id, const SymbolP& symbol
 	, SymbolViewer(symbol)
 	, parent(parent)
 {
-	switchEditor(new_shared2<SymbolSelectEditor>(this, false));
+	onChangeSymbol();
 }
 
 void SymbolControl::switchEditor(const SymbolEditorBaseP& e) {
@@ -34,7 +34,7 @@ void SymbolControl::switchEditor(const SymbolEditorBaseP& e) {
 	Refresh(false);
 }
 
-void SymbolControl::onSymbolChange() {
+void SymbolControl::onChangeSymbol() {
 	selectedParts.clear();
 	switchEditor(new_shared2<SymbolSelectEditor>(this, false));
 	Refresh(false);

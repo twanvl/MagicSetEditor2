@@ -12,9 +12,10 @@
 
 SymbolViewer::SymbolViewer(const SymbolP& symbol, double borderRadius)
 	: borderRadius(borderRadius)
-	, SymbolView(symbol)
 	, rotation(0, RealRect(0,0,500,500))
-{}
+{
+	setSymbol(symbol);
+}
 
 // ----------------------------------------------------------------------------- : Drawing
 

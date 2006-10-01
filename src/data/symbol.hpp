@@ -17,8 +17,6 @@
 DECLARE_POINTER_TYPE(ControlPoint);
 DECLARE_POINTER_TYPE(SymbolPart);
 DECLARE_POINTER_TYPE(Symbol);
-DECLARE_TYPEOF_COLLECTION(ControlPointP);
-DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 
 // ----------------------------------------------------------------------------- : ControlPoint
 
@@ -168,23 +166,24 @@ class Symbol {
 // ----------------------------------------------------------------------------- : SymbolView
 
 /// A 'view' of a symbol, is notified when the symbol is updated
+/** To listen to events, derived classes should override onAction(const Action&)
+ */
 class SymbolView : public ActionListener {
   public:
 	SymbolView();
-	SymbolView(SymbolP symbol);
 	~SymbolView();
   
 	/// Get the symbol that is currently being viewed
 	inline SymbolP getSymbol() { return symbol; }
 	/// Change the symbol that is being viewed
-	void   setSymbol(SymbolP symbol);
+	void   setSymbol(const SymbolP& symbol);
 	
   protected:
 	/// The symbol that is currently being viewed, should not be modified directly!
 	SymbolP symbol;
 	
-	/// Called when the associated symbol is changed, but not when it is initially set!
-	virtual void onSymbolChange() {}
+	/// Called when another symbol is being viewn (using setSymbol)
+	virtual void onChangeSymbol() {}
 };
 
 

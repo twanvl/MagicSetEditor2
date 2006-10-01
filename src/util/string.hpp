@@ -14,6 +14,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include "prec.hpp"
 #include "for_each.hpp"
 #include <ctype.h>
 #include <boost/preprocessor/cat.hpp>

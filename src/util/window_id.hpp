@@ -7,6 +7,11 @@
 #ifndef HEADER_UTIL_WINDOW_ID
 #define HEADER_UTIL_WINDOW_ID
 
+/** @file util/window_id.hpp
+ *
+ *  @brief Enumerations of all window ids used.
+ */
+
 // ----------------------------------------------------------------------------- : Includes
 
 // ----------------------------------------------------------------------------- : Menu ids

@@ -16,7 +16,7 @@
 /// A kind of map of K->V, with the following properties:
 /**  - K must have a unique member ->index of type UInt
  *   - There must exist a function initObject(K, V&)
- *     that stores a new V object for a given key in v
+ *     that stores a new V object for a given key in the reference
  *   - O(1) inserts and lookups
  */
 template <typename Key, typename Value>
@@ -35,10 +35,10 @@ class IndexMap : private vector<Value> {
 	void init(const vector<Key>& keys) {
 		if (!this->empty()) return;
 		this->reserve(keys.size());
-		FOR_EACH(it, keys) {
-			Key& k = *it;
-			if (k->index >= this->size()) this->resize(k->index + 1);
-			initObject(k, (*this)[k->index]);
+		FOR_EACH_CONST(key, keys) {
+			assert(key);
+			if (key->index >= this->size()) this->resize(key->index + 1);
+			initObject(key, (*this)[key->index]);
 		}
 	}
 	
