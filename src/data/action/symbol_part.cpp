@@ -8,7 +8,9 @@
 
 #include <data/action/symbol_part.hpp>
 #include <gfx/bezier.hpp>
+
 DECLARE_TYPEOF_COLLECTION(Vector2D);
+DECLARE_TYPEOF_COLLECTION(ControlPointP);
 
 // ----------------------------------------------------------------------------- : Utility
 
@@ -324,6 +326,7 @@ void SinglePointRemoveAction::perform(bool toUndo) {
 }
 
 DECLARE_POINTER_TYPE(SinglePointRemoveAction);
+DECLARE_TYPEOF_COLLECTION(SinglePointRemoveActionP);
 
 
 // Remove a set of points from a symbol part.

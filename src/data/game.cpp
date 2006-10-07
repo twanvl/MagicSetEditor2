@@ -9,3 +9,7 @@
 #include <data/game.hpp>
 
 // ----------------------------------------------------------------------------- : Game
+
+bool Game::isMagic() const {
+	return name() == _("magic");
+}

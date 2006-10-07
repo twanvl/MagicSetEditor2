@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
 #include <util/action_stack.hpp>
+#include <util/io/package.hpp>
 
 DECLARE_POINTER_TYPE(Card);
 DECLARE_POINTER_TYPE(Set);
@@ -20,7 +21,7 @@ DECLARE_POINTER_TYPE(Game);
 // ----------------------------------------------------------------------------- : Set
 
 /// A set of cards
-class Set {
+class Set : public Packaged {
   public:
 	/// The game this set uses
 	GameP game;
@@ -52,8 +53,10 @@ class SetView : public ActionListener {
 	/// The set that is currently being viewed, should not be modified directly!
 	SetP set;
 	
-	/// Called when another set is being viewn (using setSet)
+	/// Called when another set is being viewed (using setSet)
 	virtual void onChangeSet() {}
+	/// Called when just before another set is being viewed (using setSet)
+	virtual void onBeforeChangeSet() {}
 };
 
 

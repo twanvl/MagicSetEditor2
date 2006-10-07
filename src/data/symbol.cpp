@@ -9,6 +9,9 @@
 #include <data/symbol.hpp>
 #include <gfx/bezier.hpp>
 
+DECLARE_TYPEOF_COLLECTION(SymbolPartP);
+DECLARE_TYPEOF_COLLECTION(ControlPointP);
+
 // ----------------------------------------------------------------------------- : ControlPoint
 
 IMPLEMENT_REFLECTION_ENUM(LockMode) {

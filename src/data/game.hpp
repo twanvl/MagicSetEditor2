@@ -10,6 +10,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/io/package.hpp>
 
 #ifndef HEADER_DATA_CARD
 DECLARE_POINTER_TYPE(Field);
@@ -17,12 +18,15 @@ DECLARE_POINTER_TYPE(Field);
 
 // ----------------------------------------------------------------------------- : Game
 
-class Game {
+class Game : public Packaged {
   public:
 	String fullName;
 	String iconFilename;
 	vector<FieldP> setFields;
 	vector<FieldP> cardFields;
+	
+	// Is this Magic the Gathering?
+	bool isMagic() const;
 };
 
 // ----------------------------------------------------------------------------- : EOF

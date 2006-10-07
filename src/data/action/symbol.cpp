@@ -13,6 +13,8 @@ typedef pair<SymbolPartP,SymbolPartCombine> pair_part_combine_t;
 typedef pair<SymbolPartP,size_t           > pair_part_size_t;
 DECLARE_TYPEOF_COLLECTION(pair_part_combine_t);
 DECLARE_TYPEOF_COLLECTION(pair_part_size_t);
+DECLARE_TYPEOF_COLLECTION(SymbolPartP);
+DECLARE_TYPEOF_COLLECTION(ControlPointP);
 
 // ----------------------------------------------------------------------------- : Moving symbol parts
 

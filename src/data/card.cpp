@@ -11,6 +11,8 @@
 #include <data/field.hpp>
 #include <util/error.hpp>
 
+DECLARE_TYPEOF_COLLECTION(FieldP);
+
 // ----------------------------------------------------------------------------- : Card
 
 IMPLEMENT_DYNAMIC_ARG(Game*, game_for_new_cards, nullptr);
