@@ -8,6 +8,8 @@
 
 #include <gui/symbol/viewer.hpp>
 
+DECLARE_TYPEOF_COLLECTION(SymbolPartP);
+
 // ----------------------------------------------------------------------------- : Constructor
 
 SymbolViewer::SymbolViewer(const SymbolP& symbol, double borderRadius)

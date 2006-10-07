@@ -77,7 +77,7 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
 		menuTool->Append(ID_MODE_SHAPES,	_("TOOL_CIRCLE"),		_("&Basic Shapes\tF8"),	_("Draw basic shapes, such as rectangles and circles"), wxITEM_CHECK);
 		menuTool->Append(ID_MODE_PAINT,		_("TOOL_MODE_PAINT"),	_("P&aint\tF9"),		_("Paint on the shape using a paintbrush"), wxITEM_CHECK);
 	menuBar->Append(menuTool, _("&Tool"));
-		
+	
 	SetMenuBar(menuBar);
 	
 	// Statusbar

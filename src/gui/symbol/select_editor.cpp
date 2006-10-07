@@ -13,6 +13,8 @@
 #include <data/action/symbol.hpp>
 #include <gfx/gfx.hpp>
 
+DECLARE_TYPEOF_COLLECTION(SymbolPartP);
+
 // ----------------------------------------------------------------------------- : SymbolSelectEditor
 
 SymbolSelectEditor::SymbolSelectEditor(SymbolControl* control, bool rotate)

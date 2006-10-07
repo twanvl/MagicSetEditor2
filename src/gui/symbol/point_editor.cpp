@@ -13,6 +13,8 @@
 #include <util/window_id.hpp>
 #include <util/error.hpp>
 
+DECLARE_TYPEOF_COLLECTION(ControlPointP);
+
 // ----------------------------------------------------------------------------- : SymbolPointEditor
 
 SymbolPointEditor::SymbolPointEditor(SymbolControl* control, const SymbolPartP& part)
