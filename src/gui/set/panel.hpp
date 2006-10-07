@@ -24,7 +24,7 @@ class SetWindowPanel : public wxPanel, public SetView {
 	SetWindowPanel(Window* parent, int id, bool autoTabbing = false);
   
 	/// We will probably want to respond to set changes
-	virtual void onSetChange();
+	virtual void onSetChange() {}
 	
 	// --------------------------------------------------- : Meta information
 	
@@ -50,6 +50,8 @@ class SetWindowPanel : public wxPanel, public SetView {
 	
 	/// Should return true if this panel wants to get focus to show an action
 	virtual bool wantsToHandle(const Action&) { return false; }
+	/// Handle an action that changes the current set
+	virtual void onAction(const Action&) {}
 	/// The settings for rendering cards have changed, refresh card viewers/editors
 	virtual void onRenderSettingsChange() {}
 	

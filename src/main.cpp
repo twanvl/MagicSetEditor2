@@ -6,7 +6,12 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
-#include "util/prec.hpp"
+#include <util/prec.hpp>
+#include <data/game.hpp>
+#include <data/set.hpp>
+#include <data/settings.hpp>
+#include <data/format/formats.hpp>
+#include <gui/set/window.hpp>
 #include <gui/symbol/window.hpp>
 
 // ----------------------------------------------------------------------------- : Main function/class
@@ -30,8 +35,10 @@ IMPLEMENT_APP(MSE)
 
 bool MSE::OnInit() {
 	wxInitAllImageHandlers();
-	//initFileFilters()
-	Window* wnd = new SymbolWindow(0);
+	initFileFormats();
+	settings.read();
+	//Window* wnd = new SymbolWindow(nullptr);
+	Window* wnd = new SetWindow(nullptr, new_shared1<Set>(Game::byName(_("magic"))));
 	wnd->Show();
 	return true;
 }
@@ -39,7 +46,7 @@ bool MSE::OnInit() {
 // ----------------------------------------------------------------------------- : Exit
 
 int MSE::OnExit() {
-//	settings.write();
+	settings.write();
 	return 0;
 }
 

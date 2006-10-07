@@ -111,6 +111,11 @@ template <> void Reader::handle(int& i) {
 	value.ToLong(&l);
 	i = l;
 }
+template <> void Reader::handle(unsigned int& i) {
+	long l = 0;
+	value.ToLong(&l);
+	i = abs(l); // abs, because it will seem strange if -1 comes out as MAX_INT
+}
 template <> void Reader::handle(double& d) {
 	value.ToDouble(&d);
 }

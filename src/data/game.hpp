@@ -12,9 +12,8 @@
 #include <util/prec.hpp>
 #include <util/io/package.hpp>
 
-#ifndef HEADER_DATA_CARD
 DECLARE_POINTER_TYPE(Field);
-#endif
+DECLARE_POINTER_TYPE(Game);
 
 // ----------------------------------------------------------------------------- : Game
 
@@ -25,8 +24,16 @@ class Game : public Packaged {
 	vector<FieldP> setFields;
 	vector<FieldP> cardFields;
 	
-	// Is this Magic the Gathering?
+	/// Loads the game with a particular name, for example "magic"
+	static GameP byName(const String& name);
+	
+	/// Is this Magic the Gathering?
 	bool isMagic() const;
+	
+  protected:
+	String typeName() const;
+	
+	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : EOF

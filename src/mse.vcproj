@@ -329,6 +329,9 @@
 					RelativePath=".\gui\set\cards_panel.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\set\panel.cpp">
+				</File>
+				<File
 					RelativePath=".\gui\set\panel.hpp">
 				</File>
 				<File
@@ -767,6 +770,12 @@
 				</File>
 				<File
 					RelativePath=".\util\io\package.hpp">
+				</File>
+				<File
+					RelativePath=".\util\io\package_manager.cpp">
+				</File>
+				<File
+					RelativePath=".\util\io\package_manager.hpp">
 				</File>
 				<File
 					RelativePath=".\util\io\reader.cpp">

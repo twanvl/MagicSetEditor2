@@ -9,3 +9,7 @@
 #include <gui/set/stats_panel.hpp>
 
 // ----------------------------------------------------------------------------- : StatsPanel
+
+StatsPanel::StatsPanel(Window* parent, int id)
+	: SetWindowPanel(parent, id)
+{}

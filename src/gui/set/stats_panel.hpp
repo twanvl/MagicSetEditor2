@@ -14,6 +14,12 @@
 
 // ----------------------------------------------------------------------------- : StatsPanel
 
+class StatsPanel : public SetWindowPanel {
+  public:
+	StatsPanel(Window* parent, int id);
+	
+	
+};
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

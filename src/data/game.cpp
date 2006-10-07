@@ -7,9 +7,21 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <data/game.hpp>
+#include <util/io/package_manager.hpp>
 
 // ----------------------------------------------------------------------------- : Game
 
+GameP Game::byName(const String& name) {
+	return packages.open<Game>(name + _(".mse-game"));
+}
+
 bool Game::isMagic() const {
 	return name() == _("magic");
+}
+
+String Game::typeName() const { return _("game"); }
+
+IMPLEMENT_REFLECTION(Game) {
+	REFLECT_N("full name", fullName);
+	REFLECT_N("icon",      iconFilename);
 }

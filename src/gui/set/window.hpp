@@ -25,7 +25,7 @@ class wxFindDialogEvent;
 class SetWindow : public wxFrame, public SetView {
   public:
 	/// Construct a SetWindow
-	SetWindow(Window* parent);
+	SetWindow(Window* parent, const SetP& set);
 	~SetWindow();
 	
 	// --------------------------------------------------- : Set actions

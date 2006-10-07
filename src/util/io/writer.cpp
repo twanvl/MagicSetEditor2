@@ -92,6 +92,9 @@ void Writer::handle(const String& value) {
 template <> void Writer::handle(const int& value) {
 	handle(String() << value);
 }
+template <> void Writer::handle(const unsigned int& value) {
+	handle(String() << value);
+}
 template <> void Writer::handle(const double& value) {
 	handle(String() << value);
 }

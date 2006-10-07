@@ -24,7 +24,7 @@ DECLARE_TYPEOF_COLLECTION(SetWindowPanel*);
 
 // ----------------------------------------------------------------------------- : Constructor
 
-SetWindow::SetWindow(Window* parent)
+SetWindow::SetWindow(Window* parent, const SetP& set)
 	: wxFrame(parent, wxID_ANY, _("Magic Set Editor"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE)
 	, currentPanel(nullptr)
 	, findDialog(nullptr)
@@ -120,13 +120,16 @@ SetWindow::SetWindow(Window* parent)
 //	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 3, _("F9"));
 	//addPanel(*s, *menuWindow, *tabBar, new DraftPanel   (&this, wxID_ANY), 4, _("F10")) 
 //	selectPanel(idWindowMin + 4); // select cards panel
+
+	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 0, _("F9"));
+	selectPanel(ID_WINDOW_MIN); // test
 	
 	// loose ends
 	tabBar->Realize();
-//	setSize(settings.SetWindowWidth, settings.SetWindowHeight);
-//	if (settings.SetWindowMaximized) {
-//		maximize();
-//	}
+	SetSize(settings.setWindowWidth, settings.setWindowHeight);
+	if (settings.setWindowMaximized) {
+		Maximize();
+	}
 //	SetWindows.push_back(&this); // register this window
 //	timer.owner = &this;
 //	timer.start(10);
@@ -134,20 +137,22 @@ SetWindow::SetWindow(Window* parent)
 	// note: this still sends events for menu and toolbar items!
 	wxUpdateUIEvent::SetMode(wxUPDATE_UI_PROCESS_SPECIFIED);
 	SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
+	
+	setSet(set);
 }
 
 SetWindow::~SetWindow() {
 	// store window size in settings
-//	wxSize s = getSize();
-//	settings.SetWindowMaximized = isMaximized();
-//	if (!isMaximized()) {
-//		settings.SetWindowWidth  = s.GetWidth();
-//		settings.SetWindowHeight = s.GetHeight();
-//	}
-//	// destroy ui of selected panel
-//	currentPanel->destroyUI(GetToolBar(), GetMenuBar());
+	wxSize s = GetSize();
+	settings.setWindowMaximized = IsMaximized();
+	if (!IsMaximized()) {
+		settings.setWindowWidth  = s.GetWidth();
+		settings.setWindowHeight = s.GetHeight();
+	}
+	// destroy ui of selected panel
+	currentPanel->destroyUI(GetToolBar(), GetMenuBar());
 	// cleanup (see find stuff)
-//	delete findDialog;
+	delete findDialog;
 	// remove from list of main windows
 //	SetWindows.erase(remove(SetWindows.begin(), SetWindows.end(), &this));
 	// stop updating
@@ -511,8 +516,7 @@ void SetWindow::onEditPreferences(wxCommandEvent&) {
 // ----------------------------------------------------------------------------- : Window events - menu - window
 
 void SetWindow::onWindowNewWindow(wxCommandEvent&) {
-	SetWindow* newWindow = new SetWindow(nullptr);
-	newWindow->setSet(set);
+	SetWindow* newWindow = new SetWindow(nullptr, set);
 	newWindow->Show();
 }
 

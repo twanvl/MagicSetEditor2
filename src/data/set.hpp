@@ -23,12 +23,21 @@ DECLARE_POINTER_TYPE(Game);
 /// A set of cards
 class Set : public Packaged {
   public:
+	/// Create a set using the given game
+	Set(const GameP& game);
+  
 	/// The game this set uses
 	GameP game;
 	/// The cards in the set
 	vector<CardP> cards;
 	/// Actions performed on this set and the cards in it
 	ActionStack actions;
+	
+  protected:
+	String typeName() const;
+	
+	// default constructor accessible to Reader
+	Set();
 	
 	DECLARE_REFLECTION();
 };
