@@ -16,6 +16,7 @@
 
 #ifdef _MSC_VER
 #	pragma warning (disable: 4100) // unreferenced formal parameter
+#	pragma warning (disable: 4355) // 'this' : used in base member initializer list
 #	pragma warning (disable: 4800) // 'int' : forcing value to bool 'true' or 'false' (performance warning)
 #endif
 

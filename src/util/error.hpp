@@ -48,6 +48,14 @@ class PackageError : public Error {
 	inline PackageError(const String& str) : Error(str) {}
 };
 
+/// A file is not found
+class FileNotFoundError : public PackageError {
+  public:
+	inline FileNotFoundError(const String& file, const String& package)
+		: PackageError(_("File not found: ") + file + _(" in package ") + package)
+	{}
+};
+
 // ----------------------------------------------------------------------------- : Parse errors
 
 /// Parse errors
