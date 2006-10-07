@@ -172,7 +172,7 @@ class Packaged : public Package {
 	
   protected:
 	/// filename of the data file, and extension of the package file
-	virtual String typeName() = 0;
+	virtual String typeName() const = 0;
 	/// Can be overloaded to do validation after loading
 	virtual void validate() {}
 	
