@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <data/game.hpp>
+#include <data/field.hpp>
 #include <util/io/package_manager.hpp>
 
 // ----------------------------------------------------------------------------- : Game
@@ -22,6 +23,19 @@ bool Game::isMagic() const {
 String Game::typeName() const { return _("game"); }
 
 IMPLEMENT_REFLECTION(Game) {
-	REFLECT_N("full name", fullName);
-	REFLECT_N("icon",      iconFilename);
+//	ioMseVersion(io, fileName, fileVersion);
+	REFLECT_N("full name",     fullName);
+	REFLECT_N("icon",          iconFilename);
+//	REFLECT_N("init script",   initScript);
+	REFLECT_N("set field",     setFields);
+	REFLECT_N("card field",    cardFields);
+//	REFLECT_N("keyword parameter type", keywordParams);
+//	REFLECT_N("keyword separator type", keywordSeparators);
+//	REFLECT_N("keyword",      keywords);
+//	REFLECT_N("word list",    wordLists);
+}
+
+void Game::validate() {
+	// a default for the full name
+	if (fullName.empty()) fullName = name();
 }

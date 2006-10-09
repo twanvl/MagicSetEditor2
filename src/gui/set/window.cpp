@@ -40,10 +40,10 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 		menuFile->Append(ID_FILE_SAVE_AS,						_("Save &As...\tF12"),			_("Save the set with a new name"));
 		IconMenu* menuExport = new IconMenu();
 			menuExport->Append(ID_FILE_EXPORT_HTML,					_("&HTML..."),					_("Export the set to a HTML file"));
-			menuExport->Append(ID_FILE_EXPORT_IMAGE,				_("Card &Image::.."),			_("Export the selected card to an image file"));
+			menuExport->Append(ID_FILE_EXPORT_IMAGE,				_("Card &Image..."),			_("Export the selected card to an image file"));
 			menuExport->Append(ID_FILE_EXPORT_IMAGES,				_("All Card I&mages..."),		_("Export images for all cards"));
-			menuExport->Append(ID_FILE_EXPORT_APPR,					_("&Apprentice::.."),			_("Export the set so it can be played with in Apprentice"));
-			menuExport->Append(ID_FILE_EXPORT_MWS,					_("Magic &Workstation::.."),	_("Export the set so it can be played with in Magic Workstation"));
+			menuExport->Append(ID_FILE_EXPORT_APPR,					_("&Apprentice..."),			_("Export the set so it can be played with in Apprentice"));
+			menuExport->Append(ID_FILE_EXPORT_MWS,					_("Magic &Workstation..."),	_("Export the set so it can be played with in Magic Workstation"));
 		menuFile->Append(ID_FILE_EXPORT,						_("&Export"),					_("Export the set..."), menuExport);
 		menuFile->AppendSeparator();
 		menuFile->Append(ID_FILE_INSPECT,						_("Inspect Internal Data..."),	_("Shows a the data in the set using a tree structure"));

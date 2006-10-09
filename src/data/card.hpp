@@ -14,9 +14,7 @@
 #include <util/dynamic_arg.hpp>
 
 class Game;
-#ifndef HEADER_DATA_GAME
 DECLARE_POINTER_TYPE(Field);
-#endif
 DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(CardStyle);
 

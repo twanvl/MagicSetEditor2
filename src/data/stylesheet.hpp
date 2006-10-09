@@ -4,37 +4,23 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_GAME
-#define HEADER_DATA_GAME
+#ifndef HEADER_DATA_STYLESHEET
+#define HEADER_DATA_STYLESHEET
 
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
 #include <util/io/package.hpp>
 
-DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Game);
 
-// ----------------------------------------------------------------------------- : Game
+// ----------------------------------------------------------------------------- : StyleSheet
 
-class Game : public Packaged {
+/// A collection of style information for card and set fields
+class StyleSheet : Packaged {
   public:
-	String fullName;
-	String iconFilename;
-	vector<FieldP> setFields;
-	vector<FieldP> cardFields;
-	
-	/// Loads the game with a particular name, for example "magic"
-	static GameP byName(const String& name);
-	
-	/// Is this Magic the Gathering?
-	bool isMagic() const;
-	
-  protected:
-	String typeName() const;
-	void validate();
-	
-	DECLARE_REFLECTION();
+	GameP game;
+  private:
 };
 
 // ----------------------------------------------------------------------------- : EOF

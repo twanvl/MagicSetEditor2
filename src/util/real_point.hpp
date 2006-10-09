@@ -7,6 +7,11 @@
 #ifndef HEADER_UTIL_REAL_POINT
 #define HEADER_UTIL_REAL_POINT
 
+/** @file util/real_point.hpp
+ *
+ *  @brief Points and sizes with floating point (real) coordinates.
+ */
+
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>

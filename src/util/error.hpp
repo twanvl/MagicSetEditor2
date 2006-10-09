@@ -7,14 +7,14 @@
 #ifndef HEADER_UTIL_ERROR
 #define HEADER_UTIL_ERROR
 
-// ----------------------------------------------------------------------------- : Includes
-
-#include <util/prec.hpp>
-
 /** @file util/error.hpp
  *
  *  @brief Classes and functions for handling errors/exceptions.
  */
+
+// ----------------------------------------------------------------------------- : Includes
+
+#include <util/prec.hpp>
 
 // ----------------------------------------------------------------------------- : Error types
 

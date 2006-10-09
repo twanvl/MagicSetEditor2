@@ -99,6 +99,15 @@ class Reader {
 
 // ----------------------------------------------------------------------------- : Container types
 
+/// Construct a new type, possibly reading something in the process.
+/** By default just creates a new object.
+ *  This function can be overloaded to provide different behaviour
+ */
+template <typename T>
+shared_ptr<T> read_new(Reader& reader) {
+	return new_shared<T>();
+}
+
 template <typename T>
 void Reader::handle(vector<T>& vector) {
 	String vectorKey = key;
@@ -111,7 +120,7 @@ void Reader::handle(vector<T>& vector) {
 
 template <typename T>
 void Reader::handle(shared_ptr<T>& pointer) {
-	if (!pointer) pointer.reset(new T);
+	if (!pointer) pointer = read_new<T>(*this);
 	handle(*pointer);
 }
 

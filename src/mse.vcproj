@@ -556,9 +556,6 @@
 				RelativePath=".\data\card.hpp">
 			</File>
 			<File
-				RelativePath=".\data\card_style.hpp">
-			</File>
-			<File
 				RelativePath=".\data\field.cpp">
 			</File>
 			<File
@@ -584,6 +581,12 @@
 			</File>
 			<File
 				RelativePath=".\data\settings.hpp">
+			</File>
+			<File
+				RelativePath=".\data\stylesheet.cpp">
+			</File>
+			<File
+				RelativePath=".\data\stylesheet.hpp">
 			</File>
 			<File
 				RelativePath=".\data\symbol.cpp">
@@ -746,6 +749,9 @@
 			</File>
 			<File
 				RelativePath=".\util\vector2d.hpp">
+			</File>
+			<File
+				RelativePath=".\util\version.hpp">
 			</File>
 			<File
 				RelativePath=".\util\window_id.hpp">
