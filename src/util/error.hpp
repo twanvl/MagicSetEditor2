@@ -64,5 +64,21 @@ class ParseError : public Error {
 	inline ParseError(const String& str) : Error(str) {}
 };
 
+/// Parse error in a script
+class ScriptParseError : public ParseError {
+  public:
+	inline ScriptParseError(const String& str) : ParseError(str) {}
+	inline ScriptParseError(const String& exp, const String& found)
+		: ParseError(_("Expected '") + exp + _("' instead of '") + found + _("'")) {}
+};
+
+// ----------------------------------------------------------------------------- : Script errors
+
+/// A runtime error in a script
+class ScriptError : public Error {
+  public:
+	inline ScriptError(const String& str) : Error(str) {}
+};
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

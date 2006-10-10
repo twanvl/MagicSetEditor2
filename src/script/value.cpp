@@ -8,22 +8,21 @@
 
 #include <script/value.hpp>
 #include <util/error.hpp>
-#include <boost/lexical_cast.hpp> //%%
 #include <boost/pool/singleton_pool.hpp>
 
 // ----------------------------------------------------------------------------- : ScriptValue
 // Base cases
 
-ScriptValue::operator String() const { return "[[" + typeName() + "]]"; }
-ScriptValue::operator int()    const { throw ScriptError("Can't convert from "+typeName()+" to integer number"); }
-ScriptValue::operator double() const { throw ScriptError("Can't convert from "+typeName()+" to real number"   ); }
-ScriptValue::operator Color()  const { throw ScriptError("Can't convert from "+typeName()+" to color"         ); }
+ScriptValue::operator String() const { return _("[[") + typeName() + _("]]"); }
+ScriptValue::operator int()    const { throw ScriptError(_("Can't convert from ")+typeName()+_(" to integer number")); }
+ScriptValue::operator double() const { throw ScriptError(_("Can't convert from ")+typeName()+_(" to real number"   )); }
+ScriptValue::operator Color()  const { throw ScriptError(_("Can't convert from ")+typeName()+_(" to color"         )); }
 ScriptValueP ScriptValue::eval(Context&) const
-                                     { throw ScriptError("Can't convert from "+typeName()+" to function"      ); }
+                                     { throw ScriptError(_("Can't convert from ")+typeName()+_(" to function"      )); }
 ScriptValueP ScriptValue::getMember(const String& name) const
-                                     { throw (typeName() + " has no member '" + name + "'"); }
-ScriptValueP ScriptValue::next()               { throw InternalError("Can't convert from "+typeName()+" to iterator"); }
-ScriptValueP ScriptValue::makeIterator() const { throw ScriptError("Can't convert from "+typeName()+" to collection"); }
+                                     { throw (typeName() + _(" has no member '") + name + _("'")); }
+ScriptValueP ScriptValue::next()               { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
+ScriptValueP ScriptValue::makeIterator() const { throw ScriptError(  _("Can't convert from ")+typeName()+_(" to collection")); }
 
 void ScriptValue::signalDependent(Context&, const Dependency&, const String& name) {}
 ScriptValueP ScriptValue::dependencies(   Context&, const Dependency&) const { return scriptNil; }
@@ -32,7 +31,7 @@ ScriptValueP ScriptValue::dependencies(   Context&, const Dependency&) const { r
 // ----------------------------------------------------------------------------- : Iterators
 
 ScriptType ScriptIterator::type() const { return SCRIPT_OBJECT; }
-String ScriptIterator::typeName() const { return "iterator"; }
+String ScriptIterator::typeName() const { return _("iterator"); }
 
 // Iterator over a range of integers
 class ScriptRangeIterator : public ScriptIterator {
@@ -62,8 +61,8 @@ class ScriptInt : public ScriptValue {
   public:
 	ScriptInt(int v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_INT; }
-	virtual String typeName() const { return "integer number"; }
-	virtual operator String() const { return lexical_cast<String>(value); }
+	virtual String typeName() const { return _("integer number"); }
+	virtual operator String() const { return String() << value; }
 	virtual operator double() const { return value; }
 	virtual operator int()    const { return value; }
   protected:
@@ -93,8 +92,8 @@ class ScriptDouble : public ScriptValue {
   public:
 	ScriptDouble(double v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_DOUBLE; }
-	virtual String typeName() const { return "real number"; }
-	virtual operator String() const { return lexical_cast<String>(value); }
+	virtual String typeName() const { return _("real number"); }
+	virtual operator String() const { return String() << value; }
 	virtual operator double() const { return value; }
 	virtual operator int()    const { return (int)value; }
   private:
@@ -112,10 +111,24 @@ class ScriptString : public ScriptValue {
   public:
 	ScriptString(const String& v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_STRING; }
-	virtual String typeName() const { return "string"; }
+	virtual String typeName() const { return _("string"); }
 	virtual operator String() const { return value; }
-	virtual operator double() const { return lexical_cast<double>(value); }
-	virtual operator int()    const { return lexical_cast<int>(value); }
+	virtual operator double() const {
+		double d;
+		if (value.ToDouble(&d)) {
+			return d;
+		} else {
+			throw ScriptError(_("Not a number: '") + value + _("'"));
+		}
+	}
+	virtual operator int()    const {
+		long l;
+		if (value.ToLong(&l)) {
+			return l;
+		} else {
+			throw ScriptError(_("Not a number: '") + value + _("'"));
+		}
+	}
   private:
 	String value;
 };
@@ -132,7 +145,7 @@ class ScriptColor : public ScriptValue {
   public:
 	ScriptColor(const Color& v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_COLOR; }
-	virtual String typeName() const { return "color"; }
+	virtual String typeName() const { return _("color"); }
   private:
 	Color value;
 };
@@ -148,8 +161,8 @@ ScriptValueP toScript(const Color& v) {
 class ScriptNil : public ScriptValue {
   public:
 	virtual ScriptType type() const { return SCRIPT_NIL; }
-	virtual String typeName() const { return "nil"; }
-	virtual operator String() const { return ""; }
+	virtual String typeName() const { return _("nil"); }
+	virtual operator String() const { return wxEmptyString; }
 	virtual operator double() const { return 0.0; }
 	virtual operator int()    const { return 0; }
 };

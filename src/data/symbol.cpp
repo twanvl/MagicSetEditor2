@@ -8,6 +8,7 @@
 
 #include <data/symbol.hpp>
 #include <gfx/bezier.hpp>
+#include <script/value.hpp>
 
 DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 DECLARE_TYPEOF_COLLECTION(ControlPointP);

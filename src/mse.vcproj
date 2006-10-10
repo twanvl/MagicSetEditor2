@@ -556,12 +556,6 @@
 				RelativePath=".\data\card.hpp">
 			</File>
 			<File
-				RelativePath=".\data\field.cpp">
-			</File>
-			<File
-				RelativePath=".\data\field.hpp">
-			</File>
-			<File
 				RelativePath=".\data\game.cpp">
 			</File>
 			<File
@@ -674,6 +668,22 @@
 					RelativePath=".\data\format\mws.cpp">
 				</File>
 			</Filter>
+			<Filter
+				Name="field"
+				Filter="">
+				<File
+					RelativePath=".\data\field.cpp">
+				</File>
+				<File
+					RelativePath=".\data\field.hpp">
+				</File>
+				<File
+					RelativePath=".\data\field\text.cpp">
+				</File>
+				<File
+					RelativePath=".\data\field\text.hpp">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="util"
@@ -759,6 +769,12 @@
 			<Filter
 				Name="io"
 				Filter="">
+				<File
+					RelativePath=".\util\io\get_member.cpp">
+				</File>
+				<File
+					RelativePath=".\util\io\get_member.hpp">
+				</File>
 				<File
 					RelativePath=".\util\io\package.cpp">
 					<FileConfiguration
@@ -900,6 +916,33 @@
 		<Filter
 			Name="script"
 			Filter="">
+			<File
+				RelativePath=".\script\context.cpp">
+			</File>
+			<File
+				RelativePath=".\script\context.hpp">
+			</File>
+			<File
+				RelativePath=".\script\dependency.cpp">
+			</File>
+			<File
+				RelativePath=".\script\parser.cpp">
+			</File>
+			<File
+				RelativePath=".\script\parser.hpp">
+			</File>
+			<File
+				RelativePath=".\script\script.cpp">
+			</File>
+			<File
+				RelativePath=".\script\script.hpp">
+			</File>
+			<File
+				RelativePath=".\script\value.cpp">
+			</File>
+			<File
+				RelativePath=".\script\value.hpp">
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\code_template.cpp">

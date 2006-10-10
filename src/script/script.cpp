@@ -8,17 +8,17 @@
 
 #include <script/script.hpp>
 #include <script/context.hpp>
-#include <boost/lexical_cast.hpp>
+#include <util/error.hpp>
 
 // ----------------------------------------------------------------------------- : Variables
 
-typedef map<string, unsigned int> Variables;
+typedef map<String, unsigned int> Variables;
 Variables variables;
 DECLARE_TYPEOF(Variables);
 
 /// Return a unique name for a variable to allow for faster loopups
 unsigned int stringToVariable(const String& s) {
-	map<string, unsigned int>::iterator it = variables.find(s);
+	map<String, unsigned int>::iterator it = variables.find(s);
 	if (it == variables.end()) {
 		unsigned int v = (unsigned int)variables.size();
 		variables.insert(make_pair(s,v));
@@ -35,7 +35,7 @@ String variableToString(unsigned int v) {
 	FOR_EACH(vi, variables) {
 		if (vi.second == v) return vi.first;
 	}
-	throw "Variable not found: " + lexical_cast<String>(v);
+	throw ScriptError(String(_("Variable not found: ")) << v);
 }
 
 // ----------------------------------------------------------------------------- : Script
@@ -44,7 +44,7 @@ ScriptType Script::type() const {
 	return SCRIPT_SCRIPT_FUN;
 }
 String Script::typeName() const {
-	return "function";
+	return _("function");
 }
 ScriptValueP Script::eval(Context& ctx) const {
 	return ctx.eval(*this);
@@ -89,6 +89,8 @@ unsigned int Script::getLabel() const {
 }
 
 DECLARE_TYPEOF_COLLECTION(Instruction);
+
+#if 0 // debugging
 
 String Script::dumpScript() const {
 	String ret;
@@ -163,3 +165,4 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 	return ret;
 }
 
+#endif

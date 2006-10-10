@@ -10,6 +10,7 @@
 #include <data/game.hpp>
 #include <data/field.hpp>
 #include <util/error.hpp>
+#include <script/value.hpp>
 
 DECLARE_TYPEOF_COLLECTION(FieldP);
 

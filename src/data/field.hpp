@@ -41,14 +41,14 @@ class Field {
 	
 	/// Creates a new Value corresponding to this Field
 	/** thisP is a smart pointer to this */
-	virtual ValueP newValue(FieldP thisP) = 0;
+	virtual ValueP newValue(const FieldP& thisP) const = 0;
 	/// Creates a new Style corresponding to this Field
 	/** thisP is a smart pointer to this */
-	virtual StyleP newStyle(FieldP thisP) = 0;
+	virtual StyleP newStyle(const FieldP& thisP) const = 0;
 	/// create a copy of this field
-	virtual FieldP clone() = 0;
+	virtual FieldP clone() const = 0;
 	/// Type of this field
-	virtual String typeName() = 0;
+	virtual String typeName() const = 0;
 	
   private:
 	DECLARE_REFLECTION_VIRTUAL();
@@ -60,6 +60,7 @@ shared_ptr<Field> read_new<Field>(Reader& reader);
 
 // ----------------------------------------------------------------------------- : Style
 
+/// Style information needed to display a Value in a Field.
 class Style {
   public:
 	virtual ~Style();
@@ -72,13 +73,14 @@ void initObject(const FieldP&, StyleP&);
 
 // ----------------------------------------------------------------------------- : Value
 
+/// A specific value 'in' a Field.
 class Value {
   public:
 	virtual ~Value();
 	
 	/// Create a copy of this value
-	virtual ValueP clone() = 0;
-	
+	virtual ValueP clone() const = 0;
+		
   private:
 	DECLARE_REFLECTION_VIRTUAL();
 };

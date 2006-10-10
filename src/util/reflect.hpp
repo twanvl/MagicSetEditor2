@@ -16,6 +16,7 @@
 
 #include "io/reader.hpp"
 #include "io/writer.hpp"
+#include "io/get_member.hpp"
 
 // ----------------------------------------------------------------------------- : Declaring reflection
 
@@ -27,8 +28,10 @@
 			template<class Tag> void reflect_impl(Tag& tag);			\
 			friend class Reader;										\
 			friend class Writer;										\
+			friend class GetMember;										\
 			void reflect(Reader& reader);								\
-			void reflect(Writer& writer)
+			void reflect(Writer& writer);								\
+			void reflect(GetMember& getMember)
 
 /// Declare that a class supports reflection, which can be overridden in derived classes
 #define DECLARE_REFLECTION_VIRTUAL()									\
@@ -36,8 +39,10 @@
 			template<class Tag> void reflect_impl(Tag& tag);			\
 			friend class Reader;										\
 			friend class Writer;										\
+			friend class GetMember;										\
 			virtual void reflect(Reader& reader);						\
-			virtual void reflect(Writer& writer)
+			virtual void reflect(Writer& writer);						\
+			virtual void reflect(GetMember& getMember)
 
 // ----------------------------------------------------------------------------- : Implementing reflection
 
@@ -47,6 +52,7 @@
  *  Currently creates the methods:
  *  - Reader::handle(Cls&)
  *  - Writer::handle(Cls&)
+ *  - GetMember::handle(Cls&)
  *  Usage:
  *    @code
  *     IMPLEMENT_REFLECTION(MyClass) {
@@ -58,12 +64,16 @@
 #define IMPLEMENT_REFLECTION(Cls)										\
 			REFLECT_OBJECT_READER(Cls)									\
 			REFLECT_OBJECT_WRITER(Cls)									\
+			REFLECT_OBJECT_GET_MEMBER(Cls)								\
 			/* Extra level, so it can be declared virtual */			\
 			void Cls::reflect(Reader& reader) {							\
 				reflect_impl(reader);									\
 			}															\
 			void Cls::reflect(Writer& writer) {							\
 				reflect_impl(writer);									\
+			}															\
+			void Cls::reflect(GetMember& getMember) {					\
+				reflect_impl(getMember);								\
 			}															\
 			template <class Tag>										\
 			void Cls::reflect_impl(Tag& tag)
@@ -93,12 +103,14 @@
  *  Currently creates the methods:
  *   - Reader::handle(Enum&
  *   - Writer::handle(const Enum&)
+ *   - GetMember::handle(const Enum&)
  */
 #define IMPLEMENT_REFLECTION_ENUM(Enum)									\
 			template <class Tag>										\
 			void reflect_ ## Enum (Enum& enum_, Tag& tag);				\
 			REFLECT_ENUM_READER(Enum)									\
 			REFLECT_ENUM_WRITER(Enum)									\
+			REFLECT_ENUM_GET_MEMBER(Enum)								\
 			template <class Tag>										\
 			void reflect_ ## Enum (Enum& enum_, Tag& tag)
 

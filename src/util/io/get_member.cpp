@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/io/get_member.hpp>
+#include <util/vector2d.hpp>
 #include <script/value.hpp>
 
 // ----------------------------------------------------------------------------- : GetMember
@@ -20,3 +21,7 @@ void GetMember::store(const int           v) { value = toScript(v); }
 void GetMember::store(const unsigned int  v) { value = toScript((int)v); }
 void GetMember::store(const double        v) { value = toScript(v); }
 void GetMember::store(const bool          v) { value = toScript(v); }
+
+void GetMember::store(const Vector2D&     v) {
+	value = toScript(String::Format(_("(%.10lf,%.10lf)"), v.x, v.y));
+}

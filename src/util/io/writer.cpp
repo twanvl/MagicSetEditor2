@@ -105,7 +105,5 @@ template <> void Writer::handle(const bool& value) {
 // ----------------------------------------------------------------------------- : Handling less basic util types
 
 template <> void Writer::handle(const Vector2D& vec) {
-	String formated;
-	formated.Printf(_("(%.10lf,%.10lf)"), vec.x, vec.y);
-	handle(formated);
+	handle(String::Format(_("(%.10lf,%.10lf)"), vec.x, vec.y));
 }

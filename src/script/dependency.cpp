@@ -20,7 +20,7 @@ DECLARE_TYPEOF_COLLECTION(Context::Binding);
 class DependencyDummy : public ScriptIterator {
   public:
 	virtual ScriptType type() const { return SCRIPT_DUMMY; }
-	virtual String typeName() const { return "dummy"; }
+	virtual String typeName() const { return _("dummy"); }
 	virtual ScriptValueP next() { return ScriptValueP(); }
 };
 
@@ -39,7 +39,7 @@ class DependencyUnion : public ScriptValue {
 	{}
 	
 	virtual ScriptType type() const { return SCRIPT_DUMMY; }
-	virtual String typeName() const { return "union of " + a->typeName() + " and " + b->typeName(); }
+	virtual String typeName() const { return _("union of ") + a->typeName() + _(" and ") + b->typeName(); }
 	
 	virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const {
 		return unified( a->dependencies(ctx,dep), b->dependencies(ctx,dep));
@@ -85,22 +85,25 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 	//   - member operator; and it signals a dependency.
 	//   - looper construction
 	//   - + for function composition
+	// Variable assignments are performed as normall.
 	// Jumps are tricky:
-	//   - I_JUMP:        Just follow them, but see below
-	//   - I_JUMP_IF_NOT: We don't know the value of the condition, evaluate both branches.
-	//                    The simple solution would be to use recursion to fork off one of the cases.
-	//                    This could result in an exponential increase in execution time,
-	//                    because the analysis after an if statement is duplicated.
-	//                    A better solution is to evalutate branches 'in parallel'. After the if statement
-	//                    the net stack effect is +1, the top element will then be a DependencyUnion object.
-	//                    To detect the joining of the branches we look for I_JUMPs, the non jumping branch will have
-	//                    a I_JUMP at the end, when we encounter it we start evaluating the other if branch.
 	//   - I_LOOP:        We want to prevent infinite loops, the solution is that after the first
 	//                    iteration we set the looper to a dummy value, so the loop is only executed once.
 	//                    TODO: This could result in false negatives when iterating over things like fields.
 	//                          We ignore this, because loops are usually only used for exporting, where dependency
 	//                          analysis is not used anyway.
-	// Variable assignments are performed as normall.
+	//   - I_JUMP_IF_NOT: We don't know the value of the condition, so we must evaluate both branches.
+	//                    The simple solution would be to use recursion to fork off one of the cases.
+	//                    This could result in an exponential increase in execution time,
+	//                    because the analysis after an if statement is duplicated.
+	//                    A better solution is to evalutate branches 'in parallel'.
+	//                    We create a jump record for taking the branch, and evaluate the fall through case.
+	//                    When later a jump record points to the current instruction the stack and variables of that
+	//                    record are unify with the current execution path.
+	//   - I_JUMP:        We must can not follow all jumps, because they may lead to a point beyond a jump record,
+	//                    we can then no longer hope to unify with that jump record.
+	//                    Instead we create a new jump record, and follow the jump record with the lowest target address.
+	//                    This story doesn't hold for backwards jumps, we can safely follow those (see I_LOOP above)
 	
 	// Scope for evaluating this script.
 	size_t stack_size = stack.size();

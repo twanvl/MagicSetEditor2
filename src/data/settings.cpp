@@ -13,6 +13,7 @@
 #include <util/io/writer.hpp>
 #include <wx/filename.h>
 #include <wx/wfstream.h>
+#include <script/value.hpp>
 
 // ----------------------------------------------------------------------------- : Extra types
 
@@ -105,7 +106,7 @@ IMPLEMENT_REFLECTION(Settings) {
 	REFLECT_N("check updates",       checkUpdates);
 //	ioAll(io, "game settings", gameSettings);
 //	ioStyleSettings(io);
-	REFLECT_N("default style settings", defaultStyleSettings);
+//	REFLECT_N("default style settings", defaultStyleSettings);
 }
 
 void Settings::read() {

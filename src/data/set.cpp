@@ -8,6 +8,7 @@
 
 #include <data/set.hpp>
 #include <data/card.hpp>
+#include <script/value.hpp>
 
 // ----------------------------------------------------------------------------- : Set
 

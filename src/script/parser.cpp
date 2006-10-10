@@ -10,9 +10,12 @@
 #include <script/parser.hpp>
 #include <util/error.hpp>
 #include <stack>
-#include <boost/lexical_cast.hpp> //%%
 
 DECLARE_TYPEOF_COLLECTION(int);
+
+#ifdef __WXMSW__
+#define TokenType TokenType_ // some stupid windows header uses our name
+#endif
 
 // ----------------------------------------------------------------------------- : Tokenizing : class
 
@@ -70,8 +73,6 @@ class TokenIterator {
 
 // ----------------------------------------------------------------------------- : Characters
 
-// TODO: isxx -> isXX!
-
 bool isAlpha_(Char c) { return isAlpha(c) || c==_('_'); }
 bool isAlnum_(Char c) { return isAlnum(c) || c==_('_'); }
 bool isOper  (Char c) { return c==_('+') || c==_('-') || c==_('*') || c==_('/') || c==_('!') || c==_('.') ||
@@ -102,34 +103,34 @@ const Token& TokenIterator::read() {
 }
 
 void TokenIterator::putBack() {
-	Token t = {TOK_NEWLINE, "\n"};
+	Token t = {TOK_NEWLINE, _("\n")};
 	buffer.insert(buffer.begin(), t);
 }
 
 void TokenIterator::addToken() {
 	if (pos >= input.size()) {
 		// EOF
-		Token t = {TOK_EOF, "end of input"};
+		Token t = {TOK_EOF, _("end of input")};
 		buffer.push_back(t);
 		return;
 	}
 	// read a character from the input
-	Char c = input[pos++];			//% input.GetChar(pos++);
+	Char c = input.GetChar(pos++);
 	if (c == _('\n')) {
-		Token t = { TOK_NEWLINE, "newline" };
+		Token t = {TOK_NEWLINE, _("newline")};
 		buffer.push_back(t);
 	} else if (isSpace(c)) {
 		// ignore
 	} else if (isAlpha(c)) {
 		// name
 		size_t start = pos - 1;
-		while (pos < input.size() && isalnum(input[pos])) ++pos; //%% isAlnum_(input.getChar(pos))) pos++;
+		while (pos < input.size() && isAlnum_(input.GetChar(pos))) ++pos;
 		Token t = {TOK_NAME, cannocialNameForm(input.substr(start, pos-start)) }; // convert name to cannocial form
 		buffer.push_back(t);
 	} else if (isDigit(c)) {
 		// number
 		size_t start = pos - 1;
-		while (pos < input.size() && isDigitOrDot(input[pos])) ++pos;
+		while (pos < input.size() && isDigitOrDot(input.GetChar(pos))) ++pos;
 		String num = input.substr(start, pos-start);
 		Token t = {
 			num.find_first_of('.') == String::npos ? TOK_INT : TOK_DOUBLE,
@@ -172,7 +173,6 @@ void TokenIterator::addToken() {
 		while (pos < input.size() && input[pos] != _('\n')) ++pos;
 	} else {
 		throw ScriptParseError(_("Unknown character in script: '") + String(1,c) + _("'"));
-		assert(false);
 	}
 }
 
@@ -360,14 +360,14 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 				script.addInstruction(I_GET_VAR, var);
 			}
 		} else if (token == TOK_INT) {
-			long l;
-			l = lexical_cast<long>(token.value);
-			//token.value.toLong(l);
+			long l = 0;
+			//l = lexical_cast<long>(token.value);
+			token.value.ToLong(&l);
 			script.addInstruction(I_PUSH_CONST, toScript(l));
 		} else if (token == TOK_DOUBLE) {
-			double d;
-			d = lexical_cast<double>(token.value);
-			//token.value.toDouble(d);
+			double d = 0;
+			//d = lexical_cast<double>(token.value);
+			token.value.ToDouble(&d);
 			script.addInstruction(I_PUSH_CONST, toScript(d));
 		} else if (token == TOK_STRING) {
 			script.addInstruction(I_PUSH_CONST, toScript(token.value));
@@ -404,7 +404,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 				// not an expression. Remove that instruction.
 				Instruction instr = script.getInstructions().back();
 				if (instr.instr != I_GET_VAR) {
-					throw ScriptParseError("Can only assign to variables");
+					throw ScriptParseError(_("Can only assign to variables"));
 				} else {
 					script.getInstructions().pop_back();
 					parseOper(input, script, PREC_SET,  I_SET_VAR, instr.data);

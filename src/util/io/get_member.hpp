@@ -16,6 +16,8 @@ typedef boost::intrusive_ptr<ScriptValue> ScriptValueP;
 inline void intrusive_ptr_add_ref(ScriptValue* p);
 inline void intrusive_ptr_release(ScriptValue* p);
 
+class Vector2D;
+
 // ----------------------------------------------------------------------------- : GetMember
 
 /// Find a member with a specific name using reflection
@@ -43,6 +45,7 @@ class GetMember {
 	
 	/// Store something in the return value
 	void store(const String&       v);
+	void store(const Vector2D&     v);
 	void store(const int           v);
 	void store(const unsigned int  v);
 	void store(const double        v);
@@ -71,9 +74,9 @@ class GetMember {
 
 // ----------------------------------------------------------------------------- : Reflection for enumerations
 
-/// Implement enum reflection as used by Writer
-#define REFLECT_ENUM_WRITER(Enum)								\
-	template<> void Writer::handle<Enum>(const Enum& enum_) {	\
+/// Implement enum reflection as used by GetMember
+#define REFLECT_ENUM_GET_MEMBER(Enum)							\
+	template<> void GetMember::handle<Enum>(const Enum& enum_) {\
 		EnumGetMember gm(*this);								\
 		reflect_ ## Enum(const_cast<Enum&>(enum_), gm);			\
 	}
@@ -88,7 +91,7 @@ class EnumGetMember {
 	template <typename Enum>
 	inline void handle(const Char* name, Enum value, Enum enum_) {
 		if (enum_ == value) {
-			writer.store(name);
+			getMember.store(name);
 		}
 	}
 	

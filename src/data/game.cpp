@@ -9,6 +9,7 @@
 #include <data/game.hpp>
 #include <data/field.hpp>
 #include <util/io/package_manager.hpp>
+#include <script/value.hpp>
 
 // ----------------------------------------------------------------------------- : Game
 

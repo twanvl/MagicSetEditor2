@@ -10,34 +10,21 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/error.hpp>
 #include <boost/intrusive_ptr.hpp>
-#include <boost/lexical_cast.hpp> //%%
-
-//#ifndef WINVER
-//#define WINVER 0x0501
-//#endif
-//#include <winresrc.h>
-//#include <windef.h>
-//#include <winbase.h> // Interlocked*crement
-#include <windows.h>
-#define TokenType TokenType_
-
-extern "C" {
-   LONG  __cdecl _InterlockedIncrement(LONG volatile *Addend);
-   LONG  __cdecl _InterlockedDecrement(LONG volatile *Addend);
-}
-#pragma intrinsic (_InterlockedIncrement)
-#define InterlockedIncrement _InterlockedIncrement
-#pragma intrinsic (_InterlockedDecrement)
-#define InterlockedDecrement _InterlockedDecrement
-
-//long __declspec(dllimport) __stdcall InterlockedDecrement(long volatile* Addend);
-//long __declspec(dllimport) __stdcall InterlockedIncrement(long volatile* Addend);
-//#pragma intrinsic(_InterlockedIncrement)
-//#pragma intrinsic( _InterlockedDecrement )
-
 class Context;
 class Dependency;
+
+#ifdef _MSC_VER
+	extern "C" {
+		LONG  __cdecl _InterlockedIncrement(LONG volatile *Addend);
+		LONG  __cdecl _InterlockedDecrement(LONG volatile *Addend);
+	}
+	#pragma intrinsic (_InterlockedIncrement)
+	#define InterlockedIncrement _InterlockedIncrement
+	#pragma intrinsic (_InterlockedDecrement)
+	#define InterlockedDecrement _InterlockedDecrement
+#endif
 
 // ----------------------------------------------------------------------------- : ScriptValue
 
@@ -161,10 +148,14 @@ class ScriptCollection : public ScriptValue {
   public:
 	inline ScriptCollection(const Collection* v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_OBJECT; }
-	virtual String typeName() const { return "collection"; }
+	virtual String typeName() const { return _("collection"); }
 	virtual ScriptValueP getMember(const String& name) const {
-		int index = lexical_cast<int>(name);
-		return toScript(value->at(index));
+		long index;
+		if (name.ToLong(&index)) {
+			return toScript(value->at(index));
+		} else {
+			throw ScriptError(_("Collection has no member ") + name);
+		}
 	}
 	virtual ScriptValueP makeIterator() const {
 		return new_intrusive1<ScriptCollectionIterator<Collection> >(value);
@@ -182,7 +173,7 @@ class ScriptObject : public ScriptValue {
   public:
 	inline ScriptObject(const shared_ptr<T>& v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_OBJECT; }
-	virtual String typeName() const { return "object"; }
+	virtual String typeName() const { return _("object"); }
 	virtual ScriptValueP getMember(const String& name) const {
 		GetMember gm(name);
 		gm.handle(*value);
@@ -246,6 +237,7 @@ inline ScriptValueP toScript(const shared_ptr<T>& v) { return new_intrusive1<Scr
  *  @code
  *   SCRIPT_FUNCTION(my_function) {
  *      SCRIPT_PARAM(String, my_string_param);
+ *      ...
  *   }
  *  @endcode
  *  Throws an error if the parameter is not found.
