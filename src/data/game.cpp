@@ -25,18 +25,18 @@ String Game::typeName() const { return _("game"); }
 
 IMPLEMENT_REFLECTION(Game) {
 //	ioMseVersion(io, fileName, fileVersion);
-	REFLECT_N("full name",     fullName);
-	REFLECT_N("icon",          iconFilename);
-//	REFLECT_N("init script",   initScript);
-	REFLECT_N("set field",     setFields);
-	REFLECT_N("card field",    cardFields);
-//	REFLECT_N("keyword parameter type", keywordParams);
-//	REFLECT_N("keyword separator type", keywordSeparators);
+	REFLECT(full_name);
+	REFLECT_N("icon",          icon_filename);
+//	REFLECT(init_script);
+	REFLECT(set_fields);
+	REFLECT(card_fields);
+//	REFLECT_N("keyword parameter type", keyword_params);
+//	REFLECT_N("keyword separator type", keyword_separators);
 //	REFLECT_N("keyword",      keywords);
-//	REFLECT_N("word list",    wordLists);
+//	REFLECT_N("word list",    word_lists);
 }
 
 void Game::validate() {
 	// a default for the full name
-	if (fullName.empty()) fullName = name();
+	if (full_name.empty()) full_name = name();
 }

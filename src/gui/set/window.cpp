@@ -26,8 +26,8 @@ DECLARE_TYPEOF_COLLECTION(SetWindowPanel*);
 
 SetWindow::SetWindow(Window* parent, const SetP& set)
 	: wxFrame(parent, wxID_ANY, _("Magic Set Editor"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE)
-	, currentPanel(nullptr)
-	, findDialog(nullptr)
+	, current_panel(nullptr)
+	, find_dialog(nullptr)
 {
 	SetIcon(wxIcon(_("ICON_APP")));
 	
@@ -43,7 +43,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 			menuExport->Append(ID_FILE_EXPORT_IMAGE,				_("Card &Image..."),			_("Export the selected card to an image file"));
 			menuExport->Append(ID_FILE_EXPORT_IMAGES,				_("All Card I&mages..."),		_("Export images for all cards"));
 			menuExport->Append(ID_FILE_EXPORT_APPR,					_("&Apprentice..."),			_("Export the set so it can be played with in Apprentice"));
-			menuExport->Append(ID_FILE_EXPORT_MWS,					_("Magic &Workstation..."),	_("Export the set so it can be played with in Magic Workstation"));
+			menuExport->Append(ID_FILE_EXPORT_MWS,					_("Magic &Workstation..."),		_("Export the set so it can be played with in Magic Workstation"));
 		menuFile->Append(ID_FILE_EXPORT,						_("&Export"),					_("Export the set..."), menuExport);
 		menuFile->AppendSeparator();
 		menuFile->Append(ID_FILE_INSPECT,						_("Inspect Internal Data..."),	_("Shows a the data in the set using a tree structure"));
@@ -126,8 +126,8 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	
 	// loose ends
 	tabBar->Realize();
-	SetSize(settings.setWindowWidth, settings.setWindowHeight);
-	if (settings.setWindowMaximized) {
+	SetSize(settings.set_window_width, settings.set_window_height);
+	if (settings.set_window_maximized) {
 		Maximize();
 	}
 //	SetWindows.push_back(&this); // register this window
@@ -144,15 +144,15 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 SetWindow::~SetWindow() {
 	// store window size in settings
 	wxSize s = GetSize();
-	settings.setWindowMaximized = IsMaximized();
+	settings.set_window_maximized = IsMaximized();
 	if (!IsMaximized()) {
-		settings.setWindowWidth  = s.GetWidth();
-		settings.setWindowHeight = s.GetHeight();
+		settings.set_window_width  = s.GetWidth();
+		settings.set_window_height = s.GetHeight();
 	}
 	// destroy ui of selected panel
-	currentPanel->destroyUI(GetToolBar(), GetMenuBar());
+	current_panel->destroyUI(GetToolBar(), GetMenuBar());
 	// cleanup (see find stuff)
-	delete findDialog;
+	delete find_dialog;
 	// remove from list of main windows
 //	SetWindows.erase(remove(SetWindows.begin(), SetWindows.end(), &this));
 	// stop updating
@@ -177,11 +177,11 @@ void SetWindow::addPanel(wxMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* 
 
 void SetWindow::selectPanel(int id) {
 	SetWindowPanel* toSelect = panels.at(id - ID_WINDOW_MIN);
-	if (currentPanel != toSelect) {
+	if (current_panel != toSelect) {
 		// destroy & create menus
-		if (currentPanel) currentPanel->destroyUI(GetToolBar(), GetMenuBar());
-		currentPanel = toSelect;
-		currentPanel->initUI(GetToolBar(), GetMenuBar());
+		if (current_panel) current_panel->destroyUI(GetToolBar(), GetMenuBar());
+		current_panel = toSelect;
+		current_panel->initUI(GetToolBar(), GetMenuBar());
 	}
 	// show/hide panels and select tabs
 	wxSizer*   sizer   = GetSizer();
@@ -189,9 +189,9 @@ void SetWindow::selectPanel(int id) {
 	wxMenuBar* menuBar = GetMenuBar();
 	int wid = ID_WINDOW_MIN;
 	FOR_EACH(p, panels) {
-		sizer->Show       (p,   p == currentPanel);
-		tabBar->ToggleTool(wid, p == currentPanel);
-		menuBar->Check    (wid, p == currentPanel);
+		sizer->Show       (p,   p == current_panel);
+		tabBar->ToggleTool(wid, p == current_panel);
+		menuBar->Check    (wid, p == current_panel);
 		++wid;
 	}
 	// fix sizer stuff
@@ -322,7 +322,7 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 	switch (ev.GetId()) {
 		// file menu
 		case ID_FILE_SAVE_AS:      ev.Enable(!set->actions.atSavePoint() || set->needSaveAs());	break;
-		case ID_FILE_EXPORT_IMAGE: ev.Enable(!!currentPanel->selectedCard());					break;
+		case ID_FILE_EXPORT_IMAGE: ev.Enable(!!current_panel->selectedCard());					break;
 		case ID_FILE_EXPORT_APPR:  ev.Enable(set->game->isMagic());								break;
 		case ID_FILE_EXPORT_MWS:   ev.Enable(set->game->isMagic());								break;
 		/*case ID_FILE_INSPECT: {
@@ -346,15 +346,15 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 			break;
 		}
 		// copy & paste & find
-		case ID_EDIT_CUT       : ev.Enable(currentPanel->canCut());		break;
-		case ID_EDIT_COPY      : ev.Enable(currentPanel->canCopy());	break;
-		case ID_EDIT_PASTE     : ev.Enable(currentPanel->canPaste());	break;
-		case ID_EDIT_FIND      : ev.Enable(currentPanel->canFind());	break;
-		case ID_EDIT_FIND_NEXT : ev.Enable(currentPanel->canFind());	break;
-		case ID_EDIT_REPLACE   : ev.Enable(currentPanel->canReplace());	break;
+		case ID_EDIT_CUT       : ev.Enable(current_panel->canCut());		break;
+		case ID_EDIT_COPY      : ev.Enable(current_panel->canCopy());	break;
+		case ID_EDIT_PASTE     : ev.Enable(current_panel->canPaste());	break;
+		case ID_EDIT_FIND      : ev.Enable(current_panel->canFind());	break;
+		case ID_EDIT_FIND_NEXT : ev.Enable(current_panel->canFind());	break;
+		case ID_EDIT_REPLACE   : ev.Enable(current_panel->canReplace());	break;
 		default:
 			// items created by the panel, and cut/copy/paste and find/replace
-			currentPanel->onUpdateUI(ev);
+			current_panel->onUpdateUI(ev);
 	}
 }
 
@@ -401,7 +401,7 @@ void SetWindow::onFileInspect(wxCommandEvent&) {
 }*/
 
 void SetWindow::onFileExportImage(wxCommandEvent&) {
-	CardP card = currentPanel->selectedCard();
+	CardP card = current_panel->selectedCard();
 	if (!card)  return; // no card selected
 	String name = wxFileSelector(_("Save image"), _(""), card->identification(), _(""),
 		                         _("JPEG images (*.jpg)|*.jpg|Windows bitmaps (*.bmp)|*.bmp|PNG images (*.png)|*.png|GIF images (*.gif)|*.gif|TIFF images (*.tif)|*.tif"),
@@ -465,38 +465,38 @@ void SetWindow::onEditRedo(wxCommandEvent&) {
 }
 
 void SetWindow::onEditCut  (wxCommandEvent&) {
-	currentPanel->doCut();
+	current_panel->doCut();
 }
 void SetWindow::onEditCopy (wxCommandEvent&) {
-	currentPanel->doCopy();
+	current_panel->doCopy();
 }
 void SetWindow::onEditPaste(wxCommandEvent&) {
-	currentPanel->doPaste();
+	current_panel->doPaste();
 }
 
 void SetWindow::onEditFind(wxCommandEvent&) {
-	delete findDialog;
-	findDialog = new wxFindReplaceDialog(this, &findData, _("Find"));
-	findDialog->Show();
+	delete find_dialog;
+	find_dialog = new wxFindReplaceDialog(this, &find_data, _("Find"));
+	find_dialog->Show();
 }
 void SetWindow::onEditFindNext(wxCommandEvent&) {
-	currentPanel->doFind(findData);
+	current_panel->doFind(find_data);
 }
 void SetWindow::onEditReplace(wxCommandEvent&) {
-	delete findDialog;
-	findDialog = new wxFindReplaceDialog(this, &findData, _("Replace"), wxFR_REPLACEDIALOG);
-	findDialog->Show();
+	delete find_dialog;
+	find_dialog = new wxFindReplaceDialog(this, &find_data, _("Replace"), wxFR_REPLACEDIALOG);
+	find_dialog->Show();
 }
 
 // find events
 void SetWindow::onFind      (wxFindDialogEvent&) {
-	currentPanel->doFind(findData);
+	current_panel->doFind(find_data);
 }
 void SetWindow::onFindNext  (wxFindDialogEvent&) {
-	currentPanel->doFind(findData);
+	current_panel->doFind(find_data);
 }
 void SetWindow::onReplace   (wxFindDialogEvent&) {
-	currentPanel->doReplace(findData);
+	current_panel->doReplace(find_data);
 }
 void SetWindow::onReplaceAll(wxFindDialogEvent&) {
 	// todo
@@ -541,7 +541,7 @@ void SetWindow::onHelpAbout(wxCommandEvent&) {
 // ----------------------------------------------------------------------------- : Window events - menu - for child panel
 
 void SetWindow::onChildMenu(wxCommandEvent& ev) {
-	currentPanel->onCommand(ev.GetId());
+	current_panel->onCommand(ev.GetId());
 }
 
 // ----------------------------------------------------------------------------- : Event table

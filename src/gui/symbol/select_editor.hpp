@@ -105,7 +105,7 @@ class SymbolSelectEditor : public SymbolEditorBase {
 	/// Find the first part at the given position
 	SymbolPartP findPart(const Vector2D& pos);
 	
-	/// Update minV and maxV to be the bounding box of the selectedParts
+	/// Update minV and maxV to be the bounding box of the selected_parts
 	/// Updates center to be the rotation center of the parts
 	void updateBoundingBox();
 	

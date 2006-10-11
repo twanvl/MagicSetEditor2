@@ -43,11 +43,11 @@ ControlPointMoveAction::ControlPointMoveAction(const set<ControlPointP>& points)
 	}
 }
 
-String ControlPointMoveAction::getName(bool toUndo) const {
+String ControlPointMoveAction::getName(bool to_undo) const {
 	return points.size() == 1 ? _("Move point") : _("Move points");
 }
 
-void ControlPointMoveAction::perform(bool toUndo) {
+void ControlPointMoveAction::perform(bool to_undo) {
 	/*
 	set<ControlPointP>::const_iterator it  = points.begin();
 	vector<Vector2D>  ::iterator       it2 = oldValues.begin();
@@ -77,23 +77,23 @@ void ControlPointMoveAction::move (const Vector2D& deltaDelta) {
 HandleMoveAction::HandleMoveAction(const SelectedHandle& handle)
 	: handle(handle)
 	, constrain(false)
-	, oldHandle(handle.getHandle())
-	, oldOther (handle.getOther())
+	, old_handle(handle.getHandle())
+	, old_other (handle.getOther())
 {}
 
-String HandleMoveAction::getName(bool toUndo) const {
+String HandleMoveAction::getName(bool to_undo) const {
 	return _("Move handle");
 }
 
-void HandleMoveAction::perform(bool toUndo) {
-	swap(oldHandle, handle.getHandle());
-	swap(oldOther,  handle.getOther());
+void HandleMoveAction::perform(bool to_undo) {
+	swap(old_handle, handle.getHandle());
+	swap(old_other,  handle.getOther());
 }
 
 void HandleMoveAction::move(const Vector2D& deltaDelta) {
 	delta += deltaDelta;
-	handle.getHandle() = constrainVector(oldHandle + delta, constrain);
-	handle.getOther()  = oldOther;
+	handle.getHandle() = constrainVector(old_handle + delta, constrain);
+	handle.getOther()  = old_other;
 	handle.onUpdateHandle();
 }
 
@@ -113,25 +113,25 @@ void ControlPointUpdate::perform() {
 SegmentModeAction::SegmentModeAction(const ControlPointP& p1, const ControlPointP& p2, SegmentMode mode)
 	: point1(p1), point2(p2)
 {
-	if (p1->segmentAfter == mode) return;
-	point1.other.segmentAfter = point2.other.segmentBefore = mode;
+	if (p1->segment_after == mode) return;
+	point1.other.segment_after = point2.other.segment_before = mode;
 	if (mode == SEGMENT_LINE) {
-		point1.other.deltaAfter  = Vector2D(0,0);
-		point2.other.deltaBefore = Vector2D(0,0);
+		point1.other.delta_after  = Vector2D(0,0);
+		point2.other.delta_before = Vector2D(0,0);
 		point1.other.lock = LOCK_FREE;
 		point2.other.lock = LOCK_FREE;
 	} else if (mode == SEGMENT_CURVE) {
-		point1.other.deltaAfter  = (p2->pos - p1->pos) / 3.0f;
-		point2.other.deltaBefore = (p1->pos - p2->pos) / 3.0f;
+		point1.other.delta_after  = (p2->pos - p1->pos) / 3.0f;
+		point2.other.delta_before = (p1->pos - p2->pos) / 3.0f;
 	}
 }
-String SegmentModeAction::getName(bool toUndo) const {
-	SegmentMode mode = toUndo ? point1.point->segmentAfter : point1.other.segmentAfter;
+String SegmentModeAction::getName(bool to_undo) const {
+	SegmentMode mode = to_undo ? point1.point->segment_after : point1.other.segment_after;
 	if (mode == SEGMENT_LINE) return _("Convert to line");
 	else                      return _("Convert to curve");
 }
 
-void SegmentModeAction::perform(bool toUndo) {
+void SegmentModeAction::perform(bool to_undo) {
 	point1.perform();
 	point2.perform();
 }
@@ -146,11 +146,11 @@ LockModeAction::LockModeAction(const ControlPointP& p, LockMode lock)
 	point.other.onUpdateLock();
 }
 
-String LockModeAction::getName(bool toUndo) const {
+String LockModeAction::getName(bool to_undo) const {
 	return _("Lock point");
 }
 
-void LockModeAction::perform(bool toUndo) {
+void LockModeAction::perform(bool to_undo) {
 	point.perform();
 }
 
@@ -161,12 +161,12 @@ CurveDragAction::CurveDragAction(const ControlPointP& point1, const ControlPoint
 	: SegmentModeAction(point1, point2, SEGMENT_CURVE)
 {}
 
-String CurveDragAction::getName(bool toUndo) const {
+String CurveDragAction::getName(bool to_undo) const {
 	return _("Move curve");
 }
 
-void CurveDragAction::perform(bool toUndo) {
-	SegmentModeAction::perform(toUndo);
+void CurveDragAction::perform(bool to_undo) {
+	SegmentModeAction::perform(to_undo);
 }
 
 void CurveDragAction::move(const Vector2D& delta, double t) {
@@ -186,8 +186,8 @@ void CurveDragAction::move(const Vector2D& delta, double t) {
 	//   delta    = p' - p
 	//   pointDelta = x * t * (1-t)
 	Vector2D pointDelta = delta / (3 * (t * t + (1-t) * (1-t)));
-	point1.point->deltaAfter  += pointDelta / t;
-	point2.point->deltaBefore += pointDelta / (1-t);
+	point1.point->delta_after  += pointDelta / t;
+	point2.point->delta_before += pointDelta / (1-t);
 	point1.point->onUpdateHandle(HANDLE_AFTER);
 	point2.point->onUpdateHandle(HANDLE_BEFORE);
 }
@@ -195,40 +195,40 @@ void CurveDragAction::move(const Vector2D& delta, double t) {
 
 // ----------------------------------------------------------------------------- : Add control point
 
-ControlPointAddAction::ControlPointAddAction(const SymbolPartP& part, UInt insertAfter, double t)
-	: point1(part->getPoint(insertAfter))
-	, point2(part->getPoint(insertAfter + 1))
+ControlPointAddAction::ControlPointAddAction(const SymbolPartP& part, UInt insert_after, double t)
+	: point1(part->getPoint(insert_after))
+	, point2(part->getPoint(insert_after + 1))
 	, part(part)
-	, insertAfter(insertAfter)
-	, newPoint(new ControlPoint())
+	, insert_after(insert_after)
+	, new_point(new ControlPoint())
 {
 	// calculate new point
-	if (point1.other.segmentAfter == SEGMENT_CURVE) {
+	if (point1.other.segment_after == SEGMENT_CURVE) {
 		// calculate new handles using de Casteljau's subdivision algorithm
-		deCasteljau(point1.other, point2.other, t, *newPoint);
+		deCasteljau(point1.other, point2.other, t, *new_point);
 		// unlock if needed
 		if (point1.other.lock == LOCK_SIZE) point1.other.lock = LOCK_DIR;
 		if (point2.other.lock == LOCK_SIZE) point2.other.lock = LOCK_DIR;
-		newPoint->lock = LOCK_DIR;
-		newPoint->segmentBefore = SEGMENT_CURVE;
-		newPoint->segmentAfter  = SEGMENT_CURVE;
+		new_point->lock = LOCK_DIR;
+		new_point->segment_before = SEGMENT_CURVE;
+		new_point->segment_after  = SEGMENT_CURVE;
 	} else {
-		newPoint->pos = point1.other.pos * (1 - t) + point2.other.pos * t;
-		newPoint->lock = LOCK_FREE;
-		newPoint->segmentBefore = SEGMENT_LINE;
-		newPoint->segmentAfter  = SEGMENT_LINE;
+		new_point->pos = point1.other.pos * (1 - t) + point2.other.pos * t;
+		new_point->lock = LOCK_FREE;
+		new_point->segment_before = SEGMENT_LINE;
+		new_point->segment_after  = SEGMENT_LINE;
 	}
 }
 
-String ControlPointAddAction::getName(bool toUndo) const {
+String ControlPointAddAction::getName(bool to_undo) const {
 	return _("Add control point");
 }
 
-void ControlPointAddAction::perform(bool toUndo) {
-	if (toUndo) { // remove the point
-		part->points.erase( part->points.begin() + insertAfter + 1);
+void ControlPointAddAction::perform(bool to_undo) {
+	if (to_undo) { // remove the point
+		part->points.erase( part->points.begin() + insert_after + 1);
 	} else {
-		part->points.insert(part->points.begin() + insertAfter + 1, newPoint);
+		part->points.insert(part->points.begin() + insert_after + 1, new_point);
 	}
 	// update points before/after
 	point1.perform();
@@ -249,8 +249,8 @@ class SinglePointRemoveAction : public Action {
   public:
 	SinglePointRemoveAction(const SymbolPartP& part, UInt position);
 	
-	virtual String getName(bool toUndo) const { return _("Delete point"); }
-	virtual void perform(bool toUndo);
+	virtual String getName(bool to_undo) const { return _("Delete point"); }
+	virtual void perform(bool to_undo);
 	
   private:
 	SymbolPartP part;
@@ -266,21 +266,21 @@ SinglePointRemoveAction::SinglePointRemoveAction(const SymbolPartP& part, UInt p
 	, point1(part->getPoint(position - 1))
 	, point2(part->getPoint(position + 1))
 {
-	if (point1.other.segmentAfter == SEGMENT_CURVE || point2.other.segmentBefore == SEGMENT_CURVE) {
+	if (point1.other.segment_after == SEGMENT_CURVE || point2.other.segment_before == SEGMENT_CURVE) {
 		// try to preserve curve
-		Vector2D before = point->deltaBefore;
-		Vector2D after  = point->deltaAfter;
+		Vector2D before = point->delta_before;
+		Vector2D after  = point->delta_after;
 		
 		// convert both segments to curves first
-		if (point1.other.segmentAfter != SEGMENT_CURVE) {
-			point1.other.deltaAfter  = -
+		if (point1.other.segment_after != SEGMENT_CURVE) {
+			point1.other.delta_after  = -
 			before                   = (point1.other.pos - point->pos) / 3.0;
-			point1.other.segmentAfter = SEGMENT_CURVE;
+			point1.other.segment_after = SEGMENT_CURVE;
 		}
-		if (point2.other.segmentBefore != SEGMENT_CURVE) {
-			point2.other.deltaBefore = -
+		if (point2.other.segment_before != SEGMENT_CURVE) {
+			point2.other.delta_before = -
 			after                    = (point2.other.pos - point->pos) / 3.0;
-			point2.other.segmentBefore = SEGMENT_CURVE;
+			point2.other.segment_before = SEGMENT_CURVE;
 		}
 		
 		// The inverse of adding a point, reconstruct the original handles
@@ -290,8 +290,8 @@ SinglePointRemoveAction::SinglePointRemoveAction(const SymbolPartP& part, UInt p
 		double al   = after .length() + 0.00000001;
 		double totl = bl + al;
 		// set new handle sizes
-		point1.other.deltaAfter  *= totl / bl;
-		point2.other.deltaBefore *= totl / al;
+		point1.other.delta_after  *= totl / bl;
+		point2.other.delta_before *= totl / al;
 		
 		// Also take in acount cases where the point does not correspond to a freshly added point.
 		// distance from the point to the curve as it would be in the above case can be used,
@@ -301,8 +301,8 @@ SinglePointRemoveAction::SinglePointRemoveAction(const SymbolPartP& part, UInt p
 		Vector2D p = c.pointAt(t);
 		Vector2D distP = point->pos - p;
 		// adjust handle sizes
-		point1.other.deltaAfter  *= ssqrt(distP.dot(point1.other.deltaAfter) /point1.other.deltaAfter.lengthSqr())  + 1;
-		point2.other.deltaBefore *= ssqrt(distP.dot(point2.other.deltaBefore)/point2.other.deltaBefore.lengthSqr()) + 1;
+		point1.other.delta_after  *= ssqrt(distP.dot(point1.other.delta_after) /point1.other.delta_after.lengthSqr())  + 1;
+		point2.other.delta_before *= ssqrt(distP.dot(point2.other.delta_before)/point2.other.delta_before.lengthSqr()) + 1;
 	
 		// unlock if needed
 		if (point1.other.lock == LOCK_SIZE) point1.other.lock = LOCK_DIR;
@@ -312,8 +312,8 @@ SinglePointRemoveAction::SinglePointRemoveAction(const SymbolPartP& part, UInt p
 	}
 }
 
-void SinglePointRemoveAction::perform(bool toUndo) {
-	if (toUndo) {
+void SinglePointRemoveAction::perform(bool to_undo) {
+	if (to_undo) {
 		// reinsert the point
 		part->points.insert(part->points.begin() + position, point);
 	} else {
@@ -336,8 +336,8 @@ class ControlPointRemoveAction : public Action {
   public:
 	ControlPointRemoveAction(const SymbolPartP& part, const set<ControlPointP>& toDelete);
 	
-	virtual String getName(bool toUndo) const;
-	virtual void perform(bool toUndo);
+	virtual String getName(bool to_undo) const;
+	virtual void perform(bool to_undo);
 	
   private:
 	vector<SinglePointRemoveActionP> removals;
@@ -355,17 +355,17 @@ ControlPointRemoveAction::ControlPointRemoveAction(const SymbolPartP& part, cons
 	}
 }
 
-String ControlPointRemoveAction::getName(bool toUndo) const {
+String ControlPointRemoveAction::getName(bool to_undo) const {
 	return removals.size() == 1 ? _("Delete point") : _("Delete points");
 }
 
-void ControlPointRemoveAction::perform(bool toUndo) {
-	if (toUndo) {
-		FOR_EACH(r, removals) r->perform(toUndo);
+void ControlPointRemoveAction::perform(bool to_undo) {
+	if (to_undo) {
+		FOR_EACH(r, removals) r->perform(to_undo);
 	} else {
 		// in reverse order, because positions of later points will
 		// change after removal of earlier points.
-		FOR_EACH_REVERSE(r, removals) r->perform(toUndo);
+		FOR_EACH_REVERSE(r, removals) r->perform(to_undo);
 	}
 }
 

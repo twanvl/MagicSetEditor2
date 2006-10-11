@@ -21,8 +21,8 @@ BezierCurve::BezierCurve(const Vector2D& p0, const Vector2D& p1, const Vector2D&
 
 BezierCurve::BezierCurve(const ControlPoint& p0, const ControlPoint& p3) {
 	// calculate coefficients
-	c = p0.deltaAfter * 3.0;
-    b = (p3.pos + p3.deltaBefore - p0.pos - p0.deltaAfter) * 3.0 - c;
+	c = p0.delta_after * 3.0;
+    b = (p3.pos + p3.delta_before - p0.pos - p0.delta_after) * 3.0 - c;
     a = (p3.pos - p0.pos) - c - b;
     d = p0.pos;
 }
@@ -41,7 +41,7 @@ void deCasteljau(Vector2D a1,  Vector2D  a2, Vector2D  a3, Vector2D  a4,
 }
 
 void deCasteljau(ControlPoint& a, ControlPoint& b, double t, ControlPoint& mid) {
-	deCasteljau(a.pos, a.deltaAfter, b.deltaBefore, b.pos, t, mid);
+	deCasteljau(a.pos, a.delta_after, b.delta_before, b.pos, t, mid);
 }
 
 void deCasteljau(const Vector2D& a1, Vector2D& a21, Vector2D& a34, const Vector2D& a4, double t, ControlPoint& out) {
@@ -51,15 +51,15 @@ void deCasteljau(const Vector2D& a1, Vector2D& a21, Vector2D& a34, const Vector2
 	Vector2D mid23h21 = (a1 + half21) * (1-t) + mid23 * t;
 	Vector2D mid23h34 = (a4 + half34) * t     + mid23 * (1-t);
 	out.pos         = mid23h21 * (1-t) + mid23h34 * t;
-	out.deltaBefore = mid23h21 - out.pos;
-	out.deltaAfter  = mid23h34 - out.pos;
+	out.delta_before = mid23h21 - out.pos;
+	out.delta_after  = mid23h34 - out.pos;
 	a21 = half21;
 	a34 = half34;
 }
 
 // ----------------------------------------------------------------------------- : Drawing
 
-void curveSubdivide(const BezierCurve& c, const Vector2D& p0, const Vector2D& p1, double t0, double t1, const Rotation& rot, vector<wxPoint>& out, UInt level) {
+void curve_subdivide(const BezierCurve& c, const Vector2D& p0, const Vector2D& p1, double t0, double t1, const Rotation& rot, vector<wxPoint>& out, UInt level) {
 	if (level <= 0)  return;
 	double midtime = (t0+t1) * 0.5f;
 	Vector2D midpoint = c.pointAt(midtime);
@@ -70,70 +70,70 @@ void curveSubdivide(const BezierCurve& c, const Vector2D& p0, const Vector2D& p1
 	double treshold = fabs(  atan2(d0.x,d0.y) - atan2(d1.x,d1.y))  * (p0-p1).lengthSqr();
 	bool subdivide = treshold >= .0001;
 	// subdivide left
-	curveSubdivide(c, p0, midpoint, t0, midtime, rot, out, level - 1);
+	curve_subdivide(c, p0, midpoint, t0, midtime, rot, out, level - 1);
 	// add midpoint
 	if (subdivide) {
 		out.push_back(rot.tr(midpoint));
 	}
 	// subdivide right
-	curveSubdivide(c, midpoint, p1, midtime, t1, rot, out, level - 1);
+	curve_subdivide(c, midpoint, p1, midtime, t1, rot, out, level - 1);
 }
 
-void segmentSubdivide(const ControlPoint& p0, const ControlPoint& p1, const Rotation& rot, vector<wxPoint>& out) {
-	assert(p0.segmentAfter == p1.segmentBefore);
+void segment_subdivide(const ControlPoint& p0, const ControlPoint& p1, const Rotation& rot, vector<wxPoint>& out) {
+	assert(p0.segment_after == p1.segment_before);
 	// always the start
 	out.push_back(rot.tr(p0.pos));
-	if (p0.segmentAfter == SEGMENT_CURVE) {
+	if (p0.segment_after == SEGMENT_CURVE) {
 		// need more points?
 		BezierCurve curve(p0,p1);
-		curveSubdivide(curve, p0.pos, p1.pos, 0, 1, rot, out, 5);
+		curve_subdivide(curve, p0.pos, p1.pos, 0, 1, rot, out, 5);
 	}
 }
 
 // ----------------------------------------------------------------------------- : Bounds
 
-void segmentBounds(const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max) {
-	assert(p1.segmentAfter == p2.segmentBefore);
-	if (p1.segmentAfter == SEGMENT_LINE) {
-		lineBounds  (p1.pos, p2.pos, min, max);
+void segment_bounds(const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max) {
+	assert(p1.segment_after == p2.segment_before);
+	if (p1.segment_after == SEGMENT_LINE) {
+		line_bounds  (p1.pos, p2.pos, min, max);
 	} else {
-		bezierBounds(p1,     p2,     min, max);
+		bezier_bounds(p1,     p2,     min, max);
 	}
 }
 
-void bezierBounds(const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max) {
-	assert(p1.segmentAfter == SEGMENT_CURVE);
+void bezier_bounds(const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max) {
+	assert(p1.segment_after == SEGMENT_CURVE);
 	// First of all, the corners should be in the bounding box
-	pointBounds(p1.pos, min, max);
-	pointBounds(p2.pos, min, max);
+	point_bounds(p1.pos, min, max);
+	point_bounds(p2.pos, min, max);
 	// Solve the derivative of the bezier curve to find its extremes
 	// It's only a quadtratic equation :)
 	BezierCurve curve(p1,p2);
 	double roots[4];
 	UInt count;
-	count  = solveQuadratic(3*curve.a.x, 2*curve.b.x, curve.c.x, roots);
-	count += solveQuadratic(3*curve.a.y, 2*curve.b.y, curve.c.y, roots + count);
+	count  = solve_quadratic(3*curve.a.x, 2*curve.b.x, curve.c.x, roots);
+	count += solve_quadratic(3*curve.a.y, 2*curve.b.y, curve.c.y, roots + count);
 	// now check them for min/max
 	for (UInt i = 0 ; i < count ; ++i) {
 		double t = roots[i];
 		if (t >=0 && t <= 1) {
-			pointBounds(curve.pointAt(t), min, max);
+			point_bounds(curve.pointAt(t), min, max);
 		}
 	}
 }
 
-void lineBounds(const Vector2D& p1, const Vector2D& p2, Vector2D& min, Vector2D& max) {
-	pointBounds(p1, min, max);
-	pointBounds(p2, min, max);
+void line_bounds(const Vector2D& p1, const Vector2D& p2, Vector2D& min, Vector2D& max) {
+	point_bounds(p1, min, max);
+	point_bounds(p2, min, max);
 }
 
-void pointBounds(const Vector2D& p, Vector2D& min, Vector2D& max) {
+void point_bounds(const Vector2D& p, Vector2D& min, Vector2D& max) {
 	min = piecewise_min(min, p);
 	max = piecewise_max(max, p);
 }
 
 // Is a point inside the bounds <min...max>?
-bool pointInBounds(const Vector2D& p, const Vector2D& min, const Vector2D& max) {
+bool point_in_bounds(const Vector2D& p, const Vector2D& min, const Vector2D& max) {
 	return p.x >= min.x && p.y >= min.y &&
 	       p.x <= max.x && p.y <= max.y;
 }
@@ -142,9 +142,9 @@ bool pointInBounds(const Vector2D& p, const Vector2D& min, const Vector2D& max) 
 // ----------------------------------------------------------------------------- : Point tests
 
 // As a point inside a symbol part?
-bool pointInPart(const Vector2D& pos, const SymbolPart& part) {
+bool point_in_part(const Vector2D& pos, const SymbolPart& part) {
 	// Step 1. compare bounding box of the part
-	if (!pointInBounds(pos, part.minPos, part.maxPos)) return false;
+	if (!point_in_bounds(pos, part.min_pos, part.max_pos)) return false;
 	
 	// Step 2. trace ray outward, count intersections
 	int count = 0;
@@ -152,10 +152,10 @@ bool pointInPart(const Vector2D& pos, const SymbolPart& part) {
 	for(size_t i = 0 ; i < size ; ++i) {
 		ControlPointP p1 = part.getPoint((int) i);
 		ControlPointP p2 = part.getPoint((int) i + 1);
-		if (p1->segmentAfter == SEGMENT_LINE) {
-			count += intersectLineRay  (p1->pos, p2->pos, pos);
+		if (p1->segment_after == SEGMENT_LINE) {
+			count += intersect_line_ray  (p1->pos, p2->pos, pos);
 		} else {
-			count += intersectBezierRay(*p1,     *p2,     pos);
+			count += intersect_bezier_ray(*p1,     *p2,     pos);
 		}
 	}
 	
@@ -165,23 +165,23 @@ bool pointInPart(const Vector2D& pos, const SymbolPart& part) {
 
 // ----------------------------------------------------------------------------- : Finding points
 
-bool posOnSegment(const Vector2D& pos, double range, const ControlPoint& p1, const ControlPoint& p2, Vector2D& pOut, double& tOut) {
-	if (p1.segmentAfter == SEGMENT_CURVE) {
-		return posOnBezier(pos, range, p1,     p2,     pOut, tOut);
+bool pos_on_segment(const Vector2D& pos, double range, const ControlPoint& p1, const ControlPoint& p2, Vector2D& pOut, double& tOut) {
+	if (p1.segment_after == SEGMENT_CURVE) {
+		return pos_on_bezier(pos, range, p1,     p2,     pOut, tOut);
 	} else {
-		return posOnLine  (pos, range, p1.pos, p2.pos, pOut, tOut);
+		return pos_on_line  (pos, range, p1.pos, p2.pos, pOut, tOut);
 	}
 }
 
-bool posOnBezier(const Vector2D& pos, double range, const ControlPoint& p1, const ControlPoint& p2, Vector2D& pOut, double& tOut) {
-	assert(p1.segmentAfter == SEGMENT_CURVE);
+bool pos_on_bezier(const Vector2D& pos, double range, const ControlPoint& p1, const ControlPoint& p2, Vector2D& pOut, double& tOut) {
+	assert(p1.segment_after == SEGMENT_CURVE);
 	// Find intersections with the horizontal and vertical lines through p0
 	// theoretically we would need to check in all directions, but this covers enough
 	BezierCurve curve(p1, p2);
 	double roots[6];
 	UInt count;
-	count  = solveCubic(curve.a.y, curve.b.y, curve.c.y, curve.d.y - pos.y, roots);
-	count += solveCubic(curve.a.x, curve.b.x, curve.c.x, curve.d.x - pos.x, roots + count); // append intersections
+	count  = solve_cubic(curve.a.y, curve.b.y, curve.c.y, curve.d.y - pos.y, roots);
+	count += solve_cubic(curve.a.x, curve.b.x, curve.c.x, curve.d.x - pos.x, roots + count); // append intersections
 	// take the best intersection point
 	double bestDistSqr = std::numeric_limits<double>::max(); //infinity
 	for(UInt i = 0 ; i < count ; ++i) {
@@ -199,7 +199,7 @@ bool posOnBezier(const Vector2D& pos, double range, const ControlPoint& p1, cons
 	return bestDistSqr <= range * range;
 }
 
-bool posOnLine(const Vector2D& pos, double range, const Vector2D& p1, const Vector2D& p2, Vector2D& pOut, double& t) {
+bool pos_on_line(const Vector2D& pos, double range, const Vector2D& p1, const Vector2D& p2, Vector2D& pOut, double& t) {
 	Vector2D p21 = p2 - p1;
 	double p21len = p21.lengthSqr();
 	if (p21len < 0.00001) return false; // line is too short
@@ -212,13 +212,13 @@ bool posOnLine(const Vector2D& pos, double range, const Vector2D& p1, const Vect
 
 // ----------------------------------------------------------------------------- : Intersection
 
-UInt intersectBezierRay(const ControlPoint& p1, const ControlPoint& p2, const Vector2D& pos) {
+UInt intersect_bezier_ray(const ControlPoint& p1, const ControlPoint& p2, const Vector2D& pos) {
 	// Looking only at the y coordinate
 	// we can use the cubic formula to find roots, points where the horizontal line
 	// through pos intersects the (extended) curve
 	BezierCurve curve(p1,p2);
 	double roots[3];
-	UInt count = solveCubic(curve.a.y, curve.b.y, curve.c.y, curve.d.y - pos.y, roots);
+	UInt count = solve_cubic(curve.a.y, curve.b.y, curve.c.y, curve.d.y - pos.y, roots);
 	// now check if the solutions are left of pos.x
 	UInt solsInRange = 0;
 	for(UInt i = 0 ; i < count ; ++i) {
@@ -230,7 +230,7 @@ UInt intersectBezierRay(const ControlPoint& p1, const ControlPoint& p2, const Ve
 	return solsInRange;
 }
 
-bool intersectLineRay(const Vector2D& p1, const Vector2D& p2, const Vector2D& pos) {
+bool intersect_line_ray(const Vector2D& p1, const Vector2D& p2, const Vector2D& pos) {
 	// Vector2D intersection = p1 + t * (p2 - p1)
 	// intersection.y == pos.y
 	//                == p1.y + t * (p2.y - p1.y)
@@ -245,7 +245,7 @@ bool intersectLineRay(const Vector2D& p1, const Vector2D& p2, const Vector2D& po
 	} else {
 		double dx = p2.x - p1.x;
 		double t  = (pos.y - p1.y) / dy;
-		if (t < 0.0 || t >= 1.0)  return false;
+		if (t < 0.0 || t >= 1.0) return false;
 		double intersectX = p1.x + t * dx;
 		return intersectX <= pos.x; // intersection is left of pos
 	}

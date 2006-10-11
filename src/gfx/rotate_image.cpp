@@ -14,7 +14,7 @@
 // Rotates an image
 // 'Rotater' is a function object that knows how to 'rotate' a pixel coordinate
 template <class Rotater>
-Image rotateImageImpl(Image img) {
+Image rotate_image_impl(Image img) {
 	UInt width = img.GetWidth(), height = img.GetHeight();
 	// initialize the return image
 	Image ret;
@@ -83,13 +83,13 @@ struct Rotate270 {
 
 // ----------------------------------------------------------------------------- : Interface
 
-Image rotateImageBy(const Image& image, int angle) {
+Image rotate_image(const Image& image, int angle) {
 	if (angle == 90) {
-		return rotateImageImpl<Rotate90>(image);
+		return rotate_image_impl<Rotate90>(image);
 	} else if (angle == 180){
-		return rotateImageImpl<Rotate180>(image);
+		return rotate_image_impl<Rotate180>(image);
 	} else if (angle == 270){
-		return rotateImageImpl<Rotate270>(image);
+		return rotate_image_impl<Rotate270>(image);
 	} else{
 		return image;
 	}

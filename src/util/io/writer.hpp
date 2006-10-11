@@ -53,9 +53,9 @@ class Writer {
 	/// Indentation of the current block
 	int indentation;
 	/// Did we just open a block (i.e. not written any lines of it)?
-	bool justOpened;
+	bool just_opened;
 	/// Last key opened
-	String openedKey;
+	String opened_key;
 	
 	/// Output stream we are writing to
 	OutputStreamP output;
@@ -69,7 +69,7 @@ class Writer {
 	/// Leave the block we are in
 	void exitBlock();
 	
-	/// Write the openedKey and the required indentation
+	/// Write the opened_key and the required indentation
 	void writeKey();
 	/// Output some taps to represent the indentation level
 	void writeIndentation();

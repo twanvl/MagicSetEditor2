@@ -103,7 +103,7 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolPart& part, HighlightStyle 
 	vector<wxPoint> points;
 	size_t size = part.points.size();
 	for(size_t i = 0 ; i < size ; ++i) {
-		segmentSubdivide(*part.getPoint((int)i), *part.getPoint((int)i+1), rotation, points);
+		segment_subdivide(*part.getPoint((int)i), *part.getPoint((int)i+1), rotation, points);
 	}
 	// draw
 	if (style == HIGHLIGHT_BORDER) {
@@ -165,7 +165,7 @@ void SymbolViewer::drawSymbolPart(const SymbolPart& part, DC* border, DC* interi
 	vector<wxPoint> points;
 	size_t size = part.points.size();
 	for(size_t i = 0 ; i < size ; ++i) {
-		segmentSubdivide(*part.getPoint((int)i), *part.getPoint((int)i+1), rotation, points);
+		segment_subdivide(*part.getPoint((int)i), *part.getPoint((int)i+1), rotation, points);
 	}
 	// draw border
 	if (border) {

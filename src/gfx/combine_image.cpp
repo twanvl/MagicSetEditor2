@@ -88,7 +88,7 @@ COMBINE_FUN(COMBINE_SHADOW,		(b * a * a) / (255 * 255)							)
 /// Combine image b onto image a using some combining mode.
 /// The results are stored in the image A.
 template <ImageCombine combine>
-void combineImageDo(Image& a, Image b) {
+void combine_image_do(Image& a, Image b) {
 	UInt size = a.GetWidth() * a.GetHeight() * 3;
 	Byte *dataA = a.GetData(), *dataB = b.GetData();
 	// for each pixel: apply function
@@ -97,7 +97,7 @@ void combineImageDo(Image& a, Image b) {
 	}
 }
 
-void combineImage(Image& a, const Image& b, ImageCombine combine) {
+void combine_image(Image& a, const Image& b, ImageCombine combine) {
 	// Images must have same size
 	assert(a.GetWidth()  == b.GetWidth());
 	assert(a.GetHeight() == b.GetHeight());
@@ -108,7 +108,7 @@ void combineImage(Image& a, const Image& b, ImageCombine combine) {
 	}
 	// Combine image data, by dispatching to combineImageDo
 	switch(combine) {
-		#define DISPATCH(comb) case comb: combineImageDo<comb>(a,b); return
+		#define DISPATCH(comb) case comb: combine_image_do<comb>(a,b); return
 		DISPATCH(COMBINE_NORMAL);
 		DISPATCH(COMBINE_ADD);
 		DISPATCH(COMBINE_SUBTRACT);
@@ -135,5 +135,6 @@ void combineImage(Image& a, const Image& b, ImageCombine combine) {
 	}
 }
 
-void drawCombineImage(DC& dc, UInt x, UInt y, const Image& img, ImageCombine combine) {
+void draw_combine_image(DC& dc, UInt x, UInt y, const Image& img, ImageCombine combine) {
+	// todo
 }

@@ -35,7 +35,7 @@ void SymbolControl::switchEditor(const SymbolEditorBaseP& e) {
 }
 
 void SymbolControl::onChangeSymbol() {
-	selectedParts.clear();
+	selected_parts.clear();
 	switchEditor(new_shared2<SymbolSelectEditor>(this, false));
 	Refresh(false);
 }
@@ -49,14 +49,14 @@ void SymbolControl::onModeChange(wxCommandEvent& ev) {
 			switchEditor(new_shared2<SymbolSelectEditor>(this, true));
 			break;
 		case ID_MODE_POINTS:
-			if (selectedParts.size() == 1) {
-				singleSelection = *selectedParts.begin();
-				switchEditor(new_shared2<SymbolPointEditor>(this, singleSelection));
+			if (selected_parts.size() == 1) {
+				single_selection = *selected_parts.begin();
+				switchEditor(new_shared2<SymbolPointEditor>(this, single_selection));
 			}
 			break;
 		case ID_MODE_SHAPES:
-			if (!selectedParts.empty()) {
-				selectedParts.clear();
+			if (!selected_parts.empty()) {
+				selected_parts.clear();
 				signalSelectionChange();
 			}
 			switchEditor(new_shared1<SymbolBasicShapeEditor>(this));
@@ -78,26 +78,26 @@ void SymbolControl::onUpdateSelection() {
 	switch(editor->modeToolId()) {
 		case ID_MODE_POINTS:
 			// can only select a single part!
-			if (selectedParts.size() > 1) {
-				SymbolPartP part = *selectedParts.begin();
-				selectedParts.clear();
-				selectedParts.insert(part);
+			if (selected_parts.size() > 1) {
+				SymbolPartP part = *selected_parts.begin();
+				selected_parts.clear();
+				selected_parts.insert(part);
 				signalSelectionChange();
-			} else if (selectedParts.empty()) {
-				selectedParts.insert(singleSelection);
+			} else if (selected_parts.empty()) {
+				selected_parts.insert(single_selection);
 				signalSelectionChange();
 			}
-			if (singleSelection != *selectedParts.begin()) {
+			if (single_selection != *selected_parts.begin()) {
 				// begin editing another part
-				singleSelection = *selectedParts.begin();
-				editor = new_shared2<SymbolPointEditor>(this, singleSelection);
+				single_selection = *selected_parts.begin();
+				editor = new_shared2<SymbolPointEditor>(this, single_selection);
 				Refresh(false);
 			}
 			break;
 		case ID_MODE_SHAPES:
-			if (!selectedParts.empty()) {
+			if (!selected_parts.empty()) {
 				// there can't be a selection
-				selectedParts.clear();
+				selected_parts.clear();
 				signalSelectionChange();
 			}
 			break;
@@ -108,15 +108,15 @@ void SymbolControl::onUpdateSelection() {
 }
 
 void SymbolControl::selectPart(const SymbolPartP& part) {
-	selectedParts.clear();
-	selectedParts.insert(part);
+	selected_parts.clear();
+	selected_parts.insert(part);
 	switchEditor(new_shared2<SymbolSelectEditor>(this, false));
 	signalSelectionChange();
 }
 
 void SymbolControl::activatePart(const SymbolPartP& part) {
-	selectedParts.clear();
-	selectedParts.insert(part);
+	selected_parts.clear();
+	selected_parts.insert(part);
 	switchEditor(new_shared2<SymbolPointEditor>(this, part));
 }
 
@@ -154,34 +154,34 @@ void SymbolControl::onPaint(wxPaintEvent& e) {
 void SymbolControl::onLeftDown(wxMouseEvent& ev) {
 	Vector2D pos = rotation.trInv(RealPoint(ev.GetX(), ev.GetY()));
 	if (editor) editor->onLeftDown(pos, ev);
-	lastPos = pos;
+	last_pos = pos;
 	ev.Skip(); // for focus
 }
 void SymbolControl::onLeftUp(wxMouseEvent& ev) {
 	Vector2D pos = rotation.trInv(RealPoint(ev.GetX(), ev.GetY()));
 	if (editor) editor->onLeftUp(pos, ev);
-	lastPos = pos;
+	last_pos = pos;
 }
 void SymbolControl::onLeftDClick(wxMouseEvent& ev) {
 	Vector2D pos = rotation.trInv(RealPoint(ev.GetX(), ev.GetY()));
 	if (editor) editor->onLeftDClick(pos, ev);
-	lastPos = pos;
+	last_pos = pos;
 }
 void SymbolControl::onRightDown(wxMouseEvent& ev) {
 	Vector2D pos = rotation.trInv(RealPoint(ev.GetX(), ev.GetY()));
 	if (editor) editor->onRightDown(pos, ev);
-	lastPos = pos;
+	last_pos = pos;
 }
 
 void SymbolControl::onMotion(wxMouseEvent& ev) {
 	Vector2D pos = rotation.trInv(RealPoint(ev.GetX(), ev.GetY()));
 	// Dragging something?
 	if (ev.LeftIsDown()) {
-		if (editor) editor->onMouseDrag(lastPos, pos, ev);
+		if (editor) editor->onMouseDrag(last_pos, pos, ev);
 	} else {
-		if (editor) editor->onMouseMove(lastPos, pos, ev);
+		if (editor) editor->onMouseMove(last_pos, pos, ev);
 	}
-	lastPos = pos;
+	last_pos = pos;
 }
 
 // Key events, just forward
@@ -207,7 +207,7 @@ void SymbolControl::onUpdateUI(wxUpdateUIEvent& ev) {
 			ev.Check(editor->modeToolId() == ev.GetId());
 			if (ev.GetId() == ID_MODE_POINTS) {
 				// can only edit points when a single part is selected <TODO?>
-				ev.Enable(selectedParts.size() == 1);
+				ev.Enable(selected_parts.size() == 1);
 			}
 			break;
 		case ID_MODE_PAINT:

@@ -71,8 +71,8 @@ class SymbolControl : public wxControl, public SymbolViewer {
 	
   public: 
 	/// What parts are selected
-	set<SymbolPartP> selectedParts;
-	SymbolPartP singleSelection;
+	set<SymbolPartP> selected_parts;
+	SymbolPartP single_selection;
 	
 	/// Parent window 
 	SymbolWindow* parent;
@@ -82,7 +82,7 @@ class SymbolControl : public wxControl, public SymbolViewer {
 	SymbolEditorBaseP editor;
 	
 	/// Last mouse position
-	Vector2D lastPos;
+	Vector2D last_pos;
 	
 	// --------------------------------------------------- : Events
 	

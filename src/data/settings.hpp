@@ -40,11 +40,11 @@ class ColumnSettings {
 /// Settings for a Game
 class GameSettings {
   public:
-	String                      defaultStyle;
-	String                      defaultExport;
+	String                      default_style;
+	String                      default_export;
 	map<String, ColumnSettings> columns;
-	String                      sortCardsBy;
-	bool                        sortCardsAscending;
+	String                      sort_cards_by;
+	bool                        sort_cards_ascending;
 	
 	DECLARE_REFLECTION();
 };
@@ -53,11 +53,11 @@ class GameSettings {
 class StyleSettings {
   public:
 	// Rendering/display settings
-/*	SimpleDefaultable<double> cardZoom         = 1.0;
-	SimpleDefaultable<int>    cardAngle        = 0;
-	SimpleDefaultable<bool>   cardAntiAlias    = true;
-	SimpleDefaultable<bool>   cardBorders      = true;
-	SimpleDefaultable<bool>   cardNormalExport = true;
+/*	SimpleDefaultable<double> card_zoom          = 1.0;
+	SimpleDefaultable<int>    card_angle         = 0;
+	SimpleDefaultable<bool>   card_anti_alias    = true;
+	SimpleDefaultable<bool>   card_borders       = true;
+	SimpleDefaultable<bool>   card_normal_export = true;
 */	
 	DECLARE_REFLECTION();
 	
@@ -77,20 +77,20 @@ class Settings {
 	Settings();
 	
 	// --------------------------------------------------- : Recently opened sets
-	vector<String> recentSets;
-	static const UInt maxRecentSets = 4; // store this many recent sets
+	vector<String> recent_sets;
+	static const UInt max_recent_sets = 4; // store this many recent sets
 	
 	/// Add a file to the list of recent files
 	void addRecentFile(const String& filename);
 	
 	// --------------------------------------------------- : Set window size
-	bool setWindowMaximized;
-	UInt setWindowWidth;
-	UInt setWindowHeight;
-	UInt cardNotesHeight;
+	bool set_window_maximized;
+	UInt set_window_width;
+	UInt set_window_height;
+	UInt card_notes_height;
 	
 	// --------------------------------------------------- : Default pacakge selections
-	String defaultGame;
+	String default_game;
 	
 	// --------------------------------------------------- : Game/style specific
 	
@@ -100,18 +100,18 @@ class Settings {
 	StyleSettings& styleSettingsFor(const CardStyle& style);
 	
   private:
-	map<String,GameSettingsP> gameSettings;
-	map<String,StyleSettingsP> styleSettings;
-	StyleSettings defaultStyleSettings;
+	map<String,GameSettingsP> game_settings;
+	map<String,StyleSettingsP> style_settings;
+	StyleSettings default_style_settings;
   public:
 	
 	// --------------------------------------------------- : Special game stuff
-	String apprenticeLocation;
-	String mwsLocation;
+	String apprentice_location;
+	String mws_location;
 	
 	// --------------------------------------------------- : Update checking
-	String updatesUrl;
-	CheckUpdates checkUpdates;
+	String updates_url;
+	CheckUpdates check_updates;
 	
 	// --------------------------------------------------- : The io
 	

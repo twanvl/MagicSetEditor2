@@ -52,9 +52,9 @@ typedef IF_UNICODE(wchar_t, char) Char;
 String decodeUTF8BOM(const String& s);
 
 /// UTF8 Byte order mark for writing at the start of files
-/** In non-unicode builds it is UTF8 encoded \xFEFF
-*  In unicode builds it is a normal \xFEFF
-*/
+/** In non-unicode builds it is UTF8 encoded \xFEFF.
+ *  In unicode builds it is a normal \xFEFF.
+ */
 const Char BYTE_ORDER_MARK[] = IF_UNICODE(L"\xFEFF", "\xEF\xBB\xBF");
 
 /// Writes a string to an output stream, encoded as UTF8
@@ -79,30 +79,32 @@ inline Char toLower(Char c) { return IF_UNICODE( towlower(c) , tolower(c) ); }
 String trim(const String&);
 
 /// Remove whitespace from the start of a string
-String trimLeft(const String&);
+String trim_left(const String&);
 
 // ----------------------------------------------------------------------------- : Words
 
 /// Returns the last word in a string
-String lastWord(const String&);
+String last_word(const String&);
 
 /// Remove the last word from a string, leaves whitespace before that word
-String stripLastWord(const String&);
+String strip_last_word(const String&);
 
 // ----------------------------------------------------------------------------- : Caseing
 
 /// Make each word in a string start with an upper case character.
-/// for use in menus
+/** for use in menus */
 String capitalize(const String&);
 
 /// Make the first word in a string start with an upper case character.
-/// for use in dialogs
-String capitalizeSentence(const String&);
+/** for use in dialogs */
+String capitalize_sentence(const String&);
 
-/// Convert a field name to cannocial form: lower case and ' ' instead of '_'
-/// non alphanumeric characters are ignored
-/// "camalCase" is converted to words "camel case"
-String cannocialNameForm(const String&);
+/// Convert a field name to cannocial form
+/** - lower case and '_' instead of ' '.
+ *  - non alphanumeric characters are droped
+ *  - "camalCase" is converted to words "camel case" (TODO)
+ */
+String cannocial_name_form(const String&);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

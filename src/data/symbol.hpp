@@ -21,12 +21,12 @@ DECLARE_POINTER_TYPE(Symbol);
 // ----------------------------------------------------------------------------- : ControlPoint
 
 /// Mode of locking for control points in a bezier curve
-/** Specificly: the relation between deltaBefore and deltaAfter
+/** Specificly: the relation between delta_before and delta_after
  */
 enum LockMode
 {	LOCK_FREE		///< no locking
-,	LOCK_DIR		///< deltaBefore = x * deltaAfter
-,	LOCK_SIZE		///< deltaBefore = -deltaAfter
+,	LOCK_DIR		///< delta_before = x * delta_after
+,	LOCK_SIZE		///< delta_before = -delta_after
 };
 
 /// Is the segment between two ControlPoints a line or a curve?
@@ -47,19 +47,19 @@ enum WhichHandle
 class ControlPoint {
   public:
 	Vector2D pos;			///< position of the control point itself
-	Vector2D deltaBefore;	///< delta to bezier control point, for curve before point
-	Vector2D deltaAfter;	///< delta to bezier control point, for curve after point
-	SegmentMode segmentBefore, segmentAfter;
+	Vector2D delta_before;	///< delta to bezier control point, for curve before point
+	Vector2D delta_after;	///< delta to bezier control point, for curve after point
+	SegmentMode segment_before, segment_after;
 	LockMode lock;
 	
 	/// Default constructor
 	ControlPoint();
 	/// Constructor for straight lines, takes only the position
 	ControlPoint(double x, double y);
-	/// Constructor for curves lines, takes postions, deltaBefore, deltaAfter and lock mode
+	/// Constructor for curves lines, takes postions, delta_before, delta_after and lock mode
 	ControlPoint(double x, double y, double xb, double yb, double xa, double ya, LockMode lock = LOCK_FREE);
 	
-	/// Must be called after deltaBefore/deltaAfter has changed, enforces lock constraints
+	/// Must be called after delta_before/delta_after has changed, enforces lock constraints
 	void onUpdateHandle(WhichHandle wh);
 	/// Must be called after lock has changed, enforces lock constraints
 	void onUpdateLock();
@@ -124,10 +124,10 @@ class SymbolPart {
 	/// How is this part combined with parts below it?
 	SymbolPartCombine combine;
 	// Center of rotation, relative to the part, when the part is scaled to [0..1]
-	Vector2D rotationCenter;
+	Vector2D rotation_center;
 	/// Position and size of the part
 	/// this is the smallest axis aligned bounding box that fits around the part
-	Vector2D minPos, maxPos;
+	Vector2D min_pos, max_pos;
 	
 	SymbolPart();
 	

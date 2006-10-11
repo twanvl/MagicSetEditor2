@@ -41,7 +41,7 @@ void resample_and_clip(const Image& imgIn, Image& imgOut, wxRect rect);
 
 /// Rotates an image counter clockwise
 /// angle must be a multiple of 90, i.e. {0,90,180,270}
-Image rotateImageBy(const Image& image, int angle);
+Image rotate_image(const Image& image, int angle);
 
 // ----------------------------------------------------------------------------- : Blending
 
@@ -59,7 +59,7 @@ void vblend(Image& img1, const Image& img2);
  *  mask is used as a mask, white pixels are taken from img1, black pixels from img2
  *  color channels are blended separatly
  */
-void maskBlend(Image& img1, const Image& img2, const Image& mask);
+void mask_blend(Image& img1, const Image& img2, const Image& mask);
 
 // ----------------------------------------------------------------------------- : Combining
 
@@ -94,10 +94,10 @@ enum ImageCombine
 /// The results are stored in the image A.
 /// This image gets the alpha channel from B, it should then be
 /// drawn onto the area where A originated.
-void combineImage(Image& a, const Image& b, ImageCombine combine);
+void combine_image(Image& a, const Image& b, ImageCombine combine);
 
 /// Draw an image to a DC using a combining function
-void drawCombineImage(DC& dc, UInt x, UInt y, const Image& img, ImageCombine combine);
+void draw_combine_image(DC& dc, UInt x, UInt y, const Image& img, ImageCombine combine);
 
 // ----------------------------------------------------------------------------- : Utility
 

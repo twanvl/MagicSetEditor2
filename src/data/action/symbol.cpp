@@ -23,15 +23,15 @@ SymbolPartMoveAction::SymbolPartMoveAction(const set<SymbolPartP>& parts)
 	, constrain(false)
 {}
 
-String SymbolPartMoveAction::getName(bool toUndo) const {
+String SymbolPartMoveAction::getName(bool to_undo) const {
 	return parts.size() == 1 ? _("Move shape") : _("Move shapes");
 }
 
-void SymbolPartMoveAction::perform(bool toUndo) {
+void SymbolPartMoveAction::perform(bool to_undo) {
 	// move the points back
 	FOR_EACH(p, parts) {
-		p->minPos -= moved;
-		p->maxPos -= moved;
+		p->min_pos -= moved;
+		p->max_pos -= moved;
 		FOR_EACH(pnt, p->points) {
 			pnt->pos -= moved;
 		}
@@ -45,8 +45,8 @@ void SymbolPartMoveAction::move(const Vector2D& deltaDelta) {
 	Vector2D d = constrainVector(delta, constrain);
 	Vector2D dd = d - moved;
 	FOR_EACH(p, parts) {
-		p->minPos += dd;
-		p->maxPos += dd;
+		p->min_pos += dd;
+		p->max_pos += dd;
 		FOR_EACH(pnt, p->points) {
 			pnt->pos += dd;
 		}
@@ -66,8 +66,8 @@ void SymbolPartMatrixAction::transform(const Vector2D& mx, const Vector2D& my) {
 	FOR_EACH(p, parts) {
 		FOR_EACH(pnt, p->points) {
 			pnt->pos         = (pnt->pos - center).mul(mx,my) + center;
-			pnt->deltaBefore = pnt->deltaBefore.mul(mx,my);
-			pnt->deltaAfter  = pnt->deltaAfter .mul(mx,my);
+			pnt->delta_before = pnt->delta_before.mul(mx,my);
+			pnt->delta_after  = pnt->delta_after .mul(mx,my);
 		}
 		// bounds change after transforming
 		p->calculateBounds();
@@ -81,11 +81,11 @@ SymbolPartRotateAction::SymbolPartRotateAction(const set<SymbolPartP>& parts, co
 	, angle(0)
 {}
 
-String SymbolPartRotateAction::getName(bool toUndo) const {
+String SymbolPartRotateAction::getName(bool to_undo) const {
 	return parts.size() == 1 ? _("Rotate shape") : _("Rotate shapes");
 }
 
-void SymbolPartRotateAction::perform(bool toUndo) {
+void SymbolPartRotateAction::perform(bool to_undo) {
 	// move the points back
 	rotateBy(-angle);
 	angle = -angle;
@@ -119,11 +119,11 @@ SymbolPartShearAction::SymbolPartShearAction(const set<SymbolPartP>& parts, cons
 	, constrain(false)
 {}
 
-String SymbolPartShearAction::getName(bool toUndo) const {
+String SymbolPartShearAction::getName(bool to_undo) const {
 	return parts.size() == 1 ? _("Shear shape") : _("Shear shapes");
 }
 
-void SymbolPartShearAction::perform(bool toUndo) {
+void SymbolPartShearAction::perform(bool to_undo) {
 	// move the points back
 	// the vector shear = (x,y) is used as:
 	//  <1 x>
@@ -161,19 +161,19 @@ SymbolPartScaleAction::SymbolPartScaleAction(const set<SymbolPartP>& parts, int 
 	oldMin          =  Vector2D::infinity();
 	Vector2D oldMax = -Vector2D::infinity();
 	FOR_EACH(p, parts) {
-		oldMin = piecewise_min(oldMin, p->minPos);
-		oldMax = piecewise_max(oldMax, p->maxPos);
+		oldMin = piecewise_min(oldMin, p->min_pos);
+		oldMax = piecewise_max(oldMax, p->max_pos);
 	}
 	// new == old
 	newMin  = newRealMin  = oldMin;
 	newSize = newRealSize = oldSize = oldMax - oldMin;
 }
 
-String SymbolPartScaleAction::getName(bool toUndo) const {
+String SymbolPartScaleAction::getName(bool to_undo) const {
 	return parts.size() == 1 ? _("Scale shape") : _("Scale shapes");
 }
 
-void SymbolPartScaleAction::perform(bool toUndo) {
+void SymbolPartScaleAction::perform(bool to_undo) {
 	swap(oldMin,  newMin);
 	swap(oldSize, newSize);
 	transformAll();
@@ -207,17 +207,17 @@ void SymbolPartScaleAction::update() {
 void SymbolPartScaleAction::transformAll() {
 	Vector2D scale = newSize.div(oldSize);
 	FOR_EACH(p, parts) {
-		p->minPos = transform(p->minPos);
-		p->maxPos = transform(p->maxPos);
+		p->min_pos = transform(p->min_pos);
+		p->max_pos = transform(p->max_pos);
 		// make sure that max >= min
-		if (p->minPos.x > p->maxPos.x) swap(p->minPos.x, p->maxPos.x);
-		if (p->minPos.y > p->maxPos.y) swap(p->minPos.y, p->maxPos.y);
+		if (p->min_pos.x > p->max_pos.x) swap(p->min_pos.x, p->max_pos.x);
+		if (p->min_pos.y > p->max_pos.y) swap(p->min_pos.y, p->max_pos.y);
 		// scale all points
 		FOR_EACH(pnt, p->points) {
 			pnt->pos = transform(pnt->pos);
 			// also scale handles
-			pnt->deltaBefore = pnt->deltaBefore.mul(scale);
-			pnt->deltaAfter  = pnt->deltaAfter .mul(scale);
+			pnt->delta_before = pnt->delta_before.mul(scale);
+			pnt->delta_after  = pnt->delta_after .mul(scale);
 		}
 	}
 }
@@ -230,11 +230,11 @@ CombiningModeAction::CombiningModeAction(const set<SymbolPartP>& parts, SymbolPa
 	}
 }
 
-String CombiningModeAction::getName(bool toUndo) const {
+String CombiningModeAction::getName(bool to_undo) const {
 	return _("Change combine mode");
 }
 
-void CombiningModeAction::perform(bool toUndo) {
+void CombiningModeAction::perform(bool to_undo) {
 	FOR_EACH(pm, parts) {
 		swap(pm.first->combine, pm.second);
 	}
@@ -246,11 +246,11 @@ SymbolPartNameAction::SymbolPartNameAction(const SymbolPartP& part, const String
 	: part(part), partName(name)
 {}
 
-String SymbolPartNameAction::getName(bool toUndo) const {
+String SymbolPartNameAction::getName(bool to_undo) const {
 	return _("Change shape name");
 }
 
-void SymbolPartNameAction::perform(bool toUndo) {
+void SymbolPartNameAction::perform(bool to_undo) {
 	swap(part->name, partName);
 }
 
@@ -260,12 +260,12 @@ AddSymbolPartAction::AddSymbolPartAction(Symbol& symbol, const SymbolPartP& part
 	: symbol(symbol), part(part)
 {}
 
-String AddSymbolPartAction::getName(bool toUndo) const {
+String AddSymbolPartAction::getName(bool to_undo) const {
 	return _("Add ") + part->name;
 }
 
-void AddSymbolPartAction::perform(bool toUndo) {
-	if (toUndo) {
+void AddSymbolPartAction::perform(bool to_undo) {
+	if (to_undo) {
 		assert(!symbol.parts.empty());
 		symbol.parts.erase (symbol.parts.begin());
 	} else {
@@ -287,12 +287,12 @@ RemoveSymbolPartsAction::RemoveSymbolPartsAction(Symbol& symbol, const set<Symbo
 	}
 }
 
-String RemoveSymbolPartsAction::getName(bool toUndo) const {
+String RemoveSymbolPartsAction::getName(bool to_undo) const {
 	return removals.size() == 1 ? _("Remove shape") : _("Remove shapes");
 }
 
-void RemoveSymbolPartsAction::perform(bool toUndo) {
-	if (toUndo) {
+void RemoveSymbolPartsAction::perform(bool to_undo) {
+	if (to_undo) {
 		// reinsert the parts
 		// ascending order, this is the reverse of removal
 		FOR_EACH(r, removals) {
@@ -325,12 +325,12 @@ DuplicateSymbolPartsAction::DuplicateSymbolPartsAction(Symbol& symbol, const set
 	}
 }
 
-String DuplicateSymbolPartsAction::getName(bool toUndo) const {
+String DuplicateSymbolPartsAction::getName(bool to_undo) const {
 	return duplications.size() == 1 ? _("Duplicate shape") : _("Duplicate shapes");
 }
 
-void DuplicateSymbolPartsAction::perform(bool toUndo) {
-	if (toUndo) {
+void DuplicateSymbolPartsAction::perform(bool to_undo) {
+	if (to_undo) {
 		// remove the clones
 		// walk in reverse order, otherwise we will shift the vector
 		FOR_EACH_REVERSE(d, duplications) {
@@ -359,11 +359,11 @@ ReorderSymbolPartsAction::ReorderSymbolPartsAction(Symbol& symbol, size_t partId
 	: symbol(symbol), partId1(partId1), partId2(partId2)
 {}
 
-String ReorderSymbolPartsAction::getName(bool toUndo) const {
+String ReorderSymbolPartsAction::getName(bool to_undo) const {
 	return _("Reorder");
 }
 
-void ReorderSymbolPartsAction::perform(bool toUndo) {
+void ReorderSymbolPartsAction::perform(bool to_undo) {
 	assert(partId1 < symbol.parts.size());
 	assert(partId2 < symbol.parts.size());
 	swap(symbol.parts[partId1], symbol.parts[partId2]);

@@ -31,8 +31,8 @@ class ControlPointMoveAction : public Action {
   public:
 	ControlPointMoveAction(const set<ControlPointP>& points);
 	
-	virtual String getName(bool toUndo) const;
-	virtual void perform(bool toUndo);
+	virtual String getName(bool to_undo) const;
+	virtual void perform(bool to_undo);
 	
 	/// Update this action to move some more
 	void move(const Vector2D& delta);
@@ -52,16 +52,16 @@ class HandleMoveAction : public Action {
   public:
 	HandleMoveAction(const SelectedHandle& handle);
 	
-	virtual String getName(bool toUndo) const;
-	virtual void perform(bool toUndo);
+	virtual String getName(bool to_undo) const;
+	virtual void perform(bool to_undo);
 	
 	/// Update this action to move some more
 	void move(const Vector2D& delta);
 	
   private:
 	SelectedHandle handle;		///< The handle to move
-	Vector2D oldHandle;			///< Old value of this handle
-	Vector2D oldOther;			///< Old value of other handle, needed for contraints
+	Vector2D old_handle;		///< Old value of this handle
+	Vector2D old_other;			///< Old value of other handle, needed for contraints
 	Vector2D delta;				///< Amount we moved
   public:
 	bool constrain;				///< Constrain movement?
@@ -90,8 +90,8 @@ class SegmentModeAction : public Action {
   public:
 	SegmentModeAction(const ControlPointP& p1, const ControlPointP& p2, SegmentMode mode);
 	
-	virtual String getName(bool toUndo) const;
-	virtual void perform(bool toUndo);
+	virtual String getName(bool to_undo) const;
+	virtual void perform(bool to_undo);
 	
   protected:
 	ControlPointUpdate point1, point2;
@@ -104,8 +104,8 @@ class LockModeAction : public Action {
   public:
 	LockModeAction(const ControlPointP& p, LockMode mode);
 	
-	virtual String getName(bool toUndo) const;
-	virtual void perform(bool toUndo);
+	virtual String getName(bool to_undo) const;
+	virtual void perform(bool to_undo);
 	
   private:
 	ControlPointUpdate point;	///< The affected point
@@ -120,8 +120,8 @@ class CurveDragAction : public SegmentModeAction {
   public:
 	CurveDragAction(const ControlPointP& point1, const ControlPointP& point2);
 	
-	virtual String getName(bool toUndo) const;
-	virtual void perform(bool toUndo);
+	virtual String getName(bool to_undo) const;
+	virtual void perform(bool to_undo);
 		
 	// Move the curve by this much, it is grabbed at time t
 	void move(const Vector2D& delta, double t);
@@ -133,17 +133,17 @@ class CurveDragAction : public SegmentModeAction {
 class ControlPointAddAction : public Action {
   public:
 	/// Insert a new point in part, after position insertAfter_, at the time t on the segment
-	ControlPointAddAction(const SymbolPartP& part, UInt insertAfter, double t);
+	ControlPointAddAction(const SymbolPartP& part, UInt insert_after, double t);
 	
-	virtual String getName(bool toUndo) const;
-	virtual void perform(bool toUndo);
+	virtual String getName(bool to_undo) const;
+	virtual void perform(bool to_undo);
 	
-	inline ControlPointP getNewPoint() const { return newPoint; }
+	inline ControlPointP getNewPoint() const { return new_point; }
 	
   private:
 	SymbolPartP   part;					///< SymbolPart we are in
-	ControlPointP newPoint;				///< The point to insert
-	UInt          insertAfter;			///< Insert after index .. in the array
+	ControlPointP new_point;				///< The point to insert
+	UInt          insert_after;			///< Insert after index .. in the array
 	ControlPointUpdate point1, point2;	///< Update the points around the new point
 };
 

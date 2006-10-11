@@ -22,7 +22,7 @@ void clearDC(DC& dc, const wxBrush& brush) {
 
 // ----------------------------------------------------------------------------- : Image related
 
-Image loadResourceImage(String name) {
+Image load_resource_image(String name) {
 	#ifdef __WXMSW__
 		// Load resource
 		// based on wxLoadUserResource

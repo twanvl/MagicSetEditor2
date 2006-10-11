@@ -31,7 +31,7 @@ class SymbolPartList : public wxListCtrl, public SymbolView {
 	inline SymbolPartP getSelection() const { return getPart(selected); }
 	
 	/// Get a set of selected parts
-	void getSelectedParts(set<SymbolPartP>& sel);
+	void getselected_parts(set<SymbolPartP>& sel);
 	/// Select the specified parts, and nothing else
 	void selectParts(const set<SymbolPartP>& sel);
 	

@@ -23,17 +23,17 @@ class Action {
 	virtual ~Action() {};
 	
 	/// Name of the action, for use in strings like "Undo <name>"
-	virtual String getName(bool toUndo) const = 0;
+	virtual String getName(bool to_undo) const = 0;
 	
 	/// Perform the action
-	/** @param toUndo if true, undo the action instead of doing it
+	/** @param to_undo if true, undo the action instead of doing it
 	 *
 	 *  Must be implemented in derived class.
 	 *
-	 *  Perform will only ever be called alternatingly with toUndo = true/false,
-	 *  the first time with toUndo = false
+	 *  Perform will only ever be called alternatingly with to_undo = true/false,
+	 *  the first time with to_undo = false
 	 */
-	virtual void perform(bool toUndo) = 0;
+	virtual void perform(bool to_undo) = 0;
 	
 	/// Try to merge another action to the end of this action.
 	/** Either: return false and do nothing
@@ -103,12 +103,12 @@ class ActionStack {
   private:
 	/// Actions to be undone
 	/// Owns the action objects!
-	vector<Action*> undoActions;
+	vector<Action*> undo_actions;
 	/// Actions to be redone
 	/// Owns the action objects!
-	vector<Action*> redoActions;
+	vector<Action*> redo_actions;
 	/// Point at which the file was saved, corresponds to the top of the undo stack at that point
-	Action* savePoint;
+	Action* save_point;
 	/// Objects that are listening to actions
 	vector<ActionListener*> listeners;
 };

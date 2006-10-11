@@ -67,7 +67,7 @@ void deCasteljau(const Vector2D& a1, Vector2D& a21, Vector2D& a34, const Vector2
 /** Adds the resulting corner points of those lines to out, the last point is not added.
  *  All points are converted to display coordinates using rot.tr
  */
-void segmentSubdivide(const ControlPoint& p0, const ControlPoint& p1, const Rotation& rot, vector<wxPoint>& out);
+void segment_subdivide(const ControlPoint& p0, const ControlPoint& p1, const Rotation& rot, vector<wxPoint>& out);
 
 // ----------------------------------------------------------------------------- : Bounds
 
@@ -76,30 +76,30 @@ void segmentSubdivide(const ControlPoint& p0, const ControlPoint& p1, const Rota
  *  min is only changed if the minimum is smaller then the current value in min,
  *  max only if the maximum is larger.
  */
-void segmentBounds(const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max);
+void segment_bounds(const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max);
 
 /// Find a bounding box that fits a curve between p1 and p2, stores the results in min and max.
 /** min is only changed if the minimum is smaller then the current value in min,
  *  max only if the maximum is larger
  */
-void bezierBounds(const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max);
+void bezier_bounds(const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max);
 
 /// Find a bounding box that fits around p1 and p2, stores the result in min and max
 /** min is only changed if the minimum is smaller then the current value in min,
  *  max only if the maximum is larger
  */
-void lineBounds(const Vector2D& p1, const Vector2D& p2, Vector2D& min, Vector2D& max);
+void line_bounds(const Vector2D& p1, const Vector2D& p2, Vector2D& min, Vector2D& max);
 
 /// Find a bounding 'box' that fits around a single point
 /** min is only changed if the minimum is smaller then the current value in min,
  *  max only if the maximum is larger
  */
-void pointBounds(const Vector2D& p, Vector2D& min, Vector2D& max);
+void point_bounds(const Vector2D& p, Vector2D& min, Vector2D& max);
 
 // ----------------------------------------------------------------------------- : Point tests
 
 /// Is a point inside the given symbol part?
-bool pointInPart(const Vector2D& p, const SymbolPart& part);
+bool point_in_part(const Vector2D& p, const SymbolPart& part);
 
 // ----------------------------------------------------------------------------- : Finding points
 
@@ -107,24 +107,24 @@ bool pointInPart(const Vector2D& p, const SymbolPart& part);
 /// the line between p1 and p2 can also be a bezier curve
 /** Returns the time on the segment in tOut, and the point on the segment in pOut
  */
-bool posOnSegment(const Vector2D& pos, double range, const ControlPoint& p1, const ControlPoint& p2, Vector2D& pOut, double& tOut);
+bool pos_on_segment(const Vector2D& pos, double range, const ControlPoint& p1, const ControlPoint& p2, Vector2D& pOut, double& tOut);
 
 /// Finds the position of p0 on the line between p1 and p2, returns true if the point is on (or near)
 /// the bezier curve between p1 and p2
-bool posOnBezier (const Vector2D& pos, double range, const ControlPoint& p1, const ControlPoint& p2, Vector2D& pOut, double& tOut);
+bool pos_on_bezier (const Vector2D& pos, double range, const ControlPoint& p1, const ControlPoint& p2, Vector2D& pOut, double& tOut);
 
 /// Finds the position of p0 on the line p1-p2, returns true if the point is withing range of the line
 /// if that is the case then (x,y) = p1 + (p2-p1) * out
-bool posOnLine   (const Vector2D& pos, double range, const Vector2D& p1,     const Vector2D& p2,     Vector2D& pOut, double& tOut);
+bool pos_on_line   (const Vector2D& pos, double range, const Vector2D& p1,     const Vector2D& p2,     Vector2D& pOut, double& tOut);
 
 // ----------------------------------------------------------------------------- : Intersection
 
 /// Counts the number of intersections between the ray/halfline from (-inf, pos.y) to pos
 /// and the bezier curve between p1 and p2.
-UInt intersectBezierRay(const ControlPoint& p1, const ControlPoint& p2, const Vector2D& pos);
+UInt intersect_bezier_ray(const ControlPoint& p1, const ControlPoint& p2, const Vector2D& pos);
 
 // Does the line between p1 and p2 intersect the ray (half line) from (-inf, pos.y) to pos?
-bool intersectLineRay(const Vector2D& p1, const Vector2D& p2, const Vector2D& pos);
+bool intersect_line_ray(const Vector2D& p1, const Vector2D& p2, const Vector2D& pos);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

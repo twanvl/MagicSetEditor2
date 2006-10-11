@@ -50,13 +50,13 @@ void SymbolPointEditor::draw(DC& dc) {
 }
 
 void SymbolPointEditor::drawHoveredLine(DC& dc) {
-	BezierCurve c(*hoverLine1, *hoverLine2);
-	wxPoint prevPoint = control.rotation.tr(hoverLine1->pos);
+	BezierCurve c(*hover_line_1, *hover_line_2);
+	wxPoint prevPoint = control.rotation.tr(hover_line_1->pos);
 	for(int i = 1 ; i <= 100 ; ++i) {
 		// Draw 100 segments of the curve
 		double t = double(i)/100.0f;
 		wxPoint curPoint = control.rotation.tr(c.pointAt(t));
-		double selectPercent = 1.0 - 1.2 * sqrt(fabs(hoverLineT-t)); // amount to color
+		double selectPercent = 1.0 - 1.2 * sqrt(fabs(hover_line_t-t)); // amount to color
 		if (selectPercent > 0) {
 			// gradient color
 			Color color(
@@ -87,7 +87,7 @@ void SymbolPointEditor::drawHandles(DC& dc) {
 void SymbolPointEditor::drawNewPoint(DC& dc) {
 	dc.SetPen(*wxGREEN_PEN);
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
-	wxPoint p = control.rotation.tr(newPoint);
+	wxPoint p = control.rotation.tr(new_point);
 	drawHandleBox(dc, p.x, p.y, true);
 }
 
@@ -98,16 +98,16 @@ void SymbolPointEditor::drawControlPoint(DC& dc, const ControlPoint& p, bool dra
 	if (drawHandleBefore || drawHandleAfter) {
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		// Before handle
-		if (drawHandleBefore && p.segmentBefore == SEGMENT_CURVE) {
-			wxPoint p1 = control.rotation.tr(p.pos + p.deltaBefore);
+		if (drawHandleBefore && p.segment_before == SEGMENT_CURVE) {
+			wxPoint p1 = control.rotation.tr(p.pos + p.delta_before);
 			dc.SetPen(handlePen(PEN_LINE, p.lock));
 			dc.DrawLine(p0.x, p0.y, p1.x, p1.y);
 			dc.SetPen(handlePen(handleHovered(p, HANDLE_BEFORE) ? PEN_HOVER : PEN_NORMAL, p.lock));
 			drawHandleCircle(dc, p1.x, p1.y);
 		}
 		// After handle
-		if (drawHandleAfter && p.segmentAfter == SEGMENT_CURVE) {
-			wxPoint p1 = control.rotation.tr(p.pos + p.deltaAfter);
+		if (drawHandleAfter && p.segment_after == SEGMENT_CURVE) {
+			wxPoint p1 = control.rotation.tr(p.pos + p.delta_after);
 			dc.SetPen(handlePen(PEN_LINE, p.lock));
 			dc.DrawLine(p0.x, p0.y, p1.x, p1.y);
 			dc.SetPen(handlePen(handleHovered(p, HANDLE_AFTER) ? PEN_HOVER : PEN_NORMAL, p.lock));
@@ -186,9 +186,9 @@ void SymbolPointEditor::onUpdateUI(wxUpdateUIEvent& ev) {
 			break;
 		case ID_LOCK_FREE: case ID_LOCK_DIR: case ID_LOCK_SIZE:
 			enabled = selection == SELECTED_POINTS &&
-				        selectedPoints.size() == 1 &&
-				        (*selectedPoints.begin())->segmentBefore == SEGMENT_CURVE &&
-				        (*selectedPoints.begin())->segmentAfter  == SEGMENT_CURVE;
+				        selected_points.size() == 1 &&
+				        (*selected_points.begin())->segment_before == SEGMENT_CURVE &&
+				        (*selected_points.begin())->segment_after  == SEGMENT_CURVE;
 			break;
 		default:
 			ev.Enable(false); // we don't know this item
@@ -198,10 +198,10 @@ void SymbolPointEditor::onUpdateUI(wxUpdateUIEvent& ev) {
 	if (enabled) {
 		switch (ev.GetId()) {
 			case ID_SEGMENT_LINE: case ID_SEGMENT_CURVE:
-				checked = selectedLine1->segmentAfter == ev.GetId() - ID_SEGMENT;
+				checked = selected_line1->segment_after == ev.GetId() - ID_SEGMENT;
 				break;
 			case ID_LOCK_FREE: case ID_LOCK_DIR: case ID_LOCK_SIZE:
-				checked = (*selectedPoints.begin())->lock == ev.GetId() - ID_LOCK;
+				checked = (*selected_points.begin())->lock == ev.GetId() - ID_LOCK;
 				break;
 		}
 	}
@@ -248,17 +248,17 @@ void SymbolPointEditor::onLeftDClick(const Vector2D& pos, wxMouseEvent& ev) {
 	findHoveredItem(pos, false);
 	if (hovering == SELECTED_NEW_POINT) {
 		// Add point
-		ControlPointAddAction* act = new ControlPointAddAction(part, hoverLine1Idx, hoverLineT);
+		ControlPointAddAction* act = new ControlPointAddAction(part, hover_line_1_idx, hover_line_t);
 		getSymbol()->actions.add(act);
 		// select the new point
 		selectPoint(act->getNewPoint(), false);
 		selection = SELECTED_POINTS;
-	} else if (hovering == SELECTED_HANDLE && hoverHandle.handle == HANDLE_MAIN) { //%%%%%%% ||/&&
+	} else if (hovering == SELECTED_HANDLE && hover_handle.handle == HANDLE_MAIN) { //%%%%%%% ||/&&
 		// Delete point
-		selectedPoints.clear();
-		selectPoint(hoverHandle.point, false);
-		getSymbol()->actions.add(controlPointRemoveAction(part, selectedPoints));
-		selectedPoints.clear();
+		selected_points.clear();
+		selectPoint(hover_handle.point, false);
+		getSymbol()->actions.add(controlPointRemoveAction(part, selected_points));
+		selected_points.clear();
 		selection = SELECTED_NONE;
 	}
 	// refresh
@@ -278,27 +278,27 @@ void SymbolPointEditor::onMouseDrag(const Vector2D& from, const Vector2D& to, wx
 		// Drag the curve
 		if (controlPointMoveAction) controlPointMoveAction = 0;
 		if (!curveDragAction) {
-			curveDragAction = new CurveDragAction(selectedLine1, selectedLine2);
+			curveDragAction = new CurveDragAction(selected_line1, selected_line2);
 			getSymbol()->actions.add(curveDragAction);
 		}
-		curveDragAction->move(delta, selectedLineT);
+		curveDragAction->move(delta, selected_line_t);
 		control.Refresh(false);
 	} else if (selection == SELECTED_POINTS || selection == SELECTED_LINE) {
 		// Move all selected points
 		if (curveDragAction)  curveDragAction = 0;
 		if (!controlPointMoveAction) {
 			// create action we can add this movement to
-			controlPointMoveAction = new ControlPointMoveAction(selectedPoints);
+			controlPointMoveAction = new ControlPointMoveAction(selected_points);
 			getSymbol()->actions.add(controlPointMoveAction);
 		}
 		controlPointMoveAction->constrain = ev.ControlDown(); // ctrl constrains
 		controlPointMoveAction->move(delta);
-		newPoint += delta;
+		new_point += delta;
 		control.Refresh(false);
 	} else if (selection == SELECTED_HANDLE) {
 		// Move the selected handle
 		if (!handleMoveAction) {
-			handleMoveAction = new HandleMoveAction(selectedHandle);
+			handleMoveAction = new HandleMoveAction(selected_handle);
 			getSymbol()->actions.add(handleMoveAction);
 		}
 		handleMoveAction->constrain = ev.ControlDown(); // ctrl constrains
@@ -352,21 +352,21 @@ bool SymbolPointEditor::isEditing() {
 
 void SymbolPointEditor::selectNothing() {
 	selection = SELECTED_NONE;
-	selectedPoints.clear();
+	selected_points.clear();
 }
 
 void SymbolPointEditor::selectPoint(const ControlPointP& point, bool toggle) {
-	set<ControlPointP>::iterator inSet = selectedPoints.find(point);
+	set<ControlPointP>::iterator inSet = selected_points.find(point);
 	if (toggle) {
-		if (inSet == selectedPoints.end()) {
-			selectedPoints.insert(point);
+		if (inSet == selected_points.end()) {
+			selected_points.insert(point);
 		} else {
-			selectedPoints.erase(inSet);
+			selected_points.erase(inSet);
 		}
 	} else {
-		if (inSet == selectedPoints.end()) {
-			selectedPoints.clear();
-			selectedPoints.insert(point);
+		if (inSet == selected_points.end()) {
+			selected_points.clear();
+			selected_points.insert(point);
 		}
 	}
 }
@@ -377,26 +377,26 @@ void SymbolPointEditor::selectHandle(const SelectedHandle& h, const wxMouseEvent
 		selectPoint(h.point, keystate.ShiftDown());
 	} else {
 		selection = SELECTED_HANDLE;
-		selectedHandle = h;
+		selected_handle = h;
 	}
 }
 
 void SymbolPointEditor::selectLine(const wxMouseEvent& keystate) {
 	selection = SELECTED_LINE;
-	selectedLine1 = hoverLine1;
-	selectedLine2 = hoverLine2;
-	selectedLineT = hoverLineT;
-	if (!keystate.ShiftDown()) selectedPoints.clear();
-	selectPoint(selectedLine1, true);
-	selectPoint(selectedLine2, true);
+	selected_line1 = hover_line_1;
+	selected_line2 = hover_line_2;
+	selected_line_t = hover_line_t;
+	if (!keystate.ShiftDown()) selected_points.clear();
+	selectPoint(selected_line1, true);
+	selectPoint(selected_line2, true);
 }
 
 
 bool SymbolPointEditor::pointSelected(const ControlPointP& pnt) {
-	return selectedPoints.find(pnt) != selectedPoints.end();
+	return selected_points.find(pnt) != selected_points.end();
 }
 bool SymbolPointEditor::pointSelected(const ControlPoint& pnt) {
-	FOR_EACH(s, selectedPoints) {
+	FOR_EACH(s, selected_points) {
 		if (s.get() == &pnt) return true;
 	}
 	return false;
@@ -410,10 +410,10 @@ bool SymbolPointEditor::pointHovered(const ControlPoint&  pnt) {
 }
 
 bool SymbolPointEditor::handleHovered(const ControlPointP& pnt, WhichHandle wh) {
-	return hovering == SELECTED_HANDLE && hoverHandle.point == pnt && hoverHandle.handle == wh;
+	return hovering == SELECTED_HANDLE && hover_handle.point == pnt && hover_handle.handle == wh;
 }
 bool SymbolPointEditor::handleHovered(const ControlPoint&  pnt, WhichHandle wh) {
-	return hovering == SELECTED_HANDLE && hoverHandle.point && hoverHandle.point.get() == &pnt && hoverHandle.handle == wh;
+	return hovering == SELECTED_HANDLE && hover_handle.point && hover_handle.point.get() == &pnt && hover_handle.handle == wh;
 }
 
 
@@ -426,24 +426,24 @@ void SymbolPointEditor::resetActions() {
 }
 
 void SymbolPointEditor::deleteSelection() {
-	if (!selectedPoints.empty()) {
-		getSymbol()->actions.add(controlPointRemoveAction(part, selectedPoints));
-		selectedPoints.clear();
+	if (!selected_points.empty()) {
+		getSymbol()->actions.add(controlPointRemoveAction(part, selected_points));
+		selected_points.clear();
 		resetActions();
 		control.Refresh(false);
 	}
 }
 
 void SymbolPointEditor::onChangeSegment(SegmentMode mode) {
-	assert(selectedLine1);
-	assert(selectedLine2);
-	if (selectedLine1->segmentAfter == mode) return;
-	getSymbol()->actions.add(new SegmentModeAction(selectedLine1, selectedLine2, mode));
+	assert(selected_line1);
+	assert(selected_line2);
+	if (selected_line1->segment_after == mode) return;
+	getSymbol()->actions.add(new SegmentModeAction(selected_line1, selected_line2, mode));
 	control.Refresh(false);
 }
 
 void SymbolPointEditor::onChangeLock(LockMode mode) {
-	getSymbol()->actions.add(new LockModeAction(*selectedPoints.begin(), mode));
+	getSymbol()->actions.add(new LockModeAction(*selected_points.begin(), mode));
 	control.Refresh(false);
 }
 
@@ -452,9 +452,9 @@ void SymbolPointEditor::onChangeLock(LockMode mode) {
 
 void SymbolPointEditor::findHoveredItem(const Vector2D& pos, bool altDown) {
 	// is there a point currently under the cursor?
-	hoverHandle = findHandle(pos);
+	hover_handle = findHandle(pos);
 	// change cursor and statusbar if point is under it
-	if (hoverHandle.handle) {
+	if (hover_handle.handle) {
 		hovering = SELECTED_HANDLE;
 		control.SetCursor(pointMove);
 		SetStatusText(_("Click and drag to move control point"));
@@ -483,11 +483,11 @@ bool SymbolPointEditor::checkPosOnCurve(const Vector2D& pos) {
 	size_t size = part->points.size();
 	for(int i = 0 ; (size_t)i < size ; ++i) {
 		// Curve between these lines
-		hoverLine1 = part->getPoint(i);
-		hoverLine2 = part->getPoint(i + 1);
-		if (posOnSegment(pos, range, *hoverLine1, *hoverLine2, newPoint, hoverLineT)) {
+		hover_line_1 = part->getPoint(i);
+		hover_line_2 = part->getPoint(i + 1);
+		if (pos_on_segment(pos, range, *hover_line_1, *hover_line_2, new_point, hover_line_t)) {
 			// mouse is on this line
-			hoverLine1Idx = i;
+			hover_line_1_idx = i;
 			return true;
 		}
 	}
@@ -510,13 +510,13 @@ SelectedHandle SymbolPointEditor::findHandle(const Vector2D& pos) {
 		bool sel    = pointSelected(p);
 		bool before = sel || pointSelected(part->getPoint(i-1)); // are the handles visible?
 		bool after  = sel || pointSelected(part->getPoint(i+1));
-		if (before && p->segmentBefore == SEGMENT_CURVE) {
-			if (inRange(p->pos + p->deltaBefore, pos, range)) {
+		if (before && p->segment_before == SEGMENT_CURVE) {
+			if (inRange(p->pos + p->delta_before, pos, range)) {
 				return SelectedHandle(p, HANDLE_BEFORE);
 			}
 		}
-		if (after && p->segmentAfter == SEGMENT_CURVE) {
-			if (inRange(p->pos + p->deltaAfter, pos, range)) {
+		if (after && p->segment_after == SEGMENT_CURVE) {
+			if (inRange(p->pos + p->delta_after, pos, range)) {
 				return SelectedHandle(p, HANDLE_AFTER);
 			}
 		}

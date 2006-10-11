@@ -30,11 +30,11 @@ IMPLEMENT_REFLECTION(ColumnSettings) {
 }
 
 IMPLEMENT_REFLECTION(GameSettings) {
-	REFLECT_N("default style",        defaultStyle);
-	REFLECT_N("default export",       defaultExport);
+	REFLECT(default_style);
+	REFLECT(default_export);
 //	REFLECT_N("cardlist columns",     columns);
-	REFLECT_N("sort cards by",        sortCardsBy);
-	REFLECT_N("sort cards ascending", sortCardsAscending);
+	REFLECT(sort_cards_by);
+	REFLECT(sort_cards_ascending);
 }
 
 IMPLEMENT_REFLECTION(StyleSettings) {
@@ -46,12 +46,12 @@ IMPLEMENT_REFLECTION(StyleSettings) {
 Settings settings;
 
 Settings::Settings()
-	: setWindowMaximized (false)
-	, setWindowWidth     (790)
-	, setWindowHeight    (300)
-	, cardNotesHeight     (40)
-	, updatesUrl          (_("http://magicseteditor.sourceforge.net/updates"))
-	, checkUpdates        (CHECK_IF_CONNECTED)
+	: set_window_maximized (false)
+	, set_window_width     (790)
+	, set_window_height    (300)
+	, card_notes_height    (40)
+	, updates_url          (_("http://magicseteditor.sourceforge.net/updates"))
+	, check_updates        (CHECK_IF_CONNECTED)
 {}
 
 void Settings::addRecentFile(const String& filename) {
@@ -60,18 +60,18 @@ void Settings::addRecentFile(const String& filename) {
 	fn.Normalize();
 	String filenameAbs = fn.GetFullPath();
 	// remove duplicates
-	recentSets.erase(
-		remove(recentSets.begin(), recentSets.end(), filenameAbs),
-		recentSets.end()
+	recent_sets.erase(
+		remove(recent_sets.begin(), recent_sets.end(), filenameAbs),
+		recent_sets.end()
 	);
 	// add to front of list
-	recentSets.insert(recentSets.begin(), filenameAbs);
+	recent_sets.insert(recent_sets.begin(), filenameAbs);
 	// enforce size limit
-	if (recentSets.size() > maxRecentSets) recentSets.resize(maxRecentSets);
+	if (recent_sets.size() > max_recent_sets) recent_sets.resize(max_recent_sets);
 }
 
 GameSettings& Settings::gameSettingsFor(const Game& game) {
-	GameSettingsP& gs = settings.gameSettings[game.name()];
+	GameSettingsP& gs = settings.game_settings[game.name()];
 	if (!gs) gs.reset(new GameSettings);
 	return *gs;
 }
@@ -84,29 +84,29 @@ StyleSettings& Settings::styleSettingsFor(const CardStyle& style) {
 }
 */
 
-String userSettingsDir() {
+String user_settings_dir() {
 	return _(""); // TODO
 }
 
 String Settings::settingsFile() {
-//	return userSettingsDir() + _("mse.config");
-	return userSettingsDir() + _("mse8.config"); // use different file during development of C++ port
+//	return user_settings_dir() + _("mse.config");
+	return user_settings_dir() + _("mse8.config"); // use different file during development of C++ port
 }
 
 IMPLEMENT_REFLECTION(Settings) {
-//	ioMseVersion(io, "settings", fileVersion);
-	REFLECT_N("recent set",          recentSets);
-	REFLECT_N("window maximized",    setWindowMaximized);
-	REFLECT_N("window width",        setWindowWidth);
-	REFLECT_N("window height",       setWindowHeight);
-	REFLECT_N("card notes height",   cardNotesHeight);
-	REFLECT_N("default game",        defaultGame);
-	REFLECT_N("apprentice location", apprenticeLocation);
-	REFLECT_N("updates url",         updatesUrl);
-	REFLECT_N("check updates",       checkUpdates);
-//	ioAll(io, "game settings", gameSettings);
+//	ioMseVersion(io, "settings", file_version);
+	REFLECT_N("recent_set", recent_sets);
+	REFLECT(set_window_maximized);
+	REFLECT(set_window_width);
+	REFLECT(set_window_height);
+	REFLECT(card_notes_height);
+	REFLECT(default_game);
+	REFLECT(apprentice_location);
+	REFLECT(updates_url);
+	REFLECT(check_updates);
+//	ioAll(io, game_settings);
 //	ioStyleSettings(io);
-//	REFLECT_N("default style settings", defaultStyleSettings);
+//	REFLECT(default_style_settings);
 }
 
 void Settings::read() {

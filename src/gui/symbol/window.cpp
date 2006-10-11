@@ -218,7 +218,7 @@ void SymbolWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 void SymbolWindow::onSelectFromList(wxListEvent& ev) {
 	if (inSelectionEvent) return ;
 	inSelectionEvent = true;
-	parts->getSelectedParts(control->selectedParts);
+	parts->getselected_parts(control->selected_parts);
 	control->onUpdateSelection();
 	inSelectionEvent = false;
 }
@@ -229,7 +229,7 @@ void SymbolWindow::onActivateFromList(wxListEvent& ev) {
 void SymbolWindow::onSelectFromControl() {
 	if (inSelectionEvent) return ;
 	inSelectionEvent = true;
-	parts->selectParts(control->selectedParts);
+	parts->selectParts(control->selected_parts);
 	inSelectionEvent = false;
 }
 

@@ -99,23 +99,23 @@ class SymbolPointEditor : public SymbolEditorBase {
 	};
 	Selection          selection;
 	//   points
-	set<ControlPointP> selectedPoints;
+	set<ControlPointP> selected_points;
 	//   handle
-	SelectedHandle     selectedHandle;
+	SelectedHandle     selected_handle;
 	//   line
-	ControlPointP      selectedLine1, selectedLine2; // selected the line between these points
-	double             selectedLineT;                // time on the line of the selection
+	ControlPointP      selected_line1, selected_line2; // selected the line between these points
+	double             selected_line_t;                // time on the line of the selection
 	
 	// Mouse feedback
 	Selection      hovering;
 	//   handle
-	SelectedHandle hoverHandle; // the handle currently under the cursor
+	SelectedHandle hover_handle; // the handle currently under the cursor
 	//   new point
-	Vector2D       newPoint;
+	Vector2D       new_point;
 	//   line
-	ControlPointP  hoverLine1, hoverLine2; // hovering on the line between these points
-	double         hoverLineT;
-	int            hoverLine1Idx; // index of hoverLine1 in the list of points
+	ControlPointP  hover_line_1, hover_line_2; // hovering on the line between these points
+	double         hover_line_t;
+	int            hover_line_1_idx; // index of hover_line_1 in the list of points
 	
 	// Gui stock
 	wxBitmap background;

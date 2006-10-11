@@ -52,7 +52,7 @@ String trim(const String& s){
 	}
 }
 
-String trimLeft(const String& s) {
+String trim_left(const String& s) {
 	size_t start = s.find_first_not_of(_(' '));
 	if (start == String::npos) {
 		return String();
@@ -63,7 +63,7 @@ String trimLeft(const String& s) {
 
 // ----------------------------------------------------------------------------- : Words
 
-String lastWord(const String& s) {
+String last_word(const String& s) {
 	size_t endLastWord   = s.find_last_not_of(_(' '));
 	size_t startLastWord = s.find_last_of(    _(' '), endLastWord);
 	if (endLastWord == String::npos) {
@@ -75,7 +75,7 @@ String lastWord(const String& s) {
 	}
 }
 
-String stripLastWord(const String& s) {
+String strip_last_word(const String& s) {
 	size_t endLastWord   = s.find_last_not_of(_(' '));
 	size_t startLastWord = s.find_last_of(_(' '), endLastWord);
 	if (endLastWord == String::npos || startLastWord == String::npos) {
@@ -115,4 +115,21 @@ String capitalize(const String& s) {
 		}
 	}
 	return result;
+}
+
+String cannocial_name_form(const String& str) {
+	String ret;
+	ret.reserve(str.size());
+	bool leading = true;
+	FOR_EACH_CONST(c, str) {
+		if ((c == _('_') || c == _(' ')) && !leading) {
+			ret += _('_');
+		} else if (isAlnum(c)) {
+			ret += toLower(c);
+			leading = false;
+		} else {
+			// ignore non alpha numeric
+		}
+	}
+	return ret;
 }

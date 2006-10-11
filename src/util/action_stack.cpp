@@ -16,77 +16,77 @@ DECLARE_TYPEOF_COLLECTION(Action*);
 DECLARE_TYPEOF_COLLECTION(ActionListener*);
 
 ActionStack::ActionStack()
-	: savePoint(nullptr)
+	: save_point(nullptr)
 {}
 
 ActionStack::~ActionStack() {
 	// we own the actions, delete them
-	FOR_EACH(a, undoActions) delete a;
-	FOR_EACH(a, redoActions) delete a;
+	FOR_EACH(a, undo_actions) delete a;
+	FOR_EACH(a, redo_actions) delete a;
 }
 
-void ActionStack::add(Action* action, bool allowMerge) {
+void ActionStack::add(Action* action, bool allow_merge) {
 	if (!action) return; // no action
 	action->perform(false); // TODO: delete action if perform throws
-	redoActions.clear();
+	redo_actions.clear();
 	tellListeners(*action);
 	// try to merge?
-	if (allowMerge && !undoActions.empty() && undoActions.back()->merge(action)) {
+	if (allow_merge && !undo_actions.empty() && undo_actions.back()->merge(action)) {
 		// merged with top undo action
 		delete action;
 	} else {
-		undoActions.push_back(action);
+		undo_actions.push_back(action);
 	}
 }
 
 void ActionStack::undo() {
 	assert(canUndo());
-	Action* action = undoActions.back();
+	Action* action = undo_actions.back();
 	action->perform(true);
 	// move to redo stack
-	undoActions.pop_back();
-	redoActions.push_back(action);
+	undo_actions.pop_back();
+	redo_actions.push_back(action);
 }
 void ActionStack::redo() {
 	assert(canRedo());
-	Action* action = redoActions.back();
+	Action* action = redo_actions.back();
 	action->perform(false);
 	// move to undo stack
-	redoActions.pop_back();
-	undoActions.push_back(action);
+	redo_actions.pop_back();
+	undo_actions.push_back(action);
 }
 
 bool ActionStack::canUndo() const {
-	return !undoActions.empty();
+	return !undo_actions.empty();
 }
 bool ActionStack::canRedo() const {
-	return !redoActions.empty();
+	return !redo_actions.empty();
 }
 
 String ActionStack::undoName() const {
 	if (canUndo()) {
-		return _("Undo ") + capitalize(undoActions.back()->getName(true));
+		return _("Undo ") + capitalize(undo_actions.back()->getName(true));
 	} else {
 		return _("Undo");
 	}
 }
 String ActionStack::redoName() const {
 	if (canRedo()) {
-		return _("Redo ") + capitalize(redoActions.back()->getName(false));
+		return _("Redo ") + capitalize(redo_actions.back()->getName(false));
 	} else {
 		return _("Redo");
 	}
 }
 
 bool ActionStack::atSavePoint() const {
-	return (undoActions.empty() && savePoint == nullptr)
-	    || (undoActions.back() == savePoint);
+	return (undo_actions.empty() && save_point == nullptr)
+	    || (undo_actions.back() == save_point);
 }
 void ActionStack::setSavePoint() {
-	if (undoActions.empty()) {
-		savePoint = nullptr;
+	if (undo_actions.empty()) {
+		save_point = nullptr;
 	} else {
-		savePoint = undoActions.back();
+		save_point = undo_actions.back();
 	}
 }
 

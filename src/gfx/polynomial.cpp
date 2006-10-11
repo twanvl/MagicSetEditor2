@@ -11,7 +11,7 @@
 
 // ----------------------------------------------------------------------------- : Solving
 
-UInt solveLinear(double a, double b, double* root) {
+UInt solve_linear(double a, double b, double* root) {
 	if (a == 0) {
 		if (b == 0) {
 			root[0] = 0;
@@ -25,9 +25,9 @@ UInt solveLinear(double a, double b, double* root) {
 	}
 }
 
-UInt solveQuadratic(double a, double b, double c, double* roots) {
+UInt solve_quadratic(double a, double b, double c, double* roots) {
 	if (a == 0) {
-		return solveLinear(b, c, roots);
+		return solve_linear(b, c, roots);
 	} else {
 		double d = b*b - 4*a*c;
 		if (d < 0)  return 0;
@@ -37,11 +37,11 @@ UInt solveQuadratic(double a, double b, double c, double* roots) {
 	}
 }
 
-UInt solveCubic(double a, double b, double c, double d, double* roots) {
+UInt solve_cubic(double a, double b, double c, double d, double* roots) {
 	if (a == 0) {
-		return solveQuadratic(b, c, d, roots);
+		return solve_quadratic(b, c, d, roots);
 	} else {
-		return solveCubic(b/a, c/a, d/a, roots);
+		return solve_cubic(b/a, c/a, d/a, roots);
 	}
 }
 
@@ -49,7 +49,7 @@ UInt solveCubic(double a, double b, double c, double d, double* roots) {
 template <typename T>
 inline T curt(T x) { return pow(x, 1.0 / 3); }
 
-UInt solveCubic(double a, double b, double c, double* roots) {
+UInt solve_cubic(double a, double b, double c, double* roots) {
 	double p = b - a*a / 3;
 	double q = c + (2 * a*a*a - 9 * a * b) / 27;
 	if (p == 0 && q == 0) {

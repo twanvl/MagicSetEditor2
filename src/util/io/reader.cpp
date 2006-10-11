@@ -13,19 +13,19 @@
 // ----------------------------------------------------------------------------- : Reader
 
 Reader::Reader(const InputStreamP& input, String filename)
-	: input(input), filename(filename), lineNumber(0)
-	, indent(0), expectedIndent(0), justOpened(false)
+	: input(input), filename(filename), line_number(0)
+	, indent(0), expected_indent(0), just_opened(false)
 	, stream(*input)
 {
 	moveNext();
 }
 
 bool Reader::enterBlock(const Char* name) {
-	if (justOpened) moveNext(); // on the key of the parent block, first move inside it
-	if (indent != expectedIndent) return false; // not enough indentation
+	if (just_opened) moveNext(); // on the key of the parent block, first move inside it
+	if (indent != expected_indent) return false; // not enough indentation
 	if (name == key) {
-		justOpened = true;
-		expectedIndent += 1; // the indent inside the block must be at least this much
+		just_opened = true;
+		expected_indent += 1; // the indent inside the block must be at least this much
 		return true;
 	} else {
 		return false;
@@ -33,21 +33,21 @@ bool Reader::enterBlock(const Char* name) {
 }
 
 void Reader::exitBlock() {
-	assert(expectedIndent > 0);
-	expectedIndent -= 1;
-	multiLineStr.clear();
-	if (justOpened) moveNext(); // leave this key
+	assert(expected_indent > 0);
+	expected_indent -= 1;
+	multi_line_str.clear();
+	if (just_opened) moveNext(); // leave this key
 	// Dump the remainder of the block
 	// TODO: issue warnings?
-	while (indent > expectedIndent) {
+	while (indent > expected_indent) {
 		moveNext();
 	}
 }
 
 void Reader::moveNext() {
-	justOpened = false;
+	just_opened = false;
 	key.clear();
-	multiLineStr.clear();
+	multi_line_str.clear();
 	indent = -1; // if no line is read it never has the expected indentation
 	// repeat until we have a good line
 	while (key.empty() && !input->Eof()) {
@@ -55,7 +55,7 @@ void Reader::moveNext() {
 	}
 	// did we reach the end of the file?
 	if (key.empty() && input->Eof()) {
-		lineNumber += 1;
+		line_number += 1;
 		indent = -1;
 	}
 }
@@ -70,10 +70,10 @@ void Reader::readLine() {
 	}
 	// read key / value
 	size_t pos = line.find_first_of(_(':'), indent);
-	key   = trim(line.substr(indent, pos - indent));
-	value = pos == String::npos ? _("") : trimLeft(line.substr(pos+1));
+	key   = cannocial_name_form(trim(line.substr(indent, pos - indent)));
+	value = pos == String::npos ? _("") : trim_left(line.substr(pos+1));
 	// we read a line
-	lineNumber += 1;
+	line_number += 1;
 	// was it a comment?
 	if (!key.empty() && key.GetChar(0) == _('#')) {
 		key.clear();
@@ -83,25 +83,25 @@ void Reader::readLine() {
 // ----------------------------------------------------------------------------- : Handling basic types
 
 template <> void Reader::handle(String& s) {
-	if (!multiLineStr.empty()) {
-		s = multiLineStr;
+	if (!multi_line_str.empty()) {
+		s = multi_line_str;
 	} else if (value.empty()) {
 		// a multiline string
 		bool first = true;
 		// read all lines that are indented enough
 		readLine();
-		while (indent >= expectedIndent) {
+		while (indent >= expected_indent) {
 			if (!first) value += '\n';
 			first = false;
-			multiLineStr += line.substr(expectedIndent); // strip expected indent
+			multi_line_str += line.substr(expected_indent); // strip expected indent
 			readLine();
 		}
 		// moveNext(), but without emptying multiLineStr
-		justOpened = false;
+		just_opened = false;
 		while (key.empty() && !input->Eof()) {
 			readLine();
 		}
-		s = multiLineStr;
+		s = multi_line_str;
 	} else {
 		s = value;
 	}

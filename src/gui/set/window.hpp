@@ -41,14 +41,14 @@ class SetWindow : public wxFrame, public SetView {
 	
 	// gui items
 	vector<SetWindowPanel*> panels;        ///< All panels on this window
-	SetWindowPanel*         currentPanel;
+	SetWindowPanel*         current_panel;
 	
 	/// Number of items in the recent sets list
-	size_t numberOfRecentSets;
+	size_t number_of_recentSets;
 	
 	// data for find/replace
-	wxDialog* findDialog;
-	wxFindReplaceData findData;
+	wxDialog* find_dialog;
+	wxFindReplaceData find_data;
 	
 	// --------------------------------------------------- : Panel managment
 	

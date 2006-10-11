@@ -23,7 +23,7 @@ void clearDC(DC& dc, const wxBrush& brush = *wxBLACK_BRUSH);
 // ----------------------------------------------------------------------------- : Resource related
 
 /// Load an image from a resource
-Image loadResourceImage(String name);
+Image load_resource_image(String name);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

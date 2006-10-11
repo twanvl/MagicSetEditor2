@@ -22,11 +22,11 @@ Card::Card() {
 	if (!game_for_new_cards()) {
 		throw InternalError(_("game_for_new_cards not set"));
 	}
-	data.init(game_for_new_cards()->cardFields);
+	data.init(game_for_new_cards()->card_fields);
 }
 
 Card::Card(const Game& game) {
-	data.init(game.cardFields);
+	data.init(game.card_fields);
 }
 
 String Card::identification() const {

@@ -27,30 +27,30 @@ IMPLEMENT_REFLECTION_ENUM(SegmentMode) {
 IMPLEMENT_REFLECTION(ControlPoint) {
 	REFLECT_N("position",      pos);
 	REFLECT_N("lock",          lock);
-	REFLECT_N("line after",    segmentAfter);
-	if (tag.reading() || segmentBefore == SEGMENT_CURVE) {
-		REFLECT_N("handle before", deltaBefore);
+	REFLECT_N("line_after",    segment_after);
+	if (tag.reading() || segment_before == SEGMENT_CURVE) {
+		REFLECT_N("handle_before", delta_before);
 	}
-	if (tag.reading() || segmentAfter  == SEGMENT_CURVE) {
-		REFLECT_N("handle after",  deltaAfter);
+	if (tag.reading() || segment_after  == SEGMENT_CURVE) {
+		REFLECT_N("handle_after",  delta_after);
 	}
 }
 
 ControlPoint::ControlPoint()
-	: segmentBefore(SEGMENT_LINE), segmentAfter(SEGMENT_LINE)
+	: segment_before(SEGMENT_LINE), segment_after(SEGMENT_LINE)
 	, lock(LOCK_FREE)
 {}
 ControlPoint::ControlPoint(double x, double y)
-	: segmentBefore(SEGMENT_LINE), segmentAfter(SEGMENT_LINE)
+	: segment_before(SEGMENT_LINE), segment_after(SEGMENT_LINE)
 	, lock(LOCK_FREE)
 	, pos(x,y)
 {}
 ControlPoint::ControlPoint(double x, double y, double xb, double yb, double xa, double ya, LockMode lock)
-	: segmentBefore(SEGMENT_CURVE), segmentAfter(SEGMENT_CURVE)
+	: segment_before(SEGMENT_CURVE), segment_after(SEGMENT_CURVE)
 	, lock(lock)
 	, pos(x,y)
-	, deltaBefore(xb,yb)
-	, deltaAfter(xa,ya)
+	, delta_before(xb,yb)
+	, delta_after(xa,ya)
 {}
 
 void ControlPoint::onUpdateHandle(WhichHandle wh) {
@@ -64,31 +64,31 @@ void ControlPoint::onUpdateHandle(WhichHandle wh) {
 void ControlPoint::onUpdateLock() {
 	// The lock has changed, avarage the handle values
 	if (lock == LOCK_DIR) {
-		// deltaBefore = x * deltaAfter
-		Vector2D dir = (deltaBefore - deltaAfter).normalized();
-		deltaBefore = dir * deltaBefore.length();
-		deltaAfter  = dir * -deltaAfter.length();
+		// delta_before = x * delta_after
+		Vector2D dir = (delta_before - delta_after).normalized();
+		delta_before = dir * delta_before.length();
+		delta_after  = dir * -delta_after.length();
 	} else if (lock == LOCK_SIZE) {
-		// deltaBefore = -deltaAfter
-		deltaBefore = (deltaBefore - deltaAfter) * 0.5;
-		deltaAfter  = -deltaBefore;
+		// delta_before = -delta_after
+		delta_before = (delta_before - delta_after) * 0.5;
+		delta_after  = -delta_before;
 	}
 }
 
 Vector2D& ControlPoint::getHandle(WhichHandle wh) {
 	if (wh == HANDLE_BEFORE) {
-		return deltaBefore;
+		return delta_before;
 	} else {
 		assert(wh == HANDLE_AFTER);
-		return deltaAfter;
+		return delta_after;
 	}
 }
 Vector2D& ControlPoint::getOther(WhichHandle wh) {
 	if (wh == HANDLE_BEFORE) {
-		return deltaAfter;
+		return delta_after;
 	} else {
 		assert(wh == HANDLE_AFTER);
-		return deltaBefore;
+		return delta_before;
 	}
 }
 
@@ -112,13 +112,13 @@ IMPLEMENT_REFLECTION(SymbolPart) {
 		// enforce constraints
 		enforceConstraints();
 		calculateBounds();
-		if (maxPos.x > 100 && maxPos.y > 100) {
+		if (max_pos.x > 100 && max_pos.y > 100) {
 			// this is a <= 0.1.2 symbol, points range [0...500] instead of [0...1]
 			// adjust it
 			FOR_EACH(p, points) {
-				p->pos         /= 500.0;
-				p->deltaBefore /= 500.0;
-				p->deltaAfter  /= 500.0;
+				p->pos          /= 500.0;
+				p->delta_before /= 500.0;
+				p->delta_after  /= 500.0;
 			}
 			if (name.empty()) name = _("Shape");
 			calculateBounds();
@@ -127,7 +127,7 @@ IMPLEMENT_REFLECTION(SymbolPart) {
 }
 
 SymbolPart::SymbolPart()
-	: combine(PART_OVERLAP), rotationCenter(.5, .5)
+	: combine(PART_OVERLAP), rotation_center(.5, .5)
 {}
 
 SymbolPartP SymbolPart::clone() const {
@@ -143,16 +143,16 @@ void SymbolPart::enforceConstraints() {
 	for (int i = 0 ; i < (int)points.size() ; ++i) {
 		ControlPointP p1 = getPoint(i);
 		ControlPointP p2 = getPoint(i + 1);
-		p2->segmentBefore = p1->segmentAfter;
+		p2->segment_before = p1->segment_after;
 		p1->onUpdateLock();
 	}
 }
 
 void SymbolPart::calculateBounds() {
-	minPos =  Vector2D::infinity();
-	maxPos = -Vector2D::infinity();
+	min_pos =  Vector2D::infinity();
+	max_pos = -Vector2D::infinity();
 	for (int i = 0 ; i < (int)points.size() ; ++i) {
-		segmentBounds(*getPoint(i), *getPoint(i + 1), minPos, maxPos);
+		segment_bounds(*getPoint(i), *getPoint(i + 1), min_pos, max_pos);
 	}
 }
 

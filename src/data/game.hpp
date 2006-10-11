@@ -19,10 +19,10 @@ DECLARE_POINTER_TYPE(Game);
 
 class Game : public Packaged {
   public:
-	String fullName;
-	String iconFilename;
-	vector<FieldP> setFields;
-	vector<FieldP> cardFields;
+	String full_name;
+	String icon_filename;
+	vector<FieldP> set_fields;
+	vector<FieldP> card_fields;
 	
 	/// Loads the game with a particular name, for example "magic"
 	static GameP byName(const String& name);

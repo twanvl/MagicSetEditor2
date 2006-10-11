@@ -63,8 +63,8 @@ class TokenIterator {
   private:
 	String input;
 	size_t pos;
-	vector<Token> buffer;     // buffer of unread tokens, front() = current
-	stack<bool>   openBraces; // braces we entered, true if the brace was from a smart string escape
+	vector<Token> buffer;      // buffer of unread tokens, front() = current
+	stack<bool>   open_braces; // braces we entered, true if the brace was from a smart string escape
 	/// Read the next token, and add it to the buffer
 	void addToken();
 	/// Read the next token which is a string (after the opening ")
@@ -125,7 +125,7 @@ void TokenIterator::addToken() {
 		// name
 		size_t start = pos - 1;
 		while (pos < input.size() && isAlnum_(input.GetChar(pos))) ++pos;
-		Token t = {TOK_NAME, cannocialNameForm(input.substr(start, pos-start)) }; // convert name to cannocial form
+		Token t = {TOK_NAME, cannocial_name_form(input.substr(start, pos-start)) }; // convert name to cannocial form
 		buffer.push_back(t);
 	} else if (isDigit(c)) {
 		// number
@@ -151,21 +151,21 @@ void TokenIterator::addToken() {
 	} else if (c==_('"')) {
 		// string
 		addStringToken();
-	} else if (c == _('}') && !openBraces.empty() && openBraces.top()) {
+	} else if (c == _('}') && !open_braces.empty() && open_braces.top()) {
 		// closing smart string, resume to string parsing
 		//   "a{e}b"  -->  "a"  "{  e  }"  "b"
-		openBraces.pop();
+		open_braces.pop();
 		Token t2 = {TOK_RPAREN, _("}\"")};
 		buffer.push_back(t2);
 		addStringToken();
 	} else if (isLparen(c)) {
 		// paranthesis/brace
-		openBraces.push(false);
+		open_braces.push(false);
 		Token t = { TOK_LPAREN, String(1,c) };
 		buffer.push_back(t);
 	} else if (isRparen(c)) {
 		// paranthesis/brace
-		if (!openBraces.empty()) openBraces.pop();
+		if (!open_braces.empty()) open_braces.pop();
 		Token t = { TOK_RPAREN, String(1,c) };
 		buffer.push_back(t);
 	} else if(c==_('#')) {
@@ -197,7 +197,7 @@ void TokenIterator::addStringToken() {
 			// smart string
 			//   "a{e}b"  -->  "a"  "{  e  }"  "b"
 			buffer.push_back(t);
-			openBraces.push(true);
+			open_braces.push(true);
 			Token t2 = {TOK_LPAREN, _("\"{")};
 			buffer.push_back(t2);
 			return;

@@ -25,15 +25,15 @@ SymbolSelectEditor::SymbolSelectEditor(SymbolControl* control, bool rotate)
 	, cursorShearY(_("CUR_SHEAR_Y"), wxBITMAP_TYPE_CUR_RESOURCE)
 {
 	// Load resource images
-	Image rot = loadResourceImage(_("HANDLE_ROTATE"));
+	Image rot = load_resource_image(_("HANDLE_ROTATE"));
 	handleRotateTL = wxBitmap(rot);
-	handleRotateTR = wxBitmap(rotateImageBy(rot,90));
-	handleRotateBR = wxBitmap(rotateImageBy(rot,180));
-	handleRotateBL = wxBitmap(rotateImageBy(rot,270));
-	Image shear = loadResourceImage(_("HANDLE_SHEAR_X"));
+	handleRotateTR = wxBitmap(rotate_image(rot,90));
+	handleRotateBR = wxBitmap(rotate_image(rot,180));
+	handleRotateBL = wxBitmap(rotate_image(rot,270));
+	Image shear = load_resource_image(_("HANDLE_SHEAR_X"));
 	handleShearX = wxBitmap(shear);
-	handleShearY = wxBitmap(rotateImageBy(shear,90));
-	handleCenter = wxBitmap(loadResourceImage(_("HANDLE_CENTER")));
+	handleShearY = wxBitmap(rotate_image(shear,90));
+	handleCenter = wxBitmap(load_resource_image(_("HANDLE_CENTER")));
 	// Make sure all parts have updated bounds
 	FOR_EACH(p, getSymbol()->parts) {
 		p->calculateBounds();
@@ -45,7 +45,7 @@ SymbolSelectEditor::SymbolSelectEditor(SymbolControl* control, bool rotate)
 
 void SymbolSelectEditor::draw(DC& dc) {
 	// highlight selected parts
-	FOR_EACH(p, control.selectedParts) {
+	FOR_EACH(p, control.selected_parts) {
 		control.highlightPart(dc, *p, HIGHLIGHT_INTERIOR);
 	}
 	// highlight the part under the cursor
@@ -57,7 +57,7 @@ void SymbolSelectEditor::draw(DC& dc) {
 }
 
 void SymbolSelectEditor::drawHandles(DC& dc) {
-	if (control.selectedParts.empty())  return;
+	if (control.selected_parts.empty())  return;
 	if (rotateAction) return; // not when rotating
 	updateBoundingBox();
 	// Draw handles on all sides
@@ -107,12 +107,12 @@ void SymbolSelectEditor::drawRotationCenter(DC& dc, const Vector2D& pos) {
 
 void SymbolSelectEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->AddSeparator();
-	tb->AddTool(ID_PART_MERGE,			_("Merge"),		loadResourceImage(_("COMBINE_OR")),			wxNullBitmap, wxITEM_CHECK, _("Merge with shapes below"),			_("Merges this shape with those below it"));
-	tb->AddTool(ID_PART_SUBTRACT,		_("Subtract"),	loadResourceImage(_("COMBINE_SUB_DARK")),	wxNullBitmap, wxITEM_CHECK, _("Subtract from shapes below"),		_("Subtracts this shape from shapes below it, leaves only the area in that shape that is not in this shape"));
-	tb->AddTool(ID_PART_INTERSECTION,	_("Intersect"),	loadResourceImage(_("COMBINE_AND_DARK")),	wxNullBitmap, wxITEM_CHECK, _("Intersect with shapes below"),		_("Intersects this shape with shapes below it, leaves only the area in both shapes"));
+	tb->AddTool(ID_PART_MERGE,			_("Merge"),		load_resource_image(_("COMBINE_OR")),		wxNullBitmap, wxITEM_CHECK, _("Merge with shapes below"),			_("Merges this shape with those below it"));
+	tb->AddTool(ID_PART_SUBTRACT,		_("Subtract"),	load_resource_image(_("COMBINE_SUB_DARK")),	wxNullBitmap, wxITEM_CHECK, _("Subtract from shapes below"),		_("Subtracts this shape from shapes below it, leaves only the area in that shape that is not in this shape"));
+	tb->AddTool(ID_PART_INTERSECTION,	_("Intersect"),	load_resource_image(_("COMBINE_AND_DARK")),	wxNullBitmap, wxITEM_CHECK, _("Intersect with shapes below"),		_("Intersects this shape with shapes below it, leaves only the area in both shapes"));
 	// note: difference doesn't work (yet)
-	tb->AddTool(ID_PART_OVERLAP,		_("Overlap"),	loadResourceImage(_("COMBINE_OVER")),		wxNullBitmap, wxITEM_CHECK, _("Place above other shapes"),			_("Place this shape, and its border above shapes below it"));
-	tb->AddTool(ID_PART_BORDER,			_("Border"),	loadResourceImage(_("COMBINE_BORDER")),		wxNullBitmap, wxITEM_CHECK, _("Draw as a border"),					_("Draws this shape as a border"));
+	tb->AddTool(ID_PART_OVERLAP,		_("Overlap"),	load_resource_image(_("COMBINE_OVER")),		wxNullBitmap, wxITEM_CHECK, _("Place above other shapes"),			_("Place this shape, and its border above shapes below it"));
+	tb->AddTool(ID_PART_BORDER,			_("Border"),	load_resource_image(_("COMBINE_BORDER")),	wxNullBitmap, wxITEM_CHECK, _("Draw as a border"),					_("Draws this shape as a border"));
 	tb->Realize();
 }
 void SymbolSelectEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
@@ -127,13 +127,13 @@ void SymbolSelectEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 
 void SymbolSelectEditor::onUpdateUI(wxUpdateUIEvent& ev) {
 	if (ev.GetId() >= ID_PART && ev.GetId() < ID_PART_MAX) {
-		if (control.selectedParts.empty()) {
+		if (control.selected_parts.empty()) {
 			ev.Check(false);
 			ev.Enable(false);
 		} else {
 			ev.Enable(true);
 			bool check = true;
-			FOR_EACH(p, control.selectedParts) {
+			FOR_EACH(p, control.selected_parts) {
 				if (p->combine != ev.GetId() - ID_PART) {
 					check = false;
 					break;
@@ -142,7 +142,7 @@ void SymbolSelectEditor::onUpdateUI(wxUpdateUIEvent& ev) {
 			ev.Check(check);
 		}
 	} else if (ev.GetId() == ID_EDIT_DUPLICATE) {
-		ev.Enable(!control.selectedParts.empty());
+		ev.Enable(!control.selected_parts.empty());
 	} else {
 		ev.Enable(false); // we don't know about this item
 	}
@@ -152,14 +152,14 @@ void SymbolSelectEditor::onCommand(int id) {
 	if (id >= ID_PART && id < ID_PART_MAX) {
 		// change combine mode
 		getSymbol()->actions.add(new CombiningModeAction(
-				control.selectedParts,
+				control.selected_parts,
 				static_cast<SymbolPartCombine>(id - ID_PART)
 			));
 		control.Refresh(false);
 	} else if (id == ID_EDIT_DUPLICATE && !isEditing()) {
 		// duplicate selection, not when dragging
 		DuplicateSymbolPartsAction* action = new DuplicateSymbolPartsAction(
-				*getSymbol(), control.selectedParts
+				*getSymbol(), control.selected_parts
 			);
 		getSymbol()->actions.add(action);
 		control.Refresh(false);
@@ -189,26 +189,26 @@ void SymbolSelectEditor::onLeftUp    (const Vector2D& pos, wxMouseEvent& ev) {
 		if (part) {
 			if (ev.ShiftDown()) {
 				// toggle selection
-				set<SymbolPartP>::iterator it = control.selectedParts.find(part);
-				if (it != control.selectedParts.end()) {
-					control.selectedParts.erase(it);
+				set<SymbolPartP>::iterator it = control.selected_parts.find(part);
+				if (it != control.selected_parts.end()) {
+					control.selected_parts.erase(it);
 				} else {
-					control.selectedParts.insert(part);
+					control.selected_parts.insert(part);
 				}
 			} else {
-				if (control.selectedParts.find(part) != control.selectedParts.end()) {
+				if (control.selected_parts.find(part) != control.selected_parts.end()) {
 					// already selected, don't change selection
 					// instead switch between rotate and resize mode
 					rotate = !rotate;
 				} else {
 					// select the part under the cursor
-					control.selectedParts.clear();
-					control.selectedParts.insert(part);
+					control.selected_parts.clear();
+					control.selected_parts.insert(part);
 				}
 			}
 		} else if (!ev.ShiftDown()) {
 			// select nothing
-			control.selectedParts.clear();
+			control.selected_parts.clear();
 		}
 		// selection has changed
 		updateBoundingBox();
@@ -230,20 +230,20 @@ void SymbolSelectEditor::onMouseMove  (const Vector2D& from, const Vector2D& to,
 	highlightPart = findPart(to);
 	// are we on a handle?
 	int dx, dy;
-	if (!control.selectedParts.empty() && onAnyHandle(to, &dx, &dy)) {
+	if (!control.selected_parts.empty() && onAnyHandle(to, &dx, &dy)) {
 		// we are on a handle, don't highlight
 		highlightPart = SymbolPartP();
 		if (rotate) {
 			// shear or rotating?
 			if (dx == 0 || dy == 0) {
-				SetStatusText(String(_("Drag to shear selected shape")) + (control.selectedParts.size() > 1 ? _("s") : _("")));
+				SetStatusText(String(_("Drag to shear selected shape")) + (control.selected_parts.size() > 1 ? _("s") : _("")));
 				control.SetCursor(dx == 0 ? cursorShearX : cursorShearY);
 			} else {
-				SetStatusText(String(_("Drag to rotate selected shape")) + (control.selectedParts.size() > 1 ? _("s") : _("")) + _(", Ctrl constrains angle to multiples of 15 degrees"));
+				SetStatusText(String(_("Drag to rotate selected shape")) + (control.selected_parts.size() > 1 ? _("s") : _("")) + _(", Ctrl constrains angle to multiples of 15 degrees"));
 				control.SetCursor(cursorRotate);
 			}
 		} else {
-			SetStatusText(String(_("Drag to resize selected shape")) + (control.selectedParts.size() > 1 ? _("s") : _("")) + _(", Ctrl constrains size"));
+			SetStatusText(String(_("Drag to resize selected shape")) + (control.selected_parts.size() > 1 ? _("s") : _("")) + _(", Ctrl constrains size"));
 			// what cursor to use?
 			if      (dx ==  dy) control.SetCursor(wxCURSOR_SIZENWSE);
 			else if (dx == -dy) control.SetCursor(wxCURSOR_SIZENESW);
@@ -262,7 +262,7 @@ void SymbolSelectEditor::onMouseMove  (const Vector2D& from, const Vector2D& to,
 }
 
 void SymbolSelectEditor::onMouseDrag  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev) {
-	if (control.selectedParts.empty()) return;
+	if (control.selected_parts.empty()) return;
 	if (!isEditing()) {
 		// we don't have an action yet, determine what to do
 		// note: base it on the from position, which is the position where dragging started
@@ -270,22 +270,22 @@ void SymbolSelectEditor::onMouseDrag  (const Vector2D& from, const Vector2D& to,
 			if (rotate) {
 				if (scaleX == 0 || scaleY == 0) {
 					// shear, center/fixed point on the opposite side
-					shearAction = new SymbolPartShearAction(control.selectedParts, handlePos(-scaleX, -scaleY));
+					shearAction = new SymbolPartShearAction(control.selected_parts, handlePos(-scaleX, -scaleY));
 					getSymbol()->actions.add(shearAction);
 				} else {
 					// rotate	
-					rotateAction = new SymbolPartRotateAction(control.selectedParts, center);
+					rotateAction = new SymbolPartRotateAction(control.selected_parts, center);
 					getSymbol()->actions.add(rotateAction);
 					startAngle = angleTo(to);
 				}
 			} else {
 				// we are on a handle; start scaling
-				scaleAction = new SymbolPartScaleAction(control.selectedParts, scaleX, scaleY);
+				scaleAction = new SymbolPartScaleAction(control.selected_parts, scaleX, scaleY);
 				getSymbol()->actions.add(scaleAction);
 			}
 		} else {
 			// move
-			moveAction = new SymbolPartMoveAction(control.selectedParts);
+			moveAction = new SymbolPartMoveAction(control.selected_parts);
 			getSymbol()->actions.add(moveAction);
 		}
 	}
@@ -345,8 +345,8 @@ void SymbolSelectEditor::onKeyChange (wxKeyEvent& ev) {
 void SymbolSelectEditor::onChar(wxKeyEvent& ev) {
 	if (ev.GetKeyCode() == WXK_DELETE) {
 		// delete selected parts
-		getSymbol()->actions.add(new RemoveSymbolPartsAction(*getSymbol(), control.selectedParts));
-		control.selectedParts.clear();
+		getSymbol()->actions.add(new RemoveSymbolPartsAction(*getSymbol(), control.selected_parts));
+		control.selected_parts.clear();
 		resetActions();
 		control.Refresh(false);
 	} else {
@@ -395,7 +395,7 @@ double SymbolSelectEditor::angleTo(const Vector2D& pos) {
 
 SymbolPartP SymbolSelectEditor::findPart(const Vector2D& pos) {
 	FOR_EACH(p, getSymbol()->parts) {
-		if (pointInPart(pos, *p)) return p;
+		if (point_in_part(pos, *p)) return p;
 	}
 	return SymbolPartP();
 }
@@ -404,18 +404,18 @@ void SymbolSelectEditor::updateBoundingBox() {
 	// Find min and max coordinates
 	minV =  Vector2D::infinity();
 	maxV = -Vector2D::infinity();
-	FOR_EACH(p, control.selectedParts) {
-		minV = piecewise_min(minV, p->minPos);
-		maxV = piecewise_max(maxV, p->maxPos);
+	FOR_EACH(p, control.selected_parts) {
+		minV = piecewise_min(minV, p->min_pos);
+		maxV = piecewise_max(maxV, p->max_pos);
 	}
 	// Find rotation center
 	center = Vector2D(0,0);
-	FOR_EACH(p, control.selectedParts) {
-		Vector2D size = p->maxPos - p->minPos;
-		size = size.mul(p->rotationCenter);
-		center += p->minPos + size;
+	FOR_EACH(p, control.selected_parts) {
+		Vector2D size = p->max_pos - p->min_pos;
+		size = size.mul(p->rotation_center);
+		center += p->min_pos + size;
 	}
-	center /= control.selectedParts.size();
+	center /= control.selected_parts.size();
 }
 
 void SymbolSelectEditor::resetActions() {

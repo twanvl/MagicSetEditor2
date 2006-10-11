@@ -12,16 +12,16 @@
 // ----------------------------------------------------------------------------- : Field
 
 Field::Field()
-	: index          (0) // sensible default?
-	, editable       (true)
-	, saveValue      (true)
-	, showStatistics (true)
-	, identifying    (false)
-	, cardListColumn (-1)
-	, cardListWidth  (100)
-	, cardListAllow  (true)
-//	, cardListAlign  (ALIGN_LEFT)
-	, tabIndex       (0)
+	: index            (0) // sensible default?
+	, editable         (true)
+	, save_value       (true)
+	, show_statistics  (true)
+	, identifying      (false)
+	, card_list_column (-1)
+	, card_list_width  (100)
+	, card_list_allow  (true)
+//	, card_list_align  (ALIGN_LEFT)
+	, tab_index        (0)
 {}
 
 Field::~Field() {}
@@ -29,8 +29,17 @@ Field::~Field() {}
 IMPLEMENT_REFLECTION(Field) {
 	if (!tag.reading()) {
 		String type = typeName();
-		REFLECT_N("type", type);
+		REFLECT(type);
 	}
+	REFLECT(editable);
+	REFLECT(save_value);
+	REFLECT(show_statistics);
+	REFLECT(identifying);
+	REFLECT(card_list_column);
+	REFLECT(card_list_width);
+	REFLECT(card_list_allow);
+//	REFLECT(card_list_align);
+	REFLECT(tab_index);
 }
 
 template <>
@@ -49,6 +58,8 @@ shared_ptr<Field> read_new<Field>(Reader& reader) {
 
 // ----------------------------------------------------------------------------- : Style
 
+Style::~Style() {}
+
 IMPLEMENT_REFLECTION(Style) {
 }
 
@@ -57,6 +68,8 @@ void initObject(const FieldP& field, StyleP& style) {
 }
 
 // ----------------------------------------------------------------------------- : Value
+
+Value::~Value() {}
 
 IMPLEMENT_REFLECTION(Value) {
 }

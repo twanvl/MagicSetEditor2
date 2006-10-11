@@ -64,18 +64,18 @@ class Reader {
 	/// The key and value of the last line we read
 	String key, value;
 	/// A string spanning multiple lines
-	String multiLineStr;
+	String multi_line_str;
 	/// Indentation of the last line we read
 	int indent;
 	/// Indentation of the block we are in
-	int expectedIndent;
+	int expected_indent;
 	/// Did we just open a block (i.e. not read any more lines of it)?
-	bool justOpened;
+	bool just_opened;
 	
 	/// Filename for error messages
 	String filename;
 	/// Line number for error messages
-	UInt lineNumber;
+	UInt line_number;
 	/// Input stream we are reading from
 	InputStreamP input;
 	/// Text stream wrapping the input stream

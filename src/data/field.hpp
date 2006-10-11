@@ -24,19 +24,19 @@ class Field {
 	Field();
 	virtual ~Field();
 	
-	UInt      index;          ///< Used by IndexMap
-	String    name;           ///< Name of the field, for refering to it from scripts and files
-	String    description;    ///< Description, used in status bar
-	bool      editable;       ///< Can values of this field be edited?
-	bool      saveValue;      ///< Should values of this field be written to files? Can be false for script generated fields.
-	bool      showStatistics; ///< Should this field appear as a group by choice in the statistics panel?
-	bool      identifying;    ///< Does this field give Card::identification()?
-	int       cardListColumn; ///< What column to use in the card list? -1 = don't list
-	UInt      cardListWidth;  ///< Width of the card list column (pixels).
-	bool      cardListAllow;  ///< Is this field allowed to appear in the card list.
-	String    cardListName;   ///< Alternate name to use in card list.
-//	Alignment cardListAlign;  ///< Alignment of the card list colummn.
-	int       tabIndex;       ///< Tab index in editor
+	UInt      index;            ///< Used by IndexMap
+	String    name;             ///< Name of the field, for refering to it from scripts and files
+	String    description;      ///< Description, used in status bar
+	bool      editable;         ///< Can values of this field be edited?
+	bool      save_value;       ///< Should values of this field be written to files? Can be false for script generated fields.
+	bool      show_statistics;  ///< Should this field appear as a group by choice in the statistics panel?
+	bool      identifying;      ///< Does this field give Card::identification()?
+	int       card_list_column; ///< What column to use in the card list? -1 = don't list
+	UInt      card_list_width;  ///< Width of the card list column (pixels).
+	bool      card_list_allow;  ///< Is this field allowed to appear in the card list.
+	String    card_list_name;   ///< Alternate name to use in card list.
+//	Alignment card_list_align;  ///< Alignment of the card list colummn.
+	int       tab_index;        ///< Tab index in editor
 //	Vector<DependendScript> dependendScripts; // scripts that depend on values of this field
 	
 	/// Creates a new Value corresponding to this Field

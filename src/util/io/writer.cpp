@@ -16,7 +16,7 @@ Writer::Writer(const OutputStreamP& output)
 	: output(output)
 	, stream(*output)
 	, indentation(0)
-	, justOpened(false)
+	, just_opened(false)
 {
 	stream.WriteString(BYTE_ORDER_MARK);
 }
@@ -24,25 +24,27 @@ Writer::Writer(const OutputStreamP& output)
 
 void Writer::enterBlock(const Char* name) {
 	// indenting into a sub-block?
-	if (justOpened) {
+	if (just_opened) {
 		writeKey();
 		stream.WriteString(_(":\n"));
 	}
 	// don't write the key yet
 	indentation += 1;
-	openedKey = name;
-	justOpened = true;
+	opened_key = name;
+	just_opened = true;
 }
 
 void Writer::exitBlock() {
 	assert(indentation > 0);
 	indentation -= 1;
-	justOpened = false;
+	just_opened = false;
 }
 
 void Writer::writeKey() {
 	writeIndentation();
-	writeUTF8(stream, openedKey);
+	// Use ' ' instead of '_' because it is more human readable
+	FOR_EACH(c, opened_key) if (c == _('_')) c = _(' ');
+	writeUTF8(stream, opened_key);
 }
 void Writer::writeIndentation() {
 	for(int i = 1 ; i < indentation ; ++i) {
@@ -53,7 +55,7 @@ void Writer::writeIndentation() {
 // ----------------------------------------------------------------------------- : Handling basic types
 
 void Writer::handle(const String& value) {
-	if (!justOpened) {
+	if (!just_opened) {
 		throw InternalError(_("Can only write a value in a key that was just opened"));
 	}
 	// write indentation and key
@@ -86,7 +88,7 @@ void Writer::handle(const String& value) {
 		writeUTF8(stream, value);
 	}
 	stream.PutChar(_('\n'));
-	justOpened = false;
+	just_opened = false;
 }
 
 template <> void Writer::handle(const int& value) {
