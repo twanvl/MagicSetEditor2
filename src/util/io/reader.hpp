@@ -9,7 +9,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
-#include "../prec.hpp"
+#include <util/prec.hpp>
 #include <wx/txtstrm.h>
 
 // ----------------------------------------------------------------------------- : Reader
@@ -47,11 +47,12 @@ class Reader {
 			exitBlock();
 		}
 	}
+	/// Reads a vector from the input stream
+	template <typename T>
+	void handle(const Char* name, vector<T>& vector);
 	
 	/// Reads an object of type T from the input stream
 	template <typename T> void handle(T& object);
-	/// Reads a vector from the input stream
-	template <typename T> void handle(vector<T>& vector);
 	/// Reads a shared_ptr from the input stream
 	template <typename T> void handle(shared_ptr<T>& pointer);
 	/// Reads a map from the input stream
@@ -109,12 +110,12 @@ shared_ptr<T> read_new(Reader& reader) {
 }
 
 template <typename T>
-void Reader::handle(vector<T>& vector) {
-	String vectorKey = key;
-	while (key == vectorKey) { // TODO : check indent
-		moveNext(); // skip key
+void Reader::handle(const Char* name, vector<T>& vector) {
+	String vectorKey = singular_form(name);
+	while (enterBlock(vectorKey)) {
 		vector.resize(vector.size() + 1);
 		handle(vector.back());
+		exitBlock();
 	}
 }
 

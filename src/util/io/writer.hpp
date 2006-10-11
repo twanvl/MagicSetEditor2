@@ -34,6 +34,9 @@ class Writer {
 		handle(object);
 		exitBlock();
 	}
+	/// Write a vector to the output stream
+	template <typename T>
+	void handle(const Char* name, const vector<T>& vector);
 	
 	/// Write a string to the output stream
 	void handle(const String& str);
@@ -41,8 +44,6 @@ class Writer {
 	
 	/// Write an object of type T to the output stream
 	template <typename T> void handle(const T& object);
-	/// Write a vector to the output stream
-	template <typename T> void handle(const vector<T>& vector);
 	/// Write a shared_ptr to the output stream
 	template <typename T> void handle(const shared_ptr<T>& pointer);
 	/// Write a map to the output stream
@@ -78,13 +79,13 @@ class Writer {
 // ----------------------------------------------------------------------------- : Container types
 
 template <typename T>
-void Writer::handle(const vector<T>& vector) {
-	/*String vectorKey = key;
-	while (key == vectorKey) { // TODO : check indent
-		moveNext(); // skip key
-		vector.resize(vector.size() + 1);
-		handle(vector.back());
-	}*/
+void Writer::handle(const Char* name, const vector<T>& vec) {
+	String vectorKey = singular_form(name);
+	for (vector<T>::const_iterator it = vec.begin() ; it != vec.end() ; ++it) {
+		enterBlock(vectorKey);
+		handle(*it);
+		exitBlock();
+	}
 }
 
 template <typename T>

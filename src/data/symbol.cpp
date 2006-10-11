@@ -106,7 +106,7 @@ IMPLEMENT_REFLECTION_ENUM(SymbolPartCombine) {
 IMPLEMENT_REFLECTION(SymbolPart) {
 	REFLECT(name);
 	REFLECT(combine);
-	REFLECT_N("point", points);
+	REFLECT(points);
 	// Fixes after reading
 	if (tag.reading()) {
 		// enforce constraints
@@ -160,7 +160,7 @@ void SymbolPart::calculateBounds() {
 
 IMPLEMENT_REFLECTION(Symbol) {
 //%% version?
-	REFLECT_N("part", parts);
+	REFLECT(parts);
 }
 
 // ----------------------------------------------------------------------------- : SymbolView

@@ -37,8 +37,8 @@ bool MSE::OnInit() {
 	wxInitAllImageHandlers();
 	initFileFormats();
 	settings.read();
-	//Window* wnd = new SymbolWindow(nullptr);
-	Window* wnd = new SetWindow(nullptr, new_shared1<Set>(Game::byName(_("magic"))));
+	Window* wnd = new SymbolWindow(nullptr);
+	//Window* wnd = new SetWindow(nullptr, new_shared1<Set>(Game::byName(_("magic"))));
 	wnd->Show();
 	return true;
 }

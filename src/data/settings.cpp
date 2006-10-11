@@ -95,7 +95,7 @@ String Settings::settingsFile() {
 
 IMPLEMENT_REFLECTION(Settings) {
 //	ioMseVersion(io, "settings", file_version);
-	REFLECT_N("recent_set", recent_sets);
+	REFLECT(recent_sets);
 	REFLECT(set_window_maximized);
 	REFLECT(set_window_width);
 	REFLECT(set_window_height);

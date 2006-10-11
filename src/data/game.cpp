@@ -32,8 +32,8 @@ IMPLEMENT_REFLECTION(Game) {
 	REFLECT(card_fields);
 //	REFLECT_N("keyword parameter type", keyword_params);
 //	REFLECT_N("keyword separator type", keyword_separators);
-//	REFLECT_N("keyword",      keywords);
-//	REFLECT_N("word list",    word_lists);
+//	REFLECT(keywords);
+//	REFLECT(word_lists);
 }
 
 void Game::validate() {
