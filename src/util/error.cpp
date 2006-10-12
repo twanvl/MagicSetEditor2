@@ -19,3 +19,31 @@ Error::~Error() {}
 String Error::what() const {
 	return message;
 }
+
+// ----------------------------------------------------------------------------- : Error handling
+
+// Errors for which a message box was already shown
+vector<String> previous_errors;
+String pending_error;
+DECLARE_TYPEOF_COLLECTION(String);
+
+void handle_error(const String& e, bool allow_duplicate = true, bool now = true) {
+	// Check duplicates
+	if (!allow_duplicate) {
+		FOR_EACH(pe, previous_errors) {
+			if (e == pe)  return;
+		}
+		previous_errors.push_back(e);
+	}
+	// Only show errors in the main thread
+	if (!now || !wxThread::IsMain()) {
+		pending_error = e;
+		return;
+	}
+	// show message
+	wxMessageBox(e, _("Error"), wxOK | wxICON_ERROR);
+}
+
+void handle_error(const Error& e, bool allow_duplicate, bool now) {
+	handle_error(e.what(), allow_duplicate, now);
+}

@@ -91,7 +91,7 @@ template <> void Reader::handle(String& s) {
 		// read all lines that are indented enough
 		readLine();
 		while (indent >= expected_indent) {
-			if (!first) value += '\n';
+			if (!first) multi_line_str += _('\n');
 			first = false;
 			multi_line_str += line.substr(expected_indent); // strip expected indent
 			readLine();

@@ -80,5 +80,17 @@ class ScriptError : public Error {
 	inline ScriptError(const String& str) : Error(str) {}
 };
 
+// ----------------------------------------------------------------------------- : Error handling
+
+/// Handle an error by showing a message box
+/** If !allow_duplicate and the error is the same as the previous error, does nothing.
+ *  If !now the error is handled by a later call to handle_pending_errors()
+ */
+void handle_error(const Error& e, bool allow_duplicate = true, bool now = true);
+
+/// Handle errors that were not handled immediatly in handleError
+/** Should be called repeatedly (e.g. in an onIdle event handler) */
+void handle_pending_errors();
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

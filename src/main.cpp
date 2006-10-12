@@ -34,13 +34,24 @@ IMPLEMENT_APP(MSE)
 // ----------------------------------------------------------------------------- : Initialization
 
 bool MSE::OnInit() {
-	wxInitAllImageHandlers();
-	initFileFormats();
-	settings.read();
-	//Window* wnd = new SymbolWindow(nullptr);
-	Window* wnd = new SetWindow(nullptr, new_shared1<Set>(Game::byName(_("magic"))));
-	wnd->Show();
-	return true;
+	try {
+		wxInitAllImageHandlers();
+		initFileFormats();
+		settings.read();
+		//Window* wnd = new SymbolWindow(nullptr);
+		Window* wnd = new SetWindow(nullptr, new_shared1<Set>(Game::byName(_("magic"))));
+		wnd->Show();
+		return true;
+	
+	} catch (Error e) {
+		handle_error(e, false);
+	} catch (std::exception e) {
+		// we don't throw std::exception ourselfs, so this is probably something serious
+		handle_error(InternalError(String(e.what(), IF_UNICODE(wxConvLocal, wxSTRING_MAXLEN) )), false);
+	} catch (...) {
+		handle_error(InternalError(_("An unexpected exception occurred, this is a bug!\nPlease save your work (use 'save as' to so you don't overwrite things),\n and restart Magic Set Editor.\n\nYou can leave a bug report on http://magicseteditor.sourceforge.net/")), false);
+	}
+	return false;
 }
 
 // ----------------------------------------------------------------------------- : Exit
@@ -53,5 +64,15 @@ int MSE::OnExit() {
 // ----------------------------------------------------------------------------- : Exception handling
 
 bool MSE::OnExceptionInMainLoop() {
+	try {
+		throw;	// rethrow the exception, so we can examine it
+	} catch (Error e) {
+		handle_error(e, false);
+	} catch (std::exception e) {
+		// we don't throw std::exception ourselfs, so this is probably something serious
+		handle_error(InternalError(String(e.what(), IF_UNICODE(wxConvLocal, wxSTRING_MAXLEN) )), false);
+	} catch (...) {
+		handle_error(InternalError(_("An unexpected exception occurred, this is a bug!\nPlease save your work (use 'save as' to so you don't overwrite things),\n and restart Magic Set Editor.\n\nYou can leave a bug report on http://magicseteditor.sourceforge.net/")), false);
+	}
 	return true;
 }
