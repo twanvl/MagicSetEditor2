@@ -27,7 +27,7 @@ enum TokenType
 ,	TOK_OPER	// + - * / . ;
 ,	TOK_LPAREN	// ( { [
 ,	TOK_RPAREN	// ) } ]
-,	TOK_NEWLINE	// newline
+,	TOK_DUMMY	// placeholder for putBack
 ,	TOK_EOF		// end of input
 };
 
@@ -35,6 +35,7 @@ enum TokenType
 struct Token {
 	TokenType type;
 	String    value;
+	bool      newline; ///< Is there a newline between this token and the previous one?
 	
 	inline operator == (TokenType     t) const { return type  == t; }
 	inline operator != (TokenType     t) const { return type  != t; }
@@ -65,10 +66,13 @@ class TokenIterator {
 	size_t pos;
 	vector<Token> buffer;      // buffer of unread tokens, front() = current
 	stack<bool>   open_braces; // braces we entered, true if the brace was from a smart string escape
+	bool          newline;    ///< Did we just pass a newline?
+	/// Add a token to the buffer, with the current newline value, resets newline
+	void addToken(TokenType type, const String& value);
 	/// Read the next token, and add it to the buffer
-	void addToken();
+	void readToken();
 	/// Read the next token which is a string (after the opening ")
-	void addStringToken();
+	void readStringToken();
 };
 
 // ----------------------------------------------------------------------------- : Characters
@@ -92,7 +96,7 @@ TokenIterator::TokenIterator(const String& str)
 const Token& TokenIterator::peek(size_t offset) {
 	// read the next token until we have enough
 	while (buffer.size() <= offset) {
-		addToken();
+		readToken();
 	}
 	return buffer[offset];
 }
@@ -103,71 +107,70 @@ const Token& TokenIterator::read() {
 }
 
 void TokenIterator::putBack() {
-	Token t = {TOK_NEWLINE, _("\n")};
+	// Don't use addToken, because it canges newline
+	// Also, we want to push_front
+	Token t = {TOK_DUMMY, _(""), false};
 	buffer.insert(buffer.begin(), t);
 }
 
-void TokenIterator::addToken() {
+void TokenIterator::addToken(TokenType type, const String& value) {
+	Token t = {type, value, newline};
+	buffer.push_back(t);
+	newline = false;
+}
+
+void TokenIterator::readToken() {
 	if (pos >= input.size()) {
 		// EOF
-		Token t = {TOK_EOF, _("end of input")};
-		buffer.push_back(t);
+		addToken(TOK_EOF, _("end of input"));
 		return;
 	}
 	// read a character from the input
 	Char c = input.GetChar(pos++);
 	if (c == _('\n')) {
-		Token t = {TOK_NEWLINE, _("newline")};
-		buffer.push_back(t);
+		newline = true;
 	} else if (isSpace(c)) {
 		// ignore
 	} else if (isAlpha(c)) {
 		// name
 		size_t start = pos - 1;
 		while (pos < input.size() && isAlnum_(input.GetChar(pos))) ++pos;
-		Token t = {TOK_NAME, cannocial_name_form(input.substr(start, pos-start)) }; // convert name to cannocial form
-		buffer.push_back(t);
+		addToken(TOK_NAME, cannocial_name_form(input.substr(start, pos-start))); // convert name to cannocial form
 	} else if (isDigit(c)) {
 		// number
 		size_t start = pos - 1;
 		while (pos < input.size() && isDigitOrDot(input.GetChar(pos))) ++pos;
 		String num = input.substr(start, pos-start);
-		Token t = {
+		addToken(
 			num.find_first_of('.') == String::npos ? TOK_INT : TOK_DOUBLE,
 			num
-		};
-		buffer.push_back(t);
+		);
 	} else if (isOper(c)) {
 		// operator
-		Token t = { TOK_OPER };
 		if (pos < input.size() && isLongOper(input.substr(pos - 1, 2))) {
 			// long operator
-			t.value = input.substr(pos - 1, 2);
+			addToken(TOK_OPER, input.substr(pos - 1, 2));
 			pos += 1;
 		} else {
-			t.value = input.substr(pos - 1, 1);
+			addToken(TOK_OPER, input.substr(pos - 1, 1));
 		}
-		buffer.push_back(t);
 	} else if (c==_('"')) {
 		// string
-		addStringToken();
+		readStringToken();
 	} else if (c == _('}') && !open_braces.empty() && open_braces.top()) {
 		// closing smart string, resume to string parsing
 		//   "a{e}b"  -->  "a"  "{  e  }"  "b"
 		open_braces.pop();
-		Token t2 = {TOK_RPAREN, _("}\"")};
-		buffer.push_back(t2);
-		addStringToken();
+		addToken(TOK_RPAREN, _("}\""));
+		readStringToken();
 	} else if (isLparen(c)) {
 		// paranthesis/brace
 		open_braces.push(false);
-		Token t = { TOK_LPAREN, String(1,c) };
-		buffer.push_back(t);
+		addToken(TOK_LPAREN, String(1,c));
 	} else if (isRparen(c)) {
 		// paranthesis/brace
 		if (!open_braces.empty()) open_braces.pop();
-		Token t = { TOK_RPAREN, String(1,c) };
-		buffer.push_back(t);
+		addToken(TOK_RPAREN, String(1,c));
 	} else if(c==_('#')) {
 		// comment untill end of line
 		while (pos < input.size() && input[pos] != _('\n')) ++pos;
@@ -176,33 +179,32 @@ void TokenIterator::addToken() {
 	}
 }
 
-void TokenIterator::addStringToken() {
-	Token t = {TOK_STRING};
+void TokenIterator::readStringToken() {
+	String str;
 	while (true) {
 		if (pos >= input.size()) throw ScriptParseError(_("Unexpected end of input in string constant"));
 		Char c = input[pos++];			//% input.GetChar(pos++);
 		// parse the string constant
 		if (c == _('"')) {
 			// end of string
-			buffer.push_back(t);
+			addToken(TOK_STRING, str);
 			return;
 		} else if (c == _('\\')) {
 			// escape
 			if (pos >= input.size()) throw ScriptParseError(_("Unexpected end of input in string constant"));
 			c = input[pos++];
-			if (c == _('n')) t.value += _('\n');
-			if (c == _('<')) t.value += _('\1'); // escape for <
-			else             t.value += c;       // \ or { or "
+			if (c == _('n')) str += _('\n');
+			if (c == _('<')) str += _('\1'); // escape for <
+			else             str += c;       // \ or { or "
 		} else if (c == _('{')) {
 			// smart string
 			//   "a{e}b"  -->  "a"  "{  e  }"  "b"
-			buffer.push_back(t);
+			addToken(TOK_STRING, str);
 			open_braces.push(true);
-			Token t2 = {TOK_LPAREN, _("\"{")};
-			buffer.push_back(t2);
+			addToken(TOK_LPAREN, _("\"{"));
 			return;
 		} else {
-			t.value += c;
+			str += c;
 		}
 	}
 }
@@ -257,7 +259,6 @@ ScriptP parse(const String& s) {
 // Expect a token, throws if it is not found
 void expectToken(TokenIterator& input, const Char* expect) {
 	Token token = input.read();
-	while (token == TOK_NEWLINE) token = input.read(); // skip newlines
 	if (token != expect) {
 		throw ScriptParseError(expect, token.value);
 	}
@@ -371,8 +372,6 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 			script.addInstruction(I_PUSH_CONST, toScript(d));
 		} else if (token == TOK_STRING) {
 			script.addInstruction(I_PUSH_CONST, toScript(token.value));
-		} else if (token == TOK_NEWLINE) {
-			continue; // ignore
 		} else {
 			throw ScriptParseError(_("Unexpected token '") + token.value + _("'"));
 		}
@@ -382,122 +381,103 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 
 void parseOper(TokenIterator& input, Script& script, Precedence minPrec, InstructionType closeWith, int closeWithData) {
 	parseExpr(input, script, minPrec); // first argument
-	bool newlines = false; // did we skip any newlines?
 	// read any operators after an expression
 	// EBNF:                    expr = expr | expr oper expr
 	// without left recursion:  expr = expr (oper expr)*
 	while (true) {
 		const Token& token = input.read();
-		bool newlines2 = newlines;
-		newlines = false;
-		if (token == TOK_OPER || token == TOK_NAME) {
-			if (minPrec <= PREC_SEQ && token==_(";")) {
-				Token next = input.peek(1);
-				if (next == TOK_RPAREN || next == TOK_EOF) {
-					// allow ; at end of expression without errors
-					return;
-				}
-				script.addInstruction(I_POP); // discard result of first expression
-				parseOper(input, script, PREC_SET);
-			} else if (minPrec <= PREC_SET && token==_(":=")) {
-				// We made a mistake, the part before the := should be a variable name,
-				// not an expression. Remove that instruction.
-				Instruction instr = script.getInstructions().back();
-				if (instr.instr != I_GET_VAR) {
-					throw ScriptParseError(_("Can only assign to variables"));
-				} else {
-					script.getInstructions().pop_back();
-					parseOper(input, script, PREC_SET,  I_SET_VAR, instr.data);
-				}
-			}
-			else if (minPrec <= PREC_AND    && token==_("and"))   parseOper(input, script, PREC_CMP,   I_BINARY, I_AND);
-			else if (minPrec <= PREC_AND    && token==_("or" ))   parseOper(input, script, PREC_CMP,   I_BINARY, I_OR);
-			else if (minPrec <= PREC_CMP    && token==_("="))     parseOper(input, script, PREC_ADD,   I_BINARY, I_EQ);
-			else if (minPrec <= PREC_CMP    && token==_("=="))    parseOper(input, script, PREC_ADD,   I_BINARY, I_EQ);
-			else if (minPrec <= PREC_CMP    && token==_("!="))    parseOper(input, script, PREC_ADD,   I_BINARY, I_NEQ);
-			else if (minPrec <= PREC_CMP    && token==_("<"))     parseOper(input, script, PREC_ADD,   I_BINARY, I_LT);
-			else if (minPrec <= PREC_CMP    && token==_(">"))     parseOper(input, script, PREC_ADD,   I_BINARY, I_GT);
-			else if (minPrec <= PREC_CMP    && token==_("<="))    parseOper(input, script, PREC_ADD,   I_BINARY, I_LE);
-			else if (minPrec <= PREC_CMP    && token==_(">="))    parseOper(input, script, PREC_ADD,   I_BINARY, I_GE);
-			else if (minPrec <= PREC_ADD    && token==_("+"))     parseOper(input, script, PREC_MUL,   I_BINARY, I_ADD);
-			else if (minPrec <= PREC_ADD    && token==_("-"))     parseOper(input, script, PREC_MUL,   I_BINARY, I_SUB);
-			else if (minPrec <= PREC_MUL    && token==_("*"))     parseOper(input, script, PREC_UNARY, I_BINARY, I_MUL);
-			else if (minPrec <= PREC_MUL    && token==_("/"))     parseOper(input, script, PREC_UNARY, I_BINARY, I_DIV);
-			else if (minPrec <= PREC_MUL    && token==_("mod"))   parseOper(input, script, PREC_UNARY, I_BINARY, I_MOD);
-			else if (minPrec <= PREC_FUN    && token==_(".")) { // get member by name
-				const Token& token = input.read();
-				if (token == TOK_NAME || token == TOK_INT || token == TOK_DOUBLE || token == TOK_STRING) {
-					script.addInstruction(I_MEMBER_C, token.value);
-				} else {
-					throw ScriptParseError(_("name"), input.peek().value);
-				}
-			} else {
-				input.putBack();
-				newlines = newlines2; // remember newlines
-				break; // unknown operator
-			}
-		} else if (token==TOK_LPAREN) {
-			if (minPrec <= PREC_FUN && token==_("(")) {
-				// function call, read arguments
-				vector<int> arguments;
-				Token t = input.peek();
-				while (t != _(")")) {
-					if (input.peek(2) == _(":")) {
-						// name: ...
-						arguments.push_back(stringToVariable(t.value));
-						input.read(); // skip the name
-						input.read(); // and the :
-						parseOper(input, script, PREC_SEQ);
-					} else {
-						// implicit "input" argument
-						arguments.push_back(stringToVariable(_("input")));
-						parseOper(input, script, PREC_SEQ);
-					}
-					t = input.peek();
-					if (t == _(",")) {
-						// Comma separating the arguments
-						input.read();
-						t = input.peek();
-					}
-				}
-				input.read(); // skip the )
-				// generate instruction
-				script.addInstruction(I_CALL, (unsigned int)arguments.size());
-				FOR_EACH(arg,arguments) {
-					script.addInstruction(I_NOP, arg);
-				}
-			} else if (minPrec <= PREC_FUN && token==_("[")) { // get member by expr
-				parseOper(input, script, PREC_ALL, I_BINARY, I_MEMBER);
-				expectToken(input, _("]"));
-			} else if (minPrec <= PREC_STRING && token==_("\"{")) {
-				// for smart strings: "x" {{ e }} "y"
-				parseOper(input, script, PREC_ALL,  I_BINARY, I_ADD);	// e
-				expectToken(input, _("}\""));
-				parseOper(input, script, PREC_NONE, I_BINARY, I_ADD);	// y
-			} else {
-				input.putBack();
-				newlines = newlines2; // remember newlines
-				break; // unknown LPAREN, has to be {
-			}
-		} else if (token == TOK_NEWLINE) {
-			const Token& next = input.peek(1);
-			if (minPrec <= PREC_NEWLINE && (next == TOK_NAME || next == TOK_LPAREN)) {
-				// function as ;
-				script.addInstruction(I_POP);
-				parseOper(input, script, PREC_SET);
-			} else {
-				// skip newlines
-				newlines = true;
-			}
-		} else {
+		if (token != TOK_OPER && token != TOK_NAME && token!=TOK_LPAREN) {
+			// not an operator-like token
 			input.putBack();
-			newlines = newlines2; // remember newlines
 			break;
 		}
-	}
-	if (newlines) {
-		// we accidentally ate a newline, restore it
-		input.putBack();
+		if (minPrec <= PREC_SEQ && token==_(";")) {
+			Token next = input.peek(1);
+			if (next == TOK_RPAREN || next == TOK_EOF) {
+				// allow ; at end of expression without errors
+				return;
+			}
+			script.addInstruction(I_POP); // discard result of first expression
+			parseOper(input, script, PREC_SET);
+		} else if (minPrec <= PREC_SET && token==_(":=")) {
+			// We made a mistake, the part before the := should be a variable name,
+			// not an expression. Remove that instruction.
+			Instruction instr = script.getInstructions().back();
+			if (instr.instr != I_GET_VAR) {
+				throw ScriptParseError(_("Can only assign to variables"));
+			} else {
+				script.getInstructions().pop_back();
+				parseOper(input, script, PREC_SET,  I_SET_VAR, instr.data);
+			}
+		}
+		else if (minPrec <= PREC_AND    && token==_("and"))   parseOper(input, script, PREC_CMP,   I_BINARY, I_AND);
+		else if (minPrec <= PREC_AND    && token==_("or" ))   parseOper(input, script, PREC_CMP,   I_BINARY, I_OR);
+		else if (minPrec <= PREC_CMP    && token==_("="))     parseOper(input, script, PREC_ADD,   I_BINARY, I_EQ);
+		else if (minPrec <= PREC_CMP    && token==_("=="))    parseOper(input, script, PREC_ADD,   I_BINARY, I_EQ);
+		else if (minPrec <= PREC_CMP    && token==_("!="))    parseOper(input, script, PREC_ADD,   I_BINARY, I_NEQ);
+		else if (minPrec <= PREC_CMP    && token==_("<"))     parseOper(input, script, PREC_ADD,   I_BINARY, I_LT);
+		else if (minPrec <= PREC_CMP    && token==_(">"))     parseOper(input, script, PREC_ADD,   I_BINARY, I_GT);
+		else if (minPrec <= PREC_CMP    && token==_("<="))    parseOper(input, script, PREC_ADD,   I_BINARY, I_LE);
+		else if (minPrec <= PREC_CMP    && token==_(">="))    parseOper(input, script, PREC_ADD,   I_BINARY, I_GE);
+		else if (minPrec <= PREC_ADD    && token==_("+"))     parseOper(input, script, PREC_MUL,   I_BINARY, I_ADD);
+		else if (minPrec <= PREC_ADD    && token==_("-"))     parseOper(input, script, PREC_MUL,   I_BINARY, I_SUB);
+		else if (minPrec <= PREC_MUL    && token==_("*"))     parseOper(input, script, PREC_UNARY, I_BINARY, I_MUL);
+		else if (minPrec <= PREC_MUL    && token==_("/"))     parseOper(input, script, PREC_UNARY, I_BINARY, I_DIV);
+		else if (minPrec <= PREC_MUL    && token==_("mod"))   parseOper(input, script, PREC_UNARY, I_BINARY, I_MOD);
+		else if (minPrec <= PREC_FUN    && token==_(".")) { // get member by name
+			const Token& token = input.read();
+			if (token == TOK_NAME || token == TOK_INT || token == TOK_DOUBLE || token == TOK_STRING) {
+				script.addInstruction(I_MEMBER_C, token.value);
+			} else {
+				throw ScriptParseError(_("name"), input.peek().value);
+			}
+		} else if (minPrec <= PREC_FUN && token==_("[")) { // get member by expr
+			parseOper(input, script, PREC_ALL, I_BINARY, I_MEMBER);
+			expectToken(input, _("]"));
+		} else if (minPrec <= PREC_FUN && token==_("(")) {
+			// function call, read arguments
+			vector<int> arguments;
+			Token t = input.peek();
+			while (t != _(")")) {
+				if (input.peek(2) == _(":")) {
+					// name: ...
+					arguments.push_back(stringToVariable(t.value));
+					input.read(); // skip the name
+					input.read(); // and the :
+					parseOper(input, script, PREC_SEQ);
+				} else {
+					// implicit "input" argument
+					arguments.push_back(stringToVariable(_("input")));
+					parseOper(input, script, PREC_SEQ);
+				}
+				t = input.peek();
+				if (t == _(",")) {
+					// Comma separating the arguments
+					input.read();
+					t = input.peek();
+				}
+			}
+			input.read(); // skip the )
+			// generate instruction
+			script.addInstruction(I_CALL, (unsigned int)arguments.size());
+			FOR_EACH(arg,arguments) {
+				script.addInstruction(I_NOP, arg);
+			}
+		} else if (minPrec <= PREC_STRING && token==_("\"{")) {
+			// for smart strings: "x" {{ e }} "y"
+			parseOper(input, script, PREC_ALL,  I_BINARY, I_ADD);	// e
+			expectToken(input, _("}\""));
+			parseOper(input, script, PREC_NONE, I_BINARY, I_ADD);	// y
+		} else if (minPrec <= PREC_NEWLINE && token.newline) {
+			// newline functions as ;
+			// only if we don't match another token!
+			input.putBack();
+			script.addInstruction(I_POP);
+			parseOper(input, script, PREC_SET);
+		} else {
+			input.putBack();
+			break;
+		}
 	}
 	// add closing instruction
 	if (closeWith != I_NOP) {
