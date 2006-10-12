@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 
 DECLARE_INTRUSIVE_POINTER_TYPE(ScriptValue);
+DECLARE_INTRUSIVE_POINTER_TYPE(Script);
 inline void intrusive_ptr_add_ref(ScriptValue* p);
 inline void intrusive_ptr_release(ScriptValue* p);
 
@@ -54,6 +55,8 @@ class GetMember {
 	template <typename T> void store(const shared_ptr<T>& pointer) {
 		value = toScript(pointer);
 	}
+	void store(const ScriptValueP&);
+	void store(const ScriptP&);
 	
   private:
 	const String& targetName;	///< The name we are looking for

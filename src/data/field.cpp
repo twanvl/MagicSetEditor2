@@ -8,6 +8,7 @@
 
 #include <data/field.hpp>
 #include <data/field/text.hpp>
+#include <util/error.hpp>
 
 // ----------------------------------------------------------------------------- : Field
 
@@ -50,7 +51,8 @@ shared_ptr<Field> read_new<Field>(Reader& reader) {
 	if (type == _("text")) {
 		return new_shared<TextField>();
 	} else {
-		throw "TODO";
+		//return new_shared<TextField>();
+		throw ParseError(_("Unsupported field type: '") + type + _("'"));
 	}
 }
 

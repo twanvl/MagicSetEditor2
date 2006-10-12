@@ -56,6 +56,8 @@ ScriptValueP rangeIterator(int start, int end) {
 
 // ----------------------------------------------------------------------------- : Integers
 
+#define USE_POOL_ALLOCATOR
+
 // Integer values
 class ScriptInt : public ScriptValue {
   public:
@@ -66,23 +68,59 @@ class ScriptInt : public ScriptValue {
 	virtual operator double() const { return value; }
 	virtual operator int()    const { return value; }
   protected:
+#ifdef USE_POOL_ALLOCATOR
 	virtual void destroy() {
 		boost::singleton_pool<ScriptValue, sizeof(ScriptInt)>::free(this);
 	}
+#endif
   private:
 	int value;
 };
 
+#if defined(USE_POOL_ALLOCATOR) && !defined(USE_INTRUSIVE_PTR)
+	// deallocation function for pool allocated integers
+	void destroy_value(ScriptInt* v) {
+		boost::singleton_pool<ScriptValue, sizeof(ScriptInt)>::free(v);
+	}
+#endif
+
 ScriptValueP toScript(int v) {
-//	return new_intrusive1<ScriptInt>(v);
-	return ScriptValueP(
-			new(boost::singleton_pool<ScriptValue, sizeof(ScriptInt)>::malloc())
-				ScriptInt(v));
+#ifdef USE_POOL_ALLOCATOR
+	#ifdef USE_INTRUSIVE_PTR
+		return ScriptValueP(
+				new(boost::singleton_pool<ScriptValue, sizeof(ScriptInt)>::malloc())
+					ScriptInt(v));
+	#else
+		return ScriptValueP(
+				new(boost::singleton_pool<ScriptValue, sizeof(ScriptInt)>::malloc())
+					ScriptInt(v),
+				destroy_value); // deallocation function
+	#endif
+#else
+	return new_intrusive1<ScriptInt>(v);
+#endif
 }
 
+// ----------------------------------------------------------------------------- : Booleans
+
+// Boolean values
+class ScriptBool : public ScriptValue {
+  public:
+	ScriptBool(bool v) : value(v) {}
+	virtual ScriptType type() const { return SCRIPT_INT; }
+	virtual String typeName() const { return _("boolean"); }
+	virtual operator String() const { return value ? _("true") : _("false"); }
+	virtual operator int()    const { return value; }
+  private:
+	bool value;
+};
+
 // use integers to represent true/false
-ScriptValueP script_true  = toScript((int)true);
-ScriptValueP script_false = toScript((int)false);
+/* NOTE: previous versions used ScriptInts as booleans, this gives problems
+ * when we use a pool allocator for them, because the pool is destroyed before these globals.
+ */
+ScriptValueP script_true (new ScriptBool(true));
+ScriptValueP script_false(new ScriptBool(false));
 
 
 // ----------------------------------------------------------------------------- : Doubles

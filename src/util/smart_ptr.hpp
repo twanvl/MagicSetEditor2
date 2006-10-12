@@ -92,11 +92,11 @@ inline shared_ptr<T> new_shared7(const A0& a0, const A1& a1, const A2& a2, const
 
 #else
 	#define DECLARE_INTRUSIVE_POINTER_TYPE DECLARE_POINTER_TYPE
-	#define intrusive_ptr smart_ptr
-	#define new_intrusive  new_smart
-	#define new_intrusive1 new_smart1
-	#define new_intrusive2 new_smart2
-	#define new_intrusive3 new_smart3
+	#define intrusive_ptr shared_ptr
+	#define new_intrusive  new_shared
+	#define new_intrusive1 new_shared1
+	#define new_intrusive2 new_shared2
+	#define new_intrusive3 new_shared3
 #endif
 
 // ----------------------------------------------------------------------------- : EOF

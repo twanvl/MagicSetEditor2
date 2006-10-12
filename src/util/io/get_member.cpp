@@ -24,9 +24,9 @@ template <> void GetMember::store(const unsigned int& v) { value = toScript((int
 template <> void GetMember::store(const double&       v) { value = toScript(v); }
 template <> void GetMember::store(const bool&         v) { value = toScript(v); }
 
-template <> void GetMember::store(const ScriptValueP& v) { value = v; }
-template <> void GetMember::store(const ScriptP&      v) { value = v; }
-
 template <> void GetMember::store(const Vector2D&     v) {
 	value = toScript(String::Format(_("(%.10lf,%.10lf)"), v.x, v.y));
 }
+
+void GetMember::store(const ScriptValueP& v) { value = v; }
+void GetMember::store(const ScriptP&      v) { value = v; }

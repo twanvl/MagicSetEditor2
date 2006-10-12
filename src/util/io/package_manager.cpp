@@ -11,7 +11,7 @@
 
 // ----------------------------------------------------------------------------- : PackageManager
 
-String programDir() {
+String program_dir() {
 	return _("."); //TODO
 }
 
@@ -20,18 +20,22 @@ PackageManager packages;
 
 PackageManager::PackageManager() {
 	// determine data directory
-	dataDirectory = programDir();
+	data_directory = program_dir();
 	// check if this is the actual data directory, especially during debugging,
 	// the data may be higher up:
 	//  exe path  = mse/build/debug/mse.exe
 	//  data path = mse/data
-	while (!wxDirExists(dataDirectory + _("/data"))) {
-		String d = dataDirectory;
-		dataDirectory = wxPathOnly(dataDirectory);
-		if (d == dataDirectory) {
+	while (!wxDirExists(data_directory + _("/data"))) {
+		String d = data_directory;
+		data_directory = wxPathOnly(data_directory);
+		if (d == data_directory) {
 			// we are at the root -> 'data' not found anywhere in the path -> fatal error
 			throw Error(_("The MSE data files can not be found, there should be a directory called 'data' with these files"));
 		}
 	}
-	dataDirectory += _("/data");
+	data_directory += _("/data");
+}
+
+void PackageManager::destroy() {
+	loaded_packages.clear();
 }

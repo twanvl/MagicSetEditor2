@@ -64,6 +64,14 @@ class ParseError : public Error {
 	inline ParseError(const String& str) : Error(str) {}
 };
 
+/// Parse error in a particular file
+class FileParseError : public ParseError {
+  public:
+	inline FileParseError(const String& err, const String& file) :
+		ParseError(_("Error while parsing file '") + file + _("':\n") + err)
+	{}
+};
+
 /// Parse error in a script
 class ScriptParseError : public ParseError {
   public:

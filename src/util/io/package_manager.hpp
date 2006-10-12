@@ -28,11 +28,11 @@ class PackageManager {
 	/// Open a package with the specified name (including extension)
 	template <typename T>
 	shared_ptr<T> open(const String& name) {
-		wxFileName fn(dataDirectory + _("/") + name);
+		wxFileName fn(data_directory + _("/") + name);
 		fn.Normalize();
 		String filename = fn.GetFullPath();
 		// Is this package already loaded?
-		PackagedP& p = loadedPackages[filename];
+		PackagedP& p = loaded_packages[filename];
 		shared_ptr<T> typedP = dynamic_pointer_cast<T>(p);
 		if (typedP) {
 			return typedP;
@@ -48,9 +48,14 @@ class PackageManager {
 	/// the type of package is determined by its extension!
 	PackagedP openAnyPackage(const String& filename);
 	
+	/// Empty the list of packages.
+	/** This function MUST be called before the program terminates, otherwise
+	 *  we could get into fights with pool allocators used by ScriptValues */
+	void destroy();
+	
   private:
-	map<String, PackagedP> loadedPackages;
-	String dataDirectory;
+	map<String, PackagedP> loaded_packages;
+	String data_directory;
 };
 
 /// The global PackageManager instance

@@ -379,11 +379,11 @@ Packaged::Packaged() {
 void Packaged::open(const String& package) {
 	Package::open(package);
 	Reader reader(openIn(typeName()), absoluteFilename() + _("/") + typeName());
-//	try {
+	try {
 		reader.handle(*this);
-//	} catch (const ParseError& err) {
-//		throw FileParseError(err.what(), filename+_("/")+typeName()); // more detailed message
-//	}
+	} catch (const ParseError& err) {
+		throw FileParseError(err.what(), absoluteFilename() + _("/") + typeName()); // more detailed message
+	}
 }
 void Packaged::save() {
 	//writeFile(thisT().fileName, thisT());

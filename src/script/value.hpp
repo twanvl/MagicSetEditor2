@@ -11,7 +11,6 @@
 
 #include <util/prec.hpp>
 #include <util/error.hpp>
-#include <boost/intrusive_ptr.hpp>
 class Context;
 class Dependency;
 
@@ -46,7 +45,11 @@ enum ScriptType
 /// Actual values are derived types
 class ScriptValue {
   public:
-	inline ScriptValue() : refCount(0) {}
+	inline ScriptValue()
+		#ifdef USE_INTRUSIVE_PTR
+			 : refCount(0)
+		#endif
+	{}
 	virtual ~ScriptValue() {}
 	
 	/// Information on the type of this value
@@ -85,22 +88,26 @@ class ScriptValue {
 	virtual void destroy() {
 		delete this;
 	}
+#ifdef USE_INTRUSIVE_PTR
   private:
 	volatile LONG refCount;
 	friend void intrusive_ptr_add_ref(ScriptValue*);
 	friend void intrusive_ptr_release(ScriptValue*);
+#endif
 };
 
-inline void intrusive_ptr_add_ref(ScriptValue* p) {
-	//p->refCount += 1;
-	InterlockedIncrement(&p->refCount);
-}
-inline void intrusive_ptr_release(ScriptValue* p) {
-	if (InterlockedDecrement(&p->refCount) == 0) {
-	//if (--p->refCount == 0) {
-		p->destroy();
+#ifdef USE_INTRUSIVE_PTR
+	inline void intrusive_ptr_add_ref(ScriptValue* p) {
+		//p->refCount += 1;
+		InterlockedIncrement(&p->refCount);
 	}
-}
+	inline void intrusive_ptr_release(ScriptValue* p) {
+		if (InterlockedDecrement(&p->refCount) == 0) {
+		//if (--p->refCount == 0) {
+			p->destroy();
+		}
+	}
+#endif
 
 extern ScriptValueP script_nil;   ///< The preallocated nil value
 extern ScriptValueP script_true;  ///< The preallocated true value
