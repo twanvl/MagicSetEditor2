@@ -82,6 +82,8 @@
 #define REFLECT(var)          tag.handle(_(#var), var)
 /// Reflect a variable under the given name
 #define REFLECT_N(name, var)  tag.handle(_(name), var)
+/// Reflect a variable without a name, should be used only once per class
+#define REFLECT_NAMELESS(var) tag.handle(var)
 
 /// Declare that the variables of a base class should also be reflected
 #define REFLECT_BASE(Base)    Base::reflect_impl(tag)

@@ -9,6 +9,7 @@
 #include <data/game.hpp>
 #include <data/field.hpp>
 #include <util/io/package_manager.hpp>
+#include <script/script.hpp>
 #include <script/value.hpp>
 
 // ----------------------------------------------------------------------------- : Game
@@ -27,7 +28,7 @@ IMPLEMENT_REFLECTION(Game) {
 //	ioMseVersion(io, fileName, fileVersion);
 	REFLECT(full_name);
 	REFLECT_N("icon",          icon_filename);
-//	REFLECT(init_script);
+	REFLECT(init_script);
 	REFLECT(set_fields);
 	REFLECT(card_fields);
 //	REFLECT_N("keyword parameter type", keyword_params);

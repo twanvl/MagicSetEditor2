@@ -12,7 +12,7 @@
 #include <util/prec.hpp>
 #include <script/value.hpp>
 
-DECLARE_POINTER_TYPE(Script);
+DECLARE_INTRUSIVE_POINTER_TYPE(Script);
 
 // ----------------------------------------------------------------------------- : Instructions
 

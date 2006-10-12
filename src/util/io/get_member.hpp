@@ -11,12 +11,11 @@
 
 #include <util/prec.hpp>
 
-class ScriptValue;
-typedef boost::intrusive_ptr<ScriptValue> ScriptValueP;
+DECLARE_INTRUSIVE_POINTER_TYPE(ScriptValue);
 inline void intrusive_ptr_add_ref(ScriptValue* p);
 inline void intrusive_ptr_release(ScriptValue* p);
 
-class Vector2D;
+template <typename T> class Defaultable;
 
 // ----------------------------------------------------------------------------- : GetMember
 
@@ -30,7 +29,7 @@ class GetMember {
 	/// Tell the reflection code we are not reading
 	inline bool reading() const { return false; }
 	
-	/// The result, or scriptNil if the member was not found
+	/// The result, or script_nil if the member was not found
 	inline ScriptValueP result() { return value; } 
 	
 	// --------------------------------------------------- : Handling objects
@@ -40,16 +39,13 @@ class GetMember {
 	void handle(const Char* name, const T& object) {
 		if (!value && name == targetName) store(object);
 	}
-	template <typename T>
-	void handle(const T&);
+	/// Handle an object: investigate children
+	template <typename T> void handle(const T&);
+	/// Handle a Defaultable: investigate children
+	template <typename T> void handle(const Defaultable<T>& def);
 	
 	/// Store something in the return value
-	void store(const String&       v);
-	void store(const Vector2D&     v);
-	void store(const int           v);
-	void store(const unsigned int  v);
-	void store(const double        v);
-	void store(const bool          v);
+	template <typename T> void store(const T& v);
 	/// Store a vector in the return value
 	template <typename T> void store(const vector<T>& vector) {
 		value = toScript(&vector);
@@ -76,7 +72,7 @@ class GetMember {
 
 /// Implement enum reflection as used by GetMember
 #define REFLECT_ENUM_GET_MEMBER(Enum)							\
-	template<> void GetMember::handle<Enum>(const Enum& enum_) {\
+	template<> void GetMember::store<Enum>(const Enum& enum_) {	\
 		EnumGetMember gm(*this);								\
 		reflect_ ## Enum(const_cast<Enum&>(enum_), gm);			\
 	}
@@ -91,7 +87,7 @@ class EnumGetMember {
 	template <typename Enum>
 	inline void handle(const Char* name, Enum value, Enum enum_) {
 		if (enum_ == value) {
-			getMember.store(name);
+			getMember.store(String(name));
 		}
 	}
 	

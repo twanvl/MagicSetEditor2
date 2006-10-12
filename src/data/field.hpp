@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
+#include <util/alignment.hpp>
 
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Style);
@@ -35,9 +36,9 @@ class Field {
 	UInt      card_list_width;  ///< Width of the card list column (pixels).
 	bool      card_list_allow;  ///< Is this field allowed to appear in the card list.
 	String    card_list_name;   ///< Alternate name to use in card list.
-//	Alignment card_list_align;  ///< Alignment of the card list colummn.
+	Alignment card_list_align;  ///< Alignment of the card list colummn.
 	int       tab_index;        ///< Tab index in editor
-//	Vector<DependendScript> dependendScripts; // scripts that depend on values of this field
+//	vector<Dependency> dependentScripts; // scripts that depend on values of this field
 	
 	/// Creates a new Value corresponding to this Field
 	/** thisP is a smart pointer to this */

@@ -68,6 +68,12 @@ inline shared_ptr<T> new_shared7(const A0& a0, const A1& a1, const A2& a2, const
 
 #ifdef USE_INTRUSIVE_PTR
 
+	/// Declares the type TypeP as a intrusive_ptr<Type>
+	#define DECLARE_INTRUSIVE_POINTER_TYPE(Type)		\
+		class Type;										\
+		typedef intrusive_ptr<Type> Type##P;
+
+
 	/// Allocate a new intrusive-pointed object
 	template <typename T>
 	inline intrusive_ptr<T> new_intrusive() {
@@ -85,6 +91,7 @@ inline shared_ptr<T> new_shared7(const A0& a0, const A1& a1, const A2& a2, const
 	}
 
 #else
+	#define DECLARE_INTRUSIVE_POINTER_TYPE DECLARE_POINTER_TYPE
 	#define intrusive_ptr smart_ptr
 	#define new_intrusive  new_smart
 	#define new_intrusive1 new_smart1

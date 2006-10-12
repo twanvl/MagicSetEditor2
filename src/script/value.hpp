@@ -28,9 +28,7 @@ class Dependency;
 
 // ----------------------------------------------------------------------------- : ScriptValue
 
-//DECLARE_POINTER_TYPE(ScriptValue);
-class ScriptValue;
-typedef boost::intrusive_ptr<ScriptValue> ScriptValueP;
+DECLARE_INTRUSIVE_POINTER_TYPE(ScriptValue);
 
 enum ScriptType
 {	SCRIPT_NIL
@@ -104,9 +102,9 @@ inline void intrusive_ptr_release(ScriptValue* p) {
 	}
 }
 
-extern ScriptValueP scriptNil;   ///< The preallocated nil value
-extern ScriptValueP scriptTrue;  ///< The preallocated true value
-extern ScriptValueP scriptFalse; ///< The preallocated false value
+extern ScriptValueP script_nil;   ///< The preallocated nil value
+extern ScriptValueP script_true;  ///< The preallocated true value
+extern ScriptValueP script_false; ///< The preallocated false value
 
 
 // ----------------------------------------------------------------------------- : Iterators
@@ -191,7 +189,7 @@ ScriptValueP toScript(int           v);
 ScriptValueP toScript(double        v);
 ScriptValueP toScript(const String& v);
 ScriptValueP toScript(const Color&  v);
-inline ScriptValueP toScript(bool                 v) { return v ? scriptTrue : scriptFalse; }
+inline ScriptValueP toScript(bool                 v) { return v ? script_true : script_false; }
 template <typename T>
 inline ScriptValueP toScript(const vector<T>*     v) { return new_intrusive1<ScriptCollection<vector<T> > >(v); }
 template <typename T>

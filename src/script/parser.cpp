@@ -283,9 +283,9 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 			if (minPrec <= PREC_UNARY && token == _("not")) {
 				parseOper(input, script, PREC_UNARY, I_UNARY, I_NOT); // unary not
 			} else if (token == _("true")) {
-				script.addInstruction(I_PUSH_CONST, scriptTrue); // boolean constant : true
+				script.addInstruction(I_PUSH_CONST, script_true); // boolean constant : true
 			} else if (token == _("false")) {
-				script.addInstruction(I_PUSH_CONST, scriptFalse); // boolean constant : false
+				script.addInstruction(I_PUSH_CONST, script_false); // boolean constant : false
 			} else if (token == _("if")) {
 				// if AAA then BBB else CCC
 				unsigned int jmpElse, jmpEnd;
@@ -300,7 +300,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 				if (input.read() == _("else")) {						// else
 					parseOper(input, script, PREC_SET);					// CCC
 				} else {
-					script.addInstruction(I_PUSH_CONST, scriptNil);
+					script.addInstruction(I_PUSH_CONST, script_nil);
 				}
 				script.comeFrom(jmpEnd);								//		lbl_end:
 			} else if (token == _("for")) {
@@ -315,7 +315,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					expectToken(input, _("in"));						// in
 					parseOper(input, script, PREC_SET);					// BBB
 					script.addInstruction(I_UNARY, I_ITERATOR_C);		//		iterator_collection
-					script.addInstruction(I_PUSH_CONST, scriptNil);		//		push nil
+					script.addInstruction(I_PUSH_CONST, script_nil);	//		push nil
 					lblStart = script.getLabel();						//		lbl_start:
 					script.addInstruction(I_LOOP, 0xFFFF);				//		loop
 					expectToken(input, _("do"));						// do
@@ -333,7 +333,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					expectToken(input, _("to"));						// to
 					parseOper(input, script, PREC_SET);					// CCC
 					script.addInstruction(I_BINARY, I_ITERATOR_R);		//		iterator_range
-					script.addInstruction(I_PUSH_CONST, scriptNil);		//		push nil
+					script.addInstruction(I_PUSH_CONST, script_nil);	//		push nil
 					lblStart = script.getLabel();						//		lbl_start:
 					script.addInstruction(I_LOOP, 0xFFFF);				//		loop
 					expectToken(input, _("do"));						// do

@@ -242,7 +242,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				// Get a variable (almost as normal)
 				case I_GET_VAR: {
 					ScriptValueP value = variables[i.data].value;
-					if (!value) value = scriptNil; // no errors here
+					if (!value) value = script_nil; // no errors here
 					stack.push_back(value);
 					break;
 				}

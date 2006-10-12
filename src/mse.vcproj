@@ -689,24 +689,6 @@
 			Name="util"
 			Filter="">
 			<File
-				RelativePath=".\util\action_stack.cpp">
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Unicode|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\util\action_stack.hpp">
-			</File>
-			<File
 				RelativePath=".\util\dynamic_arg.hpp">
 			</File>
 			<File
@@ -719,13 +701,7 @@
 				RelativePath=".\util\for_each.hpp">
 			</File>
 			<File
-				RelativePath=".\util\index_map.hpp">
-			</File>
-			<File
 				RelativePath=".\util\prec.hpp">
-			</File>
-			<File
-				RelativePath=".\util\real_point.hpp">
 			</File>
 			<File
 				RelativePath=".\util\reflect.hpp">
@@ -756,9 +732,6 @@
 			</File>
 			<File
 				RelativePath=".\util\string.hpp">
-			</File>
-			<File
-				RelativePath=".\util\vector2d.hpp">
 			</File>
 			<File
 				RelativePath=".\util\version.hpp">
@@ -834,6 +807,46 @@
 				</File>
 				<File
 					RelativePath=".\util\io\writer.hpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="types"
+				Filter="">
+				<File
+					RelativePath=".\util\action_stack.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\util\action_stack.hpp">
+				</File>
+				<File
+					RelativePath=".\util\alignment.cpp">
+				</File>
+				<File
+					RelativePath=".\util\alignment.hpp">
+				</File>
+				<File
+					RelativePath=".\util\defaultable.hpp">
+				</File>
+				<File
+					RelativePath=".\util\index_map.hpp">
+				</File>
+				<File
+					RelativePath=".\util\real_point.hpp">
+				</File>
+				<File
+					RelativePath=".\util\vector2d.hpp">
 				</File>
 			</Filter>
 		</Filter>
@@ -936,6 +949,12 @@
 			</File>
 			<File
 				RelativePath=".\script\script.hpp">
+			</File>
+			<File
+				RelativePath=".\script\scriptable.cpp">
+			</File>
+			<File
+				RelativePath=".\script\scriptable.hpp">
 			</File>
 			<File
 				RelativePath=".\script\value.cpp">

@@ -25,7 +25,7 @@ ScriptValueP ScriptValue::next()               { throw InternalError(_("Can't co
 ScriptValueP ScriptValue::makeIterator() const { throw ScriptError(  _("Can't convert from ")+typeName()+_(" to collection")); }
 
 void ScriptValue::signalDependent(Context&, const Dependency&, const String& name) {}
-ScriptValueP ScriptValue::dependencies(   Context&, const Dependency&) const { return scriptNil; }
+ScriptValueP ScriptValue::dependencies(   Context&, const Dependency&) const { return script_nil; }
 
 
 // ----------------------------------------------------------------------------- : Iterators
@@ -81,8 +81,8 @@ ScriptValueP toScript(int v) {
 }
 
 // use integers to represent true/false
-ScriptValueP scriptTrue  = toScript((int)true);
-ScriptValueP scriptFalse = toScript((int)false);
+ScriptValueP script_true  = toScript((int)true);
+ScriptValueP script_false = toScript((int)false);
 
 
 // ----------------------------------------------------------------------------- : Doubles
@@ -165,10 +165,11 @@ class ScriptNil : public ScriptValue {
 	virtual operator String() const { return wxEmptyString; }
 	virtual operator double() const { return 0.0; }
 	virtual operator int()    const { return 0; }
+	virtual ScriptValueP eval(Context&) const { return script_nil; } // nil() == nil
 };
 
 /// The preallocated nil value
-ScriptValueP scriptNil(new ScriptNil);
+ScriptValueP script_nil(new ScriptNil);
 
 
 // ----------------------------------------------------------------------------- : EOF

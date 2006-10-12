@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <data/field/text.hpp>
+#include <script/script.hpp>
 
 // ----------------------------------------------------------------------------- : TextField
 
@@ -37,8 +38,8 @@ String TextField::typeName() const {
 IMPLEMENT_REFLECTION(TextField) {
 	REFLECT_BASE(Field);
 	REFLECT(multi_line);
-//	REFLECT(script);
-//	REFLECT_N("default", default_script);
+	REFLECT(script);
+	REFLECT_N("default", default_script);
 	REFLECT(move_cursor_with_sort);
 	REFLECT(default_name);
 }
@@ -61,4 +62,5 @@ ValueP TextValue::clone() const {
 
 IMPLEMENT_REFLECTION(TextValue) {
 	REFLECT_BASE(Value);
+	REFLECT_NAMELESS(value);
 }

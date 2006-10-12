@@ -63,6 +63,7 @@ void Reader::moveNext() {
 void Reader::readLine() {
 	// fix UTF8 in ascii builds; skip BOM
 	line = decodeUTF8BOM(stream.ReadLine());
+	line_number += 1;
 	// read indentation
 	indent = 0;
 	while ((UInt)indent < line.size() && line.GetChar(indent) == _('\t')) {
@@ -70,14 +71,13 @@ void Reader::readLine() {
 	}
 	// read key / value
 	size_t pos = line.find_first_of(_(':'), indent);
+	if (!pos || line.GetChar(indent) == _('#')) {
+		// empty line or comment
+		key.clear();
+		return;
+	}
 	key   = cannocial_name_form(trim(line.substr(indent, pos - indent)));
 	value = pos == String::npos ? _("") : trim_left(line.substr(pos+1));
-	// we read a line
-	line_number += 1;
-	// was it a comment?
-	if (!key.empty() && key.GetChar(0) == _('#')) {
-		key.clear();
-	}
 }
 
 // ----------------------------------------------------------------------------- : Handling basic types

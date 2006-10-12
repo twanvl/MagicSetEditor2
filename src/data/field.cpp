@@ -20,7 +20,7 @@ Field::Field()
 	, card_list_column (-1)
 	, card_list_width  (100)
 	, card_list_allow  (true)
-//	, card_list_align  (ALIGN_LEFT)
+	, card_list_align  (ALIGN_LEFT)
 	, tab_index        (0)
 {}
 
@@ -38,7 +38,7 @@ IMPLEMENT_REFLECTION(Field) {
 	REFLECT(card_list_column);
 	REFLECT(card_list_width);
 	REFLECT(card_list_allow);
-//	REFLECT(card_list_align);
+	REFLECT(card_list_align);
 	REFLECT(tab_index);
 }
 

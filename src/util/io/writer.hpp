@@ -12,6 +12,8 @@
 #include <util/prec.hpp>
 #include <wx/txtstrm.h>
 
+template <typename T> class Defaultable;
+
 // ----------------------------------------------------------------------------- : Writer
 
 typedef wxOutputStream  OutputStream;
@@ -48,6 +50,8 @@ class Writer {
 	template <typename T> void handle(const shared_ptr<T>& pointer);
 	/// Write a map to the output stream
 	//template <typename K, typename V> void handle(map<K,V>& map);
+	/// Write an object of type Defaultable<T> to the output stream
+	template <typename T> void handle(const Defaultable<T>& def);
 	
   private:
 	// --------------------------------------------------- : Data

@@ -12,6 +12,8 @@
 #include <util/prec.hpp>
 #include <wx/txtstrm.h>
 
+template <typename T> class Defaultable;
+
 // ----------------------------------------------------------------------------- : Reader
 
 typedef wxInputStream  InputStream;
@@ -57,6 +59,8 @@ class Reader {
 	template <typename T> void handle(shared_ptr<T>& pointer);
 	/// Reads a map from the input stream
 	//template <typename K, typename V> void handle(map<K,V>& map);
+	/// Reads a Defaultable from the input stream
+	template <typename T> void handle(Defaultable<T>& def);
 	
   private:
 	// --------------------------------------------------- : Data
@@ -130,7 +134,16 @@ void Reader::handle(shared_ptr<T>& pointer) {
 /// Implement reflection as used by Reader
 #define REFLECT_OBJECT_READER(Cls)								\
 	template<> void Reader::handle<Cls>(Cls& object) {			\
-		object.reflect(*this);									\
+		while (indent >= expected_indent) {						\
+			UInt l = line_number;								\
+			object.reflect(*this);								\
+			if (l == line_number) {								\
+				/* error */										\
+				do {											\
+					moveNext();									\
+				} while (indent > expected_indent);				\
+			}													\
+		}														\
 	}
 
 // ----------------------------------------------------------------------------- : Reflection for enumerations
