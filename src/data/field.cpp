@@ -8,6 +8,11 @@
 
 #include <data/field.hpp>
 #include <data/field/text.hpp>
+#include <data/field/choice.hpp>
+#include <data/field/boolean.hpp>
+#include <data/field/image.hpp>
+#include <data/field/symbol.hpp>
+#include <data/field/color.hpp>
 #include <util/error.hpp>
 
 // ----------------------------------------------------------------------------- : Field

@@ -81,6 +81,13 @@ String trim(const String&);
 /// Remove whitespace from the start of a string
 String trim_left(const String&);
 
+/// Compare two strings, is the first less than the first?
+/** Uses a smart comparison algorithm that understands numbers. 
+ *  The comparison is case insensitive.
+ *  Doesn't handle leading zeros.
+ */
+bool smart_less(const String&, const String&);
+
 // ----------------------------------------------------------------------------- : Words
 
 /// Returns the last word in a string

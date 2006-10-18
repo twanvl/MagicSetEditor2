@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
 #include <util/defaultable.hpp>
+#include <script/script.hpp>
 
 DECLARE_INTRUSIVE_POINTER_TYPE(Script);
 class Context;

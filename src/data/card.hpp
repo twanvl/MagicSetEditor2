@@ -16,7 +16,7 @@
 class Game;
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
-DECLARE_POINTER_TYPE(CardStyle);
+DECLARE_POINTER_TYPE(StyleSheet);
 
 // ----------------------------------------------------------------------------- : Card
 
@@ -34,17 +34,16 @@ class Card {
 	/// Get an identification of the card, an identification is something like a name, title, etc.
 	String identification() const;
 	
-  private:
-	/// The values on the fields of the card
-	/// The indices should correspond to the cardFields in the Game
+	/// The values on the fields of the card.
+	/** The indices should correspond to the cardFields in the Game */
 	IndexMap<FieldP, ValueP> data;
 	
 	/// Notes for this card
 	String notes;
 	
 	/// Alternative style to use for this card
-	/// Optional, if not set use the card style from the set
-	CardStyleP style;
+	/** Optional; if not set use the card style from the set */
+	StyleSheetP stylesheet;
 	
 	DECLARE_REFLECTION();
 };

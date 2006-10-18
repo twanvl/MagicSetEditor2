@@ -81,7 +81,10 @@ class Value {
 	
 	/// Create a copy of this value
 	virtual ValueP clone() const = 0;
-		
+	
+	/// Convert this value to a string for use in tables
+	virtual String toString() const = 0;
+	
   private:
 	DECLARE_REFLECTION_VIRTUAL();
 };

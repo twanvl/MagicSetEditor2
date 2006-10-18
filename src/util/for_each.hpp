@@ -185,6 +185,13 @@
 		FOR_EACH_2_T(TYPEOF_IT(Collection1), TYPEOF_REF(Collection1), Elem1, Collection1,	\
 		             TYPEOF_IT(Collection2), TYPEOF_REF(Collection2), Elem2, Collection2)
 
+/// Iterate over two constants collections in parallel, their type must be declared with DECLARE_TYPEOF.
+/** Usage: FOR_EACH_2_CONST(e1,collect1, e2,collect2) { body-of-loop }
+ */
+#define FOR_EACH_2_CONST(Elem1,Collection1, Elem2,Collection2)								\
+		FOR_EACH_2_T(TYPEOF_CIT(Collection1), TYPEOF_CREF(Collection1), Elem1, Collection1,	\
+		             TYPEOF_CIT(Collection2), TYPEOF_CREF(Collection2), Elem2, Collection2)
+
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

@@ -32,7 +32,8 @@ enum Alignment
 ,	ALIGN_JUSTIFY_OVERFLOW	= 0x1000
 ,	ALIGN_STRETCH			= 0x2000
 // common combinations
-,	ALIGN_TOP_LEFT			= ALIGN_TOP | ALIGN_LEFT
+,	ALIGN_TOP_LEFT			= ALIGN_TOP    | ALIGN_LEFT
+,	ALIGN_MIDDLE_CENTER		= ALIGN_MIDDLE | ALIGN_CENTER
 };
 
 
@@ -40,7 +41,7 @@ enum Alignment
 double align_delta_x(Alignment align, double box_width, double obj_width);
 
 /// How much should an object with obj_height be moved to be aligned in a box with box_height?
-double align_delta_t(Alignment align, double box_height, double obj_height);
+double align_delta_y(Alignment align, double box_height, double obj_height);
 
 /// Align a rectangle inside another rectangle
 /** returns the topleft coordinates of the inner rectangle after alignment

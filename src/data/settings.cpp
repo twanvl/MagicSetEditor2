@@ -8,6 +8,7 @@
 
 #include <data/settings.hpp>
 #include <data/game.hpp>
+#include <data/field.hpp>
 #include <util/reflect.hpp>
 #include <util/io/reader.hpp>
 #include <util/io/writer.hpp>
@@ -23,6 +24,12 @@ IMPLEMENT_REFLECTION_ENUM(CheckUpdates) {
 	VALUE_N("never",        CHECK_NEVER);
 }
 
+const int COLUMN_NOT_INITIALIZED = -100000;
+
+ColumnSettings::ColumnSettings()
+	: width(100), position(COLUMN_NOT_INITIALIZED), visible(false)
+{}
+
 IMPLEMENT_REFLECTION(ColumnSettings) {
 	REFLECT(width);
 	REFLECT(position);
@@ -37,7 +44,7 @@ IMPLEMENT_REFLECTION(GameSettings) {
 	REFLECT(sort_cards_ascending);
 }
 
-IMPLEMENT_REFLECTION(StyleSettings) {
+IMPLEMENT_REFLECTION(StyleSheetSettings) {
 	// TODO
 }
 
@@ -74,6 +81,19 @@ GameSettings& Settings::gameSettingsFor(const Game& game) {
 	GameSettingsP& gs = settings.game_settings[game.name()];
 	if (!gs) gs.reset(new GameSettings);
 	return *gs;
+}
+ColumnSettings& Settings::columnSettingsFor(const Game& game, const Field& field) {
+	// Get game info
+	GameSettings& gs = gameSettingsFor(game);
+	// Get column info
+	ColumnSettings& cs = gs.columns[field.name];
+	if (cs.position == COLUMN_NOT_INITIALIZED) {
+		// column info not set, initialize based on the game
+		cs.visible  = field.card_list_column >= 0;
+		cs.position = field.card_list_column;
+		cs.width    = field.card_list_width;
+	}
+	return cs;
 }
 /*
 StyleSettings& Settings::styleSettingsFor(const CardStyle& style) {

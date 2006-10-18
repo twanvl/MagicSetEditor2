@@ -11,6 +11,28 @@
 
 // ----------------------------------------------------------------------------- : Alignment
 
+double align_delta_x(Alignment align, double box_width, double obj_width) {
+	if      (align & ALIGN_CENTER) return (box_width - obj_width) / 2;
+	else if (align & ALIGN_RIGHT)  return  box_width - obj_width;
+	else                           return 0;
+}
+
+
+double align_delta_y(Alignment align, double box_height, double obj_height) {
+	if      (align & ALIGN_MIDDLE) return (box_height - obj_height) / 2;
+	else if (align & ALIGN_BOTTOM) return  box_height - obj_height;
+	else                           return 0;
+}
+
+RealPoint align_in_rect(Alignment align, const RealSize& to_align, const RealRect& outer) {
+	return RealPoint(
+		outer.position.x + align_delta_x(align, outer.size.width,  to_align.width),
+		outer.position.y + align_delta_y(align, outer.size.height, to_align.height)
+	);
+}
+
+// ----------------------------------------------------------------------------- : Reflection stuff
+
 /// Convert a String to an Alignment
 Alignment fromString(const String& str) {
 	int al = 0;

@@ -8,11 +8,12 @@
 
 #include <util/io/package_manager.hpp>
 #include <util/error.hpp>
+#include <data/game.hpp>
 
 // ----------------------------------------------------------------------------- : PackageManager
 
 String program_dir() {
-	return _("."); //TODO
+	return wxGetCwd(); //TODO
 }
 
 PackageManager packages;
@@ -34,6 +35,33 @@ PackageManager::PackageManager() {
 		}
 	}
 	data_directory += _("/data");
+}
+
+PackagedP PackageManager::openAny(const String& name) {
+	wxFileName fn(data_directory + _("/") + name);
+	fn.Normalize();
+	String filename = fn.GetFullPath();
+	// Is this package already loaded?
+	PackagedP& p = loaded_packages[filename];
+	if (p) {
+		return p;
+	} else {
+		// load with the right type, based on extension
+		if      (fn.GetExt() == _("mse-game"))         p = new_shared<Game>();
+//		else if (fn.GetExt() == _("mse-style"))        p = new_shared<CardStyle>();
+//		else if (fn.GetExt() == _("mse-locale"))       p = new_shared<Locale>();
+//		else if (fn.GetExt() == _("mse-include"))      p = new_shared<IncludePackage>();
+//		else if (fn.GetExt() == _("mse-symbol-font"))  p = new_shared<SymbolFont>();
+		else {
+			throw PackageError(_("Unrecognized package type: ") + fn.GetExt());
+		}
+		p->open(filename);
+		return p;
+	}
+}
+
+String PackageManager::findFirst(const String& pattern) {
+	return wxFindFirstFile(data_directory + _("/") + pattern, 0);
 }
 
 void PackageManager::destroy() {

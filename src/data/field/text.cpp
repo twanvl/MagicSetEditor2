@@ -59,6 +59,9 @@ IMPLEMENT_REFLECTION(TextStyle) {
 ValueP TextValue::clone() const {
 	return new_shared1<TextValue>(*this);
 }
+String TextValue::toString() const {
+	return value();
+}
 
 IMPLEMENT_REFLECTION(TextValue) {
 	REFLECT_BASE(Value);

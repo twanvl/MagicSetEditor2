@@ -22,7 +22,17 @@ bool Game::isMagic() const {
 	return name() == _("magic");
 }
 
+String Game::typeNameStatic() { return _("game"); }
 String Game::typeName() const { return _("game"); }
+
+String Game::fullName() const { return full_name; }
+InputStreamP Game::openIconFile() {
+	if (!icon_filename.empty()) {
+		return openIn(icon_filename);
+	} else {
+		return InputStreamP();
+	}
+}
 
 IMPLEMENT_REFLECTION(Game) {
 //	ioMseVersion(io, fileName, fileVersion);

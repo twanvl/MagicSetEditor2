@@ -113,16 +113,16 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	// NOTE: place the CardsPanel last in the panels list,
 	//  this way the card list is the last to be told of a set change
 	//  this way everyone else already uses the new set when it sends a CardSelectEvent
-//	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 4, _("F5"));
+//	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 4, _("F5"), _("Cards"), _("Cards"));
 //	addPanel(menuWindow, tabBar, new SetInfoPanel (this, wxID_ANY), 0, _("F6"));
-//	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 1, _("F7"));
+	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 1, _("F7"), _("Style"), _("Style"), _("Chnage the style of cards"));
 //	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 2, _("F8"));
-//	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 3, _("F9"));
+//	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 3, _("F9"), _("Stats"), _("Statistics"), _("Show statistics about the cards in the set"));
 	//addPanel(*s, *menuWindow, *tabBar, new DraftPanel   (&this, wxID_ANY), 4, _("F10")) 
 //	selectPanel(idWindowMin + 4); // select cards panel
 
-	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 0, _("F9"));
-	selectPanel(ID_WINDOW_MIN); // test
+	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 0, _("F9"), _("Stats"), _("Statistics"), _("Show statistics about the cards in the set"));
+	selectPanel(ID_WINDOW_MIN+1); // test
 	
 	// loose ends
 	tabBar->Realize();
@@ -162,15 +162,16 @@ SetWindow::~SetWindow() {
 
 // ----------------------------------------------------------------------------- : Panel managment
 
-void SetWindow::addPanel(wxMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* panel, UInt pos, const String& shortcut) {
+void SetWindow::addPanel(wxMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* panel, UInt pos,
+                         const String& shortcut, const String& shortName, const String& longName, const String& description) {
 	// insert in list
 	if (panels.size() <= pos) panels.resize(pos + 1);
 	panels[pos] = panel;
 	// add to tab bar
 	int id = ID_WINDOW_MIN + pos;
-	tabBar->AddTool(id,panel->shortName(), wxNullBitmap, wxNullBitmap, wxITEM_CHECK, panel->longName(), panel->description());
+	tabBar->AddTool(id, shortName, wxNullBitmap, wxNullBitmap, wxITEM_CHECK, longName, description);
 	// add to menu bar
-	windowMenu->AppendCheckItem(id, panel->longName() + _("\t") + shortcut, panel->description());
+	windowMenu->AppendCheckItem(id, longName + _("\t") + shortcut, description);
 	// add to sizer
 	GetSizer()->Add(panel, 1, wxEXPAND);
 }

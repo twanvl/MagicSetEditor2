@@ -26,12 +26,9 @@ class SetWindowPanel : public wxPanel, public SetView {
 	/// We will probably want to respond to set changes
 	virtual void onSetChange() {}
 	
-	// --------------------------------------------------- : Meta information
-	
-	virtual String shortName()   { return _("<undefined>"); } ///< for tab bar
-	virtual String longName()    { return shortName(); }      ///< for menu
-	virtual String description() { return _("<undefined>"); } ///< for status bar
-	virtual String helpFile()    { return _(""); }            ///< help file to use when this panel is active
+//	// --------------------------------------------------- : Meta information
+//	
+//	virtual String helpFile()    { return _(""); } ///< help file to use when this panel is active
 	
 	// --------------------------------------------------- : UI
 	
@@ -49,29 +46,29 @@ class SetWindowPanel : public wxPanel, public SetView {
 	// --------------------------------------------------- : Actions/Events
 	
 	/// Should return true if this panel wants to get focus to show an action
-	virtual bool wantsToHandle(const Action&) { return false; }
+	virtual bool wantsToHandle(const Action&) const { return false; }
 	/// Handle an action that changes the current set
 	virtual void onAction(const Action&) {}
 	/// The settings for rendering cards have changed, refresh card viewers/editors
 	virtual void onRenderSettingsChange() {}
 	
 	// --------------------------------------------------- : Clipboard
-	virtual bool canPaste() { return false; }			///< Is pasting possible?
-	virtual bool canCopy()  { return false; }			///< Is copying possible?
-	virtual bool canCut()   { return canCopy(); }		///< Is cutting possible?
+	virtual bool canPaste() const { return false; }		///< Is pasting possible?
+	virtual bool canCopy()  const { return false; }		///< Is copying possible?
+	virtual bool canCut()   const { return canCopy(); }	///< Is cutting possible?
 	virtual void doPaste()  {}							///< Paste the contents of the clipboard
 	virtual void doCopy()   {}							///< Copy the selection to the clipboard
 	virtual void doCut()    {}							///< Cut the selection to the clipboard
 	
 	// --------------------------------------------------- : Searching (find/replace)
-	virtual bool canFind()    { return false; }			///< Is finding possible?
-	virtual bool canReplace() { return false; }			///< Is replacing possible?
+	virtual bool canFind()    const { return false; }				///< Is finding possible?
+	virtual bool canReplace() const { return false; }				///< Is replacing possible?
 	virtual bool doFind(wxFindReplaceData&)    { return false; }	///< Find the next math
 	virtual bool doReplace(wxFindReplaceData&) { return false; }	///< Replace the next match
 	
 	// --------------------------------------------------- : Selection
-	virtual CardP selectedCard() { return CardP(); }	///< Return the currently selected card, or CardP()
-	virtual void  selectCard(CardP card) {}				///< Switch the view to another card
+	virtual CardP selectedCard() const { return CardP(); }	///< Return the currently selected card, or CardP()
+	virtual void  selectCard(CardP card) {}					///< Switch the view to another card
 	
   protected:
 	// --------------------------------------------------- : Helper functions for UI

@@ -368,6 +368,18 @@
 				<File
 					RelativePath=".\gui\control\card_list.hpp">
 				</File>
+				<File
+					RelativePath=".\gui\control\gallery_list.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\gallery_list.hpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\package_list.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\package_list.hpp">
+				</File>
 			</Filter>
 			<Filter
 				Name="editor"
@@ -543,10 +555,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="symbol"
-			Filter="">
-		</Filter>
-		<Filter
 			Name="data"
 			Filter="">
 			<File
@@ -672,10 +680,40 @@
 				Name="field"
 				Filter="">
 				<File
+					RelativePath=".\data\field\boolean.cpp">
+				</File>
+				<File
+					RelativePath=".\data\field\boolean.hpp">
+				</File>
+				<File
+					RelativePath=".\data\field\choice.cpp">
+				</File>
+				<File
+					RelativePath=".\data\field\choice.hpp">
+				</File>
+				<File
+					RelativePath=".\data\field\color.cpp">
+				</File>
+				<File
+					RelativePath=".\data\field\color.hpp">
+				</File>
+				<File
 					RelativePath=".\data\field.cpp">
 				</File>
 				<File
 					RelativePath=".\data\field.hpp">
+				</File>
+				<File
+					RelativePath=".\data\field\image.cpp">
+				</File>
+				<File
+					RelativePath=".\data\field\image.hpp">
+				</File>
+				<File
+					RelativePath=".\data\field\symbol.cpp">
+				</File>
+				<File
+					RelativePath=".\data\field\symbol.hpp">
 				</File>
 				<File
 					RelativePath=".\data\field\text.cpp">

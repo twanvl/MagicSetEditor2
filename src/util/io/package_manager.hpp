@@ -44,9 +44,14 @@ class PackageManager {
 		}
 	}
 	
-	/// Open a package with the specified name
-	/// the type of package is determined by its extension!
-	PackagedP openAnyPackage(const String& filename);
+	/// Open a package with the specified name, the type of package is determined by its extension!
+	PackagedP openAny(const String& name);
+	
+	/// Find a package whos name matches a pattern
+	/** Find more using wxFindNextFile().
+	 *  If no package is found returns an empty string.
+	 */
+	String findFirst(const String& pattern);
 	
 	/// Empty the list of packages.
 	/** This function MUST be called before the program terminates, otherwise

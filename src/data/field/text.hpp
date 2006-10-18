@@ -71,6 +71,7 @@ class TextValue : public Value {
 	Defaultable<String> value;				///< The text of this value
 	
 	virtual ValueP clone() const;
+	virtual String toString() const;
   private:
 	DECLARE_REFLECTION();
 };

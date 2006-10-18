@@ -130,6 +130,9 @@ enum ChildMenuID {
 ,	ID_SHAPE_STAR
 ,	ID_SHAPE_MAX
 ,	ID_SIDES
+
+	// CardList
+,	ID_SELECT_COLUMNS		= 3001
 };
 
 

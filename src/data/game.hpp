@@ -32,8 +32,12 @@ class Game : public Packaged {
 	/// Is this Magic the Gathering?
 	bool isMagic() const;
 	
+	static String typeNameStatic();
+	virtual String typeName() const;
+	virtual String fullName() const;
+	virtual InputStreamP openIconFile();
+	
   protected:
-	String typeName() const;
 	void validate();
 	
 	DECLARE_REFLECTION();

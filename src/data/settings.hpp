@@ -11,12 +11,14 @@
 
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
+#include <util/defaultable.hpp>
 
 class Game;
-class CardStyle;
+class StyleSheet;
+class Field;
 
 DECLARE_POINTER_TYPE(GameSettings);
-DECLARE_POINTER_TYPE(StyleSettings);
+DECLARE_POINTER_TYPE(StyleSheetSettings);
 
 // ----------------------------------------------------------------------------- : Extra data structures
 
@@ -30,6 +32,7 @@ enum CheckUpdates
 /// Settings of a single column in the card list
 class ColumnSettings {
   public:
+	ColumnSettings();
 	UInt width;
 	int  position;
 	bool visible;
@@ -49,20 +52,20 @@ class GameSettings {
 	DECLARE_REFLECTION();
 };
 
-/// Settings for a Style
-class StyleSettings {
+/// Settings for a StyleSheet
+class StyleSheetSettings {
   public:
 	// Rendering/display settings
-/*	SimpleDefaultable<double> card_zoom          = 1.0;
-	SimpleDefaultable<int>    card_angle         = 0;
-	SimpleDefaultable<bool>   card_anti_alias    = true;
-	SimpleDefaultable<bool>   card_borders       = true;
-	SimpleDefaultable<bool>   card_normal_export = true;
-*/	
+	Defaultable<double> card_zoom;
+	Defaultable<int>    card_angle;
+	Defaultable<bool>   card_anti_alias;
+	Defaultable<bool>   card_borders;
+	Defaultable<bool>   card_normal_export;
+	
 	DECLARE_REFLECTION();
 	
 //	/// Where the settings are the default, use the value from ss
-//	void useDefault(const StyleSettings& ss);
+//	void useDefault(const StyleSheetSettings& ss);
 };
 
 // ----------------------------------------------------------------------------- : Settings
@@ -92,17 +95,19 @@ class Settings {
 	// --------------------------------------------------- : Default pacakge selections
 	String default_game;
 	
-	// --------------------------------------------------- : Game/style specific
+	// --------------------------------------------------- : Game/stylesheet specific
 	
 	/// Get the settings object for a specific game
-	GameSettings& gameSettingsFor(const Game& game);
-	/// Get the settings object for a specific style
-	StyleSettings& styleSettingsFor(const CardStyle& style);
+	GameSettings&       gameSettingsFor      (const Game& game);
+	/// Get the settings for a column for a specific field in a game
+	ColumnSettings&     columnSettingsFor    (const Game& game, const Field& field);
+	/// Get the settings object for a specific stylesheet
+	StyleSheetSettings& styleSheetSettingsFor(const StyleSheet& stylesheet);
 	
   private:
-	map<String,GameSettingsP> game_settings;
-	map<String,StyleSettingsP> style_settings;
-	StyleSettings default_style_settings;
+	map<String,GameSettingsP>       game_settings;
+	map<String,StyleSheetSettingsP> stylesheet_settings;
+	StyleSheetSettings              default_stylesheet_settings;
   public:
 	
 	// --------------------------------------------------- : Special game stuff
