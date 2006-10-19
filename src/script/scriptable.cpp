@@ -24,7 +24,7 @@ void store(const ScriptValueP& val, Defaultable<String>& var) { var.assign(*val)
 
 OptionalScript::~OptionalScript() {}
 
-ScriptValueP OptionalScript::invoke(Context& ctx) {
+ScriptValueP OptionalScript::invoke(Context& ctx) const {
 	if (script) {
 		return ctx.eval(*script);
 	} else {
@@ -44,14 +44,11 @@ template <> void Writer::handle(const OptionalScript& os) {
 	handle(os.unparsed);
 }
 
-template <> void GetMember::handle(const OptionalScript& os) {
-	// no members
-}
-template <> void GetMember::store(const OptionalScript& os) {
+template <> void GetDefaultMember::handle(const OptionalScript& os) {
 	// reflect as the script itself
 	if (os.script) {
-		store(os.script);
+		handle(os.script);
 	} else {
-		store(script_nil);
+		handle(script_nil);
 	}
 }

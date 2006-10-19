@@ -13,6 +13,7 @@
 #include <util/reflect.hpp>
 #include <util/defaultable.hpp>
 #include <script/script.hpp>
+#include <script/parser.hpp>
 
 DECLARE_INTRUSIVE_POINTER_TYPE(Script);
 class Context;
@@ -33,17 +34,17 @@ class OptionalScript {
   public:
 	~OptionalScript();
 	/// Is the script set?
-	inline operator bool() { return !!script; }
+	inline operator bool() const { return !!script; }
 	
 	/// Invoke the script, return the result, or script_nil if there is no script
-	ScriptValueP invoke(Context& ctx);
+	ScriptValueP invoke(Context& ctx) const;
 	
 	/// Invoke the script on a value
 	/** Assigns the result to value if it has changed.
 	 *  Returns true if the value has changed.
 	 */
 	template <typename T>
-	bool invokeOn(Context& ctx, T& value) {
+	bool invokeOn(Context& ctx, T& value) const {
 		if (script) {
 			T new_value;
 			store(new_value, script->invoke(ctx));
@@ -59,6 +60,7 @@ class OptionalScript {
 	ScriptP script;		///< The script, may be null if there is no script
 	String unparsed;	///< Unparsed script, for writing back to a file
 	DECLARE_REFLECTION();
+	template <typename T> friend class Scriptable;
 };
 
 // ----------------------------------------------------------------------------- : Scriptable
@@ -85,6 +87,32 @@ class Scriptable {
 	
 	DECLARE_REFLECTION();
 };
+
+
+// we need some custom io, because the behaviour is different for each of Reader/Writer/GetMember
+
+template <typename T>
+void Reader::handle(Scriptable<T>& s) {
+	handle(s.script.unparsed);
+	if (starts_with(s.script.unparsed, _("script:"))) {
+		s.script.script   = parse(s.script.unparsed);
+	} else {
+		handle(value);
+	}
+}
+template <typename T>
+void Writer::handle(const Scriptable<T>& s) {
+	if (s.script) {
+		handle(s.script);
+	} else {
+		handle(s.value);
+	}
+}
+template <typename T>
+void GetDefaultMember::handle(const Scriptable<T>& s) {
+	// just handle as the value
+	handle(s.value);
+}
 
 // ----------------------------------------------------------------------------- : EOF
 #endif
