@@ -53,7 +53,7 @@ bool MSE::OnInit() {
 		// we don't throw std::exception ourselfs, so this is probably something serious
 		handle_error(InternalError(String(e.what(), IF_UNICODE(wxConvLocal, wxSTRING_MAXLEN) )), false);
 	} catch (...) {
-		handle_error(InternalError(_("An unexpected exception occurred, this is a bug!\nPlease save your work (use 'save as' to so you don't overwrite things),\n and restart Magic Set Editor.\n\nYou can leave a bug report on http://magicseteditor.sourceforge.net/")), false);
+		handle_error(InternalError(_("An unexpected exception occurred!")), false);
 	}
 	packages.destroy();
 	return false;
@@ -78,7 +78,7 @@ bool MSE::OnExceptionInMainLoop() {
 		// we don't throw std::exception ourselfs, so this is probably something serious
 		handle_error(InternalError(String(e.what(), IF_UNICODE(wxConvLocal, wxSTRING_MAXLEN) )), false);
 	} catch (...) {
-		handle_error(InternalError(_("An unexpected exception occurred, this is a bug!\nPlease save your work (use 'save as' to so you don't overwrite things),\n and restart Magic Set Editor.\n\nYou can leave a bug report on http://magicseteditor.sourceforge.net/")), false);
+		handle_error(InternalError(_("An unexpected exception occurred!")), false);
 	}
 	return true;
 }

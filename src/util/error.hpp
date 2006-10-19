@@ -36,7 +36,8 @@ class Error {
 class InternalError : public Error {
   public:
 	inline InternalError(const String& str)
-		: Error(_("An internal error occured, please contact the author:\n") + str)
+		: Error(_("An internal error occured:\n\n") + str
+		       +_("\n\nPlease save your work (use 'save as' to so you don't overwrite things),\n and restart Magic Set Editor.\n\nYou should leave a bug report on http://magicseteditor.sourceforge.net/"))
 	{}
 };
 
