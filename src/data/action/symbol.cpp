@@ -355,8 +355,8 @@ void DuplicateSymbolPartsAction::getParts(set<SymbolPartP>& parts) {
 
 // ----------------------------------------------------------------------------- : Reorder symbol parts
 
-ReorderSymbolPartsAction::ReorderSymbolPartsAction(Symbol& symbol, size_t partId1, size_t partId2)
-	: symbol(symbol), partId1(partId1), partId2(partId2)
+ReorderSymbolPartsAction::ReorderSymbolPartsAction(Symbol& symbol, size_t part_id1, size_t part_id2)
+	: symbol(symbol), part_id1(part_id1), part_id2(part_id2)
 {}
 
 String ReorderSymbolPartsAction::getName(bool to_undo) const {
@@ -364,7 +364,7 @@ String ReorderSymbolPartsAction::getName(bool to_undo) const {
 }
 
 void ReorderSymbolPartsAction::perform(bool to_undo) {
-	assert(partId1 < symbol.parts.size());
-	assert(partId2 < symbol.parts.size());
-	swap(symbol.parts[partId1], symbol.parts[partId2]);
+	assert(part_id1 < symbol.parts.size());
+	assert(part_id2 < symbol.parts.size());
+	swap(symbol.parts[part_id1], symbol.parts[part_id2]);
 }

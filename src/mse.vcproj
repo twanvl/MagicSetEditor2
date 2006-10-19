@@ -612,6 +612,36 @@
 				Name="action"
 				Filter="">
 				<File
+					RelativePath=".\data\action\set.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\data\action\set.hpp">
+				</File>
+				<File
 					RelativePath=".\data\action\symbol.cpp">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -708,6 +738,12 @@
 				</File>
 				<File
 					RelativePath=".\data\field\image.hpp">
+				</File>
+				<File
+					RelativePath=".\data\field\multiple_choice.cpp">
+				</File>
+				<File
+					RelativePath=".\data\field\multiple_choice.hpp">
 				</File>
 				<File
 					RelativePath=".\data\field\symbol.cpp">

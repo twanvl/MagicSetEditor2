@@ -17,6 +17,8 @@ DECLARE_POINTER_TYPE(SymbolFilter);
 
 // ----------------------------------------------------------------------------- : SymbolField
 
+DECLARE_POINTER_TYPE(SymbolField);
+
 /// A field for image values
 class SymbolField : public Field {
   public:
@@ -35,6 +37,9 @@ class SymbolField : public Field {
 /// The Style for a SymbolField
 class SymbolStyle : public Style {
   public:
+	inline SymbolStyle(const SymbolFieldP& field) : Style(field) {}
+	HAS_FIELD(Symbol)
+	
 	class Variation;
 	typedef shared_ptr<Variation> VariationP;
 	vector<VariationP> variations; ///< Different variantions of the same symbol
@@ -58,6 +63,9 @@ class SymbolStyle::Variation {
 /// The Value in a SymbolField, i.e. a symbol
 class SymbolValue : public Value {
   public:
+	inline SymbolValue(const SymbolFieldP& field) : Value(field) {}
+	HAS_FIELD(Symbol)
+	
 	String filename; ///< Filename of the symbol (in the current package)
 	
 	virtual String toString() const;

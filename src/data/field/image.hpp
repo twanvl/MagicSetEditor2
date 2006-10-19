@@ -15,6 +15,8 @@
 
 // ----------------------------------------------------------------------------- : ImageField
 
+DECLARE_POINTER_TYPE(ImageField);
+
 /// A field for image values
 class ImageField : public Field {
   public:
@@ -33,7 +35,10 @@ class ImageField : public Field {
 /// The Style for a ImageField
 class ImageStyle : public Style {
   public:
+	inline ImageStyle(const ImageFieldP& field) : Style(field) {}
+	
 	Scriptable<String> mask_filename; ///< Filename for a mask image
+	
   private:
 	DECLARE_REFLECTION();
 };
@@ -43,6 +48,8 @@ class ImageStyle : public Style {
 /// The Value in a ImageField, i.e. an image
 class ImageValue : public Value {
   public:
+	inline ImageValue(const ImageFieldP& field) : Value(field) {}
+	
 	String filename; ///< Filename of the image (in the current package), or ""
 	
 	virtual String toString() const;

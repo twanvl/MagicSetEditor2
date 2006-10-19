@@ -13,11 +13,19 @@
 
 // ----------------------------------------------------------------------------- : IndexMap
 
-/// A kind of map of K->V, with the following properties:
+/// A kind of map of Key->Value, with the following properties:
 /**  - K must have a unique member ->index of type UInt
- *   - There must exist a function initObject(K, V&)
+ *   - There must exist a function void init_object(Key, Value&)
  *     that stores a new V object for a given key in the reference
+ *   - There must exist a function Key get_key(Value)
+ *     that returns a key for a given value
+ *   - For reflection there must exist a function String get_key_name(Value)
+ *     that returns the key in string form
  *   - O(1) inserts and lookups
+ *
+ *  The 'map' is actually just a vector of values, each key has an index
+ *  which is used for the vector.
+ *  Values know their keys, so there is no need to store them separately.
  */
 template <typename Key, typename Value>
 class IndexMap : private vector<Value> {
@@ -25,20 +33,18 @@ class IndexMap : private vector<Value> {
 	using vector<Value>::empty;
 	using vector<Value>::size;
 	using vector<Value>::iterator;
+	using vector<Value>::const_iterator;
 	using vector<Value>::begin;
 	using vector<Value>::end;
 	
 	/// Initialize this map with default values given a list of keys, has no effect if !empty()
-	/** Requires a function
-	 *    void initObject(Key, Value&)
-	 */
 	void init(const vector<Key>& keys) {
 		if (!this->empty()) return;
 		this->reserve(keys.size());
 		FOR_EACH_CONST(key, keys) {
 			assert(key);
 			if (key->index >= this->size()) this->resize(key->index + 1);
-			initObject(key, (*this)[key->index]);
+			init_object(key, (*this)[key->index]);
 		}
 	}
 	
@@ -48,20 +54,18 @@ class IndexMap : private vector<Value> {
 		assert(this->size() > key->index);
 		return at(key->index);
 	}
-
+	
 	/// Is a value contained in this index map?
-	/// requires a function Key Value::getKey()
 	inline bool contains(const Value& value) const {
 		assert(value);
-		size_t index = value->getKey()->index;
+		size_t index = get_key(value)->index;
 		return index < this.size() && (*this)[index] == value
 	}
-
+	
 	/// Is a key in the domain of this index map?
-	/// requires a function Key Value::getKey()
 	inline bool containsKey(const Key& key) const {
 		assert(key);
-		return key->index < this.size() && (*this)[key->index]->getKey() == key
+		return key->index < this.size() && get_key((*this)[key->index]) == key
 	}
 	
   private:

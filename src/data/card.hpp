@@ -31,19 +31,18 @@ class Card {
 	/// Creates a card using the given game
 	Card(const Game& game);
 	
-	/// Get an identification of the card, an identification is something like a name, title, etc.
-	String identification() const;
-	
 	/// The values on the fields of the card.
-	/** The indices should correspond to the cardFields in the Game */
+	/** The indices should correspond to the card_fields in the Game */
 	IndexMap<FieldP, ValueP> data;
-	
 	/// Notes for this card
 	String notes;
-	
 	/// Alternative style to use for this card
 	/** Optional; if not set use the card style from the set */
 	StyleSheetP stylesheet;
+	
+	/// Get the identification of this card, an identification is something like a name, title, etc.
+	/** May return "" */
+	String identification() const;
 	
 	DECLARE_REFLECTION();
 };

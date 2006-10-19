@@ -16,15 +16,7 @@ TextField::TextField()
 	, default_name(_("Default"))
 {}
 
-StyleP TextField::newStyle(const FieldP& thisP) const {
-	assert(thisP.get() == this);
-	return new_shared<TextStyle>();
-}
-
-ValueP TextField::newValue(const FieldP& thisP) const {
-	assert(thisP.get() == this);
-	return new_shared<TextValue>();
-}
+FIELD_TYPE(Text)
 
 String TextField::typeName() const {
 	return _("text");
@@ -42,8 +34,40 @@ IMPLEMENT_REFLECTION(TextField) {
 
 // ----------------------------------------------------------------------------- : TextStyle
 
+TextStyle::TextStyle(const TextFieldP& field)
+	: Style(field)
+	, always_symbol(false), allow_formating(true)
+	, alignment(ALIGN_TOP_LEFT)
+	, angle(0)
+	, padding_left  (0), padding_left_min  (10000)
+	, padding_right (0), padding_right_min (10000)
+	, padding_top   (0), padding_top_min   (10000)
+	, padding_bottom(0), padding_bottom_min(10000)
+	, line_height_soft(1.0)
+	, line_height_hard(1.0)
+	, line_height_line(1.0)
+{}
+
 IMPLEMENT_REFLECTION(TextStyle) {
 	REFLECT_BASE(Style);
+//	REFLECT(font);
+//	REFLECT(symbol_font);
+	REFLECT(always_symbol);
+	REFLECT(allow_formating);
+	REFLECT(alignment);
+	REFLECT(angle);
+	REFLECT(padding_left);
+	REFLECT(padding_right);
+	REFLECT(padding_top);
+	REFLECT(padding_bottom);
+	REFLECT(padding_left_min);
+	REFLECT(padding_right_min);
+	REFLECT(padding_top_min);
+	REFLECT(padding_bottom_min);
+	REFLECT(line_height_soft);
+	REFLECT(line_height_hard);
+	REFLECT(line_height_line);
+	REFLECT_N("mask", mask_filename);
 }
 
 // ----------------------------------------------------------------------------- : TextValue

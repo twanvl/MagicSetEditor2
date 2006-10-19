@@ -10,13 +10,7 @@
 
 // ----------------------------------------------------------------------------- : SymbolField
 
-StyleP SymbolField::newStyle(const FieldP& thisP) const {
-	return new_shared<SymbolStyle>();
-}
-
-ValueP SymbolField::newValue(const FieldP& thisP) const {
-	return new_shared<SymbolValue>();
-}
+FIELD_TYPE(Symbol)
 
 String SymbolField::typeName() const {
 	return _("symbol");

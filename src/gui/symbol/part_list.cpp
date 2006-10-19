@@ -41,10 +41,10 @@ void SymbolPartList::onChangeSymbol() {
 
 void SymbolPartList::onAction(const Action& action) {
 	TYPE_CASE(action, ReorderSymbolPartsAction) {
-		if (selected == (long) action.partId1) {
-			selectItem((long) action.partId2);
-		} else if (selected == (long) action.partId2) {
-			selectItem((long) action.partId1);
+		if (selected == (long) action.part_id1) {
+			selectItem((long) action.part_id2);
+		} else if (selected == (long) action.part_id2) {
+			selectItem((long) action.part_id1);
 		}
 	}
 	TYPE_CASE_(action, SymbolPartListAction) {

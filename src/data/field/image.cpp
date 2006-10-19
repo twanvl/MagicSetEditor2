@@ -10,13 +10,7 @@
 
 // ----------------------------------------------------------------------------- : ImageField
 
-StyleP ImageField::newStyle(const FieldP& thisP) const {
-	return new_shared<ImageStyle>();
-}
-
-ValueP ImageField::newValue(const FieldP& thisP) const {
-	return new_shared<ImageValue>();
-}
+FIELD_TYPE(Image)
 
 String ImageField::typeName() const {
 	return _("image");

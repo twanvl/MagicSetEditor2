@@ -172,7 +172,7 @@ class ScriptCollection : public ScriptValue {
 
 // ----------------------------------------------------------------------------- : Collections : maps
 
-/// Script value containing a map like collection
+/// Script value containing a map-like collection
 template <typename Collection>
 class ScriptMap : public ScriptValue {
   public:
@@ -223,6 +223,8 @@ template <typename T>
 inline ScriptValueP toScript(const vector<T>*     v) { return new_intrusive1<ScriptCollection<vector<T> > >(v); }
 template <typename K, typename V>
 inline ScriptValueP toScript(const map<K,V>*      v) { return new_intrusive1<ScriptMap<map<K,V> > >(v); }
+template <typename K, typename V>
+inline ScriptValueP toScript(const IndexMap<K,V>* v) { return new_intrusive1<ScriptMap<IndexMap<K,V> > >(v); }
 template <typename T>
 inline ScriptValueP toScript(const shared_ptr<T>& v) { return new_intrusive1<ScriptObject<T> >(v); }
 

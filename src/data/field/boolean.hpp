@@ -14,6 +14,8 @@
 
 // ----------------------------------------------------------------------------- : BooleanField
 
+DECLARE_POINTER_TYPE(BooleanField);
+
 /// A field whos value is either true or false
 class BooleanField : public ChoiceField {
   public:
@@ -34,6 +36,9 @@ class BooleanField : public ChoiceField {
 /// The Style for a BooleanField
 class BooleanStyle : public ChoiceStyle {
   public:
+	inline BooleanStyle(const ChoiceFieldP& field) : ChoiceStyle(field) {}
+	HAS_FIELD(Boolean)
+	
 	// no extra data
 	
   private:
@@ -45,6 +50,9 @@ class BooleanStyle : public ChoiceStyle {
 /// The Value in a BooleanField
 class BooleanValue : public ChoiceValue {
   public:
+	inline BooleanValue(const ChoiceFieldP& field) : ChoiceValue(field) {}
+	HAS_FIELD(Boolean)
+	
 	// no extra data
 	
   private:

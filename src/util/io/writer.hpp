@@ -52,6 +52,8 @@ class Writer {
 	template <typename T> void handle(const shared_ptr<T>& pointer);
 	/// Write a map to the output stream
 	template <typename K, typename V> void handle(const map<K,V>& map);
+	/// Write an IndexMap to the output stream
+	template <typename K, typename V> void handle(const IndexMap<K,V>& map);
 	/// Write an object of type Defaultable<T> to the output stream
 	template <typename T> void handle(const Defaultable<T>&);
 	/// Write an object of type Scriptable<T> to the output stream
@@ -98,12 +100,21 @@ template <typename T>
 void Writer::handle(const shared_ptr<T>& pointer) {
 	if (pointer) handle(*pointer);
 }
+
 template <typename K, typename V>
 void Writer::handle(const map<K,V>& m) {
 	for (typename map<K,V>::const_iterator it = m.begin() ; it != m.end() ; ++it) {
 		handle(it->first.c_str(), it->second);
 	}
 }
+
+template <typename K, typename V>
+void Writer::handle(const IndexMap<K,V>& m) {
+	for (typename IndexMap<K,V>::const_iterator it = m.begin() ; it != m.end() ; ++it) {
+		handle(get_key_name(*it).c_str(), *it);
+	}
+}
+
 
 // ----------------------------------------------------------------------------- : Reflection
 

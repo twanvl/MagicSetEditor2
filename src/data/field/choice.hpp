@@ -17,6 +17,8 @@
 
 // ----------------------------------------------------------------------------- : ChoiceField
 
+DECLARE_POINTER_TYPE(ChoiceField);
+
 /// A field that contains a list of choices
 class ChoiceField : public Field {
   public:
@@ -108,7 +110,8 @@ enum ChoiceRenderStyle
 /// The Style for a ChoiceField
 class ChoiceStyle : public Style {
   public:
-	ChoiceStyle();
+	ChoiceStyle(const ChoiceFieldP& field);
+	HAS_FIELD(Choice)
 	
 	ChoicePopupStyle			popup_style;	///< Style of popups/menus
 	ChoiceRenderStyle			render_style;	///< Style of rendering
@@ -129,6 +132,9 @@ class ChoiceStyle : public Style {
 /// The Value in a ChoiceField
 class ChoiceValue : public Value {
   public:
+	inline ChoiceValue(const ChoiceFieldP& field) : Value(field) {}
+	HAS_FIELD(Choice)
+	
 	Defaultable<String> value;	/// The name of the selected choice
 	
 	virtual String toString() const;

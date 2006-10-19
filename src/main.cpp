@@ -40,7 +40,10 @@ bool MSE::OnInit() {
 		initFileFormats();
 		settings.read();
 		//Window* wnd = new SymbolWindow(nullptr);
-		Window* wnd = new SetWindow(nullptr, new_shared1<Set>(Game::byName(_("magic"))));
+		//GameP g = Game::byName(_("magic"))
+		SetP  s = new_shared<Set>();
+		s->open(_("test.mse-set"));
+		Window* wnd = new SetWindow(nullptr, s);
 		wnd->Show();
 		return true;
 	

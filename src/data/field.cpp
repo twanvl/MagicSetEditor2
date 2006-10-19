@@ -9,6 +9,7 @@
 #include <data/field.hpp>
 #include <data/field/text.hpp>
 #include <data/field/choice.hpp>
+#include <data/field/multiple_choice.hpp>
 #include <data/field/boolean.hpp>
 #include <data/field/image.hpp>
 #include <data/field/symbol.hpp>
@@ -56,20 +57,28 @@ shared_ptr<Field> read_new<Field>(Reader& reader) {
 	// there must be a type specified
 	String type;
 	reader.handle(_("type"), type);
-	if      (type == _("text"))		return new_shared<TextField>();
-	else if (type == _("choice"))	return new_shared<ChoiceField>();
-	else if (type == _("boolean"))	return new_shared<BooleanField>();
-	else if (type == _("image"))	return new_shared<ImageField>();
-	else if (type == _("symbol"))	return new_shared<SymbolField>();
-	else if (type == _("color"))	return new_shared<ColorField>();
+	if      (type == _("text"))				return new_shared<TextField>();
+	else if (type == _("choice"))			return new_shared<ChoiceField>();
+	else if (type == _("multiple choice"))	return new_shared<MultipleChoiceField>();
+	else if (type == _("boolean"))			return new_shared<BooleanField>();
+	else if (type == _("image"))			return new_shared<ImageField>();
+	else if (type == _("symbol"))			return new_shared<SymbolField>();
+	else if (type == _("color"))			return new_shared<ColorField>();
 	else {
 		throw ParseError(_("Unsupported field type: '") + type + _("'"));
 	}
 }
 
 
-
 // ----------------------------------------------------------------------------- : Style
+
+Style::Style(const FieldP& field)
+	: fieldP(field)
+	, z_index(0)
+	, left(0), width (1)
+	, top (0), height(1)
+	, visible(true)
+{}
 
 Style::~Style() {}
 
@@ -82,8 +91,11 @@ IMPLEMENT_REFLECTION(Style) {
 	REFLECT(visible);
 }
 
-void initObject(const FieldP& field, StyleP& style) {
+void init_object(const FieldP& field, StyleP& style) {
 	style = field->newStyle(field);
+}
+template <> StyleP read_new<Style>(Reader&) {
+	throw InternalError(_("IndexMap contains nullptr StyleP the application should have crashed already"));
 }
 
 // ----------------------------------------------------------------------------- : Value
@@ -93,7 +105,10 @@ Value::~Value() {}
 IMPLEMENT_REFLECTION_NAMELESS(Value) {
 }
 
-void initObject(const FieldP& field, ValueP& value) {
+void init_object(const FieldP& field, ValueP& value) {
 	value = field->newValue(field);
+}
+template <> ValueP read_new<Value>(Reader&) {
+	throw InternalError(_("IndexMap contains nullptr ValueP the application should have crashed already"));
 }
 

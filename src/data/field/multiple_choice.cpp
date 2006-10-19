@@ -15,13 +15,7 @@ MultipleChoiceField::MultipleChoiceField()
 	, maximum_selection(1000000)
 {}
 
-StyleP MultipleChoiceField::newStyle(const FieldP& thisP) const {
-	return new_shared<MultipleChoiceStyle>();
-}
-
-ValueP MultipleChoiceField::newValue(const FieldP& thisP) const {
-	return new_shared<MultipleChoiceValue>();
-}
+FIELD_TYPE(MultipleChoice)
 
 String MultipleChoiceField::typeName() const {
 	return _("multiple choice");
@@ -35,8 +29,9 @@ IMPLEMENT_REFLECTION(MultipleChoiceField) {
 
 // ----------------------------------------------------------------------------- : MultipleChoiceStyle
 
-MultipleChoiceStyle::MultipleChoiceStyle()
-	: direction(HORIZONTAL)
+MultipleChoiceStyle::MultipleChoiceStyle(const MultipleChoiceFieldP& field)
+	: ChoiceStyle(field)
+	, direction(HORIZONTAL)
 	, spacing(0)
 {}
 

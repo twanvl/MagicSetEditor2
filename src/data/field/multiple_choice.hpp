@@ -14,6 +14,8 @@
 
 // ----------------------------------------------------------------------------- : MultipleChoiceField
 
+DECLARE_POINTER_TYPE(MultipleChoiceField);
+
 /// A ChoiceField where multiple choices can be selected simultaniously
 class MultipleChoiceField : public ChoiceField {
   public:
@@ -38,7 +40,8 @@ enum Direction {
 /// The Style for a MultipleChoiceField
 class MultipleChoiceStyle : public ChoiceStyle {
   public:
-	MultipleChoiceStyle();
+	MultipleChoiceStyle(const MultipleChoiceFieldP& field);
+	HAS_FIELD(MultipleChoice)
 	
 	Direction direction;	///< In what direction are choices layed out?
 	double spacing;			///< Spacing between choices (images) in pixels
@@ -55,6 +58,9 @@ class MultipleChoiceStyle : public ChoiceStyle {
  */
 class MultipleChoiceValue : public ChoiceValue {
   public:
+	inline MultipleChoiceValue(const MultipleChoiceFieldP& field) : ChoiceValue(field) {}
+	HAS_FIELD(MultipleChoice)
+	
 	// no extra data
 	
 	/// Splits the value, stores the selected choices in the out parameter

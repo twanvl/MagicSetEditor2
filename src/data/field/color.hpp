@@ -16,6 +16,8 @@
 
 // ----------------------------------------------------------------------------- : ColorField
 
+DECLARE_POINTER_TYPE(ColorField);
+
 /// A field for color values, it contains a list of choices for colors
 class ColorField : public Field {
   public:
@@ -52,14 +54,15 @@ class ColorField::Choice {
 /// The Style for a ColorField
 class ColorStyle : public Style {
   public:
-	ColorStyle();
+	ColorStyle(const ColorFieldP& field);
+	HAS_FIELD(Color)
 	
 	int  radius;			///< Radius of round corners
 	UInt left_width;		///< Width of the colored region on the left side
 	UInt right_width;		///< Width of the colored region on the right side
 	UInt top_width;			///< Width of the colored region on the top side
 	UInt bottom_width;		///< Width of the colored region on the bottom side
-	
+		
   private:
 	DECLARE_REFLECTION();
 };
@@ -69,6 +72,9 @@ class ColorStyle : public Style {
 /// The Value in a ColorField
 class ColorValue : public Value {
   public:
+	inline ColorValue(const ColorFieldP& field) : Value(field) {}
+	HAS_FIELD(Color)
+	
 	Defaultable<Color> value;	///< The value
 	
 	virtual String toString() const;

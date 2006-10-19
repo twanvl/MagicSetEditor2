@@ -17,17 +17,22 @@
 DECLARE_POINTER_TYPE(Card);
 DECLARE_POINTER_TYPE(Set);
 DECLARE_POINTER_TYPE(Game);
+DECLARE_POINTER_TYPE(Stylesheet);
 
 // ----------------------------------------------------------------------------- : Set
 
 /// A set of cards
 class Set : public Packaged {
   public:
+	/// Create a set, the set should be open()ed later
+	Set();
 	/// Create a set using the given game
 	Set(const GameP& game);
   
 	/// The game this set uses
 	GameP game;
+	/// The default stylesheet
+	StylesheetP stylesheet;
 	/// The cards in the set
 	vector<CardP> cards;
 	/// Actions performed on this set and the cards in it
@@ -35,10 +40,7 @@ class Set : public Packaged {
 	
   protected:
 	String typeName() const;
-	
-	// default constructor accessible to Reader
-	Set();
-	
+		
 	DECLARE_REFLECTION();
 };
 

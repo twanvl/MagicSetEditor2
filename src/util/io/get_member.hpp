@@ -46,6 +46,7 @@ class GetDefaultMember {
 	template <typename T>             void handle(const Scriptable<T>&);
 	template <typename T>             void handle(const vector<T>&     c) { value = toScript(&c); }
 	template <typename K, typename V> void handle(const map<K,V>&      c) { value = toScript(&c); }
+	template <typename K, typename V> void handle(const IndexMap<K,V>& c) { value = toScript(&c); }
 	template <typename T>             void handle(const shared_ptr<T>& p) { value = toScript(p); }
 	void handle(const ScriptValueP&);
 	void handle(const ScriptP&);
@@ -78,6 +79,16 @@ class GetMember : private GetDefaultMember {
 	}
 	/// Handle an object: investigate children
 	template <typename T> void handle(const T&);
+	/// Handle an index map: invistigate keys
+	template <typename K, typename V> void handle(const IndexMap<K,V>& m) {
+		if (gdm.result()) return;
+		for (typename IndexMap<K,V>::const_iterator it = m.begin() ; it != m.end() ; ++it) {
+			if (get_key_name(*it) == target_name) {
+				gdm.handle(*it);
+				return;
+			}
+		}
+	}
 		
   private:
 	const String& target_name;	///< The name we are looking for

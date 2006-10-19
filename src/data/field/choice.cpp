@@ -17,13 +17,7 @@ ChoiceField::ChoiceField()
 	, default_name(_("Default"))
 {}
 
-StyleP ChoiceField::newStyle(const FieldP& thisP) const {
-	return new_shared<ChoiceStyle>();
-}
-
-ValueP ChoiceField::newValue(const FieldP& thisP) const {
-	return new_shared<ChoiceValue>();
-}
+FIELD_TYPE(Choice)
 
 String ChoiceField::typeName() const {
 	return _("choice");
@@ -153,8 +147,13 @@ template <> void GetMember::handle(const ChoiceField::Choice& c) {
 
 // ----------------------------------------------------------------------------- : ChoiceStyle
 
-ChoiceStyle::ChoiceStyle()
-
+ChoiceStyle::ChoiceStyle(const ChoiceFieldP& field)
+	: Style(field)
+	, popup_style(POPUP_DROPDOWN)
+	, render_style(RENDER_TEXT)
+	, combine(COMBINE_NORMAL)
+	, alignment(ALIGN_STRETCH)
+	, colors_card_list(false)
 {}
 
 IMPLEMENT_REFLECTION_ENUM(ChoicePopupStyle) {
@@ -190,7 +189,6 @@ IMPLEMENT_REFLECTION(ChoiceStyle) {
 String ChoiceValue::toString() const {
 	return value();
 }
-
 
 IMPLEMENT_REFLECTION_NAMELESS(ChoiceValue) {
 	REFLECT_NAMELESS(value);

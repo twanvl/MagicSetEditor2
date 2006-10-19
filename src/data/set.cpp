@@ -22,7 +22,7 @@ String Set::typeName() const { return _("set"); }
 
 IMPLEMENT_REFLECTION(Set) {
 	WITH_DYNAMIC_ARG(game_for_new_cards, game.get()) {
-		REFLECT_N("card", cards);
+		REFLECT(cards);
 	}
 }
 

@@ -223,7 +223,7 @@ class DuplicateSymbolPartsAction : public SymbolPartListAction {
 /// Change the position of a part in a symbol, by swapping two parts.
 class ReorderSymbolPartsAction : public SymbolPartListAction {
   public:
-	ReorderSymbolPartsAction(Symbol& symbol, size_t partId1, size_t partId2);
+	ReorderSymbolPartsAction(Symbol& symbol, size_t part_id1, size_t part_id2);
   
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);
@@ -231,7 +231,7 @@ class ReorderSymbolPartsAction : public SymbolPartListAction {
   private:
 	Symbol& symbol;				///< Symbol to swap the parts in
   public:
-	size_t partId1, partId2;	///< Indeces of parts to swap
+	size_t part_id1, part_id2;	///< Indeces of parts to swap
 };
 
 

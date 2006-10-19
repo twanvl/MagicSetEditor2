@@ -65,7 +65,9 @@ class Reader {
 	/// Reads a shared_ptr from the input stream
 	template <typename T> void handle(shared_ptr<T>& pointer);
 	/// Reads a map from the input stream
-	template <typename K, typename V> void handle(map<K,V>& map);
+	template <typename K, typename V> void handle(map<K,V>& m);
+	/// Reads an IndexMap from the input stream, reads only keys that already exist in the map
+	template <typename K, typename V> void handle(IndexMap<K,V>& m);
 	/// Reads a Defaultable from the input stream
 	template <typename T> void handle(Defaultable<T>&);
 	/// Reads a Scriptable from the input stream
@@ -150,8 +152,17 @@ void Reader::handle(shared_ptr<T>& pointer) {
 }
 
 template <typename K, typename V>
-void Reader::handle(map<K,V>& map) {
+void Reader::handle(map<K,V>& m) {
 	// TODO
+}
+
+template <typename K, typename V>
+void Reader::handle(IndexMap<K,V>& m) {
+	while (indent >= expected_indent) {
+		for (typename IndexMap<K,V>::iterator it = m.begin() ; it != m.end() ; ++it) {
+			handle(get_key_name(*it).c_str(), *it);
+		}
+	}
 }
 
 // ----------------------------------------------------------------------------- : Reflection

@@ -17,13 +17,7 @@ ColorField::ColorField()
 	, allow_custom(true)
 {}
 
-StyleP ColorField::newStyle(const FieldP& thisP) const {
-	return new_shared<ColorStyle>();
-}
-
-ValueP ColorField::newValue(const FieldP& thisP) const {
-	return new_shared<ColorValue>();
-}
+FIELD_TYPE(Color)
 
 String ColorField::typeName() const {
 	return _("color");
@@ -47,8 +41,9 @@ IMPLEMENT_REFLECTION(ColorField::Choice) {
 
 // ----------------------------------------------------------------------------- : ColorStyle
 
-ColorStyle::ColorStyle()
-	: radius(0)
+ColorStyle::ColorStyle(const ColorFieldP& field)
+	: Style(field)
+	, radius(0)
 	, left_width(100000), right_width (100000)
 	, top_width (100000), bottom_width(100000)
 {}
@@ -65,12 +60,12 @@ IMPLEMENT_REFLECTION(ColorStyle) {
 // ----------------------------------------------------------------------------- : ColorValue
 
 String ColorValue::toString() const {
-/*	if (value.isDefault()) return field->default_name;
+	if (value.isDefault()) return field().default_name;
 	// is this a named color?
-	FOR_EACH(c, field->choices) {
-		if (value == c->color) return c->name;
+	FOR_EACH(c, field().choices) {
+		if (value() == c->color) return c->name;
 	}
-*/	return _("<color>");
+	return _("<color>");
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(ColorValue) {

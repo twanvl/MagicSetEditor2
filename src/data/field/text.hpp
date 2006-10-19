@@ -16,6 +16,8 @@
 
 // ----------------------------------------------------------------------------- : TextField
 
+DECLARE_POINTER_TYPE(TextField);
+
 /// A field for values containing tagged text
 class TextField : public Field {
   public:
@@ -40,16 +42,19 @@ class TextField : public Field {
 /// The Style for a TextField
 class TextStyle : public Style {
   public:
+	TextStyle(const TextFieldP&);
+	HAS_FIELD(Text)
+	
 //	FontInfo font;							///< Font to use for the text
 //	SymbolFontInfo symbol_font;				///< Symbol font for symbols in the text
 	bool always_symbol;						///< Should everything be drawn as symbols?
-	bool allow_formatting;					///< Is formating (bold/italic/..) allowed?
+	bool allow_formating;					///< Is formating (bold/italic/..) allowed?
 	Alignment alignment;					///< Alignment inside the box
 	int angle;								///< Angle of the text inside the box
-	int padding_left,   padding_left_min;	///< Padding
-	int padding_right,  padding_right_min;	///< Padding
-	int padding_top,    padding_top_min;	///< Padding
-	int padding_bottom, padding_bottom_min;	///< Padding
+	double padding_left,   padding_left_min;	///< Padding
+	double padding_right,  padding_right_min;	///< Padding
+	double padding_top,    padding_top_min;		///< Padding
+	double padding_bottom, padding_bottom_min;	///< Padding
 	double line_height_soft;				///< Line height for soft linebreaks
 	double line_height_hard;				///< Line height for hard linebreaks
 	double line_height_line;				///< Line height for <line> tags
@@ -63,7 +68,10 @@ class TextStyle : public Style {
 
 /// The Value in a TextField
 class TextValue : public Value {
-  public:	
+  public:
+	inline TextValue(const TextFieldP& field) : Value(field) {}
+	HAS_FIELD(Text)
+	
 	Defaultable<String> value;				///< The text of this value
 	
 	virtual String toString() const;

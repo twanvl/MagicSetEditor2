@@ -16,13 +16,7 @@ BooleanField::BooleanField() {
 	choices->initIds();
 }
 
-StyleP BooleanField::newStyle(const FieldP& thisP) const {
-	return new_shared<BooleanStyle>();
-}
-
-ValueP BooleanField::newValue(const FieldP& thisP) const {
-	return new_shared<BooleanValue>();
-}
+FIELD_TYPE(Boolean)
 
 String BooleanField::typeName() const {
 	return _("boolean");
