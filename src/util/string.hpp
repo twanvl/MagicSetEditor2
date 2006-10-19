@@ -81,13 +81,6 @@ String trim(const String&);
 /// Remove whitespace from the start of a string
 String trim_left(const String&);
 
-/// Compare two strings, is the first less than the first?
-/** Uses a smart comparison algorithm that understands numbers. 
- *  The comparison is case insensitive.
- *  Doesn't handle leading zeros.
- */
-bool smart_less(const String&, const String&);
-
 // ----------------------------------------------------------------------------- : Words
 
 /// Returns the last word in a string
@@ -117,6 +110,18 @@ String cannocial_name_form(const String&);
 /** Used for reflection, for example "vector<T> apples" is written with keys "apple"
  */
 String singular_form(const String&);
+
+// ----------------------------------------------------------------------------- : Comparing / finding
+
+/// Compare two strings, is the first less than the first?
+/** Uses a smart comparison algorithm that understands numbers. 
+ *  The comparison is case insensitive.
+ *  Doesn't handle leading zeros.
+ */
+bool smart_less(const String&, const String&);
+
+/// Return whether str starts with start
+bool starts_with(const String& str, const String& start);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

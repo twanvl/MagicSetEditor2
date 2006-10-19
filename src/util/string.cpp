@@ -61,45 +61,6 @@ String trim_left(const String& s) {
 	}
 }
 
-bool smart_less(const String& as, const String& bs) {
-	bool in_num = false; // are we inside a number?
-	bool lt = false;     // is as less than bs?
-	bool eq = true;      // so far is everything equal?
-	FOR_EACH_2_CONST(a, as, b, bs) {
-		bool na = isDigit(a), nb = isDigit(b);
-		Char la = toLower(a), lb = toLower(b);
-		if (na && nb) {
-			// compare numbers
-			in_num = true;
-			if (eq && a != b) {
-				eq = false;
-				lt = a < b;
-			}
-		} else if (in_num && na) {
-			// comparing numbers, one is longer, therefore it is greater
-			return false;
-		} else if (in_num && nb) {
-			return true;
-		} else if (in_num && !eq) {
-			// two numbers of the same length, but not equal
-			return lt;
-		} else {
-			// compare characters
-			if (la < lb)  return true;
-			if (la > lb)  return false;
-		}
-		in_num = na && nb;
-	}
-	// When we are at the end; shorter strings come first
-	// This is true for normal string collation
-	// and also when both end in a number and another digit follows
-	if (as.size() != bs.size()) {
-		return as.size() < bs.size();
-	} else {
-		return lt;
-	}
-}
-
 // ----------------------------------------------------------------------------- : Words
 
 String last_word(const String& s) {
@@ -177,4 +138,53 @@ String singular_form(const String& str) {
 	assert(str.size() > 1);
 	assert(str.GetChar(str.size() - 1) == _('s')); // ends in 's'
 	return str.substr(0, str.size() - 1);
+}
+
+// ----------------------------------------------------------------------------- : Comparing / finding
+
+bool starts_with(const String& str, const String& start) {
+	if (str.size() < start.size()) return false;
+	FOR_EACH_2_CONST(a, str, b, start) {
+		if (a != b) return false;
+	}
+	return true;
+}
+
+bool smart_less(const String& as, const String& bs) {
+	bool in_num = false; // are we inside a number?
+	bool lt = false;     // is as less than bs?
+	bool eq = true;      // so far is everything equal?
+	FOR_EACH_2_CONST(a, as, b, bs) {
+		bool na = isDigit(a), nb = isDigit(b);
+		Char la = toLower(a), lb = toLower(b);
+		if (na && nb) {
+			// compare numbers
+			in_num = true;
+			if (eq && a != b) {
+				eq = false;
+				lt = a < b;
+			}
+		} else if (in_num && na) {
+			// comparing numbers, one is longer, therefore it is greater
+			return false;
+		} else if (in_num && nb) {
+			return true;
+		} else if (in_num && !eq) {
+			// two numbers of the same length, but not equal
+			return lt;
+		} else {
+			// compare characters
+			if (la < lb)  return true;
+			if (la > lb)  return false;
+		}
+		in_num = na && nb;
+	}
+	// When we are at the end; shorter strings come first
+	// This is true for normal string collation
+	// and also when both end in a number and another digit follows
+	if (as.size() != bs.size()) {
+		return as.size() < bs.size();
+	} else {
+		return lt;
+	}
 }
