@@ -66,6 +66,6 @@ template <> void Reader::handle(Alignment& align) {
 template <> void Writer::handle(const Alignment& align) {
 	handle(toString(align));
 }
-template <> void GetMember::store(const Alignment& align) {
-	store(toString(align));
+template <> void GetDefaultMember::handle(const Alignment& align) {
+	handle(toString(align));
 }

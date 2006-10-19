@@ -130,3 +130,10 @@ template <> void Reader::handle(Vector2D& vec) {
 		throw ParseError(_("Expected (x,y)"));
 	}
 }
+
+template <> void Reader::handle(Color& col) {
+	UInt r,g,b;
+	if (wxSscanf(value.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
+		col.Set(r, g, b);
+	}
+}

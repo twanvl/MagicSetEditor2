@@ -13,6 +13,7 @@
 #include <wx/txtstrm.h>
 
 template <typename T> class Defaultable;
+template <typename T> class Scriptable;
 
 // ----------------------------------------------------------------------------- : Reader
 
@@ -39,6 +40,8 @@ class Reader {
 	
 	/// Tell the reflection code we are reading
 	inline bool reading() const { return true; }
+	/// Is the thing currently being read 'complex', i.e. does it have children
+	inline bool isComplex() const { return value.empty(); }
 	
 	// --------------------------------------------------- : Handling objects
 	/// Handle an object: read it if it's name matches
@@ -58,9 +61,11 @@ class Reader {
 	/// Reads a shared_ptr from the input stream
 	template <typename T> void handle(shared_ptr<T>& pointer);
 	/// Reads a map from the input stream
-	//template <typename K, typename V> void handle(map<K,V>& map);
+	template <typename K, typename V> void handle(map<K,V>& map);
 	/// Reads a Defaultable from the input stream
-	template <typename T> void handle(Defaultable<T>& def);
+	template <typename T> void handle(Defaultable<T>&);
+	/// Reads a Scriptable from the input stream
+	template <typename T> void handle(Scriptable<T>&);
 	
   private:
 	// --------------------------------------------------- : Data
@@ -129,6 +134,11 @@ void Reader::handle(shared_ptr<T>& pointer) {
 	handle(*pointer);
 }
 
+template <typename K, typename V>
+void Reader::handle(map<K,V>& map) {
+	// TODO
+}
+
 // ----------------------------------------------------------------------------- : Reflection
 
 /// Implement reflection as used by Reader
@@ -144,6 +154,9 @@ void Reader::handle(shared_ptr<T>& pointer) {
 				} while (indent > expected_indent);				\
 			}													\
 		}														\
+	}															\
+	void Cls::reflect(Reader& reader) {							\
+		reflect_impl(reader);									\
 	}
 
 // ----------------------------------------------------------------------------- : Reflection for enumerations

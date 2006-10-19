@@ -13,6 +13,7 @@
 #include <wx/txtstrm.h>
 
 template <typename T> class Defaultable;
+template <typename T> class Scriptable;
 
 // ----------------------------------------------------------------------------- : Writer
 
@@ -26,7 +27,8 @@ class Writer {
 	Writer(const OutputStreamP& output);
 	
 	/// Tell the reflection code we are not reading
-	inline bool reading() const { return false; }
+	inline bool reading()   const { return false; }
+	inline bool isComplex() const { return false; }
 	
 	// --------------------------------------------------- : Handling objects
 	/// Handle an object: write it under the given name
@@ -49,9 +51,11 @@ class Writer {
 	/// Write a shared_ptr to the output stream
 	template <typename T> void handle(const shared_ptr<T>& pointer);
 	/// Write a map to the output stream
-	//template <typename K, typename V> void handle(map<K,V>& map);
+	template <typename K, typename V> void handle(const map<K,V>& map);
 	/// Write an object of type Defaultable<T> to the output stream
-	template <typename T> void handle(const Defaultable<T>& def);
+	template <typename T> void handle(const Defaultable<T>&);
+	/// Write an object of type Scriptable<T> to the output stream
+	template <typename T> void handle(const Scriptable<T>&);
 	
   private:
 	// --------------------------------------------------- : Data
@@ -85,16 +89,20 @@ class Writer {
 template <typename T>
 void Writer::handle(const Char* name, const vector<T>& vec) {
 	String vectorKey = singular_form(name);
-	for (vector<T>::const_iterator it = vec.begin() ; it != vec.end() ; ++it) {
-		enterBlock(vectorKey);
-		handle(*it);
-		exitBlock();
+	for (typename vector<T>::const_iterator it = vec.begin() ; it != vec.end() ; ++it) {
+		handle(vectorKey, *it);
 	}
 }
 
 template <typename T>
 void Writer::handle(const shared_ptr<T>& pointer) {
 	if (pointer) handle(*pointer);
+}
+template <typename K, typename V>
+void Writer::handle(const map<K,V>& m) {
+	for (typename map<K,V>::const_iterator it = m.begin() ; it != m.end() ; ++it) {
+		handle(it->first.c_str(), it->second);
+	}
 }
 
 // ----------------------------------------------------------------------------- : Reflection
@@ -103,6 +111,9 @@ void Writer::handle(const shared_ptr<T>& pointer) {
 #define REFLECT_OBJECT_WRITER(Cls)								\
 	template<> void Writer::handle<Cls>(const Cls& object) {	\
 		const_cast<Cls&>(object).reflect(*this);				\
+	}															\
+	void Cls::reflect(Writer& writer) {							\
+		reflect_impl(writer);									\
 	}
 
 // ----------------------------------------------------------------------------- : Reflection for enumerations

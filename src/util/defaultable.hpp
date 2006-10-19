@@ -60,8 +60,8 @@ void Writer::handle(const Defaultable<T>& def) {
 	}
 }
 template <typename T>
-void GetMember::handle(const Defaultable<T>& def) {
-	store(def());
+void GetDefaultMember::handle(const Defaultable<T>& def) {
+	handle(def());
 }
 
 // ----------------------------------------------------------------------------- : EOF

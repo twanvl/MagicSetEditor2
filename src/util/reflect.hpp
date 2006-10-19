@@ -28,10 +28,12 @@
 			template<class Tag> void reflect_impl(Tag& tag);			\
 			friend class Reader;										\
 			friend class Writer;										\
+			friend class GetDefaultMember;								\
 			friend class GetMember;										\
 			void reflect(Reader& reader);								\
 			void reflect(Writer& writer);								\
-			void reflect(GetMember& getMember)
+			void reflect(GetDefaultMember& gdm);						\
+			void reflect(GetMember& gm)
 
 /// Declare that a class supports reflection, which can be overridden in derived classes
 #define DECLARE_REFLECTION_VIRTUAL()									\
@@ -39,10 +41,14 @@
 			template<class Tag> void reflect_impl(Tag& tag);			\
 			friend class Reader;										\
 			friend class Writer;										\
+			friend class GetDefaultMember;								\
 			friend class GetMember;										\
+			/* extra level of indirection between Tag::handle			\
+			 * and reflect_impl, to allow for virtual */				\
 			virtual void reflect(Reader& reader);						\
 			virtual void reflect(Writer& writer);						\
-			virtual void reflect(GetMember& getMember)
+			virtual void reflect(GetDefaultMember& gdm);				\
+			virtual void reflect(GetMember& gm)
 
 // ----------------------------------------------------------------------------- : Implementing reflection
 
@@ -50,9 +56,9 @@
 /** Reflection allows the member variables of a class to be inspected at runtime.
  *
  *  Currently creates the methods:
- *  - Reader::handle(Cls&)
- *  - Writer::handle(Cls&)
- *  - GetMember::handle(Cls&)
+ *  - Reader          ::handle(Cls&)
+ *  - Writer          ::handle(const Cls&)
+ *  - GetMember       ::handle(const Cls&)
  *  Usage:
  *    @code
  *     IMPLEMENT_REFLECTION(MyClass) {
@@ -64,17 +70,24 @@
 #define IMPLEMENT_REFLECTION(Cls)										\
 			REFLECT_OBJECT_READER(Cls)									\
 			REFLECT_OBJECT_WRITER(Cls)									\
+			REFLECT_OBJECT_GET_DEFAULT_MEMBER_NOT(Cls)					\
 			REFLECT_OBJECT_GET_MEMBER(Cls)								\
-			/* Extra level, so it can be declared virtual */			\
-			void Cls::reflect(Reader& reader) {							\
-				reflect_impl(reader);									\
-			}															\
-			void Cls::reflect(Writer& writer) {							\
-				reflect_impl(writer);									\
-			}															\
-			void Cls::reflect(GetMember& getMember) {					\
-				reflect_impl(getMember);								\
-			}															\
+			template <class Tag>										\
+			void Cls::reflect_impl(Tag& tag)
+
+/// Implement the refelection of a class type Cls that only uses REFLECT_NAMELESS
+#define IMPLEMENT_REFLECTION_NAMELESS(Cls)								\
+			REFLECT_OBJECT_READER(Cls)									\
+			REFLECT_OBJECT_WRITER(Cls)									\
+			REFLECT_OBJECT_GET_DEFAULT_MEMBER(Cls)						\
+			REFLECT_OBJECT_GET_MEMBER_NOT(Cls)							\
+			template <class Tag>										\
+			void Cls::reflect_impl(Tag& tag)
+
+/// Implement the refelection of a class type Cls, but only for Reader and Writer
+#define IMPLEMENT_REFLECTION_NO_GET_MEMBER(Cls)							\
+			REFLECT_OBJECT_READER(Cls)									\
+			REFLECT_OBJECT_WRITER(Cls)									\
 			template <class Tag>										\
 			void Cls::reflect_impl(Tag& tag)
 
@@ -105,7 +118,7 @@
  *  Currently creates the methods:
  *   - Reader::handle(Enum&
  *   - Writer::handle(const Enum&)
- *   - GetMember::handle(const Enum&)
+ *   - GetDefaultMember::handle(const Enum&)
  */
 #define IMPLEMENT_REFLECTION_ENUM(Enum)									\
 			template <class Tag>										\

@@ -17,85 +17,118 @@ inline void intrusive_ptr_add_ref(ScriptValue* p);
 inline void intrusive_ptr_release(ScriptValue* p);
 
 template <typename T> class Defaultable;
+template <typename T> class Scriptable;
 
-// ----------------------------------------------------------------------------- : GetMember
+// ----------------------------------------------------------------------------- : GetDefaultMember
 
-/// Find a member with a specific name using reflection
+/// Find a member without a name using reflection
 /** The member is wrapped in a ScriptValue */
-class GetMember {
+class GetDefaultMember {
   public:
-	/// Construct a member getter that looks for the given name
-	GetMember(const String& name);
-	
 	/// Tell the reflection code we are not reading
-	inline bool reading() const { return false; }
+	inline bool reading()   const { return false; }
+	inline bool isComplex() const { return false; }
 	
 	/// The result, or script_nil if the member was not found
 	inline ScriptValueP result() { return value; } 
 	
 	// --------------------------------------------------- : Handling objects
 	
+	/// Handle an object: we don't match things with a name
+	template <typename T>
+	void handle(const Char* name, const T& object) {}
+	
+	/// Handle an object: investigate children, or store it if we know how
+	template <typename T>             void handle(const T&);
+	
+	/// Handle a Defaultable: investigate children
+	template <typename T>             void handle(const Defaultable<T>&);
+	template <typename T>             void handle(const Scriptable<T>&);
+	template <typename T>             void handle(const vector<T>&     c) { value = toScript(&c); }
+	template <typename K, typename V> void handle(const map<K,V>&      c) { value = toScript(&c); }
+	template <typename T>             void handle(const shared_ptr<T>& p) { value = toScript(p); }
+	void handle(const ScriptValueP&);
+	void handle(const ScriptP&);
+  private:
+	ScriptValueP  value;		///< The value we found (if any)
+};
+
+// ----------------------------------------------------------------------------- : GetMember
+
+/// Find a member with a specific name using reflection
+/** The member is wrapped in a ScriptValue */
+class GetMember : private GetDefaultMember {
+  public:
+	/// Construct a member getter that looks for the given name
+	GetMember(const String& name);
+	
+	/// Tell the reflection code we are not reading
+	inline bool reading()   const { return false; }
+	inline bool isComplex() const { return false; }
+	
+	/// The result, or script_nil if the member was not found
+	inline ScriptValueP result() { return gdm.result(); } 
+	
+	// --------------------------------------------------- : Handling objects
+	
 	/// Handle an object: we are done if the name matches
 	template <typename T>
 	void handle(const Char* name, const T& object) {
-		if (!value && name == targetName) store(object);
+		if (!gdm.result() && name == target_name) gdm.handle(object);
 	}
 	/// Handle an object: investigate children
 	template <typename T> void handle(const T&);
-	/// Handle a Defaultable: investigate children
-	template <typename T> void handle(const Defaultable<T>& def);
-	
-	/// Store something in the return value
-	template <typename T> void store(const T& v);
-	/// Store a vector in the return value
-	template <typename T> void store(const vector<T>& vector) {
-		value = toScript(&vector);
-	}
-	/// Store a shared_ptr in the return value
-	template <typename T> void store(const shared_ptr<T>& pointer) {
-		value = toScript(pointer);
-	}
-	void store(const ScriptValueP&);
-	void store(const ScriptP&);
-	
+		
   private:
-	const String& targetName;	///< The name we are looking for
-	ScriptValueP  value;		///< The value we found (if any)
+	const String& target_name;	///< The name we are looking for
+	GetDefaultMember gdm;		///< Object to store and retrieve the value
 };
 
 // ----------------------------------------------------------------------------- : Reflection
 
-/// Implement reflection as used by GetMember
-#define REFLECT_OBJECT_GET_MEMBER(Cls)							\
-	template<> void GetMember::handle<Cls>(const Cls& object) {	\
-		const_cast<Cls&>(object).reflect(*this);				\
+/// Implement reflection as used by GetDefaultMember
+#define REFLECT_OBJECT_GET_DEFAULT_MEMBER(Cls)		REFLECT_WRITE_YES(Cls,GetDefaultMember)
+#define REFLECT_OBJECT_GET_MEMBER(Cls)				REFLECT_WRITE_YES(Cls,GetMember)
+#define REFLECT_OBJECT_GET_DEFAULT_MEMBER_NOT(Cls)	REFLECT_WRITE_NO(Cls,GetDefaultMember)
+#define REFLECT_OBJECT_GET_MEMBER_NOT(Cls)			REFLECT_WRITE_NO(Cls,GetMember)
+
+#define REFLECT_WRITE_YES(Cls, Tag)										\
+	template<> void Tag::handle<Cls>(const Cls& object) {				\
+		const_cast<Cls&>(object).reflect(*this);						\
+	}																	\
+	void Cls::reflect(Tag& tag) {										\
+		reflect_impl(tag);												\
 	}
+
+#define REFLECT_WRITE_NO(Cls, Tag)										\
+	template<> void Tag::handle<Cls>(const Cls& object) {}				\
+	void Cls::reflect(Tag& tag) {}
 
 // ----------------------------------------------------------------------------- : Reflection for enumerations
 
 /// Implement enum reflection as used by GetMember
-#define REFLECT_ENUM_GET_MEMBER(Enum)							\
-	template<> void GetMember::store<Enum>(const Enum& enum_) {	\
-		EnumGetMember gm(*this);								\
-		reflect_ ## Enum(const_cast<Enum&>(enum_), gm);			\
+#define REFLECT_ENUM_GET_MEMBER(Enum)									\
+	template<> void GetDefaultMember::handle<Enum>(const Enum& enum_) {	\
+		EnumGetMember egm(*this);										\
+		reflect_ ## Enum(const_cast<Enum&>(enum_), egm);				\
 	}
 
 /// 'Tag' to be used when reflecting enumerations for GetMember
 class EnumGetMember {
   public:
-	inline EnumGetMember(GetMember& getMember)
-		: getMember(getMember) {}
+	inline EnumGetMember(GetDefaultMember& gdm)
+		: gdm(gdm) {}
 	
 	/// Handle a possible value for the enum, if the name matches the name in the input
 	template <typename Enum>
 	inline void handle(const Char* name, Enum value, Enum enum_) {
 		if (enum_ == value) {
-			getMember.store(String(name));
+			gdm.handle(String(name));
 		}
 	}
 	
   private:
-	GetMember& getMember;  ///< The writer to write output to
+	GetDefaultMember& gdm;  ///< The object to store output in
 };
 
 // ----------------------------------------------------------------------------- : EOF

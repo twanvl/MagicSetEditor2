@@ -11,22 +11,20 @@
 #include <script/value.hpp>
 #include <script/script.hpp>
 
+// ----------------------------------------------------------------------------- : GetDefaultMember
+
+template <> void GetDefaultMember::handle(const String&       v) { value = toScript(v); }
+template <> void GetDefaultMember::handle(const int&          v) { value = toScript(v); }
+template <> void GetDefaultMember::handle(const unsigned int& v) { value = toScript((int)v); }
+template <> void GetDefaultMember::handle(const double&       v) { value = toScript(v); }
+template <> void GetDefaultMember::handle(const bool&         v) { value = toScript(v); }
+template <> void GetDefaultMember::handle(const Vector2D&     v) { value = toScript(String::Format(_("(%.10lf,%.10lf)"), v.x, v.y)); }
+template <> void GetDefaultMember::handle(const Color&        v) { value = toScript(v); }
+            void GetDefaultMember::handle(const ScriptValueP& v) { value = v; }
+            void GetDefaultMember::handle(const ScriptP&      v) { value = v; }
+
 // ----------------------------------------------------------------------------- : GetMember
 
 GetMember::GetMember(const String& name)
-	: targetName(name)
+	: target_name(name)
 {}
-
-template <> void GetMember::store(const String&       v) { value = toScript(v); }
-//template <> void GetMember::store(const Char* const&  v) { value = toScript(v); }
-template <> void GetMember::store(const int&          v) { value = toScript(v); }
-template <> void GetMember::store(const unsigned int& v) { value = toScript((int)v); }
-template <> void GetMember::store(const double&       v) { value = toScript(v); }
-template <> void GetMember::store(const bool&         v) { value = toScript(v); }
-
-template <> void GetMember::store(const Vector2D&     v) {
-	value = toScript(String::Format(_("(%.10lf,%.10lf)"), v.x, v.y));
-}
-
-void GetMember::store(const ScriptValueP& v) { value = v; }
-void GetMember::store(const ScriptP&      v) { value = v; }
