@@ -23,57 +23,62 @@
 	#define DECLARE_TYPEOF(T)
 	#define DECLARE_TYPEOF_COLLECTION(T)
 	
-	#define TYPEOF(Value)     __typeof(Value)
-	#define TYPEOF_IT(Value)  __typeof(Value.begin())
-	#define TYPEOF_CIT(Value) __typeof(Value.begin())
-	#define TYPEOF_RIT(Value) __typeof(Value.rbegin())
-	#define TYPEOF_REF(Value) __typeof(*Value.begin())&
+	#define TYPEOF(Value)      __typeof(Value)
+	#define TYPEOF_IT(Value)   __typeof(Value.begin())
+	#define TYPEOF_CIT(Value)  __typeof(Value.begin())
+	#define TYPEOF_RIT(Value)  __typeof(Value.rbegin())
+	#define TYPEOF_CRIT(Value) __typeof(Value.rbegin())
+	#define TYPEOF_REF(Value)  __typeof(*Value.begin())&
 	
 #else
 	/// Helper for typeof tricks
 	template<const type_info &ref_type_info> struct TypeOf {};
 
 	/// The type of a value
-	#define TYPEOF(Value) TypeOf<typeid(Value)>::type
+	#define TYPEOF(Value)      TypeOf<typeid(Value)>::type
 	/// The type of an iterator
-	#define TYPEOF_IT(Value) TypeOf<typeid(Value)>::iterator
+	#define TYPEOF_IT(Value)   TypeOf<typeid(Value)>::iterator
 	/// The type of a const iterator
-	#define TYPEOF_CIT(Value) TypeOf<typeid(Value)>::const_iterator
+	#define TYPEOF_CIT(Value)  TypeOf<typeid(Value)>::const_iterator
 	/// The type of a reverse iterator
-	#define TYPEOF_RIT(Value) TypeOf<typeid(Value)>::reverse_iterator
+	#define TYPEOF_RIT(Value)  TypeOf<typeid(Value)>::reverse_iterator
+	/// The type of a const reverse iterator
+	#define TYPEOF_CRIT(Value) TypeOf<typeid(Value)>::const_reverse_iterator
 	/// The type of a reference
-	#define TYPEOF_REF(Value) TypeOf<typeid(Value)>::reference
+	#define TYPEOF_REF(Value)  TypeOf<typeid(Value)>::reference
 	/// The type of a const reference
 	#define TYPEOF_CREF(Value) TypeOf<typeid(Value)>::const_reference
 
 	/// Declare typeof magic for a specific type
-	#define DECLARE_TYPEOF(T)									\
-		template<> struct TypeOf<typeid(T)> {					\
-			typedef T                   type;					\
-			typedef T::iterator         iterator;				\
-			typedef T::const_iterator   const_iterator;			\
-			typedef T::reverse_iterator reverse_iterator;		\
-			typedef T::reference        reference;				\
-			typedef T::const_reference  const_reference;		\
+	#define DECLARE_TYPEOF(T)											\
+		template<> struct TypeOf<typeid(T)> {							\
+			typedef T							type;					\
+			typedef T::iterator					iterator;				\
+			typedef T::const_iterator			const_iterator;			\
+			typedef T::reverse_iterator			reverse_iterator;		\
+			typedef T::const_reverse_iterator	const_reverse_iterator;	\
+			typedef T::reference				reference;				\
+			typedef T::const_reference			const_reference;		\
 		}
 	/// Declare typeof magic for a specific type that doesn't support reverse iterators
-	#define DECLARE_TYPEOF_NO_REV(T)							\
-		template<> struct TypeOf<typeid(T)> {					\
-			typedef T                   type;					\
-			typedef T::iterator         iterator;				\
-			typedef T::const_iterator   const_iterator;			\
-			typedef T::reference        reference;				\
-			typedef T::const_reference  const_reference;		\
+	#define DECLARE_TYPEOF_NO_REV(T)									\
+		template<> struct TypeOf<typeid(T)> {							\
+			typedef T							type;					\
+			typedef T::iterator					iterator;				\
+			typedef T::const_iterator			const_iterator;			\
+			typedef T::reference				reference;				\
+			typedef T::const_reference			const_reference;		\
 		}
 	/// Declare typeof magic for a specific type, using const iterators
-	#define DECLARE_TYPEOF_CONST(T)								\
-		template<> struct TypeOf<typeid(T)> {					\
-			typedef T                   type;					\
-			typedef T::const_iterator   iterator;				\
-			typedef T::const_iterator   const_iterator;			\
-			typedef T::reverse_iterator reverse_iterator;		\
-			typedef T::const_reference  reference;				\
-			typedef T::const_reference  const_reference;		\
+	#define DECLARE_TYPEOF_CONST(T)										\
+		template<> struct TypeOf<typeid(T)> {							\
+			typedef T							type;					\
+			typedef T::const_iterator			iterator;				\
+			typedef T::const_iterator			const_iterator;			\
+			typedef T::const_reverse_iterator	reverse_iterator;		\
+			typedef T::const_reverse_iterator	const_reverse_iterator;	\
+			typedef T::const_reference			reference;				\
+			typedef T::const_reference			const_reference;		\
 		}
 
 
@@ -119,13 +124,13 @@
 // ----------------------------------------------------------------------------- : Looping macros
 
 /// Iterate over a collection, with an iterator of type TypeIt, and elements of type TypeElem
-/** Usage: FOR_EACH_T(TypeIt,TypeElem,e,collect) { body-of-loop }
+/** Usage: FOR_EACH_T(TypeIt,TypeElem,e,collect,begin,end) { body-of-loop }
  *
  *  We need a hack to be able to declare a local variable without needing braces.
  *  To do this we use a nested for loop that is only executed once, and which is optimized away.
  *  To terminate this loop we need an extra bool, which we set to false after the first iteration.
  */
-#define FOR_EACH_T(TypeIt,TypeElem,Elem,Collection)							\
+#define FOR_EACH_T(TypeIt,TypeElem,Elem,Collection, begin, end)				\
 		for(std::pair<TypeIt,bool> Elem##_IT(Collection.begin(), true) ;	\
 		    Elem##_IT.first != Collection.end() ;							\
 		    ++Elem##_IT.first, Elem##_IT.second = true)						\
@@ -137,26 +142,28 @@
 /** Usage: FOR_EACH(e,collect) { body-of-loop }
  */
 #define FOR_EACH(Elem,Collection)											\
-		FOR_EACH_T(TYPEOF_IT(Collection), TYPEOF_REF(Collection), Elem, Collection)
+		FOR_EACH_T(TYPEOF_IT(Collection), TYPEOF_REF(Collection), Elem, Collection, begin, end)
 
 /// Iterate over a collection whos type must be declared with DECLARE_TYPEOF
 /** Uses a const iterator
  *  Usage: FOR_EACH_CONST(e,collect) { body-of-loop }
  */
 #define FOR_EACH_CONST(Elem,Collection)										\
-		FOR_EACH_T(TYPEOF_CIT(Collection), TYPEOF_CREF(Collection), Elem, Collection)
+		FOR_EACH_T(TYPEOF_CIT(Collection), TYPEOF_CREF(Collection), Elem, Collection, begin, end)
 
 /// Iterate over a collection whos type must be declared with DECLARE_TYPEOF
 /** Iterates using a reverse_iterator
  *  Usage: FOR_EACH_REVERSE(e,collect) { body-of-loop }
  */
 #define FOR_EACH_REVERSE(Elem,Collection)									\
-		for(std::pair<TYPEOF_RIT(Collection),bool> Elem##_IT(Collection.rbegin(), true) ;	\
-		    Elem##_IT.first != Collection.rend() ;							\
-		    ++Elem##_IT.first, Elem##_IT.second = true)						\
-		    for(TYPEOF_REF(Collection) Elem = *Elem##_IT.first ;			\
-				Elem##_IT.second ;											\
-				Elem##_IT.second = false)
+		FOR_EACH_T(TYPEOF_RIT(Collection), TYPEOF_REF(Collection), Elem, Collection, rbegin, rend)
+
+/// Iterate over a collection whos type must be declared with DECLARE_TYPEOF
+/** Iterates using a const_reverse_iterator
+ *  Usage: FOR_EACH_CONST_REVERSE(e,collect) { body-of-loop }
+ */
+#define FOR_EACH_CONST_REVERSE(Elem,Collection)								\
+		FOR_EACH_T(TYPEOF_CRIT(Collection), TYPEOF_CREF(Collection), Elem, Collection, rbegin, rend)
 
 /// Iterate over two collection in parallel
 /** Usage: FOR_EACH_2_T(TypeIt1,TypeElem1,e1,collect1,TypeIt2,TypeElem2,e2,collect2) { body-of-loop }
