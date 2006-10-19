@@ -250,7 +250,7 @@ class SinglePointRemoveAction : public Action {
 	SinglePointRemoveAction(const SymbolPartP& part, UInt position);
 	
 	virtual String getName(bool to_undo) const { return _("Delete point"); }
-	virtual void perform(bool to_undo);
+	virtual void   perform(bool to_undo);
 	
   private:
 	SymbolPartP part;
@@ -337,7 +337,7 @@ class ControlPointRemoveAction : public Action {
 	ControlPointRemoveAction(const SymbolPartP& part, const set<ControlPointP>& toDelete);
 	
 	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
+	virtual void   perform(bool to_undo);
 	
   private:
 	vector<SinglePointRemoveActionP> removals;

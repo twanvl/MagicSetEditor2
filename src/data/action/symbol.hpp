@@ -34,7 +34,7 @@ class SymbolPartMoveAction : public SymbolPartAction {
 	SymbolPartMoveAction(const set<SymbolPartP>& parts);
 	
 	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
+	virtual void   perform(bool to_undo);
 	
 	/// Update this action to move some more
 	void move(const Vector2D& delta);
@@ -71,7 +71,7 @@ class SymbolPartRotateAction : public SymbolPartMatrixAction {
 	SymbolPartRotateAction(const set<SymbolPartP>& parts, const Vector2D& center);
 	
 	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
+	virtual void   perform(bool to_undo);
 	
 	/// Update this action to rotate to a different angle
 	void rotateTo(double newAngle);
@@ -94,7 +94,7 @@ class SymbolPartShearAction : public SymbolPartMatrixAction {
 	SymbolPartShearAction(const set<SymbolPartP>& parts, const Vector2D& center);
 	
 	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
+	virtual void   perform(bool to_undo);
 	
 	/// Change shear by a given amount
 	void move(const Vector2D& deltaShear);
@@ -115,7 +115,7 @@ class SymbolPartScaleAction : public SymbolPartAction {
 	SymbolPartScaleAction(const set<SymbolPartP>& parts, int scaleX, int scaleY);
 	
 	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
+	virtual void   perform(bool to_undo);
 	
 	/// Change min and max coordinates
 	void move(const Vector2D& deltaMin, const Vector2D& deltaMax);
@@ -146,7 +146,7 @@ class CombiningModeAction : public SymbolPartListAction {
 	CombiningModeAction(const set<SymbolPartP>& parts, SymbolPartCombine mode);
 	
 	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
+	virtual void   perform(bool to_undo);
 	
   private:
 	vector<pair<SymbolPartP,SymbolPartCombine> > parts;	///< Affected parts with new combining modes
@@ -160,7 +160,7 @@ class SymbolPartNameAction : public SymbolPartListAction {
 	SymbolPartNameAction(const SymbolPartP& part, const String& name);
 	
 	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
+	virtual void   perform(bool to_undo);
 	
   private:
 	SymbolPartP part;		///< Affected part
@@ -175,7 +175,7 @@ class AddSymbolPartAction : public SymbolPartListAction {
 	AddSymbolPartAction(Symbol& symbol, const SymbolPartP& part);
 	
 	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
+	virtual void   perform(bool to_undo);
 	
   private:
 	Symbol& symbol;			///< Symbol to add the part to
@@ -190,7 +190,7 @@ class RemoveSymbolPartsAction : public SymbolPartListAction {
 	RemoveSymbolPartsAction(Symbol& symbol, const set<SymbolPartP>& parts);
 	
 	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
+	virtual void   perform(bool to_undo);
 	
   private:
 	Symbol& symbol;
@@ -206,7 +206,7 @@ class DuplicateSymbolPartsAction : public SymbolPartListAction {
 	DuplicateSymbolPartsAction(Symbol& symbol, const set<SymbolPartP>& parts);
 	
 	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
+	virtual void   perform(bool to_undo);
 	
 	/// Fill a set with all the new parts
 	void getParts(set<SymbolPartP>& parts);
@@ -226,7 +226,7 @@ class ReorderSymbolPartsAction : public SymbolPartListAction {
 	ReorderSymbolPartsAction(Symbol& symbol, size_t partId1, size_t partId2);
   
 	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
+	virtual void   perform(bool to_undo);
 	
   private:
 	Symbol& symbol;				///< Symbol to swap the parts in
