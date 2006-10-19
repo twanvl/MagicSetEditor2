@@ -170,6 +170,28 @@ class ScriptCollection : public ScriptValue {
 	const Collection* value;
 };
 
+// ----------------------------------------------------------------------------- : Collections : maps
+
+/// Script value containing a map like collection
+template <typename Collection>
+class ScriptMap : public ScriptValue {
+  public:
+	inline ScriptMap(const Collection* v) : value(v) {}
+	virtual ScriptType type() const { return SCRIPT_OBJECT; }
+	virtual String typeName() const { return _("collection"); }
+	virtual ScriptValueP getMember(const String& name) const {
+		Collection::const_iterator it = value->find(name);
+		if (it != value->end()) {
+			return toScript(it->second);
+		} else {
+			throw ScriptError(_("Collection has no member ") + name);
+		}
+	}
+  private:
+	/// Store a pointer to a collection, collections are only ever used for structures owned outside the script
+	const Collection* value;
+};
+
 // ----------------------------------------------------------------------------- : Objects
 
 /// Script value containing an object (pointer)
@@ -199,6 +221,8 @@ ScriptValueP toScript(const Color&  v);
 inline ScriptValueP toScript(bool                 v) { return v ? script_true : script_false; }
 template <typename T>
 inline ScriptValueP toScript(const vector<T>*     v) { return new_intrusive1<ScriptCollection<vector<T> > >(v); }
+template <typename K, typename V>
+inline ScriptValueP toScript(const map<K,V>*      v) { return new_intrusive1<ScriptMap<map<K,V> > >(v); }
 template <typename T>
 inline ScriptValueP toScript(const shared_ptr<T>& v) { return new_intrusive1<ScriptObject<T> >(v); }
 
