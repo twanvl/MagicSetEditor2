@@ -62,7 +62,7 @@
  *  @endcode
  */
 #define WITH_DYNAMIC_ARG(name, value)					\
-	if (name##_changer(value))
+	if (name##_changer name##_dummmy = value) // hack: variable in if guard scopes over the following block
 
 // ----------------------------------------------------------------------------- : EOF
 #endif
