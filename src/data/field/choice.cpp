@@ -31,7 +31,7 @@ String ChoiceField::typeName() const {
 
 IMPLEMENT_REFLECTION(ChoiceField) {
 	REFLECT_BASE(Field);
-	REFLECT(choices);
+	REFLECT_N("choices", choices->choices);
 	REFLECT(script);
 	REFLECT_N("default", default_script);
 	REFLECT(initial);

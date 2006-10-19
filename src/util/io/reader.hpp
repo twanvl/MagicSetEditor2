@@ -43,6 +43,9 @@ class Reader {
 	/// Is the thing currently being read 'complex', i.e. does it have children
 	inline bool isComplex() const { return value.empty(); }
 	
+	/// Show a warning message, but continue reading
+	void warning(const String& msg);
+	
 	// --------------------------------------------------- : Handling objects
 	/// Handle an object: read it if it's name matches
 	template <typename T>
@@ -148,7 +151,8 @@ void Reader::handle(map<K,V>& map) {
 			UInt l = line_number;								\
 			object.reflect(*this);								\
 			if (l == line_number) {								\
-				/* error */										\
+				/* warning: unexpected key */					\
+				warning(_("Unexpected key: '") + key + _("'"));	\
 				do {											\
 					moveNext();									\
 				} while (indent > expected_indent);				\
@@ -167,7 +171,8 @@ void Reader::handle(map<K,V>& map) {
 		EnumReader reader(value);								\
 		reflect_ ## Enum(enum_, reader);						\
 		if (!reader.isDone()) {									\
-			/* warning message */								\
+			/* warning: unknown value */						\
+			warning(_("Unrecognized value: ") + value);			\
 		}														\
 	}
 
@@ -181,7 +186,8 @@ class EnumReader {
 	template <typename Enum>
 	inline void handle(const Char* name, Enum value, Enum& enum_) {
 		if (!done && read == name) {
-			first = true;
+			done  = true;
+			first = false;
 			enum_ = value;
 		} else if (first) {
 			first = false;

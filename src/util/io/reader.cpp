@@ -20,6 +20,10 @@ Reader::Reader(const InputStreamP& input, String filename)
 	moveNext();
 }
 
+void Reader::warning(const String& msg) {
+	wxMessageBox((msg + _("\nOn line: ")) << line_number << _("\nIn file: ") << filename, _("Warning"), wxOK | wxICON_EXCLAMATION);
+}
+
 bool Reader::enterBlock(const Char* name) {
 	if (just_opened) moveNext(); // on the key of the parent block, first move inside it
 	if (indent != expected_indent) return false; // not enough indentation

@@ -37,6 +37,8 @@ IMPLEMENT_REFLECTION(Field) {
 		String type = typeName();
 		REFLECT(type);
 	}
+	REFLECT(name);
+	REFLECT(description);
 	REFLECT(editable);
 	REFLECT(save_value);
 	REFLECT(show_statistics);
@@ -44,7 +46,8 @@ IMPLEMENT_REFLECTION(Field) {
 	REFLECT(card_list_column);
 	REFLECT(card_list_width);
 	REFLECT(card_list_allow);
-	REFLECT(card_list_align);
+	REFLECT(card_list_name);
+	REFLECT_N("card_list_alignment", card_list_align);
 	REFLECT(tab_index);
 }
 
