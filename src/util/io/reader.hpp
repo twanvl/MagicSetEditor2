@@ -33,10 +33,11 @@ class Reader {
 	/// Construct a reader that reads from the given input stream
 	/** filename is used only for error messages
 	 */
-	Reader(const InputStreamP& input, String filename = _(""));
+	Reader(const InputStreamP& input, const String& filename = wxEmptyString);
 	
 	/// Construct a reader that reads a file in a package
-	Reader(String filename);
+	/** Used for "include file" keys. */
+	Reader(const String& filename);
 	
 	/// Tell the reflection code we are reading
 	inline bool reading() const { return true; }
@@ -106,8 +107,18 @@ class Reader {
 	/// Reads the next line from the input, and stores it in line/key/value/indent
 	void readLine();
 	
-	/// Issue a warning: "Unexpected key: $key"
-	void unexpected();
+	/// No line was read, because nothing mathes the current key
+	/** Maybe the key is "include file" */
+	template <typename T>
+	void unknownKey(T& v) {
+		if (key == _("include_file")) {
+			Reader reader(value);
+			reader.handle(v);
+		} else {
+			unknownKey();
+		}
+	}
+	void unknownKey();
 };
 
 // ----------------------------------------------------------------------------- : Container types
@@ -150,13 +161,7 @@ void Reader::handle(map<K,V>& map) {
 		while (indent >= expected_indent) {						\
 			UInt l = line_number;								\
 			object.reflect(*this);								\
-			if (l == line_number) {								\
-				/* warning: unexpected key */					\
-				warning(_("Unexpected key: '") + key + _("'"));	\
-				do {											\
-					moveNext();									\
-				} while (indent > expected_indent);				\
-			}													\
+			if (l == line_number) unknownKey(object);			\
 		}														\
 	}															\
 	void Cls::reflect(Reader& reader) {							\

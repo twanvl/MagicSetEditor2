@@ -53,6 +53,9 @@ class PackageManager {
 	 */
 	String findFirst(const String& pattern);
 	
+	// Open a file from a package, with a name encoded as "package/file"
+	InputStreamP openFileFromPackage(const String& name);
+	
 	/// Empty the list of packages.
 	/** This function MUST be called before the program terminates, otherwise
 	 *  we could get into fights with pool allocators used by ScriptValues */

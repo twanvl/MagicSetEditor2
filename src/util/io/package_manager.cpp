@@ -10,6 +10,26 @@
 #include <util/error.hpp>
 #include <data/game.hpp>
 
+// ----------------------------------------------------------------------------- : IncludePackage
+
+/// A package that just contains a bunch of files that are used from other packages
+class IncludePackage : public Packaged {
+  protected:
+	String typeName() const;
+	DECLARE_REFLECTION();
+};
+
+String IncludePackage::typeName() const { return _("include"); }
+
+IMPLEMENT_REFLECTION(IncludePackage) {
+	if (tag.reading()) {
+		// ingore
+		String full_name, version;
+		REFLECT(full_name);
+		REFLECT(version);
+	}
+}
+
 // ----------------------------------------------------------------------------- : PackageManager
 
 String program_dir() {
@@ -50,10 +70,10 @@ PackagedP PackageManager::openAny(const String& name) {
 		if      (fn.GetExt() == _("mse-game"))         p = new_shared<Game>();
 //		else if (fn.GetExt() == _("mse-style"))        p = new_shared<CardStyle>();
 //		else if (fn.GetExt() == _("mse-locale"))       p = new_shared<Locale>();
-//		else if (fn.GetExt() == _("mse-include"))      p = new_shared<IncludePackage>();
+		else if (fn.GetExt() == _("mse-include"))      p = new_shared<IncludePackage>();
 //		else if (fn.GetExt() == _("mse-symbol-font"))  p = new_shared<SymbolFont>();
 		else {
-			throw PackageError(_("Unrecognized package type: ") + fn.GetExt());
+			throw PackageError(_("Unrecognized package type: '") + fn.GetExt() + _("'\nwhile trying to open: ") + name);
 		}
 		p->open(filename);
 		return p;
@@ -62,6 +82,19 @@ PackagedP PackageManager::openAny(const String& name) {
 
 String PackageManager::findFirst(const String& pattern) {
 	return wxFindFirstFile(data_directory + _("/") + pattern, 0);
+}
+
+InputStreamP PackageManager::openFileFromPackage(const String& name) {
+	// we don't want an absolute path (for security reasons)
+	String n;
+	if (!name.empty() && name.GetChar(0) == _('/')) n = name.substr(1);
+	else                                            n = name;
+	// break
+	size_t pos = n.find_first_of(_("/\\"));
+	if (pos == String::npos) throw FileNotFoundError(n, _("No package name specified, use 'package/filename'"));
+	// open package and file
+	PackagedP p = openAny(n.substr(0, pos));
+	return p->openIn(n.substr(pos+1));
 }
 
 void PackageManager::destroy() {

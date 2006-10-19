@@ -9,16 +9,27 @@
 #include "reader.hpp"
 #include <util/vector2d.hpp>
 #include <util/error.hpp>
+#include <util/io/package_manager.hpp>
 
 // ----------------------------------------------------------------------------- : Reader
 
-Reader::Reader(const InputStreamP& input, String filename)
+Reader::Reader(const InputStreamP& input, const String& filename)
 	: input(input), filename(filename), line_number(0)
 	, indent(0), expected_indent(0), just_opened(false)
 	, stream(*input)
 {
 	moveNext();
 }
+
+Reader::Reader(const String& filename)
+	: input(packages.openFileFromPackage(filename))
+	, filename(filename), line_number(0)
+	, indent(0), expected_indent(0), just_opened(false)
+	, stream(*input)
+{
+	moveNext();
+}
+
 
 void Reader::warning(const String& msg) {
 	wxMessageBox((msg + _("\nOn line: ")) << line_number << _("\nIn file: ") << filename, _("Warning"), wxOK | wxICON_EXCLAMATION);
@@ -82,6 +93,13 @@ void Reader::readLine() {
 	}
 	key   = cannocial_name_form(trim(line.substr(indent, pos - indent)));
 	value = pos == String::npos ? _("") : trim_left(line.substr(pos+1));
+}
+
+void Reader::unknownKey() {
+	warning(_("Unexpected key: '") + key + _("'"));
+	do {
+		moveNext();
+	} while (indent > expected_indent);
 }
 
 // ----------------------------------------------------------------------------- : Handling basic types
