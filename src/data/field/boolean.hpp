@@ -21,6 +21,10 @@ class BooleanField : public ChoiceField {
 	
 	// no extra data
 	
+	virtual ValueP newValue(const FieldP& thisP) const;
+	virtual StyleP newStyle(const FieldP& thisP) const;
+	virtual String typeName() const;
+	
   private:
 	DECLARE_REFLECTION();
 };

@@ -21,6 +21,11 @@ DECLARE_POINTER_TYPE(SymbolFilter);
 class SymbolField : public Field {
   public:
 	// no extra data
+	
+	virtual ValueP newValue(const FieldP& thisP) const;
+	virtual StyleP newStyle(const FieldP& thisP) const;
+	virtual String typeName() const;
+	
   private:
 	DECLARE_REFLECTION();
 };
@@ -31,7 +36,7 @@ class SymbolField : public Field {
 class SymbolStyle : public Style {
   public:
 	class Variation;
-	DECLARE_POINTER_TYPE(Variation);
+	typedef shared_ptr<Variation> VariationP;
 	vector<VariationP> variations; ///< Different variantions of the same symbol
 	
   private:
@@ -41,6 +46,7 @@ class SymbolStyle : public Style {
 /// Styling for a symbol variation, defines color, border, etc.
 class SymbolStyle::Variation {
   public:
+	Variation();
 	String        name;				///< Name of this variation
 	SymbolFilterP filter;			///< Filter to color the symbol
 	double        border_radius;	///< Border radius for the symbol
@@ -53,6 +59,9 @@ class SymbolStyle::Variation {
 class SymbolValue : public Value {
   public:
 	String filename; ///< Filename of the symbol (in the current package)
+	
+	virtual String toString() const;
+	
   private:
 	DECLARE_REFLECTION();
 };

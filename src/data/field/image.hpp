@@ -19,6 +19,11 @@
 class ImageField : public Field {
   public:
 	// no extra data
+	
+	virtual ValueP newValue(const FieldP& thisP) const;
+	virtual StyleP newStyle(const FieldP& thisP) const;
+	virtual String typeName() const;
+	
   private:
 	DECLARE_REFLECTION();
 };
@@ -38,7 +43,10 @@ class ImageStyle : public Style {
 /// The Value in a ImageField, i.e. an image
 class ImageValue : public Value {
   public:
-	String filename; ///< Filename of the image (in the current package)
+	String filename; ///< Filename of the image (in the current package), or ""
+	
+	virtual String toString() const;
+	
   private:
 	DECLARE_REFLECTION();
 };

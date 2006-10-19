@@ -29,7 +29,6 @@ class TextField : public Field {
 	
 	virtual ValueP newValue(const FieldP& thisP) const;
 	virtual StyleP newStyle(const FieldP& thisP) const;
-	virtual FieldP clone() const;
 	virtual String typeName() const;
 	
   private:
@@ -55,10 +54,7 @@ class TextStyle : public Style {
 	double line_height_hard;				///< Line height for hard linebreaks
 	double line_height_line;				///< Line height for <line> tags
 	String mask_filename;					///< Filename of the mask
-//	ContourMaskP mask;						///< Mask to fit the text to (may be null)
-	
-	virtual StyleP clone() const;
-	
+//	ContourMaskP mask;						///< Mask to fit the text to (may be null)	
   private:
 	DECLARE_REFLECTION();
 };
@@ -70,7 +66,6 @@ class TextValue : public Value {
   public:	
 	Defaultable<String> value;				///< The text of this value
 	
-	virtual ValueP clone() const;
 	virtual String toString() const;
   private:
 	DECLARE_REFLECTION();

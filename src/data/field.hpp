@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
 #include <util/alignment.hpp>
+#include <script/scriptable.hpp>
 
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Style);
@@ -46,8 +47,6 @@ class Field {
 	/// Creates a new Style corresponding to this Field
 	/** thisP is a smart pointer to this */
 	virtual StyleP newStyle(const FieldP& thisP) const = 0;
-	/// create a copy of this field
-	virtual FieldP clone() const = 0;
 	/// Type of this field
 	virtual String typeName() const = 0;
 	
@@ -66,6 +65,11 @@ class Style {
   public:
 	virtual ~Style();
 	
+	int z_index;						///< Stacking of values of this field, higher = on top
+	Scriptable<double> left,  top;		///< Position of this field
+	Scriptable<double> width, height;	///< Position of this field
+	Scriptable<bool>   visible;			///< Is this field visible?
+	
   private:
 	DECLARE_REFLECTION_VIRTUAL();
 };
@@ -78,10 +82,7 @@ void initObject(const FieldP&, StyleP&);
 class Value {
   public:
 	virtual ~Value();
-	
-	/// Create a copy of this value
-	virtual ValueP clone() const = 0;
-	
+		
 	/// Convert this value to a string for use in tables
 	virtual String toString() const = 0;
 	

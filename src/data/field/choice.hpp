@@ -13,14 +13,27 @@
 #include <util/defaultable.hpp>
 #include <data/field.hpp>
 #include <gfx/gfx.hpp> // for ImageCombine
+#include <script/scriptable.hpp>
 
 // ----------------------------------------------------------------------------- : ChoiceField
 
 /// A field that contains a list of choices
 class ChoiceField : public Field {
   public:
+	ChoiceField();
+	
 	class Choice;
-	DECLARE_POINTER_TYPE(Choice);
+	typedef shared_ptr<Choice> ChoiceP;
+	
+	ChoiceP choices;				///< A choice group of possible choices
+	OptionalScript script;			///< Script to apply to all values
+	OptionalScript default_script;	///< Script that generates the default value
+	String initial;					///< Initial choice of a new value, or ""
+	String default_name;			///< Name of "default" value
+	
+	virtual ValueP newValue(const FieldP& thisP) const;
+	virtual StyleP newStyle(const FieldP& thisP) const;
+	virtual String typeName() const;
 	
   private:
 	DECLARE_REFLECTION();
@@ -32,35 +45,44 @@ class ChoiceField::Choice {
 	String          name;			///< Name/value of the item
 	String          default_name;	///< A default item, if this is a group and default_name.empty() there is no default
 	vector<ChoiceP> choices;		///< Choices and sub groups in this group
-	UInt            first_id;		///< First item-id in this group (can be the default item)
+	/// First item-id in this group (can be the default item)
+	/** Item-ids are consecutive integers, a group uses all ids [first_id..lastId()).
+	 *  The top level group has first_id 0.
+	 */
+	int             first_id;
+	
+	Choice();
 	
 	/// Is this a group?
 	bool isGroup() const;
 	/// Can this Choice itself be chosen?
+	/** For a single choice this is always true, for a group only if it has a default choice */
 	bool hasDefault() const;
 	
 	/// Initialize the first_id of children
-	/** Returns lastId() */
-	UInt initIds() const;
+	/** @pre first_id is set
+	 *  Returns lastId()
+	 */
+	int initIds();
 	/// Number of choices in this group (and subgroups), 1 if it is not a group
 	/** The default choice also counts */
-	UInt choiceCount() const;
+	int choiceCount() const;
 	/// item-id just beyond the end of this group
-	UInt lastId() const;
+	int lastId() const;
 	
 	/// item-id of a choice, given the internal name
 	/** If the id is not in this group, returns -1 */
-	UInt choiceId(const String& name);
+	int choiceId(const String& name) const;
 	/// Internal name of a choice
 	/** The internal name is formed by concatenating the names of all parents, separated by spaces.
 	 *  Returns "" if id is not in this group
 	 */
-	String choiceName(UInt id);
+	String choiceName(int id) const;
 	/// Formated name of a choice.
 	/** Intended for use in menu structures, so it doesn't include the group name for children.
 	 *  Returns "" if id is not in this group.
 	 */
-	String choiceNameNice(UInt id);
+	String choiceNameNice(int id) const;
 	
 	DECLARE_REFLECTION();
 };
@@ -85,13 +107,14 @@ enum ChoiceRenderStyle
 /// The Style for a ChoiceField
 class ChoiceStyle : public Style {
   public:
+	ChoiceStyle();
 	
+	ChoicePopupStyle			popup_style;	///< Style of popups/menus
+	ChoiceRenderStyle			render_style;	///< Style of rendering
 //	FontInfo					font;			///< Font for drawing text (when RENDER_TEXT)
 //	map<String,ScriptableImage>	choice_images;	///< Images for the various choices (when RENDER_IMAGE)
 	map<String,Color>			choice_colors;	///< Colors for the various choices (when color_cardlist)
 	bool						colors_card_list;///< Does this field determine colors of the rows in the card list?
-	ChoicePopupStyle			popup_style;	///< Style of popups/menus
-	ChoiceRenderStyle			render_style;	///< Style of rendering
 	String						mask_filename;	///< Filename of an additional mask over the images
 	ImageCombine				combine;		///< Combining mode for drawing the images
 	Alignment					alignment;		///< Alignment of images
@@ -106,6 +129,9 @@ class ChoiceStyle : public Style {
 class ChoiceValue : public Value {
   public:
 	Defaultable<String> value;	/// The name of the selected choice
+	
+	virtual String toString() const;
+	
   private:
 	DECLARE_REFLECTION();
 };

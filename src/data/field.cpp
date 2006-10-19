@@ -53,10 +53,13 @@ shared_ptr<Field> read_new<Field>(Reader& reader) {
 	// there must be a type specified
 	String type;
 	reader.handle(_("type"), type);
-	if (type == _("text")) {
-		return new_shared<TextField>();
-	} else {
-		//return new_shared<TextField>();
+	if      (type == _("text"))		return new_shared<TextField>();
+	else if (type == _("choice"))	return new_shared<ChoiceField>();
+	else if (type == _("boolean"))	return new_shared<BooleanField>();
+	else if (type == _("image"))	return new_shared<ImageField>();
+	else if (type == _("symbol"))	return new_shared<SymbolField>();
+	else if (type == _("color"))	return new_shared<ColorField>();
+	else {
 		throw ParseError(_("Unsupported field type: '") + type + _("'"));
 	}
 }
@@ -68,6 +71,12 @@ shared_ptr<Field> read_new<Field>(Reader& reader) {
 Style::~Style() {}
 
 IMPLEMENT_REFLECTION(Style) {
+	REFLECT(z_index);
+	REFLECT(left);
+	REFLECT(top);
+	REFLECT(width);
+	REFLECT(height);
+	REFLECT(visible);
 }
 
 void initObject(const FieldP& field, StyleP& style) {
@@ -78,7 +87,7 @@ void initObject(const FieldP& field, StyleP& style) {
 
 Value::~Value() {}
 
-IMPLEMENT_REFLECTION(Value) {
+IMPLEMENT_REFLECTION_NAMELESS(Value) {
 }
 
 void initObject(const FieldP& field, ValueP& value) {

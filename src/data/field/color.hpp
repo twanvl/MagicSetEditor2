@@ -22,13 +22,17 @@ class ColorField : public Field {
 	ColorField();
 	
 	class Choice;
-	DECLARE_POINTER_TYPE(Choice);
+	typedef shared_ptr<Choice> ChoiceP;
 	
 	OptionalScript  script;			///< Script to apply to all values
 	OptionalScript  default_script;	///< Script that generates the default value
 	vector<ChoiceP> choices;		///< Color choices available
 	bool            allow_custom;	///< Are colors not in the list of choices allowed?
 	String          default_name;	///< Name of "default" value
+	
+	virtual ValueP newValue(const FieldP& thisP) const;
+	virtual StyleP newStyle(const FieldP& thisP) const;
+	virtual String typeName() const;
 	
   private:
 	DECLARE_REFLECTION();
@@ -66,6 +70,8 @@ class ColorStyle : public Style {
 class ColorValue : public Value {
   public:
 	Defaultable<Color> value;	///< The value
+	
+	virtual String toString() const;
 	
   private:
 	DECLARE_REFLECTION();

@@ -26,10 +26,6 @@ ValueP TextField::newValue(const FieldP& thisP) const {
 	return new_shared<TextValue>();
 }
 
-FieldP TextField::clone() const {
-	return new_shared1<TextField>(*this);
-}
-
 String TextField::typeName() const {
 	return _("text");
 }
@@ -46,24 +42,16 @@ IMPLEMENT_REFLECTION(TextField) {
 
 // ----------------------------------------------------------------------------- : TextStyle
 
-StyleP TextStyle::clone() const {
-	return new_shared1<TextStyle>(*this);
-}
-
 IMPLEMENT_REFLECTION(TextStyle) {
 	REFLECT_BASE(Style);
 }
 
 // ----------------------------------------------------------------------------- : TextValue
 
-ValueP TextValue::clone() const {
-	return new_shared1<TextValue>(*this);
-}
 String TextValue::toString() const {
 	return value();
 }
 
-IMPLEMENT_REFLECTION(TextValue) {
-	REFLECT_BASE(Value);
+IMPLEMENT_REFLECTION_NAMELESS(TextValue) {
 	REFLECT_NAMELESS(value);
 }
