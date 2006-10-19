@@ -51,3 +51,12 @@ void Game::validate() {
 	// a default for the full name
 	if (full_name.empty()) full_name = name();
 }
+
+// special behaviour of reading/writing GamePs: only read/write the name
+
+void Reader::handle(GameP& game) {
+	game = Game::byName(value);
+}
+void Writer::handle(const GameP& game) {
+	handle(game->name());
+}

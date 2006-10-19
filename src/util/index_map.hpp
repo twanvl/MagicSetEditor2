@@ -41,7 +41,8 @@ class IndexMap : private vector<Value> {
 	void init(const vector<Key>& keys) {
 		if (!this->empty()) return;
 		this->reserve(keys.size());
-		FOR_EACH_CONST(key, keys) {
+		for(vector<Key>::const_iterator it = keys.begin() ; it != keys.end() ; ++it) {
+			const Key& key = *it;
 			assert(key);
 			if (key->index >= this->size()) this->resize(key->index + 1);
 			init_object(key, (*this)[key->index]);
@@ -66,6 +67,15 @@ class IndexMap : private vector<Value> {
 	inline bool containsKey(const Key& key) const {
 		assert(key);
 		return key->index < this.size() && get_key((*this)[key->index]) == key
+	}
+	
+	/// Find a value given the key name, return an iterator
+	template <typename Name>
+	const_iterator find(const Name& key) const {
+		for(vector<Value>::const_iterator it = begin() ; it != end() ; ++it) {
+			if (get_key_name(*it) == key) return it;
+		}
+		return end();
 	}
 	
   private:

@@ -18,6 +18,8 @@ DECLARE_POINTER_TYPE(Card);
 DECLARE_POINTER_TYPE(Set);
 DECLARE_POINTER_TYPE(Game);
 DECLARE_POINTER_TYPE(Stylesheet);
+DECLARE_POINTER_TYPE(Field);
+DECLARE_POINTER_TYPE(Value);
 
 // ----------------------------------------------------------------------------- : Set
 
@@ -33,8 +35,13 @@ class Set : public Packaged {
 	GameP game;
 	/// The default stylesheet
 	StylesheetP stylesheet;
+	/// The values on the fields of the set
+	/** The indices should correspond to the set_fields in the Game */
+	IndexMap<FieldP, ValueP> data;
 	/// The cards in the set
 	vector<CardP> cards;
+	/// Code to use for apprentice (Magic only)
+	String apprentice_code;
 	/// Actions performed on this set and the cards in it
 	ActionStack actions;
 	

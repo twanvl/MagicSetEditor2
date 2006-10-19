@@ -7,7 +7,9 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <data/set.hpp>
+#include <data/game.hpp>
 #include <data/card.hpp>
+#include <data/field.hpp>
 #include <script/value.hpp>
 
 // ----------------------------------------------------------------------------- : Set
@@ -21,9 +23,15 @@ Set::Set() {}
 String Set::typeName() const { return _("set"); }
 
 IMPLEMENT_REFLECTION(Set) {
+	REFLECT(game);
+	if (data.empty() && game) {
+		data.init(game->set_fields);
+	}
+	REFLECT_N("set_info", data);
 	WITH_DYNAMIC_ARG(game_for_new_cards, game.get()) {
 		REFLECT(cards);
 	}
+	REFLECT(apprentice_code);
 }
 
 

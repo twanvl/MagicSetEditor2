@@ -172,6 +172,26 @@ class ScriptCollection : public ScriptValue {
 
 // ----------------------------------------------------------------------------- : Collections : maps
 
+template <typename V>
+ScriptValueP get_member(const map<String,V>& m, const String& name) {
+	map<String,V>::const_iterator it = m.find(name);
+	if (it != m.end()) {
+		return toScript(it->second);
+	} else {
+		throw ScriptError(_("Collection has no member '") + name + _("'"));
+	}
+}
+
+template <typename K, typename V>
+ScriptValueP get_member(const IndexMap<K,V>& m, const String& name) {
+	IndexMap<K,V>::const_iterator it = m.find(name);
+	if (it != m.end()) {
+		return toScript(*it);
+	} else {
+		throw ScriptError(_("Collection has no member '") + name + _("'"));
+	}
+}
+
 /// Script value containing a map-like collection
 template <typename Collection>
 class ScriptMap : public ScriptValue {
@@ -180,12 +200,7 @@ class ScriptMap : public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_OBJECT; }
 	virtual String typeName() const { return _("collection"); }
 	virtual ScriptValueP getMember(const String& name) const {
-		Collection::const_iterator it = value->find(name);
-		if (it != value->end()) {
-			return toScript(it->second);
-		} else {
-			throw ScriptError(_("Collection has no member ") + name);
-		}
+		return get_member(*value, name);
 	}
   private:
 	/// Store a pointer to a collection, collections are only ever used for structures owned outside the script

@@ -10,10 +10,13 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/version.hpp>
 #include <wx/txtstrm.h>
 
 template <typename T> class Defaultable;
 template <typename T> class Scriptable;
+DECLARE_POINTER_TYPE(Game);
+DECLARE_POINTER_TYPE(StyleSheet);
 
 // ----------------------------------------------------------------------------- : Reader
 
@@ -44,6 +47,9 @@ class Reader {
 	/// Is the thing currently being read 'complex', i.e. does it have children
 	inline bool isComplex() const { return value.empty(); }
 	
+	/// Read and check the application version
+	void handleAppVersion();
+	
 	/// Show a warning message, but continue reading
 	void warning(const String& msg);
 	
@@ -72,9 +78,14 @@ class Reader {
 	template <typename T> void handle(Defaultable<T>&);
 	/// Reads a Scriptable from the input stream
 	template <typename T> void handle(Scriptable<T>&);
+	// special behaviour
+	void handle(GameP&);
+	void handle(StyleSheet&);
 	
-  private:
 	// --------------------------------------------------- : Data
+	/// App version this file was made with
+	Version app_version;
+  private:
 	/// The line we read
 	String line;
 	/// The key and value of the last line we read

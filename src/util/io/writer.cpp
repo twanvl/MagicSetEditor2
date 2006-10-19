@@ -9,6 +9,7 @@
 #include "writer.hpp"
 #include <util/vector2d.hpp>
 #include <util/error.hpp>
+#include <util/version.hpp>
 
 // ----------------------------------------------------------------------------- : Writer
 
@@ -21,6 +22,10 @@ Writer::Writer(const OutputStreamP& output)
 	stream.WriteString(BYTE_ORDER_MARK);
 }
 
+
+void Writer::handleAppVersion() {
+	handle(_("mse_version"), app_version);
+}
 
 void Writer::enterBlock(const Char* name) {
 	// indenting into a sub-block?

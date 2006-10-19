@@ -14,6 +14,8 @@
 
 template <typename T> class Defaultable;
 template <typename T> class Scriptable;
+DECLARE_POINTER_TYPE(Game);
+DECLARE_POINTER_TYPE(StyleSheet);
 
 // ----------------------------------------------------------------------------- : Writer
 
@@ -29,6 +31,9 @@ class Writer {
 	/// Tell the reflection code we are not reading
 	inline bool reading()   const { return false; }
 	inline bool isComplex() const { return false; }
+	
+	/// Write the application version
+	void handleAppVersion();
 	
 	// --------------------------------------------------- : Handling objects
 	/// Handle an object: write it under the given name
@@ -58,6 +63,9 @@ class Writer {
 	template <typename T> void handle(const Defaultable<T>&);
 	/// Write an object of type Scriptable<T> to the output stream
 	template <typename T> void handle(const Scriptable<T>&);
+	// special behaviour
+	void handle(const GameP&);
+	void handle(const StyleSheet&);
 	
   private:
 	// --------------------------------------------------- : Data

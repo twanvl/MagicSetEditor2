@@ -25,13 +25,15 @@ struct Version {
 	Version()             : version(0)       {}
 	Version(UInt version) : version(version) {}
 	
-	bool operator < (Version v) { return version < v.versionSuffix; }
+	inline bool operator < (Version v) const { return version < v.version; }
 	
 	/// Convert a version number to a string
-	String toString();
+	String toString() const;
+	/// Get the version number as an integer number
+	UInt   toNumber() const;
 	
 	/// Convert a string to a version number
-	static Version fromString(UInt version);
+	static Version fromString(const String& version);
 	
   private:
 	UInt version; ///< Version number encoded as aabbcc, where a=major, b=minor, c=revision
@@ -39,20 +41,14 @@ struct Version {
 
 // ----------------------------------------------------------------------------- : Versions
 
-/// The verwsion number of MSE
-const Version app_version  = 000300; // 0.3.0
-const Char* version_suffix = _(" (beta)");
+/// The version number of MSE
+extern const Version app_version;
+extern const Char* version_suffix;
 
 /// File version, usually the same as program version,
 /** When no files are changed the file version is not incremented
- *  Changes:
- *     0.2.0 : start of version numbering practice
- *     0.2.2 : _("include file")
- *     0.2.6 : fix in settings loading
- *     0.2.7 : new tag system, different style of close tags
- *     0.3.0 : port of code to C++
  */
-const Version file_version = 000300; // 0.3.0
+extern const Version file_version;
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

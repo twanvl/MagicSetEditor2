@@ -31,6 +31,21 @@ Reader::Reader(const String& filename)
 }
 
 
+void Reader::handleAppVersion() {
+	if (enterBlock(_("mse_version"))) {
+		handle(app_version);
+		if (::app_version < app_version) {
+			wxMessageBox(
+				filename + _("\n")
+				_("This file is made with a newer version of Magic Set Editor (")+ app_version.toString() +_(").\n")
+				_("When you open it, some aspects of the file may be lost.\n")
+				_("It is recommended that you upgrade to the latest version.\n")
+				_("Visit http:://magicseteditor.sourceforge.net/"), _("Warning"), wxOK | wxICON_EXCLAMATION);
+		}
+		exitBlock();
+	}
+}
+
 void Reader::warning(const String& msg) {
 	wxMessageBox((msg + _("\nOn line: ")) << line_number << _("\nIn file: ") << filename, _("Warning"), wxOK | wxICON_EXCLAMATION);
 }
