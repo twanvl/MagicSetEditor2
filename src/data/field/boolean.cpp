@@ -11,9 +11,9 @@
 // ----------------------------------------------------------------------------- : BooleanField
 
 BooleanField::BooleanField() {
-//	choices->choices.push_back(new_shared1<Choice>(_("yes")));
-//	choices->choices.push_back(new_shared1<Choice>(_("no")));
-//	choices->initIds();
+	choices->choices.push_back(new_shared1<Choice>(_("yes")));
+	choices->choices.push_back(new_shared1<Choice>(_("no")));
+	choices->initIds();
 }
 
 StyleP BooleanField::newStyle(const FieldP& thisP) const {

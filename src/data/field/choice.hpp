@@ -42,6 +42,9 @@ class ChoiceField : public Field {
 /// An item that can be chosen for this field
 class ChoiceField::Choice {
   public:
+	Choice();
+	Choice(const String& name);
+	
 	String          name;			///< Name/value of the item
 	String          default_name;	///< A default item, if this is a group and default_name.empty() there is no default
 	vector<ChoiceP> choices;		///< Choices and sub groups in this group
@@ -50,9 +53,7 @@ class ChoiceField::Choice {
 	 *  The top level group has first_id 0.
 	 */
 	int             first_id;
-	
-	Choice();
-	
+		
 	/// Is this a group?
 	bool isGroup() const;
 	/// Can this Choice itself be chosen?

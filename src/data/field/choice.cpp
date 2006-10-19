@@ -43,6 +43,9 @@ IMPLEMENT_REFLECTION(ChoiceField) {
 ChoiceField::Choice::Choice()
 	: first_id(0)
 {}
+ChoiceField::Choice::Choice(const String& name)
+	: first_id(0), name(name)
+{}
 
 
 bool ChoiceField::Choice::isGroup() const {
