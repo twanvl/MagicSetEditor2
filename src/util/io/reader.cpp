@@ -91,6 +91,11 @@ void Reader::readLine() {
 		key.clear();
 		return;
 	}
+	if (key.empty() && input->Eof()) {
+		// end of file
+		indent = -1;
+		return;
+	}
 	key   = cannocial_name_form(trim(line.substr(indent, pos - indent)));
 	value = pos == String::npos ? _("") : trim_left(line.substr(pos+1));
 }
@@ -112,7 +117,7 @@ template <> void Reader::handle(String& s) {
 		bool first = true;
 		// read all lines that are indented enough
 		readLine();
-		while (indent >= expected_indent) {
+		while (indent >= expected_indent && !input->Eof()) {
 			if (!first) multi_line_str += _('\n');
 			first = false;
 			multi_line_str += line.substr(expected_indent); // strip expected indent

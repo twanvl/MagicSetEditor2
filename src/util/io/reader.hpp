@@ -114,6 +114,7 @@ class Reader {
 		if (key == _("include_file")) {
 			Reader reader(value);
 			reader.handle(v);
+			moveNext();
 		} else {
 			unknownKey();
 		}
