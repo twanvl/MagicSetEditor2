@@ -11,6 +11,16 @@
 
 #include <util/prec.hpp>
 
+// ----------------------------------------------------------------------------- : Events
+
+DECLARE_EVENT_TYPE(EVENT_GALLERY_SELECT,   <not used>)
+DECLARE_EVENT_TYPE(EVENT_GALLERY_ACTIVATE, <not used>)
+
+/// Handle EVENT_GALLERY_SELECT events
+#define EVT_GALLERY_SELECT(  id, handler) EVT_COMMAND(id, EVENT_GALLERY_SELECT,   handler)
+/// Handle EVENT_GALLERY_ACTIVATE events
+#define EVT_GALLERY_ACTIVATE(id, handler) EVT_COMMAND(id, EVENT_GALLERY_ACTIVATE, handler)
+
 // ----------------------------------------------------------------------------- : GalleryList
 
 /// A list of items with custom drawing
@@ -47,6 +57,8 @@ class GalleryList : public wxScrolledWindow {
 	
 	/// Find the item corresponding to the given location
 	size_t findItem(const wxMouseEvent&);
+	/// Send an event
+	void sendEvent(WXTYPE type);
 };
 
 // ----------------------------------------------------------------------------- : EOF

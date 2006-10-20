@@ -12,6 +12,7 @@
 #include <data/set.hpp>
 #include <data/settings.hpp>
 #include <data/format/formats.hpp>
+#include <gui/welcome_window.hpp>
 #include <gui/set/window.hpp>
 #include <gui/symbol/window.hpp>
 
@@ -41,9 +42,10 @@ bool MSE::OnInit() {
 		settings.read();
 		//Window* wnd = new SymbolWindow(nullptr);
 		//GameP g = Game::byName(_("magic"))
-		SetP  s = new_shared<Set>();
-		s->open(_("test.mse-set"));
-		Window* wnd = new SetWindow(nullptr, s);
+		//SetP  s = new_shared<Set>();
+		//s->open(_("test.mse-set"));
+		//Window* wnd = new SetWindow(nullptr, s);
+		Window* wnd = new WelcomeWindow();
 		wnd->Show();
 		return true;
 	

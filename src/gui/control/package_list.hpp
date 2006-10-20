@@ -30,7 +30,10 @@ class PackageList : public GalleryList {
 	/// Shows packages that match a specific patern
 	void showData(const String& pattern = _("*.*"));
 	
-	// Is there a package selected?
+	/// Clears this list
+	void clear();
+	
+	/// Is there a package selected?
 	inline bool hasSelection() const { return selection < itemCount(); }
 	
 	/// Get the selected package, T should be the same type used for showData
@@ -42,6 +45,9 @@ class PackageList : public GalleryList {
 		if (!ret) throw InternalError(_("PackageList: Selected package has the wrong type"));
 		return ret;
 	}
+	
+	/// Select the package with the given name, if it is not found, selects nothing
+	void select(const String& name);
 	
   protected:
 	/// Return how many items there are in the list

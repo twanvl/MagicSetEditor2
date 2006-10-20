@@ -8,4 +8,7 @@
 
 #include <data/stylesheet.hpp>
 
-// ----------------------------------------------------------------------------- : 
+// ----------------------------------------------------------------------------- : StyleSheet
+
+String StyleSheet::typeNameStatic() { return _("style"); }
+String StyleSheet::typeName() const { return _("style"); }

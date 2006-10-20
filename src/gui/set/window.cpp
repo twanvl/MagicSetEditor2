@@ -366,10 +366,9 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 
 void SetWindow::onFileNew(wxCommandEvent&) {
 	if (!askSaveAndContinue()) return;
-//	NewWindow wnd(this);
-//	wnd.showModal();
-	// associate new set
-//	if (wnd.set)  set = wnd.set;
+	// new set?
+	SetP new_set = new_set_window(this);
+	if (new_set) set = new_set;
 }
 
 void SetWindow::onFileOpen(wxCommandEvent&) {
@@ -451,7 +450,7 @@ void SetWindow::onFilePrintPreview(wxCommandEvent&) {
 }
 
 void SetWindow::onFileRecent(wxCommandEvent& ev) {
-//	setSet(importSet(settings.recentSets.at(ev.GetId() - ID_FILE_RECENT)));
+//	setSet(import_set(settings.recentSets.at(ev.GetId() - ID_FILE_RECENT)));
 }
 
 void SetWindow::onFileExit(wxCommandEvent&) {

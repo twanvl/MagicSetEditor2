@@ -8,6 +8,7 @@
 
 #include <gui/welcome_window.hpp>
 #include <gui/util.hpp>
+#include <gui/new_window.hpp>
 #include <gui/set/window.hpp>
 #include <util/window_id.hpp>
 #include <data/settings.hpp>
@@ -70,11 +71,7 @@ void WelcomeWindow::onOpenSet(wxCommandEvent&) {
 }
 
 void WelcomeWindow::onNewSet(wxCommandEvent&) {
-//	NewWindow wnd(0);
-//	wnd.ShowModal();
-//	if (wnd.set) {
-//		close(wnd.getSet());
-//	}
+	close(new_set_window(this));
 }
 
 // MOVEME

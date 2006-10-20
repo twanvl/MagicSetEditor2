@@ -37,7 +37,7 @@ IMPLEMENT_REFLECTION(ColumnSettings) {
 }
 
 IMPLEMENT_REFLECTION(GameSettings) {
-	REFLECT(default_style);
+	REFLECT(default_stylesheet);
 	REFLECT(default_export);
 //	REFLECT_N("cardlist columns",     columns);
 	REFLECT(sort_cards_by);

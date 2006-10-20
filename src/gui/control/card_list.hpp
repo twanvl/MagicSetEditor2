@@ -18,9 +18,9 @@ DECLARE_POINTER_TYPE(Field);
 
 // ----------------------------------------------------------------------------- : Events
 
-DECLARE_EVENT_TYPE(EVENT_CARD_SELECT, <not used>);
+DECLARE_EVENT_TYPE(EVENT_CARD_SELECT, <not used>)
 /// Handle CardSelectEvents
-#define EVT_CARD_SELECT(id, handler) EVT_COMMAND(id, EVENT_CARD_SELECT, handler);
+#define EVT_CARD_SELECT(id, handler) EVT_COMMAND(id, EVENT_CARD_SELECT, handler)
 
 /// The event of selecting a card
 struct CardSelectEvent : public wxCommandEvent {

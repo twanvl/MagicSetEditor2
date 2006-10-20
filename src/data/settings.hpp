@@ -43,7 +43,7 @@ class ColumnSettings {
 /// Settings for a Game
 class GameSettings {
   public:
-	String                      default_style;
+	String                      default_stylesheet;
 	String                      default_export;
 	map<String, ColumnSettings> columns;
 	String                      sort_cards_by;

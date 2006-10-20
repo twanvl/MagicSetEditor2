@@ -17,7 +17,7 @@
 DECLARE_POINTER_TYPE(Card);
 DECLARE_POINTER_TYPE(Set);
 DECLARE_POINTER_TYPE(Game);
-DECLARE_POINTER_TYPE(Stylesheet);
+DECLARE_POINTER_TYPE(StyleSheet);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
 
@@ -30,11 +30,13 @@ class Set : public Packaged {
 	Set();
 	/// Create a set using the given game
 	Set(const GameP& game);
+	/// Create a set using the given stylesheet, and its game
+	Set(const StyleSheetP& stylesheet);
   
 	/// The game this set uses
 	GameP game;
 	/// The default stylesheet
-	StylesheetP stylesheet;
+	StyleSheetP stylesheet;
 	/// The values on the fields of the set
 	/** The indices should correspond to the set_fields in the Game */
 	IndexMap<FieldP, ValueP> data;

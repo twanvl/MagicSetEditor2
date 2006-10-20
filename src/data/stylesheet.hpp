@@ -17,10 +17,17 @@ DECLARE_POINTER_TYPE(Game);
 // ----------------------------------------------------------------------------- : StyleSheet
 
 /// A collection of style information for card and set fields
-class StyleSheet : Packaged {
+class StyleSheet : public Packaged {
   public:
 	GameP game;
+	
+	static String typeNameStatic();
+	virtual String typeName() const;
+	virtual String fullName() const;
+	virtual InputStreamP openIconFile();
+	
   private:
+	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : EOF

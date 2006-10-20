@@ -76,3 +76,21 @@ void PackageList::showData(const String& pattern) {
 	// update list
 	update();
 }
+
+void PackageList::clear() {
+	packages.clear();
+	update();
+}
+
+void PackageList::select(const String& name) {
+	for (vector<PackageData>::const_iterator it = packages.begin() ; it != packages.end() ; ++it) {
+		if (it->package->name() == name) {
+			selection = it - packages.begin();
+			update();
+			return;
+		}
+	}
+	selection = NO_SELECTION;
+	update();
+	return;
+}

@@ -8,17 +8,23 @@
 
 #include <data/set.hpp>
 #include <data/game.hpp>
+#include <data/stylesheet.hpp>
 #include <data/card.hpp>
 #include <data/field.hpp>
 #include <script/value.hpp>
 
 // ----------------------------------------------------------------------------- : Set
 
+Set::Set() {}
+
 Set::Set(const GameP& game)
 	: game(game)
 {}
 
-Set::Set() {}
+Set::Set(const StyleSheetP& stylesheet)
+	: stylesheet(stylesheet)
+	, game(stylesheet->game)
+{}
 
 String Set::typeName() const { return _("set"); }
 

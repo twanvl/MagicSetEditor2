@@ -8,6 +8,11 @@
 
 #include <gui/control/gallery_list.hpp>
 
+// ----------------------------------------------------------------------------- : Events
+
+DEFINE_EVENT_TYPE(EVENT_GALLERY_SELECT);
+DEFINE_EVENT_TYPE(EVENT_GALLERY_ACTIVATE);
+
 // ----------------------------------------------------------------------------- : GalleryList
 
 const int MARGIN = 2; // margin around items
@@ -77,12 +82,12 @@ void GalleryList::onLeftDown(wxMouseEvent& ev) {
 	if (item != selection && item < itemCount()) {
 		selection = item;
 		update();
+		sendEvent(EVENT_GALLERY_SELECT);
 	}
 }
 
 void GalleryList::onLeftDClick(wxMouseEvent& ev) {
-	// activate an item
-	// TODO
+	sendEvent(EVENT_GALLERY_ACTIVATE);
 }
 
 void GalleryList::onKeyDown(wxKeyEvent& ev) {
@@ -158,6 +163,11 @@ void GalleryList::OnDraw(DC& dc) {
 		// draw item
 		drawItem(dc, (int)i * dx + MARGIN, (int)i * dy + MARGIN, i, selected);
 	}
+}
+
+void GalleryList::sendEvent(WXTYPE type) {
+	wxCommandEvent ev(type, GetId());
+	ProcessEvent(ev);
 }
 
 // ----------------------------------------------------------------------------- : Event table
