@@ -28,7 +28,7 @@ class SymbolControl : public wxControl, public SymbolViewer {
 	
 	virtual void onChangeSymbol();
 	
-	virtual void onAction(const Action&);
+	virtual void onAction(const Action&, bool undone);
 	
 	// Forward command to editor
 	void onExtraTool(wxCommandEvent& ev);

@@ -55,7 +55,7 @@ class Set : public Packaged {
 // ----------------------------------------------------------------------------- : SetView
 
 /// A 'view' of a Set, is notified when the Set is updated
-/** To listen to events, derived classes should override onAction(const Action&)
+/** To listen to events, derived classes should override onAction(const Action&, bool undone)
  */
 class SetView : public ActionListener {
   public:

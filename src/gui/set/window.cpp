@@ -234,7 +234,7 @@ void SetWindow::onChangeSet() {
 	fixMinWindowSize();
 }
 
-void SetWindow::onAction(const Action& action) {
+void SetWindow::onAction(const Action& action, bool undone) {
 //	TYPE_CASE_(action, SetStyleChange) {
 //		// The style changed, maybe also the size of the viewer
 //		Layout();

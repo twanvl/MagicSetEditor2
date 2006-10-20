@@ -40,8 +40,8 @@ class AddCardAction : public CardListAction {
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);
 	
-  private:
-	CardP card; ///< The new card
+  //private:
+	const CardP card; ///< The new card
 };
 
 // ----------------------------------------------------------------------------- : Remove card
@@ -54,9 +54,9 @@ class RemoveCardAction : public CardListAction {
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);
 	
-  private:
-	CardP  card;	///< The removed card
-	size_t card_id;	///< Position of the card in the set
+  //private:
+	const CardP  card;	///< The removed card
+	const size_t card_id;	///< Position of the card in the set
 };
 
 // ----------------------------------------------------------------------------- : Reorder cards
@@ -69,8 +69,8 @@ class ReorderCardsAction : public CardListAction {
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);
 	
-  private:
-	size_t card_id1, card_id2;	///< Positions of the two cards to swap
+  //private:
+	const size_t card_id1, card_id2;	///< Positions of the two cards to swap
 };
 
 // ----------------------------------------------------------------------------- : EOF

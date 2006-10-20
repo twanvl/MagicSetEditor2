@@ -166,7 +166,7 @@ class Symbol {
 // ----------------------------------------------------------------------------- : SymbolView
 
 /// A 'view' of a symbol, is notified when the symbol is updated
-/** To listen to events, derived classes should override onAction(const Action&)
+/** To listen to events, derived classes should override onAction(const Action&, bool undone)
  */
 class SymbolView : public ActionListener {
   public:

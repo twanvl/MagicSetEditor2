@@ -39,12 +39,10 @@ void AddCardAction::perform(bool to_undo) {
 
 RemoveCardAction::RemoveCardAction(Set& set, const CardP& card)
 	: CardListAction(set), card(card)
-{
 	// find the card_id of the card we want to remove
-	vector<CardP>::iterator it = find(set.cards.begin(), set.cards.end(), card);
-	if (it != set.cards.end()) {
-		card_id = it - set.cards.begin();
-	} else {
+	, card_id(find(set.cards.begin(), set.cards.end(), card) - set.cards.begin())
+{
+	if (card_id >= set.cards.size()) {
 		throw InternalError(_("Card to remove not found in set"));
 	}
 }

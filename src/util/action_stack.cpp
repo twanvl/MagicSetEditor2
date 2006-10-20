@@ -29,7 +29,7 @@ void ActionStack::add(Action* action, bool allow_merge) {
 	if (!action) return; // no action
 	action->perform(false); // TODO: delete action if perform throws
 	redo_actions.clear();
-	tellListeners(*action);
+	tellListeners(*action, false);
 	// try to merge?
 	if (allow_merge && !undo_actions.empty() && undo_actions.back()->merge(action)) {
 		// merged with top undo action
@@ -43,6 +43,7 @@ void ActionStack::undo() {
 	assert(canUndo());
 	Action* action = undo_actions.back();
 	action->perform(true);
+	tellListeners(*action, true);
 	// move to redo stack
 	undo_actions.pop_back();
 	redo_actions.push_back(action);
@@ -51,6 +52,7 @@ void ActionStack::redo() {
 	assert(canRedo());
 	Action* action = redo_actions.back();
 	action->perform(false);
+	tellListeners(*action, false);
 	// move to undo stack
 	redo_actions.pop_back();
 	undo_actions.push_back(action);
@@ -103,6 +105,6 @@ void ActionStack::removeListener(ActionListener* listener) {
 		listeners.end()
 		);
 }
-void ActionStack::tellListeners(const Action& action) {
-	FOR_EACH(l, listeners) l->onAction(action);
+void ActionStack::tellListeners(const Action& action, bool undone) {
+	FOR_EACH(l, listeners) l->onAction(action, undone);
 }

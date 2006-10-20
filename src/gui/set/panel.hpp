@@ -46,9 +46,9 @@ class SetWindowPanel : public wxPanel, public SetView {
 	// --------------------------------------------------- : Actions/Events
 	
 	/// Should return true if this panel wants to get focus to show an action
-	virtual bool wantsToHandle(const Action&) const { return false; }
+	virtual bool wantsToHandle(const Action&, bool undone) const { return false; }
 	/// Handle an action that changes the current set
-	virtual void onAction(const Action&) {}
+	virtual void onAction(const Action&, bool undone) {}
 	/// The settings for rendering cards have changed, refresh card viewers/editors
 	virtual void onRenderSettingsChange() {}
 	

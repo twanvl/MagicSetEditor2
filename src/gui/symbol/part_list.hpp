@@ -39,7 +39,7 @@ class SymbolPartList : public wxListCtrl, public SymbolView {
 	void onChangeSymbol();
 	
 	/// Event handler for changes to the symbol
-	virtual void onAction(const Action& a);
+	virtual void onAction(const Action& a, bool undone);
 	
   protected:
 	/// Get the text of an item

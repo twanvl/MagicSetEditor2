@@ -80,7 +80,7 @@ class SetWindow : public wxFrame, public SetView {
 	/// We want to respond to set changes
 	virtual void onChangeSet();
 	/// Actions that change the set
-	virtual void onAction(const Action&);
+	virtual void onAction(const Action&, bool undone);
 	
   private:
 	/// A different card has been selected

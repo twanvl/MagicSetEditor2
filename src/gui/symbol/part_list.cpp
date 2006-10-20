@@ -39,7 +39,7 @@ void SymbolPartList::onChangeSymbol() {
 	update();
 }
 
-void SymbolPartList::onAction(const Action& action) {
+void SymbolPartList::onAction(const Action& action, bool undone) {
 	TYPE_CASE(action, ReorderSymbolPartsAction) {
 		if (selected == (long) action.part_id1) {
 			selectItem((long) action.part_id2);

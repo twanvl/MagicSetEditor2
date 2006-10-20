@@ -68,7 +68,7 @@ void SymbolControl::onExtraTool(wxCommandEvent& ev) {
 	if (editor) editor->onCommand(ev.GetId());
 }
 
-void SymbolControl::onAction(const Action& action) {
+void SymbolControl::onAction(const Action& action, bool undone) {
 	TYPE_CASE_(action, SymbolPartAction) {
 		Refresh(false);
 	}

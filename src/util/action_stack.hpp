@@ -47,7 +47,8 @@ class Action {
 /// Base class/interface for objects that listen to actions
 class ActionListener {
   public:
-	virtual void onAction(const Action& a) = 0;
+	/// Notification that an action a has been performed or undone
+	virtual void onAction(const Action& a, bool undone) = 0;
 };
 
 // ----------------------------------------------------------------------------- : Action stack
@@ -98,7 +99,7 @@ class ActionStack {
 	/// Remove an action listener
 	void removeListener(ActionListener* listener);
 	/// Tell all listeners about an action
-	void tellListeners(const Action&);
+	void tellListeners(const Action&, bool undone);
 	
   private:
 	/// Actions to be undone

@@ -13,6 +13,7 @@
 #include <data/set.hpp>
 #include <data/card.hpp>
 #include <data/settings.hpp>
+#include <data/action/set.hpp>
 #include <util/window_id.hpp>
 
 DECLARE_TYPEOF_COLLECTION(CardP);
@@ -47,8 +48,44 @@ void CardListBase::onBeforeChangeSet() {
 void CardListBase::onChangeSet() {
 	rebuild();
 }
-void CardListBase::onAction(const Action& action) {
-	// TODO
+
+void CardListBase::onAction(const Action& action, bool undone) {
+	TYPE_CASE(action, AddCardAction) {
+		// select the new card
+		selectCard(action.card, false /*list will be refreshed anyway*/);
+		refreshList();
+	}
+	TYPE_CASE(action, RemoveCardAction) {
+		if (undone) {
+			// select the re-added card
+			selectCard(action.card, false /*list will be refreshed anyway*/);
+			refreshList();
+		} else {
+			long pos = selected_card_pos;
+			refreshList();
+			if (action.card == selected_card) {
+				// select the next card, if not possible, select the last
+				if ((size_t)pos + 1 < sorted_card_list.size()) {
+					selectCardPos(pos, true);
+				} else {
+					selectCardPos((long)sorted_card_list.size() - 1, true);
+				}
+			}
+		}
+	}
+	TYPE_CASE(action, ReorderCardsAction) {
+		if (sort_criterium) return; // nothing changes for us
+		if ((long)action.card_id1 == selected_card_pos || (long)action.card_id2 == selected_card_pos) {
+			// Selected card has moved; also move in the sorted card list
+			swap(sorted_card_list[action.card_id1] ,sorted_card_list[action.card_id2]);
+			// reselect the current card, it has moved
+			selected_card_pos = (long)action.card_id1 == selected_card_pos ? (long)action.card_id2 : (long)action.card_id1;
+			// select the right card
+			selectCurrentCard();
+		}
+		RefreshItem((long)action.card_id1);
+		RefreshItem((long)action.card_id2);
+	}
 }
 
 vector<CardP>& CardListBase::getCards() const {
@@ -58,16 +95,18 @@ vector<CardP>& CardListBase::getCards() const {
 // ----------------------------------------------------------------------------- : CardListBase : Selection
 
 bool CardListBase::canSelectPrevious() const {
-	return selected_card_pos + 1 >= 0;
+	return selected_card_pos - 1 >= 0;
 }
 bool CardListBase::canSelectNext() const {
 	return selected_card_pos >= 0 && static_cast<size_t>(selected_card_pos + 1) < sorted_card_list.size();
 }
 void CardListBase::selectPrevious() {
-// TODO
+	assert(selected_card_pos >= 1);
+	selectCardPos(selected_card_pos - 1, true);
 }
 void CardListBase::selectNext() {
-// TODO
+	assert(selected_card_pos + 1 < (long)sorted_card_list.size());
+	selectCardPos(selected_card_pos + 1, true);
 }
 
 // ----------------------------------------------------------------------------- : CardListBase : Selection (private)
@@ -81,19 +120,19 @@ void CardListBase::selectCard(const CardP& card, bool focus) {
 		selectCurrentCard();
 	}
 }
-/*
-void CardListBase::selectCardPos(size_t pos, bool focus = true, bool force = false) {
-	if (selectedCardPos == pos && !force)  return; // this card is already selected
-	if (pos < sortedCardList.size()) {
+
+void CardListBase::selectCardPos(long pos, bool focus) {
+	if (selected_card_pos == pos && !focus)  return; // this card is already selected
+	if ((size_t)pos < sorted_card_list.size()) {
 		// only if there is something to select
-		selectCard(getCard(pos), false);
+		selectCard(sorted_card_list[pos], false);
 	} else {
 		selectCard(CardP(), false);
 	}
-	selectedCardPos = Long(pos);
-	if (focus)  selectCurrentCard();
+	selected_card_pos = pos;
+	if (focus) selectCurrentCard();
 }
-*/
+
 void CardListBase::findSelectedCardPos() {
 	// find the position of the selected card
 	long count = GetItemCount();
@@ -107,7 +146,7 @@ void CardListBase::findSelectedCardPos() {
 }
 void CardListBase::selectCurrentCard() {
 	if (GetItemCount() > 0) {
-		if (selected_card_pos == -1) {
+		if (selected_card_pos == -1 || (size_t)selected_card_pos > sorted_card_list.size()) {
 			// deselect currently selected item, if any
 			long sel = GetFirstSelected();
 			Select(sel, false);
@@ -190,9 +229,7 @@ void CardListBase::rebuild() {
 	}
 	refreshList();
 	// select a card if possible
-//	if (!getCards().empty()) {
-//		selectCardPos(0, true);
-//	}
+	selectCardPos(0, true);
 }
 
 void CardListBase::refreshList() {
@@ -273,7 +310,7 @@ void CardListBase::onColumnClick(wxListEvent& ev) {
 	FieldP new_sort_criterium = column_fields[ev.GetColumn()];
 	if (sort_criterium == new_sort_criterium) {
 		if (sort_ascending) {
-			sort_ascending = false;		// 2nd click on same column -> sort descending
+			sort_ascending = false;			// 2nd click on same column -> sort descending
 		} else {
 			new_sort_criterium.reset();		// 3rd click on same column -> don't sort
 		}
@@ -306,12 +343,12 @@ void CardListBase::onSelectColumns(wxCommandEvent&) {
 }
 
 void CardListBase::onItemFocus(wxListEvent& ev) {
-//	selectCardPos(ev.GetIndex(), false);
+	selectCardPos(ev.GetIndex(), false);
 }
 
 void CardListBase::onChar(wxKeyEvent& ev) {
 	if (ev.GetKeyCode() == WXK_DELETE) {
-//		set->actions.add(new_shared2<RemoveCardAction>(set.get(), card));
+		set->actions.add(new RemoveCardAction(*set, selected_card));
 	} else if (ev.GetKeyCode() == WXK_TAB) {
 		// send a navigation event to our parent, to select another control
 		// we need this because tabs are not handled on the cards panel

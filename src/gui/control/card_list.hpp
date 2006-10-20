@@ -50,7 +50,7 @@ class CardListBase : public wxListView, public SetView {
 	// --------------------------------------------------- : Selection
 	
 	inline CardP getCard() const            { return selected_card; }
-	inline void  setCard(const CardP& card) { selectCard(card); }
+	inline void  setCard(const CardP& card) { selectCard(card, true); }
 	
 	/// Is there a previous card to select?
 	bool canSelectPrevious() const;
@@ -74,7 +74,7 @@ class CardListBase : public wxListView, public SetView {
 	
 	virtual void onBeforeChangeSet();
 	virtual void onChangeSet();
-	virtual void onAction(const Action&);
+	virtual void onAction(const Action&, bool undone);
 	
 	// --------------------------------------------------- : The cards
   protected:
@@ -113,9 +113,9 @@ class CardListBase : public wxListView, public SetView {
 	/** If focus then the card is also focused and selected in the actual control.
 	 *  This should abviously not be done when the card is selected because it was selected (leading to a loop).
 	 */
-	void selectCard(const CardP& card, bool focus = false);
+	void selectCard(const CardP& card, bool focus);
 	/// Select a card at the specified position
-	void selectCardPos(long pos);
+	void selectCardPos(long pos, bool focus);
 	/// Find the position for the selected_card
 	void findSelectedCardPos();
 	/// Actually select the card at selected_card_pos in the control

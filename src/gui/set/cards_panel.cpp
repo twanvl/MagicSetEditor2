@@ -186,11 +186,11 @@ void CardsPanel::onCommand(int id) {
 
 // ----------------------------------------------------------------------------- : Actions
 
-bool CardsPanel::wantsToHandle(const Action&) const {
+bool CardsPanel::wantsToHandle(const Action&, bool undone) const {
 	return false;
 }
 
-void CardsPanel::onAction(const Action& action) {
+void CardsPanel::onAction(const Action& action, bool undo) {
 	// TODO
 }
 
