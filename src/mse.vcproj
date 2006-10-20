@@ -545,6 +545,28 @@
 					RelativePath=".\gui\symbol\window.hpp">
 				</File>
 			</Filter>
+			<Filter
+				Name="other"
+				Filter="">
+				<File
+					RelativePath=".\gui\about_window.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\about_window.hpp">
+				</File>
+				<File
+					RelativePath=".\gui\new_window.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\new_window.hpp">
+				</File>
+				<File
+					RelativePath=".\gui\welcome_window.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\welcome_window.hpp">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="resource"

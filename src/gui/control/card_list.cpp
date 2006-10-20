@@ -51,9 +51,14 @@ void CardListBase::onChangeSet() {
 
 void CardListBase::onAction(const Action& action, bool undone) {
 	TYPE_CASE(action, AddCardAction) {
-		// select the new card
-		selectCard(action.card, false /*list will be refreshed anyway*/);
-		refreshList();
+		if (undone) {
+			refreshList();
+			selectCardPos((long)sorted_card_list.size() - 1, true);
+		} else {
+			// select the new card
+			selectCard(action.card, false /*list will be refreshed anyway*/);
+			refreshList();
+		}
 	}
 	TYPE_CASE(action, RemoveCardAction) {
 		if (undone) {

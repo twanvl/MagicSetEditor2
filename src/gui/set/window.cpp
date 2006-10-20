@@ -12,6 +12,8 @@
 #include <gui/set/set_info_panel.hpp>
 #include <gui/set/style_panel.hpp>
 #include <gui/set/stats_panel.hpp>
+#include <gui/about_window.hpp>
+#include <gui/new_window.hpp>
 #include <gui/icon_menu.hpp>
 #include <util/window_id.hpp>
 #include <data/game.hpp>
@@ -535,8 +537,8 @@ void SetWindow::onHelpIndex(wxCommandEvent&) {
 }
 
 void SetWindow::onHelpAbout(wxCommandEvent&) {
-//	AboutWindow wnd(this);
-//	wnd.ShowModal();
+	AboutWindow wnd(this);
+	wnd.ShowModal();
 }
 
 // ----------------------------------------------------------------------------- : Window events - menu - for child panel
