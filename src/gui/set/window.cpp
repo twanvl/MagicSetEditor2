@@ -113,16 +113,16 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	// NOTE: place the CardsPanel last in the panels list,
 	//  this way the card list is the last to be told of a set change
 	//  this way everyone else already uses the new set when it sends a CardSelectEvent
-//	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 4, _("F5"), _("Cards"), _("Cards"));
+	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 2, _("F5"), _("Cards"), _("Cards"), _("Edit the cards in the set"));
 //	addPanel(menuWindow, tabBar, new SetInfoPanel (this, wxID_ANY), 0, _("F6"));
-	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 1, _("F7"), _("Style"), _("Style"), _("Chnage the style of cards"));
+	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 1, _("F7"), _("Style"), _("Style"), _("Change the style of cards"));
 //	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 2, _("F8"));
 //	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 3, _("F9"), _("Stats"), _("Statistics"), _("Show statistics about the cards in the set"));
 	//addPanel(*s, *menuWindow, *tabBar, new DraftPanel   (&this, wxID_ANY), 4, _("F10")) 
 //	selectPanel(idWindowMin + 4); // select cards panel
 
 	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 0, _("F9"), _("Stats"), _("Statistics"), _("Show statistics about the cards in the set"));
-	selectPanel(ID_WINDOW_MIN+1); // test
+	selectPanel(ID_WINDOW_MIN+2); // test
 	
 	// loose ends
 	tabBar->Realize();

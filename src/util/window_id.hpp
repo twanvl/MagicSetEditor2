@@ -100,6 +100,10 @@ enum ChildMenuID {
 ,	ID_KEYWORD_PREV
 ,	ID_KEYWORD_NEXT
 
+	// Format menu
+,	ID_FORMAT_BOLD			= 1201
+,	ID_FORMAT_ITALIC
+,	ID_FORMAT_SYMBOL
 
 	// SymbolSelectEditor toolbar/menu
 ,	ID_PART					= 2001

@@ -42,7 +42,7 @@ struct CardSelectEvent : public wxCommandEvent {
  *  This class is an abstract base class for card lists, derived classes must overload:
  *   - getCard(index)
  */
-class CardListBase : public wxListCtrl, public SetView {
+class CardListBase : public wxListView, public SetView {
   public:
 	CardListBase(Window* parent, int id, int additional_style = 0);
 	~CardListBase();
@@ -52,14 +52,14 @@ class CardListBase : public wxListCtrl, public SetView {
 	inline CardP getCard() const            { return selected_card; }
 	inline void  setCard(const CardP& card) { selectCard(card); }
 	
+	/// Is there a previous card to select?
+	bool canSelectPrevious() const;
+	/// Is there a next card to select?
+	bool canSelectNext() const;
 	/// Move the selection to the previous card (if possible)
 	void selectPrevious();
 	/// Move the selection to the next card (if possible)
 	void selectNext();
-	/// Is there a previous card to select?
-	bool canSelectPrevious();
-	/// Is there a next card to select?
-	bool canSelectNext();
 	
 	// --------------------------------------------------- : Clipboard
 	
@@ -104,10 +104,10 @@ class CardListBase : public wxListCtrl, public SetView {
 	FieldP         sort_criterium;   ///< Field to sort by
 	bool           sort_ascending;   ///< Sort order
 	
-	mutable wxListItemAttr itemAttr; // for OnGetItemAttr
+	mutable wxListItemAttr item_attr; // for OnGetItemAttr
 	
-	/// Get a card by position
-	void getCard(long pos);
+//	/// Get a card by position
+//	void getCard(long pos);
 	
 	/// Select a card, send an event to the parent
 	/** If focus then the card is also focused and selected in the actual control.

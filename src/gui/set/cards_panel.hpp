@@ -12,6 +12,9 @@
 #include <util/prec.hpp>
 #include <gui/set/panel.hpp>
 
+class wxSplitterWindow;
+class CardListBase;
+
 // ----------------------------------------------------------------------------- : CardsPanel
 
 /// A card list and card editor panel
@@ -20,13 +23,8 @@ class CardsPanel : public SetWindowPanel {
 	CardsPanel(Window* parent, int id);
 	~CardsPanel();
 	
-	void onSetChange();
-	
-	// --------------------------------------------------- : Meta information
-	virtual String shortName();
-	virtual String longName();
-	virtual String description();
-	
+	void onChangeSet();
+		
 	// --------------------------------------------------- : UI
 	
 	virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
@@ -36,7 +34,7 @@ class CardsPanel : public SetWindowPanel {
 	
 	// --------------------------------------------------- : Actions
 	
-	virtual bool wantsToHandle(const Action&);
+	virtual bool wantsToHandle(const Action&) const;
 	virtual void onAction(const Action&);
 	virtual void onRenderSettingsChange();
   private:
@@ -44,16 +42,16 @@ class CardsPanel : public SetWindowPanel {
   public:
   
 	// --------------------------------------------------- : Clipboard
-	virtual bool canCut();
-	virtual bool canCopy();
-	virtual bool canPaste();
+/*	virtual bool canCut() const;
+	virtual bool canCopy() const;
+	virtual bool canPaste() const;
 	virtual void doCut();
 	virtual void doCopy();
 	virtual void doPaste();
 	
 	// --------------------------------------------------- : Searching (find/replace)
-	virtual bool canFind();
-	virtual bool canReplace();
+	virtual bool canFind() const;
+	virtual bool canReplace() const;
 	virtual bool doFind(wxFindReplaceData& what);
 	virtual bool doReplace(wxFindReplaceData& what);
   private:
@@ -88,14 +86,14 @@ class CardsPanel : public SetWindowPanel {
   public:
   
 	// --------------------------------------------------- : Selection
-	virtual CardP selectedCard();
+	virtual CardP selectedCard() const;
 	virtual void selectCard(const CardP& card);
 	
   private:
 	// --------------------------------------------------- : Controls
-//	wxSplitterWindow* splitter;
+	wxSplitterWindow* splitter;
 //	Editor*       editor;
-//	EditCardList* cardList;
+	CardListBase* card_list;
 //	DataTextCtrl* notes;
 	
 	// --------------------------------------------------- : Menus & tools

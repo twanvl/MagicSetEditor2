@@ -45,7 +45,10 @@ SetView::~SetView() {
 
 void SetView::setSet(const SetP& newSet) {
 	// no longer listening to old set
-	if (set) set->actions.removeListener(this);
+	if (set) {
+		onBeforeChangeSet();
+		set->actions.removeListener(this);
+	}
 	set = newSet;
 	// start listening to new set
 	if (set) set->actions.addListener(this);

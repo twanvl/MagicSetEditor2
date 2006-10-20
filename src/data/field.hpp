@@ -26,7 +26,7 @@ class Field {
 	Field();
 	virtual ~Field();
 	
-	UInt      index;            ///< Used by IndexMap
+	size_t    index;            ///< Used by IndexMap
 	String    name;             ///< Name of the field, for refering to it from scripts and files
 	String    description;      ///< Description, used in status bar
 	bool      editable;         ///< Can values of this field be edited?
@@ -56,7 +56,9 @@ class Field {
 
 template <>
 shared_ptr<Field> read_new<Field>(Reader& reader);
-
+inline void update_index(FieldP& f, size_t index) {
+	f->index = index;
+}
 
 // ----------------------------------------------------------------------------- : Style
 

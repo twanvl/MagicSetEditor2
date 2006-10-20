@@ -39,6 +39,7 @@ IMPLEMENT_REFLECTION(Field) {
 		REFLECT(type);
 	}
 	REFLECT(name);
+	if (tag.reading()) name = cannocial_name_form(name);
 	REFLECT(description);
 	REFLECT(editable);
 	REFLECT(save_value);
@@ -48,6 +49,7 @@ IMPLEMENT_REFLECTION(Field) {
 	REFLECT(card_list_width);
 	REFLECT(card_list_allow);
 	REFLECT(card_list_name);
+	if (tag.reading() && card_list_name.empty()) card_list_name = name;
 	REFLECT_N("card_list_alignment", card_list_align);
 	REFLECT(tab_index);
 }

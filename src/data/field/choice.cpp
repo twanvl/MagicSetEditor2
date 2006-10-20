@@ -128,7 +128,7 @@ IMPLEMENT_REFLECTION_NO_GET_MEMBER(ChoiceField::Choice) {
 	if (isGroup() || (tag.reading() && tag.isComplex())) {
 		// complex values are groups
 		REFLECT(name);
-		REFLECT_N("group choice", default_name);
+		REFLECT_N("group_choice", default_name);
 		REFLECT(choices);
 	} else {
 		REFLECT_NAMELESS(name);

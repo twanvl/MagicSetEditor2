@@ -9,6 +9,7 @@
 #include <gui/control/card_list.hpp>
 #include <data/game.hpp>
 #include <data/field.hpp>
+#include <data/field/choice.hpp>
 #include <data/set.hpp>
 #include <data/card.hpp>
 #include <data/settings.hpp>
@@ -16,6 +17,7 @@
 
 DECLARE_TYPEOF_COLLECTION(CardP);
 DECLARE_TYPEOF_COLLECTION(FieldP);
+DECLARE_POINTER_TYPE(ChoiceValue);
 typedef map<int,FieldP> map_int_FieldP;
 DECLARE_TYPEOF(map_int_FieldP);
 
@@ -26,7 +28,14 @@ DEFINE_EVENT_TYPE(EVENT_CARD_SELECT);
 // ----------------------------------------------------------------------------- : CardListBase
 
 CardListBase::CardListBase(Window* parent, int id, int additional_style)
-{}
+	: wxListView(parent, id, wxDefaultPosition, wxDefaultSize, additional_style | wxLC_REPORT | wxLC_VIRTUAL | wxLC_SINGLE_SEL)
+{
+	// create image list
+	wxImageList* il = new wxImageList(18,14);
+	il->Add(Bitmap(_("SORT_ASC")),  Color(255,0,255));
+	il->Add(Bitmap(_("SORT_DESC")), Color(255,0,255));
+	AssignImageList(il, wxIMAGE_LIST_SMALL);
+}
 
 CardListBase::~CardListBase() {
 	storeColumns();
@@ -47,6 +56,21 @@ vector<CardP>& CardListBase::getCards() const {
 }
 
 // ----------------------------------------------------------------------------- : CardListBase : Selection
+
+bool CardListBase::canSelectPrevious() const {
+	return selected_card_pos + 1 >= 0;
+}
+bool CardListBase::canSelectNext() const {
+	return selected_card_pos >= 0 && static_cast<size_t>(selected_card_pos + 1) < sorted_card_list.size();
+}
+void CardListBase::selectPrevious() {
+// TODO
+}
+void CardListBase::selectNext() {
+// TODO
+}
+
+// ----------------------------------------------------------------------------- : CardListBase : Selection (private)
 
 void CardListBase::selectCard(const CardP& card, bool focus) {
 	selected_card = card;
@@ -73,6 +97,7 @@ void CardListBase::selectCardPos(size_t pos, bool focus = true, bool force = fal
 void CardListBase::findSelectedCardPos() {
 	// find the position of the selected card
 	long count = GetItemCount();
+	selected_card_pos = -1;
 	for (long pos = 0 ; pos < count ; ++pos) {
 		if (sorted_card_list[pos] == selected_card) {
 			selected_card_pos = pos;
@@ -82,8 +107,14 @@ void CardListBase::findSelectedCardPos() {
 }
 void CardListBase::selectCurrentCard() {
 	if (GetItemCount() > 0) {
-		SetItemState(selected_card_pos, wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED,
-		                                wxLIST_STATE_SELECTED|wxLIST_STATE_FOCUSED);
+		if (selected_card_pos == -1) {
+			// deselect currently selected item, if any
+			long sel = GetFirstSelected();
+			Select(sel, false);
+		} else {
+			Select(selected_card_pos);
+			Focus(selected_card_pos);
+		}
 	}
 }
 
@@ -230,10 +261,10 @@ int CardListBase::OnGetItemImage(long pos) const {
 
 wxListItemAttr* CardListBase::OnGetItemAttr(long pos) const {
 	if (!color_style) return nullptr;
-//	ChoiceValueP val = static_cast<ChoiceValueP>( sorted_car_list[cardPos]->data[color_field]);
-//	assert(val);
-//	itemAttr.textColour = colorStyle->choiceColors#(val->value); // if it doesn't exist we get black
-	return &itemAttr;
+	ChoiceValueP val = static_pointer_cast<ChoiceValue>( sorted_card_list[pos]->data[color_style->fieldP]);
+	assert(val);
+	item_attr.SetTextColour(color_style->choice_colors[val->value()]); // if it doesn't exist we get black
+	return &item_attr;
 }
 
 // ----------------------------------------------------------------------------- : CardListBase : Window events
@@ -244,7 +275,7 @@ void CardListBase::onColumnClick(wxListEvent& ev) {
 		if (sort_ascending) {
 			sort_ascending = false;		// 2nd click on same column -> sort descending
 		} else {
-			sort_criterium.reset();		// 3rd click on same column -> don't sort
+			new_sort_criterium.reset();		// 3rd click on same column -> don't sort
 		}
 	} else {
 		sort_ascending = true;
@@ -253,16 +284,11 @@ void CardListBase::onColumnClick(wxListEvent& ev) {
 	int i = 0;
 	FOR_EACH(f, column_fields) {
 		if (f == new_sort_criterium) {
-			wxListItem li;
-			li.m_mask  = wxLIST_MASK_IMAGE;
-			li.m_image = sort_ascending ? 0 : 1; // arrow up/down
-			SetColumn(i, li);
+			SetColumnImage(i, sort_ascending ? 0 : 1); // arrow up/down
 		} else if (f == sort_criterium) {
-			wxListItem li;
-			li.m_mask  = wxLIST_MASK_IMAGE;
-			li.m_image = -1; // no sort icon
-			SetColumn(i, li);
+			ClearColumnImage(i);
 		}
+		++i;
 	}
 	sort_criterium = new_sort_criterium;
 	refreshList();
@@ -303,7 +329,7 @@ void CardListBase::onDrag(wxMouseEvent& ev) {
 
 // ----------------------------------------------------------------------------- : CardListBase : Event table
 
-BEGIN_EVENT_TABLE(CardListBase, wxListCtrl)
+BEGIN_EVENT_TABLE(CardListBase, wxListView)
 	EVT_LIST_COL_CLICK			(wxID_ANY,			CardListBase::onColumnClick)
 	EVT_LIST_COL_RIGHT_CLICK	(wxID_ANY,			CardListBase::onColumnRightClick)
 	EVT_LIST_ITEM_FOCUSED		(wxID_ANY,			CardListBase::onItemFocus)
