@@ -116,10 +116,13 @@ void Reader::readLine() {
 }
 
 void Reader::unknownKey() {
-	warning(_("Unexpected key: '") + key + _("'"));
-	do {
-		moveNext();
-	} while (indent > expected_indent);
+	if (indent == expected_indent) {
+		warning(_("Unexpected key: '") + key + _("'"));
+		do {
+			moveNext();
+		} while (indent > expected_indent);
+	}
+	// else: could be a nameless value, which doesn't call exitBlock to move past its own key
 }
 
 // ----------------------------------------------------------------------------- : Handling basic types
