@@ -37,7 +37,7 @@ IMPLEMENT_APP(MSE)
 bool MSE::OnInit() {
 	try {
 		wxInitAllImageHandlers();
-		initFileFormats();
+		init_file_formats();
 		settings.read();
 		//Window* wnd = new SymbolWindow(nullptr);
 		//GameP g = Game::byName(_("magic"))

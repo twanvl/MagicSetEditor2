@@ -42,18 +42,18 @@ class FileFormat {
 
 /// Initialize the list of file formats
 /** Must be called before any other methods of this header */
-void initFileFormats();
+void init_file_formats();
 
 /// List of supported import formats
 /** Formated as _("All supported (type1,...)|type1,...|name|type|...|All files(*.*)|*.*").
  *  For use in file selection dialogs.
  */
-String importFormats();
+String import_formats();
 
 // List of supported export formats that a set in a specific game can be exported.
-/** Similair format as importFormats, except for _('all supported') and _('all files')
+/** Similair format as importFormats, except for 'all supported' and 'all files'
  */
-String exportFormats(const Game& game);
+String export_formats(const Game& game);
 
 /// Opens a set with the specified filename.
 /** File format is chosen based on the extension, default is fileFormats[0]
@@ -64,12 +64,12 @@ String exportFormats(const Game& game);
  *  changing the recent set list could change the filename while we are opening it
  *  (which would be bad)
  */
-SetP importSet(String name);
+SetP import_set(String name);
 
 /// Save a set under the specified name.
 /** filterType specifies what format to use for saving, used as index in the list of file formats
  */
-void exportSet(const Set& set, const String& filename, size_t formatType);
+void export_set(const Set& set, const String& filename, size_t format_type);
 
 // ----------------------------------------------------------------------------- : Export
 

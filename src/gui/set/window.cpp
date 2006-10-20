@@ -294,7 +294,7 @@ bool SetWindow::askSaveAndContinue() {
 /*		try {
 			if (set->needSaveAs()) {
 				// need save as
-				FileDialog dlg(&this, _("Save a set"), _(""), _(""), exportFormats(set->game), wxSAVE | wxOVERWRITE_PROMPT);
+				FileDialog dlg(&this, _("Save a set"), _(""), _(""), export_formats(set->game), wxSAVE | wxOVERWRITE_PROMPT);
 				if (dlg.showModal() == wxID_OK) {
 					exportSet(set, dlg.path, dlg.filterIndex);
 					return true;
@@ -374,9 +374,9 @@ void SetWindow::onFileNew(wxCommandEvent&) {
 
 void SetWindow::onFileOpen(wxCommandEvent&) {
 	if (!askSaveAndContinue())  return;
-	wxFileDialog dlg(this, _("Open a set"), _(""), _(""), importFormats(), wxOPEN);
+	wxFileDialog dlg(this, _("Open a set"), _(""), _(""), import_formats(), wxOPEN);
 	if (dlg.ShowModal() == wxID_OK) {
-		set = importSet(dlg.GetPath());
+		set = import_set(dlg.GetPath());
 	}
 }
 
@@ -391,9 +391,9 @@ void SetWindow::onFileSave(wxCommandEvent& ev) {
 }
 
 void SetWindow::onFileSaveAs(wxCommandEvent&) {
-	wxFileDialog dlg(this, _("Save a set"), _(""), _(""), exportFormats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
+	wxFileDialog dlg(this, _("Save a set"), _(""), _(""), export_formats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
 	if (dlg.ShowModal() == wxID_OK) {
-		exportSet(*set, dlg.GetPath(), dlg.GetFilterIndex());
+		export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
 	}
 }
 
