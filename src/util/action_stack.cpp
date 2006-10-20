@@ -28,8 +28,10 @@ ActionStack::~ActionStack() {
 void ActionStack::add(Action* action, bool allow_merge) {
 	if (!action) return; // no action
 	action->perform(false); // TODO: delete action if perform throws
-	redo_actions.clear();
 	tellListeners(*action, false);
+	// clear redo list
+	FOR_EACH(a, redo_actions) delete a;
+	redo_actions.clear();
 	// try to merge?
 	if (allow_merge && !undo_actions.empty() && undo_actions.back()->merge(action)) {
 		// merged with top undo action
