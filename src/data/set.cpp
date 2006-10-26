@@ -29,13 +29,17 @@ Set::Set(const StyleSheetP& stylesheet)
 String Set::typeName() const { return _("set"); }
 
 IMPLEMENT_REFLECTION(Set) {
+	tag.addAlias(300, _("style"), _("stylesheet")); // < 0.3.0 used style instead of stylesheet
 	REFLECT(game);
-	if (data.empty() && game) {
-		data.init(game->set_fields);
-	}
-	REFLECT_N("set_info", data);
-	WITH_DYNAMIC_ARG(game_for_new_cards, game.get()) {
-		REFLECT(cards);
+	if (game) {
+		if (tag.reading()) {
+			data.init(game->set_fields);
+		}
+		WITH_DYNAMIC_ARG(game_for_reading, game.get()) {
+			REFLECT(stylesheet);
+			REFLECT_N("set_info", data);
+			REFLECT(cards);
+		}
 	}
 	REFLECT(apprentice_code);
 }

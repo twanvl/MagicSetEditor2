@@ -8,6 +8,7 @@
 
 #include <gui/set/cards_panel.hpp>
 #include <gui/control/card_list.hpp>
+#include <gui/control/card_editor.hpp>
 #include <gui/icon_menu.hpp>
 #include <data/set.hpp>
 #include <data/action/set.hpp>
@@ -21,8 +22,9 @@ CardsPanel::CardsPanel(Window* parent, int id)
 	: SetWindowPanel(parent, id, false)
 {
 	// init controls
+//	Panel* notesP
+	editor   = new CardEditor(this, ID_EDITOR);
 //	splitter = new SplitterWindow(&this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
-//	card_list = new EditCardList(splitter, idCardList);
 //	card_list = new EditCardList(splitter, ID_CARD_LIST);
 	card_list = new CardListBase(this, ID_CARD_LIST);
 	// init splitter
@@ -37,6 +39,7 @@ CardsPanel::CardsPanel(Window* parent, int id)
 	SetSizer(s);
 */
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
+	s->Add(editor,    0, wxRIGHT, 2);
 	s->Add(card_list, 1, wxEXPAND);
 	SetSizer(s);
 }
@@ -46,7 +49,7 @@ CardsPanel::~CardsPanel() {
 }
 
 void CardsPanel::onChangeSet() {
-//	editor->setSet(set);
+	editor->setSet(set);
 	card_list->setSet(set);
 /*	// resize editor
 	Sizer* s = sizer;
@@ -207,5 +210,5 @@ CardP CardsPanel::selectedCard() const {
 }
 void CardsPanel::selectCard(const CardP& card) {
 	card_list->setCard(card);
-//	editor->setCard(card);
+	editor->setCard(*card);
 }

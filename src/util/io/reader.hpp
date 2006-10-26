@@ -46,6 +46,8 @@ class Reader {
 	inline bool reading() const { return true; }
 	/// Is the thing currently being read 'complex', i.e. does it have children
 	inline bool isComplex() const { return value.empty(); }
+	/// Add a as an alias for b, all keys a will be replaced with b, only if app_version < end_version
+	void addAlias(Version end_version, const Char* a, const Char* b);
 	
 	/// Read and check the application version
 	void handleAppVersion();
@@ -80,7 +82,7 @@ class Reader {
 	template <typename T> void handle(Scriptable<T>&);
 	// special behaviour
 	void handle(GameP&);
-	void handle(StyleSheet&);
+	void handle(StyleSheetP&);
 	
 	// --------------------------------------------------- : Data
 	/// App version this file was made with
@@ -98,6 +100,8 @@ class Reader {
 	int expected_indent;
 	/// Did we just open a block (i.e. not read any more lines of it)?
 	bool just_opened;
+	/// Aliasses for compatability
+	map<String, String> aliasses;
 	
 	/// Filename for error messages
 	String filename;

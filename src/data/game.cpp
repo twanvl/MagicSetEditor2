@@ -14,6 +14,8 @@
 
 // ----------------------------------------------------------------------------- : Game
 
+IMPLEMENT_DYNAMIC_ARG(Game*, game_for_reading, nullptr);
+
 GameP Game::byName(const String& name) {
 	return packages.open<Game>(name + _(".mse-game"));
 }
@@ -35,7 +37,6 @@ InputStreamP Game::openIconFile() {
 }
 
 IMPLEMENT_REFLECTION(Game) {
-//	ioMseVersion(io, fileName, fileVersion);
 	REFLECT(full_name);
 	REFLECT_N("icon",          icon_filename);
 	REFLECT(init_script);

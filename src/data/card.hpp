@@ -11,7 +11,6 @@
 
 #include <util/string.hpp>
 #include <util/reflect.hpp>
-#include <util/dynamic_arg.hpp>
 
 class Game;
 DECLARE_POINTER_TYPE(Field);
@@ -19,9 +18,6 @@ DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(StyleSheet);
 
 // ----------------------------------------------------------------------------- : Card
-
-/// Game that is used for cards constructed with the default constructor
-DECLARE_DYNAMIC_ARG(Game*, game_for_new_cards);
 
 /// A card from a card Set
 class Card {

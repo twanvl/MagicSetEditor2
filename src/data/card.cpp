@@ -16,13 +16,11 @@ DECLARE_TYPEOF_COLLECTION(FieldP);
 
 // ----------------------------------------------------------------------------- : Card
 
-IMPLEMENT_DYNAMIC_ARG(Game*, game_for_new_cards, nullptr);
-
 Card::Card() {
-	if (!game_for_new_cards()) {
-		throw InternalError(_("game_for_new_cards not set"));
+	if (!game_for_reading()) {
+		throw InternalError(_("game_for_reading not set"));
 	}
-	data.init(game_for_new_cards()->card_fields);
+	data.init(game_for_reading()->card_fields);
 }
 
 Card::Card(const Game& game) {

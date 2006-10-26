@@ -31,6 +31,7 @@ class Writer {
 	/// Tell the reflection code we are not reading
 	inline bool reading()   const { return false; }
 	inline bool isComplex() const { return false; }
+	inline void addAlias(int, const Char*, const Char*) {}
 	
 	/// Write the application version
 	void handleAppVersion();
@@ -65,7 +66,7 @@ class Writer {
 	template <typename T> void handle(const Scriptable<T>&);
 	// special behaviour
 	void handle(const GameP&);
-	void handle(const StyleSheet&);
+	void handle(const StyleSheetP&);
 	
   private:
 	// --------------------------------------------------- : Data

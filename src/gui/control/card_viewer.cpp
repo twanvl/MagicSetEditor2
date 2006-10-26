@@ -12,13 +12,17 @@
 
 // ----------------------------------------------------------------------------- : CardViewer
 
-CardViewer::CardViewer(Window* parent, int id, int style)
+CardViewer::CardViewer(Window* parent, int id, long style)
 	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, style)
 {}
 
 wxSize CardViewer::DoGetBestSize() const {
 	wxSize ws = GetSize(), cs = GetClientSize();
-	return wxSize(set->stylesheet->card_width, set->stylesheet->card_height) + ws - cs;
+	if (set && set->stylesheet) {
+		return wxSize(set->stylesheet->card_width, set->stylesheet->card_height) + ws - cs;
+	} else {
+		return cs;
+	}
 }
 
 void CardViewer::onPaint(wxPaintEvent&) {

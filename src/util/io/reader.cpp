@@ -30,6 +30,11 @@ Reader::Reader(const String& filename)
 	moveNext();
 }
 
+void Reader::addAlias(Version end_version, const Char* a, const Char* b) {
+	if (app_version < end_version) {
+		aliasses[a] = b;
+	}
+}
 
 void Reader::handleAppVersion() {
 	if (enterBlock(_("mse_version"))) {
@@ -113,6 +118,11 @@ void Reader::readLine() {
 	}
 	key   = cannocial_name_form(trim(line.substr(indent, pos - indent)));
 	value = pos == String::npos ? _("") : trim_left(line.substr(pos+1));
+	// aliasses?
+	map<String,String>::const_iterator it = aliasses.find(key);
+	if (it != aliasses.end()) {
+		key = it->second;
+	}
 }
 
 void Reader::unknownKey() {

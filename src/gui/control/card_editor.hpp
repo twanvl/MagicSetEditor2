@@ -4,33 +4,26 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CONTROL_CARD_VIEWER
-#define HEADER_GUI_CONTROL_CARD_VIEWER
+#ifndef HEADER_GUI_CONTROL_CARD_EDITOR
+#define HEADER_GUI_CONTROL_CARD_EDITOR
 
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
-#include <render/card/viewer.hpp>
+#include <gui/control/card_viewer.hpp>
 
-// ----------------------------------------------------------------------------- : CardViewer
+// ----------------------------------------------------------------------------- : DataEditor
 
-/// A control to view a single card
-class CardViewer : public wxControl, public DataViewer {
+/// An editor for data values (usually a card)
+class DataEditor : public CardViewer {
   public:
-	CardViewer(Window* parent, int id, long style = 0);
-	
-  protected:
-	/// Return the desired size of control
-	virtual wxSize DoGetBestSize() const;
-	
+	DataEditor(Window* parent, int id, long style = 0);
   private:
 	DECLARE_EVENT_TABLE();
-	
-	void onPaint(wxPaintEvent&);
-	void onSize(wxSizeEvent&);
-	
-	Bitmap buffer; /// < Off-screen buffer we draw to
 };
+
+/// By default a DataEditor edits cards
+typedef DataEditor CardEditor;
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/rotation.hpp>
 #include <util/real_point.hpp>
+#include <data/field.hpp>
 
 class DataViewer;
 class ValueAction;
@@ -26,7 +27,12 @@ class ValueViewer {
   public:
 	/// Construct a ValueViewer, set the value at a later time
 	ValueViewer(DataViewer& parent, const StyleP& style);
-	virtual ~ValueViewer();
+	virtual ~ValueViewer() {}
+	
+	/// Change the associated value
+	void setValue(const ValueP&);
+	/// Return the associated field
+	inline const FieldP& getField() const { return styleP->fieldP; }
 	
 	// Draw this value
 	virtual void draw(RotatedDC& dc) = 0;
@@ -46,13 +52,10 @@ class ValueViewer {
 	/// Called when an action is performed on the associated value
 	virtual void onAction(const ValueAction&, bool undone) { onValueChange(); }
 	
-	/// Change the associated value
-	void setValue(const ValueP&);
-	
   protected:
 	DataViewer& viewer;	///< Our parent object
-	StyleP style_;		///< The style of this viewer
-	ValueP value_;		///< The value we are currently viewing
+	StyleP styleP;		///< The style of this viewer
+	ValueP valueP;		///< The value we are currently viewing
 	
 	/// Should this viewer render using a platform native look?
 	bool nativeLook() const;
@@ -70,8 +73,9 @@ class ValueViewer {
   public:														\
 	Type(DataViewer& parent, const Type ## StyleP& style)		\
   private:														\
-	inline Type##Style style() const { return *value_; }		\
-	inline Type##Value value() const { return *value_; }
+	inline Type##Style& style() const { return *styleP; }		\
+	inline Type##Value& value() const { return *valueP; }		\
+	inline Type##Field& field() const { return styleP->field(); }
 
 
 // ----------------------------------------------------------------------------- : EOF

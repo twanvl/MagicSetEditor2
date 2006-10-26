@@ -12,15 +12,20 @@
 #include <util/prec.hpp>
 #include <util/io/package.hpp>
 #include <script/scriptable.hpp>
+#include <util/dynamic_arg.hpp>
 
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Game);
 
 // ----------------------------------------------------------------------------- : Game
 
+/// Game that is used for cards constructed with the default constructor, as well as for reading stylesheets
+DECLARE_DYNAMIC_ARG(Game*, game_for_reading);
+
+/// A description of a card game
 class Game : public Packaged {
   public:
-	String full_name;				///< Name of this game for menus etc.
+	String full_name;				///< Name of this game, for menus etc.
 	String icon_filename;			///< Filename of icon to use in NewWindow
 	OptionalScript init_script;		///< Script of variables available to other scripts in this game
 	vector<FieldP> set_fields;		///< Fields for set information

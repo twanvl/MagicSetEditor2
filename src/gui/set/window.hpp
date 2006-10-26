@@ -16,6 +16,7 @@
 class IconMenu;
 class SetWindowPanel;
 class wxFindDialogEvent;
+struct CardSelectEvent;
 
 // ----------------------------------------------------------------------------- : SetWindow
 
@@ -150,9 +151,11 @@ class SetWindow : public wxFrame, public SetView {
 	void onHelpIndex           (wxCommandEvent&);
 	void onHelpAbout           (wxCommandEvent&);
 	
-	// --------------------------------------------------- : Window events - menu - for child panel
+	// --------------------------------------------------- : Window events - other
 	
 	void onChildMenu           (wxCommandEvent&);
+	
+	void onCardSelect          (CardSelectEvent&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

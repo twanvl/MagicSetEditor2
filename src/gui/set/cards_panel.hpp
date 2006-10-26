@@ -14,6 +14,7 @@
 
 class wxSplitterWindow;
 class CardListBase;
+class DataEditor;
 
 // ----------------------------------------------------------------------------- : CardsPanel
 
@@ -92,9 +93,9 @@ class CardsPanel : public SetWindowPanel {
   private:
 	// --------------------------------------------------- : Controls
 	wxSplitterWindow* splitter;
-//	Editor*       editor;
-	CardListBase* card_list;
-//	DataTextCtrl* notes;
+	DataEditor*       editor;
+	CardListBase*     card_list;
+//	DataTextCtrl*     notes;
 	
 	// --------------------------------------------------- : Menus & tools
 	wxMenu* cardMenu, formatMenu;

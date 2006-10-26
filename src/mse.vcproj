@@ -363,6 +363,12 @@
 				Name="control"
 				Filter="">
 				<File
+					RelativePath=".\gui\control\card_editor.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\card_editor.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\control\card_list.cpp">
 				</File>
 				<File

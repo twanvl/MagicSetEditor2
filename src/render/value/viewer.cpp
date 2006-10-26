@@ -10,6 +10,11 @@
 
 // ----------------------------------------------------------------------------- : ValueViewer
 
+void ValueViewer::setValue(const ValueP& value) {
+	assert(value->fieldP == styleP->fieldP); // matching field
+	valueP = value;
+	onValueChange();
+}
 
 // ----------------------------------------------------------------------------- : Development/debug
 

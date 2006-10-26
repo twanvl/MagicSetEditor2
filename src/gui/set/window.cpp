@@ -12,6 +12,7 @@
 #include <gui/set/set_info_panel.hpp>
 #include <gui/set/style_panel.hpp>
 #include <gui/set/stats_panel.hpp>
+#include <gui/control/card_list.hpp>
 #include <gui/about_window.hpp>
 #include <gui/new_window.hpp>
 #include <gui/icon_menu.hpp>
@@ -540,10 +541,16 @@ void SetWindow::onHelpAbout(wxCommandEvent&) {
 	wnd.ShowModal();
 }
 
-// ----------------------------------------------------------------------------- : Window events - menu - for child panel
+// ----------------------------------------------------------------------------- : Window events - other
 
 void SetWindow::onChildMenu(wxCommandEvent& ev) {
 	current_panel->onCommand(ev.GetId());
+}
+
+void SetWindow::onCardSelect(CardSelectEvent& ev) {
+	FOR_EACH(p, panels) {
+		p->selectCard(ev.card);
+	}
 }
 
 // ----------------------------------------------------------------------------- : Event table
@@ -586,5 +593,5 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
 	EVT_CLOSE			(						SetWindow::onClose)
 //	EVT_TIMER			(wxID_ANY,				SetWindow::onTick)
 //	EVT_IDLE			(						SetWindow::onIdle)
-//	EVT_CARD_SELECT		(wxID_ANY,				SetWindow::onCardSelect)
+	EVT_CARD_SELECT		(wxID_ANY,				SetWindow::onCardSelect)
 END_EVENT_TABLE  ()
