@@ -52,7 +52,14 @@ void Reader::handleAppVersion() {
 }
 
 void Reader::warning(const String& msg) {
-	wxMessageBox((msg + _("\nOn line: ")) << line_number << _("\nIn file: ") << filename, _("Warning"), wxOK | wxICON_EXCLAMATION);
+	warnings += String(_("\nOn line ")) << line_number << _(": \t") << msg;
+}
+
+void Reader::showWarnings() {
+	if (!warnings.empty()) {
+		wxMessageBox(_("Warnings while reading file:\n") + filename + _("\n") + warnings, _("Warning"), wxOK | wxICON_EXCLAMATION);
+		warnings.clear();
+	}
 }
 
 bool Reader::enterBlock(const Char* name) {
@@ -118,14 +125,20 @@ void Reader::readLine() {
 	}
 	key   = cannocial_name_form(trim(line.substr(indent, pos - indent)));
 	value = pos == String::npos ? _("") : trim_left(line.substr(pos+1));
-	// aliasses?
-	map<String,String>::const_iterator it = aliasses.find(key);
-	if (it != aliasses.end()) {
-		key = it->second;
-	}
 }
 
 void Reader::unknownKey() {
+	// aliasses?
+	map<String,String>::const_iterator it = aliasses.find(key);
+	if (it != aliasses.end()) {
+		if (aliasses.find(it->second) != aliasses.end()) {
+			// alias points to another alias, don't follow it, there is the risk of infinite loops
+		} else {
+			// try this key instead
+			key = it->second;
+			return;
+		}
+	}
 	if (indent == expected_indent) {
 		warning(_("Unexpected key: '") + key + _("'"));
 		do {

@@ -55,10 +55,12 @@ class OptionalScript {
 		}
 		return false;
 	}
-	
+		
   private:
 	ScriptP script;		///< The script, may be null if there is no script
 	String unparsed;	///< Unparsed script, for writing back to a file
+	// parse the unparsed string, while reading
+	void parse(Reader&);
 	DECLARE_REFLECTION();
 	template <typename T> friend class Scriptable;
 };
@@ -95,7 +97,8 @@ template <typename T>
 void Reader::handle(Scriptable<T>& s) {
 	handle(s.script.unparsed);
 	if (starts_with(s.script.unparsed, _("script:"))) {
-		s.script.script   = parse(s.script.unparsed);
+		s.script.unparsed = s.script.unparsed.substr(7);
+		s.script.parse(*this);
 	} else {
 		handle(value);
 	}

@@ -42,6 +42,8 @@ class Reader {
 	/** Used for "include file" keys. */
 	Reader(const String& filename);
 	
+	~Reader() { showWarnings(); }
+	
 	/// Tell the reflection code we are reading
 	inline bool reading() const { return true; }
 	/// Is the thing currently being read 'complex', i.e. does it have children
@@ -52,8 +54,10 @@ class Reader {
 	/// Read and check the application version
 	void handleAppVersion();
 	
-	/// Show a warning message, but continue reading
+	/// Add a warning message, but continue reading
 	void warning(const String& msg);
+	/// Show all warning messages, but continue reading
+	void showWarnings();
 	
 	// --------------------------------------------------- : Handling objects
 	/// Handle an object: read it if it's name matches
@@ -111,6 +115,8 @@ class Reader {
 	InputStreamP input;
 	/// Text stream wrapping the input stream
 	wxTextInputStream stream;
+	/// Accumulated warning messages
+	String warnings;
 	
 	// --------------------------------------------------- : Reading the stream
 	

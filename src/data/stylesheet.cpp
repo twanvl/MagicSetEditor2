@@ -40,6 +40,7 @@ IMPLEMENT_REFLECTION(StyleSheet) {
 	tag.addAlias(300, _("dpi"),        _("card_dpi"));
 	tag.addAlias(300, _("background"), _("card_background"));
 	tag.addAlias(300, _("info_style"), _("set_info_style"));
+	tag.addAlias(300, _("align"),      _("alignment"));
 	
 	REFLECT(game);
 	REFLECT(full_name);

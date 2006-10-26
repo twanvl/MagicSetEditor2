@@ -32,12 +32,20 @@ ScriptValueP OptionalScript::invoke(Context& ctx) const {
 	}
 }
 
+void OptionalScript::parse(Reader& reader) {
+	try {
+		script = ::parse(unparsed);
+	} catch (const ParseError& e) {
+		reader.warning(e.what());
+	}
+}
+
+
 // custom reflection, different for each type
 
 template <> void Reader::handle(OptionalScript& os) {
 	handle(os.unparsed);
-	// read the script
-	os.script = parse(os.unparsed);
+	os.parse(*this);
 }
 
 template <> void Writer::handle(const OptionalScript& os) {
