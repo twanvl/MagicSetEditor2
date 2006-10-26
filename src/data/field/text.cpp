@@ -16,7 +16,7 @@ TextField::TextField()
 	, default_name(_("Default"))
 {}
 
-FIELD_TYPE(Text)
+IMPLEMENT_FIELD_TYPE(Text)
 
 String TextField::typeName() const {
 	return _("text");

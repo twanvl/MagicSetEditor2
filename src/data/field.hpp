@@ -18,6 +18,11 @@ DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Style);
 DECLARE_POINTER_TYPE(Value);
 
+// for DataViewer/editor
+class DataViewer; class DataEditor;
+DECLARE_POINTER_TYPE(ValueViewer);
+DECLARE_POINTER_TYPE(ValueEditor);
+
 // ----------------------------------------------------------------------------- : Field
 
 /// Information on how to store a value
@@ -74,6 +79,13 @@ class Style {
 	Scriptable<double> width, height;	///< Position of this field
 	Scriptable<bool>   visible;			///< Is this field visible?
 	
+	/// Make a viewer object for values using this style
+	/** thisP is a smart pointer to this */
+	virtual ValueViewerP makeViewer(DataViewer& parent, const StyleP& thisP) = 0;
+	/// Make an editor object for values using this style
+	/** thisP is a smart pointer to this */
+	virtual ValueEditorP makeEditor(DataEditor& parent, const StyleP& thisP) = 0;
+	
   private:
 	DECLARE_REFLECTION_VIRTUAL();
 };
@@ -107,8 +119,13 @@ template <> ValueP read_new<Value>(Reader&);
 
 // ----------------------------------------------------------------------------- : Utilities
 
+#define DECLARE_FIELD_TYPE(Type)														\
+	virtual ValueP newValue(const FieldP& thisP) const;									\
+	virtual StyleP newStyle(const FieldP& thisP) const;									\
+	virtual String typeName() const
+
 // implement newStyle and newValue
-#define FIELD_TYPE(Type)																\
+#define IMPLEMENT_FIELD_TYPE(Type)														\
 	StyleP Type ## Field::newStyle(const FieldP& thisP) const {							\
 		assert(thisP.get() == this);													\
 		return new_shared1<Type ## Style>(static_pointer_cast<Type ## Field>(thisP));	\
@@ -118,8 +135,13 @@ template <> ValueP read_new<Value>(Reader&);
 		return new_shared1<Type ## Value>(static_pointer_cast<Type ## Field>(thisP));	\
 	}
 
+#define DECLARE_STYLE_TYPE(Type)														\
+	DECLARE_HAS_FIELD(Type)																\
+	virtual ValueViewerP makeViewer(DataViewer& parent, const StyleP& thisP);			\
+	virtual ValueEditorP makeEditor(DataEditor& parent, const StyleP& thisP)
+
 // implement field() which returns a field with the right (derived) type
-#define HAS_FIELD(Type)																	\
+#define DECLARE_HAS_FIELD(Type)															\
 	inline Type ## Field& field() const {												\
 		return *static_cast<Type ## Field*>(fieldP.get());								\
 	}

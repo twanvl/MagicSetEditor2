@@ -17,7 +17,7 @@ ColorField::ColorField()
 	, allow_custom(true)
 {}
 
-FIELD_TYPE(Color)
+IMPLEMENT_FIELD_TYPE(Color)
 
 String ColorField::typeName() const {
 	return _("color");

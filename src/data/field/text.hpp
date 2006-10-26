@@ -22,17 +22,14 @@ DECLARE_POINTER_TYPE(TextField);
 class TextField : public Field {
   public:
 	TextField();
+	DECLARE_FIELD_TYPE(Text);
 	
 	OptionalScript script;			///< Script to apply to all values
 	OptionalScript default_script;	///< Script that generates the default value
 	bool multi_line;				///< Are newlines allowed in the text?
 	bool move_cursor_with_sort;		///< When the text is reordered by a script should the cursor position be updated?
 	String default_name;			///< Name of "default" value
-	
-	virtual ValueP newValue(const FieldP& thisP) const;
-	virtual StyleP newStyle(const FieldP& thisP) const;
-	virtual String typeName() const;
-	
+		
   private:
 	DECLARE_REFLECTION();
 };
@@ -43,7 +40,7 @@ class TextField : public Field {
 class TextStyle : public Style {
   public:
 	TextStyle(const TextFieldP&);
-	HAS_FIELD(Text)
+	DECLARE_STYLE_TYPE(Text);
 	
 //	FontInfo font;							///< Font to use for the text
 //	SymbolFontInfo symbol_font;				///< Symbol font for symbols in the text
@@ -70,7 +67,7 @@ class TextStyle : public Style {
 class TextValue : public Value {
   public:
 	inline TextValue(const TextFieldP& field) : Value(field) {}
-	HAS_FIELD(Text)
+	DECLARE_HAS_FIELD(Text)
 	
 	Defaultable<String> value;				///< The text of this value
 	

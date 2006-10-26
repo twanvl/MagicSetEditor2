@@ -21,10 +21,7 @@ DECLARE_POINTER_TYPE(ImageField);
 class ImageField : public Field {
   public:
 	// no extra data
-	
-	virtual ValueP newValue(const FieldP& thisP) const;
-	virtual StyleP newStyle(const FieldP& thisP) const;
-	virtual String typeName() const;
+	DECLARE_FIELD_TYPE(Image);
 	
   private:
 	DECLARE_REFLECTION();
@@ -36,6 +33,7 @@ class ImageField : public Field {
 class ImageStyle : public Style {
   public:
 	inline ImageStyle(const ImageFieldP& field) : Style(field) {}
+	DECLARE_STYLE_TYPE(Image);
 	
 	Scriptable<String> mask_filename; ///< Filename for a mask image
 	

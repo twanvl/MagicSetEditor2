@@ -22,6 +22,7 @@ DECLARE_POINTER_TYPE(ColorField);
 class ColorField : public Field {
   public:
 	ColorField();
+	DECLARE_FIELD_TYPE(Color);
 	
 	class Choice;
 	typedef shared_ptr<Choice> ChoiceP;
@@ -31,11 +32,7 @@ class ColorField : public Field {
 	vector<ChoiceP> choices;		///< Color choices available
 	bool            allow_custom;	///< Are colors not in the list of choices allowed?
 	String          default_name;	///< Name of "default" value
-	
-	virtual ValueP newValue(const FieldP& thisP) const;
-	virtual StyleP newStyle(const FieldP& thisP) const;
-	virtual String typeName() const;
-	
+		
   private:
 	DECLARE_REFLECTION();
 };
@@ -55,7 +52,7 @@ class ColorField::Choice {
 class ColorStyle : public Style {
   public:
 	ColorStyle(const ColorFieldP& field);
-	HAS_FIELD(Color)
+	DECLARE_STYLE_TYPE(Color);
 	
 	int  radius;			///< Radius of round corners
 	UInt left_width;		///< Width of the colored region on the left side
@@ -73,7 +70,7 @@ class ColorStyle : public Style {
 class ColorValue : public Value {
   public:
 	inline ColorValue(const ColorFieldP& field) : Value(field) {}
-	HAS_FIELD(Color)
+	DECLARE_HAS_FIELD(Color)
 	
 	Defaultable<Color> value;	///< The value
 	

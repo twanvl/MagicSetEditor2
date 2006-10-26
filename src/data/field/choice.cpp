@@ -17,7 +17,7 @@ ChoiceField::ChoiceField()
 	, default_name(_("Default"))
 {}
 
-FIELD_TYPE(Choice)
+IMPLEMENT_FIELD_TYPE(Choice)
 
 String ChoiceField::typeName() const {
 	return _("choice");

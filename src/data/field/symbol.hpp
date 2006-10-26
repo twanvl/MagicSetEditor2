@@ -23,10 +23,7 @@ DECLARE_POINTER_TYPE(SymbolField);
 class SymbolField : public Field {
   public:
 	// no extra data
-	
-	virtual ValueP newValue(const FieldP& thisP) const;
-	virtual StyleP newStyle(const FieldP& thisP) const;
-	virtual String typeName() const;
+	DECLARE_FIELD_TYPE(Symbol);
 	
   private:
 	DECLARE_REFLECTION();
@@ -38,7 +35,7 @@ class SymbolField : public Field {
 class SymbolStyle : public Style {
   public:
 	inline SymbolStyle(const SymbolFieldP& field) : Style(field) {}
-	HAS_FIELD(Symbol)
+	DECLARE_STYLE_TYPE(Symbol);
 	
 	class Variation;
 	typedef shared_ptr<Variation> VariationP;
@@ -64,7 +61,7 @@ class SymbolStyle::Variation {
 class SymbolValue : public Value {
   public:
 	inline SymbolValue(const SymbolFieldP& field) : Value(field) {}
-	HAS_FIELD(Symbol)
+	DECLARE_HAS_FIELD(Symbol)
 	
 	String filename; ///< Filename of the symbol (in the current package)
 	

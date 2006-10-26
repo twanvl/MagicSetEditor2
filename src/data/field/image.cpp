@@ -10,7 +10,7 @@
 
 // ----------------------------------------------------------------------------- : ImageField
 
-FIELD_TYPE(Image)
+IMPLEMENT_FIELD_TYPE(Image)
 
 String ImageField::typeName() const {
 	return _("image");

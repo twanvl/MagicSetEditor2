@@ -20,13 +20,10 @@ DECLARE_POINTER_TYPE(BooleanField);
 class BooleanField : public ChoiceField {
   public:
 	BooleanField();
+	DECLARE_FIELD_TYPE(Boolean);
 	
 	// no extra data
-	
-	virtual ValueP newValue(const FieldP& thisP) const;
-	virtual StyleP newStyle(const FieldP& thisP) const;
-	virtual String typeName() const;
-	
+		
   private:
 	DECLARE_REFLECTION();
 };
@@ -37,7 +34,7 @@ class BooleanField : public ChoiceField {
 class BooleanStyle : public ChoiceStyle {
   public:
 	inline BooleanStyle(const ChoiceFieldP& field) : ChoiceStyle(field) {}
-	HAS_FIELD(Boolean)
+	DECLARE_STYLE_TYPE(Boolean);
 	
 	// no extra data
 	
@@ -51,7 +48,7 @@ class BooleanStyle : public ChoiceStyle {
 class BooleanValue : public ChoiceValue {
   public:
 	inline BooleanValue(const ChoiceFieldP& field) : ChoiceValue(field) {}
-	HAS_FIELD(Boolean)
+	DECLARE_HAS_FIELD(Boolean);
 	
 	// no extra data
 	

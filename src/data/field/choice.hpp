@@ -23,6 +23,7 @@ DECLARE_POINTER_TYPE(ChoiceField);
 class ChoiceField : public Field {
   public:
 	ChoiceField();
+	DECLARE_FIELD_TYPE(Choice);
 	
 	class Choice;
 	typedef shared_ptr<Choice> ChoiceP;
@@ -32,11 +33,7 @@ class ChoiceField : public Field {
 	OptionalScript default_script;	///< Script that generates the default value
 	String initial;					///< Initial choice of a new value, or ""
 	String default_name;			///< Name of "default" value
-	
-	virtual ValueP newValue(const FieldP& thisP) const;
-	virtual StyleP newStyle(const FieldP& thisP) const;
-	virtual String typeName() const;
-	
+		
   private:
 	DECLARE_REFLECTION();
 };
@@ -111,7 +108,7 @@ enum ChoiceRenderStyle
 class ChoiceStyle : public Style {
   public:
 	ChoiceStyle(const ChoiceFieldP& field);
-	HAS_FIELD(Choice)
+	DECLARE_STYLE_TYPE(Choice);
 	
 	ChoicePopupStyle			popup_style;	///< Style of popups/menus
 	ChoiceRenderStyle			render_style;	///< Style of rendering
@@ -133,7 +130,7 @@ class ChoiceStyle : public Style {
 class ChoiceValue : public Value {
   public:
 	inline ChoiceValue(const ChoiceFieldP& field) : Value(field) {}
-	HAS_FIELD(Choice)
+	DECLARE_HAS_FIELD(Choice)
 	
 	Defaultable<String> value;	/// The name of the selected choice
 	

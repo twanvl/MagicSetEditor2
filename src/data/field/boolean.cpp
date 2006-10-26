@@ -16,7 +16,7 @@ BooleanField::BooleanField() {
 	choices->initIds();
 }
 
-FIELD_TYPE(Boolean)
+IMPLEMENT_FIELD_TYPE(Boolean)
 
 String BooleanField::typeName() const {
 	return _("boolean");

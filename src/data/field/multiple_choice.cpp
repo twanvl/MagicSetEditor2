@@ -15,7 +15,7 @@ MultipleChoiceField::MultipleChoiceField()
 	, maximum_selection(1000000)
 {}
 
-FIELD_TYPE(MultipleChoice)
+IMPLEMENT_FIELD_TYPE(MultipleChoice)
 
 String MultipleChoiceField::typeName() const {
 	return _("multiple choice");

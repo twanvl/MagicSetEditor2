@@ -4,32 +4,32 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_STYLESHEET
-#define HEADER_DATA_STYLESHEET
+#ifndef HEADER_GUI_CONTROL_CARD_VIEWER
+#define HEADER_GUI_CONTROL_CARD_VIEWER
 
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
-#include <util/io/package.hpp>
+#include <render/card/viewer.hpp>
 
-DECLARE_POINTER_TYPE(Game);
+// ----------------------------------------------------------------------------- : CardViewer
 
-// ----------------------------------------------------------------------------- : StyleSheet
-
-/// A collection of style information for card and set fields
-class StyleSheet : public Packaged {
+/// A control to view a single card
+class CardViewer : public wxControl, public DataViewer {
   public:
-	GameP game;
-	double card_width;		///< The width of a card in pixels
-	double card_height;		///< The height of a card in pixels
+	CardViewer(Window* parent, int id, int style);
 	
-	static String typeNameStatic();
-	virtual String typeName() const;
-	virtual String fullName() const;
-	virtual InputStreamP openIconFile();
+  protected:
+	/// Return the desired size of control
+	virtual wxSize DoGetBestSize() const;
 	
   private:
-	DECLARE_REFLECTION();
+	DECLARE_EVENT_TABLE();
+	
+	void onPaint(wxPaintEvent&);
+	void onSize(wxSizeEvent&);
+	
+	Bitmap buffer; /// < Off-screen buffer we draw to
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -20,12 +20,9 @@ DECLARE_POINTER_TYPE(MultipleChoiceField);
 class MultipleChoiceField : public ChoiceField {
   public:
 	MultipleChoiceField();
+	DECLARE_FIELD_TYPE(MultipleChoiceField);
 	
 	UInt minimum_selection, maximum_selection; ///< How many choices can be selected simultaniously?
-	
-	virtual ValueP newValue(const FieldP& thisP) const;
-	virtual StyleP newStyle(const FieldP& thisP) const;
-	virtual String typeName() const;
 	
   private:
 	DECLARE_REFLECTION();
@@ -41,7 +38,7 @@ enum Direction {
 class MultipleChoiceStyle : public ChoiceStyle {
   public:
 	MultipleChoiceStyle(const MultipleChoiceFieldP& field);
-	HAS_FIELD(MultipleChoice)
+	DECLARE_STYLE_TYPE(MultipleChoice);
 	
 	Direction direction;	///< In what direction are choices layed out?
 	double spacing;			///< Spacing between choices (images) in pixels
@@ -59,7 +56,7 @@ class MultipleChoiceStyle : public ChoiceStyle {
 class MultipleChoiceValue : public ChoiceValue {
   public:
 	inline MultipleChoiceValue(const MultipleChoiceFieldP& field) : ChoiceValue(field) {}
-	HAS_FIELD(MultipleChoice)
+	DECLARE_HAS_FIELD(MultipleChoice);
 	
 	// no extra data
 	

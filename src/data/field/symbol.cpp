@@ -10,7 +10,7 @@
 
 // ----------------------------------------------------------------------------- : SymbolField
 
-FIELD_TYPE(Symbol)
+IMPLEMENT_FIELD_TYPE(Symbol)
 
 String SymbolField::typeName() const {
 	return _("symbol");
