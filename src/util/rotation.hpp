@@ -30,6 +30,10 @@ class Rotation {
 	inline void setZoom(double z) { zoom = z; }
 	/// Change the angle
 	void setAngle(int a);
+	/// The internal size
+	inline RealSize getInternalSize() const { return trInv(size); }
+	/// The intarnal rectangle (origin at (0,0))
+	inline RealRect getInternalRect() const { return RealRect(RealPoint(0,0), getInternalSize()); }
 	
 	/// Translate a size or length
 	inline double trS(double s) const { return  s * zoom; }
@@ -45,14 +49,19 @@ class Rotation {
 	RealSize trNoNeg(const RealSize& s) const;
 	/// Translate a rectangle, the result will never have a negative size
 	RealRect trNoNeg(const RealRect& r) const;
+	/// Translate a rectangle, the result will never have a negative size
+	/** The rectangle is also not zoomed */
+	RealRect trNoNegNoZoom(const RealRect& r) const;
 	
 	/// Translate a size or length back to internal 'coordinates'
 	inline double trInvS(double s) const { return  s / zoom; }
 	
 	/// Translate a point back to internal coordinates
 	RealPoint trInv(const RealPoint& p) const;
+	/// Translate a size back to internal coordinates
+	RealSize  trInv(const RealSize&  s) const;
 	
-  private:
+  protected:
 	int angle;				///< The angle of rotation in degrees (counterclockwise)
 	RealSize size;			///< Size of the rectangle, in external coordinates
 	RealPoint origin;		///< tr(0,0)
@@ -96,27 +105,40 @@ class Rotater {
  */
 class RotatedDC : public Rotation {
   public:
-	RotatedDC(int angle, const RealRect& rect, double zoom = 1.0);
-	RotatedDC(const Rotation& rotation);
+	RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, bool high_quality);
+	RotatedDC(DC& dc, const Rotation& rotation, bool high_quality);
   
 	// ----------------------------- : Drawing
 	
 	void DrawText  (const String& text,   const RealPoint& pos);
+	/// Draw abitmap, it must already be zoomed!
 	void DrawBitmap(const Bitmap& bitmap, const RealPoint& pos);
+	/// Draw an image using the given combining mode, the image must already be zoomed!
 	void DrawImage (const Image& image,   const RealPoint& pos, ImageCombine combine = COMBINE_NORMAL);
 	void DrawLine  (const RealPoint& p1,  const RealPoint& p2);
 	void DrawRectangle(const RealRect& r);
 	void DrawRoundedRectangle(const RealRect& r, double radius);
 	
+	// Fill the dc with the color of the current brush
+	void Fill();
+	
 	// ----------------------------- : Forwarded properties
 	
+	/// Sets the pen for the dc, does not scale the line width
 	void SetPen(const wxPen&);
 	void SetBrush(const wxBrush&);
 	void SetTextForeground(const Color&);
 	void SetLogicalFunction(int function);
+	void SetFont(const wxFont& font);
+	/// Set the font, scales for zoom and high_quality
+	/** The font will get the given (internal) point size */
+	void SetFont(wxFont font, double size);
 	
-	RealSize getTextExtent(const String& string);
+	RealSize GetTextExtent(const String& text);
 	
+  private:
+	wxDC& dc;			///< The actual dc
+	bool high_quality;	///< Drawing using our own anti aliassing?
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -99,6 +99,14 @@ class RealRect {
 	inline RealRect(double x, double y, double w, double h)
 		: position(x,y), size(w,h)
 	{}
+	
+	inline operator wxRect() const {
+		return wxRect(position.x, position.y, size.width, size.height);
+	}
+	/// Return a rectangle that is amount larger to all sides
+	inline RealRect grow(double amount) {
+		return RealRect(position.x - amount, position.y - amount, size.width + 2 * amount, size.height + 2 * amount);
+	}
 };
 
 // ----------------------------------------------------------------------------- : Operators
