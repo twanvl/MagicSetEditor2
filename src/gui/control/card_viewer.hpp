@@ -23,6 +23,8 @@ class CardViewer : public wxControl, public DataViewer {
 	/// Return the desired size of control
 	virtual wxSize DoGetBestSize() const;
 	
+	virtual void onChange();
+	
   private:
 	DECLARE_EVENT_TABLE();
 	

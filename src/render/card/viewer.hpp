@@ -67,6 +67,9 @@ class DataViewer : public SetView {
 	/// Update the viewers and forward actions
 	virtual void onAction(const Action&, bool undone);
 	
+	/// Notification that the total image has changed
+	virtual void onChange() {}
+	
   private:
 	vector<ValueViewerP> viewers; ///< The viewers for the different values in the data
 };

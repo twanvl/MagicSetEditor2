@@ -84,8 +84,8 @@ class Scriptable {
 	}
 	
   private:
+	T value;				///< The actual value
 	OptionalScript script;	///< The optional script
-	T value;				///< The scripted value
 	
 	DECLARE_REFLECTION();
 };
@@ -100,7 +100,7 @@ void Reader::handle(Scriptable<T>& s) {
 		s.script.unparsed = s.script.unparsed.substr(7);
 		s.script.parse(*this);
 	} else {
-		handle(value);
+		handle(s.value);
 	}
 }
 template <typename T>

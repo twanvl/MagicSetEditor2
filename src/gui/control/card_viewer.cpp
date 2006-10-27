@@ -25,6 +25,10 @@ wxSize CardViewer::DoGetBestSize() const {
 	}
 }
 
+void CardViewer::onChange() {
+	Refresh(false);
+}
+
 void CardViewer::onPaint(wxPaintEvent&) {
 	wxBufferedPaintDC dc(this);
 	dc.BeginDrawing();

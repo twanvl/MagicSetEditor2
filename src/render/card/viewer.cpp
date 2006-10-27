@@ -88,6 +88,7 @@ void DataViewer::setData(IndexMap<FieldP,ValueP>& values) {
 	FOR_EACH(v, viewers) {
 		v->setValue(values[v->getField()]);
 	}
+	onChange();
 }
 
 

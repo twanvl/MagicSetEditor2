@@ -53,7 +53,7 @@ String trim(const String& s){
 }
 
 String trim_left(const String& s) {
-	size_t start = s.find_first_not_of(_(' '));
+	size_t start = s.find_first_not_of(_(" \t"));
 	if (start == String::npos) {
 		return String();
 	} else {
