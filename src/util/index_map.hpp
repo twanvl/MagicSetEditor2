@@ -34,6 +34,8 @@ class IndexMap : private vector<Value> {
 	using vector<Value>::size;
 	using vector<Value>::iterator;
 	using vector<Value>::const_iterator;
+	using vector<Value>::reference;
+	using vector<Value>::const_reference;
 	using vector<Value>::begin;
 	using vector<Value>::end;
 	
@@ -60,13 +62,13 @@ class IndexMap : private vector<Value> {
 	inline bool contains(const Value& value) const {
 		assert(value);
 		size_t index = get_key(value)->index;
-		return index < this.size() && (*this)[index] == value
+		return index < this->size() && (*this)[index] == value;
 	}
 	
 	/// Is a key in the domain of this index map?
 	inline bool containsKey(const Key& key) const {
 		assert(key);
-		return key->index < this.size() && get_key((*this)[key->index]) == key
+		return key->index < this.size() && get_key((*this)[key->index]) == key;
 	}
 	
 	/// Find a value given the key name, return an iterator
