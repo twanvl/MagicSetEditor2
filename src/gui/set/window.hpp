@@ -85,7 +85,7 @@ class SetWindow : public wxFrame, public SetView {
 	
   private:
 	/// A different card has been selected
-	void onCardSelect(wxCommandEvent&);
+	void onCardSelect(CardSelectEvent&);
 	
 	/// Render settings have changed (because of editing of preferences)
 	void onRenderSettingsChange();
@@ -154,8 +154,6 @@ class SetWindow : public wxFrame, public SetView {
 	// --------------------------------------------------- : Window events - other
 	
 	void onChildMenu           (wxCommandEvent&);
-	
-	void onCardSelect          (CardSelectEvent&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

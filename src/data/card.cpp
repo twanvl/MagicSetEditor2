@@ -32,6 +32,7 @@ String Card::identification() const {
 }
 
 IMPLEMENT_REFLECTION(Card) {
+	REFLECT(stylesheet);
 	REFLECT(notes);
 	REFLECT_NAMELESS(data);
 }

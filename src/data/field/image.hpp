@@ -16,6 +16,8 @@
 // ----------------------------------------------------------------------------- : ImageField
 
 DECLARE_POINTER_TYPE(ImageField);
+DECLARE_POINTER_TYPE(ImageStyle);
+DECLARE_POINTER_TYPE(ImageValue);
 
 /// A field for image values
 class ImageField : public Field {

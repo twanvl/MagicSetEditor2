@@ -14,6 +14,7 @@
 #include <util/real_point.hpp>
 #include <data/field.hpp>
 
+class Set;
 class DataViewer;
 class ValueAction;
 DECLARE_POINTER_TYPE(Style);
@@ -33,6 +34,8 @@ class ValueViewer {
 	void setValue(const ValueP&);
 	/// Return the associated field
 	inline const FieldP& getField() const { return styleP->fieldP; }
+	/// Return the associated style
+	inline const StyleP& getStyle() const { return styleP; }
 	
 	// Draw this value
 	virtual void draw(RotatedDC& dc) = 0;
@@ -65,17 +68,19 @@ class ValueViewer {
 	
 	/// Draws a border around the field
 	void drawFieldBorder(RotatedDC& dc);
+	
+	Set& getSet() const;
 };
 
 // ----------------------------------------------------------------------------- : Utility
 
-#define VALUE_VIEWER(Base, Type)								\
-  public:														\
-	Type(DataViewer& parent, const Type ## StyleP& style)		\
-  private:														\
-	inline Type##Style& style() const { return *styleP; }		\
-	inline Type##Value& value() const { return *valueP; }		\
-	inline Type##Field& field() const { return styleP->field(); }
+#define DECLARE_VALUE_VIEWER(Type)																	\
+  private:																							\
+	inline const Type##Style& style() const { return static_cast<const Type##Style&>(*styleP); }	\
+	inline const Type##Value& value() const { return static_cast<const Type##Value&>(*valueP); }	\
+	inline const Type##Field& field() const { return style().field(); }								\
+  public:																							\
+	Type##ValueViewer(DataViewer& parent, const Type ## StyleP& style)
 
 
 // ----------------------------------------------------------------------------- : EOF

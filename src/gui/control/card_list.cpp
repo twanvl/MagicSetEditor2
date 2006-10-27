@@ -56,14 +56,14 @@ void CardListBase::onAction(const Action& action, bool undone) {
 			selectCardPos((long)sorted_card_list.size() - 1, true);
 		} else {
 			// select the new card
-			selectCard(action.card, false /*list will be refreshed anyway*/);
+			selectCard(action.card, false /*list will be refreshed anyway*/, true);
 			refreshList();
 		}
 	}
 	TYPE_CASE(action, RemoveCardAction) {
 		if (undone) {
 			// select the re-added card
-			selectCard(action.card, false /*list will be refreshed anyway*/);
+			selectCard(action.card, false /*list will be refreshed anyway*/, true);
 			refreshList();
 		} else {
 			long pos = selected_card_pos;
@@ -116,10 +116,12 @@ void CardListBase::selectNext() {
 
 // ----------------------------------------------------------------------------- : CardListBase : Selection (private)
 
-void CardListBase::selectCard(const CardP& card, bool focus) {
+void CardListBase::selectCard(const CardP& card, bool focus, bool event) {
 	selected_card = card;
-	CardSelectEvent ev(card);
-	ProcessEvent(ev);
+	if (event) {
+		CardSelectEvent ev(card);
+		ProcessEvent(ev);
+	}
 	if (focus) {
 		findSelectedCardPos();
 		selectCurrentCard();
@@ -130,9 +132,9 @@ void CardListBase::selectCardPos(long pos, bool focus) {
 	if (selected_card_pos == pos && !focus)  return; // this card is already selected
 	if ((size_t)pos < sorted_card_list.size()) {
 		// only if there is something to select
-		selectCard(sorted_card_list[pos], false);
+		selectCard(sorted_card_list[pos], false, true);
 	} else {
-		selectCard(CardP(), false);
+		selectCard(CardP(), false, true);
 	}
 	selected_card_pos = pos;
 	if (focus) selectCurrentCard();

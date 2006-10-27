@@ -17,6 +17,8 @@
 // ----------------------------------------------------------------------------- : TextField
 
 DECLARE_POINTER_TYPE(TextField);
+DECLARE_POINTER_TYPE(TextStyle);
+DECLARE_POINTER_TYPE(TextValue);
 
 /// A field for values containing tagged text
 class TextField : public Field {

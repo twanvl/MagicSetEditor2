@@ -18,6 +18,8 @@ DECLARE_POINTER_TYPE(SymbolFilter);
 // ----------------------------------------------------------------------------- : SymbolField
 
 DECLARE_POINTER_TYPE(SymbolField);
+DECLARE_POINTER_TYPE(SymbolStyle);
+DECLARE_POINTER_TYPE(SymbolValue);
 
 /// A field for image values
 class SymbolField : public Field {

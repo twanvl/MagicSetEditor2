@@ -8,6 +8,7 @@
 
 #include <gui/util.hpp>
 #include <util/error.hpp>
+#include <util/rotation.hpp>
 #include <wx/mstream.h>
 
 // ----------------------------------------------------------------------------- : DC related
@@ -18,6 +19,26 @@ void clearDC(DC& dc, const wxBrush& brush) {
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(brush);
 	dc.DrawRectangle(0, 0, size.GetWidth(), size.GetHeight());
+}
+
+void draw_checker(RotatedDC& dc, const RealRect& rect) {
+	dc.SetPen(*wxTRANSPARENT_PEN);
+	dc.SetBrush(*wxWHITE_BRUSH);
+	dc.DrawRectangle(rect);
+	dc.SetBrush(Color(235,235,235));
+	const double checker_size = 10;
+	int odd = 0;
+	for (double y = 0 ; y < rect.size.height ; y += checker_size) {
+		for (double x = odd * checker_size ; x < rect.size.width ; x += checker_size * 2) {
+			dc.DrawRectangle(RealRect(
+								rect.position.x + x,
+								rect.position.y + y,
+								min(checker_size, rect.size.width  - x),
+								min(checker_size, rect.size.height - y)
+							));
+		}
+		odd = 1 - odd;
+	}
 }
 
 // ----------------------------------------------------------------------------- : Image related

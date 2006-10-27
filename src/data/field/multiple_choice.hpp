@@ -15,6 +15,8 @@
 // ----------------------------------------------------------------------------- : MultipleChoiceField
 
 DECLARE_POINTER_TYPE(MultipleChoiceField);
+DECLARE_POINTER_TYPE(MultipleChoiceStyle);
+DECLARE_POINTER_TYPE(MultipleChoiceValue);
 
 /// A ChoiceField where multiple choices can be selected simultaniously
 class MultipleChoiceField : public ChoiceField {

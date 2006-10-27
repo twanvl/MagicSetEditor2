@@ -15,6 +15,8 @@
 // ----------------------------------------------------------------------------- : BooleanField
 
 DECLARE_POINTER_TYPE(BooleanField);
+DECLARE_POINTER_TYPE(BooleanStyle);
+DECLARE_POINTER_TYPE(BooleanValue);
 
 /// A field whos value is either true or false
 class BooleanField : public ChoiceField {

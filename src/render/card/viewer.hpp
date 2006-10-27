@@ -39,11 +39,14 @@ class DataViewer : public SetView {
 	/// Should field borders be drawn?
 	/** false by default, can be overloaded */
 	virtual bool drawBorders() const;
+	/// Should editing specific things be drawn?
+	/** false by default, can be overloaded */
+	virtual bool drawEditing() const;
 	/// Pens for drawing field borders (only called if drawBorders())
 	virtual wxPen borderPen(bool active) const;
-	/// The value of the field that is currently focused, may be null
+	/// The viewer that is currently focused, may be null
 	/** null by default, can be overloaded */
-	virtual Value* focusedValue() const;
+	virtual ValueViewer* focusedViewer() const;
 	
 	// --------------------------------------------------- : Setting data
 	

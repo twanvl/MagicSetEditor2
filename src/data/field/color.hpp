@@ -17,6 +17,8 @@
 // ----------------------------------------------------------------------------- : ColorField
 
 DECLARE_POINTER_TYPE(ColorField);
+DECLARE_POINTER_TYPE(ColorStyle);
+DECLARE_POINTER_TYPE(ColorValue);
 
 /// A field for color values, it contains a list of choices for colors
 class ColorField : public Field {

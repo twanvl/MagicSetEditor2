@@ -246,11 +246,10 @@ void SetWindow::onAction(const Action& action, bool undone) {
 }
 	
 	
-void SetWindow::onCardSelect(wxCommandEvent& ev) {
-//	CardP card = static_cast<CardSelectEvent&>(ev).card;
-//	FOR_EACH(p, panels) {
-//		p->selectCard(card);
-//	}
+void SetWindow::onCardSelect(CardSelectEvent& ev) {
+	FOR_EACH(p, panels) {
+		p->selectCard(ev.card);
+	}
 	fixMinWindowSize();
 }
 
@@ -545,12 +544,6 @@ void SetWindow::onHelpAbout(wxCommandEvent&) {
 
 void SetWindow::onChildMenu(wxCommandEvent& ev) {
 	current_panel->onCommand(ev.GetId());
-}
-
-void SetWindow::onCardSelect(CardSelectEvent& ev) {
-	FOR_EACH(p, panels) {
-		p->selectCard(ev.card);
-	}
 }
 
 // ----------------------------------------------------------------------------- : Event table

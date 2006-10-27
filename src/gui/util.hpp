@@ -15,10 +15,16 @@
 
 #include <util/prec.hpp>
 
+class RotatedDC;
+class RealRect;
+
 // ----------------------------------------------------------------------------- : DC related
 
 /// Fill a DC with a single color
 void clearDC(DC& dc, const wxBrush& brush = *wxBLACK_BRUSH);
+
+/// Draw a checkerboard pattern
+void draw_checker(RotatedDC& dc, const RealRect&);
 
 // ----------------------------------------------------------------------------- : Resource related
 

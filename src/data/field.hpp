@@ -79,6 +79,10 @@ class Style {
 	Scriptable<double> width, height;	///< Position of this field
 	Scriptable<bool>   visible;			///< Is this field visible?
 	
+	inline RealPoint getPos()  const { return RealPoint(left, top               ); }
+	inline RealSize  getSize() const { return RealSize (           width, height); }
+	inline RealRect  getRect() const { return RealRect (left, top, width, height); }
+	
 	/// Make a viewer object for values using this style
 	/** thisP is a smart pointer to this */
 	virtual ValueViewerP makeViewer(DataViewer& parent, const StyleP& thisP) = 0;

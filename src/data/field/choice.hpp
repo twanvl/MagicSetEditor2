@@ -18,6 +18,8 @@
 // ----------------------------------------------------------------------------- : ChoiceField
 
 DECLARE_POINTER_TYPE(ChoiceField);
+DECLARE_POINTER_TYPE(ChoiceStyle);
+DECLARE_POINTER_TYPE(ChoiceValue);
 
 /// A field that contains a list of choices
 class ChoiceField : public Field {

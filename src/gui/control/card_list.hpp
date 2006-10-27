@@ -20,7 +20,10 @@ DECLARE_POINTER_TYPE(Field);
 
 DECLARE_EVENT_TYPE(EVENT_CARD_SELECT, <not used>)
 /// Handle CardSelectEvents
-#define EVT_CARD_SELECT(id, handler) EVT_COMMAND(id, EVENT_CARD_SELECT, handler)
+#define EVT_CARD_SELECT(id, handler)										\
+	DECLARE_EVENT_TABLE_ENTRY(EVENT_CARD_SELECT, id, -1,					\
+	 (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction)		\
+	 (void (wxEvtHandler::*)(CardSelectEvent&)) (&handler), (wxObject*) NULL),
 
 /// The event of selecting a card
 struct CardSelectEvent : public wxCommandEvent {
@@ -50,7 +53,7 @@ class CardListBase : public wxListView, public SetView {
 	// --------------------------------------------------- : Selection
 	
 	inline CardP getCard() const            { return selected_card; }
-	inline void  setCard(const CardP& card) { selectCard(card, true); }
+	inline void  setCard(const CardP& card) { selectCard(card, true, false); }
 	
 	/// Is there a previous card to select?
 	bool canSelectPrevious() const;
@@ -113,7 +116,7 @@ class CardListBase : public wxListView, public SetView {
 	/** If focus then the card is also focused and selected in the actual control.
 	 *  This should abviously not be done when the card is selected because it was selected (leading to a loop).
 	 */
-	void selectCard(const CardP& card, bool focus);
+	void selectCard(const CardP& card, bool focus, bool event);
 	/// Select a card at the specified position
 	void selectCardPos(long pos, bool focus);
 	/// Find the position for the selected_card
