@@ -20,12 +20,12 @@ class ImageValueViewer : public ValueViewer {
   public:
 	DECLARE_VALUE_VIEWER(Image) : ValueViewer(parent,style) {}
 	
-	void draw(RotatedDC& dc);
+	virtual void draw(RotatedDC& dc);
 	
-	bool containsPoint(const RealPoint& p) const;
+	virtual bool containsPoint(const RealPoint& p) const;
 	
-	void onValueChange();
-	void onStyleChange();
+	virtual void onValueChange();
+	virtual void onStyleChange();
 			
   private:
 	Bitmap bitmap;

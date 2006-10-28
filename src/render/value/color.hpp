@@ -10,8 +10,19 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <render/value/viewer.hpp>
+#include <data/field/color.hpp>
 
-// ----------------------------------------------------------------------------- : 
+// ----------------------------------------------------------------------------- : ColorValueViewer
+
+/// Viewer that displays an color value
+class ColorValueViewer : public ValueViewer {
+  public:
+	DECLARE_VALUE_VIEWER(Color) : ValueViewer(parent,style) {}
+	
+	virtual void draw(RotatedDC& dc);
+	virtual bool containsPoint(const RealPoint& p) const;
+};
 
 
 // ----------------------------------------------------------------------------- : EOF

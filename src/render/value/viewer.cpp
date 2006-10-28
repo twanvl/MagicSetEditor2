@@ -48,6 +48,10 @@ void ValueViewer::drawFieldBorder(RotatedDC& dc) {
 	}
 }
 
+bool ValueViewer::nativeLook() const {
+	return viewer.nativeLook();
+}
+
 // ----------------------------------------------------------------------------- : Development/debug
 
 #ifdef _DEBUG
@@ -72,8 +76,9 @@ void ValueViewer::drawFieldBorder(RotatedDC& dc) {
 ValueViewerP ChoiceStyle        ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
 ValueViewerP BooleanStyle       ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
 ValueViewerP MultipleChoiceStyle::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
-ValueViewerP ColorStyle         ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
+//ValueViewerP ColorStyle         ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
 //ValueViewerP ImageStyle         ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
+IMPLEMENT_MAKE_VIEWER(Color);
 IMPLEMENT_MAKE_VIEWER(Image);
 ValueViewerP SymbolStyle        ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
 ValueViewerP TextStyle          ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }

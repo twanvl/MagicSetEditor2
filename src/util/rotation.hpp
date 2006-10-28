@@ -136,6 +136,8 @@ class RotatedDC : public Rotation {
 	
 	RealSize GetTextExtent(const String& text);
 	
+	inline wxDC& getDC() { return dc; }
+	
   private:
 	wxDC& dc;			///< The actual dc
 	bool high_quality;	///< Drawing using our own anti aliassing?

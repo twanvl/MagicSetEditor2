@@ -93,6 +93,9 @@ class RealRect {
 	/// Size of the rectangle
 	RealSize  size;
 	
+	inline RealRect(const wxRect& rect)
+		: position(rect.x, rect.y), size(rect.width, rect.height)
+	{}
 	inline RealRect(const RealPoint& position, const RealSize& size)
 		: position(position), size(size)
 	{}
@@ -106,6 +109,10 @@ class RealRect {
 	/// Return a rectangle that is amount larger to all sides
 	inline RealRect grow(double amount) {
 		return RealRect(position.x - amount, position.y - amount, size.width + 2 * amount, size.height + 2 * amount);
+	}
+	
+	inline RealRect operator + (const RealRect& r) const {
+		return RealRect(position + r.position, size + r.size);
 	}
 };
 

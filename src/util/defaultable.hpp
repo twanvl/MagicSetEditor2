@@ -31,6 +31,7 @@ class Defaultable {
 	
 	/// Get access to the value
 	inline const T& operator () () const { return value; }
+	inline const T& get         () const { return value; }
 	
 	/// Is this value in the default state?
 	inline bool isDefault() const { return is_default; }
