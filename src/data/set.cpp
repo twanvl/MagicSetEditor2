@@ -46,11 +46,10 @@ IMPLEMENT_REFLECTION(Set) {
 		if (tag.reading()) {
 			data.init(game->set_fields);
 		}
-		WITH_DYNAMIC_ARG(game_for_reading, game.get()) {
-			REFLECT(stylesheet);
-			REFLECT_N("set_info", data);
-			REFLECT(cards);
-		}
+		WITH_DYNAMIC_ARG(game_for_reading, game.get());
+		REFLECT(stylesheet);
+		REFLECT_N("set_info", data);
+		REFLECT(cards);
 	}
 	REFLECT(apprentice_code);
 }

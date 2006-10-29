@@ -56,11 +56,62 @@ bool script_image_up_to_date(const ScriptValueP& value) {
 	}
 }
 
+
 // ----------------------------------------------------------------------------- : ScriptableImage
+
+ScriptImageP ScriptableImage::generate(Context& ctx) const {
+	try {
+		ScriptImageP img = to_script_image(script.invoke(ctx));
+		return img;
+	} catch (Error e) {
+		// loading images can fail
+		// it is likely we are inside a paint function or outside the main thread, handle error later
+		handle_error(e, false, false);
+		return new_intrusive1<ScriptImage>(Image(1,1));
+	}
+}
+
+ScriptImageP ScriptableImage::generate(Context& ctx, UInt width, UInt height, PreserveAspect preserve_aspect, bool saturate) const {
+	ScriptImageP image = generate(ctx);
+	if (!image->image.Ok()) {
+		// return an image so we don't fail
+		image->image = Image(1,1);
+	}
+	UInt iw = image->image.GetWidth(), ih = image->image.GetHeight();
+	if ((iw == width && ih == height) || width == 0) {
+		// already the right size
+	} else if (preserve_aspect == ASPECT_FIT) {
+		// determine actual size of resulting image
+		UInt w, h;
+		if (iw * height > ih * width) { // too much height requested
+			w = width;
+			h = width * ih / iw;
+		} else {
+			w = height * iw / ih;
+			h = height;
+		}
+		Image resampled_image(w, h, false);
+		resample(image->image, resampled_image);
+		image->image = resampled_image;
+	} else {
+		Image resampled_image(width, height, false);
+		if (preserve_aspect == ASPECT_BORDER && (width < height * 3) && (height < width * 3)) {
+			// preserve the aspect ratio if there is not too much difference
+			resample_preserve_aspect(image->image, resampled_image);
+		} else {
+			resample(image->image, resampled_image);
+		}
+		image->image = resampled_image;
+	}
+	if (saturate) {
+		::saturate(image->image, 40);
+	}
+	return image;
+}
 
 ScriptImageP ScriptableImage::update(Context& ctx, UInt width, UInt height, PreserveAspect preserve_aspect, bool saturate) {
 	// up to date?
-	if (!cache || (UInt)cache->image.GetWidth() != width || (UInt)cache->image.GetHeight() == height) {
+	if (!cache || (UInt)cache->image.GetWidth() != width || (UInt)cache->image.GetHeight() == height || !upToDate(ctx, last_update)) {
 		// cache must be updated
 		cache = generate(ctx, width, height, preserve_aspect, saturate);
 		last_update.update();
@@ -68,6 +119,10 @@ ScriptImageP ScriptableImage::update(Context& ctx, UInt width, UInt height, Pres
 	return cache;
 }
 
+bool ScriptableImage::upToDate(Context& ctx, Age age) const {
+	WITH_DYNAMIC_ARG(last_update_age, age.get());
+	return (int)*script.invoke(ctx);
+}
 
 // ----------------------------------------------------------------------------- : Reflection
 

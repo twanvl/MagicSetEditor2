@@ -27,7 +27,7 @@
 
 /// Declare a dynamic argument.
 /** The value of the argument can be got with: name()
- *  To change the value use WITH_DYNAMIC_ARG(name, newValue) { ... }
+ *  To change the value use WITH_DYNAMIC_ARG(name, newValue)
  *  To be used in a header file. Use IMPLEMENT_DYN_ARG in a source file
  */
 #define DECLARE_DYNAMIC_ARG(Type, name)					\
@@ -42,7 +42,6 @@
 		inline ~name##_changer() {						\
 			name##_private = oldValue;					\
 		}												\
-		inline operator bool() { return true; }			\
 	  private:											\
 		Type oldValue;									\
 	}
@@ -55,14 +54,15 @@
 /** Usage:
  *  @code
  *   // here name() == old value
- *   WITH_DYNAMIC_ARG(name, newValue) {
+ *   {
+ *      WITH_DYNAMIC_ARG(name, newValue);
  *      // here name() == newValue
  *   }
  *   // here name() == old value
  *  @endcode
  */
 #define WITH_DYNAMIC_ARG(name, value)					\
-	if (name##_changer name##_dummmy = value) // hack: variable in if guard scopes over the following block
+	name##_changer name##_dummmy(value)
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

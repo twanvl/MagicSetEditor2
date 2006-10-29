@@ -19,23 +19,11 @@
 // ----------------------------------------------------------------------------- : Resampling
 
 /// Resample (resize) an image, uses bilenear filtering
-/** The algorithm first resizes in horizontally, then vertically,
- *  the two passes are essentially the same:
- *   - for each row:
- *     - each input pixel becomes a fixed amount of output (in 1<<shift fixed point math)
- *     - for each output pixel:
- *       - 'eat' input pixels until the total is 1<<shift
- *       - write the total to the output pixel
- *   - to ensure the sum of all the pixel amounts is exacly width<<shift an extra rest amount
- *     is 'eaten' from the first pixel
- *
- *  Uses fixed point numbers internally
- */
-void resample(const Image& imgIn, Image& imgOut);
+void resample(const Image& img_in, Image& img_out);
 
-/// Resamples an image, first clips the input image to a specified rectangle,
-/// that rectangle is resampledinto the entire output image
-void resample_and_clip(const Image& imgIn, Image& imgOut, wxRect rect);
+/// Resamples an image, first clips the input image to a specified rectangle
+/** The selected rectangle is resampled into the entire output image */
+void resample_and_clip(const Image& img_in, Image& img_out, wxRect rect);
 
 /// How to preserve the aspect ratio of an image when rescaling
 enum PreserveAspect
@@ -44,6 +32,8 @@ enum PreserveAspect
 ,	ASPECT_FIT			///< generate a smaller image if needed
 };
 
+/// Resample an image, but preserve the aspect ratio by adding a transparent border around the output if needed.
+void resample_preserve_aspect(const Image& img_in, Image& img_out);
 
 // ----------------------------------------------------------------------------- : Image rotation
 
@@ -67,8 +57,13 @@ void linear_blend(Image& img1, const Image& img2, double x1,double y1, double x2
  */
 void mask_blend(Image& img1, const Image& img2, const Image& mask);
 
-/// Use the red channel of img2 as alpha channel for img1
-void set_alpha(Image& img1, const Image& img2);
+/// Use the red channel of img_alpha as alpha channel for img
+void set_alpha(Image& img, const Image& img_alpha);
+
+// ----------------------------------------------------------------------------- : Effects
+
+/// Saturate an image, amount should be in range [0...100]
+void saturate(Image& image, int amount);
 
 // ----------------------------------------------------------------------------- : Combining
 

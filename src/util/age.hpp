@@ -41,6 +41,9 @@ class Age {
 	/// Compare two ages, smaller means earlier
 	inline bool operator < (Age a) const { return age < a.age; }
 	
+	/// A number corresponding to the age
+	inline LONG get() const { return age; }
+	
   private:
 	/// This age
 	LONG age;

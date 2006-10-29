@@ -1053,6 +1053,9 @@
 				RelativePath=".\gfx\bezier.hpp">
 			</File>
 			<File
+				RelativePath=".\gfx\blend_image.cpp">
+			</File>
+			<File
 				RelativePath=".\gfx\combine_image.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
@@ -1071,10 +1074,16 @@
 				RelativePath=".\gfx\gfx.hpp">
 			</File>
 			<File
+				RelativePath=".\gfx\image_effects.cpp">
+			</File>
+			<File
 				RelativePath=".\gfx\polynomial.cpp">
 			</File>
 			<File
 				RelativePath=".\gfx\polynomial.hpp">
+			</File>
+			<File
+				RelativePath=".\gfx\resample_image.cpp">
 			</File>
 			<File
 				RelativePath=".\gfx\resample_text.cpp">

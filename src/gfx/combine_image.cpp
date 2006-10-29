@@ -6,9 +6,8 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
-#include "../util/prec.hpp"
-#include "../util/reflect.hpp"
-#include "gfx.hpp"
+#include <gfx/gfx.hpp>
+#include <util/reflect.hpp>
 #include <algorithm>
 
 using namespace std;
