@@ -9,6 +9,7 @@
 #include <script/script.hpp>
 #include <script/parser.hpp>
 #include <util/error.hpp>
+#include <util/io/package_manager.hpp> // for "include file" semi hack
 #include <stack>
 
 DECLARE_TYPEOF_COLLECTION(int);
@@ -64,9 +65,16 @@ class TokenIterator {
   private:
 	String input;
 	size_t pos;
-	vector<Token> buffer;      // buffer of unread tokens, front() = current
-	stack<bool>   open_braces; // braces we entered, true if the brace was from a smart string escape
-	bool          newline;    ///< Did we just pass a newline?
+	vector<Token> buffer;		///< buffer of unread tokens, front() = current
+	stack<bool>   open_braces;	///< braces we entered, true if the brace was from a smart string escape
+	bool          newline;		///< Did we just pass a newline?
+	// more input?
+	struct MoreInput {
+		String input;
+		size_t pos;
+	};
+	stack<MoreInput> more;		///< Read tokens from here when we are done with the current input
+	
 	/// Add a token to the buffer, with the current newline value, resets newline
 	void addToken(TokenType type, const String& value);
 	/// Read the next token, and add it to the buffer
@@ -91,6 +99,7 @@ bool isLongOper(const String& s) { return s==_(":=") || s==_("==") || s==_("!=")
 TokenIterator::TokenIterator(const String& str)
 	: input(str)
 	, pos(0)
+	, newline(false)
 {}
 
 const Token& TokenIterator::peek(size_t offset) {
@@ -121,6 +130,12 @@ void TokenIterator::addToken(TokenType type, const String& value) {
 
 void TokenIterator::readToken() {
 	if (pos >= input.size()) {
+		// done with input, is there more?
+		if (!more.empty()) {
+			input = more.top().input;
+			pos   = more.top().pos;
+			more.pop();
+		}
 		// EOF
 		addToken(TOK_EOF, _("end of input"));
 		return;
@@ -131,6 +146,24 @@ void TokenIterator::readToken() {
 		newline = true;
 	} else if (isSpace(c)) {
 		// ignore
+	} else if (is_substr(input, pos-1, _("include file:"))) {
+		// include a file
+		// HACK: This is not really the right place for it, but it's the best I've got
+		// filename
+		pos += 12; // "nclude file:"
+		size_t eol = input.find_first_of(_("\r\n"), pos);
+		if (eol == String::npos) eol = input.size();
+		String filename = trim(input.substr(pos, eol - pos));
+		// store the current input for later retrieval
+		MoreInput m = {input, eol};
+		more.push(m);
+		// open file
+		InputStreamP is = packages.openFileFromPackage(filename);
+		wxTextInputStream tis(*is);
+		// read the entire file, and start at the beginning of it
+		pos = 0;
+		input.clear();
+		while (!is->Eof()) input += tis.ReadLine() + _('\n');
 	} else if (isAlpha(c)) {
 		// name
 		size_t start = pos - 1;
@@ -208,6 +241,7 @@ void TokenIterator::readStringToken() {
 		}
 	}
 }
+
 
 // ----------------------------------------------------------------------------- : Parsing
 

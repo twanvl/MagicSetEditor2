@@ -108,8 +108,6 @@ String variableToString(unsigned int v);
  */
 class Script : public ScriptValue {
   public:
-	/// Set the script to be executed
-	//void setScript(const String& script);
 	
 	virtual ScriptType type() const;
 	virtual String typeName() const;

@@ -121,7 +121,11 @@ String singular_form(const String&);
 bool smart_less(const String&, const String&);
 
 /// Return whether str starts with start
+/** starts_with(a,b) == is_substr(a,0,b) */
 bool starts_with(const String& str, const String& start);
+
+/// Return whether str contains the string cmp at position pos
+bool is_substr(const String& str, size_t pos, const Char* cmp);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

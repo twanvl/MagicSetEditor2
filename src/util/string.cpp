@@ -87,14 +87,14 @@ String strip_last_word(const String& s) {
 
 // ----------------------------------------------------------------------------- : Caseing
 
-/// Quick check to see if the substring starting at the given iterator is equal
-/// to some given string
+/// Quick check to see if the substring starting at the given iterator is equal to some given string
 bool is_substr(const String& s, String::iterator it, const Char* cmp) {
 	while (it != s.end() && *cmp != 0) {
 		if (*it++ != *cmp++) return false;
 	}
 	return *cmp == 0;
 }
+
 String capitalize(const String& s) {
 	String result = s;
 	bool afterSpace = true;
@@ -142,14 +142,6 @@ String singular_form(const String& str) {
 
 // ----------------------------------------------------------------------------- : Comparing / finding
 
-bool starts_with(const String& str, const String& start) {
-	if (str.size() < start.size()) return false;
-	FOR_EACH_2_CONST(a, str, b, start) {
-		if (a != b) return false;
-	}
-	return true;
-}
-
 bool smart_less(const String& as, const String& bs) {
 	bool in_num = false; // are we inside a number?
 	bool lt = false;     // is as less than bs?
@@ -187,4 +179,19 @@ bool smart_less(const String& as, const String& bs) {
 	} else {
 		return lt;
 	}
+}
+
+bool starts_with(const String& str, const String& start) {
+	if (str.size() < start.size()) return false;
+	FOR_EACH_2_CONST(a, str, b, start) {
+		if (a != b) return false;
+	}
+	return true;
+}
+
+bool is_substr(const String& str, size_t pos, const Char* cmp) {
+	for (String::const_iterator it = str.begin() + pos ; *cmp && it < str.end() ; ++cmp, ++it) {
+		if (*cmp != *it) return false;
+	}
+	return *cmp == _('\0');
 }
