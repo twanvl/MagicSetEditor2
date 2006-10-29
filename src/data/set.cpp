@@ -12,6 +12,7 @@
 #include <data/card.hpp>
 #include <data/field.hpp>
 #include <script/value.hpp>
+#include <script/script_manager.hpp>
 
 // ----------------------------------------------------------------------------- : Set
 
@@ -26,7 +27,17 @@ Set::Set(const StyleSheetP& stylesheet)
 	, game(stylesheet->game)
 {}
 
+Set::~Set() {}
+
+
+Context& Set::getContext() {
+	throw "TODO";
+}
+
 String Set::typeName() const { return _("set"); }
+
+void Set::validate() {
+}
 
 IMPLEMENT_REFLECTION(Set) {
 	tag.addAlias(300, _("style"), _("stylesheet")); // < 0.3.0 used style instead of stylesheet

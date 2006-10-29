@@ -15,6 +15,7 @@
 
 DECLARE_POINTER_TYPE(Style);
 DECLARE_POINTER_TYPE(ValueViewer);
+class Context;
 
 // ----------------------------------------------------------------------------- : DataViewer
 
@@ -47,6 +48,8 @@ class DataViewer : public SetView {
 	/// The viewer that is currently focused, may be null
 	/** null by default, can be overloaded */
 	virtual ValueViewer* focusedViewer() const;
+	/// Get a script context to use for scripts in the viewers
+	Context& getContext() const;
 	
 	// --------------------------------------------------- : Setting data
 	

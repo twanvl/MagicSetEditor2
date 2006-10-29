@@ -37,6 +37,14 @@ void resample(const Image& imgIn, Image& imgOut);
 /// that rectangle is resampledinto the entire output image
 void resample_and_clip(const Image& imgIn, Image& imgOut, wxRect rect);
 
+/// How to preserve the aspect ratio of an image when rescaling
+enum PreserveAspect
+{	ASPECT_STRETCH		///< don't preserve
+,	ASPECT_BORDER		///< put borders around the image to make it the right shape
+,	ASPECT_FIT			///< generate a smaller image if needed
+};
+
+
 // ----------------------------------------------------------------------------- : Image rotation
 
 /// Rotates an image counter clockwise
@@ -45,14 +53,12 @@ Image rotate_image(const Image& image, int angle);
 
 // ----------------------------------------------------------------------------- : Blending
 
-/// Blends two images together, using a horizontal gradient
+/// Blends two images together using some linear gradient
 /** The result is stored in img1
- *  To the left the color is that of img1, to the right of img2
+ *  The two coordinates give the two points between which the images are blended
+ *  Coordinates are given in the range [0..1);
  */
-void hblend(Image& img1, const Image& img2);
-
-/// Blends two images together, using a vertical gradient
-void vblend(Image& img1, const Image& img2);
+void linear_blend(Image& img1, const Image& img2, double x1,double y1, double x2,double y2);
 
 /// Blends two images together, using a third image as a mask
 /** The result is stored in img1
@@ -60,6 +66,9 @@ void vblend(Image& img1, const Image& img2);
  *  color channels are blended separatly
  */
 void mask_blend(Image& img1, const Image& img2, const Image& mask);
+
+/// Use the red channel of img2 as alpha channel for img1
+void set_alpha(Image& img1, const Image& img2);
 
 // ----------------------------------------------------------------------------- : Combining
 

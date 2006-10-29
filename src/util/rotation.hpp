@@ -108,7 +108,7 @@ class RotatedDC : public Rotation {
 	RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, bool high_quality);
 	RotatedDC(DC& dc, const Rotation& rotation, bool high_quality);
   
-	// ----------------------------- : Drawing
+	// --------------------------------------------------- : Drawing
 	
 	void DrawText  (const String& text,   const RealPoint& pos);
 	/// Draw abitmap, it must already be zoomed!
@@ -122,7 +122,7 @@ class RotatedDC : public Rotation {
 	// Fill the dc with the color of the current brush
 	void Fill();
 	
-	// ----------------------------- : Forwarded properties
+	// --------------------------------------------------- : Forwarded properties
 	
 	/// Sets the pen for the dc, does not scale the line width
 	void SetPen(const wxPen&);
@@ -134,7 +134,8 @@ class RotatedDC : public Rotation {
 	/** The font will get the given (internal) point size */
 	void SetFont(wxFont font, double size);
 	
-	RealSize GetTextExtent(const String& text);
+	RealSize GetTextExtent(const String& text) const;
+	double GetCharHeight() const;
 	
 	inline wxDC& getDC() { return dc; }
 	

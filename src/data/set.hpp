@@ -13,6 +13,7 @@
 #include <util/reflect.hpp>
 #include <util/action_stack.hpp>
 #include <util/io/package.hpp>
+#include <boost/scoped_ptr.hpp>
 
 DECLARE_POINTER_TYPE(Card);
 DECLARE_POINTER_TYPE(Set);
@@ -20,6 +21,8 @@ DECLARE_POINTER_TYPE(Game);
 DECLARE_POINTER_TYPE(StyleSheet);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
+class ScriptManager;
+class Context;
 
 // ----------------------------------------------------------------------------- : Set
 
@@ -32,6 +35,7 @@ class Set : public Packaged {
 	Set(const GameP& game);
 	/// Create a set using the given stylesheet, and its game
 	Set(const StyleSheetP& stylesheet);
+	~Set();
   
 	/// The game this set uses
 	GameP game;
@@ -47,10 +51,18 @@ class Set : public Packaged {
 	/// Actions performed on this set and the cards in it
 	ActionStack actions;
 	
+	/// A context for performing scripts
+	/** Should only be used from the main thread! */
+	Context& getContext();
+	
   protected:
-	String typeName() const;
-		
+	virtual String typeName() const;
+	virtual void validate();
+	
 	DECLARE_REFLECTION();
+  private:
+	/// Object for managing and executing scripts
+	scoped_ptr<ScriptManager> script_manager;
 };
 
 

@@ -15,7 +15,7 @@
 
 // ----------------------------------------------------------------------------- : ColorValueViewer
 
-/// Viewer that displays an color value
+/// Viewer that displays a color value
 class ColorValueViewer : public ValueViewer {
   public:
 	DECLARE_VALUE_VIEWER(Color) : ValueViewer(parent,style) {}

@@ -1000,6 +1000,12 @@
 					RelativePath=".\util\action_stack.hpp">
 				</File>
 				<File
+					RelativePath=".\util\age.cpp">
+				</File>
+				<File
+					RelativePath=".\util\age.hpp">
+				</File>
+				<File
 					RelativePath=".\util\alignment.cpp">
 				</File>
 				<File
@@ -1114,6 +1120,36 @@
 				RelativePath=".\script\dependency.cpp">
 			</File>
 			<File
+				RelativePath=".\script\image.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug Unicode|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Unicode|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\script\image.hpp">
+			</File>
+			<File
 				RelativePath=".\script\parser.cpp">
 			</File>
 			<File
@@ -1124,6 +1160,12 @@
 			</File>
 			<File
 				RelativePath=".\script\script.hpp">
+			</File>
+			<File
+				RelativePath=".\script\script_manager.cpp">
+			</File>
+			<File
+				RelativePath=".\script\script_manager.hpp">
 			</File>
 			<File
 				RelativePath=".\script\scriptable.cpp">

@@ -76,7 +76,7 @@ class ValueViewer {
 
 #define DECLARE_VALUE_VIEWER(Type)																	\
   private:																							\
-	inline const Type##Style& style() const { return static_cast<const Type##Style&>(*styleP); }	\
+	inline       Type##Style& style() const { return static_cast<      Type##Style&>(*styleP); }	\
 	inline const Type##Value& value() const { return static_cast<const Type##Value&>(*valueP); }	\
 	inline const Type##Field& field() const { return style().field(); }								\
   public:																							\

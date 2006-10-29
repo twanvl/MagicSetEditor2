@@ -48,6 +48,7 @@ bool   DataViewer::drawBorders()   const { return false; }
 bool   DataViewer::drawEditing()   const { return false; }
 wxPen  DataViewer::borderPen(bool) const { return wxPen(); }
 ValueViewer* DataViewer::focusedViewer() const { return nullptr; }
+Context& DataViewer::getContext()  const { return set->getContext(); }
 
 // ----------------------------------------------------------------------------- : Setting data
 

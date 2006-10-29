@@ -146,8 +146,11 @@ void RotatedDC::SetFont(wxFont font, double size) {
 	dc.SetFont(font);
 }
 
-RealSize RotatedDC::GetTextExtent(const String& text) {
+RealSize RotatedDC::GetTextExtent(const String& text) const {
 	int w, h;
 	dc.GetTextExtent(text, &w, &h);
 	return RealSize(w,h) / zoom;
+}
+double RotatedDC::GetCharHeight() const {
+	return dc.GetCharHeight() / zoom;
 }

@@ -10,9 +10,18 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <render/value/viewer.hpp>
+#include <data/field/choice.hpp>
 
-// ----------------------------------------------------------------------------- : 
+// ----------------------------------------------------------------------------- : ChoiceValueViewer
 
+/// Viewer that displays a choice value
+class ChoiceValueViewer : public ValueViewer {
+  public:
+	DECLARE_VALUE_VIEWER(Choice) : ValueViewer(parent,style) {}
+	
+	virtual void draw(RotatedDC& dc);
+};
 
 // ----------------------------------------------------------------------------- : EOF
 #endif
