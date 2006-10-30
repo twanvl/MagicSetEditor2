@@ -40,6 +40,12 @@ void OptionalScript::parse(Reader& reader) {
 	}
 }
 
+void OptionalScript::initDependencies(Context& ctx, const Dependency& dep) const {
+	if (script) {
+		ctx.dependencies(dep, *script);
+	}
+}
+
 
 // custom reflection, different for each type
 

@@ -55,7 +55,10 @@ class OptionalScript {
 		}
 		return false;
 	}
-		
+	
+	/// Initialize things this script depends on by adding dep to their list of dependent scripts
+	void initDependencies(Context&, const Dependency& dep) const;
+	
   private:
 	ScriptP script;		///< The script, may be null if there is no script
 	String unparsed;	///< Unparsed script, for writing back to a file
@@ -81,6 +84,10 @@ class Scriptable {
 	// Updates the value by executing the script, returns true if the value has changed
 	inline bool update(Context& ctx) {
 		return script.invokeOn(ctx, value);
+	}
+	
+	inline void initDependencies(Context& ctx, const Dependency& dep) const {
+		script.initDependencies(ctx, dep);
 	}
 	
   private:

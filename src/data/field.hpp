@@ -13,10 +13,13 @@
 #include <util/reflect.hpp>
 #include <util/alignment.hpp>
 #include <script/scriptable.hpp>
+#include <script/dependency.hpp>
 
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Style);
 DECLARE_POINTER_TYPE(Value);
+class Context;
+class Dependency;
 
 // for DataViewer/editor
 class DataViewer; class DataEditor;
@@ -44,7 +47,7 @@ class Field {
 	String    card_list_name;   ///< Alternate name to use in card list.
 	Alignment card_list_align;  ///< Alignment of the card list colummn.
 	int       tab_index;        ///< Tab index in editor
-//	vector<Dependency> dependentScripts; // scripts that depend on values of this field
+	vector<Dependency> dependent_scripts; ///< Scripts that depend on values of this field
 	
 	/// Creates a new Value corresponding to this Field
 	/** thisP is a smart pointer to this */
@@ -54,6 +57,9 @@ class Field {
 	virtual StyleP newStyle(const FieldP& thisP) const = 0;
 	/// Type of this field
 	virtual String typeName() const = 0;
+	
+	/// Add the given dependency to the dependet_scripts list for the variables this field depends on
+	virtual void initDependencies(Context&, const Dependency&) const {}
 	
   private:
 	DECLARE_REFLECTION_VIRTUAL();
@@ -89,6 +95,9 @@ class Style {
 	/// Make an editor object for values using this style
 	/** thisP is a smart pointer to this */
 	virtual ValueEditorP makeEditor(DataEditor& parent, const StyleP& thisP) = 0;
+	
+	/// Add the given dependency to the dependet_scripts list for the variables this style depends on
+	virtual void initDependencies(Context&, const Dependency&) const;
 	
   private:
 	DECLARE_REFLECTION_VIRTUAL();

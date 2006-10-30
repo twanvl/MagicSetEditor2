@@ -11,11 +11,14 @@
 #include <data/field.hpp>
 #include <util/io/package_manager.hpp>
 
+DECLARE_TYPEOF_COLLECTION(StyleSheet*);
+
 // ----------------------------------------------------------------------------- : StyleSheet
 
 StyleSheet::StyleSheet()
 	: card_width(100), card_height(100)
 	, card_dpi(96), card_background(*wxWHITE)
+	, dependencies_initialized(false)
 {}
 
 StyleSheetP StyleSheet::byGameAndName(const Game& game, const String& name) {
@@ -61,6 +64,11 @@ IMPLEMENT_REFLECTION(StyleSheet) {
 //	io(_("extra field"), extraSetFields);
 //	extraInfoStyle.init(extraSetFields);
 //	io(_("extra style"), extraInfoStyle);
+}
+
+void StyleSheet::validate(Version) {
+	// a default for the full name
+	if (full_name.empty()) full_name = name();
 }
 
 

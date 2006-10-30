@@ -40,18 +40,21 @@ class StyleSheet : public Packaged {
 	/** The indices should correspond to the set_fields in the Game */
 	IndexMap<FieldP, StyleP> set_info_style;
 	
+	bool dependencies_initialized;	///< are the script dependencies comming from this stylesheet all initialized?
+	
+	/// Load a StyleSheet, given a Game and the name of the StyleSheet
+	static StyleSheetP byGameAndName(const Game& game, const String& name);
+	/// name of the package without the game name
+	String styleName();
+		
 	static String typeNameStatic();
 	virtual String typeName() const;
 	virtual String fullName() const;
 	virtual InputStreamP openIconFile();
 	
-	/// Load a StyleSheet, given a Game and the name of the StyleSheet
-	static StyleSheetP byGameAndName(const Game& game, const String& name);
+  protected:
+	virtual void validate(Version);
 	
-	/// name of the package without the game name
-	String styleName();
-	
-  private:
 	DECLARE_REFLECTION();
 };
 

@@ -10,29 +10,15 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/action_stack.hpp>
 #include <script/context.hpp>
-#include <data/set.hpp>
+#include <script/dependency.hpp>
 
-// ----------------------------------------------------------------------------- : Dependency
-
-/// Types of dependencies
-enum DependencyType
-{	DEP_CARD_FIELD			///< dependency of a script in a "card" field
-,	DEP_CARDS_FIELD			///< dependency of a script in a "card"  field for all cards
-,	DEP_SET_INFO_FIELD		///< dependency of a script in a "set"   field
-,	DEP_STYLESHEET_FIELD	///< dependency of a script in a "style" property
-,	DEP_CARD_COPY_DEP		///< copy the dependencies from a card field
-,	DEP_SET_COPY_DEP		///< copy the dependencies from a set  field
-,	DEP_CHOICE_IMAGE		///< dependency of a generated choice image, index2 gives the index of the choice image
-};
-
-/// A 'pointer' to some script that depends on another script
-class Dependency {
-  public:
-	DependencyType type   : 4;	///< Type of the dependent script
-	UInt           index2 : 10;	///< A second index, used for some types
-	size_t         index;		///< index into an IndexMap
-};
+class Set;
+class Value;
+DECLARE_POINTER_TYPE(Game);
+DECLARE_POINTER_TYPE(StyleSheet);
+DECLARE_POINTER_TYPE(Card);
 
 // ----------------------------------------------------------------------------- : Dependencies of data type members
 
@@ -50,14 +36,17 @@ class Dependency {
 class ScriptManager : public ActionListener {
   public:
 	ScriptManager(Set& set);
+	~ScriptManager();
+		
+	/// Get a context to use for the set, for a given stylesheet
+	Context& getContext(const StyleSheetP& s);
 	
   private:
-	Context context; ///< Context for evaluating scripts
+	Set&                            set;		///< Set for which we are managing scripts
+	map<const StyleSheet*,Context*> contexts;	///< Context for evaluating scripts that use a given stylesheet
 	
-	void initScriptStuff();
-	void initDependencies();
-	void initDependencies(const StyleSheetP&);
-	void initContext(const StyleSheetP&);
+	void initDependencies(Context&, Game&);
+	void initDependencies(Context&, StyleSheet&);
 	
 	// Update all styles for a particular card
 	void updateStyles(const CardP& card);

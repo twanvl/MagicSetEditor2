@@ -16,6 +16,10 @@
 
 IMPLEMENT_DYNAMIC_ARG(Game*, game_for_reading, nullptr);
 
+Game::Game()
+	: dependencies_initialized(false)
+{}
+
 GameP Game::byName(const String& name) {
 	return packages.open<Game>(name + _(".mse-game"));
 }
@@ -48,7 +52,7 @@ IMPLEMENT_REFLECTION(Game) {
 //	REFLECT(word_lists);
 }
 
-void Game::validate() {
+void Game::validate(Version) {
 	// a default for the full name
 	if (full_name.empty()) full_name = name();
 }

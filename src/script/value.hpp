@@ -214,7 +214,7 @@ class ScriptMap : public ScriptValue {
 template <typename T>
 class ScriptObject : public ScriptValue {
   public:
-	inline ScriptObject(const shared_ptr<T>& v) : value(v) {}
+	inline ScriptObject(const T& v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_OBJECT; }
 	virtual String typeName() const { return _("object"); }
 	virtual ScriptValueP getMember(const String& name) const {
@@ -224,7 +224,7 @@ class ScriptObject : public ScriptValue {
 		else             throw  ScriptError(_("Object has no member '") + name + _("'"));
 	}
   private:
-	shared_ptr<T> value; ///< The object
+	T value; ///< The object
 };
 
 // ----------------------------------------------------------------------------- : Creating
@@ -242,7 +242,7 @@ inline ScriptValueP toScript(const map<K,V>*      v) { return new_intrusive1<Scr
 template <typename K, typename V>
 inline ScriptValueP toScript(const IndexMap<K,V>* v) { return new_intrusive1<ScriptMap<IndexMap<K,V> > >(v); }
 template <typename T>
-inline ScriptValueP toScript(const shared_ptr<T>& v) { return new_intrusive1<ScriptObject<T> >(v); }
+inline ScriptValueP toScript(const shared_ptr<T>& v) { return new_intrusive1<ScriptObject<shared_ptr<T> > >(v); }
 
 
 // ----------------------------------------------------------------------------- : Buildin functions

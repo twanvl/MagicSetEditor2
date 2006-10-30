@@ -55,9 +55,13 @@ class Set : public Packaged {
 	/** Should only be used from the main thread! */
 	Context& getContext();
 	
+	/// A context for performing scripts on a particular card
+	/** Should only be used from the main thread! */
+	Context& getContext(const Card& card);
+	
   protected:
 	virtual String typeName() const;
-	virtual void validate();
+	virtual void validate(Version);
 	
 	DECLARE_REFLECTION();
   private:

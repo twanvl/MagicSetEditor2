@@ -30,18 +30,18 @@ void resample_pass(const Image& img_in, Image& img_out, int offset_in, int offse
                    int lines, int line_delta_in, int line_delta_out)
 {
 	bool alpha = img_in.HasAlpha();
-	if (alpha) img_out.InitAlpha();
+	if (alpha && !img_out.HasAlpha()) img_out.InitAlpha();
 	int out_fact = (length_out << shift) / length_in; // how much to output for 256 input = 1 pixel
 	int out_rest = (length_out << shift) % length_in;
 	// for each line
 	for (int l = 0 ; l < lines ; ++l) {
-		Byte* in  = img_in .GetData() + 3 * (offset_in  + line_delta_in);
-		Byte* out = img_out.GetData() + 3 * (offset_out + line_delta_out);
+		Byte* in  = img_in .GetData() + 3 * (offset_in  + l * line_delta_in);
+		Byte* out = img_out.GetData() + 3 * (offset_out + l * line_delta_out);
 		UInt in_rem = out_fact + out_rest; // remaining to input from the current input pixel
 		
 		if (alpha) {
-			Byte* in_a  = img_in .GetAlpha() + (offset_in  + line_delta_in);
-			Byte* out_a = img_out.GetAlpha() + (offset_out + line_delta_out);
+			Byte* in_a  = img_in .GetAlpha() + (offset_in  + l * line_delta_in);
+			Byte* out_a = img_out.GetAlpha() + (offset_out + l * line_delta_out);
 			
 			for (int x = 0 ; x < length_out ; ++x) {
 				UInt out_rem = 1 << shift;

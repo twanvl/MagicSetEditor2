@@ -48,7 +48,7 @@ class Reader {
 	inline bool reading() const { return true; }
 	/// Is the thing currently being read 'complex', i.e. does it have children
 	inline bool isComplex() const { return value.empty(); }
-	/// Add a as an alias for b, all keys a will be replaced with b, only if app_version < end_version
+	/// Add a as an alias for b, all keys a will be replaced with b, only if file_app_version < end_version
 	void addAlias(Version end_version, const Char* a, const Char* b);
 	
 	/// Read and check the application version
@@ -90,7 +90,7 @@ class Reader {
 	
 	// --------------------------------------------------- : Data
 	/// App version this file was made with
-	Version app_version;
+	Version file_app_version;
   private:
 	/// The line we read
 	String line;

@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/io/package.hpp>
 #include <script/scriptable.hpp>
+#include <script/dependency.hpp>
 #include <util/dynamic_arg.hpp>
 
 DECLARE_POINTER_TYPE(Field);
@@ -25,11 +26,17 @@ DECLARE_DYNAMIC_ARG(Game*, game_for_reading);
 /// A description of a card game
 class Game : public Packaged {
   public:
+	Game();
+	
 	String full_name;				///< Name of this game, for menus etc.
 	String icon_filename;			///< Filename of icon to use in NewWindow
 	OptionalScript init_script;		///< Script of variables available to other scripts in this game
 	vector<FieldP> set_fields;		///< Fields for set information
 	vector<FieldP> card_fields;		///< Fields on each card
+	
+	vector<Dependency> dependent_scripts_cards;		///< scripts that depend on the card list
+	vector<Dependency> dependent_scripts_keywords;	///< scripts that depend on the keywords
+	bool dependencies_initialized;					///< are the script dependencies comming from this game all initialized?
 	
 	/// Loads the game with a particular name, for example "magic"
 	static GameP byName(const String& name);
@@ -43,7 +50,7 @@ class Game : public Packaged {
 	virtual InputStreamP openIconFile();
 	
   protected:
-	void validate();
+	virtual void validate(Version);
 	
 	DECLARE_REFLECTION();
 };

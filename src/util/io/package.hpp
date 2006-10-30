@@ -179,7 +179,7 @@ class Packaged : public Package {
 	/// filename of the data file, and extension of the package file
 	virtual String typeName() const = 0;
 	/// Can be overloaded to do validation after loading
-	virtual void validate() {}
+	virtual void validate(Version file_app_version) {}
 	
 	DECLARE_REFLECTION_VIRTUAL();
 };

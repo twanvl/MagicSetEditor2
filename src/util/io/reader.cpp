@@ -31,18 +31,18 @@ Reader::Reader(const String& filename)
 }
 
 void Reader::addAlias(Version end_version, const Char* a, const Char* b) {
-	if (app_version < end_version) {
+	if (file_app_version < end_version) {
 		aliasses[a] = b;
 	}
 }
 
 void Reader::handleAppVersion() {
 	if (enterBlock(_("mse_version"))) {
-		handle(app_version);
-		if (::app_version < app_version) {
+		handle(file_app_version);
+		if (app_version < file_app_version) {
 			wxMessageBox(
 				filename + _("\n")
-				_("This file is made with a newer version of Magic Set Editor (")+ app_version.toString() +_(").\n")
+				_("This file is made with a newer version of Magic Set Editor (")+ file_app_version.toString() +_(").\n")
 				_("When you open it, some aspects of the file may be lost.\n")
 				_("It is recommended that you upgrade to the latest version.\n")
 				_("Visit http:://magicseteditor.sourceforge.net/"), _("Warning"), wxOK | wxICON_EXCLAMATION);

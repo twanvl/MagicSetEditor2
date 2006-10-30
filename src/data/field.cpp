@@ -71,7 +71,6 @@ shared_ptr<Field> read_new<Field>(Reader& reader) {
 	}
 }
 
-
 // ----------------------------------------------------------------------------- : Style
 
 Style::Style(const FieldP& field)
@@ -98,6 +97,14 @@ void init_object(const FieldP& field, StyleP& style) {
 }
 template <> StyleP read_new<Style>(Reader&) {
 	throw InternalError(_("IndexMap contains nullptr StyleP the application should have crashed already"));
+}
+
+void Style::initDependencies(Context& ctx, const Dependency& dep) const {
+	left   .initDependencies(ctx,dep);
+	top    .initDependencies(ctx,dep);
+	width  .initDependencies(ctx,dep);
+	height .initDependencies(ctx,dep);
+	visible.initDependencies(ctx,dep);
 }
 
 // ----------------------------------------------------------------------------- : Value

@@ -388,6 +388,7 @@ void Packaged::open(const String& package) {
 	try {
 		reader.handleAppVersion();
 		reader.handle(*this);
+		validate(reader.file_app_version);
 	} catch (const ParseError& err) {
 		throw FileParseError(err.what(), absoluteFilename() + _("/") + typeName()); // more detailed message
 	}

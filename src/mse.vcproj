@@ -1129,6 +1129,9 @@
 				RelativePath=".\script\dependency.cpp">
 			</File>
 			<File
+				RelativePath=".\script\dependency.hpp">
+			</File>
+			<File
 				RelativePath=".\script\image.cpp">
 				<FileConfiguration
 					Name="Debug|Win32">

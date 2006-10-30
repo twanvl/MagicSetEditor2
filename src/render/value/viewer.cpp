@@ -73,11 +73,12 @@ bool ValueViewer::nativeLook() const {
 		return ValueViewerP(new Type##ValueViewer(parent, static_pointer_cast<Type##Style>(thisP)));	\
 	}
 
-ValueViewerP ChoiceStyle        ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
+//ValueViewerP ChoiceStyle        ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
 ValueViewerP BooleanStyle       ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
 ValueViewerP MultipleChoiceStyle::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
 //ValueViewerP ColorStyle         ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
 //ValueViewerP ImageStyle         ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
+IMPLEMENT_MAKE_VIEWER(Choice);
 IMPLEMENT_MAKE_VIEWER(Color);
 IMPLEMENT_MAKE_VIEWER(Image);
 ValueViewerP SymbolStyle        ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
