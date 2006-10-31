@@ -29,6 +29,7 @@ DECLARE_TYPEOF_COLLECTION(String);
 
 void handle_error(const String& e, bool allow_duplicate = true, bool now = true) {
 	// Check duplicates
+	// TODO: thread safety
 	if (!allow_duplicate) {
 		FOR_EACH(pe, previous_errors) {
 			if (e == pe)  return;
