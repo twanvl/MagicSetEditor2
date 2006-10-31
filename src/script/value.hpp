@@ -36,8 +36,7 @@ enum ScriptType
 ,	SCRIPT_STRING
 ,	SCRIPT_COLOR
 ,	SCRIPT_IMAGE
-,	SCRIPT_BUILDIN_FUN
-,	SCRIPT_SCRIPT_FUN
+,	SCRIPT_FUNCTION
 ,	SCRIPT_OBJECT
 ,	SCRIPT_DUMMY
 };
@@ -77,6 +76,8 @@ class ScriptValue {
 	virtual ScriptValueP makeIterator() const;
 	/// Return the next item for this iterator, or ScriptValueP() if there is no such item
 	virtual ScriptValueP next();
+	/// Return the number of items in this value (assuming it is a collection)
+	virtual int itemCount() const;
 	
 	/// Signal that a script depends on a member of this value
 	virtual void signalDependent(Context&, const Dependency&, const String& name);
@@ -166,6 +167,7 @@ class ScriptCollection : public ScriptValue {
 	virtual ScriptValueP makeIterator() const {
 		return new_intrusive1<ScriptCollectionIterator<Collection> >(value);
 	}
+	virtual int itemCount() const { return (int)value->size(); }
   private:
 	/// Store a pointer to a collection, collections are only ever used for structures owned outside the script
 	const Collection* value;
@@ -203,6 +205,7 @@ class ScriptMap : public ScriptValue {
 	virtual ScriptValueP getMember(const String& name) const {
 		return get_member(*value, name);
 	}
+	virtual int itemCount() const { return (int)value->size(); }
   private:
 	/// Store a pointer to a collection, collections are only ever used for structures owned outside the script
 	const Collection* value;
@@ -271,7 +274,7 @@ inline ScriptValueP toScript(const shared_ptr<T>& v) { return new_intrusive1<Scr
 		class ScriptBuildin_##name : public ScriptValue {		\
 			dep													\
 			/* virtual */ ScriptType type() const				\
-				{ return SCRIPT_BUILDIN_FUN; }					\
+				{ return SCRIPT_FUNCTION; }						\
 			virtual String typeName() const						\
 				{ return _("build in function '") _(#name) _("'"); }	\
 			virtual ScriptValueP eval(Context&) const;			\
@@ -284,13 +287,36 @@ inline ScriptValueP toScript(const shared_ptr<T>& v) { return new_intrusive1<Scr
  *  @code
  *   SCRIPT_FUNCTION(my_function) {
  *      SCRIPT_PARAM(String, my_string_param);
- *      ...
+ *      ... my_string_param ...
  *   }
  *  @endcode
  *  Throws an error if the parameter is not found.
  */
 #define SCRIPT_PARAM(Type, name)								\
 		Type name = *ctx.getVariable(_(#name))
+
+/// Retrieve an optional parameter
+/** Usage:
+ *  @code
+ *   SCRIPT_FUNCTION(my_function) {
+ *      SCRIPT_OPTIONAL_PARAM(String, my_string_param) {
+ *          ... my_string_param ...
+ *      }
+ *      ...
+ *   }
+ *  @endcode
+ */
+#define SCRIPT_OPTIONAL_PARAM(Type, name)	SCRIPT_OPTIONAL_PARAM_N(Type, name, #name)
+
+#define SCRIPT_OPTIONAL_PARAM_N(Type, str, name)				\
+		ScriptValueP name##_ = ctx.getVariableOpt(_(str));		\
+		Type name = name##_ ? *name##_ : Type();				\
+		if (name##_)
+
+/// Retrieve an optional parameter with a default value
+#define SCRIPT_PARAM_DEFAULT(Type, name, def)					\
+		ScriptValueP name##_ = ctx.getVariableOpt(_(#name));	\
+		Type name = name##_ ? *name##_ : def
 
 /// Return a value from a SCRIPT_FUNCTION
 #define SCRIPT_RETURN(value) return toScript(value)

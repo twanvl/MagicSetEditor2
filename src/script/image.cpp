@@ -111,7 +111,7 @@ ScriptImageP ScriptableImage::generate(Context& ctx, UInt width, UInt height, Pr
 
 ScriptImageP ScriptableImage::update(Context& ctx, UInt width, UInt height, PreserveAspect preserve_aspect, bool saturate) {
 	// up to date?
-	if (!cache || (UInt)cache->image.GetWidth() != width || (UInt)cache->image.GetHeight() == height || !upToDate(ctx, last_update)) {
+	if (!cache || (UInt)cache->image.GetWidth() != width || (UInt)cache->image.GetHeight() != height || !upToDate(ctx, last_update)) {
 		// cache must be updated
 		cache = generate(ctx, width, height, preserve_aspect, saturate);
 		last_update.update();
@@ -120,8 +120,12 @@ ScriptImageP ScriptableImage::update(Context& ctx, UInt width, UInt height, Pres
 }
 
 bool ScriptableImage::upToDate(Context& ctx, Age age) const {
-	WITH_DYNAMIC_ARG(last_update_age, age.get());
-	return (int)*script.invoke(ctx);
+	try {
+		WITH_DYNAMIC_ARG(last_update_age, age.get());
+		return (int)*script.invoke(ctx);
+	} catch (Error e) {
+		return true; // script gives errors, don't update
+	}
 }
 
 // ----------------------------------------------------------------------------- : Reflection

@@ -81,7 +81,7 @@ class Scriptable {
 	inline operator const T& () const { return value; }
 	inline bool isScripted() const { return script; }
 	
-	// Updates the value by executing the script, returns true if the value has changed
+	/// Updates the value by executing the script, returns true if the value has changed
 	inline bool update(Context& ctx) {
 		return script.invokeOn(ctx, value);
 	}

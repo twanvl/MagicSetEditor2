@@ -74,7 +74,9 @@ void DataViewer::setStyles(IndexMap<FieldP,StyleP>& styles) {
 	// create viewers
 	viewers.clear();
 	FOR_EACH(s, styles) {
-		if (s->visible || s->visible.isScripted()) {
+		if ((s->visible || s->visible.isScripted()) &&
+		    (s->width   || s->width  .isScripted()) &&
+		    (s->height  || s->height .isScripted())) {
 			// no need to make a viewer for things that are always invisible
 			viewers.push_back(makeViewer(s));
 			// REMOVEME //TODO //%%%

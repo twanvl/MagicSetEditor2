@@ -19,6 +19,9 @@ DECLARE_TYPEOF(Contexts);
 DECLARE_TYPEOF_COLLECTION(FieldP);
 DECLARE_TYPEOF_NO_REV(IndexMap_FieldP_StyleP);
 
+// initialize functions, from functions.cpp
+void init_script_functions(Context& ctx);
+
 // ----------------------------------------------------------------------------- : ScriptManager : initialization
 
 ScriptManager::ScriptManager(Set& set)
@@ -48,10 +51,10 @@ Context& ScriptManager::getContext(const StyleSheetP& stylesheet) {
 		// variables
 		//  NOTE: do not use a smart pointer for the pointer to the set, because the set owns this
 		//        which would lead to a reference cycle.
+		init_script_functions(*ctx);
 		ctx->setVariable(_("set"),        new_intrusive1<ScriptObject<Set*> >(&set));
 		ctx->setVariable(_("game"),       toScript(set.game));
 		ctx->setVariable(_("stylesheet"), toScript(stylesheet));
-		//ctx->style->object = style;
 		//ctx->setVariable(_("styling"), toScript(set->extraStyleData(style)));
 		try {
 			// perform init scripts

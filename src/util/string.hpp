@@ -100,7 +100,7 @@ String capitalize(const String&);
 String capitalize_sentence(const String&);
 
 /// Convert a field name to cannocial form
-/** - lower case and '_' instead of ' '.
+/** - lower case and ' ' instead of '_'.
  *  - non alphanumeric characters are droped
  *  - "camalCase" is converted to words "camel case" (TODO)
  */
@@ -126,6 +126,9 @@ bool starts_with(const String& str, const String& start);
 
 /// Return whether str contains the string cmp at position pos
 bool is_substr(const String& str, size_t pos, const Char* cmp);
+
+/// Compare two strings for equality, b may contain '_' where a contains ' '
+bool cannocial_name_compare(const String& a, const Char* b);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

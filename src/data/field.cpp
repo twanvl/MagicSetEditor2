@@ -76,8 +76,8 @@ shared_ptr<Field> read_new<Field>(Reader& reader) {
 Style::Style(const FieldP& field)
 	: fieldP(field)
 	, z_index(0)
-	, left(0), width (1)
-	, top (0), height(1)
+	, left(0), width (0)
+	, top (0), height(0)
 	, visible(true)
 {}
 

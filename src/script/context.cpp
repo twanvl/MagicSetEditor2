@@ -183,7 +183,7 @@ ScriptValueP Context::getVariable(const String& name) {
 	return value;
 }
 
-ScriptValueP Context::getVariableOrNil(const String& name) {
+ScriptValueP Context::getVariableOpt(const String& name) {
 	return variables[stringToVariable(name)].value;
 }
 
@@ -246,6 +246,25 @@ void instrUnary  (UnaryInstructionType   i, ScriptValueP& a) {
 	}															\
 	break
 
+/// Composition of two functions
+class ScriptCompose : public ScriptValue {
+  public:
+	ScriptCompose(ScriptValueP a, ScriptValueP b) : a(a), b(b) {}
+	
+	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
+	virtual String typeName() const { return _("replace_rule"); }
+	virtual ScriptValueP eval(Context& ctx) const {
+		ctx.setVariable(_("input"), a->eval(ctx));
+		return b->eval(ctx);
+	}
+	virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const {
+		ctx.setVariable(_("input"), a->dependencies(ctx, dep));
+		return b->dependencies(ctx, dep);
+	}
+  private:
+	ScriptValueP a,b;
+};
+
 void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP& b) {
 	ScriptType at = a->type(), bt = b->type();
 	switch (i) {
@@ -260,8 +279,8 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 				a = b;
 			} else if (bt == SCRIPT_NIL) {
 				// a = a;
-			//} else if (a->likesFunction() && b->likesFunction()) {
-			//	a = compose(a, b);
+			} else if (at == SCRIPT_FUNCTION && bt == SCRIPT_FUNCTION) {
+				a = new_intrusive2<ScriptCompose>(a, b);
 			} else if (at == SCRIPT_STRING || bt == SCRIPT_STRING) {
 				a = toScript((String)*a  +  (String)*b);
 			} else if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {

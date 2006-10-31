@@ -54,8 +54,8 @@ class Context {
 	
 	/// Get the value of a variable, throws if it not set
 	ScriptValueP getVariable(const String& name);
-	/// Get the value of a variable, returns nil if it is not set
-	ScriptValueP getVariableOrNil(const String& name);
+	/// Get the value of a variable, returns ScriptValue() if it is not set
+	ScriptValueP getVariableOpt(const String& name);
 	
   public:// public for FOR_EACH
 	/// Record of a variable

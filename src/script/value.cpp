@@ -23,6 +23,7 @@ ScriptValueP ScriptValue::getMember(const String& name) const
                                      { throw (typeName() + _(" has no member '") + name + _("'")); }
 ScriptValueP ScriptValue::next()               { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
 ScriptValueP ScriptValue::makeIterator() const { throw ScriptError(  _("Can't convert from ")+typeName()+_(" to collection")); }
+int          ScriptValue::itemCount()    const { throw ScriptError(  _("Can't convert from ")+typeName()+_(" to collection")); }
 
 void ScriptValue::signalDependent(Context&, const Dependency&, const String& name) {}
 ScriptValueP ScriptValue::dependencies(   Context&, const Dependency&) const { return script_nil; }
@@ -167,6 +168,7 @@ class ScriptString : public ScriptValue {
 			throw ScriptError(_("Not a number: '") + value + _("'"));
 		}
 	}
+	virtual int itemCount() const { return (int)value.size(); }
   private:
 	String value;
 };

@@ -41,7 +41,7 @@ String variableToString(unsigned int v) {
 // ----------------------------------------------------------------------------- : Script
 
 ScriptType Script::type() const {
-	return SCRIPT_SCRIPT_FUN;
+	return SCRIPT_FUNCTION;
 }
 String Script::typeName() const {
 	return _("function");

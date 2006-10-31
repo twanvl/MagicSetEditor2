@@ -35,7 +35,7 @@ void Writer::enterBlock(const Char* name) {
 	}
 	// don't write the key yet
 	indentation += 1;
-	opened_key = name;
+	opened_key = cannocial_name_form(name);
 	just_opened = true;
 }
 
@@ -47,8 +47,6 @@ void Writer::exitBlock() {
 
 void Writer::writeKey() {
 	writeIndentation();
-	// Use ' ' instead of '_' because it is more human readable
-	FOR_EACH(c, opened_key) if (c == _('_')) c = _(' ');
 	writeUTF8(stream, opened_key);
 }
 void Writer::writeIndentation() {

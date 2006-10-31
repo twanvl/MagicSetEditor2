@@ -37,7 +37,8 @@ void handle_error(const String& e, bool allow_duplicate = true, bool now = true)
 	}
 	// Only show errors in the main thread
 	if (!now || !wxThread::IsMain()) {
-		pending_error = e;
+		if (!pending_error.empty()) pending_error += _("\n\n");
+		pending_error += e;
 		return;
 	}
 	// show message
@@ -46,4 +47,12 @@ void handle_error(const String& e, bool allow_duplicate = true, bool now = true)
 
 void handle_error(const Error& e, bool allow_duplicate, bool now) {
 	handle_error(e.what(), allow_duplicate, now);
+}
+
+void handle_pending_errors() {
+	assert(wxThread::IsMain());
+	if (!pending_error.empty()) {
+		handle_error(pending_error);
+		pending_error.clear();
+	}
 }

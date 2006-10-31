@@ -154,6 +154,8 @@ class SetWindow : public wxFrame, public SetView {
 	// --------------------------------------------------- : Window events - other
 	
 	void onChildMenu           (wxCommandEvent&);
+	
+	void onIdle                (wxIdleEvent&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

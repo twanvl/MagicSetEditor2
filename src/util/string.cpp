@@ -123,7 +123,7 @@ String cannocial_name_form(const String& str) {
 	bool leading = true;
 	FOR_EACH_CONST(c, str) {
 		if ((c == _('_') || c == _(' ')) && !leading) {
-			ret += _('_');
+			ret += _(' ');
 		} else if (isAlnum(c)) {
 			ret += toLower(c);
 			leading = false;
@@ -194,4 +194,13 @@ bool is_substr(const String& str, size_t pos, const Char* cmp) {
 		if (*cmp != *it) return false;
 	}
 	return *cmp == _('\0');
+}
+
+bool cannocial_name_compare(const String& as, const Char* b) {
+	const Char* a = as.c_str();
+	while (true) {
+		if (*a != *b && !(*a == _(' ') && *b == _('_'))) return false;
+		if (*a == _('\0')) return true;
+		a++; b++;
+	}
 }

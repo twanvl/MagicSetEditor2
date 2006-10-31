@@ -546,6 +546,12 @@ void SetWindow::onChildMenu(wxCommandEvent& ev) {
 	current_panel->onCommand(ev.GetId());
 }
 
+void SetWindow::onIdle(wxIdleEvent& ev) {
+	// Stuff that must be done in the main thread
+	handle_pending_errors();
+//	showUpdateDialog(this);
+}
+
 // ----------------------------------------------------------------------------- : Event table
 
 BEGIN_EVENT_TABLE(SetWindow, wxFrame)
@@ -584,7 +590,6 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
 //	EVT_FIND_REPLACE	(wxID_ANY,				SetWindow::onReplace)
 //	EVT_FIND_REPLACE_ALL(wxID_ANY,				SetWindow::onReplaceAll)
 	EVT_CLOSE			(						SetWindow::onClose)
-//	EVT_TIMER			(wxID_ANY,				SetWindow::onTick)
-//	EVT_IDLE			(						SetWindow::onIdle)
+	EVT_IDLE			(						SetWindow::onIdle)
 	EVT_CARD_SELECT		(wxID_ANY,				SetWindow::onCardSelect)
 END_EVENT_TABLE  ()

@@ -134,7 +134,7 @@ class Reader {
 	/** Maybe the key is "include file" */
 	template <typename T>
 	void unknownKey(T& v) {
-		if (key == _("include_file")) {
+		if (key == _("include file")) {
 			Reader reader(value);
 			reader.handle(v);
 			moveNext();
