@@ -20,7 +20,7 @@ ScriptValue::operator Color()  const { throw ScriptError(_("Can't convert from "
 ScriptValueP ScriptValue::eval(Context&) const
                                      { throw ScriptError(_("Can't convert from ")+typeName()+_(" to function"      )); }
 ScriptValueP ScriptValue::getMember(const String& name) const
-                                     { throw (typeName() + _(" has no member '") + name + _("'")); }
+                                     { throw ScriptError(typeName() + _(" has no member '") + name + _("'")); }
 ScriptValueP ScriptValue::next()               { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
 ScriptValueP ScriptValue::makeIterator() const { throw ScriptError(  _("Can't convert from ")+typeName()+_(" to collection")); }
 int          ScriptValue::itemCount()    const { throw ScriptError(  _("Can't convert from ")+typeName()+_(" to collection")); }

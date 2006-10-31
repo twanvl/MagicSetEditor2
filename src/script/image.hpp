@@ -50,15 +50,16 @@ class ScriptableImage {
 	inline operator bool() const { return script; }
 	
 	/// Generate an image, doesn't cache, and doesn't scale
-	ScriptImageP generate(Context& ctx) const;
+	/** Image files are loaded from the given package */
+	ScriptImageP generate(Context& ctx, Package&) const;
 	/// Generate an image, scaling it and optionally saturating it
-	ScriptImageP generate(Context& ctx, UInt width, UInt height, PreserveAspect preserve_aspect = ASPECT_STRETCH, bool saturate = false) const;
+	ScriptImageP generate(Context& ctx, Package&, UInt width, UInt height, PreserveAspect preserve_aspect = ASPECT_STRETCH, bool saturate = false) const;
 	
 	/// Update and return the cached image
 	/** Only recomputes the image if it is out of date, or the size doesn't match.
 	 *  If width==height==0 then doesn't resample.
 	 */
-	ScriptImageP update(Context& ctx, UInt width = 0, UInt height = 0, PreserveAspect preserve_aspect = ASPECT_STRETCH, bool saturate = false);
+	ScriptImageP update(Context& ctx, Package&, UInt width = 0, UInt height = 0, PreserveAspect preserve_aspect = ASPECT_STRETCH, bool saturate = false);
 	
 	/// Is the cached image up to date?
 	bool upToDate(Context& ctx, Age age) const;

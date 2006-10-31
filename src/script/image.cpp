@@ -59,8 +59,9 @@ bool script_image_up_to_date(const ScriptValueP& value) {
 
 // ----------------------------------------------------------------------------- : ScriptableImage
 
-ScriptImageP ScriptableImage::generate(Context& ctx) const {
+ScriptImageP ScriptableImage::generate(Context& ctx, Package& pkg) const {
 	try {
+		WITH_DYNAMIC_ARG(load_images_from, &pkg);
 		ScriptImageP img = to_script_image(script.invoke(ctx));
 		return img;
 	} catch (Error e) {
@@ -71,8 +72,8 @@ ScriptImageP ScriptableImage::generate(Context& ctx) const {
 	}
 }
 
-ScriptImageP ScriptableImage::generate(Context& ctx, UInt width, UInt height, PreserveAspect preserve_aspect, bool saturate) const {
-	ScriptImageP image = generate(ctx);
+ScriptImageP ScriptableImage::generate(Context& ctx, Package& pkg, UInt width, UInt height, PreserveAspect preserve_aspect, bool saturate) const {
+	ScriptImageP image = generate(ctx, pkg);
 	if (!image->image.Ok()) {
 		// return an image so we don't fail
 		image->image = Image(1,1);
@@ -109,11 +110,11 @@ ScriptImageP ScriptableImage::generate(Context& ctx, UInt width, UInt height, Pr
 	return image;
 }
 
-ScriptImageP ScriptableImage::update(Context& ctx, UInt width, UInt height, PreserveAspect preserve_aspect, bool saturate) {
+ScriptImageP ScriptableImage::update(Context& ctx, Package& pkg, UInt width, UInt height, PreserveAspect preserve_aspect, bool saturate) {
 	// up to date?
 	if (!cache || (UInt)cache->image.GetWidth() != width || (UInt)cache->image.GetHeight() != height || !upToDate(ctx, last_update)) {
 		// cache must be updated
-		cache = generate(ctx, width, height, preserve_aspect, saturate);
+		cache = generate(ctx, pkg, width, height, preserve_aspect, saturate);
 		last_update.update();
 	}
 	return cache;

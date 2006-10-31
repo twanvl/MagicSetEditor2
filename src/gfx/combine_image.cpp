@@ -108,7 +108,7 @@ void combine_image(Image& a, const Image& b, ImageCombine combine) {
 	// Combine image data, by dispatching to combineImageDo
 	switch(combine) {
 		#define DISPATCH(comb) case comb: combine_image_do<comb>(a,b); return
-		DISPATCH(COMBINE_NORMAL);
+		case COMBINE_NORMAL: a = b; return; // no need to do a per pixel operation
 		DISPATCH(COMBINE_ADD);
 		DISPATCH(COMBINE_SUBTRACT);
 		DISPATCH(COMBINE_STAMP);
@@ -135,5 +135,18 @@ void combine_image(Image& a, const Image& b, ImageCombine combine) {
 }
 
 void draw_combine_image(DC& dc, UInt x, UInt y, const Image& img, ImageCombine combine) {
-	// todo
+	if (combine == COMBINE_NORMAL) {
+		dc.DrawBitmap(img, x, y);
+	} else {
+		// Capture the current image in the target rectangle
+		Bitmap sourceB(img.GetWidth(), img.GetHeight());
+		wxMemoryDC sourceDC;
+		sourceDC.SelectObject(sourceB);
+		sourceDC.Blit(0, 0, img.GetWidth(), img.GetHeight(), &dc, x, y);
+		sourceDC.SelectObject(wxNullBitmap);
+		Image source = sourceB.ConvertToImage();
+		// Combine and draw
+		combine_image(source, img, combine);
+		dc.DrawBitmap(source, x, y);
+	}
 }

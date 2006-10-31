@@ -8,6 +8,7 @@
 
 #include <render/value/choice.hpp>
 #include <render/card/viewer.hpp>
+#include <data/stylesheet.hpp>
 
 // ----------------------------------------------------------------------------- : ChoiceValueViewer
 
@@ -22,12 +23,12 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 			ScriptableImage& img = it->second;
 			ScriptImageP i;
 			if (nativeLook()) {
-				i = img.update(viewer.getContext(), 16, 16, ASPECT_BORDER, false);
+				i = img.update(viewer.getContext(), *getSet().stylesheet, 16, 16, ASPECT_BORDER, false);
 			} else if(style().render_style & RENDER_TEXT) {
 				// also drawing text
-				i = img.update(viewer.getContext(), 0, 0);
+				i = img.update(viewer.getContext(), *getSet().stylesheet, 0, 0);
 			} else {
-				i = img.update(viewer.getContext(),
+				i = img.update(viewer.getContext(), *getSet().stylesheet,
 						dc.trS(style().width), dc.trS(style().height),
 						style().alignment == ALIGN_STRETCH ? ASPECT_STRETCH : ASPECT_FIT
 					);

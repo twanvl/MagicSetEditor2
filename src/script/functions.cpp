@@ -24,7 +24,44 @@ class ScriptReplaceRule : public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
 	virtual String typeName() const { return _("replace_rule"); }
 	virtual ScriptValueP eval(Context& ctx) const {
-		throw "TODO";
+		SCRIPT_PARAM(String, input);
+		if (context.IsValid() || replacement_function) {
+			// match first, then check context of match
+			String ret;
+			while (regex.Matches(input)) {
+				// for each match ...
+				size_t start, len;
+				bool ok = regex.GetMatch(&start, &len, 0);
+				assert(ok);
+				ret                 += input.substr(0, start);          // everything before the match position stays
+				String inside        = input.substr(start, len);        // inside the match
+				String next_input    = input.substr(start + len);       // next loop the input is after this match
+				String after_replace = ret + _("<match>") + next_input; // after replacing, the resulting context would be
+				if (!context.IsValid() || context.Matches(after_replace)) {
+					// the context matches -> perform replacement
+					if (replacement_function) {
+						// set match results in context
+						for (UInt m = 0 ; m < regex.GetMatchCount() ; ++m) {
+							regex.GetMatch(&start, &len, m);
+							String name  = m == 0 ? _("input") : String(_("_")) << m;
+							String value = input.substr(start, len);
+							ctx.setVariable(name, toScript(value));
+						}
+						// call
+						inside = (String)*replacement_function->eval(ctx);
+					} else {
+						regex.Replace(&inside, replacement, 1); // replace inside
+					}
+				}
+				ret  += inside;
+				input = next_input;
+			}
+			SCRIPT_RETURN(ret);
+		} else {
+			// dumb replacing
+			regex.Replace(&input, replacement);
+			SCRIPT_RETURN(input);
+		}
 	}
 	
 	wxRegEx      regex;					///< Regex to match
@@ -58,6 +95,38 @@ SCRIPT_FUNCTION(replace_rule) {
 }
 
 // ----------------------------------------------------------------------------- : Rules : regex filter
+
+class ScriptFilterRule : public ScriptValue {
+  public:
+	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
+	virtual String typeName() const { return _("replace_rule"); }
+	virtual ScriptValueP eval(Context& ctx) const {
+		SCRIPT_PARAM(String, input);
+		String ret;
+		while (regex.Matches(input)) {
+			// match, append to result
+			size_t start, len;
+			bool ok = regex.GetMatch(&start, &len, 0);
+			assert(ok);
+			ret  += input.substr(start, len);  // the match
+			input = input.substr(start + len); // everything after the match
+		}
+		SCRIPT_RETURN(ret);
+	}
+	
+	wxRegEx regex; ///< Regex to match
+};
+
+// Create a regular expression rule for filtering strings
+SCRIPT_FUNCTION(filter_rule) {
+	intrusive_ptr<ScriptFilterRule> ret(new ScriptFilterRule);
+	// match
+	SCRIPT_PARAM(String, match);
+	if (!ret->regex.Compile(match, wxRE_ADVANCED)) {
+		throw ScriptError(_("Error while compiling regular expression: '")+match+_("'"));
+	}
+	return ret;
+}
 
 // ----------------------------------------------------------------------------- : Rules : sort
 
@@ -247,6 +316,7 @@ SCRIPT_FUNCTION(number_of_items) {
 
 void init_script_functions(Context& ctx) {
 	ctx.setVariable(_("replace rule"),    script_replace_rule);
+	ctx.setVariable(_("filter rule"),     script_filter_rule);
 	ctx.setVariable(_("sort rule"),       script_sort_rule);
 	ctx.setVariable(_("to upper"),        script_to_upper);
 	ctx.setVariable(_("to lower"),        script_to_lower);
