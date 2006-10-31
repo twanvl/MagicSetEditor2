@@ -142,6 +142,7 @@ template <> void Reader::handle(ScriptableImage& s) {
 		// script is a constant function
 		s.script.script = new_intrusive<Script>();
 		s.script.script->addInstruction(I_PUSH_CONST, s.script.unparsed);
+		s.script.script->addInstruction(I_RET);
 	}
 }
 template <> void Writer::handle(const ScriptableImage& s) {

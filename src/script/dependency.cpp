@@ -304,7 +304,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 		if (scope) closeScope(scope); // restore scope
 		stack.resize(stack_size);     // restore stack
 		// delete jump records
-		while(jumps.empty()) {
+		while (!jumps.empty()) {
 			delete jumps.top();
 			jumps.pop();
 		}
