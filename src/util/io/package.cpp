@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/io/package.hpp>
+#include <util/io/package_manager.hpp>
 #include <util/error.hpp>
 #include <wx/wfstream.h>
 #include <wx/zipstrm.h>
@@ -147,10 +148,10 @@ class ZipFileInputStream : private wxFileInputStream, public wxZipInputStream {
 };
 
 InputStreamP Package::openIn(const String& file) {
-//	if (!n.empty() && n.getChar(0) == _('/')) {
-//		// absolute path, open file from another package
-//		return packMan.openFileFromPackage(n);
-//	}
+	if (!file.empty() && file.GetChar(0) == _('/')) {
+		// absolute path, open file from another package
+		return packages.openFileFromPackage(file);
+	}
 	FileInfos::iterator it = files.find(toStandardName(file));
 	if (it == files.end()) {
 		throw FileNotFoundError(file, filename);
