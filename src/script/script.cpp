@@ -17,7 +17,7 @@ Variables variables;
 DECLARE_TYPEOF(Variables);
 
 /// Return a unique name for a variable to allow for faster loopups
-unsigned int stringToVariable(const String& s) {
+unsigned int string_to_variable(const String& s) {
 	map<String, unsigned int>::iterator it = variables.find(s);
 	if (it == variables.end()) {
 		unsigned int v = (unsigned int)variables.size();
@@ -31,7 +31,7 @@ unsigned int stringToVariable(const String& s) {
 /// Get the name of a vaiable
 /** Warning: this function is slow, it should only be used for error messages and such.
  */
-String variableToString(unsigned int v) {
+String variable_to_string(unsigned int v) {
 	FOR_EACH(vi, variables) {
 		if (vi.second == v) return vi.first;
 	}
@@ -159,7 +159,7 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 			ret += "\t" + lexical_cast<String>(i.data);
 			break;
 		case I_GET_VAR: case I_SET_VAR: case I_NOP:					// variable
-			ret += "\t" + variableToString(i.data) + "\t$" + lexical_cast<String>(i.data);
+			ret += "\t" + variable_to_string(i.data) + "\t$" + lexical_cast<String>(i.data);
 			break;
 	}
 	return ret;

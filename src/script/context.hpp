@@ -69,7 +69,7 @@ class Context {
 		Variable value;    ///< Old value of that variable.
 	};
   private:
-	/// Variables, indexed by integer naem (using stringToVariable)
+	/// Variables, indexed by integer naem (using string_to_variable)
 	VectorIntMap<unsigned int, Variable> variables;
 	/// Shadowed variable bindings
 	vector<Binding> shadowed;

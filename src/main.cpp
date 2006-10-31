@@ -37,6 +37,7 @@ IMPLEMENT_APP(MSE)
 
 bool MSE::OnInit() {
 	try {
+		SetAppName(_("Magic Set Editor"));
 		wxInitAllImageHandlers();
 		init_file_formats();
 		settings.read();

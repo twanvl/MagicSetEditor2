@@ -72,7 +72,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 				// Get a variable
 				case I_GET_VAR: {
 					ScriptValueP value = variables[i.data].value;
-					if (!value) throw ScriptError(_("Variable not set: ") + variableToString(i.data));
+					if (!value) throw ScriptError(_("Variable not set: ") + variable_to_string(i.data));
 					stack.push_back(value);
 					break;
 				}
@@ -163,7 +163,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 }
 
 void Context::setVariable(const String& name, const ScriptValueP& value) {
-	setVariable(stringToVariable(name), value);
+	setVariable(string_to_variable(name), value);
 }
 
 void Context::setVariable(int name, const ScriptValueP& value) {
@@ -178,13 +178,13 @@ void Context::setVariable(int name, const ScriptValueP& value) {
 }
 
 ScriptValueP Context::getVariable(const String& name) {
-	ScriptValueP value = variables[stringToVariable(name)].value;
+	ScriptValueP value = variables[string_to_variable(name)].value;
 	if (!value) throw ScriptError(_("Variable not set: ") + name);
 	return value;
 }
 
 ScriptValueP Context::getVariableOpt(const String& name) {
-	return variables[stringToVariable(name)].value;
+	return variables[string_to_variable(name)].value;
 }
 
 

@@ -64,6 +64,20 @@ ScriptValueP unified(const ScriptValueP& a, const ScriptValueP& b) {
 	else        return new_intrusive2<DependencyUnion>(a,b);
 }
 
+/// Behaves like script_nil, but with a name
+class ScriptMissingVariable : public ScriptValue {
+  public:
+	ScriptMissingVariable(const String& name) : name(name) {}
+	virtual ScriptType type() const { return SCRIPT_NIL; }
+	virtual String typeName() const { return _("missing variable '") + name + _("'"); }
+	virtual operator String() const { return wxEmptyString; }
+	virtual operator double() const { return 0.0; }
+	virtual operator int()    const { return 0; }
+	virtual ScriptValueP eval(Context&) const { return script_nil; } // nil() == nil
+  private:
+	String name; ///< Name of the variable
+};
+
 // ----------------------------------------------------------------------------- : Jump record
 
 // Utility class: a jump that has been postponed
@@ -245,7 +259,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				// Get a variable (almost as normal)
 				case I_GET_VAR: {
 					ScriptValueP value = variables[i.data].value;
-					if (!value) value = script_nil; // no errors here
+					if (!value) value = new_intrusive1<ScriptMissingVariable>(variable_to_string(i.data)); // no errors here
 					stack.push_back(value);
 					break;
 				}

@@ -38,11 +38,11 @@ InputStreamP StyleSheet::openIconFile() {
 }
 IMPLEMENT_REFLECTION(StyleSheet) {
 	// < 0.3.0 didn't use card_ prefix
-	tag.addAlias(300, _("width"),      _("card_width"));
-	tag.addAlias(300, _("height"),     _("card_height"));
-	tag.addAlias(300, _("dpi"),        _("card_dpi"));
-	tag.addAlias(300, _("background"), _("card_background"));
-	tag.addAlias(300, _("info_style"), _("set_info_style"));
+	tag.addAlias(300, _("width"),      _("card width"));
+	tag.addAlias(300, _("height"),     _("card height"));
+	tag.addAlias(300, _("dpi"),        _("card dpi"));
+	tag.addAlias(300, _("background"), _("card background"));
+	tag.addAlias(300, _("info style"), _("set info style"));
 	tag.addAlias(300, _("align"),      _("alignment"));
 	
 	REFLECT(game);

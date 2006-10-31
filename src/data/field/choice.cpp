@@ -171,6 +171,7 @@ IMPLEMENT_REFLECTION_ENUM(ChoiceRenderStyle) {
 }
 
 IMPLEMENT_REFLECTION(ChoiceStyle) {
+	tag.addAlias(300, _("card list colors"), _("colors card list"));
 	REFLECT_BASE(Style);
 	REFLECT(popup_style);
 	REFLECT(render_style);

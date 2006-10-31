@@ -355,7 +355,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					script.addInstruction(I_LOOP, 0xFFFF);				//		loop
 					expectToken(input, _("do"));						// do
 					script.addInstruction(I_SET_VAR,
-										stringToVariable(name.value));	//		set name
+										string_to_variable(name.value));//		set name
 					script.addInstruction(I_POP);						//		 pop
 					parseOper(input, script, PREC_SET, I_BINARY, I_ADD);// CCC;	add
 					script.addInstruction(I_JUMP, lblStart);			//		jump lbl_start
@@ -373,7 +373,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					script.addInstruction(I_LOOP, 0xFFFF);				//		loop
 					expectToken(input, _("do"));						// do
 					script.addInstruction(I_SET_VAR,
-										stringToVariable(name.value));	//		set name
+										string_to_variable(name.value));//		set name
 					script.addInstruction(I_POP);						//		 pop
 					parseOper(input, script, PREC_SET, I_BINARY, I_ADD);// DDD;	add
 					script.addInstruction(I_JUMP, lblStart);			//		jump lbl_start
@@ -391,7 +391,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 				script.addInstruction(I_TERNARY, I_RGB);
 			} else {
 				// variable
-				unsigned int var = stringToVariable(token.value);
+				unsigned int var = string_to_variable(token.value);
 				script.addInstruction(I_GET_VAR, var);
 			}
 		} else if (token == TOK_INT) {
@@ -475,13 +475,13 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			while (t != _(")")) {
 				if (input.peek(2) == _(":")) {
 					// name: ...
-					arguments.push_back(stringToVariable(t.value));
+					arguments.push_back(string_to_variable(t.value));
 					input.read(); // skip the name
 					input.read(); // and the :
 					parseOper(input, script, PREC_SEQ);
 				} else {
 					// implicit "input" argument
-					arguments.push_back(stringToVariable(_("input")));
+					arguments.push_back(string_to_variable(_("input")));
 					parseOper(input, script, PREC_SEQ);
 				}
 				t = input.peek();
