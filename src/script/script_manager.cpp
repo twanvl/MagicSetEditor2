@@ -55,6 +55,7 @@ Context& ScriptManager::getContext(const StyleSheetP& stylesheet) {
 		ctx->setVariable(_("set"),        new_intrusive1<ScriptObject<Set*> >(&set));
 		ctx->setVariable(_("game"),       toScript(set.game));
 		ctx->setVariable(_("stylesheet"), toScript(stylesheet));
+		ctx->setVariable(_("card"),       set.cards.empty() ? script_nil : toScript(set.cards.front())); // dummy value
 		//ctx->setVariable(_("styling"), toScript(set->extraStyleData(style)));
 		try {
 			// perform init scripts

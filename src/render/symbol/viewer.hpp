@@ -14,6 +14,11 @@
 #include <data/symbol.hpp>
 #include <gfx/bezier.hpp>
 
+// ----------------------------------------------------------------------------- : Simple rendering
+
+/// Render a Symbol to an Image
+Image render_symbol(const SymbolP& symbol, double border_radius = 0.05, int size = 100);
+
 // ----------------------------------------------------------------------------- : Symbol Viewer
 
 enum HighlightStyle {
@@ -25,10 +30,10 @@ enum HighlightStyle {
 class SymbolViewer : public SymbolView {
   public:
 	// --------------------------------------------------- : Data
-	SymbolViewer(const SymbolP& symbol, double borderRadius = 0.05);
+	SymbolViewer(const SymbolP& symbol, double border_radius = 0.05);
 	
 	// drawing
-	double borderRadius;
+	double border_radius;
 
 	// --------------------------------------------------- : Point translation
 	

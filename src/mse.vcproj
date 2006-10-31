@@ -509,24 +509,6 @@
 					RelativePath=".\gui\symbol\select_editor.hpp">
 				</File>
 				<File
-					RelativePath=".\gui\symbol\viewer.cpp">
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release Unicode|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\gui\symbol\viewer.hpp">
-				</File>
-				<File
 					RelativePath=".\gui\symbol\window.cpp">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1462,6 +1444,46 @@
 				</File>
 				<File
 					RelativePath=".\render\card\viewer.hpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="symbol"
+				Filter="">
+				<File
+					RelativePath=".\render\symbol\filter.cpp">
+				</File>
+				<File
+					RelativePath=".\render\symbol\filter.hpp">
+				</File>
+				<File
+					RelativePath=".\render\symbol\viewer.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\render\symbol\viewer.hpp">
 				</File>
 			</Filter>
 		</Filter>

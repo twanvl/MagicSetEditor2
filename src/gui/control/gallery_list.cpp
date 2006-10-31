@@ -112,6 +112,7 @@ void GalleryList::onKeyDown(wxKeyEvent& ev) {
 }
 
 // Linear interpolation between colors
+// MOVE ME, declared in gfx.hpp
 Color lerp(const Color& a, const Color& b, double t) {
 	return Color(a.Red()   + (b.Red()   - a.Red()  ) * t,
 	             a.Green() + (b.Green() - a.Green()) * t,

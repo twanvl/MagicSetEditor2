@@ -6,14 +6,14 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
-#include <gui/symbol/viewer.hpp>
+#include <render/symbol/viewer.hpp>
 
 DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 
 // ----------------------------------------------------------------------------- : Constructor
 
-SymbolViewer::SymbolViewer(const SymbolP& symbol, double borderRadius)
-	: borderRadius(borderRadius)
+SymbolViewer::SymbolViewer(const SymbolP& symbol, double border_radius)
+	: border_radius(border_radius)
 	, rotation(0, RealRect(0,0,500,500))
 {
 	setSymbol(symbol);
@@ -176,7 +176,7 @@ void SymbolViewer::drawSymbolPart(const SymbolPart& part, DC* border, DC* interi
 			// white/black
 			border->SetBrush(Color(borderCol, borderCol, borderCol));
 		}
-		border->SetPen(wxPen(*wxWHITE, rotation.trS(borderRadius)));
+		border->SetPen(wxPen(*wxWHITE, rotation.trS(border_radius)));
 		border->DrawPolygon((int)points.size(), &points[0]);
 	}
 	// draw interior
@@ -186,38 +186,3 @@ void SymbolViewer::drawSymbolPart(const SymbolPart& part, DC* border, DC* interi
 		interior->DrawPolygon((int)points.size(), &points[0]);
 	}
 }
-
-
-/*
-void SymbolViewer::calcBezierPoint(const ControlPointP& p0, const ControlPointP& p1, Point*& p_out, UInt count) {
-	BezierCurve c(*p0, *p1);
-	// add start point
-	*p_out = toDisplay(*p0);
-	++p_out;
-	// recursively calculate rest of curve
-	calcBezierOpt(c, *p0, *p1, 0.0f, 1.0f, p_out, count-1);
-}
-
-
-void SymbolViewer::calcBezierOpt(const BezierCurve& c, const Vector2D& p0, const Vector2D& p1, double t0, double t1, Point*& p_out, mutable UInt count) {
-	if (count <= 0)  return;
-	double midtime = (t0+t1) * 0.5f;
-	Vector2D midpoint = c.pointAt(midtime);
-	Vector2D d0 = p0 - midpoint;
-	Vector2D d1 = midpoint - p1;
-	// Determine treshold for subdivision, greater angle -> subdivide
-	// greater size -> subdivide
-	double treshold = fabs(  atan2(d0.x,d0.y) - atan2(d1.x,d1.y))   * (p0-p1).lengthSqr();
-	bool subdivide = treshold >= .0001;
-	// subdivide left
-	calcBezierOpt(c, p0, midpoint, t0, midtime, p_out, count/2);
-	// add midpoint
-	if (subdivide) {
-		*p_out = toDisplay(midpoint);
-		++p_out;
-		count -= 1;
-	}
-	// subdivide right
-	calcBezierOpt(c, midpoint, p1, midtime, t1, p_out, count/2);
-}
-*/

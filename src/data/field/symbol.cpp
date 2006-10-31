@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <data/field/symbol.hpp>
+#include <render/symbol/filter.hpp>
 
 // ----------------------------------------------------------------------------- : SymbolField
 
@@ -35,7 +36,7 @@ SymbolStyle::Variation::Variation()
 IMPLEMENT_REFLECTION(SymbolStyle::Variation) {
 	REFLECT(name);
 	REFLECT(border_radius);
-	//REFLECT_NAMELESS(filter);
+	REFLECT_NAMELESS(filter);
 }
 
 // ----------------------------------------------------------------------------- : SymbolValue

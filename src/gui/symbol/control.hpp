@@ -11,7 +11,7 @@
 
 #include <util/prec.hpp>
 #include <data/symbol.hpp>
-#include <gui/symbol/viewer.hpp>
+#include <render/symbol/viewer.hpp>
 
 class SymbolWindow;
 DECLARE_POINTER_TYPE(SymbolEditorBase);
