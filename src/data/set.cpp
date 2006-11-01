@@ -46,6 +46,11 @@ Context& Set::getContext(const Card& card) {
 	return script_manager->getContext(card.stylesheet ? card.stylesheet : stylesheet);
 }
 
+StyleSheetP Set::stylesheetFor(const CardP& card) {
+	if (card && card->stylesheet) return card->stylesheet;
+	else                          return stylesheet;
+}
+
 String Set::typeName() const { return _("set"); }
 
 // fix values for versions < 0.2.7

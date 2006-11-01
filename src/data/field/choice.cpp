@@ -9,6 +9,8 @@
 #include <data/field/choice.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
+typedef map<String,ScriptableImage> map_String_ScriptableImage;
+DECLARE_TYPEOF(map_String_ScriptableImage);
 
 // ----------------------------------------------------------------------------- : ChoiceField
 
@@ -21,6 +23,12 @@ IMPLEMENT_FIELD_TYPE(Choice)
 
 String ChoiceField::typeName() const {
 	return _("choice");
+}
+
+void ChoiceField::initDependencies(Context& ctx, const Dependency& dep) const {
+	Field        ::initDependencies(ctx, dep);
+	script        .initDependencies(ctx, dep);
+	default_script.initDependencies(ctx, dep);
 }
 
 IMPLEMENT_REFLECTION(ChoiceField) {
@@ -156,6 +164,24 @@ ChoiceStyle::ChoiceStyle(const ChoiceFieldP& field)
 	, colors_card_list(false)
 {}
 
+// TODO
+/*
+void ChoiceStyle::invalidate() {
+	// rebuild choice images
+}
+}
+*/
+bool ChoiceStyle::update(Context& ctx) {
+	// Don't update the choice images, leave that to invalidate()
+	return Style::update(ctx);
+}
+void ChoiceStyle::initDependencies(Context& ctx, const Dependency& dep) const {
+	Style::initDependencies(ctx, dep);
+	FOR_EACH_CONST(ci, choice_images) {
+		ci.second.initDependencies(ctx, dep);
+	}
+}
+
 IMPLEMENT_REFLECTION_ENUM(ChoicePopupStyle) {
 	VALUE_N("dropdown",	POPUP_DROPDOWN);
 	VALUE_N("menu",		POPUP_MENU);
@@ -189,6 +215,11 @@ IMPLEMENT_REFLECTION(ChoiceStyle) {
 
 String ChoiceValue::toString() const {
 	return value();
+}
+bool ChoiceValue::update(Context& ctx) {
+	Value::update(ctx);
+	return field().default_script.invokeOnDefault(ctx, value)
+	     | field().        script.invokeOn(ctx, value);
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(ChoiceValue) {

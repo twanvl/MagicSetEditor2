@@ -35,6 +35,12 @@ class Defaultable {
 	
 	/// Is this value in the default state?
 	inline bool isDefault() const { return is_default; }
+	/// Set the defaultness to true
+	inline void setDefault() { is_default = true; }
+	
+	/// Compare the values, ignore defaultness
+	/** used by scriptable to check for changes */
+	inline bool operator != (const Defaultable& that) const { return value != that.value; }
 	
   private:
 	/// Is this value in the default state?
@@ -45,7 +51,6 @@ class Defaultable {
 	friend class Reader;
 	friend class Writer;
 };
-
 
 // we need some custom io, because the behaviour is different for each of Reader/Writer/GetMember
 

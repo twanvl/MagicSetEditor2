@@ -11,9 +11,9 @@
 
 #include <util/prec.hpp>
 #include <util/age.hpp>
+#include <util/dynamic_arg.hpp>
 #include <script/scriptable.hpp>
 #include <gfx/gfx.hpp>
-#include <util/dynamic_arg.hpp>
 
 class Package;
 DECLARE_INTRUSIVE_POINTER_TYPE(ScriptImage);
@@ -63,6 +63,10 @@ class ScriptableImage {
 	
 	/// Is the cached image up to date?
 	bool upToDate(Context& ctx, Age age) const;
+	
+	inline void initDependencies(Context& ctx, const Dependency& dep) const {
+		script.initDependencies(ctx, dep);
+	}
 	
   private:
 	OptionalScript script;		///< The script, not really optional

@@ -54,10 +54,12 @@ class Set : public Packaged {
 	/// A context for performing scripts
 	/** Should only be used from the main thread! */
 	Context& getContext();
-	
 	/// A context for performing scripts on a particular card
 	/** Should only be used from the main thread! */
 	Context& getContext(const Card& card);
+	
+	/// Stylesheet to use for a particular card
+	StyleSheetP stylesheetFor(const CardP& card);
 	
   protected:
 	virtual String typeName() const;

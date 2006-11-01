@@ -25,9 +25,11 @@ class DependencyDummy : public ScriptIterator {
 	virtual ScriptType type() const { return SCRIPT_DUMMY; }
 	virtual String typeName() const { return _("dummy"); }
 	virtual ScriptValueP next() { return ScriptValueP(); }
+	virtual ScriptValueP eval(Context&)           const { return dependency_dummy; } // dummy() == dummy
+	virtual ScriptValueP getMember(const String&) const { return dependency_dummy; } // dummy.* = dummy
 };
 
-ScriptValueP dependencyDummy(new DependencyDummy);
+ScriptValueP dependency_dummy(new DependencyDummy);
 
 ScriptValueP unified(const ScriptValueP& a, const ScriptValueP& b);
 
@@ -220,7 +222,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					assert(dynamic_pointer_cast<ScriptIterator>(it)); // top of stack must be an iterator
 					ScriptValueP val = static_pointer_cast<ScriptIterator>(it)->next();
 					if (val) {
-						it = dependencyDummy; // invalidate iterator, so we loop only once
+						it = dependency_dummy; // invalidate iterator, so we loop only once
 						stack.push_back(val);
 					} else {
 						stack.erase(stack.end() - 2); // remove iterator
@@ -259,7 +261,9 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				// Get a variable (almost as normal)
 				case I_GET_VAR: {
 					ScriptValueP value = variables[i.data].value;
-					if (!value) value = new_intrusive1<ScriptMissingVariable>(variable_to_string(i.data)); // no errors here
+					if (!value) {
+						value = new_intrusive1<ScriptMissingVariable>(variable_to_string(i.data)); // no errors here
+					}
 					stack.push_back(value);
 					break;
 				}
@@ -277,7 +281,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 							a = a->makeIterator(); // as normal
 							break;
 						default:
-							a = dependencyDummy;
+							a = dependency_dummy;
 					}
 					break;
 				}
@@ -298,7 +302,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 							unify(a, b); // may be function composition
 							break;
 						default:
-							a = dependencyDummy;
+							a = dependency_dummy;
 					}
 					break;
 				}
@@ -307,7 +311,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					ScriptValueP  c = stack.back(); stack.pop_back();
 					ScriptValueP  b = stack.back(); stack.pop_back();
 					ScriptValueP& a = stack.back();
-					a = dependencyDummy;
+					a = dependency_dummy;
 					break;
 				}
 			}

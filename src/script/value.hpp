@@ -114,7 +114,7 @@ class ScriptValue {
 extern ScriptValueP script_nil;   ///< The preallocated nil value
 extern ScriptValueP script_true;  ///< The preallocated true value
 extern ScriptValueP script_false; ///< The preallocated false value
-
+extern ScriptValueP dependency_dummy; ///< Dummy value used during dependency analysis
 
 // ----------------------------------------------------------------------------- : Iterators
 

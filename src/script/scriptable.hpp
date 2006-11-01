@@ -13,10 +13,10 @@
 #include <util/reflect.hpp>
 #include <util/defaultable.hpp>
 #include <script/script.hpp>
+#include <script/context.hpp>
 #include <script/parser.hpp>
 
 DECLARE_INTRUSIVE_POINTER_TYPE(Script);
-class Context;
 
 // ----------------------------------------------------------------------------- : Store
 
@@ -37,7 +37,7 @@ class OptionalScript {
 	inline operator bool() const { return !!script; }
 	
 	/// Invoke the script, return the result, or script_nil if there is no script
-	ScriptValueP invoke(Context& ctx) const;
+	ScriptValueP invoke(Context& ctx, bool open_scope = true) const;
 	
 	/// Invoke the script on a value
 	/** Assigns the result to value if it has changed.
@@ -47,13 +47,24 @@ class OptionalScript {
 	bool invokeOn(Context& ctx, T& value) const {
 		if (script) {
 			T new_value;
-			store(new_value, script->invoke(ctx));
+			ctx.setVariable(_("value"), toScript(value));
+			store(ctx.eval(*script), new_value);
 			if (value != new_value) {
 				value = new_value;
 				return true;
 			}
 		}
 		return false;
+	}
+	/// Invoke the script on a value if it is in the default state
+	template <typename T>
+	bool invokeOnDefault(Context& ctx, Defaultable<T>& value) const {
+		if (value.isDefault() && invokeOn(ctx, value)) {
+			value.setDefault(); // restore defaultness
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	/// Initialize things this script depends on by adding dep to their list of dependent scripts
@@ -67,6 +78,9 @@ class OptionalScript {
 	DECLARE_REFLECTION();
 	template <typename T> friend class Scriptable;
 };
+
+template <typename T>
+inline ScriptValueP toScript(const Defaultable<T>& v) { return toScript(v.get()); }
 
 // ----------------------------------------------------------------------------- : Scriptable
 

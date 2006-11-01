@@ -13,20 +13,18 @@
 // ----------------------------------------------------------------------------- : ScriptValue
 // Base cases
 
-ScriptValue::operator String() const { return _("[[") + typeName() + _("]]"); }
-ScriptValue::operator int()    const { throw ScriptError(_("Can't convert from ")+typeName()+_(" to integer number")); }
-ScriptValue::operator double() const { throw ScriptError(_("Can't convert from ")+typeName()+_(" to real number"   )); }
-ScriptValue::operator Color()  const { throw ScriptError(_("Can't convert from ")+typeName()+_(" to color"         )); }
-ScriptValueP ScriptValue::eval(Context&) const
-                                     { throw ScriptError(_("Can't convert from ")+typeName()+_(" to function"      )); }
-ScriptValueP ScriptValue::getMember(const String& name) const
-                                     { throw ScriptError(typeName() + _(" has no member '") + name + _("'")); }
-ScriptValueP ScriptValue::next()               { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
-ScriptValueP ScriptValue::makeIterator() const { throw ScriptError(  _("Can't convert from ")+typeName()+_(" to collection")); }
-int          ScriptValue::itemCount()    const { throw ScriptError(  _("Can't convert from ")+typeName()+_(" to collection")); }
+ScriptValue::operator String()                          const { return _("[[") + typeName() + _("]]"); }
+ScriptValue::operator int()                             const { throw ScriptError(  _("Can't convert from ")+typeName()+_(" to integer number")); }
+ScriptValue::operator double()                          const { throw ScriptError(  _("Can't convert from ")+typeName()+_(" to real number"   )); }
+ScriptValue::operator Color()                           const { throw ScriptError(  _("Can't convert from ")+typeName()+_(" to color"         )); }
+ScriptValueP ScriptValue::eval(Context&)                const { throw ScriptError(  _("Can't convert from ")+typeName()+_(" to function"      )); }
+ScriptValueP ScriptValue::getMember(const String& name) const { throw ScriptError(typeName() + _(" has no member '") + name + _("'")); }
+ScriptValueP ScriptValue::next()                              { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
+ScriptValueP ScriptValue::makeIterator()                const { throw ScriptError(  _("Can't convert from ")+typeName()+_(" to collection")); }
+int          ScriptValue::itemCount()                   const { throw ScriptError(  _("Can't convert from ")+typeName()+_(" to collection")); }
 
 void ScriptValue::signalDependent(Context&, const Dependency&, const String& name) {}
-ScriptValueP ScriptValue::dependencies(   Context&, const Dependency&) const { return script_nil; }
+ScriptValueP ScriptValue::dependencies(Context&, const Dependency&) const { return dependency_dummy; }
 
 
 // ----------------------------------------------------------------------------- : Iterators

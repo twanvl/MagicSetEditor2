@@ -11,8 +11,10 @@
 
 #include <util/prec.hpp>
 #include <util/action_stack.hpp>
+#include <util/age.hpp>
 #include <script/context.hpp>
 #include <script/dependency.hpp>
+#include <queue>
 
 class Set;
 class Value;
@@ -37,9 +39,12 @@ class ScriptManager : public ActionListener {
   public:
 	ScriptManager(Set& set);
 	~ScriptManager();
-		
+	
 	/// Get a context to use for the set, for a given stylesheet
 	Context& getContext(const StyleSheetP& s);
+	
+	// Update all styles for a particular card
+	void updateStyles(const CardP& card);
 	
   private:
 	Set&                            set;		///< Set for which we are managing scripts
@@ -48,18 +53,29 @@ class ScriptManager : public ActionListener {
 	void initDependencies(Context&, Game&);
 	void initDependencies(Context&, StyleSheet&);
 	
-	// Update all styles for a particular card
-	void updateStyles(const CardP& card);
 	/// Updates scripts, starting at some value
 	/** if the value changes any dependend values are updated as well */
-	void updateValue(Value* value, const CardP& card);
+	void updateValue(Value& value, const CardP& card);
 	/// Update all fields of all cards
 	/** Update all set info fields
 	 *  Doesn't update styles
 	 */
 	void updateAll();
 	// Update all values with a specific dependency
-	void updateAllDependend(const vector<Dependency>& dependendScripts);
+	void updateAllDependend(const vector<Dependency>& dependent_scripts);
+	
+	// Something that needs to be updated
+	struct ToUpdate {
+		Value* value;  // value to update
+		CardP  card;   // card the value is in, or 0 if it is not a card field
+	};
+	/// Update all things in to_update, and things that depent on them, etc.
+	/** Only update things that are older than starting_age. */
+	void updateRecursive(deque<ToUpdate>& to_update, Age starting_age);
+	/// Update a value given by a ToUpdate object, and add things depending on it to to_update
+	void updateToUpdate(const ToUpdate& u, deque<ToUpdate>& to_update, Age starting_age);
+	/// Schedule all things in deps to be updated by adding them to to_update
+	void alsoUpdate(deque<ToUpdate>& to_update, const vector<Dependency>& deps, const CardP& card);
 	
   protected:
 	/// Respond to actions by updating scripts

@@ -99,6 +99,14 @@ template <> StyleP read_new<Style>(Reader&) {
 	throw InternalError(_("IndexMap contains nullptr StyleP the application should have crashed already"));
 }
 
+bool Style::update(Context& ctx) {
+	return left   .update(ctx)
+	     | top    .update(ctx)
+	     | width  .update(ctx)
+	     | height .update(ctx)
+	     | visible.update(ctx);
+}
+
 void Style::initDependencies(Context& ctx, const Dependency& dep) const {
 	left   .initDependencies(ctx,dep);
 	top    .initDependencies(ctx,dep);

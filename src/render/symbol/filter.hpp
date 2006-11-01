@@ -94,6 +94,7 @@ class LinearGradientSymbolFilter : public GradientSymbolFilter {
   private:
 	double center_x, center_y;
 	double end_x,    end_y;
+	mutable double len;
 	DECLARE_REFLECTION();
 };
 

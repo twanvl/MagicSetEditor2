@@ -36,7 +36,9 @@ class ChoiceField : public Field {
 	OptionalScript default_script;	///< Script that generates the default value
 	String initial;					///< Initial choice of a new value, or ""
 	String default_name;			///< Name of "default" value
-		
+	
+	virtual void initDependencies(Context&, const Dependency&) const;
+	
   private:
 	DECLARE_REFLECTION();
 };
@@ -123,6 +125,9 @@ class ChoiceStyle : public Style {
 	ImageCombine				combine;		///< Combining mode for drawing the images
 	Alignment					alignment;		///< Alignment of images
 	
+	virtual bool update(Context&);
+	virtual void initDependencies(Context&, const Dependency&) const;
+	
   private:
 	DECLARE_REFLECTION();
 };
@@ -138,6 +143,7 @@ class ChoiceValue : public Value {
 	Defaultable<String> value;	/// The name of the selected choice
 	
 	virtual String toString() const;
+	virtual bool update(Context&);
 	
   private:
 	DECLARE_REFLECTION();

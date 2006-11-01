@@ -24,9 +24,9 @@ void store(const ScriptValueP& val, Defaultable<String>& var) { var.assign(*val)
 
 OptionalScript::~OptionalScript() {}
 
-ScriptValueP OptionalScript::invoke(Context& ctx) const {
+ScriptValueP OptionalScript::invoke(Context& ctx, bool open_scope) const {
 	if (script) {
-		return ctx.eval(*script);
+		return ctx.eval(*script, open_scope);
 	} else {
 		return script_nil;
 	}

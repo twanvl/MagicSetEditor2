@@ -97,6 +97,9 @@ IMPLEMENT_REFLECTION(GradientSymbolFilter) {
 
 // ----------------------------------------------------------------------------- : LinearGradientSymbolFilter
 
+// TODO: move to some general util header
+inline double sqr(double x) { return x * x; }
+
 String LinearGradientSymbolFilter::fillType() const { return _("linear gradient"); }
 
 LinearGradientSymbolFilter::LinearGradientSymbolFilter()
@@ -105,12 +108,14 @@ LinearGradientSymbolFilter::LinearGradientSymbolFilter()
 {}
 
 AColor LinearGradientSymbolFilter::color(double x, double y, SymbolSet point) const {
+	len = sqr(end_x - center_x) + sqr(end_y - center_y);
+	if (len == 0) len = 1; // prevent div by 0
 	return GradientSymbolFilter::color(x,y,point,this);
 }
 
 double LinearGradientSymbolFilter::t(double x, double y) const {
-	//return abs( int(x - center_x) * dirX + int(y - centerY) * dirY)  * scale;
-	return 0; // todo
+	double t= abs( (x - center_x) * (end_x - center_x) + (y - center_y) * (end_y - center_y)) / len;
+	return min(1.,max(0.,t));
 }
 
 IMPLEMENT_REFLECTION(LinearGradientSymbolFilter) {
@@ -126,9 +131,6 @@ String RadialGradientSymbolFilter::fillType() const { return _("radial gradient"
 AColor RadialGradientSymbolFilter::color(double x, double y, SymbolSet point) const {
 	return GradientSymbolFilter::color(x,y,point,this);
 }
-
-// TODO: move to some general util header
-inline double sqr(double x) { return x * x; }
 
 double RadialGradientSymbolFilter::t(double x, double y) const {
 	return sqrt( (sqr(x - 0.5) + sqr(y - 0.5)) * 2); 

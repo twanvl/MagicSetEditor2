@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
 #include <util/alignment.hpp>
+#include <util/age.hpp>
 #include <script/scriptable.hpp>
 #include <script/dependency.hpp>
 
@@ -96,6 +97,8 @@ class Style {
 	/** thisP is a smart pointer to this */
 	virtual ValueEditorP makeEditor(DataEditor& parent, const StyleP& thisP) = 0;
 	
+	/// Update scripted values of this style, return true if anything has changed
+	virtual bool update(Context&);
 	/// Add the given dependency to the dependet_scripts list for the variables this style depends on
 	virtual void initDependencies(Context&, const Dependency&) const;
 	
@@ -116,10 +119,13 @@ class Value {
 	inline Value(const FieldP& field) : fieldP(field) {}
 	virtual ~Value();
 	
-	const FieldP       fieldP;			///< Field this value is for, should have the right type!
-		
+	const FieldP fieldP;				///< Field this value is for, should have the right type!
+	Age          last_script_update;	///< When where the scripts last updated? (by calling update)
+	
 	/// Convert this value to a string for use in tables
 	virtual String toString() const = 0;
+	/// Apply scripts to this value, return true if the value has changed
+	virtual bool update(Context&) { last_script_update.update(); return false; }
 	
   private:
 	DECLARE_REFLECTION_VIRTUAL();
