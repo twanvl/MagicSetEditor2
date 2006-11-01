@@ -41,7 +41,9 @@ class ScriptManager : public ActionListener {
 	~ScriptManager();
 	
 	/// Get a context to use for the set, for a given stylesheet
-	Context& getContext(const StyleSheetP& s);
+	Context& getContext(const StyleSheetP&);
+	/// Get a context to use for the set, for a given card
+	Context& getContext(const CardP&);
 	
 	// Update all styles for a particular card
 	void updateStyles(const CardP& card);
@@ -66,8 +68,8 @@ class ScriptManager : public ActionListener {
 	
 	// Something that needs to be updated
 	struct ToUpdate {
-		Value* value;  // value to update
-		CardP  card;   // card the value is in, or 0 if it is not a card field
+		Value* value;  ///< value to update
+		CardP  card;   ///< card the value is in, or CadP() if it is not a card field
 	};
 	/// Update all things in to_update, and things that depent on them, etc.
 	/** Only update things that are older than starting_age. */

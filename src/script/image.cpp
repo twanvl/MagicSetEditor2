@@ -123,7 +123,7 @@ ScriptImageP ScriptableImage::update(Context& ctx, Package& pkg, UInt width, UIn
 bool ScriptableImage::upToDate(Context& ctx, Age age) const {
 	try {
 		WITH_DYNAMIC_ARG(last_update_age, age.get());
-		return (int)*script.invoke(ctx);
+		return script_image_up_to_date(script.invoke(ctx));
 	} catch (Error e) {
 		return true; // script gives errors, don't update
 	}

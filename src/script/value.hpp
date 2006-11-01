@@ -68,9 +68,15 @@ class ScriptValue {
 		
 	/// Get a member variable from this value
 	virtual ScriptValueP getMember(const String& name) const;
+	/// Signal that a script depends on a member of this value
+	/** It is the abstract version of getMember*/
+	virtual ScriptValueP dependencyMember(const String& name, const Dependency&) const;
 	
 	/// Evaluate this value (if it is a function)
 	virtual ScriptValueP eval(Context&) const;
+	/// Mark the scripts that this function depends on
+	/** Return value is an abstract version of the return value of eval */
+	virtual ScriptValueP dependencies(Context&, const Dependency&) const;
 	
 	/// Return an iterator for the current collection, an iterator is a value that has next()
 	virtual ScriptValueP makeIterator() const;
@@ -79,11 +85,6 @@ class ScriptValue {
 	/// Return the number of items in this value (assuming it is a collection)
 	virtual int itemCount() const;
 	
-	/// Signal that a script depends on a member of this value
-	virtual void signalDependent(Context&, const Dependency&, const String& name);
-	/// Mark the scripts that this function depends on
-	/** Return value is an abstract version of the return value of eval */
-	virtual ScriptValueP dependencies(Context&, const Dependency&) const;
 	
   protected:
 	/// Delete this object
@@ -158,7 +159,7 @@ class ScriptCollection : public ScriptValue {
 	virtual String typeName() const { return _("collection"); }
 	virtual ScriptValueP getMember(const String& name) const {
 		long index;
-		if (name.ToLong(&index)) {
+		if (name.ToLong(&index) && index >= 0 && (size_t)index < value->size()) {
 			return toScript(value->at(index));
 		} else {
 			throw ScriptError(_("Collection has no member ") + name);
@@ -220,14 +221,31 @@ class ScriptObject : public ScriptValue {
 	inline ScriptObject(const T& v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_OBJECT; }
 	virtual String typeName() const { return _("object"); }
+	virtual operator String() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator String(); }
+	virtual operator double() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator double(); }
+	virtual operator int()    const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator int(); }
+	virtual operator Color()  const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator Color(); }
 	virtual ScriptValueP getMember(const String& name) const {
 		GetMember gm(name);
 		gm.handle(*value);
 		if (gm.result()) return gm.result();
-		else             throw  ScriptError(_("Object has no member '") + name + _("'"));
+		else {
+			// try nameless member
+			ScriptValueP d = getDefault();
+			if (d) {
+				return d->getMember(name);
+			} else {
+				throw  ScriptError(_("Object has no member '") + name + _("'"));
+			}
+		}
 	}
   private:
 	T value; ///< The object
+	ScriptValueP getDefault() const {
+		GetDefaultMember gdm;
+		gdm.handle(*value);
+		return gdm.result();
+	}
 };
 
 // ----------------------------------------------------------------------------- : Creating

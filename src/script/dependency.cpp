@@ -25,8 +25,6 @@ class DependencyDummy : public ScriptIterator {
 	virtual ScriptType type() const { return SCRIPT_DUMMY; }
 	virtual String typeName() const { return _("dummy"); }
 	virtual ScriptValueP next() { return ScriptValueP(); }
-	virtual ScriptValueP eval(Context&)           const { return dependency_dummy; } // dummy() == dummy
-	virtual ScriptValueP getMember(const String&) const { return dependency_dummy; } // dummy.* = dummy
 };
 
 ScriptValueP dependency_dummy(new DependencyDummy);
@@ -51,6 +49,9 @@ class DependencyUnion : public ScriptValue {
 	}
 	virtual ScriptValueP makeIterator() const {
 		return unified(a->makeIterator(), b->makeIterator());
+	}
+	virtual ScriptValueP dependencyMember(const String& name, const Dependency& dep) const {
+		return unified(a->dependencyMember(name,dep), b->dependencyMember(name,dep));
 	}
   private:
 	ScriptValueP a, b;
@@ -212,8 +213,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				// Get an object member (almost as normal)
 				case I_MEMBER_C: {
 					String name = *script.constants[i.data];
-					stack.back()->signalDependent(*this, dep, name); // dependency on member
-					stack.back() = stack.back()->getMember(name);
+					stack.back() = stack.back()->dependencyMember(name, dep); // dependency on member
 					break;
 				}
 				// Loop over a container, push next value or jump (almost as normal)
@@ -295,8 +295,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 							break;
 						case I_MEMBER: {
 							String name = *b;
-							a->signalDependent(*this, dep, name); // dependency on member
-							a = a->getMember(name);
+							a = a->dependencyMember(name, dep); // dependency on member
 							break;
 						} case I_ADD:
 							unify(a, b); // may be function composition

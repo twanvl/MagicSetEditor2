@@ -78,6 +78,15 @@ Context& ScriptManager::getContext(const StyleSheetP& stylesheet) {
 		return *ctx;
 	}
 }
+Context& ScriptManager::getContext(const CardP& card) {
+	Context& ctx = getContext(set.stylesheetFor(card));
+	if (card) {
+		ctx.setVariable(_("card"), toScript(card));
+	} else {
+		ctx.setVariable(_("card"), script_nil);
+	}
+	return ctx;
+}
 
 void ScriptManager::initDependencies(Context& ctx, Game& game) {
 	if (game.dependencies_initialized) return;
@@ -115,7 +124,7 @@ void ScriptManager::onAction(const Action& action, bool undone) {
 void ScriptManager::updateStyles(const CardP& card) {
 //	lastUpdatedCard = card;
 	StyleSheetP stylesheet = set.stylesheetFor(card);
-	Context& ctx = getContext(stylesheet);
+	Context& ctx = getContext(card);
 	// update all styles
 	FOR_EACH(s, stylesheet->card_style) {
 		if (s->update(ctx)) {
@@ -130,7 +139,7 @@ void ScriptManager::updateValue(Value& value, const CardP& card) {
 	Age starting_age; // the start of the update process
 	deque<ToUpdate> to_update;
 	// execute script for initial changed value
-	value.update(getContext(set.stylesheetFor(card)));
+	value.update(getContext(card));
 	// update dependent scripts
 	alsoUpdate(to_update, value.fieldP->dependent_scripts, card);
 	updateRecursive(to_update, starting_age);
@@ -144,7 +153,7 @@ void ScriptManager::updateAll() {
 	}
 	// update card data of all cards
 	FOR_EACH(card, set.cards) {
-		Context& ctx = getContext(set.stylesheetFor(card));
+		Context& ctx = getContext(card);
 		FOR_EACH(v, card->data) {
 			v->update(ctx);
 		}
@@ -171,7 +180,7 @@ void ScriptManager::updateRecursive(deque<ToUpdate>& to_update, Age starting_age
 void ScriptManager::updateToUpdate(const ToUpdate& u, deque<ToUpdate>& to_update, Age starting_age) {
 	Age age = u.value->last_script_update;
 	if (starting_age < age)  return; // this value was already updated
-	Context& ctx = getContext(set.stylesheetFor(u.card));
+	Context& ctx = getContext(u.card);
 	if (u.value->update(ctx)) {
 		// changed, send event
 //		ScriptValueEvent change(&*u.card, u.value);

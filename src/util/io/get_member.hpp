@@ -79,7 +79,9 @@ class GetMember : private GetDefaultMember {
 	/// Handle an object: we are done if the name matches
 	template <typename T>
 	void handle(const Char* name, const T& object) {
-		if (!gdm.result() && name == target_name) gdm.handle(object);
+		if (!gdm.result() && cannocial_name_compare(target_name, name)) {
+			gdm.handle(object);
+		}
 	}
 	/// Handle an object: investigate children
 	template <typename T> void handle(const T&);
