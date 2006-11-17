@@ -17,6 +17,7 @@
 /**  - K must have a unique member ->index of type UInt
  *   - There must exist a function void init_object(Key, Value&)
  *     that stores a new V object for a given key in the reference
+ *     if the value is already set the function should do nothing
  *   - There must exist a function Key get_key(Value)
  *     that returns a key for a given value
  *   - For reflection there must exist a function String get_key_name(Value)
@@ -39,9 +40,10 @@ class IndexMap : private vector<Value> {
 	using vector<Value>::begin;
 	using vector<Value>::end;
 	
-	/// Initialize this map with default values given a list of keys, has no effect if !empty()
+	/// Initialize this map with default values given a list of keys
+	/** has no effect if already initialized with the given keys */
 	void init(const vector<Key>& keys) {
-		if (!this->empty()) return;
+		if (this->size() == keys.size()) return;
 		this->reserve(keys.size());
 		for(vector<Key>::const_iterator it = keys.begin() ; it != keys.end() ; ++it) {
 			const Key& key = *it;

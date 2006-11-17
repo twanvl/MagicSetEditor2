@@ -9,7 +9,7 @@
 
 /** @file util/string.hpp
  *
- *  String and character utility functions and macros
+ *  @brief String and character utility functions and macros
  */
 
 // ----------------------------------------------------------------------------- : Includes

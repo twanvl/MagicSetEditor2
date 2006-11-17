@@ -34,18 +34,23 @@ class StyleSheet : public Packaged {
 	double card_dpi;				///< The resolution of a card in dots per inch
 	Color  card_background;			///< The background color of cards
 	/// The styling for card fields
-	/** The indices should correspond to the set_fields in the Game */
+	/** The indices should correspond to the card_fields in the Game */
 	IndexMap<FieldP, StyleP> card_style;
 	/// The styling for set info fields
 	/** The indices should correspond to the set_fields in the Game */
 	IndexMap<FieldP, StyleP> set_info_style;
+	/// Extra fields for styling
+	vector<FieldP> styling_fields;
+	/// The styling for the extra set fields
+	/** The indices should correspond to the styling_fields */
+	IndexMap<FieldP, StyleP> styling_style;
 	
 	bool dependencies_initialized;	///< are the script dependencies comming from this stylesheet all initialized?
 	
 	/// Load a StyleSheet, given a Game and the name of the StyleSheet
 	static StyleSheetP byGameAndName(const Game& game, const String& name);
 	/// name of the package without the game name
-	String styleName();
+	String stylesheetName() const;
 		
 	static String typeNameStatic();
 	virtual String typeName() const;

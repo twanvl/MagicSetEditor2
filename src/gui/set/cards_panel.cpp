@@ -210,5 +210,5 @@ CardP CardsPanel::selectedCard() const {
 }
 void CardsPanel::selectCard(const CardP& card) {
 	card_list->setCard(card);
-	editor->setCard(*card);
+	editor->setCard(card);
 }

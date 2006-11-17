@@ -34,6 +34,8 @@ class Rotation {
 	inline RealSize getInternalSize() const { return trInv(size); }
 	/// The intarnal rectangle (origin at (0,0))
 	inline RealRect getInternalRect() const { return RealRect(RealPoint(0,0), getInternalSize()); }
+	/// The external rectangle (as passed to the constructor) == trNoNeg(getInternalRect())
+	RealRect getExternalRect() const;
 	
 	/// Translate a size or length
 	inline double trS(double s) const { return  s * zoom; }
@@ -67,6 +69,8 @@ class Rotation {
 	RealPoint origin;		///< tr(0,0)
 	double zoom;			///< Zoom factor, zoom = 2.0 means that 1 internal = 2 external
 	
+	friend class Rotater;
+	
 	/// Is the rotation sideways (90 or 270 degrees)?
 	// Note: angle & 2 == 0 for angle in {0, 180} and != 0 for angle in {90, 270)
 	inline bool sideways() const { return  (angle & 2) != 0; }
@@ -91,11 +95,15 @@ class Rotation {
  *  @endcode
  */
 class Rotater {
+  public:
 	/// Compose a rotation by onto the rotation rot
 	/** rot is restored when this object is destructed
 	 */
 	Rotater(Rotation& rot, const Rotation& by);
 	~Rotater();
+  private:
+	Rotation old;
+	Rotation& rot;
 };
 
 // ----------------------------------------------------------------------------- : RotatedDC

@@ -192,13 +192,13 @@ void Reader::handle(map<String, V>& m) {
 
 template <typename K, typename V>
 void Reader::handle(IndexMap<K,V>& m) {
-	do {
-		UInt l = line_number;
+	//do {
+	//	UInt l = line_number;
 		for (typename IndexMap<K,V>::iterator it = m.begin() ; it != m.end() ; ++it) {
 			handle(get_key_name(*it).c_str(), *it);
 		}
-		if (l == line_number) unknownKey(m);
-	} while (indent >= expected_indent);
+	//	if (l == line_number) unknownKey(m);
+	//} while (indent >= expected_indent);
 }
 
 // ----------------------------------------------------------------------------- : Reflection

@@ -78,11 +78,12 @@ ValueViewerP BooleanStyle       ::makeViewer(DataViewer& parent, const StyleP& t
 ValueViewerP MultipleChoiceStyle::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
 //ValueViewerP ColorStyle         ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
 //ValueViewerP ImageStyle         ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
+IMPLEMENT_MAKE_VIEWER(Text);
 IMPLEMENT_MAKE_VIEWER(Choice);
 IMPLEMENT_MAKE_VIEWER(Color);
 IMPLEMENT_MAKE_VIEWER(Image);
 ValueViewerP SymbolStyle        ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
-ValueViewerP TextStyle          ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
+//ValueViewerP TextStyle          ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
 
 ValueEditorP ChoiceStyle        ::makeEditor(DataEditor& parent, const StyleP& thisP) { return ValueEditorP(); }
 ValueEditorP BooleanStyle       ::makeEditor(DataEditor& parent, const StyleP& thisP) { return ValueEditorP(); }

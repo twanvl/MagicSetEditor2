@@ -35,7 +35,7 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 		dc.DrawRectangle(RealRect(style().left, style().top, 40, style().height));
 		dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 		dc.SetPen(*wxTRANSPARENT_PEN);
-		dc.DrawRectangle(style().getRect() + RealRect(40, 0, -40, 0));
+		dc.DrawRectangle(style().getRect().move(40, 0, -40, 0));
 		dc.DrawText(color_name, style().getPos() + RealSize(43, 3));
 	} else {
 		// do we need clipping?

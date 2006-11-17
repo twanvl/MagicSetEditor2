@@ -214,6 +214,12 @@ class ScriptMap : public ScriptValue {
 
 // ----------------------------------------------------------------------------- : Objects
 
+/// Number of items in some collection like object, can be overloaded
+template <typename T>
+int item_count(const T& v) {
+	return -1;
+}
+
 /// Script value containing an object (pointer)
 template <typename T>
 class ScriptObject : public ScriptValue {
@@ -238,6 +244,10 @@ class ScriptObject : public ScriptValue {
 				throw  ScriptError(_("Object has no member '") + name + _("'"));
 			}
 		}
+	}
+	virtual int itemCount() const {
+		int i = item_count(*value);
+		return i >= 0 ? i : ScriptValue::itemCount();
 	}
   private:
 	T value; ///< The object

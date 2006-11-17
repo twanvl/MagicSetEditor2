@@ -14,6 +14,7 @@
 #include <data/field/text.hpp> // for 0.2.7 fix
 #include <script/value.hpp>
 #include <script/script_manager.hpp>
+#include <wx/sstream.h>
 
 DECLARE_TYPEOF_COLLECTION(CardP);
 typedef IndexMap<FieldP,ValueP> IndexMap_FieldP_ValueP;
@@ -44,6 +45,9 @@ Context& Set::getContext() {
 }
 Context& Set::getContext(const Card& card) {
 	return script_manager->getContext(card.stylesheet ? card.stylesheet : stylesheet);
+}
+void Set::updateFor(const CardP& card) {
+	script_manager->updateStyles(card);
 }
 
 StyleSheetP Set::stylesheetFor(const CardP& card) {
@@ -90,8 +94,16 @@ void Set::validate(Version file_app_version) {
 */	}
 }
 
+// in scripts, set.something is read from the set_info
+template <typename Tag>
+void reflect_set_info_get_member(Tag&       tag, const IndexMap<FieldP, ValueP>& data) {}
+void reflect_set_info_get_member(GetMember& tag, const IndexMap<FieldP, ValueP>& data) {
+	REFLECT_NAMELESS(data);
+}
+
 IMPLEMENT_REFLECTION(Set) {
-	tag.addAlias(300, _("style"), _("stylesheet")); // < 0.3.0 used style instead of stylesheet
+	tag.addAlias(300, _("style"),          _("stylesheet")); // < 0.3.0 used style instead of stylesheet
+	tag.addAlias(300, _("extra set info"), _("styling"));
 	REFLECT(game);
 	if (game) {
 		if (tag.reading()) {
@@ -100,11 +112,54 @@ IMPLEMENT_REFLECTION(Set) {
 		WITH_DYNAMIC_ARG(game_for_reading, game.get());
 		REFLECT(stylesheet);
 		REFLECT_N("set_info", data);
+		if (stylesheet) {
+			REFLECT_N("styling", styling_data);
+		}
 		REFLECT(cards);
 	}
+	reflect_set_info_get_member(tag,data);
 	REFLECT(apprentice_code);
 }
 
+// ----------------------------------------------------------------------------- : Styling
+
+// Extra set data, for a specific stylesheet
+/* The data is not read immediatly, because we do not know the stylesheet */
+class Set::Styling {
+  public:
+	IndexMap<FieldP, ValueP> data;
+	String unread_data;
+	DECLARE_REFLECTION();
+};
+
+IndexMap<FieldP, ValueP>& Set::stylingDataFor(const StyleSheet& stylesheet) {
+	StylingP& styling = styling_data[stylesheet.stylesheetName()];
+	if (!styling) {
+		styling = new_shared<Styling>();
+		styling->data.init(stylesheet.styling_fields);
+	} else if (!styling->unread_data.empty()) {
+		// we delayed the reading of the data, read it now
+		styling->data.init(stylesheet.styling_fields);
+		Reader reader(new_shared1<wxStringInputStream>(styling->unread_data), _("styling data of ") + stylesheet.stylesheetName());
+		reader.handle(styling->data);
+		styling->unread_data.clear();
+	}
+	return styling->data;
+}
+
+// custom reflection : read into unread_data
+template <> void Reader::handle(Set::Styling& s) {
+	handle(s.unread_data);
+}
+template <> void Writer::handle(const Set::Styling& s) {
+	handle(s.data);
+}
+template <> void GetMember::handle(const Set::Styling& s) {
+	handle(s.data);
+}
+template <> void GetDefaultMember::handle(const Set::Styling& s) {
+	handle(s.data);
+}
 
 // ----------------------------------------------------------------------------- : SetView
 

@@ -10,8 +10,24 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <render/value/viewer.hpp>
+#include <render/text/viewer.hpp>
+#include <data/field/text.hpp>
 
-// ----------------------------------------------------------------------------- : 
+// ----------------------------------------------------------------------------- : TextValueViewer
+
+/// Viewer that displays a text value
+class TextValueViewer : public ValueViewer {
+  public:
+	DECLARE_VALUE_VIEWER(Text) : ValueViewer(parent,style) {}
+	
+	virtual void draw(RotatedDC& dc);
+	virtual void onValueChange();
+	virtual void onStyleChange();
+	
+  private:
+	TextViewer v;
+};
 
 
 // ----------------------------------------------------------------------------- : EOF

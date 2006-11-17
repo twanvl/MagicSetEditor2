@@ -156,7 +156,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 		
 	} catch (...) {
 		// cleanup after an exception
-		if (scope) closeScope(scope); // restore scope
+		if (useScope) closeScope(scope); // restore scope
 		stack.resize(stack_size);     // restore stack
 		throw; // rethrow
 	}
@@ -307,4 +307,9 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 // ----------------------------------------------------------------------------- : Simple instructions : ternary
 
 void instrTernary(TernaryInstructionType i, ScriptValueP& a, const ScriptValueP& b, const ScriptValueP& c) {
+	switch (i) {
+		case I_RGB:
+			a = toScript(Color((int)*a, (int)*b, (int)*c));
+			break;
+	}
 }

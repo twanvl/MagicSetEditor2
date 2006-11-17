@@ -22,6 +22,12 @@ String TextField::typeName() const {
 	return _("text");
 }
 
+void TextField::initDependencies(Context& ctx, const Dependency& dep) const {
+	Field        ::initDependencies(ctx, dep);
+	script        .initDependencies(ctx, dep);
+	default_script.initDependencies(ctx, dep);
+}
+
 
 IMPLEMENT_REFLECTION(TextField) {
 	REFLECT_BASE(Field);
@@ -48,10 +54,19 @@ TextStyle::TextStyle(const TextFieldP& field)
 	, line_height_line(1.0)
 {}
 
+bool TextStyle::update(Context& ctx) {
+	return Style::update(ctx)
+	     | font.update(ctx);
+}
+void TextStyle::initDependencies(Context& ctx, const Dependency& dep) const {
+	Style::initDependencies(ctx, dep);
+	font.initDependencies(ctx, dep);
+}
+
 IMPLEMENT_REFLECTION(TextStyle) {
 	REFLECT_BASE(Style);
-//	REFLECT(font);
-//	REFLECT(symbol_font);
+	REFLECT(font);
+	REFLECT(symbol_font);
 	REFLECT(always_symbol);
 	REFLECT(allow_formating);
 	REFLECT(alignment);
@@ -74,6 +89,11 @@ IMPLEMENT_REFLECTION(TextStyle) {
 
 String TextValue::toString() const {
 	return value();
+}
+bool TextValue::update(Context& ctx) {
+	Value::update(ctx);
+	return field().default_script.invokeOnDefault(ctx, value)
+	     | field().        script.invokeOn(ctx, value);
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(TextValue) {

@@ -11,15 +11,25 @@
 
 // ----------------------------------------------------------------------------- : Rotation
 
+// constrain an angle to {0,90,180,270}
+int constrain_angle(int angle) {
+	int a = ((angle + 45) % 360 + 360) % 360; // [0..360)
+	return (a / 90) * 90; // multiple of 90
+}
+
 Rotation::Rotation(int angle, const RealRect& rect, double zoom)
-	: angle(angle)
+	: angle(constrain_angle(angle))
 	, size(rect.size)
 	, origin(rect.position)
 	, zoom(zoom)
 {
 	// set origin
 	if (revX()) origin.x += size.width;
-	if (revY()) origin.x += size.height;
+	if (revY()) origin.y += size.height;
+}
+
+RealRect Rotation::getExternalRect() const {
+	return RealRect(origin - RealSize(revX() ? size.width : 0, revY() ? size.height : 0), size);
 }
 
 RealPoint Rotation::tr(const RealPoint& p) const {
@@ -72,6 +82,21 @@ RealPoint Rotation::trInv(const RealPoint& p) const {
 
 // ----------------------------------------------------------------------------- : Rotater
 
+Rotater::Rotater(Rotation& rot, const Rotation& by)
+	: old(rot)
+	, rot(rot)
+{
+	// apply rotation
+	RealRect new_ext = rot.trNoNeg(by.getExternalRect());
+	rot.angle = constrain_angle(rot.angle + by.angle);
+	rot.zoom *= by.zoom;
+	rot.size   = new_ext.size;
+	rot.origin = new_ext.position + RealSize(rot.revX() ? rot.size.width : 0, rot.revY() ? rot.size.height : 0);
+}
+
+Rotater::~Rotater() {
+	rot = old; // restore
+}
 
 // ----------------------------------------------------------------------------- : RotatedDC
 

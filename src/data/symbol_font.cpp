@@ -6,20 +6,20 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
-#include <render/value/text.hpp>
-#include <render/card/viewer.hpp>
+#include <data/symbol_font.hpp>
 
-// ----------------------------------------------------------------------------- : TextValueViewer
+// ----------------------------------------------------------------------------- : SymbolFont
+// ----------------------------------------------------------------------------- : SymbolFontRef
 
-void TextValueViewer::draw(RotatedDC& dc) {
-	drawFieldBorder(dc);
-	v.draw(dc, value().value(), style(), viewer.getContext(), DRAW_NORMAL);
-}
+SymbolFontRef::SymbolFontRef()
+	: size(12)
+	, scale_down_to(1)
+	, alignment(ALIGN_MIDDLE_CENTER)
+{}
 
-void TextValueViewer::onValueChange() {
-	v.reset();
-}
-
-void TextValueViewer::onStyleChange() {
-	v.reset();
+IMPLEMENT_REFLECTION(SymbolFontRef) {
+	REFLECT(name);
+	REFLECT(size);
+	REFLECT(scale_down_to);
+	REFLECT(alignment);
 }

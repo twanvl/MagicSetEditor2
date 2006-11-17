@@ -135,9 +135,10 @@ void TokenIterator::readToken() {
 			input = more.top().input;
 			pos   = more.top().pos;
 			more.pop();
+		} else {
+			// EOF
+			addToken(TOK_EOF, _("end of input"));
 		}
-		// EOF
-		addToken(TOK_EOF, _("end of input"));
 		return;
 	}
 	// read a character from the input

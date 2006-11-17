@@ -54,7 +54,7 @@ class DataViewer : public SetView {
 	// --------------------------------------------------- : Setting data
 	
 	/// Display a card in this viewer
-	void setCard(Card& card);
+	void setCard(const CardP& card);
 	
 	// --------------------------------------------------- : The viewers
   protected:
@@ -74,7 +74,8 @@ class DataViewer : public SetView {
 	virtual void onChange() {}
 	
   private:
-	vector<ValueViewerP> viewers; ///< The viewers for the different values in the data
+	vector<ValueViewerP> viewers;	///< The viewers for the different values in the data
+	CardP card;						///< The card that is currently displayed, if any
 };
 
 // ----------------------------------------------------------------------------- : EOF

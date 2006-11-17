@@ -13,6 +13,7 @@
 
 // ----------------------------------------------------------------------------- : GetDefaultMember
 
+template <> void GetDefaultMember::handle(const Char* const&  v) { value = toScript(v); }
 template <> void GetDefaultMember::handle(const String&       v) { value = toScript(v); }
 template <> void GetDefaultMember::handle(const int&          v) { value = toScript(v); }
 template <> void GetDefaultMember::handle(const unsigned int& v) { value = toScript((int)v); }

@@ -14,7 +14,8 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
-#include "../util/prec.hpp"
+#include <util/prec.hpp>
+#include <util/real_point.hpp>
 
 // ----------------------------------------------------------------------------- : Resampling
 
@@ -102,6 +103,46 @@ void combine_image(Image& a, const Image& b, ImageCombine combine);
 
 /// Draw an image to a DC using a combining function
 void draw_combine_image(DC& dc, UInt x, UInt y, const Image& img, ImageCombine combine);
+
+// ----------------------------------------------------------------------------- : Masks
+
+/// An alpha mask is an alpha channel that can be copied to another image
+/** It is created by treating black in the source image as transparent and white (red) as opaque
+ */
+class AlphaMask {
+  public:
+	AlphaMask();
+	~AlphaMask();
+	
+	// TODO
+	
+  private:
+	Byte* alpha;
+};
+
+/// A contour mask stores the size and position of each line in the image
+/** It is created by treating black in the source image as transparent and white (red) as opaque
+ *  The left is the first non-transparent pixel, the right is the last non-transparent pixel
+ */
+class ContourMask {
+  public:
+	ContourMask();
+	~ContourMask();
+	
+	/// Load a contour mask
+	void load(const String& filename);
+	/// Unload the mask
+	void unload();
+	
+	/// Returns the start of a row, when the mask were stretched to size
+	double rowLeft (double y, RealSize size) const;
+	/// Returns the end of a row, when the mask were stretched to size
+	double rowRight(double y, RealSize size) const;
+	
+  private:
+	UInt width, height;
+	UInt *lefts, *rights;
+};
 
 // ----------------------------------------------------------------------------- : Utility
 

@@ -6,20 +6,14 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
-#include <render/value/text.hpp>
-#include <render/card/viewer.hpp>
+#include <render/text/element.hpp>
 
-// ----------------------------------------------------------------------------- : TextValueViewer
+// ----------------------------------------------------------------------------- : SymbolTextElement
 
-void TextValueViewer::draw(RotatedDC& dc) {
-	drawFieldBorder(dc);
-	v.draw(dc, value().value(), style(), viewer.getContext(), DRAW_NORMAL);
+void SymbolTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, DrawWhat what, size_t start, size_t end) const {
+	// TODO
 }
 
-void TextValueViewer::onValueChange() {
-	v.reset();
-}
-
-void TextValueViewer::onStyleChange() {
-	v.reset();
+void SymbolTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const {
+	// TODO
 }

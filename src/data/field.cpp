@@ -93,7 +93,7 @@ IMPLEMENT_REFLECTION(Style) {
 }
 
 void init_object(const FieldP& field, StyleP& style) {
-	style = field->newStyle(field);
+	if (!style) style = field->newStyle(field);
 }
 template <> StyleP read_new<Style>(Reader&) {
 	throw InternalError(_("IndexMap contains nullptr StyleP the application should have crashed already"));
@@ -123,7 +123,7 @@ IMPLEMENT_REFLECTION_NAMELESS(Value) {
 }
 
 void init_object(const FieldP& field, ValueP& value) {
-	value = field->newValue(field);
+	if (!value) value = field->newValue(field);
 }
 template <> ValueP read_new<Value>(Reader&) {
 	throw InternalError(_("IndexMap contains nullptr ValueP the application should have crashed already"));

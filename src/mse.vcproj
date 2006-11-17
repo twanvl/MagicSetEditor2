@@ -632,13 +632,40 @@
 				RelativePath=".\data\card.hpp">
 			</File>
 			<File
+				RelativePath=".\data\font.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug Unicode|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Unicode|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\data\font.hpp">
+			</File>
+			<File
 				RelativePath=".\data\game.cpp">
 			</File>
 			<File
 				RelativePath=".\data\game.hpp">
-			</File>
-			<File
-				RelativePath=".\data\locale.hpp">
 			</File>
 			<File
 				RelativePath=".\data\set.cpp">
@@ -675,6 +702,12 @@
 			</File>
 			<File
 				RelativePath=".\data\symbol.hpp">
+			</File>
+			<File
+				RelativePath=".\data\symbol_font.cpp">
+			</File>
+			<File
+				RelativePath=".\data\symbol_font.hpp">
 			</File>
 			<Filter
 				Name="action"
@@ -886,6 +919,12 @@
 			</File>
 			<File
 				RelativePath=".\util\string.hpp">
+			</File>
+			<File
+				RelativePath=".\util\tagged_string.cpp">
+			</File>
+			<File
+				RelativePath=".\util\tagged_string.hpp">
 			</File>
 			<File
 				RelativePath=".\util\window_id.hpp">
@@ -1184,36 +1223,6 @@
 				Name="value"
 				Filter="">
 				<File
-					RelativePath=".\render\value\boolean.cpp">
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug Unicode|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Release Unicode|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath=".\render\value\boolean.hpp">
-				</File>
-				<File
 					RelativePath=".\render\value\choice.cpp">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1484,6 +1493,67 @@
 				</File>
 				<File
 					RelativePath=".\render\symbol\viewer.hpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="text"
+				Filter="">
+				<File
+					RelativePath=".\render\text\element.cpp">
+				</File>
+				<File
+					RelativePath=".\render\text\element.hpp">
+				</File>
+				<File
+					RelativePath=".\render\text\font.cpp">
+				</File>
+				<File
+					RelativePath=".\render\text\line.cpp">
+				</File>
+				<File
+					RelativePath=".\render\text\symbol.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\render\text\viewer.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\render\text\viewer.hpp">
 				</File>
 			</Filter>
 		</Filter>

@@ -33,6 +33,8 @@ void DataViewer::draw(RotatedDC& dc) {
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(set->stylesheet->card_background);
 	dc.DrawRectangle(dc.getInternalRect());
+	// update style scripts
+	if (card) set->updateFor(card);
 	// draw values
 	FOR_EACH(v, viewers) { // draw low z index fields first
 		if (v->getStyle()->visible) {// visible
@@ -52,10 +54,11 @@ Context& DataViewer::getContext()  const { return set->getContext(); }
 
 // ----------------------------------------------------------------------------- : Setting data
 
-void DataViewer::setCard(Card& card) {
+void DataViewer::setCard(const CardP& card) {
 	assert(set);
+	this->card = card;
 	setStyles(set->stylesheet->card_style);
-	setData(card.data);
+	setData(card->data);
 }
 
 // ----------------------------------------------------------------------------- : Viewers

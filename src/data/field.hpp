@@ -99,7 +99,7 @@ class Style {
 	
 	/// Update scripted values of this style, return true if anything has changed
 	virtual bool update(Context&);
-	/// Add the given dependency to the dependet_scripts list for the variables this style depends on
+	/// Add the given dependency to the dependent_scripts list for the variables this style depends on
 	virtual void initDependencies(Context&, const Dependency&) const;
 	
   private:

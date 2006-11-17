@@ -24,6 +24,14 @@ StyleSheet::StyleSheet()
 StyleSheetP StyleSheet::byGameAndName(const Game& game, const String& name) {
 	return packages.open<StyleSheet>(game.name() + _("-") + name + _(".mse-style"));
 }
+String StyleSheet::stylesheetName() const {
+	String sn = name(), gn = game->name();
+	if (sn.size() + 1 > gn.size()) {
+		return sn.substr(gn.size() + 1); // remove "gamename-"
+	} else {
+		return sn;
+	}
+}
 
 String StyleSheet::typeNameStatic() { return _("style"); }
 String StyleSheet::typeName() const { return _("style"); }
@@ -36,6 +44,7 @@ InputStreamP StyleSheet::openIconFile() {
 		return game->openIconFile(); // use game icon by default
 	}
 }
+
 IMPLEMENT_REFLECTION(StyleSheet) {
 	// < 0.3.0 didn't use card_ prefix
 	tag.addAlias(300, _("width"),      _("card width"));
@@ -44,6 +53,8 @@ IMPLEMENT_REFLECTION(StyleSheet) {
 	tag.addAlias(300, _("background"), _("card background"));
 	tag.addAlias(300, _("info style"), _("set info style"));
 	tag.addAlias(300, _("align"),      _("alignment"));
+	tag.addAlias(300, _("extra field"),_("styling field"));
+	tag.addAlias(300, _("extra style"),_("styling style"));
 	
 	REFLECT(game);
 	REFLECT(full_name);
@@ -61,9 +72,9 @@ IMPLEMENT_REFLECTION(StyleSheet) {
 		REFLECT(card_style);
 		REFLECT(set_info_style);
 	}
-//	io(_("extra field"), extraSetFields);
-//	extraInfoStyle.init(extraSetFields);
-//	io(_("extra style"), extraInfoStyle);
+	REFLECT(styling_fields);
+	if (tag.reading()) styling_style.init(styling_fields);
+	REFLECT(styling_style);
 }
 
 void StyleSheet::validate(Version) {

@@ -162,6 +162,10 @@ class ScriptString : public ScriptValue {
 		long l;
 		if (value.ToLong(&l)) {
 			return l;
+		} else if (value == _("yes") || value == _("true")) {
+			return true;
+		} else if (value == _("no") || value == _("false")) {
+			return false;
 		} else {
 			throw ScriptError(_("Not a number: '") + value + _("'"));
 		}
@@ -193,6 +197,7 @@ class ScriptColor : public ScriptValue {
 	ScriptColor(const Color& v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_COLOR; }
 	virtual String typeName() const { return _("color"); }
+	virtual operator Color()  const { return value; }
   private:
 	Color value;
 };

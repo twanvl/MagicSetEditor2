@@ -19,6 +19,7 @@ DECLARE_POINTER_TYPE(Card);
 DECLARE_POINTER_TYPE(Set);
 DECLARE_POINTER_TYPE(Game);
 DECLARE_POINTER_TYPE(StyleSheet);
+DECLARE_POINTER_TYPE(Styling);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
 class ScriptManager;
@@ -44,6 +45,9 @@ class Set : public Packaged {
 	/// The values on the fields of the set
 	/** The indices should correspond to the set_fields in the Game */
 	IndexMap<FieldP, ValueP> data;
+	/// Extra values for specitic stylesheets, indexed by stylesheet name
+	DECLARE_POINTER_TYPE(Styling);
+	map<String, StylingP> styling_data;
 	/// The cards in the set
 	vector<CardP> cards;
 	/// Code to use for apprentice (Magic only)
@@ -57,9 +61,14 @@ class Set : public Packaged {
 	/// A context for performing scripts on a particular card
 	/** Should only be used from the main thread! */
 	Context& getContext(const Card& card);
+	/// Update styles for a card
+	void updateFor(const CardP& card);
 	
 	/// Stylesheet to use for a particular card
 	StyleSheetP stylesheetFor(const CardP& card);
+	
+	/// Styling information for a particular stylesheet
+	IndexMap<FieldP, ValueP>& stylingDataFor(const StyleSheet&);
 	
   protected:
 	virtual String typeName() const;
@@ -71,6 +80,9 @@ class Set : public Packaged {
 	scoped_ptr<ScriptManager> script_manager;
 };
 
+inline int item_count(const Set& set) {
+	return (int)set.cards.size();
+}
 
 // ----------------------------------------------------------------------------- : SetView
 

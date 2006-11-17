@@ -41,7 +41,7 @@ class RealSize {
 	{}
 	
 	/// Addition of two sizes
-	inline void operator += (const RealSize& s2) {
+/*	inline void operator += (const RealSize& s2) {
 		width  += s2.width;
 		height += s2.height;
 	}
@@ -62,7 +62,7 @@ class RealSize {
 	inline RealSize operator - () const {
 		return RealSize(-width, -height);
 	}
-	
+*/	
 	/// Multiplying a size by a scalar r, multiplies both components
 	inline void operator *= (double r) {
 		width  *= r;
@@ -82,6 +82,26 @@ class RealSize {
 		return wxSize(realRound(width), realRound(height));
 	}
 };
+
+/// Add two sizes horizontally
+/**  ####   $$$    ####$$$
+ *   #### + $$$  = ####$$$
+ *   ####          ####...
+ */
+inline RealSize addHorizontal(const RealSize& a, const RealSize& b) {
+	return RealSize(a.width + b.width, max(a.height, b.height));
+}
+
+/// Add two sizes vertically
+/**  ####   $$$    ####
+ *   #### + $$$  = ####
+ *   ####          ####
+ *                 $$$.
+ *                 $$$.
+ */
+inline RealSize addVertical(const RealSize& a, const RealSize& b) {
+	return RealSize(max(a.width, b.width), a.height + b.height);
+}
 
 // ----------------------------------------------------------------------------- : Rectangle using doubles
 
@@ -110,9 +130,9 @@ class RealRect {
 	inline RealRect grow(double amount) {
 		return RealRect(position.x - amount, position.y - amount, size.width + 2 * amount, size.height + 2 * amount);
 	}
-	
-	inline RealRect operator + (const RealRect& r) const {
-		return RealRect(position + r.position, size + r.size);
+	/// Move the coordinates by some amount
+	inline RealRect move(double dx, double dy, double dw, double dh) {
+		return RealRect(position.x + dx, position.y + dy, size.width + dw, size.height + dh);
 	}
 };
 

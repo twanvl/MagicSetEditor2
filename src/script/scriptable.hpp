@@ -25,6 +25,7 @@ void store(const ScriptValueP& val, String& var);
 void store(const ScriptValueP& val, int&    var);
 void store(const ScriptValueP& val, double& var);
 void store(const ScriptValueP& val, bool&   var);
+void store(const ScriptValueP& val, Color&  var);
 void store(const ScriptValueP& val, Defaultable<String>& var);
 
 // ----------------------------------------------------------------------------- : OptionalScript

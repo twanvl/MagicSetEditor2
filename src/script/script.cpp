@@ -15,11 +15,17 @@
 typedef map<String, unsigned int> Variables;
 Variables variables;
 DECLARE_TYPEOF(Variables);
+#ifdef _DEBUG
+	vector<String> variable_names;
+#endif
 
 /// Return a unique name for a variable to allow for faster loopups
 unsigned int string_to_variable(const String& s) {
 	map<String, unsigned int>::iterator it = variables.find(s);
 	if (it == variables.end()) {
+		#ifdef _DEBUG
+			variable_names.push_back(s);
+		#endif
 		unsigned int v = (unsigned int)variables.size();
 		variables.insert(make_pair(s,v));
 		return v;
