@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <gui/control/gallery_list.hpp>
+#include <gfx/gfx.hpp>
 
 // ----------------------------------------------------------------------------- : Events
 
@@ -109,14 +110,6 @@ void GalleryList::onKeyDown(wxKeyEvent& ev) {
 							update();
 						} break;
 	}
-}
-
-// Linear interpolation between colors
-// MOVE ME, declared in gfx.hpp
-Color lerp(const Color& a, const Color& b, double t) {
-	return Color(a.Red()   + (b.Red()   - a.Red()  ) * t,
-	             a.Green() + (b.Green() - a.Green()) * t,
-	             a.Blue()  + (b.Blue()  - a.Blue() ) * t);
 }
 
 wxSize GalleryList::DoGetBestSize() const {

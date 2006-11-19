@@ -23,25 +23,39 @@ DECLARE_POINTER_TYPE(Graph);
 /** A group is rendered as a single bar or pie slice */
 class GraphGroup {
   public:
+	GraphGroup(const String& name, UInt size, const Color& color = *wxBLACK)
+		: name(name), color(color), size(size)
+	{}
+	
 	String name;	///< Name of this position
 	Color  color;	///< Associated color
-	int    size;	///< Number of elements in this group
+	UInt   size;	///< Number of elements in this group
 };
 
 /// An axis in a graph, consists of a list of groups
 /** The sum of groups.sum = sum of all elements in the data */
 class GraphAxis {
   public:
+	GraphAxis(const String& name, bool auto_color = true)
+		: name(name)
+		, auto_color(auto_color)
+		, max(0)
+	{}
+	
 	String             name;		///< Name/label of this axis
 	bool               auto_color;	///< Automatically assign colors to the groups on this axis
 	vector<GraphGroup> groups;		///< Groups along this axis
-	int                max;			///< Maximum size of the groups
+	UInt               max;			///< Maximum size of the groups
 };
 
 /// A single data point of a graph
 class GraphElement {
   public:
-	vector<String> axis_groups; ///< Group name for each axis
+	GraphElement() {}
+	GraphElement(const String& v1);
+	GraphElement(const String& v1, const String& v2);
+	
+	vector<String> values; ///< Group name for each axis
 };
 
 /// Data to be displayed in a graph, not processed yet
@@ -54,11 +68,11 @@ class GraphDataPre {
 /// Data to be displayed in a graph
 class GraphData {
   public:
-	GraphData(GraphDataPre);
+	GraphData(const GraphDataPre&);
 	
 	vector<GraphAxisP> axes;	///< The axes in the data
-	vector<int>        values;	///< Multi dimensional (dim = axes.size()) array of values
-	int                size;	///< Total number of elements
+	vector<UInt>       values;	///< Multi dimensional (dim = axes.size()) array of values
+	UInt               size;	///< Total number of elements
 };
 
 
@@ -69,7 +83,7 @@ class GraphData {
 class Graph {
   public:
 	/// Draw this graph, filling the internalRect() of the dc.
-	virtual void draw(RotatedDC& dc) = 0;
+	virtual void draw(RotatedDC& dc) const = 0;
 	/// Find the item at the given position, position is normalized to [0..1)
 	virtual bool findItem(const RealPoint& pos, vector<int>& out) const { return false; }
 	/// Change the data
@@ -84,7 +98,7 @@ class Graph {
 class Graph1D : public Graph {
   public:
 	inline Graph1D(size_t axis) : axis(axis) {}
-	virtual bool findItem(const RealPoint& pos, vector<int>& out) const { return false; }
+	virtual bool findItem(const RealPoint& pos, vector<int>& out) const;
   protected:
 	size_t axis;
 	/// Find an item, return the position along the axis, or -1 if not found

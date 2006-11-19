@@ -1241,6 +1241,33 @@
 				RelativePath=".\gfx\blend_image.cpp">
 			</File>
 			<File
+				RelativePath=".\gfx\color.cpp">
+				<FileConfiguration
+					Name="Debug|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug Unicode|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release Unicode|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+				</FileConfiguration>
+			</File>
+			<File
 				RelativePath=".\gfx\combine_image.cpp">
 				<FileConfiguration
 					Name="Release|Win32">
