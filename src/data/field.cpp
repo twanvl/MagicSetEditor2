@@ -24,9 +24,10 @@ Field::Field()
 	, save_value       (true)
 	, show_statistics  (true)
 	, identifying      (false)
-	, card_list_column (-1)
+	, card_list_column (100)
 	, card_list_width  (100)
 	, card_list_allow  (true)
+	, card_list_visible(false)
 	, card_list_align  (ALIGN_LEFT)
 	, tab_index        (0)
 {}
@@ -47,6 +48,7 @@ IMPLEMENT_REFLECTION(Field) {
 	REFLECT(identifying);
 	REFLECT(card_list_column);
 	REFLECT(card_list_width);
+	REFLECT(card_list_visible);
 	REFLECT(card_list_allow);
 	REFLECT(card_list_name);
 	if (tag.reading() && card_list_name.empty()) card_list_name = name;

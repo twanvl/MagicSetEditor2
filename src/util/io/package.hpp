@@ -104,8 +104,8 @@ class Package {
 	
 	/// Open a file given an absolute filename
 	static InputStreamP openAbsoluteFile(const String& name);
-	/*
-	// --------------------------------------------------- : Managing the inside of the package : IO files
+	
+/*	// --------------------------------------------------- : Managing the inside of the package : IO files
 	
 	template <typename T>
 	void readFile<T> (String n, T& obj) {

@@ -159,7 +159,7 @@ void SymbolPart::calculateBounds() {
 // ----------------------------------------------------------------------------- : Symbol
 
 IMPLEMENT_REFLECTION(Symbol) {
-//%% version?
+	tag.handleAppVersion();
 	REFLECT(parts);
 }
 

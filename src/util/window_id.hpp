@@ -163,6 +163,10 @@ enum ControlID {
 ,	ID_SEPARATOR
 ,	ID_REMINDER
 ,	ID_RULES
+,	ID_MOVE_UP
+,	ID_MOVE_DOWN
+,	ID_SHOW
+,	ID_HIDE
 };
 
 // ----------------------------------------------------------------------------- : EOF

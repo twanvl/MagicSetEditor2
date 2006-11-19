@@ -42,9 +42,10 @@ class Field {
 	bool      save_value;       ///< Should values of this field be written to files? Can be false for script generated fields.
 	bool      show_statistics;  ///< Should this field appear as a group by choice in the statistics panel?
 	bool      identifying;      ///< Does this field give Card::identification()?
-	int       card_list_column; ///< What column to use in the card list? -1 = don't list
+	int       card_list_column; ///< What column to use in the card list?
 	UInt      card_list_width;  ///< Width of the card list column (pixels).
-	bool      card_list_allow;  ///< Is this field allowed to appear in the card list.
+	bool      card_list_visible;///< Is this field shown in the card list?
+	bool      card_list_allow;  ///< Is this field allowed to appear in the card list?
 	String    card_list_name;   ///< Alternate name to use in card list.
 	Alignment card_list_align;  ///< Alignment of the card list colummn.
 	int       tab_index;        ///< Tab index in editor

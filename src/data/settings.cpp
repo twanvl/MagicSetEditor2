@@ -30,6 +30,9 @@ ColumnSettings::ColumnSettings()
 	: width(100), position(COLUMN_NOT_INITIALIZED), visible(false)
 {}
 
+// dummy for ColumnSettings reflection
+ScriptValueP toScript(const ColumnSettings&) { return script_nil; }
+
 IMPLEMENT_REFLECTION(ColumnSettings) {
 	REFLECT(width);
 	REFLECT(position);
@@ -39,13 +42,17 @@ IMPLEMENT_REFLECTION(ColumnSettings) {
 IMPLEMENT_REFLECTION(GameSettings) {
 	REFLECT(default_stylesheet);
 	REFLECT(default_export);
-//	REFLECT_N("cardlist columns",     columns);
+	REFLECT_N("cardlist columns",     columns);
 	REFLECT(sort_cards_by);
 	REFLECT(sort_cards_ascending);
 }
 
 IMPLEMENT_REFLECTION(StyleSheetSettings) {
-	// TODO
+	REFLECT(card_zoom);
+	REFLECT(card_angle);
+	REFLECT(card_anti_alias);
+	REFLECT(card_borders);
+	REFLECT(card_normal_export);
 }
 
 // ----------------------------------------------------------------------------- : Settings
@@ -89,7 +96,7 @@ ColumnSettings& Settings::columnSettingsFor(const Game& game, const Field& field
 	ColumnSettings& cs = gs.columns[field.name];
 	if (cs.position == COLUMN_NOT_INITIALIZED) {
 		// column info not set, initialize based on the game
-		cs.visible  = field.card_list_column >= 0;
+		cs.visible  = field.card_list_visible;
 		cs.position = field.card_list_column;
 		cs.width    = field.card_list_width;
 	}
@@ -114,7 +121,9 @@ String Settings::settingsFile() {
 }
 
 IMPLEMENT_REFLECTION(Settings) {
-//	ioMseVersion(io, "settings", file_version);
+	tag.handleAppVersion();
+	tag.addAlias(300,         _("style settings"),         _("stylesheet settings"));
+	tag.addAlias(300, _("default style settings"), _("default stylesheet settings"));
 	REFLECT(recent_sets);
 	REFLECT(set_window_maximized);
 	REFLECT(set_window_width);
@@ -124,9 +133,9 @@ IMPLEMENT_REFLECTION(Settings) {
 	REFLECT(apprentice_location);
 	REFLECT(updates_url);
 	REFLECT(check_updates);
-//	ioAll(io, game_settings);
-//	ioStyleSettings(io);
-//	REFLECT(default_style_settings);
+	REFLECT(game_settings);
+	REFLECT(stylesheet_settings);
+	REFLECT(default_stylesheet_settings);
 }
 
 void Settings::read() {

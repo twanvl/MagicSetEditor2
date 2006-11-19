@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <gui/control/card_list.hpp>
+#include <gui/control/card_list_column_select.hpp>
 #include <data/game.hpp>
 #include <data/field.hpp>
 #include <data/field/choice.hpp>
@@ -282,10 +283,10 @@ void CardListBase::storeColumns() {
 	gs.sort_cards_ascending = sort_ascending;
 }
 void CardListBase::selectColumns() {
-//	CardListColumnSelect wnd(this, set->game);
-//	if (wnd.ShowModal() == wxID_OK) {
-//		rebuild(); // columns have changed
-//	}
+	CardListColumnSelectDialog wnd(this, set->game);
+	if (wnd.ShowModal() == wxID_OK) {
+		rebuild(); // columns have changed
+	}
 }
 
 // ----------------------------------------------------------------------------- : CardListBase : Item 'events'

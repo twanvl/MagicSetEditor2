@@ -351,12 +351,12 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 			break;
 		}
 		// copy & paste & find
-		case ID_EDIT_CUT       : ev.Enable(current_panel->canCut());		break;
+		case ID_EDIT_CUT       : ev.Enable(current_panel->canCut());	break;
 		case ID_EDIT_COPY      : ev.Enable(current_panel->canCopy());	break;
 		case ID_EDIT_PASTE     : ev.Enable(current_panel->canPaste());	break;
 		case ID_EDIT_FIND      : ev.Enable(current_panel->canFind());	break;
 		case ID_EDIT_FIND_NEXT : ev.Enable(current_panel->canFind());	break;
-		case ID_EDIT_REPLACE   : ev.Enable(current_panel->canReplace());	break;
+		case ID_EDIT_REPLACE   : ev.Enable(current_panel->canReplace());break;
 		default:
 			// items created by the panel, and cut/copy/paste and find/replace
 			current_panel->onUpdateUI(ev);

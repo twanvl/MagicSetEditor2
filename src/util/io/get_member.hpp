@@ -29,7 +29,6 @@ class GetDefaultMember {
 	inline bool reading()   const { return false; }
 	inline bool isComplex() const { return false; }
 	inline void addAlias(int, const Char*, const Char*) {}
-	
 	inline void handleAppVersion() {} // no effect
 	
 	/// The result, or script_nil if the member was not found
@@ -70,6 +69,7 @@ class GetMember : private GetDefaultMember {
 	inline bool reading()   const { return false; }
 	inline bool isComplex() const { return false; }
 	inline void addAlias(int, const Char*, const Char*) {}
+	inline void handleAppVersion() {} // no effect
 	
 	/// The result, or script_nil if the member was not found
 	inline ScriptValueP result() { return gdm.result(); } 
