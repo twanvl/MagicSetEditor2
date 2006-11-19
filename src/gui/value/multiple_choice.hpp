@@ -4,24 +4,21 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_RENDER_VALUE_COLOR
-#define HEADER_RENDER_VALUE_COLOR
+#ifndef HEADER_GUI_VALUE_MULTIPLE_CHOICE
+#define HEADER_GUI_VALUE_MULTIPLE_CHOICE
 
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
-#include <render/value/viewer.hpp>
-#include <data/field/color.hpp>
+#include <gui/value/editor.hpp>
+#include <render/value/multiple_choice.hpp>
 
-// ----------------------------------------------------------------------------- : ColorValueViewer
+// ----------------------------------------------------------------------------- : MultipleChoiceValueEditor
 
-/// Viewer that displays a color value
-class ColorValueViewer : public ValueViewer {
+/// An editor 'control' for editing MultipleChoiceValues
+class MultipleChoiceValueEditor : public MultipleChoiceValueViewer, public ValueEditor {
   public:
-	DECLARE_VALUE_VIEWER(Color) : ValueViewer(parent,style) {}
-	
-	virtual void draw(RotatedDC& dc);
-	virtual bool containsPoint(const RealPoint& p) const;
+	DECLARE_VALUE_EDITOR(MultipleChoice);
 };
 
 // ----------------------------------------------------------------------------- : EOF

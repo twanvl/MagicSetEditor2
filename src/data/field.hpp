@@ -95,7 +95,7 @@ class Style {
 	virtual ValueViewerP makeViewer(DataViewer& parent, const StyleP& thisP) = 0;
 	/// Make an editor object for values using this style
 	/** thisP is a smart pointer to this */
-	virtual ValueEditorP makeEditor(DataEditor& parent, const StyleP& thisP) = 0;
+	virtual ValueViewerP makeEditor(DataEditor& parent, const StyleP& thisP) = 0;
 	
 	/// Update scripted values of this style, return true if anything has changed
 	virtual bool update(Context&);
@@ -157,7 +157,7 @@ template <> ValueP read_new<Value>(Reader&);
 #define DECLARE_STYLE_TYPE(Type)														\
 	DECLARE_HAS_FIELD(Type)																\
 	virtual ValueViewerP makeViewer(DataViewer& parent, const StyleP& thisP);			\
-	virtual ValueEditorP makeEditor(DataEditor& parent, const StyleP& thisP)
+	virtual ValueViewerP makeEditor(DataEditor& parent, const StyleP& thisP)
 
 // implement field() which returns a field with the right (derived) type
 #define DECLARE_HAS_FIELD(Type)															\

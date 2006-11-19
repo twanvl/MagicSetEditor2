@@ -4,12 +4,22 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
+#ifndef HEADER_GUI_VALUE_SYMBOL
+#define HEADER_GUI_VALUE_SYMBOL
+
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
+#include <gui/value/editor.hpp>
 #include <render/value/symbol.hpp>
 
-// ----------------------------------------------------------------------------- : SymbolValueViewer
+// ----------------------------------------------------------------------------- : SymbolValueEditor
 
-void SymbolValueViewer::draw(RotatedDC& dc) {
-	// TODO
-}
+/// An editor 'control' for editing SymbolValues
+class SymbolValueEditor : public SymbolValueViewer, public ValueEditor {
+  public:
+	DECLARE_VALUE_EDITOR(Symbol);
+};
+
+// ----------------------------------------------------------------------------- : EOF
+#endif

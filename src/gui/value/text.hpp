@@ -4,24 +4,22 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_RENDER_VALUE_COLOR
-#define HEADER_RENDER_VALUE_COLOR
+#ifndef HEADER_GUI_VALUE_TEXT
+#define HEADER_GUI_VALUE_TEXT
 
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
-#include <render/value/viewer.hpp>
-#include <data/field/color.hpp>
+#include <gui/value/editor.hpp>
+#include <render/value/text.hpp>
 
-// ----------------------------------------------------------------------------- : ColorValueViewer
+// ----------------------------------------------------------------------------- : TextValueEditor
 
-/// Viewer that displays a color value
-class ColorValueViewer : public ValueViewer {
+/// An editor 'control' for editing TextValues
+class TextValueEditor : public TextValueViewer, public ValueEditor {
   public:
-	DECLARE_VALUE_VIEWER(Color) : ValueViewer(parent,style) {}
+	DECLARE_VALUE_EDITOR(Text);
 	
-	virtual void draw(RotatedDC& dc);
-	virtual bool containsPoint(const RealPoint& p) const;
 };
 
 // ----------------------------------------------------------------------------- : EOF

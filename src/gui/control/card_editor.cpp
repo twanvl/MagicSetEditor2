@@ -14,7 +14,7 @@
 
 #define FOR_EACH_EDITOR			\
 	FOR_EACH(v, viewers)		\
-		if (ValueEditorP = static_pointer_cast<ValueEditor>(v))
+		if (ValueEditor* e = v->getEditor())
 
 DataEditor::DataEditor(Window* parent, int id, long style)
 	: CardViewer(parent, id, style)

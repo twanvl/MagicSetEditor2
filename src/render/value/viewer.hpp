@@ -55,6 +55,9 @@ class ValueViewer {
 	/// Called when an action is performed on the associated value
 	virtual void onAction(const ValueAction&, bool undone) { onValueChange(); }
 	
+	/// Convert this viewer to an editor, if possible
+	virtual ValueEditor* getEditor() { return 0; }
+	
   protected:
 	DataViewer& viewer;	///< Our parent object
 	StyleP styleP;		///< The style of this viewer
@@ -75,7 +78,7 @@ class ValueViewer {
 // ----------------------------------------------------------------------------- : Utility
 
 #define DECLARE_VALUE_VIEWER(Type)																	\
-  private:																							\
+  protected:																						\
 	inline       Type##Style& style() const { return static_cast<      Type##Style&>(*styleP); }	\
 	inline const Type##Value& value() const { return static_cast<const Type##Value&>(*valueP); }	\
 	inline const Type##Field& field() const { return style().field(); }								\

@@ -8,4 +8,8 @@
 
 #include <render/value/multiple_choice.hpp>
 
-// ----------------------------------------------------------------------------- : 
+// ----------------------------------------------------------------------------- : MultipleChoiceValueViewer
+
+void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
+	// TODO
+}

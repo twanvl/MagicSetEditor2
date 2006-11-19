@@ -10,32 +10,27 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <gui/control/card_editor.hpp>
 #include <render/value/viewer.hpp>
-
-class DataEditor;
 
 // ----------------------------------------------------------------------------- : ValueEditor
 
 /// An editor 'control' for a single value on a card
 /** The inheritance diagram for derived editors looks like:
- *                  ValueViewer
- *                   ^        ^
- *                  /          .
- *                 /            .
- *           SomeViewer     ValueEditor
- *                 ^            ^
- *                  \          /
- *                   \        /
- *                   SomeEditor
+ *                 ValueViewer
+ *                    ^         
+ *                   /           
+ *                  /             
+ *         SomeValueViewer     ValueEditor
+ *                 ^               ^
+ *                  \             /
+ *                   \           /
+ *                  SomeValueEditor
  *
- *  Where ... is virtual inheritance and -- is normal inheritance.
- *  This is slightly different from the usual virtual inheritance recipe, but it should still work.
+ *  Note that ValueEditor does NOT inherit from ValueViewer, because that leads to all kinds of problems
  */
-class ValueEditor : public virtual ValueViewer {
+class ValueEditor {
   public:
-	/// Construct a ValueEditor, set the value at a later time
-	ValueEditor(DataEditor& parent, const StyleP& style);
-		
 	// --------------------------------------------------- : Events
 	
 	/// This editor gains focus
@@ -52,7 +47,7 @@ class ValueEditor : public virtual ValueViewer {
 	virtual void onMouseWheel    (RealPoint pos, wxMouseEvent& ev) {}
 	
 	/// Key events
-	virtual void onChar(wxKeyEvent ev);
+	virtual void onChar(wxKeyEvent ev) {}
 	
 	/// A menu item was selected
 	virtual void onMenu(wxCommandEvent& ev) { ev.Skip(); }
@@ -101,6 +96,19 @@ class ValueEditor : public virtual ValueViewer {
 	/// The cursor type to use when the mouse is over this control
 	virtual wxCursor cursor() const { return wxCursor(); }
 };
+
+// ----------------------------------------------------------------------------- : Utility
+
+#define DECLARE_VALUE_EDITOR(Type)											\
+		Type##ValueEditor(DataEditor& parent, const Type##StyleP& style)	\
+			: Type##ValueViewer(parent, style)								\
+		{}																	\
+		virtual ValueEditor* getEditor() { return this; }					\
+	  private:																\
+		inline DataEditor& editor() const {									\
+			return static_cast<DataEditor&>(viewer);						\
+		}																	\
+	  public:
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

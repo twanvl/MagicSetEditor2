@@ -10,9 +10,18 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <render/value/viewer.hpp>
+#include <data/field/multiple_choice.hpp>
 
-// ----------------------------------------------------------------------------- : 
+// ----------------------------------------------------------------------------- : MultipleChoiceValueViewer
 
+/// Viewer that displays a multiple choice value
+class MultipleChoiceValueViewer : public ValueViewer {
+  public:
+	DECLARE_VALUE_VIEWER(MultipleChoice) : ValueViewer(parent,style) {}
+	
+	virtual void draw(RotatedDC& dc);
+};
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

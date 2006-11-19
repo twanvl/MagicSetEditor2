@@ -37,6 +37,5 @@ class ImageValueViewer : public ValueViewer {
 	static Bitmap imagePlaceholder(const Rotation& rot, UInt w, UInt h, bool editing);
 };
 
-
 // ----------------------------------------------------------------------------- : EOF
 #endif

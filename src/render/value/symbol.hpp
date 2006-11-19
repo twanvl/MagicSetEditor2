@@ -10,9 +10,18 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <render/value/viewer.hpp>
+#include <data/field/symbol.hpp>
 
-// ----------------------------------------------------------------------------- : 
+// ----------------------------------------------------------------------------- : SymbolValueViewer
 
+/// Viewer that displays a symbol value
+class SymbolValueViewer : public ValueViewer {
+  public:
+	DECLARE_VALUE_VIEWER(Symbol) : ValueViewer(parent,style) {}
+	
+	virtual void draw(RotatedDC& dc);
+};
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

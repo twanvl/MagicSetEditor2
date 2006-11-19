@@ -10,7 +10,6 @@
 #include <render/value/text.hpp>
 #include <render/value/choice.hpp>
 #include <render/value/multiple_choice.hpp>
-#include <render/value/boolean.hpp>
 #include <render/value/image.hpp>
 #include <render/value/symbol.hpp>
 #include <render/value/color.hpp>
@@ -52,20 +51,7 @@ bool ValueViewer::nativeLook() const {
 	return viewer.nativeLook();
 }
 
-// ----------------------------------------------------------------------------- : Development/debug
-
-#ifdef _DEBUG
-
-// REMOVEME
-
-#include <data/field.hpp>
-#include <data/field/choice.hpp>
-#include <data/field/boolean.hpp>
-#include <data/field/multiple_choice.hpp>
-#include <data/field/color.hpp>
-#include <data/field/image.hpp>
-#include <data/field/symbol.hpp>
-#include <data/field/text.hpp>
+// ----------------------------------------------------------------------------- : Type dispatch
 
 #define IMPLEMENT_MAKE_VIEWER(Type)														\
 	ValueViewerP Type##Style::makeViewer(DataViewer& parent, const StyleP& thisP) {		\
@@ -73,24 +59,9 @@ bool ValueViewer::nativeLook() const {
 		return ValueViewerP(new Type##ValueViewer(parent, static_pointer_cast<Type##Style>(thisP)));	\
 	}
 
-//ValueViewerP ChoiceStyle        ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
-ValueViewerP BooleanStyle       ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
-ValueViewerP MultipleChoiceStyle::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
-//ValueViewerP ColorStyle         ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
-//ValueViewerP ImageStyle         ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
 IMPLEMENT_MAKE_VIEWER(Text);
 IMPLEMENT_MAKE_VIEWER(Choice);
+IMPLEMENT_MAKE_VIEWER(MultipleChoice);
 IMPLEMENT_MAKE_VIEWER(Color);
 IMPLEMENT_MAKE_VIEWER(Image);
-ValueViewerP SymbolStyle        ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
-//ValueViewerP TextStyle          ::makeViewer(DataViewer& parent, const StyleP& thisP) { return ValueViewerP(); }
-
-ValueEditorP ChoiceStyle        ::makeEditor(DataEditor& parent, const StyleP& thisP) { return ValueEditorP(); }
-ValueEditorP BooleanStyle       ::makeEditor(DataEditor& parent, const StyleP& thisP) { return ValueEditorP(); }
-ValueEditorP MultipleChoiceStyle::makeEditor(DataEditor& parent, const StyleP& thisP) { return ValueEditorP(); }
-ValueEditorP ColorStyle         ::makeEditor(DataEditor& parent, const StyleP& thisP) { return ValueEditorP(); }
-ValueEditorP ImageStyle         ::makeEditor(DataEditor& parent, const StyleP& thisP) { return ValueEditorP(); }
-ValueEditorP SymbolStyle        ::makeEditor(DataEditor& parent, const StyleP& thisP) { return ValueEditorP(); }
-ValueEditorP TextStyle          ::makeEditor(DataEditor& parent, const StyleP& thisP) { return ValueEditorP(); }
-
-#endif
+IMPLEMENT_MAKE_VIEWER(Symbol);
