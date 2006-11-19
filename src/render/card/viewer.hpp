@@ -75,6 +75,7 @@ class DataViewer : public SetView {
 	
   private:
 	vector<ValueViewerP> viewers;	///< The viewers for the different values in the data
+  protected:
 	CardP card;						///< The card that is currently displayed, if any
 };
 

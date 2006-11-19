@@ -18,11 +18,13 @@ CardViewer::CardViewer(Window* parent, int id, long style)
 
 wxSize CardViewer::DoGetBestSize() const {
 	wxSize ws = GetSize(), cs = GetClientSize();
-	if (set && set->stylesheet) {
-		return wxSize(set->stylesheet->card_width, set->stylesheet->card_height) + ws - cs;
-	} else {
-		return cs;
+	if (set) {
+		StyleSheetP stylesheet = set->stylesheetFor(card);
+		if (stylesheet) {
+			return wxSize(stylesheet->card_width, stylesheet->card_height) + ws - cs;
+		}
 	}
+	return cs;
 }
 
 void CardViewer::onChange() {

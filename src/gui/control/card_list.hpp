@@ -82,7 +82,12 @@ class CardListBase : public wxListView, public SetView {
 	// --------------------------------------------------- : The cards
   protected:
 	/// What cards should be shown?
-	virtual vector<CardP>& getCards() const;
+	virtual const vector<CardP>& getCards() const;
+	
+	/// Rebuild the card list (clear all vectors and fill them again)
+	void rebuild();
+	/// Do some additional updating before rebuilding the list
+	virtual void onRebuild() {}
 	
 	// --------------------------------------------------- : Item 'events'
 	
@@ -109,9 +114,6 @@ class CardListBase : public wxListView, public SetView {
 	
 	mutable wxListItemAttr item_attr; // for OnGetItemAttr
 	
-//	/// Get a card by position
-//	void getCard(long pos);
-	
 	/// Select a card, send an event to the parent
 	/** If focus then the card is also focused and selected in the actual control.
 	 *  This should abviously not be done when the card is selected because it was selected (leading to a loop).
@@ -127,8 +129,6 @@ class CardListBase : public wxListView, public SetView {
 	/// Sorts the list by the current sorting criterium
 	void sortList();
 	struct CardComparer; // for comparing cards
-	/// Rebuild the card list (clear all vectors and fill them again)
-	void rebuild();
 	/// Refresh the card list (resort, refresh and reselect current item)
 	void refreshList();
 	/// Find the field that determines the color, if any.

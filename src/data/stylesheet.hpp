@@ -51,7 +51,7 @@ class StyleSheet : public Packaged {
 	static StyleSheetP byGameAndName(const Game& game, const String& name);
 	/// name of the package without the game name
 	String stylesheetName() const;
-		
+	
 	static String typeNameStatic();
 	virtual String typeName() const;
 	virtual String fullName() const;

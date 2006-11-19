@@ -11,7 +11,7 @@
 
 // ----------------------------------------------------------------------------- : FontTextElement
 
-void FontTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, DrawWhat what, size_t start, size_t end) const {
+void FontTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, double* xs, DrawWhat what, size_t start, size_t end) const {
 	dc.SetFont(font->font, font->size * scale);
 	
 	if (end != start && text.substr(end-1, 1) == _("\n")) end -= 1; // don't draw the newline character at the end
@@ -42,11 +42,15 @@ void FontTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>&
 	double prev_width = 0;
 	for (size_t i = start ; i < end ; ++i) {
 		Char c = text.GetChar(i);
-		RealSize s = dc.GetTextExtent(text.substr(start, i - start));
+		RealSize s = dc.GetTextExtent(text.substr(start, i - start + 1));
 		out.push_back(CharInfo(RealSize(s.width - prev_width, s.height),
 						c == _('\n') ? BREAK_HARD :
 						c == _(' ')  ? BREAK_SOFT : BREAK_NO
 		             ));
 		prev_width = s.width;
 	}
+}
+
+double FontTextElement::minScale() const {
+	return 1; // TODO
 }

@@ -10,10 +10,14 @@
 
 // ----------------------------------------------------------------------------- : SymbolTextElement
 
-void SymbolTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, DrawWhat what, size_t start, size_t end) const {
+void SymbolTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, double* xs, DrawWhat what, size_t start, size_t end) const {
 	// TODO
 }
 
 void SymbolTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const {
 	// TODO
+}
+
+double SymbolTextElement::minScale() const {
+	return 1; // TODO
 }

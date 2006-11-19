@@ -41,6 +41,7 @@ CardsPanel::CardsPanel(Window* parent, int id)
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
 	s->Add(editor,    0, wxRIGHT, 2);
 	s->Add(card_list, 1, wxEXPAND);
+	s->SetSizeHints(this);
 	SetSizer(s);
 }
 

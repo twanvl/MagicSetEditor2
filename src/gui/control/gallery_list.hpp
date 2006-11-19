@@ -30,6 +30,9 @@ class GalleryList : public wxScrolledWindow {
   public:
 	GalleryList(Window* parent, int id, int direction = wxHORIZONTAL);
 	
+	/// Is there an item selected?
+	inline bool hasSelection() const { return selection < itemCount(); }
+	
   protected:
 	static const size_t NO_SELECTION = (size_t)-1;
 	size_t selection;	///< The selected item, or NO_SELECTION if there is no selection

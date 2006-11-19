@@ -199,7 +199,6 @@ void SetWindow::selectPanel(int id) {
 		++wid;
 	}
 	// fix sizer stuff
-	Layout();
 	fixMinWindowSize();
 }
 
@@ -257,11 +256,13 @@ void SetWindow::onRenderSettingsChange() {
 	FOR_EACH(p, panels) {
 		p->onRenderSettingsChange();
 	}
-	Layout();
 	fixMinWindowSize();
 }
 
 void SetWindow::fixMinWindowSize() {
+	current_panel->Layout();
+	current_panel->SetMinSize(current_panel->GetSizer()->GetMinSize());
+	Layout();
 	wxSize s  = GetSizer()->GetMinSize();
 	wxSize ws = GetSize();
 	wxSize cs = GetClientSize();
@@ -269,6 +270,7 @@ void SetWindow::fixMinWindowSize() {
 	if (ws.x < minSize.x) ws.x = minSize.x;
 	if (ws.y < minSize.y) ws.y = minSize.y;
 	SetSize(ws);
+	SetMinSize(minSize);
 }
 
 

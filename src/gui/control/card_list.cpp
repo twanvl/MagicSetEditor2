@@ -93,7 +93,7 @@ void CardListBase::onAction(const Action& action, bool undone) {
 	}
 }
 
-vector<CardP>& CardListBase::getCards() const {
+const vector<CardP>& CardListBase::getCards() const {
 	return set->cards;
 }
 
@@ -186,7 +186,7 @@ struct CardListBase::CardComparer {
 
 void CardListBase::sortList() {
 	sorted_card_list.clear();
-	FOR_EACH(card, getCards()) {
+	FOR_EACH_CONST(card, getCards()) {
 		sorted_card_list.push_back(card);
 	}
 	if (sort_criterium) {
@@ -198,6 +198,7 @@ void CardListBase::rebuild() {
 	ClearAll();
 	column_fields.clear();
 	selected_card_pos = -1;
+	onRebuild();
 	// determine column order
 	map<int,FieldP> new_column_fields;
 	FOR_EACH(f, set->game->card_fields) {

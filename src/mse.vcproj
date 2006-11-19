@@ -375,10 +375,22 @@
 					RelativePath=".\gui\control\card_list.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\control\card_list_column_select.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\card_list_column_select.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\control\card_viewer.cpp">
 				</File>
 				<File
 					RelativePath=".\gui\control\card_viewer.hpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\filtered_card_list.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\filtered_card_list.hpp">
 				</File>
 				<File
 					RelativePath=".\gui\control\gallery_list.cpp">
@@ -387,15 +399,17 @@
 					RelativePath=".\gui\control\gallery_list.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\control\graph.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\graph.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\control\package_list.cpp">
 				</File>
 				<File
 					RelativePath=".\gui\control\package_list.hpp">
 				</File>
-			</Filter>
-			<Filter
-				Name="editor"
-				Filter="">
 			</Filter>
 			<Filter
 				Name="symbol"

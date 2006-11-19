@@ -18,6 +18,11 @@
 class DataEditor : public CardViewer {
   public:
 	DataEditor(Window* parent, int id, long style = 0);
+	
+  protected:
+	/// Create an editor for the given style (as opposed to a normal viewer)
+	virtual ValueViewerP makeViewer(const StyleP&);
+	
   private:
 	DECLARE_EVENT_TABLE();
 };

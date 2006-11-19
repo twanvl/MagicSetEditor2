@@ -17,32 +17,51 @@
 DECLARE_POINTER_TYPE(Font);
 DECLARE_POINTER_TYPE(SymbolFont);
 DECLARE_POINTER_TYPE(SymbolInFont);
+class RotatedDC;
 
 // ----------------------------------------------------------------------------- : SymbolFont
 
 // A font that is drawn using images
-class SymbolFont : Packaged {
+class SymbolFont : public Packaged {
   public:
+	SymbolFont();
+	
 	/// Loads the symbol font with a given name, for example "magic-mana-large"
 	static SymbolFontP byName(const String& name);
 	
+	class DrawableSymbol {
+	  public:
+		// TODO: anything?
+	  private:
+		String        text;		///< Original text
+		SymbolInFont* symbol;	///< Symbol to draw, if nullptr, use the default symbol and draw the text
+	};
+	typedef vector<DrawableSymbol> SplitSymbols;
+	
+	/// Split a string into separate symbols for drawing and for determining their size
+	void split(const String& text, SplitSymbols& out);
+	
+	/// Draw a piece of text prepared using split
+	void draw(RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, const SplitSymbols& text);
+	
+	static String typeNameStatic();
+	virtual String typeName() const;
+	
   private:
-	UInt imgSize;		///< Font size that the images use
-	UInt minSize;		///< Minimum font size
+	UInt img_size;		///< Font size that the images use
+	UInt min_size;		///< Minimum font size
 	RealSize spacing;	///< Spacing between sybmols (for the default font size)
 	// writing text
 	bool scale_text;	///< Should text be scaled down to fit in a symbol?
 	FontP text_font;	///< Font to use for missing symbols
 	double text_margin_left;
 	double text_margin_right;
-	double text_margin_rop;
+	double text_margin_top;
 	double text_margin_bottom;
-	Alignment text_align;
+	Alignment text_alignment;
 	bool merge_numbers;	///< Merge numbers? e.g. "11" is a single symbol ('1' must not exist as a symbol)
 	
-  public:
-	class Symbol;
-  private:
+	friend class SymbolInFont;
 	vector<SymbolInFontP> symbols;	///< The individual symbols
 	
 	DECLARE_REFLECTION();
@@ -60,7 +79,7 @@ class SymbolFontRef {
 	void initDependencies(Context&, Dependency& dep);
 	
 	/// Is a font loaded?
-	bool valid();
+	bool valid() const;
 	
   private:
 	Scriptable<String> name;			///< Font package name, can be changed with script

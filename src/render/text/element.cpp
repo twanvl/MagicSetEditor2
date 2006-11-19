@@ -14,12 +14,15 @@ DECLARE_TYPEOF_COLLECTION(TextElementP);
 
 // ----------------------------------------------------------------------------- : TextElements
 
-void TextElements::draw(RotatedDC& dc, double scale, const RealRect& rect, DrawWhat what, size_t start, size_t end) const {
+void TextElements::draw(RotatedDC& dc, double scale, const RealRect& rect, double* xs, DrawWhat what, size_t start, size_t end) const {
 	FOR_EACH_CONST(e, elements) {
 		size_t start_ = max(start, e->start);
 		size_t end_   = min(end,   e->end);
 		if (start_ < end_) {
-			e->draw(dc, scale, rect, what, start_, end_);
+			e->draw(dc, scale,
+			        RealRect(rect.position.x + xs[start_-start], rect.position.y,
+			                 xs[end_-start] - xs[start_-start], rect.size.height),
+			        xs + start_ - start, what, start_, end_);
 		}
 		if (end <= e->end) return; // nothing can be after this
 	}
@@ -28,37 +31,23 @@ void TextElements::draw(RotatedDC& dc, double scale, const RealRect& rect, DrawW
 void TextElements::getCharInfo(RotatedDC& dc, double scale, size_t start, size_t end, vector<CharInfo>& out) const {
 	FOR_EACH_CONST(e, elements) {
 		// characters before this element, after the previous
-		for (size_t i = start ; i < e->start ; ++i) {
+		while (start + out.size() < e->start) {
 			out.push_back(CharInfo(RealSize(0,0), BREAK_NO));
 		}
 		e->getCharInfo(dc, scale, out);
-		start = min(end, e->end);
 	}
-	for (size_t i = start ; i < end ; ++i) {
+	while (start + out.size() < end) {
 		out.push_back(CharInfo(RealSize(0,0), BREAK_NO));
 	}
 }
 
-/*//@@
-RealSize TextElements::charSize(const Rotation& rot, double scale, size_t index) const {
-	vector<TextElementP>::const_iterator e = findByIndex(index);
-	if (e != elements.end()) {
-		return (*e)->charSize(rot, scale, index);
-	} else {
-		return RealSize(0,0);
+double TextElements::minScale() const {
+	double m = 0.0001;
+	FOR_EACH_CONST(e, elements) {
+		m = max(m, e->minScale());
 	}
+	return m;
 }
-
-bool ends_before_index(const TextElementP& e, size_t index) {
-	return index < e->end;
-}
-
-vector<TextElementP>::const_iterator TextElements::findByIndex(size_t index) const {
-	// Note: slightly abusing lower_bound, since typeof(index) != elements.element_type
-	vector<TextElementP>::const_iterator it = lower_bound(elements.begin(), elements.end(), index, ends_before_index);
-	if ((*it)->start <= index && (*it)->end > index) return it;
-	else                                             return elements.end();
-}*/
 
 // Helper class for TextElements::fromString, to allow persistent formating state accross recusive calls
 struct TextElementsFromString {
@@ -114,8 +103,8 @@ struct TextElementsFromString {
 					e->end = pos + 1; // just move the end, no need to make a new element
 				} else {
 					// add a new element for this text
-					if (symbol > 0) {
-						te.elements.push_back(new_shared3<SymbolTextElement>(text, pos, pos + 1));
+					if (symbol > 0 && style.symbol_font.valid()) {
+						te.elements.push_back(new_shared4<SymbolTextElement>(text, pos, pos + 1, style.symbol_font));
 					} else {
 						te.elements.push_back(new_shared4<FontTextElement>  (text, pos, pos + 1, style.font.make(bold > 0, italic > 0)));
 					}

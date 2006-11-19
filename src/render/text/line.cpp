@@ -10,10 +10,15 @@
 
 // ----------------------------------------------------------------------------- : HorizontalLineTextElement
 
-void HorizontalLineTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, DrawWhat what, size_t start, size_t end) const {
-	// TODO
+void HorizontalLineTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, double* xs, DrawWhat what, size_t start, size_t end) const {
+	// handled by TextViewer
 }
 
 void HorizontalLineTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const {
-	// TODO
+	out.push_back(CharInfo(RealSize(0,0), BREAK_LINE));
 }
+
+double HorizontalLineTextElement::minScale() const {
+	return 0; // we don't care about scaling
+}
+

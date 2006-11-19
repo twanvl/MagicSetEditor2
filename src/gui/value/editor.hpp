@@ -1,0 +1,106 @@
+//+----------------------------------------------------------------------------+
+//| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
+//| Copyright:    (C) 2001 - 2006 Twan van Laarhoven                           |
+//| License:      GNU General Public License 2 or later (see file COPYING)     |
+//+----------------------------------------------------------------------------+
+
+#ifndef HEADER_GUI_VALUE_EDITOR
+#define HEADER_GUI_VALUE_EDITOR
+
+// ----------------------------------------------------------------------------- : Includes
+
+#include <util/prec.hpp>
+#include <render/value/viewer.hpp>
+
+class DataEditor;
+
+// ----------------------------------------------------------------------------- : ValueEditor
+
+/// An editor 'control' for a single value on a card
+/** The inheritance diagram for derived editors looks like:
+ *                  ValueViewer
+ *                   ^        ^
+ *                  /          .
+ *                 /            .
+ *           SomeViewer     ValueEditor
+ *                 ^            ^
+ *                  \          /
+ *                   \        /
+ *                   SomeEditor
+ *
+ *  Where ... is virtual inheritance and -- is normal inheritance.
+ *  This is slightly different from the usual virtual inheritance recipe, but it should still work.
+ */
+class ValueEditor : public virtual ValueViewer {
+  public:
+	/// Construct a ValueEditor, set the value at a later time
+	ValueEditor(DataEditor& parent, const StyleP& style);
+		
+	// --------------------------------------------------- : Events
+	
+	/// This editor gains focus
+	virtual void onFocus() {}
+	/// This editor loses focus
+	virtual void onLoseFocus() {}
+	
+	/// Handle mouse events
+	virtual void onMouseLeftDown (RealPoint pos, wxMouseEvent& ev) {}
+	virtual void onMouseLeftUp   (RealPoint pos, wxMouseEvent& ev) {}
+	virtual void onMouseDClick   (RealPoint pos, wxMouseEvent& ev) {}
+	virtual void onMouseRightDown(RealPoint pos, wxMouseEvent& ev) {}
+	virtual void onMouseMove     (RealPoint pos, wxMouseEvent& ev) {}
+	virtual void onMouseWheel    (RealPoint pos, wxMouseEvent& ev) {}
+	
+	/// Key events
+	virtual void onChar(wxKeyEvent ev);
+	
+	/// A menu item was selected
+	virtual void onMenu(wxCommandEvent& ev) { ev.Skip(); }
+	/// a context menu is requested, add extra items to the menu m
+	/** return false to suppress menu */
+	virtual bool onContextMenu(wxMenu& m, wxContextMenuEvent& ev) { return true; }
+	
+	// --------------------------------------------------- : Clipboard
+	
+	/// This editor can be copied from right now
+	virtual bool canCopy()  const { return false; }
+	/// This editor can be cut from right now
+	virtual bool canCut()   const { return canCopy(); }
+	/// This editor can be pasted to right now
+	/** this function should also check the data on the clipboard has the right format */
+	virtual bool canPaste() const { return false; }
+	// Copies from this field editor, returns success
+	virtual bool doCopy()   { return false; }
+	// Deletes the selection from this field editor, cut = copy + delete, returns success
+	virtual bool doDelete() { return false; }
+	// Cuts the selection from this field editor
+	bool         doCut()    { return  doCopy() && doDelete(); }
+	/// Initiate pasting in this field editor,
+	/** should again check if pasting is possible and fail silently if not, returns success */
+	virtual bool doPaste() { return false; }
+	
+	// --------------------------------------------------- : Formating
+	
+	/// Is the given type of formatting change supported?
+	virtual bool canFormat(int type) const { return false; }
+	/// Is the given type of formatting enabled for the current selection?
+	virtual bool hasFormat(int type) const { return false; }
+	/// Toggle the given type of formatting for the current selection
+	virtual void doFormat(int type)        { assert(false); }
+	
+	// --------------------------------------------------- : Selection
+	
+	/// Select the specified range (if it makes sense)
+	virtual void select(size_t start, size_t end) {}
+	/// Determine the selected range
+	virtual size_t selectionStart() const { return 0; }
+	virtual size_t selectionEnd()   const { return 0; }
+	
+	// --------------------------------------------------- : Other
+	
+	/// The cursor type to use when the mouse is over this control
+	virtual wxCursor cursor() const { return wxCursor(); }
+};
+
+// ----------------------------------------------------------------------------- : EOF
+#endif

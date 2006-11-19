@@ -32,10 +32,7 @@ class PackageList : public GalleryList {
 	
 	/// Clears this list
 	void clear();
-	
-	/// Is there a package selected?
-	inline bool hasSelection() const { return selection < itemCount(); }
-	
+		
 	/// Get the selected package, T should be the same type used for showData
 	/** @pre hasSelection()
 	 *  Throws if the selection is not of type T */

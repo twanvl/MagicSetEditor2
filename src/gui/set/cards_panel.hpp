@@ -38,8 +38,6 @@ class CardsPanel : public SetWindowPanel {
 	virtual bool wantsToHandle(const Action&, bool undone) const;
 	virtual void onAction(const Action&, bool undone);
 	virtual void onRenderSettingsChange();
-  private:
-	void updateSize();
   public:
   
 	// --------------------------------------------------- : Clipboard

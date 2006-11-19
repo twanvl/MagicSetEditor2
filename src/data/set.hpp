@@ -65,6 +65,7 @@ class Set : public Packaged {
 	void updateFor(const CardP& card);
 	
 	/// Stylesheet to use for a particular card
+	/** card may be null */
 	StyleSheetP stylesheetFor(const CardP& card);
 	
 	/// Styling information for a particular stylesheet

@@ -1,0 +1,161 @@
+//+----------------------------------------------------------------------------+
+//| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
+//| Copyright:    (C) 2001 - 2006 Twan van Laarhoven                           |
+//| License:      GNU General Public License 2 or later (see file COPYING)     |
+//+----------------------------------------------------------------------------+
+
+#ifndef HEADER_GUI_CONTROL_GRAPH
+#define HEADER_GUI_CONTROL_GRAPH
+
+// ----------------------------------------------------------------------------- : Includes
+
+#include <util/prec.hpp>
+#include <util/rotation.hpp>
+
+DECLARE_POINTER_TYPE(GraphAxis);
+DECLARE_POINTER_TYPE(GraphElement);
+DECLARE_POINTER_TYPE(GraphData);
+DECLARE_POINTER_TYPE(Graph);
+
+// ----------------------------------------------------------------------------- : Graph data
+
+/// A group in a table or graph
+/** A group is rendered as a single bar or pie slice */
+class GraphGroup {
+  public:
+	String name;	///< Name of this position
+	Color  color;	///< Associated color
+	int    size;	///< Number of elements in this group
+};
+
+/// An axis in a graph, consists of a list of groups
+/** The sum of groups.sum = sum of all elements in the data */
+class GraphAxis {
+  public:
+	String             name;		///< Name/label of this axis
+	bool               auto_color;	///< Automatically assign colors to the groups on this axis
+	vector<GraphGroup> groups;		///< Groups along this axis
+	int                max;			///< Maximum size of the groups
+};
+
+/// A single data point of a graph
+class GraphElement {
+  public:
+	vector<String> axis_groups; ///< Group name for each axis
+};
+
+/// Data to be displayed in a graph, not processed yet
+class GraphDataPre {
+  public:
+	vector<GraphAxisP>    axes;
+	vector<GraphElementP> elements;
+};
+
+/// Data to be displayed in a graph
+class GraphData {
+  public:
+	GraphData(GraphDataPre);
+	
+	vector<GraphAxisP> axes;	///< The axes in the data
+	vector<int>        values;	///< Multi dimensional (dim = axes.size()) array of values
+	int                size;	///< Total number of elements
+};
+
+
+// ----------------------------------------------------------------------------- : Graph
+
+/// A type of graph
+/** It is rendered into a sub-rectangle of the screen */
+class Graph {
+  public:
+	/// Draw this graph, filling the internalRect() of the dc.
+	virtual void draw(RotatedDC& dc) = 0;
+	/// Find the item at the given position, position is normalized to [0..1)
+	virtual bool findItem(const RealPoint& pos, vector<int>& out) const { return false; }
+	/// Change the data
+	virtual void setData(const GraphDataP& d) { data = d; }
+	
+  protected:
+	/// Data of the graph
+	GraphDataP data;
+};
+
+/// Base class for 1 dimensional graph components
+class Graph1D : public Graph {
+  public:
+	inline Graph1D(size_t axis) : axis(axis) {}
+	virtual bool findItem(const RealPoint& pos, vector<int>& out) const { return false; }
+  protected:
+	size_t axis;
+	/// Find an item, return the position along the axis, or -1 if not found
+	virtual int findItem(const RealPoint& pos) const = 0;
+};
+
+/// A bar graph
+class BarGraph : public Graph1D {
+  public:
+	inline BarGraph(size_t axis) : Graph1D(axis) {}
+	virtual void draw(RotatedDC& dc) const;
+	virtual int findItem(const RealPoint& pos) const;
+};
+
+// TODO
+//class BarGraph2D {
+//};
+
+/// A pie graph
+class PieGraph : public Graph1D {
+  public:
+	inline PieGraph(size_t axis) : Graph1D(axis) {}
+	virtual void draw(RotatedDC& dc) const;
+	virtual int findItem(const RealPoint& pos) const;
+};
+
+/// The legend, used for pie graphs
+class GraphLegend : public Graph1D {
+  public:
+	inline GraphLegend(size_t axis) : Graph1D(axis) {}
+	virtual void draw(RotatedDC& dc) const;
+	virtual int findItem(const RealPoint& pos) const;
+};
+
+//class GraphTable {
+//};
+
+//class GraphAxis : public Graph1D {
+//	virtual void draw(RotatedDC& dc) const;
+//};
+
+//class GraphValueAxis {
+//	virtual void draw(RotatedDC& dc) const;
+//};
+
+// ----------------------------------------------------------------------------- : Graph control
+
+/// A control showing statistics in a graphical form
+class GraphControl : public wxControl {
+  public:
+	/// Create a graph control
+	GraphControl(Window* parent, int id);
+	
+	/// Update the data in the graph
+	void setData(const GraphDataPre& data);
+	/// Update the data in the graph
+	void setData(const GraphDataP& data);
+	
+  private:
+	/// Graph object
+	GraphP graph;
+	/// The selected item per axis, or an empty vector if there is no selection
+	/** If the value for an axis is -1, then all groups on that axis are selected */
+	vector<int> current_item;
+	
+	DECLARE_EVENT_TABLE();
+	
+	void onPaint(wxPaintEvent&);
+	void onSize (wxSizeEvent&);
+	void onMouseDown(wxMouseEvent& ev);
+};
+
+// ----------------------------------------------------------------------------- : EOF
+#endif

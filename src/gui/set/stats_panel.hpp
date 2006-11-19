@@ -12,13 +12,23 @@
 #include <util/prec.hpp>
 #include <gui/set/panel.hpp>
 
+class StatFieldList;
+class GraphControl;
+class FilteredCardList;
+
 // ----------------------------------------------------------------------------- : StatsPanel
 
 class StatsPanel : public SetWindowPanel {
   public:
 	StatsPanel(Window* parent, int id);
 	
+//	virtual void onUpdateUI(wxUpdateUIEvent& e);
+//	virtual void onCommand(int id);
 	
+  private:
+	StatFieldList*    fields;
+	GraphControl*     graph;
+	FilteredCardList* card_list;
 };
 
 // ----------------------------------------------------------------------------- : EOF

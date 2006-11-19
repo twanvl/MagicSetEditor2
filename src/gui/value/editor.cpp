@@ -6,11 +6,6 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
-#include <gui/set/set_info_panel.hpp>
+#include <gui/value/editor.hpp>
 
-// ----------------------------------------------------------------------------- : SetInfoPanel
-
-SetInfoPanel::SetInfoPanel(Window* parent, int id)
-	: SetWindowPanel(parent, id)
-{
-}
+// ----------------------------------------------------------------------------- : ValueEditor

@@ -75,7 +75,7 @@ void TextViewer::draw(RotatedDC& dc, const String& text, const TextStyle& style,
 	FOR_EACH(l, lines) {
 		if (l.visible(dc)) {
 			RealRect rect(l.positions.front(), l.top, l.width(), l.line_height);
-			elements.draw(dc, scale, rect, what, l.start, l.end());
+			elements.draw(dc, scale, rect, &*l.positions.begin(), what, l.start, l.end());
 		}
 	}
 }
