@@ -14,6 +14,7 @@
 #include <data/settings.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ValueViewerP);
+DECLARE_TYPEOF_COLLECTION(ValueViewer*);
 
 // ----------------------------------------------------------------------------- : DataEditor
 
@@ -53,6 +54,82 @@ ValueViewer* DataEditor::focusedViewer() const {
 }
 
 // ----------------------------------------------------------------------------- : Selection
+
+void DataEditor::select(ValueViewer* v) {
+	ValueEditor* old_editor = current_editor;
+	current_viewer = v;
+	current_editor = v->getEditor();
+	if (current_editor != old_editor) {
+		// selection has changed
+		if (old_editor)     old_editor->onLoseFocus();
+		if (current_editor) current_editor->onFocus();
+		onChange();
+	}
+}
+
+void DataEditor::selectFirst() {
+	selectByTabPos(0);
+}
+bool DataEditor::selectNext() {
+	return selectByTabPos(currentTabPos() + 1);
+}
+bool DataEditor::selectPrevious() {
+	return selectByTabPos(currentTabPos() - 1);
+}
+
+bool DataEditor::selectByTabPos(int tab_pos) {
+	if (tab_pos >= 0 && (size_t)tab_pos < by_tab_index.size()) {
+		select(by_tab_index[tab_pos]);
+		return true;
+	} else if (!by_tab_index.empty()) {
+		// also select something! so when we regain focus the selected editor makes sense
+		if (tab_pos < 0) select(by_tab_index.back());
+		else             select(by_tab_index.front());
+	}
+	return false;
+}
+int DataEditor::currentTabPos() const {
+	int i = 0;
+	FOR_EACH_CONST(v, by_tab_index) {
+		if (v == current_viewer) return i;
+		++i;
+	}
+	return -1;
+}
+
+struct CompareTabIndex {
+	bool operator() (ValueViewer* a, ValueViewer* b) {
+		Style& as = *a->getStyle(), &bs = *b->getStyle();
+		Field& af = *as.fieldP,     &bf = *bs.fieldP;
+		if (af.tab_index < bf.tab_index) return true;
+		if (af.tab_index > bf.tab_index) return false;
+		if (abs(as.top - bs.top) < 15) {
+			// the fields are almost on the same 'row'
+			// compare horizontally first
+			if (as.left < bs.left) return true; // horizontal sorting
+			if (as.left > bs.left) return false;
+			if (as.top  < bs.top)  return true; // vertical sorting
+		} else {
+			// compare vertically first
+			if (as.top  < bs.top)  return true; // vertical sorting
+			if (as.top  > bs.top)  return false;
+			if (as.left < bs.left) return true; // horizontal sorting
+		}
+		return false;
+	}
+};
+void DataEditor::createTabIndex() {
+	by_tab_index.clear();
+	FOR_EACH(v, viewers) {
+		if (v->getField()->editable && v->getStyle()->visible) {
+			by_tab_index.push_back(v.get());
+		}
+	}
+	stable_sort(by_tab_index.begin(), by_tab_index.end(), CompareTabIndex());
+}
+void DataEditor::onInit() {
+	createTabIndex();
+}
 
 // ----------------------------------------------------------------------------- : Clipboard & Formatting
 
@@ -159,6 +236,27 @@ RealPoint DataEditor::mousePoint(const wxMouseEvent& ev) {
 
 // ----------------------------------------------------------------------------- : Keyboard events
 
+void DataEditor::onChar(wxKeyEvent& ev) {
+	if (ev.GetKeyCode() == WXK_TAB) {
+		if (!ev.ShiftDown()) {
+			// try to select the next editor
+			if (selectNext()) return;
+			// send a navigation event to our parent, to select another control
+			wxNavigationKeyEvent evt;
+			GetParent()->ProcessEvent(evt);
+		} else {
+			// try to select the previos editor
+			if (selectPrevious()) return;
+			// send a navigation event to our parent, to select another control
+			wxNavigationKeyEvent evt;
+			evt.SetDirection(false);
+			GetParent()->ProcessEvent(evt);
+		}
+	} else if (current_editor) {
+		current_editor->onChar(ev);
+	}
+}
+
 // ----------------------------------------------------------------------------- : Menu events
 
 void DataEditor::onContextMenu(wxContextMenuEvent& ev) {
@@ -175,8 +273,28 @@ void DataEditor::onContextMenu(wxContextMenuEvent& ev) {
 		}
 	}
 }
+void DataEditor::onMenu(wxCommandEvent& ev) {
+	if (current_editor) {
+		current_editor->onMenu(ev);
+	} else {
+		ev.Skip();
+	}
+}
 
 // ----------------------------------------------------------------------------- : Focus events
+
+void DataEditor::onFocus(wxFocusEvent& ev) {
+	if (current_editor) {
+		current_editor->onFocus();
+		onChange();
+	}
+}
+void DataEditor::onLoseFocus(wxFocusEvent& ev) {
+	if (current_editor) {
+		current_editor->onLoseFocus();
+		onChange();
+	}
+}
 
 // ----------------------------------------------------------------------------- : Event table
 
@@ -188,9 +306,9 @@ BEGIN_EVENT_TABLE(DataEditor, CardViewer)
 	EVT_MOTION         (DataEditor::onMotion)
 	EVT_MOUSEWHEEL     (DataEditor::onMouseWheel)
 	EVT_LEAVE_WINDOW   (DataEditor::onMouseLeave)
-//	EVT_CONTEXT_MENU   (DataEditor::onContextMenu)
-//	EVT_CHAR           (DataEditor::onChar)
-//	EVT_SET_FOCUS      (DataEditor::onFocus)
-//	EVT_KILL_FOCUS     (DataEditor::onLoseFocus)
-//	EVT_MENU           (wxID_ANY, DataEditor::onMenu)
+	EVT_CONTEXT_MENU   (DataEditor::onContextMenu)
+	EVT_MENU           (wxID_ANY, DataEditor::onMenu)
+	EVT_CHAR           (DataEditor::onChar)
+	EVT_SET_FOCUS      (DataEditor::onFocus)
+	EVT_KILL_FOCUS     (DataEditor::onLoseFocus)
 END_EVENT_TABLE  ()

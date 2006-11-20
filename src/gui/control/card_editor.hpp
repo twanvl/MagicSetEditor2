@@ -30,7 +30,14 @@ class DataEditor : public CardViewer {
 	
 	// --------------------------------------------------- : Selection
 	
-	// TODO
+	/// Select the given viewer, sends focus events
+	void select(ValueViewer* v);
+	/// Select the first editable and visible editor (by tab index)
+	void selectFirst();
+	/// Select the next editable editor, returns false if the current editor is the last one
+	bool selectNext();
+	/// Select the previous editable editor, returns false if the current editor is the first one
+	bool selectPrevious();
 	
 	// --------------------------------------------------- : Clipboard
 	
@@ -53,12 +60,15 @@ class DataEditor : public CardViewer {
 	/// Create an editor for the given style (as opposed to a normal viewer)
 	virtual ValueViewerP makeViewer(const StyleP&);
 	
+	virtual void onInit();
+	
 	// --------------------------------------------------- : Data
   private:
 	DECLARE_EVENT_TABLE();
 	
 	ValueViewer* current_viewer;	///< The currently selected viewer
 	ValueEditor* current_editor;	///< The currently selected editor, corresponding to the viewer
+	vector<ValueViewer*> by_tab_index;	///< The editable viewers, sorted by tab index
 	
 	// --------------------------------------------------- : Events
 	
@@ -87,6 +97,14 @@ class DataEditor : public CardViewer {
 	void selectFieldNoEvents(const RealPoint& pos);
 	/// Convert mouse coordinates to internal coordinates
 	RealPoint mousePoint(const wxMouseEvent& e);
+	
+	// Create tab index ordering of the (editable) viewers
+	void createTabIndex();
+	/// Select the field with the given position in the by_tab_index list
+	/** Returns success */
+	bool selectByTabPos(int tab_pos);
+	/// Find the tab pos of the current viewer, returns -1 if not found
+	int currentTabPos() const;
 };
 
 /// By default a DataEditor edits cards

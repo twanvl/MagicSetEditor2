@@ -90,6 +90,7 @@ void DataViewer::setStyles(IndexMap<FieldP,StyleP>& styles) {
 	}
 	// sort viewers by z-index of style
 	stable_sort(viewers.begin(), viewers.end(), CompareViewer());
+	onInit();
 }
 
 void DataViewer::setData(IndexMap<FieldP,ValueP>& values) {
