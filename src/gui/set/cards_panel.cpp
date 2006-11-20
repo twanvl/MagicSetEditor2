@@ -65,6 +65,7 @@ void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->AddTool(ID_FORMAT_BOLD,		_(""), Bitmap(_("TOOL_BOLD")),		wxNullBitmap, wxITEM_CHECK, _("Bold"));
 	tb->AddTool(ID_FORMAT_ITALIC,	_(""), Bitmap(_("TOOL_ITALIC")),	wxNullBitmap, wxITEM_CHECK, _("Italic"));
 	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), Bitmap(_("TOOL_SYMBOL")),	wxNullBitmap, wxITEM_CHECK, _("Symbols"));
+	tb->AddTool(ID_FORMAT_REMINDER,	_(""), Bitmap(_("TOOL_REMINDER")),	wxNullBitmap, wxITEM_CHECK, _("Reminder Text"));
 	tb->AddSeparator();
 	tb->AddTool(ID_CARD_ADD,		_(""), Bitmap(_("TOOL_CARD_ADD")),	wxNullBitmap, wxITEM_NORMAL,_("Add card"));
 	tb->AddTool(ID_CARD_REMOVE,		_(""), Bitmap(_("TOOL_CARD_DEl")),	wxNullBitmap, wxITEM_NORMAL,_("Remove selected card"));
@@ -97,6 +98,7 @@ void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 		menuFormat->Append(ID_FORMAT_BOLD,		_("TOOL_BOLD"),		_("Bold\tCtrl+B"),					_("Makes the selected text bold"),			wxITEM_CHECK);
 		menuFormat->Append(ID_FORMAT_ITALIC,	_("TOOL_ITALIC"),	_("Italic\tCtrl+I"),				_("Makes the selected text italic"),		wxITEM_CHECK);
 		menuFormat->Append(ID_FORMAT_SYMBOL,	_("TOOL_SYMBOL"),	_("Symbols\tCtrl+M"),				_("Draws the selected text with symbols"),	wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_REMINDER,	_("TOOL_REMINDER"),	_("Reminder Text\tCtrl+R"),			_("Show reminder text for the selected keyword"),	wxITEM_CHECK);
 	mb->Insert(3, menuFormat, _("&Format"));
 }
 
@@ -105,6 +107,7 @@ void CardsPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->DeleteTool(ID_FORMAT_BOLD);
 	tb->DeleteTool(ID_FORMAT_ITALIC);
 	tb->DeleteTool(ID_FORMAT_SYMBOL);
+	tb->DeleteTool(ID_FORMAT_REMINDER);
 	tb->DeleteTool(ID_CARD_ADD);
 	tb->DeleteTool(ID_CARD_REMOVE);
 	tb->DeleteTool(ID_CARD_ROTATE);
