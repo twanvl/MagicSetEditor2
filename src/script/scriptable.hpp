@@ -33,6 +33,8 @@ void store(const ScriptValueP& val, Defaultable<String>& var);
 /// An optional script, 
 class OptionalScript {
   public:
+	inline OptionalScript() {}
+	OptionalScript(const String& script_);
 	~OptionalScript();
 	/// Is the script set?
 	inline operator bool() const { return !!script; }
@@ -96,6 +98,8 @@ class Scriptable {
 	inline operator const T&   () const { return value; }
 	inline const T& operator ()() const { return value; }
 	inline bool isScripted() const { return script; }
+	/// Has this value been read from a Reader?
+	inline bool hasBeenRead() const { return !script.unparsed.empty(); }
 	
 	/// Updates the value by executing the script, returns true if the value has changed
 	inline bool update(Context& ctx) {

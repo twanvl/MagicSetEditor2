@@ -14,13 +14,13 @@ DECLARE_TYPEOF_COLLECTION(TextElementP);
 
 // ----------------------------------------------------------------------------- : TextElements
 
-void TextElements::draw(RotatedDC& dc, double scale, const RealRect& rect, double* xs, DrawWhat what, size_t start, size_t end) const {
+void TextElements::draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const {
 	FOR_EACH_CONST(e, elements) {
 		size_t start_ = max(start, e->start);
 		size_t end_   = min(end,   e->end);
 		if (start_ < end_) {
 			e->draw(dc, scale,
-			        RealRect(rect.position.x + xs[start_-start], rect.position.y,
+			        RealRect(rect.position.x + xs[start_-start] - xs[0], rect.position.y,
 			                 xs[end_-start] - xs[start_-start], rect.size.height),
 			        xs + start_ - start, what, start_, end_);
 		}

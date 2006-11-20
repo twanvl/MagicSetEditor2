@@ -25,7 +25,7 @@ class CardsPanel : public SetWindowPanel {
 	~CardsPanel();
 	
 	void onChangeSet();
-		
+	
 	// --------------------------------------------------- : UI
 	
 	virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);

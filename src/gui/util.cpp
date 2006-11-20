@@ -11,6 +11,12 @@
 #include <util/rotation.hpp>
 #include <wx/mstream.h>
 
+#if defined(wxMSW) && wxUSE_UXTHEME
+	#include <wx/msw/uxtheme.h>
+	#include <tmschema.h>
+	#include <shlobj.h>
+#endif
+
 // ----------------------------------------------------------------------------- : DC related
 
 /// Fill a DC with a single color
@@ -43,7 +49,7 @@ void draw_checker(RotatedDC& dc, const RealRect& rect) {
 
 // ----------------------------------------------------------------------------- : Image related
 
-Image load_resource_image(String name) {
+Image load_resource_image(const String& name) {
 	#ifdef __WXMSW__
 		// Load resource
 		// based on wxLoadUserResource
@@ -60,5 +66,55 @@ Image load_resource_image(String name) {
 		int len = ::SizeofResource(wxGetInstance(), hResource);
 		wxMemoryInputStream stream(data, len);
 		return wxImage(stream);
+	#endif
+}
+
+// ----------------------------------------------------------------------------- : Platform look
+
+// Draw a basic 3D border
+void draw3DBorder(DC& dc, int x1, int y1, int x2, int y2) {
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW));
+	dc.DrawLine(x1, y1, x2, y1);
+	dc.DrawLine(x1, y1, x1, y2);
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+	dc.DrawLine(x1-1, y1-1, x2+1, y1-1);
+	dc.DrawLine(x1-1, y1-1, x1-1, y2+1);
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DLIGHT));
+	dc.DrawLine(x1, y2, x2, y2);
+	dc.DrawLine(x2, y1, x2, y2+1);
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DHIGHLIGHT));
+	dc.DrawLine(x1-1, y2+1, x2+1, y2+1);
+	dc.DrawLine(x2+1, y1-1, x2+1, y2+2);
+}
+
+void draw_control_border(Window* win, DC& dc, const wxRect& rect) {
+	#if defined(wxMSW) && wxUSE_UXTHEME
+		RECT r;
+		wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
+		if (themeEngine && themeEngine->IsAppThemed()) {
+			wxUxThemeHandle hTheme(win, L_("EDIT"));
+			r.left = rect.x -1;
+			r.top = rect.y  -1;
+			r.right = rect.x + rect.width + 1;
+			r.bottom = rect.y + rect.height + 1;
+			if (hTheme) {
+				wxUxThemeEngine::Get()->DrawThemeBackground(
+					hTheme,
+					dc.GetHDC(),
+					EP_EDITTEXT,
+					ETS_NORMAL,
+					&r,
+					NULL
+				);
+				return;
+			}
+		}
+		r.left   = rect.x - 2;
+		r.top    = rect.y - 2;
+		r.right  = rect.x + rect.width  + 2;
+		r.bottom = rect.y + rect.height + 2;
+		DrawEdge((HDC)dc.GetHDC(), &r, EDGE_SUNKEN, BF_RECT);
+	#else
+		draw3DBorder(dc, rect.x - 1, rect.y - 1, rect.x + rect.width, rect.y + rect.height);
 	#endif
 }

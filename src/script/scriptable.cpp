@@ -23,6 +23,11 @@ void store(const ScriptValueP& val, Defaultable<String>& var) { var.assign(*val)
 
 // ----------------------------------------------------------------------------- : OptionalScript
 
+OptionalScript::OptionalScript(const String& script_)
+	: unparsed(script_)
+	, script(::parse(script_))
+{}
+
 OptionalScript::~OptionalScript() {}
 
 ScriptValueP OptionalScript::invoke(Context& ctx, bool open_scope) const {

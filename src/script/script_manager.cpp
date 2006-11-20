@@ -26,6 +26,7 @@ DECLARE_TYPEOF_NO_REV(IndexMap_FieldP_ValueP);
 
 // initialize functions, from functions.cpp
 void init_script_functions(Context& ctx);
+void init_script_image_functions(Context& ctx);
 
 // ----------------------------------------------------------------------------- : ScriptManager : initialization
 
@@ -57,6 +58,7 @@ Context& ScriptManager::getContext(const StyleSheetP& stylesheet) {
 		//  NOTE: do not use a smart pointer for the pointer to the set, because the set owns this
 		//        which would lead to a reference cycle.
 		init_script_functions(*ctx);
+		init_script_image_functions(*ctx);
 		ctx->setVariable(_("set"),        new_intrusive1<ScriptObject<Set*> >(&set));
 		ctx->setVariable(_("game"),       toScript(set.game));
 		ctx->setVariable(_("stylesheet"), toScript(stylesheet));

@@ -12,11 +12,35 @@
 #include <util/prec.hpp>
 #include <gui/set/panel.hpp>
 
+class SetInfoEditor;
+
 // ----------------------------------------------------------------------------- : SetInfoPanel
 
 class SetInfoPanel : public SetWindowPanel {
   public:
 	SetInfoPanel(Window* parent, int id);
+	
+	// --------------------------------------------------- : UI
+	
+	virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
+	virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
+	virtual void onUpdateUI(wxUpdateUIEvent& e);
+	virtual void onCommand(int id);
+	
+	// --------------------------------------------------- : Clipboard
+	
+	virtual bool canCut()   const;
+	virtual bool canCopy()  const;
+	virtual bool canPaste() const;
+	virtual void doCut();
+	virtual void doCopy();
+	virtual void doPaste();
+	
+  protected:
+	virtual void onChangeSet();
+	
+  private:
+	SetInfoEditor* editor;
 };
 
 // ----------------------------------------------------------------------------- : EOF

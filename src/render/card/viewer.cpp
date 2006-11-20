@@ -27,22 +27,25 @@ void DataViewer::draw(DC& dc) {
 	StyleSheetP stylesheet = set->stylesheetFor(card);
 	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
 	RotatedDC rdc(dc, ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(), ss.card_anti_alias() && !nativeLook());
-	draw(rdc);
+	draw(rdc, set->stylesheet->card_background);
 }
-void DataViewer::draw(RotatedDC& dc) {
+void DataViewer::draw(RotatedDC& dc, const Color& background) {
 	if (!set)  return; // no set specified, don't draw anything
 	// fill with background color
 	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(set->stylesheet->card_background);
+	dc.SetBrush(background);
 	dc.DrawRectangle(dc.getInternalRect());
 	// update style scripts
 	if (card) set->updateFor(card);
 	// draw values
 	FOR_EACH(v, viewers) { // draw low z index fields first
 		if (v->getStyle()->visible) {// visible
-			v->draw(dc);
+			drawViewer(dc, *v);
 		}
 	}
+}
+void DataViewer::drawViewer(RotatedDC& dc, ValueViewer& v) {
+	v.draw(dc);
 }
 
 // ----------------------------------------------------------------------------- : Utility for ValueViewers
@@ -80,8 +83,9 @@ void DataViewer::setStyles(IndexMap<FieldP,StyleP>& styles) {
 	viewers.clear();
 	FOR_EACH(s, styles) {
 		if ((s->visible || s->visible.isScripted()) &&
-		    (s->width   || s->width  .isScripted()) &&
-		    (s->height  || s->height .isScripted())) {
+		    nativeLook() || (
+		      (s->width   || s->width  .isScripted()) &&
+		      (s->height  || s->height .isScripted()))) {
 			// no need to make a viewer for things that are always invisible
 			viewers.push_back(makeViewer(s));
 			// REMOVEME //TODO //%%%

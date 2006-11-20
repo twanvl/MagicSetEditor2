@@ -47,7 +47,7 @@ struct CardSelectEvent : public wxCommandEvent {
  */
 class CardListBase : public wxListView, public SetView {
   public:
-	CardListBase(Window* parent, int id, int additional_style = 0);
+	CardListBase(Window* parent, int id, long additional_style = 0);
 	~CardListBase();
 	
 	// --------------------------------------------------- : Selection

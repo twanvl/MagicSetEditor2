@@ -116,16 +116,13 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	// NOTE: place the CardsPanel last in the panels list,
 	//  this way the card list is the last to be told of a set change
 	//  this way everyone else already uses the new set when it sends a CardSelectEvent
-	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 2, _("F5"), _("Cards"), _("Cards"), _("Edit the cards in the set"));
-//	addPanel(menuWindow, tabBar, new SetInfoPanel (this, wxID_ANY), 0, _("F6"));
-	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 1, _("F7"), _("Style"), _("Style"), _("Change the style of cards"));
+	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 3, _("F5"), _("Cards"),		_("Cards"),				_("Edit the cards in the set"));
+	addPanel(menuWindow, tabBar, new SetInfoPanel (this, wxID_ANY), 0, _("F6"), _("Set info"),	_("&Set Information"),	_("Edit information about the set, its creator, etc."));
+	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 1, _("F7"), _("Style"),		_("Style"),				_("Change the style of cards"));
 //	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 2, _("F8"));
-//	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 3, _("F9"), _("Stats"), _("Statistics"), _("Show statistics about the cards in the set"));
-	//addPanel(*s, *menuWindow, *tabBar, new DraftPanel   (&this, wxID_ANY), 4, _("F10")) 
-//	selectPanel(idWindowMin + 4); // select cards panel
-
-	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 0, _("F9"), _("Stats"), _("Statistics"), _("Show statistics about the cards in the set"));
-	selectPanel(ID_WINDOW_MIN+2); // test
+	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 2, _("F9"), _("Stats"),		_("Statistics"),		_("Show statistics about the cards in the set"));
+//	addPanel(*s, *menuWindow, *tabBar, new DraftPanel   (&this, wxID_ANY), 4, _("F10")) 
+	selectPanel(ID_WINDOW_MIN + 3); // select cards panel
 	
 	// loose ends
 	tabBar->Realize();
@@ -227,8 +224,6 @@ void SetWindow::onChangeSet() {
 	// make sure there is always at least one card
 	// some things need this
 	if (set->cards.empty()) set->cards.push_back(new_shared1<Card>(*set->game));
-	// does the set need a scriptUpdater? If so, we can do it
-//	if (!set->scriptUpdater) scriptUpdater.set = set;
 	// all panels view the same set
 	FOR_EACH(p, panels) {
 		p->setSet(set);

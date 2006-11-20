@@ -59,7 +59,7 @@ class TextElement {
 	/// Draw a subsection section of the text in the given rectangle
 	/** xs give the x coordinates for each character
 	 *  this->start <= start < end <= this->end <= text.size() */
-	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, double* xs, DrawWhat what, size_t start, size_t end) const = 0;
+	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const = 0;
 	/// Get information on all characters in the range [start...end) and store them in out
 	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const = 0;
 	/// Return the minimum scale factor allowed (starts at 1)
@@ -96,7 +96,7 @@ class TextElement {
 class TextElements : public vector<TextElementP> {
   public:
 	/// Draw all the elements (as need to show the range start..end)
-	void draw       (RotatedDC& dc, double scale, const RealRect& rect, double* xs, DrawWhat what, size_t start, size_t end) const;
+	void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 	// Get information on all characters in the range [start...end) and store them in out
 	void getCharInfo(RotatedDC& dc, double scale, size_t start, size_t end, vector<CharInfo>& out) const;
 	/// Return the minimum scale factor allowed by all elements
@@ -131,7 +131,7 @@ class FontTextElement : public SimpleTextElement {
 		, font(font)
 	{}
 
-	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, double* xs, DrawWhat what, size_t start, size_t end) const;
+	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
 	virtual double minScale() const;
   private:
@@ -147,7 +147,7 @@ class SymbolTextElement : public SimpleTextElement {
 		, font(font), ctx(*ctx)
 	{}
 
-	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, double* xs, DrawWhat what, size_t start, size_t end) const;
+	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
 	virtual double minScale() const;
   private:
@@ -172,7 +172,7 @@ class HorizontalLineTextElement : public TextElement {
   public:
 	HorizontalLineTextElement(const String& text, size_t start ,size_t end) : TextElement(text, start, end) {}
 
-	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, double* xs, DrawWhat what, size_t start, size_t end) const;
+	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
 	virtual double minScale() const;
 };
@@ -185,7 +185,7 @@ class CompoundTextElement : public TextElement {
   public:
 	CompoundTextElement(const String& text, size_t start ,size_t end) : TextElement(text, start, end) {}
 	
-	virtual void draw        (RotatedDC& dc, double scale, const RealRect& rect, double* xs, DrawWhat what, size_t start, size_t end) const;
+	virtual void draw        (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 	virtual RealSize charSize(RotatedDC& dc, double scale, size_t index) const;
 	
   private:

@@ -28,9 +28,11 @@ class DataViewer : public SetView {
 	// --------------------------------------------------- : Drawing
 	
 	/// Draw the current (card/data) to the given dc
-	void draw(DC& dc);
+	virtual void draw(DC& dc);
 	/// Draw the current (card/data) to the given dc
-	virtual void draw(RotatedDC& dc);
+	virtual void draw(RotatedDC& dc, const Color& background);
+	/// Draw a single viewer
+	virtual void drawViewer(RotatedDC& dc, ValueViewer& v);
 	
 	// --------------------------------------------------- : Utility for ValueViewers
 	

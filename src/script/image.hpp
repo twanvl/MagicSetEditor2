@@ -46,6 +46,9 @@ class ScriptImage : public ScriptValue {
  */
 class ScriptableImage {
   public:
+	inline ScriptableImage() {}
+	ScriptableImage(const String& script);
+	
 	/// Is there an image set?
 	inline operator bool() const { return script; }
 	

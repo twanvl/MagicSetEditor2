@@ -29,7 +29,13 @@ void draw_checker(RotatedDC& dc, const RealRect&);
 // ----------------------------------------------------------------------------- : Resource related
 
 /// Load an image from a resource
-Image load_resource_image(String name);
+Image load_resource_image(const String& name);
+
+// ----------------------------------------------------------------------------- : Platform look
+
+/// Draws a border for a control *around* a rect
+/** Based on wxRendererXP::DrawComboBoxDropButton */
+void draw_control_border(Window* win, DC& dc, const wxRect& rect);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

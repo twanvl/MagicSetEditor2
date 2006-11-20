@@ -117,6 +117,14 @@ String capitalize(const String& s) {
 	return result;
 }
 
+String capitalize_sentence(const String& s) {
+	String ret = s.Lower();
+	if (!ret.empty()) {
+		ret[0] = toUpper(ret[0]);
+	}
+	return ret;
+}
+
 String cannocial_name_form(const String& str) {
 	String ret;
 	ret.reserve(str.size());

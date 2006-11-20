@@ -18,13 +18,6 @@ DECLARE_TYPEOF_COLLECTION(ValueViewer*);
 
 // ----------------------------------------------------------------------------- : DataEditor
 
-#define FOR_EACH_EDITOR							\
-	FOR_EACH(v, viewers)						\
-		if (ValueEditor* e = v->getEditor())
-#define FOR_EACH_EDITOR_REVERSE					\
-	FOR_EACH_REVERSE(v, viewers)				\
-		if (ValueEditor* e = v->getEditor())
-
 DataEditor::DataEditor(Window* parent, int id, long style)
 	: CardViewer(parent, id, style)
 	, current_viewer(nullptr)

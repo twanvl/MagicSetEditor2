@@ -11,7 +11,7 @@
 
 // ----------------------------------------------------------------------------- : FontTextElement
 
-void FontTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, double* xs, DrawWhat what, size_t start, size_t end) const {
+void FontTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const {
 	dc.SetFont(font->font, font->size * scale);
 	
 	if (end != start && text.substr(end-1, 1) == _("\n")) end -= 1; // don't draw the newline character at the end

@@ -31,6 +31,14 @@ IMPLEMENT_REFLECTION(BooleanField) {
 
 // ----------------------------------------------------------------------------- : BooleanStyle
 
+BooleanStyle::BooleanStyle(const ChoiceFieldP& field)
+	: ChoiceStyle(field)
+{
+	render_style = RENDER_BOTH;
+	choice_images[_("yes")] = ScriptableImage(_("buildin_image(\"bool_yes\")"));
+	choice_images[_("no")]  = ScriptableImage(_("buildin_image(\"bool_no\")"));
+}
+
 IMPLEMENT_REFLECTION(BooleanStyle) {
 	REFLECT_BASE(ChoiceStyle);
 }

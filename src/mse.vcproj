@@ -405,6 +405,12 @@
 					RelativePath=".\gui\control\graph.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\control\native_look_editor.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\native_look_editor.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\control\package_list.cpp">
 				</File>
 				<File

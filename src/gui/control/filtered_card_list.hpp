@@ -29,7 +29,7 @@ class CardListFilter {
 /// A card list that lists a subset of the cards in the set
 class FilteredCardList : public CardListBase {
   public:
-	FilteredCardList(Window* parent, int id, int style = 0);
+	FilteredCardList(Window* parent, int id, long style = 0);
 	
 	/// Change the filter to use
 	void setFilter(const CardListFilterP& filter_);

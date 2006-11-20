@@ -35,7 +35,7 @@ class BooleanField : public ChoiceField {
 /// The Style for a BooleanField
 class BooleanStyle : public ChoiceStyle {
   public:
-	inline BooleanStyle(const ChoiceFieldP& field) : ChoiceStyle(field) {}
+	BooleanStyle(const ChoiceFieldP& field);
 	DECLARE_HAS_FIELD(Boolean); // not DECLARE_STYLE_TYPE, because we use a normal ChoiceValueViewer/Editor
 	
 	// no extra data

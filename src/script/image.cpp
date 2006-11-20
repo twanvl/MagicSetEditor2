@@ -10,6 +10,7 @@
 #include <script/context.hpp>
 #include <util/dynamic_arg.hpp>
 #include <util/io/package.hpp>
+#include <gui/util.hpp> // load_resource_image
 
 // image generating functions have two modes
 // if last_update_age >  0 they return whether the image is still up to date
@@ -58,6 +59,10 @@ bool script_image_up_to_date(const ScriptValueP& value) {
 
 
 // ----------------------------------------------------------------------------- : ScriptableImage
+
+ScriptableImage::ScriptableImage(const String& script_)
+	: script(script_)
+{}
 
 ScriptImageP ScriptableImage::generate(Context& ctx, Package& pkg) const {
 	try {
@@ -199,4 +204,22 @@ SCRIPT_FUNCTION(set_mask) {
 			script_image_up_to_date(ctx.getVariable(_("mask")))
 		);
 	}
+}
+
+SCRIPT_FUNCTION(buildin_image) {
+	if (last_update_age() == 0) {
+		SCRIPT_PARAM(String, input);
+		Image img = load_resource_image(input);
+		if (!img.Ok()) throw ScriptError(_("There is no build in image '") + input + _("'"));
+		return new_intrusive1<ScriptImage>(img);
+	} else {
+		SCRIPT_RETURN(true);
+	}
+}
+
+void init_script_image_functions(Context& ctx) {
+	ctx.setVariable(_("linear blend"),    script_linear_blend);
+	ctx.setVariable(_("masked blend"),    script_masked_blend);
+	ctx.setVariable(_("set mask"),        script_set_mask);
+	ctx.setVariable(_("buildin image"),   script_buildin_image);
 }

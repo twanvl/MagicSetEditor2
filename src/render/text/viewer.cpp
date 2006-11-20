@@ -257,11 +257,11 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const String& text, const Text
 }
 
 double TextViewer::lineLeft(RotatedDC& dc, const TextStyle& style, double y) {
-	return 0;
+	return 0 + style.padding_left;
 //	return style.mask.rowLeft(y, dc.getInternalSize()) + style.padding_left;
 }
 double TextViewer::lineRight(RotatedDC& dc, const TextStyle& style, double y) {
-	return style.width;
+	return style.width - style.padding_right;
 //	return style.mask.rowRight(y, dc.getInternalSize()) - style.padding_right;
 }
 ContourMask::ContourMask() {} // MOVEME //@@

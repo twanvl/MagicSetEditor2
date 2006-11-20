@@ -12,7 +12,7 @@ DECLARE_TYPEOF_COLLECTION(CardP);
 
 // ----------------------------------------------------------------------------- : FilteredCardList
 
-FilteredCardList::FilteredCardList(Window* parent, int id, int style)
+FilteredCardList::FilteredCardList(Window* parent, int id, long style)
 	: CardListBase(parent, id, style)
 {}
 
