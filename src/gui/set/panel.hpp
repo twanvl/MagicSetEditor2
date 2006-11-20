@@ -39,7 +39,7 @@ class SetWindowPanel : public wxPanel, public SetView {
 	/// Update the UI by enabling/disabling items.
 	/** Note: copy/paste and find/replace are not handled here.
 	 */
-	virtual void onUpdateUI(wxUpdateUIEvent& e) {}
+	virtual void onUpdateUI(wxUpdateUIEvent&) {}
 	/// Respond to one of those extra menu/tool items
 	virtual void onCommand(int id) {}
 	
@@ -69,22 +69,6 @@ class SetWindowPanel : public wxPanel, public SetView {
 	// --------------------------------------------------- : Selection
 	virtual CardP selectedCard() const { return CardP(); }	///< Return the currently selected card, or CardP()
 	virtual void  selectCard(const CardP& card) {}			///< Switch the view to another card
-	
-  protected:
-	// --------------------------------------------------- : Helper functions for UI
-	/// Enable/disable a tool or menu item
-//	void enable(wxToolBar* tb, wxMenuBar* mb, int id, bool enable);
-//		mb->Enable(id, enable)
-//		tb->EnableTool(id, enable)
-		
-	/// Id of the control that has the focus, or -1 if no control has the focus
-	int focusedControl();
-//		Window* focusedWindow = findFocus()
-//		// is this window actually inside this panel?
-//		if focusedWindow && findWindowById(focusedWindow->id, &this) == focusedWindow
-//			return focusedWindow->id
-//		else
-//			return -1 // no window has the focus, or it has a different parent/ancestor
 };
 
 // ----------------------------------------------------------------------------- : EOF

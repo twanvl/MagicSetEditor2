@@ -83,7 +83,7 @@ class DataEditor : public CardViewer {
 	void onChar      (wxKeyEvent&);
 	
 	void onContextMenu(wxContextMenuEvent&);
-	void onMenu       (wxCommandEvent& e);
+	void onMenu       (wxCommandEvent&);
 	
 	void onFocus    (wxFocusEvent&);
 	void onLoseFocus(wxFocusEvent&);
@@ -96,7 +96,7 @@ class DataEditor : public CardViewer {
 	// selectField, but don't send events
 	void selectFieldNoEvents(const RealPoint& pos);
 	/// Convert mouse coordinates to internal coordinates
-	RealPoint mousePoint(const wxMouseEvent& e);
+	RealPoint mousePoint(const wxMouseEvent&);
 	
 	// Create tab index ordering of the (editable) viewers
 	void createTabIndex();

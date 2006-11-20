@@ -30,7 +30,7 @@ class CardsPanel : public SetWindowPanel {
 	
 	virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
 	virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
-	virtual void onUpdateUI(wxUpdateUIEvent& e);
+	virtual void onUpdateUI(wxUpdateUIEvent&);
 	virtual void onCommand(int id);
 	
 	// --------------------------------------------------- : Actions
@@ -41,7 +41,7 @@ class CardsPanel : public SetWindowPanel {
   public:
   
 	// --------------------------------------------------- : Clipboard
-/*	virtual bool canCut() const;
+	virtual bool canCut() const;
 	virtual bool canCopy() const;
 	virtual bool canPaste() const;
 	virtual void doCut();
@@ -49,7 +49,7 @@ class CardsPanel : public SetWindowPanel {
 	virtual void doPaste();
 	
 	// --------------------------------------------------- : Searching (find/replace)
-	virtual bool canFind() const;
+/*	virtual bool canFind() const;
 	virtual bool canReplace() const;
 	virtual bool doFind(wxFindReplaceData& what);
 	virtual bool doReplace(wxFindReplaceData& what);

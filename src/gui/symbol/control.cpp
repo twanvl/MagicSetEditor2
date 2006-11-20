@@ -140,7 +140,7 @@ void SymbolControl::draw(DC& dc) {
 		editor->draw(dc);
 	}
 }
-void SymbolControl::onPaint(wxPaintEvent& e) {
+void SymbolControl::onPaint(wxPaintEvent&) {
 	wxBufferedPaintDC dc(this);
 	dc.BeginDrawing();
 	draw(dc);

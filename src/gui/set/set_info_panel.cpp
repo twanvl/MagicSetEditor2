@@ -55,11 +55,11 @@ void SetInfoPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	delete mb->Remove(2);
 }
 
-void SetInfoPanel::onUpdateUI(wxUpdateUIEvent& e) {
-	switch (e.GetId()) {
+void SetInfoPanel::onUpdateUI(wxUpdateUIEvent& ev) {
+	switch (ev.GetId()) {
 		case ID_FORMAT_BOLD: case ID_FORMAT_ITALIC: case ID_FORMAT_SYMBOL: {
-			e.Enable(editor->canFormat(e.GetId()));
-			e.Check (editor->hasFormat(e.GetId()));
+			ev.Enable(editor->canFormat(ev.GetId()));
+			ev.Check (editor->hasFormat(ev.GetId()));
 			break;
 		}
 	}
@@ -69,6 +69,7 @@ void SetInfoPanel::onCommand(int id) {
 	switch (id) {
 		case ID_FORMAT_BOLD: case ID_FORMAT_ITALIC: case ID_FORMAT_SYMBOL: {
 			editor->doFormat(id);
+			break;
 		}
 	}
 }

@@ -92,5 +92,5 @@ void Reader::handle(StyleSheetP& stylesheet) {
 	stylesheet = StyleSheet::byGameAndName(*game_for_reading(), value);
 }
 void Writer::handle(const StyleSheetP& stylesheet) {
-	handle(stylesheet->name());
+	if (stylesheet) handle(stylesheet->name());
 }

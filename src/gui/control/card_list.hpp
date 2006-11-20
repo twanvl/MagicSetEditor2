@@ -88,6 +88,8 @@ class CardListBase : public wxListView, public SetView {
 	void rebuild();
 	/// Do some additional updating before rebuilding the list
 	virtual void onRebuild() {}
+	/// Can the card list be modified?
+	virtual bool allowModify() const { return true; }
 	
 	// --------------------------------------------------- : Item 'events'
 	

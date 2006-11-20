@@ -190,7 +190,6 @@ template <> void Reader::handle(double& d) {
 template <> void Reader::handle(bool& b) {
 	b = (value==_("true") || value==_("1") || value==_("yes"));
 }
-
 // ----------------------------------------------------------------------------- : Handling less basic util types
 
 template <> void Reader::handle(Vector2D& vec) {
@@ -203,5 +202,27 @@ template <> void Reader::handle(Color& col) {
 	UInt r,g,b;
 	if (wxSscanf(value.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
 		col.Set(r, g, b);
+	}
+}
+
+template <> void Reader::handle(FileName& f) {
+	if (clipboard_package()) {
+		String str; handle(str);
+		if (!str.empty()) {
+			// copy file into current package
+			try {
+				String packaged_name = clipboard_package()->newFileName(_("image"),_("")); // a new unique name in the package, assume it's an image
+				OutputStreamP out    = clipboard_package()->openOut(packaged_name);
+				InputStreamP  in     = Package::openAbsoluteFile(str);
+				out->Write(*in); // copy
+				f.assign(packaged_name);
+			} catch (Error) {
+				// ignore errors
+			}
+		} else {
+			f.assign(str);
+		}
+	} else {
+		handle(static_cast<String&>(f));
 	}
 }

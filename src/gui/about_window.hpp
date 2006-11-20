@@ -24,7 +24,7 @@ class AboutWindow : public wxDialog {
 	// graphics
 	Bitmap logo, logo2;
 	
-	void onPaint(wxPaintEvent& e);
+	void onPaint(wxPaintEvent&);
 	void draw(DC& dc);
 };
 

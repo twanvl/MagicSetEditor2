@@ -17,6 +17,19 @@
 	#include <shlobj.h>
 #endif
 
+// ----------------------------------------------------------------------------- : Window related
+
+// Id of the control that has the focus, or -1 if no control has the focus
+int focused_control(const Window* window) {
+	Window* focused_window = wxWindow::FindFocus();
+	// is this window actually inside this panel?
+	if (focused_window && wxWindow::FindWindowById(focused_window->GetId(), window) == focused_window) {
+		return focused_window->GetId();
+	} else {
+		return -1; // no window has the focus, or it has a different parent/ancestor
+	}
+}
+
 // ----------------------------------------------------------------------------- : DC related
 
 /// Fill a DC with a single color

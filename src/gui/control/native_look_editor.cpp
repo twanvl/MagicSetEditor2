@@ -73,8 +73,8 @@ wxSize NativeLookEditor::DoGetBestSize() const {
 	return wxSize(200, 200);
 }
 void NativeLookEditor::onSize(wxSizeEvent& ev) {
-//	CardViewre::onSize(ev);
 	resizeViewers();
+	Refresh(false);
 }
 
 BEGIN_EVENT_TABLE(NativeLookEditor, DataEditor)

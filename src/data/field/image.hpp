@@ -50,7 +50,7 @@ class ImageValue : public Value {
   public:
 	inline ImageValue(const ImageFieldP& field) : Value(field) {}
 	
-	String filename; ///< Filename of the image (in the current package), or ""
+	FileName filename; ///< Filename of the image (in the current package), or ""
 	
 	virtual String toString() const;
 	

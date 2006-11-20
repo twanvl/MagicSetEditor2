@@ -18,6 +18,11 @@
 class RotatedDC;
 class RealRect;
 
+// ----------------------------------------------------------------------------- : Window related
+
+/// Id of the control that has the focus in the given window, or -1 if no control has the focus
+int focused_control(const Window* window);
+
 // ----------------------------------------------------------------------------- : DC related
 
 /// Fill a DC with a single color

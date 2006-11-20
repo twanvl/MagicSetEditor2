@@ -10,6 +10,7 @@
 #include <util/vector2d.hpp>
 #include <util/error.hpp>
 #include <util/version.hpp>
+#include <util/io/package.hpp>
 
 // ----------------------------------------------------------------------------- : Writer
 
@@ -114,4 +115,20 @@ template <> void Writer::handle(const Vector2D& vec) {
 }
 template <> void Writer::handle(const Color& col) {
 	handle(String::Format(_("rgb(%u,%u,%u)"), col.Red(), col.Green(), col.Blue()));
+}
+
+template <> void Writer::handle(const FileName& value) {
+	if (clipboard_package() && !value.empty()) {
+		// use absolute names on clipboard
+		try {
+			handle(clipboard_package()->absoluteName(value));
+		} catch (const Error&) {
+			// ignore errors
+		}
+	} else {
+		handle(static_cast<const String&>(value));
+		if (writing_package()) {
+			writing_package()->referenceFile(value);
+		}
+	}
 }

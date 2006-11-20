@@ -9,7 +9,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
-#include <util/string.hpp>
+#include <util/prec.hpp>
 #include <util/reflect.hpp>
 
 class Game;

@@ -60,6 +60,7 @@ Context& DataViewer::getContext()  const { return set->getContext(); }
 // ----------------------------------------------------------------------------- : Setting data
 
 void DataViewer::setCard(const CardP& card) {
+	if (!card) return; // TODO: clear editor?
 	assert(set);
 	this->card = card;
 	setStyles(set->stylesheet->card_style);

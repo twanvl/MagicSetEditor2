@@ -46,7 +46,7 @@ WelcomeWindow::WelcomeWindow()
 	SetSizer(s1);
 }
 
-void WelcomeWindow::onPaint(wxPaintEvent& e) {
+void WelcomeWindow::onPaint(wxPaintEvent&) {
 	wxBufferedPaintDC dc(this);
 	dc.BeginDrawing();
 	draw(dc);

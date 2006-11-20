@@ -22,9 +22,16 @@ class StatsPanel : public SetWindowPanel {
   public:
 	StatsPanel(Window* parent, int id);
 	
-//	virtual void onUpdateUI(wxUpdateUIEvent& e);
-//	virtual void onCommand(int id);
+	// --------------------------------------------------- : UI
 	
+	virtual void onChangeSet();
+	virtual void onCommand(int id);
+	
+	// --------------------------------------------------- : Selection
+	virtual CardP selectedCard() const;
+	virtual void selectCard(const CardP& card);
+	
+	// --------------------------------------------------- : Data
   private:
 	StatFieldList*    fields;
 	GraphControl*     graph;

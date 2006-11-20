@@ -65,5 +65,8 @@ typedef unsigned int  UInt;
 /// Null pointer
 #define nullptr 0
 
+/// A string standing for a filename, has different behaviour when reading/writing
+class FileName : public String {};
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

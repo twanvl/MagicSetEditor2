@@ -956,6 +956,12 @@
 					RelativePath=".\data\format\apprentice.cpp">
 				</File>
 				<File
+					RelativePath=".\data\format\clipboard.cpp">
+				</File>
+				<File
+					RelativePath=".\data\format\clipboard.hpp">
+				</File>
+				<File
 					RelativePath=".\data\format\formats.cpp">
 				</File>
 				<File

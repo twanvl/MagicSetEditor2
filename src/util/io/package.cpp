@@ -18,6 +18,9 @@ DECLARE_TYPEOF(Package::FileInfos);
 
 // ----------------------------------------------------------------------------- : Package : outside
 
+IMPLEMENT_DYNAMIC_ARG(Package*, writing_package,   nullptr);
+IMPLEMENT_DYNAMIC_ARG(Package*, clipboard_package, nullptr);
+
 Package::Package()
 	: zipStream (nullptr)
 	, fileStream(nullptr)
@@ -219,6 +222,13 @@ String Package::newFileName(const String& prefix, const String& suffix) {
 	}
 }
 
+void Package::referenceFile(const String& file) {
+	if (file.empty()) return;
+	FileInfos::iterator it = files.find(file);
+	if (it == files.end()) throw InternalError(_("referencing a nonexistant file"));
+	it->second.keep = true;
+}
+
 String Package::absoluteName(const String& file) {
 	assert(wxThread::IsMain());
 	FileInfos::iterator it = files.find(toStandardName(file));
@@ -234,6 +244,21 @@ String Package::absoluteName(const String& file) {
 	} else {
 		// assume zip package
 		return filename+_("\1")+file;
+	}
+}
+// Open a file that is in some package
+InputStreamP Package::openAbsoluteFile(const String& name) {
+	size_t pos = name.find_first_of(_('\1'));
+	if (pos == String::npos) {
+		// temp or dir file
+		shared_ptr<wxFileInputStream> f = new_shared1<wxFileInputStream>(name);
+		if (!f->IsOk()) throw FileNotFoundError(_("<unknown>"), name);
+		return f;
+	} else {
+		// packaged file, always in zip format
+		Package p;
+		p.open(name.substr(0, pos));
+		return p.openIn( name.substr(pos + 1));
 	}
 }
 

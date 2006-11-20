@@ -10,6 +10,7 @@
 #include <gui/control/card_list.hpp>
 #include <gui/control/card_editor.hpp>
 #include <gui/icon_menu.hpp>
+#include <gui/util.hpp>
 #include <data/set.hpp>
 #include <data/action/set.hpp>
 #include <data/settings.hpp>
@@ -119,25 +120,25 @@ void CardsPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	delete mb->Remove(2);
 }
 
-void CardsPanel::onUpdateUI(wxUpdateUIEvent& e) {
-	switch (e.GetId()) {
-		case ID_CARD_PREV:       e.Enable(card_list->canSelectPrevious());	break;
-		case ID_CARD_NEXT:       e.Enable(card_list->canSelectNext());		break;
-/*		case ID_CARD_ROTATE_0:   e.Check(editor->rotation.angle == 0);		break;
-		case ID_CARD_ROTATE_90:  e.Check(editor->rotation.angle == 90);		break;
-		case ID_CARD_ROTATE_180: e.Check(editor->rotation.angle == 180);	break;
-		case ID_CARD_ROTATE_270: e.Check(editor->rotation.angle == 270);	break;
-		case ID_CARD_REMOVE:     e.Enable(set->cards.size() > 0);			break;
-		case ID_FORMAT_BOLD: case ID_FORMAT_ITALIC: case ID_FORMAT_SYMBOL: {
-			if (focusedControl() == idEditor) {
-				e.Enable(editor->canFormat(e.id));
-				e.Check (editor->hasFormat(e.id));
+void CardsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
+	switch (ev.GetId()) {
+		case ID_CARD_PREV:       ev.Enable(card_list->canSelectPrevious());	break;
+		case ID_CARD_NEXT:       ev.Enable(card_list->canSelectNext());		break;
+/*		case ID_CARD_ROTATE_0:   ev.Check(editor->rotation.angle == 0);		break;
+		case ID_CARD_ROTATE_90:  ev.Check(editor->rotation.angle == 90);	break;
+		case ID_CARD_ROTATE_180: ev.Check(editor->rotation.angle == 180);	break;
+		case ID_CARD_ROTATE_270: ev.Check(editor->rotation.angle == 270);	break;*/
+		case ID_CARD_REMOVE:     ev.Enable(set->cards.size() > 0);			break;
+		case ID_FORMAT_BOLD: case ID_FORMAT_ITALIC: case ID_FORMAT_SYMBOL: case ID_FORMAT_REMINDER: {
+			if (focused_control(this) == ID_EDITOR) {
+				ev.Enable(editor->canFormat(ev.GetId()));
+				ev.Check (editor->hasFormat(ev.GetId()));
 			} else {
-				e.Enable(false);
-				e.Check(false);
+				ev.Enable(false);
+				ev.Check(false);
 			}
 			break;
-		}*/
+		}
 	}
 }
 
@@ -159,35 +160,41 @@ void CardsPanel::onCommand(int id) {
 			StyleSettings& ss = settings.styleSettingsFor(*editor->style);
 			ss.cardAngle = (ss.cardAngle + 90) % 360;
 			onRenderSettingsChange();
+			break;
 		}
 		case idCardRotate0 {
 			StyleSettings& ss = settings.styleSettingsFor(*editor->style);
 			ss.cardAngle = 0;
 			onRenderSettingsChange();
+			break;
 		}
 		case idCardRotate90 {
 			StyleSettings& ss = settings.styleSettingsFor(*editor->style);
 			ss.cardAngle = 90;
 			onRenderSettingsChange();
+			break;
 		}
 		case idCardRotate180 {
 			StyleSettings& ss = settings.styleSettingsFor(*editor->style);
 			ss.cardAngle = 180;
 			onRenderSettingsChange();
+			break;
 		}
 		case idCardRotate270 {
 			StyleSettings& ss = settings.styleSettingsFor(*editor->style);
 			ss.cardAngle = 270;
 			onRenderSettingsChange();
+			break;
 		}
 		case idSelectColumns {
 			cardList->selectColumns();
-		}
-		case idFormatBold, idFormatItalic, idFormatSymbol, idFormatNoAuto {
-			if (focusedControl() == idEditor) {
-				editor->doFormat(id);
-			}
 		}*/
+		case ID_FORMAT_BOLD: case ID_FORMAT_ITALIC: case ID_FORMAT_SYMBOL: case ID_FORMAT_REMINDER: {
+			if (focused_control(this) == ID_EDITOR) {
+				editor->doFormat(id);
+				break;
+			}
+		}
 	}
 }
 
@@ -205,6 +212,14 @@ void CardsPanel::onRenderSettingsChange() {
 }
 
 // ----------------------------------------------------------------------------- : Clipboard
+
+bool CardsPanel::canCut()   const { return focused_control(this) == ID_EDITOR ? editor->canCut()   :    card_list->canCut();   }
+bool CardsPanel::canCopy()  const { return focused_control(this) == ID_EDITOR ? editor->canCopy()  :    card_list->canCopy();  }
+bool CardsPanel::canPaste() const { return focused_control(this) == ID_EDITOR ? editor->canPaste() :    card_list->canPaste(); }
+void CardsPanel::doCut()          { if    (focused_control(this) == ID_EDITOR)  editor->doCut();   else card_list->doCut();    }
+void CardsPanel::doCopy()         { if    (focused_control(this) == ID_EDITOR)  editor->doCopy();  else card_list->doCopy();   }
+void CardsPanel::doPaste()        { if    (focused_control(this) == ID_EDITOR)  editor->doPaste(); else card_list->doPaste();  }
+
 // ----------------------------------------------------------------------------- : Searching
 
 // ----------------------------------------------------------------------------- : Selection

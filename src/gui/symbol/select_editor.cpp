@@ -225,7 +225,7 @@ void SymbolSelectEditor::onLeftDClick(const Vector2D& pos, wxMouseEvent& ev) {
 	}
 }
 
-void SymbolSelectEditor::onMouseMove  (const Vector2D& from, const Vector2D& to, wxMouseEvent& e) {
+void SymbolSelectEditor::onMouseMove  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev) {
 	// can we highlight a part?
 	highlightPart = findPart(to);
 	// are we on a handle?

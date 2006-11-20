@@ -40,7 +40,7 @@ class FilteredCardList : public CardListBase {
 	/// Rebuild the filtered card list
 	virtual void onRebuild();
 //	/// Don't reorder
-//	virtual void onDrag(wxMouseEvent& e);
+//	virtual void onDrag(wxMouseEvent& ev);
 
   private:	
 	CardListFilterP filter;	///< Filter with which this.cards is made

@@ -63,5 +63,5 @@ void Reader::handle(GameP& game) {
 	game = Game::byName(value);
 }
 void Writer::handle(const GameP& game) {
-	handle(game->name());
+	if (game) handle(game->name());
 }

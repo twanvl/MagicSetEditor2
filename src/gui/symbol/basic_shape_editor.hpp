@@ -29,7 +29,7 @@ class SymbolBasicShapeEditor : public SymbolEditorBase {
 	
 	virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
 	virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
-	virtual void onUpdateUI(wxUpdateUIEvent& e);
+	virtual void onUpdateUI(wxUpdateUIEvent&);
 	virtual void onCommand(int id);
 	virtual int modeToolId();
 	

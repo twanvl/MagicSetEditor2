@@ -92,7 +92,7 @@ class SymbolControl : public wxControl, public SymbolViewer {
 	void onRightDown (wxMouseEvent& ev);
 	void onMotion    (wxMouseEvent& ev);
 		
-	void onPaint    (wxPaintEvent& e);
+	void onPaint    (wxPaintEvent& ev);
 	void onKeyChange(wxKeyEvent& ev);
 	void onChar     (wxKeyEvent& ev);
 	void onSize     (wxSizeEvent& ev);

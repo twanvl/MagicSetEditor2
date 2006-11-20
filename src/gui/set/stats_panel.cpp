@@ -10,6 +10,7 @@
 #include <gui/control/graph.hpp>
 #include <gui/control/gallery_list.hpp>
 #include <gui/control/filtered_card_list.hpp>
+#include <util/window_id.hpp>
 #include <wx/splitter.h>
 
 // ----------------------------------------------------------------------------- : StatFieldList
@@ -43,7 +44,7 @@ StatsPanel::StatsPanel(Window* parent, int id)
 {
 	// init controls
 	wxSplitterWindow* splitter;
-	fields    = new StatFieldList   (this, wxID_ANY);
+	fields    = new StatFieldList   (this, ID_FIELD_LIST);
 	splitter  = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
 	graph     = new GraphControl    (splitter, wxID_ANY);
 	card_list = new FilteredCardList(splitter, wxID_ANY);
@@ -57,4 +58,26 @@ StatsPanel::StatsPanel(Window* parent, int id)
 	s->Add(splitter, 1, wxEXPAND);
 	s->SetSizeHints(this);
 	SetSizer(s);
+}
+
+void StatsPanel::onChangeSet() {
+	card_list->setSet(set);
+}
+
+void StatsPanel::onCommand(int id) {
+	switch (id) {
+		case ID_FIELD_LIST: {
+			// change graph data
+			break;
+		}
+	}
+}
+
+// ----------------------------------------------------------------------------- : Selection
+
+CardP StatsPanel::selectedCard() const {
+	return card_list->getCard();
+}
+void StatsPanel::selectCard(const CardP& card) {
+	card_list->setCard(card);
 }

@@ -14,8 +14,10 @@
 #include <data/set.hpp>
 #include <data/card.hpp>
 #include <data/settings.hpp>
+#include <data/format/clipboard.hpp>
 #include <data/action/set.hpp>
 #include <util/window_id.hpp>
+#include <wx/clipbrd.h>
 
 DECLARE_TYPEOF_COLLECTION(CardP);
 DECLARE_TYPEOF_COLLECTION(FieldP);
@@ -162,6 +164,41 @@ void CardListBase::selectCurrentCard() {
 			Select(selected_card_pos);
 			Focus(selected_card_pos);
 		}
+	}
+}
+
+// ----------------------------------------------------------------------------- : CardListBase : Clipboard
+
+bool CardListBase::canCopy()  const { return !!selected_card; }
+bool CardListBase::canCut()   const { return canCopy() && allowModify(); }
+bool CardListBase::canPaste() const {
+	return wxTheClipboard->IsSupported(CardDataObject::format);
+}
+
+void CardListBase::doCopy() {
+	if (!canCopy()) return;
+	if (!wxTheClipboard->Open()) return;
+	wxTheClipboard->SetData(new CardOnClipboard(set, selected_card)); // ignore result
+	wxTheClipboard->Close();
+}
+void CardListBase::doCut() {
+	// cut = copy + delete
+	if (!canCut()) return;
+	doCopy();
+	set->actions.add(new RemoveCardAction(*set, selected_card) );
+}
+void CardListBase::doPaste() {
+	// get data
+	if (!canPaste()) return;
+	if (!wxTheClipboard->Open()) return;
+	CardDataObject data;
+	bool ok = wxTheClipboard->GetData(data);
+	wxTheClipboard->Close();
+	if (!ok) return;
+	// add card to set
+	CardP card = data.getCard(set);
+	if (card) {
+		set->actions.add(new AddCardAction(*set, card));
 	}
 }
 
@@ -356,7 +393,7 @@ void CardListBase::onItemFocus(wxListEvent& ev) {
 }
 
 void CardListBase::onChar(wxKeyEvent& ev) {
-	if (ev.GetKeyCode() == WXK_DELETE) {
+	if (ev.GetKeyCode() == WXK_DELETE && allowModify()) {
 		set->actions.add(new RemoveCardAction(*set, selected_card));
 	} else if (ev.GetKeyCode() == WXK_TAB) {
 		// send a navigation event to our parent, to select another control

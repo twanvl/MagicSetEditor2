@@ -10,10 +10,17 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/reflect.hpp>
+#include <util/dynamic_arg.hpp>
 
+class Package;
 class wxFileInputStream;
 class wxZipInputStream;
 class wxZipEntry;
+
+/// The package that is currently being written to
+DECLARE_DYNAMIC_ARG(Package*, writing_package);
+/// The package that is being put onto/read from the clipboard
+DECLARE_DYNAMIC_ARG(Package*, clipboard_package);
 
 // ----------------------------------------------------------------------------- : Package
 

@@ -138,6 +138,9 @@ enum ChildMenuID {
 
 	// CardList
 ,	ID_SELECT_COLUMNS		= 3001
+	
+	// Statistics
+,	ID_FIELD_LIST			= 3101
 };
 
 

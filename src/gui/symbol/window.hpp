@@ -58,7 +58,7 @@ class SymbolWindow : public Frame {
 	void onModeChange(wxCommandEvent&);
 	void onExtraTool (wxCommandEvent&);
 	
-	void onUpdateUI(wxUpdateUIEvent& e);
+	void onUpdateUI(wxUpdateUIEvent&);
 	
 	/// Changing selected parts in the list
 	void onSelectFromList(wxListEvent& ev);
