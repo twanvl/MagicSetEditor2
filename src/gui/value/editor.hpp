@@ -39,21 +39,21 @@ class ValueEditor {
 	virtual void onLoseFocus() {}
 	
 	/// Handle mouse events
-	virtual void onMouseLeftDown (RealPoint pos, wxMouseEvent& ev) {}
-	virtual void onMouseLeftUp   (RealPoint pos, wxMouseEvent& ev) {}
-	virtual void onMouseDClick   (RealPoint pos, wxMouseEvent& ev) {}
-	virtual void onMouseRightDown(RealPoint pos, wxMouseEvent& ev) {}
-	virtual void onMouseMove     (RealPoint pos, wxMouseEvent& ev) {}
-	virtual void onMouseWheel    (RealPoint pos, wxMouseEvent& ev) {}
+	virtual void onLeftDown   (const RealPoint& pos, wxMouseEvent& ev) {}
+	virtual void onLeftUp     (const RealPoint& pos, wxMouseEvent& ev) {}
+	virtual void onLeftDClick (const RealPoint& pos, wxMouseEvent& ev) {}
+	virtual void onRightDown  (const RealPoint& pos, wxMouseEvent& ev) {}
+	virtual void onMotion     (const RealPoint& pos, wxMouseEvent& ev) {}
+	virtual void onMouseWheel (const RealPoint& pos, wxMouseEvent& ev) {}
 	
 	/// Key events
 	virtual void onChar(wxKeyEvent ev) {}
 	
-	/// A menu item was selected
-	virtual void onMenu(wxCommandEvent& ev) { ev.Skip(); }
 	/// a context menu is requested, add extra items to the menu m
 	/** return false to suppress menu */
 	virtual bool onContextMenu(wxMenu& m, wxContextMenuEvent& ev) { return true; }
+	/// A menu item was selected
+	virtual void onMenu(wxCommandEvent& ev) { ev.Skip(); }
 	
 	// --------------------------------------------------- : Clipboard
 	

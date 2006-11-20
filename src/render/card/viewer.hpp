@@ -73,9 +73,7 @@ class DataViewer : public SetView {
 	/// Notification that the total image has changed
 	virtual void onChange() {}
 	
-  private:
 	vector<ValueViewerP> viewers;	///< The viewers for the different values in the data
-  protected:
 	CardP card;						///< The card that is currently displayed, if any
 };
 

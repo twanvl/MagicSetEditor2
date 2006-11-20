@@ -12,6 +12,7 @@
 #include <data/stylesheet.hpp>
 #include <data/card.hpp>
 #include <data/field.hpp>
+#include <data/settings.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ValueViewerP);
 typedef IndexMap<FieldP,StyleP> IndexMap_FieldP_StyleP;
@@ -23,8 +24,9 @@ DECLARE_TYPEOF_NO_REV(IndexMap_FieldP_StyleP);
 // ----------------------------------------------------------------------------- : Drawing
 
 void DataViewer::draw(DC& dc) {
-//	RotatedDC rdc(dc, rotation, settings.styleSettingsFor(*style).cardAntiAlias && !nativeLook())
-	RotatedDC rdc(dc, 0, RealRect(0,0,400,400), 1.0, false);
+	StyleSheetP stylesheet = set->stylesheetFor(card);
+	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
+	RotatedDC rdc(dc, ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(), ss.card_anti_alias() && !nativeLook());
 	draw(rdc);
 }
 void DataViewer::draw(RotatedDC& dc) {

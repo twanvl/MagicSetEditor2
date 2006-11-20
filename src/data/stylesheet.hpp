@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <util/io/package.hpp>
+#include <util/real_point.hpp>
 #include <script/scriptable.hpp>
 
 DECLARE_POINTER_TYPE(Game);
@@ -46,6 +47,8 @@ class StyleSheet : public Packaged {
 	IndexMap<FieldP, StyleP> styling_style;
 	
 	bool dependencies_initialized;	///< are the script dependencies comming from this stylesheet all initialized?
+	
+	inline RealRect getCardRect() const { return RealRect(0, 0, card_width, card_height); }
 	
 	/// Load a StyleSheet, given a Game and the name of the StyleSheet
 	static StyleSheetP byGameAndName(const Game& game, const String& name);

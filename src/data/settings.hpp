@@ -43,6 +43,8 @@ class ColumnSettings {
 /// Settings for a Game
 class GameSettings {
   public:
+	GameSettings();
+	
 	String                      default_stylesheet;
 	String                      default_export;
 	map<String, ColumnSettings> columns;
@@ -55,6 +57,8 @@ class GameSettings {
 /// Settings for a StyleSheet
 class StyleSheetSettings {
   public:
+	StyleSheetSettings();
+	
 	// Rendering/display settings
 	Defaultable<double> card_zoom;
 	Defaultable<int>    card_angle;
@@ -62,10 +66,10 @@ class StyleSheetSettings {
 	Defaultable<bool>   card_borders;
 	Defaultable<bool>   card_normal_export;
 	
-	DECLARE_REFLECTION();
+	/// Where the settings are the default, use the value from ss
+	void useDefault(const StyleSheetSettings& ss);
 	
-//	/// Where the settings are the default, use the value from ss
-//	void useDefault(const StyleSheetSettings& ss);
+	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : Settings
@@ -102,7 +106,7 @@ class Settings {
 	/// Get the settings for a column for a specific field in a game
 	ColumnSettings&     columnSettingsFor    (const Game& game, const Field& field);
 	/// Get the settings object for a specific stylesheet
-	StyleSheetSettings& styleSheetSettingsFor(const StyleSheet& stylesheet);
+	StyleSheetSettings& stylesheetSettingsFor(const StyleSheet& stylesheet);
 	
   private:
 	map<String,GameSettingsP>       game_settings;

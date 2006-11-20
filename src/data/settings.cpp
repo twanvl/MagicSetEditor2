@@ -8,6 +8,7 @@
 
 #include <data/settings.hpp>
 #include <data/game.hpp>
+#include <data/stylesheet.hpp>
 #include <data/field.hpp>
 #include <util/reflect.hpp>
 #include <util/io/reader.hpp>
@@ -39,12 +40,33 @@ IMPLEMENT_REFLECTION(ColumnSettings) {
 	REFLECT(visible);
 }
 
+GameSettings::GameSettings()
+	: sort_cards_ascending(true)
+{}
+
 IMPLEMENT_REFLECTION(GameSettings) {
 	REFLECT(default_stylesheet);
 	REFLECT(default_export);
 	REFLECT_N("cardlist columns",     columns);
 	REFLECT(sort_cards_by);
 	REFLECT(sort_cards_ascending);
+}
+
+
+StyleSheetSettings::StyleSheetSettings()
+	: card_zoom         (1.0,  true)
+	, card_angle        (0,    true)
+	, card_anti_alias   (true, true)
+	, card_borders      (true, true)
+	, card_normal_export(true, true)
+{}
+
+void StyleSheetSettings::useDefault(const StyleSheetSettings& ss) {
+	if (card_zoom         .isDefault()) card_zoom         .assignDefault(ss.card_zoom());
+	if (card_angle        .isDefault()) card_angle        .assignDefault(ss.card_angle());
+	if (card_anti_alias   .isDefault()) card_anti_alias   .assignDefault(ss.card_anti_alias());
+	if (card_borders      .isDefault()) card_borders      .assignDefault(ss.card_borders());
+	if (card_normal_export.isDefault()) card_normal_export.assignDefault(ss.card_normal_export());
 }
 
 IMPLEMENT_REFLECTION(StyleSheetSettings) {
@@ -85,7 +107,7 @@ void Settings::addRecentFile(const String& filename) {
 }
 
 GameSettings& Settings::gameSettingsFor(const Game& game) {
-	GameSettingsP& gs = settings.game_settings[game.name()];
+	GameSettingsP& gs = game_settings[game.name()];
 	if (!gs) gs.reset(new GameSettings);
 	return *gs;
 }
@@ -102,14 +124,12 @@ ColumnSettings& Settings::columnSettingsFor(const Game& game, const Field& field
 	}
 	return cs;
 }
-/*
-StyleSettings& Settings::styleSettingsFor(const CardStyle& style) {
-	StyleSettingsP& ss = settings.styleSettings#(style.name());
-	if (!ss)  ss = new_shared<StyleSettings>();
-	ss->useDefault(defaultStyleSettings); // update default settings
+StyleSheetSettings& Settings::stylesheetSettingsFor(const StyleSheet& stylesheet) {
+	StyleSheetSettingsP& ss = stylesheet_settings[stylesheet.name()];
+	if (!ss) ss.reset(new StyleSheetSettings);
+	ss->useDefault(default_stylesheet_settings); // update default settings
 	return *ss;
 }
-*/
 
 String user_settings_dir() {
 	return _(""); // TODO

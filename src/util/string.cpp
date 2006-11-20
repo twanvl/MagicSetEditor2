@@ -124,7 +124,7 @@ String cannocial_name_form(const String& str) {
 	FOR_EACH_CONST(c, str) {
 		if ((c == _('_') || c == _(' ')) && !leading) {
 			ret += _(' ');
-		} else if (isAlnum(c)) {
+		} else if (isAlnum(c) || c == _('-')) {
 			ret += toLower(c);
 			leading = false;
 		} else {

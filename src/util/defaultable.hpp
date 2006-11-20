@@ -20,13 +20,18 @@
 template <typename T>
 class Defaultable {
   public:
-	inline Defaultable()           :           is_default(true)  {}
-	inline Defaultable(const T& v) : value(v), is_default(false) {}
+	inline Defaultable()                             :           is_default(true)  {}
+	inline Defaultable(const T& v, bool def = false) : value(v), is_default(def) {}
 	
 	/// Assigning a value takes this object out of the default state
 	inline void assign(const T& new_value) {
 		value      = new_value;
 		is_default = false;
+	}
+	/// Assigning a value keep this object in the default state
+	inline void assignDefault(const T& new_value) {
+		assert(is_default);
+		value      = new_value;
 	}
 	
 	/// Get access to the value
