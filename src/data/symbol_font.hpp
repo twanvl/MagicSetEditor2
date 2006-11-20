@@ -18,6 +18,7 @@ DECLARE_POINTER_TYPE(Font);
 DECLARE_POINTER_TYPE(SymbolFont);
 DECLARE_POINTER_TYPE(SymbolInFont);
 class RotatedDC;
+struct CharInfo;
 
 // ----------------------------------------------------------------------------- : SymbolFont
 
@@ -29,20 +30,20 @@ class SymbolFont : public Packaged {
 	/// Loads the symbol font with a given name, for example "magic-mana-large"
 	static SymbolFontP byName(const String& name);
 	
-	class DrawableSymbol {
-	  public:
-		// TODO: anything?
-	  private:
-		String        text;		///< Original text
-		SymbolInFont* symbol;	///< Symbol to draw, if nullptr, use the default symbol and draw the text
-	};
+	class DrawableSymbol;
 	typedef vector<DrawableSymbol> SplitSymbols;
-	
 	/// Split a string into separate symbols for drawing and for determining their size
-	void split(const String& text, SplitSymbols& out);
+	void split(const String& text, SplitSymbols& out) const;
 	
 	/// Draw a piece of text prepared using split
-	void draw(RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, const SplitSymbols& text);
+	void draw(RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, const String& text);
+	/// Get information on characters in a string
+	void getCharInfo(RotatedDC& dc, Context& ctx, double font_size, const String& text, vector<CharInfo>& out);
+	
+	/// Draw a piece of text prepared using split
+	void draw(RotatedDC& dc, Context& ctx, RealRect rect, double font_size, const Alignment& align, const SplitSymbols& text);
+	/// Get information on characters in a string
+	void getCharInfo(RotatedDC& dc, Context& ctx, double font_size, const SplitSymbols& text, vector<CharInfo>& out);
 	
 	static String typeNameStatic();
 	virtual String typeName() const;
@@ -64,8 +65,23 @@ class SymbolFont : public Packaged {
 	friend class SymbolInFont;
 	vector<SymbolInFontP> symbols;	///< The individual symbols
 	
+	/// Find the default symbol
+	/** may return nullptr */
+	SymbolInFont* defaultSymbol() const;
+	
+	/// Draws a single symbol inside the given rectangle
+	void drawSymbol  (RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, SymbolInFont& sym);
+	/// Draw the default bitmap to a dc and overlay a string of text
+	void drawWithText(RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, const String& text);
+	
+	/// Size of a single symbol
+	RealSize symbolSize       (Context& ctx, double font_size, const DrawableSymbol& sym);
+	/// Size of the default symbol
+	RealSize defaultSymbolSize(Context& ctx, double font_size);
+	
 	DECLARE_REFLECTION();
 };
+
 
 // ----------------------------------------------------------------------------- : SymbolFontRef
 
@@ -76,12 +92,11 @@ class SymbolFontRef {
 	
 	// Script update
 	bool update(Context& ctx);
-	void initDependencies(Context&, Dependency& dep);
+	void initDependencies(Context&, const Dependency&) const;
 	
 	/// Is a font loaded?
 	bool valid() const;
-	
-  private:
+		
 	Scriptable<String> name;			///< Font package name, can be changed with script
 	double             size;			///< Size of the font
 	double             scale_down_to;	///< Mimumum size of the font

@@ -104,7 +104,7 @@ struct TextElementsFromString {
 				} else {
 					// add a new element for this text
 					if (symbol > 0 && style.symbol_font.valid()) {
-						te.elements.push_back(new_shared4<SymbolTextElement>(text, pos, pos + 1, style.symbol_font));
+						te.elements.push_back(new_shared5<SymbolTextElement>(text, pos, pos + 1, style.symbol_font, &ctx));
 					} else {
 						te.elements.push_back(new_shared4<FontTextElement>  (text, pos, pos + 1, style.font.make(bold > 0, italic > 0)));
 					}

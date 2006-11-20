@@ -171,6 +171,11 @@ void RotatedDC::SetFont(wxFont font, double size) {
 	dc.SetFont(font);
 }
 
+double RotatedDC::getFontSizeStep() const {
+	return 1; // TODO
+//	return 1. / (high_quality ? text_scaling : 1);
+}
+
 RealSize RotatedDC::GetTextExtent(const String& text) const {
 	int w, h;
 	dc.GetTextExtent(text, &w, &h);

@@ -133,7 +133,7 @@ class Set::Styling {
 };
 
 IndexMap<FieldP, ValueP>& Set::stylingDataFor(const StyleSheet& stylesheet) {
-	StylingP& styling = styling_data[stylesheet.stylesheetName()];
+	StylingP& styling = styling_data[stylesheet.name()];
 	if (!styling) {
 		styling = new_shared<Styling>();
 		styling->data.init(stylesheet.styling_fields);

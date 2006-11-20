@@ -137,7 +137,10 @@ class ChoiceStyle : public Style {
 /// The Value in a ChoiceField
 class ChoiceValue : public Value {
   public:
-	inline ChoiceValue(const ChoiceFieldP& field) : Value(field) {}
+	inline ChoiceValue(const ChoiceFieldP& field)
+		: Value(field)
+		, value(field->initial, true)
+	{}
 	DECLARE_HAS_FIELD(Choice)
 	
 	Defaultable<String> value;	/// The name of the selected choice

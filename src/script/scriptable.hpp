@@ -93,7 +93,8 @@ class Scriptable {
 	Scriptable()               : value()      {}
 	Scriptable(const T& value) : value(value) {}
 	
-	inline operator const T& () const { return value; }
+	inline operator const T&   () const { return value; }
+	inline const T& operator ()() const { return value; }
 	inline bool isScripted() const { return script; }
 	
 	/// Updates the value by executing the script, returns true if the value has changed

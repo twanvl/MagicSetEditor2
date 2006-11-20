@@ -195,6 +195,9 @@ bool is_substr(const String& str, size_t pos, const Char* cmp) {
 	}
 	return *cmp == _('\0');
 }
+bool is_substr(const String& str, size_t pos, const String& cmp) {
+	return is_substr(str, pos, cmp.c_str());
+}
 
 bool cannocial_name_compare(const String& as, const Char* b) {
 	const Char* a = as.c_str();

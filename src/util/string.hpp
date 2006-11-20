@@ -126,6 +126,8 @@ bool starts_with(const String& str, const String& start);
 
 /// Return whether str contains the string cmp at position pos
 bool is_substr(const String& str, size_t pos, const Char* cmp);
+/// Return whether str contains the string cmp at position pos
+bool is_substr(const String& str, size_t pos, const String& cmp);
 
 /// Compare two strings for equality, b may contain '_' where a contains ' '
 bool cannocial_name_compare(const String& a, const Char* b);

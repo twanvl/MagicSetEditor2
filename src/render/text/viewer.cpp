@@ -129,7 +129,12 @@ const TextViewer::Line& TextViewer::findLine(size_t index) const {
 // ----------------------------------------------------------------------------- : Elements
 
 void TextViewer::prepareElements(const String& text, const TextStyle& style, Context& ctx) {
-	elements.fromString(text, 0, text.size(), style, ctx);
+	if (style.always_symbol) {
+		elements.elements.clear();
+		elements.elements.push_back(new_shared5<SymbolTextElement>(text, 0, text.size(), style.symbol_font, &ctx));
+	} else {
+		elements.fromString(text, 0, text.size(), style, ctx);
+	}
 }
 
 

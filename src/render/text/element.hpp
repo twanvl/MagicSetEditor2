@@ -142,9 +142,9 @@ class FontTextElement : public SimpleTextElement {
 /// A text element that uses a symbol font
 class SymbolTextElement : public SimpleTextElement {
   public:
-	SymbolTextElement(const String& text, size_t start ,size_t end, const SymbolFontRef& font)
+	SymbolTextElement(const String& text, size_t start ,size_t end, const SymbolFontRef& font, Context* ctx)
 		: SimpleTextElement(text, start, end)
-		, font(font)
+		, font(font), ctx(*ctx)
 	{}
 
 	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, double* xs, DrawWhat what, size_t start, size_t end) const;
@@ -152,6 +152,7 @@ class SymbolTextElement : public SimpleTextElement {
 	virtual double minScale() const;
   private:
 	const SymbolFontRef& font; // owned by TextStyle
+	Context& ctx;
 };
 
 // ----------------------------------------------------------------------------- : CompoundTextElement

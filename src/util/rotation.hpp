@@ -56,7 +56,9 @@ class Rotation {
 	RealRect trNoNegNoZoom(const RealRect& r) const;
 	
 	/// Translate a size or length back to internal 'coordinates'
-	inline double trInvS(double s) const { return  s / zoom; }
+	inline double   trInvS(double s)           const { return s / zoom; }
+	/// Translate a size back to internal 'coordinates', doesn't rotate
+	inline RealSize trInvS(const RealSize& s) const { return RealSize(s.width / zoom, s.height / zoom); }
 	
 	/// Translate a point back to internal coordinates
 	RealPoint trInv(const RealPoint& p) const;
@@ -141,6 +143,9 @@ class RotatedDC : public Rotation {
 	/// Set the font, scales for zoom and high_quality
 	/** The font will get the given (internal) point size */
 	void SetFont(wxFont font, double size);
+	
+	/// Steps to use when decrementing font size
+	double getFontSizeStep() const;
 	
 	RealSize GetTextExtent(const String& text) const;
 	double GetCharHeight() const;

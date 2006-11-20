@@ -7,17 +7,22 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <render/text/element.hpp>
+#include <data/symbol_font.hpp>
 
 // ----------------------------------------------------------------------------- : SymbolTextElement
 
 void SymbolTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, double* xs, DrawWhat what, size_t start, size_t end) const {
-	// TODO
+	if (font.font) {
+		font.font->draw(dc, ctx, rect, font.size * scale, font.alignment, text.substr(start, end-start));
+	}
 }
 
 void SymbolTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const {
-	// TODO
+	if (font.font) {
+		font.font->getCharInfo(dc, ctx, font.size * scale, text.substr(start, end-start), out);
+	}
 }
 
 double SymbolTextElement::minScale() const {
-	return 1; // TODO
+	return font.size / min(0.001, min(font.size, font.scale_down_to));
 }

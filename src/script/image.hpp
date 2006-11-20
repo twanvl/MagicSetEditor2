@@ -50,7 +50,8 @@ class ScriptableImage {
 	inline operator bool() const { return script; }
 	
 	/// Generate an image, doesn't cache, and doesn't scale
-	/** Image files are loaded from the given package */
+	/** Image files are loaded from the given package.
+	 *  The result is always valid. */
 	ScriptImageP generate(Context& ctx, Package&) const;
 	/// Generate an image, scaling it and optionally saturating it
 	ScriptImageP generate(Context& ctx, Package&, UInt width, UInt height, PreserveAspect preserve_aspect = ASPECT_STRETCH, bool saturate = false) const;

@@ -103,6 +103,17 @@ inline RealSize addVertical(const RealSize& a, const RealSize& b) {
 	return RealSize(max(a.width, b.width), a.height + b.height);
 }
 
+/// Add two sizes diagonally
+/**  ####   $$$    ####...
+ *   #### + $$$  = ####...
+ *   ####          ####...
+ *                 ....$$$
+ *                 ....$$$
+ */
+inline RealSize addDiagonal(const RealSize& a, const RealSize& b) {
+	return RealSize(a.width + b.width, a.height + b.height);
+}
+
 // ----------------------------------------------------------------------------- : Rectangle using doubles
 
 /// A rectangle (postion and size) using real (double) coordinats
@@ -135,6 +146,30 @@ class RealRect {
 		return RealRect(position.x + dx, position.y + dy, size.width + dw, size.height + dh);
 	}
 };
+
+/// Split a rectangle horizontally
+/** Returns a section from the left of this rectangle witht the given width
+ *  The rectangle will change to become the part remaining to the right
+ *  For example given a rectangle:
+ *    +------------+
+ *    |     R      |
+ *    +------------+
+ *  A = split_left(R,5)
+ *    +----+-------+
+ *    | A  |   R   |
+ *    +----+-------+
+ */
+inline RealRect split_left(RealRect& r, double w) {
+	RealRect result(r.position.x, r.position.y, w, r.size.height);
+	r.size.width -= w;
+	r.position.x += w;
+	return result;
+}
+/// Split a rectangle horizontally
+inline RealRect split_left(RealRect& r, const RealSize& s) {
+	return split_left(r, s.width);
+}
+
 
 // ----------------------------------------------------------------------------- : Operators
 
