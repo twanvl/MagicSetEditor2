@@ -6,8 +6,9 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
-#include "string.hpp"
-#include "for_each.hpp"
+#include <util/prec.hpp>
+#include <util/string.hpp>
+#include <util/for_each.hpp>
 #include <wx/txtstrm.h>
 
 // ----------------------------------------------------------------------------- : Unicode
@@ -145,6 +146,9 @@ String cannocial_name_form(const String& str) {
 String singular_form(const String& str) {
 	assert(str.size() > 1);
 	assert(str.GetChar(str.size() - 1) == _('s')); // ends in 's'
+	if (str.size() > 3 && is_substr(str, str.size()-3, _("ies"))) {
+		return str.substr(0, str.size() - 3) + _("y");
+	}
 	return str.substr(0, str.size() - 1);
 }
 

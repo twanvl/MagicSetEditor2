@@ -22,10 +22,6 @@ DECLARE_POINTER_TYPE(Game);
 DECLARE_POINTER_TYPE(StyleSheet);
 DECLARE_POINTER_TYPE(Card);
 
-// ----------------------------------------------------------------------------- : Dependencies of data type members
-
-
-
 // ----------------------------------------------------------------------------- : ScriptManager
 
 /// Manager of the script context for a set, keeps scripts up to date

@@ -43,8 +43,8 @@ Set::~Set() {}
 Context& Set::getContext() {
 	return script_manager->getContext(stylesheet);
 }
-Context& Set::getContext(const Card& card) {
-	return script_manager->getContext(card.stylesheet ? card.stylesheet : stylesheet);
+Context& Set::getContext(const CardP& card) {
+	return script_manager->getContext(card);
 }
 void Set::updateFor(const CardP& card) {
 	script_manager->updateStyles(card);

@@ -8,9 +8,13 @@
 
 #include <data/game.hpp>
 #include <data/field.hpp>
+#include <data/statistics.hpp>
 #include <util/io/package_manager.hpp>
 #include <script/script.hpp>
 #include <script/value.hpp>
+
+DECLARE_TYPEOF_COLLECTION(FieldP);
+DECLARE_TYPEOF_COLLECTION(StatsDimensionP);
 
 // ----------------------------------------------------------------------------- : Game
 
@@ -46,6 +50,8 @@ IMPLEMENT_REFLECTION(Game) {
 	REFLECT(init_script);
 	REFLECT(set_fields);
 	REFLECT(card_fields);
+	REFLECT(statistics_dimensions);
+	REFLECT(statistics_categories);
 //	REFLECT_N("keyword parameter type", keyword_params);
 //	REFLECT_N("keyword separator type", keyword_separators);
 //	REFLECT(keywords);
@@ -55,7 +61,27 @@ IMPLEMENT_REFLECTION(Game) {
 void Game::validate(Version) {
 	// a default for the full name
 	if (full_name.empty()) full_name = name();
+	// automatic statistics dimensions
+	{
+		vector<StatsDimensionP> dims;
+		FOR_EACH(f, card_fields) {
+			if (f->show_statistics) {
+				dims.push_back(new_shared1<StatsDimension>(*f));
+			}
+		}
+		statistics_dimensions.insert(statistics_dimensions.begin(), dims.begin(), dims.end()); // push front
+	}
+	// automatic statistics categories
+	{
+		vector<StatsCategoryP> cats;
+		FOR_EACH(dim, statistics_dimensions) {
+			cats.push_back(new_shared1<StatsCategory>(dim));
+		}
+		statistics_categories.insert(statistics_categories.begin(), cats.begin(), cats.end()); // push front
+	}
 }
+
+void addStatsDimensionsForFields();
 
 // special behaviour of reading/writing GamePs: only read/write the name
 

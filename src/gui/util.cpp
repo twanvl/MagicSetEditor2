@@ -11,7 +11,7 @@
 #include <util/rotation.hpp>
 #include <wx/mstream.h>
 
-#if defined(wxMSW) && wxUSE_UXTHEME
+#if wxUSE_UXTHEME
 	#include <wx/msw/uxtheme.h>
 	#include <tmschema.h>
 	#include <shlobj.h>
@@ -101,19 +101,19 @@ void draw3DBorder(DC& dc, int x1, int y1, int x2, int y2) {
 }
 
 void draw_control_border(Window* win, DC& dc, const wxRect& rect) {
-	#if defined(wxMSW) && wxUSE_UXTHEME
+	#if wxUSE_UXTHEME
 		RECT r;
 		wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
 		if (themeEngine && themeEngine->IsAppThemed()) {
-			wxUxThemeHandle hTheme(win, L_("EDIT"));
+			wxUxThemeHandle hTheme(win, _("EDIT"));
 			r.left = rect.x -1;
 			r.top = rect.y  -1;
 			r.right = rect.x + rect.width + 1;
 			r.bottom = rect.y + rect.height + 1;
 			if (hTheme) {
 				wxUxThemeEngine::Get()->DrawThemeBackground(
-					hTheme,
-					dc.GetHDC(),
+					(HTHEME)hTheme,
+					(HDC)dc.GetHDC(),
 					EP_EDITTEXT,
 					ETS_NORMAL,
 					&r,

@@ -850,6 +850,12 @@
 				RelativePath=".\data\settings.hpp">
 			</File>
 			<File
+				RelativePath=".\data\statistics.cpp">
+			</File>
+			<File
+				RelativePath=".\data\statistics.hpp">
+			</File>
+			<File
 				RelativePath=".\data\stylesheet.cpp">
 			</File>
 			<File

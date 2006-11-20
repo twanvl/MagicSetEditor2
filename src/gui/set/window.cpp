@@ -13,6 +13,7 @@
 #include <gui/set/style_panel.hpp>
 #include <gui/set/stats_panel.hpp>
 #include <gui/control/card_list.hpp>
+#include <gui/control/gallery_list.hpp>
 #include <gui/about_window.hpp>
 #include <gui/new_window.hpp>
 #include <gui/icon_menu.hpp>
@@ -580,6 +581,7 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
 	EVT_MENU			(ID_HELP_INDEX,			SetWindow::onHelpIndex)
 	EVT_MENU			(ID_HELP_ABOUT,			SetWindow::onHelpAbout)
 	EVT_TOOL_RANGE		(ID_CHILD_MIN, ID_CHILD_MAX,   SetWindow::onChildMenu)
+	EVT_GALLERY_SELECT  (ID_FIELD_LIST,                SetWindow::onChildMenu) // for StatsPanel, because it is not a EVT_TOOL
 	
 	EVT_UPDATE_UI		(wxID_ANY,				SetWindow::onUpdateUI)
 //	EVT_FIND			(wxID_ANY,				SetWindow::onFind)

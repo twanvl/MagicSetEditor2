@@ -17,6 +17,8 @@
 
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Game);
+DECLARE_POINTER_TYPE(StatsDimension);
+DECLARE_POINTER_TYPE(StatsCategory);
 
 // ----------------------------------------------------------------------------- : Game
 
@@ -33,6 +35,8 @@ class Game : public Packaged {
 	OptionalScript init_script;		///< Script of variables available to other scripts in this game
 	vector<FieldP> set_fields;		///< Fields for set information
 	vector<FieldP> card_fields;		///< Fields on each card
+	vector<StatsDimensionP> statistics_dimensions;	///< (Additional) statistics dimensions
+	vector<StatsCategoryP>  statistics_categories;	///< (Additional) statistics categories
 	
 	vector<Dependency> dependent_scripts_cards;		///< scripts that depend on the card list
 	vector<Dependency> dependent_scripts_keywords;	///< scripts that depend on the keywords

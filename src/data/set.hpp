@@ -60,7 +60,7 @@ class Set : public Packaged {
 	Context& getContext();
 	/// A context for performing scripts on a particular card
 	/** Should only be used from the main thread! */
-	Context& getContext(const Card& card);
+	Context& getContext(const CardP& card);
 	/// Update styles for a card
 	void updateFor(const CardP& card);
 	

@@ -42,6 +42,7 @@ IMPLEMENT_REFLECTION(Field) {
 	REFLECT(name);
 	if (tag.reading()) name = cannocial_name_form(name);
 	REFLECT(description);
+	REFLECT_N("icon", icon_filename);
 	REFLECT(editable);
 	REFLECT(save_value);
 	REFLECT(show_statistics);

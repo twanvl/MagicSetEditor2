@@ -12,7 +12,7 @@
 #include <util/prec.hpp>
 #include <gui/set/panel.hpp>
 
-class StatFieldList;
+class StatCategoryList;
 class GraphControl;
 class FilteredCardList;
 
@@ -33,7 +33,7 @@ class StatsPanel : public SetWindowPanel {
 	
 	// --------------------------------------------------- : Data
   private:
-	StatFieldList*    fields;
+	StatCategoryList* categories;
 	GraphControl*     graph;
 	FilteredCardList* card_list;
 };
