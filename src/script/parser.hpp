@@ -14,8 +14,11 @@
 
 // ----------------------------------------------------------------------------- : Parser
 
-// Parse a String to a Script
-ScriptP parse(const String& s);
+/// Parse a String to a Script
+/** If string_mode then s is interpreted as a string,
+ *  escaping to script mode can be done with {}
+ */
+ScriptP parse(const String& s, bool string_mode = false);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

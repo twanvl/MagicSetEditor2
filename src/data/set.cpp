@@ -10,6 +10,7 @@
 #include <data/game.hpp>
 #include <data/stylesheet.hpp>
 #include <data/card.hpp>
+#include <data/keyword.hpp>
 #include <data/field.hpp>
 #include <data/field/text.hpp> // for 0.2.7 fix
 #include <script/value.hpp>
@@ -116,6 +117,7 @@ IMPLEMENT_REFLECTION(Set) {
 			REFLECT_N("styling", styling_data);
 		}
 		REFLECT(cards);
+		REFLECT(keywords);
 	}
 	reflect_set_info_get_member(tag,data);
 	REFLECT(apprentice_code);

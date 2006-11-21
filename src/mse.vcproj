@@ -838,6 +838,12 @@
 				RelativePath=".\data\game.hpp">
 			</File>
 			<File
+				RelativePath=".\data\keyword.cpp">
+			</File>
+			<File
+				RelativePath=".\data\keyword.hpp">
+			</File>
+			<File
 				RelativePath=".\data\set.cpp">
 			</File>
 			<File

@@ -134,6 +134,8 @@ class Script : public ScriptValue {
 	
 	/// Get access to the vector of instructions
 	inline vector<Instruction>& getInstructions() { return instructions; }
+	/// Get access to the vector of constants
+	inline vector<ScriptValueP>& getConstants()   { return constants; }
 	
 	/// Output the instructions in a human readable format
 	String dumpScript() const;

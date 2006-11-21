@@ -44,11 +44,16 @@ struct Token {
 	inline operator != (const String& s) const { return type == TOK_STRING || value != s; }
 };
 
+enum OpenBrace 
+{	BRACE_STRING		// "
+,	BRACE_STRING_MODE	// fake brace for string mode
+,	BRACE_PAREN			// (, [, {
+};
 
 /// Iterator over a string, one token at a time
 class TokenIterator {
   public:
-	TokenIterator(const String& str);
+	TokenIterator(const String& str, bool string_mode);
 	
 	/// Peek at the next token, doesn't move to the one after that
 	/** Can peek further forward by using higher values of offset.
@@ -65,9 +70,9 @@ class TokenIterator {
   private:
 	String input;
 	size_t pos;
-	vector<Token> buffer;		///< buffer of unread tokens, front() = current
-	stack<bool>   open_braces;	///< braces we entered, true if the brace was from a smart string escape
-	bool          newline;		///< Did we just pass a newline?
+	vector<Token>    buffer;		///< buffer of unread tokens, front() = current
+	stack<OpenBrace> open_braces;	///< braces/quotes we entered from script mode
+	bool             newline;		///< Did we just pass a newline?
 	// more input?
 	struct MoreInput {
 		String input;
@@ -96,11 +101,17 @@ bool isLongOper(const String& s) { return s==_(":=") || s==_("==") || s==_("!=")
 
 // ----------------------------------------------------------------------------- : Tokenizing
 
-TokenIterator::TokenIterator(const String& str)
+TokenIterator::TokenIterator(const String& str, bool string_mode)
 	: input(str)
 	, pos(0)
 	, newline(false)
-{}
+{
+	if (string_mode) {
+		open_braces.push(BRACE_STRING_MODE);
+		putBack();//dummy
+		readStringToken();
+	}
+}
 
 const Token& TokenIterator::peek(size_t offset) {
 	// read the next token until we have enough
@@ -190,16 +201,16 @@ void TokenIterator::readToken() {
 		}
 	} else if (c==_('"')) {
 		// string
+		open_braces.push(BRACE_STRING);
 		readStringToken();
-	} else if (c == _('}') && !open_braces.empty() && open_braces.top()) {
+	} else if (c == _('}') && !open_braces.empty() && open_braces.top() != BRACE_PAREN) {
 		// closing smart string, resume to string parsing
 		//   "a{e}b"  -->  "a"  "{  e  }"  "b"
-		open_braces.pop();
 		addToken(TOK_RPAREN, _("}\""));
 		readStringToken();
 	} else if (isLparen(c)) {
 		// paranthesis/brace
-		open_braces.push(false);
+		open_braces.push(BRACE_PAREN);
 		addToken(TOK_LPAREN, String(1,c));
 	} else if (isRparen(c)) {
 		// paranthesis/brace
@@ -216,17 +227,26 @@ void TokenIterator::readToken() {
 void TokenIterator::readStringToken() {
 	String str;
 	while (true) {
-		if (pos >= input.size()) throw ScriptParseError(_("Unexpected end of input in string constant"));
-		Char c = input[pos++];			//% input.GetChar(pos++);
+		if (pos >= input.size()) {
+			if (!open_braces.empty() && open_braces.top() == BRACE_STRING_MODE) {
+				// in string mode: end of input = end of string
+				addToken(TOK_STRING, str);
+				return;
+			} else {
+				throw ScriptParseError(_("Unexpected end of input in string constant"));
+			}
+		}
+		Char c = input.GetChar(pos++);
 		// parse the string constant
-		if (c == _('"')) {
+		if (c == _('"') && !open_braces.empty() && open_braces.top() == BRACE_STRING) {
 			// end of string
 			addToken(TOK_STRING, str);
+			open_braces.pop();
 			return;
 		} else if (c == _('\\')) {
 			// escape
 			if (pos >= input.size()) throw ScriptParseError(_("Unexpected end of input in string constant"));
-			c = input[pos++];
+			c = input.GetChar(pos++);
 			if (c == _('n')) str += _('\n');
 			if (c == _('<')) str += _('\1'); // escape for <
 			else             str += c;       // \ or { or "
@@ -234,7 +254,6 @@ void TokenIterator::readStringToken() {
 			// smart string
 			//   "a{e}b"  -->  "a"  "{  e  }"  "b"
 			addToken(TOK_STRING, str);
-			open_braces.push(true);
 			addToken(TOK_LPAREN, _("\"{"));
 			return;
 		} else {
@@ -280,8 +299,8 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec);
  */
 void parseOper(TokenIterator& input, Script& script, Precedence minPrec, InstructionType closeWith = I_NOP, int closeWithData = 0);
 
-ScriptP parse(const String& s) {
-	TokenIterator input(s);
+ScriptP parse(const String& s, bool string_mode) {
+	TokenIterator input(s, string_mode);
 	ScriptP script(new Script);
 	parseOper(input, *script, PREC_ALL, I_RET);
 	if (input.peek() != TOK_EOF) {
@@ -500,9 +519,23 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			}
 		} else if (minPrec <= PREC_STRING && token==_("\"{")) {
 			// for smart strings: "x" {{ e }} "y"
-			parseOper(input, script, PREC_ALL,  I_BINARY, I_ADD);	// e
+			// optimize: "" + e  ->  e
+			Instruction i = script.getInstructions().back();
+			if (i.instr == I_PUSH_CONST && String(*script.getConstants()[i.data]).empty()) {
+				script.getInstructions().pop_back();
+				parseOper(input, script, PREC_ALL);						// e
+			} else {
+				parseOper(input, script, PREC_ALL, I_BINARY, I_ADD);	// e
+			}
 			expectToken(input, _("}\""));
-			parseOper(input, script, PREC_NONE, I_BINARY, I_ADD);	// y
+			parseOper(input, script, PREC_NONE);						// y
+			// optimize: e + ""  -> e
+			i = script.getInstructions().back();
+			if (i.instr == I_PUSH_CONST && String(*script.getConstants()[i.data]).empty()) {
+				script.getInstructions().pop_back();
+			} else {
+				script.addInstruction(I_BINARY, I_ADD);
+			}
 		} else if (minPrec <= PREC_NEWLINE && token.newline) {
 			// newline functions as ;
 			// only if we don't match another token!

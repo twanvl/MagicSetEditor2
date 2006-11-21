@@ -38,9 +38,9 @@ ScriptValueP OptionalScript::invoke(Context& ctx, bool open_scope) const {
 	}
 }
 
-void OptionalScript::parse(Reader& reader) {
+void OptionalScript::parse(Reader& reader, bool string_mode) {
 	try {
-		script = ::parse(unparsed);
+		script = ::parse(unparsed, string_mode);
 	} catch (const ParseError& e) {
 		reader.warning(e.what());
 	}

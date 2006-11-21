@@ -291,6 +291,14 @@ SCRIPT_FUNCTION(substring) {
 	}
 }
 
+// does a string contain a substring?
+SCRIPT_FUNCTION(contains) {
+	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM(String, match);
+	SCRIPT_RETURN(input.find(match) != String::npos);
+}
+
+
 // ----------------------------------------------------------------------------- : Vector stuff
 
 /// position of some element in a vector
@@ -322,6 +330,7 @@ void init_script_functions(Context& ctx) {
 	ctx.setVariable(_("to lower"),        script_to_lower);
 	ctx.setVariable(_("to title"),        script_to_title);
 	ctx.setVariable(_("substring"),       script_substring);
+	ctx.setVariable(_("contains"),        script_contains);
 	ctx.setVariable(_("position"),        script_position_of);
 	ctx.setVariable(_("number of items"), script_number_of_items);
 }

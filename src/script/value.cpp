@@ -170,6 +170,14 @@ class ScriptString : public ScriptValue {
 			throw ScriptError(_("Not a number: '") + value + _("'"));
 		}
 	}
+	virtual operator Color() const {
+		UInt r,g,b;
+		if (wxSscanf(value.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
+			return Color(r, g, b);
+		} else {
+			throw ScriptError(_("Not a color: '") + value + _("'"));
+		}
+	}
 	virtual int itemCount() const { return (int)value.size(); }
 	virtual ScriptValueP getMember(const String& name) const {
 		// get member returns characters
@@ -198,6 +206,9 @@ class ScriptColor : public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_COLOR; }
 	virtual String typeName() const { return _("color"); }
 	virtual operator Color()  const { return value; }
+	virtual operator String() const {
+		return String::Format(_("rgb(%u,%u,%u)"), value.Red(), value.Green(), value.Blue());
+	}
   private:
 	Color value;
 };

@@ -22,6 +22,7 @@ DECLARE_POINTER_TYPE(StyleSheet);
 DECLARE_POINTER_TYPE(Styling);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
+DECLARE_POINTER_TYPE(Keyword);
 class ScriptManager;
 class Context;
 
@@ -38,22 +39,18 @@ class Set : public Packaged {
 	Set(const StyleSheetP& stylesheet);
 	~Set();
   
-	/// The game this set uses
-	GameP game;
-	/// The default stylesheet
-	StyleSheetP stylesheet;
+	GameP game;					///< The game this set uses
+	StyleSheetP stylesheet;		///< The default stylesheet
 	/// The values on the fields of the set
 	/** The indices should correspond to the set_fields in the Game */
 	IndexMap<FieldP, ValueP> data;
 	/// Extra values for specitic stylesheets, indexed by stylesheet name
 	DECLARE_POINTER_TYPE(Styling);
 	map<String, StylingP> styling_data;
-	/// The cards in the set
-	vector<CardP> cards;
-	/// Code to use for apprentice (Magic only)
-	String apprentice_code;
-	/// Actions performed on this set and the cards in it
-	ActionStack actions;
+	vector<CardP> cards;		///< The cards in the set
+	vector<KeywordP> keywords;	///< Additional keywords used in this set
+	String apprentice_code;		///< Code to use for apprentice (Magic only)
+	ActionStack actions;		///< Actions performed on this set and the cards in it
 	
 	/// A context for performing scripts
 	/** Should only be used from the main thread! */

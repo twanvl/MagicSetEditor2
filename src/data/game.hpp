@@ -19,6 +19,9 @@ DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Game);
 DECLARE_POINTER_TYPE(StatsDimension);
 DECLARE_POINTER_TYPE(StatsCategory);
+DECLARE_POINTER_TYPE(KeywordParam);
+DECLARE_POINTER_TYPE(KeywordMode);
+DECLARE_POINTER_TYPE(Keyword);
 
 // ----------------------------------------------------------------------------- : Game
 
@@ -37,6 +40,10 @@ class Game : public Packaged {
 	vector<FieldP> card_fields;		///< Fields on each card
 	vector<StatsDimensionP> statistics_dimensions;	///< (Additional) statistics dimensions
 	vector<StatsCategoryP>  statistics_categories;	///< (Additional) statistics categories
+	
+	vector<KeywordParamP>   keyword_parameter_types;///< Types of keyword parameters
+	vector<KeywordModeP>    keyword_modes;          ///< Modes of keywords
+	vector<KeywordP>        keywords;				///< Keywords for use in text
 	
 	vector<Dependency> dependent_scripts_cards;		///< scripts that depend on the card list
 	vector<Dependency> dependent_scripts_keywords;	///< scripts that depend on the keywords
