@@ -18,6 +18,7 @@ class FilteredCardList;
 
 // ----------------------------------------------------------------------------- : StatsPanel
 
+/// A panel for showing statistics on cards
 class StatsPanel : public SetWindowPanel {
   public:
 	StatsPanel(Window* parent, int id);

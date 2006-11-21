@@ -11,6 +11,7 @@
 #include <gui/set/cards_panel.hpp>
 #include <gui/set/set_info_panel.hpp>
 #include <gui/set/style_panel.hpp>
+#include <gui/set/keywords_panel.hpp>
 #include <gui/set/stats_panel.hpp>
 #include <gui/control/card_list.hpp>
 #include <gui/control/gallery_list.hpp>
@@ -117,13 +118,13 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	// NOTE: place the CardsPanel last in the panels list,
 	//  this way the card list is the last to be told of a set change
 	//  this way everyone else already uses the new set when it sends a CardSelectEvent
-	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 3, _("F5"), _("Cards"),		_("Cards"),				_("Edit the cards in the set"));
+	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 4, _("F5"), _("Cards"),		_("Cards"),				_("Edit the cards in the set"));
 	addPanel(menuWindow, tabBar, new SetInfoPanel (this, wxID_ANY), 0, _("F6"), _("Set info"),	_("&Set Information"),	_("Edit information about the set, its creator, etc."));
 	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 1, _("F7"), _("Style"),		_("Style"),				_("Change the style of cards"));
-//	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 2, _("F8"));
-	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 2, _("F9"), _("Stats"),		_("Statistics"),		_("Show statistics about the cards in the set"));
+	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 2, _("F8"), _("Keywords"),	_("Keywords"),			_("Define extra keywords for this set"));
+	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 3, _("F9"), _("Stats"),		_("Statistics"),		_("Show statistics about the cards in the set"));
 //	addPanel(*s, *menuWindow, *tabBar, new DraftPanel   (&this, wxID_ANY), 4, _("F10")) 
-	selectPanel(ID_WINDOW_MIN + 3); // select cards panel
+	selectPanel(ID_WINDOW_MIN + 0); // select cards panel
 	
 	// loose ends
 	tabBar->Realize();
@@ -256,7 +257,6 @@ void SetWindow::onRenderSettingsChange() {
 }
 
 void SetWindow::fixMinWindowSize() {
-	current_panel->Layout();
 	current_panel->SetMinSize(current_panel->GetSizer()->GetMinSize());
 	Layout();
 	wxSize s  = GetSizer()->GetMinSize();

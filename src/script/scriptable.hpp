@@ -30,7 +30,7 @@ void store(const ScriptValueP& val, Defaultable<String>& var);
 
 // ----------------------------------------------------------------------------- : OptionalScript
 
-/// An optional script, 
+/// An optional script
 class OptionalScript {
   public:
 	inline OptionalScript() {}
@@ -73,7 +73,7 @@ class OptionalScript {
 	/// Initialize things this script depends on by adding dep to their list of dependent scripts
 	void initDependencies(Context&, const Dependency& dep) const;
 	
-  private:
+  protected:
 	ScriptP script;		///< The script, may be null if there is no script
 	String unparsed;	///< Unparsed script, for writing back to a file
 	// parse the unparsed string, while reading
@@ -84,6 +84,16 @@ class OptionalScript {
 
 template <typename T>
 inline ScriptValueP toScript(const Defaultable<T>& v) { return toScript(v.get()); }
+
+// ----------------------------------------------------------------------------- : StringScript
+
+/// An optional script which is parsed in string mode
+class StringScript : public OptionalScript {
+  public:
+	const String& get() const;
+	void set(const String&);
+	DECLARE_REFLECTION();
+};
 
 // ----------------------------------------------------------------------------- : Scriptable
 

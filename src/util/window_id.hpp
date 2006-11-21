@@ -141,6 +141,9 @@ enum ChildMenuID {
 	
 	// Statistics
 ,	ID_FIELD_LIST			= 3101
+	
+	// Style
+,	ID_STYLE_USE_FOR_ALL	= 3201
 };
 
 

@@ -13,9 +13,10 @@
 #include <util/reflect.hpp>
 #include <util/io/reader.hpp>
 #include <util/io/writer.hpp>
+#include <script/value.hpp>
 #include <wx/filename.h>
 #include <wx/wfstream.h>
-#include <script/value.hpp>
+#include <wx/stdpaths.h>
 
 // ----------------------------------------------------------------------------- : Extra types
 
@@ -131,8 +132,11 @@ StyleSheetSettings& Settings::stylesheetSettingsFor(const StyleSheet& stylesheet
 	return *ss;
 }
 
+/// Retrieve the directory to use for settings and other data files
 String user_settings_dir() {
-	return _(""); // TODO
+	String dir = wxStandardPaths::Get().GetUserDataDir();
+	if (!wxDirExists(dir)) wxMkDir(dir);
+	return dir + _("/");
 }
 
 String Settings::settingsFile() {

@@ -40,6 +40,7 @@ bool MSE::OnInit() {
 		SetAppName(_("Magic Set Editor"));
 		wxInitAllImageHandlers();
 		init_file_formats();
+		packages.init();
 		settings.read();
 		//Window* wnd = new SymbolWindow(nullptr);
 		//GameP g = Game::byName(_("magic"))

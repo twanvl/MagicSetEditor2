@@ -72,3 +72,34 @@ template <> void GetDefaultMember::handle(const OptionalScript& os) {
 		handle(script_nil);
 	}
 }
+
+// ----------------------------------------------------------------------------- : StringScript
+
+const String& StringScript::get() const {
+	return unparsed;
+}
+
+void StringScript::set(const String& s) {
+	unparsed = s;
+	script = ::parse(unparsed, true);
+}
+
+template <> void Reader::handle(StringScript& os) {
+	handle(os.unparsed);
+	os.parse(*this, true);
+}
+
+// same as OptionalScript
+
+template <> void Writer::handle(const StringScript& os) {
+	handle(os.unparsed);
+}
+
+template <> void GetDefaultMember::handle(const StringScript& os) {
+	// reflect as the script itself
+	if (os.script) {
+		handle(os.script);
+	} else {
+		handle(script_nil);
+	}
+}

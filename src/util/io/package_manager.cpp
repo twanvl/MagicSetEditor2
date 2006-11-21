@@ -11,6 +11,7 @@
 #include <data/game.hpp>
 #include <data/stylesheet.hpp>
 #include <data/symbol_font.hpp>
+#include <wx/stdpaths.h>
 
 // ----------------------------------------------------------------------------- : IncludePackage
 
@@ -34,16 +35,12 @@ IMPLEMENT_REFLECTION(IncludePackage) {
 
 // ----------------------------------------------------------------------------- : PackageManager
 
-String program_dir() {
-	return wxGetCwd(); //TODO
-}
-
 PackageManager packages;
 
 
-PackageManager::PackageManager() {
+void PackageManager::init() {
 	// determine data directory
-	data_directory = program_dir();
+	data_directory = wxStandardPaths::Get().GetDataDir();
 	// check if this is the actual data directory, especially during debugging,
 	// the data may be higher up:
 	//  exe path  = mse/build/debug/mse.exe

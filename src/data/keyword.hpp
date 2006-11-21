@@ -26,7 +26,7 @@ class KeywordParam {
 	String         description;	///< Description of the type
 	String         match;		///< Uncompiled regex
 	wxRegEx        matchRe;		///< Regular expression to match
-	OptionalScript in_reminder;	///< Transformation of the value for showing in the reminder text 
+	OptionalScript script;		///< Transformation of the value for showing in the reminder text 
 	
 	DECLARE_REFLECTION();
 };
@@ -50,7 +50,7 @@ class KeywordExpansion {
 	String                after;		///< Components after the keyword: parameters and separators
 	vector<KeywordParamP> parameters;	///< The types of parameters
 	wxRegEx               splitter;		///< Regular expression to split/match the components, automatically generated
-	OptionalScript        reminder;		///< Reminder text of the keyword
+	StringScript          reminder;		///< Reminder text of the keyword
 	
 	DECLARE_REFLECTION();
 };

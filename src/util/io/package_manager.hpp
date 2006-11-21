@@ -23,7 +23,12 @@ DECLARE_POINTER_TYPE(Packaged);
  */
 class PackageManager {
   public:
-	PackageManager();
+	/// Initialize the package manager
+	void init();
+	/// Empty the list of packages.
+	/** This function MUST be called before the program terminates, otherwise
+	 *  we could get into fights with pool allocators used by ScriptValues */
+	void destroy();
 	
 	/// Open a package with the specified name (including extension)
 	template <typename T>
@@ -55,12 +60,7 @@ class PackageManager {
 	
 	// Open a file from a package, with a name encoded as "package/file"
 	InputStreamP openFileFromPackage(const String& name);
-	
-	/// Empty the list of packages.
-	/** This function MUST be called before the program terminates, otherwise
-	 *  we could get into fights with pool allocators used by ScriptValues */
-	void destroy();
-	
+		
   private:
 	map<String, PackagedP> loaded_packages;
 	String data_directory;
