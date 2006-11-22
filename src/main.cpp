@@ -13,8 +13,10 @@
 #include <data/settings.hpp>
 #include <data/format/formats.hpp>
 #include <gui/welcome_window.hpp>
+#include <gui/update_checker.hpp>
 #include <gui/set/window.hpp>
 #include <gui/symbol/window.hpp>
+#include <wx/fs_inet.h>
 
 // ----------------------------------------------------------------------------- : Main function/class
 
@@ -39,9 +41,12 @@ bool MSE::OnInit() {
 	try {
 		SetAppName(_("Magic Set Editor"));
 		wxInitAllImageHandlers();
+		wxFileSystem::AddHandler(new wxInternetFSHandler); // needed for update checker
 		init_file_formats();
 		packages.init();
 		settings.read();
+		// check for updates
+		check_updates();
 		//Window* wnd = new SymbolWindow(nullptr);
 		//GameP g = Game::byName(_("magic"))
 		SetP  s = new_shared<Set>();

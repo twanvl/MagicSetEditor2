@@ -16,6 +16,7 @@
 #include <gui/control/card_list.hpp>
 #include <gui/control/gallery_list.hpp>
 #include <gui/about_window.hpp>
+#include <gui/update_checker.hpp>
 #include <gui/new_window.hpp>
 #include <gui/icon_menu.hpp>
 #include <util/window_id.hpp>
@@ -529,7 +530,7 @@ void SetWindow::onChildMenu(wxCommandEvent& ev) {
 void SetWindow::onIdle(wxIdleEvent& ev) {
 	// Stuff that must be done in the main thread
 	handle_pending_errors();
-//	showUpdateDialog(this);
+	show_update_dialog(this);
 }
 
 // ----------------------------------------------------------------------------- : Event table
