@@ -285,14 +285,22 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 				a = toScript((String)*a  +  (String)*b);
 			} else if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {
 				a = toScript((double)*a  +  (double)*b);
-			} else {
+			} else if (at == SCRIPT_INT    || bt == SCRIPT_INT) {
 				a = toScript((int)*a     +  (int)*b);
+			} else {
+				a = toScript((String)*a  +  (String)*b);
 			}
 			break;
 		case I_SUB:		OPERATOR_DI(-);
 		case I_MUL:		OPERATOR_DI(*);
 		case I_DIV:		OPERATOR_DI(/);
-		case I_MOD: // fmod
+		case I_MOD:
+			if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {
+				a = toScript(fmod((double)*a, (double)*b));
+			} else {
+				a = toScript((int)*a % (int)*b);
+			}
+			break;
 		case I_AND:		OPERATOR_I(&&);
 		case I_OR:		OPERATOR_I(||);
 		case I_EQ:		OPERATOR_SDI(==);

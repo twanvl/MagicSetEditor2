@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <gui/control/graph.hpp>
+#include <util/alignment.hpp>
 #include <gfx/gfx.hpp>
 #include <wx/dcbuffer.h>
 
@@ -86,8 +87,11 @@ GraphData::GraphData(const GraphDataPre& d)
 
 // ----------------------------------------------------------------------------- : Graph1D
 
-bool Graph1D::findItem(const RealPoint& pos, vector<int>& out) const {
-	int i = findItem(pos);
+void Graph1D::draw(RotatedDC& dc, const vector<int>& current) const {
+	draw(dc, axis < current.size() ? current.at(axis) : -1);
+}
+bool Graph1D::findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const {
+	int i = findItem(pos, rect);
 	if (i == -1) return false;
 	else {
 		out.clear();
@@ -99,11 +103,86 @@ bool Graph1D::findItem(const RealPoint& pos, vector<int>& out) const {
 
 // ----------------------------------------------------------------------------- : Bar Graph
 
-void BarGraph::draw(RotatedDC& dc) const {
-	// TODO
+void BarGraph::draw(RotatedDC& dc, int current) const {
+	if (!data) return;
+	// Rectangle for bars
+	RealRect rect = dc.getInternalRect().move(15, 5, -20, -20);
+	// Bar sizes
+	GraphAxis& axis = axis_data();
+	int count = int(axis.groups.size());
+	double width_space = rect.width / count; // including spacing
+	double width       = width_space / 5 * 4;
+	double space       = width_space / 5;
+	double step_height = rect.height / axis.max; // multiplier for bar height
+	// Highlight current column
+	Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+	Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+	if (current >= 0) {
+		double x = rect.x + width_space * current;
+		dc.SetPen(*wxTRANSPARENT_PEN);
+		dc.SetBrush(lerp(bg, axis.groups[current].color, 0.25));
+		dc.DrawRectangle(RealRect(x + space / 2 - 5, rect.bottom() + 1 + 15,
+			                      width + 10, -step_height * axis.groups[current].size - 1.999 - 20));
+		dc.SetBrush(lerp(bg, axis.groups[current].color, 0.5));
+		dc.DrawRectangle(RealRect(x + space / 2 - 2, rect.bottom() + 1 + 2,
+			                      width + 4,  -step_height * axis.groups[current].size - 1.999 - 4));
+	}
+	// How many labels and lines to draw?
+	dc.SetFont(*wxNORMAL_FONT);
+	UInt label_step = max(1.0, dc.GetCharHeight() / step_height);
+	// Draw backlines (horizontal) and value labels
+	dc.SetPen(lerp(bg, fg, 0.5));
+	for (UInt i = 0 ; i <= axis.max ; ++i) {
+		if (i % label_step == 0) {
+			int y = rect.bottom() - i * step_height;
+			dc.DrawLine(RealPoint(rect.left() - 2, y), RealPoint(rect.right(), y));
+			// draw label, aligned middle right
+			String label; label << i;
+			RealSize text_size = dc.GetTextExtent(label);
+			dc.DrawText(label, align_in_rect(ALIGN_MIDDLE_RIGHT, text_size, RealRect(rect.x - 4, y, 0, 0)));
+		}
+	}
+	// Draw axes
+	dc.SetPen(fg);
+	dc.DrawLine(rect.bottomLeft() - RealSize(2,0), rect.bottomRight());
+	dc.DrawLine(rect.topLeft(),                    rect.bottomLeft());
+	// Draw bars
+	double x = rect.x;
+	FOR_EACH_CONST(g, axis.groups) {
+		// draw bar
+		dc.SetBrush(g.color);
+		dc.DrawRectangle(RealRect(x + space / 2, rect.bottom() + 1, width, -step_height * g.size - 1.999));
+		// draw label, aligned bottom center
+		RealSize text_size = dc.GetTextExtent(g.name);
+		dc.SetClippingRegion(RealRect(x + 2, rect.bottom(), width_space - 4, text_size.height));
+		dc.DrawText(g.name, align_in_rect(ALIGN_TOP_CENTER, text_size, RealRect(x, rect.bottom() + 3, width_space, 0)));
+		dc.DestroyClippingRegion();
+		x += width_space;
+	}
 }
-int BarGraph::findItem(const RealPoint& pos) const {
-	return -1; // TODO
+int BarGraph::findItem(const RealPoint& pos, const RealRect& rect1) const {
+	if (!data) return -1;
+	// Rectangle for bars
+	RealRect rect = rect1.move(15, 5, -20, -20);
+	// Bar sizes
+	GraphAxis& axis = axis_data();
+	int count = int(axis.groups.size());
+	double width_space = rect.width / count; // including spacing
+	double space       = width_space / 5;
+	// Find column in which this point could be located
+	int    col    = (pos.x - rect.x) / width_space;
+	double in_col = (pos.x - rect.x) - col * width_space;
+	if (in_col < space / 2               || // left
+	    in_col > width_space - space / 2 || // right
+	    pos.y > rect.bottom()            || // below
+	    pos.y < rect.top()) {               // above
+		return -1;
+	}
+	if (col < 0 || (size_t)col >= axis_data().groups.size()) {
+		return -1;
+	} else {
+		return col;
+	}
 }
 
 // ----------------------------------------------------------------------------- : Pie Graph
@@ -136,7 +215,7 @@ void GraphControl::onPaint(wxPaintEvent&) {
 	rdc.SetPen(*wxTRANSPARENT_PEN);
 	rdc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	rdc.DrawRectangle(rdc.getInternalRect());
-	if (graph) graph->draw(rdc);
+	if (graph) graph->draw(rdc, current_item);
 }
 
 void GraphControl::onSize(wxSizeEvent&) {
@@ -146,7 +225,9 @@ void GraphControl::onSize(wxSizeEvent&) {
 void GraphControl::onMouseDown(wxMouseEvent& ev) {
 	if (!graph) return;
 	wxSize cs = GetClientSize();
-	graph->findItem(RealPoint((double)ev.GetX()/cs.GetWidth(), (double)ev.GetY()/cs.GetHeight()), current_item);
+	if (graph->findItem(RealPoint(ev.GetX(), ev.GetY()), RealRect(RealPoint(0,0),cs), current_item)) {
+		Refresh(false);
+	}
 }
 
 BEGIN_EVENT_TABLE(GraphControl, wxControl)

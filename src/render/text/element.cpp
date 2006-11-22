@@ -20,8 +20,8 @@ void TextElements::draw(RotatedDC& dc, double scale, const RealRect& rect, const
 		size_t end_   = min(end,   e->end);
 		if (start_ < end_) {
 			e->draw(dc, scale,
-			        RealRect(rect.position.x + xs[start_-start] - xs[0], rect.position.y,
-			                 xs[end_-start] - xs[start_-start], rect.size.height),
+			        RealRect(rect.x + xs[start_-start] - xs[0], rect.y,
+			                 xs[end_-start] - xs[start_-start], rect.height),
 			        xs + start_ - start, what, start_, end_);
 		}
 		if (end <= e->end) return; // nothing can be after this

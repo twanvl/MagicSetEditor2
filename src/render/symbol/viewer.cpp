@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <render/symbol/viewer.hpp>
+#include <gui/util.hpp> // clearDC_black
 
 DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 
@@ -29,12 +30,7 @@ MemoryDCP getTempDC(DC& dc) {
 	Bitmap buffer(s.GetWidth(), s.GetHeight(), 1);
 	MemoryDCP newDC(new wxMemoryDC);
 	newDC->SelectObject(buffer);
-	// On windows 9x it seems that bitmaps are not black by default
-	#if !BITMAPS_DEFAULT_BLACK
-		newDC->SetPen(*wxTRANSPARENT_PEN);
-		newDC->SetBrush(*wxBLACK_BRUSH);
-		newDC->DrawRectangle(0, 0, s.GetWidth(), s.GetHeight());
-	#endif
+	clearDC_black(*newDC);
 	return newDC;
 }
 

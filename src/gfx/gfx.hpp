@@ -36,6 +36,16 @@ enum PreserveAspect
 /// Resample an image, but preserve the aspect ratio by adding a transparent border around the output if needed.
 void resample_preserve_aspect(const Image& img_in, Image& img_out);
 
+/// Draw text by first drawing it using a larger font and then downsampling it
+/** optionally rotated by an angle.
+ *  rect    = rectangle to draw in
+ *  (wc,hc) = the corner where drawing should begin, (0,0) for top-left, (1,1) for bottom-right
+ */
+void draw_resampled_text(DC& dc, const RealRect& rect, int wc, int hc, int angle, const String& text);
+
+// scaling factor to use when drawing resampled text
+extern const int text_scaling;
+
 // ----------------------------------------------------------------------------- : Image rotation
 
 /// Rotates an image counter clockwise

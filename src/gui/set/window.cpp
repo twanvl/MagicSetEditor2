@@ -124,7 +124,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 2, _("F8"), _("Keywords"),	_("Keywords"),			_("Define extra keywords for this set"));
 	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 3, _("F9"), _("Stats"),		_("Statistics"),		_("Show statistics about the cards in the set"));
 //	addPanel(*s, *menuWindow, *tabBar, new DraftPanel   (&this, wxID_ANY), 4, _("F10")) 
-	selectPanel(ID_WINDOW_MIN + 0); // select cards panel
+	selectPanel(ID_WINDOW_MIN + 4); // select cards panel
 	
 	// loose ends
 	tabBar->Realize();
@@ -141,6 +141,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
 	
 	setSet(set);
+	current_panel->Layout();
 }
 
 SetWindow::~SetWindow() {
@@ -202,25 +203,6 @@ void SetWindow::selectPanel(int id) {
 }
 
 // ----------------------------------------------------------------------------- : Set actions
-
-void SetWindow::onBeforeChangeSet() {
-	// Make sure we don't own the set's scriptUpdater
-//	if (set->scriptUpdater != &scriptUpdater) {
-//		assert(!scriptUpdater.set);
-//		return;
-//	}
-	// We do own the set's scriptUpdater
-	// stop handling updates for the set
-	// do this first, so events get send, which stop worker threads
-//	scriptUpdater.setNullSet();
-	// another window should take over the scriptUpdating
-//	FOR_EACH(wnd, SetWindows) {
-//		if (wnd != &this && wnd->getSet() == set) {
-//			wnd->scriptUpdater.setSet(set);
-//			break;
-//		}
-//	}
-}
 
 void SetWindow::onChangeSet() {
 	// make sure there is always at least one card

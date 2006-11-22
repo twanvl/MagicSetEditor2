@@ -19,8 +19,8 @@ int constrain_angle(int angle) {
 
 Rotation::Rotation(int angle, const RealRect& rect, double zoom)
 	: angle(constrain_angle(angle))
-	, size(rect.size)
-	, origin(rect.position)
+	, size(rect.size())
+	, origin(rect.position())
 	, zoom(zoom)
 {
 	// set origin
@@ -43,7 +43,7 @@ RealSize Rotation::tr(const RealSize& s) const {
 	}
 }
 RealRect Rotation::tr(const RealRect& r) const {
-	return RealRect(tr(r.position), tr(r.size));
+	return RealRect(tr(r.position()), tr(r.size()));
 }
 
 RealSize Rotation::trNoNeg(const RealSize& s) const {
@@ -54,12 +54,12 @@ RealSize Rotation::trNoNeg(const RealSize& s) const {
 	}
 }
 RealRect Rotation::trNoNeg(const RealRect& r) const {
-	RealSize s = (sideways() ? RealSize(r.size.height, r.size.width) : r.size) * zoom;
-	return RealRect(tr(r.position) - RealSize(revX()?s.width:0, revY()?s.height:0), s);
+	RealSize s = (sideways() ? RealSize(r.height, r.width) : r.size()) * zoom;
+	return RealRect(tr(r.position()) - RealSize(revX()?s.width:0, revY()?s.height:0), s);
 }
 RealRect Rotation::trNoNegNoZoom(const RealRect& r) const {
-	RealSize s = sideways() ? RealSize(r.size.height, r.size.width) : r.size;
-	return RealRect(tr(r.position) - RealSize(revX()?s.width:0, revY()?s.height:0), s);
+	RealSize s = sideways() ? RealSize(r.height, r.width) : r.size();
+	return RealRect(tr(r.position()) - RealSize(revX()?s.width:0, revY()?s.height:0), s);
 }
 
 
@@ -90,8 +90,8 @@ Rotater::Rotater(Rotation& rot, const Rotation& by)
 	RealRect new_ext = rot.trNoNeg(by.getExternalRect());
 	rot.angle = constrain_angle(rot.angle + by.angle);
 	rot.zoom *= by.zoom;
-	rot.size   = new_ext.size;
-	rot.origin = new_ext.position + RealSize(rot.revX() ? rot.size.width : 0, rot.revY() ? rot.size.height : 0);
+	rot.size   = new_ext.size();
+	rot.origin = new_ext.position() + RealSize(rot.revX() ? rot.size.width : 0, rot.revY() ? rot.size.height : 0);
 }
 
 Rotater::~Rotater() {
@@ -107,26 +107,21 @@ RotatedDC::RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, bool 
 
 RotatedDC::RotatedDC(DC& dc, const Rotation& rotation, bool high_quality = false)
 	: Rotation(rotation)
-	, dc(dc), high_quality(high_quality)
+	, dc(dc), high_quality(high_quality&&false)
 {}
 
 // ----------------------------------------------------------------------------- : RotatedDC : Drawing
 
 void RotatedDC::DrawText  (const String& text, const RealPoint& pos) {
 	if (text.empty()) return;
-//	if (high_quality) {
-/*		RealRect r(p, getTextExtent(text));
-		//dc.getTextExtent(text, &r.width, &r.height)
+	if (high_quality) {
+		RealRect r(pos, GetTextExtent(text));
 		RealRect r_ext = trNoNeg(r);
-		drawResampledText( {
-			dc, r_ext.x, r_ext.y, r_ext.width, r_ext.height,
-			revX(), revY(),
-			angle, text);
-		}
+		draw_resampled_text(dc, r_ext, revX(), revY(), angle, text);
 	} else {
-*/		RealPoint p_ext = tr(pos);
+		RealPoint p_ext = tr(pos);
 		dc.DrawRotatedText(text, p_ext.x, p_ext.y, angle);
-//	}
+	}
 }
 
 void RotatedDC::DrawBitmap(const Bitmap& bitmap, const RealPoint& pos) {
@@ -165,22 +160,30 @@ void RotatedDC::SetBrush(const wxBrush& brush)        { dc.SetBrush(brush); }
 void RotatedDC::SetTextForeground(const Color& color) { dc.SetTextForeground(color); }
 void RotatedDC::SetLogicalFunction(int function)      { dc.SetLogicalFunction(function); }
 
-void RotatedDC::SetFont(const wxFont& font)           { SetFont(font, font.GetPointSize()); }
+void RotatedDC::SetFont(const wxFont& font) {
+	SetFont(font, font.GetPointSize());
+}
 void RotatedDC::SetFont(wxFont font, double size) {
-	font.SetPointSize(trS(size));
+	font.SetPointSize(trS(size) * (high_quality ? text_scaling : 1));
 	dc.SetFont(font);
 }
 
 double RotatedDC::getFontSizeStep() const {
-	return 1; // TODO
-//	return 1. / (high_quality ? text_scaling : 1);
+	return 1. / (high_quality ? text_scaling : 1);
 }
 
 RealSize RotatedDC::GetTextExtent(const String& text) const {
 	int w, h;
 	dc.GetTextExtent(text, &w, &h);
-	return RealSize(w,h) / zoom;
+	return RealSize(w,h) / zoom / (high_quality ? text_scaling : 1);
 }
 double RotatedDC::GetCharHeight() const {
-	return dc.GetCharHeight() / zoom;
+	return dc.GetCharHeight() / zoom / (high_quality ? text_scaling : 1);
+}
+
+void RotatedDC::SetClippingRegion(const RealRect& rect) {
+	dc.SetClippingRegion(trNoNeg(rect));
+}
+void RotatedDC::DestroyClippingRegion() {
+	dc.DestroyClippingRegion();
 }

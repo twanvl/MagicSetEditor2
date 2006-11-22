@@ -73,6 +73,9 @@ class OptionalScript {
 	/// Initialize things this script depends on by adding dep to their list of dependent scripts
 	void initDependencies(Context&, const Dependency& dep) const;
 	
+	/// Get access to the script, be careful
+	Script& getScript();
+	
   protected:
 	ScriptP script;		///< The script, may be null if there is no script
 	String unparsed;	///< Unparsed script, for writing back to a file

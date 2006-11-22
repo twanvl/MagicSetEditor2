@@ -26,8 +26,8 @@ double align_delta_y(Alignment align, double box_height, double obj_height) {
 
 RealPoint align_in_rect(Alignment align, const RealSize& to_align, const RealRect& outer) {
 	return RealPoint(
-		outer.position.x + align_delta_x(align, outer.size.width,  to_align.width),
-		outer.position.y + align_delta_y(align, outer.size.height, to_align.height)
+		outer.x + align_delta_x(align, outer.width,  to_align.width),
+		outer.y + align_delta_y(align, outer.height, to_align.height)
 	);
 }
 

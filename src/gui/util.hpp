@@ -26,7 +26,10 @@ int focused_control(const Window* window);
 // ----------------------------------------------------------------------------- : DC related
 
 /// Fill a DC with a single color
-void clearDC(DC& dc, const wxBrush& brush = *wxBLACK_BRUSH);
+void clearDC(DC& dc, const wxBrush& brush);
+
+/// Fill a newly allocated DC with black, if the platform doesn't do so automaticly
+void clearDC_black(DC& dc);
 
 /// Draw a checkerboard pattern
 void draw_checker(RotatedDC& dc, const RealRect&);

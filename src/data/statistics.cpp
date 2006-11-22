@@ -21,14 +21,20 @@ StatsDimension::StatsDimension(const Field& field)
 	, description  (field.description)
 	, icon_filename(field.icon_filename)
 {
-	// init script!
+	// initialize script, card.{field_name}
+	Script& s = script.getScript();
+	s.addInstruction(I_GET_VAR,  string_to_variable(_("card")));
+	s.addInstruction(I_MEMBER_C, field.name);
+	s.addInstruction(I_RET);
 }
 
 IMPLEMENT_REFLECTION(StatsDimension) {
-	REFLECT(name);
-	REFLECT(description);
-	REFLECT_N("icon", icon_filename);
-	REFLECT(script);
+	if (!automatic) {
+		REFLECT(name);
+		REFLECT(description);
+		REFLECT_N("icon", icon_filename);
+		REFLECT(script);
+	}
 }
 
 // ----------------------------------------------------------------------------- : Statistics category
@@ -53,9 +59,11 @@ IMPLEMENT_REFLECTION_ENUM(GraphType) {
 }
 
 IMPLEMENT_REFLECTION(StatsCategory) {
-	REFLECT(name);
-	REFLECT(description);
-	REFLECT_N("icon", icon_filename);
-	REFLECT(type);
-	REFLECT(dimensions);
+	if (!automatic) {
+		REFLECT(name);
+		REFLECT(description);
+		REFLECT_N("icon", icon_filename);
+		REFLECT(type);
+		REFLECT(dimensions);
+	}
 }

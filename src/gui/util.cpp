@@ -40,6 +40,13 @@ void clearDC(DC& dc, const wxBrush& brush) {
 	dc.DrawRectangle(0, 0, size.GetWidth(), size.GetHeight());
 }
 
+void clearDC_black(DC& dc) {
+	#if !BITMAPS_DEFAULT_BLACK
+		// On windows 9x it seems that bitmaps are not black by default
+		clearDC(dc, *wxBLACK_BRUSH);
+	#endif
+}
+
 void draw_checker(RotatedDC& dc, const RealRect& rect) {
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(*wxWHITE_BRUSH);
@@ -47,13 +54,13 @@ void draw_checker(RotatedDC& dc, const RealRect& rect) {
 	dc.SetBrush(Color(235,235,235));
 	const double checker_size = 10;
 	int odd = 0;
-	for (double y = 0 ; y < rect.size.height ; y += checker_size) {
-		for (double x = odd * checker_size ; x < rect.size.width ; x += checker_size * 2) {
+	for (double y = 0 ; y < rect.height ; y += checker_size) {
+		for (double x = odd * checker_size ; x < rect.width ; x += checker_size * 2) {
 			dc.DrawRectangle(RealRect(
-								rect.position.x + x,
-								rect.position.y + y,
-								min(checker_size, rect.size.width  - x),
-								min(checker_size, rect.size.height - y)
+								rect.x + x,
+								rect.y + y,
+								min(checker_size, rect.width  - x),
+								min(checker_size, rect.height - y)
 							));
 		}
 		odd = 1 - odd;

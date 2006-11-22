@@ -52,6 +52,10 @@ void OptionalScript::initDependencies(Context& ctx, const Dependency& dep) const
 	}
 }
 
+Script& OptionalScript::getScript() {
+	if (!script) script = new_intrusive<Script>();
+	return *script;
+}
 
 // custom reflection, different for each type
 

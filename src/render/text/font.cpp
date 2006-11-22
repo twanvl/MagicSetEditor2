@@ -27,11 +27,11 @@ void FontTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, co
 		// draw shadow
 		if (font->hasShadow()) {
 			dc.SetTextForeground(font->shadow_color);
-			dc.DrawText(text.substr(start, end - start), rect.position + font->shadow_displacement);
+			dc.DrawText(text.substr(start, end - start), rect.position() + font->shadow_displacement);
 		}
 		// draw
 		dc.SetTextForeground(font->color);
-		dc.DrawText(text.substr(start, end - start), rect.position);
+		dc.DrawText(text.substr(start, end - start), rect.position());
 //	}
 }
 

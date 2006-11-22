@@ -110,7 +110,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase26.lib wxmsw26_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase26.lib wxmsw26_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregex.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -250,7 +250,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase26u.lib wxmsw26u_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase26u.lib wxmsw26u_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregexu.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"

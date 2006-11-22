@@ -77,8 +77,6 @@ class SetWindow : public wxFrame, public SetView {
 	// --------------------------------------------------- : Action related
   protected:
 	/// We want to respond to set changes
-	virtual void onBeforeChangeSet();
-	/// We want to respond to set changes
 	virtual void onChangeSet();
 	/// Actions that change the set
 	virtual void onAction(const Action&, bool undone);

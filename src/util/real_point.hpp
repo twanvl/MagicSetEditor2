@@ -117,33 +117,51 @@ inline RealSize addDiagonal(const RealSize& a, const RealSize& b) {
 // ----------------------------------------------------------------------------- : Rectangle using doubles
 
 /// A rectangle (postion and size) using real (double) coordinats
-class RealRect {
+class RealRect : private RealPoint, private RealSize {
   public:
-	/// Position of the top left corner
-	RealPoint position;
-	/// Size of the rectangle
-	RealSize  size;
-	
+	using RealPoint::x;
+	using RealPoint::y;
+	using RealSize::width;
+	using RealSize::height;
+		
 	inline RealRect(const wxRect& rect)
-		: position(rect.x, rect.y), size(rect.width, rect.height)
+		: RealPoint(rect.x, rect.y), RealSize(rect.width, rect.height)
 	{}
 	inline RealRect(const RealPoint& position, const RealSize& size)
-		: position(position), size(size)
+		: RealPoint(position), RealSize(size)
 	{}
 	inline RealRect(double x, double y, double w, double h)
-		: position(x,y), size(w,h)
+		: RealPoint(x,y), RealSize(w,h)
 	{}
 	
-	inline operator wxRect() const {
-		return wxRect(position.x, position.y, size.width, size.height);
-	}
+	/// Position of the top left corner
+	inline       RealPoint& position()       { return *this; }
+	inline const RealPoint& position() const { return *this; }
+	/// Size of the rectangle
+	inline       RealSize&  size()           { return *this; }
+	inline const RealSize&  size()     const { return *this; }
+	
+	inline double left()   const { return x; }
+	inline double right()  const { return x + width; }
+	inline double top()    const { return y; }
+	inline double bottom() const { return y + height; }
+	
+	inline RealPoint topLeft    () const { return *this; }
+	inline RealPoint topRight   () const { return RealPoint(x + width, y); }
+	inline RealPoint bottomLeft () const { return RealPoint(x,         y + height); }
+	inline RealPoint bottomRight() const { return RealPoint(x + width, y + height); }
+	
 	/// Return a rectangle that is amount larger to all sides
 	inline RealRect grow(double amount) {
-		return RealRect(position.x - amount, position.y - amount, size.width + 2 * amount, size.height + 2 * amount);
+		return RealRect(x - amount, y - amount, width + 2 * amount, height + 2 * amount);
 	}
 	/// Move the coordinates by some amount
-	inline RealRect move(double dx, double dy, double dw, double dh) {
-		return RealRect(position.x + dx, position.y + dy, size.width + dw, size.height + dh);
+	inline RealRect move(double dx, double dy, double dw, double dh) const {
+		return RealRect(x + dx, y + dy, width + dw, height + dh);
+	}
+	
+	inline operator wxRect() const {
+		return wxRect(x, y, width, height);
 	}
 };
 
@@ -160,9 +178,9 @@ class RealRect {
  *    +----+-------+
  */
 inline RealRect split_left(RealRect& r, double w) {
-	RealRect result(r.position.x, r.position.y, w, r.size.height);
-	r.size.width -= w;
-	r.position.x += w;
+	RealRect result(r.x, r.y, w, r.height);
+	r.width -= w;
+	r.x     += w;
 	return result;
 }
 /// Split a rectangle horizontally

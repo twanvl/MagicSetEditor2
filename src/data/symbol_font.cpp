@@ -210,19 +210,19 @@ void SymbolFont::drawWithText(RotatedDC& dc, Context& ctx, const RealRect& rect,
 	if (def) {
 		Bitmap bmp = def->getBitmap(ctx, *this, dc.trS(font_size));
 		// align symbol
-		sym_rect.size     = dc.trInvS(RealSize(bmp.GetWidth(), bmp.GetHeight()));
-		sym_rect.position = align_in_rect(align, sym_rect.size, rect);
+		sym_rect.size()     = dc.trInvS(RealSize(bmp.GetWidth(), bmp.GetHeight()));
+		sym_rect.position() = align_in_rect(align, sym_rect.size(), rect);
 		// draw
-		dc.DrawBitmap(bmp, sym_rect.position);
+		dc.DrawBitmap(bmp, sym_rect.position());
 	}
 	
 	// 2. draw text
 	if (!text_font) return;
 	// subtract margins from size
-	sym_rect.position.x  += text_margin_left;
-	sym_rect.position.y  += text_margin_top;
-	sym_rect.size.width  -= text_margin_left + text_margin_right;
-	sym_rect.size.height -= text_margin_top  + text_margin_bottom;
+	sym_rect.x      += text_margin_left;
+	sym_rect.y      += text_margin_top;
+	sym_rect.width  -= text_margin_left + text_margin_right;
+	sym_rect.height -= text_margin_top  + text_margin_bottom;
 	// setup text, shrink it
 	double size = text_font->size; // TODO : incorporate shrink factor?
 	RealSize ts;
@@ -230,7 +230,7 @@ void SymbolFont::drawWithText(RotatedDC& dc, Context& ctx, const RealRect& rect,
 		if (size <= 0) return; // text too small
 		dc.SetFont(text_font->font, size);
 		ts = dc.GetTextExtent(text);
-		if (ts.width <= sym_rect.size.width && ts.height <= sym_rect.size.height) {
+		if (ts.width <= sym_rect.width && ts.height <= sym_rect.height) {
 			break; // text fits
 		} else {
 			// text doesn't fit

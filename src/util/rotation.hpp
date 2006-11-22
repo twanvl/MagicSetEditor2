@@ -139,16 +139,19 @@ class RotatedDC : public Rotation {
 	void SetBrush(const wxBrush&);
 	void SetTextForeground(const Color&);
 	void SetLogicalFunction(int function);
+	
 	void SetFont(const wxFont& font);
 	/// Set the font, scales for zoom and high_quality
 	/** The font will get the given (internal) point size */
 	void SetFont(wxFont font, double size);
-	
 	/// Steps to use when decrementing font size
 	double getFontSizeStep() const;
 	
 	RealSize GetTextExtent(const String& text) const;
 	double GetCharHeight() const;
+	
+	void SetClippingRegion(const RealRect& rect);
+	void DestroyClippingRegion();
 	
 	inline wxDC& getDC() { return dc; }
 	

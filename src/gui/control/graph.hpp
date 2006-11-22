@@ -83,9 +83,9 @@ class GraphData {
 class Graph {
   public:
 	/// Draw this graph, filling the internalRect() of the dc.
-	virtual void draw(RotatedDC& dc) const = 0;
-	/// Find the item at the given position, position is normalized to [0..1)
-	virtual bool findItem(const RealPoint& pos, vector<int>& out) const { return false; }
+	virtual void draw(RotatedDC& dc, const vector<int>& current) const = 0;
+	/// Find the item at the given position, the rectangle gives the screen size
+	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const { return false; }
 	/// Change the data
 	virtual void setData(const GraphDataP& d) { data = d; }
 	
@@ -98,19 +98,22 @@ class Graph {
 class Graph1D : public Graph {
   public:
 	inline Graph1D(size_t axis) : axis(axis) {}
-	virtual bool findItem(const RealPoint& pos, vector<int>& out) const;
+	virtual void draw(RotatedDC& dc, const vector<int>& current) const;
+	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const;
   protected:
 	size_t axis;
 	/// Find an item, return the position along the axis, or -1 if not found
-	virtual int findItem(const RealPoint& pos) const = 0;
+	virtual int findItem(const RealPoint& pos, const RealRect& rect) const = 0;
+	virtual void draw(RotatedDC& dc, int current) const = 0;
+	inline GraphAxis& axis_data() const { return *data->axes.at(axis); }
 };
 
 /// A bar graph
 class BarGraph : public Graph1D {
   public:
 	inline BarGraph(size_t axis) : Graph1D(axis) {}
-	virtual void draw(RotatedDC& dc) const;
-	virtual int findItem(const RealPoint& pos) const;
+	virtual void draw(RotatedDC& dc, int current) const;
+	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
 };
 
 // TODO
@@ -121,16 +124,16 @@ class BarGraph : public Graph1D {
 class PieGraph : public Graph1D {
   public:
 	inline PieGraph(size_t axis) : Graph1D(axis) {}
-	virtual void draw(RotatedDC& dc) const;
-	virtual int findItem(const RealPoint& pos) const;
+	virtual void draw(RotatedDC& dc, int current) const;
+	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
 };
 
 /// The legend, used for pie graphs
 class GraphLegend : public Graph1D {
   public:
 	inline GraphLegend(size_t axis) : Graph1D(axis) {}
-	virtual void draw(RotatedDC& dc) const;
-	virtual int findItem(const RealPoint& pos) const;
+	virtual void draw(RotatedDC& dc, int current) const;
+	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
 };
 
 //class GraphTable {
