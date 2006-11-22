@@ -111,8 +111,8 @@ class Settings {
   private:
 	map<String,GameSettingsP>       game_settings;
 	map<String,StyleSheetSettingsP> stylesheet_settings;
-	StyleSheetSettings              default_stylesheet_settings;
   public:
+	StyleSheetSettings              default_stylesheet_settings;	///< The default settings for stylesheets
 	
 	// --------------------------------------------------- : Special game stuff
 	String apprentice_location;

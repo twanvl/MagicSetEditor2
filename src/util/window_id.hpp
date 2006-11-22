@@ -167,13 +167,17 @@ enum ControlID {
 ,	ID_NOTES
 ,	ID_KEYWORD
 ,	ID_PARAMETER
-,	ID_SEPARATOR
 ,	ID_REMINDER
 ,	ID_RULES
+	// Card list column select
 ,	ID_MOVE_UP
 ,	ID_MOVE_DOWN
 ,	ID_SHOW
 ,	ID_HIDE
+	// Settings
+,	ID_NOTEBOOK
+,	ID_APPRENTICE_BROWSE
+,	ID_CHECK_UPDATES_NOW
 };
 
 // ----------------------------------------------------------------------------- : EOF

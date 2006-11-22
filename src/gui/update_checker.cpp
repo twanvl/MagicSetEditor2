@@ -38,6 +38,9 @@ VersionDataP update_version_data;
 // Is update checking in progress?
 volatile bool checking_updates = false;
 
+bool update_data_found() { return !!update_version_data; }
+bool update_available()  { return update_version_data && update_version_data->version > app_version; }
+
 // ----------------------------------------------------------------------------- : Update checking
 
 // Thread to retrieve update information
@@ -114,8 +117,7 @@ struct HtmlWindowToBrowser : public wxHtmlWindow {
 };
 
 void show_update_dialog(Window* parent) {
-	if (!update_version_data) return;
-	if (update_version_data->version <= app_version) return; // we already have the latest version
+	if (!update_available()) return; // we already have the latest version
 	// Show update dialog
 	wxDialog* dlg = new wxDialog(parent, wxID_ANY, _("Updates availible"), wxDefaultPosition);
 	// controls

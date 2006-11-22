@@ -26,5 +26,10 @@ void check_updates_now(bool async = true);
  *  Call this function from an onIdle loop */
 void show_update_dialog(Window* parent);
 
+/// Was update data found?
+bool update_data_found();
+/// Is there an update?
+bool update_available();
+
 // ----------------------------------------------------------------------------- : EOF
 #endif
