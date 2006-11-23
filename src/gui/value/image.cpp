@@ -9,3 +9,5 @@
 #include <gui/value/image.hpp>
 
 // ----------------------------------------------------------------------------- : 
+
+IMPLEMENT_VALUE_EDITOR(Image) {}

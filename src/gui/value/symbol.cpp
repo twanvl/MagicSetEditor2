@@ -9,3 +9,5 @@
 #include <gui/value/symbol.hpp>
 
 // ----------------------------------------------------------------------------- : 
+
+IMPLEMENT_VALUE_EDITOR(Symbol) {}

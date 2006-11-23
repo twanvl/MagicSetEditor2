@@ -34,7 +34,9 @@ class ColorField : public Field {
 	vector<ChoiceP> choices;		///< Color choices available
 	bool            allow_custom;	///< Are colors not in the list of choices allowed?
 	String          default_name;	///< Name of "default" value
-		
+	
+	virtual void initDependencies(Context&, const Dependency&) const;
+	
   private:
 	DECLARE_REFLECTION();
 };
@@ -77,6 +79,7 @@ class ColorValue : public Value {
 	Defaultable<Color> value;	///< The value
 	
 	virtual String toString() const;
+	virtual bool update(Context&);
 	
   private:
 	DECLARE_REFLECTION();

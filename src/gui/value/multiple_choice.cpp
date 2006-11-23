@@ -9,3 +9,5 @@
 #include <gui/value/multiple_choice.hpp>
 
 // ----------------------------------------------------------------------------- : 
+
+IMPLEMENT_VALUE_EDITOR(MultipleChoice) {}

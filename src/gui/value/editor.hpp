@@ -109,15 +109,17 @@ class ValueEditor {
 // ----------------------------------------------------------------------------- : Utility
 
 #define DECLARE_VALUE_EDITOR(Type)											\
-		Type##ValueEditor(DataEditor& parent, const Type##StyleP& style)	\
-			: Type##ValueViewer(parent, style)								\
-		{}																	\
+		Type##ValueEditor(DataEditor& parent, const Type##StyleP& style);	\
 		virtual ValueEditor* getEditor() { return this; }					\
 	  private:																\
 		inline DataEditor& editor() const {									\
 			return static_cast<DataEditor&>(viewer);						\
 		}																	\
 	  public:
+
+#define IMPLEMENT_VALUE_EDITOR(Type)													\
+	Type##ValueEditor::Type##ValueEditor(DataEditor& parent, const Type##StyleP& style)	\
+		: Type##ValueViewer(parent, style)
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

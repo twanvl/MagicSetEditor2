@@ -45,5 +45,10 @@ Image load_resource_image(const String& name);
 /** Based on wxRendererXP::DrawComboBoxDropButton */
 void draw_control_border(Window* win, DC& dc, const wxRect& rect);
 
+/// Draws an arrow for a menu item indicating it has a sub menu
+void draw_menu_arrow(Window* win, DC& dc, const wxRect& rect, bool active);
+
+void draw_drop_down_arrow(Window* win, DC& dc, const wxRect& rect, bool active);
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

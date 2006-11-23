@@ -9,3 +9,5 @@
 #include <gui/value/text.hpp>
 
 // ----------------------------------------------------------------------------- : 
+
+IMPLEMENT_VALUE_EDITOR(Text) {}

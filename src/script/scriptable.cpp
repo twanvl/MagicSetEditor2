@@ -20,6 +20,7 @@ void store(const ScriptValueP& val, double& var)              { var = *val; }
 void store(const ScriptValueP& val, bool&   var)              { var = static_cast<int>(*val); }
 void store(const ScriptValueP& val, Color&  var)              { var = *val; }
 void store(const ScriptValueP& val, Defaultable<String>& var) { var.assign(*val); }
+void store(const ScriptValueP& val, Defaultable<Color>& var)  { var.assign(*val); }
 
 // ----------------------------------------------------------------------------- : OptionalScript
 

@@ -13,12 +13,30 @@
 #include <gui/value/editor.hpp>
 #include <render/value/color.hpp>
 
+DECLARE_POINTER_TYPE(DropDownList);
+
 // ----------------------------------------------------------------------------- : ColorValueEditor
 
 /// An editor 'control' for editing ColorValues
 class ColorValueEditor : public ColorValueViewer, public ValueEditor {
   public:
 	DECLARE_VALUE_EDITOR(Color);
+	
+	// --------------------------------------------------- : Events
+	virtual void onLeftDown(const RealPoint& pos, wxMouseEvent& ev);
+	virtual void onChar(wxKeyEvent& ev);
+	virtual void onLoseFocus();
+	
+	virtual void drawSelection(RotatedDC& dc);
+	virtual void determineSize();
+	
+  private:
+	DropDownListP drop_down;
+	friend class DropDownColorList;
+	/// Change the color
+	void change(const Defaultable<Color>& c);
+	/// Change to a custom color
+	void changeCustom();
 };
 
 // ----------------------------------------------------------------------------- : EOF

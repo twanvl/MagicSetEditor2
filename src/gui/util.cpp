@@ -10,6 +10,7 @@
 #include <util/error.hpp>
 #include <util/rotation.hpp>
 #include <wx/mstream.h>
+#include <wx/renderer.h>
 
 #if wxUSE_UXTHEME
 	#include <wx/msw/uxtheme.h>
@@ -137,4 +138,24 @@ void draw_control_border(Window* win, DC& dc, const wxRect& rect) {
 	#else
 		draw3DBorder(dc, rect.x - 1, rect.y - 1, rect.x + rect.width, rect.y + rect.height);
 	#endif
+}
+
+// portable, based on wxRendererGeneric::DrawComboBoxDropButton
+void draw_menu_arrow(Window* win, DC& dc, const wxRect& rect, bool active) {
+	wxPoint pt[] =
+		{	wxPoint(0, 0)
+		,	wxPoint(4, 4)
+		,	wxPoint(0, 8)
+		};
+	dc.SetPen(*wxTRANSPARENT_PEN);
+	dc.SetBrush(wxSystemSettings::GetColour(active ? wxSYS_COLOUR_HIGHLIGHTTEXT : wxSYS_COLOUR_WINDOWTEXT));
+	dc.DrawPolygon(3, pt, rect.x + rect.width - 6, rect.y + (rect.height - 9) / 2);
+}
+
+void draw_drop_down_arrow(Window* win, DC& dc, const wxRect& rect, bool active) {
+	wxRendererNative& rn = wxRendererNative::GetDefault();
+	int w = wxSystemSettings::GetMetric(wxSYS_VSCROLL_ARROW_X); // drop down arrow is same size
+	rn.DrawComboBoxDropButton(win, dc, 
+		wxRect(rect.x + rect.width - w, rect.y, w, rect.height)
+		, active ? wxCONTROL_PRESSED : 0);
 }

@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <data/field/color.hpp>
+#include <script/script.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ColorField::ChoiceP);
 
@@ -22,6 +23,13 @@ IMPLEMENT_FIELD_TYPE(Color)
 String ColorField::typeName() const {
 	return _("color");
 }
+
+void ColorField::initDependencies(Context& ctx, const Dependency& dep) const {
+	Field        ::initDependencies(ctx, dep);
+	script        .initDependencies(ctx, dep);
+	default_script.initDependencies(ctx, dep);
+}
+
 
 IMPLEMENT_REFLECTION(ColorField) {
 	REFLECT_BASE(Field);
@@ -66,6 +74,11 @@ String ColorValue::toString() const {
 		if (value() == c->color) return c->name;
 	}
 	return _("<color>");
+}
+bool ColorValue::update(Context& ctx) {
+	Value::update(ctx);
+	return field().default_script.invokeOnDefault(ctx, value)
+	     | field().        script.invokeOn(ctx, value);
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(ColorValue) {
