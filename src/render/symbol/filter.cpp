@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <render/symbol/filter.hpp>
+#include <render/symbol/viewer.hpp>
 #include <gfx/gfx.hpp>
 #include <util/error.hpp>
 
@@ -35,6 +36,12 @@ void filter_symbol(Image& symbol, const SymbolFilter& filter) {
 			alpha += 1;
 		}
 	}
+}
+
+Image render_symbol(const SymbolP& symbol, const SymbolFilter& filter, double border_radius, int size) {
+	Image i = render_symbol(symbol, border_radius, size);
+	filter_symbol(i, filter);
+	return i;
 }
 
 // ----------------------------------------------------------------------------- : SymbolFilter

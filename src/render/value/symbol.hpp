@@ -21,6 +21,10 @@ class SymbolValueViewer : public ValueViewer {
 	DECLARE_VALUE_VIEWER(Symbol) : ValueViewer(parent,style) {}
 	
 	virtual void draw(RotatedDC& dc);
+	void onValueChange();
+	
+  private:
+	vector<Bitmap> symbols;	///< Cached images
 };
 
 // ----------------------------------------------------------------------------- : EOF

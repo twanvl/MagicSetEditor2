@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
 
+DECLARE_POINTER_TYPE(Symbol);
 class SymbolFilter;
 
 // ----------------------------------------------------------------------------- : Color
@@ -31,6 +32,9 @@ class AColor : public Color {
  *  The result is stored in the symbol parameter.
  */
 void filter_symbol(Image& symbol, const SymbolFilter& filter);
+
+/// Render a Symbol to an Image and filter it
+Image render_symbol(const SymbolP& symbol, const SymbolFilter& filter, double border_radius = 0.05, int size = 100);
 
 /// Is a point inside a symbol?
 enum SymbolSet

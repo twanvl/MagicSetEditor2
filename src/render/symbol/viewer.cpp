@@ -11,6 +11,19 @@
 
 DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 
+// ----------------------------------------------------------------------------- : Simple rendering
+
+Image render_symbol(const SymbolP& symbol, double border_radius, int size) {
+	SymbolViewer viewer(symbol, border_radius);
+	Bitmap bmp(size, size);
+	wxMemoryDC dc;
+	dc.SelectObject(bmp);
+	clearDC_black(dc);
+	viewer.draw(dc);
+	dc.SelectObject(wxNullBitmap);
+	return bmp.ConvertToImage();
+}
+
 // ----------------------------------------------------------------------------- : Constructor
 
 SymbolViewer::SymbolViewer(const SymbolP& symbol, double border_radius)

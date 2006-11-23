@@ -112,22 +112,30 @@ class Package {
 	/// Open a file given an absolute filename
 	static InputStreamP openAbsoluteFile(const String& name);
 	
-/*	// --------------------------------------------------- : Managing the inside of the package : IO files
+	// --------------------------------------------------- : Managing the inside of the package : Reader/writer
 	
 	template <typename T>
-	void readFile<T> (String n, T& obj) {
-		In i(openFileIn(n), filename + _("/") + n);
+	void readFile(const String& file, T& obj) {
+		Reader reader(openIn(file), absoluteFilename() + _("/") + file);
 		try {
-			i(obj);
-		} catch (ParseError e) {
-			throw FileParseError(e.what(), filename+_("/")+n); // more detailed message
+			reader.handle(obj);
+		} catch (const ParseError& err) {
+			throw FileParseError(err.what(), absoluteFilename() + _("/") + file); // more detailed message
 		}
 	}
+	template <typename T>
+	T readFile(const String& file) {
+		T obj;
+		readFile(file, obj);
+		return obj;
+	}
 	
 	template <typename T>
-	void writeFile(const String& file, T obj) {
+	void writeFile(const String& file, const T& obj) {
+		Writer writer(openOut(file));
+		writer.handle(obj);
 	}
-	*/
+	
 	// --------------------------------------------------- : Private stuff
   private:
 	

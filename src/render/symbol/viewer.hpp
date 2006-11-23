@@ -40,13 +40,14 @@ class SymbolViewer : public SymbolView {
 	Rotation rotation; ///< Object that handles rotation, scaling and translation
 	
 	// --------------------------------------------------- : Drawing
-
-  public:
+	
 	/// Draw the symbol to a dc
 	void draw(DC& dc);
-		
+	
 	void highlightPart(DC& dc, const SymbolPart& part, HighlightStyle style);
-		
+	
+	void onAction(const Action&, bool) {}
+	
   private:
 	/// Combines a symbol part with what is currently drawn, the border and interior are drawn separatly
 	/** directB/directI are true if the border/interior is the screen dc, false if it
