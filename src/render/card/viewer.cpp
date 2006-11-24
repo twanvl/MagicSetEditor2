@@ -57,6 +57,12 @@ wxPen  DataViewer::borderPen(bool) const { return wxPen(); }
 ValueViewer* DataViewer::focusedViewer() const { return nullptr; }
 Context& DataViewer::getContext()  const { return set->getContext(); }
 
+Rotation DataViewer::getRotation() const {
+	StyleSheetP stylesheet = set->stylesheetFor(card);
+	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
+	return Rotation(ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom());
+}
+
 // ----------------------------------------------------------------------------- : Setting data
 
 void DataViewer::setCard(const CardP& card) {

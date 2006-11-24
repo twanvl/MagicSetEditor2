@@ -32,7 +32,11 @@ void CardViewer::onChange() {
 }
 
 void CardViewer::onPaint(wxPaintEvent&) {
-	wxBufferedPaintDC dc(this);
+	wxSize cs = GetClientSize();
+	if (!buffer.Ok() || buffer.GetWidth() != cs.GetWidth() || buffer.GetHeight() != cs.GetHeight()) {
+		buffer = Bitmap(cs.GetWidth(), cs.GetHeight());
+	}
+	wxBufferedPaintDC dc(this, buffer);
 	dc.BeginDrawing();
 	draw(dc);
 	dc.EndDrawing();

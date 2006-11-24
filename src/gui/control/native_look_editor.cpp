@@ -21,8 +21,12 @@ NativeLookEditor::NativeLookEditor(Window* parent, int id, long style)
 	: DataEditor(parent, id, style)
 {}
 
+Rotation NativeLookEditor::getRotation() const {
+	return Rotation(0, RealRect(RealPoint(0,0),GetClientSize()));
+}
+
 void NativeLookEditor::draw(DC& dc) {
-	RotatedDC rdc(dc, 0, RealRect(RealPoint(0,0),GetClientSize()), 1, 0);
+	RotatedDC rdc(dc, getRotation(), false);
 	DataViewer::draw(rdc, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 }
 void NativeLookEditor::drawViewer(RotatedDC& dc, ValueViewer& v) {

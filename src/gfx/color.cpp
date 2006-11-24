@@ -46,3 +46,13 @@ Color darken(const Color& c) {
 		c.Blue()  * 8 / 10
 	);
 }
+
+Color saturate(const Color& c, double amount) {
+	int r = c.Red(), g = c.Green(), b = c.Blue();
+	double l = (r + g + b) / 3;
+	return Color(
+		col((r - amount * l) / (1 - amount)),
+		col((g - amount * l) / (1 - amount)),
+		col((b - amount * l) / (1 - amount))
+	);
+}

@@ -76,7 +76,8 @@ class ColorValue : public Value {
 	inline ColorValue(const ColorFieldP& field) : Value(field) {}
 	DECLARE_HAS_FIELD(Color)
 	
-	Defaultable<Color> value;	///< The value
+	typedef Defaultable<Color> ValueType;
+	ValueType value;	///< The value
 	
 	virtual String toString() const;
 	virtual bool update(Context&);

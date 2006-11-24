@@ -47,7 +47,7 @@ class ValueEditor {
 	virtual void onMouseWheel (const RealPoint& pos, wxMouseEvent& ev) {}
 	
 	/// Key events
-	virtual void onChar(wxKeyEvent ev) {}
+	virtual void onChar(wxKeyEvent& ev) {}
 	
 	/// a context menu is requested, add extra items to the menu m
 	/** return false to suppress menu */

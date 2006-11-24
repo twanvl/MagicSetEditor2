@@ -169,5 +169,8 @@ Color hsl2rgb(double h, double s, double l);
 /// A darker version of a color
 Color darken(const Color& c);
 
+/// A saturated version of a color
+Color saturate(const Color& c, double amount);
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

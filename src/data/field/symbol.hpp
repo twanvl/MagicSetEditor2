@@ -65,7 +65,8 @@ class SymbolValue : public Value {
 	inline SymbolValue(const SymbolFieldP& field) : Value(field) {}
 	DECLARE_HAS_FIELD(Symbol)
 	
-	FileName filename; ///< Filename of the symbol (in the current package)
+	typedef FileName ValueType;
+	ValueType filename; ///< Filename of the symbol (in the current package)
 	
 	virtual String toString() const;
 	

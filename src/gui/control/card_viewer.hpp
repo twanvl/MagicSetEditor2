@@ -29,7 +29,6 @@ class CardViewer : public wxControl, public DataViewer {
 	DECLARE_EVENT_TABLE();
 	
 	void onPaint(wxPaintEvent&);
-	void onSize(wxSizeEvent&);
 	
 	Bitmap buffer; /// < Off-screen buffer we draw to
 };

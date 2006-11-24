@@ -58,8 +58,8 @@ class ValueViewer {
 	/// Convert this viewer to an editor, if possible
 	virtual ValueEditor* getEditor() { return 0; }
 	
-  protected:
 	DataViewer& viewer;	///< Our parent object
+  protected:
 	StyleP styleP;		///< The style of this viewer
 	ValueP valueP;		///< The value we are currently viewing
 	

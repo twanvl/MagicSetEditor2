@@ -9,6 +9,8 @@
 #include <gui/drop_down_list.hpp>
 #include <gui/util.hpp>
 #include <render/value/viewer.hpp>
+#include <render/card/viewer.hpp>
+#include <util/rotation.hpp>
 #include <gfx/gfx.hpp>
 #include <wx/dcbuffer.h>
 
@@ -23,38 +25,31 @@ class DropDownHider : public wxEvtHandler {
 	DropDownList& list;
 	
 	virtual bool ProcessEvent(wxEvent& ev) {
-		// close the list, and pass on the event
-		// don't just use ev.Skip(), because this event handler will be removed by hiding,
-		// so there will be no next handler to skip to
-		wxEvtHandler* nh = GetNextHandler();
-		list.hide(false);
-		if (nh) nh->ProcessEvent(ev);
+		int t = ev.GetEventType();
+		if ( t == wxEVT_LEFT_DOWN      || t == wxEVT_RIGHT_DOWN
+		  || t == wxEVT_MOVE           || t == wxEVT_SIZE
+		  || t == wxEVT_MENU_HIGHLIGHT || t == wxEVT_MENU_OPEN    || t == wxEVT_MENU_OPEN
+		  || t == wxEVT_ACTIVATE       || t == wxEVT_CLOSE_WINDOW || t == wxEVT_KILL_FOCUS
+		  || t == wxEVT_COMMAND_TOOL_CLICKED)
+		{
+			// close the list, and pass on the event
+			// don't just use ev.Skip(), because this event handler will be removed by hiding,
+			// so there will be no next handler to skip to
+			wxEvtHandler* nh = GetNextHandler();
+			list.hide(false);
+			if (nh) nh->ProcessEvent(ev);
+			return false;
+		} else {
+//			if (t !=10093 && t !=10098 && t !=10097 && t !=10099 && t !=10004 && t !=10062
+//			 && t !=10025 && t !=10035 && t !=10034 && t !=10036 && t !=10042 && t !=10119)
+//			{
+//				t=t;//DEBUG
+//			}
+			return wxEvtHandler::ProcessEvent(ev);
+		}
 	}
 };
 
-/*BEGIN_EVENT_TABLE(DropDownHider, wxEvtHandler)
-	EVT_CUSTOM(wxEVT_LEFT_DOWN,      wxID_ANY, DropDownHider::onEvent)
-	EVT_CUSTOM(wxEVT_RIGHT_DOWN,     wxID_ANY, DropDownHider::onEvent)
-	EVT_CUSTOM(wxEVT_MOVE,           wxID_ANY, DropDownHider::onEvent)
-	EVT_CUSTOM(wxEVT_SIZE,           wxID_ANY, DropDownHider::onEvent)
-	EVT_CUSTOM(wxEVT_MENU_HIGHLIGHT, wxID_ANY, DropDownHider::onEvent)
-	EVT_CUSTOM(wxEVT_MENU,           wxID_ANY, DropDownHider::onEvent)
-	EVT_CUSTOM(wxEVT_MENU_OPEN,      wxID_ANY, DropDownHider::onEvent)
-	EVT_CUSTOM(wxEVT_ACTIVATE,       wxID_ANY, DropDownHider::onEvent)
-//	EVT_CUSTOM(wxEVT_CLOSE,          wxID_ANY, DropDownHider::onEvent)
-	EVT_CUSTOM(wxEVT_KILL_FOCUS,     wxID_ANY, DropDownHider::onEvent)
-/*	EVT_LEFT_DOWN      (          (wxMouseEventFunction)&DropDownHider::onEvent)
-	EVT_RIGHT_DOWN     (          DropDownHider::onMouseEvent)
-	EVT_MOVE           (          DropDownHider::onMoveEvent)
-	EVT_SIZE           (          DropDownHider::onSizeEvent)
-	EVT_MENU_HIGHLIGHT (wxID_ANY, DropDownHider::onMenuEvent)
-	EVT_MENU           (wxID_ANY, DropDownHider::onCommandEvent)
-	EVT_MENU_OPEN      (          DropDownHider::onMenuEvent)
-	EVT_ACTIVATE       (          DropDownHider::onActivateEvent)
-	EVT_CLOSE          (          DropDownHider::onCloseEvent)
-	EVT_KILL_FOCUS     (          DropDownHider::onFocusEvent)
-END_EVENT_TABLE  ()
-*/
 
 // ----------------------------------------------------------------------------- : DropDownList : Show/Hide
 
@@ -64,6 +59,7 @@ DropDownList::DropDownList(Window* parent, bool is_submenu, ValueViewer* viewer)
 	, selected_item(NO_SELECTION)
 	, open_sub_menu(nullptr)
 	, parent_menu(is_submenu ? static_cast<DropDownList*>(GetParent()) : nullptr)
+	, hider(is_submenu ? nullptr : new DropDownHider(*this))
 	, viewer(viewer)
 	, item_size(100,1)
 {
@@ -75,6 +71,10 @@ DropDownList::DropDownList(Window* parent, bool is_submenu, ValueViewer* viewer)
 	item_size.height = h;
 }
 
+DropDownList::~DropDownList() {
+	delete hider;
+}
+
 void DropDownList::show(bool in_place, wxPoint pos) {
 	if (IsShown()) return;
 	// find selection
@@ -83,40 +83,38 @@ void DropDownList::show(bool in_place, wxPoint pos) {
 	int line_count = 0;
 	size_t count = itemCount();
 	for (size_t i = 0 ; i < count ; ++i) if (lineBelow(i)) line_count += 1;
-	wxSize size(
+	RealSize size(
 		item_size.width + marginW * 2,
 		item_size.height * count + marginH * 2 + line_count
 	);
 	int parent_height = 0;
-	/*if (!in_place) {
+	if (!in_place && viewer) {
 		// Position the drop down list below the editor control (based on the style)
-		RotatedObject rot(editor.rotation);
-		Rect r = rot.trNoNeg(style->rect);
-		if (editor.nativeLook()) {
-			pos          = Point(r.left - 3, r.top - 3);
-			size.width   = max(size.width, r.width + 6);
-			editorHeight = r.height + 6;
+		RealRect r = viewer->viewer.getRotation().trNoNeg(viewer->getStyle()->getRect());
+		if (viewer->viewer.nativeLook()) {
+			pos           = wxPoint(r.x - 3, r.y - 3);
+			size.width    = max(size.width, r.width + 6);
+			parent_height = r.height + 6;
 		} else {
-			pos          = Point(r.left - 1, r.top - 1);
-			size.width   = max(size.width, r.width + 2);
-			editorHeight = r.height;
+			pos           = wxPoint(r.x - 1, r.y - 1);
+			size.width    = max(size.width, r.width + 2);
+			parent_height = r.height;
 		}
 	} else if (parent_menu) {
-		parent_height = -item_height - 1;
+		parent_height = -item_size.height - 1;
 	}
-	*/
+	pos = GetParent()->ClientToScreen(pos);
 	// move & resize
-	item_size.width = size.GetWidth() - marginW * 2;
+	item_size.width = size.width - marginW * 2;
 	SetSize(size);
 	Position(pos, wxSize(0, parent_height));
 	// set event handler
-	if (!parent_menu) {
-//		Window* parent = wxGetTopLevelParent(this);
-//		parent->PushEventHandler(&hider);
+	if (hider) {
+		Window* parent = wxGetTopLevelParent(GetParent());
+		parent->PushEventHandler(hider);
 	}
 	// show
 //	oldSelectedItem = selectedItem;
-
 	if (selected_item == NO_SELECTION && itemCount() > 0) selected_item = 0; // select first item by default
 	mouse_down = false;
 	Window::Show();
@@ -143,10 +141,10 @@ void DropDownList::realHide() {
 	if (parent_menu) {
 		parent_menu->open_sub_menu = 0;
 	} else {
-//		redrawDropDownArrowOnParent();
+		redrawArrowOnParent();
 		// disconnect event handler
-//		Window* parent = getTopLevelParent(&editor);
-//		parent->RemoveEventHandler(&hider);
+		Window* parent = wxGetTopLevelParent(GetParent());
+		parent->RemoveEventHandler(hider);
 	}
 }
 
@@ -306,7 +304,7 @@ void DropDownList::onCharInParent(wxKeyEvent& ev) {
 		} else {
 			switch (k) {
 				case WXK_UP:
-					if (selected_item - 1 >= 0) {
+					if (selected_item > 0) {
 						selected_item -= 1;
 						Refresh(false);
 					}
@@ -332,11 +330,12 @@ void DropDownList::onCharInParent(wxKeyEvent& ev) {
 					// match first character of an item, start searching just after the current selection
 					size_t si = selected_item != NO_SELECTION ? selected_item + 1 : 0;
 					size_t count = itemCount();
-					for (size_t i = si ; i < count + si ; ++i) {
-						String c = itemText(i);
+					for (size_t i = 0 ; i < count ; ++i) {
+						size_t index = (si + i) % count;
+						String c = itemText(index);
 						if (!c.empty() && toUpper(c.GetChar(0)) == toUpper(ev.GetUnicodeKey())) {
 							// first character matches
-							selected_item = i;
+							selected_item = index;
 							showSubMenu();
 							Refresh(false);
 							return;

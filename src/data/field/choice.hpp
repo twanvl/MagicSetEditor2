@@ -143,7 +143,8 @@ class ChoiceValue : public Value {
 	{}
 	DECLARE_HAS_FIELD(Choice)
 	
-	Defaultable<String> value;	/// The name of the selected choice
+	typedef Defaultable<String> ValueType;
+	ValueType value;	/// The name of the selected choice
 	
 	virtual String toString() const;
 	virtual bool update(Context&);

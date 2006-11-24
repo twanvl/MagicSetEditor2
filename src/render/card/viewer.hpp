@@ -52,6 +52,8 @@ class DataViewer : public SetView {
 	virtual ValueViewer* focusedViewer() const;
 	/// Get a script context to use for scripts in the viewers
 	Context& getContext() const;
+	/// The rotation to use
+	virtual Rotation getRotation() const;
 	
 	// --------------------------------------------------- : Setting data
 	

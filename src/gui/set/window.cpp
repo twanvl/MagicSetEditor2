@@ -96,6 +96,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 			
 	// tool bar
 	wxToolBar* tb = CreateToolBar(wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL);
+	tb->SetToolBitmapSize(wxSize(18,18));
 	tb->AddTool(ID_FILE_NEW,	_(""),	Bitmap(_("TOOL_NEW")),	wxNullBitmap, wxITEM_NORMAL, _("New set"),	_("Creates a new set"));
 	tb->AddTool(ID_FILE_OPEN,	_(""),	Bitmap(_("TOOL_OPEN")),	wxNullBitmap, wxITEM_NORMAL, _("Open set"),	_("Opens an existing set"));
 	tb->AddTool(ID_FILE_SAVE,	_(""),	Bitmap(_("TOOL_SAVE")),	wxNullBitmap, wxITEM_NORMAL, _("Save set"),	_("Saves the current set"));

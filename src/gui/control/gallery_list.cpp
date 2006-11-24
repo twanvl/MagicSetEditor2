@@ -159,7 +159,7 @@ void GalleryList::OnDraw(DC& dc) {
 		bool selected = i == selection;
 		Color c = selected ? wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT) : unselected;
 		dc.SetPen(c);
-		dc.SetBrush(lerp(background, c, 0.3));
+		dc.SetBrush(saturate(lerp(background, c, 0.3), selected ? 0.5 : 0));
 		RealPoint pos = itemPos(i);
 		dc.DrawRectangle(pos.x - BORDER, pos.y - BORDER, item_size.width + 2*BORDER, item_size.height + 2*BORDER);
 		// draw item

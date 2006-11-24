@@ -9,6 +9,7 @@
 #include <gui/value/color.hpp>
 #include <gui/drop_down_list.hpp>
 #include <gui/util.hpp>
+#include <data/action/value.hpp>
 #include <wx/colordlg.h>
 
 DECLARE_TYPEOF_COLLECTION(ColorField::ChoiceP);
@@ -141,7 +142,7 @@ void ColorValueEditor::determineSize() {
 }
 
 void ColorValueEditor::change(const Defaultable<Color>& c) {
-//	getSet().actions.add(new ColorChangeAction(value(), c));
+	getSet().actions.add(value_action(static_pointer_cast<ColorValue>(valueP), c));
 }
 void ColorValueEditor::changeCustom() {
 	Color c = wxGetColourFromUser(0, value().value());

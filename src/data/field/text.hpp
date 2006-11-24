@@ -80,7 +80,8 @@ class TextValue : public Value {
 	inline TextValue(const TextFieldP& field) : Value(field) {}
 	DECLARE_HAS_FIELD(Text)
 	
-	Defaultable<String> value;				///< The text of this value
+	typedef Defaultable<String> ValueType;
+	ValueType value;				///< The text of this value
 	
 	virtual String toString() const;
 	virtual bool update(Context&);
