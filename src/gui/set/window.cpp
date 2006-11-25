@@ -18,6 +18,7 @@
 #include <gui/about_window.hpp>
 #include <gui/update_checker.hpp>
 #include <gui/new_window.hpp>
+#include <gui/preferences_window.hpp>
 #include <gui/icon_menu.hpp>
 #include <util/window_id.hpp>
 #include <data/game.hpp>
@@ -487,7 +488,8 @@ void SetWindow::onReplaceAll(wxFindDialogEvent&) {
 }
 
 void SetWindow::onEditPreferences(wxCommandEvent&) {
-//	SettingsWindow wnd(this);
+	PreferencesWindow wnd(this);
+	wnd.ShowModal();
 //	if (wnd.ShowModal() == wxID_OK) {
 //		// render settings may have changed, notify all windows
 //		FOR_EACH(m, setWindows) {

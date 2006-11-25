@@ -13,6 +13,8 @@
 #include <util/reflect.hpp>
 
 class Game;
+class Dependency;
+DECLARE_POINTER_TYPE(Card);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(StyleSheet);
@@ -42,6 +44,8 @@ class Card {
 	
 	DECLARE_REFLECTION();
 };
+
+void mark_dependency_member(const CardP& value, const String& name, const Dependency& dep);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

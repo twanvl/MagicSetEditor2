@@ -220,6 +220,10 @@ int item_count(const T& v) {
 	return -1;
 }
 
+/// Mark a dependency on a member of value, can be overloaded
+template <typename T>
+void mark_dependency_member(const T& value, const String& name, const Dependency& dep) {}
+
 /// Script value containing an object (pointer)
 template <typename T>
 class ScriptObject : public ScriptValue {
@@ -244,6 +248,10 @@ class ScriptObject : public ScriptValue {
 				throw  ScriptError(_("Object has no member '") + name + _("'"));
 			}
 		}
+	}
+	virtual ScriptValueP dependencyMember(const String& name, const Dependency& dep) const {
+		mark_dependency_member(value, name, dep);
+		return getMember(name);
 	}
 	virtual int itemCount() const {
 		int i = item_count(*value);

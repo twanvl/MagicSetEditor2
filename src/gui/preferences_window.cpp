@@ -145,7 +145,7 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 				s5->Add(new wxStaticText(this, wxID_ANY, _("Columns: ")),      0, wxALL & ~wxLEFT | wxEXPAND, 4);
 				s5->Add(columns);
 			s4->Add(s5, 0, wxEXPAND | wxALL, 4);
-		s->Add(s, 0, wxEXPAND | wxALL & ~wxTOP, 8);
+		s->Add(s4, 0, wxEXPAND | wxALL & ~wxTOP, 8);
 	s->SetSizeHints(this);
 	SetSizer(s);
 }

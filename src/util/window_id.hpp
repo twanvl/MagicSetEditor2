@@ -178,6 +178,20 @@ enum ControlID {
 ,	ID_NOTEBOOK
 ,	ID_APPRENTICE_BROWSE
 ,	ID_CHECK_UPDATES_NOW
+	// Image slicer
+,	ID_PREVIEW
+,	ID_SELECTOR
+,	ID_SIZE
+,	ID_LEFT
+,	ID_TOP
+,	ID_WIDTH
+,	ID_HEIGHT
+,	ID_FIX_ASPECT
+,	ID_ZOOM
+,	ID_ZOOM_X
+,	ID_ZOOM_Y
+,	ID_SHARPEN
+,	ID_SHARPEN_AMOUNT
 };
 
 // ----------------------------------------------------------------------------- : EOF

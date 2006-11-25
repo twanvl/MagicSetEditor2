@@ -64,6 +64,7 @@ class ScriptManager : public ActionListener {
 	
 	// Something that needs to be updated
 	struct ToUpdate {
+		ToUpdate(Value* value, CardP card) : value(value), card(card) {}
 		Value* value;  ///< value to update
 		CardP  card;   ///< card the value is in, or CadP() if it is not a card field
 	};

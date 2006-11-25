@@ -95,6 +95,13 @@ void Set::validate(Version file_app_version) {
 */	}
 }
 
+void mark_dependency_member(Set* value, const String& name, const Dependency& dep) {
+	// TODO
+}
+void mark_dependency_member(const SetP& value, const String& name, const Dependency& dep) {
+	mark_dependency_member(value.get(), name, dep);
+}
+
 // in scripts, set.something is read from the set_info
 template <typename Tag>
 void reflect_set_info_get_member(Tag&       tag, const IndexMap<FieldP, ValueP>& data) {}

@@ -25,6 +25,7 @@ DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(Keyword);
 class ScriptManager;
 class Context;
+class Dependency;
 
 // ----------------------------------------------------------------------------- : Set
 
@@ -81,6 +82,9 @@ class Set : public Packaged {
 inline int item_count(const Set& set) {
 	return (int)set.cards.size();
 }
+
+void mark_dependency_member(const SetP& value, const String& name, const Dependency& dep);
+void mark_dependency_member(Set*        value, const String& name, const Dependency& dep);
 
 // ----------------------------------------------------------------------------- : SetView
 

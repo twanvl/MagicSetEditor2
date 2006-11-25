@@ -164,7 +164,7 @@ class ScriptString : public ScriptValue {
 			return l;
 		} else if (value == _("yes") || value == _("true")) {
 			return true;
-		} else if (value == _("no") || value == _("false")) {
+		} else if (value == _("no") || value == _("false") || value.empty()) {
 			return false;
 		} else {
 			throw ScriptError(_("Not a number: '") + value + _("'"));

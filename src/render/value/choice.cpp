@@ -18,7 +18,7 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 	double margin = 0;
 	if (style().render_style & RENDER_IMAGE) {
 		// draw image
-		map<String,ScriptableImage>::iterator it = style().choice_images.find(value().value());
+		map<String,ScriptableImage>::iterator it = style().choice_images.find(cannocial_name_form(value().value()));
 		if (it != style().choice_images.end()) {
 			ScriptableImage& img = it->second;
 			ScriptImageP i;

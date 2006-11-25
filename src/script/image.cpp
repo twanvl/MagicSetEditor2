@@ -208,6 +208,24 @@ SCRIPT_FUNCTION(set_mask) {
 	}
 }
 
+bool parse_enum(const String&, ImageCombine& out);
+
+SCRIPT_FUNCTION(set_combine) {
+	if (last_update_age() == 0) {
+		SCRIPT_PARAM(String, combine);
+		ScriptImageP image = to_script_image(ctx.getVariable(_("input")));
+		// parse and set combine
+		if (!parse_enum(combine, image->combine)) {
+			throw ScriptError(_("Not a valid combine mode: '") + combine + _("'"));
+		}
+		return image;
+	} else {
+		SCRIPT_RETURN(
+			script_image_up_to_date(ctx.getVariable(_("input")))
+		);
+	}
+}
+
 SCRIPT_FUNCTION(buildin_image) {
 	if (last_update_age() == 0) {
 		SCRIPT_PARAM(String, input);
@@ -223,5 +241,6 @@ void init_script_image_functions(Context& ctx) {
 	ctx.setVariable(_("linear blend"),    script_linear_blend);
 	ctx.setVariable(_("masked blend"),    script_masked_blend);
 	ctx.setVariable(_("set mask"),        script_set_mask);
+	ctx.setVariable(_("set combine"),     script_set_combine);
 	ctx.setVariable(_("buildin image"),   script_buildin_image);
 }

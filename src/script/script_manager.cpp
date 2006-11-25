@@ -12,6 +12,8 @@
 #include <data/game.hpp>
 #include <data/card.hpp>
 #include <data/field.hpp>
+#include <data/action/set.hpp>
+#include <data/action/value.hpp>
 #include <util/error.hpp>
 
 typedef map<const StyleSheet*,Context*> Contexts;
@@ -32,7 +34,10 @@ void init_script_image_functions(Context& ctx);
 
 ScriptManager::ScriptManager(Set& set)
 	: set(set)
-{}
+{
+	// add as an action listener for the set, so we receive actions
+	set.actions.addListener(this);
+}
 
 ScriptManager::~ScriptManager() {
 	set.actions.removeListener(this);
@@ -40,8 +45,6 @@ ScriptManager::~ScriptManager() {
 	FOR_EACH(sc, contexts) {
 		delete sc.second;
 	}
-	// add as an action listener for the set, so we receive actions
-	set.actions.addListener(this);
 }
 
 Context& ScriptManager::getContext(const StyleSheetP& stylesheet) {
@@ -116,11 +119,19 @@ void ScriptManager::initDependencies(Context& ctx, StyleSheet& stylesheet) {
 // ----------------------------------------------------------------------------- : ScriptManager : updating
 
 void ScriptManager::onAction(const Action& action, bool undone) {
-	// TODO
-//	TYPE_CASE(action, ValueAction) {
-//	}
-//	TYPE_CASE(action, CardListAction) {
-//	}
+	TYPE_CASE(action, ValueAction) {
+		// find the affected card
+		FOR_EACH(card, set.cards) {
+			if (card->data.contains(action.valueP)) {
+				updateValue(*action.valueP, card);
+				return;
+			}
+		}
+		updateValue(*action.valueP, CardP());
+	}
+	TYPE_CASE_(action, CardListAction) {
+		updateAllDependend(set.game->dependent_scripts_cards);
+	}
 }
 
 void ScriptManager::updateStyles(const CardP& card) {
@@ -196,8 +207,14 @@ void ScriptManager::alsoUpdate(deque<ToUpdate>& to_update, const vector<Dependen
 	FOR_EACH_CONST(d, deps) {
 		switch (d.type) {
 			case DEP_SET_FIELD: {
+				ValueP value = set.data.at(d.index);
+				to_update.push_back(ToUpdate(value.get(), CardP()));
 				break;
 			} case DEP_CARD_FIELD: {
+				if (card) {
+					ValueP value = card->data.at(d.index);
+					to_update.push_back(ToUpdate(value.get(), card));
+				}
 				break;
 			} case DEP_CARDS_FIELD: {
 				break;

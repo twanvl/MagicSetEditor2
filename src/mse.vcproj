@@ -581,6 +581,12 @@
 					RelativePath=".\gui\drop_down_list.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\image_slice_window.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\image_slice_window.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\new_window.cpp">
 				</File>
 				<File

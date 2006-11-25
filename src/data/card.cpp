@@ -31,6 +31,14 @@ String Card::identification() const {
 	return _("TODO");
 }
 
+void mark_dependency_member(const CardP& card, const String& name, const Dependency& dep) {
+	// Find field with that name
+	IndexMap<FieldP,ValueP>::const_iterator it = card->data.find(name);
+	if (it != card->data.end()) {
+		(*it)->fieldP->dependent_scripts.push_back(dep);
+	}
+}
+
 IMPLEMENT_REFLECTION(Card) {
 	REFLECT(stylesheet);
 	REFLECT(notes);
