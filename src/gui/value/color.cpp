@@ -35,9 +35,15 @@ class DropDownColorList : public DropDownList {
 	mutable Color default_color;
 
 	inline const ColorField& field() const { return cve.field(); }
-//	// default, custom item
+	// default, custom item
 	bool hasDefault() const { return field().default_script; }
 	bool hasCustom()  const { return field().allow_custom; }
+	bool isDefault(size_t item) const {
+		return item == 0 && hasDefault();
+	}
+	bool isCustom(size_t item) const {
+		return item == itemCount() - 1 && hasCustom();
+	}
 };
 
 
@@ -56,13 +62,12 @@ size_t DropDownColorList::itemCount() const {
 	return cve.field().choices.size() + hasDefault() + hasCustom();
 }
 bool DropDownColorList::lineBelow(size_t item) const {
-	return (item == 0               && hasDefault()) // below default item
-		|| (item == itemCount() - 2 && hasCustom()); // above custom item
+	return isDefault(item) || isCustom(item + 1); // below default item, above custom item
 }
 String DropDownColorList::itemText(size_t item) const {
-	if (item == 0 && hasDefault()) {
+	if (isDefault(item)) {
 		return field().default_name;
-	} else if (item == itemCount()-1 && hasCustom()) {
+	} else if (isCustom(item)) {
 		return _("Custom...");
 	} else {
 		return field().choices[item - hasDefault()]->name;
@@ -71,9 +76,9 @@ String DropDownColorList::itemText(size_t item) const {
 
 void DropDownColorList::drawIcon(DC& dc, int x, int y, size_t item, bool selected) const {
 	Color col;
-	if (item == 0 && hasDefault()) { // default
+	if (isDefault(item)) {
 		col = default_color;
-	} else if (item == itemCount()-1 && hasCustom()) { // custom color
+	} else if (isCustom(item)) {
 		col = cve.value().value();
 	} else {
 		col = field().choices[item - hasDefault()]->color;
@@ -83,6 +88,7 @@ void DropDownColorList::drawIcon(DC& dc, int x, int y, size_t item, bool selecte
 	dc.SetBrush(col);
 	dc.DrawRectangle(x+1, y+1, icon_size.width-2, item_size.height-2);
 }
+
 
 size_t DropDownColorList::selection() const {
 	// find selected color
@@ -107,9 +113,9 @@ size_t DropDownColorList::selection() const {
 	return selection;
 }
 void DropDownColorList::select(size_t item) {
-	if (item == 0 && hasDefault()) {
+	if (isDefault(item)) {
 		cve.change( Defaultable<Color>());
-	} else if (item == itemCount() - 1 && hasCustom()) {
+	} else if (isCustom(item)) {
 		cve.changeCustom();
 	} else {
 		cve.change(field().choices[item - hasDefault()]->color);

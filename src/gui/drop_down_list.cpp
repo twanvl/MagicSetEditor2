@@ -62,6 +62,8 @@ DropDownList::DropDownList(Window* parent, bool is_submenu, ValueViewer* viewer)
 	, hider(is_submenu ? nullptr : new DropDownHider(*this))
 	, viewer(viewer)
 	, item_size(100,1)
+	, icon_size(0,0)
+	, text_offset(0)
 {
 	// determine item height
 	wxClientDC dc(this);
@@ -79,10 +81,21 @@ void DropDownList::show(bool in_place, wxPoint pos) {
 	if (IsShown()) return;
 	// find selection
 	selected_item = selection();
-	// fix size & position
-	int line_count = 0;
+	// width
 	size_t count = itemCount();
+	if (item_size.width == 100) { // not initialized
+		wxClientDC dc(this);
+		dc.SetFont(*wxNORMAL_FONT);
+		for (size_t i = 0 ; i < count ; ++i) {
+			int text_width;
+			dc.GetTextExtent(capitalize(itemText(i)), &text_width, 0);
+			item_size.width = max(item_size.width, text_width + icon_size.width + 14); // 14 = room for popup arrow + padding
+		}
+	}
+	// height
+	int line_count = 0;
 	for (size_t i = 0 ; i < count ; ++i) if (lineBelow(i)) line_count += 1;
+	// size
 	RealSize size(
 		item_size.width + marginW * 2,
 		item_size.height * count + marginH * 2 + line_count
@@ -165,7 +178,7 @@ bool DropDownList::showSubMenu() {
 	}
 }
 bool DropDownList::showSubMenu(size_t item, int y) {
-	DropDownList* sub_menu = item == NO_SELECTION ? nullptr : popup(item);
+	DropDownList* sub_menu = item == NO_SELECTION ? nullptr : submenu(item);
 	if (sub_menu == open_sub_menu) return sub_menu; // no change
 	hideSubMenu();
 	open_sub_menu = sub_menu;
@@ -243,7 +256,7 @@ void DropDownList::drawItem(DC& dc, int y, size_t item) {
 	drawIcon(dc, marginW, y, item, item == selected_item);	
 	dc.DrawText(capitalize(itemText(item)), marginW + icon_size.width, y + text_offset);
 	// draw popup icon
-	if (popup(item)) {
+	if (submenu(item)) {
 		draw_menu_arrow(this, dc, wxRect(marginW, y, item_size.width, item_size.height), item == selected_item);
 	}
 	// draw line below
@@ -262,7 +275,7 @@ void DropDownList::onLeftDown(wxMouseEvent&) {
 void DropDownList::onLeftUp(wxMouseEvent&) {
 	if (mouse_down) {
 		// don't hide if there is a child menu
-		if (selected_item != NO_SELECTION && popup(selected_item)) return;
+		if (selected_item != NO_SELECTION && submenu(selected_item)) return;
 		hide(true);
 	}
 }

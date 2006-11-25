@@ -13,6 +13,7 @@
 #include <data/card.hpp>
 #include <data/field.hpp>
 #include <data/settings.hpp>
+#include <data/action/value.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ValueViewerP);
 typedef IndexMap<FieldP,StyleP> IndexMap_FieldP_StyleP;
@@ -116,6 +117,15 @@ ValueViewerP DataViewer::makeViewer(const StyleP& style) {
 	return style->makeViewer(*this, style);
 }
 
-void DataViewer::onAction(const Action&, bool undone) {
-	// TODO
+void DataViewer::onAction(const Action& action, bool undone) {
+	TYPE_CASE(action, ValueAction) {
+		FOR_EACH(v, viewers) {
+			if (v->getValue() == action.valueP) {
+				// refresh the viewer
+				v->onAction(action, undone);
+				onChange();
+				return;
+			}
+		}
+	}
 }

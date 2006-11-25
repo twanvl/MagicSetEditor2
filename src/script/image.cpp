@@ -143,6 +143,8 @@ template <> void Reader::handle(ScriptableImage& s) {
 	if (starts_with(s.script.unparsed, _("script:"))) {
 		s.script.unparsed = s.script.unparsed.substr(7);
 		s.script.parse(*this);
+	} else if (s.script.unparsed.find_first_of('{') != String.npos) {
+		s.script.parse(*this, true);
 	} else {
 		// script is a constant function
 		s.script.script = new_intrusive<Script>();

@@ -36,6 +36,8 @@ class ValueViewer {
 	inline const FieldP& getField() const { return styleP->fieldP; }
 	/// Return the associated style
 	inline const StyleP& getStyle() const { return styleP; }
+	/// Return the associated value
+	inline const ValueP& getValue() const { return valueP; }
 	
 	// Draw this value
 	virtual void draw(RotatedDC& dc) = 0;

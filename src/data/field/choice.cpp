@@ -38,6 +38,9 @@ IMPLEMENT_REFLECTION(ChoiceField) {
 	REFLECT_N("default", default_script);
 	REFLECT(initial);
 	REFLECT(default_name);
+	if (tag.reading()) {
+		choices->initIds();
+	}
 }
 
 // ----------------------------------------------------------------------------- : ChoiceField::Choice

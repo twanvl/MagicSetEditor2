@@ -56,11 +56,11 @@ class DropDownList : public wxPopupWindow {
 	/// Draw an icon at the specified location
 	virtual void drawIcon(DC& dc, int x, int y, size_t item, bool selected) const = 0;
 	/// Is there a line below an item?
-	virtual bool lineBelow(size_t item)      const { return false; }
+	virtual bool lineBelow(size_t item)        const { return false; }
 	/// Should the item be highlighted?
-	virtual bool highlightItem(size_t item)  const { return false; }
-	// An extra menu that pops up from an item, or null if there is no popup menu
-	virtual DropDownList* popup(size_t item) const { return nullptr; }
+	virtual bool highlightItem(size_t item)    const { return false; }
+	// An extra submenu that pops up from an item, or null if there is no popup menu
+	virtual DropDownList* submenu(size_t item) const { return nullptr; }
 	
 	// --------------------------------------------------- : Layout
 	
