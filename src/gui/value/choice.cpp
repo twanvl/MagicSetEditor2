@@ -35,6 +35,8 @@ ChoiceField::ChoiceP DropDownChoiceList::getChoice(size_t item) const {
 String DropDownChoiceList::itemText(size_t item) const {
 	if (isFieldDefault(item)) {
 		return field().default_name;
+	} else if (isGroupDefault(item)) {
+		return group->default_name;
 	} else {
 		ChoiceField::ChoiceP choice = getChoice(item);
 		return choice->name;
@@ -43,15 +45,15 @@ String DropDownChoiceList::itemText(size_t item) const {
 bool DropDownChoiceList::lineBelow(size_t item) const {
 	return isDefault(item);
 }
-DropDownList* DropDownChoiceList::submenu(size_t item) {
+DropDownList* DropDownChoiceList::submenu(size_t item) const {
 	if (isDefault(item)) return nullptr;
 	item -= hasDefault();
-	if (item < submenus.size()) submenus.resize(item + 1);
+	if (item >= submenus.size()) submenus.resize(item + 1);
 	if (submenus[item]) return submenus[item].get();
-	ChoiceField::ChoiceP choice = getChoice(item);
+	ChoiceField::ChoiceP choice = group->choices[item];
 	if (choice->isGroup()) {
 		// create submenu
-		submenus[item].reset(new DropDownChoiceList(GetParent(), true, cve, choice));
+		submenus[item].reset(new DropDownChoiceList(const_cast<DropDownChoiceList*>(this), true, cve, choice));
 	}
 	return submenus[item].get();
 }

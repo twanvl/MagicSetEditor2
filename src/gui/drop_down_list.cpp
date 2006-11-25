@@ -58,19 +58,22 @@ DropDownList::DropDownList(Window* parent, bool is_submenu, ValueViewer* viewer)
 	, mouse_down(false)
 	, selected_item(NO_SELECTION)
 	, open_sub_menu(nullptr)
-	, parent_menu(is_submenu ? static_cast<DropDownList*>(GetParent()) : nullptr)
+	, parent_menu(nullptr)
 	, hider(is_submenu ? nullptr : new DropDownHider(*this))
 	, viewer(viewer)
 	, item_size(100,1)
 	, icon_size(0,0)
-	, text_offset(0)
+	, text_offset(1)
 {
+	if (is_submenu) {
+		parent_menu = &dynamic_cast<DropDownList&>(*GetParent());
+	}
 	// determine item height
 	wxClientDC dc(this);
 	dc.SetFont(*wxNORMAL_FONT);
 	int h;
 	dc.GetTextExtent(_("X"), 0, &h);
-	item_size.height = h;
+	item_size.height = h + 2;
 }
 
 DropDownList::~DropDownList() {
@@ -127,7 +130,6 @@ void DropDownList::show(bool in_place, wxPoint pos) {
 		parent->PushEventHandler(hider);
 	}
 	// show
-//	oldSelectedItem = selectedItem;
 	if (selected_item == NO_SELECTION && itemCount() > 0) selected_item = 0; // select first item by default
 	mouse_down = false;
 	Window::Show();
@@ -152,7 +154,7 @@ void DropDownList::realHide() {
 //	onHide();
 	hideSubMenu();
 	if (parent_menu) {
-		parent_menu->open_sub_menu = 0;
+		parent_menu->open_sub_menu = nullptr;
 	} else {
 		redrawArrowOnParent();
 		// disconnect event handler
@@ -254,7 +256,7 @@ void DropDownList::drawItem(DC& dc, int y, size_t item) {
 	}
 	// draw text and icon
 	drawIcon(dc, marginW, y, item, item == selected_item);	
-	dc.DrawText(capitalize(itemText(item)), marginW + icon_size.width, y + text_offset);
+	dc.DrawText(capitalize(itemText(item)), marginW + icon_size.width + 1, y + text_offset);
 	// draw popup icon
 	if (submenu(item)) {
 		draw_menu_arrow(this, dc, wxRect(marginW, y, item_size.width, item_size.height), item == selected_item);

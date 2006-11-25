@@ -98,12 +98,12 @@ bool is_substr(const String& s, String::iterator it, const Char* cmp) {
 
 String capitalize(const String& s) {
 	String result = s;
-	bool afterSpace = true;
+	bool after_space = true;
 	FOR_EACH_IT(it, result) {
-		if (*it == ' ') {
-			afterSpace = true;
-		} else if (afterSpace) {
-			afterSpace = false;
+		if (*it == _(' ') || *it == _('/')) {
+			after_space = true;
+		} else if (after_space) {
+			after_space = false;
 			if (it != s.begin() &&
 			    (is_substr(result,it,_("is ")) || is_substr(result,it,_("the ")) ||
 			     is_substr(result,it,_("in ")) || is_substr(result,it,_("of "))  ||

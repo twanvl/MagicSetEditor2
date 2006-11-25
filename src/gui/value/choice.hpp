@@ -50,7 +50,7 @@ class DropDownChoiceList : public DropDownList {
 	virtual bool          lineBelow(size_t item) const;
 	virtual String        itemText(size_t item) const;
 	virtual void          drawIcon(DC& dc, int x, int y, size_t item, bool selected) const;
-	virtual DropDownList* submenu(size_t item);
+	virtual DropDownList* submenu(size_t item) const;
 	
 	virtual void   select(size_t item);
 	virtual size_t selection() const;
@@ -58,7 +58,7 @@ class DropDownChoiceList : public DropDownList {
   private:
 	ChoiceValueEditor& cve;
 	ChoiceField::ChoiceP group;		///< Group this menu shows
-	vector<DropDownListP> submenus;
+	mutable vector<DropDownListP> submenus;
 	
 	inline const ChoiceField& field() const { return cve.field(); }
 	
