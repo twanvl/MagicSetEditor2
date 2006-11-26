@@ -28,7 +28,7 @@ void filter_symbol(Image& symbol, const SymbolFilter& filter) {
 			AColor result = filter.color((double)x / width, (double)y / height, point);
 			// Store color
 			data[0]  = result.Red();
-			data[2]  = result.Green();
+			data[1]  = result.Green();
 			data[2]  = result.Blue();
 			alpha[0] = result.alpha;
 			// next

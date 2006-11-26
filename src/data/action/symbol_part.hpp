@@ -150,7 +150,7 @@ class ControlPointAddAction : public Action {
 // ----------------------------------------------------------------------------- : Remove control point
 
 /// Action that removes any number of points from a symbol part
-/// TODO: If less then 3 points are left removes the entire part!
+/// TODO: If less then 3 points are left removes the entire part?
 Action* controlPointRemoveAction(const SymbolPartP& part, const set<ControlPointP>& toDelete);
 
 

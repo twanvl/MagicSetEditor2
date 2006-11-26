@@ -112,5 +112,5 @@ void ChoiceValueEditor::determineSize() {
 }
 
 void ChoiceValueEditor::change(const Defaultable<String>& c) {
-	getSet().actions.add(value_action(static_pointer_cast<ChoiceValue>(valueP), c));
+	getSet().actions.add(value_action(valueP(), c));
 }

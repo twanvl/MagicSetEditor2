@@ -20,6 +20,7 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
   public:
 	DECLARE_VALUE_EDITOR(Text);
 	
+//	virtual void determineSize();
 };
 
 // ----------------------------------------------------------------------------- : EOF

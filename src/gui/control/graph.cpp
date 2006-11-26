@@ -203,7 +203,7 @@ void GraphControl::setData(const GraphDataPre& data) {
 void GraphControl::setData(const GraphDataP& data) {
 	if (graph) {
 		graph->setData(data);
-		current_item.clear(); // TODO : preserver selection
+		current_item.clear(); // TODO : preserve selection
 		Refresh(false);
 	}
 }

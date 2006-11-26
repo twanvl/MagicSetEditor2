@@ -203,7 +203,7 @@ String Package::nameOut(const String& file) {
 	}
 }
 
-String Package::newFileName(const String& prefix, const String& suffix) {
+FileName Package::newFileName(const String& prefix, const String& suffix) {
 	assert(wxThread::IsMain()); // Writing should only be done from the main thread
 	String name;
 	UInt infix = 0;

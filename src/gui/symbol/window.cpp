@@ -10,8 +10,12 @@
 #include <gui/symbol/control.hpp>
 #include <gui/symbol/part_list.hpp>
 #include <gui/icon_menu.hpp>
+#include <data/set.hpp>
+#include <data/field/symbol.hpp>
+#include <data/action/value.hpp>
 #include <util/window_id.hpp>
 #include <util/io/reader.hpp>
+#include <util/error.hpp>
 #include <wx/filename.h>
 #include <wx/wfstream.h>
 
@@ -29,7 +33,7 @@ SymbolPartP defaultSymbolPart(double d) {
 }
 
 // A default symbol, a square
-SymbolP defaultSymbol() {
+SymbolP default_symbol() {
 	SymbolP symbol = new_shared<Symbol>();
 	symbol->parts.push_back(defaultSymbolPart(0));
 	return symbol;
@@ -38,12 +42,29 @@ SymbolP defaultSymbol() {
 // ----------------------------------------------------------------------------- : Constructor
 
 SymbolWindow::SymbolWindow(Window* parent) {
-	init(parent, defaultSymbol());
+	init(parent, default_symbol());
 }
 
-SymbolWindow::SymbolWindow(Window* parent, String filename) {
-	// TODO
-	init(parent, defaultSymbol());
+SymbolWindow::SymbolWindow(Window* parent, const String& filename) {
+	// TODO : open file
+	init(parent, default_symbol());
+}
+
+SymbolWindow::SymbolWindow(Window* parent, const SymbolValueP& value, const SetP& set)
+	: value(value), set(set)
+{
+	// attempt to load symbol
+	SymbolP symbol;
+	if (!value->filename.empty()) {
+		try {
+			// load symbol
+			symbol = set->readFile<SymbolP>(value->filename);
+		} catch (const Error& e) {
+			handle_error(e);
+		}
+	}
+	if (!symbol) symbol = default_symbol();
+	init(parent, symbol);
 }
 
 void SymbolWindow::init(Window* parent, SymbolP symbol) {
@@ -122,12 +143,17 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
 	s->Add(v,       0, wxEXPAND);
 	s->Add(control, 1, wxEXPAND);
 	SetSizer(s);
+	
+	// we want update ui events
+	wxUpdateUIEvent::SetMode(wxUPDATE_UI_PROCESS_SPECIFIED);
+	SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
+	em->SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
 }
 
 // ----------------------------------------------------------------------------- : Event handling
 
 void SymbolWindow::onFileNew(wxCommandEvent& ev) {
-	SymbolP symbol = defaultSymbol();
+	SymbolP symbol = default_symbol();
 	parts->setSymbol(symbol);
 	control->setSymbol(symbol);
 }
@@ -151,12 +177,25 @@ void SymbolWindow::onFileOpen(wxCommandEvent& ev) {
 }
 
 void SymbolWindow::onFileSave(wxCommandEvent& ev) {
+	// TODO
+	onFileSaveAs(ev);
 }
 
 void SymbolWindow::onFileSaveAs(wxCommandEvent& ev) {
+	String name = wxFileSelector(_("Save symbol"),_(""),_(""),_(""),_("Symbol files (*.mse-symbol)|*.mse-symbol"),wxSAVE, this);
+	if (!name.empty()) {
+		Writer writer(new_shared1<wxFileOutputStream>(name));
+		writer.handle(control->getSymbol());
+	}
 }
 
 void SymbolWindow::onFileStore(wxCommandEvent& ev) {
+	if (value) {
+		FileName new_filename = set->newFileName(value->field().name,_(".mse-symbol")); // a new unique name in the package
+		Writer writer(set->openOut(new_filename));
+		writer.handle(control->getSymbol());
+		set->actions.add(value_action(value, new_filename));
+	}
 }
 
 void SymbolWindow::onFileExit(wxCommandEvent& ev) {
@@ -191,7 +230,7 @@ void SymbolWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 	switch(ev.GetId()) {
 		// file menu
 		case ID_FILE_STORE: {
-		//	ev.Enable(value);
+			ev.Enable(value);
 			break;
 		// undo/redo
 		} case ID_EDIT_UNDO: {

@@ -148,7 +148,7 @@ void ColorValueEditor::determineSize() {
 }
 
 void ColorValueEditor::change(const Defaultable<Color>& c) {
-	getSet().actions.add(value_action(static_pointer_cast<ColorValue>(valueP), c));
+	getSet().actions.add(value_action(valueP(), c));
 }
 void ColorValueEditor::changeCustom() {
 	Color c = wxGetColourFromUser(0, value().value());

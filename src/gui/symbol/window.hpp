@@ -9,13 +9,14 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
-#include "../../util/prec.hpp"
+#include <util/prec.hpp>
 #include <data/symbol.hpp>
 #include <wx/listctrl.h>
-//#include "control.hpp"
 
 class SymbolControl;
 class SymbolPartList;
+DECLARE_POINTER_TYPE(SymbolValue);
+DECLARE_POINTER_TYPE(Set);
 
 // ----------------------------------------------------------------------------- : SymbolWindow
 
@@ -25,9 +26,9 @@ class SymbolWindow : public Frame {
 	/// Construct a SymbolWindow
 	SymbolWindow(Window* parent);
 	/// Construct a SymbolWindow showing a symbol from a file
-	SymbolWindow(Window* parent, String filename);
-//	/// Construct a SymbolWindow showing a symbol from a set
-//	SymbolWindow(Window* parent);
+	SymbolWindow(Window* parent, const String& filename);
+//	/// Construct a SymbolWindow showing a symbol value in a set
+	SymbolWindow(Window* parent, const SymbolValueP& value, const SetP& set);
 	
   private:
 	// --------------------------------------------------- : Children
@@ -39,8 +40,8 @@ class SymbolWindow : public Frame {
 	SymbolPartList* parts;   ///< A list of parts in the symbol
 	
 	// when editing a symbol field
-//	SymbolValueP value
-//	SetP set
+	SymbolValueP value;
+	SetP set;
 	
 	// --------------------------------------------------- : Event handling
 	DECLARE_EVENT_TABLE();

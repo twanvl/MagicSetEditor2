@@ -98,7 +98,7 @@ class Package {
 	/// Creates a new, unique, filename with the specified prefix and suffix
 	/// for example newFileName("image/",".jpg") -> "image/1.jpg"
 	/// Returns the name of a temporary file that can be written to.
-	String newFileName(const String& prefix, const String& suffix);
+	FileName newFileName(const String& prefix, const String& suffix);
 	
 	/// Signal that a file is still used by this package.
 	/// Must be called for files not opened using openOut/nameOut

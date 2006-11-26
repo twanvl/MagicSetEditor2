@@ -66,7 +66,11 @@ typedef unsigned int  UInt;
 #define nullptr 0
 
 /// A string standing for a filename, has different behaviour when reading/writing
-class FileName : public String {};
+class FileName : public String {
+  public:
+	FileName()                            {}
+	FileName(const String& s) : String(s) {}
+};
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

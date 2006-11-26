@@ -18,7 +18,8 @@ Image render_symbol(const SymbolP& symbol, double border_radius, int size) {
 	Bitmap bmp(size, size);
 	wxMemoryDC dc;
 	dc.SelectObject(bmp);
-	clearDC_black(dc);
+	clearDC(dc, Color(0,128,0));
+	viewer.rotation.setZoom(size);
 	viewer.draw(dc);
 	dc.SelectObject(wxNullBitmap);
 	return bmp.ConvertToImage();
@@ -28,7 +29,7 @@ Image render_symbol(const SymbolP& symbol, double border_radius, int size) {
 
 SymbolViewer::SymbolViewer(const SymbolP& symbol, double border_radius)
 	: border_radius(border_radius)
-	, rotation(0, RealRect(0,0,500,500))
+	, rotation(0, RealRect(0,0,500,500), 500)
 {
 	setSymbol(symbol);
 }

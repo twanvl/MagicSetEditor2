@@ -217,18 +217,21 @@ void ScriptManager::alsoUpdate(deque<ToUpdate>& to_update, const vector<Dependen
 				}
 				break;
 			} case DEP_CARDS_FIELD: {
+				// TODO
 				break;
 			} case DEP_STYLE: {
+				// TODO
 				break;
 			} case DEP_CARD_COPY_DEP: {
+				// TODO
 				break;
 			} case DEP_SET_COPY_DEP: {
+				// TODO
 				break;
 			} default:
 				assert(false);
 		}
-		/*
-		if (d.type == DependendScript.setField) {
+/*		if (d.type == DependendScript.setField) {
 			// from set data
 			ValueP value = set->data.at(ds.index);
 			toUpdate.push_back(ToUpdate(&*value));

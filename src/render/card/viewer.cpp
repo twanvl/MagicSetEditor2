@@ -95,9 +95,8 @@ void DataViewer::setStyles(IndexMap<FieldP,StyleP>& styles) {
 		      (s->width   || s->width  .isScripted()) &&
 		      (s->height  || s->height .isScripted()))) {
 			// no need to make a viewer for things that are always invisible
-			viewers.push_back(makeViewer(s));
-			// REMOVEME //TODO //%%%
-			if (!viewers.back()) viewers.pop_back();
+			ValueViewerP viewer = makeViewer(s);
+			if (viewer) viewers.push_back(viewer);
 		}
 	}
 	// sort viewers by z-index of style

@@ -201,7 +201,7 @@ void SymbolControl::onSize(wxSizeEvent& ev) {
 	Refresh(false);
 }
 void SymbolControl::onUpdateUI(wxUpdateUIEvent& ev) {
-	if (!editor)  return;
+	if (!editor) return;
 	switch (ev.GetId()) {
 		case ID_MODE_SELECT: case ID_MODE_ROTATE: case ID_MODE_POINTS: case ID_MODE_SHAPES: //case ID_MODE_PAINT:
 			ev.Check(editor->modeToolId() == ev.GetId());

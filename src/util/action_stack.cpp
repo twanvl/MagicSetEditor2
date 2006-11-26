@@ -43,6 +43,7 @@ void ActionStack::add(Action* action, bool allow_merge) {
 
 void ActionStack::undo() {
 	assert(canUndo());
+	if (!canUndo()) return;
 	Action* action = undo_actions.back();
 	action->perform(true);
 	tellListeners(*action, true);
@@ -52,6 +53,7 @@ void ActionStack::undo() {
 }
 void ActionStack::redo() {
 	assert(canRedo());
+	if (!canRedo()) return;
 	Action* action = redo_actions.back();
 	action->perform(false);
 	tellListeners(*action, false);
