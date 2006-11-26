@@ -175,30 +175,35 @@ bool CardListBase::canPaste() const {
 	return wxTheClipboard->IsSupported(CardDataObject::format);
 }
 
-void CardListBase::doCopy() {
-	if (!canCopy()) return;
-	if (!wxTheClipboard->Open()) return;
-	wxTheClipboard->SetData(new CardOnClipboard(set, selected_card)); // ignore result
+bool CardListBase::doCopy() {
+	if (!canCopy()) return false;
+	if (!wxTheClipboard->Open()) return false;
+	bool ok = wxTheClipboard->SetData(new CardOnClipboard(set, selected_card)); // ignore result
 	wxTheClipboard->Close();
+	return ok;
 }
-void CardListBase::doCut() {
+bool CardListBase::doCut() {
 	// cut = copy + delete
-	if (!canCut()) return;
-	doCopy();
-	set->actions.add(new RemoveCardAction(*set, selected_card) );
+	if (!canCut()) return false;
+	if (!doCopy()) return false;
+	set->actions.add(new RemoveCardAction(*set, selected_card));
+	return true;
 }
-void CardListBase::doPaste() {
+bool CardListBase::doPaste() {
 	// get data
-	if (!canPaste()) return;
-	if (!wxTheClipboard->Open()) return;
+	if (!canPaste()) return false;
+	if (!wxTheClipboard->Open()) return false;
 	CardDataObject data;
 	bool ok = wxTheClipboard->GetData(data);
 	wxTheClipboard->Close();
-	if (!ok) return;
+	if (!ok) return false;
 	// add card to set
 	CardP card = data.getCard(set);
 	if (card) {
 		set->actions.add(new AddCardAction(*set, card));
+		return true;
+	} else {
+		return false;
 	}
 }
 

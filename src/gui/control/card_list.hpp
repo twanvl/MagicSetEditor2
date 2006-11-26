@@ -69,9 +69,10 @@ class CardListBase : public wxListView, public SetView {
 	bool canCut()   const;
 	bool canCopy()  const;
 	bool canPaste() const;
-	void doCut();
-	void doCopy();
-	void doPaste();
+	// Try to perform a clipboard operation, return success
+	bool doCut();
+	bool doCopy();
+	bool doPaste();
 	
 	// --------------------------------------------------- : Set actions
 	

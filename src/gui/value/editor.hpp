@@ -69,7 +69,7 @@ class ValueEditor {
 	// Deletes the selection from this field editor, cut = copy + delete, returns success
 	virtual bool doDelete() { return false; }
 	// Cuts the selection from this field editor
-	bool         doCut()    { return  doCopy() && doDelete(); }
+	bool         doCut()    { return doCopy() && doDelete(); }
 	/// Initiate pasting in this field editor,
 	/** should again check if pasting is possible and fail silently if not, returns success */
 	virtual bool doPaste() { return false; }

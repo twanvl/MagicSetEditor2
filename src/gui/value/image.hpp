@@ -19,6 +19,20 @@
 class ImageValueEditor : public ImageValueViewer, public ValueEditor {
   public:
 	DECLARE_VALUE_EDITOR(Image);
+	
+	virtual void onLeftDClick(const RealPoint&, wxMouseEvent&);
+	
+	// --------------------------------------------------- : Clipboard
+	
+	virtual bool canCopy()  const;
+	virtual bool canCut()   const { return false; }
+	virtual bool canPaste() const;
+	virtual bool doCopy();
+	virtual bool doPaste();
+	
+  private:
+	// Open the image slice window showing the give image
+	void sliceImage(const Image&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

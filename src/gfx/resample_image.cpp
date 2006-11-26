@@ -93,8 +93,8 @@ void resample_pass(const Image& img_in, Image& img_out, int offset_in, int offse
 				if (out_rem > 0) {
 					// eat a partial input pixel
 					totR += in[0] * out_rem;
-					totR += in[1] * out_rem;
-					totR += in[2] * out_rem;
+					totG += in[1] * out_rem;
+					totB += in[2] * out_rem;
 					in_rem -= out_rem;
 				}
 				// store
