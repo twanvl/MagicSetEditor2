@@ -89,10 +89,11 @@ class ImageSliceWindow : public wxDialog {
 	void onChangeSharpen      (wxCommandEvent&);
 	void onChangeSharpenAmount(wxScrollEvent&);
 	
+	// Something changed in the selector control, update controls and selection displays
+	void onSliceChange(wxCommandEvent&);
+	
 	// --------------------------------------------------- : Updating
 	
-	// Something changed in the selector control, update controls and selection displays
-	void onSelectionUpdate();
 	// The manual controls were changed
 	void onUpdateFromControl();
 	// Update the values in the controls

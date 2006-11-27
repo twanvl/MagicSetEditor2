@@ -62,6 +62,14 @@ Image ImageSlice::getSlice() const {
 	return target;
 }
 
+// ----------------------------------------------------------------------------- : Events
+
+DECLARE_EVENT_TYPE(EVENT_SLICE_CHANGED, <not used>);
+DEFINE_EVENT_TYPE(EVENT_SLICE_CHANGED);
+
+/// Handle EVENT_SLICE_CHANGED events
+#define EVT_SLICE_CHANGED(id, handler) EVT_COMMAND(id, EVENT_SLICE_CHANGED, handler)
+
 // ----------------------------------------------------------------------------- : ImageSliceWindow
 
 ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wxSize& target_size)
@@ -244,9 +252,9 @@ void ImageSliceWindow::onChangeSharpenAmount(wxScrollEvent&) {
 
 // ----------------------------------------------------------------------------- : ImageSliceWindow : Updates
 
-void ImageSliceWindow::onSelectionUpdate() {
+void ImageSliceWindow::onSliceChange(wxCommandEvent&) {
 	slice.constrain();
-//	//preview.update();
+	preview->update();
 	selector->update();
 	updateControls();
 }
@@ -313,6 +321,7 @@ BEGIN_EVENT_TABLE(ImageSliceWindow, wxDialog)
 	EVT_SPINCTRL		(ID_ZOOM_Y,			ImageSliceWindow::onChangeZoomY)
 	EVT_CHECKBOX		(ID_SHARPEN,		ImageSliceWindow::onChangeSharpen)
 	EVT_COMMAND_SCROLL	(ID_SHARPEN_AMOUNT,	ImageSliceWindow::onChangeSharpenAmount)
+	EVT_SLICE_CHANGED   (wxID_ANY,			ImageSliceWindow::onSliceChange)
 //	EVT_SIZE			(					ImageSliceWindow::onSize)
 END_EVENT_TABLE  ()
 
@@ -371,8 +380,10 @@ void ImageSlicePreview::onMotion(wxMouseEvent& ev) {
 	if (mouse_down) {
 		// drag the image
 		slice.selection.x = start_selection.x + (mouseX - ev.GetX()) / slice.zoomX();
-		slice.selection.y = start_selection.x + (mouseY - ev.GetY()) / slice.zoomY();
-//		parent->onSelectionUpdate();
+		slice.selection.y = start_selection.y + (mouseY - ev.GetY()) / slice.zoomY();
+		// Notify parent
+		wxCommandEvent ev(EVENT_SLICE_CHANGED, GetId());
+		ProcessEvent(ev);
 	}
 }
 
@@ -548,22 +559,31 @@ void ImageSliceSelector::onMotion(wxMouseEvent& ev) {
 		} else {
 			// fix aspect ratio
 			if (slice.aspect_fixed) {
-				if (abs(deltaX * slice.target_size.GetWidth()) >
-				    abs(deltaY * slice.target_size.GetHeight())) {
+				// fixed == deltaX * height = deltaY * width
+				double d = (dragX * deltaX * slice.target_size.GetHeight() + dragY * deltaY * slice.target_size.GetWidth()) / 2;
+				deltaX = dragX * d / slice.target_size.GetHeight();
+				deltaY = dragY * d / slice.target_size.GetWidth();
+				/*if (dragX * deltaX * slice.target_size.GetWidth() <
+				    dragY * deltaY * slice.target_size.GetHeight()) {
 					deltaY = dragX * dragY * deltaX * slice.target_size.GetWidth() / slice.target_size.GetHeight();
 				} else {
 					deltaX = dragX * dragY * deltaY * slice.target_size.GetHeight() / slice.target_size.GetWidth();
-				}
+				}*/
 			}
 			// move
-			slice.selection.x      = start_selection.x      + deltaX * (1 - dragX) / 2;
-			slice.selection.y      = start_selection.y      + deltaY * (1 - dragY) / 2;
-			slice.selection.width  = start_selection.width  + deltaX * dragX;
-			slice.selection.height = start_selection.height + deltaY * dragY;
+			if (dragX) {
+				slice.selection.x      = start_selection.x      + deltaX * (1 - dragX) / 2;
+				slice.selection.width  = start_selection.width  + deltaX * dragX;
+			}
+			if (dragY) {
+				slice.selection.y      = start_selection.y      + deltaY * (1 - dragY) / 2;
+				slice.selection.height = start_selection.height + deltaY * dragY;
+			}
 		}
 		
-		// Refresh
-//		parent->onSelectionUpdate();
+		// Notify parent
+		wxCommandEvent ev(EVENT_SLICE_CHANGED, GetId());
+		ProcessEvent(ev);
 	} else {
 		int dx, dy;
 		if (onAnyHandle(ev, &dx, &dy)) {
