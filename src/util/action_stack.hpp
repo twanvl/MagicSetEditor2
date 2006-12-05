@@ -40,7 +40,7 @@ class Action {
 	/** Either: return false and do nothing
 	 *  Or: return true and change this action to incorporate both actions
 	 */
-	virtual bool merge(const Action* action) { return false; }
+	virtual bool merge(const Action& action) { return false; }
 };
 
 // ----------------------------------------------------------------------------- : Action listeners

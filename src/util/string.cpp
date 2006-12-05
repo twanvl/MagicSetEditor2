@@ -62,6 +62,10 @@ String trim_left(const String& s) {
 	}
 }
 
+String substr_replace(const String& input, size_t start, size_t end, const String& replacement) {
+	return input.substr(0,start) + replacement + input.substr(end);
+}
+
 // ----------------------------------------------------------------------------- : Words
 
 String last_word(const String& s) {

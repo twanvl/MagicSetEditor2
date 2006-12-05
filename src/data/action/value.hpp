@@ -37,18 +37,9 @@ class ValueAction : public Action {
 	const ValueP valueP; ///< The modified value
 };
 
-/// Utility macro for declaring classes derived from ValueAction
-#define DECLARE_VALUE_ACTION(Type)						\
-  protected:											\
-	inline Type##Value& value() const {					\
-		return static_cast<Type##Value&>(*valueP);		\
-	}													\
-  public:												\
-	virtual void   perform(bool to_undo)
-
-
 // ----------------------------------------------------------------------------- : Simple
 
+/// Action that updates a Value to a new value
 ValueAction* value_action(const ChoiceValueP& value, const Defaultable<String>& new_value);
 ValueAction* value_action(const ColorValueP&  value, const Defaultable<Color>&  new_value);
 ValueAction* value_action(const ImageValueP&  value, const FileName&            new_value);
@@ -56,17 +47,30 @@ ValueAction* value_action(const SymbolValueP& value, const FileName&            
 
 // ----------------------------------------------------------------------------- : Text
 
-/*
-class ColorValueAction : public ValueAction {
+/// An action that changes a TextValue
+class TextValueAction : public ValueAction {
   public:
-	ColorValueAction(const ColorValueP& value, const Defaultable<Color>& color);
+	TextValueAction(const TextValueP& value, size_t start, size_t end, size_t new_end, const Defaultable<String>& new_value, const String& name);
 	
-	DECLARE_VALUE_ACTION(Color);
+	virtual String getName(bool to_undo) const;
+	virtual void perform(bool to_undo);
+	virtual bool merge(const Action& action);
 	
+	/// The modified selection
+	size_t selection_start, selection_end;
   private:
-	Defaultable<Color> color;	///< The new/old color
+	inline TextValue& value() const;
+	
+	size_t new_selection_end;
+	Defaultable<String> new_value;
+	String name;
 };
-*/
+
+/// Action for toggleing some formating tag on or off in some range
+TextValueAction* toggle_format_action(const TextValueP& value, const String& tag, size_t start, size_t end, const String& action_name);
+
+/// Typing in a TextValue, replace the selection [start...end) with replacement
+TextValueAction* typing_action(const TextValueP& value, size_t start, size_t end, const String& replacement, const String& action_name);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

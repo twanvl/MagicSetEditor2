@@ -32,7 +32,7 @@ struct TextViewer::Line {
 	/// Index just beyond the last character on this line
 	size_t end() const { return start + positions.size() - 1; }
 	/// Find the index of the character at the given position on this line
-	/** Always returns a value in the range [start..end()) */
+	/** Always returns a value in the range [start..end()] */
 	size_t posToIndex(double x) const;
 	
 	/// Is this line visible using the given rectangle?
@@ -47,13 +47,12 @@ struct TextViewer::Line {
 
 size_t TextViewer::Line::posToIndex(double x) const {
 	// largest index with pos <= x
-	vector<double>::const_iterator it1 = lower_bound(positions.begin(), positions.end(), x);
-	if (it1 == positions.end()) return end();
+	vector<double>::const_iterator it2 = lower_bound(positions.begin(), positions.end(), x);
+	if (it2 == positions.begin()) return start;
 	// first index with pos > x
-	vector<double>::const_iterator it2 = it1 + 1;
-	if (it2 == positions.end()) return it1 - positions.begin();
-	if (x - *it1 <= *it2 - x)   return it1 - positions.begin(); // it1 is closer
-	else                        return it2 - positions.begin(); // it2 is closer
+	vector<double>::const_iterator it1 = it2 - 1;
+	if (x - *it1 <= *it2 - x) return it1 - positions.begin() + start; // it1 is closer
+	else                      return it2 - positions.begin() + start; // it2 is closer
 }
 
 // ----------------------------------------------------------------------------- : TextViewer
@@ -65,7 +64,7 @@ TextViewer::~TextViewer() {}
 // ----------------------------------------------------------------------------- : Drawing
 
 void TextViewer::draw(RotatedDC& dc, const String& text, const TextStyle& style, Context& ctx, DrawWhat what) {
-	Rotater r(dc, Rotation(style.angle, style.getRect()));
+	Rotater r(dc, style.getRotation());
 	if (lines.empty()) {
 		// not prepared yet
 		prepareElements(text, style, ctx);
@@ -81,7 +80,7 @@ void TextViewer::draw(RotatedDC& dc, const String& text, const TextStyle& style,
 }
 
 void TextViewer::drawSelection(RotatedDC& dc, const TextStyle& style, size_t sel_start, size_t sel_end) {
-	Rotater r(dc, Rotation(style.angle, style.getRect()));
+	Rotater r(dc, style.getRotation());
 	if (sel_start == sel_end) return;
 	if (sel_end <  sel_start) swap(sel_start, sel_end);
 	dc.SetBrush(*wxBLACK_BRUSH);
@@ -109,6 +108,25 @@ void TextViewer::reset() {
 
 // ----------------------------------------------------------------------------- : Positions
 
+const TextViewer::Line& TextViewer::findLine(size_t index) const {
+	FOR_EACH_CONST(l, lines) {
+		if (l.end() > index) return l;
+	}
+	return lines.front();
+}
+
+size_t TextViewer::moveLine(size_t index, int delta) const {
+	const Line* line1 = &findLine(index);
+	const Line* line2 = line1 + delta;
+	if (line2 >= &lines.front() && line2 <= &lines.back()) {
+		size_t idx = index - line1->start;
+		if (idx < 0 || idx >= line1->positions.size()) return index; // can't move
+		return line2->posToIndex(line1->positions[idx]); // character at the same position
+	} else {
+		return index; // can't move
+	}
+}
+
 size_t TextViewer::lineStart(size_t index) const {
 	if (lines.empty()) return 0;
 	return findLine(index).start;
@@ -119,11 +137,32 @@ size_t TextViewer::lineEnd(size_t index) const {
 	return findLine(index).end();
 }
 
-const TextViewer::Line& TextViewer::findLine(size_t index) const {
-	FOR_EACH_CONST(l, lines) {
-		if (l.end() > index) return l;
+struct CompareTop {
+	inline bool operator () (const TextViewer::Line& l, double y) const { return l.top < y; }
+	inline bool operator () (double y, const TextViewer::Line& l) const { return y < l.top; }
+};
+size_t TextViewer::indexAt(const RealPoint& pos) const {
+	// 1. find the line
+	vector<Line>::const_iterator l = lower_bound(lines.begin(), lines.end(), pos.y, CompareTop());
+	if (l != lines.begin()) l--;
+	assert(l != lines.end());
+	// 2. find char on line
+	return l->posToIndex(pos.x);
+}
+
+RealRect TextViewer::charRect(size_t index) const {
+	const Line& l = findLine(index);
+	size_t pos = index - l.start;
+	if (pos >= l.positions.size()) {
+		return RealRect(l.positions.back(), l.top, 0, l.line_height);
+	} else {
+		return RealRect(l.positions[pos], l.top, l.positions[pos + 1] - l.positions[pos], l.line_height);
 	}
-	return lines.front();
+}
+
+double TextViewer::heightOfLastLine() const {
+	if (lines.empty()) return 0;
+	else               return lines.back().line_height;
 }
 
 // ----------------------------------------------------------------------------- : Elements

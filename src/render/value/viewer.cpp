@@ -41,7 +41,7 @@ RealRect ValueViewer::boundingBox() const {
 
 void ValueViewer::drawFieldBorder(RotatedDC& dc) {
 	if (viewer.drawBorders() && getField()->editable) {
-		dc.SetPen(viewer.borderPen(viewer.focusedViewer() == this));
+		dc.SetPen(viewer.borderPen(isCurrent()));
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		dc.DrawRectangle(styleP->getRect().grow(dc.trInvS(1)));
 	}
@@ -49,6 +49,9 @@ void ValueViewer::drawFieldBorder(RotatedDC& dc) {
 
 bool ValueViewer::nativeLook() const {
 	return viewer.nativeLook();
+}
+bool ValueViewer::isCurrent() const {
+	return viewer.focusedViewer() == this;
 }
 
 // ----------------------------------------------------------------------------- : Type dispatch

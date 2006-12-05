@@ -56,15 +56,31 @@ class TextViewer {
 	
 	// --------------------------------------------------- : Positions
 	
-	/// Find the character index that is before the given index, and which has a nonzero width
-	size_t moveLeft(size_t index) const;
+	/// Find the character index that is before/after the given index, and which has a nonzero width
+//	size_t moveChar(size_t index, int delta) const;
 	/// Find the character index that is on a line above/below index
 	/** If this would move outisde the text, returns the input index */
 	size_t moveLine(size_t index, int delta) const;
+	
 	/// The character index of the start of the line that character #index is on
 	size_t lineStart(size_t index) const;
 	/// The character index past the end of the line that character #index is on
 	size_t lineEnd  (size_t index) const;
+	
+	/// Find the index of the character at the given position
+	/** If the position is before everything returns 0,
+	 *  if it is after everything returns text.size().
+	 *  The position is in internal coordinates */
+	size_t indexAt(const RealPoint& pos) const;
+	/// Find the position of the character at the given index
+	/** The position is in internal coordinates */
+	RealPoint posOf(size_t index) const;
+	
+	/// Return the rectangle around a single character
+	RealRect charRect(size_t index) const;
+	
+	/// Return the height of the last line
+	double heightOfLastLine() const;
 	
   private:
 	// --------------------------------------------------- : More drawing

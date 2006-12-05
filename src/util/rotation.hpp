@@ -73,9 +73,12 @@ class Rotation {
 	
 	friend class Rotater;
 	
+  public:
 	/// Is the rotation sideways (90 or 270 degrees)?
 	// Note: angle & 2 == 0 for angle in {0, 180} and != 0 for angle in {90, 270)
 	inline bool sideways() const { return  (angle & 2) != 0; }
+	
+  protected:
 	/// Is the x axis 'reversed' (after turning sideways)?
 	inline bool revX()     const { return  angle >= 180; }
 	/// Is the y axis 'reversed' (after turning sideways)?

@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <util/defaultable.hpp>
+#include <util/rotation.hpp>
 #include <data/field.hpp>
 #include <data/font.hpp>
 #include <data/symbol_font.hpp>
@@ -67,6 +68,11 @@ class TextStyle : public Style {
 	
 	virtual bool update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;
+	
+	/// The rotation to use when drawing
+	inline Rotation getRotation() const {
+		return Rotation(angle, getRect());
+	}
 	
   private:
 	DECLARE_REFLECTION();

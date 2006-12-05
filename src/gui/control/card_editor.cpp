@@ -12,6 +12,7 @@
 #include <data/field.hpp>
 #include <data/stylesheet.hpp>
 #include <data/settings.hpp>
+#include <wx/caret.h>
 
 DECLARE_TYPEOF_COLLECTION(ValueViewerP);
 DECLARE_TYPEOF_COLLECTION(ValueViewer*);
@@ -22,7 +23,10 @@ DataEditor::DataEditor(Window* parent, int id, long style)
 	: CardViewer(parent, id, style)
 	, current_viewer(nullptr)
 	, current_editor(nullptr)
-{}
+{
+	// Create a caret
+	SetCaret(new wxCaret(this,1,1));
+}
 
 ValueViewerP DataEditor::makeViewer(const StyleP& style) {
 	return style->makeEditor(*this, style);

@@ -46,9 +46,16 @@ String fix_old_tags(const String&);
 size_t skip_tag(const String& str, size_t start);
 
 /// Find the position of the closing tag matching the tag at start
-/** If not found returns String::npos
- */
+/** If not found returns String::npos */
 size_t match_close_tag(const String& str, size_t start);
+
+/// Find the last start tag before position start
+/** If not found returns String::npos */
+size_t last_start_tag_before(const String& str, const String& tag, size_t start);
+
+/// Is the given range entirely contained in a given tag?
+/** If so: return the start position of that tag, otherwise returns String::npos */
+size_t in_tag(const String& str, const String& tag, size_t start, size_t end);
 
 /// Return the tag at the given position (without the <>)
 String tag_at(const String& str, size_t pos);
@@ -80,6 +87,17 @@ String remove_tag_exact(const String& str, const String& tag);
  */
 String remove_tag_contents(const String& str, const String& tag);
 
+// ----------------------------------------------------------------------------- : Updates
+
+/// Replace a subsection of 'input' with 'replacement'.
+/** The section to replace is indicated by [start...end).
+ *  This function makes sure tags still match. It also attempts to cancel out tags.
+ *  This means that when removing "<x>a</x>" nothing is left,
+ *  but with input "<x>a" -> "<x>" and "</>a" -> "</>".
+ *  Escapes the replacement, i.e. all < in become \1.
+ */
+String tagged_substr_replace(const String& input, size_t start, size_t end, const String& replacement);
+
 // ----------------------------------------------------------------------------- : Simplification
 
 /// Verify that a string is correctly tagged, if it is not, change it so it is
@@ -95,10 +113,14 @@ String verify_tagged(const String& str);
  */
 String simplify_tagged(const String& str);
 
-/// Simplify a tagged string by merging adjecent open/close tags "<tag></tag>" --> ""
+/// Simplify a tagged string by merging adjecent open/close tags
+/** e.g. "<tag></tag>" --> ""
+ */
 String simplify_tagged_merge(const String& str);
 
 /// Simplify overlapping formatting tags
+/** e.g. "<i>blah<i>blah</i>blah</i>" -> "<i>blahblahblah</i>"
+ */
 String simplify_tagged_overlap(const String& str);
 
 // ----------------------------------------------------------------------------- : EOF

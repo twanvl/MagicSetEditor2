@@ -81,6 +81,9 @@ String trim(const String&);
 /// Remove whitespace from the start of a string
 String trim_left(const String&);
 
+/// Replace the substring [start...end) of 'input' with 'replacement'
+String substr_replace(const String& input, size_t start, size_t end, const String& replacement);
+
 // ----------------------------------------------------------------------------- : Words
 
 /// Returns the last word in a string

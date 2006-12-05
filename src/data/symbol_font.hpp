@@ -76,6 +76,7 @@ class SymbolFont : public Packaged {
 	
 	/// Size of a single symbol
 	RealSize symbolSize       (Context& ctx, double font_size, const DrawableSymbol& sym);
+  public:
 	/// Size of the default symbol
 	RealSize defaultSymbolSize(Context& ctx, double font_size);
 	

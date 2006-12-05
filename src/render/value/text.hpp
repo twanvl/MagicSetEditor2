@@ -25,7 +25,7 @@ class TextValueViewer : public ValueViewer {
 	virtual void onValueChange();
 	virtual void onStyleChange();
 	
-  private:
+  protected:
 	TextViewer v;
 };
 
