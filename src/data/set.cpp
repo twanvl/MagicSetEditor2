@@ -12,7 +12,8 @@
 #include <data/card.hpp>
 #include <data/keyword.hpp>
 #include <data/field.hpp>
-#include <data/field/text.hpp> // for 0.2.7 fix
+#include <data/field/text.hpp>    // for 0.2.7 fix
+#include <util/tagged_string.hpp> // for 0.2.7 fix
 #include <script/value.hpp>
 #include <script/script_manager.hpp>
 #include <wx/sstream.h>
@@ -62,9 +63,9 @@ String Set::typeName() const { return _("set"); }
 void fix_value_207(const ValueP& value) {
 	if (TextValue* v = dynamic_cast<TextValue*>(value.get())) {
 		// text value -> fix it
-//		v->value.assign(	// don't change defaultness
-//			fix_old_tags(v->value); // remove tags
-//		);
+		v->value.assignDontChangeDefault(	// don't change defaultness
+			fix_old_tags(v->value()) // remove tags
+		);
 	}
 }
 

@@ -82,6 +82,14 @@ String fix_old_tags(const String& str) {
 
 // ----------------------------------------------------------------------------- : Finding tags
 
+size_t tag_start(const String& str, size_t pos) {
+	size_t start = str.find_last_of(_('<'), pos);
+	if (start == String::npos) return String::npos;
+	size_t end   = skip_tag(str, start);
+	if (end <= pos) return String::npos;
+	return start;
+}
+
 size_t skip_tag(const String& str, size_t start) {
 	if (start >= str.size()) return String::npos;
 	size_t end = str.find_first_of(_('>'), start);
@@ -152,6 +160,43 @@ String anti_tag(const String& tag) {
 }
 
 // ----------------------------------------------------------------------------- : Global operations
+
+String remove_tag(const String& str, const String& tag) {
+	if (tag.size() < 1)  return str;
+	String ctag = close_tag(tag);
+	return remove_tag_exact(remove_tag_exact(str, tag), ctag);
+}
+
+String remove_tag_exact(const String& str, const String& tag) {
+	String ret; ret.reserve(str.size());
+	size_t start = 0, pos = str.find(tag);
+	while (pos != String::npos) {
+		ret += str.substr(start, pos - start); // before
+		// next
+		start = skip_tag(str, pos);
+		if (start > str.size()) break;
+		pos = str.find(tag, start);
+	}
+	ret += str.substr(start);
+	return ret;
+}
+
+String remove_tag_contents(const String& str, const String& tag) {
+	String ret; ret.reserve(str.size());
+	size_t start = 0, pos = str.find(tag);
+	while (pos != String::npos) {
+		size_t end = match_close_tag(str, pos);
+		if (end == String::npos) return ret; // missing close tag
+		ret += str.substr(start, pos - start);
+		// next
+		start = skip_tag(str, end);
+		if (start > str.size()) break;
+		pos = str.find(tag, start);
+	}
+	ret += str.substr(start);
+	return ret;
+}
+
 // ----------------------------------------------------------------------------- : Updates
 
 /// Return all open or close tags in the given range from a string

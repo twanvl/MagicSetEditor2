@@ -329,7 +329,12 @@ inline ScriptValueP toScript(const shared_ptr<T>& v) { return new_intrusive1<Scr
  *  Throws an error if the parameter is not found.
  */
 #define SCRIPT_PARAM(Type, name)								\
-		Type name = *ctx.getVariable(_(#name))
+		Type name = getParam<Type>(ctx.getVariable(_(#name)))
+
+template <typename T>
+inline T            getParam              (const ScriptValueP& value) { return *value; }
+template <>
+inline ScriptValueP getParam<ScriptValueP>(const ScriptValueP& value) { return value;  }
 
 /// Retrieve an optional parameter
 /** Usage:

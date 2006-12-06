@@ -82,7 +82,7 @@ void TextViewer::draw(RotatedDC& dc, const String& text, const TextStyle& style,
 void TextViewer::drawSelection(RotatedDC& dc, const TextStyle& style, size_t sel_start, size_t sel_end) {
 	Rotater r(dc, style.getRotation());
 	if (sel_start == sel_end) return;
-	if (sel_end <  sel_start) swap(sel_start, sel_end);
+	if (sel_end < sel_start) swap(sel_start, sel_end);
 	dc.SetBrush(*wxBLACK_BRUSH);
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetLogicalFunction(wxINVERT);
@@ -96,7 +96,7 @@ void TextViewer::Line::drawSelection(RotatedDC& dc, size_t sel_start, size_t sel
 	if (!visible(dc)) return;
 	if (sel_start < end() && sel_end > start) {
 		double x1 = positions[sel_start];
-		double x2 = positions[max(end(), sel_end)];
+		double x2 = positions[min(end(), sel_end)];
 		dc.DrawRectangle(RealRect(x1, top, x2 - x1, line_height));
 	}
 }
@@ -116,6 +116,7 @@ const TextViewer::Line& TextViewer::findLine(size_t index) const {
 }
 
 size_t TextViewer::moveLine(size_t index, int delta) const {
+	if (lines.empty()) return index;
 	const Line* line1 = &findLine(index);
 	const Line* line2 = line1 + delta;
 	if (line2 >= &lines.front() && line2 <= &lines.back()) {
@@ -151,6 +152,7 @@ size_t TextViewer::indexAt(const RealPoint& pos) const {
 }
 
 RealRect TextViewer::charRect(size_t index) const {
+	if (lines.empty()) return RealRect(0,0,0,0);
 	const Line& l = findLine(index);
 	size_t pos = index - l.start;
 	if (pos >= l.positions.size()) {
@@ -160,9 +162,32 @@ RealRect TextViewer::charRect(size_t index) const {
 	}
 }
 
+bool TextViewer::isVisible(size_t index) const {
+	if (lines.empty()) return false;
+	const Line& l = findLine(index);
+	size_t pos = index - l.start;
+	if (pos >= l.positions.size()) {
+		return false;
+	} else if (pos + 1 == l.positions.size()) {
+		return true; // last char of the line
+	} else {
+		return l.positions[pos + 1] - l.positions[pos] > 0.0001;
+	}
+}
+size_t TextViewer::firstVisibleChar(size_t index, int delta) const {
+	if (lines.empty()) return index;
+	const Line& l = findLine(index);
+	int pos = (int)(index - l.start);
+	while (pos + delta > 0 && (size_t)pos + delta + 1 < l.positions.size()) {
+		if (l.positions[pos + 1] - l.positions[pos] > 0.0001) break;
+		pos += delta;
+	}
+	return pos + l.start;
+}
+
 double TextViewer::heightOfLastLine() const {
 	if (lines.empty()) return 0;
-	else               return lines.back().line_height;
+	return lines.back().line_height;
 }
 
 // ----------------------------------------------------------------------------- : Elements

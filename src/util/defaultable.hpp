@@ -33,6 +33,10 @@ class Defaultable {
 		assert(is_default);
 		value      = new_value;
 	}
+	/// Assigning a value, don't change the defaultness
+	inline void assignDontChangeDefault(const T& new_value) {
+		value = new_value;
+	}
 	
 	/// Get access to the value
 	inline const T& operator () () const { return value; }

@@ -42,6 +42,14 @@ String fix_old_tags(const String&);
 
 // ----------------------------------------------------------------------------- : Finding tags
 
+/// Returns the position of the tag the given position is in
+/** Returns String::npos if pos is not in a tag.
+ *  In a tag is:
+ *   < t a g >
+ *  n y y y y n
+ */
+size_t tag_start(const String& str, size_t pos);
+
 /// Returns the position just beyond the tag starting at start
 size_t skip_tag(const String& str, size_t start);
 
@@ -53,8 +61,10 @@ size_t match_close_tag(const String& str, size_t start);
 /** If not found returns String::npos */
 size_t last_start_tag_before(const String& str, const String& tag, size_t start);
 
-/// Is the given range entirely contained in a given tag?
-/** If so: return the start position of that tag, otherwise returns String::npos */
+/// Is the given range entirely contained in a given tagged block?
+/** If so: return the start position of that tag, otherwise returns String::npos
+ *  A tagged block is everything between <tag>...</tag>
+ */
 size_t in_tag(const String& str, const String& tag, size_t start, size_t end);
 
 /// Return the tag at the given position (without the <>)
@@ -78,7 +88,7 @@ String anti_tag(const String& tag);
  */
 String remove_tag(const String& str, const String& tag);
 
-/// Remove all instances of tags starting with tag
+/// Remove all instances of tags starting with tag, but not its close tag
 String remove_tag_exact(const String& str, const String& tag);
 
 /// Remove all instances of a tag (including contents) from a string

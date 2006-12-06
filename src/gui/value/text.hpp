@@ -79,6 +79,7 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	virtual wxCursor cursor() const;
 	virtual void determineSize();
 	virtual void onShow(bool);
+	virtual void draw(RotatedDC&);
 	
 	// --------------------------------------------------- : Data
   private:

@@ -8,6 +8,7 @@
 
 #include <script/value.hpp>
 #include <script/context.hpp>
+#include <util/tagged_string.hpp>
 #include <wx/regex.h>
 
 DECLARE_TYPEOF_COLLECTION(UInt);
@@ -56,6 +57,7 @@ class ScriptReplaceRule : public ScriptValue {
 				ret  += inside;
 				input = next_input;
 			}
+			ret += input;
 			SCRIPT_RETURN(ret);
 		} else {
 			// dumb replacing
@@ -79,7 +81,7 @@ SCRIPT_FUNCTION(replace_rule) {
 		throw ScriptError(_("Error while compiling regular expression: '")+match+_("'"));
 	}
 	// replace
-	ScriptValueP replace = ctx.getVariable(_("replace"));
+	SCRIPT_PARAM(ScriptValueP, replace);
 	if (replace->type() == SCRIPT_FUNCTION) {
 		ret->replacement_function = replace;
 	} else {
@@ -234,25 +236,57 @@ String spec_sort(const String& spec, const String& input) {
 }
 
 
-class ScriptSortRule : public ScriptValue {
-  public:
-	ScriptSortRule(const String& order) : order(order) {}
-	
-	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
-	virtual String typeName() const { return _("sort_rule"); }
-	virtual ScriptValueP eval(Context& ctx) const {
-		SCRIPT_PARAM(String, input);
-		SCRIPT_RETURN(spec_sort(order, input));
-	}
-	
-  private:
-	String order;
-};
+// Utility for defining a script rule with a single parameter
+#define SCRIPT_RULE_1(funname, type1, name1)								\
+	class ScriptRule_##funname: public ScriptValue {						\
+	  public:																\
+		inline ScriptRule_##funname(const type1& name1) : name1(name1) {}	\
+		virtual ScriptType type() const { return SCRIPT_FUNCTION; }			\
+		virtual String typeName() const { return _(#funname)_("_rule"); }	\
+		virtual ScriptValueP eval(Context& ctx) const;						\
+	  private:																\
+		type1 name1;														\
+	};																		\
+	SCRIPT_FUNCTION(funname##_rule) {										\
+		SCRIPT_PARAM(type1, name1);											\
+		return new_intrusive1<ScriptRule_##funname>(name1);					\
+	}																		\
+	SCRIPT_FUNCTION(funname) {												\
+		SCRIPT_PARAM(type1, name1);											\
+		return ScriptRule_##funname(name1).eval(ctx);						\
+	}																		\
+	ScriptValueP ScriptRule_##funname::eval(Context& ctx) const
+
+// Utility for defining a script rule with two parameters
+#define SCRIPT_RULE_2(funname, type1, name1, type2, name2)					\
+	class ScriptRule_##funname: public ScriptValue {						\
+	  public:																\
+		inline ScriptRule_##funname(const type1& name1, const type2& name2)	\
+			: name1(name1), name2(name2) {}									\
+		virtual ScriptType type() const { return SCRIPT_FUNCTION; }			\
+		virtual String typeName() const { return _(#funname)_("_rule"); }	\
+		virtual ScriptValueP eval(Context& ctx) const;						\
+	  private:																\
+		type1 name1;														\
+		type2 name2;														\
+	};																		\
+	SCRIPT_FUNCTION(funname##_rule) {										\
+		SCRIPT_PARAM(type1, name1);											\
+		SCRIPT_PARAM(type2, name2);											\
+		return new_intrusive2<ScriptRule_##funname>(name1, name2);			\
+	}																		\
+	SCRIPT_FUNCTION(funname) {												\
+		SCRIPT_PARAM(type1, name1);											\
+		SCRIPT_PARAM(type2, name2);											\
+		return ScriptRule_##funname(name1, name2).eval(ctx);				\
+	}																		\
+	ScriptValueP ScriptRule_##funname::eval(Context& ctx) const
+
 
 // Create a rule for spec_sorting strings
-SCRIPT_FUNCTION(sort_rule) {
-	SCRIPT_PARAM(String, order);
-	return new_intrusive1<ScriptSortRule>(order);
+SCRIPT_RULE_1(sort, String, order) {
+	SCRIPT_PARAM(String, input);
+	SCRIPT_RETURN(spec_sort(order, input));
 }
 
 // ----------------------------------------------------------------------------- : String stuff
@@ -298,16 +332,55 @@ SCRIPT_FUNCTION(contains) {
 	SCRIPT_RETURN(input.find(match) != String::npos);
 }
 
+// ----------------------------------------------------------------------------- : Tagged stuff
+
+String replace_tag_contents(String input, const String& tag, const ScriptValueP& contents, Context& ctx) {
+	String ret;
+	size_t pos = input.find(tag);
+	while (pos != String::npos) {
+		// find end of tag and contents
+		size_t end = match_close_tag(input, pos);
+		if (end == String::npos) break; // missing close tag
+		// prepare for call
+		String old_contents = input.substr(pos + tag.size(), end - (pos + tag.size()));
+		ctx.setVariable(_("contents"), toScript(old_contents));
+		// replace
+		ret += input.substr(0, pos); // before tag
+		ret += tag;
+		ret += *contents->eval(ctx);// new contents (call)
+		ret += close_tag(tag);
+		// next
+		input = input.substr(skip_tag(input,end));
+		pos = input.find(tag);
+	}
+	return ret + input;
+}
+
+
+// Replace the contents of a specific tag
+SCRIPT_RULE_2(tag_contents,  String, tag,  ScriptValueP, contents) {
+	SCRIPT_PARAM(String, input);
+	SCRIPT_RETURN(replace_tag_contents(input, tag, contents, ctx));
+}
+
+SCRIPT_RULE_1(tag_remove, String, tag) {
+	SCRIPT_PARAM(String, input);
+	SCRIPT_RETURN(remove_tag(input, tag));
+}
 
 // ----------------------------------------------------------------------------- : Vector stuff
 
 /// position of some element in a vector
-/** 1 based index, 0 if not found */
+/** 0 based index, -1 if not found */
 int position_in_vector(const ScriptValueP& of, const ScriptValueP& in, const ScriptValueP& order_by) {
-	return 0;// TODO
+	ScriptType of_t = of->type(), in_t = in->type();
+	if (of_t == SCRIPT_STRING || in_t == SCRIPT_STRING) {
+		return (int)((String)*of).find(*in); // (int)npos == -1
+	}
+	return -1; // TODO
 }
 
-// finding positions
+// finding positions, also of substrings
 SCRIPT_FUNCTION(position_of) {
 	ScriptValueP of       = ctx.getVariable(_("of"));
 	ScriptValueP in       = ctx.getVariable(_("in"));
@@ -323,15 +396,20 @@ SCRIPT_FUNCTION(number_of_items) {
 // ----------------------------------------------------------------------------- : Initialize functions
 
 void init_script_functions(Context& ctx) {
-	ctx.setVariable(_("replace rule"),    script_replace_rule);
-	ctx.setVariable(_("filter rule"),     script_filter_rule);
-	ctx.setVariable(_("sort rule"),       script_sort_rule);
-	ctx.setVariable(_("to upper"),        script_to_upper);
-	ctx.setVariable(_("to lower"),        script_to_lower);
-	ctx.setVariable(_("to title"),        script_to_title);
-	ctx.setVariable(_("substring"),       script_substring);
-	ctx.setVariable(_("contains"),        script_contains);
-	ctx.setVariable(_("position"),        script_position_of);
-	ctx.setVariable(_("number of items"), script_number_of_items);
+	ctx.setVariable(_("replace rule"),      script_replace_rule);
+	ctx.setVariable(_("filter rule"),       script_filter_rule);
+	ctx.setVariable(_("sort"),              script_sort);
+	ctx.setVariable(_("sort rule"),         script_sort_rule);
+	ctx.setVariable(_("to upper"),          script_to_upper);
+	ctx.setVariable(_("to lower"),          script_to_lower);
+	ctx.setVariable(_("to title"),          script_to_title);
+	ctx.setVariable(_("substring"),         script_substring);
+	ctx.setVariable(_("contains"),          script_contains);
+	ctx.setVariable(_("tag contents"),      script_tag_contents);
+	ctx.setVariable(_("remove tag"),        script_tag_remove);
+	ctx.setVariable(_("tag contents rule"), script_tag_contents_rule);
+	ctx.setVariable(_("tag remove rule"),   script_tag_remove_rule);
+	ctx.setVariable(_("position"),          script_position_of);
+	ctx.setVariable(_("number of items"),   script_number_of_items);
 }
 

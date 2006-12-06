@@ -213,6 +213,11 @@ void TextValueEditor::onMenu(wxCommandEvent& ev) {
 
 // ----------------------------------------------------------------------------- : Other overrides
 
+void TextValueEditor::draw(RotatedDC& dc) {
+	TextValueViewer::draw(dc);
+	v.drawSelection(dc, style(), selection_start, selection_end);
+}
+
 wxCursor rotated_ibeam;
 
 wxCursor TextValueEditor::cursor() const {
@@ -237,6 +242,8 @@ void TextValueEditor::onAction(const ValueAction& action, bool undone) {
 	TYPE_CASE(action, TextValueAction) {
 		selection_start = action.selection_start;
 		selection_end   = action.selection_end;
+		fixSelection();
+		if (isCurrent()) showCaret();
 	}
 }
 
@@ -471,7 +478,7 @@ void TextValueEditor::moveSelection(size_t new_end, bool also_move_start, Moveme
 
 void TextValueEditor::moveSelectionNoRedraw(size_t new_end, bool also_move_start, Movement dir) {
 	selection_end = new_end;
-	if (also_move_start)  selection_start = selection_end;
+	if (also_move_start) selection_start = selection_end;
 	fixSelection(dir);
 }
 
@@ -479,7 +486,7 @@ void TextValueEditor::fixSelection(Movement dir) {
 	const String& val = value().value();
 	// value may have become smaller because of undo/redo
 	// make sure the selection stays inside the text
-	size_t size;
+	size_t size = val.size();
 	selection_end   = min(size, selection_end);
 	selection_start = min(size, selection_start);
 	// start and end must be on the same side of separators
@@ -513,6 +520,8 @@ void TextValueEditor::fixSelection(Movement dir) {
 		atompos = val.find(_("<atom"), atompos + 1);
 	}
 	// start and end must not be inside or between tags
+	selection_start = v.firstVisibleChar(selection_start, dir == MOVE_LEFT ? -1 : +1);
+	selection_end   = v.firstVisibleChar(selection_end,   dir == MOVE_LEFT ? -1 : +1);
 	//  TODO
 }
 
@@ -521,7 +530,7 @@ size_t TextValueEditor::prevCharBoundry(size_t pos) const {
 	return max(0, (int)pos - 1);
 }
 size_t TextValueEditor::nextCharBoundry(size_t pos) const {
-	return max(value().value().size(), pos + 1);
+	return min(value().value().size(), pos + 1);
 }
 size_t TextValueEditor::prevWordBoundry(size_t pos) const {
 	const String& val = value().value();
