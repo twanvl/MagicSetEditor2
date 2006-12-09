@@ -15,7 +15,7 @@ DECLARE_TYPEOF_COLLECTION(ColorField::ChoiceP);
 void ColorValueViewer::draw(RotatedDC& dc) {
 	// draw in the value color
 	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(value().value.get());
+	dc.SetBrush(value().value());
 	if (nativeLook()) {
 		// native look
 		// find name of color
@@ -24,7 +24,7 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 			color_name = field().default_name;
 		} else {
 			FOR_EACH_CONST(c, field().choices) {
-				if (value().value.get() == c->color) {
+				if (value().value() == c->color) {
 					color_name = capitalize(c->name);
 					break;
 				}

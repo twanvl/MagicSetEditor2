@@ -351,14 +351,14 @@ void SetWindow::onFileNew(wxCommandEvent&) {
 	if (!askSaveAndContinue()) return;
 	// new set?
 	SetP new_set = new_set_window(this);
-	if (new_set) set = new_set;
+	if (new_set) setSet(new_set);
 }
 
 void SetWindow::onFileOpen(wxCommandEvent&) {
 	if (!askSaveAndContinue())  return;
 	wxFileDialog dlg(this, _("Open a set"), _(""), _(""), import_formats(), wxOPEN);
 	if (dlg.ShowModal() == wxID_OK) {
-		set = import_set(dlg.GetPath());
+		setSet(import_set(dlg.GetPath()));
 	}
 }
 

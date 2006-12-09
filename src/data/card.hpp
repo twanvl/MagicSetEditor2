@@ -42,6 +42,18 @@ class Card {
 	/** May return "" */
 	String identification() const;
 	
+	/// Find a value in the data by name and type
+	template <typename T> T& value(const String& name) {
+		for(IndexMap<FieldP, ValueP>::iterator it = data.begin() ; it != data.end() ; ++it) {
+			if ((*it)->fieldP->name == name) {
+				T* ret = dynamic_cast<T*>(it->get());
+				if (!ret) throw InternalError(_("Card field with name '")+name+_("' doesn't have the right type"));
+				return *ret;
+			}
+		}
+		throw InternalError(_("Expected a card field with name '")+name+_("'"));
+	}
+	
 	DECLARE_REFLECTION();
 };
 

@@ -139,7 +139,9 @@ class ChoiceValue : public Value {
   public:
 	inline ChoiceValue(const ChoiceFieldP& field)
 		: Value(field)
-		, value(field->initial, true)
+		, value(field->initial.empty()
+		           ? field->choices->choiceName(0) // first choice
+		           : field->initial, true)
 	{}
 	DECLARE_HAS_FIELD(Choice)
 	

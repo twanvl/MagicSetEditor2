@@ -18,9 +18,9 @@ DECLARE_TYPEOF_COLLECTION(FileFormatP);
 vector<FileFormatP> file_formats;
 
 void init_file_formats() {
-	//file_formats.push_back(new_shared<MSE2FileFilter>());
-	//file_formats.push_back(new_shared<MSE1FileFilter>());
-	//file_formats.push_back(new_shared<MtgEditorFileFilter>());
+	file_formats.push_back(mse2_file_format());
+	file_formats.push_back(mse1_file_format());
+	file_formats.push_back(mtg_editor_file_format());
 }
 
 String import_formats() {
@@ -47,7 +47,7 @@ String export_formats(const Game& game) {
 	return type_strings;
 }
 
-void export_set(const Set& set, const String& filename, size_t format_type) {
+void export_set(Set& set, const String& filename, size_t format_type) {
 	FileFormatP format = file_formats.at(format_type);
 	if (!format->canExport(*set.game)) {
 		throw InternalError(_("File format doesn't apply to set"));

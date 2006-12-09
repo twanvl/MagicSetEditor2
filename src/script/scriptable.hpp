@@ -87,7 +87,7 @@ class OptionalScript {
 };
 
 template <typename T>
-inline ScriptValueP toScript(const Defaultable<T>& v) { return toScript(v.get()); }
+inline ScriptValueP toScript(const Defaultable<T>& v) { return toScript(v()); }
 
 // ----------------------------------------------------------------------------- : StringScript
 

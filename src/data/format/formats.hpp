@@ -14,6 +14,7 @@
 
 class Game;
 DECLARE_POINTER_TYPE(Set);
+DECLARE_POINTER_TYPE(FileFormat);
 
 // ----------------------------------------------------------------------------- : FileFormat
 
@@ -33,7 +34,7 @@ class FileFormat {
 		throw InternalError(_("Import not supported by this file format"));
 	}
 	/// Export using this filter
-	virtual void exportSet(const Set& set, const String& filename) {
+	virtual void exportSet(Set& set, const String& filename) {
 		throw InternalError(_("Export not supported by this file format"));
 	}
 };
@@ -69,10 +70,13 @@ SetP import_set(String name);
 /// Save a set under the specified name.
 /** filterType specifies what format to use for saving, used as index in the list of file formats
  */
-void export_set(const Set& set, const String& filename, size_t format_type);
+void export_set(Set& set, const String& filename, size_t format_type);
 
-// ----------------------------------------------------------------------------- : Export
+// ----------------------------------------------------------------------------- : The formats
 
+FileFormatP mse1_file_format();
+FileFormatP mse2_file_format();
+FileFormatP mtg_editor_file_format();
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

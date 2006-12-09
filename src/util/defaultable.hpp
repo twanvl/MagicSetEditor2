@@ -40,12 +40,18 @@ class Defaultable {
 	
 	/// Get access to the value
 	inline const T& operator () () const { return value; }
-	inline const T& get         () const { return value; }
+	/// Get access to the value, for changing it
+	inline       T& mutate      ()       {
+		is_default = false;
+		return value;
+	}
 	
 	/// Is this value in the default state?
 	inline bool isDefault() const { return is_default; }
 	/// Set the defaultness to true
 	inline void setDefault() { is_default = true; }
+	/// Set the defaultness to false
+	inline void unsetDefault() { is_default = false; }
 	
 	/// Compare the values, ignore defaultness
 	/** used by scriptable to check for changes */

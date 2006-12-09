@@ -69,6 +69,18 @@ class Set : public Packaged {
 	/// Styling information for a particular stylesheet
 	IndexMap<FieldP, ValueP>& stylingDataFor(const StyleSheet&);
 	
+	/// Find a value in the data by name and type
+	template <typename T> T& value(const String& name) {
+		for(IndexMap<FieldP, ValueP>::iterator it = data.begin() ; it != data.end() ; ++it) {
+			if ((*it)->fieldP->name == name) {
+				T* ret = dynamic_cast<T*>(it->get());
+				if (!ret) throw InternalError(_("Set field with name '")+name+_("' doesn't have the right type"));
+				return *ret;
+			}
+		}
+		throw InternalError(_("Expected a set field with name '")+name+_("'"));
+	}
+	
   protected:
 	virtual String typeName() const;
 	virtual void validate(Version);
