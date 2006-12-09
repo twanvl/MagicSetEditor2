@@ -19,26 +19,6 @@
 #include <wx/filename.h>
 #include <wx/wfstream.h>
 
-// ------------------------------------------------------------------------------------------------ : Default symbol
-
-// A default symbol part, a square, moved by d
-SymbolPartP defaultSymbolPart(double d) {
-	SymbolPartP part = new_shared<SymbolPart>();
-	part->points.push_back(new_shared2<ControlPoint>(d + .2, d + .2));
-	part->points.push_back(new_shared2<ControlPoint>(d + .2, d + .8));
-	part->points.push_back(new_shared2<ControlPoint>(d + .8, d + .8));
-	part->points.push_back(new_shared2<ControlPoint>(d + .8, d + .2));
-	part->name = _("Square");
-	return part;
-}
-
-// A default symbol, a square
-SymbolP default_symbol() {
-	SymbolP symbol = new_shared<Symbol>();
-	symbol->parts.push_back(defaultSymbolPart(0));
-	return symbol;
-}
-
 // ----------------------------------------------------------------------------- : Constructor
 
 SymbolWindow::SymbolWindow(Window* parent) {

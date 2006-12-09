@@ -45,6 +45,19 @@ InputStreamP StyleSheet::openIconFile() {
 	}
 }
 
+StyleP StyleSheet::styleFor(const FieldP& field) {
+	if (card_style.containsKey(field)) {
+		return card_style[field];
+	} else if (set_info_style.containsKey(field)) {
+		return set_info_style[field];
+	} else if (styling_style.containsKey(field)) {
+		return styling_style[field];
+	} else {
+		throw InternalError(_("Can not find styling for field '")+field->name+_("'in stylesheet"));
+	}
+}
+
+
 IMPLEMENT_REFLECTION(StyleSheet) {
 	// < 0.3.0 didn't use card_ prefix
 	tag.addAlias(300, _("width"),      _("card width"));

@@ -71,7 +71,7 @@ class IndexMap : private vector<Value> {
 	/// Is a key in the domain of this index map?
 	inline bool containsKey(const Key& key) const {
 		assert(key);
-		return key->index < this.size() && get_key((*this)[key->index]) == key;
+		return key->index < this->size() && get_key((*this)[key->index]) == key;
 	}
 	
 	/// Find a value given the key name, return an iterator

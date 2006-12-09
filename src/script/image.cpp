@@ -10,7 +10,15 @@
 #include <script/context.hpp>
 #include <util/dynamic_arg.hpp>
 #include <util/io/package.hpp>
+// for functions:
+#include <data/set.hpp>
+#include <data/stylesheet.hpp>
+#include <data/symbol.hpp>
+#include <data/field/symbol.hpp>
+#include <render/symbol/filter.hpp>
 #include <gui/util.hpp> // load_resource_image
+
+DECLARE_TYPEOF_COLLECTION(SymbolStyle::VariationP);
 
 // image generating functions have two modes
 // if last_update_age >  0 they return whether the image is still up to date
@@ -226,6 +234,37 @@ SCRIPT_FUNCTION(set_combine) {
 	}
 }
 
+SCRIPT_FUNCTION(symbol_variation) {
+	SCRIPT_PARAM(ValueP, symbol);
+	SymbolValueP value = dynamic_pointer_cast<SymbolValue>(symbol);
+	if (last_update_age() == 0) {
+		SCRIPT_PARAM(String, variation);
+		// find set & style
+		SCRIPT_PARAM(Set*, set);
+		SCRIPT_OPTIONAL_PARAM_(CardP, card);
+		SymbolStyleP style = dynamic_pointer_cast<SymbolStyle>(set->stylesheetFor(card)->styleFor(value->fieldP));
+		if (!style) throw InternalError(_("Symbol value has a style of the wrong type"));
+		// load symbol
+		SymbolP symbol;
+		if (value->filename.empty()) {
+			symbol = default_symbol();
+		} else {
+			symbol = set->readFile<SymbolP>(value->filename);
+		}
+		// determine filter & render
+		FOR_EACH(v, style->variations) {
+			if (v->name == variation) {
+				// render & filter
+				return new_intrusive1<ScriptImage>(render_symbol(symbol, *v->filter, v->border_radius));
+			}
+		}
+		throw ScriptError(_("Variation of symbol not found ('") + variation + _("')"));
+	} else {
+//		SCRIPT_RETURN(last_update_age() >= value->filename.last_update_age);
+		SCRIPT_RETURN(true);
+	}
+}
+
 SCRIPT_FUNCTION(buildin_image) {
 	if (last_update_age() == 0) {
 		SCRIPT_PARAM(String, input);
@@ -233,14 +272,15 @@ SCRIPT_FUNCTION(buildin_image) {
 		if (!img.Ok()) throw ScriptError(_("There is no build in image '") + input + _("'"));
 		return new_intrusive1<ScriptImage>(img);
 	} else {
-		SCRIPT_RETURN(true);
+		SCRIPT_RETURN(true); // always up to date
 	}
 }
 
 void init_script_image_functions(Context& ctx) {
-	ctx.setVariable(_("linear blend"),    script_linear_blend);
-	ctx.setVariable(_("masked blend"),    script_masked_blend);
-	ctx.setVariable(_("set mask"),        script_set_mask);
-	ctx.setVariable(_("set combine"),     script_set_combine);
-	ctx.setVariable(_("buildin image"),   script_buildin_image);
+	ctx.setVariable(_("linear blend"),     script_linear_blend);
+	ctx.setVariable(_("masked blend"),     script_masked_blend);
+	ctx.setVariable(_("set mask"),         script_set_mask);
+	ctx.setVariable(_("set combine"),      script_set_combine);
+	ctx.setVariable(_("symbol variation"), script_symbol_variation);
+	ctx.setVariable(_("buildin image"),    script_buildin_image);
 }

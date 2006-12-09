@@ -257,6 +257,8 @@ class ScriptObject : public ScriptValue {
 		int i = item_count(*value);
 		return i >= 0 ? i : ScriptValue::itemCount();
 	}
+	/// Get access to the value
+	inline T getValue() { return value; }
   private:
 	T value; ///< The object
 	ScriptValueP getDefault() const {
@@ -332,9 +334,15 @@ inline ScriptValueP toScript(const shared_ptr<T>& v) { return new_intrusive1<Scr
 		Type name = getParam<Type>(ctx.getVariable(_(#name)))
 
 template <typename T>
-inline T            getParam              (const ScriptValueP& value) { return *value; }
-template <>
-inline ScriptValueP getParam<ScriptValueP>(const ScriptValueP& value) { return value;  }
+            inline T            getParam              (const ScriptValueP& value) {
+				ScriptObject<T>* o = dynamic_cast<ScriptObject<T>*>(value.get());
+				if (!o) throw ScriptError(_("Can't convert from ")+value->typeName()+_(" to object"));
+				return o->getValue();
+            }
+template <> inline ScriptValueP getParam<ScriptValueP>(const ScriptValueP& value) { return value;  }
+template <> inline String       getParam<String>      (const ScriptValueP& value) { return *value; }
+template <> inline int          getParam<int>         (const ScriptValueP& value) { return *value; }
+template <> inline double       getParam<double>      (const ScriptValueP& value) { return *value; }
 
 /// Retrieve an optional parameter
 /** Usage:
@@ -347,17 +355,24 @@ inline ScriptValueP getParam<ScriptValueP>(const ScriptValueP& value) { return v
  *   }
  *  @endcode
  */
-#define SCRIPT_OPTIONAL_PARAM(Type, name)	SCRIPT_OPTIONAL_PARAM_N(Type, name, #name)
+#define SCRIPT_OPTIONAL_PARAM(Type, name)	SCRIPT_OPTIONAL_PARAM_N(Type, #name, name)
 
-#define SCRIPT_OPTIONAL_PARAM_N(Type, str, name)				\
-		ScriptValueP name##_ = ctx.getVariableOpt(_(str));		\
-		Type name = name##_ ? *name##_ : Type();				\
+#define SCRIPT_OPTIONAL_PARAM_N(Type, str, name)					\
+		ScriptValueP name##_ = ctx.getVariableOpt(_(str));			\
+		Type name = name##_ ? getParam<Type>(name##_) : Type();		\
 		if (name##_)
 
+/// Retrieve an optional parameter, can't be used as an if statement
+#define SCRIPT_OPTIONAL_PARAM_(Type, name)	SCRIPT_OPTIONAL_PARAM_N_(Type, #name, name)
+
+#define SCRIPT_OPTIONAL_PARAM_N_(Type, str, name)					\
+		ScriptValueP name##_ = ctx.getVariableOpt(_(str));			\
+		Type name = name##_ ? getParam<Type>(name##_) : Type();
+
 /// Retrieve an optional parameter with a default value
-#define SCRIPT_PARAM_DEFAULT(Type, name, def)					\
-		ScriptValueP name##_ = ctx.getVariableOpt(_(#name));	\
-		Type name = name##_ ? *name##_ : def
+#define SCRIPT_PARAM_DEFAULT(Type, name, def)						\
+		ScriptValueP name##_ = ctx.getVariableOpt(_(#name));		\
+		Type name = name##_ ? getParam<Type>(name##_) : def
 
 /// Return a value from a SCRIPT_FUNCTION
 #define SCRIPT_RETURN(value) return toScript(value)

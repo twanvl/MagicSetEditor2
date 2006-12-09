@@ -50,6 +50,9 @@ class StyleSheet : public Packaged {
 	
 	inline RealRect getCardRect() const { return RealRect(0, 0, card_width, card_height); }
 	
+	/// Return the style for a given field, it is not specified what type of field this is.
+	StyleP styleFor(const FieldP& field);
+	
 	/// Load a StyleSheet, given a Game and the name of the StyleSheet
 	static StyleSheetP byGameAndName(const Game& game, const String& name);
 	/// name of the package without the game name

@@ -162,6 +162,8 @@ class Symbol {
 	DECLARE_REFLECTION();
 };
 
+/// A default symbol: a square
+SymbolP default_symbol();
 
 // ----------------------------------------------------------------------------- : SymbolView
 
