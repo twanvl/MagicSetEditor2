@@ -131,6 +131,7 @@ void Package::saveAs(const String& name, bool removeUnused) {
 
 // ----------------------------------------------------------------------------- : Package : inside
 
+/*
 /// Class that is a wxZipInputStream over a wxFileInput stream
 /** Note that wxFileInputStream is also a base class, because it must be constructed first
  *  This class requires a patch in wxWidgets (2.5.4)
@@ -139,7 +140,9 @@ void Package::saveAs(const String& name, bool removeUnused) {
  *   to:
  *        if ((AtHeader()));
  *  It seems that in 2.6.3 this is no longer necessary (TODO: test)
- */
+ *
+ *  NOTE: Not used with wx 2.6.3, since it doesn't support seeking
+ * /
 class ZipFileInputStream : private wxFileInputStream, public wxZipInputStream {
   public:
 	ZipFileInputStream(const String& filename, wxZipEntry* entry)
@@ -149,6 +152,7 @@ class ZipFileInputStream : private wxFileInputStream, public wxZipInputStream {
 		OpenEntry(*entry);
 	}
 };
+*/
 
 InputStreamP Package::openIn(const String& file) {
 	if (!file.empty() && file.GetChar(0) == _('/')) {
@@ -168,8 +172,10 @@ InputStreamP Package::openIn(const String& file) {
 		stream = new_shared1<wxFileInputStream>(filename+_("/")+file);
 	} else if (wxFileExists(filename) && it->second.zipEntry) {
 		// a file in a zip archive
-		stream = static_pointer_cast<wxZipInputStream>(
-					new_shared2<ZipFileInputStream>(filename, it->second.zipEntry));
+		// somebody in wx thought seeking was no longer needed, it now only works with the 'compatability constructor'
+		stream = new_shared2<wxZipInputStream>(filename, it->second.zipEntry->GetName());
+		//stream = static_pointer_cast<wxZipInputStream>(
+		//			new_shared2<ZipFileInputStream>(filename, it->second.zipEntry));
 	} else {
 		// shouldn't happen, packaged changed by someone else since opening it
 		throw FileNotFoundError(file, filename);
