@@ -85,6 +85,7 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
   private:
 	size_t selection_start, selection_end; ///< Cursor position/selection (if any)
 	TextValueEditorScrollBar* scrollbar;   ///< Scrollbar for multiline fields in native look
+	bool select_words;                     ///< Select whole words when dragging the mouse?
 	
 	// --------------------------------------------------- : Selection / movement
 	

@@ -79,7 +79,7 @@ class RealSize {
 	
 	/// Can be converted to a wxSize, with integer components
 	inline operator wxSize() {
-		return wxSize(realRound(width), realRound(height));
+		return wxSize(to_int(width), to_int(height));
 	}
 };
 
@@ -161,7 +161,14 @@ class RealRect : private RealPoint, private RealSize {
 	}
 	
 	inline operator wxRect() const {
-		return wxRect(x, y, width, height);
+		// Prevent rounding errors, for example if
+		// x = 0.6 and width = 0.6
+		// the right = 1.2
+		// so we want a rectangle from 0 to 1
+		// not from 0 to 0
+		int i_l = to_int(x), i_r = to_int(right());
+		int i_t = to_int(y), i_b = to_int(bottom());
+		return wxRect(i_l, i_t, i_r - i_l, i_b - i_t);
 	}
 };
 

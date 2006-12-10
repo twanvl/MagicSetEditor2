@@ -49,6 +49,7 @@ size_t TextViewer::Line::posToIndex(double x) const {
 	// largest index with pos <= x
 	vector<double>::const_iterator it2 = lower_bound(positions.begin(), positions.end(), x);
 	if (it2 == positions.begin()) return start;
+	if (it2 == positions.end()) --it2; // we don't want to find the position beyond the end
 	// first index with pos > x
 	vector<double>::const_iterator it1 = it2 - 1;
 	if (x - *it1 <= *it2 - x) return it1 - positions.begin() + start; // it1 is closer
@@ -95,8 +96,8 @@ void TextViewer::drawSelection(RotatedDC& dc, const TextStyle& style, size_t sel
 void TextViewer::Line::drawSelection(RotatedDC& dc, size_t sel_start, size_t sel_end) {
 	if (!visible(dc)) return;
 	if (sel_start < end() && sel_end > start) {
-		double x1 = positions[sel_start - start];
-		double x2 = positions[min(end(), sel_end) - start];
+		double x1 = positions[max(start, sel_start) - start];
+		double x2 = positions[min(end(), sel_end)   - start];
 		dc.DrawRectangle(RealRect(x1, top, x2 - x1, line_height));
 	}
 }
@@ -110,7 +111,7 @@ void TextViewer::reset() {
 
 const TextViewer::Line& TextViewer::findLine(size_t index) const {
 	FOR_EACH_CONST(l, lines) {
-		if (l.end() > index) return l;
+		if (l.end() >= index) return l;
 	}
 	return lines.front();
 }
@@ -176,13 +177,22 @@ bool TextViewer::isVisible(size_t index) const {
 }
 size_t TextViewer::firstVisibleChar(size_t index, int delta) const {
 	if (lines.empty()) return index;
-	const Line& l = findLine(index);
-	int pos = (int)(index - l.start);
-	while (pos + delta > 0 && (size_t)pos + delta + 1 < l.positions.size()) {
-		if (l.positions[pos + 1] - l.positions[pos] > 0.0001) break;
-		pos += delta;
+	const Line* l = &findLine(index);
+	while (true) {
+		int pos = (int)(index - l->start);
+		while (index == l->end() || (pos + delta >= 0 && (size_t)pos + delta < l->positions.size())) {
+			if (index == l->end() || l->positions[pos + 1] - l->positions[pos] > 0.0001) {
+				return index;
+			}
+			pos   += delta;
+			index += delta;
+		}
+		// move to another line, if not at start/end
+		if (l + delta < &lines.front()) return 0;
+		if (l + delta > &lines.back())  return l->end();
+		index += delta;
+		l     += delta;
 	}
-	return pos + l.start;
 }
 
 double TextViewer::heightOfLastLine() const {

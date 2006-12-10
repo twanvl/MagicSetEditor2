@@ -14,9 +14,11 @@
 
 // ----------------------------------------------------------------------------- : Rounding
 
-// Rounding function for converting doubles to integers
-inline int realRound(double d) {
-	return d > 0 ? d + 0.5 : d - 0.5;
+/// Rounding function for converting doubles to integers,
+/** Intentionally uses slightly less then 0.5, to give a more consistent result
+ *  when for instance something like "x/2" is used. */
+inline int to_int(double d) {
+	return d > 0 ? d + 0.4999995 : d - 0.4999995;
 }
 
 // ----------------------------------------------------------------------------- : Vector2D
@@ -110,7 +112,7 @@ class Vector2D {
 	}
 	
 	inline operator wxPoint() const {
-		return wxPoint(realRound(x), realRound(y));
+		return wxPoint(to_int(x), to_int(y));
 	}
 	
 	// Vector at infinity

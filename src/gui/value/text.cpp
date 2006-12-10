@@ -55,6 +55,7 @@ END_EVENT_TABLE  ()
 
 IMPLEMENT_VALUE_EDITOR(Text)
 	, selection_start(0), selection_end(0)
+	, select_words(false)
 	, scrollbar(nullptr)
 {}
 
@@ -65,6 +66,7 @@ TextValueEditor::~TextValueEditor() {
 // ----------------------------------------------------------------------------- : Mouse
 
 void TextValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
+	select_words = false;
 	moveSelection(v.indexAt(style().getRotation().trInv(pos)), !ev.ShiftDown(), MOVE_MID);
 }
 void TextValueEditor::onLeftUp(const RealPoint& pos, wxMouseEvent&) {
@@ -73,11 +75,18 @@ void TextValueEditor::onLeftUp(const RealPoint& pos, wxMouseEvent&) {
 
 void TextValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
 	if (ev.LeftIsDown()) {
-		moveSelection(v.indexAt(style().getRotation().trInv(pos)), false, MOVE_MID);
+		size_t index = v.indexAt(style().getRotation().trInv(pos));
+		if (select_words) {
+			// TODO: on the left, swap start and end
+			moveSelection(index < selection_start ? prevWordBoundry(index) : nextWordBoundry(index), false, MOVE_MID);
+		} else {
+			moveSelection(index, false, MOVE_MID);
+		}
 	}
 }
 
 void TextValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent& ev) {
+	select_words = true;
 	size_t index = v.indexAt(style().getRotation().trInv(pos));
 	moveSelection(prevWordBoundry(index), true, MOVE_MID);
 	moveSelection(nextWordBoundry(index), false, MOVE_MID);
@@ -216,6 +225,24 @@ void TextValueEditor::onMenu(wxCommandEvent& ev) {
 void TextValueEditor::draw(RotatedDC& dc) {
 	TextValueViewer::draw(dc);
 	v.drawSelection(dc, style(), selection_start, selection_end);
+	// DEBUG, TODO: REMOVEME
+	Rotater r(dc, style().getRotation());
+	/*dc.SetPen(*wxRED_PEN);
+	dc.SetBrush(*wxTRANSPARENT_BRUSH);
+	dc.SetTextForeground(*wxGREEN);
+	dc.SetFont(wxFont(6,wxFONTFAMILY_SWISS,wxNORMAL,wxNORMAL));
+	for (size_t i = 0 ; i < value().value().size() ; i += 10) {
+		RealRect r = v.charRect(i);
+		r.width = max(r.width,1.);
+		dc.DrawRectangle(r);
+		dc.DrawText(String()<<(int)i, r.position()+RealSize(1,5));
+	}*/
+	dc.SetPen(*wxTRANSPARENT_PEN);
+	dc.SetBrush(*wxWHITE_BRUSH);
+	dc.SetTextForeground(*wxBLUE);
+	dc.SetFont(wxFont(6,wxFONTFAMILY_SWISS,wxNORMAL,wxNORMAL));
+	dc.DrawRectangle(RealRect(style().width-50,style().height-10,50,10));
+	dc.DrawText(String::Format(_("%d - %d"),selection_start, selection_end), RealPoint(style().width-50,style().height-10));
 }
 
 wxCursor rotated_ibeam;
@@ -473,6 +500,14 @@ void TextValueEditor::moveSelection(size_t new_end, bool also_move_start, Moveme
 		v.drawSelection(rdc, style(), selection_start, selection_end);
 //	}
 	showCaret();
+	// TODO; DEBUG!!
+	Rotater r(rdc, style().getRotation());
+	rdc.SetPen(*wxTRANSPARENT_PEN);
+	rdc.SetBrush(*wxWHITE_BRUSH);
+	rdc.SetTextForeground(*wxBLUE);
+	rdc.SetFont(wxFont(6,wxFONTFAMILY_SWISS,wxNORMAL,wxNORMAL));
+	rdc.DrawRectangle(RealRect(style().width-50,style().height-10,50,10));
+	rdc.DrawText(String::Format(_("%d - %d"),selection_start, selection_end), RealPoint(style().width-50,style().height-10));
 }
 
 void TextValueEditor::moveSelectionNoRedraw(size_t new_end, bool also_move_start, Movement dir) {
