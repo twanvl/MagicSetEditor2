@@ -26,6 +26,7 @@ class MSE2FileFormat : public FileFormat {
 		return set;
 	}
 	virtual void exportSet(Set& set, const String& filename) {
+		settings.addRecentFile(filename);
 		set.saveAs(filename);
 		set.actions.setSavePoint();;
 	}

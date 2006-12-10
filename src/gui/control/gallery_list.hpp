@@ -64,6 +64,7 @@ class GalleryList : public wxScrolledWindow {
 	size_t findItem(const wxMouseEvent&) const;
 	/// Find the coordinates of an item
 	RealPoint itemPos(size_t item) const;
+  protected:
 	/// Send an event
 	void sendEvent(WXTYPE type);
 };

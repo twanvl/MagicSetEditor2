@@ -35,22 +35,17 @@ class NewSetWindow : public wxDialog {
 	PackageList*  game_list, *stylesheet_list;
 	wxStaticText* game_text, *stylesheet_text;
 	Window* ok_button;
-	
-	// --------------------------------------------------- : enabling stuff
-	
-	void enableStyle(bool e);
-	void enableOk   (bool e);
-	
+		
 	// --------------------------------------------------- : events
 	
 	void onGameSelect  (wxCommandEvent&);
-//	void onGameDeselect(wxCommandEvent&);
 	
 	void onStyleSheetSelect  (wxCommandEvent&);
-//	void onStyleSheetDeselect(wxCommandEvent&);
 	void onStyleSheetActivate(wxCommandEvent&);
 	
 	virtual void OnOK(wxCommandEvent&);
+	
+	void onUpdateUI(wxUpdateUIEvent&);
 	
 	// we are done, close the window
 	void done();

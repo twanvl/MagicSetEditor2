@@ -30,8 +30,8 @@ NewSetWindow::NewSetWindow(Window* parent)
 	// init controls
 	game_list       = new PackageList (this, ID_GAME_LIST);
 	stylesheet_list = new PackageList (this, ID_STYLESHEET_LIST);
-	game_text       = new wxStaticText(this, wxID_ANY, _("&Game type:"));
-	stylesheet_text = new wxStaticText(this, wxID_ANY, _("&Card style:"));
+	game_text       = new wxStaticText(this, ID_GAME_LIST,       _("&Game type:"));
+	stylesheet_text = new wxStaticText(this, ID_STYLESHEET_LIST, _("&Card style:"));
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		s->Add(game_text,       0, wxALL,                     4);
@@ -41,24 +41,12 @@ NewSetWindow::NewSetWindow(Window* parent)
 		s->Add(CreateButtonSizer(wxOK | wxCANCEL) , 0, wxEXPAND | wxALL, 8);
 		s->SetSizeHints(this);
 	SetSizer(s);
-	// disable stuff
-	ok_button = FindWindow(wxID_OK);
-	assert(ok_button);
-	enableStyle(false);
 	// force refresh of gameList, otherwise a grey background shows (win XP)
 	SetSize(wxSize(530,320));
 	// init lists
 	game_list->showData<Game>();
 	game_list->select(settings.default_game);
-}
-
-void NewSetWindow::enableStyle(bool e) {
-	stylesheet_list->Enable(e);
-	stylesheet_text->Enable(e);
-	if (!e) enableOk(e);
-}
-void NewSetWindow::enableOk(bool e) {
-	ok_button->Enable(e);
+	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }
 
 void NewSetWindow::onGameSelect(wxCommandEvent&) {
@@ -67,25 +55,17 @@ void NewSetWindow::onGameSelect(wxCommandEvent&) {
 	GameSettings& gs = settings.gameSettingsFor(*game);
 	stylesheet_list->showData<StyleSheet>(game->name() + _("-*"));
 	stylesheet_list->select(gs.default_stylesheet);
-	enableStyle(true);
+	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }
-/*void NewSetWindow::onGameDeselect(wxCommandEvent&) {
-	stylesheet_list->clear();
-	enableStyle(false);
-}
-*/
+
 void NewSetWindow::onStyleSheetSelect(wxCommandEvent&) {
-	enableOk(true);
 	// store this as default selection
 	GameP       game       = game_list      ->getSelection<Game>();
 	StyleSheetP stylesheet = stylesheet_list->getSelection<StyleSheet>();
 	GameSettings& gs = settings.gameSettingsFor(*game);
 	gs.default_stylesheet = stylesheet->name();
+	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }
-/*void NewSetWindow::onStyleSheetDeselect(wxCommandEvent&) {
-	enableOk(false);
-}
-*/
 void NewSetWindow::onStyleSheetActivate(wxCommandEvent&) {
 	done();
 }
@@ -101,10 +81,21 @@ void NewSetWindow::done() {
 	EndModal(wxID_OK);
 }
 
+void NewSetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
+	switch (ev.GetId()) {
+		case ID_STYLESHEET_LIST:
+			ev.Enable(game_list->hasSelection());
+			break;
+		case wxID_OK:
+			ev.Enable(stylesheet_list->hasSelection());
+			break;
+	}
+}
+
 BEGIN_EVENT_TABLE(NewSetWindow, wxDialog)
-	EVT_GALLERY_SELECT  (ID_GAME_LIST,  NewSetWindow::onGameSelect)
-//	EVT_LIST_ITEM_DESELECTED (ID_GAME_LIST,  NewSetWindow::onGameDeselect)
-	EVT_GALLERY_SELECT   (ID_STYLESHEET_LIST, NewSetWindow::onStyleSheetSelect)
-//	EVT_LIST_ITEM_DESELECTED (ID_STYLESHEET_LIST, NewSetWindow::onStyleDeselect)
-	EVT_GALLERY_ACTIVATE  (ID_STYLESHEET_LIST, NewSetWindow::onStyleSheetActivate)
+	EVT_GALLERY_SELECT  (ID_GAME_LIST,       NewSetWindow::onGameSelect)
+	EVT_GALLERY_SELECT  (ID_STYLESHEET_LIST, NewSetWindow::onStyleSheetSelect)
+	EVT_GALLERY_ACTIVATE(ID_STYLESHEET_LIST, NewSetWindow::onStyleSheetActivate)
+	EVT_BUTTON          (wxID_OK,            NewSetWindow::OnOK)
+	EVT_UPDATE_UI       (wxID_ANY,           NewSetWindow::onUpdateUI)
 END_EVENT_TABLE  ()

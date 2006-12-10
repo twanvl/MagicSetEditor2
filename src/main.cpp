@@ -49,10 +49,10 @@ bool MSE::OnInit() {
 		check_updates();
 		//Window* wnd = new SymbolWindow(nullptr);
 		//GameP g = Game::byName(_("magic"))
-		SetP  s = new_shared<Set>();
-		s->open(_("test.mse-set"));
-		Window* wnd = new SetWindow(nullptr, s);
-		//Window* wnd = new WelcomeWindow();
+		//SetP  s = new_shared<Set>();
+		//s->open(_("test.mse-set"));
+		//Window* wnd = new SetWindow(nullptr, s);
+		Window* wnd = new WelcomeWindow();
 		wnd->Show();
 		return true;
 	

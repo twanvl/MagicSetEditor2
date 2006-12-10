@@ -87,6 +87,7 @@ void PackageList::select(const String& name) {
 		if (it->package->name() == name) {
 			selection = it - packages.begin();
 			update();
+			sendEvent(EVENT_GALLERY_SELECT);
 			return;
 		}
 	}

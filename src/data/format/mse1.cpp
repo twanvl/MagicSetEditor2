@@ -45,9 +45,7 @@ SetP MSE1FileFormat::importSet(const String& filename) {
 		wxTextInputStream file(f);
 	#endif
 	// create set
-	SetP set(new Set);
-	set->game = Game::byName(_("magic"));
-	set->data.init(set->game->set_fields);
+	SetP set(new Set(Game::byName(_("magic"))));
 	
 	// file version check
 	String format = file.ReadLine();

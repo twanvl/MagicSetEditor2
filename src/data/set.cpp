@@ -31,13 +31,17 @@ Set::Set()
 Set::Set(const GameP& game)
 	: game(game)
 	, script_manager(new ScriptManager(*this))
-{}
+{
+	data.init(game->set_fields);
+}
 
 Set::Set(const StyleSheetP& stylesheet)
 	: stylesheet(stylesheet)
 	, game(stylesheet->game)
 	, script_manager(new ScriptManager(*this))
-{}
+{
+	data.init(game->set_fields);
+}
 
 Set::~Set() {}
 
