@@ -36,5 +36,5 @@ String ImageValue::toString() const {
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(ImageValue) {
-	REFLECT_NAMELESS(filename);
+	if (fieldP->save_value) REFLECT_NAMELESS(filename);
 }

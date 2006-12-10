@@ -226,5 +226,5 @@ bool ChoiceValue::update(Context& ctx) {
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(ChoiceValue) {
-	REFLECT_NAMELESS(value);
+	if (fieldP->save_value) REFLECT_NAMELESS(value);
 }
