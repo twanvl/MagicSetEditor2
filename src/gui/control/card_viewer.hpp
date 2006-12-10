@@ -19,6 +19,10 @@ class CardViewer : public wxControl, public DataViewer {
   public:
 	CardViewer(Window* parent, int id, long style = 0);
 	
+	/// Get a dc to draw on the card outside onPaint	
+	/** May NOT be called while in onPaint/draw */
+	shared_ptr<DC> overdrawDC();
+	
   protected:
 	/// Return the desired size of control
 	virtual wxSize DoGetBestSize() const;
@@ -30,7 +34,10 @@ class CardViewer : public wxControl, public DataViewer {
 	
 	void onPaint(wxPaintEvent&);
 	
-	Bitmap buffer; /// < Off-screen buffer we draw to
+	Bitmap buffer;     ///< Off-screen buffer we draw to
+	bool   up_to_date; ///< Is the buffer up to date?
+	
+	class OverdrawDC;
 };
 
 // ----------------------------------------------------------------------------- : EOF

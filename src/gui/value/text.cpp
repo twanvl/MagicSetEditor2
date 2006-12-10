@@ -448,31 +448,30 @@ void TextValueEditor::moveSelection(size_t new_end, bool also_move_start, Moveme
 		moveSelectionNoRedraw(new_end, also_move_start, dir);
 		return;
 	}
-	// First redraw selection
+	// Hide caret
 	wxCaret* caret = editor().GetCaret();
 	if (caret->IsVisible()) caret->Hide();
-	{
-/*		DCP dc = editor.overdrawDC();
-		RotatedDC rdc(*dc, editor.rotation);
-		if (nativeLook) {
-			// clip the dc to the region of this control
-			rdc.SetClippingRegion(style->left, style->top, style->width, style->height);
-		}
-		// clear old
-		v.drawSelection(rdc, style(), selection_start, selection_end);
-		// move
-*/		moveSelectionNoRedraw(new_end, also_move_start, dir);
-		// scroll?
-//		scrollWithCursor = true;
-//		if (onMove()) {
-//			// we can't redraw just the selection because we must scroll
-//			updateScrollbar();
-//			editor.refreshEditor();
-//		} else {
-//			// draw new selection
-//			v.drawSelection(rdc, style(), selection_start, selection_end);
-//		}
+	// Move selection
+	shared_ptr<DC> dc = editor().overdrawDC();
+	RotatedDC rdc(*dc, viewer.getRotation(), false);
+	if (nativeLook()) {
+		// clip the dc to the region of this control
+		rdc.SetClippingRegion(style().getRect());
 	}
+	// clear old selection by drawing it again
+	v.drawSelection(rdc, style(), selection_start, selection_end);
+	// move
+	moveSelectionNoRedraw(new_end, also_move_start, dir);
+	// scroll?
+//	scrollWithCursor = true;
+//	if (onMove()) {
+//		// we can't redraw just the selection because we must scroll
+//		updateScrollbar();
+//		editor.refreshEditor();
+//	} else {
+		// draw new selection
+		v.drawSelection(rdc, style(), selection_start, selection_end);
+//	}
 	showCaret();
 }
 

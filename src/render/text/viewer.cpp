@@ -95,8 +95,8 @@ void TextViewer::drawSelection(RotatedDC& dc, const TextStyle& style, size_t sel
 void TextViewer::Line::drawSelection(RotatedDC& dc, size_t sel_start, size_t sel_end) {
 	if (!visible(dc)) return;
 	if (sel_start < end() && sel_end > start) {
-		double x1 = positions[sel_start];
-		double x2 = positions[min(end(), sel_end)];
+		double x1 = positions[sel_start - start];
+		double x2 = positions[min(end(), sel_end) - start];
 		dc.DrawRectangle(RealRect(x1, top, x2 - x1, line_height));
 	}
 }

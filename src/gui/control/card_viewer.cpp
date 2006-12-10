@@ -14,6 +14,7 @@
 
 CardViewer::CardViewer(Window* parent, int id, long style)
 	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, style)
+	, up_to_date(false)
 {}
 
 wxSize CardViewer::DoGetBestSize() const {
@@ -29,17 +30,54 @@ wxSize CardViewer::DoGetBestSize() const {
 
 void CardViewer::onChange() {
 	Refresh(false);
+	up_to_date = false;
 }
 
+#ifdef _DEBUG
+	DECLARE_DYNAMIC_ARG(bool, inOnPaint);
+	IMPLEMENT_DYNAMIC_ARG(bool, inOnPaint, false);
+#endif
+
 void CardViewer::onPaint(wxPaintEvent&) {
+	#ifdef _DEBUG
+		// we don't want recursion
+		assert(!inOnPaint());
+		WITH_DYNAMIC_ARG(inOnPaint, true);
+	#endif
 	wxSize cs = GetClientSize();
 	if (!buffer.Ok() || buffer.GetWidth() != cs.GetWidth() || buffer.GetHeight() != cs.GetHeight()) {
 		buffer = Bitmap(cs.GetWidth(), cs.GetHeight());
+		up_to_date = false;
 	}
 	wxBufferedPaintDC dc(this, buffer);
-	dc.BeginDrawing();
-	draw(dc);
-	dc.EndDrawing();
+	if (!up_to_date) {
+		up_to_date = true;
+		dc.BeginDrawing();
+		draw(dc);
+		dc.EndDrawing();
+	}
+}
+
+// helper class for overdrawDC()
+class CardViewer::OverdrawDC : private wxClientDC, public wxBufferedDC {
+  public:
+	OverdrawDC(CardViewer* window)
+		: wxClientDC(window)
+	{
+		wxBufferedDC::Init((wxClientDC*)this, window->buffer);
+		wxBufferedDC::BeginDrawing();
+	}
+	~OverdrawDC() {
+		wxBufferedDC::EndDrawing();
+	}
+};
+
+shared_ptr<DC> CardViewer::overdrawDC() {
+	#ifdef _DEBUG
+		// don't call from onPaint
+		assert(!inOnPaint());
+	#endif
+	return shared_ptr<DC>((wxBufferedDC*)(new OverdrawDC(this)));
 }
 
 // ----------------------------------------------------------------------------- : Event table
