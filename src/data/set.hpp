@@ -23,9 +23,12 @@ DECLARE_POINTER_TYPE(Styling);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(Keyword);
+DECLARE_INTRUSIVE_POINTER_TYPE(ScriptValue);
 class ScriptManager;
 class Context;
 class Dependency;
+template <typename> class OrderCache;
+typedef shared_ptr<OrderCache<CardP> > OrderCacheP;
 
 // ----------------------------------------------------------------------------- : Set
 
@@ -81,6 +84,9 @@ class Set : public Packaged {
 		throw InternalError(_("Expected a set field with name '")+name+_("'"));
 	}
 	
+	/// Find the position of a card in this set, when the card list is sorted using the given cirterium
+	int positionOfCard(const CardP& card, const ScriptValueP& order_by);
+	
   protected:
 	virtual String typeName() const;
 	virtual void validate(Version);
@@ -89,11 +95,14 @@ class Set : public Packaged {
   private:
 	/// Object for managing and executing scripts
 	scoped_ptr<ScriptManager> script_manager;
+	/// Cache of cards ordered by some criterion
+	map<ScriptValueP,OrderCacheP> order_cache;
 };
 
 inline int item_count(const Set& set) {
 	return (int)set.cards.size();
 }
+ScriptValueP make_iterator(const Set& set);
 
 void mark_dependency_member(const SetP& value, const String& name, const Dependency& dep);
 void mark_dependency_member(Set*        value, const String& name, const Dependency& dep);

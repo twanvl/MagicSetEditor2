@@ -14,6 +14,7 @@
 #include <data/field.hpp>
 #include <data/field/text.hpp>    // for 0.2.7 fix
 #include <util/tagged_string.hpp> // for 0.2.7 fix
+#include <util/order_cache.hpp>
 #include <script/value.hpp>
 #include <script/script_manager.hpp>
 #include <wx/sstream.h>
@@ -100,20 +101,6 @@ void Set::validate(Version file_app_version) {
 */	}
 }
 
-void mark_dependency_member(Set* value, const String& name, const Dependency& dep) {
-	// TODO
-}
-void mark_dependency_member(const SetP& value, const String& name, const Dependency& dep) {
-	mark_dependency_member(value.get(), name, dep);
-}
-
-// in scripts, set.something is read from the set_info
-template <typename Tag>
-void reflect_set_info_get_member(Tag&       tag, const IndexMap<FieldP, ValueP>& data) {}
-void reflect_set_info_get_member(GetMember& tag, const IndexMap<FieldP, ValueP>& data) {
-	REFLECT_NAMELESS(data);
-}
-
 IMPLEMENT_REFLECTION(Set) {
 	tag.addAlias(300, _("style"),          _("stylesheet")); // < 0.3.0 used style instead of stylesheet
 	tag.addAlias(300, _("extra set info"), _("styling"));
@@ -133,6 +120,42 @@ IMPLEMENT_REFLECTION(Set) {
 	}
 	reflect_set_info_get_member(tag,data);
 	REFLECT(apprentice_code);
+}
+
+// ----------------------------------------------------------------------------- : Script utilities
+
+ScriptValueP make_iterator(const Set& set) {
+	return new_intrusive1<ScriptCollectionIterator<vector<CardP> > >(&set.cards);
+}
+
+void mark_dependency_member(Set* value, const String& name, const Dependency& dep) {
+	// TODO
+}
+void mark_dependency_member(const SetP& value, const String& name, const Dependency& dep) {
+	mark_dependency_member(value.get(), name, dep);
+}
+
+// in scripts, set.something is read from the set_info
+template <typename Tag>
+void reflect_set_info_get_member(Tag&       tag, const IndexMap<FieldP, ValueP>& data) {}
+void reflect_set_info_get_member(GetMember& tag, const IndexMap<FieldP, ValueP>& data) {
+	REFLECT_NAMELESS(data);
+}
+
+int Set::positionOfCard(const CardP& card, const ScriptValueP& order_by) {
+	// TODO : Lock the map?
+	assert(order_by);
+	OrderCacheP& order = order_cache[order_by];
+	if (!order) {
+		// 1. make a list of the order value for each card
+		vector<String> values; values.reserve(cards.size());
+		FOR_EACH_CONST(c, cards) {
+			values.push_back(*order_by->eval(getContext(c)));
+		}
+		// 2. initialize order cache
+		order.reset(new OrderCache<CardP>(cards, values));
+	}
+	return order->find(card);
 }
 
 // ----------------------------------------------------------------------------- : Styling

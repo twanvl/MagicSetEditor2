@@ -29,7 +29,7 @@ ScriptValueP ScriptValue::dependencies(Context&,               const Dependency&
 
 // ----------------------------------------------------------------------------- : Iterators
 
-ScriptType ScriptIterator::type() const { return SCRIPT_OBJECT; }
+ScriptType ScriptIterator::type() const { return SCRIPT_ITERATOR; }
 String ScriptIterator::typeName() const { return _("iterator"); }
 
 // Iterator over a range of integers

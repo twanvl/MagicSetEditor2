@@ -1136,6 +1136,9 @@
 				RelativePath=".\util\for_each.hpp">
 			</File>
 			<File
+				RelativePath=".\util\order_cache.hpp">
+			</File>
+			<File
 				RelativePath=".\util\prec.hpp">
 			</File>
 			<File

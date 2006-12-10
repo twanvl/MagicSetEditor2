@@ -10,6 +10,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/reflect.hpp>
 #include <util/error.hpp>
 class Context;
 class Dependency;
@@ -37,7 +38,9 @@ enum ScriptType
 ,	SCRIPT_COLOR
 ,	SCRIPT_IMAGE
 ,	SCRIPT_FUNCTION
-,	SCRIPT_OBJECT
+,	SCRIPT_OBJECT // Only ScriptObject
+,	SCRIPT_COLLECTION
+,	SCRIPT_ITERATOR
 ,	SCRIPT_DUMMY
 };
 
@@ -121,7 +124,7 @@ extern ScriptValueP dependency_dummy; ///< Dummy value used during dependency an
 
 // Iterator over a collection
 struct ScriptIterator : public ScriptValue {
-	virtual ScriptType type() const;// { return SCRIPT_OBJECT; }
+	virtual ScriptType type() const;// { return SCRIPT_ITERATOR; }
 	virtual String typeName() const;// { return "iterator"; }
 	
 	/// Return the next item for this iterator, or ScriptValueP() if there is no such item
@@ -155,7 +158,7 @@ template <typename Collection>
 class ScriptCollection : public ScriptValue {
   public:
 	inline ScriptCollection(const Collection* v) : value(v) {}
-	virtual ScriptType type() const { return SCRIPT_OBJECT; }
+	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
 	virtual String typeName() const { return _("collection"); }
 	virtual ScriptValueP getMember(const String& name) const {
 		long index;
@@ -201,7 +204,7 @@ template <typename Collection>
 class ScriptMap : public ScriptValue {
   public:
 	inline ScriptMap(const Collection* v) : value(v) {}
-	virtual ScriptType type() const { return SCRIPT_OBJECT; }
+	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
 	virtual String typeName() const { return _("collection"); }
 	virtual ScriptValueP getMember(const String& name) const {
 		return get_member(*value, name);
@@ -218,6 +221,11 @@ class ScriptMap : public ScriptValue {
 template <typename T>
 int item_count(const T& v) {
 	return -1;
+}
+/// Return an iterator for some collection, can be overloaded
+template <typename T>
+ScriptValueP make_iterator(const T& v) {
+	return ScriptValueP();
 }
 
 /// Mark a dependency on a member of value, can be overloaded
@@ -253,12 +261,16 @@ class ScriptObject : public ScriptValue {
 		mark_dependency_member(value, name, dep);
 		return getMember(name);
 	}
+	virtual ScriptValueP makeIterator() const {
+		ScriptValueP it = make_iterator(*value);
+		return it ? it : ScriptValue::makeIterator();
+	}
 	virtual int itemCount() const {
 		int i = item_count(*value);
 		return i >= 0 ? i : ScriptValue::itemCount();
 	}
 	/// Get access to the value
-	inline T getValue() { return value; }
+	inline T getValue() const { return value; }
   private:
 	T value; ///< The object
 	ScriptValueP getDefault() const {

@@ -9,6 +9,7 @@
 #include <script/value.hpp>
 #include <script/context.hpp>
 #include <util/tagged_string.hpp>
+#include <data/set.hpp>
 #include <wx/regex.h>
 
 DECLARE_TYPEOF_COLLECTION(UInt);
@@ -370,14 +371,53 @@ SCRIPT_RULE_1(tag_remove, String, tag) {
 
 // ----------------------------------------------------------------------------- : Vector stuff
 
+/// compare script values for equallity
+bool equal(const ScriptValue& a, const ScriptValue& b) {
+	ScriptType at = a.type(), bt = b.type();
+	if (at != bt) {
+		return false;
+	} else if (at == SCRIPT_INT) {
+		return    (int)a == (int)b;
+	} else if (at == SCRIPT_DOUBLE) {
+		return (double)a == (double)b;
+	} else if (at == SCRIPT_STRING) {
+		return (String)a == (String)b;
+	} else if (at == SCRIPT_OBJECT) {
+		// HACK for ScriptObject<shared_ptr<X> >
+		// assumes different types are layed out the same, and that
+		// should be void*, but then we need getMember for void
+		const ScriptObject<int*>& av = reinterpret_cast<const ScriptObject<int*>&>(a);
+		const ScriptObject<int*>& bv = reinterpret_cast<const ScriptObject<int*>&>(b);
+		return av.getValue() == bv.getValue();
+	}
+	return &a == &b;
+}
+
 /// position of some element in a vector
 /** 0 based index, -1 if not found */
 int position_in_vector(const ScriptValueP& of, const ScriptValueP& in, const ScriptValueP& order_by) {
 	ScriptType of_t = of->type(), in_t = in->type();
 	if (of_t == SCRIPT_STRING || in_t == SCRIPT_STRING) {
+		// string finding
 		return (int)((String)*of).find(*in); // (int)npos == -1
+	} else if (order_by) {
+		ScriptObject<Set*>*  s = dynamic_cast<ScriptObject<Set*>* >(in.get());
+		ScriptObject<CardP>* c = dynamic_cast<ScriptObject<CardP>*>(of.get());
+		if (s && c) {
+			return s->getValue()->positionOfCard(c->getValue(), order_by);
+		} else {
+			throw ScriptError(_("position: using 'order_by' is only supported for finding cards in the set"));
+		}
+	} else {
+		// unordered position
+		ScriptValueP it = in->makeIterator();
+		int i = 0;
+		while (ScriptValueP v = it->next()) {
+			if (equal(*of, *v)) return i;
+			i++;
+		}
 	}
-	return -1; // TODO
+	return -1; // TODO?
 }
 
 // finding positions, also of substrings
