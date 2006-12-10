@@ -412,7 +412,6 @@ void Packaged::open(const String& package) {
 	Package::open(package);
 	Reader reader(openIn(typeName()), absoluteFilename() + _("/") + typeName());
 	try {
-		reader.handleAppVersion();
 		reader.handle(*this);
 		validate(reader.file_app_version);
 	} catch (const ParseError& err) {
@@ -420,10 +419,14 @@ void Packaged::open(const String& package) {
 	}
 }
 void Packaged::save() {
-//	writeFile(thisT().fileName, thisT());
+	WITH_DYNAMIC_ARG(writing_package, this);
+	writeFile(typeName(), *this);
+	referenceFile(typeName());
 	Package::save();
 }
 void Packaged::saveAs(const String& package) {
-//	writeFile(thisT().fileName, thisT());
+	WITH_DYNAMIC_ARG(writing_package, this);
+	writeFile(typeName(), *this);
+	referenceFile(typeName());
 	Package::saveAs(package);
 }

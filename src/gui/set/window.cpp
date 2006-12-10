@@ -28,6 +28,8 @@
 #include <data/format/formats.hpp>
 
 DECLARE_TYPEOF_COLLECTION(SetWindowPanel*);
+DECLARE_TYPEOF_COLLECTION(SetWindow*);
+DECLARE_TYPEOF_COLLECTION(String);
 
 // ----------------------------------------------------------------------------- : Constructor
 
@@ -35,6 +37,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	: wxFrame(parent, wxID_ANY, _("Magic Set Editor"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE)
 	, current_panel(nullptr)
 	, find_dialog(nullptr)
+	, number_of_recent_sets(0)
 {
 	SetIcon(wxIcon(_("ICON_APP")));
 	
@@ -135,9 +138,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	if (settings.set_window_maximized) {
 		Maximize();
 	}
-//	SetWindows.push_back(&this); // register this window
-//	timer.owner = &this;
-//	timer.start(10);
+	set_windows.push_back(this); // register this window
 	// don't send update ui events to children
 	// note: this still sends events for menu and toolbar items!
 	wxUpdateUIEvent::SetMode(wxUPDATE_UI_PROCESS_SPECIFIED);
@@ -159,12 +160,11 @@ SetWindow::~SetWindow() {
 	current_panel->destroyUI(GetToolBar(), GetMenuBar());
 	// cleanup (see find stuff)
 	delete find_dialog;
-	// remove from list of main windows
-//	SetWindows.erase(remove(SetWindows.begin(), SetWindows.end(), &this));
+	// remove from list of set windows
+	set_windows.erase(remove(set_windows.begin(), set_windows.end(), this));
 	// stop updating
 	onBeforeChangeSet();
 }
-
 
 // ----------------------------------------------------------------------------- : Panel managment
 
@@ -203,6 +203,17 @@ void SetWindow::selectPanel(int id) {
 	}
 	// fix sizer stuff
 	fixMinWindowSize();
+}
+
+// ----------------------------------------------------------------------------- : Window managment
+
+vector<SetWindow*> SetWindow::set_windows;
+
+bool SetWindow::isOnlyWithSet() {
+	FOR_EACH(w, set_windows) {
+		if (w != this && w->set == set) return false;
+	}
+	return true;
 }
 
 // ----------------------------------------------------------------------------- : Set actions
@@ -255,17 +266,15 @@ void SetWindow::fixMinWindowSize() {
 }
 
 
-
 // ----------------------------------------------------------------------------- : Window events - close
 
 void SetWindow::onClose(wxCloseEvent& ev) {
 	// only ask if we want to save is this is the only window that has the current set opened
-//	if (!isOnlyWithSet() || askSaveAndContinue()) {
-//		timer.stop();
+	if (!isOnlyWithSet() || askSaveAndContinue()) {
 		Destroy();
-//	} else {
-//		ev.Veto();
-//	}
+	} else {
+		ev.Veto();
+	}
 }
 
 bool SetWindow::askSaveAndContinue() {
@@ -274,27 +283,26 @@ bool SetWindow::askSaveAndContinue() {
 	int save = wxMessageBox(_("The set has changed\n\nDo you want to save the changes?"), _("Save changes"), wxYES_NO | wxCANCEL | wxICON_EXCLAMATION);
 	if (save == wxYES) {
 		// save the set
-/*		try {
+		try {
 			if (set->needSaveAs()) {
 				// need save as
-				FileDialog dlg(&this, _("Save a set"), _(""), _(""), export_formats(set->game), wxSAVE | wxOVERWRITE_PROMPT);
-				if (dlg.showModal() == wxID_OK) {
-					exportSet(set, dlg.path, dlg.filterIndex);
+				wxFileDialog dlg(this, _("Save a set"), _(""), _(""), export_formats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
+				if (dlg.ShowModal() == wxID_OK) {
+					export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
 					return true;
 				} else {
 					return false;
 				}
 			} else {
 				set->save();
-				set->actions.atSavePoint = true;
+				set->actions.setSavePoint();
 				return true;
 			}
 		} catch (Error e) {
 			// something went wrong with saving, don't proceed
-			handleError(e);
+			handle_error(e);
 			return false;
 		}
-*/		return false;/////<<<<removeme
 	} else if (save == wxNO) {
 		return true;
 	} else { // wxCANCEL
@@ -307,16 +315,14 @@ bool SetWindow::askSaveAndContinue() {
 void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 	switch (ev.GetId()) {
 		// file menu
-		case ID_FILE_SAVE_AS:      ev.Enable(!set->actions.atSavePoint() || set->needSaveAs());	break;
+		case ID_FILE_SAVE:         ev.Enable(!set->actions.atSavePoint() || set->needSaveAs());	break;
 		case ID_FILE_EXPORT_IMAGE: ev.Enable(!!current_panel->selectedCard());					break;
 		case ID_FILE_EXPORT_APPR:  ev.Enable(set->game->isMagic());								break;
 		case ID_FILE_EXPORT_MWS:   ev.Enable(set->game->isMagic());								break;
-		/*case ID_FILE_INSPECT: {
-			// the item just before FileRecent, because FileRecent may not be in the menu yet
-			//updateRecentSets();
-			// TODO
+		case ID_FILE_EXIT:
+			// update for ID_FILE_RECENT done for a different id, because ID_FILE_RECENT may not be in the menu yet
+			updateRecentSets();
 			break;
-		}*/
 		// undo/redo
 		case ID_EDIT_UNDO: {
 			ev.Enable(set->actions.canUndo());
@@ -342,6 +348,27 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 			// items created by the panel, and cut/copy/paste and find/replace
 			current_panel->onUpdateUI(ev);
 	}
+}
+
+static const int FILE_MENU_SIZE_BEFORE_RECENT_SETS = 11; // HACK; we should calculate the position to insert!
+void SetWindow::updateRecentSets() {
+	wxMenuBar* mb = GetMenuBar();
+	assert(number_of_recent_sets <= (UInt)settings.recent_sets.size()); // the number of recent sets should only increase
+	UInt i = 0;
+	FOR_EACH(file, settings.recent_sets) {
+		if (i >= settings.max_recent_sets) break;
+		if (i < number_of_recent_sets) {
+			// menu item already exists, update it
+			mb->SetLabel(ID_FILE_RECENT + i, String(_("&")) << (i+1) << _(" ") << file);
+		} else {
+			// add new item
+			int pos = i + FILE_MENU_SIZE_BEFORE_RECENT_SETS; // HUGE HACK, we should calculate the position to insert!
+			IconMenu* file_menu = static_cast<IconMenu*>(mb->GetMenu(0));
+			file_menu->Insert(pos, ID_FILE_RECENT + i, String(_("&")) << (i+1) << _(" ") << file, wxEmptyString);
+		}
+		i++;
+	}
+	number_of_recent_sets = (UInt)settings.recent_sets.size();
 }
 
 // ----------------------------------------------------------------------------- : Window events - menu - file
@@ -433,7 +460,7 @@ void SetWindow::onFilePrintPreview(wxCommandEvent&) {
 }
 
 void SetWindow::onFileRecent(wxCommandEvent& ev) {
-//	setSet(import_set(settings.recentSets.at(ev.GetId() - ID_FILE_RECENT)));
+	setSet(import_set(settings.recent_sets.at(ev.GetId() - ID_FILE_RECENT)));
 }
 
 void SetWindow::onFileExit(wxCommandEvent&) {

@@ -35,11 +35,7 @@ class SetWindow : public wxFrame, public SetView {
 	DECLARE_EVENT_TABLE();
 	
 	// --------------------------------------------------- : Data
-	
-	// keep scripts up to date
-//	ScriptUpdater scriptUpdater;
-//	Timer timer;
-	
+		
 	// gui items
 	vector<SetWindowPanel*> panels;        ///< All panels on this window
 	SetWindowPanel*         current_panel;
@@ -50,7 +46,7 @@ class SetWindow : public wxFrame, public SetView {
 	// data for find/replace
 	wxDialog* find_dialog;
 	wxFindReplaceData find_data;
-	
+		
 	// --------------------------------------------------- : Panel managment
 	
 	/// Add a panel to the window, as well as to the menu and tab bar
@@ -64,13 +60,9 @@ class SetWindow : public wxFrame, public SetView {
 	
 	// --------------------------------------------------- : Managing multiple main windows
 	
-	/// All opened main windows
-	static vector<SetWindow*> setWindows;
-	
-	/// Is this the first window that has this set?
-	/** The first window is considered the owner in many cases */
-	bool isFirstWithSet();
-	
+	/// All opened set windows
+	static vector<SetWindow*> set_windows;
+		
 	/// Is this the only window that has this set?
 	bool isOnlyWithSet();
 	
@@ -106,6 +98,9 @@ class SetWindow : public wxFrame, public SetView {
 	// --------------------------------------------------- : Window events - update UI
 		
 	void onUpdateUI(wxUpdateUIEvent&);
+	/// The number of 'recent set' menu items shown
+	UInt number_of_recent_sets;
+	void updateRecentSets();
 	
 	// --------------------------------------------------- : Window events - menu - file
 	void onFileNew             (wxCommandEvent&);

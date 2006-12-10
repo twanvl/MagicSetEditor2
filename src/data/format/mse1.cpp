@@ -60,7 +60,7 @@ SetP MSE1FileFormat::importSet(const String& filename) {
 	set->value<TextValue>(_("copyright")).value = file.ReadLine();
 	file.ReadLine(); // border color, ignored
 	String stylesheet = file.ReadLine();
-	file.ReadLine(); // apprentice prefix ('MY'), ignored
+	set->apprentice_code = file.ReadLine(); // apprentice prefix
 	file.ReadLine(); // 'formatN'?, not even used by MSE1 :S, ignored
 	file.ReadLine(); // 'formatS'?, same, ignored
 	file.ReadLine(); // symbol filename, ignored

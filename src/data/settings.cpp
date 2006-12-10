@@ -145,7 +145,6 @@ String Settings::settingsFile() {
 }
 
 IMPLEMENT_REFLECTION(Settings) {
-	tag.handleAppVersion();
 	tag.addAlias(300,         _("style settings"),         _("stylesheet settings"));
 	tag.addAlias(300, _("default style settings"), _("default stylesheet settings"));
 	REFLECT(recent_sets);

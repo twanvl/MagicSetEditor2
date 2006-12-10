@@ -21,6 +21,7 @@ Writer::Writer(const OutputStreamP& output)
 	, just_opened(false)
 {
 	stream.WriteString(BYTE_ORDER_MARK);
+	handleAppVersion();
 }
 
 

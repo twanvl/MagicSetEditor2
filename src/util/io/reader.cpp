@@ -19,6 +19,7 @@ Reader::Reader(const InputStreamP& input, const String& filename)
 	, stream(*input)
 {
 	moveNext();
+	handleAppVersion();
 }
 
 Reader::Reader(const String& filename)
@@ -28,6 +29,7 @@ Reader::Reader(const String& filename)
 	, stream(*input)
 {
 	moveNext();
+	handleAppVersion();
 }
 
 void Reader::addAlias(Version end_version, const Char* a, const Char* b) {
