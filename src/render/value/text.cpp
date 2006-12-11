@@ -13,7 +13,8 @@
 
 void TextValueViewer::draw(RotatedDC& dc) {
 	drawFieldBorder(dc);
-	v.draw(dc, value().value(), style(), viewer.getContext(), DRAW_NORMAL);
+	v.prepare(dc, value().value(), style(), viewer.getContext());
+	v.draw(dc, style(), DRAW_NORMAL);
 }
 
 void TextValueViewer::onValueChange() {

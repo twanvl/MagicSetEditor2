@@ -224,7 +224,15 @@ void TextValueEditor::onMenu(wxCommandEvent& ev) {
 
 void TextValueEditor::draw(RotatedDC& dc) {
 	TextValueViewer::draw(dc);
-	v.drawSelection(dc, style(), selection_start, selection_end);
+	if (isCurrent()) {
+		v.drawSelection(dc, style(), selection_start, selection_end);
+		
+		// show caret, onAction() would be a better place
+		// but it has to be done after the viewer has updated the TextViewer
+		// we could do that ourselfs, but we need a dc for that
+		fixSelection();
+		showCaret();
+	}
 	// DEBUG, TODO: REMOVEME
 	Rotater r(dc, style().getRotation());
 	/*dc.SetPen(*wxRED_PEN);
@@ -269,8 +277,6 @@ void TextValueEditor::onAction(const ValueAction& action, bool undone) {
 	TYPE_CASE(action, TextValueAction) {
 		selection_start = action.selection_start;
 		selection_end   = action.selection_end;
-		fixSelection();
-		if (isCurrent()) showCaret();
 	}
 }
 
@@ -437,6 +443,8 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 		moveSelection(selection_start);
 		return;
 	}
+	// perform the action
+	// NOTE: this calls our onAction, invalidating the text viewer and moving the selection around the new text
 	getSet().actions.add(action);
 	// move cursor
 	if (field().move_cursor_with_sort && replacement.size() == 1) {

@@ -47,10 +47,12 @@ class TextViewer {
 	/** The drawing information is cached,
 	 *  before calling draw again with different text/style reset() should be called
 	 */
-	void draw(RotatedDC& dc, const String& text, const TextStyle& style, Context&, DrawWhat);
+	void draw(RotatedDC& dc, const TextStyle& style, DrawWhat what);
 	/// Draw an indicator for selected text
 	void drawSelection(RotatedDC& dc, const TextStyle& style, size_t sel_start, size_t sel_end);
 	
+	/// Prepare the text for drawing, if it is not already prepared
+	void prepare(RotatedDC& dc, const String& text, const TextStyle& style, Context&);
 	/// Reset the cached data, at a new call to draw it will be recalculated
 	void reset();
 	

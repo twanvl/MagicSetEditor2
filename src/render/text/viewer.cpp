@@ -64,13 +64,9 @@ TextViewer::~TextViewer() {}
 
 // ----------------------------------------------------------------------------- : Drawing
 
-void TextViewer::draw(RotatedDC& dc, const String& text, const TextStyle& style, Context& ctx, DrawWhat what) {
+void TextViewer::draw(RotatedDC& dc, const TextStyle& style, DrawWhat what) {
+	assert(!lines.empty());
 	Rotater r(dc, style.getRotation());
-	if (lines.empty()) {
-		// not prepared yet
-		prepareElements(text, style, ctx);
-		prepareLines(dc, text, style);
-	}
 	// Draw the text  line by line
 	FOR_EACH(l, lines) {
 		if (l.visible(dc)) {
@@ -102,6 +98,14 @@ void TextViewer::Line::drawSelection(RotatedDC& dc, size_t sel_start, size_t sel
 	}
 }
 
+void TextViewer::prepare(RotatedDC& dc, const String& text, const TextStyle& style, Context& ctx) {
+	if (lines.empty()) {
+		// not prepared yet
+		Rotater r(dc, style.getRotation());
+		prepareElements(text, style, ctx);
+		prepareLines(dc, text, style);
+	}
+}
 void TextViewer::reset() {
 	elements.clear();
 	lines.clear();
