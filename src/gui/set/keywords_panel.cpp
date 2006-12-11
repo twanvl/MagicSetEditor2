@@ -7,8 +7,24 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <gui/set/keywords_panel.hpp>
+#include <data/keyword.hpp>
+#include <wx/listctrl.h>
 
 // ----------------------------------------------------------------------------- : KeywordsList
+
+/// A control that lists the keywords in a set or game
+class KeywordList : public wxListView {
+  public:
+	KeywordList(Window* parent, int id);
+	
+	/// Set the list of keywords to show
+	void setData(vector<KeywordP>& dat);
+	
+	bool canSelectPrevious() const;
+	bool canSelectNext() const;
+	void selectPrevious();
+	void selectNext();
+};
 
 // ----------------------------------------------------------------------------- : KeywordsPanel
 

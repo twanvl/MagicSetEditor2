@@ -9,9 +9,11 @@
 #include <gui/set/cards_panel.hpp>
 #include <gui/control/card_list.hpp>
 #include <gui/control/card_editor.hpp>
+#include <gui/control/text_ctrl.hpp>
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <data/set.hpp>
+#include <data/card.hpp>
 #include <data/action/set.hpp>
 #include <data/settings.hpp>
 #include <util/window_id.hpp>
@@ -23,25 +25,27 @@ CardsPanel::CardsPanel(Window* parent, int id)
 	: SetWindowPanel(parent, id, false)
 {
 	// init controls
-//	Panel* notesP
-	editor   = new CardEditor(this, ID_EDITOR);
-//	splitter = new SplitterWindow(&this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
+	wxPanel* notesP;
+	wxSplitterWindow* splitter;
+	editor    = new CardEditor(this, ID_EDITOR);
+	splitter  = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
 //	card_list = new EditCardList(splitter, ID_CARD_LIST);
-	card_list = new CardListBase(this, ID_CARD_LIST);
+	card_list = new CardListBase(splitter, ID_CARD_LIST);
+	notesP    = new Panel(splitter, wxID_ANY);
+	notes     = new TextCtrl(notesP, ID_NOTES);
+	// init sizer for notes panel
+	wxSizer* sn = new wxBoxSizer(wxVERTICAL);
+	sn->Add(new wxStaticText(notesP, wxID_ANY, _("Card notes:")), 0, wxEXPAND, 2);
+	sn->Add(notes, 1, wxEXPAND | wxTOP, 2);
+	notesP->SetSizer(sn);
 	// init splitter
-//	splitter->minimumPaneSize = 14;
-//	splitter->sashGravity = 1.0;
-//	splitter->splitHorizontally(cardList, notesP, -40);
+	splitter->SetMinimumPaneSize(14);
+	splitter->SetSashGravity(1.0);
+	splitter->SplitHorizontally(card_list, notesP, -40);
 	// init sizer
-/*	Sizer* s = new wxBoxSizer(wxHORIZONTAL);
-	s->Add(editor, 0, wxRIGHT, 2);
-	s->Add(splitter, 1, wxEXPAND);
-	s->SetSizeHints(this);
-	SetSizer(s);
-*/
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
-	s->Add(editor,    0, wxRIGHT, 2);
-	s->Add(card_list, 1, wxEXPAND);
+	s->Add(editor,   0, wxRIGHT, 2);
+	s->Add(splitter, 1, wxEXPAND);
 	s->SetSizeHints(this);
 	SetSizer(s);
 }
@@ -52,6 +56,7 @@ CardsPanel::~CardsPanel() {
 
 void CardsPanel::onChangeSet() {
 	editor->setSet(set);
+	notes->setSet(set);
 	card_list->setSet(set);
 /*	// resize editor
 	Sizer* s = sizer;
@@ -230,4 +235,5 @@ CardP CardsPanel::selectedCard() const {
 void CardsPanel::selectCard(const CardP& card) {
 	card_list->setCard(card);
 	editor->setCard(card);
+	notes->setValue(card ? &card->notes : nullptr);
 }

@@ -138,7 +138,8 @@ void ColorValueEditor::onLoseFocus() {
 	drop_down->hide(false);
 }
 
-void ColorValueEditor::drawSelection(RotatedDC& dc) {
+void ColorValueEditor::draw(RotatedDC& dc) {
+	ColorValueViewer::draw(dc);
 	if (nativeLook()) {
 		draw_drop_down_arrow(&editor(), dc.getDC(), style().getRect().grow(1), drop_down->IsShown());
 	}

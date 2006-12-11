@@ -28,7 +28,7 @@ class ChoiceValueEditor : public ChoiceValueViewer, public ValueEditor {
 	virtual void onChar(wxKeyEvent& ev);
 	virtual void onLoseFocus();
 	
-	virtual void drawSelection(RotatedDC& dc);
+	virtual void draw(RotatedDC& dc);
 	virtual void determineSize();
 	
   private:

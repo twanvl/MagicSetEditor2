@@ -585,6 +585,12 @@
 				<File
 					RelativePath=".\gui\control\package_list.hpp">
 				</File>
+				<File
+					RelativePath=".\gui\control\text_ctrl.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\text_ctrl.hpp">
+				</File>
 			</Filter>
 			<Filter
 				Name="symbol"

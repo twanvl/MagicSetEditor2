@@ -53,6 +53,12 @@ class IndexMap : private vector<Value> {
 			init_object(key, (*this)[key->index]);
 		}
 	}
+	/// Change this map by adding an additional key and value
+	void add(const Key& key, const Value& value) {
+		assert(get_key(value) == key);
+		if (key->index >= this->size()) this->resize(key->index + 1);
+		(*this)[key->index] = value;
+	}
 	
 	/// Retrieve a value given its key
 	inline Value operator [] (const Key& key) {

@@ -102,7 +102,8 @@ void ChoiceValueEditor::onLoseFocus() {
 	drop_down->hide(false);
 }
 
-void ChoiceValueEditor::drawSelection(RotatedDC& dc) {
+void ChoiceValueEditor::draw(RotatedDC& dc) {
+	ChoiceValueViewer::draw(dc);
 	if (nativeLook()) {
 		draw_drop_down_arrow(&editor(), dc.getDC(), style().getRect().grow(1), drop_down->IsShown());
 	}

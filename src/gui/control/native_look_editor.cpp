@@ -42,8 +42,6 @@ void NativeLookEditor::drawViewer(RotatedDC& dc, ValueViewer& v) {
 	draw_control_border(this, dc.getDC(), wxRect(s.left - 1, s.top - 1, s.width + 2, s.height + 2));
 	// draw viewer
 	v.draw(dc);
-	ValueEditor* e = v.getEditor();
-	if (e) e->drawSelection(dc);
 }
 
 void NativeLookEditor::resizeViewers() {
@@ -66,7 +64,7 @@ void NativeLookEditor::resizeViewers() {
 }
 
 void NativeLookEditor::onInit() {
-	// Give fieldEditors a chance to show/hide controls (scrollbar) when selecting other editors
+	// Give viewers a chance to show/hide controls (scrollbar) when selecting other editors
 	FOR_EACH_EDITOR {
 		e->onShow(true);
 	}

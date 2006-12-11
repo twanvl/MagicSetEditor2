@@ -15,6 +15,7 @@
 class wxSplitterWindow;
 class CardListBase;
 class DataEditor;
+class TextCtrl;
 
 // ----------------------------------------------------------------------------- : CardsPanel
 
@@ -83,7 +84,7 @@ class CardsPanel : public SetWindowPanel {
 	bool findInValue(const CardP& crd_, virtual const ValueP& value, int firstChar, FindReplaceData& what, const FindHandler& handler);
 	*/
   public:
-  
+	
 	// --------------------------------------------------- : Selection
 	virtual CardP selectedCard() const;
 	virtual void selectCard(const CardP& card);
@@ -93,7 +94,7 @@ class CardsPanel : public SetWindowPanel {
 	wxSplitterWindow* splitter;
 	DataEditor*       editor;
 	CardListBase*     card_list;
-//	DataTextCtrl*     notes;
+	TextCtrl*         notes;
 	
 	// --------------------------------------------------- : Menus & tools
 	wxMenu* cardMenu, formatMenu;

@@ -99,11 +99,6 @@ class ValueEditor {
 	virtual void determineSize() {}
 	/// The editor is shown or hidden
 	virtual void onShow(bool) {}
-	
-	/// Draw selection indicators
-	/** note: the drawing of the value is done by the viewer, only a selection indicator is drawn here
-	 */
-	virtual void drawSelection(RotatedDC& dc) {}
 };
 
 // ----------------------------------------------------------------------------- : Utility
