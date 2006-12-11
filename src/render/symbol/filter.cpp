@@ -10,6 +10,7 @@
 #include <render/symbol/viewer.hpp>
 #include <gfx/gfx.hpp>
 #include <util/error.hpp>
+#include <script/value.hpp> // for some strange reason the profile build needs this :(
 
 // ----------------------------------------------------------------------------- : Symbol filtering
 

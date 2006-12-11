@@ -18,12 +18,13 @@ const int text_scaling = 4;
 // Fills an image with the specified color
 void fill_image(Image& image, const Color& color) {
 	Byte* pos = image.GetData();
-	Byte* end = image.GetData() + image.GetWidth() * image.GetHeight() * 3;
+	Byte* end = pos + image.GetWidth() * image.GetHeight() * 3;
+	Byte r = color.Red(), g = color.Green(), b = color.Blue();
+	// fill the image
 	while (pos != end) {
-		pos[0] = color.Red();
-		pos[1] = color.Green();
-		pos[2] = color.Blue();
-		pos += 3;
+		*pos++ = r;
+		*pos++ = g;
+		*pos++ = b;
 	}
 }
 
@@ -58,6 +59,27 @@ void downsample_to_alpha(Image& img_in, Image& img_out) {
 			out[x + line_size * y] = total / text_scaling;
 		}
 	}
+	
+	/*
+	img_out.InitAlpha();
+	Byte* in  = img_in.GetData();
+	Byte* out = img_out.GetAlpha();
+	int w = img_out.GetWidth(), h = img_out.GetHeight();
+	int line_size = 3 * w * text_scaling;
+	for (int y = 0 ; y < h ; ++y) {
+		for (int x = 0 ; x < w ; ++x) {
+			int total = 0;
+			for (int i = 0 ; i < text_scaling ; ++i) {
+				for (int j = 0 ; j < text_scaling ; ++j) {
+					total += in[3*j];
+				}
+				in += line_size;
+			}
+			*out++ = total / (text_scaling * text_scaling);
+			in += 3 * text_scaling - line_size * text_scaling;
+		}
+		in += line_size * (text_scaling - 1);
+	}*/
 }
 
 // Draw text by first drawing it using a larger font and then downsampling it

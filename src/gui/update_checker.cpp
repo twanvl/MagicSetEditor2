@@ -9,6 +9,7 @@
 #include <gui/update_checker.hpp>
 #include <data/settings.hpp>
 #include <util/version.hpp>
+#include <script/value.hpp> // for some strange reason the profile build needs this :(
 #include <wx/dialup.h>
 #include <wx/url.h>
 #include <wx/html/htmlwin.h>

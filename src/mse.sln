@@ -10,6 +10,7 @@ Global
 		Release = Release
 		Release Profile Unicode = Release Profile Unicode
 		Release Unicode = Release Unicode
+		Release Unicode fast build = Release Unicode fast build
 	EndGlobalSection
 	GlobalSection(ProjectConfiguration) = postSolution
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Debug.ActiveCfg = Debug|Win32
@@ -18,9 +19,11 @@ Global
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Debug Unicode.Build.0 = Debug Unicode|Win32
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release.ActiveCfg = Release|Win32
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release.Build.0 = Release|Win32
-		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Profile Unicode.ActiveCfg = Release Unicode|Win32
-		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Profile Unicode.Build.0 = Release Unicode|Win32
+		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Profile Unicode.ActiveCfg = Release Profile Unicode|Win32
+		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Profile Unicode.Build.0 = Release Profile Unicode|Win32
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Unicode.ActiveCfg = Release Unicode|Win32
+		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Unicode fast build.ActiveCfg = Release Unicode fast build|Win32
+		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Unicode fast build.Build.0 = Release Unicode fast build|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
