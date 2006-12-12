@@ -8,14 +8,20 @@ menu
 	save:				&Save	Ctrl+S
 	save as:			Save &As...	F12
 	export:				&Export
-	exit:				&Exit	Alt+F4
+	print preview:		Print Pre&view...
+	print:				&Print...	Ctrl+P
+	exit:				E&xit	Alt+F4
 	
 	edit:			&Edit
-	undo:				&Undo	Ctrl+Z
-	redo:				&Redo	Ctrl+Y
+	undo:				&Undo %s	Ctrl+Z
+	redo:				&Redo %s	Ctrl+Y
 	cut:				Cu&t	Ctrl+X
 	copy:				&Copy	Ctrl+C
 	paste:				&Paste	Ctrl+V
+	find:				&Find	Ctrl+F
+	find next:			Find &Next	F3
+	replace:			R&eplace	Ctrl+H
+	preferences:		&Preferences...
 	
 	cards:			&Cards
 	rotate 270:			Rotated 90° &Clockwise
@@ -34,14 +40,33 @@ menu
 
 ############################################################## Menu help texts
 help:
-	new:			Create a new set
+	file:
+	new:				Create a new set
+	open:				Open a set
+	save:				Save the set
+	save as:			Save the set with a new name
+	exit:				Quits Magic Set Editor; prompts to save the set
+	
+	edit:
+	undo:				Undoes the last action
+	redo:				Redoes the last action
+	
+	format:
 	bold:			Makes the selected text bold
 	italic:			Makes the selected text italic
 
-############################################################## Tooltips
+############################################################## Toolbar
 tool:
+	cards tab:		Cards
+	set info tab:	Set info
+	
 	remove card:	Remove selected card
 	rotated card:	Rotate card
+	
+	bold:			Bold
+	italic:			Italic
+	symbols:		Symbols
+	reminder text:	Reminder Text
 
 ############################################################## Labels in the GUI
 label:
@@ -111,9 +136,17 @@ type:
 ############################################################## Magic
 game:
 	magic:
+		# Card fields
 		name:		Name
 		cc:			CC
 		type:		Type
 		p/t:		P/T
 		rarity:		Rarity
 		card name:	Card Name
+		
+		# Set info
+		
+		# descriptions/help text
+#stylesheet:
+#	magic-new:
+#		

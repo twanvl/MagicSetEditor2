@@ -44,53 +44,53 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	// initialize menu bar
 	wxMenuBar* menuBar = new wxMenuBar();
 	IconMenu* menuFile = new IconMenu();
-		menuFile->Append(ID_FILE_NEW,		_("TOOL_NEW"),		_("&New...\tCtrl+N"),			_("Create a new set"));
-		menuFile->Append(ID_FILE_OPEN,		_("TOOL_OPEN"),		_("&Open...\tCtrl+O"),			_("Open a set"));
-		menuFile->Append(ID_FILE_SAVE,		_("TOOL_SAVE"),		_("&Save\tCtrl+S"),				_("Save the set"));
-		menuFile->Append(ID_FILE_SAVE_AS,						_("Save &As...\tF12"),			_("Save the set with a new name"));
+		menuFile->Append(ID_FILE_NEW,		_("TOOL_NEW"),		_MENU_("new"),			_HELP_("new"));
+		menuFile->Append(ID_FILE_OPEN,		_("TOOL_OPEN"),		_MENU_("open"),			_HELP_("open"));
+		menuFile->Append(ID_FILE_SAVE,		_("TOOL_SAVE"),		_MENU_("save"),			_HELP_("save"));
+		menuFile->Append(ID_FILE_SAVE_AS,						_MENU_("save as"),		_HELP_("save as"));
 		IconMenu* menuExport = new IconMenu();
 			menuExport->Append(ID_FILE_EXPORT_HTML,					_("&HTML..."),					_("Export the set to a HTML file"));
 			menuExport->Append(ID_FILE_EXPORT_IMAGE,				_("Card &Image..."),			_("Export the selected card to an image file"));
 			menuExport->Append(ID_FILE_EXPORT_IMAGES,				_("All Card I&mages..."),		_("Export images for all cards"));
 			menuExport->Append(ID_FILE_EXPORT_APPR,					_("&Apprentice..."),			_("Export the set so it can be played with in Apprentice"));
 			menuExport->Append(ID_FILE_EXPORT_MWS,					_("Magic &Workstation..."),		_("Export the set so it can be played with in Magic Workstation"));
-		menuFile->Append(ID_FILE_EXPORT,						_("&Export"),					_("Export the set..."), menuExport);
+		menuFile->Append(ID_FILE_EXPORT,						_MENU_("export"),					_("Export the set..."), menuExport);
 		menuFile->AppendSeparator();
 		menuFile->Append(ID_FILE_INSPECT,						_("Inspect Internal Data..."),	_("Shows a the data in the set using a tree structure"));
 		menuFile->AppendSeparator();
-		menuFile->Append(ID_FILE_PRINT_PREVIEW,					_("Print Pre&view..."),			_("Shows cards as they will be printed"));
-		menuFile->Append(ID_FILE_PRINT,							_("&Print..."),					_("Print cards from this set"));
+		menuFile->Append(ID_FILE_PRINT_PREVIEW,					_MENU_("print preview"),			_("Shows cards as they will be printed"));
+		menuFile->Append(ID_FILE_PRINT,							_MENU_("print"),					_("Print cards from this set"));
 		menuFile->AppendSeparator();
 		// recent files go here
 		menuFile->AppendSeparator();
-		menuFile->Append(ID_FILE_EXIT,							_("E&xit\tAlt+F4"),				_("Quits Magic Set Editor; prompts to save the set"));
+		menuFile->Append(ID_FILE_EXIT,							_MENU_("exit"),				_HELP_("exit"));
 	menuBar->Append(menuFile, _MENU_("file"));
 	
 	IconMenu* menuEdit = new IconMenu();
-		menuEdit->Append(ID_EDIT_UNDO,		_("TOOL_UNDO"),		_("&Undo\tCtrl+Z"),				_("Undoes the last action"));
-		menuEdit->Append(ID_EDIT_REDO,		_("TOOL_REDO"),		_("&Redo\tF4"),					_("Redoes the last action"));
+		menuEdit->Append(ID_EDIT_UNDO,		_("TOOL_UNDO"),		_MENU_("undo"),				_("Undoes the last action"));
+		menuEdit->Append(ID_EDIT_REDO,		_("TOOL_REDO"),		_MENU_("redo"),				_("Redoes the last action"));
 		menuEdit->AppendSeparator();
-		menuEdit->Append(ID_EDIT_CUT,		_("TOOL_CUT"),		_("Cu&t\tCtrl+X"),				_("Move the selected text to the clipboard"));
-		menuEdit->Append(ID_EDIT_COPY,		_("TOOL_COPY"),		_("&Copy\tCtrl+C"),				_("Place the selected text on the clipboard"));
-		menuEdit->Append(ID_EDIT_PASTE,		_("TOOL_PASTE"),	_("&Paste\tCtrl+V"),			_("Inserts the text from the clipboard"));
+		menuEdit->Append(ID_EDIT_CUT,		_("TOOL_CUT"),		_MENU_("cut"),				_("Move the selected text to the clipboard"));
+		menuEdit->Append(ID_EDIT_COPY,		_("TOOL_COPY"),		_MENU_("copy"),				_("Place the selected text on the clipboard"));
+		menuEdit->Append(ID_EDIT_PASTE,		_("TOOL_PASTE"),	_MENU_("paste"),			_("Inserts the text from the clipboard"));
 		menuEdit->AppendSeparator();
-		menuEdit->Append(ID_EDIT_FIND,		_("TOOL_FIND"),		_("&Find...\tCtrl+F"),			_(""));
-		menuEdit->Append(ID_EDIT_FIND_NEXT,						_("Find &Next\tF3"),			_(""));
-		menuEdit->Append(ID_EDIT_REPLACE,						_("R&eplace...\tCtrl+H"),		_(""));
+		menuEdit->Append(ID_EDIT_FIND,		_("TOOL_FIND"),		_MENU_("find"),				_(""));
+		menuEdit->Append(ID_EDIT_FIND_NEXT,						_MENU_("find next"),		_(""));
+		menuEdit->Append(ID_EDIT_REPLACE,						_MENU_("replace"),			_(""));
 		menuEdit->AppendSeparator();
-		menuEdit->Append(ID_EDIT_PREFERENCES,					_("Preferences..."),			_("Change the configuration of Magic Set Editor"));
-	menuBar->Append(menuEdit, _("&Edit"));
+		menuEdit->Append(ID_EDIT_PREFERENCES,					_MENU_("preferences"),		_("Change the configuration of Magic Set Editor"));
+	menuBar->Append(menuEdit, _MENU_("edit"));
 	
 	IconMenu* menuWindow = new IconMenu();
 		menuWindow->Append(ID_WINDOW_NEW,					_	("&New Window"),				_("Creates another window to edit the same set"));
 		menuWindow->AppendSeparator();
-	menuBar->Append(menuWindow, _("&Window"));
+	menuBar->Append(menuWindow, _MENU_("window"));
 	
 	IconMenu* menuHelp = new IconMenu();
 		menuHelp->Append(ID_HELP_INDEX,		_("TOOL_HELP"),		_("&Index..\tF1"),				_(""));
 		menuHelp->AppendSeparator();
 		menuHelp->Append(ID_HELP_ABOUT,							_("&About Magic Set Editor..."), _(""));
-	menuBar->Append(menuHelp, _("&Help"));
+	menuBar->Append(menuHelp, _MENU_("help"));
 	
 	SetMenuBar(menuBar);
 		
