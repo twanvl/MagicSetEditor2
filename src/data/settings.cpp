@@ -89,6 +89,7 @@ Settings::Settings()
 	, card_notes_height    (40)
 	, updates_url          (_("http://magicseteditor.sourceforge.net/updates"))
 	, check_updates        (CHECK_IF_CONNECTED)
+	, locale               (_("en"))
 {}
 
 void Settings::addRecentFile(const String& filename) {
@@ -147,6 +148,7 @@ String Settings::settingsFile() {
 IMPLEMENT_REFLECTION(Settings) {
 	tag.addAlias(300,         _("style settings"),         _("stylesheet settings"));
 	tag.addAlias(300, _("default style settings"), _("default stylesheet settings"));
+	REFLECT(locale);
 	REFLECT(recent_sets);
 	REFLECT(set_window_maximized);
 	REFLECT(set_window_width);

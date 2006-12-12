@@ -11,6 +11,7 @@
 #include <data/game.hpp>
 #include <data/set.hpp>
 #include <data/settings.hpp>
+#include <data/locale.hpp>
 #include <data/format/formats.hpp>
 #include <gui/welcome_window.hpp>
 #include <gui/update_checker.hpp>
@@ -45,6 +46,7 @@ bool MSE::OnInit() {
 		init_file_formats();
 		packages.init();
 		settings.read();
+		the_locale = Locale::byName(settings.locale);
 		// check for updates
 		check_updates();
 		//Window* wnd = new SymbolWindow(nullptr);

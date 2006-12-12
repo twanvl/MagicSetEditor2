@@ -66,7 +66,7 @@ shared_ptr<SymbolFilter> read_new<SymbolFilter>(Reader& reader) {
 	else if (fill_type == _("linear gradient"))	return new_shared<LinearGradientSymbolFilter>();
 	else if (fill_type == _("radial gradient"))	return new_shared<RadialGradientSymbolFilter>();
 	else {
-		throw ParseError(_("Unsupported fill type: '") + fill_type + _("'"));
+		throw ParseError(_ERROR_1_("unsupported fill type", fill_type));
 	}
 }
 

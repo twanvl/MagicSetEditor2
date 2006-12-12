@@ -64,7 +64,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 		// recent files go here
 		menuFile->AppendSeparator();
 		menuFile->Append(ID_FILE_EXIT,							_("E&xit\tAlt+F4"),				_("Quits Magic Set Editor; prompts to save the set"));
-	menuBar->Append(menuFile, _("&File"));
+	menuBar->Append(menuFile, _MENU_("file"));
 	
 	IconMenu* menuEdit = new IconMenu();
 		menuEdit->Append(ID_EDIT_UNDO,		_("TOOL_UNDO"),		_("&Undo\tCtrl+Z"),				_("Undoes the last action"));

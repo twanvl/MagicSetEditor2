@@ -83,6 +83,10 @@ class Settings {
 	/// Default constructor initializes default settings
 	Settings();
 	
+	// --------------------------------------------------- : Locale
+	
+	String locale;
+	
 	// --------------------------------------------------- : Recently opened sets
 	vector<String> recent_sets;
 	static const UInt max_recent_sets = 4; // store this many recent sets

@@ -17,7 +17,7 @@ template <typename T> inline T sqr(T x) { return x * x; }
 void linear_blend(Image& img1, const Image& img2, double x1,double y1, double x2,double y2) {
 	int width = img1.GetWidth(), height = img1.GetHeight();
 	if (img2.GetWidth() != width || img2.GetHeight() != height) {
-		throw Error(_("Images used for blending must have the same size"));
+		throw Error(_ERROR_("images used for blending must have the same size"));
 	}
 	
 	const int fixed = 1<<16; // fixed point multiplier
@@ -35,7 +35,7 @@ void linear_blend(Image& img1, const Image& img2, double x1,double y1, double x2
 	//   (using dx = x1-x2, dy = y1-y2)
 	//   a = fixed / (w^2 dx^2 + h^2 dy^2)
 	//   d = a * (w^2 x1 dx + h^2 y1 dy)
-	if (x1==x2 && y1==y2) throw Error(_("Coordinates for blending overlap"));
+	if (x1==x2 && y1==y2) throw Error(_ERROR_("coordinates for blending overlap"));
 	double a = fixed / (sqr(width) * sqr(x1-x2)  +  sqr(height) * sqr(y1-y2));
 	int xm = (x2 - x1) * width  * a;
 	int ym = (y2 - y1) * height * a;

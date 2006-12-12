@@ -36,8 +36,7 @@ class Error {
 class InternalError : public Error {
   public:
 	inline InternalError(const String& str)
-		: Error(_("An internal error occured:\n\n") + str
-		       +_("\n\nPlease save your work (use 'save as' to so you don't overwrite things),\n and restart Magic Set Editor.\n\nYou should leave a bug report on http://magicseteditor.sourceforge.net/"))
+		: Error(_ERROR_1_("internal error",str))
 	{}
 };
 
@@ -53,7 +52,7 @@ class PackageError : public Error {
 class FileNotFoundError : public PackageError {
   public:
 	inline FileNotFoundError(const String& file, const String& package)
-		: PackageError(_("File not found: ") + file + _(" in package ") + package)
+		: PackageError(_ERROR_2_("file not found",file,package))
 	{}
 };
 
@@ -69,7 +68,7 @@ class ParseError : public Error {
 class FileParseError : public ParseError {
   public:
 	inline FileParseError(const String& err, const String& file) :
-		ParseError(_("Error while parsing file '") + file + _("':\n") + err)
+		ParseError(_ERROR_2_("file parse error",file,err))
 	{}
 };
 

@@ -1,0 +1,119 @@
+﻿full name: English
+
+############################################################## Menu items
+menu
+	file:			&File
+	new:				&New...	Ctrl+N
+	open:				&Open...	Ctrl+O
+	save:				&Save	Ctrl+S
+	save as:			Save &As...	F12
+	export:				&Export
+	exit:				&Exit	Alt+F4
+	
+	edit:			&Edit
+	undo:				&Undo	Ctrl+Z
+	redo:				&Redo	Ctrl+Y
+	cut:				Cu&t	Ctrl+X
+	copy:				&Copy	Ctrl+C
+	paste:				&Paste	Ctrl+V
+	
+	cards:			&Cards
+	rotate 270:			Rotated 90° &Clockwise
+	
+	format:			&Format
+	bold:				&Bold	Ctrl+B
+	italic:				&Italic	Ctrl+I
+	symbols:			&Symbols	Ctrl+M
+	reminder text:		&Reminder Text	Ctrl+R
+	
+	window:			&Window
+	new window:			&New Window
+	cards tab:			&Cards
+	
+	help:			&Help
+
+############################################################## Menu help texts
+help:
+	new:			Create a new set
+	bold:			Makes the selected text bold
+	italic:			Makes the selected text italic
+
+############################################################## Tooltips
+tool:
+	remove card:	Remove selected card
+	rotated card:	Rotate card
+
+############################################################## Labels in the GUI
+label:
+	card notes:		Card notes:
+
+############################################################## Buttons in the GUI
+button:
+	use for all cards:	Use for &all cards
+
+############################################################## Action (undo/redo) names
+action:
+	typing:			Typing
+	backspace:		Backspace
+	delete:			Delete
+	change:			Change %s
+
+############################################################## Error messages
+error:
+	# General
+	internal error:
+		An internal error occured:
+		
+		%s
+		
+		Please save your work (use 'save as' to so you don't overwrite things)
+		and restart Magic Set Editor.
+		
+		You should leave a bug report on http://magicseteditor.sourceforge.net/
+	
+	# File related
+	file not found:				File not found: '%s' in package '%s'
+	file parse error:
+		Error while parsing file: '%s'
+		%s
+	package not found:			Package not found: '%s'
+	unable to open output file:	Error while saving, unable to open output file
+	unable to store file:		Error while saving, unable to store file
+	
+	# Script stuff
+	collection has no member:	Collection has no member '%s'
+	object has no member:		Object has no member '%s'
+	
+	# Image stuff
+	coordinates for blending overlap:					Coordinates for blending overlap
+	images used for blending must have the same size:	Images used for blending must have the same size
+	
+	# Error from files
+	no game specified for the set:						No game specified for the set
+	no stylesheet specified for the set:				No stylesheet specified for the set
+	stylesheet and set refer to different game:
+		stylesheet and set don't refer to the same game, this is an error in the stylesheet file
+	unsupported fill type:								Unsupported fill type: '%s'
+	unrecognized value:									Unrecognized value: '%s'
+	newer version:
+		%s
+		This file is made with a newer version of Magic Set Editor (%s)
+		When you open it, some aspects of the file may be lost.
+		It is recommended that you upgrade to the latest version.
+		Visit http:://magicseteditor.sourceforge.net/
+
+############################################################## Types used in scripts
+type:
+	real:			Real number
+	integer:		Integer number
+	string:			String
+
+############################################################## Magic
+game:
+	magic:
+		name:		Name
+		cc:			CC
+		type:		Type
+		p/t:		P/T
+		rarity:		Rarity
+		card name:	Card Name

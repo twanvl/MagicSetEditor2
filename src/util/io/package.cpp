@@ -308,9 +308,9 @@ void Package::openZipfile() {
 	delete zipStream;  zipStream  = nullptr;
 	// open streams
 	fileStream = new wxFileInputStream(filename);
-	if (!fileStream->IsOk()) throw PackageError(_("Package not found: '")+filename+_("'"));
+	if (!fileStream->IsOk()) throw PackageError(_ERROR_1_("package not found", filename));
 	zipStream  = new wxZipInputStream(*fileStream);
-	if (!zipStream->IsOk()) throw PackageError(_("Package not found: '")+filename+_("'"));
+	if (!zipStream->IsOk())  throw PackageError(_ERROR_1_("package not found", filename));
 	// read zip entries
 	while (true) {
 		wxZipEntry* entry = zipStream->GetNextEntry();
@@ -333,12 +333,12 @@ void Package::saveToDirectory(const String& saveAs, bool removeUnused) {
 			// move files that were updated
 			wxRemoveFile(saveAs+_("/")+f.first);
 			if (!wxRenameFile(f.second.tempName, saveAs+_("/")+f.first)) {
-				throw PackageError(_("Error while saving, unable to store file"));
+				throw PackageError(_ERROR_("unable to store file"));
 			}
 		} else if (filename != saveAs) {
 			// save as, copy old filess
 			if (!wxCopyFile(filename+_("/")+f.first, saveAs+_("/")+f.first)) {
-				throw PackageError(_("Error while saving, unable to store file"));
+				throw PackageError(_ERROR_("unable to store file"));
 			}
 		} else {
 			// old file, just keep it
@@ -353,9 +353,9 @@ void Package::saveToZipfile(const String& saveAs, bool removeUnused) {
 	// open zip file
 	try {
 		scoped_ptr<wxFileOutputStream> newFile(new wxFileOutputStream(tempFile));
-		if (!newFile->IsOk()) throw PackageError(_("Error while saving, unable to open output file"));
+		if (!newFile->IsOk()) throw PackageError(_ERROR_("unable to open output file"));
 		scoped_ptr<wxZipOutputStream>  newZip(new wxZipOutputStream(*newFile));
-		if (!newZip->IsOk())  throw PackageError(_("Error while saving, unable to open output file"));
+		if (!newZip->IsOk())  throw PackageError(_ERROR_("unable to open output file"));
 		// copy everything to a new zip file, unless it's updated or removed
 		if (zipStream) newZip->CopyArchiveMetaData(*zipStream);
 		FOR_EACH(f, files) {

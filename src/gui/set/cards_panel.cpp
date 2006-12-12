@@ -35,7 +35,7 @@ CardsPanel::CardsPanel(Window* parent, int id)
 	notes     = new TextCtrl(notesP, ID_NOTES);
 	// init sizer for notes panel
 	wxSizer* sn = new wxBoxSizer(wxVERTICAL);
-	sn->Add(new wxStaticText(notesP, wxID_ANY, _("Card notes:")), 0, wxEXPAND, 2);
+	sn->Add(new wxStaticText(notesP, wxID_ANY, _LABEL_("card notes")), 0, wxEXPAND, 2);
 	sn->Add(notes, 1, wxEXPAND | wxTOP, 2);
 	notesP->SetSizer(sn);
 	// init splitter
@@ -68,15 +68,15 @@ void CardsPanel::onChangeSet() {
 
 void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	// Toolbar
-	tb->AddTool(ID_FORMAT_BOLD,		_(""), Bitmap(_("TOOL_BOLD")),		wxNullBitmap, wxITEM_CHECK, _("Bold"));
-	tb->AddTool(ID_FORMAT_ITALIC,	_(""), Bitmap(_("TOOL_ITALIC")),	wxNullBitmap, wxITEM_CHECK, _("Italic"));
-	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), Bitmap(_("TOOL_SYMBOL")),	wxNullBitmap, wxITEM_CHECK, _("Symbols"));
-	tb->AddTool(ID_FORMAT_REMINDER,	_(""), Bitmap(_("TOOL_REMINDER")),	wxNullBitmap, wxITEM_CHECK, _("Reminder Text"));
+	tb->AddTool(ID_FORMAT_BOLD,		_(""), Bitmap(_("TOOL_BOLD")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("bold"));
+	tb->AddTool(ID_FORMAT_ITALIC,	_(""), Bitmap(_("TOOL_ITALIC")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("italic"));
+	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), Bitmap(_("TOOL_SYMBOL")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("symbols"));
+	tb->AddTool(ID_FORMAT_REMINDER,	_(""), Bitmap(_("TOOL_REMINDER")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("reminder text"));
 	tb->AddSeparator();
-	tb->AddTool(ID_CARD_ADD,		_(""), Bitmap(_("TOOL_CARD_ADD")),	wxNullBitmap, wxITEM_NORMAL,_("Add card"));
-	tb->AddTool(ID_CARD_REMOVE,		_(""), Bitmap(_("TOOL_CARD_DEl")),	wxNullBitmap, wxITEM_NORMAL,_("Remove selected card"));
+	tb->AddTool(ID_CARD_ADD,		_(""), Bitmap(_("TOOL_CARD_ADD")),	wxNullBitmap, wxITEM_NORMAL,_TOOL_("add card"));
+	tb->AddTool(ID_CARD_REMOVE,		_(""), Bitmap(_("TOOL_CARD_DEl")),	wxNullBitmap, wxITEM_NORMAL,_TOOL_("remove card"));
 	tb->AddSeparator();
-	tb->AddTool(ID_CARD_ROTATE,		_(""), Bitmap(_("TOOL_CARD_ROTATE")),wxNullBitmap,wxITEM_NORMAL,_("Rotate card"));
+	tb->AddTool(ID_CARD_ROTATE,		_(""), Bitmap(_("TOOL_CARD_ROTATE")),wxNullBitmap,wxITEM_NORMAL,_TOOL_("rotate card"));
 	tb->Realize();
 	// Menus
 	IconMenu* menuCard = new IconMenu();

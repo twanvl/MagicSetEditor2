@@ -39,6 +39,7 @@ using namespace std;
 #include "string.hpp"
 #include "smart_ptr.hpp"
 #include "index_map.hpp"
+#include "locale.hpp"
 
 // ----------------------------------------------------------------------------- : Wx Aliasses
 

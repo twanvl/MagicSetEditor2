@@ -76,13 +76,13 @@ Image load_resource_image(const String& name) {
 		// based on wxLoadUserResource
 		// The image can be in an IMAGE resource, in any file format
 		HRSRC hResource = ::FindResource(wxGetInstance(), name, _("IMAGE"));
-		if ( hResource == 0 ) throw InternalError(_("Resource not found: ") + name);
+		if ( hResource == 0 ) throw InternalError(String::Format(_("Resource not found: %s"), name));
 		
 		HGLOBAL hData = ::LoadResource(wxGetInstance(), hResource);
-		if ( hData == 0 ) throw InternalError(_("Resource not an image: ") + name);
+		if ( hData == 0 ) throw InternalError(String::Format(_("Resource not an image: %s"), name));
 		
 		char* data = (char *)::LockResource(hData);
-		if ( !data ) throw InternalError(_("Resource cannot be locked: ") + name);
+		if ( !data ) throw InternalError(String::Format(_("Resource cannot be locked: %s"), name));
 
 		int len = ::SizeofResource(wxGetInstance(), hResource);
 		wxMemoryInputStream stream(data, len);

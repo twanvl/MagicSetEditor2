@@ -225,7 +225,7 @@ void Reader::handle(IndexMap<K,V>& m) {
 		reflect_ ## Enum(enum_, reader);						\
 		if (!reader.isDone()) {									\
 			/* warning: unknown value */						\
-			warning(_("Unrecognized value: ") + value);			\
+			warning(_ERROR_1_("unrecognized value", value));	\
 		}														\
 	}															\
 	bool parse_enum(const String& value, Enum& out) {			\

@@ -185,7 +185,7 @@ ScriptValueP get_member(const map<String,V>& m, const String& name) {
 	if (it != m.end()) {
 		return toScript(it->second);
 	} else {
-		throw ScriptError(_("Collection has no member '") + name + _("'"));
+		throw ScriptError(_ERROR_1_("collection has no member", name));
 	}
 }
 
@@ -195,7 +195,7 @@ ScriptValueP get_member(const IndexMap<K,V>& m, const String& name) {
 	if (it != m.end()) {
 		return toScript(*it);
 	} else {
-		throw ScriptError(_("Collection has no member '") + name + _("'"));
+		throw ScriptError(_ERROR_1_("collection has no member", name));
 	}
 }
 
@@ -253,7 +253,7 @@ class ScriptObject : public ScriptValue {
 			if (d) {
 				return d->getMember(name);
 			} else {
-				throw  ScriptError(_("Object has no member '") + name + _("'"));
+				throw  ScriptError(_ERROR_1_("object has no member", name));
 			}
 		}
 	}

@@ -77,14 +77,14 @@ void fix_value_207(const ValueP& value) {
 void Set::validate(Version file_app_version) {
 	// are the
 	if (!game) {
-		throw Error(_("No game specified for the set"));
+		throw Error(_ERROR_("no game specified for the set"));
 	}
 	if (!stylesheet) {
 		// TODO : Allow user to select a different style
-		throw Error(_("No stylesheet specified for the set"));
+		throw Error(_ERROR_("no stylesheet specified for the set"));
 	}
 	if (stylesheet->game != game) {
-		throw Error(_("stylesheet and set don't refer to the same game, this is an error in the stylesheet file"));
+		throw Error(_ERROR_("stylesheet and set refer to different game"));
 	}
 	
 	// This is our chance to fix version incompatabilities

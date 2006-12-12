@@ -19,7 +19,7 @@
 // ----------------------------------------------------------------------------- : ValueAction
 
 String ValueAction::getName(bool to_undo) const {
-	return _("Change ") + valueP->fieldP->name;
+	return String::Format(_ACTION_("change"), valueP->fieldP->name);
 }
 
 // ----------------------------------------------------------------------------- : Simple
