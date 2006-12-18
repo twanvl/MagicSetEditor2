@@ -3,18 +3,18 @@
 ############################################################## Menu items
 menu
 	file:			&File
-	new:				&New...	Ctrl+N
-	open:				&Open...	Ctrl+O
-	save:				&Save	Ctrl+S
-	save as:			Save &As...	F12
+	new set:			&New...	Ctrl+N
+	open set:			&Open...	Ctrl+O
+	save set:			&Save	Ctrl+S
+	save set as:		Save &As...	F12
 	export:				&Export
 	print preview:		Print Pre&view...
 	print:				&Print...	Ctrl+P
 	exit:				E&xit	Alt+F4
 	
 	edit:			&Edit
-	undo:				&Undo %s	Ctrl+Z
-	redo:				&Redo %s	Ctrl+Y
+	undo:				&Undo%s	Ctrl+Z
+	redo:				&Redo%s	Ctrl+Y
 	cut:				Cu&t	Ctrl+X
 	copy:				&Copy	Ctrl+C
 	paste:				&Paste	Ctrl+V
@@ -38,14 +38,32 @@ menu
 	
 	help:			&Help
 	about:				&About Magic Set Editor...
+	
+	# symbol editor
+	
+	new symbol:			&New...	Ctrl+N
+	open symbol:		&Open...	Ctrl+O
+	save symbol:		&Save	Ctrl+S
+	save symbol as:		Save &As...	F12
+	store symbol:		S&tore	Ctrl+Enter
+	close symbol editor:Close	Alt+F4
+	
+	duplicate:			Duplicate	Ctrl+D
+	
+	tool:			&Tool
+	select:				&Select	F5
+	rotate:				&Rotate	F6
+	points:				&Points	F7
+	basic shapes:		&Basic Shapes	F8
+	paint:				P&aint	F9
 
 ############################################################## Menu help texts
 help:
 	file:
-	new:				Create a new set
-	open:				Open an existing set
-	save:				Save the set
-	save as:			Save the set with a new name
+	new set:			Create a new set
+	open set:			Open an existing set
+	save set:			Save the set
+	save set as:		Save the set with a new name
 	print preview:		Shows cards as they will be printed
 	print:				Print cards from this set
 	exit:				Quits Magic Set Editor; prompts to save the set
@@ -53,6 +71,10 @@ help:
 	edit:
 	undo:				Undoes the last action
 	redo:				Redoes the last action
+	cut:				Move the selected text to the clipboard
+	copy:				Place the selected text on the clipboard
+	paste:				Inserts the text from the clipboard
+	preferences:		Change the configuration of Magic Set Editor
 	
 	format:
 	bold:				Makes the selected text bold
@@ -62,11 +84,39 @@ help:
 	new window:			Creates another window to edit the same set
 	
 	help:
+	
+	# symbol editor
+	
+	new symbol:			Create a new symbol
+	open symbol:		Open a symbol
+	save symbol:		Save the symbol
+	save symbol as:		Save the symbol under a diferent filename
+	store symbol:		Stores the symbol in the set
+	close symbol editor:Closes the symbol editor
+	
+	duplicate:			Duplicates the selected shapes
+	
+	tool:
+	select:				Select and move shapes
+	rotate:				Rotate and shear shapes
+	points:				Edit control points for a shape in the symbol
+	basic shapes:		Draw basic shapes, such as rectangles and circles
+	paint:				Paint on the shape using a paintbrush
 
 ############################################################## Toolbar
 tool:
 	cards tab:		Cards
 	set info tab:	Set info
+	
+	new set:		New set
+	open set:		Open set
+	save set:		Save set
+	
+	cut:			Cut
+	copy:			Copy
+	paste:			Paste
+	undo:			Undo%s
+	redo:			Redo%s
 	
 	remove card:	Remove selected card
 	rotated card:	Rotate card
@@ -75,6 +125,15 @@ tool:
 	italic:			Italic
 	symbols:		Symbols
 	reminder text:	Reminder Text
+	
+	# symbol editor
+	store symbol:		Store symbol in set
+	
+	select:				Select (F5)
+	rotate:				Rotate (F6)
+	points:				Points (F7)
+	basic shapes:		Basic Shapes (F8)
+	paint:				Paint on Shape (F9)
 
 ############################################################## Labels in the GUI
 label:
@@ -141,15 +200,23 @@ button:
 title:
 	magic set editor:	Magic Set Editor
 	about:				About Magic Set Editor
+	# dialogs
+	open set:			Open Set
+	save set:			Save Set As
+	save image:			Save Image
+	#preferences
 	preferences:		Preferences
 	display:				Display
 	directories:			Directories
 	updates:				Updates
 	update check:			Update Check
 	locate apprentice:		Locate Apprentice
+	# select
 	select columns:		Select Columns
 	select cards:		Select Cards
+	# slice
 	slice image:		Slice Image
+	# print
 	print preview:		Print Preview
 
 ############################################################## Action (undo/redo) names

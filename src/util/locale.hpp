@@ -56,6 +56,12 @@ String tr(LocaleCategory cat, const String& key);
 /// A localized string for error messages
 #define _ERROR_(s)	tr(LOCALE_CAT_ERROR, _(s))
 
+/// A localized string for menus/toolbar buttons, with 1 argument (printf style)
+#define _MENU_1_(s,a)		String::Format(tr(LOCALE_CAT_MENU,  _(s)), a)
+
+/// A localized string for tooltip text, with 1 argument (printf style)
+#define _TOOL_1_(s,a)		String::Format(tr(LOCALE_CAT_TOOL,  _(s)), a)
+
 /// A localized string for error messages, with 1 argument (printf style)
 #define _ERROR_1_(s,a)		String::Format(tr(LOCALE_CAT_ERROR, _(s)), a)
 /// A localized string for error messages, with 2 argument (printf style)

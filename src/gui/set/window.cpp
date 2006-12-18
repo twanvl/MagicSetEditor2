@@ -45,10 +45,10 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	// initialize menu bar
 	wxMenuBar* menuBar = new wxMenuBar();
 	IconMenu* menuFile = new IconMenu();
-		menuFile->Append(ID_FILE_NEW,		_("TOOL_NEW"),		_MENU_("new"),			_HELP_("new"));
-		menuFile->Append(ID_FILE_OPEN,		_("TOOL_OPEN"),		_MENU_("open"),			_HELP_("open"));
-		menuFile->Append(ID_FILE_SAVE,		_("TOOL_SAVE"),		_MENU_("save"),			_HELP_("save"));
-		menuFile->Append(ID_FILE_SAVE_AS,						_MENU_("save as"),		_HELP_("save as"));
+		menuFile->Append(ID_FILE_NEW,		_("TOOL_NEW"),		_MENU_("new set"),			_HELP_("new set"));
+		menuFile->Append(ID_FILE_OPEN,		_("TOOL_OPEN"),		_MENU_("open set"),			_HELP_("open set"));
+		menuFile->Append(ID_FILE_SAVE,		_("TOOL_SAVE"),		_MENU_("save set"),			_HELP_("save set"));
+		menuFile->Append(ID_FILE_SAVE_AS,						_MENU_("save set as"),		_HELP_("save set as"));
 		IconMenu* menuExport = new IconMenu();
 			menuExport->Append(ID_FILE_EXPORT_HTML,					_("&HTML..."),					_("Export the set to a HTML file"));
 			menuExport->Append(ID_FILE_EXPORT_IMAGE,				_("Card &Image..."),			_("Export the selected card to an image file"));
@@ -68,18 +68,18 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	menuBar->Append(menuFile, _MENU_("file"));
 	
 	IconMenu* menuEdit = new IconMenu();
-		menuEdit->Append(ID_EDIT_UNDO,		_("TOOL_UNDO"),		_MENU_("undo"),				_HELP_("undo"));
-		menuEdit->Append(ID_EDIT_REDO,		_("TOOL_REDO"),		_MENU_("redo"),				_HELP_("redo"));
+		menuEdit->Append(ID_EDIT_UNDO,		_("TOOL_UNDO"),		_MENU_1_("undo",wxEmptyString),	_HELP_("undo"));
+		menuEdit->Append(ID_EDIT_REDO,		_("TOOL_REDO"),		_MENU_1_("redo",wxEmptyString),	_HELP_("redo"));
 		menuEdit->AppendSeparator();
-		menuEdit->Append(ID_EDIT_CUT,		_("TOOL_CUT"),		_MENU_("cut"),				_("Move the selected text to the clipboard"));
-		menuEdit->Append(ID_EDIT_COPY,		_("TOOL_COPY"),		_MENU_("copy"),				_("Place the selected text on the clipboard"));
-		menuEdit->Append(ID_EDIT_PASTE,		_("TOOL_PASTE"),	_MENU_("paste"),			_("Inserts the text from the clipboard"));
+		menuEdit->Append(ID_EDIT_CUT,		_("TOOL_CUT"),		_MENU_("cut"),				_HELP_("cut"));
+		menuEdit->Append(ID_EDIT_COPY,		_("TOOL_COPY"),		_MENU_("copy"),				_HELP_("copy"));
+		menuEdit->Append(ID_EDIT_PASTE,		_("TOOL_PASTE"),	_MENU_("paste"),			_HELP_("paste"));
 		menuEdit->AppendSeparator();
 		menuEdit->Append(ID_EDIT_FIND,		_("TOOL_FIND"),		_MENU_("find"),				_(""));
 		menuEdit->Append(ID_EDIT_FIND_NEXT,						_MENU_("find next"),		_(""));
 		menuEdit->Append(ID_EDIT_REPLACE,						_MENU_("replace"),			_(""));
 		menuEdit->AppendSeparator();
-		menuEdit->Append(ID_EDIT_PREFERENCES,					_MENU_("preferences"),		_("Change the configuration of Magic Set Editor"));
+		menuEdit->Append(ID_EDIT_PREFERENCES,					_MENU_("preferences"),		_HELP_("preferences"));
 	menuBar->Append(menuEdit, _MENU_("edit"));
 	
 	IconMenu* menuWindow = new IconMenu();
@@ -88,7 +88,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	menuBar->Append(menuWindow, _MENU_("window"));
 	
 	IconMenu* menuHelp = new IconMenu();
-		menuHelp->Append(ID_HELP_INDEX,		_("TOOL_HELP"),		_("&Index..\tF1"),				_(""));
+		menuHelp->Append(ID_HELP_INDEX,		_("TOOL_HELP"),		_("&Index..\tF1"),			_(""));
 		menuHelp->AppendSeparator();
 		menuHelp->Append(ID_HELP_ABOUT,							_MENU_("about"),			_(""));
 	menuBar->Append(menuHelp, _MENU_("help"));
@@ -102,16 +102,16 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	// tool bar
 	wxToolBar* tb = CreateToolBar(wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL);
 	tb->SetToolBitmapSize(wxSize(18,18));
-	tb->AddTool(ID_FILE_NEW,	_(""),	Bitmap(_("TOOL_NEW")),	wxNullBitmap, wxITEM_NORMAL, _("New set"),	_("Creates a new set"));
-	tb->AddTool(ID_FILE_OPEN,	_(""),	Bitmap(_("TOOL_OPEN")),	wxNullBitmap, wxITEM_NORMAL, _("Open set"),	_("Opens an existing set"));
-	tb->AddTool(ID_FILE_SAVE,	_(""),	Bitmap(_("TOOL_SAVE")),	wxNullBitmap, wxITEM_NORMAL, _("Save set"),	_("Saves the current set"));
+	tb->AddTool(ID_FILE_NEW,	_(""),	Bitmap(_("TOOL_NEW")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("new set"),		_HELP_("new set"));
+	tb->AddTool(ID_FILE_OPEN,	_(""),	Bitmap(_("TOOL_OPEN")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("open set"),	_HELP_("open set"));
+	tb->AddTool(ID_FILE_SAVE,	_(""),	Bitmap(_("TOOL_SAVE")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("save set"),	_HELP_("save set"));
 	tb->AddSeparator();
-	tb->AddTool(ID_EDIT_CUT,	_(""),	Bitmap(_("TOOL_CUT")),	wxNullBitmap, wxITEM_NORMAL, _("Cut"));
-	tb->AddTool(ID_EDIT_COPY,	_(""),	Bitmap(_("TOOL_COPY")),	wxNullBitmap, wxITEM_NORMAL, _("Copy"));
-	tb->AddTool(ID_EDIT_PASTE,	_(""),	Bitmap(_("TOOL_PASTE")),wxNullBitmap, wxITEM_NORMAL, _("Paste"));
+	tb->AddTool(ID_EDIT_CUT,	_(""),	Bitmap(_("TOOL_CUT")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("cut"));
+	tb->AddTool(ID_EDIT_COPY,	_(""),	Bitmap(_("TOOL_COPY")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("copy"));
+	tb->AddTool(ID_EDIT_PASTE,	_(""),	Bitmap(_("TOOL_PASTE")),wxNullBitmap, wxITEM_NORMAL, _TOOL_("paste"));
 	tb->AddSeparator();
-	tb->AddTool(ID_EDIT_UNDO,	_(""),	Bitmap(_("TOOL_UNDO")),	wxNullBitmap, wxITEM_NORMAL, _("Undo"));
-	tb->AddTool(ID_EDIT_REDO,	_(""),	Bitmap(_("TOOL_REDO")),	wxNullBitmap, wxITEM_NORMAL, _("Redo"));
+	tb->AddTool(ID_EDIT_UNDO,	_(""),	Bitmap(_("TOOL_UNDO")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("undo",wxEmptyString));
+	tb->AddTool(ID_EDIT_REDO,	_(""),	Bitmap(_("TOOL_REDO")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("redo",wxEmptyString));
 	tb->AddSeparator();
 	tb->Realize();
 	
@@ -328,14 +328,14 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 		case ID_EDIT_UNDO: {
 			ev.Enable(set->actions.canUndo());
 			String label = set->actions.undoName();
-			ev.SetText(label + _("\tCtrl+Z"));
-			GetToolBar()->SetToolShortHelp(ID_EDIT_UNDO, label);
+			ev.SetText(_MENU_1_("undo", label));
+			GetToolBar()->SetToolShortHelp(ID_EDIT_UNDO, _TOOL_1_("undo", label));
 			break;
 		} case ID_EDIT_REDO: {
 			ev.Enable(set->actions.canRedo());
 			String label = set->actions.redoName();
-			ev.SetText(label + _("\tF4"));
-			GetToolBar()->SetToolShortHelp(ID_EDIT_REDO, label);
+			ev.SetText(_MENU_1_("redo", label));
+			GetToolBar()->SetToolShortHelp(ID_EDIT_REDO, _TOOL_1_("redo", label));
 			break;
 		}
 		// copy & paste & find
@@ -384,7 +384,7 @@ void SetWindow::onFileNew(wxCommandEvent&) {
 
 void SetWindow::onFileOpen(wxCommandEvent&) {
 	if (!askSaveAndContinue())  return;
-	wxFileDialog dlg(this, _("Open a set"), _(""), _(""), import_formats(), wxOPEN);
+	wxFileDialog dlg(this, _TITLE_("open set"), _(""), _(""), import_formats(), wxOPEN);
 	if (dlg.ShowModal() == wxID_OK) {
 		setSet(import_set(dlg.GetPath()));
 	}
@@ -401,7 +401,7 @@ void SetWindow::onFileSave(wxCommandEvent& ev) {
 }
 
 void SetWindow::onFileSaveAs(wxCommandEvent&) {
-	wxFileDialog dlg(this, _("Save a set"), _(""), _(""), export_formats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
+	wxFileDialog dlg(this, _TITLE_("save set"), _(""), _(""), export_formats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
 	if (dlg.ShowModal() == wxID_OK) {
 		export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
 	}
@@ -416,11 +416,11 @@ void SetWindow::onFileInspect(wxCommandEvent&) {
 void SetWindow::onFileExportImage(wxCommandEvent&) {
 	CardP card = current_panel->selectedCard();
 	if (!card)  return; // no card selected
-	String name = wxFileSelector(_("Save image"), _(""), card->identification(), _(""),
+	String name = wxFileSelector(_TITLE_("save image"), _(""), card->identification(), _(""),
 		                         _("JPEG images (*.jpg)|*.jpg|Windows bitmaps (*.bmp)|*.bmp|PNG images (*.png)|*.png|GIF images (*.gif)|*.gif|TIFF images (*.tif)|*.tif"),
 		                         wxSAVE | wxOVERWRITE_PROMPT, this);
 	if (!name.empty()) {
-//		exportImage(set, card, name);
+		export_image(set, card, name);
 	}
 }
 

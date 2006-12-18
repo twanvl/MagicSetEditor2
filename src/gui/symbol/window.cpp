@@ -54,30 +54,30 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
 	// Menu bar
 	wxMenuBar* menuBar = new wxMenuBar();
 	IconMenu* menuFile = new IconMenu();
-		menuFile->Append(ID_FILE_NEW,		_("TOOL_NEW"),		_("&New...\tCtrl+N"),		_("Create a new symbol"));
-		menuFile->Append(ID_FILE_OPEN,		_("TOOL_OPEN"),		_("&Open...\tCtrl+O"),		_("Open a symbol"));
-		menuFile->Append(ID_FILE_SAVE,		_("TOOL_SAVE"),		_("&Save\tCtrl+S"),			_("Save the symbol"));
-		menuFile->Append(ID_FILE_SAVE_AS,						_("Save &As...\tF12"),		_("Save the symbol under a diferent filename"));
+		menuFile->Append(ID_FILE_NEW,		_("TOOL_NEW"),			_MENU_("new symbol"),			_HELP_("new symbol"));
+		menuFile->Append(ID_FILE_OPEN,		_("TOOL_OPEN"),			_MENU_("open symbol"),			_HELP_("open symbol"));
+		menuFile->Append(ID_FILE_SAVE,		_("TOOL_SAVE"),			_MENU_("save symbol"),			_HELP_("save symbol"));
+		menuFile->Append(ID_FILE_SAVE_AS,							_MENU_("save symbol as"),		_HELP_("save symbol as"));
 		menuFile->AppendSeparator();
-		menuFile->Append(ID_FILE_STORE,		_("TOOL_APPLY"),	_("S&tore\tCtrl+Enter"),	_("Stores the symbol in the set"));
+		menuFile->Append(ID_FILE_STORE,		_("TOOL_APPLY"),		_MENU_("store symbol"),			_HELP_("store symbol"));
 		menuFile->AppendSeparator();
-		menuFile->Append(ID_FILE_EXIT,							_("&Close\tAlt+F4"),		_("Closes the symbol editor"));
-	menuBar->Append(menuFile, _("&File"));
+		menuFile->Append(ID_FILE_EXIT,								_MENU_("close symbol editor"),	_HELP_("close symbol editor"));
+	menuBar->Append(menuFile, _MENU_("file"));
 	
 	IconMenu* menuEdit = new IconMenu();
-		menuEdit->Append(ID_EDIT_UNDO,		_("TOOL_UNDO"),		_("&Undo\tCtrl+Z"),			_("Undoes the last action"));
-		menuEdit->Append(ID_EDIT_REDO,		_("TOOL_REDO"),		_("&Redo\tF4"),				_(""));
+		menuEdit->Append(ID_EDIT_UNDO,		_("TOOL_UNDO"),			_MENU_1_("undo",wxEmptyString),	_HELP_("undo"));
+		menuEdit->Append(ID_EDIT_REDO,		_("TOOL_REDO"),			_MENU_1_("redo",wxEmptyString),	_HELP_("redo"));
 		menuEdit->AppendSeparator();
-		menuEdit->Append(ID_EDIT_DUPLICATE,	_("TOOL_DUPLICATE"),	_("&Duplicate\tCtrl+D"),_("Duplicates the selected shapes"));
-	menuBar->Append(menuEdit, _("&Edit"));
+		menuEdit->Append(ID_EDIT_DUPLICATE,	_("TOOL_DUPLICATE"),	_MENU_("duplicate"),			_HELP_("duplicate"));
+	menuBar->Append(menuEdit, _MENU_("edit"));
 	
 	IconMenu* menuTool = new IconMenu();
-		menuTool->Append(ID_MODE_SELECT,	_("TOOL_MODE_SELECT"),	_("&Select\tF5"),		_("Select and move shapes"), wxITEM_CHECK);
-		menuTool->Append(ID_MODE_ROTATE,	_("TOOL_MODE_ROTATE"),	_("&Rotate\tF6"),		_("Rotate and shear shapes"), wxITEM_CHECK);
-		menuTool->Append(ID_MODE_POINTS,	_("TOOL_MODE_CURVE"),	_("&Points\tF7"),		_("Edit control points for a shape in the symbol"), wxITEM_CHECK);
-		menuTool->Append(ID_MODE_SHAPES,	_("TOOL_CIRCLE"),		_("&Basic Shapes\tF8"),	_("Draw basic shapes, such as rectangles and circles"), wxITEM_CHECK);
-		menuTool->Append(ID_MODE_PAINT,		_("TOOL_MODE_PAINT"),	_("P&aint\tF9"),		_("Paint on the shape using a paintbrush"), wxITEM_CHECK);
-	menuBar->Append(menuTool, _("&Tool"));
+		menuTool->Append(ID_MODE_SELECT,	_("TOOL_MODE_SELECT"),	_MENU_("select"),				_HELP_("select"),		wxITEM_CHECK);
+		menuTool->Append(ID_MODE_ROTATE,	_("TOOL_MODE_ROTATE"),	_MENU_("rotate"),				_HELP_("rotate"),		wxITEM_CHECK);
+		menuTool->Append(ID_MODE_POINTS,	_("TOOL_MODE_CURVE"),	_MENU_("points"),				_HELP_("points"),		wxITEM_CHECK);
+		menuTool->Append(ID_MODE_SHAPES,	_("TOOL_CIRCLE"),		_MENU_("basic shapes"),			_HELP_("basic shapes"),	wxITEM_CHECK);
+		menuTool->Append(ID_MODE_PAINT,		_("TOOL_MODE_PAINT"),	_MENU_("paint"),				_HELP_("paint"),		wxITEM_CHECK);
+	menuBar->Append(menuTool, _MENU_("tool"));
 	
 	SetMenuBar(menuBar);
 	
@@ -87,23 +87,23 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
 	
 	// Toolbar
 	wxToolBar* tb = CreateToolBar(wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL | wxTB_TEXT);
-	tb->AddTool(ID_FILE_STORE,	_("Store"),			Bitmap(_("TOOL_APPLY")),	wxNullBitmap, wxITEM_NORMAL, _("Store symbol in set"),	_("Stores the symbol in the set"));
+	tb->AddTool(ID_FILE_STORE,	_("Store"),			Bitmap(_("TOOL_APPLY")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("store symbol"), _HELP_("store symbol"));
 	tb->AddSeparator();
-	tb->AddTool(ID_EDIT_UNDO,	_("Undo"),			Bitmap(_("TOOL_UNDO")),		wxNullBitmap, wxITEM_NORMAL, _("Undo"),					_("Undoes the last action"));
-	tb->AddTool(ID_EDIT_REDO,	_("Redo"),			Bitmap(_("TOOL_REDO")),		wxNullBitmap, wxITEM_NORMAL, _("Redo"),					_("Redoes the last action undone"));
+	tb->AddTool(ID_EDIT_UNDO,	_("Undo"),			Bitmap(_("TOOL_UNDO")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("undo",wxEmptyString));
+	tb->AddTool(ID_EDIT_REDO,	_("Redo"),			Bitmap(_("TOOL_REDO")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("redo",wxEmptyString));
 	tb->Realize();
 	
 	// Edit mode toolbar
 	wxPanel* emp = new wxPanel(this, wxID_ANY);
 	wxToolBar* em = new wxToolBar(emp, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_VERTICAL | wxTB_TEXT | wxTB_HORZ_LAYOUT);
-	em->AddTool(ID_MODE_SELECT,_("Select"),			Bitmap(_("TOOL_MODE_SELECT")),	wxNullBitmap, wxITEM_CHECK, _("Select (F5)"),			_("Select and move parts of the symbol"));
-	em->AddTool(ID_MODE_ROTATE,_("Rotate"),			Bitmap(_("TOOL_MODE_ROTATE")),	wxNullBitmap, wxITEM_CHECK, _("Rotate (F6)"),			_("Rotate and shear parts of the symbol"));
+	em->AddTool(ID_MODE_SELECT,_("Select"),			Bitmap(_("TOOL_MODE_SELECT")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("select"),		_HELP_("select"));
+	em->AddTool(ID_MODE_ROTATE,_("Rotate"),			Bitmap(_("TOOL_MODE_ROTATE")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("rotate"),		_HELP_("rotate"));
 	em->AddSeparator();
-	em->AddTool(ID_MODE_POINTS,_("Points"),			Bitmap(_("TOOL_MODE_CURVE")),	wxNullBitmap, wxITEM_CHECK, _("Points (F7)"),			_("Edit control points for a shape in the symbol"));
+	em->AddTool(ID_MODE_POINTS,_("Points"),			Bitmap(_("TOOL_MODE_CURVE")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("points"),		_HELP_("points"));
 	em->AddSeparator();
-	em->AddTool(ID_MODE_SHAPES,_("Basic Shapes"),	Bitmap(_("TOOL_CIRCLE")),		wxNullBitmap, wxITEM_CHECK, _("Basic Shapes (F8)"),		_("Draw basic shapes, such as rectangles and circles"));
+	em->AddTool(ID_MODE_SHAPES,_("Basic Shapes"),	Bitmap(_("TOOL_CIRCLE")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("basic shapes"),	_HELP_("basic shapes"));
 	em->AddSeparator();
-	em->AddTool(ID_MODE_PAINT, _("Paint"),			Bitmap(_("TOOL_MODE_PAINT")),	wxNullBitmap, wxITEM_CHECK, _("Paint on shape (F9)"),	_("Paint on the shape using a paintbrush"));
+	em->AddTool(ID_MODE_PAINT, _("Paint"),			Bitmap(_("TOOL_MODE_PAINT")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("paint"),		_HELP_("paint"));
 	em->AddSeparator();
 	em->Realize();
 	
@@ -216,14 +216,14 @@ void SymbolWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 		} case ID_EDIT_UNDO: {
 			ev.Enable(control->getSymbol()->actions.canUndo());
 			String label = control->getSymbol()->actions.undoName();
-			ev.SetText(label + _("\tCtrl+Z"));
-			GetToolBar()->SetToolShortHelp(ID_EDIT_UNDO, label);
+			ev.SetText(_MENU_1_("undo", label));
+			GetToolBar()->SetToolShortHelp(ID_EDIT_UNDO, _TOOL_1_("undo", label));
 			break;
 		} case ID_EDIT_REDO: {
 			ev.Enable(control->getSymbol()->actions.canRedo());
 			String label = control->getSymbol()->actions.redoName();
-			ev.SetText(label + _("\tF4"));
-			GetToolBar()->SetToolShortHelp(ID_EDIT_REDO, label);
+			ev.SetText(_MENU_1_("redo", label));
+			GetToolBar()->SetToolShortHelp(ID_EDIT_REDO, _TOOL_1_("redo", label));
 			break;
 		} default: {
 			// items created by the editor control
