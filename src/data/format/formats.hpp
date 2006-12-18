@@ -14,6 +14,7 @@
 
 class Game;
 DECLARE_POINTER_TYPE(Set);
+DECLARE_POINTER_TYPE(Card);
 DECLARE_POINTER_TYPE(FileFormat);
 
 // ----------------------------------------------------------------------------- : FileFormat
@@ -77,6 +78,17 @@ void export_set(Set& set, const String& filename, size_t format_type);
 FileFormatP mse1_file_format();
 FileFormatP mse2_file_format();
 FileFormatP mtg_editor_file_format();
+
+// ----------------------------------------------------------------------------- : Other ways to export
+
+/// Export images for each card in a set to a list of files
+void export_images(Window* parent, const SetP& set);
+
+/// Export the image of a single card
+void export_image(const SetP& set, const CardP& card, const String& filename);
+
+/// Generate a bitmap image of a card
+Bitmap export_bitmap(const SetP& set, const CardP& card);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

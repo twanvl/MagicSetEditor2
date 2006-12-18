@@ -64,7 +64,7 @@ class OptionalScript {
 	template <typename T>
 	bool invokeOnDefault(Context& ctx, Defaultable<T>& value) const {
 		if (value.isDefault() && invokeOn(ctx, value)) {
-			value.setDefault(); // restore defaultness
+			value.makeDefault(); // restore defaultness
 			return true;
 		} else {
 			return false;

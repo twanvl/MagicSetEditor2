@@ -75,7 +75,7 @@ SetP MSE1FileFormat::importSet(const String& filename) {
 	if (stylesheet.substr(0,3) == _("old")) {
 		try {
 			set->stylesheet = StyleSheet::byGameAndName(*set->game, _("old"));
-		} catch (Error) {
+		} catch (const Error&) {
 			// If old style doesn't work try the new one
 			set->stylesheet = StyleSheet::byGameAndName(*set->game, _("new"));
 		}

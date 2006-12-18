@@ -49,7 +49,7 @@ class Defaultable {
 	/// Is this value in the default state?
 	inline bool isDefault() const { return is_default; }
 	/// Set the defaultness to true
-	inline void setDefault() { is_default = true; }
+	inline void makeDefault() { is_default = true; }
 	/// Set the defaultness to false
 	inline void unsetDefault() { is_default = false; }
 	

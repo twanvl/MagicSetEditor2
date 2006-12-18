@@ -66,6 +66,12 @@ String substr_replace(const String& input, size_t start, size_t end, const Strin
 	return input.substr(0,start) + replacement + input.substr(end);
 }
 
+String replace_all(const String& heystack, const String& needle, const String& replacement) {
+	String ret = heystack;
+	ret.Replace(needle, replacement);
+	return ret;
+}
+
 // ----------------------------------------------------------------------------- : Words
 
 String last_word(const String& s) {

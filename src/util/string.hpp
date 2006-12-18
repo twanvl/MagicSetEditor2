@@ -84,6 +84,9 @@ String trim_left(const String&);
 /// Replace the substring [start...end) of 'input' with 'replacement'
 String substr_replace(const String& input, size_t start, size_t end, const String& replacement);
 
+/// Replace all occurences of one needle with replacement
+String replace_all(const String& heystack, const String& needle, const String& replacement);
+
 // ----------------------------------------------------------------------------- : Words
 
 /// Returns the last word in a string
