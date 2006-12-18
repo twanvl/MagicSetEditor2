@@ -538,28 +538,10 @@
 					RelativePath=".\gui\control\card_editor.hpp">
 				</File>
 				<File
-					RelativePath=".\gui\control\card_list.cpp">
-				</File>
-				<File
-					RelativePath=".\gui\control\card_list.hpp">
-				</File>
-				<File
-					RelativePath=".\gui\control\card_list_column_select.cpp">
-				</File>
-				<File
-					RelativePath=".\gui\control\card_list_column_select.hpp">
-				</File>
-				<File
 					RelativePath=".\gui\control\card_viewer.cpp">
 				</File>
 				<File
 					RelativePath=".\gui\control\card_viewer.hpp">
-				</File>
-				<File
-					RelativePath=".\gui\control\filtered_card_list.cpp">
-				</File>
-				<File
-					RelativePath=".\gui\control\filtered_card_list.hpp">
 				</File>
 				<File
 					RelativePath=".\gui\control\gallery_list.cpp">
@@ -574,12 +556,6 @@
 					RelativePath=".\gui\control\graph.hpp">
 				</File>
 				<File
-					RelativePath=".\gui\control\image_card_list.cpp">
-				</File>
-				<File
-					RelativePath=".\gui\control\image_card_list.hpp">
-				</File>
-				<File
 					RelativePath=".\gui\control\native_look_editor.cpp">
 				</File>
 				<File
@@ -592,17 +568,45 @@
 					RelativePath=".\gui\control\package_list.hpp">
 				</File>
 				<File
-					RelativePath=".\gui\control\select_card_list.cpp">
-				</File>
-				<File
-					RelativePath=".\gui\control\select_card_list.hpp">
-				</File>
-				<File
 					RelativePath=".\gui\control\text_ctrl.cpp">
 				</File>
 				<File
 					RelativePath=".\gui\control\text_ctrl.hpp">
 				</File>
+				<Filter
+					Name="card_list"
+					Filter="">
+					<File
+						RelativePath=".\gui\control\card_list.cpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\card_list.hpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\card_list_column_select.cpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\card_list_column_select.hpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\filtered_card_list.cpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\filtered_card_list.hpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\image_card_list.cpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\image_card_list.hpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\select_card_list.cpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\select_card_list.hpp">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="symbol"
@@ -840,6 +844,12 @@
 					RelativePath=".\gui\about_window.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\card_select_window.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\card_select_window.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\drop_down_list.cpp">
 				</File>
 				<File
@@ -862,6 +872,12 @@
 				</File>
 				<File
 					RelativePath=".\gui\preferences_window.hpp">
+				</File>
+				<File
+					RelativePath=".\gui\print_window.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\print_window.hpp">
 				</File>
 				<File
 					RelativePath=".\gui\thumbnail_thread.cpp">
@@ -2564,6 +2580,9 @@
 		</File>
 		<File
 			RelativePath=".\code_template.hpp">
+		</File>
+		<File
+			RelativePath="..\data\en.mse-locale\locale">
 		</File>
 		<File
 			RelativePath=".\main.cpp">

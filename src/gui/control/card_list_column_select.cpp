@@ -17,22 +17,22 @@ DECLARE_TYPEOF_COLLECTION(CardListColumnSelectDialog::ColumnSettingsF);
 // ----------------------------------------------------------------------------- : CardListColumnSelectDialog
 
 CardListColumnSelectDialog::CardListColumnSelectDialog(Window* parent, const GameP& game)
-	: wxDialog(parent, wxID_ANY,_("Select Columns"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER)
+	: wxDialog(parent, wxID_ANY, _TITLE_("select columns"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER)
 	, game(game)
 {
 	// Create controls
 	list = new wxCheckListBox(this, wxID_ANY);
 	// Create sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
-		s->Add(new wxStaticText(this, wxID_ANY, _("Select the columns you want to display")), 0, wxALL, 8);
-		s->Add(new wxStaticText(this, wxID_ANY, _("Columns:")                              ), 0, wxALL & ~wxBOTTOM, 8);
+		s->Add(new wxStaticText(this, wxID_ANY, _LABEL_("select columns")), 0, wxALL, 8);
+		s->Add(new wxStaticText(this, wxID_ANY, _LABEL_("columns")       ), 0, wxALL & ~wxBOTTOM, 8);
 		wxSizer* s2 = new wxBoxSizer(wxHORIZONTAL);
 			s2->Add(list, 1, wxEXPAND | wxLEFT | wxRIGHT, 4);
 			wxSizer* s3 = new wxBoxSizer(wxVERTICAL);
-				s3->Add(new wxButton(this, ID_MOVE_UP,   _("Move &Up")),   0, wxEXPAND,         2);
-				s3->Add(new wxButton(this, ID_MOVE_DOWN, _("Move &Down")), 0, wxEXPAND | wxTOP, 2);
-				s3->Add(new wxButton(this, ID_SHOW,      _("&Show")),      0, wxEXPAND | wxTOP, 2);
-				s3->Add(new wxButton(this, ID_HIDE,      _("&Hide")),      0, wxEXPAND | wxTOP, 2);
+				s3->Add(new wxButton(this, ID_MOVE_UP,   _BUTTON_("move up")),   0, wxEXPAND,         2);
+				s3->Add(new wxButton(this, ID_MOVE_DOWN, _BUTTON_("move down")), 0, wxEXPAND | wxTOP, 2);
+				s3->Add(new wxButton(this, ID_SHOW,      _BUTTON_("show")),      0, wxEXPAND | wxTOP, 2);
+				s3->Add(new wxButton(this, ID_HIDE,      _BUTTON_("hide")),      0, wxEXPAND | wxTOP, 2);
 			s2->Add(s3,   0, wxEXPAND | wxALL & ~wxTOP,  4);
 		s->Add(s2                                                                           , 1, wxEXPAND | wxALL, 4);
 		s->Add(CreateButtonSizer(wxOK | wxCANCEL)                                           , 0, wxEXPAND | wxALL, 8);

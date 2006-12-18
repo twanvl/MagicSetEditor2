@@ -27,6 +27,7 @@ enum LocaleCategory
 ,	LOCALE_CAT_TOOL
 ,	LOCALE_CAT_LABEL
 ,	LOCALE_CAT_BUTTON
+,	LOCALE_CAT_TITLE
 ,	LOCALE_CAT_TYPE
 ,	LOCALE_CAT_ACTION
 ,	LOCALE_CAT_ERROR
@@ -44,8 +45,10 @@ String tr(LocaleCategory cat, const String& key);
 #define _TOOL_(s)	tr(LOCALE_CAT_TOOL,  _(s))
 /// A localized string for labels
 #define _LABEL_(s)	tr(LOCALE_CAT_LABEL, _(s))
-/// A localized string for buttons
+/// A localized string for buttons/checkboxes/etc.
 #define _BUTTON_(s)	tr(LOCALE_CAT_BUTTON,_(s))
+/// A localized string for window titles
+#define _TITLE_(s)	tr(LOCALE_CAT_TITLE, _(s))
 /// A localized string for type names in scripts
 #define _TYPE_(s)	tr(LOCALE_CAT_TYPE,  _(s))
 /// A localized string for action names

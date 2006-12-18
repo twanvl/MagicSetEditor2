@@ -19,19 +19,19 @@
 // ----------------------------------------------------------------------------- : WelcomeWindow
 
 WelcomeWindow::WelcomeWindow()
-	: Frame(nullptr, wxID_ANY, _("Magic Set Editor"), wxDefaultPosition, wxSize(480,340), wxDEFAULT_DIALOG_STYLE)
+	: Frame(nullptr, wxID_ANY, _TITLE_("magic set editor"), wxDefaultPosition, wxSize(480,340), wxDEFAULT_DIALOG_STYLE)
 	, logo (load_resource_image(_("ABOUT")))
 	, logo2(load_resource_image(_("TWO")))
 {
 	SetIcon(wxIcon(_("ICON_APP")));
 	
 	// init controls
-	wxButton* new_set   = new HoverButtonExt(this, ID_FILE_NEW,    _("WELCOME_NEW"),  _("New set"), _("Creates a new set"));
-	wxButton* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,   _("WELCOME_OPEN"), _("Open set"), _("Open an existing set"));
+	wxButton* new_set   = new HoverButtonExt(this, ID_FILE_NEW,    _("WELCOME_NEW"),  _BUTTON_("new set"),  _HELP_("new"));
+	wxButton* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,   _("WELCOME_OPEN"), _BUTTON_("open set"), _HELP_("open"));
 	wxButton* open_last = 0;
 	if (!settings.recent_sets.empty()) {
 		wxFileName n(settings.recent_sets.front());
-		open_last       = new HoverButtonExt(this, ID_FILE_RECENT, _("WELCOME_LAST"), _("Last opened set"), _("Open '") + n.GetName() + _("'"));
+		open_last       = new HoverButtonExt(this, ID_FILE_RECENT, _("WELCOME_LAST"), _BUTTON_("last opened set"), _("Open '") + n.GetName() + _("'"));
 	}
 	
 	wxSizer* s1  = new wxBoxSizer(wxHORIZONTAL);

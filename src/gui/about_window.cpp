@@ -14,7 +14,7 @@
 // ----------------------------------------------------------------------------- : About window
 
 AboutWindow::AboutWindow(Window* parent)
-	: wxDialog(parent, wxID_ANY, _("About Magic Set Editor"), wxDefaultPosition, wxSize(510,340), wxCLIP_CHILDREN | wxDEFAULT_DIALOG_STYLE)
+	: wxDialog(parent, wxID_ANY, _TITLE_("about"), wxDefaultPosition, wxSize(510,340), wxCLIP_CHILDREN | wxDEFAULT_DIALOG_STYLE)
 	, logo (load_resource_image(_("ABOUT")))
 	, logo2(load_resource_image(_("TWO")))
 {
@@ -55,7 +55,7 @@ void AboutWindow::draw(DC& dc) {
 	dc.DrawText(_("   don't use it for anything important"), 34, 181);
 	dc.DrawText(_("Copyright \xA9 2006 Twan van Laarhoven"), 34, 214);
 }
-	
+
 BEGIN_EVENT_TABLE(AboutWindow, wxDialog)
 	EVT_PAINT      (AboutWindow::onPaint)
 END_EVENT_TABLE  ()

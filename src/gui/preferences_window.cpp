@@ -77,13 +77,13 @@ class UpdatePreferencesPage : public PreferencesPage {
 // ----------------------------------------------------------------------------- : PreferencesWindow
 
 PreferencesWindow::PreferencesWindow(Window* parent)
-	: wxDialog(parent, wxID_ANY, _("Preferences"), wxDefaultPosition)
+	: wxDialog(parent, wxID_ANY, _TITLE_("preferences"), wxDefaultPosition)
 {
 	// init notebook
 	wxNotebook* nb = new wxNotebook(this, ID_NOTEBOOK);
-	nb->AddPage(new DisplayPreferencesPage(nb), _("Display"));
-	nb->AddPage(new DirsPreferencesPage   (nb), _("Directories"));
-	nb->AddPage(new UpdatePreferencesPage (nb), _("Updates"));
+	nb->AddPage(new DisplayPreferencesPage(nb), _TITLE_("display"));
+	nb->AddPage(new DirsPreferencesPage   (nb), _TITLE_("directories"));
+	nb->AddPage(new UpdatePreferencesPage (nb), _TITLE_("updates"));
 	
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
@@ -116,11 +116,11 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 	: PreferencesPage(parent)
 {
 	// init controls
-	high_quality      = new wxCheckBox(this, wxID_ANY, _("&High quality rendering"));
-	borders           = new wxCheckBox(this, wxID_ANY, _("Show &lines around fields"));
+	high_quality      = new wxCheckBox(this, wxID_ANY, _BUTTON_("high quality"));
+	borders           = new wxCheckBox(this, wxID_ANY, _BUTTON_("show lines"));
 	zoom              = new wxSpinCtrl(this, wxID_ANY);
-	non_normal_export = new wxCheckBox(this, wxID_ANY, _("Use zoom and rotation settings when e&xporting"));
-	wxButton* columns = new wxButton(this, ID_SELECT_COLUMNS, _("Select..."));
+	non_normal_export = new wxCheckBox(this, wxID_ANY, _BUTTON_("zoom export"));
+	wxButton* columns = new wxButton(this, ID_SELECT_COLUMNS, _BUTTON_("select"));
 	// set values
 	high_quality->     SetValue( settings.default_stylesheet_settings.card_anti_alias());
 	borders->          SetValue( settings.default_stylesheet_settings.card_borders());
@@ -173,13 +173,13 @@ DirsPreferencesPage::DirsPreferencesPage(Window* parent)
 {
 	// init controls
 	apprentice   = new wxTextCtrl(this, wxID_ANY);
-	wxButton* ab = new wxButton(this, ID_APPRENTICE_BROWSE, _("&Browse..."));
+	wxButton* ab = new wxButton(this, ID_APPRENTICE_BROWSE, _BUTTON_("browse"));
 	// set values
 	apprentice->SetValue(settings.apprentice_location);
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
-		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, this, _("External programs"));
-			s2->Add(new wxStaticText(this, wxID_ANY, _("&Apprentice:")), 0, wxALL, 4);
+		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("external programs"));
+			s2->Add(new wxStaticText(this, wxID_ANY, _LABEL_("apprentice")), 0, wxALL, 4);
 			wxSizer* s3 = new wxBoxSizer(wxHORIZONTAL);
 				s3->Add(apprentice, 1, wxEXPAND | wxRIGHT, 4);
 				s3->Add(ab,         0, wxEXPAND);
@@ -195,7 +195,7 @@ void DirsPreferencesPage::store() {
 
 void DirsPreferencesPage::onApprenticeBrowse(wxCommandEvent&) {
 	// browse for appr.exe
-	wxFileDialog dlg(this, _("Locate apprentice"), apprentice->GetValue(), _(""), _("Apprentice Executable|appr.exe"), wxOPEN);
+	wxFileDialog dlg(this, _TITLE_("locate apprentice"), apprentice->GetValue(), _(""), _("Apprentice Executable|appr.exe"), wxOPEN);
 	if (dlg.ShowModal() == wxID_OK) {
 		wxFileName fn(dlg.GetPath());
 		apprentice->SetValue(fn.GetPath());
@@ -214,18 +214,18 @@ UpdatePreferencesPage::UpdatePreferencesPage(Window* parent)
 {
 	// init controls
 	check_at_startup    = new wxChoice(this, wxID_ANY);
-	wxButton* check_now = new wxButton(this, ID_CHECK_UPDATES_NOW, _("Check &Now"));
+	wxButton* check_now = new wxButton(this, ID_CHECK_UPDATES_NOW, _BUTTON_("check now"));
 	// set values
-	check_at_startup->Append(_("Always"));                        // 0
-	check_at_startup->Append(_("If internet connection exists")); // 1
-	check_at_startup->Append(_("Never"));                         // 2
+	check_at_startup->Append(_BUTTON_("always"));                        // 0
+	check_at_startup->Append(_BUTTON_("if internet connection exists")); // 1
+	check_at_startup->Append(_BUTTON_("never"));                         // 2
 	check_at_startup->SetSelection(settings.check_updates);
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
-		s->Add(new wxStaticText(this, wxID_ANY, _("&Check for new versions at startup:")), 0, wxALL, 8);
+		s->Add(new wxStaticText(this, wxID_ANY, _LABEL_("check at startup")), 0, wxALL, 8);
 		s->Add(check_at_startup, 0, wxALL & ~wxTOP, 8);
 		s->Add(check_now,        0, wxALL & ~wxTOP, 8);
-		s->Add(new wxStaticText(this, wxID_ANY, _("Checking for updates requires an internet connection.\nWhen no internet connection is found upates are not checked.\n\nNo information is collected when checking for updates.")), 0, wxALL & ~wxTOP, 8);
+		s->Add(new wxStaticText(this, wxID_ANY, _LABEL_("checking requires internet")), 0, wxALL & ~wxTOP, 8);
 	SetSizer(s);
 }
 
@@ -239,9 +239,9 @@ void UpdatePreferencesPage::store() {
 void UpdatePreferencesPage::onCheckUpdatesNow(wxCommandEvent&) {
 	check_updates_now(false);
 	if (!update_data_found()) {
-		wxMessageBox(_("Checking updates failed"), _("Update Check"), wxICON_ERROR | wxOK);
+		wxMessageBox(_ERROR_("checking updates failed"), _TITLE_("update check"), wxICON_ERROR | wxOK);
 	} else if (!update_available()) {
-		wxMessageBox(_("There are no available updates."), _("Update Check"), wxICON_INFORMATION | wxOK);
+		wxMessageBox(_ERROR_("no updates"),              _TITLE_("update check"), wxICON_INFORMATION | wxOK);
 	} else {
 		show_update_dialog(GetParent());
 	}

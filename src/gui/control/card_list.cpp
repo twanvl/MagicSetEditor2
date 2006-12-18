@@ -178,7 +178,7 @@ void CardListBase::selectCurrentCard() {
 bool CardListBase::canCopy()  const { return !!selected_card; }
 bool CardListBase::canCut()   const { return canCopy() && allowModify(); }
 bool CardListBase::canPaste() const {
-	return wxTheClipboard->IsSupported(CardDataObject::format);
+	return allowModify() && wxTheClipboard->IsSupported(CardDataObject::format);
 }
 
 bool CardListBase::doCopy() {
@@ -417,6 +417,7 @@ void CardListBase::onChar(wxKeyEvent& ev) {
 }
 
 void CardListBase::onDrag(wxMouseEvent& ev) {
+	if (!allowModify()) return;
 	if (ev.Dragging() && selected_card && !sort_criterium) {
 		// reorder card list
 		int flags;

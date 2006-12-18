@@ -27,6 +27,7 @@ IMPLEMENT_REFLECTION(Locale) {
 	REFLECT_N("tool",   translations[LOCALE_CAT_TOOL]);
 	REFLECT_N("label",  translations[LOCALE_CAT_LABEL]);
 	REFLECT_N("button", translations[LOCALE_CAT_BUTTON]);
+	REFLECT_N("title",  translations[LOCALE_CAT_TITLE]);
 	REFLECT_N("action", translations[LOCALE_CAT_ACTION]);
 	REFLECT_N("error",  translations[LOCALE_CAT_ERROR]);
 	REFLECT_N("type",   translations[LOCALE_CAT_TYPE]);

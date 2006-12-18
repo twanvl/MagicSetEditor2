@@ -19,6 +19,7 @@
 #include <gui/update_checker.hpp>
 #include <gui/new_window.hpp>
 #include <gui/preferences_window.hpp>
+#include <gui/print_window.hpp>
 #include <gui/icon_menu.hpp>
 #include <util/window_id.hpp>
 #include <data/game.hpp>
@@ -34,7 +35,7 @@ DECLARE_TYPEOF_COLLECTION(String);
 // ----------------------------------------------------------------------------- : Constructor
 
 SetWindow::SetWindow(Window* parent, const SetP& set)
-	: wxFrame(parent, wxID_ANY, _("Magic Set Editor"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE)
+	: wxFrame(parent, wxID_ANY, _TITLE_("magic set editor"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE)
 	, current_panel(nullptr)
 	, find_dialog(nullptr)
 	, number_of_recent_sets(0)
@@ -58,8 +59,8 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 		menuFile->AppendSeparator();
 		menuFile->Append(ID_FILE_INSPECT,						_("Inspect Internal Data..."),	_("Shows a the data in the set using a tree structure"));
 		menuFile->AppendSeparator();
-		menuFile->Append(ID_FILE_PRINT_PREVIEW,					_MENU_("print preview"),			_("Shows cards as they will be printed"));
-		menuFile->Append(ID_FILE_PRINT,							_MENU_("print"),					_("Print cards from this set"));
+		menuFile->Append(ID_FILE_PRINT_PREVIEW,					_MENU_("print preview"),	_HELP_("print preview"));
+		menuFile->Append(ID_FILE_PRINT,							_MENU_("print"),			_HELP_("print"));
 		menuFile->AppendSeparator();
 		// recent files go here
 		menuFile->AppendSeparator();
@@ -67,8 +68,8 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	menuBar->Append(menuFile, _MENU_("file"));
 	
 	IconMenu* menuEdit = new IconMenu();
-		menuEdit->Append(ID_EDIT_UNDO,		_("TOOL_UNDO"),		_MENU_("undo"),				_("Undoes the last action"));
-		menuEdit->Append(ID_EDIT_REDO,		_("TOOL_REDO"),		_MENU_("redo"),				_("Redoes the last action"));
+		menuEdit->Append(ID_EDIT_UNDO,		_("TOOL_UNDO"),		_MENU_("undo"),				_HELP_("undo"));
+		menuEdit->Append(ID_EDIT_REDO,		_("TOOL_REDO"),		_MENU_("redo"),				_HELP_("redo"));
 		menuEdit->AppendSeparator();
 		menuEdit->Append(ID_EDIT_CUT,		_("TOOL_CUT"),		_MENU_("cut"),				_("Move the selected text to the clipboard"));
 		menuEdit->Append(ID_EDIT_COPY,		_("TOOL_COPY"),		_MENU_("copy"),				_("Place the selected text on the clipboard"));
@@ -82,14 +83,14 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	menuBar->Append(menuEdit, _MENU_("edit"));
 	
 	IconMenu* menuWindow = new IconMenu();
-		menuWindow->Append(ID_WINDOW_NEW,					_	("&New Window"),				_("Creates another window to edit the same set"));
+		menuWindow->Append(ID_WINDOW_NEW,					 	_MENU_("new window"),		_HELP_("new window"));
 		menuWindow->AppendSeparator();
 	menuBar->Append(menuWindow, _MENU_("window"));
 	
 	IconMenu* menuHelp = new IconMenu();
 		menuHelp->Append(ID_HELP_INDEX,		_("TOOL_HELP"),		_("&Index..\tF1"),				_(""));
 		menuHelp->AppendSeparator();
-		menuHelp->Append(ID_HELP_ABOUT,							_("&About Magic Set Editor..."), _(""));
+		menuHelp->Append(ID_HELP_ABOUT,							_MENU_("about"),			_(""));
 	menuBar->Append(menuHelp, _MENU_("help"));
 	
 	SetMenuBar(menuBar);
@@ -452,11 +453,11 @@ void SetWindow::onFileExportMWS(wxCommandEvent&) {
 }
 
 void SetWindow::onFilePrint(wxCommandEvent&) {
-//	printSet(this, set);
+	print_set(this, set);
 }
 
 void SetWindow::onFilePrintPreview(wxCommandEvent&) {
-//	printPreview(this, set);
+	print_preview(this, set);
 }
 
 void SetWindow::onFileRecent(wxCommandEvent& ev) {

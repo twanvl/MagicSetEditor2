@@ -103,9 +103,10 @@ class CardListBase : public wxListView, public SetView {
 	virtual wxListItemAttr* OnGetItemAttr(long pos) const;
 	
 	// --------------------------------------------------- : Data
-  private:
+  protected:
 	CardP          selected_card;	 ///< The currently selected card, or -1 if no card is selected
 	long           selected_card_pos;///< Position of the selected card in the sorted_card_list
+  private:
 	// display stuff
 	ChoiceStyleP   color_style;       ///< Style (and field) to use for text color (optional)
 	vector<FieldP> column_fields;     ///< The field to use for each column (by column index)

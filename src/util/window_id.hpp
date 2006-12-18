@@ -174,6 +174,9 @@ enum ControlID {
 ,	ID_MOVE_DOWN
 ,	ID_SHOW
 ,	ID_HIDE
+	// Card select
+,	ID_SELECT_ALL
+,	ID_SELECT_NONE
 	// Settings
 ,	ID_NOTEBOOK
 ,	ID_APPRENTICE_BROWSE

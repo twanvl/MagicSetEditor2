@@ -37,14 +37,17 @@ menu
 	cards tab:			&Cards
 	
 	help:			&Help
+	about:				&About Magic Set Editor...
 
 ############################################################## Menu help texts
 help:
 	file:
 	new:				Create a new set
-	open:				Open a set
+	open:				Open an existing set
 	save:				Save the set
 	save as:			Save the set with a new name
+	print preview:		Shows cards as they will be printed
+	print:				Print cards from this set
 	exit:				Quits Magic Set Editor; prompts to save the set
 	
 	edit:
@@ -52,8 +55,13 @@ help:
 	redo:				Redoes the last action
 	
 	format:
-	bold:			Makes the selected text bold
-	italic:			Makes the selected text italic
+	bold:				Makes the selected text bold
+	italic:				Makes the selected text italic
+	
+	window:
+	new window:			Creates another window to edit the same set
+	
+	help:
 
 ############################################################## Toolbar
 tool:
@@ -70,11 +78,79 @@ tool:
 
 ############################################################## Labels in the GUI
 label:
-	card notes:		Card notes:
+	card notes:			Card notes:
+	
+	# Preferences
+	zoom:				&Zoom:
+	external programs:	External programs
+	apprentice:			&Apprentice:
+	check at startup:	Check for new versions at startup
+	checking requires internet:
+		Checking for updates requires an internet connection.
+		When no internet connection is found upates are not checked.
+		
+		No information is collected when checking for updates.
+	
+	# Column select
+	select columns:		Select the columns you want to display
+	columns:			Columns:
+	
+	# Card select
+	select cards print:		Select the cards you want to print
+	
+	# Image slicer
+	original:			Original:
+	result:				Result:
+	size:				Size
+	selection:			Selection
+	zoom:				Zoom
+	filter:				Filter
 
-############################################################## Buttons in the GUI
+############################################################## Buttons/checkboxes/choices in the GUI
 button:
+	# Set window
 	use for all cards:	Use for &all cards
+	
+	# Welcome
+	new set:			New set
+	open set:			Open set
+	last opened set:	Last opened set
+	
+	# Preferences
+	select:				&Select...
+	browse:				&Browse...
+	high quality:		&High quality rendering
+	show lines:			Show &lines around fields
+	zoom export:		Use zoom and rotation settings when e&xporting
+	check now:			Check &Now
+	always:							Always
+	if internet connection exists:	If internet connection exists
+	never:							Never
+	
+	# Column select
+	move up:			Move &Up
+	move down:			Move &Down
+	show:				&Show
+	hide:				&Hide
+	
+	# Card select
+	select all:			Select &All
+	select none:		Select &None
+
+############################################################## Titles in the GUI
+title:
+	magic set editor:	Magic Set Editor
+	about:				About Magic Set Editor
+	preferences:		Preferences
+	display:				Display
+	directories:			Directories
+	updates:				Updates
+	update check:			Update Check
+	locate apprentice:		Locate Apprentice
+	select columns:		Select Columns
+	select cards:		Select Cards
+	slice image:		Slice Image
+	print preview:		Print Preview
 
 ############################################################## Action (undo/redo) names
 action:
@@ -126,6 +202,10 @@ error:
 		When you open it, some aspects of the file may be lost.
 		It is recommended that you upgrade to the latest version.
 		Visit http:://magicseteditor.sourceforge.net/
+	
+	# Update checking
+	checking updates failed:			Checking updates failed.
+	no updates:							There are no available updates.
 
 ############################################################## Types used in scripts
 type:

@@ -73,7 +73,7 @@ DEFINE_EVENT_TYPE(EVENT_SLICE_CHANGED);
 // ----------------------------------------------------------------------------- : ImageSliceWindow
 
 ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wxSize& target_size)
-	: wxDialog(parent,wxID_ANY,_("Slice image"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxFULL_REPAINT_ON_RESIZE)
+	: wxDialog(parent,wxID_ANY,_TITLE_("slice image"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxFULL_REPAINT_ON_RESIZE)
 	, slice(source, target_size)
 {
 	// init controls
@@ -86,7 +86,7 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 	                 , _("Size to &Fit")
 	                 , _("F&orce to Fit")
 	                 , _("&Custom Size") };
-	size      = new wxRadioBox(this, ID_SIZE, _("Size"), defPos, wxDefaultSize, 4, sizes, 1);
+	size      = new wxRadioBox(this, ID_SIZE, _LABEL_("size"), defPos, wxDefaultSize, 4, sizes, 1);
 	
 	left      = new wxSpinCtrl(this, ID_LEFT,   _(""), defPos, spinSize);
 	top       = new wxSpinCtrl(this, ID_TOP,    _(""), defPos, spinSize);
@@ -115,11 +115,11 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 		// top row: image editors
 		wxSizer* s2 = new wxBoxSizer(wxHORIZONTAL);
 			wxSizer* s3 = new wxBoxSizer(wxVERTICAL);
-				s3->Add(new wxStaticText(this, wxID_ANY, _("Original:")));
+				s3->Add(new wxStaticText(this, wxID_ANY, _LABEL_("original")));
 				s3->Add(selector, 1, wxEXPAND | wxTOP, 4);
 			s2->Add(s3, 1, wxEXPAND | wxALL, 4);
 			wxSizer* s4 = new wxBoxSizer(wxVERTICAL);
-				s4->Add(new wxStaticText(this, wxID_ANY, _("Result:")));
+				s4->Add(new wxStaticText(this, wxID_ANY, _LABEL_("result")));
 				s4->Add(preview, 0, wxTOP, 4);
 			s2->Add(s4, 0, wxALL, 4);
 		s->Add(s2, 1, wxEXPAND);
@@ -128,7 +128,7 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 			s5->AddStretchSpacer(1);
 			s5->Add(size, 0, wxEXPAND | wxALL, 4);
 			s5->AddStretchSpacer(1);
-			wxSizer* s6 = new wxStaticBoxSizer(wxVERTICAL, this, _("Selection"));
+			wxSizer* s6 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("selection"));
 				wxSizer* s7 = new wxFlexGridSizer(0, 2, 4, 5);
 					s7->Add(new wxStaticText(this, wxID_ANY, _("&Left")),   0, wxALIGN_CENTER_VERTICAL);
 					s7->Add(left,   0, wxEXPAND);
@@ -141,7 +141,7 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 				s6->Add(s7, 1, wxEXPAND | wxALL, 4);
 			s5->Add(s6, 0, wxEXPAND | wxALL, 4);
 			s5->AddStretchSpacer(1);
-			wxSizer* s8 = zoom_sizer = new wxStaticBoxSizer(wxVERTICAL, this, _("Zoom"));
+			wxSizer* s8 = zoom_sizer = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("zoom"));
 				s8->Add(fix_aspect, 0, wxEXPAND | wxALL & ~wxBOTTOM, 4);
 				wxSizer* s9 = zoom_fixed = new wxFlexGridSizer(0, 3, 4, 5);
 					s9->Add(new wxStaticText(this, wxID_ANY, _("&Zoom")),   0, wxALIGN_CENTER_VERTICAL);
@@ -158,7 +158,7 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 				s8->Add(sA, 0, wxEXPAND | wxALL, 4);
 			s5->Add(s8, 0, wxEXPAND | wxALL, 4);
 			s5->AddStretchSpacer(1);
-			wxSizer* sB = new wxStaticBoxSizer(wxVERTICAL, this, _("Filter"));
+			wxSizer* sB = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("filter"));
 				sB->Add(sharpen,        0, wxEXPAND | wxALL & ~wxBOTTOM, 4);
 				sB->Add(sharpen_amount, 0, wxEXPAND | wxALL, 4);
 			s5->Add(sB, 0, wxEXPAND | wxALL, 4);
