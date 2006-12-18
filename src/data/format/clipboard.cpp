@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <data/format/clipboard.hpp>
+#include <data/format/formats.hpp>
 #include <data/card.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
@@ -77,7 +78,7 @@ CardOnClipboard::CardOnClipboard(const SetP& set, const CardP& card) {
 		// TODO
 		//Add( new TextDataObject(_("card"))) 
 	// Conversion to bitmap format
-//		Add(new BitmapDataObject(exportImageBmp(set, card)));
+		Add(new wxBitmapDataObject(export_bitmap(set, card)));
 	// Conversion to serialized card format
 		Add(new CardDataObject(set, card), true);
 }

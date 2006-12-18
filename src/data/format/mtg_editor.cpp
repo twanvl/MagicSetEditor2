@@ -192,7 +192,12 @@ SetP MtgEditorFileFormat::importSet(const String& filename) {
 	
 	// Load stylesheet
 	if (layout != _("8e")) {
-		set->stylesheet = StyleSheet::byGameAndName(*set->game, _("old"));
+		try {
+			set->stylesheet = StyleSheet::byGameAndName(*set->game, _("old"));
+		} catch (const Error&) {
+			// If old style doesn't work try the new one
+			set->stylesheet = StyleSheet::byGameAndName(*set->game, _("new"));
+		}
 	} else {
 		set->stylesheet = StyleSheet::byGameAndName(*set->game, _("new"));
 	}
