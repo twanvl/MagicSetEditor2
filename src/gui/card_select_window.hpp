@@ -4,40 +4,38 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CONTROL_SELECT_CARD_LIST
-#define HEADER_GUI_CONTROL_SELECT_CARD_LIST
+#ifndef HEADER_GUI_CARD_SELECT_WINDOW
+#define HEADER_GUI_CARD_SELECT_WINDOW
 
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
-#include <gui/control/card_list.hpp>
 
-// ----------------------------------------------------------------------------- : SelectCardList
+DECLARE_POINTER_TYPE(Set);
+DECLARE_POINTER_TYPE(Card);
+class SelectCardList;
 
-/// A card list with check boxes
-class SelectCardList : public CardListBase {
+// ----------------------------------------------------------------------------- : CardSelectWindow
+
+/// A window for selecting a subset of the cards from a set.
+/** this is used when printing or exporting
+ */
+class CardSelectWindow : public wxDialog {
   public:
-	SelectCardList(Window* parent, int id, long additional_style = 0);
-	/// Select all cards
-	void selectAll();
-	/// Deselect all cards
-	void selectNone();
+	CardSelectWindow(Window* parent, const SetP& set, const String& label);
+	
 	/// Is the given card selected?
 	bool isSelected(const CardP& card) const;
+	
   protected:
-	virtual int  OnGetItemImage(long pos) const;
-	virtual void onChangeSet();
-  private:
 	DECLARE_EVENT_TABLE();
 	
-	set<CardP> selected; ///< which cards are selected?
+	SelectCardList* list;
+	SetP            set;
 	
-	void toggle(const CardP& card);
-	
-	void onKeyDown(wxKeyEvent&);
-	void onLeftDown(wxMouseEvent&);
+	void onSelectAll (wxCommandEvent&);
+	void onSelectNone(wxCommandEvent&);
 };
-
 
 // ----------------------------------------------------------------------------- : EOF
 #endif
