@@ -22,7 +22,29 @@ DECLARE_POINTER_TYPE(Game);
 DECLARE_POINTER_TYPE(StyleSheet);
 DECLARE_POINTER_TYPE(Card);
 
-// ----------------------------------------------------------------------------- : ScriptManager
+// ----------------------------------------------------------------------------- : SetScriptContext
+
+/// Manager of the script context for a set
+class SetScriptContext {
+  public:
+	SetScriptContext(Set& set);
+	~SetScriptContext();
+	
+	/// Get a context to use for the set, for a given stylesheet
+	Context& getContext(const StyleSheetP&);
+	/// Get a context to use for the set, for a given card
+	Context& getContext(const CardP&);
+	
+  protected:
+	Set&                            set;		///< Set for which we are managing scripts
+	map<const StyleSheet*,Context*> contexts;	///< Context for evaluating scripts that use a given stylesheet
+	
+	/// Called when a new context for a stylesheet is initialized
+	virtual void onInit(const StyleSheetP& stylesheet, Context* ctx) {}
+};
+
+
+// ----------------------------------------------------------------------------- : SetScriptManager
 
 /// Manager of the script context for a set, keeps scripts up to date
 /** Whenever there is an action all necessary scripts are executed.
@@ -31,22 +53,16 @@ DECLARE_POINTER_TYPE(Card);
  *  The context contains a normal pointer to the set, not a shared_ptr, because the set
  *  itself owns this object.
  */
-class ScriptManager : public ActionListener {
+class SetScriptManager : public SetScriptContext, public ActionListener {
   public:
-	ScriptManager(Set& set);
-	~ScriptManager();
-	
-	/// Get a context to use for the set, for a given stylesheet
-	Context& getContext(const StyleSheetP&);
-	/// Get a context to use for the set, for a given card
-	Context& getContext(const CardP&);
+	SetScriptManager(Set& set);
+	~SetScriptManager();
 	
 	// Update all styles for a particular card
 	void updateStyles(const CardP& card);
 	
   private:
-	Set&                            set;		///< Set for which we are managing scripts
-	map<const StyleSheet*,Context*> contexts;	///< Context for evaluating scripts that use a given stylesheet
+	virtual void onInit(const StyleSheetP& stylesheet, Context* ctx);
 	
 	void initDependencies(Context&, Game&);
 	void initDependencies(Context&, StyleSheet&);

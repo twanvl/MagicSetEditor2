@@ -32,15 +32,13 @@ class FilteredCardList : public CardListBase {
 	FilteredCardList(Window* parent, int id, long style = 0);
 	
 	/// Change the filter to use
-	void setFilter(const CardListFilterP& filter_);
+	void setFilter(const CardListFilterP& filter);
 	
   protected:
 	/// Get only the subset of the cards
 	virtual const vector<CardP>& getCards() const;
 	/// Rebuild the filtered card list
 	virtual void onRebuild();
-//	/// Don't reorder
-//	virtual void onDrag(wxMouseEvent& ev);
 
   private:	
 	CardListFilterP filter;	///< Filter with which this.cards is made

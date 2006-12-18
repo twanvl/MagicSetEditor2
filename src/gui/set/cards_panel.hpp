@@ -13,7 +13,7 @@
 #include <gui/set/panel.hpp>
 
 class wxSplitterWindow;
-class CardListBase;
+class ImageCardList;
 class DataEditor;
 class TextCtrl;
 
@@ -93,7 +93,7 @@ class CardsPanel : public SetWindowPanel {
 	// --------------------------------------------------- : Controls
 	wxSplitterWindow* splitter;
 	DataEditor*       editor;
-	CardListBase*     card_list;
+	ImageCardList*    card_list;
 	TextCtrl*         notes;
 	
 	// --------------------------------------------------- : Menus & tools

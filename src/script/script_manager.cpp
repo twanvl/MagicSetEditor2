@@ -30,26 +30,20 @@ DECLARE_TYPEOF_NO_REV(IndexMap_FieldP_ValueP);
 void init_script_functions(Context& ctx);
 void init_script_image_functions(Context& ctx);
 
-// ----------------------------------------------------------------------------- : ScriptManager : initialization
+// ----------------------------------------------------------------------------- : SetScriptContext : initialization
 
-ScriptManager::ScriptManager(Set& set)
+SetScriptContext::SetScriptContext(Set& set)
 	: set(set)
-{
-	// add as an action listener for the set, so we receive actions
-	set.actions.addListener(this);
-}
+{}
 
-ScriptManager::~ScriptManager() {
-	set.actions.removeListener(this);
-	// destroy context
+SetScriptContext::~SetScriptContext() {
+	// destroy contexts
 	FOR_EACH(sc, contexts) {
 		delete sc.second;
 	}
 }
 
-Context& ScriptManager::getContext(const StyleSheetP& stylesheet) {
-	assert(wxThread::IsMain()); // only use our contexts from the main thread
-	
+Context& SetScriptContext::getContext(const StyleSheetP& stylesheet) {
 	Contexts::iterator it = contexts.find(stylesheet.get());
 	if (it != contexts.end()) {
 		return *it->second; // we already have a context
@@ -67,23 +61,11 @@ Context& ScriptManager::getContext(const StyleSheetP& stylesheet) {
 		ctx->setVariable(_("stylesheet"), toScript(stylesheet));
 		ctx->setVariable(_("card"),       set.cards.empty() ? script_nil : toScript(set.cards.front())); // dummy value
 		ctx->setVariable(_("styling"),    toScript(&set.stylingDataFor(*stylesheet)));
-		try {
-			// perform init scripts, don't use a scope, variables stay bound in the context
-			set.game  ->init_script.invoke(*ctx, false);
-			stylesheet->init_script.invoke(*ctx, false);
-			// find script dependencies
-			initDependencies(*ctx, *set.game);
-			initDependencies(*ctx, *stylesheet);
-			// apply scripts to everything
-			updateAll();
-		} catch (Error e) {
-			handle_error(e, false, false);
-		}		
-		// initialize dependencies
+		onInit(stylesheet, ctx);
 		return *ctx;
 	}
 }
-Context& ScriptManager::getContext(const CardP& card) {
+Context& SetScriptContext::getContext(const CardP& card) {
 	Context& ctx = getContext(set.stylesheetFor(card));
 	if (card) {
 		ctx.setVariable(_("card"), toScript(card));
@@ -93,7 +75,37 @@ Context& ScriptManager::getContext(const CardP& card) {
 	return ctx;
 }
 
-void ScriptManager::initDependencies(Context& ctx, Game& game) {
+// ----------------------------------------------------------------------------- : SetScriptManager : initialization
+
+SetScriptManager::SetScriptManager(Set& set)
+	: SetScriptContext(set)
+{
+	// add as an action listener for the set, so we receive actions
+	set.actions.addListener(this);
+}
+
+SetScriptManager::~SetScriptManager() {
+	set.actions.removeListener(this);
+}
+
+void SetScriptManager::onInit(const StyleSheetP& stylesheet, Context* ctx) {
+	assert(wxThread::IsMain());
+	// initialize dependencies
+	try {
+		// perform init scripts, don't use a scope, variables stay bound in the context
+		set.game  ->init_script.invoke(*ctx, false);
+		stylesheet->init_script.invoke(*ctx, false);
+		// find script dependencies
+		initDependencies(*ctx, *set.game);
+		initDependencies(*ctx, *stylesheet);
+		// apply scripts to everything
+		updateAll();
+	} catch (Error e) {
+		handle_error(e, false, false);
+	}
+}
+
+void SetScriptManager::initDependencies(Context& ctx, Game& game) {
 	if (game.dependencies_initialized) return;
 	game.dependencies_initialized = true;
 	// find dependencies of card fields
@@ -107,7 +119,7 @@ void ScriptManager::initDependencies(Context& ctx, Game& game) {
 }
 
 
-void ScriptManager::initDependencies(Context& ctx, StyleSheet& stylesheet) {
+void SetScriptManager::initDependencies(Context& ctx, StyleSheet& stylesheet) {
 	if (stylesheet.dependencies_initialized) return;
 	stylesheet.dependencies_initialized = true;
 	// find dependencies of choice images and other style stuff
@@ -118,7 +130,7 @@ void ScriptManager::initDependencies(Context& ctx, StyleSheet& stylesheet) {
 
 // ----------------------------------------------------------------------------- : ScriptManager : updating
 
-void ScriptManager::onAction(const Action& action, bool undone) {
+void SetScriptManager::onAction(const Action& action, bool undone) {
 	TYPE_CASE(action, ValueAction) {
 		// find the affected card
 		FOR_EACH(card, set.cards) {
@@ -134,7 +146,7 @@ void ScriptManager::onAction(const Action& action, bool undone) {
 	}
 }
 
-void ScriptManager::updateStyles(const CardP& card) {
+void SetScriptManager::updateStyles(const CardP& card) {
 //	lastUpdatedCard = card;
 	StyleSheetP stylesheet = set.stylesheetFor(card);
 	Context& ctx = getContext(card);
@@ -148,7 +160,7 @@ void ScriptManager::updateStyles(const CardP& card) {
 	}
 }
 
-void ScriptManager::updateValue(Value& value, const CardP& card) {
+void SetScriptManager::updateValue(Value& value, const CardP& card) {
 	Age starting_age; // the start of the update process
 	deque<ToUpdate> to_update;
 	// execute script for initial changed value
@@ -158,7 +170,7 @@ void ScriptManager::updateValue(Value& value, const CardP& card) {
 	updateRecursive(to_update, starting_age);
 }
 
-void ScriptManager::updateAll() {
+void SetScriptManager::updateAll() {
 	// update set data
 	Context& ctx = getContext(set.stylesheet);
 	FOR_EACH(v, set.data) {
@@ -175,14 +187,14 @@ void ScriptManager::updateAll() {
 	updateAllDependend(set.game->dependent_scripts_cards);
 }
 
-void ScriptManager::updateAllDependend(const vector<Dependency>& dependent_scripts) {
+void SetScriptManager::updateAllDependend(const vector<Dependency>& dependent_scripts) {
 	deque<ToUpdate> to_update;
 	Age starting_age;
 	alsoUpdate(to_update, dependent_scripts, CardP());
 	updateRecursive(to_update, starting_age);
 }
 
-void ScriptManager::updateRecursive(deque<ToUpdate>& to_update, Age starting_age) {
+void SetScriptManager::updateRecursive(deque<ToUpdate>& to_update, Age starting_age) {
 //	set->order_cache.clear(); // clear caches before evaluating a round of scripts
 	while (!to_update.empty()) {
 		updateToUpdate(to_update.front(), to_update, starting_age);
@@ -190,7 +202,7 @@ void ScriptManager::updateRecursive(deque<ToUpdate>& to_update, Age starting_age
 	}
 }
 
-void ScriptManager::updateToUpdate(const ToUpdate& u, deque<ToUpdate>& to_update, Age starting_age) {
+void SetScriptManager::updateToUpdate(const ToUpdate& u, deque<ToUpdate>& to_update, Age starting_age) {
 	Age age = u.value->last_script_update;
 	if (starting_age < age)  return; // this value was already updated
 	Context& ctx = getContext(u.card);
@@ -203,7 +215,7 @@ void ScriptManager::updateToUpdate(const ToUpdate& u, deque<ToUpdate>& to_update
 	}
 }
 
-void ScriptManager::alsoUpdate(deque<ToUpdate>& to_update, const vector<Dependency>& deps, const CardP& card) {
+void SetScriptManager::alsoUpdate(deque<ToUpdate>& to_update, const vector<Dependency>& deps, const CardP& card) {
 	FOR_EACH_CONST(d, deps) {
 		switch (d.type) {
 			case DEP_SET_FIELD: {
@@ -217,16 +229,24 @@ void ScriptManager::alsoUpdate(deque<ToUpdate>& to_update, const vector<Dependen
 				}
 				break;
 			} case DEP_CARDS_FIELD: {
-				// TODO
+				// something invalidates a card value for all cards, so all cards need updating
+				FOR_EACH(card, set.cards) {
+					ValueP value = card->data.at(d.index);
+					to_update.push_back(ToUpdate(value.get(), card));
+				}
 				break;
 			} case DEP_STYLE: {
 				// TODO
 				break;
 			} case DEP_CARD_COPY_DEP: {
-				// TODO
+				// propagate dependencies from another field
+				FieldP f = set.game->card_fields[d.index];
+				alsoUpdate(to_update, f->dependent_scripts, card);
 				break;
 			} case DEP_SET_COPY_DEP: {
-				// TODO
+				// propagate dependencies from another field
+				FieldP f = set.game->set_fields[d.index];
+				alsoUpdate(to_update, f->dependent_scripts, card);
 				break;
 			} default:
 				assert(false);

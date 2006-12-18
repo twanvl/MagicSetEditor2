@@ -20,8 +20,8 @@ const vector<CardP>& FilteredCardList::getCards() const {
 	return cards;
 }
 
-void FilteredCardList::setFilter(const CardListFilterP& filter_) {
-	filter = filter_;
+void FilteredCardList::setFilter(const CardListFilterP& filter) {
+	this->filter = filter;
 	rebuild();
 }
 

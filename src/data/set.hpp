@@ -24,7 +24,8 @@ DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(Keyword);
 DECLARE_INTRUSIVE_POINTER_TYPE(ScriptValue);
-class ScriptManager;
+class SetScriptManager;
+class SetScriptContext;
 class Context;
 class Dependency;
 template <typename> class OrderCache;
@@ -64,6 +65,12 @@ class Set : public Packaged {
 	Context& getContext(const CardP& card);
 	/// Update styles for a card
 	void updateFor(const CardP& card);
+	/// A context for performing scripts
+	/** Should only be used from the thumbnail thread! */
+	Context& getContextForThumbnails();
+	/// A context for performing scripts on a particular card
+	/** Should only be used from the thumbnail thread! */
+	Context& getContextForThumbnails(const CardP& card);
 	
 	/// Stylesheet to use for a particular card
 	/** card may be null */
@@ -94,7 +101,9 @@ class Set : public Packaged {
 	DECLARE_REFLECTION();
   private:
 	/// Object for managing and executing scripts
-	scoped_ptr<ScriptManager> script_manager;
+	scoped_ptr<SetScriptManager> script_manager;
+	/// Object for executing scripts from the thumbnail thread
+	scoped_ptr<SetScriptContext> thumbnail_script_context;
 	/// Cache of cards ordered by some criterion
 	map<ScriptValueP,OrderCacheP> order_cache;
 };

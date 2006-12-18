@@ -14,6 +14,7 @@
 #include <data/set.hpp>
 #include <data/card.hpp>
 #include <data/settings.hpp>
+#include <data/stylesheet.hpp>
 #include <data/format/clipboard.hpp>
 #include <data/action/set.hpp>
 #include <util/window_id.hpp>
@@ -24,6 +25,8 @@ DECLARE_TYPEOF_COLLECTION(FieldP);
 DECLARE_POINTER_TYPE(ChoiceValue);
 typedef map<int,FieldP> map_int_FieldP;
 DECLARE_TYPEOF(map_int_FieldP);
+typedef IndexMap<FieldP,StyleP> IndexMap_FieldP_StyleP;
+DECLARE_TYPEOF_NO_REV(IndexMap_FieldP_StyleP);
 
 // ----------------------------------------------------------------------------- : Events
 
@@ -85,7 +88,7 @@ void CardListBase::onAction(const Action& action, bool undone) {
 		if (sort_criterium) return; // nothing changes for us
 		if ((long)action.card_id1 == selected_card_pos || (long)action.card_id2 == selected_card_pos) {
 			// Selected card has moved; also move in the sorted card list
-			swap(sorted_card_list[action.card_id1] ,sorted_card_list[action.card_id2]);
+			swap(sorted_card_list[action.card_id1],sorted_card_list[action.card_id2]);
 			// reselect the current card, it has moved
 			selected_card_pos = (long)action.card_id1 == selected_card_pos ? (long)action.card_id2 : (long)action.card_id1;
 			// select the right card
@@ -98,6 +101,9 @@ void CardListBase::onAction(const Action& action, bool undone) {
 
 const vector<CardP>& CardListBase::getCards() const {
 	return set->cards;
+}
+const CardP& CardListBase::getCard(long pos) const {
+	return sorted_card_list[pos];
 }
 
 // ----------------------------------------------------------------------------- : CardListBase : Selection
@@ -135,7 +141,7 @@ void CardListBase::selectCardPos(long pos, bool focus) {
 	if (selected_card_pos == pos && !focus)  return; // this card is already selected
 	if ((size_t)pos < sorted_card_list.size()) {
 		// only if there is something to select
-		selectCard(sorted_card_list[pos], false, true);
+		selectCard(getCard(pos), false, true);
 	} else {
 		selectCard(CardP(), false, true);
 	}
@@ -148,7 +154,7 @@ void CardListBase::findSelectedCardPos() {
 	long count = GetItemCount();
 	selected_card_pos = -1;
 	for (long pos = 0 ; pos < count ; ++pos) {
-		if (sorted_card_list[pos] == selected_card) {
+		if (getCard(pos) == selected_card) {
 			selected_card_pos = pos;
 			break;
 		}
@@ -298,13 +304,12 @@ void CardListBase::refreshList() {
 }
 
 ChoiceStyleP CardListBase::findColorStyle() {
-/*	FOR_EACH(s, set->default_stylesheet->card_style) {
-		ChoiceStyleP cs = dynamic_cast<ChoiceStyleP>(s);
+	FOR_EACH(s, set->stylesheet->card_style) {
+		ChoiceStyleP cs = dynamic_pointer_cast<ChoiceStyle>(s);
 		if (cs && cs->colors_card_list) {
 			return cs;
 		}
 	}
-*/
 	return ChoiceStyleP();
 }
 
@@ -338,7 +343,7 @@ String CardListBase::OnGetItemText(long pos, long col) const {
 		// wx may give us non existing columns!
 		return wxEmptyString;
 	}
-	ValueP val = sorted_card_list[pos]->data[column_fields[col]];
+	ValueP val = getCard(pos)->data[column_fields[col]];
 	if (val) return val->toString();
 	else     return wxEmptyString;
 }
@@ -349,7 +354,7 @@ int CardListBase::OnGetItemImage(long pos) const {
 
 wxListItemAttr* CardListBase::OnGetItemAttr(long pos) const {
 	if (!color_style) return nullptr;
-	ChoiceValueP val = static_pointer_cast<ChoiceValue>( sorted_card_list[pos]->data[color_style->fieldP]);
+	ChoiceValueP val = static_pointer_cast<ChoiceValue>( getCard(pos)->data[color_style->fieldP]);
 	assert(val);
 	item_attr.SetTextColour(color_style->choice_colors[val->value()]); // if it doesn't exist we get black
 	return &item_attr;
@@ -412,7 +417,20 @@ void CardListBase::onChar(wxKeyEvent& ev) {
 }
 
 void CardListBase::onDrag(wxMouseEvent& ev) {
-// TODO
+	if (ev.Dragging() && selected_card && !sort_criterium) {
+		// reorder card list
+		int flags;
+		long item = HitTest(ev.GetPosition(), flags);
+		if (flags & wxLIST_HITTEST_ONITEM) {
+			if (item > 0)                EnsureVisible(item-1);
+			if (item < GetItemCount()-1) EnsureVisible(item+1);
+			findSelectedCardPos();
+			if (item != selected_card_pos) {
+				// move card in the set
+				set->actions.add(new ReorderCardsAction(*set, item, selected_card_pos));
+			}
+		}
+	}
 }
 
 // ----------------------------------------------------------------------------- : CardListBase : Event table

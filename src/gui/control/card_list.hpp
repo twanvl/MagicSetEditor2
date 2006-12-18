@@ -41,9 +41,6 @@ struct CardSelectEvent : public wxCommandEvent {
  *
  *  Note: (long) pos refers to position in the sorted_card_list,
  *        (size_t) index refers to the index in the actual card list (as returned by getCards).
- *
- *  This class is an abstract base class for card lists, derived classes must overload:
- *   - getCard(index)
  */
 class CardListBase : public wxListView, public SetView {
   public:
@@ -84,24 +81,26 @@ class CardListBase : public wxListView, public SetView {
   protected:
 	/// What cards should be shown?
 	virtual const vector<CardP>& getCards() const;
+	/// Return the card at the given position in the sorted card list
+	const CardP& getCard(long pos) const;
 	
 	/// Rebuild the card list (clear all vectors and fill them again)
 	void rebuild();
 	/// Do some additional updating before rebuilding the list
 	virtual void onRebuild() {}
 	/// Can the card list be modified?
-	virtual bool allowModify() const { return true; }
+	virtual bool allowModify() const { return false; }
 	
 	// --------------------------------------------------- : Item 'events'
 	
 	/// Get the text of an item in a specific column
 	/** Overrides a function from wxListCtrl */
-	String OnGetItemText (long pos, long col) const;
+	virtual String OnGetItemText (long pos, long col) const;
 	/// Get the image of an item, by default no image is used
 	/** Overrides a function from wxListCtrl */
-	int    OnGetItemImage(long pos) const;
+	virtual int    OnGetItemImage(long pos) const;
 	/// Get the color for an item
-	wxListItemAttr* OnGetItemAttr(long pos) const;
+	virtual wxListItemAttr* OnGetItemAttr(long pos) const;
 	
 	// --------------------------------------------------- : Data
   private:

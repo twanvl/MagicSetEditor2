@@ -7,7 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <gui/set/cards_panel.hpp>
-#include <gui/control/card_list.hpp>
+#include <gui/control/image_card_list.hpp>
 #include <gui/control/card_editor.hpp>
 #include <gui/control/text_ctrl.hpp>
 #include <gui/icon_menu.hpp>
@@ -29,8 +29,7 @@ CardsPanel::CardsPanel(Window* parent, int id)
 	wxSplitterWindow* splitter;
 	editor    = new CardEditor(this, ID_EDITOR);
 	splitter  = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
-//	card_list = new EditCardList(splitter, ID_CARD_LIST);
-	card_list = new CardListBase(splitter, ID_CARD_LIST);
+	card_list = new ImageCardList(splitter, ID_CARD_LIST);
 	notesP    = new Panel(splitter, wxID_ANY);
 	notes     = new TextCtrl(notesP, ID_NOTES);
 	// init sizer for notes panel

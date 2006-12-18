@@ -574,6 +574,12 @@
 					RelativePath=".\gui\control\graph.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\control\image_card_list.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\image_card_list.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\control\native_look_editor.cpp">
 				</File>
 				<File
@@ -584,6 +590,12 @@
 				</File>
 				<File
 					RelativePath=".\gui\control\package_list.hpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\select_card_list.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\select_card_list.hpp">
 				</File>
 				<File
 					RelativePath=".\gui\control\text_ctrl.cpp">
@@ -850,6 +862,12 @@
 				</File>
 				<File
 					RelativePath=".\gui\preferences_window.hpp">
+				</File>
+				<File
+					RelativePath=".\gui\thumbnail_thread.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\thumbnail_thread.hpp">
 				</File>
 				<File
 					RelativePath=".\gui\update_checker.cpp">
