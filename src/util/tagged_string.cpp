@@ -198,7 +198,6 @@ size_t index_to_cursor(const String& str, size_t index, Movement dir) {
 		}
 	}
 	if (cursor == 0)       return 0;
-	if (i == str.size())   return cursor;
 	if (dir == MOVE_LEFT)  return cursor - 1;
 	if (dir == MOVE_RIGHT) return cursor - (start == index);
 	// which is nearer? start or end?
