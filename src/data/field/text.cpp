@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <data/field/text.hpp>
+#include <util/tagged_string.hpp>
 #include <script/script.hpp>
 
 // ----------------------------------------------------------------------------- : TextField
@@ -90,7 +91,7 @@ IMPLEMENT_REFLECTION(TextStyle) {
 // ----------------------------------------------------------------------------- : TextValue
 
 String TextValue::toString() const {
-	return value();
+	return untag(value());
 }
 bool TextValue::update(Context& ctx) {
 	Value::update(ctx);
