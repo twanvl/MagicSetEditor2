@@ -50,6 +50,8 @@ class TextViewer {
 	void draw(RotatedDC& dc, const TextStyle& style, DrawWhat what);
 	/// Draw an indicator for selected text
 	void drawSelection(RotatedDC& dc, const TextStyle& style, size_t sel_start, size_t sel_end);
+	/// Draw separators for <line> tags
+	void drawSeparators(RotatedDC& dc);
 	
 	/// Prepare the text for drawing, if it is not already prepared
 	void prepare(RotatedDC& dc, const String& text, const TextStyle& style, Context&);

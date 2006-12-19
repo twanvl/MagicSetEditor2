@@ -67,6 +67,11 @@ TextViewer::~TextViewer() {}
 void TextViewer::draw(RotatedDC& dc, const TextStyle& style, DrawWhat what) {
 	assert(!lines.empty());
 	Rotater r(dc, style.getRotation());
+	// separator lines?
+	// do this first, so pen is still set from drawing the field border
+	if (what & DRAW_BORDERS) {
+		drawSeparators(dc);
+	}
 	// Draw the text, line by line
 	FOR_EACH(l, lines) {
 		if (l.visible(dc)) {
@@ -95,6 +100,26 @@ void TextViewer::Line::drawSelection(RotatedDC& dc, size_t sel_start, size_t sel
 		double x1 = positions[max(start, sel_start) - start];
 		double x2 = positions[min(end(), sel_end)   - start];
 		dc.DrawRectangle(RealRect(x1, top, x2 - x1, line_height));
+	}
+}
+
+void TextViewer::drawSeparators(RotatedDC& dc) {
+	// separator lines
+	bool separator = false;
+	double y = 0;
+	FOR_EACH(l, lines) {
+		double y2 = l.top + l.line_height;
+		if (separator && l.visible(dc)) {
+			// between the two lines
+			y = (y + l.top) / 2;
+			dc.DrawLine(RealPoint(0, y), RealPoint(dc.getInternalRect().width, y));
+		}
+		separator = l.separator_after;
+		y = y2;
+	}
+	// separator at the end?
+	if (separator) {
+		dc.DrawLine(RealPoint(0, y), RealPoint(dc.getInternalRect().width, y));
 	}
 }
 
