@@ -80,6 +80,29 @@ String close_tag(const String& tag);
 /// The matching close tag for an open tag and vice versa
 String anti_tag(const String& tag);
 
+// ----------------------------------------------------------------------------- : Cursor position
+
+/// Directions of cursor movement
+enum Movement
+{	MOVE_LEFT  = -1	///< Always move the cursor to the left
+,	MOVE_MID   =  0	///< Move in whichever direction the distance to move is shorter (TODO: define shorter)
+,	MOVE_RIGHT =  1	///< Always move the cursor to the right
+};
+
+/// Find the cursor position corresponding to the given character index.
+/** A cursor position always corresponds to a valid place to type text.
+ *  The cursor position is rounded to the direction dir.
+ */
+size_t index_to_cursor(const String& str, size_t index, Movement dir = MOVE_MID);
+
+/// Find the range of character indeces corresponding to the given cursor position
+/** The output parameters will correspond to the range [start...end) which are all valid character indices.
+ */
+void cursor_to_index_range(const String& str, size_t cursor, size_t& begin, size_t& end);
+
+/// Find the character index corresponding to the given cursor position
+size_t cursor_to_index(const String& str, size_t cursor);
+
 // ----------------------------------------------------------------------------- : Global operations
 
 /// Remove all instances of a tag and its close tag, but keep the contents.

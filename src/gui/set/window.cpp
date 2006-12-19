@@ -94,11 +94,11 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	menuBar->Append(menuHelp, _MENU_("help"));
 	
 	SetMenuBar(menuBar);
-		
+	
 	// status bar
 	CreateStatusBar();
 	SetStatusText(_("Welcome to Magic Set Editor"));
-			
+	
 	// tool bar
 	wxToolBar* tb = CreateToolBar(wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL);
 	tb->SetToolBitmapSize(wxSize(18,18));

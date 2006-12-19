@@ -130,7 +130,7 @@ class FontTextElement : public SimpleTextElement {
 		: SimpleTextElement(text, start, end)
 		, font(font)
 	{}
-
+	
 	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
 	virtual double minScale() const;
@@ -146,7 +146,7 @@ class SymbolTextElement : public SimpleTextElement {
 		: SimpleTextElement(text, start, end)
 		, font(font), ctx(*ctx)
 	{}
-
+	
 	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
 	virtual double minScale() const;
@@ -162,8 +162,21 @@ class CompoundTextElement : public TextElement {
   public:
 	CompoundTextElement(const String& text, size_t start ,size_t end) : TextElement(text, start, end) {}
 	
+	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
+	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
+	virtual double minScale() const;
+	
 	TextElements elements; ///< the elements
 };
+
+/// A TextElement drawn using a grey background
+class AtomTextElement : public CompoundTextElement {
+  public:
+	AtomTextElement(const String& text, size_t start ,size_t end) : CompoundTextElement(text, start, end) {}
+	
+	virtual void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
+};
+
 
 // ----------------------------------------------------------------------------- : Other text elements
 

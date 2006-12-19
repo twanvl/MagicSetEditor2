@@ -195,15 +195,20 @@ button:
 	# Card select
 	select all:			Select &All
 	select none:		Select &None
+	
+	# Update checker
+	close:				&Close
 
 ############################################################## Titles in the GUI
 title:
 	magic set editor:	Magic Set Editor
 	about:				About Magic Set Editor
+	symbol editor:		Symbol Editor
 	# dialogs
 	open set:			Open Set
 	save set:			Save Set As
 	save image:			Save Image
+	updates availible:	Updates Availible
 	#preferences
 	preferences:		Preferences
 	display:				Display

@@ -159,6 +159,80 @@ String anti_tag(const String& tag) {
 	else                                          return _("</") + tag           + _(">");
 }
 
+// ----------------------------------------------------------------------------- : Cursor position
+
+size_t index_to_cursor(const String& str, size_t index, Movement dir) {
+	size_t cursor = 0;
+	size_t start = 0, end = 0;
+	index = min(index, str.size());
+	// find the range [start...end) with the same cursor value, that contains index
+	// after the loop, cursor corresponds to index end
+	for (size_t i = 0 ; i < str.size() ; ) {
+		Char c = str.GetChar(i);
+		if (c == _('<')) {
+			// a tag
+			if (is_substr(str, i, _("<atom")) || is_substr(str, i, _("<sep"))) {
+				// skip tag contents, tag counts as a single 'character'
+				i = skip_tag(str, match_close_tag(str, i));
+				cursor++;
+				start = end;
+				end   = i;
+				if (end > index) break;
+			} else {
+				i = skip_tag(str, i);
+				end = i;
+			}
+		} else {
+			cursor++;
+			i++;
+			start = end;
+			end   = i;
+			if (end > index) break;
+		}
+	}
+	if (cursor == 0)       return 0;
+	if (i == str.size())   return cursor;
+	if (dir == MOVE_LEFT)  return cursor - 1;
+	if (dir == MOVE_RIGHT) return cursor - (start == index);
+	// which is nearer? start or end?
+	return cursor - ((int)(index - start) <= (int)(end - index));
+}
+
+void cursor_to_index_range(const String& str, size_t cursor, size_t& start, size_t& end) {
+	start = end = 0;
+	size_t cur = 0;
+	size_t i = 0;
+	while (cur <= cursor && i < str.size()) {
+		Char c = str.GetChar(i);
+		if (c == _('<')) {
+			// a tag
+			if (is_substr(str, i, _("<atom")) || is_substr(str, i, _("<sep"))) {
+				// skip tag contents, tag counts as a single 'character'
+				i = skip_tag(str, match_close_tag(str, i));
+				cur++;
+				if (cur == cursor) start = i;
+			} else {
+				i = skip_tag(str, i);
+			}
+		} else {
+			cur++;
+			i++;
+			if (cur == cursor) start = i;
+		}
+	}
+	end = min(i, str.size());
+	if (cur < cursor) start = end = str.size();
+}
+
+size_t cursor_to_index(const String& str, size_t cursor) {
+	size_t start, end;
+	cursor_to_index_range(str, cursor, start, end);
+	// TODO: If at i there is <tag></tag> return a position inside the tags
+	// This allows formating to be enabled without a selection
+	return start;
+}
+
+
 // ----------------------------------------------------------------------------- : Global operations
 
 String remove_tag(const String& str, const String& tag) {

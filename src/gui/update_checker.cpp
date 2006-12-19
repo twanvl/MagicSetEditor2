@@ -120,11 +120,11 @@ struct HtmlWindowToBrowser : public wxHtmlWindow {
 void show_update_dialog(Window* parent) {
 	if (!update_available()) return; // we already have the latest version
 	// Show update dialog
-	wxDialog* dlg = new wxDialog(parent, wxID_ANY, _("Updates availible"), wxDefaultPosition);
+	wxDialog* dlg = new wxDialog(parent, wxID_ANY, _TITLE_("updates availible"), wxDefaultPosition);
 	// controls
 	wxHtmlWindow* html = new HtmlWindowToBrowser(dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO | wxSUNKEN_BORDER);
 	html->SetPage(update_version_data->description);
-	wxButton* close = new wxButton(dlg, wxID_OK, _("&Close"));
+	wxButton* close = new wxButton(dlg, wxID_OK, _BUTTON_("close"));
 	close->SetDefault();
 	// layout
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);

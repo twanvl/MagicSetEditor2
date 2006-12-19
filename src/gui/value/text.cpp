@@ -54,7 +54,8 @@ END_EVENT_TABLE  ()
 // ----------------------------------------------------------------------------- : TextValueEditor
 
 IMPLEMENT_VALUE_EDITOR(Text)
-	, selection_start(0), selection_end(0)
+	, selection_start  (0), selection_end  (0)
+	, selection_start_i(0), selection_end_i(0)
 	, select_words(false)
 	, scrollbar(nullptr)
 {}
@@ -67,7 +68,7 @@ TextValueEditor::~TextValueEditor() {
 
 void TextValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
 	select_words = false;
-	moveSelection(v.indexAt(style().getRotation().trInv(pos)), !ev.ShiftDown(), MOVE_MID);
+	moveSelection(TYPE_INDEX, v.indexAt(style().getRotation().trInv(pos)), !ev.ShiftDown(), MOVE_MID);
 }
 void TextValueEditor::onLeftUp(const RealPoint& pos, wxMouseEvent&) {
 	// TODO: lookup position of click?
@@ -78,9 +79,9 @@ void TextValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
 		size_t index = v.indexAt(style().getRotation().trInv(pos));
 		if (select_words) {
 			// TODO: on the left, swap start and end
-			moveSelection(index < selection_start ? prevWordBoundry(index) : nextWordBoundry(index), false, MOVE_MID);
+			moveSelection(TYPE_INDEX, index < selection_start_i ? prevWordBoundry(index) : nextWordBoundry(index), false, MOVE_MID);
 		} else {
-			moveSelection(index, false, MOVE_MID);
+			moveSelection(TYPE_INDEX, index, false, MOVE_MID);
 		}
 	}
 }
@@ -88,16 +89,16 @@ void TextValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
 void TextValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent& ev) {
 	select_words = true;
 	size_t index = v.indexAt(style().getRotation().trInv(pos));
-	moveSelection(prevWordBoundry(index), true, MOVE_MID);
-	moveSelection(nextWordBoundry(index), false, MOVE_MID);
+	moveSelection(TYPE_INDEX, prevWordBoundry(index), true, MOVE_MID);
+	moveSelection(TYPE_INDEX, nextWordBoundry(index), false, MOVE_MID);
 }
 
 void TextValueEditor::onRightDown(const RealPoint& pos, wxMouseEvent& ev) {
 	size_t index = v.indexAt(style().getRotation().trInv(pos));
-	if (index < min(selection_start, selection_end) ||
-		index > max(selection_start, selection_end)) {
+	if (index < min(selection_start_i, selection_end_i) ||
+		index > max(selection_start_i, selection_end_i)) {
 		// only move cursor when outside selection
-		moveSelection(index, !ev.ShiftDown(), MOVE_MID);
+		moveSelection(TYPE_INDEX, index, !ev.ShiftDown(), MOVE_MID);
 	}
 }
 
@@ -109,48 +110,48 @@ void TextValueEditor::onChar(wxKeyEvent& ev) {
 		case WXK_LEFT:
 			// move left (selection?)
 			if (ev.ControlDown()) {
-				moveSelection(prevWordBoundry(selection_end),!ev.ShiftDown(), MOVE_LEFT);
+				moveSelection(TYPE_INDEX,  prevWordBoundry(selection_end_i),!ev.ShiftDown(), MOVE_LEFT);
 			} else {
-				moveSelection(prevCharBoundry(selection_end),!ev.ShiftDown(), MOVE_LEFT);
+				moveSelection(TYPE_CURSOR, prevCharBoundry(selection_end),  !ev.ShiftDown(), MOVE_LEFT);
 			}
 			break;
 		case WXK_RIGHT:
 			// move left (selection?)
 			if (ev.ControlDown()) {
-				moveSelection(nextWordBoundry(selection_end),!ev.ShiftDown(), MOVE_RIGHT);
+				moveSelection(TYPE_INDEX,  nextWordBoundry(selection_end_i),!ev.ShiftDown(), MOVE_RIGHT);
 			} else {
-				moveSelection(nextCharBoundry(selection_end),!ev.ShiftDown(), MOVE_RIGHT);
+				moveSelection(TYPE_CURSOR, nextCharBoundry(selection_end),  !ev.ShiftDown(), MOVE_RIGHT);
 			}
 			break;
 		case WXK_UP:
-			moveSelection(v.moveLine(selection_end, -1), !ev.ShiftDown(), MOVE_LEFT);
+			moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, -1), !ev.ShiftDown(), MOVE_LEFT);
 			break;
 		case WXK_DOWN:
-			moveSelection(v.moveLine(selection_end, +1), !ev.ShiftDown(), MOVE_RIGHT);
+			moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, +1), !ev.ShiftDown(), MOVE_RIGHT);
 			break;
 		case WXK_HOME:
 			// move to begining of line / all (if control)
 			if (ev.ControlDown()) {
-				moveSelection(0,                          !ev.ShiftDown(), MOVE_LEFT);
+				moveSelection(TYPE_INDEX, 0,                            !ev.ShiftDown(), MOVE_LEFT);
 			} else {
-				moveSelection(v.lineStart(selection_end), !ev.ShiftDown(), MOVE_LEFT);
+				moveSelection(TYPE_INDEX, v.lineStart(selection_end_i), !ev.ShiftDown(), MOVE_LEFT);
 			}
 			break;
 		case WXK_END:
 			// move to end of line / all (if control)
 			if (ev.ControlDown()) {
-				moveSelection(value().value().size(),   !ev.ShiftDown(), MOVE_RIGHT);
+				moveSelection(TYPE_INDEX, value().value().size(),   !ev.ShiftDown(), MOVE_RIGHT);
 			} else {
-				moveSelection(v.lineEnd(selection_end), !ev.ShiftDown(), MOVE_RIGHT);
+				moveSelection(TYPE_INDEX, v.lineEnd(selection_end_i), !ev.ShiftDown(), MOVE_RIGHT);
 			}
 			break;
 		case WXK_BACK:
 			if (selection_start == selection_end) {
 				// if no selection, select previous character
-				moveSelectionNoRedraw(prevCharBoundry(selection_end), false);
+				moveSelectionNoRedraw(TYPE_CURSOR, prevCharBoundry(selection_end), false);
 				if (selection_start == selection_end) {
 					// Walk over a <sep> as if we are the LEFT key
-					moveSelection(prevCharBoundry(selection_end), true, MOVE_LEFT);
+					moveSelection(TYPE_CURSOR, prevCharBoundry(selection_end), true, MOVE_LEFT);
 					return;
 				}
 			}
@@ -159,10 +160,10 @@ void TextValueEditor::onChar(wxKeyEvent& ev) {
 		case WXK_DELETE:
 			if (selection_start == selection_end) {
 				// if no selection select next
-				moveSelectionNoRedraw(nextCharBoundry(selection_end), false);
+				moveSelectionNoRedraw(TYPE_CURSOR, nextCharBoundry(selection_end), false);
 				if (selection_start == selection_end) {
 					// Walk over a <sep> as if we are the RIGHT key
-					moveSelection(nextCharBoundry(selection_end), true, MOVE_RIGHT);
+					moveSelection(TYPE_CURSOR, nextCharBoundry(selection_end), true, MOVE_RIGHT);
 				}
 			}
 			replaceSelection(wxEmptyString, _("Delete"));
@@ -193,12 +194,13 @@ void TextValueEditor::onLoseFocus() {
 	assert(caret);
 	if (caret->IsVisible()) caret->Hide();
 	// hide selection
-	selection_start = selection_end = 0;
+	selection_start   = selection_end   = 0;
+	selection_start_i = selection_end_i = 0;
 }
 
 bool TextValueEditor::onContextMenu(wxMenu& m, wxContextMenuEvent& ev) {
 	// in a keword? => "reminder text" option
-	size_t kwpos = in_tag(value().value(), _("<kw-"), selection_start, selection_start);
+	size_t kwpos = in_tag(value().value(), _("<kw-"), selection_start_i, selection_start_i);
 	if (kwpos != String::npos) {
 		Char c = String(value().value()).GetChar(kwpos + 4);
 		m.AppendSeparator();
@@ -211,7 +213,7 @@ bool TextValueEditor::onContextMenu(wxMenu& m, wxContextMenuEvent& ev) {
 void TextValueEditor::onMenu(wxCommandEvent& ev) {
 	if (ev.GetId() == ID_FORMAT_REMINDER) {
 		// toggle reminder text
-		size_t kwpos = in_tag(value().value(), _("<kw-"), selection_start, selection_start);
+		size_t kwpos = in_tag(value().value(), _("<kw-"), selection_start_i, selection_start_i);
 		if (kwpos != String::npos) {
 //			getSet().actions.add(new TextToggleReminderAction(value, kwpos));
 		}
@@ -225,7 +227,7 @@ void TextValueEditor::onMenu(wxCommandEvent& ev) {
 void TextValueEditor::draw(RotatedDC& dc) {
 	TextValueViewer::draw(dc);
 	if (isCurrent()) {
-		v.drawSelection(dc, style(), selection_start, selection_end);
+		v.drawSelection(dc, style(), selection_start_i, selection_end_i);
 		
 		// show caret, onAction() would be a better place
 		// but it has to be done after the viewer has updated the TextViewer
@@ -268,15 +270,16 @@ wxCursor TextValueEditor::cursor() const {
 
 void TextValueEditor::onValueChange() {
 	TextValueViewer::onValueChange();
-	selection_start = 0;
-	selection_end   = 0;
+	selection_start   = selection_end   = 0;
+	selection_start_i = selection_end_i = 0;
 }
 
 void TextValueEditor::onAction(const ValueAction& action, bool undone) {
 	TextValueViewer::onAction(action, undone);
 	TYPE_CASE(action, TextValueAction) {
-		selection_start = action.selection_start;
-		selection_end   = action.selection_end;
+		selection_start_i = action.selection_start;
+		selection_end_i   = action.selection_end;
+		fixSelection(TYPE_INDEX);
 	}
 }
 
@@ -304,10 +307,10 @@ bool TextValueEditor::doPaste() {
 
 bool TextValueEditor::doCopy() {
 	// determine string to store
-	if (selection_start > value().value().size()) selection_start = value().value().size();
-	if (selection_end   > value().value().size()) selection_end   = value().value().size();
-	size_t start = min(selection_start, selection_end);
-	size_t end   = max(selection_start, selection_end);
+	if (selection_start_i > value().value().size()) selection_start_i = value().value().size();
+	if (selection_end_i   > value().value().size()) selection_end_i   = value().value().size();
+	size_t start = min(selection_start_i, selection_end_i);
+	size_t end   = max(selection_start_i, selection_end_i);
 	String str = untag(value().value().substr(start, end - start));
 	if (str.empty()) return false; // no data to copy
 	// set data
@@ -340,11 +343,11 @@ bool TextValueEditor::canFormat(int type) const {
 bool TextValueEditor::hasFormat(int type) const {
 	switch (type) {
 		case ID_FORMAT_BOLD:
-			return in_tag(value().value(), _("<b"),   selection_start, selection_end) != String::npos;
+			return in_tag(value().value(), _("<b"),   selection_start_i, selection_end_i) != String::npos;
 		case ID_FORMAT_ITALIC:
-			return in_tag(value().value(), _("<i"),   selection_start, selection_end) != String::npos;
+			return in_tag(value().value(), _("<i"),   selection_start_i, selection_end_i) != String::npos;
 		case ID_FORMAT_SYMBOL:
-			return in_tag(value().value(), _("<sym"), selection_start, selection_end) != String::npos;
+			return in_tag(value().value(), _("<sym"), selection_start_i, selection_end_i) != String::npos;
 		case ID_FORMAT_REMINDER:
 			return false; // TODO
 		default:
@@ -355,15 +358,15 @@ bool TextValueEditor::hasFormat(int type) const {
 void TextValueEditor::doFormat(int type) {
 	switch (type) {
 		case ID_FORMAT_BOLD: {
-			getSet().actions.add(toggle_format_action(valueP(), _("b"),   selection_start, selection_end, _("Bold")));
+			getSet().actions.add(toggle_format_action(valueP(), _("b"),   selection_start_i, selection_end_i, _("Bold")));
 			break;
 		}
 		case ID_FORMAT_ITALIC: {
-			getSet().actions.add(toggle_format_action(valueP(), _("i"),   selection_start, selection_end, _("Italic")));
+			getSet().actions.add(toggle_format_action(valueP(), _("i"),   selection_start_i, selection_end_i, _("Italic")));
 			break;
 		}
 		case ID_FORMAT_SYMBOL: {
-			getSet().actions.add(toggle_format_action(valueP(), _("sym"), selection_start, selection_end, _("Symbols")));
+			getSet().actions.add(toggle_format_action(valueP(), _("sym"), selection_start_i, selection_end_i, _("Symbols")));
 			break;
 		}
 	}
@@ -378,7 +381,7 @@ void TextValueEditor::showCaret() {
 	// The caret
 	wxCaret* caret = editor().GetCaret();
 	// cursor rectangle
-	RealRect cursor = v.charRect(selection_end);
+	RealRect cursor = v.charRect(selection_end_i);
 	cursor.width = 0;
 	// height may be 0 near a <line>
 	// it is not 0 for empty text, because TextRenderer handles that case
@@ -437,10 +440,10 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 	fixSelection();
 	// execute the action before adding it to the stack,
 	// because we want to run scripts before action listeners see the action
-	ValueAction* action = typing_action(valueP(), selection_start, selection_end, replacement, name);
+	ValueAction* action = typing_action(valueP(), selection_start_i, selection_end_i, replacement, name);
 	if (!action) {
-		// nothing changed, but move the selection anyway
-		moveSelection(selection_start);
+		// nothing changes, but move the selection anyway
+		moveSelection(TYPE_CURSOR, selection_start);
 		return;
 	}
 	// perform the action
@@ -451,12 +454,12 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 		String val = value().value();
 		Char typed  = replacement.GetChar(0);
 		Char typedU = toUpper(typed);
-		Char cur    = val.GetChar(selection_start);
+		Char cur    = val.GetChar(selection_start_i);
 		// the cursor may have moved because of sorting...
 		// is 'replacement' just after the current cursor?
-		if (selection_start >= 0 && selection_start < val.size() && (cur == typed || cur == typedU)) {
+		if (selection_start_i >= 0 && selection_start_i < val.size() && (cur == typed || cur == typedU)) {
 			// no need to move cursor in a special way
-			selection_end = selection_start = min(selection_end, selection_start) + 1;
+			selection_end_i = selection_start_i = min(selection_end_i, selection_start_i) + 1;
 		} else {
 			// find the last occurence of 'replacement' in the value
 			size_t pos = val.find_last_of(typed);
@@ -465,22 +468,23 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 				pos = val.find_last_of(typedU);
 			}
 			if (pos != String::npos) {
-				selection_end = selection_start = pos + 1;
+				selection_end_i = selection_start_i = pos + 1;
 			} else {
-				selection_end = selection_start;
+				selection_end_i = selection_start_i;
 			}
 		}
 	} else {
-		selection_end = selection_start = min(selection_end, selection_start) + replacement.size();
+		selection_end_i = selection_start_i = min(selection_end_i, selection_start_i) + replacement.size();
 	}
+	fixSelection(TYPE_INDEX, MOVE_MID);
 	// scroll with next update
 //	scrollWithCursor = true;
 }
 
-void TextValueEditor::moveSelection(size_t new_end, bool also_move_start, Movement dir) {
+void TextValueEditor::moveSelection(IndexType t, size_t new_end, bool also_move_start, Movement dir) {
 	if (!isCurrent()) {
 		// selection is only visible for curent editor, we can do a move the simple way
-		moveSelectionNoRedraw(new_end, also_move_start, dir);
+		moveSelectionNoRedraw(t, new_end, also_move_start, dir);
 		return;
 	}
 	// Hide caret
@@ -494,9 +498,9 @@ void TextValueEditor::moveSelection(size_t new_end, bool also_move_start, Moveme
 		rdc.SetClippingRegion(style().getRect());
 	}
 	// clear old selection by drawing it again
-	v.drawSelection(rdc, style(), selection_start, selection_end);
+	v.drawSelection(rdc, style(), selection_start_i, selection_end_i);
 	// move
-	moveSelectionNoRedraw(new_end, also_move_start, dir);
+	moveSelectionNoRedraw(t, new_end, also_move_start, dir);
 	// scroll?
 //	scrollWithCursor = true;
 //	if (onMove()) {
@@ -518,23 +522,53 @@ void TextValueEditor::moveSelection(size_t new_end, bool also_move_start, Moveme
 	rdc.DrawText(String::Format(_("%d - %d"),selection_start, selection_end), RealPoint(style().width-50,style().height-10));
 }
 
-void TextValueEditor::moveSelectionNoRedraw(size_t new_end, bool also_move_start, Movement dir) {
-	selection_end = new_end;
-	if (also_move_start) selection_start = selection_end;
-	fixSelection(dir);
+void TextValueEditor::moveSelectionNoRedraw(IndexType t, size_t new_end, bool also_move_start, Movement dir) {
+	if (t == TYPE_INDEX) {
+		selection_end_i = new_end;
+		if (also_move_start) selection_start_i = selection_end_i;
+	} else {
+		selection_end = new_end;
+		if (also_move_start) selection_start   = selection_end;
+	}
+	fixSelection(t, dir);
 }
 
-void TextValueEditor::fixSelection(Movement dir) {
+void TextValueEditor::fixSelection(IndexType t, Movement dir) {
 	const String& val = value().value();
-	// value may have become smaller because of undo/redo
-	// make sure the selection stays inside the text
-	size_t size = val.size();
-	selection_end   = min(size, selection_end);
-	selection_start = min(size, selection_start);
+	// Which type takes precedent?
+	if (t == TYPE_INDEX) {
+		selection_start = index_to_cursor(value().value(), selection_start_i, dir);
+		selection_end   = index_to_cursor(value().value(), selection_end_i,   dir);
+	}
+	// make sure the selection is at a valid position inside the text
+	selection_start_i = cursor_to_index(val, selection_start);
+	selection_end_i   = cursor_to_index(val, selection_end);
 	// start and end must be on the same side of separators
 	size_t seppos = val.find(_("<sep"));
 	while (seppos != String::npos) {
-		size_t sepend = match_close_tag(val, seppos);
+		size_t sepend = skip_tag(val,match_close_tag(val, seppos));
+		if ((selection_start_i <= seppos && selection_end_i > seppos) ||
+		    (selection_start_i >= sepend && selection_end_i < sepend)) {
+		    // not on same side, move selection end before sep
+			//selection_end = cursor_to_index(val, index_to_cursor(val, seppos));
+			selection_end   = index_to_cursor(val, seppos, dir);
+			selection_end_i = cursor_to_index(val, selection_end);
+		}
+		// find next separator
+		seppos = val.find(_("<sep"), seppos + 1);
+	}
+	
+	// REMOVEME
+	/*size_t size = val.size();
+	selection_end   = min(size, selection_end);
+	selection_start = min(size, selection_start);
+	// start and end must not be inside or between tags
+	selection_start = v.firstVisibleChar(selection_start, dir == MOVE_LEFT ? -1 : +1);
+	selection_end   = v.firstVisibleChar(selection_end,   dir == MOVE_LEFT ? -1 : +1);
+	// start and end must be on the same side of separators
+	size_t seppos = val.find(_("<sep"));
+	while (seppos != String::npos) {
+		size_t sepend = skip_tag(val,match_close_tag(val, seppos));
 		if (selection_start <= seppos && selection_end > seppos) selection_end = seppos; // not on same side
 		if (selection_start >= sepend && selection_end < sepend) selection_end = sepend; // not on same side
 		if (selection_start > seppos && selection_start < sepend) {
@@ -551,7 +585,7 @@ void TextValueEditor::fixSelection(Movement dir) {
 	// start or end in an <atom>? if so, move them out
 	size_t atompos = val.find(_("<atom"));
 	while (atompos != String::npos) {
-		size_t atomend = match_close_tag(val, atompos);
+		size_t atomend = skip_tag(val,match_close_tag(val, atompos));
 		if (selection_start > atompos && selection_start < atomend) { // start inside atom
 			selection_start = move(selection_start, atompos, atomend, dir);
 		}
@@ -561,10 +595,8 @@ void TextValueEditor::fixSelection(Movement dir) {
 		// find next atom
 		atompos = val.find(_("<atom"), atompos + 1);
 	}
-	// start and end must not be inside or between tags
-	selection_start = v.firstVisibleChar(selection_start, dir == MOVE_LEFT ? -1 : +1);
-	selection_end   = v.firstVisibleChar(selection_end,   dir == MOVE_LEFT ? -1 : +1);
-	//  TODO
+	*/
+	//  TODO? : More checks?
 }
 
 
@@ -572,19 +604,19 @@ size_t TextValueEditor::prevCharBoundry(size_t pos) const {
 	return max(0, (int)pos - 1);
 }
 size_t TextValueEditor::nextCharBoundry(size_t pos) const {
-	return min(value().value().size(), pos + 1);
+	return pos + 1;
 }
-size_t TextValueEditor::prevWordBoundry(size_t pos) const {
+size_t TextValueEditor::prevWordBoundry(size_t pos_i) const {
 	const String& val = value().value();
-	size_t p = val.find_last_not_of(_(" ,.:;()\n"), max(0, (int)(pos - 1))); //note: pos-1 might be < 0
+	size_t p = val.find_last_not_of(_(" ,.:;()\n"), max(0, (int)pos_i - 1));
 	if (p == String::npos) return 0;
 	p = val.find_last_of(_(" ,.:;()\n"), p);
 	if (p == String::npos) return 0;
 	return p + 1;
 }
-size_t TextValueEditor::nextWordBoundry(size_t pos) const {
+size_t TextValueEditor::nextWordBoundry(size_t pos_i) const {
 	const String& val = value().value();
-	size_t p = val.find_first_of(_(" ,.:;()\n"), pos);
+	size_t p = val.find_first_of(_(" ,.:;()\n"), pos_i);
 	if (p == String::npos) return val.size();
 	p = val.find_first_not_of(_(" ,.:;()\n"), p);
 	if (p == String::npos) return val.size();

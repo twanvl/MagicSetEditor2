@@ -81,7 +81,7 @@ class TextViewer {
 	/// Is the character at the given index visible?
 	bool isVisible(size_t index) const;
 	/// Find the first character index that is at/before/after the given index, and which has a nonzero width
-	/** More precisely: it returns a position so that no character after it has zero width
+	/** More precisely: it returns a position so that the character after it in the direction delta has nonzero width
 	 */
 	size_t firstVisibleChar(size_t index, int delta) const;
 	

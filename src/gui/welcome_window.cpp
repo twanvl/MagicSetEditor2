@@ -64,7 +64,7 @@ void WelcomeWindow::draw(DC& dc) {
 }
 
 void WelcomeWindow::onOpenSet(wxCommandEvent&) {
-	wxFileDialog dlg(this, _("Open a set"), wxEmptyString, wxEmptyString, import_formats(), wxOPEN);
+	wxFileDialog dlg(this, _TITLE_("open set"), wxEmptyString, wxEmptyString, import_formats(), wxOPEN);
 	if (dlg.ShowModal() == wxID_OK) {
 		close(import_set(dlg.GetPath()));
 	}
