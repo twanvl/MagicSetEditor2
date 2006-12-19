@@ -132,8 +132,8 @@
  */
 #define FOR_EACH_T(TypeIt,TypeElem,Elem,Collection, begin, end)				\
 		for(std::pair<TypeIt,bool> Elem##_IT(Collection.begin(), true) ;	\
-		    Elem##_IT.first != Collection.end() ;							\
-		    ++Elem##_IT.first, Elem##_IT.second = true)						\
+		    Elem##_IT.second && Elem##_IT.first != Collection.end() ;		\
+		    ++Elem##_IT.first, Elem##_IT.second = !Elem##_IT.second)		\
 		    for(TypeElem Elem = *Elem##_IT.first ;							\
 				Elem##_IT.second ;											\
 				Elem##_IT.second = false)
