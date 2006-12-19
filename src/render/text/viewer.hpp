@@ -104,7 +104,7 @@ class TextViewer {
 	vector<Line> lines; ///< The lines in the text box
 	
 	/// Prepare the lines, layout the text
-	void prepareLines(RotatedDC& dc, const String& text, const TextStyle& style);
+	void prepareLines(RotatedDC& dc, const String& text, const TextStyle& style, Context& ctx);
 	/// Prepare the lines, layout the text; at a specific scale
 	bool prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style, bool stop_if_too_long);
 	/// Align the lines within the textbox

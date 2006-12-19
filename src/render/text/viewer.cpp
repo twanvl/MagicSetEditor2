@@ -128,7 +128,7 @@ void TextViewer::prepare(RotatedDC& dc, const String& text, const TextStyle& sty
 		// not prepared yet
 		Rotater r(dc, style.getRotation());
 		prepareElements(text, style, ctx);
-		prepareLines(dc, text, style);
+		prepareLines(dc, text, style, ctx);
 	}
 }
 void TextViewer::reset() {
@@ -243,13 +243,22 @@ void TextViewer::prepareElements(const String& text, const TextStyle& style, Con
 
 // ----------------------------------------------------------------------------- : Layout
 
-void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle& style) {
+void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle& style, Context& ctx) {
 	scale = 1;
 	// find character sizes
 	vector<CharInfo> chars;
 	elements.getCharInfo(dc, scale, 0, text.size(), chars);
 	// try to layout
 	prepareLinesScale(dc, chars, style, false);
+	// no text, find a dummy height for the single line we have
+	if (lines.size() == 1 && lines[0].width() < 0.0001) {
+		if (style.always_symbol && style.symbol_font.valid()) {
+			lines[0].line_height = style.symbol_font.font->defaultSymbolSize(ctx, style.symbol_font.size).height;
+		} else {
+			dc.SetFont(style.font.font);
+			lines[0].line_height = dc.GetTextExtent(_(" ")).height;
+		}
+	}
 	// align
 	alignLines(dc, chars, style);
 }
