@@ -13,6 +13,8 @@
 #include <script/value.hpp>
 
 DECLARE_TYPEOF_COLLECTION(FieldP);
+typedef IndexMap<FieldP,ValueP> IndexMap_FieldP_ValueP;
+DECLARE_TYPEOF_NO_REV(IndexMap_FieldP_ValueP);
 
 // ----------------------------------------------------------------------------- : Card
 
@@ -28,7 +30,18 @@ Card::Card(const Game& game) {
 }
 
 String Card::identification() const {
-	return _("TODO");
+	// an identifying field
+	FOR_EACH_CONST(v, data) {
+		if (v->fieldP->identifying) {
+			return v->toString();
+		}
+	}
+	// otherwise the first field
+	if (!data.empty()) {
+		return data.at(0)->toString();
+	} else {
+		return wxEmptyString;
+	}
 }
 
 void mark_dependency_member(const CardP& card, const String& name, const Dependency& dep) {
