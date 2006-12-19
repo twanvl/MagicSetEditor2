@@ -31,12 +31,12 @@ void TextElements::draw(RotatedDC& dc, double scale, const RealRect& rect, const
 void TextElements::getCharInfo(RotatedDC& dc, double scale, size_t start, size_t end, vector<CharInfo>& out) const {
 	FOR_EACH_CONST(e, elements) {
 		// characters before this element, after the previous
-		while (start + out.size() < e->start) {
+		while (out.size() < e->start) {
 			out.push_back(CharInfo(RealSize(0,0), BREAK_NO));
 		}
 		e->getCharInfo(dc, scale, out);
 	}
-	while (start + out.size() < end) {
+	while (out.size() < end) {
 		out.push_back(CharInfo(RealSize(0,0), BREAK_NO));
 	}
 }
@@ -86,13 +86,14 @@ struct TextElementsFromString {
 					shared_ptr<ErrorTextElement> e(new ErrorTextElement(text, pos, end));
 					fromString(e->elements, text, pos, end, style, ctx);
 					pos = skip_tag(text, end);
-				} else if (is_substr(text, start, _("<atom"))) {
+*/				} else if (is_substr(text, tag_start, _("<atom"))) {
 					// 'atomic' indicator
 					size_t end = match_close_tag(text, tag_start);
 					shared_ptr<AtomTextElement> e(new AtomTextElement(text, pos, end));
 					fromString(e->elements, text, pos, end, style, ctx);
+					te.elements.push_back(e);
 					pos = skip_tag(text, end);
-*/				} else {
+				} else {
 					// ignore other tags
 				}
 			} else {

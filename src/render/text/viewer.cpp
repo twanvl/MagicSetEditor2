@@ -67,7 +67,7 @@ TextViewer::~TextViewer() {}
 void TextViewer::draw(RotatedDC& dc, const TextStyle& style, DrawWhat what) {
 	assert(!lines.empty());
 	Rotater r(dc, style.getRotation());
-	// Draw the text  line by line
+	// Draw the text, line by line
 	FOR_EACH(l, lines) {
 		if (l.visible(dc)) {
 			RealRect rect(l.positions.front(), l.top, l.width(), l.line_height);

@@ -2508,6 +2508,9 @@
 				Name="text"
 				Filter="">
 				<File
+					RelativePath=".\render\text\compound.cpp">
+				</File>
+				<File
 					RelativePath=".\render\text\element.cpp">
 				</File>
 				<File

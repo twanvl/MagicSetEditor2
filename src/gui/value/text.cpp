@@ -235,24 +235,6 @@ void TextValueEditor::draw(RotatedDC& dc) {
 		fixSelection();
 		showCaret();
 	}
-	// DEBUG, TODO: REMOVEME
-	Rotater r(dc, style().getRotation());
-	/*dc.SetPen(*wxRED_PEN);
-	dc.SetBrush(*wxTRANSPARENT_BRUSH);
-	dc.SetTextForeground(*wxGREEN);
-	dc.SetFont(wxFont(6,wxFONTFAMILY_SWISS,wxNORMAL,wxNORMAL));
-	for (size_t i = 0 ; i < value().value().size() ; i += 10) {
-		RealRect r = v.charRect(i);
-		r.width = max(r.width,1.);
-		dc.DrawRectangle(r);
-		dc.DrawText(String()<<(int)i, r.position()+RealSize(1,5));
-	}*/
-	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(*wxWHITE_BRUSH);
-	dc.SetTextForeground(*wxBLUE);
-	dc.SetFont(wxFont(6,wxFONTFAMILY_SWISS,wxNORMAL,wxNORMAL));
-	dc.DrawRectangle(RealRect(style().width-50,style().height-10,50,10));
-	dc.DrawText(String::Format(_("%d - %d"),selection_start, selection_end), RealPoint(style().width-50,style().height-10));
 }
 
 wxCursor rotated_ibeam;
@@ -512,14 +494,6 @@ void TextValueEditor::moveSelection(IndexType t, size_t new_end, bool also_move_
 		v.drawSelection(rdc, style(), selection_start_i, selection_end_i);
 //	}
 	showCaret();
-	// TODO; DEBUG!!
-	Rotater r(rdc, style().getRotation());
-	rdc.SetPen(*wxTRANSPARENT_PEN);
-	rdc.SetBrush(*wxWHITE_BRUSH);
-	rdc.SetTextForeground(*wxBLUE);
-	rdc.SetFont(wxFont(6,wxFONTFAMILY_SWISS,wxNORMAL,wxNORMAL));
-	rdc.DrawRectangle(RealRect(style().width-50,style().height-10,50,10));
-	rdc.DrawText(String::Format(_("%d - %d"),selection_start, selection_end), RealPoint(style().width-50,style().height-10));
 }
 
 void TextValueEditor::moveSelectionNoRedraw(IndexType t, size_t new_end, bool also_move_start, Movement dir) {
