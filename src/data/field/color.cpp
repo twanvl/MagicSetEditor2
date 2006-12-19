@@ -82,5 +82,5 @@ bool ColorValue::update(Context& ctx) {
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(ColorValue) {
-	if (fieldP->save_value) REFLECT_NAMELESS(value);
+	if (fieldP->save_value || tag.scripting()) REFLECT_NAMELESS(value);
 }

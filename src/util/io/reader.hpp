@@ -46,6 +46,8 @@ class Reader {
 	
 	/// Tell the reflection code we are reading
 	inline bool reading() const { return true; }
+	/// Tell the reflection code we are not related to scripting
+	inline bool scripting() const { return false; }
 	/// Is the thing currently being read 'complex', i.e. does it have children
 	inline bool isComplex() const { return value.empty(); }
 	/// Add a as an alias for b, all keys a will be replaced with b, only if file_app_version < end_version

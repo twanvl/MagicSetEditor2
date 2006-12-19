@@ -46,5 +46,5 @@ String SymbolValue::toString() const {
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(SymbolValue) {
-	if (fieldP->save_value) REFLECT_NAMELESS(filename);
+	if (fieldP->save_value || tag.scripting()) REFLECT_NAMELESS(filename);
 }

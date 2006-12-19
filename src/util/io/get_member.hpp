@@ -27,6 +27,7 @@ class GetDefaultMember {
   public:
 	/// Tell the reflection code we are not reading
 	inline bool reading()   const { return false; }
+	inline bool scripting() const { return true; }
 	inline bool isComplex() const { return false; }
 	inline void addAlias(int, const Char*, const Char*) {}
 	inline void handleAppVersion() {} // no effect
@@ -67,6 +68,7 @@ class GetMember : private GetDefaultMember {
 	
 	/// Tell the reflection code we are not reading
 	inline bool reading()   const { return false; }
+	inline bool scripting() const { return true; }
 	inline bool isComplex() const { return false; }
 	inline void addAlias(int, const Char*, const Char*) {}
 	inline void handleAppVersion() {} // no effect
