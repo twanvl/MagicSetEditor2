@@ -509,7 +509,7 @@ void TextValueEditor::moveSelection(IndexType t, size_t new_end, bool also_move_
 //		editor.refreshEditor();
 //	} else {
 		// draw new selection
-		v.drawSelection(rdc, style(), selection_start, selection_end);
+		v.drawSelection(rdc, style(), selection_start_i, selection_end_i);
 //	}
 	showCaret();
 	// TODO; DEBUG!!
