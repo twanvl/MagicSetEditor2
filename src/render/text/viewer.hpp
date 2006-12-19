@@ -104,7 +104,10 @@ class TextViewer {
 	/// Prepare the lines, layout the text
 	void prepareLines(RotatedDC& dc, const String& text, const TextStyle& style);
 	/// Prepare the lines, layout the text; at a specific scale
-	bool prepareLinesScale(RotatedDC& dc, const String& text, const TextStyle& style, bool stop_if_too_long);
+	bool prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style, bool stop_if_too_long);
+	/// Align the lines within the textbox
+	void alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style);
+	
 	/// Find the line the given index is on, returns the first line if the index is not found
 	const Line& findLine(size_t index) const;
 	

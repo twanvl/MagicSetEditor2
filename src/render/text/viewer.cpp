@@ -220,14 +220,17 @@ void TextViewer::prepareElements(const String& text, const TextStyle& style, Con
 
 void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle& style) {
 	scale = 1;
-	prepareLinesScale(dc, text, style, false);
-}
-
-bool TextViewer::prepareLinesScale(RotatedDC& dc, const String& text, const TextStyle& style, bool stop_if_too_long) {
-	// Try to layout the text at the current scale
 	// find character sizes
 	vector<CharInfo> chars;
 	elements.getCharInfo(dc, scale, 0, text.size(), chars);
+	// try to layout
+	prepareLinesScale(dc, chars, style, false);
+	// align
+	alignLines(dc, chars, style);
+}
+
+bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style, bool stop_if_too_long) {
+	// Try to layout the text at the current scale
 	// first line
 	lines.clear();
 	Line line;
@@ -240,7 +243,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const String& text, const Text
 	size_t         word_start = 0;
 	// For each character ...
 	for(size_t i = 0 ; i < chars.size() ; ++i) {
-		CharInfo& c = chars[i];
+		const CharInfo& c = chars[i];
 		// Should we break?
 		bool   break_now    = false;
 		bool   accept_word  = false; // the current word should be added to the line
@@ -342,5 +345,59 @@ double TextViewer::lineRight(RotatedDC& dc, const TextStyle& style, double y) {
 	return style.width - style.padding_right;
 //	return style.mask.rowRight(y, dc.getInternalSize()) - style.padding_right;
 }
+
 ContourMask::ContourMask() {} // MOVEME //@@
 ContourMask::~ContourMask() {}
+
+void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style) {
+	if (style.alignment == ALIGN_TOP_LEFT) return;
+	// Find height of the text, don't count the last lines if they are empty
+	double height = 0;
+	FOR_EACH_REVERSE(l, lines) {
+		height = l.top + l.line_height;
+		if (l.line_height) break; // not an empty line
+	}
+	// amount to shift all lines vertically
+	RealSize s = dc.getInternalSize();
+	double vdelta = align_delta_y(style.alignment, s.height, height);
+	// align all lines
+	FOR_EACH(l, lines) {
+		l.top += vdelta;
+		// amount to shift all characters horizontally
+		double width = l.positions.back();
+		if ((style.alignment & ALIGN_JUSTIFY) ||
+			(style.alignment & ALIGN_JUSTIFY_OVERFLOW && width > s.width)) {
+			// justify text
+//			justifying = true;
+			double hdelta = s.width - width;         // amount of space to distribute
+			int count = (int)l.positions.size() - 1; // distribute it among this many characters
+			if (count == 0) count = 1;               // prevent div by 0
+			int i = 0;
+			FOR_EACH(c, l.positions) {
+				c += hdelta * i++ / count;
+			}
+		} else if (style.alignment & ALIGN_JUSTIFY) {
+			// justify text, by words
+//			justifying = true;
+			double hdelta = s.width - width;         // amount of space to distribute
+			int count = 0;                           // distribute it among this many words
+			for (size_t k = l.start + 1 ; k < l.end() - 1 ; ++k) {
+				if (chars[k].break_after == BREAK_SOFT) ++count;
+			}
+			if (count == 0) count = 1;               // prevent div by 0
+			int i = 0; size_t j = l.start;
+			FOR_EACH(c, l.positions) {
+				c += hdelta * i / count;
+				if (j < l.end() && chars[j++].break_after == BREAK_SOFT) i++;
+			}
+		} else {
+			// simple alignment
+//			justifying = false;
+			double hdelta = align_delta_x(style.alignment, s.width, width);
+			FOR_EACH(c, l.positions) {
+				c += hdelta;
+			}
+		}
+	}
+	// TODO : work well with mask
+}
