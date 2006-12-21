@@ -118,8 +118,9 @@ tool:
 	undo:			Undo%s
 	redo:			Redo%s
 	
+	add card:		Add card
 	remove card:	Remove selected card
-	rotated card:	Rotate card
+	rotate card:	Rotate card
 	
 	bold:			Bold
 	italic:			Italic
