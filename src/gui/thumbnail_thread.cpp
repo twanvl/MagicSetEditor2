@@ -153,11 +153,13 @@ bool ThumbnailThread::done(void* owner) {
 		// store image
 		r.first->store(r.second);
 		// store in cache
-		String filename = image_cache_dir() + safeFilename(r.first->cache_name) + _(".png");
-		r.second.SaveFile(filename, wxBITMAP_TYPE_PNG);
-		// set modification time
-		wxFileName fn(filename);
-		fn.SetTimes(0, &r.first->modified, 0);
+		if (r.second.Ok()) {
+			String filename = image_cache_dir() + safeFilename(r.first->cache_name) + _(".png");
+			r.second.SaveFile(filename, wxBITMAP_TYPE_PNG);
+			// set modification time
+			wxFileName fn(filename);
+			fn.SetTimes(0, &r.first->modified, 0);
+		}
 		// remove from name list
 		request_names.erase(r.first);
 	}

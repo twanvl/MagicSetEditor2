@@ -269,9 +269,9 @@ void CardListBase::rebuild() {
 	FOR_EACH(f, new_column_fields) {
 		ColumnSettings& cs = settings.columnSettingsFor(*set->game, *f.second);
 		int align;
-		if      (f.second->card_list_align == ALIGN_RIGHT)  align = wxLIST_FORMAT_RIGHT;
-		else if (f.second->card_list_align == ALIGN_CENTER) align = wxLIST_FORMAT_CENTRE;
-		else                                                align = wxLIST_FORMAT_LEFT;
+		if      (f.second->card_list_align & ALIGN_RIGHT)  align = wxLIST_FORMAT_RIGHT;
+		else if (f.second->card_list_align & ALIGN_CENTER) align = wxLIST_FORMAT_CENTRE;
+		else                                               align = wxLIST_FORMAT_LEFT;
 		InsertColumn((long)column_fields.size(), capitalize(f.second->card_list_name), align, cs.width);
 		column_fields.push_back(f.second);
 	}

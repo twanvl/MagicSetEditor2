@@ -142,6 +142,14 @@ void SetScriptManager::onAction(const Action& action, bool undone) {
 	TYPE_CASE_(action, ScriptValueEvent) {
 		return; // Don't go into an infinite loop because of our own events
 	}
+	TYPE_CASE(action, AddCardAction) {
+		// update the added card specificly
+		Context& ctx = getContext(action.card);
+		FOR_EACH(v, action.card->data) {
+			v->update(ctx);
+		}
+		// note: fallthrough
+	}
 	TYPE_CASE_(action, CardListAction) {
 		updateAllDependend(set.game->dependent_scripts_cards);
 	}

@@ -57,15 +57,19 @@ class CardThumbnailRequest : public ThumbnailRequest {
 		, filename(filename)
 	{}
 	virtual Image generate() {
-		ImageCardList* parent = (ImageCardList*)owner;
-		Image image;
-		if (image.LoadFile(*parent->set->openIn(filename))) {
-			// two step anti aliased resampling
-			image.Rescale(36, 28); // step 1: no anti aliassing
-			Image image2(18, 14, false); // step 2: with anti aliassing
-			resample(image, image2);
-			return image2;
-		} else {
+		try {
+			ImageCardList* parent = (ImageCardList*)owner;
+			Image image;
+			if (image.LoadFile(*parent->set->openIn(filename))) {
+				// two step anti aliased resampling
+				image.Rescale(36, 28); // step 1: no anti aliassing
+				Image image2(18, 14, false); // step 2: with anti aliassing
+				resample(image, image2);
+				return image2;
+			} else {
+				return Image();
+			}
+		} catch (...) {
 			return Image();
 		}
 	}
