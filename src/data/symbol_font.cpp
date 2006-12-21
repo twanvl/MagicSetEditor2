@@ -144,10 +144,10 @@ void SymbolFont::split(const String& text, SplitSymbols& out) const {
 	for (size_t pos = 0 ; pos < text.size() ; ) {
 		// 1. check merged numbers
 		if (merge_numbers && pos + 1 < text.size()) {
-			size_t num_count = text.find_first_not_of(_("0123456789"), pos);
+			size_t num_count = text.find_first_not_of(_("0123456789"), pos) - pos;
 			if (num_count >= 2) {
 				// draw single symbol for the whole number
-				out.push_back(DrawableSymbol(text.substr(0, num_count), 0));
+				out.push_back(DrawableSymbol(text.substr(pos, num_count), nullptr));
 				pos += num_count;
 				goto next_symbol;
 			}
