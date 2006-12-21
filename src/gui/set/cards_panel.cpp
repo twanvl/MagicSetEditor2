@@ -128,10 +128,15 @@ void CardsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 	switch (ev.GetId()) {
 		case ID_CARD_PREV:       ev.Enable(card_list->canSelectPrevious());	break;
 		case ID_CARD_NEXT:       ev.Enable(card_list->canSelectNext());		break;
-/*		case ID_CARD_ROTATE_0:   ev.Check(editor->rotation.angle == 0);		break;
-		case ID_CARD_ROTATE_90:  ev.Check(editor->rotation.angle == 90);	break;
-		case ID_CARD_ROTATE_180: ev.Check(editor->rotation.angle == 180);	break;
-		case ID_CARD_ROTATE_270: ev.Check(editor->rotation.angle == 270);	break;*/
+		case ID_CARD_ROTATE_0: case ID_CARD_ROTATE_90: case ID_CARD_ROTATE_180: case ID_CARD_ROTATE_270: {
+			StyleSheetSettings& ss = settings.stylesheetSettingsFor(*set->stylesheetFor(card_list->getCard()));
+			int a = ev.GetId() == ID_CARD_ROTATE_0   ? 0
+			      : ev.GetId() == ID_CARD_ROTATE_90  ? 90
+			      : ev.GetId() == ID_CARD_ROTATE_180 ? 180
+			      :                                    270;
+			ev.Check(ss.card_angle() == a);
+			break;
+		}
 		case ID_CARD_REMOVE:     ev.Enable(set->cards.size() > 0);			break;
 		case ID_FORMAT_BOLD: case ID_FORMAT_ITALIC: case ID_FORMAT_SYMBOL: case ID_FORMAT_REMINDER: {
 			if (focused_control(this) == ID_EDITOR) {
@@ -157,42 +162,25 @@ void CardsPanel::onCommand(int id) {
 		case ID_CARD_ADD:
 			set->actions.add(new AddCardAction(*set));
 			break;
-		case ID_CARD_ROTATE:
+		case ID_CARD_REMOVE:
 			set->actions.add(new RemoveCardAction(*set, card_list->getCard()));
 			break;
-/*		case idCardRotate {
-			StyleSettings& ss = settings.styleSettingsFor(*editor->style);
-			ss.cardAngle = (ss.cardAngle + 90) % 360;
-			onRenderSettingsChange();
+		case ID_CARD_ROTATE:
+		case ID_CARD_ROTATE_0: case ID_CARD_ROTATE_90: case ID_CARD_ROTATE_180: case ID_CARD_ROTATE_270: {
+			StyleSheetSettings& ss = settings.stylesheetSettingsFor(*set->stylesheetFor(card_list->getCard()));
+			ss.card_angle.assign(
+				  id == ID_CARD_ROTATE     ? (ss.card_angle() + 90) % 360
+				: id == ID_CARD_ROTATE_0   ? 0
+				: id == ID_CARD_ROTATE_90  ? 90
+				: id == ID_CARD_ROTATE_180 ? 180
+				:                            270
+			);
+			//onRenderSettingsChange();
 			break;
 		}
-		case idCardRotate0 {
-			StyleSettings& ss = settings.styleSettingsFor(*editor->style);
-			ss.cardAngle = 0;
-			onRenderSettingsChange();
-			break;
+		case ID_SELECT_COLUMNS: {
+			card_list->selectColumns();
 		}
-		case idCardRotate90 {
-			StyleSettings& ss = settings.styleSettingsFor(*editor->style);
-			ss.cardAngle = 90;
-			onRenderSettingsChange();
-			break;
-		}
-		case idCardRotate180 {
-			StyleSettings& ss = settings.styleSettingsFor(*editor->style);
-			ss.cardAngle = 180;
-			onRenderSettingsChange();
-			break;
-		}
-		case idCardRotate270 {
-			StyleSettings& ss = settings.styleSettingsFor(*editor->style);
-			ss.cardAngle = 270;
-			onRenderSettingsChange();
-			break;
-		}
-		case idSelectColumns {
-			cardList->selectColumns();
-		}*/
 		case ID_FORMAT_BOLD: case ID_FORMAT_ITALIC: case ID_FORMAT_SYMBOL: case ID_FORMAT_REMINDER: {
 			if (focused_control(this) == ID_EDITOR) {
 				editor->doFormat(id);
@@ -213,6 +201,7 @@ void CardsPanel::onAction(const Action& action, bool undo) {
 }
 
 void CardsPanel::onRenderSettingsChange() {
+	// TODO
 }
 
 // ----------------------------------------------------------------------------- : Clipboard

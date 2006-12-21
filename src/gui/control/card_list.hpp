@@ -140,8 +140,10 @@ class CardListBase : public wxListView, public SetView {
 	
 	/// Store the column sizes in the settings
 	void storeColumns();
+	public:
 	/// Open a dialog for selecting columns to be shown
 	void selectColumns();
+	private:
 	
 	// --------------------------------------------------- : Window events
 	DECLARE_EVENT_TABLE();
