@@ -314,16 +314,16 @@ inline ScriptValueP toScript(const shared_ptr<T>& v) { return new_intrusive1<Scr
  *   context.setVariable("my_function", script_my_function);
  *  @endcode
  */
-#define SCRIPT_FUNCTION(name) SCRIPT_FUNCTION_AUX(name,virtual)
+#define SCRIPT_FUNCTION(name) SCRIPT_FUNCTION_AUX(name,;)
 
 /// Macro to declare a new script function with custom dependency handling
-#define SCRIPT_FUNCTION_DEP(name) SCRIPT_FUNCTION_AUX(name,virtual) //TODO
+#define SCRIPT_FUNCTION_DEP(name) SCRIPT_FUNCTION_AUX(name, virtual ScriptValueP dependencies(Context&, const Dependency&) const;)
 
 // helper for SCRIPT_FUNCTION and SCRIPT_FUNCTION_DEP
 #define SCRIPT_FUNCTION_AUX(name,dep)							\
 		class ScriptBuildin_##name : public ScriptValue {		\
 			dep													\
-			/* virtual */ ScriptType type() const				\
+			virtual  ScriptType type() const					\
 				{ return SCRIPT_FUNCTION; }						\
 			virtual String typeName() const						\
 				{ return _("build in function '") _(#name) _("'"); }	\

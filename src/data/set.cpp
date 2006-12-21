@@ -129,7 +129,21 @@ ScriptValueP make_iterator(const Set& set) {
 }
 
 void mark_dependency_member(Set* value, const String& name, const Dependency& dep) {
-	// TODO
+	// is it the card list?
+	if (name == _("cards")) {
+		value->game->dependent_scripts_cards.push_back(dep);
+		return;
+	}
+	// is it the keywords?
+	if (name == _("keywords")) {
+		value->game->dependent_scripts_keywords.push_back(dep);
+		return;
+	}
+	// is it in the set data?
+	IndexMap<FieldP,ValueP>::const_iterator it = value->data.find(name);
+	if (it != value->data.end()) {
+		(*it)->fieldP->dependent_scripts.push_back(dep);
+	}
 }
 void mark_dependency_member(const SetP& value, const String& name, const Dependency& dep) {
 	mark_dependency_member(value.get(), name, dep);
@@ -156,6 +170,9 @@ int Set::positionOfCard(const CardP& card, const ScriptValueP& order_by) {
 		order.reset(new OrderCache<CardP>(cards, values));
 	}
 	return order->find(card);
+}
+void Set::clearOrderCache() {
+	order_cache.clear();
 }
 
 // ----------------------------------------------------------------------------- : Styling

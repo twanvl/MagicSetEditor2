@@ -8,6 +8,7 @@
 
 #include <script/value.hpp>
 #include <script/context.hpp>
+#include <script/dependency.hpp>
 #include <util/tagged_string.hpp>
 #include <data/set.hpp>
 #include <wx/regex.h>
@@ -421,17 +422,36 @@ int position_in_vector(const ScriptValueP& of, const ScriptValueP& in, const Scr
 }
 
 // finding positions, also of substrings
-SCRIPT_FUNCTION(position_of) {
+SCRIPT_FUNCTION_DEP(position_of) {
 	ScriptValueP of       = ctx.getVariable(_("of"));
 	ScriptValueP in       = ctx.getVariable(_("in"));
 	ScriptValueP order_by = ctx.getVariableOpt(_("order by"));
 	SCRIPT_RETURN(position_in_vector(of, in, order_by));
 }
 
+ScriptValueP ScriptBuildin_position_of::dependencies(Context& ctx, const Dependency& dep) const {
+	ScriptValueP of       = ctx.getVariable(_("of"));
+	ScriptValueP in       = ctx.getVariable(_("in"));
+	ScriptValueP order_by = ctx.getVariableOpt(_("order by"));
+	ScriptObject<Set*>*  s = dynamic_cast<ScriptObject<Set*>* >(in.get());
+	ScriptObject<CardP>* c = dynamic_cast<ScriptObject<CardP>*>(of.get());
+	if (s && c) {
+		// dependency on cards
+		mark_dependency_member(s->getValue(), _("cards"), dep);
+		if (order_by) {
+			// dependency on order_by function
+			order_by->dependencies(ctx, dep.makeCardIndependend());
+		}
+	}
+	return dependency_dummy;
+};
+
+
 // finding sizes
 SCRIPT_FUNCTION(number_of_items) {
 	SCRIPT_RETURN(ctx.getVariable(_("in"))->itemCount());
 }
+
 
 // ----------------------------------------------------------------------------- : Initialize functions
 

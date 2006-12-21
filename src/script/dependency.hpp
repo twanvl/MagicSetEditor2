@@ -33,6 +33,11 @@ class Dependency {
 	DependencyType type   : 5;	///< Type of the dependent script
 	size_t         index  : 27;	///< index into an IndexMap
 	void*          data;		///< Extra pointer data
+	
+	/// This dependency, but dependent on all cards instead of just one
+	inline Dependency makeCardIndependend() const {
+		return Dependency(type == DEP_CARD_FIELD ? DEP_CARDS_FIELD : type, index, data);
+	}
 };
 
 // ----------------------------------------------------------------------------- : EOF

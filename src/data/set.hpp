@@ -93,6 +93,8 @@ class Set : public Packaged {
 	
 	/// Find the position of a card in this set, when the card list is sorted using the given cirterium
 	int positionOfCard(const CardP& card, const ScriptValueP& order_by);
+	/// Clear the order_cache used by positionOfCard
+	void clearOrderCache();
 	
   protected:
 	virtual String typeName() const;

@@ -99,6 +99,7 @@ void SetScriptManager::onInit(const StyleSheetP& stylesheet, Context* ctx) {
 		initDependencies(*ctx, *set.game);
 		initDependencies(*ctx, *stylesheet);
 		// apply scripts to everything
+		// TODO : don't updateAll here, it will be done repeatedly
 		updateAll();
 	} catch (Error e) {
 		handle_error(e, false, false);
@@ -195,7 +196,7 @@ void SetScriptManager::updateAllDependend(const vector<Dependency>& dependent_sc
 }
 
 void SetScriptManager::updateRecursive(deque<ToUpdate>& to_update, Age starting_age) {
-//	set->order_cache.clear(); // clear caches before evaluating a round of scripts
+	set.clearOrderCache(); // clear caches before evaluating a round of scripts
 	while (!to_update.empty()) {
 		updateToUpdate(to_update.front(), to_update, starting_age);
 		to_update.pop_front();
@@ -226,8 +227,10 @@ void SetScriptManager::alsoUpdate(deque<ToUpdate>& to_update, const vector<Depen
 				if (card) {
 					ValueP value = card->data.at(d.index);
 					to_update.push_back(ToUpdate(value.get(), card));
+					break;
+				} else {
+					// There is no card, so the update should affect all cards (fall through).
 				}
-				break;
 			} case DEP_CARDS_FIELD: {
 				// something invalidates a card value for all cards, so all cards need updating
 				FOR_EACH(card, set.cards) {
