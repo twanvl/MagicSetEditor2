@@ -99,6 +99,8 @@ void Set::validate(Version file_app_version) {
 			FOR_EACH(v, s.second->data) fix_value_207(v);
 		}
 */	}
+	// update scripts
+	script_manager->updateAll();
 }
 
 IMPLEMENT_REFLECTION(Set) {

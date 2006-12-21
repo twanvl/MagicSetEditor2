@@ -141,3 +141,12 @@ TextValueAction* typing_action(const TextValueP& value, size_t start, size_t end
 	}
 }
 
+// ----------------------------------------------------------------------------- : Event
+
+String ScriptValueEvent::getName(bool) const {
+	assert(false); // this action is just an event, getName shouldn't be called
+	throw InternalError(_("ScriptValueEvent::getName"));
+}
+void ScriptValueEvent::perform(bool) {
+	assert(false); // this action is just an event, it should not be performed
+}

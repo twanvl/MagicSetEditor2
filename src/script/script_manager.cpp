@@ -98,9 +98,6 @@ void SetScriptManager::onInit(const StyleSheetP& stylesheet, Context* ctx) {
 		// find script dependencies
 		initDependencies(*ctx, *set.game);
 		initDependencies(*ctx, *stylesheet);
-		// apply scripts to everything
-		// TODO : don't updateAll here, it will be done repeatedly
-		updateAll();
 	} catch (Error e) {
 		handle_error(e, false, false);
 	}
@@ -141,6 +138,9 @@ void SetScriptManager::onAction(const Action& action, bool undone) {
 			}
 		}
 		updateValue(*action.valueP, CardP());
+	}
+	TYPE_CASE_(action, ScriptValueEvent) {
+		return; // Don't go into an infinite loop because of our own events
 	}
 	TYPE_CASE_(action, CardListAction) {
 		updateAllDependend(set.game->dependent_scripts_cards);
@@ -209,8 +209,8 @@ void SetScriptManager::updateToUpdate(const ToUpdate& u, deque<ToUpdate>& to_upd
 	Context& ctx = getContext(u.card);
 	if (u.value->update(ctx)) {
 		// changed, send event
-//		ScriptValueEvent change(&*u.card, u.value);
-//		set.actions.tellListeners(change);
+		ScriptValueEvent change(u.card.get(), u.value);
+		set.actions.tellListeners(change, false);
 		// u.value has changed, also update values with a dependency on u.value
 		alsoUpdate(to_update, u.value->fieldP->dependent_scripts, u.card);
 	}

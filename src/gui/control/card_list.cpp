@@ -17,6 +17,7 @@
 #include <data/stylesheet.hpp>
 #include <data/format/clipboard.hpp>
 #include <data/action/set.hpp>
+#include <data/action/value.hpp>
 #include <util/window_id.hpp>
 #include <wx/clipbrd.h>
 
@@ -96,6 +97,14 @@ void CardListBase::onAction(const Action& action, bool undone) {
 		}
 		RefreshItem((long)action.card_id1);
 		RefreshItem((long)action.card_id2);
+	}
+	TYPE_CASE_(action, ScriptValueEvent) {
+		// No refresh needed, a ScriptValueEvent is only generated in response to a ValueAction
+		return;
+	}
+	TYPE_CASE_(action, ValueAction) {
+		refreshList();
+		return;
 	}
 }
 

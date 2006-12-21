@@ -18,6 +18,7 @@
 #include <util/action_stack.hpp>
 #include <util/defaultable.hpp>
 
+class Card;
 DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(TextValue);
 DECLARE_POINTER_TYPE(ChoiceValue);
@@ -71,6 +72,20 @@ TextValueAction* toggle_format_action(const TextValueP& value, const String& tag
 
 /// Typing in a TextValue, replace the selection [start...end) with replacement
 TextValueAction* typing_action(const TextValueP& value, size_t start, size_t end, const String& replacement, const String& action_name);
+
+// ----------------------------------------------------------------------------- : Event
+
+/// Notification that a script caused a value to change
+class ScriptValueEvent : public Action {
+  public:
+	inline ScriptValueEvent(const Card* card, const Value* value) : card(card), value(value) {}
+		
+	virtual String getName(bool to_undo) const;
+	virtual void perform(bool to_undo);
+	
+	const Card* card;   ///< Card the value is on
+	const Value* value; ///< The modified value
+};
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

@@ -61,6 +61,12 @@ class SetScriptManager : public SetScriptContext, public ActionListener {
 	// Update all styles for a particular card
 	void updateStyles(const CardP& card);
 	
+	/// Update all fields of all cards
+	/** Update all set info fields
+	 *  Doesn't update styles
+	 */
+	void updateAll();
+	
   private:
 	virtual void onInit(const StyleSheetP& stylesheet, Context* ctx);
 	
@@ -70,11 +76,6 @@ class SetScriptManager : public SetScriptContext, public ActionListener {
 	/// Updates scripts, starting at some value
 	/** if the value changes any dependend values are updated as well */
 	void updateValue(Value& value, const CardP& card);
-	/// Update all fields of all cards
-	/** Update all set info fields
-	 *  Doesn't update styles
-	 */
-	void updateAll();
 	// Update all values with a specific dependency
 	void updateAllDependend(const vector<Dependency>& dependent_scripts);
 	
