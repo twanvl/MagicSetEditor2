@@ -31,7 +31,7 @@ class Rotation {
 	/// Change the angle
 	void setAngle(int a);
 	/// The internal size
-	inline RealSize getInternalSize() const { return trInv(size); }
+	inline RealSize getInternalSize() const { return trInvNoNeg(size); }
 	/// The intarnal rectangle (origin at (0,0))
 	inline RealRect getInternalRect() const { return RealRect(RealPoint(0,0), getInternalSize()); }
 	/// The external rectangle (as passed to the constructor) == trNoNeg(getInternalRect())
@@ -64,6 +64,8 @@ class Rotation {
 	RealPoint trInv(const RealPoint& p) const;
 	/// Translate a size back to internal coordinates
 	RealSize  trInv(const RealSize&  s) const;
+	/// Translate a size back to internal coordinates, that are not negative
+	RealSize  trInvNoNeg(const RealSize&  s) const;
 	
   protected:
 	int angle;				///< The angle of rotation in degrees (counterclockwise)

@@ -402,8 +402,8 @@ void TextValueEditor::showCaret() {
 	cursor = rot.tr(cursor);
 	// set size
 	wxSize size = cursor.size();
-	size.SetWidth (max(1, size.GetWidth()));
-	size.SetHeight(max(1, size.GetHeight()));
+	if (size.GetWidth()  == 0) size.SetWidth (1);
+	if (size.GetHeight() == 0) size.SetHeight(1);
 	// resize, move, show
 	if (size != caret->GetSize()) {
 		caret->SetSize(size);

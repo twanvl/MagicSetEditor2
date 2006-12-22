@@ -44,7 +44,7 @@ class PackageList : public GalleryList {
 	}
 	
 	/// Select the package with the given name, if it is not found, selects nothing
-	void select(const String& name);
+	void select(const String& name, bool send_event = true);
 	
   protected:
 	/// Return how many items there are in the list

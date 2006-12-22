@@ -82,12 +82,14 @@ void PackageList::clear() {
 	update();
 }
 
-void PackageList::select(const String& name) {
+void PackageList::select(const String& name, bool send_event) {
 	for (vector<PackageData>::const_iterator it = packages.begin() ; it != packages.end() ; ++it) {
 		if (it->package->name() == name) {
 			selection = it - packages.begin();
 			update();
-			sendEvent(EVENT_GALLERY_SELECT);
+			if (send_event) {
+				sendEvent(EVENT_GALLERY_SELECT);
+			}
 			return;
 		}
 	}

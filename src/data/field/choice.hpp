@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/defaultable.hpp>
 #include <data/field.hpp>
+#include <data/font.hpp>
 #include <gfx/gfx.hpp> // for ImageCombine
 #include <script/scriptable.hpp>
 #include <script/image.hpp>
@@ -117,7 +118,7 @@ class ChoiceStyle : public Style {
 	
 	ChoicePopupStyle			popup_style;	///< Style of popups/menus
 	ChoiceRenderStyle			render_style;	///< Style of rendering
-//	FontInfo					font;			///< Font for drawing text (when RENDER_TEXT)
+	Font						font;			///< Font for drawing text (when RENDER_TEXT)
 	map<String,ScriptableImage>	choice_images;	///< Images for the various choices (when RENDER_IMAGE)
 	map<String,Color>			choice_colors;	///< Colors for the various choices (when color_cardlist)
 	bool						colors_card_list;///< Does this field determine colors of the rows in the card list?

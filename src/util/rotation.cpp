@@ -80,6 +80,14 @@ RealPoint Rotation::trInv(const RealPoint& p) const {
 	}
 }
 
+RealSize Rotation::trInvNoNeg(const RealSize& s) const {
+	if (sideways()) {
+		return RealSize(s.height, s.width) / zoom;
+	} else {
+		return RealSize(s.width, s.height) / zoom;
+	}
+}
+
 // ----------------------------------------------------------------------------- : Rotater
 
 Rotater::Rotater(Rotation& rot, const Rotation& by)

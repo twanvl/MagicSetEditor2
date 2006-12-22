@@ -208,7 +208,7 @@ IMPLEMENT_REFLECTION(ChoiceStyle) {
 	REFLECT(combine);
 	REFLECT(alignment);
 	REFLECT(colors_card_list);
-//	REFLECT(font);
+	REFLECT(font);
 	REFLECT(choice_images);
 //	if (tag.reading() && choice_colors.empty())
 	REFLECT(choice_colors);
