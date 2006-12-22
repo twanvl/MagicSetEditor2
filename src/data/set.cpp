@@ -135,18 +135,18 @@ ScriptValueP make_iterator(const Set& set) {
 void mark_dependency_member(Set* value, const String& name, const Dependency& dep) {
 	// is it the card list?
 	if (name == _("cards")) {
-		value->game->dependent_scripts_cards.push_back(dep);
+		value->game->dependent_scripts_cards.add(dep);
 		return;
 	}
 	// is it the keywords?
 	if (name == _("keywords")) {
-		value->game->dependent_scripts_keywords.push_back(dep);
+		value->game->dependent_scripts_keywords.add(dep);
 		return;
 	}
 	// is it in the set data?
 	IndexMap<FieldP,ValueP>::const_iterator it = value->data.find(name);
 	if (it != value->data.end()) {
-		(*it)->fieldP->dependent_scripts.push_back(dep);
+		(*it)->fieldP->dependent_scripts.add(dep);
 	}
 }
 void mark_dependency_member(const SetP& value, const String& name, const Dependency& dep) {

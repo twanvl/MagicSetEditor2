@@ -69,7 +69,7 @@ String TextValueAction::getName(bool to_undo) const { return name; }
 
 void TextValueAction::perform(bool to_undo) {
 	swap(value().value, new_value);
-//	if (value().value.age < new_value.age) value().value.age = Age();
+	value().last_update.update();
 	swap(selection_end, new_selection_end);
 }
 

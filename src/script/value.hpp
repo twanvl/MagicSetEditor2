@@ -355,6 +355,7 @@ template <> inline ScriptValueP getParam<ScriptValueP>(const ScriptValueP& value
 template <> inline String       getParam<String>      (const ScriptValueP& value) { return *value; }
 template <> inline int          getParam<int>         (const ScriptValueP& value) { return *value; }
 template <> inline double       getParam<double>      (const ScriptValueP& value) { return *value; }
+template <> inline bool         getParam<bool>        (const ScriptValueP& value) { return (int)*value; }
 
 /// Retrieve an optional parameter
 /** Usage:
@@ -367,23 +368,25 @@ template <> inline double       getParam<double>      (const ScriptValueP& value
  *   }
  *  @endcode
  */
-#define SCRIPT_OPTIONAL_PARAM(Type, name)	SCRIPT_OPTIONAL_PARAM_N(Type, #name, name)
+#define SCRIPT_OPTIONAL_PARAM(Type, name)	SCRIPT_OPTIONAL_PARAM_N(Type, _(#name), name)
 
 #define SCRIPT_OPTIONAL_PARAM_N(Type, str, name)					\
-		ScriptValueP name##_ = ctx.getVariableOpt(_(str));			\
+		ScriptValueP name##_ = ctx.getVariableOpt(str);				\
 		Type name = name##_ ? getParam<Type>(name##_) : Type();		\
 		if (name##_)
 
 /// Retrieve an optional parameter, can't be used as an if statement
-#define SCRIPT_OPTIONAL_PARAM_(Type, name)	SCRIPT_OPTIONAL_PARAM_N_(Type, #name, name)
+#define SCRIPT_OPTIONAL_PARAM_(Type, name)	SCRIPT_OPTIONAL_PARAM_N_(Type, _(#name), name)
 
 #define SCRIPT_OPTIONAL_PARAM_N_(Type, str, name)					\
-		ScriptValueP name##_ = ctx.getVariableOpt(_(str));			\
+		ScriptValueP name##_ = ctx.getVariableOpt(str);				\
 		Type name = name##_ ? getParam<Type>(name##_) : Type();
 
 /// Retrieve an optional parameter with a default value
-#define SCRIPT_PARAM_DEFAULT(Type, name, def)						\
-		ScriptValueP name##_ = ctx.getVariableOpt(_(#name));		\
+#define SCRIPT_PARAM_DEFAULT(Type, name, def) SCRIPT_PARAM_DEFAULT_N(Type, _(#name), name, def)
+/// Retrieve an optional parameter with a default value
+#define SCRIPT_PARAM_DEFAULT_N(Type, str, name, def)				\
+		ScriptValueP name##_ = ctx.getVariableOpt(str);				\
 		Type name = name##_ ? getParam<Type>(name##_) : def
 
 /// Return a value from a SCRIPT_FUNCTION

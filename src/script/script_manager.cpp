@@ -30,6 +30,8 @@ DECLARE_TYPEOF_NO_REV(IndexMap_FieldP_ValueP);
 void init_script_functions(Context& ctx);
 void init_script_image_functions(Context& ctx);
 
+#define LOG_UPDATES
+
 // ----------------------------------------------------------------------------- : SetScriptContext : initialization
 
 SetScriptContext::SetScriptContext(Set& set)
@@ -151,7 +153,13 @@ void SetScriptManager::onAction(const Action& action, bool undone) {
 		// note: fallthrough
 	}
 	TYPE_CASE_(action, CardListAction) {
+		#ifdef LOG_UPDATES
+			wxLogDebug(_("Card dependencies"));
+		#endif
 		updateAllDependend(set.game->dependent_scripts_cards);
+		#ifdef LOG_UPDATES
+			wxLogDebug(_("-------------------------------\n"));
+		#endif
 	}
 }
 
@@ -174,12 +182,21 @@ void SetScriptManager::updateValue(Value& value, const CardP& card) {
 	deque<ToUpdate> to_update;
 	// execute script for initial changed value
 	value.update(getContext(card));
+	#ifdef LOG_UPDATES
+		wxLogDebug(_("Start:     %s"), value.fieldP->name);
+	#endif
 	// update dependent scripts
 	alsoUpdate(to_update, value.fieldP->dependent_scripts, card);
 	updateRecursive(to_update, starting_age);
+	#ifdef LOG_UPDATES
+		wxLogDebug(_("-------------------------------\n"));
+	#endif
 }
 
 void SetScriptManager::updateAll() {
+	#ifdef LOG_UPDATES
+		wxLogDebug(_("Update all"));
+	#endif
 	// update set data
 	Context& ctx = getContext(set.stylesheet);
 	FOR_EACH(v, set.data) {
@@ -194,6 +211,9 @@ void SetScriptManager::updateAll() {
 	}
 	// update things that depend on the card list
 	updateAllDependend(set.game->dependent_scripts_cards);
+	#ifdef LOG_UPDATES
+		wxLogDebug(_("-------------------------------\n"));
+	#endif
 }
 
 void SetScriptManager::updateAllDependend(const vector<Dependency>& dependent_scripts) {
@@ -221,7 +241,14 @@ void SetScriptManager::updateToUpdate(const ToUpdate& u, deque<ToUpdate>& to_upd
 		set.actions.tellListeners(change, false);
 		// u.value has changed, also update values with a dependency on u.value
 		alsoUpdate(to_update, u.value->fieldP->dependent_scripts, u.card);
+	#ifdef LOG_UPDATES
+		wxLogDebug(_("Changed: %s"), u.value->fieldP->name);
+	#endif
 	}
+	#ifdef LOG_UPDATES
+	else
+		wxLogDebug(_("Same:    %s"), u.value->fieldP->name);
+	#endif
 }
 
 void SetScriptManager::alsoUpdate(deque<ToUpdate>& to_update, const vector<Dependency>& deps, const CardP& card) {

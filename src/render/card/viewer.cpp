@@ -134,4 +134,16 @@ void DataViewer::onAction(const Action& action, bool undone) {
 			}
 		}
 	}
+	TYPE_CASE(action, ScriptValueEvent) {
+		if (action.card == card.get()) {
+			FOR_EACH(v, viewers) {
+				if (v->getValue().get() == action.value) {
+					// refresh the viewer
+					v->onAction(action, undone);
+					onChange();
+					return;
+				}
+			}
+		}
+	}
 }

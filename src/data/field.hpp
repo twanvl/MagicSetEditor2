@@ -50,7 +50,7 @@ class Field {
 	String    card_list_name;   ///< Alternate name to use in card list.
 	Alignment card_list_align;  ///< Alignment of the card list colummn.
 	int       tab_index;        ///< Tab index in editor
-	vector<Dependency> dependent_scripts; ///< Scripts that depend on values of this field
+	Dependencies dependent_scripts; ///< Scripts that depend on values of this field
 	
 	/// Creates a new Value corresponding to this Field
 	/** thisP is a smart pointer to this */

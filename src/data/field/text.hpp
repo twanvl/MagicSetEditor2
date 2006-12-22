@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/defaultable.hpp>
 #include <util/rotation.hpp>
+#include <util/age.hpp>
 #include <data/field.hpp>
 #include <data/font.hpp>
 #include <data/symbol_font.hpp>
@@ -88,6 +89,7 @@ class TextValue : public Value {
 	
 	typedef Defaultable<String> ValueType;
 	ValueType value;				///< The text of this value
+	Age       last_update;			///< When was the text last changed?
 	
 	virtual String toString() const;
 	virtual bool update(Context&);

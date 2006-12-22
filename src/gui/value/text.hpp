@@ -51,7 +51,7 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	// --------------------------------------------------- : Actions
 	
 	virtual void onValueChange();
-	virtual void onAction(const ValueAction&, bool undone);
+	virtual void onAction(const Action&, bool undone);
 	
 	// --------------------------------------------------- : Clipboard
 	

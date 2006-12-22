@@ -10,6 +10,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/dynamic_arg.hpp>
 
 #ifdef _MSC_VER
 	extern "C" {
@@ -32,6 +33,7 @@ class Age {
 	Age() {
 		update();
 	}
+	Age(LONG age) : age(age) {}
 	
 	/// Update the age to become the newest one
 	inline void update() {
@@ -51,9 +53,14 @@ class Age {
 	static volatile LONG new_age;
 };
 
-// ----------------------------------------------------------------------------- : Aged
 
-
+/// Age the object currently being processed was last updated
+/** NOTE:
+ *  image generating functions have two modes
+ *  if last_update_age >  0 they return whether the image is still up to date
+ *  if last_update_age == 0 they generate the image
+ */
+DECLARE_DYNAMIC_ARG  (long, last_update_age);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

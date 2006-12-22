@@ -38,6 +38,25 @@ class Dependency {
 	inline Dependency makeCardIndependend() const {
 		return Dependency(type == DEP_CARD_FIELD ? DEP_CARDS_FIELD : type, index, data);
 	}
+	
+	inline bool operator == (const Dependency& d) const {
+		return type == d.type && index == d.index && data == d.data;
+	}
+};
+
+// ----------------------------------------------------------------------------- : Dependencies
+
+/// A list of dependencies
+class Dependencies : public vector<Dependency> {
+  public:
+	/// Add a dependency, prevents duplicates
+	inline void add(const Dependency& d) {
+		if (find(begin(),end(),d) == end()) {
+			push_back(d);
+		}
+	}
+  private:
+	using vector<Dependency>::push_back;
 };
 
 // ----------------------------------------------------------------------------- : EOF

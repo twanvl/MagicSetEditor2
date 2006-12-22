@@ -16,7 +16,7 @@
 
 class Set;
 class DataViewer;
-class ValueAction;
+class Action;
 DECLARE_POINTER_TYPE(Style);
 DECLARE_POINTER_TYPE(Value);
 
@@ -55,7 +55,7 @@ class ValueViewer {
 	/// Called when a (scripted) property of the associated style has changed
 	virtual void onStyleChange() {}
 	/// Called when an action is performed on the associated value
-	virtual void onAction(const ValueAction&, bool undone) { onValueChange(); }
+	virtual void onAction(const Action&, bool undone) { onValueChange(); }
 	
 	/// Convert this viewer to an editor, if possible
 	virtual ValueEditor* getEditor() { return 0; }

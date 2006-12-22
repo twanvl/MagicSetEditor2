@@ -20,11 +20,6 @@
 
 DECLARE_TYPEOF_COLLECTION(SymbolStyle::VariationP);
 
-// image generating functions have two modes
-// if last_update_age >  0 they return whether the image is still up to date
-// if last_update_age == 0 they generate the image
-DECLARE_DYNAMIC_ARG  (long, last_update_age);
-IMPLEMENT_DYNAMIC_ARG(long, last_update_age, 0);
 IMPLEMENT_DYNAMIC_ARG(Package*, load_images_from, nullptr);
 
 // ----------------------------------------------------------------------------- : ScriptImage

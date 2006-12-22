@@ -261,7 +261,7 @@ void TextValueEditor::onValueChange() {
 	selection_start_i = selection_end_i = 0;
 }
 
-void TextValueEditor::onAction(const ValueAction& action, bool undone) {
+void TextValueEditor::onAction(const Action& action, bool undone) {
 	TextValueViewer::onAction(action, undone);
 	TYPE_CASE(action, TextValueAction) {
 		selection_start_i = action.selection_start;

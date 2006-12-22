@@ -168,7 +168,7 @@ void Context::setVariable(const String& name, const ScriptValueP& value) {
 
 void Context::setVariable(int name, const ScriptValueP& value) {
 	Variable& var = variables[name];
-	if (var.value && var.level < level) {
+	if (var.level < level) {
 		// keep shadow copy
 		Binding bind = {name, var};
 		shadowed.push_back(bind);

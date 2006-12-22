@@ -13,3 +13,5 @@
 // what a waste of a source file...
 
 volatile LONG Age::new_age;
+
+IMPLEMENT_DYNAMIC_ARG(long, last_update_age, 0);

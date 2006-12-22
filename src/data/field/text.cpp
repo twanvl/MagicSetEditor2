@@ -95,8 +95,11 @@ String TextValue::toString() const {
 }
 bool TextValue::update(Context& ctx) {
 	Value::update(ctx);
-	return field().default_script.invokeOnDefault(ctx, value)
-	     | field().        script.invokeOn(ctx, value);
+	WITH_DYNAMIC_ARG(last_update_age, last_update.get());
+	bool change = field().default_script.invokeOnDefault(ctx, value)
+	            | field().        script.invokeOn(ctx, value);
+	if (change) last_update.update();
+	return change;
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(TextValue) {

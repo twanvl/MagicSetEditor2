@@ -60,6 +60,7 @@ class Context {
   public:// public for FOR_EACH
 	/// Record of a variable
 	struct Variable {
+		Variable() : level(0) {}
 		unsigned int level; ///< Scope level on which this variable was set
 		ScriptValueP value; ///< Value of this variable
 	};

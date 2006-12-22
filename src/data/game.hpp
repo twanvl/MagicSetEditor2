@@ -45,9 +45,9 @@ class Game : public Packaged {
 	vector<KeywordModeP>    keyword_modes;          ///< Modes of keywords
 	vector<KeywordP>        keywords;				///< Keywords for use in text
 	
-	vector<Dependency> dependent_scripts_cards;		///< scripts that depend on the card list
-	vector<Dependency> dependent_scripts_keywords;	///< scripts that depend on the keywords
-	bool dependencies_initialized;					///< are the script dependencies comming from this game all initialized?
+	Dependencies dependent_scripts_cards;		///< scripts that depend on the card list
+	Dependencies dependent_scripts_keywords;	///< scripts that depend on the keywords
+	bool dependencies_initialized;				///< are the script dependencies comming from this game all initialized?
 	
 	/// Loads the game with a particular name, for example "magic"
 	static GameP byName(const String& name);
