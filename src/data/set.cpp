@@ -99,6 +99,8 @@ void Set::validate(Version file_app_version) {
 			FOR_EACH(v, s.second->data) fix_value_207(v);
 		}
 */	}
+	// we want at least one card
+	if (cards.empty()) cards.push_back(new_shared1<Card>(*game));
 	// update scripts
 	script_manager->updateAll();
 }

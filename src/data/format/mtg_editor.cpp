@@ -202,6 +202,7 @@ SetP MtgEditorFileFormat::importSet(const String& filename) {
 		set->stylesheet = StyleSheet::byGameAndName(*set->game, _("new"));
 	}
 	
+	set->validate();
 	return set;
 }
 

@@ -90,6 +90,7 @@ SetP MSE1FileFormat::importSet(const String& filename) {
 	}
 	
 	// done
+	set->validate();
 	return set;
 }
 

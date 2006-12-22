@@ -96,12 +96,13 @@ class Set : public Packaged {
 	/// Clear the order_cache used by positionOfCard
 	void clearOrderCache();
 	
-  protected:
 	virtual String typeName() const;
-	virtual void validate(Version);
+	/// Validate that the set is correctly loaded
+	virtual void validate(Version = app_version);
 	
-	DECLARE_REFLECTION();
   private:
+	DECLARE_REFLECTION();
+	
 	/// Object for managing and executing scripts
 	scoped_ptr<SetScriptManager> script_manager;
 	/// Object for executing scripts from the thumbnail thread

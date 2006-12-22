@@ -77,7 +77,7 @@ void NewSetWindow::OnOK(wxCommandEvent&) {
 void NewSetWindow::done() {
 	StyleSheetP stylesheet = stylesheet_list->getSelection<StyleSheet>();
 	set = new_shared1<Set>(stylesheet);
-	set->cards.push_back(new_shared1<Card>(*set->game));
+	set->validate();
 	EndModal(wxID_OK);
 }
 
