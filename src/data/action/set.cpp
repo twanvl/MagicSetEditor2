@@ -80,6 +80,14 @@ void ReorderCardsAction::perform(bool to_undo) {
 
 // ----------------------------------------------------------------------------- : Change stylesheet
 
+String DisplayChangeAction::getName(bool to_undo) const {
+	assert(false);
+	return _("");
+}
+void DisplayChangeAction::perform(bool to_undo) {
+	assert(false);
+}
+
 
 String ChangeCardStyleAction::getName(bool to_undo) const {
 	return _("Change style");
@@ -87,6 +95,7 @@ String ChangeCardStyleAction::getName(bool to_undo) const {
 void ChangeCardStyleAction::perform(bool to_undo) {
 	swap(card->stylesheet, stylesheet);
 }
+
 
 String ChangeSetStyleAction::getName(bool to_undo) const {
 	return _("Change style (all cards)");

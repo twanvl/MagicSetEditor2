@@ -22,9 +22,11 @@
  */
 class Rotation {
   public:
-	/// Construct a rotation object with the given rectangle of external coordinates
-	/// and a given rotation angle and zoom factor
-	Rotation(int angle, const RealRect& rect, double zoom = 1.0);
+	/// Construct a rotation object
+	/** with the given rectangle of external coordinates and a given rotation angle and zoom factor.
+	 *  if is_internal then the rect gives the internal coordinates, its origin should be (0,0)
+	 */
+	Rotation(int angle, const RealRect& rect, double zoom = 1.0, bool is_internal = false);
 	
 	/// Change the zoom factor
 	inline void setZoom(double z) { zoom = z; }
@@ -34,6 +36,8 @@ class Rotation {
 	inline RealSize getInternalSize() const { return trInvNoNeg(size); }
 	/// The intarnal rectangle (origin at (0,0))
 	inline RealRect getInternalRect() const { return RealRect(RealPoint(0,0), getInternalSize()); }
+	/// The size of the external rectangle (as passed to the constructor) == trNoNeg(getInternalSize())
+	inline RealSize getExternalSize() const { return size; }
 	/// The external rectangle (as passed to the constructor) == trNoNeg(getInternalRect())
 	RealRect getExternalRect() const;
 	
@@ -120,7 +124,7 @@ class Rotater {
  */
 class RotatedDC : public Rotation {
   public:
-	RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, bool high_quality);
+	RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, bool high_quality, bool is_internal = false);
 	RotatedDC(DC& dc, const Rotation& rotation, bool high_quality);
   
 	// --------------------------------------------------- : Drawing

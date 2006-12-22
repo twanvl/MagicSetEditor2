@@ -32,7 +32,7 @@ Bitmap export_bitmap(const SetP& set, const CardP& card) {
 //		viewer.rotation.angle = 0;
 //		viewer.rotation.zoom  = 1.0;
 	}
-	RealSize size = viewer.getRotation().getExternalRect().size();
+	RealSize size = viewer.getRotation().getExternalSize();
 	// create bitmap & dc
 	Bitmap bitmap(size.width, size.height);
 	if (!bitmap.Ok()) throw InternalError(_("Unable to create bitmap"));

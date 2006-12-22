@@ -20,10 +20,7 @@ CardViewer::CardViewer(Window* parent, int id, long style)
 wxSize CardViewer::DoGetBestSize() const {
 	wxSize ws = GetSize(), cs = GetClientSize();
 	if (set) {
-		StyleSheetP stylesheet = set->stylesheetFor(card);
-		if (stylesheet) {
-			return wxSize(stylesheet->card_width, stylesheet->card_height) + ws - cs;
-		}
+		return (wxSize)getRotation().getExternalSize() + ws - cs;
 	}
 	return cs;
 }

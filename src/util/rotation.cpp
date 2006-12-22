@@ -17,12 +17,15 @@ int constrain_angle(int angle) {
 	return (a / 90) * 90; // multiple of 90
 }
 
-Rotation::Rotation(int angle, const RealRect& rect, double zoom)
+Rotation::Rotation(int angle, const RealRect& rect, double zoom, bool is_internal)
 	: angle(constrain_angle(angle))
 	, size(rect.size())
 	, origin(rect.position())
 	, zoom(zoom)
 {
+	if (is_internal) {
+		size = trNoNeg(size);
+	}
 	// set origin
 	if (revX()) origin.x += size.width;
 	if (revY()) origin.y += size.height;
@@ -108,12 +111,12 @@ Rotater::~Rotater() {
 
 // ----------------------------------------------------------------------------- : RotatedDC
 
-RotatedDC::RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, bool high_quality)
-	: Rotation(angle, rect, zoom)
+RotatedDC::RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, bool high_quality, bool is_internal)
+	: Rotation(angle, rect, zoom, is_internal)
 	, dc(dc), high_quality(high_quality)
 {}
 
-RotatedDC::RotatedDC(DC& dc, const Rotation& rotation, bool high_quality = false)
+RotatedDC::RotatedDC(DC& dc, const Rotation& rotation, bool high_quality)
 	: Rotation(rotation)
 	, dc(dc), high_quality(high_quality&&false)
 {}

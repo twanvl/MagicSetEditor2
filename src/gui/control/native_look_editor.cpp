@@ -91,7 +91,7 @@ SetInfoEditor::SetInfoEditor(Window* parent, int id, long style)
 {}
 
 void SetInfoEditor::onChangeSet() {
-	setStyles(set->stylesheet->set_info_style);
+	setStyles(set->stylesheet, set->stylesheet->set_info_style);
 	setData(set->data);
 }
 
@@ -103,7 +103,7 @@ StylingEditor::StylingEditor(Window* parent, int id, long style)
 
 void StylingEditor::showStylesheet(const StyleSheetP& stylesheet) {
 	this->stylesheet = stylesheet;
-	setStyles(stylesheet->styling_style);
+	setStyles(set->stylesheet, stylesheet->styling_style);
 	setData(set->stylingDataFor(*stylesheet));
 }
 

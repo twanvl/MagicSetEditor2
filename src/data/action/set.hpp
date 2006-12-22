@@ -76,8 +76,15 @@ class ReorderCardsAction : public CardListAction {
 
 // ----------------------------------------------------------------------------- : Change stylesheet
 
+/// An action that affects the rendering/display/look of a set or cards in the set
+class DisplayChangeAction : public Action {
+  public:
+	virtual String getName(bool to_undo) const;
+	virtual void   perform(bool to_undo);
+};
+
 /// Changing the style of a a card
-class ChangeCardStyleAction : public Action {
+class ChangeCardStyleAction : public DisplayChangeAction {
   public:
 	ChangeCardStyleAction(const CardP& card, const StyleSheetP& stylesheet)
 		: card(card), stylesheet(stylesheet) {}
@@ -91,7 +98,7 @@ class ChangeCardStyleAction : public Action {
 };
 
 /// Changing the style of a set to that of a card
-class ChangeSetStyleAction : public Action {
+class ChangeSetStyleAction : public DisplayChangeAction {
   public:
 	ChangeSetStyleAction(Set& set, const CardP& card)
 		: set(set), card(card) {}

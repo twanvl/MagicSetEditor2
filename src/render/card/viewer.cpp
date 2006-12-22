@@ -14,6 +14,8 @@
 #include <data/field.hpp>
 #include <data/settings.hpp>
 #include <data/action/value.hpp>
+#include <data/action/set.hpp>
+#include <gui/util.hpp> // clearDC
 
 DECLARE_TYPEOF_COLLECTION(ValueViewerP);
 typedef IndexMap<FieldP,StyleP> IndexMap_FieldP_StyleP;
@@ -25,17 +27,14 @@ DECLARE_TYPEOF_NO_REV(IndexMap_FieldP_StyleP);
 // ----------------------------------------------------------------------------- : Drawing
 
 void DataViewer::draw(DC& dc) {
-	StyleSheetP stylesheet = set->stylesheetFor(card);
 	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
-	RotatedDC rdc(dc, ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(), ss.card_anti_alias() && !nativeLook());
-	draw(rdc, set->stylesheet->card_background);
+	RotatedDC rdc(dc, ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(), ss.card_anti_alias() && !nativeLook(), true);
+	draw(rdc, stylesheet->card_background);
 }
 void DataViewer::draw(RotatedDC& dc, const Color& background) {
-	if (!set)  return; // no set specified, don't draw anything
+	if (!set) return; // no set specified, don't draw anything
 	// fill with background color
-	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(background);
-	dc.DrawRectangle(dc.getInternalRect());
+	clearDC(dc.getDC(), background);
 	// update style scripts
 	if (card) set->updateFor(card);
 	// draw values
@@ -59,9 +58,8 @@ ValueViewer* DataViewer::focusedViewer() const { return nullptr; }
 Context& DataViewer::getContext()  const { return set->getContext(); }
 
 Rotation DataViewer::getRotation() const {
-	StyleSheetP stylesheet = set->stylesheetFor(card);
 	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
-	return Rotation(ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom());
+	return Rotation(ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(), true);
 }
 
 // ----------------------------------------------------------------------------- : Setting data
@@ -70,7 +68,8 @@ void DataViewer::setCard(const CardP& card) {
 	if (!card) return; // TODO: clear editor?
 	assert(set);
 	this->card = card;
-	setStyles(set->stylesheet->card_style);
+	stylesheet = set->stylesheetFor(card);
+	setStyles(stylesheet, stylesheet->card_style);
 	setData(card->data);
 }
 
@@ -82,11 +81,12 @@ struct CompareViewer {
 	}
 };
 
-void DataViewer::setStyles(IndexMap<FieldP,StyleP>& styles) {
+void DataViewer::setStyles(const StyleSheetP& stylesheet, IndexMap<FieldP,StyleP>& styles) {
 	if (!viewers.empty() && styles.contains(viewers.front()->getStyle())) {
 		// already using these styles
 		return;
 	}
+	this->stylesheet = stylesheet;
 	// create viewers
 	viewers.clear();
 	FOR_EACH(s, styles) {
@@ -117,6 +117,11 @@ ValueViewerP DataViewer::makeViewer(const StyleP& style) {
 }
 
 void DataViewer::onAction(const Action& action, bool undone) {
+	TYPE_CASE_(action, DisplayChangeAction) {
+		// refresh
+		setCard(card);
+		return;
+	}
 	TYPE_CASE(action, ValueAction) {
 		FOR_EACH(v, viewers) {
 			if (v->getValue() == action.valueP) {

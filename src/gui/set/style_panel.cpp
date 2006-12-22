@@ -83,11 +83,13 @@ void StylePanel::onStyleSelect(wxCommandEvent&) {
 			stylesheet = StyleSheetP();
 		}
 		set->actions.add(new ChangeCardStyleAction(card, stylesheet));
+		Layout();
 	}
 }
 
 void StylePanel::onUseForAll(wxCommandEvent&) {
 	set->actions.add(new ChangeSetStyleAction(*set, card));
+	Layout();
 }
 
 BEGIN_EVENT_TABLE(StylePanel, wxPanel)

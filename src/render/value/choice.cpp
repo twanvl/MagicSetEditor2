@@ -23,12 +23,12 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 			ScriptableImage& img = it->second;
 			ScriptImageP i;
 			if (nativeLook()) {
-				i = img.update(viewer.getContext(), *getSet().stylesheet, 16, 16, ASPECT_BORDER, false);
+				i = img.update(viewer.getContext(), *viewer.stylesheet, 16, 16, ASPECT_BORDER, false);
 			} else if(style().render_style & RENDER_TEXT) {
 				// also drawing text
-				i = img.update(viewer.getContext(), *getSet().stylesheet, 0, 0);
+				i = img.update(viewer.getContext(), *viewer.stylesheet, 0, 0);
 			} else {
-				i = img.update(viewer.getContext(), *getSet().stylesheet,
+				i = img.update(viewer.getContext(), *viewer.stylesheet,
 						dc.trS(style().width), dc.trS(style().height),
 						style().alignment == ALIGN_STRETCH ? ASPECT_STRETCH : ASPECT_FIT
 					);

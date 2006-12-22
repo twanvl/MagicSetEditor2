@@ -56,7 +56,7 @@ void TextCtrl::setValue(String* value) {
 		// assign to this control
 		IndexMap<FieldP,StyleP> styles; styles.add(field, style);
 		IndexMap<FieldP,ValueP> values; values.add(field, value);
-		setStyles(styles);
+		setStyles(set->stylesheet, styles);
 		setData(values);
 		// determine required height
 		viewers.front()->getEditor()->determineSize();

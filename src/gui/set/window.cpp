@@ -27,6 +27,7 @@
 #include <data/card.hpp>
 #include <data/settings.hpp>
 #include <data/format/formats.hpp>
+#include <data/action/set.hpp>
 
 DECLARE_TYPEOF_COLLECTION(SetWindowPanel*);
 DECLARE_TYPEOF_COLLECTION(SetWindow*);
@@ -231,11 +232,11 @@ void SetWindow::onChangeSet() {
 }
 
 void SetWindow::onAction(const Action& action, bool undone) {
-//	TYPE_CASE_(action, SetStyleChange) {
-//		// The style changed, maybe also the size of the viewer
-//		Layout();
-//		fixMinWindowSize();
-//	}
+	TYPE_CASE_(action, DisplayChangeAction) {
+		// The style changed, maybe also the size of card viewers
+		if (current_panel) current_panel->Layout();
+		fixMinWindowSize();
+	}
 }
 	
 	
@@ -517,13 +518,10 @@ void SetWindow::onReplaceAll(wxFindDialogEvent&) {
 
 void SetWindow::onEditPreferences(wxCommandEvent&) {
 	PreferencesWindow wnd(this);
-	wnd.ShowModal();
-//	if (wnd.ShowModal() == wxID_OK) {
-//		// render settings may have changed, notify all windows
-//		FOR_EACH(m, setWindows) {
-//			m->onRenderSettingsChange();
-//		}
-//	}
+	if (wnd.ShowModal() == wxID_OK) {
+		// render settings may have changed, notify all windows
+		set->actions.tellListeners(DisplayChangeAction(),true);
+	}
 }
 
 

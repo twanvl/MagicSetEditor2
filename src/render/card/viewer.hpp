@@ -21,10 +21,7 @@ class Context;
 
 /// A viewer can generate an image of some values, usually a card.
 class DataViewer : public SetView {
-  public:
-	/// Rotation and zoom to use when drawing
-//	Rotation rotation;
-	
+  public:	
 	// --------------------------------------------------- : Drawing
 	
 	/// Draw the current (card/data) to the given dc
@@ -63,7 +60,7 @@ class DataViewer : public SetView {
 	// --------------------------------------------------- : The viewers
   protected:
 	/// Set the styles for the data to be shown, recreating the viewers
-	void setStyles(IndexMap<FieldP,StyleP>& styles);
+	void setStyles(const StyleSheetP& stylesheet, IndexMap<FieldP,StyleP>& styles);
 	/// Set the data to be shown in the viewers, refresh them
 	void setData(IndexMap<FieldP,ValueP>& values);
 	
@@ -82,6 +79,8 @@ class DataViewer : public SetView {
 	
 	vector<ValueViewerP> viewers;	///< The viewers for the different values in the data
 	CardP card;						///< The card that is currently displayed, if any
+  public:
+	StyleSheetP stylesheet;			///< Stylesheet being used
 };
 
 // ----------------------------------------------------------------------------- : EOF
