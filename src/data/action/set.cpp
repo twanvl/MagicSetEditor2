@@ -77,3 +77,27 @@ void ReorderCardsAction::perform(bool to_undo) {
 	assert(card_id2 < set.cards.size());
 	swap(set.cards[card_id1], set.cards[card_id2]);
 }
+
+// ----------------------------------------------------------------------------- : Change stylesheet
+
+
+String ChangeCardStyleAction::getName(bool to_undo) const {
+	return _("Change style");
+}
+void ChangeCardStyleAction::perform(bool to_undo) {
+	swap(card->stylesheet, stylesheet);
+}
+
+String ChangeSetStyleAction::getName(bool to_undo) const {
+	return _("Change style (all cards)");
+}
+void ChangeSetStyleAction::perform(bool to_undo) {
+	if (!to_undo) {
+		stylesheet       = set.stylesheet;
+		set.stylesheet   = card->stylesheet;
+		card->stylesheet = StyleSheetP();
+	} else {
+		card->stylesheet = set.stylesheet;
+		set.stylesheet   = stylesheet;
+	}
+}

@@ -19,6 +19,7 @@
 
 class Set;
 DECLARE_POINTER_TYPE(Card);
+DECLARE_POINTER_TYPE(StyleSheet);
 
 // ----------------------------------------------------------------------------- : Add card
 
@@ -71,6 +72,37 @@ class ReorderCardsAction : public CardListAction {
 	
   //private:
 	const size_t card_id1, card_id2;	///< Positions of the two cards to swap
+};
+
+// ----------------------------------------------------------------------------- : Change stylesheet
+
+/// Changing the style of a a card
+class ChangeCardStyleAction : public Action {
+  public:
+	ChangeCardStyleAction(const CardP& card, const StyleSheetP& stylesheet)
+		: card(card), stylesheet(stylesheet) {}
+	
+	virtual String getName(bool to_undo) const;
+	virtual void   perform(bool to_undo);
+	
+  //private:
+	CardP       card;			///< The affected card
+	StyleSheetP stylesheet;		///< Its new stylesheet
+};
+
+/// Changing the style of a set to that of a card
+class ChangeSetStyleAction : public Action {
+  public:
+	ChangeSetStyleAction(Set& set, const CardP& card)
+		: set(set), card(card) {}
+	
+	virtual String getName(bool to_undo) const;
+	virtual void   perform(bool to_undo);
+	
+  private:
+	Set&        set;			///< The affected set
+	CardP       card;			///< The card whos stylesheet is copied to the set
+	StyleSheetP stylesheet;		///< The old stylesheet of the set
 };
 
 // ----------------------------------------------------------------------------- : EOF
