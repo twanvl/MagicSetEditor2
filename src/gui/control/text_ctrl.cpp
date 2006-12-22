@@ -26,15 +26,16 @@ Rotation TextCtrl::getRotation() const {
 }
 
 void TextCtrl::draw(DC& dc) {
+	if (!viewers.empty()) {
+		wxSize cs = GetClientSize();
+		Style& style = *viewers.front()->getStyle();
+		style.width  = cs.GetWidth()  - 2;
+		style.height = cs.GetHeight() - 2;
+	}
 	RotatedDC rdc(dc, getRotation(), false);
-	DataViewer::draw(rdc, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	DataViewer::draw(rdc, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 }
 void TextCtrl::drawViewer(RotatedDC& dc, ValueViewer& v) {
-	// draw background
-	Style& s = *v.getStyle();
-	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-	dc.DrawRectangle(s.getRect().grow(1));
 	// draw viewer
 	v.draw(dc);
 }
@@ -49,6 +50,7 @@ void TextCtrl::setValue(String* value) {
 		TextValueP value(new TextValue(field));
 		// set stuff
 		field->index = 0;
+		field->multi_line = true;
 		style->width = 100;
 		style->height = 20;
 		style->left = style->top = 1;
@@ -95,12 +97,7 @@ void TextCtrl::onInit() {
 }
 
 void TextCtrl::onSize(wxSizeEvent&) {
-	if (!viewers.empty()) {
-		wxSize cs = GetClientSize();
-		Style& style = *viewers.front()->getStyle();
-		style.width  = cs.GetWidth()  - 2;
-		style.height = cs.GetHeight() - 2;
-	}
+	Refresh(false);
 }
 
 BEGIN_EVENT_TABLE(TextCtrl, DataEditor)

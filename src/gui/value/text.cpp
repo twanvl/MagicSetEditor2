@@ -78,8 +78,13 @@ void TextValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
 	if (ev.LeftIsDown()) {
 		size_t index = v.indexAt(style().getRotation().trInv(pos));
 		if (select_words) {
-			// TODO: on the left, swap start and end
-			moveSelection(TYPE_INDEX, index < selection_start_i ? prevWordBoundry(index) : nextWordBoundry(index), false, MOVE_MID);
+			// on the left, swap start and end
+			bool left = index < max(selection_start_i, selection_end_i);
+			if (left != (selection_end_i < selection_start_i)) {
+				swap(selection_start_i, selection_end_i);
+			}
+//			//if (left && selection_end_i < selection_start_i
+			moveSelection(TYPE_INDEX, left ? prevWordBoundry(index) : nextWordBoundry(index), false, MOVE_MID);
 		} else {
 			moveSelection(TYPE_INDEX, index, false, MOVE_MID);
 		}
@@ -472,27 +477,30 @@ void TextValueEditor::moveSelection(IndexType t, size_t new_end, bool also_move_
 	// Hide caret
 	wxCaret* caret = editor().GetCaret();
 	if (caret->IsVisible()) caret->Hide();
-	// Move selection
-	shared_ptr<DC> dc = editor().overdrawDC();
-	RotatedDC rdc(*dc, viewer.getRotation(), false);
-	if (nativeLook()) {
-		// clip the dc to the region of this control
-		rdc.SetClippingRegion(style().getRect());
-	}
-	// clear old selection by drawing it again
-	v.drawSelection(rdc, style(), selection_start_i, selection_end_i);
-	// move
-	moveSelectionNoRedraw(t, new_end, also_move_start, dir);
-	// scroll?
-//	scrollWithCursor = true;
-//	if (onMove()) {
-//		// we can't redraw just the selection because we must scroll
-//		updateScrollbar();
-//		editor.refreshEditor();
-//	} else {
-		// draw new selection
+	// Destroy the clientDC before reshowing the caret, prevent flicker on MSW
+	{
+		// Move selection
+		shared_ptr<DC> dc = editor().overdrawDC();
+		RotatedDC rdc(*dc, viewer.getRotation(), false);
+		if (nativeLook()) {
+			// clip the dc to the region of this control
+			rdc.SetClippingRegion(style().getRect());
+		}
+		// clear old selection by drawing it again
 		v.drawSelection(rdc, style(), selection_start_i, selection_end_i);
-//	}
+		// move
+		moveSelectionNoRedraw(t, new_end, also_move_start, dir);
+		// scroll?
+	//	scrollWithCursor = true;
+	//	if (onMove()) {
+	//		// we can't redraw just the selection because we must scroll
+	//		updateScrollbar();
+	//		editor.refreshEditor();
+	//	} else {
+			// draw new selection
+			v.drawSelection(rdc, style(), selection_start_i, selection_end_i);
+	//	}
+	}
 	showCaret();
 }
 
