@@ -58,6 +58,7 @@ ValueViewer* DataViewer::focusedViewer() const { return nullptr; }
 Context& DataViewer::getContext()  const { return set->getContext(); }
 
 Rotation DataViewer::getRotation() const {
+	if (!stylesheet) stylesheet = set->stylesheet;
 	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
 	return Rotation(ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(), true);
 }
@@ -71,6 +72,7 @@ void DataViewer::setCard(const CardP& card) {
 	stylesheet = set->stylesheetFor(card);
 	setStyles(stylesheet, stylesheet->card_style);
 	setData(card->data);
+	onChangeSize();
 }
 
 // ----------------------------------------------------------------------------- : Viewers

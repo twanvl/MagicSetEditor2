@@ -196,19 +196,6 @@ bool CardsPanel::wantsToHandle(const Action&, bool undone) const {
 	return false;
 }
 
-void CardsPanel::onAction(const Action& action, bool undone) {
-	TYPE_CASE_(action, DisplayChangeAction) {
-		// The style changed, maybe also the size of editor
-		Layout();
-		//if (current_panel) current_panel->Layout();
-		//fixMinWindowSize();
-	}
-}
-
-void CardsPanel::onRenderSettingsChange() {
-	// TODO
-}
-
 // ----------------------------------------------------------------------------- : Clipboard
 
 bool CardsPanel::canCut()   const { return focused_control(this) == ID_EDITOR ? editor->canCut()   :    card_list->canCut();   }

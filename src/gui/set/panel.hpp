@@ -49,8 +49,6 @@ class SetWindowPanel : public wxPanel, public SetView {
 	virtual bool wantsToHandle(const Action&, bool undone) const { return false; }
 	/// Handle an action that changes the current set
 	virtual void onAction(const Action&, bool undone) {}
-	/// The settings for rendering cards have changed, refresh card viewers/editors
-	virtual void onRenderSettingsChange() {}
 	
 	// --------------------------------------------------- : Clipboard
 	virtual bool canPaste() const { return false; }		///< Is pasting possible?

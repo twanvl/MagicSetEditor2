@@ -10,6 +10,10 @@
 #include <data/stylesheet.hpp>
 #include <wx/dcbuffer.h>
 
+// ----------------------------------------------------------------------------- : Events
+
+DEFINE_EVENT_TYPE(EVENT_SIZE_CHANGE);
+
 // ----------------------------------------------------------------------------- : CardViewer
 
 CardViewer::CardViewer(Window* parent, int id, long style)
@@ -29,6 +33,16 @@ void CardViewer::onChange() {
 	Refresh(false);
 	up_to_date = false;
 }
+
+void CardViewer::onChangeSize() {
+	wxSize ws = GetSize(), cs = GetClientSize();
+	wxSize desired_cs = (wxSize)getRotation().getExternalSize() + ws - cs;
+	if (desired_cs != cs) {
+		wxCommandEvent ev(EVENT_SIZE_CHANGE, GetId());
+		ProcessEvent(ev);
+	}
+}
+
 
 #ifdef _DEBUG
 	DECLARE_DYNAMIC_ARG(bool, inOnPaint);

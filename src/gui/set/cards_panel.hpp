@@ -37,8 +37,6 @@ class CardsPanel : public SetWindowPanel {
 	// --------------------------------------------------- : Actions
 	
 	virtual bool wantsToHandle(const Action&, bool undone) const;
-	virtual void onAction(const Action&, bool undone);
-	virtual void onRenderSettingsChange();
   public:
   
 	// --------------------------------------------------- : Clipboard

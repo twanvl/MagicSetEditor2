@@ -73,14 +73,15 @@ class DataViewer : public SetView {
 	
 	/// Notification that the total image has changed
 	virtual void onChange() {}
-	
 	/// Notification that the viewers are initialized
 	virtual void onInit() {}
+	/// Notification that the size of the viewer may have changed
+	virtual void onChangeSize() {}
 	
 	vector<ValueViewerP> viewers;	///< The viewers for the different values in the data
 	CardP card;						///< The card that is currently displayed, if any
   public:
-	StyleSheetP stylesheet;			///< Stylesheet being used
+	mutable StyleSheetP stylesheet;	///< Stylesheet being used
 };
 
 // ----------------------------------------------------------------------------- : EOF

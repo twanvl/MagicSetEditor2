@@ -12,6 +12,13 @@
 #include <util/prec.hpp>
 #include <render/card/viewer.hpp>
 
+// ----------------------------------------------------------------------------- : Events
+
+/// Event that indicates the size of a CardViewer has changed
+DECLARE_EVENT_TYPE(EVENT_SIZE_CHANGE, <not used>)
+/// Handle EVENT_SIZE_CHANGE events
+#define EVT_SIZE_CHANGE(id, handler) EVT_COMMAND(id, EVENT_SIZE_CHANGE, handler)
+
 // ----------------------------------------------------------------------------- : CardViewer
 
 /// A control to view a single card
@@ -28,6 +35,7 @@ class CardViewer : public wxControl, public DataViewer {
 	virtual wxSize DoGetBestSize() const;
 	
 	virtual void onChange();
+	virtual void onChangeSize();
 	
   private:
 	DECLARE_EVENT_TABLE();

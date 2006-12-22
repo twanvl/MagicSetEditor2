@@ -76,10 +76,7 @@ class SetWindow : public wxFrame, public SetView {
   private:
 	/// A different card has been selected
 	void onCardSelect(CardSelectEvent&);
-	
-	/// Render settings have changed (because of editing of preferences)
-	void onRenderSettingsChange();
-	
+		
 	// minSize = mainSizer->getMinWindowSize(this)
 	// but wx made that private
 	void fixMinWindowSize();
@@ -149,6 +146,8 @@ class SetWindow : public wxFrame, public SetView {
 	void onChildMenu           (wxCommandEvent&);
 	
 	void onIdle                (wxIdleEvent&);
+	
+	void onSizeChange          (wxCommandEvent&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -53,15 +53,13 @@ void StylePanel::onChangeSet() {
 void StylePanel::onAction(const Action& action, bool undone) {
 	TYPE_CASE_(action, ChangeSetStyleAction) {
 		list->select(set->stylesheetFor(card)->name(), false);
-//		updateSize();
 	}
 	TYPE_CASE(action, ChangeCardStyleAction) {
 		if (action.card == card) {
-//			preview->onAction(action, undone); // update the preview control before we determine our new size
 			list->select(set->stylesheetFor(card)->name(), false);
-//			updateSize();
 		}
 	}
+	use_for_all->Enable(card && card->stylesheet);
 }
 
 // ----------------------------------------------------------------------------- : Selection

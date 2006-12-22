@@ -14,6 +14,7 @@
 #include <gui/set/keywords_panel.hpp>
 #include <gui/set/stats_panel.hpp>
 #include <gui/control/card_list.hpp>
+#include <gui/control/card_viewer.hpp>
 #include <gui/control/gallery_list.hpp>
 #include <gui/about_window.hpp>
 #include <gui/update_checker.hpp>
@@ -232,11 +233,12 @@ void SetWindow::onChangeSet() {
 }
 
 void SetWindow::onAction(const Action& action, bool undone) {
-	TYPE_CASE_(action, DisplayChangeAction) {
+/*	TYPE_CASE_(action, DisplayChangeAction) {
 		// The style changed, maybe also the size of card viewers
 		if (current_panel) current_panel->Layout();
 		fixMinWindowSize();
 	}
+*/
 }
 	
 	
@@ -244,14 +246,6 @@ void SetWindow::onCardSelect(CardSelectEvent& ev) {
 	FOR_EACH(p, panels) {
 		p->selectCard(ev.card);
 	}
-	fixMinWindowSize();
-}
-
-void SetWindow::onRenderSettingsChange() {
-	FOR_EACH(p, panels) {
-		p->onRenderSettingsChange();
-	}
-	fixMinWindowSize();
 }
 
 void SetWindow::fixMinWindowSize() {
@@ -267,6 +261,12 @@ void SetWindow::fixMinWindowSize() {
 	SetMinSize(minSize);
 }
 
+void SetWindow::onSizeChange(wxCommandEvent&) {
+	FOR_EACH(p, panels) {
+		p->Layout();
+	}
+	fixMinWindowSize();
+}
 
 // ----------------------------------------------------------------------------- : Window events - close
 
@@ -603,4 +603,5 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
 	EVT_CLOSE			(						SetWindow::onClose)
 	EVT_IDLE			(						SetWindow::onIdle)
 	EVT_CARD_SELECT		(wxID_ANY,				SetWindow::onCardSelect)
+	EVT_SIZE_CHANGE		(wxID_ANY,				SetWindow::onSizeChange)
 END_EVENT_TABLE  ()
