@@ -25,7 +25,7 @@ SetP new_set_window(Window* parent) {
 }
 
 NewSetWindow::NewSetWindow(Window* parent)
-	: wxDialog(parent, wxID_ANY, _("New set"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+	: wxDialog(parent, wxID_ANY, _("New set"), wxDefaultPosition, wxSize(530,320), wxDEFAULT_DIALOG_STYLE)
 {
 	// init controls
 	game_list       = new PackageList (this, ID_GAME_LIST);
@@ -35,14 +35,17 @@ NewSetWindow::NewSetWindow(Window* parent)
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		s->Add(game_text,       0, wxALL,                     4);
-		s->Add(game_list,       1, wxEXPAND | wxALL & ~wxTOP, 4);
+		s->Add(game_list,       0, wxEXPAND | wxALL & ~wxTOP, 4);
 		s->Add(stylesheet_text, 0, wxALL,                     4);
-		s->Add(stylesheet_list, 1, wxEXPAND | wxALL & ~wxTOP, 4);
+		s->Add(stylesheet_list, 0, wxEXPAND | wxALL & ~wxTOP, 4);
 		s->Add(CreateButtonSizer(wxOK | wxCANCEL) , 0, wxEXPAND | wxALL, 8);
 		s->SetSizeHints(this);
 	SetSizer(s);
-	// force refresh of gameList, otherwise a grey background shows (win XP)
-	SetSize(wxSize(530,320));
+	// Resize
+	SetSize(630,-1);
+	Layout();
+	GetSizer()->SetSizeHints(this);
+	SetSize(630,-1);
 	// init lists
 	game_list->showData<Game>();
 	game_list->select(settings.default_game);
@@ -56,6 +59,13 @@ void NewSetWindow::onGameSelect(wxCommandEvent&) {
 	stylesheet_list->showData<StyleSheet>(game->name() + _("-*"));
 	stylesheet_list->select(gs.default_stylesheet);
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);
+	// resize (yuck)
+	SetSize(630,-1);
+	Layout();
+	GetSizer()->SetSizeHints(this);
+	Layout();
+	GetSizer()->SetSizeHints(this);
+	SetSize(630,-1);
 }
 
 void NewSetWindow::onStyleSheetSelect(wxCommandEvent&) {
