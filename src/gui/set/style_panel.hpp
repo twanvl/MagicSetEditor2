@@ -24,15 +24,22 @@ class StylePanel : public SetWindowPanel {
 	StylePanel(Window* parent, int id);
 	
 	virtual void onChangeSet();
+	virtual void onAction(const Action&, bool undone);
 	
 	// --------------------------------------------------- : Selection
 	virtual void selectCard(const CardP& card);
 	
   private:
+	DECLARE_EVENT_TABLE();
+	
 	CardViewer*    preview;		///< Card preview
 	PackageList*   list;		///< List of stylesheets
 	StylingEditor* editor;		///< Editor for styling information
 	wxButton*      use_for_all;
+	CardP          card;		///< Card we are working on
+	
+	void onStyleSelect(wxCommandEvent&);
+	void onUseForAll(wxCommandEvent&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

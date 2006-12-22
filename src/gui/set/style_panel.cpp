@@ -13,7 +13,9 @@
 #include <util/window_id.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
+#include <data/card.hpp>
 #include <data/stylesheet.hpp>
+#include <data/action/set.hpp>
 
 // ----------------------------------------------------------------------------- : StylePanel
 
@@ -41,14 +43,54 @@ StylePanel::StylePanel(Window* parent, int id)
 
 void StylePanel::onChangeSet() {
 	list->showData<StyleSheet>(set->game->name() + _("-*"));
-	list->select(set->stylesheet->name());
+	list->select(set->stylesheet->name(), false);
 	editor->setSet(set);
 	preview->setSet(set);
+	card.reset();
+	use_for_all->Enable(false);
+}
+
+void StylePanel::onAction(const Action& action, bool undone) {
+	TYPE_CASE_(action, ChangeSetStyleAction) {
+		list->select(set->stylesheetFor(card)->name(), false);
+//		updateSize();
+	}
+	TYPE_CASE(action, ChangeCardStyleAction) {
+		if (action.card == card) {
+//			preview->onAction(action, undone); // update the preview control before we determine our new size
+			list->select(set->stylesheetFor(card)->name(), false);
+//			updateSize();
+		}
+	}
 }
 
 // ----------------------------------------------------------------------------- : Selection
 
 void StylePanel::selectCard(const CardP& card) {
+	this->card = card;
 	preview->setCard(card);
-	list->select(set->stylesheetFor(card)->name());
+	list->select(set->stylesheetFor(card)->name(), false);
+	use_for_all->Enable(card && card->stylesheet);
 }
+
+// ----------------------------------------------------------------------------- : Events
+
+void StylePanel::onStyleSelect(wxCommandEvent&) {
+	if (list->hasSelection()) {
+		StyleSheetP stylesheet = list->getSelection<StyleSheet>();
+		if (stylesheet == set->stylesheet) {
+			// select no special style when selecting the same style as the set default
+			stylesheet = StyleSheetP();
+		}
+		set->actions.add(new ChangeCardStyleAction(card, stylesheet));
+	}
+}
+
+void StylePanel::onUseForAll(wxCommandEvent&) {
+	set->actions.add(new ChangeSetStyleAction(*set, card));
+}
+
+BEGIN_EVENT_TABLE(StylePanel, wxPanel)
+	EVT_GALLERY_SELECT(wxID_ANY,             StylePanel::onStyleSelect)
+	EVT_BUTTON        (ID_STYLE_USE_FOR_ALL, StylePanel::onUseForAll)
+END_EVENT_TABLE()
