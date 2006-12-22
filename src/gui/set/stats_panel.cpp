@@ -114,7 +114,7 @@ void StatsPanel::onCommand(int id) {
 				StatsCategory& cat = categories->getSelection();
 				GraphDataPre d;
 				FOR_EACH(dim, cat.dimensions) {
-					d.axes.push_back(new_shared1<GraphAxis>(dim->name));
+					d.axes.push_back(new_shared3<GraphAxis>(dim->name, true, dim->numeric));
 				}
 				FOR_EACH(card, set->cards) {
 					Context& ctx = set->getContext(card);

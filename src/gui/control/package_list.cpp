@@ -54,9 +54,10 @@ void PackageList::showData(const String& pattern) {
 			PackageP package = ::packages.openAny(f);
 			// open image
 			InputStreamP stream = package->openIconFile();
+			Image img;
 			Bitmap bmp;
-			if (stream) {
-				bmp = Bitmap(Image(*stream));
+			if (stream && img.LoadFile(*stream)) {
+				bmp = Bitmap(img);
 			}
 			// add to list
 			packages.push_back(PackageData(package, bmp));

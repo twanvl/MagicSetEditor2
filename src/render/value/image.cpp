@@ -9,6 +9,7 @@
 #include <render/value/image.hpp>
 #include <render/card/viewer.hpp>
 #include <data/set.hpp>
+#include <data/stylesheet.hpp>
 #include <gui/util.hpp>
 
 // ----------------------------------------------------------------------------- : ImageValueViewer
@@ -23,9 +24,9 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 			if (image.LoadFile(*image_file)) {
 				image.Rescale(dc.trS(style().width), dc.trS(style().height));
 				// apply mask to image
-/*				loadMask(dc);
+				loadMask(dc);
 				if (alpha_mask) alpha_mask->setAlpha(image);
-*/				bitmap = Bitmap(image);
+				bitmap = Bitmap(image);
 			}
 		} catch (Error e) {
 			handle_error(e, false, false); // don't handle now, we are in onPaint
@@ -34,15 +35,9 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 	// if there is no image, generate a placeholder, only if there is enough room for it
 	if (!bitmap.Ok() && style().width > 40) {
 		bitmap = imagePlaceholder(dc, dc.trS(style().width), dc.trS(style().height), viewer.drawEditing());
-/*		loadMask(dc);
+		loadMask(dc);
 		if (alpha_mask) alpha_mask->setAlpha(bitmap);
-/*		if (alphaMask) {
-			// convert to image and apply alpha
-			Image image = bmp.ConvertToImage();
-			alpha_mask->setAlpha(image);
-			bitmap = image;
-		}
-*/	}
+	}
 	// draw image, if any
 	if (bitmap.Ok()) {
 		dc.DrawBitmap(bitmap, style().getPos());
@@ -55,15 +50,13 @@ bool ImageValueViewer::containsPoint(const RealPoint& p) const {
 	if (x < 0 || y < 0 || x >= (int)style().width || y >= (int)style().height) {
 		return false; // outside rectangle
 	}
-/*	// check against mask
-	if (!style->maskFilename.value.empty()) {
-		RotatedObject rot(viewer.getRotation());
-		loadMask(rot);
-		return !alphaMask->isTransparent(x, y);
+	// check against mask
+	if (!style().mask_filename().empty()) {
+		loadMask(viewer.getRotation());
+		return !alpha_mask || !alpha_mask->isTransparent(x, y);
 	} else {
 		return true;
-	}*/
-	return true;
+	}
 }
 
 void ImageValueViewer::onValueChange() {
@@ -72,7 +65,20 @@ void ImageValueViewer::onValueChange() {
 
 void ImageValueViewer::onStyleChange() {
 	bitmap = Bitmap();
-//	alpha_mask = AlphaMaskP();
+	alpha_mask = AlphaMaskP();
+}
+
+void ImageValueViewer::loadMask(const Rotation& rot) const {
+	if (style().mask_filename().empty()) return; // no mask
+	if (alpha_mask && alpha_mask->size == wxSize(rot.trS(style().width), rot.trS(style().height))) return; // mask loaded and right size
+	// (re) load the mask
+	Image image;
+	InputStreamP image_file = viewer.stylesheet->openIn(style().mask_filename);
+	if (image.LoadFile(*image_file)) {
+		Image resampled(rot.trS(style().width), rot.trS(style().height));
+		resample(image, resampled);
+		alpha_mask = new_shared1<AlphaMask>(resampled);
+	}
 }
 
 Bitmap ImageValueViewer::imagePlaceholder(const Rotation& rot, UInt w, UInt h, bool editing) {

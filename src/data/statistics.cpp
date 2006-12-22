@@ -13,6 +13,7 @@
 
 StatsDimension::StatsDimension()
 	: automatic(false)
+	, numeric(false)
 {}
 
 StatsDimension::StatsDimension(const Field& field)
@@ -20,6 +21,7 @@ StatsDimension::StatsDimension(const Field& field)
 	, name         (field.name)
 	, description  (field.description)
 	, icon_filename(field.icon_filename)
+	, numeric(false)
 {
 	// initialize script, card.{field_name}
 	Script& s = script.getScript();
@@ -34,6 +36,7 @@ IMPLEMENT_REFLECTION(StatsDimension) {
 		REFLECT(description);
 		REFLECT_N("icon", icon_filename);
 		REFLECT(script);
+		REFLECT(numeric);
 	}
 }
 

@@ -30,6 +30,7 @@ class StatsDimension {
 	String         description;		///< Description, used in status bar
 	String         icon_filename;	///< Icon for lists
 	OptionalScript script;			///< Script that determines the value(s)
+	bool           numeric;			///< Are the values numeric? If so, they require special sorting
 	bool           automatic;		///< Based on a card field?
 	
 	DECLARE_REFLECTION();

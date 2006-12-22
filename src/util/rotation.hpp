@@ -42,7 +42,7 @@ class Rotation {
 	RealRect getExternalRect() const;
 	
 	/// Translate a size or length
-	inline double trS(double s) const { return  s * zoom; }
+	inline double trS(double s) const { return s * zoom; }
 	
 	/// Translate a single point
 	RealPoint tr(const RealPoint& p) const;

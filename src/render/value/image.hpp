@@ -13,6 +13,8 @@
 #include <render/value/viewer.hpp>
 #include <data/field/image.hpp>
 
+DECLARE_POINTER_TYPE(AlphaMask);
+
 // ----------------------------------------------------------------------------- : ImageValueViewer
 
 /// Viewer that displays an image value
@@ -29,9 +31,9 @@ class ImageValueViewer : public ValueViewer {
 			
   private:
 	Bitmap bitmap;
-//	mutable AlphaMaskP alpha_mask;
+	mutable AlphaMaskP alpha_mask;
 	
-//	void loadMask(const RotatedObject& rot) const;
+	void loadMask(const Rotation& rot) const;
 	
 	/// Generate a placeholder image
 	static Bitmap imagePlaceholder(const Rotation& rot, UInt w, UInt h, bool editing);

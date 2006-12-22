@@ -68,9 +68,6 @@ void linear_blend(Image& img1, const Image& img2, double x1,double y1, double x2
  */
 void mask_blend(Image& img1, const Image& img2, const Image& mask);
 
-/// Use the red channel of img_alpha as alpha channel for img
-void set_alpha(Image& img, const Image& img_alpha);
-
 // ----------------------------------------------------------------------------- : Effects
 
 /// Saturate an image, amount should be in range [0...100]
@@ -116,16 +113,27 @@ void draw_combine_image(DC& dc, UInt x, UInt y, const Image& img, ImageCombine c
 
 // ----------------------------------------------------------------------------- : Masks
 
+/// Use the red channel of img_alpha as alpha channel for img
+void set_alpha(Image& img, const Image& img_alpha);
+
 /// An alpha mask is an alpha channel that can be copied to another image
 /** It is created by treating black in the source image as transparent and white (red) as opaque
  */
 class AlphaMask {
   public:
-	AlphaMask();
+	AlphaMask(const Image& mask);
 	~AlphaMask();
 	
-	// TODO
+	/// Apply the alpha mask to an image
+	void setAlpha(Image& i) const;
+	/// Apply the alpha mask to a bitmap
+	void setAlpha(Bitmap& b) const;
 	
+	/// Is the given location fully transparent?
+	bool isTransparent(int x, int y) const;
+	
+	/// Size of the mask
+	wxSize size;
   private:
 	Byte* alpha;
 };

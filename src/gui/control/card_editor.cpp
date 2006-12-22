@@ -126,6 +126,8 @@ void DataEditor::createTabIndex() {
 }
 void DataEditor::onInit() {
 	createTabIndex();
+	current_viewer = nullptr;
+	current_editor = nullptr;
 }
 
 // ----------------------------------------------------------------------------- : Clipboard & Formatting

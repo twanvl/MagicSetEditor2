@@ -36,15 +36,17 @@ class GraphGroup {
 /** The sum of groups.sum = sum of all elements in the data */
 class GraphAxis {
   public:
-	GraphAxis(const String& name, bool auto_color = true)
+	GraphAxis(const String& name, bool auto_color = true, bool numeric = false)
 		: name(name)
 		, auto_color(auto_color)
 		, max(0)
+		, numeric(numeric)
 	{}
 	
 	String             name;		///< Name/label of this axis
 	bool               auto_color;	///< Automatically assign colors to the groups on this axis
 	vector<GraphGroup> groups;		///< Groups along this axis
+	bool               numeric;		///< Numeric axis?
 	UInt               max;			///< Maximum size of the groups
 };
 

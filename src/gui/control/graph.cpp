@@ -42,9 +42,36 @@ GraphData::GraphData(const GraphDataPre& d)
 			counts[e->values[i]] += 1;
 		}
 		// TODO: allow some ordering in the groups, and allow colors to be passed
-		FOR_EACH(c, counts) {
-			a->groups.push_back(GraphGroup(c.first, c.second));
-			a->max = max(a->max, c.second);
+		if (a->numeric) {
+			// TODO: start at something other than 0?
+			// TODO: support fractions?
+			size_t left = counts.size();
+			int i = 0;
+			while (left) {
+				String is = String() << i++;
+				map<String,UInt>::const_iterator it = counts.find(is);
+				if (it == counts.end()) {
+					// not found, add a 0 bar
+					a->groups.push_back(GraphGroup(is, 0));
+				} else {
+					a->groups.push_back(GraphGroup(is, it->second));
+					a->max = max(a->max, it->second);
+					left--;
+				}
+				if (i > 100) {
+					// prevent infinite loops if there are non-numeric entries
+					// drop empty tail
+					while (a->groups.size() > 1 && a->groups.back().size == 0) {
+						a->groups.pop_back();
+					}
+					break;
+				}
+			}
+		} else {
+			FOR_EACH(c, counts) {
+				a->groups.push_back(GraphGroup(c.first, c.second));
+				a->max = max(a->max, c.second);
+			}
 		}
 		// find some nice colors for the groups
 		if (a->auto_color) {
@@ -106,7 +133,7 @@ bool Graph1D::findItem(const RealPoint& pos, const RealRect& rect, vector<int>& 
 void BarGraph::draw(RotatedDC& dc, int current) const {
 	if (!data) return;
 	// Rectangle for bars
-	RealRect rect = dc.getInternalRect().move(15, 5, -20, -20);
+	RealRect rect = dc.getInternalRect().move(23, 8, -30, -28);
 	// Bar sizes
 	GraphAxis& axis = axis_data();
 	int count = int(axis.groups.size());
@@ -151,10 +178,10 @@ void BarGraph::draw(RotatedDC& dc, int current) const {
 	FOR_EACH_CONST(g, axis.groups) {
 		// draw bar
 		dc.SetBrush(g.color);
-		dc.DrawRectangle(RealRect(x + space / 2, rect.bottom() + 1, width, -step_height * g.size - 1.999));
+		dc.DrawRectangle(RealRect(x + space / 2, rect.bottom() + 1, width, (int)(rect.bottom() - step_height * g.size) - rect.bottom() - 1));
 		// draw label, aligned bottom center
 		RealSize text_size = dc.GetTextExtent(g.name);
-		dc.SetClippingRegion(RealRect(x + 2, rect.bottom(), width_space - 4, text_size.height));
+		dc.SetClippingRegion(RealRect(x + 2, rect.bottom() + 3, width_space - 4, text_size.height));
 		dc.DrawText(g.name, align_in_rect(ALIGN_TOP_CENTER, text_size, RealRect(x, rect.bottom() + 3, width_space, 0)));
 		dc.DestroyClippingRegion();
 		x += width_space;
@@ -163,7 +190,7 @@ void BarGraph::draw(RotatedDC& dc, int current) const {
 int BarGraph::findItem(const RealPoint& pos, const RealRect& rect1) const {
 	if (!data) return -1;
 	// Rectangle for bars
-	RealRect rect = rect1.move(15, 5, -20, -20);
+	RealRect rect = rect1.move(23, 8, -30, -28);
 	// Bar sizes
 	GraphAxis& axis = axis_data();
 	int count = int(axis.groups.size());
