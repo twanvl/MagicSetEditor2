@@ -79,12 +79,16 @@ void TextValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
 		size_t index = v.indexAt(style().getRotation().trInv(pos));
 		if (select_words) {
 			// on the left, swap start and end
-			bool left = index < max(selection_start_i, selection_end_i);
-			if (left != (selection_end_i < selection_start_i)) {
+			bool left = selection_end_i < selection_start_i;
+			size_t next = nextWordBoundry(index);
+			size_t prev = prevWordBoundry(index);
+			if (( left && next > max(selection_start_i, selection_end_i)) ||
+			    (!left && prev < min(selection_start_i, selection_end_i))) {
+				left = !left;
 				swap(selection_start_i, selection_end_i);
 			}
-//			//if (left && selection_end_i < selection_start_i
-			moveSelection(TYPE_INDEX, left ? prevWordBoundry(index) : nextWordBoundry(index), false, MOVE_MID);
+			// TODO : still not quite right, requires a moveSelection function that moves start & end simultaniously
+			moveSelection(TYPE_INDEX, left ? prev : next, false, MOVE_MID);
 		} else {
 			moveSelection(TYPE_INDEX, index, false, MOVE_MID);
 		}

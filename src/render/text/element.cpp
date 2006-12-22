@@ -53,10 +53,10 @@ double TextElements::minScale() const {
 struct TextElementsFromString {
 	// What formatting is enabled?
 	int bold, italic, symbol;
-	int soft, kwpph;
+	int soft, kwpph, line;
 	
 	TextElementsFromString()
-		: bold(0), italic(0), symbol(0), soft(0), kwpph(0) {}
+		: bold(0), italic(0), symbol(0), soft(0), kwpph(0), line(0) {}
 	
 	// read TextElements from a string
 	void fromString(TextElements& te, const String& text, size_t start, size_t end, const TextStyle& style, Context& ctx) {
@@ -77,16 +77,9 @@ struct TextElementsFromString {
 				else if (is_substr(text, tag_start, _("</sep-soft")))   soft   -= 1;
 				else if (is_substr(text, tag_start, _( "<atom-kwpph"))) kwpph  += 1;
 				else if (is_substr(text, tag_start, _("</atom-kwpph"))) kwpph  -= 1;
-				else if (is_substr(text, tag_start, _("<line"))) {
-					// horizontal line
-					te.elements.push_back(new_shared3<HorizontalLineTextElement>(text, tag_start, pos));
-/*				} else if (is_substr(text, start, _("<error"))) {
-					// underline with wavy 'error' indicator
-					size_t end = match_close_tag(text, tag_start);
-					shared_ptr<ErrorTextElement> e(new ErrorTextElement(text, pos, end));
-					fromString(e->elements, text, pos, end, style, ctx);
-					pos = skip_tag(text, end);
-*/				} else if (is_substr(text, tag_start, _("<atom"))) {
+				else if (is_substr(text, tag_start, _( "<line")))       line   += 1;
+				else if (is_substr(text, tag_start, _("</line")))       line   -= 1;
+				else if (is_substr(text, tag_start, _("<atom"))) {
 					// 'atomic' indicator
 					size_t end = match_close_tag(text, tag_start);
 					shared_ptr<AtomTextElement> e(new AtomTextElement(text, pos, end));
@@ -107,7 +100,7 @@ struct TextElementsFromString {
 					if (symbol > 0 && style.symbol_font.valid()) {
 						te.elements.push_back(new_shared5<SymbolTextElement>(text, pos, pos + 1, style.symbol_font, &ctx));
 					} else {
-						te.elements.push_back(new_shared4<FontTextElement>  (text, pos, pos + 1, style.font.make(bold > 0, italic > 0)));
+						te.elements.push_back(new_shared5<FontTextElement>  (text, pos, pos + 1, style.font.make(bold > 0, italic > 0), line > 0 ? BREAK_LINE : BREAK_HARD));
 					}
 				}
 				pos += 1;

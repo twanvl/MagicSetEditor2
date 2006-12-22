@@ -175,13 +175,6 @@ size_t index_to_cursor(const String& str, size_t index, Movement dir) {
 			if (is_substr(str, i, _("<atom")) || is_substr(str, i, _("<sep"))) {
 				// skip tag contents, tag counts as a single 'character'
 				i = skip_tag(str, match_close_tag(str, i));
-			} else if (is_substr(str, i, _("<line"))) {
-				// no contents, but has width
-				i = skip_tag(str, i);
-				if (i > index) {
-					// HACK: Don't walk past <line>
-					dir = dir == MOVE_RIGHT ? MOVE_LEFT : MOVE_RIGHT;
-				}
 			} else {
 				i = skip_tag(str, i);
 				end = i;
@@ -216,9 +209,6 @@ void cursor_to_index_range(const String& str, size_t cursor, size_t& start, size
 			if (is_substr(str, i, _("<atom")) || is_substr(str, i, _("<sep"))) {
 				// skip tag contents, tag counts as a single 'character'
 				i = skip_tag(str, match_close_tag(str, i));
-			} else if (is_substr(str, i, _("<line"))) {
-				// no contents, but has width
-				i = skip_tag(str, i);
 			} else {
 				i = skip_tag(str, i);
 				has_width = false;

@@ -126,17 +126,18 @@ class SimpleTextElement : public TextElement {
 /// A text element that uses a normal font
 class FontTextElement : public SimpleTextElement {
   public:
-	FontTextElement(const String& text, size_t start ,size_t end, const FontP& font)
+	FontTextElement(const String& text, size_t start ,size_t end, const FontP& font, LineBreak break_style)
 		: SimpleTextElement(text, start, end)
-		, font(font)
+		, font(font), break_style(break_style)
 	{}
 	
 	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
 	virtual double minScale() const;
   private:
-	FontP    font;
-	DrawWhat draw_as;
+	FontP     font;
+	DrawWhat  draw_as;
+	LineBreak break_style;
 };
 
 /// A text element that uses a symbol font
@@ -179,7 +180,7 @@ class AtomTextElement : public CompoundTextElement {
 
 
 // ----------------------------------------------------------------------------- : Other text elements
-
+/*
 /// A text element that displays a horizontal separator line
 class HorizontalLineTextElement : public TextElement {
   public:
@@ -189,21 +190,7 @@ class HorizontalLineTextElement : public TextElement {
 	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
 	virtual double minScale() const;
 };
-
-/*
-// ----------------------------------------------------------------------------- : CompoundTextElement
-
-/// A TextElement consisting of sub elements
-class CompoundTextElement : public TextElement {
-  public:
-	CompoundTextElement(const String& text, size_t start ,size_t end) : TextElement(text, start, end) {}
-	
-	virtual void draw        (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
-	virtual RealSize charSize(RotatedDC& dc, double scale, size_t index) const;
-	
-  private:
-	TextElements elements;
-};
 */
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

@@ -44,7 +44,7 @@ void FontTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>&
 		Char c = text.GetChar(i);
 		RealSize s = dc.GetTextExtent(text.substr(start, i - start + 1));
 		out.push_back(CharInfo(RealSize(s.width - prev_width, s.height),
-						c == _('\n') ? BREAK_HARD :
+						c == _('\n') ? break_style :
 						c == _(' ')  ? BREAK_SOFT : BREAK_NO
 		             ));
 		prev_width = s.width;

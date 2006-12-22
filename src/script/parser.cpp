@@ -247,9 +247,9 @@ void TokenIterator::readStringToken() {
 			// escape
 			if (pos >= input.size()) throw ScriptParseError(_("Unexpected end of input in string constant"));
 			c = input.GetChar(pos++);
-			if (c == _('n')) str += _('\n');
-			if (c == _('<')) str += _('\1'); // escape for <
-			else             str += c;       // \ or { or "
+			if      (c == _('n')) str += _('\n');
+			else if (c == _('<')) str += _('\1'); // escape for <
+			else                  str += c;       // \ or { or "
 		} else if (c == _('{')) {
 			// smart string
 			//   "a{e}b"  -->  "a"  "{  e  }"  "b"
