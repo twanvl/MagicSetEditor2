@@ -125,6 +125,10 @@ class ChoiceStyle : public Style {
 	String						mask_filename;	///< Filename of an additional mask over the images
 	ImageCombine				combine;		///< Combining mode for drawing the images
 	Alignment					alignment;		///< Alignment of images
+	Image						mask;			///< The actual mask image
+	
+	/// Load the mask image, if it's not already done
+	void loadMask(Package& pkg);
 	
 	virtual bool update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;

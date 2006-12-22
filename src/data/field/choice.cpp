@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <data/field/choice.hpp>
+#include <util/io/package.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
 typedef map<String,ScriptableImage> map_String_ScriptableImage;
@@ -185,6 +186,13 @@ void ChoiceStyle::initDependencies(Context& ctx, const Dependency& dep) const {
 	}
 }
 
+void ChoiceStyle::loadMask(Package& pkg) {
+	if (mask.Ok() || mask_filename.empty()) return;
+	// load file
+	InputStreamP image_file = pkg.openIn(mask_filename);
+	mask.LoadFile(*image_file);
+}
+
 IMPLEMENT_REFLECTION_ENUM(ChoicePopupStyle) {
 	VALUE_N("dropdown",	POPUP_DROPDOWN);
 	VALUE_N("menu",		POPUP_MENU);
@@ -204,7 +212,7 @@ IMPLEMENT_REFLECTION(ChoiceStyle) {
 	REFLECT_BASE(Style);
 	REFLECT(popup_style);
 	REFLECT(render_style);
-	REFLECT_N("maks",mask_filename);
+	REFLECT_N("mask",mask_filename);
 	REFLECT(combine);
 	REFLECT(alignment);
 	REFLECT(colors_card_list);

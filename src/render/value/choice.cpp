@@ -34,6 +34,12 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 					);
 			}
 			if (i) {
+				// apply mask?
+				style().loadMask(*viewer.stylesheet);
+				if (style().mask.Ok()) {
+					set_alpha(i->image, style().mask);
+				}
+				// draw
 				dc.DrawImage(i->image,
 					align_in_rect(style().alignment, RealSize(i->image.GetWidth(), i->image.GetHeight()), style().getRect()),
 					i->combine == COMBINE_NORMAL ? style().combine : i->combine

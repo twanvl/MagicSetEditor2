@@ -77,7 +77,7 @@ void mask_blend(Image& img1, const Image& img2, const Image& mask) {
 
 void set_alpha(Image& img, const Image& img_alpha) {
 	if (img.GetWidth() != img_alpha.GetWidth() || img.GetHeight() != img_alpha.GetHeight()) {
-		throw InternalError(_("Image used with maks must have same size as mask"));
+		throw Error(_("Image must have same size as mask"));
 	}
 	if (!img.HasAlpha()) img.InitAlpha();
 	Byte *im = img.GetAlpha(), *al = img_alpha.GetData();

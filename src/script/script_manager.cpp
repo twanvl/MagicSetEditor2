@@ -30,7 +30,7 @@ DECLARE_TYPEOF_NO_REV(IndexMap_FieldP_ValueP);
 void init_script_functions(Context& ctx);
 void init_script_image_functions(Context& ctx);
 
-#define LOG_UPDATES
+//#define LOG_UPDATES
 
 // ----------------------------------------------------------------------------- : SetScriptContext : initialization
 
