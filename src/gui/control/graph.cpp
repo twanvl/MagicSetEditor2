@@ -14,6 +14,7 @@
 DECLARE_TYPEOF_COLLECTION(GraphAxisP);
 DECLARE_TYPEOF_COLLECTION(GraphElementP);
 DECLARE_TYPEOF_COLLECTION(GraphGroup);
+DECLARE_TYPEOF_COLLECTION(int);
 typedef map<String,UInt> map_String_UInt;
 DECLARE_TYPEOF(map_String_UInt);
 
@@ -254,6 +255,19 @@ void GraphControl::onMouseDown(wxMouseEvent& ev) {
 	wxSize cs = GetClientSize();
 	if (graph->findItem(RealPoint(ev.GetX(), ev.GetY()), RealRect(RealPoint(0,0),cs), current_item)) {
 		Refresh(false);
+	}
+}
+
+bool GraphControl::hasSelection(size_t axis) const {
+	return current_item.size() >= axis && current_item[axis] >= 0;
+}
+void GraphControl::getSelection(vector<String>& out) const {
+	out.clear();
+	if (!graph) return;
+	FOR_EACH_2_CONST(i, current_item, a, graph->getData().axes) {
+		if (i >= 0) {
+			out.push_back((size_t)i < a->groups.size() ? a->groups[i].name : wxEmptyString);
+		}
 	}
 }
 

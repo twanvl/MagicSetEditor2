@@ -90,6 +90,8 @@ class Graph {
 	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const { return false; }
 	/// Change the data
 	virtual void setData(const GraphDataP& d) { data = d; }
+	/// Get the data
+	inline const GraphData& getData() const { return *data; }
 	
   protected:
 	/// Data of the graph
@@ -161,6 +163,11 @@ class GraphControl : public wxControl {
 	void setData(const GraphDataPre& data);
 	/// Update the data in the graph
 	void setData(const GraphDataP& data);
+	
+	/// Is there a selection on the given axis?
+	bool hasSelection(size_t axis) const;
+	/// Get the current item, returns the selected value on each axis in out
+	void getSelection(vector<String>& out) const;
 	
   private:
 	/// Graph object

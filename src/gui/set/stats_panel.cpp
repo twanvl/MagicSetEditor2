@@ -18,6 +18,7 @@
 #include <wx/splitter.h>
 
 DECLARE_TYPEOF_COLLECTION(StatsDimensionP);
+DECLARE_TYPEOF_COLLECTION(String);
 DECLARE_TYPEOF_COLLECTION(CardP);
 
 // ----------------------------------------------------------------------------- : StatCategoryList
@@ -130,6 +131,24 @@ void StatsPanel::onCommand(int id) {
 		}
 	}
 }
+
+class StatsFilter : public CardListFilter {
+  public:
+	StatsFilter(Set& set, const vector<StatsDimensionP>& dims, const vector<String>& values)
+		: set(set), dims(dims), values(values)
+	{}
+	virtual bool keep(const CardP& card) {
+		Context& ctx = set.getContext(card);
+		FOR_EACH_2(d, dims, v, values) {
+			if (*d->script.invoke(ctx) != v) return false;
+		}
+		return true;
+	}
+  private:
+	Set&                    set;
+	vector<StatsDimensionP> dims;
+	vector<String>          values;
+};
 
 // ----------------------------------------------------------------------------- : Selection
 
