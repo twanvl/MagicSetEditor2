@@ -20,6 +20,8 @@
 DECLARE_TYPEOF_COLLECTION(StatsDimensionP);
 DECLARE_TYPEOF_COLLECTION(String);
 DECLARE_TYPEOF_COLLECTION(CardP);
+typedef pair<StatsDimensionP,String> pair_StatsDimensionP_String;
+DECLARE_TYPEOF_COLLECTION(pair_StatsDimensionP_String);
 
 // ----------------------------------------------------------------------------- : StatCategoryList
 
@@ -29,7 +31,7 @@ class StatCategoryList : public GalleryList {
 	StatCategoryList(Window* parent, int id)
 		: GalleryList(parent, id, wxVERTICAL)
 	{
-		item_size = wxSize(140, 23);
+		item_size = wxSize(150, 23);
 	}
 	
 	void show(const GameP&);
@@ -70,12 +72,15 @@ void StatCategoryList::drawItem(DC& dc, int x, int y, size_t item, bool selected
 		dc.DrawBitmap(cat.icon, x+1, y+1);
 	}
 	// draw name
-	RealRect rect(RealPoint(x + 23, y), RealSize(item_size.width - 30, item_size.height));
+	RealRect rect(RealPoint(x + 24, y), RealSize(item_size.width - 30, item_size.height));
 	String str = capitalize(cat.name);
-	dc.SetFont(wxFont(10,wxSWISS,wxNORMAL,wxBOLD,false,_("Arial")));
+//	dc.SetFont(wxFont(9.5 * text_scaling, wxSWISS, wxNORMAL, wxNORMAL, false,_("Arial")));
+	dc.SetFont(*wxNORMAL_FONT);
 	int w, h;
 	dc.GetTextExtent(str, &w, &h);
-	RealPoint pos = align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(w,h), rect);
+	RealSize size = RealSize(w,h);
+	RealPoint pos = align_in_rect(ALIGN_MIDDLE_LEFT, size, rect);
+//	draw_resampled_text(dc, RealRect(pos, size), 0, 0, 0, str);
 	dc.DrawText(str, pos.x, pos.y);
 }
 
@@ -132,23 +137,43 @@ void StatsPanel::onCommand(int id) {
 	}
 }
 
+// ----------------------------------------------------------------------------- : Filtering card list
+
 class StatsFilter : public CardListFilter {
   public:
-	StatsFilter(Set& set, const vector<StatsDimensionP>& dims, const vector<String>& values)
-		: set(set), dims(dims), values(values)
+	StatsFilter(Set& set)
+		: set(set)
 	{}
 	virtual bool keep(const CardP& card) {
 		Context& ctx = set.getContext(card);
-		FOR_EACH_2(d, dims, v, values) {
-			if (*d->script.invoke(ctx) != v) return false;
+		FOR_EACH(v, values) {
+			if (*v.first->script.invoke(ctx) != v.second) return false;
 		}
 		return true;
 	}
-  private:
-	Set&                    set;
-	vector<StatsDimensionP> dims;
-	vector<String>          values;
+	
+	vector<pair<StatsDimensionP, String> > values; ///< Values selected along each dimension
+	Set& set;
 };
+
+void StatsPanel::onGraphSelect(wxCommandEvent&) {
+	if (!categories->hasSelection()) return;
+	shared_ptr<StatsFilter> filter(new StatsFilter(*set));
+	StatsCategory& cat = categories->getSelection();
+	vector<pair<StatsDimensionP, String> > values;
+	int i = 0;
+	FOR_EACH(dim, cat.dimensions) {
+		if (graph->hasSelection(i)) {
+			filter->values.push_back(make_pair(dim, graph->getSelection(i)));
+		}
+		i++;
+	}
+	card_list->setFilter(filter);
+}
+
+BEGIN_EVENT_TABLE(StatsPanel, wxPanel)
+	EVT_GRAPH_SELECT(wxID_ANY, StatsPanel::onGraphSelect)
+END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------- : Selection
 

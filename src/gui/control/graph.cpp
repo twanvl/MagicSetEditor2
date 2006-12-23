@@ -18,6 +18,10 @@ DECLARE_TYPEOF_COLLECTION(int);
 typedef map<String,UInt> map_String_UInt;
 DECLARE_TYPEOF(map_String_UInt);
 
+// ----------------------------------------------------------------------------- : Events
+
+DEFINE_EVENT_TYPE(EVENT_GRAPH_SELECT);
+
 // ----------------------------------------------------------------------------- : GraphData
 
 GraphElement::GraphElement(const String& v1) {
@@ -254,21 +258,21 @@ void GraphControl::onMouseDown(wxMouseEvent& ev) {
 	if (!graph) return;
 	wxSize cs = GetClientSize();
 	if (graph->findItem(RealPoint(ev.GetX(), ev.GetY()), RealRect(RealPoint(0,0),cs), current_item)) {
+		wxCommandEvent ev(EVENT_GRAPH_SELECT, GetId());
+		ProcessEvent(ev);
 		Refresh(false);
 	}
 }
 
 bool GraphControl::hasSelection(size_t axis) const {
-	return current_item.size() >= axis && current_item[axis] >= 0;
+	return axis < current_item.size() && current_item[axis] >= 0;
 }
-void GraphControl::getSelection(vector<String>& out) const {
-	out.clear();
-	if (!graph) return;
-	FOR_EACH_2_CONST(i, current_item, a, graph->getData().axes) {
-		if (i >= 0) {
-			out.push_back((size_t)i < a->groups.size() ? a->groups[i].name : wxEmptyString);
-		}
-	}
+String GraphControl::getSelection(size_t axis) const {
+	if (!graph || axis >= current_item.size() || axis >= graph->getData().axes.size()) return wxEmptyString;
+	GraphAxis& a = *graph->getData().axes[axis];
+	int i = current_item[axis];
+	if (i == -1 || (size_t)i >= a.groups.size()) return wxEmptyString;
+	return a.groups[current_item[axis]].name;
 }
 
 BEGIN_EVENT_TABLE(GraphControl, wxControl)

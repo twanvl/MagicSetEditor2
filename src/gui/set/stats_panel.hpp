@@ -34,9 +34,13 @@ class StatsPanel : public SetWindowPanel {
 	
 	// --------------------------------------------------- : Data
   private:
+	DECLARE_EVENT_TABLE();
+	
 	StatCategoryList* categories;
 	GraphControl*     graph;
 	FilteredCardList* card_list;
+	
+	void onGraphSelect(wxCommandEvent&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

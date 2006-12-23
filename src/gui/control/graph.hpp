@@ -17,6 +17,13 @@ DECLARE_POINTER_TYPE(GraphElement);
 DECLARE_POINTER_TYPE(GraphData);
 DECLARE_POINTER_TYPE(Graph);
 
+// ----------------------------------------------------------------------------- : Events
+
+/// Event that indicates the a subset is selected/deselected in a graph
+DECLARE_EVENT_TYPE(EVENT_GRAPH_SELECT, <not used>)
+/// Handle EVENT_GRAPH_SELECT events
+#define EVT_GRAPH_SELECT(id, handler) EVT_COMMAND(id, EVENT_GRAPH_SELECT, handler)
+
 // ----------------------------------------------------------------------------- : Graph data
 
 /// A group in a table or graph
@@ -166,8 +173,8 @@ class GraphControl : public wxControl {
 	
 	/// Is there a selection on the given axis?
 	bool hasSelection(size_t axis) const;
-	/// Get the current item, returns the selected value on each axis in out
-	void getSelection(vector<String>& out) const;
+	/// Get the current item along the given axis
+	String getSelection(size_t axis) const;
 	
   private:
 	/// Graph object
