@@ -97,8 +97,8 @@ StatsPanel::StatsPanel(Window* parent, int id)
 	card_list  = new FilteredCardList(splitter, wxID_ANY);
 	// init splitter
 	splitter->SetMinimumPaneSize(100);
-	splitter->SetSashGravity(1.0);
-	splitter->SplitHorizontally(graph, card_list, -100);
+	splitter->SetSashGravity(0.6);
+	splitter->SplitHorizontally(graph, card_list, -170);
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
 	s->Add(categories, 0, wxEXPAND | wxRIGHT, 2);
@@ -110,6 +110,7 @@ StatsPanel::StatsPanel(Window* parent, int id)
 void StatsPanel::onChangeSet() {
 	card_list->setSet(set);
 	categories->show(set->game);
+	filterCards();
 }
 
 void StatsPanel::onCommand(int id) {
@@ -131,6 +132,7 @@ void StatsPanel::onCommand(int id) {
 					d.elements.push_back(e);
 				}
 				graph->setData(d);
+				filterCards();
 			}
 			break;
 		}
@@ -157,6 +159,10 @@ class StatsFilter : public CardListFilter {
 };
 
 void StatsPanel::onGraphSelect(wxCommandEvent&) {
+	filterCards();
+}
+
+void StatsPanel::filterCards() {
 	if (!categories->hasSelection()) return;
 	shared_ptr<StatsFilter> filter(new StatsFilter(*set));
 	StatsCategory& cat = categories->getSelection();

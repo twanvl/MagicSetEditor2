@@ -41,6 +41,7 @@ class StatsPanel : public SetWindowPanel {
 	FilteredCardList* card_list;
 	
 	void onGraphSelect(wxCommandEvent&);
+	void filterCards();
 };
 
 // ----------------------------------------------------------------------------- : EOF
