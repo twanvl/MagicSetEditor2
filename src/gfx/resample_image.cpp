@@ -141,10 +141,25 @@ void resample_and_clip(const Image& img_in, Image& img_out, wxRect rect) {
 
 // ----------------------------------------------------------------------------- : Aspect ratio preserving
 
-// fill an image with 100% transparent
-void fill_transparent(Image& img) {
+// fill an image with 100% transparent, except for the given rectangle
+void fill_transparent(Image& img, int dx, int dy, int w, int h) {
 	if (!img.HasAlpha()) img.InitAlpha();
-	memset(img.GetAlpha(), 0, img.GetWidth() * img.GetHeight());
+	int iw = img.GetWidth(), ih = img.GetHeight();
+	Byte* data = img.GetAlpha();
+	// fill
+	int y = 0;
+	for (; y < dy ; ++y) {
+		for (int x = 0 ; x < iw ; ++x) *data++ = 0;
+	}
+	for (; y < dy + h ; ++y) {
+		int x = 0;
+		for (; x < dx     ; ++x) *data++ = 0;
+		for (; x < dx + w ; ++x) *data++ = 255;
+		for (; x < iw     ; ++x) *data++ = 0;
+	}
+	for (; y < ih ; ++y) {
+		for (int x = 0 ; x < iw ; ++x) *data++ = 0;
+	}
 }
 
 void resample_preserve_aspect(const Image& img_in, Image& img_out) {
@@ -157,7 +172,7 @@ void resample_preserve_aspect(const Image& img_in, Image& img_out) {
 	int dx = (img_out.GetWidth()  - rwidth)  / 2;
 	int dy = (img_out.GetHeight() - rheight) / 2;
 	// transparent background
-	fill_transparent(img_out);
+	fill_transparent(img_out, dx, dy, rwidth, rheight);
 	// resample
 	int offset_out = dx + img_out.GetWidth() * dy;
 	Image img_temp(rwidth, img_in.GetHeight(), false);
