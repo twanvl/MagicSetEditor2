@@ -48,13 +48,37 @@ Set::~Set() {}
 
 
 Context& Set::getContext() {
+	assert(wxThread::IsMain());
 	return script_manager->getContext(stylesheet);
 }
 Context& Set::getContext(const CardP& card) {
+	assert(wxThread::IsMain());
 	return script_manager->getContext(card);
 }
 void Set::updateFor(const CardP& card) {
 	script_manager->updateStyles(card);
+}
+
+Context& Set::getContextForThumbnails() {
+	assert(!wxThread::IsMain());
+	if (!thumbnail_script_context) {
+		thumbnail_script_context.reset(new SetScriptContext(*this));
+	}
+	return thumbnail_script_context->getContext(stylesheet);
+}
+Context& Set::getContextForThumbnails(const CardP& card) {
+	assert(!wxThread::IsMain());
+	if (!thumbnail_script_context) {
+		thumbnail_script_context.reset(new SetScriptContext(*this));
+	}
+	return thumbnail_script_context->getContext(card);
+}
+Context& Set::getContextForThumbnails(const StyleSheetP& stylesheet) {
+	assert(!wxThread::IsMain());
+	if (!thumbnail_script_context) {
+		thumbnail_script_context.reset(new SetScriptContext(*this));
+	}
+	return thumbnail_script_context->getContext(stylesheet);
 }
 
 StyleSheetP Set::stylesheetFor(const CardP& card) {

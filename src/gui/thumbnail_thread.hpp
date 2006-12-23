@@ -69,9 +69,6 @@ class ThumbnailThread {
 	set<ThumbnailRequestP>                  request_names;      ///< Requests that haven't been stored yet, to prevent duplicates
 	friend class ThumbnailThreadWorker;
 	ThumbnailThreadWorker* worker;								///< The worker thread. invariant: no requests ==> worker==nullptr
-	
-	/// A name that is safe to use as a filename, for the cache
-	static String safeFilename(const String& str);
 };
 
 /// The global thumbnail generator thread

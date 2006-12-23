@@ -8,6 +8,7 @@
 
 #include <gui/control/card_list.hpp>
 #include <gui/control/card_list_column_select.hpp>
+#include <gui/icon_menu.hpp>
 #include <data/game.hpp>
 #include <data/field.hpp>
 #include <data/field/choice.hpp>
@@ -60,6 +61,10 @@ void CardListBase::onAction(const Action& action, bool undone) {
 	TYPE_CASE(action, AddCardAction) {
 		if (undone) {
 			refreshList();
+			if (!allowModify()) {
+				// Let some other card list else do the selecting
+				return;
+			}
 			selectCardPos((long)sorted_card_list.size() - 1, true);
 		} else {
 			// select the new card
@@ -75,6 +80,10 @@ void CardListBase::onAction(const Action& action, bool undone) {
 		} else {
 			long pos = selected_card_pos;
 			refreshList();
+			if (!allowModify()) {
+				// Let some other card list else do the selecting
+				return;
+			}
 			if (action.card == selected_card) {
 				// select the next card, if not possible, select the last
 				if ((size_t)pos + 1 < sorted_card_list.size()) {
@@ -140,8 +149,8 @@ void CardListBase::selectCard(const CardP& card, bool focus, bool event) {
 		CardSelectEvent ev(card);
 		ProcessEvent(ev);
 	}
+	findSelectedCardPos();
 	if (focus) {
-		findSelectedCardPos();
 		selectCurrentCard();
 	}
 }
@@ -443,6 +452,19 @@ void CardListBase::onDrag(wxMouseEvent& ev) {
 	}
 }
 
+void CardListBase::onContextMenu(wxContextMenuEvent&) {
+	if (allowModify()) {
+		IconMenu m;
+		m.Append(wxID_CUT,	 _("TOOL_CUT"),		_("Cu&t"),		_("Move the selected card to the clipboard"));
+		m.Append(wxID_COPY,	 _("TOOL_COPY"),	_("&Copy"),		_("Place the selected card on the clipboard"));
+		m.Append(wxID_PASTE, _("TOOL_PASTE"),	_("&Paste"),	_("Inserts the card from the clipboard"));
+		m.AppendSeparator();
+		m.Append(ID_CARD_ADD,	_("TOOL_CARD_ADD"),		_("&Add Card"),					_("Add a new, blank, card to this set"));
+		m.Append(ID_CARD_REMOVE,_("TOOL_CARD_DEL"),		_("&Remove Select Card"),		_("Delete the selected card from this set"));
+		PopupMenu(&m);
+	}
+}
+
 // ----------------------------------------------------------------------------- : CardListBase : Event table
 
 BEGIN_EVENT_TABLE(CardListBase, wxListView)
@@ -452,4 +474,5 @@ BEGIN_EVENT_TABLE(CardListBase, wxListView)
 	EVT_CHAR					(					CardListBase::onChar)
 	EVT_MOTION					(					CardListBase::onDrag)
 	EVT_MENU					(ID_SELECT_COLUMNS,	CardListBase::onSelectColumns)
+	EVT_CONTEXT_MENU            (                   CardListBase::onContextMenu)
 END_EVENT_TABLE  ()

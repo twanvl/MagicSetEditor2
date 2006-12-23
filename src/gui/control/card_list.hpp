@@ -154,6 +154,7 @@ class CardListBase : public wxListView, public SetView {
 	void onItemFocus       (wxListEvent& ev);
 	void onChar            (wxKeyEvent& ev);
 	void onDrag            (wxMouseEvent& ev);
+	void onContextMenu     (wxContextMenuEvent&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

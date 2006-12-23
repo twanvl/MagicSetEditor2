@@ -8,9 +8,56 @@
 
 #include <gui/value/choice.hpp>
 #include <gui/util.hpp>
+#include <gui/thumbnail_thread.hpp>
 #include <data/action/value.hpp>
+#include <data/stylesheet.hpp>
+#include <script/image.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
+
+// ----------------------------------------------------------------------------- : ChoiceThumbnailRequest
+
+class ChoiceThumbnailRequest : public ThumbnailRequest {
+  public:
+	ChoiceThumbnailRequest(ChoiceValueEditor* cve, int id);
+	virtual Image generate();
+	virtual void store(const Image&);
+  private:
+	int id;
+	StyleSheetP stylesheet;
+};
+
+ChoiceThumbnailRequest::ChoiceThumbnailRequest(ChoiceValueEditor* cve, int id)
+	: ThumbnailRequest(
+		cve,
+		cve->viewer.stylesheet->name() + _("/") + cve->field().name + _("/") << id,
+		cve->viewer.stylesheet->lastModified())
+	, stylesheet(cve->viewer.stylesheet)
+	, id(id)
+{}
+
+Image ChoiceThumbnailRequest::generate() {
+	ChoiceValueEditor& cve = *(ChoiceValueEditor*)owner;
+	Context& ctx = cve.getSet().getContextForThumbnails(stylesheet);
+	String name = cannocial_name_form(cve.field().choices->choiceName(id));
+	ScriptableImage& img = cve.style().choice_images[name];
+	return img.generate(ctx, *stylesheet, 16, 16, ASPECT_BORDER, true)->image;
+}
+
+void ChoiceThumbnailRequest::store(const Image& img) {
+	ChoiceValueEditor& cve = *(ChoiceValueEditor*)owner;
+	wxImageList* il = cve.style().thumbnails;
+	while (id > il->GetImageCount()) {
+		il->Add(wxBitmap(16,16),*wxBLACK);
+	}
+	if (img.Ok()) {
+		if (id == il->GetImageCount()) {
+			il->Add(img);
+		} else {
+			il->Replace(id, img);
+		}
+	}
+}
 
 // ----------------------------------------------------------------------------- : DropDownChoiceList
 
@@ -18,7 +65,9 @@ DropDownChoiceList::DropDownChoiceList(Window* parent, bool is_submenu, ChoiceVa
 	: DropDownList(parent, is_submenu, is_submenu ? nullptr : &cve)
 	, group(group)
 	, cve(cve)
-{}
+{
+	icon_size.width = 16;
+}
 
 size_t DropDownChoiceList::itemCount() const {
 	return group->choices.size() + hasDefault();
@@ -59,7 +108,20 @@ DropDownList* DropDownChoiceList::submenu(size_t item) const {
 }
 
 void DropDownChoiceList::drawIcon(DC& dc, int x, int y, size_t item, bool selected) const {
-	// TODO
+	// imagelist to use
+	wxImageList* il = cve.style().thumbnails;
+	assert(il);
+	// find the image for the item
+	int image_id;
+	if (isFieldDefault(item)) {
+		image_id = default_id;
+	} else {
+		image_id = getChoice(item)->first_id;
+	}
+	// draw image
+	if (image_id < il->GetImageCount()) {
+		il->Draw(image_id, dc, x, y);
+	}
 }
 
 
@@ -72,11 +134,24 @@ void DropDownChoiceList::select(size_t item) {
 	}
 }
 size_t DropDownChoiceList::selection() const {
-	if (hasFieldDefault() && cve.value().value.isDefault()) {
-		return 0;
-	}
-	size_t i = hasDefault();
+	// we need thumbnail images soon
+	const_cast<DropDownChoiceList*>(this)->generateThumbnailImages();
+	// selected item
 	int id = field().choices->choiceId(cve.value().value());
+	// id of default item
+	if (hasFieldDefault()) {
+		if (cve.value().value.isDefault()) {
+			// default is selected
+			default_id = id;
+			return 0;
+		} else {
+			// run default script to find out what the default choice would be
+			String default_choice = *cve.field().default_script.invoke( cve.viewer.getContext() );
+			default_id = group->choiceId(default_choice);
+		}
+	}
+	// item corresponding to id
+	size_t i = hasDefault();
 	FOR_EACH(c, group->choices) {
 		if (id >= c->first_id && id < c->lastId()) {
 			return i;
@@ -86,11 +161,44 @@ size_t DropDownChoiceList::selection() const {
 	return NO_SELECTION;
 }
 
+void DropDownChoiceList::generateThumbnailImages() {
+	if (!isRoot()) return;
+	if (!cve.style().thumbnails) {
+		cve.style().thumbnails = new wxImageList(16,16);
+	}
+	int image_count = cve.style().thumbnails->GetImageCount();
+	int end = group->lastId();
+	Context& ctx = cve.viewer.getContext();
+	for (int i = 0 ; i < end ; ++i) {
+		String name = cannocial_name_form(group->choiceName(i));
+		ScriptableImage& img = cve.style().choice_images[name];
+		if (i >= image_count || !img.upToDate(ctx, cve.style().thumbnail_age)) {
+			// TODO : handle the case where image i was previously skipped
+			// request this thumbnail
+			thumbnail_thread.request( new_shared2<ChoiceThumbnailRequest>(&cve, i) );
+		}
+	}
+	cve.style().thumbnail_age.update();
+}
+
+void DropDownChoiceList::onIdle(wxIdleEvent& ev) {
+	if (!isRoot()) return;
+	thumbnail_thread.done(&cve);
+}
+
+BEGIN_EVENT_TABLE(DropDownChoiceList, DropDownList)
+	EVT_IDLE(DropDownChoiceList::onIdle)
+END_EVENT_TABLE()
+
 // ----------------------------------------------------------------------------- : ChoiceValueEditor
 
 IMPLEMENT_VALUE_EDITOR(Choice)
 	, drop_down(new DropDownChoiceList(&editor(), false, *this, field().choices))
 {}
+
+ChoiceValueEditor::~ChoiceValueEditor() {
+	thumbnail_thread.abort(this);
+}
 
 void ChoiceValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
 	drop_down->onMouseInParent(ev, style().popup_style == POPUP_DROPDOWN_IN_PLACE && !nativeLook());

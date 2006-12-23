@@ -115,6 +115,7 @@ class ChoiceStyle : public Style {
   public:
 	ChoiceStyle(const ChoiceFieldP& field);
 	DECLARE_STYLE_TYPE(Choice);
+	~ChoiceStyle();
 	
 	ChoicePopupStyle			popup_style;	///< Style of popups/menus
 	ChoiceRenderStyle			render_style;	///< Style of rendering
@@ -126,6 +127,8 @@ class ChoiceStyle : public Style {
 	ImageCombine				combine;		///< Combining mode for drawing the images
 	Alignment					alignment;		///< Alignment of images
 	Image						mask;			///< The actual mask image
+	wxImageList*				thumbnails;		///< Thumbnails for the choices
+	Age							thumbnail_age;	///< Age the thumbnails were generated
 	
 	/// Load the mask image, if it's not already done
 	void loadMask(Package& pkg);

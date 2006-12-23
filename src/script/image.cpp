@@ -46,6 +46,12 @@ ScriptImageP to_script_image(const ScriptValueP& value) {
 		} else {
 			throw ScriptError(_("Unable to load image '") + filename + _("' from '" + pkg->name() + _("'")));
 		}
+	} else if (value->type() == SCRIPT_NIL) {
+		// error, return blank image
+		Image i(1,1);
+		i.InitAlpha();
+		i.SetAlpha(0,0,0);
+		return new_intrusive1<ScriptImage>(i);
 	} else {
 		throw ScriptError(_("Can not convert from '") + value->typeName() + _("' to image"));
 	}
@@ -129,6 +135,7 @@ ScriptImageP ScriptableImage::update(Context& ctx, Package& pkg, UInt width, UIn
 }
 
 bool ScriptableImage::upToDate(Context& ctx, Age age) const {
+	if (!script) return true;
 	try {
 		WITH_DYNAMIC_ARG(last_update_age, age.get());
 		return script_image_up_to_date(script.invoke(ctx));

@@ -63,6 +63,13 @@ Context& SetScriptContext::getContext(const StyleSheetP& stylesheet) {
 		ctx->setVariable(_("stylesheet"), toScript(stylesheet));
 		ctx->setVariable(_("card"),       set.cards.empty() ? script_nil : toScript(set.cards.front())); // dummy value
 		ctx->setVariable(_("styling"),    toScript(&set.stylingDataFor(*stylesheet)));
+		try {
+			// perform init scripts, don't use a scope, variables stay bound in the context
+			set.game  ->init_script.invoke(*ctx, false);
+			stylesheet->init_script.invoke(*ctx, false);
+		} catch (const Error& e) {
+			handle_error(e, false, false);
+		}
 		onInit(stylesheet, ctx);
 		return *ctx;
 	}
@@ -94,13 +101,10 @@ void SetScriptManager::onInit(const StyleSheetP& stylesheet, Context* ctx) {
 	assert(wxThread::IsMain());
 	// initialize dependencies
 	try {
-		// perform init scripts, don't use a scope, variables stay bound in the context
-		set.game  ->init_script.invoke(*ctx, false);
-		stylesheet->init_script.invoke(*ctx, false);
 		// find script dependencies
 		initDependencies(*ctx, *set.game);
 		initDependencies(*ctx, *stylesheet);
-	} catch (Error e) {
+	} catch (const Error& e) {
 		handle_error(e, false, false);
 	}
 }

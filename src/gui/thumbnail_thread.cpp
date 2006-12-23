@@ -12,6 +12,30 @@
 typedef pair<ThumbnailRequestP,Image> pair_ThumbnailRequestP_Image;
 DECLARE_TYPEOF_COLLECTION(pair_ThumbnailRequestP_Image);
 
+// ----------------------------------------------------------------------------- : Image Cache
+
+String user_settings_dir();
+String image_cache_dir() {
+	String dir = user_settings_dir() + _("/cache");
+	if (!wxDirExists(dir)) wxMkDir(dir);
+	return dir + _("/");
+}
+
+/// A name that is safe to use as a filename, for the cache
+String safe_filename(const String& str) {
+	String ret; ret.reserve(str.size());
+	FOR_EACH_CONST(c, str) {
+		if (isAlnum(c)) {
+			ret += c;
+		} else if (c==_(' ') || c==_('-')) {
+			ret += _('-');
+		} else {
+			ret += _('_');
+		}
+	}
+	return ret;
+}
+
 // ----------------------------------------------------------------------------- : ThumbnailThreadWorker
 
 class ThumbnailThreadWorker : public wxThread {
@@ -50,7 +74,15 @@ wxThread::ExitCode ThumbnailThreadWorker::Entry() {
 		if (TestDestroy()) return 0;
 		Image img = current->generate();
 		if (TestDestroy()) return 0;
-		// store result
+		// store in cache
+		if (img.Ok()) {
+			String filename = image_cache_dir() + safe_filename(current->cache_name) + _(".png");
+			img.SaveFile(filename, wxBITMAP_TYPE_PNG);
+			// set modification time
+			wxFileName fn(filename);
+			fn.SetTimes(0, &current->modified, 0);
+		}
+		// store result in closed request list
 		{
 			wxMutexLocker lock(parent->mutex);
 			parent->closed_requests.push_back(make_pair(current,img));
@@ -79,27 +111,6 @@ ThumbnailThread::~ThumbnailThread() {
 	abortAll();
 }
 
-String user_settings_dir();
-String image_cache_dir() {
-	String dir = user_settings_dir() + _("/cache");
-	if (!wxDirExists(dir)) wxMkDir(dir);
-	return dir + _("/");
-}
-
-String ThumbnailThread::safeFilename(const String& str) {
-	String ret; ret.reserve(str.size());
-	FOR_EACH_CONST(c, str) {
-		if (isAlnum(c)) {
-			ret += c;
-		} else if (c==_(' ') || c==_('-')) {
-			ret += _('-');
-		} else {
-			ret += _('_');
-		}
-	}
-	return ret;
-}
-
 void ThumbnailThread::request(const ThumbnailRequestP& request) {
 	assert(wxThread::IsMain());
 	// Is the request in progress?
@@ -108,7 +119,7 @@ void ThumbnailThread::request(const ThumbnailRequestP& request) {
 	}
 	request_names.insert(request);
 	// Is the image in the cache?
-	String filename = image_cache_dir() + safeFilename(request->cache_name) + _(".png");
+	String filename = image_cache_dir() + safe_filename(request->cache_name) + _(".png");
 	wxFileName fn(filename);
 	if (fn.FileExists()) {
 		wxDateTime modified;
@@ -152,14 +163,6 @@ bool ThumbnailThread::done(void* owner) {
 	FOR_EACH(r, finished) {
 		// store image
 		r.first->store(r.second);
-		// store in cache
-		if (r.second.Ok()) {
-			String filename = image_cache_dir() + safeFilename(r.first->cache_name) + _(".png");
-			r.second.SaveFile(filename, wxBITMAP_TYPE_PNG);
-			// set modification time
-			wxFileName fn(filename);
-			fn.SetTimes(0, &r.first->modified, 0);
-		}
 		// remove from name list
 		request_names.erase(r.first);
 	}

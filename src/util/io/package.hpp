@@ -62,6 +62,8 @@ class Package {
 	virtual String fullName() const;
 	/// Return the absolute filename of this file
 	const String& absoluteFilename() const;
+	/// The time this package was last modified
+	inline wxDateTime lastModified() const { return modified; }
 	
 	/// Get an input stream for the package icon, if there is any
 	virtual InputStreamP openIconFile();

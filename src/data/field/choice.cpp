@@ -166,14 +166,19 @@ ChoiceStyle::ChoiceStyle(const ChoiceFieldP& field)
 	, combine(COMBINE_NORMAL)
 	, alignment(ALIGN_STRETCH)
 	, colors_card_list(false)
+	, thumbnails(nullptr)
 {}
+
+ChoiceStyle::~ChoiceStyle() {
+	delete thumbnails;
+}
 
 // TODO
 /*
 void ChoiceStyle::invalidate() {
 	// rebuild choice images
 }
-}
+
 */
 bool ChoiceStyle::update(Context& ctx) {
 	// Don't update the choice images, leave that to invalidate()

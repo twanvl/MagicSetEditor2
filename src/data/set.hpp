@@ -71,6 +71,9 @@ class Set : public Packaged {
 	/// A context for performing scripts on a particular card
 	/** Should only be used from the thumbnail thread! */
 	Context& getContextForThumbnails(const CardP& card);
+	/// A context for performing scripts on a particular stylesheet
+	/** Should only be used from the thumbnail thread! */
+	Context& getContextForThumbnails(const StyleSheetP& stylesheet);
 	
 	/// Stylesheet to use for a particular card
 	/** card may be null */

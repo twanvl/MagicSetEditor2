@@ -22,6 +22,7 @@ DECLARE_POINTER_TYPE(DropDownList);
 class ChoiceValueEditor : public ChoiceValueViewer, public ValueEditor {
   public:
 	DECLARE_VALUE_EDITOR(Choice);
+	~ChoiceValueEditor();
 	
 	// --------------------------------------------------- : Events
 	virtual void onLeftDown(const RealPoint& pos, wxMouseEvent& ev);
@@ -34,6 +35,7 @@ class ChoiceValueEditor : public ChoiceValueViewer, public ValueEditor {
   private:
 	DropDownListP drop_down;
 	friend class DropDownChoiceList;
+	friend class ChoiceThumbnailRequest;
 	/// Change the choice
 	void change(const Defaultable<String>& c);
 };
@@ -56,13 +58,17 @@ class DropDownChoiceList : public DropDownList {
 	virtual size_t selection() const;
 	
   private:
+	DECLARE_EVENT_TABLE();
+	
 	ChoiceValueEditor& cve;
 	ChoiceField::ChoiceP group;		///< Group this menu shows
 	mutable vector<DropDownListP> submenus;
+	mutable int default_id; ///< Item id for the default item (if !hasFieldDefault()) this is undefined)
 	
 	inline const ChoiceField& field() const { return cve.field(); }
 	
-	inline bool hasFieldDefault() const { return group == field().choices && field().default_script; }
+	inline bool isRoot()          const { return group == field().choices; }
+	inline bool hasFieldDefault() const { return isRoot() && field().default_script; }
 	inline bool hasGroupDefault() const { return group->hasDefault(); }
 	inline bool hasDefault()      const { return hasFieldDefault() || hasGroupDefault(); }
 	inline bool isFieldDefault(size_t item) const { return item == 0 && hasFieldDefault(); }
@@ -71,6 +77,9 @@ class DropDownChoiceList : public DropDownList {
 	
 	// Find an item in the group of choices
 	ChoiceField::ChoiceP getChoice(size_t item) const;
+	/// Start generating thumbnail images
+	void generateThumbnailImages();
+	void onIdle(wxIdleEvent&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

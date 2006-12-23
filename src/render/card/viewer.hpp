@@ -51,6 +51,8 @@ class DataViewer : public SetView {
 	Context& getContext() const;
 	/// The rotation to use
 	virtual Rotation getRotation() const;
+	/// The card we are viewing
+	inline CardP getCard() const { return card; }
 	
 	// --------------------------------------------------- : Setting data
 	
