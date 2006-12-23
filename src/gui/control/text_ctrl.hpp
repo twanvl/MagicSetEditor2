@@ -38,7 +38,6 @@ class TextCtrl : public DataEditor {
 	virtual Rotation getRotation() const;
 	
 	virtual void draw(DC& dc);
-	virtual void drawViewer(RotatedDC& dc, ValueViewer& v);
 	
 	/// When an action is received, change the underlying value
 	virtual void onAction(const Action&, bool undone);

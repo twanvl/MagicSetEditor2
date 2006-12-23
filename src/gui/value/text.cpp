@@ -506,7 +506,7 @@ void TextValueEditor::moveSelection(IndexType t, size_t new_end, bool also_move_
 		if (ensureCaretVisible()) {
 			// we can't redraw just the selection because we must scroll
 			updateScrollbar();
-//			editor.refreshEditor();
+			redraw();
 		} else {
 			// draw new selection
 			v.drawSelection(rdc, style(), selection_start_i, selection_end_i);
@@ -605,7 +605,7 @@ void TextValueEditor::determineSize(bool force_fit) {
 			style().top - 1,
 			sbw,
 			style().height + 2);
-//		r.reset();
+		v.reset();
 	} else {
 		// Height depends on font
 		wxMemoryDC dc;
@@ -637,7 +637,7 @@ void TextValueEditor::scrollTo(int pos) {
 	v.scrollTo(pos);
 	// move the cursor if needed
 	// refresh
-//	viewer.onChange();
+	redraw();
 }
 
 bool TextValueEditor::ensureCaretVisible() {

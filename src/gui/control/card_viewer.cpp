@@ -8,6 +8,7 @@
 
 #include <gui/control/card_viewer.hpp>
 #include <data/stylesheet.hpp>
+#include <render/value/viewer.hpp>
 #include <wx/dcbuffer.h>
 
 // ----------------------------------------------------------------------------- : Events
@@ -29,9 +30,14 @@ wxSize CardViewer::DoGetBestSize() const {
 	return cs;
 }
 
-void CardViewer::onChange() {
-	Refresh(false);
+void CardViewer::redraw(const ValueViewer& v) {
 	up_to_date = false;
+	RefreshRect(v.boundingBox(), false);
+}
+
+void CardViewer::onChange() {
+	up_to_date = false;
+	Refresh(false);
 }
 
 void CardViewer::onChangeSize() {
@@ -42,7 +48,6 @@ void CardViewer::onChangeSize() {
 		ProcessEvent(ev);
 	}
 }
-
 
 #ifdef _DEBUG
 	DECLARE_DYNAMIC_ARG(bool, inOnPaint);
@@ -61,12 +66,21 @@ void CardViewer::onPaint(wxPaintEvent&) {
 		up_to_date = false;
 	}
 	wxBufferedPaintDC dc(this, buffer);
+	dc.SetClippingRegion(GetUpdateRegion());
 	if (!up_to_date) {
 		up_to_date = true;
 		dc.BeginDrawing();
 		draw(dc);
 		dc.EndDrawing();
 	}
+}
+
+void CardViewer::drawViewer(RotatedDC& dc, ValueViewer& v) {
+	if (shouldDraw(v)) v.draw(dc);
+}
+
+bool CardViewer::shouldDraw(const ValueViewer& v) const {
+	return GetUpdateRegion().Contains((wxRect)v.boundingBox()) != wxOutRegion;
 }
 
 // helper class for overdrawDC()

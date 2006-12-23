@@ -29,10 +29,6 @@ void TextCtrl::draw(DC& dc) {
 	RotatedDC rdc(dc, getRotation(), false);
 	DataViewer::draw(rdc, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 }
-void TextCtrl::drawViewer(RotatedDC& dc, ValueViewer& v) {
-	// draw viewer
-	v.draw(dc);
-}
 
 
 void TextCtrl::setValue(String* value) {

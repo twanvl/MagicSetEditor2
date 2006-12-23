@@ -30,6 +30,7 @@ void NativeLookEditor::draw(DC& dc) {
 	DataViewer::draw(rdc, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 }
 void NativeLookEditor::drawViewer(RotatedDC& dc, ValueViewer& v) {
+	if (!shouldDraw(v)) return;
 	// draw background
 	Style& s = *v.getStyle();
 	dc.SetPen(*wxTRANSPARENT_PEN);

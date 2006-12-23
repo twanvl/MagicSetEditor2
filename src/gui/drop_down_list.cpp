@@ -10,6 +10,7 @@
 #include <gui/util.hpp>
 #include <render/value/viewer.hpp>
 #include <render/card/viewer.hpp>
+#include <gui/value/editor.hpp>
 #include <util/rotation.hpp>
 #include <gfx/gfx.hpp>
 #include <wx/dcbuffer.h>
@@ -208,7 +209,8 @@ int DropDownList::itemPosition(size_t item) const {
 
 void DropDownList::redrawArrowOnParent() {
 	if (viewer) {
-		// TODO
+		ValueEditor* e = viewer->getEditor();
+		if (e) e->redraw();
 	}
 }
 

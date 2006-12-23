@@ -99,6 +99,9 @@ class ValueEditor {
 	virtual void determineSize(bool force_fit = false) {}
 	/// The editor is shown or hidden
 	virtual void onShow(bool) {}
+	
+	/// Redraw this viewer
+	virtual void redraw() = 0;
 };
 
 // ----------------------------------------------------------------------------- : Utility
@@ -106,6 +109,7 @@ class ValueEditor {
 #define DECLARE_VALUE_EDITOR(Type)											\
 		Type##ValueEditor(DataEditor& parent, const Type##StyleP& style);	\
 		virtual ValueEditor* getEditor() { return this; }					\
+		virtual void redraw();												\
 	  private:																\
 		inline DataEditor& editor() const {									\
 			return static_cast<DataEditor&>(viewer);						\
@@ -113,6 +117,9 @@ class ValueEditor {
 	  public:
 
 #define IMPLEMENT_VALUE_EDITOR(Type)													\
+	void Type##ValueEditor::redraw() {													\
+		editor().redraw(*this);															\
+	}																					\
 	Type##ValueEditor::Type##ValueEditor(DataEditor& parent, const Type##StyleP& style)	\
 		: Type##ValueViewer(parent, style)
 

@@ -30,12 +30,20 @@ class CardViewer : public wxControl, public DataViewer {
 	/** May NOT be called while in onPaint/draw */
 	shared_ptr<DC> overdrawDC();
 	
+	/// Invalidate and redraw (the area of) a single value viewer
+	void redraw(const ValueViewer&);
+	
   protected:
 	/// Return the desired size of control
 	virtual wxSize DoGetBestSize() const;
 	
 	virtual void onChange();
 	virtual void onChangeSize();
+	
+	/// Should the given viewer be drawn?
+	bool shouldDraw(const ValueViewer&) const;
+	
+	virtual void drawViewer(RotatedDC& dc, ValueViewer& v);
 	
   private:
 	DECLARE_EVENT_TABLE();
