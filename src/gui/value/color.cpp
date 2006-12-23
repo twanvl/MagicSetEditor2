@@ -144,7 +144,7 @@ void ColorValueEditor::draw(RotatedDC& dc) {
 		draw_drop_down_arrow(&editor(), dc.getDC(), style().getRect().grow(1), drop_down->IsShown());
 	}
 }
-void ColorValueEditor::determineSize() {
+void ColorValueEditor::determineSize(bool) {
 	style().height = 20;
 }
 

@@ -96,7 +96,7 @@ class ValueEditor {
 	/// The cursor type to use when the mouse is over this control
 	virtual wxCursor cursor() const { return wxCursor(); }
 	/// determines prefered size in the native look, update the style
-	virtual void determineSize() {}
+	virtual void determineSize(bool force_fit = false) {}
 	/// The editor is shown or hidden
 	virtual void onShow(bool) {}
 };

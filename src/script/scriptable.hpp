@@ -111,6 +111,7 @@ class Scriptable {
 	
 	inline operator const T&   () const { return value; }
 	inline const T& operator ()() const { return value; }
+	inline       T& mutate     ()       { return value; }
 	inline bool isScripted() const { return script; }
 	/// Has this value been read from a Reader?
 	inline bool hasBeenRead() const { return !script.unparsed.empty(); }

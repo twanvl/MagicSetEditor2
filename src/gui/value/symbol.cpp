@@ -19,6 +19,6 @@ void SymbolValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent&) {
 	wnd->Show();
 }
 
-void SymbolValueEditor::determineSize() {
+void SymbolValueEditor::determineSize(bool) {
 	style().height = 50;
 }

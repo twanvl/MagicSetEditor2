@@ -21,7 +21,7 @@ class SymbolValueEditor : public SymbolValueViewer, public ValueEditor {
 	DECLARE_VALUE_EDITOR(Symbol);
 	
 	virtual void onLeftDClick(const RealPoint& pos, wxMouseEvent&);
-	virtual void determineSize();
+	virtual void determineSize(bool);
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -108,7 +108,7 @@ void ChoiceValueEditor::draw(RotatedDC& dc) {
 		draw_drop_down_arrow(&editor(), dc.getDC(), style().getRect().grow(1), drop_down->IsShown());
 	}
 }
-void ChoiceValueEditor::determineSize() {
+void ChoiceValueEditor::determineSize(bool) {
 	style().height = max(style().height(), 16.);
 }
 

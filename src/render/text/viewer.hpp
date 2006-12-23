@@ -90,6 +90,31 @@ class TextViewer {
 	/// Return the height of the last line
 	double heightOfLastLine() const;
 	
+	// --------------------------------------------------- : Lines/scrolling
+	
+	/// The total number of lines
+	size_t lineCount() const;
+	/// number of fully visible lines, height gives the height of the box
+	size_t visibleLineCount(double height) const;
+	/// the index of the first visible line
+	size_t firstVisibleLine() const;
+	// scroll so line_id becomes the first visible line
+	void scrollTo(size_t line_id);
+	/// Ensure the specified character is fully visible
+	/*  Always scrolls by a whole line.
+	 *  Returns true if the editor has scrolled.
+	 */
+	bool ensureVisible(double height, size_t char_id);
+	
+	/// Get exact scroll position
+	double getExactScrollPosition() const;
+	/// Set exact scroll position
+	void setExactScrollPosition(double pos);
+	
+  private:
+	/// Scroll all lines a given amount
+	void scrollBy(double delta);
+	
   private:
 	// --------------------------------------------------- : More drawing
 	double scale; /// < Scale when drawing

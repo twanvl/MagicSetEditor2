@@ -76,7 +76,7 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	// --------------------------------------------------- : Other
 	
 	virtual wxCursor cursor() const;
-	virtual void determineSize();
+	virtual void determineSize(bool force_fit = false);
 	virtual void onShow(bool);
 	virtual void draw(RotatedDC&);
 	
@@ -127,8 +127,17 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	
 	friend class TextValueEditorScrollBar;
 	
+	/// When the cursor moves, should the scrollposition change?
+	bool scroll_with_cursor;
+	
 	/// Scroll to the given position, called by scrollbar
 	void scrollTo(int pos);
+	/// Update the scrollbar to show the current scroll position
+	void updateScrollbar();
+	/// Scrolls to ensure the caret stays visible, return true if the control is scrolled
+	bool ensureCaretVisible();
+	/// Prepare for drawing if there is a scrollbar
+	void prepareDrawScrollbar(RotatedDC& dc);
 };
 
 // ----------------------------------------------------------------------------- : EOF

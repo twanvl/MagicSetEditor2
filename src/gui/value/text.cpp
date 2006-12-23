@@ -29,9 +29,9 @@ class TextValueEditorScrollBar : public wxWindow {
 };
 
 
-TextValueEditorScrollBar::TextValueEditorScrollBar(TextValueEditor& te)
+TextValueEditorScrollBar::TextValueEditorScrollBar(TextValueEditor& tve)
 	: wxWindow(&tve.editor(), wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER | wxVSCROLL | wxALWAYS_SHOW_SB)
-	, tve(te)
+	, tve(tve)
 {}
 
 void TextValueEditorScrollBar::onScroll(wxScrollWinEvent& ev) {
@@ -57,8 +57,12 @@ IMPLEMENT_VALUE_EDITOR(Text)
 	, selection_start  (0), selection_end  (0)
 	, selection_start_i(0), selection_end_i(0)
 	, select_words(false)
-	, scrollbar(nullptr)
-{}
+	, scrollbar(nullptr), scroll_with_cursor(false)
+{
+	if (viewer.nativeLook() && field().multi_line) {
+		scrollbar = new TextValueEditorScrollBar(*this);
+	}
+}
 
 TextValueEditor::~TextValueEditor() {
 	delete scrollbar;
@@ -234,10 +238,13 @@ void TextValueEditor::onMenu(wxCommandEvent& ev) {
 // ----------------------------------------------------------------------------- : Other overrides
 
 void TextValueEditor::draw(RotatedDC& dc) {
+	// update scrollbar
+	prepareDrawScrollbar(dc);
+	// draw text
 	TextValueViewer::draw(dc);
+	// draw selection
 	if (isCurrent()) {
 		v.drawSelection(dc, style(), selection_start_i, selection_end_i);
-		
 		// show caret, onAction() would be a better place
 		// but it has to be done after the viewer has updated the TextViewer
 		// we could do that ourselfs, but we need a dc for that
@@ -469,7 +476,7 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 	}
 	fixSelection(TYPE_INDEX, MOVE_MID);
 	// scroll with next update
-//	scrollWithCursor = true;
+	scroll_with_cursor = true;
 }
 
 void TextValueEditor::moveSelection(IndexType t, size_t new_end, bool also_move_start, Movement dir) {
@@ -495,15 +502,15 @@ void TextValueEditor::moveSelection(IndexType t, size_t new_end, bool also_move_
 		// move
 		moveSelectionNoRedraw(t, new_end, also_move_start, dir);
 		// scroll?
-	//	scrollWithCursor = true;
-	//	if (onMove()) {
-	//		// we can't redraw just the selection because we must scroll
-	//		updateScrollbar();
-	//		editor.refreshEditor();
-	//	} else {
+		scroll_with_cursor = true;
+		if (ensureCaretVisible()) {
+			// we can't redraw just the selection because we must scroll
+			updateScrollbar();
+//			editor.refreshEditor();
+		} else {
 			// draw new selection
 			v.drawSelection(rdc, style(), selection_start_i, selection_end_i);
-	//	}
+		}
 	}
 	showCaret();
 }
@@ -545,46 +552,6 @@ void TextValueEditor::fixSelection(IndexType t, Movement dir) {
 		// find next separator
 		seppos = val.find(_("<sep"), seppos + 1);
 	}
-	
-	// REMOVEME
-	/*size_t size = val.size();
-	selection_end   = min(size, selection_end);
-	selection_start = min(size, selection_start);
-	// start and end must not be inside or between tags
-	selection_start = v.firstVisibleChar(selection_start, dir == MOVE_LEFT ? -1 : +1);
-	selection_end   = v.firstVisibleChar(selection_end,   dir == MOVE_LEFT ? -1 : +1);
-	// start and end must be on the same side of separators
-	size_t seppos = val.find(_("<sep"));
-	while (seppos != String::npos) {
-		size_t sepend = skip_tag(val,match_close_tag(val, seppos));
-		if (selection_start <= seppos && selection_end > seppos) selection_end = seppos; // not on same side
-		if (selection_start >= sepend && selection_end < sepend) selection_end = sepend; // not on same side
-		if (selection_start > seppos && selection_start < sepend) {
-			// start inside separator
-			selection_start = move(selection_start, seppos, sepend, dir);
-		}
-		if (selection_end > seppos && selection_end < sepend) {
-			// end inside separator
-			selection_end = selection_start < sepend ? seppos : sepend;
-		}
-		// find next separator
-		seppos = val.find(_("<sep"), seppos + 1);
-	}
-	// start or end in an <atom>? if so, move them out
-	size_t atompos = val.find(_("<atom"));
-	while (atompos != String::npos) {
-		size_t atomend = skip_tag(val,match_close_tag(val, atompos));
-		if (selection_start > atompos && selection_start < atomend) { // start inside atom
-			selection_start = move(selection_start, atompos, atomend, dir);
-		}
-		if (selection_end   > atompos && selection_end   < atomend) { // end inside atom
-			selection_end   = move(selection_end,   atompos, atomend, dir);
-		}
-		// find next atom
-		atompos = val.find(_("<atom"), atompos + 1);
-	}
-	*/
-	//  TODO? : More checks?
 }
 
 
@@ -626,12 +593,12 @@ size_t TextValueEditor::move(size_t pos, size_t start, size_t end, Movement dir)
 
 // ----------------------------------------------------------------------------- : Native look / scrollbar
 
-void TextValueEditor::determineSize() {
+void TextValueEditor::determineSize(bool force_fit) {
 	if (!nativeLook()) return;
 	style().angle = 0; // no rotation in nativeLook
 	if (scrollbar) {
 		// muliline, determine scrollbar size
-		style().height = 100;
+		if (!force_fit) style().height = 100;
 		int sbw = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
 		scrollbar->SetSize(
 			style().left + style().width - sbw + 1,
@@ -667,8 +634,47 @@ void TextValueEditor::onMouseWheel(const RealPoint& pos, wxMouseEvent& ev) {
 
 void TextValueEditor::scrollTo(int pos) {
 	// scroll
-//	r.scrollTo(pos);
+	v.scrollTo(pos);
 	// move the cursor if needed
 	// refresh
-//	editor.refreshEditor();
+//	viewer.onChange();
+}
+
+bool TextValueEditor::ensureCaretVisible() {
+	if (scrollbar && scroll_with_cursor) {
+		scroll_with_cursor = false;
+		return v.ensureVisible(style().height - style().padding_top - style().padding_bottom, selection_end_i);
+	}
+	return false;
+}
+
+void TextValueEditor::updateScrollbar() {
+	assert(scrollbar);
+	int position  = (int)v.firstVisibleLine();
+	int page_size = (int)v.visibleLineCount(style().height - style().padding_top - style().padding_bottom);
+	int range     = (int)v.lineCount();
+	scrollbar->SetScrollbar(
+		wxVERTICAL,
+		position,
+		page_size,
+		range,
+		page_size > 1 ? page_size - 1 : 0
+	);
+}
+
+void TextValueEditor::prepareDrawScrollbar(RotatedDC& dc) {
+	if (scrollbar) {
+		// don't draw under the scrollbar
+		int scrollbar_width = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
+		style().width.mutate() -= scrollbar_width;
+		// prepare text, and remember scroll position
+		double scroll_pos = v.getExactScrollPosition();
+		v.prepare(dc, value().value(), style(), viewer.getContext());
+		v.setExactScrollPosition(scroll_pos);
+		// scroll to the same place, but always show the caret
+		ensureCaretVisible();
+		// update after scrolling
+		updateScrollbar();
+		style().width.mutate() += scrollbar_width;
+	}
 }

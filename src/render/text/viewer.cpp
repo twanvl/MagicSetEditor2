@@ -229,6 +229,66 @@ double TextViewer::heightOfLastLine() const {
 	return lines.back().line_height;
 }
 
+// ----------------------------------------------------------------------------- : Scrolling
+
+size_t TextViewer::lineCount() const {
+	return lines.size();
+}
+size_t TextViewer::visibleLineCount(double height) const {
+	size_t count = 0;
+	FOR_EACH_CONST(l, lines) {
+		if (l.top + l.line_height > height) return count;
+		if (l.top >= 0) ++count;
+	}
+	return count;
+}
+size_t TextViewer::firstVisibleLine() const {
+	size_t i = 0;
+	FOR_EACH_CONST(l, lines) {
+		if (l.top >= 0) return i;
+		i++;
+	}
+	return 0; //no visible lines
+}
+
+void TextViewer::scrollTo(size_t line_id) {
+	scrollBy(-lines.at(line_id).top);
+}
+void TextViewer::scrollBy(double delta) {
+	if (delta == 0) return;
+	FOR_EACH(l, lines) {
+		l.top += delta;
+	}
+}
+
+bool TextViewer::ensureVisible(double height, size_t char_id) {
+	const Line& line = findLine(char_id);
+	if (line.top < 0) {
+		// scroll up
+		scrollBy(-line.top);
+		return true;
+	} else if (line.bottom() > height) {
+		// scroll down
+		FOR_EACH(l, lines) {
+			if (l.top > 0) scrollBy(-l.line_height); // scroll down a single line ...
+			if (line.bottom() <= height) break;      // ... until we can see the current line
+		}
+		return true;
+	} else {
+		return false; // line was already visible
+	}
+}
+
+double TextViewer::getExactScrollPosition() const {
+	if (lines.empty()) return 0;
+	return -lines.front().top;
+}
+void TextViewer::setExactScrollPosition(double pos) {
+	if (lines.empty()) return; // no scrolling is needed
+	pos += lines.front().top;
+	scrollBy(-pos);
+}
+
 // ----------------------------------------------------------------------------- : Elements
 
 void TextViewer::prepareElements(const String& text, const TextStyle& style, Context& ctx) {

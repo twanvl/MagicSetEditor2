@@ -26,12 +26,6 @@ Rotation TextCtrl::getRotation() const {
 }
 
 void TextCtrl::draw(DC& dc) {
-	if (!viewers.empty()) {
-		wxSize cs = GetClientSize();
-		Style& style = *viewers.front()->getStyle();
-		style.width  = cs.GetWidth()  - 2;
-		style.height = cs.GetHeight() - 2;
-	}
 	RotatedDC rdc(dc, getRotation(), false);
 	DataViewer::draw(rdc, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 }
@@ -60,8 +54,11 @@ void TextCtrl::setValue(String* value) {
 		IndexMap<FieldP,ValueP> values; values.add(field, value);
 		setStyles(set->stylesheet, styles);
 		setData(values);
-		// determine required height
-		viewers.front()->getEditor()->determineSize();
+		// determine size
+		wxSize cs = GetClientSize();
+		style->width  = cs.GetWidth()  - 2;
+		style->height = cs.GetHeight() - 2;
+		viewers.front()->getEditor()->determineSize(true);
 		SetMinSize(wxSize(style->width + 6, style->height + 6));
 	}
 	valueChanged();
@@ -97,7 +94,14 @@ void TextCtrl::onInit() {
 }
 
 void TextCtrl::onSize(wxSizeEvent&) {
-	Refresh(false);
+	if (!viewers.empty()) {
+		wxSize cs = GetClientSize();
+		Style& style = *viewers.front()->getStyle();
+		style.width  = cs.GetWidth()  - 2;
+		style.height = cs.GetHeight() - 2;
+		viewers.front()->getEditor()->determineSize(true);
+	}
+	onChange();
 }
 
 BEGIN_EVENT_TABLE(TextCtrl, DataEditor)

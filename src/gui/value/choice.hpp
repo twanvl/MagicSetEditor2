@@ -29,7 +29,7 @@ class ChoiceValueEditor : public ChoiceValueViewer, public ValueEditor {
 	virtual void onLoseFocus();
 	
 	virtual void draw(RotatedDC& dc);
-	virtual void determineSize();
+	virtual void determineSize(bool);
 	
   private:
 	DropDownListP drop_down;
