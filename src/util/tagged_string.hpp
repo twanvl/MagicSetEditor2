@@ -101,7 +101,7 @@ size_t index_to_cursor(const String& str, size_t index, Movement dir = MOVE_MID)
 void cursor_to_index_range(const String& str, size_t cursor, size_t& begin, size_t& end);
 
 /// Find the character index corresponding to the given cursor position
-size_t cursor_to_index(const String& str, size_t cursor);
+size_t cursor_to_index(const String& str, size_t cursor, Movement dir = MOVE_MID);
 
 // ----------------------------------------------------------------------------- : Global operations
 

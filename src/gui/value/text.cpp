@@ -354,6 +354,7 @@ bool TextValueEditor::hasFormat(int type) const {
 }
 
 void TextValueEditor::doFormat(int type) {
+	size_t ss = selection_start, se = selection_end;
 	switch (type) {
 		case ID_FORMAT_BOLD: {
 			getSet().actions.add(toggle_format_action(valueP(), _("b"),   selection_start_i, selection_end_i, _("Bold")));
@@ -368,6 +369,9 @@ void TextValueEditor::doFormat(int type) {
 			break;
 		}
 	}
+	selection_start = ss;
+	selection_end   = se;
+	fixSelection();
 }
 
 // ----------------------------------------------------------------------------- : Selection
@@ -534,8 +538,8 @@ void TextValueEditor::fixSelection(IndexType t, Movement dir) {
 		selection_end   = index_to_cursor(value().value(), selection_end_i,   dir);
 	}
 	// make sure the selection is at a valid position inside the text
-	selection_start_i = cursor_to_index(val, selection_start);
-	selection_end_i   = cursor_to_index(val, selection_end);
+	selection_start_i = cursor_to_index(val, selection_start, selection_start == selection_end ? MOVE_MID : MOVE_RIGHT);
+	selection_end_i   = cursor_to_index(val, selection_end,   selection_start == selection_end ? MOVE_MID : MOVE_LEFT);
 	// start and end must be on the same side of separators
 	size_t seppos = val.find(_("<sep"));
 	while (seppos != String::npos) {
@@ -543,11 +547,11 @@ void TextValueEditor::fixSelection(IndexType t, Movement dir) {
 		if (selection_start_i <= seppos && selection_end_i > seppos) {
 		    // not on same side, move selection end before sep
 			selection_end   = index_to_cursor(val, seppos, dir);
-			selection_end_i = cursor_to_index(val, selection_end);
+			selection_end_i = cursor_to_index(val, selection_end, selection_start == selection_end ? MOVE_MID : MOVE_LEFT);
 		} else if (selection_start_i >= sepend && selection_end_i < sepend) {
 		    // not on same side, move selection end after sep
 			selection_end   = index_to_cursor(val, sepend, dir);
-			selection_end_i = cursor_to_index(val, selection_end);
+			selection_end_i = cursor_to_index(val, selection_end, selection_start == selection_end ? MOVE_MID : MOVE_LEFT);
 		}
 		// find next separator
 		seppos = val.find(_("<sep"), seppos + 1);

@@ -2527,9 +2527,6 @@
 					RelativePath=".\render\text\font.cpp">
 				</File>
 				<File
-					RelativePath=".\render\text\line.cpp">
-				</File>
-				<File
 					RelativePath=".\render\text\symbol.cpp">
 					<FileConfiguration
 						Name="Debug|Win32">

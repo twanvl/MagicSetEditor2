@@ -229,12 +229,12 @@ void cursor_to_index_range(const String& str, size_t cursor, size_t& start, size
 	if (cur < cursor) start = end = str.size();
 }
 
-size_t cursor_to_index(const String& str, size_t cursor) {
+size_t cursor_to_index(const String& str, size_t cursor, Movement dir) {
 	size_t start, end;
 	cursor_to_index_range(str, cursor, start, end);
 	// TODO: If at i there is <tag></tag> return a position inside the tags
 	// This allows formating to be enabled without a selection
-	return start;
+	return dir == MOVE_RIGHT ? end - 1 : start;
 }
 
 
@@ -373,12 +373,12 @@ String simplify_tagged_overlap(const String& str) {
 					add_or_cancel_tag(tag, open_tags);
 					if (open_tags.find(anti_tag(tag)) != String::npos) {
 						// still not canceled out
-						i += tag.size() + 2;
+						i += tag.size() + 1;
 						continue;
 					}
 				} else {
 					// skip this tag, doubling it has no effect
-					i += tag.size() + 2;
+					i += tag.size() + 1;
 					add_or_cancel_tag(tag, open_tags);
 					continue;
 				}
