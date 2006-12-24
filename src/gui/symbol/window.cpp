@@ -26,8 +26,11 @@ SymbolWindow::SymbolWindow(Window* parent) {
 }
 
 SymbolWindow::SymbolWindow(Window* parent, const String& filename) {
-	// TODO : open file
-	init(parent, default_symbol());
+	// open file
+	Reader reader(filename);
+	SymbolP symbol;
+	reader.handle(symbol);
+	init(parent, symbol);
 }
 
 SymbolWindow::SymbolWindow(Window* parent, const SymbolValueP& value, const SetP& set)

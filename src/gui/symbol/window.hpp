@@ -27,7 +27,7 @@ class SymbolWindow : public Frame {
 	SymbolWindow(Window* parent);
 	/// Construct a SymbolWindow showing a symbol from a file
 	SymbolWindow(Window* parent, const String& filename);
-//	/// Construct a SymbolWindow showing a symbol value in a set
+	/// Construct a SymbolWindow showing a symbol value in a set
 	SymbolWindow(Window* parent, const SymbolValueP& value, const SetP& set);
 	
   private:

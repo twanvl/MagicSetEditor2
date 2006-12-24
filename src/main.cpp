@@ -48,17 +48,35 @@ bool MSE::OnInit() {
 		packages.init();
 		settings.read();
 		the_locale = Locale::byName(settings.locale);
-		// check for updates
 		check_updates();
-		//Window* wnd = new SymbolWindow(nullptr);
-		//GameP g = Game::byName(_("magic"))
-		SetP  s = new_shared<Set>();
-		s->open(_("test.mse-set"));
-		Window* wnd = new SetWindow(nullptr, s);
-		//Window* wnd = new WelcomeWindow();
-		wnd->Show();
+		
+		// interpret command line
+		if (argc > 1) {
+			try {
+				// Command line argument, find its extension
+				wxFileName f(argv[1]);
+				if (f.GetExt() == _("mse-symbol")) {
+					// Show the symbol editor
+					Window* wnd = new SymbolWindow(nullptr, argv[1]);
+					wnd->Show();
+					return true;
+				} else if (f.GetExt() == _("mse-set") || f.GetExt() == _("mse") || f.GetExt() == _("set")) {
+					// Show the set window
+					Window* wnd = new SetWindow(nullptr, import_set(argv[1]));
+					wnd->Show();
+					return true;
+				} else {
+					handle_error(_("Invalid command line argument:\n") + String(argv[1]));
+				}
+			} catch (const Error& e) {
+				handle_error(e);
+			}
+		}
+		
+		// no command line arguments, or error, show welcome window
+		(new WelcomeWindow())->Show();
 		return true;
-	
+			
 	} catch (Error e) {
 		handle_error(e, false);
 	} catch (std::exception e) {
@@ -67,7 +85,7 @@ bool MSE::OnInit() {
 	} catch (...) {
 		handle_error(InternalError(_("An unexpected exception occurred!")), false);
 	}
-	packages.destroy();
+	OnExit();
 	return false;
 }
 
