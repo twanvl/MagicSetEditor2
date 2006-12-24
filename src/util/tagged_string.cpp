@@ -232,7 +232,25 @@ void cursor_to_index_range(const String& str, size_t cursor, size_t& start, size
 size_t cursor_to_index(const String& str, size_t cursor, Movement dir) {
 	size_t start, end;
 	cursor_to_index_range(str, cursor, start, end);
-	// TODO: If at i there is <tag></tag> return a position inside the tags
+	if (dir == MOVE_MID) {
+		// find the middle between start and end
+		// if the string in between contains a pair "<tag></tag>" or "</tag><tag>" returns the middle
+		// otherwise returns start
+		for (size_t i = start ; i < end ; ) {
+			if (str.GetChar(i) == _('<')) {
+				String tag1 = tag_at(str, i);
+				i = skip_tag(str, i);
+				if (str.GetChar(i) == _('<')) {
+					String tag2 = tag_at(str, i);
+					if (_("<") + tag2 + _(">") == anti_tag(tag1)) {
+						return i;
+					}
+				}
+			} else {
+				i++;
+			}
+		}
+	}
 	// This allows formating to be enabled without a selection
 	return dir == MOVE_RIGHT ? end - 1 : start;
 }
