@@ -48,7 +48,6 @@ class ThumbnailRequest {
 class ThumbnailThread {
   public:
 	ThumbnailThread();
-	~ThumbnailThread();
 	
 	/// Request a thumbnail, it may be store()d immediatly if the thumbnail is cached
 	void request(const ThumbnailRequestP& request);
@@ -58,6 +57,7 @@ class ThumbnailThread {
 	/// Abort all thumbnail requests for the given owner
 	void abort(void* owner);
 	/// Abort all computations
+	/** *must* be called at application exit */
 	void abortAll();
 	
   private:

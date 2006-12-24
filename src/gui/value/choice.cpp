@@ -66,7 +66,9 @@ DropDownChoiceList::DropDownChoiceList(Window* parent, bool is_submenu, ChoiceVa
 	, group(group)
 	, cve(cve)
 {
-	icon_size.width = 16;
+	icon_size.width  = 16;
+	icon_size.height = 16;
+	item_size.height = max(16., item_size.height);
 }
 
 size_t DropDownChoiceList::itemCount() const {
@@ -183,7 +185,9 @@ void DropDownChoiceList::generateThumbnailImages() {
 
 void DropDownChoiceList::onIdle(wxIdleEvent& ev) {
 	if (!isRoot()) return;
-	thumbnail_thread.done(&cve);
+	if (thumbnail_thread.done(&cve)) {
+		Refresh(false);
+	}
 }
 
 BEGIN_EVENT_TABLE(DropDownChoiceList, DropDownList)
@@ -201,6 +205,8 @@ ChoiceValueEditor::~ChoiceValueEditor() {
 }
 
 void ChoiceValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
+	//HACK TODO REMOVEME
+	thumbnail_thread.abortAll();
 	drop_down->onMouseInParent(ev, style().popup_style == POPUP_DROPDOWN_IN_PLACE && !nativeLook());
 }
 void ChoiceValueEditor::onChar(wxKeyEvent& ev) {

@@ -58,7 +58,6 @@ wxThread::ExitCode ThumbnailThreadWorker::Entry() {
 	while (true) {
 		do {
 			Sleep(1);
-			if (TestDestroy()) return 0;
 		} while (stop);
 		// get a request
 		{
@@ -71,9 +70,7 @@ wxThread::ExitCode ThumbnailThreadWorker::Entry() {
 			parent->open_requests.pop_front();
 		}
 		// perform request
-		if (TestDestroy()) return 0;
 		Image img = current->generate();
-		if (TestDestroy()) return 0;
 		// store in cache
 		if (img.Ok()) {
 			String filename = image_cache_dir() + safe_filename(current->cache_name) + _(".png");
@@ -106,10 +103,6 @@ ThumbnailThread::ThumbnailThread()
 	: completed(mutex)
 	, worker(nullptr)
 {}
-
-ThumbnailThread::~ThumbnailThread() {
-	abortAll();
-}
 
 void ThumbnailThread::request(const ThumbnailRequestP& request) {
 	assert(wxThread::IsMain());
@@ -172,7 +165,7 @@ bool ThumbnailThread::done(void* owner) {
 void ThumbnailThread::abort(void* owner) {
 	assert(wxThread::IsMain());
 	mutex.Lock();
-	if (worker && worker->current->owner == owner) {
+	if (worker && worker->current && worker->current->owner == owner) {
 		// a request for this owner is in progress, wait until it is done
 		worker->stop = true;
 		completed.Wait();
@@ -183,8 +176,8 @@ void ThumbnailThread::abort(void* owner) {
 	for (size_t i = 0 ; i < open_requests.size() ; ) {
 		if (open_requests[i]->owner == owner) {
 			// remove
-			open_requests.erase(open_requests.begin() + i, open_requests.begin() + i + 1);
 			request_names.erase(open_requests[i]);
+			open_requests.erase(open_requests.begin() + i, open_requests.begin() + i + 1);
 		} else {
 			++i;
 		}
@@ -193,8 +186,8 @@ void ThumbnailThread::abort(void* owner) {
 	for (size_t i = 0 ; i < closed_requests.size() ; ) {
 		if (closed_requests[i].first->owner == owner) {
 			// remove
-			closed_requests.erase(closed_requests.begin() + i, closed_requests.begin() + i + 1);
 			request_names.erase(closed_requests[i].first);
+			closed_requests.erase(closed_requests.begin() + i, closed_requests.begin() + i + 1);
 		} else {
 			++i;
 		}
@@ -208,10 +201,14 @@ void ThumbnailThread::abortAll() {
 	open_requests.clear();
 	closed_requests.clear();
 	request_names.clear();
-	if (worker) {
-		// a request is in progress, wait until it is done, killing the worker
+	// end worker
+	if (worker && worker->current) {
 		completed.Wait();
 	} else {
 		mutex.Unlock();
 	}
+	// There may still be a worker, but if there is, it has no current object, so it is
+	// in, before or after the stop loop. It can do nothing but end.
+	// An unfortunate side effect is that we might leak some memory (of the worker object),
+	// when the thread gets Kill()ed by wx.
 }

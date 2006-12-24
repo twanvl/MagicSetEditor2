@@ -17,6 +17,7 @@
 #include <gui/update_checker.hpp>
 #include <gui/set/window.hpp>
 #include <gui/symbol/window.hpp>
+#include <gui/thumbnail_thread.hpp>
 #include <wx/fs_inet.h>
 
 // ----------------------------------------------------------------------------- : Main function/class
@@ -73,6 +74,7 @@ bool MSE::OnInit() {
 // ----------------------------------------------------------------------------- : Exit
 
 int MSE::OnExit() {
+	thumbnail_thread.abortAll();
 	settings.write();
 	packages.destroy();
 	return 0;

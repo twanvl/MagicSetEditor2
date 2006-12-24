@@ -144,6 +144,8 @@ void resample_and_clip(const Image& img_in, Image& img_out, wxRect rect) {
 // fill an image with 100% transparent, except for the given rectangle
 void fill_transparent(Image& img, int dx, int dy, int w, int h) {
 	if (!img.HasAlpha()) img.InitAlpha();
+	memset(img.GetAlpha(), 0, img.GetWidth() * img.GetHeight());
+	/*/?
 	int iw = img.GetWidth(), ih = img.GetHeight();
 	Byte* data = img.GetAlpha();
 	// fill
@@ -160,6 +162,7 @@ void fill_transparent(Image& img, int dx, int dy, int w, int h) {
 	for (; y < ih ; ++y) {
 		for (int x = 0 ; x < iw ; ++x) *data++ = 0;
 	}
+	*/
 }
 
 void resample_preserve_aspect(const Image& img_in, Image& img_out) {
