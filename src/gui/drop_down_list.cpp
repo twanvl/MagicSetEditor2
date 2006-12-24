@@ -37,10 +37,8 @@ class DropDownHider : public wxEvtHandler {
 			// don't just use ev.Skip(), because this event handler will be removed by hiding,
 			// so there will be no next handler to skip to
 			wxEvtHandler* nh = GetNextHandler();
-			wxLogDebug(L"close to %p", nh);
 			list.hide(false);
 			if (nh) nh->ProcessEvent(ev);
-			wxLogDebug(L"/close to %p", nh);
 			return false;
 		} else {
 //			if (t !=10093 && t !=10098 && t !=10097 && t !=10099 && t !=10004 && t !=10062
@@ -80,6 +78,7 @@ DropDownList::DropDownList(Window* parent, bool is_submenu, ValueViewer* viewer)
 }
 
 DropDownList::~DropDownList() {
+	realHide(); // restore event handler before deleting it
 	delete hider;
 }
 
