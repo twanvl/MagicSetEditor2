@@ -51,6 +51,27 @@ void ChoiceThumbnailRequest::store(const Image& img) {
 		il->Add(wxBitmap(16,16),*wxBLACK);
 	}
 	if (img.Ok()) {
+		#ifdef __WXMSW__
+			// for some reason windows doesn't like completely transparent images if they do not have a mask
+			// HACK:
+			if (img.GetWidth() == 16 && img.GetHeight() == 16) {
+				// is the image empty?
+				bool empty = true;
+				int* b = (int*)img.GetAlpha();
+				int* e = b + 16*16/sizeof(int);
+				while (b != e) {
+					if (*b++) {
+						empty = false;
+						break;
+					}
+				}
+				// if so, use a mask instead
+				if (empty) {
+					const_cast<Image&>(img).ConvertAlphaToMask();
+				}
+			}
+			// Hack ends here
+		#endif
 		if (id == il->GetImageCount()) {
 			il->Add(img);
 		} else {
