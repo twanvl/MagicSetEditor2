@@ -31,10 +31,11 @@ class KeywordList : public wxListView {
 KeywordsPanel::KeywordsPanel(Window* parent, int id)
 	: SetWindowPanel(parent, id)
 {
-	/*wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
-		wxSizer* s2 = new wxBoxSizer(wxVERTICAL);
+	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
+	s->Add(new wxStaticText(this, wxID_ANY, _("Sorry, no keywords for now"),wxDefaultPosition,wxDefaultSize,wxALIGN_CENTER), 1, wxALIGN_CENTER); // TODO: Remove
+	/*	wxSizer* s2 = new wxBoxSizer(wxVERTICAL);
 			s2->Add(list_active,   1, wxEXPAND);
-			s2->Add(list_inactive, 1, wxEXPAND);
+			s2->Add(list_inactive, 1, wxEXPAND);*/
 	s->SetSizeHints(this);
-	SetSizer(s);*/
+	SetSizer(s);
 }
