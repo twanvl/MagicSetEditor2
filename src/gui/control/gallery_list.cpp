@@ -23,6 +23,7 @@ const int BORDER = 1; // margin between items
 GalleryList::GalleryList(Window* parent, int id, int direction)
 	: wxScrolledWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER | (direction == wxHORIZONTAL ? wxHSCROLL : wxVSCROLL) )
 	, direction(direction)
+	, selection(NO_SELECTION)
 {}
 
 void GalleryList::update() {
