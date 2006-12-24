@@ -48,6 +48,13 @@ double TextElements::minScale() const {
 	}
 	return m;
 }
+double TextElements::scaleStep() const {
+	double m = 1;
+	FOR_EACH_CONST(e, elements) {
+		m = min(m, e->scaleStep());
+	}
+	return m;
+}
 
 // Helper class for TextElements::fromString, to allow persistent formating state accross recusive calls
 struct TextElementsFromString {

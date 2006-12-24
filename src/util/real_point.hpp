@@ -40,29 +40,11 @@ class RealSize {
 		: width(s.GetWidth()), height(s.GetHeight())
 	{}
 	
-	/// Addition of two sizes
-/*	inline void operator += (const RealSize& s2) {
-		width  += s2.width;
-		height += s2.height;
-	}
-	/// Addition of two sizes
-	inline RealSize operator + (const RealSize& s2) const {
-		return RealSize(width + s2.width, height + s2.height);
-	}
-	/// Difference of two sizes
-	inline void operator -= (const RealSize& s2){
-		width  -= s2.width;
-		height -= s2.height;
-	}
-	/// Difference of two sizes
-	inline RealSize operator - (const RealSize& s2) const {
-		return RealSize(width - s2.width, height - s2.height);
-	}
-	/// Inversion of a size, inverts both components
+	/// Negation of a size, negates both components
 	inline RealSize operator - () const {
 		return RealSize(-width, -height);
 	}
-*/	
+	
 	/// Multiplying a size by a scalar r, multiplies both components
 	inline void operator *= (double r) {
 		width  *= r;

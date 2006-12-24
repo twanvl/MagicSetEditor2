@@ -64,30 +64,8 @@ class TextElement {
 	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const = 0;
 	/// Return the minimum scale factor allowed (starts at 1)
 	virtual double minScale() const = 0;
-/*
-	// draw the section <start...end)
-	// drawSeparators indicates what we should draw, separators or normal text
-	// h is the height of the current line
-	virtual void draw(RotatedDC& dc, UInt shrink, RealRect rect, size_t start, size_t end, DrawWhat draw) const = 0;
-	/// Returns the width and height of the character at charId
-	virtual RealSize charSize(RotatedDC& dc, double scale, size_t charId) const = 0;
-	/// May the text be broken after char_id?
-	virtual BreakAfter breakAfter(size_t char_id) const = 0;
-	// number of characters in this object
-	abstract size_t size() const;
-	// maximum shrink factor allowed
-	// shrink indicates by how much the thing to render should be shrunk, there is no indication
-	// what it means (probably pixels or points), but size(shrink = k+1) <= size(shrink = k) 
-	abstract UInt maxShrink() const;
-	// Size of an entire section
-	RealSize sectionSize(RotatedDC& dc, double scale, size_t start, size_t end) const;
-	RealSize for::sectionSize(RotatedDC& dc, double scale, size_t start, size_t end) const {
-		RealSize size;
-		for(i = start ; i < end ; ++i) {
-			size = addHorizontal(size, charSize(dc, scale, i));
-		}
-		return size;
-	}*/
+	/// Return the steps the scale factor should take
+	virtual double scaleStep() const = 0;
 };
 
 // ----------------------------------------------------------------------------- : TextElements
@@ -101,6 +79,8 @@ class TextElements : public vector<TextElementP> {
 	void getCharInfo(RotatedDC& dc, double scale, size_t start, size_t end, vector<CharInfo>& out) const;
 	/// Return the minimum scale factor allowed by all elements
 	double minScale() const;
+	/// Return the steps the scale factor should take
+	double scaleStep() const;
 	
 	/// The actual elements
 	/** They must be in order of positions and not overlap, i.e.
@@ -134,6 +114,7 @@ class FontTextElement : public SimpleTextElement {
 	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
 	virtual double minScale() const;
+	virtual double scaleStep() const;
   private:
 	FontP     font;
 	DrawWhat  draw_as;
@@ -151,6 +132,7 @@ class SymbolTextElement : public SimpleTextElement {
 	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
 	virtual double minScale() const;
+	virtual double scaleStep() const;
   private:
 	const SymbolFontRef& font; // owned by TextStyle
 	Context& ctx;
@@ -166,6 +148,7 @@ class CompoundTextElement : public TextElement {
 	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
 	virtual double minScale() const;
+	virtual double scaleStep() const;
 	
 	TextElements elements; ///< the elements
 };

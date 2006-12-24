@@ -304,15 +304,26 @@ void TextViewer::prepareElements(const String& text, const TextStyle& style, Con
 // ----------------------------------------------------------------------------- : Layout
 
 void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle& style, Context& ctx) {
-	// find character sizes
-	vector<CharInfo> chars;
 	// try to layout, at different scales
+	vector<CharInfo> chars;
 	scale = 1;
-//	double min_scale = elements.minScale();
-//	while
-	chars.clear();
-	elements.getCharInfo(dc, scale, 0, text.size(), chars);
-	prepareLinesScale(dc, chars, style, false);
+	double min_scale = elements.minScale();
+	double scale_step = max(0.1,elements.scaleStep());
+	while (true) {
+		double next_scale = scale - scale_step;
+		bool   last = next_scale < min_scale;
+		// fits?
+		chars.clear();
+		elements.getCharInfo(dc, scale, 0, text.size(), chars);
+		bool fits = prepareLinesScale(dc, chars, style, last);
+		if (fits && (lines.empty() || lines.back().bottom() <= dc.getInternalSize().height - style.padding_bottom)) {
+			break; // text fits in box
+		}
+		if (last) break;
+		// TODO: smarter iteration
+		scale = next_scale;
+	}
+	
 	// no text, find a dummy height for the single line we have
 	if (lines.size() == 1 && lines[0].width() < 0.0001) {
 		if (style.always_symbol && style.symbol_font.valid()) {
@@ -322,8 +333,10 @@ void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle
 			lines[0].line_height = dc.GetTextExtent(_(" ")).height;
 		}
 	}
+	
 	// align
 	alignLines(dc, chars, style);
+	
 	// HACK : fix empty first line before <line>, do this after align, so layout is not affected
 	if (lines.size() > 1 && lines[0].line_height == 0) {
 		dc.SetFont(style.font.font);
@@ -338,6 +351,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 	// first line
 	lines.clear();
 	Line line;
+	line.top = style.padding_top;
 	// size of the line so far
 	RealSize line_size(lineLeft(dc, style, 0), 0);
 	line.positions.push_back(line_size.width);
@@ -462,7 +476,9 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 		if (l.line_height) break; // not an empty line
 	}
 	// amount to shift all lines vertically
-	RealSize s = dc.getInternalSize();
+	RealSize s = addDiagonal(
+					dc.getInternalSize(),
+					-RealSize(style.padding_left+style.padding_right, style.padding_top + style.padding_bottom));
 	double vdelta = align_delta_y(style.alignment, s.height, height);
 	// align all lines
 	FOR_EACH(l, lines) {

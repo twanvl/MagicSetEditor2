@@ -51,3 +51,6 @@ void FontTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>&
 double FontTextElement::minScale() const {
 	return min(font->size, font->scale_down_to) / max(0.01, font->size);
 }
+double FontTextElement::scaleStep() const {
+	return 1. / max(font->size, 1.);
+}

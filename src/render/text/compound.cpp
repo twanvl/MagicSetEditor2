@@ -19,6 +19,9 @@ void CompoundTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharIn
 double CompoundTextElement::minScale() const {
 	return elements.minScale();
 }
+double CompoundTextElement::scaleStep() const {
+	return elements.scaleStep();
+}
 
 // ----------------------------------------------------------------------------- : AtomTextElement
 
