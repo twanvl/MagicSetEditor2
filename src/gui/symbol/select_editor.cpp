@@ -376,8 +376,8 @@ bool SymbolSelectEditor::onHandle(const Vector2D& mpos, int dx, int dy) {
 	       mp.y >= p.y - 4 && mp.y < p.y + 4;
 }
 bool SymbolSelectEditor::onAnyHandle(const Vector2D& mpos, int* dxOut, int* dyOut) {
-	for (int dx = -1 ; dx < 1 ; ++dx) {
-		for (int dy = -1 ; dy < 1 ; ++dy) {
+	for (int dx = -1 ; dx <= 1 ; ++dx) {
+		for (int dy = -1 ; dy <= 1 ; ++dy) {
 			if ((dx != 0 || dy != 0) && onHandle(mpos, dx, dy)) { // (0,0) == center, not a handle
 				*dxOut = dx;
 				*dyOut = dy;
