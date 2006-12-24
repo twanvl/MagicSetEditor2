@@ -126,9 +126,9 @@ class SimpleTextElement : public TextElement {
 /// A text element that uses a normal font
 class FontTextElement : public SimpleTextElement {
   public:
-	FontTextElement(const String& text, size_t start ,size_t end, const FontP& font, LineBreak break_style)
+	FontTextElement(const String& text, size_t start ,size_t end, const FontP& font, DrawWhat draw_as, LineBreak break_style)
 		: SimpleTextElement(text, start, end)
-		, font(font), break_style(break_style)
+		, font(font), draw_as(draw_as), break_style(break_style)
 	{}
 	
 	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;

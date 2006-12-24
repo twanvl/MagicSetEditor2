@@ -304,11 +304,14 @@ void TextViewer::prepareElements(const String& text, const TextStyle& style, Con
 // ----------------------------------------------------------------------------- : Layout
 
 void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle& style, Context& ctx) {
-	scale = 1;
 	// find character sizes
 	vector<CharInfo> chars;
+	// try to layout, at different scales
+	scale = 1;
+//	double min_scale = elements.minScale();
+//	while
+	chars.clear();
 	elements.getCharInfo(dc, scale, 0, text.size(), chars);
-	// try to layout
 	prepareLinesScale(dc, chars, style, false);
 	// no text, find a dummy height for the single line we have
 	if (lines.size() == 1 && lines[0].width() < 0.0001) {
@@ -321,6 +324,13 @@ void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle
 	}
 	// align
 	alignLines(dc, chars, style);
+	// HACK : fix empty first line before <line>, do this after align, so layout is not affected
+	if (lines.size() > 1 && lines[0].line_height == 0) {
+		dc.SetFont(style.font.font);
+		double h = dc.GetCharHeight();
+		lines[0].line_height =  h;
+		lines[0].top         -= h;
+	}
 }
 
 bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style, bool stop_if_too_long) {

@@ -24,5 +24,5 @@ void SymbolTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo
 }
 
 double SymbolTextElement::minScale() const {
-	return font.size / min(0.001, min(font.size, font.scale_down_to));
+	return min(font.size, font.scale_down_to) / max(0.01, font.size);
 }

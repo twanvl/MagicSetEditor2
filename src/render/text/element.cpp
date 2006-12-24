@@ -100,7 +100,10 @@ struct TextElementsFromString {
 					if (symbol > 0 && style.symbol_font.valid()) {
 						te.elements.push_back(new_shared5<SymbolTextElement>(text, pos, pos + 1, style.symbol_font, &ctx));
 					} else {
-						te.elements.push_back(new_shared5<FontTextElement>  (text, pos, pos + 1, style.font.make(bold > 0, italic > 0), line > 0 ? BREAK_LINE : BREAK_HARD));
+						te.elements.push_back(new_shared6<FontTextElement>  (text, pos, pos + 1,
+													style.font.make(bold > 0, italic > 0),
+													soft > 0 ? DRAW_ACTIVE : DRAW_NORMAL,
+													line > 0 ? BREAK_LINE : BREAK_HARD));
 					}
 				}
 				pos += 1;

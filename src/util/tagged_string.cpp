@@ -33,6 +33,10 @@ String untag_no_escape(const String& str) {
 	return ret;
 }
 
+String untag_hide_sep(const String& str) {
+	return untag(remove_tag_contents(str,_("<sep-soft")));
+}
+
 String escape(const String& str) {
 	String ret; ret.reserve(str.size());
 	FOR_EACH_CONST(c, str) {

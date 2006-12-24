@@ -12,17 +12,14 @@
 // ----------------------------------------------------------------------------- : FontTextElement
 
 void FontTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const {
+	if ((what & draw_as) != draw_as) return; // don't draw
 	dc.SetFont(font->font, font->size * scale);
-	
 	if (end != start && text.substr(end-1, 1) == _("\n")) end -= 1; // don't draw the newline character at the end
-/*	if ((draw & DRAW_NORMAL) != DRAW_NORMAL) {
-		// don't draw
-	if (what == DRAW_ACTIVE) {
+	if (draw_as == DRAW_ACTIVE) {
 		// we are drawing a separator
 		dc.SetTextForeground(font->separator_color);
-		dc.DrawText(text.substr(start, end-start), rect.position);
-	}
-	} else {*/
+		dc.DrawText(text.substr(start, end-start), rect.position());
+	} else {
 		// draw normally
 		// draw shadow
 		if (font->hasShadow()) {
@@ -32,7 +29,7 @@ void FontTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, co
 		// draw
 		dc.SetTextForeground(font->color);
 		dc.DrawText(text.substr(start, end - start), rect.position());
-//	}
+	}
 }
 
 void FontTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const {
@@ -52,5 +49,5 @@ void FontTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>&
 }
 
 double FontTextElement::minScale() const {
-	return 1; // TODO
+	return min(font->size, font->scale_down_to) / max(0.01, font->size);
 }

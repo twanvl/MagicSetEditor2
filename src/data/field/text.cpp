@@ -91,7 +91,7 @@ IMPLEMENT_REFLECTION(TextStyle) {
 // ----------------------------------------------------------------------------- : TextValue
 
 String TextValue::toString() const {
-	return untag(value());
+	return untag_hide_sep(value());
 }
 bool TextValue::update(Context& ctx) {
 	Value::update(ctx);
