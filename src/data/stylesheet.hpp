@@ -27,8 +27,6 @@ class StyleSheet : public Packaged {
 	StyleSheet();
 	
 	GameP game;						///< The game this stylesheet is made for
-	String full_name;				///< Name of this game, for menus etc.
-	String icon_filename;			///< Filename of icon to use in NewWindow
 	OptionalScript init_script;		///< Script of variables available to other scripts in this stylesheet
 	double card_width;				///< The width of a card in pixels
 	double card_height;				///< The height of a card in pixels
@@ -60,11 +58,8 @@ class StyleSheet : public Packaged {
 	
 	static String typeNameStatic();
 	virtual String typeName() const;
-	virtual String fullName() const;
-	virtual InputStreamP openIconFile();
 	
   protected:
-	virtual void validate(Version);
 	
 	DECLARE_REFLECTION();
 };

@@ -64,10 +64,7 @@ class Package {
 	const String& absoluteFilename() const;
 	/// The time this package was last modified
 	inline wxDateTime lastModified() const { return modified; }
-	
-	/// Get an input stream for the package icon, if there is any
-	virtual InputStreamP openIconFile();
-	
+		
 	/// Open a package, should only be called when the package is constructed using the default constructor!
 	/// @pre open not called before [TODO]
 	void open(const String& package);
@@ -187,6 +184,13 @@ class Packaged : public Package {
 	Packaged();
 	virtual ~Packaged() {}
 	
+	String short_name;		///< Short name of this package
+	String full_name;		///< Name of this package, for menus etc.
+	String icon_filename;	///< Filename of icon to use in package lists
+	
+	/// Get an input stream for the package icon, if there is any
+	InputStreamP openIconFile();
+	
 	/// Open a package, and read the data
 	void open(const String& package);
 	void save();
@@ -196,7 +200,7 @@ class Packaged : public Package {
 	/// filename of the data file, and extension of the package file
 	virtual String typeName() const = 0;
 	/// Can be overloaded to do validation after loading
-	virtual void validate(Version file_app_version) {}
+	virtual void validate(Version file_app_version);
 	
 	DECLARE_REFLECTION_VIRTUAL();
 };

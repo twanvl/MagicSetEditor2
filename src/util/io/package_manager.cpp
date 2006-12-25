@@ -26,10 +26,10 @@ class IncludePackage : public Packaged {
 String IncludePackage::typeName() const { return _("include"); }
 
 IMPLEMENT_REFLECTION(IncludePackage) {
+	REFLECT_BASE(Packaged);
 	if (tag.reading()) {
 		// ingore
-		String full_name, version;
-		REFLECT(full_name);
+		String version;
 		REFLECT(version);
 	}
 }

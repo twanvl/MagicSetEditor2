@@ -21,7 +21,7 @@ LocaleP Locale::byName(const String& name) {
 }
 
 IMPLEMENT_REFLECTION(Locale) {
-	REFLECT(full_name);
+	REFLECT_BASE(Packaged);
 	REFLECT_N("menu",   translations[LOCALE_CAT_MENU]);
 	REFLECT_N("help",   translations[LOCALE_CAT_HELP]);
 	REFLECT_N("tool",   translations[LOCALE_CAT_TOOL]);

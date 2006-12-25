@@ -12,7 +12,7 @@
 #include <util/prec.hpp>
 #include <gui/control/gallery_list.hpp>
 
-DECLARE_POINTER_TYPE(Package);
+DECLARE_POINTER_TYPE(Packaged);
 
 // ----------------------------------------------------------------------------- : PackageList
 
@@ -59,9 +59,9 @@ class PackageList : public GalleryList {
 	// Information about a package
 	struct PackageData {
 		PackageData() {}
-		PackageData(const PackageP& package, const Bitmap& image) : package(package), image(image) {}
-		PackageP package;
-		Bitmap   image;
+		PackageData(const PackagedP& package, const Bitmap& image) : package(package), image(image) {}
+		PackagedP package;
+		Bitmap    image;
 	};
 	/// The displayed packages
 	vector<PackageData> packages;

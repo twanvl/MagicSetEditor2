@@ -36,15 +36,6 @@ String StyleSheet::stylesheetName() const {
 String StyleSheet::typeNameStatic() { return _("style"); }
 String StyleSheet::typeName() const { return _("style"); }
 
-String StyleSheet::fullName() const { return full_name; }
-InputStreamP StyleSheet::openIconFile() {
-	if (!icon_filename.empty()) {
-		return openIn(icon_filename);
-	} else {
-		return game->openIconFile(); // use game icon by default
-	}
-}
-
 StyleP StyleSheet::styleFor(const FieldP& field) {
 	if (card_style.containsKey(field)) {
 		return card_style[field];
@@ -70,8 +61,7 @@ IMPLEMENT_REFLECTION(StyleSheet) {
 	tag.addAlias(300, _("extra style"),_("styling style"));
 	
 	REFLECT(game);
-	REFLECT(full_name);
-	REFLECT_N("icon",          icon_filename);
+	REFLECT_BASE(Packaged);
 	REFLECT(init_script);
 	REFLECT(card_width);
 	REFLECT(card_height);
@@ -88,11 +78,6 @@ IMPLEMENT_REFLECTION(StyleSheet) {
 	REFLECT(styling_fields);
 	if (tag.reading()) styling_style.init(styling_fields);
 	REFLECT(styling_style);
-}
-
-void StyleSheet::validate(Version) {
-	// a default for the full name
-	if (full_name.empty()) full_name = name();
 }
 
 

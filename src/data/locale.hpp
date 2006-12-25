@@ -29,8 +29,6 @@ class GameLocale {
 /// A collection of translations of messages
 class Locale : public Packaged {
   public:
-	/// Name of this locale
-	String full_name;
 	/// Translations of UI strings in each category
 	map<String,String> translations[LOCALE_CAT_MAX];
 	/// Translations of game specific texts, by game name

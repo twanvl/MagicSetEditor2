@@ -97,7 +97,7 @@
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="0"
 				PrecompiledHeaderThrough="util/prec.hpp"
 				PrecompiledHeaderFile=""
 				AssemblerListingLocation="$(OutDir)"

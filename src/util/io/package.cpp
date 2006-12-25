@@ -60,9 +60,6 @@ String Package::fullName() const {
 const String& Package::absoluteFilename() const {
 	return filename;
 }
-InputStreamP Package::openIconFile() {
-	return InputStreamP();
-}
 
 
 void Package::open(const String& n) {
@@ -408,12 +405,21 @@ String Package::toStandardName(const String& name) {
 
 // note: reflection must be declared before it is used
 IMPLEMENT_REFLECTION(Packaged) {
-	// default does nothing
+	REFLECT(short_name);
+	REFLECT(full_name);
+	REFLECT_N("icon", icon_filename);
 }
 
 Packaged::Packaged() {
 }
 
+InputStreamP Packaged::openIconFile() {
+	if (!icon_filename.empty()) {
+		return openIn(icon_filename);
+	} else {
+		return InputStreamP();
+	}
+}
 void Packaged::open(const String& package) {
 	Package::open(package);
 	Reader reader(openIn(typeName()), absoluteFilename() + _("/") + typeName());
@@ -435,4 +441,9 @@ void Packaged::saveAs(const String& package) {
 	writeFile(typeName(), *this);
 	referenceFile(typeName());
 	Package::saveAs(package);
+}
+
+void Packaged::validate(Version) {
+	// a default for the short name
+	if (short_name.empty()) short_name = name();
 }

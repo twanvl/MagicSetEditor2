@@ -33,8 +33,6 @@ class Game : public Packaged {
   public:
 	Game();
 	
-	String full_name;				///< Name of this game, for menus etc.
-	String icon_filename;			///< Filename of icon to use in NewWindow
 	OptionalScript init_script;		///< Script of variables available to other scripts in this game
 	vector<FieldP> set_fields;		///< Fields for set information
 	vector<FieldP> card_fields;		///< Fields on each card
@@ -57,8 +55,6 @@ class Game : public Packaged {
 	
 	static String typeNameStatic();
 	virtual String typeName() const;
-	virtual String fullName() const;
-	virtual InputStreamP openIconFile();
 	
   protected:
 	virtual void validate(Version);

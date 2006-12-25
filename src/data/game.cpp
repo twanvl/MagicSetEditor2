@@ -36,18 +36,8 @@ bool Game::isMagic() const {
 String Game::typeNameStatic() { return _("game"); }
 String Game::typeName() const { return _("game"); }
 
-String Game::fullName() const { return full_name; }
-InputStreamP Game::openIconFile() {
-	if (!icon_filename.empty()) {
-		return openIn(icon_filename);
-	} else {
-		return InputStreamP();
-	}
-}
-
 IMPLEMENT_REFLECTION(Game) {
-	REFLECT(full_name);
-	REFLECT_N("icon",          icon_filename);
+	REFLECT_BASE(Packaged);
 	REFLECT(init_script);
 	REFLECT(set_fields);
 	REFLECT(card_fields);
@@ -59,9 +49,8 @@ IMPLEMENT_REFLECTION(Game) {
 //	REFLECT(word_lists);
 }
 
-void Game::validate(Version) {
-	// a default for the full name
-	if (full_name.empty()) full_name = name();
+void Game::validate(Version v) {
+	Packaged::validate(v);
 	// automatic statistics dimensions
 	{
 		vector<StatsDimensionP> dims;
