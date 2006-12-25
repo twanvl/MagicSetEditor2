@@ -26,8 +26,8 @@ WelcomeWindow::WelcomeWindow()
 	SetIcon(wxIcon(_("ICON_APP")));
 	
 	// init controls
-	wxButton* new_set   = new HoverButtonExt(this, ID_FILE_NEW,    _("WELCOME_NEW"),  _BUTTON_("new set"),  _HELP_("new"));
-	wxButton* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,   _("WELCOME_OPEN"), _BUTTON_("open set"), _HELP_("open"));
+	wxButton* new_set   = new HoverButtonExt(this, ID_FILE_NEW,    _("WELCOME_NEW"),  _BUTTON_("new set"),  _HELP_("new set"));
+	wxButton* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,   _("WELCOME_OPEN"), _BUTTON_("open set"), _HELP_("open set"));
 	wxButton* open_last = 0;
 	if (!settings.recent_sets.empty()) {
 		wxFileName n(settings.recent_sets.front());
