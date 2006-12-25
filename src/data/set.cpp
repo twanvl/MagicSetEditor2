@@ -223,7 +223,7 @@ IndexMap<FieldP, ValueP>& Set::stylingDataFor(const StyleSheet& stylesheet) {
 		// we delayed the reading of the data, read it now
 		styling->data.init(stylesheet.styling_fields);
 		Reader reader(new_shared1<wxStringInputStream>(styling->unread_data), _("styling data of ") + stylesheet.stylesheetName());
-		reader.handle(styling->data);
+		reader.handle_greedy(styling->data);
 		styling->unread_data.clear();
 	}
 	return styling->data;

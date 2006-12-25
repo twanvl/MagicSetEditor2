@@ -14,6 +14,7 @@
 
 void ChoiceValueViewer::draw(RotatedDC& dc) {
 	drawFieldBorder(dc);
+	if (style().render_style & RENDER_HIDDEN) return;
 	if (value().value().empty()) return;
 	double margin = 0;
 	if (style().render_style & RENDER_IMAGE) {

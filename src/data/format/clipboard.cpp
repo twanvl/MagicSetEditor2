@@ -31,7 +31,7 @@ void deserialize_from_clipboard(T& object, Package& package, const String& data)
 	shared_ptr<wxStringInputStream> stream( new wxStringInputStream(data) );
 	Reader reader(stream, _("clipboard"));
 	WITH_DYNAMIC_ARG(clipboard_package, &package);
-		reader.handle(object);
+		reader.handle_greedy(object);
 }
 
 // ----------------------------------------------------------------------------- : CardDataObject

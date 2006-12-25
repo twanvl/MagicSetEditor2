@@ -62,11 +62,23 @@ class Reader {
 	void showWarnings();
 	
 	// --------------------------------------------------- : Handling objects
+	/// Handle an object that can read as much as it can eat
+	template <typename T>
+	void handle_greedy(T& object) {
+		do {
+//			UInt l = line_number;
+			handled = false;
+			handle(object);
+//			if (l == line_number && !handled) unknownKey(object);
+			if (!handled) unknownKey(object);
+		} while (indent >= expected_indent);
+	}
+	
 	/// Handle an object: read it if it's name matches
 	template <typename T>
 	void handle(const Char* name, T& object) {
 		if (enterBlock(name)) {
-			handle(object);
+			handle_greedy(object);
 			exitBlock();
 		}
 	}
@@ -100,6 +112,8 @@ class Reader {
 	String key, value;
 	/// A string spanning multiple lines
 	String multi_line_str;
+	/// Has the current line been handled?
+	bool handled;
 	/// Indentation of the last line we read
 	int indent;
 	/// Indentation of the block we are in
@@ -132,13 +146,16 @@ class Reader {
 	/// Reads the next line from the input, and stores it in line/key/value/indent
 	void readLine();
 	
+	/// Return the value on the current line
+	const String& getValue();
+	
 	/// No line was read, because nothing mathes the current key
 	/** Maybe the key is "include file" */
 	template <typename T>
 	void unknownKey(T& v) {
 		if (key == _("include file")) {
 			Reader reader(value);
-			reader.handle(v);
+			reader.handle_greedy(v);
 			moveNext();
 		} else {
 			unknownKey();
@@ -166,7 +183,7 @@ void Reader::handle(const Char* name, vector<T>& vector) {
 	String vectorKey = singular_form(name);
 	while (enterBlock(vectorKey)) {
 		vector.resize(vector.size() + 1);
-		handle(vector.back());
+		handle_greedy(vector.back());
 		update_index(vector.back(), vector.size() - 1); // update index for IndexMap
 		exitBlock();
 	}
@@ -187,20 +204,16 @@ void Reader::handle(map<String, V>& m) {
 		just_opened = true;
 		expected_indent += 1;
 		// now read the value
-		handle(m[key]);
+		handle_greedy(m[key]);
 		exitBlock();
 	}
 }
 
 template <typename K, typename V>
 void Reader::handle(IndexMap<K,V>& m) {
-	//do {
-	//	UInt l = line_number;
-		for (typename IndexMap<K,V>::iterator it = m.begin() ; it != m.end() ; ++it) {
-			handle(get_key_name(*it).c_str(), *it);
-		}
-	//	if (l == line_number) unknownKey(m);
-	//} while (indent >= expected_indent);
+	for (typename IndexMap<K,V>::iterator it = m.begin() ; it != m.end() ; ++it) {
+		handle(get_key_name(*it).c_str(), *it);
+	}
 }
 
 // ----------------------------------------------------------------------------- : Reflection
@@ -208,11 +221,7 @@ void Reader::handle(IndexMap<K,V>& m) {
 /// Implement reflection as used by Reader
 #define REFLECT_OBJECT_READER(Cls)								\
 	template<> void Reader::handle<Cls>(Cls& object) {			\
-		do {													\
-			UInt l = line_number;								\
-			object.reflect(*this);								\
-			if (l == line_number) unknownKey(object);			\
-		} while (indent >= expected_indent);					\
+		object.reflect(*this);									\
 	}															\
 	void Cls::reflect(Reader& reader) {							\
 		reflect_impl(reader);									\
@@ -223,7 +232,7 @@ void Reader::handle(IndexMap<K,V>& m) {
 /// Implement enum reflection as used by Reader
 #define REFLECT_ENUM_READER(Enum)								\
 	template<> void Reader::handle<Enum>(Enum& enum_) {			\
-		EnumReader reader(value);								\
+		EnumReader reader(getValue());							\
 		reflect_ ## Enum(enum_, reader);						\
 		if (!reader.isDone()) {									\
 			/* warning: unknown value */						\

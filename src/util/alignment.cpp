@@ -71,7 +71,7 @@ String to_string(Alignment align) {
 // we need custom io, because there can be both a horizontal and a vertical component
 
 template <> void Reader::handle(Alignment& align) {
-	align = from_string(value);
+	align = from_string(getValue());
 }
 template <> void Writer::handle(const Alignment& align) {
 	handle(to_string(align));

@@ -81,6 +81,7 @@ void Reader::exitBlock() {
 	while (indent > expected_indent) {
 		moveNext();
 	}
+	handled = true;
 }
 
 void Reader::moveNext() {
@@ -110,12 +111,12 @@ void Reader::readLine() {
 	}
 	// read key / value
 	size_t pos = line.find_first_of(_(':'), indent);
-	if (!pos || line.GetChar(indent) == _('#')) {
+	if (trim(line).empty() || line.GetChar(indent) == _('#')) {
 		// empty line or comment
 		key.clear();
 		return;
 	}
-	if (key.empty() && input->Eof()) {
+	if (input->Eof()) {
 		// end of file
 		indent = -1;
 		return;
@@ -147,9 +148,10 @@ void Reader::unknownKey() {
 
 // ----------------------------------------------------------------------------- : Handling basic types
 
-template <> void Reader::handle(String& s) {
+const String& Reader::getValue() {
+	handled = true;
 	if (!multi_line_str.empty()) {
-		s = multi_line_str;
+		return multi_line_str;
 	} else if (value.empty()) {
 		// a multiline string
 		bool first = true;
@@ -161,50 +163,54 @@ template <> void Reader::handle(String& s) {
 			multi_line_str += line.substr(expected_indent); // strip expected indent
 			readLine();
 		}
-		// moveNext(), but without emptying multiLineStr
+		// moveNext(), but without emptying multi_line_str
 		just_opened = false;
 		while (key.empty() && !input->Eof()) {
 			readLine();
 		}
-		s = multi_line_str;
+		return multi_line_str;
 	} else {
-		s = value;
+		return value;
 	}
+}
+
+template <> void Reader::handle(String& s) {
+	s = getValue();
 }
 template <> void Reader::handle(int& i) {
 	long l = 0;
-	value.ToLong(&l);
+	getValue().ToLong(&l);
 	i = l;
 }
 template <> void Reader::handle(unsigned int& i) {
 	long l = 0;
-	value.ToLong(&l);
+	getValue().ToLong(&l);
 	i = abs(l); // abs, because it will seem strange if -1 comes out as MAX_INT
 }
 template <> void Reader::handle(double& d) {
-	value.ToDouble(&d);
+	getValue().ToDouble(&d);
 }
 template <> void Reader::handle(bool& b) {
-	b = (value==_("true") || value==_("1") || value==_("yes"));
+	b = (getValue()==_("true") || getValue()==_("1") || getValue()==_("yes"));
 }
 // ----------------------------------------------------------------------------- : Handling less basic util types
 
 template <> void Reader::handle(Vector2D& vec) {
-	if (!wxSscanf(value.c_str(), _("(%lf,%lf)"), &vec.x, &vec.y)) {
+	if (!wxSscanf(getValue().c_str(), _("(%lf,%lf)"), &vec.x, &vec.y)) {
 		throw ParseError(_("Expected (x,y)"));
 	}
 }
 
 template <> void Reader::handle(Color& col) {
 	UInt r,g,b;
-	if (wxSscanf(value.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
+	if (wxSscanf(getValue().c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
 		col.Set(r, g, b);
 	}
 }
 
 template <> void Reader::handle(FileName& f) {
 	if (clipboard_package()) {
-		String str; handle(str);
+		String str = getValue();
 		if (!str.empty()) {
 			// copy file into current package
 			try {

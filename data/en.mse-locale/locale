@@ -1,7 +1,7 @@
 ﻿full name: English
 
 ############################################################## Menu items
-menu
+menu:
 	file:			&File
 	new set:			&New...	Ctrl+N
 	open set:			&Open...	Ctrl+O

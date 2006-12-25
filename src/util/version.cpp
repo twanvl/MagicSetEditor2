@@ -29,7 +29,7 @@ Version Version::fromString(const String& version) {
 
 
 template <> void Reader::handle(Version& v) {
-	v = Version::fromString(value);
+	v = Version::fromString(getValue());
 }
 template <> void Writer::handle(const Version& v) {
 	handle(v.toString());

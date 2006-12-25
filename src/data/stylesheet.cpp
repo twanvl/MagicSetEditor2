@@ -87,7 +87,7 @@ void Reader::handle(StyleSheetP& stylesheet) {
 	if (!game_for_reading()) {
 		throw InternalError(_("game_for_reading not set"));
 	}
-	stylesheet = StyleSheet::byGameAndName(*game_for_reading(), value);
+	stylesheet = StyleSheet::byGameAndName(*game_for_reading(), getValue());
 }
 void Writer::handle(const StyleSheetP& stylesheet) {
 	if (stylesheet) handle(stylesheet->stylesheetName());

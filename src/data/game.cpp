@@ -76,7 +76,7 @@ void addStatsDimensionsForFields();
 // special behaviour of reading/writing GamePs: only read/write the name
 
 void Reader::handle(GameP& game) {
-	game = Game::byName(value);
+	game = Game::byName(getValue());
 }
 void Writer::handle(const GameP& game) {
 	if (game) handle(game->name());

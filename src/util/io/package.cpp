@@ -424,7 +424,7 @@ void Packaged::open(const String& package) {
 	Package::open(package);
 	Reader reader(openIn(typeName()), absoluteFilename() + _("/") + typeName());
 	try {
-		reader.handle(*this);
+		reader.handle_greedy(*this);
 		validate(reader.file_app_version);
 	} catch (const ParseError& err) {
 		throw FileParseError(err.what(), absoluteFilename() + _("/") + typeName()); // more detailed message

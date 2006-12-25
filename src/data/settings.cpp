@@ -170,7 +170,7 @@ void Settings::read() {
 		shared_ptr<wxFileInputStream> file = new_shared1<wxFileInputStream>(filename);
 		if (!file->Ok()) return; // failure is not an error
 		Reader reader(file, filename);
-		reader.handle(*this);
+		reader.handle_greedy(*this);
 	}
 }
 

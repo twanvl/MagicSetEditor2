@@ -117,7 +117,7 @@ class Package {
 	void readFile(const String& file, T& obj) {
 		Reader reader(openIn(file), absoluteFilename() + _("/") + file);
 		try {
-			reader.handle(obj);
+			reader.handle_greedy(obj);
 		} catch (const ParseError& err) {
 			throw FileParseError(err.what(), absoluteFilename() + _("/") + file); // more detailed message
 		}

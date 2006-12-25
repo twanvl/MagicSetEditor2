@@ -174,6 +174,7 @@ struct CompareTop {
 };
 size_t TextViewer::indexAt(const RealPoint& pos) const {
 	// 1. find the line
+	if (lines.empty()) return 0;
 	vector<Line>::const_iterator l = lower_bound(lines.begin(), lines.end(), pos.y, CompareTop());
 	if (l != lines.begin()) l--;
 	assert(l != lines.end());

@@ -495,7 +495,7 @@ SCRIPT_FUNCTION_DEP(combined_editor) {
 		pos = value.find(_("<sep"));
 	}
 	value_parts.push_back(value);
-	if (value_parts.size() < values.size()) value_parts.resize(values.size());
+	value_parts.resize(values.size()); // TODO: what if there are more value_parts than values?
 	// update the values if our input value is newer?
 	Age new_value_update = last_update_age();
 	FOR_EACH_2(v, values, nv, value_parts) {
