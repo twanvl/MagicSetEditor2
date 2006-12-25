@@ -449,7 +449,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			Token next = input.peek(1);
 			if (next == TOK_RPAREN || next == TOK_EOF) {
 				// allow ; at end of expression without errors
-				return;
+				break;
 			}
 			script.addInstruction(I_POP); // discard result of first expression
 			parseOper(input, script, PREC_SET);
