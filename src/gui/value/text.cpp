@@ -563,7 +563,7 @@ size_t TextValueEditor::prevCharBoundry(size_t pos) const {
 	return max(0, (int)pos - 1);
 }
 size_t TextValueEditor::nextCharBoundry(size_t pos) const {
-	return pos + 1;
+	return min(index_to_cursor(value().value(), String::npos), pos + 1);
 }
 size_t TextValueEditor::prevWordBoundry(size_t pos_i) const {
 	const String& val = value().value();

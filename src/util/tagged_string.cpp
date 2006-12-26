@@ -167,38 +167,41 @@ String anti_tag(const String& tag) {
 
 size_t index_to_cursor(const String& str, size_t index, Movement dir) {
 	size_t cursor = 0;
-	size_t start = 0, end = 0;
 	index = min(index, str.size());
 	// find the range [start...end) with the same cursor value, that contains index
-	// after the loop, cursor corresponds to index end
-	for (size_t i = 0 ; i < str.size() ; ) {
+	// after the loop, 'cursor' corresponds to the index i/end
+	for (size_t i = 0 ; i < str.size() ;) {
 		Char c = str.GetChar(i);
 		bool has_width = true;
 		if (c == _('<')) {
 			// a tag
 			if (is_substr(str, i, _("<atom")) || is_substr(str, i, _("<sep"))) {
 				// skip tag contents, tag counts as a single 'character'
-				i = skip_tag(str, match_close_tag(str, i));
+				size_t before = i;
+				size_t after = skip_tag(str, match_close_tag(str, i));
+				if (index > before && index < after) {
+					// index is inside an atom, determine on which side we want the cursor
+					if (dir == MOVE_RIGHT) {
+						return cursor + 1;
+					} else if (dir == MOVE_MID) {
+						// take the closest side
+						return cursor + ((int)(after - index) < (int)(index - before));
+					}
+				}
+				i = after;
 			} else {
 				i = skip_tag(str, i);
-				end = i;
 				has_width = false;
 			}
 		} else {
 			i++;
 		}
+		if (i > index) break;
 		if (has_width) {
 			cursor++;
-			start = end;
-			end   = i;
-			if (end > index) break;
 		}
 	}
-	if (cursor == 0)       return 0;
-	if (dir == MOVE_LEFT)  return cursor - 1;
-	if (dir == MOVE_RIGHT) return cursor - (start == index);
-	// which is nearer? start or end?
-	return cursor - ((int)(index - start) <= (int)(end - index));
+	return cursor;
 }
 
 void cursor_to_index_range(const String& str, size_t cursor, size_t& start, size_t& end) {
@@ -227,6 +230,7 @@ void cursor_to_index_range(const String& str, size_t cursor, size_t& start, size
 	}
 	end = min(i, str.size());
 	if (cur < cursor) start = end = str.size();
+	if (end <= start) end = start + 1;
 }
 
 size_t cursor_to_index(const String& str, size_t cursor, Movement dir) {
