@@ -57,17 +57,33 @@ String tr(LocaleCategory cat, const String& key);
 #define _ERROR_(s)	tr(LOCALE_CAT_ERROR, _(s))
 
 /// A localized string for menus/toolbar buttons, with 1 argument (printf style)
-#define _MENU_1_(s,a)		String::Format(tr(LOCALE_CAT_MENU,  _(s)), a)
+#define _MENU_1_(s,a)		format_string(tr(LOCALE_CAT_MENU,  _(s)), a)
 
 /// A localized string for tooltip text, with 1 argument (printf style)
-#define _TOOL_1_(s,a)		String::Format(tr(LOCALE_CAT_TOOL,  _(s)), a)
+#define _TOOL_1_(s,a)		format_string(tr(LOCALE_CAT_TOOL,  _(s)), a)
 
 /// A localized string for error messages, with 1 argument (printf style)
-#define _ERROR_1_(s,a)		String::Format(tr(LOCALE_CAT_ERROR, _(s)), a)
+#define _ERROR_1_(s,a)		format_string(tr(LOCALE_CAT_ERROR, _(s)), a)
 /// A localized string for error messages, with 2 argument (printf style)
-#define _ERROR_2_(s,a,b)	String::Format(tr(LOCALE_CAT_ERROR, _(s)), a, b)
+#define _ERROR_2_(s,a,b)	format_string(tr(LOCALE_CAT_ERROR, _(s)), a, b)
 /// A localized string for error messages, with 3 argument (printf style)
-#define _ERROR_3_(s,a,b,c)	String::Format(tr(LOCALE_CAT_ERROR, _(s)), a, b, c)
+#define _ERROR_3_(s,a,b,c)	format_string(tr(LOCALE_CAT_ERROR, _(s)), a, b, c)
+
+/// Format a string
+/** Equivalent to sprintf / String::Format, but allows strings to be passed as arguments (gcc)
+ */
+inline String format_string(const String& format, ...) {
+	va_list args;
+	va_start(args, format);
+	return String::Format(format, args);
+	va_end(args);
+}
+inline String format_string(const String& format, const String& a0) {
+	return format_string(format, a0.c_str());
+}
+inline String format_string(const String& format, const String& a0, const String& a1) {
+	return format_string(format, a0.c_str(), a1.c_str());
+}
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

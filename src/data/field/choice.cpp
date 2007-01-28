@@ -50,7 +50,7 @@ ChoiceField::Choice::Choice()
 	: first_id(0)
 {}
 ChoiceField::Choice::Choice(const String& name)
-	: first_id(0), name(name)
+	: name(name), first_id(0)
 {}
 
 
@@ -163,9 +163,9 @@ ChoiceStyle::ChoiceStyle(const ChoiceFieldP& field)
 	: Style(field)
 	, popup_style(POPUP_DROPDOWN)
 	, render_style(RENDER_TEXT)
+	, colors_card_list(false)
 	, combine(COMBINE_NORMAL)
 	, alignment(ALIGN_STRETCH)
-	, colors_card_list(false)
 	, thumbnails(nullptr)
 {}
 

@@ -11,9 +11,9 @@
 // ----------------------------------------------------------------------------- : Color utility functions
 
 Color lerp(const Color& a, const Color& b, double t) {
-	return Color(a.Red()   + (b.Red()   - a.Red()  ) * t,
-	             a.Green() + (b.Green() - a.Green()) * t,
-	             a.Blue()  + (b.Blue()  - a.Blue() ) * t);
+	return Color(static_cast<int>( a.Red()   + (b.Red()   - a.Red()  ) * t ),
+	             static_cast<int>( a.Green() + (b.Green() - a.Green()) * t ),
+	             static_cast<int>( a.Blue()  + (b.Blue()  - a.Blue() ) * t ));
 }
 
 
@@ -51,8 +51,8 @@ Color saturate(const Color& c, double amount) {
 	int r = c.Red(), g = c.Green(), b = c.Blue();
 	double l = (r + g + b) / 3;
 	return Color(
-		col((r - amount * l) / (1 - amount)),
-		col((g - amount * l) / (1 - amount)),
-		col((b - amount * l) / (1 - amount))
+		col(static_cast<int>( (r - amount * l) / (1 - amount) )),
+		col(static_cast<int>( (g - amount * l) / (1 - amount) )),
+		col(static_cast<int>( (b - amount * l) / (1 - amount) ))
 	);
 }

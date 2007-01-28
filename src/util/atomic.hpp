@@ -64,6 +64,10 @@
 	class AtomicInt {
 	  public:
 		AtomicInt(AtomicIntEquiv v) : v(v) {}
+		AtomicInt(const AtomicInt& i) {
+			wxCriticalSectionLocker lock(i.cs);
+			v = i.v;
+		}
 		inline operator AtomicIntEquiv() const {
 			return v;
 		}
@@ -78,8 +82,8 @@
 			return --v;
 		}
 	  private:
-		AtomicIntEquiv    v;  ///< The value
-		wxCriticalSection cs; ///< Critical section protecting v
+		AtomicIntEquiv            v;  ///< The value
+		mutable wxCriticalSection cs; ///< Critical section protecting v
 	};
 	
 #endif

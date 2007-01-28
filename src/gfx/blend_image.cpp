@@ -37,9 +37,9 @@ void linear_blend(Image& img1, const Image& img2, double x1,double y1, double x2
 	//   d = a * (w^2 x1 dx + h^2 y1 dy)
 	if (x1==x2 && y1==y2) throw Error(_ERROR_("coordinates for blending overlap"));
 	double a = fixed / (sqr(width) * sqr(x1-x2)  +  sqr(height) * sqr(y1-y2));
-	int xm = (x2 - x1) * width  * a;
-	int ym = (y2 - y1) * height * a;
-	int d  = - (x1 * width * xm + y1 * width * ym);
+	int xm = to_int( (x2 - x1) * width  * a );
+	int ym = to_int( (y2 - y1) * height * a );
+	int d  = to_int( - (x1 * width * xm + y1 * width * ym) );
 	
 	Byte *data1 = img1.GetData(), *data2 = img2.GetData();
 	// blend pixels

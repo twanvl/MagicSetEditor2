@@ -88,10 +88,10 @@ void downsample_to_alpha(Image& img_in, Image& img_out) {
 //  (wc,hc) = the corner where drawing should begin, (0,0) for top-left, (1,1) for bottom-right
 void draw_resampled_text(DC& dc, const RealRect& rect, int wc, int hc, int angle, const String& text) {
 	// enlarge slightly
-	int w = rect.width + 1, h = rect.height + 1;
+	int w = static_cast<int>(rect.width) + 1, h = static_cast<int>(rect.height) + 1;
 	// determine sub-pixel position
-	int xi = rect.x, yi = rect.y;
-	int xsub = text_scaling * (rect.x - xi), ysub = text_scaling * (rect.y - yi);
+	int xi = static_cast<int>(rect.x), yi = static_cast<int>(rect.y);
+	int xsub = static_cast<int>(text_scaling * (rect.x - xi)), ysub = static_cast<int>(text_scaling * (rect.y - yi));
 	// draw text
 	Bitmap buffer(w * text_scaling, h * text_scaling, 24); // should be initialized to black
 	wxMemoryDC mdc;
@@ -109,6 +109,6 @@ void draw_resampled_text(DC& dc, const RealRect& rect, int wc, int hc, int angle
 	fill_image(img_small, dc.GetTextForeground());
 	downsample_to_alpha(img_large, img_small);
 	// step 3. draw to dc
-	dc.DrawBitmap(img_small, xi + wc * (rect.width - w), yi + hc * (rect.height - h));
+	dc.DrawBitmap(img_small, xi + static_cast<int>(wc * (rect.width - w)), yi + static_cast<int>(hc * (rect.height - h)));
 }
 

@@ -81,7 +81,7 @@ void StatCategoryList::drawItem(DC& dc, int x, int y, size_t item, bool selected
 	RealSize size = RealSize(w,h);
 	RealPoint pos = align_in_rect(ALIGN_MIDDLE_LEFT, size, rect);
 //	draw_resampled_text(dc, RealRect(pos, size), 0, 0, 0, str);
-	dc.DrawText(str, pos.x, pos.y);
+	dc.DrawText(str, (int)pos.x, (int)pos.y);
 }
 
 // ----------------------------------------------------------------------------- : StatsPanel
@@ -149,7 +149,7 @@ class StatsFilter : public CardListFilter {
 	virtual bool keep(const CardP& card) {
 		Context& ctx = set.getContext(card);
 		FOR_EACH(v, values) {
-			if (*v.first->script.invoke(ctx) != v.second) return false;
+			if ((String)*v.first->script.invoke(ctx) != v.second) return false;
 		}
 		return true;
 	}

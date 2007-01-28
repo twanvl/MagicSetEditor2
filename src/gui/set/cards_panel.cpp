@@ -90,9 +90,9 @@ void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 		menuCard->AppendSeparator();
 		IconMenu* menuRotate = new IconMenu();
 			menuRotate->Append(ID_CARD_ROTATE_0,		_("TOOL_CARD_ROTATE_0"),	_("&Normal"),							_("Display the card with the right side up"),										wxITEM_CHECK);
-			menuRotate->Append(ID_CARD_ROTATE_270,		_("TOOL_CARD_ROTATE_270"),	_("Rotated 90° &Clockwise"),			_("Display the card rotated clockwise"),											wxITEM_CHECK);
-			menuRotate->Append(ID_CARD_ROTATE_90,		_("TOOL_CARD_ROTATE_90"),	_("Rotated 90° C&ounter Clockwise"),	_("Display the card rotated counter-clockwise (anti-clockwise for the British)"),	wxITEM_CHECK);
-			menuRotate->Append(ID_CARD_ROTATE_180,		_("TOOL_CARD_ROTATE_180"),	_("Rotated 180°, &Up Side Down"),		_("Display the card up side down"),													wxITEM_CHECK);
+			menuRotate->Append(ID_CARD_ROTATE_270,		_("TOOL_CARD_ROTATE_270"),	_("Rotated 90 &Clockwise"),			_("Display the card rotated clockwise"),											wxITEM_CHECK);
+			menuRotate->Append(ID_CARD_ROTATE_90,		_("TOOL_CARD_ROTATE_90"),	_("Rotated 90 C&ounter Clockwise"),	_("Display the card rotated counter-clockwise (anti-clockwise for the British)"),	wxITEM_CHECK);
+			menuRotate->Append(ID_CARD_ROTATE_180,		_("TOOL_CARD_ROTATE_180"),	_("Rotated 180, &Up Side Down"),		_("Display the card up side down"),													wxITEM_CHECK);
 		menuCard->Append(wxID_ANY,			_("TOOL_CARD_ROTATE"),	_("&Orientation"),					_("Orientation of the card display"),		wxITEM_NORMAL, menuRotate);
 		menuCard->AppendSeparator();
 		// This probably belongs in the window menu, but there we can't remove the separator once it is added

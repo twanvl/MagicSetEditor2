@@ -58,10 +58,10 @@ class Defaultable {
 	inline bool operator != (const Defaultable& that) const { return value != that.value; }
 	
   private:
-	/// Is this value in the default state?
-	bool is_default;
 	/// The value
 	T value;
+	/// Is this value in the default state?
+	bool is_default;
 	
 	friend class Reader;
 	friend class Writer;

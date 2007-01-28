@@ -46,8 +46,8 @@ class GraphAxis {
 	GraphAxis(const String& name, bool auto_color = true, bool numeric = false)
 		: name(name)
 		, auto_color(auto_color)
-		, max(0)
 		, numeric(numeric)
+		, max(0)
 	{}
 	
 	String             name;		///< Name/label of this axis
@@ -91,6 +91,7 @@ class GraphData {
 /** It is rendered into a sub-rectangle of the screen */
 class Graph {
   public:
+	virtual ~Graph() {}
 	/// Draw this graph, filling the internalRect() of the dc.
 	virtual void draw(RotatedDC& dc, const vector<int>& current) const = 0;
 	/// Find the item at the given position, the rectangle gives the screen size
