@@ -13,6 +13,7 @@
 #include <util/reflect.hpp>
 #include <util/action_stack.hpp>
 #include <util/io/package.hpp>
+#include <data/field.hpp> // for Set::value
 #include <boost/scoped_ptr.hpp>
 
 DECLARE_POINTER_TYPE(Card);
@@ -131,7 +132,7 @@ class SetView : public ActionListener {
   public:
 	SetView();
 	~SetView();
-  
+	
 	/// Get the set that is currently being viewed
 	inline SetP getSet() { return set; }
 	/// Change the set that is being viewed

@@ -15,6 +15,7 @@
 #include <queue>
 
 DECLARE_POINTER_TYPE(ThumbnailRequest);
+class ThumbnailThreadWorker;
 
 // ----------------------------------------------------------------------------- : ThumbnailRequest
 
@@ -23,6 +24,8 @@ class ThumbnailRequest {
   public:
 	ThumbnailRequest(void* owner, const String& cache_name, const wxDateTime& modified)
 		: owner(owner), cache_name(cache_name), modified(modified) {}
+	
+	virtual ~ThumbnailRequest() {}
 	
 	/// Generate the thumbnail, called in another thread
 	virtual Image generate() = 0;
@@ -66,7 +69,7 @@ class ThumbnailThread {
 	
 	deque<ThumbnailRequestP>                open_requests;		///< Requests on which work hasn't finished
 	vector<pair<ThumbnailRequestP,Image> >  closed_requests;	///< Requests for which work is completed
-	set<ThumbnailRequestP>                  request_names;      ///< Requests that haven't been stored yet, to prevent duplicates
+	set<ThumbnailRequestP>                  request_names;		///< Requests that haven't been stored yet, to prevent duplicates
 	friend class ThumbnailThreadWorker;
 	ThumbnailThreadWorker* worker;								///< The worker thread. invariant: no requests ==> worker==nullptr
 };

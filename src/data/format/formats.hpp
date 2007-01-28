@@ -22,6 +22,7 @@ DECLARE_POINTER_TYPE(FileFormat);
 /// A filter for a specific file format
 class FileFormat {
   public:
+	virtual ~FileFormat() {}
 	/// File extension used by this file format
 	virtual String extension() = 0;
 	/// Name of the filter

@@ -36,7 +36,7 @@ class Error {
 class InternalError : public Error {
   public:
 	inline InternalError(const String& str)
-		: Error(_ERROR_1_("internal error",str))
+		: Error(_ERROR_1_("internal error", str.c_str()))
 	{}
 };
 
@@ -52,7 +52,7 @@ class PackageError : public Error {
 class FileNotFoundError : public PackageError {
   public:
 	inline FileNotFoundError(const String& file, const String& package)
-		: PackageError(_ERROR_2_("file not found",file,package))
+		: PackageError(_ERROR_2_("file not found", file.c_str(), package.c_str()))
 	{}
 };
 
@@ -68,7 +68,7 @@ class ParseError : public Error {
 class FileParseError : public ParseError {
   public:
 	inline FileParseError(const String& err, const String& file) :
-		ParseError(_ERROR_2_("file parse error",file,err))
+		ParseError(_ERROR_2_("file parse error", file.c_str(), err.c_str()))
 	{}
 };
 

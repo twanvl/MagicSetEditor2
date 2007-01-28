@@ -11,17 +11,7 @@
 
 #include <util/prec.hpp>
 #include <util/dynamic_arg.hpp>
-
-#ifdef _MSC_VER
-	extern "C" {
-		LONG  __cdecl _InterlockedIncrement(LONG volatile *Addend);
-		LONG  __cdecl _InterlockedDecrement(LONG volatile *Addend);
-	}
-	#pragma intrinsic (_InterlockedIncrement)
-	#define InterlockedIncrement _InterlockedIncrement
-	#pragma intrinsic (_InterlockedDecrement)
-	#define InterlockedDecrement _InterlockedDecrement
-#endif
+#include <util/atomic.hpp>
 
 // ----------------------------------------------------------------------------- : Age
 
@@ -33,24 +23,24 @@ class Age {
 	Age() {
 		update();
 	}
-	Age(LONG age) : age(age) {}
+	Age(AtomicIntEquiv age) : age(age) {}
 	
 	/// Update the age to become the newest one
 	inline void update() {
-		age = InterlockedIncrement(&new_age);
+		age = ++new_age;
 	}
 	
 	/// Compare two ages, smaller means earlier
 	inline bool operator < (Age a) const { return age < a.age; }
 	
 	/// A number corresponding to the age
-	inline LONG get() const { return age; }
+	inline AtomicIntEquiv get() const { return age; }
 	
   private:
 	/// This age
-	LONG age;
+	AtomicIntEquiv age;
 	/// Global age counter, value of the last age created
-	static volatile LONG new_age;
+	static AtomicInt new_age;
 };
 
 
@@ -60,7 +50,7 @@ class Age {
  *  if last_update_age >  0 they return whether the image is still up to date
  *  if last_update_age == 0 they generate the image
  */
-DECLARE_DYNAMIC_ARG  (long, last_update_age);
+DECLARE_DYNAMIC_ARG  (AtomicIntEquiv, last_update_age);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

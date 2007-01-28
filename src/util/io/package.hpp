@@ -11,6 +11,7 @@
 
 #include <util/reflect.hpp>
 #include <util/dynamic_arg.hpp>
+#include <util/error.hpp>
 
 class Package;
 class wxFileInputStream;

@@ -21,6 +21,8 @@
 #ifdef __GNUC__
 	// GCC has a buildin typeof function, so it doesn't need (as much) hacks
 	#define DECLARE_TYPEOF(T)
+	#define DECLARE_TYPEOF_NO_REV(T)
+	#define DECLARE_TYPEOF_CONST(T)
 	#define DECLARE_TYPEOF_COLLECTION(T)
 	
 	#define TYPEOF(Value)      __typeof(Value)

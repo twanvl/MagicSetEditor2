@@ -25,6 +25,7 @@
 // Wx headers
 #include <wx/setup.h>
 #include <wx/wxprec.h>
+#include <wx/wx.h>
 #include <wx/image.h>
 #include <wx/datetime.h>
 

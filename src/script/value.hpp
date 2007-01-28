@@ -15,17 +15,6 @@
 class Context;
 class Dependency;
 
-#ifdef _MSC_VER
-	extern "C" {
-		LONG  __cdecl _InterlockedIncrement(LONG volatile *Addend);
-		LONG  __cdecl _InterlockedDecrement(LONG volatile *Addend);
-	}
-	#pragma intrinsic (_InterlockedIncrement)
-	#define InterlockedIncrement _InterlockedIncrement
-	#pragma intrinsic (_InterlockedDecrement)
-	#define InterlockedDecrement _InterlockedDecrement
-#endif
-
 // ----------------------------------------------------------------------------- : ScriptValue
 
 DECLARE_INTRUSIVE_POINTER_TYPE(ScriptValue);
@@ -46,7 +35,7 @@ enum ScriptType
 
 /// A value that can be handled by the scripting engine.
 /// Actual values are derived types
-class ScriptValue {
+class ScriptValue : public IntrusivePtrBase {
   public:
 	inline ScriptValue()
 		#ifdef USE_INTRUSIVE_PTR
@@ -87,33 +76,7 @@ class ScriptValue {
 	virtual ScriptValueP next();
 	/// Return the number of items in this value (assuming it is a collection)
 	virtual int itemCount() const;
-	
-	
-  protected:
-	/// Delete this object
-	virtual void destroy() {
-		delete this;
-	}
-#ifdef USE_INTRUSIVE_PTR
-  private:
-	volatile LONG refCount;
-	friend void intrusive_ptr_add_ref(ScriptValue*);
-	friend void intrusive_ptr_release(ScriptValue*);
-#endif
 };
-
-#ifdef USE_INTRUSIVE_PTR
-	inline void intrusive_ptr_add_ref(ScriptValue* p) {
-		//p->refCount += 1;
-		InterlockedIncrement(&p->refCount);
-	}
-	inline void intrusive_ptr_release(ScriptValue* p) {
-		if (InterlockedDecrement(&p->refCount) == 0) {
-		//if (--p->refCount == 0) {
-			p->destroy();
-		}
-	}
-#endif
 
 extern ScriptValueP script_nil;   ///< The preallocated nil value
 extern ScriptValueP script_true;  ///< The preallocated true value
@@ -181,7 +144,7 @@ class ScriptCollection : public ScriptValue {
 
 template <typename V>
 ScriptValueP get_member(const map<String,V>& m, const String& name) {
-	map<String,V>::const_iterator it = m.find(name);
+	typename map<String,V>::const_iterator it = m.find(name);
 	if (it != m.end()) {
 		return toScript(it->second);
 	} else {
@@ -191,7 +154,7 @@ ScriptValueP get_member(const map<String,V>& m, const String& name) {
 
 template <typename K, typename V>
 ScriptValueP get_member(const IndexMap<K,V>& m, const String& name) {
-	IndexMap<K,V>::const_iterator it = m.find(name);
+	typename IndexMap<K,V>::const_iterator it = m.find(name);
 	if (it != m.end()) {
 		return toScript(*it);
 	} else {

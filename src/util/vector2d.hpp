@@ -18,7 +18,7 @@
 /** Intentionally uses slightly less then 0.5, to give a more consistent result
  *  when for instance something like "x/2" is used. */
 inline int to_int(double d) {
-	return d > 0 ? d + 0.4999995 : d - 0.4999995;
+	return static_cast<int>(d > 0 ? d + 0.4999995 : d - 0.4999995);
 }
 
 // ----------------------------------------------------------------------------- : Vector2D

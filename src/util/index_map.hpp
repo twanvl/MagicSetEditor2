@@ -46,7 +46,7 @@ class IndexMap : private vector<Value> {
 	void init(const vector<Key>& keys) {
 		if (this->size() == keys.size()) return;
 		this->reserve(keys.size());
-		for(vector<Key>::const_iterator it = keys.begin() ; it != keys.end() ; ++it) {
+		for(typename vector<Key>::const_iterator it = keys.begin() ; it != keys.end() ; ++it) {
 			const Key& key = *it;
 			assert(key);
 			if (key->index >= this->size()) this->resize(key->index + 1);
@@ -82,8 +82,8 @@ class IndexMap : private vector<Value> {
 	
 	/// Find a value given the key name, return an iterator
 	template <typename Name>
-	const_iterator find(const Name& key) const {
-		for(vector<Value>::const_iterator it = begin() ; it != end() ; ++it) {
+	typename vector<Value>::const_iterator find(const Name& key) const {
+		for(typename vector<Value>::const_iterator it = begin() ; it != end() ; ++it) {
 			if (get_key_name(*it) == key) return it;
 		}
 		return end();

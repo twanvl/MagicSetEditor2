@@ -48,6 +48,7 @@ class Action {
 /// Base class/interface for objects that listen to actions
 class ActionListener {
   public:
+	virtual ~ActionListener() {}
 	/// Notification that an action a has been performed or undone
 	virtual void onAction(const Action& a, bool undone) = 0;
 };

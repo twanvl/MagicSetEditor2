@@ -14,9 +14,11 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
-// MOVEME
-/// Using intrusive_ptr where possible? (as opposed to smart_ptr)
-#define USE_INTRUSIVE_PTR
+#include <util/atomic.hpp>
+#ifdef HAVE_FAST_ATOMIC
+	/// Using intrusive_ptr where possible? (as opposed to smart_ptr)
+	#define USE_INTRUSIVE_PTR
+#endif
 
 #include <boost/shared_ptr.hpp>
 #ifdef USE_INTRUSIVE_PTR
@@ -99,7 +101,31 @@ inline shared_ptr<T> new_shared7(const A0& a0, const A1& a1, const A2& a2, const
 	inline intrusive_ptr<T> new_intrusive2(const A0& a0, const A1& a1) {
 		return intrusive_ptr<T>(new T(a0, a1));
 	}
-
+	
+	/// Base class for objects wishing to use intrusive_ptrs
+	class IntrusivePtrBase {
+	  public:
+		virtual ~IntrusivePtrBase();
+	  protected:
+		/// Delete this object
+		virtual void destroy() {
+			delete this;
+		}
+	  private:
+		volatile AtomicInt ref_count;
+		friend void intrusive_ptr_add_ref(IntrusivePtrBase*);
+		friend void intrusive_ptr_release(IntrusivePtrBase*);
+	};
+	
+	inline void intrusive_ptr_add_ref(IntrusivePtrBase* p) {
+		++p->ref_count;
+	}
+	inline void intrusive_ptr_release(IntrusivePtrBase* p) {
+		if (--p->ref_count == 0) {
+			p->destroy();
+		}
+	}
+	
 #else
 	#define DECLARE_INTRUSIVE_POINTER_TYPE DECLARE_POINTER_TYPE
 	#define intrusive_ptr shared_ptr
@@ -107,6 +133,17 @@ inline shared_ptr<T> new_shared7(const A0& a0, const A1& a1, const A2& a2, const
 	#define new_intrusive1 new_shared1
 	#define new_intrusive2 new_shared2
 	#define new_intrusive3 new_shared3
+	
+	class IntrusivePtrBase {
+	  public:
+		virtual ~IntrusivePtrBase();
+	  protected:
+		/// Delete this object
+		virtual void destroy() {
+			delete this;
+		}
+	};
+	
 #endif
 
 // ----------------------------------------------------------------------------- : EOF

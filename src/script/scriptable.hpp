@@ -141,7 +141,7 @@ void Reader::handle(Scriptable<T>& s) {
 	if (starts_with(s.script.unparsed, _("script:"))) {
 		s.script.unparsed = s.script.unparsed.substr(7);
 		s.script.parse(*this);
-	} else if (s.script.unparsed.find_first_of('{') != String.npos) {
+	} else if (s.script.unparsed.find_first_of('{') != String::npos) {
 		s.script.parse(*this, true);
 	} else {
 		handle(s.value);
