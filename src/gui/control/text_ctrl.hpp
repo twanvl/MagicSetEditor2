@@ -45,6 +45,7 @@ class TextCtrl : public DataEditor {
 	
   protected:
 	virtual void onInit();
+	virtual wxSize DoGetBestSize() const;
 	
   private:
 	String* value; ///< Value to edit

@@ -55,7 +55,8 @@ void TextCtrl::setValue(String* value) {
 		style->width  = cs.GetWidth()  - 2;
 		style->height = cs.GetHeight() - 2;
 		viewers.front()->getEditor()->determineSize(true);
-		SetMinSize(RealSize(style->width + 6, style->height + 6));
+		// We don't wan to change the window size
+		//SetMinSize(RealSize(style->width + 6, style->height + 6));
 	}
 	valueChanged();
 }
@@ -98,6 +99,9 @@ void TextCtrl::onSize(wxSizeEvent&) {
 		viewers.front()->getEditor()->determineSize(true);
 	}
 	onChange();
+}
+wxSize TextCtrl::DoGetBestSize() const {
+	return wxSize(1,1);
 }
 
 BEGIN_EVENT_TABLE(TextCtrl, DataEditor)
