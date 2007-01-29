@@ -149,7 +149,7 @@ class StatsFilter : public CardListFilter {
 	virtual bool keep(const CardP& card) {
 		Context& ctx = set.getContext(card);
 		FOR_EACH(v, values) {
-			if ((String)*v.first->script.invoke(ctx) != v.second) return false;
+			if (v.first->script.invoke(ctx)->toString() != v.second) return false;
 		}
 		return true;
 	}

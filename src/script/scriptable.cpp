@@ -14,7 +14,7 @@
 
 // ----------------------------------------------------------------------------- : Store
 
-void store(const ScriptValueP& val, String& var)              { var = static_cast<String>(*val); }
+void store(const ScriptValueP& val, String& var)              { var = val->toString(); }
 void store(const ScriptValueP& val, int&    var)              { var = *val; }
 void store(const ScriptValueP& val, double& var)              { var = *val; }
 void store(const ScriptValueP& val, bool&   var)              { var = static_cast<int>(*val); }
@@ -25,8 +25,8 @@ void store(const ScriptValueP& val, Defaultable<Color>& var)  { var.assign(*val)
 // ----------------------------------------------------------------------------- : OptionalScript
 
 OptionalScript::OptionalScript(const String& script_)
-	: unparsed(script_)
-	, script(::parse(script_))
+	: script(::parse(script_))
+	, unparsed(script_)
 {}
 
 OptionalScript::~OptionalScript() {}

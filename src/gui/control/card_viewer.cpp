@@ -80,7 +80,7 @@ void CardViewer::drawViewer(RotatedDC& dc, ValueViewer& v) {
 }
 
 bool CardViewer::shouldDraw(const ValueViewer& v) const {
-	return GetUpdateRegion().Contains((wxRect)v.boundingBox()) != wxOutRegion;
+	return GetUpdateRegion().Contains(v.boundingBox().toRect()) != wxOutRegion;
 }
 
 // helper class for overdrawDC()

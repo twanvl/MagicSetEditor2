@@ -83,13 +83,13 @@ IMPLEMENT_REFLECTION(StyleSheetSettings) {
 Settings settings;
 
 Settings::Settings()
-	: set_window_maximized (false)
+	: locale               (_("en"))
+	, set_window_maximized (false)
 	, set_window_width     (790)
 	, set_window_height    (300)
 	, card_notes_height    (40)
-	, updates_url          (_("http://magicseteditor.sourceforge.net/updates"))
 	, check_updates        (CHECK_IF_CONNECTED)
-	, locale               (_("en"))
+	, updates_url          (_("http://magicseteditor.sourceforge.net/updates"))
 {}
 
 void Settings::addRecentFile(const String& filename) {

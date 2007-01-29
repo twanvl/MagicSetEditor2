@@ -11,6 +11,8 @@
 
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
+#include <util/error.hpp>
+#include <data/field.hpp> // for Card::value
 
 class Game;
 class Dependency;

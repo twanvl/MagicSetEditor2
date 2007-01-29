@@ -37,8 +37,8 @@ Set::Set(const GameP& game)
 }
 
 Set::Set(const StyleSheetP& stylesheet)
-	: stylesheet(stylesheet)
-	, game(stylesheet->game)
+	: game(stylesheet->game)
+	, stylesheet(stylesheet)
 	, script_manager(new SetScriptManager(*this))
 {
 	data.init(game->set_fields);

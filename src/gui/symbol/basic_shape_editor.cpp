@@ -160,10 +160,10 @@ void SymbolBasicShapeEditor::makeShape(const Vector2D& a, const Vector2D& b, boo
 	// constrain
 	Vector2D size = b - a;
 	if (constrained) {
-		if (abs(size.x) > abs(size.y)) {
-			size.y = sgn(size.y) * abs(size.x);
+		if (fabs(size.x) > fabs(size.y)) {
+			size.y = sgn(size.y) * fabs(size.x);
 		} else {
-			size.x = sgn(size.x) * abs(size.y);
+			size.x = sgn(size.x) * fabs(size.y);
 		}
 	}
 	// make shape

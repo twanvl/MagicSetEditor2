@@ -126,7 +126,7 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 	borders->          SetValue( settings.default_stylesheet_settings.card_borders());
 	non_normal_export->SetValue(!settings.default_stylesheet_settings.card_normal_export());
 	zoom->SetRange(1, 1000);
-	zoom->             SetValue(  settings.default_stylesheet_settings.card_zoom() * 100);
+	zoom->             SetValue(static_cast<int>(settings.default_stylesheet_settings.card_zoom() * 100));
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, this, _("Card Display"));

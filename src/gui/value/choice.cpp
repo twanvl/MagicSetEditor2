@@ -23,8 +23,8 @@ class ChoiceThumbnailRequest : public ThumbnailRequest {
 	virtual Image generate();
 	virtual void store(const Image&);
   private:
-	int id;
 	StyleSheetP stylesheet;
+	int id;
 };
 
 ChoiceThumbnailRequest::ChoiceThumbnailRequest(ChoiceValueEditor* cve, int id)
@@ -84,8 +84,8 @@ void ChoiceThumbnailRequest::store(const Image& img) {
 
 DropDownChoiceList::DropDownChoiceList(Window* parent, bool is_submenu, ChoiceValueEditor& cve, ChoiceField::ChoiceP group)
 	: DropDownList(parent, is_submenu, is_submenu ? nullptr : &cve)
-	, group(group)
 	, cve(cve)
+	, group(group)
 {
 	icon_size.width  = 16;
 	icon_size.height = 16;

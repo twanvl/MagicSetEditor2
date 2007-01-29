@@ -16,7 +16,7 @@
 
 // ----------------------------------------------------------------------------- : AtomicInt : windows
 
-#ifdef _WX_MSW_
+#ifdef __WXMSW__
 	
 	#ifdef _MSC_VER
 		extern "C" {

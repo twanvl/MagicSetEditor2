@@ -43,7 +43,7 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 					style().top_width  < style().height && style().bottom_width < style().height;
 		if (clip) {
 			// clip away the inside of the rectangle
-			wxRegion r = dc.tr(style().getRect());
+			wxRegion r = dc.tr(style().getRect()).toRect();
 			r.Subtract(dc.tr(RealRect(
 				style().left + style().left_width,
 				style().top  + style().top_width,

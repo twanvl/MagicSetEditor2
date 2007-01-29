@@ -79,8 +79,10 @@ void CardListColumnSelectDialog::initList() {
 		// check
 		int i = list->GetCount() - 1;
 		list->Check(i, c.settings.visible);
-		// fix the background color
-		list->GetItem(i)->SetBackgroundColour(window_color);
+		#ifdef _WX_MSW_
+			// fix the background color
+			list->GetItem(i)->SetBackgroundColour(window_color);
+		#endif
 	}
 }
 

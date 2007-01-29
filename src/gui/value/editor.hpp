@@ -31,6 +31,7 @@
  */
 class ValueEditor {
   public:
+	virtual ~ValueEditor();
 	// --------------------------------------------------- : Events
 	
 	/// This editor gains focus

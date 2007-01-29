@@ -57,7 +57,12 @@ class ScriptValue : public IntrusivePtrBase {
 	virtual operator int()    const;
 	/// Convert this value to a color
 	virtual operator Color()  const;
-		
+	
+	/// Explicit overload to convert to a string
+	/** This is sometimes necessary, because wxString has an int constructor,
+	 *  which confuses gcc. */
+	inline String toString() const { return *this; }
+	
 	/// Get a member variable from this value
 	virtual ScriptValueP getMember(const String& name) const;
 	/// Signal that a script depends on a member of this value
@@ -246,10 +251,11 @@ class ScriptObject : public ScriptValue {
 // ----------------------------------------------------------------------------- : Creating
 
 /// Convert a value to a script value
-ScriptValueP toScript(int           v);
-ScriptValueP toScript(double        v);
-ScriptValueP toScript(const String& v);
-ScriptValueP toScript(const Color&  v);
+       ScriptValueP toScript(int           v);
+inline ScriptValueP toScript(long          v) { return toScript((int) v); }
+       ScriptValueP toScript(double        v);
+       ScriptValueP toScript(const String& v);
+       ScriptValueP toScript(const Color&  v);
 inline ScriptValueP toScript(bool                 v) { return v ? script_true : script_false; }
 template <typename T>
 inline ScriptValueP toScript(const vector<T>*     v) { return new_intrusive1<ScriptCollection<vector<T> > >(v); }

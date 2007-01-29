@@ -12,7 +12,7 @@
 #include <wx/mstream.h>
 #include <wx/renderer.h>
 
-#if wxUSE_UXTHEME
+#if wxUSE_UXTHEME && defined(__WXMSW__)
 	#include <wx/msw/uxtheme.h>
 	#include <tmschema.h>
 	#include <shlobj.h>
@@ -109,7 +109,7 @@ void draw3DBorder(DC& dc, int x1, int y1, int x2, int y2) {
 }
 
 void draw_control_border(Window* win, DC& dc, const wxRect& rect) {
-	#if wxUSE_UXTHEME
+	#if wxUSE_UXTHEME && defined(__WXMSW__)
 		RECT r;
 		wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
 		if (themeEngine && themeEngine->IsAppThemed()) {

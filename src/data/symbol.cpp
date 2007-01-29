@@ -41,16 +41,16 @@ ControlPoint::ControlPoint()
 	, lock(LOCK_FREE)
 {}
 ControlPoint::ControlPoint(double x, double y)
-	: segment_before(SEGMENT_LINE), segment_after(SEGMENT_LINE)
+	: pos(x,y)
+	, segment_before(SEGMENT_LINE), segment_after(SEGMENT_LINE)
 	, lock(LOCK_FREE)
-	, pos(x,y)
 {}
 ControlPoint::ControlPoint(double x, double y, double xb, double yb, double xa, double ya, LockMode lock)
-	: segment_before(SEGMENT_CURVE), segment_after(SEGMENT_CURVE)
-	, lock(lock)
-	, pos(x,y)
+	: pos(x,y)
 	, delta_before(xb,yb)
 	, delta_after(xa,ya)
+	, segment_before(SEGMENT_CURVE), segment_after(SEGMENT_CURVE)
+	, lock(lock)
 {}
 
 void ControlPoint::onUpdateHandle(WhichHandle wh) {

@@ -57,14 +57,14 @@ OrderCache<T>::OrderCache(const vector<T>& keys, const vector<String>& values) {
 	// initialize positions, use pos to point back to the values vector
 	positions.reserve(keys.size());
 	int i = 0;
-	for (vector<T>::const_iterator it = keys.begin() ; it != keys.end() ; ++it, ++i) {
+	for (typename vector<T>::const_iterator it = keys.begin() ; it != keys.end() ; ++it, ++i) {
 		positions.push_back(KV(&**it, i));
 	}
 	// sort the KVs by the values
 	sort(positions.begin(), positions.end(), CompareValues(values));
 	// update positions, to point to sorted list
 	i = 0;
-	for (vector<KV>::iterator it = positions.begin() ; it != positions.end() ; ++it, ++i) {
+	for (typename vector<KV>::iterator it = positions.begin() ; it != positions.end() ; ++it, ++i) {
 		it->second = i;
 	}
 	// sort the KVs by the keys

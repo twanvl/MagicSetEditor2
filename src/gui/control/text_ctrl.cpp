@@ -55,7 +55,7 @@ void TextCtrl::setValue(String* value) {
 		style->width  = cs.GetWidth()  - 2;
 		style->height = cs.GetHeight() - 2;
 		viewers.front()->getEditor()->determineSize(true);
-		SetMinSize(wxSize(style->width + 6, style->height + 6));
+		SetMinSize(RealSize(style->width + 6, style->height + 6));
 	}
 	valueChanged();
 }

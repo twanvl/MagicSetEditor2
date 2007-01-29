@@ -26,12 +26,12 @@ class StatsDimension {
 	StatsDimension();
 	StatsDimension(const Field&);
 	
+	bool           automatic;		///< Based on a card field?
 	String         name;			///< Name of this dimension
 	String         description;		///< Description, used in status bar
 	String         icon_filename;	///< Icon for lists
 	OptionalScript script;			///< Script that determines the value(s)
 	bool           numeric;			///< Are the values numeric? If so, they require special sorting
-	bool           automatic;		///< Based on a card field?
 	
 	DECLARE_REFLECTION();
 };
@@ -51,13 +51,13 @@ class StatsCategory {
 	StatsCategory();
 	StatsCategory(const StatsDimensionP&);
 	
+	bool                    automatic;		///< Automatically generated?
 	String                  name;			///< Name/label
 	String                  description;	///< Description, used in status bar
 	String                  icon_filename;	///< Icon for lists
 	Bitmap                  icon;			///< The loaded icon (optional of course)
 	vector<StatsDimensionP> dimensions;		///< The dimensions to use, higher dimensions may be null
 	GraphType               type;			///< Type of graph to use
-	bool                    automatic;		///< Automatically generated?
 	
 	DECLARE_REFLECTION();
 };

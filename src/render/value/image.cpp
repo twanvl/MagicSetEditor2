@@ -22,7 +22,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 			InputStreamP image_file = getSet().openIn(value().filename);
 			Image image;
 			if (image.LoadFile(*image_file)) {
-				image.Rescale(dc.trS(style().width), dc.trS(style().height));
+				image.Rescale((int)dc.trS(style().width), (int)dc.trS(style().height));
 				// apply mask to image
 				loadMask(dc);
 				if (alpha_mask) alpha_mask->setAlpha(image);
@@ -34,7 +34,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 	}
 	// if there is no image, generate a placeholder, only if there is enough room for it
 	if (!bitmap.Ok() && style().width > 40) {
-		bitmap = imagePlaceholder(dc, dc.trS(style().width), dc.trS(style().height), viewer.drawEditing());
+		bitmap = imagePlaceholder(dc, (int)dc.trS(style().width), (int)dc.trS(style().height), viewer.drawEditing());
 		loadMask(dc);
 		if (alpha_mask) alpha_mask->setAlpha(bitmap);
 	}
@@ -45,15 +45,15 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 }
 
 bool ImageValueViewer::containsPoint(const RealPoint& p) const {
-	int x = p.x - style().left;
-	int y = p.y - style().top;
-	if (x < 0 || y < 0 || x >= (int)style().width || y >= (int)style().height) {
+	double x = p.x - style().left;
+	double y = p.y - style().top;
+	if (x < 0 || y < 0 || x >= style().width || y >= style().height) {
 		return false; // outside rectangle
 	}
 	// check against mask
 	if (!style().mask_filename().empty()) {
 		loadMask(viewer.getRotation());
-		return !alpha_mask || !alpha_mask->isTransparent(x, y);
+		return !alpha_mask || !alpha_mask->isTransparent((int)x, (int)y);
 	} else {
 		return true;
 	}
@@ -70,12 +70,13 @@ void ImageValueViewer::onStyleChange() {
 
 void ImageValueViewer::loadMask(const Rotation& rot) const {
 	if (style().mask_filename().empty()) return; // no mask
-	if (alpha_mask && alpha_mask->size == wxSize(rot.trS(style().width), rot.trS(style().height))) return; // mask loaded and right size
+	int w = rot.trS(style().width), h = rot.trS(style().height);
+	if (alpha_mask && alpha_mask->size == wxSize(w,h)) return; // mask loaded and right size
 	// (re) load the mask
 	Image image;
 	InputStreamP image_file = viewer.stylesheet->openIn(style().mask_filename);
 	if (image.LoadFile(*image_file)) {
-		Image resampled(rot.trS(style().width), rot.trS(style().height));
+		Image resampled(w,h);
 		resample(image, resampled);
 		alpha_mask = new_shared1<AlphaMask>(resampled);
 	}

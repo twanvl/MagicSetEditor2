@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <gui/control/card_list.hpp>
+#include <set>
 
 // ----------------------------------------------------------------------------- : SelectCardList
 
@@ -30,7 +31,7 @@ class SelectCardList : public CardListBase {
   private:
 	DECLARE_EVENT_TABLE();
 	
-	set<CardP> selected; ///< which cards are selected?
+	std::set<CardP> selected; ///< which cards are selected?
 	
 	void toggle(const CardP& card);
 	

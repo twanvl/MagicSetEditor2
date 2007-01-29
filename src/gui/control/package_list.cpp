@@ -35,12 +35,12 @@ void PackageList::drawItem(DC& dc, int x, int y, size_t item, bool selected) {
 	dc.SetFont(wxFont(12,wxSWISS,wxNORMAL,wxBOLD,false,_("Arial")));
 	dc.GetTextExtent(capitalize(d.package->short_name), &w, &h);
 	pos = align_in_rect(ALIGN_CENTER, RealSize(w,h), rect);
-	dc.DrawText(capitalize(d.package->short_name), pos.x, pos.y + 110);
+	dc.DrawText(capitalize(d.package->short_name), (int)pos.x, (int)pos.y + 110);
 	// draw name
 	dc.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 	dc.GetTextExtent(d.package->full_name, &w, &h);
 	RealPoint text_pos = align_in_rect(ALIGN_CENTER, RealSize(w,h), rect);
-	dc.DrawText(d.package->full_name, text_pos.x, text_pos.y + 130);
+	dc.DrawText(d.package->full_name, (int)text_pos.x, (int)text_pos.y + 130);
 }
 
 void PackageList::showData(const String& pattern) {

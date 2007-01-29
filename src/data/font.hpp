@@ -35,7 +35,7 @@ class Font {
 	/// Update the scritables, returns true if there is a change
 	bool update(Context& ctx);
 	/// Add the given dependency to the dependent_scripts list for the variables this font depends on
-	virtual void initDependencies(Context&, const Dependency&) const;
+	void initDependencies(Context&, const Dependency&) const;
 	
 	/// Does this font have a shadow?
 	inline bool hasShadow() { return shadow_displacement.width != 0 || shadow_displacement.height != 0; }

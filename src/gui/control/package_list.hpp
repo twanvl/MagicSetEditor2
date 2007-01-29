@@ -10,6 +10,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/error.hpp>
 #include <gui/control/gallery_list.hpp>
 
 DECLARE_POINTER_TYPE(Packaged);

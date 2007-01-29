@@ -22,13 +22,13 @@ const int BORDER = 1; // margin between items
 
 GalleryList::GalleryList(Window* parent, int id, int direction)
 	: wxScrolledWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER | (direction == wxHORIZONTAL ? wxHSCROLL : wxVSCROLL) )
-	, direction(direction)
 	, selection(NO_SELECTION)
+	, direction(direction)
 {}
 
 void GalleryList::update() {
-	const int w = item_size.width  + MARGIN + 2*BORDER;
-	const int h = item_size.height + MARGIN + 2*BORDER;
+	const int w = (int)item_size.width  + MARGIN + 2*BORDER;
+	const int h = (int)item_size.height + MARGIN + 2*BORDER;
 	// resize and scroll
 	if (direction == wxHORIZONTAL) {
 		SetVirtualSize(w * (int)itemCount() + MARGIN, h + MARGIN);
@@ -56,11 +56,11 @@ void GalleryList::update() {
 
 size_t GalleryList::findItem(const wxMouseEvent& ev) const {
 	if (direction == wxHORIZONTAL) {
-		int x, w = item_size.width  + MARGIN + 2*BORDER;
+		int x, w = (int)item_size.width  + MARGIN + 2*BORDER;
 		GetViewStart (&x, 0);
 		return static_cast<size_t>( x + ev.GetX() / w );
 	} else { // wxVERTICAL
-		int y, h = item_size.height + MARGIN + 2*BORDER;
+		int y, h = (int)item_size.height + MARGIN + 2*BORDER;
 		GetViewStart (0, &y);
 		return static_cast<size_t>( y + ev.GetY() / h );
 	}

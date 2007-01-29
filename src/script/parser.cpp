@@ -38,10 +38,10 @@ struct Token {
 	String    value;
 	bool      newline; ///< Is there a newline between this token and the previous one?
 	
-	inline operator == (TokenType     t) const { return type  == t; }
-	inline operator != (TokenType     t) const { return type  != t; }
-	inline operator == (const String& s) const { return type != TOK_STRING && value == s; }
-	inline operator != (const String& s) const { return type == TOK_STRING || value != s; }
+	inline bool operator == (TokenType     t) const { return type  == t; }
+	inline bool operator != (TokenType     t) const { return type  != t; }
+	inline bool operator == (const String& s) const { return type != TOK_STRING && value == s; }
+	inline bool operator != (const String& s) const { return type == TOK_STRING || value != s; }
 };
 
 enum OpenBrace 
@@ -521,7 +521,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			// for smart strings: "x" {{ e }} "y"
 			// optimize: "" + e  ->  e
 			Instruction i = script.getInstructions().back();
-			if (i.instr == I_PUSH_CONST && String(*script.getConstants()[i.data]).empty()) {
+			if (i.instr == I_PUSH_CONST && script.getConstants()[i.data]->toString().empty()) {
 				script.getInstructions().pop_back();
 				parseOper(input, script, PREC_ALL);						// e
 			} else {
@@ -531,7 +531,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			parseOper(input, script, PREC_NONE);						// y
 			// optimize: e + ""  -> e
 			i = script.getInstructions().back();
-			if (i.instr == I_PUSH_CONST && String(*script.getConstants()[i.data]).empty()) {
+			if (i.instr == I_PUSH_CONST && script.getConstants()[i.data]->toString().empty()) {
 				script.getInstructions().pop_back();
 			} else {
 				script.addInstruction(I_BINARY, I_ADD);

@@ -107,8 +107,8 @@ END_EVENT_TABLE  ()
 
 HoverButtonExt::HoverButtonExt(Window* parent, int id, const String& icon_name, const String& label, const String& sub_label)
 	: HoverButton(parent, id, _("BTN"))
-	, label(label), sub_label(sub_label)
 	, icon(load_resource_image(icon_name))
+	, label(label), sub_label(sub_label)
 	, font_large(14, wxSWISS, wxNORMAL, wxNORMAL, false, _("Arial"))
 	, font_small(8,  wxSWISS, wxNORMAL, wxNORMAL, false, _("Arial"))
 {}

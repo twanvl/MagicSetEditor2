@@ -18,7 +18,7 @@ inline double sgn(double v) { return  v > 0 ? 1 : -1; }
 
 Vector2D constrainVector(const Vector2D& v, bool constrain, bool onlyDiagonal) {
 	if (!constrain) return v;
-	double ax = abs(v.x), ay = abs(v.y);
+	double ax = fabs(v.x), ay = fabs(v.y);
 	if (ax * 2 < ay && !onlyDiagonal) {
 		return Vector2D(0, v.y); // vertical
 	} else if(ay * 2 < ax && !onlyDiagonal) {

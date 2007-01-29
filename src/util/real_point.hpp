@@ -152,6 +152,11 @@ class RealRect : private RealPoint, private RealSize {
 		int i_t = to_int(y), i_b = to_int(bottom());
 		return wxRect(i_l, i_t, i_r - i_l, i_b - i_t);
 	}
+	
+	/// Explicit conversion to wxRect, to not confuse gcc
+	inline wxRect toRect() const {
+		return *this;
+	}
 };
 
 /// Split a rectangle horizontally

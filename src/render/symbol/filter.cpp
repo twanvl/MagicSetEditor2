@@ -122,7 +122,7 @@ AColor LinearGradientSymbolFilter::color(double x, double y, SymbolSet point) co
 }
 
 double LinearGradientSymbolFilter::t(double x, double y) const {
-	double t= abs( (x - center_x) * (end_x - center_x) + (y - center_y) * (end_y - center_y)) / len;
+	double t= fabs( (x - center_x) * (end_x - center_x) + (y - center_y) * (end_y - center_y)) / len;
 	return min(1.,max(0.,t));
 }
 

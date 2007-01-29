@@ -53,7 +53,7 @@ DropDownColorList::DropDownColorList(Window* parent, ColorValueEditor& cve)
 {
 	icon_size.width = 25;
 	if (item_size.height < 16) {
-		text_offset = (16 - item_size.height) / 2;
+		text_offset = (16 - (int)item_size.height) / 2;
 		item_size.height = 16;
 	}
 }
@@ -86,7 +86,7 @@ void DropDownColorList::drawIcon(DC& dc, int x, int y, size_t item, bool selecte
 	// draw a rectangle with the right color
 	dc.SetPen(wxSystemSettings::GetColour(selected ? wxSYS_COLOUR_HIGHLIGHTTEXT : wxSYS_COLOUR_WINDOWTEXT));
 	dc.SetBrush(col);
-	dc.DrawRectangle(x+1, y+1, icon_size.width-2, item_size.height-2);
+	dc.DrawRectangle(x+1, y+1, (int)icon_size.width-2, (int)item_size.height-2);
 }
 
 

@@ -48,10 +48,10 @@ struct CharInfo {
 /// A section of text that can be rendered using a TextViewer
 class TextElement {
   public:
-	/// What section of the input string is this element?
-	size_t start, end;
 	/// The text of which a subsection is drawn
 	String text;
+	/// What section of the input string is this element?
+	size_t start, end;
 	
 	inline TextElement(const String& text, size_t start ,size_t end) : text(text), start(start), end(end) {}
 	virtual ~TextElement() {}

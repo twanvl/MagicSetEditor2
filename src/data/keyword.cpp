@@ -38,7 +38,7 @@ void read_compat(Reader& tag, Keyword* k) {
 		KeywordExpansionP e(new KeywordExpansion);
 		size_t start = separator.find_first_of('[');
 		size_t end   = separator.find_first_of(']');
-		if (start != String.npos && end != String.npos) {
+		if (start != String::npos && end != String::npos) {
 			e->after += separator.substr(start + 1, end - start - 1);
 		}
 		if (!parameter.empty()) {

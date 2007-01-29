@@ -84,8 +84,9 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
   private:
 	size_t selection_start,   selection_end;   ///< Cursor position/selection (if any), cursor positions
 	size_t selection_start_i, selection_end_i; ///< Cursor position/selection, character indices
-	TextValueEditorScrollBar* scrollbar;   ///< Scrollbar for multiline fields in native look
-	bool select_words;                     ///< Select whole words when dragging the mouse?
+	bool select_words;                         ///< Select whole words when dragging the mouse?
+	TextValueEditorScrollBar* scrollbar;       ///< Scrollbar for multiline fields in native look
+	bool scroll_with_cursor;                   ///< When the cursor moves, should the scrollposition change?
 	
 	// --------------------------------------------------- : Selection / movement
 	
@@ -126,10 +127,7 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	// --------------------------------------------------- : Scrolling
 	
 	friend class TextValueEditorScrollBar;
-	
-	/// When the cursor moves, should the scrollposition change?
-	bool scroll_with_cursor;
-	
+		
 	/// Scroll to the given position, called by scrollbar
 	void scrollTo(int pos);
 	/// Update the scrollbar to show the current scroll position

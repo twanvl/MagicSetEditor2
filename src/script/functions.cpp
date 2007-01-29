@@ -56,7 +56,7 @@ class ScriptReplaceRule : public ScriptValue {
 							ctx.setVariable(name, toScript(value));
 						}
 						// call
-						inside = (String)*replacement_function->eval(ctx);
+						inside = replacement_function->eval(ctx)->toString();
 					} else {
 						regex.Replace(&inside, replacement, 1); // replace inside
 					}
@@ -92,7 +92,7 @@ SCRIPT_FUNCTION(replace_rule) {
 	if (replace->type() == SCRIPT_FUNCTION) {
 		ret->replacement_function = replace;
 	} else {
-		ret->replacement = (String)*replace;
+		ret->replacement = replace->toString();
 	}
 	// in_context
 	SCRIPT_OPTIONAL_PARAM_N(String, _("in context"), in_context) {
@@ -354,7 +354,7 @@ String replace_tag_contents(String input, const String& tag, const ScriptValueP&
 		// replace
 		ret += input.substr(0, pos); // before tag
 		ret += tag;
-		ret += *contents->eval(ctx);// new contents (call)
+		ret += contents->eval(ctx)->toString();// new contents (call)
 		ret += close_tag(tag);
 		// next
 		input = input.substr(skip_tag(input,end));
@@ -387,7 +387,7 @@ bool equal(const ScriptValue& a, const ScriptValue& b) {
 	} else if (at == SCRIPT_DOUBLE) {
 		return (double)a == (double)b;
 	} else if (at == SCRIPT_STRING) {
-		return (String)a == (String)b;
+		return a.toString() == b.toString();
 	} else if (at == SCRIPT_OBJECT) {
 		// HACK for ScriptObject<shared_ptr<X> >
 		// assumes different types are layed out the same, and that
@@ -405,7 +405,7 @@ int position_in_vector(const ScriptValueP& of, const ScriptValueP& in, const Scr
 	ScriptType of_t = of->type(), in_t = in->type();
 	if (of_t == SCRIPT_STRING || in_t == SCRIPT_STRING) {
 		// string finding
-		return (int)((String)*of).find(*in); // (int)npos == -1
+		return (int)of->toString().find(in->toString()); // (int)npos == -1
 	} else if (order_by) {
 		ScriptObject<Set*>*  s = dynamic_cast<ScriptObject<Set*>* >(in.get());
 		ScriptObject<CardP>* c = dynamic_cast<ScriptObject<CardP>*>(of.get());

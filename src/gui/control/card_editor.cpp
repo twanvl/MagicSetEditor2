@@ -100,7 +100,7 @@ struct CompareTabIndex {
 		Field& af = *as.fieldP,     &bf = *bs.fieldP;
 		if (af.tab_index < bf.tab_index) return true;
 		if (af.tab_index > bf.tab_index) return false;
-		if (abs(as.top - bs.top) < 15) {
+		if (fabs(as.top - bs.top) < 15) {
 			// the fields are almost on the same 'row'
 			// compare horizontally first
 			if (as.left < bs.left) return true; // horizontal sorting
