@@ -1,0 +1,154 @@
+//+----------------------------------------------------------------------------+
+//| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
+//| Copyright:    (C) 2001 - 2006 Twan van Laarhoven                           |
+//| License:      GNU General Public License 2 or later (see file COPYING)     |
+//+----------------------------------------------------------------------------+
+
+#include <windows.h> // include for version info constants
+
+// -------------------------------------------------------- : Icons
+
+ICON_APP				ICON	"icon/mse.ico" // has to come first in alphabet!!
+ICON_EXPORT				ICON	"icon/set.ico" //todo
+ICON_GAME				ICON	"icon/set.ico" //todo
+ICON_SET				ICON	"icon/set.ico"
+ICON_STYLE				ICON	"icon/set.ico" //todo
+ICON_SYMBOL				ICON	"icon/symbol.ico"
+
+// -------------------------------------------------------- : Toolbar
+
+CUR_ROT_IBEAM			CURSOR	"cursor/rot_text.cur"
+
+TOOL_NEW				BITMAP	"tool/file_new.bmp"
+TOOL_OPEN				BITMAP	"tool/file_open.bmp"
+TOOL_SAVE				BITMAP	"tool/file_save.bmp"
+
+TOOL_UNDO				BITMAP	"tool/edit_undo.bmp"
+TOOL_REDO				BITMAP	"tool/edit_redo.bmp"
+TOOL_CUT				BITMAP	"tool/edit_cut.bmp"
+TOOL_COPY				BITMAP	"tool/edit_copy.bmp"
+TOOL_PASTE				BITMAP	"tool/edit_paste.bmp"
+TOOL_FIND				BITMAP	"tool/edit_find.bmp"
+
+TOOL_BOLD				BITMAP	"tool/format_bold.bmp"
+TOOL_ITALIC				BITMAP	"tool/format_italic.bmp"
+TOOL_SYMBOL				BITMAP	"tool/format_symbol.bmp"
+TOOL_REMINDER			BITMAP	"tool/format_reminder.bmp"
+TOOL_NO_AUTO			BITMAP	"tool/format_no_auto.bmp"
+
+TOOL_CARD_ADD			BITMAP	"tool/card_add.bmp"
+TOOL_CARD_ADD_M			BITMAP	"tool/card_add_multiple.bmp"
+TOOL_CARD_DEL			BITMAP	"tool/card_del.bmp"
+TOOL_CARD_ROTATE		BITMAP	"tool/card_rotate.bmp"
+TOOL_CARD_ROTATE_0		BITMAP	"tool/card_rotate_0.bmp"
+TOOL_CARD_ROTATE_90		BITMAP	"tool/card_rotate_90.bmp"
+TOOL_CARD_ROTATE_180	BITMAP	"tool/card_rotate_180.bmp"
+TOOL_CARD_ROTATE_270	BITMAP	"tool/card_rotate_270.bmp"
+
+TOOL_KEYWORD_ADD		BITMAP	"tool/keyword_add.bmp"
+TOOL_KEYWORD_DEL		BITMAP	"tool/keyword_del.bmp"
+
+TOOL_HELP				BITMAP	"tool/help.bmp"
+
+// -------------------------------------------------------- : Symbol editor
+
+CUR_POINT				CURSOR	"cursor/point.cur"
+CUR_POINT_ADD			CURSOR	"cursor/point_add.cur"
+CUR_POINT_MOVE			CURSOR	"cursor/point_move.cur"
+CUR_POINT_CURVE			CURSOR	"cursor/curve.cur"
+CUR_ROTATE				CURSOR	"cursor/rotate.cur"
+CUR_SHEAR_X				CURSOR	"cursor/shear_x.cur"
+CUR_SHEAR_Y				CURSOR	"cursor/shear_y.cur"
+
+TOOL_LINE				BITMAP	"tool/line.bmp"
+TOOL_CURVE				BITMAP	"tool/curve.bmp"
+TOOL_LOCK_FREE			BITMAP	"tool/lock_free.bmp"
+TOOL_LOCK_DIR			BITMAP	"tool/lock_dir.bmp"
+TOOL_LOCK_SIZE			BITMAP	"tool/lock_size.bmp"
+
+TOOL_CIRCLE				BITMAP	"tool/circle.bmp"
+TOOL_RECTANGLE			BITMAP	"tool/rectangle.bmp"
+TOOL_TRIANGLE			BITMAP	"tool/triangle.bmp"
+TOOL_STAR				BITMAP	"tool/star.bmp"
+
+TOOL_MODE_SELECT		BITMAP	"tool/mode_select.bmp"
+TOOL_MODE_ROTATE		BITMAP	"tool/mode_rotate.bmp"
+TOOL_MODE_CURVE			BITMAP	"tool/mode_curve.bmp"
+TOOL_MODE_PAINT			BITMAP	"tool/mode_paint.bmp"
+TOOL_APPLY				BITMAP	"tool/apply.bmp"
+TOOL_DUPLICATE			BITMAP	"tool/duplicate.bmp"
+
+COMBINE_OR				IMAGE	"tool/combine_or.png"
+COMBINE_SUB				IMAGE	"tool/combine_sub.png"
+COMBINE_SUB_DARK		IMAGE	"tool/combine_sub_dark.png"
+COMBINE_AND				IMAGE	"tool/combine_and.png"
+COMBINE_AND_DARK		IMAGE	"tool/combine_and_dark.png"
+COMBINE_XOR				IMAGE	"tool/combine_xor.png"
+COMBINE_OVER			IMAGE	"tool/combine_over.png"
+COMBINE_BORDER			IMAGE	"tool/combine_border.png"
+
+HANDLE_ROTATE			IMAGE	"../common/handle_rotate_tl.png"
+HANDLE_SHEAR_X			IMAGE	"../common/handle_shear_x.png"
+HANDLE_CENTER			IMAGE	"../common/handle_center.png"
+
+// -------------------------------------------------------- : Other
+
+SORT_ASC				BITMAP	"other/sort_asc.bmp"
+SORT_DESC				BITMAP	"other/sort_desc.bmp"
+PLUS					BITMAP	"other/plus.bmp"
+MINUS					BITMAP	"other/minus.bmp"
+SELECTED				IMAGE	"other/selected_yes.png"
+DESELECTED				IMAGE	"other/selected_no.png"
+
+BOOL_YES				IMAGE	"../common/bool_yes.png"
+BOOL_NO					IMAGE	"../common/bool_no.png"
+
+//HELP_BOOK				BITMAP	"help_book.bmp"
+//HELP_BOOK_OPEN			BITMAP	"help_book_open.bmp"
+//HELP_PAGE				BITMAP	"help_page.bmp"
+
+ABOUT					IMAGE	"../common/about.png"
+TWO						IMAGE	"../common/two_beta.png"
+BTN_NORMAL				IMAGE	"../common/btn_normal.png"
+BTN_HOVER				IMAGE	"../common/btn_hover.png"
+BTN_OK_NORMAL			IMAGE	"../common/btn_ok_normal.png"
+BTN_OK_HOVER			IMAGE	"../common/btn_ok_hover.png"
+
+//ABOUT_XMAS			IMAGE	"about-xmas.png"
+//TWO_XMAS				IMAGE	"two_beta-xmas.png"
+
+WELCOME_NEW				IMAGE	"../common/welcome_new.png"
+WELCOME_OPEN			IMAGE	"../common/welcome_open.png"
+WELCOME_LAST			IMAGE	"../common/welcome_last.png"
+
+// -------------------------------------------------------- : WX
+
+wxBITMAP_STD_COLOURS	BITMAP "wx/msw/colours.bmp"
+WXCURSOR_HAND           CURSOR  DISCARDABLE     "wx/msw/hand.cur"
+
+// -------------------------------------------------------- : Version info
+
+1 VERSIONINFO
+FILEVERSION    0,3,0
+PRODUCTVERSION 0,3,0
+FILETYPE VFT_APP
+{
+  BLOCK "StringFileInfo"
+  {
+    BLOCK "040904E4"
+    {
+      VALUE "FileVersion",			"0.3.0"
+      VALUE "License",				"GNU General Public License 2 or later; This is free software, and you are welcome to redistribute it under certain conditions; See the help file for details"
+      VALUE "FileDescription",		"Magic Set Editor"
+      VALUE "InternalName",			"mse2/8"
+      VALUE "LegalCopyright",		"© 2001-2006 Twan van Laarhoven"
+      VALUE "ProductName",			"Magic Set Editor"
+    }
+  }
+}
+
+#if !defined(__WIN64__)
+#if !defined(wxUSE_NO_MANIFEST) || (wxUSE_NO_MANIFEST == 0)
+1 24 "wx/msw/wx.manifest"
+#endif
+#endif
