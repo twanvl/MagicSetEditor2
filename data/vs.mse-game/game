@@ -1,0 +1,436 @@
+﻿mse version: 0.2.7
+short name: VS System
+icon: card-back.png
+
+############################################################## Functions & filters
+## Copied and Pasted from magic-new.mse-style/style, with a few modifications
+# General functions
+init script:
+	# add symbols to text
+	symbol_filter :=
+		# step 5a : add arrow/diamond/dot symbols
+		replace_rule(
+			match: "->|@",
+			replace: "<sym-auto>&</sym-auto>" ) +
+		# step 5b : dot separator
+		replace_rule(
+			match: "`|::",
+			replace: "•")+
+		# step 5c : longdash for keywords
+		replace_rule(
+			match: "--",
+			replace: "—")
+	# the rule text filter
+	#  - adds -> symbols
+	#  - adds @ symbols
+	#  - adds :: symbols
+	#  - makes text in parentheses italic
+	text_filter := 
+		# step 1 : remove all automatic tags
+		tag_remove_rule(tag: "<sym-auto>") +
+		tag_remove_rule(tag: "<i-auto>")   +
+		tag_remove_rule(tag: "<b-auto>")   +
+		# step 2 : reminder text for keywords
+		#keyword_rule(
+		#	expand_reminder_game: { set.automatic_reminder_text == "yes" },
+		#	expand_reminder_set:  { set.automatic_reminder_text != "no" },
+		#	before: " (",
+		#	after:  ")"
+		#	) +
+		# step 3 : expand shortcut words ~ and CARDNAME
+		replace_rule(
+			match: "~|~THIS~|CARDNAME",
+			in_context: "(^|[[:space:]])<match>",
+			replace: "<atom-cardname></atom-cardname>"
+			) +
+		# step 5 : symbols
+		symbol_filter +
+		# step 4 : fill in atom fields
+		tag_contents_rule(
+			tag: "<atom-cardname>",
+			contents: { if card.name=="" then "CARDNAME" else card.name }
+			) +
+		# step 7 : italic reminder text
+		replace_rule(
+		 	match: "[(][^)\n]*[)]?",
+			in_context: "(^|[[:space:]])<match>|<atom-keyword><match></atom-keyword>",
+		 	replace: "<i-auto>&</i-auto>") +
+		# step 7b : Bold keywords
+		replace_rule(
+		 	match: "<kw[^>]*>[^<]+</",
+	 		replace: "<b-auto>&</b-auto>")
+	
+	# Determine type of card
+	dual_name := filter_rule(match: "•")
+	card_type := {
+		if      card.team == "Location"    then "location"
+		else if card.team == "Equipment"   then "equipment"
+		else if card.team == "Plot Twist"  then "plot twist"
+		else if card.team_2 != ""          then "character dual"
+		else if dual_name(card.team) != "" then "character dual (new)"
+		else                                   "character"
+	}
+	# Default 'team' name of card
+	team := {
+		if      is_location()   then "Location"
+		else if is_equipment()  then "Equipment"
+		else if is_plot_twist() then "Plot Twist"
+		else                         ""
+	}
+	
+	# Only pass numbers
+	only_numbers := filter_rule(match: "[0-9]")
+	
+	############### Type of card
+	
+	is_dual := {
+		card.card_type == "character dual" or
+	        card.card_type == "concealed dual"
+	}
+	is_new_dual := {
+		card.card_type == "character dual (new)" or
+	        card.card_type == "concealed dual (new)"
+	}
+	is_character := {
+		card.card_type == "character"            or
+	        card.card_type == "character dual"       or
+	        card.card_type == "character dual (new)" or
+	        card.card_type == "concealed"            or
+	        card.card_type == "concealed dual"       or
+	        card.card_type == "concealed dual (new)"
+	}
+	is_concealed := {
+	        card.card_type == "concealed" or
+	        card.card_type == "concealed dual" or
+	        card.card_type == "concealed dual (new)"
+	}
+	is_equipment := {
+		card.card_type == "equipment"
+	}
+	is_location := {
+		card.card_type == "location"
+	}
+	is_plot_twist := {
+		card.card_type == "plot twist"
+	}
+	is_ch_or_pt := {
+		is_character() or is_plot_twist()
+	}
+
+############################################################## Set fields
+
+set field:
+	type: text
+	name: title
+	description: This information will not appear on the card.
+set field:
+	type: text
+	name: code
+	description: Recommended only 3 Capital digits. Will appear before card number. ex: MOR-1
+set field:
+	type: text
+	name: description
+	multi line: true
+	description: This information will not appear on the card.
+set field:
+	type: text
+	name: artist
+	description: Editting this will set 1 artist for all the cards and will appear in the artist bar below the picture.
+set field:
+	type: text
+	name: copyright
+	description: Copytight information. This information will not appear on the card.
+set field:
+	type: choice
+	name: automatic reminder text
+	choice: yes
+	choice: only for custom keywords
+	choice: no
+	initial: no
+	description: Should reminder text be added to keywords by default? Note: you can enable/disable reminder text by right clicking the keyword.
+
+
+############################################################## Card fields
+
+############################# Background stuff
+card field:
+	type: choice
+	name: card type
+	choice: character
+	choice: character dual
+	choice: character dual (new)
+	choice: concealed
+	choice: concealed dual
+	choice: concealed dual (new)
+	choice: equipment
+	choice: location
+	choice: plot twist
+	default: card_type()
+	show statistics: false
+
+############################# Name line
+card field:
+	type: text
+	name: name
+	script: symbol_filter(value)
+	identifying: true
+	show statistics: false
+	card list visible: true
+	card list column: 1
+	description: The name of the card, use @ for a diamond
+card field:
+	type: text
+	name: cost
+	script: only_numbers(value)
+	card list visible: true
+	card list column: 3
+	card list alignment: right
+	card list width: 37
+	card list name: Cost
+card field:
+	type: image
+	name: card symbol
+	show statistics: false
+	description: Double click to load a symbol for the card
+
+############################# Image
+card field:
+	type: image
+	name: image
+	show statistics: false
+
+############################# Type Bar
+card field:
+	type: text
+	name: type text
+	description: The type of the card
+card field:
+	type: choice
+	name: type bar
+	choice: type bar
+	editable: false
+
+############################# Version
+card field:
+	type: text
+	name: version
+	card list visible: true
+	card list column: 2
+	script: symbol_filter(value)
+
+############################# Card ID
+card field:
+	type: text
+	name: number
+	script:
+		set.code
+		+ "-" +
+		position(
+			of: card
+			in: set
+			order_by: {
+				card.name
+			}) 
+	card list visible: true
+	card list column: 6
+	card list width: 55
+	card list name: #
+	editable: false
+card field:
+	type: choice
+	name: rarity
+	choice: common
+	choice: uncommon
+	choice: rare
+	choice: promo
+
+############################# Affiliation
+card field:
+	type: text
+	name: team
+	default: team()
+	script: symbol_filter(value)
+	description: The team of the card, use ` for a separator for dual cards
+
+card field:
+	type: text
+	name: team 2
+	script: symbol_filter(value)
+	description: The second affiliation of the card (for dual cards)
+
+############################# FlightRange
+card field:
+	type: multiple choice
+	name: symbols
+	choice: flight
+	choice: range
+	choice: ongoing
+	description: Symbols for this card (flight/range/ongoing), multiple symbols can be selected
+
+############################# Text box
+card field:
+	type: text
+	name: rule text
+	script: text_filter(value)
+	show statistics: false
+	multi line: true
+	description: Rule text of the card, use @ for a diamond, -> for an arrow and :: for a dot
+card field:
+	type: text
+	name: flavor text
+	show statistics: false
+	multi line: true
+
+############################# Atack / Defense
+card field:
+	type: text
+	name: attack
+	save value: true
+	card list visible: true
+	card list column: 4
+	card list width: 33
+	card list name: ATK
+
+card field:
+	type: text
+	name: defence
+	save value: true
+	card list visible: true
+	card list column: 5
+	card list width: 33
+	card list name: DEF
+
+############################# Copyright stuff
+card field:
+	type: text
+	name: illustrator
+	default: set.artist
+card field:
+	type: text
+	name: copyright
+	default: set.copyright
+	multi line: true
+
+
+############################################################## Word lists
+# Doesn't do anything yet
+
+#word list:
+#	name: affiliation or type
+#	word: anti-matter
+#	word: arkham inmates
+#	word: darkseid's elite
+#	word: deathstroke
+#	word: emerald enemies
+#	word: fearsome five
+#	word: gotham knights
+#	word: green lantern
+#	word: injustice gang
+#	word: jla
+#	word: jli
+#	word: league of assassins
+#	word: manhunter
+#	word: new gods
+#	word: revenge squad
+#	word: secret society
+#	word: shadowpact
+#	word: team superman
+#	word: teen titans
+#	word: avengers
+#	word: brotherhood
+#	word: crimelords
+#	word: doom
+#	word: fantastic four
+#	word: kang council
+#	word: marvel knights
+#	word: masters of evil
+#	word: negative zone
+#	word: sentinel
+#	word: sinister syndicate
+#	word: skrull
+#	word: spider-friends
+#	word: squadron supreme
+#	word: thunderbolts
+#	word: underworld
+#	word: x-men
+#	word: x-statix
+#	word: equipment
+#	word: location
+#	word: plot twist
+
+
+############################################################## Keywords
+
+############################# Keyword rules
+
+keyword parameter type:
+	name: no parameter
+keyword parameter type:
+	name: number
+	match: [0-9]+
+keyword parameter type:
+	name: action
+	match: [^\n(.,]+
+keyword parameter type:
+	name: name
+	match:
+		[^
+		(.,]+
+
+############################# All VS System keywords
+
+keyword:
+	keyword: Concealed—Optional.
+	reminder: You may have ~THIS~ come into play in the hidden area.
+keyword:
+	keyword: Concealed.
+	reminder: This character comes into play in the hidden area.
+keyword:
+	keyword: Loyalty—Reveal.
+	reminder: If you don’t control a character that shares an affiliation with ~THIS~, then as an additional cost to recruit ~THIS~, reveal a character card from your hand or resource row that shares an affiliation with ~THIS~.
+keyword:
+	keyword: Loyalty.
+	reminder: As an additional cost to recruit ~THIS~, you must control a character that shares a team affiliation with ~THIS~.
+keyword:
+	keyword: Evasion.
+	reminder: Stun ~THIS~ -> Recover ~THIS~ at the start of the recovery phase this turn.
+keyword:
+	keyword: Invulnerability.
+	reminder: Whenever ~THIS~ becomes stunned, you do not take stun damage. Breakthrough is applied normally.
+keyword:
+	keyword: Cosmic:
+	reminder: 
+keyword:
+	keyword: Boost
+	separator: whitespace [ ]
+	parameter: text
+	reminder: 
+keyword:
+	keyword: Willpower
+	separator: whitespace [ ]
+	parameter: number
+	reminder: 
+keyword:
+	keyword: Leader:
+	reminder:
+keyword:
+	keyword: Ally:
+	reminder: 
+keyword:
+	keyword: Unique.
+	reminder: 
+keyword:
+	keyword: Ongoing:
+	reminder: 
+keyword:
+	keyword: Reservist.
+	reminder: You may recruit this card from your resource row. If you do, you may put a card from your hand face down into your resource row.
+keyword:
+	keyword: Transferable.
+	reminder: During your recruit step you may unequip ~THIS~ and equip it to another character you control.
+keyword:
+	keyword: Vengeance:
+	reminder: This ability is activated whenever ~THIS~ is stunned.
+keyword:
+	keyword: Backup:
+	reminder: This ability can only be used during the build step.

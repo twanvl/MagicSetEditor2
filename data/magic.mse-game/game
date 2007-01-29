@@ -1,0 +1,1101 @@
+﻿mse version: 0.2.7
+short name: Magic
+full name: Magic the Gathering
+icon: card-back.png
+
+############################################################## Functions & filters
+
+# General functions
+init script:
+	# correctly sort a mana symbol (no guild mana)
+	mana_sort       := sort_rule(order: "XYZ[0123456789]S(WUBRG)")
+	# correctly sort guild mana
+	mana_sort_guild := replace_rule( # swap these:
+				match: "U/W|B/U|R/B|G/B|W/G|B/W|R/U|G/B|W/R|U/G",
+				in_context: "(^|[^/])<match>($|[^/])",
+				replace: {input[2] + "/" + input[0]}) +
+			   replace_rule(
+				match: "T", replace: ""
+			   )
+	mana_has_guild := sort_rule(order: "</|>") # Is there guild or half mana in the input?
+	# A mana cost can contain both normal and guild mana
+	mana_filter := to_upper + {
+		if mana_has_guild()!="" then mana_sort_guild()
+		else                         mana_sort()
+	}
+	# Like mana filter, only also allow tap symbols:
+	tap_filter := sort_rule(order: "<T>")
+	mana_filter_t := replace_rule(               # Remove [] used for forcing mana symbols
+				match: "[\\[\\]]",
+				replace: ""
+			) + { tap_filter() + mana_filter() }
+	
+	# Names of colors
+	color_name := {
+		if      input = "W" then "white"
+		else if input = "U" then "blue"
+		else if input = "B" then "black"
+		else if input = "R" then "red"
+		else if input = "G" then "green"
+		else                     ""
+	}
+	# color based on mana cost, input = a mana cost
+	color_filter  := sort_rule(order: "<WUBRG>") + sort_rule(order: "(WUBRG)")
+	color_filterH := sort_rule(order: "</>")
+	mana_to_color := {
+		colors := color_filter()
+		hybrid := color_filterH()
+		count  := number_of_items(in: colors)
+		if hybrid == "" then
+			# not a hybrid
+			if      count == 0 then  "colorless"
+			else if count == 1 then  color_name(colors[0])
+			else if set.set_info.use_gradient_multicolor == "no"  then "multicolor" # stop here
+			else if count == 2 then  "multicolor 2 color " + color_name(colors[0]) + " / " + color_name(colors[1])
+			else if set.set_info.use_gradient_multicolor != "yes" then "multicolor" # stop here
+			else if count == 3 then  "multicolor 3 color " + color_name(colors[0]) + " / " + color_name(colors[1]) + " / " + color_name(colors[2])
+			else if count == 3 then  "multicolor 4 color " + to_lower(colors[0]) + "/" + to_lower(colors[1]) + "/" + to_lower(colors[2]) + to_lower(colors[3])
+			else if count == 5 then  "multicolor 5 color w/u/b/r/g"
+			else                     "multicolor"
+		else
+			# hybrid
+			if count == 2 then  "hybrid 2 color " + color_name(colors[0]) + " / " + color_name(colors[1])
+			else                "multicolor"
+	}
+	
+	# color based on land text box, input = textbox contents
+	color_text_filter := filter_rule(match: "<sym[^>]*>([^<]+)") + color_filter;
+	land_to_color := {
+		# Based on watermark
+		if      card.watermark = "mana symbol white" then "land 1 color white"
+		else if card.watermark = "mana symbol blue"  then "land 1 color blue"
+		else if card.watermark = "mana symbol black" then "land 1 color black"
+		else if card.watermark = "mana symbol red"   then "land 1 color red"
+		else if card.watermark = "mana symbol green" then "land 1 color green"
+		else (
+			# Based on colors in text box
+			colors := color_text_filter(input: card.rule_text);
+			if      colors = ""   then "land"
+			else if colors = "W"  then "land 1 color white"
+			else if colors = "U"  then "land 1 color blue"
+			else if colors = "B"  then "land 1 color black"
+			else if colors = "R"  then "land 1 color red"
+			else if colors = "G"  then "land 1 color green"
+			else if colors = "WU" then "land 2 color white / blue"
+			else if colors = "UB" then "land 2 color blue / black"
+			else if colors = "BR" then "land 2 color black / red"
+			else if colors = "RG" then "land 2 color red / green"
+			else if colors = "WG" then "land 2 color green / white"
+			else if colors = "WB" then "land 2 color white / black"
+			else if colors = "UR" then "land 2 color blue / red"
+			else if colors = "BG" then "land 2 color black / green"
+			else if colors = "WR" then "land 2 color red / white"
+			else if colors = "UG" then "land 2 color green / blue"
+			else                       "land 1 color multicolor"
+		)
+	};
+	
+	# Index for sorting, white cards are first, so white->1, blue->2, .. ,
+	#  multi->6, hybrid->7, arti->8, land->9, basic land->10
+	is_multicolor := filter_rule(match: "^multicolor") + {input != ""};
+	is_hybrid     := filter_rule(match: "^hybrid")     + {input != ""};
+	is_colorless  := filter_rule(match: "^colorless")  + {input != ""};
+	sort_index := {
+		if      card.card_color=="white"        then "A"
+		else if card.card_color=="blue"         then "B"
+		else if card.card_color=="black"        then "C"
+		else if card.card_color=="red"          then "D"
+		else if card.card_color=="green"        then "E"
+		else if is_multicolor(card.card_color)  then "F"
+		else if is_hybrid    (card.card_color)  then "G"
+		else if is_colorless (card.card_color)  then "H"
+		else if card.super_type!="Basic Land"   then "I"
+		else                                         "J"
+	};
+	
+	# The color of a card
+	is_land := filter_rule(match: "(?i)Land") + {input != ""};
+	card_color := {
+		# usually the color of mana
+		mana_color := mana_to_color(casting_cost);
+		if mana_color == "colorless" and is_land(input: card.super_type)
+		then land_to_color()
+		else mana_color
+	};
+	
+	# Filters for the text box
+	# context in which mana symbols are found
+	mana_context :=
+		"(?ix)				# case insensitive, ignore whitespace
+		 (^|[[:space:]\"(])		# start of a word
+		 (  <match>:			# G: something
+		 |  <match>,			# G, tap: something
+		 |  <match>[ ]can[ ]be[ ]pay
+		 |  (pays?|additional|costs?|the	# pay X. creatures cost 1 less. pay an additional G.
+		    |adds?|pay(ed)?[ ](with|using)
+		    )
+		    ([ ]either)?			 # pay either X or Y
+		    ([ ]<sym[^>]*>[XYZWUBRG0-9/|]+</sym[^>]*>[ ](and|or))* # pay X or Y
+		    [ ]<match> 
+		    ([,.)]|$				# (end of word)
+		    |[ ][^ .,]*$			# still typing...
+		    |[ ]( or | and | in | less | more | to ) # or next word is ...
+		    )
+	         )
+		 |  <param-mana><match></param-mana>	# keyword argument that is declared as mana
+		 |  <param-cost><match></param-cost>	# keyword argument that is declared as cost
+		 |  <param-cost><match>,		# keyword argument that is declared as cost
+		 ";
+	# the rule text filter
+	#  - adds mana symbols
+	#  - makes text in parentheses italic
+	text_filter :=
+		# step 1 : remove all automatic tags
+		tag_remove_rule(tag: "<sym-auto>") +
+		tag_remove_rule(tag: "<i-auto>")   +
+	#	# step 2 : reminder text for keywords
+	#	keyword_rule(
+	#		expand_reminder_game: { set.automatic_reminder_text == "yes" },
+	#		expand_reminder_set:  { set.automatic_reminder_text != "no" },
+	#		before: " (",
+	#		after:  ")",
+	#		fix_english: true
+	#		) +
+		# step 3 : expand shortcut words ~ and CARDNAME
+		replace_rule(
+			match: "~|~THIS~|CARDNAME",
+			in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
+			replace: "<atom-cardname></atom-cardname>"
+			) +
+		# step 4 : fill in atom fields
+		tag_contents_rule(
+			tag: "<atom-cardname>",
+			contents: { if card_name=="" then "CARDNAME" else card_name }
+			) +
+		# step 4.5 : explict non mana symbols
+		replace_rule(
+			match: "\\][STXYZWUBRG0-9/|]+\\[",
+			replace: {"<nosym>" + mana_filter_t() + "</nosym>"} ) +
+		# step 5 : add mana & tap symbols
+		replace_rule(
+			match: "[STXYZWUBRG0-9/|]+",
+			in_context: mana_context,
+			replace: {"<sym-auto>" + mana_filter_t() + "</sym-auto>"} ) +
+		# step 5b : add explict mana symbols
+		replace_rule(
+			match: "\\[[STXYZWUBRG0-9/|]+\\]",
+			replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
+		# step 6 : longdash
+		replace_rule(
+			match: "-",
+			in_context: "(?i)[a-z0-9] <match> |<param-cost> ?<match>"  # Lengthen dashes in Keyword--Cost  -- jimrandomh
+			replace: "—")+
+		# step 7 : italic reminder text
+		replace_rule(
+		 	match: "[(][^)\n]*[)]?",
+			in_context: "(^|[[:space:]])<match>|<atom-keyword><match></",
+		 	replace: "<i-auto>&</i-auto>")
+	
+	# the flavor text filter
+	#  - makes all text italic
+	flavor_text_filter :=
+		# step 1 : remove italic tags
+		tag_remove_rule(tag: "<i-flavor>")   +
+		# step 2 : surround by <i> tags
+		{ "<i-flavor>" + input + "</i-flavor>" }
+	
+	# Converted mana cost
+	cmc := {
+		  1 * number_of_items(in: sort(order:"SWUBRG")) # colored mana
+		- 1 * number_of_items(in: sort(order:"/"))      # guild mana, W/U -> 2 - 1
+		+ 1 * sort(order: "[0123456789]")               # colorless mana
+	}
+
+# TODO : somewhere else?
+#card to conversion:
+#	name: MTGnews.com forums
+#	script:
+#		"[b]" + card.name + "[/b]\n" +
+#		card.sub_type + " - " + card.super_type + "\n" +
+#		card.rules_text + "\n"
+#		card.pt + "\n"
+#		"[i]" + card.flavor_text + "[/i]"
+
+############################################################## Set fields
+
+set field:
+	type: text
+	name: title
+set field:
+	type: text
+	name: description
+	multi line: true
+set field:
+	type: text
+	name: artist
+set field:
+	type: text
+	name: copyright
+set field:
+	type: symbol
+	name: symbol
+	description: The symbol for this set, double click to edit
+set field:
+	type: color
+	name: border color
+	description: The default border color for cards
+	choice:
+		name: black
+		color: rgb(0,0,0)
+	choice:
+		name: white
+		color: rgb(255,255,255)
+	choice:
+		name: silver
+		color: rgb(128,128,128)
+	choice:
+		name: gold
+		color: rgb(200,180,0)
+set field:
+	type: choice
+	name: automatic reminder text
+	choice: yes
+	choice: only for custom keywords
+	choice: no
+	description: Should reminder text be added to keywords by default? Note: you can enable/disable reminder text by right clicking the keyword.
+set field:
+	type: boolean
+	name: automatic card numbers
+	description: Should card numbers be shown on the cards?
+set field:
+	type: boolean
+	name: mark errors
+	description: Marks errors on cards, for example wording and spelling errors, non unique card names, etc.
+set field:
+	type: choice
+	name: use gradient multicolor
+	choice: yes
+	choice: only for two color cards
+	choice: no
+	description: Use gradients on multicolor cards by default, you can always change it be clicking on the card border.
+	initial: no
+
+############################################################## Card fields
+
+############################# Background stuff
+card field:
+	type: color
+	name: border color
+	default: set.border_color
+	choice:
+		name: black
+		color: rgb(0,0,0)
+	choice:
+		name: white
+		color: rgb(255,255,255)
+	choice:
+		name: silver
+		color: rgb(128,128,128)
+	choice:
+		name: gold
+		color: rgb(200,180,0)
+	show statistics: false
+card field:
+	type: choice
+	name: card color
+	icon: stats/card_color.png
+	# Specify the colors somewhere else, to keep things clean
+	include file: magic-blends.mse-include/card-colors
+	default: card_color(casting_cost: card.casting_cost)
+
+############################# Name line
+card field:
+	type: text
+	name: name
+	identifying: true
+	show statistics: false
+	card list visible: true
+	card list column: 1
+	card list width: 150
+	description: The name of the card
+card field:
+	type: text
+	name: casting cost
+	icon: stats/casting_cost.png
+	script: mana_filter(value)
+	move cursor with sort: true
+	card list visible: true
+	card list column: 2
+	card list alignment: right
+	card list width: 50
+	card list name: CC
+	description: The casting cost of the card
+card field:
+	type: choice
+	name: card symbol
+	icon: stats/card_symbol.png
+	choice: none
+	choice: tombstone
+	description: Symbol for this card (tombstone)
+
+############################# Image
+card field:
+	type: image
+	name: image
+	show statistics: false
+
+############################# Card type
+card field:
+	type: text
+	name: super type
+	icon: stats/creature_type.png
+	editable: false
+card field:
+	type: text
+	name: sub type
+	icon: stats/creature_type.png
+	editable: false
+card field:
+	type: text
+	name: type
+	icon: stats/creature_type.png
+	save value: false
+	script:
+		# Either just supertype, or subtype - supertype
+		combined_editor(
+			field1: card.super_type,
+			separator: " — ",
+			field2: card.sub_type,
+			soft_before_empty: true,
+			hide_when_empty:   true,
+			type_over1: " -",
+			type_over2: "-"
+		)
+	card list visible: true
+	card list column:4
+	description: The type of this card, type - to go the sub type
+
+card field:
+	type: choice
+	name: rarity
+	icon: stats/rarity.png
+	choice: basic land
+	choice: common
+	choice: uncommon
+	choice: rare
+	choice: special
+	initial: common
+	card list visible: true
+	card list column: 6
+	description: The rarity of the card, to edit the symbol switch to the 'set info' tab
+
+############################# Text box
+card field:
+	type: text
+	name: rule text
+	script: text_filter(input: value, card_name: card.name)
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: flavor text
+	script: flavor_text_filter(value)
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: text
+	multi line: true
+	save value: false
+	show statistics: false
+	script:
+		combined_editor(field1: card.rule_text, separator: "<line>\n</line>", field2: card.flavor_text)
+
+card field:
+	type: choice
+	name: watermark
+	icon: stats/watermark.png
+	choice: none
+	choice:
+		name: mana symbol
+		choice: white
+		choice: blue
+		choice: black
+		choice: red
+		choice: green
+	choice:
+		name: guild symbol
+		choice: Azorius Senate (W/U)
+		choice: House Dimir (U/B)
+		choice: Cult of Rakdos (B/R)
+		choice: Gruul Clans (R/G)
+		choice: Selesnya Conclave (G/W)
+		choice: Orzhov Syndicate (W/B)
+		choice: The Izzet (U/R)
+		choice: The Golgari (B/G)
+		choice: Boros Legion (R/W)
+		choice: The Simic (G/U)
+	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, or a guild symbol
+
+############################# PT
+card field:
+	type: text
+	name: power
+	icon: stats/power.png
+	editable: false
+card field:
+	type: text
+	name: toughness
+	icon: stats/toughness.png
+	editable: false
+card field:
+	type: text
+	name: pt
+	save value: false
+	script: 
+		combined_editor(
+			field1: card.power,
+			separator: "/",
+			field2: card.toughness,
+			soft_before_empty: true,
+			hide_when_empty:   true,
+			type_over1: "/"
+		)
+	card list visible: true
+	card list column: 5
+	card list width: 50
+	card list name: P/T
+	description: Power/toughness
+	show statistics: false
+
+card field: # box for power/toughness
+	type: choice
+	name: pt box
+	include file: magic-blends.mse-include/card-colors
+	script: card.card_color
+	editable: false
+	save value: false
+	show statistics: false
+
+############################# Card sorting / numbering
+card field:
+	type: text
+	name: card number
+	save value: false
+	script:
+		position(
+			of: card
+			in: set
+			order_by: { sort_index() + card.name }
+			) + 1
+		+ "/" +
+		number_of_items(in: set)
+	card list visible: true
+	card list column: 10
+	card list width: 50
+	card list name: #
+	card list alignment: right
+	editable: false
+	show statistics: false
+
+############################# Copyright stuff
+card field:
+	type: text
+	name: illustrator
+	icon: stats/illustrator.png
+	default: set.artist
+	description: Illustrator of this card, the default value can be changed on the 'set info' tab
+card field:
+	type: text
+	name: copyright
+	default: set.copyright
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: copyright line
+	save value: false
+	show statistics: false
+	script:
+		if set.automatic_card_numbers then
+			combined_editor(field1: card.copyright, separator: " ", field2: card.card_number)
+		else
+			forward_editor(field: card.copyright)
+	description: Copyright of this card and cardnumber, the default value can be changed on the 'set info' tab
+
+############################################################## Duplicate fields (split/flip cards)
+# Based on flip templates by Wolfwood
+# These are a direct copy of the fields above, only with a 2
+
+
+card field:
+	type: choice
+	name: card color 2
+	icon: stats/card_color.png
+	include file: magic-blends.mse-include/card-colors
+	default: card_color(casting_cost: card.casting_cost_2)
+	show statistics: false
+card field:
+	type: text
+	name: name 2
+	identifying: true
+	show statistics: false
+card field:
+	type: text
+	name: casting cost 2
+	icon: stats/casting_cost.png
+	script: mana_filter(value)
+	move cursor with sort: true
+	card list alignment: right
+	card list width: 50
+	card list name: CC
+	show statistics: false
+card field:
+	type: choice
+	name: card symbol 2
+	icon: stats/card_symbol.png
+	choice: none
+	choice: tombstone
+	show statistics: false
+card field:
+	type: image
+	name: image 2
+	show statistics: false
+card field:
+	type: text
+	name: super type 2
+	icon: stats/creature_type.png
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: sub type 2
+	icon: stats/creature_type.png
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: type 2
+	save value: false
+	script:
+		combined_editor(
+			field1: card.super_type_2,
+			separator: " — ",
+			field2: card.sub_type_2,
+			hide_when_empty:   true,
+			soft_before_empty: true,
+			type_over1: " -",
+			type_over2: "-"
+		)
+	show statistics: false
+card field:
+	type: choice
+	name: rarity 2
+	icon: stats/rarity.png
+	choice: basic land
+	choice: common
+	choice: uncommon
+	choice: rare
+	choice: special
+	initial: common
+	# Both rarities will be the same
+	script: card.rarity
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: rule text 2
+	script: text_filter(input: value, card_name: card.name_2)
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: flavor text 2
+	script: flavor_text_filter(value)
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: text 2
+	multi line: true
+	save value: false
+	show statistics: false
+	script:
+		combined_editor(field1: card.rule_text_2, separator: "<line>\n</line>", field2: card.flavor_text_2)
+card field:
+	type: text
+	name: power 2
+	icon: stats/power.png
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: toughness 2
+	icon: stats/toughness.png
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: pt 2
+	save value: false
+	script:
+		combined_editor(
+			field1: card.power_2,
+			separator: "/",
+			field2: card.toughness_2,
+			soft_before_empty: true,
+			hide_when_empty:   true,
+			type_over1: "/"
+		)
+	card list width: 50
+	card list name: P/T2
+	show statistics: false
+card field:
+	type: choice
+	name: pt box 2
+	include file: magic-blends.mse-include/card-colors
+	script: card.card_color_2
+	editable: false
+	save value: false
+	show statistics: false
+card field:
+	# Another pt box witht the same value as pt box 1
+	type: choice
+	name: pt box 1b
+	include file: magic-blends.mse-include/card-colors
+	script: card.card_color
+	editable: false
+	save value: false
+	show statistics: false
+card field:
+	type: text
+	name: illustrator 2
+	icon: stats/illustrator.png
+	default: set.artist
+	show statistics: false
+card field:
+	type: text
+	name: copyright 2
+	default: set.copyright
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: copyright line 2
+	save value: false
+	show statistics: false
+	script:
+		if set.automatic_card_numbers then
+			combined_editor(field1: card.copyright_2, separator: " ", field2: card.card_number)
+		else
+			forward_editor(field: card.copyright_2)
+
+
+
+
+
+
+
+
+
+
+# The following (until keywords) doesn't do anything yet
+
+############################################################## Statistics categories
+
+statistics dimension:
+	name:   converted mana cost
+	script: cmc(card.casting_cost)
+	numeric: true
+	icon: stats/casting_cost.png
+
+statistics dimension:
+	name:   rarity_twice
+	script: card.rarity + card.rarity
+
+statistics category:
+	name: color / rarity
+	dimension: card_color
+	dimension: rarity
+
+#statistics field:
+#	name: creature type
+#	data 1:
+#		if card.super_type == "Creature" or card.super_type == "Legendary Creature" then
+#			split(around:" ", input: card.sub_type)
+
+#statistics field:
+#	name: converted mana cost
+#	graph style: bar
+#	data 1:
+#		card.casting_cost
+#		# TODO
+
+#statistics field:
+#	name: color / rarity
+#	graph style: cross
+#	data 1: card.card_color
+#	data 2: card.rarity
+
+############################################################## Word lists
+
+#word list:
+#	name: card types
+#	word: Creature
+#	word: Artifact
+#	word: Enchantment
+#	word: Instant
+#	word: Sorcery
+#	word: Land
+#	word: Legendary Creature
+#	word: Legendary Artifact
+#	word: Legendary Enchantment
+#	word: Legendary Land
+
+#word list:
+#	name: creature types
+#	word: Goblin
+#	word: Elf
+#	word: Wizard
+#	word: Human
+
+#word list:
+#	name: enchantment types
+#	word:
+#	word: Aura
+
+
+
+############################################################## Card packs
+
+#pack:
+#	name: Base set
+#	pack type: 
+#pack:
+#	name: 
+#pack:
+#	name: Booster
+#	pack type: random
+#	card type:
+#		amount: 1
+#		filter: rarity = "rare"
+#	card type:
+#		amount: 3
+#		filter: rarity = "uncommon"
+#	card type:
+#		amount: 11
+#		filter: rarity = "common"
+
+
+
+
+############################################################## Keywords
+
+############################# Keyword rules
+
+keyword parameter type:
+	name: no parameter
+keyword parameter type:
+	name: mana
+	match: [XYZ0-9WUBRGS/]+
+# By jimrandomh
+keyword parameter type:
+	name: cost
+	#insert as: word
+	match: ***:[XYZ0-9WUBRGS/]+|[^(.,\n]|([XYZ0-9WUBRGS/]+,)?[^(.,\n]*
+keyword parameter type:
+	name: number
+	match: [XYZ0-9]+
+keyword parameter type:
+	name: number (one, two, ...)
+	#insert as: number: one, two
+	match: [XYZ0-9]+
+keyword parameter type:
+	name: number (a, two, ...)
+	#insert as: number: a, two
+	match: [XYZ0-9]+
+keyword parameter type:
+	name: number (, two, ...)
+	#insert as: number: , two
+	match: [XYZ0-9]+
+keyword parameter type:
+	name: action
+	#insert as: word
+	match: ***:[^(.,\n]+
+keyword parameter type:
+	name: name
+	#insert as: word
+	match: ***:[^(.,\n]+
+
+############################# All Magic keywords
+# By JrEye and Neko_Asakami
+
+keyword:
+	keyword: Flying
+	reminder: This creature can’t be blocked except by creatures with flying.
+keyword:
+	keyword: Haste
+	reminder: This creature can attack and tap the turn it comes under your control.
+keyword:
+	keyword: Fear
+	reminder: This creature can’t be blocked except by artifact creatures and/or black creatures.
+keyword:
+	keyword: First strike
+	reminder: This creature deals combat damage before creatures without first strike.
+keyword:
+	keyword: Enchant
+	separator: whitespace [ ]
+	parameter: name
+	reminder: Target a <param> as you play this. This card comes into play attached to that <param>.
+keyword:
+	keyword: Cycling
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: <param>, Discard this card: Draw a card.
+keyword:
+	keyword: Trample
+	reminder: If this creature would deal enough combat damage to its blockers to destroy them, you may have it deal the rest of its damage to defending player.
+keyword:
+	keyword: Banding
+	reminder: When declaring attackers or blockers this creature may group with others creatures with banding and one creature without banding. When damage is dealt, you decide where damage is dealt.
+keyword:
+	keyword: Rampage
+	separator: whitespace [ ]
+	parameter: number
+	reminder: Whenever this creature becomes blocked, it gets +<param>/+<param> until end of turn for each creature blocking it beyond the first.
+keyword:
+	keyword: Vigilance
+	reminder: Attacking doesn’t cause this creature to tap.
+keyword:
+	keyword: Defender
+	reminder: This creature can’t attack.
+keyword:
+	keyword: Cumulative upkeep
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay <param> for each age counter on it.
+keyword:
+	keyword: Horsemanship
+	reminder: This creature can’t be blocked except by creatures with horsemanship.
+keyword:
+	keyword: Phasing
+	reminder: At the beginning of your upkeep, put this and any cards attached to it in the phased-out zone.  If this is already in the phased-out zone, return it and any card attached to it to play.  If there were counters on this card when it phased out, put that many counters on it when it returns to play.  This ability does not cause comes-into-play or leaves play abilities to trigger.
+keyword:
+	keyword: Flanking
+	separator: whitespace [ ]
+	parameter: number
+	reminder: Whenever a creature without flanking blocks this creature, the blocking creature gets -<param>/-<param> until end of turn.
+keyword:
+	keyword: Shadow
+	reminder: This creature can block or be blocked by only creatures with shadow.
+keyword:
+	keyword: Buyback
+	separator: whitespace [ ]
+	parameter: name
+	reminder: You may pay <param> in addition to any other costs as you play this spell. If you do, put ~ into your hand instead of your graveyard as part of its resolution.
+keyword:
+	keyword: Echo
+	reminder: At the beginning of your next upkeep after this permanent comes under your control, sacrifice it unless you pay its mana cost.
+keyword:
+	keyword: Plainscycling
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: <param>, Discard this card: Search your library for a Plains card, reveal it, and put it into your hand. Then shuffle your library.
+keyword:
+	keyword: Islandcycling
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: <param>, Discard this card: Search your library for a Island card, reveal it, and put it into your hand. Then shuffle your library.
+keyword:
+	keyword: Swampcycling
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: <param>, Discard this card: Search your library for a Swamp card, reveal it, and put it into your hand. Then shuffle your library.
+keyword:
+	keyword: Mountaincycling
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: <param>, Discard this card: Search your library for a Mountain card, reveal it, and put it into your hand. Then shuffle your library.
+keyword:
+	keyword: Forestcycling
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: <param>, Discard this card: Search your library for a Forest card, reveal it, and put it into your hand. Then shuffle your library.
+keyword:
+	keyword: Fading
+	separator: whitespace [ ]
+	parameter: number (a, two, ...)
+	reminder: This comes into play with <param> fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can’t, sacrifice it.
+keyword:
+	keyword: Kicker
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: You may pay an additional <param> as you play this spell.
+keyword:
+	keyword: Madness
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: You may play this card for its madness cost at the time you discard it.
+keyword:
+	keyword: Threshold
+	separator: dash [ - ]
+	parameter: action
+	reminder: You have threshold as long as seven or more cards are in your graveyard.
+keyword:
+	keyword: Flashback
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: You may play this card from your graveyard for its flashback cost. Then remove it from the game.
+keyword:
+	keyword: Morph
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: You may play this face down as a 2/2 creature for [3]. Turn it face up any time for its morph cost.
+keyword:
+	keyword: Amplify
+	separator: whitespace [ ]
+	parameter: number (a, two, ...)
+	reminder: As this card comes into play, put <param> +1/+1 counter(s) on it for each creature that shares a type with this that you reveal in your hand.
+keyword:
+	keyword: Double strike
+	reminder: This creature deals both first-strike and regular combat damage.
+keyword:
+	keyword: Provoke
+	reminder: When this attacks, you may have target creature defending player controls untap and block it if able.
+keyword:
+	keyword: Storm
+	reminder: When you play this spell, copy it for each spell played before it this turn. You may choose new targets for the copies.
+keyword:
+	keyword: Affinity for
+	separator: whitespace [ ]
+	parameter: name
+	reminder: This spell costs <sym>1</sym> less to play for each <param> you control.
+keyword:
+	keyword: Entwine
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: Choose both if you pay the entwine cost.
+keyword:
+	keyword: Equip
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: <param>: Attach to target creature you control. Equip only as a sorcery. This card comes into play unattached and stays in play if the creature leaves play.
+keyword:
+	keyword: Imprint
+	separator: dash [ - ]
+	parameter: action
+	reminder: The removed card is imprinted on this artifact.
+keyword:
+	keyword: Modular
+	separator: whitespace [ ]
+	parameter: number (a, two, ...)
+	reminder: This comes into play with <param> +1/+1 counter(s) on it. When it’s put into a graveyard, you may put its +1/+1 counters on target artifact creature.
+keyword:
+	keyword: Scry
+	separator: whitespace [ ]
+	parameter: number (, two, ...)
+	reminder: Look at the top <param> card(s) of your library. Put any number of them on the bottom of your library in any order and the rest on top of your library in any order.
+keyword:
+	keyword: Sunburst
+	reminder: This comes into play with a +1/+1 counter on it for each color of mana used to pay its cost. If it is not a creature, use charge counters instead.
+#keyword:
+#	keyword: Splice onto
+#	separator: whitespace [ ]
+#	parameter: name
+#	reminder: As you play a <param> spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
+keyword:
+	keyword: Splice onto Arcane
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: As you play an Arcane spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
+keyword:
+	keyword: Offering
+	separator: dash [ - ]
+	parameter: name
+	reminder: You may play this card any time you could play an instant by sacrificing a <param> and paying the difference in mana costs between this and the sacrificed <param>. Mana cost includes color.
+keyword:
+	keyword: Bushido
+	separator: whitespace [ ]
+	parameter: number
+	reminder: When this blocks or becomes blocked, it gets +<param>/+<param> until end of turn.
+keyword:
+	keyword: Ninjutsu
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: <param>, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
+keyword:
+	keyword: Soulshift
+	separator: whitespace [ ]
+	parameter: number
+	reminder: When this is put into a graveyard from play, you may return target Spirit card with converted mana cost <param> or less from you graveyard to your hand.
+keyword:
+	keyword: Epic
+	reminder: For the rest of the game, you can’t play spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability. If the spell has any targets, you may choose new targets for the copy.
+keyword:
+	keyword: Convoke
+	reminder: Each creature you tap while playing this spell reduces its cost by <sym>1</sym> or by one mana of that creature’s color.
+keyword:
+	keyword: Transmute
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: <param>, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
+keyword:
+	keyword: Haunt
+	reminder: When this card is put into a graveyard from play, remove it from the game haunting target creature.
+keyword:
+	keyword: Bloodthirst
+	separator: whitespace [ ]
+	parameter: number (a, two, ...)
+	reminder: If an opponent was dealt damage this turn, this creature comes into play with <param> +1/+1 counter(s) on it.
+keyword:
+	keyword: Replicate
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: When you play this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.
+keyword:
+	keyword: Islandwalk
+	reminder: This creature is unblockable as long as defending player controls a Island.
+keyword:
+	keyword: Forestwalk
+	reminder: This creature is unblockable as long as defending player controls a Forest.
+keyword:
+	keyword: Mountainwalk
+	reminder: This creature is unblockable as long as defending player controls a Mountain.
+keyword:
+	keyword: Plainswalk
+	reminder: This creature is unblockable as long as defending player controls a Plains.
+keyword:
+	keyword: Swampwalk
+	reminder: This creature is unblockable as long as defending player controls a Swamp.
+keyword:
+	keyword: Legendary Landwalk
+	reminder: This creature is unblockable as long as defending player controls a Legendary land.
+keyword:
+	keyword: Non-basic Landwalk
+	reminder: This creature is unblockable as long as defending player controls a non-basic land.
+keyword:
+	keyword: Snow-covered Landwalk
+	reminder: This creature is unblockable as long as defending player controls a Snow-covered land.
+keyword:
+	keyword: Denimwalk
+	reminder: If defending player is wearing any clothing made of denim, this creature is unblockable.
+keyword:
+	keyword: Protection from
+	separator: whitespace [ ] 
+	parameter: name
+	reminder: This creature can’t be blocked, targeted, dealt damage, or enchanted by anything <param>.
+keyword:
+	keyword: Dredge
+	separator: whitespace [ ]
+	parameter: number (one, two, ...)
+	reminder: As long as you have at least <param> card(s) in your library, if you would draw a card, you may instead put exactly <param> card(s) from the top of your library into your graveyard and return this card from your graveyard to your hand.
+keyword:
+	keyword: Graft
+	separator: whitespace [ ]
+	parameter: number (a, two, ...)
+	reminder: This creature comes into play with <param> +1/+1 counter(s) on it. Whenever another creature comes into play, you may move a +1/+1 counter from this creature onto it.
+keyword:
+	keyword: Forecast
+	separator: whitespace [ ]
+	parameter: cost
+	reminder: Play this ability only during your upkeep and only once each turn.

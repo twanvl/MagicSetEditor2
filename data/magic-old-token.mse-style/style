@@ -1,0 +1,245 @@
+############################################################## 
+############################################################## 
+############################################################## Old Tokens
+############################################################## 
+############################################################## 
+
+mse version: 0.2.7
+game: magic
+short name: Tokens
+full name: Old style
+icon: card-sample.png
+
+############################################################## Extra scripts
+## COPY/PASTE from magic-old.mse-style/style
+
+init script:
+	# Load blend scripts for hybrids/multicolors
+	include file: magic-blends.mse-include/blend-scripts
+	
+	# There is no land template
+	land_template := { "acard.jpg" }
+	
+	# Horizontal 5 color blends are not supported
+	card_hybrid_5b := card_hybrid_5
+	
+	# Use the normal tap symbol
+	mana_t := { "mana_t_old.png" }
+	
+	# Does the card have a color that requires a black font for copyright/artist?
+	black_font_colors := filter_rule(match:"^(hybrid 2 color)?white")
+	font_color := {
+		if  black_font_colors(input:card.card_color) != "" then
+			rgb(0,0,0)
+		else
+			rgb(255,255,255)
+	}
+
+############################################################## Set info fields
+info style:
+	title:
+		padding left: 2
+		font:
+			size: 16
+	symbol:
+		variation:
+			name: common
+			border radius: 0.10
+			fill type: solid
+			fill color:   rgb(0,0,0)
+			border color: rgb(255,255,255)
+		variation:
+			name: uncommon
+			border radius: 0.05
+			fill type: linear gradient
+			fill color 1:   rgb(224,224,224)
+			fill color 2:   rgb(84, 84, 84)
+			border color 1: rgb(0,  0,  0)
+			border color 2: rgb(0,  0,  0)
+		variation:
+			name: rare
+			border radius: 0.05
+			fill type: linear gradient
+			fill color 1:   rgb(214,196,94)
+			fill color 2:   rgb(95, 84, 40)
+			border color 1: rgb(0,  0,  0)
+			border color 2: rgb(0,  0,  0)
+		variation:
+			name: special
+			border radius: 0.10
+			fill type: linear gradient
+			fill color 1:   rgb(224,170,247)
+			fill color 2:   rgb(58,7,80)
+			border color 1: rgb(255,255,255)
+			border color 2: rgb(255,255,255)
+	automatic reminder text:
+		render style: both
+		choice images:
+			yes: script: buildin_image("bool_yes")
+			no:  script: buildin_image("bool_no")
+	use gradient multicolor:
+		render style: both
+		choice images:
+			yes: script: buildin_image("bool_yes")
+			no:  script: buildin_image("bool_no")
+
+
+############################################################## Extra style
+
+############################################################## Card fields
+card style:
+	############################# Background stuff
+	border color:
+		left: 0
+		top : 0
+		width:	312
+		height:	444
+		radius: 0
+		left width:   12
+		right width:  12
+		top width:    12
+		bottom width: 12
+		z index: -1
+	card color:
+		left:	0
+		top:	0
+		width:	312
+		height:	444
+		z index: -2
+		render style: image
+		popup style: in place
+		include file: magic-blends.mse-include/card-backgrounds
+
+	############################# Name line
+	name:
+		left: 29
+		top : 16
+		width: 250
+		height: 22
+		align: middle center
+		padding bottom: 0
+		z index: 1
+		font:
+			name: MagicMedieval
+			size: 14
+			color: rgb(255,255,255)
+			shadow color: rgb(0,0,0)
+			shadow displacement x: 1
+			shadow displacement y: 1
+
+	############################# Image
+	image:
+		left:	33
+		top:	46
+		width:	244
+		height:	232
+		z index: 1
+
+	############################# Card type
+
+	type:
+		left: 47
+		top : 296
+		width: 199
+		height: 18
+		align: top left
+		z index: 1
+		font:
+			name: MPlantin
+			size: 11
+			color: rgb(255,255,255)
+			shadow color: rgb(0,0,0)
+			shadow displacement x: 1
+			shadow displacement y: 1
+			separator color: rgb(192,192,192)
+
+	rarity:
+		left: 247
+		top : 294
+		width: 22
+		height: 22
+		z index: 1
+		render style: image
+		choice images:
+			# Images based on the set symbol
+			basic land: script: symbol_variation(symbol: set.symbol, variation: "common")
+			common:     script: symbol_variation(symbol: set.symbol, variation: "common")
+			uncommon:   script: symbol_variation(symbol: set.symbol, variation: "uncommon")
+			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
+			special:    script: symbol_variation(symbol: set.symbol, variation: "special")
+
+	############################# Text box
+	text:
+		left: 47
+		top : 318
+		width: 216
+		height: 67
+		font:
+			name: MPlantin
+			italic name: MPlantin-Italic
+			size: 13
+			scale down to: 6
+			color: rgb(0,0,0)
+		symbol font:
+			name: magic-mana-small
+			size: 13
+		align: middle center
+		z index: 2
+		padding left:   2
+		padding top:    2
+		padding right:  2
+		padding bottom: 2
+		line height hard: 1.2
+		line height line: 1.5
+
+	############################# PT
+	pt:
+		z index: 4
+		left:	233
+		top:	391
+		width:	42
+		height:	28
+		align: right top
+		font:
+			name: Mplantin
+			size: 16
+			weight: bold
+			color: rgb(255,255,255)
+			shadow color: rgb(0,0,0)
+			shadow displacement x: 2
+			shadow displacement y: 2
+			separator color: rgb(255,50,50)
+
+	############################# Card sorting / numbering
+	############################# Copyright stuff
+
+	illustrator:
+		left: 47
+		top : 391
+		width: 160
+		height: 13
+		z index: 1
+		align: middle left
+		font:
+			name: Mplantin
+			size: 9
+			color: rgb(255,255,255)
+			shadow color: rgb(0,0,0)
+			shadow displacement x: 1
+			shadow displacement y: 1
+
+	copyright line:
+		left: 47
+		top : 404
+		width: 160
+		height: 10
+		z index: 1
+		align: middle left
+		font:
+			name: MPlantin
+			size: 6
+			color: script: font_color()
+
+width: 312
+height: 444
+dpi: 127.34225621414913957934990439771

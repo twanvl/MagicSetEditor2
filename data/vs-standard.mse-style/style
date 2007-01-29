@@ -1,0 +1,364 @@
+mse version: 0.2.7
+game: vs
+short name: Standard
+full name: Normal VS cards
+icon: card-sample.png
+
+############################################################## Extra scripts
+
+############################################################## Set info fields
+info style:
+	title:
+		padding left: 2
+		font:
+			size: 16
+	automatic reminder text:
+		font:
+			size: 16
+		render style: both
+		choice images:
+			yes: script: buildin_image("bool_yes")
+			no:  script: buildin_image("bool_no")
+
+############################################################## Extra style
+
+############################################################## Card fields
+card style:
+	############################# Background stuff
+	card type:
+		left:	0
+		top:	0
+		width:	375
+		height:	523
+		z index: -2
+		render style: image
+		popup style: in place
+		choice images:
+			character:		card-character.jpg
+			character dual:		card-character-dual.jpg
+			character dual (new):	card-character-dual-new.jpg
+			concealed:		card-concealed.jpg
+			concealed dual:		card-concealed-dual.jpg
+			concealed dual (new):	card-concealed-dual-new.jpg
+			equipment:		card-equipment.jpg
+			location:		card-location.jpg
+			plot twist:		card-plot-twist.jpg
+		card list colors: true
+		choice colors:
+			character:	rgb(120,18,0)
+			character dual:	rgb(120,18,0)
+			concealed:	rgb(26,26,26)
+			concealed dual:	rgb(26,26,26)
+			equipment:	rgb(80,80,80)
+			location:	rgb(30,110,0)
+			plot twist:	rgb(10,0,110)
+
+	############################# Name line
+	name:
+		left: 90
+		top : 25
+		width: 219
+		height: 24
+		align: bottom shrink-overflow
+		padding bottom: 0
+		z index: 4
+		font:
+			name: Percolator Expert
+			size: 22
+			color:
+				script:	if is_concealed()	then rgb(23,4,6)
+				else	if is_equipment()	then rgb(18,21,26)
+				else    if is_location()	then rgb(31,53,30)
+				else    if is_plot_twist()	then rgb(28,47,87)
+				else                                 rgb(22,10,10)
+		symbol font:
+			name: vs-standard-arrow
+			size: 15
+			align: middle center
+	cost:
+		left: 33
+		top : 28
+		width: 25
+		height: 41
+		align: middle center
+		font:
+			name: Dirty Headline
+			size: 24
+			color: 
+				script:	if is_equipment()  then rgb(240,221,146)
+				else    if is_location()   then rgb(193,240,250)
+				else    if is_plot_twist() then rgb(161,174,238)
+				else                            rgb(255,210,110)
+		z index: 4
+		padding top: 0
+	card symbol:
+		left: 315
+		top : 31
+		height: 30
+		width: 30
+		z index: 4
+
+	############################# Image
+	image:
+		left:	65
+		top:	78
+		width:	
+			script:	if is_dual() then 249 else 282
+		height: 241
+		mask:
+			script: if is_dual() then "image-mask-dual.png" else "image-mask.png"
+		z index: 1
+
+	############################# Type Bar
+	type text:
+		left:	72
+		top:	299
+		width:	
+			script: if is_dual() then 235 else 268
+		height: 20
+		font:
+			name: Eurostile
+			size: 11
+			color: rgb(0,0,0)
+			weight: bold
+		align: middle center
+		z index: 3
+	type bar:
+		left:	72
+		top:	299
+		width:	script: if is_dual() then 235 else 268
+		height: 20
+		visible:
+			script: card.type_text != ""
+		render style: image
+		choice images:
+			type bar: type-bar.png
+		z index: 2
+
+	############################# Version
+
+	version:
+		left: 90
+		top : 46
+		width: 219
+		height: 18
+		align: top shrink-overflow
+		z index: 4
+		font:
+			name: Percolator Expert
+			size: 14
+			color: 
+				script:	if is_concealed()	then rgb(23,4,6)
+				else	if is_equipment()	then rgb(18,21,26)
+				else    if is_location()	then rgb(31,53,30)
+				else    if is_plot_twist()	then rgb(28,47,87)
+				else                                 rgb(22,10,10)
+			separator color: rgb(128,128,128)
+
+	############################# Card ID
+	number:
+		left: 136
+		top : 485
+		width: 30
+		height: 22
+		z index: 3
+		font:
+			name: Eurostile
+			size: 10
+			color:
+				script: if card.rarity=="common"   then rgb(255,255,255)
+				else    if card.rarity=="uncommon" then rgb(80,174,255)
+				else    if card.rarity=="rare"     then rgb(255,210,60)
+				else    if card.rarity=="promo"    then rgb(255,20,20)
+				else rgb(255,255,255)
+			weight: bold
+	rarity:
+		left: 135
+		top: 484
+		width: 50
+		height: 16
+		z index: 4
+		render style: image hidden
+		choice images:
+			common:	  rarity-common.png
+			uncommon: rarity-uncommon.png
+			rare:	  rarity-rare.png
+			promo:    rarity-promo.png
+
+	############################# Affiliation
+	team:
+		left: 23
+		top : 100
+		height: 
+			script: if is_new_dual() then 240 else 200
+		width: 28
+		angle: 90
+		font:
+			name: Percolator Expert
+			size: 19
+			scale down to: 18
+			color: rgb(245,230,197)
+		symbol font:
+			name: vs-standard-arrow
+			size: 18
+			align: middle center
+		align: middle center
+		z index: 4
+		padding left:   2
+		padding top:    2
+		padding right:  2
+		padding bottom: 2
+
+	team 2:
+		left: 325
+		top : 100
+		height: 200
+		width: 28
+		angle: 270
+		font:
+			name: Percolator Expert
+			size: 19
+			scale down to: 18
+			color: rgb(245,230,197)
+		symbol font:
+			name: vs-standard-arrow
+			size: 18
+			align: middle center
+		visible: is_dual()
+		align: middle center
+		z index: 4
+		padding left:   2
+		padding top:    2
+		padding right:  2
+		padding bottom: 2
+
+	############################# FlightRange
+	symbols:
+		left: 25
+		top : 
+			script: if is_new_dual() then 366 else 322
+		height: 67
+		width: 38
+		z index: 4
+		render style: image
+		choice images:
+			flight: flight.png
+			ongoing: ongoing.png
+			range: range.png
+		direction: vertical
+		spacing: 0
+
+
+	############################# Text box
+	rule text:
+		left: 84
+		top : 336
+		width: 272
+		height: 120
+		mask: text-mask.png
+		font:
+			name: Eurostile
+			italic name: EurostileObl-Normal
+			size: 11
+			scale down to: 8
+			color: rgb(0,0,0)
+		symbol font:
+			name: vs-standard-arrow
+			size: 11
+			align: middle center
+		align: top left
+		z index: 4
+		padding left:   2
+		padding top:    2
+		padding right:  2
+		padding bottom: 2
+		line height hard: 1.4
+
+	flavor text:
+		left: 84
+		top : 356
+		width: 272
+		height: 120
+		mask: flavor-text-mask.png
+		font:
+			name: EurostileObl-Normal
+			size: 11
+			scale down to: 8
+			color: rgb(0,0,0)
+		align: bottom left
+		z index: 3
+		padding left:   2
+		padding top:    2
+		padding right:  2
+		padding bottom: 2
+		line height hard: 1.2
+
+		
+
+	############################# Atack/defence
+	attack:
+		z index: 4
+		left:	50
+		top:	430
+		width:	30
+		height:	37
+		visible: script: is_character()
+		z index: 4
+		align: left middle
+		font:
+			name: Dirty Headline
+			size: 24
+			color: rgb(255,210,110)
+			shadow color: rgb(0,0,0)
+			shadow displacement x: 2
+			shadow displacement y: 0
+
+	defence:
+		z index: 4
+		left:	50
+		top:	468
+		width:	30
+		height:	37
+		visible: script: is_character()
+		z index: 4
+		align: left middle
+		padding bottom: -4
+		font:
+			name: Dirty Headline
+			size: 24
+			color: rgb(200,213,225)
+			shadow color: rgb(0,0,0)
+			shadow displacement x: -2
+			shadow displacement y: 0
+
+	############################# Card sorting / numbering
+	############################# Copyright stuff
+
+	illustrator:
+		left: 122
+		top : 320
+		width: 170
+		height: 16
+		align: center top
+		z index: 4
+		font:
+			name: Eurostile
+			size: 9
+			weight: bold
+			color: rgb(255,255,255)
+
+	copyright:
+		left: 195
+		top : 480
+		width: 110
+		height: 26
+		z index: 4
+		align: middle left
+		font: 
+			name: Eurostile
+			size: 6
+			color: rgb(255,255,255)
+
+width: 375
+height: 523
+dpi: 150

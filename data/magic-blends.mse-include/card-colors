@@ -1,0 +1,165 @@
+# Quite a lot of card colors
+# Included by a game file
+
+choice: white
+choice: blue
+choice: black
+choice: red
+choice: green
+choice: colorless
+choice:
+	name:   multicolor
+	group choice: normal
+	choice:
+		name: 2 color
+		choice: white / blue
+		choice: blue / black
+		choice: black / red
+		choice: red / green
+		choice: green / white
+		choice: white / black
+		choice: blue / red
+		choice: black / green
+		choice: red / white
+		choice: green / blue
+	choice:
+		name:   3 color
+		choice: white / blue / black
+		choice: blue / black / red
+		choice: black / red / green
+		choice: red / green / white
+		choice: green / white / blue
+		choice: white / black / red
+		choice: blue / red / green
+		choice: black / green / white
+		choice: red / white / blue
+		choice: green / blue / black
+	choice:
+		name:   4 color
+		choice: w/u/b/r
+		choice: u/b/r/g
+		choice: b/r/g/w
+		choice: r/g/w/u
+		choice: g/w/u/b
+	choice:
+		name:   5 color
+		choice: w/u/b/r/g
+		choice: w/u/b/r/g (horizontal)
+choice:
+	name:   land
+	group choice: colorless
+	choice:
+		name: 1 color
+		choice: white
+		choice: blue
+		choice: black
+		choice: red
+		choice: green
+		choice: multicolor
+	choice:
+		name: 2 color
+		choice: white / blue
+		choice: blue / black
+		choice: black / red
+		choice: red / green
+		choice: green / white
+		choice: white / black
+		choice: blue / red
+		choice: black / green
+		choice: red / white
+		choice: green / blue
+choice:
+	name:   hybrid
+	choice:
+		name: 2 color
+		choice: white / blue
+		choice: blue / black
+		choice: black / red
+		choice: red / green
+		choice: green / white
+		choice: white / black
+		choice: blue / red
+		choice: black / green
+		choice: red / white
+		choice: green / blue
+		choice: colorless / white
+		choice: colorless / blue
+		choice: colorless / black
+		choice: colorless / red
+		choice: colorless / green
+	choice:
+		name: 3 color
+		choice: white / blue / black
+		choice: blue / black / red
+		choice: black / red / green
+		choice: red / green / white
+		choice: green / white / blue
+		choice: white / black / red
+		choice: blue / red / green
+		choice: black / green / white
+		choice: red / white / blue
+		choice: green / blue / black
+		choice:
+			name:	horizontal
+			choice: white / blue / black
+			choice: blue / black / red
+			choice: black / red / green
+			choice: red / green / white
+			choice: green / white / blue
+			choice: white / black / red
+			choice: blue / red / green
+			choice: black / green / white
+			choice: red / white / blue
+			choice: green / blue / black
+	choice:
+		name:   4 color
+		choice: w/u/b/r
+		choice: u/b/r/g
+		choice: b/r/g/w
+		choice: r/g/w/u
+		choice: g/w/u/b
+		choice:
+			name:	horizontal
+			choice: w/u/b/r
+			choice: u/b/r/g
+			choice: b/r/g/w
+			choice: r/g/w/u
+			choice: g/w/u/b
+	choice:
+		name:   5 color
+		choice: w/u/b/r/g
+		choice: w/u/b/r/g (horizontal)
+	choice:
+		# Vertical hybrids, for flip cards
+		#   By: Wolfwood
+		name:   vertical
+		choice: white / blue
+		choice: white / black
+		choice: white / red
+		choice: white / green
+		choice: white / colorless
+		choice: blue / white
+		choice: blue / black
+		choice: blue / red
+		choice: blue / green
+		choice: blue / colorless
+		choice: black / white
+		choice: black / blue
+		choice: black / red
+		choice: black / green
+		choice: black / colorless
+		choice: red / white
+		choice: red / blue
+		choice: red / black
+		choice: red / green
+		choice: red / colorless
+		choice: green / white
+		choice: green / blue
+		choice: green / black
+		choice: green / red
+		choice: green / colorless
+		choice: colorless / white
+		choice: colorless / blue
+		choice: colorless / black
+		choice: colorless / red
+		choice: colorless / green

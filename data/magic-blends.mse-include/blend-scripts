@@ -1,0 +1,261 @@
+# Scripts for blending images
+# Included by a style file in its init script
+
+# Credits:
+#  3/4/5 color blends by Guinea Pig
+#  vertical blends by Wolfwood
+
+
+########################################################################
+# Filenames and other defaults
+########################################################################
+
+mask_hybrid_with_land	:= { false }
+land_template		:= { input + "lcard.jpg" }
+card_template		:= { input + "card.jpg" }
+pt_template		:= { input + "pt.jpg" }
+pt2_template		:= { input + "pt2.jpg" }
+
+########################################################################
+# Hybrid blends
+########################################################################
+
+# Make parts of the input grey (land color)
+card_hybrid_nt := {
+	if mask_hybrid_with_land() then
+		masked_blend(
+			mask:  "hybrid_blend_nt.png",
+			dark:  land_template(""),
+			light: input,
+		)
+	else input
+}
+
+# Card hybrid without land blending
+card_hybrid := {
+	linear_blend(
+		image1: card_template(input[0])
+		image2: card_template(input[1])
+		x1: 0.4,  y1: 0
+		x2: 0.6,  y2: 0
+	)
+}
+
+
+card_hybrid_2 := card_hybrid + card_hybrid_nt
+
+# vertical 2 color hybrid
+card_hybrid_2v := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: card_template(input[0])
+			image2: card_template(input[1])
+			x1: 0,  y1: 0.4
+			x2: 0,  y2: 0.62
+		)
+	)
+}
+# 'star' 3 color hybrid
+card_hybrid_3 := {
+	card_hybrid_nt(
+		linear_blend(
+			image1:  card_hybrid(input[0] + input[1]),
+			image2: card_template(input[2]),
+			x1: 0,  y1: 0.55
+			x2: 0,  y2: 0.77
+		)
+	)
+}
+# 'star' 4 color hybrid
+card_hybrid_4 := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: card_hybrid(input[0] + input[1])
+			image2: card_hybrid(input[2] + input[3])
+			x1: 0,  y1: 0.4
+			x2: 0,  y2: 0.62
+		)
+	)
+}
+# 'star' 5 color hybrid
+card_hybrid_5 := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: linear_blend(
+				image1:  card_hybrid("gb"),
+				image2: card_hybrid("wu"),
+				x1: 0,  y1: 0.19
+				x2: 0,  y2: 0.35
+			),
+			image2: card_template("r"),
+			x1: 0,  y1: 0.677
+			x2: 0,  y2: 0.837
+		)
+	)
+}
+# horizontal 3 color hybrid
+card_hybrid_3h := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: card_template(input[0])
+			x1: 0.22,  y1: 0
+			x2: 0.4,   y2: 0
+			image2: linear_blend(
+			  image1: card_template(input[1])
+			  x1: 0.6,   y1: 0
+			  x2: 0.78,  y2: 0
+			  image2: card_template(input[2])
+		))
+	)
+}
+# horizontal 4 color hybrid
+card_hybrid_4h := {
+	card_hybrid_nt(
+		linear_blend(
+			# blend = 0.16
+			image1: card_template(input[0])
+			x1: 0.15,  y1: 0
+			x2: 0.31,   y2: 0
+			image2: linear_blend(
+			  image1: card_template(input[1])
+			  x1: 0.42,  y1: 0
+			  x2: 0.58,  y2: 0
+			  image2: linear_blend(
+			    image1: card_template(input[2])
+			    x1: 0.69, y1: 0
+			    x2: 0.85, y2: 0
+			    image2: card_template(input[3])
+		)))
+	)
+}
+# horizontal 5 color hybrid
+card_hybrid_5h := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: card_template("w")
+			x1: 2.0 / 15,  y1: 0
+			x2: 4.0 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: card_template("u")
+			  x1: 5.0 / 15,  y1: 0
+			  x2: 7.0 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: card_template("b")
+			    x1: 8.0 / 15,  y1: 0
+			    x2: 10.0 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: card_template("r")
+			      x1: 11.0 / 15,  y1: 0
+			      x2: 13.0 / 15,  y2: 0
+			      image2: card_template("g")
+		))))
+	)
+}
+
+########################################################################
+# Multicolor blends
+########################################################################
+
+# Make a hybrid blend into a multicolor blend
+multi_hybrid := {
+	masked_blend(
+		mask:  "multicolor_dual_blend.png",
+		dark:  "mcard.jpg",
+		light: input,
+	)
+}
+
+
+########################################################################
+# Land blends
+########################################################################
+
+land_hybrid_2 := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: land_template(input[0])
+			image2: land_template(input[1])
+			x1: 0.4,  y1: 0
+			x2: 0.6,  y2: 0
+		)
+	)
+}
+
+########################################################################
+# Power/thoughness boxes
+########################################################################
+
+# Make parts of the input grey (hpt.jpg color)
+# For p/t box
+card_hybrid_pt := {
+	# Make the p/t box grey based on set.grey_hybrid_name 
+	if mask_hybrid_with_land()
+	then land_hybrid_pt()
+	else pt_template()
+}
+# Mask part of the input p/t box with the "hpt.jpg" file
+land_hybrid_pt := {
+	masked_blend(
+		mask:  "hybrid_blend_pt.png",
+		dark:  "hpt.jpg",
+		light: pt_template(),
+	)
+}
+
+# Multicolor blend for pt box
+multi_hybrid_pt := {
+	masked_blend(
+		mask:  "multicolor_dual_blend_pt.png",
+		dark:  pt_template("m"),
+		light: pt_template(),
+	)
+}
+
+# 3 Color Horizontal Blending (based on templates by BunnieRein)
+card_hybrid_3h_pt := {
+	linear_blend(
+		image1: pt_template(input[0])
+		image2: pt_template(input[1])
+		x1: -0.2,  y1: 0
+		x2:  0.1,  y2: 0
+	)
+}
+# 4 Color Horizontal Blending
+card_hybrid_4h_pt := {
+	linear_blend(
+		image1: pt_template(input[0])
+		image2: pt_template(input[1])
+		x1: -0.1,  y1: 0
+		x2:  0.6,  y2: 0
+	)
+}
+
+########################################################################
+# Power/thoughness boxes #2
+########################################################################
+
+# Make parts of the input grey (hpt.jpg color)
+# For p/t box
+card_hybrid_pt2 := {
+	# Make the p/t box grey based on set.grey_hybrid_name 
+	if mask_hybrid_with_land()
+	then land_hybrid_pt2()
+	else pt2_template()
+}
+# Mask part of the input p/t box with the "hpt.jpg" file
+land_hybrid_pt2 := {
+	masked_blend(
+		mask:  "hybrid_blend_pt2.png",
+		dark:  "hpt.jpg",
+		light: pt2_template(),
+	)
+}
+
+# Multicolor blend for pt box
+multi_hybrid_pt2 := {
+	masked_blend(
+		mask:  "multicolor_dual_blend_pt2.png",
+		dark:  "mpt2.jpg",
+		light: pt2_template(),
+	)
+}

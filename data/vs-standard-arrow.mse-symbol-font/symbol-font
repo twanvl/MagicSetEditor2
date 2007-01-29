@@ -1,0 +1,11 @@
+mse version: 0.2.7
+# Symbol font for arrow symbol
+
+image font size: 135
+horizontal space: 0
+symbol:
+	code: ->
+	image: arrow.png
+symbol:
+	code: @
+	image: diamond.png

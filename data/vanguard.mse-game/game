@@ -1,0 +1,299 @@
+﻿mse version: 0.2.7
+short name: Vanguard
+full name: Magic Vanguard
+icon: card-sample.png
+
+# Author : Wolfwood
+# Most stuff is copy/pasted from magic.mse-game
+
+############################################################## Functions & filters
+
+# General functions
+init script:
+	# correctly sort a mana symbol (no guild mana)
+	mana_sort       := sort_rule(order: "XYZ[0123456789]S(WUBRG)")
+	# correctly sort guild mana
+	mana_sort_guild := replace_rule( # swap these:
+			match: "U/W|B/U|R/B|G/B|W/G|B/W|R/U|G/B|W/R|U/G",
+			in_context: "(^|[^/])<match>($|[^/])",
+			replace: {input[2] + "/" + input[0]})
+	mana_has_guild     := sort_rule(order: "</|>") # Is there guild or half mana in the input?
+	# A mana cost can contain both normal and guild mana
+	mana_filter := to_upper + {
+		if mana_has_guild()!="" then mana_sort_guild()
+		else                         mana_sort()
+	}
+	# Like mana filter, only also allow tap symbols:
+	tap_filter := sort_rule(order: "<T>")
+	mana_filter_t := replace_rule(               # Remove [] used for forcing mana symbols
+				match: "[\\[\\]]",
+				replace: ""
+			) + { tap_filter() + mana_filter() }
+	
+	
+	# Filters for the text box
+	# context in which mana symbols are found
+	mana_context :=
+		"(?ix)				# case insensitive, ignore whitespace
+		 (^|[[:space:]\"(])		# start of a word
+		 (  <match>:			# G: something
+		 |  <match>,			# G, tap: something
+		 |  <match>[ ]can[ ]be[ ]pay
+		 |  (pays?|additional|costs?|the	# pay X. creatures cost 1 less. pay an additional G.
+		    |adds?|pay(ed)?[ ](with|using)
+		    )
+		    ([ ]either)?			 # pay either X or Y
+		    ([ ]<sym[^>]*>[XYZWUBRG0-9/|]+</sym[^>]*>[ ](and|or))* # pay X or Y
+		    [ ]<match> 
+		    ([,.)]|$				# (end of word)
+		    |[ ][^ .,]*$			# still typing...
+		    |[ ]( or | and | in | less | more | to ) # or next word is ...
+		    )
+	         )
+		 |  <param-mana><match></param-mana>	# keyword argument that is declared as mana
+		 |  <param-cost><match></param-cost>	# keyword argument that is declared as cost
+		 |  <param-cost><match>,		# keyword argument that is declared as cost
+		 ";
+	# the rule text filter
+	#  - adds mana symbols
+	#  - makes text in parentheses italic
+	text_filter := 
+		# step 1 : remove all automatic tags
+		tag_remove_rule(tag: "<sym-auto>") +
+		tag_remove_rule(tag: "<i-auto>")   +
+		# step 3 : expand shortcut words ~ and CARDNAME
+		replace_rule(
+			match: "~|~THIS~|CARDNAME",
+			in_context: "(^|[[:space:]]|\\()<match>",
+			replace: "<atom-cardname></atom-cardname>"
+			) +
+		# step 4 : fill in atom fields
+		tag_contents_rule(
+			tag: "<atom-cardname>",
+			contents: { if card.name=="" then "CARDNAME" else card.name }
+			) +
+		# step 4.5 : explict non mana symbols
+		replace_rule(
+			match: "\\][STXYZWUBRG0-9/|]+\\[",
+			replace: {"<nosym>" + mana_filter_t() + "</nosym>"} ) +
+		# step 5 : add mana & tap symbols
+		replace_rule(
+			match: "[STXYZWUBRG0-9/|]+",
+			in_context: mana_context,
+			replace: {"<sym-auto>" + mana_filter_t() + "</sym-auto>"} ) +
+		# step 5b : add explict mana symbols
+		replace_rule(
+			match: "\\[[STXYZWUBRG0-9/|]+\\]",
+			replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
+		# step 7 : italic reminder text
+		replace_rule(
+		 	match: "[(][^)\n]*[)]?",
+			in_context: "(^|[[:space:]])<match>|<atom-keyword><match></>",
+		 	replace: "<i-auto>&</i-auto>");
+	
+
+############################################################## Set fields
+
+set field:
+	type: text
+	name: title
+set field:
+	type: text
+	name: description
+	multi line: true
+set field:
+	type: text
+	name: artist
+set field:
+	type: text
+	name: copyright
+set field:
+	type: color
+	name: border color
+	description: The default border color for cards
+	choice:
+		name: black
+		color: rgb(0,0,0)
+	choice:
+		name: white
+		color: rgb(255,255,255)
+	choice:
+		name: silver
+		color: rgb(128,128,128)
+	choice:
+		name: gold
+		color: rgb(200,180,0)
+set field:
+	type: boolean
+	name: automatic card numbers
+	initial: no
+	description: Should card numbers be shown on the cards?
+
+############################################################## Card fields
+
+############################# Background stuff
+card field:
+	type: color
+	name: border color
+	default: set.border_color
+	choice:
+		name: black
+		color: rgb(0,0,0)
+	choice:
+		name: white
+		color: rgb(255,255,255)
+	choice:
+		name: silver
+		color: rgb(128,128,128)
+	choice:
+		name: gold
+		color: rgb(200,180,0)
+	show statistics: false
+card field:
+	type: choice
+	name: background
+	choice: normal
+	editable: false
+
+############################# Name line
+card field:
+	type: text
+	name: name
+	identifying: true
+	show statistics: false
+	card list visible: true
+	card list column: 1
+	card list width: 150
+
+############################# Image
+card field:
+	type: image
+	name: image
+	show statistics: false
+
+############################# Card type
+
+card field:
+	type: text
+	name: type
+	card list visible: true
+	card list column: 2
+
+############################# Text box
+card field:
+	type: text
+	name: rule text
+	script: text_filter(value)
+	show statistics: false
+	multi line: true
+card field:
+	type: text
+	name: flavor text
+	show statistics: false
+	multi line: true
+
+############################# PT
+card field:
+	type: text
+	name: handmod
+	card list visible: true
+	card list column: 3
+	card list width: 50
+	card list name: hand
+
+card field:
+	type: text
+	name: lifemod
+	card list visible: true
+	card list column: 4
+	card list width: 50
+	card list name: life
+
+
+############################# Card sorting / numbering
+card field:
+	type: text
+	name: card number
+	save value: false
+	script:
+		position(
+			of: card
+			in: set
+			order_by: { card.name }
+		)
+		+ "/" +
+		number_of_items(in: set)
+	card list visible: true
+	card list column: 10
+	card list width: 50
+	card list name: #
+	editable: false
+	show statistics: false
+
+############################# Copyright stuff
+card field:
+	type: text
+	name: illustrator
+	default: set.artist
+card field:
+	type: text
+	name: copyright
+	default: set.copyright
+	editable: false
+card field:
+	type: text
+	name: copyright line
+	save value: false
+	show statistics: false
+	script:
+		if set.automatic_card_numbers then
+			combined_editor(field1: card.copyright, separator: " ", field2: card.card_number)
+		else
+			forward_editor(field: card.copyright)
+
+############################################################## Keywords
+
+############################# Keyword rules
+
+keyword parameter type:
+	name: no parameter
+keyword parameter type:
+	name: mana
+	match: [XYZ0-9WUBRG/]+
+keyword parameter type:
+	name: number
+	match: [0-9]+
+keyword parameter type:
+	name: action
+	match: [^\n(.,]+
+keyword parameter type:
+	name: name
+	match:
+		[^
+		(.,]+
+
+
+############################# All Magic keywords
+
+keyword:
+	keyword: Flying
+	reminder: This creature can’t be blocked except by creatures with flying.
+keyword:
+	keyword: Haste
+	reminder: This creature can attack the turn it comes under your control.
+keyword:
+	keyword: Fear
+	reminder: This creature can't be blocked except by artifact creatures and/or black creatures.
+keyword:
+	keyword: First strike
+	reminder: This creature deals combat damage before creatures without first strike.
+keyword:
+	keyword: Enchant
+	separator: whitespace [ ]
+	parameter: name
+	reminder: Target a <param> as you play this. This card comes into play attached to that <param>.
+keyword:
+	keyword: Cycling
+	separator: whitespace [ ]
+	parameter: mana
+	reminder: <param>, Discard this card: Draw a card.

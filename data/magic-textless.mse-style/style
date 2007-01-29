@@ -1,0 +1,264 @@
+mse version: 0.2.7
+game: magic
+short name: Textless
+full name: Modern style
+icon: card-sample.png
+
+#By: Wolfwood
+
+############################################################## Extra scripts
+
+init script:
+	# Load blend scripts for hybrids/multicolors
+	include file: magic-blends.mse-include/blend-scripts
+	
+	# Should hybrids have a grey name?
+	mask_hybrid_with_land := { styling.grey_hybrid_name }
+	
+	# There is no land template
+	land_template := { "acard.jpg" }
+	
+	# there is no multi template
+	multi_hybrid := { input }
+	
+	card_template := { if input == "m" then "acard.jpg" else input + "card.jpg" }
+	pt_template   := { input + "pt.jpg" }
+	
+	# Use the normal tap symbol
+	small_mana_t := "mana_t.png"
+	
+	# Does the card have a color that requires a white font for copyright/artist?
+	white_font_colors := filter_rule(match:"^(hybrid 2 color)?black|^land")
+	font_color := {
+		if  white_font_colors(input:card.card_color) != "" then
+			rgb(255,255,255)
+		else
+			rgb(0,0,0)
+	}
+
+############################################################## Set info fields
+info style:
+	title:
+		padding left: 2
+		font:
+			size: 16
+	symbol:
+		variation:
+			name: common
+			border radius: 0.10
+			fill type: solid
+			fill color:   rgb(0,0,0)
+			border color: rgb(255,255,255)
+		variation:
+			name: uncommon
+			border radius: 0.05
+			fill type: linear gradient
+			fill color 1:   rgb(224,224,224)
+			fill color 2:   rgb(84, 84, 84)
+			border color 1: rgb(0,  0,  0)
+			border color 2: rgb(0,  0,  0)
+		variation:
+			name: rare
+			border radius: 0.05
+			fill type: linear gradient
+			fill color 1:   rgb(214,196,94)
+			fill color 2:   rgb(95, 84, 40)
+			border color 1: rgb(0,  0,  0)
+			border color 2: rgb(0,  0,  0)
+		variation:
+			name: special
+			border radius: 0.10
+			fill type: linear gradient
+			fill color 1:   rgb(224,170,247)
+			fill color 2:   rgb(58,7,80)
+			border color 1: rgb(255,255,255)
+			border color 2: rgb(255,255,255)
+	automatic reminder text:
+		render style: both
+		choice images:
+			yes: script: buildin_image("bool_yes")
+			no:  script: buildin_image("bool_no")
+	use gradient multicolor:
+		render style: both
+		choice images:
+			yes: script: buildin_image("bool_yes")
+			no:  script: buildin_image("bool_no")
+
+
+############################################################## Extra style
+
+extra field:
+	type: boolean
+	name: colored mana symbols
+	description: Use colored mana symbols, as used by Wizards since Fifth Dawn.
+extra field:
+	type: boolean
+	name: darker artifacts
+	description: Use darker artifacts, as used by Wizards since Fifth Dawn.
+extra field:
+	type: boolean
+	name: grey hybrid name
+	description: Use a grey background for the name and type line on hybrid cards. This is done on real cards.
+	initial: no
+extra field:
+	type: boolean
+	name: use guild mana symbols
+	description: Use the Ravnica guild symbols instead of the official half/half circles for hybrid mana.
+	initial: no
+extra field:
+	type: boolean
+	name: popup mana symbols
+	description: Use the symbols of the casting cost line inside the text box as well
+	initial: no
+
+extra style:
+	popup mana symbols:
+		choice images:
+			yes: /magic-mana-large.mse-symbol-font/mana_w.png
+			no:  /magic-mana-small.mse-symbol-font/mana_w.png
+
+############################################################## Card fields
+card style:
+	############################# Background stuff
+	border color:
+		left: 0
+		top : 0
+		width:	375
+		height:	523
+		radius: 18
+		left width:   17
+		right width:  17
+		top width:    17
+		bottom width: 18
+		z index: -1
+	card color:
+		left:	0
+		top:	0
+		width:	375
+		height:	523
+		z index: -2
+		render style: image
+		popup style: in place
+		include file: magic-blends.mse-include/card-backgrounds
+
+	############################# Name line
+	name:
+		left: 
+			script: if card.card_symbol=="none" then 32 else 51
+		top : 30
+		width: 
+			script: if card.card_symbol=="none" then 246 else 227
+		height: 23
+		align: bottom shrink-overflow
+		padding bottom: 0
+		z index: 1
+		font:
+			name: Matrix
+			size: 17
+			weight: bold
+			color: rgb(0,0,0)
+	casting cost:
+		left: 280
+		top : 29
+		width: 63
+		height: 23
+		align: bottom right
+		symbol font:
+			name: magic-mana-large
+			size: 15
+			align: bottom right
+		always symbol: true
+		z index: 2
+		padding top: 0
+	card symbol:
+		left: 
+			script: if card.card_symbol=="none" then 20 else 32
+		top : 31
+		height: 20
+		width: 14
+		render style: image
+		choice images:
+			tombstone: tombstone.png
+
+	############################# Image
+	image:
+		left:	0
+		top:	55
+		width:	375
+		height:	472
+		mask: mask_image.png
+		z index: 1
+
+	############################# Card type
+	rarity:
+		left: 320
+		top : 480
+		width: 22
+		height: 22
+		z index: 1
+		render style: image
+		choice images:
+			# Images based on the set symbol
+			basic land: script: symbol_variation(symbol: set.symbol, variation: "common")
+			common:     script: symbol_variation(symbol: set.symbol, variation: "common")
+			uncommon:   script: symbol_variation(symbol: set.symbol, variation: "uncommon")
+			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
+			special:    script: symbol_variation(symbol: set.symbol, variation: "special")
+
+	############################# PT
+	pt:
+		z index: 4
+		left:	290
+		top:	448
+		width:	60
+		height:	28
+		align: center middle
+		font:
+			name: Mplantin
+			size: 18
+			weight: bold
+			color: rgb(0,0,0)
+			separator color: rgb(200,0,0)
+
+	pt box:
+		left:	277
+		top:	442
+		width:	81
+		height:	42
+		z index: 1
+		visible:
+			script: card.pt != ""
+		render style: image
+		mask: mask_pt.png
+		include file: magic-blends.mse-include/card-ptboxes
+
+	############################# Card sorting / numbering
+	############################# Copyright stuff
+
+	illustrator:
+		left: 56
+		top : 477
+		width: 217
+		height: 16
+		z index: 1
+		font:
+			name: Matrix
+			size: 12
+			color:
+				script: font_color()
+
+	copyright line:
+		left: 26
+		top : 493
+		width: 247
+		height: 12
+		z index: 1
+		font:
+			name: MPlantin
+			size: 8
+			color:
+				script: font_color()
+
+width: 375
+height: 523
+dpi: 150
