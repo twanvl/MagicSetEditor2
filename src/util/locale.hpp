@@ -79,10 +79,10 @@ inline String format_string(const String& format, ...) {
 	va_end(args);
 }
 inline String format_string(const String& format, const String& a0) {
-	return format_string(format, a0.c_str());
+	return String::Format(format, a0.c_str());
 }
 inline String format_string(const String& format, const String& a0, const String& a1) {
-	return format_string(format, a0.c_str(), a1.c_str());
+	return String::Format(format, a0.c_str(), a1.c_str());
 }
 
 // ----------------------------------------------------------------------------- : EOF

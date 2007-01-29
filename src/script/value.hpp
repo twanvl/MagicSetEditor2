@@ -37,11 +37,6 @@ enum ScriptType
 /// Actual values are derived types
 class ScriptValue : public IntrusivePtrBase {
   public:
-	inline ScriptValue()
-		#ifdef USE_INTRUSIVE_PTR
-			 : refCount(0)
-		#endif
-	{}
 	virtual ~ScriptValue() {}
 	
 	/// Information on the type of this value

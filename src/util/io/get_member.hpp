@@ -10,11 +10,10 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <script/value.hpp>
 
 DECLARE_INTRUSIVE_POINTER_TYPE(ScriptValue);
 DECLARE_INTRUSIVE_POINTER_TYPE(Script);
-inline void intrusive_ptr_add_ref(ScriptValue* p);
-inline void intrusive_ptr_release(ScriptValue* p);
 
 template <typename T> class Defaultable;
 template <typename T> class Scriptable;

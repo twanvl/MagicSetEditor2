@@ -105,14 +105,15 @@ inline shared_ptr<T> new_shared7(const A0& a0, const A1& a1, const A2& a2, const
 	/// Base class for objects wishing to use intrusive_ptrs
 	class IntrusivePtrBase {
 	  public:
-		virtual ~IntrusivePtrBase();
+		inline IntrusivePtrBase() : ref_count(0) {}
+		virtual ~IntrusivePtrBase() {}
 	  protected:
 		/// Delete this object
 		virtual void destroy() {
 			delete this;
 		}
 	  private:
-		volatile AtomicInt ref_count;
+		AtomicInt ref_count;
 		friend void intrusive_ptr_add_ref(IntrusivePtrBase*);
 		friend void intrusive_ptr_release(IntrusivePtrBase*);
 	};

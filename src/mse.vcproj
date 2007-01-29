@@ -1178,7 +1178,7 @@
 			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx"
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}">
 			<File
-				RelativePath=".\resource\mse.rc">
+				RelativePath=".\resource\msw\mse.rc">
 			</File>
 		</Filter>
 		<Filter
@@ -1627,6 +1627,9 @@
 		<Filter
 			Name="util"
 			Filter="">
+			<File
+				RelativePath=".\util\atomic.hpp">
+			</File>
 			<File
 				RelativePath=".\util\dynamic_arg.hpp">
 			</File>

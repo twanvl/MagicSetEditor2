@@ -52,7 +52,7 @@ class PackageError : public Error {
 class FileNotFoundError : public PackageError {
   public:
 	inline FileNotFoundError(const String& file, const String& package)
-		: PackageError(_ERROR_2_("file not found", file.c_str(), package.c_str()))
+		: PackageError(_ERROR_2_("file not found", file, package))
 	{}
 };
 
@@ -68,7 +68,7 @@ class ParseError : public Error {
 class FileParseError : public ParseError {
   public:
 	inline FileParseError(const String& err, const String& file) :
-		ParseError(_ERROR_2_("file parse error", file.c_str(), err.c_str()))
+		ParseError(_ERROR_2_("file parse error", file, err))
 	{}
 };
 
