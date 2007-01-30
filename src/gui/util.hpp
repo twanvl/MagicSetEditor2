@@ -42,6 +42,12 @@ Image load_resource_image(const String& name);
 /// Load a cursor from a resource
 wxCursor load_resource_cursor(const String& name);
 
+/// Load an icon from a resource
+wxIcon load_resource_icon(const String& name);
+
+/// Load an image for use in a toolbar (filename: tool/...) from a resource
+wxBitmap load_resource_tool_image(const String& name);
+
 // ----------------------------------------------------------------------------- : Platform look
 
 /// Draws a border for a control *around* a rect

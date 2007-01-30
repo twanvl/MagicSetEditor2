@@ -8,47 +8,47 @@
 
 // -------------------------------------------------------- : Icons
 
-ICON_APP				ICON	"icon/mse.ico" // has to come first in alphabet!!
-ICON_EXPORT				ICON	"icon/set.ico" //todo
-ICON_GAME				ICON	"icon/set.ico" //todo
-ICON_SET				ICON	"icon/set.ico"
-ICON_STYLE				ICON	"icon/set.ico" //todo
-ICON_SYMBOL				ICON	"icon/symbol.ico"
+icon/app				ICON	"icon/mse.ico" // has to come first in alphabet!!
+icon/export				ICON	"icon/set.ico" //todo
+icon/game				ICON	"icon/set.ico" //todo
+icon/set				ICON	"icon/set.ico"
+icon/style				ICON	"icon/set.ico" //todo
+icon/symbol				ICON	"icon/symbol.ico"
 
 // -------------------------------------------------------- : Toolbar
 
 cursor/rot_text			CURSOR	"cursor/rot_text.cur"
 
-TOOL_NEW				BITMAP	"tool/file_new.bmp"
-TOOL_OPEN				BITMAP	"tool/file_open.bmp"
-TOOL_SAVE				BITMAP	"tool/file_save.bmp"
+tool/new				BITMAP	"tool/file_new.bmp"
+tool/open				BITMAP	"tool/file_open.bmp"
+tool/save				BITMAP	"tool/file_save.bmp"
 
-TOOL_UNDO				BITMAP	"tool/edit_undo.bmp"
-TOOL_REDO				BITMAP	"tool/edit_redo.bmp"
-TOOL_CUT				BITMAP	"tool/edit_cut.bmp"
-TOOL_COPY				BITMAP	"tool/edit_copy.bmp"
-TOOL_PASTE				BITMAP	"tool/edit_paste.bmp"
-TOOL_FIND				BITMAP	"tool/edit_find.bmp"
+tool/undo				BITMAP	"tool/edit_undo.bmp"
+tool/redo				BITMAP	"tool/edit_redo.bmp"
+tool/cut				BITMAP	"tool/edit_cut.bmp"
+tool/copy				BITMAP	"tool/edit_copy.bmp"
+tool/paste				BITMAP	"tool/edit_paste.bmp"
+tool/find				BITMAP	"tool/edit_find.bmp"
 
-TOOL_BOLD				BITMAP	"tool/format_bold.bmp"
-TOOL_ITALIC				BITMAP	"tool/format_italic.bmp"
-TOOL_SYMBOL				BITMAP	"tool/format_symbol.bmp"
-TOOL_REMINDER			BITMAP	"tool/format_reminder.bmp"
-TOOL_NO_AUTO			BITMAP	"tool/format_no_auto.bmp"
+tool/bold				BITMAP	"tool/format_bold.bmp"
+tool/italic				BITMAP	"tool/format_italic.bmp"
+tool/symbol				BITMAP	"tool/format_symbol.bmp"
+tool/reminder			BITMAP	"tool/format_reminder.bmp"
+tool/no_auto			BITMAP	"tool/format_no_auto.bmp"
 
-TOOL_CARD_ADD			BITMAP	"tool/card_add.bmp"
-TOOL_CARD_ADD_M			BITMAP	"tool/card_add_multiple.bmp"
-TOOL_CARD_DEL			BITMAP	"tool/card_del.bmp"
-TOOL_CARD_ROTATE		BITMAP	"tool/card_rotate.bmp"
-TOOL_CARD_ROTATE_0		BITMAP	"tool/card_rotate_0.bmp"
-TOOL_CARD_ROTATE_90		BITMAP	"tool/card_rotate_90.bmp"
-TOOL_CARD_ROTATE_180	BITMAP	"tool/card_rotate_180.bmp"
-TOOL_CARD_ROTATE_270	BITMAP	"tool/card_rotate_270.bmp"
+tool/card_add			BITMAP	"tool/card_add.bmp"
+tool/card_add_multiple	BITMAP	"tool/card_add_multiple.bmp"
+tool/card_del			BITMAP	"tool/card_del.bmp"
+tool/card_rotate		BITMAP	"tool/card_rotate.bmp"
+tool/card_rotate_0		BITMAP	"tool/card_rotate_0.bmp"
+tool/card_rotate_90		BITMAP	"tool/card_rotate_90.bmp"
+tool/card_rotate_180	BITMAP	"tool/card_rotate_180.bmp"
+tool/card_rotate_270	BITMAP	"tool/card_rotate_270.bmp"
 
-TOOL_KEYWORD_ADD		BITMAP	"tool/keyword_add.bmp"
-TOOL_KEYWORD_DEL		BITMAP	"tool/keyword_del.bmp"
+tool/keyword_add		BITMAP	"tool/keyword_add.bmp"
+tool/keyword_del		BITMAP	"tool/keyword_del.bmp"
 
-TOOL_HELP				BITMAP	"tool/help.bmp"
+tool/help				BITMAP	"tool/help.bmp"
 
 // -------------------------------------------------------- : Symbol editor
 
@@ -60,66 +60,66 @@ cursor/rotate			CURSOR	"cursor/rotate.cur"
 cursor/shear_x			CURSOR	"cursor/shear_x.cur"
 cursor/shear_y			CURSOR	"cursor/shear_y.cur"
 
-TOOL_LINE				BITMAP	"tool/line.bmp"
-TOOL_CURVE				BITMAP	"tool/curve.bmp"
-TOOL_LOCK_FREE			BITMAP	"tool/lock_free.bmp"
-TOOL_LOCK_DIR			BITMAP	"tool/lock_dir.bmp"
-TOOL_LOCK_SIZE			BITMAP	"tool/lock_size.bmp"
+tool/line				BITMAP	"tool/line.bmp"
+tool/curve				BITMAP	"tool/curve.bmp"
+tool/lock_free			BITMAP	"tool/lock_free.bmp"
+tool/lock_dir			BITMAP	"tool/lock_dir.bmp"
+tool/lock_size			BITMAP	"tool/lock_size.bmp"
 
-TOOL_CIRCLE				BITMAP	"tool/circle.bmp"
-TOOL_RECTANGLE			BITMAP	"tool/rectangle.bmp"
-TOOL_TRIANGLE			BITMAP	"tool/triangle.bmp"
-TOOL_STAR				BITMAP	"tool/star.bmp"
+tool/circle				BITMAP	"tool/circle.bmp"
+tool/rectangle			BITMAP	"tool/rectangle.bmp"
+tool/triangle			BITMAP	"tool/triangle.bmp"
+tool/star				BITMAP	"tool/star.bmp"
 
-TOOL_MODE_SELECT		BITMAP	"tool/mode_select.bmp"
-TOOL_MODE_ROTATE		BITMAP	"tool/mode_rotate.bmp"
-TOOL_MODE_CURVE			BITMAP	"tool/mode_curve.bmp"
-TOOL_MODE_PAINT			BITMAP	"tool/mode_paint.bmp"
-TOOL_APPLY				BITMAP	"tool/apply.bmp"
-TOOL_DUPLICATE			BITMAP	"tool/duplicate.bmp"
+tool/mode_select		BITMAP	"tool/mode_select.bmp"
+tool/mode_rotate		BITMAP	"tool/mode_rotate.bmp"
+tool/mode_curve			BITMAP	"tool/mode_curve.bmp"
+tool/mode_paint			BITMAP	"tool/mode_paint.bmp"
+tool/apply				BITMAP	"tool/apply.bmp"
+tool/duplicate			BITMAP	"tool/duplicate.bmp"
 
-COMBINE_OR				IMAGE	"tool/combine_or.png"
-COMBINE_SUB				IMAGE	"tool/combine_sub.png"
-COMBINE_SUB_DARK		IMAGE	"tool/combine_sub_dark.png"
-COMBINE_AND				IMAGE	"tool/combine_and.png"
-COMBINE_AND_DARK		IMAGE	"tool/combine_and_dark.png"
-COMBINE_XOR				IMAGE	"tool/combine_xor.png"
-COMBINE_OVER			IMAGE	"tool/combine_over.png"
-COMBINE_BORDER			IMAGE	"tool/combine_border.png"
+combine_or				IMAGE	"tool/combine_or.png"
+combine_sub				IMAGE	"tool/combine_sub.png"
+combine_sub_dark		IMAGE	"tool/combine_sub_dark.png"
+combine_and				IMAGE	"tool/combine_and.png"
+combine_and_dark		IMAGE	"tool/combine_and_dark.png"
+combine_xor				IMAGE	"tool/combine_xor.png"
+combine_over			IMAGE	"tool/combine_over.png"
+combine_border			IMAGE	"tool/combine_border.png"
 
-HANDLE_ROTATE			IMAGE	"../common/handle_rotate_tl.png"
-HANDLE_SHEAR_X			IMAGE	"../common/handle_shear_x.png"
-HANDLE_CENTER			IMAGE	"../common/handle_center.png"
+handle_rotate			IMAGE	"../common/handle_rotate_tl.png"
+handle_shear_x			IMAGE	"../common/handle_shear_x.png"
+handle_center			IMAGE	"../common/handle_center.png"
 
 // -------------------------------------------------------- : Other
 
-SORT_ASC				BITMAP	"other/sort_asc.bmp"
-SORT_DESC				BITMAP	"other/sort_desc.bmp"
-PLUS					BITMAP	"other/plus.bmp"
-MINUS					BITMAP	"other/minus.bmp"
-SELECTED				IMAGE	"other/selected_yes.png"
-DESELECTED				IMAGE	"other/selected_no.png"
+sort_asc				IMAGE	"other/sort_asc.bmp"
+sort_desc				IMAGE	"other/sort_desc.bmp"
+plus					IMAGE	"other/plus.bmp"
+minus					IMAGE	"other/minus.bmp"
+selected				IMAGE	"other/selected_yes.png"
+deselected				IMAGE	"other/selected_no.png"
 
-BOOL_YES				IMAGE	"../common/bool_yes.png"
-BOOL_NO					IMAGE	"../common/bool_no.png"
+bool_yes				IMAGE	"../common/bool_yes.png"
+bool_no					IMAGE	"../common/bool_no.png"
 
-//HELP_BOOK				BITMAP	"help_book.bmp"
-//HELP_BOOK_OPEN			BITMAP	"help_book_open.bmp"
-//HELP_PAGE				BITMAP	"help_page.bmp"
+//help_book				BITMAP	"help_book.bmp"
+//help_book_open			BITMAP	"help_book_open.bmp"
+//help_page				BITMAP	"help_page.bmp"
 
-ABOUT					IMAGE	"../common/about.png"
-TWO						IMAGE	"../common/two_beta.png"
-BTN_NORMAL				IMAGE	"../common/btn_normal.png"
-BTN_HOVER				IMAGE	"../common/btn_hover.png"
-BTN_OK_NORMAL			IMAGE	"../common/btn_ok_normal.png"
-BTN_OK_HOVER			IMAGE	"../common/btn_ok_hover.png"
+about					IMAGE	"../common/about.png"
+two						IMAGE	"../common/two_beta.png"
+btn_normal				IMAGE	"../common/btn_normal.png"
+btn_hover				IMAGE	"../common/btn_hover.png"
+btn_ok_normal			IMAGE	"../common/btn_ok_normal.png"
+btn_ok_hover			IMAGE	"../common/btn_ok_hover.png"
 
-//ABOUT_XMAS			IMAGE	"about-xmas.png"
-//TWO_XMAS				IMAGE	"two_beta-xmas.png"
+//about_xmas			IMAGE	"about-xmas.png"
+//two_xmas				IMAGE	"two_beta-xmas.png"
 
-WELCOME_NEW				IMAGE	"../common/welcome_new.png"
-WELCOME_OPEN			IMAGE	"../common/welcome_open.png"
-WELCOME_LAST			IMAGE	"../common/welcome_last.png"
+welcome_new				IMAGE	"../common/welcome_new.png"
+welcome_open			IMAGE	"../common/welcome_open.png"
+welcome_last			IMAGE	"../common/welcome_last.png"
 
 // -------------------------------------------------------- : WX
 

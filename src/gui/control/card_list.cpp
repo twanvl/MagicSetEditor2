@@ -9,6 +9,7 @@
 #include <gui/control/card_list.hpp>
 #include <gui/control/card_list_column_select.hpp>
 #include <gui/icon_menu.hpp>
+#include <gui/util.hpp>
 #include <data/game.hpp>
 #include <data/field.hpp>
 #include <data/field/choice.hpp>
@@ -41,8 +42,8 @@ CardListBase::CardListBase(Window* parent, int id, long additional_style)
 {
 	// create image list
 	wxImageList* il = new wxImageList(18,14);
-	il->Add(Bitmap(_("SORT_ASC")),  Color(255,0,255));
-	il->Add(Bitmap(_("SORT_DESC")), Color(255,0,255));
+	il->Add(load_resource_image(_("sort_asc")),  Color(255,0,255));
+	il->Add(load_resource_image(_("sort_desc")), Color(255,0,255));
 	AssignImageList(il, wxIMAGE_LIST_SMALL);
 }
 
@@ -455,12 +456,12 @@ void CardListBase::onDrag(wxMouseEvent& ev) {
 void CardListBase::onContextMenu(wxContextMenuEvent&) {
 	if (allowModify()) {
 		IconMenu m;
-		m.Append(wxID_CUT,	 _("TOOL_CUT"),		_("Cu&t"),		_("Move the selected card to the clipboard"));
-		m.Append(wxID_COPY,	 _("TOOL_COPY"),	_("&Copy"),		_("Place the selected card on the clipboard"));
-		m.Append(wxID_PASTE, _("TOOL_PASTE"),	_("&Paste"),	_("Inserts the card from the clipboard"));
+		m.Append(wxID_CUT,		_("cut"),		_("Cu&t"),					_("Move the selected card to the clipboard"));
+		m.Append(wxID_COPY,		_("copy"),		_("&Copy"),					_("Place the selected card on the clipboard"));
+		m.Append(wxID_PASTE,	_("paste"),	_("&Paste"),				_("Inserts the card from the clipboard"));
 		m.AppendSeparator();
-		m.Append(ID_CARD_ADD,	_("TOOL_CARD_ADD"),		_("&Add Card"),					_("Add a new, blank, card to this set"));
-		m.Append(ID_CARD_REMOVE,_("TOOL_CARD_DEL"),		_("&Remove Select Card"),		_("Delete the selected card from this set"));
+		m.Append(ID_CARD_ADD,	_("card_add"),		_("&Add Card"),				_("Add a new, blank, card to this set"));
+		m.Append(ID_CARD_REMOVE,_("card_del"),		_("&Remove Select Card"),	_("Delete the selected card from this set"));
 		PopupMenu(&m);
 	}
 }

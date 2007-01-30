@@ -110,6 +110,22 @@ wxCursor load_resource_cursor(const String& name) {
 	#endif
 }
 
+wxIcon load_resource_icon(const String& name) {
+	#if defined(__WXMSW__)
+		return wxIcon(_("icon/") + name);
+	#else
+		return wxIcon(load_resource_image(_("icon/") + name));
+	#endif
+}
+
+wxBitmap load_resource_tool_image(const String& name) {
+	#if defined(__WXMSW__)
+		return wxBitmap(_("tool/") + name);
+	#else
+		return load_resource_image(_("tool/") + name);
+	#endif
+}
+
 // ----------------------------------------------------------------------------- : Platform look
 
 // Draw a basic 3D border

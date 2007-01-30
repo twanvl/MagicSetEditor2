@@ -15,11 +15,11 @@
 
 AboutWindow::AboutWindow(Window* parent)
 	: wxDialog(parent, wxID_ANY, _TITLE_("about"), wxDefaultPosition, wxSize(510,340), wxCLIP_CHILDREN | wxDEFAULT_DIALOG_STYLE)
-	, logo (load_resource_image(_("ABOUT")))
-	, logo2(load_resource_image(_("TWO")))
+	, logo (load_resource_image(_("about")))
+	, logo2(load_resource_image(_("two")))
 {
 	// init controls
-	wxButton* ok_button = new HoverButton(this, wxID_OK, _("BTN_OK"));
+	wxButton* ok_button = new HoverButton(this, wxID_OK, _("btn_ok"));
 	wxSize bs = ok_button->GetSize(), ws = GetClientSize();
 	ok_button->Move(ws.GetWidth() - bs.GetWidth(),  ws.GetHeight() - bs.GetHeight()); // align bottom right
 }

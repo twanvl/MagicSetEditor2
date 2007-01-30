@@ -48,26 +48,21 @@ Image generateDisabledImage(const Image& imgIn) {
 // ----------------------------------------------------------------------------- : IconMenu
 
 void IconMenu::Append(int id, const String& resource, const String& text, const String& help, int style, wxMenu* submenu) {
+	// create menu, load icon
+	wxMenuItem* item = new wxMenuItem(this, id, text, help, style, submenu);
+	Bitmap bitmap = load_resource_tool_image(resource);
+	// load bitmap
 	#ifdef __WXMSW__
-		// load bitmap
-		Bitmap bitmap(resource);
+		// make greyed bitmap
 		bitmap = bitmap.GetSubBitmap(wxRect(0,0,16,16));
 		Image disabledImage = generateDisabledImage(bitmap.ConvertToImage());
-		// add menu item
-		wxMenuItem* item = new wxMenuItem(this, id, text, help, style, submenu);
 		item->SetBitmaps(bitmap, bitmap);
 		item->SetDisabledBitmap(disabledImage);
-		wxMenu::Append(item);
 	#else
-
-		// load bitmap
-
-		Bitmap bitmap = load_resource_image(resource);
-		// add menu
-		wxMenuItem* item = new wxMenuItem(this, id, text, help, style, submenu);
 		item->SetBitmap(bitmap);
-		wxMenu::Append(item);
 	#endif
+	// add menu
+	wxMenu::Append(item);
 }
 
 void IconMenu::Append(int id, const String& text, const String& help) {

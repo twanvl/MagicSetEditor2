@@ -22,6 +22,7 @@
 #include <gui/preferences_window.hpp>
 #include <gui/print_window.hpp>
 #include <gui/icon_menu.hpp>
+#include <gui/util.hpp>
 #include <util/window_id.hpp>
 #include <data/game.hpp>
 #include <data/set.hpp>
@@ -42,57 +43,57 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	, find_dialog(nullptr)
 	, number_of_recent_sets(0)
 {
-	SetIcon(wxIcon(_("ICON_APP")));
+	SetIcon(load_resource_icon(_("app")));
 	
 	// initialize menu bar
 	wxMenuBar* menuBar = new wxMenuBar();
 	IconMenu* menuFile = new IconMenu();
-		menuFile->Append(ID_FILE_NEW,		_("TOOL_NEW"),		_MENU_("new set"),			_HELP_("new set"));
-		menuFile->Append(ID_FILE_OPEN,		_("TOOL_OPEN"),		_MENU_("open set"),			_HELP_("open set"));
-		menuFile->Append(ID_FILE_SAVE,		_("TOOL_SAVE"),		_MENU_("save set"),			_HELP_("save set"));
-		menuFile->Append(ID_FILE_SAVE_AS,						_MENU_("save set as"),		_HELP_("save set as"));
+		menuFile->Append(ID_FILE_NEW,		_("new"),		_MENU_("new set"),			_HELP_("new set"));
+		menuFile->Append(ID_FILE_OPEN,		_("open"),		_MENU_("open set"),			_HELP_("open set"));
+		menuFile->Append(ID_FILE_SAVE,		_("save"),		_MENU_("save set"),			_HELP_("save set"));
+		menuFile->Append(ID_FILE_SAVE_AS,					_MENU_("save set as"),		_HELP_("save set as"));
 		IconMenu* menuExport = new IconMenu();
-			menuExport->Append(ID_FILE_EXPORT_HTML,					_("&HTML..."),					_("Export the set to a HTML file"));
-			menuExport->Append(ID_FILE_EXPORT_IMAGE,				_("Card &Image..."),			_("Export the selected card to an image file"));
-			menuExport->Append(ID_FILE_EXPORT_IMAGES,				_("All Card I&mages..."),		_("Export images for all cards"));
-			menuExport->Append(ID_FILE_EXPORT_APPR,					_("&Apprentice..."),			_("Export the set so it can be played with in Apprentice"));
-			menuExport->Append(ID_FILE_EXPORT_MWS,					_("Magic &Workstation..."),		_("Export the set so it can be played with in Magic Workstation"));
-		menuFile->Append(ID_FILE_EXPORT,						_MENU_("export"),					_("Export the set..."), menuExport);
+			menuExport->Append(ID_FILE_EXPORT_HTML,				_("&HTML..."),					_("Export the set to a HTML file"));
+			menuExport->Append(ID_FILE_EXPORT_IMAGE,			_("Card &Image..."),			_("Export the selected card to an image file"));
+			menuExport->Append(ID_FILE_EXPORT_IMAGES,			_("All Card I&mages..."),		_("Export images for all cards"));
+			menuExport->Append(ID_FILE_EXPORT_APPR,				_("&Apprentice..."),			_("Export the set so it can be played with in Apprentice"));
+			menuExport->Append(ID_FILE_EXPORT_MWS,				_("Magic &Workstation..."),		_("Export the set so it can be played with in Magic Workstation"));
+		menuFile->Append(ID_FILE_EXPORT,					_MENU_("export"),					_("Export the set..."), menuExport);
 		menuFile->AppendSeparator();
-		menuFile->Append(ID_FILE_INSPECT,						_("Inspect Internal Data..."),	_("Shows a the data in the set using a tree structure"));
+		menuFile->Append(ID_FILE_INSPECT,					_("Inspect Internal Data..."),	_("Shows a the data in the set using a tree structure"));
 		menuFile->AppendSeparator();
-		menuFile->Append(ID_FILE_PRINT_PREVIEW,					_MENU_("print preview"),	_HELP_("print preview"));
-		menuFile->Append(ID_FILE_PRINT,							_MENU_("print"),			_HELP_("print"));
+		menuFile->Append(ID_FILE_PRINT_PREVIEW,				_MENU_("print preview"),	_HELP_("print preview"));
+		menuFile->Append(ID_FILE_PRINT,						_MENU_("print"),			_HELP_("print"));
 		menuFile->AppendSeparator();
 		// recent files go here
 		menuFile->AppendSeparator();
-		menuFile->Append(ID_FILE_EXIT,							_MENU_("exit"),				_HELP_("exit"));
+		menuFile->Append(ID_FILE_EXIT,						_MENU_("exit"),				_HELP_("exit"));
 	menuBar->Append(menuFile, _MENU_("file"));
 	
 	IconMenu* menuEdit = new IconMenu();
-		menuEdit->Append(ID_EDIT_UNDO,		_("TOOL_UNDO"),		_MENU_1_("undo",wxEmptyString),	_HELP_("undo"));
-		menuEdit->Append(ID_EDIT_REDO,		_("TOOL_REDO"),		_MENU_1_("redo",wxEmptyString),	_HELP_("redo"));
+		menuEdit->Append(ID_EDIT_UNDO,		_("undo"),		_MENU_1_("undo",wxEmptyString),	_HELP_("undo"));
+		menuEdit->Append(ID_EDIT_REDO,		_("redo"),		_MENU_1_("redo",wxEmptyString),	_HELP_("redo"));
 		menuEdit->AppendSeparator();
-		menuEdit->Append(ID_EDIT_CUT,		_("TOOL_CUT"),		_MENU_("cut"),				_HELP_("cut"));
-		menuEdit->Append(ID_EDIT_COPY,		_("TOOL_COPY"),		_MENU_("copy"),				_HELP_("copy"));
-		menuEdit->Append(ID_EDIT_PASTE,		_("TOOL_PASTE"),	_MENU_("paste"),			_HELP_("paste"));
+		menuEdit->Append(ID_EDIT_CUT,		_("cut"),		_MENU_("cut"),				_HELP_("cut"));
+		menuEdit->Append(ID_EDIT_COPY,		_("copy"),		_MENU_("copy"),				_HELP_("copy"));
+		menuEdit->Append(ID_EDIT_PASTE,		_("paste"),		_MENU_("paste"),			_HELP_("paste"));
 		menuEdit->AppendSeparator();
-		menuEdit->Append(ID_EDIT_FIND,		_("TOOL_FIND"),		_MENU_("find"),				_(""));
-		menuEdit->Append(ID_EDIT_FIND_NEXT,						_MENU_("find next"),		_(""));
-		menuEdit->Append(ID_EDIT_REPLACE,						_MENU_("replace"),			_(""));
+		menuEdit->Append(ID_EDIT_FIND,		_("find"),		_MENU_("find"),				_(""));
+		menuEdit->Append(ID_EDIT_FIND_NEXT,					_MENU_("find next"),		_(""));
+		menuEdit->Append(ID_EDIT_REPLACE,					_MENU_("replace"),			_(""));
 		menuEdit->AppendSeparator();
-		menuEdit->Append(ID_EDIT_PREFERENCES,					_MENU_("preferences"),		_HELP_("preferences"));
+		menuEdit->Append(ID_EDIT_PREFERENCES,				_MENU_("preferences"),		_HELP_("preferences"));
 	menuBar->Append(menuEdit, _MENU_("edit"));
 	
 	IconMenu* menuWindow = new IconMenu();
-		menuWindow->Append(ID_WINDOW_NEW,					 	_MENU_("new window"),		_HELP_("new window"));
+		menuWindow->Append(ID_WINDOW_NEW,					_MENU_("new window"),		_HELP_("new window"));
 		menuWindow->AppendSeparator();
 	menuBar->Append(menuWindow, _MENU_("window"));
 	
 	IconMenu* menuHelp = new IconMenu();
-		menuHelp->Append(ID_HELP_INDEX,		_("TOOL_HELP"),		_("&Index..\tF1"),			_(""));
+		menuHelp->Append(ID_HELP_INDEX,		_("help"),		_("&Index..\tF1"),			_(""));
 		menuHelp->AppendSeparator();
-		menuHelp->Append(ID_HELP_ABOUT,							_MENU_("about"),			_(""));
+		menuHelp->Append(ID_HELP_ABOUT,						_MENU_("about"),			_(""));
 	menuBar->Append(menuHelp, _MENU_("help"));
 	
 	SetMenuBar(menuBar);
@@ -104,16 +105,16 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	// tool bar
 	wxToolBar* tb = CreateToolBar(wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL);
 	tb->SetToolBitmapSize(wxSize(18,18));
-	tb->AddTool(ID_FILE_NEW,	_(""),	Bitmap(_("TOOL_NEW")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("new set"),		_HELP_("new set"));
-	tb->AddTool(ID_FILE_OPEN,	_(""),	Bitmap(_("TOOL_OPEN")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("open set"),	_HELP_("open set"));
-	tb->AddTool(ID_FILE_SAVE,	_(""),	Bitmap(_("TOOL_SAVE")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("save set"),	_HELP_("save set"));
+	tb->AddTool(ID_FILE_NEW,	_(""),	load_resource_tool_image(_("new")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_("new set"),		_HELP_("new set"));
+	tb->AddTool(ID_FILE_OPEN,	_(""),	load_resource_tool_image(_("open")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("open set"),	_HELP_("open set"));
+	tb->AddTool(ID_FILE_SAVE,	_(""),	load_resource_tool_image(_("save")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("save set"),	_HELP_("save set"));
 	tb->AddSeparator();
-	tb->AddTool(ID_EDIT_CUT,	_(""),	Bitmap(_("TOOL_CUT")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("cut"));
-	tb->AddTool(ID_EDIT_COPY,	_(""),	Bitmap(_("TOOL_COPY")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("copy"));
-	tb->AddTool(ID_EDIT_PASTE,	_(""),	Bitmap(_("TOOL_PASTE")),wxNullBitmap, wxITEM_NORMAL, _TOOL_("paste"));
+	tb->AddTool(ID_EDIT_CUT,	_(""),	load_resource_tool_image(_("cut")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_("cut"));
+	tb->AddTool(ID_EDIT_COPY,	_(""),	load_resource_tool_image(_("copy")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("copy"));
+	tb->AddTool(ID_EDIT_PASTE,	_(""),	load_resource_tool_image(_("paste")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("paste"));
 	tb->AddSeparator();
-	tb->AddTool(ID_EDIT_UNDO,	_(""),	Bitmap(_("TOOL_UNDO")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("undo",wxEmptyString));
-	tb->AddTool(ID_EDIT_REDO,	_(""),	Bitmap(_("TOOL_REDO")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("redo",wxEmptyString));
+	tb->AddTool(ID_EDIT_UNDO,	_(""),	load_resource_tool_image(_("undo")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("undo",wxEmptyString));
+	tb->AddTool(ID_EDIT_REDO,	_(""),	load_resource_tool_image(_("redo")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("redo",wxEmptyString));
 	tb->AddSeparator();
 	tb->Realize();
 	

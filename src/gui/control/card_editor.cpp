@@ -261,9 +261,9 @@ void DataEditor::onChar(wxKeyEvent& ev) {
 void DataEditor::onContextMenu(wxContextMenuEvent& ev) {
 	if (current_editor) {
 		IconMenu m;
-		m.Append(wxID_CUT,	 _("TOOL_CUT"),		_("Cu&t"),		_("Move the selected text to the clipboard"));
-		m.Append(wxID_COPY,	 _("TOOL_COPY"),	_("&Copy"),		_("Place the selected text on the clipboard"));
-		m.Append(wxID_PASTE, _("TOOL_PASTE"),	_("&Paste"),	_("Inserts the text from the clipboard"));
+		m.Append(wxID_CUT,	 _("cut"),		_("Cu&t"),		_("Move the selected text to the clipboard"));
+		m.Append(wxID_COPY,	 _("copy"),	_("&Copy"),		_("Place the selected text on the clipboard"));
+		m.Append(wxID_PASTE, _("paste"),	_("&Paste"),	_("Inserts the text from the clipboard"));
 		m.Enable(wxID_CUT,   canCut());
 		m.Enable(wxID_COPY,  canCopy());
 		m.Enable(wxID_PASTE, canPaste());

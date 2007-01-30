@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <gui/symbol/basic_shape_editor.hpp>
+#include <gui/util.hpp>
 #include <util/window_id.hpp>
 #include <data/action/symbol.hpp>
 #include <wx/spinctrl.h>
@@ -37,10 +38,10 @@ void SymbolBasicShapeEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	sidesL = new wxStaticText(tb, ID_SIDES, _(" sides: "));
 	sides->SetSize(50, -1);
 	tb->AddSeparator();
-	tb->AddTool(ID_SHAPE_CIRCLE,		_("Ellipse"),		Bitmap(_("TOOL_CIRCLE")),		wxNullBitmap, wxITEM_CHECK, _("Circle / Ellipse"),			_("Draw circles and ellipses"));
-	tb->AddTool(ID_SHAPE_RECTANGLE,		_("Rectangle"),		Bitmap(_("TOOL_RECTANGLE")),	wxNullBitmap, wxITEM_CHECK, _("Square / Rectangle"),		_("Draw squares and rectangles"));
-	tb->AddTool(ID_SHAPE_POLYGON,		_("Polygon"),		Bitmap(_("TOOL_TRIANGLE")),		wxNullBitmap, wxITEM_CHECK, _("Polygon"),					_("Draw triangles, pentagons and other regular polygons"));
-	tb->AddTool(ID_SHAPE_STAR,			_("Star"),			Bitmap(_("TOOL_STAR")),			wxNullBitmap, wxITEM_CHECK, _("Star"),						_("Draw stars"));
+	tb->AddTool(ID_SHAPE_CIRCLE,		_("Ellipse"),		load_resource_tool_image(_("circle")),		wxNullBitmap, wxITEM_CHECK, _("Circle / Ellipse"),			_("Draw circles and ellipses"));
+	tb->AddTool(ID_SHAPE_RECTANGLE,		_("Rectangle"),		load_resource_tool_image(_("rectangle")),	wxNullBitmap, wxITEM_CHECK, _("Square / Rectangle"),		_("Draw squares and rectangles"));
+	tb->AddTool(ID_SHAPE_POLYGON,		_("Polygon"),		load_resource_tool_image(_("triangle")),	wxNullBitmap, wxITEM_CHECK, _("Polygon"),					_("Draw triangles, pentagons and other regular polygons"));
+	tb->AddTool(ID_SHAPE_STAR,			_("Star"),			load_resource_tool_image(_("star")),		wxNullBitmap, wxITEM_CHECK, _("Star"),						_("Draw stars"));
 	tb->AddControl(sidesL);
 	tb->AddControl(sides);
 	tb->Realize();

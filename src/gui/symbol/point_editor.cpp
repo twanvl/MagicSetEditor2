@@ -154,12 +154,12 @@ wxPen SymbolPointEditor::handlePen(WhichPen p, LockMode lock) {
 void SymbolPointEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	// Initialize toolbar
 	tb->AddSeparator();
-	tb->AddTool(ID_SEGMENT_LINE,	_("Line"),		Bitmap(_("TOOL_LINE")),			wxNullBitmap, wxITEM_CHECK, _("To straigt line"),		_("Makes the selected line straight"));
-	tb->AddTool(ID_SEGMENT_CURVE,	_("Curve"),		Bitmap(_("TOOL_CURVE")),		wxNullBitmap, wxITEM_CHECK, _("To curve"),				_("Makes the selected line curved"));
+	tb->AddTool(ID_SEGMENT_LINE,	_("Line"),		load_resource_tool_image(_("line")),		wxNullBitmap, wxITEM_CHECK, _("To straigt line"),		_("Makes the selected line straight"));
+	tb->AddTool(ID_SEGMENT_CURVE,	_("Curve"),		load_resource_tool_image(_("curve")),		wxNullBitmap, wxITEM_CHECK, _("To curve"),				_("Makes the selected line curved"));
 	tb->AddSeparator();
-	tb->AddTool(ID_LOCK_FREE,		_("Free"),		Bitmap(_("TOOL_LOCK_FREE")),	wxNullBitmap, wxITEM_CHECK, _("Unlock node"),			_("Allows the two control points on the node to be moved freely"));
-	tb->AddTool(ID_LOCK_DIR,		_("Smooth"),	Bitmap(_("TOOL_LOCK_DIR")),		wxNullBitmap, wxITEM_CHECK, _("Make node smooth"),		_("Makes the selected node smooth by placing the two control points opposite each other"));
-	tb->AddTool(ID_LOCK_SIZE,		_("Symmetric"),	Bitmap(_("TOOL_LOCK_SIZE")),	wxNullBitmap, wxITEM_CHECK, _("Make node symmetric"),	_("Makes the selected node symetric"));
+	tb->AddTool(ID_LOCK_FREE,		_("Free"),		load_resource_tool_image(_("lock_free")),	wxNullBitmap, wxITEM_CHECK, _("Unlock node"),			_("Allows the two control points on the node to be moved freely"));
+	tb->AddTool(ID_LOCK_DIR,		_("Smooth"),	load_resource_tool_image(_("lock_dir")),	wxNullBitmap, wxITEM_CHECK, _("Make node smooth"),		_("Makes the selected node smooth by placing the two control points opposite each other"));
+	tb->AddTool(ID_LOCK_SIZE,		_("Symmetric"),	load_resource_tool_image(_("lock_size")),	wxNullBitmap, wxITEM_CHECK, _("Make node symmetric"),	_("Makes the selected node symetric"));
 	tb->Realize();
 	// TODO : menu bar
 	//mb->Insert(2, curveMenu, _("&Curve"))

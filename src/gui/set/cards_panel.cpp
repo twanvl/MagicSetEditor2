@@ -67,43 +67,43 @@ void CardsPanel::onChangeSet() {
 
 void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	// Toolbar
-	tb->AddTool(ID_FORMAT_BOLD,		_(""), Bitmap(_("TOOL_BOLD")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("bold"));
-	tb->AddTool(ID_FORMAT_ITALIC,	_(""), Bitmap(_("TOOL_ITALIC")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("italic"));
-	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), Bitmap(_("TOOL_SYMBOL")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("symbols"));
-	tb->AddTool(ID_FORMAT_REMINDER,	_(""), Bitmap(_("TOOL_REMINDER")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("reminder text"));
+	tb->AddTool(ID_FORMAT_BOLD,		_(""), load_resource_tool_image(_("bold")),			wxNullBitmap, wxITEM_CHECK, _TOOL_("bold"));
+	tb->AddTool(ID_FORMAT_ITALIC,	_(""), load_resource_tool_image(_("italic")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("italic"));
+	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), load_resource_tool_image(_("symbol")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("symbols"));
+	tb->AddTool(ID_FORMAT_REMINDER,	_(""), load_resource_tool_image(_("reminder")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("reminder text"));
 	tb->AddSeparator();
-	tb->AddTool(ID_CARD_ADD,		_(""), Bitmap(_("TOOL_CARD_ADD")),	wxNullBitmap, wxITEM_NORMAL,_TOOL_("add card"));
-	tb->AddTool(ID_CARD_REMOVE,		_(""), Bitmap(_("TOOL_CARD_DEl")),	wxNullBitmap, wxITEM_NORMAL,_TOOL_("remove card"));
+	tb->AddTool(ID_CARD_ADD,		_(""), load_resource_tool_image(_("card_add")),		wxNullBitmap, wxITEM_NORMAL,_TOOL_("add card"));
+	tb->AddTool(ID_CARD_REMOVE,		_(""), load_resource_tool_image(_("card_del")),		wxNullBitmap, wxITEM_NORMAL,_TOOL_("remove card"));
 	tb->AddSeparator();
-	tb->AddTool(ID_CARD_ROTATE,		_(""), Bitmap(_("TOOL_CARD_ROTATE")),wxNullBitmap,wxITEM_NORMAL,_TOOL_("rotate card"));
+	tb->AddTool(ID_CARD_ROTATE,		_(""), load_resource_tool_image(_("card_rotate")),	wxNullBitmap,wxITEM_NORMAL,_TOOL_("rotate card"));
 	tb->Realize();
 	// Menus
 	IconMenu* menuCard = new IconMenu();
 		menuCard->Append(ID_CARD_PREV,								_("Select &Previous Card\tPgUp"),	_("Selects the previous card in the list"));
 		menuCard->Append(ID_CARD_NEXT,								_("Select &Next Card\tPgDn"),		_("Selects the next card in the list"));
 		menuCard->AppendSeparator();
-		menuCard->Append(ID_CARD_ADD,		_("TOOL_CARD_ADD"),		_("&Add Card\tCtrl++"),				_("Add a new, blank, card to this set"));
-		menuCard->Append(ID_CARD_ADD_MULT,	_("TOOL_CARD_ADD_M"),	_("Add &Multiple Cards..."),		_("Add multiple cards to the set"));
+		menuCard->Append(ID_CARD_ADD,		_("card_add"),			_("&Add Card\tCtrl++"),				_("Add a new, blank, card to this set"));
+		menuCard->Append(ID_CARD_ADD_MULT,	_("card_add_multiple"),	_("Add &Multiple Cards..."),		_("Add multiple cards to the set"));
 																	// NOTE: space after "Del" prevents wx from making del an accellerator
 																	// otherwise we delete a card when delete is pressed inside the editor
-		menuCard->Append(ID_CARD_REMOVE,	_("TOOL_CARD_DEL"),		_("&Remove Select Card\tDel "),		_("Delete the selected card from this set"));
+		menuCard->Append(ID_CARD_REMOVE,	_("card_del"),			_("&Remove Select Card\tDel "),		_("Delete the selected card from this set"));
 		menuCard->AppendSeparator();
 		IconMenu* menuRotate = new IconMenu();
-			menuRotate->Append(ID_CARD_ROTATE_0,		_("TOOL_CARD_ROTATE_0"),	_("&Normal"),							_("Display the card with the right side up"),										wxITEM_CHECK);
-			menuRotate->Append(ID_CARD_ROTATE_270,		_("TOOL_CARD_ROTATE_270"),	_("Rotated 90 &Clockwise"),			_("Display the card rotated clockwise"),											wxITEM_CHECK);
-			menuRotate->Append(ID_CARD_ROTATE_90,		_("TOOL_CARD_ROTATE_90"),	_("Rotated 90 C&ounter Clockwise"),	_("Display the card rotated counter-clockwise (anti-clockwise for the British)"),	wxITEM_CHECK);
-			menuRotate->Append(ID_CARD_ROTATE_180,		_("TOOL_CARD_ROTATE_180"),	_("Rotated 180, &Up Side Down"),		_("Display the card up side down"),													wxITEM_CHECK);
-		menuCard->Append(wxID_ANY,			_("TOOL_CARD_ROTATE"),	_("&Orientation"),					_("Orientation of the card display"),		wxITEM_NORMAL, menuRotate);
+			menuRotate->Append(ID_CARD_ROTATE_0,		_("card_rotate_0"),		_("&Normal"),							_("Display the card with the right side up"),										wxITEM_CHECK);
+			menuRotate->Append(ID_CARD_ROTATE_270,		_("card_rotate_270"),	_("Rotated 90 &Clockwise"),			_("Display the card rotated clockwise"),											wxITEM_CHECK);
+			menuRotate->Append(ID_CARD_ROTATE_90,		_("card_rotate_90"),	_("Rotated 90 C&ounter Clockwise"),	_("Display the card rotated counter-clockwise (anti-clockwise for the British)"),	wxITEM_CHECK);
+			menuRotate->Append(ID_CARD_ROTATE_180,		_("card_rotate_180"),	_("Rotated 180, &Up Side Down"),		_("Display the card up side down"),													wxITEM_CHECK);
+		menuCard->Append(wxID_ANY,			_("card_rotate"),	_("&Orientation"),					_("Orientation of the card display"),		wxITEM_NORMAL, menuRotate);
 		menuCard->AppendSeparator();
 		// This probably belongs in the window menu, but there we can't remove the separator once it is added
-		menuCard->Append(ID_SELECT_COLUMNS,							_("C&ard List Columns..."),			_("Select what columns should be shown and in what order."));
+		menuCard->Append(ID_SELECT_COLUMNS,								_("C&ard List Columns..."),			_("Select what columns should be shown and in what order."));
 	mb->Insert(2, menuCard,   _("&Cards"));
 	
 	IconMenu* menuFormat = new IconMenu();
-		menuFormat->Append(ID_FORMAT_BOLD,		_("TOOL_BOLD"),		_("Bold\tCtrl+B"),					_("Makes the selected text bold"),			wxITEM_CHECK);
-		menuFormat->Append(ID_FORMAT_ITALIC,	_("TOOL_ITALIC"),	_("Italic\tCtrl+I"),				_("Makes the selected text italic"),		wxITEM_CHECK);
-		menuFormat->Append(ID_FORMAT_SYMBOL,	_("TOOL_SYMBOL"),	_("Symbols\tCtrl+M"),				_("Draws the selected text with symbols"),	wxITEM_CHECK);
-		menuFormat->Append(ID_FORMAT_REMINDER,	_("TOOL_REMINDER"),	_("Reminder Text\tCtrl+R"),			_("Show reminder text for the selected keyword"),	wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_BOLD,		_("bold"),		_("Bold\tCtrl+B"),					_("Makes the selected text bold"),			wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_ITALIC,	_("italic"),	_("Italic\tCtrl+I"),				_("Makes the selected text italic"),		wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_SYMBOL,	_("symbol"),	_("Symbols\tCtrl+M"),				_("Draws the selected text with symbols"),	wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_REMINDER,	_("reminder"),	_("Reminder Text\tCtrl+R"),			_("Show reminder text for the selected keyword"),	wxITEM_CHECK);
 	mb->Insert(3, menuFormat, _("&Format"));
 }
 

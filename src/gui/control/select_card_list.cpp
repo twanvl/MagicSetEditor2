@@ -18,10 +18,10 @@ SelectCardList::SelectCardList(Window* parent, int id, long additional_style)
 {
 	// create image list
 	wxImageList* il = new wxImageList(15,15);
-	il->Add(Bitmap(_("SORT_ASC")),  Color(255,0,255));
-	il->Add(Bitmap(_("SORT_DESC")), Color(255,0,255));
-	il->Add(load_resource_image(_("DESELECTED")));
-	il->Add(load_resource_image(_("SELECTED")));
+	il->Add(load_resource_image(_("sort_asc")),  Color(255,0,255));
+	il->Add(load_resource_image(_("sort_desc")), Color(255,0,255));
+	il->Add(load_resource_image(_("deselected")));
+	il->Add(load_resource_image(_("selected")));
 	AssignImageList(il, wxIMAGE_LIST_SMALL);
 }
 

@@ -9,6 +9,7 @@
 #include <gui/set/set_info_panel.hpp>
 #include <gui/control/native_look_editor.hpp>
 #include <gui/icon_menu.hpp>
+#include <gui/util.hpp>
 #include <util/window_id.hpp>
 
 // ----------------------------------------------------------------------------- : SetInfoPanel
@@ -33,16 +34,16 @@ void SetInfoPanel::onChangeSet() {
 
 void SetInfoPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	// Toolbar
-	tb->AddTool(ID_FORMAT_BOLD,		_(""), Bitmap(_("TOOL_BOLD")),		wxNullBitmap, wxITEM_CHECK, _("Bold"));
-	tb->AddTool(ID_FORMAT_ITALIC,	_(""), Bitmap(_("TOOL_ITALIC")),	wxNullBitmap, wxITEM_CHECK, _("Italic"));
-	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), Bitmap(_("TOOL_SYMBOL")),	wxNullBitmap, wxITEM_CHECK, _("Symbols"));
+	tb->AddTool(ID_FORMAT_BOLD,		_(""), load_resource_tool_image(_("bold")),		wxNullBitmap, wxITEM_CHECK, _("Bold"));
+	tb->AddTool(ID_FORMAT_ITALIC,	_(""), load_resource_tool_image(_("italic")),	wxNullBitmap, wxITEM_CHECK, _("Italic"));
+	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), load_resource_tool_image(_("symbol")),	wxNullBitmap, wxITEM_CHECK, _("Symbols"));
 	tb->Realize();
 	// Menus
 	IconMenu* menuFormat = new IconMenu();
-		menuFormat->Append(ID_FORMAT_BOLD,		_("TOOL_BOLD"),		_("Bold\tCtrl+B"),					_("Makes the selected text bold"),			wxITEM_CHECK);
-		menuFormat->Append(ID_FORMAT_ITALIC,	_("TOOL_ITALIC"),	_("Italic\tCtrl+I"),				_("Makes the selected text italic"),		wxITEM_CHECK);
-		menuFormat->Append(ID_FORMAT_SYMBOL,	_("TOOL_SYMBOL"),	_("Symbols\tCtrl+M"),				_("Draws the selected text with symbols"),	wxITEM_CHECK);
-		menuFormat->Append(ID_FORMAT_REMINDER,	_("TOOL_REMINDER"),	_("Reminder Text\tCtrl+R"),			_("Show reminder text for the selected keyword"),	wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_BOLD,		_("bold"),		_("Bold\tCtrl+B"),					_("Makes the selected text bold"),			wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_ITALIC,	_("italic"),	_("Italic\tCtrl+I"),				_("Makes the selected text italic"),		wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_SYMBOL,	_("symbol"),	_("Symbols\tCtrl+M"),				_("Draws the selected text with symbols"),	wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_REMINDER,	_("reminder"),	_("Reminder Text\tCtrl+R"),			_("Show reminder text for the selected keyword"),	wxITEM_CHECK);
 	mb->Insert(2, menuFormat, _("&Format"));
 }
 
