@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <script/value.hpp>
+#include <script/to_value.hpp>
 #include <util/error.hpp>
 #include <boost/pool/singleton_pool.hpp>
 

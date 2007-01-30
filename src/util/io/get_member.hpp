@@ -10,11 +10,9 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <script/value.hpp>
 
 class Script;
-class ScriptValue;
-
-DECLARE_INTRUSIVE_POINTER_TYPE(ScriptValue);
 DECLARE_INTRUSIVE_POINTER_TYPE(Script);
 
 template <typename T> class Defaultable;

@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <gui/thumbnail_thread.hpp>
+#include <util/platform.hpp>
 #include <wx/thread.h>
 
 typedef pair<ThumbnailRequestP,Image> pair_ThumbnailRequestP_Image;
@@ -17,7 +18,7 @@ DECLARE_TYPEOF_COLLECTION(pair_ThumbnailRequestP_Image);
 String user_settings_dir();
 String image_cache_dir() {
 	String dir = user_settings_dir() + _("/cache");
-	if (!wxDirExists(dir)) wxMkDir(wxConvLocal.cWX2MB(dir), 0777);
+	if (!wxDirExists(dir)) wxMkDir(dir);
 	return dir + _("/");
 }
 

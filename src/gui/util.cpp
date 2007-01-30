@@ -69,7 +69,7 @@ void draw_checker(RotatedDC& dc, const RealRect& rect) {
 	}
 }
 
-// ----------------------------------------------------------------------------- : Image related
+// ----------------------------------------------------------------------------- : Resource related
 
 Image load_resource_image(const String& name) {
 	#if defined(__WXMSW__)
@@ -99,6 +99,14 @@ Image load_resource_image(const String& name) {
 		return resource;
 	#else
 		#error Handling of resource loading needs to be declared.
+	#endif
+}
+
+wxCursor load_resource_cursor(const String& name) {
+	#if defined(__WXMSW__)
+		return wxCursor(_("cursor/") + name, wxBITMAP_TYPE_CUR_RESOURCE);
+	#else
+		return wxCursor(load_resource_image(_("cursor/") + name));
 	#endif
 }
 

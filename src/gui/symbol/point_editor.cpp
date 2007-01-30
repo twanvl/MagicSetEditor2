@@ -24,10 +24,10 @@ SymbolPointEditor::SymbolPointEditor(SymbolControl* control, const SymbolPartP& 
 	, selection(SELECTED_NONE)
 	, hovering(SELECTED_NONE)
 	// Load gui stock
-	, pointSelect(load_resource_image(_("CUR_POINT")))
-	, pointAdd   (load_resource_image(_("CUR_POINT_ADD")))
-	, pointCurve (load_resource_image(_("CUR_POINT_CURVE")))
-	, pointMove  (load_resource_image(_("CUR_POINT_MOVE")))
+	, pointSelect(load_resource_cursor(_("point")))
+	, pointAdd   (load_resource_cursor(_("point_add")))
+	, pointCurve (load_resource_cursor(_("curve")))
+	, pointMove  (load_resource_cursor(_("point_move")))
 {
 	resetActions();
 //	// fix pen joins

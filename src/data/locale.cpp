@@ -8,7 +8,7 @@
 
 #include <data/locale.hpp>
 #include <util/io/package_manager.hpp>
-#include <script/value.hpp>
+#include <script/to_value.hpp>
 
 // ----------------------------------------------------------------------------- : Locale class
 

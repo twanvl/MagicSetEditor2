@@ -7,8 +7,8 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <data/symbol.hpp>
+#include <script/to_value.hpp>
 #include <gfx/bezier.hpp>
-#include <script/value.hpp>
 
 DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 DECLARE_TYPEOF_COLLECTION(ControlPointP);

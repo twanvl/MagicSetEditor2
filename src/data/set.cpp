@@ -15,7 +15,6 @@
 #include <data/field/text.hpp>    // for 0.2.7 fix
 #include <util/tagged_string.hpp> // for 0.2.7 fix
 #include <util/order_cache.hpp>
-#include <script/value.hpp>
 #include <script/script_manager.hpp>
 #include <wx/sstream.h>
 

@@ -259,7 +259,7 @@ wxCursor rotated_ibeam;
 wxCursor TextValueEditor::cursor() const {
 	if (viewer.getRotation().sideways() ^ style().getRotation().sideways()) { // 90 or 270 degrees
 		if (!rotated_ibeam.Ok()) {
-			rotated_ibeam = wxCursor(load_resource_image(_("CUR_ROT_IBEAM")));
+			rotated_ibeam = wxCursor(load_resource_cursor(_("rot_text")));
 		}
 		return rotated_ibeam;
 	} else {

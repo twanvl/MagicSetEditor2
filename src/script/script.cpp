@@ -8,6 +8,7 @@
 
 #include <script/script.hpp>
 #include <script/context.hpp>
+#include <script/to_value.hpp>
 #include <util/error.hpp>
 
 // ----------------------------------------------------------------------------- : Variables

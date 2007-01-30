@@ -17,7 +17,7 @@ ICON_SYMBOL				ICON	"icon/symbol.ico"
 
 // -------------------------------------------------------- : Toolbar
 
-CUR_ROT_IBEAM			CURSOR	"cursor/rot_text.cur"
+cursor/rot_text			CURSOR	"cursor/rot_text.cur"
 
 TOOL_NEW				BITMAP	"tool/file_new.bmp"
 TOOL_OPEN				BITMAP	"tool/file_open.bmp"
@@ -52,13 +52,13 @@ TOOL_HELP				BITMAP	"tool/help.bmp"
 
 // -------------------------------------------------------- : Symbol editor
 
-CUR_POINT				CURSOR	"cursor/point.cur"
-CUR_POINT_ADD			CURSOR	"cursor/point_add.cur"
-CUR_POINT_MOVE			CURSOR	"cursor/point_move.cur"
-CUR_POINT_CURVE			CURSOR	"cursor/curve.cur"
-CUR_ROTATE				CURSOR	"cursor/rotate.cur"
-CUR_SHEAR_X				CURSOR	"cursor/shear_x.cur"
-CUR_SHEAR_Y				CURSOR	"cursor/shear_y.cur"
+cursor/point			CURSOR	"cursor/point.cur"
+cursor/point_add		CURSOR	"cursor/point_add.cur"
+cursor/point_move		CURSOR	"cursor/point_move.cur"
+cursor/curve			CURSOR	"cursor/curve.cur"
+cursor/rotate			CURSOR	"cursor/rotate.cur"
+cursor/shear_x			CURSOR	"cursor/shear_x.cur"
+cursor/shear_y			CURSOR	"cursor/shear_y.cur"
 
 TOOL_LINE				BITMAP	"tool/line.bmp"
 TOOL_CURVE				BITMAP	"tool/curve.bmp"

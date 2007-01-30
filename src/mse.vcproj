@@ -1646,6 +1646,9 @@
 				RelativePath=".\util\order_cache.hpp">
 			</File>
 			<File
+				RelativePath=".\util\platform.hpp">
+			</File>
+			<File
 				RelativePath=".\util\prec.hpp">
 			</File>
 			<File
@@ -2131,6 +2134,9 @@
 			</File>
 			<File
 				RelativePath=".\script\scriptable.hpp">
+			</File>
+			<File
+				RelativePath=".\script\to_value.hpp">
 			</File>
 			<File
 				RelativePath=".\script\value.cpp">
@@ -2629,6 +2635,9 @@
 		</File>
 		<File
 			RelativePath=".\code_template.hpp">
+		</File>
+		<File
+			RelativePath="..\conversion-todo.txt">
 		</File>
 		<File
 			RelativePath="..\data\en.mse-locale\locale">

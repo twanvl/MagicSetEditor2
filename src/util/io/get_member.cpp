@@ -8,8 +8,8 @@
 
 #include <util/io/get_member.hpp>
 #include <util/vector2d.hpp>
-#include <script/value.hpp>
 #include <script/script.hpp>
+#include <script/to_value.hpp>
 
 // ---------------------------------------------------------------------------- : GetDefaultMember
 

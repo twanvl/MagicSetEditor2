@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <script/script_manager.hpp>
+#include <script/to_value.hpp>
 #include <data/set.hpp>
 #include <data/stylesheet.hpp>
 #include <data/game.hpp>

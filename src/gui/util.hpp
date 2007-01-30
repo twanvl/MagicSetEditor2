@@ -39,6 +39,9 @@ void draw_checker(RotatedDC& dc, const RealRect&);
 /// Load an image from a resource
 Image load_resource_image(const String& name);
 
+/// Load a cursor from a resource
+wxCursor load_resource_cursor(const String& name);
+
 // ----------------------------------------------------------------------------- : Platform look
 
 /// Draws a border for a control *around* a rect

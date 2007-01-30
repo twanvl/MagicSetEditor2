@@ -15,6 +15,7 @@
 #include <script/script.hpp>
 #include <script/context.hpp>
 #include <script/parser.hpp>
+#include <script/to_value.hpp>
 
 DECLARE_INTRUSIVE_POINTER_TYPE(Script);
 
@@ -85,9 +86,6 @@ class OptionalScript {
 	DECLARE_REFLECTION();
 	template <typename T> friend class Scriptable;
 };
-
-template <typename T>
-inline ScriptValueP toScript(const Defaultable<T>& v) { return toScript(v()); }
 
 // ----------------------------------------------------------------------------- : StringScript
 

@@ -8,6 +8,7 @@
 
 #include <script/script.hpp>
 #include <script/parser.hpp>
+#include <script/to_value.hpp>
 #include <util/error.hpp>
 #include <util/io/package_manager.hpp> // for "include file" semi hack
 #include <stack>

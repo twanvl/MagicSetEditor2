@@ -8,6 +8,7 @@
 
 #include <script/image.hpp>
 #include <script/context.hpp>
+#include <script/to_value.hpp>
 #include <util/dynamic_arg.hpp>
 #include <util/io/package.hpp>
 // for functions:

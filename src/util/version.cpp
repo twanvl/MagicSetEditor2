@@ -8,7 +8,6 @@
 
 #include <util/version.hpp>
 #include <util/reflect.hpp>
-#include <script/value.hpp>
 
 // ----------------------------------------------------------------------------- : Version
 

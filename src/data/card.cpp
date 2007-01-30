@@ -10,7 +10,7 @@
 #include <data/game.hpp>
 #include <data/field.hpp>
 #include <util/error.hpp>
-#include <script/value.hpp>
+#include <util/reflect.hpp>
 
 DECLARE_TYPEOF_COLLECTION(FieldP);
 typedef IndexMap<FieldP,ValueP> IndexMap_FieldP_ValueP;
