@@ -114,11 +114,10 @@ HoverButtonExt::HoverButtonExt(Window* parent, int id, const wxImage& icon, cons
 {}
 
 void HoverButtonExt::draw(DC& dc) {
-	handle_error(Error(_("HEYA")));
 	// draw button
 	HoverButton::draw(dc);
 	// icon
-	if (icon.Ok()) dc.DrawBitmap(icon, 7, 7); else handle_error(Error(_("Error drawing button bitmaps")));
+	if (icon.Ok()) dc.DrawBitmap(icon, 7, 7);
 	// text
 	dc.SetTextForeground(*wxBLACK);
 	dc.SetFont(font_large);
