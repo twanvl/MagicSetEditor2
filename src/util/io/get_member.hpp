@@ -10,7 +10,9 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
-#include <script/value.hpp>
+
+class Script;
+class ScriptValue;
 
 DECLARE_INTRUSIVE_POINTER_TYPE(ScriptValue);
 DECLARE_INTRUSIVE_POINTER_TYPE(Script);
@@ -39,13 +41,14 @@ class GetDefaultMember {
 	/// Handle an object: we don't match things with a name
 	template <typename T>
 	void handle(const Char* name, const T& object) {}
-	
+
 	/// Handle an object: investigate children, or store it if we know how
+	                                  void handle(const Char *);
 	template <typename T>             void handle(const T&);
 	
 	/// Handle a Defaultable: investigate children
 	template <typename T>             void handle(const Defaultable<T>&);
-	template <typename T>             void handle(const Scriptable<T>&);
+	template <typename T>             void handle(const Scriptable<T>& );
 	template <typename T>             void handle(const vector<T>&     c) { value = toScript(&c); }
 	template <typename K, typename V> void handle(const map<K,V>&      c) { value = toScript(&c); }
 	template <typename K, typename V> void handle(const IndexMap<K,V>& c) { value = toScript(&c); }

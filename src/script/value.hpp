@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
 #include <util/error.hpp>
+#include <util/io/get_member.hpp>
 class Context;
 class Dependency;
 

@@ -20,9 +20,9 @@ DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 SymbolSelectEditor::SymbolSelectEditor(SymbolControl* control, bool rotate)
 	: SymbolEditorBase(control)
 	, rotate(rotate)
-	, cursorRotate(_("CUR_ROTATE"),  wxBITMAP_TYPE_CUR_RESOURCE)
-	, cursorShearX(_("CUR_SHEAR_X"), wxBITMAP_TYPE_CUR_RESOURCE)
-	, cursorShearY(_("CUR_SHEAR_Y"), wxBITMAP_TYPE_CUR_RESOURCE)
+	, cursorRotate(load_resource_image(_("CUR_ROTATE")))
+	, cursorShearX(load_resource_image(_("CUR_SHEAR_X")))
+	, cursorShearY(load_resource_image(_("CUR_SHEAR_Y")))
 {
 	// Load resource images
 	Image rot = load_resource_image(_("HANDLE_ROTATE"));

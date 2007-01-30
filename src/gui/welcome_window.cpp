@@ -26,12 +26,12 @@ WelcomeWindow::WelcomeWindow()
 	SetIcon(wxIcon(_("ICON_APP")));
 	
 	// init controls
-	wxButton* new_set   = new HoverButtonExt(this, ID_FILE_NEW,    _("WELCOME_NEW"),  _BUTTON_("new set"),  _HELP_("new set"));
-	wxButton* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,   _("WELCOME_OPEN"), _BUTTON_("open set"), _HELP_("open set"));
+	wxButton* new_set   = new HoverButtonExt(this, ID_FILE_NEW,    load_resource_image(_("WELCOME_NEW")),  _BUTTON_("new set"),  _HELP_("new set"));
+	wxButton* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,   load_resource_image(_("WELCOME_OPEN")), _BUTTON_("open set"), _HELP_("open set"));
 	wxButton* open_last = 0;
 	if (!settings.recent_sets.empty()) {
 		wxFileName n(settings.recent_sets.front());
-		open_last       = new HoverButtonExt(this, ID_FILE_RECENT, _("WELCOME_LAST"), _BUTTON_("last opened set"), _("Open '") + n.GetName() + _("'"));
+		open_last       = new HoverButtonExt(this, ID_FILE_RECENT, load_resource_image(_("WELCOME_LAST")), _BUTTON_("last opened set"), _("Open '") + n.GetName() + _("'"));
 	}
 	
 	wxSizer* s1  = new wxBoxSizer(wxHORIZONTAL);
@@ -105,19 +105,20 @@ END_EVENT_TABLE  ()
 
 // ----------------------------------------------------------------------------- : Hover button with label
 
-HoverButtonExt::HoverButtonExt(Window* parent, int id, const String& icon_name, const String& label, const String& sub_label)
+HoverButtonExt::HoverButtonExt(Window* parent, int id, const wxImage& icon, const String& label, const String& sub_label)
 	: HoverButton(parent, id, _("BTN"))
-	, icon(load_resource_image(icon_name))
+	, icon(icon)
 	, label(label), sub_label(sub_label)
 	, font_large(14, wxSWISS, wxNORMAL, wxNORMAL, false, _("Arial"))
 	, font_small(8,  wxSWISS, wxNORMAL, wxNORMAL, false, _("Arial"))
 {}
 
 void HoverButtonExt::draw(DC& dc) {
+	handle_error(Error(_("HEYA")));
 	// draw button
 	HoverButton::draw(dc);
 	// icon
-	if (icon.Ok()) dc.DrawBitmap(icon, 7, 7);
+	if (icon.Ok()) dc.DrawBitmap(icon, 7, 7); else handle_error(Error(_("Error drawing button bitmaps")));
 	// text
 	dc.SetTextForeground(*wxBLACK);
 	dc.SetFont(font_large);

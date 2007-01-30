@@ -8,6 +8,7 @@
 
 #include <gui/symbol/point_editor.hpp>
 #include <gui/symbol/window.hpp>
+#include <gui/util.hpp>
 #include <gfx/bezier.hpp>
 #include <data/action/symbol_part.hpp>
 #include <util/window_id.hpp>
@@ -23,10 +24,10 @@ SymbolPointEditor::SymbolPointEditor(SymbolControl* control, const SymbolPartP& 
 	, selection(SELECTED_NONE)
 	, hovering(SELECTED_NONE)
 	// Load gui stock
-	, pointSelect(_("CUR_POINT"),      wxBITMAP_TYPE_CUR_RESOURCE)
-	, pointAdd   (_("CUR_POINT_ADD"),  wxBITMAP_TYPE_CUR_RESOURCE)
-	, pointCurve (_("CUR_POINT_CURVE"),wxBITMAP_TYPE_CUR_RESOURCE)
-	, pointMove  (_("CUR_POINT_MOVE"), wxBITMAP_TYPE_CUR_RESOURCE)
+	, pointSelect(load_resource_image(_("CUR_POINT")))
+	, pointAdd   (load_resource_image(_("CUR_POINT_ADD")))
+	, pointCurve (load_resource_image(_("CUR_POINT_CURVE")))
+	, pointMove  (load_resource_image(_("CUR_POINT_MOVE")))
 {
 	resetActions();
 //	// fix pen joins
@@ -526,6 +527,6 @@ SelectedHandle SymbolPointEditor::findHandle(const Vector2D& pos) {
 }
 
 bool SymbolPointEditor::inRange(const Vector2D& a, const Vector2D& b, double range) {
-	return abs(a.x - b.x) <= range &&
-	       abs(a.y - b.y) <= range;
+	return fabs(a.x - b.x) <= range &&
+	       fabs(a.y - b.y) <= range;
 }

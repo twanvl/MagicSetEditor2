@@ -9,13 +9,14 @@
 #include <gui/util.hpp>
 #include <util/error.hpp>
 #include <util/rotation.hpp>
-#include <wx/mstream.h>
 #include <wx/renderer.h>
+#include <wx/stdpaths.h>
 
 #if wxUSE_UXTHEME && defined(__WXMSW__)
 	#include <wx/msw/uxtheme.h>
 	#include <tmschema.h>
 	#include <shlobj.h>
+	#include <wx/mstream.h>
 #endif
 
 // ----------------------------------------------------------------------------- : Window related
@@ -71,7 +72,7 @@ void draw_checker(RotatedDC& dc, const RealRect& rect) {
 // ----------------------------------------------------------------------------- : Image related
 
 Image load_resource_image(const String& name) {
-	#ifdef __WXMSW__
+	#if defined(__WXMSW__)
 		// Load resource
 		// based on wxLoadUserResource
 		// The image can be in an IMAGE resource, in any file format
@@ -87,6 +88,17 @@ Image load_resource_image(const String& name) {
 		int len = ::SizeofResource(wxGetInstance(), hResource);
 		wxMemoryInputStream stream(data, len);
 		return wxImage(stream);
+	#elif defined(__linux__)
+		static String path = wxStandardPaths::Get().GetDataDir() + _("/resource/");
+		String file = path + name.Lower();
+		wxImage resource (file + _(".png"), wxBITMAP_TYPE_PNG);
+		if (!resource.Ok()) resource.LoadFile (file + _(".bmp"), wxBITMAP_TYPE_BMP);
+		if (!resource.Ok()) resource.LoadFile (file + _(".ico"), wxBITMAP_TYPE_ICO);
+		if (!resource.Ok()) resource.LoadFile (file + _(".cur"), wxBITMAP_TYPE_CUR);
+		if (!resource.Ok()) throw InternalError(String::Format(_("Resource not found: %s"), name.c_str()));
+		return resource;
+	#else
+		#error Handling of resource loading needs to be declared.
 	#endif
 }
 

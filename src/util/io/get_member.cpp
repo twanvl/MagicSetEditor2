@@ -11,9 +11,9 @@
 #include <script/value.hpp>
 #include <script/script.hpp>
 
-// ----------------------------------------------------------------------------- : GetDefaultMember
+// ---------------------------------------------------------------------------- : GetDefaultMember
 
-template <> void GetDefaultMember::handle(const Char* const&  v) { value = toScript(v); }
+            void GetDefaultMember::handle(const Char*         v) { value = toScript(v); }
 template <> void GetDefaultMember::handle(const String&       v) { value = toScript(v); }
 template <> void GetDefaultMember::handle(const FileName&     v) { value = toScript(v); }
 template <> void GetDefaultMember::handle(const int&          v) { value = toScript(v); }

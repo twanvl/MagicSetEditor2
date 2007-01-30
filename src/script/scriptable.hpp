@@ -132,7 +132,6 @@ class Scriptable {
 	DECLARE_REFLECTION();
 };
 
-
 // we need some custom io, because the behaviour is different for each of Reader/Writer/GetMember
 
 template <typename T>

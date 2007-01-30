@@ -51,7 +51,7 @@ class WelcomeWindow : public Frame {
 /// An extended hover button, not only has base images, but also has two labels
 class HoverButtonExt : public HoverButton {
   public:
-	HoverButtonExt(Window* parent, int id, const String& icon_name, const String& label, const String& sub_label);
+	HoverButtonExt(Window* parent, int id, const wxImage& icon_name, const String& label, const String& sub_label);
 	
   private:
 	Bitmap icon;

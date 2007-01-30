@@ -137,7 +137,7 @@ inline shared_ptr<T> new_shared7(const A0& a0, const A1& a1, const A2& a2, const
 	
 	class IntrusivePtrBase {
 	  public:
-		virtual ~IntrusivePtrBase();
+		virtual ~IntrusivePtrBase() {};
 	  protected:
 		/// Delete this object
 		virtual void destroy() {

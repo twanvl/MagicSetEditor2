@@ -392,8 +392,8 @@ bool equal(const ScriptValue& a, const ScriptValue& b) {
 		// HACK for ScriptObject<shared_ptr<X> >
 		// assumes different types are layed out the same, and that
 		// should be void*, but then we need getMember for void
-		const ScriptObject<int*>& av = reinterpret_cast<const ScriptObject<int*>&>(a);
-		const ScriptObject<int*>& bv = reinterpret_cast<const ScriptObject<int*>&>(b);
+		const ScriptObject<int*>& av = dynamic_cast<const ScriptObject<int*>&>(a);
+		const ScriptObject<int*>& bv = dynamic_cast<const ScriptObject<int*>&>(b);
 		return av.getValue() == bv.getValue();
 	}
 	return &a == &b;
@@ -565,7 +565,7 @@ ScriptValueP ScriptBuildin_combined_editor::dependencies(Context& ctx, const Dep
 			}
 		}
 	}
-	SCRIPT_RETURN(dependency_dummy);
+	return dependency_dummy;
 }
 
 

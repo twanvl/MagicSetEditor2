@@ -88,8 +88,8 @@ Settings::Settings()
 	, set_window_width     (790)
 	, set_window_height    (300)
 	, card_notes_height    (40)
-	, check_updates        (CHECK_IF_CONNECTED)
 	, updates_url          (_("http://magicseteditor.sourceforge.net/updates"))
+	, check_updates        (CHECK_IF_CONNECTED)
 {}
 
 void Settings::addRecentFile(const String& filename) {
@@ -136,7 +136,7 @@ StyleSheetSettings& Settings::stylesheetSettingsFor(const StyleSheet& stylesheet
 /// Retrieve the directory to use for settings and other data files
 String user_settings_dir() {
 	String dir = wxStandardPaths::Get().GetUserDataDir();
-	if (!wxDirExists(dir)) wxMkDir(dir);
+	if (!wxDirExists(dir)) wxMkDir(wxConvLocal.cWX2MB(dir), 0777);
 	return dir + _("/");
 }
 

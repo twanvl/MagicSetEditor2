@@ -64,22 +64,22 @@ void Script::addInstruction(InstructionType t) {
 	//	// optimize: push x ; member_v -->  member x
 	//	instructions.back().instr = I_MEMBER;
 	//} else {
-	Instruction i = {t, 0};
+	Instruction i = {t, {0}};
 	instructions.push_back(i);
 	//}
 }
 void Script::addInstruction(InstructionType t, unsigned int d) {
-	Instruction i = {t, d};
+	Instruction i = {t, {d}};
 	instructions.push_back(i);
 }
 void Script::addInstruction(InstructionType t, const ScriptValueP& c) {
 	constants.push_back(c);
-	Instruction i = {t, (unsigned int)constants.size() - 1};
+	Instruction i = {t, {(unsigned int)constants.size() - 1}};
 	instructions.push_back(i);
 }
 void Script::addInstruction(InstructionType t, const String& s) {
 	constants.push_back(toScript(s));
-	Instruction i = {t, (unsigned int)constants.size() - 1};
+	Instruction i = {t, {(unsigned int)constants.size() - 1}};
 	instructions.push_back(i);
 }
 

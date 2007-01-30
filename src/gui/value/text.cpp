@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <gui/value/text.hpp>
+#include <gui/util.hpp>
 #include <data/action/value.hpp>
 #include <util/tagged_string.hpp>
 #include <util/window_id.hpp>
@@ -258,7 +259,7 @@ wxCursor rotated_ibeam;
 wxCursor TextValueEditor::cursor() const {
 	if (viewer.getRotation().sideways() ^ style().getRotation().sideways()) { // 90 or 270 degrees
 		if (!rotated_ibeam.Ok()) {
-			rotated_ibeam = wxCursor(_("CUR_ROT_IBEAM"));
+			rotated_ibeam = wxCursor(load_resource_image(_("CUR_ROT_IBEAM")));
 		}
 		return rotated_ibeam;
 	} else {

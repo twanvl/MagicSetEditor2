@@ -63,7 +63,7 @@ void TextCtrl::setValue(String* value) {
 void TextCtrl::valueChanged() {
 	if (!viewers.empty()) {
 		TextValue& tv = static_cast<TextValue&>(*viewers.front()->getValue());
-		tv.value.assign(value ? *value : wxEmptyString);
+		tv.value.assign(value ? String(*value) : String(wxEmptyString));
 		viewers.front()->onValueChange();
 	}
 	onChange();

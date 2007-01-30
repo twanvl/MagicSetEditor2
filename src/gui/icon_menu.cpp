@@ -6,7 +6,8 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
-#include "icon_menu.hpp"
+#include <gui/icon_menu.hpp>
+#include <gui/util.hpp>
 
 // ----------------------------------------------------------------------------- : generateDisabledImage
 
@@ -57,12 +58,14 @@ void IconMenu::Append(int id, const String& resource, const String& text, const 
 		item->SetBitmaps(bitmap, bitmap);
 		item->SetDisabledBitmap(disabledImage);
 		wxMenu::Append(item);
-	#else
-		// load bitmap
-		Bitmap bitmap = loadResourceImage(resource);
+	#else
+
+		// load bitmap
+
+		Bitmap bitmap = load_resource_image(resource);
 		// add menu
 		wxMenuItem* item = new wxMenuItem(this, id, text, help, style, submenu);
-		item->SetBitmaps(bitmap);
+		item->SetBitmap(bitmap);
 		wxMenu::Append(item);
 	#endif
 }

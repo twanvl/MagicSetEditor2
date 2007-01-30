@@ -17,7 +17,7 @@ DECLARE_TYPEOF_COLLECTION(pair_ThumbnailRequestP_Image);
 String user_settings_dir();
 String image_cache_dir() {
 	String dir = user_settings_dir() + _("/cache");
-	if (!wxDirExists(dir)) wxMkDir(dir);
+	if (!wxDirExists(dir)) wxMkDir(wxConvLocal.cWX2MB(dir), 0777);
 	return dir + _("/");
 }
 
