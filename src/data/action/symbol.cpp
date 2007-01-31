@@ -77,8 +77,8 @@ void SymbolPartMatrixAction::transform(const Vector2D& mx, const Vector2D& my) {
 
 SymbolPartRotateAction::SymbolPartRotateAction(const set<SymbolPartP>& parts, const Vector2D& center)
 	: SymbolPartMatrixAction(parts, center)
-	, constrain(false)
 	, angle(0)
+	, constrain(false)
 {}
 
 String SymbolPartRotateAction::getName(bool to_undo) const {
@@ -154,8 +154,8 @@ void SymbolPartShearAction::shearBy(const Vector2D& shear) {
 
 SymbolPartScaleAction::SymbolPartScaleAction(const set<SymbolPartP>& parts, int scaleX, int scaleY)
 	: parts(parts)
-	, constrain(false)
 	, scaleX(scaleX), scaleY(scaleY)
+	, constrain(false)
 {
 	// Find min and max coordinates
 	oldMin          =  Vector2D::infinity();

@@ -19,7 +19,7 @@
 // ----------------------------------------------------------------------------- : ValueAction
 
 String ValueAction::getName(bool to_undo) const {
-	return String::Format(_ACTION_("change"), valueP->fieldP->name);
+	return format_string(_ACTION_("change"), valueP->fieldP->name);
 }
 
 // ----------------------------------------------------------------------------- : Simple
@@ -61,8 +61,10 @@ ValueAction* value_action(const SymbolValueP& value, const FileName&            
 // ----------------------------------------------------------------------------- : Text
 
 TextValueAction::TextValueAction(const TextValueP& value, size_t start, size_t end, size_t new_end, const Defaultable<String>& new_value, const String& name)
-	: ValueAction(value), new_value(new_value), name(name)
+	: ValueAction(value)
 	, selection_start(start), selection_end(end), new_selection_end(new_end)
+	, new_value(new_value)
+	, name(name)
 {}
 
 String TextValueAction::getName(bool to_undo) const { return name; }

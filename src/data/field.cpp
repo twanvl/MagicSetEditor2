@@ -26,8 +26,8 @@ Field::Field()
 	, identifying      (false)
 	, card_list_column (100)
 	, card_list_width  (100)
-	, card_list_allow  (true)
 	, card_list_visible(false)
+	, card_list_allow  (true)
 	, card_list_align  (ALIGN_LEFT)
 	, tab_index        (0)
 {}
@@ -79,8 +79,8 @@ shared_ptr<Field> read_new<Field>(Reader& reader) {
 Style::Style(const FieldP& field)
 	: fieldP(field)
 	, z_index(0)
-	, left(0), width (0)
-	, top (0), height(0)
+	, left(0),  top(0)
+	, width(0), height(0)
 	, visible(true)
 {}
 

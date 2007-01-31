@@ -52,8 +52,8 @@ StatsCategory::StatsCategory(const StatsDimensionP& dim)
 	, name         (dim->name)
 	, description  (dim->description)
 	, icon_filename(dim->icon_filename)
-	, type(GRAPH_TYPE_BAR)
 	, dimensions(1, dim)
+	, type(GRAPH_TYPE_BAR)
 {}
 
 IMPLEMENT_REFLECTION_ENUM(GraphType) {

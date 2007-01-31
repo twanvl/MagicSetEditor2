@@ -41,7 +41,12 @@ IMPLEMENT_APP(MSE)
 
 bool MSE::OnInit() {
 	try {
-		SetAppName(_("Magic Set Editor"));
+		#ifdef __WXMSW__
+			SetAppName(_("Magic Set Editor"));
+		#else
+			// Platform friendly appname
+			SetAppName(_("magicseteditor"));
+		#endif
 		wxInitAllImageHandlers();
 		wxFileSystem::AddHandler(new wxInternetFSHandler); // needed for update checker
 		init_file_formats();

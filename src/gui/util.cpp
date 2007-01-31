@@ -114,7 +114,7 @@ wxIcon load_resource_icon(const String& name) {
 	#if defined(__WXMSW__)
 		return wxIcon(_("icon/") + name);
 	#else
-		return wxIcon(load_resource_image(_("icon/") + name));
+		return wxIcon(_("icon/") + name + _(".ico"), wxBITMAP_TYPE_ICO);
 	#endif
 }
 

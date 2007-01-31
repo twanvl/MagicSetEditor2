@@ -22,8 +22,8 @@ IMPLEMENT_DYNAMIC_ARG(Package*, writing_package,   nullptr);
 IMPLEMENT_DYNAMIC_ARG(Package*, clipboard_package, nullptr);
 
 Package::Package()
-	: zipStream (nullptr)
-	, fileStream(nullptr)
+	: fileStream(nullptr)
+	, zipStream (nullptr)
 {}
 
 Package::~Package() {

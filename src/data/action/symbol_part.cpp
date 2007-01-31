@@ -76,9 +76,9 @@ void ControlPointMoveAction::move (const Vector2D& deltaDelta) {
 
 HandleMoveAction::HandleMoveAction(const SelectedHandle& handle)
 	: handle(handle)
-	, constrain(false)
 	, old_handle(handle.getHandle())
 	, old_other (handle.getOther())
+	, constrain(false)
 {}
 
 String HandleMoveAction::getName(bool to_undo) const {
@@ -196,11 +196,11 @@ void CurveDragAction::move(const Vector2D& delta, double t) {
 // ----------------------------------------------------------------------------- : Add control point
 
 ControlPointAddAction::ControlPointAddAction(const SymbolPartP& part, UInt insert_after, double t)
-	: point1(part->getPoint(insert_after))
-	, point2(part->getPoint(insert_after + 1))
-	, part(part)
-	, insert_after(insert_after)
+	: part(part)
 	, new_point(new ControlPoint())
+	, insert_after(insert_after)
+	, point1(part->getPoint(insert_after))
+	, point2(part->getPoint(insert_after + 1))
 {
 	// calculate new point
 	if (point1.other.segment_after == SEGMENT_CURVE) {

@@ -14,8 +14,8 @@ DECLARE_TYPEOF_COLLECTION(ColorField::ChoiceP);
 // ----------------------------------------------------------------------------- : ColorField
 
 ColorField::ColorField()
-	: default_name(_("Default"))
-	, allow_custom(true)
+	: allow_custom(true)
+	, default_name(_("Default"))
 {}
 
 IMPLEMENT_FIELD_TYPE(Color)

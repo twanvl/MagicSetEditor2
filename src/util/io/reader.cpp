@@ -14,19 +14,18 @@
 // ----------------------------------------------------------------------------- : Reader
 
 Reader::Reader(const InputStreamP& input, const String& filename)
-	: input(input), filename(filename), line_number(0)
-	, indent(0), expected_indent(0), just_opened(false)
-	, stream(*input)
+	: indent(0), expected_indent(0), just_opened(false)
+	, filename(filename), line_number(0)
+	, input(input), stream(*input)
 {
 	moveNext();
 	handleAppVersion();
 }
 
 Reader::Reader(const String& filename)
-	: input(packages.openFileFromPackage(filename))
+	: indent(0), expected_indent(0), just_opened(false)
 	, filename(filename), line_number(0)
-	, indent(0), expected_indent(0), just_opened(false)
-	, stream(*input)
+	, input(packages.openFileFromPackage(filename)), stream(*input)
 {
 	moveNext();
 	handleAppVersion();

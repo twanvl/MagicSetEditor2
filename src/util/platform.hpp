@@ -4,8 +4,8 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_PREC
-#define HEADER_UTIL_PREC
+#ifndef HEADER_UTIL_PLATFORM
+#define HEADER_UTIL_PLATFORM
 
 /** @file util/platform.hpp
  *
@@ -23,7 +23,7 @@
 
 #ifdef __linux__
 	
-	inline void wxMkDir(const String& str) {
+	inline void wxMkDir(const String& dir) {
 		wxMkDir(wxConvLocal.cWX2MB(dir), 0777);
 	}
 	

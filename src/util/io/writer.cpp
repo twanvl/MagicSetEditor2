@@ -15,10 +15,8 @@
 // ----------------------------------------------------------------------------- : Writer
 
 Writer::Writer(const OutputStreamP& output)
-	: output(output)
-	, stream(*output)
-	, indentation(0)
-	, just_opened(false)
+	: indentation(0), just_opened(false)
+	, output(output), stream(*output)
 {
 	stream.WriteString(BYTE_ORDER_MARK);
 	handleAppVersion();

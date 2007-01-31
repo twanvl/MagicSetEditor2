@@ -28,7 +28,7 @@ DECLARE_POINTER_TYPE(Card);
 class SetScriptContext {
   public:
 	SetScriptContext(Set& set);
-	~SetScriptContext();
+	virtual ~SetScriptContext();
 	
 	/// Get a context to use for the set, for a given stylesheet
 	Context& getContext(const StyleSheetP&);
