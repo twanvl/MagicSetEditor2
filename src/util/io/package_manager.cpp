@@ -58,7 +58,9 @@ void PackageManager::init() {
 }
 
 PackagedP PackageManager::openAny(const String& name) {
-	wxFileName fn(data_directory + _("/") + name);
+	wxFileName fn(
+		(wxFileName(name).IsRelative() ? data_directory + _("/") : wxString(wxEmptyString))
+		+ name);
 	fn.Normalize();
 	String filename = fn.GetFullPath();
 	// Is this package already loaded?

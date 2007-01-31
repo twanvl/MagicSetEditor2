@@ -26,8 +26,14 @@ WelcomeWindow::WelcomeWindow()
 	SetIcon(load_resource_icon(_("app")));
 	
 	// init controls
-	wxButton* new_set   = new HoverButtonExt(this, ID_FILE_NEW,    load_resource_image(_("welcome_new")),  _BUTTON_("new set"),  _HELP_("new set"));
-	wxButton* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,   load_resource_image(_("welcome_open")), _BUTTON_("open set"), _HELP_("open set"));
+	#ifdef __WXMSW__
+		wxButton* new_set   = new HoverButtonExt(this, ID_FILE_NEW,    load_resource_image(_("welcome_new")),  _BUTTON_("new set"),  _HELP_("new set"));	
+		wxButton* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,   load_resource_image(_("welcome_open")), _BUTTON_("open set"), _HELP_("open set"));
+	#else
+		// For now, hover buttons don't work on GTK
+		wxButton* new_set   = new wxButton(this, ID_FILE_NEW,  _BUTTON_("new set"));
+		wxButton* open_set  = new wxButton(this, ID_FILE_OPEN, _BUTTON_("open set"));
+	#endif
 	wxButton* open_last = 0;
 	if (!settings.recent_sets.empty()) {
 		wxFileName n(settings.recent_sets.front());
@@ -74,7 +80,7 @@ void WelcomeWindow::onNewSet(wxCommandEvent&) {
 	close(new_set_window(this));
 }
 
-// MOVEME
+// TODO: MOVEME
 template <typename T>
 shared_ptr<T> open_package(const String& filename) {
 	shared_ptr<T> package(new T);
@@ -115,7 +121,7 @@ HoverButtonExt::HoverButtonExt(Window* parent, int id, const wxImage& icon, cons
 
 void HoverButtonExt::draw(DC& dc) {
 	// draw button
-	HoverButton::draw(dc);
+//	HoverButton::draw(dc);
 	// icon
 	if (icon.Ok()) dc.DrawBitmap(icon, 7, 7);
 	// text
