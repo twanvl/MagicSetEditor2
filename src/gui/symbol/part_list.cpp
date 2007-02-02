@@ -20,12 +20,12 @@ SymbolPartList::SymbolPartList(Window* parent, int id, SymbolP symbol)
 	// Create image list
 	wxImageList* images = new wxImageList(16,16);
 	// NOTE: this is based on the order of the SymbolPartCombine enum!
-	images->Add(load_resource_image(_("combine_or")));
-	images->Add(load_resource_image(_("combine_sub")));
-	images->Add(load_resource_image(_("combine_and")));
-	images->Add(load_resource_image(_("combine_xor")));
-	images->Add(load_resource_image(_("combine_over")));
-	images->Add(load_resource_image(_("combine_border")));
+	images->Add(load_resource_tool_image(_("combine_or")));
+	images->Add(load_resource_tool_image(_("combine_sub")));
+	images->Add(load_resource_tool_image(_("combine_and")));
+	images->Add(load_resource_tool_image(_("combine_xor")));
+	images->Add(load_resource_tool_image(_("combine_over")));
+	images->Add(load_resource_tool_image(_("combine_border")));
 	AssignImageList(images, wxIMAGE_LIST_SMALL);
 	// create columns
 	InsertColumn(0, _("Name"));

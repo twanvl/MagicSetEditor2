@@ -61,8 +61,8 @@ void SymbolPointEditor::drawHoveredLine(DC& dc) {
 		if (selectPercent > 0) {
 			// gradient color
 			Color color(
-				col(300 - 300 * selectPercent),
-				col(300 * selectPercent),
+				col(300 - int(300 * selectPercent)),
+				col(300 * int(selectPercent)),
 				col(0)
 			);
 			dc.SetPen(wxPen(color, 3));

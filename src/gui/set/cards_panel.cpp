@@ -67,10 +67,10 @@ void CardsPanel::onChangeSet() {
 
 void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	// Toolbar
-	tb->AddTool(ID_FORMAT_BOLD,		_(""), load_resource_tool_image(_("bold")),			wxNullBitmap, wxITEM_CHECK, _TOOL_("bold"));
-	tb->AddTool(ID_FORMAT_ITALIC,	_(""), load_resource_tool_image(_("italic")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("italic"));
-	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), load_resource_tool_image(_("symbol")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("symbols"));
-	tb->AddTool(ID_FORMAT_REMINDER,	_(""), load_resource_tool_image(_("reminder")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("reminder text"));
+	tb->AddTool(ID_FORMAT_BOLD,		_(""), load_resource_tool_image(_("format_bold")),			wxNullBitmap, wxITEM_CHECK, _TOOL_("bold"));
+	tb->AddTool(ID_FORMAT_ITALIC,	_(""), load_resource_tool_image(_("format_italic")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("italic"));
+	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), load_resource_tool_image(_("format_symbol")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("symbols"));
+	tb->AddTool(ID_FORMAT_REMINDER,	_(""), load_resource_tool_image(_("format_reminder")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("reminder text"));
 	tb->AddSeparator();
 	tb->AddTool(ID_CARD_ADD,		_(""), load_resource_tool_image(_("card_add")),		wxNullBitmap, wxITEM_NORMAL,_TOOL_("add card"));
 	tb->AddTool(ID_CARD_REMOVE,		_(""), load_resource_tool_image(_("card_del")),		wxNullBitmap, wxITEM_NORMAL,_TOOL_("remove card"));
@@ -100,10 +100,10 @@ void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	mb->Insert(2, menuCard,   _("&Cards"));
 	
 	IconMenu* menuFormat = new IconMenu();
-		menuFormat->Append(ID_FORMAT_BOLD,		_("bold"),		_("Bold\tCtrl+B"),					_("Makes the selected text bold"),			wxITEM_CHECK);
-		menuFormat->Append(ID_FORMAT_ITALIC,	_("italic"),	_("Italic\tCtrl+I"),				_("Makes the selected text italic"),		wxITEM_CHECK);
-		menuFormat->Append(ID_FORMAT_SYMBOL,	_("symbol"),	_("Symbols\tCtrl+M"),				_("Draws the selected text with symbols"),	wxITEM_CHECK);
-		menuFormat->Append(ID_FORMAT_REMINDER,	_("reminder"),	_("Reminder Text\tCtrl+R"),			_("Show reminder text for the selected keyword"),	wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_BOLD,		_("format_bold"),		_("Bold\tCtrl+B"),					_("Makes the selected text bold"),			wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_ITALIC,	_("format_italic"),	_("Italic\tCtrl+I"),				_("Makes the selected text italic"),		wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_SYMBOL,	_("format_symbol"),	_("Symbols\tCtrl+M"),				_("Draws the selected text with symbols"),	wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_REMINDER,	_("format_reminder"),	_("Reminder Text\tCtrl+R"),			_("Show reminder text for the selected keyword"),	wxITEM_CHECK);
 	mb->Insert(3, menuFormat, _("&Format"));
 }
 

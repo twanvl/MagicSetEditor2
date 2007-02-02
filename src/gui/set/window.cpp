@@ -48,9 +48,9 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	// initialize menu bar
 	wxMenuBar* menuBar = new wxMenuBar();
 	IconMenu* menuFile = new IconMenu();
-		menuFile->Append(ID_FILE_NEW,		_("new"),		_MENU_("new set"),			_HELP_("new set"));
-		menuFile->Append(ID_FILE_OPEN,		_("open"),		_MENU_("open set"),			_HELP_("open set"));
-		menuFile->Append(ID_FILE_SAVE,		_("save"),		_MENU_("save set"),			_HELP_("save set"));
+		menuFile->Append(ID_FILE_NEW,		_("file_new"),		_MENU_("new set"),			_HELP_("new set"));
+		menuFile->Append(ID_FILE_OPEN,		_("file_open"),		_MENU_("open set"),			_HELP_("open set"));
+		menuFile->Append(ID_FILE_SAVE,		_("file_save"),		_MENU_("save set"),			_HELP_("save set"));
 		menuFile->Append(ID_FILE_SAVE_AS,					_MENU_("save set as"),		_HELP_("save set as"));
 		IconMenu* menuExport = new IconMenu();
 			menuExport->Append(ID_FILE_EXPORT_HTML,				_("&HTML..."),					_("Export the set to a HTML file"));
@@ -71,14 +71,14 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	menuBar->Append(menuFile, _MENU_("file"));
 	
 	IconMenu* menuEdit = new IconMenu();
-		menuEdit->Append(ID_EDIT_UNDO,		_("undo"),		_MENU_1_("undo",wxEmptyString),	_HELP_("undo"));
-		menuEdit->Append(ID_EDIT_REDO,		_("redo"),		_MENU_1_("redo",wxEmptyString),	_HELP_("redo"));
+		menuEdit->Append(ID_EDIT_UNDO,		_("edit_undo"),		_MENU_1_("undo",wxEmptyString),	_HELP_("undo"));
+		menuEdit->Append(ID_EDIT_REDO,		_("edit_redo"),		_MENU_1_("redo",wxEmptyString),	_HELP_("redo"));
 		menuEdit->AppendSeparator();
-		menuEdit->Append(ID_EDIT_CUT,		_("cut"),		_MENU_("cut"),				_HELP_("cut"));
-		menuEdit->Append(ID_EDIT_COPY,		_("copy"),		_MENU_("copy"),				_HELP_("copy"));
-		menuEdit->Append(ID_EDIT_PASTE,		_("paste"),		_MENU_("paste"),			_HELP_("paste"));
+		menuEdit->Append(ID_EDIT_CUT,		_("edit_cut"),		_MENU_("cut"),				_HELP_("cut"));
+		menuEdit->Append(ID_EDIT_COPY,		_("edit_copy"),		_MENU_("copy"),				_HELP_("copy"));
+		menuEdit->Append(ID_EDIT_PASTE,		_("edit_paste"),		_MENU_("paste"),			_HELP_("paste"));
 		menuEdit->AppendSeparator();
-		menuEdit->Append(ID_EDIT_FIND,		_("find"),		_MENU_("find"),				_(""));
+		menuEdit->Append(ID_EDIT_FIND,		_("edit_find"),		_MENU_("find"),				_(""));
 		menuEdit->Append(ID_EDIT_FIND_NEXT,					_MENU_("find next"),		_(""));
 		menuEdit->Append(ID_EDIT_REPLACE,					_MENU_("replace"),			_(""));
 		menuEdit->AppendSeparator();
@@ -105,16 +105,16 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	// tool bar
 	wxToolBar* tb = CreateToolBar(wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL);
 	tb->SetToolBitmapSize(wxSize(18,18));
-	tb->AddTool(ID_FILE_NEW,	_(""),	load_resource_tool_image(_("new")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_("new set"),		_HELP_("new set"));
-	tb->AddTool(ID_FILE_OPEN,	_(""),	load_resource_tool_image(_("open")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("open set"),	_HELP_("open set"));
-	tb->AddTool(ID_FILE_SAVE,	_(""),	load_resource_tool_image(_("save")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("save set"),	_HELP_("save set"));
+	tb->AddTool(ID_FILE_NEW,	_(""),	load_resource_tool_image(_("file_new")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_("new set"),		_HELP_("new set"));
+	tb->AddTool(ID_FILE_OPEN,	_(""),	load_resource_tool_image(_("file_open")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("open set"),	_HELP_("open set"));
+	tb->AddTool(ID_FILE_SAVE,	_(""),	load_resource_tool_image(_("file_save")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("save set"),	_HELP_("save set"));
 	tb->AddSeparator();
-	tb->AddTool(ID_EDIT_CUT,	_(""),	load_resource_tool_image(_("cut")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_("cut"));
-	tb->AddTool(ID_EDIT_COPY,	_(""),	load_resource_tool_image(_("copy")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("copy"));
-	tb->AddTool(ID_EDIT_PASTE,	_(""),	load_resource_tool_image(_("paste")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("paste"));
+	tb->AddTool(ID_EDIT_CUT,	_(""),	load_resource_tool_image(_("edit_cut")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_("cut"));
+	tb->AddTool(ID_EDIT_COPY,	_(""),	load_resource_tool_image(_("edit_copy")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("copy"));
+	tb->AddTool(ID_EDIT_PASTE,	_(""),	load_resource_tool_image(_("edit_paste")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("paste"));
 	tb->AddSeparator();
-	tb->AddTool(ID_EDIT_UNDO,	_(""),	load_resource_tool_image(_("undo")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("undo",wxEmptyString));
-	tb->AddTool(ID_EDIT_REDO,	_(""),	load_resource_tool_image(_("redo")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("redo",wxEmptyString));
+	tb->AddTool(ID_EDIT_UNDO,	_(""),	load_resource_tool_image(_("edit_undo")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("undo",wxEmptyString));
+	tb->AddTool(ID_EDIT_REDO,	_(""),	load_resource_tool_image(_("edit_redo")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("redo",wxEmptyString));
 	tb->AddSeparator();
 	tb->Realize();
 	
@@ -349,7 +349,7 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 		case ID_EDIT_REPLACE   : ev.Enable(current_panel->canReplace());break;
 		default:
 			// items created by the panel, and cut/copy/paste and find/replace
-			current_panel->onUpdateUI(ev);
+			if(current_panel) current_panel->onUpdateUI(ev);
 	}
 }
 

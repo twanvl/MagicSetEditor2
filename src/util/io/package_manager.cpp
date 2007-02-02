@@ -51,7 +51,7 @@ void PackageManager::init() {
 		data_directory = wxPathOnly(data_directory);
 		if (d == data_directory) {
 			// we are at the root -> 'data' not found anywhere in the path -> fatal error
-			throw Error(_("The MSE data files can not be found, there should be a directory called 'data' with these files"));
+			throw Error(_("The MSE data files can not be found, there should be a directory called 'data' with these files. The expected directory to find it in was ") + wxStandardPaths::Get().GetDataDir());
 		}
 	}
 	data_directory += _("/data");

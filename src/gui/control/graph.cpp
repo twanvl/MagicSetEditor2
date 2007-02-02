@@ -161,12 +161,12 @@ void BarGraph::draw(RotatedDC& dc, int current) const {
 	}
 	// How many labels and lines to draw?
 	dc.SetFont(*wxNORMAL_FONT);
-	UInt label_step = max(1.0, dc.GetCharHeight() / step_height);
+	UInt label_step = UInt(max(1.0, dc.GetCharHeight() / step_height));
 	// Draw backlines (horizontal) and value labels
 	dc.SetPen(lerp(bg, fg, 0.5));
 	for (UInt i = 0 ; i <= axis.max ; ++i) {
 		if (i % label_step == 0) {
-			int y = rect.bottom() - i * step_height;
+			int y = int(rect.bottom() - i * step_height);
 			dc.DrawLine(RealPoint(rect.left() - 2, y), RealPoint(rect.right(), y));
 			// draw label, aligned middle right
 			String label; label << i;
@@ -202,7 +202,7 @@ int BarGraph::findItem(const RealPoint& pos, const RealRect& rect1) const {
 	double width_space = rect.width / count; // including spacing
 	double space       = width_space / 5;
 	// Find column in which this point could be located
-	int    col    = (pos.x - rect.x) / width_space;
+	int    col    = int((pos.x - rect.x) / width_space);
 	double in_col = (pos.x - rect.x) - col * width_space;
 	if (in_col < space / 2               || // left
 	    in_col > width_space - space / 2 || // right

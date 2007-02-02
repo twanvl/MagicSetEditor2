@@ -48,19 +48,19 @@ class CardsPanel : public SetWindowPanel {
 	virtual void doPaste();
 	
 	// --------------------------------------------------- : Searching (find/replace)
-/*	virtual bool canFind() const;
+#if 0
+	virtual bool canFind() const;
 	virtual bool canReplace() const;
 	virtual bool doFind(wxFindReplaceData& what);
 	virtual bool doReplace(wxFindReplaceData& what);
   private:
 	// Functions that handle finding
-	/*
 	typedef void (CardsPanel::*FindHandler)(const CardP&, const TextValueP&, const size_t, const size_t, wxFindReplaceData&);
 		
 	/// Execute a find (or replace), and start with the currently selected card and value
 	/** if findSame==true then find will also find the currently highlighted word
 	 *  Returns true if found
-	 * /
+	 */
 	bool find(FindReplaceData& what, const FindHandler& handler, bool findSame = false);
 	
 	/// find handler : select found value
@@ -70,17 +70,17 @@ class CardsPanel : public SetWindowPanel {
 	void handleReplace(const CardP& card, const TextValueP& value, size_t start, size_t end, FindReplaceData& what);
 	
 	/// Find in all cards
-	/** NOTE: this function is essentially the same as findInCard * /
+	/** NOTE: this function is essentially the same as findInCard */
 	bool findInCards(const CardP& firstCard, const ValueP& firstValue, int firstChar, FindReplaceData& what, const FindHandler& handler);
 	
 	/// Find in a card, if firstValue is specified start searching there
-	/** NOTE: this function is essentially the same as findInCards * /
+	/** NOTE: this function is essentially the same as findInCards */
 	bool findInCard(const CardP& card, const ValueP& firstValue, int firstChar, FindReplaceData& what, const FindHandler& handler);
 	
 	/// Find the current search string in the specified value
-	/** if searchDir = up searches from the end and only before firstChar, unless firstChar == -1 * /
+	/** if searchDir = up searches from the end and only before firstChar, unless firstChar == -1 */
 	bool findInValue(const CardP& crd_, virtual const ValueP& value, int firstChar, FindReplaceData& what, const FindHandler& handler);
-	*/
+#endif
   public:
 	
 	// --------------------------------------------------- : Selection

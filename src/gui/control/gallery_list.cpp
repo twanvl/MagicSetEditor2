@@ -117,8 +117,8 @@ void GalleryList::onChar(wxKeyEvent& ev) {
 
 wxSize GalleryList::DoGetBestSize() const {
 	wxSize ws = GetSize(), cs = GetClientSize();
-	const int w = item_size.width  + 2*MARGIN + 2*BORDER;
-	const int h = item_size.height + 2*MARGIN + 2*BORDER;
+	const int w = int(item_size.width)  + 2*MARGIN + 2*BORDER;
+	const int h = int(item_size.height) + 2*MARGIN + 2*BORDER;
 	return wxSize(w, h) + ws - cs;
 }
 
@@ -136,13 +136,13 @@ void GalleryList::OnDraw(DC& dc) {
 	GetViewStart(&x, &y);
 	GetClientSize(&cw, &ch);
 	if (direction == wxHORIZONTAL) {
-		dx = item_size.width + MARGIN + 2*BORDER;
+		dx = int(item_size.width) + MARGIN + 2*BORDER;
 		dy = 0;
 		start = (size_t) x;
 		end   = (size_t) (start + cw / dx + 1);
 	} else {
 		dx = 0;
-		dy = item_size.height + MARGIN + 2*BORDER;
+		dy = int(item_size.height) + MARGIN + 2*BORDER;
 		start = (size_t) y;
 		end   = (size_t) (start + ch / dy + 1);
 	}
@@ -162,9 +162,9 @@ void GalleryList::OnDraw(DC& dc) {
 		dc.SetPen(c);
 		dc.SetBrush(saturate(lerp(background, c, 0.3), selected ? 0.5 : 0));
 		RealPoint pos = itemPos(i);
-		dc.DrawRectangle(pos.x - BORDER, pos.y - BORDER, item_size.width + 2*BORDER, item_size.height + 2*BORDER);
+		dc.DrawRectangle(int(pos.x) - BORDER, int(pos.y) - BORDER, int(item_size.width) + 2*BORDER, int(item_size.height) + 2*BORDER);
 		// draw item
-		drawItem(dc, pos.x, pos.y, i, selected);
+		drawItem(dc, int(pos.x), int(pos.y), i, selected);
 	}
 }
 

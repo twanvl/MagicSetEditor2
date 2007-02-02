@@ -188,7 +188,7 @@ void TextValueEditor::onChar(wxKeyEvent& ev) {
 			}
 			break;
 		default:
-			if (ev.GetKeyCode() >= _(' ') && ev.GetKeyCode() == (int)ev.GetRawKeyCode()) {
+			if (ev.GetKeyCode() >= _(' ') /*&& ev.GetKeyCode() == (int)ev.GetRawKeyCode()*/) {
 				// TODO: Find a more correct way to determine normal characters,
 				//       this might not work for internationalized input.
 				//       It might also not be portable!
@@ -606,10 +606,10 @@ void TextValueEditor::determineSize(bool force_fit) {
 		if (!force_fit) style().height = 100;
 		int sbw = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
 		scrollbar->SetSize(
-			(int)style().left + style().width - sbw + 1,
-			(int)style().top - 1,
-			(int)sbw,
-			(int)style().height + 2);
+			int(style().left + style().width - sbw + 1),
+			int(style().top - 1),
+			int(sbw),
+			int(style().height + 2));
 		v.reset();
 	} else {
 		// Height depends on font

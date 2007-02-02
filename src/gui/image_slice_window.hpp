@@ -40,8 +40,8 @@ class ImageSlice {
 	// Zoom factor
 	inline double zoomX() const { return target_size.GetWidth()  / (double)selection.width;  }
 	inline double zoomY() const { return target_size.GetHeight() / (double)selection.height; }
-	inline void zoomX(double zoom) { selection.width  = target_size.GetWidth()  / zoom; }
-	inline void zoomY(double zoom) { selection.height = target_size.GetHeight() / zoom; }
+	inline void zoomX(double zoom) { selection.width  = int(target_size.GetWidth()  / zoom); }
+	inline void zoomY(double zoom) { selection.height = int(target_size.GetHeight() / zoom); }
 };
 
 

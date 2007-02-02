@@ -40,10 +40,10 @@ void ImageSlice::constrain() {
 		int diff = selection.width * target_size.GetHeight() - selection.height * target_size.GetWidth();
 		if (diff > 0) {
 			// too wide
-			selection.width  -=  diff / target_size.GetHeight();
+			selection.width  -= int(diff / target_size.GetHeight());
 		} else {
 			// too high
-			selection.height -= -diff / target_size.GetWidth();
+			selection.height -= int(-diff / target_size.GetWidth());
 		}
 	}
 }
@@ -286,15 +286,15 @@ void ImageSliceWindow::updateControls() {
 	height    ->SetValue(slice.selection.height);
 	fix_aspect->SetValue(slice.aspect_fixed);
 	if (slice.aspect_fixed) {
-		zoom->SetValue(slice.zoomX() * 100);
+		zoom->SetValue(int(slice.zoomX() * 100));
 		if (zoom_x->IsShown()) {
 			zoom_sizer->Show(zoom_fixed, true);
 			zoom_sizer->Show(zoom_free,  false);
 			Layout();
 		}
 	} else {
-		zoom_x->SetValue(slice.zoomX() * 100);
-		zoom_y->SetValue(slice.zoomY() * 100);
+		zoom_x->SetValue(int(slice.zoomX() * 100));
+		zoom_y->SetValue(int(slice.zoomY() * 100));
 		if (zoom->IsShown()) {
 			zoom_sizer->Show(zoom_fixed, false);
 			zoom_sizer->Show(zoom_free,  true);
@@ -379,8 +379,8 @@ void ImageSlicePreview::onLeftUp(wxMouseEvent&v) {
 void ImageSlicePreview::onMotion(wxMouseEvent& ev) {
 	if (mouse_down) {
 		// drag the image
-		slice.selection.x = start_selection.x + (mouseX - ev.GetX()) / slice.zoomX();
-		slice.selection.y = start_selection.y + (mouseY - ev.GetY()) / slice.zoomY();
+		slice.selection.x = int(start_selection.x + (mouseX - ev.GetX()) / slice.zoomX());
+		slice.selection.y = int(start_selection.y + (mouseY - ev.GetY()) / slice.zoomY());
 		// Notify parent
 		wxCommandEvent ev(EVENT_SLICE_CHANGED, GetId());
 		ProcessEvent(ev);
@@ -428,10 +428,10 @@ void ImageSliceSelector::draw(DC& dc) {
 	if (!bitmap.Ok()) return;
 	// Selected region
 	wxSize s = GetClientSize();
-	int left   = slice.selection.x * scaleX + border;
-	int top    = slice.selection.y * scaleY + border;
-	int width  = slice.selection.width  * scaleX;
-	int height = slice.selection.height * scaleY;
+	int left   = int(slice.selection.x * scaleX + border);
+	int top    = int(slice.selection.y * scaleY + border);
+	int width  = int(slice.selection.width  * scaleX);
+	int height = int(slice.selection.height * scaleY);
 	// background
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(Color(128,128,128));
@@ -554,8 +554,8 @@ void ImageSliceSelector::onMotion(wxMouseEvent& ev) {
 		// are we on a handle?
 		if (dragX == 0 && dragY == 0) {
 			// dragging entire selection
-			slice.selection.x = start_selection.x + deltaX;
-			slice.selection.y = start_selection.y + deltaY;
+			slice.selection.x = int(start_selection.x + deltaX);
+			slice.selection.y = int(start_selection.y + deltaY);
 		} else {
 			// fix aspect ratio
 			if (slice.aspect_fixed) {
@@ -572,12 +572,12 @@ void ImageSliceSelector::onMotion(wxMouseEvent& ev) {
 			}
 			// move
 			if (dragX) {
-				slice.selection.x      = start_selection.x      + deltaX * (1 - dragX) / 2;
-				slice.selection.width  = start_selection.width  + deltaX * dragX;
+				slice.selection.x      = int(start_selection.x      + deltaX * (1 - dragX) / 2);
+				slice.selection.width  = int(start_selection.width  + deltaX * dragX);
 			}
 			if (dragY) {
-				slice.selection.y      = start_selection.y      + deltaY * (1 - dragY) / 2;
-				slice.selection.height = start_selection.height + deltaY * dragY;
+				slice.selection.y      = int(start_selection.y      + deltaY * (1 - dragY) / 2);
+				slice.selection.height = int(start_selection.height + deltaY * dragY);
 			}
 		}
 		
@@ -622,8 +622,8 @@ bool ImageSliceSelector::onAnyHandle(const wxMouseEvent& ev, int* dxOut, int* dy
 }
 wxPoint ImageSliceSelector::handlePos(int dx, int dy) const {
 	return wxPoint(
-		scaleX * (slice.selection.x + ((dx + 1) * slice.selection.width)  * 0.5) + border,
-		scaleY * (slice.selection.y + ((dy + 1) * slice.selection.height) * 0.5) + border
+		int(scaleX * (slice.selection.x + ((dx + 1) * slice.selection.width)  * 0.5) + border),
+		int(scaleY * (slice.selection.y + ((dy + 1) * slice.selection.height) * 0.5) + border)
 	);
 }
 

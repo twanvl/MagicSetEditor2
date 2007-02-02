@@ -91,11 +91,12 @@ Image load_resource_image(const String& name) {
 	#elif defined(__linux__)
 		static String path = wxStandardPaths::Get().GetDataDir() + _("/resource/");
 		String file = path + name.Lower();
-		wxImage resource (file + _(".png"), wxBITMAP_TYPE_PNG);
-		if (!resource.Ok()) resource.LoadFile (file + _(".bmp"), wxBITMAP_TYPE_BMP);
-		if (!resource.Ok()) resource.LoadFile (file + _(".ico"), wxBITMAP_TYPE_ICO);
-		if (!resource.Ok()) resource.LoadFile (file + _(".cur"), wxBITMAP_TYPE_CUR);
-		if (!resource.Ok()) throw InternalError(String::Format(_("Resource not found: %s"), name.c_str()));
+		wxImage resource;
+		if (wxFileExists(file + _(".png"))) resource.LoadFile(file + _(".png"));
+		else if (wxFileExists(file + _(".bmp"))) resource.LoadFile(file + _(".bmp"));
+		else if (wxFileExists(file + _(".ico"))) resource.LoadFile(file + _(".ico"));
+		else if (wxFileExists(file + _(".cur"))) resource.LoadFile(file + _(".cur"));
+		if (!resource.Ok()) handle_error(InternalError(String(_("Cannot find resource file at ")) + file));
 		return resource;
 	#else
 		#error Handling of resource loading needs to be declared.
@@ -114,7 +115,8 @@ wxIcon load_resource_icon(const String& name) {
 	#if defined(__WXMSW__)
 		return wxIcon(_("icon/") + name);
 	#else
-		return wxIcon(_("icon/") + name + _(".ico"), wxBITMAP_TYPE_ICO);
+		static String path = wxStandardPaths::Get().GetDataDir() + _("/icon/");
+		return wxIcon(path + name + _(".ico"), wxBITMAP_TYPE_ICO);
 	#endif
 }
 
