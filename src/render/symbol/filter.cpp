@@ -15,10 +15,16 @@
 // ----------------------------------------------------------------------------- : Symbol filtering
 
 void filter_symbol(Image& symbol, const SymbolFilter& filter) {
-	if (!symbol.HasAlpha()) symbol.InitAlpha();
 	Byte* data  = symbol.GetData();
 	Byte* alpha = symbol.GetAlpha();
 	UInt width = symbol.GetWidth(), height = symbol.GetHeight();
+	// HACK: wxGTK seems to fail sometimes if you ask it to allocate the alpha channel.
+	//       This manually allocates the memory and gives it to the image to handle.
+	if (!alpha) {
+		alpha = (Byte*) malloc (sizeof(Byte) * width * height);
+		memset(alpha, 255, width * height);
+		symbol.SetAlpha(alpha);
+		}
 	for (UInt y = 0 ; y < width ; ++y) {
 		for (UInt x = 0 ; x < height ; ++x) {
 			// Determine set
