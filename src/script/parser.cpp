@@ -292,7 +292,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec);
 
 /// Parse an expression, possibly with operators applied. Optionally adds an instruction at the end.
 /** @param input     Read tokens from the input
- *  @param script     Add resulting instructions to the script
+ *  @param script    Add resulting instructions to the script
  *  @param minPrec   Minimum precedence level for operators
  *  @param closeWith Add this instruction at the end
  *  @param closeWithData Data for the instruction at the end

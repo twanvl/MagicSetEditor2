@@ -37,6 +37,8 @@ menu:
 	cards tab:			&Cards
 	
 	help:			&Help
+	index:				&Index...	F1
+	website:			&Website...
 	about:				&About Not Quite Magic Set Editor...
 	
 	# symbol editor
@@ -84,6 +86,9 @@ help:
 	new window:			Creates another window to edit the same set
 	
 	help:
+	index:				
+	website:			
+	about:				
 	
 	# symbol editor
 	

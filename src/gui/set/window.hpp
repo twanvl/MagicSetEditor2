@@ -139,6 +139,7 @@ class SetWindow : public wxFrame, public SetView {
 	// --------------------------------------------------- : Window events - menu - help
 	
 	void onHelpIndex           (wxCommandEvent&);
+	void onHelpWebsite         (wxCommandEvent&);
 	void onHelpAbout           (wxCommandEvent&);
 	
 	// --------------------------------------------------- : Window events - other

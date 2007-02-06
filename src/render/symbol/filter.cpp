@@ -24,7 +24,7 @@ void filter_symbol(Image& symbol, const SymbolFilter& filter) {
 		alpha = (Byte*) malloc (sizeof(Byte) * width * height);
 		memset(alpha, 255, width * height);
 		symbol.SetAlpha(alpha);
-		}
+	}
 	for (UInt y = 0 ; y < width ; ++y) {
 		for (UInt x = 0 ; x < height ; ++x) {
 			// Determine set

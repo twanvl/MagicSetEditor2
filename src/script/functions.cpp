@@ -339,6 +339,12 @@ SCRIPT_FUNCTION(contains) {
 	SCRIPT_RETURN(input.find(match) != String::npos);
 }
 
+SCRIPT_FUNCTION(format) {
+	SCRIPT_PARAM(String, format);
+	SCRIPT_PARAM(String, input);
+	SCRIPT_RETURN(format_string(_("%") + replace_all(format, _("%"), _("")), input));
+}
+
 // ----------------------------------------------------------------------------- : Tagged stuff
 
 String replace_tag_contents(String input, const String& tag, const ScriptValueP& contents, Context& ctx) {
@@ -582,6 +588,7 @@ void init_script_functions(Context& ctx) {
 	ctx.setVariable(_("to title"),          script_to_title);
 	ctx.setVariable(_("substring"),         script_substring);
 	ctx.setVariable(_("contains"),          script_contains);
+	ctx.setVariable(_("format"),            script_format);
 	ctx.setVariable(_("tag contents"),      script_tag_contents);
 	ctx.setVariable(_("remove tag"),        script_tag_remove);
 	ctx.setVariable(_("tag contents rule"), script_tag_contents_rule);

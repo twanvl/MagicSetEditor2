@@ -27,6 +27,7 @@ SetP new_set_window(Window* parent) {
 NewSetWindow::NewSetWindow(Window* parent)
 	: wxDialog(parent, wxID_ANY, _("New set"), wxDefaultPosition, wxSize(530,320), wxDEFAULT_DIALOG_STYLE)
 {
+	wxBusyCursor wait;
 	// init controls
 	game_list       = new PackageList (this, ID_GAME_LIST);
 	stylesheet_list = new PackageList (this, ID_STYLESHEET_LIST);
@@ -53,6 +54,7 @@ NewSetWindow::NewSetWindow(Window* parent)
 }
 
 void NewSetWindow::onGameSelect(wxCommandEvent&) {
+	wxBusyCursor wait;
 	GameP game = game_list->getSelection<Game>();
 	settings.default_game = game->name();
 	GameSettings& gs = settings.gameSettingsFor(*game);

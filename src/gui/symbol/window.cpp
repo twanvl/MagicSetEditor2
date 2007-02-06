@@ -58,9 +58,9 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
 	// Menu bar
 	wxMenuBar* menuBar = new wxMenuBar();
 	IconMenu* menuFile = new IconMenu();
-		menuFile->Append(ID_FILE_NEW,		_("file_new"),			_MENU_("new symbol"),			_HELP_("new symbol"));
-		menuFile->Append(ID_FILE_OPEN,		_("file_open"),			_MENU_("open symbol"),			_HELP_("open symbol"));
-		menuFile->Append(ID_FILE_SAVE,		_("file_save"),			_MENU_("save symbol"),			_HELP_("save symbol"));
+		menuFile->Append(ID_FILE_NEW,		_("new"),			_MENU_("new symbol"),			_HELP_("new symbol"));
+		menuFile->Append(ID_FILE_OPEN,		_("open"),			_MENU_("open symbol"),			_HELP_("open symbol"));
+		menuFile->Append(ID_FILE_SAVE,		_("save"),			_MENU_("save symbol"),			_HELP_("save symbol"));
 		menuFile->Append(ID_FILE_SAVE_AS,						_MENU_("save symbol as"),		_HELP_("save symbol as"));
 		menuFile->AppendSeparator();
 		menuFile->Append(ID_FILE_STORE,		_("apply"),			_MENU_("store symbol"),			_HELP_("store symbol"));
@@ -69,8 +69,8 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
 	menuBar->Append(menuFile, _MENU_("file"));
 	
 	IconMenu* menuEdit = new IconMenu();
-		menuEdit->Append(ID_EDIT_UNDO,		_("edit_undo"),			_MENU_1_("undo",wxEmptyString),	_HELP_("undo"));
-		menuEdit->Append(ID_EDIT_REDO,		_("edit_redo"),			_MENU_1_("redo",wxEmptyString),	_HELP_("redo"));
+		menuEdit->Append(ID_EDIT_UNDO,		_("undo"),			_MENU_1_("undo",wxEmptyString),	_HELP_("undo"));
+		menuEdit->Append(ID_EDIT_REDO,		_("redo"),			_MENU_1_("redo",wxEmptyString),	_HELP_("redo"));
 		menuEdit->AppendSeparator();
 		menuEdit->Append(ID_EDIT_DUPLICATE,	_("duplicate"),		_MENU_("duplicate"),			_HELP_("duplicate"));
 	menuBar->Append(menuEdit, _MENU_("edit"));
@@ -93,8 +93,8 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
 	wxToolBar* tb = CreateToolBar(wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL | wxTB_TEXT);
 	tb->AddTool(ID_FILE_STORE,	_("Store"),			load_resource_tool_image(_("apply")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_("store symbol"), _HELP_("store symbol"));
 	tb->AddSeparator();
-	tb->AddTool(ID_EDIT_UNDO,	_("Undo"),			load_resource_tool_image(_("edit_undo")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("undo",wxEmptyString));
-	tb->AddTool(ID_EDIT_REDO,	_("Redo"),			load_resource_tool_image(_("edit_redo")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("redo",wxEmptyString));
+	tb->AddTool(ID_EDIT_UNDO,	_("Undo"),			load_resource_tool_image(_("undo")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("undo",wxEmptyString));
+	tb->AddTool(ID_EDIT_REDO,	_("Redo"),			load_resource_tool_image(_("redo")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("redo",wxEmptyString));
 	tb->Realize();
 	
 	// Edit mode toolbar

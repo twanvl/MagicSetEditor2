@@ -31,23 +31,34 @@ class AboutWindow : public wxDialog {
 // ----------------------------------------------------------------------------- : Button with image and hover effect
 
 // A button that changes images on mouseenter/leave
-class HoverButton : public wxBitmapButton {
+class HoverButton : public wxControl {
   public:
 	HoverButton(Window* parent, int id, const String& name);
 	
   private:
 	DECLARE_EVENT_TABLE();
 	
-	Bitmap normal, hover; /// Bitmaps for the states of the button
+	Bitmap bg_normal, bg_hover, bg_focus, bg_down; /// Bitmaps for the states of the button
+	bool hover, focus, mouse_down, key_down;
 	
 	void onMouseEnter(wxMouseEvent&);
 	void onMouseLeave(wxMouseEvent&);
 	void onFocus     (wxFocusEvent& ev);
 	void onKillFocus (wxFocusEvent& ev);
 	void onPaint     (wxPaintEvent&);
+	void onLeftUp    (wxMouseEvent&);
+	void onLeftDown  (wxMouseEvent&);
+	void onKeyDown   (wxKeyEvent&);
+	void onKeyUp     (wxKeyEvent&);
+	virtual wxSize DoGetBestSize() const;
+	
+	const Bitmap* last_drawn;
+	const Bitmap* toDraw() const;
+	void refreshIfNeeded();
 	
   protected:
 	virtual void draw(DC& dc);
+	int drawDelta() const;
 };
 
 

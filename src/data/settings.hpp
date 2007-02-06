@@ -125,6 +125,7 @@ class Settings {
 	// --------------------------------------------------- : Update checking
 	String updates_url;
 	CheckUpdates check_updates;
+	String website_url;
 	
 	// --------------------------------------------------- : The io
 	

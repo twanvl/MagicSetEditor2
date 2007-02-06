@@ -16,28 +16,34 @@
 #include <wx/dcbuffer.h>
 #include <wx/filename.h>
 
+// 2007-02-06: New HoverButton, hopefully this on works on GTK
+#define USE_HOVERBUTTON
+
 // ----------------------------------------------------------------------------- : WelcomeWindow
 
 WelcomeWindow::WelcomeWindow()
-	: Frame(nullptr, wxID_ANY, _TITLE_("magic set editor"), wxDefaultPosition, wxSize(480,340), wxDEFAULT_DIALOG_STYLE)
+	: Frame(nullptr, wxID_ANY, _TITLE_("magic set editor"), wxDefaultPosition, wxSize(480,340), wxDEFAULT_DIALOG_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN )
 	, logo (load_resource_image(_("about")))
 	, logo2(load_resource_image(_("two")))
 {
 	SetIcon(load_resource_icon(_("app")));
 	
 	// init controls
-	#ifdef __WXMSW__
-		wxButton* new_set   = new HoverButtonExt(this, ID_FILE_NEW,    load_resource_image(_("welcome_new")),  _BUTTON_("new set"),  _HELP_("new set"));	
-		wxButton* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,   load_resource_image(_("welcome_open")), _BUTTON_("open set"), _HELP_("open set"));
+	#ifdef USE_HOVERBUTTON
+		wxControl* new_set   = new HoverButtonExt(this, ID_FILE_NEW,    load_resource_image(_("welcome_new")),  _BUTTON_("new set"),  _HELP_("new set"));	
+		wxControl* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,   load_resource_image(_("welcome_open")), _BUTTON_("open set"), _HELP_("open set"));
 	#else
-		// For now, hover buttons don't work on GTK
-		wxButton* new_set   = new wxButton(this, ID_FILE_NEW,  _BUTTON_("new set"));
-		wxButton* open_set  = new wxButton(this, ID_FILE_OPEN, _BUTTON_("open set"));
+		wxControl* new_set   = new wxButton(this, ID_FILE_NEW,  _BUTTON_("new set"));
+		wxControl* open_set  = new wxButton(this, ID_FILE_OPEN, _BUTTON_("open set"));
 	#endif
-	wxButton* open_last = 0;
+	wxControl* open_last = nullptr;
 	if (!settings.recent_sets.empty()) {
 		wxFileName n(settings.recent_sets.front());
-		open_last       = new HoverButtonExt(this, ID_FILE_RECENT, load_resource_image(_("welcome_last")), _BUTTON_("last opened set"), _("Open '") + n.GetName() + _("'"));
+		#ifdef USE_HOVERBUTTON
+			open_last       = new HoverButtonExt(this, ID_FILE_RECENT, load_resource_image(_("welcome_last")), _BUTTON_("last opened set"), _("Open '") + n.GetName() + _("'"));
+		#else
+			open_last       = new wxButton(this, ID_FILE_RECENT, _BUTTON_("last opened set"));
+		#endif
 	}
 	
 	wxSizer* s1  = new wxBoxSizer(wxHORIZONTAL);
@@ -121,13 +127,14 @@ HoverButtonExt::HoverButtonExt(Window* parent, int id, const wxImage& icon, cons
 
 void HoverButtonExt::draw(DC& dc) {
 	// draw button
-//	HoverButton::draw(dc);
+	HoverButton::draw(dc);
+	int d = drawDelta();
 	// icon
-	if (icon.Ok()) dc.DrawBitmap(icon, 7, 7);
+	if (icon.Ok()) dc.DrawBitmap(icon, d+7, d+7);
 	// text
 	dc.SetTextForeground(*wxBLACK);
 	dc.SetFont(font_large);
-	dc.DrawText(label, 44, 7);
+	dc.DrawText(label, d+44, d+7);
 	dc.SetFont(font_small);
-	dc.DrawText(sub_label, 45, 28);
+	dc.DrawText(sub_label, d+45, d+28);
 }

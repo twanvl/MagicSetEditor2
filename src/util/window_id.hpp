@@ -60,8 +60,10 @@ enum MenuID {
 ,	ID_WINDOW_MAX			= 220
 
 	// Help menu (MainWindow)
-,	ID_HELP_INDEX			= 301
-,	ID_HELP_ABOUT
+,	ID_HELP_INDEX			= wxID_HELP_CONTENTS
+,	ID_HELP_WEBSITE			= 301
+,	ID_HELP_DOCUMENTATION
+,	ID_HELP_ABOUT			= wxID_ABOUT
 
 	// Mode menu (SymbolWindow)
 ,	ID_MODE_MIN				= 401

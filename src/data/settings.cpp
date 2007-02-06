@@ -90,6 +90,7 @@ Settings::Settings()
 	, card_notes_height    (40)
 	, updates_url          (_("http://magicseteditor.sourceforge.net/updates"))
 	, check_updates        (CHECK_IF_CONNECTED)
+	, website_url          (_("http://magicseteditor.sourceforge.net/"))
 {}
 
 void Settings::addRecentFile(const String& filename) {
@@ -158,6 +159,7 @@ IMPLEMENT_REFLECTION(Settings) {
 	REFLECT(apprentice_location);
 	REFLECT(updates_url);
 	REFLECT(check_updates);
+	REFLECT(website_url);
 	REFLECT(game_settings);
 	REFLECT(stylesheet_settings);
 	REFLECT(default_stylesheet_settings);
