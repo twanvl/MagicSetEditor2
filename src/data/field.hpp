@@ -102,7 +102,10 @@ class Style {
 	/// Update scripted values of this style, return true if anything has changed
 	virtual bool update(Context&);
 	/// Add the given dependency to the dependent_scripts list for the variables this style depends on
+	/** Only use for things that need invalidate() */
 	virtual void initDependencies(Context&, const Dependency&) const;
+	/// Invalidate scripted images for this style
+	virtual void invalidate() {}
 	
   private:
 	DECLARE_REFLECTION_VIRTUAL();

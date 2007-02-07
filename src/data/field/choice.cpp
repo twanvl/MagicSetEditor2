@@ -167,19 +167,15 @@ ChoiceStyle::ChoiceStyle(const ChoiceFieldP& field)
 	, combine(COMBINE_NORMAL)
 	, alignment(ALIGN_STRETCH)
 	, thumbnails(nullptr)
+	, thumbnail_age(1) // thumbnails were made before the beginning of time
+	, invalidated_images(false)
 {}
 
 ChoiceStyle::~ChoiceStyle() {
 	delete thumbnails;
 }
 
-// TODO
-/*
-void ChoiceStyle::invalidate() {
-	// rebuild choice images
-}
 
-*/
 bool ChoiceStyle::update(Context& ctx) {
 	// Don't update the choice images, leave that to invalidate()
 	return Style::update(ctx);
@@ -189,6 +185,18 @@ void ChoiceStyle::initDependencies(Context& ctx, const Dependency& dep) const {
 	FOR_EACH_CONST(ci, choice_images) {
 		ci.second.initDependencies(ctx, dep);
 	}
+}
+void ChoiceStyle::invalidate() {
+	// rebuild choice images
+	// TODO: Don't use this; rely on upToDate() instead
+	FOR_EACH(ci, choice_images) {
+		// TODO : only invalidate images that actually have dependencies
+		ci.second.invalidate();
+	}
+	if (thumbnails) {
+		thumbnails->RemoveAll();
+	}
+	invalidated_images = true;
 }
 
 void ChoiceStyle::loadMask(Package& pkg) {

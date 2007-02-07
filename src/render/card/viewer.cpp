@@ -146,4 +146,16 @@ void DataViewer::onAction(const Action& action, bool undone) {
 			}
 		}
 	}
+	TYPE_CASE(action, ScriptStyleEvent) {
+		if (action.stylesheet == stylesheet.get()) {
+			FOR_EACH(v, viewers) {
+				if (v->getStyle().get() == action.style) {
+					// refresh the viewer
+					v->onStyleChange();
+					onChange();
+					return;
+				}
+			}
+		}
+	}
 }

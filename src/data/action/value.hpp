@@ -19,7 +19,9 @@
 #include <util/defaultable.hpp>
 
 class Card;
+class StyleSheet;
 DECLARE_POINTER_TYPE(Value);
+DECLARE_POINTER_TYPE(Style);
 DECLARE_POINTER_TYPE(TextValue);
 DECLARE_POINTER_TYPE(ChoiceValue);
 DECLARE_POINTER_TYPE(ColorValue);
@@ -85,6 +87,20 @@ class ScriptValueEvent : public Action {
 	
 	const Card* card;   ///< Card the value is on
 	const Value* value; ///< The modified value
+};
+
+/// Notification that a script caused a style to change
+class ScriptStyleEvent : public Action {
+  public:
+	inline ScriptStyleEvent(const StyleSheet* stylesheet, const Style* style)
+		: stylesheet(stylesheet), style(style)
+	{}
+		
+	virtual String getName(bool to_undo) const;
+	virtual void perform(bool to_undo);
+	
+	const StyleSheet* stylesheet; ///< StyleSheet the style is for
+	const Style*      style;      ///< The modified style
 };
 
 // ----------------------------------------------------------------------------- : EOF

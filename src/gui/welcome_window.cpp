@@ -78,6 +78,7 @@ void WelcomeWindow::draw(DC& dc) {
 void WelcomeWindow::onOpenSet(wxCommandEvent&) {
 	wxFileDialog dlg(this, _TITLE_("open set"), wxEmptyString, wxEmptyString, import_formats(), wxOPEN);
 	if (dlg.ShowModal() == wxID_OK) {
+		wxBusyCursor wait;
 		close(import_set(dlg.GetPath()));
 	}
 }
@@ -95,6 +96,7 @@ shared_ptr<T> open_package(const String& filename) {
 }
 
 void WelcomeWindow::onOpenLast(wxCommandEvent&) {
+	wxBusyCursor wait;
 	assert(!settings.recent_sets.empty());
 	close( open_package<Set>(settings.recent_sets.front()) );
 }

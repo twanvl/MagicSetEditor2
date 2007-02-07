@@ -48,7 +48,6 @@ enum MenuID {
 ,	ID_EDIT_COPY			= wxID_COPY
 ,	ID_EDIT_PASTE			= wxID_PASTE
 ,	ID_EDIT_DELETE			= 101
-,	ID_EDIT_DUPLICATE		= 102
 ,	ID_EDIT_FIND			= wxID_FIND
 ,	ID_EDIT_FIND_NEXT		= 103
 ,	ID_EDIT_REPLACE			= wxID_REPLACE
@@ -117,6 +116,7 @@ enum ChildMenuID {
 ,	ID_PART_OVERLAP			= ID_PART + 4//PART_OVERLAP
 ,	ID_PART_BORDER			= ID_PART + 5//PART_BORDER
 ,	ID_PART_MAX
+,	ID_EDIT_DUPLICATE					// duplicating symbol parts
 
 	// SymbolPointEditor toolbar/menu
 ,	ID_SEGMENT				= 2101

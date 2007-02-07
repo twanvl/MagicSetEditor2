@@ -264,7 +264,9 @@ SCRIPT_FUNCTION(symbol_variation) {
 		throw ScriptError(_("Variation of symbol not found ('") + variation + _("')"));
 	} else {
 //		SCRIPT_RETURN(last_update_age() >= value->filename.last_update_age);
-		SCRIPT_RETURN(true);
+		SCRIPT_RETURN(last_update_age() > 1); // the symbol was created/loaded after program start,
+		                                      // don't use cached images
+//		SCRIPT_RETURN(true);
 	}
 }
 

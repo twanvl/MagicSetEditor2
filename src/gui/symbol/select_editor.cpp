@@ -107,12 +107,12 @@ void SymbolSelectEditor::drawRotationCenter(DC& dc, const Vector2D& pos) {
 
 void SymbolSelectEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->AddSeparator();
-	tb->AddTool(ID_PART_MERGE,			_("Merge"),		load_resource_tool_image(_("combine_or")),		wxNullBitmap, wxITEM_CHECK, _("Merge with shapes below"),			_("Merges this shape with those below it"));
-	tb->AddTool(ID_PART_SUBTRACT,		_("Subtract"),	load_resource_tool_image(_("combine_sub_dark")),	wxNullBitmap, wxITEM_CHECK, _("Subtract from shapes below"),		_("Subtracts this shape from shapes below it, leaves only the area in that shape that is not in this shape"));
-	tb->AddTool(ID_PART_INTERSECTION,	_("Intersect"),	load_resource_tool_image(_("combine_and_dark")),	wxNullBitmap, wxITEM_CHECK, _("Intersect with shapes below"),		_("Intersects this shape with shapes below it, leaves only the area in both shapes"));
+	tb->AddTool(ID_PART_MERGE,			_("Merge"),		load_resource_image(_("combine_or")),		wxNullBitmap, wxITEM_CHECK, _("Merge with shapes below"),			_("Merges this shape with those below it"));
+	tb->AddTool(ID_PART_SUBTRACT,		_("Subtract"),	load_resource_image(_("combine_sub_dark")),	wxNullBitmap, wxITEM_CHECK, _("Subtract from shapes below"),		_("Subtracts this shape from shapes below it, leaves only the area in that shape that is not in this shape"));
+	tb->AddTool(ID_PART_INTERSECTION,	_("Intersect"),	load_resource_image(_("combine_and_dark")),	wxNullBitmap, wxITEM_CHECK, _("Intersect with shapes below"),		_("Intersects this shape with shapes below it, leaves only the area in both shapes"));
 	// note: difference doesn't work (yet)
-	tb->AddTool(ID_PART_OVERLAP,		_("Overlap"),	load_resource_tool_image(_("combine_over")),		wxNullBitmap, wxITEM_CHECK, _("Place above other shapes"),			_("Place this shape, and its border above shapes below it"));
-	tb->AddTool(ID_PART_BORDER,			_("Border"),	load_resource_tool_image(_("combine_border")),	wxNullBitmap, wxITEM_CHECK, _("Draw as a border"),					_("Draws this shape as a border"));
+	tb->AddTool(ID_PART_OVERLAP,		_("Overlap"),	load_resource_image(_("combine_over")),		wxNullBitmap, wxITEM_CHECK, _("Place above other shapes"),			_("Place this shape, and its border above shapes below it"));
+	tb->AddTool(ID_PART_BORDER,			_("Border"),	load_resource_image(_("combine_border")),	wxNullBitmap, wxITEM_CHECK, _("Draw as a border"),					_("Draws this shape as a border"));
 	tb->Realize();
 }
 void SymbolSelectEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {

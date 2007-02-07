@@ -19,7 +19,7 @@ DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
 
 class ChoiceThumbnailRequest : public ThumbnailRequest {
   public:
-	ChoiceThumbnailRequest(ChoiceValueEditor* cve, int id);
+	ChoiceThumbnailRequest(ChoiceValueEditor* cve, int id, bool from_disk);
 	virtual Image generate();
 	virtual void store(const Image&);
   private:
@@ -27,11 +27,13 @@ class ChoiceThumbnailRequest : public ThumbnailRequest {
 	int id;
 };
 
-ChoiceThumbnailRequest::ChoiceThumbnailRequest(ChoiceValueEditor* cve, int id)
+ChoiceThumbnailRequest::ChoiceThumbnailRequest(ChoiceValueEditor* cve, int id, bool from_disk)
 	: ThumbnailRequest(
 		cve,
 		cve->viewer.stylesheet->name() + _("/") + cve->field().name + _("/") << id,
-		cve->viewer.stylesheet->lastModified())
+		from_disk ? cve->viewer.stylesheet->lastModified()
+		          : wxDateTime::Now()
+	)
 	, stylesheet(cve->viewer.stylesheet)
 	, id(id)
 {}
@@ -195,10 +197,11 @@ void DropDownChoiceList::generateThumbnailImages() {
 	for (int i = 0 ; i < end ; ++i) {
 		String name = cannocial_name_form(group->choiceName(i));
 		ScriptableImage& img = cve.style().choice_images[name];
-		if (i >= image_count || !img.upToDate(ctx, cve.style().thumbnail_age)) {
+		bool up_to_date = img.upToDate(ctx, cve.style().thumbnail_age);
+		if (i >= image_count || !up_to_date) {
 			// TODO : handle the case where image i was previously skipped
 			// request this thumbnail
-			thumbnail_thread.request( new_shared2<ChoiceThumbnailRequest>(&cve, i) );
+			thumbnail_thread.request( new_shared3<ChoiceThumbnailRequest>(&cve, i, up_to_date && !cve.style().invalidated_images) );
 		}
 	}
 	cve.style().thumbnail_age.update();

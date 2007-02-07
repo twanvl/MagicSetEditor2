@@ -129,12 +129,14 @@ class ChoiceStyle : public Style {
 	Image						mask;			///< The actual mask image
 	wxImageList*				thumbnails;		///< Thumbnails for the choices
 	Age							thumbnail_age;	///< Age the thumbnails were generated
+	bool                        invalidated_images; ///< Have the images been invalidated?
 	
 	/// Load the mask image, if it's not already done
 	void loadMask(Package& pkg);
 	
 	virtual bool update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;
+	virtual void invalidate();
 	
   private:
 	DECLARE_REFLECTION();

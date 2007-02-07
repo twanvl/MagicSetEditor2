@@ -62,8 +62,8 @@ bool TextStyle::update(Context& ctx) {
 }
 void TextStyle::initDependencies(Context& ctx, const Dependency& dep) const {
 	Style     ::initDependencies(ctx, dep);
-	font       .initDependencies(ctx, dep);
-	symbol_font.initDependencies(ctx, dep);
+//	font       .initDependencies(ctx, dep);
+//	symbol_font.initDependencies(ctx, dep);
 }
 
 IMPLEMENT_REFLECTION(TextStyle) {

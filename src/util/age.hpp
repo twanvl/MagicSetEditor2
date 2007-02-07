@@ -23,6 +23,11 @@ class Age {
 	Age() {
 		update();
 	}
+	/// Create a special age
+	/** 0: dummy value, used for other purposes
+	 *  1: before 'beginning of time', the age conceptually just before program start
+	 *  2..: normal ages
+	 */
 	Age(AtomicIntEquiv age) : age(age) {}
 	
 	/// Update the age to become the newest one

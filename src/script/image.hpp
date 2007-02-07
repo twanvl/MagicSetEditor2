@@ -71,6 +71,10 @@ class ScriptableImage {
 	inline void initDependencies(Context& ctx, const Dependency& dep) const {
 		script.initDependencies(ctx, dep);
 	}
+	/// Invalidate the cached image
+	inline void invalidate() {
+		cache = ScriptImageP();
+	}
 	
   private:
 	OptionalScript script;		///< The script, not really optional
