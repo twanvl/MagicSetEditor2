@@ -23,8 +23,8 @@ init script:
 	# Horizontal 5 color blends are not supported
 	card_hybrid_5b := card_hybrid_5
 	
-	# Use the normal tap symbol
-	mana_t := { "mana_t_old.png" }
+	# Use the old tap symbol
+	mana_t := { "old" }
 	
 	# Does the card have a color that requires a black font for copyright/artist?
 	black_font_colors := filter_rule(match:"^(hybrid 2 color)?white")

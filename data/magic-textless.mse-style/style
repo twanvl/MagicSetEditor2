@@ -25,7 +25,7 @@ init script:
 	pt_template   := { input + "pt.jpg" }
 	
 	# Use the normal tap symbol
-	small_mana_t := "mana_t.png"
+	mana_t := { "new" }
 	
 	# Does the card have a color that requires a white font for copyright/artist?
 	white_font_colors := filter_rule(match:"^(hybrid 2 color)?black|^land")

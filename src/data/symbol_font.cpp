@@ -10,12 +10,14 @@
 #include <util/dynamic_arg.hpp>
 #include <util/io/package_manager.hpp>
 #include <util/rotation.hpp>
+#include <util/error.hpp>
+#include <util/window_id.hpp>
 #include <render/text/element.hpp> // fot CharInfo
 #include <script/image.hpp>
-#include <util/error.hpp>
 
 DECLARE_TYPEOF_COLLECTION(SymbolFont::DrawableSymbol);
 DECLARE_TYPEOF_COLLECTION(SymbolInFontP);
+DECLARE_TYPEOF_COLLECTION(InsertSymbolMenuP);
 
 // ----------------------------------------------------------------------------- : SymbolFont
 
@@ -31,7 +33,12 @@ SymbolFont::SymbolFont()
 	, text_margin_top(0),  text_margin_bottom(0)
 	, text_alignment(ALIGN_MIDDLE_CENTER)
 	, merge_numbers(false)
+	, processed_insert_symbol_menu(nullptr)
 {}
+
+SymbolFont::~SymbolFont() {
+	delete processed_insert_symbol_menu;
+}
 
 String SymbolFont::typeNameStatic() { return _("symbol-font"); }
 String SymbolFont::typeName() const { return _("symbol-font"); }
@@ -57,6 +64,7 @@ IMPLEMENT_REFLECTION(SymbolFont) {
 	REFLECT(text_margin_top);
 	REFLECT(text_margin_bottom);
 	REFLECT(text_alignment);
+	REFLECT(insert_symbol_menu);
 }
 
 // ----------------------------------------------------------------------------- : SymbolInFont
@@ -69,15 +77,21 @@ class SymbolInFont {
 	/// Get a shrunk, zoomed bitmap
 	Bitmap getBitmap(Context& ctx, Package& pkg, double size);
 	
+	/// Get a bitmap with the given size
+	Bitmap getBitmap(Context& ctx, Package& pkg, wxSize size);
+	
 	/// Size of a (zoomed) bitmap
 	/** This is the size of the resulting image, it does NOT convert back to internal coordinates */
 	RealSize size(Context& ctx, Package& pkg, double size);
 	
-	String          code;			///< Code for this symbol
+	void update(Context& ctx);
+	
+	String           code;			///< Code for this symbol
+	Scriptable<bool> enabled;		///< Is this symbol enabled?
   private:
-	ScriptableImage image;			///< The image for this symbol
-	double          img_size;		///< Font size used by the image
-	wxSize          actual_size;	///< Actual image size, only known after loading the image
+	ScriptableImage  image;			///< The image for this symbol
+	double           img_size;		///< Font size used by the image
+	wxSize           actual_size;	///< Actual image size, only known after loading the image
 	/// Cached bitmaps for different sizes
 	map<double, Bitmap> bitmaps;
 	
@@ -86,6 +100,7 @@ class SymbolInFont {
 
 SymbolInFont::SymbolInFont()
 	: actual_size(0,0)
+	, enabled(true)
 {
 	assert(symbol_font_for_reading());
 	img_size = symbol_font_for_reading()->img_size;
@@ -112,6 +127,18 @@ Bitmap SymbolInFont::getBitmap(Context& ctx, Package& pkg, double size) {
 	}
 	return bmp;
 }
+Bitmap SymbolInFont::getBitmap(Context& ctx, Package& pkg, wxSize size) {
+	// generate new bitmap
+	if (!image) {
+		throw Error(_("No image specified for symbol with code '") + code + _("' in symbol font."));
+	}
+	Image img = image.generate(ctx, pkg)->image;
+	actual_size = wxSize(img.GetWidth(), img.GetHeight());
+	// scale to match expected size
+	Image resampled_image(size.GetWidth(), size.GetHeight(), false);
+	resample_preserve_aspect(img, resampled_image);
+	return Bitmap(resampled_image);
+}
 
 RealSize SymbolInFont::size(Context& ctx, Package& pkg, double size) {
 	if (actual_size.GetWidth() == 0) {
@@ -121,9 +148,14 @@ RealSize SymbolInFont::size(Context& ctx, Package& pkg, double size) {
 	return wxSize(actual_size * size / img_size);
 }
 
+void SymbolInFont::update(Context& ctx) {
+	enabled.update(ctx);
+}
+
 IMPLEMENT_REFLECTION(SymbolInFont) {
 	REFLECT(code);
 	REFLECT(image);
+	REFLECT(enabled);
 	REFLECT_N("image font size", img_size);
 }
 
@@ -139,7 +171,11 @@ class SymbolFont::DrawableSymbol {
 	SymbolInFont* symbol;	///< Symbol to draw, if nullptr, use the default symbol and draw the text
 };
 
-void SymbolFont::split(const String& text, SplitSymbols& out) const {
+void SymbolFont::split(const String& text, Context& ctx, SplitSymbols& out) const {
+	// update all symbol-in-fonts
+	FOR_EACH_CONST(sym, symbols) {
+		sym->update(ctx);
+	}
 	// read a single symbol until we are done with the text
 	for (size_t pos = 0 ; pos < text.size() ; ) {
 		// 1. check merged numbers
@@ -154,7 +190,7 @@ void SymbolFont::split(const String& text, SplitSymbols& out) const {
 		}
 		// 2. check symbol list
 		FOR_EACH_CONST(sym, symbols) {
-			if (!sym->code.empty() && is_substr(text, pos, sym->code)) { // symbol matches
+			if (!sym->code.empty() && sym->enabled && is_substr(text, pos, sym->code)) { // symbol matches
 				out.push_back(DrawableSymbol(sym->code, sym.get()));
 				pos += sym->code.size();
 				goto next_symbol; // continue two levels
@@ -178,7 +214,7 @@ SymbolInFont* SymbolFont::defaultSymbol() const {
 
 void SymbolFont::draw(RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, const String& text) {
 	SplitSymbols symbols;
-	split(text, symbols);
+	split(text, ctx, symbols);
 	draw(dc, ctx, rect, font_size, align, symbols);
 }
 
@@ -253,7 +289,7 @@ void SymbolFont::drawWithText(RotatedDC& dc, Context& ctx, const RealRect& rect,
 
 void SymbolFont::getCharInfo(RotatedDC& dc, Context& ctx, double font_size, const String& text, vector<CharInfo>& out) {
 	SplitSymbols symbols;
-	split(text, symbols);
+	split(text, ctx, symbols);
 	getCharInfo(dc, ctx, font_size, symbols, out);
 }
 
@@ -282,6 +318,133 @@ RealSize SymbolFont::defaultSymbolSize(Context& ctx, double font_size) {
 	}
 }
 
+
+// ----------------------------------------------------------------------------- : InsertSymbolMenu
+
+wxMenu* SymbolFont::insertSymbolMenu(Context& ctx) {
+	if (!processed_insert_symbol_menu && insert_symbol_menu) {
+		// Make menu
+		processed_insert_symbol_menu = insert_symbol_menu->makeMenu(ID_INSERT_SYMBOL_MENU_MIN, ctx, *this);
+	}
+	return processed_insert_symbol_menu;
+}
+
+String SymbolFont::insertSymbolCode(int menu_id) const {
+	// find item
+	if (insert_symbol_menu) {
+		return insert_symbol_menu->getCode(menu_id - ID_INSERT_SYMBOL_MENU_MIN, *this);
+	} else {
+		return wxEmptyString;
+	}
+}
+
+
+InsertSymbolMenu::InsertSymbolMenu()
+	: type(ITEM_CODE)
+{}
+
+int InsertSymbolMenu::size() const {
+	if (type == ITEM_CODE || type == ITEM_CUSTOM) {
+		return 1;
+	} else if (type == ITEM_SUBMENU) {
+		int count = 0;
+		FOR_EACH_CONST(i, items) {
+			count += i->size();
+		}
+		return count;
+	} else {
+		return 0;
+	}
+}
+String InsertSymbolMenu::getCode(int id, const SymbolFont& font) const {
+	if (type == ITEM_SUBMENU) {
+		FOR_EACH_CONST(i, items) {
+			int id2 = id - i->size();
+			if (id2 < 0) {
+				return i->getCode(id, font);
+			}
+			id = id2;
+		}
+	} else if (id == 0 && type == ITEM_CODE) {
+		return name;
+	} else if (id == 0 && type == ITEM_CUSTOM) {
+		String message = tr(font,name,name);
+		return wxGetTextFromUser(message, message);
+	}
+	return wxEmptyString;
+}
+
+wxMenu* InsertSymbolMenu::makeMenu(int id, Context& ctx, SymbolFont& font) const {
+	if (type == ITEM_SUBMENU) {
+		wxMenu* menu = new wxMenu();
+		FOR_EACH_CONST(i, items) {
+			menu->Append(i->makeMenuItem(menu, id, ctx, font));
+			id += i->size();
+		}
+		return menu;
+	}
+	return nullptr;
+}
+wxMenuItem* InsertSymbolMenu::makeMenuItem(wxMenu* parent, int first_id, Context& ctx, SymbolFont& font) const {
+	if (type == ITEM_SUBMENU) {
+		wxMenuItem* item = new wxMenuItem(parent, wxID_ANY, tr(font, _("menu item ") + name, name),
+		                                  wxEmptyString, wxITEM_NORMAL,
+		                                  makeMenu(first_id, ctx, font));
+		item->SetBitmap(wxNullBitmap);
+		return item;
+	} else if (type == ITEM_LINE) {
+		wxMenuItem* item = new wxMenuItem(parent, wxID_SEPARATOR);
+		return item;
+	} else {
+		wxMenuItem* item = new wxMenuItem(parent, first_id, tr(font, _("menu item ") + name, name));
+		// Generate bitmap for use on this item
+		SymbolInFont* symbol = nullptr;
+		if (type == ITEM_CUSTOM) {
+			symbol = font.defaultSymbol();
+		} else {
+			FOR_EACH(sym, font.symbols) {
+				if (!sym->code.empty() && sym->enabled && name == sym->code) { 
+					symbol = sym.get();
+					break;
+				}
+			}
+		}
+		if (symbol) {
+			item->SetBitmap(symbol->getBitmap(ctx, font, wxSize(16,16)));
+		} else {
+			item->SetBitmap(wxNullBitmap);
+		}
+		return item;
+	}
+}
+
+
+IMPLEMENT_REFLECTION_ENUM(MenuItemType) {
+	VALUE_N("code",		ITEM_CODE);
+	VALUE_N("custom",	ITEM_CUSTOM);
+	VALUE_N("line",		ITEM_LINE);
+	VALUE_N("submenu",	ITEM_SUBMENU);
+}
+
+IMPLEMENT_REFLECTION_NO_GET_MEMBER(InsertSymbolMenu) {
+	if (!items.empty() || (tag.reading() && tag.isComplex())) {
+		// complex values are groups
+		REFLECT(type);
+		REFLECT(name);
+		REFLECT(items);
+		if (!items.empty()) type = ITEM_SUBMENU;
+	} else {
+		REFLECT_NAMELESS(name);
+	}
+}
+template <> void GetDefaultMember::handle(const InsertSymbolMenu& m) {
+	handle(m.name);
+}
+template <> void GetMember::handle(const InsertSymbolMenu& m) {
+	handle(_("type"),  m.type);
+	handle(_("name"),  m.name);
+	handle(_("items"), m.items);
+}
 
 // ----------------------------------------------------------------------------- : SymbolFontRef
 

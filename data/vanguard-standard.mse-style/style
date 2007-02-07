@@ -9,8 +9,8 @@ icon: card-sample.png
 ############################################################## Extra scripts
 
 init script:
-	# Use the normal tap symbol
-	small_mana_t := "mana_t.png"
+	# Use the old tap symbol
+	mana_t := { "old" }
 
 ############################################################## Set info fields
 info style:

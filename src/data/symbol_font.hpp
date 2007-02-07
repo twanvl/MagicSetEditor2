@@ -17,6 +17,7 @@
 DECLARE_POINTER_TYPE(Font);
 DECLARE_POINTER_TYPE(SymbolFont);
 DECLARE_POINTER_TYPE(SymbolInFont);
+DECLARE_POINTER_TYPE(InsertSymbolMenu);
 class RotatedDC;
 struct CharInfo;
 
@@ -26,6 +27,7 @@ struct CharInfo;
 class SymbolFont : public Packaged {
   public:
 	SymbolFont();
+	~SymbolFont();
 	
 	/// Loads the symbol font with a given name, for example "magic-mana-large"
 	static SymbolFontP byName(const String& name);
@@ -33,7 +35,7 @@ class SymbolFont : public Packaged {
 	class DrawableSymbol;
 	typedef vector<DrawableSymbol> SplitSymbols;
 	/// Split a string into separate symbols for drawing and for determining their size
-	void split(const String& text, SplitSymbols& out) const;
+	void split(const String& text, Context& ctx, SplitSymbols& out) const;
 	
 	/// Draw a piece of text prepared using split
 	void draw(RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, const String& text);
@@ -48,6 +50,16 @@ class SymbolFont : public Packaged {
 	static String typeNameStatic();
 	virtual String typeName() const;
 	
+	/// Generate a 'insert symbol' menu.
+	/** This class owns the menu!
+	 *  All ids used will be in the range ID_INSERT_SYMBOL_MENU_MIN...ID_INSERT_SYMBOL_MENU_MAX.
+	 *  If there is no insert symbol menu, returns nullptr.
+	 */
+	wxMenu* insertSymbolMenu(Context& ctx);
+	/// Process a choice from the insert symbol menu
+	/** Return the code representing the symbol */
+	String insertSymbolCode(int menu_id) const;
+	
   private:
 	UInt img_size;		///< Font size that the images use
 	UInt min_size;		///< Minimum font size
@@ -61,8 +73,11 @@ class SymbolFont : public Packaged {
 	double text_margin_bottom;
 	Alignment text_alignment;
 	bool merge_numbers;	///< Merge numbers? e.g. "11" is a single symbol ('1' must not exist as a symbol)
+	InsertSymbolMenuP insert_symbol_menu;
+	wxMenu* processed_insert_symbol_menu;
 	
 	friend class SymbolInFont;
+	friend class InsertSymbolMenu;
 	vector<SymbolInFontP> symbols;	///< The individual symbols
 	
 	/// Find the default symbol
@@ -83,6 +98,35 @@ class SymbolFont : public Packaged {
 	DECLARE_REFLECTION();
 };
 
+// ----------------------------------------------------------------------------- : InsertSymbolMenu
+
+enum MenuItemType
+{	ITEM_CODE		///< Name gives the code to insert
+,	ITEM_CUSTOM		///< Use a dialog box
+,	ITEM_LINE		///< A menu separator
+,	ITEM_SUBMENU	///< A submenu
+};
+
+/// Description of a menu to insert symbols from a symbol font into the text
+class InsertSymbolMenu {
+  public:
+	InsertSymbolMenu();
+	
+	MenuItemType              type;
+	String                    name;
+	vector<InsertSymbolMenuP> items;
+	
+	/// Number of ids used (recursive)
+	int size() const;
+	/// Get the code for an item, id relative to the start of this menu
+	String getCode(int id, const SymbolFont& font) const;
+	/// Make an actual menu
+	wxMenu*     makeMenu(int first_id, Context& ctx, SymbolFont& font) const;
+	/// Make an actual menu item
+	wxMenuItem* makeMenuItem(wxMenu* parent, int first_id, Context& ctx, SymbolFont& font) const;
+	
+	DECLARE_REFLECTION();
+};
 
 // ----------------------------------------------------------------------------- : SymbolFontRef
 

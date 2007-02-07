@@ -77,6 +77,11 @@ void IconMenu::Append(int id, const String& text, const String& help, wxMenu* su
 	wxMenu::Append(item);
 }
 
+void IconMenu::Append(wxMenuItem* item) {
+	item->SetBitmap(wxNullBitmap);
+	wxMenu::Append(item);
+}
+
 void IconMenu::Insert(size_t pos, int id, const String& text, const String& help) {
 	wxMenuItem* item = new wxMenuItem (this, id, text, help);
 	item->SetBitmap(wxNullBitmap);

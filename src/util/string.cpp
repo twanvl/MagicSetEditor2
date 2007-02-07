@@ -141,13 +141,17 @@ String cannocial_name_form(const String& str) {
 	ret.reserve(str.size());
 	bool leading = true;
 	FOR_EACH_CONST(c, str) {
-		if ((c == _('_') || c == _(' ')) && !leading) {
-			ret += _(' ');
+		if ((c == _('_') || c == _(' '))) {
+			if (!leading) ret += _(' ');
+		} else {
+			ret += c;
+			leading = false;
+/*			
 		} else if (isAlnum(c) || c == _('-')) {
 			ret += toLower(c);
 			leading = false;
 		} else {
-			// ignore non alpha numeric
+			// ignore non alpha numeric*/
 		}
 	}
 	return ret;

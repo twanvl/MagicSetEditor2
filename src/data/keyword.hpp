@@ -46,11 +46,11 @@ class KeywordMode {
 /// A way to use a keyword
 class KeywordExpansion {
   public:
-	String                before;		///< Components before the keyword: parameters and separators (tagged string)
-	String                after;		///< Components after the keyword: parameters and separators
+	String                match;		///< String to match, <param> tags are used for parameters
 	vector<KeywordParamP> parameters;	///< The types of parameters
-	wxRegEx               splitter;		///< Regular expression to split/match the components, automatically generated
+//	wxRegEx               splitter;		///< Regular expression to split/match the components, automatically generated
 	StringScript          reminder;		///< Reminder text of the keyword
+	String                mode;			///< Mode of use, can be used by scripts (only gives the name). Default is the mode of the Keyword.
 	
 	DECLARE_REFLECTION();
 };

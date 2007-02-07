@@ -59,7 +59,7 @@ class Package {
 	bool needSaveAs() const;
 	/// Determines the short name of this package: the filename without path or extension
 	String name() const;
-	/// Return the full name of this package, by default equal to name()
+	/// Return the (user friendly) full name of this package, by default equal to name()
 	virtual String fullName() const;
 	/// Return the absolute filename of this file
 	const String& absoluteFilename() const;

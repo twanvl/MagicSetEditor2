@@ -127,7 +127,7 @@ String remove_tag_contents(const String& str, const String& tag);
  *  This function makes sure tags still match. It also attempts to cancel out tags.
  *  This means that when removing "<x>a</x>" nothing is left,
  *  but with input "<x>a" -> "<x>" and "</>a" -> "</>".
- *  Escapes the replacement, i.e. all < in become \1.
+ *  Does not escape the replacement.
  */
 String tagged_substr_replace(const String& input, size_t start, size_t end, const String& replacement);
 

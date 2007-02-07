@@ -143,6 +143,20 @@ void DataEditor::doCopy()                  { if    (current_editor)   current_ed
 void DataEditor::doPaste()                 { if    (current_editor)   current_editor->doPaste();       }
 void DataEditor::doFormat(int type)        { if    (current_editor)   current_editor->doFormat(type);  }
 
+
+wxMenu* DataEditor::getMenu(int type) const {
+	if (current_editor) {
+		return current_editor->getMenu(type);
+	} else {
+		return nullptr;
+	}
+}
+void DataEditor::onCommand(int id) {
+	if (current_editor) {
+		current_editor->onCommand(id);
+	}
+}
+
 // ----------------------------------------------------------------------------- : Mouse events
 
 void DataEditor::onLeftDown(wxMouseEvent& ev) {
@@ -274,7 +288,9 @@ void DataEditor::onContextMenu(wxContextMenuEvent& ev) {
 }
 void DataEditor::onMenu(wxCommandEvent& ev) {
 	if (current_editor) {
-		current_editor->onMenu(ev);
+		if (!current_editor->onCommand(ev.GetId())) {
+			ev.Skip();
+		}
 	} else {
 		ev.Skip();
 	}

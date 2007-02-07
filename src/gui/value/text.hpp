@@ -44,7 +44,8 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	virtual void onMouseWheel(const RealPoint& pos, wxMouseEvent& ev);
 	
 	virtual bool onContextMenu(wxMenu& m, wxContextMenuEvent&);
-	virtual void onMenu(wxCommandEvent&);
+	virtual wxMenu* getMenu(int type) const;
+	virtual bool onCommand(int);
 	
 	virtual void onChar(wxKeyEvent&);
 	
@@ -98,6 +99,7 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	void moveSelectionNoRedraw(IndexType t, size_t new_end, bool also_move_start=true, Movement dir = MOVE_MID);
 	
 	/// Replace the current selection with 'replacement', name the action
+	/** replacement should be a tagged string (i.e. already escaped) */
 	void replaceSelection(const String& replacement, const String& name);
 	
 	/// Make sure the selection satisfies its constraints

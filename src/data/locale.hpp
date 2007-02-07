@@ -15,14 +15,20 @@
 #include <util/io/package.hpp>
 
 DECLARE_POINTER_TYPE(Locale);
-DECLARE_POINTER_TYPE(GameLocale);
+DECLARE_POINTER_TYPE(SubLocale);
 
 // ----------------------------------------------------------------------------- : Locale class
 
-/// Translations of the texts of a game
-class GameLocale {
+/// Translations of the texts of a game/stylesheet/symbolfont
+class SubLocale {
   public:
 	map<String,String> translations;
+	
+	/// Translate a key
+	String tr(const String& key);
+	/// Translate a key with a default value
+	String tr(const String& key, const String& def);
+	
 	DECLARE_REFLECTION();
 };
 
@@ -30,9 +36,13 @@ class GameLocale {
 class Locale : public Packaged {
   public:
 	/// Translations of UI strings in each category
-	map<String,String> translations[LOCALE_CAT_MAX];
-	/// Translations of game specific texts, by game name
-	map<String,GameLocaleP> game_translations;
+	SubLocale              translations[LOCALE_CAT_MAX];
+	/// Translations of Game specific texts, by game name
+	map<String,SubLocaleP> game_translations;
+	/// Translations of StyleSheet specific texts, by stylesheet name
+	map<String,SubLocaleP> stylesheet_translations;
+	/// Translations of SymbolFont specific texts, by symbol font name
+	map<String,SubLocaleP> symbol_font_translations;
 	
 	/// Open a locale with the given name
 	static LocaleP byName(const String& name);

@@ -282,7 +282,9 @@ void CardListBase::rebuild() {
 		if      (f.second->card_list_align & ALIGN_RIGHT)  align = wxLIST_FORMAT_RIGHT;
 		else if (f.second->card_list_align & ALIGN_CENTER) align = wxLIST_FORMAT_CENTRE;
 		else                                               align = wxLIST_FORMAT_LEFT;
-		InsertColumn((long)column_fields.size(), capitalize(f.second->card_list_name), align, cs.width);
+		InsertColumn((long)column_fields.size(),
+		             tr(*set->game, f.second->card_list_name, capitalize(f.second->card_list_name)),
+		             align, cs.width);
 		column_fields.push_back(f.second);
 	}
 	// find field that determines color

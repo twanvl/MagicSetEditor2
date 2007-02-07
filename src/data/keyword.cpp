@@ -21,8 +21,7 @@ IMPLEMENT_REFLECTION(KeywordMode) {
 	REFLECT(description);
 }
 IMPLEMENT_REFLECTION(KeywordExpansion) {
-	REFLECT(before);
-	REFLECT(after);
+	REFLECT(match);
 	REFLECT(reminder);
 }
 
@@ -36,15 +35,17 @@ void read_compat(Reader& tag, Keyword* k) {
 	if (!separator.empty() || !parameter.empty() || !reminder.empty()) {
 		// old style keyword declaration, no separate expansion
 		KeywordExpansionP e(new KeywordExpansion);
+		e->match = k->keyword;
 		size_t start = separator.find_first_of('[');
 		size_t end   = separator.find_first_of(']');
 		if (start != String::npos && end != String::npos) {
-			e->after += separator.substr(start + 1, end - start - 1);
+			e->match += separator.substr(start + 1, end - start - 1);
 		}
 		if (!parameter.empty()) {
-			e->after += _("<param>") + parameter + _("</param>");
+			e->match += _("<param>") + parameter + _("</param>");
 		}
 		e->reminder.set(reminder);
+		k->expansions.push_back(e);
 	}
 }
 

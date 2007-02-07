@@ -24,7 +24,8 @@ String Error::what() const {
 
 // Errors for which a message box was already shown
 vector<String> previous_errors;
-String pending_error;
+String pending_errors;
+String pending_warnings;
 DECLARE_TYPEOF_COLLECTION(String);
 
 void handle_error(const String& e, bool allow_duplicate = true, bool now = true) {
@@ -38,8 +39,8 @@ void handle_error(const String& e, bool allow_duplicate = true, bool now = true)
 	}
 	// Only show errors in the main thread
 	if (!now || !wxThread::IsMain()) {
-		if (!pending_error.empty()) pending_error += _("\n\n");
-		pending_error += e;
+		if (!pending_errors.empty()) pending_errors += _("\n\n");
+		pending_errors += e;
 		return;
 	}
 	// show message
@@ -50,10 +51,27 @@ void handle_error(const Error& e, bool allow_duplicate, bool now) {
 	handle_error(e.what(), allow_duplicate, now);
 }
 
+void handle_warning(const String& w, bool now) {
+	// Check duplicates
+	// TODO: thread safety
+	// Only show errors in the main thread
+	if (!now || !wxThread::IsMain()) {
+		if (!pending_warnings.empty()) pending_warnings += _("\n\n");
+		pending_warnings += w;
+		return;
+	}
+	// show message
+	wxMessageBox(w, _("Warning"), wxOK | wxICON_EXCLAMATION);
+}
+
 void handle_pending_errors() {
 	assert(wxThread::IsMain());
-	if (!pending_error.empty()) {
-		handle_error(pending_error);
-		pending_error.clear();
+	if (!pending_errors.empty()) {
+		handle_error(pending_errors);
+		pending_errors.clear();
+	}
+	if (!pending_warnings.empty()) {
+		handle_warning(pending_warnings);
+		pending_warnings.clear();
 	}
 }

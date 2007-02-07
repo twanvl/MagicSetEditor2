@@ -22,7 +22,7 @@ init script:
 	land_template := { "acard.jpg" }
 	
 	# Use the normal tap symbol
-	mana_t := { "mana_t.png" }
+	mana_t := { "new" }
 	
 	# Does the card have a color that requires a white font for copyright/artist?
 	white_font_colors := filter_rule(match:"^(hybrid )?black|^land")

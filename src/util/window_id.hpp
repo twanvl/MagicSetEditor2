@@ -81,7 +81,7 @@ enum MenuID {
 enum ChildMenuID {
 
 	ID_CHILD_MIN			= 1000
-,	ID_CHILD_MAX			= 2999
+,	ID_CHILD_MAX			= 3999
 
 	// Cards menu
 ,	ID_CARD_ADD				= 1001
@@ -106,6 +106,7 @@ enum ChildMenuID {
 ,	ID_FORMAT_ITALIC
 ,	ID_FORMAT_SYMBOL
 ,	ID_FORMAT_REMINDER
+,	ID_INSERT_SYMBOL
 
 	// SymbolSelectEditor toolbar/menu
 ,	ID_PART					= 2001
@@ -146,6 +147,10 @@ enum ChildMenuID {
 	
 	// Style
 ,	ID_STYLE_USE_FOR_ALL	= 3201
+	
+	// SymbolFont (Format menu)
+,	ID_INSERT_SYMBOL_MENU_MIN = 3301
+,	ID_INSERT_SYMBOL_MENU_MAX = 3999
 };
 
 

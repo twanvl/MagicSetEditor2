@@ -192,7 +192,7 @@ void TextValueEditor::onChar(wxKeyEvent& ev) {
 				// TODO: Find a more correct way to determine normal characters,
 				//       this might not work for internationalized input.
 				//       It might also not be portable!
-				replaceSelection(String(ev.GetUnicodeKey(), 1), _("Typing"));
+				replaceSelection(escape(String(ev.GetUnicodeKey(), 1)), _("Typing"));
 			}
 	}
 }
@@ -224,6 +224,31 @@ bool TextValueEditor::onContextMenu(wxMenu& m, wxContextMenuEvent& ev) {
 	// always show the menu
 	return true;
 }
+bool TextValueEditor::onCommand(int id) {
+	if (id >= ID_INSERT_SYMBOL_MENU_MIN && id <= ID_INSERT_SYMBOL_MENU_MAX) {
+		// Insert a symbol
+		if ((style().always_symbol || style().allow_formating) && style().symbol_font.valid()) {
+			String code = style().symbol_font.font->insertSymbolCode(id);
+			if (!style().always_symbol) {
+				code = _("<sym>") + code + _("</sym>");
+			}
+			replaceSelection(code, _("Insert Symbol"));
+			return true;
+		}
+	}
+	return false;
+}
+wxMenu* TextValueEditor::getMenu(int type) const {
+	if (type == ID_INSERT_SYMBOL && (style().always_symbol || style().allow_formating)
+	                             && style().symbol_font.valid()) {
+		return style().symbol_font.font->insertSymbolMenu(viewer.getContext());
+	} else {
+		return nullptr;
+	}
+}
+
+/*
+/// TODO : move to doFormat
 void TextValueEditor::onMenu(wxCommandEvent& ev) {
 	if (ev.GetId() == ID_FORMAT_REMINDER) {
 		// toggle reminder text
@@ -235,6 +260,7 @@ void TextValueEditor::onMenu(wxCommandEvent& ev) {
 		ev.Skip();
 	}
 }
+*/
 
 // ----------------------------------------------------------------------------- : Other overrides
 

@@ -41,7 +41,7 @@ void Reader::handleAppVersion() {
 	if (enterBlock(_("mse_version"))) {
 		handle(file_app_version);
 		if (app_version < file_app_version) {
-			wxMessageBox(_ERROR_2_("newer version", filename, file_app_version.toString()), _("Warning"), wxOK | wxICON_EXCLAMATION);
+			handle_warning(_ERROR_2_("newer version", filename, file_app_version.toString()), false);
 		}
 		exitBlock();
 	}
@@ -53,7 +53,7 @@ void Reader::warning(const String& msg) {
 
 void Reader::showWarnings() {
 	if (!warnings.empty()) {
-		wxMessageBox(_("Warnings while reading file:\n") + filename + _("\n") + warnings, _("Warning"), wxOK | wxICON_EXCLAMATION);
+		handle_warning(_("Warnings while reading file:\n") + filename + _("\n") + warnings, false);
 		warnings.clear();
 	}
 }

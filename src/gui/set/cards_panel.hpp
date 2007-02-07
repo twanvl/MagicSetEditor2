@@ -16,6 +16,7 @@ class wxSplitterWindow;
 class ImageCardList;
 class DataEditor;
 class TextCtrl;
+class IconMenu;
 
 // ----------------------------------------------------------------------------- : CardsPanel
 
@@ -95,7 +96,8 @@ class CardsPanel : public SetWindowPanel {
 	TextCtrl*         notes;
 	
 	// --------------------------------------------------- : Menus & tools
-	wxMenu* cardMenu, formatMenu;
+	IconMenu* menuCard, *menuFormat;
+	wxMenuItem* insertSymbolMenu; // owned by menuFormat, but submenu owned by SymbolFont
 };
 
 // ----------------------------------------------------------------------------- : EOF

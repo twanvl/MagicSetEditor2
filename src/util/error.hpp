@@ -96,7 +96,10 @@ class ScriptError : public Error {
  */
 void handle_error(const Error& e, bool allow_duplicate = true, bool now = true);
 
-/// Handle errors that were not handled immediatly in handleError
+/// Handle a warning by showing a message box
+void handle_warning(const String& w, bool now = true);
+
+/// Handle errors and warnings that were not handled immediatly in handleError
 /** Should be called repeatedly (e.g. in an onIdle event handler) */
 void handle_pending_errors();
 

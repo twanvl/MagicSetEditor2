@@ -331,7 +331,7 @@ String tagged_substr_replace(const String& input, size_t start, size_t end, cons
 	return simplify_tagged(
 		substr_replace(input, start, end,
 			get_tags(input, start, end, true) + // close tags
-			escape(replacement) +
+			replacement +
 			get_tags(input, start, end, false)  // open tags
 		));
 }

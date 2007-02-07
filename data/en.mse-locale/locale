@@ -305,6 +305,38 @@ game:
 		# Set info
 		
 		# descriptions/help text
-#stylesheet:
-#	magic-new:
-#		
+stylesheet:
+	magic-new:
+		
+symbol font:
+	magic-mana-small:
+		menu item T:			&Tap symbol	T
+		menu item W:			&White mana	W
+		menu item U:			Bl&ue mana	U
+		menu item B:			&Black mana	B
+		menu item R:			&Red mana	R
+		menu item G:			&Green mana	G
+		menu item S:			&Snow mana	S
+		menu item X:			Variable mana &X	X
+		menu item Y:			Variable mana &Y	Y
+		menu item Z:			Variable mana &Z	Z
+		menu item colorless:	&Colorless mana...
+		menu item half:				&Half mana
+		menu item |W:				&White	|W
+		menu item |U:				Bl&ue	|U
+		menu item |B:				&Black	|B
+		menu item |R:				&Red	|R
+		menu item |G:				&Green	|G
+		menu item |S:				&Snow	|S
+		menu item 1/2:				&Colorless	1/2
+		menu item hybrid:		H&ybrid mana (two color)
+		menu item W/U:			White/Blue mana	W/U
+		menu item U/B:			Blue/Black mana	U/B
+		menu item B/R:			Black/Ref mana	B/R
+		menu item R/G:			Red/Green mana	R/G
+		menu item G/W:			Green/White mana	G/W
+		menu item W/B:			White/Black mana	W/B
+		menu item U/R:			Blue/Red mana	U/R
+		menu item B/G:			Black/Green mana	B/G
+		menu item R/W:			Red/White mana	R/W
+		menu item G/U:			Green/blue mana	G/U

@@ -1,12 +1,12 @@
-mse version: 0.2.7
+mse version: 0.3.0
 # Symbol font in the normal, flat, style, used for text boxes and on old style cards
 # Note:
-#  Define  small_mana_t:="mana_t(_old)?.png" in the init script of the style
+#  Define  mana_t := {"new|old|older"} in the init script of the style
 #
 # So for example: 
 #
 #init script:
-#	small_mana_t := "mana_t.png"
+#	mana_t := {"new"}
 
 image font size: 135
 horizontal space: 2
@@ -14,7 +14,15 @@ symbol:
 	image: mana_circle.png
 symbol:
 	code: T
-	image: { mana_t() }
+	image: mana_t_older.png
+	enabled: { mana_t() == "older" }
+symbol:
+	code: T
+	image: mana_t_old.png
+	enabled: { mana_t() == "old" }
+symbol:
+	code: T
+	image: mana_t.png
 symbol:
 	code: W/U
 	image: mana_wu.png
@@ -103,3 +111,49 @@ text margin left:   3
 text margin right:  2
 text margin top:    -1
 text margin bottom: -1
+
+##############################################################
+# Insert-symbol menu
+insert symbol menu:
+	item: T
+	item:
+		type: line
+	item: X
+	item: Y
+	item: Z
+	item:
+		type: custom
+		name: colorless
+	item:
+		type: line
+	item: W
+	item: U
+	item: B
+	item: R
+	item: G
+	item: S
+	item:
+		type: line
+	item:
+		name: half
+		item: 1/2
+		item: |W
+		item: |U
+		item: |B
+		item: |R
+		item: |G
+		item: |S
+	item:
+		name: hybrid
+		item: W/U
+		item: U/B
+		item: B/R
+		item: R/G
+		item: G/W
+		item:
+			type: line
+		item: W/B
+		item: U/R
+		item: B/G
+		item: R/W
+		item: G/U

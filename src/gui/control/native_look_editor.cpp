@@ -38,7 +38,9 @@ void NativeLookEditor::drawViewer(RotatedDC& dc, ValueViewer& v) {
 	dc.DrawRectangle(s.getRect().grow(1));
 	// draw label
 	dc.SetFont(*wxNORMAL_FONT);
-	dc.DrawText(capitalize_sentence(s.fieldP->name), RealPoint(margin_left, s.top + 1));
+	// TODO : tr using stylesheet or using game?
+	dc.DrawText(tr(*set->game, s.fieldP->name, capitalize_sentence(s.fieldP->name)),
+	            RealPoint(margin_left, s.top + 1));
 	// draw 3D border
 	draw_control_border(this, dc.getDC(), RealRect(s.left - 1, s.top - 1, s.width + 2, s.height + 2));
 	// draw viewer

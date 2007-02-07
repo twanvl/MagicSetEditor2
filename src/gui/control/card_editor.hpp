@@ -53,6 +53,10 @@ class DataEditor : public CardViewer {
 	bool canFormat(int type) const;
 	bool hasFormat(int type) const;
 	void doFormat (int type);
+	/// Get a special menu, events should be sent to onCommand
+	wxMenu* getMenu(int type) const;
+	/// A menu item from getMenu was selected
+	void onCommand(int id);
 	
 	// --------------------------------------------------- : ValueViewers
 	

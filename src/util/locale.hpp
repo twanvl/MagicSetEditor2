@@ -19,6 +19,10 @@
 #include <util/prec.hpp>
 #include <util/string.hpp>
 
+class Game;
+class StyleSheet;
+class SymbolFont;
+
 // ----------------------------------------------------------------------------- : Localisation macros
 
 enum LocaleCategory
@@ -36,6 +40,24 @@ enum LocaleCategory
 
 /// Translate 'key' in the category 'cat' using the current locale
 String tr(LocaleCategory cat, const String& key);
+
+/// Translate 'key' in the for a Game using the current locale
+String tr(const Game&, const String& key);
+/// Translate 'key' in the for a StyleSheet using the current locale
+String tr(const StyleSheet&, const String& key);
+/// Translate 'key' in the for a SymbolFont using the current locale
+String tr(const SymbolFont&, const String& key);
+
+/// Translate 'key' in the for a Game using the current locale
+/** If the key is not found, use the default value */
+String tr(const Game&, const String& key, const String& def);
+/// Translate 'key' in the for a StyleSheet using the current locale
+/** If the key is not found, use the default value */
+String tr(const StyleSheet&, const String& key, const String& def);
+/// Translate 'key' in the for a SymbolFont using the current locale
+/** If the key is not found, use the default value */
+String tr(const SymbolFont&, const String& key, const String& def);
+
 
 /// A localized string for menus/toolbar buttons
 #define _MENU_(s)	tr(LOCALE_CAT_MENU,  _(s))
