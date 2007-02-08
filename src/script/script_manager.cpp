@@ -18,14 +18,12 @@
 #include <util/error.hpp>
 
 typedef map<const StyleSheet*,Context*> Contexts;
-typedef IndexMap<FieldP,StyleP> IndexMap_FieldP_StyleP;
-typedef IndexMap<FieldP,ValueP> IndexMap_FieldP_ValueP;
 DECLARE_TYPEOF(Contexts);
 DECLARE_TYPEOF_COLLECTION(CardP);
 DECLARE_TYPEOF_COLLECTION(FieldP);
 DECLARE_TYPEOF_COLLECTION(Dependency);
-DECLARE_TYPEOF_NO_REV(IndexMap_FieldP_StyleP);
-DECLARE_TYPEOF_NO_REV(IndexMap_FieldP_ValueP);
+DECLARE_TYPEOF_NO_REV2(IndexMap<FieldP,StyleP>);
+DECLARE_TYPEOF_NO_REV2(IndexMap<FieldP,ValueP>);
 
 // initialize functions, from functions.cpp
 void init_script_functions(Context& ctx);

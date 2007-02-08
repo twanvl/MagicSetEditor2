@@ -72,7 +72,7 @@ void StatCategoryList::drawItem(DC& dc, int x, int y, size_t item, bool selected
 		dc.DrawBitmap(cat.icon, x+1, y+1);
 	}
 	// draw name
-	RealRect rect(RealPoint(x + 24, y), RealSize(item_size.width - 30, item_size.height));
+	RealRect rect(RealPoint(x + 24, y), RealSize(item_size.x - 30, item_size.y));
 	String str = capitalize(cat.name);
 //	dc.SetFont(wxFont(9.5 * text_scaling, wxSWISS, wxNORMAL, wxNORMAL, false,_("Arial")));
 	dc.SetFont(*wxNORMAL_FONT);

@@ -30,16 +30,25 @@ class AboutWindow : public wxDialog {
 
 // ----------------------------------------------------------------------------- : Button with image and hover effect
 
-// A button that changes images on mouseenter/leave
+/// A button that changes images on mouseenter/leave
 class HoverButton : public wxControl {
   public:
-	HoverButton(Window* parent, int id, const String& name);
+	/// Create a HoverButton, name is the resource name of the images to use
+	/** name+"_normal", name+"_hover", name+"_focus", name+"_down"
+	 *  are the resource names of the images used.
+	 */
+	HoverButton(Window* parent, int id, const String& name, const Color& background = Color(240,247,255));
+	
+	/// Load different bitmaps for this button
+	void loadBitmaps(const String& name);
 	
   private:
 	DECLARE_EVENT_TABLE();
 	
-	Bitmap bg_normal, bg_hover, bg_focus, bg_down; /// Bitmaps for the states of the button
+	String bitmaps; ///< Name of the loaded bitmaps
+	Bitmap bg_normal, bg_hover, bg_focus, bg_down; ///< Bitmaps for the states of the button
 	bool hover, focus, mouse_down, key_down;
+	Color background;
 	
 	void onMouseEnter(wxMouseEvent&);
 	void onMouseLeave(wxMouseEvent&);

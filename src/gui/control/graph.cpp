@@ -15,8 +15,7 @@ DECLARE_TYPEOF_COLLECTION(GraphAxisP);
 DECLARE_TYPEOF_COLLECTION(GraphElementP);
 DECLARE_TYPEOF_COLLECTION(GraphGroup);
 DECLARE_TYPEOF_COLLECTION(int);
-typedef map<String,UInt> map_String_UInt;
-DECLARE_TYPEOF(map_String_UInt);
+DECLARE_TYPEOF2(map<String,UInt>);
 
 // ----------------------------------------------------------------------------- : Events
 

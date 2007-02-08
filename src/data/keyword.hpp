@@ -27,6 +27,7 @@ class KeywordParam {
 	String         match;		///< Uncompiled regex
 	wxRegEx        matchRe;		///< Regular expression to match
 	OptionalScript script;		///< Transformation of the value for showing in the reminder text 
+	String         example;		///< Example for preview dialog
 	
 	DECLARE_REFLECTION();
 };
@@ -68,10 +69,24 @@ class Keyword {
 	DECLARE_REFLECTION();
 };
 
+
 // ----------------------------------------------------------------------------- : Using keywords
 
+/// A class that allows for fast matching of keywords
+class KeywordDatabase;
+DECLARE_POINTER_TYPE(KeywordDatabase);
+
+/// Create a new keyword database
+KeywordDatabaseP new_keyword_database();
+
+/// Add a keyword to a KeywordDatabase
+/** NOTE: keywords may not be altered after they are added to the database,
+ *  The database should be rebuild.
+ */
+void add_keyword(KeywordDatabase& db, const Keyword& kw);
+
 /// Expand/update all keywords in the given string
-String expand_keywords(const String& text);
+String expand_keywords(const KeywordDatabase& db, const String& text);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

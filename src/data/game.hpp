@@ -39,6 +39,7 @@ class Game : public Packaged {
 	vector<StatsDimensionP> statistics_dimensions;	///< (Additional) statistics dimensions
 	vector<StatsCategoryP>  statistics_categories;	///< (Additional) statistics categories
 	
+	bool                    has_keywords;           ///< Does this game use keywords?
 	vector<KeywordParamP>   keyword_parameter_types;///< Types of keyword parameters
 	vector<KeywordModeP>    keyword_modes;          ///< Modes of keywords
 	vector<KeywordP>        keywords;				///< Keywords for use in text

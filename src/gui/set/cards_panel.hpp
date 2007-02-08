@@ -17,6 +17,7 @@ class ImageCardList;
 class DataEditor;
 class TextCtrl;
 class IconMenu;
+class HoverButton;
 
 // ----------------------------------------------------------------------------- : CardsPanel
 
@@ -94,6 +95,7 @@ class CardsPanel : public SetWindowPanel {
 	DataEditor*       editor;
 	ImageCardList*    card_list;
 	TextCtrl*         notes;
+	HoverButton*      collapse_notes;
 	
 	// --------------------------------------------------- : Menus & tools
 	IconMenu* menuCard, *menuFormat;

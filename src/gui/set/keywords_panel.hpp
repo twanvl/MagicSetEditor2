@@ -12,12 +12,16 @@
 #include <util/prec.hpp>
 #include <gui/set/panel.hpp>
 
+class KeywordList;
+
 // ----------------------------------------------------------------------------- : KeywordsPanel
 
 /// A panel for listing and editing the keywords in a set
 class KeywordsPanel : public SetWindowPanel {
   public:
 	KeywordsPanel(Window* parent, int id);
+  private:
+	KeywordList* list;
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -135,7 +135,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 2, _("F8"), _("Keywords"),	_("Keywords"),			_("Define extra keywords for this set"));
 	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 3, _("F9"), _("Stats"),		_("Statistics"),		_("Show statistics about the cards in the set"));
 //	addPanel(*s, *menuWindow, *tabBar, new DraftPanel   (&this, wxID_ANY), 4, _("F10")) 
-	selectPanel(ID_WINDOW_MIN + 4); // select cards panel
+	selectPanel(ID_WINDOW_CARDS); // select cards panel
 	
 	// loose ends
 	tabBar->Realize();
@@ -253,6 +253,7 @@ void SetWindow::onCardSelect(CardSelectEvent& ev) {
 void SetWindow::fixMinWindowSize() {
 	current_panel->SetMinSize(current_panel->GetSizer()->GetMinSize());
 	Layout();
+	current_panel->Layout();
 	wxSize s  = GetSizer()->GetMinSize();
 	wxSize ws = GetSize();
 	wxSize cs = GetClientSize();
@@ -348,6 +349,9 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 		case ID_EDIT_FIND      : ev.Enable(current_panel->canFind());	break;
 		case ID_EDIT_FIND_NEXT : ev.Enable(current_panel->canFind());	break;
 		case ID_EDIT_REPLACE   : ev.Enable(current_panel->canReplace());break;
+		// windows
+		case ID_WINDOW_KEYWORDS: ev.Enable(set->game->has_keywords);	break;
+		// other
 		default:
 			// items created by the panel, and cut/copy/paste and find/replace
 			if(current_panel) current_panel->onUpdateUI(ev);
@@ -600,6 +604,7 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
 	EVT_MENU			(ID_HELP_WEBSITE,		SetWindow::onHelpWebsite)
 	EVT_MENU			(ID_HELP_ABOUT,			SetWindow::onHelpAbout)
 	EVT_TOOL_RANGE		(ID_CHILD_MIN, ID_CHILD_MAX,   SetWindow::onChildMenu)
+	EVT_COMMAND_RANGE	(ID_CHILD_MIN, ID_CHILD_MAX, wxEVT_COMMAND_BUTTON_CLICKED, SetWindow::onChildMenu)
 	EVT_GALLERY_SELECT  (ID_FIELD_LIST,                SetWindow::onChildMenu) // for StatsPanel, because it is not a EVT_TOOL
 	
 	EVT_UPDATE_UI		(wxID_ANY,				SetWindow::onUpdateUI)

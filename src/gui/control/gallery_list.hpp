@@ -36,9 +36,10 @@ class GalleryList : public wxScrolledWindow {
 	
   protected:
 	static const size_t NO_SELECTION = (size_t)-1;
-	size_t selection;	///< The selected item, or NO_SELECTION if there is no selection
-	RealSize item_size;	///< The size of a single item
-	int direction;		///< Direction of the list, can be wxHORIZONTAL or wxVERTICAL
+	size_t selection;	  ///< The selected item, or NO_SELECTION if there is no selection
+	wxSize item_size;	  ///< The size of a single item
+	int scroll_increment; ///< How large are the scroll steps?
+	int direction;		  ///< Direction of the list, can be wxHORIZONTAL or wxVERTICAL
 	
 	/// Redraw the list after changing the selection or the number of items
 	void update();
@@ -63,7 +64,7 @@ class GalleryList : public wxScrolledWindow {
 	/// Find the item corresponding to the given location
 	size_t findItem(const wxMouseEvent&) const;
 	/// Find the coordinates of an item
-	RealPoint itemPos(size_t item) const;
+	wxPoint itemPos(size_t item) const;
   protected:
 	/// Send an event
 	void sendEvent(WXTYPE type);

@@ -20,10 +20,23 @@ class KeywordList : public wxListView {
 	/// Set the list of keywords to show
 	void setData(vector<KeywordP>& dat);
 	
+	// --------------------------------------------------- : Selection
+	
+	inline KeywordP getKeyword() const            { return selected_keyword; }
+	inline void     setKeyword(const KeywordP& kw) { /* TODO */ }
+	
 	bool canSelectPrevious() const;
 	bool canSelectNext() const;
 	void selectPrevious();
 	void selectNext();
+	
+  protected:
+	/// Get the text of an item in a specific column
+	/** Overrides a function from wxListCtrl */
+	virtual String OnGetItemText (long pos, long col) const;
+  private:
+	KeywordP selected_keyword;
+	long     selected_keyword_pos;
 };
 
 // ----------------------------------------------------------------------------- : KeywordsPanel

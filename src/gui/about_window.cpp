@@ -64,16 +64,24 @@ END_EVENT_TABLE  ()
 // ----------------------------------------------------------------------------- : Button with image and hover effect
 
 
-HoverButton::HoverButton(Window* parent, int id, const String& name)
-	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxNO_BORDER)
-	, bg_normal(load_resource_image(name + _("_normal")))
-	, bg_hover (load_resource_image(name + _("_hover")))
-	, bg_focus (load_resource_image(name + _("_focus")))
-	, bg_down  (load_resource_image(name + _("_down")))
+HoverButton::HoverButton(Window* parent, int id, const String& name, const Color& background)
+	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxNO_BORDER )
 	, hover(false), focus(false), mouse_down(false), key_down(false)
 	, last_drawn(nullptr)
+	, background(background)
 {
+	loadBitmaps(name);
 	SetSize(DoGetBestSize());
+}
+
+void HoverButton::loadBitmaps(const String& name) {
+	if (bitmaps == name) return;
+	bitmaps = name;
+	bg_normal = Bitmap(load_resource_image(name + _("_normal")));
+	bg_hover  = Bitmap(load_resource_image(name + _("_hover")));
+	bg_focus  = Bitmap(load_resource_image(name + _("_focus")));
+	bg_down   = Bitmap(load_resource_image(name + _("_down")));
+	Refresh(false);
 }
 
 void HoverButton::onMouseEnter(wxMouseEvent&) {
@@ -151,10 +159,10 @@ void HoverButton::draw(DC& dc) {
 	// clear background (for transparent button images)
 	wxSize ws = GetClientSize();
 	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(Color(240,247,255));
+	dc.SetBrush(background != wxNullColour ? background : wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 	dc.DrawRectangle(0, 0, ws.GetWidth(), ws.GetHeight());
 	// draw button
-	dc.DrawBitmap(*toDraw(), 0, 0);
+	dc.DrawBitmap(*toDraw(), 0, 0, true);
 	last_drawn = toDraw();
 }
 int HoverButton::drawDelta() const {

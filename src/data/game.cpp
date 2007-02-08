@@ -22,6 +22,7 @@ IMPLEMENT_DYNAMIC_ARG(Game*, game_for_reading, nullptr);
 
 Game::Game()
 	: dependencies_initialized(false)
+	, has_keywords(false)
 {}
 
 GameP Game::byName(const String& name) {
@@ -42,6 +43,7 @@ IMPLEMENT_REFLECTION(Game) {
 	REFLECT(card_fields);
 	REFLECT(statistics_dimensions);
 	REFLECT(statistics_categories);
+	REFLECT(has_keywords);
 	REFLECT(keyword_parameter_types);
 	REFLECT(keyword_modes);
 	REFLECT(keywords);

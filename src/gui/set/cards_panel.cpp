@@ -10,6 +10,7 @@
 #include <gui/control/image_card_list.hpp>
 #include <gui/control/card_editor.hpp>
 #include <gui/control/text_ctrl.hpp>
+#include <gui/about_window.hpp>
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <data/set.hpp>
@@ -26,19 +27,23 @@ CardsPanel::CardsPanel(Window* parent, int id)
 {
 	// init controls
 	wxPanel* notesP;
-	wxSplitterWindow* splitter;
 	editor    = new CardEditor(this, ID_EDITOR);
 	splitter  = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
 	card_list = new ImageCardList(splitter, ID_CARD_LIST);
 	notesP    = new Panel(splitter, wxID_ANY);
 	notes     = new TextCtrl(notesP, ID_NOTES);
+	collapse_notes = new HoverButton(notesP, ID_COLLAPSE_NOTES, _("btn_collapse"), wxNullColour);
+	collapse_notes->SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
 	// init sizer for notes panel
 	wxSizer* sn = new wxBoxSizer(wxVERTICAL);
-	sn->Add(new wxStaticText(notesP, wxID_ANY, _LABEL_("card notes")), 0, wxEXPAND, 2);
+		wxSizer* sc = new wxBoxSizer(wxHORIZONTAL);
+		sc->Add(new wxStaticText(notesP, wxID_ANY, _LABEL_("card notes")), 1, wxEXPAND);
+		sc->Add(collapse_notes, 0, wxALIGN_CENTER | wxRIGHT, 2);
+	sn->Add(sc, 0, wxEXPAND, 2);
 	sn->Add(notes, 1, wxEXPAND | wxTOP, 2);
 	notesP->SetSizer(sn);
 	// init splitter
-	splitter->SetMinimumPaneSize(14);
+	splitter->SetMinimumPaneSize(15);
 	splitter->SetSashGravity(1.0);
 	splitter->SplitHorizontally(card_list, notesP, -40);
 	// init sizer
@@ -162,10 +167,15 @@ void CardsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 			}
 			break;
 		}
+		case ID_COLLAPSE_NOTES: {
+			bool collapse = notes->GetSize().y > 0;
+			collapse_notes->loadBitmaps(collapse ? _("btn_collapse") : _("btn_expand"));
+			break;
+		}
 		case ID_INSERT_SYMBOL: {
 			wxMenu* menu = editor->getMenu(ID_INSERT_SYMBOL);
 			ev.Enable(menu);
-			if (insertSymbolMenu->GetSubMenu() != menu  ||  menu->GetParent() != menuFormat) {
+			if (insertSymbolMenu->GetSubMenu() != menu  ||  (menu && menu->GetParent() != menuFormat)) {
 				// re-add the menu
 				menuFormat->Remove(insertSymbolMenu);
 				insertSymbolMenu->SetSubMenu(menu);
@@ -210,6 +220,17 @@ void CardsPanel::onCommand(int id) {
 				editor->doFormat(id);
 				break;
 			}
+		}
+		case ID_COLLAPSE_NOTES: {
+			bool collapse = notes->GetSize().y > 0;
+			if (collapse) {
+				splitter->SetSashPosition(-1);
+				notes->SetFocus();
+			} else {
+				splitter->SetSashPosition(-150);
+				card_list->SetFocus();
+			}
+			break;
 		}
 		default: {
 			if (id >= ID_INSERT_SYMBOL_MENU_MIN && id <= ID_INSERT_SYMBOL_MENU_MAX) {

@@ -17,37 +17,40 @@ DEFINE_EVENT_TYPE(EVENT_GALLERY_ACTIVATE);
 
 // ----------------------------------------------------------------------------- : GalleryList
 
-const int MARGIN = 1; // margin between items
-const int BORDER = 1; // margin between items
+const int MARGIN = 1; // margin between items (excluding border)
+const int BORDER = 1; // border aroung items
+const int SPACING = MARGIN + 2*BORDER; // distance between items
 
 GalleryList::GalleryList(Window* parent, int id, int direction)
 	: wxScrolledWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER | (direction == wxHORIZONTAL ? wxHSCROLL : wxVSCROLL) )
 	, selection(NO_SELECTION)
 	, direction(direction)
+	, scroll_increment(10)
 {}
 
 void GalleryList::update() {
-	const int w = (int)item_size.width  + MARGIN + 2*BORDER;
-	const int h = (int)item_size.height + MARGIN + 2*BORDER;
+	const int w = item_size.x + SPACING;
+	const int h = item_size.y + SPACING;
 	// resize and scroll
 	if (direction == wxHORIZONTAL) {
 		SetVirtualSize(w * (int)itemCount() + MARGIN, h + MARGIN);
-		SetScrollRate(w, 0);
+		SetScrollRate(scroll_increment, 0);
 	} else { // wxVERTICAL
-		SetVirtualSize(w, h * (int)itemCount() + MARGIN + MARGIN);
-		SetScrollRate(0, h);
+		SetVirtualSize(w + MARGIN, h * (int)itemCount() + MARGIN);
+		SetScrollRate(0, scroll_increment);
 	}
 	// ensure selected item + its margin is visible
 	if (selection < itemCount()) {
 		int x, y, cw, ch;
 		GetViewStart (&x,  &y);
 		GetClientSize(&cw, &ch);
-		cw = (cw - w + 1) / w; ch = (ch - h + 1) / h;
-		RealPoint pos = itemPos(selection);
-		x = min(x,      (int)selection);
-		y = min(y,      (int)selection);
-		x = max(x + cw, (int)selection) - cw;
-		y = max(y + ch, (int)selection) - ch;
+		cw = (cw - scroll_increment + 1) / scroll_increment;
+		ch = (ch - scroll_increment + 1) / scroll_increment;
+		wxPoint pos = itemPos(selection);
+		x = min(x,      (int)(selection * w) / scroll_increment);
+		y = min(y,      (int)(selection * h) / scroll_increment);
+		x = max(x + cw, (int)(selection * w + w - 1) / scroll_increment) - cw;
+		y = max(y + ch, (int)(selection * h + h - 1) / scroll_increment) - ch;
 		Scroll(x,y);
 	}
 	// redraw
@@ -56,21 +59,21 @@ void GalleryList::update() {
 
 size_t GalleryList::findItem(const wxMouseEvent& ev) const {
 	if (direction == wxHORIZONTAL) {
-		int x, w = (int)item_size.width  + MARGIN + 2*BORDER;
+		int x, w = item_size.x  + SPACING;
 		GetViewStart (&x, 0);
-		return static_cast<size_t>( x + ev.GetX() / w );
+		return static_cast<size_t>( max(0, x * scroll_increment + ev.GetX() - MARGIN) / w );
 	} else { // wxVERTICAL
-		int y, h = (int)item_size.height + MARGIN + 2*BORDER;
+		int y, h = item_size.y + SPACING;
 		GetViewStart (0, &y);
-		return static_cast<size_t>( y + ev.GetY() / h );
+		return static_cast<size_t>( max(0, y * scroll_increment + ev.GetY() - MARGIN) / h );
 	}
 }
 
-RealPoint GalleryList::itemPos(size_t item) const {
+wxPoint GalleryList::itemPos(size_t item) const {
 	if (direction == wxHORIZONTAL) {
-		return RealPoint(item * (item_size.width + MARGIN + 2*BORDER) + MARGIN + BORDER, MARGIN + BORDER);
+		return wxPoint((int)item * (item_size.x + SPACING) + MARGIN + BORDER, MARGIN + BORDER);
 	} else {
-		return RealPoint(MARGIN + BORDER, item * (item_size.height + MARGIN + 2*BORDER) + MARGIN + BORDER);
+		return wxPoint(MARGIN + BORDER, (int)item * (item_size.y + SPACING) + MARGIN + BORDER);
 	}
 }
 
@@ -117,8 +120,8 @@ void GalleryList::onChar(wxKeyEvent& ev) {
 
 wxSize GalleryList::DoGetBestSize() const {
 	wxSize ws = GetSize(), cs = GetClientSize();
-	const int w = int(item_size.width)  + 2*MARGIN + 2*BORDER;
-	const int h = int(item_size.height) + 2*MARGIN + 2*BORDER;
+	const int w = item_size.x + SPACING;
+	const int h = item_size.y + SPACING;
 	return wxSize(w, h) + ws - cs;
 }
 
@@ -136,15 +139,15 @@ void GalleryList::OnDraw(DC& dc) {
 	GetViewStart(&x, &y);
 	GetClientSize(&cw, &ch);
 	if (direction == wxHORIZONTAL) {
-		dx = int(item_size.width) + MARGIN + 2*BORDER;
+		dx = item_size.x + MARGIN + 2*BORDER;
 		dy = 0;
-		start = (size_t) x;
-		end   = (size_t) (start + cw / dx + 1);
+		start = (size_t) max(0, x * scroll_increment - MARGIN) / dx;
+		end   = (size_t) max(0, x * scroll_increment - MARGIN + cw + dx) / dx;
 	} else {
 		dx = 0;
-		dy = int(item_size.height) + MARGIN + 2*BORDER;
-		start = (size_t) y;
-		end   = (size_t) (start + ch / dy + 1);
+		dy = item_size.y + MARGIN + 2*BORDER;
+		start = (size_t) max(0, y * scroll_increment - MARGIN) / dy;
+		end   = (size_t) max(0, y * scroll_increment - MARGIN + ch + dy) / dy;
 	}
 	end = min(end, itemCount());
 	// clear background
@@ -161,10 +164,10 @@ void GalleryList::OnDraw(DC& dc) {
 		Color c = selected ? wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT) : unselected;
 		dc.SetPen(c);
 		dc.SetBrush(saturate(lerp(background, c, 0.3), selected ? 0.5 : 0));
-		RealPoint pos = itemPos(i);
-		dc.DrawRectangle(int(pos.x) - BORDER, int(pos.y) - BORDER, int(item_size.width) + 2*BORDER, int(item_size.height) + 2*BORDER);
+		wxPoint pos = itemPos(i);
+		dc.DrawRectangle(pos.x - BORDER, pos.y - BORDER, item_size.x + 2*BORDER, item_size.y + 2*BORDER);
 		// draw item
-		drawItem(dc, int(pos.x), int(pos.y), i, selected);
+		drawItem(dc, pos.x, pos.y, i, selected);
 	}
 }
 

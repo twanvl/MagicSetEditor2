@@ -24,6 +24,8 @@
 	#define DECLARE_TYPEOF_NO_REV(T)
 	#define DECLARE_TYPEOF_CONST(T)
 	#define DECLARE_TYPEOF_COLLECTION(T)
+	#define DECLARE_TYPEOF2(A,B)
+	#define DECLARE_TYPEOF_NO_REV2(A,B)
 	
 	#define TYPEOF(Value)      __typeof(Value)
 	#define TYPEOF_IT(Value)   __typeof(Value.begin())
@@ -83,14 +85,28 @@
 			typedef T::const_reference			reference;				\
 			typedef T::const_reference			const_reference;		\
 		}
-
-
+	
 	/// Declare typeof magic for a specific std::vector type
 	#define DECLARE_TYPEOF_COLLECTION(T)  DECLARE_TYPEOF(vector<T>); \
 	                                      DECLARE_TYPEOF_CONST(set<T>)
 	
+	/// Declare typeof magic for a specific type, with two template arguments
+	/** This is needed because the preprocessor sees MACRO(class<a,b>)
+		*  as a macro call with two arguments.
+		*/
+	#define DECLARE_TYPEOF2(A,B)										\
+		typedef A,B BOOST_PP_CAT(TypeOfTemp,__LINE__);					\
+		DECLARE_TYPEOF(BOOST_PP_CAT(TypeOfTemp,__LINE__))
+	#define DECLARE_TYPEOF_NO_REV2(A,B)									\
+		typedef A,B BOOST_PP_CAT(TypeOfTemp,__LINE__);					\
+		DECLARE_TYPEOF_NO_REV(BOOST_PP_CAT(TypeOfTemp,__LINE__))
+	#define DECLARE_TYPEOF_COLLECTION2(A,B)								\
+		typedef A,B BOOST_PP_CAT(TypeOfTemp,__LINE__);					\
+		DECLARE_TYPEOF_COLLECTION(BOOST_PP_CAT(TypeOfTemp,__LINE__))
+	
 #endif
 
+	
 // ----------------------------------------------------------------------------- : Looping macros with iterators
 
 /// Iterate over a collection, using an iterator it of type Type

@@ -15,7 +15,8 @@
 PackageList::PackageList(Window* parent, int id, int direction)
 	: GalleryList(parent, id, direction)
 {
-	item_size = wxSize(110, 150);
+	item_size = wxSize(108, 150);
+	SetThemeEnabled(true);
 }
 
 size_t PackageList::itemCount() const {
@@ -29,7 +30,7 @@ void PackageList::drawItem(DC& dc, int x, int y, size_t item, bool selected) {
 	int w, h;
 	// draw image
 	if (d.image.Ok()) {
-		dc.DrawBitmap(d.image, x + int(align_delta_x(ALIGN_CENTER, item_size.width, d.image.GetWidth())), y + 3);
+		dc.DrawBitmap(d.image, x + int(align_delta_x(ALIGN_CENTER, item_size.x, d.image.GetWidth())), y + 3, true);
 	}
 	// draw short name
 	dc.SetFont(wxFont(12,wxSWISS,wxNORMAL,wxBOLD,false,_("Arial")));

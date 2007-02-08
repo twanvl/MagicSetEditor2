@@ -56,6 +56,11 @@ enum MenuID {
 	// Window menu (MainWindow)
 ,	ID_WINDOW_NEW			= 201
 ,	ID_WINDOW_MIN			= 202
+,	ID_WINDOW_CARDS			= ID_WINDOW_MIN + 4 // see SetWindow::SetWindow
+,	ID_WINDOW_SET			= ID_WINDOW_MIN + 0
+,	ID_WINDOW_STYLE			= ID_WINDOW_MIN + 1
+,	ID_WINDOW_KEYWORDS		= ID_WINDOW_MIN + 2
+,	ID_WINDOW_STATS			= ID_WINDOW_MIN + 3
 ,	ID_WINDOW_MAX			= 220
 
 	// Help menu (MainWindow)
@@ -94,6 +99,9 @@ enum ChildMenuID {
 ,	ID_CARD_ROTATE_90
 ,	ID_CARD_ROTATE_180
 ,	ID_CARD_ROTATE_270
+
+	// On cards panel
+,	ID_COLLAPSE_NOTES
 
 	// Keyword menu
 ,	ID_KEYWORD_ADD			= 1101

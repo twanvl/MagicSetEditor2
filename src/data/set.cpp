@@ -19,8 +19,7 @@
 #include <wx/sstream.h>
 
 DECLARE_TYPEOF_COLLECTION(CardP);
-typedef IndexMap<FieldP,ValueP> IndexMap_FieldP_ValueP;
-DECLARE_TYPEOF_NO_REV(IndexMap_FieldP_ValueP);
+DECLARE_TYPEOF_NO_REV2(IndexMap<FieldP,ValueP>);
 
 // ----------------------------------------------------------------------------- : Set
 
