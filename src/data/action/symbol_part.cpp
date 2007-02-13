@@ -262,7 +262,7 @@ class SinglePointRemoveAction : public Action {
 SinglePointRemoveAction::SinglePointRemoveAction(const SymbolPartP& part, UInt position)
 	: part(part)
 	, position(position)
-	, point (part->getPoint(position - 1))
+	, point (part->getPoint(position))
 	, point1(part->getPoint(position - 1))
 	, point2(part->getPoint(position + 1))
 {
@@ -273,13 +273,13 @@ SinglePointRemoveAction::SinglePointRemoveAction(const SymbolPartP& part, UInt p
 		
 		// convert both segments to curves first
 		if (point1.other.segment_after != SEGMENT_CURVE) {
-			point1.other.delta_after  = -
 			before                   = (point1.other.pos - point->pos) / 3.0;
+			point1.other.delta_after = -before;
 			point1.other.segment_after = SEGMENT_CURVE;
 		}
 		if (point2.other.segment_before != SEGMENT_CURVE) {
-			point2.other.delta_before = -
-			after                    = (point2.other.pos - point->pos) / 3.0;
+			after                     = (point2.other.pos - point->pos) / 3.0;
+			point2.other.delta_before = -after;
 			point2.other.segment_before = SEGMENT_CURVE;
 		}
 		
