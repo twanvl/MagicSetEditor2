@@ -153,6 +153,7 @@ void SymbolWindow::onFileOpen(wxCommandEvent& ev) {
 			Reader reader(new_shared1<wxFileInputStream>(name), name);
 			reader.handle_greedy(symbol);
 		} else {
+			wxBusyCursor busy;
 			Image image(name);
 			if (!image.Ok()) return;
 			symbol = import_symbol(image);

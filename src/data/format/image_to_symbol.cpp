@@ -88,7 +88,7 @@ bool is_mse1_symbol(const Image& img) {
 		}
 	}
 	if (delta > 5000) return false; // not black & white enough
-	// TODO : more checks
+	// TODO : more checks?
 	return true;
 }
 
@@ -350,7 +350,9 @@ void straighten(SymbolPart& part) {
 /// Remove unneeded points between straight lines
 void merge_lines(SymbolPart& part) {
 	for (int i = 0 ; (size_t)i < part.points.size() ; ++i) {
-		Vector2D a = part.getPoint(i-1)->pos, b = part.getPoint(i)->pos, c = part.getPoint(i+1)->pos;
+		ControlPoint& cur  = *part.getPoint(i);
+		if (cur.segment_before != cur.segment_after) continue;
+		Vector2D a = part.getPoint(i-1)->pos, b = cur.pos, c = part.getPoint(i+1)->pos;
 		Vector2D ab = (a-b).normalized();
 		Vector2D bc = (b-c).normalized();
 		double angle_len = fabs(  atan2(ab.x,ab.y) - atan2(bc.x,bc.y))  * (a-c).lengthSqr();
