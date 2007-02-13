@@ -39,10 +39,11 @@ void greyscale(Image& img) {
 
 /// Thresholds an image, giving a black & white result
 /** The threshold is determined automatically
- *  The output is stored in the data array, EMPTY for black, FULL for white
- *  If invert is used, use EMPTY for white and FULL for black
+ *  The output is stored in the data array,
+ *  EMPTY for the 'border' color, FULL for the interior
  */
-void threshold(Byte* data, size_t size, bool invert = true) {
+void threshold(Byte* data, int w, int h) {
+	size_t size = w * h;
 	// make histogram of data
 	size_t hist[256];
 	fill_n(hist,256,0);
@@ -66,7 +67,21 @@ void threshold(Byte* data, size_t size, bool invert = true) {
 	}
 	// threshold data
 	for (size_t i = 0 ; i < size ; ++i) {
-		data[i] = (data[i] >= threshold) != invert ? FULL : EMPTY;
+		data[i] = data[i] >= threshold ? FULL : EMPTY;
+	}
+	// should the colors be inverted?
+	int border_count = 0;
+	for (int x = 0 ; x < w ; ++x) {
+		border_count += data[x] + data[x+(h-1)*w];
+	}
+	for (int y = 0 ; y < h ; ++y) {
+		border_count += data[y*w] + data[w-1+y*w];
+	}
+	if (border_count > w + h) {
+		// more then half the border if FULL, invert
+		for (size_t i = 0 ; i < size ; ++i) {
+			data[i] = data[i] == FULL ? EMPTY : FULL;
+		}
 	}
 }
 
@@ -187,7 +202,7 @@ SymbolP image_to_symbol(Image& img) {
 	int w = img.GetWidth(), h = img.GetHeight();
 	// 1. threshold the image
 	greyscale(img);
-	threshold(img.GetData(), w*h);
+	threshold(img.GetData(), w, h);
 	// 2. read as many symbol parts as we can
 	ImageData data = {w,h,img.GetData()};
 	SymbolP symbol(new Symbol);
