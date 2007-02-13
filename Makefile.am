@@ -99,6 +99,7 @@ magicseteditor_SOURCES += ./src/data/format/mws.cpp
 magicseteditor_SOURCES += ./src/data/format/mse1.cpp
 magicseteditor_SOURCES += ./src/data/format/mse2.cpp
 magicseteditor_SOURCES += ./src/data/format/clipboard.cpp
+magicseteditor_SOURCES += ./src/data/format/image_to_symbol.cpp
 magicseteditor_SOURCES += ./src/data/statistics.cpp
 magicseteditor_SOURCES += ./src/data/settings.cpp
 magicseteditor_SOURCES += ./src/data/keyword.cpp

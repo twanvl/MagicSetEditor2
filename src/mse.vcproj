@@ -1441,6 +1441,12 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\data\format\image_to_symbol.cpp">
+				</File>
+				<File
+					RelativePath=".\data\format\image_to_symbol.hpp">
+				</File>
+				<File
 					RelativePath=".\data\format\mse1.cpp">
 				</File>
 				<File

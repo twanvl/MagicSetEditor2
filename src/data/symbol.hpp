@@ -114,6 +114,12 @@ enum SymbolPartCombine
 ,	PART_BORDER
 };
 
+/// A sane mod function, always returns a result in the range [0..size)
+inline size_t mod(int a, size_t size) {
+	int m = a % (int)size;
+	return m >= 0 ? m : m + size;
+}
+
 /// A single part (polygon/bezier-gon) in a Symbol
 class SymbolPart {
   public:
@@ -136,7 +142,7 @@ class SymbolPart {
 	
 	/// Get a control point, wraps around
 	inline ControlPointP getPoint(int id) const {
-		return points[id >= 0  ?  id % points.size()  :  id + points.size()];
+		return points[mod(id, points.size())];
 	}
 	
 	/// Enforce lock constraints

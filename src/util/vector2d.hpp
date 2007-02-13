@@ -123,7 +123,7 @@ class Vector2D {
 };
 
 /// Piecewise minimum
-inline Vector2D piecewise_min(Vector2D a, Vector2D b) {
+inline Vector2D piecewise_min(const Vector2D& a, const Vector2D& b) {
 	return Vector2D(
 		a.x < b.x ? a.x : b.x,
 		a.y < b.y ? a.y : b.y
@@ -131,12 +131,14 @@ inline Vector2D piecewise_min(Vector2D a, Vector2D b) {
 }
 
 /// Piecewise maximum
-inline Vector2D piecewise_max(Vector2D a, Vector2D b) {
+inline Vector2D piecewise_max(const Vector2D& a, const Vector2D& b) {
 	return Vector2D(
 		a.x < b.x ? b.x : a.x,
 		a.y < b.y ? b.y : a.y
 	);
 }
+
+inline Vector2D operator * (double a, const Vector2D& b) { return b * a; }
 
 
 // ----------------------------------------------------------------------------- : EOF

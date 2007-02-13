@@ -1,0 +1,450 @@
+//+----------------------------------------------------------------------------+
+//| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
+//| Copyright:    (C) 2001 - 2006 Twan van Laarhoven                           |
+//| License:      GNU General Public License 2 or later (see file COPYING)     |
+//+----------------------------------------------------------------------------+
+
+// ----------------------------------------------------------------------------- : Includes
+
+#include <data/format/image_to_symbol.hpp>
+#include <gfx/bezier.hpp>
+#include <util/error.hpp>
+
+DECLARE_TYPEOF_COLLECTION(ControlPointP);
+DECLARE_TYPEOF_COLLECTION(SymbolPartP);
+
+// ----------------------------------------------------------------------------- : Image preprocessing
+
+enum ImageMarker
+{	EMPTY  = 0	// This cell is empty
+,	FULL   = 1	// This cell is full
+,	MARKED = 2	// This cell is full, but it has been used as a starting point for finding symbols
+};
+
+
+/// Convert an image to greyscale
+/** The image becomes a single channel image, just an array of bytes.
+ *  This means only the first 1/3 of the image data is used, and the image
+ *  is no longer an actual image.
+ */
+void greyscale(Image& img) {
+	UInt size = img.GetWidth() * img.GetHeight();
+	Byte* data = img.GetData();
+	Byte* out  = data;
+	for (UInt i = 0 ; i < size ; ++i) {
+		*out++ = (data[0] + data[1] + data[2]) / 3;
+		data += 3;
+	}
+}
+
+/// Thresholds an image, giving a black & white result
+/** The threshold is determined automatically
+ *  The output is stored in the data array, EMPTY for black, FULL for white
+ *  If invert is used, use EMPTY for white and FULL for black
+ */
+void threshold(Byte* data, size_t size, bool invert = true) {
+	// make histogram of data
+	size_t hist[256];
+	fill_n(hist,256,0);
+	for (size_t i = 0 ; i < size ; ++i) {
+		hist[data[i]]++;
+	}
+	// find threshold
+	size_t threshold_pos = size / 2;
+	int threshold = 255;
+	size_t below = 0;
+	for (int i = 0 ; i < 255 ; ++i) {
+		if (below + hist[i]/2 > threshold_pos) {
+			threshold = i;
+			break;
+		}
+		below += hist[i];
+		if (below >= threshold_pos) {
+			threshold = i + 1;
+			break;
+		}
+	}
+	// threshold data
+	for (size_t i = 0 ; i < size ; ++i) {
+		data[i] = (data[i] >= threshold) != invert ? FULL : EMPTY;
+	}
+}
+
+
+// ----------------------------------------------------------------------------- : Image to symbol
+
+bool is_mse1_symbol(const Image& img) {
+	// mse1 symbols are 60x80
+	if (img.GetWidth() != 60 || img.GetHeight() != 80) return false;
+	// the right side is black & white
+	int delta = 0;
+	for (int y = 0 ; y < 80 ; ++y) {
+		Byte* d = img.GetData() + 3 * (y * 60 + 20);
+		for (int x = 20 ; x < 60 ; ++x) {
+			int r = *d++;
+			int g = *d++;
+			int b = *d++;
+			delta += abs(r - b) + abs(r - g) + abs(b - g);
+		}
+	}
+	if (delta > 5000) return false; // not black & white enough
+	// TODO : more checks
+	return true;
+}
+
+struct ImageData {
+	int width, height;
+	Byte* data;
+	mutable Byte dummy;
+	inline Byte& operator () (int x, int y) const {
+		if (x < 0 || x >= width || y < 0 || y >= height) {
+			return (dummy = EMPTY); // outside, return empty
+		} else {
+			return data[x + y*width];
+		}
+	}
+};
+
+bool find_symbol_part_start(const ImageData& data, int& x_out, int& y_out) {
+	for (int x = 0 ; x < data.width ; ++x) {
+		for (int y = 0 ; y < data.height ; ++y) {
+			if (data(x, y) == FULL && data(x, y-1) == EMPTY) {
+				// the point above must be clear, we don't want to start in the 'ground'
+				// also, we don't want to find things we found before
+				x_out = x;
+				y_out = y;
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
+SymbolPartP read_symbol_part(const ImageData& data) {
+	// find start point
+	int xs, ys;
+	if (!find_symbol_part_start(data, xs, ys))  return SymbolPartP();
+	data(xs, ys) |= MARKED;
+	
+	SymbolPartP part(new SymbolPart);
+	
+	// walk around, clockwise
+	xs += 1; // start right of the found point, otherwise last_move might think we came from above
+	int x = xs, y = ys;
+	int old_x = x, old_y = y;
+	int last_move = 1; // 1 = right or down, (as in x|y += 1)
+	do {
+		// the cursor (x,y) is between four pounts:
+		// a b
+		//  .
+		// c d
+		bool a = data(x-1, y-1) & FULL;
+		bool b = data(x,   y-1) & FULL;
+		bool c = data(x-1, y  ) & FULL;
+		bool d = data(x,   y  ) & FULL;
+		UInt pack = (a << 12) + (b << 8) + (c << 4) + d; // 0xabcd
+		switch (pack) {
+			case 0x0001 : x += 1; break;
+			case 0x0010 : y += 1; break;
+			case 0x0011 : x += 1; break;
+			case 0x0100 : y -= 1; break;
+			case 0x0101 : y -= 1; break;
+			case 0x0110 : y -= last_move; break; // diagonal, we can come here from two sides, from left and right
+			case 0x0111 : y -= 1; break;         // last_move indicates which of {b,c} we are 'attached' to
+			case 0x1000 : x -= 1; break;
+			case 0x1001 : x += last_move; break;
+			case 0x1010 : y += 1; break;
+			case 0x1011 : x += 1; break;
+			case 0x1100 : x -= 1; break;
+			case 0x1101 : x -= 1; break;
+			case 0x1110 : y += 1; break;
+			default:
+				throw InternalError(_("in the ground/air"));
+		}
+		
+		// add to part and place a mark
+		part->points.push_back(new_shared2<ControlPoint>(
+				double(x) / data.width,
+				double(y) / data.height
+			));
+		if (x > old_x) data(old_x, y) |= MARKED; // mark when moving right -> only mark the top of the part
+		last_move = (x + y) - (old_x + old_y);
+		old_x = x;
+		old_y = y;
+	} while (x != xs || y != ys); // we will end up in the start point
+	
+	// are we on the inside or the outside?
+	if (data(x-2,y-1) & FULL) {
+		part->combine = PART_SUBTRACT;
+	} else {
+		part->combine = PART_MERGE;
+	}
+	return part;
+}
+
+
+SymbolP image_to_symbol(Image& img) {
+	int w = img.GetWidth(), h = img.GetHeight();
+	// 1. threshold the image
+	greyscale(img);
+	threshold(img.GetData(), w*h);
+	// 2. read as many symbol parts as we can
+	ImageData data = {w,h,img.GetData()};
+	SymbolP symbol(new Symbol);
+	while (true) {
+		SymbolPartP part = read_symbol_part(data);
+		if (!part) break;
+		symbol->parts.push_back(part);
+	}
+	reverse(symbol->parts.begin(), symbol->parts.end());
+	return symbol;
+}
+
+SymbolP import_symbol(Image& img) {
+	SymbolP symbol;
+	if (is_mse1_symbol(img)) {
+		Image img2 = img.GetSubImage(wxRect(20,0,40,40));
+		symbol = image_to_symbol(img2);
+	} else {
+		symbol = image_to_symbol(img);
+	}
+	simplify_symbol(*symbol);
+	return symbol;
+}
+
+
+// ----------------------------------------------------------------------------- : Simplify symbol
+
+/// Finds corners, marks corners as LOCK_FREE, non-corners as LOCK_DIR
+/** A corner is a point that has an angle between tangent greater then a treshold
+ */
+void mark_corners(SymbolPart& part) {
+	for (int i = 0 ; (size_t)i < part.points.size() ; ++i) {
+		ControlPoint& current = *part.getPoint(i);
+		Vector2D before  = .6 * part.getPoint(i-1)->pos + .2 * part.getPoint(i-2)->pos + .1 * part.getPoint(i-3)->pos + .1 * part.getPoint(i-4)->pos;
+		Vector2D after   = .6 * part.getPoint(i+1)->pos + .2 * part.getPoint(i+2)->pos + .1 * part.getPoint(i+3)->pos + .1 * part.getPoint(i+4)->pos;
+		before = (before - current.pos).normalized();
+		after  = (after  - current.pos).normalized();
+		if (before.dot(after) >= -0.25f) {
+			// corner
+			current.lock = LOCK_FREE;
+		} else {
+			current.lock = LOCK_DIR;
+		}
+	}
+}
+
+/// Merge adjacent corners
+/** Triangles will result in adjecent corners:
+ *   XX
+ *   XXXX   _ corner 1;
+ *   XXXXXX _ corner 2;
+ *   XXXX
+ *   XX
+ *
+ *  Not all adjectent corners should be merged, for example
+ *   X             _ 1
+ *   XXXXXXXXXXXXX _ 2
+ *  should be kept
+ *
+ *  The solution is to look at the tangent lines.
+ *  Where these two lines (one for each corner) intersect,
+ *   is the merged corner. If it is too far away, don't merge
+ */
+void merge_corners(SymbolPart& part) {
+	for (int i = 0 ; (size_t)i < part.points.size() ; ++i) {
+		ControlPoint& cur  = *part.getPoint(i);
+		ControlPoint& prev = *part.getPoint(i - 1);
+		if (prev.lock != LOCK_FREE || cur.lock != LOCK_FREE) continue;
+		// step 1. find tangent lines: try tangent lines to the first point, the second, etc.
+		// and take the one that has the largest angle with ab, i.e. the smallest dot,
+		// where ab is the line between the two corners
+		Vector2D ab = cur.pos - prev.pos;
+		double min_a_dot = 1e100, min_b_dot = 1e100;
+		Vector2D a, b;
+		for (int j = 0 ; j < 4 ; ++j) {
+			Vector2D a_ = (part.getPoint(i-j-1)->pos - prev.pos).normalized();
+			Vector2D b_ = (part.getPoint(i+j)->pos   - cur.pos).normalized();
+			double a_dot =  a_.dot(ab);
+			double b_dot = -b_.dot(ab);
+			if (a_dot < min_a_dot) {
+				min_a_dot = a_dot;
+				a = a_;
+			}
+			if (b_dot < min_b_dot) {
+				min_b_dot = b_dot;
+				b = b_;
+			}
+		}
+		// step 2. find intersection point, to solve:
+		//  t a + ab = u b, solve for t,u
+		// Gives us:
+		//  t = ab cross b / b cross a
+		double tden = max(0.00000001, b.cross(a));
+		double t  = ab.cross(b) / tden;
+		// do these tangent lines intersect, and not too far away?
+		// if so, then the intersection point is the merged point
+		if (t >= 0 && t < 20.0) {
+			prev.pos += a * -t;
+			part.points.erase(part.points.begin() + i);
+			i -= 1;
+		}
+	}
+}
+
+/// Avarage/'blur' a symbol part
+void avarage(SymbolPart& part) {
+	// create a copy of the points
+	vector<Vector2D> old_points;
+	FOR_EACH(p, part.points) {
+		old_points.push_back(p->pos);
+	}
+	// avarage points
+	for (int i = 0 ; (size_t)i < part.points.size() ; ++i) {
+		ControlPoint& p = *part.getPoint(i);
+		if (p.lock == LOCK_DIR) {
+			p.pos = .25 * old_points[mod(i-1, old_points.size())]
+			      + .50 * p.pos
+			      + .25 * old_points[mod(i+1, old_points.size())];
+		}
+	}
+}
+
+/// Convert a symbol part to curves
+void convert_to_curves(SymbolPart& part) {
+	// mark all segments as curves
+	for (int i = 0 ; (size_t)i < part.points.size() ; ++i) {
+		ControlPoint& cur  = *part.getPoint(i);
+		ControlPoint& next = *part.getPoint(i + 1);
+		cur.segment_after  = SEGMENT_CURVE;
+		cur.segment_before = SEGMENT_CURVE;
+		cur.delta_after   = (next.pos - cur.pos)  / 3.0;
+		next.delta_before = (cur.pos  - next.pos) / 3.0;
+	}
+	// make the curves smooth by enforcing direction constraints
+	FOR_EACH(p, part.points) {
+		p->onUpdateLock();
+	}
+}
+
+/// Convert almost straight curves in a symbol part to lines
+void straighten(SymbolPart& part) {
+	const double treshold = 0.2;
+	for (int i = 0 ; (size_t)i < part.points.size() ; ++i) {
+		ControlPoint& cur  = *part.getPoint(i);
+		ControlPoint& next = *part.getPoint(i + 1);
+		Vector2D ab = (next.pos - cur.pos).normalized();
+		Vector2D aa = cur.delta_after.normalized();
+		Vector2D bb = next.delta_before.normalized();
+		// if the area beneath the polygon formed by the handles is small
+		// then it is a straight line
+		double cpDot = abs(aa.cross(ab)) + abs(bb.cross(ab));
+		if (cpDot < treshold) {
+			cur.segment_after = next.segment_before = SEGMENT_LINE;
+			cur.delta_after = next.delta_before = Vector2D();
+			cur.lock = next.lock = LOCK_FREE;
+		}
+	}
+}
+
+/// Remove unneeded points between straight lines
+void merge_lines(SymbolPart& part) {
+	for (int i = 0 ; (size_t)i < part.points.size() ; ++i) {
+		Vector2D a = part.getPoint(i-1)->pos, b = part.getPoint(i)->pos, c = part.getPoint(i+1)->pos;
+		Vector2D ab = (a-b).normalized();
+		Vector2D bc = (b-c).normalized();
+		double angle_len = fabs(  atan2(ab.x,ab.y) - atan2(bc.x,bc.y))  * (a-c).lengthSqr();
+		bool keep = angle_len >= .0001;
+		if (!keep) {
+			part.points.erase(part.points.begin() + i);
+			i -= 1;
+		}
+	}
+}
+
+double cost_of_point_removal(SymbolPart& part, int i);
+void remove_point(SymbolPart& part, int i);
+
+/// Simplify a symbol part by removing points
+/** Always remove the point with the lowest cost,
+ *  stop when the cost becomes too high
+ */
+void remove_points(SymbolPart& part) {
+	const double treshold = 0.002; // maximum cost
+	while (true) {
+		// Find the point with the lowest cost of removal
+		int best = -1;
+		double best_cost = 1e100;
+		for (int i = 0 ; (size_t)i < part.points.size() ; ++i) {
+			double cost = cost_of_point_removal(part, i); 
+			if (cost < best_cost) {
+				best_cost = cost;
+				best = i;
+			}
+		}
+		if (best_cost > treshold) break;
+		// ... and remove it
+		remove_point(part, best);
+	}
+}
+/// Cost of removing point i from a symbol part
+double cost_of_point_removal(SymbolPart& part, int i) {
+	ControlPoint& cur  = *part.getPoint(i);
+	ControlPoint& prev = *part.getPoint(i-1);
+	ControlPoint& next = *part.getPoint(i+1);
+	if (cur.lock != LOCK_DIR) return 1e100; // don't remove corners
+	
+	Vector2D before = cur.delta_before;
+	Vector2D after  = cur.delta_after;
+	Vector2D ac     = prev.pos - next.pos;
+	// Based on SinglePointRemoveAction
+	double bl   = before.length() + 0.00001; // prevent division by 0
+	double al   = after.length() + 0.00001;
+	double totl = bl + al;
+	// set new handle sizes
+	Vector2D after0  = prev.delta_after * totl / bl;
+	Vector2D before2 = next.delta_before * totl / al;
+	// determine closest point on the merged curve
+	BezierCurve c(prev.pos, prev.pos + after0, next.pos + before2, next.pos);
+	double t = bl/totl;
+	Vector2D np = cur.pos - c.pointAt(t);
+	// cost is distance to new point * length of line ~= area added/removed from part
+	return np.length() * ac.length();
+}
+/// Remove a point from a bezier curve
+/** See SinglePointRemoveAction for algorithm */
+void remove_point(SymbolPart& part, int i) {
+	ControlPoint& cur  = *part.getPoint(i);
+	ControlPoint& prev = *part.getPoint(i-1);
+	ControlPoint& next = *part.getPoint(i+1);
+	Vector2D before = cur.delta_before;
+	Vector2D after  = cur.delta_after;
+	// Based on SinglePointRemoveAction
+	double bl   = before.length() + 0.00001; // prevent division by 0
+	double al   = after.length() + 0.00001;
+	double totl = bl + al;
+	// set new handle sizes
+	prev.delta_after  *= totl / bl;
+	next.delta_before *= totl / al;
+	// remove
+	part.points.erase(part.points.begin() + i);
+}
+
+
+void simplify_symbol_part(SymbolPart& part) {
+	mark_corners(part);
+	merge_corners(part);
+	for (int i = 0 ; i < 3 ; ++i) {
+		avarage(part);
+	}
+	convert_to_curves(part);
+	remove_points(part);
+	straighten(part);
+	merge_lines(part);
+}
+
+void simplify_symbol(Symbol& symbol) {
+	FOR_EACH(p, symbol.parts) {
+		simplify_symbol_part(*p);
+	}
+}

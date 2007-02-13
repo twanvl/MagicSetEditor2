@@ -13,6 +13,7 @@
 #include <gui/util.hpp>
 #include <data/set.hpp>
 #include <data/field/symbol.hpp>
+#include <data/format/image_to_symbol.hpp>
 #include <data/action/value.hpp>
 #include <util/window_id.hpp>
 #include <util/io/reader.hpp>
@@ -143,16 +144,18 @@ void SymbolWindow::onFileNew(wxCommandEvent& ev) {
 }
 
 void SymbolWindow::onFileOpen(wxCommandEvent& ev) {
-	String name = wxFileSelector(_("Open symbol"),_(""),_(""),_(""),_("Symbol files|*.mse-symbol;*.bmp|MSE2 symbol files (*.mse-symbol)|*.mse-symbol|MSE1 symbol files (*.bmp)|*.bmp"),wxOPEN|wxFILE_MUST_EXIST, this);
+	String name = wxFileSelector(_("Open symbol"),_(""),_(""),_(""),_("Symbol files|*.mse-symbol;*.bmp|MSE2 symbol files (*.mse-symbol)|*.mse-symbol|Images/MSE1 symbol files|*.bmp;*.png;*.jpg;*.gif"),wxOPEN|wxFILE_MUST_EXIST, this);
 	if (!name.empty()) {
 		wxFileName n(name);
 		String ext = n.GetExt();
 		SymbolP symbol;
-		if (ext.Lower() == _("bmp")) {
-//%			symbol = importSymbol(wxImage(name));
-		} else {
+		if (ext.Lower() == _("mse-symbol")) {
 			Reader reader(new_shared1<wxFileInputStream>(name), name);
 			reader.handle_greedy(symbol);
+		} else {
+			Image image(name);
+			if (!image.Ok()) return;
+			symbol = import_symbol(image);
 		}
 		// show...
 		parts->setSymbol(symbol);
