@@ -11,6 +11,7 @@
 #include <gui/util.hpp>
 #include <util/window_id.hpp>
 #include <data/action/symbol.hpp>
+#include <data/settings.hpp>
 #include <gfx/gfx.hpp>
 
 DECLARE_TYPEOF_COLLECTION(SymbolPartP);
@@ -122,7 +123,7 @@ void SymbolSelectEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->DeleteTool(ID_PART_OVERLAP);
 	tb->DeleteTool(ID_PART_BORDER);
 	// HACK: hardcoded size of rest of toolbar
-	tb->DeleteToolByPos(4); // delete separator
+	tb->DeleteToolByPos(7); // delete separator
 }
 
 void SymbolSelectEditor::onUpdateUI(wxUpdateUIEvent& ev) {
@@ -173,6 +174,40 @@ int SymbolSelectEditor::modeToolId() {
 // ----------------------------------------------------------------------------- : Mouse Events
 
 void SymbolSelectEditor::onLeftDown  (const Vector2D& pos, wxMouseEvent& ev) {
+	have_dragged = true;
+	// change selection
+	// Are we on a handle?
+	int dx, dy;
+	if (onAnyHandle(pos, &dx, &dy)) return; // don't change the selection
+	// Select the part under the cursor
+	SymbolPartP part = findPart(pos);
+	if (part) {
+		if (ev.ShiftDown()) {
+			// toggle selection
+			set<SymbolPartP>::iterator it = control.selected_parts.find(part);
+			if (it != control.selected_parts.end()) {
+				control.selected_parts.erase(it);
+			} else {
+				control.selected_parts.insert(part);
+			}
+		} else {
+			if (control.selected_parts.find(part) != control.selected_parts.end()) {
+				// already selected, do nothing
+				have_dragged = false; // we haven't done anything
+			} else {
+				// select the part under the cursor
+				control.selected_parts.clear();
+				control.selected_parts.insert(part);
+			}
+		}
+	} else if (!ev.ShiftDown()) {
+		// select nothing
+		control.selected_parts.clear();
+	}
+	// selection has changed
+	updateBoundingBox();
+	control.signalSelectionChange();
+	control.Refresh(false);
 }
 
 void SymbolSelectEditor::onLeftUp    (const Vector2D& pos, wxMouseEvent& ev) {
@@ -180,39 +215,18 @@ void SymbolSelectEditor::onLeftUp    (const Vector2D& pos, wxMouseEvent& ev) {
 		// stop editing
 		resetActions();
 	} else {
-		// mouse not moved, change selection
-		// Are we on a handle?
-		int dx, dy;
-		if (onAnyHandle(pos, &dx, &dy)) return; // don't change the selection
-		// Select the part under the cursor
-		SymbolPartP part = findPart(pos);
-		if (part) {
-			if (ev.ShiftDown()) {
-				// toggle selection
-				set<SymbolPartP>::iterator it = control.selected_parts.find(part);
-				if (it != control.selected_parts.end()) {
-					control.selected_parts.erase(it);
-				} else {
-					control.selected_parts.insert(part);
-				}
-			} else {
-				if (control.selected_parts.find(part) != control.selected_parts.end()) {
-					// already selected, don't change selection
-					// instead switch between rotate and resize mode
-					rotate = !rotate;
-				} else {
-					// select the part under the cursor
-					control.selected_parts.clear();
-					control.selected_parts.insert(part);
-				}
+		// mouse not moved -> change selection
+		if (!have_dragged && !ev.ShiftDown()) {
+			int dx, dy;
+			if (onAnyHandle(pos, &dx, &dy)) return; // don't change the selection
+			// Find the part under the cursor
+			SymbolPartP part = findPart(pos);
+			if (control.selected_parts.find(part) != control.selected_parts.end()) {
+				// already selected, don't change selection
+				// instead switch between rotate and resize mode
+				rotate = !rotate;
 			}
-		} else if (!ev.ShiftDown()) {
-			// select nothing
-			control.selected_parts.clear();
 		}
-		// selection has changed
-		updateBoundingBox();
-		control.signalSelectionChange();
 	}
 	control.Refresh(false);
 }
@@ -261,7 +275,12 @@ void SymbolSelectEditor::onMouseMove  (const Vector2D& from, const Vector2D& to,
 	control.Refresh(false);
 }
 
+template <typename Event> int snap(Event& ev) {
+	return settings.symbol_grid_snap != ev.ShiftDown() ? settings.symbol_grid_size : 0; // shift toggles snap
+}
+
 void SymbolSelectEditor::onMouseDrag  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev) {
+	have_dragged = true;
 	if (control.selected_parts.empty()) return;
 	if (!isEditing()) {
 		// we don't have an action yet, determine what to do
@@ -294,6 +313,7 @@ void SymbolSelectEditor::onMouseDrag  (const Vector2D& from, const Vector2D& to,
 	if (moveAction) {
 		// move the selected parts
 		moveAction->constrain =	ev.ControlDown();
+		moveAction->snap      = snap(ev);
 		moveAction->move(to - from);
 	} else if (scaleAction) {
 		// scale the selected parts
@@ -303,7 +323,9 @@ void SymbolSelectEditor::onMouseDrag  (const Vector2D& from, const Vector2D& to,
 		if (scaleX ==  1) dMax.x = delta.x;
 		if (scaleY == -1) dMin.y = delta.y;
 		if (scaleY ==  1) dMax.y = delta.y;
-		scaleAction->constrain = ev.ControlDown();
+//		scaleAction->constrain = ev.ControlDown();
+		scaleAction->constrain = true; // always constrain diagonal scaling
+		scaleAction->snap      = snap(ev);
 		scaleAction->move(dMin,	dMax);
 	} else if (rotateAction) {
 		// rotate the selected parts
@@ -315,7 +337,8 @@ void SymbolSelectEditor::onMouseDrag  (const Vector2D& from, const Vector2D& to,
 		Vector2D delta = to-from;
 		delta = delta.mul(Vector2D(scaleY, scaleX));
 		delta = delta.div(maxV - minV);
-		shearAction->constrain = ev.ControlDown();
+//		shearAction->constrain = ev.ControlDown();
+		shearAction->snap      = snap(ev);
 		shearAction->move(delta);
 	}
 	control.Refresh(false);
@@ -324,20 +347,27 @@ void SymbolSelectEditor::onMouseDrag  (const Vector2D& from, const Vector2D& to,
 // ----------------------------------------------------------------------------- : Key Events
 
 void SymbolSelectEditor::onKeyChange (wxKeyEvent& ev) {
-	if (ev.GetKeyCode() == WXK_CONTROL) {
+	if (ev.GetKeyCode() == WXK_CONTROL || ev.GetKeyCode() == WXK_SHIFT) {
 		// changed constrains
 		if (moveAction) {
 			moveAction->constrain = ev.ControlDown();
+			moveAction->snap      = snap(ev);
 			moveAction->move(Vector2D()); // apply constrains
 			control.Refresh(false);
 		} else if (scaleAction) {
 			// only allow constrained scaling in diagonal direction
-			scaleAction->constrain = ev.ControlDown();
+//			scaleAction->constrain = ev.ControlDown();
+			scaleAction->constrain = true; // always constrain diagonal scaling
+			scaleAction->snap      = snap(ev);
 			scaleAction->update(); // apply constrains
 			control.Refresh(false);
 		} else if (rotateAction) {
 			rotateAction->constrain = ev.ControlDown();
 			rotateAction->rotateBy(0); // apply constrains
+			control.Refresh(false);
+		} else if (shearAction) {
+			shearAction->snap      = snap(ev);
+			shearAction->move(Vector2D()); // apply constrains
 			control.Refresh(false);
 		}
 	}
@@ -408,7 +438,7 @@ void SymbolSelectEditor::updateBoundingBox() {
 		minV = piecewise_min(minV, p->min_pos);
 		maxV = piecewise_max(maxV, p->max_pos);
 	}
-	// Find rotation center
+/*	// Find rotation center
 	center = Vector2D(0,0);
 	FOR_EACH(p, control.selected_parts) {
 		Vector2D size = p->max_pos - p->min_pos;
@@ -416,6 +446,8 @@ void SymbolSelectEditor::updateBoundingBox() {
 		center += p->min_pos + size;
 	}
 	center /= control.selected_parts.size();
+*/
+	center = (minV + maxV) / 2;
 }
 
 void SymbolSelectEditor::resetActions() {

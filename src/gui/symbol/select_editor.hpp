@@ -78,6 +78,8 @@ class SymbolSelectEditor : public SymbolEditorBase {
 	double startAngle;
 	// what side are we dragging/rotating on?
 	int scaleX, scaleY;
+	// have we dragged?
+	bool have_dragged;
 	// Do we want to rotate?
 	bool rotate;
 	// Graphics assets

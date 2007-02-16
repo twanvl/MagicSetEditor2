@@ -126,6 +126,8 @@ enum ChildMenuID {
 ,	ID_PART_BORDER			= ID_PART + 5//PART_BORDER
 ,	ID_PART_MAX
 ,	ID_EDIT_DUPLICATE					// duplicating symbol parts
+,	ID_VIEW_GRID
+,	ID_VIEW_GRID_SNAP
 
 	// SymbolPointEditor toolbar/menu
 ,	ID_SEGMENT				= 2101

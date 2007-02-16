@@ -18,8 +18,16 @@ DECLARE_TYPEOF_COLLECTION(ControlPointP);
 
 SymbolPartMoveAction::SymbolPartMoveAction(const set<SymbolPartP>& parts)
 	: parts(parts)
+	, min_pos(Vector2D::infinity()), max_pos(-Vector2D::infinity())
 	, constrain(false)
-{}
+	, snap(0)
+{
+	// Determine min/max_pos
+	FOR_EACH(p,parts) {
+		min_pos = piecewise_min(min_pos, p->min_pos);
+		max_pos = piecewise_max(max_pos, p->max_pos);
+	}
+}
 
 String SymbolPartMoveAction::getName(bool to_undo) const {
 	return parts.size() == 1 ? _("Move shape") : _("Move shapes");
@@ -39,9 +47,10 @@ void SymbolPartMoveAction::perform(bool to_undo) {
 
 void SymbolPartMoveAction::move(const Vector2D& deltaDelta) {
 	delta += deltaDelta;
-	// Move each point by deltaDelta, possibly constrained
-	Vector2D d = constrainVector(delta, constrain);
+	// Determine actual delta, possibly constrained and snapped
+	Vector2D d = constrain_snap_vector_offset(min_pos, max_pos, delta, constrain, snap);
 	Vector2D dd = d - moved;
+	// Move each point by d
 	FOR_EACH(p, parts) {
 		p->min_pos += dd;
 		p->max_pos += dd;
@@ -114,7 +123,8 @@ void SymbolPartRotateAction::rotateBy(double deltaAngle) {
 
 SymbolPartShearAction::SymbolPartShearAction(const set<SymbolPartP>& parts, const Vector2D& center)
 	: SymbolPartMatrixAction(parts, center)
-	, constrain(false)
+//	, constrain(false)
+	, snap(0)
 {}
 
 String SymbolPartShearAction::getName(bool to_undo) const {
@@ -130,12 +140,14 @@ void SymbolPartShearAction::perform(bool to_undo) {
 	//  <1  -x>  /
 	//  <-y  1> / (1 - xy)
 	// we have: xy = 0 => (1 - xy) = 1
-	shearBy(-shear);
+	shearBy(-moved);
 }
 
 void SymbolPartShearAction::move(const Vector2D& deltaShear) {
 	shear += deltaShear;
-	shearBy(deltaShear);
+	Vector2D d = snap_vector(shear - moved, snap);
+	shearBy(d);
+	moved += d;
 }
 
 void SymbolPartShearAction::shearBy(const Vector2D& shear) {
@@ -154,6 +166,7 @@ SymbolPartScaleAction::SymbolPartScaleAction(const set<SymbolPartP>& parts, int 
 	: parts(parts)
 	, scaleX(scaleX), scaleY(scaleY)
 	, constrain(false)
+	, snap(0)
 {
 	// Find min and max coordinates
 	oldMin          =  Vector2D::infinity();
@@ -191,10 +204,19 @@ void SymbolPartScaleAction::update() {
 	// the size after the move
 	newMin = newRealMin; newSize = newRealSize;
 	if (constrain && scaleX != 0 && scaleY != 0) {
+		// TODO : snapping
 		Vector2D scale = newSize.div(tmpSize);
-		scale = constrainVector(scale, true, true);
+		scale = constrain_vector(scale, true, true);
 		newSize = tmpSize.mul(scale);
 		newMin += (newRealSize - newSize).mul(Vector2D(scaleX == -1 ? 1 : 0, scaleY == -1 ? 1 : 0));
+	} else if (snap >= 0) {
+		if (scaleX + scaleY < 0) {
+			newMin = snap_vector(newMin, snap);
+			newSize += newRealMin - newMin;
+		} else {
+			Vector2D newMax = snap_vector(newMin + newSize, snap);
+			newSize = newMax - newMin;
+		}
 	}
 	// now move all points
 	transformAll();

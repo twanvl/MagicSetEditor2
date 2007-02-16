@@ -120,8 +120,8 @@ void GalleryList::onChar(wxKeyEvent& ev) {
 
 wxSize GalleryList::DoGetBestSize() const {
 	wxSize ws = GetSize(), cs = GetClientSize();
-	const int w = item_size.x + SPACING;
-	const int h = item_size.y + SPACING;
+	const int w = item_size.x + 2*MARGIN + 2*BORDER;
+	const int h = item_size.y + 2*MARGIN + 2*BORDER;
 	return wxSize(w, h) + ws - cs;
 }
 

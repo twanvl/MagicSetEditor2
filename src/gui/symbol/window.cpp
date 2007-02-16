@@ -96,6 +96,9 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
 	tb->AddSeparator();
 	tb->AddTool(ID_EDIT_UNDO,	_("Undo"),			load_resource_tool_image(_("undo")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("undo",wxEmptyString));
 	tb->AddTool(ID_EDIT_REDO,	_("Redo"),			load_resource_tool_image(_("redo")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("redo",wxEmptyString));
+	tb->AddSeparator();
+	tb->AddTool(ID_VIEW_GRID,	_("Grid"),			load_resource_tool_image(_("grid")),		wxNullBitmap, wxITEM_CHECK,  _TOOL_("grid"));
+	tb->AddTool(ID_VIEW_GRID_SNAP,_("Snap"),		load_resource_tool_image(_("grid_snap")),	wxNullBitmap, wxITEM_CHECK,  _TOOL_("snap"));
 	tb->Realize();
 	
 	// Edit mode toolbar

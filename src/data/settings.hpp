@@ -100,6 +100,11 @@ class Settings {
 	UInt set_window_height;
 	UInt card_notes_height;
 	
+	// --------------------------------------------------- : Symbol editor
+	UInt symbol_grid_size;
+	bool symbol_grid;
+	bool symbol_grid_snap;
+	
 	// --------------------------------------------------- : Default pacakge selections
 	String default_game;
 	

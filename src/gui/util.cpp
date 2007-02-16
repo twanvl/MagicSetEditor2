@@ -122,7 +122,7 @@ wxIcon load_resource_icon(const String& name) {
 
 wxBitmap load_resource_tool_image(const String& name) {
 	#if defined(__WXMSW__)
-		return wxBitmap(_("tool/") + name);
+		return load_resource_image(_("tool/") + name);
 	#else
 		return load_resource_image(_("tool/") + name);
 	#endif

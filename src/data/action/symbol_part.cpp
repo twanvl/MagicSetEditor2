@@ -16,12 +16,12 @@ DECLARE_TYPEOF_COLLECTION(ControlPointP);
 
 inline double sgn(double v) { return  v > 0 ? 1 : -1; }
 
-Vector2D constrainVector(const Vector2D& v, bool constrain, bool onlyDiagonal) {
+Vector2D constrain_vector(const Vector2D& v, bool constrain, bool only_diagonal) {
 	if (!constrain) return v;
 	double ax = fabs(v.x), ay = fabs(v.y);
-	if (ax * 2 < ay && !onlyDiagonal) {
+	if (ax * 2 < ay && !only_diagonal) {
 		return Vector2D(0, v.y); // vertical
-	} else if(ay * 2 < ax && !onlyDiagonal) {
+	} else if(ay * 2 < ax && !only_diagonal) {
 		return Vector2D(v.x, 0); // horizontal
 	} else {
 		return Vector2D(         // diagonal
@@ -31,11 +31,62 @@ Vector2D constrainVector(const Vector2D& v, bool constrain, bool onlyDiagonal) {
 	}
 }
 
+inline double snap(double x, int steps) {
+	return steps <= 0 ? x : floor(x * steps + 0.5) / steps;
+}
+
+Vector2D snap_vector(const Vector2D& v, int steps) {
+	return Vector2D(snap(v.x, steps), snap(v.y, steps));
+}
+
+Vector2D constrain_snap_vector(const Vector2D& v, const Vector2D& d, bool constrain, int steps) {
+	if (!constrain) return snap_vector(v+d, steps);
+	double ax = fabs(d.x), ay = fabs(d.y);
+	if (ax * 2 < ay) {
+		return Vector2D(v.x, snap(d.y + v.y, steps)); // vertical
+	} else if(ay * 2 < ax) {
+		return Vector2D(snap(d.x + v.x, steps), v.y); // horizontal
+	} else {	
+		double dc = (ax + ay) / 2; // delta in both directions
+		double dxs = snap(v.x + dc, steps) - v.x; // snapped to x
+		double dys = snap(v.y + dc, steps) - v.y; // snapped to y
+		if (fabs(dxs-dc) < fabs(dys-dc)) {
+			// take the one that is closest to the unsnaped delta
+			return Vector2D(v.x + sgn(d.x) * dxs, v.y + sgn(d.y) * dxs);
+		} else {
+			return Vector2D(v.x + sgn(d.x) * dys, v.y + sgn(d.y) * dys);
+		}
+	}
+}
+
+Vector2D constrain_snap_vector_offset(const Vector2D& off1, const Vector2D& d, bool constrain, int steps) {
+	return constrain_snap_vector(off1, d, constrain, steps) - off1;
+}
+// calculate constrained delta for the given offset, store in output if it is better
+void constrain_snap_vector_offset_(const Vector2D& off, const Vector2D& d, bool constrain, int steps, Vector2D& best, double& best_length) {
+	Vector2D d2 = constrain_snap_vector_offset(off, d, constrain, steps);
+	double l2 = d2.lengthSqr();
+	if (l2 < best_length) {
+		best_length = l2;
+		best        = d2;
+	}
+}
+Vector2D constrain_snap_vector_offset(const Vector2D& off1, const Vector2D& off2, const Vector2D& d, bool constrain, int steps) {
+	Vector2D dd; double l = numeric_limits<double>::infinity();
+	constrain_snap_vector_offset_(off1,                    d, constrain, steps, dd, l);
+	constrain_snap_vector_offset_(off2,                    d, constrain, steps, dd, l);
+	constrain_snap_vector_offset_(Vector2D(off1.x,off2.y), d, constrain, steps, dd, l);
+	constrain_snap_vector_offset_(Vector2D(off2.x,off1.y), d, constrain, steps, dd, l);
+	return dd;
+}
+
+
 // ----------------------------------------------------------------------------- : Move control point
 
 ControlPointMoveAction::ControlPointMoveAction(const set<ControlPointP>& points)
 	: points(points)
 	, constrain(false)
+	, snap(0)
 {
 	oldValues.reserve(points.size());
 	FOR_EACH(p, points) {
@@ -48,13 +99,6 @@ String ControlPointMoveAction::getName(bool to_undo) const {
 }
 
 void ControlPointMoveAction::perform(bool to_undo) {
-	/*
-	set<ControlPointP>::const_iterator it  = points.begin();
-	vector<Vector2D>  ::iterator       it2 = oldValues.begin();
-	for( ; it != points.end() && it2 != oldValues.end() ; ++it, ++it2) {
-		swap<Vector2D>((*it)->pos, *it2);
-	}
-	*/
 	FOR_EACH_2(p,points,  op,oldValues) {
 		swap(p->pos, op);
 	}
@@ -63,11 +107,10 @@ void ControlPointMoveAction::perform(bool to_undo) {
 void ControlPointMoveAction::move (const Vector2D& deltaDelta) {
 	delta += deltaDelta;
 	// Move each point by delta, possibly constrained
-	Vector2D d = constrainVector(delta, constrain);
 	set<ControlPointP>::const_iterator it  = points.begin();
 	vector<Vector2D>  ::iterator       it2 = oldValues.begin();
 	for( ; it != points.end() && it2 != oldValues.end() ; ++it, ++it2) {
-		(*it)->pos = (*it2) + d;
+		(*it)->pos = constrain_snap_vector(*it2, delta, constrain, snap);
 	}
 }
 
@@ -79,6 +122,7 @@ HandleMoveAction::HandleMoveAction(const SelectedHandle& handle)
 	, old_handle(handle.getHandle())
 	, old_other (handle.getOther())
 	, constrain(false)
+	, snap(0)
 {}
 
 String HandleMoveAction::getName(bool to_undo) const {
@@ -92,7 +136,7 @@ void HandleMoveAction::perform(bool to_undo) {
 
 void HandleMoveAction::move(const Vector2D& deltaDelta) {
 	delta += deltaDelta;
-	handle.getHandle() = constrainVector(old_handle + delta, constrain);
+	handle.getHandle() = constrain_snap_vector_offset(handle.point->pos, old_handle + delta, constrain, snap);
 	handle.getOther()  = old_other;
 	handle.onUpdateHandle();
 }

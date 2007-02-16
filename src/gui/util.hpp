@@ -46,8 +46,6 @@ wxCursor load_resource_cursor(const String& name);
 wxIcon load_resource_icon(const String& name);
 
 /// Load an image for use in a toolbar (filename: tool/...) from a resource
-/** Note: should ONLY be used for ".bmp" images for now
- */
 wxBitmap load_resource_tool_image(const String& name);
 
 // ----------------------------------------------------------------------------- : Platform look

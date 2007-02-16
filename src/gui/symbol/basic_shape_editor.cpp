@@ -56,9 +56,9 @@ void SymbolBasicShapeEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->RemoveChild(sidesL);
 	tb->RemoveChild(sides);
 	// HACK: hardcoded size of rest of toolbar
-	tb->DeleteToolByPos(4); // delete separator
-	tb->DeleteToolByPos(4); // delete sidesL
-	tb->DeleteToolByPos(4); // delete sides
+	tb->DeleteToolByPos(7); // delete separator
+	tb->DeleteToolByPos(7); // delete sidesL
+	tb->DeleteToolByPos(7); // delete sides
 	#if wxVERSION_NUMBER < 2600
 		delete sides;
 		delete sidesL;

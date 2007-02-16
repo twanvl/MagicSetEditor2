@@ -220,6 +220,10 @@ SymbolP import_symbol(Image& img) {
 	if (is_mse1_symbol(img)) {
 		Image img2 = img.GetSubImage(wxRect(20,0,40,40));
 		symbol = image_to_symbol(img2);
+	} else if (img.GetWidth() > 100 || img.GetHeight() > 100) {
+		// 100x100 ought to be enough, we trow out most afterwards data anyway
+		Image resampled = img.Rescale(100,100);
+		symbol = image_to_symbol(resampled);
 	} else {
 		symbol = image_to_symbol(img);
 	}
@@ -387,7 +391,7 @@ void remove_point(SymbolPart& part, int i);
  *  stop when the cost becomes too high
  */
 void remove_points(SymbolPart& part) {
-	const double treshold = 0.002; // maximum cost
+	const double treshold = 0.0002; // maximum cost
 	while (true) {
 		// Find the point with the lowest cost of removal
 		int best = -1;

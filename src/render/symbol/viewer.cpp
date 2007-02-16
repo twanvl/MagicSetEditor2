@@ -127,7 +127,7 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolPart& part, HighlightStyle 
 		dc.DrawPolygon((int)points.size(), &points[0]);
 		if (part.combine == PART_SUBTRACT || part.combine == PART_BORDER) {
 			dc.SetLogicalFunction(wxAND);
-			dc.SetBrush(Color(192,192,255));
+			dc.SetBrush(Color(191,191,255));
 			dc.DrawPolygon((int)points.size(), &points[0]);
 		}
 		dc.SetLogicalFunction(wxCOPY);

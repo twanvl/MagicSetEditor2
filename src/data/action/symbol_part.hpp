@@ -20,9 +20,25 @@
 
 // ----------------------------------------------------------------------------- : Utility
 
-/// Constrain a vector to be horizontal, vertical or diagonal
-/// If constraint==false does nothing
-Vector2D constrainVector(const Vector2D& v, bool constrain = true, bool onlyDiagonal = false);
+/// Constrain a vector to be horizontal, vertical or diagonal.
+/** If constraint==false does nothing
+ */
+Vector2D constrain_vector(const Vector2D& v, bool constrain = true, bool only_diagonal = false);
+
+/// Snap a vector to the grid with the given number of steps per unit interval.
+/** If spacing==0 does not snap. */
+Vector2D snap_vector(const Vector2D& v, int steps);
+
+/// Add a delta to a vector
+/** Possibly constrain the delta, and snap to result to grid
+ */
+Vector2D constrain_snap_vector(const Vector2D& v, const Vector2D& d, bool constrain, int steps);
+
+/// Constrain a vector a vector, and snap to an offset grid
+Vector2D constrain_snap_vector_offset(const Vector2D& off1, const Vector2D& d, bool constrain, int steps);
+/// Constrain a vector a vector, and snap to two possible offset grids
+/** Takes the closest snap */
+Vector2D constrain_snap_vector_offset(const Vector2D& off1, const Vector2D& off2, const Vector2D& d, bool constrain, int steps);
 
 // ----------------------------------------------------------------------------- : Move control point
 
@@ -43,6 +59,7 @@ class ControlPointMoveAction : public Action {
 	Vector2D delta;				///< Amount we moved
   public:
 	bool constrain;				///< Constrain movement?
+	int snap;					///< Snap to grid?
 };
 
 // ----------------------------------------------------------------------------- : Move handle
@@ -65,6 +82,7 @@ class HandleMoveAction : public Action {
 	Vector2D delta;				///< Amount we moved
   public:
 	bool constrain;				///< Constrain movement?
+	int snap;					///< Snap to grid?
 };
 
 // ----------------------------------------------------------------------------- : Segment mode

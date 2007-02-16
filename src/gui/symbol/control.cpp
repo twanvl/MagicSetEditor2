@@ -14,6 +14,7 @@
 #include <gui/symbol/basic_shape_editor.hpp>
 #include <gui/util.hpp>
 #include <data/action/symbol.hpp>
+#include <data/settings.hpp>
 #include <util/window_id.hpp>
 #include <wx/dcbuffer.h>
 
@@ -65,7 +66,18 @@ void SymbolControl::onModeChange(wxCommandEvent& ev) {
 }
 
 void SymbolControl::onExtraTool(wxCommandEvent& ev) {
-	if (editor) editor->onCommand(ev.GetId());
+	switch (ev.GetId()) {
+		case ID_VIEW_GRID:
+			settings.symbol_grid = !settings.symbol_grid;
+			Refresh(false);
+			break;
+		case ID_VIEW_GRID_SNAP:
+			settings.symbol_grid_snap = !settings.symbol_grid_snap;
+			Refresh(false);
+			break;
+		default:
+			if (editor) editor->onCommand(ev.GetId());
+	}
 }
 
 void SymbolControl::onAction(const Action& action, bool undone) {
@@ -135,6 +147,25 @@ void SymbolControl::draw(DC& dc) {
 	clearDC(dc, Color(0, 128, 0));
 	// draw symbol iself
 	SymbolViewer::draw(dc);
+	// draw grid
+	if (settings.symbol_grid) {
+		wxSize s = dc.GetSize();
+		int lines = settings.symbol_grid_size;
+		for (int i = 0 ; i <= lines ; ++i) {
+			int x = rotation.trS((double)i/lines-0.0001);
+			//dc.SetPen(Color(0, i%5 == 0 ? 64 : 31, 0));
+			//dc.SetPen(Color(i%5 == 0 ? 64 : 31, 0, 0));
+			dc.SetLogicalFunction(wxAND);
+			dc.SetPen(i%5 == 0 ? Color(191,255,191) : Color(191, 255, 191));
+			dc.DrawLine(x, 0, x, s.y);
+			dc.DrawLine(0, x, s.x, x);
+			dc.SetLogicalFunction(wxOR);
+			dc.SetPen(i%5 == 0 ? Color(0,63,0) : Color(0, 31, 0));
+			dc.DrawLine(x, 0, x, s.y);
+			dc.DrawLine(0, x, s.x, x);
+		}
+		dc.SetLogicalFunction(wxCOPY);
+	}
 	// draw editing overlay
 	if (editor) {
 		editor->draw(dc);
@@ -196,7 +227,7 @@ void SymbolControl::onChar(wxKeyEvent& ev) {
 }
 
 void SymbolControl::onSize(wxSizeEvent& ev) {
-	wxSize s = ev.GetSize();
+	wxSize s = GetClientSize();
 	rotation.setZoom(min(s.GetWidth(), s.GetHeight()));
 	Refresh(false);
 }
@@ -212,6 +243,12 @@ void SymbolControl::onUpdateUI(wxUpdateUIEvent& ev) {
 			break;
 		case ID_MODE_PAINT:
 			ev.Enable(false); // TODO
+			break;
+		case ID_VIEW_GRID:
+			ev.Check(settings.symbol_grid);
+			break;
+		case ID_VIEW_GRID_SNAP:
+			ev.Check(settings.symbol_grid_snap);
 			break;
 		default:
 			if (ev.GetId() >= ID_CHILD_MIN && ev.GetId() < ID_CHILD_MAX) {

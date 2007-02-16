@@ -43,8 +43,10 @@ class SymbolPartMoveAction : public SymbolPartAction {
 	set<SymbolPartP> parts;		///< Parts to move
 	Vector2D delta;				///< How much to move
 	Vector2D moved;				///< How much has been moved
+	Vector2D min_pos, max_pos;	///< Bounding box of the thing we are moving
   public:
 	bool constrain;				///< Constrain movement?
+	int snap;					///< Snap to grid?
 };
 
 // ----------------------------------------------------------------------------- : Rotating symbol parts
@@ -101,9 +103,11 @@ class SymbolPartShearAction : public SymbolPartMatrixAction {
 	
   private:
 	Vector2D shear;				///< Shearing, shear.x == 0 || shear.y == 0
+	Vector2D moved;
 	void shearBy(const Vector2D& shear);
   public:
-	bool constrain;				///< Constrain movement?
+//	bool constrain;				///< Constrain movement?
+	int snap;					///< Snap to grid?
 };
 
 
@@ -135,7 +139,8 @@ class SymbolPartScaleAction : public SymbolPartAction {
 		return (v - oldMin).div(oldSize).mul(newSize) + newMin;
 	}
   public:
-	bool constrain;						///< Constrain movement?
+	bool constrain;				///< Constrain movement?
+	int snap;					///< Snap to grid?
 };
 
 // ----------------------------------------------------------------------------- : Change combine mode

@@ -88,6 +88,9 @@ Settings::Settings()
 	, set_window_width     (790)
 	, set_window_height    (300)
 	, card_notes_height    (40)
+	, symbol_grid_size     (30)
+	, symbol_grid          (true)
+	, symbol_grid_snap     (false)
 	, updates_url          (_("http://magicseteditor.sourceforge.net/updates"))
 	, check_updates        (CHECK_IF_CONNECTED)
 	, website_url          (_("http://magicseteditor.sourceforge.net/"))
@@ -155,6 +158,9 @@ IMPLEMENT_REFLECTION(Settings) {
 	REFLECT(set_window_width);
 	REFLECT(set_window_height);
 	REFLECT(card_notes_height);
+	REFLECT(symbol_grid_size);
+	REFLECT(symbol_grid);
+	REFLECT(symbol_grid_snap);
 	REFLECT(default_game);
 	REFLECT(apprentice_location);
 	REFLECT(updates_url);

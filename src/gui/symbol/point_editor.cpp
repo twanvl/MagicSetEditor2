@@ -11,6 +11,7 @@
 #include <gui/util.hpp>
 #include <gfx/bezier.hpp>
 #include <data/action/symbol_part.hpp>
+#include <data/settings.hpp>
 #include <util/window_id.hpp>
 #include <util/error.hpp>
 
@@ -172,8 +173,8 @@ void SymbolPointEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->DeleteTool(ID_LOCK_DIR);
 	tb->DeleteTool(ID_LOCK_SIZE);
 	// HACK: hardcoded size of rest of toolbar
-	tb->DeleteToolByPos(4); // delete separator
-	tb->DeleteToolByPos(4); // delete separator
+	tb->DeleteToolByPos(7); // delete separator
+	tb->DeleteToolByPos(7); // delete separator
 	// TODO : menu bar
 	//mb->Remove(2)
 }
@@ -215,8 +216,10 @@ void SymbolPointEditor::onCommand(int id) {
 	switch (id) {
 		case ID_SEGMENT_LINE: case ID_SEGMENT_CURVE:
 			onChangeSegment( static_cast<SegmentMode>(id - ID_SEGMENT) );
+			break;
 		case ID_LOCK_FREE: case ID_LOCK_DIR: case ID_LOCK_SIZE:
 			onChangeLock( static_cast<LockMode>(id - ID_LOCK) );
+			break;
 	}
 }
 
@@ -273,6 +276,10 @@ void SymbolPointEditor::onMouseMove(const Vector2D& from, const Vector2D& to, wx
 	control.Refresh(false);
 }
 
+template <typename Event> int snap(Event& ev) {
+	return settings.symbol_grid_snap != ev.ShiftDown() ? settings.symbol_grid_size : 0; // shift toggles snap
+}
+
 void SymbolPointEditor::onMouseDrag(const Vector2D& from, const Vector2D& to, wxMouseEvent& ev) {
 	Vector2D delta = to - from;
 	if (selection == SELECTED_LINE && ev.AltDown()) {
@@ -293,6 +300,7 @@ void SymbolPointEditor::onMouseDrag(const Vector2D& from, const Vector2D& to, wx
 			getSymbol()->actions.add(controlPointMoveAction);
 		}
 		controlPointMoveAction->constrain = ev.ControlDown(); // ctrl constrains
+		controlPointMoveAction->snap      = snap(ev);
 		controlPointMoveAction->move(delta);
 		new_point += delta;
 		control.Refresh(false);
@@ -302,7 +310,8 @@ void SymbolPointEditor::onMouseDrag(const Vector2D& from, const Vector2D& to, wx
 			handleMoveAction = new HandleMoveAction(selected_handle);
 			getSymbol()->actions.add(handleMoveAction);
 		}
-		handleMoveAction->constrain = ev.ControlDown(); // ctrl constrains
+		handleMoveAction->constrain  = ev.ControlDown(); // ctrl constrains
+		handleMoveAction->snap = snap(ev);
 		handleMoveAction->move(delta);
 		control.Refresh(false);
 	}
@@ -323,14 +332,16 @@ void SymbolPointEditor::onKeyChange(wxKeyEvent& ev) {
 			SetStatusText(_("Alt + drag to move curve;  double click to add control point on this line"));
 		}
 		control.Refresh(false);
-	} else if (ev.GetKeyCode() == WXK_CONTROL) {
-		// constrain changed
+	} else if (ev.GetKeyCode() == WXK_CONTROL || ev.GetKeyCode() == WXK_SHIFT) {
+		// constrain/snap changed
 		if (controlPointMoveAction) {
 			controlPointMoveAction->constrain = ev.ControlDown();
+			controlPointMoveAction->snap = snap(ev);
 			controlPointMoveAction->move(Vector2D()); //refresh action
 			control.Refresh(false);
 		} else if (handleMoveAction) {
 			handleMoveAction->constrain = ev.ControlDown();
+			handleMoveAction->snap = snap(ev);
 			handleMoveAction->move(Vector2D()); //refresh action
 			control.Refresh(false);
 		}
