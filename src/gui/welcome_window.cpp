@@ -24,7 +24,7 @@
 WelcomeWindow::WelcomeWindow()
 	: Frame(nullptr, wxID_ANY, _TITLE_("magic set editor"), wxDefaultPosition, wxSize(480,340), wxDEFAULT_DIALOG_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN )
 	, logo (load_resource_image(_("about")))
-	, logo2(load_resource_image(_("two")))
+	, logo2(load_resource_image(_("two_beta")))
 {
 	SetIcon(load_resource_icon(_("app")));
 	
@@ -120,7 +120,7 @@ END_EVENT_TABLE  ()
 // ----------------------------------------------------------------------------- : Hover button with label
 
 HoverButtonExt::HoverButtonExt(Window* parent, int id, const wxImage& icon, const String& label, const String& sub_label)
-	: HoverButton(parent, id, _("BTN"))
+	: HoverButton(parent, id, _("btn"))
 	, icon(icon)
 	, label(label), sub_label(sub_label)
 	, font_large(14, wxSWISS, wxNORMAL, wxNORMAL, false, _("Arial"))

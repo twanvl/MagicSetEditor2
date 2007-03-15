@@ -15,7 +15,7 @@ DECLARE_TYPEOF_COLLECTION(GraphAxisP);
 DECLARE_TYPEOF_COLLECTION(GraphElementP);
 DECLARE_TYPEOF_COLLECTION(GraphGroup);
 DECLARE_TYPEOF_COLLECTION(int);
-DECLARE_TYPEOF2(map<String,UInt>);
+DECLARE_TYPEOF((map<String,UInt>));
 
 // ----------------------------------------------------------------------------- : Events
 

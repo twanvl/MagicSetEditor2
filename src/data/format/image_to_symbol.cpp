@@ -99,7 +99,7 @@ bool is_mse1_symbol(const Image& img) {
 			int r = *d++;
 			int g = *d++;
 			int b = *d++;
-			delta += abs(r - b) + abs(r - g) + abs(b - g);
+			delta += fabs(r - b) + fabs(r - g) + fabs(b - g);
 		}
 	}
 	if (delta > 5000) return false; // not black & white enough
@@ -357,7 +357,7 @@ void straighten(SymbolPart& part) {
 		Vector2D bb = next.delta_before.normalized();
 		// if the area beneath the polygon formed by the handles is small
 		// then it is a straight line
-		double cpDot = abs(aa.cross(ab)) + abs(bb.cross(ab));
+		double cpDot = fabs(aa.cross(ab)) + fabs(bb.cross(ab));
 		if (cpDot < treshold) {
 			cur.segment_after = next.segment_before = SEGMENT_LINE;
 			cur.delta_after = next.delta_before = Vector2D();

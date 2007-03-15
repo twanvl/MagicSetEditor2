@@ -12,7 +12,7 @@
 #include <data/stylesheet.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ValueViewerP);
-DECLARE_TYPEOF_NO_REV2(IndexMap<FieldP,StyleP>);
+DECLARE_TYPEOF_NO_REV((IndexMap<FieldP,StyleP>));
 
 // ----------------------------------------------------------------------------- : NativeLookEditor
 

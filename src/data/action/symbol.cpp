@@ -9,8 +9,8 @@
 #include <data/action/symbol.hpp>
 #include <data/action/symbol_part.hpp>
 
-DECLARE_TYPEOF_COLLECTION2(pair<SymbolPartP,SymbolPartCombine>);
-DECLARE_TYPEOF_COLLECTION2(pair<SymbolPartP,size_t           >);
+DECLARE_TYPEOF_COLLECTION((pair<SymbolPartP,SymbolPartCombine>));
+DECLARE_TYPEOF_COLLECTION((pair<SymbolPartP,size_t           >));
 DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 DECLARE_TYPEOF_COLLECTION(ControlPointP);
 

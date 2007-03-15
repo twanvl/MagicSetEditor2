@@ -10,7 +10,7 @@
 #include <util/tagged_string.hpp>
 
 class KeywordTrie;
-DECLARE_TYPEOF2(map<Char, KeywordTrie*>);
+DECLARE_TYPEOF((map<Char, KeywordTrie*>));
 
 // ----------------------------------------------------------------------------- : Reflection
 
