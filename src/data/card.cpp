@@ -13,7 +13,7 @@
 #include <util/reflect.hpp>
 
 DECLARE_TYPEOF_COLLECTION(FieldP);
-DECLARE_TYPEOF_NO_REV((IndexMap<FieldP,ValueP>));
+DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA ValueP>);
 
 // ----------------------------------------------------------------------------- : Card
 

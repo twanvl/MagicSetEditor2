@@ -161,18 +161,22 @@ init script:
 	#		after:  ")",
 	#		fix_english: true
 	#		) +
-		# step 3 : expand shortcut words ~ and CARDNAME
+		expand_keywords_rule(
+			default_expand: { set.automatic_reminder_text == "yes" },
+			combine:        { "{keyword}<atom-reminder><i> ({reminder})</i></atom-reminder>" }
+			) +
+		# step 3a : expand shortcut words ~ and CARDNAME
 		replace_rule(
 			match: "~|~THIS~|CARDNAME",
 			in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
 			replace: "<atom-cardname></atom-cardname>"
 			) +
-		# step 4 : fill in atom fields
+		# step 3b : fill in atom fields
 		tag_contents_rule(
 			tag: "<atom-cardname>",
 			contents: { if card_name=="" then "CARDNAME" else card_name }
 			) +
-		# step 4.5 : explict non mana symbols
+		# step 4 : explict non mana symbols
 		replace_rule(
 			match: "\\][STXYZWUBRG0-9/|]+\\[",
 			replace: {"<nosym>" + mana_filter_t() + "</nosym>"} ) +
@@ -802,7 +806,7 @@ keyword parameter type:
 keyword parameter type:
 	name: cost
 	#insert as: word
-	match: ***:[XYZ0-9WUBRGS/]+|[^(.,\n]|([XYZ0-9WUBRGS/]+,)?[^(.,\n]*
+	match: [XYZ0-9WUBRGS/]+|[^(.,\n]|([XYZ0-9WUBRGS/]+,)?[^(.,\n]*
 keyword parameter type:
 	name: number
 	match: [XYZ0-9]+
@@ -821,11 +825,11 @@ keyword parameter type:
 keyword parameter type:
 	name: action
 	#insert as: word
-	match: ***:[^(.,\n]+
+	match: [^(.,\n]+
 keyword parameter type:
 	name: name
 	#insert as: word
-	match: ***:[^(.,\n]+
+	match: [^(.,\n]+
 
 ############################# All Magic keywords
 # By JrEye and Neko_Asakami
@@ -851,7 +855,7 @@ keyword:
 	keyword: Cycling
 	separator: whitespace [ ]
 	parameter: cost
-	reminder: <param>, Discard this card: Draw a card.
+	reminder: {param1}, Discard this card: Draw a card.
 keyword:
 	keyword: Trample
 	reminder: If this creature would deal enough combat damage to its blockers to destroy them, you may have it deal the rest of its damage to defending player.

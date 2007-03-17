@@ -113,7 +113,8 @@ String capitalize_sentence(const String&);
 String cannocial_name_form(const String&);
 
 /// Returns the singular form of a string
-/** Used for reflection, for example "vector<T> apples" is written with keys "apple"
+/** Used for reflection, for example "vector<T> apples" is written with keys
+ *  singular_form("apples"), which is "apple"
  */
 String singular_form(const String&);
 

@@ -16,6 +16,8 @@
 DECLARE_POINTER_TYPE(KeywordParam);
 DECLARE_POINTER_TYPE(KeywordExpansion);
 DECLARE_POINTER_TYPE(KeywordMode);
+DECLARE_POINTER_TYPE(Keyword);
+class KeywordTrie;
 
 // ----------------------------------------------------------------------------- : Keyword components
 
@@ -24,8 +26,7 @@ class KeywordParam {
   public:
 	String         name;		///< Name of the parameter type
 	String         description;	///< Description of the type
-	String         match;		///< Uncompiled regex
-	wxRegEx        matchRe;		///< Regular expression to match
+	String         match;		///< Regular expression to match
 	OptionalScript script;		///< Transformation of the value for showing in the reminder text 
 	String         example;		///< Example for preview dialog
 	
@@ -49,9 +50,18 @@ class KeywordExpansion {
   public:
 	String                match;		///< String to match, <param> tags are used for parameters
 	vector<KeywordParamP> parameters;	///< The types of parameters
-//	wxRegEx               splitter;		///< Regular expression to split/match the components, automatically generated
+	wxRegEx               matchRe;		///< Regular expression to match and split parameters, automatically generated
 	StringScript          reminder;		///< Reminder text of the keyword
-	String                mode;			///< Mode of use, can be used by scripts (only gives the name). Default is the mode of the Keyword.
+	String                mode;			///< Mode of use, can be used by scripts (only gives the name)
+//	. Default is the mode of the Keyword.
+	String regex;//TODO REMOVE
+	
+	/// Prepare the expansion: (re)generate matchRe and the list of parameters.
+	/** Throws when there is an error in the input
+	 *  @param param_types A list of all parameter types.
+	 *  @param force       Re-prepare even if the regex&parameters are okay
+	 */
+	void prepare(const vector<KeywordParamP>& param_types, bool force = false);
 	
 	DECLARE_REFLECTION();
 };
@@ -64,7 +74,7 @@ class Keyword {
 	String                    keyword;		///< The keyword
 	vector<KeywordExpansionP> expansions;	///< Expansions, i.e. ways to use this keyword
 	String                    rules;		///< Rules/explanation
-	String                    mode;			///< Mode of use, can be used by scripts (only gives the name)
+//	String                    mode;			///< Mode of use, can be used by scripts (only gives the name)
 	
 	DECLARE_REFLECTION();
 };
@@ -72,21 +82,41 @@ class Keyword {
 
 // ----------------------------------------------------------------------------- : Using keywords
 
-/// A class that allows for fast matching of keywords
-class KeywordDatabase;
-DECLARE_POINTER_TYPE(KeywordDatabase);
-
-/// Create a new keyword database
-KeywordDatabaseP new_keyword_database();
-
-/// Add a keyword to a KeywordDatabase
+/// A database of keywords to allow for fast matching
 /** NOTE: keywords may not be altered after they are added to the database,
  *  The database should be rebuild.
  */
-void add_keyword(KeywordDatabase& db, const Keyword& kw);
-
-/// Expand/update all keywords in the given string
-String expand_keywords(const KeywordDatabase& db, const String& text);
+class KeywordDatabase {
+  public:
+	KeywordDatabase();
+	~KeywordDatabase();
+	
+	/// Add a list of keywords to be matched
+	void add(const vector<KeywordP>&);
+	/// Add a keyword to be matched
+	void add(const Keyword&);
+	/// Add an expansion of a keyword to be matched
+	void add(const KeywordExpansion&);
+	
+	/// Prepare the parameters and match regex for a list of keywords
+	static void prepare_parameters(const vector<KeywordParamP>&, const vector<KeywordP>&);
+	static void prepare_parameters(const vector<KeywordParamP>&, const Keyword&);
+	
+	/// Clear the database
+	void clear();
+	/// Is the database empty?
+	inline bool empty() const { return !root; }
+	
+	/// Expand/update all keywords in the given string.
+	/** @param expand_default script function indicating whether reminder text should be shown by default
+	 *  @param combine_script script function to combine keyword and reminder text in some way
+	 *  @param ctx            context for evaluation of scripts
+	 */
+	String expand(const String& text, const ScriptValueP& expand_default, const ScriptValueP& combine_script, Context& ctx) const;
+	
+  private:
+	KeywordTrie* root;	///< Data structure for finding keywords
+};
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

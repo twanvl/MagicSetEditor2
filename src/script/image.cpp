@@ -61,7 +61,7 @@ ScriptImageP to_script_image(const ScriptValueP& value) {
 /// Is the given image up to date?
 bool script_image_up_to_date(const ScriptValueP& value) {
 	if (value->type() == SCRIPT_INT) {
-		return (int)*value; // boolean up-to-dateness from parameter
+		return (bool)*value; // boolean up-to-dateness from parameter
 	} else {
 		return true;
 	}

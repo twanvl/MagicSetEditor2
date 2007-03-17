@@ -12,6 +12,7 @@
 #include <util/tagged_string.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
+#include <data/keyword.hpp>
 #include <data/field/text.hpp>
 #include <wx/regex.h>
 
@@ -265,7 +266,7 @@ String spec_sort(const String& spec, const String& input) {
 	ScriptValueP ScriptRule_##funname::eval(Context& ctx) const
 
 // Utility for defining a script rule with two parameters
-#define SCRIPT_RULE_2(funname, type1, name1, type2, name2)					\
+#define SCRIPT_RULE_2_N(funname, type1, str1, name1, type2, str2, name2)	\
 	class ScriptRule_##funname: public ScriptValue {						\
 	  public:																\
 		inline ScriptRule_##funname(const type1& name1, const type2& name2)	\
@@ -278,16 +279,18 @@ String spec_sort(const String& spec, const String& input) {
 		type2 name2;														\
 	};																		\
 	SCRIPT_FUNCTION(funname##_rule) {										\
-		SCRIPT_PARAM(type1, name1);											\
-		SCRIPT_PARAM(type2, name2);											\
+		SCRIPT_PARAM_N(type1, str1, name1);									\
+		SCRIPT_PARAM_N(type2, str2, name2);									\
 		return new_intrusive2<ScriptRule_##funname>(name1, name2);			\
 	}																		\
 	SCRIPT_FUNCTION(funname) {												\
-		SCRIPT_PARAM(type1, name1);											\
-		SCRIPT_PARAM(type2, name2);											\
+		SCRIPT_PARAM_N(type1, str1, name1);									\
+		SCRIPT_PARAM_N(type2, str2, name2);									\
 		return ScriptRule_##funname(name1, name2).eval(ctx);				\
 	}																		\
 	ScriptValueP ScriptRule_##funname::eval(Context& ctx) const
+#define SCRIPT_RULE_2(funname, type1, name1, type2, name2)					\
+        SCRIPT_RULE_2_N(funname, type1, _(#name1), name1, type2, _(#name2), name2)
 
 
 // Create a rule for spec_sorting strings
@@ -339,10 +342,21 @@ SCRIPT_FUNCTION(contains) {
 	SCRIPT_RETURN(input.find(match) != String::npos);
 }
 
-SCRIPT_FUNCTION(format) {
-	SCRIPT_PARAM(String, format);
-	SCRIPT_PARAM(String, input);
-	SCRIPT_RETURN(format_string(_("%") + replace_all(format, _("%"), _("")), input));
+SCRIPT_RULE_1(format, String, format) {
+	String fmt = _("%") + replace_all(format, _("%"), _(""));
+	// determine type expected by format string
+	if (format.find_first_of(_("DdIiOoXx")) != String.npos) {
+		SCRIPT_PARAM(int, input);
+		SCRIPT_RETURN(String::Format(fmt, input));
+	} else if (format.find_first_of(_("EeFfGg")) != String.npos) {
+		SCRIPT_PARAM(double, input);
+		SCRIPT_RETURN(String::Format(fmt, input));
+	} else if (format.find_first_of(_("Ss")) != String.npos) {
+		SCRIPT_PARAM(String, input);
+		SCRIPT_RETURN(format_string(fmt, input));
+	} else {
+		throw ScriptError(_ERROR_1_("unsupported format", format));
+	}
 }
 
 // ----------------------------------------------------------------------------- : Tagged stuff
@@ -381,7 +395,23 @@ SCRIPT_RULE_1(tag_remove, String, tag) {
 	SCRIPT_RETURN(remove_tag(input, tag));
 }
 
-// ----------------------------------------------------------------------------- : Vector stuff
+// ----------------------------------------------------------------------------- : Keywords
+
+SCRIPT_RULE_2_N(expand_keywords,  ScriptValueP, _("default expand"), default_expand,
+                                  ScriptValueP, _("combine"),        combine) {
+	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM(Set*, set);
+	KeywordDatabase& db = set->keyword_db;
+	if (db.empty()) {
+		db.add(set->game->keywords);
+		db.add(set->keywords);
+		db.prepare_parameters(set->game->keyword_parameter_types, set->game->keywords);
+		db.prepare_parameters(set->game->keyword_parameter_types, set->keywords);
+	}
+	SCRIPT_RETURN(db.expand(input, default_expand, combine, ctx));
+}
+
+// ----------------------------------------------------------------------------- : Collection stuff
 
 /// compare script values for equallity
 bool equal(const ScriptValue& a, const ScriptValue& b) {
@@ -497,7 +527,7 @@ SCRIPT_FUNCTION_DEP(combined_editor) {
 	size_t pos = value.find(_("<sep"));
 	while (pos != String::npos) {
 		value_parts.push_back(value.substr(0, pos));
-		value = value.substr(min(skip_tag(value,match_close_tag(value,pos)), value.size()));
+		value = value.substr(min(match_close_tag_end(value,pos), value.size()));
 		pos = value.find(_("<sep"));
 	}
 	value_parts.push_back(value);
@@ -579,23 +609,25 @@ ScriptValueP ScriptBuildin_combined_editor::dependencies(Context& ctx, const Dep
 // ----------------------------------------------------------------------------- : Initialize functions
 
 void init_script_functions(Context& ctx) {
-	ctx.setVariable(_("replace rule"),      script_replace_rule);
-	ctx.setVariable(_("filter rule"),       script_filter_rule);
-	ctx.setVariable(_("sort"),              script_sort);
-	ctx.setVariable(_("sort rule"),         script_sort_rule);
-	ctx.setVariable(_("to upper"),          script_to_upper);
-	ctx.setVariable(_("to lower"),          script_to_lower);
-	ctx.setVariable(_("to title"),          script_to_title);
-	ctx.setVariable(_("substring"),         script_substring);
-	ctx.setVariable(_("contains"),          script_contains);
-	ctx.setVariable(_("format"),            script_format);
-	ctx.setVariable(_("tag contents"),      script_tag_contents);
-	ctx.setVariable(_("remove tag"),        script_tag_remove);
-	ctx.setVariable(_("tag contents rule"), script_tag_contents_rule);
-	ctx.setVariable(_("tag remove rule"),   script_tag_remove_rule);
-	ctx.setVariable(_("position"),          script_position_of);
-	ctx.setVariable(_("number of items"),   script_number_of_items);
-	ctx.setVariable(_("forward editor"),    script_combined_editor);
-	ctx.setVariable(_("combined editor"),   script_combined_editor);
+	ctx.setVariable(_("replace rule"),         script_replace_rule);
+	ctx.setVariable(_("filter rule"),          script_filter_rule);
+	ctx.setVariable(_("sort"),                 script_sort);
+	ctx.setVariable(_("sort rule"),            script_sort_rule);
+	ctx.setVariable(_("to upper"),             script_to_upper);
+	ctx.setVariable(_("to lower"),             script_to_lower);
+	ctx.setVariable(_("to title"),             script_to_title);
+	ctx.setVariable(_("substring"),            script_substring);
+	ctx.setVariable(_("contains"),             script_contains);
+	ctx.setVariable(_("format"),               script_format);
+	ctx.setVariable(_("tag contents"),         script_tag_contents);
+	ctx.setVariable(_("remove tag"),           script_tag_remove);
+	ctx.setVariable(_("tag contents rule"),    script_tag_contents_rule);
+	ctx.setVariable(_("tag remove rule"),      script_tag_remove_rule);
+	ctx.setVariable(_("expand keywords rule"), script_expand_keywords_rule);
+	ctx.setVariable(_("expand keywords"),      script_expand_keywords);
+	ctx.setVariable(_("position"),             script_position_of);
+	ctx.setVariable(_("number of items"),      script_number_of_items);
+	ctx.setVariable(_("forward editor"),       script_combined_editor);
+	ctx.setVariable(_("combined editor"),      script_combined_editor);
 }
 

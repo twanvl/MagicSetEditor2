@@ -110,7 +110,7 @@ bool_no					IMAGE	"../common/bool_no.png"
 //help_page				BITMAP	"help_page.png"
 
 about					IMAGE	"../common/about.png"
-two_beta						IMAGE	"../common/two_beta.png"
+two_beta				IMAGE	"../common/two_beta.png"
 btn_normal				IMAGE	"../common/btn_normal.png"
 btn_hover				IMAGE	"../common/btn_hover.png"
 btn_focus				IMAGE	"../common/btn_focus.png"
@@ -155,7 +155,7 @@ FILETYPE VFT_APP
       VALUE "License",				"GNU General Public License 2 or later; This is free software, and you are welcome to redistribute it under certain conditions; See the help file for details"
       VALUE "FileDescription",		"Magic Set Editor"
       VALUE "InternalName",			"mse2/8"
-      VALUE "LegalCopyright",		" 2001-2006 Twan van Laarhoven"
+      VALUE "LegalCopyright",		"© 2001-2006 Twan van Laarhoven"
       VALUE "ProductName",			"Magic Set Editor"
     }
   }

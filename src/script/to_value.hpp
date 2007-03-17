@@ -53,13 +53,13 @@ class ScriptCollection : public ScriptValue {
   public:
 	inline ScriptCollection(const Collection* v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
-	virtual String typeName() const { return _("collection"); }
+	virtual String typeName() const { return _TYPE_("collection"); }
 	virtual ScriptValueP getMember(const String& name) const {
 		long index;
 		if (name.ToLong(&index) && index >= 0 && (size_t)index < value->size()) {
 			return toScript(value->at(index));
 		} else {
-			throw ScriptError(_("Collection has no member ") + name);
+			return ScriptValue::getMember(name);
 		}
 	}
 	virtual ScriptValueP makeIterator() const {
@@ -79,7 +79,7 @@ ScriptValueP get_member(const map<String,V>& m, const String& name) {
 	if (it != m.end()) {
 		return toScript(it->second);
 	} else {
-		throw ScriptError(_ERROR_1_("collection has no member", name));
+		throw ScriptError(_ERROR_2_("has no member", _TYPE_("collection"), name));
 	}
 }
 
@@ -89,7 +89,7 @@ ScriptValueP get_member(const IndexMap<K,V>& m, const String& name) {
 	if (it != m.end()) {
 		return toScript(*it);
 	} else {
-		throw ScriptError(_ERROR_1_("collection has no member", name));
+		throw ScriptError(_ERROR_2_("has no member", _TYPE_("collection"), name));
 	}
 }
 
@@ -99,7 +99,7 @@ class ScriptMap : public ScriptValue {
   public:
 	inline ScriptMap(const Collection* v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
-	virtual String typeName() const { return _("collection"); }
+	virtual String typeName() const { return _TYPE_("collection"); }
 	virtual ScriptValueP getMember(const String& name) const {
 		return get_member(*value, name);
 	}
@@ -132,7 +132,7 @@ class ScriptObject : public ScriptValue {
   public:
 	inline ScriptObject(const T& v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_OBJECT; }
-	virtual String typeName() const { return _("object"); }
+	virtual String typeName() const { return _TYPE_("object"); }
 	virtual operator String() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator String(); }
 	virtual operator double() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator double(); }
 	virtual operator int()    const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator int(); }
@@ -147,7 +147,7 @@ class ScriptObject : public ScriptValue {
 			if (d) {
 				return d->getMember(name);
 			} else {
-				throw  ScriptError(_ERROR_1_("object has no member", name));
+				throw  ScriptValue::getMember(name);
 			}
 		}
 	}
@@ -239,7 +239,9 @@ inline ScriptValueP toScript(const Defaultable<T>& v) { return toScript(v()); }
  *  Throws an error if the parameter is not found.
  */
 #define SCRIPT_PARAM(Type, name)								\
-		Type name = getParam<Type>(ctx.getVariable(_(#name)))
+		SCRIPT_PARAM_N(Type, _(#name), name)
+#define SCRIPT_PARAM_N(Type, str, name)							\
+		Type name = getParam<Type>(ctx.getVariable(str))
 
 template <typename T>
             inline T            getParam              (const ScriptValueP& value) {

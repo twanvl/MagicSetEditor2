@@ -14,6 +14,7 @@
 #include <util/action_stack.hpp>
 #include <util/io/package.hpp>
 #include <data/field.hpp> // for Set::value
+#include <data/keyword.hpp>
 #include <boost/scoped_ptr.hpp>
 
 DECLARE_POINTER_TYPE(Card);
@@ -57,6 +58,7 @@ class Set : public Packaged {
 	vector<KeywordP> keywords;	///< Additional keywords used in this set
 	String apprentice_code;		///< Code to use for apprentice (Magic only)
 	ActionStack actions;		///< Actions performed on this set and the cards in it
+	KeywordDatabase keyword_db;	///< Database for matching keywords, must be cleared when keywords change
 	
 	/// A context for performing scripts
 	/** Should only be used from the main thread! */

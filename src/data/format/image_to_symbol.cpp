@@ -9,6 +9,7 @@
 #include <data/format/image_to_symbol.hpp>
 #include <gfx/bezier.hpp>
 #include <util/error.hpp>
+#include <util/platform.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ControlPointP);
 DECLARE_TYPEOF_COLLECTION(SymbolPartP);
@@ -99,7 +100,7 @@ bool is_mse1_symbol(const Image& img) {
 			int r = *d++;
 			int g = *d++;
 			int b = *d++;
-			delta += fabs(r - b) + fabs(r - g) + fabs(b - g);
+			delta += abs(r - b) + abs(r - g) + abs(b - g);
 		}
 	}
 	if (delta > 5000) return false; // not black & white enough
@@ -357,7 +358,7 @@ void straighten(SymbolPart& part) {
 		Vector2D bb = next.delta_before.normalized();
 		// if the area beneath the polygon formed by the handles is small
 		// then it is a straight line
-		double cpDot = fabs(aa.cross(ab)) + fabs(bb.cross(ab));
+		double cpDot = abs(aa.cross(ab)) + abs(bb.cross(ab));
 		if (cpDot < treshold) {
 			cur.segment_after = next.segment_before = SEGMENT_LINE;
 			cur.delta_after = next.delta_before = Vector2D();
@@ -374,7 +375,7 @@ void merge_lines(SymbolPart& part) {
 		Vector2D a = part.getPoint(i-1)->pos, b = cur.pos, c = part.getPoint(i+1)->pos;
 		Vector2D ab = (a-b).normalized();
 		Vector2D bc = (b-c).normalized();
-		double angle_len = fabs(  atan2(ab.x,ab.y) - atan2(bc.x,bc.y))  * (a-c).lengthSqr();
+		double angle_len = abs(  atan2(ab.x,ab.y) - atan2(bc.x,bc.y))  * (a-c).lengthSqr();
 		bool keep = angle_len >= .0001;
 		if (!keep) {
 			part.points.erase(part.points.begin() + i);

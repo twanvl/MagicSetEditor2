@@ -10,7 +10,7 @@
 #include <util/io/package.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
-DECLARE_TYPEOF((map<String,ScriptableImage>));
+DECLARE_TYPEOF(map<String COMMA ScriptableImage>);
 
 // ----------------------------------------------------------------------------- : ChoiceField
 

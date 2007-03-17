@@ -9,7 +9,7 @@
 
 /** @file util/platform.hpp
  *
- *  @brief Platform specific hacks
+ *  @brief Platform and compiler specific hacks.
  */
 
 // ----------------------------------------------------------------------------- : Includes
@@ -23,9 +23,20 @@
 
 #ifdef __linux__
 	
+	/// wxMkDir as documented
 	inline void wxMkDir(const String& dir) {
 		wxMkDir(wxConvLocal.cWX2MB(dir), 0777);
 	}
+	
+#endif
+
+// ----------------------------------------------------------------------------- : GCC
+
+#ifdef __GNUC__
+	
+	/// Absolute value of integers
+	template <typename T>
+	inline T abs(T a) { return a < 0 ? -a : a; }
 	
 #endif
 

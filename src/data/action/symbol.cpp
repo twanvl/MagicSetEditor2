@@ -9,8 +9,8 @@
 #include <data/action/symbol.hpp>
 #include <data/action/symbol_part.hpp>
 
-DECLARE_TYPEOF_COLLECTION((pair<SymbolPartP,SymbolPartCombine>));
-DECLARE_TYPEOF_COLLECTION((pair<SymbolPartP,size_t           >));
+DECLARE_TYPEOF_COLLECTION(pair<SymbolPartP COMMA SymbolPartCombine>);
+DECLARE_TYPEOF_COLLECTION(pair<SymbolPartP COMMA size_t           >);
 DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 DECLARE_TYPEOF_COLLECTION(ControlPointP);
 
@@ -204,11 +204,11 @@ void SymbolPartScaleAction::update() {
 	// the size after the move
 	newMin = newRealMin; newSize = newRealSize;
 	if (constrain && scaleX != 0 && scaleY != 0) {
-		// TODO : snapping
 		Vector2D scale = newSize.div(tmpSize);
 		scale = constrain_vector(scale, true, true);
 		newSize = tmpSize.mul(scale);
 		newMin += (newRealSize - newSize).mul(Vector2D(scaleX == -1 ? 1 : 0, scaleY == -1 ? 1 : 0));
+		// TODO : snapping
 	} else if (snap >= 0) {
 		if (scaleX + scaleY < 0) {
 			newMin = snap_vector(newMin, snap);

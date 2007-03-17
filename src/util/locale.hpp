@@ -97,8 +97,9 @@ String tr(const SymbolFont&, const String& key, const String& def);
 inline String format_string(const String& format, ...) {
 	va_list args;
 	va_start(args, format);
-	return String::Format(format, args);
+	String res = String::Format(format, args);
 	va_end(args);
+	return res;
 }
 inline String format_string(const String& format, const String& a0) {
 	return String::Format(format, a0.c_str());

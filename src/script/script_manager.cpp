@@ -22,8 +22,8 @@ DECLARE_TYPEOF(Contexts);
 DECLARE_TYPEOF_COLLECTION(CardP);
 DECLARE_TYPEOF_COLLECTION(FieldP);
 DECLARE_TYPEOF_COLLECTION(Dependency);
-DECLARE_TYPEOF_NO_REV((IndexMap<FieldP,StyleP>));
-DECLARE_TYPEOF_NO_REV((IndexMap<FieldP,ValueP>));
+DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA StyleP>);
+DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA ValueP>);
 
 // initialize functions, from functions.cpp
 void init_script_functions(Context& ctx);

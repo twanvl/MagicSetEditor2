@@ -570,7 +570,7 @@ void TextValueEditor::fixSelection(IndexType t, Movement dir) {
 	// start and end must be on the same side of separators
 	size_t seppos = val.find(_("<sep"));
 	while (seppos != String::npos) {
-		size_t sepend = skip_tag(val,match_close_tag(val, seppos));
+		size_t sepend = match_close_tag_end(val, seppos);
 		if (selection_start_i <= seppos && selection_end_i > seppos) {
 		    // not on same side, move selection end before sep
 			selection_end   = index_to_cursor(val, seppos, dir);

@@ -48,6 +48,8 @@ class ScriptValue : public IntrusivePtrBase {
 	virtual operator double() const;
 	/// Convert this value to an integer
 	virtual operator int()    const;
+	/// Convert this value to a boolean
+	inline  operator bool()   const { return (int)*this; }
 	/// Convert this value to a color
 	virtual operator Color()  const;
 	

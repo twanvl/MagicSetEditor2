@@ -26,8 +26,8 @@
 DECLARE_TYPEOF_COLLECTION(CardP);
 DECLARE_TYPEOF_COLLECTION(FieldP);
 DECLARE_POINTER_TYPE(ChoiceValue);
-DECLARE_TYPEOF((map<int,FieldP>));
-DECLARE_TYPEOF_NO_REV((IndexMap<FieldP,StyleP>));
+DECLARE_TYPEOF(map<int COMMA FieldP>);
+DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA StyleP>);
 
 // ----------------------------------------------------------------------------- : Events
 

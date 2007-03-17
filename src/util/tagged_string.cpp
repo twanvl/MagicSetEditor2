@@ -121,6 +121,10 @@ size_t match_close_tag(const String& str, size_t start) {
 	return String::npos;
 }
 
+size_t match_close_tag_end(const String& str, size_t start) {
+	return skip_tag(str, match_close_tag(str, start));
+}
+
 size_t last_start_tag_before(const String& str, const String& tag, size_t start) {
 	start = min(str.size(), start);
 	for (size_t pos = start ; pos > 0 ; --pos) {
@@ -178,7 +182,7 @@ size_t index_to_cursor(const String& str, size_t index, Movement dir) {
 			if (is_substr(str, i, _("<atom")) || is_substr(str, i, _("<sep"))) {
 				// skip tag contents, tag counts as a single 'character'
 				size_t before = i;
-				size_t after = skip_tag(str, match_close_tag(str, i));
+				size_t after = match_close_tag_end(str, i);
 				if (index > before && index < after) {
 					// index is inside an atom, determine on which side we want the cursor
 					if (dir == MOVE_RIGHT) {
@@ -215,7 +219,7 @@ void cursor_to_index_range(const String& str, size_t cursor, size_t& start, size
 			// a tag
 			if (is_substr(str, i, _("<atom")) || is_substr(str, i, _("<sep"))) {
 				// skip tag contents, tag counts as a single 'character'
-				i = skip_tag(str, match_close_tag(str, i));
+				i = match_close_tag_end(str, i);
 			} else {
 				i = skip_tag(str, i);
 				has_width = false;
@@ -259,6 +263,24 @@ size_t cursor_to_index(const String& str, size_t cursor, Movement dir) {
 	return dir == MOVE_RIGHT ? end - 1 : start;
 }
 
+// ----------------------------------------------------------------------------- : Untagged position
+
+size_t untagged_to_index(const String& str, size_t pos, bool inside) {
+	size_t i = 0, p = 0;
+	while (i < str.size()) {
+		Char c = str.GetChar(i);
+		if (c == _('<')) {
+			bool is_close = is_substr(str, i, _("</"));
+			if (p == pos && is_close == inside) break;
+			i = skip_tag(str, i);
+		} else {
+			if (p == pos) break;
+			i++;
+			p++;
+		}
+	}
+	return i;
+}
 
 // ----------------------------------------------------------------------------- : Global operations
 

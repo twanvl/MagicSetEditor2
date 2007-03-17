@@ -215,7 +215,7 @@ void instrUnary  (UnaryInstructionType   i, ScriptValueP& a) {
 			a = toScript(-(int)*a);
 			break;
 		case I_NOT:
-			a = toScript(!(int)*a);
+			a = toScript(!(bool)*a);
 			break;
 	}
 }

@@ -85,12 +85,19 @@
 		}
 	
 	/// Declare typeof magic for a specific std::vector type
-	#define DECLARE_TYPEOF_COLLECTION(T)  DECLARE_TYPEOF(vector<T>); \
-// 	                                      DECLARE_TYPEOF_CONST(set<T>)
+	#define DECLARE_TYPEOF_COLLECTION(T)  DECLARE_TYPEOF(vector< T >); \
+ 	                                      DECLARE_TYPEOF_CONST(set< T >)
 	
 #endif
 
-	
+/// Use for template classes
+/** i.e.
+ *    DECLARE_TYPEOF(pair<a COMMA b>);
+ *  instead of
+ *    DECLARE_TYPEOF(pair<a,b>);
+ */
+#define COMMA ,
+
 // ----------------------------------------------------------------------------- : Looping macros with iterators
 
 /// Iterate over a collection, using an iterator it of type Type

@@ -260,8 +260,11 @@ error:
 	unable to store file:		Error while saving, unable to store file
 	
 	# Script stuff
-	collection has no member:	Collection has no member '%s'
-	object has no member:		Object has no member '%s'
+	has no member:				%s has no member '%s'
+	can't convert:				Can't convert from %s to %s
+	has no member value:		String "%s" has no member '%s'
+	can't convert value:		Can't convert "%s" from %s to %s
+	unsupported format:			Invalid string format: '%s'
 	
 	# Image stuff
 	coordinates for blending overlap:					Coordinates for blending overlap
@@ -287,9 +290,15 @@ error:
 
 ############################################################## Types used in scripts
 type:
-	real:			Real number
-	integer:		Integer number
-	string:			String
+	function:		function
+	collection:		collection
+	object:			object
+	real:			real number
+	integer:		integer number
+	string:			string
+	boolean:		boolean
+	color:			color
+	nil:			nothing
 
 ############################################################## Magic
 game:

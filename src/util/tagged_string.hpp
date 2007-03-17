@@ -57,6 +57,12 @@ size_t skip_tag(const String& str, size_t start);
 /** If not found returns String::npos */
 size_t match_close_tag(const String& str, size_t start);
 
+/// Find the position of the closing tag matching the tag at start
+/** Returns the position just after that tag.
+ *    match_close_tag_end(s,i) == skip_tag(s, match_close_tag(s,i) )
+ *  If not found returns String::npos */
+size_t match_close_tag_end(const String& str, size_t start);
+
 /// Find the last start tag before position start
 /** If not found returns String::npos */
 size_t last_start_tag_before(const String& str, const String& tag, size_t start);
@@ -102,6 +108,14 @@ void cursor_to_index_range(const String& str, size_t cursor, size_t& begin, size
 
 /// Find the character index corresponding to the given cursor position
 size_t cursor_to_index(const String& str, size_t cursor, Movement dir = MOVE_MID);
+
+// ----------------------------------------------------------------------------- : Untagged position
+
+/// Find the tagged position corresponding to the given untagged position.
+/** An untagged position in str is a position in untag(str).
+ *  @param inside if inside then it prefers to find positions inside tags (after open tags, before close tags)
+ */
+size_t untagged_to_index(const String& str, size_t pos, bool inside);
 
 // ----------------------------------------------------------------------------- : Global operations
 

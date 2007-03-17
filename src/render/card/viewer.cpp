@@ -18,7 +18,7 @@
 #include <gui/util.hpp> // clearDC
 
 DECLARE_TYPEOF_COLLECTION(ValueViewerP);
-DECLARE_TYPEOF_NO_REV((IndexMap<FieldP,StyleP>));
+DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA StyleP>);
 
 // ----------------------------------------------------------------------------- : DataViewer
 
