@@ -54,7 +54,7 @@ Image render_symbol(const SymbolP& symbol, const SymbolFilter& filter, double bo
 // ----------------------------------------------------------------------------- : SymbolFilter
 
 IMPLEMENT_REFLECTION(SymbolFilter) {
-	if (!tag.reading()) {
+	REFLECT_IF_NOT_READING {
 		String fill_type = fillType();
 		REFLECT(fill_type);
 	}

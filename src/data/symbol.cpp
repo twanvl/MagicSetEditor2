@@ -108,7 +108,7 @@ IMPLEMENT_REFLECTION(SymbolPart) {
 	REFLECT(combine);
 	REFLECT(points);
 	// Fixes after reading
-	if (tag.reading()) {
+	REFLECT_IF_READING {
 		// enforce constraints
 		enforceConstraints();
 		calculateBounds();

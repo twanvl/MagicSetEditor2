@@ -51,14 +51,14 @@ StyleP StyleSheet::styleFor(const FieldP& field) {
 
 IMPLEMENT_REFLECTION(StyleSheet) {
 	// < 0.3.0 didn't use card_ prefix
-	tag.addAlias(300, _("width"),      _("card width"));
-	tag.addAlias(300, _("height"),     _("card height"));
-	tag.addAlias(300, _("dpi"),        _("card dpi"));
-	tag.addAlias(300, _("background"), _("card background"));
-	tag.addAlias(300, _("info style"), _("set info style"));
-	tag.addAlias(300, _("align"),      _("alignment"));
-	tag.addAlias(300, _("extra field"),_("styling field"));
-	tag.addAlias(300, _("extra style"),_("styling style"));
+	REFLECT_ALIAS(300, "width",       "card width");
+	REFLECT_ALIAS(300, "height",      "card height");
+	REFLECT_ALIAS(300, "dpi",         "card dpi");
+	REFLECT_ALIAS(300, "background",  "card background");
+	REFLECT_ALIAS(300, "info style",  "set info style");
+	REFLECT_ALIAS(300, "align",       "alignment");
+	REFLECT_ALIAS(300, "extra field", "styling field");
+	REFLECT_ALIAS(300, "extra style", "styling style");
 	
 	REFLECT(game);
 	REFLECT_BASE(Packaged);
@@ -68,7 +68,7 @@ IMPLEMENT_REFLECTION(StyleSheet) {
 	REFLECT(card_dpi);
 	REFLECT(card_background);
 	if (game) {
-		if (tag.reading()) {
+		REFLECT_IF_READING {
 			card_style    .init(game->card_fields);
 			set_info_style.init(game->set_fields);
 		}
@@ -76,7 +76,7 @@ IMPLEMENT_REFLECTION(StyleSheet) {
 		REFLECT(set_info_style);
 	}
 	REFLECT(styling_fields);
-	if (tag.reading()) styling_style.init(styling_fields);
+	REFLECT_IF_READING styling_style.init(styling_fields);
 	REFLECT(styling_style);
 }
 

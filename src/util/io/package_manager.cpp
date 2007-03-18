@@ -27,7 +27,7 @@ String IncludePackage::typeName() const { return _("include"); }
 
 IMPLEMENT_REFLECTION(IncludePackage) {
 	REFLECT_BASE(Packaged);
-	if (tag.reading()) {
+	REFLECT_IF_READING {
 		// ingore
 		String version;
 		REFLECT(version);

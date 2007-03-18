@@ -36,12 +36,12 @@ Field::Field()
 Field::~Field() {}
 
 IMPLEMENT_REFLECTION(Field) {
-	if (!tag.reading()) {
+	REFLECT_IF_NOT_READING {
 		String type = typeName();
 		REFLECT(type);
 	}
 	REFLECT(name);
-	if (tag.reading()) name = cannocial_name_form(name);
+	REFLECT_IF_READING name = cannocial_name_form(name);
 	REFLECT(description);
 	REFLECT_N("icon", icon_filename);
 	REFLECT(editable);
@@ -53,7 +53,7 @@ IMPLEMENT_REFLECTION(Field) {
 	REFLECT(card_list_visible);
 	REFLECT(card_list_allow);
 	REFLECT(card_list_name);
-	if (tag.reading() && card_list_name.empty()) card_list_name = name;
+	REFLECT_IF_READING if(card_list_name.empty()) card_list_name = name;
 	REFLECT_N("card_list_alignment", card_list_align);
 	REFLECT(tab_index);
 }

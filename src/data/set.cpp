@@ -128,11 +128,11 @@ void Set::validate(Version file_app_version) {
 }
 
 IMPLEMENT_REFLECTION(Set) {
-	tag.addAlias(300, _("style"),          _("stylesheet")); // < 0.3.0 used style instead of stylesheet
-	tag.addAlias(300, _("extra set info"), _("styling"));
+	REFLECT_ALIAS(300, "style",          "stylesheet"); // < 0.3.0 used style instead of stylesheet
+	REFLECT_ALIAS(300, "extra set info", "styling");
 	REFLECT(game);
 	if (game) {
-		if (tag.reading()) {
+		REFLECT_IF_READING {
 			data.init(game->set_fields);
 		}
 		WITH_DYNAMIC_ARG(game_for_reading, game.get());

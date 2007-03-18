@@ -38,7 +38,7 @@ IMPLEMENT_REFLECTION(ChoiceField) {
 	REFLECT_N("default", default_script);
 	REFLECT(initial);
 	REFLECT(default_name);
-	if (tag.reading()) {
+	REFLECT_IF_READING {
 		choices->initIds();
 	}
 }
@@ -220,7 +220,7 @@ IMPLEMENT_REFLECTION_ENUM(ChoiceRenderStyle) {
 }
 
 IMPLEMENT_REFLECTION(ChoiceStyle) {
-	tag.addAlias(300, _("card list colors"), _("colors card list"));
+	REFLECT_ALIAS(300, "card list colors", "colors card list");
 	REFLECT_BASE(Style);
 	REFLECT(popup_style);
 	REFLECT(render_style);
@@ -230,7 +230,6 @@ IMPLEMENT_REFLECTION(ChoiceStyle) {
 	REFLECT(colors_card_list);
 	REFLECT(font);
 	REFLECT(choice_images);
-//	if (tag.reading() && choice_colors.empty())
 	REFLECT(choice_colors);
 }
 

@@ -150,8 +150,8 @@ String Settings::settingsFile() {
 }
 
 IMPLEMENT_REFLECTION(Settings) {
-	tag.addAlias(300,         _("style settings"),         _("stylesheet settings"));
-	tag.addAlias(300, _("default style settings"), _("default stylesheet settings"));
+	REFLECT_ALIAS(300,         "style settings",         "stylesheet settings");
+	REFLECT_ALIAS(300, "default style settings", "default stylesheet settings");
 	REFLECT(locale);
 	REFLECT(recent_sets);
 	REFLECT(set_window_maximized);

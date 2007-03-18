@@ -101,6 +101,34 @@
 /// Declare that the variables of a base class should also be reflected
 #define REFLECT_BASE(Base)    Base::reflect_impl(tag)
 
+/// Reflect a group of declarations only when reading
+/** Usage:
+ *  @code
+ *   REFLECT_IF_READING {
+ *      // only executed by Reader
+ *   }
+ *  @endcode
+ */
+#define REFLECT_IF_READING    if (tag.reading())
+
+/// Reflect a group of declarations only when *not* reading
+/** Usage:
+ *  @code
+ *   REFLECT_IF_NOT_READING {
+ *      // only executed by Writer, GetMember, GetDefaultMember
+ *   }
+ *  @endcode
+ */
+#define REFLECT_IF_NOT_READING  if (!tag.reading())
+
+/// Add an alias for backwards compatability
+/** If a key 'old' is encountered in the input file, it is interpreted as 'new' for versions < version
+ *  Example:
+ *  @code
+ *   REFLECT_ALIAS(300, "style", "stylesheet") // prior to 0.3.0 style was used instead of stylesheet
+ *  @encode
+ */
+#define REFLECT_ALIAS(version, old, new) tag.addAlias(version, _(old), _(new))
 
 // ----------------------------------------------------------------------------- : Reflecting enums
 
