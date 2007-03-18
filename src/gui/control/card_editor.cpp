@@ -35,10 +35,11 @@ ValueViewerP DataEditor::makeViewer(const StyleP& style) {
 // ----------------------------------------------------------------------------- : Utility for ValueViewers
 
 bool DataEditor::drawBorders() const {
-	return !nativeLook() && settings.stylesheetSettingsFor(*set->stylesheetFor(card)).card_borders();
+	return !nativeLook() &&
+	        settings.stylesheetSettingsFor(*set->stylesheetFor(card)).card_borders();
 }
 bool DataEditor::drawEditing() const {
-	return true;
+	return FindFocus() == this;
 }
 
 wxPen DataEditor::borderPen(bool active) const {
@@ -47,7 +48,7 @@ wxPen DataEditor::borderPen(bool active) const {
 }
 
 ValueViewer* DataEditor::focusedViewer() const {
-	return current_viewer;
+	return FindFocus() == this ? current_viewer : nullptr;
 }
 
 // ----------------------------------------------------------------------------- : Selection
@@ -276,7 +277,7 @@ void DataEditor::onContextMenu(wxContextMenuEvent& ev) {
 	if (current_editor) {
 		IconMenu m;
 		m.Append(wxID_CUT,	 _("cut"),		_("Cu&t"),		_("Move the selected text to the clipboard"));
-		m.Append(wxID_COPY,	 _("copy"),	_("&Copy"),		_("Place the selected text on the clipboard"));
+		m.Append(wxID_COPY,	 _("copy"),		_("&Copy"),		_("Place the selected text on the clipboard"));
 		m.Append(wxID_PASTE, _("paste"),	_("&Paste"),	_("Inserts the text from the clipboard"));
 		m.Enable(wxID_CUT,   canCut());
 		m.Enable(wxID_COPY,  canCopy());

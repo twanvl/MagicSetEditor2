@@ -807,6 +807,7 @@ keyword parameter type:
 	name: cost
 	#insert as: word
 	match: [XYZ0-9WUBRGS/]+|[^(.,\n]|([XYZ0-9WUBRGS/]+,)?[^(.,\n]*
+	script: "<sym-auto>{input}</sym-auto>" # TODO : DEBUG
 keyword parameter type:
 	name: number
 	match: [XYZ0-9]+

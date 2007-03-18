@@ -116,7 +116,7 @@ void KeywordExpansion::prepare(const vector<KeywordParamP>& param_types, bool fo
 	if (!force && matchRe.IsValid()) return;
 	parameters.clear();
 	// Prepare regex
-//	String regex;
+	String regex = _("(");
 	vector<KeywordParamP>::const_iterator param = parameters.begin();
 	// Parse the 'match' string
 	for (size_t i = 0 ; i < match.size() ;) {
@@ -126,24 +126,26 @@ void KeywordExpansion::prepare(const vector<KeywordParamP>& param_types, bool fo
 			size_t start = skip_tag(match, i), end = match_close_tag(match, i);
 			String type = match.substr(start, end-start);
 			// find parameter type 'type'
-			KeywordParam* p = nullptr;
+			KeywordParamP p;
 			FOR_EACH_CONST(pt, param_types) {
 				if (pt->name == type) {
-					p = pt.get();
+					p = pt;
 					break;
 				}
 			}
 			if (!p) {
 				throw InternalError(_("Unknown keyword parameter type: ") + type);
 			}
+			parameters.push_back(p);
 			// modify regex
-			regex += _("(") + make_non_capturing(p->match) + _(")");
+			regex += _(")(") + make_non_capturing(p->match) + _(")?(");
 			i = skip_tag(match, end);
 		} else {
 			regex += regex_escape(c);
 			i++;
 		}
 	}
+	regex += _(")");
 	if (!matchRe.Compile(regex, wxRE_ADVANCED)) {
 		throw InternalError(_("Error creating match regex"));
 	}
@@ -275,7 +277,7 @@ void closure(vector<KeywordTrie*>& state) {
 	}
 }
 
-//DEBUG
+#ifdef _DEBUG
 void dump(int i, KeywordTrie* t) {
 	FOR_EACH(c, t->children) {
 		wxLogDebug(String(i,_(' ')) + c.first + _("     ") + String::Format(_("%p"),c.second));
@@ -286,19 +288,18 @@ void dump(int i, KeywordTrie* t) {
 		if (t->on_any_star != t) dump(i+2, t->on_any_star);
 	}
 }
+#endif
 
 String KeywordDatabase::expand(const String& text,
                                const ScriptValueP& expand_default,
                                const ScriptValueP& combine_script,
                                Context& ctx) const {
-	// DEBUG: dump db
-	//dump(0, root);
-	
 	assert(combine_script);
 	
 	// Remove all old reminder texts
 	String s = remove_tag_contents(text, _("<atom-reminder>"));
 	s = remove_tag_contents(s, _("<atom-keyword>")); // OLD, TODO: REMOVEME
+	s = remove_tag_contents(s, _("<atom-kwpph>"));
 	s = remove_tag(s, _("<keyword-param"));
 	String untagged = untag_no_escape(s);
 	
@@ -345,7 +346,6 @@ String KeywordDatabase::expand(const String& text,
 				map<Char,KeywordTrie*>::const_iterator it = kt->children.find(c);
 				if (it != kt->children.end()) {
 					next.push_back(it->second);
-					wxLogDebug(c + String(_(" -> ")) + String::Format(_("%p"), it->second));
 				}
 			}
 			// next becomes current
@@ -369,17 +369,35 @@ String KeywordDatabase::expand(const String& text,
 							       end   = untagged_to_index(s, start_u + len_u, true);
 							result += s.substr(0, start);
 							
-							// Set parameters in context
+							// Split the keyword, set parameters in context
+							String total; // the total keyword
 							size_t match_count = kw->matchRe.GetMatchCount();
+							assert(match_count - 1 == 1 + 2 * kw->parameters.size());
 							for (size_t j = 1 ; j < match_count ; ++j) {
+								// j = odd -> text
+								// j = even -> parameter #(j/2)
 								size_t start_u, len_u;
 								kw->matchRe.GetMatch(&start_u, &len_u, j);
-								String param = untagged.substr(start_u, len_u);
-								if (j-1 < kw->parameters.size() && kw->parameters[j-1]->script) {
-									// apply parameter script
-									param = kw->parameters[j-1]->script.invoke(ctx)->toString();
+								size_t part_end = untagged_to_index(s, start_u + len_u, true);
+								String part = s.substr(start, part_end - start);
+								if ((j % 2) == 0) {
+									// parameter
+									String param = untagged.substr(start_u, len_u); // untagged version
+									if (param.empty()) {
+										// placeholder
+										param = _("<atom-kwpph>") + kw->parameters[j/2-1]->name + _("</atom-kwpph>");
+										part  = part + param; // keep tags
+									} else if (kw->parameters[j/2-1]->script) {
+										// apply parameter script
+										ctx.setVariable(_("input"), toScript(part));
+										part  = kw->parameters[j/2-1]->script.invoke(ctx)->toString();
+										ctx.setVariable(_("input"), toScript(part));
+										param = kw->parameters[j/2-1]->script.invoke(ctx)->toString();
+									}
+									ctx.setVariable(String(_("param")) << (int)(j/2), toScript(param));
 								}
-								ctx.setVariable(String(_("param")) << (int)j, toScript(param));
+								total += part;
+								start = part_end;
 							}
 							ctx.setVariable(_("mode"), toScript(kw->mode));
 							
@@ -394,14 +412,14 @@ String KeywordDatabase::expand(const String& text,
 							// Combine keyword & reminder with result
 							if (expand) {
 								String reminder = kw->reminder.invoke(ctx)->toString();
-								ctx.setVariable(_("keyword"),  toScript(s.substr(start, end - start)));
+								ctx.setVariable(_("keyword"),  toScript(total));
 								ctx.setVariable(_("reminder"), toScript(reminder));
 								result +=  _("<kw-"); result += expand_type; result += _(">");
 								result += combine_script->eval(ctx)->toString();
 								result += _("</kw-"); result += expand_type; result += _(">");
 							} else {
 								result +=  _("<kw-"); result += expand_type; result += _(">");
-								result += s.substr(start, end - start);
+								result += total;
 								result += _("</kw-"); result += expand_type; result += _(">");
 							}
 							

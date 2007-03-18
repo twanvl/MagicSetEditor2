@@ -50,11 +50,15 @@ class KeywordExpansion {
   public:
 	String                match;		///< String to match, <param> tags are used for parameters
 	vector<KeywordParamP> parameters;	///< The types of parameters
-	wxRegEx               matchRe;		///< Regular expression to match and split parameters, automatically generated
 	StringScript          reminder;		///< Reminder text of the keyword
 	String                mode;			///< Mode of use, can be used by scripts (only gives the name)
-//	. Default is the mode of the Keyword.
-	String regex;//TODO REMOVE
+	/// Regular expression to match and split parameters, automatically generated.
+	/** The regex has exactly 2 * parameters.size() + 1 captures (excluding the entire match, caputure 0),
+	 *  captures 1,3,... capture the plain text of the match string
+	 *  captures 2,4,... capture the parameters
+	 */
+	wxRegEx               matchRe;
+//%	. Default is the mode of the Keyword.
 	
 	/// Prepare the expansion: (re)generate matchRe and the list of parameters.
 	/** Throws when there is an error in the input
