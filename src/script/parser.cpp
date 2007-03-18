@@ -419,14 +419,14 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 			long l = 0;
 			//l = lexical_cast<long>(token.value);
 			token.value.ToLong(&l);
-			script.addInstruction(I_PUSH_CONST, toScript(l));
+			script.addInstruction(I_PUSH_CONST, to_script(l));
 		} else if (token == TOK_DOUBLE) {
 			double d = 0;
 			//d = lexical_cast<double>(token.value);
 			token.value.ToDouble(&d);
-			script.addInstruction(I_PUSH_CONST, toScript(d));
+			script.addInstruction(I_PUSH_CONST, to_script(d));
 		} else if (token == TOK_STRING) {
-			script.addInstruction(I_PUSH_CONST, toScript(token.value));
+			script.addInstruction(I_PUSH_CONST, to_script(token.value));
 		} else {
 			throw ScriptParseError(_("Unexpected token '") + token.value + _("'"));
 		}

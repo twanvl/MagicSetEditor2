@@ -212,10 +212,10 @@ void instrUnary  (UnaryInstructionType   i, ScriptValueP& a) {
 			a = a->makeIterator();
 			break;
 		case I_NEGATE:
-			a = toScript(-(int)*a);
+			a = to_script(-(int)*a);
 			break;
 		case I_NOT:
-			a = toScript(!(bool)*a);
+			a = to_script(!(bool)*a);
 			break;
 	}
 }
@@ -224,26 +224,26 @@ void instrUnary  (UnaryInstructionType   i, ScriptValueP& a) {
 
 // operator on ints
 #define OPERATOR_I(OP)											\
-	a = toScript((int)*a  OP  (int)*b);							\
+	a = to_script((int)*a  OP  (int)*b);						\
 	break
 
 // operator on doubles or ints
 #define OPERATOR_DI(OP)											\
 	if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {			\
-		a = toScript((double)*a  OP  (double)*b);				\
+		a = to_script((double)*a  OP  (double)*b);				\
 	} else {													\
-		a = toScript((int)*a     OP  (int)*b);					\
+		a = to_script((int)*a     OP  (int)*b);					\
 	}															\
 	break
 
 // operator on strings or doubles or ints
 #define OPERATOR_SDI(OP)										\
 	if (at == SCRIPT_STRING || bt == SCRIPT_STRING) {			\
-		a = toScript(a->toString()  OP  b->toString());				\
+		a = to_script(a->toString()  OP  b->toString());		\
 	} else if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {	\
-		a = toScript((double)*a     OP  (double)*b);				\
+		a = to_script((double)*a     OP  (double)*b);			\
 	} else {													\
-		a = toScript((int)*a        OP  (int)*b);					\
+		a = to_script((int)*a        OP  (int)*b);				\
 	}															\
 	break
 
@@ -283,13 +283,13 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 			} else if (at == SCRIPT_FUNCTION && bt == SCRIPT_FUNCTION) {
 				a = new_intrusive2<ScriptCompose>(a, b);
 			} else if (at == SCRIPT_STRING || bt == SCRIPT_STRING) {
-				a = toScript(a->toString()  +  b->toString());
+				a = to_script(a->toString()  +  b->toString());
 			} else if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {
-				a = toScript((double)*a     +  (double)*b);
+				a = to_script((double)*a     +  (double)*b);
 			} else if (at == SCRIPT_INT    || bt == SCRIPT_INT) {
-				a = toScript((int)*a        +  (int)*b);
+				a = to_script((int)*a        +  (int)*b);
 			} else {
-				a = toScript(a->toString()  +  b->toString());
+				a = to_script(a->toString()  +  b->toString());
 			}
 			break;
 		case I_SUB:		OPERATOR_DI(-);
@@ -297,9 +297,9 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 		case I_DIV:		OPERATOR_DI(/);
 		case I_MOD:
 			if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {
-				a = toScript(fmod((double)*a, (double)*b));
+				a = to_script(fmod((double)*a, (double)*b));
 			} else {
-				a = toScript((int)*a % (int)*b);
+				a = to_script((int)*a % (int)*b);
 			}
 			break;
 		case I_AND:		OPERATOR_I(&&);
@@ -318,7 +318,7 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 void instrTernary(TernaryInstructionType i, ScriptValueP& a, const ScriptValueP& b, const ScriptValueP& c) {
 	switch (i) {
 		case I_RGB:
-			a = toScript(Color((int)*a, (int)*b, (int)*c));
+			a = to_script(Color((int)*a, (int)*b, (int)*c));
 			break;
 	}
 }

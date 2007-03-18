@@ -37,7 +37,7 @@ class ScriptCollectionIterator : public ScriptIterator {
 	ScriptCollectionIterator(const Collection* col) : pos(0), col(col) {}
 	virtual ScriptValueP next() {
 		if (pos < col->size()) {
-			return toScript(col->at(pos++));
+			return to_script(col->at(pos++));
 		} else {
 			return ScriptValueP();
 		}
@@ -57,7 +57,7 @@ class ScriptCollection : public ScriptValue {
 	virtual ScriptValueP getMember(const String& name) const {
 		long index;
 		if (name.ToLong(&index) && index >= 0 && (size_t)index < value->size()) {
-			return toScript(value->at(index));
+			return to_script(value->at(index));
 		} else {
 			return ScriptValue::getMember(name);
 		}
@@ -66,6 +66,8 @@ class ScriptCollection : public ScriptValue {
 		return new_intrusive1<ScriptCollectionIterator<Collection> >(value);
 	}
 	virtual int itemCount() const { return (int)value->size(); }
+	/// Collections can be compared by comparing pointers
+	virtual const void* comparePointer() const { return value; }
   private:
 	/// Store a pointer to a collection, collections are only ever used for structures owned outside the script
 	const Collection* value;
@@ -77,7 +79,7 @@ template <typename V>
 ScriptValueP get_member(const map<String,V>& m, const String& name) {
 	typename map<String,V>::const_iterator it = m.find(name);
 	if (it != m.end()) {
-		return toScript(it->second);
+		return to_script(it->second);
 	} else {
 		throw ScriptError(_ERROR_2_("has no member", _TYPE_("collection"), name));
 	}
@@ -87,7 +89,7 @@ template <typename K, typename V>
 ScriptValueP get_member(const IndexMap<K,V>& m, const String& name) {
 	typename IndexMap<K,V>::const_iterator it = m.find(name);
 	if (it != m.end()) {
-		return toScript(*it);
+		return to_script(*it);
 	} else {
 		throw ScriptError(_ERROR_2_("has no member", _TYPE_("collection"), name));
 	}
@@ -104,6 +106,8 @@ class ScriptMap : public ScriptValue {
 		return get_member(*value, name);
 	}
 	virtual int itemCount() const { return (int)value->size(); }
+	/// Collections can be compared by comparing pointers
+	virtual const void* comparePointer() const { return value; }
   private:
 	/// Store a pointer to a collection, collections are only ever used for structures owned outside the script
 	const Collection* value;
@@ -163,6 +167,8 @@ class ScriptObject : public ScriptValue {
 		int i = item_count(*value);
 		return i >= 0 ? i : ScriptValue::itemCount();
 	}
+	/// Objects can be compared by comparing pointers
+	virtual const void* comparePointer() const { return &*value; }
 	/// Get access to the value
 	inline T getValue() const { return value; }
   private:
@@ -177,118 +183,38 @@ class ScriptObject : public ScriptValue {
 // ----------------------------------------------------------------------------- : Creating
 
 /// Convert a value to a script value
-       ScriptValueP toScript(int           v);
-inline ScriptValueP toScript(long          v) { return toScript((int) v); }
-       ScriptValueP toScript(double        v);
-       ScriptValueP toScript(const String& v);
-       ScriptValueP toScript(const Color&  v);
-inline ScriptValueP toScript(bool                 v) { return v ? script_true : script_false; }
+       ScriptValueP to_script(int           v);
+inline ScriptValueP to_script(long          v) { return to_script((int) v); }
+       ScriptValueP to_script(double        v);
+       ScriptValueP to_script(const String& v);
+       ScriptValueP to_script(const Color&  v);
+inline ScriptValueP to_script(bool                 v) { return v ? script_true : script_false; }
 template <typename T>
-inline ScriptValueP toScript(const vector<T>*     v) { return new_intrusive1<ScriptCollection<vector<T> > >(v); }
+inline ScriptValueP to_script(const vector<T>*     v) { return new_intrusive1<ScriptCollection<vector<T> > >(v); }
 template <typename K, typename V>
-inline ScriptValueP toScript(const map<K,V>*      v) { return new_intrusive1<ScriptMap<map<K,V> > >(v); }
+inline ScriptValueP to_script(const map<K,V>*      v) { return new_intrusive1<ScriptMap<map<K,V> > >(v); }
 template <typename K, typename V>
-inline ScriptValueP toScript(const IndexMap<K,V>* v) { return new_intrusive1<ScriptMap<IndexMap<K,V> > >(v); }
+inline ScriptValueP to_script(const IndexMap<K,V>* v) { return new_intrusive1<ScriptMap<IndexMap<K,V> > >(v); }
 template <typename T>
-inline ScriptValueP toScript(const shared_ptr<T>& v) { return new_intrusive1<ScriptObject<shared_ptr<T> > >(v); }
+inline ScriptValueP to_script(const shared_ptr<T>& v) { return new_intrusive1<ScriptObject<shared_ptr<T> > >(v); }
 template <typename T>
-inline ScriptValueP toScript(const Defaultable<T>& v) { return toScript(v()); }
+inline ScriptValueP to_script(const Defaultable<T>& v) { return to_script(v()); }
 
-// ----------------------------------------------------------------------------- : Buildin functions
+// ----------------------------------------------------------------------------- : Destructing
 
-/// Macro to declare a new script function
-/** Usage:
- *  @code
- *   SCRIPT_FUNCTION(my_function) {
- *      // function code goes here
- *   }
- *  @endcode
- *  This declares a value 'script_my_function' which can be added as a variable to a context
- *  using:
- *  @code
- *   extern ScriptValueP script_my_function;
- *   context.setVariable("my_function", script_my_function);
- *  @endcode
- */
-#define SCRIPT_FUNCTION(name) SCRIPT_FUNCTION_AUX(name,;)
-
-/// Macro to declare a new script function with custom dependency handling
-#define SCRIPT_FUNCTION_DEP(name) SCRIPT_FUNCTION_AUX(name, virtual ScriptValueP dependencies(Context&, const Dependency&) const;)
-
-// helper for SCRIPT_FUNCTION and SCRIPT_FUNCTION_DEP
-#define SCRIPT_FUNCTION_AUX(name,dep)							\
-		class ScriptBuildin_##name : public ScriptValue {		\
-			dep													\
-			virtual  ScriptType type() const					\
-				{ return SCRIPT_FUNCTION; }						\
-			virtual String typeName() const						\
-				{ return _("build in function '") _(#name) _("'"); }	\
-			virtual ScriptValueP eval(Context&) const;			\
-		};														\
-		ScriptValueP script_##name(new ScriptBuildin_##name);	\
-		ScriptValueP ScriptBuildin_##name::eval(Context& ctx) const
-
-/// Retrieve a parameter to a SCRIPT_FUNCTION with the given name and type
-/** Usage:
- *  @code
- *   SCRIPT_FUNCTION(my_function) {
- *      SCRIPT_PARAM(String, my_string_param);
- *      ... my_string_param ...
- *   }
- *  @endcode
- *  Throws an error if the parameter is not found.
- */
-#define SCRIPT_PARAM(Type, name)								\
-		SCRIPT_PARAM_N(Type, _(#name), name)
-#define SCRIPT_PARAM_N(Type, str, name)							\
-		Type name = getParam<Type>(ctx.getVariable(str))
-
-template <typename T>
-            inline T            getParam              (const ScriptValueP& value) {
-				ScriptObject<T>* o = dynamic_cast<ScriptObject<T>*>(value.get());
-				if (!o) throw ScriptError(_("Can't convert from ")+value->typeName()+_(" to object"));
-				return o->getValue();
-            }
-template <> inline ScriptValueP getParam<ScriptValueP>(const ScriptValueP& value) { return value;  }
-template <> inline String       getParam<String>      (const ScriptValueP& value) { return *value; }
-template <> inline int          getParam<int>         (const ScriptValueP& value) { return *value; }
-template <> inline double       getParam<double>      (const ScriptValueP& value) { return *value; }
-template <> inline bool         getParam<bool>        (const ScriptValueP& value) { return (int)*value; }
-
-/// Retrieve an optional parameter
-/** Usage:
- *  @code
- *   SCRIPT_FUNCTION(my_function) {
- *      SCRIPT_OPTIONAL_PARAM(String, my_string_param) {
- *          ... my_string_param ...
- *      }
- *      ...
- *   }
- *  @endcode
- */
-#define SCRIPT_OPTIONAL_PARAM(Type, name)	SCRIPT_OPTIONAL_PARAM_N(Type, _(#name), name)
-
-#define SCRIPT_OPTIONAL_PARAM_N(Type, str, name)					\
-		ScriptValueP name##_ = ctx.getVariableOpt(str);				\
-		Type name = name##_ ? getParam<Type>(name##_) : Type();		\
-		if (name##_)
-
-/// Retrieve an optional parameter, can't be used as an if statement
-#define SCRIPT_OPTIONAL_PARAM_(Type, name)	SCRIPT_OPTIONAL_PARAM_N_(Type, _(#name), name)
-
-#define SCRIPT_OPTIONAL_PARAM_N_(Type, str, name)					\
-		ScriptValueP name##_ = ctx.getVariableOpt(str);				\
-		Type name = name##_ ? getParam<Type>(name##_) : Type();
-
-/// Retrieve an optional parameter with a default value
-#define SCRIPT_PARAM_DEFAULT(Type, name, def) SCRIPT_PARAM_DEFAULT_N(Type, _(#name), name, def)
-/// Retrieve an optional parameter with a default value
-#define SCRIPT_PARAM_DEFAULT_N(Type, str, name, def)				\
-		ScriptValueP name##_ = ctx.getVariableOpt(str);				\
-		Type name = name##_ ? getParam<Type>(name##_) : def
-
-/// Return a value from a SCRIPT_FUNCTION
-#define SCRIPT_RETURN(value) return toScript(value)
+/// Convert a value from a script value to a normal value
+template <typename T> inline T  from_script              (const ScriptValueP& value) {
+	ScriptObject<T>* o = dynamic_cast<ScriptObject<T>*>(value.get());
+	if (!o) {
+		throw ScriptError(_ERROR_2_("can't convert", value->typeName(), _TYPE_("object" )));
+	}
+	return o->getValue();
+}
+template <> inline ScriptValueP from_script<ScriptValueP>(const ScriptValueP& value) { return value;  }
+template <> inline String       from_script<String>      (const ScriptValueP& value) { return *value; }
+template <> inline int          from_script<int>         (const ScriptValueP& value) { return *value; }
+template <> inline double       from_script<double>      (const ScriptValueP& value) { return *value; }
+template <> inline bool         from_script<bool>        (const ScriptValueP& value) { return *value; }
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

@@ -8,6 +8,7 @@
 
 #include <script/script_manager.hpp>
 #include <script/to_value.hpp>
+#include <script/functions/functions.hpp>
 #include <data/set.hpp>
 #include <data/stylesheet.hpp>
 #include <data/game.hpp>
@@ -24,10 +25,6 @@ DECLARE_TYPEOF_COLLECTION(FieldP);
 DECLARE_TYPEOF_COLLECTION(Dependency);
 DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA StyleP>);
 DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA ValueP>);
-
-// initialize functions, from functions.cpp
-void init_script_functions(Context& ctx);
-void init_script_image_functions(Context& ctx);
 
 //#define LOG_UPDATES
 
@@ -56,12 +53,11 @@ Context& SetScriptContext::getContext(const StyleSheetP& stylesheet) {
 		//  NOTE: do not use a smart pointer for the pointer to the set, because the set owns this
 		//        which would lead to a reference cycle.
 		init_script_functions(*ctx);
-		init_script_image_functions(*ctx);
 		ctx->setVariable(_("set"),        new_intrusive1<ScriptObject<Set*> >(&set));
-		ctx->setVariable(_("game"),       toScript(set.game));
-		ctx->setVariable(_("stylesheet"), toScript(stylesheet));
-		ctx->setVariable(_("card"),       set.cards.empty() ? script_nil : toScript(set.cards.front())); // dummy value
-		ctx->setVariable(_("styling"),    toScript(&set.stylingDataFor(*stylesheet)));
+		ctx->setVariable(_("game"),       to_script(set.game));
+		ctx->setVariable(_("stylesheet"), to_script(stylesheet));
+		ctx->setVariable(_("card"),       set.cards.empty() ? script_nil : to_script(set.cards.front())); // dummy value
+		ctx->setVariable(_("styling"),    to_script(&set.stylingDataFor(*stylesheet)));
 		try {
 			// perform init scripts, don't use a scope, variables stay bound in the context
 			set.game  ->init_script.invoke(*ctx, false);
@@ -76,7 +72,7 @@ Context& SetScriptContext::getContext(const StyleSheetP& stylesheet) {
 Context& SetScriptContext::getContext(const CardP& card) {
 	Context& ctx = getContext(set.stylesheetFor(card));
 	if (card) {
-		ctx.setVariable(_("card"), toScript(card));
+		ctx.setVariable(_("card"), to_script(card));
 	} else {
 		ctx.setVariable(_("card"), script_nil);
 	}

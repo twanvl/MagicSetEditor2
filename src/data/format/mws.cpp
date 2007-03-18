@@ -52,7 +52,7 @@ String card_rarity_code(const String& rarity) {
 
 // ----------------------------------------------------------------------------- : export_mws
 
-void export_mws(const SetP& set) {
+void export_mws(Window* parent, const SetP& set) {
 	if (!set->game->isMagic()) {
 		throw Error(_("Can only export Magic sets to Magic Workstation"));
 	}
@@ -60,7 +60,7 @@ void export_mws(const SetP& set) {
 	// Select filename
 	String name = wxFileSelector(_("Export to file"),_(""),_(""),_(""),
 		                         _("Text files (*.txt)|*.txt|All Files|*.*"),
-		                         wxSAVE | wxOVERWRITE_PROMPT);
+		                         wxSAVE | wxOVERWRITE_PROMPT, parent);
 	if (name.empty()) return;
 	wxBusyCursor busy;
 	// Open file

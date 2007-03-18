@@ -33,7 +33,7 @@ ColumnSettings::ColumnSettings()
 {}
 
 // dummy for ColumnSettings reflection
-ScriptValueP toScript(const ColumnSettings&) { return script_nil; }
+ScriptValueP to_script(const ColumnSettings&) { return script_nil; }
 
 IMPLEMENT_REFLECTION(ColumnSettings) {
 	REFLECT(width);

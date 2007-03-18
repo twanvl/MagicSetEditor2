@@ -41,6 +41,9 @@ class ScriptValue : public IntrusivePtrBase {
 	virtual ScriptType type() const = 0;
 	/// Name of the type of value
 	virtual String typeName() const = 0;
+	/// A pointer that uniquely identifies the value, used for comparing.
+	/** If implementation is not possible, should return nullptr. */
+	virtual const void* comparePointer() const;
 	
 	/// Convert this value to a string
 	virtual operator String() const;

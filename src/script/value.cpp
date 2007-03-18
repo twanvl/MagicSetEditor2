@@ -23,6 +23,7 @@ ScriptValueP ScriptValue::getMember(const String& name) const { throw ScriptErro
 ScriptValueP ScriptValue::next()                              { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
 ScriptValueP ScriptValue::makeIterator()                const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
 int          ScriptValue::itemCount()                   const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
+const void*  ScriptValue::comparePointer()              const { return nullptr; }
 
 ScriptValueP ScriptValue::dependencyMember(const String& name, const Dependency&) const { return dependency_dummy; }
 ScriptValueP ScriptValue::dependencies(Context&,               const Dependency&) const { return dependency_dummy; }
@@ -41,7 +42,7 @@ class ScriptRangeIterator : public ScriptIterator {
 		: pos(start), end(end) {}
 	virtual ScriptValueP next() {
 		if (pos <= end) {
-			return toScript(pos++);
+			return to_script(pos++);
 		} else {
 			return ScriptValueP();
 		}
@@ -84,7 +85,7 @@ class ScriptInt : public ScriptValue {
 	}
 #endif
 
-ScriptValueP toScript(int v) {
+ScriptValueP to_script(int v) {
 #ifdef USE_POOL_ALLOCATOR
 	#ifdef USE_INTRUSIVE_PTR
 		return ScriptValueP(
@@ -138,7 +139,7 @@ class ScriptDouble : public ScriptValue {
 	double value;
 };
 
-ScriptValueP toScript(double v) {
+ScriptValueP to_script(double v) {
 	return new_intrusive1<ScriptDouble>(v);
 }
 
@@ -184,7 +185,7 @@ class ScriptString : public ScriptValue {
 		// get member returns characters
 		long index;
 		if (name.ToLong(&index) && index >= 0 && (size_t)index < value.size()) {
-			return toScript(String(1,value[index]));
+			return to_script(String(1,value[index]));
 		} else {
 			throw ScriptError(_ERROR_2_("has no member value", value, name));
 		}
@@ -193,7 +194,7 @@ class ScriptString : public ScriptValue {
 	String value;
 };
 
-ScriptValueP toScript(const String& v) {
+ScriptValueP to_script(const String& v) {
 	return new_intrusive1<ScriptString>(v);
 }
 
@@ -214,7 +215,7 @@ class ScriptColor : public ScriptValue {
 	Color value;
 };
 
-ScriptValueP toScript(const Color& v) {
+ScriptValueP to_script(const Color& v) {
 	return new_intrusive1<ScriptColor>(v);
 }
 

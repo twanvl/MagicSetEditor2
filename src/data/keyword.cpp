@@ -389,17 +389,17 @@ String KeywordDatabase::expand(const String& text,
 										part  = part + param; // keep tags
 									} else if (kw->parameters[j/2-1]->script) {
 										// apply parameter script
-										ctx.setVariable(_("input"), toScript(part));
+										ctx.setVariable(_("input"), to_script(part));
 										part  = kw->parameters[j/2-1]->script.invoke(ctx)->toString();
-										ctx.setVariable(_("input"), toScript(part));
+										ctx.setVariable(_("input"), to_script(part));
 										param = kw->parameters[j/2-1]->script.invoke(ctx)->toString();
 									}
-									ctx.setVariable(String(_("param")) << (int)(j/2), toScript(param));
+									ctx.setVariable(String(_("param")) << (int)(j/2), to_script(param));
 								}
 								total += part;
 								start = part_end;
 							}
-							ctx.setVariable(_("mode"), toScript(kw->mode));
+							ctx.setVariable(_("mode"), to_script(kw->mode));
 							
 							// Show reminder text?
 							bool expand = expand_type == _('1');
@@ -412,8 +412,8 @@ String KeywordDatabase::expand(const String& text,
 							// Combine keyword & reminder with result
 							if (expand) {
 								String reminder = kw->reminder.invoke(ctx)->toString();
-								ctx.setVariable(_("keyword"),  toScript(total));
-								ctx.setVariable(_("reminder"), toScript(reminder));
+								ctx.setVariable(_("keyword"),  to_script(total));
+								ctx.setVariable(_("reminder"), to_script(reminder));
 								result +=  _("<kw-"); result += expand_type; result += _(">");
 								result += combine_script->eval(ctx)->toString();
 								result += _("</kw-"); result += expand_type; result += _(">");

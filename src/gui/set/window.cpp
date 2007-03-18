@@ -457,7 +457,7 @@ void SetWindow::onFileExportApprentice(wxCommandEvent&) {
 }
 
 void SetWindow::onFileExportMWS(wxCommandEvent&) {
-	export_mws(set);
+	export_mws(this, set);
 }
 
 void SetWindow::onFilePrint(wxCommandEvent&) {

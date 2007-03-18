@@ -79,7 +79,7 @@ void Script::addInstruction(InstructionType t, const ScriptValueP& c) {
 	instructions.push_back(i);
 }
 void Script::addInstruction(InstructionType t, const String& s) {
-	constants.push_back(toScript(s));
+	constants.push_back(to_script(s));
 	Instruction i = {t, {(unsigned int)constants.size() - 1}};
 	instructions.push_back(i);
 }

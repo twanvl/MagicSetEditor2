@@ -13,15 +13,15 @@
 
 // ---------------------------------------------------------------------------- : GetDefaultMember
 
-            void GetDefaultMember::handle(const Char*         v) { value = toScript(v); }
-template <> void GetDefaultMember::handle(const String&       v) { value = toScript(v); }
-template <> void GetDefaultMember::handle(const FileName&     v) { value = toScript(v); }
-template <> void GetDefaultMember::handle(const int&          v) { value = toScript(v); }
-template <> void GetDefaultMember::handle(const unsigned int& v) { value = toScript((int)v); }
-template <> void GetDefaultMember::handle(const double&       v) { value = toScript(v); }
-template <> void GetDefaultMember::handle(const bool&         v) { value = toScript(v); }
-template <> void GetDefaultMember::handle(const Vector2D&     v) { value = toScript(String::Format(_("(%.10lf,%.10lf)"), v.x, v.y)); }
-template <> void GetDefaultMember::handle(const Color&        v) { value = toScript(v); }
+            void GetDefaultMember::handle(const Char*         v) { value = to_script(v); }
+template <> void GetDefaultMember::handle(const String&       v) { value = to_script(v); }
+template <> void GetDefaultMember::handle(const FileName&     v) { value = to_script(v); }
+template <> void GetDefaultMember::handle(const int&          v) { value = to_script(v); }
+template <> void GetDefaultMember::handle(const unsigned int& v) { value = to_script((int)v); }
+template <> void GetDefaultMember::handle(const double&       v) { value = to_script(v); }
+template <> void GetDefaultMember::handle(const bool&         v) { value = to_script(v); }
+template <> void GetDefaultMember::handle(const Vector2D&     v) { value = to_script(String::Format(_("(%.10lf,%.10lf)"), v.x, v.y)); }
+template <> void GetDefaultMember::handle(const Color&        v) { value = to_script(v); }
             void GetDefaultMember::handle(const ScriptValueP& v) { value = v; }
             void GetDefaultMember::handle(const ScriptP&      v) { value = v; }
 

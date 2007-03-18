@@ -92,7 +92,7 @@ void export_image(const SetP& set, const CardP& card, const String& filename);
 Bitmap export_bitmap(const SetP& set, const CardP& card);
 
 /// Export a set to Magic Workstation format
-void export_mws(const SetP& set);
+void export_mws(Window* parent, const SetP& set);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

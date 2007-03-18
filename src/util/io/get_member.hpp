@@ -47,10 +47,10 @@ class GetDefaultMember {
 	/// Handle a Defaultable: investigate children
 	template <typename T>             void handle(const Defaultable<T>&);
 	template <typename T>             void handle(const Scriptable<T>& );
-	template <typename T>             void handle(const vector<T>&     c) { value = toScript(&c); }
-	template <typename K, typename V> void handle(const map<K,V>&      c) { value = toScript(&c); }
-	template <typename K, typename V> void handle(const IndexMap<K,V>& c) { value = toScript(&c); }
-	template <typename T>             void handle(const shared_ptr<T>& p) { value = toScript(p); }
+	template <typename T>             void handle(const vector<T>&     c) { value = to_script(&c); }
+	template <typename K, typename V> void handle(const map<K,V>&      c) { value = to_script(&c); }
+	template <typename K, typename V> void handle(const IndexMap<K,V>& c) { value = to_script(&c); }
+	template <typename T>             void handle(const shared_ptr<T>& p) { value = to_script(p); }
 	void handle(const ScriptValueP&);
 	void handle(const ScriptP&);
   private:

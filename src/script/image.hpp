@@ -85,7 +85,13 @@ class ScriptableImage {
 };
 
 /// Missing for now
-inline ScriptValueP toScript(const ScriptableImage&) { return script_nil; }
+inline ScriptValueP to_script(const ScriptableImage&) { return script_nil; }
+
+/// Convert a script value to an image
+ScriptImageP to_script_image(const ScriptValueP& value);
+
+/// Is the given image up to date?
+bool script_image_up_to_date(const ScriptValueP& value);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif
