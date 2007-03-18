@@ -72,27 +72,39 @@ String tr(LocaleCategory cat, const String& key) {
 
 String tr(const Game& g, const String& key) {
 	if (!the_locale) return key; // no locale loaded (yet)
-	return the_locale->game_translations[g.name()]->tr(key);
+	SubLocaleP loc = the_locale->game_translations[g.name()];
+	if (!loc)        return key; // no information on this game
+	return loc->tr(key);
 }
 String tr(const StyleSheet& s, const String& key) {
 	if (!the_locale) return key; // no locale loaded (yet)
-	return the_locale->stylesheet_translations[s.name()]->tr(key);
+	SubLocaleP loc = the_locale->stylesheet_translations[s.name()];
+	if (!loc)        return key; // no information on this stylesheet
+	return loc->tr(key);
 }
 String tr(const SymbolFont& f, const String& key) {
 	if (!the_locale) return key; // no locale loaded (yet)
-	return the_locale->symbol_font_translations[f.name()]->tr(key);
+	SubLocaleP loc = the_locale->symbol_font_translations[f.name()];
+	if (!loc)        return key; // no information on this symbol font
+	return loc->tr(key);
 }
 
 
 String tr(const Game& g, const String& key, const String& def) {
 	if (!the_locale) return key; // no locale loaded (yet)
-	return the_locale->game_translations[g.name()]->tr(key, def);
+	SubLocaleP loc = the_locale->game_translations[g.name()];
+	if (!loc)        return key; // no information on this game
+	return loc->tr(key, def);
 }
 String tr(const StyleSheet& s, const String& key, const String& def) {
 	if (!the_locale) return key; // no locale loaded (yet)
-	return the_locale->stylesheet_translations[s.name()]->tr(key, def);
+	SubLocaleP loc = the_locale->stylesheet_translations[s.name()];
+	if (!loc)        return key; // no information on this stylesheet
+	return loc->tr(key, def);
 }
 String tr(const SymbolFont& f, const String& key, const String& def) {
 	if (!the_locale) return key; // no locale loaded (yet)
-	return the_locale->symbol_font_translations[f.name()]->tr(key, def);
+	SubLocaleP loc = the_locale->symbol_font_translations[f.name()];
+	if (!loc)        return key; // no information on this symbol font
+	return loc->tr(key, def);
 }
