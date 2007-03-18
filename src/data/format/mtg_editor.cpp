@@ -143,13 +143,13 @@ SetP MtgEditorFileFormat::importSet(const String& filename) {
 			target = &current_card->value<TextValue>(_("power")).value;
 		} else if (line == _("#TOUGHNESS#####")) {										// toughness
 			target = &current_card->value<TextValue>(_("toughness")).value;
-		} else if (line == _("#ILLUSTRATION##") || line == _("#ILLUSTRATION8#")) {	// image
+		} else if (line == _("#ILLUSTRATION##") || line == _("#ILLUSTRATION8#")) {		// image
 			target = 0;
 			line = file.ReadLine();
 			if (!wxFileExists(line)) {
 				// based on card name and date
 				line = filter1(filename) + set_date + _("/") +
-				       filter2(current_card->value<TextValue>(_("name")).value()) + card_date + _(".jpg");
+				       filter2(current_card->value<TextValue>(_("name")).value) + card_date + _(".jpg");
 			}
 			// copy image into set
 			if (wxFileExists(line)) {
@@ -177,16 +177,16 @@ SetP MtgEditorFileFormat::importSet(const String& filename) {
 	
 	// set defaults for artist and copyright to that of the first card
 	if (!set->cards.empty()) {
-		String artist    = set->cards[0]->value<TextValue>(_("illustrator")).value();
-		String copyright = set->cards[0]->value<TextValue>(_("copyright"))  .value();
+		String artist    = set->cards[0]->value<TextValue>(_("illustrator")).value;
+		String copyright = set->cards[0]->value<TextValue>(_("copyright"))  .value;
 		set->value<TextValue>(_("artist"))   .value.assign(artist);
 		set->value<TextValue>(_("copyright")).value.assign(copyright);
 		// which cards have this value?
 		FOR_EACH(card, set->cards) {
 			Defaultable<String>& card_artist    = card->value<TextValue>(_("illustrator")).value;
 			Defaultable<String>& card_copyright = card->value<TextValue>(_("copyright"))  .value;
-			if (card_artist()    == artist)    card_artist.makeDefault();
-			if (card_copyright() == copyright) card_copyright.makeDefault();
+			if (card_artist    == artist)    card_artist.makeDefault();
+			if (card_copyright == copyright) card_copyright.makeDefault();
 		}
 	}
 	
@@ -237,7 +237,7 @@ String MtgEditorFileFormat::filter2(const String& str) {
 
 void MtgEditorFileFormat::untag(const CardP& card, const String& field) {
 	Defaultable<String>& value = card->value<TextValue>(field).value;
-	value.assignDontChangeDefault(untag_no_escape(value()));
+	value.assignDontChangeDefault(untag_no_escape(value));
 }
 
 

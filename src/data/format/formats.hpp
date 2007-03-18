@@ -91,5 +91,8 @@ void export_image(const SetP& set, const CardP& card, const String& filename);
 /// Generate a bitmap image of a card
 Bitmap export_bitmap(const SetP& set, const CardP& card);
 
+/// Export a set to Magic Workstation format
+void export_mws(const SetP& set);
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

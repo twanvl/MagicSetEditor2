@@ -148,6 +148,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	// note: this still sends events for menu and toolbar items!
 	wxUpdateUIEvent::SetMode(wxUPDATE_UI_PROCESS_SPECIFIED);
 	SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
+	tabBar->SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
 	
 	setSet(set);
 	current_panel->Layout();
@@ -456,7 +457,7 @@ void SetWindow::onFileExportApprentice(wxCommandEvent&) {
 }
 
 void SetWindow::onFileExportMWS(wxCommandEvent&) {
-//	exportMWS(set);
+	export_mws(set);
 }
 
 void SetWindow::onFilePrint(wxCommandEvent&) {

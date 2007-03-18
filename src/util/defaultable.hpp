@@ -39,6 +39,7 @@ class Defaultable {
 	}
 	
 	/// Get access to the value
+	inline operator const T& () const { return value; }
 	inline const T& operator () () const { return value; }
 	/// Get access to the value, for changing it
 	inline       T& mutate      ()       {

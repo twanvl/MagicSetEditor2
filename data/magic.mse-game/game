@@ -803,6 +803,8 @@ statistics category:
 
 ############################# Keyword rules
 
+has keywords: true
+
 keyword parameter type:
 	name: no parameter
 keyword parameter type:
