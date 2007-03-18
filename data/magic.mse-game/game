@@ -228,6 +228,9 @@ init script:
 ############################################################## Set fields
 
 set field:
+	type: info
+	name: Set Information
+set field:
 	type: text
 	name: title
 set field:
@@ -244,6 +247,9 @@ set field:
 	type: symbol
 	name: symbol
 	description: The symbol for this set, double click to edit
+set field:
+	type: info
+	name: Defaults and Automation
 set field:
 	type: color
 	name: border color

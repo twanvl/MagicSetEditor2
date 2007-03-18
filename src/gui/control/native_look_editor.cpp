@@ -30,18 +30,21 @@ void NativeLookEditor::draw(DC& dc) {
 }
 void NativeLookEditor::drawViewer(RotatedDC& dc, ValueViewer& v) {
 	if (!shouldDraw(v)) return;
-	// draw background
-	Style& s = *v.getStyle();
-	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-	dc.DrawRectangle(s.getRect().grow(1));
-	// draw label
-	dc.SetFont(*wxNORMAL_FONT);
-	// TODO : tr using stylesheet or using game?
-	dc.DrawText(tr(*set->game, s.fieldP->name, capitalize_sentence(s.fieldP->name)),
-	            RealPoint(margin_left, s.top + 1));
-	// draw 3D border
-	draw_control_border(this, dc.getDC(), RealRect(s.left - 1, s.top - 1, s.width + 2, s.height + 2));
+	ValueEditor* e = v.getEditor();
+	if (!e || e->drawLabel()) {
+		// draw background
+		Style& s = *v.getStyle();
+		dc.SetPen(*wxTRANSPARENT_PEN);
+		dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+		dc.DrawRectangle(s.getRect().grow(1));
+		// draw label
+		dc.SetFont(*wxNORMAL_FONT);
+		// TODO : tr using stylesheet or using game?
+		dc.DrawText(tr(*set->game, s.fieldP->name, capitalize_sentence(s.fieldP->name)),
+					RealPoint(margin_left, s.top + 1));
+		// draw 3D border
+		draw_control_border(this, dc.getDC(), RealRect(s.left - 1, s.top - 1, s.width + 2, s.height + 2));
+	}
 	// draw viewer
 	v.draw(dc);
 }
@@ -55,11 +58,15 @@ void NativeLookEditor::resizeViewers() {
 	// Set editor sizes
 	FOR_EACH(v, viewers) {
 		StyleP s = v->getStyle();
-		s->left = margin + label_width;
+		ValueEditor* e = v->getEditor();
+		if (!e || e->drawLabel()) {
+			s->left = margin + label_width;
+		} else {
+			s->left = margin;
+		}
 		s->top  = y;
 		s->width  = w - s->left - margin;
 		s->height = default_height;
-		ValueEditor* e = v->getEditor();
 		if (e) e->determineSize();
 		y += s->height + vspace;
 	}

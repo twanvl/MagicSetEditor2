@@ -13,6 +13,7 @@
 #include <gui/value/image.hpp>
 #include <gui/value/symbol.hpp>
 #include <gui/value/color.hpp>
+#include <gui/value/information.hpp>
 
 // ----------------------------------------------------------------------------- : ValueEditor
 
@@ -30,3 +31,4 @@ IMPLEMENT_MAKE_EDITOR(MultipleChoice);
 IMPLEMENT_MAKE_EDITOR(Color);
 IMPLEMENT_MAKE_EDITOR(Image);
 IMPLEMENT_MAKE_EDITOR(Symbol);
+IMPLEMENT_MAKE_EDITOR(Info);

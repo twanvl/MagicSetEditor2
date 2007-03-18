@@ -13,6 +13,7 @@
 #include <render/value/image.hpp>
 #include <render/value/symbol.hpp>
 #include <render/value/color.hpp>
+#include <render/value/information.hpp>
 #include <render/card/viewer.hpp>
 
 // ----------------------------------------------------------------------------- : ValueViewer
@@ -68,3 +69,4 @@ IMPLEMENT_MAKE_VIEWER(MultipleChoice);
 IMPLEMENT_MAKE_VIEWER(Color);
 IMPLEMENT_MAKE_VIEWER(Image);
 IMPLEMENT_MAKE_VIEWER(Symbol);
+IMPLEMENT_MAKE_VIEWER(Info);

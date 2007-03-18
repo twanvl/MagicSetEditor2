@@ -14,6 +14,7 @@
 #include <data/field/image.hpp>
 #include <data/field/symbol.hpp>
 #include <data/field/color.hpp>
+#include <data/field/information.hpp>
 #include <util/error.hpp>
 
 // ----------------------------------------------------------------------------- : Field
@@ -69,6 +70,7 @@ shared_ptr<Field> read_new<Field>(Reader& reader) {
 	else if (type == _("image"))			return new_shared<ImageField>();
 	else if (type == _("symbol"))			return new_shared<SymbolField>();
 	else if (type == _("color"))			return new_shared<ColorField>();
+	else if (type == _("info"))				return new_shared<InfoField>();
 	else {
 		throw ParseError(_("Unsupported field type: '") + type + _("'"));
 	}

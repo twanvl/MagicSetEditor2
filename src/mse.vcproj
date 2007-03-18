@@ -1046,6 +1046,12 @@
 					RelativePath=".\gui\value\image.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\value\information.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\value\information.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\value\multiple_choice.cpp">
 					<FileConfiguration
 						Name="Debug|Win32">
@@ -1491,6 +1497,48 @@
 				</File>
 				<File
 					RelativePath=".\data\field\image.hpp">
+				</File>
+				<File
+					RelativePath=".\data\field\information.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Profile Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode fast build|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\data\field\information.hpp">
 				</File>
 				<File
 					RelativePath=".\data\field\multiple_choice.cpp">
@@ -2282,6 +2330,48 @@
 				</File>
 				<File
 					RelativePath=".\render\value\image.hpp">
+				</File>
+				<File
+					RelativePath=".\render\value\information.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Profile Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode fast build|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)2.obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\render\value\information.hpp">
 				</File>
 				<File
 					RelativePath=".\render\value\multiple_choice.cpp">
