@@ -72,10 +72,10 @@ class ActionStack {
 	void add(Action* action, bool allowMerge = true);
 	
 	/// Undoes the last action that was (re)done
-	/// @pre canUndo()
+	/** @pre canUndo() */
 	void undo();
 	/// Redoes the last action that was undone
-	/// @pre canRedo()
+	/** @pre canRedo() */
 	void redo();
 	
 	/// Is undoing possible?
@@ -83,15 +83,15 @@ class ActionStack {
 	/// Is redoing possible?
 	bool canRedo() const;
 	
-	/// Name of the action that will be undone next, in the form "Undo <Action>"
-	/// If there is no action to undo returns "Undo"
+	/// Name of the action that will be undone next, in the form " <Action>"
+	/** If there is no action to undo returns "" */
 	String undoName() const;
-	/// Name of the action that will be redone next "Redo <Action>"
-	/// If there is no action to undo returns "Redo"
+	/// Name of the action that will be redone next " <Action>"
+	/** If there is no action to undo returns "" */
 	String redoName() const;
 	
 	/// Is the file currently at a 'savepoint'?
-	/// This is the last point at which the file was saved
+	/** This is the last point at which the file was saved. */
 	bool atSavePoint() const;
 	/// Indicate that the file is at a savepoint.
 	void setSavePoint();
@@ -104,11 +104,11 @@ class ActionStack {
 	void tellListeners(const Action&, bool undone);
 	
   private:
-	/// Actions to be undone
-	/// Owns the action objects!
+	/// Actions to be undone.
+	/** Owns the action objects! */
 	vector<Action*> undo_actions;
 	/// Actions to be redone
-	/// Owns the action objects!
+	/** Owns the action objects! */
 	vector<Action*> redo_actions;
 	/// Point at which the file was saved, corresponds to the top of the undo stack at that point
 	Action* save_point;
@@ -119,15 +119,16 @@ class ActionStack {
 
 // ----------------------------------------------------------------------------- : Utilities
 
-/// Tests if variable has the type Type
+/// Tests if variable has the type Type.
 /** Uses dynamic cast, so Type must have a virtual function.
  */
 #define TYPE_CASE_(variable, Type)									\
 		if (dynamic_cast<const Type*>(&variable))
 
-/// Tests if variable has the type Type. If this is the case, makes
-/// variable have type Type inside the statement
-/** Uses dynamic cast, so Type must have a virtual function.
+/// Tests if variable has the type Type. 
+/** If this is the case, makes variable have type Type inside the statement.
+ *  
+ *  Uses dynamic cast, so Type must have a virtual function.
  */
 #define TYPE_CASE(variable, Type)									\
 		pair<const Type*,bool> Type##variable						\

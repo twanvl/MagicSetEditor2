@@ -11,7 +11,6 @@
 
 #include <util/prec.hpp>
 #include <render/value/viewer.hpp>
-#include <render/text/viewer.hpp>
 #include <data/field/information.hpp>
 
 // ----------------------------------------------------------------------------- : InfoValueViewer

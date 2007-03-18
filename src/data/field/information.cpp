@@ -7,7 +7,6 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <data/field/information.hpp>
-#include <util/tagged_string.hpp>
 #include <script/script.hpp>
 
 // ----------------------------------------------------------------------------- : InfoField
