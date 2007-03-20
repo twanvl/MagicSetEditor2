@@ -8,6 +8,11 @@ menu:
 	save set:			&Save	Ctrl+S
 	save set as:		Save &As...	F12
 	export:				&Export
+	export html:			&HTML...
+	export image:			Card &Image...
+	export images:			All Card I&mages...
+	export apprentice:		&Apprentice...
+	export mws:				Magic &Workstation...
 	print preview:		Print Pre&view...
 	print:				&Print...	Ctrl+P
 	exit:				E&xit	Alt+F4
@@ -24,17 +29,32 @@ menu:
 	preferences:		&Preferences...
 	
 	cards:			&Cards
-	rotate 270:			Rotated 90° &Clockwise
+	previous card:		Select &Previous Card	PgUp
+	next card:			Select &Next Card	PgDn
+	add card:			&Add Card	Ctrl++
+	add cards:			Add &Multiple Cards...
+	remove card:		&Remove Select Card	Del
+	orientation:		&Orientation
+	rotate 0:				&Normal
+	rotate 270:				Rotated 90° &Clockwise
+	rotate 90:				Rotated 90° C&ounter Clockwise
+	rotate 180:				Rotated 180°, &Up Side Down
+	card list columns:	C&ard List Columns...
 	
 	format:			&Format
 	bold:				&Bold	Ctrl+B
 	italic:				&Italic	Ctrl+I
 	symbols:			&Symbols	Ctrl+M
 	reminder text:		&Reminder Text	Ctrl+R
+	insert symbol:		I&nsert Symbol
 	
 	window:			&Window
 	new window:			&New Window
-	cards tab:			&Cards
+	cards window:		&Cards	F5
+	set info window:	&Set Information	F6
+	style window:		St&yle	F7
+	keywords window:	&Keywords	F8
+	stats window:		S&tatistics	F8
 	
 	help:			&Help
 	index:				&Index...	F1
@@ -66,6 +86,12 @@ help:
 	open set:			Open an existing set
 	save set:			Save the set
 	save set as:		Save the set with a new name
+	export:				Export the set...
+	export html:			Export the set to a web page
+	export image:			Export the selected card to an image file
+	export images:			Export images for all cards
+	export apprentice:		Export the set so it can be played with in Apprentice
+	export mws:				Export the set so it can be played with in Magic Workstation
 	print preview:		Shows cards as they will be printed
 	print:				Print cards from this set
 	exit:				Quits Not Quite Magic Set Editor; prompts to save the set
@@ -78,17 +104,49 @@ help:
 	paste:				Inserts the text from the clipboard
 	preferences:		Change the configuration of Not Quite Magic Set Editor
 	
+	cards:
+	previous card:		Selects the previous card in the list
+	next card:			Selects the next card in the list
+	add card:			Add a new, blank, card to this set
+	add cards:			Add multiple cards to the set
+	remove card:		Delete the selected card from this set
+	orientation:		Orientation of the displayed card
+	rotate 0:				Display the card with the right side up
+	rotate 270:				Display the card rotated clockwise
+	rotate 90:				Display the card rotated counter-clockwise (anti-clockwise for the British)
+	rotate 180:				Display the card up side down
+	card list columns:	Select what columns should be shown and in what order.
+	
 	format:
 	bold:				Makes the selected text bold
 	italic:				Makes the selected text italic
+	symbols:			Draws the selected text with symbols
+	reminder text:		Show reminder text for the selected keyword
 	
 	window:
 	new window:			Creates another window to edit the same set
+	cards window:		Edit the cards in the set
+	set info window:	Edit information about the set, its creator, etc.
+	style window:		Change the style of cards
+	keywords window:	Define extra keywords for this set
+	stats window:		Show statistics about the cards in the set
+	cards tab:			
+	set info tab:		Set Information
+	style tab:			Card Style
+	keywords tab:		
+	stats tab:			
 	
 	help:
 	index:				
 	website:			
 	about:				
+	
+	# Preferences
+	app language:
+		Note: You must restart MSE for the changes to take effect.
+	zoom export:
+		(When off, the cards are exported
+		 and copied at 100% size and normal rotation)
 	
 	# symbol editor
 	
@@ -132,6 +190,12 @@ tool:
 	symbols:		Symbols
 	reminder text:	Reminder Text
 	
+	cards tab:			Cards
+	set info tab:		Set info
+	style tab:			Style
+	keywords tab:		Keywords
+	stats tab:			Statistics
+	
 	# symbol editor
 	store symbol:		Store symbol in set
 	
@@ -146,9 +210,14 @@ label:
 	card notes:			Card notes:
 	
 	# Preferences
+	language:			Language
+	app language:		Language of the user interface:
+	card display:		Card Display
 	zoom:				&Zoom:
+	percent of normal:	% of normal size
 	external programs:	External programs
 	apprentice:			&Apprentice:
+	apprentice exe:		Apprentice Executable
 	check at startup:	Check for new versions at startup
 	checking requires internet:
 		Checking for updates requires an internet connection.
@@ -217,6 +286,7 @@ title:
 	updates availible:	Updates Availible
 	#preferences
 	preferences:		Preferences
+	global:					Global
 	display:				Display
 	directories:			Directories
 	updates:				Updates
@@ -265,6 +335,7 @@ error:
 	has no member value:		String "%s" has no member '%s'
 	can't convert value:		Can't convert "%s" from %s to %s
 	unsupported format:			Invalid string format: '%s'
+	can not sort:				I don't know how to sort a %s
 	
 	# Image stuff
 	coordinates for blending overlap:					Coordinates for blending overlap

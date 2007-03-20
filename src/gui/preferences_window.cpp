@@ -138,6 +138,7 @@ GlobalPreferencesPage::GlobalPreferencesPage(Window* parent)
 		if (settings.locale == package->name()) {
 			language->SetSelection(n);
 		}
+		n++;
 		f = wxFindNextFile();
 	}
 	// init sizer

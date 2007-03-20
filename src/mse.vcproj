@@ -2836,6 +2836,9 @@
 			RelativePath="..\conversion-todo.txt">
 		</File>
 		<File
+			RelativePath="..\data\nl.mse-locale\locale">
+		</File>
+		<File
 			RelativePath="..\data\en.mse-locale\locale">
 		</File>
 		<File

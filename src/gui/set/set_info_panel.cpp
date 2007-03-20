@@ -34,17 +34,17 @@ void SetInfoPanel::onChangeSet() {
 
 void SetInfoPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	// Toolbar
-	tb->AddTool(ID_FORMAT_BOLD,		_(""), load_resource_tool_image(_("bold")),		wxNullBitmap, wxITEM_CHECK, _("Bold"));
-	tb->AddTool(ID_FORMAT_ITALIC,	_(""), load_resource_tool_image(_("italic")),	wxNullBitmap, wxITEM_CHECK, _("Italic"));
-	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), load_resource_tool_image(_("symbol")),	wxNullBitmap, wxITEM_CHECK, _("Symbols"));
+	tb->AddTool(ID_FORMAT_BOLD,		_(""), load_resource_tool_image(_("bold")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("bold"));
+	tb->AddTool(ID_FORMAT_ITALIC,	_(""), load_resource_tool_image(_("italic")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("italic"));
+	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), load_resource_tool_image(_("symbol")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("symbols"));
 	tb->Realize();
 	// Menus
 	IconMenu* menuFormat = new IconMenu();
-		menuFormat->Append(ID_FORMAT_BOLD,		_("bold"),		_("Bold\tCtrl+B"),					_("Makes the selected text bold"),			wxITEM_CHECK);
-		menuFormat->Append(ID_FORMAT_ITALIC,	_("italic"),	_("Italic\tCtrl+I"),				_("Makes the selected text italic"),		wxITEM_CHECK);
-		menuFormat->Append(ID_FORMAT_SYMBOL,	_("symbol"),	_("Symbols\tCtrl+M"),				_("Draws the selected text with symbols"),	wxITEM_CHECK);
-		menuFormat->Append(ID_FORMAT_REMINDER,	_("reminder"),	_("Reminder Text\tCtrl+R"),			_("Show reminder text for the selected keyword"),	wxITEM_CHECK);
-	mb->Insert(2, menuFormat, _("&Format"));
+		menuFormat->Append(ID_FORMAT_BOLD,		_("bold"),			_MENU_("bold"),				_HELP_("bold"),				wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_ITALIC,	_("italic"),		_MENU_("italic"),			_HELP_("italic"),			wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_SYMBOL,	_("symbol"),		_MENU_("symbols"),			_HELP_("symbols"),			wxITEM_CHECK);
+		menuFormat->Append(ID_FORMAT_REMINDER,	_("reminder"),		_MENU_("reminder text"),	_HELP_("reminder text"),	wxITEM_CHECK);
+	mb->Insert(2, menuFormat, _MENU_("format"));
 }
 
 void SetInfoPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {

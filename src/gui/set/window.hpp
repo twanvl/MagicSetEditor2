@@ -52,8 +52,7 @@ class SetWindow : public wxFrame, public SetView {
 	/// Add a panel to the window, as well as to the menu and tab bar
 	/** The position only determines the order in which events will be send.
 	 */
-	void addPanel(wxMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* panel, UInt pos,
-	              const String& shortcut, const String& shortName, const String& longName, const String& description);
+	void addPanel(wxMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* panel, UInt pos, const String& name);
 	
 	/// Select a panel, based on a tab id
 	void selectPanel(int id);

@@ -53,15 +53,15 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 		menuFile->Append(ID_FILE_SAVE,		_("save"),		_MENU_("save set"),			_HELP_("save set"));
 		menuFile->Append(ID_FILE_SAVE_AS,					_MENU_("save set as"),		_HELP_("save set as"));
 		IconMenu* menuExport = new IconMenu();
-			menuExport->Append(ID_FILE_EXPORT_HTML,				_("&HTML..."),					_("Export the set to a HTML file"));
-			menuExport->Append(ID_FILE_EXPORT_IMAGE,			_("Card &Image..."),			_("Export the selected card to an image file"));
-			menuExport->Append(ID_FILE_EXPORT_IMAGES,			_("All Card I&mages..."),		_("Export images for all cards"));
-			menuExport->Append(ID_FILE_EXPORT_APPR,				_("&Apprentice..."),			_("Export the set so it can be played with in Apprentice"));
-			menuExport->Append(ID_FILE_EXPORT_MWS,				_("Magic &Workstation..."),		_("Export the set so it can be played with in Magic Workstation"));
+			menuExport->Append(ID_FILE_EXPORT_HTML,				_MENU_("export html"),		_HELP_("export html"));
+			menuExport->Append(ID_FILE_EXPORT_IMAGE,			_MENU_("export image"),		_HELP_("export image"));
+			menuExport->Append(ID_FILE_EXPORT_IMAGES,			_MENU_("export images"),	_HELP_("export images"));
+			menuExport->Append(ID_FILE_EXPORT_APPR,				_MENU_("export apprentice"),_HELP_("export apprentice"));
+			menuExport->Append(ID_FILE_EXPORT_MWS,				_MENU_("export mws"),		_HELP_("export mws"));
 		menuFile->Append(ID_FILE_EXPORT,					_MENU_("export"),					_("Export the set..."), menuExport);
 		menuFile->AppendSeparator();
-		menuFile->Append(ID_FILE_INSPECT,					_("Inspect Internal Data..."),	_("Shows a the data in the set using a tree structure"));
-		menuFile->AppendSeparator();
+//		menuFile->Append(ID_FILE_INSPECT,					_("Inspect Internal Data..."),	_("Shows a the data in the set using a tree structure"));
+//		menuFile->AppendSeparator();
 		menuFile->Append(ID_FILE_PRINT_PREVIEW,				_MENU_("print preview"),	_HELP_("print preview"));
 		menuFile->Append(ID_FILE_PRINT,						_MENU_("print"),			_HELP_("print"));
 		menuFile->AppendSeparator();
@@ -110,9 +110,9 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	tb->AddTool(ID_FILE_OPEN,	_(""),	load_resource_tool_image(_("open")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("open set"),	_HELP_("open set"));
 	tb->AddTool(ID_FILE_SAVE,	_(""),	load_resource_tool_image(_("save")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("save set"),	_HELP_("save set"));
 	tb->AddSeparator();
-	tb->AddTool(ID_EDIT_CUT,	_(""),	load_resource_tool_image(_("cut")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_("cut"));
-	tb->AddTool(ID_EDIT_COPY,	_(""),	load_resource_tool_image(_("copy")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("copy"));
-	tb->AddTool(ID_EDIT_PASTE,	_(""),	load_resource_tool_image(_("paste")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("paste"));
+	tb->AddTool(ID_EDIT_CUT,	_(""),	load_resource_tool_image(_("cut")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_("cut"),			_HELP_("cut"));
+	tb->AddTool(ID_EDIT_COPY,	_(""),	load_resource_tool_image(_("copy")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("copy"),		_HELP_("copy"));
+	tb->AddTool(ID_EDIT_PASTE,	_(""),	load_resource_tool_image(_("paste")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("paste"),		_HELP_("paste"));
 	tb->AddSeparator();
 	tb->AddTool(ID_EDIT_UNDO,	_(""),	load_resource_tool_image(_("undo")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("undo",wxEmptyString));
 	tb->AddTool(ID_EDIT_REDO,	_(""),	load_resource_tool_image(_("redo")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("redo",wxEmptyString));
@@ -129,11 +129,11 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	// NOTE: place the CardsPanel last in the panels list,
 	//  this way the card list is the last to be told of a set change
 	//  this way everyone else already uses the new set when it sends a CardSelectEvent
-	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 4, _("F5"), _("Cards"),		_("Cards"),				_("Edit the cards in the set"));
-	addPanel(menuWindow, tabBar, new SetInfoPanel (this, wxID_ANY), 0, _("F6"), _("Set info"),	_("&Set Information"),	_("Edit information about the set, its creator, etc."));
-	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 1, _("F7"), _("Style"),		_("Style"),				_("Change the style of cards"));
-	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 2, _("F8"), _("Keywords"),	_("Keywords"),			_("Define extra keywords for this set"));
-	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 3, _("F9"), _("Stats"),		_("Statistics"),		_("Show statistics about the cards in the set"));
+	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 4, _("cards"));
+	addPanel(menuWindow, tabBar, new SetInfoPanel (this, wxID_ANY), 0, _("set info"));
+	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 1, _("style"));
+	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 2, _("keywords"));
+	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 3, _("stats"));
 //	addPanel(*s, *menuWindow, *tabBar, new DraftPanel   (&this, wxID_ANY), 4, _("F10")) 
 	selectPanel(ID_WINDOW_CARDS); // select cards panel
 	
@@ -174,16 +174,20 @@ SetWindow::~SetWindow() {
 
 // ----------------------------------------------------------------------------- : Panel managment
 
-void SetWindow::addPanel(wxMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* panel, UInt pos,
-                         const String& shortcut, const String& shortName, const String& longName, const String& description) {
+void SetWindow::addPanel(wxMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* panel, UInt pos, const String& name) {
 	// insert in list
 	if (panels.size() <= pos) panels.resize(pos + 1);
 	panels[pos] = panel;
+	// names
+	String menu_name   = tr(LOCALE_CAT_MENU, name + _(" window"));
+	String description = tr(LOCALE_CAT_HELP, name + _(" window"));
+	String tab_name    = tr(LOCALE_CAT_TOOL, name + _(" tab"));
+	String tab_help    = tr(LOCALE_CAT_HELP, name + _(" tab"));
 	// add to tab bar
 	int id = ID_WINDOW_MIN + pos;
-	tabBar->AddTool(id, shortName, wxNullBitmap, wxNullBitmap, wxITEM_CHECK, longName, description);
+	tabBar->AddTool(id, tab_name, wxNullBitmap, wxNullBitmap, wxITEM_CHECK, tab_help, description);
 	// add to menu bar
-	windowMenu->AppendCheckItem(id, longName + _("\t") + shortcut, description);
+	windowMenu->AppendCheckItem(id, menu_name, description);
 	// add to sizer
 	GetSizer()->Add(panel, 1, wxEXPAND);
 }
@@ -359,7 +363,7 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 	}
 }
 
-static const int FILE_MENU_SIZE_BEFORE_RECENT_SETS = 11; // HACK; we should calculate the position to insert!
+static const int FILE_MENU_SIZE_BEFORE_RECENT_SETS = 9; // HACK; we should calculate the position to insert!
 void SetWindow::updateRecentSets() {
 	wxMenuBar* mb = GetMenuBar();
 	assert(number_of_recent_sets <= (UInt)settings.recent_sets.size()); // the number of recent sets should only increase
