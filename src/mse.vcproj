@@ -1575,6 +1575,12 @@
 				Name="aux"
 				Filter="">
 				<File
+					RelativePath=".\data\export_template.cpp">
+				</File>
+				<File
+					RelativePath=".\data\export_template.hpp">
+				</File>
+				<File
 					RelativePath=".\data\font.cpp">
 					<FileConfiguration
 						Name="Debug|Win32">

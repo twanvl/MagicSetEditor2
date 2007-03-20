@@ -23,7 +23,7 @@ struct CharInfo;
 
 // ----------------------------------------------------------------------------- : SymbolFont
 
-// A font that is drawn using images
+/// A font that is drawn using images
 class SymbolFont : public Packaged {
   public:
 	SymbolFont();

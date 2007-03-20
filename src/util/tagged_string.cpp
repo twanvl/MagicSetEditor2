@@ -291,8 +291,9 @@ String remove_tag(const String& str, const String& tag) {
 }
 
 String remove_tag_exact(const String& str, const String& tag) {
-	String ret; ret.reserve(str.size());
 	size_t start = 0, pos = str.find(tag);
+	if (pos == String::npos) return str; // no need to copy
+	String ret; ret.reserve(str.size());
 	while (pos != String::npos) {
 		ret += str.substr(start, pos - start); // before
 		// next
@@ -305,8 +306,9 @@ String remove_tag_exact(const String& str, const String& tag) {
 }
 
 String remove_tag_contents(const String& str, const String& tag) {
-	String ret; ret.reserve(str.size());
 	size_t start = 0, pos = str.find(tag);
+	if (pos == String::npos) return str; // no need to copy
+	String ret; ret.reserve(str.size());
 	while (pos != String::npos) {
 		size_t end = match_close_tag(str, pos);
 		if (end == String::npos) return ret; // missing close tag

@@ -12,6 +12,8 @@
 #include <data/set.hpp>
 #include <data/game.hpp>
 
+DECLARE_TYPEOF_COLLECTION(pair<String COMMA ScriptValueP>);
+
 // ----------------------------------------------------------------------------- : String stuff
 
 // convert a string to upper case
@@ -147,7 +149,7 @@ int position_in_vector(const ScriptValueP& of, const ScriptValueP& in, const Scr
 		}
 	} else {
 		// unordered position
-		ScriptValueP it = in->makeIterator();
+		ScriptValueP it = in->makeIterator(in);
 		int i = 0;
 		while (ScriptValueP v = it->next()) {
 			if (equal(*of, *v)) return i;
@@ -155,6 +157,34 @@ int position_in_vector(const ScriptValueP& of, const ScriptValueP& in, const Scr
 		}
 	}
 	return -1; // TODO?
+}
+
+// sort a script list
+ScriptValueP sort_script(Context& ctx, const ScriptValueP& list, ScriptValue& order_by) {
+	ScriptType list_t = list->type();
+	if (list_t == SCRIPT_STRING) {
+		// sort a string
+		String s = list->toString();
+		sort(s.begin(), s.end());
+		SCRIPT_RETURN(s);
+	} else {
+		// are we sorting a set
+		ScriptObject<Set*>* set = dynamic_cast<ScriptObject<Set*>*>(list.get());
+		// sort a collection
+		vector<pair<String,ScriptValueP> > values;
+		ScriptValueP it = list->makeIterator(list);
+		while (ScriptValueP v = it->next()) {
+			ctx.setVariable(set ? _("card") : _("input"), v);
+			values.push_back(make_pair(order_by.eval(ctx)->toString(), v));
+		}
+		sort(values.begin(), values.end());
+		// return collection
+		intrusive_ptr<ScriptCustomCollection> ret(new ScriptCustomCollection());
+		FOR_EACH(v, values) {
+			ret->value.push_back(v.second);
+		}
+		return ret;
+	}
 }
 
 // finding positions, also of substrings
@@ -436,12 +466,66 @@ String spec_sort(const String& spec, const String& input) {
 }
 
 
-// Create a rule for spec_sorting strings
-SCRIPT_RULE_1(sort, String, order) {
-	SCRIPT_PARAM(String, input);
-	SCRIPT_RETURN(spec_sort(order, input));
-}
+// Sort using spec_sort
+class ScriptRule_sort_order: public ScriptValue {
+  public:
+	inline ScriptRule_sort_order(const String& order) : order(order) {}
+	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
+	virtual String typeName() const { return _("sort_rule"); }
+	virtual ScriptValueP eval(Context& ctx) const {
+		SCRIPT_PARAM(String, input);
+		SCRIPT_RETURN(spec_sort(order, input));
+	}
+  private:
+	String order;
+};
+// Sort using sort_script
+class ScriptRule_sort_order_by: public ScriptValue {
+  public:
+	inline ScriptRule_sort_order_by(const ScriptValueP& order_by) : order_by(order_by) {}
+	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
+	virtual String typeName() const { return _("sort_rule"); }
+	virtual ScriptValueP eval(Context& ctx) const {
+		SCRIPT_PARAM(ScriptValueP, input);
+		return sort_script(ctx, input, *order_by);
+	}
+  private:
+	ScriptValueP order_by;
+};
+// Sort a string alphabetically
+class ScriptRule_sort: public ScriptValue {
+  public:
+	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
+	virtual String typeName() const { return _("sort_rule"); }
+	virtual ScriptValueP eval(Context& ctx) const {
+		SCRIPT_PARAM(String, input);
+		sort(input.begin(), input.end());
+		SCRIPT_RETURN(input);
+	}
+  private:
+	ScriptValueP order_by;
+};
 
+SCRIPT_FUNCTION(sort_rule) {
+	SCRIPT_OPTIONAL_PARAM(String, order) {
+		return new_intrusive1<ScriptRule_sort_order   >(order);
+	}
+	SCRIPT_OPTIONAL_PARAM(ScriptValueP, order_by) {
+		return new_intrusive1<ScriptRule_sort_order_by>(order_by);
+	} else {
+		return new_intrusive <ScriptRule_sort         >();
+	}
+}
+SCRIPT_FUNCTION(sort) {
+	SCRIPT_OPTIONAL_PARAM(String, order) {
+		return ScriptRule_sort_order   (order   ).eval(ctx);
+	}
+	SCRIPT_OPTIONAL_PARAM(ScriptValueP, order_by) {
+		return ScriptRule_sort_order_by(order_by).eval(ctx);
+	} else {
+		return ScriptRule_sort         (        ).eval(ctx);
+	}
+}
 
 // ----------------------------------------------------------------------------- : Init
 

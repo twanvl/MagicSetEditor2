@@ -74,7 +74,8 @@ class ScriptValue : public IntrusivePtrBase {
 	virtual ScriptValueP dependencies(Context&, const Dependency&) const;
 	
 	/// Return an iterator for the current collection, an iterator is a value that has next()
-	virtual ScriptValueP makeIterator() const;
+	/** thisP can be used to prevent destruction of the collection */
+	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
 	/// Return the next item for this iterator, or ScriptValueP() if there is no such item
 	virtual ScriptValueP next();
 	/// Return the number of items in this value (assuming it is a collection)

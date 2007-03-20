@@ -17,6 +17,7 @@
 #include <util/prec.hpp>
 #include <util/error.hpp>
 #include <script/to_value.hpp>
+#include <script/context.hpp>
 
 // ----------------------------------------------------------------------------- : Functions
 

@@ -44,8 +44,8 @@ IMPLEMENT_REFLECTION(Game) {
 	REFLECT(statistics_dimensions);
 	REFLECT(statistics_categories);
 	REFLECT(has_keywords);
-	REFLECT(keyword_parameter_types);
 	REFLECT(keyword_modes);
+	REFLECT(keyword_parameter_types);
 	REFLECT(keywords);
 //	REFLECT(word_lists);
 }

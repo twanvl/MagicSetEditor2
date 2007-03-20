@@ -54,9 +54,6 @@ String Package::name() const {
 	else if (                         ext == String::npos) return filename.substr(slash+1);
 	else                                                   return filename.substr(slash+1, ext-slash-1);
 }
-String Package::fullName() const {
-	return name();
-}
 const String& Package::absoluteFilename() const {
 	return filename;
 }

@@ -62,7 +62,7 @@ class ScriptCollection : public ScriptValue {
 			return ScriptValue::getMember(name);
 		}
 	}
-	virtual ScriptValueP makeIterator() const {
+	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const {
 		return new_intrusive1<ScriptCollectionIterator<Collection> >(value);
 	}
 	virtual int itemCount() const { return (int)value->size(); }
@@ -113,6 +113,23 @@ class ScriptMap : public ScriptValue {
 	const Collection* value;
 };
 
+// ----------------------------------------------------------------------------- : Collections : from script
+
+/// Script value containing a custom collection, returned from script functions
+class ScriptCustomCollection : public ScriptValue {
+  public:
+	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
+	virtual String typeName() const { return _TYPE_("collection"); }
+	virtual ScriptValueP getMember(const String& name) const;
+	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
+	virtual int itemCount() const { return (int)value.size(); }
+	/// Collections can be compared by comparing pointers
+	virtual const void* comparePointer() const { return &value; }
+	
+	/// The collection
+	vector<ScriptValueP> value;
+};
+
 // ----------------------------------------------------------------------------- : Objects
 
 /// Number of items in some collection like object, can be overloaded
@@ -159,9 +176,9 @@ class ScriptObject : public ScriptValue {
 		mark_dependency_member(value, name, dep);
 		return getMember(name);
 	}
-	virtual ScriptValueP makeIterator() const {
+	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const {
 		ScriptValueP it = make_iterator(*value);
-		return it ? it : ScriptValue::makeIterator();
+		return it ? it : ScriptValue::makeIterator(thisP);
 	}
 	virtual int itemCount() const {
 		int i = item_count(*value);

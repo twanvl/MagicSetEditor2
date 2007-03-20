@@ -14,16 +14,16 @@
 // ----------------------------------------------------------------------------- : ScriptValue
 // Base cases
 
-ScriptValue::operator String()                          const { return _("[[") + typeName() + _("]]"); }
-ScriptValue::operator int()                             const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("integer" ))); }
-ScriptValue::operator double()                          const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("real"    ))); }
-ScriptValue::operator Color()                           const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("color"   ))); }
-ScriptValueP ScriptValue::eval(Context&)                const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("function"))); }
-ScriptValueP ScriptValue::getMember(const String& name) const { throw ScriptError(_ERROR_2_("has no member", typeName(), name));              }
-ScriptValueP ScriptValue::next()                              { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
-ScriptValueP ScriptValue::makeIterator()                const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
-int          ScriptValue::itemCount()                   const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
-const void*  ScriptValue::comparePointer()              const { return nullptr; }
+ScriptValue::operator String()                              const { return _("[[") + typeName() + _("]]"); }
+ScriptValue::operator int()                                 const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("integer" ))); }
+ScriptValue::operator double()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("real"    ))); }
+ScriptValue::operator Color()                               const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("color"   ))); }
+ScriptValueP ScriptValue::eval(Context&)                    const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("function"))); }
+ScriptValueP ScriptValue::getMember(const String& name)     const { throw ScriptError(_ERROR_2_("has no member", typeName(), name));              }
+ScriptValueP ScriptValue::next()                                  { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
+ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
+int          ScriptValue::itemCount()                       const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
+const void*  ScriptValue::comparePointer()                  const { return nullptr; }
 
 ScriptValueP ScriptValue::dependencyMember(const String& name, const Dependency&) const { return dependency_dummy; }
 ScriptValueP ScriptValue::dependencies(Context&,               const Dependency&) const { return dependency_dummy; }
@@ -236,5 +236,35 @@ class ScriptNil : public ScriptValue {
 /// The preallocated nil value
 ScriptValueP script_nil(new ScriptNil);
 
+// ----------------------------------------------------------------------------- : Custom collection
 
-// ----------------------------------------------------------------------------- : EOF
+// Iterator over a custom collection
+class ScriptCustomCollectionIterator : public ScriptIterator {
+  public:	
+	ScriptCustomCollectionIterator(const vector<ScriptValueP>* col, ScriptValueP colP)
+		: pos(0), col(col), colP(colP) {}
+	virtual ScriptValueP next() {
+		if (pos < col->size()) {
+			return to_script(col->at(pos++));
+		} else {
+			return ScriptValueP();
+		}
+	}
+  private:
+	size_t pos;
+	ScriptValueP colP; // for ownership of the collection
+	const vector<ScriptValueP>* col;
+};
+
+ScriptValueP ScriptCustomCollection::getMember(const String& name) const {
+	long index;
+	if (name.ToLong(&index) && index >= 0 && (size_t)index < value.size()) {
+		return to_script(value.at(index));
+	} else {
+		return ScriptValue::getMember(name);
+	}
+}
+ScriptValueP ScriptCustomCollection::makeIterator(const ScriptValueP& thisP) const {
+	return new_intrusive2<ScriptCustomCollectionIterator>(&value, thisP);
+}
+
