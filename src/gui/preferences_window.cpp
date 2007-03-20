@@ -10,6 +10,7 @@
 #include <gui/update_checker.hpp>
 #include <data/settings.hpp>
 #include <util/window_id.hpp>
+#include <util/io/package_manager.hpp>
 #include <wx/spinctrl.h>
 #include <wx/filename.h>
 
@@ -24,6 +25,16 @@ class PreferencesPage : public wxPanel {
 	
 	/// Stores the settings from the panel in the global settings object
 	virtual void store() = 0;
+};
+
+// Preferences page for global MSE settings
+class GlobalPreferencesPage : public PreferencesPage {
+  public:
+	GlobalPreferencesPage(Window* parent);
+	void store();	
+	
+  private:
+	wxComboBox* language;
 };
 
 // Preferences page for card viewing related settings
@@ -81,6 +92,7 @@ PreferencesWindow::PreferencesWindow(Window* parent)
 {
 	// init notebook
 	wxNotebook* nb = new wxNotebook(this, ID_NOTEBOOK);
+	nb->AddPage(new GlobalPreferencesPage (nb), _TITLE_("global"));
 	nb->AddPage(new DisplayPreferencesPage(nb), _TITLE_("display"));
 	nb->AddPage(new DirsPreferencesPage   (nb), _TITLE_("directories"));
 	nb->AddPage(new UpdatePreferencesPage (nb), _TITLE_("updates"));
@@ -110,6 +122,43 @@ BEGIN_EVENT_TABLE(PreferencesWindow, wxDialog)
 END_EVENT_TABLE  ()
 
 
+// ----------------------------------------------------------------------------- : Preferences page : global
+
+GlobalPreferencesPage::GlobalPreferencesPage(Window* parent)
+	: PreferencesPage(parent)
+{
+	// init controls
+	language = new wxComboBox(this, wxID_ANY, _(""), wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY | wxCB_SORT);
+	// set values
+	String f = ::packages.findFirst(_("*.mse-locale"));
+	int n = 0;
+	while (!f.empty()) {
+		PackagedP package = packages.openAny(f);
+		language->Append(package->name() + _(": ") + package->full_name, package.get());
+		if (settings.locale == package->name()) {
+			language->SetSelection(n);
+		}
+		f = wxFindNextFile();
+	}
+	// init sizer
+	wxSizer* s = new wxBoxSizer(wxVERTICAL);
+	s->SetSizeHints(this);
+		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("language"));
+			s2->Add(new wxStaticText(this, wxID_ANY, _LABEL_("app language")), 0,            wxALL,          4);
+			s2->Add(language,                                                  0, wxEXPAND | wxALL & ~wxTOP, 4);
+			s2->Add(new wxStaticText(this, wxID_ANY, _HELP_( "app language")), 0,            wxALL & ~wxTOP, 4);
+		s->Add(s2, 0, wxALL | wxEXPAND, 8);
+	SetSizer(s);
+}
+
+void GlobalPreferencesPage::store() {
+	int n = language->GetSelection();
+	if (n == wxNOT_FOUND) return;
+	Packaged* p = (Packaged*)language->GetClientData(n);
+	settings.locale = p->name();
+	// set the_locale?
+}
+
 // ----------------------------------------------------------------------------- : Preferences page : display
 
 DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
@@ -120,7 +169,7 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 	borders           = new wxCheckBox(this, wxID_ANY, _BUTTON_("show lines"));
 	zoom              = new wxSpinCtrl(this, wxID_ANY);
 	non_normal_export = new wxCheckBox(this, wxID_ANY, _BUTTON_("zoom export"));
-	wxButton* columns = new wxButton(this, ID_SELECT_COLUMNS, _BUTTON_("select"));
+	//wxButton* columns = new wxButton(this, ID_SELECT_COLUMNS, _BUTTON_("select"));
 	// set values
 	high_quality->     SetValue( settings.default_stylesheet_settings.card_anti_alias());
 	borders->          SetValue( settings.default_stylesheet_settings.card_borders());
@@ -129,23 +178,25 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 	zoom->             SetValue(static_cast<int>(settings.default_stylesheet_settings.card_zoom() * 100));
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
-		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, this, _("Card Display"));
+		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("card display"));
 			s2->Add(high_quality, 0, wxEXPAND | wxALL, 4);
 			s2->Add(borders,      0, wxEXPAND | wxALL, 4);
 			wxSizer* s3 = new wxBoxSizer(wxHORIZONTAL);
-				s3->Add(new wxStaticText(this, wxID_ANY, _("&Zoom:")),          0, wxALL & ~wxLEFT,  4);
+				s3->Add(new wxStaticText(this, wxID_ANY, _LABEL_("zoom")),             0, wxALL & ~wxLEFT,  4);
 				s3->Add(zoom);
-				s3->Add(new wxStaticText(this, wxID_ANY, _("% of normal size")),1, wxALL & ~wxRIGHT, 4);
+				s3->Add(new wxStaticText(this, wxID_ANY, _LABEL_("percent of normal")),1, wxALL & ~wxRIGHT, 4);
 			s2->Add(s3, 0, wxEXPAND | wxALL, 4);
 			s2->Add(non_normal_export,0, wxEXPAND | wxALL, 4);
-			s2->Add(new wxStaticText(this, wxID_ANY, _("(When off the cards are exported\n and copied at 100% size and normal rotation)")), 0, wxALL & ~wxTOP, 4);
+			s2->Add(new wxStaticText(this, wxID_ANY,     _HELP_("zoom export")),       0, wxALL & ~wxTOP, 4);
 		s->Add(s2, 0, wxEXPAND | wxALL, 8);
+		/*
 		wxSizer* s4 = new wxStaticBoxSizer(wxVERTICAL, this, _("Card List"));
 			wxSizer* s5 = new wxBoxSizer(wxHORIZONTAL);
 				s5->Add(new wxStaticText(this, wxID_ANY, _("Columns: ")),      0, wxALL & ~wxLEFT | wxEXPAND, 4);
 				s5->Add(columns);
 			s4->Add(s5, 0, wxEXPAND | wxALL, 4);
 		s->Add(s4, 0, wxEXPAND | wxALL & ~wxTOP, 8);
+		*/
 	s->SetSizeHints(this);
 	SetSizer(s);
 }
@@ -158,7 +209,7 @@ void DisplayPreferencesPage::store() {
 }
 
 void DisplayPreferencesPage::onSelectColumns(wxCommandEvent&) {
-	// TODO
+	// Impossible, set specific
 }
 
 BEGIN_EVENT_TABLE(DisplayPreferencesPage, wxPanel)
@@ -195,7 +246,7 @@ void DirsPreferencesPage::store() {
 
 void DirsPreferencesPage::onApprenticeBrowse(wxCommandEvent&) {
 	// browse for appr.exe
-	wxFileDialog dlg(this, _TITLE_("locate apprentice"), apprentice->GetValue(), _(""), _("Apprentice Executable|appr.exe"), wxOPEN);
+	wxFileDialog dlg(this, _TITLE_("locate apprentice"), apprentice->GetValue(), _(""), _LABEL_("apprentice exe") + _("|appr.exe"), wxOPEN);
 	if (dlg.ShowModal() == wxID_OK) {
 		wxFileName fn(dlg.GetPath());
 		apprentice->SetValue(fn.GetPath());
