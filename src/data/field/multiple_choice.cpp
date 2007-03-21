@@ -51,3 +51,22 @@ IMPLEMENT_REFLECTION(MultipleChoiceStyle) {
 IMPLEMENT_REFLECTION_NAMELESS(MultipleChoiceValue) {
 	REFLECT_BASE(ChoiceValue);
 }
+
+void MultipleChoiceValue::get(vector<String>& out) const {
+	// split the value
+	out.clear();
+	bool is_new = true;
+	FOR_EACH_CONST(c, value()) {
+		if (c == _(',')) {
+			is_new = true;
+		} else if (is_new) {
+			if (c != _(' ')) { // ignore whitespace after ,
+				is_new = false;
+				out.push_back(String(1, c));
+			}
+		} else {
+			assert(!out.empty());
+			out.back() += c;
+		}
+	}
+}

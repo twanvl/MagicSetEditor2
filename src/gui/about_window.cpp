@@ -16,7 +16,7 @@
 AboutWindow::AboutWindow(Window* parent)
 	: wxDialog(parent, wxID_ANY, _TITLE_("about"), wxDefaultPosition, wxSize(510,340), wxCLIP_CHILDREN | wxDEFAULT_DIALOG_STYLE | wxTAB_TRAVERSAL)
 	, logo (load_resource_image(_("about")))
-	, logo2(load_resource_image(_("two")))
+	, logo2(load_resource_image(_("two_beta")))
 {
 	// init controls
 	wxControl* ok_button = new HoverButton(this, wxID_OK, _("btn_ok"));

@@ -57,13 +57,13 @@ class MultipleChoiceStyle : public ChoiceStyle {
  */
 class MultipleChoiceValue : public ChoiceValue {
   public:
-	inline MultipleChoiceValue(const MultipleChoiceFieldP& field) : ChoiceValue(field) {}
+	inline MultipleChoiceValue(const MultipleChoiceFieldP& field) : ChoiceValue(field, true) {}
 	DECLARE_HAS_FIELD(MultipleChoice);
 	
 	// no extra data
 	
 	/// Splits the value, stores the selected choices in the out parameter
-	void get(vector<String>& out);
+	void get(vector<String>& out) const;
 	
   private:
 	DECLARE_REFLECTION();

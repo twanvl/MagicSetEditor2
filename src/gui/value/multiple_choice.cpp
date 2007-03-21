@@ -8,6 +8,13 @@
 
 #include <gui/value/multiple_choice.hpp>
 
-// ----------------------------------------------------------------------------- : 
+// ----------------------------------------------------------------------------- : MultipleChoiceValueEditor
 
 IMPLEMENT_VALUE_EDITOR(MultipleChoice) {}
+
+void MultipleChoiceValueEditor::determineSize(bool force_fit) {
+	if (!nativeLook()) return;
+	// height depends on number of items and item height
+	int item_count = field().choices->lastId();
+	style().height = item_count * 20;
+}

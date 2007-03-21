@@ -197,3 +197,14 @@ void draw_drop_down_arrow(Window* win, DC& dc, const wxRect& rect, bool active) 
 		wxRect(rect.x + rect.width - w, rect.y, w, rect.height)
 		, active ? wxCONTROL_PRESSED : 0);
 }
+
+void draw_checkbox(Window* win, DC& dc, const wxRect& rect, bool checked) {
+	// TODO: Windows version?
+	// portable
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+	dc.SetBrush(*wxTRANSPARENT_BRUSH);
+	dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
+	if (checked) {
+		dc.DrawCheckMark(rect);
+	}
+}

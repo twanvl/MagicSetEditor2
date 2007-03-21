@@ -40,6 +40,7 @@ IMPLEMENT_REFLECTION(Game) {
 	REFLECT_BASE(Packaged);
 	REFLECT(init_script);
 	REFLECT(set_fields);
+	REFLECT(default_set_style);
 	REFLECT(card_fields);
 	REFLECT(statistics_dimensions);
 	REFLECT(statistics_categories);

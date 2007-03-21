@@ -57,7 +57,11 @@ void draw_control_border(Window* win, DC& dc, const wxRect& rect);
 /// Draws an arrow for a menu item indicating it has a sub menu
 void draw_menu_arrow(Window* win, DC& dc, const wxRect& rect, bool active);
 
+/// Draws a drop down arrow corresponding to that used by a combo box
 void draw_drop_down_arrow(Window* win, DC& dc, const wxRect& rect, bool active);
+
+/// Draws a check box
+void draw_checkbox(Window* win, DC& dc, const wxRect& rect, bool checked);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

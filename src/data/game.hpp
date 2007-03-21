@@ -16,6 +16,7 @@
 #include <util/dynamic_arg.hpp>
 
 DECLARE_POINTER_TYPE(Field);
+DECLARE_POINTER_TYPE(Style);
 DECLARE_POINTER_TYPE(Game);
 DECLARE_POINTER_TYPE(StatsDimension);
 DECLARE_POINTER_TYPE(StatsCategory);
@@ -33,9 +34,10 @@ class Game : public Packaged {
   public:
 	Game();
 	
-	OptionalScript init_script;		///< Script of variables available to other scripts in this game
-	vector<FieldP> set_fields;		///< Fields for set information
-	vector<FieldP> card_fields;		///< Fields on each card
+	OptionalScript          init_script;			///< Script of variables available to other scripts in this game
+	vector<FieldP>          set_fields;				///< Fields for set information
+	IndexMap<FieldP,StyleP> default_set_style;		///< Default style for the set fields, because it is often the same
+	vector<FieldP>          card_fields;			///< Fields on each card
 	vector<StatsDimensionP> statistics_dimensions;	///< (Additional) statistics dimensions
 	vector<StatsCategoryP>  statistics_categories;	///< (Additional) statistics categories
 	
@@ -44,9 +46,9 @@ class Game : public Packaged {
 	vector<KeywordModeP>    keyword_modes;          ///< Modes of keywords
 	vector<KeywordP>        keywords;				///< Keywords for use in text
 	
-	Dependencies dependent_scripts_cards;		///< scripts that depend on the card list
-	Dependencies dependent_scripts_keywords;	///< scripts that depend on the keywords
-	bool dependencies_initialized;				///< are the script dependencies comming from this game all initialized?
+	Dependencies dependent_scripts_cards;			///< scripts that depend on the card list
+	Dependencies dependent_scripts_keywords;		///< scripts that depend on the keywords
+	bool dependencies_initialized;					///< are the script dependencies comming from this game all initialized?
 	
 	/// Loads the game with a particular name, for example "magic"
 	static GameP byName(const String& name);

@@ -45,13 +45,13 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 					align_in_rect(style().alignment, RealSize(i->image.GetWidth(), i->image.GetHeight()), style().getRect()),
 					i->combine == COMBINE_NORMAL ? style().combine : i->combine
 				);
-				margin = i->image.GetWidth() + 1;
+				margin = dc.trInvS(i->image.GetWidth()) + 1;
 			}
 		}
 	}
 	if (style().render_style & RENDER_TEXT) {
 		// draw text
-		dc.DrawText(capitalize(value().value()),
+		dc.DrawText(tr(*viewer.stylesheet, value().value(), capitalize(value().value())),
 			align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(0, dc.GetCharHeight()), style().getRect()) + RealSize(margin, 0)
 		);
 	}

@@ -212,11 +212,14 @@ IMPLEMENT_REFLECTION_ENUM(ChoicePopupStyle) {
 }
 
 IMPLEMENT_REFLECTION_ENUM(ChoiceRenderStyle) {
-	VALUE_N("text",			RENDER_TEXT);
-	VALUE_N("image",		RENDER_IMAGE);
-	VALUE_N("both",			RENDER_BOTH);
-	VALUE_N("hidden",		RENDER_HIDDEN);
-	VALUE_N("image hidden",	RENDER_HIDDEN_IMAGE);
+	VALUE_N("text",				RENDER_TEXT);
+	VALUE_N("image",			RENDER_IMAGE);
+	VALUE_N("both",				RENDER_BOTH);
+	VALUE_N("hidden",			RENDER_HIDDEN);
+	VALUE_N("image hidden",		RENDER_HIDDEN_IMAGE);
+	VALUE_N("checklist",		RENDER_TEXT_CHECKLIST);
+	VALUE_N("image checklist",	RENDER_IMAGE_CHECKLIST);
+	VALUE_N("both checklist",	RENDER_BOTH_CHECKLIST);
 }
 
 IMPLEMENT_REFLECTION(ChoiceStyle) {

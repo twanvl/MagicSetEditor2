@@ -19,6 +19,8 @@
 class MultipleChoiceValueEditor : public MultipleChoiceValueViewer, public ValueEditor {
   public:
 	DECLARE_VALUE_EDITOR(MultipleChoice);
+	
+	virtual void determineSize(bool force_fit);
 };
 
 // ----------------------------------------------------------------------------- : EOF

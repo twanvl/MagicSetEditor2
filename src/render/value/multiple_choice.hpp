@@ -21,6 +21,8 @@ class MultipleChoiceValueViewer : public ValueViewer {
 	DECLARE_VALUE_VIEWER(MultipleChoice) : ValueViewer(parent,style) {}
 	
 	virtual void draw(RotatedDC& dc);
+  private:
+	void drawChoice(RotatedDC& dc, RealPoint& pos, const String& choice, bool active = true);
 };
 
 // ----------------------------------------------------------------------------- : EOF
