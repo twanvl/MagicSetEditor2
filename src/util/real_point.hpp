@@ -70,7 +70,7 @@ class RealSize {
  *   #### + $$$  = ####$$$
  *   ####          ####...
  */
-inline RealSize addHorizontal(const RealSize& a, const RealSize& b) {
+inline RealSize add_horizontal(const RealSize& a, const RealSize& b) {
 	return RealSize(a.width + b.width, max(a.height, b.height));
 }
 
@@ -81,7 +81,7 @@ inline RealSize addHorizontal(const RealSize& a, const RealSize& b) {
  *                 $$$.
  *                 $$$.
  */
-inline RealSize addVertical(const RealSize& a, const RealSize& b) {
+inline RealSize add_vertical(const RealSize& a, const RealSize& b) {
 	return RealSize(max(a.width, b.width), a.height + b.height);
 }
 
@@ -92,7 +92,7 @@ inline RealSize addVertical(const RealSize& a, const RealSize& b) {
  *                 ....$$$
  *                 ....$$$
  */
-inline RealSize addDiagonal(const RealSize& a, const RealSize& b) {
+inline RealSize add_diagonal(const RealSize& a, const RealSize& b) {
 	return RealSize(a.width + b.width, a.height + b.height);
 }
 

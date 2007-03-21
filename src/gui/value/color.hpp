@@ -23,8 +23,8 @@ class ColorValueEditor : public ColorValueViewer, public ValueEditor {
 	DECLARE_VALUE_EDITOR(Color);
 	
 	// --------------------------------------------------- : Events
-	virtual void onLeftDown(const RealPoint& pos, wxMouseEvent& ev);
-	virtual void onChar(wxKeyEvent& ev);
+	virtual bool onLeftDown(const RealPoint& pos, wxMouseEvent& ev);
+	virtual bool onChar(wxKeyEvent& ev);
 	virtual void onLoseFocus();
 	
 	virtual void draw(RotatedDC& dc);

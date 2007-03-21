@@ -8,6 +8,7 @@
 
 #include <gui/control/card_viewer.hpp>
 #include <data/stylesheet.hpp>
+#include <data/settings.hpp>
 #include <render/value/viewer.hpp>
 #include <wx/dcbuffer.h>
 
@@ -32,7 +33,7 @@ wxSize CardViewer::DoGetBestSize() const {
 
 void CardViewer::redraw(const ValueViewer& v) {
 	up_to_date = false;
-	RefreshRect(v.boundingBox(), false);
+	RefreshRect(getRotation().tr(v.boundingBox()), false);
 }
 
 void CardViewer::onChange() {
@@ -66,12 +67,16 @@ void CardViewer::onPaint(wxPaintEvent&) {
 		up_to_date = false;
 	}
 	wxBufferedPaintDC dc(this, buffer);
-	dc.SetClippingRegion(GetUpdateRegion());
+	// scrolling
+//	int dx = GetScrollPos(wxHORIZONTAL), dy = GetScrollPos(wxVERTICAL);
+//	dc.SetDeviceOrigin(-dx, -dy);
+	wxRegion clip = GetUpdateRegion();
+//	clip.Offset(dx, dy);
+	dc.SetClippingRegion(clip);
+	// draw
 	if (!up_to_date) {
 		up_to_date = true;
-		dc.BeginDrawing();
 		draw(dc);
-		dc.EndDrawing();
 	}
 }
 
@@ -80,7 +85,10 @@ void CardViewer::drawViewer(RotatedDC& dc, ValueViewer& v) {
 }
 
 bool CardViewer::shouldDraw(const ValueViewer& v) const {
-	return GetUpdateRegion().Contains(v.boundingBox().toRect()) != wxOutRegion;
+//	int dx = GetScrollPos(wxHORIZONTAL), dy = GetScrollPos(wxVERTICAL);
+//	wxRegion clip = GetUpdateRegion();
+//	clip.Offset(dx, dy);
+	return GetUpdateRegion().Contains(getRotation().tr(v.boundingBox().toRect()).toRect()) != wxOutRegion;
 }
 
 // helper class for overdrawDC()
@@ -102,7 +110,15 @@ shared_ptr<DC> CardViewer::overdrawDC() {
 		// don't call from onPaint
 		assert(!inOnPaint());
 	#endif
-	return shared_ptr<DC>((wxBufferedDC*)(new OverdrawDC(this)));
+	return shared_ptr<DC>((wxBufferedDC*)new OverdrawDC(this));
+}
+
+Rotation CardViewer::getRotation() const {
+	// Same as DataViewer::getRotation, only taking into account scrolling
+	if (!stylesheet) stylesheet = set->stylesheet;
+	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
+	int dx = GetScrollPos(wxHORIZONTAL), dy = GetScrollPos(wxVERTICAL);
+	return Rotation(ss.card_angle(), stylesheet->getCardRect().move(-dx,-dy,0,0), ss.card_zoom(), true);
 }
 
 // ----------------------------------------------------------------------------- : Event table

@@ -41,6 +41,9 @@ class NativeLookEditor : public DataEditor {
 	DECLARE_EVENT_TABLE();
 	
 	void onSize(wxSizeEvent&);
+	void onScroll(wxScrollWinEvent&);
+	void onMouseWheel(wxMouseEvent&);
+	void scrollTo(int direction, int pos);
 	/// Resize the viewers so they match with this control
 	void resizeViewers();
 };

@@ -67,14 +67,14 @@ class DataEditor : public CardViewer {
 	virtual void onInit();
 	
 	// --------------------------------------------------- : Data
-  private:
-	DECLARE_EVENT_TABLE();
-	
 	ValueViewer* current_viewer;	///< The currently selected viewer
 	ValueEditor* current_editor;	///< The currently selected editor, corresponding to the viewer
 	vector<ValueViewer*> by_tab_index;	///< The editable viewers, sorted by tab index
 	
+  private:
 	// --------------------------------------------------- : Events
+	DECLARE_EVENT_TABLE();
+	
 	
 	void onLeftDown  (wxMouseEvent&);
 	void onLeftUp    (wxMouseEvent&);
@@ -96,7 +96,7 @@ class DataEditor : public CardViewer {
 	
 	/// Changes the selection to the field at the specified coordinates
 	/** Sends an event to the event function of the current viewer */
-	void selectField(wxMouseEvent& ev, void (ValueEditor::*event)(const RealPoint&, wxMouseEvent&));
+	void selectField(wxMouseEvent& ev, bool (ValueEditor::*event)(const RealPoint&, wxMouseEvent&));
 	// selectField, but don't send events
 	void selectFieldNoEvents(const RealPoint& pos);
 	/// Convert mouse coordinates to internal coordinates

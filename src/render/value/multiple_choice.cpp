@@ -41,12 +41,11 @@ void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
 }
 
 void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const String& choice, bool active) {
-	double margin = 0, height = 0;
+	RealSize size;
 	if (nativeLook() && (style().render_style & RENDER_CHECKLIST)) {
-		height = 10;
-		margin = 11;
-		wxRect rect = dc.tr(RealRect(pos,RealSize(10,10)));
+		wxRect rect = dc.tr(RealRect(pos + RealSize(1,1), RealSize(12,12)));
 		draw_checkbox(nullptr, dc.getDC(), rect, active); // TODO
+		size = add_horizontal(size, RealSize(14,16));
 	}
 	if (style().render_style & RENDER_IMAGE) {
 		map<String,ScriptableImage>::iterator it = style().choice_images.find(cannocial_name_form(choice));
@@ -54,21 +53,22 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 			ScriptImageP i = it->second.update(viewer.getContext(), *viewer.stylesheet, 0, 0);
 			if (i) {
 				// TODO : alignment?
-				dc.DrawImage(i->image, pos, i->combine == COMBINE_NORMAL ? style().combine : i->combine);
-				margin += dc.trInvS(i->image.GetWidth()) + 1;
-				height = max(height, dc.trInvS(i->image.GetHeight()));
+				dc.DrawImage(i->image, pos + RealSize(size.width, 0), i->combine == COMBINE_NORMAL ? style().combine : i->combine);
+				size = add_horizontal(size, dc.trInv(RealSize(i->image.GetWidth() + 1, i->image.GetHeight())));
 			}
 		}
 	}
 	if (style().render_style & RENDER_TEXT) {
 		// draw text
-		// TODO: alignment
-		dc.DrawText(tr(*viewer.stylesheet, choice, capitalize(choice)), pos + RealSize(margin, 0));
-		// TODO: determine size
+		String text = tr(*viewer.stylesheet, choice, capitalize(choice));
+		RealSize text_size = dc.GetTextExtent(text);
+		dc.DrawText(text, align_in_rect(ALIGN_MIDDLE_LEFT, text_size,
+		                                RealRect(pos + RealSize(size.width + 1, 0), RealSize(0,size.height))));
+		size = add_horizontal(size, text_size);
 	}
 	if (style().direction == HORIZONTAL) {
-		pos.x += margin + style().spacing;
+		pos.x += size.width  + style().spacing;
 	} else {
-		pos.y += height + style().spacing;
+		pos.y += size.height + style().spacing;
 	}
 }

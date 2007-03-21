@@ -35,9 +35,9 @@ class DropDownList : public wxPopupWindow {
 	
 	// --------------------------------------------------- : Parent control
 	/// Takes all keyboard events from a FieldEditor
-	void onCharInParent(wxKeyEvent&);
+	bool onCharInParent(wxKeyEvent&);
 	/// Takes a mouse event from the parent, show/hide as appropriate
-	void onMouseInParent(wxMouseEvent&, bool open_in_place);
+	bool onMouseInParent(wxMouseEvent&, bool open_in_place);
   
   protected:
 	// --------------------------------------------------- : Selection

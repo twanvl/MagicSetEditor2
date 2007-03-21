@@ -303,7 +303,7 @@ void SymbolFont::getCharInfo(RotatedDC& dc, Context& ctx, double font_size, cons
 
 RealSize SymbolFont::symbolSize(Context& ctx, double font_size, const DrawableSymbol& sym) {
 	if (sym.symbol) {
-		return addDiagonal(sym.symbol->size(ctx, *this, font_size), spacing);
+		return add_diagonal(sym.symbol->size(ctx, *this, font_size), spacing);
 	} else {
 		return defaultSymbolSize(ctx, font_size);
 	}
@@ -312,9 +312,9 @@ RealSize SymbolFont::symbolSize(Context& ctx, double font_size, const DrawableSy
 RealSize SymbolFont::defaultSymbolSize(Context& ctx, double font_size) {
 	SymbolInFont* def = defaultSymbol();
 	if (def) {
-		return addDiagonal(def->size(ctx, *this, font_size), spacing);
+		return add_diagonal(def->size(ctx, *this, font_size), spacing);
 	} else {
-		return addDiagonal(RealSize(1,1), spacing);
+		return add_diagonal(RealSize(1,1), spacing);
 	}
 }
 

@@ -39,16 +39,16 @@ class ValueEditor {
 	/// This editor loses focus
 	virtual void onLoseFocus() {}
 	
-	/// Handle mouse events
-	virtual void onLeftDown   (const RealPoint& pos, wxMouseEvent& ev) {}
-	virtual void onLeftUp     (const RealPoint& pos, wxMouseEvent& ev) {}
-	virtual void onLeftDClick (const RealPoint& pos, wxMouseEvent& ev) {}
-	virtual void onRightDown  (const RealPoint& pos, wxMouseEvent& ev) {}
-	virtual void onMotion     (const RealPoint& pos, wxMouseEvent& ev) {}
-	virtual void onMouseWheel (const RealPoint& pos, wxMouseEvent& ev) {}
+	/// Handle mouse events, return true if the event is used
+	virtual bool onLeftDown   (const RealPoint& pos, wxMouseEvent& ev) { return false; }
+	virtual bool onLeftUp     (const RealPoint& pos, wxMouseEvent& ev) { return false; }
+	virtual bool onLeftDClick (const RealPoint& pos, wxMouseEvent& ev) { return false; }
+	virtual bool onRightDown  (const RealPoint& pos, wxMouseEvent& ev) { return false; }
+	virtual bool onMotion     (const RealPoint& pos, wxMouseEvent& ev) { return false; }
+	virtual bool onMouseWheel (const RealPoint& pos, wxMouseEvent& ev) { return false; }
 	
 	/// Key events
-	virtual void onChar(wxKeyEvent& ev) {}
+	virtual bool onChar(wxKeyEvent& ev) { return false; }
 	
 	/// a context menu is requested, add extra items to the menu m
 	/** return false to suppress menu */

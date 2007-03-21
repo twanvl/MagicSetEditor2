@@ -210,7 +210,7 @@ void DataEditor::onMouseLeave(wxMouseEvent& ev) {
 	if (frame) frame->SetStatusText(wxEmptyString);
 }
 
-void DataEditor::selectField(wxMouseEvent& ev, void (ValueEditor::*event)(const RealPoint&, wxMouseEvent&)) {
+void DataEditor::selectField(wxMouseEvent& ev, bool (ValueEditor::*event)(const RealPoint&, wxMouseEvent&)) {
 	RealPoint pos = mousePoint(ev);
 	// change viewer/editor
 	ValueEditor* old_editor = current_editor;
@@ -242,10 +242,7 @@ void DataEditor::selectFieldNoEvents(const RealPoint& p) {
 }
 
 RealPoint DataEditor::mousePoint(const wxMouseEvent& ev) {
-	StyleSheetP stylesheet = set->stylesheetFor(card);
-	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
-	Rotation rot(ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom());
-	return rot.trInv(RealPoint(ev.GetX(), ev.GetY()));
+	return getRotation().trInv(RealPoint(ev.GetX(), ev.GetY()));
 }
 
 // ----------------------------------------------------------------------------- : Keyboard events

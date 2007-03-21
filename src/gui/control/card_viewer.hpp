@@ -33,6 +33,9 @@ class CardViewer : public wxControl, public DataViewer {
 	/// Invalidate and redraw (the area of) a single value viewer
 	void redraw(const ValueViewer&);
 	
+	/// The rotation to use
+	virtual Rotation getRotation() const;
+	
   protected:
 	/// Return the desired size of control
 	virtual wxSize DoGetBestSize() const;

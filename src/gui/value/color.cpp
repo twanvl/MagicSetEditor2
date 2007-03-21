@@ -128,11 +128,11 @@ IMPLEMENT_VALUE_EDITOR(Color)
 	, drop_down(new DropDownColorList(&editor(), *this))
 {}
 
-void ColorValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
-	drop_down->onMouseInParent(ev, !nativeLook());
+bool ColorValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
+	return drop_down->onMouseInParent(ev, !nativeLook());
 }
-void ColorValueEditor::onChar(wxKeyEvent& ev) {
-	drop_down->onCharInParent(ev);
+bool ColorValueEditor::onChar(wxKeyEvent& ev) {
+	return drop_down->onCharInParent(ev);
 }
 void ColorValueEditor::onLoseFocus() {
 	drop_down->hide(false);
@@ -141,7 +141,7 @@ void ColorValueEditor::onLoseFocus() {
 void ColorValueEditor::draw(RotatedDC& dc) {
 	ColorValueViewer::draw(dc);
 	if (nativeLook()) {
-		draw_drop_down_arrow(&editor(), dc.getDC(), style().getRect().grow(1), drop_down->IsShown());
+		draw_drop_down_arrow(&editor(), dc.getDC(), dc.tr(style().getRect().grow(1)), drop_down->IsShown());
 	}
 }
 void ColorValueEditor::determineSize(bool) {

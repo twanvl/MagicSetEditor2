@@ -36,18 +36,18 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	virtual void onFocus();
 	virtual void onLoseFocus();
 	
-	virtual void onLeftDown  (const RealPoint& pos, wxMouseEvent&);
-	virtual void onLeftUp    (const RealPoint& pos, wxMouseEvent&);
-	virtual void onLeftDClick(const RealPoint& pos, wxMouseEvent&);
-	virtual void onRightDown (const RealPoint& pos, wxMouseEvent&);
-	virtual void onMotion    (const RealPoint& pos, wxMouseEvent&);
-	virtual void onMouseWheel(const RealPoint& pos, wxMouseEvent& ev);
+	virtual bool onLeftDown  (const RealPoint& pos, wxMouseEvent&);
+	virtual bool onLeftUp    (const RealPoint& pos, wxMouseEvent&);
+	virtual bool onLeftDClick(const RealPoint& pos, wxMouseEvent&);
+	virtual bool onRightDown (const RealPoint& pos, wxMouseEvent&);
+	virtual bool onMotion    (const RealPoint& pos, wxMouseEvent&);
+	virtual bool onMouseWheel(const RealPoint& pos, wxMouseEvent& ev);
 	
 	virtual bool onContextMenu(wxMenu& m, wxContextMenuEvent&);
 	virtual wxMenu* getMenu(int type) const;
 	virtual bool onCommand(int);
 	
-	virtual void onChar(wxKeyEvent&);
+	virtual bool onChar(wxKeyEvent&);
 	
 	// --------------------------------------------------- : Actions
 	

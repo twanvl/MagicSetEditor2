@@ -71,15 +71,17 @@ TextValueEditor::~TextValueEditor() {
 
 // ----------------------------------------------------------------------------- : Mouse
 
-void TextValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
+bool TextValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
 	select_words = false;
 	moveSelection(TYPE_INDEX, v.indexAt(style().getRotation().trInv(pos)), !ev.ShiftDown(), MOVE_MID);
+	return true;
 }
-void TextValueEditor::onLeftUp(const RealPoint& pos, wxMouseEvent&) {
+bool TextValueEditor::onLeftUp(const RealPoint& pos, wxMouseEvent&) {
 	// TODO: lookup position of click?
+	return false;
 }
 
-void TextValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
+bool TextValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
 	if (ev.LeftIsDown()) {
 		size_t index = v.indexAt(style().getRotation().trInv(pos));
 		if (select_words) {
@@ -98,27 +100,30 @@ void TextValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
 			moveSelection(TYPE_INDEX, index, false, MOVE_MID);
 		}
 	}
+	return true;
 }
 
-void TextValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent& ev) {
+bool TextValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent& ev) {
 	select_words = true;
 	size_t index = v.indexAt(style().getRotation().trInv(pos));
 	moveSelection(TYPE_INDEX, prevWordBoundry(index), true, MOVE_MID);
 	moveSelection(TYPE_INDEX, nextWordBoundry(index), false, MOVE_MID);
+	return true;
 }
 
-void TextValueEditor::onRightDown(const RealPoint& pos, wxMouseEvent& ev) {
+bool TextValueEditor::onRightDown(const RealPoint& pos, wxMouseEvent& ev) {
 	size_t index = v.indexAt(style().getRotation().trInv(pos));
 	if (index < min(selection_start_i, selection_end_i) ||
 		index > max(selection_start_i, selection_end_i)) {
 		// only move cursor when outside selection
 		moveSelection(TYPE_INDEX, index, !ev.ShiftDown(), MOVE_MID);
 	}
+	return true;
 }
 
 // ----------------------------------------------------------------------------- : Keyboard
 
-void TextValueEditor::onChar(wxKeyEvent& ev) {
+bool TextValueEditor::onChar(wxKeyEvent& ev) {
 	fixSelection();
 	switch (ev.GetKeyCode()) {
 		case WXK_LEFT:
@@ -166,7 +171,7 @@ void TextValueEditor::onChar(wxKeyEvent& ev) {
 				if (selection_start == selection_end) {
 					// Walk over a <sep> as if we are the LEFT key
 					moveSelection(TYPE_CURSOR, prevCharBoundry(selection_end), true, MOVE_LEFT);
-					return;
+					return true;
 				}
 			}
 			replaceSelection(wxEmptyString, _("Backspace"));
@@ -195,6 +200,7 @@ void TextValueEditor::onChar(wxKeyEvent& ev) {
 				replaceSelection(escape(String(ev.GetUnicodeKey(), 1)), _("Typing"));
 			}
 	}
+	return true;
 }
 
 // ----------------------------------------------------------------------------- : Other events
@@ -629,13 +635,15 @@ void TextValueEditor::determineSize(bool force_fit) {
 	style().angle = 0; // no rotation in nativeLook
 	if (scrollbar) {
 		// muliline, determine scrollbar size
+		Rotation rot = viewer.getRotation();
 		if (!force_fit) style().height = 100;
 		int sbw = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
+		RealPoint pos = rot.tr(style().getPos());
 		scrollbar->SetSize(
-			int(style().left + style().width - sbw + 1),
-			int(style().top - 1),
-			int(sbw),
-			int(style().height + 2));
+			(int)pos.x + rot.trS(style().width) + 1 - sbw,
+			(int)pos.y - 1,
+			(int)sbw,
+			(int)rot.trS(style().height) + 2);
 		v.reset();
 	} else {
 		// Height depends on font
@@ -654,13 +662,15 @@ void TextValueEditor::onShow(bool showing) {
 	}
 }
 
-void TextValueEditor::onMouseWheel(const RealPoint& pos, wxMouseEvent& ev) {
+bool TextValueEditor::onMouseWheel(const RealPoint& pos, wxMouseEvent& ev) {
 	if (scrollbar) {
 		int toScroll = ev.GetWheelRotation() * ev.GetLinesPerAction() / ev.GetWheelDelta(); // note: up is positive
 		int target = min(max(scrollbar->GetScrollPos(wxVERTICAL) - toScroll, 0),
 			             scrollbar->GetScrollRange(wxVERTICAL) - scrollbar->GetScrollThumb(wxVERTICAL));
 		scrollTo(target);
+		return true;
 	}
+	return false;
 }
 
 void TextValueEditor::scrollTo(int pos) {

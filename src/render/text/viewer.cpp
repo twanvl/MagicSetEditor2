@@ -382,7 +382,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 			accept_word = true;
 		}
 		// Add size of the character
-		word_size = addHorizontal(word_size, c.size);
+		word_size = add_horizontal(word_size, c.size);
 		positions_word.push_back(word_size.width);
 		// Did the word become too long?
 		if (style.field().multi_line && !break_now) {
@@ -411,7 +411,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 				line.positions.push_back(line_size.width + p);
 			}
 			// add size; next word
-			line_size = addHorizontal(line_size, word_size);
+			line_size = add_horizontal(line_size, word_size);
 			word_size = RealSize(0, 0);
 			word_start = i + 1;
 			positions_word.clear();
@@ -445,7 +445,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 	FOR_EACH(p, positions_word) {
 		line.positions.push_back(line_size.width + p);
 	}
-	line_size = addHorizontal(line_size, word_size);
+	line_size = add_horizontal(line_size, word_size);
 	// the last line
 	if (line_size.height < 0.01 && !lines.empty()) {
 		// if a line has 0 height, use the height of the line above it, but at most once
@@ -477,7 +477,7 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 		if (l.line_height) break; // not an empty line
 	}
 	// amount to shift all lines vertically
-	RealSize s = addDiagonal(
+	RealSize s = add_diagonal(
 					dc.getInternalSize(),
 					-RealSize(style.padding_left+style.padding_right, style.padding_top + style.padding_bottom));
 	double vdelta = align_delta_y(style.alignment, s.height, height);

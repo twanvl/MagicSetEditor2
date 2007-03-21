@@ -37,9 +37,10 @@ int focused_control(const Window* window) {
 /// Fill a DC with a single color
 void clearDC(DC& dc, const wxBrush& brush) {
 	wxSize size = dc.GetSize();
+	wxPoint pos = dc.GetDeviceOrigin(); // don't you love undocumented methods?
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(brush);
-	dc.DrawRectangle(0, 0, size.GetWidth(), size.GetHeight());
+	dc.DrawRectangle(-pos.x, -pos.y, size.GetWidth(), size.GetHeight());
 }
 
 void clearDC_black(DC& dc) {

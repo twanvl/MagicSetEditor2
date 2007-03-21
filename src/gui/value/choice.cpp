@@ -228,13 +228,13 @@ ChoiceValueEditor::~ChoiceValueEditor() {
 	thumbnail_thread.abort(this);
 }
 
-void ChoiceValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
+bool ChoiceValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
 	//HACK TODO REMOVEME
 	thumbnail_thread.abortAll();
-	drop_down->onMouseInParent(ev, style().popup_style == POPUP_DROPDOWN_IN_PLACE && !nativeLook());
+	return drop_down->onMouseInParent(ev, style().popup_style == POPUP_DROPDOWN_IN_PLACE && !nativeLook());
 }
-void ChoiceValueEditor::onChar(wxKeyEvent& ev) {
-	drop_down->onCharInParent(ev);
+bool ChoiceValueEditor::onChar(wxKeyEvent& ev) {
+	return drop_down->onCharInParent(ev);
 }
 void ChoiceValueEditor::onLoseFocus() {
 	drop_down->hide(false);
@@ -243,7 +243,7 @@ void ChoiceValueEditor::onLoseFocus() {
 void ChoiceValueEditor::draw(RotatedDC& dc) {
 	ChoiceValueViewer::draw(dc);
 	if (nativeLook()) {
-		draw_drop_down_arrow(&editor(), dc.getDC(), style().getRect().grow(1), drop_down->IsShown());
+		draw_drop_down_arrow(&editor(), dc.getDC(), dc.tr(style().getRect().grow(1)), drop_down->IsShown());
 	}
 }
 void ChoiceValueEditor::determineSize(bool) {

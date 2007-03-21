@@ -307,18 +307,19 @@ void DropDownList::onMotion(wxMouseEvent& ev) {
 
 // ----------------------------------------------------------------------------- : DropDownList : Parent events
 
-void DropDownList::onMouseInParent(wxMouseEvent& ev, bool open_in_place) {
+bool DropDownList::onMouseInParent(wxMouseEvent& ev, bool open_in_place) {
 	if (IsShown()) hide(false);
 	else           show(open_in_place, wxPoint(ev.GetX(), ev.GetY()));
+	return true;
 }
 
-void DropDownList::onCharInParent(wxKeyEvent& ev) {
+bool DropDownList::onCharInParent(wxKeyEvent& ev) {
 	// keyboard codes
 	int k = ev.GetKeyCode();
 	if (IsShown()) {
 		if (open_sub_menu) {
 			// sub menu always takes keys
-			open_sub_menu->onCharInParent(ev);
+			return open_sub_menu->onCharInParent(ev);
 		} else {
 			switch (k) {
 				case WXK_UP:
@@ -356,15 +357,18 @@ void DropDownList::onCharInParent(wxKeyEvent& ev) {
 							selected_item = index;
 							showSubMenu();
 							Refresh(false);
-							return;
+							return true;
 						}
 					}
 			}
 		}
+		return true;
 	} else if (k==WXK_SPACE || k==WXK_RETURN || k==WXK_DOWN) {
 		// drop down list is not shown yet, show it now
 		show(false, wxPoint(0,0));
+		return true;
 	}
+	return false;
 }
 
 // ----------------------------------------------------------------------------- : DropDownList : Event table
