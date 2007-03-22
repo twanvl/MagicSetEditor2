@@ -45,7 +45,7 @@ class ItemList : public wxListView {
 	
 	/// Is sorting required?
 	virtual bool mustSort() const { return false; }
-	/// Compare two items for <
+	/// Compare two items for < based on sort_by_column (not on sort_ascending)
 	virtual bool compareItems(void* a, void* b) const = 0;
 	
 	// --------------------------------------------------- : Protected interface

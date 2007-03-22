@@ -93,7 +93,11 @@ struct ItemList::ItemComparer {
 	ItemList&   list; // 'this' pointer
 	// Compare two items using the current criterium and order
 	bool operator () (const VoidP& a, const VoidP& b) {
-		return list.compareItems(a.get(), b.get());
+		if (list.sort_ascending) {
+			return list.compareItems(a.get(), b.get());
+		} else {
+			return list.compareItems(b.get(), a.get());
+		}
 	}
 };
 
@@ -124,7 +128,6 @@ void ItemList::sortBy(long column, bool ascending) {
 		} else if (i == sort_by_column) {
 			ClearColumnImage(i);
 		}
-		++i;
 	}
 	// sort list
 	sort_by_column = column;

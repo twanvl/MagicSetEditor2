@@ -167,13 +167,8 @@ bool CardListBase::compareItems(void* a, void* b) const {
 	FieldP sort_field = column_fields[sort_by_column];
 	ValueP va = reinterpret_cast<Card*>(a)->data[sort_field];
 	ValueP vb = reinterpret_cast<Card*>(b)->data[sort_field];
-	if (sort_ascending) {
-		if (!va || !vb)  return va < vb; // got to do something, compare pointers
-		return smart_less(  va->toString() , vb->toString() );
-	} else {
-		if (!va || !vb)  return vb < va;
-		return smart_less(  vb->toString() , va->toString() );
-	}
+	if (!va || !vb)  return va < vb; // got to do something, compare pointers
+	return smart_less(  va->toString() , vb->toString() );
 }
 
 void CardListBase::rebuild() {

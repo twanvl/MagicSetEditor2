@@ -20,6 +20,9 @@ class KeywordList;
 class KeywordsPanel : public SetWindowPanel {
   public:
 	KeywordsPanel(Window* parent, int id);
+	
+	virtual void onChangeSet();
+	
   private:
 	KeywordList* list;
 };
