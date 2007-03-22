@@ -200,12 +200,14 @@ void draw_drop_down_arrow(Window* win, DC& dc, const wxRect& rect, bool active) 
 }
 
 void draw_checkbox(Window* win, DC& dc, const wxRect& rect, bool checked) {
-	// TODO: Windows version?
-	// portable
+	#if wxUSE_UXTHEME && defined(__WXMSW__)
+		// TODO: Windows version?
+	#endif
+	// portable version
+	if (checked) {
+		dc.DrawCheckMark(wxRect(rect.x-1,rect.y-1,rect.width+2,rect.height+2));
+	}
 	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
 	dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
-	if (checked) {
-		dc.DrawCheckMark(rect);
-	}
 }

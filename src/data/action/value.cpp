@@ -52,10 +52,11 @@ class SimpleValueAction : public ValueAction {
 	typename T::ValueType new_value;
 };
 
-ValueAction* value_action(const ChoiceValueP& value, const Defaultable<String>& new_value) { return new SimpleValueAction<ChoiceValue, &ChoiceValue::value,    true> (value, new_value); }
-ValueAction* value_action(const ColorValueP&  value, const Defaultable<Color>&  new_value) { return new SimpleValueAction<ColorValue,  &ColorValue::value,     true> (value, new_value); }
-ValueAction* value_action(const ImageValueP&  value, const FileName&            new_value) { return new SimpleValueAction<ImageValue,  &ImageValue::filename,  false>(value, new_value); }
-ValueAction* value_action(const SymbolValueP& value, const FileName&            new_value) { return new SimpleValueAction<SymbolValue, &SymbolValue::filename, false>(value, new_value); }
+ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value) { return new SimpleValueAction<ChoiceValue,         &ChoiceValue::value,         true> (value, new_value); }
+ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value) { return new SimpleValueAction<MultipleChoiceValue, &MultipleChoiceValue::value, false>(value, new_value); }
+ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value) { return new SimpleValueAction<ColorValue,          &ColorValue::value,          true> (value, new_value); }
+ValueAction* value_action(const ImageValueP&          value, const FileName&            new_value) { return new SimpleValueAction<ImageValue,          &ImageValue::filename,       false>(value, new_value); }
+ValueAction* value_action(const SymbolValueP&         value, const FileName&            new_value) { return new SimpleValueAction<SymbolValue,         &SymbolValue::filename,      false>(value, new_value); }
 
 
 // ----------------------------------------------------------------------------- : Text

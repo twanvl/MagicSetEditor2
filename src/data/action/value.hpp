@@ -24,6 +24,7 @@ DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(Style);
 DECLARE_POINTER_TYPE(TextValue);
 DECLARE_POINTER_TYPE(ChoiceValue);
+DECLARE_POINTER_TYPE(MultipleChoiceValue);
 DECLARE_POINTER_TYPE(ColorValue);
 DECLARE_POINTER_TYPE(ImageValue);
 DECLARE_POINTER_TYPE(SymbolValue);
@@ -43,10 +44,11 @@ class ValueAction : public Action {
 // ----------------------------------------------------------------------------- : Simple
 
 /// Action that updates a Value to a new value
-ValueAction* value_action(const ChoiceValueP& value, const Defaultable<String>& new_value);
-ValueAction* value_action(const ColorValueP&  value, const Defaultable<Color>&  new_value);
-ValueAction* value_action(const ImageValueP&  value, const FileName&            new_value);
-ValueAction* value_action(const SymbolValueP& value, const FileName&            new_value);
+ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value);
+ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value);
+ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value);
+ValueAction* value_action(const ImageValueP&          value, const FileName&            new_value);
+ValueAction* value_action(const SymbolValueP&         value, const FileName&            new_value);
 
 // ----------------------------------------------------------------------------- : Text
 

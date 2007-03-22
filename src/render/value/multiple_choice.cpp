@@ -41,7 +41,7 @@ void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
 }
 
 void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const String& choice, bool active) {
-	RealSize size;
+	RealSize size; size.height = item_height;
 	if (nativeLook() && (style().render_style & RENDER_CHECKLIST)) {
 		wxRect rect = dc.tr(RealRect(pos + RealSize(1,1), RealSize(12,12)));
 		draw_checkbox(nullptr, dc.getDC(), rect, active); // TODO
@@ -60,7 +60,7 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 	}
 	if (style().render_style & RENDER_TEXT) {
 		// draw text
-		String text = tr(*viewer.stylesheet, choice, capitalize(choice));
+		String text = tr(*viewer.stylesheet, choice, capitalize_sentence(choice));
 		RealSize text_size = dc.GetTextExtent(text);
 		dc.DrawText(text, align_in_rect(ALIGN_MIDDLE_LEFT, text_size,
 		                                RealRect(pos + RealSize(size.width + 1, 0), RealSize(0,size.height))));

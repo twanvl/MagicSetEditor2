@@ -21,6 +21,10 @@ class MultipleChoiceValueEditor : public MultipleChoiceValueViewer, public Value
 	DECLARE_VALUE_EDITOR(MultipleChoice);
 	
 	virtual void determineSize(bool force_fit);
+	virtual bool onLeftDown   (const RealPoint& pos, wxMouseEvent& ev);
+  private:
+	/// Toggle a choice or on or off
+	void toggle(int id);
 };
 
 // ----------------------------------------------------------------------------- : EOF
