@@ -274,6 +274,15 @@ set field:
 	choice: no
 	description: Should reminder text be added to keywords by default? Note: you can enable/disable reminder text by right clicking the keyword.
 set field:
+	# TODO : RENAME
+	type: multiple choice
+	name: automatic reminder text2
+	choice: old keywords
+	choice: core set keywords
+	choice: expert level keywords
+	choice: custom keywords
+	description: Should reminder text be added to keywords by default? Note: you can enable/disable reminder text by right clicking the keyword.
+set field:
 	type: boolean
 	name: automatic card numbers
 	description: Should card numbers be shown on the cards?
@@ -289,6 +298,58 @@ set field:
 	choice: no
 	description: Use gradients on multicolor cards by default, you can always change it be clicking on the card border.
 	initial: no
+
+############################# Default style
+
+default set style:
+	title:
+		padding left: 2
+		font:
+			size: 16
+	symbol:
+		variation:
+			name: common
+			border radius: 0.10
+			fill type: solid
+			fill color:   rgb(0,0,0)
+			border color: rgb(255,255,255)
+		variation:
+			name: uncommon
+			border radius: 0.05
+			fill type: linear gradient
+			fill color 1:   rgb(224,224,224)
+			fill color 2:   rgb(84, 84, 84)
+			border color 1: rgb(0,  0,  0)
+			border color 2: rgb(0,  0,  0)
+		variation:
+			name: rare
+			border radius: 0.05
+			fill type: linear gradient
+			fill color 1:   rgb(214,196,94)
+			fill color 2:   rgb(95, 84, 40)
+			border color 1: rgb(0,  0,  0)
+			border color 2: rgb(0,  0,  0)
+		variation:
+			name: special
+			border radius: 0.10
+			fill type: linear gradient
+			fill color 1:   rgb(224,170,247)
+			fill color 2:   rgb(58,7,80)
+			border color 1: rgb(255,255,255)
+			border color 2: rgb(255,255,255)
+	automatic reminder text:
+		render style: both
+		choice images:
+			yes: script: buildin_image("bool_yes")
+			no:  script: buildin_image("bool_no")
+	automatic reminder text2:
+		render style: checklist
+		direction: vertical
+	use gradient multicolor:
+		render style: both
+		choice images:
+			yes: script: buildin_image("bool_yes")
+			no:  script: buildin_image("bool_no")
 
 ############################################################## Card fields
 
@@ -719,10 +780,6 @@ statistics dimension:
 	numeric: true
 	icon: stats/casting_cost.png
 
-statistics dimension:
-	name:   rarity_twice
-	script: card.rarity + card.rarity
-
 statistics category:
 	name: color / rarity
 	dimension: card_color
@@ -804,6 +861,19 @@ statistics category:
 ############################# Keyword rules
 
 has keywords: true
+
+keyword mode:
+	name: old
+	description: Old keywords (Banding, Phasing, etc.)
+keyword mode:
+	name: core
+	description: Core set keywords (Flying, Haste, etc.)
+keyword mode:
+	name: expert
+	description: Expert level keywords (Cycling, Vanishing, etc.)
+keyword mode:
+	name: custom
+	description: Custom keywords
 
 keyword parameter type:
 	name: no parameter

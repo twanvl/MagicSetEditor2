@@ -37,6 +37,7 @@ class BooleanStyle : public ChoiceStyle {
   public:
 	BooleanStyle(const ChoiceFieldP& field);
 	DECLARE_HAS_FIELD(Boolean); // not DECLARE_STYLE_TYPE, because we use a normal ChoiceValueViewer/Editor
+	virtual StyleP clone() const;
 	
 	// no extra data
 	

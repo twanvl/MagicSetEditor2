@@ -92,6 +92,9 @@ class Style {
 	inline RealSize  getSize() const { return RealSize (           width, height); }
 	inline RealRect  getRect() const { return RealRect (left, top, width, height); }
 	
+	/// Get a copy of this style
+	virtual StyleP clone() const = 0;
+	
 	/// Make a viewer object for values using this style
 	/** thisP is a smart pointer to this */
 	virtual ValueViewerP makeViewer(DataViewer& parent, const StyleP& thisP) = 0;
@@ -157,12 +160,16 @@ template <> ValueP read_new<Value>(Reader&);
 	ValueP Type ## Field::newValue(const FieldP& thisP) const {							\
 		assert(thisP.get() == this);													\
 		return new_shared1<Type ## Value>(static_pointer_cast<Type ## Field>(thisP));	\
+	}																					\
+	StyleP Type ## Style::clone() const {												\
+		return new_shared1<Type ## Style>(*this);										\
 	}
 
 #define DECLARE_STYLE_TYPE(Type)														\
 	DECLARE_HAS_FIELD(Type)																\
+	virtual StyleP clone() const;														\
 	virtual ValueViewerP makeViewer(DataViewer& parent, const StyleP& thisP);			\
-	virtual ValueViewerP makeEditor(DataEditor& parent, const StyleP& thisP)
+	virtual ValueViewerP makeEditor(DataEditor& parent, const StyleP& thisP);
 
 // implement field() which returns a field with the right (derived) type
 #define DECLARE_HAS_FIELD(Type)															\

@@ -53,6 +53,15 @@ class IndexMap : private vector<Value> {
 			init_object(key, (*this)[key->index]);
 		}
 	}
+	/// Initialize this map with cloned values from another list
+	void cloneFrom(const IndexMap<Key,Value>& values) {
+		if (this->size() == values.size()) return;
+		this->reserve(values.size());
+		for(size_t index = size() ; index < values.size() ; ++index) {
+			const Value& value = values[index];
+			push_back(value ? value->clone() : value);
+		}
+	}
 	/// Change this map by adding an additional key and value
 	void add(const Key& key, const Value& value) {
 		assert(get_key(value) == key);

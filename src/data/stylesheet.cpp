@@ -69,8 +69,8 @@ IMPLEMENT_REFLECTION(StyleSheet) {
 	REFLECT(card_background);
 	if (game) {
 		REFLECT_IF_READING {
-			card_style    .init(game->card_fields);
-			set_info_style.init(game->set_fields);
+			card_style.init(game->card_fields);
+			set_info_style.cloneFrom(game->default_set_style);
 		}
 		REFLECT(card_style);
 		REFLECT(set_info_style);
