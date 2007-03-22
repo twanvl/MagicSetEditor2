@@ -50,11 +50,11 @@ menu:
 	
 	window:			&Window
 	new window:			&New Window
-	cards window:		&Cards	F5
-	set info window:	&Set Information	F6
-	style window:		St&yle	F7
-	keywords window:	&Keywords	F8
-	stats window:		S&tatistics	F8
+	cards tab:			&Cards	F5
+	set info tab:		&Set Information	F6
+	style tab:			St&yle	F7
+	keywords tab:		&Keywords	F8
+	stats tab:			S&tatistics	F8
 	
 	help:			&Help
 	index:				&Index...	F1
@@ -81,6 +81,8 @@ menu:
 
 ############################################################## Menu help texts
 help:
+	welcome:			Welcome to Magic Set Editor
+	
 	file:
 	new set:			Create a new set
 	open set:			Open an existing set
@@ -111,6 +113,7 @@ help:
 	add cards:			Add multiple cards to the set
 	remove card:		Delete the selected card from this set
 	orientation:		Orientation of the displayed card
+	rotate card:			Rotate the card display 90° clockwise
 	rotate 0:				Display the card with the right side up
 	rotate 270:				Display the card rotated clockwise
 	rotate 90:				Display the card rotated counter-clockwise (anti-clockwise for the British)
@@ -125,16 +128,11 @@ help:
 	
 	window:
 	new window:			Creates another window to edit the same set
-	cards window:		Edit the cards in the set
-	set info window:	Edit information about the set, its creator, etc.
-	style window:		Change the style of cards
-	keywords window:	Define extra keywords for this set
-	stats window:		Show statistics about the cards in the set
-	cards tab:			
-	set info tab:		Set Information
-	style tab:			Card Style
-	keywords tab:		
-	stats tab:			
+	cards tab:			Edit the cards in the set
+	set info tab:		Edit information about the set, its creator, etc.
+	style tab:			Change the style of cards
+	keywords tab:		Define extra keywords for this set
+	stats tab:			Show statistics about the cards in the set
 	
 	help:
 	index:				
@@ -148,8 +146,7 @@ help:
 		(When off, the cards are exported
 		 and copied at 100% size and normal rotation)
 	
-	# symbol editor
-	
+	# Symbol editor
 	new symbol:			Create a new symbol
 	open symbol:		Open a symbol
 	save symbol:		Save the symbol
@@ -159,36 +156,52 @@ help:
 	
 	duplicate:			Duplicates the selected shapes
 	
+	grid:				Show gridlines
+	snap:				Snap shapes and points to gridlines
+	
 	tool:
 	select:				Select and move shapes
 	rotate:				Rotate and shear shapes
 	points:				Edit control points for a shape in the symbol
 	basic shapes:		Draw basic shapes, such as rectangles and circles
 	paint:				Paint on the shape using a paintbrush
+	
+	select editor:
+	merge:				Merges this shape with those below it
+	subtract:			Subtracts this shape from shapes below it, leaves only the area in that shape that is not in this shape
+	intersect:			Intersects this shape with shapes below it, leaves only the area in both shapes
+	overlap:			Place this shape, and its border above shapes below it
+	border:				Draws this shape as a border
+	
+	drag to shear:		Drag to shear selected shape
+	drag to rotate:		Drag to rotate selected %s, Ctrl constrains angle to multiples of 15 degrees
+	drag to resize:		Drag to resize selected %s, Ctrl constrains size
+	click to select shape:	Click to select shape, drag to move shape, double click to edit shape
+	
+	ellipse:			Draw circles and ellipses
+	rectangle:			Draw squares and rectangles
+	polygon:			Draw triangles, pentagons and other regular polygons
+	star:				Draw stars
+	sides:				The number of sides of the polygon or points of the star
+	drag to draw shape:	Drag to resize shape, Ctrl constrains shape, Shift centers shape
+	draw ellipse:		Click and drag to draw a ellipse, hold Ctrl for a circle
+	draw rectangle:		Click and drag to draw a rectangle, hold Ctrl for a square
+	draw polygon:		Click and drag to draw a polygon
+	draw star:			Click and drag to draw a star
+	
+	line segment:		Makes the selected line segment straight
+	curve segment:		Makes the selected line segment curved
+	free point:			Allows the two control points of the point to be moved freely
+	smooth point:		Makes the selected point smooth by placing the two control points opposite each other
+	symmetric point:	Makes the selected point symetric
+	drag to move curve:	Drag to move curve
+	drag to move line:	Alt + drag to move curve;  double click to add a point on this line
+	drag to move point:	Click and drag to move control point;  double click to remove the point
 
 ############################################################## Toolbar
 tool:
-	cards tab:		Cards
-	set info tab:	Set info
-	
-	new set:		New set
-	open set:		Open set
-	save set:		Save set
-	
-	cut:			Cut
-	copy:			Copy
-	paste:			Paste
-	undo:			Undo%s
-	redo:			Redo%s
-	
-	add card:		Add card
-	remove card:	Remove selected card
-	rotate card:	Rotate card
-	
-	bold:			Bold
-	italic:			Italic
-	symbols:		Symbols
-	reminder text:	Reminder Text
+	undo:				Undo
+	redo:				Redo
 	
 	cards tab:			Cards
 	set info tab:		Set info
@@ -197,13 +210,95 @@ tool:
 	stats tab:			Statistics
 	
 	# symbol editor
+	store symbol:		Store
+	
+	grid:				Grid
+	snap:				Snap
+	
+	select:				Select
+	rotate:				Rotate
+	points:				Points
+	basic shapes:		Basic Shapes
+	paint:				Paint
+	
+	merge:				Merge
+	subtract:			Subtract
+	intersect:			Intersect
+	overlap:			Overlap
+	border:				Border
+	
+	ellipse:			Ellipse
+	rectangle:			Rectangle
+	polygon:			Polygon
+	star:				Star
+	
+	line segment:		Line
+	curve segment:		Curve
+	free point:			Free
+	smooth point:		Smooth
+	symmetric point:	Symmetric
+	
+############################################################## Toolbar help text
+tooltip:
+	cards tab:			
+	set info tab:		Set information
+	style tab:			
+	keywords tab:		
+	stats tab:			
+	
+	new set:			New set
+	open set:			Open set
+	save set:			Save set
+	
+	cut:				Cut
+	copy:				Copy
+	paste:				Paste
+	undo:				Undo%s
+	redo:				Redo%s
+	
+	add card:			Add card
+	remove card:		Remove selected card
+	rotate card:		Rotate card
+	
+	bold:				Bold
+	italic:				Italic
+	symbols:			Symbols
+	reminder text:		Reminder Text
+	
+	cards tab:			
+	set info tab:		Set Information
+	style tab:			Card Style
+	keywords tab:		
+	stats tab:			
+	
+	# symbol editor
 	store symbol:		Store symbol in set
+	
+	grid:				Show grid
+	snap:				Snap to grid
 	
 	select:				Select (F5)
 	rotate:				Rotate (F6)
 	points:				Points (F7)
 	basic shapes:		Basic Shapes (F8)
 	paint:				Paint on Shape (F9)
+	
+	merge:				Merge with shapes below
+	subtract:			Subtract from shapes below
+	intersect:			Intersect with shapes below
+	overlap:			Place above other shapes
+	border:				Draw as a border
+	
+	ellipse:			Circle / Ellipse
+	rectangle:			Square / Rectangle
+	polygon:			Polygon
+	star:				Star
+	
+	line segment:		To straigt line
+	curve segment:		To curve
+	free point:			Unlock point
+	smooth point:		Make point smooth
+	symmetric point:	Make point symmetric
 
 ############################################################## Labels in the GUI
 label:
@@ -239,6 +334,9 @@ label:
 	selection:			Selection
 	zoom:				Zoom
 	filter:				Filter
+	
+	# Symbol editor
+	sides:				sides
 
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
@@ -359,7 +457,7 @@ error:
 	checking updates failed:			Checking updates failed.
 	no updates:							There are no available updates.
 
-############################################################## Types used in scripts
+############################################################## Types used in scripts / shape names
 type:
 	function:		function
 	collection:		collection
@@ -370,6 +468,21 @@ type:
 	boolean:		boolean
 	color:			color
 	nil:			nothing
+	
+	# Symbol editor shapes
+	shape:			shape
+	shapes:			shapes
+	circle:			circle
+	ellipse:		ellipse
+	square:			square
+	rectangle:		rectangle
+	triangle:		triangle
+	rhombus:		rhombus
+	pentagon:		pentagon
+	hexagon:		hexagon
+	polygon:		polygon
+	star:			star
+	
 
 ############################################################## Magic
 game:

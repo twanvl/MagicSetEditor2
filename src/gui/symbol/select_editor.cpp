@@ -108,12 +108,12 @@ void SymbolSelectEditor::drawRotationCenter(DC& dc, const Vector2D& pos) {
 
 void SymbolSelectEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->AddSeparator();
-	tb->AddTool(ID_PART_MERGE,			_("Merge"),		load_resource_image(_("combine_or")),		wxNullBitmap, wxITEM_CHECK, _("Merge with shapes below"),			_("Merges this shape with those below it"));
-	tb->AddTool(ID_PART_SUBTRACT,		_("Subtract"),	load_resource_image(_("combine_sub_dark")),	wxNullBitmap, wxITEM_CHECK, _("Subtract from shapes below"),		_("Subtracts this shape from shapes below it, leaves only the area in that shape that is not in this shape"));
-	tb->AddTool(ID_PART_INTERSECTION,	_("Intersect"),	load_resource_image(_("combine_and_dark")),	wxNullBitmap, wxITEM_CHECK, _("Intersect with shapes below"),		_("Intersects this shape with shapes below it, leaves only the area in both shapes"));
+	tb->AddTool(ID_PART_MERGE,			_TOOL_("merge"),	load_resource_image(_("combine_or")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("merge"),		_HELP_("merge"));
+	tb->AddTool(ID_PART_SUBTRACT,		_TOOL_("subtract"),	load_resource_image(_("combine_sub_dark")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("subtract"),	_HELP_("subtract"));
+	tb->AddTool(ID_PART_INTERSECTION,	_TOOL_("intersect"),load_resource_image(_("combine_and_dark")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("intersect"),	_HELP_("intersect"));
 	// note: difference doesn't work (yet)
-	tb->AddTool(ID_PART_OVERLAP,		_("Overlap"),	load_resource_image(_("combine_over")),		wxNullBitmap, wxITEM_CHECK, _("Place above other shapes"),			_("Place this shape, and its border above shapes below it"));
-	tb->AddTool(ID_PART_BORDER,			_("Border"),	load_resource_image(_("combine_border")),	wxNullBitmap, wxITEM_CHECK, _("Draw as a border"),					_("Draws this shape as a border"));
+	tb->AddTool(ID_PART_OVERLAP,		_TOOL_("overlap"),	load_resource_image(_("combine_over")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("overlap"),	_HELP_("overlap"));
+	tb->AddTool(ID_PART_BORDER,			_TOOL_("border"),	load_resource_image(_("combine_border")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("border"),	_HELP_("border"));
 	tb->Realize();
 }
 void SymbolSelectEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
@@ -247,17 +247,18 @@ void SymbolSelectEditor::onMouseMove  (const Vector2D& from, const Vector2D& to,
 	if (!control.selected_parts.empty() && onAnyHandle(to, &dx, &dy)) {
 		// we are on a handle, don't highlight
 		highlightPart = SymbolPartP();
+		String shapes = control.selected_parts.size() > 1 ? _TYPE_("shapes") : _TYPE_("shape");
 		if (rotate) {
 			// shear or rotating?
 			if (dx == 0 || dy == 0) {
-				SetStatusText(String(_("Drag to shear selected shape")) + (control.selected_parts.size() > 1 ? _("s") : _("")));
+				SetStatusText(_HELP_1_("drag to shear", shapes));
 				control.SetCursor(dx == 0 ? cursorShearX : cursorShearY);
 			} else {
-				SetStatusText(String(_("Drag to rotate selected shape")) + (control.selected_parts.size() > 1 ? _("s") : _("")) + _(", Ctrl constrains angle to multiples of 15 degrees"));
+				SetStatusText(_HELP_1_("drag to rotate", shapes));
 				control.SetCursor(cursorRotate);
 			}
 		} else {
-			SetStatusText(String(_("Drag to resize selected shape")) + (control.selected_parts.size() > 1 ? _("s") : _("")) + _(", Ctrl constrains size"));
+			SetStatusText(_HELP_1_("drag to resize", shapes));
 			// what cursor to use?
 			if      (dx ==  dy) control.SetCursor(wxCURSOR_SIZENWSE);
 			else if (dx == -dy) control.SetCursor(wxCURSOR_SIZENESW);
@@ -266,7 +267,7 @@ void SymbolSelectEditor::onMouseMove  (const Vector2D& from, const Vector2D& to,
 		}
 	} else {
 		if (highlightPart) {
-			SetStatusText(_("Click to select shape, drag to move shape, double click to edit shape"));
+			SetStatusText(_HELP_("click to select shape"));
 		} else {
 			SetStatusText(_(""));
 		}

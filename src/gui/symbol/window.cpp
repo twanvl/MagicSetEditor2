@@ -92,26 +92,26 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
 	
 	// Toolbar
 	wxToolBar* tb = CreateToolBar(wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL | wxTB_TEXT);
-	tb->AddTool(ID_FILE_STORE,	_("Store"),			load_resource_tool_image(_("apply")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_("store symbol"), _HELP_("store symbol"));
+	tb->AddTool(ID_FILE_STORE,		_TOOL_("store symbol"),	load_resource_tool_image(_("apply")),		wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("store symbol"), _HELP_("store symbol"));
 	tb->AddSeparator();
-	tb->AddTool(ID_EDIT_UNDO,	_("Undo"),			load_resource_tool_image(_("undo")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("undo",wxEmptyString));
-	tb->AddTool(ID_EDIT_REDO,	_("Redo"),			load_resource_tool_image(_("redo")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("redo",wxEmptyString));
+	tb->AddTool(ID_EDIT_UNDO,		_TOOL_("undo"),			load_resource_tool_image(_("undo")),		wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_1_("undo",wxEmptyString));
+	tb->AddTool(ID_EDIT_REDO,		_TOOL_("redo"),			load_resource_tool_image(_("redo")),		wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_1_("redo",wxEmptyString));
 	tb->AddSeparator();
-	tb->AddTool(ID_VIEW_GRID,	_("Grid"),			load_resource_tool_image(_("grid")),		wxNullBitmap, wxITEM_CHECK,  _TOOL_("grid"));
-	tb->AddTool(ID_VIEW_GRID_SNAP,_("Snap"),		load_resource_tool_image(_("grid_snap")),	wxNullBitmap, wxITEM_CHECK,  _TOOL_("snap"));
+	tb->AddTool(ID_VIEW_GRID,		_TOOL_("grid"),			load_resource_tool_image(_("grid")),		wxNullBitmap, wxITEM_CHECK,  _TOOLTIP_("grid"),			_HELP_("grid"));
+	tb->AddTool(ID_VIEW_GRID_SNAP,	_TOOL_("snap"),			load_resource_tool_image(_("grid_snap")),	wxNullBitmap, wxITEM_CHECK,  _TOOLTIP_("snap"),			_HELP_("snap"));
 	tb->Realize();
 	
 	// Edit mode toolbar
 	wxPanel* emp = new wxPanel(this, wxID_ANY);
 	wxToolBar* em = new wxToolBar(emp, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_VERTICAL | wxTB_TEXT | wxTB_HORZ_LAYOUT);
-	em->AddTool(ID_MODE_SELECT,_("Select"),			load_resource_tool_image(_("mode_select")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("select"),		_HELP_("select"));
-	em->AddTool(ID_MODE_ROTATE,_("Rotate"),			load_resource_tool_image(_("mode_rotate")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("rotate"),		_HELP_("rotate"));
+	em->AddTool(ID_MODE_SELECT,		_TOOL_("select"),		load_resource_tool_image(_("mode_select")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("select"),		_HELP_("select"));
+	em->AddTool(ID_MODE_ROTATE,		_TOOL_("rotate"),		load_resource_tool_image(_("mode_rotate")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("rotate"),		_HELP_("rotate"));
 	em->AddSeparator();
-	em->AddTool(ID_MODE_POINTS,_("Points"),			load_resource_tool_image(_("mode_curve")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("points"),		_HELP_("points"));
+	em->AddTool(ID_MODE_POINTS,		_TOOL_("points"),		load_resource_tool_image(_("mode_curve")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("points"),		_HELP_("points"));
 	em->AddSeparator();
-	em->AddTool(ID_MODE_SHAPES,_("Basic Shapes"),	load_resource_tool_image(_("circle")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("basic shapes"),	_HELP_("basic shapes"));
+	em->AddTool(ID_MODE_SHAPES,		_TOOL_("basic shapes"),	load_resource_tool_image(_("circle")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("basic shapes"),	_HELP_("basic shapes"));
 	em->AddSeparator();
-	em->AddTool(ID_MODE_PAINT, _("Paint"),			load_resource_tool_image(_("mode_paint")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("paint"),		_HELP_("paint"));
+	em->AddTool(ID_MODE_PAINT,		_TOOL_("paint"),		load_resource_tool_image(_("mode_paint")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("paint"),			_HELP_("paint"));
 	em->AddSeparator();
 	em->Realize();
 	
@@ -228,13 +228,13 @@ void SymbolWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 			ev.Enable(control->getSymbol()->actions.canUndo());
 			String label = control->getSymbol()->actions.undoName();
 			ev.SetText(_MENU_1_("undo", label));
-			GetToolBar()->SetToolShortHelp(ID_EDIT_UNDO, _TOOL_1_("undo", label));
+			GetToolBar()->SetToolShortHelp(ID_EDIT_UNDO, _TOOLTIP_1_("undo", label));
 			break;
 		} case ID_EDIT_REDO: {
 			ev.Enable(control->getSymbol()->actions.canRedo());
 			String label = control->getSymbol()->actions.redoName();
 			ev.SetText(_MENU_1_("redo", label));
-			GetToolBar()->SetToolShortHelp(ID_EDIT_REDO, _TOOL_1_("redo", label));
+			GetToolBar()->SetToolShortHelp(ID_EDIT_REDO, _TOOLTIP_1_("redo", label));
 			break;
 		} default: {
 			// items created by the editor control

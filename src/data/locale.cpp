@@ -25,16 +25,17 @@ LocaleP Locale::byName(const String& name) {
 
 IMPLEMENT_REFLECTION(Locale) {
 	REFLECT_BASE(Packaged);
-	REFLECT_N("menu",   translations[LOCALE_CAT_MENU]);
-	REFLECT_N("help",   translations[LOCALE_CAT_HELP]);
-	REFLECT_N("tool",   translations[LOCALE_CAT_TOOL]);
-	REFLECT_N("label",  translations[LOCALE_CAT_LABEL]);
-	REFLECT_N("button", translations[LOCALE_CAT_BUTTON]);
-	REFLECT_N("title",  translations[LOCALE_CAT_TITLE]);
-	REFLECT_N("action", translations[LOCALE_CAT_ACTION]);
-	REFLECT_N("error",  translations[LOCALE_CAT_ERROR]);
-	REFLECT_N("type",   translations[LOCALE_CAT_TYPE]);
-	REFLECT_N("game",   game_translations);
+	REFLECT_N("menu",        translations[LOCALE_CAT_MENU]);
+	REFLECT_N("help",        translations[LOCALE_CAT_HELP]);
+	REFLECT_N("tool",        translations[LOCALE_CAT_TOOL]);
+	REFLECT_N("tooltip",     translations[LOCALE_CAT_TOOLTIP]);
+	REFLECT_N("label",       translations[LOCALE_CAT_LABEL]);
+	REFLECT_N("button",      translations[LOCALE_CAT_BUTTON]);
+	REFLECT_N("title",       translations[LOCALE_CAT_TITLE]);
+	REFLECT_N("action",      translations[LOCALE_CAT_ACTION]);
+	REFLECT_N("error",       translations[LOCALE_CAT_ERROR]);
+	REFLECT_N("type",        translations[LOCALE_CAT_TYPE]);
+	REFLECT_N("game",        game_translations);
 	REFLECT_N("stylesheet",  stylesheet_translations);
 	REFLECT_N("symbol font", symbol_font_translations);
 }

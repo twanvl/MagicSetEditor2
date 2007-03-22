@@ -155,12 +155,12 @@ wxPen SymbolPointEditor::handlePen(WhichPen p, LockMode lock) {
 void SymbolPointEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	// Initialize toolbar
 	tb->AddSeparator();
-	tb->AddTool(ID_SEGMENT_LINE,	_("Line"),		load_resource_tool_image(_("line")),		wxNullBitmap, wxITEM_CHECK, _("To straigt line"),		_("Makes the selected line straight"));
-	tb->AddTool(ID_SEGMENT_CURVE,	_("Curve"),		load_resource_tool_image(_("curve")),		wxNullBitmap, wxITEM_CHECK, _("To curve"),				_("Makes the selected line curved"));
-	tb->AddSeparator();
-	tb->AddTool(ID_LOCK_FREE,		_("Free"),		load_resource_tool_image(_("lock_free")),	wxNullBitmap, wxITEM_CHECK, _("Unlock node"),			_("Allows the two control points on the node to be moved freely"));
-	tb->AddTool(ID_LOCK_DIR,		_("Smooth"),	load_resource_tool_image(_("lock_dir")),	wxNullBitmap, wxITEM_CHECK, _("Make node smooth"),		_("Makes the selected node smooth by placing the two control points opposite each other"));
-	tb->AddTool(ID_LOCK_SIZE,		_("Symmetric"),	load_resource_tool_image(_("lock_size")),	wxNullBitmap, wxITEM_CHECK, _("Make node symmetric"),	_("Makes the selected node symetric"));
+	tb->AddTool(ID_SEGMENT_LINE,	_TOOL_("line segment"),		load_resource_tool_image(_("line")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("line segment"),		_HELP_("line segment"));
+	tb->AddTool(ID_SEGMENT_CURVE,	_TOOL_("curve segment"),	load_resource_tool_image(_("curve")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("curve segment"),		_HELP_("curve segment"));
+	tb->AddSeparator();																													
+	tb->AddTool(ID_LOCK_FREE,		_TOOL_("free point"),		load_resource_tool_image(_("lock_free")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("free point"),		_HELP_("free point"));
+	tb->AddTool(ID_LOCK_DIR,		_TOOL_("smooth point"),		load_resource_tool_image(_("lock_dir")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("smooth point"),		_HELP_("smooth point"));
+	tb->AddTool(ID_LOCK_SIZE,		_TOOL_("symmetric point"),	load_resource_tool_image(_("lock_size")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("symmetric point"),	_HELP_("symmetric point"));
 	tb->Realize();
 	// TODO : menu bar
 	//mb->Insert(2, curveMenu, _("&Curve"))
@@ -325,11 +325,11 @@ void SymbolPointEditor::onKeyChange(wxKeyEvent& ev) {
 		if (ev.AltDown()) {
 			hovering = SELECTED_LINE;
 			control.SetCursor(pointCurve);
-			SetStatusText(_("Drag to move curve"));
+			SetStatusText(_HELP_("drag to move curve"));
 		} else {
 			hovering = SELECTED_NEW_POINT;
 			control.SetCursor(pointAdd);
-			SetStatusText(_("Alt + drag to move curve;  double click to add control point on this line"));
+			SetStatusText(_HELP_("drag to move line"));
 		}
 		control.Refresh(false);
 	} else if (ev.GetKeyCode() == WXK_CONTROL || ev.GetKeyCode() == WXK_SHIFT) {
@@ -469,18 +469,18 @@ void SymbolPointEditor::findHoveredItem(const Vector2D& pos, bool altDown) {
 	if (hover_handle.handle) {
 		hovering = SELECTED_HANDLE;
 		control.SetCursor(pointMove);
-		SetStatusText(_("Click and drag to move control point"));
+		SetStatusText(_HELP_("drag to move point"));
 	} else {
 		// Not on a point or handle, maybe the cursor is on a curve
 		if (checkPosOnCurve(pos)) {
 			if (altDown) {
 				hovering = SELECTED_LINE;
 				control.SetCursor(pointCurve);
-				SetStatusText(_("Drag to move curve"));
+				SetStatusText(_HELP_("drag to move curve"));
 			} else {
 				hovering = SELECTED_NEW_POINT;
 				control.SetCursor(pointAdd);
-				SetStatusText(_("Alt + drag to move curve;  double click to add control point on this line"));
+				SetStatusText(_HELP_("drag to move line"));
 			}
 		} else {
 			hovering = SELECTED_NONE;

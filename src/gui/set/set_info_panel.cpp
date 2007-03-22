@@ -34,9 +34,9 @@ void SetInfoPanel::onChangeSet() {
 
 void SetInfoPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	// Toolbar
-	tb->AddTool(ID_FORMAT_BOLD,		_(""), load_resource_tool_image(_("bold")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("bold"));
-	tb->AddTool(ID_FORMAT_ITALIC,	_(""), load_resource_tool_image(_("italic")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("italic"));
-	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), load_resource_tool_image(_("symbol")),	wxNullBitmap, wxITEM_CHECK, _TOOL_("symbols"));
+	tb->AddTool(ID_FORMAT_BOLD,		_(""), load_resource_tool_image(_("bold")),			wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("bold"),			_HELP_("bold"));
+	tb->AddTool(ID_FORMAT_ITALIC,	_(""), load_resource_tool_image(_("italic")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("italic"),		_HELP_("italic"));
+	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), load_resource_tool_image(_("symbol")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("symbols"),		_HELP_("symbols"));
 	tb->Realize();
 	// Menus
 	IconMenu* menuFormat = new IconMenu();

@@ -35,13 +35,14 @@ void SymbolBasicShapeEditor::draw(DC& dc) {
 
 void SymbolBasicShapeEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	sides  = new wxSpinCtrl(  tb, ID_SIDES, _("3"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 3, 50, 3);
-	sidesL = new wxStaticText(tb, ID_SIDES, _(" sides: "));
+	sidesL = new wxStaticText(tb, ID_SIDES, _(" ") + _LABEL_("sides") + _(": "));
+	sides->SetHelpText(_HELP_("sides"));
 	sides->SetSize(50, -1);
 	tb->AddSeparator();
-	tb->AddTool(ID_SHAPE_CIRCLE,		_("Ellipse"),		load_resource_tool_image(_("circle")),		wxNullBitmap, wxITEM_CHECK, _("Circle / Ellipse"),			_("Draw circles and ellipses"));
-	tb->AddTool(ID_SHAPE_RECTANGLE,		_("Rectangle"),		load_resource_tool_image(_("rectangle")),	wxNullBitmap, wxITEM_CHECK, _("Square / Rectangle"),		_("Draw squares and rectangles"));
-	tb->AddTool(ID_SHAPE_POLYGON,		_("Polygon"),		load_resource_tool_image(_("triangle")),	wxNullBitmap, wxITEM_CHECK, _("Polygon"),					_("Draw triangles, pentagons and other regular polygons"));
-	tb->AddTool(ID_SHAPE_STAR,			_("Star"),			load_resource_tool_image(_("star")),		wxNullBitmap, wxITEM_CHECK, _("Star"),						_("Draw stars"));
+	tb->AddTool(ID_SHAPE_CIRCLE,	_TOOL_("ellipse"),		load_resource_tool_image(_("circle")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("ellipse"),	_HELP_("ellipse"));
+	tb->AddTool(ID_SHAPE_RECTANGLE,	_TOOL_("rectangle"),	load_resource_tool_image(_("rectangle")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("rectangle"),	_HELP_("rectangle"));
+	tb->AddTool(ID_SHAPE_POLYGON,	_TOOL_("polygon"),		load_resource_tool_image(_("triangle")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("polygon"),	_HELP_("polygon"));
+	tb->AddTool(ID_SHAPE_STAR,		_TOOL_("star"),			load_resource_tool_image(_("star")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("star"),		_HELP_("star"));
 	tb->AddControl(sidesL);
 	tb->AddControl(sides);
 	tb->Realize();
@@ -90,7 +91,7 @@ void SymbolBasicShapeEditor::onLeftDown   (const Vector2D& pos, wxMouseEvent& ev
 	// Start drawing
 	drawing = true;
 	start = end = pos;
-	SetStatusText(_("Drag to resize shape, Ctrl constrains shape, Shift centers shape"));
+	SetStatusText(_HELP_("drag to draw shape"));
 }
 
 void SymbolBasicShapeEditor::onLeftUp     (const Vector2D& pos, wxMouseEvent& ev) {
@@ -138,16 +139,16 @@ void SymbolBasicShapeEditor::stopActions() {
 	drawing = false;
 	switch (mode) {
 		case ID_SHAPE_CIRCLE:
-			SetStatusText(_("Click and drag to draw a ellipse, hold Ctrl for a circle"));
+			SetStatusText(_HELP_("draw ellipse"));
 			break;
 		case ID_SHAPE_RECTANGLE:
-			SetStatusText(_("Click and drag to draw a rectangle, hold Ctrl for a square"));
+			SetStatusText(_HELP_("draw rectangle"));
 			break;
 		case ID_SHAPE_POLYGON:
-			SetStatusText(_("Click and drag to draw a polygon"));
+			SetStatusText(_HELP_("draw polygon"));
 			break;
 		case ID_SHAPE_STAR:
-			SetStatusText(_("Click and drag to draw a star"));
+			SetStatusText(_HELP_("draw star"));
 			break;
 	}
 	control.Refresh(false);
@@ -183,9 +184,9 @@ void SymbolBasicShapeEditor::makeCenteredShape(const Vector2D& c, Vector2D r, bo
 		case ID_SHAPE_CIRCLE: {
 			// A circle / ellipse
 			if (constrained) {
-				shape->name = _("Circle");
+				shape->name = capitalize(_TYPE_("circle"));
 			} else {
-				shape->name = _("Ellipse");
+				shape->name = capitalize(_TYPE_("ellipse"));
 			}
 			// a circle has 4 control points, the first is: (x+r, y) db(0, kr) da(0, -kr)
 			// kr is a magic constant
@@ -198,9 +199,9 @@ void SymbolBasicShapeEditor::makeCenteredShape(const Vector2D& c, Vector2D r, bo
 		} case ID_SHAPE_RECTANGLE: {
 			// A rectangle / square
 			if (constrained) {
-				shape->name = _("Square");
+				shape->name = capitalize(_TYPE_("square"));
 			} else {
-				shape->name = _("Rectangle");
+				shape->name = capitalize(_TYPE_("rectangle"));
 			}
 			// a rectangle just has four corners
 			shape->points.push_back(new_shared2<ControlPoint>(c.x - r.x, c.y - r.y));
@@ -211,12 +212,16 @@ void SymbolBasicShapeEditor::makeCenteredShape(const Vector2D& c, Vector2D r, bo
 		} default: {
 			// A polygon or star
 			int n = sides->GetValue();  // number of sides
-			switch (n) {
-				case 3:  shape->name = _("Triangle");
-				case 4:  shape->name = _("Rhombus");
-				case 5:  shape->name = _("Pentagon");
-				case 6:  shape->name = _("Hexagon");
-				default: shape->name = _("Polygon");
+			if (mode == ID_SHAPE_POLYGON) {
+				switch (n) {
+					case 3:  shape->name = capitalize(_TYPE_("triangle"));
+					case 4:  shape->name = capitalize(_TYPE_("rhombus"));
+					case 5:  shape->name = capitalize(_TYPE_("pentagon"));
+					case 6:  shape->name = capitalize(_TYPE_("hexagon"));
+					default: shape->name = capitalize(_TYPE_("polygon"));
+				}
+			} else { // star
+				shape->name = capitalize(_TYPE_("star"));
 			}
 			// Example: n == 7
 			//         a           a..g = corners

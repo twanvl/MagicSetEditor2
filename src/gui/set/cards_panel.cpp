@@ -111,15 +111,15 @@ void CardsPanel::onChangeSet() {
 
 void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	// Toolbar
-	tb->AddTool(ID_FORMAT_BOLD,		_(""), load_resource_tool_image(_("bold")),			wxNullBitmap, wxITEM_CHECK, _TOOL_("bold"));
-	tb->AddTool(ID_FORMAT_ITALIC,	_(""), load_resource_tool_image(_("italic")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("italic"));
-	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), load_resource_tool_image(_("symbol")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("symbols"));
-	tb->AddTool(ID_FORMAT_REMINDER,	_(""), load_resource_tool_image(_("reminder")),		wxNullBitmap, wxITEM_CHECK, _TOOL_("reminder text"));
+	tb->AddTool(ID_FORMAT_BOLD,		_(""), load_resource_tool_image(_("bold")),			wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("bold"),			_HELP_("bold"));
+	tb->AddTool(ID_FORMAT_ITALIC,	_(""), load_resource_tool_image(_("italic")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("italic"),		_HELP_("italic"));
+	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), load_resource_tool_image(_("symbol")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("symbols"),		_HELP_("symbols"));
+	tb->AddTool(ID_FORMAT_REMINDER,	_(""), load_resource_tool_image(_("reminder")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("reminder text"),	_HELP_("reminder text"));
 	tb->AddSeparator();
-	tb->AddTool(ID_CARD_ADD,		_(""), load_resource_tool_image(_("card_add")),		wxNullBitmap, wxITEM_NORMAL,_TOOL_("add card"));
-	tb->AddTool(ID_CARD_REMOVE,		_(""), load_resource_tool_image(_("card_del")),		wxNullBitmap, wxITEM_NORMAL,_TOOL_("remove card"));
+	tb->AddTool(ID_CARD_ADD,		_(""), load_resource_tool_image(_("card_add")),		wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("add card"),		_HELP_("add card"));
+	tb->AddTool(ID_CARD_REMOVE,		_(""), load_resource_tool_image(_("card_del")),		wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("remove card"),	_HELP_("remove card"));
 	tb->AddSeparator();
-	tb->AddTool(ID_CARD_ROTATE,		_(""), load_resource_tool_image(_("card_rotate")),	wxNullBitmap,wxITEM_NORMAL, _TOOL_("rotate card"));
+	tb->AddTool(ID_CARD_ROTATE,		_(""), load_resource_tool_image(_("card_rotate")),	wxNullBitmap,wxITEM_NORMAL, _TOOLTIP_("rotate card"),	_HELP_("rotate card"));
 	tb->Realize();
 	// Menus
 	mb->Insert(2, menuCard,   _MENU_("cards"));

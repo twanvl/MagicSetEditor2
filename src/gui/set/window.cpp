@@ -101,21 +101,21 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	
 	// status bar
 	CreateStatusBar();
-	SetStatusText(_("Welcome to Magic Set Editor"));
+	SetStatusText(_HELP_("welcome"));
 	
 	// tool bar
 	wxToolBar* tb = CreateToolBar(wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL);
 	tb->SetToolBitmapSize(wxSize(18,18));
-	tb->AddTool(ID_FILE_NEW,	_(""),	load_resource_tool_image(_("new")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_("new set"),		_HELP_("new set"));
-	tb->AddTool(ID_FILE_OPEN,	_(""),	load_resource_tool_image(_("open")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("open set"),	_HELP_("open set"));
-	tb->AddTool(ID_FILE_SAVE,	_(""),	load_resource_tool_image(_("save")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("save set"),	_HELP_("save set"));
+	tb->AddTool(ID_FILE_NEW,	_(""),	load_resource_tool_image(_("new")),		wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("new set"),	_HELP_("new set"));
+	tb->AddTool(ID_FILE_OPEN,	_(""),	load_resource_tool_image(_("open")),	wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("open set"),	_HELP_("open set"));
+	tb->AddTool(ID_FILE_SAVE,	_(""),	load_resource_tool_image(_("save")),	wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("save set"),	_HELP_("save set"));
 	tb->AddSeparator();
-	tb->AddTool(ID_EDIT_CUT,	_(""),	load_resource_tool_image(_("cut")),		wxNullBitmap, wxITEM_NORMAL, _TOOL_("cut"),			_HELP_("cut"));
-	tb->AddTool(ID_EDIT_COPY,	_(""),	load_resource_tool_image(_("copy")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("copy"),		_HELP_("copy"));
-	tb->AddTool(ID_EDIT_PASTE,	_(""),	load_resource_tool_image(_("paste")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_("paste"),		_HELP_("paste"));
+	tb->AddTool(ID_EDIT_CUT,	_(""),	load_resource_tool_image(_("cut")),		wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("cut"),		_HELP_("cut"));
+	tb->AddTool(ID_EDIT_COPY,	_(""),	load_resource_tool_image(_("copy")),	wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("copy"),		_HELP_("copy"));
+	tb->AddTool(ID_EDIT_PASTE,	_(""),	load_resource_tool_image(_("paste")),	wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("paste"),	_HELP_("paste"));
 	tb->AddSeparator();
-	tb->AddTool(ID_EDIT_UNDO,	_(""),	load_resource_tool_image(_("undo")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("undo",wxEmptyString));
-	tb->AddTool(ID_EDIT_REDO,	_(""),	load_resource_tool_image(_("redo")),	wxNullBitmap, wxITEM_NORMAL, _TOOL_1_("redo",wxEmptyString));
+	tb->AddTool(ID_EDIT_UNDO,	_(""),	load_resource_tool_image(_("undo")),	wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_1_("undo",wxEmptyString));
+	tb->AddTool(ID_EDIT_REDO,	_(""),	load_resource_tool_image(_("redo")),	wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_1_("redo",wxEmptyString));
 	tb->AddSeparator();
 	tb->Realize();
 	
@@ -129,11 +129,11 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	// NOTE: place the CardsPanel last in the panels list,
 	//  this way the card list is the last to be told of a set change
 	//  this way everyone else already uses the new set when it sends a CardSelectEvent
-	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 4, _("cards"));
-	addPanel(menuWindow, tabBar, new SetInfoPanel (this, wxID_ANY), 0, _("set info"));
-	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 1, _("style"));
-	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 2, _("keywords"));
-	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 3, _("stats"));
+	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 4, _("cards tab"));
+	addPanel(menuWindow, tabBar, new SetInfoPanel (this, wxID_ANY), 0, _("set info tab"));
+	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 1, _("style tab"));
+	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 2, _("keywords tab"));
+	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 3, _("stats tab"));
 //	addPanel(*s, *menuWindow, *tabBar, new DraftPanel   (&this, wxID_ANY), 4, _("F10")) 
 	selectPanel(ID_WINDOW_CARDS); // select cards panel
 	
@@ -179,10 +179,10 @@ void SetWindow::addPanel(wxMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* 
 	if (panels.size() <= pos) panels.resize(pos + 1);
 	panels[pos] = panel;
 	// names
-	String menu_name   = tr(LOCALE_CAT_MENU, name + _(" window"));
-	String description = tr(LOCALE_CAT_HELP, name + _(" window"));
-	String tab_name    = tr(LOCALE_CAT_TOOL, name + _(" tab"));
-	String tab_help    = tr(LOCALE_CAT_HELP, name + _(" tab"));
+	String menu_name   = tr(LOCALE_CAT_MENU,    name);
+	String description = tr(LOCALE_CAT_HELP,    name);
+	String tab_name    = tr(LOCALE_CAT_TOOL,    name);
+	String tab_help    = tr(LOCALE_CAT_TOOLTIP, name);
 	// add to tab bar
 	int id = ID_WINDOW_MIN + pos;
 	tabBar->AddTool(id, tab_name, wxNullBitmap, wxNullBitmap, wxITEM_CHECK, tab_help, description);
@@ -338,13 +338,13 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 			ev.Enable(set->actions.canUndo());
 			String label = set->actions.undoName();
 			ev.SetText(_MENU_1_("undo", label));
-			GetToolBar()->SetToolShortHelp(ID_EDIT_UNDO, _TOOL_1_("undo", label));
+			GetToolBar()->SetToolShortHelp(ID_EDIT_UNDO, _TOOLTIP_1_("undo", label));
 			break;
 		} case ID_EDIT_REDO: {
 			ev.Enable(set->actions.canRedo());
 			String label = set->actions.redoName();
 			ev.SetText(_MENU_1_("redo", label));
-			GetToolBar()->SetToolShortHelp(ID_EDIT_REDO, _TOOL_1_("redo", label));
+			GetToolBar()->SetToolShortHelp(ID_EDIT_REDO, _TOOLTIP_1_("redo", label));
 			break;
 		}
 		// copy & paste & find

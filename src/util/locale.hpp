@@ -29,6 +29,7 @@ enum LocaleCategory
 {	LOCALE_CAT_MENU
 ,	LOCALE_CAT_HELP
 ,	LOCALE_CAT_TOOL
+,	LOCALE_CAT_TOOLTIP
 ,	LOCALE_CAT_LABEL
 ,	LOCALE_CAT_BUTTON
 ,	LOCALE_CAT_TITLE
@@ -60,36 +61,41 @@ String tr(const SymbolFont&, const String& key, const String& def);
 
 
 /// A localized string for menus/toolbar buttons
-#define _MENU_(s)	tr(LOCALE_CAT_MENU,  _(s))
+#define _MENU_(s)    tr(LOCALE_CAT_MENU,      _(s))
 /// A localized string for help/statusbar text
-#define _HELP_(s)	tr(LOCALE_CAT_HELP,  _(s))
+#define _HELP_(s)    tr(LOCALE_CAT_HELP,      _(s))
+/// A localized string for the text of toolbar buttons
+#define _TOOL_(s)    tr(LOCALE_CAT_TOOL,      _(s))
 /// A localized string for tooltip text for toolbar buttons
-#define _TOOL_(s)	tr(LOCALE_CAT_TOOL,  _(s))
+#define _TOOLTIP_(s) tr(LOCALE_CAT_TOOLTIP,   _(s))
 /// A localized string for labels
-#define _LABEL_(s)	tr(LOCALE_CAT_LABEL, _(s))
+#define _LABEL_(s)   tr(LOCALE_CAT_LABEL,     _(s))
 /// A localized string for buttons/checkboxes/etc.
-#define _BUTTON_(s)	tr(LOCALE_CAT_BUTTON,_(s))
+#define _BUTTON_(s)  tr(LOCALE_CAT_BUTTON,    _(s))
 /// A localized string for window titles
-#define _TITLE_(s)	tr(LOCALE_CAT_TITLE, _(s))
+#define _TITLE_(s)   tr(LOCALE_CAT_TITLE,     _(s))
 /// A localized string for type names in scripts
-#define _TYPE_(s)	tr(LOCALE_CAT_TYPE,  _(s))
+#define _TYPE_(s)    tr(LOCALE_CAT_TYPE,      _(s))
 /// A localized string for action names
-#define _ACTION_(s)	tr(LOCALE_CAT_ACTION, _(s))
+#define _ACTION_(s)  tr(LOCALE_CAT_ACTION,    _(s))
 /// A localized string for error messages
-#define _ERROR_(s)	tr(LOCALE_CAT_ERROR, _(s))
+#define _ERROR_(s)   tr(LOCALE_CAT_ERROR,     _(s))
 
 /// A localized string for menus/toolbar buttons, with 1 argument (printf style)
-#define _MENU_1_(s,a)		format_string(tr(LOCALE_CAT_MENU,  _(s)), a)
+#define _MENU_1_(s,a)		format_string(tr(LOCALE_CAT_MENU,    _(s)), a)
 
 /// A localized string for tooltip text, with 1 argument (printf style)
-#define _TOOL_1_(s,a)		format_string(tr(LOCALE_CAT_TOOL,  _(s)), a)
+#define _HELP_1_(s,a)		format_string(tr(LOCALE_CAT_HELP,    _(s)), a)
+
+/// A localized string for tooltip text, with 1 argument (printf style)
+#define _TOOLTIP_1_(s,a)	format_string(tr(LOCALE_CAT_TOOLTIP, _(s)), a)
 
 /// A localized string for error messages, with 1 argument (printf style)
-#define _ERROR_1_(s,a)		format_string(tr(LOCALE_CAT_ERROR, _(s)), a)
+#define _ERROR_1_(s,a)		format_string(tr(LOCALE_CAT_ERROR,   _(s)), a)
 /// A localized string for error messages, with 2 argument (printf style)
-#define _ERROR_2_(s,a,b)	format_string(tr(LOCALE_CAT_ERROR, _(s)), a, b)
+#define _ERROR_2_(s,a,b)	format_string(tr(LOCALE_CAT_ERROR,   _(s)), a, b)
 /// A localized string for error messages, with 3 argument (printf style)
-#define _ERROR_3_(s,a,b,c)	format_string(tr(LOCALE_CAT_ERROR, _(s)), a, b, c)
+#define _ERROR_3_(s,a,b,c)	format_string(tr(LOCALE_CAT_ERROR,   _(s)), a, b, c)
 
 /// Format a string
 /** Equivalent to sprintf / String::Format, but allows strings to be passed as arguments (gcc)
