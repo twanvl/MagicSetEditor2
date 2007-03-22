@@ -131,10 +131,16 @@ void NativeLookEditor::onScroll(wxScrollWinEvent& ev) {
 	}
 }
 void NativeLookEditor::onMouseWheel(wxMouseEvent& ev) {
-	if (current_editor) {
-		bool scrolled = current_editor->onMouseWheel(mousePoint(ev), ev);
-		if (scrolled) return;
+	// send scroll event to field under cursor
+	RealPoint pos = mousePoint(ev);
+	FOR_EACH_EDITOR_REVERSE { // find high z index fields first
+		if (v->containsPoint(pos) && v->getField()->editable) {
+			bool scrolled = e->onMouseWheel(mousePoint(ev), ev);
+			if (scrolled) return;
+			break;
+		}
 	}
+	// scroll entire window
 	int toScroll = 10 * ev.GetWheelRotation() * ev.GetLinesPerAction() / ev.GetWheelDelta(); // note: up is positive
 	int y = GetScrollPos(wxVERTICAL);
 	scrollTo(wxVERTICAL, y - toScroll);

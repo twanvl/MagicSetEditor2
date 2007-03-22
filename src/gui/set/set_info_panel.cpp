@@ -45,6 +45,8 @@ void SetInfoPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 		menuFormat->Append(ID_FORMAT_SYMBOL,	_("symbol"),		_MENU_("symbols"),			_HELP_("symbols"),			wxITEM_CHECK);
 		menuFormat->Append(ID_FORMAT_REMINDER,	_("reminder"),		_MENU_("reminder text"),	_HELP_("reminder text"),	wxITEM_CHECK);
 	mb->Insert(2, menuFormat, _MENU_("format"));
+	// focus on editor
+	editor->SetFocus();
 }
 
 void SetInfoPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
