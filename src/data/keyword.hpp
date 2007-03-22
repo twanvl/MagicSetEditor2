@@ -14,7 +14,6 @@
 #include <wx/regex.h>
 
 DECLARE_POINTER_TYPE(KeywordParam);
-DECLARE_POINTER_TYPE(KeywordExpansion);
 DECLARE_POINTER_TYPE(KeywordMode);
 DECLARE_POINTER_TYPE(Keyword);
 class KeywordTrie;
@@ -45,9 +44,11 @@ class KeywordMode {
 
 // ----------------------------------------------------------------------------- : Keyword expansion
 
-/// A way to use a keyword
-class KeywordExpansion {
+/// A keyword for a set or a game
+class Keyword {
   public:
+	String                keyword;		///< The keyword, only for human use
+	String                rules;		///< Rules/explanation
 	String                match;		///< String to match, <param> tags are used for parameters
 	vector<KeywordParamP> parameters;	///< The types of parameters
 	StringScript          reminder;		///< Reminder text of the keyword
@@ -58,7 +59,6 @@ class KeywordExpansion {
 	 *  captures 2,4,... capture the parameters
 	 */
 	wxRegEx               matchRe;
-//%	. Default is the mode of the Keyword.
 	
 	/// Prepare the expansion: (re)generate matchRe and the list of parameters.
 	/** Throws when there is an error in the input
@@ -66,19 +66,6 @@ class KeywordExpansion {
 	 *  @param force       Re-prepare even if the regex&parameters are okay
 	 */
 	void prepare(const vector<KeywordParamP>& param_types, bool force = false);
-	
-	DECLARE_REFLECTION();
-};
-
-// ----------------------------------------------------------------------------- : Keyword
-
-/// A keyword for a set or a game
-class Keyword {
-  public:
-	String                    keyword;		///< The keyword
-	vector<KeywordExpansionP> expansions;	///< Expansions, i.e. ways to use this keyword
-	String                    rules;		///< Rules/explanation
-//	String                    mode;			///< Mode of use, can be used by scripts (only gives the name)
 	
 	DECLARE_REFLECTION();
 };
@@ -99,12 +86,9 @@ class KeywordDatabase {
 	void add(const vector<KeywordP>&);
 	/// Add a keyword to be matched
 	void add(const Keyword&);
-	/// Add an expansion of a keyword to be matched
-	void add(const KeywordExpansion&);
 	
 	/// Prepare the parameters and match regex for a list of keywords
 	static void prepare_parameters(const vector<KeywordParamP>&, const vector<KeywordP>&);
-	static void prepare_parameters(const vector<KeywordParamP>&, const Keyword&);
 	
 	/// Clear the database
 	void clear();

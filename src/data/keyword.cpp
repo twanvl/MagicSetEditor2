@@ -14,8 +14,7 @@ DECLARE_TYPEOF(map<Char COMMA KeywordTrie*>);
 DECLARE_TYPEOF_COLLECTION(KeywordTrie*);
 DECLARE_TYPEOF_COLLECTION(KeywordP);
 DECLARE_TYPEOF_COLLECTION(KeywordParamP);
-DECLARE_TYPEOF_COLLECTION(KeywordExpansionP);
-DECLARE_TYPEOF_COLLECTION(const KeywordExpansion*);
+DECLARE_TYPEOF_COLLECTION(const Keyword*);
 
 // ----------------------------------------------------------------------------- : Reflection
 
@@ -29,41 +28,33 @@ IMPLEMENT_REFLECTION(KeywordMode) {
 	REFLECT(name);
 	REFLECT(description);
 }
-IMPLEMENT_REFLECTION(KeywordExpansion) {
-	REFLECT(match);
-	REFLECT(reminder);
-}
 
 // backwards compatability
 template <typename T> void read_compat(T&, const Keyword*) {}
 void read_compat(Reader& tag, Keyword* k) {
-	String separator, parameter, reminder;
+	if (!k->match.empty()) return;
+	String separator, parameter;
 	REFLECT(separator);
 	REFLECT(parameter);
-	REFLECT(reminder);
-	if (!separator.empty() || !parameter.empty() || !reminder.empty()) {
-		// old style keyword declaration, no separate expansion
-		KeywordExpansionP e(new KeywordExpansion);
-		e->match = k->keyword;
-		size_t start = separator.find_first_of('[');
-		size_t end   = separator.find_first_of(']');
-		if (start != String::npos && end != String::npos) {
-			e->match += separator.substr(start + 1, end - start - 1);
-		}
-		if (!parameter.empty()) {
-			e->match += _("<param>") + parameter + _("</param>");
-		}
-		e->reminder.set(reminder);
-		k->expansions.push_back(e);
+	// create a match string from the keyword
+	k->match = k->keyword;
+	size_t start = separator.find_first_of('[');
+	size_t end   = separator.find_first_of(']');
+	if (start != String::npos && end != String::npos) {
+		k->match += separator.substr(start + 1, end - start - 1);
+	}
+	if (!parameter.empty()) {
+		k->match += _("<param>") + parameter + _("</param>");
 	}
 }
 
 IMPLEMENT_REFLECTION(Keyword) {
 	REFLECT(keyword);
 	read_compat(tag, this);
-	REFLECT(expansions);
+	REFLECT(match);
+	REFLECT(reminder);
 	REFLECT(rules);
-//	REFLECT(mode);
+	REFLECT(mode);
 }
 
 
@@ -112,7 +103,7 @@ String regex_escape(Char c) {
 	}
 }
 
-void KeywordExpansion::prepare(const vector<KeywordParamP>& param_types, bool force) {
+void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
 	if (!force && matchRe.IsValid()) return;
 	parameters.clear();
 	// Prepare regex
@@ -159,9 +150,9 @@ class KeywordTrie {
 	KeywordTrie();
 	~KeywordTrie();
 	
-	map<Char, KeywordTrie*>   children;    ///< children after a given character (owned)
-	KeywordTrie*              on_any_star; ///< children on /.*/ (owned or this)
-	vector<const KeywordExpansion*> finished;    ///< keywords expansions that end in this node
+	map<Char, KeywordTrie*> children;    ///< children after a given character (owned)
+	KeywordTrie*            on_any_star; ///< children on /.*/ (owned or this)
+	vector<const Keyword*>  finished;    ///< keywordss that end in this node
 	
 	/// Insert nodes representing the given character
 	/** return the node where the evaluation will be after matching the character */
@@ -228,41 +219,32 @@ void KeywordDatabase::add(const vector<KeywordP>& kws) {
 		add(*kw);
 	}
 }
-void KeywordDatabase::add(const Keyword& kw) {
-	FOR_EACH_CONST(e, kw.expansions) {
-		add(*e);
-	}
-}
 
-void KeywordDatabase::add(const KeywordExpansion& e) {
+void KeywordDatabase::add(const Keyword& kw) {
+	if (kw.match.empty()) return; // can't handle empty keywords
 	if (!root) {
 		root = new KeywordTrie;
 		root->on_any_star = root;
 	}
 	KeywordTrie* cur = root->insertAnyStar();
-	for (size_t i = 0 ; i < e.match.size() ;) {
-		Char c = e.match.GetChar(i);
-		if (is_substr(e.match, i, _("<param"))) {
+	for (size_t i = 0 ; i < kw.match.size() ;) {
+		Char c = kw.match.GetChar(i);
+		if (is_substr(kw.match, i, _("<param"))) {
 			// tag, parameter, match anything
 			cur = cur->insertAnyStar();
-			i = match_close_tag_end(e.match, i);
+			i = match_close_tag_end(kw.match, i);
 		} else {
 			cur = cur->insert(c);
 			i++;
 		}
 	}
 	// now cur is the trie after matching the keyword anywhere in the input text
-	cur->finished.push_back(&e);
+	cur->finished.push_back(&kw);
 }
 
 void KeywordDatabase::prepare_parameters(const vector<KeywordParamP>& ps, const vector<KeywordP>& kws) {
 	FOR_EACH_CONST(kw, kws) {
-		prepare_parameters(ps, *kw);
-	}
-}
-void KeywordDatabase::prepare_parameters(const vector<KeywordParamP>& ps, const Keyword& kw) {
-	FOR_EACH_CONST(e, kw.expansions) {
-		e->prepare(ps);
+		kw->prepare(ps);
 	}
 }
 
@@ -311,7 +293,7 @@ String KeywordDatabase::expand(const String& text,
 	while (!s.empty()) {
 		vector<KeywordTrie*> current; // current location(s) in the trie
 		vector<KeywordTrie*> next;    // location(s) after this step
-		set<const KeywordExpansion*> used; // keywords already investigated
+		set<const Keyword*>  used;    // keywords already investigated
 		current.push_back(root);
 		closure(current);
 		char expand_type = 'a'; // is the keyword expanded? From <kw-?> tag
@@ -355,7 +337,7 @@ String KeywordDatabase::expand(const String& text,
 			// are we done?
 			FOR_EACH(n, current) {
 				FOR_EACH(f, n->finished) {
-					const KeywordExpansion* kw = f;
+					const Keyword* kw = f;
 					if (used.insert(kw).second) {
 						// we have found a possible match, which we have not seen before
 						assert(kw->matchRe.IsValid());

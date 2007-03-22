@@ -166,6 +166,12 @@ String singular_form(const String& str) {
 	return str.substr(0, str.size() - 1);
 }
 
+String remove_shortcut(const String& str) {
+	size_t tab = str.find_last_of(_('\t'));
+	if (tab == String::npos) return str;
+	else                     return str.substr(0, tab);
+}
+
 // ----------------------------------------------------------------------------- : Comparing / finding
 
 bool smart_less(const String& as, const String& bs) {

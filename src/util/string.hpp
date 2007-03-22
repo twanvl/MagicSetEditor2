@@ -118,6 +118,11 @@ String cannocial_name_form(const String&);
  */
 String singular_form(const String&);
 
+/// Remove a shortcut from a menu string
+/** e.g. "Cut\tCtrl+X" --> "Cut"
+ */
+String remove_shortcut(const String&);
+
 // ----------------------------------------------------------------------------- : Comparing / finding
 
 /// Compare two strings, is the first less than the first?

@@ -60,7 +60,7 @@ String tr(const StyleSheet&, const String& key, const String& def);
 String tr(const SymbolFont&, const String& key, const String& def);
 
 
-/// A localized string for menus/toolbar buttons
+/// A localized string for menus
 #define _MENU_(s)    tr(LOCALE_CAT_MENU,      _(s))
 /// A localized string for help/statusbar text
 #define _HELP_(s)    tr(LOCALE_CAT_HELP,      _(s))
@@ -81,21 +81,23 @@ String tr(const SymbolFont&, const String& key, const String& def);
 /// A localized string for error messages
 #define _ERROR_(s)   tr(LOCALE_CAT_ERROR,     _(s))
 
-/// A localized string for menus/toolbar buttons, with 1 argument (printf style)
-#define _MENU_1_(s,a)		format_string(tr(LOCALE_CAT_MENU,    _(s)), a)
+/// A localized string for menus, with 1 argument (printf style)
+#define _MENU_1_(s,a)		format_string(_MENU_(s),    a)
+/// A localized string for context menus, contains no "\tshortcut"
+#define _CONTEXT_MENU_(s)   remove_shortcut(_MENU_(s))
 
 /// A localized string for tooltip text, with 1 argument (printf style)
-#define _HELP_1_(s,a)		format_string(tr(LOCALE_CAT_HELP,    _(s)), a)
+#define _HELP_1_(s,a)		format_string(_HELP_(s),    a)
 
 /// A localized string for tooltip text, with 1 argument (printf style)
-#define _TOOLTIP_1_(s,a)	format_string(tr(LOCALE_CAT_TOOLTIP, _(s)), a)
+#define _TOOLTIP_1_(s,a)	format_string(_TOOLTIP_(s), a)
 
 /// A localized string for error messages, with 1 argument (printf style)
-#define _ERROR_1_(s,a)		format_string(tr(LOCALE_CAT_ERROR,   _(s)), a)
+#define _ERROR_1_(s,a)		format_string(_ERROR_(s),   a)
 /// A localized string for error messages, with 2 argument (printf style)
-#define _ERROR_2_(s,a,b)	format_string(tr(LOCALE_CAT_ERROR,   _(s)), a, b)
+#define _ERROR_2_(s,a,b)	format_string(_ERROR_(s),   a, b)
 /// A localized string for error messages, with 3 argument (printf style)
-#define _ERROR_3_(s,a,b,c)	format_string(tr(LOCALE_CAT_ERROR,   _(s)), a, b, c)
+#define _ERROR_3_(s,a,b,c)	format_string(_ERROR_(s),   a, b, c)
 
 /// Format a string
 /** Equivalent to sprintf / String::Format, but allows strings to be passed as arguments (gcc)

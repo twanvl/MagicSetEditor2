@@ -532,18 +532,6 @@
 				Name="control"
 				Filter="">
 				<File
-					RelativePath=".\gui\control\card_editor.cpp">
-				</File>
-				<File
-					RelativePath=".\gui\control\card_editor.hpp">
-				</File>
-				<File
-					RelativePath=".\gui\control\card_viewer.cpp">
-				</File>
-				<File
-					RelativePath=".\gui\control\card_viewer.hpp">
-				</File>
-				<File
 					RelativePath=".\gui\control\gallery_list.cpp">
 				</File>
 				<File
@@ -556,22 +544,10 @@
 					RelativePath=".\gui\control\graph.hpp">
 				</File>
 				<File
-					RelativePath=".\gui\control\native_look_editor.cpp">
-				</File>
-				<File
-					RelativePath=".\gui\control\native_look_editor.hpp">
-				</File>
-				<File
 					RelativePath=".\gui\control\package_list.cpp">
 				</File>
 				<File
 					RelativePath=".\gui\control\package_list.hpp">
-				</File>
-				<File
-					RelativePath=".\gui\control\text_ctrl.cpp">
-				</File>
-				<File
-					RelativePath=".\gui\control\text_ctrl.hpp">
 				</File>
 				<Filter
 					Name="card_list"
@@ -605,6 +581,50 @@
 					</File>
 					<File
 						RelativePath=".\gui\control\select_card_list.hpp">
+					</File>
+				</Filter>
+				<Filter
+					Name="other lists"
+					Filter="">
+					<File
+						RelativePath=".\gui\control\item_list.cpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\item_list.hpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\keyword_list.cpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\keyword_list.hpp">
+					</File>
+				</Filter>
+				<Filter
+					Name="editor"
+					Filter="">
+					<File
+						RelativePath=".\gui\control\card_editor.cpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\card_editor.hpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\card_viewer.cpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\card_viewer.hpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\native_look_editor.cpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\native_look_editor.hpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\text_ctrl.cpp">
+					</File>
+					<File
+						RelativePath=".\gui\control\text_ctrl.hpp">
 					</File>
 				</Filter>
 			</Filter>
@@ -1190,66 +1210,6 @@
 		<Filter
 			Name="data"
 			Filter="">
-			<File
-				RelativePath=".\data\card.cpp">
-			</File>
-			<File
-				RelativePath=".\data\card.hpp">
-			</File>
-			<File
-				RelativePath=".\data\game.cpp">
-			</File>
-			<File
-				RelativePath=".\data\game.hpp">
-			</File>
-			<File
-				RelativePath=".\data\set.cpp">
-			</File>
-			<File
-				RelativePath=".\data\set.hpp">
-			</File>
-			<File
-				RelativePath=".\data\settings.cpp">
-			</File>
-			<File
-				RelativePath=".\data\settings.hpp">
-			</File>
-			<File
-				RelativePath=".\data\stylesheet.cpp">
-			</File>
-			<File
-				RelativePath=".\data\stylesheet.hpp">
-			</File>
-			<File
-				RelativePath=".\data\symbol.cpp">
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Unicode|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Profile Unicode|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Unicode fast build|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\data\symbol.hpp">
-			</File>
 			<Filter
 				Name="action"
 				Filter="">
@@ -1683,85 +1643,74 @@
 					RelativePath=".\data\symbol_font.hpp">
 				</File>
 			</Filter>
+			<Filter
+				Name="base"
+				Filter="">
+				<File
+					RelativePath=".\data\card.cpp">
+				</File>
+				<File
+					RelativePath=".\data\card.hpp">
+				</File>
+				<File
+					RelativePath=".\data\game.cpp">
+				</File>
+				<File
+					RelativePath=".\data\game.hpp">
+				</File>
+				<File
+					RelativePath=".\data\set.cpp">
+				</File>
+				<File
+					RelativePath=".\data\set.hpp">
+				</File>
+				<File
+					RelativePath=".\data\settings.cpp">
+				</File>
+				<File
+					RelativePath=".\data\settings.hpp">
+				</File>
+				<File
+					RelativePath=".\data\stylesheet.cpp">
+				</File>
+				<File
+					RelativePath=".\data\stylesheet.hpp">
+				</File>
+				<File
+					RelativePath=".\data\symbol.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Profile Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode fast build|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\data\symbol.hpp">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="util"
 			Filter="">
-			<File
-				RelativePath=".\util\atomic.hpp">
-			</File>
-			<File
-				RelativePath=".\util\dynamic_arg.hpp">
-			</File>
-			<File
-				RelativePath=".\util\error.cpp">
-			</File>
-			<File
-				RelativePath=".\util\error.hpp">
-			</File>
-			<File
-				RelativePath=".\util\for_each.hpp">
-			</File>
-			<File
-				RelativePath=".\util\order_cache.hpp">
-			</File>
-			<File
-				RelativePath=".\util\platform.hpp">
-			</File>
-			<File
-				RelativePath=".\util\prec.hpp">
-			</File>
-			<File
-				RelativePath=".\util\reflect.hpp">
-			</File>
-			<File
-				RelativePath=".\util\rotation.cpp">
-			</File>
-			<File
-				RelativePath=".\util\rotation.hpp">
-			</File>
-			<File
-				RelativePath=".\util\smart_ptr.hpp">
-			</File>
-			<File
-				RelativePath=".\util\string.cpp">
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Unicode|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Profile Unicode|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Unicode fast build|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\util\string.hpp">
-			</File>
-			<File
-				RelativePath=".\util\tagged_string.cpp">
-			</File>
-			<File
-				RelativePath=".\util\tagged_string.hpp">
-			</File>
-			<File
-				RelativePath=".\util\window_id.hpp">
-			</File>
 			<Filter
 				Name="io"
 				Filter="">
@@ -1933,6 +1882,85 @@
 				</File>
 				<File
 					RelativePath=".\util\version.hpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="base"
+				Filter="">
+				<File
+					RelativePath=".\util\atomic.hpp">
+				</File>
+				<File
+					RelativePath=".\util\dynamic_arg.hpp">
+				</File>
+				<File
+					RelativePath=".\util\error.cpp">
+				</File>
+				<File
+					RelativePath=".\util\error.hpp">
+				</File>
+				<File
+					RelativePath=".\util\for_each.hpp">
+				</File>
+				<File
+					RelativePath=".\util\order_cache.hpp">
+				</File>
+				<File
+					RelativePath=".\util\platform.hpp">
+				</File>
+				<File
+					RelativePath=".\util\prec.hpp">
+				</File>
+				<File
+					RelativePath=".\util\reflect.hpp">
+				</File>
+				<File
+					RelativePath=".\util\rotation.cpp">
+				</File>
+				<File
+					RelativePath=".\util\rotation.hpp">
+				</File>
+				<File
+					RelativePath=".\util\smart_ptr.hpp">
+				</File>
+				<File
+					RelativePath=".\util\string.cpp">
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Profile Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode fast build|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\util\string.hpp">
+				</File>
+				<File
+					RelativePath=".\util\tagged_string.cpp">
+				</File>
+				<File
+					RelativePath=".\util\tagged_string.hpp">
+				</File>
+				<File
+					RelativePath=".\util\window_id.hpp">
 				</File>
 			</Filter>
 		</Filter>
@@ -2114,93 +2142,6 @@
 		<Filter
 			Name="script"
 			Filter="">
-			<File
-				RelativePath=".\script\context.cpp">
-			</File>
-			<File
-				RelativePath=".\script\context.hpp">
-			</File>
-			<File
-				RelativePath=".\script\dependency.cpp">
-			</File>
-			<File
-				RelativePath=".\script\dependency.hpp">
-			</File>
-			<File
-				RelativePath=".\script\image.cpp">
-				<FileConfiguration
-					Name="Debug|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)3.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)3.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug Unicode|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)3.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Unicode|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)3.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Profile Unicode|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)3.obj"/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release Unicode fast build|Win32">
-					<Tool
-						Name="VCCLCompilerTool"
-						ObjectFile="$(IntDir)/$(InputName)3.obj"/>
-				</FileConfiguration>
-			</File>
-			<File
-				RelativePath=".\script\image.hpp">
-			</File>
-			<File
-				RelativePath=".\script\parser.cpp">
-			</File>
-			<File
-				RelativePath=".\script\parser.hpp">
-			</File>
-			<File
-				RelativePath=".\script\script.cpp">
-			</File>
-			<File
-				RelativePath=".\script\script.hpp">
-			</File>
-			<File
-				RelativePath=".\script\script_manager.cpp">
-			</File>
-			<File
-				RelativePath=".\script\script_manager.hpp">
-			</File>
-			<File
-				RelativePath=".\script\scriptable.cpp">
-			</File>
-			<File
-				RelativePath=".\script\scriptable.hpp">
-			</File>
-			<File
-				RelativePath=".\script\to_value.hpp">
-			</File>
-			<File
-				RelativePath=".\script\value.cpp">
-			</File>
-			<File
-				RelativePath=".\script\value.hpp">
-			</File>
 			<Filter
 				Name="functions"
 				Filter="">
@@ -2296,6 +2237,105 @@
 				</File>
 				<File
 					RelativePath=".\script\functions\util.hpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="base"
+				Filter="">
+				<File
+					RelativePath=".\script\script.cpp">
+				</File>
+				<File
+					RelativePath=".\script\script.hpp">
+				</File>
+				<File
+					RelativePath=".\script\to_value.hpp">
+				</File>
+				<File
+					RelativePath=".\script\value.cpp">
+				</File>
+				<File
+					RelativePath=".\script\value.hpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="parse_eval"
+				Filter="">
+				<File
+					RelativePath=".\script\context.cpp">
+				</File>
+				<File
+					RelativePath=".\script\context.hpp">
+				</File>
+				<File
+					RelativePath=".\script\dependency.cpp">
+				</File>
+				<File
+					RelativePath=".\script\dependency.hpp">
+				</File>
+				<File
+					RelativePath=".\script\parser.cpp">
+				</File>
+				<File
+					RelativePath=".\script\parser.hpp">
+				</File>
+			</Filter>
+			<Filter
+				Name="use"
+				Filter="">
+				<File
+					RelativePath=".\script\image.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Profile Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode fast build|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)3.obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\script\image.hpp">
+				</File>
+				<File
+					RelativePath=".\script\script_manager.cpp">
+				</File>
+				<File
+					RelativePath=".\script\script_manager.hpp">
+				</File>
+				<File
+					RelativePath=".\script\scriptable.cpp">
+				</File>
+				<File
+					RelativePath=".\script\scriptable.hpp">
 				</File>
 			</Filter>
 		</Filter>
@@ -2836,10 +2876,10 @@
 			RelativePath="..\conversion-todo.txt">
 		</File>
 		<File
-			RelativePath="..\data\nl.mse-locale\locale">
+			RelativePath="..\data\en.mse-locale\locale">
 		</File>
 		<File
-			RelativePath="..\data\en.mse-locale\locale">
+			RelativePath="..\data\nl.mse-locale\locale">
 		</File>
 		<File
 			RelativePath=".\main.cpp">

@@ -26,7 +26,7 @@ SelectCardList::SelectCardList(Window* parent, int id, long additional_style)
 }
 
 void SelectCardList::selectAll() {
-	FOR_EACH_CONST(c, getCards()) {
+	FOR_EACH_CONST(c, set->cards) {
 		selected.insert(c);
 	}
 	Refresh(false);
@@ -61,25 +61,25 @@ void SelectCardList::toggle(const CardP& card) {
 }
 
 void SelectCardList::onKeyDown(wxKeyEvent& ev) {
-	if (selected_card_pos == -1 || !selected_card) {
+	if (selected_item_pos == -1 || !selected_item) {
 		// no selection
 		ev.Skip();
 		return;
 	}
 	switch (ev.GetKeyCode()) {
 		case WXK_SPACE: {
-			toggle(selected_card);
-			RefreshItem(selected_card_pos);
+			toggle(getCard());
+			RefreshItem(selected_item_pos);
 			break;
 		}
 		case WXK_NUMPAD_ADD: case '+': {
-			selected.insert(selected_card);
-			RefreshItem(selected_card_pos);
+			selected.insert(getCard());
+			RefreshItem(selected_item_pos);
 			break;
 		}
 		case WXK_NUMPAD_SUBTRACT: case '-': {
-			selected.erase(selected_card);
-			RefreshItem(selected_card_pos);
+			selected.erase(getCard());
+			RefreshItem(selected_item_pos);
 			break;
 		}
 		default:

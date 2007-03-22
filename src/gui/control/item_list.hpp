@@ -1,0 +1,89 @@
+//+----------------------------------------------------------------------------+
+//| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
+//| Copyright:    (C) 2001 - 2006 Twan van Laarhoven                           |
+//| License:      GNU General Public License 2 or later (see file COPYING)     |
+//+----------------------------------------------------------------------------+
+
+#ifndef HEADER_GUI_CONTROL_ITEM_LIST
+#define HEADER_GUI_CONTROL_ITEM_LIST
+
+// ----------------------------------------------------------------------------- : Includes
+
+#include <util/prec.hpp>
+#include <wx/listctrl.h>
+
+typedef shared_ptr<void> VoidP;
+
+// ----------------------------------------------------------------------------- : ItemList
+
+/// A generic list of items
+/** The list is shown in report mode, and allows sorting.
+ *  Currently used for cards and keywords.
+ */
+class ItemList : public wxListView {
+  public:
+	ItemList(Window* parent, int id, long additional_style = 0);
+	
+	// --------------------------------------------------- : Selection
+	
+	/// Is there a previous item to select?
+	bool canSelectPrevious() const;
+	/// Is there a next item to select?
+	bool canSelectNext() const;
+	/// Move the selection to the previous item (if possible)
+	void selectPrevious();
+	/// Move the selection to the next item (if possible)
+	void selectNext();
+	
+	// --------------------------------------------------- : Virtual interface
+  protected:
+	/// Get a list of all items
+	virtual void getItems(vector<VoidP>& out) const = 0;
+	
+	/// Send an 'item selected' event for the currently selected item (selected_item)
+	virtual void sendEvent() = 0;
+	
+	/// Is sorting required?
+	virtual bool mustSort() const { return false; }
+	/// Compare two items for <
+	virtual bool compareItems(void* a, void* b) const = 0;
+	
+	// --------------------------------------------------- : Protected interface
+	/// Return the card at the given position in the sorted list
+	inline const VoidP& getItem(long pos) const { return sorted_list[pos]; }
+	/// Sort by the given column
+	void sortBy(long column, bool ascending);
+	/// Refresh the card list (resort, refresh and reselect current item)
+	void refreshList();
+	
+	/// Select an item, send an event to the parent
+	/** If focus then the item is also focused and selected in the actual control.
+	 *  This should abviously not be done when the item is selected because it was focused (leading to a loop).
+	 */
+	void selectItem(const VoidP& item, bool focus, bool event);
+	/// Select a item at the specified position
+	void selectItemPos(long pos, bool focus);
+	/// Find the position for the selected_item
+	void findSelectedItemPos();
+	/// Actually select the card at selected_item_pos in the control
+	void selectCurrentItem();
+	
+	// --------------------------------------------------- : Data
+	VoidP          selected_item;	  ///< The currently selected item
+	long           selected_item_pos; ///< Position of the selected item in the sorted_list, or -1 if no card is selected
+	bool           sort_ascending;    ///< Sort order
+	long           sort_by_column;    ///< Column to use for sorting, or -1 if not sorted
+	vector<VoidP>  sorted_list;       ///< Sorted list of items, can be considered a map: pos->item
+	
+  private:
+	struct ItemComparer; // for comparing items
+	
+	// --------------------------------------------------- : Window events
+	DECLARE_EVENT_TABLE();
+	
+	void onColumnClick(wxListEvent& ev);
+	void onItemFocus  (wxListEvent& ev);
+};
+
+// ----------------------------------------------------------------------------- : EOF
+#endif

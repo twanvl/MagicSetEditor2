@@ -16,21 +16,16 @@ FilteredCardList::FilteredCardList(Window* parent, int id, long style)
 	: CardListBase(parent, id, style)
 {}
 
-const vector<CardP>& FilteredCardList::getCards() const {
-	return cards;
-}
-
 void FilteredCardList::setFilter(const CardListFilterP& filter) {
 	this->filter = filter;
 	rebuild();
 }
 
-void FilteredCardList::onRebuild() {
-	cards.clear();
+void FilteredCardList::getItems(vector<VoidP>& out) const {
 	if (filter) {
 		FOR_EACH(c, set->cards) {
 			if (filter->keep(c)) {
-				cards.push_back(c);
+				out.push_back(c);
 			}
 		}
 	}

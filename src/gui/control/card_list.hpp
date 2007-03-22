@@ -10,8 +10,8 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <gui/control/item_list.hpp>
 #include <data/set.hpp>
-#include <wx/listctrl.h>
 
 DECLARE_POINTER_TYPE(ChoiceStyle);
 DECLARE_POINTER_TYPE(Field);
@@ -39,28 +39,19 @@ struct CardSelectEvent : public wxCommandEvent {
 /*  This class allows the cards to be sorted, and has a _('currentCard'), the selected card
  *  when a card is selected, it raises a CardSelectEvent, that will propage to the parent window.
  *
- *  Note: (long) pos refers to position in the sorted_card_list,
- *        (size_t) index refers to the index in the actual card list (as returned by getCards).
+ *  Note: (long) pos refers to position in the sorted_list,
+ *        (size_t) index refers to the index in the actual card list.
  */
-class CardListBase : public wxListView, public SetView {
+class CardListBase : public ItemList, public SetView {
   public:
 	CardListBase(Window* parent, int id, long additional_style = 0);
 	~CardListBase();
 	
 	// --------------------------------------------------- : Selection
 	
-	inline CardP getCard() const            { return selected_card; }
-	inline void  setCard(const CardP& card) { selectCard(card, true, false); }
-	
-	/// Is there a previous card to select?
-	bool canSelectPrevious() const;
-	/// Is there a next card to select?
-	bool canSelectNext() const;
-	/// Move the selection to the previous card (if possible)
-	void selectPrevious();
-	/// Move the selection to the next card (if possible)
-	void selectNext();
-	
+	inline CardP getCard() const            { return static_pointer_cast<Card>(selected_item); }
+	inline void  setCard(const CardP& card) { selectItem(card, true, false); }
+		
 	// --------------------------------------------------- : Clipboard
 	
 	bool canCut()   const;
@@ -79,10 +70,10 @@ class CardListBase : public wxListView, public SetView {
 	
 	// --------------------------------------------------- : The cards
   protected:
-	/// What cards should be shown?
-	virtual const vector<CardP>& getCards() const;
+	/// Get a list of all cards
+	virtual void getItems(vector<VoidP>& out) const;
 	/// Return the card at the given position in the sorted card list
-	const CardP& getCard(long pos) const;
+	inline CardP getCard(long pos) const { return static_pointer_cast<Card>(getItem(pos)); }
 	
 	/// Rebuild the card list (clear all vectors and fill them again)
 	void rebuild();
@@ -90,6 +81,11 @@ class CardListBase : public wxListView, public SetView {
 	virtual void onRebuild() {}
 	/// Can the card list be modified?
 	virtual bool allowModify() const { return false; }
+	
+	/// Send an 'item selected' event for the currently selected item (selected_item)
+	virtual void sendEvent();
+	/// Compare cards
+	virtual bool compareItems(void* a, void* b) const;
 	
 	// --------------------------------------------------- : Item 'events'
 	
@@ -103,37 +99,13 @@ class CardListBase : public wxListView, public SetView {
 	virtual wxListItemAttr* OnGetItemAttr(long pos) const;
 	
 	// --------------------------------------------------- : Data
-  protected:
-	CardP          selected_card;	 ///< The currently selected card, or -1 if no card is selected
-	long           selected_card_pos;///< Position of the selected card in the sorted_card_list
   private:
 	// display stuff
 	ChoiceStyleP   color_style;       ///< Style (and field) to use for text color (optional)
 	vector<FieldP> column_fields;     ///< The field to use for each column (by column index)
-	// sorted list stuff
-	vector<CardP>  sorted_card_list; ///< Sorted list of cards, can be considered a map: pos->card
-	FieldP         sort_criterium;   ///< Field to sort by
-	bool           sort_ascending;   ///< Sort order
-	
+		
 	mutable wxListItemAttr item_attr; // for OnGetItemAttr
 	
-	/// Select a card, send an event to the parent
-	/** If focus then the card is also focused and selected in the actual control.
-	 *  This should abviously not be done when the card is selected because it was selected (leading to a loop).
-	 */
-	void selectCard(const CardP& card, bool focus, bool event);
-	/// Select a card at the specified position
-	void selectCardPos(long pos, bool focus);
-	/// Find the position for the selected_card
-	void findSelectedCardPos();
-	/// Actually select the card at selected_card_pos in the control
-	void selectCurrentCard();
-	
-	/// Sorts the list by the current sorting criterium
-	void sortList();
-	struct CardComparer; // for comparing cards
-	/// Refresh the card list (resort, refresh and reselect current item)
-	void refreshList();
 	/// Find the field that determines the color, if any.
 	/** Note: Uses only fields from the set's default style */
 	ChoiceStyleP findColorStyle();
@@ -148,10 +120,8 @@ class CardListBase : public wxListView, public SetView {
 	// --------------------------------------------------- : Window events
 	DECLARE_EVENT_TABLE();
 	
-	void onColumnClick     (wxListEvent& ev);
 	void onColumnRightClick(wxListEvent& ev);
 	void onSelectColumns   (wxCommandEvent& ev);
-	void onItemFocus       (wxListEvent& ev);
 	void onChar            (wxKeyEvent& ev);
 	void onDrag            (wxMouseEvent& ev);
 	void onContextMenu     (wxContextMenuEvent&);

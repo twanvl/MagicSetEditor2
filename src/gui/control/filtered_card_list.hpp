@@ -36,13 +36,10 @@ class FilteredCardList : public CardListBase {
 	
   protected:
 	/// Get only the subset of the cards
-	virtual const vector<CardP>& getCards() const;
-	/// Rebuild the filtered card list
-	virtual void onRebuild();
+	virtual void getItems(vector<VoidP>& out) const;
 
   private:	
 	CardListFilterP filter;	///< Filter with which this.cards is made
-	vector<CardP>   cards;	///< The cards that are shown
 };
 
 
