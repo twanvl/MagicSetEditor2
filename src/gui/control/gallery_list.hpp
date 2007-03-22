@@ -59,6 +59,7 @@ class GalleryList : public wxScrolledWindow {
 	void onLeftDClick(wxMouseEvent& ev);
 	void onChar(wxKeyEvent& ev);
 	void onPaint(wxPaintEvent&);
+	void onSize(wxSizeEvent&);
 	void OnDraw(DC& dc);
 	
 	/// Find the item corresponding to the given location

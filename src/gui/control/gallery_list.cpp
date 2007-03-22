@@ -171,6 +171,10 @@ void GalleryList::OnDraw(DC& dc) {
 	}
 }
 
+void GalleryList::onSize(wxSizeEvent&) {
+	update();
+}
+
 void GalleryList::sendEvent(WXTYPE type) {
 	wxCommandEvent ev(type, GetId());
 	ProcessEvent(ev);
@@ -183,4 +187,5 @@ BEGIN_EVENT_TABLE(GalleryList, wxScrolledWindow)
 	EVT_LEFT_DCLICK    (GalleryList::onLeftDClick)
 	EVT_CHAR           (GalleryList::onChar)
 	EVT_PAINT          (GalleryList::onPaint)
+	EVT_SIZE           (GalleryList::onSize)
 END_EVENT_TABLE  ()
