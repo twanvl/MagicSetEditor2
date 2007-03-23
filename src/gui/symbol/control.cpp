@@ -152,7 +152,7 @@ void SymbolControl::draw(DC& dc) {
 		wxSize s = dc.GetSize();
 		int lines = settings.symbol_grid_size;
 		for (int i = 0 ; i <= lines ; ++i) {
-			int x = rotation.trS((double)i/lines-0.0001);
+			int x = (int) rotation.trS(i/lines-0.0001);
 			//dc.SetPen(Color(0, i%5 == 0 ? 64 : 31, 0));
 			//dc.SetPen(Color(i%5 == 0 ? 64 : 31, 0, 0));
 			dc.SetLogicalFunction(wxAND);

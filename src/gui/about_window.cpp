@@ -67,8 +67,8 @@ END_EVENT_TABLE  ()
 HoverButton::HoverButton(Window* parent, int id, const String& name, const Color& background)
 	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxNO_BORDER )
 	, hover(false), focus(false), mouse_down(false), key_down(false)
-	, last_drawn(nullptr)
 	, background(background)
+	, last_drawn(nullptr)
 {
 	loadBitmaps(name);
 	SetSize(DoGetBestSize());

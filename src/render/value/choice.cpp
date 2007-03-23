@@ -30,7 +30,7 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 				i = img.update(viewer.getContext(), *viewer.stylesheet, 0, 0);
 			} else {
 				i = img.update(viewer.getContext(), *viewer.stylesheet,
-						dc.trS(style().width), dc.trS(style().height),
+						(int) dc.trS(style().width), (int) dc.trS(style().height),
 						style().alignment == ALIGN_STRETCH ? ASPECT_STRETCH : ASPECT_FIT
 					);
 			}

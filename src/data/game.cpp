@@ -21,8 +21,8 @@ DECLARE_TYPEOF_COLLECTION(StatsDimensionP);
 IMPLEMENT_DYNAMIC_ARG(Game*, game_for_reading, nullptr);
 
 Game::Game()
-	: dependencies_initialized(false)
-	, has_keywords(false)
+	: has_keywords(false)
+	, dependencies_initialized(false)
 {}
 
 GameP Game::byName(const String& name) {

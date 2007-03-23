@@ -205,7 +205,7 @@ inline ScriptValueP to_script(long          v) { return to_script((int) v); }
        ScriptValueP to_script(double        v);
        ScriptValueP to_script(const String& v);
        ScriptValueP to_script(const Color&  v);
-inline ScriptValueP to_script(bool                 v) { return v ? script_true : script_false; }
+inline ScriptValueP to_script(bool          v) { return v ? script_true : script_false; }
 template <typename T>
 inline ScriptValueP to_script(const vector<T>*     v) { return new_intrusive1<ScriptCollection<vector<T> > >(v); }
 template <typename K, typename V>

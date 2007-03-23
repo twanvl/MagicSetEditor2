@@ -30,7 +30,7 @@ void SymbolValueViewer::draw(RotatedDC& dc) {
 			// render and filter variations
 			FOR_EACH(variation, style().variations) {
 				Image img = render_symbol(symbol, *variation->filter, variation->border_radius);
-				Image resampled(wh, wh, false);
+				Image resampled((int) wh, (int) wh, false);
 				resample(img, resampled);
 				symbols.push_back(Bitmap(resampled));
 			}

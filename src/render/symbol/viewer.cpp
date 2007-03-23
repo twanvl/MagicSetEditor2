@@ -186,7 +186,7 @@ void SymbolViewer::drawSymbolPart(const SymbolPart& part, DC* border, DC* interi
 			// white/black
 			border->SetBrush(Color(borderCol, borderCol, borderCol));
 		}
-		border->SetPen(wxPen(*wxWHITE, rotation.trS(border_radius)));
+		border->SetPen(wxPen(*wxWHITE, (int) rotation.trS(border_radius)));
 		border->DrawPolygon((int)points.size(), &points[0]);
 	}
 	// draw interior

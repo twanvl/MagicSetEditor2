@@ -25,11 +25,12 @@ String ValueAction::getName(bool to_undo) const {
 // ----------------------------------------------------------------------------- : Simple
 
 /// A ValueAction that swaps between old and new values
-template <typename T, typename T::ValueType T::*member, bool ALLOW_MERGE>
+template <typename T, bool ALLOW_MERGE>
 class SimpleValueAction : public ValueAction {
   public:
-	inline SimpleValueAction(const shared_ptr<T>& value, const typename T::ValueType& new_value)
+	inline SimpleValueAction(const shared_ptr<T>& value, const typename T::ValueType& new_value, typename T::ValueType T::*member)
 		: ValueAction(value), new_value(new_value)
+		, member(member)
 	{}
 	
 	virtual void perform(bool to_undo) {
@@ -50,13 +51,14 @@ class SimpleValueAction : public ValueAction {
 	
   private:
 	typename T::ValueType new_value;
+	typename T::ValueType T::*member;
 };
 
-ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value) { return new SimpleValueAction<ChoiceValue,         &ChoiceValue::value,         true> (value, new_value); }
-ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value) { return new SimpleValueAction<MultipleChoiceValue, &MultipleChoiceValue::value, false>(value, new_value); }
-ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value) { return new SimpleValueAction<ColorValue,          &ColorValue::value,          true> (value, new_value); }
-ValueAction* value_action(const ImageValueP&          value, const FileName&            new_value) { return new SimpleValueAction<ImageValue,          &ImageValue::filename,       false>(value, new_value); }
-ValueAction* value_action(const SymbolValueP&         value, const FileName&            new_value) { return new SimpleValueAction<SymbolValue,         &SymbolValue::filename,      false>(value, new_value); }
+ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value) { return new SimpleValueAction<ChoiceValue, true> (value, new_value, &ChoiceValue::value); }
+ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value) { return new SimpleValueAction<MultipleChoiceValue, false>(value, new_value, &MultipleChoiceValue::value); }
+ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value) { return new SimpleValueAction<ColorValue, true> (value, new_value, &ColorValue::value); }
+ValueAction* value_action(const ImageValueP&          value, const FileName&            new_value) { return new SimpleValueAction<ImageValue,          false>(value, new_value, &ImageValue::filename); }
+ValueAction* value_action(const SymbolValueP&         value, const FileName&            new_value) { return new SimpleValueAction<SymbolValue,         false>(value, new_value, &SymbolValue::filename); }
 
 
 // ----------------------------------------------------------------------------- : Text

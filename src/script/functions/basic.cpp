@@ -60,13 +60,13 @@ SCRIPT_FUNCTION(contains) {
 SCRIPT_RULE_1(format, String, format) {
 	String fmt = _("%") + replace_all(format, _("%"), _(""));
 	// determine type expected by format string
-	if (format.find_first_of(_("DdIiOoXx")) != String.npos) {
+	if (format.find_first_of(_("DdIiOoXx")) != String::npos) {
 		SCRIPT_PARAM(int, input);
 		SCRIPT_RETURN(String::Format(fmt, input));
-	} else if (format.find_first_of(_("EeFfGg")) != String.npos) {
+	} else if (format.find_first_of(_("EeFfGg")) != String::npos) {
 		SCRIPT_PARAM(double, input);
 		SCRIPT_RETURN(String::Format(fmt, input));
-	} else if (format.find_first_of(_("Ss")) != String.npos) {
+	} else if (format.find_first_of(_("Ss")) != String::npos) {
 		SCRIPT_PARAM(String, input);
 		SCRIPT_RETURN(format_string(fmt, input));
 	} else {

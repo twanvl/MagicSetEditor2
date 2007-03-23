@@ -33,6 +33,7 @@ String english_number(int i) {
 		case 18: return _("eighteen");
 		case 20: return _("twenty");
 		case 30: return _("thirty");
+		case 40: return _("forty");
 		case 50: return _("fifty");
 		case 80: return _("eighty");
 		default: {
@@ -40,7 +41,7 @@ String english_number(int i) {
 				// number too large, keep as digits
 				return (String() << i);
 			} else if (i < 20) {
-				return english_number(i%10) + english_number(10);
+				return english_number(i%10) + _("teen");
 			} else if (i % 10 == 0) {
 				return english_number(i/10) + _("ty");
 			} else {

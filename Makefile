@@ -74,6 +74,7 @@ am_magicseteditor_OBJECTS = ./src/render/text/viewer.$(OBJEXT) \
 	./src/render/value/symbol.$(OBJEXT) \
 	./src/render/value/multiple_choice.$(OBJEXT) \
 	./src/render/value/choice.$(OBJEXT) \
+	./src/render/value/information.$(OBJEXT) \
 	./src/gfx/rotate_image.$(OBJEXT) ./src/gfx/color.$(OBJEXT) \
 	./src/gfx/bezier.$(OBJEXT) ./src/gfx/combine_image.$(OBJEXT) \
 	./src/gfx/image_effects.$(OBJEXT) \
@@ -93,6 +94,8 @@ am_magicseteditor_OBJECTS = ./src/render/text/viewer.$(OBJEXT) \
 	./src/gui/control/package_list.$(OBJEXT) \
 	./src/gui/control/gallery_list.$(OBJEXT) \
 	./src/gui/control/card_viewer.$(OBJEXT) \
+	./src/gui/control/item_list.$(OBJEXT) \
+	./src/gui/control/keyword_list.$(OBJEXT) \
 	./src/gui/set/style_panel.$(OBJEXT) \
 	./src/gui/set/panel.$(OBJEXT) \
 	./src/gui/set/set_info_panel.$(OBJEXT) \
@@ -112,7 +115,8 @@ am_magicseteditor_OBJECTS = ./src/render/text/viewer.$(OBJEXT) \
 	./src/gui/value/symbol.$(OBJEXT) \
 	./src/gui/value/multiple_choice.$(OBJEXT) \
 	./src/gui/value/editor.$(OBJEXT) \
-	./src/gui/value/choice.$(OBJEXT) ./src/gui/util.$(OBJEXT) \
+	./src/gui/value/choice.$(OBJEXT) \
+	./src/gui/value/information.$(OBJEXT) ./src/gui/util.$(OBJEXT) \
 	./src/gui/card_select_window.$(OBJEXT) \
 	./src/gui/about_window.$(OBJEXT) \
 	./src/gui/update_checker.$(OBJEXT) \
@@ -124,7 +128,12 @@ am_magicseteditor_OBJECTS = ./src/render/text/viewer.$(OBJEXT) \
 	./src/gui/drop_down_list.$(OBJEXT) \
 	./src/gui/image_slice_window.$(OBJEXT) \
 	./src/script/script_manager.$(OBJEXT) \
-	./src/script/script.$(OBJEXT) ./src/script/functions.$(OBJEXT) \
+	./src/script/script.$(OBJEXT) \
+	./src/script/functions/basic.$(OBJEXT) \
+	./src/script/functions/export.$(OBJEXT) \
+	./src/script/functions/image.$(OBJEXT) \
+	./src/script/functions/editor.$(OBJEXT) \
+	./src/script/functions/english.$(OBJEXT) \
 	./src/script/value.$(OBJEXT) ./src/script/dependency.$(OBJEXT) \
 	./src/script/image.$(OBJEXT) ./src/script/context.$(OBJEXT) \
 	./src/script/scriptable.$(OBJEXT) \
@@ -135,6 +144,7 @@ am_magicseteditor_OBJECTS = ./src/render/text/viewer.$(OBJEXT) \
 	./src/data/field/symbol.$(OBJEXT) \
 	./src/data/field/multiple_choice.$(OBJEXT) \
 	./src/data/field/choice.$(OBJEXT) \
+	./src/data/field/information.$(OBJEXT) \
 	./src/data/format/clipboard.$(OBJEXT) \
 	./src/data/format/image.$(OBJEXT) \
 	./src/data/format/html.$(OBJEXT) \
@@ -155,6 +165,7 @@ am_magicseteditor_OBJECTS = ./src/render/text/viewer.$(OBJEXT) \
 	./src/data/keyword.$(OBJEXT) ./src/data/stylesheet.$(OBJEXT) \
 	./src/data/statistics.$(OBJEXT) ./src/data/set.$(OBJEXT) \
 	./src/data/symbol_font.$(OBJEXT) \
+	./src/data/export_template.$(OBJEXT) \
 	./src/util/io/get_member.$(OBJEXT) \
 	./src/util/io/reader.$(OBJEXT) \
 	./src/util/io/package_manager.$(OBJEXT) \
@@ -298,7 +309,8 @@ magicseteditor_SOURCES = ./src/render/text/viewer.cpp \
 	./src/render/value/viewer.cpp ./src/render/value/image.cpp \
 	./src/render/value/text.cpp ./src/render/value/symbol.cpp \
 	./src/render/value/multiple_choice.cpp \
-	./src/render/value/choice.cpp ./src/gfx/rotate_image.cpp \
+	./src/render/value/choice.cpp \
+	./src/render/value/information.cpp ./src/gfx/rotate_image.cpp \
 	./src/gfx/color.cpp ./src/gfx/bezier.cpp \
 	./src/gfx/combine_image.cpp ./src/gfx/image_effects.cpp \
 	./src/gfx/polynomial.cpp ./src/gfx/blend_image.cpp \
@@ -316,6 +328,8 @@ magicseteditor_SOURCES = ./src/render/text/viewer.cpp \
 	./src/gui/control/package_list.cpp \
 	./src/gui/control/gallery_list.cpp \
 	./src/gui/control/card_viewer.cpp \
+	./src/gui/control/item_list.cpp \
+	./src/gui/control/keyword_list.cpp \
 	./src/gui/set/style_panel.cpp ./src/gui/set/panel.cpp \
 	./src/gui/set/set_info_panel.cpp \
 	./src/gui/set/keywords_panel.cpp ./src/gui/set/window.cpp \
@@ -328,25 +342,31 @@ magicseteditor_SOURCES = ./src/render/text/viewer.cpp \
 	./src/gui/value/image.cpp ./src/gui/value/text.cpp \
 	./src/gui/value/symbol.cpp ./src/gui/value/multiple_choice.cpp \
 	./src/gui/value/editor.cpp ./src/gui/value/choice.cpp \
-	./src/gui/util.cpp ./src/gui/card_select_window.cpp \
-	./src/gui/about_window.cpp ./src/gui/update_checker.cpp \
-	./src/gui/thumbnail_thread.cpp ./src/gui/icon_menu.cpp \
-	./src/gui/new_window.cpp ./src/gui/preferences_window.cpp \
-	./src/gui/welcome_window.cpp ./src/gui/print_window.cpp \
-	./src/gui/drop_down_list.cpp ./src/gui/image_slice_window.cpp \
+	./src/gui/value/information.cpp ./src/gui/util.cpp \
+	./src/gui/card_select_window.cpp ./src/gui/about_window.cpp \
+	./src/gui/update_checker.cpp ./src/gui/thumbnail_thread.cpp \
+	./src/gui/icon_menu.cpp ./src/gui/new_window.cpp \
+	./src/gui/preferences_window.cpp ./src/gui/welcome_window.cpp \
+	./src/gui/print_window.cpp ./src/gui/drop_down_list.cpp \
+	./src/gui/image_slice_window.cpp \
 	./src/script/script_manager.cpp ./src/script/script.cpp \
-	./src/script/functions.cpp ./src/script/value.cpp \
+	./src/script/functions/basic.cpp \
+	./src/script/functions/export.cpp \
+	./src/script/functions/image.cpp \
+	./src/script/functions/editor.cpp \
+	./src/script/functions/english.cpp ./src/script/value.cpp \
 	./src/script/dependency.cpp ./src/script/image.cpp \
 	./src/script/context.cpp ./src/script/scriptable.cpp \
 	./src/script/parser.cpp ./src/data/field/color.cpp \
 	./src/data/field/boolean.cpp ./src/data/field/image.cpp \
 	./src/data/field/text.cpp ./src/data/field/symbol.cpp \
 	./src/data/field/multiple_choice.cpp \
-	./src/data/field/choice.cpp ./src/data/format/clipboard.cpp \
-	./src/data/format/image.cpp ./src/data/format/html.cpp \
-	./src/data/format/mse1.cpp ./src/data/format/mse2.cpp \
-	./src/data/format/mws.cpp ./src/data/format/apprentice.cpp \
-	./src/data/format/formats.cpp ./src/data/format/mtg_editor.cpp \
+	./src/data/field/choice.cpp ./src/data/field/information.cpp \
+	./src/data/format/clipboard.cpp ./src/data/format/image.cpp \
+	./src/data/format/html.cpp ./src/data/format/mse1.cpp \
+	./src/data/format/mse2.cpp ./src/data/format/mws.cpp \
+	./src/data/format/apprentice.cpp ./src/data/format/formats.cpp \
+	./src/data/format/mtg_editor.cpp \
 	./src/data/format/image_to_symbol.cpp \
 	./src/data/action/symbol.cpp ./src/data/action/set.cpp \
 	./src/data/action/symbol_part.cpp ./src/data/action/value.cpp \
@@ -355,14 +375,14 @@ magicseteditor_SOURCES = ./src/render/text/viewer.cpp \
 	./src/data/card.cpp ./src/data/field.cpp \
 	./src/data/keyword.cpp ./src/data/stylesheet.cpp \
 	./src/data/statistics.cpp ./src/data/set.cpp \
-	./src/data/symbol_font.cpp ./src/util/io/get_member.cpp \
-	./src/util/io/reader.cpp ./src/util/io/package_manager.cpp \
-	./src/util/io/package.cpp ./src/util/io/writer.cpp \
-	./src/util/rotation.cpp ./src/util/tagged_string.cpp \
-	./src/util/action_stack.cpp ./src/util/string.cpp \
-	./src/util/alignment.cpp ./src/util/version.cpp \
-	./src/util/error.cpp ./src/util/age.cpp ./src/main.cpp \
-	./src/code_template.cpp
+	./src/data/symbol_font.cpp ./src/data/export_template.cpp \
+	./src/util/io/get_member.cpp ./src/util/io/reader.cpp \
+	./src/util/io/package_manager.cpp ./src/util/io/package.cpp \
+	./src/util/io/writer.cpp ./src/util/rotation.cpp \
+	./src/util/tagged_string.cpp ./src/util/action_stack.cpp \
+	./src/util/string.cpp ./src/util/alignment.cpp \
+	./src/util/version.cpp ./src/util/error.cpp ./src/util/age.cpp \
+	./src/main.cpp ./src/code_template.cpp
 all: all-am
 
 .SUFFIXES:
@@ -497,6 +517,9 @@ src/render/value/$(DEPDIR)/$(am__dirstamp):
 	src/render/value/$(DEPDIR)/$(am__dirstamp)
 ./src/render/value/choice.$(OBJEXT): src/render/value/$(am__dirstamp) \
 	src/render/value/$(DEPDIR)/$(am__dirstamp)
+./src/render/value/information.$(OBJEXT):  \
+	src/render/value/$(am__dirstamp) \
+	src/render/value/$(DEPDIR)/$(am__dirstamp)
 src/gfx/$(am__dirstamp):
 	@$(mkdir_p) ./src/gfx
 	@: > src/gfx/$(am__dirstamp)
@@ -564,6 +587,12 @@ src/gui/control/$(DEPDIR)/$(am__dirstamp):
 ./src/gui/control/card_viewer.$(OBJEXT):  \
 	src/gui/control/$(am__dirstamp) \
 	src/gui/control/$(DEPDIR)/$(am__dirstamp)
+./src/gui/control/item_list.$(OBJEXT):  \
+	src/gui/control/$(am__dirstamp) \
+	src/gui/control/$(DEPDIR)/$(am__dirstamp)
+./src/gui/control/keyword_list.$(OBJEXT):  \
+	src/gui/control/$(am__dirstamp) \
+	src/gui/control/$(DEPDIR)/$(am__dirstamp)
 src/gui/set/$(am__dirstamp):
 	@$(mkdir_p) ./src/gui/set
 	@: > src/gui/set/$(am__dirstamp)
@@ -628,6 +657,8 @@ src/gui/value/$(DEPDIR)/$(am__dirstamp):
 	src/gui/value/$(DEPDIR)/$(am__dirstamp)
 ./src/gui/value/choice.$(OBJEXT): src/gui/value/$(am__dirstamp) \
 	src/gui/value/$(DEPDIR)/$(am__dirstamp)
+./src/gui/value/information.$(OBJEXT): src/gui/value/$(am__dirstamp) \
+	src/gui/value/$(DEPDIR)/$(am__dirstamp)
 src/gui/$(am__dirstamp):
 	@$(mkdir_p) ./src/gui
 	@: > src/gui/$(am__dirstamp)
@@ -668,8 +699,27 @@ src/script/$(DEPDIR)/$(am__dirstamp):
 	src/script/$(DEPDIR)/$(am__dirstamp)
 ./src/script/script.$(OBJEXT): src/script/$(am__dirstamp) \
 	src/script/$(DEPDIR)/$(am__dirstamp)
-./src/script/functions.$(OBJEXT): src/script/$(am__dirstamp) \
-	src/script/$(DEPDIR)/$(am__dirstamp)
+src/script/functions/$(am__dirstamp):
+	@$(mkdir_p) ./src/script/functions
+	@: > src/script/functions/$(am__dirstamp)
+src/script/functions/$(DEPDIR)/$(am__dirstamp):
+	@$(mkdir_p) ./src/script/functions/$(DEPDIR)
+	@: > src/script/functions/$(DEPDIR)/$(am__dirstamp)
+./src/script/functions/basic.$(OBJEXT):  \
+	src/script/functions/$(am__dirstamp) \
+	src/script/functions/$(DEPDIR)/$(am__dirstamp)
+./src/script/functions/export.$(OBJEXT):  \
+	src/script/functions/$(am__dirstamp) \
+	src/script/functions/$(DEPDIR)/$(am__dirstamp)
+./src/script/functions/image.$(OBJEXT):  \
+	src/script/functions/$(am__dirstamp) \
+	src/script/functions/$(DEPDIR)/$(am__dirstamp)
+./src/script/functions/editor.$(OBJEXT):  \
+	src/script/functions/$(am__dirstamp) \
+	src/script/functions/$(DEPDIR)/$(am__dirstamp)
+./src/script/functions/english.$(OBJEXT):  \
+	src/script/functions/$(am__dirstamp) \
+	src/script/functions/$(DEPDIR)/$(am__dirstamp)
 ./src/script/value.$(OBJEXT): src/script/$(am__dirstamp) \
 	src/script/$(DEPDIR)/$(am__dirstamp)
 ./src/script/dependency.$(OBJEXT): src/script/$(am__dirstamp) \
@@ -702,6 +752,9 @@ src/data/field/$(DEPDIR)/$(am__dirstamp):
 	src/data/field/$(am__dirstamp) \
 	src/data/field/$(DEPDIR)/$(am__dirstamp)
 ./src/data/field/choice.$(OBJEXT): src/data/field/$(am__dirstamp) \
+	src/data/field/$(DEPDIR)/$(am__dirstamp)
+./src/data/field/information.$(OBJEXT):  \
+	src/data/field/$(am__dirstamp) \
 	src/data/field/$(DEPDIR)/$(am__dirstamp)
 src/data/format/$(am__dirstamp):
 	@$(mkdir_p) ./src/data/format
@@ -778,6 +831,8 @@ src/data/$(DEPDIR)/$(am__dirstamp):
 	src/data/$(DEPDIR)/$(am__dirstamp)
 ./src/data/symbol_font.$(OBJEXT): src/data/$(am__dirstamp) \
 	src/data/$(DEPDIR)/$(am__dirstamp)
+./src/data/export_template.$(OBJEXT): src/data/$(am__dirstamp) \
+	src/data/$(DEPDIR)/$(am__dirstamp)
 src/util/io/$(am__dirstamp):
 	@$(mkdir_p) ./src/util/io
 	@: > src/util/io/$(am__dirstamp)
@@ -838,11 +893,13 @@ mostlyclean-compile:
 	-rm -f ./src/data/action/symbol_part.$(OBJEXT)
 	-rm -f ./src/data/action/value.$(OBJEXT)
 	-rm -f ./src/data/card.$(OBJEXT)
+	-rm -f ./src/data/export_template.$(OBJEXT)
 	-rm -f ./src/data/field.$(OBJEXT)
 	-rm -f ./src/data/field/boolean.$(OBJEXT)
 	-rm -f ./src/data/field/choice.$(OBJEXT)
 	-rm -f ./src/data/field/color.$(OBJEXT)
 	-rm -f ./src/data/field/image.$(OBJEXT)
+	-rm -f ./src/data/field/information.$(OBJEXT)
 	-rm -f ./src/data/field/multiple_choice.$(OBJEXT)
 	-rm -f ./src/data/field/symbol.$(OBJEXT)
 	-rm -f ./src/data/field/text.$(OBJEXT)
@@ -886,6 +943,8 @@ mostlyclean-compile:
 	-rm -f ./src/gui/control/gallery_list.$(OBJEXT)
 	-rm -f ./src/gui/control/graph.$(OBJEXT)
 	-rm -f ./src/gui/control/image_card_list.$(OBJEXT)
+	-rm -f ./src/gui/control/item_list.$(OBJEXT)
+	-rm -f ./src/gui/control/keyword_list.$(OBJEXT)
 	-rm -f ./src/gui/control/native_look_editor.$(OBJEXT)
 	-rm -f ./src/gui/control/package_list.$(OBJEXT)
 	-rm -f ./src/gui/control/select_card_list.$(OBJEXT)
@@ -917,6 +976,7 @@ mostlyclean-compile:
 	-rm -f ./src/gui/value/color.$(OBJEXT)
 	-rm -f ./src/gui/value/editor.$(OBJEXT)
 	-rm -f ./src/gui/value/image.$(OBJEXT)
+	-rm -f ./src/gui/value/information.$(OBJEXT)
 	-rm -f ./src/gui/value/multiple_choice.$(OBJEXT)
 	-rm -f ./src/gui/value/symbol.$(OBJEXT)
 	-rm -f ./src/gui/value/text.$(OBJEXT)
@@ -933,13 +993,18 @@ mostlyclean-compile:
 	-rm -f ./src/render/value/choice.$(OBJEXT)
 	-rm -f ./src/render/value/color.$(OBJEXT)
 	-rm -f ./src/render/value/image.$(OBJEXT)
+	-rm -f ./src/render/value/information.$(OBJEXT)
 	-rm -f ./src/render/value/multiple_choice.$(OBJEXT)
 	-rm -f ./src/render/value/symbol.$(OBJEXT)
 	-rm -f ./src/render/value/text.$(OBJEXT)
 	-rm -f ./src/render/value/viewer.$(OBJEXT)
 	-rm -f ./src/script/context.$(OBJEXT)
 	-rm -f ./src/script/dependency.$(OBJEXT)
-	-rm -f ./src/script/functions.$(OBJEXT)
+	-rm -f ./src/script/functions/basic.$(OBJEXT)
+	-rm -f ./src/script/functions/editor.$(OBJEXT)
+	-rm -f ./src/script/functions/english.$(OBJEXT)
+	-rm -f ./src/script/functions/export.$(OBJEXT)
+	-rm -f ./src/script/functions/image.$(OBJEXT)
 	-rm -f ./src/script/image.$(OBJEXT)
 	-rm -f ./src/script/parser.$(OBJEXT)
 	-rm -f ./src/script/script.$(OBJEXT)
@@ -966,6 +1031,7 @@ distclean-compile:
 include ./src/$(DEPDIR)/code_template.Po
 include ./src/$(DEPDIR)/main.Po
 include ./src/data/$(DEPDIR)/card.Po
+include ./src/data/$(DEPDIR)/export_template.Po
 include ./src/data/$(DEPDIR)/field.Po
 include ./src/data/$(DEPDIR)/font.Po
 include ./src/data/$(DEPDIR)/game.Po
@@ -985,6 +1051,7 @@ include ./src/data/field/$(DEPDIR)/boolean.Po
 include ./src/data/field/$(DEPDIR)/choice.Po
 include ./src/data/field/$(DEPDIR)/color.Po
 include ./src/data/field/$(DEPDIR)/image.Po
+include ./src/data/field/$(DEPDIR)/information.Po
 include ./src/data/field/$(DEPDIR)/multiple_choice.Po
 include ./src/data/field/$(DEPDIR)/symbol.Po
 include ./src/data/field/$(DEPDIR)/text.Po
@@ -1028,6 +1095,8 @@ include ./src/gui/control/$(DEPDIR)/filtered_card_list.Po
 include ./src/gui/control/$(DEPDIR)/gallery_list.Po
 include ./src/gui/control/$(DEPDIR)/graph.Po
 include ./src/gui/control/$(DEPDIR)/image_card_list.Po
+include ./src/gui/control/$(DEPDIR)/item_list.Po
+include ./src/gui/control/$(DEPDIR)/keyword_list.Po
 include ./src/gui/control/$(DEPDIR)/native_look_editor.Po
 include ./src/gui/control/$(DEPDIR)/package_list.Po
 include ./src/gui/control/$(DEPDIR)/select_card_list.Po
@@ -1050,6 +1119,7 @@ include ./src/gui/value/$(DEPDIR)/choice.Po
 include ./src/gui/value/$(DEPDIR)/color.Po
 include ./src/gui/value/$(DEPDIR)/editor.Po
 include ./src/gui/value/$(DEPDIR)/image.Po
+include ./src/gui/value/$(DEPDIR)/information.Po
 include ./src/gui/value/$(DEPDIR)/multiple_choice.Po
 include ./src/gui/value/$(DEPDIR)/symbol.Po
 include ./src/gui/value/$(DEPDIR)/text.Po
@@ -1064,19 +1134,24 @@ include ./src/render/text/$(DEPDIR)/viewer.Po
 include ./src/render/value/$(DEPDIR)/choice.Po
 include ./src/render/value/$(DEPDIR)/color.Po
 include ./src/render/value/$(DEPDIR)/image.Po
+include ./src/render/value/$(DEPDIR)/information.Po
 include ./src/render/value/$(DEPDIR)/multiple_choice.Po
 include ./src/render/value/$(DEPDIR)/symbol.Po
 include ./src/render/value/$(DEPDIR)/text.Po
 include ./src/render/value/$(DEPDIR)/viewer.Po
 include ./src/script/$(DEPDIR)/context.Po
 include ./src/script/$(DEPDIR)/dependency.Po
-include ./src/script/$(DEPDIR)/functions.Po
 include ./src/script/$(DEPDIR)/image.Po
 include ./src/script/$(DEPDIR)/parser.Po
 include ./src/script/$(DEPDIR)/script.Po
 include ./src/script/$(DEPDIR)/script_manager.Po
 include ./src/script/$(DEPDIR)/scriptable.Po
 include ./src/script/$(DEPDIR)/value.Po
+include ./src/script/functions/$(DEPDIR)/basic.Po
+include ./src/script/functions/$(DEPDIR)/editor.Po
+include ./src/script/functions/$(DEPDIR)/english.Po
+include ./src/script/functions/$(DEPDIR)/export.Po
+include ./src/script/functions/$(DEPDIR)/image.Po
 include ./src/util/$(DEPDIR)/action_stack.Po
 include ./src/util/$(DEPDIR)/age.Po
 include ./src/util/$(DEPDIR)/alignment.Po
@@ -1342,6 +1417,8 @@ distclean-generic:
 	-rm -f src/render/value/$(am__dirstamp)
 	-rm -f src/script/$(DEPDIR)/$(am__dirstamp)
 	-rm -f src/script/$(am__dirstamp)
+	-rm -f src/script/functions/$(DEPDIR)/$(am__dirstamp)
+	-rm -f src/script/functions/$(am__dirstamp)
 	-rm -f src/util/$(DEPDIR)/$(am__dirstamp)
 	-rm -f src/util/$(am__dirstamp)
 	-rm -f src/util/io/$(DEPDIR)/$(am__dirstamp)
@@ -1356,7 +1433,7 @@ clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 
 distclean: distclean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./src/$(DEPDIR) ./src/data/$(DEPDIR) ./src/data/action/$(DEPDIR) ./src/data/field/$(DEPDIR) ./src/data/format/$(DEPDIR) ./src/gfx/$(DEPDIR) ./src/gui/$(DEPDIR) ./src/gui/control/$(DEPDIR) ./src/gui/set/$(DEPDIR) ./src/gui/symbol/$(DEPDIR) ./src/gui/value/$(DEPDIR) ./src/render/card/$(DEPDIR) ./src/render/symbol/$(DEPDIR) ./src/render/text/$(DEPDIR) ./src/render/value/$(DEPDIR) ./src/script/$(DEPDIR) ./src/util/$(DEPDIR) ./src/util/io/$(DEPDIR)
+	-rm -rf ./src/$(DEPDIR) ./src/data/$(DEPDIR) ./src/data/action/$(DEPDIR) ./src/data/field/$(DEPDIR) ./src/data/format/$(DEPDIR) ./src/gfx/$(DEPDIR) ./src/gui/$(DEPDIR) ./src/gui/control/$(DEPDIR) ./src/gui/set/$(DEPDIR) ./src/gui/symbol/$(DEPDIR) ./src/gui/value/$(DEPDIR) ./src/render/card/$(DEPDIR) ./src/render/symbol/$(DEPDIR) ./src/render/text/$(DEPDIR) ./src/render/value/$(DEPDIR) ./src/script/$(DEPDIR) ./src/script/functions/$(DEPDIR) ./src/util/$(DEPDIR) ./src/util/io/$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-hdr distclean-tags
@@ -1384,7 +1461,7 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./src/$(DEPDIR) ./src/data/$(DEPDIR) ./src/data/action/$(DEPDIR) ./src/data/field/$(DEPDIR) ./src/data/format/$(DEPDIR) ./src/gfx/$(DEPDIR) ./src/gui/$(DEPDIR) ./src/gui/control/$(DEPDIR) ./src/gui/set/$(DEPDIR) ./src/gui/symbol/$(DEPDIR) ./src/gui/value/$(DEPDIR) ./src/render/card/$(DEPDIR) ./src/render/symbol/$(DEPDIR) ./src/render/text/$(DEPDIR) ./src/render/value/$(DEPDIR) ./src/script/$(DEPDIR) ./src/util/$(DEPDIR) ./src/util/io/$(DEPDIR)
+	-rm -rf ./src/$(DEPDIR) ./src/data/$(DEPDIR) ./src/data/action/$(DEPDIR) ./src/data/field/$(DEPDIR) ./src/data/format/$(DEPDIR) ./src/gfx/$(DEPDIR) ./src/gui/$(DEPDIR) ./src/gui/control/$(DEPDIR) ./src/gui/set/$(DEPDIR) ./src/gui/symbol/$(DEPDIR) ./src/gui/value/$(DEPDIR) ./src/render/card/$(DEPDIR) ./src/render/symbol/$(DEPDIR) ./src/render/text/$(DEPDIR) ./src/render/value/$(DEPDIR) ./src/script/$(DEPDIR) ./src/script/functions/$(DEPDIR) ./src/util/$(DEPDIR) ./src/util/io/$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 

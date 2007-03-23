@@ -48,7 +48,7 @@ void reflect_font(Reader& tag, Font& font) {
 	REFLECT(weight);
 	REFLECT(style);
 	if (!name.empty())   font.font.SetFaceName(name);
-	if (size > 0)        font.font.SetPointSize(font.size = size);
+	if (size > 0)        font.font.SetPointSize((int) (font.size = size));
 	if (!weight.empty()) font.font.SetWeight(weight == _("bold")   ? wxBOLD   : wxNORMAL);
 	if (!style.empty())  font.font.SetWeight(style  == _("italic") ? wxITALIC : wxNORMAL);
 }

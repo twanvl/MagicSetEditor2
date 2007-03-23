@@ -125,7 +125,7 @@ void Package::saveAs(const String& name, bool removeUnused) {
 
 // ----------------------------------------------------------------------------- : Package : inside
 
-/*
+#if 0
 /// Class that is a wxZipInputStream over a wxFileInput stream
 /** Note that wxFileInputStream is also a base class, because it must be constructed first
  *  This class requires a patch in wxWidgets (2.5.4)
@@ -136,7 +136,7 @@ void Package::saveAs(const String& name, bool removeUnused) {
  *  It seems that in 2.6.3 this is no longer necessary (TODO: test)
  *
  *  NOTE: Not used with wx 2.6.3, since it doesn't support seeking
- * /
+ */
 class ZipFileInputStream : private wxFileInputStream, public wxZipInputStream {
   public:
 	ZipFileInputStream(const String& filename, wxZipEntry* entry)
@@ -146,7 +146,7 @@ class ZipFileInputStream : private wxFileInputStream, public wxZipInputStream {
 		OpenEntry(*entry);
 	}
 };
-*/
+#endif
 
 InputStreamP Package::openIn(const String& file) {
 	if (!file.empty() && file.GetChar(0) == _('/')) {

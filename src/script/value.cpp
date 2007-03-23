@@ -245,21 +245,21 @@ class ScriptCustomCollectionIterator : public ScriptIterator {
 		: pos(0), col(col), colP(colP) {}
 	virtual ScriptValueP next() {
 		if (pos < col->size()) {
-			return to_script(col->at(pos++));
+			return col->at(pos++);
 		} else {
 			return ScriptValueP();
 		}
 	}
   private:
 	size_t pos;
-	ScriptValueP colP; // for ownership of the collection
 	const vector<ScriptValueP>* col;
+	ScriptValueP colP; // for ownership of the collection
 };
 
 ScriptValueP ScriptCustomCollection::getMember(const String& name) const {
 	long index;
 	if (name.ToLong(&index) && index >= 0 && (size_t)index < value.size()) {
-		return to_script(value.at(index));
+		return value.at(index);
 	} else {
 		return ScriptValue::getMember(name);
 	}

@@ -38,8 +38,8 @@ class GalleryList : public wxScrolledWindow {
 	static const size_t NO_SELECTION = (size_t)-1;
 	size_t selection;	  ///< The selected item, or NO_SELECTION if there is no selection
 	wxSize item_size;	  ///< The size of a single item
-	int scroll_increment; ///< How large are the scroll steps?
 	int direction;		  ///< Direction of the list, can be wxHORIZONTAL or wxVERTICAL
+	int scroll_increment;     ///< How large are the scroll steps?
 	
 	/// Redraw the list after changing the selection or the number of items
 	void update();

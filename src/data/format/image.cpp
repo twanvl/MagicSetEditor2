@@ -34,7 +34,7 @@ Bitmap export_bitmap(const SetP& set, const CardP& card) {
 	}
 	RealSize size = viewer.getRotation().getExternalSize();
 	// create bitmap & dc
-	Bitmap bitmap(size.width, size.height);
+	Bitmap bitmap((int) size.width, (int) size.height);
 	if (!bitmap.Ok()) throw InternalError(_("Unable to create bitmap"));
 	wxMemoryDC dc;
 	dc.SelectObject(bitmap);

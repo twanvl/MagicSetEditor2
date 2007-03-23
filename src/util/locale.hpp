@@ -115,6 +115,9 @@ inline String format_string(const String& format, const String& a0) {
 inline String format_string(const String& format, const String& a0, const String& a1) {
 	return String::Format(format, a0.c_str(), a1.c_str());
 }
+inline String format_string(const String& format, const String& a0, const String& a1, const String& a2) {
+	return String::Format(format, a0.c_str(), a1.c_str(), a2.c_str());
+}
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

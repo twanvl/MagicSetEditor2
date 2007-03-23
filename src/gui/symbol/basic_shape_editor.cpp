@@ -16,8 +16,8 @@
 
 SymbolBasicShapeEditor::SymbolBasicShapeEditor(SymbolControl* control)
 	: SymbolEditorBase(control)
-	, drawing(false)
 	, mode(ID_SHAPE_CIRCLE)
+	, drawing(false)
 {
 	control->SetCursor(*wxCROSS_CURSOR);
 }

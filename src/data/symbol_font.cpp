@@ -99,8 +99,8 @@ class SymbolInFont {
 };
 
 SymbolInFont::SymbolInFont()
-	: actual_size(0,0)
-	, enabled(true)
+	: enabled(true)
+	, actual_size(0,0)
 {
 	assert(symbol_font_for_reading());
 	img_size = symbol_font_for_reading()->img_size;
@@ -118,8 +118,8 @@ Bitmap SymbolInFont::getBitmap(Context& ctx, Package& pkg, double size) {
 		Image img = image.generate(ctx, pkg)->image;
 		actual_size = wxSize(img.GetWidth(), img.GetHeight());
 		// scale to match expected size
-		Image resampled_image(actual_size.GetWidth()  * size / img_size,
-			                  actual_size.GetHeight() * size / img_size, false);
+		Image resampled_image((int) (actual_size.GetWidth()  * size / img_size),
+			                 (int) (actual_size.GetHeight() * size / img_size), false);
 		if (!resampled_image.Ok()) return Bitmap(1,1);
 		resample(img, resampled_image);
 		// convert to bitmap, store for later use
@@ -145,7 +145,7 @@ RealSize SymbolInFont::size(Context& ctx, Package& pkg, double size) {
 		// we don't know what size the image will be
 		getBitmap(ctx, pkg, size);
 	}
-	return wxSize(actual_size * size / img_size);
+	return wxSize(actual_size * (int) (size) / (int) (img_size));
 }
 
 void SymbolInFont::update(Context& ctx) {

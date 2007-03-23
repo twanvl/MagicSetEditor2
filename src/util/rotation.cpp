@@ -131,14 +131,14 @@ void RotatedDC::DrawText  (const String& text, const RealPoint& pos) {
 		draw_resampled_text(dc, r_ext, revX(), revY(), angle, text);
 	} else {
 		RealPoint p_ext = tr(pos);
-		dc.DrawRotatedText(text, p_ext.x, p_ext.y, angle);
+		dc.DrawRotatedText(text, (int) p_ext.x, (int) p_ext.y, angle);
 	}
 }
 
 void RotatedDC::DrawBitmap(const Bitmap& bitmap, const RealPoint& pos) {
 	if (angle == 0) {
 		RealPoint p_ext = tr(pos);
-		dc.DrawBitmap(bitmap, p_ext.x, p_ext.y, true);
+		dc.DrawBitmap(bitmap, (int) p_ext.x, (int) p_ext.y, true);
 	} else {
 		DrawImage(bitmap.ConvertToImage(), pos);
 	}
@@ -175,7 +175,7 @@ void RotatedDC::SetFont(const wxFont& font) {
 	SetFont(font, font.GetPointSize());
 }
 void RotatedDC::SetFont(wxFont font, double size) {
-	font.SetPointSize(trS(size) * (high_quality ? text_scaling : 1));
+	font.SetPointSize((int) (trS(size) * (high_quality ? text_scaling : 1)));
 	dc.SetFont(font);
 }
 

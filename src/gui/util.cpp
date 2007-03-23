@@ -85,13 +85,13 @@ Image load_resource_image(const String& name) {
 		
 		char* data = (char *)::LockResource(hData);
 		if ( !data ) throw InternalError(String::Format(_("Resource cannot be locked: %s"), name));
-
+		
 		int len = ::SizeofResource(wxGetInstance(), hResource);
 		wxMemoryInputStream stream(data, len);
 		return wxImage(stream);
 	#elif defined(__linux__)
 		static String path = wxStandardPaths::Get().GetDataDir() + _("/resource/");
-		String file = path + name; // if the name is in upper case, fix the call
+		String file = path + name;
 		wxImage resource;
 		if (wxFileExists(file + _(".png"))) resource.LoadFile(file + _(".png"));
 		else if (wxFileExists(file + _(".bmp"))) resource.LoadFile(file + _(".bmp"));
