@@ -102,8 +102,11 @@ help:
 	undo:				Undoes the last action
 	redo:				Redoes the last action
 	cut:				Move the selected text to the clipboard
+	cut card:			Move the selected card to the clipboard
 	copy:				Place the selected text on the clipboard
+	copy card:			Place the selected card on the clipboard
 	paste:				Inserts the text from the clipboard
+	paste card:			Inserts the card from the clipboard
 	preferences:		Change the configuration of Not Quite Magic Set Editor
 	
 	cards:
@@ -197,6 +200,9 @@ help:
 	drag to move curve:	Drag to move curve
 	drag to move line:	Alt + drag to move curve;  double click to add a point on this line
 	drag to move point:	Click and drag to move control point;  double click to remove the point
+	
+	# Card select
+	filename format:	(Use {card.name} for the name of the card  ;  The filetype is determined based on the extension)
 
 ############################################################## Toolbar
 tool:
@@ -304,6 +310,9 @@ tooltip:
 label:
 	card notes:			Card notes:
 	
+	# Open dialogs
+	all files			All files
+	
 	# Preferences
 	language:			Language
 	app language:		Language of the user interface:
@@ -324,8 +333,13 @@ label:
 	select columns:		Select the columns you want to display
 	columns:			Columns:
 	
-	# Card select
-	select cards print:		Select the cards you want to print
+	# Card select / images export
+	select cards print:	Select the cards you want to print
+	filename format:	&Format: 
+	filename conflicts:	&Handle duplicating filenames:
+	export filenames:	Filenames
+	cards to export:	Cards to export
+	filename is ignored: (filename is ignored)
 	
 	# Image slicer
 	original:			Original:
@@ -368,6 +382,10 @@ button:
 	# Card select
 	select all:			Select &All
 	select none:		Select &None
+	overwrite:			Overwrite old files
+	keep old:			Keep old files
+	number:				Add a number to the filename
+	number overwrite:	Add a number to the filename, overwrite previous exports
 	
 	# Update checker
 	close:				&Close
@@ -393,10 +411,13 @@ title:
 	# select
 	select columns:		Select Columns
 	select cards:		Select Cards
+	select cards export:Select Cards to Export
 	# slice
 	slice image:		Slice Image
 	# print
 	print preview:		Print Preview
+	# export
+	export images:		Export Images
 
 ############################################################## Action (undo/redo) names
 action:

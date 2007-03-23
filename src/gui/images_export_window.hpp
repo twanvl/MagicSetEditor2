@@ -4,29 +4,28 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_SET_KEYWORDS_PANEL
-#define HEADER_GUI_SET_KEYWORDS_PANEL
+#ifndef HEADER_GUI_IMAGES_EXPORT_WINDOW
+#define HEADER_GUI_IMAGES_EXPORT_WINDOW
 
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
-#include <gui/set/panel.hpp>
+#include <gui/card_select_window.hpp>
 
-class KeywordList;
-class TextCtrl;
+// ----------------------------------------------------------------------------- : ImagesExportWindow
 
-// ----------------------------------------------------------------------------- : KeywordsPanel
-
-/// A panel for listing and editing the keywords in a set
-class KeywordsPanel : public SetWindowPanel {
+/// A window for selecting a subset of the cards from a set to export to images
+class ImagesExportWindow : public CardSelectWindow {
   public:
-	KeywordsPanel(Window* parent, int id);
-	
-	virtual void onChangeSet();
+	ImagesExportWindow(Window* parent, const SetP& set);
 	
   private:
-	KeywordList* list;
-	TextCtrl*    keyword;
+	DECLARE_EVENT_TABLE();
+	
+	void onOk(wxCommandEvent&);
+	
+	wxTextCtrl* format;
+	wxChoice*   conflicts;
 };
 
 // ----------------------------------------------------------------------------- : EOF

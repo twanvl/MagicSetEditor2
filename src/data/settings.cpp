@@ -26,6 +26,13 @@ IMPLEMENT_REFLECTION_ENUM(CheckUpdates) {
 	VALUE_N("never",        CHECK_NEVER);
 }
 
+IMPLEMENT_REFLECTION_ENUM(FilenameConflicts) {
+	VALUE_N("keep old",			CONFLICT_KEEP_OLD);
+	VALUE_N("overwrite",		CONFLICT_OVERWRITE);
+	VALUE_N("number",			CONFLICT_NUMBER);
+	VALUE_N("number overwrite",	CONFLICT_NUMBER_OVERWRITE);
+}
+
 const int COLUMN_NOT_INITIALIZED = -100000;
 
 ColumnSettings::ColumnSettings()
@@ -43,6 +50,8 @@ IMPLEMENT_REFLECTION(ColumnSettings) {
 
 GameSettings::GameSettings()
 	: sort_cards_ascending(true)
+	, images_export_filename(_("{card.name}.jpg"))
+	, images_export_conflicts(CONFLICT_NUMBER_OVERWRITE)
 {}
 
 IMPLEMENT_REFLECTION(GameSettings) {
@@ -51,6 +60,8 @@ IMPLEMENT_REFLECTION(GameSettings) {
 	REFLECT_N("cardlist columns",     columns);
 	REFLECT(sort_cards_by);
 	REFLECT(sort_cards_ascending);
+	REFLECT(images_export_filename);
+	REFLECT(images_export_conflicts);
 }
 
 

@@ -57,8 +57,9 @@ StatsCategory::StatsCategory(const StatsDimensionP& dim)
 {}
 
 IMPLEMENT_REFLECTION_ENUM(GraphType) {
-	VALUE_N("bar", GRAPH_TYPE_BAR);
-	VALUE_N("pie", GRAPH_TYPE_PIE);
+	VALUE_N("bar",     GRAPH_TYPE_BAR);
+	VALUE_N("pie",     GRAPH_TYPE_PIE);
+	VALUE_N("scatter", GRAPH_TYPE_SCATTER);
 }
 
 IMPLEMENT_REFLECTION(StatsCategory) {

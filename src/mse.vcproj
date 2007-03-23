@@ -882,6 +882,12 @@
 					RelativePath=".\gui\image_slice_window.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\images_export_window.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\images_export_window.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\new_window.cpp">
 				</File>
 				<File
@@ -2876,10 +2882,10 @@
 			RelativePath="..\conversion-todo.txt">
 		</File>
 		<File
-			RelativePath="..\data\en.mse-locale\locale">
+			RelativePath="..\data\nl.mse-locale\locale">
 		</File>
 		<File
-			RelativePath="..\data\nl.mse-locale\locale">
+			RelativePath="..\data\en.mse-locale\locale">
 		</File>
 		<File
 			RelativePath=".\main.cpp">

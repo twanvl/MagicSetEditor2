@@ -94,7 +94,7 @@ void TextBufferDC::drawToDevice(DC& dc, int x, int y) {
 
 void print_preview(Window* parent, const SetP& set) {
 	// Let the user choose cards
-	CardSelectWindow wnd(parent, set, _LABEL_("select cards print"));
+	CardSelectWindow wnd(parent, set, _LABEL_("select cards print"), _TITLE_("select cards"));
 	if (wnd.ShowModal() != wxID_OK) {
 		return; // cancel
 	}
@@ -116,7 +116,7 @@ void print_preview(Window* parent, const SetP& set) {
 
 void print_set(Window* parent, const SetP& set) {
 	// Let the user choose cards
-	CardSelectWindow wnd(parent, set, _LABEL_("select cards print"));
+	CardSelectWindow wnd(parent, set, _LABEL_("select cards print"), _TITLE_("select cards"));
 	if (wnd.ShowModal() != wxID_OK) {
 		return; // cancel
 	}

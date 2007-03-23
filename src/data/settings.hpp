@@ -29,6 +29,14 @@ enum CheckUpdates
 ,	CHECK_NEVER
 };
 
+/// How to handle filename conflicts
+enum FilenameConflicts
+{	CONFLICT_KEEP_OLD			// always keep old file
+,	CONFLICT_OVERWRITE			// always overwrite
+,	CONFLICT_NUMBER				// always add numbers ("file.1.something")
+,	CONFLICT_NUMBER_OVERWRITE	// only add numbers for conflicts inside a set, overwrite old stuff
+};
+
 /// Settings of a single column in the card list
 class ColumnSettings {
   public:
@@ -50,6 +58,8 @@ class GameSettings {
 	map<String, ColumnSettings> columns;
 	String                      sort_cards_by;
 	bool                        sort_cards_ascending;
+	String                      images_export_filename;
+	FilenameConflicts           images_export_conflicts;
 	
 	DECLARE_REFLECTION();
 };

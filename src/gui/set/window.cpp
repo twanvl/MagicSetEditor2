@@ -21,6 +21,7 @@
 #include <gui/new_window.hpp>
 #include <gui/preferences_window.hpp>
 #include <gui/print_window.hpp>
+#include <gui/images_export_window.hpp>
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <util/window_id.hpp>
@@ -437,7 +438,8 @@ void SetWindow::onFileExportImage(wxCommandEvent&) {
 }
 
 void SetWindow::onFileExportImages(wxCommandEvent&) {
-//	exportImages(this, set);
+	ImagesExportWindow wnd(this, set);
+	wnd.ShowModal();
 }
 
 void SetWindow::onFileExportHTML(wxCommandEvent&) {

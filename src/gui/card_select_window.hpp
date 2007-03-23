@@ -22,7 +22,7 @@ class SelectCardList;
  */
 class CardSelectWindow : public wxDialog {
   public:
-	CardSelectWindow(Window* parent, const SetP& set, const String& label);
+	CardSelectWindow(Window* parent, const SetP& set, const String& label, const String& title, bool sizer=true);
 	
 	/// Is the given card selected?
 	bool isSelected(const CardP& card) const;
@@ -32,6 +32,7 @@ class CardSelectWindow : public wxDialog {
 	
 	SelectCardList* list;
 	SetP            set;
+	wxButton*       sel_all, *sel_none;
 	
 	void onSelectAll (wxCommandEvent&);
 	void onSelectNone(wxCommandEvent&);

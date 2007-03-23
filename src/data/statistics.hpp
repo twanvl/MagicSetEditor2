@@ -42,6 +42,7 @@ class StatsDimension {
 enum GraphType
 {	GRAPH_TYPE_BAR
 ,	GRAPH_TYPE_PIE
+,	GRAPH_TYPE_SCATTER
 };
 
 /// A category for statistics
