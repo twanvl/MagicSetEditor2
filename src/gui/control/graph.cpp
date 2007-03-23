@@ -160,7 +160,7 @@ void BarGraph::draw(RotatedDC& dc, int current) const {
 	}
 	// How many labels and lines to draw?
 	dc.SetFont(*wxNORMAL_FONT);
-	UInt label_step = UInt(max(1.0, dc.GetCharHeight() / step_height));
+	UInt label_step = UInt(max(1.0, (dc.GetCharHeight() + 1) / step_height));
 	// Draw backlines (horizontal) and value labels
 	dc.SetPen(lerp(bg, fg, 0.5));
 	for (UInt i = 0 ; i <= axis.max ; ++i) {
@@ -217,6 +217,10 @@ int BarGraph::findItem(const RealPoint& pos, const RealRect& rect1) const {
 }
 
 // ----------------------------------------------------------------------------- : Pie Graph
+
+// ----------------------------------------------------------------------------- : Scatter Graph
+
+
 
 // ----------------------------------------------------------------------------- : Graph Legend
 

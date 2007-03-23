@@ -54,11 +54,11 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 		menuFile->Append(ID_FILE_SAVE,		_("save"),		_MENU_("save set"),			_HELP_("save set"));
 		menuFile->Append(ID_FILE_SAVE_AS,					_MENU_("save set as"),		_HELP_("save set as"));
 		IconMenu* menuExport = new IconMenu();
-			menuExport->Append(ID_FILE_EXPORT_HTML,				_MENU_("export html"),		_HELP_("export html"));
-			menuExport->Append(ID_FILE_EXPORT_IMAGE,			_MENU_("export image"),		_HELP_("export image"));
-			menuExport->Append(ID_FILE_EXPORT_IMAGES,			_MENU_("export images"),	_HELP_("export images"));
-			menuExport->Append(ID_FILE_EXPORT_APPR,				_MENU_("export apprentice"),_HELP_("export apprentice"));
-			menuExport->Append(ID_FILE_EXPORT_MWS,				_MENU_("export mws"),		_HELP_("export mws"));
+			menuExport->Append(ID_FILE_EXPORT_HTML,		_("export_html"),		_MENU_("export html"),		_HELP_("export html"));
+			menuExport->Append(ID_FILE_EXPORT_IMAGE,	_("export_image"),		_MENU_("export image"),		_HELP_("export image"));
+			menuExport->Append(ID_FILE_EXPORT_IMAGES,	_("export_images"),		_MENU_("export images"),	_HELP_("export images"));
+			menuExport->Append(ID_FILE_EXPORT_APPR,		_("export_apprentice"),	_MENU_("export apprentice"),_HELP_("export apprentice"));
+			menuExport->Append(ID_FILE_EXPORT_MWS,		_("export_mws"),		_MENU_("export mws"),		_HELP_("export mws"));
 		menuFile->Append(ID_FILE_EXPORT,					_MENU_("export"),					_("Export the set..."), menuExport);
 		menuFile->AppendSeparator();
 //		menuFile->Append(ID_FILE_INSPECT,					_("Inspect Internal Data..."),	_("Shows a the data in the set using a tree structure"));
