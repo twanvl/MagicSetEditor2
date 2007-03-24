@@ -23,8 +23,11 @@ class KeywordTrie;
 /// Parameter type of keywords
 class KeywordParam {
   public:
+	KeywordParam();
 	String         name;		///< Name of the parameter type
-	String         description;	///< Description of the type
+	String         description;	///< Description of the parameter type
+	String         placeholder;	///< Placholder for <atom-kwpph>, name is used if this is empty
+	bool           optional;	///< Can this parameter be left out (a placeholder is then used)
 	String         match;		///< Regular expression to match
 	OptionalScript script;		///< Transformation of the value for showing in the reminder text 
 	String         example;		///< Example for preview dialog

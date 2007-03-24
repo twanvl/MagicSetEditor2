@@ -18,11 +18,18 @@ DECLARE_TYPEOF_COLLECTION(const Keyword*);
 
 // ----------------------------------------------------------------------------- : Reflection
 
+KeywordParam::KeywordParam()
+	: optional(true)
+{}
+
 IMPLEMENT_REFLECTION(KeywordParam) {
 	REFLECT(name);
 	REFLECT(description);
+	REFLECT(placeholder);
+	REFLECT(optional);
 	REFLECT(match);
 	REFLECT(script);
+	REFLECT(example);
 }
 IMPLEMENT_REFLECTION(KeywordMode) {
 	REFLECT(name);
@@ -129,7 +136,7 @@ void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
 			}
 			parameters.push_back(p);
 			// modify regex
-			regex += _(")(") + make_non_capturing(p->match) + _(")?(");
+			regex += _(")(") + make_non_capturing(p->match) + _(")") + (p->optional ? _("?") : _("")) + _("(");
 			i = skip_tag(match, end);
 		} else {
 			regex += regex_escape(c);
@@ -365,17 +372,18 @@ String KeywordDatabase::expand(const String& text,
 								String part = s.substr(start, part_end - start);
 								if ((j % 2) == 0) {
 									// parameter
+									KeywordParam& kwp = *kw->parameters[j/2-1];
 									String param = untagged.substr(start_u, len_u); // untagged version
 									if (param.empty()) {
 										// placeholder
-										param = _("<atom-kwpph>‹") + kw->parameters[j/2-1]->name + _("›</atom-kwpph>");
+										param = _("<atom-kwpph>‹") + (kwp.placeholder.empty() ? kwp.name : kwp.placeholder) + _("›</atom-kwpph>");
 										part  = part + param; // keep tags
 									} else if (kw->parameters[j/2-1]->script) {
 										// apply parameter script
 										ctx.setVariable(_("input"), to_script(part));
-										part  = kw->parameters[j/2-1]->script.invoke(ctx)->toString();
+										part  = kwp.script.invoke(ctx)->toString();
 										ctx.setVariable(_("input"), to_script(part));
-										param = kw->parameters[j/2-1]->script.invoke(ctx)->toString();
+										param = kwp.script.invoke(ctx)->toString();
 									}
 									ctx.setVariable(String(_("param")) << (int)(j/2), to_script(param));
 								}

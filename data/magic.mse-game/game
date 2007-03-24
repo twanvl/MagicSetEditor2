@@ -941,7 +941,11 @@ keyword parameter type:
 	match: [^(.,\n]+
 keyword parameter type:
 	name: prefix
+	description: Prefix for things like "<something>walk"
+	placeholder: land
+	optional: false
 	match: [A-Z][a-z]*
+	example: Forest
 
 ############################# All Magic keywords
 # By JrEye and Neko_Asakami
