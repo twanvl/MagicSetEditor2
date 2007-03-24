@@ -75,7 +75,8 @@ class TextValueAction : public ValueAction {
 TextValueAction* toggle_format_action(const TextValueP& value, const String& tag, size_t start, size_t end, const String& action_name);
 
 /// Typing in a TextValue, replace the selection [start...end) with replacement
-TextValueAction* typing_action(const TextValueP& value, size_t start, size_t end, const String& replacement, const String& action_name);
+/** start and end are cursor positions, start_i and end_i are indices*/
+TextValueAction* typing_action(const TextValueP& value, size_t start_i, size_t end_i, size_t start, size_t end, const String& replacement, const String& action_name);
 
 // ----------------------------------------------------------------------------- : Event
 

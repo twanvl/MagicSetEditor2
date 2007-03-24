@@ -143,25 +143,25 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 			}
 			break;
 		case WXK_UP:
-			moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, -1), !ev.ShiftDown(), MOVE_LEFT);
+			moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, -1), !ev.ShiftDown(), MOVE_LEFT_OPT);
 			break;
 		case WXK_DOWN:
-			moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, +1), !ev.ShiftDown(), MOVE_RIGHT);
+			moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, +1), !ev.ShiftDown(), MOVE_RIGHT_OPT);
 			break;
 		case WXK_HOME:
 			// move to begining of line / all (if control)
 			if (ev.ControlDown()) {
-				moveSelection(TYPE_INDEX, 0,                            !ev.ShiftDown(), MOVE_LEFT);
+				moveSelection(TYPE_INDEX, 0,                            !ev.ShiftDown(), MOVE_LEFT_OPT);
 			} else {
-				moveSelection(TYPE_INDEX, v.lineStart(selection_end_i), !ev.ShiftDown(), MOVE_LEFT);
+				moveSelection(TYPE_INDEX, v.lineStart(selection_end_i), !ev.ShiftDown(), MOVE_LEFT_OPT);
 			}
 			break;
 		case WXK_END:
 			// move to end of line / all (if control)
 			if (ev.ControlDown()) {
-				moveSelection(TYPE_INDEX, value().value().size(),   !ev.ShiftDown(), MOVE_RIGHT);
+				moveSelection(TYPE_INDEX, value().value().size(),     !ev.ShiftDown(), MOVE_RIGHT_OPT);
 			} else {
-				moveSelection(TYPE_INDEX, v.lineEnd(selection_end_i), !ev.ShiftDown(), MOVE_RIGHT);
+				moveSelection(TYPE_INDEX, v.lineEnd(selection_end_i), !ev.ShiftDown(), MOVE_RIGHT_OPT);
 			}
 			break;
 		case WXK_BACK:
@@ -306,11 +306,11 @@ void TextValueEditor::onValueChange() {
 }
 
 void TextValueEditor::onAction(const Action& action, bool undone) {
-	TextValueViewer::onAction(action, undone);
+	TextValueViewer::onValueChange();
 	TYPE_CASE(action, TextValueAction) {
-		selection_start_i = action.selection_start;
-		selection_end_i   = action.selection_end;
-		fixSelection(TYPE_INDEX);
+		selection_start = action.selection_start;
+		selection_end   = action.selection_end;
+		fixSelection(TYPE_CURSOR);
 	}
 }
 
@@ -475,7 +475,7 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 	fixSelection();
 	// execute the action before adding it to the stack,
 	// because we want to run scripts before action listeners see the action
-	ValueAction* action = typing_action(valueP(), selection_start_i, selection_end_i, replacement, name);
+	ValueAction* action = typing_action(valueP(), selection_start_i, selection_end_i, selection_start, selection_end, replacement, name);
 	if (!action) {
 		// nothing changes, but move the selection anyway
 		moveSelection(TYPE_CURSOR, selection_start);
@@ -571,8 +571,8 @@ void TextValueEditor::fixSelection(IndexType t, Movement dir) {
 		selection_end   = index_to_cursor(value().value(), selection_end_i,   dir);
 	}
 	// make sure the selection is at a valid position inside the text
-	selection_start_i = cursor_to_index(val, selection_start, selection_start == selection_end ? MOVE_MID : MOVE_RIGHT);
-	selection_end_i   = cursor_to_index(val, selection_end,   selection_start == selection_end ? MOVE_MID : MOVE_LEFT);
+	selection_start_i = cursor_to_index(val, selection_start, selection_start == selection_end ? MOVE_MID : MOVE_RIGHT_OPT);
+	selection_end_i   = cursor_to_index(val, selection_end,   selection_start == selection_end ? MOVE_MID : MOVE_LEFT_OPT);
 	// start and end must be on the same side of separators
 	size_t seppos = val.find(_("<sep"));
 	while (seppos != String::npos) {
@@ -580,11 +580,11 @@ void TextValueEditor::fixSelection(IndexType t, Movement dir) {
 		if (selection_start_i <= seppos && selection_end_i > seppos) {
 		    // not on same side, move selection end before sep
 			selection_end   = index_to_cursor(val, seppos, dir);
-			selection_end_i = cursor_to_index(val, selection_end, selection_start == selection_end ? MOVE_MID : MOVE_LEFT);
+			selection_end_i = cursor_to_index(val, selection_end, selection_start == selection_end ? MOVE_MID : MOVE_LEFT_OPT);
 		} else if (selection_start_i >= sepend && selection_end_i < sepend) {
 		    // not on same side, move selection end after sep
 			selection_end   = index_to_cursor(val, sepend, dir);
-			selection_end_i = cursor_to_index(val, selection_end, selection_start == selection_end ? MOVE_MID : MOVE_LEFT);
+			selection_end_i = cursor_to_index(val, selection_end, selection_start == selection_end ? MOVE_MID : MOVE_LEFT_OPT);
 		}
 		// find next separator
 		seppos = val.find(_("<sep"), seppos + 1);
@@ -622,10 +622,10 @@ void TextValueEditor::select(size_t start, size_t end) {
 }
 
 size_t TextValueEditor::move(size_t pos, size_t start, size_t end, Movement dir) {
-	if (dir == MOVE_LEFT)      return start;
-	if (dir == MOVE_RIGHT)     return end;
-	if (pos * 2 > start + end) return end; // past the middle
-	else                       return start;
+	if (dir < 0 /*MOVE_LEFT*/)  return start;
+	if (dir > 0 /*MOVE_RIGHT*/) return end;
+	if (pos * 2 > start + end)  return end; // past the middle
+	else                        return start;
 }
 
 // ----------------------------------------------------------------------------- : Native look / scrollbar

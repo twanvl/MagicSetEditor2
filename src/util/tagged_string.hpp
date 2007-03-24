@@ -90,9 +90,11 @@ String anti_tag(const String& tag);
 
 /// Directions of cursor movement
 enum Movement
-{	MOVE_LEFT  = -1	///< Always move the cursor to the left
-,	MOVE_MID   =  0	///< Move in whichever direction the distance to move is shorter (TODO: define shorter)
-,	MOVE_RIGHT =  1	///< Always move the cursor to the right
+{	MOVE_LEFT      = -2	///< Always move the cursor to the left
+,	MOVE_LEFT_OPT  = -1	///< Move the cursor to the left, but a position inside a tag is the same as that before
+,	MOVE_MID       =  0	///< Move in whichever direction the distance to move is shorter (TODO: define shorter)
+,	MOVE_RIGHT_OPT =  1	///< Move the cursor to the left, but a position inside a tag is the same as that after
+,	MOVE_RIGHT     =  2	///< Always move the cursor to the right
 };
 
 /// Find the cursor position corresponding to the given character index.

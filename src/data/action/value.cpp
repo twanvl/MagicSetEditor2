@@ -130,10 +130,10 @@ TextValueAction* toggle_format_action(const TextValueP& value, const String& tag
 	}
 }
 
-TextValueAction* typing_action(const TextValueP& value, size_t start, size_t end, const String& replacement, const String& action_name)  {
+TextValueAction* typing_action(const TextValueP& value, size_t start_i, size_t end_i, size_t start, size_t end, const String& replacement, const String& action_name)  {
 	bool reverse = start > end;
 	if (reverse) swap(start, end);
-	String new_value = tagged_substr_replace(value->value(), start, end, replacement);
+	String new_value = tagged_substr_replace(value->value(), start_i, end_i, replacement);
 	if (value->value() == new_value) {
 		// no change
 		return nullptr;
@@ -141,9 +141,9 @@ TextValueAction* typing_action(const TextValueP& value, size_t start, size_t end
 //		if (name == _("Backspace")) {
 //			// HACK: put start after end
 		if (reverse) {
-			return new TextValueAction(value, end, start, start+replacement.size(), new_value, action_name);
+			return new TextValueAction(value, end, start, start+untag(replacement).size(), new_value, action_name);
 		} else {
-			return new TextValueAction(value, start, end, start+replacement.size(), new_value, action_name);
+			return new TextValueAction(value, start, end, start+untag(replacement).size(), new_value, action_name);
 		}
 	}
 }

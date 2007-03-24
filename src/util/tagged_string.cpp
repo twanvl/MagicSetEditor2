@@ -182,14 +182,46 @@ size_t index_to_cursor(const String& str, size_t index, Movement dir) {
 			if (is_substr(str, i, _("<atom")) || is_substr(str, i, _("<sep"))) {
 				// skip tag contents, tag counts as a single 'character'
 				size_t before = i;
-				size_t after = match_close_tag_end(str, i);
+				size_t close = match_close_tag(str, i);
+				size_t after = skip_tag(str, close);
 				if (index > before && index < after) {
-					// index is inside an atom, determine on which side we want the cursor
-					if (dir == MOVE_RIGHT) {
+					// Index is inside an atom, determine on which side we want the cursor
+					// This is the only place where MOVE_LEFT/RIGHT and MOVE_*_OPT differ
+					// for the OPT version we must check if we are actually past any real characters
+					// but, if the atom is empty, it still counts as a single character!
+					if (dir == MOVE_LEFT) {
+						return cursor;
+					} else if (dir == MOVE_RIGHT) {
 						return cursor + 1;
 					} else if (dir == MOVE_MID) {
 						// take the closest side
 						return cursor + ((int)(after - index) < (int)(index - before));
+					} else if (dir == MOVE_LEFT_OPT) {
+						// is there any non-tag after index?
+						bool empty = true;
+						while (i < close) {
+							c = str.GetChar(i);
+							if (c == _('<')) {
+								i = skip_tag(str, i);
+							} else if (i >= index) {
+								return cursor; // this is a non-tag character after index
+							} else {
+								empty = false;
+								++i;
+							}
+						}
+						return empty ? cursor : cursor + 1; // still didn't pass any
+					} else if (dir == MOVE_RIGHT_OPT) {
+						// is index actually past any non-tag?
+						while (i < close) {
+							if (i >= index) {
+								return cursor; // we didn't pass any non-tag stuff
+							}
+							c = str.GetChar(i);
+							if (c != _('<')) break;
+							i = skip_tag(str, i);
+						}
+						return cursor + 1; // yes it is
 					}
 				}
 				i = after;
@@ -260,7 +292,7 @@ size_t cursor_to_index(const String& str, size_t cursor, Movement dir) {
 		}
 	}
 	// This allows formating to be enabled without a selection
-	return dir == MOVE_RIGHT ? end - 1 : start;
+	return dir <= 0 /*MOVE_LEFT*/ ? start : end - 1;
 }
 
 // ----------------------------------------------------------------------------- : Untagged position
