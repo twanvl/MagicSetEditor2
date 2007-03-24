@@ -125,7 +125,7 @@ void DataViewer::onAction(const Action& action, bool undone) {
 	}
 	TYPE_CASE(action, ValueAction) {
 		FOR_EACH(v, viewers) {
-			if (v->getValue() == action.valueP) {
+			if (v->getValue()->equals( action.valueP.get() )) {
 				// refresh the viewer
 				v->onAction(action, undone);
 				onChange();

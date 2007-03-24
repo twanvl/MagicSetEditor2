@@ -10,6 +10,8 @@
 #include <data/set.hpp>
 #include <data/game.hpp>
 #include <data/keyword.hpp>
+#include <util/tagged_string.hpp>
+#include <gfx/gfx.hpp>
 
 DECLARE_TYPEOF_COLLECTION(KeywordP);
 
@@ -23,7 +25,7 @@ KeywordList::KeywordList(Window* parent, int id, long additional_style)
 	: ItemList(parent, id, additional_style)
 {
 	// Add columns
-	InsertColumn(0, _LABEL_("keyword"),  wxLIST_FORMAT_LEFT,  100);
+	InsertColumn(0, _LABEL_("keyword"),  wxLIST_FORMAT_LEFT,    0);
 	InsertColumn(1, _LABEL_("match"),    wxLIST_FORMAT_LEFT,  200);
 	InsertColumn(2, _LABEL_("mode"),     wxLIST_FORMAT_LEFT,  100);
 	InsertColumn(3, _LABEL_("uses"),     wxLIST_FORMAT_RIGHT,  80);
@@ -51,11 +53,21 @@ void KeywordList::onAction(const Action& action, bool undone) {
 
 // ----------------------------------------------------------------------------- : KeywordListBase : for ItemList
 
+String match_string(const Keyword& a) {
+	return untag(replace_all(replace_all(
+	            a.match,
+		        _("<param>"), _("‹")),
+		        _("</param>"), _("›"))
+	       );
+}
+
 void KeywordList::getItems(vector<VoidP>& out) const {
 	FOR_EACH(k, set->keywords) {
+		k->fixed = false;
 		out.push_back(k);
 	}
 	FOR_EACH(k, set->game->keywords) {
+		k->fixed = true;
 		out.push_back(k);
 	}
 }
@@ -83,7 +95,7 @@ String KeywordList::OnGetItemText (long pos, long col) const {
 	const Keyword& kw = *getKeyword(pos);
 	switch(col) {
 		case 0:		return kw.keyword;
-		case 1:		return kw.match;
+		case 1:		return match_string(kw);
 		case 2:		return kw.mode;
 		case 3:		return _("TODO");
 		case 4:		return _("TODO");
@@ -92,4 +104,12 @@ String KeywordList::OnGetItemText (long pos, long col) const {
 }
 int KeywordList::OnGetItemImage(long pos) const {
 	return -1;
+}
+
+wxListItemAttr* KeywordList::OnGetItemAttr(long pos) const {
+	// black for set keywords, grey for game keywords (uneditable)
+	const Keyword& kw = *getKeyword(pos);
+	if (!kw.fixed) return nullptr;
+	item_attr.SetTextColour(lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT),0.5));
+	return &item_attr;
 }

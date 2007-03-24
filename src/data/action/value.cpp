@@ -35,6 +35,7 @@ class SimpleValueAction : public ValueAction {
 	
 	virtual void perform(bool to_undo) {
 		swap(static_cast<T&>(*valueP).*member, new_value);
+		valueP->onAction(*this, to_undo); // notify value
 	}
 	
 	virtual bool merge(const Action& action) {
@@ -54,9 +55,9 @@ class SimpleValueAction : public ValueAction {
 	typename T::ValueType T::*member;
 };
 
-ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value) { return new SimpleValueAction<ChoiceValue, true> (value, new_value, &ChoiceValue::value); }
+ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value) { return new SimpleValueAction<ChoiceValue,         true> (value, new_value, &ChoiceValue::value); }
 ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value) { return new SimpleValueAction<MultipleChoiceValue, false>(value, new_value, &MultipleChoiceValue::value); }
-ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value) { return new SimpleValueAction<ColorValue, true> (value, new_value, &ColorValue::value); }
+ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value) { return new SimpleValueAction<ColorValue,          true> (value, new_value, &ColorValue::value); }
 ValueAction* value_action(const ImageValueP&          value, const FileName&            new_value) { return new SimpleValueAction<ImageValue,          false>(value, new_value, &ImageValue::filename); }
 ValueAction* value_action(const SymbolValueP&         value, const FileName&            new_value) { return new SimpleValueAction<SymbolValue,         false>(value, new_value, &SymbolValue::filename); }
 
@@ -76,6 +77,7 @@ void TextValueAction::perform(bool to_undo) {
 	swap(value().value, new_value);
 	value().last_update.update();
 	swap(selection_end, new_selection_end);
+	valueP->onAction(*this, to_undo); // notify value
 }
 
 bool TextValueAction::merge(const Action& action) {

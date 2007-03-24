@@ -37,7 +37,7 @@ void TextCtrl::setValue(String* value) {
 		// create a field, style and value
 		TextFieldP field(new TextField);
 		TextStyleP style(new TextStyle(field));
-		TextValueP value(new TextValue(field));
+		TextValueP value(new FakeTextValue(field, this->value));
 		// set stuff
 		field->index = 0;
 		field->multi_line = true;
@@ -57,6 +57,11 @@ void TextCtrl::setValue(String* value) {
 		viewers.front()->getEditor()->determineSize(true);
 		// We don't wan to change the window size
 		//SetMinSize(RealSize(style->width + 6, style->height + 6));
+	} else if (value) {
+		// create a new value, for a different underlying actual value
+		ValueViewer& viewer  = *viewers.front();
+		TextValueP new_value(new FakeTextValue(static_pointer_cast<TextField>(viewer.getField()), this->value));
+		viewer.setValue(new_value);
 	}
 	valueChanged();
 }
@@ -70,13 +75,15 @@ void TextCtrl::valueChanged() {
 }
 void TextCtrl::onAction(const Action& action, bool undone) {
 	DataEditor::onAction(action, undone);
+	/*
 	TYPE_CASE(action, TextValueAction) {
-		TextValue& tv = static_cast<TextValue&>(*viewers.front()->getValue());
-		if (&tv == action.valueP.get()) {
+		FakeTextValue& tv = static_cast<FakeTextValue&>(*viewers.front()->getValue());
+		if (tv.equals(action.valueP.get())) {
 			// the value has changed
 			if (value) *value = tv.value();
 		}
 	}
+	*/
 }
 void TextCtrl::onChangeSet() {
 	DataEditor::onChangeSet();

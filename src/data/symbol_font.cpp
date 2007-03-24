@@ -119,7 +119,7 @@ Bitmap SymbolInFont::getBitmap(Context& ctx, Package& pkg, double size) {
 		actual_size = wxSize(img.GetWidth(), img.GetHeight());
 		// scale to match expected size
 		Image resampled_image((int) (actual_size.GetWidth()  * size / img_size),
-			                 (int) (actual_size.GetHeight() * size / img_size), false);
+		                      (int) (actual_size.GetHeight() * size / img_size), false);
 		if (!resampled_image.Ok()) return Bitmap(1,1);
 		resample(img, resampled_image);
 		// convert to bitmap, store for later use

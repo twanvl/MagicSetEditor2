@@ -127,10 +127,13 @@ Value::~Value() {}
 IMPLEMENT_REFLECTION_NAMELESS(Value) {
 }
 
+bool Value::equals(const Value* that) {
+	return this == that;
+}
+
 void init_object(const FieldP& field, ValueP& value) {
 	if (!value) value = field->newValue(field);
 }
 template <> ValueP read_new<Value>(Reader&) {
 	throw InternalError(_("IndexMap contains nullptr ValueP the application should have crashed already"));
 }
-

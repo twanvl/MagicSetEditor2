@@ -105,3 +105,18 @@ bool TextValue::update(Context& ctx) {
 IMPLEMENT_REFLECTION_NAMELESS(TextValue) {
 	if (fieldP->save_value || tag.scripting()) REFLECT_NAMELESS(value);
 }
+
+// ----------------------------------------------------------------------------- : FakeTextValue
+
+void FakeTextValue::onAction(Action& a, bool undone) {
+	*underlying = value;
+}
+
+bool FakeTextValue::equals(const Value* that) {
+	if (this == that) return true;
+	const FakeTextValue* thatT = dynamic_cast<const FakeTextValue*>(that);
+	if (!thatT || underlying != thatT->underlying) return false;
+	// update the value
+	value = *underlying;
+	return true;
+}

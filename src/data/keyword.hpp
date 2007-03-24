@@ -59,6 +59,7 @@ class Keyword {
 	 *  captures 2,4,... capture the parameters
 	 */
 	wxRegEx               matchRe;
+	bool                  fixed;		///< Is this keyword uneditable? (true for game keywods, false for set keywords)
 	
 	/// Prepare the expansion: (re)generate matchRe and the list of parameters.
 	/** Throws when there is an error in the input

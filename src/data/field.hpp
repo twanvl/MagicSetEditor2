@@ -21,6 +21,7 @@ DECLARE_POINTER_TYPE(Style);
 DECLARE_POINTER_TYPE(Value);
 class Context;
 class Dependency;
+class Action;
 
 // for DataViewer/editor
 class DataViewer; class DataEditor;
@@ -134,6 +135,14 @@ class Value {
 	virtual String toString() const = 0;
 	/// Apply scripts to this value, return true if the value has changed
 	virtual bool update(Context&) { last_script_update.update(); return false; }
+	/// This value has been updated by an action
+	/** Does nothing for most Values, only FakeValues can update underlying data */
+	virtual void onAction(Action& a, bool undone) {}
+	/// Is this value the same as some other value (for the same field&card)
+	/** Has behaviour other than == for FakeTextValue.
+	 *  In that case, afterwards this becomes equal to that if they use the same underlying object.
+	 */
+	virtual bool equals(const Value* that);
 	
   private:
 	DECLARE_REFLECTION_VIRTUAL();

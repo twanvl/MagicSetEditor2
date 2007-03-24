@@ -79,16 +79,16 @@ class ValueViewer {
 
 // ----------------------------------------------------------------------------- : Utility
 
-#define DECLARE_VALUE_VIEWER(Type)																				\
-  protected:																									\
-	inline       Type##Style& style()  const { return static_cast<      Type##Style&>(*ValueViewer::styleP); }	\
-	inline const Type##Value& value()  const { return static_cast<const Type##Value&>(*ValueViewer::valueP); }	\
-	inline const Type##Field& field()  const { return style().field(); }										\
-	inline       Type##StyleP styleP() const { return static_pointer_cast<Type##Style>(ValueViewer::styleP); }	\
-	inline       Type##ValueP valueP() const { return static_pointer_cast<Type##Value>(ValueViewer::valueP); } 	\
-	inline       Type##FieldP fieldP() const { return static_pointer_cast<Type##Field>(style().fieldP); }		\
-  public:																										\
-	Type##ValueViewer(DataViewer& parent, const Type ## StyleP& style)
+#define DECLARE_VALUE_VIEWER(Type)                                                                              \
+  protected:                                                                                                    \
+    inline       Type##Style& style()  const { return static_cast<      Type##Style&>(*ValueViewer::styleP); }  \
+    inline const Type##Value& value()  const { return static_cast<const Type##Value&>(*ValueViewer::valueP); }  \
+    inline const Type##Field& field()  const { return style().field(); }                                        \
+    inline       Type##StyleP styleP() const { return static_pointer_cast<Type##Style>(ValueViewer::styleP); }  \
+    inline       Type##ValueP valueP() const { return static_pointer_cast<Type##Value>(ValueViewer::valueP); }  \
+    inline       Type##FieldP fieldP() const { return static_pointer_cast<Type##Field>(style().fieldP); }       \
+  public:                                                                                                       \
+    Type##ValueViewer(DataViewer& parent, const Type ## StyleP& style)
 
 
 // ----------------------------------------------------------------------------- : EOF

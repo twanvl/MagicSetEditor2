@@ -98,5 +98,22 @@ class TextValue : public Value {
 	DECLARE_REFLECTION();
 };
 
+// ----------------------------------------------------------------------------- : TextValue
+
+/// A 'fake' TextValue that is used to edit some other string
+/** Used by TextCtrl */
+class FakeTextValue : public TextValue {
+  public:
+	inline FakeTextValue(const TextFieldP& field, String* underlying)
+		: TextValue(field), underlying(underlying) {}
+	
+	String* const underlying; ///< The underlying actual value
+	
+	/// Update underlying data
+	virtual void onAction(Action& a, bool undone);
+	/// Editing the same underlying value?
+	virtual bool equals(const Value* that);
+};
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

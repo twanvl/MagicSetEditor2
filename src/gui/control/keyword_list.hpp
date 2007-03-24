@@ -68,9 +68,13 @@ class KeywordList : public ItemList, public SetView {
 	/// Get the image of an item, by default no image is used
 	/** Overrides a function from wxListCtrl */
 	virtual int    OnGetItemImage(long pos) const;
+	/// Get the color for an item
+	virtual wxListItemAttr* OnGetItemAttr(long pos) const;
 	
   private:
 	void storeColumns();
+	
+	mutable wxListItemAttr item_attr; // for OnGetItemAttr
 };
 
 // ----------------------------------------------------------------------------- : EOF

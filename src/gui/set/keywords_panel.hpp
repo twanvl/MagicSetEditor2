@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <gui/set/panel.hpp>
 
+class wxSplitterWindow;
 class KeywordList;
 class TextCtrl;
 
@@ -25,8 +26,13 @@ class KeywordsPanel : public SetWindowPanel {
 	virtual void onChangeSet();
 	
   private:
-	KeywordList* list;
-	TextCtrl*    keyword;
+	// --------------------------------------------------- : Controls
+	wxSplitterWindow* splitter;
+	KeywordList*      list;
+	TextCtrl*         keyword;
+	TextCtrl*         match;
+	TextCtrl*         reminder;
+	TextCtrl*         rules;
 };
 
 // ----------------------------------------------------------------------------- : EOF
