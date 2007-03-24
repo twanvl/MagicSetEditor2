@@ -360,14 +360,15 @@ String KeywordDatabase::expand(const String& text,
 								// j = even -> parameter #(j/2)
 								size_t start_u, len_u;
 								kw->matchRe.GetMatch(&start_u, &len_u, j);
-								size_t part_end = untagged_to_index(s, start_u + len_u, true);
+								// note: start_u can be (uint)-1 when len_u == 0
+								size_t part_end = len_u > 0 ? untagged_to_index(s, start_u + len_u, true) : start;
 								String part = s.substr(start, part_end - start);
 								if ((j % 2) == 0) {
 									// parameter
 									String param = untagged.substr(start_u, len_u); // untagged version
 									if (param.empty()) {
 										// placeholder
-										param = _("<atom-kwpph>") + kw->parameters[j/2-1]->name + _("</atom-kwpph>");
+										param = _("<atom-kwpph>‹") + kw->parameters[j/2-1]->name + _("›</atom-kwpph>");
 										part  = part + param; // keep tags
 									} else if (kw->parameters[j/2-1]->script) {
 										// apply parameter script

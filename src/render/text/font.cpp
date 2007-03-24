@@ -15,21 +15,14 @@ void FontTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, co
 	if ((what & draw_as) != draw_as) return; // don't draw
 	dc.SetFont(font->font, font->size * scale);
 	if (end != start && text.substr(end-1, 1) == _("\n")) end -= 1; // don't draw the newline character at the end
-	if (draw_as == DRAW_ACTIVE) {
-		// we are drawing a separator
-		dc.SetTextForeground(font->separator_color);
-		dc.DrawText(text.substr(start, end-start), rect.position());
-	} else {
-		// draw normally
-		// draw shadow
-		if (font->hasShadow()) {
-			dc.SetTextForeground(font->shadow_color);
-			dc.DrawText(text.substr(start, end - start), rect.position() + font->shadow_displacement);
-		}
-		// draw
-		dc.SetTextForeground(font->color);
-		dc.DrawText(text.substr(start, end - start), rect.position());
+	// draw shadow
+	if (font->hasShadow()) {
+		dc.SetTextForeground(font->shadow_color);
+		dc.DrawText(text.substr(start, end - start), rect.position() + font->shadow_displacement);
 	}
+	// draw
+	dc.SetTextForeground(font->color);
+	dc.DrawText(text.substr(start, end - start), rect.position());
 }
 
 void FontTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const {

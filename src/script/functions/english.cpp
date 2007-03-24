@@ -9,6 +9,7 @@
 #include <script/functions/functions.hpp>
 #include <script/functions/util.hpp>
 #include <util/tagged_string.hpp>
+#include <util/error.hpp>
 
 // ----------------------------------------------------------------------------- : Numbers
 
@@ -70,6 +71,14 @@ SCRIPT_FUNCTION(english_number_a) {
 
 
 // ----------------------------------------------------------------------------- : Singular/plural
+
+SCRIPT_FUNCTION(english_singular) {
+	throw InternalError(_("TODO"));
+}
+
+SCRIPT_FUNCTION(english_plural) {
+	throw InternalError(_("TODO"));
+}
 
 // ----------------------------------------------------------------------------- : Hints
 

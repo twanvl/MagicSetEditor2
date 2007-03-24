@@ -308,7 +308,14 @@ tooltip:
 
 ############################################################## Labels in the GUI
 label:
+	# Cards tab
 	card notes:			Card notes:
+	# Keywords tab
+	keyword:			Keyword
+	match:				Matches
+	mode:				Mode
+	uses:				Uses
+	reminder:			Reminder text
 	
 	# Open dialogs
 	all files			All files

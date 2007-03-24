@@ -27,7 +27,7 @@ KeywordList::KeywordList(Window* parent, int id, long additional_style)
 	// Add columns
 	InsertColumn(0, _LABEL_("keyword"),  wxLIST_FORMAT_LEFT,    0);
 	InsertColumn(1, _LABEL_("match"),    wxLIST_FORMAT_LEFT,  200);
-	InsertColumn(2, _LABEL_("mode"),     wxLIST_FORMAT_LEFT,  100);
+	InsertColumn(2, _LABEL_("mode"),     wxLIST_FORMAT_LEFT,   60);
 	InsertColumn(3, _LABEL_("uses"),     wxLIST_FORMAT_RIGHT,  80);
 	InsertColumn(4, _LABEL_("reminder"), wxLIST_FORMAT_LEFT,  300);
 }
