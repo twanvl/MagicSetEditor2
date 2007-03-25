@@ -563,6 +563,13 @@ void TextValueEditor::moveSelectionNoRedraw(IndexType t, size_t new_end, bool al
 	fixSelection(t, dir);
 }
 
+// direction of a with respect to b
+Movement direction_of(size_t a, size_t b) {
+	if (a < b) return MOVE_LEFT_OPT;
+	if (a > b) return MOVE_RIGHT_OPT;
+	else       return MOVE_MID;
+}
+
 void TextValueEditor::fixSelection(IndexType t, Movement dir) {
 	const String& val = value().value();
 	// Which type takes precedent?
@@ -571,8 +578,9 @@ void TextValueEditor::fixSelection(IndexType t, Movement dir) {
 		selection_end   = index_to_cursor(value().value(), selection_end_i,   dir);
 	}
 	// make sure the selection is at a valid position inside the text
-	selection_start_i = cursor_to_index(val, selection_start, selection_start == selection_end ? MOVE_MID : MOVE_RIGHT_OPT);
-	selection_end_i   = cursor_to_index(val, selection_end,   selection_start == selection_end ? MOVE_MID : MOVE_LEFT_OPT);
+	// prepare to move 'inward' (i.e. from start in the direction of end and vice versa)
+	selection_start_i = cursor_to_index(val, selection_start, direction_of(selection_end, selection_start));
+	selection_end_i   = cursor_to_index(val, selection_end,   direction_of(selection_start, selection_end));
 	// start and end must be on the same side of separators
 	size_t seppos = val.find(_("<sep"));
 	while (seppos != String::npos) {
@@ -580,11 +588,11 @@ void TextValueEditor::fixSelection(IndexType t, Movement dir) {
 		if (selection_start_i <= seppos && selection_end_i > seppos) {
 		    // not on same side, move selection end before sep
 			selection_end   = index_to_cursor(val, seppos, dir);
-			selection_end_i = cursor_to_index(val, selection_end, selection_start == selection_end ? MOVE_MID : MOVE_LEFT_OPT);
+			selection_end_i = cursor_to_index(val, selection_end, direction_of(selection_start, selection_end));
 		} else if (selection_start_i >= sepend && selection_end_i < sepend) {
 		    // not on same side, move selection end after sep
 			selection_end   = index_to_cursor(val, sepend, dir);
-			selection_end_i = cursor_to_index(val, selection_end, selection_start == selection_end ? MOVE_MID : MOVE_LEFT_OPT);
+			selection_end_i = cursor_to_index(val, selection_end, direction_of(selection_start, selection_end));
 		}
 		// find next separator
 		seppos = val.find(_("<sep"), seppos + 1);
