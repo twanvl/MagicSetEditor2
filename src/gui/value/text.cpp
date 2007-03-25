@@ -390,15 +390,15 @@ void TextValueEditor::doFormat(int type) {
 	size_t ss = selection_start, se = selection_end;
 	switch (type) {
 		case ID_FORMAT_BOLD: {
-			getSet().actions.add(toggle_format_action(valueP(), _("b"),   selection_start_i, selection_end_i, _("Bold")));
+			getSet().actions.add(toggle_format_action(valueP(), _("b"),   selection_start_i, selection_end_i, selection_start, selection_end, _("Bold")));
 			break;
 		}
 		case ID_FORMAT_ITALIC: {
-			getSet().actions.add(toggle_format_action(valueP(), _("i"),   selection_start_i, selection_end_i, _("Italic")));
+			getSet().actions.add(toggle_format_action(valueP(), _("i"),   selection_start_i, selection_end_i, selection_start, selection_end, _("Italic")));
 			break;
 		}
 		case ID_FORMAT_SYMBOL: {
-			getSet().actions.add(toggle_format_action(valueP(), _("sym"), selection_start_i, selection_end_i, _("Symbols")));
+			getSet().actions.add(toggle_format_action(valueP(), _("sym"), selection_start_i, selection_end_i, selection_start, selection_end, _("Symbols")));
 			break;
 		}
 	}

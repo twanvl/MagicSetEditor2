@@ -96,26 +96,29 @@ TextValue& TextValueAction::value() const {
 }
 
 
-TextValueAction* toggle_format_action(const TextValueP& value, const String& tag, size_t start, size_t end, const String& action_name) {
-	if (start > end) swap(start, end);
+TextValueAction* toggle_format_action(const TextValueP& value, const String& tag, size_t start_i, size_t end_i, size_t start, size_t end, const String& action_name) {
+	if (start > end) {
+		swap(start, end);
+		swap(start_i, end_i);
+	}
 	String new_value;
 	const String& str = value->value();
 	// Are we inside the tag we are toggling?
-	size_t tagpos = in_tag(str, _("<") + tag, start, end);
+	size_t tagpos = in_tag(str, _("<") + tag, start_i, end_i);
 	if (tagpos == String::npos) {
 		// we are not inside this tag, add it
-		new_value =  str.substr(0, start);
+		new_value =  str.substr(0, start_i);
 		new_value += _("<") + tag + _(">");
-		new_value += str.substr(start, end - start);
+		new_value += str.substr(start_i, end_i - start_i);
 		new_value += _("</") + tag + _(">");
-		new_value += str.substr(end);
+		new_value += str.substr(end_i);
 	} else {
 		// we are inside this tag, _('remove') it
-		new_value =  str.substr(0, start);
+		new_value =  str.substr(0, start_i);
 		new_value += _("</") + tag + _(">");
-		new_value += str.substr(start, end - start);
+		new_value += str.substr(start_i, end_i - start_i);
 		new_value += _("<") + tag + _(">");
-		new_value += str.substr(end);
+		new_value += str.substr(end_i);
 	}
 	// Build action
 	if (start != end) {
@@ -132,7 +135,10 @@ TextValueAction* toggle_format_action(const TextValueP& value, const String& tag
 
 TextValueAction* typing_action(const TextValueP& value, size_t start_i, size_t end_i, size_t start, size_t end, const String& replacement, const String& action_name)  {
 	bool reverse = start > end;
-	if (reverse) swap(start, end);
+	if (reverse) {
+		swap(start, end);
+		swap(start_i, end_i);
+	}
 	String new_value = tagged_substr_replace(value->value(), start_i, end_i, replacement);
 	if (value->value() == new_value) {
 		// no change

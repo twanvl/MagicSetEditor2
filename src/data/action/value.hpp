@@ -72,7 +72,7 @@ class TextValueAction : public ValueAction {
 };
 
 /// Action for toggleing some formating tag on or off in some range
-TextValueAction* toggle_format_action(const TextValueP& value, const String& tag, size_t start, size_t end, const String& action_name);
+TextValueAction* toggle_format_action(const TextValueP& value, const String& tag, size_t start_i, size_t end_i, size_t start, size_t end, const String& action_name);
 
 /// Typing in a TextValue, replace the selection [start...end) with replacement
 /** start and end are cursor positions, start_i and end_i are indices*/
