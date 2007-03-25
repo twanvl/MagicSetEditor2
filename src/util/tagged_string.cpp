@@ -193,9 +193,6 @@ size_t index_to_cursor(const String& str, size_t index, Movement dir) {
 						return cursor;
 					} else if (dir == MOVE_RIGHT) {
 						return cursor + 1;
-					} else if (dir == MOVE_MID) {
-						// take the closest side
-						return cursor + ((int)(after - index) < (int)(index - before));
 					} else if (dir == MOVE_LEFT_OPT) {
 						// is there any non-tag after index?
 						bool empty = true;
@@ -222,6 +219,22 @@ size_t index_to_cursor(const String& str, size_t index, Movement dir) {
 							i = skip_tag(str, i);
 						}
 						return cursor + 1; // yes it is
+					} else if (dir == MOVE_MID) {
+						// count number of actual characters before/after
+						int before_c = 0;
+						int after_c  = 0;
+						while (i < close) {
+							c = str.GetChar(i);
+							if (c == _('<')) {
+								i = skip_tag(str, i);
+							} else {
+								if (i < index) before_c++;
+								else           after_c++;
+								++i;
+							}
+						}
+						// take the closest side
+						return before_c <= after_c ? cursor : cursor + 1;
 					}
 				}
 				i = after;
@@ -250,6 +263,8 @@ void cursor_to_index_range(const String& str, size_t cursor, size_t& start, size
 		if (c == _('<')) {
 			// a tag
 			if (is_substr(str, i, _("<atom")) || is_substr(str, i, _("<sep"))) {
+				// never move the end over an atom/sep
+				if (cur >= cursor) break;
 				// skip tag contents, tag counts as a single 'character'
 				i = match_close_tag_end(str, i);
 			} else {
