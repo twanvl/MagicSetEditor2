@@ -130,10 +130,10 @@ void Reader::unknownKey() {
 	if (it != aliasses.end()) {
 		if (aliasses.find(it->second.new_key) != aliasses.end()) {
 			// alias points to another alias, don't follow it, there is the risk of infinite loops
-		} else if (it->second.end_version <= file_version) {
+		} else if (it->second.end_version <= file_app_version) {
 			// alias not used for this version, use in warning
 			if (indent == expected_indent) {
-				warning(_("Unexpected key: '") + key + _("' try '") + it->second.new_key + _("'"));
+				warning(_("Unexpected key: '") + key + _("'  use  '") + it->second.new_key + _("'"));
 				do {
 					moveNext();
 				} while (indent > expected_indent);
@@ -175,6 +175,11 @@ const String& Reader::getValue() {
 		just_opened = false;
 		while (key.empty() && !input->Eof()) {
 			readLine();
+		}
+		// did we reach the end of the file?
+		if (key.empty() && input->Eof()) {
+			line_number += 1;
+			indent = -1;
 		}
 		return multi_line_str;
 	} else {
