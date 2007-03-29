@@ -32,9 +32,9 @@ Reader::Reader(const String& filename)
 }
 
 void Reader::addAlias(Version end_version, const Char* a, const Char* b) {
-	if (file_app_version < end_version) {
-		aliasses[a] = b;
-	}
+	Alias& alias = aliasses[a];
+	alias.new_key     = b;
+	alias.end_version = end_version;
 }
 
 void Reader::handleAppVersion() {
@@ -126,13 +126,22 @@ void Reader::readLine() {
 
 void Reader::unknownKey() {
 	// aliasses?
-	map<String,String>::const_iterator it = aliasses.find(key);
+	map<String,Alias>::const_iterator it = aliasses.find(key);
 	if (it != aliasses.end()) {
-		if (aliasses.find(it->second) != aliasses.end()) {
+		if (aliasses.find(it->second.new_key) != aliasses.end()) {
 			// alias points to another alias, don't follow it, there is the risk of infinite loops
+		} else if (it->second.end_version <= file_version) {
+			// alias not used for this version, use in warning
+			if (indent == expected_indent) {
+				warning(_("Unexpected key: '") + key + _("' try '") + it->second.new_key + _("'"));
+				do {
+					moveNext();
+				} while (indent > expected_indent);
+				return;
+			}
 		} else {
 			// try this key instead
-			key = it->second;
+			key = it->second.new_key;
 			return;
 		}
 	}

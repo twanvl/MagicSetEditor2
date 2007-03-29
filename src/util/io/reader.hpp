@@ -121,7 +121,12 @@ class Reader {
 	/// Did we just open a block (i.e. not read any more lines of it)?
 	bool just_opened;
 	/// Aliasses for compatability
-	map<String, String> aliasses;
+	struct Alias {
+		String  new_key;
+		Version end_version;
+	};
+	/// Aliasses for compatability
+	map<String, Alias> aliasses;
 	
 	/// Filename for error messages
 	String filename;
