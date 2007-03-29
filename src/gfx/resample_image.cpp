@@ -165,3 +165,62 @@ void resample_preserve_aspect(const Image& img_in, Image& img_out) {
 	resample_pass(img_in,   img_temp, 0, 0,          img_in.GetWidth(),  1,                   rwidth,  1,                  img_in.GetHeight(), img_in.GetWidth(), img_temp.GetWidth());
 	resample_pass(img_temp, img_out,  0, offset_out, img_in.GetHeight(), img_temp.GetWidth(), rheight, img_out.GetWidth(), rwidth,             1,                 1);
 }
+
+// ----------------------------------------------------------------------------- : Sharpening
+
+void sharp_downsample(const Image& img_in, Image& img_out, int amount);
+
+void sharp_resample(const Image& img_in, Image& img_out, int amount) {
+	sharp_resample_and_clip(img_in, img_out, wxRect(0, 0, img_in.GetWidth(), img_in.GetHeight()), amount);
+}
+
+void sharp_resample_and_clip(const Image& img_in, Image& img_out, wxRect rect, int amount) {
+	Image img_larger(img_out.GetWidth() * 2, img_out.GetHeight() * 2, false);
+	resample_and_clip(img_in, img_larger, rect);
+	sharp_downsample(img_larger, img_out, amount);
+}
+
+// Downsample an image to create a sharp result by applying a sharpening filter
+// img_in must be twice as large as img_out
+void sharp_downsample(const Image& img_in, Image& img_out, int amount) {
+	assert(img_in.GetWidth()  == img_out.GetWidth() * 2);
+	assert(img_in.GetHeight() == img_out.GetHeight() * 2);
+	
+	int width = img_out.GetWidth(), height = img_out.GetHeight();
+	int line = width * 6;
+	int center_weight = 201;
+	int border_weight = amount;
+	assert(4 * center_weight - 8 * border_weight > 0);
+	
+	Byte *in = img_in.GetData(), *out = img_out.GetData();
+	
+	for (int y = 0 ; y < height ; ++y) {
+		for (int x = 0 ; x < width ; ++x) {
+			for (int c = 0 ; c < 3 ; ++c) { // for each component
+				// Filter using a kernel of the form
+				/*     -1 -1
+				 *  -1  c  c -1
+				 *  -1  c  c -1
+				 *     -1 -1
+				 * But when we are near the edge replicate the edge pixel
+				 */
+				int tot =
+				  center_weight * (in[0] + in[3] + in[line] + in[line+3]) - // center
+				  border_weight * (
+				    (x   == 0      ? in[0]    + in[line]   : in[-3]     + in[line-3])  +  // left
+				    (x+1 == width  ? in[3]    + in[line+3] : in[6]      + in[line+6])  +  // right
+				    (y   == 0      ? in[0]    + in[3]      : in[-line]  + in[3-line])  +  // top
+				    (y+1 == height ? in[line] + in[line+3] : in[line*2] + in[line*2+3]) );// bottom
+				// And then avarage the result into a single pixel (downsample by factor 2)
+				out[0] = col( tot / (4 * center_weight - 8 * border_weight) );
+				// next pixel
+				++in;
+				++out;
+			}
+			// skip a pixel
+			in += 3;
+		}
+		// skip a line
+		in += line;
+	}
+}

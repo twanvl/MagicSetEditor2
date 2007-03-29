@@ -36,6 +36,13 @@ enum PreserveAspect
 /// Resample an image, but preserve the aspect ratio by adding a transparent border around the output if needed.
 void resample_preserve_aspect(const Image& img_in, Image& img_out);
 
+/// Resample an image to create a sharp result by applying a sharpening filter
+/** Amount must be between 0 and 100 */
+void sharp_resample(const Image& img_in, Image& img_out, int amount);
+
+/// Sharpening version of of resample_and_clip
+void sharp_resample_and_clip(const Image& img_in, Image& img_out, wxRect rect, int amount);
+
 /// Draw text by first drawing it using a larger font and then downsampling it
 /** optionally rotated by an angle.
  *  rect    = rectangle to draw in

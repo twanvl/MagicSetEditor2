@@ -54,11 +54,11 @@ Image ImageSlice::getSlice() const {
 		return source;
 	}
 	Image target(target_size.GetWidth(), target_size.GetHeight(), false);
-//	if (sharpen && sharpen_amount > 0) {
-//		sharp_resample_and_clip(source, target, selection, sharpen_amount);
-//	} else {
+	if (sharpen && sharpen_amount > 0 && sharpen_amount <= 100) {
+		sharp_resample_and_clip(source, target, selection, sharpen_amount);
+	} else {
 		resample_and_clip(source, target, selection);
-//	}
+	}
 	return target;
 }
 
