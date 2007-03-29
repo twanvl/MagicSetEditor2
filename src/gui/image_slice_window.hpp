@@ -14,6 +14,7 @@
 class ImageSlicePreview;
 class ImageSliceSelector;
 class wxSpinEvent;
+DECLARE_POINTER_TYPE(AlphaMask);
 
 // ----------------------------------------------------------------------------- : ImageSlice
 
@@ -50,7 +51,7 @@ class ImageSlice {
 /// Dialog for selecting a slice of an image
 class ImageSliceWindow : public wxDialog {
   public:
-	ImageSliceWindow(Window* parent, const Image& source, const wxSize& target_size);
+	ImageSliceWindow(Window* parent, const Image& source, const wxSize& target_size, const AlphaMaskP& target_mask);
 	
 	/// Return the sliced image
 	Image getImage() const;
@@ -106,7 +107,7 @@ class ImageSliceWindow : public wxDialog {
 /// A preview of the sliced image
 class ImageSlicePreview : public wxControl {
   public:
-	ImageSlicePreview(Window* parent, int id, ImageSlice& slice);
+	ImageSlicePreview(Window* parent, int id, ImageSlice& slice, const AlphaMaskP& mask);
 	
 	/// Notify that the slice was updated
 	void update();
@@ -115,6 +116,7 @@ class ImageSlicePreview : public wxControl {
   private:
 	Bitmap bitmap;
 	ImageSlice& slice;
+	AlphaMaskP mask;
 	
 	bool mouse_down;
 	int mouseX, mouseY;		///< starting mouse position

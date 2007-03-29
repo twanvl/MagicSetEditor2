@@ -39,6 +39,8 @@ class ImageStyle : public Style {
 	
 	Scriptable<String> mask_filename; ///< Filename for a mask image
 	
+	virtual bool update(Context&);
+	
   private:
 	DECLARE_REFLECTION();
 };

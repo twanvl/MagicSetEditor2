@@ -121,18 +121,18 @@ class ChoiceStyle : public Style {
 	DECLARE_STYLE_TYPE(Choice);
 	~ChoiceStyle();
 	
-	ChoicePopupStyle			popup_style;	///< Style of popups/menus
-	ChoiceRenderStyle			render_style;	///< Style of rendering
-	Font						font;			///< Font for drawing text (when RENDER_TEXT)
-	map<String,ScriptableImage>	choice_images;	///< Images for the various choices (when RENDER_IMAGE)
-	map<String,Color>			choice_colors;	///< Colors for the various choices (when color_cardlist)
-	bool						colors_card_list;///< Does this field determine colors of the rows in the card list?
-	String						mask_filename;	///< Filename of an additional mask over the images
-	ImageCombine				combine;		///< Combining mode for drawing the images
-	Alignment					alignment;		///< Alignment of images
-	Image						mask;			///< The actual mask image
-	wxImageList*				thumbnails;		///< Thumbnails for the choices
-	Age							thumbnail_age;	///< Age the thumbnails were generated
+	ChoicePopupStyle            popup_style;        ///< Style of popups/menus
+	ChoiceRenderStyle           render_style;       ///< Style of rendering
+	Font                        font;               ///< Font for drawing text (when RENDER_TEXT)
+	map<String,ScriptableImage> choice_images;      ///< Images for the various choices (when RENDER_IMAGE)
+	map<String,Color>           choice_colors;      ///< Colors for the various choices (when color_cardlist)
+	bool                        colors_card_list;   ///< Does this field determine colors of the rows in the card list?
+	Scriptable<String>          mask_filename;      ///< Filename of an additional mask over the images
+	ImageCombine                combine;            ///< Combining mode for drawing the images
+	Alignment                   alignment;          ///< Alignment of images
+	Image                       mask;               ///< The actual mask image
+	wxImageList*                thumbnails;         ///< Thumbnails for the choices
+	Age                         thumbnail_age;      ///< Age the thumbnails were generated
 	bool                        invalidated_images; ///< Have the images been invalidated?
 	
 	/// Load the mask image, if it's not already done

@@ -28,6 +28,10 @@ IMPLEMENT_REFLECTION(ImageStyle) {
 	REFLECT_N("mask", mask_filename);
 }
 
+bool ImageStyle::update(Context& ctx) {
+	return Style       ::update(ctx)
+	     | mask_filename.update(ctx);
+}
 
 // ----------------------------------------------------------------------------- : ImageValue
 

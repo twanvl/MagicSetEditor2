@@ -10,6 +10,7 @@
 #include <gui/image_slice_window.hpp>
 #include <data/format/clipboard.hpp>
 #include <data/action/value.hpp>
+#include <data/stylesheet.hpp>
 #include <wx/clipbrd.h>
 
 // ----------------------------------------------------------------------------- : ImageValueEditor
@@ -28,8 +29,20 @@ bool ImageValueEditor::onLeftDClick(const RealPoint&, wxMouseEvent&) {
 
 void ImageValueEditor::sliceImage(const Image& image) {
 	if (!image.Ok()) return;
+	// mask?
+	AlphaMaskP mask;
+	if (!style().mask_filename().empty()) {
+		Image mask_image;
+		InputStreamP image_file = viewer.stylesheet->openIn(style().mask_filename);
+		if (mask_image.LoadFile(*image_file)) {
+			Image resampled(style().width, style().height);
+			resample(mask_image, resampled);
+			mask = new_shared1<AlphaMask>(resampled);
+		}
+	}
 	// slice
-	ImageSliceWindow s(wxGetTopLevelParent(&editor()), image, style().getSize());
+	ImageSliceWindow s(wxGetTopLevelParent(&editor()), image, style().getSize(), mask);
+	// clicked ok?
 	if (s.ShowModal() == wxID_OK) {
 		// store the image into the set
 		FileName new_image_file = getSet().newFileName(field().name,_("")); // a new unique name in the package

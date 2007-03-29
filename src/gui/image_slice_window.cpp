@@ -7,7 +7,9 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <gui/image_slice_window.hpp>
+#include <gui/util.hpp>
 #include <util/window_id.hpp>
+#include <util/rotation.hpp>
 #include <gfx/gfx.hpp>
 #include <wx/spinctrl.h>
 #include <wx/dcbuffer.h>
@@ -72,7 +74,7 @@ DEFINE_EVENT_TYPE(EVENT_SLICE_CHANGED);
 
 // ----------------------------------------------------------------------------- : ImageSliceWindow
 
-ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wxSize& target_size)
+ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wxSize& target_size, const AlphaMaskP& mask)
 	: wxDialog(parent,wxID_ANY,_TITLE_("slice image"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxFULL_REPAINT_ON_RESIZE)
 	, slice(source, target_size)
 {
@@ -80,7 +82,7 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 	const wxPoint defPos = wxDefaultPosition;
 	const wxSize spinSize(80,-1);
 	selector  = new ImageSliceSelector(this, ID_SELECTOR, slice);
-	preview   = new ImageSlicePreview (this, ID_PREVIEW,  slice);
+	preview   = new ImageSlicePreview (this, ID_PREVIEW,  slice, mask);
 	
 	String sizes[] = { _("&Original Size")
 	                 , _("Size to &Fit")
@@ -331,9 +333,10 @@ END_EVENT_TABLE  ()
 
 // ----------------------------------------------------------------------------- : ImageSlicePreview
 
-ImageSlicePreview::ImageSlicePreview(Window* parent, int id, ImageSlice& slice)
+ImageSlicePreview::ImageSlicePreview(Window* parent, int id, ImageSlice& slice, const AlphaMaskP& mask)
 	: wxControl(parent, id)
 	, slice(slice)
+	, mask(mask)
 	, mouse_down(false)
 {}
 
@@ -356,7 +359,21 @@ void ImageSlicePreview::onPaint(wxPaintEvent&) {
 }
 void ImageSlicePreview::draw(DC& dc) {
 	if (!bitmap.Ok()) {
-		bitmap = Bitmap(slice.getSlice());
+		Image image = slice.getSlice();
+		if (mask && mask->size == slice.target_size) {
+			mask->setAlpha(image);
+			// create bitmap
+			bitmap = Bitmap(image.GetWidth(), image.GetHeight());
+			wxMemoryDC mdc; mdc.SelectObject(bitmap);
+			// draw checker pattern behind image
+			RealRect rect = GetClientSize();
+			RotatedDC rdc(mdc, 0, rect, 1, false);
+			draw_checker(rdc, rect);
+			rdc.DrawImage(image, RealPoint(0,0));
+			mdc.SelectObject(wxNullBitmap);
+		} else {
+			bitmap = Bitmap(image);
+		}
 	}
 	if (bitmap.Ok()) {
 		dc.DrawBitmap(bitmap, 0, 0);

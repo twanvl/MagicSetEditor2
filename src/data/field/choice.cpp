@@ -177,7 +177,8 @@ ChoiceStyle::~ChoiceStyle() {
 
 bool ChoiceStyle::update(Context& ctx) {
 	// Don't update the choice images, leave that to invalidate()
-	return Style::update(ctx);
+	return Style       ::update(ctx)
+	     | mask_filename.update(ctx);
 }
 void ChoiceStyle::initDependencies(Context& ctx, const Dependency& dep) const {
 	Style::initDependencies(ctx, dep);
@@ -199,7 +200,7 @@ void ChoiceStyle::invalidate() {
 }
 
 void ChoiceStyle::loadMask(Package& pkg) {
-	if (mask.Ok() || mask_filename.empty()) return;
+	if (mask.Ok() || mask_filename().empty()) return;
 	// load file
 	InputStreamP image_file = pkg.openIn(mask_filename);
 	mask.LoadFile(*image_file);
