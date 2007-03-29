@@ -92,20 +92,20 @@ String tr(const SymbolFont& f, const String& key) {
 
 
 String tr(const Game& g, const String& key, const String& def) {
-	if (!the_locale) return key; // no locale loaded (yet)
+	if (!the_locale) return def; // no locale loaded (yet)
 	SubLocaleP loc = the_locale->game_translations[g.name()];
-	if (!loc)        return key; // no information on this game
+	if (!loc)        return def; // no information on this game
 	return loc->tr(key, def);
 }
 String tr(const StyleSheet& s, const String& key, const String& def) {
-	if (!the_locale) return key; // no locale loaded (yet)
+	if (!the_locale) return def; // no locale loaded (yet)
 	SubLocaleP loc = the_locale->stylesheet_translations[s.name()];
-	if (!loc)        return key; // no information on this stylesheet
+	if (!loc)        return def; // no information on this stylesheet
 	return loc->tr(key, def);
 }
 String tr(const SymbolFont& f, const String& key, const String& def) {
-	if (!the_locale) return key; // no locale loaded (yet)
+	if (!the_locale) return def; // no locale loaded (yet)
 	SubLocaleP loc = the_locale->symbol_font_translations[f.name()];
-	if (!loc)        return key; // no information on this symbol font
+	if (!loc)        return def; // no information on this symbol font
 	return loc->tr(key, def);
 }
