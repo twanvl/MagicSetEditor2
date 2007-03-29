@@ -196,6 +196,7 @@ card field:
 	show statistics: false
 	card list visible: true
 	card list column: 1
+	card list width: 200
 	description: The name of the card, use @ for a diamond
 card field:
 	type: text
@@ -245,14 +246,15 @@ card field:
 	script:
 		set.code
 		+ "-" +
-		position(
-			of: card
-			in: set
-			order_by: {card.name}
-			) 
+		format( format: "%03i"
+		      , position(
+				of: card
+				in: set
+				order_by: {card.name}
+			))
 	card list visible: true
 	card list column: 6
-	card list width: 55
+	card list width: 65
 	card list name: #
 	editable: false
 card field:

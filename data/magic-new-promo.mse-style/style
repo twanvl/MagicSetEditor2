@@ -1,8 +1,12 @@
-mse version: 0.2.7
+mse version: 0.3.0
 game: magic
 short name: Promotional
 full name: Large image
 icon: card-sample.png
+
+card width: 375
+card height: 523
+card dpi: 150
 
 ############################################################## Extra scripts
 
@@ -34,81 +38,33 @@ init script:
 			rgb(0,0,0)
 	}
 
-############################################################## Set info fields
-info style:
-	title:
-		padding left: 2
-		font:
-			size: 16
-	symbol:
-		variation:
-			name: common
-			border radius: 0.10
-			fill type: solid
-			fill color:   rgb(0,0,0)
-			border color: rgb(255,255,255)
-		variation:
-			name: uncommon
-			border radius: 0.05
-			fill type: linear gradient
-			fill color 1:   rgb(224,224,224)
-			fill color 2:   rgb(84, 84, 84)
-			border color 1: rgb(0,  0,  0)
-			border color 2: rgb(0,  0,  0)
-		variation:
-			name: rare
-			border radius: 0.05
-			fill type: linear gradient
-			fill color 1:   rgb(214,196,94)
-			fill color 2:   rgb(95, 84, 40)
-			border color 1: rgb(0,  0,  0)
-			border color 2: rgb(0,  0,  0)
-		variation:
-			name: special
-			border radius: 0.10
-			fill type: linear gradient
-			fill color 1:   rgb(224,170,247)
-			fill color 2:   rgb(58,7,80)
-			border color 1: rgb(255,255,255)
-			border color 2: rgb(255,255,255)
-	automatic reminder text:
-		render style: both
-		choice images:
-			yes: script: buildin_image("bool_yes")
-			no:  script: buildin_image("bool_no")
-	use gradient multicolor:
-		render style: both
-		choice images:
-			yes: script: buildin_image("bool_yes")
-			no:  script: buildin_image("bool_no")
 
+############################################################## Extra style options
 
-############################################################## Extra style
-
-extra field:
+styling field:
 	type: boolean
 	name: colored mana symbols
 	description: Use colored mana symbols, as used by Wizards since Fifth Dawn.
-extra field:
+styling field:
 	type: boolean
 	name: darker artifacts
 	description: Use darker artifacts, as used by Wizards since Fifth Dawn.
-extra field:
+styling field:
 	type: boolean
 	name: grey hybrid name
 	description: Use a grey background for the name and type line on hybrid cards. This is done on real cards.
-extra field:
+styling field:
 	type: boolean
 	name: use guild mana symbols
 	description: Use the Ravnica guild symbols instead of the official half/half circles for hybrid mana.
 	initial: no
-extra field:
+styling field:
 	type: boolean
 	name: popup mana symbols
 	description: Use the symbols of the casting cost line inside the text box as well
 	initial: no
 
-extra style:
+styling style:
 	popup mana symbols:
 		choice images:
 			yes: /magic-mana-large.mse-symbol-font/mana_w.png
@@ -146,7 +102,7 @@ card style:
 		width: 
 			script: if card.card_symbol=="none" then 246 else 227
 		height: 23
-		align: bottom shrink-overflow
+		alignment: bottom shrink-overflow
 		padding bottom: 0
 		z index: 1
 		font:
@@ -159,11 +115,11 @@ card style:
 		top : 30
 		width: 63
 		height: 23
-		align: bottom right
+		alignment: bottom right
 		symbol font:
 			name: magic-mana-large
 			size: 15
-			align: bottom right
+			alignment: bottom right
 		always symbol: true
 		z index: 2
 		padding top: 0
@@ -192,7 +148,7 @@ card style:
 		top : 317
 		width: 286
 		height: 18
-		align: top shrink-overflow
+		alignment: top shrink-overflow
 		z index: 1
 		font:
 			name: Matrix
@@ -225,7 +181,7 @@ card style:
 					then "magic-mana-large"
 					else "magic-mana-small"
 			size: 14
-		align: middle left
+		alignment: middle left
 		z index: 2
 		padding left:   4
 		padding top:    2
@@ -241,7 +197,7 @@ card style:
 		height: 156
 		z index: 1
 		render style: image
-		align: middle center
+		alignment: middle center
 		include file: magic-watermarks.mse-include/watermarks
 
 	############################# PT
@@ -251,7 +207,7 @@ card style:
 		top:	467
 		width:	60
 		height:	28
-		align: center middle
+		alignment: center middle
 		font:
 			name: Mplantin
 			size: 18
@@ -297,7 +253,3 @@ card style:
 			size: 8
 			color:
 				script: font_color()
-
-width: 375
-height: 523
-dpi: 150

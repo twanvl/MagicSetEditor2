@@ -1,24 +1,14 @@
-mse version: 0.2.7
+mse version: 0.3.0
 game: vs
 short name: Promotional
 full name: Extended Art Promo
 icon: card-sample.png
 
-############################################################## Extra scripts
+card width: 375
+card height: 523
+card dpi: 150
 
-############################################################## Set info fields
-info style:
-	title:
-		padding left: 2
-		font:
-			size: 16
-	automatic reminder text:
-		font:
-			size: 16
-		render style: both
-		choice images:
-			yes: script: buildin_image("bool_yes")
-			no:  script: buildin_image("bool_no")
+############################################################## Extra scripts
 
 ############################################################## Extra style
 
@@ -43,7 +33,7 @@ card style:
 			equipment:		card-equipment.jpg
 			location:		card-location.jpg
 			plot twist:		card-plot-twist.jpg
-		card list colors: true
+		colors card list: true
 		choice colors:
 			character:	rgb(120,18,0)
 			character dual:	rgb(120,18,0)
@@ -59,7 +49,7 @@ card style:
 		top : 23
 		width: 224
 		height: 24
-		align: bottom shrink-overflow
+		alignment: bottom shrink-overflow
 		font:
 			name: Percolator Expert
 			size: 22
@@ -72,14 +62,14 @@ card style:
 		symbol font:
 			name: vs-standard-arrow
 			size: 15
-			align: middle center
+			alignment: middle center
 		z index: 4
 	cost:
 		left: 31
 		top : 28
 		width: 13
 		height: 31
-		align: middle center
+		alignment: middle center
 		font:
 			name: Dirty Headline
 			size: 18
@@ -120,7 +110,7 @@ card style:
 			color: rgb(0,0,0)
 			weight: bold
 		visible: script: is_character()
-		align: middle center
+		alignment: middle center
 		z index: 3
 	type bar:
 		left:	script: if is_dual() then 87 else 72
@@ -141,7 +131,7 @@ card style:
 		top : 44
 		width: 224
 		height: 18
-		align: top shrink-overflow
+		alignment: top shrink-overflow
 		z index: 4
 		font:
 			name: Percolator Expert
@@ -156,7 +146,7 @@ card style:
 		symbol font:
 			name: vs-standard-arrow
 			size: 8
-			align: middle center
+			alignment: middle center
 
 	############################# Card ID
 	number:
@@ -203,9 +193,9 @@ card style:
 		symbol font:
 			name: vs-standard-arrow
 			size: 18
-			align: middle center
+			alignment: middle center
 		visible: is_dual()
-		align: center shrink-overflow
+		alignment: center shrink-overflow
 		z index: 4
 		padding left:   2
 		padding top:    2
@@ -250,8 +240,8 @@ card style:
 		symbol font:
 			name: vs-standard-arrow
 			size: 8
-			align: middle center
-		align: top left
+			alignment: middle center
+		alignment: top left
 		z index: 4
 		padding left:   2
 		padding top:    2
@@ -271,7 +261,7 @@ card style:
 			size: 8
 			scale down to: 4
 			color: rgb(0,0,0)
-		align: bottom left
+		alignment: bottom left
 		z index: 3
 		padding left:   2
 		padding top:    2
@@ -290,7 +280,7 @@ card style:
 		height:	32
 		visible: script: is_character()
 		z index: 4
-		align: left middle
+		alignment: left middle
 		font:
 			name: Dirty Headline
 			size: 20
@@ -307,7 +297,7 @@ card style:
 		height:	32
 		visible: script: is_character()
 		z index: 4
-		align: left middle
+		alignment: left middle
 		padding bottom: -4
 		font:
 			name: Dirty Headline
@@ -325,7 +315,7 @@ card style:
 		top : 417
 		width: 170
 		height: 10
-		align: center top
+		alignment: center top
 		z index: 4
 		font:
 			name: Eurostile
@@ -339,12 +329,9 @@ card style:
 		width: 110
 		height: 13
 		z index: 4
-		align: middle left
+		alignment: middle left
 		font: 
 			name: Eurostile
 			size: 4
 			color: rgb(255,255,255)
 
-width: 375
-height: 523
-dpi: 150
