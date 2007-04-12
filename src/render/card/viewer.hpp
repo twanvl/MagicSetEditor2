@@ -42,6 +42,9 @@ class DataViewer : public SetView {
 	/// Should editing specific things be drawn?
 	/** false by default, can be overloaded */
 	virtual bool drawEditing() const;
+	/// Should focus only editing specific things be drawn?
+	/** false by default, can be overloaded */
+	virtual bool drawFocus() const;
 	/// Pens for drawing field borders (only called if drawBorders())
 	virtual wxPen borderPen(bool active) const;
 	/// The viewer that is currently focused, may be null

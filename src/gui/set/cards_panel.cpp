@@ -249,12 +249,20 @@ bool CardsPanel::wantsToHandle(const Action&, bool undone) const {
 
 // ----------------------------------------------------------------------------- : Clipboard
 
-bool CardsPanel::canCut()   const { return focused_control(this) == ID_EDITOR ? editor->canCut()   :    card_list->canCut();   }
-bool CardsPanel::canCopy()  const { return focused_control(this) == ID_EDITOR ? editor->canCopy()  :    card_list->canCopy();  }
-bool CardsPanel::canPaste() const { return focused_control(this) == ID_EDITOR ? editor->canPaste() :    card_list->canPaste(); }
-void CardsPanel::doCut()          { if    (focused_control(this) == ID_EDITOR)  editor->doCut();   else card_list->doCut();    }
-void CardsPanel::doCopy()         { if    (focused_control(this) == ID_EDITOR)  editor->doCopy();  else card_list->doCopy();   }
-void CardsPanel::doPaste()        { if    (focused_control(this) == ID_EDITOR)  editor->doPaste(); else card_list->doPaste();  }
+// determine what control to use for clipboard actions
+#define CUT_COPY_PASTE(op,return)									\
+	int id = focused_control(this);									\
+	if      (id == ID_EDITOR)    { return editor->op();    }		\
+	else if (id == ID_CARD_LIST) { return card_list->op(); }		\
+	else if (id == ID_NOTES)     { return notes->op();     }		\
+	else                         { return false;           }
+
+bool CardsPanel::canCut()   const { CUT_COPY_PASTE(canCut,   return) }
+bool CardsPanel::canCopy()  const { CUT_COPY_PASTE(canCopy,  return) }
+bool CardsPanel::canPaste() const { CUT_COPY_PASTE(canPaste, return) }
+void CardsPanel::doCut()          { CUT_COPY_PASTE(doCut,   ;) }
+void CardsPanel::doCopy()         { CUT_COPY_PASTE(doCopy,  ;) }
+void CardsPanel::doPaste()        { CUT_COPY_PASTE(doPaste, ;) }
 
 // ----------------------------------------------------------------------------- : Searching
 

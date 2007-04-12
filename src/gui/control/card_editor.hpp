@@ -26,6 +26,7 @@ class DataEditor : public CardViewer {
 	
 	virtual bool drawBorders() const;
 	virtual bool drawEditing() const;
+	virtual bool drawFocus() const;
 	virtual wxPen borderPen(bool active) const;
 	virtual ValueViewer* focusedViewer() const;
 	

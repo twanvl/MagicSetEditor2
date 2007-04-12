@@ -39,6 +39,9 @@ bool DataEditor::drawBorders() const {
 	        settings.stylesheetSettingsFor(*set->stylesheetFor(card)).card_borders();
 }
 bool DataEditor::drawEditing() const {
+	return true;
+}
+bool DataEditor::drawFocus() const {
 	return FindFocus() == this;
 }
 

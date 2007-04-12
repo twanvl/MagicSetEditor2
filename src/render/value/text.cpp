@@ -25,8 +25,8 @@ void TextValueViewer::draw(RotatedDC& dc) {
 	v.prepare(dc, value().value(), style(), viewer.getContext());
 	v.draw(dc, style(), (DrawWhat)(
 		  DRAW_NORMAL
-		| (viewer.drawBorders()                ? DRAW_BORDERS : 0)
-		| (viewer.drawEditing() && isCurrent() ? DRAW_ACTIVE  : 0)
+		| (viewer.drawBorders()              ? DRAW_BORDERS : 0)
+		| (viewer.drawFocus() && isCurrent() ? DRAW_ACTIVE  : 0)
 		));
 }
 
