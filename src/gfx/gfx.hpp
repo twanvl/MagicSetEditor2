@@ -155,9 +155,11 @@ class ContourMask {
 	~ContourMask();
 	
 	/// Load a contour mask
-	void load(const String& filename);
+	void load(const Image& image);
 	/// Unload the mask
 	void unload();
+	/// Is a mask loaded?
+	inline bool ok() const { return width > 0 && height > 0; }
 	
 	/// Returns the start of a row, when the mask were stretched to size
 	double rowLeft (double y, RealSize size) const;
@@ -165,8 +167,8 @@ class ContourMask {
 	double rowRight(double y, RealSize size) const;
 	
   private:
-	UInt width, height;
-	UInt *lefts, *rights;
+	int width, height;
+	int *lefts, *rights;
 };
 
 // ----------------------------------------------------------------------------- : Color utility functions

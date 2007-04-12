@@ -468,6 +468,11 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 			line.separator_after = false;
 			// reset line_size
 			line_size = RealSize(lineLeft(dc, style, line.top), 0);
+			while (line.top < style.height && line_size.width + 1 >= style.width - style.padding_right) {
+				// nothing fits on this line, move down one pixel
+				line.top += 1;
+				line_size = RealSize(lineLeft(dc, style, line.top), 0);
+			}
 			line.positions.push_back(line_size.width); // start position
 		}
 	}
@@ -487,16 +492,11 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 }
 
 double TextViewer::lineLeft(RotatedDC& dc, const TextStyle& style, double y) {
-	return 0 + style.padding_left;
-//	return style.mask.rowLeft(y, dc.getInternalSize()) + style.padding_left;
+	return style.mask.rowLeft(y, dc.getInternalSize()) + style.padding_left;
 }
 double TextViewer::lineRight(RotatedDC& dc, const TextStyle& style, double y) {
-	return style.width - style.padding_right;
-//	return style.mask.rowRight(y, dc.getInternalSize()) - style.padding_right;
+	return style.mask.rowRight(y, dc.getInternalSize()) - style.padding_right;
 }
-
-ContourMask::ContourMask() {} // MOVEME //@@
-ContourMask::~ContourMask() {}
 
 void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style) {
 	if (style.alignment == ALIGN_TOP_LEFT) return;
