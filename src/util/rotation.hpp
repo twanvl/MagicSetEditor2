@@ -119,13 +119,20 @@ class Rotater {
 
 // ----------------------------------------------------------------------------- : RotatedDC
 
+/// Render quality of text
+enum RenderQuality {
+	QUALITY_AA,			///< Our own anti aliassing
+	QUALITY_SUB_PIXEL,	///< Sub-pixel positioning
+	QUALITY_LOW,		///< Normal
+};
+
 /// A DC with rotation applied
 /** All draw** functions take internal coordinates.
  */
 class RotatedDC : public Rotation {
   public:
-	RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, bool high_quality, bool is_internal = false);
-	RotatedDC(DC& dc, const Rotation& rotation, bool high_quality);
+	RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, RenderQuality quality, bool is_internal = false);
+	RotatedDC(DC& dc, const Rotation& rotation, RenderQuality quality);
   
 	// --------------------------------------------------- : Drawing
 	
@@ -165,8 +172,8 @@ class RotatedDC : public Rotation {
 	inline wxDC& getDC() { return dc; }
 	
   private:
-	wxDC& dc;			///< The actual dc
-	bool high_quality;	///< Drawing using our own anti aliassing?
+	wxDC& dc;				///< The actual dc
+	RenderQuality quality;	///< Quality of the text
 };
 
 // ----------------------------------------------------------------------------- : EOF

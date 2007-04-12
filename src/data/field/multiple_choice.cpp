@@ -31,14 +31,9 @@ IMPLEMENT_REFLECTION(MultipleChoiceField) {
 
 MultipleChoiceStyle::MultipleChoiceStyle(const MultipleChoiceFieldP& field)
 	: ChoiceStyle(field)
-	, direction(HORIZONTAL)
+	, direction(LEFT_TO_RIGHT)
 	, spacing(0)
 {}
-
-IMPLEMENT_REFLECTION_ENUM(Direction) {
-	VALUE_N("horizontal", HORIZONTAL);
-	VALUE_N("vertical",   VERTICAL);
-}
 
 IMPLEMENT_REFLECTION(MultipleChoiceStyle) {
 	REFLECT_BASE(ChoiceStyle);

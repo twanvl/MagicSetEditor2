@@ -285,6 +285,7 @@ set field:
 	choice: core
 	choice: expert
 	choice: custom
+	initial: old, core, export, custom
 	description: Should reminder text be added to keywords by default? Note: you can enable/disable reminder text by right clicking the keyword.
 set field:
 	type: boolean
@@ -902,6 +903,7 @@ keyword mode:
 	name: expert
 	description: Expert level keywords (Cycling, Vanishing, etc.)
 keyword mode:
+	is default: true
 	name: custom
 	description: Custom keywords
 

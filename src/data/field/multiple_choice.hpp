@@ -32,10 +32,6 @@ class MultipleChoiceField : public ChoiceField {
 
 // ----------------------------------------------------------------------------- : MultipleChoiceStyle
 
-enum Direction {
-	HORIZONTAL, VERTICAL
-};
-
 /// The Style for a MultipleChoiceField
 class MultipleChoiceStyle : public ChoiceStyle {
   public:

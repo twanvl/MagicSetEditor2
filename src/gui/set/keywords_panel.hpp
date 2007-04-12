@@ -15,6 +15,8 @@
 class wxSplitterWindow;
 class KeywordList;
 class TextCtrl;
+class IconMenu;
+struct KeywordSelectEvent;
 
 // ----------------------------------------------------------------------------- : KeywordsPanel
 
@@ -22,17 +24,32 @@ class TextCtrl;
 class KeywordsPanel : public SetWindowPanel {
   public:
 	KeywordsPanel(Window* parent, int id);
+	~KeywordsPanel();
 	
 	virtual void onChangeSet();
 	
+	// --------------------------------------------------- : UI
+	
+	virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
+	virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
+	virtual void onUpdateUI(wxUpdateUIEvent&);
+	virtual void onCommand(int id);
+	
   private:
+	DECLARE_EVENT_TABLE();
+	
 	// --------------------------------------------------- : Controls
 	wxSplitterWindow* splitter;
+	wxPanel*          panel;
 	KeywordList*      list;
 	TextCtrl*         keyword;
 	TextCtrl*         match;
 	TextCtrl*         reminder;
 	TextCtrl*         rules;
+	IconMenu*         menuKeyword;
+	
+	// --------------------------------------------------- : Events
+	void onKeywordSelect(KeywordSelectEvent& ev);
 };
 
 // ----------------------------------------------------------------------------- : EOF

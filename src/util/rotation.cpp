@@ -111,24 +111,31 @@ Rotater::~Rotater() {
 
 // ----------------------------------------------------------------------------- : RotatedDC
 
-RotatedDC::RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, bool high_quality, bool is_internal)
+RotatedDC::RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, RenderQuality quality, bool is_internal)
 	: Rotation(angle, rect, zoom, is_internal)
-	, dc(dc), high_quality(high_quality)
+	, dc(dc), quality(quality)
 {}
 
-RotatedDC::RotatedDC(DC& dc, const Rotation& rotation, bool high_quality)
+RotatedDC::RotatedDC(DC& dc, const Rotation& rotation, RenderQuality quality)
 	: Rotation(rotation)
-	, dc(dc), high_quality(high_quality&&false)
+	, dc(dc), quality(quality)
 {}
 
 // ----------------------------------------------------------------------------- : RotatedDC : Drawing
 
 void RotatedDC::DrawText  (const String& text, const RealPoint& pos) {
 	if (text.empty()) return;
-	if (high_quality) {
+	if (quality == QUALITY_AA) {
 		RealRect r(pos, GetTextExtent(text));
 		RealRect r_ext = trNoNeg(r);
 		draw_resampled_text(dc, r_ext, revX(), revY(), angle, text);
+	} else if (quality == QUALITY_SUB_PIXEL) {
+		RealPoint p_ext = tr(pos)*text_scaling;
+		double usx,usy;
+		dc.GetUserScale(&usx, &usy);
+		dc.SetUserScale(usx/text_scaling, usy/text_scaling);
+		dc.DrawRotatedText(text, (int) p_ext.x, (int) p_ext.y, angle);
+		dc.SetUserScale(usx, usy);
 	} else {
 		RealPoint p_ext = tr(pos);
 		dc.DrawRotatedText(text, (int) p_ext.x, (int) p_ext.y, angle);
@@ -172,24 +179,44 @@ void RotatedDC::SetTextForeground(const Color& color) { dc.SetTextForeground(col
 void RotatedDC::SetLogicalFunction(int function)      { dc.SetLogicalFunction(function); }
 
 void RotatedDC::SetFont(const wxFont& font) {
-	SetFont(font, font.GetPointSize());
+	if (quality == QUALITY_LOW) {
+		dc.SetFont(font);
+	} else {
+		SetFont(font, font.GetPointSize());
+	}
 }
 void RotatedDC::SetFont(wxFont font, double size) {
-	font.SetPointSize((int) (trS(size) * (high_quality ? text_scaling : 1)));
+	if (quality == QUALITY_LOW) {
+		font.SetPointSize((int)  trS(size));
+	} else {
+		font.SetPointSize((int) (trS(size) * text_scaling));
+	}
 	dc.SetFont(font);
 }
 
 double RotatedDC::getFontSizeStep() const {
-	return 1. / (high_quality ? text_scaling : 1);
+	if (quality == QUALITY_LOW) {
+		return 1;
+	} else {
+		return 1. / text_scaling;
+	}
 }
 
 RealSize RotatedDC::GetTextExtent(const String& text) const {
 	int w, h;
 	dc.GetTextExtent(text, &w, &h);
-	return RealSize(w,h) / zoom / (high_quality ? text_scaling : 1);
+	if (quality == QUALITY_LOW) {
+		return RealSize(w,h) / zoom;
+	} else {
+		return RealSize(w,h) / zoom / text_scaling;
+	}
 }
 double RotatedDC::GetCharHeight() const {
-	return dc.GetCharHeight() / zoom / (high_quality ? text_scaling : 1);
+	if (quality == QUALITY_LOW) {
+		return dc.GetCharHeight() / zoom;
+	} else {
+		return dc.GetCharHeight() / zoom / text_scaling;
+	}
 }
 
 void RotatedDC::SetClippingRegion(const RealRect& rect) {

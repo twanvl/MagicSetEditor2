@@ -41,6 +41,12 @@ menu:
 	rotate 180:				Rotated 180°, &Up Side Down
 	card list columns:	C&ard List Columns...
 	
+	keywords:		&Keywords
+	previous keyword:	Select &Previous Keyword	PgUp
+	next keyword:		Select &Next Keyword	PgDn
+	add keyword:		&Add Keyword	Ctrl++
+	remove keyword:		&Remove Select Keyword	Del
+	
 	format:			&Format
 	bold:				&Bold	Ctrl+B
 	italic:				&Italic	Ctrl+I
@@ -122,6 +128,12 @@ help:
 	rotate 90:				Display the card rotated counter-clockwise (anti-clockwise for the British)
 	rotate 180:				Display the card up side down
 	card list columns:	Select what columns should be shown and in what order.
+	
+	keywords:
+	previous keyword:	Selects the previous keyword in the list
+	next keyword:		Selects the next keyword in the list
+	add keyword:		Add a new keyword to this set
+	remove keyword:		Delete the selected keyword from this set
 	
 	format:
 	bold:				Makes the selected text bold
@@ -265,6 +277,9 @@ tooltip:
 	add card:			Add card
 	remove card:		Remove selected card
 	rotate card:		Rotate card
+	
+	add keyword:		Add keyword
+	remove keyword:		Remove selected keyword
 	
 	bold:				Bold
 	italic:				Italic

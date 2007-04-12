@@ -27,7 +27,9 @@ DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA StyleP>);
 
 void DataViewer::draw(DC& dc) {
 	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
-	RotatedDC rdc(dc, ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(), ss.card_anti_alias() && !nativeLook(), true);
+	RotatedDC rdc(dc, ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(),
+	              nativeLook() ? QUALITY_LOW : (ss.card_anti_alias() ? QUALITY_AA : QUALITY_SUB_PIXEL),
+	              true);
 	draw(rdc, stylesheet->card_background);
 }
 void DataViewer::draw(RotatedDC& dc, const Color& background) {

@@ -41,6 +41,7 @@ class KeywordParam {
 class KeywordMode {
 	String name;		///< Name of the mode
 	String description;	///< Description of the type
+	bool   is_default;	///< This is the default mode for new keywords
 	
 	DECLARE_REFLECTION();
 };

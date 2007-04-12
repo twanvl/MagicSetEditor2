@@ -529,7 +529,7 @@ void TextValueEditor::moveSelection(IndexType t, size_t new_end, bool also_move_
 	{
 		// Move selection
 		shared_ptr<DC> dc = editor().overdrawDC();
-		RotatedDC rdc(*dc, viewer.getRotation(), false);
+		RotatedDC rdc(*dc, viewer.getRotation(), QUALITY_LOW);
 		if (nativeLook()) {
 			// clip the dc to the region of this control
 			rdc.SetClippingRegion(style().getRect());
@@ -659,7 +659,7 @@ void TextValueEditor::determineSize(bool force_fit) {
 		Bitmap bmp(1,1);
 		dc.SelectObject(bmp);
 		dc.SetFont(style().font.font);
-		style().height = dc.GetCharHeight() + 2;
+		style().height = dc.GetCharHeight() + 2 + style().padding_top + style().padding_bottom;
 	}
 }
 

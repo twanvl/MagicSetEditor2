@@ -367,7 +367,7 @@ void ImageSlicePreview::draw(DC& dc) {
 			wxMemoryDC mdc; mdc.SelectObject(bitmap);
 			// draw checker pattern behind image
 			RealRect rect = GetClientSize();
-			RotatedDC rdc(mdc, 0, rect, 1, false);
+			RotatedDC rdc(mdc, 0, rect, 1, QUALITY_LOW);
 			draw_checker(rdc, rect);
 			rdc.DrawImage(image, RealPoint(0,0));
 			mdc.SelectObject(wxNullBitmap);

@@ -11,6 +11,7 @@
 #include <data/field/text.hpp>
 
 DECLARE_TYPEOF_COLLECTION(TextElementP);
+DECLARE_POINTER_TYPE(FontTextElement);
 
 // ----------------------------------------------------------------------------- : TextElements
 
@@ -56,14 +57,26 @@ double TextElements::scaleStep() const {
 	return m;
 }
 
+// Colors for <param> tags
+Color param_colors[] =
+	{	Color(0,170,0)
+	,	Color(0,0,200)
+	,	Color(200,0,100)
+	,	Color(200,200,0)
+	,	Color(0,170,170)
+	,	Color(200,0,0)
+	};
+
 // Helper class for TextElements::fromString, to allow persistent formating state accross recusive calls
 struct TextElementsFromString {
 	// What formatting is enabled?
 	int bold, italic, symbol;
-	int soft, kwpph, line;
+	int soft, kwpph, param, line;
+	int param_id;
+	bool bracket;
 	
 	TextElementsFromString()
-		: bold(0), italic(0), symbol(0), soft(0), kwpph(0), line(0) {}
+		: bold(0), italic(0), symbol(0), soft(0), kwpph(0), param(0), line(0), param_id(0), bracket(false) {}
 	
 	// read TextElements from a string
 	void fromString(TextElements& te, const String& text, size_t start, size_t end, const TextStyle& style, Context& ctx) {
@@ -84,6 +97,8 @@ struct TextElementsFromString {
 				else if (is_substr(text, tag_start, _("</sep-soft")))   soft   -= 1;
 				else if (is_substr(text, tag_start, _( "<atom-kwpph"))) kwpph  += 1;
 				else if (is_substr(text, tag_start, _("</atom-kwpph"))) kwpph  -= 1;
+				else if (is_substr(text, tag_start, _( "<param")))      param  += 1;
+				else if (is_substr(text, tag_start, _("</param")))      param  -= 1;
 				else if (is_substr(text, tag_start, _( "<line")))       line   += 1;
 				else if (is_substr(text, tag_start, _("</line")))       line   -= 1;
 				else if (is_substr(text, tag_start, _("<atom"))) {
@@ -97,21 +112,40 @@ struct TextElementsFromString {
 					// ignore other tags
 				}
 			} else {
+				if (c == _('\1')) c = _('<'); // unescape
 				// A character of normal text, add to the last text element (if possible)
 				SimpleTextElement* e = nullptr;
 				if (!te.elements.empty()) e = dynamic_cast<SimpleTextElement*>(te.elements.back().get());
-				if (e && e->end == pos) {
-					e->end = pos + 1; // just move the end, no need to make a new element
+				if (e && e->end == (bracket ? pos + 1 : pos)) {
+					e->end = bracket ? pos + 2 : pos + 1; // just move the end, no need to make a new element
+					e->content += c;
+					if (bracket) {
+						// content is "<somethin>g" should be "<something>"
+						swap(e->content[e->content.size() - 2], e->content[e->content.size() - 1]);
+					}
 				} else {
 					// add a new element for this text
 					if (symbol > 0 && style.symbol_font.valid()) {
-						te.elements.push_back(new_shared5<SymbolTextElement>(text, pos, pos + 1, style.symbol_font, &ctx));
+						e = new SymbolTextElement(text, pos, pos + 1, style.symbol_font, &ctx);
+						bracket = false;
 					} else {
-						te.elements.push_back(new_shared6<FontTextElement>  (text, pos, pos + 1,
-													style.font.make(bold > 0, italic > 0, soft > 0 || kwpph > 0),
-													soft > 0 ? DRAW_ACTIVE : DRAW_NORMAL,
-													line > 0 ? BREAK_LINE : BREAK_HARD));
+						FontP font = style.font.make(bold > 0, italic > 0, soft > 0 || kwpph > 0,
+						                             param > 0 ? &param_colors[(param_id++) % (sizeof(param_colors)/sizeof(param_colors[0]))] : nullptr);
+						bracket = kwpph > 0 || param > 0;
+						e = new FontTextElement(
+									text,
+									bracket ? pos - 1 : pos,
+									bracket ? pos + 2 : pos + 1,
+									font,
+									soft > 0 ? DRAW_ACTIVE : DRAW_NORMAL,
+									line > 0 ? BREAK_LINE : BREAK_HARD);
 					}
+					if (bracket) {
+						e->content = String(_("‹")) + c + _("›");
+					} else {
+						e->content = c;
+					}
+					te.elements.push_back(TextElementP(e));
 				}
 				pos += 1;
 			}

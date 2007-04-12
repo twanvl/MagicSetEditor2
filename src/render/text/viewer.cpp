@@ -325,6 +325,36 @@ void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle
 		scale = next_scale;
 	}
 	
+	/*
+	double scale_1 = 1.
+	double fit_1   = fitLines(dc, text, style, scale_1);
+	if (fit_1 <= 0 || scale_1 >= scale_2) {
+		// ok
+	} else {
+		// find best text size, using the 'false position' root finding method
+		double scale_2 = elements.minScale();
+		double fit_2   = fitLines(dc, text, style, scale_2);
+		if (fit_2 > 0) {
+			// still doesn't fit at smallest size
+		} else {
+			// invariant: fit_1 > 0 && fit_2 <= 0
+			while (abs(scale_2 - scale_1) > 0.01) {
+				double scale_3 = scale_2 - fit_2 * (scale_2 - scale_1)/(fit_2 - fit_1);
+				double fit_3 = fitLines(dc, text, style, scale_3);
+				if (fit_3 > 0) {
+					scale_2 = scale_3;
+					fit_2   = fit_3;
+				} else {
+					scale_2 = scale_3;
+					fit_2   = fit_3;
+				}
+			}
+		}
+	}
+	
+	// returns negative values if it fits, positive if it doesn't
+	*/
+	
 	// no text, find a dummy height for the single line we have
 	if (lines.size() == 1 && lines[0].width() < 0.0001) {
 		if (style.always_symbol && style.symbol_font.valid()) {

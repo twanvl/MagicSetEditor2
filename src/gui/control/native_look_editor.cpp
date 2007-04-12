@@ -26,7 +26,7 @@ Rotation NativeLookEditor::getRotation() const {
 }
 
 void NativeLookEditor::draw(DC& dc) {
-	RotatedDC rdc(dc, getRotation(), false);
+	RotatedDC rdc(dc, getRotation(), QUALITY_LOW);
 	DataViewer::draw(rdc, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
 }
 void NativeLookEditor::drawViewer(RotatedDC& dc, ValueViewer& v) {

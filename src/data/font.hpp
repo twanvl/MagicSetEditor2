@@ -41,7 +41,7 @@ class Font {
 	inline bool hasShadow() { return shadow_displacement.width != 0 || shadow_displacement.height != 0; }
 	
 	/// Make a bold/italic/placeholder version of this font
-	FontP make(bool bold, bool italic, bool placeholder_color) const;
+	FontP make(bool bold, bool italic, bool placeholder_color, Color* other_color) const;
 	
   private:
 	DECLARE_REFLECTION();

@@ -88,7 +88,7 @@ Bitmap ImageValueViewer::imagePlaceholder(const Rotation& rot, UInt w, UInt h, b
 	wxMemoryDC mdc;
 	mdc.SelectObject(bmp);
 	RealRect rect(0,0,w,h);
-	RotatedDC dc(mdc, 0, rect, 1.0, true);
+	RotatedDC dc(mdc, 0, rect, 1.0, QUALITY_AA);
 	// Draw checker background
 	draw_checker(dc, rect);
 	// Draw text

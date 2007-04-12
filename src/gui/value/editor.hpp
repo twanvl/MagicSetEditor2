@@ -94,6 +94,17 @@ class ValueEditor {
 	virtual size_t selectionStart() const { return 0; }
 	virtual size_t selectionEnd()   const { return 0; }
 	
+	// --------------------------------------------------- : Search / replace
+	
+	/// Do a search or replace action for the given FindInfo
+	/** If from_start == false: searches only from the current selection onward (or backward),
+	 *                          excluding the sellection itself.
+	 *  If from_start == true:  searches everything
+	 *
+	 *  Returns true when more searching is needed.
+	 */
+	bool search(FindInfo& find, bool from_start);
+	
 	// --------------------------------------------------- : Other
 	
 	/// The cursor type to use when the mouse is over this control

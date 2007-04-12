@@ -79,3 +79,24 @@ template <> void Writer::handle(const Alignment& align) {
 template <> void GetDefaultMember::handle(const Alignment& align) {
 	handle(to_string(align));
 }
+
+// ----------------------------------------------------------------------------- : Direction
+
+IMPLEMENT_REFLECTION_ENUM(Direction) {
+	VALUE_N("left to right", LEFT_TO_RIGHT);
+	VALUE_N("right to left", RIGHT_TO_LEFT);
+	VALUE_N("top to bottom", TOP_TO_BOTTOM);
+	VALUE_N("bottom to top", BOTTOM_TO_TOP);
+	VALUE_N("horizontal",    LEFT_TO_RIGHT);
+	VALUE_N("vertical",      TOP_TO_BOTTOM);
+}
+
+RealPoint move_in_direction(Direction dir, const RealPoint& point, const RealSize to_move, double spacing) {
+	switch (dir) {
+		case LEFT_TO_RIGHT: return RealPoint(point.x + to_move.width + spacing, point.y);
+		case RIGHT_TO_LEFT: return RealPoint(point.x - to_move.width - spacing, point.y);
+		case TOP_TO_BOTTOM: return RealPoint(point.x, point.y + to_move.height + spacing);
+		case BOTTOM_TO_TOP: return RealPoint(point.x, point.y - to_move.height - spacing);
+		default:            return point; // should not happen
+	}
+}

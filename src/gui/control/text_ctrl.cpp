@@ -16,9 +16,10 @@ DECLARE_TYPEOF_COLLECTION(ValueViewerP);
 
 // ----------------------------------------------------------------------------- : TextCtrl
 
-TextCtrl::TextCtrl(Window* parent, int id, long style)
+TextCtrl::TextCtrl(Window* parent, int id, bool multi_line, long style)
 	: DataEditor(parent, id, style)
 	, value(nullptr)
+	, multi_line(multi_line)
 {}
 
 Rotation TextCtrl::getRotation() const {
@@ -26,44 +27,37 @@ Rotation TextCtrl::getRotation() const {
 }
 
 void TextCtrl::draw(DC& dc) {
-	RotatedDC rdc(dc, getRotation(), false);
+	RotatedDC rdc(dc, getRotation(), QUALITY_LOW);
 	DataViewer::draw(rdc, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 }
 
 
-void TextCtrl::setValue(String* value) {
-	this->value = value;
-	if (viewers.empty() && value) {
-		// create a field, style and value
-		TextFieldP field(new TextField);
-		TextStyleP style(new TextStyle(field));
-		TextValueP value(new FakeTextValue(field, this->value));
-		// set stuff
-		field->index = 0;
-		field->multi_line = true;
-		style->width = 100;
-		style->height = 20;
-		style->left = style->top = 1;
-		value->value.assign(*this->value);
-		// assign to this control
-		IndexMap<FieldP,StyleP> styles; styles.add(field, style);
-		IndexMap<FieldP,ValueP> values; values.add(field, value);
-		setStyles(set->stylesheet, styles);
-		setData(values);
-		// determine size
-		wxSize cs = GetClientSize();
-		style->width  = cs.GetWidth()  - 2;
-		style->height = cs.GetHeight() - 2;
-		viewers.front()->getEditor()->determineSize(true);
-		// We don't wan to change the window size
-		//SetMinSize(RealSize(style->width + 6, style->height + 6));
-	} else if (value) {
+TextStyle& TextCtrl::getStyle() {
+	assert(!viewers.empty());
+	return static_cast<TextStyle&>(*viewers.front()->getStyle());
+}
+TextField& TextCtrl::getField() {
+	assert(!viewers.empty());
+	return static_cast<TextField&>(*viewers.front()->getField());
+}
+void TextCtrl::updateSize() {
+	wxSize cs = GetClientSize();
+	Style& style = getStyle();
+	style.width  = cs.GetWidth()  - 2;
+	style.height = cs.GetHeight() - 2;
+	viewers.front()->getEditor()->determineSize(true);
+}
+
+void TextCtrl::setValue(String* value, bool untagged) {
+	if (value != this->value) {
+		this->value = value;
 		// create a new value, for a different underlying actual value
-		ValueViewer& viewer  = *viewers.front();
-		TextValueP new_value(new FakeTextValue(static_pointer_cast<TextField>(viewer.getField()), this->value));
+		ValueViewer& viewer = *viewers.front();
+		TextValueP new_value(new FakeTextValue(static_pointer_cast<TextField>(viewer.getField()), this->value, untagged));
 		viewer.setValue(new_value);
+		updateSize();
+		valueChanged();
 	}
-	valueChanged();
 }
 void TextCtrl::valueChanged() {
 	if (!viewers.empty()) {
@@ -87,7 +81,29 @@ void TextCtrl::onAction(const Action& action, bool undone) {
 }
 void TextCtrl::onChangeSet() {
 	DataEditor::onChangeSet();
-	setValue(nullptr);
+	// initialize
+	if (viewers.empty()) {
+		// create a field, style and value
+		TextFieldP field(new TextField);
+		TextStyleP style(new TextStyle(field));
+		TextValueP value(new FakeTextValue(field, nullptr, false));
+		// set stuff
+		field->index = 0;
+		field->multi_line = multi_line;
+		style->width = 100;
+		style->height = 20;
+		style->left = style->top = 1;
+		style->font.color = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+		// assign to this control
+		IndexMap<FieldP,StyleP> styles; styles.add(field, style);
+		IndexMap<FieldP,ValueP> values; values.add(field, value);
+		setStyles(set->stylesheet, styles);
+		setData(values);
+		updateSize();
+		onChange();
+	} else {
+		setValue(nullptr);
+	}
 }
 
 void TextCtrl::onInit() {
@@ -99,16 +115,19 @@ void TextCtrl::onInit() {
 
 void TextCtrl::onSize(wxSizeEvent&) {
 	if (!viewers.empty()) {
-		wxSize cs = GetClientSize();
-		Style& style = *viewers.front()->getStyle();
-		style.width  = cs.GetWidth()  - 2;
-		style.height = cs.GetHeight() - 2;
-		viewers.front()->getEditor()->determineSize(true);
+		updateSize();
+		onChange();
 	}
-	onChange();
 }
 wxSize TextCtrl::DoGetBestSize() const {
-	return wxSize(1,1);
+	if (multi_line || viewers.empty()) {
+		// flexible size
+		return wxSize(1,1);
+	} else {
+		wxSize ws = GetSize(), cs = GetClientSize();
+		Style& style = *viewers.front()->getStyle();
+		return wxSize(style.width, style.height) + ws - cs;
+	}
 }
 
 BEGIN_EVENT_TABLE(TextCtrl, DataEditor)

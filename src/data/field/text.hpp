@@ -65,7 +65,8 @@ class TextStyle : public Style {
 	double line_height_hard;					///< Line height for hard linebreaks
 	double line_height_line;					///< Line height for <line> tags
 	String mask_filename;						///< Filename of the mask
-	ContourMask mask;							///< Mask to fit the text to (may be null)	
+	ContourMask mask;							///< Mask to fit the text to (may be null)
+	Direction direction;						///< In what direction is text layed out?
 	
 	virtual bool update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;
@@ -104,10 +105,12 @@ class TextValue : public Value {
 /** Used by TextCtrl */
 class FakeTextValue : public TextValue {
   public:
-	inline FakeTextValue(const TextFieldP& field, String* underlying)
-		: TextValue(field), underlying(underlying) {}
+	/// Initialize the fake text value
+	/** underlying can be nullptr, in that case there is no underlying value */
+	FakeTextValue(const TextFieldP& field, String* underlying, bool untagged);
 	
-	String* const underlying; ///< The underlying actual value
+	String* const underlying; ///< The underlying actual value, can be null
+	bool const untagged; ///< The underlying value is untagged
 	
 	/// Update underlying data
 	virtual void onAction(Action& a, bool undone);

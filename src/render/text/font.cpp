@@ -14,15 +14,18 @@
 void FontTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const {
 	if ((what & draw_as) != draw_as) return; // don't draw
 	dc.SetFont(font->font, font->size * scale);
-	if (end != start && text.substr(end-1, 1) == _("\n")) end -= 1; // don't draw the newline character at the end
 	// draw shadow
+	String text = content.substr(start - this->start, end - start);
+	if (!text.empty() && text.GetChar(text.size() - 1) == _('\n')) {
+		text = text.substr(0, text.size() - 1); // don't draw last \n
+	}
 	if (font->hasShadow()) {
 		dc.SetTextForeground(font->shadow_color);
-		dc.DrawText(text.substr(start, end - start), rect.position() + font->shadow_displacement);
+		dc.DrawText(text, rect.position() + font->shadow_displacement);
 	}
 	// draw
 	dc.SetTextForeground(font->color);
-	dc.DrawText(text.substr(start, end - start), rect.position());
+	dc.DrawText(text, rect.position());
 }
 
 void FontTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const {
@@ -31,8 +34,8 @@ void FontTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>&
 	// find sizes & breaks
 	double prev_width = 0;
 	for (size_t i = start ; i < end ; ++i) {
-		Char c = text.GetChar(i);
-		RealSize s = dc.GetTextExtent(text.substr(start, i - start + 1));
+		Char c = content.GetChar(i - this->start);
+		RealSize s = dc.GetTextExtent(content.substr(start - this->start, i - start + 1));
 		out.push_back(CharInfo(RealSize(s.width - prev_width, s.height),
 						c == _('\n') ? break_style :
 						c == _(' ')  ? BREAK_SOFT : BREAK_NO

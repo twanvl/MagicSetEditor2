@@ -52,5 +52,17 @@ double align_delta_y(Alignment align, double box_height, double obj_height);
  */
 RealPoint align_in_rect(Alignment align, const RealSize& to_align, const RealRect& outer);
 
+// ----------------------------------------------------------------------------- : Direction
+
+/// Direction to place something in
+enum Direction {
+	LEFT_TO_RIGHT, RIGHT_TO_LEFT,
+	TOP_TO_BOTTOM, BOTTOM_TO_TOP
+};
+
+/// Move a point in a direction
+/** If the direction is horizontal the to_move.width is used, otherwise to_move.height */
+RealPoint move_in_direction(Direction dir, const RealPoint& point, const RealSize to_move, double spacing = 0);
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

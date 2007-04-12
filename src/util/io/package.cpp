@@ -41,7 +41,7 @@ bool Package::isOpened() const {
 	return !filename.empty();
 }
 bool Package::needSaveAs() const {
-	return !filename.empty();
+	return filename.empty();
 }
 String Package::name() const {
 	// wxFileName is too slow (profiled)

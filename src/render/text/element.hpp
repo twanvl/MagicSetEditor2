@@ -100,7 +100,10 @@ class TextElements : public vector<TextElementP> {
 /// A text element that just shows text
 class SimpleTextElement : public TextElement {
   public:
-	SimpleTextElement(const String& text, size_t start ,size_t end) : TextElement(text, start, end) {}
+	SimpleTextElement(const String& text, size_t start, size_t end)
+		: TextElement(text, start, end), content(text.substr(start,end-start))
+	{}
+	String content;	///< Text to show
 };
 
 /// A text element that uses a normal font

@@ -27,7 +27,7 @@ class CardsPanel : public SetWindowPanel {
 	CardsPanel(Window* parent, int id);
 	~CardsPanel();
 	
-	void onChangeSet();
+	virtual void onChangeSet();
 	
 	// --------------------------------------------------- : UI
 	

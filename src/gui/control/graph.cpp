@@ -246,7 +246,7 @@ void GraphControl::setData(const GraphDataP& data) {
 void GraphControl::onPaint(wxPaintEvent&) {
 	wxBufferedPaintDC dc(this);
 	wxSize cs = GetClientSize();
-	RotatedDC rdc(dc, 0, RealRect(RealPoint(0,0),cs), 1, false);
+	RotatedDC rdc(dc, 0, RealRect(RealPoint(0,0),cs), 1, QUALITY_LOW);
 	rdc.SetPen(*wxTRANSPARENT_PEN);
 	rdc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	rdc.DrawRectangle(rdc.getInternalRect());

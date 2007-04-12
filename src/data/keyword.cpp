@@ -34,6 +34,7 @@ IMPLEMENT_REFLECTION(KeywordParam) {
 IMPLEMENT_REFLECTION(KeywordMode) {
 	REFLECT(name);
 	REFLECT(description);
+	REFLECT(is_default);
 }
 
 // backwards compatability
@@ -376,7 +377,7 @@ String KeywordDatabase::expand(const String& text,
 									String param = untagged.substr(start_u, len_u); // untagged version
 									if (param.empty()) {
 										// placeholder
-										param = _("<atom-kwpph>‹") + (kwp.placeholder.empty() ? kwp.name : kwp.placeholder) + _("›</atom-kwpph>");
+										param = _("<atom-kwpph>") + (kwp.placeholder.empty() ? kwp.name : kwp.placeholder) + _("</atom-kwpph>");
 										part  = part + param; // keep tags
 									} else if (kw->parameters[j/2-1]->script) {
 										// apply parameter script

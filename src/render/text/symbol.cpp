@@ -13,13 +13,13 @@
 
 void SymbolTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const {
 	if (font.font) {
-		font.font->draw(dc, ctx, rect, font.size * scale, font.alignment, text.substr(start, end-start));
+		font.font->draw(dc, ctx, rect, font.size * scale, font.alignment, content.substr(start - this->start, end-start));
 	}
 }
 
 void SymbolTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const {
 	if (font.font) {
-		font.font->getCharInfo(dc, ctx, font.size * scale, text.substr(start, end-start), out);
+		font.font->getCharInfo(dc, ctx, font.size * scale, content.substr(start - this->start, end-start), out);
 	}
 }
 

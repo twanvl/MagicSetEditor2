@@ -18,7 +18,7 @@ DECLARE_TYPEOF_COLLECTION(String);
 void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
 	drawFieldBorder(dc);
 	if (style().render_style & RENDER_HIDDEN) return;
-	RealPoint pos = style().getPos();
+	RealPoint pos = align_in_rect(style().alignment, RealSize(0,0), style().getRect());
 	// selected choices
 	vector<String> selected;
 	value().get(selected);
@@ -66,9 +66,6 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 		                                RealRect(pos + RealSize(size.width + 1, 0), RealSize(0,size.height))));
 		size = add_horizontal(size, text_size);
 	}
-	if (style().direction == HORIZONTAL) {
-		pos.x += size.width  + style().spacing;
-	} else {
-		pos.y += size.height + style().spacing;
-	}
+	// next position
+	pos = move_in_direction(style().direction, pos, size, style().spacing);
 }

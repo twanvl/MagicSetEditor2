@@ -13,6 +13,7 @@
 #include <gui/control/card_viewer.hpp>
 
 class ValueEditor;
+class FindInfo;
 
 // ----------------------------------------------------------------------------- : DataEditor
 
@@ -57,6 +58,16 @@ class DataEditor : public CardViewer {
 	wxMenu* getMenu(int type) const;
 	/// A menu item from getMenu was selected
 	void onCommand(int id);
+	
+	// --------------------------------------------------- : Search/replace
+		
+	/// Do a search or replace action for the given FindInfo
+	/** If from_start == false: searches only from the current selection onward (or backward)
+	 *  If from_start == true:  searches everything
+	 *
+	 *  Returns true when more searching is needed.
+	 */
+	bool search(FindInfo& find, bool from_start);
 	
 	// --------------------------------------------------- : ValueViewers
 	

@@ -27,7 +27,7 @@ void Font::initDependencies(Context& ctx, const Dependency& dep) const {
 	shadow_color.initDependencies(ctx, dep);
 }
 
-FontP Font::make(bool bold, bool italic, bool placeholder_color) const {
+FontP Font::make(bool bold, bool italic, bool placeholder_color, Color* other_color) const {
 	FontP f(new Font(*this));
 	if (bold) f->font.SetWeight(wxBOLD);
 	if (italic) {
@@ -40,6 +40,9 @@ FontP Font::make(bool bold, bool italic, bool placeholder_color) const {
 	if (placeholder_color) {
 		f->color = f->separator_color;
 		f->shadow_displacement = RealSize(0,0); // no shadow
+	}
+	if (other_color) {
+		f->color = *other_color;
 	}
 	return f;
 }

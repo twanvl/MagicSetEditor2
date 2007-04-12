@@ -86,6 +86,7 @@ IMPLEMENT_REFLECTION(TextStyle) {
 	REFLECT(line_height_hard);
 	REFLECT(line_height_line);
 	REFLECT_N("mask", mask_filename);
+	REFLECT(direction);
 }
 
 // ----------------------------------------------------------------------------- : TextValue
@@ -108,15 +109,27 @@ IMPLEMENT_REFLECTION_NAMELESS(TextValue) {
 
 // ----------------------------------------------------------------------------- : FakeTextValue
 
+FakeTextValue::FakeTextValue(const TextFieldP& field, String* underlying, bool untagged)
+	: TextValue(field), underlying(underlying)
+	, untagged(untagged)
+{
+	if (underlying) {
+		value.assign(untagged ? escape(*underlying) : *underlying);
+	}
+}
+
 void FakeTextValue::onAction(Action& a, bool undone) {
-	*underlying = value;
+	if (underlying) {
+		*underlying = untagged ? untag(value) : value;
+	}
 }
 
 bool FakeTextValue::equals(const Value* that) {
 	if (this == that) return true;
+	if (!underlying)  return false;
 	const FakeTextValue* thatT = dynamic_cast<const FakeTextValue*>(that);
 	if (!thatT || underlying != thatT->underlying) return false;
 	// update the value
-	value = *underlying;
+	value.assign(untagged ? escape(*underlying) : *underlying);
 	return true;
 }
