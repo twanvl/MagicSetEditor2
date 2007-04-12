@@ -19,7 +19,7 @@ DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
 
 class ChoiceThumbnailRequest : public ThumbnailRequest {
   public:
-	ChoiceThumbnailRequest(ChoiceValueEditor* cve, int id, bool from_disk);
+	ChoiceThumbnailRequest(ValueViewer* cve, int id, bool from_disk);
 	virtual Image generate();
 	virtual void store(const Image&);
   private:
@@ -27,10 +27,10 @@ class ChoiceThumbnailRequest : public ThumbnailRequest {
 	int id;
 };
 
-ChoiceThumbnailRequest::ChoiceThumbnailRequest(ChoiceValueEditor* cve, int id, bool from_disk)
+ChoiceThumbnailRequest::ChoiceThumbnailRequest(ValueViewer* cve, int id, bool from_disk)
 	: ThumbnailRequest(
 		cve,
-		cve->viewer.stylesheet->name() + _("/") + cve->field().name + _("/") << id,
+		cve->viewer.stylesheet->name() + _("/") + cve->getField()->name + _("/") << id,
 		from_disk ? cve->viewer.stylesheet->lastModified()
 		          : wxDateTime::Now()
 	)
@@ -82,9 +82,10 @@ void ChoiceThumbnailRequest::store(const Image& img) {
 	}
 }
 
-// ----------------------------------------------------------------------------- : DropDownChoiceList
+// ----------------------------------------------------------------------------- : DropDownChoiceListBase
 
-DropDownChoiceList::DropDownChoiceList(Window* parent, bool is_submenu, ChoiceValueEditor& cve, ChoiceField::ChoiceP group)
+DropDownChoiceListBase::DropDownChoiceListBase
+		(Window* parent, bool is_submenu, ValueViewer& cve, ChoiceField::ChoiceP group)
 	: DropDownList(parent, is_submenu, is_submenu ? nullptr : &cve)
 	, cve(cve)
 	, group(group)
@@ -94,11 +95,11 @@ DropDownChoiceList::DropDownChoiceList(Window* parent, bool is_submenu, ChoiceVa
 	item_size.height = max(16., item_size.height);
 }
 
-size_t DropDownChoiceList::itemCount() const {
+size_t DropDownChoiceListBase::itemCount() const {
 	return group->choices.size() + hasDefault();
 }
 
-ChoiceField::ChoiceP DropDownChoiceList::getChoice(size_t item) const {
+ChoiceField::ChoiceP DropDownChoiceListBase::getChoice(size_t item) const {
 	if (isGroupDefault(item)) {
 		return group;
 	} else {
@@ -106,7 +107,7 @@ ChoiceField::ChoiceP DropDownChoiceList::getChoice(size_t item) const {
 	}
 }
 
-String DropDownChoiceList::itemText(size_t item) const {
+String DropDownChoiceListBase::itemText(size_t item) const {
 	if (isFieldDefault(item)) {
 		return field().default_name;
 	} else if (isGroupDefault(item)) {
@@ -116,10 +117,10 @@ String DropDownChoiceList::itemText(size_t item) const {
 		return choice->name;
 	}
 }
-bool DropDownChoiceList::lineBelow(size_t item) const {
+bool DropDownChoiceListBase::lineBelow(size_t item) const {
 	return isDefault(item);
 }
-DropDownList* DropDownChoiceList::submenu(size_t item) const {
+DropDownList* DropDownChoiceListBase::submenu(size_t item) const {
 	if (isDefault(item)) return nullptr;
 	item -= hasDefault();
 	if (item >= submenus.size()) submenus.resize(item + 1);
@@ -127,14 +128,14 @@ DropDownList* DropDownChoiceList::submenu(size_t item) const {
 	ChoiceField::ChoiceP choice = group->choices[item];
 	if (choice->isGroup()) {
 		// create submenu
-		submenus[item].reset(new DropDownChoiceList(const_cast<DropDownChoiceList*>(this), true, cve, choice));
+		submenus[item].reset(createSubMenu(choice));
 	}
 	return submenus[item].get();
 }
 
-void DropDownChoiceList::drawIcon(DC& dc, int x, int y, size_t item, bool selected) const {
+void DropDownChoiceListBase::drawIcon(DC& dc, int x, int y, size_t item, bool selected) const {
 	// imagelist to use
-	wxImageList* il = cve.style().thumbnails;
+	wxImageList* il = style().thumbnails;
 	assert(il);
 	// find the image for the item
 	int image_id;
@@ -149,29 +150,68 @@ void DropDownChoiceList::drawIcon(DC& dc, int x, int y, size_t item, bool select
 	}
 }
 
+void DropDownChoiceListBase::generateThumbnailImages() {
+	if (!isRoot()) return;
+	if (!style().thumbnails) {
+		style().thumbnails = new wxImageList(16,16);
+	}
+	int image_count = style().thumbnails->GetImageCount();
+	int end = group->lastId();
+	Context& ctx = cve.viewer.getContext();
+	for (int i = 0 ; i < end ; ++i) {
+		String name = cannocial_name_form(group->choiceName(i));
+		ScriptableImage& img = style().choice_images[name];
+		bool up_to_date = img.upToDate(ctx, style().thumbnail_age);
+		if (i >= image_count || !up_to_date) {
+			// TODO : handle the case where image i was previously skipped
+			// request this thumbnail
+			thumbnail_thread.request( new_shared3<ChoiceThumbnailRequest>(&cve, i, up_to_date && !style().invalidated_images) );
+		}
+	}
+	style().thumbnail_age.update();
+}
+
+void DropDownChoiceListBase::onIdle(wxIdleEvent& ev) {
+	if (!isRoot()) return;
+	if (thumbnail_thread.done(&cve)) {
+		Refresh(false);
+	}
+}
+
+BEGIN_EVENT_TABLE(DropDownChoiceListBase, DropDownList)
+	EVT_IDLE(DropDownChoiceListBase::onIdle)
+END_EVENT_TABLE()
+
+// ----------------------------------------------------------------------------- : DropDownChoiceList
+
+DropDownChoiceList::DropDownChoiceList(Window* parent, bool is_submenu, ValueViewer& cve, ChoiceField::ChoiceP group)
+	: DropDownChoiceListBase(parent, is_submenu, cve, group)
+{}
 
 void DropDownChoiceList::select(size_t item) {
 	if (isFieldDefault(item)) {
-		cve.change( Defaultable<String>() );
+		dynamic_cast<ChoiceValueEditor&>(cve).change( Defaultable<String>() );
 	} else {
 		ChoiceField::ChoiceP choice = getChoice(item);
-		cve.change( field().choices->choiceName(choice->first_id) );
+		dynamic_cast<ChoiceValueEditor&>(cve).change( field().choices->choiceName(choice->first_id) );
 	}
 }
+
 size_t DropDownChoiceList::selection() const {
 	// we need thumbnail images soon
 	const_cast<DropDownChoiceList*>(this)->generateThumbnailImages();
 	// selected item
-	int id = field().choices->choiceId(cve.value().value());
+	const Defaultable<String>& value = dynamic_cast<ChoiceValueEditor&>(cve).value().value();
+	int id = field().choices->choiceId(value);
 	// id of default item
 	if (hasFieldDefault()) {
-		if (cve.value().value.isDefault()) {
+		if (value.isDefault()) {
 			// default is selected
 			default_id = id;
 			return 0;
 		} else {
 			// run default script to find out what the default choice would be
-			String default_choice = *cve.field().default_script.invoke( cve.viewer.getContext() );
+			String default_choice = *field().default_script.invoke( cve.viewer.getContext() );
 			default_id = group->choiceId(default_choice);
 		}
 	}
@@ -186,37 +226,9 @@ size_t DropDownChoiceList::selection() const {
 	return NO_SELECTION;
 }
 
-void DropDownChoiceList::generateThumbnailImages() {
-	if (!isRoot()) return;
-	if (!cve.style().thumbnails) {
-		cve.style().thumbnails = new wxImageList(16,16);
-	}
-	int image_count = cve.style().thumbnails->GetImageCount();
-	int end = group->lastId();
-	Context& ctx = cve.viewer.getContext();
-	for (int i = 0 ; i < end ; ++i) {
-		String name = cannocial_name_form(group->choiceName(i));
-		ScriptableImage& img = cve.style().choice_images[name];
-		bool up_to_date = img.upToDate(ctx, cve.style().thumbnail_age);
-		if (i >= image_count || !up_to_date) {
-			// TODO : handle the case where image i was previously skipped
-			// request this thumbnail
-			thumbnail_thread.request( new_shared3<ChoiceThumbnailRequest>(&cve, i, up_to_date && !cve.style().invalidated_images) );
-		}
-	}
-	cve.style().thumbnail_age.update();
+DropDownList* DropDownChoiceList::createSubMenu(ChoiceField::ChoiceP group) const {
+	return new DropDownChoiceList(const_cast<DropDownChoiceList*>(this), true, cve, group);
 }
-
-void DropDownChoiceList::onIdle(wxIdleEvent& ev) {
-	if (!isRoot()) return;
-	if (thumbnail_thread.done(&cve)) {
-		Refresh(false);
-	}
-}
-
-BEGIN_EVENT_TABLE(DropDownChoiceList, DropDownList)
-	EVT_IDLE(DropDownChoiceList::onIdle)
-END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------- : ChoiceValueEditor
 
@@ -230,7 +242,7 @@ ChoiceValueEditor::~ChoiceValueEditor() {
 
 bool ChoiceValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
 	//HACK TODO REMOVEME
-	thumbnail_thread.abortAll();
+	//thumbnail_thread.abortAll();
 	return drop_down->onMouseInParent(ev, style().popup_style == POPUP_DROPDOWN_IN_PLACE && !nativeLook());
 }
 bool ChoiceValueEditor::onChar(wxKeyEvent& ev) {
