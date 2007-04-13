@@ -12,6 +12,7 @@
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <data/keyword.hpp>
+#include <data/action/keyword.hpp>
 #include <data/field/text.hpp>
 #include <util/window_id.hpp>
 #include <wx/listctrl.h>
@@ -25,7 +26,7 @@ KeywordsPanel::KeywordsPanel(Window* parent, int id)
 	// init controls
 	splitter  = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
 	list      = new KeywordList(splitter, wxID_ANY);
-	panel     = new Panel(splitter, wxID_ANY);
+	panel     = new Panel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 /* no tab traversal*/);
 	keyword   = new TextCtrl(panel, wxID_ANY, false);
 	match     = new TextCtrl(panel, wxID_ANY, false);
 	reminder  = new TextCtrl(panel, wxID_ANY, false);
@@ -114,10 +115,13 @@ void KeywordsPanel::onCommand(int id) {
 			list->selectNext();
 			break;
 		case ID_KEYWORD_ADD:
-//			set->actions.add(new AddKeywordAction(*set));
+			set->actions.add(new AddKeywordAction(*set));
 			break;
 		case ID_KEYWORD_REMOVE:
-//			set->actions.add(new RemoveKeywordAction(*set, list->getKeyword()));
+			if (!list->getKeyword()->fixed) {
+				// only remove set keywords
+				set->actions.add(new RemoveKeywordAction(*set, list->getKeyword()));
+			}
 			break;
 	}
 }

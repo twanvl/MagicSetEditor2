@@ -876,6 +876,12 @@
 					RelativePath=".\gui\drop_down_list.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\html_export_window.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\html_export_window.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\image_slice_window.cpp">
 				</File>
 				<File
@@ -1219,6 +1225,48 @@
 			<Filter
 				Name="action"
 				Filter="">
+				<File
+					RelativePath=".\data\action\keyword.cpp">
+					<FileConfiguration
+						Name="Debug|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Debug Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Profile Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release Unicode fast build|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath=".\data\action\keyword.hpp">
+				</File>
 				<File
 					RelativePath=".\data\action\set.cpp">
 					<FileConfiguration

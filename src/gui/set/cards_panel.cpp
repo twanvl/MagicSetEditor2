@@ -30,7 +30,7 @@ CardsPanel::CardsPanel(Window* parent, int id)
 	editor    = new CardEditor(this, ID_EDITOR);
 	splitter  = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
 	card_list = new ImageCardList(splitter, ID_CARD_LIST);
-	notesP    = new Panel(splitter, wxID_ANY);
+	notesP    = new Panel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 /* no tab traversal*/);
 	notes     = new TextCtrl(notesP, ID_NOTES, true);
 	collapse_notes = new HoverButton(notesP, ID_COLLAPSE_NOTES, _("btn_collapse"), wxNullColour);
 	collapse_notes->SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);

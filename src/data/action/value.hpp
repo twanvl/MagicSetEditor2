@@ -7,7 +7,7 @@
 #ifndef HEADER_DATA_ACTION_VALUE
 #define HEADER_DATA_ACTION_VALUE
 
-/** @file data/action/set.hpp
+/** @file data/action/value.hpp
  *
  *  Actions operating on Values (and derived classes, "*Value")
  */

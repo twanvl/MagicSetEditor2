@@ -39,6 +39,7 @@ class KeywordParam {
 
 /// Information on when and how to use a keyword
 class KeywordMode {
+  public:
 	String name;		///< Name of the mode
 	String description;	///< Description of the type
 	bool   is_default;	///< This is the default mode for new keywords
@@ -51,6 +52,8 @@ class KeywordMode {
 /// A keyword for a set or a game
 class Keyword {
   public:
+	Keyword() : fixed(false) {}
+	
 	String                keyword;		///< The keyword, only for human use
 	String                rules;		///< Rules/explanation
 	String                match;		///< String to match, <param> tags are used for parameters

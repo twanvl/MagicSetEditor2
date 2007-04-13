@@ -30,6 +30,7 @@ class CardListAction : public Action {
 	
   protected:
 	Set& set; // the set owns this action, so the set will not be destroyed before this
+	          // therefore we don't need a smart pointer
 };
 
 /// Adding a new card to a set

@@ -10,6 +10,7 @@
 #include <gui/card_select_window.hpp>
 #include <gui/util.hpp>
 #include <data/set.hpp>
+#include <wx/print.h>
 
 DECLARE_TYPEOF_COLLECTION(CardP);
 
@@ -88,7 +89,41 @@ void TextBufferDC::drawToDevice(DC& dc, int x, int y) {
 	}
 }
 
+// ----------------------------------------------------------------------------- : Layout
+
+/// Layout of a page of cards
+class PageLayout {
+  public:
+	RealSize card_size;			///< Size of a card
+	RealSize card_space;		///< Spacing between cards
+	double margin_left, margin_right, margin_top, margin_bottom; ///< Page margins
+	int rows, cols;				///< Number of rows/columns of cards
+	bool landscape;				///< Are cards rotated to landscape orientation?
+};
+
 // ----------------------------------------------------------------------------- : Printout
+
+/// A printout object specifying how to print a specified set of cards
+class CardsPrintout : wxPrintout {
+  public:
+	CardsPrintout(const SetP& set, const vector<CardP>& cards);
+	/// Determine card size, cards per row
+	void OnPreparePrinting();
+	/// Number of pages, and something else I don't understand...
+	void GetPageInfo(int* pageMin, int* pageMax, int* pageFrom, int* pageTo);
+	/// Again, 'number of pages', strange wx interface
+	bool HasPage(int page);
+	/// Print a page
+	bool OnPrintPage(int page);
+	
+  private:
+	PageLayout layout;
+	
+	/// Draw a card, that is card_nr on this page, find the postion by asking the layout
+	void drawCard(DC& dc, const CardP& card, UInt card_nr);
+	/// Draw a card at the specified coordinates
+	void drawCard(DC& dc, const CardP& card, double x, double y, int rotation = 0);
+};
 
 // ----------------------------------------------------------------------------- : PrintWindow
 
