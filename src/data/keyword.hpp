@@ -40,6 +40,8 @@ class KeywordParam {
 /// Information on when and how to use a keyword
 class KeywordMode {
   public:
+	KeywordMode() : is_default(false) {}
+	
 	String name;		///< Name of the mode
 	String description;	///< Description of the type
 	bool   is_default;	///< This is the default mode for new keywords

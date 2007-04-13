@@ -10,6 +10,9 @@
 #include <data/keyword.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
+#include <script/parser.hpp>
+#include <util/tagged_string.hpp>
+#include <util/error.hpp>
 
 DECLARE_TYPEOF_COLLECTION(KeywordModeP);
 
@@ -68,4 +71,102 @@ void RemoveKeywordAction::perform(bool to_undo) {
 		assert(keyword_id <= set.keywords.size());
 		set.keywords.insert(set.keywords.begin() + keyword_id, keyword);
 	}
+}
+
+// ----------------------------------------------------------------------------- : Changing keywords
+
+KeywordReminderTextValue::KeywordReminderTextValue(const TextFieldP& field, Keyword* keyword, bool editable)
+	: KeywordTextValue(field, keyword, &keyword->reminder.getUnparsed(), editable)
+{}
+
+void KeywordReminderTextValue::store() {
+	if (!editable) {
+		retrieve();
+		return;
+	}
+	// Re-highlight
+	String new_value = untag(value);
+	highlight(new_value);
+	// Try to parse the script
+	try {
+		ScriptP new_script = parse(new_value, true);
+		// parsed okay, assign
+		errors.clear();
+		keyword.reminder.getScriptP()  = new_script;
+		keyword.reminder.getUnparsed() = new_value;
+	} catch (const Error& e) {
+		// parse errors, report
+		errors = e.what(); // TODO
+	}
+}
+
+void KeywordReminderTextValue::retrieve() {
+	highlight(*underlying);
+}
+
+void KeywordReminderTextValue::highlight(const String& code) {
+	// Add tags to indicate code / syntax highlight
+	// i.e.  bla {if code "x" } bla
+	// becomes:
+	//       bla <code>{<code-kw>if</code-kw> code "<code-string>x</code-string>" } bla
+	String new_value;
+	int in_brace = 0;
+	bool in_string = true;
+	for (size_t pos = 0 ; pos < code.size() ; ) {
+		Char c = code.GetChar(pos);
+		if (c == _('<')) {
+			new_value += _('\1'); // escape
+			++pos;
+		} else if (c == _('{')) {
+			in_brace++;
+			if (in_brace == 1) new_value += _("<code>");
+			if (in_string) in_string = false;
+			new_value += c;
+			++pos;
+		} else if (c == _('}') && !in_string) {
+			new_value += c;
+			in_brace--;
+			if (in_brace == 0) {
+				new_value += _("</code>");
+				in_string = true;
+			}
+			++pos;
+		} else if (c == _('"')) {
+			if (in_string) {
+				in_string = false;
+				new_value += _("\"<code-str>");
+			} else {
+				in_string = true;
+				new_value += _("<code-str>\"");
+			}
+			++pos;
+		} else if (c == _('\\') && in_string && pos + 1 < code.size()) {
+			new_value += c + code.GetChar(pos + 1); // escape code
+			pos += 2;
+		} else if (is_substr(code, pos, _("if ")) && !in_string) {
+			new_value += _("<code-kw>if</code-kw> ");
+			pos += 3;
+		} else if (is_substr(code, pos, _("then ")) && !in_string) {
+			new_value += _("<code-kw>then</code-kw> ");
+			pos += 5;
+		} else if (is_substr(code, pos, _("else ")) && !in_string) {
+			new_value += _("<code-kw>else</code-kw> ");
+			pos += 5;
+		} else if (is_substr(code, pos, _("for ")) && !in_string) {
+			new_value += _("<code-kw>for</code-kw> ");
+			pos += 4;
+		} else if (is_substr(code, pos, _("param")) && !in_string) {
+			// parameter reference
+			size_t end = code.find_first_not_of(_("0123456789"), pos + 5);
+			if (end == String::npos) end = code.size();
+			String param = code.substr(pos, end-pos);
+			new_value += _("<") + param + _(">") + param + _("</") + param + _(">");
+			pos = end;
+		} else {
+			new_value += c;
+			++pos;
+		}
+	}
+	// set
+	value = new_value;
 }

@@ -12,8 +12,9 @@
 #include <util/prec.hpp>
 #include <gui/control/card_editor.hpp>
 
-class TextField;
 class TextStyle;
+DECLARE_POINTER_TYPE(TextField);
+DECLARE_POINTER_TYPE(FakeTextValue);
 
 // ----------------------------------------------------------------------------- : TextCtrl
 
@@ -31,16 +32,20 @@ class TextCtrl : public DataEditor {
 	TextCtrl(Window* parent, int id, bool multi_line, long style = 0);
 	
 	/// Set the value that is being edited
+	/** value can be a nullptr*/
 	void setValue(String* value, bool untagged = false);
-	/// Notification that the value has changed outside this control
-	void valueChanged();
+	/// Set the value that is being edited
+	void setValue(const FakeTextValueP& value);
+	
+	/// Update the size, for example after changing the style
+	void updateSize();
 	
 	/// Get access to the field used by the control
 	TextField& getField();
+	/// Get access to the field used by the control
+	TextFieldP getFieldP();
 	/// Get access to the style used by the control
 	TextStyle& getStyle();
-	/// Update the size, for example after changing the style
-	void updateSize();
 	
 	/// Uses a native look
 	virtual bool nativeLook()  const { return true; }
@@ -49,8 +54,6 @@ class TextCtrl : public DataEditor {
 	
 	virtual void draw(DC& dc);
 	
-	/// When an action is received, change the underlying value
-	virtual void onAction(const Action&, bool undone);
 	virtual void onChangeSet();
 	
   protected:

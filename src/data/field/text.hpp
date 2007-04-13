@@ -107,10 +107,18 @@ class FakeTextValue : public TextValue {
   public:
 	/// Initialize the fake text value
 	/** underlying can be nullptr, in that case there is no underlying value */
-	FakeTextValue(const TextFieldP& field, String* underlying, bool untagged);
+	FakeTextValue(const TextFieldP& field, String* underlying, bool editable, bool untagged);
 	
 	String* const underlying; ///< The underlying actual value, can be null
-	bool const untagged; ///< The underlying value is untagged
+	bool const editable;      ///< The underlying value can be edited
+	bool const untagged;      ///< The underlying value is untagged
+	
+	/// Store the value in the underlying value.
+	/** May be overloaded to do some transformation */
+	virtual void store();
+	/// Retrieve the value from the underlying value.
+	/** May be overloaded to do some transformation */
+	virtual void retrieve();
 	
 	/// Update underlying data
 	virtual void onAction(Action& a, bool undone);

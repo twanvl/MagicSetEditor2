@@ -12,6 +12,7 @@
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <data/keyword.hpp>
+#include <data/action/value.hpp>
 #include <data/action/keyword.hpp>
 #include <data/field/text.hpp>
 #include <util/window_id.hpp>
@@ -29,12 +30,14 @@ KeywordsPanel::KeywordsPanel(Window* parent, int id)
 	panel     = new Panel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 /* no tab traversal*/);
 	keyword   = new TextCtrl(panel, wxID_ANY, false);
 	match     = new TextCtrl(panel, wxID_ANY, false);
-	reminder  = new TextCtrl(panel, wxID_ANY, false);
+	reminder  = new TextCtrl(panel, wxID_ANY, true); // allow multiline for wordwrap
 	rules     = new TextCtrl(panel, wxID_ANY, true);
+	fixed     = new wxStaticText(panel, wxID_ANY, _("This is a standard $game keyword, you can not edit it. ")
+		                                          _("If you make a copy of the keyword your copy will take precedent."));
+	errors    = new wxStaticText(panel, wxID_ANY, _(""));
 	// init sizer for panel
-	wxSizer* sp = new wxBoxSizer(wxVERTICAL);
-		sp->Add(new wxStaticText(panel, wxID_ANY, _("This is a standard $game keyword, you can not edit it. ")
-		                                          _("If you make a copy of the keyword your copy will take precedent.")), 0, wxALL, 6);
+	sp = new wxBoxSizer(wxVERTICAL);
+		sp->Add(fixed, 0, wxALL, 6);
 		sp->Add(new wxStaticText(panel, wxID_ANY, _("Keyword:")), 0, wxALL, 6);
 		sp->Add(keyword, 0, wxEXPAND | wxALL & ~wxTOP, 6);
 		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, panel, _("Match"));
@@ -43,7 +46,8 @@ KeywordsPanel::KeywordsPanel(Window* parent, int id)
 			s2->Add(new wxStaticText(panel, wxID_ANY, _("Parameters:")), 0, wxALL, 6);
 		sp->Add(s2, 0, wxEXPAND | wxALL, 6);
 		sp->Add(new wxStaticText(panel, wxID_ANY, _("Reminder:")), 0, wxALL, 6);
-		sp->Add(reminder, 0, wxEXPAND | wxALL & ~wxTOP, 6);
+		sp->Add(reminder, 1, wxEXPAND | wxALL & ~wxTOP, 6);
+		sp->Add(errors,   0, wxALL & ~wxTOP, 6);
 		sp->Add(new wxStaticText(panel, wxID_ANY, _("Example:")), 0, wxALL, 6);
 		sp->Add(new wxStaticText(panel, wxID_ANY, _("Rules:")), 0, wxALL, 6);
 		sp->Add(rules, 1, wxEXPAND | wxALL & ~wxTOP, 6);
@@ -144,20 +148,43 @@ void KeywordsPanel::onChangeSet() {
 	match   ->updateSize();
 	reminder->setSet(set);
 	reminder->getStyle().padding_bottom = 2;
+	match   ->getStyle().font.size = 10;
+	match   ->getStyle().font.font.SetPointSize(10);
 	reminder->updateSize();
 	rules   ->setSet(set);
 	// re-layout
 	panel->Layout();
 }
 
+void KeywordsPanel::onAction(const Action& action, bool undone) {
+	TYPE_CASE(action, ValueAction) {
+		KeywordReminderTextValue* value = dynamic_cast<KeywordReminderTextValue*>(action.valueP.get());
+		if (value && &value->keyword == list->getKeyword().get()) {
+			// the current keyword's reminder text changed
+			errors->SetLabel(value->errors);
+		}
+	}
+}
+
 void KeywordsPanel::onKeywordSelect(KeywordSelectEvent& ev) {
 	if (ev.keyword) {
-		panel->Enable(!ev.keyword->fixed);
-		keyword->setValue(&ev.keyword->keyword, true);
-		match  ->setValue(&ev.keyword->match);
-		rules  ->setValue(&ev.keyword->rules);
+		Keyword& kw = *ev.keyword;
+		//sp->Show(fixed, kw.fixed);
+		fixed->SetLabel(kw.fixed ? _("This is a standard $game keyword, you can not edit it. ")
+		                           _("If you make a copy of the keyword your copy will take precedent.")
+		                         : _(""));
+		Layout();
+		keyword ->setValue(new_shared5<KeywordTextValue>        (keyword->getFieldP(),  &kw, &kw.keyword, !kw.fixed, true));
+		match   ->setValue(new_shared4<KeywordTextValue>        (match->getFieldP(),    &kw, &kw.match,   !kw.fixed));
+		rules   ->setValue(new_shared4<KeywordTextValue>        (rules->getFieldP(),    &kw, &kw.rules,   !kw.fixed));
+		shared_ptr<KeywordReminderTextValue> reminder_value(new KeywordReminderTextValue(reminder->getFieldP(), &kw,              !kw.fixed));
+		reminder->setValue(reminder_value);
+		errors->SetLabel(reminder_value->errors);
 	} else {
-		panel->Enable(false);
+		keyword ->setValue(nullptr);
+		match   ->setValue(nullptr);
+		rules   ->setValue(nullptr);
+		reminder->setValue(nullptr);
 	}
 }
 

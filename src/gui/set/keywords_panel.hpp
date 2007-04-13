@@ -27,6 +27,7 @@ class KeywordsPanel : public SetWindowPanel {
 	~KeywordsPanel();
 	
 	virtual void onChangeSet();
+	virtual void onAction(const Action&, bool);
 	
 	// --------------------------------------------------- : UI
 	
@@ -41,12 +42,15 @@ class KeywordsPanel : public SetWindowPanel {
 	// --------------------------------------------------- : Controls
 	wxSplitterWindow* splitter;
 	wxPanel*          panel;
+	wxSizer*          sp;
 	KeywordList*      list;
 	TextCtrl*         keyword;
 	TextCtrl*         match;
 	TextCtrl*         reminder;
 	TextCtrl*         rules;
 	IconMenu*         menuKeyword;
+	wxStaticText*     fixed;
+	wxStaticText*     errors;
 	
 	// --------------------------------------------------- : Events
 	void onKeywordSelect(KeywordSelectEvent& ev);

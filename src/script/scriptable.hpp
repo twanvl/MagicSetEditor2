@@ -76,7 +76,11 @@ class OptionalScript {
 	void initDependencies(Context&, const Dependency& dep) const;
 	
 	/// Get access to the script, be careful
-	Script& getScript();
+	Script&  getScript();
+	inline ScriptP& getScriptP() { return script; }
+	/// Get access to the unparsed value
+	inline       String& getUnparsed()       { return unparsed; }
+	inline const String& getUnparsed() const { return unparsed; }
 	
   protected:
 	ScriptP script;		///< The script, may be null if there is no script

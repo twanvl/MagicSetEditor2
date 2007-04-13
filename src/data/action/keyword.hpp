@@ -16,6 +16,7 @@
 
 #include <util/prec.hpp>
 #include <util/action_stack.hpp>
+#include <data/field/text.hpp>
 
 class Set;
 DECLARE_POINTER_TYPE(Keyword);
@@ -61,6 +62,39 @@ class RemoveKeywordAction : public KeywordListAction {
 };
 
 // ----------------------------------------------------------------------------- : Changing keywords
+
+/// A FakeTextValue that is used to edit an aspect of a keyword
+/** These values can be seen in ValueActions.
+ *  Can edit one of:
+ *    - the keyword name
+ *    - the match string
+ *    - reminder text
+ */
+class KeywordTextValue : public FakeTextValue {
+  public:
+	KeywordTextValue(const TextFieldP& field, Keyword* keyword, String* underlying, bool editable, bool untagged = false)
+		: FakeTextValue(field, underlying, editable, untagged)
+		, keyword(*keyword)
+	{}
+	
+	Keyword& keyword;	///< The keyword that is being edited
+};
+
+/// A FakeTextValue that is used to edit reminder text scripts
+class KeywordReminderTextValue : public KeywordTextValue {
+  public:
+	KeywordReminderTextValue(const TextFieldP& field, Keyword* keyword, bool editable);
+	
+	String errors; ///< Errors in the script
+	
+	/// Try to compile the script
+	virtual void store();
+	/// Add some tags, so the script looks nice
+	virtual void retrieve();
+	
+	/// Syntax highlight, and store in value
+	void highlight(const String& code);
+};
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

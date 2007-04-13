@@ -66,17 +66,21 @@ Color param_colors[] =
 	,	Color(0,170,170)
 	,	Color(200,0,0)
 	};
+const size_t param_colors_count = sizeof(param_colors) / sizeof(param_colors[0]);
 
 // Helper class for TextElements::fromString, to allow persistent formating state accross recusive calls
 struct TextElementsFromString {
 	// What formatting is enabled?
 	int bold, italic, symbol;
 	int soft, kwpph, param, line;
+	int code, code_kw, code_string, param_ref;
 	int param_id;
 	bool bracket;
 	
 	TextElementsFromString()
-		: bold(0), italic(0), symbol(0), soft(0), kwpph(0), param(0), line(0), param_id(0), bracket(false) {}
+		: bold(0), italic(0), symbol(0), soft(0), kwpph(0), param(0), line(0)
+		, code(0), code_kw(0), code_string(0), param_ref(0)
+		, param_id(0), bracket(false) {}
 	
 	// read TextElements from a string
 	void fromString(TextElements& te, const String& text, size_t start, size_t end, const TextStyle& style, Context& ctx) {
@@ -87,20 +91,39 @@ struct TextElementsFromString {
 			if (c == _('<')) {
 				size_t tag_start = pos;
 				pos = skip_tag(text, tag_start);
-				if      (is_substr(text, tag_start, _( "<b")))          bold   += 1;
-				else if (is_substr(text, tag_start, _("</b")))          bold   -= 1;
-				else if (is_substr(text, tag_start, _( "<i")))          italic += 1;
-				else if (is_substr(text, tag_start, _("</i")))          italic -= 1;
-				else if (is_substr(text, tag_start, _( "<sym")))        symbol += 1;
-				else if (is_substr(text, tag_start, _("</sym")))        symbol -= 1;
-				else if (is_substr(text, tag_start, _( "<sep-soft")))   soft   += 1;
-				else if (is_substr(text, tag_start, _("</sep-soft")))   soft   -= 1;
-				else if (is_substr(text, tag_start, _( "<atom-kwpph"))) kwpph  += 1;
-				else if (is_substr(text, tag_start, _("</atom-kwpph"))) kwpph  -= 1;
-				else if (is_substr(text, tag_start, _( "<param")))      param  += 1;
-				else if (is_substr(text, tag_start, _("</param")))      param  -= 1;
-				else if (is_substr(text, tag_start, _( "<line")))       line   += 1;
-				else if (is_substr(text, tag_start, _("</line")))       line   -= 1;
+				if      (is_substr(text, tag_start, _( "<b")))          bold        += 1;
+				else if (is_substr(text, tag_start, _("</b")))          bold        -= 1;
+				else if (is_substr(text, tag_start, _( "<i")))          italic      += 1;
+				else if (is_substr(text, tag_start, _("</i")))          italic      -= 1;
+				else if (is_substr(text, tag_start, _( "<sym")))        symbol      += 1;
+				else if (is_substr(text, tag_start, _("</sym")))        symbol      -= 1;
+				else if (is_substr(text, tag_start, _( "<sep-soft")))   soft        += 1;
+				else if (is_substr(text, tag_start, _("</sep-soft")))   soft        -= 1;
+				else if (is_substr(text, tag_start, _( "<atom-kwpph"))) kwpph       += 1;
+				else if (is_substr(text, tag_start, _("</atom-kwpph"))) kwpph       -= 1;
+				else if (is_substr(text, tag_start, _( "<code-kw")))    code_kw     += 1;
+				else if (is_substr(text, tag_start, _("</code-kw")))    code_kw     -= 1;
+				else if (is_substr(text, tag_start, _( "<code-str")))   code_string += 1;
+				else if (is_substr(text, tag_start, _("</code-str")))   code_string -= 1;
+				else if (is_substr(text, tag_start, _( "<code")))       code        += 1;
+				else if (is_substr(text, tag_start, _("</code")))       code        -= 1;
+				else if (is_substr(text, tag_start, _( "<ref-param"))) {
+					// determine the param being referenced
+					// from a tag <param123>
+					if (pos != String::npos) {
+						String ref = text.substr(tag_start + 6, pos - tag_start - 7);
+						long ref_n;
+						if (ref.ToLong(&ref_n)) {
+							param_id = ref_n;
+						}
+					}
+					param_ref += 1;
+				}
+				else if (is_substr(text, tag_start, _("</ref-param")))  param_ref   -= 1;
+				else if (is_substr(text, tag_start, _( "<param")))      param       += 1;
+				else if (is_substr(text, tag_start, _("</param")))      param       -= 1;
+				else if (is_substr(text, tag_start, _( "<line")))       line        += 1;
+				else if (is_substr(text, tag_start, _("</line")))       line        -= 1;
 				else if (is_substr(text, tag_start, _("<atom"))) {
 					// 'atomic' indicator
 					size_t end = match_close_tag(text, tag_start);
@@ -129,8 +152,10 @@ struct TextElementsFromString {
 						e = new SymbolTextElement(text, pos, pos + 1, style.symbol_font, &ctx);
 						bracket = false;
 					} else {
-						FontP font = style.font.make(bold > 0, italic > 0, soft > 0 || kwpph > 0,
-						                             param > 0 ? &param_colors[(param_id++) % (sizeof(param_colors)/sizeof(param_colors[0]))] : nullptr);
+						FontP font = style.font.make(bold > 0, italic > 0, soft > 0 || kwpph > 0, code > 0,
+						                             param > 0 || param_ref > 0
+						                               ? &param_colors[(param_id++) % param_colors_count]
+						                               : nullptr);
 						bracket = kwpph > 0 || param > 0;
 						e = new FontTextElement(
 									text,

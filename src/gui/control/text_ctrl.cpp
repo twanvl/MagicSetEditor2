@@ -40,6 +40,10 @@ TextField& TextCtrl::getField() {
 	assert(!viewers.empty());
 	return static_cast<TextField&>(*viewers.front()->getField());
 }
+TextFieldP TextCtrl::getFieldP() {
+	assert(!viewers.empty());
+	return static_pointer_cast<TextField>(viewers.front()->getField());
+}
 void TextCtrl::updateSize() {
 	wxSize cs = GetClientSize();
 	Style& style = getStyle();
@@ -49,36 +53,15 @@ void TextCtrl::updateSize() {
 }
 
 void TextCtrl::setValue(String* value, bool untagged) {
-	if (value != this->value) {
-		this->value = value;
-		// create a new value, for a different underlying actual value
-		ValueViewer& viewer = *viewers.front();
-		TextValueP new_value(new FakeTextValue(static_pointer_cast<TextField>(viewer.getField()), this->value, untagged));
-		viewer.setValue(new_value);
-		updateSize();
-		valueChanged();
-	}
+	setValue(new_shared4<FakeTextValue>(getFieldP(), value, true, untagged));
 }
-void TextCtrl::valueChanged() {
-	if (!viewers.empty()) {
-		TextValue& tv = static_cast<TextValue&>(*viewers.front()->getValue());
-		tv.value.assign(value ? String(*value) : String(wxEmptyString));
-		viewers.front()->onValueChange();
-	}
+void TextCtrl::setValue(const FakeTextValueP& value) {
+	value->retrieve();
+	viewers.front()->setValue(value);
+	updateSize();
 	onChange();
 }
-void TextCtrl::onAction(const Action& action, bool undone) {
-	DataEditor::onAction(action, undone);
-	/*
-	TYPE_CASE(action, TextValueAction) {
-		FakeTextValue& tv = static_cast<FakeTextValue&>(*viewers.front()->getValue());
-		if (tv.equals(action.valueP.get())) {
-			// the value has changed
-			if (value) *value = tv.value();
-		}
-	}
-	*/
-}
+
 void TextCtrl::onChangeSet() {
 	DataEditor::onChangeSet();
 	// initialize
@@ -86,7 +69,7 @@ void TextCtrl::onChangeSet() {
 		// create a field, style and value
 		TextFieldP field(new TextField);
 		TextStyleP style(new TextStyle(field));
-		TextValueP value(new FakeTextValue(field, nullptr, false));
+		TextValueP value(new FakeTextValue(field, nullptr, false, false));
 		// set stuff
 		field->index = 0;
 		field->multi_line = multi_line;

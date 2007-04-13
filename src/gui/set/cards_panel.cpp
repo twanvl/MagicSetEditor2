@@ -272,6 +272,7 @@ CardP CardsPanel::selectedCard() const {
 	return card_list->getCard();
 }
 void CardsPanel::selectCard(const CardP& card) {
+	if (!set) return; // we want onChangeSet first
 	card_list->setCard(card);
 	editor->setCard(card);
 	notes->setValue(card ? &card->notes : nullptr);

@@ -27,7 +27,7 @@ void Font::initDependencies(Context& ctx, const Dependency& dep) const {
 	shadow_color.initDependencies(ctx, dep);
 }
 
-FontP Font::make(bool bold, bool italic, bool placeholder_color, Color* other_color) const {
+FontP Font::make(bool bold, bool italic, bool placeholder_color, bool code_color, Color* other_color) const {
 	FontP f(new Font(*this));
 	if (bold) f->font.SetWeight(wxBOLD);
 	if (italic) {
@@ -36,6 +36,11 @@ FontP Font::make(bool bold, bool italic, bool placeholder_color, Color* other_co
 		} else {
 			f->font.SetWeight(wxBOLD);
 		}
+	}
+	if (code_color) {
+		f->color = Color(128,0,0);
+		f->font.SetFamily(wxFONTFAMILY_TELETYPE);
+		f->font.SetFaceName(_("Courier New"));
 	}
 	if (placeholder_color) {
 		f->color = f->separator_color;

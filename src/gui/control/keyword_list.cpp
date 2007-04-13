@@ -10,6 +10,8 @@
 #include <data/set.hpp>
 #include <data/game.hpp>
 #include <data/keyword.hpp>
+#include <data/action/value.hpp>
+#include <data/action/keyword.hpp>
 #include <util/tagged_string.hpp>
 #include <gfx/gfx.hpp>
 
@@ -47,8 +49,49 @@ void KeywordList::onChangeSet() {
 }
 
 void KeywordList::onAction(const Action& action, bool undone) {
-	//TYPE_CASE(action, AddKeywordAction) {
-	//}
+	TYPE_CASE(action, AddKeywordAction) {
+		if (undone) {
+			long pos = selected_item_pos;
+			refreshList();
+			if (action.keyword == selected_item) {
+				// select the next keyword, if not possible, select the last
+				if (pos + 1 < GetItemCount()) {
+					selectItemPos(pos, true);
+				} else {
+					selectItemPos(GetItemCount() - 1, true);
+				}
+			}
+		} else {
+			// select the new keyword
+			selectItem(action.keyword, false /*list will be refreshed anyway*/, true);
+			refreshList();
+		}
+	}
+	TYPE_CASE(action, RemoveKeywordAction) {
+		if (undone) {
+			// select the re-added keyword
+			selectItem(action.keyword, false /*list will be refreshed anyway*/, true);
+			refreshList();
+		} else {
+			long pos = selected_item_pos;
+			refreshList();
+			if (action.keyword == selected_item) {
+				// select the next keyword, if not possible, select the last
+				if (pos + 1 < GetItemCount()) {
+					selectItemPos(pos, true);
+				} else {
+					selectItemPos(GetItemCount() - 1, true);
+				}
+			}
+		}
+	}
+	TYPE_CASE(action, ValueAction) {
+		KeywordTextValue* value = dynamic_cast<KeywordTextValue*>(action.valueP.get());
+		if (value) {
+			// this is indeed an action on a keyword, refresh
+			refreshList();
+		}
+	}
 }
 
 // ----------------------------------------------------------------------------- : KeywordListBase : for ItemList
@@ -83,8 +126,8 @@ bool KeywordList::compareItems(void* a, void* b) const {
 		case 1: return ka.match   < kb.match;
 		case 2: return ka.mode    < kb.mode;
 		//case 3:
-		//case 4:
-		default: // TODO: 3 and 4
+		case 4: return ka.reminder.getUnparsed() < kb.reminder.getUnparsed();
+		default: // TODO: 3
 				return ka.keyword < kb.keyword;
 	}
 }
@@ -98,7 +141,7 @@ String KeywordList::OnGetItemText (long pos, long col) const {
 		case 1:		return match_string(kw);
 		case 2:		return kw.mode;
 		case 3:		return _("TODO");
-		case 4:		return _("TODO");
+		case 4:		return kw.reminder.getUnparsed();
 		default:	return wxEmptyString;
 	}
 }

@@ -109,18 +109,25 @@ IMPLEMENT_REFLECTION_NAMELESS(TextValue) {
 
 // ----------------------------------------------------------------------------- : FakeTextValue
 
-FakeTextValue::FakeTextValue(const TextFieldP& field, String* underlying, bool untagged)
+FakeTextValue::FakeTextValue(const TextFieldP& field, String* underlying, bool editable, bool untagged)
 	: TextValue(field), underlying(underlying)
-	, untagged(untagged)
-{
-	if (underlying) {
-		value.assign(untagged ? escape(*underlying) : *underlying);
+	, editable(editable), untagged(untagged)
+{}
+
+void FakeTextValue::store() {
+	if (editable) {
+		*underlying = untagged ? untag(value) : value;
+	} else {
+		retrieve();
 	}
+}
+void FakeTextValue::retrieve() {
+	value.assign(untagged ? escape(*underlying) : *underlying);
 }
 
 void FakeTextValue::onAction(Action& a, bool undone) {
 	if (underlying) {
-		*underlying = untagged ? untag(value) : value;
+		store();
 	}
 }
 
@@ -130,6 +137,6 @@ bool FakeTextValue::equals(const Value* that) {
 	const FakeTextValue* thatT = dynamic_cast<const FakeTextValue*>(that);
 	if (!thatT || underlying != thatT->underlying) return false;
 	// update the value
-	value.assign(untagged ? escape(*underlying) : *underlying);
+	retrieve();
 	return true;
 }
