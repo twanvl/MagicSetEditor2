@@ -51,10 +51,11 @@ enum OpenBrace
 ,	BRACE_PAREN			// (, [, {
 };
 
-/// Iterator over a string, one token at a time
+/// Iterator over a string, one token at a time.
+/** Also stores errors found when tokenizing or parsing */
 class TokenIterator {
   public:
-	TokenIterator(const String& str, bool string_mode);
+	TokenIterator(const String& str, bool string_mode, vector<ScriptParseError>& errors);
 	
 	/// Peek at the next token, doesn't move to the one after that
 	/** Can peek further forward by using higher values of offset.
@@ -87,6 +88,14 @@ class TokenIterator {
 	void readToken();
 	/// Read the next token which is a string (after the opening ")
 	void readStringToken();
+	
+  public:
+	/// All errors found
+	vector<ScriptParseError>& errors;
+	/// Add an error message
+	void add_error(const String& message);
+	/// Expected some token instead of what was found
+	void expected(const String& exp);
 };
 
 // ----------------------------------------------------------------------------- : Characters
@@ -102,10 +111,11 @@ bool isLongOper(const String& s) { return s==_(":=") || s==_("==") || s==_("!=")
 
 // ----------------------------------------------------------------------------- : Tokenizing
 
-TokenIterator::TokenIterator(const String& str, bool string_mode)
+TokenIterator::TokenIterator(const String& str, bool string_mode, vector<ScriptParseError>& errors)
 	: input(str)
 	, pos(0)
 	, newline(false)
+	, errors(errors)
 {
 	if (string_mode) {
 		open_braces.push(BRACE_STRING_MODE);
@@ -221,7 +231,8 @@ void TokenIterator::readToken() {
 		// comment untill end of line
 		while (pos < input.size() && input[pos] != _('\n')) ++pos;
 	} else {
-		throw ScriptParseError(_("Unknown character in script: '") + String(1,c) + _("'"));
+		add_error(_("Unknown character in script: '") + String(1,c) + _("'"));
+		// just skip the character
 	}
 }
 
@@ -234,7 +245,10 @@ void TokenIterator::readStringToken() {
 				addToken(TOK_STRING, str);
 				return;
 			} else {
-				throw ScriptParseError(_("Unexpected end of input in string constant"));
+				add_error(_("Unexpected end of input in string constant"));
+				// fix up
+				addToken(TOK_STRING, str);
+				return;
 			}
 		}
 		Char c = input.GetChar(pos++);
@@ -246,7 +260,12 @@ void TokenIterator::readStringToken() {
 			return;
 		} else if (c == _('\\')) {
 			// escape
-			if (pos >= input.size()) throw ScriptParseError(_("Unexpected end of input in string constant"));
+			if (pos >= input.size()) {
+				add_error(_("Unexpected end of input in string constant"));
+				// fix up
+				addToken(TOK_STRING, str);
+				return;
+			}
 			c = input.GetChar(pos++);
 			if      (c == _('n')) str += _('\n');
 			else if (c == _('<')) str += _('\1'); // escape for <
@@ -264,7 +283,19 @@ void TokenIterator::readStringToken() {
 }
 
 
+void TokenIterator::add_error(const String& message) {
+	if (!errors.empty() && errors.back().start == pos) return; // already an error here
+	errors.push_back(ScriptParseError(pos, message));
+}
+void TokenIterator::expected(const String& expected) {
+	size_t error_pos = pos - peek(0).value.size();
+	if (!errors.empty() && errors.back().start == pos) return; // already an error here
+	errors.push_back(ScriptParseError(error_pos, expected, peek(0).value));
+}
+
+
 // ----------------------------------------------------------------------------- : Parsing
+
 
 /// Precedence levels for parsing, higher = tighter
 enum Precedence
@@ -300,22 +331,43 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec);
  */
 void parseOper(TokenIterator& input, Script& script, Precedence minPrec, InstructionType closeWith = I_NOP, int closeWithData = 0);
 
-ScriptP parse(const String& s, bool string_mode) {
-	TokenIterator input(s, string_mode);
+
+ScriptP parse(const String& s, bool string_mode, vector<ScriptParseError>& errors_out) {
+	errors_out.clear();
+	// parse
+	TokenIterator input(s, string_mode, errors_out);
 	ScriptP script(new Script);
 	parseOper(input, *script, PREC_ALL, I_RET);
-	if (input.peek() != TOK_EOF) {
-		throw ScriptParseError(_("end of input"), input.peek().value);
-	} else {
+	Token eof = input.read();
+	if (eof != TOK_EOF) {
+		input.expected(_("end of input"));
+	}
+	// were there errors?
+	if (errors_out.empty()) {
 		return script;
+	} else {
+		return ScriptP();
 	}
 }
 
-// Expect a token, throws if it is not found
-void expectToken(TokenIterator& input, const Char* expect) {
+ScriptP parse(const String& s, bool string_mode) {
+	vector<ScriptParseError> errors;
+	ScriptP script = parse(s, string_mode, errors);
+	if (!errors.empty()) {
+		throw ScriptParseErrors(errors);
+	}
+	return script;
+}
+
+
+// Expect a token, adds an error if it is not found
+bool expectToken(TokenIterator& input, const Char* expect, const Char* name_in_error = nullptr) {
 	Token token = input.read();
-	if (token != expect) {
-		throw ScriptParseError(expect, token.value);
+	if (token == expect) {
+		return true;
+	} else {
+		input.expected(name_in_error ? name_in_error : expect);
+		return false;
 	}
 }
 
@@ -367,7 +419,9 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					// for each AAA in BBB do CCC
 					input.read();										// each
 					Token name = input.read();							// AAA
-					if (name != TOK_NAME) throw ScriptParseError(_("name"), name.value);
+					if (name != TOK_NAME) {
+						input.expected(_("name"));
+					}
 					expectToken(input, _("in"));						// in
 					parseOper(input, script, PREC_SET);					// BBB
 					script.addInstruction(I_UNARY, I_ITERATOR_C);		//		iterator_collection
@@ -428,7 +482,8 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 		} else if (token == TOK_STRING) {
 			script.addInstruction(I_PUSH_CONST, to_script(token.value));
 		} else {
-			throw ScriptParseError(_("Unexpected token '") + token.value + _("'"));
+			input.expected(_("expression"));
+			return;
 		}
 		break;
 	}
@@ -459,11 +514,10 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			// not an expression. Remove that instruction.
 			Instruction instr = script.getInstructions().back();
 			if (instr.instr != I_GET_VAR) {
-				throw ScriptParseError(_("Can only assign to variables"));
-			} else {
-				script.getInstructions().pop_back();
-				parseOper(input, script, PREC_SET,  I_SET_VAR, instr.data);
+				input.add_error(_("Can only assign to variables"));
 			}
+			script.getInstructions().pop_back();
+			parseOper(input, script, PREC_SET,  I_SET_VAR, instr.data);
 		}
 		else if (minPrec <= PREC_AND    && token==_("and"))   parseOper(input, script, PREC_CMP,   I_BINARY, I_AND);
 		else if (minPrec <= PREC_AND    && token==_("or" ))   parseOper(input, script, PREC_CMP,   I_BINARY, I_OR);
@@ -484,7 +538,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			if (token == TOK_NAME || token == TOK_INT || token == TOK_DOUBLE || token == TOK_STRING) {
 				script.addInstruction(I_MEMBER_C, token.value);
 			} else {
-				throw ScriptParseError(_("name"), input.peek().value);
+				input.expected(_("name"));
 			}
 		} else if (minPrec <= PREC_FUN && token==_("[")) { // get member by expr
 			parseOper(input, script, PREC_ALL, I_BINARY, I_MEMBER);
@@ -528,14 +582,15 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			} else {
 				parseOper(input, script, PREC_ALL, I_BINARY, I_ADD);	// e
 			}
-			expectToken(input, _("}\""));
-			parseOper(input, script, PREC_NONE);						// y
-			// optimize: e + ""  -> e
-			i = script.getInstructions().back();
-			if (i.instr == I_PUSH_CONST && script.getConstants()[i.data]->toString().empty()) {
-				script.getInstructions().pop_back();
-			} else {
-				script.addInstruction(I_BINARY, I_ADD);
+			if (expectToken(input, _("}\""), _("}"))) {
+				parseOper(input, script, PREC_NONE);					// y
+				// optimize: e + ""  -> e
+				i = script.getInstructions().back();
+				if (i.instr == I_PUSH_CONST && script.getConstants()[i.data]->toString().empty()) {
+					script.getInstructions().pop_back();
+				} else {
+					script.addInstruction(I_BINARY, I_ADD);
+				}
 			}
 		} else if (minPrec <= PREC_NEWLINE && token.newline) {
 			// newline functions as ;

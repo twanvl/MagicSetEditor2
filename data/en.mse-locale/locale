@@ -60,7 +60,7 @@ menu:
 	set info tab:		&Set Information	F6
 	style tab:			St&yle	F7
 	keywords tab:		&Keywords	F8
-	stats tab:			S&tatistics	F8
+	stats tab:			S&tatistics	F9
 	
 	help:			&Help
 	index:				&Index...	F1
@@ -331,6 +331,9 @@ label:
 	mode:				Mode
 	uses:				Uses
 	reminder:			Reminder text
+	standard keyword:
+		This is a standard %s keyword, you can not edit it.
+		If you make a copy of the keyword your copy will take precedent.
 	
 	# Open dialogs
 	all files			All files

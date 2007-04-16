@@ -75,9 +75,18 @@ class FileParseError : public ParseError {
 /// Parse error in a script
 class ScriptParseError : public ParseError {
   public:
-	inline ScriptParseError(const String& str) : ParseError(str) {}
-	inline ScriptParseError(const String& exp, const String& found)
-		: ParseError(_("Expected '") + exp + _("' instead of '") + found + _("'")) {}
+	ScriptParseError(size_t pos, const String& str);
+	ScriptParseError(size_t pos, const String& expected, const String& found);
+	/// Position of the error
+	size_t start, end;
+	/// Return the error message
+	virtual String what() const; 
+};
+
+/// Multiple parse errors in a script
+class ScriptParseErrors : public ParseError {
+  public:
+	ScriptParseErrors(const vector<ScriptParseError>& errors);
 };
 
 // ----------------------------------------------------------------------------- : Script errors

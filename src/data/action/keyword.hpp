@@ -16,6 +16,7 @@
 
 #include <util/prec.hpp>
 #include <util/action_stack.hpp>
+#include <util/error.hpp>
 #include <data/field/text.hpp>
 
 class Set;
@@ -93,7 +94,7 @@ class KeywordReminderTextValue : public KeywordTextValue {
 	virtual void retrieve();
 	
 	/// Syntax highlight, and store in value
-	void highlight(const String& code);
+	void highlight(const String& code, const vector<ScriptParseError>& errors);
 };
 
 // ----------------------------------------------------------------------------- : EOF

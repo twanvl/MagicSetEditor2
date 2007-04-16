@@ -8,6 +8,8 @@
 
 #include <util/error.hpp>
 
+DECLARE_TYPEOF_COLLECTION(ScriptParseError);
+
 // ----------------------------------------------------------------------------- : Error types
 
 Error::Error(const String& message)
@@ -19,6 +21,32 @@ Error::~Error() {}
 String Error::what() const {
 	return message;
 }
+
+// ----------------------------------------------------------------------------- : Parse errors
+
+ScriptParseError::ScriptParseError(size_t pos, const String& error)
+	: start(pos), end(pos)
+	, ParseError(error)
+{}
+ScriptParseError::ScriptParseError(size_t pos, const String& exp, const String& found)
+	: start(pos), end(pos + found.size())
+	, ParseError(_("Expected '") + exp + _("' instead of '") + found + _("'"))
+{}
+String ScriptParseError::what() const {
+	return String(_("(")) << (int)start << _("): ") << Error::what();
+}
+
+String concat(const vector<ScriptParseError>& errors) {
+	String total;
+	FOR_EACH_CONST(e, errors) {
+		if (!total.empty()) total += _("\n");
+		total += e.what();
+	}
+	return total;
+}
+ScriptParseErrors::ScriptParseErrors(const vector<ScriptParseError>& errors)
+	: ParseError(concat(errors))
+{}
 
 // ----------------------------------------------------------------------------- : Error handling
 

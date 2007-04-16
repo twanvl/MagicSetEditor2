@@ -73,18 +73,19 @@ struct TextElementsFromString {
 	// What formatting is enabled?
 	int bold, italic, symbol;
 	int soft, kwpph, param, line;
-	int code, code_kw, code_string, param_ref;
+	int code, code_kw, code_string, param_ref, error;
 	int param_id;
 	bool bracket;
 	
 	TextElementsFromString()
 		: bold(0), italic(0), symbol(0), soft(0), kwpph(0), param(0), line(0)
-		, code(0), code_kw(0), code_string(0), param_ref(0)
+		, code(0), code_kw(0), code_string(0), param_ref(0), error(0)
 		, param_id(0), bracket(false) {}
 	
 	// read TextElements from a string
 	void fromString(TextElements& te, const String& text, size_t start, size_t end, const TextStyle& style, Context& ctx) {
 		te.elements.clear();
+		end = min(end, text.size());
 		// for each character...
 		for (size_t pos = start ; pos < end ; ) {
 			Char c = text.GetChar(pos);
@@ -126,11 +127,18 @@ struct TextElementsFromString {
 				else if (is_substr(text, tag_start, _("</line")))       line        -= 1;
 				else if (is_substr(text, tag_start, _("<atom"))) {
 					// 'atomic' indicator
-					size_t end = match_close_tag(text, tag_start);
-					shared_ptr<AtomTextElement> e(new AtomTextElement(text, pos, end));
-					fromString(e->elements, text, pos, end, style, ctx);
+					size_t end_tag = min(end, match_close_tag(text, tag_start));
+					shared_ptr<AtomTextElement> e(new AtomTextElement(text, pos, end_tag));
+					fromString(e->elements, text, pos, end_tag, style, ctx);
 					te.elements.push_back(e);
-					pos = skip_tag(text, end);
+					pos = skip_tag(text, end_tag);
+				} else if (is_substr(text, tag_start, _( "<error"))) {
+					// error indicator
+					size_t end_tag = min(end, match_close_tag(text, tag_start));
+					shared_ptr<ErrorTextElement> e(new ErrorTextElement(text, pos, end_tag));
+					fromString(e->elements, text, pos, end_tag, style, ctx);
+					te.elements.push_back(e);
+					pos = skip_tag(text, end_tag);
 				} else {
 					// ignore other tags
 				}

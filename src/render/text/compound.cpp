@@ -33,3 +33,23 @@ void AtomTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, co
 	}
 	CompoundTextElement::draw(dc, scale, rect, xs, what, start, end);
 }
+
+// ----------------------------------------------------------------------------- : ErrorTextElement
+
+void ErrorTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const {
+	// Draw wavy underline
+	dc.SetPen(*wxRED_PEN);
+	RealPoint pos = rect.bottomLeft() - dc.trInvS(RealSize(0,2));
+	RealSize  dx(dc.trInvS(2), 0), dy(0, dc.trInvS(1));
+	while (pos.x + 1 < rect.right()) {
+		dc.DrawLine(pos - dy, pos + dx + dy);
+		pos += dx;
+		dy  = -dy;
+	}
+	if (pos.x < rect.right()) {
+		// final piece
+		dc.DrawLine(pos - dy, pos + dx / 2);
+	}
+	// Draw the contents
+	CompoundTextElement::draw(dc, scale, rect, xs, what, start, end);
+}

@@ -84,27 +84,30 @@ void KeywordReminderTextValue::store() {
 		retrieve();
 		return;
 	}
-	// Re-highlight
+	// new value
 	String new_value = untag(value);
-	highlight(new_value);
 	// Try to parse the script
-	try {
-		ScriptP new_script = parse(new_value, true);
+	vector<ScriptParseError> parse_errors;
+	ScriptP new_script = parse(new_value, true, parse_errors);
+	if (parse_errors.empty()) {
 		// parsed okay, assign
 		errors.clear();
 		keyword.reminder.getScriptP()  = new_script;
 		keyword.reminder.getUnparsed() = new_value;
-	} catch (const Error& e) {
+	} else {
 		// parse errors, report
-		errors = e.what(); // TODO
+		errors = ScriptParseErrors(parse_errors).what();
 	}
+	// re-highlight input, show errors
+	highlight(new_value, parse_errors);
 }
 
 void KeywordReminderTextValue::retrieve() {
-	highlight(*underlying);
+	vector<ScriptParseError> no_errors;
+	highlight(*underlying, no_errors);
 }
 
-void KeywordReminderTextValue::highlight(const String& code) {
+void KeywordReminderTextValue::highlight(const String& code, const vector<ScriptParseError>& errors) {
 	// Add tags to indicate code / syntax highlight
 	// i.e.  bla {if code "x" } bla
 	// becomes:
@@ -112,7 +115,24 @@ void KeywordReminderTextValue::highlight(const String& code) {
 	String new_value;
 	int in_brace = 0;
 	bool in_string = true;
+	vector<ScriptParseError>::const_iterator error = errors.begin();
 	for (size_t pos = 0 ; pos < code.size() ; ) {
+		// error underlining
+		while (error != errors.end() && error->start == error->end) ++error;
+		if (error != errors.end()) {
+			if (error->start == pos) {
+				new_value += _("<error>");
+			}
+			if (error->end == pos) {
+				++error;
+				if (error == errors.end() || error->start > pos) {
+					new_value += _("</error>");
+				} else {
+					// immediatly open again
+				}
+			}
+		}
+		// process a character
 		Char c = code.GetChar(pos);
 		if (c == _('<')) {
 			new_value += _('\1'); // escape

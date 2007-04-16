@@ -164,6 +164,13 @@ class AtomTextElement : public CompoundTextElement {
 	virtual void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 };
 
+/// A TextElement drawn using a red wavy underline
+class ErrorTextElement : public CompoundTextElement {
+  public:
+	ErrorTextElement(const String& text, size_t start ,size_t end) : CompoundTextElement(text, start, end) {}
+	
+	virtual void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
+};
 
 // ----------------------------------------------------------------------------- : Other text elements
 /*
