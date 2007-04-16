@@ -49,7 +49,7 @@ new:
 // -----------------------------------------------------------------------------
 
 purpose: Draw 'checked' menu items with a border
-file: src\msw\ownerdrw.cpp
+file: src/msw/ownerdrw.cpp
 line: 464
 old:
             // there should be enough space!
@@ -126,5 +126,27 @@ new:
             // @@@ 2006-07-31
             // Edge for checked already drawn
 
+
+// -----------------------------------------------------------------------------
+
+purpose: Don't mess with the default GUI font for no reason
+file: src/msw/settings.cpp
+line: 226
+old:
+            wxNativeFontInfo info;
+            info.lf = lf;
+     #ifndef __WXWINCE__
+            // We want Windows 2000 or later to have new fonts even MS Shell Dlg
+            // is returned as default GUI font for compatibility
+            int verMaj;
+            if(index == DEFAULT_GUI_FONT && wxGetOsVersion(&verMaj) == wxOS_WINDOWS_NT && verMaj >= 5)
+                wxStrcpy(info.lf.lfFaceName, wxT("MS Shell Dlg 2"));
+     #endif
+            // Under MicroWindows we pass the HFONT as well
+new:
+            wxNativeFontInfo info;
+            info.lf = lf;
+            //@@@ 2006-11-21: Don't mess with my Default GUI Font!
+            // Under MicroWindows we pass the HFONT as well
 
 // -----------------------------------------------------------------------------
