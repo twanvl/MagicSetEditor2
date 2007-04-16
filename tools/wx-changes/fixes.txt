@@ -1,0 +1,130 @@
+
+
+// -----------------------------------------------------------------------------
+
+purpose: Allow wxTAB_TRAVERSAL to be disabled for splitter windows
+file: src/common/splitter.cpp
+line: 90
+old:
+    // allow TABbing from one window to the other
+    style |= wxTAB_TRAVERSAL;
+new:
+    // allow TABbing from one window to the other
+    // @@@ 2007-04-13 If I don't ask for TAB_TREVERSAL, I don't want it, thank you very much!
+    //style |= wxTAB_TRAVERSAL;
+
+
+// -----------------------------------------------------------------------------
+
+purpose: Fix copy/paste of bitmaps into Photopaint/Photoshop
+file: src/msw/dib.cpp
+line: 522
+old:
+    // memory we need for BITMAPINFO only
+    DWORD dwLen = bi.biSize + GetNumberOfColours(bm.bmBitsPixel) * sizeof(RGBQUAD);
+new:
+    // memory we need for BITMAPINFO only
+    DWORD dwLen = bi.biSize + GetNumberOfColours(bm.bmBitsPixel) * sizeof(RGBQUAD);
+    // @@@ 2006-09-29
+    // HACK: Photoshop and Photopaint thing they are dealing with BI_BITFIELDS
+    // so they expect masks, make room for that in the palet section
+    if (bm.bmBitsPixel == 32) {
+        dwLen += 3 * sizeof(DWORD);
+    }
+line: 551
+old:
+    // return the total size
+    return dwLen + bi.biSizeImage;
+new:
+    // @@@
+    // HACK: make the DIB BI_BITFIELDS compatible for stupid programs that don't understand BI_RGB
+    if (!wantSizeOnly && bm.bmBitsPixel == 32) {
+        bi.biClrUsed = 3;
+        ZeroMemory((char *)pbi + dwLen - 3 * sizeof(DWORD), 3 * sizeof(DWORD));
+    }
+    // return the total size
+    return dwLen + bi.biSizeImage;
+
+
+// -----------------------------------------------------------------------------
+
+purpose: Draw 'checked' menu items with a border
+file: src\msw\ownerdrw.cpp
+line: 464
+old:
+            // there should be enough space!
+            wxASSERT((nBmpWidth <= rc.GetWidth()) && (nBmpHeight <= rc.GetHeight()));
+            
+            int heightDiff = m_nHeight - nBmpHeight;
+            dc.Blit(rc.x + (margin - nBmpWidth) / 2,
+                    rc.y + heightDiff / 2,
+                    nBmpWidth, nBmpHeight,
+                    &dcMem, 0, 0, wxCOPY, true /* use mask */);
+            
+            if ( ( st & wxODSelected ) && !( st & wxODDisabled ) && draw_bitmap_edge )
+new:
+            // there should be enough space!
+            wxASSERT((nBmpWidth <= rc.GetWidth()) && (nBmpHeight <= rc.GetHeight()));
+            
+            // @@@ 2006-07-31
+            // Draw dither behind bitmap
+            if ( ( st & wxODChecked) ) {
+                RECT rectBmp = { rc.GetLeft(), rc.GetTop(),
+                                 rc.GetLeft() + margin,
+                                 rc.GetTop() + m_nHeight };
+                HBRUSH hbr, hPrevBrush;
+                if (draw_bitmap_edge) {
+                    if ((st & wxODSelected)) {
+                        // Clear dither behind bitmap
+                        // Draw sunken edge on checked item
+                        DrawEdge(hdc, &rectBmp, BDR_SUNKENOUTER, BF_RECT | BF_MIDDLE);
+                    } else {
+                        // Draw dither behind bitmap
+                        // Stolen from ReactOS
+                        const WORD wPattern_AA55[8] =  { 0xaaaa, 0x5555, 0xaaaa, 0x5555, 0xaaaa, 0x5555, 0xaaaa, 0x5555 };
+                        HBITMAP hbm = CreateBitmap(8, 8, 1, 1, wPattern_AA55);
+                        hbr = CreatePatternBrush(hbm);
+                        hPrevBrush = (HBRUSH)SelectObject(hdc, hbr);
+                        SetBkColor(hdc, RGB(255, 255, 255));
+                        PatBlt(hdc, rectBmp.left, rectBmp.top, rectBmp.right-rectBmp.left, rectBmp.bottom-rectBmp.top, 0x00FA0089);
+                        DeleteObject(hbm);
+                        SelectObject(hdc, hPrevBrush);
+                        DeleteObject(hbr);
+                        // Draw sunken edge on checked item
+                        DrawEdge(hdc, &rectBmp, BDR_SUNKENOUTER, BF_RECT);
+                    }
+                } else {
+                    // Draw rectangle around checked item
+                    // background color is interpolated between selection and menu color
+                    HPEN hpen, hPrevPen;
+                    DWORD menu_bg_color  = GetSysColor(COLOR_MENU);
+                    DWORD selected_color = GetSysColor(COLOR_MENUHILIGHT);
+                    if ((st & wxODSelected)) {
+                        hbr = CreateSolidBrush(menu_bg_color);
+                    } else {
+                        hbr = CreateSolidBrush(RGB( (3*GetRValue(menu_bg_color) + GetRValue(selected_color)) / 4
+                                                  , (3*GetGValue(menu_bg_color) + GetGValue(selected_color)) / 4
+                                                  , (3*GetBValue(menu_bg_color) + GetBValue(selected_color)) / 4));
+                    }
+                    hpen = CreatePen(PS_SOLID,1, selected_color);
+                    hPrevBrush = (HBRUSH)SelectObject(hdc, hbr);
+                    hPrevPen   = (HPEN)  SelectObject(hdc, hpen);
+                    Rectangle(hdc, rectBmp.left, rectBmp.top, rectBmp.right, rectBmp.bottom);
+                    SelectObject(hdc, hPrevPen);
+                    SelectObject(hdc, hPrevBrush);
+                    DeleteObject(hpen);
+                    DeleteObject(hbr);
+                }
+            } // }}}
+            
+            int heightDiff = m_nHeight - nBmpHeight;
+            dc.Blit(rc.x + (margin - nBmpWidth) / 2,
+                    rc.y + heightDiff / 2,
+                    nBmpWidth, nBmpHeight,
+                    &dcMem, 0, 0, wxCOPY, true /* use mask */);
+            
+            // @@@ 2006-07-31
+            // Edge for checked already drawn
+
+
+// -----------------------------------------------------------------------------
