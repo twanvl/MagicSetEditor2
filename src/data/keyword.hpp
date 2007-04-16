@@ -58,7 +58,7 @@ class Keyword {
 	
 	String                keyword;		///< The keyword, only for human use
 	String                rules;		///< Rules/explanation
-	String                match;		///< String to match, <param> tags are used for parameters
+	String                match;		///< String to match, <atom-param> tags are used for parameters
 	vector<KeywordParamP> parameters;	///< The types of parameters
 	StringScript          reminder;		///< Reminder text of the keyword
 	String                mode;			///< Mode of use, can be used by scripts (only gives the name)

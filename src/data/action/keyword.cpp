@@ -160,7 +160,7 @@ void KeywordReminderTextValue::highlight(const String& code) {
 			size_t end = code.find_first_not_of(_("0123456789"), pos + 5);
 			if (end == String::npos) end = code.size();
 			String param = code.substr(pos, end-pos);
-			new_value += _("<") + param + _(">") + param + _("</") + param + _(">");
+			new_value += _("<ref-") + param + _(">") + param + _("</ref-") + param + _(">");
 			pos = end;
 		} else {
 			new_value += c;

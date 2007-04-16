@@ -49,8 +49,16 @@ class KeywordsPanel : public SetWindowPanel {
 	TextCtrl*         reminder;
 	TextCtrl*         rules;
 	IconMenu*         menuKeyword;
-	wxStaticText*     fixed;
+	wxStaticText*     fixedL;
+	wxSizer*          fixed;
 	wxStaticText*     errors;
+	/// Controls to edit a parameter
+	struct ParamEditor {
+		wxStaticText* label;
+		wxChoice*     type;
+		bool          shown;
+	};
+	vector<ParamEditor> params;
 	
 	// --------------------------------------------------- : Events
 	void onKeywordSelect(KeywordSelectEvent& ev);

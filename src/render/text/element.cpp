@@ -57,7 +57,7 @@ double TextElements::scaleStep() const {
 	return m;
 }
 
-// Colors for <param> tags
+// Colors for <atom-param> tags
 Color param_colors[] =
 	{	Color(0,170,0)
 	,	Color(0,0,200)
@@ -109,19 +109,19 @@ struct TextElementsFromString {
 				else if (is_substr(text, tag_start, _("</code")))       code        -= 1;
 				else if (is_substr(text, tag_start, _( "<ref-param"))) {
 					// determine the param being referenced
-					// from a tag <param123>
+					// from a tag <ref-param123>
 					if (pos != String::npos) {
-						String ref = text.substr(tag_start + 6, pos - tag_start - 7);
+						String ref = text.substr(tag_start + 10, pos - tag_start - 11);
 						long ref_n;
 						if (ref.ToLong(&ref_n)) {
-							param_id = ref_n;
+							param_id = (ref_n - 1)%param_colors_count + param_colors_count;
 						}
 					}
 					param_ref += 1;
 				}
 				else if (is_substr(text, tag_start, _("</ref-param")))  param_ref   -= 1;
-				else if (is_substr(text, tag_start, _( "<param")))      param       += 1;
-				else if (is_substr(text, tag_start, _("</param")))      param       -= 1;
+				else if (is_substr(text, tag_start, _( "<atom-param"))) param       += 1;
+				else if (is_substr(text, tag_start, _("</atom-param"))) param       -= 1;
 				else if (is_substr(text, tag_start, _( "<line")))       line        += 1;
 				else if (is_substr(text, tag_start, _("</line")))       line        -= 1;
 				else if (is_substr(text, tag_start, _("<atom"))) {

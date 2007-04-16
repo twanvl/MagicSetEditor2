@@ -12,12 +12,15 @@
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <data/keyword.hpp>
+#include <data/game.hpp>
 #include <data/action/value.hpp>
 #include <data/action/keyword.hpp>
 #include <data/field/text.hpp>
 #include <util/window_id.hpp>
 #include <wx/listctrl.h>
 #include <wx/splitter.h>
+#include <wx/statline.h>
+#include <wx/artprov.h>
 
 // ----------------------------------------------------------------------------- : KeywordsPanel
 
@@ -32,25 +35,42 @@ KeywordsPanel::KeywordsPanel(Window* parent, int id)
 	match     = new TextCtrl(panel, wxID_ANY, false);
 	reminder  = new TextCtrl(panel, wxID_ANY, true); // allow multiline for wordwrap
 	rules     = new TextCtrl(panel, wxID_ANY, true);
-	fixed     = new wxStaticText(panel, wxID_ANY, _("This is a standard $game keyword, you can not edit it. ")
-		                                          _("If you make a copy of the keyword your copy will take precedent."));
 	errors    = new wxStaticText(panel, wxID_ANY, _(""));
+	// warning about fixed keywords
+	fixedL    = new wxStaticText(panel, wxID_ANY, _(""));
+	wxStaticBitmap* fixedI = new wxStaticBitmap(panel, wxID_ANY, wxArtProvider::GetBitmap(wxART_WARNING));
+	fixed = new wxBoxSizer(wxVERTICAL);
+		wxSizer* s0 = new wxBoxSizer(wxHORIZONTAL);
+		s0->Add(fixedI, 0, wxALIGN_CENTER | wxRIGHT, 10);
+		s0->Add(fixedL, 0, wxALIGN_CENTER_VERTICAL);
+	fixed->Add(new wxStaticLine(panel), 0, wxEXPAND | wxBOTTOM, 8);
+	fixed->Add(s0, 0, wxALL & ~wxTOP | wxALIGN_CENTER, 8);
+	fixed->Add(new wxStaticLine(panel), 0, wxEXPAND | wxBOTTOM, 8);
 	// init sizer for panel
 	sp = new wxBoxSizer(wxVERTICAL);
-		sp->Add(fixed, 0, wxALL, 6);
-		sp->Add(new wxStaticText(panel, wxID_ANY, _("Keyword:")), 0, wxALL, 6);
-		sp->Add(keyword, 0, wxEXPAND | wxALL & ~wxTOP, 6);
-		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, panel, _("Match"));
-			s2->Add(new wxStaticText(panel, wxID_ANY, _("Keyword format:")), 0, wxALL, 6);
-			s2->Add(match, 0, wxEXPAND | wxALL & ~wxTOP, 6);
-			s2->Add(new wxStaticText(panel, wxID_ANY, _("Parameters:")), 0, wxALL, 6);
-		sp->Add(s2, 0, wxEXPAND | wxALL, 6);
-		sp->Add(new wxStaticText(panel, wxID_ANY, _("Reminder:")), 0, wxALL, 6);
-		sp->Add(reminder, 1, wxEXPAND | wxALL & ~wxTOP, 6);
-		sp->Add(errors,   0, wxALL & ~wxTOP, 6);
-		sp->Add(new wxStaticText(panel, wxID_ANY, _("Example:")), 0, wxALL, 6);
-		sp->Add(new wxStaticText(panel, wxID_ANY, _("Rules:")), 0, wxALL, 6);
-		sp->Add(rules, 1, wxEXPAND | wxALL & ~wxTOP, 6);
+		sp->Add(fixed, 0, wxEXPAND); sp->Show(fixed,false);
+		wxSizer* s1 = new wxBoxSizer(wxVERTICAL);
+			s1->Add(new wxStaticText(panel, wxID_ANY, _("Keyword:")), 0);
+			s1->Add(keyword, 0, wxEXPAND | wxTOP, 2);
+		sp->Add(s1, 0, wxEXPAND | wxLEFT, 2);
+		sp->Add(new wxStaticLine(panel), 0, wxEXPAND | wxTOP | wxBOTTOM, 8);
+		wxSizer* s2 = new wxBoxSizer(wxVERTICAL);
+			s2->Add(new wxStaticText(panel, wxID_ANY, _("Match:")), 0);
+			s2->Add(match, 0, wxEXPAND | wxTOP, 2);
+			s2->Add(new wxStaticText(panel, wxID_ANY, _("Parameters:")), 0, wxTOP, 6);
+		sp->Add(s2, 0, wxEXPAND | wxLEFT, 2);
+		sp->Add(new wxStaticLine(panel), 0, wxEXPAND | wxTOP | wxBOTTOM, 8);
+		wxSizer* s3 = new wxBoxSizer(wxVERTICAL);
+			s3->Add(new wxStaticText(panel, wxID_ANY, _("Reminder:")), 0);
+			s3->Add(reminder, 1, wxEXPAND | wxTOP, 2);
+			s3->Add(errors,   0, wxEXPAND | wxTOP, 4);
+			s3->Add(new wxStaticText(panel, wxID_ANY, _("Example:")), 0, wxTOP, 6);
+		sp->Add(s3, 1, wxEXPAND | wxLEFT, 2);
+		sp->Add(new wxStaticLine(panel), 0, wxEXPAND | wxTOP | wxBOTTOM, 8);
+		wxSizer* s4 = new wxBoxSizer(wxVERTICAL);
+			s4->Add(new wxStaticText(panel, wxID_ANY, _("Rules:")), 0);
+			s4->Add(rules, 1, wxEXPAND | wxTOP, 2);
+		sp->Add(s4, 1, wxEXPAND | wxLEFT, 2);
 	panel->SetSizer(sp);
 	// init splitter
 	splitter->SetMinimumPaneSize(100);
@@ -135,6 +155,8 @@ void KeywordsPanel::onCommand(int id) {
 
 void KeywordsPanel::onChangeSet() {
 	list->setSet(set);
+	// warning label (depends on game name)
+	fixedL->SetLabel(format_string(_LABEL_("standard keyword"), set->game->short_name));
 	// init text controls
 	keyword ->setSet(set);
 	keyword ->getStyle().font.size = 16;
@@ -169,17 +191,14 @@ void KeywordsPanel::onAction(const Action& action, bool undone) {
 void KeywordsPanel::onKeywordSelect(KeywordSelectEvent& ev) {
 	if (ev.keyword) {
 		Keyword& kw = *ev.keyword;
-		//sp->Show(fixed, kw.fixed);
-		fixed->SetLabel(kw.fixed ? _("This is a standard $game keyword, you can not edit it. ")
-		                           _("If you make a copy of the keyword your copy will take precedent.")
-		                         : _(""));
-		Layout();
+		sp->Show(fixed, kw.fixed);
 		keyword ->setValue(new_shared5<KeywordTextValue>        (keyword->getFieldP(),  &kw, &kw.keyword, !kw.fixed, true));
 		match   ->setValue(new_shared4<KeywordTextValue>        (match->getFieldP(),    &kw, &kw.match,   !kw.fixed));
 		rules   ->setValue(new_shared4<KeywordTextValue>        (rules->getFieldP(),    &kw, &kw.rules,   !kw.fixed));
 		shared_ptr<KeywordReminderTextValue> reminder_value(new KeywordReminderTextValue(reminder->getFieldP(), &kw,              !kw.fixed));
 		reminder->setValue(reminder_value);
 		errors->SetLabel(reminder_value->errors);
+		sp->Layout();
 	} else {
 		keyword ->setValue(nullptr);
 		match   ->setValue(nullptr);

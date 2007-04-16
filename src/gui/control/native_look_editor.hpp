@@ -72,8 +72,6 @@ class StylingEditor : public NativeLookEditor {
   protected:
 	virtual void onChangeSet();
 	
-  private:
-	StyleSheetP stylesheet; ///< The stylesheet for which we are showing the styling data
 };
 
 // ----------------------------------------------------------------------------- : EOF

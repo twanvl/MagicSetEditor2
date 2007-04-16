@@ -91,6 +91,7 @@ void NativeLookEditor::resizeViewers() {
 }
 
 void NativeLookEditor::onInit() {
+	DataEditor::onInit();
 	// Give viewers a chance to show/hide controls (scrollbar) when selecting other editors
 	FOR_EACH_EDITOR {
 		e->onShow(true);
@@ -191,7 +192,6 @@ StylingEditor::StylingEditor(Window* parent, int id, long style)
 {}
 
 void StylingEditor::showStylesheet(const StyleSheetP& stylesheet) {
-	this->stylesheet = stylesheet;
 	setStyles(set->stylesheet, stylesheet->styling_style);
 	setData(set->stylingDataFor(*stylesheet));
 }

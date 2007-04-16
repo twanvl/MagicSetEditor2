@@ -53,10 +53,12 @@ void StylePanel::onChangeSet() {
 void StylePanel::onAction(const Action& action, bool undone) {
 	TYPE_CASE_(action, ChangeSetStyleAction) {
 		list->select(set->stylesheetFor(card)->name(), false);
+		editor->showStylesheet(set->stylesheetFor(card));
 	}
 	TYPE_CASE(action, ChangeCardStyleAction) {
 		if (action.card == card) {
 			list->select(set->stylesheetFor(card)->name(), false);
+			editor->showStylesheet(set->stylesheetFor(card));
 		}
 	}
 	use_for_all->Enable(card && card->stylesheet);
@@ -67,6 +69,7 @@ void StylePanel::onAction(const Action& action, bool undone) {
 void StylePanel::selectCard(const CardP& card) {
 	this->card = card;
 	preview->setCard(card);
+	editor->showStylesheet(set->stylesheetFor(card));
 	list->select(set->stylesheetFor(card)->name(), false);
 	use_for_all->Enable(card && card->stylesheet);
 }

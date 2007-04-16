@@ -52,7 +52,7 @@ void read_compat(Reader& tag, Keyword* k) {
 		k->match += separator.substr(start + 1, end - start - 1);
 	}
 	if (!parameter.empty()) {
-		k->match += _("<param>") + parameter + _("</param>");
+		k->match += _("<atom-param>") + parameter + _("</atom-param>");
 	}
 }
 
@@ -120,7 +120,7 @@ void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
 	// Parse the 'match' string
 	for (size_t i = 0 ; i < match.size() ;) {
 		Char c = match.GetChar(i);
-		if (is_substr(match, i, _("<param"))) {
+		if (is_substr(match, i, _("<atom-param"))) {
 			// parameter, determine type...
 			size_t start = skip_tag(match, i), end = match_close_tag(match, i);
 			String type = match.substr(start, end-start);
@@ -237,7 +237,7 @@ void KeywordDatabase::add(const Keyword& kw) {
 	KeywordTrie* cur = root->insertAnyStar();
 	for (size_t i = 0 ; i < kw.match.size() ;) {
 		Char c = kw.match.GetChar(i);
-		if (is_substr(kw.match, i, _("<param"))) {
+		if (is_substr(kw.match, i, _("<atom-param"))) {
 			// tag, parameter, match anything
 			cur = cur->insertAnyStar();
 			i = match_close_tag_end(kw.match, i);

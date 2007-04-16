@@ -115,20 +115,24 @@ FakeTextValue::FakeTextValue(const TextFieldP& field, String* underlying, bool e
 {}
 
 void FakeTextValue::store() {
-	if (editable) {
-		*underlying = untagged ? untag(value) : value;
-	} else {
-		retrieve();
+	if (underlying) {
+		if (editable) {
+			*underlying = untagged ? untag(value) : value;
+		} else {
+			retrieve();
+		}
 	}
 }
 void FakeTextValue::retrieve() {
-	value.assign(untagged ? escape(*underlying) : *underlying);
+	if (underlying) {
+		value.assign(untagged ? escape(*underlying) : *underlying);
+	} else {
+		value.assign(wxEmptyString);
+	}
 }
 
 void FakeTextValue::onAction(Action& a, bool undone) {
-	if (underlying) {
-		store();
-	}
+	store();
 }
 
 bool FakeTextValue::equals(const Value* that) {
