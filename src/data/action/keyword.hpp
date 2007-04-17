@@ -97,5 +97,10 @@ class KeywordReminderTextValue : public KeywordTextValue {
 	void highlight(const String& code, const vector<ScriptParseError>& errors);
 };
 
+/// Changing the mode of a keyword
+class ChangeKeywordModeAction : public Action {
+	
+};
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

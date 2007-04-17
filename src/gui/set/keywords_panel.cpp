@@ -22,6 +22,9 @@
 #include <wx/statline.h>
 #include <wx/artprov.h>
 
+DECLARE_TYPEOF_COLLECTION(KeywordParamP);
+DECLARE_TYPEOF_COLLECTION(KeywordModeP);
+
 // ----------------------------------------------------------------------------- : KeywordsPanel
 
 KeywordsPanel::KeywordsPanel(Window* parent, int id)
@@ -36,6 +39,8 @@ KeywordsPanel::KeywordsPanel(Window* parent, int id)
 	reminder  = new TextCtrl(panel, wxID_ANY, true); // allow multiline for wordwrap
 	rules     = new TextCtrl(panel, wxID_ANY, true);
 	errors    = new wxStaticText(panel, wxID_ANY, _(""));
+	mode      = new wxChoice(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr);
+	add_param = new wxButton(panel, ID_KEYWORD_ADD_PARAM, _("Insert Parameter"));
 	// warning about fixed keywords
 	fixedL    = new wxStaticText(panel, wxID_ANY, _(""));
 	wxStaticBitmap* fixedI = new wxStaticBitmap(panel, wxID_ANY, wxArtProvider::GetBitmap(wxART_WARNING));
@@ -52,12 +57,15 @@ KeywordsPanel::KeywordsPanel(Window* parent, int id)
 		wxSizer* s1 = new wxBoxSizer(wxVERTICAL);
 			s1->Add(new wxStaticText(panel, wxID_ANY, _("Keyword:")), 0);
 			s1->Add(keyword, 0, wxEXPAND | wxTOP, 2);
+			s1->Add(new wxStaticText(panel, wxID_ANY, _("Mode:")), 0, wxTOP, 2);
+			s1->Add(mode, 0, wxEXPAND | wxTOP, 2);
 		sp->Add(s1, 0, wxEXPAND | wxLEFT, 2);
 		sp->Add(new wxStaticLine(panel), 0, wxEXPAND | wxTOP | wxBOTTOM, 8);
 		wxSizer* s2 = new wxBoxSizer(wxVERTICAL);
 			s2->Add(new wxStaticText(panel, wxID_ANY, _("Match:")), 0);
 			s2->Add(match, 0, wxEXPAND | wxTOP, 2);
 			s2->Add(new wxStaticText(panel, wxID_ANY, _("Parameters:")), 0, wxTOP, 6);
+			s2->Add(add_param, 0, wxALIGN_LEFT | wxTOP, 2);
 		sp->Add(s2, 0, wxEXPAND | wxLEFT, 2);
 		sp->Add(new wxStaticLine(panel), 0, wxEXPAND | wxTOP | wxBOTTOM, 8);
 		wxSizer* s3 = new wxBoxSizer(wxVERTICAL);
@@ -127,6 +135,8 @@ void KeywordsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 		case ID_KEYWORD_PREV:       ev.Enable(list->canSelectPrevious());	break;
 		case ID_KEYWORD_NEXT:       ev.Enable(list->canSelectNext());		break;
 		case ID_KEYWORD_REMOVE:     ev.Enable(list->getKeyword() && !list->getKeyword()->fixed);	break;
+		case ID_KEYWORD_ADD_PARAM:
+			break;
 	}
 }
 
@@ -147,6 +157,14 @@ void KeywordsPanel::onCommand(int id) {
 				set->actions.add(new RemoveKeywordAction(*set, list->getKeyword()));
 			}
 			break;
+		case ID_KEYWORD_ADD_PARAM: {
+			wxMenu param_menu;
+			FOR_EACH(p, set->game->keyword_parameter_types) {
+				param_menu.Append(wxID_ANY, p->name);
+			}
+			add_param->PopupMenu(&param_menu, 0, add_param->GetSize().y);
+			break;
+		}
 	}
 }
 
@@ -174,6 +192,12 @@ void KeywordsPanel::onChangeSet() {
 	match   ->getStyle().font.font.SetPointSize(10);
 	reminder->updateSize();
 	rules   ->setSet(set);
+	// parameter & mode lists
+	add_param->Enable(false);
+	mode->Clear();
+	FOR_EACH(m, set->game->keyword_modes) {
+		mode->Append(m->name);
+	}
 	// re-layout
 	panel->Layout();
 }
@@ -198,12 +222,16 @@ void KeywordsPanel::onKeywordSelect(KeywordSelectEvent& ev) {
 		shared_ptr<KeywordReminderTextValue> reminder_value(new KeywordReminderTextValue(reminder->getFieldP(), &kw,              !kw.fixed));
 		reminder->setValue(reminder_value);
 		errors->SetLabel(reminder_value->errors);
+		add_param->Enable(!kw.fixed && !set->game->keyword_parameter_types.empty());
+		mode->SetStringSelection(kw.mode);
 		sp->Layout();
 	} else {
 		keyword ->setValue(nullptr);
 		match   ->setValue(nullptr);
 		rules   ->setValue(nullptr);
 		reminder->setValue(nullptr);
+		add_param->Enable(false);
+		mode     ->Enable(false);
 	}
 }
 

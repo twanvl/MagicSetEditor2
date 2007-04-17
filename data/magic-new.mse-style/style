@@ -34,6 +34,8 @@ init script:
 		else if styling.tap_symbol == "diagonal T" then "older"
 		else                                            "new"
 	}
+	# Use guild mana symbols?
+	guild_mana := { styling.use_guild_mana_symbols }
 	
 	# Does the card have a color that requires a white font for copyright/artist?
 	white_font_colors := filter_rule(match:"^(hybrid 2 color )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(black|land|hybrid 4 color w/u/b/r)")
@@ -90,6 +92,10 @@ styling style:
 			light: oacard.jpg
 			dark:  acard.jpg
 			brown: bacard.jpg
+	use guild mana symbols:
+		choice images:
+			yes: /magic-mana-small.mse-symbol-font/mana_guild_rg.png
+			no:  /magic-mana-small.mse-symbol-font/mana_rg.png
 	popup mana symbols:
 		choice images:
 			yes: /magic-mana-large.mse-symbol-font/mana_w.png

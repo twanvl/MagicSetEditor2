@@ -95,6 +95,9 @@ init script:
 ############################################################## Set fields
 
 set field:
+	type: info
+	name: Set Information
+set field:
 	type: text
 	name: title
 set field:
@@ -107,6 +110,9 @@ set field:
 set field:
 	type: text
 	name: copyright
+set field:
+	type: info
+	name: Defaults and Automation
 set field:
 	type: color
 	name: border color
@@ -128,6 +134,14 @@ set field:
 	name: automatic card numbers
 	initial: no
 	description: Should card numbers be shown on the cards?
+
+############################# Default style
+
+default set style:
+	title:
+		padding left: 2
+		font:
+			size: 16
 
 ############################################################## Card fields
 

@@ -23,8 +23,14 @@ init script:
 	# Horizontal 5 color blends are not supported
 	card_hybrid_5b := card_hybrid_5
 	
-	# Use the old tap symbol
-	mana_t := { "old" }
+	# Use the normal tap symbol
+	mana_t := {
+		if      styling.tap_symbol == "old"        then "old"
+		else if styling.tap_symbol == "diagonal T" then "older"
+		else                                            "new"
+	}
+	# Use guild mana symbols?
+	guild_mana := { styling.use_guild_mana_symbols }
 	
 	# Does the card have a color that requires a black font for copyright/artist?
 	black_font_colors := filter_rule(match:"^(hybrid 2 color)?white")
@@ -35,57 +41,43 @@ init script:
 			rgb(255,255,255)
 	}
 
-############################################################## Set info fields
-info style:
-	title:
-		padding left: 2
-		font:
-			size: 16
-	symbol:
-		variation:
-			name: common
-			border radius: 0.10
-			fill type: solid
-			fill color:   rgb(0,0,0)
-			border color: rgb(255,255,255)
-		variation:
-			name: uncommon
-			border radius: 0.05
-			fill type: linear gradient
-			fill color 1:   rgb(224,224,224)
-			fill color 2:   rgb(84, 84, 84)
-			border color 1: rgb(0,  0,  0)
-			border color 2: rgb(0,  0,  0)
-		variation:
-			name: rare
-			border radius: 0.05
-			fill type: linear gradient
-			fill color 1:   rgb(214,196,94)
-			fill color 2:   rgb(95, 84, 40)
-			border color 1: rgb(0,  0,  0)
-			border color 2: rgb(0,  0,  0)
-		variation:
-			name: special
-			border radius: 0.10
-			fill type: linear gradient
-			fill color 1:   rgb(224,170,247)
-			fill color 2:   rgb(58,7,80)
-			border color 1: rgb(255,255,255)
-			border color 2: rgb(255,255,255)
-	automatic reminder text:
+
+############################################################## Extra style options
+
+styling field:
+	type: boolean
+	name: use guild mana symbols
+	description: Use the Ravnica guild symbols instead of the official half/half circles for hybrid mana.
+	initial: no
+styling field:
+	type: boolean
+	name: popup mana symbols
+	description: Use the symbols of the casting cost line inside the text box as well
+	initial: no
+styling field:
+	type: choice
+	name: tap symbol
+	description: What tap symbol should be used on cards?
+	initial: old
+	choice: modern
+	choice: old
+	choice: diagonal T
+
+styling style:
+	use guild mana symbols:
+		choice images:
+			yes: /magic-mana-small.mse-symbol-font/mana_guild_rg.png
+			no:  /magic-mana-small.mse-symbol-font/mana_rg.png
+	popup mana symbols:
+		choice images:
+			yes: /magic-mana-large.mse-symbol-font/mana_w.png
+			no:  /magic-mana-small.mse-symbol-font/mana_w.png
+	tap symbol:
 		render style: both
 		choice images:
-			yes: script: buildin_image("bool_yes")
-			no:  script: buildin_image("bool_no")
-	use gradient multicolor:
-		render style: both
-		choice images:
-			yes: script: buildin_image("bool_yes")
-			no:  script: buildin_image("bool_no")
-
-
-
-############################################################## Extra style
+			modern:     /magic-mana-large.mse-symbol-font/mana_t.png
+			old:        /magic-mana-large.mse-symbol-font/mana_t_old.png
+			diagonal T: /magic-mana-large.mse-symbol-font/mana_t_older.png
 
 ############################################################## Card fields
 card style:
@@ -203,7 +195,11 @@ card style:
 			scale down to: 6
 			color: rgb(0,0,0)
 		symbol font:
-			name: magic-mana-small
+			name:
+				script:
+					if styling.popup_mana_symbols
+					then "magic-mana-large"
+					else "magic-mana-small"
 			size: 13
 		align: middle left
 		z index: 2

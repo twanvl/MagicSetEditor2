@@ -271,22 +271,19 @@ set field:
 		name: gold
 		color: rgb(200,180,0)
 set field:
-	type: choice
-	name: automatic reminder text
-	choice: yes
-	choice: only for custom keywords
-	choice: no
-	description: Should reminder text be added to keywords by default? Note: you can enable/disable reminder text by right clicking the keyword.
-set field:
-	# TODO : RENAME
 	type: multiple choice
-	name: automatic reminder text2
+	name: automatic reminder text
 	choice: old
 	choice: core
 	choice: expert
 	choice: custom
-	initial: old, core, export, custom
-	description: Should reminder text be added to keywords by default? Note: you can enable/disable reminder text by right clicking the keyword.
+	initial: old, core, expert, custom
+	# Convert from older mse versions
+	script:
+		if value = "yes" then "old, core, expert, custom"
+		else if value = "no" then ""
+		else value
+	description: For which kinds of keywords should reminder text be added by default? Note: you can enable/disable reminder text by right clicking the keyword.
 set field:
 	type: boolean
 	name: automatic card numbers
@@ -343,11 +340,6 @@ default set style:
 			border color 1: rgb(255,255,255)
 			border color 2: rgb(255,255,255)
 	automatic reminder text:
-		render style: both
-		choice images:
-			yes: script: buildin_image("bool_yes")
-			no:  script: buildin_image("bool_no")
-	automatic reminder text2:
 		render style: checklist
 		direction: vertical
 	use gradient multicolor:
@@ -891,7 +883,7 @@ statistics category:
 
 has keywords: true
 
-keyword preview: {keyword} <i>({reminder})</i>
+#keyword preview: {keyword} <i>({reminder})</i>
 
 keyword mode:
 	name: old
@@ -970,12 +962,12 @@ keyword:
 	reminder: This creature deals combat damage before creatures without first strike.
 keyword:
 	keyword: Enchant
-	match: Enchant <param>name</param>
+	match: Enchant <atom-param>name</atom-param>
 	mode: core
-	reminder: Target a <param> as you play this. This card comes into play attached to that {param1}.
+	reminder: Target a {param1} as you play this. This card comes into play attached to that {param1}.
 keyword:
 	keyword: Cycling
-	match: Cycling <param>cost</param>
+	match: Cycling <atom-param>cost</atom-param>
 	mode: core
 	reminder: {param1}, Discard this card: Draw a card.
 keyword:
@@ -988,7 +980,7 @@ keyword:
 	reminder: When declaring attackers or blockers this creature may group with others creatures with banding and one creature without banding. When damage is dealt, you decide where damage is dealt.
 keyword:
 	keyword: Rampage
-	match: Rampage <param>number</param>
+	match: Rampage <atom-param>number</atom-param>
 	mode: old
 	reminder: Whenever this creature becomes blocked, it gets +{param1}/+{param1} until end of turn for each creature blocking it beyond the first.
 keyword:
@@ -1001,7 +993,7 @@ keyword:
 	reminder: This creature can’t attack.
 keyword:
 	keyword: Cumulative upkeep
-	match: Cumulative upkeep <param>cost</param>
+	match: Cumulative upkeep <atom-param>cost</atom-param>
 	mode: old
 	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay {param1} for each age counter on it.
 keyword:
@@ -1014,7 +1006,7 @@ keyword:
 	reminder: At the beginning of your upkeep, put this and any cards attached to it in the phased-out zone.  If this is already in the phased-out zone, return it and any card attached to it to play.  If there were counters on this card when it phased out, put that many counters on it when it returns to play.  This ability does not cause comes-into-play or leaves play abilities to trigger.
 keyword:
 	keyword: Flanking
-	match: Flanking <param>number</param>
+	match: Flanking <atom-param>number</atom-param>
 	mode: old
 	reminder: Whenever a creature without flanking blocks this creature, the blocking creature gets -{param1}/-{param1} until end of turn.
 keyword:
@@ -1023,7 +1015,7 @@ keyword:
 	reminder: This creature can block or be blocked by only creatures with shadow.
 keyword:
 	keyword: Buyback
-	match: Buyback <param>cost</param>
+	match: Buyback <atom-param>cost</atom-param>
 	mode: expert
 	reminder: You may pay {param1} in addition to any other costs as you play this spell. If you do, put ~ into your hand instead of your graveyard as part of its resolution.
 keyword:
@@ -1031,32 +1023,23 @@ keyword:
 	mode: expert
 	reminder: At the beginning of your next upkeep after this permanent comes under your control, sacrifice it unless you pay its mana cost.
 keyword:
-	keyword: Plainscycling
-	separator: whitespace [ ]
-	parameter: cost
-	mode: expert
-	reminder: <param>, Discard this card: Search your library for a Plains card, reveal it, and put it into your hand. Then shuffle your library.
-keyword:
 	keyword: Landcycling
-	match: <param>prefix</param>cycling <param>cost</param>
+	match: <atom-param>prefix</atom-param>cycling <atom-param>cost</atom-param>
 	mode: expert
 	reminder: {param2}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
 keyword:
 	keyword: Fading
-	separator: whitespace [ ]
-	parameter: number (a, two, ...)
+	match: Fading <atom-param>number</atom-param>
 	mode: expert
-	reminder: This comes into play with <param> fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can’t, sacrifice it.
+	reminder: This comes into play with {param1} fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can’t, sacrifice it.
 keyword:
 	keyword: Kicker
-	separator: whitespace [ ]
-	parameter: cost
+	match: Kicker <atom-param>cost</atom-param>
 	mode: expert
-	reminder: You may pay an additional <param> as you play this spell.
+	reminder: You may pay an additional {param1} as you play this spell.
 keyword:
 	keyword: Madness
-	separator: whitespace [ ]
-	parameter: cost
+	match: Madness <atom-param>cost</atom-param>
 	mode: expert
 	reminder: You may play this card for its madness cost at the time you discard it.
 keyword:
@@ -1082,7 +1065,7 @@ keyword:
 	separator: whitespace [ ]
 	parameter: number (a, two, ...)
 	mode: expert
-	reminder: As this card comes into play, put <param> +1/+1 counter(s) on it for each creature that shares a type with this that you reveal in your hand.
+	reminder: As this card comes into play, put {param1} +1/+1 counter(s) on it for each creature that shares a type with this that you reveal in your hand.
 keyword:
 	keyword: Double strike
 	mode: expert
@@ -1112,7 +1095,7 @@ keyword:
 	separator: whitespace [ ]
 	parameter: cost
 	mode: expert
-	reminder: <param>: Attach to target creature you control. Equip only as a sorcery. This card comes into play unattached and stays in play if the creature leaves play.
+	reminder: {param1}: Attach to target creature you control. Equip only as a sorcery. This card comes into play unattached and stays in play if the creature leaves play.
 keyword:
 	keyword: Imprint
 	separator: dash [ - ]
@@ -1124,20 +1107,20 @@ keyword:
 	separator: whitespace [ ]
 	parameter: number (a, two, ...)
 	mode: expert
-	reminder: This comes into play with <param> +1/+1 counter(s) on it. When it’s put into a graveyard, you may put its +1/+1 counters on target artifact creature.
+	reminder: This comes into play with {param1} +1/+1 counter(s) on it. When it’s put into a graveyard, you may put its +1/+1 counters on target artifact creature.
 keyword:
 	keyword: Scry
 	separator: whitespace [ ]
 	parameter: number (, two, ...)
 	mode: expert
-	reminder: Look at the top <param> card(s) of your library. Put any number of them on the bottom of your library in any order and the rest on top of your library in any order.
+	reminder: Look at the top {param1} card(s) of your library. Put any number of them on the bottom of your library in any order and the rest on top of your library in any order.
 keyword:
 	keyword: Sunburst
 	mode: expert
 	reminder: This comes into play with a +1/+1 counter on it for each color of mana used to pay its cost. If it is not a creature, use charge counters instead.
 #keyword:
 	keyword: Splice
-	match: Splice onto <param>name</param> <param>cost</param>
+	match: Splice onto <atom-param>name</atom-param> <atom-param>cost</atom-param>
 	mode: expert
 	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
 keyword:
@@ -1151,25 +1134,25 @@ keyword:
 	separator: dash [ - ]
 	parameter: name
 	mode: expert
-	reminder: You may play this card any time you could play an instant by sacrificing a <param> and paying the difference in mana costs between this and the sacrificed <param>. Mana cost includes color.
+	reminder: You may play this card any time you could play an instant by sacrificing a {param1} and paying the difference in mana costs between this and the sacrificed {param1}. Mana cost includes color.
 keyword:
 	keyword: Bushido
 	separator: whitespace [ ]
 	parameter: number
 	mode: expert
-	reminder: When this blocks or becomes blocked, it gets +<param>/+<param> until end of turn.
+	reminder: When this blocks or becomes blocked, it gets +{param1}/+{param1} until end of turn.
 keyword:
 	keyword: Ninjutsu
 	separator: whitespace [ ]
 	parameter: cost
 	mode: expert
-	reminder: <param>, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
+	reminder: {param1}, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
 keyword:
 	keyword: Soulshift
 	separator: whitespace [ ]
 	parameter: number
 	mode: expert
-	reminder: When this is put into a graveyard from play, you may return target Spirit card with converted mana cost <param> or less from you graveyard to your hand.
+	reminder: When this is put into a graveyard from play, you may return target Spirit card with converted mana cost {param1} or less from you graveyard to your hand.
 keyword:
 	keyword: Epic
 	mode: expert
@@ -1183,7 +1166,7 @@ keyword:
 	separator: whitespace [ ]
 	parameter: cost
 	mode: expert
-	reminder: <param>, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
+	reminder: {param1}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
 keyword:
 	keyword: Haunt
 	mode: expert
@@ -1193,7 +1176,7 @@ keyword:
 	separator: whitespace [ ]
 	parameter: number (a, two, ...)
 	mode: expert
-	reminder: If an opponent was dealt damage this turn, this creature comes into play with <param> +1/+1 counter(s) on it.
+	reminder: If an opponent was dealt damage this turn, this creature comes into play with {param1} +1/+1 counter(s) on it.
 keyword:
 	keyword: Replicate
 	separator: whitespace [ ]
@@ -1218,7 +1201,7 @@ keyword:
 	reminder: If defending player is wearing any clothing made of denim, this creature is unblockable.
 keyword:
 	keyword: Landwalk
-	match: <param>prefix</param>walk
+	match: <atom-param>prefix</atom-param>walk
 	mode: core
 	reminder: This creature is unblockable as long as defending player controls a {param1}.
 keyword:
@@ -1226,19 +1209,19 @@ keyword:
 	separator: whitespace [ ] 
 	parameter: name
 	mode: core
-	reminder: This creature can’t be blocked, targeted, dealt damage, or enchanted by anything <param>.
+	reminder: This creature can’t be blocked, targeted, dealt damage, or enchanted by anything {param1}.
 keyword:
 	keyword: Dredge
 	separator: whitespace [ ]
 	parameter: number (one, two, ...)
 	mode: expert
-	reminder: As long as you have at least <param> card(s) in your library, if you would draw a card, you may instead put exactly <param> card(s) from the top of your library into your graveyard and return this card from your graveyard to your hand.
+	reminder: As long as you have at least {param1} card(s) in your library, if you would draw a card, you may instead put exactly {param1} card(s) from the top of your library into your graveyard and return this card from your graveyard to your hand.
 keyword:
 	keyword: Graft
 	separator: whitespace [ ]
 	parameter: number (a, two, ...)
 	mode: expert
-	reminder: This creature comes into play with <param> +1/+1 counter(s) on it. Whenever another creature comes into play, you may move a +1/+1 counter from this creature onto it.
+	reminder: This creature comes into play with {param1} +1/+1 counter(s) on it. Whenever another creature comes into play, you may move a +1/+1 counter from this creature onto it.
 keyword:
 	keyword: Forecast
 	separator: whitespace [ ]

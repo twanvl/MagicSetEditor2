@@ -52,6 +52,8 @@ class KeywordsPanel : public SetWindowPanel {
 	wxStaticText*     fixedL;
 	wxSizer*          fixed;
 	wxStaticText*     errors;
+	wxChoice*         mode;
+	wxButton*         add_param;
 	/// Controls to edit a parameter
 	struct ParamEditor {
 		wxStaticText* label;

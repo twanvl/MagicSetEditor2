@@ -57,7 +57,7 @@ bool   DataViewer::drawEditing()   const { return false; }
 bool   DataViewer::drawFocus()     const { return false; }
 wxPen  DataViewer::borderPen(bool) const { return wxPen(); }
 ValueViewer* DataViewer::focusedViewer() const { return nullptr; }
-Context& DataViewer::getContext()  const { return set->getContext(); }
+Context& DataViewer::getContext()  const { return set->getContext(card); }
 
 Rotation DataViewer::getRotation() const {
 	if (!stylesheet) stylesheet = set->stylesheet;
@@ -68,7 +68,7 @@ Rotation DataViewer::getRotation() const {
 // ----------------------------------------------------------------------------- : Setting data
 
 void DataViewer::setCard(const CardP& card) {
-	if (!card) return; // TODO: clear editor?
+	if (!card) return; // TODO: clear vie?
 	assert(set);
 	this->card = card;
 	stylesheet = set->stylesheetFor(card);
