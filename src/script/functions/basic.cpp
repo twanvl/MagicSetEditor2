@@ -219,8 +219,8 @@ SCRIPT_FUNCTION(number_of_items) {
 
 // ----------------------------------------------------------------------------- : Keywords
 
-SCRIPT_RULE_2_N(expand_keywords,  ScriptValueP, _("default expand"), default_expand,
-                                  ScriptValueP, _("combine"),        combine) {
+SCRIPT_RULE_2_N_DEP(expand_keywords, ScriptValueP, _("default expand"), default_expand,
+                                     ScriptValueP, _("combine"),        combine) {
 	SCRIPT_PARAM(String, input);
 	SCRIPT_PARAM(Set*, set);
 	KeywordDatabase& db = set->keyword_db;
@@ -232,7 +232,13 @@ SCRIPT_RULE_2_N(expand_keywords,  ScriptValueP, _("default expand"), default_exp
 	}
 	SCRIPT_RETURN(db.expand(input, default_expand, combine, ctx));
 }
-
+SCRIPT_RULE_2_DEPENDENCIES(expand_keywords) {
+	default_expand->dependencies(ctx, dep);
+	combine       ->dependencies(ctx, dep);
+	SCRIPT_PARAM(Set*, set);
+	set->game->dependent_scripts_keywords.add(dep); // this depends on the set's keywords
+	SCRIPT_RETURN(_(""));
+}
 
 // ----------------------------------------------------------------------------- : Rules : regex replace
 

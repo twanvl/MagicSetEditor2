@@ -33,8 +33,10 @@ void ActionStack::add(Action* action, bool allow_merge) {
 	FOR_EACH(a, redo_actions) delete a;
 	redo_actions.clear();
 	// try to merge?
-	if (allow_merge && !undo_actions.empty() && undo_actions.back()->merge(*action)) {
-		// merged with top undo action
+	if (allow_merge && !undo_actions.empty() &&
+	    undo_actions.back() != save_point    && // never merge with the save point
+	    undo_actions.back()->merge(*action) // merged with top undo action
+	    ) {
 		delete action;
 	} else {
 		undo_actions.push_back(action);

@@ -124,6 +124,7 @@ bool TextValueEditor::onRightDown(const RealPoint& pos, wxMouseEvent& ev) {
 // ----------------------------------------------------------------------------- : Keyboard
 
 bool TextValueEditor::onChar(wxKeyEvent& ev) {
+	if (ev.AltDown()) return false;
 	fixSelection();
 	switch (ev.GetKeyCode()) {
 		case WXK_LEFT:
@@ -198,6 +199,8 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 				//       this might not work for internationalized input.
 				//       It might also not be portable!
 				replaceSelection(escape(String(ev.GetUnicodeKey(), 1)), _("Typing"));
+			} else {
+				return false;
 			}
 	}
 	return true;
@@ -365,7 +368,8 @@ bool TextValueEditor::canFormat(int type) const {
 		case ID_FORMAT_SYMBOL:
 			return !style().always_symbol && style().allow_formating && style().symbol_font.valid();
 		case ID_FORMAT_REMINDER:
-			return false; // TODO
+			return !style().always_symbol && style().allow_formating &&
+			       in_tag(value().value(), _("<kw"), selection_start_i, selection_end_i) != String::npos;
 		default:
 			return false;
 	}
@@ -379,9 +383,15 @@ bool TextValueEditor::hasFormat(int type) const {
 			return in_tag(value().value(), _("<i"),   selection_start_i, selection_end_i) != String::npos;
 		case ID_FORMAT_SYMBOL:
 			return in_tag(value().value(), _("<sym"), selection_start_i, selection_end_i) != String::npos;
-		case ID_FORMAT_REMINDER:
-			return false; // TODO
-		default:
+		case ID_FORMAT_REMINDER: {
+			const String& v = value().value();
+			size_t tag = in_tag(v, _("<kw"),  selection_start_i, selection_end_i);
+			if (tag != String::npos && tag + 4 < v.size()) {
+				Char c = v.GetChar(tag + 4);
+				return c == _('1') || c == _('A');
+			}
+			return false;
+		} default:
 			return false;
 	}
 }

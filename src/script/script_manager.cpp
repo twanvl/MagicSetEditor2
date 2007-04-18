@@ -16,6 +16,7 @@
 #include <data/field.hpp>
 #include <data/action/set.hpp>
 #include <data/action/value.hpp>
+#include <data/action/keyword.hpp>
 #include <util/error.hpp>
 
 typedef map<const StyleSheet*,Context*> Contexts;
@@ -131,6 +132,12 @@ void SetScriptManager::initDependencies(Context& ctx, StyleSheet& stylesheet) {
 
 void SetScriptManager::onAction(const Action& action, bool undone) {
 	TYPE_CASE(action, ValueAction) {
+		// is it a keyword's fake value?
+		KeywordTextValue* value = dynamic_cast<KeywordTextValue*>(action.valueP.get());
+		if (value) {
+			updateAllDependend(set.game->dependent_scripts_keywords);
+			return;
+		}
 		// find the affected card
 		FOR_EACH(card, set.cards) {
 			if (card->data.contains(action.valueP)) {
@@ -138,6 +145,7 @@ void SetScriptManager::onAction(const Action& action, bool undone) {
 				return;
 			}
 		}
+		// not a card value
 		updateValue(*action.valueP, CardP());
 	}
 	TYPE_CASE_(action, ScriptValueEvent) {
@@ -159,6 +167,14 @@ void SetScriptManager::onAction(const Action& action, bool undone) {
 		#ifdef LOG_UPDATES
 			wxLogDebug(_("-------------------------------\n"));
 		#endif
+	}
+	TYPE_CASE_(action, KeywordListAction) {
+		updateAllDependend(set.game->dependent_scripts_keywords);
+		return;
+	}
+	TYPE_CASE_(action, ChangeKeywordModeAction) {
+		updateAllDependend(set.game->dependent_scripts_keywords);
+		return;
 	}
 }
 

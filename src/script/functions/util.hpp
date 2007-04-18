@@ -143,6 +143,13 @@
         SCRIPT_RULE_2_N(funname, type1, _(#name1), name1, type2, _(#name2), name2)
 /// Utility for defining a script rule with two named parameters
 #define SCRIPT_RULE_2_N(funname, type1, str1, name1, type2, str2, name2)	\
+	SCRIPT_RULE_2_N_AUX(funname, type1, str1, name1, type2, str2, name2, ;)
+/// Utility for defining a script rule with two named parameters, with dependencies
+#define SCRIPT_RULE_2_N_DEP(funname, type1, str1, name1, type2, str2, name2)\
+	SCRIPT_RULE_2_N_AUX(    funname, type1, str1, name1, type2, str2, name2,\
+		virtual ScriptValueP dependencies(Context&, const Dependency&) const;)
+
+#define SCRIPT_RULE_2_N_AUX(funname, type1, str1, name1, type2, str2, name2, dep) \
 	class ScriptRule_##funname: public ScriptValue {						\
 	  public:																\
 		inline ScriptRule_##funname(const type1& name1, const type2& name2)	\
@@ -150,6 +157,7 @@
 		virtual ScriptType type() const { return SCRIPT_FUNCTION; }			\
 		virtual String typeName() const { return _(#funname)_("_rule"); }	\
 		virtual ScriptValueP eval(Context& ctx) const;						\
+		dep																	\
 	  private:																\
 		type1 name1;														\
 		type2 name2;														\
@@ -165,6 +173,9 @@
 		return ScriptRule_##funname(name1, name2).eval(ctx);				\
 	}																		\
 	ScriptValueP ScriptRule_##funname::eval(Context& ctx) const
+
+#define SCRIPT_RULE_2_DEPENDENCIES(name)									\
+	ScriptValueP ScriptRule_##name::dependencies(Context& ctx, const Dependency& dep) const
 
 
 // ----------------------------------------------------------------------------- : EOF
