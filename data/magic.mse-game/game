@@ -156,7 +156,7 @@ init script:
 		# step 2 : reminder text for keywords
 		expand_keywords_rule(
 			default_expand: { contains(match:mode, set.automatic_reminder_text, match:mode) },
-			combine:        { "{keyword}<atom-reminder><i> ({reminder})</i></atom-reminder>" }
+			combine:        { "{keyword}<atom-reminder><i> ({process_english_hints(reminder)})</i></atom-reminder>" }
 			) +
 		# step 3a : expand shortcut words ~ and CARDNAME
 		replace_rule(
@@ -1035,8 +1035,7 @@ keyword:
 	reminder: You may play this card for its madness cost at the time you discard it.
 keyword:
 	keyword: Threshold
-	separator: dash [ - ]
-	parameter: action
+	match: Threshold - <atom-param>action</atom-param>
 	mode: expert
 	reminder: You have threshold as long as seven or more cards are in your graveyard.
 keyword:
@@ -1053,10 +1052,9 @@ keyword:
 	reminder: You may play this face down as a 2/2 creature for [3]. Turn it face up any time for its morph cost.
 keyword:
 	keyword: Amplify
-	separator: whitespace [ ]
-	parameter: number (a, two, ...)
+	match: Amplify <atom-param>number</atom-param>
 	mode: expert
-	reminder: As this card comes into play, put {param1} +1/+1 counter(s) on it for each creature that shares a type with this that you reveal in your hand.
+	reminder: As this card comes into play, put {english_number(param1)} +1/+1 counter(s) on it for each creature that shares a type with this that you reveal in your hand.
 keyword:
 	keyword: Double strike
 	mode: expert
@@ -1101,25 +1099,18 @@ keyword:
 	reminder: This comes into play with {param1} +1/+1 counter(s) on it. When it’s put into a graveyard, you may put its +1/+1 counters on target artifact creature.
 keyword:
 	keyword: Scry
-	separator: whitespace [ ]
-	parameter: number (, two, ...)
+	match: Scry <atom-param>number</atom-param>
 	mode: expert
-	reminder: Look at the top {param1} card(s) of your library. Put any number of them on the bottom of your library in any order and the rest on top of your library in any order.
+	reminder: Look at the top {english_number_multiple(param1)} card(s) of your library. Put any number of them on the bottom of your library in any order and the rest on top of your library in any order.
 keyword:
 	keyword: Sunburst
 	mode: expert
 	reminder: This comes into play with a +1/+1 counter on it for each color of mana used to pay its cost. If it is not a creature, use charge counters instead.
-#keyword:
+keyword:
 	keyword: Splice
 	match: Splice onto <atom-param>name</atom-param> <atom-param>cost</atom-param>
 	mode: expert
 	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
-keyword:
-	keyword: Splice onto Arcane
-	separator: whitespace [ ]
-	parameter: cost
-	mode: expert
-	reminder: As you play an Arcane spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
 keyword:
 	keyword: Offering
 	separator: dash [ - ]
@@ -1203,16 +1194,15 @@ keyword:
 	reminder: This creature can’t be blocked, targeted, dealt damage, or enchanted by anything {param1}.
 keyword:
 	keyword: Dredge
-	separator: whitespace [ ]
-	parameter: number (one, two, ...)
+	match: Dredge <atom-param>number</atom-param>
 	mode: expert
-	reminder: As long as you have at least {param1} card(s) in your library, if you would draw a card, you may instead put exactly {param1} card(s) from the top of your library into your graveyard and return this card from your graveyard to your hand.
+	reminder: As long as you have at least {english_number(param1)} card(s) in your library, if you would draw a card, you may instead put exactly {param1} card(s) from the top of your library into your graveyard and return this card from your graveyard to your hand.
 keyword:
 	keyword: Graft
 	separator: whitespace [ ]
-	parameter: number (a, two, ...)
+	parameter: number
 	mode: expert
-	reminder: This creature comes into play with {param1} +1/+1 counter(s) on it. Whenever another creature comes into play, you may move a +1/+1 counter from this creature onto it.
+	reminder: This creature comes into play with {english_number(param1)} +1/+1 counter(s) on it. Whenever another creature comes into play, you may move a +1/+1 counter from this creature onto it.
 keyword:
 	keyword: Forecast
 	separator: whitespace [ ]

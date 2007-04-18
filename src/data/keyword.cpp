@@ -405,8 +405,12 @@ String KeywordDatabase::expand(const String& text,
 										ctx.setVariable(_("input"), to_script(part));
 										param = kwp.script.invoke(ctx)->toString();
 									}
-									part  = _("<param-") + kwp.name + _(">") + part  + _("</param-") + kwp.name + _(">");
-									param = _("<param-") + kwp.name + _(">") + param + _("</param-") + kwp.name + _(">");
+									String param_type = replace_all(replace_all(replace_all(kwp.name,
+															_("("),_("-")),
+															_(")"),_("-")),
+															_(" "),_("-"));
+									part  = _("<param-") + param_type + _(">") + part  + _("</param-") + param_type + _(">");
+									param = _("<param-") + param_type + _(">") + param + _("</param-") + param_type + _(">");
 									ctx.setVariable(String(_("param")) << (int)(j/2), to_script(param));
 								}
 								total += part;

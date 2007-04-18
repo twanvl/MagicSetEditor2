@@ -16,9 +16,18 @@
 DECLARE_POINTER_TYPE(KeywordParam);
 DECLARE_POINTER_TYPE(KeywordMode);
 DECLARE_POINTER_TYPE(Keyword);
+DECLARE_POINTER_TYPE(ParamReferenceType);
 class KeywordTrie;
 
-// ----------------------------------------------------------------------------- : Keyword components
+// ----------------------------------------------------------------------------- : Keyword parameters
+
+class ParamReferenceType {
+	String        name;        ///< Name of the parameter reference type
+	String        description; ///< Description (for status bar)
+	StringScript  code;        ///< Code to insert into the reminder text script, input is the actual parameter name
+	
+	DECLARE_REFLECTION();
+};
 
 /// Parameter type of keywords
 class KeywordParam {
@@ -30,7 +39,8 @@ class KeywordParam {
 	bool           optional;	///< Can this parameter be left out (a placeholder is then used)
 	String         match;		///< Regular expression to match
 	OptionalScript script;		///< Transformation of the value for showing in the reminder text 
-	String         example;		///< Example for preview dialog
+	String         example;		///< Example for the keyword editor
+	vector<ParamReferenceTypeP> refer_script;///< Way to refer to a parameter from the reminder text script
 	
 	DECLARE_REFLECTION();
 };
