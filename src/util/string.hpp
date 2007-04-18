@@ -60,6 +60,15 @@ const Char BYTE_ORDER_MARK[] = IF_UNICODE(L"\xFEFF", "\xEF\xBB\xBF");
 /// Writes a string to an output stream, encoded as UTF8
 void writeUTF8(wxTextOutputStream& stream, const String& str);
 
+/// Some constants we like to use
+#ifdef UNICODE
+	#define  LEFT_ANGLE_BRACKET _("\x2039")
+	#define RIGHT_ANGLE_BRACKET _("\x203A")
+#else
+	#define  LEFT_ANGLE_BRACKET _("<")
+	#define RIGHT_ANGLE_BRACKET _(">")
+#endif
+
 // ----------------------------------------------------------------------------- : Char functions
 
 // Character set tests

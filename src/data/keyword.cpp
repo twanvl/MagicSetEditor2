@@ -13,6 +13,7 @@ class KeywordTrie;
 DECLARE_TYPEOF(map<Char COMMA KeywordTrie*>);
 DECLARE_TYPEOF_COLLECTION(KeywordTrie*);
 DECLARE_TYPEOF_COLLECTION(KeywordP);
+DECLARE_TYPEOF_COLLECTION(KeywordModeP);
 DECLARE_TYPEOF_COLLECTION(KeywordParamP);
 DECLARE_TYPEOF_COLLECTION(const Keyword*);
 
@@ -65,6 +66,23 @@ IMPLEMENT_REFLECTION(Keyword) {
 	REFLECT(mode);
 }
 
+
+size_t Keyword::findMode(const vector<KeywordModeP>& modes) const {
+	// find
+	size_t id = 0;
+	FOR_EACH_CONST(m, modes) {
+		if (mode == m->name) return id;
+		++id;
+	}
+	// default
+	id = 0;
+	FOR_EACH_CONST(m, modes) {
+		if (m->is_default) return id;
+		++id;
+	}
+	// not found
+	return 0;
+}
 
 // ----------------------------------------------------------------------------- : Regex stuff
 
@@ -291,6 +309,7 @@ String KeywordDatabase::expand(const String& text,
 	s = remove_tag_contents(s, _("<atom-keyword>")); // OLD, TODO: REMOVEME
 	s = remove_tag_contents(s, _("<atom-kwpph>"));
 	s = remove_tag(s, _("<keyword-param"));
+	s = remove_tag(s, _("<param-"));
 	String untagged = untag_no_escape(s);
 	
 	if (!root) return s;
@@ -386,6 +405,8 @@ String KeywordDatabase::expand(const String& text,
 										ctx.setVariable(_("input"), to_script(part));
 										param = kwp.script.invoke(ctx)->toString();
 									}
+									part  = _("<param-") + kwp.name + _(">") + part  + _("</param-") + kwp.name + _(">");
+									param = _("<param-") + kwp.name + _(">") + param + _("</param-") + kwp.name + _(">");
 									ctx.setVariable(String(_("param")) << (int)(j/2), to_script(param));
 								}
 								total += part;

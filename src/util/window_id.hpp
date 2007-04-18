@@ -99,17 +99,14 @@ enum ChildMenuID {
 ,	ID_CARD_ROTATE_90
 ,	ID_CARD_ROTATE_180
 ,	ID_CARD_ROTATE_270
-
-	// On cards panel
-,	ID_COLLAPSE_NOTES
+	// CardList
+,	ID_SELECT_COLUMNS
 
 	// Keyword menu
 ,	ID_KEYWORD_ADD			= 1101
 ,	ID_KEYWORD_REMOVE
 ,	ID_KEYWORD_PREV
 ,	ID_KEYWORD_NEXT
-,	ID_KEYWORD_ADD_PARAM
-,	ID_KEYWORD_REF_PARAM
 
 	// Format menu
 ,	ID_FORMAT_BOLD			= 1201
@@ -150,15 +147,22 @@ enum ChildMenuID {
 ,	ID_SHAPE_STAR
 ,	ID_SHAPE_MAX
 ,	ID_SIDES
+	
+	// On cards panel
+,	ID_COLLAPSE_NOTES		= 3001
+	
+	// Style panel
+,	ID_STYLE_USE_FOR_ALL	= 3011
 
-	// CardList
-,	ID_SELECT_COLUMNS		= 3001
+	// Keywords panel
+,	ID_KEYWORD_ADD_PARAM	= 3021
+,	ID_KEYWORD_REF_PARAM
+,	ID_KEYWORD_MODE
+,	ID_PARAM_TYPE_MIN		= 3101
+,	ID_PARAM_TYPE_MAX		= 3199
 	
-	// Statistics
-,	ID_FIELD_LIST			= 3101
-	
-	// Style
-,	ID_STYLE_USE_FOR_ALL	= 3201
+	// Statistics panel
+,	ID_FIELD_LIST			= 3031
 	
 	// SymbolFont (Format menu)
 ,	ID_INSERT_SYMBOL_MENU_MIN = 3301

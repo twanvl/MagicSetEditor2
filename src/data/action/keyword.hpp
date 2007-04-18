@@ -99,7 +99,15 @@ class KeywordReminderTextValue : public KeywordTextValue {
 
 /// Changing the mode of a keyword
 class ChangeKeywordModeAction : public Action {
+  public:
+	ChangeKeywordModeAction(Keyword& keyword, const String& new_mode);
 	
+	virtual String getName(bool to_undo) const;
+	virtual void   perform(bool to_undo);
+	
+  //private:
+	Keyword& keyword;
+	String   mode;
 };
 
 // ----------------------------------------------------------------------------- : EOF

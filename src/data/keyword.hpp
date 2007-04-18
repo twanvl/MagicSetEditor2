@@ -70,6 +70,10 @@ class Keyword {
 	wxRegEx               matchRe;
 	bool                  fixed;		///< Is this keyword uneditable? (true for game keywods, false for set keywords)
 	
+	/// Find the index of the mode in a list of possibilities.
+	/** Returns the default if not found and 0 if there is no default */
+	size_t findMode(const vector<KeywordModeP>& modes) const;
+	
 	/// Prepare the expansion: (re)generate matchRe and the list of parameters.
 	/** Throws when there is an error in the input
 	 *  @param param_types A list of all parameter types.

@@ -153,16 +153,9 @@ init script:
 		# step 1 : remove all automatic tags
 		tag_remove_rule(tag: "<sym-auto>") +
 		tag_remove_rule(tag: "<i-auto>")   +
-	#	# step 2 : reminder text for keywords
-	#	keyword_rule(
-	#		expand_reminder_game: { set.automatic_reminder_text == "yes" },
-	#		expand_reminder_set:  { set.automatic_reminder_text != "no" },
-	#		before: " (",
-	#		after:  ")",
-	#		fix_english: true
-	#		) +
+		# step 2 : reminder text for keywords
 		expand_keywords_rule(
-			default_expand: { set.automatic_reminder_text == "yes" },
+			default_expand: { contains(match:mode, set.automatic_reminder_text, match:mode) },
 			combine:        { "{keyword}<atom-reminder><i> ({reminder})</i></atom-reminder>" }
 			) +
 		# step 3a : expand shortcut words ~ and CARDNAME
@@ -900,8 +893,6 @@ keyword mode:
 	description: Custom keywords
 
 keyword parameter type:
-	name: no parameter
-keyword parameter type:
 	name: mana
 	match: [XYZ0-9WUBRGS/]+
 # By jimrandomh
@@ -909,7 +900,7 @@ keyword parameter type:
 	name: cost
 	#insert as: word
 	match: [XYZ0-9WUBRGS/]+|[^(.,\n]|([XYZ0-9WUBRGS/]+,)?[^(.,\n]*
-	script: "<sym-auto>{mana_sort()}</sym-auto>" # TODO : DEBUG
+	#script: "<sym-auto>{mana_sort()}</sym-auto>" # TODO : DEBUG
 keyword parameter type:
 	name: number
 	match: [XYZ0-9]+

@@ -39,7 +39,7 @@ KeywordsPanel::KeywordsPanel(Window* parent, int id)
 	reminder  = new TextCtrl(panel, wxID_ANY, true); // allow multiline for wordwrap
 	rules     = new TextCtrl(panel, wxID_ANY, true);
 	errors    = new wxStaticText(panel, wxID_ANY, _(""));
-	mode      = new wxChoice(panel, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0, nullptr);
+	mode      = new wxChoice(panel, ID_KEYWORD_MODE, wxDefaultPosition, wxDefaultSize, 0, nullptr);
 	add_param = new wxButton(panel, ID_KEYWORD_ADD_PARAM, _("Insert Parameter"));
 	// warning about fixed keywords
 	fixedL    = new wxStaticText(panel, wxID_ANY, _(""));
@@ -159,12 +159,19 @@ void KeywordsPanel::onCommand(int id) {
 			break;
 		case ID_KEYWORD_ADD_PARAM: {
 			wxMenu param_menu;
+			int id = ID_PARAM_TYPE_MIN;
 			FOR_EACH(p, set->game->keyword_parameter_types) {
-				param_menu.Append(wxID_ANY, p->name);
+				param_menu.Append(id++, p->name);
 			}
 			add_param->PopupMenu(&param_menu, 0, add_param->GetSize().y);
 			break;
 		}
+		default:
+			if (id >= ID_PARAM_TYPE_MIN && id < ID_PARAM_TYPE_MAX) {
+				// add parameter
+				KeywordParamP param = set->game->keyword_parameter_types.at(id - ID_PARAM_TYPE_MIN);
+				
+			}
 	}
 }
 
@@ -198,6 +205,7 @@ void KeywordsPanel::onChangeSet() {
 	FOR_EACH(m, set->game->keyword_modes) {
 		mode->Append(m->name);
 	}
+	mode     ->Enable(false);
 	// re-layout
 	panel->Layout();
 }
@@ -208,6 +216,12 @@ void KeywordsPanel::onAction(const Action& action, bool undone) {
 		if (value && &value->keyword == list->getKeyword().get()) {
 			// the current keyword's reminder text changed
 			errors->SetLabel(value->errors);
+		}
+	}
+	TYPE_CASE(action, ChangeKeywordModeAction) {
+		if (&action.keyword == list->getKeyword().get()) {
+			// the current keyword's mode changed
+			mode->SetSelection((int)list->getKeyword()->findMode(set->game->keyword_modes));
 		}
 	}
 }
@@ -223,7 +237,8 @@ void KeywordsPanel::onKeywordSelect(KeywordSelectEvent& ev) {
 		reminder->setValue(reminder_value);
 		errors->SetLabel(reminder_value->errors);
 		add_param->Enable(!kw.fixed && !set->game->keyword_parameter_types.empty());
-		mode->SetStringSelection(kw.mode);
+		mode     ->Enable(!kw.fixed && !set->game->keyword_modes.empty());
+		mode->SetSelection((int)kw.findMode(set->game->keyword_modes));
 		sp->Layout();
 	} else {
 		keyword ->setValue(nullptr);
@@ -235,6 +250,16 @@ void KeywordsPanel::onKeywordSelect(KeywordSelectEvent& ev) {
 	}
 }
 
+void KeywordsPanel::onModeChange(wxCommandEvent& ev) {
+	if (!list->getKeyword()) return;
+	int sel = mode->GetSelection();
+	if (sel >= 0 && (size_t)sel < set->game->keyword_modes.size()) {
+		set->actions.add(new ChangeKeywordModeAction(*list->getKeyword(), set->game->keyword_modes[sel]->name));
+	}
+}
+
+
 BEGIN_EVENT_TABLE(KeywordsPanel, wxPanel)
-	EVT_KEYWORD_SELECT(wxID_ANY, KeywordsPanel::onKeywordSelect)
+	EVT_KEYWORD_SELECT(wxID_ANY,        KeywordsPanel::onKeywordSelect)
+	EVT_CHOICE        (ID_KEYWORD_MODE, KeywordsPanel::onModeChange)
 END_EVENT_TABLE()

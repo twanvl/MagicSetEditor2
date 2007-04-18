@@ -190,3 +190,17 @@ void KeywordReminderTextValue::highlight(const String& code, const vector<Script
 	// set
 	value = new_value;
 }
+
+// ----------------------------------------------------------------------------- : Changing keywords : mode
+
+ChangeKeywordModeAction::ChangeKeywordModeAction(Keyword& keyword, const String& new_mode)
+	: keyword(keyword), mode(new_mode)
+{}
+
+String ChangeKeywordModeAction::getName(bool to_undo) const {
+	return _("Keyword mode");
+}
+
+void ChangeKeywordModeAction::perform(bool to_undo) {
+	swap(keyword.mode, mode);
+}

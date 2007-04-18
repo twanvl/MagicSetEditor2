@@ -64,6 +64,7 @@ class KeywordsPanel : public SetWindowPanel {
 	
 	// --------------------------------------------------- : Events
 	void onKeywordSelect(KeywordSelectEvent& ev);
+	void onModeChange(wxCommandEvent& ev);
 };
 
 // ----------------------------------------------------------------------------- : EOF
