@@ -410,6 +410,11 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 		} else if (c.break_after == BREAK_SOFT && style.field().multi_line) {
 			// Soft break == end of word
 			accept_word = true;
+		} else if (c.break_after == BREAK_MAYBE && style.direction == TOP_TO_BOTTOM) {
+			break_now   = true;
+			accept_word = true;
+			hide_breaker = false;
+			line_height_multiplier = style.line_height_soft;
 		}
 		// Add size of the character
 		word_size = add_horizontal(word_size, c.size);

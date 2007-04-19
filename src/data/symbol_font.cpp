@@ -297,7 +297,10 @@ void SymbolFont::getCharInfo(RotatedDC& dc, Context& ctx, double font_size, cons
 	FOR_EACH_CONST(sym, text) {
 		size_t count = sym.text.size();
 		RealSize size = dc.trInvS(symbolSize(ctx, dc.trS(font_size), sym));
-		out.insert(out.end(), count, RealSize(size.width / count, size.height)); // divide into count parts
+		size.width /= count; // divide into count parts
+		for (size_t i = 0 ; i < count ; ++i) {
+			out.push_back(CharInfo(size, i == count - 1 ? BREAK_MAYBE : BREAK_NO));
+		}
 	}
 }
 

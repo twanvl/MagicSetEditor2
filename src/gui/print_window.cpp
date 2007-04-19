@@ -120,7 +120,7 @@ class CardsPrintout : wxPrintout {
 	PageLayout layout;
 	
 	/// Draw a card, that is card_nr on this page, find the postion by asking the layout
-	void drawCard(DC& dc, const CardP& card, UInt card_nr);
+	void drawCard(DC& dc, const CardP& card, size_t card_nr);
 	/// Draw a card at the specified coordinates
 	void drawCard(DC& dc, const CardP& card, double x, double y, int rotation = 0);
 };

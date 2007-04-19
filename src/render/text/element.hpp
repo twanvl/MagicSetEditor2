@@ -31,7 +31,8 @@ enum DrawWhat
 
 /// Information on a linebreak
 enum LineBreak
-{	BREAK_NO		// no line break
+{	BREAK_NO		// no line break ever
+,	BREAK_MAYBE		// break here when in "direction:vertical" mode
 ,	BREAK_SOFT		// optional line break (' ')
 ,	BREAK_HARD		// always a line break ('\n')
 ,	BREAK_LINE		// line break with a separator line (<line>)
@@ -42,7 +43,7 @@ struct CharInfo {
 	RealSize  size;
 	LineBreak break_after;
 	
-	inline CharInfo(RealSize size, LineBreak break_after = BREAK_NO) : size(size), break_after(break_after) {}
+	inline CharInfo(RealSize size, LineBreak break_after) : size(size), break_after(break_after) {}
 };
 
 /// A section of text that can be rendered using a TextViewer
