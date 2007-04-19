@@ -458,8 +458,7 @@ void SetWindow::onFileExportHTML(wxCommandEvent&) {
 }
 
 void SetWindow::onFileExportApprentice(wxCommandEvent&) {
-//	ApprenticeExportWindow wnd(&this, set);
-//	wnd.ShowModal();
+	export_apprentice(this, set);
 }
 
 void SetWindow::onFileExportMWS(wxCommandEvent&) {

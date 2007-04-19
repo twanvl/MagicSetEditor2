@@ -55,6 +55,16 @@ class Card {
 		}
 		throw InternalError(_("Expected a card field with name '")+name+_("'"));
 	}
+	template <typename T> const T& value(const String& name) const {
+		for(IndexMap<FieldP, ValueP>::const_iterator it = data.begin() ; it != data.end() ; ++it) {
+			if ((*it)->fieldP->name == name) {
+				const T* ret = dynamic_cast<const T*>(it->get());
+				if (!ret) throw InternalError(_("Card field with name '")+name+_("' doesn't have the right type"));
+				return *ret;
+			}
+		}
+		throw InternalError(_("Expected a card field with name '")+name+_("'"));
+	}
 	
 	DECLARE_REFLECTION();
 };

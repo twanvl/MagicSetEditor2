@@ -47,7 +47,7 @@ menu:
 	add keyword:		&Add Keyword	Ctrl++
 	remove keyword:		&Remove Select Keyword	Del
 	
-	format:			&Format
+	format:			F&ormat
 	bold:				&Bold	Ctrl+B
 	italic:				&Italic	Ctrl+I
 	symbols:			&Symbols	Ctrl+M
@@ -160,6 +160,9 @@ help:
 	zoom export:
 		(When off, the cards are exported
 		 and copied at 100% size and normal rotation)
+	
+	# apprentice export
+	set code:			A set code is a two character code that is used by Apprentice to refer to a set.
 	
 	# Symbol editor
 	new symbol:			Create a new symbol
@@ -366,6 +369,10 @@ label:
 	cards to export:	Cards to export
 	filename is ignored: (filename is ignored)
 	
+	# apprentice export
+	set code:			Set &Code:
+	apprentice export cancled: Export to Apprentice is cancled
+	
 	# Image slicer
 	original:			Original:
 	result:				Result:
@@ -443,6 +450,7 @@ title:
 	print preview:		Print Preview
 	# export
 	export images:		Export Images
+	export cancled:		Export Cancled
 
 ############################################################## Action (undo/redo) names
 action:

@@ -94,5 +94,8 @@ Bitmap export_bitmap(const SetP& set, const CardP& card);
 /// Export a set to Magic Workstation format
 void export_mws(Window* parent, const SetP& set);
 
+/// Export a set to Apprentice
+void export_apprentice(Window* parent, const SetP& set);
+
 // ----------------------------------------------------------------------------- : EOF
 #endif
