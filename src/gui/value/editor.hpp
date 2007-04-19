@@ -13,6 +13,8 @@
 #include <gui/control/card_editor.hpp>
 #include <render/value/viewer.hpp>
 
+class IconMenu;
+
 // ----------------------------------------------------------------------------- : ValueEditor
 
 /// An editor 'control' for a single value on a card
@@ -52,7 +54,7 @@ class ValueEditor {
 	
 	/// a context menu is requested, add extra items to the menu m
 	/** return false to suppress menu */
-	virtual bool onContextMenu(wxMenu& m, wxContextMenuEvent& ev) { return true; }
+	virtual bool onContextMenu(IconMenu& m, wxContextMenuEvent& ev) { return true; }
 	/// Get a special menu, events will be sent to onMenu
 	virtual wxMenu* getMenu(int type) const { return nullptr; }
 	/// A menu item was selected, return true if the command was processed

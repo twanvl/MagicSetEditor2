@@ -144,14 +144,43 @@ TextValueAction* typing_action(const TextValueP& value, size_t start_i, size_t e
 		// no change
 		return nullptr;
 	} else {
-//		if (name == _("Backspace")) {
-//			// HACK: put start after end
 		if (reverse) {
 			return new TextValueAction(value, end, start, start+untag(replacement).size(), new_value, action_name);
 		} else {
 			return new TextValueAction(value, start, end, start+untag(replacement).size(), new_value, action_name);
 		}
 	}
+}
+
+// ----------------------------------------------------------------------------- : Reminder text
+
+TextToggleReminderAction::TextToggleReminderAction(const TextValueP& value, size_t pos_in)
+	: ValueAction(value)
+{
+	pos = in_tag(value->value(), _("<kw-"), pos_in, pos_in);
+	if (pos == String::npos) {
+		throw InternalError(_("TextToggleReminderAction: not in <kw- tag"));
+	}
+	Char c = value->value().GetChar(pos + 4);
+	enable = !(c == _('1') || c == _('A')); // if it was not enabled, then enable it
+	old = enable ? _('1') : _('0');
+}
+String TextToggleReminderAction::getName(bool to_undo) const {
+	return enable ? _("Show reminder text") : _("Hide reminder text");
+}
+
+void TextToggleReminderAction::perform(bool to_undo) {
+	TextValue& value = static_cast<TextValue&>(*valueP);
+	String& val = value.value.mutate();
+	assert(pos + 4 < val.size());
+	size_t end = match_close_tag(val, pos);
+	Char& c = val[pos + 4];
+	swap(c, old);
+	if (end != String::npos && end + 5 < val.size()) {
+		val[end + 5] = c; // </kw-c>
+	}
+	value.last_update.update();
+	value.onAction(*this, to_undo); // notify value
 }
 
 

@@ -61,7 +61,7 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	virtual bool onMotion    (const RealPoint& pos, wxMouseEvent&);
 	virtual bool onMouseWheel(const RealPoint& pos, wxMouseEvent& ev);
 	
-	virtual bool onContextMenu(wxMenu& m, wxContextMenuEvent&);
+	virtual bool onContextMenu(IconMenu& m, wxContextMenuEvent&);
 	virtual wxMenu* getMenu(int type) const;
 	virtual bool onCommand(int);
 	

@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <gui/value/text.hpp>
+#include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <data/action/value.hpp>
 #include <util/tagged_string.hpp>
@@ -221,14 +222,12 @@ void TextValueEditor::onLoseFocus() {
 	selection_start_i = selection_end_i = 0;
 }
 
-bool TextValueEditor::onContextMenu(wxMenu& m, wxContextMenuEvent& ev) {
+bool TextValueEditor::onContextMenu(IconMenu& m, wxContextMenuEvent& ev) {
 	// in a keword? => "reminder text" option
 	size_t kwpos = in_tag(value().value(), _("<kw-"), selection_start_i, selection_start_i);
 	if (kwpos != String::npos) {
-		Char c = String(value().value()).GetChar(kwpos + 4);
 		m.AppendSeparator();
-		m.AppendCheckItem(ID_FORMAT_REMINDER, _("&Reminder text"), _("Show or hide reminder text for this keyword"));
-		m.Check(ID_FORMAT_REMINDER, c == _('1') || c == _('A')); // reminder text currently shown
+		m.Append(ID_FORMAT_REMINDER,	_("reminder"),		_MENU_("reminder text"),	_HELP_("reminder text"),	wxITEM_CHECK);
 	}
 	// always show the menu
 	return true;
@@ -369,7 +368,7 @@ bool TextValueEditor::canFormat(int type) const {
 			return !style().always_symbol && style().allow_formating && style().symbol_font.valid();
 		case ID_FORMAT_REMINDER:
 			return !style().always_symbol && style().allow_formating &&
-			       in_tag(value().value(), _("<kw"), selection_start_i, selection_end_i) != String::npos;
+			       in_tag(value().value(), _("<kw"), selection_start_i, selection_start_i) != String::npos;
 		default:
 			return false;
 	}
@@ -385,7 +384,7 @@ bool TextValueEditor::hasFormat(int type) const {
 			return in_tag(value().value(), _("<sym"), selection_start_i, selection_end_i) != String::npos;
 		case ID_FORMAT_REMINDER: {
 			const String& v = value().value();
-			size_t tag = in_tag(v, _("<kw"),  selection_start_i, selection_end_i);
+			size_t tag = in_tag(v, _("<kw"),  selection_start_i, selection_start_i);
 			if (tag != String::npos && tag + 4 < v.size()) {
 				Char c = v.GetChar(tag + 4);
 				return c == _('1') || c == _('A');
@@ -409,6 +408,10 @@ void TextValueEditor::doFormat(int type) {
 		}
 		case ID_FORMAT_SYMBOL: {
 			getSet().actions.add(toggle_format_action(valueP(), _("sym"), selection_start_i, selection_end_i, selection_start, selection_end, _("Symbols")));
+			break;
+		}
+		case ID_FORMAT_REMINDER: {
+			getSet().actions.add(new TextToggleReminderAction(valueP(), selection_start_i));
 			break;
 		}
 	}

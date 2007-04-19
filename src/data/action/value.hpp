@@ -71,12 +71,28 @@ class TextValueAction : public ValueAction {
 	String name;
 };
 
-/// Action for toggleing some formating tag on or off in some range
+/// Action for toggling some formating tag on or off in some range
 TextValueAction* toggle_format_action(const TextValueP& value, const String& tag, size_t start_i, size_t end_i, size_t start, size_t end, const String& action_name);
 
 /// Typing in a TextValue, replace the selection [start...end) with replacement
 /** start and end are cursor positions, start_i and end_i are indices*/
 TextValueAction* typing_action(const TextValueP& value, size_t start_i, size_t end_i, size_t start, size_t end, const String& replacement, const String& action_name);
+
+// ----------------------------------------------------------------------------- : Reminder text
+
+/// Toggle reminder text for a keyword on or off
+class TextToggleReminderAction : public ValueAction {
+  public:
+	TextToggleReminderAction(const TextValueP& value, size_t pos);
+	
+	virtual String getName(bool to_undo) const;
+	virtual void perform(bool to_undo);
+	
+  private:	
+	size_t pos;  ///< Position of "<kw-"
+	bool enable; ///< Should the reminder text be turned on or off?
+	Char old;    ///< Old value of the <kw- tag
+};
 
 // ----------------------------------------------------------------------------- : Event
 

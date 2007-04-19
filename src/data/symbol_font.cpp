@@ -323,6 +323,10 @@ RealSize SymbolFont::defaultSymbolSize(Context& ctx, double font_size) {
 
 wxMenu* SymbolFont::insertSymbolMenu(Context& ctx) {
 	if (!processed_insert_symbol_menu && insert_symbol_menu) {
+		// update all symbol-in-fonts
+		FOR_EACH_CONST(sym, symbols) {
+			sym->update(ctx);
+		}
 		// Make menu
 		processed_insert_symbol_menu = insert_symbol_menu->makeMenu(ID_INSERT_SYMBOL_MENU_MIN, ctx, *this);
 	}
