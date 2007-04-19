@@ -56,10 +56,8 @@ ImagesExportWindow::ImagesExportWindow(Window* parent, const SetP& set)
 
 // ----------------------------------------------------------------------------- : Exporting the images
 
-// filename.3.ext -> filename.4.ext
-void inc_number_filename(String& filename) {
-	// TODO
-	throw "TODO";
+bool is_filename_char(Char c) {
+	return isAlnum(c) || c == _(' ') || c == _('_') || c == _('-') || c == _('.');
 }
 
 void ImagesExportWindow::onOk(wxCommandEvent&) {
@@ -75,7 +73,7 @@ void ImagesExportWindow::onOk(wxCommandEvent&) {
 	ScriptP filename_script = parse(gs.images_export_filename, true);
 	// Select filename
 	String name = wxFileSelector(_TITLE_("export images"),_(""), _LABEL_("filename is ignored"),_(""),
-		                         _LABEL_("all files")+_("|*.*"), wxSAVE, this);
+		                         _LABEL_("filename is ignored")+_("|*.*"), wxSAVE, this);
 	if (name.empty()) return;
 	wxFileName fn(name);
 	// Export
@@ -86,25 +84,41 @@ void ImagesExportWindow::onOk(wxCommandEvent&) {
 			Context& ctx = set->getContext(card);
 			String filename = untag(ctx.eval(*filename_script)->toString());
 			if (!filename) continue; // no filename -> no saving
-			fn.SetName(filename);
-			filename = fn.GetFullPath();
-			if (wxFileExists(filename)) {
+			// sanitize filename
+			String clean_filename;
+			FOR_EACH(c, filename) {
+				if (is_filename_char(c)) {
+					clean_filename += c;
+				}
+			}
+			if (clean_filename.empty() || starts_with(clean_filename, _("."))) {
+				clean_filename = _("no-name") + clean_filename;
+			}
+			fn.SetFullName(clean_filename);
+			// does the file exist?
+			if (fn.FileExists()) {
 				// file exists, what to do?
 				switch (gs.images_export_conflicts) {
 					case CONFLICT_KEEP_OLD:  goto next_card;
 					case CONFLICT_OVERWRITE: break;
 					case CONFLICT_NUMBER: {
+						int i = 0;
+						String ext = fn.GetExt();
 						do {
-							inc_number_filename(filename);
-						} while(wxFileExists(filename));
+							fn.SetExt(String() << ++i << _(".") << ext);
+						} while(fn.FileExists());
 					}
 					case CONFLICT_NUMBER_OVERWRITE: {
-						while(used.find(filename) != used.end()) {
-							inc_number_filename(filename);
+						int i = 0;
+						String ext = fn.GetExt();
+						while(used.find(fn.GetFullPath()) != used.end()) {
+							fn.SetExt(String() << ++i << _(".") << ext);
 						}
 					}
 				}
 			}
+			// write image
+			filename = fn.GetFullPath();
 			used.insert(filename);
 			export_image(set, card, filename);
 		}
