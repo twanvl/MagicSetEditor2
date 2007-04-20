@@ -160,6 +160,8 @@ enum ChildMenuID {
 ,	ID_KEYWORD_MODE
 ,	ID_PARAM_TYPE_MIN		= 3101
 ,	ID_PARAM_TYPE_MAX		= 3199
+,	ID_PARAM_REF_MIN		= 3201
+,	ID_PARAM_REF_MAX		= 3299
 	
 	// Statistics panel
 ,	ID_FIELD_LIST			= 3031

@@ -54,13 +54,7 @@ class KeywordsPanel : public SetWindowPanel {
 	wxStaticText*     errors;
 	wxChoice*         mode;
 	wxButton*         add_param;
-	/// Controls to edit a parameter
-	struct ParamEditor {
-		wxStaticText* label;
-		wxChoice*     type;
-		bool          shown;
-	};
-	vector<ParamEditor> params;
+	wxButton*         ref_param;
 	
 	// --------------------------------------------------- : Events
 	void onKeywordSelect(KeywordSelectEvent& ev);

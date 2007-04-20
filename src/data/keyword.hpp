@@ -22,9 +22,10 @@ class KeywordTrie;
 // ----------------------------------------------------------------------------- : Keyword parameters
 
 class ParamReferenceType {
+  public:
 	String        name;        ///< Name of the parameter reference type
 	String        description; ///< Description (for status bar)
-	StringScript  code;        ///< Code to insert into the reminder text script, input is the actual parameter name
+	StringScript  script;      ///< Code to insert into the reminder text script, input is the actual parameter name
 	
 	DECLARE_REFLECTION();
 };
@@ -40,7 +41,7 @@ class KeywordParam {
 	String         match;		///< Regular expression to match
 	OptionalScript script;		///< Transformation of the value for showing in the reminder text 
 	String         example;		///< Example for the keyword editor
-	vector<ParamReferenceTypeP> refer_script;///< Way to refer to a parameter from the reminder text script
+	vector<ParamReferenceTypeP> refer_scripts;///< Way to refer to a parameter from the reminder text script
 	
 	DECLARE_REFLECTION();
 };
@@ -110,6 +111,8 @@ class KeywordDatabase {
 	void add(const vector<KeywordP>&);
 	/// Add a keyword to be matched
 	void add(const Keyword&);
+	/// Remove a keyword from the database
+	void remove(const Keyword&);
 	
 	/// Prepare the parameters and match regex for a list of keywords
 	static void prepare_parameters(const vector<KeywordParamP>&, const vector<KeywordP>&);

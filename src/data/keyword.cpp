@@ -23,6 +23,12 @@ KeywordParam::KeywordParam()
 	: optional(true)
 {}
 
+IMPLEMENT_REFLECTION(ParamReferenceType) {
+	REFLECT(name);
+	REFLECT(description);
+	REFLECT(script);
+}
+
 IMPLEMENT_REFLECTION(KeywordParam) {
 	REFLECT(name);
 	REFLECT(description);
@@ -31,6 +37,7 @@ IMPLEMENT_REFLECTION(KeywordParam) {
 	REFLECT(match);
 	REFLECT(script);
 	REFLECT(example);
+	REFLECT(refer_scripts);
 }
 IMPLEMENT_REFLECTION(KeywordMode) {
 	REFLECT(name);

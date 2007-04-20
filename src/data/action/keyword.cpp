@@ -18,8 +18,9 @@ DECLARE_TYPEOF_COLLECTION(KeywordModeP);
 
 // ----------------------------------------------------------------------------- : Add Keyword
 
-AddKeywordAction::AddKeywordAction(Set& set)
-	: KeywordListAction(set), keyword(new Keyword())
+AddKeywordAction::AddKeywordAction(Adding, Set& set)
+	: KeywordListAction(set), adding(true), keyword(new Keyword())
+	, keyword_id(set.keywords.size())
 {
 	// find default mode
 	FOR_EACH(mode, set.game->keyword_modes) {
@@ -29,28 +30,8 @@ AddKeywordAction::AddKeywordAction(Set& set)
 		}
 	}
 }
-
-AddKeywordAction::AddKeywordAction(Set& set, const KeywordP& keyword)
-	: KeywordListAction(set), keyword(keyword)
-{}
-
-String AddKeywordAction::getName(bool to_undo) const {
-	return _("Add keyword");
-}
-
-void AddKeywordAction::perform(bool to_undo) {
-	if (!to_undo) {
-		set.keywords.push_back(keyword);
-	} else {
-		assert(!set.keywords.empty());
-		set.keywords.pop_back();
-	}
-}
-
-// ----------------------------------------------------------------------------- : Remove Keyword
-
-RemoveKeywordAction::RemoveKeywordAction(Set& set, const KeywordP& keyword)
-	: KeywordListAction(set), keyword(keyword)
+AddKeywordAction::AddKeywordAction(Removing, Set& set, const KeywordP& keyword)
+	: KeywordListAction(set), adding(false), keyword(keyword)
 	// find the keyword_id of the keyword we want to remove
 	, keyword_id(find(set.keywords.begin(), set.keywords.end(), keyword) - set.keywords.begin())
 {
@@ -59,18 +40,19 @@ RemoveKeywordAction::RemoveKeywordAction(Set& set, const KeywordP& keyword)
 	}
 }
 
-String RemoveKeywordAction::getName(bool to_undo) const {
-	return _("Remove keyword");
+String AddKeywordAction::getName(bool to_undo) const {
+	return adding ? _("Add keyword") : _("Remove keyword");
 }
 
-void RemoveKeywordAction::perform(bool to_undo) {
-	if (!to_undo) {
-		assert(keyword_id < set.keywords.size());
-		set.keywords.erase(set.keywords.begin() + keyword_id);
-	} else {
+void AddKeywordAction::perform(bool to_undo) {
+	if (adding != to_undo) {
 		assert(keyword_id <= set.keywords.size());
 		set.keywords.insert(set.keywords.begin() + keyword_id, keyword);
+	} else {
+		assert(keyword_id < set.keywords.size());
+		set.keywords.erase(set.keywords.begin() + keyword_id);
 	}
+	set.keyword_db.clear();
 }
 
 // ----------------------------------------------------------------------------- : Changing keywords

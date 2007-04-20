@@ -22,6 +22,7 @@
 #include <wx/statline.h>
 #include <wx/artprov.h>
 
+DECLARE_TYPEOF_COLLECTION(ParamReferenceTypeP);
 DECLARE_TYPEOF_COLLECTION(KeywordParamP);
 DECLARE_TYPEOF_COLLECTION(KeywordModeP);
 
@@ -39,8 +40,10 @@ KeywordsPanel::KeywordsPanel(Window* parent, int id)
 	reminder  = new TextCtrl(panel, wxID_ANY, true); // allow multiline for wordwrap
 	rules     = new TextCtrl(panel, wxID_ANY, true);
 	errors    = new wxStaticText(panel, wxID_ANY, _(""));
+	errors->SetForegroundColour(*wxRED);
 	mode      = new wxChoice(panel, ID_KEYWORD_MODE, wxDefaultPosition, wxDefaultSize, 0, nullptr);
-	add_param = new wxButton(panel, ID_KEYWORD_ADD_PARAM, _("Insert Parameter"));
+	add_param = new wxButton(panel, ID_KEYWORD_ADD_PARAM, _BUTTON_("insert parameter"));
+	ref_param = new wxButton(panel, ID_KEYWORD_REF_PARAM, _BUTTON_("refer parameter"));
 	// warning about fixed keywords
 	fixedL    = new wxStaticText(panel, wxID_ANY, _(""));
 	wxStaticBitmap* fixedI = new wxStaticBitmap(panel, wxID_ANY, wxArtProvider::GetBitmap(wxART_WARNING));
@@ -64,15 +67,15 @@ KeywordsPanel::KeywordsPanel(Window* parent, int id)
 		wxSizer* s2 = new wxBoxSizer(wxVERTICAL);
 			s2->Add(new wxStaticText(panel, wxID_ANY, _("Match:")), 0);
 			s2->Add(match, 0, wxEXPAND | wxTOP, 2);
-			s2->Add(new wxStaticText(panel, wxID_ANY, _("Parameters:")), 0, wxTOP, 6);
 			s2->Add(add_param, 0, wxALIGN_LEFT | wxTOP, 2);
 		sp->Add(s2, 0, wxEXPAND | wxLEFT, 2);
 		sp->Add(new wxStaticLine(panel), 0, wxEXPAND | wxTOP | wxBOTTOM, 8);
 		wxSizer* s3 = new wxBoxSizer(wxVERTICAL);
 			s3->Add(new wxStaticText(panel, wxID_ANY, _("Reminder:")), 0);
 			s3->Add(reminder, 1, wxEXPAND | wxTOP, 2);
+			s3->Add(ref_param, 0, wxALIGN_LEFT | wxTOP, 2);
 			s3->Add(errors,   0, wxEXPAND | wxTOP, 4);
-			s3->Add(new wxStaticText(panel, wxID_ANY, _("Example:")), 0, wxTOP, 6);
+			//s3->Add(new wxStaticText(panel, wxID_ANY, _("Example:")), 0, wxTOP, 6);
 		sp->Add(s3, 1, wxEXPAND | wxLEFT, 2);
 		sp->Add(new wxStaticLine(panel), 0, wxEXPAND | wxTOP | wxBOTTOM, 8);
 		wxSizer* s4 = new wxBoxSizer(wxVERTICAL);
@@ -149,28 +152,62 @@ void KeywordsPanel::onCommand(int id) {
 			list->selectNext();
 			break;
 		case ID_KEYWORD_ADD:
-			set->actions.add(new AddKeywordAction(*set));
+			set->actions.add(new AddKeywordAction(ADD, *set));
 			break;
 		case ID_KEYWORD_REMOVE:
 			if (!list->getKeyword()->fixed) {
 				// only remove set keywords
-				set->actions.add(new RemoveKeywordAction(*set, list->getKeyword()));
+				set->actions.add(new AddKeywordAction(REMOVE, *set, list->getKeyword()));
 			}
 			break;
 		case ID_KEYWORD_ADD_PARAM: {
 			wxMenu param_menu;
 			int id = ID_PARAM_TYPE_MIN;
 			FOR_EACH(p, set->game->keyword_parameter_types) {
-				param_menu.Append(id++, p->name);
+				param_menu.Append(id++, p->name, p->description);
 			}
 			add_param->PopupMenu(&param_menu, 0, add_param->GetSize().y);
+			break;
+		}
+		case ID_KEYWORD_REF_PARAM: {
+			wxMenu ref_menu;
+			int id = ID_PARAM_REF_MIN;
+			int param = 0;
+			FOR_EACH(p, list->getKeyword()->parameters) {
+				String item = String() << ++param << _(". ") << LEFT_ANGLE_BRACKET << p->name << RIGHT_ANGLE_BRACKET;
+				if (p->refer_scripts.empty()) {
+					ref_menu.Append(id++, item);
+				} else {
+					wxMenu* submenu = new wxMenu();
+					FOR_EACH(r, p->refer_scripts) {
+						submenu->Append(id++, r->name, r->description);
+					}
+					ref_menu.Append(wxID_ANY, item, submenu);
+				}
+			}
+			ref_param->PopupMenu(&ref_menu, 0, ref_param->GetSize().y);
 			break;
 		}
 		default:
 			if (id >= ID_PARAM_TYPE_MIN && id < ID_PARAM_TYPE_MAX) {
 				// add parameter
 				KeywordParamP param = set->game->keyword_parameter_types.at(id - ID_PARAM_TYPE_MIN);
-				
+				String to_insert = _("<atom-keyword>") + param->name + _("</atom-keyword>");
+				// TODO
+			} else if (id >= ID_PARAM_REF_MIN && id < ID_PARAM_REF_MAX) {
+				/*
+				int i = ID_PARAM_REF_MIN;
+				FOR_EACH(p, list->getKeyword()->parameters) {
+					if (p->refer_scripts.empty()) {
+						if (i == id) {
+							// found it
+						} else {
+						}
+					}
+				}
+				String to_insert = list->getKeyword()->run_ref_script(id - ID_PARAM_REF_MIN, set->getContext());
+				*/
+				// TODO
 			}
 	}
 }
@@ -201,6 +238,7 @@ void KeywordsPanel::onChangeSet() {
 	rules   ->setSet(set);
 	// parameter & mode lists
 	add_param->Enable(false);
+	ref_param->Enable(false);
 	mode->Clear();
 	FOR_EACH(m, set->game->keyword_modes) {
 		mode->Append(m->name);
@@ -237,6 +275,7 @@ void KeywordsPanel::onKeywordSelect(KeywordSelectEvent& ev) {
 		reminder->setValue(reminder_value);
 		errors->SetLabel(reminder_value->errors);
 		add_param->Enable(!kw.fixed && !set->game->keyword_parameter_types.empty());
+		ref_param->Enable(!kw.fixed && !kw.parameters.empty());
 		mode     ->Enable(!kw.fixed && !set->game->keyword_modes.empty());
 		mode->SetSelection((int)kw.findMode(set->game->keyword_modes));
 		sp->Layout();
@@ -246,6 +285,7 @@ void KeywordsPanel::onKeywordSelect(KeywordSelectEvent& ev) {
 		rules   ->setValue(nullptr);
 		reminder->setValue(nullptr);
 		add_param->Enable(false);
+		ref_param->Enable(false);
 		mode     ->Enable(false);
 	}
 }

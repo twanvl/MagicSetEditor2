@@ -386,8 +386,12 @@ label:
 
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
-	# Set window
+	# Style panel
 	use for all cards:	Use for &all cards
+	
+	# Keywords panel
+	insert parameter:	Insert Parameter...
+	refer parameter:	Use Parameter...
 	
 	# Welcome
 	new set:			New set

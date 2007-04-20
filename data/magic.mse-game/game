@@ -898,36 +898,35 @@ keyword parameter type:
 # By jimrandomh
 keyword parameter type:
 	name: cost
-	#insert as: word
 	match: [XYZ0-9WUBRGS/]+|[^(.,\n]|([XYZ0-9WUBRGS/]+,)?[^(.,\n]*
-	#script: "<sym-auto>{mana_sort()}</sym-auto>" # TODO : DEBUG
 keyword parameter type:
 	name: number
 	match: [XYZ0-9]+
-keyword parameter type:
-	name: number (one, two, ...)
-	#insert as: number: one, two
-	match: [XYZ0-9]+
-keyword parameter type:
-	name: number (a, two, ...)
-	#insert as: number: a, two
-	match: [XYZ0-9]+
-keyword parameter type:
-	name: number (, two, ...)
-	#insert as: number: , two
-	match: [XYZ0-9]+
+	refer script:
+		name: normal
+		description: (1,2,3)
+		script: \{{input}\}
+	refer script:
+		name: as words
+		description: (one, two, three)
+		script: \{english_number({input})\}
+	refer script:
+		name: as words, use "a" for 1
+		description: (a, two, three)
+		script: \{english_number_a({input})\}
+	refer script:
+		name: as words, use "" for 1
+		description: (, two, three)
+		script: \{english_number_multiple({input})\}
 keyword parameter type:
 	name: action
-	#insert as: word
 	match: [^(.,\n]+
 keyword parameter type:
 	name: name
-	#insert as: word
 	match: [^(.,\n]+
 keyword parameter type:
-	name: prefix
+	name: land
 	description: Prefix for things like "<something>walk"
-	placeholder: land
 	optional: false
 	match: [A-Z][a-z]*
 	example: Forest
@@ -1015,7 +1014,7 @@ keyword:
 	reminder: At the beginning of your next upkeep after this permanent comes under your control, sacrifice it unless you pay its mana cost.
 keyword:
 	keyword: Landcycling
-	match: <atom-param>prefix</atom-param>cycling <atom-param>cost</atom-param>
+	match: <atom-param>land</atom-param>cycling <atom-param>cost</atom-param>
 	mode: expert
 	reminder: {param2}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
 keyword:
@@ -1093,10 +1092,9 @@ keyword:
 	reminder: The removed card is imprinted on this artifact.
 keyword:
 	keyword: Modular
-	separator: whitespace [ ]
-	parameter: number (a, two, ...)
+	match: Modular  <atom-param>number</atom-param>
 	mode: expert
-	reminder: This comes into play with {param1} +1/+1 counter(s) on it. When it’s put into a graveyard, you may put its +1/+1 counters on target artifact creature.
+	reminder: This comes into play with {english_number_a(param1)} +1/+1 counter(s) on it. When it’s put into a graveyard, you may put its +1/+1 counters on target artifact creature.
 keyword:
 	keyword: Scry
 	match: Scry <atom-param>number</atom-param>
@@ -1156,9 +1154,9 @@ keyword:
 keyword:
 	keyword: Bloodthirst
 	separator: whitespace [ ]
-	parameter: number (a, two, ...)
+	parameter: number
 	mode: expert
-	reminder: If an opponent was dealt damage this turn, this creature comes into play with {param1} +1/+1 counter(s) on it.
+	reminder: If an opponent was dealt damage this turn, this creature comes into play with {english_number_a(param1)} +1/+1 counter(s) on it.
 keyword:
 	keyword: Replicate
 	separator: whitespace [ ]
@@ -1183,7 +1181,7 @@ keyword:
 	reminder: If defending player is wearing any clothing made of denim, this creature is unblockable.
 keyword:
 	keyword: Landwalk
-	match: <atom-param>prefix</atom-param>walk
+	match: <atom-param>land</atom-param>walk
 	mode: core
 	reminder: This creature is unblockable as long as defending player controls a {param1}.
 keyword:

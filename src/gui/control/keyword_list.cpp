@@ -30,7 +30,7 @@ KeywordList::KeywordList(Window* parent, int id, long additional_style)
 	InsertColumn(0, _LABEL_("keyword"),  wxLIST_FORMAT_LEFT,    0);
 	InsertColumn(1, _LABEL_("match"),    wxLIST_FORMAT_LEFT,  200);
 	InsertColumn(2, _LABEL_("mode"),     wxLIST_FORMAT_LEFT,   60);
-	InsertColumn(3, _LABEL_("uses"),     wxLIST_FORMAT_RIGHT,  80);
+	InsertColumn(3, _LABEL_("uses"),     wxLIST_FORMAT_RIGHT,  50);
 	InsertColumn(4, _LABEL_("reminder"), wxLIST_FORMAT_LEFT,  300);
 }
 
@@ -50,26 +50,8 @@ void KeywordList::onChangeSet() {
 
 void KeywordList::onAction(const Action& action, bool undone) {
 	TYPE_CASE(action, AddKeywordAction) {
-		if (undone) {
-			long pos = selected_item_pos;
-			refreshList();
-			if (action.keyword == selected_item) {
-				// select the next keyword, if not possible, select the last
-				if (pos + 1 < GetItemCount()) {
-					selectItemPos(pos, true);
-				} else {
-					selectItemPos(GetItemCount() - 1, true);
-				}
-			}
-		} else {
+		if (action.adding != undone) {
 			// select the new keyword
-			selectItem(action.keyword, false /*list will be refreshed anyway*/, true);
-			refreshList();
-		}
-	}
-	TYPE_CASE(action, RemoveKeywordAction) {
-		if (undone) {
-			// select the re-added keyword
 			selectItem(action.keyword, false /*list will be refreshed anyway*/, true);
 			refreshList();
 		} else {
@@ -143,7 +125,7 @@ String KeywordList::OnGetItemText (long pos, long col) const {
 		case 0:		return kw.keyword;
 		case 1:		return match_string(kw);
 		case 2:		return kw.mode;
-		case 3:		return _("TODO");
+		case 3:		return _("?");
 		case 4:		return kw.reminder.getUnparsed();
 		default:	return wxEmptyString;
 	}
