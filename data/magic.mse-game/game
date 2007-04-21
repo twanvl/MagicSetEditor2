@@ -778,28 +778,28 @@ statistics dimension:
 	numeric: true
 	icon: stats/colored_casting_cost.png
 
-statistics dimension:
-	name: power2
-	script: card.power
-	numeric: true
-	icon: stats/power.png
+#statistics dimension:
+#	name: power2
+#	script: card.power
+#	numeric: true
+#	icon: stats/power.png
 
-statistics dimension:
-	name: toughness2
-	script: card.toughness
-	numeric: true
-	icon: stats/toughness.png
+#statistics dimension:
+#	name: toughness2
+#	script: card.toughness
+#	numeric: true
+#	icon: stats/toughness.png
 
-statistics category:
-	name: color / rarity
-	dimension: card_color
-	dimension: rarity
+#statistics category:
+#	name: color / rarity
+#	dimension: card_color
+#	dimension: rarity
 
-statistics category:
-	name: power / toughness
-	type: scatter
-	dimension: power2
-	dimension: toughness2
+#statistics category:
+#	name: power / toughness
+#	type: scatter
+#	dimension: power2
+#	dimension: toughness2
 
 #statistics field:
 #	name: creature type
@@ -938,18 +938,22 @@ keyword parameter type:
 
 keyword:
 	keyword: Flying
+	match: Flying
 	mode: core
 	reminder: This creature can’t be blocked except by creatures with flying.
 keyword:
 	keyword: Haste
+	match: Haste
 	mode: core
 	reminder: This creature can attack and tap the turn it comes under your control.
 keyword:
 	keyword: Fear
+	match: Fear
 	mode: core
 	reminder: This creature can’t be blocked except by artifact creatures and/or black creatures.
 keyword:
 	keyword: First strike
+	match: First strike
 	mode: core
 	reminder: This creature deals combat damage before creatures without first strike.
 keyword:
@@ -964,10 +968,12 @@ keyword:
 	reminder: {param1}, Discard this card: Draw a card.
 keyword:
 	keyword: Trample
+	match: Trample
 	mode: core
 	reminder: If this creature would deal enough combat damage to its blockers to destroy them, you may have it deal the rest of its damage to defending player.
 keyword:
 	keyword: Banding
+	match: Banding
 	mode: old
 	reminder: When declaring attackers or blockers this creature may group with others creatures with banding and one creature without banding. When damage is dealt, you decide where damage is dealt.
 keyword:
@@ -977,10 +983,12 @@ keyword:
 	reminder: Whenever this creature becomes blocked, it gets +{param1}/+{param1} until end of turn for each creature blocking it beyond the first.
 keyword:
 	keyword: Vigilance
+	match: Vigilance
 	mode: core
 	reminder: Attacking doesn’t cause this creature to tap.
 keyword:
 	keyword: Defender
+	match: Defender
 	mode: core
 	reminder: This creature can’t attack.
 keyword:
@@ -990,10 +998,12 @@ keyword:
 	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay {param1} for each age counter on it.
 keyword:
 	keyword: Horsemanship
+	match: Horsemanship
 	mode: old
 	reminder: This creature can’t be blocked except by creatures with horsemanship.
 keyword:
 	keyword: Phasing
+	match: Phasing
 	mode: old
 	reminder: At the beginning of your upkeep, put this and any cards attached to it in the phased-out zone.  If this is already in the phased-out zone, return it and any card attached to it to play.  If there were counters on this card when it phased out, put that many counters on it when it returns to play.  This ability does not cause comes-into-play or leaves play abilities to trigger.
 keyword:
@@ -1003,6 +1013,7 @@ keyword:
 	reminder: Whenever a creature without flanking blocks this creature, the blocking creature gets -{param1}/-{param1} until end of turn.
 keyword:
 	keyword: Shadow
+	match: Shadow
 	mode: core
 	reminder: This creature can block or be blocked by only creatures with shadow.
 keyword:
@@ -1012,6 +1023,7 @@ keyword:
 	reminder: You may pay {param1} in addition to any other costs as you play this spell. If you do, put ~ into your hand instead of your graveyard as part of its resolution.
 keyword:
 	keyword: Echo
+	match: Echo
 	mode: expert
 	reminder: At the beginning of your next upkeep after this permanent comes under your control, sacrifice it unless you pay its mana cost.
 keyword:
@@ -1056,14 +1068,17 @@ keyword:
 	reminder: As this card comes into play, put {english_number(param1)} +1/+1 counter(s) on it for each creature that shares a type with this that you reveal in your hand.
 keyword:
 	keyword: Double strike
+	match: Double strike
 	mode: expert
 	reminder: This creature deals both first-strike and regular combat damage.
 keyword:
 	keyword: Provoke
+	match: Provoke
 	mode: expert
 	reminder: When this attacks, you may have target creature defending player controls untap and block it if able.
 keyword:
 	keyword: Storm
+	match: Storm
 	mode: expert
 	reminder: When you play this spell, copy it for each spell played before it this turn. You may choose new targets for the copies.
 keyword:
@@ -1098,6 +1113,7 @@ keyword:
 	reminder: Look at the top {english_number_multiple(param1)} card(s) of your library. Put any number of them on the bottom of your library in any order and the rest on top of your library in any order.
 keyword:
 	keyword: Sunburst
+	match: Sunburst
 	mode: expert
 	reminder: This comes into play with a +1/+1 counter on it for each color of mana used to pay its cost. If it is not a creature, use charge counters instead.
 keyword:
@@ -1127,10 +1143,12 @@ keyword:
 	reminder: When this is put into a graveyard from play, you may return target Spirit card with converted mana cost {param1} or less from you graveyard to your hand.
 keyword:
 	keyword: Epic
+	match: Epic
 	mode: expert
 	reminder: For the rest of the game, you can’t play spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability. If the spell has any targets, you may choose new targets for the copy.
 keyword:
 	keyword: Convoke
+	match: Convoke
 	mode: expert
 	reminder: Each creature you tap while playing this spell reduces its cost by <sym>1</sym> or by one mana of that creature’s color.
 keyword:
@@ -1140,6 +1158,7 @@ keyword:
 	reminder: {param1}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
 keyword:
 	keyword: Haunt
+	match: Haunt
 	mode: expert
 	reminder: When this card is put into a graveyard from play, remove it from the game haunting target creature.
 keyword:
@@ -1154,18 +1173,22 @@ keyword:
 	reminder: When you play this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.
 keyword:
 	keyword: Legendary Landwalk
+	match: Legendary Landwalk
 	mode: core
 	reminder: This creature is unblockable as long as defending player controls a Legendary land.
 keyword:
 	keyword: Non-basic Landwalk
+	match: Non-basic Landwalk
 	mode: core
 	reminder: This creature is unblockable as long as defending player controls a non-basic land.
 keyword:
 	keyword: Snow-covered Landwalk
+	match: Snow-covered Landwalk
 	mode: core
 	reminder: This creature is unblockable as long as defending player controls a Snow-covered land.
 keyword:
 	keyword: Denimwalk
+	match: Denimwalk
 	mode: core
 	reminder: If defending player is wearing any clothing made of denim, this creature is unblockable.
 keyword:

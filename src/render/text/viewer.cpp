@@ -75,8 +75,16 @@ void TextViewer::draw(RotatedDC& dc, const TextStyle& style, DrawWhat what) {
 	// Draw the text, line by line
 	FOR_EACH(l, lines) {
 		if (l.visible(dc)) {
-			RealRect rect(l.positions.front(), l.top, l.width(), l.line_height);
-			elements.draw(dc, scale, rect, &*l.positions.begin(), what, l.start, l.end());
+			if (justifying) {
+				// Draw characters separatly
+				for (size_t i = 0 ; i < l.positions.size() - 1 ; ++i) {
+					RealRect rect(l.positions[i], l.top, l.positions[i+1] - l.positions[i] , l.line_height);
+					elements.draw(dc, scale, rect, &l.positions[i], what, l.start + i, l.start + i + 1);
+				}
+			} else {
+				RealRect rect(l.positions.front(), l.top, l.width(), l.line_height);
+				elements.draw(dc, scale, rect, &*l.positions.begin(), what, l.start, l.end());
+			}
 		}
 	}
 }
@@ -524,7 +532,7 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 		if ((style.alignment & ALIGN_JUSTIFY) ||
 			(style.alignment & ALIGN_JUSTIFY_OVERFLOW && width > s.width)) {
 			// justify text
-//			justifying = true;
+			justifying = true;
 			double hdelta = s.width - width;         // amount of space to distribute
 			int count = (int)l.positions.size() - 1; // distribute it among this many characters
 			if (count == 0) count = 1;               // prevent div by 0
@@ -532,9 +540,9 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 			FOR_EACH(c, l.positions) {
 				c += hdelta * i++ / count;
 			}
-		} else if (style.alignment & ALIGN_JUSTIFY) {
+		} else if (style.alignment & ALIGN_JUSTIFY_WORDS) {
 			// justify text, by words
-//			justifying = true;
+			justifying = true;
 			double hdelta = s.width - width;         // amount of space to distribute
 			int count = 0;                           // distribute it among this many words
 			for (size_t k = l.start + 1 ; k < l.end() - 1 ; ++k) {
@@ -548,7 +556,7 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 			}
 		} else {
 			// simple alignment
-//			justifying = false;
+			justifying = false;
 			double hdelta = align_delta_x(style.alignment, s.width, width);
 			FOR_EACH(c, l.positions) {
 				c += hdelta;

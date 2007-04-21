@@ -13,6 +13,8 @@
 
 ItemList::ItemList(Window* parent, int id, long additional_style)
 	: wxListView(parent, id, wxDefaultPosition, wxDefaultSize, additional_style | wxLC_REPORT | wxLC_VIRTUAL | wxLC_SINGLE_SEL)
+	, selected_item_pos(-1)
+	, sort_by_column(-1), sort_ascending(true)
 {
 	// create image list
 	wxImageList* il = new wxImageList(18,14);
