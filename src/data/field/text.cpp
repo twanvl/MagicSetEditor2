@@ -1,6 +1,6 @@
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-//| Copyright:    (C) 2001 - 2006 Twan van Laarhoven                           |
+//| Copyright:    (C) 2001 - 2007 Twan van Laarhoven                           |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
@@ -66,6 +66,12 @@ void TextStyle::initDependencies(Context& ctx, const Dependency& dep) const {
 //	symbol_font.initDependencies(ctx, dep);
 }
 
+IMPLEMENT_REFLECTION(TextBackground) {
+	REFLECT(image);
+	REFLECT_N("displacement_x", displacement.width);
+	REFLECT_N("displacement_y", displacement.height);
+}
+
 IMPLEMENT_REFLECTION(TextStyle) {
 	REFLECT_BASE(Style);
 	REFLECT(font);
@@ -87,6 +93,9 @@ IMPLEMENT_REFLECTION(TextStyle) {
 	REFLECT(line_height_line);
 	REFLECT_N("mask", mask_filename);
 	REFLECT(direction);
+	REFLECT(text_background);
+	REFLECT(text_background_left);
+	REFLECT(text_background_right);
 }
 
 // ----------------------------------------------------------------------------- : TextValue

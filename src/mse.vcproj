@@ -2930,10 +2930,10 @@
 			RelativePath="..\conversion-todo.txt">
 		</File>
 		<File
-			RelativePath="..\data\nl.mse-locale\locale">
+			RelativePath="..\data\en.mse-locale\locale">
 		</File>
 		<File
-			RelativePath="..\data\en.mse-locale\locale">
+			RelativePath="..\data\nl.mse-locale\locale">
 		</File>
 		<File
 			RelativePath=".\main.cpp">

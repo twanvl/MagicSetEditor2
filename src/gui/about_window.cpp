@@ -1,6 +1,6 @@
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-//| Copyright:    (C) 2001 - 2006 Twan van Laarhoven                           |
+//| Copyright:    (C) 2001 - 2007 Twan van Laarhoven                           |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
@@ -53,7 +53,7 @@ void AboutWindow::draw(DC& dc) {
 	dc.DrawText(_("   it probably contains lots bugs,"), 34, 147);
 	dc.DrawText(_("   it misses some very important features,"), 34, 164);
 	dc.DrawText(_("   don't use it for anything important"), 34, 181);
-	dc.DrawText(_("Copyright \xA9 2006 Twan van Laarhoven"), 34, 214);
+	dc.DrawText(_("Copyright \xA9 2007 Twan van Laarhoven"), 34, 214);
 }
 
 BEGIN_EVENT_TABLE(AboutWindow, wxDialog)

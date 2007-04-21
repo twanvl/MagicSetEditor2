@@ -1,6 +1,6 @@
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-//| Copyright:    (C) 2001 - 2006 Twan van Laarhoven                           |
+//| Copyright:    (C) 2001 - 2007 Twan van Laarhoven                           |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
@@ -80,6 +80,7 @@ class Keyword {
 	 */
 	wxRegEx               matchRe;
 	bool                  fixed;		///< Is this keyword uneditable? (true for game keywods, false for set keywords)
+	bool                  valid;		///< Is this keyword okay (reminder text compiles & runs; match does not match "")
 	
 	/// Find the index of the mode in a list of possibilities.
 	/** Returns the default if not found and 0 if there is no default */

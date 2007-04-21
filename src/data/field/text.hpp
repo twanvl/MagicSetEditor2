@@ -1,6 +1,6 @@
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-//| Copyright:    (C) 2001 - 2006 Twan van Laarhoven                           |
+//| Copyright:    (C) 2001 - 2007 Twan van Laarhoven                           |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
@@ -17,6 +17,7 @@
 #include <data/font.hpp>
 #include <data/symbol_font.hpp>
 #include <script/scriptable.hpp>
+#include <script/image.hpp>
 #include <gfx/gfx.hpp>
 
 // ----------------------------------------------------------------------------- : TextField
@@ -24,6 +25,7 @@
 DECLARE_POINTER_TYPE(TextField);
 DECLARE_POINTER_TYPE(TextStyle);
 DECLARE_POINTER_TYPE(TextValue);
+DECLARE_POINTER_TYPE(TextBackground);
 
 /// A field for values containing tagged text
 class TextField : public Field {
@@ -44,6 +46,15 @@ class TextField : public Field {
 };
 
 // ----------------------------------------------------------------------------- : TextStyle
+
+/// Background behind text
+class TextBackground {
+  public:
+	ScriptableImage image;        ///< background image, stretched to text size
+	RealSize        displacement;
+  private:
+	DECLARE_REFLECTION();
+};
 
 /// The Style for a TextField
 class TextStyle : public Style {
@@ -67,6 +78,8 @@ class TextStyle : public Style {
 	String mask_filename;						///< Filename of the mask
 	ContourMask mask;							///< Mask to fit the text to (may be null)
 	Direction direction;						///< In what direction is text layed out?
+	TextBackgroundP text_background;			///< Image behind the text
+	TextBackgroundP text_background_left, text_background_right;
 	
 	virtual bool update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;
