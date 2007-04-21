@@ -65,7 +65,7 @@ class KeywordMode {
 /// A keyword for a set or a game
 class Keyword {
   public:
-	Keyword() : fixed(false) {}
+	Keyword() : fixed(false), valid(false) {}
 	
 	String                keyword;		///< The keyword, only for human use
 	String                rules;		///< Rules/explanation

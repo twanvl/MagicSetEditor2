@@ -170,7 +170,11 @@ void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
 		}
 	}
 	regex += _(")");
-	if (!matchRe.Compile(regex, wxRE_ADVANCED)) {
+	if (matchRe.Compile(regex, wxRE_ADVANCED)) {
+		// not valid if it matches "", that would make MSE hang
+		valid = !matchRe.Matches(_(""));
+	} else {
+		valid = false;
 		throw InternalError(_("Error creating match regex"));
 	}
 }
@@ -254,7 +258,7 @@ void KeywordDatabase::add(const vector<KeywordP>& kws) {
 }
 
 void KeywordDatabase::add(const Keyword& kw) {
-	if (kw.match.empty()) return; // can't handle empty keywords
+	if (kw.match.empty() || !kw.valid) return; // can't handle empty keywords
 	if (!root) {
 		root = new KeywordTrie;
 		root->on_any_star = root;
