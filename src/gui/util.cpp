@@ -152,7 +152,7 @@ void draw_control_border(Window* win, DC& dc, const wxRect& rect) {
 		RECT r;
 		wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
 		if (themeEngine && themeEngine->IsAppThemed()) {
-			wxUxThemeHandle hTheme(win, _("EDIT"));
+			wxUxThemeHandle hTheme(win, L"EDIT");
 			r.left = rect.x -1;
 			r.top = rect.y  -1;
 			r.right = rect.x + rect.width + 1;

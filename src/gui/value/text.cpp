@@ -199,7 +199,11 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 				// TODO: Find a more correct way to determine normal characters,
 				//       this might not work for internationalized input.
 				//       It might also not be portable!
-				replaceSelection(escape(String(ev.GetUnicodeKey(), 1)), _("Typing"));
+				#ifdef UNICODE
+					replaceSelection(escape(String(ev.GetUnicodeKey(),    1)), _("Typing"));
+				#else
+					replaceSelection(escape(String((Char)ev.GetKeyCode(), 1)), _("Typing"));
+				#endif
 			} else {
 				return false;
 			}

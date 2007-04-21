@@ -352,7 +352,11 @@ bool DropDownList::onCharInParent(wxKeyEvent& ev) {
 					for (size_t i = 0 ; i < count ; ++i) {
 						size_t index = (si + i) % count;
 						String c = itemText(index);
+#ifdef UNICODE
 						if (!c.empty() && toUpper(c.GetChar(0)) == toUpper(ev.GetUnicodeKey())) {
+#else
+						if (!c.empty() && toUpper(c.GetChar(0)) == toUpper(ev.GetKeyCode())) {
+#endif
 							// first character matches
 							selected_item = index;
 							showSubMenu();
