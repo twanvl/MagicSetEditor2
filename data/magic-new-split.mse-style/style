@@ -1,8 +1,12 @@
-mse version: 0.2.7
+mse version: 0.3.1
 game: magic
 short name: Split Cards
 full name: Modern split cards
 icon: card-sample.png
+
+card width: 523
+card height: 375
+card dpi: 150
 
 # Author: Wolfwood
 # Lots of copy/paste from magic-new.mse-style
@@ -119,7 +123,7 @@ card style:
 		width: 
 			script: if card.card_symbol=="none" then 175 else 168
 		height: 17
-		align: top shrink-overflow
+		alignment: top shrink-overflow
 		padding bottom: 0
 		z index: 1
 		font:
@@ -134,7 +138,7 @@ card style:
 		width: 
 			script: if card.card_symbol_2=="none" then 215 else 227
 		height: 17
-		align: top shrink-overflow
+		alignment: top shrink-overflow
 		padding bottom: 0
 		z index: 1
 		font:
@@ -147,11 +151,11 @@ card style:
 		top : 27
 		width: 35
 		height: 16
-		align: bottom right
+		alignment: bottom right
 		symbol font:
 			name: magic-mana-large
 			size: 12
-			align: bottom right
+			alignment: bottom right
 		always symbol: true
 		z index: 2
 		padding top: 0
@@ -161,11 +165,11 @@ card style:
 		top : 27
 		width: 35
 		height: 16
-		align: bottom right
+		alignment: bottom right
 		symbol font:
 			name: magic-mana-large
 			size: 12
-			align: bottom right
+			alignment: bottom right
 		always symbol: true
 		z index: 2
 		padding top: 0
@@ -192,7 +196,7 @@ card style:
 		top : 211
 		width: 197
 		height: 17
-		align: top shrink-overflow
+		alignment: top shrink-overflow
 		z index: 1
 		font:
 			name: Matrix
@@ -205,7 +209,7 @@ card style:
 		top : 211
 		width: 197
 		height: 17
-		align: top shrink-overflow
+		alignment: top shrink-overflow
 		z index: 1
 		font:
 			name: Matrix
@@ -262,7 +266,7 @@ card style:
 					then "magic-mana-large"
 					else "magic-mana-small"
 			size: 14
-		align: middle left
+		alignment: middle left
 		z index: 2
 		padding left:   2
 		padding top:    2
@@ -289,7 +293,7 @@ card style:
 					then "magic-mana-large"
 					else "magic-mana-small"
 			size: 14
-		align: middle left
+		alignment: middle left
 		z index: 2
 		padding left:   2
 		padding top:    2
@@ -305,7 +309,7 @@ card style:
 		top:	328
 		width:	48
 		height:	25
-		align: center middle
+		alignment: center middle
 		font:
 			name: Mplantin
 			size: 14
@@ -319,7 +323,7 @@ card style:
 		top:	328
 		width:	48
 		height:	25
-		align: center middle
+		alignment: center middle
 		font:
 			name: Mplantin
 			size: 14
@@ -399,7 +403,3 @@ card style:
 			size: 6
 			color:
 				script: font_color(card.card_color_2)
-
-width: 523
-height: 375
-dpi: 150

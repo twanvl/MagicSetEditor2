@@ -1,0 +1,315 @@
+﻿mse version: 0.3.1
+short name: Yu-Gi-Oh!
+icon: card-back.png
+
+############################################################## Functions & filters
+## Copied and Pasted from vs.mse-game, with a few modifications
+# General functions
+init script:
+	# level codes
+	level_filter := to_lower + sort_rule(order: "[ctefqrs]")
+	# the rule text filter
+	#  - adds continuous symbols
+	#  - adds counter symbols
+	#  - adds equipment symbols
+	#  - adds field symbols
+	#  - adds quickplay symbols
+	#  - adds ritual symbols
+	#  - adds level symbols
+	#  - makes text in parentheses italic
+	text_filter := 
+		# step 1 : remove all automatic tags
+		tag_remove_rule(tag: "<sym-auto>") +
+		tag_remove_rule(tag: "<i-auto>")   +
+		# step 2 : symbols
+		replace_rule(
+			match: "cn|ct|eq|fd|qp|ri|lv",
+			replace: {"<sym-auto>&</sym-auto>"} ) +
+		# step 3 : fill in atom fields
+		tag_contents_rule(
+			tag: "<atom-cardname>",
+			contents: { if card.name=="" then "CARDNAME" else card.name }
+			)
+	
+	# the flavor text filter
+	flavor_text_filter :=
+		# step 1 : remove italic tags
+		tag_remove_rule(tag: "<i-flavor>") +
+		# step 2 : surround by <i> tags
+		{ "<i-flavor>" + input + "</i-flavor>" };
+	
+	# Determine type of card
+	card_type := {
+		if      card.attribute == "spell"   then "spell card"
+		else if card.attribute == "trap"    then "trap card"
+		else                                     "normal monster"
+	}
+	# Default 'attribute' of card
+	attribute := {
+		if      is_spell_card() then "spell"
+		else if is_trap_card()  then "trap"
+		else                         ""
+	}
+	
+	############### Type of card
+	
+	is_nmonster := {
+		card.card_type == "spell card" or
+	        card.card_type == "trap card"
+	}
+	is_monster := {
+		card.card_type == "normal monster" or
+	        card.card_type == "effect monster" or
+	        card.card_type == "ritual monster" or
+	        card.card_type == "fusion monster" or
+		card.card_type == "obelisk"        or
+		card.card_type == "slifer"	   or
+		card.card_type == "ra"		   or
+		card.card_type == "legendary dragons"
+	}
+	is_normal_monster := {
+		card.card_type == "normal monster" or
+		card.card_type == "obelisk"        or
+		card.card_type == "slifer"	   or
+		card.card_type == "ra"		   or
+		card.card_type == "legendary dragons"
+	}
+	is_spell_card := {
+		card.card_type == "spell card"
+	}
+	is_trap_card := {
+	        card.card_type == "trap card"
+	}
+
+############################################################## Set fields
+
+set field:
+	type: info
+	name: Set Information
+set field:
+	type: text
+	name: title
+	description: This information will not appear on the card.
+set field:
+	type: text
+	name: code
+	description: Recommended only 3 Capital digits. Will appear before card number. ex: LOB-XX101
+set field:
+	type: text
+	name: language
+	description: Recommended 2 - 3 Captital digits. Will appear before the card number, after the code. ex: XXX-EN101
+set field:
+	type: text
+	name: description
+	multi line: true
+	description: This information will not appear on the card.
+set field:
+	type: text
+	name: edition
+	description: Editting this will set 1 edition for all the cards and will appear in the edition bar below the picture. ex-> LIMITED EDITION
+set field:
+	type: text
+	name: copyright
+	description: Copyright information. This will not appear on the card.
+
+
+############################# Default style
+
+default set style:
+	title:
+		padding left: 2
+		font:
+			size: 16
+
+############################################################## Card fields
+
+############################# Background stuff
+card field:
+	type: choice
+	name: card type
+	choice: normal monster
+	choice: effect monster
+	choice: ritual monster
+	choice: fusion monster
+	choice: obelisk
+	choice: slifer
+	choice: ra
+	choice: legendary dragons
+	choice: spell card
+	choice: trap card
+	default: card_type()
+
+############################# Name line
+card field:
+	type: text
+	name: name
+	identifying: true
+	show statistics: false
+	card list visible: true
+	card list column: 1
+card field:
+	type: choice
+	name: attribute
+	choice: none
+	choice: earth
+	choice: water
+	choice: fire
+	choice: wind
+	choice: light
+	choice: dark
+	choice: divine
+	choice: spell
+	choice: trap
+	card list visible: true
+	card list column: 2
+card field:
+	type: text
+	name: level
+	description: Level, s = star, c = continuous, t = counter, e = equipment, f = field, q = quickplay, r = ritual
+	script: level_filter(value)
+
+############################# Image
+card field:
+	type: image
+	name: image
+	show statistics: false
+
+############################# Card type
+card field:
+	type: text
+	name: monster
+	editable: false
+card field:
+	type: text
+	name: type1
+	editable: false
+card field:
+	type: text
+	name: monster type
+	script:
+		# Either just monster, monster / type1
+		combined_editor(
+			field1: card.monster,
+			separator: " / ",
+			field2: card.type1,
+			grey_until_needed: true,
+			hide_when_both_empty: true,
+			type_over1: " / ",
+			type_over2: "/"
+		)
+	card list visible: true
+	card list column: 3
+
+############################# Edition and Card ID
+card field:
+	type: text
+	name: number
+	script:
+		set.code
+		+ "-" +
+		set.language +
+		position(
+			of: card
+			in: set
+			order_by: {
+				card.name
+			})
+	card list visible: true
+	card list column: 6
+	card list width: 55
+	card list name: #
+	editable: false
+card field:
+	type: text
+	name: edition
+	default: set.edition
+
+############################# Text box
+card field:
+	type: text
+	name: rules
+	script: text_filter(value)
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: flavor
+	script: flavor_text_filter(value)
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: rule text
+	multi line: true
+	save value: false
+	show statistics: false
+	script:
+		if is_normal_monster(value) then
+			combined_editor(field1: card.rules, separator: "<line>\n</>", field2: card.flavor)
+		else 
+			forward_editor(field: card.rules)
+
+############################# Attack/Defense
+card field:
+	type: text
+	name: attack
+	save value: true
+	script: to_upper(value)
+	card list visible: true
+	card list column: 4
+	card list width: 33
+	card list name: ATK
+card field:
+	type: text
+	name: defense
+	save value: true
+	script: to_upper(value)
+	card list visible: true
+	card list column: 5
+	card list width: 33
+	card list name: DEF
+
+############################# Copyright stuff
+card field:
+	type: text
+	name: gamecode
+card field:
+	type: text
+	name: copyright
+	default: set.copyright
+
+
+############################################################## Word lists
+# Doesn't do anything yet
+
+#word list:
+#	name: type
+#	word: Dragon
+#	word: Spellcaster
+#	word: Zombie
+#	word: Warrior
+#	word: Beast-Warrior
+#	word: Beast
+#	word: Winged Beast
+#	word: Fiend
+#	word: Fiary
+#	word: Insect
+#	word: Dinosaur
+#	word: Reptile
+#	word: Fish
+#	word: Sea Serpent
+#	word: Machine
+#	word: Thunder
+#	word: Aqua
+#	word: Pyro
+#	word: Rock
+#	word: Plant
+#	word: Divine-Beast
+#	word: Toon
+#	word: Spirit
+#	word: Union
+#	word: Effect
+#	word: Fusion
+#	word: Ritual
+#	word: Divine
+

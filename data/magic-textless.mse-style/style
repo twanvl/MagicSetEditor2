@@ -1,8 +1,12 @@
-mse version: 0.2.7
+mse version: 0.3.1
 game: magic
 short name: Textless
 full name: Modern style
 icon: card-sample.png
+
+card width: 375
+card height: 523
+card dpi: 150
 
 #By: Wolfwood
 
@@ -97,7 +101,7 @@ card style:
 		width: 
 			script: if card.card_symbol=="none" then 246 else 227
 		height: 23
-		align: bottom shrink-overflow
+		alignment: bottom shrink-overflow
 		padding bottom: 0
 		z index: 1
 		font:
@@ -110,11 +114,11 @@ card style:
 		top : 29
 		width: 63
 		height: 23
-		align: bottom right
+		alignment: bottom right
 		symbol font:
 			name: magic-mana-large
 			size: 15
-			align: bottom right
+			alignment: bottom right
 		always symbol: true
 		z index: 2
 		padding top: 0
@@ -160,7 +164,7 @@ card style:
 		top:	448
 		width:	60
 		height:	28
-		align: center middle
+		alignment: center middle
 		font:
 			name: Mplantin
 			size: 18
@@ -206,7 +210,3 @@ card style:
 			size: 8
 			color:
 				script: font_color()
-
-width: 375
-height: 523
-dpi: 150

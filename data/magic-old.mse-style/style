@@ -4,11 +4,15 @@
 ############################################################## 
 ############################################################## 
 
-mse version: 0.2.7
+mse version: 0.3.1
 game: magic
 short name: Old style
 full name: Before 8th edition
 icon: card-sample.png
+
+card width: 312
+card height: 444
+card dpi: 127.34225621414913957934990439771
 
 ############################################################## Extra scripts
 ## COPY/PASTE from magic-new.mse-style/style
@@ -109,7 +113,7 @@ card style:
 		top : 9
 		width: 210
 		height: 22
-		align: bottom shrink-overflow
+		alignment: bottom shrink-overflow
 		padding bottom: 0
 		z index: 1
 		font:
@@ -124,11 +128,11 @@ card style:
 		top : 9
 		width: 54
 		height: 22
-		align: middle right
+		alignment: middle right
 		symbol font:
 			name: magic-mana-small
 			size: 14
-			align: middle right
+			alignment: middle right
 		always symbol: true
 		z index: 2
 		padding top: 0
@@ -156,7 +160,7 @@ card style:
 		top : 248
 		width: 240
 		height: 18
-		align: top left
+		alignment: top left
 		z index: 1
 		font:
 			name: MPlantin
@@ -201,7 +205,7 @@ card style:
 					then "magic-mana-large"
 					else "magic-mana-small"
 			size: 13
-		align: middle left
+		alignment: middle left
 		z index: 2
 		padding left:   2
 		padding top:    2
@@ -217,7 +221,7 @@ card style:
 		height: 140
 		z index: 1
 		render style: image
-		align: middle center
+		alignment: middle center
 		include file: magic-watermarks.mse-include/watermarks
 
 	############################# PT
@@ -227,7 +231,7 @@ card style:
 		top:	408
 		width:	42
 		height:	28
-		align: right top
+		alignment: right top
 		font:
 			name: Mplantin
 			size: 16
@@ -247,7 +251,7 @@ card style:
 		width: 200
 		height: 14
 		z index: 1
-		align: center
+		alignment: center
 		font:
 			name: Mplantin
 			size: 9
@@ -262,12 +266,8 @@ card style:
 		width: 200
 		height: 9
 		z index: 1
-		align: center
+		alignment: center
 		font:
 			name: MPlantin
 			size: 6
 			color: script: font_color()
-
-width: 312
-height: 444
-dpi: 127.34225621414913957934990439771
