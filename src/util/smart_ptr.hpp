@@ -75,6 +75,16 @@ template <typename T, typename A0, typename A1, typename A2, typename A3, typena
 inline shared_ptr<T> new_shared7(const A0& a0, const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5, const A6& a6) {
 	return shared_ptr<T>(new T(a0, a1, a2, a3, a4, a5, a6));
 }
+/// Allocate a new shared-pointed object, given eight arguments to pass to the ctor of T
+template <typename T, typename A0, typename A1, typename A2, typename A3, typename A4, typename A5, typename A6, typename A7>
+inline shared_ptr<T> new_shared8(const A0& a0, const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5, const A6& a6, const A7& a7) {
+	return shared_ptr<T>(new T(a0, a1, a2, a3, a4, a5, a6, a7));
+}
+/// Allocate a new shared-pointed object, given nine arguments to pass to the ctor of T
+template <typename T, typename A0, typename A1, typename A2, typename A3, typename A4, typename A5, typename A6, typename A7, typename A8>
+inline shared_ptr<T> new_shared9(const A0& a0, const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5, const A6& a6, const A7& a7, const A8& a8) {
+	return shared_ptr<T>(new T(a0, a1, a2, a3, a4, a5, a6, a7, a8));
+}
 
 // ----------------------------------------------------------------------------- : Intrusive pointers
 
