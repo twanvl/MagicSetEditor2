@@ -66,7 +66,7 @@ menu:
 	help:			&Help
 	index:				&Index...	F1
 	website:			&Website...
-	about:				&About Not Quite Magic Set Editor...
+	about:				&About Magic Set Editor...
 	
 	# symbol editor
 	
@@ -103,7 +103,7 @@ help:
 	export mws:				Export the set so it can be played with in Magic Workstation
 	print preview:		Shows cards as they will be printed
 	print:				Print cards from this set
-	exit:				Quits Not Quite Magic Set Editor; prompts to save the set
+	exit:				Quits Magic Set Editor; prompts to save the set
 	
 	edit:
 	undo:				Undoes the last action
@@ -114,7 +114,7 @@ help:
 	copy card:			Place the selected card on the clipboard
 	paste:				Inserts the text from the clipboard
 	paste card:			Inserts the card from the clipboard
-	preferences:		Change the configuration of Not Quite Magic Set Editor
+	preferences:		Change the configuration of Magic Set Editor
 	
 	cards:
 	previous card:		Selects the previous card in the list
@@ -429,8 +429,8 @@ button:
 
 ############################################################## Titles in the GUI
 title:
-	magic set editor:	Not Quite Magic Set Editor
-	about:				About Not Quite Magic Set Editor
+	magic set editor:	Magic Set Editor
+	about:				About Magic Set Editor
 	symbol editor:		Symbol Editor
 	# dialogs
 	open set:			Open Set
