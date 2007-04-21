@@ -40,7 +40,7 @@ template <> void GetDefaultMember::handle(const Version& v) {
 // ----------------------------------------------------------------------------- : Versions
 
 // NOTE: Don't use leading zeroes, they mean octal
-const Version app_version  = 300; // 0.3.0
+const Version app_version  = 301; // 0.3.1
 const Char* version_suffix = _(" (beta)");
 
 /*  Changes:
@@ -49,5 +49,6 @@ const Char* version_suffix = _(" (beta)");
  *     0.2.6 : fix in settings loading
  *     0.2.7 : new tag system, different style of close tags
  *     0.3.0 : port of code to C++
+ *     0.3.1 : new keyword system, some new style options
  */
-const Version file_version = 300; // 0.3.0
+const Version file_version = 301; // 0.3.1
