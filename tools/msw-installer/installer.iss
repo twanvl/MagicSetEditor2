@@ -5,10 +5,10 @@
 ;//+----------------------------------------------------------------------------+
 
 [setup]
-AppName                 = Not Quite Magic Set Editor 2
-AppVerName              = Not Quite Magic Set Editor 2 - 0.3.0 beta
+AppName                 = Magic Set Editor 2
+AppVerName              = Magic Set Editor 2 - 0.3.1 beta
 AppCopyright            = Copyright © 2001-2006 Twan van Laarhoven
-DefaultDirName          = {pf}\Not Quite Magic Set Editor 2
+DefaultDirName          = {pf}\Magic Set Editor 2
 DisableStartupPrompt    = 1
 DisableProgramGroupPage = 1
 AllowNoIcons            = 0
@@ -154,23 +154,23 @@ Source: "data/yugioh-standard-levels.mse-symbol-font/*";        DestDir:    "{ap
 ; ------------------------------ : Rest of installer
 
 [Icons]
-Name: "{commonprograms}\Not Quite Magic Set Editor"; Filename: "{app}\mse.exe"; WorkingDir: "{app}"
+Name: "{commonprograms}\Magic Set Editor"; Filename: "{app}\mse.exe"; WorkingDir: "{app}"
 
 
 [Registry]
 ; .mse-set file association
-;Root: HKCR; Subkey: ".mse-set";                              ValueType: string; ValueName: ""; ValueData: "MagicSetEditor2Set";   Flags: uninsdeletevalue
-;Root: HKCR; Subkey: "MagicSetEditor2Set";                    ValueType: string; ValueName: ""; ValueData: "Magic Set Editor Set"; Flags: uninsdeletekey
-;Root: HKCR; Subkey: "MagicSetEditor2Set\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\mse.exe,3"
-;Root: HKCR; Subkey: "MagicSetEditor2Set\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\mse.exe"" ""%1"""
+Root: HKCR; Subkey: ".mse-set";                              ValueType: string; ValueName: ""; ValueData: "MagicSetEditor2Set";   Flags: uninsdeletevalue
+Root: HKCR; Subkey: "MagicSetEditor2Set";                    ValueType: string; ValueName: ""; ValueData: "Magic Set Editor Set"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "MagicSetEditor2Set\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\mse.exe,3"
+Root: HKCR; Subkey: "MagicSetEditor2Set\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\mse.exe"" ""%1"""
 ; .mse-symbol file association
-;Root: HKCR; Subkey: ".mse-symbol";                              ValueType: string; ValueName: ""; ValueData: "MagicSetEditor2Symbol";   Flags: uninsdeletevalue
-;Root: HKCR; Subkey: "MagicSetEditor2Symbol";                    ValueType: string; ValueName: ""; ValueData: "Magic Set Editor Symbol"; Flags: uninsdeletekey
-;Root: HKCR; Subkey: "MagicSetEditor2Symbol\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\mse.exe,5"
-;Root: HKCR; Subkey: "MagicSetEditor2Symbol\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\mse.exe"" ""%1"""
+Root: HKCR; Subkey: ".mse-symbol";                              ValueType: string; ValueName: ""; ValueData: "MagicSetEditor2Symbol";   Flags: uninsdeletevalue
+Root: HKCR; Subkey: "MagicSetEditor2Symbol";                    ValueType: string; ValueName: ""; ValueData: "Magic Set Editor Symbol"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "MagicSetEditor2Symbol\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\mse.exe,5"
+Root: HKCR; Subkey: "MagicSetEditor2Symbol\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\mse.exe"" ""%1"""
 
 
 
 [Run]
-Filename: "{app}\mse.exe"; Description: "Start Not Quite Magic Set Editor"; Flags: postinstall nowait skipifsilent unchecked
+Filename: "{app}\mse.exe"; Description: "Start Magic Set Editor"; Flags: postinstall nowait skipifsilent unchecked
 
