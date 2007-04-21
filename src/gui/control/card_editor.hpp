@@ -70,6 +70,11 @@ class DataEditor : public CardViewer {
 	 */
 	bool search(FindInfo& find, bool from_start);
 	
+	// --------------------------------------------------- : Selection in editor
+	
+	/// Insert 'text' into the current editor, using an action with the given name
+	void insert(const String& text, const String& action_name);
+	
 	// --------------------------------------------------- : ValueViewers
 	
   protected:

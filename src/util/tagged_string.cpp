@@ -390,7 +390,10 @@ String get_tags(const String& str, size_t start, size_t end, bool close_tags) {
 			}
 		}
 		if (intag && keeptag) ret += c;
-		if (c == _('>')) intag = false;
+		if (c == _('>')) {
+			intag = false;
+			keeptag = false;
+		}
 	}
 	return ret;
 }
@@ -399,12 +402,21 @@ String tagged_substr_replace(const String& input, size_t start, size_t end, cons
 	assert(start <= end);
 	size_t size = input.size();
 	String ret; ret.reserve(size + replacement.size() - (end - start)); // estimated size
-	return simplify_tagged(
-		substr_replace(input, start, end,
-			get_tags(input, start, end, true) + // close tags
-			replacement +
-			get_tags(input, start, end, false)  // open tags
-		));
+	if (replacement.empty()) {
+		return simplify_tagged(
+			substr_replace(input, start, end,
+				get_tags(input, start, end, false) + // open tags
+				replacement +
+				get_tags(input, start, end, true)    // close tags
+			));
+	} else {
+		return simplify_tagged(
+			substr_replace(input, start, end,
+				get_tags(input, start, end, true) + // close tags
+				replacement +
+				get_tags(input, start, end, false)  // open tags
+			));
+	}
 }
 
 
@@ -419,15 +431,24 @@ String simplify_tagged(const String& str) {
 // otherwise appends <tag> and returns fales
 // (where </tag> is the negation of tag)
 bool add_or_cancel_tag(const String& tag, String& stack) {
-	String anti = anti_tag(tag);
-	size_t pos = stack.find(anti);
-	if (pos == String::npos) {
+	if (starts_with(tag, _("b")) || starts_with(tag, _("i")) || starts_with(tag, _("sym")) ||
+	    starts_with(tag, _("/"))) {
+		// cancel out all close tags, but not all open tags,
+		// so <xx></xx> is always removed
+		// but </xx><xx> is not
+		String anti = anti_tag(tag);
+		size_t pos = stack.find(anti);
+		if (pos == String::npos) {
+			stack += _("<") + tag + _(">");
+			return false;
+		} else {
+			// cancel out with anti tag
+			stack = stack.substr(0, pos) + stack.substr(pos + anti.size());
+			return true;
+		}
+	} else {
 		stack += _("<") + tag + _(">");
 		return false;
-	} else {
-		// cancel out with anti tag
-		stack = stack.substr(0, pos) + stack.substr(pos + anti.size());
-		return true;
 	}
 }
 

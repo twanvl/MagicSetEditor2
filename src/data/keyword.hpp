@@ -111,8 +111,6 @@ class KeywordDatabase {
 	void add(const vector<KeywordP>&);
 	/// Add a keyword to be matched
 	void add(const Keyword&);
-	/// Remove a keyword from the database
-	void remove(const Keyword&);
 	
 	/// Prepare the parameters and match regex for a list of keywords
 	static void prepare_parameters(const vector<KeywordParamP>&, const vector<KeywordP>&);

@@ -161,6 +161,10 @@ void DataEditor::onCommand(int id) {
 	}
 }
 
+void DataEditor::insert(const String& text, const String& action_name) {
+	if (current_editor) current_editor->insert(text, action_name);
+}
+
 // ----------------------------------------------------------------------------- : Mouse events
 
 void DataEditor::onLeftDown(wxMouseEvent& ev) {

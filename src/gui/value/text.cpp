@@ -218,8 +218,8 @@ void TextValueEditor::onLoseFocus() {
 	assert(caret);
 	if (caret->IsVisible()) caret->Hide();
 	// hide selection
-	selection_start   = selection_end   = 0;
-	selection_start_i = selection_end_i = 0;
+	//selection_start   = selection_end   = 0;
+	//selection_start_i = selection_end_i = 0;
 }
 
 bool TextValueEditor::onContextMenu(IconMenu& m, wxContextMenuEvent& ev) {
@@ -478,6 +478,9 @@ void TextValueEditor::showCaret() {
 	if (!caret->IsVisible()) caret->Show();
 }
 
+void TextValueEditor::insert(const String& text, const String& action_name) {
+	replaceSelection(text, action_name);
+}
 void TextValueEditor::replaceSelection(const String& replacement, const String& name) {
 	if (replacement.empty() && selection_start == selection_end) {
 		// no text selected, nothing to delete

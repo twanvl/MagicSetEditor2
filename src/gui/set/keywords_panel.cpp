@@ -138,8 +138,6 @@ void KeywordsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 		case ID_KEYWORD_PREV:       ev.Enable(list->canSelectPrevious());	break;
 		case ID_KEYWORD_NEXT:       ev.Enable(list->canSelectNext());		break;
 		case ID_KEYWORD_REMOVE:     ev.Enable(list->getKeyword() && !list->getKeyword()->fixed);	break;
-		case ID_KEYWORD_ADD_PARAM:
-			break;
 	}
 }
 
@@ -192,26 +190,37 @@ void KeywordsPanel::onCommand(int id) {
 			if (id >= ID_PARAM_TYPE_MIN && id < ID_PARAM_TYPE_MAX) {
 				// add parameter
 				KeywordParamP param = set->game->keyword_parameter_types.at(id - ID_PARAM_TYPE_MIN);
-				String to_insert = _("<atom-keyword>") + param->name + _("</atom-keyword>");
-				// TODO
+				String to_insert = _("<atom-param>") + param->name + _("</atom-param>");
+				match->insert(to_insert, _("Insert parameter"));
 			} else if (id >= ID_PARAM_REF_MIN && id < ID_PARAM_REF_MAX) {
-				/*
-				int i = ID_PARAM_REF_MIN;
-				FOR_EACH(p, list->getKeyword()->parameters) {
-					if (p->refer_scripts.empty()) {
-						if (i == id) {
-							// found it
-						} else {
-						}
-					}
-				}
-				String to_insert = list->getKeyword()->run_ref_script(id - ID_PARAM_REF_MIN, set->getContext());
-				*/
-				// TODO
+				String to_insert = runRefScript(id - ID_PARAM_REF_MIN);
+				reminder->insert(to_insert, _("Use parameter"));
 			}
 	}
 }
 
+String KeywordsPanel::runRefScript(int find_i) {
+	int param = 0;
+	int i = 0;
+	FOR_EACH(p, list->getKeyword()->parameters) {
+		String param_s = String(_("param")) << ++param;
+		if (p->refer_scripts.empty()) {
+			if (i++ == find_i) {
+				// found it
+				return _("{") + param_s + _("}");
+			}
+		} else {
+			FOR_EACH(r, p->refer_scripts) {
+				if (i++ == find_i) {
+					Context& ctx = set->getContext();
+					ctx.setVariable(_("input"), to_script(param_s));
+					return r->script.invoke(ctx)->toString();
+				}
+			}
+		}
+	}
+	return wxEmptyString;
+}
 
 // ----------------------------------------------------------------------------- : Events
 
@@ -250,10 +259,19 @@ void KeywordsPanel::onChangeSet() {
 
 void KeywordsPanel::onAction(const Action& action, bool undone) {
 	TYPE_CASE(action, ValueAction) {
-		KeywordReminderTextValue* value = dynamic_cast<KeywordReminderTextValue*>(action.valueP.get());
-		if (value && &value->keyword == list->getKeyword().get()) {
-			// the current keyword's reminder text changed
-			errors->SetLabel(value->errors);
+		{
+			KeywordReminderTextValue* value = dynamic_cast<KeywordReminderTextValue*>(action.valueP.get());
+			if (value && &value->keyword == list->getKeyword().get()) {
+				// the current keyword's reminder text changed
+				errors->SetLabel(value->errors);
+			}
+		}
+		{
+			KeywordTextValue* value = dynamic_cast<KeywordTextValue*>(action.valueP.get());
+			if (value && value->underlying == &list->getKeyword()->match) {
+				// match string changes, maybe there are parameters now
+				ref_param->Enable(!value->keyword.fixed && !value->keyword.parameters.empty());
+			}
 		}
 	}
 	TYPE_CASE(action, ChangeKeywordModeAction) {

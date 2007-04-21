@@ -69,11 +69,11 @@ class ValueEditor {
 	/// This editor can be pasted to right now
 	/** this function should also check the data on the clipboard has the right format */
 	virtual bool canPaste() const { return false; }
-	// Copies from this field editor, returns success
+	/// Copies from this field editor, returns success
 	virtual bool doCopy()   { return false; }
-	// Deletes the selection from this field editor, cut = copy + delete, returns success
+	/// Deletes the selection from this field editor, cut = copy + delete, returns success
 	virtual bool doDelete() { return false; }
-	// Cuts the selection from this field editor
+	/// Cuts the selection from this field editor
 	bool         doCut()    { return doCopy() && doDelete(); }
 	/// Initiate pasting in this field editor,
 	/** should again check if pasting is possible and fail silently if not, returns success */
@@ -95,6 +95,9 @@ class ValueEditor {
 	/// Determine the selected range
 	virtual size_t selectionStart() const { return 0; }
 	virtual size_t selectionEnd()   const { return 0; }
+	
+	/// Insert the given text (replacing the current selection)
+	virtual void insert(const String& text, const String& action_name) {};
 	
 	// --------------------------------------------------- : Search / replace
 	

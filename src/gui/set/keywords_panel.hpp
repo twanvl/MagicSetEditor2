@@ -39,6 +39,9 @@ class KeywordsPanel : public SetWindowPanel {
   private:
 	DECLARE_EVENT_TABLE();
 	
+	/// Find the code to insert based on the ref_scripts for the parameters of the current keyword
+	String runRefScript(int i);
+	
 	// --------------------------------------------------- : Controls
 	wxSplitterWindow* splitter;
 	wxPanel*          panel;

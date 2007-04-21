@@ -92,6 +92,8 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	virtual size_t selectionStart() const { return selection_start; }
 	virtual size_t selectionEnd()   const { return selection_end; }
 	
+	virtual void insert(const String& text, const String& action_name);
+	
 	// --------------------------------------------------- : Other
 	
 	virtual wxCursor cursor() const;

@@ -91,6 +91,9 @@ void TextCtrl::onChangeSet() {
 	} else {
 		setValue(nullptr);
 	}
+	// select the one and only editor
+	current_viewer = viewers.front().get();
+	current_editor = current_viewer->getEditor();
 }
 
 void TextCtrl::onInit() {
