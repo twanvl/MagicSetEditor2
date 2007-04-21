@@ -527,7 +527,7 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 	} else {
 		selection_end_i = selection_start_i = min(selection_end_i, selection_start_i) + replacement.size();
 	}
-	fixSelection(TYPE_INDEX, MOVE_MID);
+	fixSelection(TYPE_INDEX, MOVE_RIGHT);
 	// scroll with next update
 	scroll_with_cursor = true;
 }

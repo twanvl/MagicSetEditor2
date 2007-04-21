@@ -201,6 +201,10 @@ init script:
 		# step 2 : surround by <i> tags
 		{ "<i-flavor>" + input + "</i-flavor>" }
 	
+	# Move the cursor past the separator in the p/t and type boxes
+	type_over_pt   := replace_rule(match:"/$", replace:"")
+	type_over_type := replace_rule(match:" ?-$", replace:"")
+	
 	# Converted mana cost
 	cmc := {
 		  1 * number_of_items(in: sort(order:"SWUBRG")) # colored mana
@@ -411,6 +415,7 @@ card field:
 	name: super type
 	icon: stats/creature_type.png
 	editable: false
+	script: type_over_type(value)
 card field:
 	type: text
 	name: sub type
@@ -428,9 +433,7 @@ card field:
 			separator: " — ",
 			field2: card.sub_type,
 			soft_before_empty: true,
-			hide_when_empty:   true,
-			type_over1: " -",
-			type_over2: "-"
+			hide_when_empty:   true
 		)
 	card list visible: true
 	card list column:4
@@ -504,6 +507,7 @@ card field:
 	name: power
 	icon: stats/power.png
 	editable: false
+	script: type_over_pt(value)
 card field:
 	type: text
 	name: toughness
@@ -519,8 +523,7 @@ card field:
 			separator: "/",
 			field2: card.toughness,
 			soft_before_empty: true,
-			hide_when_empty:   true,
-			type_over1: "/"
+			hide_when_empty:   true
 		)
 	card list visible: true
 	card list column: 5
@@ -628,6 +631,7 @@ card field:
 	icon: stats/creature_type.png
 	editable: false
 	show statistics: false
+	script: type_over_type(value)
 card field:
 	type: text
 	name: sub type 2
@@ -643,10 +647,8 @@ card field:
 			field1: card.super_type_2,
 			separator: " — ",
 			field2: card.sub_type_2,
-			hide_when_empty:   true,
 			soft_before_empty: true,
-			type_over1: " -",
-			type_over2: "-"
+			hide_when_empty:   true
 		)
 	show statistics: false
 card field:
@@ -689,6 +691,7 @@ card field:
 	icon: stats/power.png
 	editable: false
 	show statistics: false
+	script: type_over_pt(value)
 card field:
 	type: text
 	name: toughness 2
@@ -705,8 +708,7 @@ card field:
 			separator: "/",
 			field2: card.toughness_2,
 			soft_before_empty: true,
-			hide_when_empty:   true,
-			type_over1: "/"
+			hide_when_empty:   true
 		)
 	card list width: 50
 	card list name: P/T2
@@ -1039,14 +1041,12 @@ keyword:
 	reminder: You have threshold as long as seven or more cards are in your graveyard.
 keyword:
 	keyword: Flashback
-	separator: whitespace [ ]
-	parameter: cost
+	match: Flashback <atom-param>cost</atom-param>
 	mode: expert
 	reminder: You may play this card from your graveyard for its flashback cost. Then remove it from the game.
 keyword:
 	keyword: Morph
-	separator: whitespace [ ]
-	parameter: cost
+	match: Morph <atom-param>cost</atom-param>
 	mode: expert
 	reminder: You may play this face down as a 2/2 creature for [3]. Turn it face up any time for its morph cost.
 keyword:
@@ -1068,26 +1068,22 @@ keyword:
 	reminder: When you play this spell, copy it for each spell played before it this turn. You may choose new targets for the copies.
 keyword:
 	keyword: Affinity for
-	separator: whitespace [ ]
-	parameter: name
+	match: Affinity for <atom-param>name</atom-param>
 	mode: expert
 	reminder: This spell costs <sym>1</sym> less to play for each {param1} you control.
 keyword:
 	keyword: Entwine
-	separator: whitespace [ ]
-	parameter: cost
+	match: Entwine <atom-param>cost</atom-param>
 	mode: expert
 	reminder: Choose both if you pay the entwine cost.
 keyword:
 	keyword: Equip
-	separator: whitespace [ ]
-	parameter: cost
+	match: Equip <atom-param>cost</atom-param>
 	mode: expert
 	reminder: {param1}: Attach to target creature you control. Equip only as a sorcery. This card comes into play unattached and stays in play if the creature leaves play.
 keyword:
 	keyword: Imprint
-	separator: dash [ - ]
-	parameter: action
+	match: Imprint - <atom-param>action</atom-param>
 	mode: expert
 	reminder: The removed card is imprinted on this artifact.
 keyword:
@@ -1111,26 +1107,22 @@ keyword:
 	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
 keyword:
 	keyword: Offering
-	separator: dash [ - ]
-	parameter: name
+	match: Offering - <atom-param>name</atom-param>
 	mode: expert
 	reminder: You may play this card any time you could play an instant by sacrificing a {param1} and paying the difference in mana costs between this and the sacrificed {param1}. Mana cost includes color.
 keyword:
 	keyword: Bushido
-	separator: whitespace [ ]
-	parameter: number
+	match: Bushido <atom-param>number</atom-param>
 	mode: expert
 	reminder: When this blocks or becomes blocked, it gets +{param1}/+{param1} until end of turn.
 keyword:
 	keyword: Ninjutsu
-	separator: whitespace [ ]
-	parameter: cost
+	match: Ninjutsu <atom-param>cost</atom-param>
 	mode: expert
 	reminder: {param1}, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
 keyword:
 	keyword: Soulshift
-	separator: whitespace [ ]
-	parameter: number
+	match: Soulshift <atom-param>number</atom-param>
 	mode: expert
 	reminder: When this is put into a graveyard from play, you may return target Spirit card with converted mana cost {param1} or less from you graveyard to your hand.
 keyword:
@@ -1143,8 +1135,7 @@ keyword:
 	reminder: Each creature you tap while playing this spell reduces its cost by <sym>1</sym> or by one mana of that creature’s color.
 keyword:
 	keyword: Transmute
-	separator: whitespace [ ]
-	parameter: cost
+	match: Transmute <atom-param>cost</atom-param>
 	mode: expert
 	reminder: {param1}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
 keyword:
@@ -1153,14 +1144,12 @@ keyword:
 	reminder: When this card is put into a graveyard from play, remove it from the game haunting target creature.
 keyword:
 	keyword: Bloodthirst
-	separator: whitespace [ ]
-	parameter: number
+	match: Bloodthirst <atom-param>number</atom-param>
 	mode: expert
 	reminder: If an opponent was dealt damage this turn, this creature comes into play with {english_number_a(param1)} +1/+1 counter(s) on it.
 keyword:
 	keyword: Replicate
-	separator: whitespace [ ]
-	parameter: cost
+	match: Replicate <atom-param>cost</atom-param>
 	mode: expert
 	reminder: When you play this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.
 keyword:
@@ -1186,8 +1175,7 @@ keyword:
 	reminder: This creature is unblockable as long as defending player controls a {param1}.
 keyword:
 	keyword: Protection from
-	separator: whitespace [ ] 
-	parameter: name
+	match: Protection from <atom-param>name</atom-param>
 	mode: core
 	reminder: This creature can’t be blocked, targeted, dealt damage, or enchanted by anything {param1}.
 keyword:
@@ -1197,13 +1185,11 @@ keyword:
 	reminder: As long as you have at least {english_number(param1)} card(s) in your library, if you would draw a card, you may instead put exactly {param1} card(s) from the top of your library into your graveyard and return this card from your graveyard to your hand.
 keyword:
 	keyword: Graft
-	separator: whitespace [ ]
-	parameter: number
+	match: Graft <atom-param>number</atom-param>
 	mode: expert
 	reminder: This creature comes into play with {english_number(param1)} +1/+1 counter(s) on it. Whenever another creature comes into play, you may move a +1/+1 counter from this creature onto it.
 keyword:
 	keyword: Forecast
-	separator: whitespace [ ]
-	parameter: cost
+	match: Forecast <atom-param>cost</atom-param>
 	mode: expert
 	reminder: Play this ability only during your upkeep and only once each turn.

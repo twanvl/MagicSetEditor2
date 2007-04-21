@@ -49,6 +49,7 @@ IMPLEMENT_REFLECTION(KeywordMode) {
 template <typename T> void read_compat(T&, const Keyword*) {}
 void read_compat(Reader& tag, Keyword* k) {
 	if (!k->match.empty()) return;
+	if (tag.file_app_version >= 301) return; // only for versions < 0.3.1
 	String separator, parameter;
 	REFLECT(separator);
 	REFLECT(parameter);
