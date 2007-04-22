@@ -10,6 +10,36 @@ icon: card-sample.png
 
 # General functions
 init script:
+	#character filter for copyright line
+	copyright_filter :=
+		# step 1 : Æ replacement rule
+		replace_rule(
+			match: "AE",
+			replace: "Æ") +
+		# step 2 : longdash for keywords
+		replace_rule(
+			match: "--| - ",
+			replace: "—") +
+		# step 3 : trademark symbol
+		replace_rule(
+			match: "TM",
+			replace: "™") +
+		# step 4 : copyright symbol
+		replace_rule(
+			match: "(C)",
+			replace: "©")
+	
+	#character filter for title line
+	name_filter :=
+		# step 1 : Æ replacement rule
+		replace_rule(
+			match: "AE",
+			replace: "Æ") +
+		# step 2 : longdash for keywords
+		replace_rule(
+			match: "--| - ",
+			replace: "—")
+	
 	# correctly sort a mana symbol (no guild mana)
 	mana_sort       := sort_rule(order: "XYZ[0123456789]S(WUBRG)")
 	# correctly sort guild mana
@@ -85,6 +115,30 @@ init script:
 		replace_rule(
 			match: "\\[[STXYZWUBRG0-9/|]+\\]",
 			replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
+		# step 6 : longdash
+		replace_rule(
+			match: "--| - ",
+			replace: "—" ) +
+		# step 6b : Æ replacement
+		replace_rule(
+			match: "AE",
+			replace: "Æ" ) +
+		# step 6c : "s" remover for keywords
+		replace_rule(
+			match: "s</param-name><s>"
+			replace: "" ) +
+		# step 6d : period remover for action param keywords
+		replace_rule(
+			match: ".</param-action><.>"
+			replace: "" ) +
+		# step 6e : "an" for parameters starting with vowels
+		replace_rule(
+			match: "<a>",
+			in_context: "<match>[ ]<param-name>?[aeiouAEIOU]",
+			replace: "an" ) +
+		replace_rule(
+			match: "<a>",
+			replace: "a" ) +
 		# step 7 : italic reminder text
 		replace_rule(
 		 	match: "[(][^)\n]*[)]?",
@@ -269,45 +323,519 @@ card field:
 
 ############################# Keyword rules
 
-keyword parameter type:
-	name: no parameter
+has keywords: true
+
+#keyword preview: {keyword} <i>({reminder})</i>
+
+keyword mode:
+	name: old
+	description: Old keywords (Banding, Phasing, etc.)
+keyword mode:
+	name: core
+	description: Core set keywords (Flying, Haste, etc.)
+keyword mode:
+	name: expert
+	description: Expert level keywords (Cycling, Vanishing, etc.)
+keyword mode:
+	is default: true
+	name: custom
+	description: Custom keywords
+
 keyword parameter type:
 	name: mana
-	match: [XYZ0-9WUBRG/]+
+	match: [XYZ0-9WUBRGS/]+
+# By jimrandomh
+keyword parameter type:
+	name: cost
+	match: [^(\n]+
 keyword parameter type:
 	name: number
-	match: [0-9]+
+	match: [XYZ0-9]+
+	refer script:
+		name: normal
+		description: (1,2,3)
+		script: \{{input}\}
+	refer script:
+		name: as words
+		description: (one, two, three)
+		script: \{english_number({input})\}
+	refer script:
+		name: as words, use "a" for 1
+		description: (a, two, three)
+		script: \{english_number_a({input})\}
+	refer script:
+		name: as words, use "" for 1
+		description: (, two, three)
+		script: \{english_number_multiple({input})\}
 keyword parameter type:
 	name: action
-	match: [^\n(.,]+
+	match: [^(,\n]+
 keyword parameter type:
 	name: name
-	match:
-		[^
-		(.,]+
-
+	match: [^(.,\n]+
+keyword parameter type:
+	name: land
+	description: Prefix for things like "<something>walk"
+	optional: false
+	match: [A-Z][a-z]*
+	example: Forest
 
 ############################# All Magic keywords
+# By JrEye and Neko_Asakami
 
 keyword:
 	keyword: Flying
-	reminder: This creature can’t be blocked except by creatures with flying.
+	match: Flying
+	mode: core
+	reminder: This creature can’t be blocked except by creatures with flying and/or reach.
 keyword:
 	keyword: Haste
-	reminder: This creature can attack the turn it comes under your control.
+	match: Haste
+	mode: core
+	reminder: This creature can attack and tap the turn it comes under your control.
 keyword:
 	keyword: Fear
-	reminder: This creature can't be blocked except by artifact creatures and/or black creatures.
+	match: Fear
+	mode: core
+	reminder: This creature can’t be blocked except by artifact creatures and/or black creatures.
 keyword:
 	keyword: First strike
+	match: First strike
+	mode: core
 	reminder: This creature deals combat damage before creatures without first strike.
 keyword:
 	keyword: Enchant
-	separator: whitespace [ ]
-	parameter: name
-	reminder: Target a <param> as you play this. This card comes into play attached to that <param>.
+	match: Enchant <atom-param>name</atom-param>
+	mode: core
+	reminder: Target a {param1} as you play this. This card comes into play attached to that {param1}.
 keyword:
 	keyword: Cycling
-	separator: whitespace [ ]
-	parameter: mana
-	reminder: <param>, Discard this card: Draw a card.
+	match: Cycling <atom-param>mana</atom-param>
+	mode: core
+	reminder: {param1}, Discard this card: Draw a card.
+keyword:
+	keyword: Cycling
+	match: Cycling—<atom-param>action</atom-param>
+	mode: core
+	reminder: {param1}<.>, Discard this card: Draw a card.
+keyword:
+	keyword: Trample
+	match: Trample
+	mode: core
+	reminder: If this creature would deal enough combat damage to its blockers to destroy them, you may have it deal the rest of its damage to defending player.
+keyword:
+	keyword: Banding
+	match: Banding
+	mode: old
+	reminder: When declaring attackers or blockers this creature may group with others creatures with banding and one creature without banding. When damage is dealt, you decide where damage is dealt.
+keyword:
+	keyword: Bands with other
+	match: Bands with other <atom-param>name</atom-param>
+	mode: old
+	reminder: When declaring attackers or blockers, this creature may group with other {param1} and creatures with banding. When damage is dealt, you decide where damage is dealt.
+keyword:
+	keyword: Rampage
+	match: Rampage <atom-param>number</atom-param>
+	mode: old
+	reminder: Whenever this creature becomes blocked, it gets +{param1}/+{param1} until end of turn for each creature blocking it beyond the first.
+keyword:
+	keyword: Vigilance
+	match: Vigilance
+	mode: core
+	reminder: Attacking doesn’t cause this creature to tap.
+keyword:
+	keyword: Defender
+	match: Defender
+	mode: core
+	reminder: This creature can’t attack.
+keyword:
+	keyword: Cumulative upkeep
+	match: Cumulative upkeep <atom-param>mana</atom-param>
+	mode: old
+	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay {param1} for each age counter on it.
+keyword:
+	keyword: Cumulative upkeep
+	match: Cumulative upkeep—<atom-param>action</atom-param>
+	mode: old
+	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you {to_lower(param1)}<.> for each age counter on it.
+keyword:
+	keyword: Horsemanship
+	match: Horsemanship
+	mode: old
+	reminder: This creature can’t be blocked except by creatures with horsemanship.
+keyword:
+	keyword: Phasing
+	match: Phasing
+	mode: old
+	reminder: At the beginning of your upkeep, put this and any cards attached to it in the phased-out zone.  If this is already in the phased-out zone, return it and any card attached to it to play.  If there were counters on this card when it phased out, put that many counters on it when it returns to play.  This ability does not cause comes-into-play or leaves play abilities to trigger.
+keyword:
+	keyword: Flanking
+	match: Flanking
+	mode: old
+	reminder: Whenever a creature without flanking blocks this creature, the blocking creature gets -1/-1 until end of turn.
+keyword:
+	keyword: Shadow
+	match: Shadow
+	mode: core
+	reminder: This creature can block or be blocked only by creatures with shadow.
+keyword:
+	keyword: Buyback
+	match: Buyback <atom-param>mana</atom-param>
+	mode: expert
+	reminder: You may pay {param1} in addition to any other costs as you play this spell. If you do, put this card into your hand as it resolves.
+keyword:
+	keyword: Buyback
+	match: Buyback—<ataom-param>action</atom-param>
+	mode: expert
+	reminder: You may {to_lower(param1)}<.> in addition to any other costs as you play this spell. If you do, put this card into your hand as it resolves.
+keyword:
+	keyword: Echo
+	match: Echo <atom-param>mana</atom-param>
+	mode: expert
+	reminder: At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.
+keyword:
+	keyword: Echo
+	match: Echo—<atom-param>action</atom-param>
+	mode: expert
+	reminder: At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.
+keyword:
+	keyword: Cardcycling
+	match: <atom-param>name</atom-param>cycling <atom-param>mana</atom-param>
+	mode: expert
+	reminder: {param2}, Discard this card: Search your library for <a> {param1} card, reveal it, and put it into your hand. Then shuffle your library.
+keyword:
+	keyword: Cardcycling
+	match: <atom-param>name</atom-param>cycling—<atom-param>action</atom-param>
+	mode: expert
+	reminder: {param2}<.>, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
+keyword:
+	keyword: Fading
+	match: Fading <atom-param>number</atom-param>
+	mode: expert
+	reminder: This comes into play with {english_number_a(param1)} fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can’t, sacrifice it.
+keyword:
+	keyword: Kicker
+	match: Kicker <atom-param>mana</atom-param>
+	mode: expert
+	reminder: You may pay an additional {param1} as you play this spell.
+keyword:
+	keyword: Kicker
+	match: Kicker—<atom-param>action</atom-param>
+	mode: expert
+	reminder: You may {to_lower(param1)}<.> as you play this spell.
+keyword:
+	keyword: Madness
+	match: Madness <atom-param>mana</atom-param>
+	mode: expert
+	reminder: You may play this card for its madness cost at the time you discard it.
+keyword:
+	keyword: Madness
+	match: Madness—<atom-param>action</atom-param>
+	mode: expert
+	reminder: You may play this card for its madness cost at the time you discard it.
+keyword:
+	keyword: Flashback
+	match: Flashback <atom-param>mana</atom-param>
+	mode: expert
+	reminder: You may play this card from your graveyard for its flashback cost. Then remove it from the game.
+keyword:
+	keyword: Flashback
+	match: Flashback—<atom-param>action</atom-param>
+	mode: expert
+	reminder: You may play this card from your graveyard for its flashback cost. Then remove it from the game.
+keyword:
+	keyword: Morph
+	match: Morph <atom-param>mana</atom-param>
+	mode: expert
+	reminder: You may play this face down as a 2/2 creature for <sym>3</sym>. Turn it face up any time for its morph cost.
+keyword:
+	keyword: Morph
+	match: Morph—<atom-param>action</atom-param>
+	mode: expert
+	reminder: You may play this face down as a 2/2 creature for <sym>3</sym>. Turn it face up any time for its morph cost.
+keyword:
+	keyword: Amplify
+	match: Amplify <atom-param>number</atom-param>
+	mode: expert
+	reminder: As this card comes into play, put {english_number_a(param1)} +1/+1 counter(s) on it for each creature that shares a type with this that you reveal in your hand.
+keyword:
+	keyword: Double strike
+	match: Double strike
+	mode: expert
+	reminder: This creature deals both first-strike and regular combat damage.
+keyword:
+	keyword: Provoke
+	match: Provoke
+	mode: expert
+	reminder: When this attacks, you may have target creature defending player controls untap and block it if able.
+keyword:
+	keyword: Storm
+	match: Storm
+	mode: expert
+	reminder: When you play this spell, copy it for each spell played before it this turn. You may choose new targets for the copies.
+keyword:
+	keyword: Affinity for
+	match: Affinity for <atom-param>name</atom-param>
+	mode: expert
+	reminder: This spell costs <sym>1</sym> less to play for each {param1}<s> you control.
+keyword:
+	keyword: Entwine
+	match: Entwine <atom-param>mana</atom-param>
+	mode: expert
+	reminder: Choose both if you pay the entwine cost.
+keyword:
+	keyword: Entwine
+	match: Entwine—<atom-param>action</atom-param>
+	mode: expert
+	reminder: Choose both if you pay the entwine cost.
+keyword:
+	keyword: Equip
+	match: Equip <atom-param>mana</atom-param>
+	mode: expert
+	reminder: {param1}: Attach to target creature you control. Equip only as a sorcery.
+keyword:
+	keyword: Equip
+	match: Equip—<atom-param>action</atom-param>
+	mode: expert
+	reminder: {param1}<.>: Attach to target creature you control. Equip only as a sorcery.
+keyword:
+	keyword: Imprint
+	match: Imprint—<atom-param>action</atom-param>
+	mode: expert
+	reminder: The removed card is imprinted on this artifact.
+keyword:
+	keyword: Modular
+	match: Modular  <atom-param>number</atom-param>
+	mode: expert
+	reminder: This comes into play with {english_number_a(param1)} +1/+1 counter(s) on it. When it’s put into a graveyard, you may put its +1/+1 counters on target artifact creature.
+keyword:
+	keyword: Scry
+	match: Scry <atom-param>number</atom-param>
+	mode: expert
+	reminder: Look at the top {english_number_multiple(param1)} card(s) of your library. Put any number of them on the bottom of your library in any order and the rest on top of your library in any order.
+keyword:
+	keyword: Sunburst
+	match: Sunburst
+	mode: expert
+	reminder: This comes into play with a +1/+1 counter on it for each color of mana used to pay its cost. If it is not a creature, use charge counters instead.
+keyword:
+	keyword: Splice
+	match: Splice onto <atom-param>name</atom-param> <atom-param>mana</atom-param>
+	mode: expert
+	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
+keyword:
+	keyword: Splice
+	match: Splice onto <atom-param>name</atom-param>—<atom-param>action</atom-param>
+	mode: expert
+	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card's effects to that spell.
+keyword:
+	keyword: Offering
+	match: <atom-param>name</atom-param> offering
+	mode: expert
+	reminder: You may play this card any time you could play an instant by sacrificing <a> {param1} and paying the difference in mana costs between this and the sacrificed {param1}. Mana cost includes color.
+keyword:
+	keyword: Bushido
+	match: Bushido <atom-param>number</atom-param>
+	mode: expert
+	reminder: When this blocks or becomes blocked, it gets +{param1}/+{param1} until end of turn.
+keyword:
+	keyword: Ninjutsu
+	match: Ninjutsu <atom-param>mana</atom-param>
+	mode: expert
+	reminder: {param1}, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
+keyword:
+	keyword: Ninjutsu
+	match: Ninjutsu—<atom-param>action</atom-param>
+	mode: expert
+	reminder: {param1}<.>, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
+keyword:
+	keyword: Soulshift
+	match: Soulshift <atom-param>number</atom-param>
+	mode: expert
+	reminder: When this is put into a graveyard from play, you may return target Spirit card with converted mana cost {param1} or less from you graveyard to your hand.
+keyword:
+	keyword: Epic
+	match: Epic
+	mode: expert
+	reminder: For the rest of the game, you can’t play spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability. If the spell has any targets, you may choose new targets for the copy.
+keyword:
+	keyword: Convoke
+	match: Convoke
+	mode: expert
+	reminder: Each creature you tap while playing this spell reduces its cost by <sym>1</sym> or by one mana of that creature’s color.
+keyword:
+	keyword: Transmute
+	match: Transmute <atom-param>mana</atom-param>
+	mode: expert
+	reminder: {param1}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
+keyword:
+	keyword: Transmute
+	match: Transmute—<atom-param>action</atom-param>
+	mode: expert
+	reminder: {param1}<.>, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
+keyword:
+	keyword: Haunt
+	match: Haunt
+	mode: expert
+	reminder: When this card is put into a graveyard from play, remove it from the game haunting target creature.
+keyword:
+	keyword: Bloodthirst
+	match: Bloodthirst <atom-param>number</atom-param>
+	mode: expert
+	reminder: If an opponent was dealt damage this turn, this creature comes into play with {english_number_a(param1)} +1/+1 counter(s) on it.
+keyword:
+	keyword: Replicate
+	match: Replicate <atom-param>mana</atom-param>
+	mode: expert
+	reminder: When you play this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.
+keyword:
+	keyword: Replicate
+	match: Replicate—<atom-param>action</atom-param>
+	mode: expert
+	reminder: When you play this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.
+#Denimwalk was a casualty of my fixing landwalk to work right
+keyword:
+	keyword: Denimwalk
+	match: Denimwalk
+	mode: core
+	reminder: If defending player is wearing any clothing made of denim, this creature is unblockable.
+keyword:
+	keyword: Landwalk
+	match: <atom-param>name</atom-param>walk
+	mode: core
+	reminder: This creature is unblockable as long as defending player controls <a> {param1}.
+keyword:
+	keyword: Protection from
+	match: Protection from <atom-param>name</atom-param>
+	mode: core
+	reminder: This creature can’t be blocked, targeted, dealt damage, or enchanted, or equipped by anything {param1}<s>.
+keyword:
+	keyword: Dredge
+	match: Dredge <atom-param>number</atom-param>
+	mode: expert
+	reminder: As long as you have at least {english_number(param1)} card(s) in your library, if you would draw a card, you may instead put exactly {param1} card(s) from the top of your library into your graveyard and return this card from your graveyard to your hand.
+keyword:
+	keyword: Graft
+	match: Graft <atom-param>number</atom-param>
+	mode: expert
+	reminder: This creature comes into play with {english_number_a(param1)} +1/+1 counter(s) on it. Whenever another creature comes into play, you may move a +1/+1 counter from this creature onto it.
+keyword:
+	keyword: Forecast
+	match: Forecast — <atom-param>cost</atom-param>, Reveal ~ from your hand: <atom-param>action</atom-param>.
+	mode: expert
+	reminder: Play this ability only during your upkeep and only once each turn.
+keyword:
+	keyword: Recover
+	match: Recover <atom-param>mana</atom-param>
+	mode: expert
+	reminder: When a creature is put into your graveyard from play, you may pay an additional {param1}. If you do, return this card from your graveyard to your hand. Otherwise, remove this card from the game.
+keyword:
+	keyword: Recover
+	match: Recover—<atom-param>action</atom-param>
+	mode: expert
+	reminder: When a creature is put into your graveyard from play, you may {to_lower(param1)}<.>. If you do, return this card from your graveyard to your hand. Otherwise, remove this card from the game.
+keyword:
+	keyword: Ripple
+	match: Ripple <atom-param>number</atom-param>
+	mode: expert
+	reminder: When you play this spell, you may reveal the top {english_number_multiple(param1)} card(s) of your library. You may play any revealed cards with the same name as this spell without paying their mana costs. Put the rest on the bottom of your library.
+keyword:
+	keyword: Flash
+	match: Flash
+	mode: expert
+	reminder: You may play this spell anytime you could play an instant.
+keyword:
+	keyword: Split second
+	match: Split second
+	mode: expert
+	reminder: As long as this spell is on the stack, players can't play spells or activated abilities that aren't mana abilities.
+keyword:
+	keyword: Suspend
+	match: Suspend <atom-param>number</atom-param>—<atom-param>mana</atom-param>
+	mode: expert
+	reminder: Rather than play this card from your hand, you may pay {param2} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost. It has haste.
+keyword:
+	keyword: Vanishing
+	match: Vanishing <atom-param>number</atom-param>
+	mode: expert
+	reminder: This creature comes into play with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter from it. When you remove the last, sacrifice it.
+keyword:
+	keyword: Deathtouch
+	match: Deathtouch
+	mode: expert
+	reminder: Whenever this creature deals damage to a creature, destroy that creature.
+keyword:
+	keyword: Reach
+	match: Reach
+	mode: expert
+	reminder: This creature can block creatures with flying.
+keyword:
+	keyword: Gravestorm
+	match: Gravestorm
+	mode: expert
+	reminder: When you play this spell, copy it for each permanent put into a graveyard from this play this turn. You may choose new targets for the copies.
+keyword:
+	keyword: Lifelink
+	match: Lifelink
+	mode: expert
+	reminder: Whenever this creature deals damage, you gain that much life.
+keyword:
+	keyword: Absorb
+	match: Absorb <atom-param>number</atom-param>
+	mode: expert
+	reminder: If a source would deal damage to this creature, prevent {param1} of that damage.
+keyword:
+	keyword: Fateseal
+	match: Fateseal <atom-param>number</atom-param>
+	mode: expert
+	reminder: Look at the top {english_number_multiple(param1)} card(s) of an opponent's library, then put any number of them on the bottom of that player's library and the rest on top in any order.
+keyword:
+	keyword: Transfigure
+	match: Transfigure <atom-param>mana</atom-param>
+	mode: expert
+	reminder: {param1}, Sacrifice this creature: Search your library for a creature card with the same converted mana cost as this creature and put that card into play. Then shuffle your library. Play only as a sorcery.
+keyword:
+	keyword: Transfigure
+	match: Transfigure—<atom-param>action</atom-param>
+	mode: expert
+	reminder: {param1}<.>, Sacrifice this creature: Search your library for a creature card with the same converted mana cost as this creature and put that card into play. Then shuffle your library. Play only as a sorcery.
+keyword:
+	keyword: Aura swap
+	match: Aura swamp <atom-param>mana</atom-param>
+	mode: expert
+	reminder: {param1}: Exchange this Aura with an Aura card in your hand.
+keyword:
+	keyword: Aura swap
+	match: Aura swap—<atom-param>action</atom-param>
+	mode: expert
+	reminder: {param1}<.>: Exchange this Aura with an Aura card in your hand.
+keyword:
+	keyword: Frenzy
+	match: Frenzy <atom-param>number</atom-param>
+	mode: expert
+	reminder: Whenever this creature attacks and isn't blocked it gets +{param1}/+0 until end of turn.
+keyword:
+	keyword: Delve
+	match: Delve
+	mode: expert
+	reminder: You may remove any number of cards in your graveyard from the game as you play this spell. It costs <sym>1</sym> less to play for each card removed this way.
+keyword:
+	keyword: Poisonous
+	match: Poisonous <atom-param>number</atom-param>
+	mode: expert
+	reminder: Whenever this creature deals combat damage to a player, that player gets {english_number_a(param1)} poison counter(s). A player with ten or more poison counters loses the game.
+keyword:
+	keyword: Shroud
+	match: Shroud
+	mode: expert
+	reminder: This permanent can't be the target of spells or abilities.
+keyword:
+	keyword: Fortify
+	match: Fortify <atom-param>mana</atom-param>
+	mode: expert
+	reminder: {param1}<.>: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
+keyword:
+	keyword: Fortify
+	match: Fortify—<atom-param>action</atom-param>
+	mode: expert
+	reminder: {param1}<.>: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
