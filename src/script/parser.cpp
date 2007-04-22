@@ -547,7 +547,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			// function call, read arguments
 			vector<int> arguments;
 			Token t = input.peek();
-			while (t != _(")")) {
+			while (t != _(")") && t != TOK_EOF) {
 				if (input.peek(2) == _(":")) {
 					// name: ...
 					arguments.push_back(string_to_variable(t.value));
