@@ -387,6 +387,8 @@ card field:
 
 ############################# Keyword rules
 
+has keywords: true
+
 keyword parameter type:
 	name: no parameter
 keyword parameter type:
@@ -394,7 +396,7 @@ keyword parameter type:
 	match: [0-9]+
 keyword parameter type:
 	name: action
-	match: [^\n(.,]+
+	match: [^(,\n]+
 keyword parameter type:
 	name: name
 	match:
@@ -405,56 +407,69 @@ keyword parameter type:
 
 keyword:
 	keyword: Concealed—Optional.
+	match: Concealed—Optional.
 	reminder: You may have ~THIS~ come into play in the hidden area.
 keyword:
 	keyword: Concealed.
+	match: Concealed.
 	reminder: This character comes into play in the hidden area.
 keyword:
 	keyword: Loyalty—Reveal.
+	match: Loyalty—Reveal.
 	reminder: If you don’t control a character that shares an affiliation with ~THIS~, then as an additional cost to recruit ~THIS~, reveal a character card from your hand or resource row that shares an affiliation with ~THIS~.
 keyword:
 	keyword: Loyalty.
+	match: Loyalty.
 	reminder: As an additional cost to recruit ~THIS~, you must control a character that shares a team affiliation with ~THIS~.
 keyword:
 	keyword: Evasion.
+	match: Evasion.
 	reminder: Stun ~THIS~ -> Recover ~THIS~ at the start of the recovery phase this turn.
 keyword:
 	keyword: Invulnerability.
+	match: Invulnerability.
 	reminder: Whenever ~THIS~ becomes stunned, you do not take stun damage. Breakthrough is applied normally.
 keyword:
 	keyword: Cosmic:
+	match: Cosmic:
 	reminder: 
 keyword:
 	keyword: Boost
-	separator: whitespace [ ]
-	parameter: text
+	match: Boost <atom-param>action</atom-param>
 	reminder: 
 keyword:
 	keyword: Willpower
-	separator: whitespace [ ]
-	parameter: number
+	match: Willpower <atom-param>number</atom-param>
 	reminder: 
 keyword:
 	keyword: Leader:
+	match: Leader:
 	reminder:
 keyword:
 	keyword: Ally:
+	match: Ally:
 	reminder: 
 keyword:
 	keyword: Unique.
+	match: Unique.
 	reminder: 
 keyword:
 	keyword: Ongoing:
+	match: Ongoing:
 	reminder: 
 keyword:
 	keyword: Reservist.
+	match: Reservist.
 	reminder: You may recruit this card from your resource row. If you do, you may put a card from your hand face down into your resource row.
 keyword:
 	keyword: Transferable.
+	match: Transferable.
 	reminder: During your recruit step you may unequip ~THIS~ and equip it to another character you control.
 keyword:
 	keyword: Vengeance:
+	match: Vengeance:
 	reminder: This ability is activated whenever ~THIS~ is stunned.
 keyword:
 	keyword: Backup:
+	match: Backup:
 	reminder: This ability can only be used during the build step.
