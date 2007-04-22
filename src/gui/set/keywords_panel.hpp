@@ -36,6 +36,14 @@ class KeywordsPanel : public SetWindowPanel {
 	virtual void onUpdateUI(wxUpdateUIEvent&);
 	virtual void onCommand(int id);
 	
+	// --------------------------------------------------- : Clipboard
+	virtual bool canCut() const;
+	virtual bool canCopy() const;
+	virtual bool canPaste() const;
+	virtual void doCut();
+	virtual void doCopy();
+	virtual void doPaste();
+	
   private:
 	DECLARE_EVENT_TABLE();
 	

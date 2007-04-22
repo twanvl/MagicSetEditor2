@@ -35,10 +35,10 @@ KeywordsPanel::KeywordsPanel(Window* parent, int id)
 	splitter  = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
 	list      = new KeywordList(splitter, wxID_ANY);
 	panel     = new Panel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 /* no tab traversal*/);
-	keyword   = new TextCtrl(panel, wxID_ANY, false);
-	match     = new TextCtrl(panel, wxID_ANY, false);
-	reminder  = new TextCtrl(panel, wxID_ANY, true); // allow multiline for wordwrap
-	rules     = new TextCtrl(panel, wxID_ANY, true);
+	keyword   = new TextCtrl(panel, ID_KEYWORD,  false);
+	match     = new TextCtrl(panel, ID_MATCH,    false);
+	reminder  = new TextCtrl(panel, ID_REMINDER, true); // allow multiline for wordwrap
+	rules     = new TextCtrl(panel, ID_RULES,    true);
 	errors    = new wxStaticText(panel, wxID_ANY, _(""));
 	errors->SetForegroundColour(*wxRED);
 	mode      = new wxChoice(panel, ID_KEYWORD_MODE, wxDefaultPosition, wxDefaultSize, 0, nullptr);
@@ -221,6 +221,28 @@ String KeywordsPanel::runRefScript(int find_i) {
 	}
 	return wxEmptyString;
 }
+
+// ----------------------------------------------------------------------------- : Clipboard
+
+// determine what control to use for clipboard actions
+#define CUT_COPY_PASTE(op,return)													\
+	int id = focused_control(this);													\
+	if      (id == ID_KEYWORD  && keyword ->IsEnabled()) { return keyword ->op(); }	\
+	else if (id == ID_MATCH    && match   ->IsEnabled()) { return match   ->op(); }	\
+	else if (id == ID_REMINDER && reminder->IsEnabled()) { return reminder->op(); }	\
+	else if (id == ID_RULES    && rules   ->IsEnabled()) { return rules   ->op(); }	\
+	else                                                 { return false;          }
+
+bool KeywordsPanel::canCopy()  const { CUT_COPY_PASTE(canCopy,  return) }
+bool KeywordsPanel::canCut()   const { if (!list->getKeyword() || list->getKeyword()->fixed) return false;
+                                       CUT_COPY_PASTE(canCut,   return) }
+bool KeywordsPanel::canPaste() const { if (!list->getKeyword() || list->getKeyword()->fixed) return false;
+                                       CUT_COPY_PASTE(canPaste, return) }
+void KeywordsPanel::doCopy()         { CUT_COPY_PASTE(doCopy,  ;) }
+void KeywordsPanel::doCut()          { if (!list->getKeyword() || list->getKeyword()->fixed) return;
+                                       CUT_COPY_PASTE(doCut,   ;) }
+void KeywordsPanel::doPaste()        { if (!list->getKeyword() || list->getKeyword()->fixed) return;
+                                       CUT_COPY_PASTE(doPaste, ;) }
 
 // ----------------------------------------------------------------------------- : Events
 

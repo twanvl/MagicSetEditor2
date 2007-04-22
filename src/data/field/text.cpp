@@ -53,6 +53,7 @@ TextStyle::TextStyle(const TextFieldP& field)
 	, line_height_soft(1.0)
 	, line_height_hard(1.0)
 	, line_height_line(1.0)
+	, direction(LEFT_TO_RIGHT)
 {}
 
 bool TextStyle::update(Context& ctx) {

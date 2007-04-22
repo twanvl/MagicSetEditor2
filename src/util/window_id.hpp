@@ -191,7 +191,7 @@ enum ControlID {
 ,	ID_STYLESHEET_LIST
 ,	ID_NOTES
 ,	ID_KEYWORD
-,	ID_PARAMETER
+,	ID_MATCH
 ,	ID_REMINDER
 ,	ID_RULES
 	// Card list column select
