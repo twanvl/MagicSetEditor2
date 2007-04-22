@@ -58,7 +58,7 @@ card style:
 		z index: 2
 		font:
 			name: MatrixBoldSmallCaps
-			size: 26
+			size: 24
 			color: 
 				script: if is_nmonster() then rgb(255,255,255)
 				else			      rgb(0,0,0)
@@ -87,11 +87,16 @@ card style:
 		width: 285
 		z index: 2
 		alignment: middle right
-		always symbol: true
+		font:
+			name: MatrixBoldSmallCaps
+			italic name: Matrix
+			scale down to: 12
+			size: 12
+			color: rgb(0,0,0)
 		symbol font:
 			name: yugioh-standard-levels
-			size: 12
 			alignment: middle center
+			size: 8
 
 	############################# Image
 	image:
@@ -112,6 +117,7 @@ card style:
 		z index: 2
 		font:
 			name: MatrixBoldSmallCaps
+			italic name: Matrix
 			size: 12
 			color: rgb(0,0,0)
 		visible: script: if is_nmonster() then false else true

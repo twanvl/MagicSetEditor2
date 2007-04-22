@@ -7,7 +7,7 @@ icon: card-back.png
 # General functions
 init script:
 	# level codes
-	level_filter := to_lower + sort_rule(order: "[ctefqrs]")
+	level_sort := sort_rule(order: "%!+&$#*")
 	# the rule text filter
 	#  - adds continuous symbols
 	#  - adds counter symbols
@@ -21,15 +21,23 @@ init script:
 		# step 1 : remove all automatic tags
 		tag_remove_rule(tag: "<sym-auto>") +
 		tag_remove_rule(tag: "<i-auto>")   +
-		# step 2 : symbols
-		replace_rule(
-			match: "cn|ct|eq|fd|qp|ri|lv",
-			replace: {"<sym-auto>&</sym-auto>"} ) +
-		# step 3 : fill in atom fields
+		# step 2 : fill in atom fields
 		tag_contents_rule(
 			tag: "<atom-cardname>",
 			contents: { if card.name=="" then "CARDNAME" else card.name }
-			)
+			) +
+		# step 3a : explict non symbols
+		replace_rule(
+			match: "\\][%!+&$#*]+\\[",
+			replace: {"<nosym>" +level_sort() + "</nosym>"} ) +
+		# step 3b : add symbols
+		replace_rule(
+			match: "[%!+&$#*]+",
+			replace: {"<sym-auto>" + level_sort() + "</sym-auto>"} ) +
+		# step 3c : add explict symbols
+		replace_rule(
+			match: "\\[[%!+&$#*]+\\]",
+			replace: {"<sym>" + level_sort() + "</sym>"} );
 	
 	# the flavor text filter
 	flavor_text_filter :=
@@ -165,8 +173,8 @@ card field:
 card field:
 	type: text
 	name: level
-	description: Level, s = star, c = continuous, t = counter, e = equipment, f = field, q = quickplay, r = ritual
-	script: level_filter(value)
+	description: Level, * = star, % = continuous, ! = counter, + = equipment, & = field, $ = quickplay, # = ritual
+	script: text_filter(value)
 
 ############################# Image
 card field:

@@ -4,24 +4,24 @@ mse version: 0.3.1
 image font size: 16
 horizontal space: 2
 symbol:
-	code: c
+	code: %
 	image: continuous.png
 symbol:
-	code: t
+	code: !
 	image: counter.png
 symbol:
-	code: e
+	code: +
 	image: equipment.png
 symbol:
-	code: f
+	code: &
 	image: field.png
 symbol:
-	code: q
+	code: $
 	image: quickplay.png
 symbol:
-	code: r
+	code: #
 	image: ritual.png
 symbol:
-	code: s
+	code: *
 	image: star.png
-	image font size: 25
+	image font size: 14
