@@ -1057,6 +1057,7 @@ keyword:
 	reminder: At the beginning of your upkeep, put this and any cards attached to it in the phased-out zone.  If this is already in the phased-out zone, return it and any card attached to it to play.  If there were counters on this card when it phased out, put that many counters on it when it returns to play.  This ability does not cause comes-into-play or leaves play abilities to trigger.
 keyword:
 	keyword: Flanking
+	match: Flanking
 	mode: old
 	reminder: Whenever a creature without flanking blocks this creature, the blocking creature gets -1/-1 until end of turn.
 keyword:
