@@ -220,6 +220,22 @@ init script:
 		replace_rule(
 			match: "AE",
 			replace: "Æ" ) +
+		# step 6c : "s" remover for keywords
+		replace_rule(
+			match: "s</param-name><s>"
+			replace: "" ) +
+		# step 6d : period remover for action param keywords
+		replace_rule(
+			match: ".</param-action><.>"
+			replace: "" ) +
+		# step 6e : "an" for parameters starting with vowels
+		replace_rule(
+			match: "<a>",
+			in_context: "<match>[ ]<param-name>?[aeiouAEIOU]",
+			replace: "an" ) +
+		replace_rule(
+			match: "<a>",
+			replace: "a" ) +
 		# step 7 : italic reminder text
 		replace_rule(
 		 	match: "[(][^)\n]*[)]?",
@@ -1009,7 +1025,7 @@ keyword:
 	keyword: Cycling
 	match: Cycling—<atom-param>action</atom-param>
 	mode: core
-	reminder: {param1}, Discard this card: Draw a card.
+	reminder: {param1}<.>, Discard this card: Draw a card.
 keyword:
 	keyword: Trample
 	match: Trample
@@ -1044,7 +1060,7 @@ keyword:
 	keyword: Cumulative upkeep
 	match: Cumulative upkeep—<atom-param>action</atom-param>
 	mode: old
-	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you {param1} for each age counter on it.
+	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you {to_lower(param1)}<.> for each age counter on it.
 keyword:
 	keyword: Horsemanship
 	match: Horsemanship
@@ -1074,7 +1090,7 @@ keyword:
 	keyword: Buyback
 	match: Buyback—<ataom-param>action</atom-param>
 	mode: expert
-	reminder: You may {param1} in addition to any other costs as you play this spell. If you do, put this card into your hand as it resolves.
+	reminder: You may {to_lower(param1)}<.> in addition to any other costs as you play this spell. If you do, put this card into your hand as it resolves.
 keyword:
 	keyword: Echo
 	match: Echo <atom-param>mana</atom-param>
@@ -1089,12 +1105,12 @@ keyword:
 	keyword: Cardcycling
 	match: <atom-param>name</atom-param>cycling <atom-param>mana</atom-param>
 	mode: expert
-	reminder: {param2}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
+	reminder: {param2}, Discard this card: Search your library for <a> {param1} card, reveal it, and put it into your hand. Then shuffle your library.
 keyword:
 	keyword: Cardcycling
 	match: <atom-param>name</atom-param>cycling—<atom-param>action</atom-param>
 	mode: expert
-	reminder: {param2}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
+	reminder: {param2}<.>, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
 keyword:
 	keyword: Fading
 	match: Fading <atom-param>number</atom-param>
@@ -1109,7 +1125,7 @@ keyword:
 	keyword: Kicker
 	match: Kicker—<atom-param>action</atom-param>
 	mode: expert
-	reminder: You may {param1} as you play this spell.
+	reminder: You may {to_lower(param1)}<.> as you play this spell.
 keyword:
 	keyword: Madness
 	match: Madness <atom-param>mana</atom-param>
@@ -1164,7 +1180,7 @@ keyword:
 	keyword: Affinity for
 	match: Affinity for <atom-param>name</atom-param>
 	mode: expert
-	reminder: This spell costs <sym>1</sym> less to play for each {param1} you control.
+	reminder: This spell costs <sym>1</sym> less to play for each {param1}<s> you control.
 keyword:
 	keyword: Entwine
 	match: Entwine <atom-param>mana</atom-param>
@@ -1184,7 +1200,7 @@ keyword:
 	keyword: Equip
 	match: Equip—<atom-param>action</atom-param>
 	mode: expert
-	reminder: {param1}: Attach to target creature you control. Equip only as a sorcery.
+	reminder: {param1}<.>: Attach to target creature you control. Equip only as a sorcery.
 keyword:
 	keyword: Imprint
 	match: Imprint—<atom-param>action</atom-param>
@@ -1217,9 +1233,9 @@ keyword:
 	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card's effects to that spell.
 keyword:
 	keyword: Offering
-	match: <atom-param>name</atom-param> Offering
+	match: <atom-param>name</atom-param> offering
 	mode: expert
-	reminder: You may play this card any time you could play an instant by sacrificing a {param1} and paying the difference in mana costs between this and the sacrificed {param1}. Mana cost includes color.
+	reminder: You may play this card any time you could play an instant by sacrificing <a> {param1} and paying the difference in mana costs between this and the sacrificed {param1}. Mana cost includes color.
 keyword:
 	keyword: Bushido
 	match: Bushido <atom-param>number</atom-param>
@@ -1234,7 +1250,7 @@ keyword:
 	keyword: Ninjutsu
 	match: Ninjutsu—<atom-param>action</atom-param>
 	mode: expert
-	reminder: {param1}, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
+	reminder: {param1}<.>, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
 keyword:
 	keyword: Soulshift
 	match: Soulshift <atom-param>number</atom-param>
@@ -1257,9 +1273,9 @@ keyword:
 	reminder: {param1}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
 keyword:
 	keyword: Transmute
-	match: Transumute—<atom-param>action</atom-param>
+	match: Transmute—<atom-param>action</atom-param>
 	mode: expert
-	reminder: {param1}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
+	reminder: {param1}<.>, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
 keyword:
 	keyword: Haunt
 	match: Haunt
@@ -1290,12 +1306,12 @@ keyword:
 	keyword: Landwalk
 	match: <atom-param>name</atom-param>walk
 	mode: core
-	reminder: This creature is unblockable as long as defending player controls a {param1}.
+	reminder: This creature is unblockable as long as defending player controls <a> {param1}.
 keyword:
 	keyword: Protection from
 	match: Protection from <atom-param>name</atom-param>
 	mode: core
-	reminder: This creature can’t be blocked, targeted, dealt damage, or enchanted, or equipped by anything {param1}.
+	reminder: This creature can’t be blocked, targeted, dealt damage, or enchanted, or equipped by anything {param1}<s>.
 keyword:
 	keyword: Dredge
 	match: Dredge <atom-param>number</atom-param>
@@ -1320,7 +1336,7 @@ keyword:
 	keyword: Recover
 	match: Recover—<atom-param>action</atom-param>
 	mode: expert
-	reminder: When a creature is put into your graveyard from play, you may pay an additonal {param1}. If you do, return this card from your graveyard to your hand. Otherwise, remove this card from the game.
+	reminder: When a creature is put into your graveyard from play, you may {to_lower(param1)}<.>. If you do, return this card from your graveyard to your hand. Otherwise, remove this card from the game.
 keyword:
 	keyword: Ripple
 	match: Ripple <atom-param>number</atom-param>
@@ -1385,7 +1401,7 @@ keyword:
 	keyword: Transfigure
 	match: Transfigure—<atom-param>action</atom-param>
 	mode: expert
-	reminder: {param1}, Sacrifice this creature: Search your library for a creature card with the same converted mana cost as this creature and put that card into play. Then shuffle your library. Play only as a sorcery.
+	reminder: {param1}<.>, Sacrifice this creature: Search your library for a creature card with the same converted mana cost as this creature and put that card into play. Then shuffle your library. Play only as a sorcery.
 keyword:
 	keyword: Aura swap
 	match: Aura swamp <atom-param>mana</atom-param>
@@ -1395,7 +1411,7 @@ keyword:
 	keyword: Aura swap
 	match: Aura swap—<atom-param>action</atom-param>
 	mode: expert
-	reminder: {param1}: Exchange this Aura with an Aura card in your hand.
+	reminder: {param1}<.>: Exchange this Aura with an Aura card in your hand.
 keyword:
 	keyword: Frenzy
 	match: Frenzy <atom-param>number</atom-param>
@@ -1420,9 +1436,9 @@ keyword:
 	keyword: Fortify
 	match: Fortify <atom-param>mana</atom-param>
 	mode: expert
-	reminder: <param>: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
+	reminder: {param1}<.>: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
 keyword:
 	keyword: Fortify
 	match: Fortify—<atom-param>action</atom-param>
 	mode: expert
-	reminder: <param>: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
+	reminder: {param1}<.>: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
