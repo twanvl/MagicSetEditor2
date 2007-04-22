@@ -1037,6 +1037,11 @@ keyword:
 	mode: old
 	reminder: When declaring attackers or blockers this creature may group with others creatures with banding and one creature without banding. When damage is dealt, you decide where damage is dealt.
 keyword:
+	keyword: Bands with other
+	match: Bands with other <atom-param>name</atom-param>
+	mode: old
+	reminder: When declaring attackers or blockers, this creature may group with other {param1} and creatures with banding. When damage is dealt, you decide where damage is dealt.
+keyword:
 	keyword: Rampage
 	match: Rampage <atom-param>number</atom-param>
 	mode: old
