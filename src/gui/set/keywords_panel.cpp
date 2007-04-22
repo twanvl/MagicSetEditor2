@@ -231,18 +231,15 @@ void KeywordsPanel::onChangeSet() {
 	// init text controls
 	keyword ->setSet(set);
 	keyword ->getStyle().font.size = 16;
-	keyword ->getStyle().font.font.SetPointSize(16);
 	keyword ->getStyle().padding_bottom = 1;
 	keyword ->updateSize();
 	match   ->setSet(set);
 	match   ->getStyle().font.size = 12;
-	match   ->getStyle().font.font.SetPointSize(12);
 	match   ->getStyle().padding_bottom = 1;
 	match   ->updateSize();
 	reminder->setSet(set);
 	reminder->getStyle().padding_bottom = 2;
 	match   ->getStyle().font.size = 10;
-	match   ->getStyle().font.font.SetPointSize(10);
 	reminder->updateSize();
 	rules   ->setSet(set);
 	// parameter & mode lists

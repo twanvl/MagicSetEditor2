@@ -676,7 +676,7 @@ void ApprenticeExportWindow::onOk(wxCommandEvent& ev) {
 	if (set->apprentice_code != new_set_code) {
 		// changed something in the set
 		set->apprentice_code = new_set_code;
-		//%%set->actions.atSavePoint = false; // tell the user he needs to save
+		//set->actions.atSavePoint = false; // TODO: tell the user he needs to save
 	}
 	// Check if apprentice exists
 	if (!wxFileExists(settings.apprentice_location + _("\\appr.exe"))) {

@@ -11,36 +11,47 @@
 // ----------------------------------------------------------------------------- : Font
 
 Font::Font()
-	: font(*wxNORMAL_FONT)
-	, size(font.GetPointSize())
+	: name()
+	, size(1)
+	, underline(false)
+	, weight_i(wxFONTWEIGHT_NORMAL), style_i(wxFONTSTYLE_NORMAL)
 	, scale_down_to(100000)
 	, shadow_displacement(0,0)
 	, separator_color(128,128,128)
 {}
 
 bool Font::update(Context& ctx) {
-	return color       .update(ctx)
+	bool changes
+	     = name        .update(ctx)
+	     | italic_name .update(ctx)
+	     | size        .update(ctx)
+	     | weight      .update(ctx)
+	     | style       .update(ctx)
+	     | underline   .update(ctx)
+	     | color       .update(ctx)
 	     | shadow_color.update(ctx);
+	weight_i  =  weight() == _("bold")   ? wxBOLD   : wxNORMAL;
+	style_i   =  style()  == _("italic") ? wxITALIC : wxNORMAL;
+	return changes;
 }
 void Font::initDependencies(Context& ctx, const Dependency& dep) const {
+	name        .initDependencies(ctx, dep);
+	italic_name .initDependencies(ctx, dep);
+	size        .initDependencies(ctx, dep);
+	weight      .initDependencies(ctx, dep);
+	style       .initDependencies(ctx, dep);
+	underline   .initDependencies(ctx, dep);
 	color       .initDependencies(ctx, dep);
 	shadow_color.initDependencies(ctx, dep);
 }
 
 FontP Font::make(bool bold, bool italic, bool placeholder_color, bool code_color, Color* other_color) const {
 	FontP f(new Font(*this));
-	if (bold) f->font.SetWeight(wxBOLD);
-	if (italic) {
-		if (!italic_name.empty()) {
-			f->font.SetFaceName(italic_name);
-		} else {
-			f->font.SetWeight(wxBOLD);
-		}
-	}
+	if (bold)   f->weight_i = wxFONTWEIGHT_BOLD;
+	if (italic) f->style_i  = wxFONTSTYLE_ITALIC;
 	if (code_color) {
 		f->color = Color(128,0,0);
-		f->font.SetFamily(wxFONTFAMILY_TELETYPE);
-		f->font.SetFaceName(_("Courier New"));
+		f->type  = TYPEWRITER;
 	}
 	if (placeholder_color) {
 		f->color = f->separator_color;
@@ -52,29 +63,27 @@ FontP Font::make(bool bold, bool italic, bool placeholder_color, bool code_color
 	return f;
 }
 
-void reflect_font(Reader& tag, Font& font) {
-	String name, weight, style;
-	double size = -1;
+wxFont Font::toWxFont(double scale) const {
+	int size_i = scale * size;
+	if (name().empty()) {
+		wxFont font = *wxNORMAL_FONT;
+		font.SetPointSize(size > 1 ? size_i : scale * font.GetPointSize());
+		return font;
+	} else if (type == TYPEWRITER) {
+		return wxFont(size_i, wxFONTFAMILY_TELETYPE, weight_i, underline(), _("Courier New"));
+	} else if (style_i == wxFONTSTYLE_ITALIC && !italic_name().empty()) {
+		return wxFont(size_i, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, weight_i, underline(), italic_name());
+	} else {
+		return wxFont(size_i, wxFONTFAMILY_DEFAULT, style_i, weight_i, underline(), name());
+	}
+}
+
+IMPLEMENT_REFLECTION(Font) {
 	REFLECT(name);
 	REFLECT(size);
 	REFLECT(weight);
 	REFLECT(style);
-	if (!name.empty())   font.font.SetFaceName(name);
-	if (size > 0)        font.font.SetPointSize((int) (font.size = size));
-	if (!weight.empty()) font.font.SetWeight(weight == _("bold")   ? wxBOLD   : wxNORMAL);
-	if (!style.empty())  font.font.SetWeight(style  == _("italic") ? wxITALIC : wxNORMAL);
-}
-
-template <typename Tag>
-void reflect_font(Tag& tag, const Font& font) {
-	REFLECT_N("name",   font.font.GetFaceName());
-	REFLECT_N("size",   font.size);
-	REFLECT_N("weight", font.font.GetWeight() == wxBOLD   ? _("bold")   : _("normal"));
-	REFLECT_N("style",  font.font.GetStyle()  == wxITALIC ? _("italic") : _("normal"));
-}
-
-IMPLEMENT_REFLECTION(Font) {
-	reflect_font(tag, *this);
+	REFLECT(underline);
 	REFLECT(italic_name);
 	REFLECT(color);
 	REFLECT(scale_down_to);

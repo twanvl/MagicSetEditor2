@@ -21,14 +21,21 @@ DECLARE_POINTER_TYPE(Font);
 /** Contains additional information about scaling, color and shadow */
 class Font {
   public:
-	wxFont            font;					///< The actual wxFont to use
-	double            size;					///< Size of the font
-	double            scale_down_to;		///< Smallest size to scale down to
-	Scriptable<Color> color;				///< Color to use
-	Scriptable<Color> shadow_color;			///< Color for shadow
-	RealSize          shadow_displacement;	///< Position of the shadow
-	String            italic_name;			///< Font name for italic text (optional)
-	Color             separator_color;		///< Color for <sep> text
+	Scriptable<String> name;				///< Name of the font
+	Scriptable<String> italic_name;			///< Font name for italic text (optional)
+	Scriptable<double> size;				///< Size of the font
+	Scriptable<String> weight, style;		///< Weight and style of the font (bold/italic)
+	Scriptable<bool>   underline;			///< Underlined?
+	int                weight_i, style_i;	///< wx constants for weight and style
+	double             scale_down_to;		///< Smallest size to scale down to
+	Scriptable<Color>  color;				///< Color to use
+	Scriptable<Color>  shadow_color;		///< Color for shadow
+	RealSize           shadow_displacement;	///< Position of the shadow
+	Color              separator_color;		///< Color for <sep> text
+	enum {
+		NORMAL,
+		TYPEWRITER,	///< Use a typewriter font
+	} type;
 	
 	Font();
 	
@@ -42,6 +49,9 @@ class Font {
 	
 	/// Make a bold/italic/placeholder version of this font
 	FontP make(bool bold, bool italic, bool placeholder_color, bool code_color, Color* other_color) const;
+	
+	/// Convert this font to a wxFont
+	wxFont toWxFont(double scale) const;
 	
   private:
 	DECLARE_REFLECTION();

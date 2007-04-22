@@ -19,7 +19,7 @@ void InfoValueViewer::draw(RotatedDC& dc) {
 	} else {
 		dc.SetTextForeground(style().font.color);
 		dc.SetBrush(style().background_color);
-		dc.SetFont(style().font.font, style().font.size);
+		dc.SetFont(style().font, 1.0);
 	}
 	// draw background
 	RealRect rect = style().getRect();

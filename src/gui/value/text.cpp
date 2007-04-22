@@ -446,7 +446,7 @@ void TextValueEditor::showCaret() {
 			if (cursor.height == 0) {
 				wxClientDC dc(&editor());
 				// TODO : high quality?
-				dc.SetFont(style().font.font);
+				dc.SetFont(style().font.toWxFont(1.0));
 				int hi;
 				dc.GetTextExtent(_(" "), 0, &hi);
 				cursor.height = rot.trS(hi);
@@ -678,7 +678,7 @@ void TextValueEditor::determineSize(bool force_fit) {
 		wxMemoryDC dc;
 		Bitmap bmp(1,1);
 		dc.SelectObject(bmp);
-		dc.SetFont(style().font.font);
+		dc.SetFont(style().font.toWxFont(1.0));
 		style().height = dc.GetCharHeight() + 2 + style().padding_top + style().padding_bottom;
 	}
 }

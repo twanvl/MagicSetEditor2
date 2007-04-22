@@ -59,7 +59,7 @@ class SymbolFont : public Packaged {
 	/// Process a choice from the insert symbol menu
 	/** Return the code representing the symbol */
 	String insertSymbolCode(int menu_id) const;
-	
+		
   private:
 	UInt img_size;		///< Font size that the images use
 	UInt min_size;		///< Minimum font size
@@ -79,6 +79,9 @@ class SymbolFont : public Packaged {
 	friend class SymbolInFont;
 	friend class InsertSymbolMenu;
 	vector<SymbolInFontP> symbols;	///< The individual symbols
+	
+	// Script update
+	void update(Context& ctx) const;
 	
 	/// Find the default symbol
 	/** may return nullptr */

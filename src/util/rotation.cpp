@@ -8,6 +8,7 @@
 
 #include <util/rotation.hpp>
 #include <gfx/gfx.hpp>
+#include <data/font.hpp>
 
 // ----------------------------------------------------------------------------- : Rotation
 
@@ -179,19 +180,20 @@ void RotatedDC::SetTextForeground(const Color& color) { dc.SetTextForeground(col
 void RotatedDC::SetLogicalFunction(int function)      { dc.SetLogicalFunction(function); }
 
 void RotatedDC::SetFont(const wxFont& font) {
-	if (quality == QUALITY_LOW) {
+	if (quality == QUALITY_LOW && zoom == 1) {
 		dc.SetFont(font);
 	} else {
-		SetFont(font, font.GetPointSize());
+		wxFont scaled = font;
+		if (quality == QUALITY_LOW) {
+			scaled.SetPointSize((int)  trS(font.GetPointSize()));
+		} else {
+			scaled.SetPointSize((int) (trS(font.GetPointSize()) * text_scaling));
+		}
+		dc.SetFont(scaled);
 	}
 }
-void RotatedDC::SetFont(wxFont font, double size) {
-	if (quality == QUALITY_LOW) {
-		font.SetPointSize((int)  trS(size));
-	} else {
-		font.SetPointSize((int) (trS(size) * text_scaling));
-	}
-	dc.SetFont(font);
+void RotatedDC::SetFont(const Font& font, double scale) {
+	dc.SetFont(font.toWxFont(trS(scale) * (quality == QUALITY_LOW ? 1 : text_scaling)));
 }
 
 double RotatedDC::getFontSizeStep() const {

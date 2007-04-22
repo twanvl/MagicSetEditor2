@@ -151,6 +151,15 @@ RealSize SymbolInFont::size(Context& ctx, Package& pkg, double size) {
 void SymbolInFont::update(Context& ctx) {
 	enabled.update(ctx);
 }
+void SymbolFont::update(Context& ctx) const {
+	// update all symbol-in-fonts
+	FOR_EACH_CONST(sym, symbols) {
+		sym->update(ctx);
+	}
+	if (text_font) {
+		text_font->update(ctx);
+	}
+}
 
 IMPLEMENT_REFLECTION(SymbolInFont) {
 	REFLECT(code);
@@ -172,10 +181,7 @@ class SymbolFont::DrawableSymbol {
 };
 
 void SymbolFont::split(const String& text, Context& ctx, SplitSymbols& out) const {
-	// update all symbol-in-fonts
-	FOR_EACH_CONST(sym, symbols) {
-		sym->update(ctx);
-	}
+	update(ctx);
 	// read a single symbol until we are done with the text
 	for (size_t pos = 0 ; pos < text.size() ; ) {
 		// 1. check merged numbers
@@ -264,7 +270,7 @@ void SymbolFont::drawWithText(RotatedDC& dc, Context& ctx, const RealRect& rect,
 	RealSize ts;
 	while (true) {
 		if (size <= 0) return; // text too small
-		dc.SetFont(text_font->font, size);
+		dc.SetFont(*text_font, size / text_font->size);
 		ts = dc.GetTextExtent(text);
 		if (ts.width <= sym_rect.width && ts.height <= sym_rect.height) {
 			break; // text fits
@@ -326,10 +332,7 @@ RealSize SymbolFont::defaultSymbolSize(Context& ctx, double font_size) {
 
 wxMenu* SymbolFont::insertSymbolMenu(Context& ctx) {
 	if (!processed_insert_symbol_menu && insert_symbol_menu) {
-		// update all symbol-in-fonts
-		FOR_EACH_CONST(sym, symbols) {
-			sym->update(ctx);
-		}
+		update(ctx);
 		// Make menu
 		processed_insert_symbol_menu = insert_symbol_menu->makeMenu(ID_INSERT_SYMBOL_MENU_MIN, ctx, *this);
 	}

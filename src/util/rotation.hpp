@@ -13,6 +13,8 @@
 #include <util/real_point.hpp>
 #include <gfx/gfx.hpp>
 
+class Font;
+
 // ----------------------------------------------------------------------------- : Rotation
 
 /// An object that can rotate coordinates inside a specified rectangle
@@ -158,8 +160,8 @@ class RotatedDC : public Rotation {
 	
 	void SetFont(const wxFont& font);
 	/// Set the font, scales for zoom and high_quality
-	/** The font will get the given (internal) point size */
-	void SetFont(wxFont font, double size);
+	/** The font size will be multiplied by 'scale' */
+	void SetFont(const Font& font, double scale);
 	/// Steps to use when decrementing font size
 	double getFontSizeStep() const;
 	

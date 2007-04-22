@@ -368,7 +368,7 @@ void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle
 		if (style.always_symbol && style.symbol_font.valid()) {
 			lines[0].line_height = style.symbol_font.font->defaultSymbolSize(ctx, style.symbol_font.size).height;
 		} else {
-			dc.SetFont(style.font.font);
+			dc.SetFont(style.font, scale);
 			lines[0].line_height = dc.GetTextExtent(_(" ")).height;
 		}
 	}
@@ -378,7 +378,7 @@ void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle
 	
 	// HACK : fix empty first line before <line>, do this after align, so layout is not affected
 	if (lines.size() > 1 && lines[0].line_height == 0) {
-		dc.SetFont(style.font.font);
+		dc.SetFont(style.font, scale);
 		double h = dc.GetCharHeight();
 		lines[0].line_height =  h;
 		lines[0].top         -= h;

@@ -13,7 +13,7 @@
 
 void FontTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const {
 	if ((what & draw_as) != draw_as) return; // don't draw
-	dc.SetFont(font->font, font->size * scale);
+	dc.SetFont(*font, scale);
 	// draw shadow
 	String text = content.substr(start - this->start, end - start);
 	if (!text.empty() && text.GetChar(text.size() - 1) == _('\n')) {
@@ -30,7 +30,7 @@ void FontTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, co
 
 void FontTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const {
 	// font
-	dc.SetFont(font->font, font->size * scale);
+	dc.SetFont(*font, scale);
 	// find sizes & breaks
 	double prev_width = 0;
 	for (size_t i = start ; i < end ; ++i) {
@@ -45,8 +45,8 @@ void FontTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>&
 }
 
 double FontTextElement::minScale() const {
-	return min(font->size, font->scale_down_to) / max(0.01, font->size);
+	return min(font->size(), font->scale_down_to) / max(0.01, font->size());
 }
 double FontTextElement::scaleStep() const {
-	return 1. / max(font->size, 1.);
+	return 1. / max(font->size(), 1.);
 }
