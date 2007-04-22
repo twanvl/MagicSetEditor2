@@ -7,6 +7,36 @@ icon: card-back.png
 
 # General functions
 init script:
+	#character filter for copyright line
+	copyright_filter :=
+		# step 1 : Æ replacement rule
+		replace_rule(
+			match: "AE",
+			replace: "Æ") +
+		# step 2 : longdash for keywords
+		replace_rule(
+			match: "--| - ",
+			replace: "—") +
+		# step 3 : trademark symbol
+		replace_rule(
+			match: "TM",
+			replace: "™") +
+		# step 4 : copyright symbol
+		replace_rule(
+			match: "(C)",
+			replace: "©")
+	
+	#character filter for title line
+	name_filter :=
+		# step 1 : Æ replacement rule
+		replace_rule(
+			match: "AE",
+			replace: "Æ") +
+		# step 2 : longdash for keywords
+		replace_rule(
+			match: "--| - ",
+			replace: "—")
+	
 	# correctly sort a mana symbol (no guild mana)
 	mana_sort       := sort_rule(order: "XYZ[0123456789]S(WUBRG)")
 	# correctly sort guild mana
@@ -54,7 +84,7 @@ init script:
 			else if count == 2 then  "multicolor 2 color " + color_name(colors[0]) + " / " + color_name(colors[1])
 			else if set.set_info.use_gradient_multicolor != "yes" then "multicolor" # stop here
 			else if count == 3 then  "multicolor 3 color " + color_name(colors[0]) + " / " + color_name(colors[1]) + " / " + color_name(colors[2])
-			else if count == 3 then  "multicolor 4 color " + to_lower(colors[0]) + "/" + to_lower(colors[1]) + "/" + to_lower(colors[2]) + to_lower(colors[3])
+			else if count == 3 then  "multicolor 4 color " + to_lower(colors[0]) + "/" + to_lower(colors[1]) + "/" + to_lower(colors[2]) + "/" + to_lower(colors[3])
 			else if count == 5 then  "multicolor 5 color w/u/b/r/g"
 			else                     "multicolor"
 		else
@@ -184,9 +214,12 @@ init script:
 			replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
 		# step 6 : longdash
 		replace_rule(
-			match: "-",
-			in_context: "(?i)[a-z0-9] <match> |<param-cost> ?<match>"  # Lengthen dashes in Keyword--Cost  -- jimrandomh
-			replace: "—")+
+			match: "--| - ",
+			replace: "—" ) +
+		# step 6b : Æ replacement
+		replace_rule(
+			match: "AE",
+			replace: "Æ" ) +
 		# step 7 : italic reminder text
 		replace_rule(
 		 	match: "[(][^)\n]*[)]?",
@@ -377,6 +410,7 @@ card field:
 card field:
 	type: text
 	name: name
+	script: name_filter(value)
 	identifying: true
 	show statistics: false
 	card list visible: true
@@ -566,12 +600,14 @@ card field:
 card field:
 	type: text
 	name: illustrator
+	script: name_filter(value)
 	icon: stats/illustrator.png
 	default: set.artist
 	description: Illustrator of this card, the default value can be changed on the 'set info' tab
 card field:
 	type: text
 	name: copyright
+	script: copyright_filter(value)
 	default: set.copyright
 	editable: false
 	show statistics: false
@@ -602,6 +638,7 @@ card field:
 card field:
 	type: text
 	name: name 2
+	script: name_filter(value)
 	identifying: true
 	show statistics: false
 card field:
@@ -733,12 +770,14 @@ card field:
 card field:
 	type: text
 	name: illustrator 2
+	script: name_filter(value)
 	icon: stats/illustrator.png
 	default: set.artist
 	show statistics: false
 card field:
 	type: text
 	name: copyright 2
+	script: copyright_filter(value)
 	default: set.copyright
 	editable: false
 	show statistics: false
