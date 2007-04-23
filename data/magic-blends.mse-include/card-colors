@@ -7,6 +7,7 @@ choice: black
 choice: red
 choice: green
 choice: colorless
+choice: artifact
 choice:
 	name:   multicolor
 	group choice: normal

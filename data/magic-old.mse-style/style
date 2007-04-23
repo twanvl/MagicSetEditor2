@@ -21,9 +21,6 @@ init script:
 	# Load blend scripts for hybrids/multicolors
 	include file: magic-blends.mse-include/blend-scripts
 	
-	# There are currently no colored lands
-	land_template := { "lcard.jpg" }
-	
 	# Horizontal 5 color blends are not supported
 	card_hybrid_5b := card_hybrid_5
 	

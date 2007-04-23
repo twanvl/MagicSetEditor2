@@ -144,12 +144,13 @@ init script:
 	};
 	
 	# The color of a card
+	is_artifact := filter_rule(match: "(?i)Artifact") + {input != ""};
 	is_land := filter_rule(match: "(?i)Land") + {input != ""};
 	card_color := {
 		# usually the color of mana
 		mana_color := mana_to_color(casting_cost);
-		if mana_color == "colorless" and is_land(input: card.super_type)
-		then land_to_color()
+		if mana_color == "colorless" and is_land(input: card.super_type)	then land_to_color()
+		else if mana_color == "colorless" and is_artifact(input: card.super_type)	then "artifact"
 		else mana_color
 	};
 	
@@ -228,14 +229,6 @@ init script:
 		replace_rule(
 			match: ".</param-action><.>"
 			replace: "" ) +
-		# step 6e : "an" for parameters starting with vowels
-		replace_rule(
-			match: "<a>",
-			in_context: "<match>[ ]<param-name>?[aeiouAEIOU]",
-			replace: "an" ) +
-		replace_rule(
-			match: "<a>",
-			replace: "a" ) +
 		# step 7 : italic reminder text
 		replace_rule(
 		 	match: "[(][^)\n]*[)]?",
@@ -1110,7 +1103,7 @@ keyword:
 	keyword: Cardcycling
 	match: <atom-param>name</atom-param>cycling <atom-param>mana</atom-param>
 	mode: expert
-	reminder: {param2}, Discard this card: Search your library for <a> {param1} card, reveal it, and put it into your hand. Then shuffle your library.
+	reminder: {param2}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
 keyword:
 	keyword: Cardcycling
 	match: <atom-param>name</atom-param>cycling—<atom-param>action</atom-param>
@@ -1240,7 +1233,7 @@ keyword:
 	keyword: Offering
 	match: <atom-param>name</atom-param> offering
 	mode: expert
-	reminder: You may play this card any time you could play an instant by sacrificing <a> {param1} and paying the difference in mana costs between this and the sacrificed {param1}. Mana cost includes color.
+	reminder: You may play this card any time you could play an instant by sacrificing a {param1} and paying the difference in mana costs between this and the sacrificed {param1}. Mana cost includes color.
 keyword:
 	keyword: Bushido
 	match: Bushido <atom-param>number</atom-param>
@@ -1311,7 +1304,7 @@ keyword:
 	keyword: Landwalk
 	match: <atom-param>name</atom-param>walk
 	mode: core
-	reminder: This creature is unblockable as long as defending player controls <a> {param1}.
+	reminder: This creature is unblockable as long as defending player controls a {param1}.
 keyword:
 	keyword: Protection from
 	match: Protection from <atom-param>name</atom-param>
