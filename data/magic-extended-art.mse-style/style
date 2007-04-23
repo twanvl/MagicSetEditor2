@@ -34,6 +34,8 @@ init script:
 		else if styling.tap_symbol == "diagonal T" then "mana_t_older.png"
 		else                                            "mana_t.png"
 	}
+	# Use guild mana symbols?
+	guild_mana := { styling.use_guild_mana_symbols }
 	
 	# Does the card have a color that requires a white font for copyright/artist?
 	white_font_colors := filter_rule(match:"^(hybrid 2 color )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(black|land|hybrid 4 color w/u/b/r)")
@@ -54,6 +56,11 @@ styling field:
 	type: boolean
 	name: grey hybrid name
 	description: Use a grey background for the name and type line on hybrid cards. This is done on real cards.
+styling field:
+	type: boolean
+	name: use guild mana symbols
+	description: Use the Ravnica guild symbols instead of the official half/half circles for hybrid mana.
+	initial: no
 styling field:
 	type: boolean
 	name: popup mana symbols
@@ -194,10 +201,11 @@ card style:
 			shadow displacement y: 2
 			color: rgb(211,211,209)
 		symbol font:
-			name: magic-mana-small
-#					{ if styling.popup_mana_symbols
-#				then "magic-mana-large"
-#				else "magic-mana-small" }
+			name:
+				script:
+					if styling.popup_mana_symbols
+					then "magic-mana-large"
+					else "magic-mana-small"
 			size: 14
 		alignment: middle left
 		z index: 2
