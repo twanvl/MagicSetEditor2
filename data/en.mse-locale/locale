@@ -16,6 +16,7 @@ menu:
 	export mws:				Magic &Workstation...
 	print preview:		Print Pre&view...
 	print:				&Print...	Ctrl+P
+	reload data:		Reload Data	Ctrl+F5
 	exit:				E&xit	Alt+F4
 	
 	edit:			&Edit
@@ -103,6 +104,7 @@ help:
 	export mws:				Export the set so it can be played with in Magic Workstation
 	print preview:		Shows cards as they will be printed
 	print:				Print cards from this set
+	reload data:		Reload all template files (game and style) as well as the set.
 	exit:				Quits Magic Set Editor; prompts to save the set
 	
 	edit:

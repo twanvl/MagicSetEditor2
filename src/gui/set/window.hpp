@@ -111,6 +111,7 @@ class SetWindow : public wxFrame, public SetView {
 	void onFileExportMWS       (wxCommandEvent&);
 	void onFilePrint           (wxCommandEvent&);
 	void onFilePrintPreview    (wxCommandEvent&);
+	void onFileReload          (wxCommandEvent&);
 	void onFileRecent          (wxCommandEvent&);
 	void onFileExit            (wxCommandEvent&);
 	

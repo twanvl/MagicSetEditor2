@@ -24,6 +24,7 @@
 #include <gui/images_export_window.hpp>
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
+#include <util/io/package_manager.hpp>
 #include <util/window_id.hpp>
 #include <data/game.hpp>
 #include <data/set.hpp>
@@ -63,6 +64,8 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 		menuFile->AppendSeparator();
 //		menuFile->Append(ID_FILE_INSPECT,					_("Inspect Internal Data..."),	_("Shows a the data in the set using a tree structure"));
 //		menuFile->AppendSeparator();
+		menuFile->Append(ID_FILE_RELOAD,					_MENU_("reload data"),		_HELP_("reload data"));
+		menuFile->AppendSeparator();
 		menuFile->Append(ID_FILE_PRINT_PREVIEW,				_MENU_("print preview"),	_HELP_("print preview"));
 		menuFile->Append(ID_FILE_PRINT,						_MENU_("print"),			_HELP_("print"));
 		menuFile->AppendSeparator();
@@ -396,7 +399,7 @@ void SetWindow::onFileNew(wxCommandEvent&) {
 }
 
 void SetWindow::onFileOpen(wxCommandEvent&) {
-	if (!askSaveAndContinue())  return;
+	if (!askSaveAndContinue()) return;
 	wxFileDialog dlg(this, _TITLE_("open set"), _(""), _(""), import_formats(), wxOPEN);
 	if (dlg.ShowModal() == wxID_OK) {
 		setSet(import_set(dlg.GetPath()));
@@ -471,6 +474,15 @@ void SetWindow::onFilePrint(wxCommandEvent&) {
 
 void SetWindow::onFilePrintPreview(wxCommandEvent&) {
 	print_preview(this, set);
+}
+
+void SetWindow::onFileReload(wxCommandEvent&) {
+	if (!askSaveAndContinue()) return;
+	String filename = set->absoluteFilename();
+	if (filename.empty()) return;
+	wxBusyCursor busy;
+	packages.destroy(); // unload all packages
+	setSet(import_set(filename));
 }
 
 void SetWindow::onFileRecent(wxCommandEvent& ev) {
@@ -593,6 +605,7 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
 //	EVT_MENU			(ID_FILE_INSPECT,		SetWindow::onFileInspect)
 	EVT_MENU			(ID_FILE_PRINT,			SetWindow::onFilePrint)
 	EVT_MENU			(ID_FILE_PRINT_PREVIEW,	SetWindow::onFilePrintPreview)
+	EVT_MENU			(ID_FILE_RELOAD,		SetWindow::onFileReload)
 	EVT_MENU_RANGE		(ID_FILE_RECENT, ID_FILE_RECENT_MAX, SetWindow::onFileRecent)
 	EVT_MENU			(ID_FILE_EXIT,			SetWindow::onFileExit)
 	EVT_MENU			(ID_EDIT_UNDO,			SetWindow::onEditUndo)
