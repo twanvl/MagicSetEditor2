@@ -329,6 +329,21 @@ size_t untagged_to_index(const String& str, size_t pos, bool inside) {
 	return i;
 }
 
+size_t index_to_untagged(const String& str, size_t index) {
+	size_t i = 0, p = 0;
+	index = min(str.size(), index);
+	while (i < index) {
+		Char c = str.GetChar(i);
+		if (c == _('<')) {
+			i = skip_tag(str, i);
+		} else {
+			i++;
+			p++;
+		}
+	}
+	return p;
+}
+
 // ----------------------------------------------------------------------------- : Global operations
 
 String remove_tag(const String& str, const String& tag) {

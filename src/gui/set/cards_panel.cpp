@@ -271,7 +271,7 @@ void CardsPanel::doPaste()        { CUT_COPY_PASTE(doPaste, ;) }
 class CardsPanel::SearchFindInfo : public FindInfo {
   public:
 	SearchFindInfo(CardsPanel& panel, wxFindReplaceData& what) : FindInfo(what), panel(panel) {}
-	virtual bool handle(const CardP& card, const TextValueP& value, size_t pos) {
+	virtual bool handle(const CardP& card, const TextValueP& value, size_t pos, bool was_selection) {
 		// Select the card
 		panel.card_list->setCard(card);
 		return true;
@@ -283,13 +283,18 @@ class CardsPanel::SearchFindInfo : public FindInfo {
 class CardsPanel::ReplaceFindInfo : public FindInfo {
   public:
 	ReplaceFindInfo(CardsPanel& panel, wxFindReplaceData& what) : FindInfo(what), panel(panel) {}
-	virtual bool handle(const CardP& card, const TextValueP& value, size_t pos) {
+	virtual bool handle(const CardP& card, const TextValueP& value, size_t pos, bool was_selection) {
 		// Select the card
 		panel.card_list->setCard(card);
 		// Replace
-		panel.editor->insert(escape(what.GetReplaceString()), _("Replace"));
-		return true;
+		if (was_selection) {
+			panel.editor->insert(escape(what.GetReplaceString()), _("Replace"));
+			return false;
+		} else {
+			return true;
+		}
 	}
+	virtual bool searchSelection() const { return true; }
   private:
 	CardsPanel& panel;
 };

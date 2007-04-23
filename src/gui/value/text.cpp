@@ -677,14 +677,17 @@ bool TextValueEditor::matchSubstr(const String& s, size_t pos, FindInfo& find) {
 		if (!is_substr(s, pos, find.findString().Lower())) return false;
 	}
 	// handle
+	bool was_selection = false;
 	if (find.select()) {
 		editor().select(this);
 		editor().SetFocus();
+		size_t old_sel_start = selection_start, old_sel_end = selection_end;
 		selection_start_i = untagged_to_index(value().value(), pos,                            true);
 		selection_end_i   = untagged_to_index(value().value(), pos + find.findString().size(), true);
 		fixSelection(TYPE_INDEX);
+		was_selection = old_sel_start == selection_start && old_sel_end == selection_end;
 	}
-	if (find.handle(viewer.getCard(), valueP(), pos)) {
+	if (find.handle(viewer.getCard(), valueP(), pos, was_selection)) {
 		return true;
 	} else {
 		// TODO: string might have changed when doing replace all
@@ -695,15 +698,17 @@ bool TextValueEditor::matchSubstr(const String& s, size_t pos, FindInfo& find) {
 bool TextValueEditor::search(FindInfo& find, bool from_start) {
 	String v = untag(value().value());
 	if (!find.caseSensitive()) v.LowerCase();
+	size_t selection_min = index_to_untagged(value().value(), min(selection_start_i, selection_end_i));
+	size_t selection_max = index_to_untagged(value().value(), max(selection_start_i, selection_end_i));
 	if (find.forward()) {
-		size_t start = min(v.size(), max(selection_start, selection_end));
+		size_t start = min(v.size(), find.searchSelection() ? selection_min : selection_max);
 		size_t end   = max(0, (int)v.size() - (int)find.findString().size());
 		for (size_t i = start ; i <= end ; ++i) {
 			if (matchSubstr(v, i, find)) return true;
 		}
 	} else {
 		size_t start = 0;
-		int end      = (int)min(selection_start, selection_end) - (int)find.findString().size();
+		int end      = (int)(find.searchSelection() ? selection_max : selection_min) - (int)find.findString().size();
 		if (end < 0) return false;
 		for (size_t i = end ; i >= start ; --i) {
 			if (matchSubstr(v, i, find)) return true;

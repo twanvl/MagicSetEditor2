@@ -119,6 +119,11 @@ size_t cursor_to_index(const String& str, size_t cursor, Movement dir = MOVE_MID
  */
 size_t untagged_to_index(const String& str, size_t pos, bool inside);
 
+/// Find the untagged position corresponding to the given tagged position.
+/** An untagged position in str is a position in untag(str).
+ */
+size_t index_to_untagged(const String& str, size_t index);
+
 // ----------------------------------------------------------------------------- : Global operations
 
 /// Remove all instances of a tag and its close tag, but keep the contents.
