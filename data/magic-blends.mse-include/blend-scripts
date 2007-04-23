@@ -15,6 +15,10 @@ land_template		:= { input + "lcard.jpg" }
 card_template		:= { input + "card.jpg" }
 pt_template		:= { input + "pt.jpg" }
 pt2_template		:= { input + "pt2.jpg" }
+typeline_template	:= { input + "typeline.png" }
+typelineland_template	:= { input + "ltypeline.png" }
+textbox_template	:= { input + "textbox.png" }
+textboxland_template	:= { input + "ltextbox.png" }
 
 ########################################################################
 # Hybrid blends
@@ -77,19 +81,56 @@ card_hybrid_4 := {
 		)
 	)
 }
-# 'star' 5 color hybrid
+# 'star' 5 color hybrid, fixed for 6 colors
 card_hybrid_5 := {
 	card_hybrid_nt(
 		linear_blend(
 			image1: linear_blend(
-				image1:  card_hybrid("gb"),
-				image2: card_hybrid("wu"),
+				image1: card_hybrid(input[0] + input[1]),
+				image2: card_hybrid(input[2] + input[3]),
 				x1: 0,  y1: 0.19
 				x2: 0,  y2: 0.35
 			),
-			image2: card_template("r"),
-			x1: 0,  y1: 0.677
-			x2: 0,  y2: 0.837
+			image2: card_template(input[4]),
+			x1: 0,  y1: 0.777
+			x2: 0,  y2: 0.937
+		)
+	)
+}
+# 'star' 6 color hybrid
+card_hybrid_6 := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: linear_blend(
+				image1: card_hybrid(input[0] + input[1]),
+				image2: card_hybrid(input[2] + input[3]),
+				x1: 0,  y1: 0.19
+				x2: 0,  y2: 0.35
+			),
+			image2: card_hybrid(input[4] + input[5]),
+			x1: 0,  y1: 0.777
+			x2: 0,  y2: 0.937
+		)
+	)
+}
+# 'star' 7 color hybrid
+card_hybrid_7 := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: linear_blend(
+				image1: linear_blend(
+					image1: card_hybrid(input[0] + input[1]),
+					image2: card_hybrid(input[2] + input[3]),
+					x1: 0,  y1: 0.34
+					x2: 0,  y2: 0.50
+				),
+				image2: card_hybrid(input[4] + input[5]),
+				x1: 0,  y1: 0.877
+				x2: 0,  y2: 0.937
+			),
+			image2: card_template(input[6]),
+			x1: 0,  y1: 1.140
+			x2: 0,  y2: 1.300
 		)
 	)
 }
@@ -128,27 +169,85 @@ card_hybrid_4h := {
 		)))
 	)
 }
-# horizontal 5 color hybrid
+# horizontal 5 color hybrid, fixed for 6 colors
 card_hybrid_5h := {
 	card_hybrid_nt(
 		linear_blend(
-			image1: card_template("w")
+			image1: card_template(input[0])
 			x1: 2.0 / 15,  y1: 0
 			x2: 4.0 / 15,  y2: 0
 			image2: linear_blend(
-			  image1: card_template("u")
+			  image1: card_template(input[1])
 			  x1: 5.0 / 15,  y1: 0
 			  x2: 7.0 / 15,  y2: 0
 			  image2: linear_blend(
-			    image1: card_template("b")
+			    image1: card_template(input[2])
 			    x1: 8.0 / 15,  y1: 0
 			    x2: 10.0 / 15,  y2: 0
 			    image2: linear_blend(
-			      image1: card_template("r")
+			      image1: card_template(input[3])
 			      x1: 11.0 / 15,  y1: 0
 			      x2: 13.0 / 15,  y2: 0
-			      image2: card_template("g")
+			      image2: card_template(input[4])
 		))))
+	)
+}
+# horizontal 6 color hybrid
+card_hybrid_6h := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: card_template(input[0])
+			x1: 1.5 / 15,  y1: 0
+			x2: 3.1 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: card_template(input[1])
+			  x1: 4.1 / 15,  y1: 0
+			  x2: 5.7 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: card_template(input[2])
+			    x1: 6.7 / 15,  y1: 0
+			    x2: 8.3 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: card_template(input[3])
+			      x1: 9.3 / 15,  y1: 0
+			      x2: 10.9 / 15,  y2: 0
+			      image2: linear_blend(
+		         	      image1: card_template(input[4])
+			      x1: 11.9 / 15, y1: 0
+			      x2: 13.5 / 15, y2: 0
+			      image2: card_template(input[5])
+		)))))
+	)
+}
+# horizontal 7 color hybrid
+card_hybrid_7h := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: card_template(input[0])
+			x1: 1.3 / 15,  y1: 0
+			x2: 2.7 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: card_template(input[1])
+			  x1: 3.5 / 15,  y1: 0
+			  x2: 4.9 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: card_template(input[2])
+			    x1: 5.7 / 15,  y1: 0
+			    x2: 7.1 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: card_template(input[3])
+			      x1: 7.9 / 15,  y1: 0
+			      x2: 9.3 / 15,  y2: 0
+			      image2: linear_blend(
+		         	      image1: card_template(input[4])
+			      x1: 10.1 / 15, y1: 0
+			      x2: 11.5 / 15, y2: 0
+			      image2: linear_blend(
+			       image1: card_template(input[5])
+			       x1: 12.3 / 15, y1: 0
+			       x2: 13.7 / 15, y2: 0
+			      image2: card_template(input[6])
+		))))))
 	)
 }
 
@@ -180,9 +279,1098 @@ land_hybrid_2 := {
 		)
 	)
 }
+land_hybrid_3 := {
+	card_hybrid_nt(
+		linear_blend(
+			image1:  land_hybrid_2(input[0] + input[1]),
+			image2: land_template(input[2]),
+			x1: 0,  y1: 0.55
+			x2: 0,  y2: 0.77
+		)
+	)
+}
+# 'star' 4 color hybrid
+land_hybrid_4 := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: land_hybrid_2(input[0] + input[1])
+			image2: land_hybrid_2(input[2] + input[3])
+			x1: 0,  y1: 0.4
+			x2: 0,  y2: 0.62
+		)
+	)
+}
+# 'star' 5 color hybrid, fixed for 6 colors
+land_hybrid_5 := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: linear_blend(
+				image1: land_hybrid_2(input[0] + input[1]),
+				image2: land_hybrid_2(input[2] + input[3]),
+				x1: 0,  y1: 0.19
+				x2: 0,  y2: 0.35
+			),
+			image2: land_template(input[4]),
+			x1: 0,  y1: 0.777
+			x2: 0,  y2: 0.937
+		)
+	)
+}
+# 'star' 6 color hybrid
+land_hybrid_6 := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: linear_blend(
+				image1: land_hybrid_2(input[0] + input[1]),
+				image2: land_hybrid_2(input[2] + input[3]),
+				x1: 0,  y1: 0.19
+				x2: 0,  y2: 0.35
+			),
+			image2: land_hybrid_2(input[4] + input[5]),
+			x1: 0,  y1: 0.777
+			x2: 0,  y2: 0.937
+		)
+	)
+}
+# 'star' 7 color hybrid
+land_hybrid_7 := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: linear_blend(
+				image1: linear_blend(
+					image1: land_hybrid_2(input[0] + input[1]),
+					image2: land_hybrid_2(input[2] + input[3]),
+					x1: 0,  y1: 0.34
+					x2: 0,  y2: 0.50
+				),
+				image2: land_hybrid_2(input[4] + input[5]),
+				x1: 0,  y1: 0.877
+				x2: 0,  y2: 0.937
+			),
+			image2: land_template(input[6]),
+			x1: 0,  y1: 1.140
+			x2: 0,  y2: 1.300
+		)
+	)
+}
+# horizontal 3 color hybrid
+land_hybrid_3h := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: land_template(input[0])
+			x1: 0.22,  y1: 0
+			x2: 0.4,   y2: 0
+			image2: linear_blend(
+			  image1: land_template(input[1])
+			  x1: 0.6,   y1: 0
+			  x2: 0.78,  y2: 0
+			  image2: land_template(input[2])
+		))
+	)
+}
+# horizontal 4 color hybrid
+land_hybrid_4h := {
+	card_hybrid_nt(
+		linear_blend(
+			# blend = 0.16
+			image1: land_template(input[0])
+			x1: 0.15,  y1: 0
+			x2: 0.31,   y2: 0
+			image2: linear_blend(
+			  image1: land_template(input[1])
+			  x1: 0.42,  y1: 0
+			  x2: 0.58,  y2: 0
+			  image2: linear_blend(
+			    image1: land_template(input[2])
+			    x1: 0.69, y1: 0
+			    x2: 0.85, y2: 0
+			    image2: land_template(input[3])
+		)))
+	)
+}
+# horizontal 5 color hybrid, fixed for 6 colors
+land_hybrid_5h := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: land_template(input[0])
+			x1: 2.0 / 15,  y1: 0
+			x2: 4.0 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: land_template(input[1])
+			  x1: 5.0 / 15,  y1: 0
+			  x2: 7.0 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: land_template(input[2])
+			    x1: 8.0 / 15,  y1: 0
+			    x2: 10.0 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: land_template(input[3])
+			      x1: 11.0 / 15,  y1: 0
+			      x2: 13.0 / 15,  y2: 0
+			      image2: land_template(input[4])
+		))))
+	)
+}
+# horizontal 6 color hybrid
+land_hybrid_6h := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: land_template(input[0])
+			x1: 1.5 / 15,  y1: 0
+			x2: 3.1 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: land_template(input[1])
+			  x1: 4.1 / 15,  y1: 0
+			  x2: 5.7 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: land_template(input[2])
+			    x1: 6.7 / 15,  y1: 0
+			    x2: 8.3 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: land_template(input[3])
+			      x1: 9.3 / 15,  y1: 0
+			      x2: 10.9 / 15,  y2: 0
+			      image2: linear_blend(
+		         	      image1: land_template(input[4])
+			      x1: 11.9 / 15, y1: 0
+			      x2: 13.5 / 15, y2: 0
+			      image2: land_template(input[5])
+		)))))
+	)
+}
+# horizontal 7 color hybrid
+land_hybrid_7h := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: land_template(input[0])
+			x1: 1.3 / 15,  y1: 0
+			x2: 2.7 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: land_template(input[1])
+			  x1: 3.5 / 15,  y1: 0
+			  x2: 4.9 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: land_template(input[2])
+			    x1: 5.7 / 15,  y1: 0
+			    x2: 7.1 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: land_template(input[3])
+			      x1: 7.9 / 15,  y1: 0
+			      x2: 9.3 / 15,  y2: 0
+			      image2: linear_blend(
+		         	      image1: land_template(input[4])
+			      x1: 10.1 / 15, y1: 0
+			      x2: 11.5 / 15, y2: 0
+			      image2: linear_blend(
+			       image1: land_template(input[5])
+			       x1: 12.3 / 15, y1: 0
+			       x2: 13.7 / 15, y2: 0
+			      image2: land_template(input[6])
+		))))))
+	)
+}
 
 ########################################################################
-# Power/thoughness boxes
+# Multicolor blends for Typelines
+########################################################################
+
+# Make a hybrid blend into a multicolor blend
+multi_hybrid_typeline := {
+	masked_blend(
+		mask:  "multicolor_dual_blend_typeline.png",
+		dark:  "mtypeline.png",
+		light: input,
+	)
+}
+
+########################################################################
+# Land blends for Typelines
+########################################################################
+
+land_hybrid_2_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			image1: typelineland_template(input[0])
+			image2: typelineland_template(input[1])
+			x1: 0.4,  y1: 0
+			x2: 0.6,  y2: 0
+		)
+	)
+}
+land_hybrid_3_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			image1: land_hybrid_2_typeline(input[0] + input[1]),
+			image2: typelineland_template(input[2]),
+			x1: 0,  y1: 0.55
+			x2: 0,  y2: 0.77
+		)
+	)
+}
+# 'star' 4 color hybrid
+land_hybrid_4_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			image1: land_hybrid_2_typeline(input[0] + input[1])
+			image2: land_hybrid_2_typeline(input[2] + input[3])
+			x1: 0,  y1: 0.4
+			x2: 0,  y2: 0.62
+		)
+	)
+}
+# 'star' 5 color hybrid
+land_hybrid_5_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			image1: linear_blend(
+				image1: land_hybrid_2_typeline(input[0] + input[1]),
+				image2: land_hybrid_2_typeline(input[2] + input[3]),
+				x1: 0,  y1: 0.19
+				x2: 0,  y2: 0.35
+			),
+			image2: typelineland_template(input[4]),
+			x1: 0,  y1: 0.777
+			x2: 0,  y2: 0.937
+		)
+	)
+}
+# 'star' 6 color hybrid
+land_hybrid_6_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			image1: linear_blend(
+				image1: land_hybrid_2_typeline(input[0] + input[1]),
+				image2: land_hybrid_2_typeline(input[2] + input[3]),
+				x1: 0,  y1: 0.19
+				x2: 0,  y2: 0.35
+			),
+			image2: land_hybrid_2_typeline(input[4] + input[5]),
+			x1: 0,  y1: 0.777
+			x2: 0,  y2: 0.937
+		)
+	)
+}
+# 'star' 7 color hybrid
+land_hybrid_7_typeline := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: linear_blend(
+				image1: linear_blend(
+					image1: land_hybrid_2_typeline(input[0] + input[1]),
+					image2: land_hybrid_2_typeline(input[2] + input[3]),
+					x1: 0,  y1: 0.34
+					x2: 0,  y2: 0.50
+				),
+				image2: land_hybrid_2_typeline(input[4] + input[5]),
+				x1: 0,  y1: 0.877
+				x2: 0,  y2: 0.937
+			),
+			image2: typelineland_template(input[6]),
+			x1: 0,  y1: 1.140
+			x2: 0,  y2: 1.300
+		)
+	)
+}
+# horizontal 3 color hybrid
+land_hybrid_3h_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			image1: typelineland_template(input[0])
+			x1: 0.22,  y1: 0
+			x2: 0.4,   y2: 0
+			image2: linear_blend(
+			  image1: typelineland_template(input[1])
+			  x1: 0.6,   y1: 0
+			  x2: 0.78,  y2: 0
+			  image2: typelineland_template(input[2])
+		))
+	)
+}
+# horizontal 4 color hybrid
+land_hybrid_4h_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			# blend = 0.16
+			image1: typelineland_template(input[0])
+			x1: 0.15,  y1: 0
+			x2: 0.31,   y2: 0
+			image2: linear_blend(
+			  image1: typelineland_template(input[1])
+			  x1: 0.42,  y1: 0
+			  x2: 0.58,  y2: 0
+			  image2: linear_blend(
+			    image1: typelineland_template(input[2])
+			    x1: 0.69, y1: 0
+			    x2: 0.85, y2: 0
+			    image2: typelineland_template(input[3])
+		)))
+	)
+}
+# horizontal 5 color hybrid
+land_hybrid_5h_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			image1: typelineland_template(input[0])
+			x1: 2.0 / 15,  y1: 0
+			x2: 4.0 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: typelineland_template(input[1])
+			  x1: 5.0 / 15,  y1: 0
+			  x2: 7.0 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: typelineland_template(input[2])
+			    x1: 8.0 / 15,  y1: 0
+			    x2: 10.0 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: typelineland_template(input[3])
+			      x1: 11.0 / 15,  y1: 0
+			      x2: 13.0 / 15,  y2: 0
+			      image2: typelineland_template(input[4])
+		))))
+	)
+}
+# horizontal 6 color hybrid
+land_hybrid_6h_typeline := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: typelineland_template(input[0])
+			x1: 1.5 / 15,  y1: 0
+			x2: 3.1 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: typelineland_template(input[1])
+			  x1: 4.1 / 15,  y1: 0
+			  x2: 5.7 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: typelineland_template(input[2])
+			    x1: 6.7 / 15,  y1: 0
+			    x2: 8.3 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: typelineland_template(input[3])
+			      x1: 9.3 / 15,  y1: 0
+			      x2: 10.9 / 15,  y2: 0
+			      image2: linear_blend(
+		         	      image1: typelineland_template(input[4])
+			      x1: 11.9 / 15, y1: 0
+			      x2: 13.5 / 15, y2: 0
+			      image2: typelineland_template(input[5])
+		)))))
+	)
+}
+# horizontal 7 color hybrid
+card_hybrid_7h_typeline := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: typelineland_template(input[0])
+			x1: 1.3 / 15,  y1: 0
+			x2: 2.7 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: typelineland_template(input[1])
+			  x1: 3.5 / 15,  y1: 0
+			  x2: 4.9 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: typelineland_template(input[2])
+			    x1: 5.7 / 15,  y1: 0
+			    x2: 7.1 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: typelineland_template(input[3])
+			      x1: 7.9 / 15,  y1: 0
+			      x2: 9.3 / 15,  y2: 0
+			      image2: linear_blend(
+		         	      image1: typelineland_template(input[4])
+			      x1: 10.1 / 15, y1: 0
+			      x2: 11.5 / 15, y2: 0
+			      image2: linear_blend(
+			       image1: typelineland_template(input[5])
+			       x1: 12.3 / 15, y1: 0
+			       x2: 13.7 / 15, y2: 0
+			      image2: typelineland_template(input[6])
+		))))))
+	)
+}
+
+########################################################################
+# Multicolor blends for Textboxes
+########################################################################
+
+# Make a hybrid blend into a multicolor blend
+multi_hybrid_textbox := {
+	masked_blend(
+		mask:  "multicolor_dual_blend_textbox.png",
+		dark:  "mtextbox.png",
+		light: input,
+	)
+}
+
+
+########################################################################
+# Land blends for Textboxes
+########################################################################
+
+land_hybrid_2_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			image1: textboxland_template(input[0])
+			image2: textboxland_template(input[1])
+			x1: 0.4,  y1: 0
+			x2: 0.6,  y2: 0
+		)
+	)
+}
+land_hybrid_3_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			image1: land_hybrid_2_textbox(input[0] + input[1]),
+			image2: textboxland_template(input[2]),
+			x1: 0,  y1: 0.55
+			x2: 0,  y2: 0.77
+		)
+	)
+}
+# 'star' 4 color hybrid
+land_hybrid_4_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			image1: land_hybrid_2_textbox(input[0] + input[1])
+			image2: land_hybrid_2_textbox(input[2] + input[3])
+			x1: 0,  y1: 0.4
+			x2: 0,  y2: 0.62
+		)
+	)
+}
+# 'star' 5 color hybrid
+land_hybrid_5_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			image1: linear_blend(
+				image1: land_hybrid_2_textbox(input[0] + input[1]),
+				image2: land_hybrid_2_textbox(input[2] + input[3]),
+				x1: 0,  y1: 0.19
+				x2: 0,  y2: 0.35
+			),
+			image2: textboxland_template(input[4]),
+			x1: 0,  y1: 0.777
+			x2: 0,  y2: 0.937
+		)
+	)
+}
+# 'star' 6 color hybrid
+land_hybrid_6_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			image1: linear_blend(
+				image1: land_hybrid_2_textbox(input[0] + input[1]),
+				image2: land_hybrid_2_textbox(input[2] + input[3]),
+				x1: 0,  y1: 0.19
+				x2: 0,  y2: 0.35
+			),
+			image2: land_hybrid_2_textbox(input[4] + input[5]),
+			x1: 0,  y1: 0.777
+			x2: 0,  y2: 0.937
+		)
+	)
+}
+# 'star' 7 color hybrid
+land_hybrid_7_textbox := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: linear_blend(
+				image1: linear_blend(
+					image1: land_hybrid_2_textbox(input[0] + input[1]),
+					image2: land_hybrid_2_textbox(input[2] + input[3]),
+					x1: 0,  y1: 0.34
+					x2: 0,  y2: 0.50
+				),
+				image2: land_hybrid_2_textbox(input[4] + input[5]),
+				x1: 0,  y1: 0.877
+				x2: 0,  y2: 0.937
+			),
+			image2: textboxland_template(input[6]),
+			x1: 0,  y1: 1.140
+			x2: 0,  y2: 1.300
+		)
+	)
+}
+# horizontal 3 color hybrid
+land_hybrid_3h_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			image1: textboxland_template(input[0])
+			x1: 0.22,  y1: 0
+			x2: 0.4,   y2: 0
+			image2: linear_blend(
+			  image1: textboxland_template(input[1])
+			  x1: 0.6,   y1: 0
+			  x2: 0.78,  y2: 0
+			  image2: textboxland_template(input[2])
+		))
+	)
+}
+# horizontal 4 color hybrid
+land_hybrid_4h_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			# blend = 0.16
+			image1: textboxland_template(input[0])
+			x1: 0.15,  y1: 0
+			x2: 0.31,   y2: 0
+			image2: linear_blend(
+			  image1: textboxland_template(input[1])
+			  x1: 0.42,  y1: 0
+			  x2: 0.58,  y2: 0
+			  image2: linear_blend(
+			    image1: textboxland_template(input[2])
+			    x1: 0.69, y1: 0
+			    x2: 0.85, y2: 0
+			    image2: textboxland_template(input[3])
+		)))
+	)
+}
+# horizontal 5 color hybrid
+land_hybrid_5h_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			image1: textboxland_template(input[0])
+			x1: 2.0 / 15,  y1: 0
+			x2: 4.0 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: textboxland_template(input[1])
+			  x1: 5.0 / 15,  y1: 0
+			  x2: 7.0 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: textboxland_template(input[2])
+			    x1: 8.0 / 15,  y1: 0
+			    x2: 10.0 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: textboxland_template(input[3])
+			      x1: 11.0 / 15,  y1: 0
+			      x2: 13.0 / 15,  y2: 0
+			      image2: textboxland_template(input[4])
+		))))
+	)
+}
+# horizontal 6 color hybrid
+land_hybrid_6h_textbox := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: textboxland_template(input[0])
+			x1: 1.5 / 15,  y1: 0
+			x2: 3.1 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: textboxland_template(input[1])
+			  x1: 4.1 / 15,  y1: 0
+			  x2: 5.7 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: textboxland_template(input[2])
+			    x1: 6.7 / 15,  y1: 0
+			    x2: 8.3 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: textboxland_template(input[3])
+			      x1: 9.3 / 15,  y1: 0
+			      x2: 10.9 / 15,  y2: 0
+			      image2: linear_blend(
+		         	      image1: textboxland_template(input[4])
+			      x1: 11.9 / 15, y1: 0
+			      x2: 13.5 / 15, y2: 0
+			      image2: textboxland_template(input[5])
+		)))))
+	)
+}
+# horizontal 7 color hybrid
+card_hybrid_7h_textbox := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: textboxland_template(input[0])
+			x1: 1.3 / 15,  y1: 0
+			x2: 2.7 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: textboxland_template(input[1])
+			  x1: 3.5 / 15,  y1: 0
+			  x2: 4.9 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: textboxland_template(input[2])
+			    x1: 5.7 / 15,  y1: 0
+			    x2: 7.1 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: textboxland_template(input[3])
+			      x1: 7.9 / 15,  y1: 0
+			      x2: 9.3 / 15,  y2: 0
+			      image2: linear_blend(
+		         	      image1: textboxland_template(input[4])
+			      x1: 10.1 / 15, y1: 0
+			      x2: 11.5 / 15, y2: 0
+			      image2: linear_blend(
+			       image1: textboxland_template(input[5])
+			       x1: 12.3 / 15, y1: 0
+			       x2: 13.7 / 15, y2: 0
+			      image2: textboxland_template(input[6])
+		))))))
+	)
+}
+
+########################################################################
+# Typelines
+########################################################################
+
+# Make parts of the input grey (land color)
+card_hybrid_nt_typeline := {
+	if mask_hybrid_with_land() then
+		masked_blend(
+			mask:  "hybrid_blend_nt_typeline.png",
+			dark:  typelineland_template(""),
+			light: input,
+		)
+	else input
+}
+
+# Card hybrid without land blending
+card_hybrid_typeline := {
+	linear_blend(
+		image1: typeline_template(input[0])
+		image2: typeline_template(input[1])
+		x1: 0.4,  y1: 0
+		x2: 0.6,  y2: 0
+	)
+}
+
+
+card_hybrid_2_typeline := card_hybrid_typeline + card_hybrid_nt_typeline
+
+# vertical 2 color hybrid
+card_hybrid_2v_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			image1: typeline_template(input[0])
+			image2: typeline_template(input[1])
+			x1: 0,  y1: 0.4
+			x2: 0,  y2: 0.62
+		)
+	)
+}
+# 'star' 3 color hybrid
+card_hybrid_3_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			image1: card_hybrid_typeline(input[0] + input[1]),
+			image2: typeline_template(input[2]),
+			x1: 0,  y1: 0.55
+			x2: 0,  y2: 0.77
+		)
+	)
+}
+# 'star' 4 color hybrid
+card_hybrid_4_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			image1: card_hybrid_typeline(input[0] + input[1])
+			image2: card_hybrid_typeline(input[2] + input[3])
+			x1: 0,  y1: 0.4
+			x2: 0,  y2: 0.62
+		)
+	)
+}
+# 'star' 5 color hybrid
+card_hybrid_5_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			image1: linear_blend(
+				image1: card_hybrid_typeline(input[0] + input[1]),
+				image2: card_hybrid_typeline(input[2] + input[3]),
+				x1: 0,  y1: 0.19
+				x2: 0,  y2: 0.35
+			),
+			image2: typeline_template(input[4]),
+			x1: 0,  y1: 0.777
+			x2: 0,  y2: 0.937
+		)
+	)
+}
+# 'star' 6 color hybrid
+card_hybrid_6_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			image1: linear_blend(
+				image1: card_hybrid_typeline(input[0] + input[1]),
+				image2: card_hybrid_typeline(input[2] + input[3]),
+				x1: 0,  y1: 0.19
+				x2: 0,  y2: 0.35
+			),
+			image2: card_hybrid_typeline(input[4] + input[5]),
+			x1: 0,  y1: 0.777
+			x2: 0,  y2: 0.937
+		)
+	)
+}
+# 'star' 7 color hybrid
+card_hybrid_7_typeline := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: linear_blend(
+				image1: linear_blend(
+					image1: card_hybrid_typeline(input[0] + input[1]),
+					image2: card_hybrid_typeline(input[2] + input[3]),
+					x1: 0,  y1: 0.34
+					x2: 0,  y2: 0.50
+				),
+				image2: card_hybrid_typeline(input[4] + input[5]),
+				x1: 0,  y1: 0.877
+				x2: 0,  y2: 0.937
+			),
+			image2: typeline_template(input[6]),
+			x1: 0,  y1: 1.140
+			x2: 0,  y2: 1.300
+		)
+	)
+}
+# horizontal 3 color hybrid
+card_hybrid_3h_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			image1: typeline_template(input[0])
+			x1: 0.22,  y1: 0
+			x2: 0.4,   y2: 0
+			image2: linear_blend(
+			  image1: typeline_template(input[1])
+			  x1: 0.6,   y1: 0
+			  x2: 0.78,  y2: 0
+			  image2: typeline_template(input[2])
+		))
+	)
+}
+# horizontal 4 color hybrid
+card_hybrid_4h_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			# blend = 0.16
+			image1: typeline_template(input[0])
+			x1: 0.15,  y1: 0
+			x2: 0.31,   y2: 0
+			image2: linear_blend(
+			  image1: typeline_template(input[1])
+			  x1: 0.42,  y1: 0
+			  x2: 0.58,  y2: 0
+			  image2: linear_blend(
+			    image1: typeline_template(input[2])
+			    x1: 0.69, y1: 0
+			    x2: 0.85, y2: 0
+			    image2: typeline_template(input[3])
+		)))
+	)
+}
+# horizontal 5 color hybrid
+card_hybrid_5h_typeline := {
+	card_hybrid_nt_typeline(
+		linear_blend(
+			image1: typeline_template(input[0])
+			x1: 2.0 / 15,  y1: 0
+			x2: 4.0 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: typeline_template(input[1])
+			  x1: 5.0 / 15,  y1: 0
+			  x2: 7.0 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: typeline_template(input[2])
+			    x1: 8.0 / 15,  y1: 0
+			    x2: 10.0 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: typeline_template(input[3])
+			      x1: 11.0 / 15,  y1: 0
+			      x2: 13.0 / 15,  y2: 0
+			      image2: typeline_template(input[4])
+		))))
+	)
+}
+# horizontal 6 color hybrid
+card_hybrid_6h_typeline := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: typeline_template(input[0])
+			x1: 1.5 / 15,  y1: 0
+			x2: 3.1 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: typeline_template(input[1])
+			  x1: 4.1 / 15,  y1: 0
+			  x2: 5.7 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: typeline_template(input[2])
+			    x1: 6.7 / 15,  y1: 0
+			    x2: 8.3 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: typeline_template(input[3])
+			      x1: 9.3 / 15,  y1: 0
+			      x2: 10.9 / 15,  y2: 0
+			      image2: linear_blend(
+		         	      image1: typeline_template(input[4])
+			      x1: 11.9 / 15, y1: 0
+			      x2: 13.5 / 15, y2: 0
+			      image2: typeline_template(input[5])
+		)))))
+	)
+}
+# horizontal 7 color hybrid
+card_hybrid_7h_typeline := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: typeline_template(input[0])
+			x1: 1.3 / 15,  y1: 0
+			x2: 2.7 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: typeline_template(input[1])
+			  x1: 3.5 / 15,  y1: 0
+			  x2: 4.9 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: typeline_template(input[2])
+			    x1: 5.7 / 15,  y1: 0
+			    x2: 7.1 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: typeline_template(input[3])
+			      x1: 7.9 / 15,  y1: 0
+			      x2: 9.3 / 15,  y2: 0
+			      image2: linear_blend(
+		         	      image1: typeline_template(input[4])
+			      x1: 10.1 / 15, y1: 0
+			      x2: 11.5 / 15, y2: 0
+			      image2: linear_blend(
+			       image1: typeline_template(input[5])
+			       x1: 12.3 / 15, y1: 0
+			       x2: 13.7 / 15, y2: 0
+			      image2: typeline_template(input[6])
+		))))))
+	)
+}
+
+########################################################################
+# Textboxes
+########################################################################
+
+# Make parts of the input grey (land color)
+card_hybrid_nt_textbox := {
+	if mask_hybrid_with_land() then
+		masked_blend(
+			mask:  "hybrid_blend_nt_textbox.png",
+			dark:  textboxland_template(""),
+			light: input,
+		)
+	else input
+}
+
+# Card hybrid without land blending
+card_hybrid_textbox := {
+	linear_blend(
+		image1: textbox_template(input[0])
+		image2: textbox_template(input[1])
+		x1: 0.4,  y1: 0
+		x2: 0.6,  y2: 0
+	)
+}
+
+
+card_hybrid_2_textbox := card_hybrid_textbox + card_hybrid_nt_textbox
+
+# vertical 2 color hybrid
+card_hybrid_2v_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			image1: textbox_template(input[0])
+			image2: textbox_template(input[1])
+			x1: 0,  y1: 0.4
+			x2: 0,  y2: 0.62
+		)
+	)
+}
+# 'star' 3 color hybrid
+card_hybrid_3_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			image1: card_hybrid_textbox(input[0] + input[1]),
+			image2: textbox_template(input[2]),
+			x1: 0,  y1: 0.55
+			x2: 0,  y2: 0.77
+		)
+	)
+}
+# 'star' 4 color hybrid
+card_hybrid_4_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			image1: card_hybrid_textbox(input[0] + input[1])
+			image2: card_hybrid_textbox(input[2] + input[3])
+			x1: 0,  y1: 0.4
+			x2: 0,  y2: 0.62
+		)
+	)
+}
+# 'star' 5 color hybrid
+card_hybrid_5_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			image1: linear_blend(
+				image1: card_hybrid_textbox(input[0] + input[1]),
+				image2: card_hybrid_textbox(input[2] + input[3]),
+				x1: 0,  y1: 0.19
+				x2: 0,  y2: 0.35
+			),
+			image2: textbox_template(input[4]),
+			x1: 0,  y1: 0.777
+			x2: 0,  y2: 0.937
+		)
+	)
+}
+# 'star' 6 color hybrid
+card_hybrid_6_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			image1: linear_blend(
+				image1: card_hybrid_textbox(input[0] + input[1]),
+				image2: card_hybrid_textbox(input[2] + input[3]),
+				x1: 0,  y1: 0.19
+				x2: 0,  y2: 0.35
+			),
+			image2: card_hybrid_textbox(input[4] + input[5]),
+			x1: 0,  y1: 0.777
+			x2: 0,  y2: 0.937
+		)
+	)
+}
+# 'star' 7 color hybrid
+card_hybrid_7_textbox := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: linear_blend(
+				image1: linear_blend(
+					image1: card_hybrid_textbox(input[0] + input[1]),
+					image2: card_hybrid_textbox(input[2] + input[3]),
+					x1: 0,  y1: 0.34
+					x2: 0,  y2: 0.50
+				),
+				image2: card_hybrid_textbox(input[4] + input[5]),
+				x1: 0,  y1: 0.877
+				x2: 0,  y2: 0.937
+			),
+			image2: textbox_template(input[6]),
+			x1: 0,  y1: 1.140
+			x2: 0,  y2: 1.300
+		)
+	)
+}
+# horizontal 3 color hybrid
+card_hybrid_3h_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			image1: textbox_template(input[0])
+			x1: 0.22,  y1: 0
+			x2: 0.4,   y2: 0
+			image2: linear_blend(
+			  image1: textbox_template(input[1])
+			  x1: 0.6,   y1: 0
+			  x2: 0.78,  y2: 0
+			  image2: textbox_template(input[2])
+		))
+	)
+}
+# horizontal 4 color hybrid
+card_hybrid_4h_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			# blend = 0.16
+			image1: textbox_template(input[0])
+			x1: 0.15,  y1: 0
+			x2: 0.31,   y2: 0
+			image2: linear_blend(
+			  image1: textbox_template(input[1])
+			  x1: 0.42,  y1: 0
+			  x2: 0.58,  y2: 0
+			  image2: linear_blend(
+			    image1: textbox_template(input[2])
+			    x1: 0.69, y1: 0
+			    x2: 0.85, y2: 0
+			    image2: textbox_template(input[3])
+		)))
+	)
+}
+# horizontal 5 color hybrid
+card_hybrid_5h_textbox := {
+	card_hybrid_nt_textbox(
+		linear_blend(
+			image1: textbox_template(input[0])
+			x1: 2.0 / 15,  y1: 0
+			x2: 4.0 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: textbox_template(input[1])
+			  x1: 5.0 / 15,  y1: 0
+			  x2: 7.0 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: textbox_template(input[2])
+			    x1: 8.0 / 15,  y1: 0
+			    x2: 10.0 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: textbox_template(input[3])
+			      x1: 11.0 / 15,  y1: 0
+			      x2: 13.0 / 15,  y2: 0
+			      image2: textbox_template(input[4])
+		))))
+	)
+}
+# horizontal 6 color hybrid
+card_hybrid_6h_textbox := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: textbox_template(input[0])
+			x1: 1.5 / 15,  y1: 0
+			x2: 3.1 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: textbox_template(input[1])
+			  x1: 4.1 / 15,  y1: 0
+			  x2: 5.7 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: textbox_template(input[2])
+			    x1: 6.7 / 15,  y1: 0
+			    x2: 8.3 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: textbox_template(input[3])
+			      x1: 9.3 / 15,  y1: 0
+			      x2: 10.9 / 15,  y2: 0
+			      image2: linear_blend(
+		         	      image1: textbox_template(input[4])
+			      x1: 11.9 / 15, y1: 0
+			      x2: 13.5 / 15, y2: 0
+			      image2: textbox_template(input[5])
+		)))))
+	)
+}
+# horizontal 7 color hybrid
+card_hybrid_7h_textbox := {
+	card_hybrid_nt(
+		linear_blend(
+			image1: textbox_template(input[0])
+			x1: 1.3 / 15,  y1: 0
+			x2: 2.7 / 15,  y2: 0
+			image2: linear_blend(
+			  image1: textbox_template(input[1])
+			  x1: 3.5 / 15,  y1: 0
+			  x2: 4.9 / 15,  y2: 0
+			  image2: linear_blend(
+			    image1: textbox_template(input[2])
+			    x1: 5.7 / 15,  y1: 0
+			    x2: 7.1 / 15,  y2: 0
+			    image2: linear_blend(
+			      image1: textbox_template(input[3])
+			      x1: 7.9 / 15,  y1: 0
+			      x2: 9.3 / 15,  y2: 0
+			      image2: linear_blend(
+		         	      image1: textbox_template(input[4])
+			      x1: 10.1 / 15, y1: 0
+			      x2: 11.5 / 15, y2: 0
+			      image2: linear_blend(
+			       image1: textbox_template(input[5])
+			       x1: 12.3 / 15, y1: 0
+			       x2: 13.7 / 15, y2: 0
+			      image2: textbox_template(input[6])
+		))))))
+	)
+}
+
+########################################################################
+# Power/toughness boxes
 ########################################################################
 
 # Make parts of the input grey (hpt.jpg color)

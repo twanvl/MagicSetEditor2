@@ -37,15 +37,15 @@ choice:
 		choice: green / blue / black
 	choice:
 		name:   4 color
-		choice: w/u/b/r
-		choice: u/b/r/g
-		choice: b/r/g/w
-		choice: r/g/w/u
-		choice: g/w/u/b
+		choice: white / blue / black / red
+		choice: blue / black / red / green
+		choice: black / red / green / white
+		choice: red / green / white / blue
+		choice: green / white / blue / black
 	choice:
 		name:   5 color
-		choice: w/u/b/r/g
-		choice: w/u/b/r/g (horizontal)
+		choice: white / blue / black / red / green
+		choice: horizontal white / blue / black / red / green
 choice:
 	name:   land
 	group choice: colorless
@@ -114,22 +114,22 @@ choice:
 			choice: green / blue / black
 	choice:
 		name:   4 color
-		choice: w/u/b/r
-		choice: u/b/r/g
-		choice: b/r/g/w
-		choice: r/g/w/u
-		choice: g/w/u/b
+		choice: white / blue / black / red
+		choice: blue / black / red / green
+		choice: black / red / green / white
+		choice: red / green / white / blue
+		choice: green / white / blue / black
 		choice:
 			name:	horizontal
-			choice: w/u/b/r
-			choice: u/b/r/g
-			choice: b/r/g/w
-			choice: r/g/w/u
-			choice: g/w/u/b
+			choice: white / blue / black / red
+			choice: blue / black / red / green
+			choice: black / red / green / white
+			choice: red / green / white / blue
+			choice: green / white / blue / black
 	choice:
 		name:   5 color
-		choice: w/u/b/r/g
-		choice: w/u/b/r/g (horizontal)
+		choice: white / blue / black / red / green
+		choice: horizontal white / blue / black / red / green
 	choice:
 		# Vertical hybrids, for flip cards
 		#   By: Wolfwood

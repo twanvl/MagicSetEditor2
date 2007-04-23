@@ -84,8 +84,8 @@ init script:
 			else if count == 2 then  "multicolor 2 color " + color_name(colors[0]) + " / " + color_name(colors[1])
 			else if set.set_info.use_gradient_multicolor != "yes" then "multicolor" # stop here
 			else if count == 3 then  "multicolor 3 color " + color_name(colors[0]) + " / " + color_name(colors[1]) + " / " + color_name(colors[2])
-			else if count == 3 then  "multicolor 4 color " + to_lower(colors[0]) + "/" + to_lower(colors[1]) + "/" + to_lower(colors[2]) + "/" + to_lower(colors[3])
-			else if count == 5 then  "multicolor 5 color w/u/b/r/g"
+			else if count == 4 then  "multicolor 4 color " + color_name(colors[0]) + " / " + color_name(colors[1]) + " / " + color_name(colors[2]) + " / " + color_name(colors[3])
+			else if count == 5 then  "multicolor 5 color " + color_name(colors[0]) + " / " + color_name(colors[1]) + " / " + color_name(colors[2]) + " / " + color_name(colors[3]) + " / " + color_name(colors[4])
 			else                     "multicolor"
 		else
 			# hybrid
@@ -542,6 +542,22 @@ card field:
 		choice: The Golgari (B/G)
 		choice: Boros Legion (R/W)
 		choice: The Simic (G/U)
+	choice: 
+		name: xander hybrid mana
+		choice: B/R
+		choice: U/B
+		choice: B/G
+		choice: R/G
+		choice: G/U
+		choice: U/R
+		choice: W/B
+		choice: G/W
+		choice: R/W
+		choice: W/U
+	choice:
+		name: promo symbol
+		choice: DCI
+		choice: FNM
 	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, or a guild symbol
 
 ############################# PT
