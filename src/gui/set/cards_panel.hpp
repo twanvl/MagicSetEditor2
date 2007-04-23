@@ -18,6 +18,7 @@ class DataEditor;
 class TextCtrl;
 class IconMenu;
 class HoverButton;
+class FindInfo;
 
 // ----------------------------------------------------------------------------- : CardsPanel
 
@@ -39,7 +40,6 @@ class CardsPanel : public SetWindowPanel {
 	// --------------------------------------------------- : Actions
 	
 	virtual bool wantsToHandle(const Action&, bool undone) const;
-  public:
   
 	// --------------------------------------------------- : Clipboard
 	virtual bool canCut() const;
@@ -50,39 +50,19 @@ class CardsPanel : public SetWindowPanel {
 	virtual void doPaste();
 	
 	// --------------------------------------------------- : Searching (find/replace)
-#if 0
-	virtual bool canFind() const;
-	virtual bool canReplace() const;
-	virtual bool doFind(wxFindReplaceData& what);
-	virtual bool doReplace(wxFindReplaceData& what);
+
+	virtual bool canFind()    const { return true; }
+	virtual bool canReplace() const { return true; }
+	virtual bool doFind      (wxFindReplaceData&);
+	virtual bool doReplace   (wxFindReplaceData&);
+	virtual bool doReplaceAll(wxFindReplaceData&);
   private:
-	// Functions that handle finding
-	typedef void (CardsPanel::*FindHandler)(const CardP&, const TextValueP&, const size_t, const size_t, wxFindReplaceData&);
-		
-	/// Execute a find (or replace), and start with the currently selected card and value
-	/** if findSame==true then find will also find the currently highlighted word
-	 *  Returns true if found
-	 */
-	bool find(FindReplaceData& what, const FindHandler& handler, bool findSame = false);
-	
-	/// find handler : select found value
-	void handleFind(const CardP& card, const TextValueP& value, size_t start, size_t end, FindReplaceData& what);
-	
-	/// replace handler : replace found value, move selection to end
-	void handleReplace(const CardP& card, const TextValueP& value, size_t start, size_t end, FindReplaceData& what);
-	
-	/// Find in all cards
-	/** NOTE: this function is essentially the same as findInCard */
-	bool findInCards(const CardP& firstCard, const ValueP& firstValue, int firstChar, FindReplaceData& what, const FindHandler& handler);
-	
-	/// Find in a card, if firstValue is specified start searching there
-	/** NOTE: this function is essentially the same as findInCards */
-	bool findInCard(const CardP& card, const ValueP& firstValue, int firstChar, FindReplaceData& what, const FindHandler& handler);
-	
-	/// Find the current search string in the specified value
-	/** if searchDir = up searches from the end and only before firstChar, unless firstChar == -1 */
-	bool findInValue(const CardP& crd_, virtual const ValueP& value, int firstChar, FindReplaceData& what, const FindHandler& handler);
-#endif
+	/// Do a search or replace action for the given FindInfo in all cards
+	bool search(FindInfo& find, bool from_start);
+	class SearchFindInfo;
+	class ReplaceFindInfo;
+	friend class CardsPanel::SearchFindInfo;
+	friend class CardsPanel::ReplaceFindInfo;
   public:
 	
 	// --------------------------------------------------- : Selection

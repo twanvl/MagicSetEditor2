@@ -61,8 +61,9 @@ class SetWindowPanel : public wxPanel, public SetView {
 	// --------------------------------------------------- : Searching (find/replace)
 	virtual bool canFind()    const { return false; }				///< Is finding possible?
 	virtual bool canReplace() const { return false; }				///< Is replacing possible?
-	virtual bool doFind(wxFindReplaceData&)    { return false; }	///< Find the next math
-	virtual bool doReplace(wxFindReplaceData&) { return false; }	///< Replace the next match
+	virtual bool doFind      (wxFindReplaceData&) { return false; }	///< Find the next math
+	virtual bool doReplace   (wxFindReplaceData&) { return false; }	///< Replace the next match
+	virtual bool doReplaceAll(wxFindReplaceData&) { return false; }	///< Replace all matches
 	
 	// --------------------------------------------------- : Selection
 	virtual CardP selectedCard() const { return CardP(); }	///< Return the currently selected card, or CardP()

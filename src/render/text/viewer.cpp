@@ -317,7 +317,7 @@ void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle
 	vector<CharInfo> chars;
 	scale = 1;
 	double min_scale = elements.minScale();
-	double scale_step = max(0.1,elements.scaleStep());
+	double scale_step = max(0.05,elements.scaleStep());
 	while (true) {
 		double next_scale = scale - scale_step;
 		bool   last = next_scale < min_scale;

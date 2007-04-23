@@ -69,11 +69,12 @@ class CardListBase : public ItemList, public SetView {
 	virtual void onAction(const Action&, bool undone);
 	
 	// --------------------------------------------------- : The cards
+  public:
+	/// Return the card at the given position in the sorted card list
+	inline CardP getCard(long pos) const { return static_pointer_cast<Card>(getItem(pos)); }
   protected:
 	/// Get a list of all cards
 	virtual void getItems(vector<VoidP>& out) const;
-	/// Return the card at the given position in the sorted card list
-	inline CardP getCard(long pos) const { return static_pointer_cast<Card>(getItem(pos)); }
 	
 	/// Rebuild the card list (clear all vectors and fill them again)
 	void rebuild();

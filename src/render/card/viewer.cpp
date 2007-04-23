@@ -68,7 +68,8 @@ Rotation DataViewer::getRotation() const {
 // ----------------------------------------------------------------------------- : Setting data
 
 void DataViewer::setCard(const CardP& card) {
-	if (!card) return; // TODO: clear vie?
+	if (!card) return; // TODO: clear viewer?
+	if (this->card == card) return; // already set
 	assert(set);
 	this->card = card;
 	stylesheet = set->stylesheetFor(card);

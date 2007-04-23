@@ -11,6 +11,7 @@
 #include <gui/util.hpp>
 #include <data/action/value.hpp>
 #include <util/tagged_string.hpp>
+#include <util/find_replace.hpp>
 #include <util/window_id.hpp>
 #include <wx/clipbrd.h>
 #include <wx/caret.h>
@@ -195,7 +196,8 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 			}
 			break;
 		default:
-			if (ev.GetKeyCode() >= _(' ') /*&& ev.GetKeyCode() == (int)ev.GetRawKeyCode()*/) {
+//			if (ev.GetKeyCode() >= _(' ') /*&& ev.GetKeyCode() == (int)ev.GetRawKeyCode()*/) {
+			if (ev.GetKeyCode() >= _(' ') && ev.GetKeyCode() == (int)ev.GetRawKeyCode()) {
 				// TODO: Find a more correct way to determine normal characters,
 				//       this might not work for internationalized input.
 				//       It might also not be portable!
@@ -654,6 +656,60 @@ size_t TextValueEditor::move(size_t pos, size_t start, size_t end, Movement dir)
 	if (dir > 0 /*MOVE_RIGHT*/) return end;
 	if (pos * 2 > start + end)  return end; // past the middle
 	else                        return start;
+}
+
+// ----------------------------------------------------------------------------- : Search / replace
+
+bool is_word_end(const String& s, size_t pos) {
+	if (pos == 0 || pos >= s.size()) return true;
+	Char c = s.GetChar(pos);
+	return isSpace(c) || isPunct(c);
+}
+
+// is find.findString() at postion pos of s
+bool TextValueEditor::matchSubstr(const String& s, size_t pos, FindInfo& find) {
+	if (find.wholeWord()) {
+		if (!is_word_end(s, pos - 1) || !is_word_end(s, pos + find.findString().size())) return false;
+	}
+	if (find.caseSensitive()) {
+		if (!is_substr(s, pos, find.findString())) return false;
+	} else {
+		if (!is_substr(s, pos, find.findString().Lower())) return false;
+	}
+	// handle
+	if (find.select()) {
+		editor().select(this);
+		editor().SetFocus();
+		selection_start_i = untagged_to_index(value().value(), pos,                            true);
+		selection_end_i   = untagged_to_index(value().value(), pos + find.findString().size(), true);
+		fixSelection(TYPE_INDEX);
+	}
+	if (find.handle(viewer.getCard(), valueP(), pos)) {
+		return true;
+	} else {
+		// TODO: string might have changed when doing replace all
+		return false;
+	}
+}
+
+bool TextValueEditor::search(FindInfo& find, bool from_start) {
+	String v = untag(value().value());
+	if (!find.caseSensitive()) v.LowerCase();
+	if (find.forward()) {
+		size_t start = min(v.size(), max(selection_start, selection_end));
+		size_t end   = max(0, (int)v.size() - (int)find.findString().size());
+		for (size_t i = start ; i <= end ; ++i) {
+			if (matchSubstr(v, i, find)) return true;
+		}
+	} else {
+		size_t start = 0;
+		int end      = (int)min(selection_start, selection_end) - (int)find.findString().size();
+		if (end < 0) return false;
+		for (size_t i = end ; i >= start ; --i) {
+			if (matchSubstr(v, i, find)) return true;
+		}
+	}
+	return false;
 }
 
 // ----------------------------------------------------------------------------- : Native look / scrollbar

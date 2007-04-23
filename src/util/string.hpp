@@ -78,6 +78,7 @@ inline bool isDigit(Char c) { return IF_UNICODE( iswdigit(c) , isdigit(c) ); }
 inline bool isAlnum(Char c) { return IF_UNICODE( iswalnum(c) , isalnum(c) ); }
 inline bool isUpper(Char c) { return IF_UNICODE( iswupper(c) , isupper(c) ); }
 inline bool isLower(Char c) { return IF_UNICODE( iswlower(c) , islower(c) ); }
+inline bool isPunct(Char c) { return IF_UNICODE( iswpunct(c) , ispunct(c) ); }
 // Character conversions
 inline Char toUpper(Char c) { return IF_UNICODE( towupper(c) , toupper(c) ); }
 inline Char toLower(Char c) { return IF_UNICODE( towlower(c) , tolower(c) ); }

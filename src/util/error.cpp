@@ -61,7 +61,7 @@ void handle_error(const String& e, bool allow_duplicate = true, bool now = true)
 	// TODO: thread safety
 	if (!allow_duplicate) {
 		FOR_EACH(pe, previous_errors) {
-			if (e == pe)  return;
+			if (e == pe) return;
 		}
 		previous_errors.push_back(e);
 	}

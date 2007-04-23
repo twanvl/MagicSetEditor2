@@ -15,24 +15,6 @@
 #include <render/value/text.hpp>
 
 class TextValueEditorScrollBar;
-class wxFindReplaceData;
-DECLARE_POINTER_TYPE(Card);
-
-// ----------------------------------------------------------------------------- : Search/replace
-
-/// Information for search/replace
-class FindInfo {
-  public:
-	FindInfo(wxFindReplaceData& what) : what(what) {}
-	virtual ~FindInfo() {}
-	
-	/// Handle that a match was found.
-	/** Should return whether more searching is needed.
-		*/
-	virtual bool handle(const CardP& card, const TextValueP& value, size_t start, size_t end) = 0;
-	
-	wxFindReplaceData& what; ///< What to search for, the direction to search in
-};
 
 // ----------------------------------------------------------------------------- : TextValueEditor
 
@@ -93,6 +75,13 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	virtual size_t selectionEnd()   const { return selection_end; }
 	
 	virtual void insert(const String& text, const String& action_name);
+	
+	// --------------------------------------------------- : Search/replace
+	
+	virtual bool search(FindInfo& find, bool from_start);
+  private:
+	bool matchSubstr(const String& s, size_t pos, FindInfo& find);
+  public:
 	
 	// --------------------------------------------------- : Other
 	

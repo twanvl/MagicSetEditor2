@@ -43,6 +43,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	: wxFrame(parent, wxID_ANY, _TITLE_("magic set editor"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE)
 	, current_panel(nullptr)
 	, find_dialog(nullptr)
+	, find_data(wxFR_DOWN)
 	, number_of_recent_sets(0)
 {
 	SetIcon(load_resource_icon(_("app")));
@@ -537,7 +538,7 @@ void SetWindow::onReplace   (wxFindDialogEvent&) {
 	current_panel->doReplace(find_data);
 }
 void SetWindow::onReplaceAll(wxFindDialogEvent&) {
-	// todo
+	current_panel->doReplaceAll(find_data);
 }
 
 void SetWindow::onEditPreferences(wxCommandEvent&) {
@@ -627,10 +628,10 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
 	EVT_GALLERY_SELECT  (ID_FIELD_LIST,                SetWindow::onChildMenu) // for StatsPanel, because it is not a EVT_TOOL
 	
 	EVT_UPDATE_UI		(wxID_ANY,				SetWindow::onUpdateUI)
-//	EVT_FIND			(wxID_ANY,				SetWindow::onFind)
-//	EVT_FIND_NEXT		(wxID_ANY,				SetWindow::onFindNext)
-//	EVT_FIND_REPLACE	(wxID_ANY,				SetWindow::onReplace)
-//	EVT_FIND_REPLACE_ALL(wxID_ANY,				SetWindow::onReplaceAll)
+	EVT_FIND			(wxID_ANY,				SetWindow::onFind)
+	EVT_FIND_NEXT		(wxID_ANY,				SetWindow::onFindNext)
+	EVT_FIND_REPLACE	(wxID_ANY,				SetWindow::onReplace)
+	EVT_FIND_REPLACE_ALL(wxID_ANY,				SetWindow::onReplaceAll)
 	EVT_CLOSE			(						SetWindow::onClose)
 	EVT_IDLE			(						SetWindow::onIdle)
 	EVT_CARD_SELECT		(wxID_ANY,				SetWindow::onCardSelect)

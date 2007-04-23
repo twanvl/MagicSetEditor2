@@ -94,6 +94,29 @@ class TextToggleReminderAction : public ValueAction {
 	Char old;    ///< Old value of the <kw- tag
 };
 
+// ----------------------------------------------------------------------------- : Replace all
+
+/// A TextValueAction without the start and end stuff
+class SimpleTextValueAction : public ValueAction {
+  public:
+	SimpleTextValueAction(const TextValueP& value, const Defaultable<String>& new_value);
+	virtual void perform(bool to_undo);
+	bool merge(const SimpleTextValueAction& action);
+  private:
+	Defaultable<String> new_value;
+};
+
+/// An action from "Replace All"; just a bunch of value actions performed in sequence
+class ReplaceAllAction : public Action {
+  public:
+	~ReplaceAllAction();
+	
+	virtual String getName(bool to_undo) const;
+	virtual void perform(bool to_undo);
+	
+	vector<SimpleTextValueAction> actions;
+};
+
 // ----------------------------------------------------------------------------- : Event
 
 /// Notification that a script caused a value to change

@@ -17,6 +17,8 @@
 #include <data/card.hpp>
 #include <data/action/set.hpp>
 #include <data/settings.hpp>
+#include <util/find_replace.hpp>
+#include <util/tagged_string.hpp>
 #include <util/window_id.hpp>
 #include <wx/splitter.h>
 
@@ -265,6 +267,61 @@ void CardsPanel::doCopy()         { CUT_COPY_PASTE(doCopy,  ;) }
 void CardsPanel::doPaste()        { CUT_COPY_PASTE(doPaste, ;) }
 
 // ----------------------------------------------------------------------------- : Searching
+
+class CardsPanel::SearchFindInfo : public FindInfo {
+  public:
+	SearchFindInfo(CardsPanel& panel, wxFindReplaceData& what) : FindInfo(what), panel(panel) {}
+	virtual bool handle(const CardP& card, const TextValueP& value, size_t pos) {
+		// Select the card
+		panel.card_list->setCard(card);
+		return true;
+	}
+  private:
+	CardsPanel& panel;
+};
+
+class CardsPanel::ReplaceFindInfo : public FindInfo {
+  public:
+	ReplaceFindInfo(CardsPanel& panel, wxFindReplaceData& what) : FindInfo(what), panel(panel) {}
+	virtual bool handle(const CardP& card, const TextValueP& value, size_t pos) {
+		// Select the card
+		panel.card_list->setCard(card);
+		// Replace
+		panel.editor->insert(escape(what.GetReplaceString()), _("Replace"));
+		return true;
+	}
+  private:
+	CardsPanel& panel;
+};
+
+bool CardsPanel::doFind(wxFindReplaceData& what) {
+	SearchFindInfo find(*this, what);
+	return search(find, false);
+}
+bool CardsPanel::doReplace(wxFindReplaceData& what) {
+	ReplaceFindInfo find(*this, what);
+	return search(find, false);
+}
+bool CardsPanel::doReplaceAll(wxFindReplaceData& what) {
+	return false; // TODO
+}
+
+bool CardsPanel::search(FindInfo& find, bool from_start) {
+	bool include = from_start;
+	CardP current = card_list->getCard();
+	for (size_t i = 0 ; i < set->cards.size() ; ++i) {
+		CardP card = card_list->getCard( (long) (find.forward() ? i : set->cards.size() - i - 1) );
+		if (card == current) include = true;
+		if (include) {
+			editor->setCard(card);
+			if (editor->search(find, from_start || card != current)) {
+				return true; // done
+			}
+		}
+	}
+	editor->setCard(current);
+	return false;
+}
 
 // ----------------------------------------------------------------------------- : Selection
 

@@ -106,9 +106,9 @@ class ValueEditor {
 	 *                          excluding the sellection itself.
 	 *  If from_start == true:  searches everything
 	 *
-	 *  Returns true when more searching is needed.
+	 *  Returns true if we are done and searching should be ended.
 	 */
-	bool search(FindInfo& find, bool from_start);
+	virtual bool search(FindInfo& find, bool from_start) { return false; }
 	
 	// --------------------------------------------------- : Other
 	

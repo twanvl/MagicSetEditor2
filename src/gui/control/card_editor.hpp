@@ -66,7 +66,7 @@ class DataEditor : public CardViewer {
 	/** If from_start == false: searches only from the current selection onward (or backward)
 	 *  If from_start == true:  searches everything
 	 *
-	 *  Returns true when more searching is needed.
+	 *  Returns true if we are done and searching should be ended.
 	 */
 	bool search(FindInfo& find, bool from_start);
 	

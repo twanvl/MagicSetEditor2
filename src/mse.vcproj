@@ -1920,6 +1920,9 @@
 					RelativePath=".\util\defaultable.hpp">
 				</File>
 				<File
+					RelativePath=".\util\find_replace.hpp">
+				</File>
+				<File
 					RelativePath=".\util\index_map.hpp">
 				</File>
 				<File
@@ -2930,10 +2933,10 @@
 			RelativePath="..\conversion-todo.txt">
 		</File>
 		<File
-			RelativePath="..\data\en.mse-locale\locale">
+			RelativePath="..\data\nl.mse-locale\locale">
 		</File>
 		<File
-			RelativePath="..\data\nl.mse-locale\locale">
+			RelativePath="..\data\en.mse-locale\locale">
 		</File>
 		<File
 			RelativePath=".\main.cpp">

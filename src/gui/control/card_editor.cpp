@@ -12,6 +12,7 @@
 #include <data/field.hpp>
 #include <data/stylesheet.hpp>
 #include <data/settings.hpp>
+#include <util/find_replace.hpp>
 #include <wx/caret.h>
 
 DECLARE_TYPEOF_COLLECTION(ValueViewerP);
@@ -132,6 +133,22 @@ void DataEditor::onInit() {
 	createTabIndex();
 	current_viewer = nullptr;
 	current_editor = nullptr;
+}
+// ----------------------------------------------------------------------------- : Search / replace
+
+bool DataEditor::search(FindInfo& find, bool from_start) {
+	bool include = from_start;
+	for (size_t i = 0 ; i < by_tab_index.size() ; ++i) {
+		ValueViewer& viewer = *by_tab_index[find.forward() ? i : by_tab_index.size() - i - 1];
+		if (&viewer == current_viewer) include = true;
+		if (include) {
+			ValueEditor* editor = viewer.getEditor();
+			if (editor && editor->search(find, from_start || &viewer != current_viewer)) {
+				return true; // done
+			}
+		}
+	}
+	return false; // not done
 }
 
 // ----------------------------------------------------------------------------- : Clipboard & Formatting
