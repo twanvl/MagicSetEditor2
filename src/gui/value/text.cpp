@@ -702,8 +702,7 @@ bool TextValueEditor::search(FindInfo& find, bool from_start) {
 	size_t selection_max = index_to_untagged(value().value(), max(selection_start_i, selection_end_i));
 	if (find.forward()) {
 		size_t start = min(v.size(), find.searchSelection() ? selection_min : selection_max);
-		size_t end   = max(0, (int)v.size() - (int)find.findString().size());
-		for (size_t i = start ; i <= end ; ++i) {
+		for (size_t i = start ; i + find.findString().size()) <= v.size() ; ++i) {
 			if (matchSubstr(v, i, find)) return true;
 		}
 	} else {
