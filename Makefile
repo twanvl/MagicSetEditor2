@@ -127,6 +127,7 @@ am_magicseteditor_OBJECTS = ./src/render/text/viewer.$(OBJEXT) \
 	./src/gui/print_window.$(OBJEXT) \
 	./src/gui/drop_down_list.$(OBJEXT) \
 	./src/gui/image_slice_window.$(OBJEXT) \
+	./src/gui/images_export_window.$(OBJEXT) \
 	./src/script/script_manager.$(OBJEXT) \
 	./src/script/script.$(OBJEXT) \
 	./src/script/functions/basic.$(OBJEXT) \
@@ -158,11 +159,13 @@ am_magicseteditor_OBJECTS = ./src/render/text/viewer.$(OBJEXT) \
 	./src/data/action/symbol.$(OBJEXT) \
 	./src/data/action/set.$(OBJEXT) \
 	./src/data/action/symbol_part.$(OBJEXT) \
-	./src/data/action/value.$(OBJEXT) ./src/data/locale.$(OBJEXT) \
-	./src/data/settings.$(OBJEXT) ./src/data/symbol.$(OBJEXT) \
-	./src/data/font.$(OBJEXT) ./src/data/game.$(OBJEXT) \
-	./src/data/card.$(OBJEXT) ./src/data/field.$(OBJEXT) \
-	./src/data/keyword.$(OBJEXT) ./src/data/stylesheet.$(OBJEXT) \
+	./src/data/action/value.$(OBJEXT) \
+	./src/data/action/keyword.$(OBJEXT) \
+	./src/data/locale.$(OBJEXT) ./src/data/settings.$(OBJEXT) \
+	./src/data/symbol.$(OBJEXT) ./src/data/font.$(OBJEXT) \
+	./src/data/game.$(OBJEXT) ./src/data/card.$(OBJEXT) \
+	./src/data/field.$(OBJEXT) ./src/data/keyword.$(OBJEXT) \
+	./src/data/stylesheet.$(OBJEXT) \
 	./src/data/statistics.$(OBJEXT) ./src/data/set.$(OBJEXT) \
 	./src/data/symbol_font.$(OBJEXT) \
 	./src/data/export_template.$(OBJEXT) \
@@ -201,13 +204,13 @@ DIST_ARCHIVES = $(distdir).tar.gz
 GZIP_ENV = --best
 distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
-ACLOCAL = ${SHELL} /home/coppro/C++/MSE/trunk/missing --run aclocal-1.9
+ACLOCAL = ${SHELL} /home/coppro/Code/C++/MSE/trunk/missing --run aclocal-1.9
 AMDEP_FALSE = #
 AMDEP_TRUE = 
-AMTAR = ${SHELL} /home/coppro/C++/MSE/trunk/missing --run tar
-AUTOCONF = ${SHELL} /home/coppro/C++/MSE/trunk/missing --run autoconf
-AUTOHEADER = ${SHELL} /home/coppro/C++/MSE/trunk/missing --run autoheader
-AUTOMAKE = ${SHELL} /home/coppro/C++/MSE/trunk/missing --run automake-1.9
+AMTAR = ${SHELL} /home/coppro/Code/C++/MSE/trunk/missing --run tar
+AUTOCONF = ${SHELL} /home/coppro/Code/C++/MSE/trunk/missing --run autoconf
+AUTOHEADER = ${SHELL} /home/coppro/Code/C++/MSE/trunk/missing --run autoheader
+AUTOMAKE = ${SHELL} /home/coppro/Code/C++/MSE/trunk/missing --run automake-1.9
 AWK = mawk
 CC = gcc
 CCDEPMODE = depmode=gcc3
@@ -234,7 +237,7 @@ LDFLAGS =
 LIBOBJS = 
 LIBS = 
 LTLIBOBJS = 
-MAKEINFO = ${SHELL} /home/coppro/C++/MSE/trunk/missing --run makeinfo
+MAKEINFO = ${SHELL} /home/coppro/Code/C++/MSE/trunk/missing --run makeinfo
 OBJEXT = o
 PACKAGE = magicseteditor
 PACKAGE_BUGREPORT = twanvl@users.sourceforge.net
@@ -278,7 +281,7 @@ host_alias =
 htmldir = ${docdir}
 includedir = ${prefix}/include
 infodir = ${datarootdir}/info
-install_sh = /home/coppro/C++/MSE/trunk/install-sh
+install_sh = /home/coppro/Code/C++/MSE/trunk/install-sh
 libdir = ${exec_prefix}/lib
 libexecdir = ${exec_prefix}/libexec
 localedir = ${datarootdir}/locale
@@ -349,6 +352,7 @@ magicseteditor_SOURCES = ./src/render/text/viewer.cpp \
 	./src/gui/preferences_window.cpp ./src/gui/welcome_window.cpp \
 	./src/gui/print_window.cpp ./src/gui/drop_down_list.cpp \
 	./src/gui/image_slice_window.cpp \
+	./src/gui/images_export_window.cpp \
 	./src/script/script_manager.cpp ./src/script/script.cpp \
 	./src/script/functions/basic.cpp \
 	./src/script/functions/export.cpp \
@@ -370,19 +374,20 @@ magicseteditor_SOURCES = ./src/render/text/viewer.cpp \
 	./src/data/format/image_to_symbol.cpp \
 	./src/data/action/symbol.cpp ./src/data/action/set.cpp \
 	./src/data/action/symbol_part.cpp ./src/data/action/value.cpp \
-	./src/data/locale.cpp ./src/data/settings.cpp \
-	./src/data/symbol.cpp ./src/data/font.cpp ./src/data/game.cpp \
-	./src/data/card.cpp ./src/data/field.cpp \
-	./src/data/keyword.cpp ./src/data/stylesheet.cpp \
-	./src/data/statistics.cpp ./src/data/set.cpp \
-	./src/data/symbol_font.cpp ./src/data/export_template.cpp \
-	./src/util/io/get_member.cpp ./src/util/io/reader.cpp \
-	./src/util/io/package_manager.cpp ./src/util/io/package.cpp \
-	./src/util/io/writer.cpp ./src/util/rotation.cpp \
-	./src/util/tagged_string.cpp ./src/util/action_stack.cpp \
-	./src/util/string.cpp ./src/util/alignment.cpp \
-	./src/util/version.cpp ./src/util/error.cpp ./src/util/age.cpp \
-	./src/main.cpp ./src/code_template.cpp
+	./src/data/action/keyword.cpp ./src/data/locale.cpp \
+	./src/data/settings.cpp ./src/data/symbol.cpp \
+	./src/data/font.cpp ./src/data/game.cpp ./src/data/card.cpp \
+	./src/data/field.cpp ./src/data/keyword.cpp \
+	./src/data/stylesheet.cpp ./src/data/statistics.cpp \
+	./src/data/set.cpp ./src/data/symbol_font.cpp \
+	./src/data/export_template.cpp ./src/util/io/get_member.cpp \
+	./src/util/io/reader.cpp ./src/util/io/package_manager.cpp \
+	./src/util/io/package.cpp ./src/util/io/writer.cpp \
+	./src/util/rotation.cpp ./src/util/tagged_string.cpp \
+	./src/util/action_stack.cpp ./src/util/string.cpp \
+	./src/util/alignment.cpp ./src/util/version.cpp \
+	./src/util/error.cpp ./src/util/age.cpp ./src/main.cpp \
+	./src/code_template.cpp
 all: all-am
 
 .SUFFIXES:
@@ -689,6 +694,8 @@ src/gui/$(DEPDIR)/$(am__dirstamp):
 	src/gui/$(DEPDIR)/$(am__dirstamp)
 ./src/gui/image_slice_window.$(OBJEXT): src/gui/$(am__dirstamp) \
 	src/gui/$(DEPDIR)/$(am__dirstamp)
+./src/gui/images_export_window.$(OBJEXT): src/gui/$(am__dirstamp) \
+	src/gui/$(DEPDIR)/$(am__dirstamp)
 src/script/$(am__dirstamp):
 	@$(mkdir_p) ./src/script
 	@: > src/script/$(am__dirstamp)
@@ -801,6 +808,8 @@ src/data/action/$(DEPDIR)/$(am__dirstamp):
 	src/data/action/$(DEPDIR)/$(am__dirstamp)
 ./src/data/action/value.$(OBJEXT): src/data/action/$(am__dirstamp) \
 	src/data/action/$(DEPDIR)/$(am__dirstamp)
+./src/data/action/keyword.$(OBJEXT): src/data/action/$(am__dirstamp) \
+	src/data/action/$(DEPDIR)/$(am__dirstamp)
 src/data/$(am__dirstamp):
 	@$(mkdir_p) ./src/data
 	@: > src/data/$(am__dirstamp)
@@ -888,6 +897,7 @@ magicseteditor$(EXEEXT): $(magicseteditor_OBJECTS) $(magicseteditor_DEPENDENCIES
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
 	-rm -f ./src/code_template.$(OBJEXT)
+	-rm -f ./src/data/action/keyword.$(OBJEXT)
 	-rm -f ./src/data/action/set.$(OBJEXT)
 	-rm -f ./src/data/action/symbol.$(OBJEXT)
 	-rm -f ./src/data/action/symbol_part.$(OBJEXT)
@@ -952,6 +962,7 @@ mostlyclean-compile:
 	-rm -f ./src/gui/drop_down_list.$(OBJEXT)
 	-rm -f ./src/gui/icon_menu.$(OBJEXT)
 	-rm -f ./src/gui/image_slice_window.$(OBJEXT)
+	-rm -f ./src/gui/images_export_window.$(OBJEXT)
 	-rm -f ./src/gui/new_window.$(OBJEXT)
 	-rm -f ./src/gui/preferences_window.$(OBJEXT)
 	-rm -f ./src/gui/print_window.$(OBJEXT)
@@ -1043,6 +1054,7 @@ include ./src/data/$(DEPDIR)/statistics.Po
 include ./src/data/$(DEPDIR)/stylesheet.Po
 include ./src/data/$(DEPDIR)/symbol.Po
 include ./src/data/$(DEPDIR)/symbol_font.Po
+include ./src/data/action/$(DEPDIR)/keyword.Po
 include ./src/data/action/$(DEPDIR)/set.Po
 include ./src/data/action/$(DEPDIR)/symbol.Po
 include ./src/data/action/$(DEPDIR)/symbol_part.Po
@@ -1080,6 +1092,7 @@ include ./src/gui/$(DEPDIR)/card_select_window.Po
 include ./src/gui/$(DEPDIR)/drop_down_list.Po
 include ./src/gui/$(DEPDIR)/icon_menu.Po
 include ./src/gui/$(DEPDIR)/image_slice_window.Po
+include ./src/gui/$(DEPDIR)/images_export_window.Po
 include ./src/gui/$(DEPDIR)/new_window.Po
 include ./src/gui/$(DEPDIR)/preferences_window.Po
 include ./src/gui/$(DEPDIR)/print_window.Po

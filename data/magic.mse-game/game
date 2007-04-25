@@ -1,4 +1,4 @@
-﻿mse version: 0.3.1
+mse version: 0.3.1
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
@@ -68,7 +68,7 @@ init script:
 		else if input = "R" then "red"
 		else if input = "G" then "green"
 		else                     ""
-	}
+	}	
 	# color based on mana cost, input = a mana cost
 	color_filter  := sort_rule(order: "<WUBRG>") + sort_rule(order: "(WUBRG)")
 	color_filterH := sort_rule(order: "</>")

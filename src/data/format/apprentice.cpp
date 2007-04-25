@@ -608,7 +608,7 @@ class ApprenticeExportWindow : public wxDialog, public WithProgress {
 	void onOk(wxCommandEvent& ev);
 	
 	/// Export the set
-	bool export();
+	bool exportSet();
 };
 
 
@@ -689,7 +689,7 @@ void ApprenticeExportWindow::onOk(wxCommandEvent& ev) {
 	progress_target->Show();
 	// export!
 	try {
-		if (!export()) {
+		if (!exportSet()) {
 			// canceled, but allow to try again
 			progress_target->Hide();
 			progress_target->Close();
@@ -706,7 +706,7 @@ void ApprenticeExportWindow::onOk(wxCommandEvent& ev) {
 	EndModal(wxID_OK);
 }
 
-bool ApprenticeExportWindow::export() {
+bool ApprenticeExportWindow::exportSet() {
 	// Expan database
 	doStep(_("Exporting expansion"), 0.01f);
 	ApprExpansionDatabase expan(this);

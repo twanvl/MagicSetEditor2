@@ -174,7 +174,7 @@ struct TextElementsFromString {
 									line > 0 ? BREAK_LINE : BREAK_HARD);
 					}
 					if (bracket) {
-						e->content = String(LEFT_ANGLE_BRACKET) + c + RIGHT_ANGLE_BRACKET;
+						e->content = String(_("<")) + c + _(">");
 					} else {
 						e->content = c;
 					}

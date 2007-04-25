@@ -127,7 +127,7 @@ FakeTextValue::FakeTextValue(const TextFieldP& field, String* underlying, bool e
 void FakeTextValue::store() {
 	if (underlying) {
 		if (editable) {
-			*underlying = untagged ? untag(value) : value;
+			*underlying = untagged ? untag(value) : value();
 		} else {
 			retrieve();
 		}

@@ -84,8 +84,8 @@ void KeywordList::onAction(const Action& action, bool undone) {
 String match_string(const Keyword& a) {
 	return untag(replace_all(replace_all(
 	            a.match,
-		         _("<atom-param>"), LEFT_ANGLE_BRACKET),
-		        _("</atom-param>"), RIGHT_ANGLE_BRACKET)
+		         _("<atom-param>"), _("<")),
+		        _("</atom-param>"), _(">"))
 	       );
 }
 

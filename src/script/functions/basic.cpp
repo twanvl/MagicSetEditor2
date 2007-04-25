@@ -428,7 +428,7 @@ String cycle_sort(const String& spec, const String& input) {
  *     "W1G")      -> "1GW"      // could be "W...G" or "...GW", second is shorter
  *     "GRBUWWUG") -> "WWUUBRGG" // no difference by rule 1,2, could be "WUBRG", "UBRGW", etc.
  *                               // becomes _("WUBRG") by rule 3
- *     "WUR")      -> "RWU"      // by rule 1 could be "R WU" or "WU R", "RUW" has an earlier hole
+ *     "WUR")      -> "RWU"      // by rule 1 could be "R WU" or "WU R", "RWU" has an earlier hole
  */
 String spec_sort(const String& spec, const String& input) {
 	String ret;
@@ -470,7 +470,6 @@ String spec_sort(const String& spec, const String& input) {
 	}
 	return ret;
 }
-
 
 // Sort using spec_sort
 class ScriptRule_sort_order: public ScriptValue {

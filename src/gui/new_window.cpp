@@ -49,7 +49,11 @@ NewSetWindow::NewSetWindow(Window* parent)
 	SetSize(630,-1);
 	// init lists
 	game_list->showData<Game>();
+	try {
 	game_list->select(settings.default_game);
+	} catch (FileNotFoundError e) {
+	handle_error(e);
+	}
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }
 
