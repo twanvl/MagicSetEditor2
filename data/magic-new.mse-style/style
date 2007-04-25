@@ -212,12 +212,12 @@ card style:
 		top : 328
 		width: 311
 		height: 142
-		#font:
-		#	name: MPlantin
-		#	italic name: MPlantin-Italic
-		#	size: 14
-		#	scale down to: 6
-		#	color: rgb(0,0,0)
+		font:
+			name: MPlantin
+			italic name: MPlantin-Italic
+			size: 14
+			scale down to: 6
+			color: rgb(0,0,0)
 		symbol font:
 			name:
 				script:
