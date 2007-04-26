@@ -234,6 +234,18 @@ init script:
 		replace_rule(
 			match: "s</param-name><s>"
 			replace: "" ) +
+		# step 6d : "." remover for keywords
+		replace_rule(
+			match: ".</param-name><.>"
+			replace: "" ) +
+		# step 6e : p/t detector, needed for suspend
+		tag_contents_rule(
+			tag: "<haspt>"
+			contents: { if card.pt == "" then "" else contents } ) +
+		# step 6f : casting cost detector, needed for suspend
+		tag_contents_rule(## <iscc> by somebloke
+			tag: "<hascc>"
+			contents: { if card.casting_cost == "" then "" else contents } ) +
 		# step 7 : italic reminder text
 		replace_rule(
 		 	match: "[(][^)\n]*[)]?",
@@ -242,7 +254,7 @@ init script:
 		# step 8 : post ( capitalization
 		replace_rule(
 			match: "[a-z]",
-			in_context: "[(](<param-[a-z]*>)?<match>",
+			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>",
 			replace: { to_upper() })
 	
 	# the flavor text filter
@@ -424,6 +436,13 @@ card field:
 	# Specify the colors somewhere else, to keep things clean
 	include file: magic-blends.mse-include/card-colors
 	default: card_color(casting_cost: card.casting_cost)
+#needed for FPM temps
+card field:
+	type: choice
+	name: font color
+	choice: black
+	choice: white
+	description: Font color for the typeline and textbox
 
 ############################# Name line
 card field:
@@ -491,7 +510,13 @@ card field:
 	card list visible: true
 	card list column:4
 	description: The type of this card, type - to go the sub type
-
+#needed for FPM temps
+card field:
+	type: choice
+	name: type image
+	include file: magic-blends.mse-include/card-colors
+	script: card.card_color
+	editable: false
 card field:
 	type: choice
 	name: rarity
@@ -527,7 +552,15 @@ card field:
 	show statistics: false
 	script:
 		combined_editor(field1: card.rule_text, separator: "<line>\n</line>", field2: card.flavor_text)
-
+#needed for FPM temps
+card field:
+	type: choice
+	name: textbox
+	include file: magic-blends.mse-include/card-colors
+	script: card.card_color
+	editable: false
+	save value: false
+	show statistics: false
 card field:
 	type: choice
 	name: watermark
@@ -582,6 +615,13 @@ card field:
 	name: toughness
 	icon: stats/toughness.png
 	editable: false
+#needed for FPM temps
+card field:
+	type: choice
+	name: ptsymbols
+	choice: shieldsword
+	editable: false
+	show statistics: false
 card field:
 	type: text
 	name: pt
@@ -768,6 +808,13 @@ card field:
 	type: text
 	name: toughness 2
 	icon: stats/toughness.png
+	editable: false
+	show statistics: false
+#needed for FPM temps
+card field:
+	type: choice
+	name: ptsymbols 2
+	choice: shieldsword
 	editable: false
 	show statistics: false
 card field:
@@ -980,9 +1027,17 @@ keyword parameter type:
 		description: standard cost
 		script: \{{input}\}
 	refer script:
-		name: dual parameters
+		name: add = nothing
 		description: parses dual costs without pay an additional
 		script: \{format_cost({input},add:"")\}
+	refer script:
+		name: add = "pay an additional "
+		description: parses dual costs without pay an additional
+		script: \{format_cost({input},add:"pay an additional ")\}
+	refer script:
+		name: add = "pay "
+		description: parses dual costs without pay an additional
+		script: \{format_cost({input},add:"pay ")\}
 keyword parameter type:
 	name: number
 	match: [XYZ0-9]+
@@ -1082,7 +1137,7 @@ keyword:
 	keyword: Cumulative upkeep
 	match: Cumulative upkeep<atom-param>cost</atom-param>
 	mode: old
-	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you {format_cost(param1,add:"pay an additional ")} for each age counter on it.
+	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you {format_cost(param1,add:"pay ")} for each age counter on it.
 keyword:
 	keyword: Horsemanship
 	match: Horsemanship
@@ -1107,7 +1162,7 @@ keyword:
 	keyword: Buyback
 	match: Buyback<atom-param>cost</atom-param>
 	mode: expert
-	reminder: You may pay {format_cost(param1,add:"pay an additional ")} in addition to any other costs as you play this spell. If you do, put this card into your hand as it resolves.
+	reminder: You may pay {format_cost(param1,add:"pay ")} in addition to any other costs as you play this spell. If you do, put this card into your hand as it resolves.
 keyword:
 	keyword: Echo
 	match: Echo<atom-param>cost</atom-param>
@@ -1117,12 +1172,7 @@ keyword:
 	keyword: Cardcycling
 	match: <atom-param>name</atom-param>cycling<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {format_cost(param1,add:"")}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
-keyword:
-	keyword: Cardcycling
-	match: <atom-param>name</atom-param>cycling—<atom-param>action</atom-param>
-	mode: expert
-	reminder: {param2}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
+	reminder: {format_cost(param2,add:"")}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
 keyword:
 	keyword: Fading
 	match: Fading <atom-param>number</atom-param>
@@ -1132,7 +1182,7 @@ keyword:
 	keyword: Kicker
 	match: Kicker<atom-param>cost</atom-param>
 	mode: expert
-	reminder: You may pay an additional {format_cost(param1,add:"pay an additional ")} as you play this spell.
+	reminder: You may {format_cost(param1,add:"pay an additional ")} as you play this spell.
 keyword:
 	keyword: Madness
 	match: Madness<atom-param>cost</atom-param>
@@ -1205,7 +1255,7 @@ keyword:
 	reminder: This comes into play with a +1/+1 counter on it for each color of mana used to pay its cost. If it is not a creature, use charge counters instead.
 keyword:
 	keyword: Splice
-	match: Splice onto <atom-param>name</atom-param><atom-param>cost</atom-param>
+	match: Splice onto <atom-param>name</atom-param> <atom-param>cost</atom-param>
 	mode: expert
 	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
 keyword:
@@ -1286,14 +1336,14 @@ keyword:
 	reminder: This creature comes into play with {english_number_a(param1)} +1/+1 counter(s) on it. Whenever another creature comes into play, you may move a +1/+1 counter from this creature onto it.
 keyword:
 	keyword: Forecast
-	match: Forecast — <atom-param>cost</atom-param>, Reveal ~ from your hand: <atom-param>action</atom-param>.
+	match: Forecast—<atom-param>cost</atom-param>, Reveal this card from your hand: <atom-param>action</atom-param>
 	mode: expert
 	reminder: Play this ability only during your upkeep and only once each turn.
 keyword:
 	keyword: Recover
 	match: Recover<atom-param>cost</atom-param>
 	mode: expert
-	reminder: When a creature is put into your graveyard from play, you may pay an additional {format_cost(param1,add:"pay an additional ")}. If you do, return this card from your graveyard to your hand. Otherwise, remove this card from the game.
+	reminder: When a creature is put into your graveyard from play, you may {format_cost(param1,add:"pay ")}. If you do, return this card from your graveyard to your hand. Otherwise, remove this card from the game.
 keyword:
 	keyword: Ripple
 	match: Ripple <atom-param>number</atom-param>
@@ -1313,7 +1363,7 @@ keyword:
 	keyword: Suspend
 	match: Suspend <atom-param>number</atom-param>—<atom-param>mana</atom-param>
 	mode: expert
-	reminder: Rather than play this card from your hand, you may pay {param2} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost. It has haste.
+	reminder: Rather than play this card from your hand,<hascc> you may</hascc> pay {param2} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost.<haspt> It has haste.</haspt>
 keyword:
 	keyword: Vanishing
 	match: Vanishing <atom-param>number</atom-param>
@@ -1356,7 +1406,7 @@ keyword:
 	reminder: {format_cost(param1,add:"")}, Sacrifice this creature: Search your library for a creature card with the same converted mana cost as this creature and put that card into play. Then shuffle your library. Play only as a sorcery.
 keyword:
 	keyword: Aura swap
-	match: Aura swamp<atom-param>cost</atom-param>
+	match: Aura swap<atom-param>cost</atom-param>
 	mode: expert
 	reminder: {format_cost(param1,add:"")}: Exchange this Aura with an Aura card in your hand.
 keyword:

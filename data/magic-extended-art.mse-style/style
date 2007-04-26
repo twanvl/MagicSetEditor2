@@ -207,7 +207,7 @@ card style:
 					then "magic-mana-large"
 					else "magic-mana-small"
 			size: 14
-		alignment: middle left
+		alignment: bottom left
 		z index: 2
 		padding left:   6
 		padding top:    2

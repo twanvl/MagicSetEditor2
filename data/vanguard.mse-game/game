@@ -26,7 +26,7 @@ init script:
 			replace: "™") +
 		# step 4 : copyright symbol
 		replace_rule(
-			match: "(C)",
+			match: "CR",
 			replace: "©")
 	
 	#character filter for title line
@@ -60,6 +60,14 @@ init script:
 				replace: ""
 			) + { tap_filter() + mana_filter() }
 	
+	# replaces — correctly
+	alternative_cost := replace_rule(match:"—|\\.", replace:"") + replace_rule(match:"[A-Z]", in_context:"<param-[a-z]*><match>", replace: { to_lower() })
+	mana_cost := replace_rule(match:" ", in_context:"\\><match>", replace: "")
+	format_cost := {
+		if   substring(begin: 0, end: 13)=="<param-cost>—"   then
+			alternative_cost(input:input)
+		else add + "<sym>" + mana_cost(input:input) + "</sym>"
+	};
 	
 	# Filters for the text box
 	# context in which mana symbols are found
@@ -81,7 +89,7 @@ init script:
 		    )
 	         )
 		 |  <param-mana><match></param-mana>	# keyword argument that is declared as mana
-		 |  <param-cost><match></param-cost>	# keyword argument that is declared as cost
+		 |  <param-cost>[ ]*<match></param-cost>	# keyword argument that is declared as cost
 		 |  <param-cost><match>,		# keyword argument that is declared as cost
 		 ";
 	# the rule text filter
@@ -91,6 +99,11 @@ init script:
 		# step 1 : remove all automatic tags
 		tag_remove_rule(tag: "<sym-auto>") +
 		tag_remove_rule(tag: "<i-auto>")   +
+		# step 2 : reminder text for keywords
+		expand_keywords_rule(
+			default_expand: { contains(match:mode, set.automatic_reminder_text, match:mode) },
+			combine:        { "{keyword}<atom-reminder><i> ({process_english_hints(reminder)})</i></atom-reminder>" }
+			) +
 		# step 3 : expand shortcut words ~ and CARDNAME
 		replace_rule(
 			match: "~|~THIS~|CARDNAME",
@@ -131,11 +144,24 @@ init script:
 		replace_rule(
 			match: ".</param-action><.>"
 			replace: "" ) +
+		# step 6e : p/t detector, needed for suspend
+		tag_contents_rule(
+			tag: "<haspt>"
+			contents: { if card.pt == "" then "" else contents } ) +
+		# step 6f : casting cost detector, needed for suspend
+		tag_contents_rule(## <iscc> by somebloke
+			tag: "<hascc>"
+			contents: { if card.casting_cost == "" then "" else contents } ) +
 		# step 7 : italic reminder text
 		replace_rule(
 		 	match: "[(][^)\n]*[)]?",
 			in_context: "(^|[[:space:]])<match>|<atom-keyword><match></>",
-		 	replace: "<i-auto>&</i-auto>");
+		 	replace: "<i-auto>&</i-auto>") +
+		# step 8 : post ( capitalization
+		replace_rule(
+			match: "[a-z]",
+			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>",
+			replace: { to_upper() })
 	
 
 ############################################################## Set fields
@@ -175,6 +201,20 @@ set field:
 	choice:
 		name: gold
 		color: rgb(200,180,0)
+set field:
+	type: multiple choice
+	name: automatic reminder text
+	choice: old
+	choice: core
+	choice: expert
+	choice: custom
+	initial: old, core, expert, custom
+	# Convert from older mse versions
+	script:
+		if value = "yes" then "old, core, expert, custom"
+		else if value = "no" then ""
+		else value
+	description: For which kinds of keywords should reminder text be added by default? Note: you can enable/disable reminder text by right clicking the keyword.
 set field:
 	type: boolean
 	name: automatic card numbers
@@ -336,10 +376,26 @@ keyword mode:
 keyword parameter type:
 	name: mana
 	match: [XYZ0-9WUBRGS/]+
-# By jimrandomh
+# By pichoro and bunnierein
 keyword parameter type:
 	name: cost
-	match: [^(\n]+
+	match: [:space:]?[^(\n]+
+	refer script:
+		name: normal
+		description: standard cost
+		script: \{{input}\}
+	refer script:
+		name: add = nothing
+		description: parses dual costs without pay an additional
+		script: \{format_cost({input},add:"")\}
+	refer script:
+		name: add = "pay an additional "
+		description: parses dual costs without pay an additional
+		script: \{format_cost({input},add:"pay an additional ")\}
+	refer script:
+		name: add = "pay "
+		description: parses dual costs without pay an additional
+		script: \{format_cost({input},add:"pay ")\}
 keyword parameter type:
 	name: number
 	match: [XYZ0-9]+
@@ -373,7 +429,7 @@ keyword parameter type:
 	example: Forest
 
 ############################# All Magic keywords
-# By JrEye and Neko_Asakami
+# By JrEye and Neko_Asakami, updated by Buttock1234 and Pichoro
 
 keyword:
 	keyword: Flying
@@ -402,14 +458,9 @@ keyword:
 	reminder: Target a {param1} as you play this. This card comes into play attached to that {param1}.
 keyword:
 	keyword: Cycling
-	match: Cycling <atom-param>mana</atom-param>
+	match: Cycling<atom-param>cost</atom-param>
 	mode: core
-	reminder: {param1}, Discard this card: Draw a card.
-keyword:
-	keyword: Cycling
-	match: Cycling—<atom-param>action</atom-param>
-	mode: core
-	reminder: {param1}<.>, Discard this card: Draw a card.
+	reminder: {format_cost(param1,add:"")}, Discard this card: Draw a card.
 keyword:
 	keyword: Trample
 	match: Trample
@@ -442,14 +493,9 @@ keyword:
 	reminder: This creature can’t attack.
 keyword:
 	keyword: Cumulative upkeep
-	match: Cumulative upkeep <atom-param>mana</atom-param>
+	match: Cumulative upkeep<atom-param>cost</atom-param>
 	mode: old
-	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay {param1} for each age counter on it.
-keyword:
-	keyword: Cumulative upkeep
-	match: Cumulative upkeep—<atom-param>action</atom-param>
-	mode: old
-	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you {to_lower(param1)}<.> for each age counter on it.
+	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you {format_cost(param1,add:"pay ")} for each age counter on it.
 keyword:
 	keyword: Horsemanship
 	match: Horsemanship
@@ -472,34 +518,19 @@ keyword:
 	reminder: This creature can block or be blocked only by creatures with shadow.
 keyword:
 	keyword: Buyback
-	match: Buyback <atom-param>mana</atom-param>
+	match: Buyback<atom-param>cost</atom-param>
 	mode: expert
-	reminder: You may pay {param1} in addition to any other costs as you play this spell. If you do, put this card into your hand as it resolves.
-keyword:
-	keyword: Buyback
-	match: Buyback—<ataom-param>action</atom-param>
-	mode: expert
-	reminder: You may {to_lower(param1)}<.> in addition to any other costs as you play this spell. If you do, put this card into your hand as it resolves.
+	reminder: You may pay {format_cost(param1,add:"pay ")} in addition to any other costs as you play this spell. If you do, put this card into your hand as it resolves.
 keyword:
 	keyword: Echo
-	match: Echo <atom-param>mana</atom-param>
-	mode: expert
-	reminder: At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.
-keyword:
-	keyword: Echo
-	match: Echo—<atom-param>action</atom-param>
+	match: Echo<atom-param>cost</atom-param>
 	mode: expert
 	reminder: At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.
 keyword:
 	keyword: Cardcycling
-	match: <atom-param>name</atom-param>cycling <atom-param>mana</atom-param>
+	match: <atom-param>name</atom-param>cycling<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param2}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
-keyword:
-	keyword: Cardcycling
-	match: <atom-param>name</atom-param>cycling—<atom-param>action</atom-param>
-	mode: expert
-	reminder: {param2}<.>, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
+	reminder: {format_cost(param2,add:"")}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
 keyword:
 	keyword: Fading
 	match: Fading <atom-param>number</atom-param>
@@ -507,42 +538,22 @@ keyword:
 	reminder: This comes into play with {english_number_a(param1)} fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can’t, sacrifice it.
 keyword:
 	keyword: Kicker
-	match: Kicker <atom-param>mana</atom-param>
+	match: Kicker<atom-param>cost</atom-param>
 	mode: expert
-	reminder: You may pay an additional {param1} as you play this spell.
-keyword:
-	keyword: Kicker
-	match: Kicker—<atom-param>action</atom-param>
-	mode: expert
-	reminder: You may {to_lower(param1)}<.> as you play this spell.
+	reminder: You may {format_cost(param1,add:"pay an additional ")} as you play this spell.
 keyword:
 	keyword: Madness
-	match: Madness <atom-param>mana</atom-param>
-	mode: expert
-	reminder: You may play this card for its madness cost at the time you discard it.
-keyword:
-	keyword: Madness
-	match: Madness—<atom-param>action</atom-param>
+	match: Madness<atom-param>cost</atom-param>
 	mode: expert
 	reminder: You may play this card for its madness cost at the time you discard it.
 keyword:
 	keyword: Flashback
-	match: Flashback <atom-param>mana</atom-param>
-	mode: expert
-	reminder: You may play this card from your graveyard for its flashback cost. Then remove it from the game.
-keyword:
-	keyword: Flashback
-	match: Flashback—<atom-param>action</atom-param>
+	match: Flashback<atom-param>cost</atom-param>
 	mode: expert
 	reminder: You may play this card from your graveyard for its flashback cost. Then remove it from the game.
 keyword:
 	keyword: Morph
-	match: Morph <atom-param>mana</atom-param>
-	mode: expert
-	reminder: You may play this face down as a 2/2 creature for <sym>3</sym>. Turn it face up any time for its morph cost.
-keyword:
-	keyword: Morph
-	match: Morph—<atom-param>action</atom-param>
+	match: Morph<atom-param>cost</atom-param>
 	mode: expert
 	reminder: You may play this face down as a 2/2 creature for <sym>3</sym>. Turn it face up any time for its morph cost.
 keyword:
@@ -572,24 +583,14 @@ keyword:
 	reminder: This spell costs <sym>1</sym> less to play for each {param1}<s> you control.
 keyword:
 	keyword: Entwine
-	match: Entwine <atom-param>mana</atom-param>
-	mode: expert
-	reminder: Choose both if you pay the entwine cost.
-keyword:
-	keyword: Entwine
-	match: Entwine—<atom-param>action</atom-param>
+	match: Entwine<atom-param>cost</atom-param>
 	mode: expert
 	reminder: Choose both if you pay the entwine cost.
 keyword:
 	keyword: Equip
-	match: Equip <atom-param>mana</atom-param>
+	match: Equip<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}: Attach to target creature you control. Equip only as a sorcery.
-keyword:
-	keyword: Equip
-	match: Equip—<atom-param>action</atom-param>
-	mode: expert
-	reminder: {param1}<.>: Attach to target creature you control. Equip only as a sorcery.
+	reminder: {format_cost(param1,add:"")}: Attach to target creature you control. Equip only as a sorcery.
 keyword:
 	keyword: Imprint
 	match: Imprint—<atom-param>action</atom-param>
@@ -612,14 +613,9 @@ keyword:
 	reminder: This comes into play with a +1/+1 counter on it for each color of mana used to pay its cost. If it is not a creature, use charge counters instead.
 keyword:
 	keyword: Splice
-	match: Splice onto <atom-param>name</atom-param> <atom-param>mana</atom-param>
+	match: Splice onto <atom-param>name</atom-param> <atom-param>cost</atom-param>
 	mode: expert
 	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
-keyword:
-	keyword: Splice
-	match: Splice onto <atom-param>name</atom-param>—<atom-param>action</atom-param>
-	mode: expert
-	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card's effects to that spell.
 keyword:
 	keyword: Offering
 	match: <atom-param>name</atom-param> offering
@@ -632,14 +628,9 @@ keyword:
 	reminder: When this blocks or becomes blocked, it gets +{param1}/+{param1} until end of turn.
 keyword:
 	keyword: Ninjutsu
-	match: Ninjutsu <atom-param>mana</atom-param>
+	match: Ninjutsu<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
-keyword:
-	keyword: Ninjutsu
-	match: Ninjutsu—<atom-param>action</atom-param>
-	mode: expert
-	reminder: {param1}<.>, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
+	reminder: {format_cost(param1,add:"")}, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
 keyword:
 	keyword: Soulshift
 	match: Soulshift <atom-param>number</atom-param>
@@ -657,14 +648,9 @@ keyword:
 	reminder: Each creature you tap while playing this spell reduces its cost by <sym>1</sym> or by one mana of that creature’s color.
 keyword:
 	keyword: Transmute
-	match: Transmute <atom-param>mana</atom-param>
+	match: Transmute<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
-keyword:
-	keyword: Transmute
-	match: Transmute—<atom-param>action</atom-param>
-	mode: expert
-	reminder: {param1}<.>, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
+	reminder: {format_cost(param1,add:"")}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
 keyword:
 	keyword: Haunt
 	match: Haunt
@@ -677,12 +663,7 @@ keyword:
 	reminder: If an opponent was dealt damage this turn, this creature comes into play with {english_number_a(param1)} +1/+1 counter(s) on it.
 keyword:
 	keyword: Replicate
-	match: Replicate <atom-param>mana</atom-param>
-	mode: expert
-	reminder: When you play this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.
-keyword:
-	keyword: Replicate
-	match: Replicate—<atom-param>action</atom-param>
+	match: Replicate<atom-param>cost</atom-param>
 	mode: expert
 	reminder: When you play this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.
 #Denimwalk was a casualty of my fixing landwalk to work right
@@ -713,19 +694,14 @@ keyword:
 	reminder: This creature comes into play with {english_number_a(param1)} +1/+1 counter(s) on it. Whenever another creature comes into play, you may move a +1/+1 counter from this creature onto it.
 keyword:
 	keyword: Forecast
-	match: Forecast — <atom-param>cost</atom-param>, Reveal ~ from your hand: <atom-param>action</atom-param>.
+	match: Forecast—<atom-param>cost</atom-param>, Reveal this card from your hand: <atom-param>action</atom-param>
 	mode: expert
 	reminder: Play this ability only during your upkeep and only once each turn.
 keyword:
 	keyword: Recover
-	match: Recover <atom-param>mana</atom-param>
+	match: Recover<atom-param>cost</atom-param>
 	mode: expert
-	reminder: When a creature is put into your graveyard from play, you may pay an additional {param1}. If you do, return this card from your graveyard to your hand. Otherwise, remove this card from the game.
-keyword:
-	keyword: Recover
-	match: Recover—<atom-param>action</atom-param>
-	mode: expert
-	reminder: When a creature is put into your graveyard from play, you may {to_lower(param1)}<.>. If you do, return this card from your graveyard to your hand. Otherwise, remove this card from the game.
+	reminder: When a creature is put into your graveyard from play, you may {format_cost(param1,add:"pay ")}. If you do, return this card from your graveyard to your hand. Otherwise, remove this card from the game.
 keyword:
 	keyword: Ripple
 	match: Ripple <atom-param>number</atom-param>
@@ -745,7 +721,7 @@ keyword:
 	keyword: Suspend
 	match: Suspend <atom-param>number</atom-param>—<atom-param>mana</atom-param>
 	mode: expert
-	reminder: Rather than play this card from your hand, you may pay {param2} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost. It has haste.
+	reminder: Rather than play this card from your hand,<hascc> you may</hascc> pay {param2} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost.<haspt> It has haste.</haspt>
 keyword:
 	keyword: Vanishing
 	match: Vanishing <atom-param>number</atom-param>
@@ -783,24 +759,14 @@ keyword:
 	reminder: Look at the top {english_number_multiple(param1)} card(s) of an opponent's library, then put any number of them on the bottom of that player's library and the rest on top in any order.
 keyword:
 	keyword: Transfigure
-	match: Transfigure <atom-param>mana</atom-param>
+	match: Transfigure<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}, Sacrifice this creature: Search your library for a creature card with the same converted mana cost as this creature and put that card into play. Then shuffle your library. Play only as a sorcery.
-keyword:
-	keyword: Transfigure
-	match: Transfigure—<atom-param>action</atom-param>
-	mode: expert
-	reminder: {param1}<.>, Sacrifice this creature: Search your library for a creature card with the same converted mana cost as this creature and put that card into play. Then shuffle your library. Play only as a sorcery.
+	reminder: {format_cost(param1,add:"")}, Sacrifice this creature: Search your library for a creature card with the same converted mana cost as this creature and put that card into play. Then shuffle your library. Play only as a sorcery.
 keyword:
 	keyword: Aura swap
-	match: Aura swamp <atom-param>mana</atom-param>
+	match: Aura swap<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}: Exchange this Aura with an Aura card in your hand.
-keyword:
-	keyword: Aura swap
-	match: Aura swap—<atom-param>action</atom-param>
-	mode: expert
-	reminder: {param1}<.>: Exchange this Aura with an Aura card in your hand.
+	reminder: {format_cost(param1,add:"")}: Exchange this Aura with an Aura card in your hand.
 keyword:
 	keyword: Frenzy
 	match: Frenzy <atom-param>number</atom-param>
@@ -823,11 +789,6 @@ keyword:
 	reminder: This permanent can't be the target of spells or abilities.
 keyword:
 	keyword: Fortify
-	match: Fortify <atom-param>mana</atom-param>
+	match: Fortify<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}<.>: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
-keyword:
-	keyword: Fortify
-	match: Fortify—<atom-param>action</atom-param>
-	mode: expert
-	reminder: {param1}<.>: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
+	reminder: {format_cost(param1,add:"")}: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
