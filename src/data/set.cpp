@@ -154,25 +154,19 @@ ScriptValueP make_iterator(const Set& set) {
 	return new_intrusive1<ScriptCollectionIterator<vector<CardP> > >(&set.cards);
 }
 
-void mark_dependency_member(Set* value, const String& name, const Dependency& dep) {
+void mark_dependency_member(const Set& set, const String& name, const Dependency& dep) {
 	// is it the card list?
 	if (name == _("cards")) {
-		value->game->dependent_scripts_cards.add(dep);
+		set.game->dependent_scripts_cards.add(dep);
 		return;
 	}
 	// is it the keywords?
 	if (name == _("keywords")) {
-		value->game->dependent_scripts_keywords.add(dep);
+		set.game->dependent_scripts_keywords.add(dep);
 		return;
 	}
 	// is it in the set data?
-	IndexMap<FieldP,ValueP>::const_iterator it = value->data.find(name);
-	if (it != value->data.end()) {
-		(*it)->fieldP->dependent_scripts.add(dep);
-	}
-}
-void mark_dependency_member(const SetP& value, const String& name, const Dependency& dep) {
-	mark_dependency_member(value.get(), name, dep);
+	mark_dependency_member(set.data, name, dep);
 }
 
 // in scripts, set.something is read from the set_info

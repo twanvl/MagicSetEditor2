@@ -122,8 +122,7 @@ inline int item_count(const Set& set) {
 }
 ScriptValueP make_iterator(const Set& set);
 
-void mark_dependency_member(const SetP& value, const String& name, const Dependency& dep);
-void mark_dependency_member(Set*        value, const String& name, const Dependency& dep);
+void mark_dependency_member(const Set& set, const String& name, const Dependency& dep);
 
 // ----------------------------------------------------------------------------- : SetView
 

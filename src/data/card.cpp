@@ -43,12 +43,8 @@ String Card::identification() const {
 	}
 }
 
-void mark_dependency_member(const CardP& card, const String& name, const Dependency& dep) {
-	// Find field with that name
-	IndexMap<FieldP,ValueP>::const_iterator it = card->data.find(name);
-	if (it != card->data.end()) {
-		(*it)->fieldP->dependent_scripts.add(dep);
-	}
+void mark_dependency_member(const Card& card, const String& name, const Dependency& dep) {
+	mark_dependency_member(card.data, name, dep);
 }
 
 IMPLEMENT_REFLECTION(Card) {

@@ -202,7 +202,7 @@ SCRIPT_FUNCTION_DEPENDENCIES(position_of) {
 	ScriptObject<CardP>* c = dynamic_cast<ScriptObject<CardP>*>(of.get());
 	if (s && c) {
 		// dependency on cards
-		mark_dependency_member(s->getValue(), _("cards"), dep);
+		mark_dependency_member(*s->getValue(), _("cards"), dep);
 		if (order_by) {
 			// dependency on order_by function
 			order_by->dependencies(ctx, dep.makeCardIndependend());

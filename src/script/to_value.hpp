@@ -14,6 +14,23 @@
 #include <util/error.hpp>
 #include <util/io/get_member.hpp>
 
+// ----------------------------------------------------------------------------- : Overloadable templates
+
+/// Number of items in some collection like object, can be overloaded
+template <typename T>
+int item_count(const T& v) {
+	return -1;
+}
+/// Return an iterator for some collection, can be overloaded
+template <typename T>
+ScriptValueP make_iterator(const T& v) {
+	return ScriptValueP();
+}
+
+/// Mark a dependency on a member of value, can be overloaded
+template <typename T>
+void mark_dependency_member(const T& value, const String& name, const Dependency& dep) {}
+
 // ----------------------------------------------------------------------------- : Iterators
 
 // Iterator over a collection
@@ -108,6 +125,10 @@ class ScriptMap : public ScriptValue {
 	virtual int itemCount() const { return (int)value->size(); }
 	/// Collections can be compared by comparing pointers
 	virtual const void* comparePointer() const { return value; }
+	virtual ScriptValueP dependencyMember(const String& name, const Dependency& dep) const {
+		mark_dependency_member(*value, name, dep);
+		return getMember(name);
+	}
   private:
 	/// Store a pointer to a collection, collections are only ever used for structures owned outside the script
 	const Collection* value;
@@ -131,21 +152,6 @@ class ScriptCustomCollection : public ScriptValue {
 };
 
 // ----------------------------------------------------------------------------- : Objects
-
-/// Number of items in some collection like object, can be overloaded
-template <typename T>
-int item_count(const T& v) {
-	return -1;
-}
-/// Return an iterator for some collection, can be overloaded
-template <typename T>
-ScriptValueP make_iterator(const T& v) {
-	return ScriptValueP();
-}
-
-/// Mark a dependency on a member of value, can be overloaded
-template <typename T>
-void mark_dependency_member(const T& value, const String& name, const Dependency& dep) {}
 
 /// Script value containing an object (pointer)
 template <typename T>
@@ -173,7 +179,7 @@ class ScriptObject : public ScriptValue {
 		}
 	}
 	virtual ScriptValueP dependencyMember(const String& name, const Dependency& dep) const {
-		mark_dependency_member(value, name, dep);
+		mark_dependency_member(*value, name, dep);
 		return getMember(name);
 	}
 	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const {

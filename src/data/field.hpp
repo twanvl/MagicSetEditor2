@@ -186,5 +186,7 @@ template <> ValueP read_new<Value>(Reader&);
 		return *static_cast<Type ## Field*>(fieldP.get());								\
 	}
 
+void mark_dependency_member(const IndexMap<FieldP,ValueP>& value, const String& name, const Dependency& dep);
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

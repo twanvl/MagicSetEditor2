@@ -361,12 +361,13 @@ String KeywordDatabase::expand(const String& text,
 			}
 			// find 'next' trie node set matching c
 			FOR_EACH(kt, current) {
-				if (kt->on_any_star) {
-					next.push_back(kt->on_any_star);
-				}
 				map<Char,KeywordTrie*>::const_iterator it = kt->children.find(c);
 				if (it != kt->children.end()) {
 					next.push_back(it->second);
+				}
+				// TODO: on any star first or last?
+				if (kt->on_any_star) {
+					next.push_back(kt->on_any_star);
 				}
 			}
 			// next becomes current

@@ -69,7 +69,7 @@ class Card {
 	DECLARE_REFLECTION();
 };
 
-void mark_dependency_member(const CardP& value, const String& name, const Dependency& dep);
+void mark_dependency_member(const Card& value, const String& name, const Dependency& dep);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

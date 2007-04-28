@@ -137,3 +137,12 @@ void init_object(const FieldP& field, ValueP& value) {
 template <> ValueP read_new<Value>(Reader&) {
 	throw InternalError(_("IndexMap contains nullptr ValueP the application should have crashed already"));
 }
+
+
+
+void mark_dependency_member(const IndexMap<FieldP,ValueP>& value, const String& name, const Dependency& dep) {
+	IndexMap<FieldP,ValueP>::const_iterator it = value.find(name);
+	if (it != value.end()) {
+		(*it)->fieldP->dependent_scripts.add(dep);
+	}
+}
