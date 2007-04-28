@@ -7,36 +7,6 @@ icon: card-back.png
 
 # General functions
 init script:
-	#character filter for copyright line
-	copyright_filter :=
-		# step 1 : Æ replacement rule
-		replace_rule(
-			match: "AE",
-			replace: "Æ") +
-		# step 2 : longdash for keywords
-		replace_rule(
-			match: "--| - ",
-			replace: "—") +
-		# step 3 : trademark symbol
-		replace_rule(
-			match: "TM",
-			replace: "™") +
-		# step 4 : copyright symbol
-		replace_rule(
-			match: "CR",
-			replace: "©")
-	
-	#character filter for title line
-	name_filter :=
-		# step 1 : Æ replacement rule
-		replace_rule(
-			match: "AE",
-			replace: "Æ") +
-		# step 2 : longdash for keywords
-		replace_rule(
-			match: "--| - ",
-			replace: "—")
-	
 	# correctly sort a mana symbol (no guild mana)
 	mana_sort       := sort_rule(order: "XYZ[0123456789]S(WUBRG)")
 	# correctly sort guild mana
@@ -254,8 +224,38 @@ init script:
 		# step 8 : post ( capitalization
 		replace_rule(
 			match: "[a-z]",
-			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>",
+			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>|—<match>",
 			replace: { to_upper() })
+	
+	#character filter for title line
+	name_filter :=
+		# step 1 : Æ replacement rule
+		replace_rule(
+			match: "AE",
+			replace: "Æ") +
+		# step 2 : longdash for keywords
+		replace_rule(
+			match: "--| - ",
+			replace: "—")
+	
+	#character filter for copyright line
+	copyright_filter :=
+		# step 1 : Æ replacement rule
+		replace_rule(
+			match: "AE",
+			replace: "Æ") +
+		# step 2 : longdash for keywords
+		replace_rule(
+			match: "--| - ",
+			replace: "—") +
+		# step 3 : trademark symbol
+		replace_rule(
+			match: "TM",
+			replace: "™") +
+		# step 4 : copyright symbol
+		replace_rule(
+			match: "CR",
+			replace: "©")
 	
 	# the flavor text filter
 	#  - makes all text italic
@@ -264,6 +264,27 @@ init script:
 		tag_remove_rule(tag: "<i-flavor>")   +
 		# step 2 : surround by <i> tags
 		{ "<i-flavor>" + input + "</i-flavor>" }
+	
+	# paintbrush symbol sorting, ordering rule, and context; needed for FPM temps
+	brush_sort := sort_rule(order: "OP")
+	brush_context :=
+		"(?ix)				# case insensitive, ignore whitespace
+		 (^|[[:space:]\"(])		# start of a word
+		 (  (^)<match>(A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z)
+	         )
+		 ";
+	artist_line_filter :=
+		tag_remove_rule(tag: "<sym-auto>") +
+		replace_rule(
+			match: "\\][OP]+\\[",
+			replace: {"<nosym>" + brush_sort() + "</nosym>"} ) +
+		replace_rule(
+			match: "[OP|]+",
+			in_context: brush_context,
+			replace: {"<sym-auto>" + brush_sort() + "</sym-auto>"} ) +
+		replace_rule(
+			match: "\\[[OP]+\\]",
+			replace: {"<sym>" + brush_sort() + "</sym>"} );
 	
 	# Move the cursor past the separator in the p/t and type boxes
 	type_over_pt   := replace_rule(match:"/$", replace:"")
@@ -617,6 +638,18 @@ card field:
 	editable: false
 #needed for FPM temps
 card field:
+	type: text
+	name: fpmpower
+	icon: stats/power.png
+	card list column:5
+#needed for FPM temps
+card field:
+	type: text
+	name: fpmtoughness
+	icon: stats/toughness.png
+	card list column:6
+#needed for FPM temps
+card field:
 	type: choice
 	name: ptsymbols
 	choice: shieldsword
@@ -798,6 +831,48 @@ card field:
 	script:
 		combined_editor(field1: card.rule_text_2, separator: "<line>\n</line>", field2: card.flavor_text_2)
 card field:
+	type: choice
+	name: watermark 2
+	choice: none
+	choice:
+		name: mana symbol
+		choice: white
+		choice: blue
+		choice: black
+		choice: red
+		choice: green
+		choice: snow
+		choice: tap
+	choice: 
+		name: xander hybrid mana
+		choice: B/R
+		choice: U/B
+		choice: B/G
+		choice: R/G
+		choice: G/U
+		choice: U/R
+		choice: W/B
+		choice: G/W
+		choice: R/W
+		choice: W/U
+	choice:
+		name: guild symbol
+		choice: Azorius Senate (W/U)
+		choice: House Dimir (U/B)
+		choice: Cult of Rakdos (B/R)
+		choice: Gruul Clans (R/G)
+		choice: Selesnya Conclave (G/W)
+		choice: Orzhov Syndicate (W/B)
+		choice: The Izzet (U/R)
+		choice: The Golgari (B/G)
+		choice: Boros Legion (R/W)
+		choice: The Simic (G/U)
+	choice:
+		name: promo symbol
+		choice: DCI
+		choice: FNM
+	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, a special symbol, or a guild symbol
+card field:
 	type: text
 	name: power 2
 	icon: stats/power.png
@@ -807,6 +882,20 @@ card field:
 card field:
 	type: text
 	name: toughness 2
+	icon: stats/toughness.png
+	editable: false
+	show statistics: false
+#needed for FPM temps
+card field:
+	type: text
+	name: fpmpower 2
+	icon: stats/power.png
+	editable: false
+	show statistics: false
+#needed for FPM temps
+card field:
+	type: text
+	name: fpmtoughness 2
 	icon: stats/toughness.png
 	editable: false
 	show statistics: false
@@ -1255,7 +1344,12 @@ keyword:
 	reminder: This comes into play with a +1/+1 counter on it for each color of mana used to pay its cost. If it is not a creature, use charge counters instead.
 keyword:
 	keyword: Splice
-	match: Splice onto <atom-param>name</atom-param> <atom-param>cost</atom-param>
+	match: Splice onto <atom-param>name</atom-param> <atom-param>mana</atom-param>
+	mode: expert
+	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
+keyword:
+	keyword: Splice
+	match: Splice onto <atom-param>name</atom-param>—<atom-param>action</atom-param>
 	mode: expert
 	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
 keyword:
@@ -1310,15 +1404,15 @@ keyword:
 	reminder: When you play this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.
 #Denimwalk was a casualty of my fixing landwalk to work right
 keyword:
-	keyword: Denimwalk
-	match: Denimwalk
-	mode: core
-	reminder: If defending player is wearing any clothing made of denim, this creature is unblockable.
-keyword:
 	keyword: Landwalk
 	match: <atom-param>name</atom-param>walk
 	mode: core
 	reminder: This creature is unblockable as long as defending player controls a {param1}.
+keyword:
+	keyword: Denimwalk
+	match: Denimwalk
+	mode: core
+	reminder: If defending player is wearing any clothing made of denim, this creature is unblockable.
 keyword:
 	keyword: Protection from
 	match: Protection from <atom-param>name</atom-param>
