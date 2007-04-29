@@ -60,7 +60,8 @@ class DataViewer : public SetView {
 	// --------------------------------------------------- : Setting data
 	
 	/// Display a card in this viewer
-	void setCard(const CardP& card);
+	/** \param refresh: Always refresh, even if this card is already shown */
+	void setCard(const CardP& card, bool refresh = false);
 	
 	// --------------------------------------------------- : The viewers
   protected:

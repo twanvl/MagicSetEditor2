@@ -67,9 +67,9 @@ Rotation DataViewer::getRotation() const {
 
 // ----------------------------------------------------------------------------- : Setting data
 
-void DataViewer::setCard(const CardP& card) {
+void DataViewer::setCard(const CardP& card, bool refresh) {
 	if (!card) return; // TODO: clear viewer?
-	if (this->card == card && this->stylesheet == set->stylesheetFor(card)) return; // already set
+	if (!refresh && this->card == card && this->stylesheet == set->stylesheetFor(card)) return; // already set
 	assert(set);
 	this->card = card;
 	stylesheet = set->stylesheetFor(card);
@@ -124,7 +124,7 @@ ValueViewerP DataViewer::makeViewer(const StyleP& style) {
 void DataViewer::onAction(const Action& action, bool undone) {
 	TYPE_CASE_(action, DisplayChangeAction) {
 		// refresh
-		setCard(card);
+		setCard(card, true);
 		return;
 	}
 	TYPE_CASE(action, ValueAction) {
