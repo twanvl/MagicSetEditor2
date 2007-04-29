@@ -7,6 +7,8 @@ icon: card-back.png
 
 # General functions
 init script:
+	# Used in FPM and Future Sight
+	brush_sort := sort_rule(order: "OP")
 	# correctly sort a mana symbol (no guild mana)
 	mana_sort       := sort_rule(order: "XYZ[0123456789]S(WUBRG)")
 	# correctly sort guild mana
@@ -264,15 +266,14 @@ init script:
 		tag_remove_rule(tag: "<i-flavor>")   +
 		# step 2 : surround by <i> tags
 		{ "<i-flavor>" + input + "</i-flavor>" }
-	
-	# paintbrush symbol sorting, ordering rule, and context; needed for FPM temps
-	brush_sort := sort_rule(order: "OP")
+	# Used in FPM and Future Sight
 	brush_context :=
 		"(?ix)				# case insensitive, ignore whitespace
 		 (^|[[:space:]\"(])		# start of a word
-		 (  (^)<match>(A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z)
+		 (  (^)<match>(A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|Æ)
 	         )
 		 ";
+	# Used in FPM and Future Sight
 	artist_line_filter :=
 		tag_remove_rule(tag: "<sym-auto>") +
 		replace_rule(
@@ -284,7 +285,13 @@ init script:
 			replace: {"<sym-auto>" + brush_sort() + "</sym-auto>"} ) +
 		replace_rule(
 			match: "\\[[OP]+\\]",
-			replace: {"<sym>" + brush_sort() + "</sym>"} );
+			replace: {"<sym>" + brush_sort() + "</sym>"} ) +
+		replace_rule(
+			match: "AE",
+			replace: "Æ") +
+		replace_rule(
+			match: "--| - ",
+			replace: "—");
 	
 	# Move the cursor past the separator in the p/t and type boxes
 	type_over_pt   := replace_rule(match:"/$", replace:"")
@@ -629,25 +636,11 @@ card field:
 	type: text
 	name: power
 	icon: stats/power.png
-	editable: false
 	script: type_over_pt(value)
 card field:
 	type: text
 	name: toughness
 	icon: stats/toughness.png
-	editable: false
-#needed for FPM temps
-card field:
-	type: text
-	name: fpmpower
-	icon: stats/power.png
-	card list column:5
-#needed for FPM temps
-card field:
-	type: text
-	name: fpmtoughness
-	icon: stats/toughness.png
-	card list column:6
 #needed for FPM temps
 card field:
 	type: choice
@@ -708,7 +701,7 @@ card field:
 card field:
 	type: text
 	name: illustrator
-	script: name_filter(value)
+	script: artist_line_filter(value)
 	icon: stats/illustrator.png
 	default: set.artist
 	description: Illustrator of this card, the default value can be changed on the 'set info' tab
@@ -941,7 +934,7 @@ card field:
 card field:
 	type: text
 	name: illustrator 2
-	script: name_filter(value)
+	script: artist_line_filter(value)
 	icon: stats/illustrator.png
 	default: set.artist
 	show statistics: false
@@ -1153,10 +1146,10 @@ keyword parameter type:
 	name: name
 	match: [^(.,\n]+
 keyword parameter type:
-	name: land
+	name: prefix
 	description: Prefix for things like "<something>walk"
 	optional: false
-	match: [A-Z][a-z]*
+	match: [A-Z][a-z, ]*
 	example: Forest
 
 ############################# All Magic keywords
@@ -1259,7 +1252,7 @@ keyword:
 	reminder: At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.
 keyword:
 	keyword: Cardcycling
-	match: <atom-param>name</atom-param>cycling<atom-param>cost</atom-param>
+	match: <atom-param>prefix</atom-param>cycling<atom-param>cost</atom-param>
 	mode: expert
 	reminder: {format_cost(param2,add:"")}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
 keyword:
@@ -1343,18 +1336,18 @@ keyword:
 	mode: expert
 	reminder: This comes into play with a +1/+1 counter on it for each color of mana used to pay its cost. If it is not a creature, use charge counters instead.
 keyword:
-	keyword: Splice
+	keyword: Splice (Mana Cost)
 	match: Splice onto <atom-param>name</atom-param> <atom-param>mana</atom-param>
 	mode: expert
 	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
 keyword:
-	keyword: Splice
+	keyword: Splice (Alternative Cost)
 	match: Splice onto <atom-param>name</atom-param>—<atom-param>action</atom-param>
 	mode: expert
 	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
 keyword:
 	keyword: Offering
-	match: <atom-param>name</atom-param> offering
+	match: <atom-param>prefix</atom-param> offering
 	mode: expert
 	reminder: You may play this card any time you could play an instant by sacrificing a {param1} and paying the difference in mana costs between this and the sacrificed {param1}. Mana cost includes color.
 keyword:
@@ -1404,15 +1397,15 @@ keyword:
 	reminder: When you play this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.
 #Denimwalk was a casualty of my fixing landwalk to work right
 keyword:
-	keyword: Landwalk
-	match: <atom-param>name</atom-param>walk
-	mode: core
-	reminder: This creature is unblockable as long as defending player controls a {param1}.
-keyword:
 	keyword: Denimwalk
 	match: Denimwalk
 	mode: core
 	reminder: If defending player is wearing any clothing made of denim, this creature is unblockable.
+keyword:
+	keyword: Landwalk
+	match: <atom-param>prefix</atom-param>walk
+	mode: core
+	reminder: This creature is unblockable as long as defending player controls a {param1}.
 keyword:
 	keyword: Protection from
 	match: Protection from <atom-param>name</atom-param>
