@@ -47,7 +47,11 @@ void DataViewer::draw(RotatedDC& dc, const Color& background) {
 	// draw values
 	FOR_EACH(v, viewers) { // draw low z index fields first
 		if (v->getStyle()->visible) {// visible
-			drawViewer(dc, *v);
+			try {
+				drawViewer(dc, *v);
+			} catch (const Error& e) {
+				handle_error(e, false, false);
+			}
 		}
 	}
 }
