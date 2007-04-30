@@ -37,7 +37,13 @@ void DataViewer::draw(RotatedDC& dc, const Color& background) {
 	// fill with background color
 	clearDC(dc.getDC(), background);
 	// update style scripts
-	if (card) set->updateFor(card);
+//%%	if (card) set->updateFor(card);
+	Context& ctx = getContext();
+	FOR_EACH(v, viewers) {
+		if (v->getStyle()->update(ctx)) {
+			v->onStyleChange();
+		}
+	}
 	// draw values
 	FOR_EACH(v, viewers) { // draw low z index fields first
 		if (v->getStyle()->visible) {// visible
