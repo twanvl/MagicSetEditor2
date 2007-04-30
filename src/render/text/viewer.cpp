@@ -369,7 +369,7 @@ void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle
 			lines[0].line_height = style.symbol_font.font->defaultSymbolSize(ctx, style.symbol_font.size).height;
 		} else {
 			dc.SetFont(style.font, scale);
-			lines[0].line_height = dc.GetTextExtent(_(" ")).height;
+			lines[0].line_height = dc.GetCharHeight();
 		}
 	}
 	
@@ -425,7 +425,11 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 			line_height_multiplier = style.line_height_soft;
 		}
 		// Add size of the character
-		word_size = add_horizontal(word_size, c.size);
+		if (c.break_after != BREAK_LINE) {
+			// ^^ HACK: don't count the line height of <line> tags, if they are the only thing on a line
+			//          then the linebreak is 'ignored'.
+			word_size = add_horizontal(word_size, c.size);
+		}
 		positions_word.push_back(word_size.width);
 		// Did the word become too long?
 		if (style.field().multi_line && !break_now) {
