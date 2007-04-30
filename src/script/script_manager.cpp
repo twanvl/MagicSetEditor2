@@ -316,42 +316,5 @@ void SetScriptManager::alsoUpdate(deque<ToUpdate>& to_update, const vector<Depen
 			} default:
 				assert(false);
 		}
-/*		if (d.type == DependendScript.setField) {
-			// from set data
-			ValueP value = set->data.at(ds.index);
-			toUpdate.push_back(ToUpdate(&*value));
-		} else if (ds.type == DependendScript.cardField) {
-			// from the same card's data
-			assert(card);
-			ValueP value = card->data.at(ds.index);
-			toUpdate.push_back(ToUpdate(&*value, card));
-		} else if (ds.type == DependendScript.cardsField) {
-			// something invalidates a card value for all cards, so all cards need updating
-			FOR_EACH(card, set)->cards {
-				ValueP value = card->data.at(ds.index);
-				toUpdate.push_back(ToUpdate(&*value, card));
-			}
-		} else if (ds.type >= DependendScript.choiceImage) {
-			// a generated image has become invalid, there is not much we can do
-			// because the index is not exact enough, it only gives the field
-			// TODO : Indicate what style
-			//CardStyleP style = set->styleOf(card) // WRONG?
-			CardStyle* style = CardStyle.getByIndex(ds.type - DependendScript.choiceImage);
-			StyleP s = style->cardStyle.at(ds.index);
-			s->invalidate();
-			// something changed, send event
-			ScriptStyleEvent change(&*s);
-			set->actions.tellListeners(change);
-		} else if (ds.type == DependendScript.cardCopyDep) {
-			// propagate dependencies from another field
-			FieldP f = game->cardFields#(ds.index);
-			alsoUpdate(toUpdate, f->dependendScripts, card);
-		} else if (ds.type == DependendScript.setCopyDep) {
-			// propagate dependencies from another field
-			FieldP f = game->setFields#(ds.index);
-			alsoUpdate(toUpdate, f->dependendScripts, card);
-		} else {
-			assert(false); // only setField, cardField and cardsField should be possible
-		}*/
 	}
 }

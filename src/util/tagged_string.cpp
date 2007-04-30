@@ -264,7 +264,7 @@ void cursor_to_index_range(const String& str, size_t cursor, size_t& start, size
 			// a tag
 			if (is_substr(str, i, _("<atom")) || is_substr(str, i, _("<sep"))) {
 				// never move the end over an atom/sep
-				if (cur >= cursor) break;
+				if (cur >= cursor) { ++i; break; }
 				// skip tag contents, tag counts as a single 'character'
 				i = match_close_tag_end(str, i);
 			} else {
