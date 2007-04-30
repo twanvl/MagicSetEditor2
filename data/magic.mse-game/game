@@ -601,6 +601,8 @@ card field:
 		choice: black
 		choice: red
 		choice: green
+		choice: snow
+		choice: tap
 	choice:
 		name: guild symbol
 		choice: Azorius Senate (W/U)
@@ -949,8 +951,6 @@ card field:
 
 
 
-# The following (until keywords) doesn't do anything yet
-
 ############################################################## Statistics categories
 
 statistics dimension:
@@ -1006,6 +1006,8 @@ statistics dimension:
 #	graph style: cross
 #	data 1: card.card_color
 #	data 2: card.rarity
+
+# The following (until keywords) doesn't do anything yet
 
 ############################################################## Word lists
 

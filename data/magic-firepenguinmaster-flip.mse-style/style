@@ -298,7 +298,8 @@ card style:
 		z index: 1
 		render style: image
 		alignment: middle center
-		include file: magic-watermarks-180.mse-include/watermarks
+		angle: 180
+		include file: magic-watermarks.mse-include/watermarks
 
 	############################# PT
 	power:

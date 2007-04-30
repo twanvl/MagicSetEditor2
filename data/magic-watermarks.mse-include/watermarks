@@ -6,6 +6,8 @@ choice images:
 	mana symbol black:			/magic-watermarks.mse-include/watermark_b.png
 	mana symbol red:			/magic-watermarks.mse-include/watermark_r.png
 	mana symbol green:			/magic-watermarks.mse-include/watermark_g.png
+	mana symbol snow:			/magic-watermarks.mse-include/watermark_s.png
+	mana symbol tap:			/magic-watermarks.mse-include/watermark_t.png
 	guild symbol Azorius Senate (W/U):    	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_azorius.png")
 	guild symbol House Dimir (U/B):       	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_dimir.png")
 	guild symbol Cult of Rakdos (B/R):    	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_rakados.png")
