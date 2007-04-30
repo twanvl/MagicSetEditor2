@@ -83,11 +83,11 @@ choice:
 		choice: black / green
 		choice: red / white
 		choice: green / blue
-		choice: colorless / white
-		choice: colorless / blue
-		choice: colorless / black
-		choice: colorless / red
-		choice: colorless / green
+		choice: artifact / white
+		choice: artifact / blue
+		choice: artifact / black
+		choice: artifact / red
+		choice: artifact / green
 	choice:
 		name: 3 color
 		choice: white / blue / black
@@ -138,29 +138,29 @@ choice:
 		choice: white / black
 		choice: white / red
 		choice: white / green
-		choice: white / colorless
+		choice: white / artifact
 		choice: blue / white
 		choice: blue / black
 		choice: blue / red
 		choice: blue / green
-		choice: blue / colorless
+		choice: blue / artifact
 		choice: black / white
 		choice: black / blue
 		choice: black / red
 		choice: black / green
-		choice: black / colorless
+		choice: black / artifact
 		choice: red / white
 		choice: red / blue
 		choice: red / black
 		choice: red / green
-		choice: red / colorless
+		choice: red / artifact
 		choice: green / white
 		choice: green / blue
 		choice: green / black
 		choice: green / red
-		choice: green / colorless
-		choice: colorless / white
-		choice: colorless / blue
-		choice: colorless / black
-		choice: colorless / red
-		choice: colorless / green
+		choice: green / artifact
+		choice: artifact / white
+		choice: artifact / blue
+		choice: artifact / black
+		choice: artifact / red
+		choice: artifact / green

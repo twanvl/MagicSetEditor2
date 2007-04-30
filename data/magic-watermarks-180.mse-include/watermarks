@@ -1,0 +1,32 @@
+# Watermark images
+
+choice images:
+	mana symbol white:			/magic-watermarks-180.mse-include/watermark_w.png
+	mana symbol blue:			/magic-watermarks-180.mse-include/watermark_u.png
+	mana symbol black:			/magic-watermarks-180.mse-include/watermark_b.png
+	mana symbol red:			/magic-watermarks-180.mse-include/watermark_r.png
+	mana symbol green:			/magic-watermarks-180.mse-include/watermark_g.png
+	mana symbol snow:			/magic-watermarks-180.mse-include/watermark_s.png
+	mana symbol tap:			/magic-watermarks-180.mse-include/watermark_t.png
+	xander hybrid mana B/R:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_brmana.png")
+	xander hybrid mana U/B:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_ubmana.png")
+	xander hybrid mana B/G:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_bgmana.png")
+	xander hybrid mana R/G:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_rgmana.png")
+	xander hybrid mana G/U:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_gumana.png")
+	xander hybrid mana U/R:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_urmana.png")
+	xander hybrid mana W/B:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_wbmana.png")
+	xander hybrid mana G/W:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_gwmana.png")
+	xander hybrid mana R/W:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_rwmana.png")
+	xander hybrid mana W/U:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_wumana.png")		
+	guild symbol Azorius Senate (W/U):    	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_azorius.png")
+	guild symbol House Dimir (U/B):       	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_dimir.png")
+	guild symbol Cult of Rakdos (B/R):    	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_rakados.png")
+	guild symbol Gruul Clans (R/G):       	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_gruul.png")
+	guild symbol Selesnya Conclave (G/W): 	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_selesnya.png")
+	guild symbol Orzhov Syndicate (W/B):  	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_orzhov.png")
+	guild symbol The Izzet (U/R):         	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_izzet.png")
+	guild symbol The Golgari (B/G):       	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_golgari.png")
+	guild symbol Boros Legion (R/W):      	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_boros.png")
+	guild symbol The Simic (G/U):         	script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_simic.png")
+	promo symbol DCI:			script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_dcipromo.png")
+	promo symbol FNM:			script: set_combine(combine:"shadow", input:"/magic-watermarks-180.mse-include/watermark_fnmpromo.png")

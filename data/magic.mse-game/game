@@ -869,28 +869,12 @@ card field:
 	type: text
 	name: power 2
 	icon: stats/power.png
-	editable: false
 	show statistics: false
 	script: type_over_pt(value)
 card field:
 	type: text
 	name: toughness 2
 	icon: stats/toughness.png
-	editable: false
-	show statistics: false
-#needed for FPM temps
-card field:
-	type: text
-	name: fpmpower 2
-	icon: stats/power.png
-	editable: false
-	show statistics: false
-#needed for FPM temps
-card field:
-	type: text
-	name: fpmtoughness 2
-	icon: stats/toughness.png
-	editable: false
 	show statistics: false
 #needed for FPM temps
 card field:

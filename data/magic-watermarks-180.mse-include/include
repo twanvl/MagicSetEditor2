@@ -1,0 +1,6 @@
+full name: Magic The Gathering, textbox watermarks
+version: 2006.08.03
+
+# This file doesn't do anything, other files in this directory can be included
+# in game/style files:
+#    watermarks		Includes references to the watermark images, to be used in a style file

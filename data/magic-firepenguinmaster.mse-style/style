@@ -36,6 +36,9 @@ init script:
 		else                                            "new"
 	}
 	
+	# Use guild mana symbols?
+	guild_mana := { styling.use_guild_mana_symbols }
+	
 	# Does the card have a color that requires a white font for copyright/artist?
 	black_font_colors := filter_rule(match:"^(hybrid 2 color [^/]*/ )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid 4 color [^/]*/[^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(hybrid 5 color horizontal  [^/]*/[^/]*/[^/]*/[^/]*/ )?(white)")
 	font_color := {
@@ -67,6 +70,11 @@ styling field:
 	choice: light
 	choice: dark
 styling field:
+	type: boolean
+	name: use guild mana symbols
+	description: Use the Ravnica guild symbols instead of the official half/half circles for hybrid mana.
+	initial: no
+styling field:
 	type: choice
 	name: tap symbol
 	description: What tap symbol should be used on cards?
@@ -76,6 +84,10 @@ styling field:
 	choice: diagonal T
 
 styling style:
+	use guild mana symbols:
+		choice images:
+			yes: /magic-mana-small.mse-symbol-font/mana_guild_rg.png
+			no:  /magic-mana-small.mse-symbol-font/mana_rg.png
 	beveled mana symbols:
 		choice images:
 			yes: /magic-mana-beveled.mse-symbol-font/mana_w.png
@@ -83,9 +95,9 @@ styling style:
 	tap symbol:
 		render style: both
 		choice images:
-			modern:     /magic-mana-large.mse-symbol-font/mana_t.png
-			old:        /magic-mana-large.mse-symbol-font/mana_t_old.png
-			diagonal T: /magic-mana-large.mse-symbol-font/mana_t_older.png
+			modern:     /magic-mana-small.mse-symbol-font/mana_t.png
+			old:        /magic-mana-small.mse-symbol-font/mana_t_old.png
+			diagonal T: /magic-mana-small.mse-symbol-font/mana_t_older.png
 
 ############################################################## Card fields
 card style:
