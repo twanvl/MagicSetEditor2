@@ -83,13 +83,10 @@ struct Rotate270 {
 // ----------------------------------------------------------------------------- : Interface
 
 Image rotate_image(const Image& image, int angle) {
-	if (angle == 90) {
-		return rotate_image_impl<Rotate90>(image);
-	} else if (angle == 180){
-		return rotate_image_impl<Rotate180>(image);
-	} else if (angle == 270){
-		return rotate_image_impl<Rotate270>(image);
-	} else{
-		return image;
+	switch (angle % 360) {
+		case 90:  return rotate_image_impl<Rotate90> (image);
+		case 180: return rotate_image_impl<Rotate180>(image);
+		case 270: return rotate_image_impl<Rotate270>(image);
+		default:  return image;
 	}
 }

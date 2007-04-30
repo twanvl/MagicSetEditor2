@@ -43,7 +43,8 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 				// draw
 				dc.DrawImage(i->image,
 					align_in_rect(style().alignment, RealSize(i->image.GetWidth(), i->image.GetHeight()), style().getRect()),
-					i->combine == COMBINE_NORMAL ? style().combine : i->combine
+					i->combine == COMBINE_NORMAL ? style().combine : i->combine,
+					style().angle
 				);
 				margin = dc.trInvS(i->image.GetWidth()) + 1;
 			}

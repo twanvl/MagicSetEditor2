@@ -131,6 +131,7 @@ class ChoiceStyle : public Style {
 	ImageCombine                combine;            ///< Combining mode for drawing the images
 	Alignment                   alignment;          ///< Alignment of images
 	Image                       mask;               ///< The actual mask image
+	int                         angle;				///< Angle by which the images are rotated
 	wxImageList*                thumbnails;         ///< Thumbnails for the choices
 	Age                         thumbnail_age;      ///< Age the thumbnails were generated
 	bool                        invalidated_images; ///< Have the images been invalidated?

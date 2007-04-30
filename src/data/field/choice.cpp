@@ -165,6 +165,7 @@ ChoiceStyle::ChoiceStyle(const ChoiceFieldP& field)
 	, colors_card_list(false)
 	, combine(COMBINE_NORMAL)
 	, alignment(ALIGN_STRETCH)
+	, angle(0)
 	, thumbnails(nullptr)
 	, thumbnail_age(1) // thumbnails were made before the beginning of time
 	, invalidated_images(false)
@@ -231,6 +232,7 @@ IMPLEMENT_REFLECTION(ChoiceStyle) {
 	REFLECT_N("mask",mask_filename);
 	REFLECT(combine);
 	REFLECT(alignment);
+	REFLECT(angle);
 	REFLECT(colors_card_list);
 	REFLECT(font);
 	REFLECT(choice_images);

@@ -142,7 +142,7 @@ class RotatedDC : public Rotation {
 	/// Draw abitmap, it must already be zoomed!
 	void DrawBitmap(const Bitmap& bitmap, const RealPoint& pos);
 	/// Draw an image using the given combining mode, the image must already be zoomed!
-	void DrawImage (const Image& image,   const RealPoint& pos, ImageCombine combine = COMBINE_NORMAL);
+	void DrawImage (const Image& image,   const RealPoint& pos, ImageCombine combine = COMBINE_NORMAL, int angle = 0);
 	void DrawLine  (const RealPoint& p1,  const RealPoint& p2);
 	void DrawRectangle(const RealRect& r);
 	void DrawRoundedRectangle(const RealRect& r, double radius);
