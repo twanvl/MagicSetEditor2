@@ -368,7 +368,7 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 	}
 }
 
-static const int FILE_MENU_SIZE_BEFORE_RECENT_SETS = 9; // HACK; we should calculate the position to insert!
+static const int FILE_MENU_SIZE_BEFORE_RECENT_SETS = 11; // HACK; we should calculate the position to insert!
 void SetWindow::updateRecentSets() {
 	wxMenuBar* mb = GetMenuBar();
 	assert(number_of_recent_sets <= (UInt)settings.recent_sets.size()); // the number of recent sets should only increase
@@ -401,6 +401,7 @@ void SetWindow::onFileNew(wxCommandEvent&) {
 
 void SetWindow::onFileOpen(wxCommandEvent&) {
 	if (!askSaveAndContinue()) return;
+	wxBusyCursor busy;
 	wxFileDialog dlg(this, _TITLE_("open set"), _(""), _(""), import_formats(), wxOPEN);
 	if (dlg.ShowModal() == wxID_OK) {
 		setSet(import_set(dlg.GetPath()));

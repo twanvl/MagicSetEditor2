@@ -169,8 +169,10 @@ String simplify_tagged(const String& str);
 
 /// Simplify a tagged string by merging adjecent open/close tags
 /** e.g. "<tag></tag>" --> ""
+ *
+ * @param all Merge all tags, if false only merges b,i,sym, and <tag></tag> pairs. But not </tag><tag>.
  */
-String simplify_tagged_merge(const String& str);
+String simplify_tagged_merge(const String& str, bool all = false);
 
 /// Simplify overlapping formatting tags
 /** e.g. "<i>blah<i>blah</i>blah</i>" -> "<i>blahblahblah</i>"

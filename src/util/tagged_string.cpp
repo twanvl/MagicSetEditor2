@@ -391,7 +391,7 @@ String remove_tag_contents(const String& str, const String& tag) {
  *    if close_tags == false, "text<tag>text</tag>text" --> "<tag>"
  *    if close_tags == true,  "text<tag>text</tag>text" --> "</tag>"
  */
-String get_tags(const String& str, size_t start, size_t end, bool close_tags) {
+String get_tags(const String& str, size_t start, size_t end, bool open_tags, bool close_tags) {
 	String ret;
 	bool intag = false;
 	bool keeptag = false;
@@ -400,7 +400,7 @@ String get_tags(const String& str, size_t start, size_t end, bool close_tags) {
 		if (c == _('<') && !intag) {
 			intag = true;
 			// is this tag an open tag?
-			if (i + 1 < end && (str.GetChar(i + 1) == _('/')) == close_tags) {
+			if (i + 1 < end && (str.GetChar(i + 1) == _('/') ? close_tags : open_tags)) {
 				keeptag = true;
 			}
 		}
@@ -417,21 +417,13 @@ String tagged_substr_replace(const String& input, size_t start, size_t end, cons
 	assert(start <= end);
 	size_t size = input.size();
 	String ret; ret.reserve(size + replacement.size() - (end - start)); // estimated size
-	if (replacement.empty()) {
-		return simplify_tagged(
-			substr_replace(input, start, end,
-				get_tags(input, start, end, false) + // open tags
-				replacement +
-				get_tags(input, start, end, true)    // close tags
-			));
-	} else {
-		return simplify_tagged(
-			substr_replace(input, start, end,
-				get_tags(input, start, end, true) + // close tags
-				replacement +
-				get_tags(input, start, end, false)  // open tags
-			));
-	}
+	String collect_tags = simplify_tagged_merge(get_tags(input, start, end, true, true),true);
+	return simplify_tagged(
+		substr_replace(input, start, end,
+			get_tags(collect_tags, 0, collect_tags.size(), false, true) + // close tags
+			replacement +
+			get_tags(collect_tags, 0, collect_tags.size(), true, false)  // open tags
+		));
 }
 
 
@@ -445,9 +437,9 @@ String simplify_tagged(const String& str) {
 // If </tag> is in stack remove it and returns true
 // otherwise appends <tag> and returns fales
 // (where </tag> is the negation of tag)
-bool add_or_cancel_tag(const String& tag, String& stack) {
-	if (starts_with(tag, _("b")) || starts_with(tag, _("i")) || starts_with(tag, _("sym")) ||
-	    starts_with(tag, _("/"))) {
+bool add_or_cancel_tag(const String& tag, String& stack, bool all = false) {
+	if (all || starts_with(tag, _("/")) ||
+	    starts_with(tag, _("b")) || starts_with(tag, _("i")) || starts_with(tag, _("sym"))) {
 		// cancel out all close tags, but not all open tags,
 		// so <xx></xx> is always removed
 		// but </xx><xx> is not
@@ -467,7 +459,7 @@ bool add_or_cancel_tag(const String& tag, String& stack) {
 	}
 }
 
-String simplify_tagged_merge(const String& str) {
+String simplify_tagged_merge(const String& str, bool all) {
 	String ret; ret.reserve(str.size());
 	String waiting_tags; // tags that are waiting to be written to the output
 	size_t size = str.size();
@@ -475,7 +467,7 @@ String simplify_tagged_merge(const String& str) {
 		Char c = str.GetChar(i);
 		if (c == _('<')) {
 			String tag = tag_at(str, i);
-			add_or_cancel_tag(tag, waiting_tags);
+			add_or_cancel_tag(tag, waiting_tags, all);
 			i += tag.size() + 1;
 		} else {
 			ret += waiting_tags;
@@ -499,7 +491,7 @@ String simplify_tagged_overlap(const String& str) {
 				// optimize this tag
 				if (open_tags.find(_("<") + tag + _(">")) == String::npos) {
 					// we are not already inside this tag
-					add_or_cancel_tag(tag, open_tags);
+					add_or_cancel_tag(tag, open_tags, true);
 					if (open_tags.find(anti_tag(tag)) != String::npos) {
 						// still not canceled out
 						i += tag.size() + 1;
@@ -508,7 +500,7 @@ String simplify_tagged_overlap(const String& str) {
 				} else {
 					// skip this tag, doubling it has no effect
 					i += tag.size() + 1;
-					add_or_cancel_tag(tag, open_tags);
+					add_or_cancel_tag(tag, open_tags, true);
 					continue;
 				}
 			}
