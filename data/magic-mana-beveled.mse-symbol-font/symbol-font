@@ -46,6 +46,36 @@ symbol:
 	code: G/U
 	image: mana_gu.png
 symbol:
+	code: B/G/W
+	image: mana_bgw.png
+symbol:
+	code: G/B/R
+	image: mana_brg.png
+symbol:
+	code: G/U/B
+	image: mana_gub.png
+symbol:
+	code: G/W/U
+	image: mana_gwu.png
+symbol:
+	code: R/G/W
+	image: mana_rgw.png
+symbol:
+	code: R/W/U
+	image: mana_rwu.png
+symbol:
+	code: U/B/R
+	image: mana_ubr.png
+symbol:
+	code: U/R/G
+	image: mana_urg.png
+symbol:
+	code: W/B/R
+	image: mana_wbr.png
+symbol:
+	code: W/U/B
+	image: mana_wub.png
+symbol:
 	code: 1/2
 	image: mana_1_half.png
 symbol:

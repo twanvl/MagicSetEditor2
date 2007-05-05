@@ -160,7 +160,7 @@ init script:
 		# step 8 : post ( capitalization
 		replace_rule(
 			match: "[a-z]",
-			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>",
+			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>|—<match>| — <match>",
 			replace: { to_upper() })
 	
 
@@ -422,14 +422,14 @@ keyword parameter type:
 	name: name
 	match: [^(.,\n]+
 keyword parameter type:
-	name: land
+	name: prefix
 	description: Prefix for things like "<something>walk"
 	optional: false
-	match: [A-Z][a-z]*
+	match: [A-Z][a-z, ]*
 	example: Forest
 
 ############################# All Magic keywords
-# By JrEye and Neko_Asakami, updated by Buttock1234 and Pichoro
+# By JrEye and Neko_Asakami, Updated by Pichoro and Buttock1234
 
 keyword:
 	keyword: Flying
@@ -528,7 +528,7 @@ keyword:
 	reminder: At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.
 keyword:
 	keyword: Cardcycling
-	match: <atom-param>name</atom-param>cycling<atom-param>cost</atom-param>
+	match: <atom-param>prefix</atom-param>cycling<atom-param>cost</atom-param>
 	mode: expert
 	reminder: {format_cost(param2,add:"")}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
 keyword:
@@ -612,13 +612,18 @@ keyword:
 	mode: expert
 	reminder: This comes into play with a +1/+1 counter on it for each color of mana used to pay its cost. If it is not a creature, use charge counters instead.
 keyword:
-	keyword: Splice
-	match: Splice onto <atom-param>name</atom-param> <atom-param>cost</atom-param>
+	keyword: Splice (Mana Cost)
+	match: Splice onto <atom-param>name</atom-param> <atom-param>mana</atom-param>
+	mode: expert
+	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
+keyword:
+	keyword: Splice (Alternative Cost)
+	match: Splice onto <atom-param>name</atom-param>—<atom-param>action</atom-param>
 	mode: expert
 	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
 keyword:
 	keyword: Offering
-	match: <atom-param>name</atom-param> offering
+	match: <atom-param>prefix</atom-param> offering
 	mode: expert
 	reminder: You may play this card any time you could play an instant by sacrificing a {param1} and paying the difference in mana costs between this and the sacrificed {param1}. Mana cost includes color.
 keyword:
@@ -674,7 +679,7 @@ keyword:
 	reminder: If defending player is wearing any clothing made of denim, this creature is unblockable.
 keyword:
 	keyword: Landwalk
-	match: <atom-param>name</atom-param>walk
+	match: <atom-param>prefix</atom-param>walk
 	mode: core
 	reminder: This creature is unblockable as long as defending player controls a {param1}.
 keyword:

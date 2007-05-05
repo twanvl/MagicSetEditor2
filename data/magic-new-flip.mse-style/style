@@ -35,12 +35,10 @@ init script:
 	guild_mana := { styling.use_guild_mana_symbols }
 	
 	# Does the card have a color that requires a white font for copyright/artist?
-	white_font_colors := filter_rule(match:"^(hybrid )?black|^land")
+	white_font_colors := filter_rule(match:"^(hybrid 2 color )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(black|land|hybrid 4 color white / blue / black / red)")
 	font_color := {
-		if  white_font_colors(input:card.card_color) != "" then
-			rgb(255,255,255)
-		else
-			rgb(0,0,0)
+		if white_font_colors(input: card.card_color) != "" then rgb(255,255,255)
+		else rgb(0,0,0)
 	}
 
 
@@ -287,6 +285,25 @@ card style:
 		padding bottom: -1
 		line height hard: 1.2
 		line height line: 1.5
+	watermark:
+		left: 151
+		top : 58
+		width: 69
+		height: 69
+		z index: 1
+		render style: image
+		alignment: middle center
+		include file: magic-watermarks.mse-include/watermarks
+	watermark 2:
+		left: 151
+		top : 378
+		width: 69
+		height: 69
+		angle: 180
+		z index: 1
+		render style: image
+		alignment: middle center
+		include file: magic-watermarks.mse-include/watermarks
 
 	############################# PT
 	pt:

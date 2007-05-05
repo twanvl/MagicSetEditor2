@@ -13,9 +13,29 @@ init script:
 	mana_sort       := sort_rule(order: "XYZ[0123456789]S(WUBRG)")
 	# correctly sort guild mana
 	mana_sort_guild := replace_rule( # swap these:
-				match: "U/W|B/U|R/B|G/B|W/G|B/W|R/U|G/B|W/R|U/G",
+				match: "U/W|B/U|R/B|G/R|W/G|B/W|R/U|G/B|W/R|U/G",
 				in_context: "(^|[^/])<match>($|[^/])",
 				replace: {input[2] + "/" + input[0]}) +
+			   replace_rule(
+				match: "W/B/U|W/R/B|U/R/B|U/G/R|B/G/R|B/W/G|R/W/G|R/U/W|G/U/W|G/B/U",
+				in_context: "(^|[^/])<match>($|[^/])",
+				replace: {input[0] + "/" + input[4] + "/" + input[2]}) +
+			   replace_rule(
+				match: "B/U/W|R/B/W|R/B/U|G/R/U|G/R/B|W/G/B|W/G/R|U/W/R|U/W/G|B/U/G",
+				in_context: "(^|[^/])<match>($|[^/])",
+				replace: {input[4] + "/" + input[2] + "/" + input[0]}) +
+			   replace_rule(
+				match: "U/W/B|B/W/R|B/U/R|R/U/G|R/B/G|G/B/W|G/R/W|W/R/U|W/G/U|U/G/B",
+				in_context: "(^|[^/])<match>($|[^/])",
+				replace: {input[2] + "/" + input[0] + "/" + input[4]}) +
+			   replace_rule(
+				match: "U/B/W|B/R/U|R/G/B|G/W/R|W/U/G|B/R/W|R/G/U|G/W/B|W/U/R|U/B/G",
+				in_context: "(^|[^/])<match>($|[^/])",
+				replace: {input[4] + "/" + input[0] + "/" + input[2]}) +
+			   replace_rule(
+				match: "B/W/U|R/U/B|G/B/R|W/R/G|U/G/W|R/W/B|G/U/R|W/B/G|U/R/W|B/G/U",
+				in_context: "(^|[^/])<match>($|[^/])",
+				replace: {input[2] + "/" + input[4] + "/" + input[0]}) +
 			   replace_rule(
 				match: "T", replace: ""
 			   )
@@ -62,6 +82,7 @@ init script:
 		else
 			# hybrid
 			if count == 2 then  "hybrid 2 color " + color_name(colors[0]) + " / " + color_name(colors[1])
+			else if count == 3 then  "hybrid 3 color " + color_name(colors[0]) + " / " + color_name(colors[1]) + " / " + color_name(colors[2])
 			else                "multicolor"
 	}
 	
@@ -97,11 +118,12 @@ init script:
 		)
 	};
 	
-	# Index for sorting, white cards are first, so white->1, blue->2, .. ,
-	#  multi->6, hybrid->7, arti->8, land->9, basic land->10
+	# Index for sorting, white cards are first, so white->A, blue->B, .. ,
+	#  multi->F, hybrid->G, arti->H, land->J, basic land->I
 	is_multicolor := filter_rule(match: "^multicolor") + {input != ""};
 	is_hybrid     := filter_rule(match: "^hybrid")     + {input != ""};
 	is_colorless  := filter_rule(match: "^colorless")  + {input != ""};
+	is_artifact := filter_rule(match: "^artifact") + {input != ""};
 	sort_index := {
 		if      card.card_color=="white"        then "A"
 		else if card.card_color=="blue"         then "B"
@@ -110,7 +132,7 @@ init script:
 		else if card.card_color=="green"        then "E"
 		else if is_multicolor(card.card_color)  then "F"
 		else if is_hybrid    (card.card_color)  then "G"
-		else if is_colorless (card.card_color)  then "H"
+		else if is_colorless (card.card_color) or is_artifact (card.card_color)  then "H"
 		else if card.super_type!="Basic Land"   then "I"
 		else                                         "J"
 	};
@@ -226,7 +248,7 @@ init script:
 		# step 8 : post ( capitalization
 		replace_rule(
 			match: "[a-z]",
-			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>|—<match>",
+			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>|—<match>| — <match>",
 			replace: { to_upper() })
 	
 	#character filter for title line
@@ -602,7 +624,6 @@ card field:
 		choice: red
 		choice: green
 		choice: snow
-		choice: tap
 	choice:
 		name: guild symbol
 		choice: Azorius Senate (W/U)
@@ -627,10 +648,6 @@ card field:
 		choice: G/W
 		choice: R/W
 		choice: W/U
-	choice:
-		name: promo symbol
-		choice: DCI
-		choice: FNM
 	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, or a guild symbol
 
 ############################# PT
@@ -837,7 +854,6 @@ card field:
 		choice: red
 		choice: green
 		choice: snow
-		choice: tap
 	choice: 
 		name: xander hybrid mana
 		choice: B/R
@@ -862,10 +878,6 @@ card field:
 		choice: The Golgari (B/G)
 		choice: Boros Legion (R/W)
 		choice: The Simic (G/U)
-	choice:
-		name: promo symbol
-		choice: DCI
-		choice: FNM
 	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, a special symbol, or a guild symbol
 card field:
 	type: text
@@ -1139,7 +1151,7 @@ keyword parameter type:
 	example: Forest
 
 ############################# All Magic keywords
-# By JrEye and Neko_Asakami
+# By JrEye and Neko_Asakami, Updated by Pichoro and Buttock1234
 
 keyword:
 	keyword: Flying
