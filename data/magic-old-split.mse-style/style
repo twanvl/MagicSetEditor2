@@ -1,14 +1,14 @@
 mse version: 0.3.1
 game: magic
-short name: Split Cards
-full name: Modern split cards
+full name: Magic Old Split Cards
+short name: Old Splits
 icon: card-sample.png
 
 card width: 523
 card height: 375
 card dpi: 150
 
-# Author: Wolfwood
+# Author: Buttock1234
 # Lots of copy/paste from magic-new.mse-style
 
 ############################################################## Extra scripts
@@ -17,12 +17,12 @@ init script:
 	# Load blend scripts for hybrids/multicolors
 	include file: magic-blends.mse-include/blend-scripts
 		
-	# Should hybrids have a grey name?
-	mask_hybrid_with_land := { styling.grey_hybrid_name }
-	
 	# Which artifact template should be used?
 	artifact_template := {
-		if styling.darker_artifacts then "a" else "oa"
+		if input == "a" then (
+			if       styling.artifact_style == "light" then "oa"
+			else                                            "a"
+		) else	input
 	}
 	
 	# Use the normal tap symbol
@@ -35,17 +35,22 @@ init script:
 	guild_mana := { styling.use_guild_mana_symbols }
 	
 	# Does the card have a color that requires a white font for copyright/artist?
-	white_font_colors := filter_rule(match:"^(hybrid 2 color )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(black|land|hybrid 4 color white / blue / black / red)")
+	black_font_colors := filter_rule(match:"^(hybrid 2 color)?white")
 	font_color := {
-		if white_font_colors(input: card.card_color) != "" then rgb(255,255,255)
-		else rgb(0,0,0)
-	}
-	font_color_2 := {
-		if white_font_colors(input: card.card_color_2) != "" then rgb(255,255,255)
-		else rgb(0,0,0)
+		if  black_font_colors(card.card_color) != "" then
+			rgb(0,0,0)
+		else
+			rgb(255,255,255)
 	}
 	
-############################################################## Extra style options
+	font_color_2 := {
+		if  black_font_colors(card.card_color_2) != "" then
+			rgb(0,0,0)
+		else
+			rgb(255,255,255)
+	}
+
+############################################################## styling style
 
 styling field:
 	type: boolean
@@ -55,10 +60,6 @@ styling field:
 	type: boolean
 	name: darker artifacts
 	description: Use darker artifacts, as used by Wizards since Fifth Dawn.
-styling field:
-	type: boolean
-	name: grey hybrid name
-	description: Use a grey background for the name and type line on hybrid cards. This is done on real cards.
 styling field:
 	type: boolean
 	name: use guild mana symbols
@@ -125,54 +126,58 @@ card style:
 
 	############################# Name line
 	name:
-		left: { if card.card_symbol=="none" then 30 else 51 }
-		top : 27
+		left: { if card.card_symbol=="none" then 32 else 51 }
+		top : 20
 		width: { if card.card_symbol=="none" then 175 else 168 }
 		height: 17
 		alignment: top shrink-overflow
 		padding bottom: 0
 		z index: 1
 		font:
-			name: Matrix
-			size: 13
-			weight: bold
-			color: rgb(0,0,0)
+			name: MagicMedieval
+			size: 12
+			color: rgb(255,255,255)
+			shadow color: rgb(0,0,0)
+			shadow displacement x: 1
+			shadow displacement y: 1
 	name 2:
-		left: { if card.card_symbol_2=="none" then 282 else 51 }
-		top : 27
-		width: { if card.card_symbol_2=="none" then 215 else 227 }
+		left: { if card.card_symbol=="none" then 284 else 51 }
+		top : 20
+		width: { if card.card_symbol=="none" then 175 else 168 }
 		height: 17
 		alignment: top shrink-overflow
 		padding bottom: 0
 		z index: 1
 		font:
-			name: Matrix
-			size: 13
-			weight: bold
-			color: rgb(0,0,0)
+			name: MagicMedieval
+			size: 12
+			color: rgb(255,255,255)
+			shadow color: rgb(0,0,0)
+			shadow displacement x: 1
+			shadow displacement y: 1
 	casting cost:
-		left: 207
-		top : 27
+		left: 209
+		top : 18.5
 		width: 35
 		height: 16
 		alignment: bottom right
 		symbol font:
-			name: magic-mana-large
-			size: 12
+			name: magic-mana-small
+			size: 11
 			alignment: bottom right
 		always symbol: true
 		z index: 2
 		padding top: 0
 
 	casting cost 2:
-		left: 459
-		top : 27
+		left: 461
+		top : 18.5
 		width: 35
 		height: 16
 		alignment: bottom right
 		symbol font:
-			name: magic-mana-large
-			size: 12
+			name: magic-mana-small
+			size: 11
 			alignment: bottom right
 		always symbol: true
 		z index: 2
@@ -180,82 +185,88 @@ card style:
 
 	############################# Image
 	image:
-		left:	28
-		top:	49
-		width:	216
-		height:	159
+		left:	36
+		top:	39
+		width:	201
+		height:	163
 		z index: 1
 
 	image 2:
-		left:	279
-		top:	49
-		width:	216
-		height:	159
+		left:	287
+		top:	39
+		width:	201
+		height:	163
 		z index: 1
 
 	############################# Card type
 
 	type:
-		left: 30
-		top : 211
+		left: 32
+		top : 206
 		width: 197
-		height: 17
-		alignment: top shrink-overflow
+		height: 16
+		alignment: middle shrink-overflow
 		z index: 1
 		font:
-			name: Matrix
-			size: 12
-			color: rgb(0,0,0)
+			name: MPlantin
+			size: 9.5
+			color: rgb(255,255,255)
+			shadow color: rgb(0,0,0)
+			shadow displacement x: 1
+			shadow displacement y: 1
 			separator color: rgb(128,128,128)
 
 	type 2:
-		left: 282
-		top : 211
+		left: 284
+		top : 206
 		width: 197
-		height: 17
-		alignment: top shrink-overflow
+		height: 16
+		alignment: middle shrink-overflow
 		z index: 1
 		font:
-			name: Matrix
-			size: 12
-			color: rgb(0,0,0)
+			name: MPlantin
+			size: 9.5
+			color: rgb(255,255,255)
+			shadow color: rgb(0,0,0)
+			shadow displacement x: 1
+			shadow displacement y: 1
 			separator color: rgb(128,128,128)
 
 	rarity:
 		left: 228
-		top : 213
+		top : 207
 		width: 13
 		height: 13
 		z index: 1
 		render style: image
 		choice images:
 			# Images based on the set symbol
-			basic land: script: symbol_variation(symbol: set.symbol, variation: "common")
-			common:     script: symbol_variation(symbol: set.symbol, variation: "common")
-			uncommon:   script: symbol_variation(symbol: set.symbol, variation: "uncommon")
-			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
-			special:    script: symbol_variation(symbol: set.symbol, variation: "special")
+			basic land:	script: symbol_variation(symbol: set.symbol, variation: "common")
+			common:   script: symbol_variation(symbol: set.symbol, variation: "common")
+			uncommon: script: symbol_variation(symbol: set.symbol, variation: "uncommon")
+			rare:     script: symbol_variation(symbol: set.symbol, variation: "rare")
+			special:	script: symbol_variation(symbol: set.symbol, variation: "special")
 
 	rarity 2:
 		left: 480
-		top : 213
+		top : 207
 		width: 13
 		height: 13
 		z index: 1
 		render style: image
 		choice images:
 			# Images based on the set symbol
-			basic land: script: symbol_variation(symbol: set.symbol, variation: "common")
-			common:     script: symbol_variation(symbol: set.symbol, variation: "common")
-			uncommon:   script: symbol_variation(symbol: set.symbol, variation: "uncommon")
-			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
-			special:    script: symbol_variation(symbol: set.symbol, variation: "special")
+			basic land:	script: symbol_variation(symbol: set.symbol, variation: "common")
+			common:   script: symbol_variation(symbol: set.symbol, variation: "common")
+			uncommon: script: symbol_variation(symbol: set.symbol, variation: "uncommon")
+			rare:     script: symbol_variation(symbol: set.symbol, variation: "rare")
+			special:	script: symbol_variation(symbol: set.symbol, variation: "special")
 
 	############################# Text box
 	text:
-		left: 29
-		top : 233
-		width: 214
+		left: 37
+		top : 226
+		width: 198
 		height: 99
 		font:
 			name: MPlantin
@@ -280,9 +291,9 @@ card style:
 		line height line: 1.5
 
 	text 2:
-		left: 279
-		top : 233
-		width: 214
+		left: 289
+		top : 226
+		width: 198
 		height: 99
 		font:
 			name: MPlantin
@@ -327,82 +338,76 @@ card style:
 	############################# PT
 	pt:
 		z index: 4
-		left:	200
-		top:	328
-		width:	48
-		height:	25
-		alignment: center middle
+		left:	208
+		top:	331
+		width:	37
+		height:	23
+		alignment: middle right
 		font:
 			name: Mplantin
 			size: 14
 			weight: bold
-			color: rgb(0,0,0)
+			color: rgb(255,255,255)
+			shadow color: rgb(0,0,0)
+			shadow displacement x: 1
+			shadow displacement y: 1
 			separator color: rgb(200,0,0)
 
 	pt 2:
 		z index: 4
-		left:	451
-		top:	328
-		width:	48
-		height:	25
-		alignment: center middle
+		left:	460
+		top:	331
+		width:	37
+		height:	23
+		alignment: middle right
 		font:
 			name: Mplantin
 			size: 14
 			weight: bold
-			color: rgb(0,0,0)
+			color: rgb(255,255,255)
+			shadow color: rgb(0,0,0)
+			shadow displacement x: 1
+			shadow displacement y: 1
 			separator color: rgb(200,0,0)
-	
-	pt box:
-		left:	194
-		top:	326
-		width:	56
-		height:	29
-		z index: 1
-		visible: { card.pt != "" }
-		render style: image
-		include file: magic-blends.mse-include/card-ptboxes
-
-	pt box 2:
-		left:	445
-		top:	326
-		width:	56
-		height:	29
-		z index: 1
-		visible: { card.pt_2 != "" }
-		render style: image
-		include file: magic-blends.mse-include/card-ptboxes
 		
-	############################# Card sorting / numbering
 	############################# Copyright stuff
 
 	illustrator:
-		left: 46
-		top : 338
+		left: 54
+		top : 333
 		width: 155
-		height: 16
+		height: 9
+		alignment: center middle
 		z index: 1
 		font:
-			name: Matrix
-			size: 8
-			color: { font_color() }
+			name: MPlantin
+			size: 9
+			color: rgb(255,255,255)
+			shadow color: rgb(0,0,0)
+			shadow displacement x: 1
+			shadow displacement y: 1
 	
 	illustrator 2:
-		left: 298
-		top : 338
+		left: 306
+		top : 333
 		width: 155
-		height: 16
+		height: 9
+		alignment: center middle
 		z index: 1
 		font:
-			name: Matrix
-			size: 8
-			color: { font_color_2() }
+			name: MPlantin
+			size: 9
+			color: rgb(255,255,255)
+			shadow color: rgb(0,0,0)
+			shadow displacement x: 1
+			shadow displacement y: 1
 	
 	copyright line:
-		left: 26
-		top : 348
-		width: 175
+		left: 50
+		top : 342
+		width: 165
 		height: 12
+		alignment: center middle
 		z index: 1
 		font:
 			name: MPlantin
@@ -410,10 +415,11 @@ card style:
 			color: { font_color() }
 	
 	copyright line 2:
-		left: 278
-		top : 348
-		width: 175
+		left: 302
+		top : 342
+		width: 165
 		height: 12
+		alignment: center middle
 		z index: 1
 		font:
 			name: MPlantin
