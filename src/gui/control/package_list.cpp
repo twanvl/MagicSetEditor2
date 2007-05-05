@@ -52,7 +52,7 @@ void PackageList::showData(const String& pattern) {
 	while (!f.empty()) {
 		// try to open the package
 //		try {
-			PackagedP package = ::packages.openAny(f);
+			PackagedP package = ::packages.openAny(f, true);
 			// open image
 			InputStreamP stream = package->openIconFile();
 			Image img;

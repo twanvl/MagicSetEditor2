@@ -8,22 +8,38 @@
 
 #include <gui/update_checker.hpp>
 #include <data/settings.hpp>
+#include <util/io/package_manager.hpp>
 #include <util/version.hpp>
 #include <script/value.hpp> // for some strange reason the profile build needs this :(
 #include <wx/dialup.h>
 #include <wx/url.h>
 #include <wx/html/htmlwin.h>
 
+DECLARE_POINTER_TYPE(PackageVersionData);
 DECLARE_POINTER_TYPE(VersionData);
 
 // ----------------------------------------------------------------------------- : Update data
 
+/// Information on available packages
+class PackageVersionData {
+  public:
+	PackageVersionData() : is_installer(true) {}
+	
+	String  name;						///< Name of the package
+	String  description;				///< html description
+	String  url;						///< Where can the package be downloaded?
+	bool    is_installer;				///< Download url refers to a .mse-installer
+	Version version;					///< Version number of the download
+	vector<PackageDependencyP> depends;	///< Packages this depends on
+};
+
 /// Information on the latest availible version
 class VersionData {
   public:
-	Version version;				///< Latest version number
-	String  description;			///< html description
+	Version version;				///< Latest version number of MSE
+	String  description;			///< html description of the latest MSE release
 	String  new_updates_url;		///< updates url has moved?
+	vector<PackageVersionDataP> packages;	///< Available packages
 	
 	DECLARE_REFLECTION();
 };

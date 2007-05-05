@@ -41,6 +41,7 @@ class PackageList : public GalleryList {
 	shared_ptr<T> getSelection() const {
 		shared_ptr<T> ret = dynamic_pointer_cast<T>(packages.at(selection).package);
 		if (!ret) throw InternalError(_("PackageList: Selected package has the wrong type"));
+		ret->loadFully();
 		return ret;
 	}
 	

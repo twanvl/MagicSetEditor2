@@ -60,6 +60,9 @@ void read_compat(Reader& tag, Keyword* k) {
 	if (start != String::npos && end != String::npos) {
 		k->match += separator.substr(start + 1, end - start - 1);
 	}
+	if (parameter == _("no parameter")) {
+		parameter.clear(); // was used for magic to indicate absence of parameter
+	}
 	if (!parameter.empty()) {
 		k->match += _("<atom-param>") + parameter + _("</atom-param>");
 	}

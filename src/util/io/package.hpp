@@ -17,6 +17,7 @@ class Package;
 class wxFileInputStream;
 class wxZipInputStream;
 class wxZipEntry;
+DECLARE_POINTER_TYPE(PackageDependency);
 
 /// The package that is currently being written to
 DECLARE_DYNAMIC_ARG(Package*, writing_package);
@@ -175,6 +176,15 @@ class Package {
 
 // ----------------------------------------------------------------------------- : Packaged
 
+/// Dependencies of a package
+class PackageDependency {
+  public:
+	String  package;	///< Name of the package someone depends on
+	Version version;	///< Minimal required version of that package
+	
+	DECLARE_REFLECTION();
+};
+
 /// Utility class for data types that are always stored in a package.
 /** When the package is opened/saved a file describing the data object is read/written
  */
@@ -183,15 +193,21 @@ class Packaged : public Package {
 	Packaged();
 	virtual ~Packaged() {}
 	
+	Version version;		///< Version number of this package
 	String short_name;		///< Short name of this package
 	String full_name;		///< Name of this package, for menus etc.
 	String icon_filename;	///< Filename of icon to use in package lists
+	vector<PackageDependencyP> dependencies;	///< Dependencies of this package
 	
 	/// Get an input stream for the package icon, if there is any
 	InputStreamP openIconFile();
 	
 	/// Open a package, and read the data
-	void open(const String& package);
+	/** if just_header is true, then the package is not fully parsed.
+	 */
+	void open(const String& package, bool just_header = false);
+	/// Ensure the package is fully loaded.
+	void loadFully();
 	void save();
 	void saveAs(const String& package);
 	
@@ -202,6 +218,10 @@ class Packaged : public Package {
 	virtual void validate(Version file_app_version);
 	
 	DECLARE_REFLECTION_VIRTUAL();
+	
+  private:
+	bool   fully_loaded;	///< Is the package fully loaded?
+	friend struct JustAsPackageProxy;
 };
 
 // ----------------------------------------------------------------------------- : EOF

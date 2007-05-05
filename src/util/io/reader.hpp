@@ -36,7 +36,7 @@ class Reader {
 	/// Construct a reader that reads from the given input stream
 	/** filename is used only for error messages
 	 */
-	Reader(const InputStreamP& input, const String& filename = wxEmptyString);
+	Reader(const InputStreamP& input, const String& filename = wxEmptyString, bool ignore_invalid = false);
 	
 	/// Construct a reader that reads a file in a package
 	/** Used for "include file" keys. */
@@ -127,6 +127,8 @@ class Reader {
 	};
 	/// Aliasses for compatability
 	map<String, Alias> aliasses;
+	/// Should all invalid keys be ignored?
+	bool ignore_invalid;
 	
 	/// Filename for error messages
 	String filename;

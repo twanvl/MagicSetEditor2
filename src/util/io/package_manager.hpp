@@ -14,6 +14,7 @@
 #include <wx/filename.h>
 
 DECLARE_POINTER_TYPE(Packaged);
+class PackageDependency;
 
 // ----------------------------------------------------------------------------- : PackageManager
 
@@ -40,9 +41,10 @@ class PackageManager {
 		PackagedP& p = loaded_packages[filename];
 		shared_ptr<T> typedP = dynamic_pointer_cast<T>(p);
 		if (typedP) {
+			typedP->loadFully();
 			return typedP;
 		} else {
-			// not loaded, or loaded with wrong type
+			// not loaded, or loaded with wrong type (i.e. with just_header)
 			p = typedP = new_shared<T>();
 			typedP->open(filename);
 			return typedP;
@@ -50,7 +52,9 @@ class PackageManager {
 	}
 	
 	/// Open a package with the specified name, the type of package is determined by its extension!
-	PackagedP openAny(const String& name);
+	/** @param if just_header is true, then the package is not fully parsed.
+	 */
+	PackagedP openAny(const String& name, bool just_header = false);
 	
 	/// Find a package whos name matches a pattern
 	/** Find more using wxFindNextFile().
@@ -58,9 +62,12 @@ class PackageManager {
 	 */
 	String findFirst(const String& pattern);
 	
-	// Open a file from a package, with a name encoded as "package/file"
+	/// Open a file from a package, with a name encoded as "package/file"
 	InputStreamP openFileFromPackage(const String& name);
-		
+	
+	/// Check if the given dependency is currently installed
+	bool checkDependency(const PackageDependency& dep, bool report_errors = false);
+	
   private:
 	map<String, PackagedP> loaded_packages;
 	String data_directory;

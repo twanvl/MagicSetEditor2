@@ -9,12 +9,14 @@
 #include <util/io/package.hpp>
 #include <util/io/package_manager.hpp>
 #include <util/error.hpp>
+#include <script/to_value.hpp> // for reflection
 #include <wx/wfstream.h>
 #include <wx/zipstrm.h>
 #include <wx/dir.h>
 #include <boost/scoped_ptr.hpp>
 
 DECLARE_TYPEOF(Package::FileInfos);
+DECLARE_TYPEOF_COLLECTION(PackageDependencyP);
 
 // ----------------------------------------------------------------------------- : Package : outside
 
@@ -400,15 +402,23 @@ String Package::toStandardName(const String& name) {
 
 // ----------------------------------------------------------------------------- : Packaged
 
+IMPLEMENT_REFLECTION(PackageDependency) {
+	REFLECT(package);
+	REFLECT(version);
+}
+
 // note: reflection must be declared before it is used
 IMPLEMENT_REFLECTION(Packaged) {
 	REFLECT(short_name);
 	REFLECT(full_name);
 	REFLECT_N("icon", icon_filename);
+	REFLECT(version);
+	REFLECT_N("depends ons", dependencies); // hack for singular_form
 }
 
-Packaged::Packaged() {
-}
+Packaged::Packaged()
+	: fully_loaded(true)
+{}
 
 InputStreamP Packaged::openIconFile() {
 	if (!icon_filename.empty()) {
@@ -417,8 +427,36 @@ InputStreamP Packaged::openIconFile() {
 		return InputStreamP();
 	}
 }
-void Packaged::open(const String& package) {
+
+// proxy object, that reads just WITHOUT using the overloaded behaviour
+struct JustAsPackageProxy {
+	JustAsPackageProxy(Packaged* that) : that(that) {}
+	Packaged* that;
+};
+template <> void Reader::handle(JustAsPackageProxy& object) {
+	object.that->Packaged::reflect_impl(*this);
+}
+
+void Packaged::open(const String& package, bool just_header) {
 	Package::open(package);
+	fully_loaded = false;
+	if (just_header) {
+		// Read just the header (the part common to all Packageds)
+		Reader reader(openIn(typeName()), absoluteFilename() + _("/") + typeName(), true);
+		try {
+			JustAsPackageProxy proxy(this);
+			reader.handle_greedy(proxy);
+			Packaged::validate(reader.file_app_version);
+		} catch (const ParseError& err) {
+			throw FileParseError(err.what(), absoluteFilename() + _("/") + typeName()); // more detailed message
+		}
+	} else {
+		loadFully();
+	}
+}
+void Packaged::loadFully() {
+	if (fully_loaded) return;
+	fully_loaded = true;
 	Reader reader(openIn(typeName()), absoluteFilename() + _("/") + typeName());
 	try {
 		reader.handle_greedy(*this);
@@ -427,6 +465,7 @@ void Packaged::open(const String& package) {
 		throw FileParseError(err.what(), absoluteFilename() + _("/") + typeName()); // more detailed message
 	}
 }
+
 void Packaged::save() {
 	WITH_DYNAMIC_ARG(writing_package, this);
 	writeFile(typeName(), *this);
@@ -443,4 +482,8 @@ void Packaged::saveAs(const String& package) {
 void Packaged::validate(Version) {
 	// a default for the short name
 	if (short_name.empty()) short_name = name();
+	// check dependencies
+	FOR_EACH(dep, dependencies) {
+		packages.checkDependency(*dep, true);
+	}
 }

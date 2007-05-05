@@ -13,9 +13,10 @@
 
 // ----------------------------------------------------------------------------- : Reader
 
-Reader::Reader(const InputStreamP& input, const String& filename)
+Reader::Reader(const InputStreamP& input, const String& filename, bool ignore_invalid)
 	: indent(0), expected_indent(0), just_opened(false)
 	, filename(filename), line_number(0)
+	, ignore_invalid(ignore_invalid)
 	, input(input), stream(*input)
 {
 	moveNext();
@@ -125,6 +126,13 @@ void Reader::readLine() {
 }
 
 void Reader::unknownKey() {
+	// ignore?
+	if (ignore_invalid) {
+		do {
+			moveNext();
+		} while (indent > expected_indent);
+		return;
+	}
 	// aliasses?
 	map<String,Alias>::const_iterator it = aliasses.find(key);
 	if (it != aliasses.end()) {

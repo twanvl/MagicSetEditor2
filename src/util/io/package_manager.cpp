@@ -58,7 +58,7 @@ void PackageManager::init() {
 	data_directory += _("/data");
 }
 
-PackagedP PackageManager::openAny(const String& name) {
+PackagedP PackageManager::openAny(const String& name, bool just_header) {
 	wxFileName fn(
 		(wxFileName(name).IsRelative() ? data_directory + _("/") : wxString(wxEmptyString))
 		+ name);
@@ -79,7 +79,7 @@ PackagedP PackageManager::openAny(const String& name) {
 		else {
 			throw PackageError(_("Unrecognized package type: '") + fn.GetExt() + _("'\nwhile trying to open: ") + name);
 		}
-		p->open(filename);
+		p->open(filename, just_header);
 		return p;
 	}
 }
@@ -99,6 +99,20 @@ InputStreamP PackageManager::openFileFromPackage(const String& name) {
 	// open package and file
 	PackagedP p = openAny(n.substr(0, pos));
 	return p->openIn(n.substr(pos+1));
+}
+
+bool PackageManager::checkDependency(const PackageDependency& dep, bool report_errors) {
+	String name = data_directory + _("/") + dep.package;
+	if (!wxFileExists(name) && !wxDirExists(name)) {
+		handle_warning(_ERROR_1_("package not found", dep.package),false);
+		return false;
+	}
+	PackagedP package = openAny(dep.package, true);
+	if (package->version < dep.version) {
+		handle_warning(_ERROR_3_("package out of date", dep.package, package->version.toString(), dep.version.toString()),false);
+		return false;
+	}
+	return true;
 }
 
 void PackageManager::destroy() {

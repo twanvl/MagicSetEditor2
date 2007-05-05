@@ -14,15 +14,24 @@
 UInt Version::toNumber() const { return version; }
 
 String Version::toString() const {
-	return String() <<
-		          ((version / 10000) % 100) <<
-		_(".") << ((version / 100)   % 100) <<
-		_(".") << ((version / 1)     % 100);
+	if (version > 20000000) {
+		// major > 2000, the version is a date, use ISO notation
+		return String::Format(_("%04d-%02d-%02d"),
+					(version / 10000)      ,
+					(version / 100)   % 100,
+					(version / 1)     % 100);
+	} else {
+		return String::Format(_("%d.%d.%d"),
+					(version / 10000)      ,
+					(version / 100)   % 100,
+					(version / 1)     % 100);
+	}
 }
 
 Version Version::fromString(const String& version) {
 	UInt major = 0, minor = 0, build = 0;
-	wxSscanf(version, _("%u.%u.%u"), &major, &minor, &build);
+	if (wxSscanf(version, _("%u.%u.%u"), &major, &minor, &build)<=1)  // a.b.c style
+	    wxSscanf(version, _("%u-%u-%u"), &major, &minor, &build);  // date style
 	return Version(major * 10000 + minor * 100 + build);
 }
 
@@ -40,7 +49,7 @@ template <> void GetDefaultMember::handle(const Version& v) {
 // ----------------------------------------------------------------------------- : Versions
 
 // NOTE: Don't use leading zeroes, they mean octal
-const Version app_version  = 301; // 0.3.1
+const Version app_version  = 302; // 0.3.2
 const Char* version_suffix = _(" (beta)");
 
 /*  Changes:
@@ -50,5 +59,6 @@ const Char* version_suffix = _(" (beta)");
  *     0.2.7 : new tag system, different style of close tags
  *     0.3.0 : port of code to C++
  *     0.3.1 : new keyword system, some new style options
+ *     0.3.2 : package dependencies
  */
-const Version file_version = 301; // 0.3.1
+const Version file_version = 302; // 0.3.2
