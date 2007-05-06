@@ -405,7 +405,8 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 				jmpEnd = script.getLabel();								//		jmp_end:
 				script.addInstruction(I_JUMP, 0xFFFF);					//		jump lbl_end
 				script.comeFrom(jmpElse);								//		lbl_else:
-				if (input.read() == _("else")) {						// else
+				if (input.peek() == _("else")) {						// else
+					input.read();
 					parseOper(input, script, PREC_SET);					// CCC
 				} else {
 					script.addInstruction(I_PUSH_CONST, script_nil);
