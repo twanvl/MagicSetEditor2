@@ -485,6 +485,7 @@ error:
 		Error while parsing file: '%s'
 		%s
 	package not found:			Package not found: '%s'
+	package out of date:		The package '%s' (version %s) is out of date, version %s is required.
 	unable to open output file:	Error while saving, unable to open output file
 	unable to store file:		Error while saving, unable to store file
 	

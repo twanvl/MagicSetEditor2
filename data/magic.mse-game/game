@@ -2,6 +2,7 @@
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
+version: 2007-05-05
 
 ############################################################## Functions & filters
 
@@ -123,7 +124,7 @@ init script:
 	is_multicolor := filter_rule(match: "^multicolor") + {input != ""};
 	is_hybrid     := filter_rule(match: "^hybrid")     + {input != ""};
 	is_colorless  := filter_rule(match: "^colorless")  + {input != ""};
-	is_artifact := filter_rule(match: "^artifact") + {input != ""};
+	is_artifact   := filter_rule(match: "^artifact")   + {input != ""};
 	sort_index := {
 		if      card.card_color=="white"        then "A"
 		else if card.card_color=="blue"         then "B"
@@ -139,23 +140,28 @@ init script:
 	
 	# The color of a card
 	is_artifact := filter_rule(match: "(?i)Artifact") + {input != ""};
-	is_land := filter_rule(match: "(?i)Land") + {input != ""};
+	is_land     := filter_rule(match: "(?i)Land")     + {input != ""};
 	card_color := {
 		# usually the color of mana
 		mana_color := mana_to_color(casting_cost);
-		if mana_color == "colorless" and is_land(input: card.super_type)	then land_to_color()
-		else if mana_color == "colorless" and is_artifact(input: card.super_type)	then "artifact"
+		if      mana_color == "colorless" and is_land    (input: card.super_type)  then land_to_color()
+		else if mana_color == "colorless" and is_artifact(input: card.super_type)  then "artifact"
 		else mana_color
 	};
 	
 	# replaces — correctly
 	alternative_cost := replace_rule(match:"—|\\.", replace:"") + replace_rule(match:"[A-Z]", in_context:"<param-[a-z]*><match>", replace: { to_lower() })
-	mana_cost := replace_rule(match:" ", in_context:"\\><match>", replace: "")
+	mana_cost := replace_rule(match:"<param-cost> ", replace: "<param-cost>")
+	add := "" # default is nothing
 	format_cost := {
 		if   substring(begin: 0, end: 13)=="<param-cost>—"   then
-			alternative_cost(input:input)
-		else add + "<sym>" + mana_cost(input:input) + "</sym>"
+			alternative_cost()
+		else add + mana_cost()
 	};
+	format_cost_start := replace_rule(match:"^(<param-cost>)?[ ]?-", replace:"\\1—")
+	# Utilities for keywords
+	has_cc := { card.casting_cost != "" }
+	has_pt := { card.pt           != "" }
 	
 	# Filters for the text box
 	# context in which mana symbols are found
@@ -169,7 +175,7 @@ init script:
 		    |adds?|pay(ed)?[ ](with|using)
 		    )
 		    ([ ]either)?			 # pay either X or Y
-		    ([ ]<sym[^>]*>[XYZWUBRG0-9/|]+</sym[^>]*>[ ](and|or))* # pay X or Y
+		    ([ ]<sym[^>]*>[STXYZWUBRG0-9/|]+</sym[^>]*>[ ](and|or))* # pay X or Y
 		    [ ]<match> 
 		    ([,.)]|$				# (end of word)
 		    |[ ][^ .,]*$			# still typing...
@@ -218,8 +224,11 @@ init script:
 			replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
 		# step 6 : longdash
 		replace_rule(
-			match: "--| - ",
-			replace: "—" ) +
+			match: "--",
+			replace: "—") +
+		replace_rule(
+			match: " - ",
+			replace: " — ")
 		# step 6b : Æ replacement
 		replace_rule(
 			match: "AE",
@@ -228,18 +237,6 @@ init script:
 		replace_rule(
 			match: "s</param-name><s>"
 			replace: "" ) +
-		# step 6d : "." remover for keywords
-		replace_rule(
-			match: ".</param-name><.>"
-			replace: "" ) +
-		# step 6e : p/t detector, needed for suspend
-		tag_contents_rule(
-			tag: "<haspt>"
-			contents: { if card.pt == "" then "" else contents } ) +
-		# step 6f : casting cost detector, needed for suspend
-		tag_contents_rule(## <iscc> by somebloke
-			tag: "<hascc>"
-			contents: { if card.casting_cost == "" then "" else contents } ) +
 		# step 7 : italic reminder text
 		replace_rule(
 		 	match: "[(][^)\n]*[)]?",
@@ -312,8 +309,11 @@ init script:
 			match: "AE",
 			replace: "Æ") +
 		replace_rule(
-			match: "--| - ",
-			replace: "—");
+			match: "--",
+			replace: "—") +
+		replace_rule(
+			match: " - ",
+			replace: " — ");
 	
 	# Move the cursor past the separator in the p/t and type boxes
 	type_over_pt   := replace_rule(match:"/$", replace:"")
@@ -1097,27 +1097,28 @@ keyword mode:
 
 keyword parameter type:
 	name: mana
-	match: [XYZ0-9WUBRGS/]+
+	match: [STXYZ0-9WUBRG/|]+
 # By pichoro and bunnierein
 keyword parameter type:
 	name: cost
-	match: [:space:]?[^(\n]+
+	match: [ ][STXYZ0-9WUBRG/|]*|[-—][^(\n.]*
 	refer script:
 		name: normal
 		description: standard cost
 		script: \{{input}\}
 	refer script:
-		name: add = nothing
-		description: parses dual costs without pay an additional
-		script: \{format_cost({input},add:"")\}
+		name: add nothing for - costs
+		description: When using - to specify a long cost, don't include the - in the reminder text
+		script: \{format_cost({input})\}
 	refer script:
-		name: add = "pay an additional "
-		description: parses dual costs without pay an additional
-		script: \{format_cost({input},add:"pay an additional ")\}
+		name: add "pay an additional " for - costs
+		description: When using - to specify a long cost, words the reminder text as "pay an additional <cost>"
+		script: \{format_cost(add:"pay an additional ",{input})\}
 	refer script:
-		name: add = "pay "
-		description: parses dual costs without pay an additional
-		script: \{format_cost({input},add:"pay ")\}
+		name: add "pay " for - costs
+		description: When using - to specify a long cost, words the reminder text as "pay <cost>"
+		script: \{format_cost(add:"pay ",{input})\}
+	script: format_cost_start()
 keyword parameter type:
 	name: number
 	match: [XYZ0-9]+
@@ -1182,7 +1183,7 @@ keyword:
 	keyword: Cycling
 	match: Cycling<atom-param>cost</atom-param>
 	mode: core
-	reminder: {format_cost(param1,add:"")}, Discard this card: Draw a card.
+	reminder: {format_cost(param1)}, Discard this card: Draw a card.
 keyword:
 	keyword: Trample
 	match: Trample
@@ -1217,7 +1218,7 @@ keyword:
 	keyword: Cumulative upkeep
 	match: Cumulative upkeep<atom-param>cost</atom-param>
 	mode: old
-	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you {format_cost(param1,add:"pay ")} for each age counter on it.
+	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you {format_cost(add:"pay ",param1)} for each age counter on it.
 keyword:
 	keyword: Horsemanship
 	match: Horsemanship
@@ -1242,7 +1243,7 @@ keyword:
 	keyword: Buyback
 	match: Buyback<atom-param>cost</atom-param>
 	mode: expert
-	reminder: You may pay {format_cost(param1,add:"pay ")} in addition to any other costs as you play this spell. If you do, put this card into your hand as it resolves.
+	reminder: You may {format_cost(add:"pay ",param1)} in addition to any other costs as you play this spell. If you do, put this card into your hand as it resolves.
 keyword:
 	keyword: Echo
 	match: Echo<atom-param>cost</atom-param>
@@ -1252,7 +1253,7 @@ keyword:
 	keyword: Cardcycling
 	match: <atom-param>prefix</atom-param>cycling<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {format_cost(param2,add:"")}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
+	reminder: {format_cost(param2)}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
 keyword:
 	keyword: Fading
 	match: Fading <atom-param>number</atom-param>
@@ -1262,7 +1263,7 @@ keyword:
 	keyword: Kicker
 	match: Kicker<atom-param>cost</atom-param>
 	mode: expert
-	reminder: You may {format_cost(param1,add:"pay an additional ")} as you play this spell.
+	reminder: You may {format_cost(add:"pay an additional ",param1)} as you play this spell.
 keyword:
 	keyword: Madness
 	match: Madness<atom-param>cost</atom-param>
@@ -1312,7 +1313,7 @@ keyword:
 	keyword: Equip
 	match: Equip<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {format_cost(param1,add:"")}: Attach to target creature you control. Equip only as a sorcery.
+	reminder: {format_cost(param1)}: Attach to target creature you control. Equip only as a sorcery.
 keyword:
 	keyword: Imprint
 	match: Imprint—<atom-param>action</atom-param>
@@ -1357,7 +1358,7 @@ keyword:
 	keyword: Ninjutsu
 	match: Ninjutsu<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {format_cost(param1,add:"")}, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
+	reminder: {format_cost(param1)}, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
 keyword:
 	keyword: Soulshift
 	match: Soulshift <atom-param>number</atom-param>
@@ -1377,7 +1378,7 @@ keyword:
 	keyword: Transmute
 	match: Transmute<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {format_cost(param1,add:"")}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
+	reminder: {format_cost(param1)}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
 keyword:
 	keyword: Haunt
 	match: Haunt
@@ -1428,7 +1429,7 @@ keyword:
 	keyword: Recover
 	match: Recover<atom-param>cost</atom-param>
 	mode: expert
-	reminder: When a creature is put into your graveyard from play, you may {format_cost(param1,add:"pay ")}. If you do, return this card from your graveyard to your hand. Otherwise, remove this card from the game.
+	reminder: When a creature is put into your graveyard from play, you may {format_cost(add:"pay ",param1)}. If you do, return this card from your graveyard to your hand. Otherwise, remove this card from the game.
 keyword:
 	keyword: Ripple
 	match: Ripple <atom-param>number</atom-param>
@@ -1448,7 +1449,7 @@ keyword:
 	keyword: Suspend
 	match: Suspend <atom-param>number</atom-param>—<atom-param>mana</atom-param>
 	mode: expert
-	reminder: Rather than play this card from your hand,<hascc> you may</hascc> pay {param2} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost.<haspt> It has haste.</haspt>
+	reminder: Rather than play this card from your hand,{if has_cc() then " you may"} pay {param2} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost.{if has_pt() then " It has haste."}
 keyword:
 	keyword: Vanishing
 	match: Vanishing <atom-param>number</atom-param>
@@ -1488,12 +1489,12 @@ keyword:
 	keyword: Transfigure
 	match: Transfigure<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {format_cost(param1,add:"")}, Sacrifice this creature: Search your library for a creature card with the same converted mana cost as this creature and put that card into play. Then shuffle your library. Play only as a sorcery.
+	reminder: {format_cost(param1)}, Sacrifice this creature: Search your library for a creature card with the same converted mana cost as this creature and put that card into play. Then shuffle your library. Play only as a sorcery.
 keyword:
 	keyword: Aura swap
 	match: Aura swap<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {format_cost(param1,add:"")}: Exchange this Aura with an Aura card in your hand.
+	reminder: {format_cost(param1)}: Exchange this Aura with an Aura card in your hand.
 keyword:
 	keyword: Frenzy
 	match: Frenzy <atom-param>number</atom-param>
@@ -1518,4 +1519,4 @@ keyword:
 	keyword: Fortify
 	match: Fortify<atom-param>cost</atom-param>
 	mode: expert
-	reminder: {format_cost(param1,add:"")}: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
+	reminder: {format_cost(param1)}: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
