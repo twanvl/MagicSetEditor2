@@ -100,7 +100,7 @@ void Reader::moveNext() {
 	}
 }
 
-void Reader::readLine() {
+void Reader::readLine(bool in_string) {
 	// fix UTF8 in ascii builds; skip BOM
 	line = decodeUTF8BOM(stream.ReadLine());
 	line_number += 1;
@@ -121,7 +121,16 @@ void Reader::readLine() {
 		indent = -1;
 		return;
 	}
-	key   = cannocial_name_form(trim(line.substr(indent, pos - indent)));
+	key   = line.substr(indent, pos - indent);
+	if (!in_string && starts_with(key, _(" "))) {
+		warning(_("key: '") + key + _("' starts with a space; only use TABs for indentation!"));
+		// try to fix up: 8 spaces is a tab
+		while (starts_with(key, _("        "))) {
+			key = key.substr(8);
+			indent += 1;
+		}
+	}
+	key   = cannocial_name_form(trim(key));
 	value = pos == String::npos ? _("") : trim_left(line.substr(pos+1));
 }
 
@@ -177,7 +186,7 @@ const String& Reader::getValue() {
 			if (!first) multi_line_str += _('\n');
 			first = false;
 			multi_line_str += line.substr(expected_indent); // strip expected indent
-			readLine();
+			readLine(true);
 		}
 		// moveNext(), but without emptying multi_line_str
 		just_opened = false;

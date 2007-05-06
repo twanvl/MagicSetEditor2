@@ -151,7 +151,7 @@ class Reader {
 	/// Move to the next non empty line
 	void moveNext();
 	/// Reads the next line from the input, and stores it in line/key/value/indent
-	void readLine();
+	void readLine(bool in_string = false);
 	
 	/// Return the value on the current line
 	const String& getValue();
