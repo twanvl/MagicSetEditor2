@@ -15,19 +15,6 @@
 // scaling factor to use when drawing resampled text
 const int text_scaling = 4;
 
-// Fills an image with the specified color
-void fill_image(Image& image, const Color& color) {
-	Byte* pos = image.GetData();
-	Byte* end = pos + image.GetWidth() * image.GetHeight() * 3;
-	Byte r = color.Red(), g = color.Green(), b = color.Blue();
-	// fill the image
-	while (pos != end) {
-		*pos++ = r;
-		*pos++ = g;
-		*pos++ = b;
-	}
-}
-
 // Downsamples the red channel of the input image to the alpha channel of the output image
 // img_in must be text_scaling times as large as img_out
 void downsample_to_alpha(Image& img_in, Image& img_out) {

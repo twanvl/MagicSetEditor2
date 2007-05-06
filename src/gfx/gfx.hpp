@@ -189,5 +189,8 @@ Color darken(const Color& c);
 /// A saturated version of a color
 Color saturate(const Color& c, double amount);
 
+/// Fills an image with the specified color
+void fill_image(Image& image, const Color& color);
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

@@ -13,6 +13,8 @@
 #include <render/value/viewer.hpp>
 #include <data/field/color.hpp>
 
+DECLARE_POINTER_TYPE(AlphaMask);
+
 // ----------------------------------------------------------------------------- : ColorValueViewer
 
 /// Viewer that displays a color value
@@ -22,6 +24,12 @@ class ColorValueViewer : public ValueViewer {
 	
 	virtual void draw(RotatedDC& dc);
 	virtual bool containsPoint(const RealPoint& p) const;
+	
+	virtual void onStyleChange();
+	
+  private:
+	mutable AlphaMaskP alpha_mask;
+	void loadMask(const Rotation& rot) const;
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -56,3 +56,16 @@ Color saturate(const Color& c, double amount) {
 		col(static_cast<int>( (b - amount * l) / (1 - amount) ))
 	);
 }
+
+
+void fill_image(Image& image, const Color& color) {
+	Byte* pos = image.GetData();
+	Byte* end = pos + image.GetWidth() * image.GetHeight() * 3;
+	Byte r = color.Red(), g = color.Green(), b = color.Blue();
+	// fill the image
+	while (pos != end) {
+		*pos++ = r;
+		*pos++ = g;
+		*pos++ = b;
+	}
+}
