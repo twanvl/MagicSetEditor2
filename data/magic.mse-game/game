@@ -195,8 +195,10 @@ init script:
 		tag_remove_rule(tag: "<i-auto>")   +
 		# step 2 : reminder text for keywords
 		expand_keywords_rule(
-			default_expand: { contains(match:mode, set.automatic_reminder_text, match:mode) },
-			combine:        { "{keyword}<atom-reminder><i> ({process_english_hints(reminder)})</i></atom-reminder>" }
+			default_expand: { contains(match:mode, set.automatic_reminder_text) },
+			combine:        {
+				if mode == "pseudo" then "<i-auto>{keyword}</i-auto>"
+				else "{keyword}<atom-reminder><i> ({process_english_hints(reminder)})</i></atom-reminder>" }
 			) +
 		# step 3a : expand shortcut words ~ and CARDNAME
 		replace_rule(
@@ -387,8 +389,9 @@ set field:
 	choice: old
 	choice: core
 	choice: expert
+	choice: pseudo
 	choice: custom
-	initial: old, core, expert, custom
+	initial: old, core, expert, pseudo, custom
 	# Convert from older mse versions
 	script:
 		if value = "yes" then "old, core, expert, custom"
@@ -1091,6 +1094,9 @@ keyword mode:
 	name: expert
 	description: Expert level keywords (Cycling, Vanishing, etc.)
 keyword mode:
+	name: pseudo
+	description: Pseudo keyword / named ability (Hellbent, Gating, etc.)
+keyword mode:
 	is default: true
 	name: custom
 	description: Custom keywords
@@ -1520,3 +1526,7 @@ keyword:
 	match: Fortify<atom-param>cost</atom-param>
 	mode: expert
 	reminder: {format_cost(param1)}: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
+keyword:
+	keyword: Hellbent
+	match: Hellbent
+	mode: pseudo
