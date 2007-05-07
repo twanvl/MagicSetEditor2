@@ -230,7 +230,7 @@ init script:
 			replace: "—") +
 		replace_rule(
 			match: " - ",
-			replace: " — ")
+			replace: " — ") +
 		# step 6b : Æ replacement
 		replace_rule(
 			match: "AE",
@@ -244,7 +244,7 @@ init script:
 		 	match: "[(][^)\n]*[)]?",
 			in_context: "(^|[[:space:]])<match>|<atom-keyword><match></",
 		 	replace: "<i-auto>&</i-auto>") +
-		# step 8 : post ( capitalization
+		# step 8 : automatic capitalization
 		replace_rule(
 			match: "[a-z]",
 			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>|—<match>| — <match>",
@@ -1095,7 +1095,7 @@ keyword mode:
 	description: Expert level keywords (Cycling, Vanishing, etc.)
 keyword mode:
 	name: pseudo
-	description: Pseudo keyword / named ability (Hellbent, Gating, etc.)
+	description: Pseudo keyword / named ability (Hellbent, Threshold, etc.)
 keyword mode:
 	is default: true
 	name: custom
@@ -1107,22 +1107,22 @@ keyword parameter type:
 # By pichoro and bunnierein
 keyword parameter type:
 	name: cost
-	match: [ ][STXYZ0-9WUBRG/|]*|[-—][^(\n.]*
+	match: [ ][STXYZ0-9WUBRG/|]*|[-—][^(\n]*
 	refer script:
 		name: normal
 		description: standard cost
 		script: \{{input}\}
 	refer script:
-		name: add nothing for - costs
-		description: When using - to specify a long cost, don't include the - in the reminder text
+		name: add nothing for mana costs
+		description: When using mana only costs, doesn't include anything extra in the reminder text
 		script: \{format_cost({input})\}
 	refer script:
-		name: add "pay an additional " for - costs
-		description: When using - to specify a long cost, words the reminder text as "pay an additional <cost>"
+		name: add "pay an additional " for mana costs
+		description: When using mana only costs, words the reminder text as "pay an additional <cost>"
 		script: \{format_cost(add:"pay an additional ",{input})\}
 	refer script:
-		name: add "pay " for - costs
-		description: When using - to specify a long cost, words the reminder text as "pay <cost>"
+		name: add "pay " for mana costs
+		description: When using mana only costs, words the reminder text as "pay <cost>"
 		script: \{format_cost(add:"pay ",{input})\}
 	script: format_cost_start()
 keyword parameter type:
@@ -1327,7 +1327,7 @@ keyword:
 	reminder: The removed card is imprinted on this artifact.
 keyword:
 	keyword: Modular
-	match: Modular  <atom-param>number</atom-param>
+	match: Modular <atom-param>number</atom-param>
 	mode: expert
 	reminder: This comes into play with {english_number_a(param1)} +1/+1 counter(s) on it. When it’s put into a graveyard, you may put its +1/+1 counters on target artifact creature.
 keyword:
@@ -1340,6 +1340,7 @@ keyword:
 	match: Sunburst
 	mode: expert
 	reminder: This comes into play with a +1/+1 counter on it for each color of mana used to pay its cost. If it is not a creature, use charge counters instead.
+#Two versions of splice needed because if there's no separator, the program doesn't know when to switch from param1 to param2.
 keyword:
 	keyword: Splice (Mana Cost)
 	match: Splice onto <atom-param>name</atom-param> <atom-param>mana</atom-param>
@@ -1400,7 +1401,6 @@ keyword:
 	match: Replicate<atom-param>cost</atom-param>
 	mode: expert
 	reminder: When you play this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.
-#Denimwalk was a casualty of my fixing landwalk to work right
 keyword:
 	keyword: Denimwalk
 	match: Denimwalk
@@ -1420,7 +1420,7 @@ keyword:
 	keyword: Dredge
 	match: Dredge <atom-param>number</atom-param>
 	mode: expert
-	reminder: As long as you have at least {english_number(param1)} card(s) in your library, if you would draw a card, you may instead put exactly {param1} card(s) from the top of your library into your graveyard and return this card from your graveyard to your hand.
+	reminder: As long as you have at least {english_number(param1)} card(s) in your library, if you would draw a card, you may instead put exactly {english_number(param1)} card(s) from the top of your library into your graveyard and return this card from your graveyard to your hand.
 keyword:
 	keyword: Graft
 	match: Graft <atom-param>number</atom-param>
@@ -1455,7 +1455,7 @@ keyword:
 	keyword: Suspend
 	match: Suspend <atom-param>number</atom-param>—<atom-param>mana</atom-param>
 	mode: expert
-	reminder: Rather than play this card from your hand,{if has_cc() then " you may"} pay {param2} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost.{if has_pt() then " It has haste."}
+	reminder: Rather than play this card from your hand,{if has_cc() then " you may" else ""} pay {param2} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost.{if has_pt() then " It has haste." else ""}
 keyword:
 	keyword: Vanishing
 	match: Vanishing <atom-param>number</atom-param>
@@ -1522,11 +1522,31 @@ keyword:
 	mode: expert
 	reminder: This permanent can't be the target of spells or abilities.
 keyword:
+	keyword: Hellbent
+	match: Hellbent
+	mode: pseudo
+keyword:
+	keyword: Channel
+	match: Channel
+	mode: pseudo
+keyword:
+	keyword: Sweep
+	match: Sweep
+	mode: pseudo
+keyword:
+	keyword: Threshold
+	match: Threshold
+	mode: pseudo
+keyword:
+	keyword: Radiance
+	match: Radiance
+	mode: pseudo
+keyword:
+	keyword: Gotcha
+	match: Gotcha
+	mode: pseudo
+keyword:
 	keyword: Fortify
 	match: Fortify<atom-param>cost</atom-param>
 	mode: expert
 	reminder: {format_cost(param1)}: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
-keyword:
-	keyword: Hellbent
-	match: Hellbent
-	mode: pseudo

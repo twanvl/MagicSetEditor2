@@ -17,46 +17,6 @@ symbol:
 	code: T
 	image: mana_t.png
 symbol:
-	code: W/U
-	image: mana_wu.png
-	image font size: 145
-symbol:
-	code: U/B
-	image: mana_ub.png
-	image font size: 145
-symbol:
-	code: B/R
-	image: mana_br.png
-	image font size: 145
-symbol:
-	code: R/G
-	image: mana_rg.png
-	image font size: 145
-symbol:
-	code: G/W
-	image: mana_gw.png
-	image font size: 145
-symbol:
-	code: W/B
-	image: mana_wb.png
-	image font size: 145
-symbol:
-	code: U/R
-	image: mana_ur.png
-	image font size: 145
-symbol:
-	code: B/G
-	image: mana_bg.png
-	image font size: 145
-symbol:
-	code: R/W
-	image: mana_rw.png
-	image font size: 145
-symbol:
-	code: G/U
-	image: mana_gu.png
-	image font size: 145
-symbol:
 	code: B/G/W
 	image: mana_bgw.png
 	image font size: 145
@@ -95,6 +55,46 @@ symbol:
 symbol:
 	code: W/U/B
 	image: mana_wub.png
+	image font size: 145
+symbol:
+	code: W/U
+	image: mana_wu.png
+	image font size: 145
+symbol:
+	code: U/B
+	image: mana_ub.png
+	image font size: 145
+symbol:
+	code: B/R
+	image: mana_br.png
+	image font size: 145
+symbol:
+	code: R/G
+	image: mana_rg.png
+	image font size: 145
+symbol:
+	code: G/W
+	image: mana_gw.png
+	image font size: 145
+symbol:
+	code: W/B
+	image: mana_wb.png
+	image font size: 145
+symbol:
+	code: U/R
+	image: mana_ur.png
+	image font size: 145
+symbol:
+	code: B/G
+	image: mana_bg.png
+	image font size: 145
+symbol:
+	code: R/W
+	image: mana_rw.png
+	image font size: 145
+symbol:
+	code: G/U
+	image: mana_gu.png
 	image font size: 145
 symbol:
 	code: 1/2

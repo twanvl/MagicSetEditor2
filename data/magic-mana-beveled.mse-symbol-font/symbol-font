@@ -16,36 +16,6 @@ symbol:
 	code: T
 	image: script: mana_t()
 symbol:
-	code: W/U
-	image: mana_wu.png
-symbol:
-	code: U/B
-	image: mana_ub.png
-symbol:
-	code: B/R
-	image: mana_br.png
-symbol:
-	code: R/G
-	image: mana_rg.png
-symbol:
-	code: G/W
-	image: mana_gw.png
-symbol:
-	code: W/B
-	image: mana_wb.png
-symbol:
-	code: U/R
-	image: mana_ur.png
-symbol:
-	code: B/G
-	image: mana_bg.png
-symbol:
-	code: R/W
-	image: mana_rw.png
-symbol:
-	code: G/U
-	image: mana_gu.png
-symbol:
 	code: B/G/W
 	image: mana_bgw.png
 symbol:
@@ -75,6 +45,36 @@ symbol:
 symbol:
 	code: W/U/B
 	image: mana_wub.png
+symbol:
+	code: W/U
+	image: mana_wu.png
+symbol:
+	code: U/B
+	image: mana_ub.png
+symbol:
+	code: B/R
+	image: mana_br.png
+symbol:
+	code: R/G
+	image: mana_rg.png
+symbol:
+	code: G/W
+	image: mana_gw.png
+symbol:
+	code: W/B
+	image: mana_wb.png
+symbol:
+	code: U/R
+	image: mana_ur.png
+symbol:
+	code: B/G
+	image: mana_bg.png
+symbol:
+	code: R/W
+	image: mana_rw.png
+symbol:
+	code: G/U
+	image: mana_gu.png
 symbol:
 	code: 1/2
 	image: mana_1_half.png
