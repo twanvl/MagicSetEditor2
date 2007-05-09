@@ -3,6 +3,7 @@ game: vs
 short name: Promotional
 full name: Extended Art Promo
 icon: card-sample.png
+position hint: 2
 
 card width: 375
 card height: 523

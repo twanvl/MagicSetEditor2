@@ -9,6 +9,7 @@ game: magic
 short name: Old style
 full name: Before 8th edition
 icon: card-sample.png
+position hint: 101
 
 card width: 312
 card height: 444

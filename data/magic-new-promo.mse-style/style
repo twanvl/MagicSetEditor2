@@ -3,6 +3,7 @@ game: magic
 short name: Promotional
 full name: Large image
 icon: card-sample.png
+position hint: 004
 
 card width: 375
 card height: 523
@@ -13,6 +14,7 @@ card dpi: 150
 init script:
 	# Load blend scripts for hybrids/multicolors
 	include file: magic-blends.mse-include/blend-scripts
+	include file: magic-default-image.mse-include/scripts
 	
 	# Should hybrids have a grey name?
 	mask_hybrid_with_land := { styling.grey_hybrid_name }
@@ -162,6 +164,7 @@ card style:
 		width:	311
 		height:	408
 		z index: 1
+		default: {default_image(card.card_color)}
 
 	############################# Card type
 

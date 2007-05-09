@@ -36,7 +36,7 @@ class ImageValueViewer : public ValueViewer {
 	void loadMask(const Rotation& rot) const;
 	
 	/// Generate a placeholder image
-	static Bitmap imagePlaceholder(const Rotation& rot, UInt w, UInt h, bool editing);
+	static Bitmap imagePlaceholder(const Rotation& rot, UInt w, UInt h, const Image& background, bool editing);
 };
 
 // ----------------------------------------------------------------------------- : EOF

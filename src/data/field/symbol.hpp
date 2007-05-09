@@ -14,6 +14,7 @@
 #include <script/scriptable.hpp>
 
 DECLARE_POINTER_TYPE(SymbolFilter);
+DECLARE_POINTER_TYPE(SymbolVariation);
 
 // ----------------------------------------------------------------------------- : SymbolField
 
@@ -39,18 +40,16 @@ class SymbolStyle : public Style {
 	inline SymbolStyle(const SymbolFieldP& field) : Style(field) {}
 	DECLARE_STYLE_TYPE(Symbol);
 	
-	class Variation;
-	typedef shared_ptr<Variation> VariationP;
-	vector<VariationP> variations; ///< Different variantions of the same symbol
+	vector<SymbolVariationP> variations; ///< Different variantions of the same symbol
 	
   private:
 	DECLARE_REFLECTION();
 };
 
 /// Styling for a symbol variation, defines color, border, etc.
-class SymbolStyle::Variation {
+class SymbolVariation {
   public:
-	Variation();
+	SymbolVariation();
 	String        name;				///< Name of this variation
 	SymbolFilterP filter;			///< Filter to color the symbol
 	double        border_radius;	///< Border radius for the symbol
@@ -66,7 +65,8 @@ class SymbolValue : public Value {
 	DECLARE_HAS_FIELD(Symbol)
 	
 	typedef FileName ValueType;
-	ValueType filename; ///< Filename of the symbol (in the current package)
+	ValueType filename;    ///< Filename of the symbol (in the current package)
+	Age       last_update; ///< When was the symbol last changed?
 	
 	virtual String toString() const;
 	

@@ -13,12 +13,59 @@
 #include <util/age.hpp>
 #include <util/dynamic_arg.hpp>
 #include <script/scriptable.hpp>
-#include <gfx/gfx.hpp>
+//%%#include <gfx/gfx.hpp>
+#include <gfx/generated_image.hpp>
 
 class Package;
-DECLARE_INTRUSIVE_POINTER_TYPE(ScriptImage);
+DECLARE_INTRUSIVE_POINTER_TYPE(ScriptImage); //%% OLD
+DECLARE_INTRUSIVE_POINTER_TYPE(GeneratedImage); //%% OLD
 
 // ----------------------------------------------------------------------------- : ScriptableImage
+
+/// An image that can also be scripted
+/** Differs from Scriptable<Image> in that:
+ *   - A script is always used
+ *   - Age is checked, chached images are used if possible
+ *   - The image can be scaled
+ */
+class ScriptableImage2 {
+  public:
+	inline ScriptableImage2() {}
+	inline ScriptableImage2(const String& script) : script(script) {}
+	
+	/// Is there an image set?
+	inline bool isScripted() const { return script; }
+	/// Is there an image generator available?
+	inline bool isReady()    const { return value; }
+	
+	/// Generate an image.
+	Image generate(const GeneratedImage::Options& options, bool cache = false) const;
+	/// How should images be combined with the background?
+	ImageCombine combine() const;
+	
+	/// Update the script, returns true if the value has changed
+	bool update(Context& ctx);
+	
+	inline void initDependencies(Context& ctx, const Dependency& dep) const {
+		script.initDependencies(ctx, dep);
+	}
+	
+  private:
+	OptionalScript  script;		///< The script, not really optional
+	GeneratedImageP value;		///< The image generator
+	mutable Image   cached;		///< The cached actual image
+	
+	DECLARE_REFLECTION();
+};
+
+/// Missing for now
+inline ScriptValueP to_script(const ScriptableImage2&) { return script_nil; }
+
+/// Convert a script value to a GeneratedImageP
+GeneratedImageP image_from_script(const ScriptValueP& value);
+
+// ----------------------------------------------------------------------------- : ScriptableImage
+//%% OLD
 
 DECLARE_DYNAMIC_ARG(Package*, load_images_from);
 

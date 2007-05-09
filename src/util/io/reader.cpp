@@ -122,7 +122,7 @@ void Reader::readLine(bool in_string) {
 		return;
 	}
 	key   = line.substr(indent, pos - indent);
-	if (!in_string && starts_with(key, _(" "))) {
+	if (!ignore_invalid && !in_string && starts_with(key, _(" "))) {
 		warning(_("key: '") + key + _("' starts with a space; only use TABs for indentation!"));
 		// try to fix up: 8 spaces is a tab
 		while (starts_with(key, _("        "))) {

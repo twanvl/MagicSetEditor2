@@ -38,6 +38,7 @@ IMPLEMENT_REFLECTION_ENUM(ImageCombine) {
 	VALUE_N("or",			COMBINE_OR);
 	VALUE_N("xor",			COMBINE_XOR);
 	VALUE_N("shadow",		COMBINE_SHADOW);
+	VALUE_N("symmetric overlay",COMBINE_SYMMETRIC_OVERLAY);
 }
 
 // ----------------------------------------------------------------------------- : Combining functions
@@ -81,6 +82,7 @@ COMBINE_FUN(COMBINE_AND,		a & b												)
 COMBINE_FUN(COMBINE_OR,			a | b												)
 COMBINE_FUN(COMBINE_XOR,		a ^ b												)
 COMBINE_FUN(COMBINE_SHADOW,		(b * a * a) / (255 * 255)							)
+COMBINE_FUN(COMBINE_SYMMETRIC_OVERLAY,	(Combine<COMBINE_OVERLAY>::f(a,b) + Combine<COMBINE_OVERLAY>::f(b,a)) / 2 )
 
 // ----------------------------------------------------------------------------- : Combining
 
@@ -131,6 +133,7 @@ void combine_image(Image& a, const Image& b, ImageCombine combine) {
 		DISPATCH(COMBINE_OR);
 		DISPATCH(COMBINE_XOR);
 		DISPATCH(COMBINE_SHADOW);
+		DISPATCH(COMBINE_SYMMETRIC_OVERLAY);
 	}
 }
 

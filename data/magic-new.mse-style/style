@@ -3,6 +3,7 @@ game: magic
 short name: Modern style
 full name: After 8th edition
 icon: card-sample.png
+position hint: 001
 
 version: 2007-05-05
 depends on:
@@ -21,6 +22,7 @@ card dpi: 150
 init script:
 	# Load blend scripts for hybrids/multicolors
 	include file: magic-blends.mse-include/blend-scripts
+	include file: magic-default-image.mse-include/scripts
 	
 	# Should hybrids have a grey name?
 	mask_hybrid_with_land := { styling.grey_hybrid_name }
@@ -52,6 +54,7 @@ init script:
 		if white_font_colors(input: card.card_color) != "" then rgb(255,255,255)
 		else rgb(0,0,0)
 	}
+	
 	
 ############################################################## Extra style options
 
@@ -125,6 +128,7 @@ card style:
 		right width:  17
 		top width:    17
 		bottom width: 18
+		#mask: border-mask.png
 		z index: -1
 	card color:
 		left:	0
@@ -179,6 +183,7 @@ card style:
 		width:	311
 		height:	228
 		z index: 1
+		default: {default_image(card.card_color)}
 
 	############################# Card type
 

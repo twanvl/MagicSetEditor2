@@ -111,6 +111,41 @@ inline shared_ptr<T> new_shared9(const A0& a0, const A1& a1, const A2& a2, const
 	inline intrusive_ptr<T> new_intrusive2(const A0& a0, const A1& a1) {
 		return intrusive_ptr<T>(new T(a0, a1));
 	}
+	/// Allocate a new intrusive-pointed object, given three arguments to pass to the ctor of T
+	template <typename T, typename A0, typename A1, typename A2>
+	inline intrusive_ptr<T> new_intrusive3(const A0& a0, const A1& a1, const A2& a2) {
+		return intrusive_ptr<T>(new T(a0, a1, a2));
+	}
+	/// Allocate a new intrusive-pointed object, given four arguments to pass to the ctor of T
+	template <typename T, typename A0, typename A1, typename A2, typename A3>
+	inline intrusive_ptr<T> new_intrusive4(const A0& a0, const A1& a1, const A2& a2, const A3& a3) {
+		return intrusive_ptr<T>(new T(a0, a1, a2, a3));
+	}
+	/// Allocate a new intrusive-pointed object, given five arguments to pass to the ctor of T
+	template <typename T, typename A0, typename A1, typename A2, typename A3, typename A4>
+	inline intrusive_ptr<T> new_intrusive5(const A0& a0, const A1& a1, const A2& a2, const A3& a3, const A4& a4) {
+		return intrusive_ptr<T>(new T(a0, a1, a2, a3, a4));
+	}
+	/// Allocate a new intrusive-pointed object, given six arguments to pass to the ctor of T
+	template <typename T, typename A0, typename A1, typename A2, typename A3, typename A4, typename A5>
+	inline intrusive_ptr<T> new_intrusive6(const A0& a0, const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5) {
+		return intrusive_ptr<T>(new T(a0, a1, a2, a3, a4, a5));
+	}
+	/// Allocate a new intrusive-pointed object, given seven arguments to pass to the ctor of T
+	template <typename T, typename A0, typename A1, typename A2, typename A3, typename A4, typename A5, typename A6>
+	inline intrusive_ptr<T> new_intrusive7(const A0& a0, const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5, const A6& a6) {
+		return intrusive_ptr<T>(new T(a0, a1, a2, a3, a4, a5, a6));
+	}
+	/// Allocate a new intrusive-pointed object, given eight arguments to pass to the ctor of T
+	template <typename T, typename A0, typename A1, typename A2, typename A3, typename A4, typename A5, typename A6, typename A7>
+	inline intrusive_ptr<T> new_intrusive8(const A0& a0, const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5, const A6& a6, const A7& a7) {
+		return intrusive_ptr<T>(new T(a0, a1, a2, a3, a4, a5, a6, a7));
+	}
+	/// Allocate a new intrusive-pointed object, given nine arguments to pass to the ctor of T
+	template <typename T, typename A0, typename A1, typename A2, typename A3, typename A4, typename A5, typename A6, typename A7, typename A8>
+	inline intrusive_ptr<T> new_intrusive9(const A0& a0, const A1& a1, const A2& a2, const A3& a3, const A4& a4, const A5& a5, const A6& a6, const A7& a7, const A8& a8) {
+		return intrusive_ptr<T>(new T(a0, a1, a2, a3, a4, a5, a6, a7, a8));
+	}
 	
 	/// Base class for objects wishing to use intrusive_ptrs
 	class IntrusivePtrBase {
@@ -144,6 +179,12 @@ inline shared_ptr<T> new_shared9(const A0& a0, const A1& a1, const A2& a2, const
 	#define new_intrusive1 new_shared1
 	#define new_intrusive2 new_shared2
 	#define new_intrusive3 new_shared3
+	#define new_intrusive4 new_shared4
+	#define new_intrusive5 new_shared5
+	#define new_intrusive6 new_shared6
+	#define new_intrusive7 new_shared7
+	#define new_intrusive8 new_shared8
+	#define new_intrusive9 new_shared9
 	
 	class IntrusivePtrBase {
 	  public:

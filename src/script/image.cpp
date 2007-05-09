@@ -14,6 +14,58 @@
 
 IMPLEMENT_DYNAMIC_ARG(Package*, load_images_from, nullptr);
 
+// ----------------------------------------------------------------------------- : Utility
+
+// convert any script value to a GeneratedImageP
+GeneratedImageP image_from_script(const ScriptValueP& value) {
+	if (value->type() == SCRIPT_STRING) {
+		return new_intrusive1<PackagedImage>(value->toString());
+	} else {
+		GeneratedImageP img = dynamic_pointer_cast<GeneratedImage>(value);
+		if (!img) throw ScriptError(_ERROR_2_("can't convert", value->typeName(), _TYPE_("image")));
+		return img;
+	}
+}
+
+// ----------------------------------------------------------------------------- : ScriptableImage2
+
+Image ScriptableImage2::generate(const GeneratedImage::Options& options, bool cache) const {
+	if (!isReady()) {
+		// error, return blank image
+		Image i(1,1);
+		i.InitAlpha();
+		i.SetAlpha(0,0,0);
+		return i;
+	}
+	if (cached.Ok() && cached.GetWidth() == options.width && cached.GetHeight() == options.height) {
+		return cached;
+	}
+	Image img = value->generate(options);
+	if (cache) cached = img;
+	return img;
+}
+
+ImageCombine ScriptableImage2::combine() const {
+	if (!isReady()) return COMBINE_NORMAL;
+	return value->combine();
+}
+
+bool ScriptableImage2::update(Context& ctx) {
+	if (!isScripted()) return false;
+	GeneratedImageP new_value = image_from_script(script.invoke(ctx));
+	if (!new_value || !value || *new_value != *value) {
+		value = new_value;
+		return true;
+	} else {
+		return false;
+	}
+}
+
+
+
+
+
+
 // ----------------------------------------------------------------------------- : ScriptImage
 
 ScriptType ScriptImage::type() const { return SCRIPT_IMAGE; }
@@ -158,5 +210,33 @@ template <> void Writer::handle(const ScriptableImage& s) {
 	handle(s.script.unparsed);
 }
 template <> void GetDefaultMember::handle(const ScriptableImage& s) {
+	handle(s.script.unparsed);
+}
+
+
+
+
+// ----------------------------------------------------------------------------- : Reflection
+
+// we need some custom io, because the behaviour is different for each of Reader/Writer/GetMember
+
+template <> void Reader::handle(ScriptableImage2& s) {
+	handle(s.script.unparsed);
+	if (starts_with(s.script.unparsed, _("script:"))) {
+		s.script.unparsed = s.script.unparsed.substr(7);
+		s.script.parse(*this);
+	} else if (s.script.unparsed.find_first_of('{') != String::npos) {
+		s.script.parse(*this, true);
+	} else {
+		// script is a constant function
+		s.script.script = new_intrusive<Script>();
+		s.script.script->addInstruction(I_PUSH_CONST, s.script.unparsed);
+		s.script.script->addInstruction(I_RET);
+	}
+}
+template <> void Writer::handle(const ScriptableImage2& s) {
+	handle(s.script.unparsed);
+}
+template <> void GetDefaultMember::handle(const ScriptableImage2& s) {
 	handle(s.script.unparsed);
 }

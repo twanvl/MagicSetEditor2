@@ -3,6 +3,7 @@ short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
 version: 2007-05-05
+position hint: 1
 
 ############################################################## Functions & filters
 
@@ -618,39 +619,7 @@ card field:
 	type: choice
 	name: watermark
 	icon: stats/watermark.png
-	choice: none
-	choice:
-		name: mana symbol
-		choice: white
-		choice: blue
-		choice: black
-		choice: red
-		choice: green
-		choice: snow
-	choice:
-		name: guild symbol
-		choice: Azorius Senate (W/U)
-		choice: House Dimir (U/B)
-		choice: Cult of Rakdos (B/R)
-		choice: Gruul Clans (R/G)
-		choice: Selesnya Conclave (G/W)
-		choice: Orzhov Syndicate (W/B)
-		choice: The Izzet (U/R)
-		choice: The Golgari (B/G)
-		choice: Boros Legion (R/W)
-		choice: The Simic (G/U)
-	choice: 
-		name: xander hybrid mana
-		choice: B/R
-		choice: U/B
-		choice: B/G
-		choice: R/G
-		choice: G/U
-		choice: U/R
-		choice: W/B
-		choice: G/W
-		choice: R/W
-		choice: W/U
+	include file: magic-watermarks.mse-include/watermark-names
 	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, or a guild symbol
 
 ############################# PT
@@ -669,6 +638,7 @@ card field:
 	name: ptsymbols
 	choice: shieldsword
 	editable: false
+	save value: false
 	show statistics: false
 card field:
 	type: text
@@ -848,39 +818,7 @@ card field:
 card field:
 	type: choice
 	name: watermark 2
-	choice: none
-	choice:
-		name: mana symbol
-		choice: white
-		choice: blue
-		choice: black
-		choice: red
-		choice: green
-		choice: snow
-	choice: 
-		name: xander hybrid mana
-		choice: B/R
-		choice: U/B
-		choice: B/G
-		choice: R/G
-		choice: G/U
-		choice: U/R
-		choice: W/B
-		choice: G/W
-		choice: R/W
-		choice: W/U
-	choice:
-		name: guild symbol
-		choice: Azorius Senate (W/U)
-		choice: House Dimir (U/B)
-		choice: Cult of Rakdos (B/R)
-		choice: Gruul Clans (R/G)
-		choice: Selesnya Conclave (G/W)
-		choice: Orzhov Syndicate (W/B)
-		choice: The Izzet (U/R)
-		choice: The Golgari (B/G)
-		choice: Boros Legion (R/W)
-		choice: The Simic (G/U)
+	include file: magic-watermarks.mse-include/watermark-names
 	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, a special symbol, or a guild symbol
 card field:
 	type: text
@@ -899,6 +837,7 @@ card field:
 	name: ptsymbols 2
 	choice: shieldsword
 	editable: false
+	save value: false
 	show statistics: false
 card field:
 	type: text
@@ -1053,25 +992,36 @@ statistics dimension:
 
 
 
+############################################################## Add multiple cards
+
+#set template:
+#	name: Base set (??? cards)
+#set template:
+#	name: Expansion set (134 cards)
+#set template:
+#	name: 5 color cycle
+#	field: rarity
+#set template:
+#	name: 3 rarities cycle
+
 ############################################################## Card packs
 
-#pack:
-#	name: Base set
-#	pack type: 
-#pack:
-#	name: 
-#pack:
-#	name: Booster
-#	pack type: random
-#	card type:
-#		amount: 1
-#		filter: rarity = "rare"
-#	card type:
-#		amount: 3
-#		filter: rarity = "uncommon"
-#	card type:
-#		amount: 11
-#		filter: rarity = "common"
+pack type:
+	name: Starter pack
+pack type:
+	name: Booster pack
+	card type:
+		name: Rare
+		amount: 1
+		filter: card.rarity = "rare"
+	card type:
+		name: Uncommon
+		amount: 3
+		filter: card.rarity = "uncommon"
+	card type:
+		name: Common
+		amount: 11
+		filter: card.rarity = "common"
 
 
 

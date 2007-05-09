@@ -496,6 +496,7 @@ int blur_pixel(Byte* in, int x, int y, int width, int height) {
 	       ) / 6;
 }
 
+// TODO: move me
 void blur_image(const Image& img_in, Image& img_out) {
 	int width = img_in.GetWidth(), height = img_in.GetHeight();
 	assert(img_out.GetWidth() == width && img_out.GetHeight() == height);

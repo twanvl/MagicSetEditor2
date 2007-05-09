@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <data/field.hpp>
 #include <script/scriptable.hpp>
+#include <script/image.hpp>
 
 // ----------------------------------------------------------------------------- : ImageField
 
@@ -38,6 +39,7 @@ class ImageStyle : public Style {
 	DECLARE_STYLE_TYPE(Image);
 	
 	Scriptable<String> mask_filename; ///< Filename for a mask image
+	ScriptableImage2    default_image; ///< Placeholder
 	
 	virtual bool update(Context&);
 	
@@ -53,7 +55,8 @@ class ImageValue : public Value {
 	inline ImageValue(const ImageFieldP& field) : Value(field) {}
 	
 	typedef FileName ValueType;
-	ValueType filename; ///< Filename of the image (in the current package), or ""
+	ValueType filename;    ///< Filename of the image (in the current package), or ""
+	Age       last_update; ///< When was the image last changed?
 	
 	virtual String toString() const;
 	

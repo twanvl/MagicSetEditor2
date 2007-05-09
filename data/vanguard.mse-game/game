@@ -2,6 +2,7 @@
 short name: Vanguard
 full name: Magic Vanguard
 icon: card-sample.png
+position hint: 2
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game

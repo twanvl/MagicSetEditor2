@@ -65,6 +65,7 @@ class PackageList : public GalleryList {
 		PackagedP package;
 		Bitmap    image;
 	};
+	struct ComparePackagePosHint;
 	/// The displayed packages
 	vector<PackageData> packages;
 };

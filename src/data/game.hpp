@@ -20,6 +20,7 @@ DECLARE_POINTER_TYPE(Style);
 DECLARE_POINTER_TYPE(Game);
 DECLARE_POINTER_TYPE(StatsDimension);
 DECLARE_POINTER_TYPE(StatsCategory);
+DECLARE_POINTER_TYPE(PackType);
 DECLARE_POINTER_TYPE(KeywordParam);
 DECLARE_POINTER_TYPE(KeywordMode);
 DECLARE_POINTER_TYPE(Keyword);
@@ -40,6 +41,7 @@ class Game : public Packaged {
 	vector<FieldP>          card_fields;            ///< Fields on each card
 	vector<StatsDimensionP> statistics_dimensions;  ///< (Additional) statistics dimensions
 	vector<StatsCategoryP>  statistics_categories;  ///< (Additional) statistics categories
+	vector<PackTypeP>       pack_types;				///< Types of random card packs to generate
 
 	bool                    has_keywords;           ///< Does this game use keywords?
 	vector<KeywordParamP>   keyword_parameter_types;///< Types of keyword parameters

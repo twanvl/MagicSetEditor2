@@ -3,6 +3,7 @@ game: magic
 full name: FPM's Flip Magic
 short name: FPM Flip
 icon: card-sample.png
+position hint: 402
 
 card width: 375
 card height: 523

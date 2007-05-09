@@ -412,12 +412,14 @@ IMPLEMENT_REFLECTION(Packaged) {
 	REFLECT(short_name);
 	REFLECT(full_name);
 	REFLECT_N("icon", icon_filename);
+	REFLECT(position_hint);
 	REFLECT(version);
 	REFLECT_N("depends ons", dependencies); // hack for singular_form
 }
 
 Packaged::Packaged()
-	: fully_loaded(true)
+	: position_hint(100000)
+	, fully_loaded(true)
 {}
 
 InputStreamP Packaged::openIconFile() {

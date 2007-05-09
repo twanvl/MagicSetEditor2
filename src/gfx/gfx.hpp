@@ -48,7 +48,7 @@ void sharp_resample_and_clip(const Image& img_in, Image& img_out, wxRect rect, i
  *  rect    = rectangle to draw in
  *  (wc,hc) = the corner where drawing should begin, (0,0) for top-left, (1,1) for bottom-right
  */
-void draw_resampled_text(DC& dc, const RealRect& rect, int wc, int hc, int angle, const String& text);
+void draw_resampled_text(DC& dc, const RealRect& rect, int wc, int hc, int angle, const String& text, int blur_radius = 0, int repeat = 1);
 
 // scaling factor to use when drawing resampled text
 extern const int text_scaling;
@@ -107,6 +107,7 @@ enum ImageCombine
 ,	COMBINE_OR
 ,	COMBINE_XOR
 ,	COMBINE_SHADOW
+,	COMBINE_SYMMETRIC_OVERLAY
 };
 
 /// Combine image b onto image a using some combining function.

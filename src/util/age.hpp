@@ -37,6 +37,8 @@ class Age {
 	
 	/// Compare two ages, smaller means earlier
 	inline bool operator < (Age a) const { return age < a.age; }
+	/// Compare two ages
+	inline bool operator == (Age a) const { return age == a.age; }
 	
 	/// A number corresponding to the age
 	inline AtomicIntEquiv get() const { return age; }

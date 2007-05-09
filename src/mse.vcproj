@@ -1691,6 +1691,12 @@
 					RelativePath=".\data\locale.hpp">
 				</File>
 				<File
+					RelativePath=".\data\pack.cpp">
+				</File>
+				<File
+					RelativePath=".\data\pack.hpp">
+				</File>
+				<File
 					RelativePath=".\data\statistics.cpp">
 				</File>
 				<File
@@ -2128,6 +2134,12 @@
 						Name="VCCLCompilerTool"
 						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\gfx\generated_image.cpp">
+			</File>
+			<File
+				RelativePath=".\gfx\generated_image.hpp">
 			</File>
 			<File
 				RelativePath=".\gfx\gfx.hpp">
@@ -2939,10 +2951,10 @@
 			RelativePath="..\conversion-todo.txt">
 		</File>
 		<File
-			RelativePath="..\data\en.mse-locale\locale">
+			RelativePath="..\data\nl.mse-locale\locale">
 		</File>
 		<File
-			RelativePath="..\data\nl.mse-locale\locale">
+			RelativePath="..\data\en.mse-locale\locale">
 		</File>
 		<File
 			RelativePath=".\main.cpp">

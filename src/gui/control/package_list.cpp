@@ -44,6 +44,16 @@ void PackageList::drawItem(DC& dc, int x, int y, size_t item, bool selected) {
 	dc.DrawText(d.package->full_name, (int)text_pos.x, (int)text_pos.y + 130);
 }
 
+struct PackageList::ComparePackagePosHint {
+	bool operator () (const PackageData& a, const PackageData& b) {
+		// use position_hints to determine order
+		if (a.package->position_hint < b.package->position_hint) return true;
+		if (a.package->position_hint > b.package->position_hint) return false;
+		// ensure a deterministic order: use the names
+		return a.package->name() < b.package->name();
+	}
+};
+
 void PackageList::showData(const String& pattern) {
 	// clear
 	packages.clear();
@@ -75,6 +85,8 @@ void PackageList::showData(const String& pattern) {
 		// Next package
 		f = wxFindNextFile();
 	}
+	// sort list
+	sort(packages.begin(), packages.end(), ComparePackagePosHint());
 	// update list
 	update();
 }

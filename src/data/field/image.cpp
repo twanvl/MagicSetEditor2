@@ -26,11 +26,13 @@ IMPLEMENT_REFLECTION(ImageField) {
 IMPLEMENT_REFLECTION(ImageStyle) {
 	REFLECT_BASE(Style);
 	REFLECT_N("mask", mask_filename);
+	REFLECT_N("default", default_image);
 }
 
 bool ImageStyle::update(Context& ctx) {
 	return Style       ::update(ctx)
-	     | mask_filename.update(ctx);
+	     | mask_filename.update(ctx)
+	     | default_image.update(ctx);
 }
 
 // ----------------------------------------------------------------------------- : ImageValue

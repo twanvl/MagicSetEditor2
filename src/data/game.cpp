@@ -10,6 +10,7 @@
 #include <data/field.hpp>
 #include <data/keyword.hpp>
 #include <data/statistics.hpp>
+#include <data/pack.hpp>
 #include <util/io/package_manager.hpp>
 #include <script/script.hpp>
 
@@ -47,6 +48,7 @@ IMPLEMENT_REFLECTION(Game) {
 	REFLECT(card_fields);
 	REFLECT(statistics_dimensions);
 	REFLECT(statistics_categories);
+	REFLECT(pack_types);
 	REFLECT(has_keywords);
 	REFLECT(keyword_modes);
 	REFLECT(keyword_parameter_types);

@@ -529,6 +529,7 @@ type:
 	string:			string
 	boolean:		boolean
 	color:			color
+	image:			image
 	nil:			nothing
 	
 	# Symbol editor shapes

@@ -3,6 +3,7 @@ game: magic
 short name: Split Cards
 full name: Modern split cards
 icon: card-sample.png
+position hint: 003
 
 card width: 523
 card height: 375
@@ -16,6 +17,7 @@ card dpi: 150
 init script:
 	# Load blend scripts for hybrids/multicolors
 	include file: magic-blends.mse-include/blend-scripts
+	include file: magic-default-image.mse-include/scripts
 		
 	# Should hybrids have a grey name?
 	mask_hybrid_with_land := { styling.grey_hybrid_name }
@@ -185,6 +187,7 @@ card style:
 		width:	216
 		height:	159
 		z index: 1
+		default: {default_image(card.card_color)}
 
 	image 2:
 		left:	279
@@ -192,6 +195,7 @@ card style:
 		width:	216
 		height:	159
 		z index: 1
+		default: {default_image(card.card_color_2)}
 
 	############################# Card type
 

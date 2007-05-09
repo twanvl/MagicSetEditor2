@@ -3,6 +3,7 @@ game: magic
 full name: FPM's Split Magic
 short name: FPM Split
 icon: card-sample.png
+position hint: 403
 
 card width: 523
 card height: 375

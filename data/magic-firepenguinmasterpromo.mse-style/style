@@ -3,6 +3,7 @@ game: magic
 full name: FPM's Promo Magic
 short name: FPM Promo
 icon: card-sample.png
+position hint: 404
 
 card width: 375
 card height: 523

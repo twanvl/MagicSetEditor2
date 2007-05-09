@@ -1,6 +1,7 @@
 ﻿mse version: 0.3.1
 short name: VS System
 icon: card-back.png
+position hint: 3
 
 ############################################################## Functions & filters
 ## Copied and Pasted from magic-new.mse-style/style, with a few modifications

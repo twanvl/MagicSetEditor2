@@ -3,6 +3,7 @@ game: magic
 short name: Planeshifted
 full name: Planar Chaos Timeshifts
 icon: card-sample.png
+position hint: 011
 
 card width: 375
 card height: 523

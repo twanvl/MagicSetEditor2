@@ -3,6 +3,7 @@ game: vs
 short name: Standard
 full name: Normal VS cards
 icon: card-sample.png
+position hint: 1
 
 card width: 375
 card height: 523

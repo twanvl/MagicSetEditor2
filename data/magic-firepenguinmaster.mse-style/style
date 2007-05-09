@@ -3,6 +3,7 @@ game: magic
 full name: FPM's Normal Magic
 short name: FPM Normal
 icon: card-sample.png
+position hint: 401
 
 card width: 375
 card height: 523

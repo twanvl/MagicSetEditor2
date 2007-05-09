@@ -1,0 +1,18 @@
+
+# default image if there is none
+default_image := {
+	"/magic-default-image.mse-include/" +
+	if      input == "white"              then "white.jpg"
+	else if input == "blue"               then "blue.jpg"
+	else if input == "red"                then "red.jpg"
+	else if input == "black"              then "black.jpg"
+	else if input == "green"              then "green.jpg"
+	else if input == "land 1 color white" then "white.jpg"
+	else if input == "land 1 color blue"  then "blue.jpg"
+	else if input == "land 1 color red"   then "red.jpg"
+	else if input == "land 1 color black" then "black.jpg"
+	else if input == "land 1 color green" then "green.jpg"
+	else if is_artifact()                 then "artifact.jpg"
+	else if is_colorless()                then "colorless.jpg"
+	else                                       "multicolor.jpg"
+}

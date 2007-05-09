@@ -1,6 +1,7 @@
 ﻿mse version: 0.3.1
 short name: Yu-Gi-Oh!
 icon: card-back.png
+position hint: 4
 
 ############################################################## Functions & filters
 ## Copied and Pasted from vs.mse-game, with a few modifications

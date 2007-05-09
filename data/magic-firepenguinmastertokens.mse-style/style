@@ -3,6 +3,7 @@ game: magic
 full name: FPM's Token Magic
 short name: FPM Token
 icon: card-sample.png
+position hint: 421
 
 card width: 375
 card height: 523

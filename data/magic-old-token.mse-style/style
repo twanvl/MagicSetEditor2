@@ -9,6 +9,7 @@ game: magic
 short name: Tokens
 full name: Old style
 icon: card-sample.png
+position hint: 121
 
 card width: 312
 card height: 444

@@ -24,17 +24,24 @@ String ValueAction::getName(bool to_undo) const {
 
 // ----------------------------------------------------------------------------- : Simple
 
+/// Swap the value in a Value object with a new one
+inline void swap_value(ChoiceValue&         a, ChoiceValue        ::ValueType& b) { swap(a.value,    b); }
+inline void swap_value(MultipleChoiceValue& a, MultipleChoiceValue::ValueType& b) { swap(a.value,    b); }
+inline void swap_value(ColorValue&          a, ColorValue         ::ValueType& b) { swap(a.value,    b); }
+inline void swap_value(ImageValue&          a, ImageValue         ::ValueType& b) { swap(a.filename, b); a.last_update.update(); }
+inline void swap_value(SymbolValue&         a, SymbolValue        ::ValueType& b) { swap(a.filename, b); a.last_update.update(); }
+inline void swap_value(TextValue&           a, TextValue          ::ValueType& b) { swap(a.value,    b); a.last_update.update(); }
+
 /// A ValueAction that swaps between old and new values
 template <typename T, bool ALLOW_MERGE>
 class SimpleValueAction : public ValueAction {
   public:
-	inline SimpleValueAction(const shared_ptr<T>& value, const typename T::ValueType& new_value, typename T::ValueType T::*member)
+	inline SimpleValueAction(const shared_ptr<T>& value, const typename T::ValueType& new_value)
 		: ValueAction(value), new_value(new_value)
-		, member(member)
 	{}
 	
 	virtual void perform(bool to_undo) {
-		swap(static_cast<T&>(*valueP).*member, new_value);
+		swap_value(static_cast<T&>(*valueP), new_value);
 		valueP->onAction(*this, to_undo); // notify value
 	}
 	
@@ -52,14 +59,13 @@ class SimpleValueAction : public ValueAction {
 	
   private:
 	typename T::ValueType new_value;
-	typename T::ValueType T::*member;
 };
 
-ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value) { return new SimpleValueAction<ChoiceValue,         true> (value, new_value, &ChoiceValue::value); }
-ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value) { return new SimpleValueAction<MultipleChoiceValue, false>(value, new_value, &MultipleChoiceValue::value); }
-ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value) { return new SimpleValueAction<ColorValue,          true> (value, new_value, &ColorValue::value); }
-ValueAction* value_action(const ImageValueP&          value, const FileName&            new_value) { return new SimpleValueAction<ImageValue,          false>(value, new_value, &ImageValue::filename); }
-ValueAction* value_action(const SymbolValueP&         value, const FileName&            new_value) { return new SimpleValueAction<SymbolValue,         false>(value, new_value, &SymbolValue::filename); }
+ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value) { return new SimpleValueAction<ChoiceValue,         true> (value, new_value); }
+ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value) { return new SimpleValueAction<MultipleChoiceValue, false>(value, new_value); }
+ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value) { return new SimpleValueAction<ColorValue,          true> (value, new_value); }
+ValueAction* value_action(const ImageValueP&          value, const FileName&            new_value) { return new SimpleValueAction<ImageValue,          false>(value, new_value); }
+ValueAction* value_action(const SymbolValueP&         value, const FileName&            new_value) { return new SimpleValueAction<SymbolValue,         false>(value, new_value); }
 
 
 // ----------------------------------------------------------------------------- : Text
@@ -74,8 +80,7 @@ TextValueAction::TextValueAction(const TextValueP& value, size_t start, size_t e
 String TextValueAction::getName(bool to_undo) const { return name; }
 
 void TextValueAction::perform(bool to_undo) {
-	swap(value().value, new_value);
-	value().last_update.update();
+	swap_value(value(), new_value);
 	swap(selection_end, new_selection_end);
 	valueP->onAction(*this, to_undo); // notify value
 }

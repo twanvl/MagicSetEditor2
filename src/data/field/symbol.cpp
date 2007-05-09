@@ -29,11 +29,11 @@ IMPLEMENT_REFLECTION(SymbolStyle) {
 	REFLECT(variations);
 }
 
-SymbolStyle::Variation::Variation()
+SymbolVariation::SymbolVariation()
 	: border_radius(0.05)
 {}
 
-IMPLEMENT_REFLECTION(SymbolStyle::Variation) {
+IMPLEMENT_REFLECTION(SymbolVariation) {
 	REFLECT(name);
 	REFLECT(border_radius);
 	REFLECT_NAMELESS(filter);
