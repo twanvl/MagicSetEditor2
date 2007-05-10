@@ -1,18 +1,38 @@
 
 # default image if there is none
+default_image_1 := {"/magic-default-image.mse-include/" + input}
+
+default_image_2 := {
+	combine_blend(
+		image1: default_image_1(image1),
+		image2: default_image_1(image2),
+		combine: "symmetric overlay"
+	)
+}
+
 default_image := {
-	"/magic-default-image.mse-include/" +
-	if      input == "white"              then "white.jpg"
-	else if input == "blue"               then "blue.jpg"
-	else if input == "red"                then "red.jpg"
-	else if input == "black"              then "black.jpg"
-	else if input == "green"              then "green.jpg"
-	else if input == "land 1 color white" then "white.jpg"
-	else if input == "land 1 color blue"  then "blue.jpg"
-	else if input == "land 1 color red"   then "red.jpg"
-	else if input == "land 1 color black" then "black.jpg"
-	else if input == "land 1 color green" then "green.jpg"
-	else if is_artifact()                 then "artifact.jpg"
-	else if is_colorless()                then "colorless.jpg"
-	else                                       "multicolor.jpg"
+	if      input == "white"			then default_image_1("white.jpg")
+	else if input == "blue"				then default_image_1("blue.jpg")
+	else if input == "red"				then default_image_1("red.jpg")
+	else if input == "black"			then default_image_1("black.jpg")
+	else if input == "green"			then default_image_1("green.jpg")
+	else if input == "land 1 color white"		then default_image_2(image1:"colorless.jpg", image2:"white.jpg")
+	else if input == "land 1 color blue"		then default_image_2(image1:"colorless.jpg", image2:"blue.jpg")
+	else if input == "land 1 color red"		then default_image_2(image1:"colorless.jpg", image2:"red.jpg")
+	else if input == "land 1 color black"		then default_image_2(image1:"colorless.jpg", image2:"black.jpg")
+	else if input == "land 1 color green"		then default_image_2(image1:"colorless.jpg", image2:"green.jpg")
+	else if input == "land 1 color multicolor"	then default_image_2(image1:"colorless.jpg", image2:"multicolor.jpg")
+	else if input == "hybrid 2 color white / blue"	then default_image_2(image1:"white.jpg", image2:"blue.jpg" )
+	else if input == "hybrid 2 color blue / black"	then default_image_2(image1:"blue.jpg",  image2:"black.jpg")
+	else if input == "hybrid 2 color black / red"	then default_image_2(image1:"black.jpg", image2:"red.jpg"  )
+	else if input == "hybrid 2 color red / green"	then default_image_2(image1:"red.jpg",   image2:"green.jpg")
+	else if input == "hybrid 2 color green / white"	then default_image_2(image1:"green.jpg", image2:"white.jpg")
+	else if input == "hybrid 2 color white / black"	then default_image_2(image1:"white.jpg", image2:"black.jpg")
+	else if input == "hybrid 2 color blue / red"	then default_image_2(image1:"blue.jpg",  image2:"red.jpg"  )
+	else if input == "hybrid 2 color black / green"	then default_image_2(image1:"black.jpg", image2:"green.jpg")
+	else if input == "hybrid 2 color red / white"	then default_image_2(image1:"red.jpg",   image2:"white.jpg")
+	else if input == "hybrid 2 color green / blue"	then default_image_2(image1:"green.jpg", image2:"blue.jpg" )
+	else if is_artifact()				then default_image_1("artifact.jpg")
+	else if is_colorless()				then default_image_1("colorless.jpg")
+	else						     default_image_1("multicolor.jpg")
 }

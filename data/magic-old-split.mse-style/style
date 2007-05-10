@@ -3,6 +3,7 @@ game: magic
 full name: Magic Old Split Cards
 short name: Old Splits
 icon: card-sample.png
+position hint: 103
 
 card width: 523
 card height: 375

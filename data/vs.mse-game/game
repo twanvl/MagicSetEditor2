@@ -167,8 +167,8 @@ default set style:
 	automatic reminder text:
 		render style: both
 		choice images:
-			yes: script: buildin_image("bool_yes")
-			no:  script: buildin_image("bool_no")
+			yes: script: built_in_image("bool_yes")
+			no:  script: built_in_image("bool_no")
 
 ############################################################## Card fields
 
