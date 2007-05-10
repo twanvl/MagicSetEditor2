@@ -18,6 +18,7 @@ Font::Font()
 	, scale_down_to(100000)
 	, shadow_displacement(0,0)
 	, separator_color(128,128,128)
+	, type(NORMAL)
 {}
 
 bool Font::update(Context& ctx) {
