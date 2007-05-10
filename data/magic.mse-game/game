@@ -127,16 +127,16 @@ init script:
 	is_colorless  := filter_rule(match: "^colorless")  + {input != ""};
 	is_artifact   := filter_rule(match: "^artifact")   + {input != ""};
 	sort_index := {
-		if      card.card_color=="white"        then "A"
+		if card.card_color=="white"        then "A"
 		else if card.card_color=="blue"         then "B"
 		else if card.card_color=="black"        then "C"
 		else if card.card_color=="red"          then "D"
 		else if card.card_color=="green"        then "E"
 		else if is_multicolor(card.card_color)  then "F"
 		else if is_hybrid    (card.card_color)  then "G"
-		else if is_colorless (card.card_color) or is_artifact (card.card_color)  then "H"
-		else if card.super_type!="Basic Land"   then "I"
-		else                                         "J"
+		else if is_colorless (card.card_color) or is_artifact (card.card_color)  then "I"
+		else if card.rarity!="basic land"   then "J"
+		else                                         "K"
 	};
 	
 	# The color of a card
@@ -528,6 +528,43 @@ card field:
 	choice: none
 	choice: tombstone
 	description: Symbol for this card (tombstone)
+#for use in futureshifts
+card field:
+	type: choice
+	name: type symbol
+	choice: none
+	choice: creature
+	choice: enchantment
+	choice: sorcery
+	choice: instant
+	choice: artifact
+	choice: land
+	choice: multitype
+	description: Symbol for the type of this card (claw marks, chalice, lightning bolt)
+# Part of Name box for new token template
+card field:
+	type: choice
+	name: name box
+	choice: black
+	editable: false
+	save value: false
+	show statistics: false
+# Part of Name box for new token template
+card field:
+	type: choice
+	name: name box left
+	choice: black
+	editable: false
+	save value: false
+	show statistics: false
+# Part of Name box for new token template
+card field:
+	type: choice
+	name: name box right
+	choice: black
+	editable: false
+	save value: false
+	show statistics: false
 
 ############################# Image
 card field:
@@ -570,7 +607,6 @@ card field:
 	name: type image
 	include file: magic-blends.mse-include/card-colors
 	script: card.card_color
-	editable: false
 card field:
 	type: choice
 	name: rarity
@@ -612,7 +648,6 @@ card field:
 	name: textbox
 	include file: magic-blends.mse-include/card-colors
 	script: card.card_color
-	editable: false
 	save value: false
 	show statistics: false
 card field:
