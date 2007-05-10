@@ -39,7 +39,7 @@ class ImageStyle : public Style {
 	DECLARE_STYLE_TYPE(Image);
 	
 	Scriptable<String> mask_filename; ///< Filename for a mask image
-	ScriptableImage2    default_image; ///< Placeholder
+	ScriptableImage    default_image; ///< Placeholder
 	
 	virtual bool update(Context&);
 	

@@ -35,8 +35,10 @@ BooleanStyle::BooleanStyle(const ChoiceFieldP& field)
 	: ChoiceStyle(field)
 {
 	render_style = RENDER_BOTH;
-	choice_images[_("yes")] = ScriptableImage(_("buildin_image(\"bool_yes\")"));
-	choice_images[_("no")]  = ScriptableImage(_("buildin_image(\"bool_no\")"));
+	//%%choice_images[_("yes")] = ScriptableImage(_("buildin_image(\"bool_yes\")"));
+	//%%choice_images[_("no")]  = ScriptableImage(_("buildin_image(\"bool_no\")"));
+	choice_images[_("yes")] = ScriptableImage(new_intrusive1<BuiltInImage>(_("bool_yes")));
+	choice_images[_("no")]  = ScriptableImage(new_intrusive1<BuiltInImage>(_("bool_no")));
 }
 
 IMPLEMENT_REFLECTION(BooleanStyle) {

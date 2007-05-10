@@ -17,6 +17,8 @@
 #include <data/field/information.hpp>
 #include <util/error.hpp>
 
+DECLARE_TYPEOF_COLLECTION(StyleListener*);
+
 // ----------------------------------------------------------------------------- : Field
 
 Field::Field()
@@ -119,6 +121,35 @@ void Style::initDependencies(Context& ctx, const Dependency& dep) const {
 //	height .initDependencies(ctx,dep);
 //	visible.initDependencies(ctx,dep);
 }
+
+// ----------------------------------------------------------------------------- : StyleListener
+
+void Style::addListener(StyleListener* listener) {
+	listeners.push_back(listener);
+}
+void Style::removeListener(StyleListener* listener) {
+	listeners.erase(
+		std::remove(
+			listeners.begin(),
+			listeners.end(),
+			listener
+			),
+		listeners.end()
+		);
+}
+void Style::tellListeners() {
+	FOR_EACH(l, listeners) l->onStyleChange();
+}
+
+StyleListener::StyleListener(const StyleP& style)
+	: styleP(style)
+{
+	style->addListener(this);
+}
+StyleListener::~StyleListener() {
+	styleP->removeListener(this);
+}
+
 
 // ----------------------------------------------------------------------------- : Value
 

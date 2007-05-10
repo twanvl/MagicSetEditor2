@@ -366,7 +366,7 @@ void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle
 	// no text, find a dummy height for the single line we have
 	if (lines.size() == 1 && lines[0].width() < 0.0001) {
 		if (style.always_symbol && style.symbol_font.valid()) {
-			lines[0].line_height = style.symbol_font.font->defaultSymbolSize(ctx, style.symbol_font.size).height;
+			lines[0].line_height = style.symbol_font.font->defaultSymbolSize(style.symbol_font.size).height;
 		} else {
 			dc.SetFont(style.font, scale);
 			lines[0].line_height = dc.GetCharHeight();

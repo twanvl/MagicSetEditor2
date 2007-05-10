@@ -40,10 +40,9 @@ ChoiceThumbnailRequest::ChoiceThumbnailRequest(ValueViewer* cve, int id, bool fr
 
 Image ChoiceThumbnailRequest::generate() {
 	ChoiceValueEditor& cve = *(ChoiceValueEditor*)owner;
-	Context& ctx = cve.getSet().getContextForThumbnails(stylesheet);
 	String name = cannocial_name_form(cve.field().choices->choiceName(id));
 	ScriptableImage& img = cve.style().choice_images[name];
-	return img.generate(ctx, *stylesheet, 16, 16, ASPECT_BORDER, true)->image;
+	return img.generate(GeneratedImage::Options(16,16, stylesheet.get(), &cve.getSet(), ASPECT_BORDER, true), false);
 }
 
 void ChoiceThumbnailRequest::store(const Image& img) {
@@ -79,6 +78,7 @@ void ChoiceThumbnailRequest::store(const Image& img) {
 		} else {
 			il->Replace(id, img);
 		}
+		cve.style().thumbnails_status[id] = THUMB_OK;
 	}
 }
 
@@ -157,18 +157,15 @@ void DropDownChoiceListBase::generateThumbnailImages() {
 	}
 	int image_count = style().thumbnails->GetImageCount();
 	int end = group->lastId();
-	Context& ctx = cve.viewer.getContext();
+	style().thumbnails_status.resize(end, THUMB_NOT_MADE);
 	for (int i = 0 ; i < end ; ++i) {
 		String name = cannocial_name_form(group->choiceName(i));
-		ScriptableImage& img = style().choice_images[name];
-		bool up_to_date = img.upToDate(ctx, style().thumbnail_age);
-		if (i >= image_count || !up_to_date) {
-			// TODO : handle the case where image i was previously skipped
+		ThumbnailStatus status = style().thumbnails_status[i];
+		if (i >= image_count || status != THUMB_OK) {
 			// request this thumbnail
-			thumbnail_thread.request( new_shared3<ChoiceThumbnailRequest>(&cve, i, up_to_date && !style().invalidated_images) );
+			thumbnail_thread.request( new_shared3<ChoiceThumbnailRequest>(&cve, i, status == THUMB_NOT_MADE) );
 		}
 	}
-	style().thumbnail_age.update();
 }
 
 void DropDownChoiceListBase::onIdle(wxIdleEvent& ev) {

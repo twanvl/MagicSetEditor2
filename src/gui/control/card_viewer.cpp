@@ -32,11 +32,13 @@ wxSize CardViewer::DoGetBestSize() const {
 }
 
 void CardViewer::redraw(const ValueViewer& v) {
+	if (drawing) return;
 	up_to_date = false;
 	RefreshRect(getRotation().tr(v.boundingBox()), false);
 }
 
 void CardViewer::onChange() {
+	if (drawing) return;
 	up_to_date = false;
 	Refresh(false);
 }

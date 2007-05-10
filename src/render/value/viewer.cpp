@@ -19,7 +19,7 @@
 // ----------------------------------------------------------------------------- : ValueViewer
 
 ValueViewer::ValueViewer(DataViewer& parent, const StyleP& style)
-	: viewer(parent), styleP(style)
+	: StyleListener(style), viewer(parent)
 {}
 
 Set& ValueViewer::getSet() const { return *viewer.getSet(); }

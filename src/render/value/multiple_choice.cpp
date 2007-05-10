@@ -49,13 +49,12 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 	}
 	if (style().render_style & RENDER_IMAGE) {
 		map<String,ScriptableImage>::iterator it = style().choice_images.find(cannocial_name_form(choice));
-		if (it != style().choice_images.end()) {
-			ScriptImageP i = it->second.update(viewer.getContext(), *viewer.stylesheet, 0, 0);
-			if (i) {
-				// TODO : alignment?
-				dc.DrawImage(i->image, pos + RealSize(size.width, 0), i->combine == COMBINE_NORMAL ? style().combine : i->combine);
-				size = add_horizontal(size, dc.trInv(RealSize(i->image.GetWidth() + 1, i->image.GetHeight())));
-			}
+		if (it != style().choice_images.end() && it->second.isReady()) {
+			Image image = it->second.generate(GeneratedImage::Options(0,0, viewer.stylesheet.get(),&getSet()), true);
+			ImageCombine combine = it->second.combine();
+			// TODO : alignment?
+			dc.DrawImage(image, pos + RealSize(size.width, 0), combine == COMBINE_NORMAL ? style().combine : combine);
+			size = add_horizontal(size, dc.trInv(RealSize(image.GetWidth() + 1, image.GetHeight())));
 		}
 	}
 	if (style().render_style & RENDER_TEXT) {

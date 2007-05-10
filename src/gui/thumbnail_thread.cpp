@@ -111,7 +111,6 @@ void ThumbnailThread::request(const ThumbnailRequestP& request) {
 	if (request_names.find(request) != request_names.end()) {
 		return;
 	}
-	request_names.insert(request);
 	// Is the image in the cache?
 	String filename = image_cache_dir() + safe_filename(request->cache_name) + _(".png");
 	wxFileName fn(filename);
@@ -124,6 +123,7 @@ void ThumbnailThread::request(const ThumbnailRequestP& request) {
 			return;
 		}
 	}
+	request_names.insert(request);
 	// request generation
 	{
 		wxMutexLocker lock(mutex);

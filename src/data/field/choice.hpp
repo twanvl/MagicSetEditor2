@@ -114,6 +114,12 @@ enum ChoiceRenderStyle
 ,	RENDER_BOTH_CHECKLIST  = RENDER_CHECKLIST | RENDER_BOTH
 };
 
+enum ThumbnailStatus
+{	THUMB_NOT_MADE
+,	THUMB_OK
+,	THUMB_CHANGED
+};
+
 /// The Style for a ChoiceField
 class ChoiceStyle : public Style {
   public:
@@ -133,15 +139,14 @@ class ChoiceStyle : public Style {
 	Image                       mask;               ///< The actual mask image
 	int                         angle;				///< Angle by which the images are rotated
 	wxImageList*                thumbnails;         ///< Thumbnails for the choices
-	Age                         thumbnail_age;      ///< Age the thumbnails were generated
-	bool                        invalidated_images; ///< Have the images been invalidated?
+	vector<ThumbnailStatus>     thumbnails_status;	///< Which thumbnails are up to date?
 	
 	/// Load the mask image, if it's not already done
 	void loadMask(Package& pkg);
 	
 	virtual bool update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;
-	virtual void invalidate();
+	virtual void invalidate(Context&);
 	
   private:
 	DECLARE_REFLECTION();

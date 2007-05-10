@@ -441,7 +441,8 @@ void TextValueEditor::showCaret() {
 	// it is not 0 for empty text, because TextRenderer handles that case
 	if (cursor.height == 0) {
 		if (style().always_symbol && style().symbol_font.valid()) {
-			RealSize s = style().symbol_font.font->defaultSymbolSize(viewer.getContext(), rot.trS(style().symbol_font.size));
+			style().symbol_font.font->update(viewer.getContext());
+			RealSize s = style().symbol_font.font->defaultSymbolSize(rot.trS(style().symbol_font.size));
 			cursor.height = s.height;
 		} else {
 			cursor.height = v.heightOfLastLine();

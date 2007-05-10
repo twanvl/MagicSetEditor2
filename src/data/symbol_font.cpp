@@ -75,14 +75,14 @@ class SymbolInFont {
 	SymbolInFont();
 	
 	/// Get a shrunk, zoomed bitmap
-	Bitmap getBitmap(Context& ctx, Package& pkg, double size);
+	Bitmap getBitmap(Package& pkg, double size);
 	
 	/// Get a bitmap with the given size
-	Bitmap getBitmap(Context& ctx, Package& pkg, wxSize size);
+	Bitmap getBitmap(Package& pkg, wxSize size);
 	
 	/// Size of a (zoomed) bitmap
 	/** This is the size of the resulting image, it does NOT convert back to internal coordinates */
-	RealSize size(Context& ctx, Package& pkg, double size);
+	RealSize size(Package& pkg, double size);
 	
 	void update(Context& ctx);
 	
@@ -107,15 +107,15 @@ SymbolInFont::SymbolInFont()
 	if (img_size <= 0) img_size = 1;
 }
 
-Bitmap SymbolInFont::getBitmap(Context& ctx, Package& pkg, double size) {
+Bitmap SymbolInFont::getBitmap(Package& pkg, double size) {
 	// is this bitmap already loaded/generated?
 	Bitmap& bmp = bitmaps[size];
 	if (!bmp.Ok()) {
 		// generate new bitmap
-		if (!image) {
+		if (!image.isReady()) {
 			throw Error(_("No image specified for symbol with code '") + code + _("' in symbol font."));
 		}
-		Image img = image.generate(ctx, pkg)->image;
+		Image img = image.generate(GeneratedImage::Options(0, 0, &pkg));
 		actual_size = wxSize(img.GetWidth(), img.GetHeight());
 		// scale to match expected size
 		Image resampled_image((int) (actual_size.GetWidth()  * size / img_size),
@@ -127,28 +127,24 @@ Bitmap SymbolInFont::getBitmap(Context& ctx, Package& pkg, double size) {
 	}
 	return bmp;
 }
-Bitmap SymbolInFont::getBitmap(Context& ctx, Package& pkg, wxSize size) {
+Bitmap SymbolInFont::getBitmap(Package& pkg, wxSize size) {
 	// generate new bitmap
-	if (!image) {
+	if (!image.isReady()) {
 		throw Error(_("No image specified for symbol with code '") + code + _("' in symbol font."));
 	}
-	Image img = image.generate(ctx, pkg)->image;
-	actual_size = wxSize(img.GetWidth(), img.GetHeight());
-	// scale to match expected size
-	Image resampled_image(size.GetWidth(), size.GetHeight(), false);
-	resample_preserve_aspect(img, resampled_image);
-	return Bitmap(resampled_image);
+	return Bitmap( image.generate(GeneratedImage::Options(size.x, size.y, &pkg, nullptr, ASPECT_BORDER)) );
 }
 
-RealSize SymbolInFont::size(Context& ctx, Package& pkg, double size) {
+RealSize SymbolInFont::size(Package& pkg, double size) {
 	if (actual_size.GetWidth() == 0) {
 		// we don't know what size the image will be
-		getBitmap(ctx, pkg, size);
+		getBitmap(pkg, size);
 	}
 	return wxSize(actual_size * (int) (size) / (int) (img_size));
 }
 
 void SymbolInFont::update(Context& ctx) {
+	image.update(ctx);
 	enabled.update(ctx);
 }
 void SymbolFont::update(Context& ctx) const {
@@ -180,8 +176,7 @@ class SymbolFont::DrawableSymbol {
 	SymbolInFont* symbol;	///< Symbol to draw, if nullptr, use the default symbol and draw the text
 };
 
-void SymbolFont::split(const String& text, Context& ctx, SplitSymbols& out) const {
-	update(ctx);
+void SymbolFont::split(const String& text, SplitSymbols& out) const {
 	// read a single symbol until we are done with the text
 	for (size_t pos = 0 ; pos < text.size() ; ) {
 		// 1. check merged numbers
@@ -220,37 +215,38 @@ SymbolInFont* SymbolFont::defaultSymbol() const {
 
 void SymbolFont::draw(RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, const String& text) {
 	SplitSymbols symbols;
-	split(text, ctx, symbols);
-	draw(dc, ctx, rect, font_size, align, symbols);
+	update(ctx);
+	split(text, symbols);
+	draw(dc, rect, font_size, align, symbols);
 }
 
-void SymbolFont::draw(RotatedDC& dc, Context& ctx, RealRect rect, double font_size, const Alignment& align, const SplitSymbols& text) {
+void SymbolFont::draw(RotatedDC& dc, RealRect rect, double font_size, const Alignment& align, const SplitSymbols& text) {
 	FOR_EACH_CONST(sym, text) {
-		RealSize size = dc.trInvS(symbolSize(ctx, dc.trS(font_size), sym));
+		RealSize size = dc.trInvS(symbolSize(dc.trS(font_size), sym));
 		RealRect sym_rect = split_left(rect, size);
 		if (sym.symbol) {
-			drawSymbol(  dc, ctx, sym_rect, font_size, align, *sym.symbol);
+			drawSymbol(  dc, sym_rect, font_size, align, *sym.symbol);
 		} else {
-			drawWithText(dc, ctx, sym_rect, font_size, align, sym.text);
+			drawWithText(dc, sym_rect, font_size, align, sym.text);
 		}
 	}
 }
 
-void SymbolFont::drawSymbol  (RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, SymbolInFont& sym) {
+void SymbolFont::drawSymbol  (RotatedDC& dc, const RealRect& rect, double font_size, const Alignment& align, SymbolInFont& sym) {
 	// find bitmap
-	Bitmap bmp = sym.getBitmap(ctx, *this, dc.trS(font_size));
+	Bitmap bmp = sym.getBitmap(*this, dc.trS(font_size));
 	// draw aligned in the rectangle
 	dc.DrawBitmap(bmp, align_in_rect(align, dc.trInvS(RealSize(bmp.GetWidth(), bmp.GetHeight())), rect));
 }
 
-void SymbolFont::drawWithText(RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, const String& text) {
+void SymbolFont::drawWithText(RotatedDC& dc, const RealRect& rect, double font_size, const Alignment& align, const String& text) {
 	// 1. draw background bitmap
 	// Size and position of symbol
 	RealRect sym_rect = rect;
 	// find and draw background bitmap
 	SymbolInFont* def = defaultSymbol();
 	if (def) {
-		Bitmap bmp = def->getBitmap(ctx, *this, dc.trS(font_size));
+		Bitmap bmp = def->getBitmap(*this, dc.trS(font_size));
 		// align symbol
 		sym_rect.size()     = dc.trInvS(RealSize(bmp.GetWidth(), bmp.GetHeight()));
 		sym_rect.position() = align_in_rect(align, sym_rect.size(), rect);
@@ -295,14 +291,15 @@ void SymbolFont::drawWithText(RotatedDC& dc, Context& ctx, const RealRect& rect,
 
 void SymbolFont::getCharInfo(RotatedDC& dc, Context& ctx, double font_size, const String& text, vector<CharInfo>& out) {
 	SplitSymbols symbols;
-	split(text, ctx, symbols);
-	getCharInfo(dc, ctx, font_size, symbols, out);
+	update(ctx);
+	split(text, symbols);
+	getCharInfo(dc, font_size, symbols, out);
 }
 
-void SymbolFont::getCharInfo(RotatedDC& dc, Context& ctx, double font_size, const SplitSymbols& text, vector<CharInfo>& out) {
+void SymbolFont::getCharInfo(RotatedDC& dc, double font_size, const SplitSymbols& text, vector<CharInfo>& out) {
 	FOR_EACH_CONST(sym, text) {
 		size_t count = sym.text.size();
-		RealSize size = dc.trInvS(symbolSize(ctx, dc.trS(font_size), sym));
+		RealSize size = dc.trInvS(symbolSize(dc.trS(font_size), sym));
 		size.width /= count; // divide into count parts
 		for (size_t i = 0 ; i < count ; ++i) {
 			out.push_back(CharInfo(size, i == count - 1 ? BREAK_MAYBE : BREAK_NO));
@@ -310,18 +307,18 @@ void SymbolFont::getCharInfo(RotatedDC& dc, Context& ctx, double font_size, cons
 	}
 }
 
-RealSize SymbolFont::symbolSize(Context& ctx, double font_size, const DrawableSymbol& sym) {
+RealSize SymbolFont::symbolSize(double font_size, const DrawableSymbol& sym) {
 	if (sym.symbol) {
-		return add_diagonal(sym.symbol->size(ctx, *this, font_size), spacing);
+		return add_diagonal(sym.symbol->size(*this, font_size), spacing);
 	} else {
-		return defaultSymbolSize(ctx, font_size);
+		return defaultSymbolSize(font_size);
 	}
 }
 
-RealSize SymbolFont::defaultSymbolSize(Context& ctx, double font_size) {
+RealSize SymbolFont::defaultSymbolSize(double font_size) {
 	SymbolInFont* def = defaultSymbol();
 	if (def) {
-		return add_diagonal(def->size(ctx, *this, font_size), spacing);
+		return add_diagonal(def->size(*this, font_size), spacing);
 	} else {
 		return add_diagonal(RealSize(1,1), spacing);
 	}
@@ -334,7 +331,7 @@ wxMenu* SymbolFont::insertSymbolMenu(Context& ctx) {
 	if (!processed_insert_symbol_menu && insert_symbol_menu) {
 		update(ctx);
 		// Make menu
-		processed_insert_symbol_menu = insert_symbol_menu->makeMenu(ID_INSERT_SYMBOL_MENU_MIN, ctx, *this);
+		processed_insert_symbol_menu = insert_symbol_menu->makeMenu(ID_INSERT_SYMBOL_MENU_MIN, *this);
 	}
 	return processed_insert_symbol_menu;
 }
@@ -384,22 +381,22 @@ String InsertSymbolMenu::getCode(int id, const SymbolFont& font) const {
 	return wxEmptyString;
 }
 
-wxMenu* InsertSymbolMenu::makeMenu(int id, Context& ctx, SymbolFont& font) const {
+wxMenu* InsertSymbolMenu::makeMenu(int id, SymbolFont& font) const {
 	if (type == ITEM_SUBMENU) {
 		wxMenu* menu = new wxMenu();
 		FOR_EACH_CONST(i, items) {
-			menu->Append(i->makeMenuItem(menu, id, ctx, font));
+			menu->Append(i->makeMenuItem(menu, id, font));
 			id += i->size();
 		}
 		return menu;
 	}
 	return nullptr;
 }
-wxMenuItem* InsertSymbolMenu::makeMenuItem(wxMenu* parent, int first_id, Context& ctx, SymbolFont& font) const {
+wxMenuItem* InsertSymbolMenu::makeMenuItem(wxMenu* parent, int first_id, SymbolFont& font) const {
 	if (type == ITEM_SUBMENU) {
 		wxMenuItem* item = new wxMenuItem(parent, wxID_ANY, tr(font, _("menu item ") + name, name),
 		                                  wxEmptyString, wxITEM_NORMAL,
-		                                  makeMenu(first_id, ctx, font));
+		                                  makeMenu(first_id, font));
 		item->SetBitmap(wxNullBitmap);
 		return item;
 	} else if (type == ITEM_LINE) {
@@ -420,7 +417,7 @@ wxMenuItem* InsertSymbolMenu::makeMenuItem(wxMenu* parent, int first_id, Context
 			}
 		}
 		if (symbol) {
-			item->SetBitmap(symbol->getBitmap(ctx, font, wxSize(16,16)));
+			item->SetBitmap(symbol->getBitmap(font, wxSize(16,16)));
 		} else {
 			item->SetBitmap(wxNullBitmap);
 		}

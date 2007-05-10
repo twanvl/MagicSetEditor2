@@ -22,6 +22,8 @@ class Context;
 /// A viewer can generate an image of some values, usually a card.
 class DataViewer : public SetView {
   public:	
+	DataViewer() : drawing(false) {}
+	
 	// --------------------------------------------------- : Drawing
 	
 	/// Draw the current (card/data) to the given dc
@@ -56,6 +58,8 @@ class DataViewer : public SetView {
 	virtual Rotation getRotation() const;
 	/// The card we are viewing
 	inline CardP getCard() const { return card; }
+	/// Invalidate and redraw (the area of) a single value viewer
+	virtual void redraw(const ValueViewer&) {}
 	
 	// --------------------------------------------------- : Setting data
 	
@@ -86,6 +90,7 @@ class DataViewer : public SetView {
 	
 	vector<ValueViewerP> viewers;	///< The viewers for the different values in the data
 	CardP card;						///< The card that is currently displayed, if any
+	bool drawing;					///< Are we currently drawing?
   public:
 	mutable StyleSheetP stylesheet;	///< Stylesheet being used
 };

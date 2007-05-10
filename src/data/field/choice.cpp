@@ -167,8 +167,6 @@ ChoiceStyle::ChoiceStyle(const ChoiceFieldP& field)
 	, alignment(ALIGN_STRETCH)
 	, angle(0)
 	, thumbnails(nullptr)
-	, thumbnail_age(1) // thumbnails were made before the beginning of time
-	, invalidated_images(false)
 {}
 
 ChoiceStyle::~ChoiceStyle() {
@@ -178,8 +176,15 @@ ChoiceStyle::~ChoiceStyle() {
 
 bool ChoiceStyle::update(Context& ctx) {
 	// Don't update the choice images, leave that to invalidate()
-	return Style       ::update(ctx)
-	     | mask_filename.update(ctx);
+	bool change = Style       ::update(ctx)
+	            | mask_filename.update(ctx);
+	FOR_EACH(ci, choice_images) {
+		if (ci.second.update(ctx)) {
+			change = true;
+			// TODO : remove this thumbnail
+		}
+	}
+	return change;
 }
 void ChoiceStyle::initDependencies(Context& ctx, const Dependency& dep) const {
 	Style::initDependencies(ctx, dep);
@@ -187,17 +192,21 @@ void ChoiceStyle::initDependencies(Context& ctx, const Dependency& dep) const {
 		ci.second.initDependencies(ctx, dep);
 	}
 }
-void ChoiceStyle::invalidate() {
-	// rebuild choice images
-	// TODO: Don't use this; rely on upToDate() instead
-	FOR_EACH(ci, choice_images) {
-		// TODO : only invalidate images that actually have dependencies
-		ci.second.invalidate();
+void ChoiceStyle::invalidate(Context& ctx) {
+	// TODO : this is also done in update(), once should be enough
+	// Update choice images and thumbnails
+	bool change = false;
+	int end = field().choices->lastId();
+	thumbnails_status.resize(end, THUMB_NOT_MADE);
+	for (int i = 0 ; i < end ; ++i) {
+		String name = cannocial_name_form(field().choices->choiceName(i));
+		ScriptableImage& img = choice_images[name];
+		if (img.update(ctx)) {
+			change = true;
+			thumbnails_status[i] = THUMB_CHANGED;
+		}
 	}
-	if (thumbnails) {
-		thumbnails->RemoveAll();
-	}
-	invalidated_images = true;
+	if (change) tellListeners();
 }
 
 void ChoiceStyle::loadMask(Package& pkg) {

@@ -88,6 +88,7 @@ bool ColorValueViewer::containsPoint(const RealPoint& p) const {
 
 void ColorValueViewer::onStyleChange() {
 	alpha_mask = AlphaMaskP();
+	viewer.redraw(*this);
 }
 
 void ColorValueViewer::loadMask(const Rotation& rot) const {

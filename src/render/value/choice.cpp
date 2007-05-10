@@ -20,34 +20,33 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 	if (style().render_style & RENDER_IMAGE) {
 		// draw image
 		map<String,ScriptableImage>::iterator it = style().choice_images.find(cannocial_name_form(value().value()));
-		if (it != style().choice_images.end()) {
+		if (it != style().choice_images.end() && it->second.isReady()) {
 			ScriptableImage& img = it->second;
-			ScriptImageP i;
+			GeneratedImage::Options img_options(0,0, viewer.stylesheet.get(), &getSet());
 			if (nativeLook()) {
-				i = img.update(viewer.getContext(), *viewer.stylesheet, 16, 16, ASPECT_BORDER, false);
+				img_options.width = img_options.height = 16;
+				img_options.preserve_aspect = ASPECT_BORDER;
 			} else if(style().render_style & RENDER_TEXT) {
-				// also drawing text
-				i = img.update(viewer.getContext(), *viewer.stylesheet, 0, 0);
+				// also drawing text, use original size
 			} else {
-				i = img.update(viewer.getContext(), *viewer.stylesheet,
-						(int) dc.trS(style().width), (int) dc.trS(style().height),
-						style().alignment == ALIGN_STRETCH ? ASPECT_STRETCH : ASPECT_FIT
-					);
+				img_options.width  = (int) dc.trS(style().width);
+				img_options.height = (int) dc.trS(style().height);
+				img_options.preserve_aspect = style().alignment == ALIGN_STRETCH ? ASPECT_STRETCH : ASPECT_FIT;
 			}
-			if (i) {
-				// apply mask?
-				style().loadMask(*viewer.stylesheet);
-				if (style().mask.Ok()) {
-					set_alpha(i->image, style().mask);
-				}
-				// draw
-				dc.DrawImage(i->image,
-					align_in_rect(style().alignment, RealSize(i->image.GetWidth(), i->image.GetHeight()), style().getRect()),
-					i->combine == COMBINE_NORMAL ? style().combine : i->combine,
-					style().angle
-				);
-				margin = dc.trInvS(i->image.GetWidth()) + 1;
+			Image image = img.generate(img_options, true);
+			ImageCombine combine = img.combine();
+			// apply mask?
+			style().loadMask(*viewer.stylesheet);
+			if (style().mask.Ok()) {
+				set_alpha(image, style().mask);
 			}
+			// draw
+			dc.DrawImage(image,
+				align_in_rect(style().alignment, RealSize(image.GetWidth(), image.GetHeight()), style().getRect()),
+				combine == COMBINE_NORMAL ? style().combine : combine,
+				style().angle
+			);
+			margin = dc.trInvS(image.GetWidth()) + 1;
 		}
 	}
 	if (style().render_style & RENDER_TEXT) {
@@ -56,4 +55,8 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 			align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(0, dc.GetCharHeight()), style().getRect()) + RealSize(margin, 0)
 		);
 	}
+}
+
+void ChoiceValueViewer::onStyleChange() {
+	viewer.redraw(*this);
 }

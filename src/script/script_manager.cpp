@@ -75,7 +75,7 @@ Context& SetScriptContext::getContext(const CardP& card) {
 	if (card) {
 		ctx.setVariable(_("card"), to_script(card));
 	} else {
-		ctx.setVariable(_("card"), script_nil);
+		ctx.setVariable(_("card"), ScriptValueP());
 	}
 	return ctx;
 }
@@ -190,8 +190,9 @@ void SetScriptManager::updateStyles(const CardP& card) {
 	// update all styles
 	FOR_EACH(s, stylesheet->card_style) {
 		if (s->update(ctx)) {
+			s->tellListeners();
 			// style has changed, tell listeners
-//			ScriptStyleEvent change(s.get());
+//%%			ScriptStyleEvent change(stylesheet.get(), s.get());
 //			set->actions.tellListeners(change);
 		}
 	}
@@ -298,7 +299,7 @@ void SetScriptManager::alsoUpdate(deque<ToUpdate>& to_update, const vector<Depen
 				// because the index is not exact enough, it only gives the field
 				StyleSheet* stylesheet = reinterpret_cast<StyleSheet*>(d.data);
 				StyleP style = stylesheet->card_style.at(d.index);
-				style->invalidate();
+				style->invalidate(getContext(card));
 				// something changed, send event
 				ScriptStyleEvent change(stylesheet, style.get());
 				set.actions.tellListeners(change, false);

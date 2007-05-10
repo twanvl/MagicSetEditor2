@@ -34,15 +34,19 @@ void DataViewer::draw(DC& dc) {
 }
 void DataViewer::draw(RotatedDC& dc, const Color& background) {
 	if (!set) return; // no set specified, don't draw anything
+	drawing = true;
 	// fill with background color
 	clearDC(dc.getDC(), background);
 	// update style scripts
-//%%	if (card) set->updateFor(card);
-	Context& ctx = getContext();
-	FOR_EACH(v, viewers) {
-		if (v->getStyle()->update(ctx)) {
-			v->onStyleChange();
+	try {
+		Context& ctx = getContext();
+		FOR_EACH(v, viewers) {
+			if (v->getStyle()->update(ctx)) {
+				v->getStyle()->tellListeners();
+			}
 		}
+	} catch (const Error& e) {
+		handle_error(e, false, false);
 	}
 	// draw values
 	FOR_EACH(v, viewers) { // draw low z index fields first
@@ -54,6 +58,7 @@ void DataViewer::draw(RotatedDC& dc, const Color& background) {
 			}
 		}
 	}
+	drawing = false;
 }
 void DataViewer::drawViewer(RotatedDC& dc, ValueViewer& v) {
 	v.draw(dc);
@@ -159,16 +164,16 @@ void DataViewer::onAction(const Action& action, bool undone) {
 			}
 		}
 	}
-	TYPE_CASE(action, ScriptStyleEvent) {
+/*//%	TYPE_CASE(action, ScriptStyleEvent) {
 		if (action.stylesheet == stylesheet.get()) {
 			FOR_EACH(v, viewers) {
 				if (v->getStyle().get() == action.style) {
 					// refresh the viewer
 					v->onStyleChange();
-					onChange();
+					if (!drawing) onChange();
 					return;
 				}
 			}
 		}
-	}
+	}*/
 }

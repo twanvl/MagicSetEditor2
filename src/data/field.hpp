@@ -22,6 +22,7 @@ DECLARE_POINTER_TYPE(Value);
 class Context;
 class Dependency;
 class Action;
+class StyleListener;
 
 // for DataViewer/editor
 class DataViewer; class DataEditor;
@@ -103,22 +104,46 @@ class Style {
 	/** thisP is a smart pointer to this */
 	virtual ValueViewerP makeEditor(DataEditor& parent, const StyleP& thisP) = 0;
 	
-	/// Update scripted values of this style, return true if anything has changed
+	/// Update scripted values of this style, return true if anything has changed.
+	/** The caller should tellListeners() */
 	virtual bool update(Context&);
 	/// Add the given dependency to the dependent_scripts list for the variables this style depends on
 	/** Only use for things that need invalidate() */
 	virtual void initDependencies(Context&, const Dependency&) const;
 	/// Invalidate scripted images for this style
-	virtual void invalidate() {}
+	virtual void invalidate(Context&) {}
+	
+	/// Add a StyleListener
+	void addListener(StyleListener*);
+	/// Remove a StyleListener
+	void removeListener(StyleListener*);
+	/// Tell the StyleListeners that this style has changed
+	void tellListeners();
 	
   private:
 	DECLARE_REFLECTION_VIRTUAL();
+	/// Things that are listening to changes in this style
+	vector<StyleListener*> listeners;
 };
 
 void init_object(const FieldP&, StyleP&);
 inline const FieldP& get_key     (const StyleP& s) { return s->fieldP; }
 inline const String& get_key_name(const StyleP& s) { return s->fieldP->name; }
 template <> StyleP read_new<Style>(Reader&);
+
+// ----------------------------------------------------------------------------- : StyleListener
+
+/// An object that can respond when a style changes;
+class StyleListener {
+  public:
+	StyleListener(const StyleP& style);
+	virtual ~StyleListener();
+	
+	/// Called when a (scripted) property of the viewed style has changed
+	virtual void onStyleChange() {}
+  protected:
+	const StyleP styleP; ///< The style we are listening to
+};
 
 // ----------------------------------------------------------------------------- : Value
 

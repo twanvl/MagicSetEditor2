@@ -36,4 +36,5 @@ void TextValueViewer::onValueChange() {
 
 void TextValueViewer::onStyleChange() {
 	v.reset();
+	viewer.redraw(*this);
 }

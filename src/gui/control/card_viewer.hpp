@@ -31,7 +31,7 @@ class CardViewer : public wxControl, public DataViewer {
 	shared_ptr<DC> overdrawDC();
 	
 	/// Invalidate and redraw (the area of) a single value viewer
-	void redraw(const ValueViewer&);
+	virtual void redraw(const ValueViewer&);
 	
 	/// The rotation to use
 	virtual Rotation getRotation() const;

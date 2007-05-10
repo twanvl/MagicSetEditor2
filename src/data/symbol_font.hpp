@@ -32,10 +32,13 @@ class SymbolFont : public Packaged {
 	/// Loads the symbol font with a given name, for example "magic-mana-large"
 	static SymbolFontP byName(const String& name);
 	
+	// Script update
+	void update(Context& ctx) const;
+	
 	class DrawableSymbol;
 	typedef vector<DrawableSymbol> SplitSymbols;
 	/// Split a string into separate symbols for drawing and for determining their size
-	void split(const String& text, Context& ctx, SplitSymbols& out) const;
+	void split(const String& text, SplitSymbols& out) const;
 	
 	/// Draw a piece of text prepared using split
 	void draw(RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, const String& text);
@@ -43,9 +46,9 @@ class SymbolFont : public Packaged {
 	void getCharInfo(RotatedDC& dc, Context& ctx, double font_size, const String& text, vector<CharInfo>& out);
 	
 	/// Draw a piece of text prepared using split
-	void draw(RotatedDC& dc, Context& ctx, RealRect rect, double font_size, const Alignment& align, const SplitSymbols& text);
+	void draw(RotatedDC& dc, RealRect rect, double font_size, const Alignment& align, const SplitSymbols& text);
 	/// Get information on characters in a string
-	void getCharInfo(RotatedDC& dc, Context& ctx, double font_size, const SplitSymbols& text, vector<CharInfo>& out);
+	void getCharInfo(RotatedDC& dc, double font_size, const SplitSymbols& text, vector<CharInfo>& out);
 	
 	static String typeNameStatic();
 	virtual String typeName() const;
@@ -79,24 +82,21 @@ class SymbolFont : public Packaged {
 	friend class SymbolInFont;
 	friend class InsertSymbolMenu;
 	vector<SymbolInFontP> symbols;	///< The individual symbols
-	
-	// Script update
-	void update(Context& ctx) const;
-	
+		
 	/// Find the default symbol
 	/** may return nullptr */
 	SymbolInFont* defaultSymbol() const;
 	
 	/// Draws a single symbol inside the given rectangle
-	void drawSymbol  (RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, SymbolInFont& sym);
+	void drawSymbol  (RotatedDC& dc, const RealRect& rect, double font_size, const Alignment& align, SymbolInFont& sym);
 	/// Draw the default bitmap to a dc and overlay a string of text
-	void drawWithText(RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, const String& text);
+	void drawWithText(RotatedDC& dc, const RealRect& rect, double font_size, const Alignment& align, const String& text);
 	
 	/// Size of a single symbol
-	RealSize symbolSize       (Context& ctx, double font_size, const DrawableSymbol& sym);
+	RealSize symbolSize       (double font_size, const DrawableSymbol& sym);
   public:
 	/// Size of the default symbol
-	RealSize defaultSymbolSize(Context& ctx, double font_size);
+	RealSize defaultSymbolSize(double font_size);
 	
 	DECLARE_REFLECTION();
 };
@@ -124,9 +124,9 @@ class InsertSymbolMenu {
 	/// Get the code for an item, id relative to the start of this menu
 	String getCode(int id, const SymbolFont& font) const;
 	/// Make an actual menu
-	wxMenu*     makeMenu(int first_id, Context& ctx, SymbolFont& font) const;
+	wxMenu*     makeMenu(int first_id, SymbolFont& font) const;
 	/// Make an actual menu item
-	wxMenuItem* makeMenuItem(wxMenu* parent, int first_id, Context& ctx, SymbolFont& font) const;
+	wxMenuItem* makeMenuItem(wxMenu* parent, int first_id, SymbolFont& font) const;
 	
 	DECLARE_REFLECTION();
 };
