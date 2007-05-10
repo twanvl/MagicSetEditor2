@@ -238,12 +238,14 @@ void instrUnary  (UnaryInstructionType   i, ScriptValueP& a) {
 
 // operator on strings or doubles or ints
 #define OPERATOR_SDI(OP)										\
-	if (at == SCRIPT_STRING || bt == SCRIPT_STRING) {			\
+	if        (at == SCRIPT_STRING || bt == SCRIPT_STRING) {	\
 		a = to_script(a->toString()  OP  b->toString());		\
 	} else if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {	\
 		a = to_script((double)*a     OP  (double)*b);			\
-	} else {													\
+	} else if (at == SCRIPT_INT    || bt == SCRIPT_INT   ) {	\
 		a = to_script((int)*a        OP  (int)*b);				\
+	} else {													\
+		a = to_script(a->toString()  OP  b->toString());		\
 	}															\
 	break
 
