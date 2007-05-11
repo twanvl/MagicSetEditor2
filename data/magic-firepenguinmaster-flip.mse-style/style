@@ -233,6 +233,7 @@ card style:
 			special:	    script: symbol_variation(symbol: set.symbol, variation: "special")
 
 	############################# Text box
+#should the bottom textbox be the flipped or unflipped text?  if flipped, reverse orientations of fields.
 	text:
 		left: 62
 		top : 380

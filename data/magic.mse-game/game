@@ -498,6 +498,7 @@ card field:
 	choice: black
 	choice: white
 	description: Font color for the typeline and textbox
+	show statistics: false
 
 ############################# Name line
 card field:
@@ -542,6 +543,7 @@ card field:
 	choice: land
 	choice: multitype
 	description: Symbol for the type of this card (claw marks, chalice, lightning bolt)
+	show statistics: false
 # Part of Name box for new token template
 card field:
 	type: choice
@@ -608,6 +610,7 @@ card field:
 	name: type image
 	include file: magic-blends.mse-include/card-colors
 	script: card.card_color
+	show statistics: false
 card field:
 	type: choice
 	name: rarity
@@ -855,6 +858,7 @@ card field:
 	type: choice
 	name: watermark 2
 	include file: magic-watermarks.mse-include/watermark-names
+	icon: stats/watermark.png
 	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, a special symbol, or a guild symbol
 card field:
 	type: text
@@ -1174,7 +1178,7 @@ keyword:
 keyword:
 	keyword: Cycling
 	match: Cycling<atom-param>cost</atom-param>
-	mode: core
+	mode: expert
 	reminder: {format_cost(param1)}, Discard this card: Draw a card.
 keyword:
 	keyword: Trample
