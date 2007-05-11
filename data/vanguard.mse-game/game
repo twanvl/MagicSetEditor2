@@ -493,7 +493,7 @@ keyword:
 	keyword: Bands with other
 	match: Bands with other <atom-param>name</atom-param>
 	mode: old
-	reminder: When declaring attackers or blockers, this creature may group with other {param1} and creatures with banding. When damage is dealt, you decide where damage is dealt.
+	reminder: When declaring attackers or blockers this creature may group with other creatures with banding or bands with {param1}. When damage is dealt, you decide where damage is dealt.
 keyword:
 	keyword: Rampage
 	match: Rampage <atom-param>number</atom-param>
@@ -833,6 +833,10 @@ keyword:
 keyword:
 	keyword: Gotcha
 	match: Gotcha
+	mode: pseudo
+keyword:
+	keyword: Grandeur
+	match: Grandeur
 	mode: pseudo
 keyword:
 	keyword: Fortify
