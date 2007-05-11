@@ -1,4 +1,4 @@
-mse version: 0.3.1
+mse version: 0.3.2
 # Symbol font in the normal, flat, style, used for text boxes and on old style cards
 # Note:
 #  Define  small_mana_t:="mana_t(_old)?.png" in the init script of the style
