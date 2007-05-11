@@ -271,15 +271,18 @@ init script:
 			replace: "Æ") +
 		# step 2 : longdash for keywords
 		replace_rule(
-			match: "--| - ",
+			match: "--",
 			replace: "—") +
+		replace_rule(
+			match: " - ",
+			replace: " — ") +
 		# step 3 : trademark symbol
 		replace_rule(
 			match: "TM",
 			replace: "™") +
 		# step 4 : copyright symbol
 		replace_rule(
-			match: "CR",
+			match: "CR|\\(C\\)",
 			replace: "©")
 	
 	# the flavor text filter
@@ -363,6 +366,7 @@ set field:
 set field:
 	type: text
 	name: copyright
+	script: copyright_filter(value)
 set field:
 	type: symbol
 	name: symbol
