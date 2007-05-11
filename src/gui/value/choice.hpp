@@ -14,7 +14,7 @@
 #include <gui/drop_down_list.hpp>
 #include <render/value/choice.hpp>
 
-DECLARE_POINTER_TYPE(DropDownList);
+DECLARE_SHARED_POINTER_TYPE(DropDownList);
 
 // ----------------------------------------------------------------------------- : ChoiceValueEditor
 

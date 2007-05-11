@@ -412,9 +412,9 @@ IMPLEMENT_REFLECTION(Packaged) {
 	REFLECT(short_name);
 	REFLECT(full_name);
 	REFLECT_N("icon", icon_filename);
-	REFLECT(position_hint);
+	REFLECT_NO_SCRIPT(position_hint);
 	REFLECT(version);
-	REFLECT_N("depends ons", dependencies); // hack for singular_form
+	REFLECT_NO_SCRIPT_N("depends ons", dependencies); // hack for singular_form
 }
 
 Packaged::Packaged()

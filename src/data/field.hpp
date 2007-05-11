@@ -32,7 +32,7 @@ DECLARE_POINTER_TYPE(ValueEditor);
 // ----------------------------------------------------------------------------- : Field
 
 /// Information on how to store a value
-class Field {
+class Field : public IntrusivePtrVirtualBase {
   public:
 	Field();
 	virtual ~Field();
@@ -71,7 +71,7 @@ class Field {
 };
 
 template <>
-shared_ptr<Field> read_new<Field>(Reader& reader);
+intrusive_ptr<Field> read_new<Field>(Reader& reader);
 inline void update_index(FieldP& f, size_t index) {
 	f->index = index;
 }
@@ -79,7 +79,7 @@ inline void update_index(FieldP& f, size_t index) {
 // ----------------------------------------------------------------------------- : Style
 
 /// Style information needed to display a Value in a Field.
-class Style {
+class Style : public IntrusivePtrVirtualBase {
   public:
 	Style(const FieldP&);
 	virtual ~Style();
@@ -134,7 +134,7 @@ template <> StyleP read_new<Style>(Reader&);
 // ----------------------------------------------------------------------------- : StyleListener
 
 /// An object that can respond when a style changes;
-class StyleListener {
+class StyleListener : public IntrusivePtrVirtualBase {
   public:
 	StyleListener(const StyleP& style);
 	virtual ~StyleListener();
@@ -148,7 +148,7 @@ class StyleListener {
 // ----------------------------------------------------------------------------- : Value
 
 /// A specific value 'in' a Field.
-class Value {
+class Value : public IntrusivePtrVirtualBase {
   public:
 	inline Value(const FieldP& field) : fieldP(field) {}
 	virtual ~Value();
@@ -189,14 +189,14 @@ template <> ValueP read_new<Value>(Reader&);
 #define IMPLEMENT_FIELD_TYPE(Type)														\
 	StyleP Type ## Field::newStyle(const FieldP& thisP) const {							\
 		assert(thisP.get() == this);													\
-		return new_shared1<Type ## Style>(static_pointer_cast<Type ## Field>(thisP));	\
+		return new_intrusive1<Type ## Style>(static_pointer_cast<Type ## Field>(thisP));\
 	}																					\
 	ValueP Type ## Field::newValue(const FieldP& thisP) const {							\
 		assert(thisP.get() == this);													\
-		return new_shared1<Type ## Value>(static_pointer_cast<Type ## Field>(thisP));	\
+		return new_intrusive1<Type ## Value>(static_pointer_cast<Type ## Field>(thisP));\
 	}																					\
 	StyleP Type ## Style::clone() const {												\
-		return new_shared1<Type ## Style>(*this);										\
+		return new_intrusive1<Type ## Style>(*this);									\
 	}
 
 #define DECLARE_STYLE_TYPE(Type)														\

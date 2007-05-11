@@ -305,10 +305,10 @@ void KeywordsPanel::onKeywordSelect(KeywordSelectEvent& ev) {
 	if (ev.keyword) {
 		Keyword& kw = *ev.keyword;
 		sp->Show(fixed, kw.fixed);
-		keyword ->setValue(new_shared5<KeywordTextValue>        (keyword->getFieldP(),  &kw, &kw.keyword, !kw.fixed, true));
-		match   ->setValue(new_shared4<KeywordTextValue>        (match->getFieldP(),    &kw, &kw.match,   !kw.fixed));
-		rules   ->setValue(new_shared4<KeywordTextValue>        (rules->getFieldP(),    &kw, &kw.rules,   !kw.fixed));
-		shared_ptr<KeywordReminderTextValue> reminder_value(new KeywordReminderTextValue(reminder->getFieldP(), &kw,              !kw.fixed));
+		keyword ->setValue(new_intrusive5<KeywordTextValue>        (keyword->getFieldP(),  &kw, &kw.keyword, !kw.fixed, true));
+		match   ->setValue(new_intrusive4<KeywordTextValue>        (match->getFieldP(),    &kw, &kw.match,   !kw.fixed));
+		rules   ->setValue(new_intrusive4<KeywordTextValue>        (rules->getFieldP(),    &kw, &kw.rules,   !kw.fixed));
+		intrusive_ptr<KeywordReminderTextValue> reminder_value(new KeywordReminderTextValue(reminder->getFieldP(), &kw,              !kw.fixed));
 		reminder->setValue(reminder_value);
 		errors->SetLabel(reminder_value->errors);
 		add_param->Enable(!kw.fixed && !set->game->keyword_parameter_types.empty());

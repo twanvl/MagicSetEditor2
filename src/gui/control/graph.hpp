@@ -28,7 +28,7 @@ DECLARE_EVENT_TYPE(EVENT_GRAPH_SELECT, <not used>)
 
 /// A group in a table or graph
 /** A group is rendered as a single bar or pie slice */
-class GraphGroup {
+class GraphGroup : public IntrusivePtrBase<GraphGroup> {
   public:
 	GraphGroup(const String& name, UInt size, const Color& color = *wxBLACK)
 		: name(name), color(color), size(size)
@@ -48,7 +48,7 @@ enum AutoColor
 
 /// An axis in a graph, consists of a list of groups
 /** The sum of groups.sum = sum of all elements in the data */
-class GraphAxis {
+class GraphAxis : public IntrusivePtrBase<GraphAxis> {
   public:
 	GraphAxis(const String& name, AutoColor auto_color = AUTO_COLOR_EVEN, bool numeric = false, const map<String,Color>* colors = nullptr)
 		: name(name)
@@ -69,7 +69,7 @@ class GraphAxis {
 };
 
 /// A single data point of a graph
-class GraphElement {
+class GraphElement : public IntrusivePtrBase<GraphElement> {
   public:
 	GraphElement() {}
 	GraphElement(const String& v1);
@@ -86,7 +86,7 @@ class GraphDataPre {
 };
 
 /// Data to be displayed in a graph
-class GraphData {
+class GraphData : public IntrusivePtrBase<GraphData> {
   public:
 	GraphData(const GraphDataPre&);
 	
@@ -108,9 +108,8 @@ enum DrawLayer
 
 /// A type of graph
 /** It is rendered into a sub-rectangle of the screen */
-class Graph {
+class Graph : public IntrusivePtrVirtualBase {
   public:
-	virtual ~Graph() {}
 	/// Draw this graph, filling the internalRect() of the dc.
 	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const = 0;
 	/// Find the item at the given position, the rectangle gives the screen size

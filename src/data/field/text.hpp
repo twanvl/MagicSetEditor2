@@ -48,7 +48,7 @@ class TextField : public Field {
 // ----------------------------------------------------------------------------- : TextStyle
 
 /// Background behind text
-class TextBackground {
+class TextBackground : public IntrusivePtrBase<TextBackground> {
   public:
 	ScriptableImage image;        ///< background image, stretched to text size
 	RealSize        displacement;

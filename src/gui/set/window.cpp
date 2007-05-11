@@ -233,7 +233,7 @@ bool SetWindow::isOnlyWithSet() {
 void SetWindow::onChangeSet() {
 	// make sure there is always at least one card
 	// some things need this
-	if (set->cards.empty()) set->cards.push_back(new_shared1<Card>(*set->game));
+	if (set->cards.empty()) set->cards.push_back(new_intrusive1<Card>(*set->game));
 	// all panels view the same set
 	FOR_EACH(p, panels) {
 		p->setSet(set);

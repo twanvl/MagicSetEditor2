@@ -20,7 +20,7 @@ class ThumbnailThreadWorker;
 // ----------------------------------------------------------------------------- : ThumbnailRequest
 
 /// A request for some kind of thumbnail
-class ThumbnailRequest {
+class ThumbnailRequest : public IntrusivePtrVirtualBase {
   public:
 	ThumbnailRequest(void* owner, const String& cache_name, const wxDateTime& modified)
 		: owner(owner), cache_name(cache_name), modified(modified) {}

@@ -44,7 +44,7 @@ enum WhichHandle
 };
 
 /// A control point (corner) of a SymbolPart (polygon/bezier-gon)
-class ControlPoint {
+class ControlPoint : public IntrusivePtrBase<ControlPoint> {
   public:
 	Vector2D pos;			///< position of the control point itself
 	Vector2D delta_before;	///< delta to bezier control point, for curve before point
@@ -121,7 +121,7 @@ inline size_t mod(int a, size_t size) {
 }
 
 /// A single part (polygon/bezier-gon) in a Symbol
-class SymbolPart {
+class SymbolPart : public IntrusivePtrBase<SymbolPart> {
   public:
 	/// The points of this polygon
 	vector<ControlPointP> points;
@@ -158,7 +158,7 @@ class SymbolPart {
 // ----------------------------------------------------------------------------- : Symbol
 
 /// An editable symbol, consists of any number of SymbolParts
-class Symbol {
+class Symbol : public IntrusivePtrBase<Symbol> {
   public:
 	/// The parts of this symbol
 	vector<SymbolPartP> parts;

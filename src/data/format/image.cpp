@@ -24,10 +24,8 @@ Bitmap export_bitmap(const SetP& set, const CardP& card) {
 	DataViewer viewer;
 	viewer.setSet(set);
 	viewer.setCard(card);
-	// style to use
-	StyleSheetP style = set->stylesheetFor(card);
 	// size of cards
-	if (settings.stylesheetSettingsFor(*style).card_normal_export()) {
+	if (settings.stylesheetSettingsFor(set->stylesheetFor(card)).card_normal_export()) {
 		// TODO
 //		viewer.rotation.angle = 0;
 //		viewer.rotation.zoom  = 1.0;

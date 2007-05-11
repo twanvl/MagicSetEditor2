@@ -21,7 +21,7 @@ class KeywordTrie;
 
 // ----------------------------------------------------------------------------- : Keyword parameters
 
-class ParamReferenceType {
+class ParamReferenceType : public IntrusivePtrBase<ParamReferenceType> {
   public:
 	String        name;        ///< Name of the parameter reference type
 	String        description; ///< Description (for status bar)
@@ -31,7 +31,7 @@ class ParamReferenceType {
 };
 
 /// Parameter type of keywords
-class KeywordParam {
+class KeywordParam : public IntrusivePtrBase<KeywordParam> {
   public:
 	KeywordParam();
 	String         name;		///< Name of the parameter type
@@ -49,7 +49,7 @@ class KeywordParam {
 // ----------------------------------------------------------------------------- : Keyword mode
 
 /// Information on when and how to use a keyword
-class KeywordMode {
+class KeywordMode : public IntrusivePtrBase<KeywordMode> {
   public:
 	KeywordMode() : is_default(false) {}
 	
@@ -63,7 +63,7 @@ class KeywordMode {
 // ----------------------------------------------------------------------------- : Keyword expansion
 
 /// A keyword for a set or a game
-class Keyword {
+class Keyword : public IntrusivePtrVirtualBase {
   public:
 	Keyword() : fixed(false), valid(false) {}
 	

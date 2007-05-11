@@ -24,7 +24,7 @@ DECLARE_POINTER_TYPE(Value);
 
 /// The virtual viewer control for a single field on a card (or in the set data)
 /** A viewer can only display a value, not edit it, ValueEditor is used for that */
-class ValueViewer : public StyleListener{
+class ValueViewer : public StyleListener {
   public:
 	/// Construct a ValueViewer, set the value at a later time
 	ValueViewer(DataViewer& parent, const StyleP& style);

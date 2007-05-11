@@ -163,7 +163,7 @@ void DropDownChoiceListBase::generateThumbnailImages() {
 		ThumbnailStatus status = style().thumbnails_status[i];
 		if (i >= image_count || status != THUMB_OK) {
 			// request this thumbnail
-			thumbnail_thread.request( new_shared3<ChoiceThumbnailRequest>(&cve, i, status == THUMB_NOT_MADE) );
+			thumbnail_thread.request( new_intrusive3<ChoiceThumbnailRequest>(&cve, i, status == THUMB_NOT_MADE) );
 		}
 	}
 }

@@ -33,19 +33,19 @@ class PackageManager {
 	
 	/// Open a package with the specified name (including extension)
 	template <typename T>
-	shared_ptr<T> open(const String& name) {
+	intrusive_ptr<T> open(const String& name) {
 		wxFileName fn(data_directory + _("/") + name);
 		fn.Normalize();
 		String filename = fn.GetFullPath();
 		// Is this package already loaded?
 		PackagedP& p = loaded_packages[filename];
-		shared_ptr<T> typedP = dynamic_pointer_cast<T>(p);
+		intrusive_ptr<T> typedP = dynamic_pointer_cast<T>(p);
 		if (typedP) {
 			typedP->loadFully();
 			return typedP;
 		} else {
 			// not loaded, or loaded with wrong type (i.e. with just_header)
-			p = typedP = new_shared<T>();
+			p = typedP = new_intrusive<T>();
 			typedP->open(filename);
 			return typedP;
 		}

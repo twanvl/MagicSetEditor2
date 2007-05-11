@@ -367,19 +367,19 @@ GraphControl::GraphControl(Window* parent, int id)
 	: wxControl(parent, id)
 {
 	//*
-	shared_ptr<GraphContainer> combined(new GraphContainer());
-	combined->add(new_shared1<GraphValueAxis>(0));
-	combined->add(new_shared1<BarGraph>(0));
-	graph = new_shared6<GraphWithMargins>(combined, 23,8,7,20, true);
+	intrusive_ptr<GraphContainer> combined(new GraphContainer());
+	combined->add(new_intrusive1<GraphValueAxis>(0));
+	combined->add(new_intrusive1<BarGraph>(0));
+	graph = new_intrusive6<GraphWithMargins>(combined, 23,8,7,20, true);
 	/*/
-	shared_ptr<GraphContainer> combined(new GraphContainer());
-	combined->add(new_shared1<PieGraph>(0));
-	graph = new_shared6<GraphWithMargins>(combined, 20,20,20,20, false);
+	intrusive_ptr<GraphContainer> combined(new GraphContainer());
+	combined->add(new_intrusive1<PieGraph>(0));
+	graph = new_intrusive6<GraphWithMargins>(combined, 20,20,20,20, false);
 	//*/
 }
 
 void GraphControl::setData(const GraphDataPre& data) {
-	setData(new_shared1<GraphData>(data));
+	setData(new_intrusive1<GraphData>(data));
 }
 void GraphControl::setData(const GraphDataP& data) {
 	if (graph) {

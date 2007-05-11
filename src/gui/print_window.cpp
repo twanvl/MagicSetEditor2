@@ -10,6 +10,7 @@
 #include <gui/card_select_window.hpp>
 #include <gui/util.hpp>
 #include <data/set.hpp>
+#include <data/card.hpp>
 #include <data/stylesheet.hpp>
 #include <render/card/viewer.hpp>
 #include <wx/print.h>
@@ -44,7 +45,7 @@ class TextBufferDC : public wxMemoryDC {
 	
   private:
 	// A call to DrawText
-	struct TextDraw {
+	struct TextDraw : public IntrusivePtrBase<TextDraw> {
 		wxFont font;
 		Color  color;
 		int x, y;
@@ -57,7 +58,7 @@ class TextBufferDC : public wxMemoryDC {
 		{}
 	};
   public:
-	typedef shared_ptr<TextDraw> TextDrawP;
+	typedef intrusive_ptr<TextDraw> TextDrawP;
   private:
 	vector<TextDrawP> text;
 	Bitmap buffer;
@@ -73,12 +74,12 @@ TextBufferDC::TextBufferDC(int width, int height)
 void TextBufferDC::DoDrawText(const String& str, int x, int y) {
 	double usx,usy;
 	GetUserScale(&usx, &usy);
-	text.push_back( new_shared7<TextDraw>(GetFont(), GetTextForeground(), usx, usy, x, y, str) );
+	text.push_back( new_intrusive7<TextDraw>(GetFont(), GetTextForeground(), usx, usy, x, y, str) );
 }
 void TextBufferDC::DoDrawRotatedText(const String& str, int x, int y, double angle) {
 	double usx,usy;
 	GetUserScale(&usx, &usy);
-	text.push_back( new_shared8<TextDraw>(GetFont(), GetTextForeground(), usx, usy, x, y, str, angle) );
+	text.push_back( new_intrusive8<TextDraw>(GetFont(), GetTextForeground(), usx, usy, x, y, str, angle) );
 }
 
 DECLARE_TYPEOF_COLLECTION(TextBufferDC::TextDrawP);
@@ -171,7 +172,7 @@ void CardsPrintout::OnPreparePrinting() {
 	int pw_mm, ph_mm;
 	GetPageSizeMM(&pw_mm, &ph_mm);
 	if (!layout) {
-		layout = new_shared2<PageLayout>(*set->stylesheet, RealSize(pw_mm, ph_mm));
+		layout = new_intrusive2<PageLayout>(*set->stylesheet, RealSize(pw_mm, ph_mm));
 	}
 }
 
@@ -201,7 +202,7 @@ void CardsPrintout::drawCard(DC& dc, const CardP& card, int card_nr) {
 	RealPoint pos( layout->margin_left + (layout->card_size.width  + layout->card_spacing.width)  * col
 	             , layout->margin_top  + (layout->card_size.height + layout->card_spacing.height) * row);
 	// determine rotation
-	StyleSheet& stylesheet = *set->stylesheetFor(card);
+	const StyleSheet& stylesheet = set->stylesheetFor(card);
 	int rotation = 0;
 	if ((stylesheet.card_width > stylesheet.card_height) != layout->card_landscape) {
 		rotation = 90 - rotation;

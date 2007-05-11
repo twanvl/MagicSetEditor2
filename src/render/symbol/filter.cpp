@@ -53,24 +53,24 @@ Image render_symbol(const SymbolP& symbol, const SymbolFilter& filter, double bo
 
 // ----------------------------------------------------------------------------- : SymbolFilter
 
-IMPLEMENT_REFLECTION(SymbolFilter) {
+IMPLEMENT_REFLECTION_NO_SCRIPT(SymbolFilter) {
 	REFLECT_IF_NOT_READING {
 		String fill_type = fillType();
 		REFLECT(fill_type);
 	}
 }
-template <> void GetMember::handle(const shared_ptr<SymbolFilter>& f) {
+template <> void GetMember::handle(const intrusive_ptr<SymbolFilter>& f) {
 	handle(*f);
 }
 
 template <>
-shared_ptr<SymbolFilter> read_new<SymbolFilter>(Reader& reader) {
+intrusive_ptr<SymbolFilter> read_new<SymbolFilter>(Reader& reader) {
 	// there must be a fill type specified
 	String fill_type;
 	reader.handle(_("fill type"), fill_type);
-	if      (fill_type == _("solid"))			return new_shared<SolidFillSymbolFilter>();
-	else if (fill_type == _("linear gradient"))	return new_shared<LinearGradientSymbolFilter>();
-	else if (fill_type == _("radial gradient"))	return new_shared<RadialGradientSymbolFilter>();
+	if      (fill_type == _("solid"))			return new_intrusive<SolidFillSymbolFilter>();
+	else if (fill_type == _("linear gradient"))	return new_intrusive<LinearGradientSymbolFilter>();
+	else if (fill_type == _("radial gradient"))	return new_intrusive<RadialGradientSymbolFilter>();
 	else {
 		throw ParseError(_ERROR_1_("unsupported fill type", fill_type));
 	}

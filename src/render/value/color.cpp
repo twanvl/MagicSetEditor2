@@ -101,6 +101,6 @@ void ColorValueViewer::loadMask(const Rotation& rot) const {
 	if (image.LoadFile(*image_file)) {
 		Image resampled(w,h);
 		resample(image, resampled);
-		alpha_mask = new_shared1<AlphaMask>(resampled);
+		alpha_mask = new_intrusive1<AlphaMask>(resampled);
 	}
 }

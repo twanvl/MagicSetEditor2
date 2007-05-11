@@ -27,7 +27,7 @@ void print_set(Window* parent, const SetP& set);
 // ----------------------------------------------------------------------------- : Layout
 
 /// Layout of a page of cards
-class PageLayout {
+class PageLayout : public IntrusivePtrBase<PageLayout> {
   public:
 	PageLayout();
 	PageLayout(const StyleSheet& stylesheet, const RealSize& page_size);

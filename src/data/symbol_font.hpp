@@ -111,7 +111,7 @@ enum MenuItemType
 };
 
 /// Description of a menu to insert symbols from a symbol font into the text
-class InsertSymbolMenu {
+class InsertSymbolMenu : public IntrusivePtrBase<InsertSymbolMenu> {
   public:
 	InsertSymbolMenu();
 	

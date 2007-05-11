@@ -70,7 +70,7 @@ IMPLEMENT_REFLECTION(SymbolFont) {
 // ----------------------------------------------------------------------------- : SymbolInFont
 
 /// A symbol in a symbol font
-class SymbolInFont {
+class SymbolInFont : public IntrusivePtrBase<SymbolInFont> {
   public:
 	SymbolInFont();
 	

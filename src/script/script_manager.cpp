@@ -71,7 +71,7 @@ Context& SetScriptContext::getContext(const StyleSheetP& stylesheet) {
 	}
 }
 Context& SetScriptContext::getContext(const CardP& card) {
-	Context& ctx = getContext(set.stylesheetFor(card));
+	Context& ctx = getContext(set.stylesheetForP(card));
 	if (card) {
 		ctx.setVariable(_("card"), to_script(card));
 	} else {
@@ -185,15 +185,13 @@ void SetScriptManager::onAction(const Action& action, bool undone) {
 
 void SetScriptManager::updateStyles(const CardP& card) {
 //	lastUpdatedCard = card;
-	StyleSheetP stylesheet = set.stylesheetFor(card);
+	const StyleSheet& stylesheet = set.stylesheetFor(card);
 	Context& ctx = getContext(card);
 	// update all styles
-	FOR_EACH(s, stylesheet->card_style) {
+	FOR_EACH_CONST(s, stylesheet.card_style) {
 		if (s->update(ctx)) {
-			s->tellListeners();
 			// style has changed, tell listeners
-//%%			ScriptStyleEvent change(stylesheet.get(), s.get());
-//			set->actions.tellListeners(change);
+			s->tellListeners();
 		}
 	}
 }

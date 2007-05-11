@@ -21,6 +21,7 @@ TextCtrl::TextCtrl(Window* parent, int id, bool multi_line, long style)
 	, value(nullptr)
 	, multi_line(multi_line)
 {}
+TextCtrl::~TextCtrl() {}
 
 Rotation TextCtrl::getRotation() const {
 	return Rotation(0, RealRect(RealPoint(0,0),GetClientSize()));
@@ -57,7 +58,7 @@ void TextCtrl::updateSize() {
 }
 
 void TextCtrl::setValue(String* value, bool untagged) {
-	setValue(new_shared4<FakeTextValue>(getFieldP(), value, true, untagged));
+	setValue(new_intrusive4<FakeTextValue>(getFieldP(), value, true, untagged));
 }
 void TextCtrl::setValue(const FakeTextValueP& value) {
 	value->retrieve();

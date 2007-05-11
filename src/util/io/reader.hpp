@@ -82,14 +82,18 @@ class Reader {
 			exitBlock();
 		}
 	}
+	/// Handle a value
+	template <typename T>
+	inline void handleNoScript(const Char* name, T& value) { handle(name,value); }
+	
 	/// Reads a vector from the input stream
 	template <typename T>
 	void handle(const Char* name, vector<T>& vector);
 	
 	/// Reads an object of type T from the input stream
 	template <typename T> void handle(T& object);
-	/// Reads a shared_ptr from the input stream
-	template <typename T> void handle(shared_ptr<T>& pointer);
+	/// Reads a intrusive_ptr from the input stream
+	template <typename T> void handle(intrusive_ptr<T>& pointer);
 	/// Reads a map from the input stream
 	template <typename V> void handle(map<String,V>& m);
 	/// Reads an IndexMap from the input stream, reads only keys that already exist in the map
@@ -178,8 +182,8 @@ class Reader {
  *  This function can be overloaded to provide different behaviour
  */
 template <typename T>
-shared_ptr<T> read_new(Reader& reader) {
-	return new_shared<T>();
+intrusive_ptr<T> read_new(Reader& reader) {
+	return new_intrusive<T>();
 }
 
 /// Update the 'index' member of a value for use by IndexMap
@@ -197,7 +201,7 @@ void Reader::handle(const Char* name, vector<T>& vector) {
 }
 
 template <typename T>
-void Reader::handle(shared_ptr<T>& pointer) {
+void Reader::handle(intrusive_ptr<T>& pointer) {
 	if (!pointer) pointer = read_new<T>(*this);
 	handle(*pointer);
 }

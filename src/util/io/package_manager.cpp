@@ -65,12 +65,12 @@ PackagedP PackageManager::openAny(const String& name, bool just_header) {
 		return p;
 	} else {
 		// load with the right type, based on extension
-		if      (fn.GetExt() == _("mse-game"))            p = new_shared<Game>();
-		else if (fn.GetExt() == _("mse-style"))           p = new_shared<StyleSheet>();
-		else if (fn.GetExt() == _("mse-locale"))          p = new_shared<Locale>();
-		else if (fn.GetExt() == _("mse-include"))         p = new_shared<IncludePackage>();
-		else if (fn.GetExt() == _("mse-symbol-font"))     p = new_shared<SymbolFont>();
-		else if (fn.GetExt() == _("mse-export-template")) p = new_shared<ExportTemplate>();
+		if      (fn.GetExt() == _("mse-game"))            p = new_intrusive<Game>();
+		else if (fn.GetExt() == _("mse-style"))           p = new_intrusive<StyleSheet>();
+		else if (fn.GetExt() == _("mse-locale"))          p = new_intrusive<Locale>();
+		else if (fn.GetExt() == _("mse-include"))         p = new_intrusive<IncludePackage>();
+		else if (fn.GetExt() == _("mse-symbol-font"))     p = new_intrusive<SymbolFont>();
+		else if (fn.GetExt() == _("mse-export-template")) p = new_intrusive<ExportTemplate>();
 		else {
 			throw PackageError(_("Unrecognized package type: '") + fn.GetExt() + _("'\nwhile trying to open: ") + name);
 		}

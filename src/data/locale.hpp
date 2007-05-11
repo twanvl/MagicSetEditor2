@@ -20,7 +20,7 @@ DECLARE_POINTER_TYPE(SubLocale);
 // ----------------------------------------------------------------------------- : Locale class
 
 /// Translations of the texts of a game/stylesheet/symbolfont
-class SubLocale {
+class SubLocale : public IntrusivePtrBase<SubLocale> {
   public:
 	map<String,String> translations;
 	

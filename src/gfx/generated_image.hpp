@@ -14,7 +14,7 @@
 #include <gfx/gfx.hpp>
 #include <script/value.hpp>
 
-DECLARE_INTRUSIVE_POINTER_TYPE(GeneratedImage);
+DECLARE_POINTER_TYPE(GeneratedImage);
 DECLARE_POINTER_TYPE(SymbolVariation);
 class Package;
 
@@ -161,12 +161,12 @@ class BuiltInImage : public GeneratedImage {
 /// Use a symbol as an image
 class SymbolToImage : public GeneratedImage {
   public:
-	inline SymbolToImage(const String& filename, Age age, const SymbolVariationP& variation)
-		: filename(filename), age(age), variation(variation)
-	{}
+	SymbolToImage(const String& filename, Age age, const SymbolVariationP& variation);
+	~SymbolToImage();
 	virtual Image generate(const Options& opt) const;
 	virtual bool operator == (const GeneratedImage& that) const;
   private:
+	SymbolToImage(const SymbolToImage&); // copy ctor
 	String           filename;
 	Age              age; ///< Age the symbol was last updated
 	SymbolVariationP variation;

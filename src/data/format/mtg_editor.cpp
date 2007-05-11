@@ -43,7 +43,7 @@ class MtgEditorFileFormat : public FileFormat {
 };
 
 FileFormatP mtg_editor_file_format() {
-	return new_shared<MtgEditorFileFormat>();
+	return new_intrusive<MtgEditorFileFormat>();
 }
 
 // ----------------------------------------------------------------------------- : Importing
@@ -68,7 +68,7 @@ SetP MtgEditorFileFormat::importSet(const String& filename) {
 	// read file
 	while (!f.Eof()) {
 		// read a line
-		if (!current_card) current_card = new_shared1<Card>(*set->game);
+		if (!current_card) current_card = new_intrusive1<Card>(*set->game);
 		String line = file.ReadLine();
 		if        (line == _("#SET###########")) {										// set.title
 			target = &set->value<TextValue>(_("title")).value;
@@ -103,7 +103,7 @@ SetP MtgEditorFileFormat::importSet(const String& filename) {
 				set->cards.push_back(current_card);
 			}
 			first = false;
-			current_card = new_shared1<Card>(*set->game);
+			current_card = new_intrusive1<Card>(*set->game);
 			target = &current_card->value<TextValue>(_("name")).value;
 		} else if (line == _("#DATE##########")) {										// date
 			// remember date for generation of illustration filename

@@ -12,7 +12,7 @@
 #include <util/prec.hpp>
 #include <wx/listctrl.h>
 
-typedef shared_ptr<void> VoidP;
+typedef intrusive_ptr<IntrusivePtrVirtualBase> VoidP;
 
 // ----------------------------------------------------------------------------- : ItemList
 

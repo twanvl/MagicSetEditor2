@@ -138,6 +138,11 @@ bool BuiltInImage::operator == (const GeneratedImage& that) const {
 
 // ----------------------------------------------------------------------------- : SymbolToImage
 
+SymbolToImage::SymbolToImage(const String& filename, Age age, const SymbolVariationP& variation)
+	: filename(filename), age(age), variation(variation)
+{}
+SymbolToImage::~SymbolToImage() {}
+
 Image SymbolToImage::generate(const Options& opt) const {
 	// TODO : use opt.width and opt.height?
 	if (!opt.symbol_package) throw ScriptError(_("Can only load images in a context where an image is expected"));

@@ -92,7 +92,7 @@ void NewSetWindow::OnOK(wxCommandEvent&) {
 
 void NewSetWindow::done() {
 	StyleSheetP stylesheet = stylesheet_list->getSelection<StyleSheet>();
-	set = new_shared1<Set>(stylesheet);
+	set = new_intrusive1<Set>(stylesheet);
 	set->validate();
 	EndModal(wxID_OK);
 }

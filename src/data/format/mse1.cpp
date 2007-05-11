@@ -29,7 +29,7 @@ class MSE1FileFormat : public FileFormat {
 };
 
 FileFormatP mse1_file_format() {
-	return new_shared<MSE1FileFormat>();
+	return new_intrusive<MSE1FileFormat>();
 }
 
 // ----------------------------------------------------------------------------- : Importing

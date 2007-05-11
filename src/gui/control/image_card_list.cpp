@@ -98,7 +98,7 @@ int ImageCardList::OnGetItemImage(long pos) const {
 			return it->second;
 		} else {
 			// request a thumbnail
-			thumbnail_thread.request(new_shared2<CardThumbnailRequest>(const_cast<ImageCardList*>(this), val.filename));
+			thumbnail_thread.request(new_intrusive2<CardThumbnailRequest>(const_cast<ImageCardList*>(this), val.filename));
 		}
 	}
 	return -1;

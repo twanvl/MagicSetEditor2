@@ -383,7 +383,7 @@ class ApprCardDatabase : public ApprDatabase {
 /** Each card has two records, a data record at the top of the file
  *  and a head record at the bottom
  */
-class ApprCardRecord {
+class ApprCardRecord : public IntrusivePtrBase<ApprCardRecord> {
   public:
 	String name, sets;
 	String type, cc, pt, text, flavor;
@@ -536,7 +536,7 @@ void ApprCardDatabase::doRead(wxInputStream& in) {
 			progress_target->onProgress(0.4f * float(i) / cards.size(),
 			                            String(_("reading card ")) << i << _(" of ") << (int)cards.size());
 		}
-		card = new_shared<ApprCardRecord>();
+		card = new_intrusive<ApprCardRecord>();
 		card->readHead(data);
 		head_pos = in.TellI();
 		in.SeekI(card->data_pos);
@@ -751,7 +751,7 @@ bool ApprenticeExportWindow::exportSet() {
 	cardlist.removeSet(set->apprentice_code);
 	// add cards from set
 	FOR_EACH(card, set->cards) {
-		ApprCardRecordP rec = new_shared2<ApprCardRecord>(*card, set->apprentice_code);
+		ApprCardRecordP rec = new_intrusive2<ApprCardRecord>(*card, set->apprentice_code);
 		cardlist.cards.push_back(rec);
 	}
 	cardlist.write();

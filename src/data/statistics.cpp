@@ -38,7 +38,7 @@ StatsDimension::StatsDimension(const Field& field)
 	s.addInstruction(I_RET);
 }
 
-IMPLEMENT_REFLECTION(StatsDimension) {
+IMPLEMENT_REFLECTION_NO_GET_MEMBER(StatsDimension) {
 	if (!automatic) {
 		REFLECT(name);
 		REFLECT(description);
@@ -72,7 +72,7 @@ IMPLEMENT_REFLECTION_ENUM(GraphType) {
 	VALUE_N("scatter", GRAPH_TYPE_SCATTER);
 }
 
-IMPLEMENT_REFLECTION(StatsCategory) {
+IMPLEMENT_REFLECTION_NO_GET_MEMBER(StatsCategory) {
 	if (!automatic) {
 		REFLECT(name);
 		REFLECT(description);

@@ -25,13 +25,13 @@ DECLARE_POINTER_TYPE(Styling);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(Keyword);
-DECLARE_INTRUSIVE_POINTER_TYPE(ScriptValue);
+DECLARE_POINTER_TYPE(ScriptValue);
 class SetScriptManager;
 class SetScriptContext;
 class Context;
 class Dependency;
 template <typename> class OrderCache;
-typedef shared_ptr<OrderCache<CardP> > OrderCacheP;
+typedef intrusive_ptr<OrderCache<CardP> > OrderCacheP;
 
 // ----------------------------------------------------------------------------- : Set
 
@@ -80,7 +80,8 @@ class Set : public Packaged {
 	
 	/// Stylesheet to use for a particular card
 	/** card may be null */
-	StyleSheetP stylesheetFor(const CardP& card);
+	const StyleSheet& stylesheetFor (const CardP& card);
+	StyleSheetP       stylesheetForP(const CardP& card);
 	
 	/// Styling information for a particular stylesheet
 	IndexMap<FieldP, ValueP>& stylingDataFor(const StyleSheet&);

@@ -39,20 +39,20 @@ String Game::typeName() const { return _("game"); }
 
 IMPLEMENT_REFLECTION(Game) {
 	REFLECT_BASE(Packaged);
-	REFLECT(init_script);
-	REFLECT(set_fields);
+	REFLECT_NO_SCRIPT(init_script);
+	REFLECT_NO_SCRIPT(set_fields);
 	REFLECT_IF_READING {
 		default_set_style.init(set_fields);
 	}
-	REFLECT(default_set_style);
-	REFLECT(card_fields);
-	REFLECT(statistics_dimensions);
-	REFLECT(statistics_categories);
-	REFLECT(pack_types);
+	REFLECT_NO_SCRIPT(default_set_style);
+	REFLECT_NO_SCRIPT(card_fields);
+	REFLECT_NO_SCRIPT(statistics_dimensions);
+	REFLECT_NO_SCRIPT(statistics_categories);
+	REFLECT_NO_SCRIPT(pack_types);
 	REFLECT(has_keywords);
 	REFLECT(keyword_modes);
 	REFLECT(keyword_parameter_types);
-	REFLECT(keywords);
+	REFLECT_NO_SCRIPT(keywords);
 //	REFLECT(word_lists);
 }
 
@@ -63,7 +63,7 @@ void Game::validate(Version v) {
 		vector<StatsDimensionP> dims;
 		FOR_EACH(f, card_fields) {
 			if (f->show_statistics) {
-				dims.push_back(new_shared1<StatsDimension>(*f));
+				dims.push_back(new_intrusive1<StatsDimension>(*f));
 			}
 		}
 		statistics_dimensions.insert(statistics_dimensions.begin(), dims.begin(), dims.end()); // push front
@@ -72,7 +72,7 @@ void Game::validate(Version v) {
 	{
 		vector<StatsCategoryP> cats;
 		FOR_EACH(dim, statistics_dimensions) {
-			cats.push_back(new_shared1<StatsCategory>(dim));
+			cats.push_back(new_intrusive1<StatsCategory>(dim));
 		}
 		statistics_categories.insert(statistics_categories.begin(), cats.begin(), cats.end()); // push front
 	}

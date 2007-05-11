@@ -9,6 +9,7 @@
 #include <data/action/set.hpp>
 #include <data/set.hpp>
 #include <data/card.hpp>
+#include <data/stylesheet.hpp>
 #include <util/error.hpp>
 
 // ----------------------------------------------------------------------------- : Add card
@@ -89,6 +90,9 @@ void DisplayChangeAction::perform(bool to_undo) {
 }
 
 
+ChangeCardStyleAction::ChangeCardStyleAction(const CardP& card, const StyleSheetP& stylesheet)
+	: card(card), stylesheet(stylesheet)
+{}
 String ChangeCardStyleAction::getName(bool to_undo) const {
 	return _("Change style");
 }
@@ -97,6 +101,9 @@ void ChangeCardStyleAction::perform(bool to_undo) {
 }
 
 
+ChangeSetStyleAction::ChangeSetStyleAction(Set& set, const CardP& card)
+	: set(set), card(card)
+{}
 String ChangeSetStyleAction::getName(bool to_undo) const {
 	return _("Change style (all cards)");
 }

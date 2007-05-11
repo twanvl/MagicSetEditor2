@@ -22,7 +22,7 @@ class SymbolControl;
  *  Differrent SymbolEditors represent different tools.
  *  NOTE : Do not confuse with SymbolEditor (a FieldEditor)
  */
-class SymbolEditorBase {
+class SymbolEditorBase : public IntrusivePtrVirtualBase {
   protected:
 	/// The control for which we are editing
 	SymbolControl& control;

@@ -79,7 +79,7 @@ wxFont Font::toWxFont(double scale) const {
 	}
 }
 
-IMPLEMENT_REFLECTION(Font) {
+IMPLEMENT_REFLECTION_NO_SCRIPT(Font) {
 	REFLECT(name);
 	REFLECT(size);
 	REFLECT(weight);

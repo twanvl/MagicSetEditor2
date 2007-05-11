@@ -7,9 +7,14 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <gui/set/panel.hpp>
+#include <data/card.hpp>
 
 // ----------------------------------------------------------------------------- : SetWindowPanel
 
 SetWindowPanel::SetWindowPanel(Window* parent, int id, bool autoTabbing)
 	: wxPanel(parent, id, wxDefaultPosition, wxDefaultSize, autoTabbing ? wxTAB_TRAVERSAL : 0)
 {}
+
+CardP SetWindowPanel::selectedCard() const {
+	return CardP();
+}

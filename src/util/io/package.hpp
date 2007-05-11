@@ -45,7 +45,7 @@ DECLARE_DYNAMIC_ARG(Package*, clipboard_package);
  *
  *  TODO: maybe support sub packages (a package inside another package)?
  */
-class Package {
+class Package : public IntrusivePtrVirtualBase {
   public:
 	// --------------------------------------------------- : Managing the outside of the package
 	
@@ -177,7 +177,7 @@ class Package {
 // ----------------------------------------------------------------------------- : Packaged
 
 /// Dependencies of a package
-class PackageDependency {
+class PackageDependency : public IntrusivePtrBase<PackageDependency> {
   public:
 	String  package;	///< Name of the package someone depends on
 	Version version;	///< Minimal required version of that package

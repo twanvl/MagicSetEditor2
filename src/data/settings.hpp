@@ -49,7 +49,7 @@ class ColumnSettings {
 };
 
 /// Settings for a Game
-class GameSettings {
+class GameSettings : public IntrusivePtrBase<GameSettings> {
   public:
 	GameSettings();
 	
@@ -65,7 +65,7 @@ class GameSettings {
 };
 
 /// Settings for a StyleSheet
-class StyleSheetSettings {
+class StyleSheetSettings : public IntrusivePtrBase<StyleSheetSettings> {
   public:
 	StyleSheetSettings();
 	

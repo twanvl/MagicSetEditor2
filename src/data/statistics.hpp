@@ -21,7 +21,7 @@ DECLARE_POINTER_TYPE(StatsCategory);
 
 /// A dimension that can be plotted as an axis in a graph
 /** Dimensions can be generated automatically based on card fields */
-class StatsDimension {
+class StatsDimension : public IntrusivePtrBase<StatsDimension> {
   public:
 	StatsDimension();
 	StatsDimension(const Field&);
@@ -49,7 +49,7 @@ enum GraphType
 
 /// A category for statistics
 /** Can be generated automatically based on a dimension */
-class StatsCategory {
+class StatsCategory : public IntrusivePtrBase<StatsCategory> {
   public:
 	StatsCategory();
 	StatsCategory(const StatsDimensionP&);

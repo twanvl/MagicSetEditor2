@@ -219,7 +219,7 @@ inline ScriptValueP to_script(const map<K,V>*      v) { return new_intrusive1<Sc
 template <typename K, typename V>
 inline ScriptValueP to_script(const IndexMap<K,V>* v) { return new_intrusive1<ScriptMap<IndexMap<K,V> > >(v); }
 template <typename T>
-inline ScriptValueP to_script(const shared_ptr<T>& v) { return new_intrusive1<ScriptObject<shared_ptr<T> > >(v); }
+inline ScriptValueP to_script(const intrusive_ptr<T>& v) { return new_intrusive1<ScriptObject<intrusive_ptr<T> > >(v); }
 template <typename T>
 inline ScriptValueP to_script(const Defaultable<T>& v) { return to_script(v()); }
 

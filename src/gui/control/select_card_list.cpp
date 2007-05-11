@@ -8,6 +8,7 @@
 
 #include <gui/control/select_card_list.hpp>
 #include <gui/util.hpp>
+#include <data/card.hpp>
 
 DECLARE_TYPEOF_COLLECTION(CardP);
 
@@ -24,6 +25,7 @@ SelectCardList::SelectCardList(Window* parent, int id, long additional_style)
 	il->Add(load_resource_image(_("selected")));
 	AssignImageList(il, wxIMAGE_LIST_SMALL);
 }
+SelectCardList::~SelectCardList() {}
 
 void SelectCardList::selectAll() {
 	FOR_EACH_CONST(c, set->cards) {

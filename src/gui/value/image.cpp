@@ -37,7 +37,7 @@ void ImageValueEditor::sliceImage(const Image& image) {
 		if (mask_image.LoadFile(*image_file)) {
 			Image resampled(style().width, style().height);
 			resample(mask_image, resampled);
-			mask = new_shared1<AlphaMask>(resampled);
+			mask = new_intrusive1<AlphaMask>(resampled);
 		}
 	}
 	// slice

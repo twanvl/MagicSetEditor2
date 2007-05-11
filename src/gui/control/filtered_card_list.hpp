@@ -17,7 +17,7 @@ DECLARE_POINTER_TYPE(CardListFilter);
 // ----------------------------------------------------------------------------- : CardListFilter
 
 /// A filter function to determine which items are shown in a card list
-class CardListFilter {
+class CardListFilter : public IntrusivePtrVirtualBase {
   public:
 	virtual ~CardListFilter() {}
 	/// Should a card be shown in the list?

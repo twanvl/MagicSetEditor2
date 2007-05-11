@@ -20,7 +20,7 @@ class Set;
 // ----------------------------------------------------------------------------- : PackType
 
 /// A card pack description for playtesting
-class PackType {
+class PackType : public IntrusivePtrBase<PackType> {
   public:
 	PackType();
 	
@@ -38,7 +38,7 @@ class PackType {
 // ----------------------------------------------------------------------------- : CardType
 
 /// A card type description for playtesting
-class CardType {
+class CardType : public IntrusivePtrBase<CardType> {
   public:
 	String          name;	///< Name of this type of cards
 	Scriptable<int> amount;	///< Number of cards of this type

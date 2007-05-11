@@ -10,6 +10,7 @@
 #include <script/functions/util.hpp>
 #include <util/tagged_string.hpp>
 #include <data/set.hpp>
+#include <data/card.hpp>
 #include <data/game.hpp>
 
 DECLARE_TYPEOF_COLLECTION(pair<String COMMA ScriptValueP>);

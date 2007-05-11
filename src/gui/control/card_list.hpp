@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <gui/control/item_list.hpp>
+#include <data/card.hpp>
 #include <data/set.hpp>
 
 DECLARE_POINTER_TYPE(ChoiceField);
@@ -27,10 +28,11 @@ DECLARE_EVENT_TYPE(EVENT_CARD_SELECT, <not used>)
 
 /// The event of selecting a card
 struct CardSelectEvent : public wxCommandEvent {
-	CardP card; ///< The selected card
 	inline CardSelectEvent(const CardP& card)
 		: wxCommandEvent(EVENT_CARD_SELECT), card(card)
 	{}
+	
+	CardP card; ///< The selected card
 };
 
 // ----------------------------------------------------------------------------- : CardListBase

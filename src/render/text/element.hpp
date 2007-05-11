@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/rotation.hpp>
 #include <util/real_point.hpp>
+#include <data/font.hpp>
 
 DECLARE_POINTER_TYPE(TextElement);
 DECLARE_POINTER_TYPE(Font);
@@ -47,7 +48,7 @@ struct CharInfo {
 };
 
 /// A section of text that can be rendered using a TextViewer
-class TextElement {
+class TextElement : public IntrusivePtrBase<TextElement> {
   public:
 	/// The text of which a subsection is drawn
 	String text;

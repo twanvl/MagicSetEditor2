@@ -89,8 +89,8 @@ void WelcomeWindow::onNewSet(wxCommandEvent&) {
 
 // TODO: MOVEME
 template <typename T>
-shared_ptr<T> open_package(const String& filename) {
-	shared_ptr<T> package(new T);
+intrusive_ptr<T> open_package(const String& filename) {
+	intrusive_ptr<T> package(new T);
 	package->open(filename);
 	return package;
 }

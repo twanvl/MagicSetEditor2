@@ -79,7 +79,11 @@ Context& Set::getContextForThumbnails(const StyleSheetP& stylesheet) {
 	return thumbnail_script_context->getContext(stylesheet);
 }
 
-StyleSheetP Set::stylesheetFor(const CardP& card) {
+const StyleSheet& Set::stylesheetFor(const CardP& card) {
+	if (card && card->stylesheet) return *card->stylesheet;
+	else                          return *stylesheet;
+}
+StyleSheetP Set::stylesheetForP(const CardP& card) {
 	if (card && card->stylesheet) return card->stylesheet;
 	else                          return stylesheet;
 }
@@ -122,7 +126,7 @@ void Set::validate(Version file_app_version) {
 		}
 */	}
 	// we want at least one card
-	if (cards.empty()) cards.push_back(new_shared1<Card>(*game));
+	if (cards.empty()) cards.push_back(new_intrusive1<Card>(*game));
 	// update scripts
 	script_manager->updateAll();
 }
@@ -187,7 +191,7 @@ int Set::positionOfCard(const CardP& card, const ScriptValueP& order_by) {
 			values.push_back(*order_by->eval(getContext(c)));
 		}
 		// 2. initialize order cache
-		order.reset(new OrderCache<CardP>(cards, values));
+		order = new_intrusive2<OrderCache<CardP> >(cards, values);
 	}
 	return order->find(card);
 }
@@ -199,7 +203,7 @@ void Set::clearOrderCache() {
 
 // Extra set data, for a specific stylesheet
 /* The data is not read immediatly, because we do not know the stylesheet */
-class Set::Styling {
+class Set::Styling : public IntrusivePtrBase<Set::Styling> {
   public:
 	IndexMap<FieldP, ValueP> data;
 	String unread_data;
@@ -209,7 +213,7 @@ class Set::Styling {
 IndexMap<FieldP, ValueP>& Set::stylingDataFor(const StyleSheet& stylesheet) {
 	StylingP& styling = styling_data[stylesheet.name()];
 	if (!styling) {
-		styling = new_shared<Styling>();
+		styling = new_intrusive<Styling>();
 		styling->data.init(stylesheet.styling_fields);
 	} else if (!styling->unread_data.empty() || (styling->data.empty()) && !stylesheet.styling_fields.empty()) {
 		// we delayed the reading of the data, read it now

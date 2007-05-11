@@ -131,10 +131,10 @@ SymbolPart::SymbolPart()
 {}
 
 SymbolPartP SymbolPart::clone() const {
-	SymbolPartP part = new_shared1<SymbolPart>(*this);
+	SymbolPartP part = new_intrusive1<SymbolPart>(*this);
 	// also clone the control points
 	FOR_EACH(p, part->points) {
-		p = new_shared1<ControlPoint>(*p);
+		p = new_intrusive1<ControlPoint>(*p);
 	}
 	return part;
 }
@@ -166,18 +166,18 @@ IMPLEMENT_REFLECTION(Symbol) {
 
 // A default symbol part, a square, moved by d
 SymbolPartP default_symbol_part(double d) {
-	SymbolPartP part = new_shared<SymbolPart>();
-	part->points.push_back(new_shared2<ControlPoint>(d + .2, d + .2));
-	part->points.push_back(new_shared2<ControlPoint>(d + .2, d + .8));
-	part->points.push_back(new_shared2<ControlPoint>(d + .8, d + .8));
-	part->points.push_back(new_shared2<ControlPoint>(d + .8, d + .2));
+	SymbolPartP part = new_intrusive<SymbolPart>();
+	part->points.push_back(new_intrusive2<ControlPoint>(d + .2, d + .2));
+	part->points.push_back(new_intrusive2<ControlPoint>(d + .2, d + .8));
+	part->points.push_back(new_intrusive2<ControlPoint>(d + .8, d + .8));
+	part->points.push_back(new_intrusive2<ControlPoint>(d + .8, d + .2));
 	part->name = _("Square");
 	return part;
 }
 
 // A default symbol, a square
 SymbolP default_symbol() {
-	SymbolP symbol = new_shared<Symbol>();
+	SymbolP symbol = new_intrusive<Symbol>();
 	symbol->parts.push_back(default_symbol_part(0));
 	return symbol;
 }

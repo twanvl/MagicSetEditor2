@@ -289,7 +289,7 @@ double ssqrt(double x) {
 }
 
 // Remove a single control point
-class SinglePointRemoveAction : public Action {
+class SinglePointRemoveAction : public Action, public IntrusivePtrBase<SinglePointRemoveAction> {
   public:
 	SinglePointRemoveAction(const SymbolPartP& part, UInt position);
 	
@@ -393,7 +393,7 @@ ControlPointRemoveAction::ControlPointRemoveAction(const SymbolPartP& part, cons
 	FOR_EACH(point, part->points) {
 		if (toDelete.find(point) != toDelete.end()) {
 			// remove this point
-			removals.push_back(new_shared2<SinglePointRemoveAction>(part, index));
+			removals.push_back(new_intrusive2<SinglePointRemoveAction>(part, index));
 		}
 		++index;
 	}
@@ -417,7 +417,7 @@ void ControlPointRemoveAction::perform(bool to_undo) {
 Action* controlPointRemoveAction(const SymbolPartP& part, const set<ControlPointP>& toDelete) {
 	if (part->points.size() - toDelete.size() < 2) {
 		// TODO : remove part?
-		//new_shared<ControlPointRemoveAllAction>(part);
+		//new_intrusive<ControlPointRemoveAllAction>(part);
 		return 0; // no action
 	} else {
 		return new ControlPointRemoveAction(part, toDelete);

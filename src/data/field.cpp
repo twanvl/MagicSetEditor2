@@ -61,18 +61,18 @@ IMPLEMENT_REFLECTION(Field) {
 }
 
 template <>
-shared_ptr<Field> read_new<Field>(Reader& reader) {
+intrusive_ptr<Field> read_new<Field>(Reader& reader) {
 	// there must be a type specified
 	String type;
 	reader.handle(_("type"), type);
-	if      (type == _("text"))				return new_shared<TextField>();
-	else if (type == _("choice"))			return new_shared<ChoiceField>();
-	else if (type == _("multiple choice"))	return new_shared<MultipleChoiceField>();
-	else if (type == _("boolean"))			return new_shared<BooleanField>();
-	else if (type == _("image"))			return new_shared<ImageField>();
-	else if (type == _("symbol"))			return new_shared<SymbolField>();
-	else if (type == _("color"))			return new_shared<ColorField>();
-	else if (type == _("info"))				return new_shared<InfoField>();
+	if      (type == _("text"))				return new_intrusive<TextField>();
+	else if (type == _("choice"))			return new_intrusive<ChoiceField>();
+	else if (type == _("multiple choice"))	return new_intrusive<MultipleChoiceField>();
+	else if (type == _("boolean"))			return new_intrusive<BooleanField>();
+	else if (type == _("image"))			return new_intrusive<ImageField>();
+	else if (type == _("symbol"))			return new_intrusive<SymbolField>();
+	else if (type == _("color"))			return new_intrusive<ColorField>();
+	else if (type == _("info"))				return new_intrusive<InfoField>();
 	else {
 		throw ParseError(_("Unsupported field type: '") + type + _("'"));
 	}

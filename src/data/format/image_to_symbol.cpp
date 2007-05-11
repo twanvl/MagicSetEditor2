@@ -179,7 +179,7 @@ SymbolPartP read_symbol_part(const ImageData& data) {
 		}
 		
 		// add to part and place a mark
-		part->points.push_back(new_shared2<ControlPoint>(
+		part->points.push_back(new_intrusive2<ControlPoint>(
 				double(x) / data.width,
 				double(y) / data.height
 			));

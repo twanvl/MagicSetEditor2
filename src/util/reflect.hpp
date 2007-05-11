@@ -84,10 +84,21 @@
 			template <class Tag>										\
 			void Cls::reflect_impl(Tag& tag)
 
-/// Implement the refelection of a class type Cls, but only for Reader and Writer
+/// Implement the refelection of a class type Cls, but only for Reader and Writer,
+/** There is custom code for GetMember and GetDefaultMember */
 #define IMPLEMENT_REFLECTION_NO_GET_MEMBER(Cls)							\
 			REFLECT_OBJECT_READER(Cls)									\
 			REFLECT_OBJECT_WRITER(Cls)									\
+			template <class Tag>										\
+			void Cls::reflect_impl(Tag& tag)
+
+/// Implement the refelection of a class type Cls, but only for Reader and Writer
+/** There is no code for GetMember and GetDefaultMember */
+#define IMPLEMENT_REFLECTION_NO_SCRIPT(Cls)								\
+			REFLECT_OBJECT_READER(Cls)									\
+			REFLECT_OBJECT_WRITER(Cls)									\
+			REFLECT_OBJECT_GET_DEFAULT_MEMBER_NOT(Cls)					\
+			REFLECT_OBJECT_GET_MEMBER_NOT(Cls)							\
 			template <class Tag>										\
 			void Cls::reflect_impl(Tag& tag)
 
@@ -129,6 +140,11 @@
  *  @encode
  */
 #define REFLECT_ALIAS(version, old, new) tag.addAlias(version, _(old), _(new))
+
+/// Reflect a variable, ignores the variable for scripting
+#define REFLECT_NO_SCRIPT(var)          tag.handleNoScript(_(#var), var)
+/// Reflect a variable under the given name
+#define REFLECT_NO_SCRIPT_N(name, var)  tag.handleNoScript(_(name), var)
 
 // ----------------------------------------------------------------------------- : Reflecting enums
 

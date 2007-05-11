@@ -15,7 +15,7 @@ class Dependency;
 
 // ----------------------------------------------------------------------------- : ScriptValue
 
-DECLARE_INTRUSIVE_POINTER_TYPE(ScriptValue);
+DECLARE_POINTER_TYPE(ScriptValue);
 
 enum ScriptType
 {	SCRIPT_NIL
@@ -33,7 +33,7 @@ enum ScriptType
 
 /// A value that can be handled by the scripting engine.
 /// Actual values are derived types
-class ScriptValue : public IntrusivePtrBase {
+class ScriptValue : public IntrusivePtrBaseWithDelete {
   public:
 	virtual ~ScriptValue() {}
 	

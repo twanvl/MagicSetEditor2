@@ -17,7 +17,7 @@
 #include <script/parser.hpp>
 #include <script/to_value.hpp>
 
-DECLARE_INTRUSIVE_POINTER_TYPE(Script);
+DECLARE_POINTER_TYPE(Script);
 
 // ----------------------------------------------------------------------------- : Store
 

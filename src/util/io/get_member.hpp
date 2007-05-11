@@ -13,7 +13,7 @@
 #include <script/value.hpp>
 
 class Script;
-DECLARE_INTRUSIVE_POINTER_TYPE(Script);
+DECLARE_POINTER_TYPE(Script);
 
 template <typename T> class Defaultable;
 template <typename T> class Scriptable;
@@ -39,6 +39,9 @@ class GetDefaultMember {
 	/// Handle an object: we don't match things with a name
 	template <typename T>
 	void handle(const Char* name, const T& object) {}
+	/// Don't handle a value
+	template <typename T>
+	inline void handleNoScript(const Char* name, T& value) {}
 
 	/// Handle an object: investigate children, or store it if we know how
 	                                  void handle(const Char *);
@@ -50,7 +53,7 @@ class GetDefaultMember {
 	template <typename T>             void handle(const vector<T>&     c) { value = to_script(&c); }
 	template <typename K, typename V> void handle(const map<K,V>&      c) { value = to_script(&c); }
 	template <typename K, typename V> void handle(const IndexMap<K,V>& c) { value = to_script(&c); }
-	template <typename T>             void handle(const shared_ptr<T>& p) { value = to_script(p); }
+	template <typename T>             void handle(const intrusive_ptr<T>& p) { value = to_script(p); }
 	void handle(const ScriptValueP&);
 	void handle(const ScriptP&);
   private:
@@ -85,6 +88,9 @@ class GetMember : private GetDefaultMember {
 			gdm.handle(object);
 		}
 	}
+	/// Don't handle a value
+	template <typename T>
+	inline void handleNoScript(const Char* name, T& value) {}
 	/// Handle an object: investigate children
 	template <typename T> void handle(const T&);
 	/// Handle an index map: invistigate keys

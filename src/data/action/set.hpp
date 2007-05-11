@@ -87,8 +87,7 @@ class DisplayChangeAction : public Action {
 /// Changing the style of a a card
 class ChangeCardStyleAction : public DisplayChangeAction {
   public:
-	ChangeCardStyleAction(const CardP& card, const StyleSheetP& stylesheet)
-		: card(card), stylesheet(stylesheet) {}
+	ChangeCardStyleAction(const CardP& card, const StyleSheetP& stylesheet);
 	
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);
@@ -101,8 +100,7 @@ class ChangeCardStyleAction : public DisplayChangeAction {
 /// Changing the style of a set to that of a card
 class ChangeSetStyleAction : public DisplayChangeAction {
   public:
-	ChangeSetStyleAction(Set& set, const CardP& card)
-		: set(set), card(card) {}
+	ChangeSetStyleAction(Set& set, const CardP& card);
 	
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);

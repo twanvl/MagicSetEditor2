@@ -33,5 +33,5 @@ class MSE2FileFormat : public FileFormat {
 };
 
 FileFormatP mse2_file_format() {
-	return new_shared<MSE2FileFormat>();
+	return new_intrusive<MSE2FileFormat>();
 }

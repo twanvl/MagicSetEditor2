@@ -37,7 +37,7 @@ ValueViewerP DataEditor::makeViewer(const StyleP& style) {
 
 bool DataEditor::drawBorders() const {
 	return !nativeLook() &&
-	        settings.stylesheetSettingsFor(*set->stylesheetFor(card)).card_borders();
+	        settings.stylesheetSettingsFor(set->stylesheetFor(card)).card_borders();
 }
 bool DataEditor::drawEditing() const {
 	return true;

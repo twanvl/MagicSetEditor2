@@ -13,7 +13,7 @@
 #include <gui/value/editor.hpp>
 #include <render/value/color.hpp>
 
-DECLARE_POINTER_TYPE(DropDownList);
+DECLARE_SHARED_POINTER_TYPE(DropDownList);
 
 // ----------------------------------------------------------------------------- : ColorValueEditor
 

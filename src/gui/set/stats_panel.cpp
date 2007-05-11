@@ -148,7 +148,7 @@ void StatsPanel::onCategorySelect() {
 		StatsCategory& cat = categories->getSelection();
 		GraphDataPre d;
 		FOR_EACH(dim, cat.dimensions) {
-			d.axes.push_back(new_shared4<GraphAxis>(
+			d.axes.push_back(new_intrusive4<GraphAxis>(
 				dim->name,
 				dim->colors.empty() ? AUTO_COLOR_EVEN : AUTO_COLOR_NO,
 				dim->numeric,
@@ -183,7 +183,7 @@ void StatsPanel::onGraphSelect(wxCommandEvent&) {
 
 void StatsPanel::filterCards() {
 	if (!categories->hasSelection()) return;
-	shared_ptr<StatsFilter> filter(new StatsFilter(*set));
+	intrusive_ptr<StatsFilter> filter(new StatsFilter(*set));
 	StatsCategory& cat = categories->getSelection();
 	vector<pair<StatsDimensionP, String> > values;
 	int i = 0;

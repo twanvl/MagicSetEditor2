@@ -30,7 +30,7 @@ class ChoiceField : public Field {
 	DECLARE_FIELD_TYPE(Choice);
 	
 	class Choice;
-	typedef shared_ptr<Choice> ChoiceP;
+	typedef intrusive_ptr<Choice> ChoiceP;
 	
 	ChoiceP choices;				///< A choice group of possible choices
 	OptionalScript script;			///< Script to apply to all values
@@ -47,7 +47,7 @@ class ChoiceField : public Field {
 };
 
 /// An item that can be chosen for this field
-class ChoiceField::Choice {
+class ChoiceField::Choice : public IntrusivePtrBase<ChoiceField::Choice> {
   public:
 	Choice();
 	Choice(const String& name);

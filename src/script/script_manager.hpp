@@ -50,7 +50,7 @@ class SetScriptContext {
 /** Whenever there is an action all necessary scripts are executed.
  *  Executes both Value scripts and Style scriptables.
  *
- *  The context contains a normal pointer to the set, not a shared_ptr, because the set
+ *  The context contains a normal pointer to the set, not a shared/intrusive_ptr, because the set
  *  itself owns this object.
  */
 class SetScriptManager : public SetScriptContext, public ActionListener {

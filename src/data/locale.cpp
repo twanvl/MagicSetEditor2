@@ -23,7 +23,7 @@ LocaleP Locale::byName(const String& name) {
 	return packages.open<Locale>(name + _(".mse-locale"));
 }
 
-IMPLEMENT_REFLECTION(Locale) {
+IMPLEMENT_REFLECTION_NO_SCRIPT(Locale) {
 	REFLECT_BASE(Packaged);
 	REFLECT_N("menu",        translations[LOCALE_CAT_MENU]);
 	REFLECT_N("help",        translations[LOCALE_CAT_HELP]);
@@ -40,7 +40,7 @@ IMPLEMENT_REFLECTION(Locale) {
 	REFLECT_N("symbol font", symbol_font_translations);
 }
 
-IMPLEMENT_REFLECTION_NAMELESS(SubLocale) {
+IMPLEMENT_REFLECTION_NO_GET_MEMBER(SubLocale) {
 	REFLECT_NAMELESS(translations);
 }
 

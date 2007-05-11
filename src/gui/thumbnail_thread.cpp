@@ -84,7 +84,7 @@ wxThread::ExitCode ThumbnailThreadWorker::Entry() {
 		{
 			wxMutexLocker lock(parent->mutex);
 			parent->closed_requests.push_back(make_pair(current,img));
-			current.reset();
+			current = ThumbnailRequestP();
 			parent->completed.Signal();
 		}
 	}

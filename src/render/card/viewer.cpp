@@ -22,6 +22,8 @@ DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA StyleP>);
 
 // ----------------------------------------------------------------------------- : DataViewer
 
+DataViewer::DataViewer() : drawing(false) {}
+DataViewer::~DataViewer() {}
 
 // ----------------------------------------------------------------------------- : Drawing
 
@@ -84,10 +86,11 @@ Rotation DataViewer::getRotation() const {
 
 void DataViewer::setCard(const CardP& card, bool refresh) {
 	if (!card) return; // TODO: clear viewer?
-	if (!refresh && this->card == card && this->stylesheet == set->stylesheetFor(card)) return; // already set
+	StyleSheetP new_stylesheet = set->stylesheetForP(card);
+	if (!refresh && this->card == card && this->stylesheet == new_stylesheet) return; // already set
 	assert(set);
 	this->card = card;
-	stylesheet = set->stylesheetFor(card);
+	stylesheet = new_stylesheet;
 	setStyles(stylesheet, stylesheet->card_style);
 	setData(card->data);
 	onChangeSize();

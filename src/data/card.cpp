@@ -8,6 +8,7 @@
 
 #include <data/card.hpp>
 #include <data/game.hpp>
+#include <data/stylesheet.hpp>
 #include <data/field.hpp>
 #include <util/error.hpp>
 #include <util/reflect.hpp>

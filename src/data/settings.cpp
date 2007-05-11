@@ -125,7 +125,7 @@ void Settings::addRecentFile(const String& filename) {
 
 GameSettings& Settings::gameSettingsFor(const Game& game) {
 	GameSettingsP& gs = game_settings[game.name()];
-	if (!gs) gs.reset(new GameSettings);
+	if (!gs) gs = new_intrusive<GameSettings>();
 	return *gs;
 }
 ColumnSettings& Settings::columnSettingsFor(const Game& game, const Field& field) {
@@ -143,7 +143,7 @@ ColumnSettings& Settings::columnSettingsFor(const Game& game, const Field& field
 }
 StyleSheetSettings& Settings::stylesheetSettingsFor(const StyleSheet& stylesheet) {
 	StyleSheetSettingsP& ss = stylesheet_settings[stylesheet.name()];
-	if (!ss) ss.reset(new StyleSheetSettings);
+	if (!ss) ss = new_intrusive<StyleSheetSettings>();
 	ss->useDefault(default_stylesheet_settings); // update default settings
 	return *ss;
 }

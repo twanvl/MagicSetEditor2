@@ -150,7 +150,7 @@ void CardsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 		case ID_CARD_PREV:       ev.Enable(card_list->canSelectPrevious());	break;
 		case ID_CARD_NEXT:       ev.Enable(card_list->canSelectNext());		break;
 		case ID_CARD_ROTATE_0: case ID_CARD_ROTATE_90: case ID_CARD_ROTATE_180: case ID_CARD_ROTATE_270: {
-			StyleSheetSettings& ss = settings.stylesheetSettingsFor(*set->stylesheetFor(card_list->getCard()));
+			StyleSheetSettings& ss = settings.stylesheetSettingsFor(set->stylesheetFor(card_list->getCard()));
 			int a = ev.GetId() == ID_CARD_ROTATE_0   ? 0
 			      : ev.GetId() == ID_CARD_ROTATE_90  ? 90
 			      : ev.GetId() == ID_CARD_ROTATE_180 ? 180
@@ -203,7 +203,7 @@ void CardsPanel::onCommand(int id) {
 			break;
 		case ID_CARD_ROTATE:
 		case ID_CARD_ROTATE_0: case ID_CARD_ROTATE_90: case ID_CARD_ROTATE_180: case ID_CARD_ROTATE_270: {
-			StyleSheetSettings& ss = settings.stylesheetSettingsFor(*set->stylesheetFor(card_list->getCard()));
+			StyleSheetSettings& ss = settings.stylesheetSettingsFor(set->stylesheetFor(card_list->getCard()));
 			ss.card_angle.assign(
 				  id == ID_CARD_ROTATE     ? (ss.card_angle() + 90) % 360
 				: id == ID_CARD_ROTATE_0   ? 0

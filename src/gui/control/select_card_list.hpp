@@ -19,6 +19,7 @@
 class SelectCardList : public CardListBase {
   public:
 	SelectCardList(Window* parent, int id, long additional_style = 0);
+	~SelectCardList();
 	/// Select all cards
 	void selectAll();
 	/// Deselect all cards

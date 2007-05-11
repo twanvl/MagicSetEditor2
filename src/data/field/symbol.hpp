@@ -47,9 +47,10 @@ class SymbolStyle : public Style {
 };
 
 /// Styling for a symbol variation, defines color, border, etc.
-class SymbolVariation {
+class SymbolVariation : public IntrusivePtrBase<SymbolVariation> {
   public:
 	SymbolVariation();
+	~SymbolVariation();
 	String        name;				///< Name of this variation
 	SymbolFilterP filter;			///< Filter to color the symbol
 	double        border_radius;	///< Border radius for the symbol

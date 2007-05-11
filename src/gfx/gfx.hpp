@@ -127,7 +127,7 @@ void set_alpha(Image& img, const Image& img_alpha);
 /// An alpha mask is an alpha channel that can be copied to another image
 /** It is created by treating black in the source image as transparent and white (red) as opaque
  */
-class AlphaMask {
+class AlphaMask : public IntrusivePtrBase<AlphaMask> {
   public:
 	AlphaMask(const Image& mask);
 	~AlphaMask();

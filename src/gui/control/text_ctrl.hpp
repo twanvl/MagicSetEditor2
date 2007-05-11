@@ -30,6 +30,7 @@ DECLARE_POINTER_TYPE(FakeTextValue);
 class TextCtrl : public DataEditor {
   public:
 	TextCtrl(Window* parent, int id, bool multi_line, long style = 0);
+	~TextCtrl();
 	
 	/// Set the value that is being edited
 	/** value can be a nullptr*/

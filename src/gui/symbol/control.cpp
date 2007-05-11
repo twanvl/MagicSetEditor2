@@ -37,22 +37,22 @@ void SymbolControl::switchEditor(const SymbolEditorBaseP& e) {
 
 void SymbolControl::onChangeSymbol() {
 	selected_parts.clear();
-	switchEditor(new_shared2<SymbolSelectEditor>(this, false));
+	switchEditor(new_intrusive2<SymbolSelectEditor>(this, false));
 	Refresh(false);
 }
 
 void SymbolControl::onModeChange(wxCommandEvent& ev) {
 	switch (ev.GetId()) {
 		case ID_MODE_SELECT:
-			switchEditor(new_shared2<SymbolSelectEditor>(this, false));
+			switchEditor(new_intrusive2<SymbolSelectEditor>(this, false));
 			break;
 		case ID_MODE_ROTATE:
-			switchEditor(new_shared2<SymbolSelectEditor>(this, true));
+			switchEditor(new_intrusive2<SymbolSelectEditor>(this, true));
 			break;
 		case ID_MODE_POINTS:
 			if (selected_parts.size() == 1) {
 				single_selection = *selected_parts.begin();
-				switchEditor(new_shared2<SymbolPointEditor>(this, single_selection));
+				switchEditor(new_intrusive2<SymbolPointEditor>(this, single_selection));
 			}
 			break;
 		case ID_MODE_SHAPES:
@@ -60,7 +60,7 @@ void SymbolControl::onModeChange(wxCommandEvent& ev) {
 				selected_parts.clear();
 				signalSelectionChange();
 			}
-			switchEditor(new_shared1<SymbolBasicShapeEditor>(this));
+			switchEditor(new_intrusive1<SymbolBasicShapeEditor>(this));
 			break;
 	}
 }
@@ -102,7 +102,7 @@ void SymbolControl::onUpdateSelection() {
 			if (single_selection != *selected_parts.begin()) {
 				// begin editing another part
 				single_selection = *selected_parts.begin();
-				editor = new_shared2<SymbolPointEditor>(this, single_selection);
+				editor = new_intrusive2<SymbolPointEditor>(this, single_selection);
 				Refresh(false);
 			}
 			break;
@@ -122,14 +122,14 @@ void SymbolControl::onUpdateSelection() {
 void SymbolControl::selectPart(const SymbolPartP& part) {
 	selected_parts.clear();
 	selected_parts.insert(part);
-	switchEditor(new_shared2<SymbolSelectEditor>(this, false));
+	switchEditor(new_intrusive2<SymbolSelectEditor>(this, false));
 	signalSelectionChange();
 }
 
 void SymbolControl::activatePart(const SymbolPartP& part) {
 	selected_parts.clear();
 	selected_parts.insert(part);
-	switchEditor(new_shared2<SymbolPointEditor>(this, part));
+	switchEditor(new_intrusive2<SymbolPointEditor>(this, part));
 }
 
 void SymbolControl::signalSelectionChange() {

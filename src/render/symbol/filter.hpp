@@ -46,7 +46,7 @@ enum SymbolSet
 // ----------------------------------------------------------------------------- : SymbolFilter
 
 /// Base class for symbol filters
-class SymbolFilter {
+class SymbolFilter : public IntrusivePtrVirtualBase {
   public:
 	virtual ~SymbolFilter() {}
 	/// What color should the symbol have at location (x, y)?
@@ -59,7 +59,7 @@ class SymbolFilter {
 };
 
 template <>
-shared_ptr<SymbolFilter> read_new<SymbolFilter>(Reader& reader);
+intrusive_ptr<SymbolFilter> read_new<SymbolFilter>(Reader& reader);
 
 // ----------------------------------------------------------------------------- : SymbolFilter types
 

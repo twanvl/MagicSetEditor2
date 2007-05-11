@@ -19,7 +19,7 @@ DECLARE_POINTER_TYPE(Font);
 
 /// A font for rendering text
 /** Contains additional information about scaling, color and shadow */
-class Font {
+class Font : public IntrusivePtrBase<Font> {
   public:
 	Scriptable<String> name;				///< Name of the font
 	Scriptable<String> italic_name;			///< Font name for italic text (optional)

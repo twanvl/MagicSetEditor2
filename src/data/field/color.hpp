@@ -27,7 +27,7 @@ class ColorField : public Field {
 	DECLARE_FIELD_TYPE(Color);
 	
 	class Choice;
-	typedef shared_ptr<Choice> ChoiceP;
+	typedef intrusive_ptr<Choice> ChoiceP;
 	
 	OptionalScript  script;			///< Script to apply to all values
 	OptionalScript  default_script;	///< Script that generates the default value
@@ -42,7 +42,7 @@ class ColorField : public Field {
 };
 
 /// A color that can be chosen for this field
-class ColorField::Choice {
+class ColorField::Choice : public IntrusivePtrBase<ColorField::Choice> {
   public:
 	String name;		///< Name of the color
 	Color  color;		///< The actual color

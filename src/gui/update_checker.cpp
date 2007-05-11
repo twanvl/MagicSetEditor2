@@ -21,7 +21,7 @@ DECLARE_POINTER_TYPE(VersionData);
 // ----------------------------------------------------------------------------- : Update data
 
 /// Information on available packages
-class PackageVersionData {
+class PackageVersionData : public IntrusivePtrBase<PackageVersionData> {
   public:
 	PackageVersionData() : is_installer(true) {}
 	
@@ -34,7 +34,7 @@ class PackageVersionData {
 };
 
 /// Information on the latest availible version
-class VersionData {
+class VersionData : public IntrusivePtrBase<VersionData> {
   public:
 	Version version;				///< Latest version number of MSE
 	String  description;			///< html description of the latest MSE release

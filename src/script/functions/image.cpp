@@ -11,6 +11,7 @@
 #include <script/image.hpp>
 // used by the functions
 #include <data/set.hpp>
+#include <data/card.hpp>
 #include <data/stylesheet.hpp>
 #include <data/symbol.hpp>
 #include <data/field/symbol.hpp>
@@ -78,7 +79,7 @@ SCRIPT_FUNCTION(symbol_variation) {
 	// find style
 	SCRIPT_PARAM(Set*, set);
 	SCRIPT_OPTIONAL_PARAM_(CardP, card);
-	SymbolStyleP style = dynamic_pointer_cast<SymbolStyle>(set->stylesheetFor(card)->styleFor(value->fieldP));
+	SymbolStyleP style = dynamic_pointer_cast<SymbolStyle>(set->stylesheetForP(card)->styleFor(value->fieldP));
 	if (!style) throw InternalError(_("Symbol value has a style of the wrong type"));
 	// find variation
 	FOR_EACH(v, style->variations) {

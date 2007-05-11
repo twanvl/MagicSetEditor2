@@ -45,6 +45,10 @@ class Writer {
 		handle(object);
 		exitBlock();
 	}
+	/// Handle a value
+	template <typename T>
+	inline void handleNoScript(const Char* name, T& value) { handle(name,value); }
+	
 	/// Write a vector to the output stream
 	template <typename T>
 	void handle(const Char* name, const vector<T>& vector);
@@ -55,8 +59,8 @@ class Writer {
 	
 	/// Write an object of type T to the output stream
 	template <typename T> void handle(const T& object);
-	/// Write a shared_ptr to the output stream
-	template <typename T> void handle(const shared_ptr<T>& pointer);
+	/// Write a intrusive_ptr to the output stream
+	template <typename T> void handle(const intrusive_ptr<T>& pointer);
 	/// Write a map to the output stream
 	template <typename K, typename V> void handle(const map<K,V>& map);
 	/// Write an IndexMap to the output stream
@@ -107,7 +111,7 @@ void Writer::handle(const Char* name, const vector<T>& vec) {
 }
 
 template <typename T>
-void Writer::handle(const shared_ptr<T>& pointer) {
+void Writer::handle(const intrusive_ptr<T>& pointer) {
 	if (pointer) handle(*pointer);
 }
 

@@ -128,14 +128,14 @@ struct TextElementsFromString {
 				else if (is_substr(text, tag_start, _("<atom"))) {
 					// 'atomic' indicator
 					size_t end_tag = min(end, match_close_tag(text, tag_start));
-					shared_ptr<AtomTextElement> e(new AtomTextElement(text, pos, end_tag));
+					intrusive_ptr<AtomTextElement> e(new AtomTextElement(text, pos, end_tag));
 					fromString(e->elements, text, pos, end_tag, style, ctx);
 					te.elements.push_back(e);
 					pos = skip_tag(text, end_tag);
 				} else if (is_substr(text, tag_start, _( "<error"))) {
 					// error indicator
 					size_t end_tag = min(end, match_close_tag(text, tag_start));
-					shared_ptr<ErrorTextElement> e(new ErrorTextElement(text, pos, end_tag));
+					intrusive_ptr<ErrorTextElement> e(new ErrorTextElement(text, pos, end_tag));
 					fromString(e->elements, text, pos, end_tag, style, ctx);
 					te.elements.push_back(e);
 					pos = skip_tag(text, end_tag);

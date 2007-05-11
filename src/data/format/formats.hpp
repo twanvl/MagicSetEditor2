@@ -20,7 +20,7 @@ DECLARE_POINTER_TYPE(FileFormat);
 // ----------------------------------------------------------------------------- : FileFormat
 
 /// A filter for a specific file format
-class FileFormat {
+class FileFormat : public IntrusivePtrVirtualBase {
   public:
 	virtual ~FileFormat() {}
 	/// File extension used by this file format
