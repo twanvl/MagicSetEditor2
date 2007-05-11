@@ -693,7 +693,7 @@ keyword:
 keyword:
 	keyword: Denimwalk
 	match: Denimwalk
-	mode: core
+	mode: old
 	reminder: If defending player is wearing any clothing made of denim, this creature is unblockable.
 keyword:
 	keyword: Landwalk
@@ -717,7 +717,7 @@ keyword:
 	reminder: This creature comes into play with {english_number_a(param1)} +1/+1 counter(s) on it. Whenever another creature comes into play, you may move a +1/+1 counter from this creature onto it.
 keyword:
 	keyword: Forecast
-	match: Forecast—<atom-param>cost</atom-param>, Reveal this card from your hand: <atom-param>action</atom-param>
+	match: Forecast<atom-param>cost</atom-param>, Reveal <atom-param>name</atom-param> from your hand: <atom-param>action</atom-param>
 	mode: expert
 	reminder: Play this ability only during your upkeep and only once each turn.
 keyword:
@@ -744,7 +744,7 @@ keyword:
 	keyword: Suspend
 	match: Suspend <atom-param>number</atom-param>—<atom-param>mana</atom-param>
 	mode: expert
-	reminder: Rather than play this card from your hand, you may pay {param2} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost. If it's a creature, it has haste.
+	reminder: Rather than play this card from your hand,{if has_cc() then " you may" else ""} pay {param2} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost.{if has_pt() then " It has haste." else ""}
 keyword:
 	keyword: Vanishing
 	match: Vanishing <atom-param>number</atom-param>
@@ -758,7 +758,7 @@ keyword:
 keyword:
 	keyword: Reach
 	match: Reach
-	mode: expert
+	mode: core
 	reminder: This creature can block creatures with flying.
 keyword:
 	keyword: Gravestorm
@@ -768,7 +768,7 @@ keyword:
 keyword:
 	keyword: Lifelink
 	match: Lifelink
-	mode: expert
+	mode: core
 	reminder: Whenever this creature deals damage, you gain that much life.
 keyword:
 	keyword: Absorb

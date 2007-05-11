@@ -127,7 +127,8 @@ init script:
 	is_colorless  := filter_rule(match: "^colorless")  + {input != ""};
 	is_artifact   := filter_rule(match: "^artifact")   + {input != ""};
 	sort_index := {
-		if card.card_color=="white"        then "A"
+		if card.casting_cost_2 !="" and card.card_color != card.card_color_2 then "H"
+		else if card.card_color=="white"        then "A"
 		else if card.card_color=="blue"         then "B"
 		else if card.card_color=="black"        then "C"
 		else if card.card_color=="red"          then "D"
@@ -1389,7 +1390,7 @@ keyword:
 keyword:
 	keyword: Denimwalk
 	match: Denimwalk
-	mode: core
+	mode: old
 	reminder: If defending player is wearing any clothing made of denim, this creature is unblockable.
 keyword:
 	keyword: Landwalk
@@ -1413,7 +1414,7 @@ keyword:
 	reminder: This creature comes into play with {english_number_a(param1)} +1/+1 counter(s) on it. Whenever another creature comes into play, you may move a +1/+1 counter from this creature onto it.
 keyword:
 	keyword: Forecast
-	match: Forecast—<atom-param>cost</atom-param>, Reveal this card from your hand: <atom-param>action</atom-param>
+	match: Forecast<atom-param>cost</atom-param>, Reveal <atom-param>name</atom-param> from your hand: <atom-param>action</atom-param>
 	mode: expert
 	reminder: Play this ability only during your upkeep and only once each turn.
 keyword:
@@ -1454,7 +1455,7 @@ keyword:
 keyword:
 	keyword: Reach
 	match: Reach
-	mode: expert
+	mode: core
 	reminder: This creature can block creatures with flying.
 keyword:
 	keyword: Gravestorm
@@ -1464,7 +1465,7 @@ keyword:
 keyword:
 	keyword: Lifelink
 	match: Lifelink
-	mode: expert
+	mode: core
 	reminder: Whenever this creature deals damage, you gain that much life.
 keyword:
 	keyword: Absorb
