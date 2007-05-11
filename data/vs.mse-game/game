@@ -186,7 +186,22 @@ card field:
 	choice: location
 	choice: plot twist
 	default: card_type()
-	show statistics: false
+	choice colors:
+		character:	rgb(240,36,0)
+		character dual:	rgb(240,36,0)
+		concealed:	rgb(33,33,33)
+		concealed dual:	rgb(33,33,33)
+		equipment:	rgb(160,160,160)
+		location:	rgb(60,220,0)
+		plot twist:	rgb(20,0,220)
+	choice colors cardlist:
+		character:	rgb(120,18,0)
+		character dual:	rgb(120,18,0)
+		concealed:	rgb(26,26,26)
+		concealed dual:	rgb(26,26,26)
+		equipment:	rgb(80,80,80)
+		location:	rgb(30,110,0)
+		plot twist:	rgb(10,0,110)
 
 ############################# Name line
 card field:

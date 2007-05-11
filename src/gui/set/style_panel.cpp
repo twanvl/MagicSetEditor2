@@ -77,7 +77,7 @@ void StylePanel::selectCard(const CardP& card) {
 // ----------------------------------------------------------------------------- : Events
 
 void StylePanel::onStyleSelect(wxCommandEvent&) {
-	if (list->hasSelection()) {
+	if (list->hasSelection() && card) {
 		StyleSheetP stylesheet = list->getSelection<StyleSheet>();
 		if (stylesheet == set->stylesheet) {
 			// select no special style when selecting the same style as the set default

@@ -13,7 +13,7 @@
 #include <gui/control/item_list.hpp>
 #include <data/set.hpp>
 
-DECLARE_POINTER_TYPE(ChoiceStyle);
+DECLARE_POINTER_TYPE(ChoiceField);
 DECLARE_POINTER_TYPE(Field);
 
 // ----------------------------------------------------------------------------- : Events
@@ -102,14 +102,13 @@ class CardListBase : public ItemList, public SetView {
 	// --------------------------------------------------- : Data
   private:
 	// display stuff
-	ChoiceStyleP   color_style;       ///< Style (and field) to use for text color (optional)
+	ChoiceFieldP   color_field;       ///< Field to use for text color (optional)
 	vector<FieldP> column_fields;     ///< The field to use for each column (by column index)
 		
 	mutable wxListItemAttr item_attr; // for OnGetItemAttr
 	
 	/// Find the field that determines the color, if any.
-	/** Note: Uses only fields from the set's default style */
-	ChoiceStyleP findColorStyle();
+	ChoiceFieldP findColorField();
 	
 	/// Store the column sizes in the settings
 	void storeColumns();

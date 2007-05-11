@@ -131,15 +131,12 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	SetSizer(s);
 	
 	// panels
-	// NOTE: place the CardsPanel last in the panels list,
-	//  this way the card list is the last to be told of a set change
-	//  this way everyone else already uses the new set when it sends a CardSelectEvent
-	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 4, _("cards tab"));
-	addPanel(menuWindow, tabBar, new SetInfoPanel (this, wxID_ANY), 0, _("set info tab"));
-	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 1, _("style tab"));
-	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 2, _("keywords tab"));
-	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 3, _("stats tab"));
-//	addPanel(*s, *menuWindow, *tabBar, new DraftPanel   (&this, wxID_ANY), 4, _("F10")) 
+	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 0, _("cards tab"));
+	addPanel(menuWindow, tabBar, new SetInfoPanel (this, wxID_ANY), 1, _("set info tab"));
+	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 2, _("style tab"));
+	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 3, _("keywords tab"));
+	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 4, _("stats tab"));
+//	addPanel(*s, *menuWindow, *tabBar, new DraftPanel   (&this, wxID_ANY), 5, _("F10")) 
 	selectPanel(ID_WINDOW_CARDS); // select cards panel
 	
 	// loose ends
@@ -240,6 +237,10 @@ void SetWindow::onChangeSet() {
 	// all panels view the same set
 	FOR_EACH(p, panels) {
 		p->setSet(set);
+	}
+	// only after setSet select a card
+	FOR_EACH(p, panels) {
+		p->selectFirstCard();
 	}
 	fixMinWindowSize();
 }

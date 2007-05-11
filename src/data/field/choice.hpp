@@ -37,6 +37,8 @@ class ChoiceField : public Field {
 	OptionalScript default_script;	///< Script that generates the default value
 	String initial;					///< Initial choice of a new value, or ""
 	String default_name;			///< Name of "default" value
+	map<String,Color> choice_colors;			///< Colors for the various choices (when color_cardlist)
+	map<String,Color> choice_colors_cardlist;	///< Colors for the various choices, for in the card list
 	
 	virtual void initDependencies(Context&, const Dependency&) const;
 	
@@ -131,8 +133,6 @@ class ChoiceStyle : public Style {
 	ChoiceRenderStyle           render_style;       ///< Style of rendering
 	Font                        font;               ///< Font for drawing text (when RENDER_TEXT)
 	map<String,ScriptableImage> choice_images;      ///< Images for the various choices (when RENDER_IMAGE)
-	map<String,Color>           choice_colors;      ///< Colors for the various choices (when color_cardlist)
-	bool                        colors_card_list;   ///< Does this field determine colors of the rows in the card list?
 	Scriptable<String>          mask_filename;      ///< Filename of an additional mask over the images
 	ImageCombine                combine;            ///< Combining mode for drawing the images
 	Alignment                   alignment;          ///< Alignment of images

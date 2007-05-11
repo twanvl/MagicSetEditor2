@@ -68,6 +68,7 @@ class SetWindowPanel : public wxPanel, public SetView {
 	// --------------------------------------------------- : Selection
 	virtual CardP selectedCard() const { return CardP(); }	///< Return the currently selected card, or CardP()
 	virtual void  selectCard(const CardP& card) {}			///< Switch the view to another card
+	virtual void  selectFirstCard() {}						///< Switch the view to the first card
 };
 
 // ----------------------------------------------------------------------------- : EOF

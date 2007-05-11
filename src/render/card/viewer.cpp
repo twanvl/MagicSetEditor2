@@ -93,6 +93,13 @@ void DataViewer::setCard(const CardP& card, bool refresh) {
 	onChangeSize();
 }
 
+void DataViewer::onChangeSet() {
+	viewers.clear();
+	onInit();
+	onChange();
+	onChangeSize();
+}
+
 // ----------------------------------------------------------------------------- : Viewers
 
 struct CompareViewer {

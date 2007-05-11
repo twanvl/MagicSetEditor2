@@ -21,6 +21,12 @@ void FilteredCardList::setFilter(const CardListFilterP& filter) {
 	rebuild();
 }
 
+void FilteredCardList::onChangeSet() {
+	// clear filter before changing set, the filter might not make sense for a different set
+	filter = CardListFilterP();
+	CardListBase::onChangeSet();
+}
+
 void FilteredCardList::getItems(vector<VoidP>& out) const {
 	if (filter) {
 		FOR_EACH(c, set->cards) {

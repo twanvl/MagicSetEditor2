@@ -330,7 +330,7 @@ SCRIPT_FUNCTION(replace) {
 class ScriptFilterRule : public ScriptValue {
   public:
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
-	virtual String typeName() const { return _("replace_rule"); }
+	virtual String typeName() const { return _("filter_rule"); }
 	virtual ScriptValueP eval(Context& ctx) const {
 		SCRIPT_PARAM(String, input);
 		String ret;

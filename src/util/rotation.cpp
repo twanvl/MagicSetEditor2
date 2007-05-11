@@ -172,6 +172,31 @@ void RotatedDC::DrawRoundedRectangle(const RealRect& r, double radius) {
 	dc.DrawRoundedRectangle(r_ext.x, r_ext.y, r_ext.width, r_ext.height, trS(radius));
 }
 
+/// Convert radians to degrees
+double rad_to_deg(double rad) { return  rad * (180.0 / M_PI); }
+/// Convert degrees to radians
+double deg_to_rad(double deg) { return  deg * (M_PI / 180.0); }
+
+void RotatedDC::DrawEllipticArc(const RealPoint& center, const RealSize& size, double start, double end) {
+	wxPoint c_ext = tr(center - size/2);
+	wxSize  s_ext = trNoNeg(size);
+	dc.DrawEllipticArc(c_ext.x, c_ext.y, s_ext.x, s_ext.y, rad_to_deg(start) + angle, rad_to_deg(end) + angle);
+}
+void RotatedDC::DrawEllipticSpoke(const RealPoint& center, const RealSize& size, double angle) {
+	wxPoint c_ext = tr(center - size/2);
+	wxSize  s_ext = trNoNeg(size);
+	double rot_angle = angle + deg_to_rad(this->angle);
+	double sin_angle = sin(rot_angle), cos_angle = cos(rot_angle);
+	// position of center and of point on the boundary can vary because of rounding errors,
+	// this code matches DrawEllipticArc (at least on windows xp).
+	dc.DrawLine(
+		c_ext.x + int(       0.5 * (s_ext.x + cos_angle) ), // center
+		c_ext.y + int(       0.5 * (s_ext.y - sin_angle) ),
+		c_ext.x + int( 0.5 + 0.5 * (s_ext.x-1) * (1 + cos_angle) ), // boundary
+		c_ext.y + int( 0.5 + 0.5 * (s_ext.y-1) * (1 - sin_angle) )
+	);
+}
+
 // ----------------------------------------------------------------------------- : Forwarded properties
 
 void RotatedDC::SetPen(const wxPen& pen)              { dc.SetPen(pen); }

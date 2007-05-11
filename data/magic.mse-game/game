@@ -333,6 +333,7 @@ init script:
 		  number_of_items(in: sort(order: "WUBRG"))     # colored mana
 		- number_of_items(in: sort(order:"/"))          # guild mana, W/U -> 2 - 1
 	}
+	primary_card_color := filter_rule(match:"^[^ ]+")
 
 # TODO : somewhere else?
 #card to conversion:
@@ -624,6 +625,12 @@ card field:
 	card list visible: true
 	card list column: 6
 	description: The rarity of the card, to edit the symbol switch to the 'set info' tab
+	choice colors:
+		basic land: rgb(109,62,39)
+		common:     rgb(33,33,33)
+		uncommon:   rgb(224,224,224)
+		rare:       rgb(214,196,94)
+		special:    rgb(58,7,80)
 
 ############################# Text box
 card field:
@@ -946,6 +953,22 @@ card field:
 
 
 ############################################################## Statistics categories
+
+statistics dimension:
+	name:   card color
+	script: primary_card_color(card.card_color)
+	icon: stats/card_color.png
+	colors:
+		white			: rgb(255,237,202)
+		blue			: rgb(42,141,255)
+		black			: rgb(33,33,33)
+		red			: rgb(255,52,0)
+		green			: rgb(138,230,0)
+		colorless		: rgb(122,85,85)
+		artifact		: rgb(188,192,195)
+		multicolor		: rgb(255,188,14)
+		land			: rgb(109,62,39)
+		hybrid			: rgb(243,26,136)
 
 statistics dimension:
 	name:   converted mana cost

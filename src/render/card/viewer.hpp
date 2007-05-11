@@ -67,6 +67,9 @@ class DataViewer : public SetView {
 	/** \param refresh: Always refresh, even if this card is already shown */
 	void setCard(const CardP& card, bool refresh = false);
 	
+	/// Clear data
+	virtual void onChangeSet();
+	
 	// --------------------------------------------------- : The viewers
   protected:
 	/// Set the styles for the data to be shown, recreating the viewers

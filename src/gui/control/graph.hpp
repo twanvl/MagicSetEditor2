@@ -39,22 +39,33 @@ class GraphGroup {
 	UInt   size;	///< Number of elements in this group
 };
 
+/// Automatic coloring mode
+enum AutoColor
+{	AUTO_COLOR_NO
+,	AUTO_COLOR_EVEN
+,	AUTO_COLOR_WEIGHTED
+};
+
 /// An axis in a graph, consists of a list of groups
 /** The sum of groups.sum = sum of all elements in the data */
 class GraphAxis {
   public:
-	GraphAxis(const String& name, bool auto_color = true, bool numeric = false)
+	GraphAxis(const String& name, AutoColor auto_color = AUTO_COLOR_EVEN, bool numeric = false, const map<String,Color>* colors = nullptr)
 		: name(name)
 		, auto_color(auto_color)
 		, numeric(numeric)
 		, max(0)
+		, total(0)
+		, colors(colors)
 	{}
 	
 	String             name;		///< Name/label of this axis
-	bool               auto_color;	///< Automatically assign colors to the groups on this axis
+	AutoColor          auto_color;	///< Automatically assign colors to the groups on this axis
 	vector<GraphGroup> groups;		///< Groups along this axis
 	bool               numeric;		///< Numeric axis?
 	UInt               max;			///< Maximum size of the groups
+	UInt               total;		///< Sum of the size of all groups
+	const map<String,Color>* colors;		///< Colors for each choice (optional
 };
 
 /// A single data point of a graph
@@ -87,13 +98,21 @@ class GraphData {
 
 // ----------------------------------------------------------------------------- : Graph
 
+enum DrawLayer
+{	LAYER_BOTTOM    = 0
+,	LAYER_SELECTION = 0
+,	LAYER_AXES
+,	LAYER_VALUES
+,	LAYER_COUNT
+};
+
 /// A type of graph
 /** It is rendered into a sub-rectangle of the screen */
 class Graph {
   public:
 	virtual ~Graph() {}
 	/// Draw this graph, filling the internalRect() of the dc.
-	virtual void draw(RotatedDC& dc, const vector<int>& current) const = 0;
+	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const = 0;
 	/// Find the item at the given position, the rectangle gives the screen size
 	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const { return false; }
 	/// Change the data
@@ -110,13 +129,13 @@ class Graph {
 class Graph1D : public Graph {
   public:
 	inline Graph1D(size_t axis) : axis(axis) {}
-	virtual void draw(RotatedDC& dc, const vector<int>& current) const;
+	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
 	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const;
   protected:
 	size_t axis;
 	/// Find an item, return the position along the axis, or -1 if not found
-	virtual int findItem(const RealPoint& pos, const RealRect& rect) const = 0;
-	virtual void draw(RotatedDC& dc, int current) const = 0;
+	virtual int findItem(const RealPoint& pos, const RealRect& rect) const { return -1; }
+	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const = 0;
 	inline GraphAxis& axis_data() const { return *data->axes.at(axis); }
 };
 
@@ -124,7 +143,7 @@ class Graph1D : public Graph {
 class BarGraph : public Graph1D {
   public:
 	inline BarGraph(size_t axis) : Graph1D(axis) {}
-	virtual void draw(RotatedDC& dc, int current) const;
+	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
 	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
 };
 
@@ -136,7 +155,7 @@ class BarGraph : public Graph1D {
 class PieGraph : public Graph1D {
   public:
 	inline PieGraph(size_t axis) : Graph1D(axis) {}
-	virtual void draw(RotatedDC& dc, int current) const;
+	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
 	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
 };
 
@@ -144,7 +163,7 @@ class PieGraph : public Graph1D {
 class GraphLegend : public Graph1D {
   public:
 	inline GraphLegend(size_t axis) : Graph1D(axis) {}
-	virtual void draw(RotatedDC& dc, int current) const;
+	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
 	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
 };
 
@@ -155,9 +174,43 @@ class GraphLegend : public Graph1D {
 //	virtual void draw(RotatedDC& dc) const;
 //};
 
-//class GraphValueAxis {
-//	virtual void draw(RotatedDC& dc) const;
-//};
+/// Draws an a vertical axis for counts
+class GraphValueAxis : public Graph1D {
+  public:
+	inline GraphValueAxis(size_t axis) : Graph1D(axis) {}
+	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
+};
+
+/// A graph with margins
+class GraphWithMargins : public Graph {
+  public:
+	inline GraphWithMargins(const GraphP& graph,
+	                        double margin_left, double margin_top, double margin_right, double margin_bottom,
+	                        bool upside_down = false)
+		: graph(graph)
+		, margin_left(margin_left), margin_top(margin_top), margin_right(margin_right), margin_bottom(margin_bottom)
+		, upside_down(upside_down)
+	{}
+	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
+	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const;
+	virtual void setData(const GraphDataP& d);
+  private:
+	double margin_left, margin_top, margin_right, margin_bottom;
+	bool upside_down; // put the coordinate system upside down, since graphs are usually bottom-to-top
+	const GraphP graph;
+};
+
+/// A display containing multiple graphs
+class GraphContainer : public Graph {
+  public:
+	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
+	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const;
+	virtual void setData(const GraphDataP& d);
+	
+	void add(const GraphP& graph);
+  private:
+	vector<GraphP> items;
+};
 
 // ----------------------------------------------------------------------------- : Graph control
 
@@ -167,6 +220,8 @@ class GraphControl : public wxControl {
 	/// Create a graph control
 	GraphControl(Window* parent, int id);
 	
+	/// Set the type of graph used, from a number of predefined choices
+	void setLayout();
 	/// Update the data in the graph
 	void setData(const GraphDataPre& data);
 	/// Update the data in the graph

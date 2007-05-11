@@ -37,7 +37,9 @@ class FilteredCardList : public CardListBase {
   protected:
 	/// Get only the subset of the cards
 	virtual void getItems(vector<VoidP>& out) const;
-
+	
+	virtual void onChangeSet();
+	
   private:	
 	CardListFilterP filter;	///< Filter with which this.cards is made
 };

@@ -14,6 +14,7 @@
 #include <data/statistics.hpp>
 #include <util/window_id.hpp>
 #include <util/alignment.hpp>
+#include <util/tagged_string.hpp>
 #include <gfx/gfx.hpp>
 #include <wx/splitter.h>
 
@@ -52,6 +53,8 @@ class StatCategoryList : public GalleryList {
 void StatCategoryList::show(const GameP& game) {
 	this->game = game;
 	update();
+	// select first item
+	selection = itemCount() > 0 ? 0 : NO_SELECTION;
 }
 
 size_t StatCategoryList::itemCount() const {
@@ -74,13 +77,11 @@ void StatCategoryList::drawItem(DC& dc, int x, int y, size_t item, bool selected
 	// draw name
 	RealRect rect(RealPoint(x + 24, y), RealSize(item_size.x - 30, item_size.y));
 	String str = capitalize(cat.name);
-//	dc.SetFont(wxFont(9.5 * text_scaling, wxSWISS, wxNORMAL, wxNORMAL, false,_("Arial")));
 	dc.SetFont(*wxNORMAL_FONT);
 	int w, h;
 	dc.GetTextExtent(str, &w, &h);
 	RealSize size = RealSize(w,h);
 	RealPoint pos = align_in_rect(ALIGN_MIDDLE_LEFT, size, rect);
-//	draw_resampled_text(dc, RealRect(pos, size), 0, 0, 0, str);
 	dc.DrawText(str, (int)pos.x, (int)pos.y);
 }
 
@@ -110,30 +111,13 @@ StatsPanel::StatsPanel(Window* parent, int id)
 void StatsPanel::onChangeSet() {
 	card_list->setSet(set);
 	categories->show(set->game);
-	filterCards();
+	onCategorySelect();
 }
 
 void StatsPanel::onCommand(int id) {
 	switch (id) {
 		case ID_FIELD_LIST: {
-			// change graph data
-			if (categories->hasSelection()) {
-				StatsCategory& cat = categories->getSelection();
-				GraphDataPre d;
-				FOR_EACH(dim, cat.dimensions) {
-					d.axes.push_back(new_shared3<GraphAxis>(dim->name, true, dim->numeric));
-				}
-				FOR_EACH(card, set->cards) {
-					Context& ctx = set->getContext(card);
-					GraphElementP e(new GraphElement);
-					FOR_EACH(dim, cat.dimensions) {
-						e->values.push_back(*dim->script.invoke(ctx));
-					}
-					d.elements.push_back(e);
-				}
-				graph->setData(d);
-				filterCards();
-			}
+			onCategorySelect();
 			break;
 		}
 	}
@@ -158,6 +142,41 @@ class StatsFilter : public CardListFilter {
 	Set& set;
 };
 
+void StatsPanel::onCategorySelect() {
+	// change graph data
+	if (categories->hasSelection()) {
+		StatsCategory& cat = categories->getSelection();
+		GraphDataPre d;
+		FOR_EACH(dim, cat.dimensions) {
+			d.axes.push_back(new_shared4<GraphAxis>(
+				dim->name,
+				dim->colors.empty() ? AUTO_COLOR_EVEN : AUTO_COLOR_NO,
+				dim->numeric,
+				&dim->colors
+				)
+			);
+		}
+		FOR_EACH(card, set->cards) {
+			Context& ctx = set->getContext(card);
+			GraphElementP e(new GraphElement);
+			bool show = true;
+			FOR_EACH(dim, cat.dimensions) {
+				String value = untag(dim->script.invoke(ctx)->toString());
+				e->values.push_back(value);
+				if (value.empty() && !dim->show_empty) {
+					// don't show this element
+					show = false;
+					break;
+				}
+			}
+			if (show) {
+				d.elements.push_back(e);
+			}
+		}
+		graph->setData(d);
+		filterCards();
+	}
+}
 void StatsPanel::onGraphSelect(wxCommandEvent&) {
 	filterCards();
 }

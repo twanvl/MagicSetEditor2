@@ -39,6 +39,10 @@ void ItemList::selectNext() {
 	assert(selected_item_pos + 1 < (long)sorted_list.size());
 	selectItemPos(selected_item_pos + 1, true);
 }
+void ItemList::selectFirst() {
+	assert(0 < (long)sorted_list.size());
+	selectItemPos(0, true);
+}
 
 // ----------------------------------------------------------------------------- : ItemList : Selection (private)
 

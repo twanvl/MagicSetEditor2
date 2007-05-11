@@ -41,6 +41,8 @@ IMPLEMENT_REFLECTION(ChoiceField) {
 	REFLECT_IF_READING {
 		choices->initIds();
 	}
+	REFLECT(choice_colors);
+	REFLECT(choice_colors_cardlist);
 }
 
 // ----------------------------------------------------------------------------- : ChoiceField::Choice
@@ -162,7 +164,6 @@ ChoiceStyle::ChoiceStyle(const ChoiceFieldP& field)
 	: Style(field)
 	, popup_style(POPUP_DROPDOWN)
 	, render_style(RENDER_TEXT)
-	, colors_card_list(false)
 	, combine(COMBINE_NORMAL)
 	, alignment(ALIGN_STRETCH)
 	, angle(0)
@@ -242,10 +243,8 @@ IMPLEMENT_REFLECTION(ChoiceStyle) {
 	REFLECT(combine);
 	REFLECT(alignment);
 	REFLECT(angle);
-	REFLECT(colors_card_list);
 	REFLECT(font);
 	REFLECT(choice_images);
-	REFLECT(choice_colors);
 }
 
 // ----------------------------------------------------------------------------- : ChoiceValue

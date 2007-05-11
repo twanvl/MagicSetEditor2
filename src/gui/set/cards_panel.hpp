@@ -68,6 +68,7 @@ class CardsPanel : public SetWindowPanel {
 	// --------------------------------------------------- : Selection
 	virtual CardP selectedCard() const;
 	virtual void selectCard(const CardP& card);
+	virtual void selectFirstCard();
 	
   private:
 	// --------------------------------------------------- : Controls

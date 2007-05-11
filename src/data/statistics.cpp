@@ -8,21 +8,29 @@
 
 #include <data/statistics.hpp>
 #include <data/field.hpp>
+#include <data/field/choice.hpp>
 
 // ----------------------------------------------------------------------------- : Statistics dimension
 
 StatsDimension::StatsDimension()
-	: automatic(false)
-	, numeric(false)
+	: automatic (false)
+	, numeric   (false)
+	, show_empty(false)
 {}
 
 StatsDimension::StatsDimension(const Field& field)
-	: automatic(true)
+	: automatic    (true)
 	, name         (field.name)
 	, description  (field.description)
 	, icon_filename(field.icon_filename)
-	, numeric(false)
+	, numeric      (false)
+	, show_empty   (false)
 {
+	// choice colors?
+	const ChoiceField* choice_field = dynamic_cast<const ChoiceField*>(&field);
+	if (choice_field) {
+		colors = choice_field->choice_colors;
+	}
 	// initialize script, card.{field_name}
 	Script& s = script.getScript();
 	s.addInstruction(I_GET_VAR,  string_to_variable(_("card")));
@@ -37,6 +45,8 @@ IMPLEMENT_REFLECTION(StatsDimension) {
 		REFLECT_N("icon", icon_filename);
 		REFLECT(script);
 		REFLECT(numeric);
+		REFLECT(show_empty);
+		REFLECT(colors);
 	}
 }
 

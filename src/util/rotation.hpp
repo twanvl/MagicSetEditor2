@@ -146,6 +146,10 @@ class RotatedDC : public Rotation {
 	void DrawLine  (const RealPoint& p1,  const RealPoint& p2);
 	void DrawRectangle(const RealRect& r);
 	void DrawRoundedRectangle(const RealRect& r, double radius);
+	/// Draw an arc of an ellipse, angles are in radians
+	void DrawEllipticArc(const RealPoint& center, const RealSize& size, double start, double end);
+	/// Draw spokes of an ellipse
+	void DrawEllipticSpoke(const RealPoint& center, const RealSize& size, double start);
 	
 	// Fill the dc with the color of the current brush
 	void Fill();

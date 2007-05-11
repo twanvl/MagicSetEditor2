@@ -34,6 +34,8 @@ class ItemList : public wxListView {
 	void selectPrevious();
 	/// Move the selection to the next item (if possible)
 	void selectNext();
+	/// Move the selection to the first item (if possible)
+	void selectFirst();
 	
 	// --------------------------------------------------- : Virtual interface
   protected:

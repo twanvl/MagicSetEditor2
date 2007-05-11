@@ -32,15 +32,6 @@ card style:
 			equipment:		card-equipment.jpg
 			location:		card-location.jpg
 			plot twist:		card-plot-twist.jpg
-		colors card list: true
-		choice colors:
-			character:	rgb(120,18,0)
-			character dual:	rgb(120,18,0)
-			concealed:	rgb(26,26,26)
-			concealed dual:	rgb(26,26,26)
-			equipment:	rgb(80,80,80)
-			location:	rgb(30,110,0)
-			plot twist:	rgb(10,0,110)
 
 	############################# Name line
 	name:

@@ -133,16 +133,3 @@ choice images:
 	hybrid vertical black / artifact		: script: card_hybrid_2v("ba")
 	hybrid vertical red / artifact			: script: card_hybrid_2v("ra")
 	hybrid vertical green / artifact		: script: card_hybrid_2v("ga")
-
-# Also define colors for card list
-card list colors: true
-choice colors:
-	white						: rgb(130,130,110)
-	blue						: rgb(0,64,168)
-	black						: rgb(0,0,0)
-	red						: rgb(168,0,0)
-	green						: rgb(0,168,0)
-	colorless					: rgb(72,90,100)
-	artifact					: rgb(72,90,100)
-	multicolor					: rgb(120,120,0)
-	land						: rgb(84,84,60)

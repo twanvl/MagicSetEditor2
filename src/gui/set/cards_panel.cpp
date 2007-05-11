@@ -340,3 +340,8 @@ void CardsPanel::selectCard(const CardP& card) {
 	notes->setValue(card ? &card->notes : nullptr);
 	Layout();
 }
+
+void CardsPanel::selectFirstCard() {
+	if (!set) return; // we want onChangeSet first
+	card_list->selectFirst();
+}

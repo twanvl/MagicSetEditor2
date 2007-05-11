@@ -147,6 +147,17 @@ card field:
 	choice: spell card
 	choice: trap card
 	default: card_type()
+	choice colors cardlist:
+		normal monster:	   rgb(120,18,0)
+		effect monster:	   rgb(120,18,0)
+		ritual monster:	   rgb(26,26,26)
+		fusion monster:	   rgb(26,26,26)
+		obelisk:	   rgb(26,26,26)
+		slifer:		   rgb(26,26,26)
+		ra:		   rgb(26,26,26)
+		legendary dragons: rgb(26,26,26)
+		spell card:	   rgb(80,80,80)
+		trap card:	   rgb(30,110,0)
 
 ############################# Name line
 card field:
