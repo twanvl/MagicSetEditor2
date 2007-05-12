@@ -16,11 +16,13 @@ DECLARE_TYPEOF_COLLECTION(KeywordP);
 DECLARE_TYPEOF_COLLECTION(KeywordModeP);
 DECLARE_TYPEOF_COLLECTION(KeywordParamP);
 DECLARE_TYPEOF_COLLECTION(const Keyword*);
+DECLARE_POINTER_TYPE(KeywordParamValue);
 
 // ----------------------------------------------------------------------------- : Reflection
 
 KeywordParam::KeywordParam()
 	: optional(true)
+	, eat_separator(true)
 {}
 
 IMPLEMENT_REFLECTION(ParamReferenceType) {
@@ -35,7 +37,11 @@ IMPLEMENT_REFLECTION(KeywordParam) {
 	REFLECT(placeholder);
 	REFLECT(optional);
 	REFLECT(match);
+	REFLECT(separator_before_is);
+	REFLECT(eat_separator);
 	REFLECT(script);
+	REFLECT(reminder_script);
+	REFLECT(separator_script);
 	REFLECT(example);
 	REFLECT(refer_scripts);
 }
@@ -77,6 +83,49 @@ IMPLEMENT_REFLECTION(Keyword) {
 	REFLECT(mode);
 }
 
+/*//%%
+String KeywordParam::make_separator_before() const {
+	// decode regex; find a string that matches it
+	String ret;
+	int disabled = 0;
+	for (size_t i = 0 ; i < separator_before_is.size() ; ++i) {
+		Char c = separator_before_is.GetChar(i);
+		if (c == _('(')) {
+			if (disabled) ++disabled;
+		} else if (c == _(')')) {
+			if (disabled) --disabled;
+		} else if (!disabled) {
+			if (c == _('|')) {
+				disabled = 1; // disable after |
+			} else if (c == _('+') || c == _('*') || c == _('?') || c == _('^') || c == _('$')) {
+				// ignore
+			} else if (c == _('\\') && i + 1 < separator_before_is.size()) {
+				// escape
+				ret += separator_before_is.GetChar(++i);
+			} else if (c == _('[') && i + 1 < separator_before_is.size()) {
+				// character class
+				c = separator_before_is.GetChar(++i);
+				if (c != _('^')) ret += c;
+				// ignore the rest of the class
+				for ( ++i ; i < separator_before_is.size() ; ++i) {
+					c = separator_before_is.GetChar(i);
+					if (c == _(']')) break;
+				}
+			} else {
+				ret += c;
+			}
+		}
+	}
+	return ret;
+}*/
+void KeywordParam::compile() {
+	if (!separator_before_is.empty() && !separator_before_re.IsValid()) {
+		separator_before_re.Compile(_("^") + separator_before_is, wxRE_ADVANCED);
+		if (eat_separator) {
+			separator_before_eat.Compile(separator_before_is + _("$"), wxRE_ADVANCED);
+		}
+	}
+}
 
 size_t Keyword::findMode(const vector<KeywordModeP>& modes) const {
 	// find
@@ -139,12 +188,19 @@ String regex_escape(Char c) {
 		return String(1,c);
 	}
 }
+/// Escape a string for use in regular expressions
+String regex_escape(const String& s) {
+	String ret;
+	FOR_EACH_CONST(c,s) ret += regex_escape(c);
+	return ret;
+}
 
 void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
-	if (!force && matchRe.IsValid()) return;
+	if (!force && match_re.IsValid()) return;
 	parameters.clear();
 	// Prepare regex
-	String regex = _("(");
+	String regex;
+	String text; // normal, non-regex, text
 	vector<KeywordParamP>::const_iterator param = parameters.begin();
 	// Parse the 'match' string
 	for (size_t i = 0 ; i < match.size() ;) {
@@ -162,21 +218,37 @@ void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
 				}
 			}
 			if (!p) {
-				throw InternalError(_("Unknown keyword parameter type: ") + type);
+				// throwing an error can mean a set will not be loaded!
+				// instead, simply disable the keyword
+				//throw InternalError(_("Unknown keyword parameter type: ") + type);
+				handle_error(_("Unknown keyword parameter type: ") + type, true, false);
+				valid = false;
+				return;
 			}
 			parameters.push_back(p);
-			// modify regex
-			regex += _(")(") + make_non_capturing(p->match) + _(")") + (p->optional ? _("?") : _("")) + _("(");
+			// modify regex : match text before
+			p->compile();
+			if (p->separator_before_eat.IsValid() && p->separator_before_eat.Matches(text)) {
+				// remove the separator from the text to prevent duplicates
+				size_t start, len;
+				p->separator_before_eat.GetMatch(&start, &len);
+				text = text.substr(0, start);
+			}
+			regex += _("(") + regex_escape(text) + _(")");
+			text.clear();
+			// modify regex : match parameter
+			regex += _("(") + make_non_capturing(p->match) + (p->optional ? _(")?") : _(")"));
 			i = skip_tag(match, end);
 		} else {
-			regex += regex_escape(c);
+			text += c;
 			i++;
 		}
 	}
-	regex += _(")");
-	if (matchRe.Compile(regex, wxRE_ADVANCED)) {
+	regex += _("(") + regex_escape(text) + _(")");
+	regex = _("\\y") + regex + _("(?=$|[^a-zA-Z0-9])"); // only match whole words
+	if (match_re.Compile(regex, wxRE_ADVANCED)) {
 		// not valid if it matches "", that would make MSE hang
-		valid = !matchRe.Matches(_(""));
+		valid = !match_re.Matches(_(""));
 	} else {
 		valid = false;
 		throw InternalError(_("Error creating match regex"));
@@ -263,22 +335,40 @@ void KeywordDatabase::add(const vector<KeywordP>& kws) {
 
 void KeywordDatabase::add(const Keyword& kw) {
 	if (kw.match.empty() || !kw.valid) return; // can't handle empty keywords
+	// Create root
 	if (!root) {
 		root = new KeywordTrie;
 		root->on_any_star = root;
 	}
 	KeywordTrie* cur = root->insertAnyStar();
+	// Add to trie
+	String text; // normal text
+	size_t param = 0;
 	for (size_t i = 0 ; i < kw.match.size() ;) {
 		Char c = kw.match.GetChar(i);
 		if (is_substr(kw.match, i, _("<atom-param"))) {
-			// tag, parameter, match anything
+			// parameter, is there a separator we should eat?
+			if (param < kw.parameters.size()) {
+				wxRegEx& sep = kw.parameters[param]->separator_before_eat;
+				if (sep.IsValid() && sep.Matches(text)) {
+					// remove the separator from the text to prevent duplicates
+					size_t start, len;
+					sep.GetMatch(&start, &len);
+					text = text.substr(0, start);
+				}
+			}
+			++param;
+			// match anything
+			cur = cur->insert(text);
+			text.clear();
 			cur = cur->insertAnyStar();
 			i = match_close_tag_end(kw.match, i);
 		} else {
-			cur = cur->insert(c);
+			text += c;
 			i++;
 		}
 	}
+	cur = cur->insert(text);
 	// now cur is the trie after matching the keyword anywhere in the input text
 	cur->finished.push_back(&kw);
 }
@@ -383,26 +473,27 @@ String KeywordDatabase::expand(const String& text,
 					const Keyword* kw = f;
 					if (used.insert(kw).second) {
 						// we have found a possible match, which we have not seen before
-						assert(kw->matchRe.IsValid());
+						assert(kw->match_re.IsValid());
 						
 						// try to match it against the *untagged* string
-						if (kw->matchRe.Matches(untagged)) {
+						if (kw->match_re.Matches(untagged)) {
 							// Everything before the keyword
 							size_t start_u, len_u;
-							kw->matchRe.GetMatch(&start_u, &len_u, 0);
+							kw->match_re.GetMatch(&start_u, &len_u, 0);
 							size_t start = untagged_to_index(s, start_u, true),
 							       end   = untagged_to_index(s, start_u + len_u, true);
 							result += s.substr(0, start);
 							
 							// Split the keyword, set parameters in context
 							String total; // the total keyword
-							size_t match_count = kw->matchRe.GetMatchCount();
+							size_t match_count = kw->match_re.GetMatchCount();
 							assert(match_count - 1 == 1 + 2 * kw->parameters.size());
 							for (size_t j = 1 ; j < match_count ; ++j) {
-								// j = odd -> text
-								// j = even -> parameter #(j/2)
+								// we start counting at 1, so
+								// j = 1 mod 2 -> text
+								// j = 0 mod 2 -> parameter  #((j-1)/2) == (j/2-1)
 								size_t start_u, len_u;
-								kw->matchRe.GetMatch(&start_u, &len_u, j);
+								kw->match_re.GetMatch(&start_u, &len_u, j);
 								// note: start_u can be (uint)-1 when len_u == 0
 								size_t part_end = len_u > 0 ? untagged_to_index(s, start_u + len_u, true) : start;
 								String part = s.substr(start, part_end - start);
@@ -410,24 +501,45 @@ String KeywordDatabase::expand(const String& text,
 									// parameter
 									KeywordParam& kwp = *kw->parameters[j/2-1];
 									String param = untagged.substr(start_u, len_u); // untagged version
+									// strip separator
+									String separator;
+									if (kwp.separator_before_re.IsValid()) {
+										if (kwp.separator_before_re.Matches(param)) {
+											size_t s_start, s_len; // start should be 0
+											kwp.separator_before_re.GetMatch(&s_start, &s_len);
+											separator = param.substr(0, s_start + s_len);
+											param     = param.substr(s_start + s_len);
+											// strip from tagged version
+											size_t end_t = untagged_to_index(part, s_start + s_len, false);
+											part = get_tags(part, 0, end_t, true, true) + part.substr(end_t);
+											// transform?
+											if (kwp.separator_script) {
+												ctx.setVariable(_("input"), to_script(separator));
+												separator = kwp.separator_script.invoke(ctx)->toString();
+											}
+										}
+									}
+									// to script
+									KeywordParamValueP script_param(new KeywordParamValue(kwp.name, separator, param));
+									KeywordParamValueP script_part (new KeywordParamValue(kwp.name, separator,  part));
+									// process param
 									if (param.empty()) {
 										// placeholder
-										param = _("<atom-kwpph>") + (kwp.placeholder.empty() ? kwp.name : kwp.placeholder) + _("</atom-kwpph>");
-										part  = part + param; // keep tags
-									} else if (kw->parameters[j/2-1]->script) {
+										script_param->value = _("<atom-kwpph>") + (kwp.placeholder.empty() ? kwp.name : kwp.placeholder) + _("</atom-kwpph>");
+										script_part->value  = part + script_param->value; // keep tags
+									} else {
 										// apply parameter script
-										ctx.setVariable(_("input"), to_script(part));
-										part  = kwp.script.invoke(ctx)->toString();
-										ctx.setVariable(_("input"), to_script(part));
-										param = kwp.script.invoke(ctx)->toString();
+										if (kwp.script) {
+											ctx.setVariable(_("input"), script_part);
+											script_part->value  = kwp.script.invoke(ctx)->toString();
+										}
+										if (kwp.reminder_script) {
+											ctx.setVariable(_("input"), script_param);
+											script_param->value = kwp.reminder_script.invoke(ctx)->toString();
+										}
 									}
-									String param_type = replace_all(replace_all(replace_all(kwp.name,
-															_("("),_("-")),
-															_(")"),_("-")),
-															_(" "),_("-"));
-									part  = _("<param-") + param_type + _(">") + part  + _("</param-") + param_type + _(">");
-									param = _("<param-") + param_type + _(">") + param + _("</param-") + param_type + _(">");
-									ctx.setVariable(String(_("param")) << (int)(j/2), to_script(param));
+									part  = separator + script_part->toString();
+									ctx.setVariable(String(_("param")) << (int)(j/2), script_param);
 								}
 								total += part;
 								start = part_end;
@@ -475,4 +587,23 @@ String KeywordDatabase::expand(const String& text,
 	}
 	
 	return result;
+}
+
+// ----------------------------------------------------------------------------- : KeywordParamValue
+
+ScriptType KeywordParamValue::type() const { return SCRIPT_STRING; }
+String KeywordParamValue::typeName() const { return _("keyword parameter"); }
+KeywordParamValue::operator String() const {
+	String safe_type = replace_all(replace_all(replace_all(type_name,
+							_("("),_("-")),
+							_(")"),_("-")),
+							_(" "),_("-"));
+	return _("<param-") + safe_type + _(">") + value  + _("</param-") + safe_type + _(">");
+}
+ScriptValueP KeywordParamValue::getMember(const String& name) const {
+	if (name == _("type"))      return to_script(type_name);
+	if (name == _("separator")) return to_script(separator);
+	if (name == _("value"))     return to_script(value);
+	if (name == _("param"))     return to_script(value);
+	return ScriptValue::getMember(name);
 }

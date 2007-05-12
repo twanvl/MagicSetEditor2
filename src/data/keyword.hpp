@@ -34,14 +34,27 @@ class ParamReferenceType : public IntrusivePtrBase<ParamReferenceType> {
 class KeywordParam : public IntrusivePtrBase<KeywordParam> {
   public:
 	KeywordParam();
-	String         name;		///< Name of the parameter type
-	String         description;	///< Description of the parameter type
-	String         placeholder;	///< Placholder for <atom-kwpph>, name is used if this is empty
-	bool           optional;	///< Can this parameter be left out (a placeholder is then used)
-	String         match;		///< Regular expression to match
-	OptionalScript script;		///< Transformation of the value for showing in the reminder text 
-	String         example;		///< Example for the keyword editor
+	String         name;				///< Name of the parameter type
+	String         description;			///< Description of the parameter type
+	String         placeholder;			///< Placholder for <atom-kwpph>, name is used if this is empty
+	bool           optional;			///< Can this parameter be left out (a placeholder is then used)
+	String         match;				///< Regular expression to match (including separators)
+	String         separator_before_is;	///< Regular expression of separator before the param
+	wxRegEx        separator_before_re;	///< Regular expression of separator before the param, compiled
+	wxRegEx        separator_before_eat;///< Regular expression of separator before the param, if eat_separator
+	bool           eat_separator;		///< Remove the separator from the match string if it also appears there (prevent duplicates)
+	OptionalScript script;				///< Transformation of the value for showing as the parameter
+	OptionalScript reminder_script;		///< Transformation of the value for showing in the reminder text
+	OptionalScript separator_script;	///< Transformation of the separator
+	String         example;				///< Example for the keyword editor
 	vector<ParamReferenceTypeP> refer_scripts;///< Way to refer to a parameter from the reminder text script
+	
+//%	/// Make a string that can function as a separator before the parameter
+//%	/** This tries to decode the separator_before_is regex */
+//%	String make_separator_before() const;
+	
+	/// Compile regexes
+	void compile();
 	
 	DECLARE_REFLECTION();
 };
@@ -76,9 +89,9 @@ class Keyword : public IntrusivePtrVirtualBase {
 	/// Regular expression to match and split parameters, automatically generated.
 	/** The regex has exactly 2 * parameters.size() + 1 captures (excluding the entire match, caputure 0),
 	 *  captures 1,3,... capture the plain text of the match string
-	 *  captures 2,4,... capture the parameters
+	 *  captures 2,4,... capture the separators and parameters
 	 */
-	wxRegEx               matchRe;
+	wxRegEx               match_re;
 	bool                  fixed;		///< Is this keyword uneditable? (true for game keywods, false for set keywords)
 	bool                  valid;		///< Is this keyword okay (reminder text compiles & runs; match does not match "")
 	
@@ -130,6 +143,24 @@ class KeywordDatabase {
 	
   private:
 	KeywordTrie* root;	///< Data structure for finding keywords
+};
+
+// ----------------------------------------------------------------------------- : Processing parameters
+
+/// A script value containing the value of a keyword parameter
+class KeywordParamValue : public ScriptValue {
+  public:
+	KeywordParamValue(const String& type, const String& separator, const String& value)
+		: type_name(type), separator(separator), value(value)
+	{}
+	String type_name;
+	String separator;
+	String value;
+	
+	virtual ScriptType type() const;
+	virtual String typeName() const;
+	virtual operator String() const;
+	virtual ScriptValueP getMember(const String& name) const;
 };
 
 // ----------------------------------------------------------------------------- : EOF

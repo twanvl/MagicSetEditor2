@@ -132,6 +132,7 @@ void Reader::readLine(bool in_string) {
 	}
 	key   = cannocial_name_form(trim(key));
 	value = pos == String::npos ? _("") : trim_left(line.substr(pos+1));
+	if (key.empty() && pos!=String::npos) key = _(" "); // we don't want an empty key if there was a colon
 }
 
 void Reader::unknownKey() {
@@ -162,7 +163,7 @@ void Reader::unknownKey() {
 			return;
 		}
 	}
-	if (indent == expected_indent) {
+	if (indent >= expected_indent) {
 		warning(_("Unexpected key: '") + key + _("'"));
 		do {
 			moveNext();

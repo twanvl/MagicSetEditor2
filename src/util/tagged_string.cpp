@@ -386,11 +386,6 @@ String remove_tag_contents(const String& str, const String& tag) {
 
 // ----------------------------------------------------------------------------- : Updates
 
-/// Return all open or close tags in the given range from a string
-/** for example:
- *    if close_tags == false, "text<tag>text</tag>text" --> "<tag>"
- *    if close_tags == true,  "text<tag>text</tag>text" --> "</tag>"
- */
 String get_tags(const String& str, size_t start, size_t end, bool open_tags, bool close_tags) {
 	String ret;
 	bool intag = false;

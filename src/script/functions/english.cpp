@@ -70,7 +70,7 @@ String do_english_num(String input, String(*fun)(int)) {
 		// a keyword parameter, of the form "<param->123</param->"
 		size_t start = skip_tag(input, 0);
 		if (start != String::npos) {
-			size_t end   = input.find_first_of(_('<'), start);
+			size_t end = input.find_first_of(_('<'), start);
 			if (end != String::npos) {
 				String is = input.substr(start, end - start);
 				long i = 0;
@@ -103,6 +103,54 @@ SCRIPT_FUNCTION(english_number_a) {
 SCRIPT_FUNCTION(english_number_multiple) {
 	SCRIPT_PARAM(String, input);
 	SCRIPT_RETURN(do_english_num(input, english_number_multiple));
+}
+
+// ----------------------------------------------------------------------------- : Singular/plural
+
+String english_singular(const String& str) {
+	if (str.size() > 3 && is_substr(str, str.size()-3, _("ies"))) {
+		return str.substr(0, str.size() - 3) + _("y");
+	} else if (str.size() > 1 && str.GetChar(str.size() - 1) == _('s')) {
+		return str.substr(0, str.size() - 1);
+	} else {
+		return str;
+	}
+}
+String english_plural(const String& str) {
+	if (str.size() > 1 && str.GetChar(str.size() - 1) == _('y')) {
+		return str.substr(0, str.size() - 1) + _("ies");
+	} else if (str.size() > 1 && str.GetChar(str.size() - 1) == _('s')) {
+		return str + _("es");
+	} else {
+		return str + _("s");
+	}
+}
+
+// script_english_singular/plural/singplur
+String do_english(String input, String(*fun)(const String&)) {
+	if (is_substr(input, 0, _("<param-"))) {
+		// a keyword parameter, of the form "<param->123</param->"
+		size_t start = skip_tag(input, 0);
+		if (start != String::npos) {
+			size_t end = input.find_first_of(_('<'), start);
+			if (end != String::npos) {
+				String is = input.substr(start, end - start);
+				return substr_replace(input, start, end, fun(is));
+			}
+		}
+		return input; // failed
+	} else {
+		return fun(input);
+	}
+}
+
+SCRIPT_FUNCTION(english_singular) {
+	SCRIPT_PARAM(String, input);
+	SCRIPT_RETURN(do_english(input, english_singular));
+}
+SCRIPT_FUNCTION(english_plural) {
+	SCRIPT_PARAM(String, input);
+	SCRIPT_RETURN(do_english(input, english_plural));
 }
 
 // ----------------------------------------------------------------------------- : Hints
@@ -160,6 +208,24 @@ String process_english_hints(const String& str) {
 			}
 			ret += c;
 			++i;
+		} else if (is_substr(str, i, _("<singular>"))) {
+			// singular -> keep, plural -> drop
+			size_t start = skip_tag(str, i);
+			size_t end   = match_close_tag(str, start);
+			if (singplur == 1 && end != String::npos) {
+				ret += str.substr(start, end - start);
+			}
+			singplur = 0;
+			i = skip_tag(str, end);
+		} else if (is_substr(str, i, _("<plural>"))) {
+			// singular -> drop, plural -> keep
+			size_t start = skip_tag(str, i);
+			size_t end   = match_close_tag(str, start);
+			if (singplur == 2 && end != String::npos) {
+				ret += str.substr(start, end - start);
+			}
+			singplur = 0;
+			i = skip_tag(str, end);
 		} else if (c == _('(') && singplur) {
 			// singular -> drop (...), plural -> keep it
 			size_t end = str.find_first_of(_(')'), i);
@@ -192,5 +258,7 @@ void init_script_english_functions(Context& ctx) {
 	ctx.setVariable(_("english number"),          script_english_number);
 	ctx.setVariable(_("english number a"),        script_english_number_a);
 	ctx.setVariable(_("english number multiple"), script_english_number_multiple);
+	ctx.setVariable(_("english singular"),        script_english_singular);
+	ctx.setVariable(_("english plural"),          script_english_plural);
 	ctx.setVariable(_("process english hints"),   script_process_english_hints);
 }
