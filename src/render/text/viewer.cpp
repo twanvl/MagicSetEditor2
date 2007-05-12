@@ -194,7 +194,7 @@ RealRect TextViewer::charRect(size_t index) const {
 	if (lines.empty()) return RealRect(0,0,0,0);
 	const Line& l = findLine(index);
 	size_t pos = index - l.start;
-	if (pos >= l.positions.size()) {
+	if (pos + 1 >= l.positions.size()) {
 		return RealRect(l.positions.back(), l.top, 0, l.line_height);
 	} else {
 		return RealRect(l.positions[pos], l.top, l.positions[pos + 1] - l.positions[pos], l.line_height);
