@@ -7,6 +7,7 @@ Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
 		Debug Unicode = Debug Unicode
+		Debug Unicode NoInit = Debug Unicode NoInit
 		Release = Release
 		Release Profile Unicode = Release Profile Unicode
 		Release Unicode = Release Unicode
@@ -17,6 +18,8 @@ Global
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Debug.Build.0 = Debug|Win32
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Debug Unicode.ActiveCfg = Debug Unicode|Win32
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Debug Unicode.Build.0 = Debug Unicode|Win32
+		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Debug Unicode NoInit.ActiveCfg = Debug Unicode NoInit|Win32
+		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Debug Unicode NoInit.Build.0 = Debug Unicode NoInit|Win32
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release.ActiveCfg = Release|Win32
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release.Build.0 = Release|Win32
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Profile Unicode.ActiveCfg = Release Profile Unicode|Win32
