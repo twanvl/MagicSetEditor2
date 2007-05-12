@@ -50,7 +50,11 @@ template <> void GetDefaultMember::handle(const Version& v) {
 
 // NOTE: Don't use leading zeroes, they mean octal
 const Version app_version  = 302; // 0.3.2
+#ifdef UNICODE
 const Char* version_suffix = _(" (beta)");
+#else
+const Char* version_suffix = _(" (beta, ascii build)");
+#endif
 
 /*  Changes:
  *     0.2.0 : start of version numbering practice
