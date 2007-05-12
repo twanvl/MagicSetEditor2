@@ -38,7 +38,7 @@ void deserialize_from_clipboard(T& object, Package& package, const String& data)
 
 /// A wrapped card for storing on the clipboard
 struct WrappedCard {
-	String expected_game_name;
+	Game*  expected_game;
 	String game_name;
 	CardP  card;
 	
@@ -46,15 +46,18 @@ struct WrappedCard {
 };
 
 IMPLEMENT_REFLECTION(WrappedCard) {
-	if (game_name == expected_game_name) REFLECT(game_name);
-	if (game_name == expected_game_name) REFLECT(card);
+	REFLECT(game_name);
+	if (game_name == expected_game->name()) {
+		WITH_DYNAMIC_ARG(game_for_reading, expected_game);
+		REFLECT(card);
+	}
 }
 
 
 wxDataFormat CardDataObject::format = _("application/x-mse-card");
 
 CardDataObject::CardDataObject(const SetP& set, const CardP& card) {
-	WrappedCard data = { set->game->name(), set->game->name(), card };
+	WrappedCard data = { set->game.get(), set->game->name(), card };
 	SetText(serialize_for_clipboard(*set, data));
 	SetFormat(format);
 }
@@ -65,7 +68,7 @@ CardDataObject::CardDataObject() {
 
 CardP CardDataObject::getCard(const SetP& set) {
 	CardP card(new Card(*set->game));
-	WrappedCard data = { set->game->name(), set->game->name(), card};
+	WrappedCard data = { set->game.get(), set->game->name(), card};
 	deserialize_from_clipboard(data, *set, GetText());
 	if (data.game_name != set->game->name()) return CardP(); // Card is from a different game
 	else                                     return card;
