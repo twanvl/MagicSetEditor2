@@ -170,6 +170,7 @@ init script:
 	# Utilities for keywords
 	has_cc := { card.casting_cost != "" }
 	has_pt := { card.pt           != "" }
+	hasno_pt := { card.pt == "" }
 	
 	# Filters for the text box
 	# context in which mana symbols are found
@@ -1268,7 +1269,7 @@ keyword:
 	keyword: Shadow
 	match: Shadow
 	mode: core
-	reminder: This creature can block or be blocked only by creatures with shadow.
+	reminder: This creature can block or be blocked by only creatures with shadow.
 keyword:
 	keyword: Buyback
 	match: Buyback <atom-param>cost</atom-param>
@@ -1363,7 +1364,7 @@ keyword:
 	keyword: Sunburst
 	match: Sunburst
 	mode: expert
-	reminder: This comes into play with a +1/+1 counter on it for each color of mana used to pay its cost. If it is not a creature, use charge counters instead.
+	reminder: This comes into play with a {if has_pt() then "+1/+1" else "charge"} counter on it for each color of mana used to pay its cost.
 #Two versions of splice needed because if there's no separator, the program doesn't know when to switch from param1 to param2.
 keyword:
 	keyword: Splice (Mana Cost)
@@ -1484,7 +1485,7 @@ keyword:
 	keyword: Vanishing
 	match: Vanishing <atom-param>number</atom-param>
 	mode: expert
-	reminder: This creature comes into play with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter from it. When you remove the last, sacrifice it.
+	reminder: This permanent comes into play with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter from it. When you remove the last, sacrifice it.
 keyword:
 	keyword: Deathtouch
 	match: Deathtouch
