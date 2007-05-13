@@ -178,7 +178,6 @@ init script:
 	# Utilities for keywords
 	has_cc := { card.casting_cost != "" }
 	has_pt := { card.pt           != "" }
-	hasno_pt := { card.pt == "" }
 	
 	# Filters for the text box
 	# context in which mana symbols are found
@@ -1194,6 +1193,14 @@ keyword parameter type:
 keyword parameter type:
 	name: name
 	match: [^(.,\n—-]+
+	refer script:
+		name: normal
+		description: No changes made.
+		script: \{{input}\}
+	refer script:
+		name: singular
+		description: Removes plurality from words.
+		script: \{english_singular({input})\}
 keyword parameter type:
 	name: prefix
 	description: Prefix for things like "<something>walk"
@@ -1210,30 +1217,10 @@ keyword:
 	mode: core
 	reminder: This creature can’t be blocked except by creatures with flying and/or reach.
 keyword:
-	keyword: Haste
-	match: Haste
-	mode: core
-	reminder: This creature can attack and tap the turn it comes under your control.
-keyword:
-	keyword: Fear
-	match: Fear
-	mode: core
-	reminder: This creature can’t be blocked except by artifact creatures and/or black creatures.
-keyword:
 	keyword: First strike
 	match: First strike
 	mode: core
 	reminder: This creature deals combat damage before creatures without first strike.
-keyword:
-	keyword: Enchant
-	match: Enchant <atom-param>name</atom-param>
-	mode: core
-	reminder: Target a {param1} as you play this. This card comes into play attached to that {param1}.
-keyword:
-	keyword: Cycling
-	match: Cycling <atom-param>cost</atom-param>
-	mode: expert
-	reminder: {param1}, Discard this card: Draw a card.
 keyword:
 	keyword: Trample
 	match: Trample
@@ -1245,6 +1232,16 @@ keyword:
 	mode: old
 	reminder: When declaring attackers or blockers this creature may group with others creatures with banding and one creature without banding. When damage is dealt, you decide where damage is dealt.
 keyword:
+	keyword: Landwalk
+	match: <atom-param>prefix</atom-param>walk
+	mode: core
+	reminder: This creature is unblockable as long as defending player controls a {param1}.
+keyword:
+	keyword: Protection from
+	match: Protection from <atom-param>name</atom-param>
+	mode: core
+	reminder: This creature can’t be blocked, targeted, dealt damage, or enchanted, or equipped by anything {english_singular(param1)}.
+keyword:
 	keyword: Bands with other
 	match: Bands with other <atom-param>name</atom-param>
 	mode: old
@@ -1255,25 +1252,10 @@ keyword:
 	mode: old
 	reminder: Whenever this creature becomes blocked, it gets +{param1}/+{param1} until end of turn for each creature blocking it beyond the first.
 keyword:
-	keyword: Vigilance
-	match: Vigilance
-	mode: core
-	reminder: Attacking doesn’t cause this creature to tap.
-keyword:
-	keyword: Defender
-	match: Defender
-	mode: core
-	reminder: This creature can’t attack.
-keyword:
 	keyword: Cumulative upkeep
 	match: Cumulative upkeep <atom-param>cost</atom-param>
 	mode: old
 	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you {for_mana_costs(add:"pay ",param1)} for each age counter on it.
-keyword:
-	keyword: Horsemanship
-	match: Horsemanship
-	mode: old
-	reminder: This creature can’t be blocked except by creatures with horsemanship.
 keyword:
 	keyword: Phasing
 	match: Phasing
@@ -1290,6 +1272,11 @@ keyword:
 	mode: core
 	reminder: This creature can block or be blocked by only creatures with shadow.
 keyword:
+	keyword: Denimwalk
+	match: Denimwalk
+	mode: old
+	reminder: If defending player is wearing any clothing made of denim, this creature is unblockable.
+keyword:
 	keyword: Buyback
 	match: Buyback <atom-param>cost</atom-param>
 	mode: expert
@@ -1300,10 +1287,20 @@ keyword:
 	mode: expert
 	reminder: At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.
 keyword:
-	keyword: Cardcycling
-	match: <atom-param>prefix</atom-param>cycling <atom-param>cost</atom-param>
+	keyword: Cycling
+	match: Cycling <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param2}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
+	reminder: {param1}, Discard this card: Draw a card.
+keyword:
+	keyword: Haste
+	match: Haste
+	mode: core
+	reminder: This creature can attack and tap the turn it comes under your control.
+keyword:
+	keyword: Horsemanship
+	match: Horsemanship
+	mode: old
+	reminder: This creature can’t be blocked except by creatures with horsemanship.
 keyword:
 	keyword: Fading
 	match: Fading <atom-param>number</atom-param>
@@ -1320,20 +1317,29 @@ keyword:
 	mode: expert
 	reminder: You may {for_mana_costs(add:"pay an additional ",param1)} as you play this spell.
 keyword:
-	keyword: Madness
-	match: Madness <atom-param>cost</atom-param>
-	mode: expert
-	reminder: You may play this card for its madness cost at the time you discard it.
-keyword:
 	keyword: Flashback
 	match: Flashback <atom-param>cost</atom-param>
 	mode: expert
 	reminder: You may play this card from your graveyard for its flashback cost. Then remove it from the game.
 keyword:
+	keyword: Threshold
+	match: Threshold
+	mode: pseudo
+keyword:
+	keyword: Madness
+	match: Madness <atom-param>cost</atom-param>
+	mode: expert
+	reminder: You may play this card for its madness cost at the time you discard it.
+keyword:
 	keyword: Morph
 	match: Morph <atom-param>cost</atom-param>
 	mode: expert
 	reminder: You may play this face down as a 2/2 creature for <sym>3</sym>. Turn it face up any time for its morph cost.
+keyword:
+	keyword: Fear
+	match: Fear
+	mode: core
+	reminder: This creature can’t be blocked except by artifact creatures and/or black creatures.
 keyword:
 	keyword: Amplify
 	match: Amplify <atom-param>number</atom-param>
@@ -1349,6 +1355,11 @@ keyword:
 	match: Provoke
 	mode: expert
 	reminder: When this attacks, you may have target creature defending player controls untap and block it if able.
+keyword:
+	keyword: Typecycling
+	match: <atom-param>prefix</atom-param>cycling <atom-param>cost</atom-param>
+	mode: expert
+	reminder: {param2}, Discard this card: Search your library for a {param1} card, reveal it, and put it into your hand. Then shuffle your library.
 keyword:
 	keyword: Storm
 	match: Storm
@@ -1390,35 +1401,66 @@ keyword:
 	mode: expert
 	reminder: This comes into play with a {if has_pt() then "+1/+1" else "charge"} counter on it for each color of mana used to pay its cost.
 keyword:
+	keyword: Gotcha
+	match: Gotcha
+	mode: pseudo
+keyword:
 	keyword: Splice
 	match: Splice onto <atom-param>name</atom-param> <atom-param>cost</atom-param>
 	mode: expert
 	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
-keyword:
-	keyword: Offering
-	match: <atom-param>prefix</atom-param> offering
-	mode: expert
-	reminder: You may play this card any time you could play an instant by sacrificing a {param1} and paying the difference in mana costs between this and the sacrificed {param1}. Mana cost includes color.
 keyword:
 	keyword: Bushido
 	match: Bushido <atom-param>number</atom-param>
 	mode: expert
 	reminder: When this blocks or becomes blocked, it gets +{param1}/+{param1} until end of turn.
 keyword:
-	keyword: Ninjutsu
-	match: Ninjutsu <atom-param>cost</atom-param>
-	mode: expert
-	reminder: {param1}, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
-keyword:
 	keyword: Soulshift
 	match: Soulshift <atom-param>number</atom-param>
 	mode: expert
 	reminder: When this is put into a graveyard from play, you may return target Spirit card with converted mana cost {param1} or less from you graveyard to your hand.
 keyword:
+	keyword: Enchant
+	match: Enchant <atom-param>name</atom-param>
+	mode: core
+	reminder: Target a {param1} as you play this. This card comes into play attached to that {param1}.
+keyword:
+	keyword: Vigilance
+	match: Vigilance
+	mode: core
+	reminder: Attacking doesn’t cause this creature to tap.
+keyword:
+	keyword: Defender
+	match: Defender
+	mode: core
+	reminder: This creature can’t attack.
+keyword:
+	keyword: Offering
+	match: <atom-param>prefix</atom-param> offering
+	mode: expert
+	reminder: You may play this card any time you could play an instant by sacrificing a {param1} and paying the difference in mana costs between this and the sacrificed {param1}. Mana cost includes color.
+keyword:
+	keyword: Ninjutsu
+	match: Ninjutsu <atom-param>cost</atom-param>
+	mode: expert
+	reminder: {param1}, Return an unblocked attacker you control to hand: Put this card into play from your hand tapped and attacking.
+keyword:
 	keyword: Epic
 	match: Epic
 	mode: expert
 	reminder: For the rest of the game, you can’t play spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability. If the spell has any targets, you may choose new targets for the copy.
+keyword:
+	keyword: Channel
+	match: Channel
+	mode: pseudo
+keyword:
+	keyword: Sweep
+	match: Sweep
+	mode: pseudo
+keyword:
+	keyword: Radiance
+	match: Radiance
+	mode: pseudo
 keyword:
 	keyword: Convoke
 	match: Convoke
@@ -1429,6 +1471,11 @@ keyword:
 	match: Transmute <atom-param>cost</atom-param>
 	mode: expert
 	reminder: {param1}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
+keyword:
+	keyword: Dredge
+	match: Dredge <atom-param>number</atom-param>
+	mode: expert
+	reminder: As long as you have at least {english_number(param1)} card(s) in your library, if you would draw a card, you may instead put exactly {english_number(param1)} card(s) from the top of your library into your graveyard and return this card from your graveyard to your hand.
 keyword:
 	keyword: Haunt
 	match: Haunt
@@ -1445,26 +1492,6 @@ keyword:
 	mode: expert
 	reminder: When you play this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.
 keyword:
-	keyword: Denimwalk
-	match: Denimwalk
-	mode: old
-	reminder: If defending player is wearing any clothing made of denim, this creature is unblockable.
-keyword:
-	keyword: Landwalk
-	match: <atom-param>prefix</atom-param>walk
-	mode: core
-	reminder: This creature is unblockable as long as defending player controls a {param1}.
-keyword:
-	keyword: Protection from
-	match: Protection from <atom-param>name</atom-param>
-	mode: core
-	reminder: This creature can’t be blocked, targeted, dealt damage, or enchanted, or equipped by anything {english_singular(param1)}.
-keyword:
-	keyword: Dredge
-	match: Dredge <atom-param>number</atom-param>
-	mode: expert
-	reminder: As long as you have at least {english_number(param1)} card(s) in your library, if you would draw a card, you may instead put exactly {english_number(param1)} card(s) from the top of your library into your graveyard and return this card from your graveyard to your hand.
-keyword:
 	keyword: Graft
 	match: Graft <atom-param>number</atom-param>
 	mode: expert
@@ -1474,6 +1501,10 @@ keyword:
 	match: Forecast <atom-param>cost</atom-param>, Reveal <atom-param>name</atom-param> from your hand: <atom-param>action</atom-param>
 	mode: expert
 	reminder: Play this ability only during your upkeep and only once each turn.
+keyword:
+	keyword: Hellbent
+	match: Hellbent
+	mode: pseudo
 keyword:
 	keyword: Recover
 	match: Recover <atom-param>cost</atom-param>
@@ -1504,6 +1535,10 @@ keyword:
 	match: Vanishing <atom-param>number</atom-param>
 	mode: expert
 	reminder: This permanent comes into play with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter from it. When you remove the last, sacrifice it.
+keyword:
+	keyword: Grandeur
+	match: Grandeur
+	mode: pseudo
 keyword:
 	keyword: Deathtouch
 	match: Deathtouch
@@ -1564,34 +1599,6 @@ keyword:
 	match: Shroud
 	mode: expert
 	reminder: This permanent can't be the target of spells or abilities.
-keyword:
-	keyword: Hellbent
-	match: Hellbent
-	mode: pseudo
-keyword:
-	keyword: Channel
-	match: Channel
-	mode: pseudo
-keyword:
-	keyword: Sweep
-	match: Sweep
-	mode: pseudo
-keyword:
-	keyword: Threshold
-	match: Threshold
-	mode: pseudo
-keyword:
-	keyword: Radiance
-	match: Radiance
-	mode: pseudo
-keyword:
-	keyword: Gotcha
-	match: Gotcha
-	mode: pseudo
-keyword:
-	keyword: Grandeur
-	match: Grandeur
-	mode: pseudo
 keyword:
 	keyword: Fortify
 	match: Fortify <atom-param>cost</atom-param>
