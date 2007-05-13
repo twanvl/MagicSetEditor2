@@ -226,10 +226,10 @@ SCRIPT_RULE_2_N_DEP(expand_keywords, ScriptValueP, _("default expand"), default_
 	SCRIPT_PARAM(Set*, set);
 	KeywordDatabase& db = set->keyword_db;
 	if (db.empty()) {
-		db.add(set->game->keywords);
-		db.add(set->keywords);
 		db.prepare_parameters(set->game->keyword_parameter_types, set->game->keywords);
 		db.prepare_parameters(set->game->keyword_parameter_types, set->keywords);
+		db.add(set->game->keywords);
+		db.add(set->keywords);
 	}
 	SCRIPT_RETURN(db.expand(input, default_expand, combine, ctx));
 }

@@ -404,9 +404,9 @@ void SetWindow::onFileNew(wxCommandEvent&) {
 
 void SetWindow::onFileOpen(wxCommandEvent&) {
 	if (!askSaveAndContinue()) return;
-	wxBusyCursor busy;
 	wxFileDialog dlg(this, _TITLE_("open set"), _(""), _(""), import_formats(), wxOPEN);
 	if (dlg.ShowModal() == wxID_OK) {
+		wxBusyCursor busy;
 		setSet(import_set(dlg.GetPath()));
 	}
 }
@@ -415,6 +415,7 @@ void SetWindow::onFileSave(wxCommandEvent& ev) {
 	if (set->needSaveAs()) {
 		onFileSaveAs(ev);
 	} else {
+		wxBusyCursor busy;
 		settings.addRecentFile(set->absoluteFilename());
 		set->save();
 		set->actions.setSavePoint();
