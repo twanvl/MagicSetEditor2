@@ -85,3 +85,20 @@ bool ImageValueEditor::doPaste() {
 	sliceImage(data.GetBitmap().ConvertToImage());
 	return true;
 }
+
+bool ImageValueEditor::doDelete() {
+	getSet().actions.add(value_action(valueP(), FileName()));
+	return true;
+}
+
+
+bool ImageValueEditor::onChar(wxKeyEvent& ev) {
+	if (ev.AltDown() || ev.ShiftDown() || ev.ControlDown()) return false;
+	switch (ev.GetKeyCode()) {
+		case WXK_DELETE:
+			doDelete();
+			return true;
+		default:
+			return false;
+	}
+}
