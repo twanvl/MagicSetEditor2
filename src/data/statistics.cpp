@@ -10,6 +10,9 @@
 #include <data/field.hpp>
 #include <data/field/choice.hpp>
 
+DECLARE_TYPEOF_COLLECTION(String);
+DECLARE_TYPEOF_COLLECTION(StatsDimensionP);
+
 // ----------------------------------------------------------------------------- : Statistics dimension
 
 StatsDimension::StatsDimension()
@@ -68,6 +71,7 @@ StatsCategory::StatsCategory(const StatsDimensionP& dim)
 
 IMPLEMENT_REFLECTION_ENUM(GraphType) {
 	VALUE_N("bar",     GRAPH_TYPE_BAR);
+	VALUE_N("stack",   GRAPH_TYPE_STACK);
 	VALUE_N("pie",     GRAPH_TYPE_PIE);
 	VALUE_N("scatter", GRAPH_TYPE_SCATTER);
 }
@@ -78,6 +82,24 @@ IMPLEMENT_REFLECTION_NO_GET_MEMBER(StatsCategory) {
 		REFLECT(description);
 		REFLECT_N("icon", icon_filename);
 		REFLECT(type);
-		REFLECT(dimensions);
+		REFLECT_N("dimensions", dimension_names);
+	}
+}
+
+void StatsCategory::find_dimensions(const vector<StatsDimensionP>& available) {
+	if (!dimensions.empty()) return;
+	FOR_EACH_CONST(n, dimension_names) {
+		StatsDimensionP dim;
+		FOR_EACH_CONST(d, available) {
+			if (d->name == n) {
+				dim = d;
+				break;
+			}
+		}
+		if (!dim) {
+			handle_error(_ERROR_1_("dimension not found",dim),false);
+		} else {
+			dimensions.push_back(dim);
+		}
 	}
 }

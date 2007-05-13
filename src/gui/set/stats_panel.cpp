@@ -147,6 +147,8 @@ void StatsPanel::onCategorySelect() {
 	if (categories->hasSelection()) {
 		StatsCategory& cat = categories->getSelection();
 		GraphDataPre d;
+		cat.find_dimensions(set->game->statistics_dimensions);
+		// create axes
 		FOR_EACH(dim, cat.dimensions) {
 			d.axes.push_back(new_intrusive4<GraphAxis>(
 				dim->name,
@@ -156,6 +158,7 @@ void StatsPanel::onCategorySelect() {
 				)
 			);
 		}
+		// find values
 		FOR_EACH(card, set->cards) {
 			Context& ctx = set->getContext(card);
 			GraphElementP e(new GraphElement);
@@ -173,6 +176,7 @@ void StatsPanel::onCategorySelect() {
 				d.elements.push_back(e);
 			}
 		}
+		// TODO graph->setLayout(cat.type)
 		graph->setData(d);
 		filterCards();
 	}

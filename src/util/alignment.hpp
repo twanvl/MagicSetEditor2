@@ -57,7 +57,9 @@ RealPoint align_in_rect(Alignment align, const RealSize& to_align, const RealRec
 /// Direction to place something in
 enum Direction {
 	LEFT_TO_RIGHT, RIGHT_TO_LEFT,
-	TOP_TO_BOTTOM, BOTTOM_TO_TOP
+	TOP_TO_BOTTOM, BOTTOM_TO_TOP,
+	HORIZONTAL = LEFT_TO_RIGHT,
+	VERTICAL   = TOP_TO_BOTTOM
 };
 
 /// Move a point in a direction

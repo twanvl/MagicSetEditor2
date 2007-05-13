@@ -173,3 +173,8 @@ Root: HKCR; Subkey: "MagicSetEditor2Symbol\shell\open\command"; ValueType: strin
 [Run]
 Filename: "{app}\mse.exe"; Description: "Start Magic Set Editor"; Flags: postinstall nowait skipifsilent unchecked
 
+; ------------------------------ : Uninstaller
+
+[UninstallDelete]
+Type: filesandordirs; Name: "{userappdata}\Magic Set Editor"
+

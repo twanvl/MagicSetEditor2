@@ -10,6 +10,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/alignment.hpp>
 #include <util/rotation.hpp>
 
 DECLARE_POINTER_TYPE(GraphAxis);
@@ -90,9 +91,12 @@ class GraphData : public IntrusivePtrBase<GraphData> {
   public:
 	GraphData(const GraphDataPre&);
 	
-	vector<GraphAxisP> axes;	///< The axes in the data
-	vector<UInt>       values;	///< Multi dimensional (dim = axes.size()) array of values
-	UInt               size;	///< Total number of elements
+	vector<GraphAxisP>   axes;		///< The axes in the data
+	vector<vector<int> > values;	///< All elements, with the group number for each axis, or -1
+	UInt                 size;		///< Total number of elements
+	
+	/// Create a cross table for two axes
+	void crossAxis(size_t axis1, size_t axis2, vector<UInt>& out) const;
 };
 
 
@@ -138,6 +142,18 @@ class Graph1D : public Graph {
 	inline GraphAxis& axis_data() const { return *data->axes.at(axis); }
 };
 
+/// Base class for 2 dimensional graph components
+class Graph2D : public Graph {
+  public:
+	inline Graph2D(size_t axis1, size_t axis2) : axis1(axis1), axis2(axis2) {}
+	virtual void setData(const GraphDataP& d);
+  protected:
+	size_t axis1, axis2;
+	vector<UInt> values; // axis1.size * axis2.size array
+	inline GraphAxis& axis1_data() const { return *data->axes.at(axis1); }
+	inline GraphAxis& axis2_data() const { return *data->axes.at(axis2); }
+};
+
 /// A bar graph
 class BarGraph : public Graph1D {
   public:
@@ -146,9 +162,13 @@ class BarGraph : public Graph1D {
 	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
 };
 
-// TODO
-//class BarGraph2D {
-//};
+// A bar graph with stacked bars
+class BarGraph2D : public Graph2D {
+  public:
+	inline BarGraph2D(size_t axis_h, size_t axis_v) : Graph2D(axis_h, axis_v) {}
+	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
+	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const;
+};
 
 /// A pie graph
 class PieGraph : public Graph1D {
@@ -169,9 +189,20 @@ class GraphLegend : public Graph1D {
 //class GraphTable {
 //};
 
-//class GraphAxis : public Graph1D {
-//	virtual void draw(RotatedDC& dc) const;
-//};
+/// Draws a horizontal/vertical axis for group labels
+class GraphLabelAxis : public Graph1D {
+  public:
+	inline GraphLabelAxis(size_t axis, Direction direction, bool rotate = false, bool draw_lines = false)
+		: Graph1D(axis), direction(direction), rotate(rotate), draw_lines(draw_lines)
+	{}
+	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
+	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
+  private:
+	Direction direction;
+	int levels;
+	bool rotate;
+	bool draw_lines;
+};
 
 /// Draws an a vertical axis for counts
 class GraphValueAxis : public Graph1D {

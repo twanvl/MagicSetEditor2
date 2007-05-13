@@ -11,6 +11,16 @@
 #include <util/tagged_string.hpp>
 #include <util/error.hpp>
 
+// ----------------------------------------------------------------------------- : Util
+
+bool is_vowel(Char c) {
+	return c == _('a') || c == _('e') || c == _('i') || c == _('o') || c == _('u')
+	    || c == _('A') || c == _('E') || c == _('I') || c == _('O') || c == _('U');
+}
+inline bool is_constant(Char c) {
+	return !is_vowel(c);
+}
+
 // ----------------------------------------------------------------------------- : Numbers
 
 /// Write a number using words, for example 23 -> "twenty-three"
@@ -110,20 +120,41 @@ SCRIPT_FUNCTION(english_number_multiple) {
 String english_singular(const String& str) {
 	if (str.size() > 3 && is_substr(str, str.size()-3, _("ies"))) {
 		return str.substr(0, str.size() - 3) + _("y");
+	} else if (str.size() > 3 && is_substr(str, str.size()-3, _("oes"))) {
+		return str.substr(0, str.size() - 2);
+	} else if (str.size() > 4 && is_substr(str, str.size()-4, _("ches"))) {
+		return str.substr(0, str.size() - 2);
+	} else if (str.size() > 4 && is_substr(str, str.size()-4, _("shes"))) {
+		return str.substr(0, str.size() - 2);
+	} else if (str.size() > 4 && is_substr(str, str.size()-4, _("sses"))) {
+		return str.substr(0, str.size() - 2);
+	} else if (str.size() > 5 && is_substr(str, str.size()-3, _("ves")) && (is_substr(str, str.size()-5, _("el")) || is_substr(str, str.size()-5, _("ar")) )) {
+		return str.substr(0, str.size() - 3) + _("f");
 	} else if (str.size() > 1 && str.GetChar(str.size() - 1) == _('s')) {
 		return str.substr(0, str.size() - 1);
+	} else if (str.size() >= 3 && is_substr(str, str.size()-3, _("men"))) {
+		return str.substr(0, str.size() - 2) + _("an");
 	} else {
 		return str;
 	}
 }
 String english_plural(const String& str) {
-	if (str.size() > 1 && str.GetChar(str.size() - 1) == _('y')) {
-		return str.substr(0, str.size() - 1) + _("ies");
-	} else if (str.size() > 1 && str.GetChar(str.size() - 1) == _('s')) {
-		return str + _("es");
-	} else {
-		return str + _("s");
+	if (str.size() > 2) {
+		Char a = str.GetChar(str.size() - 2);
+		Char b = str.GetChar(str.size() - 1);
+		if (b == _('y') && is_constant(a)) {
+			return str.substr(0, str.size() - 1) + _("ies");
+		} else if (b == _('o') && is_constant(a)) {
+			return str + _("es");
+		} else if ((a == _('s') || a == _('c')) && b == _('h')) {
+			return str + _("es");
+		} else if (b == _('s')) {
+			return str + _("es");
+		} else {
+			return str + _("s");
+		}
 	}
+	return str + _("s");
 }
 
 // script_english_singular/plural/singplur
@@ -154,11 +185,6 @@ SCRIPT_FUNCTION(english_plural) {
 }
 
 // ----------------------------------------------------------------------------- : Hints
-
-bool is_vowel(Char c) {
-	return c == _('a') || c == _('e') || c == _('i') || c == _('o') || c == _('u')
-	    || c == _('A') || c == _('E') || c == _('I') || c == _('O') || c == _('U');
-}
 
 /// Process english hints in the input string
 /** A hint is formed by

@@ -42,6 +42,9 @@ class KeywordParam : public IntrusivePtrBase<KeywordParam> {
 	String         separator_before_is;	///< Regular expression of separator before the param
 	wxRegEx        separator_before_re;	///< Regular expression of separator before the param, compiled
 	wxRegEx        separator_before_eat;///< Regular expression of separator before the param, if eat_separator
+	String         separator_after_is;	///< Regular expression of separator after the param
+	wxRegEx        separator_after_re;	///< Regular expression of separator after the param, compiled
+	wxRegEx        separator_after_eat;	///< Regular expression of separator after the param, if eat_separator
 	bool           eat_separator;		///< Remove the separator from the match string if it also appears there (prevent duplicates)
 	OptionalScript script;				///< Transformation of the value for showing as the parameter
 	OptionalScript reminder_script;		///< Transformation of the value for showing in the reminder text
@@ -53,7 +56,7 @@ class KeywordParam : public IntrusivePtrBase<KeywordParam> {
 //%	/** This tries to decode the separator_before_is regex */
 //%	String make_separator_before() const;
 	
-	/// Compile regexes
+	/// Compile regexes for separators
 	void compile();
 	
 	DECLARE_REFLECTION();
@@ -150,11 +153,11 @@ class KeywordDatabase {
 /// A script value containing the value of a keyword parameter
 class KeywordParamValue : public ScriptValue {
   public:
-	KeywordParamValue(const String& type, const String& separator, const String& value)
-		: type_name(type), separator(separator), value(value)
+	KeywordParamValue(const String& type, const String& separator_before, const String& separator_after, const String& value)
+		: type_name(type), separator_before(separator_before), separator_after(separator_after), value(value)
 	{}
 	String type_name;
-	String separator;
+	String separator_before, separator_after;
 	String value;
 	
 	virtual ScriptType type() const;

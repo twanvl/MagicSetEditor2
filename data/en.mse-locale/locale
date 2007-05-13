@@ -518,6 +518,9 @@ error:
 	# Update checking
 	checking updates failed:			Checking updates failed.
 	no updates:							There are no available updates.
+	
+	# Stats panel
+	dimension not found:				There is no statistics dimension '%s'
 
 ############################################################## Types used in scripts / shape names
 type:

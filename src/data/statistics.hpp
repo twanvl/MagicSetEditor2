@@ -43,6 +43,7 @@ class StatsDimension : public IntrusivePtrBase<StatsDimension> {
 /// Types of graphs
 enum GraphType
 {	GRAPH_TYPE_BAR
+,	GRAPH_TYPE_STACK
 ,	GRAPH_TYPE_PIE
 ,	GRAPH_TYPE_SCATTER
 };
@@ -59,8 +60,12 @@ class StatsCategory : public IntrusivePtrBase<StatsCategory> {
 	String                  description;	///< Description, used in status bar
 	String                  icon_filename;	///< Icon for lists
 	Bitmap                  icon;			///< The loaded icon (optional of course)
-	vector<StatsDimensionP> dimensions;		///< The dimensions to use, higher dimensions may be null
+	vector<String>          dimension_names;///< Names of the dimensions to use
+	vector<StatsDimensionP> dimensions;		///< Actual dimensions
 	GraphType               type;			///< Type of graph to use
+	
+	/// Initialize dimensions from dimension_names
+	void find_dimensions(const vector<StatsDimensionP>& available);
 	
 	DECLARE_REFLECTION();
 };

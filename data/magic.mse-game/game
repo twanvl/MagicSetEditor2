@@ -152,13 +152,19 @@ init script:
 	};
 	
 	# replaces — correctly
-	alternative_cost := replace_rule(match:"\\.$", replace:"") + replace_rule(match:"^[A-Z]", replace: { to_lower() })
 	add := "" # default is nothing
 	for_mana_costs := format_cost := {
-		if input.separator=="—" then
-			"<param-cost>{alternative_cost(input.param)}</param-cost>"
+		if input.separator_before == "—" then
+			"<param-cost>{input.param}</param-cost>"
 		else
 			"<param-mana>{add}{input.param}</param-mana>"
+	}
+	alternative_cost := replace_rule(match:"^[A-Z]", replace: { to_lower() })
+	format_alt_cost := {
+		if input.separator_before == "—" then
+			alternative_cost(input.param)
+		else
+			input.param
 	}
 	long_dash := replace_rule(match:"-", replace:"—")
 	# Utilities for keywords
@@ -256,8 +262,11 @@ init script:
 			replace: "Æ") +
 		# step 2 : longdash for keywords
 		replace_rule(
-			match: "--| - ",
-			replace: "—")
+			match: "--",
+			replace: "—") +
+		replace_rule(
+			match: " - ",
+			replace: " — ")
 	
 	#character filter for copyright line
 	copyright_filter :=
@@ -955,7 +964,7 @@ card field:
 ############################################################## Statistics categories
 
 statistics dimension:
-	name:   card color
+	name:   card color2
 	script: primary_card_color(card.card_color)
 	icon: stats/card_color.png
 	colors:
@@ -994,10 +1003,10 @@ statistics dimension:
 #	numeric: true
 #	icon: stats/toughness.png
 
-#statistics category:
-#	name: color / rarity
-#	dimension: card_color
-#	dimension: rarity
+statistics category:
+	name: color / rarity
+	dimension: card color2
+	dimension: rarity
 
 #statistics category:
 #	name: power / toughness
@@ -1095,6 +1104,7 @@ pack type:
 
 has keywords: true
 
+keyword match script: name_filter(value)
 #keyword preview: {keyword} <i>({reminder})</i>
 
 keyword mode:
@@ -1122,6 +1132,7 @@ keyword parameter type:
 	name: cost
 	match: [ ][STXYZ0-9WUBRG/|]*|[-—][^(\n]*
 	separator before is: [ —-]
+	separator after is: [.]
 	optional: false
 	# note: the separator is part of match
 	refer script:
@@ -1136,6 +1147,7 @@ keyword parameter type:
 		name: add "pay " for mana costs
 		description: When using mana only costs, words the reminder text as "pay <cost>"
 		script: \{for_mana_costs(add:"pay ",{input})\}
+	reminder script: format_alt_cost()
 	separator script: long_dash()
 keyword parameter type:
 	name: number
@@ -1161,7 +1173,7 @@ keyword parameter type:
 	match: [^(,\n]+
 keyword parameter type:
 	name: name
-	match: [^(.,\n]+
+	match: [^(.,\n-—]+
 keyword parameter type:
 	name: prefix
 	description: Prefix for things like "<something>walk"
