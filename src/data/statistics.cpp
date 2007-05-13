@@ -12,6 +12,7 @@
 
 DECLARE_TYPEOF_COLLECTION(String);
 DECLARE_TYPEOF_COLLECTION(StatsDimensionP);
+DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
 
 // ----------------------------------------------------------------------------- : Statistics dimension
 
@@ -33,16 +34,29 @@ StatsDimension::StatsDimension(const Field& field)
 	const ChoiceField* choice_field = dynamic_cast<const ChoiceField*>(&field);
 	if (choice_field) {
 		colors = choice_field->choice_colors;
-		int count = choice_field->choices->lastId();
+		/*int count = choice_field->choices->lastId();
 		for (int i = 0 ; i < count ; ++i) {
 			groups.push_back(choice_field->choices->choiceName(i));
+		}*/
+		// only top level choices
+		FOR_EACH_CONST(g, choice_field->choices->choices) {
+			groups.push_back(g->name);
 		}
+		// initialize script, primary_choice(card.{field_name})
+		Script& s = script.getScript();
+		s.addInstruction(I_GET_VAR,  string_to_variable(_("primary choice")));
+		s.addInstruction(I_GET_VAR,  string_to_variable(_("card")));
+		s.addInstruction(I_MEMBER_C, field.name);
+		s.addInstruction(I_CALL,     1);
+		s.addInstruction(I_NOP,      string_to_variable(_("input")));
+		s.addInstruction(I_RET);
+	} else {
+		// initialize script, card.{field_name}
+		Script& s = script.getScript();
+		s.addInstruction(I_GET_VAR,  string_to_variable(_("card")));
+		s.addInstruction(I_MEMBER_C, field.name);
+		s.addInstruction(I_RET);
 	}
-	// initialize script, card.{field_name}
-	Script& s = script.getScript();
-	s.addInstruction(I_GET_VAR,  string_to_variable(_("card")));
-	s.addInstruction(I_MEMBER_C, field.name);
-	s.addInstruction(I_RET);
 }
 
 IMPLEMENT_REFLECTION_NO_GET_MEMBER(StatsDimension) {

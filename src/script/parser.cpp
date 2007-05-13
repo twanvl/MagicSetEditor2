@@ -13,7 +13,7 @@
 #include <util/io/package_manager.hpp> // for "include file" semi hack
 #include <stack>
 
-DECLARE_TYPEOF_COLLECTION(int);
+DECLARE_TYPEOF_COLLECTION(Variable);
 
 #ifdef __WXMSW__
 #define TokenType TokenType_ // some stupid windows header uses our name
@@ -546,7 +546,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			expectToken(input, _("]"));
 		} else if (minPrec <= PREC_FUN && token==_("(")) {
 			// function call, read arguments
-			vector<int> arguments;
+			vector<Variable> arguments;
 			Token t = input.peek();
 			while (t != _(")") && t != TOK_EOF) {
 				if (input.peek(2) == _(":")) {

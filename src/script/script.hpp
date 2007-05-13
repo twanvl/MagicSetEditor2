@@ -92,13 +92,15 @@ struct Instruction {
 
 // ----------------------------------------------------------------------------- : Variables
 
+typedef unsigned int Variable;
+
 /// Return a unique name for a variable to allow for faster loopups
-unsigned int string_to_variable(const String& s);
+Variable string_to_variable(const String& s);
 
 /// Get the name of a vaiable
 /** Warning: this function is slow, it should only be used for error messages and such.
  */
-String variable_to_string(unsigned int v);
+String variable_to_string(Variable v);
 
 // ----------------------------------------------------------------------------- : Script
 

@@ -427,7 +427,7 @@ void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 			if (draw_lines) {
 				dc.SetPen(lerp(bg, fg, 0.5));
-				for (int i = 0 ; i < count ; ++i) {
+				for (int i = 1 ; i <= count ; ++i) {
 					dc.DrawLine(RealPoint(rect.x + i*width, rect.top()), RealPoint(rect.x + i*width, rect.bottom()));
 				}
 			}
@@ -436,6 +436,29 @@ void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			dc.DrawLine(rect.topLeft(), rect.bottomLeft());
 		} else {
 			// TODO
+			double height = rect.height / count; // width of an item
+			// Draw labels
+			double y = rect.bottom();
+			FOR_EACH_CONST(g, axis.groups) {
+				// draw label, aligned bottom center
+				RealSize text_size = dc.GetTextExtent(g.name);
+				//dc.SetClippingRegion(RealRect(x + 2, rect.bottom() + 3, width - 4, text_size.height));
+				dc.DrawText(g.name, align_in_rect(ALIGN_MIDDLE_RIGHT, text_size, RealRect(-3, y, 0, -height)));
+				//dc.DestroyClippingRegion();
+				y -= height;
+			}
+			// Draw lines
+			Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+			Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+			if (draw_lines) {
+				dc.SetPen(lerp(bg, fg, 0.5));
+				for (int i = 1 ; i <= count ; ++i) {
+					dc.DrawLine(RealPoint(rect.left(), rect.bottom() - i*height), RealPoint(rect.right(), rect.bottom() - i*height));
+				}
+			}
+			// always draw axis line
+			dc.SetPen(fg);
+			dc.DrawLine(rect.bottomLeft(), rect.bottomRight());
 		}
 	}
 }
@@ -560,6 +583,12 @@ void GraphControl::setLayout(GraphType type) {
 			break;
 		} case GRAPH_TYPE_SCATTER: {
 			// TODO
+			intrusive_ptr<GraphContainer> combined(new GraphContainer());
+			combined->add(new_intrusive4<GraphLabelAxis>(0, HORIZONTAL, false, true));
+			combined->add(new_intrusive4<GraphLabelAxis>(1, VERTICAL,   false, true));
+			//combined->add(new_intrusive2<BarGraph2D>(0,1));
+			graph = new_intrusive5<GraphWithMargins>(combined, 23,8,7,20);
+			break;
 		} default:
 			graph = GraphP();
 	}
@@ -574,8 +603,8 @@ void GraphControl::setData(const GraphDataP& data) {
 	if (graph) {
 		graph->setData(data);
 		current_item.clear(); // TODO : preserve selection
-		Refresh(false);
 	}
+	Refresh(false);
 }
 
 void GraphControl::onPaint(wxPaintEvent&) {

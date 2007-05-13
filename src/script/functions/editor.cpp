@@ -12,10 +12,12 @@
 #include <data/set.hpp>
 #include <data/game.hpp>
 #include <data/field/text.hpp>
+#include <data/field/choice.hpp>
 
 DECLARE_TYPEOF_COLLECTION(FieldP);
 DECLARE_TYPEOF_COLLECTION(TextValue*);
 DECLARE_TYPEOF_COLLECTION(String);
+DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
 
 // ----------------------------------------------------------------------------- : Combined editor
 
@@ -131,9 +133,31 @@ SCRIPT_FUNCTION_DEPENDENCIES(combined_editor) {
 	return dependency_dummy;
 }
 
+// ----------------------------------------------------------------------------- : Choice values
+
+// convert a full choice name into the name of the top level group it is in
+SCRIPT_FUNCTION(primary_choice) {
+	SCRIPT_PARAM(ValueP,input);
+	ChoiceValueP value = dynamic_pointer_cast<ChoiceValue>(input);
+	if (!value) {
+		throw ScriptError(_("Argument to 'primary_choice' should be a choice field")); 
+	}
+	// determine choice
+	int id = value->field().choices->choiceId(value->value);
+	// find the last group that still contains id
+	const vector<ChoiceField::ChoiceP>& choices = value->field().choices->choices;
+	FOR_EACH_CONST_REVERSE(c, choices) {
+		if (id >= c->first_id) {
+			SCRIPT_RETURN(c->name);
+		}
+	}
+	SCRIPT_RETURN(_(""));
+}
+
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_editor_functions(Context& ctx) {
 	ctx.setVariable(_("forward editor"),  script_combined_editor); // combatability
 	ctx.setVariable(_("combined editor"), script_combined_editor);
+	ctx.setVariable(_("primary choice"),  script_primary_choice);
 }

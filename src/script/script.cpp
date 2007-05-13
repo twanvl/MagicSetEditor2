@@ -13,7 +13,7 @@
 
 // ----------------------------------------------------------------------------- : Variables
 
-typedef map<String, unsigned int> Variables;
+typedef map<String, Variable> Variables;
 Variables variables;
 DECLARE_TYPEOF(Variables);
 #ifdef _DEBUG
@@ -21,13 +21,13 @@ DECLARE_TYPEOF(Variables);
 #endif
 
 /// Return a unique name for a variable to allow for faster loopups
-unsigned int string_to_variable(const String& s) {
+Variable string_to_variable(const String& s) {
 	map<String, unsigned int>::iterator it = variables.find(s);
 	if (it == variables.end()) {
 		#ifdef _DEBUG
 			variable_names.push_back(s);
 		#endif
-		unsigned int v = (unsigned int)variables.size();
+		Variable v = (Variable)variables.size();
 		variables.insert(make_pair(s,v));
 		return v;
 	} else {
@@ -38,7 +38,7 @@ unsigned int string_to_variable(const String& s) {
 /// Get the name of a vaiable
 /** Warning: this function is slow, it should only be used for error messages and such.
  */
-String variable_to_string(unsigned int v) {
+String variable_to_string(Variable v) {
 	FOR_EACH(vi, variables) {
 		if (vi.second == v) return vi.first;
 	}

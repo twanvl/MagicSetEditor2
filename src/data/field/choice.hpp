@@ -60,7 +60,7 @@ class ChoiceField::Choice : public IntrusivePtrBase<ChoiceField::Choice> {
 	 *  The top level group has first_id 0.
 	 */
 	int             first_id;
-		
+	
 	/// Is this a group?
 	bool isGroup() const;
 	/// Can this Choice itself be chosen?
