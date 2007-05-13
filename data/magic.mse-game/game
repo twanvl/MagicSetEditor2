@@ -89,7 +89,15 @@ init script:
 	}
 	
 	# color based on land text box, input = textbox contents
-	color_text_filter := filter_rule(match: "<sym[^>]*>([^<]+)") + color_filter;
+	color_text_filter :=
+		# remove activation costs
+		replace_rule(
+			match: "<sym[^>]*>[^<]+</sym[^>]*>"
+			in_context: "(?ix)<match>(,|:)|(pays?|additional|costs?)[ ]<match>",
+			replace: ""
+		) +
+		# keep only mana
+		filter_rule(match: "<sym[^>]*>([^<]+)") + color_filter;
 	land_to_color := {
 		# Based on watermark
 		if      card.watermark = "mana symbol white" then "land 1 color white"
@@ -122,10 +130,10 @@ init script:
 	
 	# Index for sorting, white cards are first, so white->A, blue->B, .. ,
 	#  multi->F, hybrid->G, arti->H, land->J, basic land->I
-	is_multicolor := filter_rule(match: "^multicolor") + {input != ""};
-	is_hybrid     := filter_rule(match: "^hybrid")     + {input != ""};
-	is_colorless  := filter_rule(match: "^colorless")  + {input != ""};
-	is_artifact   := filter_rule(match: "^artifact")   + {input != ""};
+	is_multicolor := match_rule(match: "^multicolor")
+	is_hybrid     := match_rule(match: "^hybrid")
+	is_colorless  := match_rule(match: "^colorless")
+	is_artifact   := match_rule(match: "^artifact")
 	sort_index := {
 		if card.casting_cost_2 !="" and card.card_color != card.card_color_2 then "H"
 		else if card.card_color=="white"        then "A"
@@ -141,8 +149,8 @@ init script:
 	};
 	
 	# The color of a card
-	is_artifact := filter_rule(match: "(?i)Artifact") + {input != ""};
-	is_land     := filter_rule(match: "(?i)Land")     + {input != ""};
+	is_artifact := match_rule(match: "(?i)Artifact")
+	is_land     := match_rule(match: "(?i)Land")
 	card_color := {
 		# usually the color of mana
 		mana_color := mana_to_color(casting_cost);
