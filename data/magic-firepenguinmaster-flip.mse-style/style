@@ -128,6 +128,7 @@ card style:
 		symbol font:
 			name: magic-mana-beveled
 			size: 17
+			scale down to: 17
 			alignment: bottom right
 		always symbol: true
 		padding top:    0

@@ -171,7 +171,8 @@ card style:
 		direction: vertical
 		symbol font:
 			name: magic-mana-beveled
-			size: 1
+			size: 13
+			scale down to: 13
 			alignment: bottom right
 		always symbol: true
 		padding top:    0
@@ -185,7 +186,8 @@ card style:
 		direction: vertical
 		symbol font:
 			name: magic-mana-beveled
-			size: 1
+			size: 13
+			scale down to: 13
 			alignment: bottom right
 		always symbol: true
 		padding top:    0
