@@ -61,14 +61,14 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 			menuExport->Append(ID_FILE_EXPORT_IMAGES,	_("export_images"),		_MENU_("export images"),	_HELP_("export images"));
 			menuExport->Append(ID_FILE_EXPORT_APPR,		_("export_apprentice"),	_MENU_("export apprentice"),_HELP_("export apprentice"));
 			menuExport->Append(ID_FILE_EXPORT_MWS,		_("export_mws"),		_MENU_("export mws"),		_HELP_("export mws"));
-		menuFile->Append(ID_FILE_EXPORT,					_MENU_("export"),					_("Export the set..."), menuExport);
+		menuFile->Append(ID_FILE_EXPORT,	_("export"),	_MENU_("export"),					_("Export the set..."), wxITEM_NORMAL, menuExport);
 		menuFile->AppendSeparator();
 //		menuFile->Append(ID_FILE_INSPECT,					_("Inspect Internal Data..."),	_("Shows a the data in the set using a tree structure"));
 //		menuFile->AppendSeparator();
 		menuFile->Append(ID_FILE_RELOAD,					_MENU_("reload data"),		_HELP_("reload data"));
 		menuFile->AppendSeparator();
-		menuFile->Append(ID_FILE_PRINT_PREVIEW,				_MENU_("print preview"),	_HELP_("print preview"));
-		menuFile->Append(ID_FILE_PRINT,						_MENU_("print"),			_HELP_("print"));
+		menuFile->Append(ID_FILE_PRINT_PREVIEW,	_("print_preview"),	_MENU_("print preview"),	_HELP_("print preview"));
+		menuFile->Append(ID_FILE_PRINT,			_("print"),			_MENU_("print"),			_HELP_("print"));
 		menuFile->AppendSeparator();
 		// recent files go here
 		menuFile->AppendSeparator();

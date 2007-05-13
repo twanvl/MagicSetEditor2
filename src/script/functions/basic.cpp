@@ -367,6 +367,38 @@ SCRIPT_FUNCTION(filter) {
 	return filter_rule(ctx)->eval(ctx);
 }
 
+// ----------------------------------------------------------------------------- : Rules : regex match
+
+class ScriptMatchRule : public ScriptValue {
+  public:
+	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
+	virtual String typeName() const { return _("match_rule"); }
+	virtual ScriptValueP eval(Context& ctx) const {
+		SCRIPT_PARAM(String, input);
+		SCRIPT_RETURN(regex.Matches(input));
+	}
+	
+	wxRegEx regex; ///< Regex to match
+};
+
+// Create a regular expression rule for filtering strings
+ScriptValueP match_rule(Context& ctx) {
+	intrusive_ptr<ScriptMatchRule> ret(new ScriptMatchRule);
+	// match
+	SCRIPT_PARAM(String, match);
+	if (!ret->regex.Compile(match, wxRE_ADVANCED)) {
+		throw ScriptError(_("Error while compiling regular expression: '")+match+_("'"));
+	}
+	return ret;
+}
+
+SCRIPT_FUNCTION(match_rule) {
+	return match_rule(ctx);
+}
+SCRIPT_FUNCTION(match) {
+	return match_rule(ctx)->eval(ctx);
+}
+
 // ----------------------------------------------------------------------------- : Rules : sort
 
 /// Sort a string using a specification using the shortest cycle metric, see spec_sort
@@ -558,8 +590,10 @@ void init_script_basic_functions(Context& ctx) {
 	// advanced string rules
 	ctx.setVariable(_("replace"),              script_replace);
 	ctx.setVariable(_("filter"),               script_filter);
+	ctx.setVariable(_("match"),                script_match);
 	ctx.setVariable(_("sort"),                 script_sort);
 	ctx.setVariable(_("replace rule"),         script_replace_rule);
 	ctx.setVariable(_("filter rule"),          script_filter_rule);
+	ctx.setVariable(_("match rule"),           script_match_rule);
 	ctx.setVariable(_("sort rule"),            script_sort_rule);
 }
