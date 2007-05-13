@@ -18,14 +18,14 @@ DECLARE_TYPEOF_COLLECTION(KeywordModeP);
 
 // ----------------------------------------------------------------------------- : Add Keyword
 
-AddKeywordAction::AddKeywordAction(Adding, Set& set)
-	: KeywordListAction(set), adding(true), keyword(new Keyword())
+AddKeywordAction::AddKeywordAction(Adding, Set& set, const KeywordP& keyword)
+	: KeywordListAction(set), adding(true), keyword(keyword ? keyword : new_intrusive<Keyword>())
 	, keyword_id(set.keywords.size())
 {
 	// find default mode
 	FOR_EACH(mode, set.game->keyword_modes) {
 		if (mode->is_default) {
-			keyword->mode = mode->name;
+			this->keyword->mode = mode->name;
 			break;
 		}
 	}

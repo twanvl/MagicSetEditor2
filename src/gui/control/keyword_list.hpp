@@ -50,6 +50,16 @@ class KeywordList : public ItemList, public SetView {
 	inline KeywordP getKeyword() const             { return static_pointer_cast<Keyword>(selected_item); }
 	inline void     setKeyword(const KeywordP& kw) { selectItem(kw, true, false); }
 	
+	// --------------------------------------------------- : Clipboard
+	
+	bool canCut()   const;
+	bool canCopy()  const;
+	bool canPaste() const;
+	// Try to perform a clipboard operation, return success
+	bool doCut();
+	bool doCopy();
+	bool doPaste();
+	
 	// --------------------------------------------------- : The keywords
   protected:
 	/// Get a list of all keywords
@@ -75,6 +85,11 @@ class KeywordList : public ItemList, public SetView {
 	void storeColumns();
 	
 	mutable wxListItemAttr item_attr; // for OnGetItemAttr
+	
+	// --------------------------------------------------- : Window events
+	DECLARE_EVENT_TABLE();
+	
+	void onContextMenu     (wxContextMenuEvent&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

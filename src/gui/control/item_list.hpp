@@ -37,6 +37,18 @@ class ItemList : public wxListView {
 	/// Move the selection to the first item (if possible)
 	void selectFirst();
 	
+	// --------------------------------------------------- : Clipboard
+	
+	virtual bool canCut()    const { return canCopy() && canDelete(); }
+	virtual bool canCopy()   const { return false; }
+	virtual bool canPaste()  const { return false; }
+	virtual bool canDelete() const { return false; }
+	// Try to perform a clipboard operation, return success
+	virtual bool doCut()    { return false; }
+	virtual bool doCopy()   { return false; }
+	virtual bool doPaste()  { return false; }
+	virtual bool doDelete() { return false; }
+	
 	// --------------------------------------------------- : Virtual interface
   protected:
 	/// Get a list of all items
@@ -85,6 +97,7 @@ class ItemList : public wxListView {
 	
 	void onColumnClick(wxListEvent& ev);
 	void onItemFocus  (wxListEvent& ev);
+	void onContextMenu(wxContextMenuEvent&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

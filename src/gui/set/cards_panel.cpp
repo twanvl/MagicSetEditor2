@@ -138,8 +138,8 @@ void CardsPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->DeleteTool(ID_CARD_REMOVE);
 	tb->DeleteTool(ID_CARD_ROTATE);
 	// HACK: hardcoded size of rest of toolbar
-	tb->DeleteToolByPos(10); // delete separator
-	tb->DeleteToolByPos(10); // delete separator
+	tb->DeleteToolByPos(12); // delete separator
+	tb->DeleteToolByPos(12); // delete separator
 	// Menus
 	mb->Remove(3);
 	mb->Remove(2);

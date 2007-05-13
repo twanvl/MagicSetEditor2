@@ -336,10 +336,8 @@ void CardListBase::onContextMenu(wxContextMenuEvent&) {
 
 // ----------------------------------------------------------------------------- : CardListBase : Event table
 
-BEGIN_EVENT_TABLE(CardListBase, wxListView)
-	EVT_LIST_COL_CLICK			(wxID_ANY,			CardListBase::onColumnClick)
+BEGIN_EVENT_TABLE(CardListBase, ItemList)
 	EVT_LIST_COL_RIGHT_CLICK	(wxID_ANY,			CardListBase::onColumnRightClick)
-	EVT_LIST_ITEM_FOCUSED		(wxID_ANY,			CardListBase::onItemFocus)
 	EVT_CHAR					(					CardListBase::onChar)
 	EVT_MOTION					(					CardListBase::onDrag)
 	EVT_MENU					(ID_SELECT_COLUMNS,	CardListBase::onSelectColumns)

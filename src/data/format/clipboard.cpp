@@ -11,6 +11,7 @@
 #include <data/card.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
+#include <data/keyword.hpp>
 #include <util/io/package.hpp>
 #include <script/scriptable.hpp>
 #include <wx/sstream.h>
@@ -72,6 +73,46 @@ CardP CardDataObject::getCard(const SetP& set) {
 	deserialize_from_clipboard(data, *set, GetText());
 	if (data.game_name != set->game->name()) return CardP(); // Card is from a different game
 	else                                     return card;
+}
+
+// ----------------------------------------------------------------------------- : KeywordDataObject
+
+/// A wrapped keyword for storing on the clipboard
+struct WrappedKeyword {
+	Game*    expected_game;
+	String   game_name;
+	KeywordP keyword;
+	
+	DECLARE_REFLECTION();
+};
+
+IMPLEMENT_REFLECTION(WrappedKeyword) {
+	REFLECT(game_name);
+	if (game_name == expected_game->name()) {
+		WITH_DYNAMIC_ARG(game_for_reading, expected_game);
+		REFLECT(keyword);
+	}
+}
+
+
+wxDataFormat KeywordDataObject::format = _("application/x-mse-keyword");
+
+KeywordDataObject::KeywordDataObject(const SetP& set, const KeywordP& keyword) {
+	WrappedKeyword data = { set->game.get(), set->game->name(), keyword };
+	SetText(serialize_for_clipboard(*set, data));
+	SetFormat(format);
+}
+
+KeywordDataObject::KeywordDataObject() {
+	SetFormat(format);
+}
+
+KeywordP KeywordDataObject::getKeyword(const SetP& set) {
+	KeywordP keyword(new Keyword());
+	WrappedKeyword data = { set->game.get(), set->game->name(), keyword};
+	deserialize_from_clipboard(data, *set, GetText());
+	if (data.game_name != set->game->name()) return KeywordP(); // Keyword is from a different game
+	else                                     return keyword;
 }
 
 // ----------------------------------------------------------------------------- : Card on clipboard

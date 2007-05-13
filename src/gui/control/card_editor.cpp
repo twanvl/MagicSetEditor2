@@ -13,6 +13,7 @@
 #include <data/stylesheet.hpp>
 #include <data/settings.hpp>
 #include <util/find_replace.hpp>
+#include <util/window_id.hpp>
 #include <wx/caret.h>
 
 DECLARE_TYPEOF_COLLECTION(ValueViewerP);
@@ -297,12 +298,12 @@ void DataEditor::onChar(wxKeyEvent& ev) {
 void DataEditor::onContextMenu(wxContextMenuEvent& ev) {
 	if (current_editor) {
 		IconMenu m;
-		m.Append(wxID_CUT,	 _("cut"),		_("Cu&t"),		_("Move the selected text to the clipboard"));
-		m.Append(wxID_COPY,	 _("copy"),		_("&Copy"),		_("Place the selected text on the clipboard"));
-		m.Append(wxID_PASTE, _("paste"),	_("&Paste"),	_("Inserts the text from the clipboard"));
-		m.Enable(wxID_CUT,   canCut());
-		m.Enable(wxID_COPY,  canCopy());
-		m.Enable(wxID_PASTE, canPaste());
+		m.Append(ID_EDIT_CUT,	_("cut"),	_MENU_("cut"),		_HELP_("cut"));
+		m.Append(ID_EDIT_COPY,	_("copy"),	_MENU_("copy"),		_HELP_("copy"));
+		m.Append(ID_EDIT_PASTE, _("paste"),	_MENU_("paste"),	_HELP_("paste"));
+		m.Enable(ID_EDIT_CUT,   canCut());
+		m.Enable(ID_EDIT_COPY,  canCopy());
+		m.Enable(ID_EDIT_PASTE, canPaste());
 		if (current_editor->onContextMenu(m, ev)) {
 			PopupMenu(&m);
 		}

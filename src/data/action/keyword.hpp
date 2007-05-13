@@ -40,7 +40,7 @@ enum Removing {REMOVE};
 /// Adding or removing a keyword from a set
 class AddKeywordAction : public KeywordListAction {
   public:
-	AddKeywordAction(Adding,   Set& set);
+	AddKeywordAction(Adding,   Set& set, const KeywordP& keyword = KeywordP());
 	AddKeywordAction(Removing, Set& set, const KeywordP& keyword);
 	
 	virtual String getName(bool to_undo) const;

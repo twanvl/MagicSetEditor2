@@ -7,13 +7,17 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <gui/control/keyword_list.hpp>
+#include <gui/icon_menu.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
 #include <data/keyword.hpp>
 #include <data/action/value.hpp>
 #include <data/action/keyword.hpp>
+#include <data/format/clipboard.hpp>
 #include <util/tagged_string.hpp>
+#include <util/window_id.hpp>
 #include <gfx/gfx.hpp>
+#include <wx/clipbrd.h>
 
 DECLARE_TYPEOF_COLLECTION(KeywordP);
 
@@ -79,6 +83,46 @@ void KeywordList::onAction(const Action& action, bool undone) {
 	}
 }
 
+// ----------------------------------------------------------------------------- : Clipboard
+
+bool KeywordList::canCopy()  const { return !!selected_item; }
+bool KeywordList::canCut()   const { return canCopy() && !getKeyword()->fixed; }
+bool KeywordList::canPaste() const {
+	return wxTheClipboard->IsSupported(KeywordDataObject::format);
+}
+
+bool KeywordList::doCopy() {
+	if (!canCopy()) return false;
+	if (!wxTheClipboard->Open()) return false;
+	bool ok = wxTheClipboard->SetData(new KeywordDataObject(set, getKeyword())); // ignore result
+	wxTheClipboard->Close();
+	return ok;
+}
+bool KeywordList::doCut() {
+	// cut = copy + delete
+	if (!canCut()) return false;
+	if (!doCopy()) return false;
+	set->actions.add(new AddKeywordAction(REMOVE, *set, getKeyword()));
+	return true;
+}
+bool KeywordList::doPaste() {
+	// get data
+	if (!canPaste()) return false;
+	if (!wxTheClipboard->Open()) return false;
+	KeywordDataObject data;
+	bool ok = wxTheClipboard->GetData(data);
+	wxTheClipboard->Close();
+	if (!ok) return false;
+	// add keyword to set
+	KeywordP keyword = data.getKeyword(set);
+	if (keyword) {
+		set->actions.add(new AddKeywordAction(ADD, *set, keyword));
+		return true;
+	} else {
+		return false;
+	}
+}
+
 // ----------------------------------------------------------------------------- : KeywordListBase : for ItemList
 
 String match_string(const Keyword& a) {
@@ -117,7 +161,7 @@ bool KeywordList::compareItems(void* a, void* b) const {
 	}
 }
 
-// ----------------------------------------------------------------------------- : KeywordListBase : Item text
+// ----------------------------------------------------------------------------- : KeywordList : Item text
 
 String KeywordList::OnGetItemText (long pos, long col) const {
 	const Keyword& kw = *getKeyword(pos);
@@ -145,3 +189,20 @@ wxListItemAttr* KeywordList::OnGetItemAttr(long pos) const {
 	}
 	return &item_attr;
 }
+
+// ----------------------------------------------------------------------------- : KeywordList : Context menu
+
+void KeywordList::onContextMenu(wxContextMenuEvent&) {
+	IconMenu m;
+	m.Append(ID_EDIT_CUT,		_("cut"),			_CONTEXT_MENU_("cut"),				_HELP_("cut keyword"));
+	m.Append(ID_EDIT_COPY,		_("copy"),			_CONTEXT_MENU_("copy"),				_HELP_("copy keyword"));
+	m.Append(ID_EDIT_PASTE,		_("paste"),			_CONTEXT_MENU_("paste"),			_HELP_("paste keyword"));
+	m.AppendSeparator();
+	m.Append(ID_KEYWORD_ADD,	_("keyword_add"),	_CONTEXT_MENU_("add keyword"),		_HELP_("add keyword"));
+	m.Append(ID_KEYWORD_REMOVE,	_("keyword_del"),	_CONTEXT_MENU_("remove keyword"),	_HELP_("remove keyword"));
+	PopupMenu(&m);
+}
+
+BEGIN_EVENT_TABLE(KeywordList, ItemList)
+	EVT_CONTEXT_MENU(KeywordList::onContextMenu)
+END_EVENT_TABLE  ()

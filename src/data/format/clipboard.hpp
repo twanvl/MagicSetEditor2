@@ -14,6 +14,7 @@
 
 DECLARE_POINTER_TYPE(Set);
 DECLARE_POINTER_TYPE(Card);
+DECLARE_POINTER_TYPE(Keyword);
 
 // ----------------------------------------------------------------------------- : CardDataObject
 
@@ -29,6 +30,22 @@ class CardDataObject : public wxTextDataObject {
 	
 	/// Retrieve a card, only if it is made with the same game as set
 	CardP getCard(const SetP& set);
+};
+
+// ----------------------------------------------------------------------------- : KeywordDataObject
+
+/// The data format for keywords on the clipboard
+class KeywordDataObject : public wxTextDataObject {
+  public:
+	/// Name of the format of MSE keywords
+	static wxDataFormat format;
+	
+	KeywordDataObject();
+	/// Store a keyword
+	KeywordDataObject(const SetP& set, const KeywordP& card);
+	
+	/// Retrieve a keyword, only if it is made with the same game as set
+	KeywordP getKeyword(const SetP& set);
 };
 
 // ----------------------------------------------------------------------------- : Card on clipboard
