@@ -44,6 +44,7 @@ class Game : public Packaged {
 	vector<PackTypeP>       pack_types;				///< Types of random card packs to generate
 
 	bool                    has_keywords;           ///< Does this game use keywords?
+	OptionalScript          keyword_match_script;	///< For the keyword editor
 	vector<KeywordParamP>   keyword_parameter_types;///< Types of keyword parameters
 	vector<KeywordModeP>    keyword_modes;          ///< Modes of keywords
 	vector<KeywordP>        keywords;               ///< Keywords for use in text

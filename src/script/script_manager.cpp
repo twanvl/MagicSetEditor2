@@ -136,6 +136,9 @@ void SetScriptManager::onAction(const Action& action, bool undone) {
 		KeywordTextValue* value = dynamic_cast<KeywordTextValue*>(action.valueP.get());
 		if (value) {
 			if (value->underlying == &value->keyword.match) {
+				// script
+				Context& ctx = getContext(set.stylesheet);
+				value->update(ctx);
 				// changed the 'match' string of a keyword, rebuild database and regex so matching is correct
 				value->keyword.prepare(set.game->keyword_parameter_types, true);
 				set.keyword_db.clear();
