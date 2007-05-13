@@ -247,3 +247,17 @@ insert symbol menu:
 		item: B/G
 		item: R/W
 		item: G/U
+	item:
+		name: hybrid 3
+		item: W/U/B
+		item: U/B/R
+		item: B/R/G
+		item: R/G/W
+		item: G/W/U
+		item:
+			type: line
+		item: W/B/R
+		item: U/R/G
+		item: B/G/W
+		item: R/W/U
+		item: G/U/B
