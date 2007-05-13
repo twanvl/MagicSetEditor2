@@ -137,7 +137,11 @@ int KeywordList::OnGetItemImage(long pos) const {
 wxListItemAttr* KeywordList::OnGetItemAttr(long pos) const {
 	// black for set keywords, grey for game keywords (uneditable)
 	const Keyword& kw = *getKeyword(pos);
-	if (!kw.fixed) return nullptr;
-	item_attr.SetTextColour(lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT),0.5));
+	if (!kw.fixed && kw.valid) return nullptr;
+	if (!kw.valid) {
+		item_attr.SetTextColour(*wxRED);
+	} else if (kw.fixed) {
+		item_attr.SetTextColour(lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT),0.5));
+	}
 	return &item_attr;
 }

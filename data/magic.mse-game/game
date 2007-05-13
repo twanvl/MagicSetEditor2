@@ -157,7 +157,7 @@ init script:
 		if input.separator_before == "—" then
 			"<param-cost>{input.param}</param-cost>"
 		else
-			"<param-mana>{add}{input.param}</param-mana>"
+			"{add}<param-mana>{input.param}</param-mana>"
 	}
 	alternative_cost := replace_rule(match:"^[A-Z]", replace: { to_lower() })
 	format_alt_cost := {
@@ -184,7 +184,7 @@ init script:
 		    |adds?|pay(ed)?[ ](with|using)
 		    )
 		    ([ ]either)?			 # pay either X or Y
-		    ([ ]<sym[^>]*>[STXYZWUBRG0-9/|]+</sym[^>]*>[ ](and|or))* # pay X or Y
+		    ([ ]<sym[^>]*>[STXYZWUBRG0-9/|]+</sym[^>]*>[ ](and|or|and/or))* # pay X or Y
 		    [ ]<match> 
 		    ([,.)]|$				# (end of word)
 		    |[ ][^ .,]*$			# still typing...
@@ -639,8 +639,8 @@ card field:
 		basic land: rgb(109,62,39)
 		common:     rgb(33,33,33)
 		uncommon:   rgb(224,224,224)
-		rare:       rgb(214,196,94)
-		special:    rgb(58,7,80)
+		rare:       rgb(255,207,52)
+		special:    rgb(190,0,255)
 
 ############################# Text box
 card field:
@@ -979,6 +979,16 @@ statistics dimension:
 		multicolor		: rgb(255,188,14)
 		land			: rgb(109,62,39)
 		hybrid			: rgb(243,26,136)
+	group: white
+	group: blue
+	group: black
+	group: red
+	group: green
+	group: colorless
+	group: artifact
+	group: multicolor
+	group: land
+	group: hybrid
 
 statistics dimension:
 	name:   converted mana cost
@@ -1006,6 +1016,7 @@ statistics dimension:
 
 statistics category:
 	name: color / rarity
+	type: stack
 	dimension: card color2
 	dimension: rarity
 
@@ -1174,7 +1185,7 @@ keyword parameter type:
 	match: [^(,\n]+
 keyword parameter type:
 	name: name
-	match: [^(.,\n-—]+
+	match: [^(.,\n—-]+
 keyword parameter type:
 	name: prefix
 	description: Prefix for things like "<something>walk"
@@ -1292,6 +1303,11 @@ keyword:
 	reminder: This comes into play with {english_number_a(param1)} fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can’t, sacrifice it.
 keyword:
 	keyword: Kicker
+	match: Kicker <atom-param>mana</atom-param> and/or <atom-param>mana</atom-param>
+	mode: expert
+	reminder: You may pay an additional {param1} and/or {param2} as you play this spell.
+keyword:
+	keyword: Kicker
 	match: Kicker <atom-param>cost</atom-param>
 	mode: expert
 	reminder: You may {for_mana_costs(add:"pay an additional ",param1)} as you play this spell.
@@ -1365,15 +1381,9 @@ keyword:
 	match: Sunburst
 	mode: expert
 	reminder: This comes into play with a {if has_pt() then "+1/+1" else "charge"} counter on it for each color of mana used to pay its cost.
-#Two versions of splice needed because if there's no separator, the program doesn't know when to switch from param1 to param2.
 keyword:
-	keyword: Splice (Mana Cost)
-	match: Splice onto <atom-param>name</atom-param> <atom-param>mana</atom-param>
-	mode: expert
-	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
-keyword:
-	keyword: Splice (Alternative Cost)
-	match: Splice onto <atom-param>name</atom-param>—<atom-param>action</atom-param>
+	keyword: Splice
+	match: Splice onto <atom-param>name</atom-param> <atom-param>cost</atom-param>
 	mode: expert
 	reminder: As you play a {param1} spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card’s effects to that spell.
 keyword:

@@ -359,6 +359,7 @@ void KeywordDatabase::add(const Keyword& kw) {
 	// Add to trie
 	String text; // normal text
 	size_t param = 0;
+	bool only_star = true;
 	for (size_t i = 0 ; i < kw.match.size() ;) {
 		Char c = kw.match.GetChar(i);
 		if (is_substr(kw.match, i, _("<atom-param"))) {
@@ -384,9 +385,18 @@ void KeywordDatabase::add(const Keyword& kw) {
 			cur = cur->insert(text);
 			text.clear();
 			cur = cur->insertAnyStar();
+			// enough?
+			if (!only_star) {
+				// If we have matched anything specific, this is a good time to stop
+				// it doesn't really matter how long we go on, since the trie is only used
+				// as an optimization to not have to match lots of regexes.
+				// As an added bonus, we get a better behaviour of matching earlier keywords first.
+				break;
+			}
 		} else {
 			text += c;
 			i++;
+			only_star = false;
 		}
 	}
 	cur = cur->insert(text);
