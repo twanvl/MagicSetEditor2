@@ -39,6 +39,7 @@ class SetWindow : public wxFrame, public SetView {
 	// gui items
 	vector<SetWindowPanel*> panels;        ///< All panels on this window
 	SetWindowPanel*         current_panel;
+	IconMenu*               menuExport;
 	
 	/// Number of items in the recent sets list
 	size_t number_of_recentSets;
@@ -104,6 +105,7 @@ class SetWindow : public wxFrame, public SetView {
 	void onFileSave            (wxCommandEvent&);
 	void onFileSaveAs          (wxCommandEvent&);
 //	void onFileInspect         (wxCommandEvent&);
+	void onFileExportMenu      (wxCommandEvent&);
 	void onFileExportImage     (wxCommandEvent&);
 	void onFileExportImages    (wxCommandEvent&);
 	void onFileExportHTML      (wxCommandEvent&);

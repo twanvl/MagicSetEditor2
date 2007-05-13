@@ -55,13 +55,13 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 		menuFile->Append(ID_FILE_OPEN,		_("open"),		_MENU_("open set"),			_HELP_("open set"));
 		menuFile->Append(ID_FILE_SAVE,		_("save"),		_MENU_("save set"),			_HELP_("save set"));
 		menuFile->Append(ID_FILE_SAVE_AS,					_MENU_("save set as"),		_HELP_("save set as"));
-		IconMenu* menuExport = new IconMenu();
+		menuExport = new IconMenu();
 			menuExport->Append(ID_FILE_EXPORT_HTML,		_("export_html"),		_MENU_("export html"),		_HELP_("export html"));
 			menuExport->Append(ID_FILE_EXPORT_IMAGE,	_("export_image"),		_MENU_("export image"),		_HELP_("export image"));
 			menuExport->Append(ID_FILE_EXPORT_IMAGES,	_("export_images"),		_MENU_("export images"),	_HELP_("export images"));
 			menuExport->Append(ID_FILE_EXPORT_APPR,		_("export_apprentice"),	_MENU_("export apprentice"),_HELP_("export apprentice"));
 			menuExport->Append(ID_FILE_EXPORT_MWS,		_("export_mws"),		_MENU_("export mws"),		_HELP_("export mws"));
-		menuFile->Append(ID_FILE_EXPORT,	_("export"),	_MENU_("export"),					_("Export the set..."), wxITEM_NORMAL, menuExport);
+		menuFile->Append(wxID_ANY,			_("export"),	_MENU_("export"),					_HELP_("export"), wxITEM_NORMAL, menuExport);
 		menuFile->AppendSeparator();
 //		menuFile->Append(ID_FILE_INSPECT,					_("Inspect Internal Data..."),	_("Shows a the data in the set using a tree structure"));
 //		menuFile->AppendSeparator();
@@ -114,6 +114,8 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	tb->AddTool(ID_FILE_NEW,	_(""),	load_resource_tool_image(_("new")),		wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("new set"),	_HELP_("new set"));
 	tb->AddTool(ID_FILE_OPEN,	_(""),	load_resource_tool_image(_("open")),	wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("open set"),	_HELP_("open set"));
 	tb->AddTool(ID_FILE_SAVE,	_(""),	load_resource_tool_image(_("save")),	wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("save set"),	_HELP_("save set"));
+	tb->AddSeparator();
+	tb->AddTool(ID_FILE_EXPORT,	_(""),	load_resource_tool_image(_("export")),	wxNullBitmap, wxITEM_CHECK,  _TOOLTIP_("export"),	_HELP_("export"));
 	tb->AddSeparator();
 	tb->AddTool(ID_EDIT_CUT,	_(""),	load_resource_tool_image(_("cut")),		wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("cut"),		_HELP_("cut"));
 	tb->AddTool(ID_EDIT_COPY,	_(""),	load_resource_tool_image(_("copy")),	wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("copy"),		_HELP_("copy"));
@@ -432,6 +434,38 @@ void SetWindow::onFileInspect(wxCommandEvent&) {
 	wnd.show();
 }*/
 
+#if defined(__WXMSW__)
+#include "wx/msw/wrapcctl.h"
+#endif
+
+void SetWindow::onFileExportMenu(wxCommandEvent& ev) {
+	// find position of export tool bar button
+	wxToolBar* tb = GetToolBar();
+	int pos = tb->GetToolPos(ev.GetId());
+	wxRect tool_rect;
+	#if defined(__WXMSW__)
+		RECT r = {0,0,0,0};
+		::SendMessage((HWND)tb->GetHWND(), TB_GETITEMRECT, pos, (LPARAM)&r);
+		tool_rect.x      = r.left;
+		tool_rect.y      = r.top;
+		tool_rect.width  = r.right - r.left;
+		tool_rect.height = r.bottom - r.top;
+	#else
+		// TODO: This is probably not correct!
+		wxSize tool_size = tb->GetToolSize();
+		wxSize tool_margin = tb->GetToolMargins();
+		tool_rect.SetSize(tool_size);
+		tool_rect.y = 0;
+		tool_rect.x = tool_size.x * pos;
+	#endif
+	// tool down
+	tb->ToggleTool(ev.GetId(), true);
+	// pop up a menu of export options
+	tb->PopupMenu(menuExport, tool_rect.x, tool_rect.GetBottom());
+	// tool up
+	tb->ToggleTool(ev.GetId(), false);
+}
+
 void SetWindow::onFileExportImage(wxCommandEvent&) {
 	CardP card = current_panel->selectedCard();
 	if (!card)  return; // no card selected
@@ -601,6 +635,7 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
 	EVT_MENU			(ID_FILE_OPEN,			SetWindow::onFileOpen)
 	EVT_MENU			(ID_FILE_SAVE,			SetWindow::onFileSave)
 	EVT_MENU			(ID_FILE_SAVE_AS,		SetWindow::onFileSaveAs)
+	EVT_MENU			(ID_FILE_EXPORT,		SetWindow::onFileExportMenu)
 	EVT_MENU			(ID_FILE_EXPORT_IMAGE,	SetWindow::onFileExportImage)
 	EVT_MENU			(ID_FILE_EXPORT_IMAGES,	SetWindow::onFileExportImages)
 	EVT_MENU			(ID_FILE_EXPORT_HTML,	SetWindow::onFileExportHTML)
