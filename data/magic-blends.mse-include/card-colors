@@ -176,6 +176,7 @@ choice colors:
 	artifact		: rgb(188,192,195)
 	multicolor		: rgb(255,188,14)
 	land			: rgb(109,62,39)
+	hybrid			: rgb(243,26,136) # purple
 	# Sub menus, same colors
 	multicolor 2 color white / blue			: rgb(255,188,14)
 	multicolor 2 color blue / black			: rgb(255,188,14)

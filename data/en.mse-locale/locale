@@ -112,10 +112,13 @@ help:
 	redo:				Redoes the last action
 	cut:				Move the selected text to the clipboard
 	cut card:			Move the selected card to the clipboard
+	cut keyword:		Move the selected keyword to the clipboard
 	copy:				Place the selected text on the clipboard
 	copy card:			Place the selected card on the clipboard
+	copy keyword:		Place the selected keyword on the clipboard
 	paste:				Inserts the text from the clipboard
 	paste card:			Inserts the card from the clipboard
+	paste keyword:		Inserts the keyword from the clipboard
 	preferences:		Change the configuration of Magic Set Editor
 	
 	cards:
@@ -273,6 +276,7 @@ tooltip:
 	new set:			New set
 	open set:			Open set
 	save set:			Save set
+	export:				Export set
 	
 	cut:				Cut
 	copy:				Copy

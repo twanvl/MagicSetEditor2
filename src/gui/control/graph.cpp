@@ -18,6 +18,7 @@ DECLARE_TYPEOF_COLLECTION(GraphP);
 DECLARE_TYPEOF_COLLECTION(int);
 DECLARE_TYPEOF_COLLECTION(vector<int>);
 DECLARE_TYPEOF_COLLECTION(String);
+DECLARE_TYPEOF_COLLECTION(UInt);
 DECLARE_TYPEOF(map<String COMMA UInt>);
 
 template <typename T> inline T sgn(T v) { return v < 0 ? -1 : 1; }
@@ -200,7 +201,7 @@ int find_bar_graph_column(double width, double x, int count) {
 	double width_space = width / count; // including spacing
 	double space       = width_space / 5;
 	// Find column in which the point could be located
-	int    col    = int(x / width_space);
+	int    col    = floor(x / width_space);
 	if (col < 0 || col >= count) return -1; // not a column
 	double in_col = x - col * width_space;
 	if (in_col < space / 2)               return -1; // left
@@ -254,14 +255,14 @@ void BarGraph2D::draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer
 	GraphAxis& axis1 = axis1_data(); // the major axis
 	GraphAxis& axis2 = axis2_data(); // the stacked axis
 	int count = int(axis1.groups.size());
-	// Bar sizes
+	// Draw
 	if (layer == LAYER_SELECTION) {
 		// Highlight current column
 		Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
 		int cur1 = this->axis1 < current.size() ? current[this->axis1] : -1;
 		int cur2 = this->axis2 < current.size() ? current[this->axis2] : -1;
 		if (cur1 >= 0) {
-			// draw that bar
+			// draw selected bar
 			int start = 0;
 			int j = 0;
 			FOR_EACH_CONST(g2, axis2.groups) {
@@ -278,8 +279,8 @@ void BarGraph2D::draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer
 			}
 		} else if (cur2 >= 0) {
 			// entire row
+			// TODO
 		}
-		// TODO
 	} else if (layer == LAYER_VALUES) {
 		// Draw bars
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
@@ -396,6 +397,72 @@ int PieGraph::findItem(const RealPoint& pos, const RealRect& rect) const {
 
 // ----------------------------------------------------------------------------- : Scatter Plot
 
+void ScatterGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const {
+	if (!data || data->axes.size() <= max(axis1,axis2)) return;
+	// Rectangle for bars
+	RealRect rect = dc.getInternalRect();
+	GraphAxis& axis1 = axis1_data(); // the major axis
+	GraphAxis& axis2 = axis2_data(); // the stacked axis
+	RealSize size(rect.width / axis1.groups.size(), rect.height / axis2.groups.size()); // size for a single cell
+	double step = min(size.width, size.height) / sqrt((double)max_value) / 2.01;
+	// Draw
+	dc.SetPen(*wxTRANSPARENT_PEN);
+	if (layer == LAYER_SELECTION) {
+		Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+		int cur1 = this->axis1 < current.size() ? current[this->axis1] : -1;
+		int cur2 = this->axis2 < current.size() ? current[this->axis2] : -1;
+		if (cur1 >= 0 && cur2 >= 0) {
+			UInt value = values[cur1 * axis2.groups.size() + cur2];
+			if (value) {
+				dc.SetBrush(lerp(bg,lerp(axis1.groups[cur1].color, axis2.groups[cur2].color, 0.5),0.5));
+				dc.DrawCircle(RealPoint(rect.left() + cur1 * size.width, rect.bottom() - (cur2+1) * size.height) + size/2, sqrt((double)value) * step + 5);
+			}
+		} else if (cur1 >= 0) {
+			dc.SetBrush(lerp(bg,axis1.groups[cur1].color,0.3));
+			dc.DrawRectangle(RealRect(rect.x + cur1 * size.width, rect.y, size.width, rect.height));
+		} else if (cur2 >= 0) {
+			dc.SetBrush(lerp(bg,axis2.groups[cur2].color,0.3));
+			dc.DrawRectangle(RealRect(rect.x, rect.bottom() - (cur2+1) * size.height, rect.width, size.height));
+		}
+	} else {
+		size_t i = 0;
+		double x = rect.left();
+		FOR_EACH_CONST(g1, axis1.groups) {
+			double y = rect.bottom() - size.height;
+			FOR_EACH_CONST(g2, axis2.groups) {
+				UInt value = values[i++];
+				dc.SetBrush(lerp(g1.color, g2.color, 0.5));
+				dc.DrawCircle(RealPoint(x,y) + size/2, sqrt((double)value) * step);
+				y -= size.height;
+			}
+			x += size.width;
+		}
+	}
+}
+bool ScatterGraph::findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const {
+	if (!data || data->axes.size() <= max(axis1,axis2)) return false;
+	// clicked item
+	GraphAxis& axis1 = axis1_data();
+	GraphAxis& axis2 = axis2_data();
+	int col = floor((pos.x - rect.x)        / rect.width  * axis1.groups.size());
+	int row = floor((rect.bottom() - pos.y) / rect.height * axis2.groups.size());
+	if (col < 0 || col >= (int)axis1.groups.size()) return false;
+	if (row < 0 || row >= (int)axis2.groups.size()) return false;
+	// done
+	out.clear();
+	out.insert(out.begin(), data->axes.size(), -1);
+	out.at(this->axis1) = col;
+	out.at(this->axis2) = row;
+	return true;
+}
+void ScatterGraph::setData(const GraphDataP& d) {
+	Graph2D::setData(d);
+	// find maximum
+	max_value = 0;
+	FOR_EACH(v, values) {
+		max_value = max(max_value, v);
+	}
+}
 
 
 // ----------------------------------------------------------------------------- : Graph Legend
@@ -407,6 +474,7 @@ void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 	GraphAxis& axis = axis_data();
 	int count = int(axis.groups.size());
 	// Draw
+	dc.SetFont(*wxNORMAL_FONT);
 	if (layer == LAYER_SELECTION) {
 		// highlight selection
 	} else if (layer != LAYER_AXES) {
@@ -427,15 +495,18 @@ void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 			if (draw_lines) {
 				dc.SetPen(lerp(bg, fg, 0.5));
-				for (int i = 1 ; i <= count ; ++i) {
-					dc.DrawLine(RealPoint(rect.x + i*width, rect.top()), RealPoint(rect.x + i*width, rect.bottom()));
+				for (int i = 0 ; i < count ; ++i) {
+					if (draw_lines == DRAW_LINES_BETWEEN) {
+						dc.DrawLine(RealPoint(rect.x + (i+1.0)*width, rect.top()), RealPoint(rect.x + (i+1.0)*width, rect.bottom()));
+					} else {
+						dc.DrawLine(RealPoint(rect.x + (i+0.5)*width, rect.top()), RealPoint(rect.x + (i+0.5)*width, rect.bottom() + 2));
+					}
 				}
 			}
 			// always draw axis line
 			dc.SetPen(fg);
 			dc.DrawLine(rect.topLeft(), rect.bottomLeft());
 		} else {
-			// TODO
 			double height = rect.height / count; // width of an item
 			// Draw labels
 			double y = rect.bottom();
@@ -443,7 +514,7 @@ void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 				// draw label, aligned bottom center
 				RealSize text_size = dc.GetTextExtent(g.name);
 				//dc.SetClippingRegion(RealRect(x + 2, rect.bottom() + 3, width - 4, text_size.height));
-				dc.DrawText(g.name, align_in_rect(ALIGN_MIDDLE_RIGHT, text_size, RealRect(-3, y, 0, -height)));
+				dc.DrawText(g.name, align_in_rect(ALIGN_MIDDLE_RIGHT, text_size, RealRect(-4, y, 0, -height)));
 				//dc.DestroyClippingRegion();
 				y -= height;
 			}
@@ -452,8 +523,12 @@ void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 			if (draw_lines) {
 				dc.SetPen(lerp(bg, fg, 0.5));
-				for (int i = 1 ; i <= count ; ++i) {
-					dc.DrawLine(RealPoint(rect.left(), rect.bottom() - i*height), RealPoint(rect.right(), rect.bottom() - i*height));
+				for (int i = 0 ; i < count ; ++i) {
+					if (draw_lines == DRAW_LINES_BETWEEN) {
+						dc.DrawLine(RealPoint(rect.left(),     rect.bottom() - (i+1.0)*height), RealPoint(rect.right(), rect.bottom() - (i+1.0)*height));
+					} else {
+						dc.DrawLine(RealPoint(rect.left() - 2, rect.bottom() - (i+0.5)*height), RealPoint(rect.right(), rect.bottom() - (i+0.5)*height));
+					}
 				}
 			}
 			// always draw axis line
@@ -466,10 +541,10 @@ int GraphLabelAxis::findItem(const RealPoint& pos, const RealRect& rect) const {
 	GraphAxis& axis = axis_data();
 	int col;
 	if (direction == HORIZONTAL) {
-		col = (pos.x - rect.x) / rect.width  * axis.groups.size();
+		col = floor((pos.x - rect.x) / rect.width  * axis.groups.size());
 		if (pos.y < rect.bottom()) return -1;
 	} else {
-		col = (pos.y - rect.y) / rect.height * axis.groups.size();
+		col = floor((rect.bottom() - pos.y) / rect.height * axis.groups.size());
 		if (pos.x > rect.left()) return -1;
 	}
 	if (col < 0 || col >= (int)axis.groups.size()) return -1;
@@ -582,12 +657,11 @@ void GraphControl::setLayout(GraphType type) {
 			graph = new_intrusive5<GraphWithMargins>(combined, 23,8,7,20);
 			break;
 		} case GRAPH_TYPE_SCATTER: {
-			// TODO
 			intrusive_ptr<GraphContainer> combined(new GraphContainer());
-			combined->add(new_intrusive4<GraphLabelAxis>(0, HORIZONTAL, false, true));
-			combined->add(new_intrusive4<GraphLabelAxis>(1, VERTICAL,   false, true));
-			//combined->add(new_intrusive2<BarGraph2D>(0,1));
-			graph = new_intrusive5<GraphWithMargins>(combined, 23,8,7,20);
+			combined->add(new_intrusive4<GraphLabelAxis>(0, HORIZONTAL, false, DRAW_LINES_MID));
+			combined->add(new_intrusive4<GraphLabelAxis>(1, VERTICAL,   false, DRAW_LINES_MID));
+			combined->add(new_intrusive2<ScatterGraph>(0,1));
+			graph = new_intrusive5<GraphWithMargins>(combined, 80,8,7,20);
 			break;
 		} default:
 			graph = GraphP();

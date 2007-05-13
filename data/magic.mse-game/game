@@ -971,31 +971,31 @@ card field:
 
 ############################################################## Statistics categories
 
-statistics dimension:
-	name:   card color2
-	script: primary_card_color(card.card_color)
-	icon: stats/card_color.png
-	colors:
-		white			: rgb(255,237,202)
-		blue			: rgb(42,141,255)
-		black			: rgb(33,33,33)
-		red			: rgb(255,52,0)
-		green			: rgb(138,230,0)
-		colorless		: rgb(122,85,85)
-		artifact		: rgb(188,192,195)
-		multicolor		: rgb(255,188,14)
-		land			: rgb(109,62,39)
-		hybrid			: rgb(243,26,136)
-	group: white
-	group: blue
-	group: black
-	group: red
-	group: green
-	group: colorless
-	group: artifact
-	group: multicolor
-	group: land
-	group: hybrid
+#statistics dimension:
+#	name:   card color2
+#	script: primary_card_color(card.card_color)
+#	icon: stats/card_color.png
+#	colors:
+#		white			: rgb(255,237,202)
+#		blue			: rgb(42,141,255)
+#		black			: rgb(33,33,33)
+#		red			: rgb(255,52,0)
+#		green			: rgb(138,230,0)
+#		colorless		: rgb(122,85,85)
+#		artifact		: rgb(188,192,195)
+#		multicolor		: rgb(255,188,14)
+#		land			: rgb(109,62,39)
+#		hybrid			: rgb(243,26,136)
+#	group: white
+#	group: blue
+#	group: black
+#	group: red
+#	group: green
+#	group: colorless
+#	group: artifact
+#	group: multicolor
+#	group: land
+#	group: hybrid
 
 statistics dimension:
 	name:   converted mana cost
@@ -1010,10 +1010,15 @@ statistics dimension:
 	icon: stats/colored_casting_cost.png
 
 #statistics dimension:
-#	name: power2
-#	script: card.power
+#	name: p/t
+#	script: card.pt
 #	numeric: true
 #	icon: stats/power.png
+
+#statistics dimension:
+#	name: word count
+#	type: word count
+#	display: list
 
 #statistics dimension:
 #	name: toughness2
@@ -1024,14 +1029,20 @@ statistics dimension:
 statistics category:
 	name: color / rarity
 	type: stack
-	dimension: card color2
+	dimension: card color
 	dimension: rarity
 
-#statistics category:
-#	name: power / toughness
-#	type: scatter
-#	dimension: power2
-#	dimension: toughness2
+statistics category:
+	name: power / toughness
+	type: scatter
+	dimension: power
+	dimension: toughness
+
+statistics category:
+	name: color / cost
+	type: scatter
+	dimension: card color
+	dimension: converted mana cost
 
 #statistics field:
 #	name: creature type

@@ -181,6 +181,17 @@ class PieGraph : public Graph1D {
 	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
 };
 
+/// A scatter plot
+class ScatterGraph : public Graph2D {
+  public:
+	inline ScatterGraph(size_t axis1, size_t axis2) : Graph2D(axis1, axis2) {}
+	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
+	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const;
+	virtual void setData(const GraphDataP& d);
+  private:
+	UInt max_value; ///< highest value
+};
+
 /// The legend, used for pie graphs
 class GraphLegend : public Graph1D {
   public:
@@ -192,11 +203,17 @@ class GraphLegend : public Graph1D {
 //class GraphTable {
 //};
 
+enum DrawLines
+{	DRAW_LINES_NO
+,	DRAW_LINES_BETWEEN
+,	DRAW_LINES_MID
+};
+
 /// Draws a horizontal/vertical axis for group labels
 class GraphLabelAxis : public Graph1D {
   public:
-	inline GraphLabelAxis(size_t axis, Direction direction, bool rotate = false, bool draw_lines = false)
-		: Graph1D(axis), direction(direction), rotate(rotate), draw_lines(draw_lines)
+	inline GraphLabelAxis(size_t axis, Direction direction, bool rotate = false, DrawLines draw_lines = DRAW_LINES_NO, bool label = false)
+		: Graph1D(axis), direction(direction), rotate(rotate), draw_lines(draw_lines), label(label)
 	{}
 	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
 	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
@@ -204,7 +221,8 @@ class GraphLabelAxis : public Graph1D {
 	Direction direction;
 	int levels;
 	bool rotate;
-	bool draw_lines;
+	DrawLines draw_lines;
+	bool label;
 };
 
 /// Draws an a vertical axis for counts

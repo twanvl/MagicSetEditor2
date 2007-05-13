@@ -172,6 +172,11 @@ void RotatedDC::DrawRoundedRectangle(const RealRect& r, double radius) {
 	dc.DrawRoundedRectangle(r_ext.x, r_ext.y, r_ext.width, r_ext.height, trS(radius));
 }
 
+void RotatedDC::DrawCircle(const RealPoint& center, double radius) {
+	wxPoint p = tr(center);
+	dc.DrawCircle(p.x + 1, p.y + 1, trS(radius));
+}
+
 /// Convert radians to degrees
 double rad_to_deg(double rad) { return  rad * (180.0 / M_PI); }
 /// Convert degrees to radians
