@@ -21,7 +21,7 @@ symbol:
 	image: mana_bgw.png
 	image font size: 145
 symbol:
-	code: G/B/R
+	code: B/R/G
 	image: mana_brg.png
 	image font size: 145
 symbol:

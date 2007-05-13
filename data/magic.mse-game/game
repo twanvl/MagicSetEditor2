@@ -110,12 +110,12 @@ init script:
 			else if colors = "UB" then "land 2 color blue / black"
 			else if colors = "BR" then "land 2 color black / red"
 			else if colors = "RG" then "land 2 color red / green"
-			else if colors = "WG" then "land 2 color green / white"
+			else if colors = "GW" then "land 2 color green / white"
 			else if colors = "WB" then "land 2 color white / black"
 			else if colors = "UR" then "land 2 color blue / red"
 			else if colors = "BG" then "land 2 color black / green"
-			else if colors = "WR" then "land 2 color red / white"
-			else if colors = "UG" then "land 2 color green / blue"
+			else if colors = "RW" then "land 2 color red / white"
+			else if colors = "GU" then "land 2 color green / blue"
 			else                       "land 1 color multicolor"
 		)
 	};

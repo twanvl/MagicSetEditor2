@@ -19,7 +19,7 @@ symbol:
 	code: B/G/W
 	image: mana_bgw.png
 symbol:
-	code: G/B/R
+	code: B/R/G
 	image: mana_brg.png
 symbol:
 	code: G/U/B
