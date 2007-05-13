@@ -133,6 +133,7 @@ class ChoiceStyle : public Style {
 	ChoiceRenderStyle           render_style;       ///< Style of rendering
 	Font                        font;               ///< Font for drawing text (when RENDER_TEXT)
 	map<String,ScriptableImage> choice_images;      ///< Images for the various choices (when RENDER_IMAGE)
+	bool                        choice_images_initialized;
 	Scriptable<String>          mask_filename;      ///< Filename of an additional mask over the images
 	ImageCombine                combine;            ///< Combining mode for drawing the images
 	Alignment                   alignment;          ///< Alignment of images

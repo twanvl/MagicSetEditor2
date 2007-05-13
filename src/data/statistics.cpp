@@ -29,10 +29,14 @@ StatsDimension::StatsDimension(const Field& field)
 	, numeric      (false)
 	, show_empty   (false)
 {
-	// choice colors?
+	// choice field?
 	const ChoiceField* choice_field = dynamic_cast<const ChoiceField*>(&field);
 	if (choice_field) {
 		colors = choice_field->choice_colors;
+		int count = choice_field->choices->lastId();
+		for (int i = 0 ; i < count ; ++i) {
+			groups.push_back(choice_field->choices->choiceName(i));
+		}
 	}
 	// initialize script, card.{field_name}
 	Script& s = script.getScript();
@@ -50,6 +54,7 @@ IMPLEMENT_REFLECTION_NO_GET_MEMBER(StatsDimension) {
 		REFLECT(numeric);
 		REFLECT(show_empty);
 		REFLECT(colors);
+		REFLECT(groups);
 	}
 }
 
@@ -68,13 +73,6 @@ StatsCategory::StatsCategory(const StatsDimensionP& dim)
 	, dimensions(1, dim)
 	, type(GRAPH_TYPE_BAR)
 {}
-
-IMPLEMENT_REFLECTION_ENUM(GraphType) {
-	VALUE_N("bar",     GRAPH_TYPE_BAR);
-	VALUE_N("stack",   GRAPH_TYPE_STACK);
-	VALUE_N("pie",     GRAPH_TYPE_PIE);
-	VALUE_N("scatter", GRAPH_TYPE_SCATTER);
-}
 
 IMPLEMENT_REFLECTION_NO_GET_MEMBER(StatsCategory) {
 	if (!automatic) {
@@ -102,4 +100,13 @@ void StatsCategory::find_dimensions(const vector<StatsDimensionP>& available) {
 			dimensions.push_back(dim);
 		}
 	}
+}
+
+// ----------------------------------------------------------------------------- : GraphType (from graph_type.hpp)
+
+IMPLEMENT_REFLECTION_ENUM(GraphType) {
+	VALUE_N("bar",     GRAPH_TYPE_BAR);
+	VALUE_N("pie",     GRAPH_TYPE_PIE);
+	VALUE_N("stack",   GRAPH_TYPE_STACK);
+	VALUE_N("scatter", GRAPH_TYPE_SCATTER);
 }

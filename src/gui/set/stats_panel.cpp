@@ -150,11 +150,12 @@ void StatsPanel::onCategorySelect() {
 		cat.find_dimensions(set->game->statistics_dimensions);
 		// create axes
 		FOR_EACH(dim, cat.dimensions) {
-			d.axes.push_back(new_intrusive4<GraphAxis>(
+			d.axes.push_back(new_intrusive5<GraphAxis>(
 				dim->name,
 				dim->colors.empty() ? AUTO_COLOR_EVEN : AUTO_COLOR_NO,
 				dim->numeric,
-				&dim->colors
+				&dim->colors,
+				dim->groups.empty() ? nullptr : &dim->groups
 				)
 			);
 		}
@@ -176,7 +177,7 @@ void StatsPanel::onCategorySelect() {
 				d.elements.push_back(e);
 			}
 		}
-		// TODO graph->setLayout(cat.type)
+		graph->setLayout(cat.type);
 		graph->setData(d);
 		filterCards();
 	}

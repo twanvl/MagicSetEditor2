@@ -164,6 +164,7 @@ ChoiceStyle::ChoiceStyle(const ChoiceFieldP& field)
 	: Style(field)
 	, popup_style(POPUP_DROPDOWN)
 	, render_style(RENDER_TEXT)
+	, choice_images_initialized(false)
 	, combine(COMBINE_NORMAL)
 	, alignment(ALIGN_STRETCH)
 	, angle(0)
@@ -179,10 +180,14 @@ bool ChoiceStyle::update(Context& ctx) {
 	// Don't update the choice images, leave that to invalidate()
 	bool change = Style       ::update(ctx)
 	            | mask_filename.update(ctx);
-	FOR_EACH(ci, choice_images) {
-		if (ci.second.update(ctx)) {
-			change = true;
-			// TODO : remove this thumbnail
+	if (!choice_images_initialized) {
+		// we only want to do this once because it is rather slow, other updates are handled by dependencies
+		choice_images_initialized = true;
+		FOR_EACH(ci, choice_images) {
+			if (ci.second.update(ctx)) {
+				change = true;
+				// TODO : remove this thumbnail
+			}
 		}
 	}
 	return change;

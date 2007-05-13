@@ -104,8 +104,8 @@
 /** Usage: FOR_EACH_IT_T(Type,it,collect) { body-of-loop }
  */
 #define FOR_EACH_IT_T(Type,Iterator,Collection)                         \
-        for(Type Iterator = Collection.begin() ;                        \
-            Iterator != Collection.end() ;                              \
+        for(Type Iterator = (Collection).begin() ;                      \
+            Iterator != (Collection).end() ;                            \
             ++Iterator)
 
 /// Iterate over a collection whos type must be declared with DECLARE_TYPEOF
@@ -127,8 +127,8 @@
  */
 #define FOR_EACH_REVERSE_IT(Iterator,Collection)                        \
         for(TYPEOF_RIT(Collection)                                      \
-            Iterator = Collection.rbegin() ;                            \
-            Iterator != Collection.rend() ;                             \
+            Iterator = (Collection).rbegin() ;                          \
+            Iterator != (Collection).rend() ;                           \
             ++Iterator)
 
 // ----------------------------------------------------------------------------- : Looping macros
@@ -141,8 +141,8 @@
  *  To terminate this loop we need an extra bool, which we set to false after the first iteration.
  */
 #define FOR_EACH_T(TypeIt,TypeElem,Elem,Collection, begin, end)             \
-        for(std::pair<TypeIt,bool> Elem##_IT(Collection.begin(), true) ;    \
-            Elem##_IT.second && Elem##_IT.first != Collection.end() ;       \
+        for(std::pair<TypeIt,bool> Elem##_IT((Collection).begin(), true) ;  \
+            Elem##_IT.second && Elem##_IT.first != (Collection).end() ;     \
             ++Elem##_IT.first, Elem##_IT.second = !Elem##_IT.second)        \
             for(TypeElem Elem = *Elem##_IT.first ;                          \
                 Elem##_IT.second ;                                          \
@@ -183,9 +183,9 @@
  */
 #define FOR_EACH_2_T(TypeIt1,TypeElem1,Elem1,Coll1,TypeIt2,TypeElem2,Elem2,Coll2)   \
         for(std::pair<std::pair<TypeIt1,TypeIt2>, bool>                             \
-            Elem1##_IT(make_pair(Coll1.begin(), Coll2.begin()), true) ;             \
-            Elem1##_IT.first.first  != Coll1.end() &&                               \
-            Elem1##_IT.first.second != Coll2.end() ;                                \
+            Elem1##_IT(make_pair((Coll1).begin(), (Coll2).begin()), true) ;         \
+            Elem1##_IT.first.first  != (Coll1).end() &&                             \
+            Elem1##_IT.first.second != (Coll2).end() ;                              \
             ++Elem1##_IT.first.first, ++Elem1##_IT.first.second,                    \
             Elem1##_IT.second = true)                                               \
             for(TypeElem1 Elem1 = *Elem1##_IT.first.first ;                         \

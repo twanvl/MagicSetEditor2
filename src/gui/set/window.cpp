@@ -489,6 +489,7 @@ void SetWindow::onFileReload(wxCommandEvent&) {
 }
 
 void SetWindow::onFileRecent(wxCommandEvent& ev) {
+	wxBusyCursor busy;
 	setSet(import_set(settings.recent_sets.at(ev.GetId() - ID_FILE_RECENT)));
 }
 

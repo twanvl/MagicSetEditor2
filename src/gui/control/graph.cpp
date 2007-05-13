@@ -17,6 +17,7 @@ DECLARE_TYPEOF_COLLECTION(GraphGroup);
 DECLARE_TYPEOF_COLLECTION(GraphP);
 DECLARE_TYPEOF_COLLECTION(int);
 DECLARE_TYPEOF_COLLECTION(vector<int>);
+DECLARE_TYPEOF_COLLECTION(String);
 DECLARE_TYPEOF(map<String COMMA UInt>);
 
 template <typename T> inline T sgn(T v) { return v < 0 ? -1 : 1; }
@@ -48,7 +49,7 @@ GraphData::GraphData(const GraphDataPre& d)
 		FOR_EACH_CONST(e, d.elements) {
 			counts[e->values[i]] += 1;
 		}
-		// TODO: allow some ordering in the groups, and allow colors to be passed
+		// TODO: allow some ordering in the groups
 		if (a->numeric) {
 			// TODO: start at something other than 0?
 			// TODO: support fractions?
@@ -74,6 +75,14 @@ GraphData::GraphData(const GraphDataPre& d)
 					}
 					break;
 				}
+			}
+		} else if (a->order) {
+			// specific group order
+			FOR_EACH_CONST(gn, *a->order) {
+				UInt count = counts[gn];
+				a->groups.push_back(GraphGroup(gn, count));
+				a->max = max(a->max, count);
+				a->total += count;
 			}
 		} else {
 			FOR_EACH(c, counts) {
@@ -175,19 +184,16 @@ RealRect bar_graph_bar(const RealRect& rect, int group, int group_count, int sta
 	double width       = width_space / 5 * 4;
 	double space       = width_space / 5;
 	double step_height = rect.height / max; // multiplier for bar height
-	double top    = rect.bottom() + 1 - start * step_height;
-	double bottom = rect.bottom()     - end   * step_height;
-	RealRect result(
+	int top    = rect.bottom() - start * step_height;
+	int bottom = rect.bottom() - end   * step_height;
+	if (bottom < top) swap(top,bottom);
+	bottom += 1;
+	return RealRect(
 		rect.x + width_space * group + space / 2,
 		top,
 		width,
-		(int)bottom - top
+		bottom - top
 	);
-	if (result.height < 0) {
-		result.height = -result.height;
-		result.y  -= result.height;
-	}
-	return result;
 }
 /// Which column of the bar graph with count bars is coordinate x in?
 int find_bar_graph_column(double width, double x, int count) {
@@ -251,6 +257,28 @@ void BarGraph2D::draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer
 	// Bar sizes
 	if (layer == LAYER_SELECTION) {
 		// Highlight current column
+		Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+		int cur1 = this->axis1 < current.size() ? current[this->axis1] : -1;
+		int cur2 = this->axis2 < current.size() ? current[this->axis2] : -1;
+		if (cur1 >= 0) {
+			// draw that bar
+			int start = 0;
+			int j = 0;
+			FOR_EACH_CONST(g2, axis2.groups) {
+				int end = start + values[j + axis2.groups.size() * cur1];
+				if (j == cur2 || cur2 < 0) {
+					RealRect bar = bar_graph_bar(rect, cur1, count, start, end, axis1.max);
+					dc.SetBrush(lerp(bg, g2.color, 0.25));
+					dc.DrawRectangle(bar.move(-5,0,10,0));
+					dc.SetBrush(lerp(bg, g2.color, 0.5));
+					dc.DrawRectangle(bar.move(-2,0,4,0));
+				}
+				start = end;
+				++j;
+			}
+		} else if (cur2 >= 0) {
+			// entire row
+		}
 		// TODO
 	} else if (layer == LAYER_VALUES) {
 		// Draw bars
@@ -276,6 +304,7 @@ bool BarGraph2D::findItem(const RealPoint& pos, const RealRect& rect, vector<int
 	GraphAxis& axis1 = axis1_data(); // the major axis
 	int count = (int)axis1.groups.size();
 	int col   = find_bar_graph_column(rect.width, pos.x - rect.x, count);
+	if (col < 0) return false;
 	// row
 	int max_value = (int)axis1.max;
 	int value = (rect.bottom() - pos.y) / rect.height * max_value;
@@ -503,18 +532,39 @@ void GraphContainer::add(const GraphP& graph) {
 GraphControl::GraphControl(Window* parent, int id)
 	: wxControl(parent, id)
 {
-	//*
-	intrusive_ptr<GraphContainer> combined(new GraphContainer());
-	combined->add(new_intrusive1<GraphValueAxis>(0));
-	combined->add(new_intrusive2<GraphLabelAxis>(0, HORIZONTAL));
-	//combined->add(new_intrusive1<BarGraph>(0));
-	combined->add(new_intrusive2<BarGraph2D>(0,1));
-	graph = new_intrusive6<GraphWithMargins>(combined, 23,8,7,20, false);
-	/*/
-	intrusive_ptr<GraphContainer> combined(new GraphContainer());
-	combined->add(new_intrusive1<PieGraph>(0));
-	graph = new_intrusive6<GraphWithMargins>(combined, 20,20,20,20, false);
-	//*/
+	setLayout(GRAPH_TYPE_BAR);
+}
+
+void GraphControl::setLayout(GraphType type) {
+	if (type == layout) return;
+	GraphDataP data = graph ? graph->getData() : GraphDataP();
+	switch (type) {
+		case GRAPH_TYPE_BAR: {
+			intrusive_ptr<GraphContainer> combined(new GraphContainer());
+			combined->add(new_intrusive1<GraphValueAxis>(0));
+			combined->add(new_intrusive2<GraphLabelAxis>(0, HORIZONTAL));
+			combined->add(new_intrusive1<BarGraph>(0));
+			graph = new_intrusive5<GraphWithMargins>(combined, 23,8,7,20);
+			break;
+		} case GRAPH_TYPE_PIE: {
+			intrusive_ptr<GraphContainer> combined(new GraphContainer());
+			combined->add(new_intrusive1<PieGraph>(0));
+			graph = new_intrusive5<GraphWithMargins>(combined, 20,20,20,20);
+			break;
+		} case GRAPH_TYPE_STACK: {
+			intrusive_ptr<GraphContainer> combined(new GraphContainer());
+			combined->add(new_intrusive1<GraphValueAxis>(0));
+			combined->add(new_intrusive2<GraphLabelAxis>(0, HORIZONTAL));
+			combined->add(new_intrusive2<BarGraph2D>(0,1));
+			graph = new_intrusive5<GraphWithMargins>(combined, 23,8,7,20);
+			break;
+		} case GRAPH_TYPE_SCATTER: {
+			// TODO
+		} default:
+			graph = GraphP();
+	}
+	if (data && graph) graph->setData(data);
+	layout = type;
 }
 
 void GraphControl::setData(const GraphDataPre& data) {
@@ -560,8 +610,8 @@ bool GraphControl::hasSelection(size_t axis) const {
 	return axis < current_item.size() && current_item[axis] >= 0;
 }
 String GraphControl::getSelection(size_t axis) const {
-	if (!graph || axis >= current_item.size() || axis >= graph->getData().axes.size()) return wxEmptyString;
-	GraphAxis& a = *graph->getData().axes[axis];
+	if (!graph || axis >= current_item.size() || axis >= graph->getData()->axes.size()) return wxEmptyString;
+	GraphAxis& a = *graph->getData()->axes[axis];
 	int i = current_item[axis];
 	if (i == -1 || (size_t)i >= a.groups.size()) return wxEmptyString;
 	return a.groups[current_item[axis]].name;

@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/alignment.hpp>
 #include <util/rotation.hpp>
+#include <data/graph_type.hpp>
 
 DECLARE_POINTER_TYPE(GraphAxis);
 DECLARE_POINTER_TYPE(GraphElement);
@@ -51,13 +52,14 @@ enum AutoColor
 /** The sum of groups.sum = sum of all elements in the data */
 class GraphAxis : public IntrusivePtrBase<GraphAxis> {
   public:
-	GraphAxis(const String& name, AutoColor auto_color = AUTO_COLOR_EVEN, bool numeric = false, const map<String,Color>* colors = nullptr)
+	GraphAxis(const String& name, AutoColor auto_color = AUTO_COLOR_EVEN, bool numeric = false, const map<String,Color>* colors = nullptr, const vector<String>* order = nullptr)
 		: name(name)
 		, auto_color(auto_color)
 		, numeric(numeric)
 		, max(0)
 		, total(0)
 		, colors(colors)
+		, order(order)
 	{}
 	
 	String             name;		///< Name/label of this axis
@@ -66,7 +68,8 @@ class GraphAxis : public IntrusivePtrBase<GraphAxis> {
 	bool               numeric;		///< Numeric axis?
 	UInt               max;			///< Maximum size of the groups
 	UInt               total;		///< Sum of the size of all groups
-	const map<String,Color>* colors;		///< Colors for each choice (optional
+	const map<String,Color>* colors;	///< Colors for each choice (optional)
+	const vector<String>*    order;		///< Order of the items (optional)
 };
 
 /// A single data point of a graph
@@ -121,7 +124,7 @@ class Graph : public IntrusivePtrVirtualBase {
 	/// Change the data
 	virtual void setData(const GraphDataP& d) { data = d; }
 	/// Get the data
-	inline const GraphData& getData() const { return *data; }
+	inline const GraphDataP& getData() const { return data; }
 	
   protected:
 	/// Data of the graph
@@ -251,7 +254,7 @@ class GraphControl : public wxControl {
 	GraphControl(Window* parent, int id);
 	
 	/// Set the type of graph used, from a number of predefined choices
-	void setLayout();
+	void setLayout(GraphType type);
 	/// Update the data in the graph
 	void setData(const GraphDataPre& data);
 	/// Update the data in the graph
@@ -265,6 +268,7 @@ class GraphControl : public wxControl {
   private:
 	/// Graph object
 	GraphP graph;
+	GraphType layout; /// < The current layout
 	/// The selected item per axis, or an empty vector if there is no selection
 	/** If the value for an axis is -1, then all groups on that axis are selected */
 	vector<int> current_item;

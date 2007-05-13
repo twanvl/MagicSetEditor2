@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
+#include <data/graph_type.hpp>
 #include <script/scriptable.hpp>
 
 class Field;
@@ -34,19 +35,12 @@ class StatsDimension : public IntrusivePtrBase<StatsDimension> {
 	bool              numeric;			///< Are the values numeric? If so, they require special sorting
 	bool              show_empty;		///< Should "" be shown?
 	map<String,Color> colors;			///< Colors for the categories
+	vector<String>    groups;			///< Order of the items
 	
 	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : Statistics category
-
-/// Types of graphs
-enum GraphType
-{	GRAPH_TYPE_BAR
-,	GRAPH_TYPE_STACK
-,	GRAPH_TYPE_PIE
-,	GRAPH_TYPE_SCATTER
-};
 
 /// A category for statistics
 /** Can be generated automatically based on a dimension */
