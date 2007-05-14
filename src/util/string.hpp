@@ -64,9 +64,17 @@ void writeUTF8(wxTextOutputStream& stream, const String& str);
 #ifdef UNICODE
 	#define  LEFT_ANGLE_BRACKET _("\x2039")
 	#define RIGHT_ANGLE_BRACKET _("\x203A")
+	#define  LEFT_SINGLE_QUOTE  _('\x2018')
+	#define RIGHT_SINGLE_QUOTE  _('\x2019')
+	#define  LEFT_DOUBLE_QUOTE  _('\x201C')
+	#define RIGHT_DOUBLE_QUOTE  _('\x201D')
 #else
 	#define  LEFT_ANGLE_BRACKET _("<")
 	#define RIGHT_ANGLE_BRACKET _(">")
+	#define  LEFT_SINGLE_QUOTE  _('\'')
+	#define RIGHT_SINGLE_QUOTE  _('\'')
+	#define  LEFT_DOUBLE_QUOTE  _('\"')
+	#define RIGHT_DOUBLE_QUOTE  _('\"')
 #endif
 
 // ----------------------------------------------------------------------------- : Char functions

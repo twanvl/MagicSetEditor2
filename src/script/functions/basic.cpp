@@ -75,6 +75,26 @@ SCRIPT_RULE_1(format, String, format) {
 	}
 }
 
+SCRIPT_FUNCTION(curly_quotes) {
+	SCRIPT_PARAM(String, input);
+	bool open = true, in_tag = false;
+	FOR_EACH(c, input) {
+		if (c == _('\'') || c == LEFT_SINGLE_QUOTE || c == RIGHT_SINGLE_QUOTE) {
+			c = open ? LEFT_SINGLE_QUOTE : RIGHT_SINGLE_QUOTE;
+		} else if (c == _('\"') || c == LEFT_DOUBLE_QUOTE || c == RIGHT_DOUBLE_QUOTE) {
+			c = open ? LEFT_DOUBLE_QUOTE : RIGHT_DOUBLE_QUOTE;
+		}
+		if (c == _('<')) {
+			in_tag = true;
+		} else if (c == _('>')) {
+			in_tag = false;
+		} else if (!in_tag) {
+			open = isSpace(c);
+		}
+	}
+	SCRIPT_RETURN(input);
+}
+
 
 // ----------------------------------------------------------------------------- : Tagged string
 
@@ -576,6 +596,7 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("contains"),             script_contains);
 	ctx.setVariable(_("format"),               script_format);
 	ctx.setVariable(_("format rule"),          script_format_rule);
+	ctx.setVariable(_("curly quotes"),         script_curly_quotes);
 	// tagged string
 	ctx.setVariable(_("tag contents"),         script_tag_contents);
 	ctx.setVariable(_("remove tag"),           script_tag_remove);

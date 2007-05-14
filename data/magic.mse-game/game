@@ -265,7 +265,8 @@ init script:
 		replace_rule(
 			match: "[a-z]",
 			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>|—<match>| — <match>",
-			replace: { to_upper() })
+			replace: { to_upper() }) +
+		curly_quotes
 	
 	#character filter for title line
 	name_filter :=
@@ -309,7 +310,9 @@ init script:
 		# step 1 : remove italic tags
 		tag_remove_rule(tag: "<i-flavor>")   +
 		# step 2 : surround by <i> tags
-		{ "<i-flavor>" + input + "</i-flavor>" }
+		{ "<i-flavor>" + input + "</i-flavor>" } +
+		# curly quotes
+		curly_quotes
 	# Used in FPM and Future Sight
 	brush_context :=
 		"(?ix)				# case insensitive, ignore whitespace
@@ -1211,6 +1214,9 @@ keyword mode:
 	name: pseudo
 	description: Pseudo keyword / named ability (Hellbent, Threshold, etc.)
 keyword mode:
+	name: inline
+	description: Inline keyword, reminder text at end of line (Scry, Regenerate, etc.)
+keyword mode:
 	is default: true
 	name: custom
 	description: Custom keywords
@@ -1643,8 +1649,12 @@ keyword:
 keyword:
 	keyword: Fateseal
 	match: Fateseal <atom-param>number</atom-param>
-	mode: expert
-	reminder: Look at the top {english_number_multiple(param1)} card(s) of an opponent's library, then put any number of them on the bottom of that player's library and the rest on top in any order.
+	mode: inline
+	reminder:
+		Look at the top {
+		 if param1.value==1 then "card of an opponent's library, then you may put it on the bottom of that player's library."
+		 else "{english_number(param1)} cards of an opponent's library, then put any number of them on the bottom of that player's library and the rest on top in any order."
+		}
 keyword:
 	keyword: Transfigure
 	match: Transfigure <atom-param>cost</atom-param>
