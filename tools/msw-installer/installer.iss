@@ -6,7 +6,7 @@
 
 [setup]
 AppName                 = Magic Set Editor 2
-AppVerName              = Magic Set Editor 2 - 0.3.2 beta
+AppVerName              = Magic Set Editor 2 - 0.3.3 beta
 AppCopyright            = Copyright © 2001-2006 Twan van Laarhoven
 DefaultDirName          = {pf}\Magic Set Editor 2
 DisableStartupPrompt    = 1
@@ -63,7 +63,8 @@ Name: "style/yugioh";            Description: "Yu-Gi-Oh!";                      
 
 ; program
 Source: "build/Release Unicode/mse.exe";                        DestDir: "{app}";                                           Components: prog; Flags: replacesameversion
-Source: "tools/msw-installer/msvcr71.dll";                      DestDir: "{sys}";                                           Components: prog; Flags: restartreplace sharedfile uninsneveruninstall onlyifdoesntexist
+; No longer needed:
+;Source: "tools/msw-installer/msvcr71.dll";                      DestDir: "{sys}";                                           Components: prog; Flags: restartreplace sharedfile uninsneveruninstall onlyifdoesntexist
 
 ; locale : en
 Source: "data/en.mse-locale/*";                                 DestDir:    "{app}/data/en.mse-locale/";                    Components: prog; Flags: recursesubdirs

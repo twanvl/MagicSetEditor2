@@ -779,12 +779,10 @@ void GraphContainer::add(const GraphP& graph) {
 
 GraphControl::GraphControl(Window* parent, int id)
 	: wxControl(parent, id)
-{
-	setLayout(GRAPH_TYPE_BAR);
-}
+{}
 
 void GraphControl::setLayout(GraphType type) {
-	if (type == layout) return;
+	if (graph && type == layout) return;
 	GraphDataP data = graph ? graph->getData() : GraphDataP();
 	switch (type) {
 		case GRAPH_TYPE_BAR: {
