@@ -1045,20 +1045,46 @@ statistics dimension:
 statistics category:
 	name: color / rarity
 	type: stack
+	icon: stats/color_rarity.png
 	dimension: card color
 	dimension: rarity
 
+#statistics category:
+#	name: power / toughness
+#	type: scatter
+#	icon: stats/pt.png
+#	dimension: power
+#	dimension: toughness
+
+#statistics category:
+#	name: power / toughness / color
+#	type: scatter pie
+#	icon: stats/pt.png
+#	dimension: power
+#	dimension: toughness
+#	dimension: card color
+
 statistics category:
 	name: power / toughness
-	type: scatter
+	type: scatter pie
+	icon: stats/pt.png
 	dimension: power
 	dimension: toughness
+	dimension: rarity
+
+#statistics category:
+#	name: color / cost
+#	type: scatter
+#	dimension: card color
+#	dimension: converted mana cost
 
 statistics category:
 	name: color / cost
-	type: scatter
+	type: scatter pie
+	icon: stats/color_cost.png
 	dimension: card color
 	dimension: converted mana cost
+	dimension: rarity
 
 statistics category:
 	name: color / colored cost
@@ -1068,9 +1094,10 @@ statistics category:
 
 statistics category:
 	name: cost / colored cost
-	type: scatter
+	type: scatter pie
 	dimension: converted mana cost
 	dimension: colored mana cost
+	dimension: card color
 
 #statistics field:
 #	name: creature type
