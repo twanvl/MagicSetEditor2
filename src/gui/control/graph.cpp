@@ -224,9 +224,9 @@ void BarGraph::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			RealRect bar = bar_graph_bar(rect, current, count, 0, group.size, axis.max);
 			dc.SetPen(*wxTRANSPARENT_PEN);
 			dc.SetBrush(lerp(bg, group.color, 0.25));
-			dc.DrawRectangle(bar.move(-5,-5,10,10));
+			dc.DrawRectangle(bar.move(-5,-5,10,5));
 			dc.SetBrush(lerp(bg, group.color, 0.5));
-			dc.DrawRectangle(bar.move(-2,-2,4,4));
+			dc.DrawRectangle(bar.move(-2,-2,4,2));
 		}
 	} else if (layer == LAYER_VALUES) {
 		// Draw bars
@@ -406,8 +406,8 @@ void ScatterGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer lay
 	RealSize size(rect.width / axis1.groups.size(), rect.height / axis2.groups.size()); // size for a single cell
 	double step = min(size.width, size.height) / sqrt((double)max_value) / 2.01;
 	// Draw
-	dc.SetPen(*wxTRANSPARENT_PEN);
 	if (layer == LAYER_SELECTION) {
+		dc.SetPen(*wxTRANSPARENT_PEN);
 		Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
 		int cur1 = this->axis1 < current.size() ? current[this->axis1] : -1;
 		int cur2 = this->axis2 < current.size() ? current[this->axis2] : -1;
@@ -425,6 +425,8 @@ void ScatterGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer lay
 			dc.DrawRectangle(RealRect(rect.x, rect.bottom() - (cur2+1) * size.height, rect.width, size.height));
 		}
 	} else {
+		Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+		dc.SetPen(fg);
 		size_t i = 0;
 		double x = rect.left();
 		FOR_EACH_CONST(g1, axis1.groups) {
@@ -475,9 +477,24 @@ void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 	int count = int(axis.groups.size());
 	// Draw
 	dc.SetFont(*wxNORMAL_FONT);
-	if (layer == LAYER_SELECTION) {
+	Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+	Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+	if (layer == LAYER_SELECTION && current >= 0) {
 		// highlight selection
-	} else if (layer != LAYER_AXES) {
+		GraphGroup& group = axis.groups[current];
+		if (direction == HORIZONTAL) {
+			double width = rect.width / count; // width of an item
+			dc.SetBrush(lerp(bg,group.color,0.5));
+			dc.SetPen(*wxTRANSPARENT_PEN);
+			RealSize text_size = dc.GetTextExtent(group.name);
+			dc.DrawRectangle(RealRect(rect.x + current * width, rect.bottom(), width, text_size.height + 5));
+		} else {
+			double height = rect.height / count;
+			dc.SetBrush(lerp(bg,group.color,0.5));
+			dc.SetPen(*wxTRANSPARENT_PEN);
+			dc.DrawRectangle(RealRect(rect.x, rect.bottom() - (current+1)*height, -78, height));
+		}
+	} else if (layer == LAYER_AXES) {
 		if (direction == HORIZONTAL) {
 			double width = rect.width / count; // width of an item
 			// Draw labels
@@ -491,11 +508,9 @@ void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 				x += width;
 			}
 			// Draw lines
-			Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-			Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 			if (draw_lines) {
-				dc.SetPen(lerp(bg, fg, 0.5));
 				for (int i = 0 ; i < count ; ++i) {
+					dc.SetPen(i == current ? fg : lerp(bg, fg, 0.3));
 					if (draw_lines == DRAW_LINES_BETWEEN) {
 						dc.DrawLine(RealPoint(rect.x + (i+1.0)*width, rect.top()), RealPoint(rect.x + (i+1.0)*width, rect.bottom()));
 					} else {
@@ -507,11 +522,11 @@ void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			dc.SetPen(fg);
 			dc.DrawLine(rect.topLeft(), rect.bottomLeft());
 		} else {
-			double height = rect.height / count; // width of an item
+			double height = rect.height / count;
 			// Draw labels
 			double y = rect.bottom();
 			FOR_EACH_CONST(g, axis.groups) {
-				// draw label, aligned bottom center
+				// draw label, aligned middle right
 				RealSize text_size = dc.GetTextExtent(g.name);
 				//dc.SetClippingRegion(RealRect(x + 2, rect.bottom() + 3, width - 4, text_size.height));
 				dc.DrawText(g.name, align_in_rect(ALIGN_MIDDLE_RIGHT, text_size, RealRect(-4, y, 0, -height)));
@@ -519,11 +534,9 @@ void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 				y -= height;
 			}
 			// Draw lines
-			Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-			Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 			if (draw_lines) {
-				dc.SetPen(lerp(bg, fg, 0.5));
 				for (int i = 0 ; i < count ; ++i) {
+					dc.SetPen(i == current ? fg : lerp(bg, fg, 0.3));
 					if (draw_lines == DRAW_LINES_BETWEEN) {
 						dc.DrawLine(RealPoint(rect.left(),     rect.bottom() - (i+1.0)*height), RealPoint(rect.right(), rect.bottom() - (i+1.0)*height));
 					} else {
@@ -561,20 +574,38 @@ void GraphValueAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 	GraphAxis& axis = axis_data();
 	double step_height = rect.height / axis.max; // height of a single value
 	dc.SetFont(*wxNORMAL_FONT);
-	UInt label_step = (UInt)floor(max(1.0, (dc.GetCharHeight() + 1) / step_height)); // values per labeled line
+	int label_step = ceil(max(1.0, (dc.GetCharHeight()) / step_height)); // values per labeled line
 	// Colors
 	Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
 	Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 	// Draw backlines (horizontal) and value labels
-	dc.SetPen(lerp(bg, fg, 0.5));
-	for (UInt i = 0 ; i <= axis.max ; ++i) {
-		if (i % label_step == 0) {
+	dc.SetPen(lerp(bg, fg, 0.3));
+	int highlight = current >= 0 ? (int)axis.groups[current].size : -1;
+	for (int i = 0 ; i <= (int)axis.max ; ++i) {
+		if (i % label_step == 0 || i == highlight) {
+			// highlight?
+			if (i == highlight) {
+				wxFont font(*wxNORMAL_FONT);
+				font.SetWeight(wxBOLD);
+				dc.SetFont(font);
+				dc.SetPen(fg);
+			}
+			// draw line
 			int y = rect.bottom() - i * step_height;
 			dc.DrawLine(RealPoint(rect.left() - 2, y), RealPoint(rect.right(), y));
 			// draw label, aligned middle right
-			String label; label << i;
-			RealSize text_size = dc.GetTextExtent(label);
-			dc.DrawText(label, align_in_rect(ALIGN_MIDDLE_RIGHT, text_size, RealRect(rect.x - 4, y, 0, 0)));
+			if (! ((i < highlight && i + label_step > highlight) ||
+			       (i > highlight && i - label_step < highlight)) || current == -1) {
+				// don't draw labels before/after current to make room
+				String label; label << i;
+				RealSize text_size = dc.GetTextExtent(label);
+				dc.DrawText(label, align_in_rect(ALIGN_MIDDLE_RIGHT, text_size, RealRect(rect.x - 4, y, 0, 0)));
+			}
+			// restore font/pen
+			if (i == highlight) {
+				dc.SetFont(*wxNORMAL_FONT);
+				dc.SetPen(lerp(bg, fg, 0.5));
+			}
 		}
 	}
 	// Draw axis

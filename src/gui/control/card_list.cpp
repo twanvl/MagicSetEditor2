@@ -209,10 +209,7 @@ void CardListBase::rebuild() {
 			// we are sorting by this column
 			sort_by_column = i;
 			// and display an arrow in the header
-			wxListItem li;
-			li.m_mask  = wxLIST_MASK_IMAGE;
-			li.m_image = sort_ascending ? 0 : 1; // arrow up/down
-			SetColumn(i, li);
+			SetColumnImage(i, sort_ascending ? 0 : 1);
 		}
 		++i;
 	}

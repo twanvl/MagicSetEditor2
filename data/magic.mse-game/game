@@ -1044,6 +1044,18 @@ statistics category:
 	dimension: card color
 	dimension: converted mana cost
 
+statistics category:
+	name: color / colored cost
+	type: scatter
+	dimension: card color
+	dimension: colored mana cost
+
+statistics category:
+	name: cost / colored cost
+	type: scatter
+	dimension: converted mana cost
+	dimension: colored mana cost
+
 #statistics field:
 #	name: creature type
 #	data 1:

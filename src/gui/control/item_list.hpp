@@ -69,6 +69,8 @@ class ItemList : public wxListView {
 	void sortBy(long column, bool ascending);
 	/// Refresh the card list (resort, refresh and reselect current item)
 	void refreshList();
+	/// Set the image of a column header (fixes wx bug)
+	void SetColumnImage(int col, int image);
 	
 	/// Select an item, send an event to the parent
 	/** If focus then the item is also focused and selected in the actual control.
@@ -91,8 +93,6 @@ class ItemList : public wxListView {
 	
   private:
 	struct ItemComparer; // for comparing items
-	
-	void SetColumnImage(int col, int image);
 	
 	// --------------------------------------------------- : Window events
 	DECLARE_EVENT_TABLE();
