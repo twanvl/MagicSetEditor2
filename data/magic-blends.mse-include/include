@@ -1,6 +1,6 @@
-mse version: 0.3.2
+mse version: 0.3.3
 full name: Magic The Gathering, card blend utilities
-version: 2006.01.17
+version: 2007.05.13
 
 # This file doesn't do anything, other files in this directory can be included
 # in game/style files:

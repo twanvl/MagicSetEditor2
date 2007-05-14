@@ -441,8 +441,8 @@ String KeywordDatabase::expand(const String& text,
 	assert(combine_script);
 	
 	// Remove all old reminder texts
-	String s = remove_tag_contents(text, _("<atom-reminder>"));
-	s = remove_tag_contents(s, _("<atom-keyword>")); // OLD, TODO: REMOVEME
+	String s = remove_tag_contents(text, _("<atom-reminder"));
+	s = remove_tag_contents(s, _("<atom-keyword")); // OLD, TODO: REMOVEME
 	s = remove_tag_contents(s, _("<atom-kwpph>"));
 	s = remove_tag(s, _("<keyword-param"));
 	s = remove_tag(s, _("<param-"));

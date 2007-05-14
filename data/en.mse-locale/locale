@@ -348,6 +348,10 @@ label:
 	# Open dialogs
 	all files			All files
 	
+	# New set window
+	game type:			&Game type:
+	style type:			&Card style:
+	
 	# Preferences
 	language:			Language
 	app language:		Language of the user interface:
@@ -379,6 +383,9 @@ label:
 	# apprentice export
 	set code:			Set &Code:
 	apprentice export cancled: Export to Apprentice is cancled
+	
+	# Html export
+	html template:		Template:
 	
 	# Image slicer
 	original:			Original:
@@ -462,6 +469,7 @@ title:
 	# export
 	export images:		Export Images
 	export cancled:		Export Cancled
+	export html:		Export HTML
 
 ############################################################## Action (undo/redo) names
 action:

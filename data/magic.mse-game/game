@@ -1,4 +1,4 @@
-﻿mse version: 0.3.2
+﻿mse version: 0.3.3
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
@@ -214,7 +214,12 @@ init script:
 			default_expand: { contains(match:mode, set.automatic_reminder_text) },
 			combine:        {
 				if mode == "pseudo" then "<i-auto>{keyword}</i-auto>"
-				else "{keyword}<atom-reminder><i> ({process_english_hints(reminder)})</i></atom-reminder>" }
+				else "{keyword}<atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
+			) +
+		# step 2b : move inline keywords' reminder text to the end of the line
+		replace_rule(
+			match: "(<atom-reminder-inline>.*</atom-reminder-inline></kw[^>]*>)([^\n(]+)",
+			replace: "\\2\\1"
 			) +
 		# step 3a : expand shortcut words ~ and CARDNAME
 		replace_rule(
@@ -410,8 +415,9 @@ set field:
 	choice: core
 	choice: expert
 	choice: pseudo
+	choice: inline
 	choice: custom
-	initial: old, core, expert, pseudo, custom
+	initial: old, core, expert, pseudo, inline, custom
 	# Convert from older mse versions
 	script:
 		if value = "yes" then "old, core, expert, custom"
@@ -1459,8 +1465,12 @@ keyword:
 keyword:
 	keyword: Scry
 	match: Scry <atom-param>number</atom-param>
-	mode: expert
-	reminder: Look at the top {english_number_multiple(param1)} card(s) of your library. Put any number of them on the bottom of your library in any order and the rest on top of your library in any order.
+	mode: inline
+	reminder:
+		To scry {param1}, look at the top {
+		 if param1.value==1 then "card of your library, then you may put that card on the bottom of your library."
+		 else "{english_number(param1)} cards of your library. Put any number of them on the bottom of your library in any order and the rest on top in any order."
+		}
 keyword:
 	keyword: Sunburst
 	match: Sunburst
