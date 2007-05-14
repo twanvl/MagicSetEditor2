@@ -96,6 +96,21 @@ inline RealSize add_diagonal(const RealSize& a, const RealSize& b) {
 	return RealSize(a.width + b.width, a.height + b.height);
 }
 
+/// Piecewise minimum
+inline RealSize piecewise_min(const RealSize& a, const RealSize& b) {
+	return RealSize(
+		a.width  < b.width  ? a.width  : b.width,
+		a.height < b.height ? a.height : b.height
+	);
+}
+/// Piecewise maximum
+inline RealSize piecewise_max(const RealSize& a, const RealSize& b) {
+	return RealSize(
+		a.width  < b.width  ? b.width  : a.width,
+		a.height < b.height ? b.height : a.height
+	);
+}
+
 // ----------------------------------------------------------------------------- : Rectangle using doubles
 
 /// A rectangle (postion and size) using real (double) coordinats

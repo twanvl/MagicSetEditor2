@@ -152,6 +152,20 @@ void GraphData::crossAxis(size_t axis1, size_t axis2, vector<UInt>& out) const {
 	}
 }
 
+void GraphData::crossAxis(size_t axis1, size_t axis2, size_t axis3, vector<UInt>& out) const {
+	size_t a1_size = axes[axis1]->groups.size();
+	size_t a2_size = axes[axis2]->groups.size();
+	size_t a3_size = axes[axis3]->groups.size();
+	out.clear();
+	out.resize(a1_size * a2_size * a3_size, 0);
+	FOR_EACH_CONST(v, values) {
+		int v1 = v[axis1], v2 = v[axis2], v3 = v[axis3];
+		if (v1 >= 0 && v2 >= 0 && v3 >= 0) {
+			out[a3_size * (a2_size * v1 + v2) + v3]++;
+		}
+	}
+}
+
 
 // ----------------------------------------------------------------------------- : Graph1D
 
@@ -399,7 +413,7 @@ int PieGraph::findItem(const RealPoint& pos, const RealRect& rect) const {
 
 void ScatterGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const {
 	if (!data || data->axes.size() <= max(axis1,axis2)) return;
-	// Rectangle for bars
+	// Rectangle for drawing
 	RealRect rect = dc.getInternalRect();
 	GraphAxis& axis1 = axis1_data(); // the major axis
 	GraphAxis& axis2 = axis2_data(); // the stacked axis
@@ -424,7 +438,7 @@ void ScatterGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer lay
 			dc.SetBrush(lerp(bg,axis2.groups[cur2].color,0.3));
 			dc.DrawRectangle(RealRect(rect.x, rect.bottom() - (cur2+1) * size.height, rect.width, size.height));
 		}
-	} else {
+	} else if (layer == LAYER_VALUES) {
 		Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 		dc.SetPen(fg);
 		size_t i = 0;
@@ -466,8 +480,113 @@ void ScatterGraph::setData(const GraphDataP& d) {
 	}
 }
 
+// ----------------------------------------------------------------------------- : Scatter Plot plus
+
+void ScatterGraphPlus::setData(const GraphDataP& d) {
+	ScatterGraph::setData(d);
+	if (data->axes.size() <= max(max(axis1,axis2),axis3)) return;
+	d->crossAxis(axis1,axis2,axis3,values3D);
+}
+
+// ----------------------------------------------------------------------------- : Scatter Pie graph
+
+void ScatterPieGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const {
+	if (data->axes.size() <= max(max(axis1,axis2),axis3)) return;
+	if (layer == LAYER_SELECTION) {
+		ScatterGraph::draw(dc, current, layer);
+	} else if (layer == LAYER_VALUES) {
+		// Rectangle for drawing
+		RealRect rect = dc.getInternalRect();
+		GraphAxis& axis1 = axis1_data(); // the major axis
+		GraphAxis& axis2 = axis2_data(); // the stacked axis
+		GraphAxis& axis3 = axis3_data(); // the pie axis
+		RealSize size(rect.width / axis1.groups.size(), rect.height / axis2.groups.size()); // size for a single cell
+		double step = min(size.width, size.height) / sqrt((double)max_value) / 2.01;
+		// Draw pies
+		Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+		dc.SetPen(fg);
+		for (size_t x = 0 ; x < axis1.groups.size() ; ++x) {
+			for (size_t y = 0 ; y < axis2.groups.size() ; ++y) {
+				size_t i = x * axis2.groups.size() + y;
+				UInt value = values[i];
+				double radius = sqrt((double)value) * step;
+				RealSize radius_s(radius*2+1,radius*2+1);
+				RealPoint center(rect.left() + (x+0.5) * size.width + 0.5, rect.bottom() - (y+0.5) * size.height + 0.5);
+				// draw pie slices
+				double angle = 0;
+				size_t j = 0;
+				FOR_EACH(g, axis3.groups) {
+					dc.SetBrush(g.color);
+					UInt val = values3D[i * axis3.groups.size() + j++];
+					if (val > 0) {
+						double end_angle = angle + 2 * M_PI * (double)val / value;
+						dc.DrawEllipticArc(center, radius_s, angle, end_angle);
+						angle = end_angle;
+					}
+				}
+				// draw spokes?
+			}
+		}
+	}
+}
+
+
 
 // ----------------------------------------------------------------------------- : Graph Legend
+
+RealSize GraphLegend::determineSize(RotatedDC& dc) const {
+	if (!data) return RealSize(-1,-1);
+	GraphAxis& axis = axis_data();
+	dc.SetFont(*wxNORMAL_FONT);
+	item_size = RealSize(0,0);
+	FOR_EACH(g, axis.groups) {
+		RealSize this_item_size = dc.GetTextExtent(g.name);
+		this_item_size = RealSize(this_item_size.width + 34, this_item_size.height + 5);
+		item_size = piecewise_max(item_size, this_item_size);
+	}
+	size = RealSize(item_size.width + 2, axis.groups.size() * item_size.height + 3); // margins
+	return size;
+}
+
+void GraphLegend::draw(RotatedDC& dc, int current, DrawLayer layer) const {
+	if (!size.width) determineSize(dc);
+	if (layer == LAYER_VALUES) {
+		RealRect rect = dc.getInternalRect();
+		RealPoint pos = align_in_rect(alignment, size, rect);
+		GraphAxis& axis = axis_data();
+		Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+		Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+		// draw border
+		dc.SetBrush(bg);
+		dc.DrawRectangle(RealRect(pos,size));
+		// draw items
+		dc.SetFont(*wxNORMAL_FONT);
+		dc.SetPen(fg);
+		double y = pos.y + 1;
+		for (int j = 0 ; j < (int)axis.groups.size() ; ++j) {
+			int i = reverse ? (int)axis.groups.size() - j - 1 : j;
+			const GraphGroup& g = axis.groups[i];
+			if (i == current) {
+				dc.SetBrush(lerp(bg,g.color,0.5));
+				dc.SetPen(*wxTRANSPARENT_PEN);
+				dc.DrawRectangle(RealRect(pos.x+1, y, item_size.width, item_size.height + 1));
+				dc.SetPen(fg);
+			}
+			dc.SetBrush(g.color);
+			dc.DrawRectangle(RealRect(pos.x+3, y + 2, 26, item_size.height - 3));
+			dc.DrawText(g.name, RealPoint(pos.x + 32, y + 2));
+			y += item_size.height;
+		}
+	}
+}
+int GraphLegend::findItem(const RealPoint& pos, const RealRect& rect) const {
+	RealPoint mypos = align_in_rect(alignment, size, rect);
+	RealPoint pos2(pos.x - mypos.x, pos.y - mypos.y);
+	if (pos2.x < 0 || pos2.y < 0 || pos2.x >= size.width || pos2.y >= size.height) return -1;
+	int col = floor((pos2.y-1) / item_size.height);
+	if (col < 0 || col >= (int)axis_data().groups.size()) return -1;
+	return reverse ? (int)axis_data().groups.size() - col - 1 : col;
+}
 
 // ----------------------------------------------------------------------------- : Graph label axis
 
@@ -580,7 +699,7 @@ void GraphValueAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 	Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 	// Draw backlines (horizontal) and value labels
 	dc.SetPen(lerp(bg, fg, 0.3));
-	int highlight = current >= 0 ? (int)axis.groups[current].size : -1;
+	int highlight = (highlight_value && current >= 0) ? (int)axis.groups[current].size : -1;
 	for (int i = 0 ; i <= (int)axis.max ; ++i) {
 		if (i % label_step == 0 || i == highlight) {
 			// highlight?
@@ -595,7 +714,7 @@ void GraphValueAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			dc.DrawLine(RealPoint(rect.left() - 2, y), RealPoint(rect.right(), y));
 			// draw label, aligned middle right
 			if (! ((i < highlight && i + label_step > highlight) ||
-			       (i > highlight && i - label_step < highlight)) || current == -1) {
+			       (i > highlight && i - label_step < highlight)) || highlight == -1) {
 				// don't draw labels before/after current to make room
 				String label; label << i;
 				RealSize text_size = dc.GetTextExtent(label);
@@ -670,7 +789,7 @@ void GraphControl::setLayout(GraphType type) {
 	switch (type) {
 		case GRAPH_TYPE_BAR: {
 			intrusive_ptr<GraphContainer> combined(new GraphContainer());
-			combined->add(new_intrusive1<GraphValueAxis>(0));
+			combined->add(new_intrusive2<GraphValueAxis>(0, true));
 			combined->add(new_intrusive2<GraphLabelAxis>(0, HORIZONTAL));
 			combined->add(new_intrusive1<BarGraph>(0));
 			graph = new_intrusive5<GraphWithMargins>(combined, 23,8,7,20);
@@ -682,9 +801,10 @@ void GraphControl::setLayout(GraphType type) {
 			break;
 		} case GRAPH_TYPE_STACK: {
 			intrusive_ptr<GraphContainer> combined(new GraphContainer());
-			combined->add(new_intrusive1<GraphValueAxis>(0));
+			combined->add(new_intrusive2<GraphValueAxis>(0, false));
 			combined->add(new_intrusive2<GraphLabelAxis>(0, HORIZONTAL));
 			combined->add(new_intrusive2<BarGraph2D>(0,1));
+			combined->add(new_intrusive3<GraphLegend>(1, ALIGN_TOP_RIGHT, true));
 			graph = new_intrusive5<GraphWithMargins>(combined, 23,8,7,20);
 			break;
 		} case GRAPH_TYPE_SCATTER: {
@@ -692,6 +812,13 @@ void GraphControl::setLayout(GraphType type) {
 			combined->add(new_intrusive4<GraphLabelAxis>(0, HORIZONTAL, false, DRAW_LINES_MID));
 			combined->add(new_intrusive4<GraphLabelAxis>(1, VERTICAL,   false, DRAW_LINES_MID));
 			combined->add(new_intrusive2<ScatterGraph>(0,1));
+			graph = new_intrusive5<GraphWithMargins>(combined, 80,8,7,20);
+			break;
+		} case GRAPH_TYPE_SCATTER_PIE: {
+			intrusive_ptr<GraphContainer> combined(new GraphContainer());
+			combined->add(new_intrusive4<GraphLabelAxis>(0, HORIZONTAL, false, DRAW_LINES_MID));
+			combined->add(new_intrusive4<GraphLabelAxis>(1, VERTICAL,   false, DRAW_LINES_MID));
+			combined->add(new_intrusive3<ScatterPieGraph>(0,1,2));
 			graph = new_intrusive5<GraphWithMargins>(combined, 80,8,7,20);
 			break;
 		} default:
@@ -734,10 +861,46 @@ void GraphControl::onMouseDown(wxMouseEvent& ev) {
 	if (!graph) return;
 	wxSize cs = GetClientSize();
 	if (graph->findItem(RealPoint(ev.GetX(), ev.GetY()), RealRect(RealPoint(0,0),cs), current_item)) {
-		wxCommandEvent ev(EVENT_GRAPH_SELECT, GetId());
-		ProcessEvent(ev);
-		Refresh(false);
+		onSelectionChange();
 	}
+	ev.Skip(); // focus
+}
+void GraphControl::onChar(wxKeyEvent& ev) {
+	if (!graph) return;
+	GraphDataP data = graph->getData();
+	if (!data) return;
+	switch (ev.GetKeyCode()) {
+		case WXK_LEFT:
+			if (current_item.size() >= 1 && data->axes.size() >= 1 && current_item[0] != -1) {
+				current_item[0]--;
+				onSelectionChange();
+			}
+			break;
+		case WXK_RIGHT:
+			if (current_item.size() >= 1 && data->axes.size() >= 1 && current_item[0] + 1 < (int)data->axes[0]->groups.size()) {
+				current_item[0]++;
+				onSelectionChange();
+			}
+			break;
+		case WXK_UP:
+			if (current_item.size() >= 2 && data->axes.size() >= 2 && current_item[1] + 1 < (int)data->axes[1]->groups.size()) {
+				current_item[1]++;
+				onSelectionChange();
+			}
+			break;
+		case WXK_DOWN:
+			if (current_item.size() >= 2 && data->axes.size() >= 2 && current_item[1] != -1) {
+				current_item[1]--;
+				onSelectionChange();
+			}
+			break;
+	}
+}
+
+void GraphControl::onSelectionChange() {
+	wxCommandEvent ev(EVENT_GRAPH_SELECT, GetId());
+	ProcessEvent(ev);
+	Refresh(false);
 }
 
 bool GraphControl::hasSelection(size_t axis) const {
@@ -755,4 +918,5 @@ BEGIN_EVENT_TABLE(GraphControl, wxControl)
 	EVT_PAINT		(GraphControl::onPaint)
 	EVT_SIZE		(GraphControl::onSize)
 	EVT_LEFT_DOWN	(GraphControl::onMouseDown)
+	EVT_CHAR		(GraphControl::onChar)
 END_EVENT_TABLE  ()

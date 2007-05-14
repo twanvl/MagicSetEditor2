@@ -119,8 +119,9 @@ void StatsCategory::find_dimensions(const vector<StatsDimensionP>& available) {
 // ----------------------------------------------------------------------------- : GraphType (from graph_type.hpp)
 
 IMPLEMENT_REFLECTION_ENUM(GraphType) {
-	VALUE_N("bar",     GRAPH_TYPE_BAR);
-	VALUE_N("pie",     GRAPH_TYPE_PIE);
-	VALUE_N("stack",   GRAPH_TYPE_STACK);
-	VALUE_N("scatter", GRAPH_TYPE_SCATTER);
+	VALUE_N("bar",         GRAPH_TYPE_BAR);
+	VALUE_N("pie",         GRAPH_TYPE_PIE);
+	VALUE_N("stack",       GRAPH_TYPE_STACK);
+	VALUE_N("scatter",     GRAPH_TYPE_SCATTER);
+	VALUE_N("scatter pie", GRAPH_TYPE_SCATTER_PIE);
 }

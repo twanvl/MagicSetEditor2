@@ -100,6 +100,8 @@ class GraphData : public IntrusivePtrBase<GraphData> {
 	
 	/// Create a cross table for two axes
 	void crossAxis(size_t axis1, size_t axis2, vector<UInt>& out) const;
+	/// Create a cross table for three axes
+	void crossAxis(size_t axis1, size_t axis2, size_t axis3, vector<UInt>& out) const;
 };
 
 
@@ -117,6 +119,8 @@ enum DrawLayer
 /** It is rendered into a sub-rectangle of the screen */
 class Graph : public IntrusivePtrVirtualBase {
   public:
+	/// Determine the size of this graph viewer, return -1 if the viewer stretches
+	virtual RealSize determineSize(RotatedDC& dc) const { return RealSize(-1,-1); }
 	/// Draw this graph, filling the internalRect() of the dc.
 	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const = 0;
 	/// Find the item at the given position, the rectangle gives the screen size
@@ -188,16 +192,41 @@ class ScatterGraph : public Graph2D {
 	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
 	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const;
 	virtual void setData(const GraphDataP& d);
-  private:
+  protected:
 	UInt max_value; ///< highest value
+};
+
+/// A scatter plot with an extra dimension
+class ScatterGraphPlus : public ScatterGraph {
+  public:
+	inline ScatterGraphPlus(size_t axis1, size_t axis2, size_t axis3) : ScatterGraph(axis1, axis2), axis3(axis3) {}
+	virtual void setData(const GraphDataP& d);
+  protected:
+	size_t axis3;
+	vector<UInt> values3D; // axis1.size * axis2.size * axis3.size array
+	inline GraphAxis& axis3_data() const { return *data->axes.at(axis3); }
+};
+
+/// A scatter plot with a pie graph for the third dimension
+class ScatterPieGraph : public ScatterGraphPlus {
+  public:
+	inline ScatterPieGraph(size_t axis1, size_t axis2, size_t axis3) : ScatterGraphPlus(axis1, axis2, axis3) {}
+	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
 };
 
 /// The legend, used for pie graphs
 class GraphLegend : public Graph1D {
   public:
-	inline GraphLegend(size_t axis) : Graph1D(axis) {}
+	inline GraphLegend(size_t axis, Alignment alignment, bool reverse = false)
+		: Graph1D(axis), alignment(alignment), reverse(reverse)
+	{}
+	virtual RealSize determineSize(RotatedDC& dc) const;
 	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
 	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
+  private:
+	mutable RealSize size, item_size;
+	Alignment alignment;
+	bool reverse;
 };
 
 //class GraphTable {
@@ -228,8 +257,10 @@ class GraphLabelAxis : public Graph1D {
 /// Draws an a vertical axis for counts
 class GraphValueAxis : public Graph1D {
   public:
-	inline GraphValueAxis(size_t axis) : Graph1D(axis) {}
+	inline GraphValueAxis(size_t axis, bool highlight_value) : Graph1D(axis), highlight_value(highlight_value) {}
 	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
+  private:
+	bool highlight_value;
 };
 
 /// A graph with margins
@@ -296,6 +327,9 @@ class GraphControl : public wxControl {
 	void onPaint(wxPaintEvent&);
 	void onSize (wxSizeEvent&);
 	void onMouseDown(wxMouseEvent& ev);
+	void onChar(wxKeyEvent& ev);
+	
+	void onSelectionChange();
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -19,6 +19,7 @@ enum GraphType
 ,	GRAPH_TYPE_PIE
 ,	GRAPH_TYPE_STACK
 ,	GRAPH_TYPE_SCATTER
+,	GRAPH_TYPE_SCATTER_PIE
 };
 
 // ----------------------------------------------------------------------------- : EOF
