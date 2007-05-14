@@ -132,13 +132,23 @@ void ItemList::sortBy(long column, bool ascending) {
 		if (i == column) {
 			SetColumnImage(i, sort_ascending ? 0 : 1); // arrow up/down
 		} else if (i == sort_by_column) {
-			ClearColumnImage(i);
+			SetColumnImage(i, -1);
 		}
 	}
 	// sort list
 	sort_by_column = column;
 	sort_ascending = ascending;
 	refreshList();
+}
+
+void ItemList::SetColumnImage(int col, int image) {
+	// The wx version of this function is broken,
+	// setting the wxLIST_MASK_IMAGE also sets the FORMAT flag, so we lose alignment info
+	wxListItem item;
+	item.SetMask(wxLIST_MASK_IMAGE | wxLIST_MASK_FORMAT);
+	GetColumn(col, item);
+    item.SetImage(image);
+    SetColumn(col, item);
 }
 
 // ----------------------------------------------------------------------------- : ItemList : Window events

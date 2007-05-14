@@ -92,6 +92,8 @@ class ItemList : public wxListView {
   private:
 	struct ItemComparer; // for comparing items
 	
+	void SetColumnImage(int col, int image);
+	
 	// --------------------------------------------------- : Window events
 	DECLARE_EVENT_TABLE();
 	
