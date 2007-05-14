@@ -22,6 +22,7 @@
 #include <gui/preferences_window.hpp>
 #include <gui/print_window.hpp>
 #include <gui/images_export_window.hpp>
+#include <gui/html_export_window.hpp>
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <util/io/package_manager.hpp>
@@ -484,18 +485,8 @@ void SetWindow::onFileExportImages(wxCommandEvent&) {
 }
 
 void SetWindow::onFileExportHTML(wxCommandEvent&) {
-//	HtmlExportWindow wnd(&this, set);
-//	wnd.ShowModal();
-	/*;//%%
-	String name = fileSelector(_("Exort to html"),_(""),_(""),_(""), {
-		                        _("HTML files (*.html)|*.html"),
-		                        wxSAVE | wxOVERWRITE_PROMPT);
-	}
-	if (!name.empty()) {
-		HtmlExportWindow wnd(&this, set, name);
-		wnd.showModal();
-	}
-	*/
+	HtmlExportWindow wnd(this, set);
+	wnd.ShowModal();
 }
 
 void SetWindow::onFileExportApprentice(wxCommandEvent&) {

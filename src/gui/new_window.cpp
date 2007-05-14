@@ -31,8 +31,8 @@ NewSetWindow::NewSetWindow(Window* parent)
 	// init controls
 	game_list       = new PackageList (this, ID_GAME_LIST);
 	stylesheet_list = new PackageList (this, ID_STYLESHEET_LIST);
-	game_text       = new wxStaticText(this, ID_GAME_LIST,       _("&Game type:"));
-	stylesheet_text = new wxStaticText(this, ID_STYLESHEET_LIST, _("&Card style:"));
+	game_text       = new wxStaticText(this, ID_GAME_LIST,       _LABEL_("game type"));
+	stylesheet_text = new wxStaticText(this, ID_STYLESHEET_LIST, _LABEL_("style type"));
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		s->Add(game_text,       0, wxALL,                     4);
