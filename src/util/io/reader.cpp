@@ -116,11 +116,6 @@ void Reader::readLine(bool in_string) {
 		key.clear();
 		return;
 	}
-	if (input->Eof()) {
-		// end of file
-		indent = -1;
-		return;
-	}
 	key   = line.substr(indent, pos - indent);
 	if (!ignore_invalid && !in_string && starts_with(key, _(" "))) {
 		warning(_("key: '") + key + _("' starts with a space; only use TABs for indentation!"));
