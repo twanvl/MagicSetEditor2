@@ -95,8 +95,8 @@ void KeywordReminderTextValue::highlight(const String& code, const vector<Script
 	// becomes:
 	//       bla <code>{<code-kw>if</code-kw> code "<code-string>x</code-string>" } bla
 	String new_value;
-	int in_brace = 0;
-	bool in_string = true;
+	vector<int> in_brace; // types of braces we are in, 0 for code brace, 1 for string escapes
+	bool in_string = true; 
 	vector<ScriptParseError>::const_iterator error = errors.begin();
 	for (size_t pos = 0 ; pos < code.size() ; ) {
 		// error underlining
@@ -120,26 +120,30 @@ void KeywordReminderTextValue::highlight(const String& code, const vector<Script
 			new_value += _('\1'); // escape
 			++pos;
 		} else if (c == _('{')) {
-			in_brace++;
-			if (in_brace == 1) new_value += _("<code>");
-			if (in_string) in_string = false;
+			if (in_string) {
+				new_value += _("<code>");
+				in_brace.push_back(1);
+				in_string = false;
+			} else {
+				in_brace.push_back(0);
+			}
 			new_value += c;
 			++pos;
 		} else if (c == _('}') && !in_string) {
 			new_value += c;
-			in_brace--;
-			if (in_brace == 0) {
+			if (!in_brace.empty() && in_brace.back() == 1) {
 				new_value += _("</code>");
 				in_string = true;
 			}
+			if (!in_brace.empty()) in_brace.pop_back();
 			++pos;
 		} else if (c == _('"')) {
 			if (in_string) {
 				in_string = false;
-				new_value += _("\"<code-str>");
+				new_value += _("\"</code-str><code>");
 			} else {
 				in_string = true;
-				new_value += _("<code-str>\"");
+				new_value += _("</code><code-str>\"");
 			}
 			++pos;
 		} else if (c == _('\\') && in_string && pos + 1 < code.size()) {

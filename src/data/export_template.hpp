@@ -30,5 +30,11 @@ class ExportTemplate : public Packaged {
 	DECLARE_REFLECTION();
 };
 
+// ----------------------------------------------------------------------------- : ExportPackage
+
+/// A package that is being written to when exporting
+class ExportingPackage : public Package {
+};
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

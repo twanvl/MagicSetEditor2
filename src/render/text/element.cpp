@@ -160,10 +160,17 @@ struct TextElementsFromString {
 						e = new SymbolTextElement(text, pos, pos + 1, style.symbol_font, &ctx);
 						bracket = false;
 					} else {
-						FontP font = style.font.make(bold > 0, italic > 0, soft > 0 || kwpph > 0, code > 0,
-						                             param > 0 || param_ref > 0
-						                               ? &param_colors[(param_id++) % param_colors_count]
-						                               : nullptr);
+						FontP font = style.font.make(
+							(bold        > 0 ? FONT_BOLD        : FONT_NORMAL) |
+							(italic      > 0 ? FONT_ITALIC      : FONT_NORMAL) |
+							(soft        > 0 ? FONT_SOFT        : FONT_NORMAL) |
+							(kwpph       > 0 ? FONT_SOFT        : FONT_NORMAL) |
+							(code        > 0 ? FONT_CODE        : FONT_NORMAL) |
+							(code_kw     > 0 ? FONT_CODE_KW     : FONT_NORMAL) |
+							(code_string > 0 ? FONT_CODE_STRING : FONT_NORMAL),
+							param > 0 || param_ref > 0
+								? &param_colors[(param_id++) % param_colors_count]
+								: nullptr);
 						bracket = kwpph > 0 || param > 0;
 						e = new FontTextElement(
 									text,

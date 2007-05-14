@@ -10,7 +10,6 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
-#include <data/export_template.hpp>
 
 class PackageList;
 DECLARE_POINTER_TYPE(Set);

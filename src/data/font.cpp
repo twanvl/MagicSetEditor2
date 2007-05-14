@@ -14,11 +14,10 @@ Font::Font()
 	: name()
 	, size(1)
 	, underline(false)
-	, weight_i(wxFONTWEIGHT_NORMAL), style_i(wxFONTSTYLE_NORMAL)
 	, scale_down_to(100000)
 	, shadow_displacement(0,0)
 	, separator_color(128,128,128)
-	, type(NORMAL)
+	, flags(FONT_NORMAL)
 {}
 
 bool Font::update(Context& ctx) {
@@ -31,8 +30,9 @@ bool Font::update(Context& ctx) {
 	     | underline   .update(ctx)
 	     | color       .update(ctx)
 	     | shadow_color.update(ctx);
-	weight_i  =  weight() == _("bold")   ? wxBOLD   : wxNORMAL;
-	style_i   =  style()  == _("italic") ? wxITALIC : wxNORMAL;
+	flags = flags & (~FONT_BOLD & ~FONT_ITALIC)
+	      | (weight() == _("bold")   ? FONT_BOLD   : FONT_NORMAL)
+	      | (style()  == _("italic") ? FONT_ITALIC : FONT_NORMAL);
 	return changes;
 }
 void Font::initDependencies(Context& ctx, const Dependency& dep) const {
@@ -46,15 +46,20 @@ void Font::initDependencies(Context& ctx, const Dependency& dep) const {
 	shadow_color.initDependencies(ctx, dep);
 }
 
-FontP Font::make(bool bold, bool italic, bool placeholder_color, bool code_color, Color* other_color) const {
+FontP Font::make(int add_flags, Color* other_color) const {
 	FontP f(new Font(*this));
-	if (bold)   f->weight_i = wxFONTWEIGHT_BOLD;
-	if (italic) f->style_i  = wxFONTSTYLE_ITALIC;
-	if (code_color) {
-		f->color = Color(128,0,0);
-		f->type  = TYPEWRITER;
+	f->flags |= add_flags;
+	if (add_flags & FONT_CODE_STRING) {
+		f->color = Color(0,0,100);
 	}
-	if (placeholder_color) {
+	if (add_flags & FONT_CODE) {
+		f->color = Color(128,0,0);
+	}
+	if (add_flags & FONT_CODE_KW) {
+		f->color = Color(158,0,0);
+		f->flags |= FONT_BOLD;
+	}
+	if (add_flags & FONT_SOFT) {
 		f->color = f->separator_color;
 		f->shadow_displacement = RealSize(0,0); // no shadow
 	}
@@ -66,13 +71,16 @@ FontP Font::make(bool bold, bool italic, bool placeholder_color, bool code_color
 
 wxFont Font::toWxFont(double scale) const {
 	int size_i = scale * size;
-	if (name().empty()) {
+	int weight_i = flags & FONT_BOLD   ? wxFONTWEIGHT_BOLD  : wxFONTWEIGHT_NORMAL;
+	int style_i  = flags & FONT_ITALIC ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL;
+	if (flags & FONT_CODE) {
+		if (size_i < 2) size_i = wxNORMAL_FONT->GetPointSize();
+		return wxFont(size_i, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, weight_i, underline(), _("Courier New"));
+	} else if (name().empty()) {
 		wxFont font = *wxNORMAL_FONT;
 		font.SetPointSize(size > 1 ? size_i : scale * font.GetPointSize());
 		return font;
-	} else if (type == TYPEWRITER) {
-		return wxFont(size_i, wxFONTFAMILY_TELETYPE, weight_i, underline(), _("Courier New"));
-	} else if (style_i == wxFONTSTYLE_ITALIC && !italic_name().empty()) {
+	} else if (flags & FONT_ITALIC && !italic_name().empty()) {
 		return wxFont(size_i, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, weight_i, underline(), italic_name());
 	} else {
 		return wxFont(size_i, wxFONTFAMILY_DEFAULT, style_i, weight_i, underline(), name());
