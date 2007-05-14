@@ -1320,6 +1320,11 @@ keyword:
 	mode: core
 	reminder: This creature can’t be blocked, targeted, dealt damage, enchanted, or equipped by anything {english_singular(param1)}.
 keyword:
+	keyword: Regeneration
+	match: Regenerate
+	mode: inline
+	reminder: The next time this creature would be destroyed this turn, it isn't. Instead tap it, remove all damage from it, and remove it from combat.
+keyword:
 	keyword: Bands with other
 	match: Bands with other <atom-param>name</atom-param>
 	mode: old
@@ -1690,8 +1695,3 @@ keyword:
 	match: Fortify <atom-param>cost</atom-param>
 	mode: expert
 	reminder: {param1}: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
-keyword:
-	keyword: Regeneration
-	match: Regenerate
-	mode: inline
-	reminder: The next time this creature would be destroyed this turn, it isn't. Instead tap it, remove all damage from it, and remove it from combat.
