@@ -1,0 +1,11 @@
+version: 0.3.3
+description:
+	<font size="+2"><b>Version 0.3.3 beta is out</b></font>
+	<hr>
+	This is a small new release, new stuff:
+	<ul>
+	 <li>The crashes are finally fixed.</li>
+	 <li>Two dimensional statistics (e.g. color vs. rarity)</li>
+	 <li>All keyword problems are fixed.</li>
+	</ul>
+	You can download the new version on <a href="http://magicseteditor.sourceforge.net/download">the MSE download page</a>.
