@@ -151,15 +151,15 @@ WXCURSOR_HAND           CURSOR  DISCARDABLE     "wx/msw/hand.cur"
 // -------------------------------------------------------- : Version info
 
 1 VERSIONINFO
-FILEVERSION    0,3,2
-PRODUCTVERSION 0,3,2
+FILEVERSION    0,3,3
+PRODUCTVERSION 0,3,3
 FILETYPE VFT_APP
 {
   BLOCK "StringFileInfo"
   {
     BLOCK "040904E4"
     {
-      VALUE "FileVersion",			"0.3.2"
+      VALUE "FileVersion",			"0.3.3"
       VALUE "License",				"GNU General Public License 2 or later; This is free software, and you are welcome to redistribute it under certain conditions; See the help file for details"
       VALUE "FileDescription",		"Magic Set Editor"
       VALUE "InternalName",			"mse2/8"

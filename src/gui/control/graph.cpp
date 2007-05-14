@@ -509,8 +509,8 @@ void ScatterPieGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer 
 			for (size_t y = 0 ; y < axis2.groups.size() ; ++y) {
 				size_t i = x * axis2.groups.size() + y;
 				UInt value = values[i];
-				double radius = sqrt((double)value) * step;
-				RealSize radius_s(radius*2+1,radius*2+1);
+				double radius = floor(sqrt((double)value) * step * 2);
+				RealSize radius_s(radius,radius);
 				RealPoint center(rect.left() + (x+0.5) * size.width + 0.5, rect.bottom() - (y+0.5) * size.height + 0.5);
 				// draw pie slices
 				double angle = 0;
