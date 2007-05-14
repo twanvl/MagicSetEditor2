@@ -244,8 +244,8 @@ card style:
 			# Images based on the set symbol
 			basic land:	script: symbol_variation(symbol: set.symbol, variation: "common")
 			common:   script: symbol_variation(symbol: set.symbol, variation: "common")
-			uncommon: script: symbol_variation(symbol: set.symbol, variation: "uncommon")
-			rare:     script: symbol_variation(symbol: set.symbol, variation: "rare")
+			uncommon: script: symbol_variation(symbol: set.symbol, variation: "olduncommon")
+			rare:     script: symbol_variation(symbol: set.symbol, variation: "oldrare")
 			special:	script: symbol_variation(symbol: set.symbol, variation: "special")
 
 	rarity 2:
@@ -259,8 +259,8 @@ card style:
 			# Images based on the set symbol
 			basic land:	script: symbol_variation(symbol: set.symbol, variation: "common")
 			common:   script: symbol_variation(symbol: set.symbol, variation: "common")
-			uncommon: script: symbol_variation(symbol: set.symbol, variation: "uncommon")
-			rare:     script: symbol_variation(symbol: set.symbol, variation: "rare")
+			uncommon: script: symbol_variation(symbol: set.symbol, variation: "olduncommon")
+			rare:     script: symbol_variation(symbol: set.symbol, variation: "oldrare")
 			special:	script: symbol_variation(symbol: set.symbol, variation: "special")
 
 	############################# Text box

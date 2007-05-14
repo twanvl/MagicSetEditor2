@@ -450,6 +450,14 @@ default set style:
 			fill color:   rgb(0,0,0)
 			border color: rgb(255,255,255)
 		variation:
+			name: olduncommon
+			border radius: 0.10
+			fill type: linear gradient
+			fill color 1:   rgb(224,224,224)
+			fill color 2:   rgb(84, 84, 84)
+			border color 1: rgb(255,255,255)
+			border color 2: rgb(255,255,255)
+		variation:
 			name: uncommon
 			border radius: 0.05
 			fill type: linear gradient
@@ -457,6 +465,14 @@ default set style:
 			fill color 2:   rgb(84, 84, 84)
 			border color 1: rgb(0,  0,  0)
 			border color 2: rgb(0,  0,  0)
+		variation:
+			name: oldrare
+			border radius: 0.10
+			fill type: linear gradient
+			fill color 1:   rgb(214,196,94)
+			fill color 2:   rgb(95, 84, 40)
+			border color 1: rgb(255,255,255)
+			border color 2: rgb(255,255,255)
 		variation:
 			name: rare
 			border radius: 0.05
@@ -1253,7 +1269,7 @@ keyword:
 	keyword: Banding
 	match: Banding
 	mode: old
-	reminder: When declaring attackers or blockers this creature may group with others creatures with banding and one creature without banding. When damage is dealt, you decide where damage is dealt.
+	reminder: When declaring attackers or blockers this creature may group with other creatures with banding and one creature without banding. When damage is dealt, you decide where damage is dealt.
 keyword:
 	keyword: Landwalk
 	match: <atom-param>prefix</atom-param>walk
@@ -1263,7 +1279,7 @@ keyword:
 	keyword: Protection from
 	match: Protection from <atom-param>name</atom-param>
 	mode: core
-	reminder: This creature can’t be blocked, targeted, dealt damage, or enchanted, or equipped by anything {english_singular(param1)}.
+	reminder: This creature can’t be blocked, targeted, dealt damage, enchanted, or equipped by anything {english_singular(param1)}.
 keyword:
 	keyword: Bands with other
 	match: Bands with other <atom-param>name</atom-param>
@@ -1278,12 +1294,12 @@ keyword:
 	keyword: Cumulative upkeep
 	match: Cumulative upkeep <atom-param>cost</atom-param>
 	mode: old
-	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you {for_mana_costs(add:"pay ",param1)} for each age counter on it.
+	reminder: At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.
 keyword:
 	keyword: Phasing
 	match: Phasing
 	mode: old
-	reminder: At the beginning of your upkeep, put this and any cards attached to it in the phased-out zone.  If this is already in the phased-out zone, return it and any card attached to it to play.  If there were counters on this card when it phased out, put that many counters on it when it returns to play.  This ability does not cause comes-into-play or leaves play abilities to trigger.
+	reminder: At the beginning of your upkeep, put this and any cards attached to it in the phased-out zone. If this is already in the phased-out zone, return it and any card and/or counters attached to it to play. This ability does not cause comes-into-play or leaves-play abilities to trigger.
 keyword:
 	keyword: Flanking
 	match: Flanking
@@ -1303,7 +1319,7 @@ keyword:
 	keyword: Buyback
 	match: Buyback <atom-param>cost</atom-param>
 	mode: expert
-	reminder: You may {for_mana_costs(add:"pay ",param1)} in addition to any other costs as you play this spell. If you do, put this card into your hand as it resolves.
+	reminder: You may {for_mana_costs(add:"pay an additional ",param1)} as you play this spell. If you do, put this card into your hand as it resolves.
 keyword:
 	keyword: Echo
 	match: Echo <atom-param>cost</atom-param>
@@ -1352,7 +1368,7 @@ keyword:
 	keyword: Madness
 	match: Madness <atom-param>cost</atom-param>
 	mode: expert
-	reminder: You may play this card for its madness cost at the time you discard it.
+	reminder: If you discard this card, you may play it for its madness cost instead of putting it into your graveyard.
 keyword:
 	keyword: Morph
 	match: Morph <atom-param>cost</atom-param>
@@ -1498,7 +1514,7 @@ keyword:
 	keyword: Dredge
 	match: Dredge <atom-param>number</atom-param>
 	mode: expert
-	reminder: As long as you have at least {english_number(param1)} card(s) in your library, if you would draw a card, you may instead put exactly {english_number(param1)} card(s) from the top of your library into your graveyard and return this card from your graveyard to your hand.
+	reminder: If you would draw a card, instead you may put exactly {english_number(param1)} card(s) from the top of your library into your graveyard. If you do, return this card from your graveyard to your hand. Otherwise, draw a card.
 keyword:
 	keyword: Haunt
 	match: Haunt
@@ -1557,7 +1573,7 @@ keyword:
 	keyword: Vanishing
 	match: Vanishing <atom-param>number</atom-param>
 	mode: expert
-	reminder: This permanent comes into play with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter from it. When you remove the last, sacrifice it.
+	reminder: This permanent comes into play with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it.
 keyword:
 	keyword: Grandeur
 	match: Grandeur
@@ -1576,7 +1592,7 @@ keyword:
 	keyword: Gravestorm
 	match: Gravestorm
 	mode: expert
-	reminder: When you play this spell, copy it for each permanent put into a graveyard from this play this turn. You may choose new targets for the copies.
+	reminder: When you play this spell, copy it for each permanent put into a graveyard this turn. You may choose new targets for the copies.
 keyword:
 	keyword: Lifelink
 	match: Lifelink
@@ -1606,7 +1622,7 @@ keyword:
 	keyword: Frenzy
 	match: Frenzy <atom-param>number</atom-param>
 	mode: expert
-	reminder: Whenever this creature attacks and isn't blocked it gets +{param1}/+0 until end of turn.
+	reminder: Whenever this creature attacks and isn't blocked, it gets +{param1}/+0 until end of turn.
 keyword:
 	keyword: Delve
 	match: Delve
