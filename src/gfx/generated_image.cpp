@@ -93,7 +93,7 @@ Image SetCombineImage::generate(const Options& opt) const {
 	return image->generate(opt);
 }
 ImageCombine SetCombineImage::combine() const {
-	return image->combine();
+	return image_combine;
 }
 bool SetCombineImage::operator == (const GeneratedImage& that) const {
 	const SetCombineImage* that2 = dynamic_cast<const SetCombineImage*>(&that);
