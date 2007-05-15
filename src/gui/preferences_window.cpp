@@ -13,6 +13,7 @@
 #include <util/io/package_manager.hpp>
 #include <wx/spinctrl.h>
 #include <wx/filename.h>
+#include <wx/notebook.h>
 
 // ----------------------------------------------------------------------------- : Preferences pages
 

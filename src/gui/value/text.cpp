@@ -196,8 +196,8 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 			}
 			break;
 		default:
-//			if (ev.GetKeyCode() >= _(' ') /*&& ev.GetKeyCode() == (int)ev.GetRawKeyCode()*/) {
-			if (ev.GetKeyCode() >= _(' ') && ev.GetKeyCode() == (int)ev.GetRawKeyCode()) {
+			if (ev.GetKeyCode() >= _(' ') /*&& ev.GetKeyCode() == (int)ev.GetRawKeyCode()*/) {
+//			if (ev.GetKeyCode() >= _(' ') && ev.GetKeyCode() == (int)ev.GetRawKeyCode()) {
 				// TODO: Find a more correct way to determine normal characters,
 				//       this might not work for internationalized input.
 				//       It might also not be portable!

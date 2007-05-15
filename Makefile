@@ -82,6 +82,7 @@ am_magicseteditor_OBJECTS = ./src/render/text/viewer.$(OBJEXT) \
 	./src/gfx/resample_image.$(OBJEXT) \
 	./src/gfx/resample_text.$(OBJEXT) \
 	./src/gfx/mask_image.$(OBJEXT) \
+	./src/gfx/generated_image.$(OBJEXT) \
 	./src/gui/control/select_card_list.$(OBJEXT) \
 	./src/gui/control/graph.$(OBJEXT) \
 	./src/gui/control/image_card_list.$(OBJEXT) \
@@ -127,6 +128,7 @@ am_magicseteditor_OBJECTS = ./src/render/text/viewer.$(OBJEXT) \
 	./src/gui/print_window.$(OBJEXT) \
 	./src/gui/drop_down_list.$(OBJEXT) \
 	./src/gui/image_slice_window.$(OBJEXT) \
+	./src/gui/html_export_window.$(OBJEXT) \
 	./src/gui/images_export_window.$(OBJEXT) \
 	./src/script/script_manager.$(OBJEXT) \
 	./src/script/script.$(OBJEXT) \
@@ -169,6 +171,7 @@ am_magicseteditor_OBJECTS = ./src/render/text/viewer.$(OBJEXT) \
 	./src/data/statistics.$(OBJEXT) ./src/data/set.$(OBJEXT) \
 	./src/data/symbol_font.$(OBJEXT) \
 	./src/data/export_template.$(OBJEXT) \
+	./src/data/installer.$(OBJEXT) ./src/data/pack.$(OBJEXT) \
 	./src/util/io/get_member.$(OBJEXT) \
 	./src/util/io/reader.$(OBJEXT) \
 	./src/util/io/package_manager.$(OBJEXT) \
@@ -250,15 +253,15 @@ SET_MAKE =
 SHELL = /bin/bash
 STRIP = 
 VERSION = 0.3.0
-WX_CFLAGS = -I/usr/lib/wx/include/gtk2-unicode-release-2.6 -I/usr/include/wx-2.6 -DGTK_NO_CHECK_CASTS -D__WXGTK__ -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -DNO_GCC_PRAGMA 
-WX_CFLAGS_ONLY = 
+WX_CFLAGS = -I/usr/lib/wx/include/gtk2-unicode-release-2.8 -I/usr/include/wx-2.8 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXGTK__ -pthread
+WX_CFLAGS_ONLY = -pthread
 WX_CONFIG_PATH = /usr/bin/wx-config
-WX_CPPFLAGS = -I/usr/lib/wx/include/gtk2-unicode-release-2.6 -I/usr/include/wx-2.6 -DGTK_NO_CHECK_CASTS -D__WXGTK__ -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -DNO_GCC_PRAGMA
-WX_CXXFLAGS = -I/usr/lib/wx/include/gtk2-unicode-release-2.6 -I/usr/include/wx-2.6 -DGTK_NO_CHECK_CASTS -D__WXGTK__ -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -DNO_GCC_PRAGMA  
-WX_CXXFLAGS_ONLY = -I/usr/lib/wx/include/gtk2-unicode-release-2.6 -I/usr/include/wx-2.6 -DGTK_NO_CHECK_CASTS -D__WXGTK__ -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -DNO_GCC_PRAGMA
-WX_LIBS = -pthread   -lwx_gtk2u_xrc-2.6 -lwx_gtk2u_qa-2.6 -lwx_gtk2u_html-2.6 -lwx_gtk2u_adv-2.6 -lwx_gtk2u_core-2.6 -lwx_baseu_xml-2.6 -lwx_baseu_net-2.6 -lwx_baseu-2.6 
-WX_LIBS_STATIC =  -pthread    /usr/lib/libwx_gtk-2.4.a -L/usr/lib -lgtk -lgdk -rdynamic -lgmodule -lgthread -lglib -lpthread -ldl -lXi -lXext -lX11 -lm -lpng -ljpeg -ltiff -lz -ldl -lm 
-WX_VERSION = 2.6.3
+WX_CPPFLAGS = -I/usr/lib/wx/include/gtk2-unicode-release-2.8 -I/usr/include/wx-2.8 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXGTK__
+WX_CXXFLAGS = -I/usr/lib/wx/include/gtk2-unicode-release-2.8 -I/usr/include/wx-2.8 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXGTK__ -pthread
+WX_CXXFLAGS_ONLY = 
+WX_LIBS = -pthread   -lwx_gtk2u_aui-2.8 -lwx_gtk2u_xrc-2.8 -lwx_gtk2u_qa-2.8 -lwx_gtk2u_html-2.8 -lwx_gtk2u_adv-2.8 -lwx_gtk2u_core-2.8 -lwx_baseu_xml-2.8 -lwx_baseu_net-2.8 -lwx_baseu-2.8 
+WX_LIBS_STATIC = 
+WX_VERSION = 2.8.1
 ac_ct_CC = gcc
 ac_ct_CXX = g++
 am__fastdepCC_FALSE = #
@@ -300,8 +303,8 @@ target_alias =
 
 # This flag allows us to use subdirectories:
 AUTOMAKE_OPTIONS = subdir-objects
-AM_CXXFLAGS = -I/usr/lib/wx/include/gtk2-unicode-release-2.6 -I/usr/include/wx-2.6 -DGTK_NO_CHECK_CASTS -D__WXGTK__ -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -DNO_GCC_PRAGMA   -DUNICODE -I . -Wall
-AM_LDFLAGS = -pthread   -lwx_gtk2u_xrc-2.6 -lwx_gtk2u_qa-2.6 -lwx_gtk2u_html-2.6 -lwx_gtk2u_adv-2.6 -lwx_gtk2u_core-2.6 -lwx_baseu_xml-2.6 -lwx_baseu_net-2.6 -lwx_baseu-2.6 
+AM_CXXFLAGS = -I/usr/lib/wx/include/gtk2-unicode-release-2.8 -I/usr/include/wx-2.8 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXGTK__ -pthread -DUNICODE -I . -Wall
+AM_LDFLAGS = -pthread   -lwx_gtk2u_aui-2.8 -lwx_gtk2u_xrc-2.8 -lwx_gtk2u_qa-2.8 -lwx_gtk2u_html-2.8 -lwx_gtk2u_adv-2.8 -lwx_gtk2u_core-2.8 -lwx_baseu_xml-2.8 -lwx_baseu_net-2.8 -lwx_baseu-2.8 
 
 # The script used to generate is MakeAM. 
 magicseteditor_SOURCES = ./src/render/text/viewer.cpp \
@@ -318,7 +321,7 @@ magicseteditor_SOURCES = ./src/render/text/viewer.cpp \
 	./src/gfx/combine_image.cpp ./src/gfx/image_effects.cpp \
 	./src/gfx/polynomial.cpp ./src/gfx/blend_image.cpp \
 	./src/gfx/resample_image.cpp ./src/gfx/resample_text.cpp \
-	./src/gfx/mask_image.cpp \
+	./src/gfx/mask_image.cpp ./src/gfx/generated_image.cpp \
 	./src/gui/control/select_card_list.cpp \
 	./src/gui/control/graph.cpp \
 	./src/gui/control/image_card_list.cpp \
@@ -352,6 +355,7 @@ magicseteditor_SOURCES = ./src/render/text/viewer.cpp \
 	./src/gui/preferences_window.cpp ./src/gui/welcome_window.cpp \
 	./src/gui/print_window.cpp ./src/gui/drop_down_list.cpp \
 	./src/gui/image_slice_window.cpp \
+	./src/gui/html_export_window.cpp \
 	./src/gui/images_export_window.cpp \
 	./src/script/script_manager.cpp ./src/script/script.cpp \
 	./src/script/functions/basic.cpp \
@@ -380,7 +384,8 @@ magicseteditor_SOURCES = ./src/render/text/viewer.cpp \
 	./src/data/field.cpp ./src/data/keyword.cpp \
 	./src/data/stylesheet.cpp ./src/data/statistics.cpp \
 	./src/data/set.cpp ./src/data/symbol_font.cpp \
-	./src/data/export_template.cpp ./src/util/io/get_member.cpp \
+	./src/data/export_template.cpp ./src/data/installer.cpp \
+	./src/data/pack.cpp ./src/util/io/get_member.cpp \
 	./src/util/io/reader.cpp ./src/util/io/package_manager.cpp \
 	./src/util/io/package.cpp ./src/util/io/writer.cpp \
 	./src/util/rotation.cpp ./src/util/tagged_string.cpp \
@@ -551,6 +556,8 @@ src/gfx/$(DEPDIR)/$(am__dirstamp):
 	src/gfx/$(DEPDIR)/$(am__dirstamp)
 ./src/gfx/mask_image.$(OBJEXT): src/gfx/$(am__dirstamp) \
 	src/gfx/$(DEPDIR)/$(am__dirstamp)
+./src/gfx/generated_image.$(OBJEXT): src/gfx/$(am__dirstamp) \
+	src/gfx/$(DEPDIR)/$(am__dirstamp)
 src/gui/control/$(am__dirstamp):
 	@$(mkdir_p) ./src/gui/control
 	@: > src/gui/control/$(am__dirstamp)
@@ -693,6 +700,8 @@ src/gui/$(DEPDIR)/$(am__dirstamp):
 ./src/gui/drop_down_list.$(OBJEXT): src/gui/$(am__dirstamp) \
 	src/gui/$(DEPDIR)/$(am__dirstamp)
 ./src/gui/image_slice_window.$(OBJEXT): src/gui/$(am__dirstamp) \
+	src/gui/$(DEPDIR)/$(am__dirstamp)
+./src/gui/html_export_window.$(OBJEXT): src/gui/$(am__dirstamp) \
 	src/gui/$(DEPDIR)/$(am__dirstamp)
 ./src/gui/images_export_window.$(OBJEXT): src/gui/$(am__dirstamp) \
 	src/gui/$(DEPDIR)/$(am__dirstamp)
@@ -842,6 +851,10 @@ src/data/$(DEPDIR)/$(am__dirstamp):
 	src/data/$(DEPDIR)/$(am__dirstamp)
 ./src/data/export_template.$(OBJEXT): src/data/$(am__dirstamp) \
 	src/data/$(DEPDIR)/$(am__dirstamp)
+./src/data/installer.$(OBJEXT): src/data/$(am__dirstamp) \
+	src/data/$(DEPDIR)/$(am__dirstamp)
+./src/data/pack.$(OBJEXT): src/data/$(am__dirstamp) \
+	src/data/$(DEPDIR)/$(am__dirstamp)
 src/util/io/$(am__dirstamp):
 	@$(mkdir_p) ./src/util/io
 	@: > src/util/io/$(am__dirstamp)
@@ -925,8 +938,10 @@ mostlyclean-compile:
 	-rm -f ./src/data/format/mtg_editor.$(OBJEXT)
 	-rm -f ./src/data/format/mws.$(OBJEXT)
 	-rm -f ./src/data/game.$(OBJEXT)
+	-rm -f ./src/data/installer.$(OBJEXT)
 	-rm -f ./src/data/keyword.$(OBJEXT)
 	-rm -f ./src/data/locale.$(OBJEXT)
+	-rm -f ./src/data/pack.$(OBJEXT)
 	-rm -f ./src/data/set.$(OBJEXT)
 	-rm -f ./src/data/settings.$(OBJEXT)
 	-rm -f ./src/data/statistics.$(OBJEXT)
@@ -937,6 +952,7 @@ mostlyclean-compile:
 	-rm -f ./src/gfx/blend_image.$(OBJEXT)
 	-rm -f ./src/gfx/color.$(OBJEXT)
 	-rm -f ./src/gfx/combine_image.$(OBJEXT)
+	-rm -f ./src/gfx/generated_image.$(OBJEXT)
 	-rm -f ./src/gfx/image_effects.$(OBJEXT)
 	-rm -f ./src/gfx/mask_image.$(OBJEXT)
 	-rm -f ./src/gfx/polynomial.$(OBJEXT)
@@ -960,6 +976,7 @@ mostlyclean-compile:
 	-rm -f ./src/gui/control/select_card_list.$(OBJEXT)
 	-rm -f ./src/gui/control/text_ctrl.$(OBJEXT)
 	-rm -f ./src/gui/drop_down_list.$(OBJEXT)
+	-rm -f ./src/gui/html_export_window.$(OBJEXT)
 	-rm -f ./src/gui/icon_menu.$(OBJEXT)
 	-rm -f ./src/gui/image_slice_window.$(OBJEXT)
 	-rm -f ./src/gui/images_export_window.$(OBJEXT)
@@ -1046,8 +1063,10 @@ include ./src/data/$(DEPDIR)/export_template.Po
 include ./src/data/$(DEPDIR)/field.Po
 include ./src/data/$(DEPDIR)/font.Po
 include ./src/data/$(DEPDIR)/game.Po
+include ./src/data/$(DEPDIR)/installer.Po
 include ./src/data/$(DEPDIR)/keyword.Po
 include ./src/data/$(DEPDIR)/locale.Po
+include ./src/data/$(DEPDIR)/pack.Po
 include ./src/data/$(DEPDIR)/set.Po
 include ./src/data/$(DEPDIR)/settings.Po
 include ./src/data/$(DEPDIR)/statistics.Po
@@ -1081,6 +1100,7 @@ include ./src/gfx/$(DEPDIR)/bezier.Po
 include ./src/gfx/$(DEPDIR)/blend_image.Po
 include ./src/gfx/$(DEPDIR)/color.Po
 include ./src/gfx/$(DEPDIR)/combine_image.Po
+include ./src/gfx/$(DEPDIR)/generated_image.Po
 include ./src/gfx/$(DEPDIR)/image_effects.Po
 include ./src/gfx/$(DEPDIR)/mask_image.Po
 include ./src/gfx/$(DEPDIR)/polynomial.Po
@@ -1090,6 +1110,7 @@ include ./src/gfx/$(DEPDIR)/rotate_image.Po
 include ./src/gui/$(DEPDIR)/about_window.Po
 include ./src/gui/$(DEPDIR)/card_select_window.Po
 include ./src/gui/$(DEPDIR)/drop_down_list.Po
+include ./src/gui/$(DEPDIR)/html_export_window.Po
 include ./src/gui/$(DEPDIR)/icon_menu.Po
 include ./src/gui/$(DEPDIR)/image_slice_window.Po
 include ./src/gui/$(DEPDIR)/images_export_window.Po

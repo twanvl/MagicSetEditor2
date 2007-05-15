@@ -10,7 +10,7 @@ AC_INIT(magicseteditor, 0.3.0, twanvl@users.sourceforge.net)
 AC_CONFIG_SRCDIR([src/main.cpp])
 # TODO: Actually use the config header
 AC_CONFIG_HEADER([src/config.h])
-CXXFLAGS = [-g3 -O0]
+CXXFLAGS = [-g3 -O0 ]
 
 AM_INIT_AUTOMAKE([-Wall foreign])
 
@@ -22,7 +22,7 @@ AC_PROG_CXX
 
 # Check for wxWidgets
 AM_OPTIONS_WXCONFIG
-AM_PATH_WXCONFIG(2.6.0,wxWin=1)
+AM_PATH_WXCONFIG(2.8.0,wxWin=1)
 if test "$wxWin" != 1; then
     AC_MSG_ERROR([
        wxWindows must be installed on your system

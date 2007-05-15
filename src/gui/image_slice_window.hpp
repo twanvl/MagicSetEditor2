@@ -10,6 +10,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <wx/spinctrl.h>
 
 class ImageSlicePreview;
 class ImageSliceSelector;

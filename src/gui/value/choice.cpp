@@ -12,6 +12,7 @@
 #include <data/action/value.hpp>
 #include <data/stylesheet.hpp>
 #include <script/image.hpp>
+#include <wx/imaglist.h>
 
 DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
 

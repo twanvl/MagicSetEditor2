@@ -12,6 +12,7 @@
 #include <data/game.hpp>
 #include <data/card.hpp>
 #include <gfx/gfx.hpp>
+#include <wx/imaglist.h>
 
 DECLARE_TYPEOF_COLLECTION(FieldP);
 

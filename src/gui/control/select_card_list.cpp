@@ -9,6 +9,7 @@
 #include <gui/control/select_card_list.hpp>
 #include <gui/util.hpp>
 #include <data/card.hpp>
+#include <wx/imaglist.h>
 
 DECLARE_TYPEOF_COLLECTION(CardP);
 
