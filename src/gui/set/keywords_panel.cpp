@@ -131,6 +131,9 @@ void KeywordsPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->DeleteTool(ID_KEYWORD_REMOVE);
 	// Menus
 	mb->Remove(2);
+	
+	// This is also a good moment to propagate changes
+	if (set) set->updateDelayed();
 }
 
 void KeywordsPanel::onUpdateUI(wxUpdateUIEvent& ev) {

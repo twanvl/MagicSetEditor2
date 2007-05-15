@@ -84,6 +84,7 @@ Context& SetScriptContext::getContext(const CardP& card) {
 
 SetScriptManager::SetScriptManager(Set& set)
 	: SetScriptContext(set)
+	, delay(0)
 {
 	// add as an action listener for the set, so we receive actions
 	set.actions.addListener(this);
@@ -143,7 +144,7 @@ void SetScriptManager::onAction(const Action& action, bool undone) {
 				value->keyword.prepare(set.game->keyword_parameter_types, true);
 				set.keyword_db.clear();
 			}
-			updateAllDependend(set.game->dependent_scripts_keywords);
+			delay |= DELAY_KEYWORDS;
 			return;
 		}
 		// find the affected card
@@ -197,6 +198,13 @@ void SetScriptManager::updateStyles(const CardP& card) {
 			s->tellListeners();
 		}
 	}
+}
+
+void SetScriptManager::updateDelayed() {
+	if (delay & DELAY_KEYWORDS) {
+		updateAllDependend(set.game->dependent_scripts_keywords);
+	}
+	delay = 0;
 }
 
 void SetScriptManager::updateValue(Value& value, const CardP& card) {

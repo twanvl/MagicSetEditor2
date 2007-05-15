@@ -58,8 +58,11 @@ class SetScriptManager : public SetScriptContext, public ActionListener {
 	SetScriptManager(Set& set);
 	~SetScriptManager();
 	
-	// Update all styles for a particular card
+	/// Update all styles for a particular card
 	void updateStyles(const CardP& card);
+	
+	/// Update expensive things that were previously delayed
+	void updateDelayed();
 	
 	/// Update all fields of all cards
 	/** Update all set info fields
@@ -92,6 +95,13 @@ class SetScriptManager : public SetScriptContext, public ActionListener {
 	void updateToUpdate(const ToUpdate& u, deque<ToUpdate>& to_update, Age starting_age);
 	/// Schedule all things in deps to be updated by adding them to to_update
 	void alsoUpdate(deque<ToUpdate>& to_update, const vector<Dependency>& deps, const CardP& card);
+	
+	/// Delayed update for (bitmask)...
+	enum Delay
+	{	DELAY_KEYWORDS = 0x01
+	,	DELAY_CARDS    = 0x02
+	};
+	int delay;
 	
   protected:
 	/// Respond to actions by updating scripts

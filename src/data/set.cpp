@@ -56,6 +56,9 @@ Context& Set::getContext(const CardP& card) {
 void Set::updateFor(const CardP& card) {
 	script_manager->updateStyles(card);
 }
+void Set::updateDelayed() {
+	script_manager->updateDelayed();
+}
 
 Context& Set::getContextForThumbnails() {
 	assert(!wxThread::IsMain());

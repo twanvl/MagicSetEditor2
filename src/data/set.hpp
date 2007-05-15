@@ -68,6 +68,8 @@ class Set : public Packaged {
 	Context& getContext(const CardP& card);
 	/// Update styles for a card
 	void updateFor(const CardP& card);
+	/// Update scripts that were delayed
+	void updateDelayed();
 	/// A context for performing scripts
 	/** Should only be used from the thumbnail thread! */
 	Context& getContextForThumbnails();
