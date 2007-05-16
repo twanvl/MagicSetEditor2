@@ -160,7 +160,15 @@ inline shared_ptr<T> new_shared9(const A0& a0, const A1& a1, const A2& a2, const
 	template <typename T> class IntrusivePtrBase {
 	  public:
 		inline IntrusivePtrBase()                        : ref_count(0) {}
-		inline IntrusivePtrBase(const IntrusivePtrBase&) : ref_count(0) {} // don't copy construct the reference count!
+		// don't copy construct the reference count!
+		inline IntrusivePtrBase(const IntrusivePtrBase&) : ref_count(0) {}
+		// don't assign the reference count!
+		inline void operator = (const IntrusivePtrBase&) { }
+	  protected:
+		/// Delete this object, can be overloaded
+		inline void destroy() {
+			delete static_cast<T*>(this);
+		}
 	  private:
 		AtomicInt ref_count;
 		template <typename T> friend void intrusive_ptr_add_ref(IntrusivePtrBase*);
@@ -172,7 +180,7 @@ inline shared_ptr<T> new_shared9(const A0& a0, const A1& a1, const A2& a2, const
 	}
 	template <typename T> inline void intrusive_ptr_release(IntrusivePtrBase<T>* p) {
 		if (--p->ref_count == 0) {
-			delete static_cast<T*>(p);
+			static_cast<T*>(p)->destroy();
 		}
 	}
 	
@@ -187,31 +195,16 @@ inline shared_ptr<T> new_shared9(const A0& a0, const A1& a1, const A2& a2, const
 	// ----------------------------------------------------------------------------- : Intrusive pointer base : with delete
 	
 	/// Base class for objects wishing to use intrusive_ptrs, using a manual delete function
-	class IntrusivePtrBaseWithDelete {
+	class IntrusivePtrBaseWithDelete : public IntrusivePtrBase<IntrusivePtrBaseWithDelete> {
 	  public:
-		inline IntrusivePtrBaseWithDelete() : ref_count(0) {}
-		inline IntrusivePtrBaseWithDelete(const IntrusivePtrBaseWithDelete&)
-			: ref_count(0) {} // don't copy construct the reference count!
 		virtual ~IntrusivePtrBaseWithDelete() {}
 	  protected:
 		/// Delete this object
 		virtual void destroy() {
 			delete this;
 		}
-	  private:
-		AtomicInt ref_count;
-		friend void intrusive_ptr_add_ref(IntrusivePtrBaseWithDelete*);
-		friend void intrusive_ptr_release(IntrusivePtrBaseWithDelete*);
+		template <typename T> friend void intrusive_ptr_release(IntrusivePtrBase<T>*);
 	};
-	
-	inline void intrusive_ptr_add_ref(IntrusivePtrBaseWithDelete* p) {
-		++p->ref_count;
-	}
-	inline void intrusive_ptr_release(IntrusivePtrBaseWithDelete* p) {
-		if (--p->ref_count == 0) {
-			p->destroy();
-		}
-	}
 	
 #else
 	#define DECLARE_POINTER_TYPE DECLARE_SHARED_POINTER_TYPE
@@ -235,7 +228,7 @@ inline shared_ptr<T> new_shared9(const A0& a0, const A1& a1, const A2& a2, const
 		virtual ~IntrusivePtrVirtualBase() {}
 	};
 	
-	class IntrusivePtrBaseWithDelete {
+	class IntrusivePtrBaseWithDelete : public IntrusivePtrBase<IntrusivePtrBaseWithDelete> {
 	  public:
 		virtual ~IntrusivePtrBaseWithDelete() {}
 	  protected:
