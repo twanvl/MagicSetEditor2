@@ -117,7 +117,7 @@ card style:
 		padding bottom: 0
 		z index: 1
 		font:
-			name: MagicMedieval
+			name: MPlantin
 			size: 14
 			color: rgb(255,255,255)
 			shadow color: rgb(0,0,0)
