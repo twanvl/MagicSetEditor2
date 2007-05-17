@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
 #include <util/defaultable.hpp>
+#include <util/alignment.hpp>
 #include <script/script.hpp>
 #include <script/context.hpp>
 #include <script/parser.hpp>
@@ -29,6 +30,7 @@ void store(const ScriptValueP& val, bool&   var);
 void store(const ScriptValueP& val, Color&  var);
 void store(const ScriptValueP& val, Defaultable<String>& var);
 void store(const ScriptValueP& val, Defaultable<Color>&  var);
+void store(const ScriptValueP& val, Alignment& var);
 
 // ----------------------------------------------------------------------------- : OptionalScript
 

@@ -12,6 +12,8 @@
 #include <script/script.hpp>
 #include <script/value.hpp>
 
+Alignment from_string(const String&);
+
 // ----------------------------------------------------------------------------- : Store
 
 void store(const ScriptValueP& val, String& var)              { var = val->toString(); }
@@ -21,6 +23,7 @@ void store(const ScriptValueP& val, bool&   var)              { var = static_cas
 void store(const ScriptValueP& val, Color&  var)              { var = *val; }
 void store(const ScriptValueP& val, Defaultable<String>& var) { var.assign(*val); }
 void store(const ScriptValueP& val, Defaultable<Color>& var)  { var.assign(*val); }
+void store(const ScriptValueP& val, Alignment& var)           { var = from_string(val->toString()); }
 
 // ----------------------------------------------------------------------------- : OptionalScript
 

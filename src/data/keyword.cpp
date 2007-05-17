@@ -637,6 +637,7 @@ String KeywordDatabase::expand(const String& text,
 
 ScriptType KeywordParamValue::type() const { return SCRIPT_STRING; }
 String KeywordParamValue::typeName() const { return _("keyword parameter"); }
+
 KeywordParamValue::operator String() const {
 	String safe_type = replace_all(replace_all(replace_all(type_name,
 							_("("),_("-")),
@@ -644,6 +645,12 @@ KeywordParamValue::operator String() const {
 							_(" "),_("-"));
 	return _("<param-") + safe_type + _(">") + value  + _("</param-") + safe_type + _(">");
 }
+
+KeywordParamValue::operator int()    const { return *to_script(value); } // a bit of a hack
+KeywordParamValue::operator double() const { return *to_script(value); }
+KeywordParamValue::operator Color()  const { return *to_script(value); }
+int KeywordParamValue::itemCount()   const { return  to_script(value)->itemCount(); }
+
 ScriptValueP KeywordParamValue::getMember(const String& name) const {
 	if (name == _("type"))             return to_script(type_name);
 	if (name == _("separator before")) return to_script(separator_before);

@@ -66,8 +66,8 @@ class TextStyle : public Style {
 	SymbolFontRef symbol_font;					///< Symbol font for symbols in the text
 	bool always_symbol;							///< Should everything be drawn as symbols?
 	bool allow_formating;						///< Is formating (bold/italic/..) allowed?
-	Alignment alignment;						///< Alignment inside the box
-	int angle;									///< Angle of the text inside the box
+	Scriptable<Alignment> alignment;			///< Alignment inside the box
+	Scriptable<int> angle;						///< Angle of the text inside the box
 	double padding_left,   padding_left_min;	///< Padding
 	double padding_right,  padding_right_min;	///< Padding
 	double padding_top,    padding_top_min;		///< Padding
