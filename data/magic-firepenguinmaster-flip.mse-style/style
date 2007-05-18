@@ -119,9 +119,9 @@ card style:
 			size: 20
 			color: rgb(0,0,0)
 	casting cost:
-		left: 32
+		left: 17
 		top : 150
-		width: 10
+		width: 25
 		height: 195
 		alignment: top right
 		direction: vertical
@@ -160,7 +160,7 @@ card style:
 	casting cost 2:
 		left: 334
 		top : 170
-		width: 10
+		width: 25
 		height: 170
 		alignment: top right
 		direction: vertical
@@ -335,16 +335,6 @@ card style:
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
 			shadow displacement y: 1
-	ptsymbols:
-		left:	24
-		top:	340
-		width:	19
-		height:	103
-		z index: 1
-		visible: { card.power != "" or card.toughness != "" }
-		render style: image
-		choice images:
-			shieldsword: ptshieldsword.png
 	power 2:
 		z index: 4
 		left:	334
@@ -377,16 +367,6 @@ card style:
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
 			shadow displacement y: 1
-	ptsymbols 2:
-		left:	333
-		top:	58
-		width:	19
-		height:	103
-		z index: 1
-		visible: { card.power_2 != "" or card.toughness_2 != "" }
-		render style: image
-		choice images:
-			shieldsword: ptshieldsword-2.png
 
 	############################# Copyright stuff
 	illustrator:
@@ -414,3 +394,36 @@ card style:
 			name: MPlantin
 			size: 7
 			color: { font_color() }
+
+############################################################## Extra card fields
+
+extra card field:
+	type: choice
+	name: pt symbols
+	script: "shieldsword"
+extra card field:
+	type: choice
+	name: pt symbols 2
+	script: "shieldsword"
+
+extra card style:
+	pt symbols:
+		left:	24
+		top:	340
+		width:	19
+		height:	103
+		z index: 1
+		visible: { card.power != "" or card.toughness != "" }
+		render style: image
+		choice images:
+			shieldsword: ptshieldsword.png
+	pt symbols 2:
+		left:	333
+		top:	58
+		width:	19
+		height:	103
+		z index: 1
+		visible: { card.power_2 != "" or card.toughness_2 != "" }
+		render style: image
+		choice images:
+			shieldsword: ptshieldsword-2.png

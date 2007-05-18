@@ -234,17 +234,6 @@ card style:
 			color: rgb(0,0,0)
 			separator color: rgb(200,0,0)
 
-	pt box:
-		left:	271
-		top:	461
-		width:	81
-		height:	42
-		z index: 1
-		visible: { card.pt != "" }
-		render style: image
-		mask: mask_pt.png
-		include file: magic-blends.mse-include/card-ptboxes
-
 	############################# Copyright stuff
 
 	illustrator:
@@ -268,3 +257,22 @@ card style:
 			name: MPlantin
 			size: 6
 			color: { font_color() }
+
+############################################################## Extra card fields
+
+extra card field:
+	type: choice
+	name: pt box
+	script: card.card_color
+
+extra card style:
+	pt box:
+		left:	271
+		top:	461
+		width:	81
+		height:	42
+		z index: 1
+		visible: { card.pt != "" }
+		render style: image
+		mask: mask_pt.png
+		include file: magic-blends.mse-include/card-ptboxes

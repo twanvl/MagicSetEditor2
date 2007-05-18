@@ -44,7 +44,11 @@ class IndexMap : private vector<Value> {
 	/// Initialize this map with default values given a list of keys
 	/** has no effect if already initialized with the given keys */
 	bool init(const vector<Key>& keys) {
-		if (this->size() == keys.size() && (this->empty() || get_key(this->front()) == keys.front())) return false;
+		if (!this->empty() && (keys.empty() || get_key(this->front()) != keys.front())) {
+			// switch to different keys
+			clear();
+		}
+		if (this->size() == keys.size()) return false;
 		this->reserve(keys.size());
 		for(typename vector<Key>::const_iterator it = keys.begin() ; it != keys.end() ; ++it) {
 			const Key& key = *it;

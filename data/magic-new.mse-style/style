@@ -92,6 +92,11 @@ styling field:
 	choice: modern
 	choice: old
 	choice: diagonal T
+styling field:
+	type: boolean
+	name: center short text
+	description: Center the text on cards with short rule text and no flavor text.
+	initial: yes
 
 styling style:
 	artifact style:
@@ -235,7 +240,13 @@ card style:
 					then "magic-mana-large"
 					else "magic-mana-small"
 			size: 14
-		alignment: middle left
+		alignment:
+			script:
+				if styling.center_short_text and
+				   not contains(match:"\n", card.rule_text) and
+				   card.flavor_text == "<i-flavor></i-flavor>"
+				then "middle center"
+				else "middle left"
 		z index: 2
 		padding left:   6
 		padding top:    2
@@ -269,16 +280,6 @@ card style:
 			color: rgb(0,0,0)
 			separator color: rgb(200,0,0)
 
-	pt box:
-		left:	271
-		top:	461
-		width:	81
-		height:	42
-		z index: 1
-		visible: { card.pt != "" }
-		render style: image
-		include file: magic-blends.mse-include/card-ptboxes
-
 	############################# Card sorting / numbering
 	############################# Copyright stuff
 
@@ -304,3 +305,21 @@ card style:
 			name: MPlantin
 			size: 6.5
 			color: { font_color() }
+
+############################################################## Extra card fields
+
+extra card field:
+	type: choice
+	name: pt box
+	script: card.card_color
+
+extra card style:
+	pt box:
+		left:	271
+		top:	461
+		width:	81
+		height:	42
+		z index: 1
+		visible: { card.pt != "" }
+		render style: image
+		include file: magic-blends.mse-include/card-ptboxes

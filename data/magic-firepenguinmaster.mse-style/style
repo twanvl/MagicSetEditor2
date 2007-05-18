@@ -141,9 +141,9 @@ card style:
 			size: 20
 			color: rgb(0,0,0)
 	casting cost:
-		left: 35
+		left: 18
 		top : 55
-		width: 10
+		width: 27
 		height: 250
 		direction: vertical
 		alignment: top right
@@ -271,16 +271,6 @@ card style:
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
 			shadow displacement y: 1
-	ptsymbols:
-		left:	25
-		top:	362
-		width:	19
-		height:	103
-		z index: 1
-		visible: { card.power != "" or card.toughness != "" }
-		render style: image
-		choice images:
-			shieldsword: ptshieldsword.png
 
 	############################# Card sorting / numbering
 	############################# Copyright stuff
@@ -311,3 +301,22 @@ card style:
 			name: MPlantin
 			size: 7
 			color: { font_color() }
+
+############################################################## Extra card fields
+
+extra card field:
+	type: choice
+	name: pt symbols
+	script: "shieldsword"
+
+extra card style:
+	pt symbols:
+		left:	25
+		top:	362
+		width:	19
+		height:	103
+		z index: 1
+		visible: { card.power != "" or card.toughness != "" }
+		render style: image
+		choice images:
+			shieldsword: ptshieldsword.png

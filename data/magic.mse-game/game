@@ -720,14 +720,6 @@ card field:
 	type: text
 	name: toughness
 	icon: stats/toughness.png
-#needed for FPM temps
-card field:
-	type: choice
-	name: ptsymbols
-	choice: shieldsword
-	editable: false
-	save value: false
-	show statistics: false
 card field:
 	type: text
 	name: pt
@@ -745,15 +737,6 @@ card field:
 	card list width: 50
 	card list name: P/T
 	description: Power/toughness
-	show statistics: false
-
-card field: # box for power/toughness
-	type: choice
-	name: pt box
-	include file: magic-blends.mse-include/card-colors
-	script: card.card_color
-	editable: false
-	save value: false
 	show statistics: false
 
 ############################# Card sorting / numbering
@@ -920,14 +903,6 @@ card field:
 	name: toughness 2
 	icon: stats/toughness.png
 	show statistics: false
-#needed for FPM temps
-card field:
-	type: choice
-	name: ptsymbols 2
-	choice: shieldsword
-	editable: false
-	save value: false
-	show statistics: false
 card field:
 	type: text
 	name: pt 2
@@ -942,23 +917,6 @@ card field:
 		)
 	card list width: 50
 	card list name: P/T2
-	show statistics: false
-card field:
-	type: choice
-	name: pt box 2
-	include file: magic-blends.mse-include/card-colors
-	script: card.card_color_2
-	editable: false
-	save value: false
-	show statistics: false
-card field:
-	# Another pt box witht the same value as pt box 1
-	type: choice
-	name: pt box 1b
-	include file: magic-blends.mse-include/card-colors
-	script: card.card_color
-	editable: false
-	save value: false
 	show statistics: false
 card field:
 	type: text

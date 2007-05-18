@@ -357,26 +357,6 @@ card style:
 			color: rgb(0,0,0)
 			separator color: rgb(200,0,0)
 	
-	pt box:
-		left:	194
-		top:	326
-		width:	56
-		height:	29
-		z index: 1
-		visible: { card.pt != "" }
-		render style: image
-		include file: magic-blends.mse-include/card-ptboxes
-
-	pt box 2:
-		left:	445
-		top:	326
-		width:	56
-		height:	29
-		z index: 1
-		visible: { card.pt_2 != "" }
-		render style: image
-		include file: magic-blends.mse-include/card-ptboxes
-		
 	############################# Card sorting / numbering
 	############################# Copyright stuff
 
@@ -423,3 +403,36 @@ card style:
 			name: MPlantin
 			size: 6
 			color: { font_color_2() }
+
+############################################################## Extra card fields
+
+extra card field:
+	type: choice
+	name: pt box
+	script: card.card_color
+
+extra card field:
+	type: choice
+	name: pt box 2
+	script: card.card_color_2
+
+extra card style:
+	pt box:
+		left:	194
+		top:	326
+		width:	56
+		height:	29
+		z index: 1
+		visible: { card.pt != "" }
+		render style: image
+		include file: magic-blends.mse-include/card-ptboxes
+
+	pt box 2:
+		left:	445
+		top:	326
+		width:	56
+		height:	29
+		z index: 1
+		visible: { card.pt_2 != "" }
+		render style: image
+		include file: magic-blends.mse-include/card-ptboxes
