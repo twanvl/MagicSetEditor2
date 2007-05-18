@@ -15,6 +15,6 @@ AM_LDFLAGS  = @WX_LIBS@
 
 magicseteditor_SOURCES = 
 
-# The script used to generate is MakeAM. " > Makefile.am;
+# The script used to generate is MakeAM.sh " > Makefile.am;
 
 find . -name *.cpp | sed "s/\./magicseteditor_SOURCES += ./" >> Makefile.am;

@@ -33,16 +33,21 @@ Image ScriptableImage::generate(const GeneratedImage::Options& options, bool cac
 		// cached, so we are done
 		return cached;
 	}
-	// generate
-	Image image;
+	// generate blank image
+	Image image(1,1);
+	image.InitAlpha();
+	image.SetAlpha(0,0,0);
 	if (isReady()) {
-		image = value->generate(options);
-	} else {
-		// error, return blank image
-		Image i(1,1);
-		i.InitAlpha();
-		i.SetAlpha(0,0,0);
-		image = i;
+		try {
+			image = value->generate(options);
+		}
+		catch (FileNotFoundError e) {
+			handle_error (e);
+			return image;
+		}
+	}
+	else {
+		return image;
 	}
 	// resize?
 	int iw = image.GetWidth(), ih = image.GetHeight();

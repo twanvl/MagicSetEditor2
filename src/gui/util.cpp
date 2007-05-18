@@ -116,7 +116,7 @@ wxIcon load_resource_icon(const String& name) {
 	#if defined(__WXMSW__)
 		return wxIcon(_("icon/") + name);
 	#else
-		static String path = wxStandardPaths::Get().GetDataDir() + _("/icon/");
+		static String path = wxStandardPaths::Get().GetDataDir() + _("/resource/icon/");
 		return wxIcon(path + name + _(".ico"), wxBITMAP_TYPE_ICO);
 	#endif
 }

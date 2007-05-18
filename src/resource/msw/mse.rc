@@ -8,7 +8,7 @@
 
 // -------------------------------------------------------- : Icons
 
-icon/app				ICON	"icon/mse.ico" // has to come first in alphabet!!
+icon/app				ICON	"icon/app.ico" // has to come first in alphabet!!
 icon/export				ICON	"icon/set.ico" //todo
 icon/game				ICON	"icon/set.ico" //todo
 icon/set				ICON	"icon/set.ico"
@@ -163,7 +163,7 @@ FILETYPE VFT_APP
       VALUE "License",				"GNU General Public License 2 or later; This is free software, and you are welcome to redistribute it under certain conditions; See the help file for details"
       VALUE "FileDescription",		"Magic Set Editor"
       VALUE "InternalName",			"mse2/8"
-      VALUE "LegalCopyright",		"© 2001-2007 Twan van Laarhoven"
+      VALUE "LegalCopyright",		"ï¿½ 2001-2007 Twan van Laarhoven"
       VALUE "ProductName",			"Magic Set Editor"
     }
   }
