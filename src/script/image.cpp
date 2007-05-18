@@ -33,21 +33,20 @@ Image ScriptableImage::generate(const GeneratedImage::Options& options, bool cac
 		// cached, so we are done
 		return cached;
 	}
-	// generate blank image
-	Image image(1,1);
-	image.InitAlpha();
-	image.SetAlpha(0,0,0);
+	// generate
+	Image image;
 	if (isReady()) {
-		try {
-			image = value->generate(options);
-		}
-		catch (FileNotFoundError e) {
-			handle_error (e);
-			return image;
-		}
-	}
-	else {
-		return image;
+		// note: Don't catch exceptions here, we don't want to return an invalid image.
+		//       We could return a blank one, but the thumbnail code does want an invalid
+		//       image in case of errors.
+		//       This allows the caller to catch errors.
+		image = value->generate(options);
+	} else {
+		// error, return blank image
+		Image i(1,1);
+		i.InitAlpha();
+		i.SetAlpha(0,0,0);
+		image = i;
 	}
 	// resize?
 	int iw = image.GetWidth(), ih = image.GetHeight();

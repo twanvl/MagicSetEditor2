@@ -43,7 +43,9 @@ Image ChoiceThumbnailRequest::generate() {
 	ChoiceValueEditor& cve = *(ChoiceValueEditor*)owner;
 	String name = cannocial_name_form(cve.field().choices->choiceName(id));
 	ScriptableImage& img = cve.style().choice_images[name];
-	return img.generate(GeneratedImage::Options(16,16, stylesheet.get(), &cve.getSet(), ASPECT_BORDER, true), false);
+	return img.isReady()
+		? img.generate(GeneratedImage::Options(16,16, stylesheet.get(), &cve.getSet(), ASPECT_BORDER, true), false)
+		: wxImage();
 }
 
 void ChoiceThumbnailRequest::store(const Image& img) {
