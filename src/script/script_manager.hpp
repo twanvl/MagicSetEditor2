@@ -21,6 +21,8 @@ class Value;
 DECLARE_POINTER_TYPE(Game);
 DECLARE_POINTER_TYPE(StyleSheet);
 DECLARE_POINTER_TYPE(Card);
+DECLARE_POINTER_TYPE(Field);
+DECLARE_POINTER_TYPE(Style);
 
 // ----------------------------------------------------------------------------- : SetScriptContext
 
@@ -76,6 +78,8 @@ class SetScriptManager : public SetScriptContext, public ActionListener {
 	void initDependencies(Context&, Game&);
 	void initDependencies(Context&, StyleSheet&);
 	
+	/// Update a map of styles
+	void updateStyles(Context& ctx, const IndexMap<FieldP,StyleP>& styles);
 	/// Updates scripts, starting at some value
 	/** if the value changes any dependend values are updated as well */
 	void updateValue(Value& value, const CardP& card);

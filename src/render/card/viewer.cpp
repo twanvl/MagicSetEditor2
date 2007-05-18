@@ -41,10 +41,14 @@ void DataViewer::draw(RotatedDC& dc, const Color& background) {
 	clearDC(dc.getDC(), background);
 	// update style scripts
 	try {
-		Context& ctx = getContext();
-		FOR_EACH(v, viewers) {
-			if (v->getStyle()->update(ctx)) {
-				v->getStyle()->tellListeners();
+		if (card) {
+			set->updateStyles(card);
+		} else {
+			Context& ctx = getContext();
+			FOR_EACH(v, viewers) {
+				if (v->getStyle()->update(ctx)) {
+					v->getStyle()->tellListeners();
+				}
 			}
 		}
 	} catch (const Error& e) {
@@ -91,8 +95,9 @@ void DataViewer::setCard(const CardP& card, bool refresh) {
 	assert(set);
 	this->card = card;
 	stylesheet = new_stylesheet;
-	setStyles(stylesheet, stylesheet->card_style);
-	setData(card->data);
+	setStyles(stylesheet, stylesheet->card_style, &stylesheet->extra_card_style);
+	card->extra_data.init(stylesheet->extra_card_fields); // make sure extra_data is initialized
+	setData(card->data, &card->extra_data);
 	onChangeSize();
 }
 
@@ -111,7 +116,7 @@ struct CompareViewer {
 	}
 };
 
-void DataViewer::setStyles(const StyleSheetP& stylesheet, IndexMap<FieldP,StyleP>& styles) {
+void DataViewer::setStyles(const StyleSheetP& stylesheet, IndexMap<FieldP,StyleP>& styles, IndexMap<FieldP,StyleP>* extra_styles) {
 	if (!viewers.empty() && styles.contains(viewers.front()->getStyle())) {
 		// already using these styles
 		return;
@@ -119,6 +124,13 @@ void DataViewer::setStyles(const StyleSheetP& stylesheet, IndexMap<FieldP,StyleP
 	this->stylesheet = stylesheet;
 	// create viewers
 	viewers.clear();
+	addStyles(styles);
+	if (extra_styles) addStyles(*extra_styles);
+	// sort viewers by z-index of style
+	stable_sort(viewers.begin(), viewers.end(), CompareViewer());
+	onInit();
+}
+void DataViewer::addStyles(IndexMap<FieldP,StyleP>& styles) {
 	FOR_EACH(s, styles) {
 		if ((s->visible || s->visible.isScripted()) &&
 		    nativeLook() || (
@@ -129,14 +141,21 @@ void DataViewer::setStyles(const StyleSheetP& stylesheet, IndexMap<FieldP,StyleP
 			if (viewer) viewers.push_back(viewer);
 		}
 	}
-	// sort viewers by z-index of style
-	stable_sort(viewers.begin(), viewers.end(), CompareViewer());
-	onInit();
 }
 
-void DataViewer::setData(IndexMap<FieldP,ValueP>& values) {
+void DataViewer::setData(IndexMap<FieldP,ValueP>& values, IndexMap<FieldP,ValueP>* extra_values) {
 	FOR_EACH(v, viewers) {
-		v->setValue(values[v->getField()]);
+		// is this field contained in values?
+		ValueP val = values.tryGet(v->getField());
+		if (val) {
+			v->setValue(val);
+		} else {
+			// if it is not in values it should be in extra values
+			assert(extra_values);
+			val = extra_values->tryGet(v->getField());
+			assert(val);
+			v->setValue(val);
+		}
 	}
 	onChange();
 }

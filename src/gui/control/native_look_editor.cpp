@@ -192,7 +192,7 @@ StylingEditor::StylingEditor(Window* parent, int id, long style)
 {}
 
 void StylingEditor::showStylesheet(const StyleSheetP& stylesheet) {
-	setStyles(set->stylesheet, stylesheet->styling_style);
+	setStyles(stylesheet, stylesheet->styling_style);
 	setData(set->stylingDataFor(*stylesheet));
 }
 

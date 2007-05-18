@@ -38,7 +38,10 @@ class StyleSheet : public Packaged {
 	/// The styling for set info fields
 	/** The indices should correspond to the set_fields in the Game */
 	IndexMap<FieldP, StyleP> set_info_style;
-	/// Extra fields for styling
+	/// Extra card fields for boxes and borders
+	vector<FieldP> extra_card_fields;
+	IndexMap<FieldP, StyleP> extra_card_style;
+	/// Extra fields for styling options
 	vector<FieldP> styling_fields;
 	/// The styling for the extra set fields
 	/** The indices should correspond to the styling_fields */

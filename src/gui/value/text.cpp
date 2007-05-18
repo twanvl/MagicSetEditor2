@@ -196,8 +196,13 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 			}
 			break;
 		default:
+		  #ifdef __WXMSW__
+			if (ev.GetKeyCode() >= _(' ') && ev.GetKeyCode() == (int)ev.GetRawKeyCode()) {
+				// This check is need, otherwise pressing a key, say "0" on the numpad produces "a0"
+				// (don't ask me why)
+		  #else
 			if (ev.GetKeyCode() >= _(' ') /*&& ev.GetKeyCode() == (int)ev.GetRawKeyCode()*/) {
-//			if (ev.GetKeyCode() >= _(' ') && ev.GetKeyCode() == (int)ev.GetRawKeyCode()) {
+		  #endif
 				// TODO: Find a more correct way to determine normal characters,
 				//       this might not work for internationalized input.
 				//       It might also not be portable!

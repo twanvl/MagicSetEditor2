@@ -43,8 +43,8 @@ class IndexMap : private vector<Value> {
 	
 	/// Initialize this map with default values given a list of keys
 	/** has no effect if already initialized with the given keys */
-	void init(const vector<Key>& keys) {
-		if (this->size() == keys.size()) return;
+	bool init(const vector<Key>& keys) {
+		if (this->size() == keys.size() && (this->empty() || get_key(this->front()) == keys.front())) return false;
 		this->reserve(keys.size());
 		for(typename vector<Key>::const_iterator it = keys.begin() ; it != keys.end() ; ++it) {
 			const Key& key = *it;
@@ -52,6 +52,7 @@ class IndexMap : private vector<Value> {
 			if (key->index >= this->size()) this->resize(key->index + 1);
 			init_object(key, (*this)[key->index]);
 		}
+		return true;
 	}
 	/// Initialize this map with cloned values from another list
 	void cloneFrom(const IndexMap<Key,Value>& values) {
@@ -74,6 +75,14 @@ class IndexMap : private vector<Value> {
 		assert(key);
 		assert(this->size() > key->index);
 		return at(key->index);
+	}
+	/// Retrieve a value given its key, if it matches
+	inline Value tryGet (const Key& key) {
+		assert(key);
+		if (this->size() <= key->index) return Value();
+		Value v = at(key->index);
+		if (get_key(v) != key) return Value();
+		return v;
 	}
 	
 	/// Is a value contained in this index map?

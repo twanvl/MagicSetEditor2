@@ -53,7 +53,7 @@ Context& Set::getContext(const CardP& card) {
 	assert(wxThread::IsMain());
 	return script_manager->getContext(card);
 }
-void Set::updateFor(const CardP& card) {
+void Set::updateStyles(const CardP& card) {
 	script_manager->updateStyles(card);
 }
 void Set::updateDelayed() {

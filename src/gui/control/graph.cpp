@@ -79,7 +79,7 @@ GraphData::GraphData(const GraphDataPre& d)
 			}
 		} else if (a->order) {
 			// specific group order
-			FOR_EACH_CONST(gn, (*(a->order))) {
+			FOR_EACH_CONST(gn, *a->order) {
 				UInt count = counts[gn];
 				a->groups.push_back(GraphGroup(gn, count));
 				a->max = max(a->max, count);

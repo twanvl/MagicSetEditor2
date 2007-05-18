@@ -2507,6 +2507,9 @@
 				Name="base"
 				Filter="">
 				<File
+					RelativePath=".\script\dependency.hpp">
+				</File>
+				<File
 					RelativePath=".\script\script.cpp">
 				</File>
 				<File
@@ -2533,9 +2536,6 @@
 				</File>
 				<File
 					RelativePath=".\script\dependency.cpp">
-				</File>
-				<File
-					RelativePath=".\script\dependency.hpp">
 				</File>
 				<File
 					RelativePath=".\script\parser.cpp">

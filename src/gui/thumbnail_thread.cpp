@@ -8,6 +8,7 @@
 
 #include <gui/thumbnail_thread.hpp>
 #include <util/platform.hpp>
+#include <util/error.hpp>
 #include <wx/thread.h>
 
 typedef pair<ThumbnailRequestP,Image> pair_ThumbnailRequestP_Image;
@@ -71,7 +72,13 @@ wxThread::ExitCode ThumbnailThreadWorker::Entry() {
 			parent->open_requests.pop_front();
 		}
 		// perform request
-		Image img = current->generate();
+		Image img;
+		try {
+			img = current->generate();
+		} catch (const Error& e) {
+			handle_error(e, false, false);
+		} catch (...) {
+		}
 		// store in cache
 		if (img.Ok()) {
 			String filename = image_cache_dir() + safe_filename(current->cache_name) + _(".png");

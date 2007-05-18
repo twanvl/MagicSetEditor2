@@ -12,6 +12,7 @@
 #include <util/io/package_manager.hpp>
 
 DECLARE_TYPEOF_COLLECTION(StyleSheet*);
+DECLARE_TYPEOF_COLLECTION(FieldP);
 
 // ----------------------------------------------------------------------------- : StyleSheet
 
@@ -62,22 +63,35 @@ IMPLEMENT_REFLECTION(StyleSheet) {
 	
 	REFLECT(game);
 	REFLECT_BASE(Packaged);
-	REFLECT(init_script);
 	REFLECT(card_width);
 	REFLECT(card_height);
 	REFLECT(card_dpi);
 	REFLECT(card_background);
+	REFLECT(init_script);
+	// styling
+	REFLECT(styling_fields);
+	REFLECT_IF_READING styling_style.init(styling_fields);
+	REFLECT(styling_style);
+	// style of game fields
 	if (game) {
 		REFLECT_IF_READING {
 			card_style.init(game->card_fields);
 			set_info_style.cloneFrom(game->default_set_style);
 		}
-		REFLECT(card_style);
 		REFLECT(set_info_style);
+		REFLECT(card_style);
 	}
-	REFLECT(styling_fields);
-	REFLECT_IF_READING styling_style.init(styling_fields);
-	REFLECT(styling_style);
+	// extra card fields
+	REFLECT(extra_card_fields);
+	REFLECT_IF_READING {
+		if (extra_card_style.init(extra_card_fields)) {
+			// make sure the extra_card_fields are not editable and savable
+			FOR_EACH(f, extra_card_fields) {
+				f->editable = f->save_value = false;
+			}
+		}
+	}
+	REFLECT(extra_card_style);
 }
 
 

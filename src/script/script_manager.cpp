@@ -123,6 +123,10 @@ void SetScriptManager::initDependencies(Context& ctx, Game& game) {
 void SetScriptManager::initDependencies(Context& ctx, StyleSheet& stylesheet) {
 	if (stylesheet.dependencies_initialized) return;
 	stylesheet.dependencies_initialized = true;
+	// find dependencies of extra card fields
+	/*FOR_EACH(f, stylesheet.extra_card_fields) {
+		f->initDependencies(ctx, Dependency(DEP_EXTRA_CARD_FIELD, f->index, &stylesheet));
+	}*/
 	// find dependencies of choice images and other style stuff
 	FOR_EACH(s, stylesheet.card_style) {
 		s->initDependencies(ctx, Dependency(DEP_STYLE, s->fieldP->index, &stylesheet));
@@ -188,11 +192,20 @@ void SetScriptManager::onAction(const Action& action, bool undone) {
 }
 
 void SetScriptManager::updateStyles(const CardP& card) {
-//	lastUpdatedCard = card;
+	assert(card);
 	const StyleSheet& stylesheet = set.stylesheetFor(card);
 	Context& ctx = getContext(card);
+	// update extra card fields
+	card->extra_data.init(stylesheet.extra_card_fields);
+	FOR_EACH(v, card->extra_data) {
+		v->update(ctx);
+	}
 	// update all styles
-	FOR_EACH_CONST(s, stylesheet.card_style) {
+	updateStyles(ctx, stylesheet.card_style);
+	updateStyles(ctx, stylesheet.extra_card_style);
+}
+void SetScriptManager::updateStyles(Context& ctx, const IndexMap<FieldP,StyleP>& styles) {
+	FOR_EACH_CONST(s, styles) {
 		if (s->update(ctx)) {
 			// style has changed, tell listeners
 			s->tellListeners();
@@ -313,6 +326,17 @@ void SetScriptManager::alsoUpdate(deque<ToUpdate>& to_update, const vector<Depen
 				ScriptStyleEvent change(stylesheet, style.get());
 				set.actions.tellListeners(change, false);
 				break;
+			/*} case DEP_EXTRA_CARD_FIELD: {
+				// Not needed, extra card fields are handled in updateStyles()
+				if (card) {
+					StyleSheet* stylesheet = reinterpret_cast<StyleSheet*>(d.data);
+					StyleSheet* stylesheet_card = &set.stylesheetFor(card);
+					if (stylesheet == stylesheet_card) {
+						ValueP value = card->extra_data.at(d.index);
+						to_update.push_back(ToUpdate(value.get(), card));
+					}
+				}
+				break;*/
 			} case DEP_CARD_COPY_DEP: {
 				// propagate dependencies from another field
 				FieldP f = set.game->card_fields[d.index];

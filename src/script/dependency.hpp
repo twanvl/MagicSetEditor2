@@ -19,6 +19,7 @@ enum DependencyType
 ,	DEP_CARDS_FIELD			///< dependency of a script in a "card"  field for all cards
 ,	DEP_SET_FIELD			///< dependency of a script in a "set"   field
 ,	DEP_STYLE				///< dependency of a script in a "style" property, data gives the stylesheet
+,	DEP_EXTRA_CARD_FIELD	///< dependency of a script in an extra stylesheet specific card field
 ,	DEP_CARD_COPY_DEP		///< copy the dependencies from a card field
 ,	DEP_SET_COPY_DEP		///< copy the dependencies from a set  field
 };

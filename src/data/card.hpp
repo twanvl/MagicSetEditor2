@@ -34,6 +34,9 @@ class Card : public IntrusivePtrVirtualBase {
 	/// The values on the fields of the card.
 	/** The indices should correspond to the card_fields in the Game */
 	IndexMap<FieldP, ValueP> data;
+	/// The values on the extra fields of the card.
+	/** The indices should correspond to the extra_card_fields in the StyleSheet */
+	IndexMap<FieldP, ValueP> extra_data;
 	/// Notes for this card
 	String notes;
 	/// Alternative style to use for this card

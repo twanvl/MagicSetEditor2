@@ -26,12 +26,12 @@
 	#define DECLARE_TYPEOF_COLLECTION(T)
 	
 	#define TYPEOF(Value)      __typeof(Value)
-	#define TYPEOF_IT(Value)   __typeof(Value.begin())
-	#define TYPEOF_CIT(Value)  __typeof(Value.begin())
-	#define TYPEOF_RIT(Value)  __typeof(Value.rbegin())
-	#define TYPEOF_CRIT(Value) __typeof(Value.rbegin())
-	#define TYPEOF_REF(Value)  __typeof(*Value.begin())&
-	#define TYPEOF_CREF(Value) __typeof(*Value.begin())&
+	#define TYPEOF_IT(Value)   __typeof((Value).begin())
+	#define TYPEOF_CIT(Value)  __typeof((Value).begin())
+	#define TYPEOF_RIT(Value)  __typeof((Value).rbegin())
+	#define TYPEOF_CRIT(Value) __typeof((Value).rbegin())
+	#define TYPEOF_REF(Value)  __typeof(*(Value).begin())&
+	#define TYPEOF_CREF(Value) __typeof(*(Value).begin())&
 	
 #else
 	/// Helper for typeof tricks
