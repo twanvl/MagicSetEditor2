@@ -358,7 +358,6 @@ void CardListBase::onContextMenu(wxContextMenuEvent&) {
 
 BEGIN_EVENT_TABLE(CardListBase, ItemList)
 	EVT_LIST_COL_RIGHT_CLICK	(wxID_ANY,			CardListBase::onColumnRightClick)
-	EVT_LIST_COL_DRAGGING		(wxID_ANY,			CardListBase::onColumnResize)
 	EVT_LIST_COL_END_DRAG		(wxID_ANY,			CardListBase::onColumnResize)
 	EVT_CHAR					(					CardListBase::onChar)
 	EVT_MOTION					(					CardListBase::onDrag)
