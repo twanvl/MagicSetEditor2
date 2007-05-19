@@ -165,25 +165,29 @@ bool KeywordList::compareItems(void* a, void* b) const {
 
 String KeywordList::OnGetItemText (long pos, long col) const {
 	const Keyword& kw = *getKeyword(pos);
-	String formatted;
-	wxChar c;
 	switch(col) {
 		case 0:		return kw.keyword;
 		case 1:		return match_string(kw);
 		case 2:		return kw.mode;
 		case 3:		return _("?");
-		case 4:
-			formatted.Clear();
-			for (size_t i = 0; i < kw.reminder.getUnparsed().Len(); ++i) {
-				c = kw.reminder.getUnparsed().GetChar(i);
+		case 4: {
+			// convert all whitespace to ' '
+			String formatted;
+			bool seen_space = false;
+			for (size_t i = 0; i < kw.reminder.getUnparsed().size(); ++i) {
+				Char c = kw.reminder.getUnparsed().GetChar(i);
 				if (isSpace(c)) {
-					formatted.Trim();
-					formatted += ' ';
+					seen_space = true;
+				} else {
+					if (seen_space) {
+						formatted += _(' ');
+						seen_space = false;
 					}
-				else
 					formatted += c;
+				}
 			}
 			return formatted;
+		}
 		default:	return wxEmptyString;
 	}
 }
