@@ -277,9 +277,9 @@ class GraphWithMargins : public Graph {
 	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const;
 	virtual void setData(const GraphDataP& d);
   private:
+	const GraphP graph;
 	double margin_left, margin_top, margin_right, margin_bottom;
 	bool upside_down; // put the coordinate system upside down, since graphs are usually bottom-to-top
-	const GraphP graph;
 };
 
 /// A display containing multiple graphs

@@ -96,7 +96,7 @@ void MultipleChoiceValueEditor::determineSize(bool force_fit) {
 bool MultipleChoiceValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
 	// find item under cursor
 	if (style().render_style & RENDER_CHECKLIST) {
-		int id = (pos.y - style().top) / item_height;
+		int id = (int)((pos.y - style().top) / item_height);
 		int end = field().choices->lastId();
 		if (id >= 0 && id < end) {
 			toggle(id);

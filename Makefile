@@ -245,14 +245,14 @@ OBJEXT = o
 PACKAGE = magicseteditor
 PACKAGE_BUGREPORT = twanvl@users.sourceforge.net
 PACKAGE_NAME = magicseteditor
-PACKAGE_STRING = magicseteditor 0.3.0
+PACKAGE_STRING = magicseteditor 0.3.3
 PACKAGE_TARNAME = magicseteditor
-PACKAGE_VERSION = 0.3.0
+PACKAGE_VERSION = 0.3.3
 PATH_SEPARATOR = :
 SET_MAKE = 
 SHELL = /bin/bash
 STRIP = 
-VERSION = 0.3.0
+VERSION = 0.3.3
 WX_CFLAGS = -I/usr/lib/wx/include/gtk2-unicode-release-2.8 -I/usr/include/wx-2.8 -D_FILE_OFFSET_BITS=64 -D_LARGE_FILES -D__WXGTK__ -pthread
 WX_CFLAGS_ONLY = -pthread
 WX_CONFIG_PATH = /usr/bin/wx-config

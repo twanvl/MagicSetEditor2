@@ -199,8 +199,8 @@ RealRect bar_graph_bar(const RealRect& rect, int group, int group_count, int sta
 	double width       = width_space / 5 * 4;
 	double space       = width_space / 5;
 	double step_height = rect.height / max; // multiplier for bar height
-	int top    = rect.bottom() - start * step_height;
-	int bottom = rect.bottom() - end   * step_height;
+	int top    = (int)(rect.bottom() - start * step_height);
+	int bottom = (int)(rect.bottom() - end   * step_height);
 	if (bottom < top) swap(top,bottom);
 	bottom += 1;
 	return RealRect(
@@ -215,7 +215,7 @@ int find_bar_graph_column(double width, double x, int count) {
 	double width_space = width / count; // including spacing
 	double space       = width_space / 5;
 	// Find column in which the point could be located
-	int    col    = floor(x / width_space);
+	int    col    = (int)floor(x / width_space);
 	if (col < 0 || col >= count) return -1; // not a column
 	double in_col = x - col * width_space;
 	if (in_col < space / 2)               return -1; // left
@@ -322,7 +322,7 @@ bool BarGraph2D::findItem(const RealPoint& pos, const RealRect& rect, vector<int
 	if (col < 0) return false;
 	// row
 	int max_value = (int)axis1.max;
-	int value = (rect.bottom() - pos.y) / rect.height * max_value;
+	int value = (int)((rect.bottom() - pos.y) / rect.height * max_value);
 	if (value < 0 || value > max_value) return false;
 	// find row
 	int row = -1;
@@ -460,8 +460,8 @@ bool ScatterGraph::findItem(const RealPoint& pos, const RealRect& rect, vector<i
 	// clicked item
 	GraphAxis& axis1 = axis1_data();
 	GraphAxis& axis2 = axis2_data();
-	int col = floor((pos.x - rect.x)        / rect.width  * axis1.groups.size());
-	int row = floor((rect.bottom() - pos.y) / rect.height * axis2.groups.size());
+	int col = (int) floor((pos.x - rect.x)        / rect.width  * axis1.groups.size());
+	int row = (int) floor((rect.bottom() - pos.y) / rect.height * axis2.groups.size());
 	if (col < 0 || col >= (int)axis1.groups.size()) return false;
 	if (row < 0 || row >= (int)axis2.groups.size()) return false;
 	// done
@@ -583,7 +583,7 @@ int GraphLegend::findItem(const RealPoint& pos, const RealRect& rect) const {
 	RealPoint mypos = align_in_rect(alignment, size, rect);
 	RealPoint pos2(pos.x - mypos.x, pos.y - mypos.y);
 	if (pos2.x < 0 || pos2.y < 0 || pos2.x >= size.width || pos2.y >= size.height) return -1;
-	int col = floor((pos2.y-1) / item_size.height);
+	int col = (int) floor((pos2.y-1) / item_size.height);
 	if (col < 0 || col >= (int)axis_data().groups.size()) return -1;
 	return reverse ? (int)axis_data().groups.size() - col - 1 : col;
 }
@@ -673,10 +673,10 @@ int GraphLabelAxis::findItem(const RealPoint& pos, const RealRect& rect) const {
 	GraphAxis& axis = axis_data();
 	int col;
 	if (direction == HORIZONTAL) {
-		col = floor((pos.x - rect.x) / rect.width  * axis.groups.size());
+		col = (int) floor((pos.x - rect.x) / rect.width  * axis.groups.size());
 		if (pos.y < rect.bottom()) return -1;
 	} else {
-		col = floor((rect.bottom() - pos.y) / rect.height * axis.groups.size());
+		col = (int) floor((rect.bottom() - pos.y) / rect.height * axis.groups.size());
 		if (pos.x > rect.left()) return -1;
 	}
 	if (col < 0 || col >= (int)axis.groups.size()) return -1;
@@ -693,7 +693,7 @@ void GraphValueAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 	GraphAxis& axis = axis_data();
 	double step_height = rect.height / axis.max; // height of a single value
 	dc.SetFont(*wxNORMAL_FONT);
-	int label_step = ceil(max(1.0, (dc.GetCharHeight()) / step_height)); // values per labeled line
+	int label_step = (int) ceil(max(1.0, (dc.GetCharHeight()) / step_height)); // values per labeled line
 	// Colors
 	Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
 	Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
@@ -710,7 +710,7 @@ void GraphValueAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 				dc.SetPen(fg);
 			}
 			// draw line
-			int y = rect.bottom() - i * step_height;
+			int y = (int) (rect.bottom() - i * step_height);
 			dc.DrawLine(RealPoint(rect.left() - 2, y), RealPoint(rect.right(), y));
 			// draw label, aligned middle right
 			if (! ((i < highlight && i + label_step > highlight) ||

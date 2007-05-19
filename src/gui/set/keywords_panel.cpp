@@ -238,12 +238,12 @@ String KeywordsPanel::runRefScript(int find_i) {
 	else if (id == ID_RULES        && rules   ->IsEnabled()) { return rules   ->op(); }	\
 	else                                                     { return false;          }
 
-bool KeywordsPanel::canCopy()  const { CUT_COPY_PASTE(canCopy,  return, false) }
-bool KeywordsPanel::canCut()   const { CUT_COPY_PASTE(canCut,   return, !list->getKeyword() || list->getKeyword()->fixed) }
-bool KeywordsPanel::canPaste() const { CUT_COPY_PASTE(canPaste, return, !list->getKeyword() || list->getKeyword()->fixed) }
-void KeywordsPanel::doCopy()         { CUT_COPY_PASTE(doCopy,  ;,       false) }
-void KeywordsPanel::doCut()          { CUT_COPY_PASTE(doCut,   ;,       !list->getKeyword() || list->getKeyword()->fixed) }
-void KeywordsPanel::doPaste()        { CUT_COPY_PASTE(doPaste, ;,       !list->getKeyword() || list->getKeyword()->fixed) }
+bool KeywordsPanel::canCopy()  const { CUT_COPY_PASTE(canCopy,  return,        false) }
+bool KeywordsPanel::canCut()   const { CUT_COPY_PASTE(canCut,   return,        !list->getKeyword() || list->getKeyword()->fixed) }
+bool KeywordsPanel::canPaste() const { CUT_COPY_PASTE(canPaste, return,        !list->getKeyword() || list->getKeyword()->fixed) }
+void KeywordsPanel::doCopy()         { CUT_COPY_PASTE(doCopy,   return (void), false) }
+void KeywordsPanel::doCut()          { CUT_COPY_PASTE(doCut,    return (void), !list->getKeyword() || list->getKeyword()->fixed) }
+void KeywordsPanel::doPaste()        { CUT_COPY_PASTE(doPaste,  return (void), !list->getKeyword() || list->getKeyword()->fixed) }
 
 // ----------------------------------------------------------------------------- : Events
 

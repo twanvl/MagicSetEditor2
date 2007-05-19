@@ -262,9 +262,9 @@ bool CardsPanel::wantsToHandle(const Action&, bool undone) const {
 bool CardsPanel::canCut()   const { CUT_COPY_PASTE(canCut,   return) }
 bool CardsPanel::canCopy()  const { CUT_COPY_PASTE(canCopy,  return) }
 bool CardsPanel::canPaste() const { CUT_COPY_PASTE(canPaste, return) }
-void CardsPanel::doCut()          { CUT_COPY_PASTE(doCut,   ;) }
-void CardsPanel::doCopy()         { CUT_COPY_PASTE(doCopy,  ;) }
-void CardsPanel::doPaste()        { CUT_COPY_PASTE(doPaste, ;) }
+void CardsPanel::doCut()          { CUT_COPY_PASTE(doCut,    return (void)) }
+void CardsPanel::doCopy()         { CUT_COPY_PASTE(doCopy,   return (void)) }
+void CardsPanel::doPaste()        { CUT_COPY_PASTE(doPaste,  return (void)) }
 
 // ----------------------------------------------------------------------------- : Searching
 

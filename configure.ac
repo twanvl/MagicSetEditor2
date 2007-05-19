@@ -6,11 +6,10 @@
 
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT(magicseteditor, 0.3.0, twanvl@users.sourceforge.net)
+AC_INIT(magicseteditor, 0.3.3, twanvl@users.sourceforge.net)
 AC_CONFIG_SRCDIR([src/main.cpp])
 # TODO: Actually use the config header
 AC_CONFIG_HEADER([src/config.h])
-CXXFLAGS = [-g3 -O0 ]
 
 AM_INIT_AUTOMAKE([-Wall foreign])
 

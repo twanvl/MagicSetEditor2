@@ -39,6 +39,7 @@ class IndexMap : private vector<Value> {
 	using vector<Value>::const_reference;
 	using vector<Value>::begin;
 	using vector<Value>::end;
+	using vector<Value>::clear;
 	using vector<Value>::at; // for using numeric indices directly
 	
 	/// Initialize this map with default values given a list of keys
