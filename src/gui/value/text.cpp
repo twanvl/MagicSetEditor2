@@ -457,6 +457,12 @@ void TextValueEditor::showCaret() {
 				dc.SetFont(style().font.toWxFont(1.0));
 				int hi;
 				dc.GetTextExtent(_(" "), 0, &hi);
+				#ifdef __WXGTK__
+					// HACK: Some fonts don't get the descender height set correctly.
+					int charHeight = dc.GetCharHeight();
+					if (charHeight != hi)
+						hi += hi - charHeight;
+				#endif
 				cursor.height = rot.trS(hi);
 			}
 		}

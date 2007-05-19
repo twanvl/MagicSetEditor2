@@ -235,10 +235,13 @@ double RotatedDC::getFontSizeStep() const {
 }
 
 RealSize RotatedDC::GetTextExtent(const String& text) const {
-	int w, h, descend;
-	dc.GetTextExtent(text, &w, &h, &descend);
+	int w, h;
+	dc.GetTextExtent(text, &w, &h);
 	#ifdef __WXGTK__
-		h += descend; /// wxGTK seems to think character height does not include the descender.
+		// HACK: Some fonts don't get the descender height set correctly.
+		int charHeight = dc.GetCharHeight();
+		if (charHeight != h)
+			h += h - charHeight;
 	#endif
 	if (quality == QUALITY_LOW) {
 		return RealSize(w,h) / zoom;
