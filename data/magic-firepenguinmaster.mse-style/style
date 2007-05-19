@@ -85,6 +85,11 @@ styling field:
 	choice: diagonal T
 
 styling style:
+	green style:
+		render style: both
+		choice images:
+			light: lgcard.jpg
+			dark:  gcard.jpg
 	use guild mana symbols:
 		choice images:
 			yes: /magic-mana-small.mse-symbol-font/mana_guild_rg.png

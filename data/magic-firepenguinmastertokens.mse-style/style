@@ -141,8 +141,6 @@ card style:
 				else "Matrix" }
 			size: 20
 			color: rgb(0,0,0)
-		visible:
-			script: styling.cardname_font == "Matrix"
 	casting cost:
 		left: 18
 		top : 55
