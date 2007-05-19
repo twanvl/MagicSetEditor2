@@ -471,10 +471,12 @@ extra card field:
 	type: choice
 	name: pt symbols
 	script: "shieldsword"
+	editable: false
 extra card field:
 	type: choice
 	name: pt symbols 2
 	script: "shieldsword"
+	editable: false
 
 extra card style:
 	pt symbols:

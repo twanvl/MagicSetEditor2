@@ -196,8 +196,8 @@ void SetScriptManager::updateStyles(const CardP& card) {
 	const StyleSheet& stylesheet = set.stylesheetFor(card);
 	Context& ctx = getContext(card);
 	// update extra card fields
-	card->extra_data.init(stylesheet.extra_card_fields);
-	FOR_EACH(v, card->extra_data) {
+	IndexMap<FieldP,ValueP>& extra_data = card->extraDataFor(stylesheet);
+	FOR_EACH(v, extra_data) {
 		v->update(ctx);
 	}
 	// update all styles

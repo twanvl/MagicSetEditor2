@@ -85,9 +85,9 @@ IMPLEMENT_REFLECTION(StyleSheet) {
 	REFLECT(extra_card_fields);
 	REFLECT_IF_READING {
 		if (extra_card_style.init(extra_card_fields)) {
-			// make sure the extra_card_fields are not editable and savable
+			// if a value is not editable, don't save it
 			FOR_EACH(f, extra_card_fields) {
-				f->editable = f->save_value = false;
+				if (!f->editable) f->save_value = false;
 			}
 		}
 	}

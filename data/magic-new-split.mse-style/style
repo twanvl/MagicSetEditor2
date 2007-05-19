@@ -410,11 +410,12 @@ extra card field:
 	type: choice
 	name: pt box
 	script: card.card_color
-
+	editable: false
 extra card field:
 	type: choice
 	name: pt box 2
 	script: card.card_color_2
+	editable: false
 
 extra card style:
 	pt box:

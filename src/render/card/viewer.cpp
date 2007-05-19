@@ -96,8 +96,7 @@ void DataViewer::setCard(const CardP& card, bool refresh) {
 	this->card = card;
 	stylesheet = new_stylesheet;
 	setStyles(stylesheet, stylesheet->card_style, &stylesheet->extra_card_style);
-	card->extra_data.init(stylesheet->extra_card_fields); // make sure extra_data is initialized
-	setData(card->data, &card->extra_data);
+	setData(card->data, &card->extraDataFor(*stylesheet));
 	onChangeSize();
 }
 

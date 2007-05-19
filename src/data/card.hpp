@@ -34,14 +34,17 @@ class Card : public IntrusivePtrVirtualBase {
 	/// The values on the fields of the card.
 	/** The indices should correspond to the card_fields in the Game */
 	IndexMap<FieldP, ValueP> data;
-	/// The values on the extra fields of the card.
-	/** The indices should correspond to the extra_card_fields in the StyleSheet */
-	IndexMap<FieldP, ValueP> extra_data;
 	/// Notes for this card
 	String notes;
 	/// Alternative style to use for this card
 	/** Optional; if not set use the card style from the set */
 	StyleSheetP stylesheet;
+	
+	/// Extra values for specitic stylesheets, indexed by stylesheet name
+	DECLARE_POINTER_TYPE(Styling);
+	map<String, StylingP> extra_data;
+	/// Styling information for a particular stylesheet
+	IndexMap<FieldP, ValueP>& extraDataFor(const StyleSheet& stylesheet) ;
 	
 	/// Get the identification of this card, an identification is something like a name, title, etc.
 	/** May return "" */
