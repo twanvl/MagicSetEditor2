@@ -199,7 +199,8 @@ void CardsPanel::onCommand(int id) {
 			set->actions.add(new AddCardAction(*set));
 			break;
 		case ID_CARD_REMOVE:
-			set->actions.add(new RemoveCardAction(*set, card_list->getCard()));
+			if (card_list->getCard() != nullptr)
+				set->actions.add(new RemoveCardAction(*set, card_list->getCard()));
 			break;
 		case ID_CARD_ROTATE:
 		case ID_CARD_ROTATE_0: case ID_CARD_ROTATE_90: case ID_CARD_ROTATE_180: case ID_CARD_ROTATE_270: {
