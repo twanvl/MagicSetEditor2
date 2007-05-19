@@ -28,6 +28,7 @@ DECLARE_TYPEOF_COLLECTION(FieldP);
 DECLARE_POINTER_TYPE(ChoiceValue);
 DECLARE_TYPEOF(map<int COMMA FieldP>);
 DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA StyleP>);
+DECLARE_TYPEOF_COLLECTION(CardListBase*);
 
 // ----------------------------------------------------------------------------- : Events
 
@@ -35,12 +36,19 @@ DEFINE_EVENT_TYPE(EVENT_CARD_SELECT);
 
 // ----------------------------------------------------------------------------- : CardListBase
 
+vector<CardListBase*> CardListBase::card_lists;
+
 CardListBase::CardListBase(Window* parent, int id, long additional_style)
 	: ItemList(parent, id, additional_style)
-{}
+{
+	// add to the list of card lists
+	card_lists.push_back(this);
+}
 
 CardListBase::~CardListBase() {
 	storeColumns();
+	// remove from list of card lists
+	card_lists.erase(remove(card_lists.begin(), card_lists.end(), this));
 }
 
 void CardListBase::onBeforeChangeSet() {
@@ -245,7 +253,12 @@ void CardListBase::storeColumns() {
 void CardListBase::selectColumns() {
 	CardListColumnSelectDialog wnd(this, set->game);
 	if (wnd.ShowModal() == wxID_OK) {
-		rebuild(); // columns have changed
+		// rebuild all card lists for this game
+		FOR_EACH(card_list, card_lists) {
+			if (card_list->set && card_list->set->game == set->game) {
+				card_list->rebuild();
+			}
+		}
 	}
 }
 
@@ -280,6 +293,16 @@ void CardListBase::onColumnRightClick(wxListEvent&) {
 	wxMenu* m = new wxMenu;
 	m->Append(ID_SELECT_COLUMNS, _("&Select Columns..."), _("Select what columns should be shown and in what order."));
 	PopupMenu(m);
+}
+void CardListBase::onColumnResize(wxListEvent& ev) {
+	storeColumns();
+	int col = ev.GetColumn();
+	int width = GetColumnWidth(col);
+	FOR_EACH(card_list, card_lists) {
+		if (card_list != this && card_list->set && card_list->set->game == set->game) {
+			card_list->SetColumnWidth(col, width);
+		}
+	}
 }
 
 void CardListBase::onSelectColumns(wxCommandEvent&) {
@@ -335,6 +358,8 @@ void CardListBase::onContextMenu(wxContextMenuEvent&) {
 
 BEGIN_EVENT_TABLE(CardListBase, ItemList)
 	EVT_LIST_COL_RIGHT_CLICK	(wxID_ANY,			CardListBase::onColumnRightClick)
+	EVT_LIST_COL_DRAGGING		(wxID_ANY,			CardListBase::onColumnResize)
+	EVT_LIST_COL_END_DRAG		(wxID_ANY,			CardListBase::onColumnResize)
 	EVT_CHAR					(					CardListBase::onChar)
 	EVT_MOTION					(					CardListBase::onDrag)
 	EVT_MENU					(ID_SELECT_COLUMNS,	CardListBase::onSelectColumns)

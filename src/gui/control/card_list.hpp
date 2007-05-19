@@ -112,17 +112,20 @@ class CardListBase : public ItemList, public SetView {
 	/// Find the field that determines the color, if any.
 	ChoiceFieldP findColorField();
 	
-	/// Store the column sizes in the settings
-	void storeColumns();
-	public:
+  public:
 	/// Open a dialog for selecting columns to be shown
 	void selectColumns();
-	private:
+  private:
+	/// Store the column sizes in the settings
+	void storeColumns();
+	/// All card lists; used to exchange column sizes
+	static vector<CardListBase*> card_lists;
 	
 	// --------------------------------------------------- : Window events
 	DECLARE_EVENT_TABLE();
 	
 	void onColumnRightClick(wxListEvent& ev);
+	void onColumnResize    (wxListEvent& ev);
 	void onSelectColumns   (wxCommandEvent& ev);
 	void onChar            (wxKeyEvent& ev);
 	void onDrag            (wxMouseEvent& ev);
