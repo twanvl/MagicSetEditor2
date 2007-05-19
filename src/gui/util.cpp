@@ -194,6 +194,9 @@ void draw_menu_arrow(Window* win, DC& dc, const wxRect& rect, bool active) {
 void draw_drop_down_arrow(Window* win, DC& dc, const wxRect& rect, bool active) {
 	wxRendererNative& rn = wxRendererNative::GetDefault();
 	int w = wxSystemSettings::GetMetric(wxSYS_VSCROLL_ARROW_X); // drop down arrow is same size
+	if (w == -1) {
+		w = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X); // Try just the scrollbar, then.
+	}
 	rn.DrawComboBoxDropButton(win, dc, 
 		wxRect(rect.x + rect.width - w, rect.y, w, rect.height)
 		, active ? wxCONTROL_PRESSED : 0);

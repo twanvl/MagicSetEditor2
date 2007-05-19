@@ -115,7 +115,7 @@ bool Style::update(Context& ctx) {
 }
 
 void Style::initDependencies(Context& ctx, const Dependency& dep) const {
-///	left   .initDependencies(ctx,dep);
+//	left   .initDependencies(ctx,dep);
 //	top    .initDependencies(ctx,dep);
 //	width  .initDependencies(ctx,dep);
 //	height .initDependencies(ctx,dep);
