@@ -250,10 +250,18 @@ RealSize RotatedDC::GetTextExtent(const String& text) const {
 	}
 }
 double RotatedDC::GetCharHeight() const {
+	int h = dc.GetCharHeight();
+	#ifdef __WXGTK__
+		// See above HACK
+		int extent;
+		dc.GetTextExtent(_("H"), 0, &extent);
+		if (h != extent)
+			h = 2 * extent - h;
+	#endif
 	if (quality == QUALITY_LOW) {
-		return dc.GetCharHeight() / zoom;
+		return h / zoom;
 	} else {
-		return dc.GetCharHeight() / zoom / text_scaling;
+		return h / zoom / text_scaling;
 	}
 }
 
