@@ -96,7 +96,7 @@ styling field:
 	type: boolean
 	name: center short text
 	description: Center the text on cards with short rule text and no flavor text.
-	initial: yes
+	initial: no
 
 styling style:
 	artifact style:

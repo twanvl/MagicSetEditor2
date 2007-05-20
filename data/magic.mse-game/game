@@ -652,7 +652,7 @@ card field:
 	type: choice
 	name: type image
 	include file: magic-blends.mse-include/card-colors
-	script: card.card_color
+	default: card.card_color
 	show statistics: false
 card field:
 	type: choice
@@ -700,7 +700,7 @@ card field:
 	type: choice
 	name: textbox
 	include file: magic-blends.mse-include/card-colors
-	script: card.card_color
+	default: card.card_color
 	save value: false
 	show statistics: false
 card field:
@@ -1423,7 +1423,7 @@ keyword:
 	reminder: {param1}: Attach to target creature you control. Equip only as a sorcery.
 keyword:
 	keyword: Imprint
-	match: Imprint—<atom-param>action</atom-param>
+	match: Imprint — <atom-param>action</atom-param>
 	mode: expert
 	reminder: The removed card is imprinted on this artifact.
 keyword:

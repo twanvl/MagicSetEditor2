@@ -637,7 +637,7 @@ keyword:
 	reminder: {param1}: Attach to target creature you control. Equip only as a sorcery.
 keyword:
 	keyword: Imprint
-	match: Imprint—<atom-param>action</atom-param>
+	match: Imprint — <atom-param>action</atom-param>
 	mode: expert
 	reminder: The removed card is imprinted on this artifact.
 keyword:
