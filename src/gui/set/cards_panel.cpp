@@ -199,7 +199,8 @@ void CardsPanel::onCommand(int id) {
 			set->actions.add(new AddCardAction(*set));
 			break;
 		case ID_CARD_REMOVE:
-			if (card_list->getCard() != nullptr)
+			if (card_list->getCard() != nullptr && set->cards.size() != 1)
+				//Don't delete the last card, and certainly don't delete a card if none exists.
 				set->actions.add(new RemoveCardAction(*set, card_list->getCard()));
 			break;
 		case ID_CARD_ROTATE:
