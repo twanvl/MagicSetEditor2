@@ -29,7 +29,7 @@ class PackageList : public GalleryList {
 	}
 	
 	/// Shows packages that match a specific patern
-	void showData(const String& pattern = _("*.*"));
+	void showData(const String& pattern = _("*"));
 	
 	/// Clears this list
 	void clear();

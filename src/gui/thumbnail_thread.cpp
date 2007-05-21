@@ -130,17 +130,41 @@ void ThumbnailThread::request(const ThumbnailRequestP& request) {
 			return;
 		}
 	}
-	request_names.insert(request);
-	// request generation
-	{
-		wxMutexLocker lock(mutex);
-		open_requests.push_back(request);
+	if (request->threadSafe()) {
+		request_names.insert(request);
+		// request generation
+		{
+			wxMutexLocker lock(mutex);
+			open_requests.push_back(request);
+		}
+		// is there a worker?
+		if (!worker) {
+			worker = new ThumbnailThreadWorker(this);
+			worker->Create();
+			worker->Run();
+		}
 	}
-	// is there a worker?
-	if (!worker) {
-		worker = new ThumbnailThreadWorker(this);
-		worker->Create();
-		worker->Run();
+	else {
+		Image img;
+		try {
+			img = request->generate();
+		} catch (const Error& e) {
+			handle_error(e, false, false);
+		} catch (...) {
+		}
+		// store in cache
+		if (img.Ok()) {
+			String filename = image_cache_dir() + safe_filename(request->cache_name) + _(".png");
+			img.SaveFile(filename, wxBITMAP_TYPE_PNG);
+			// set modification time
+			wxFileName fn(filename);
+			fn.SetTimes(0, &request->modified, 0);
+		}
+		{
+			wxMutexLocker lock(mutex);
+			closed_requests.push_back(make_pair(request,img));
+			completed.Signal();
+		}
 	}
 }
 

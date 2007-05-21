@@ -54,6 +54,7 @@ SymbolWindow::SymbolWindow(Window* parent, const SymbolValueP& value, const SetP
 
 void SymbolWindow::init(Window* parent, SymbolP symbol) {
 	Create(parent, wxID_ANY, _TITLE_("symbol editor"), wxDefaultPosition, wxSize(600,600), wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
+	SetIcon(load_resource_icon(_("app")));
 	inSelectionEvent = false;
 	
 	// Menu bar

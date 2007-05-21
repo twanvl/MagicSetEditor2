@@ -73,7 +73,7 @@ void ImagesExportWindow::onOk(wxCommandEvent&) {
 	ScriptP filename_script = parse(gs.images_export_filename, true);
 	// Select filename
 	String name = wxFileSelector(_TITLE_("export images"),_(""), _LABEL_("filename is ignored"),_(""),
-		                         _LABEL_("filename is ignored")+_("|*.*"), wxSAVE, this);
+		                         _LABEL_("filename is ignored")+_("|*"), wxSAVE, this);
 	if (name.empty()) return;
 	wxFileName fn(name);
 	// Export

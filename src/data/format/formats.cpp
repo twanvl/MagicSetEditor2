@@ -33,7 +33,7 @@ String import_formats() {
 			type_strings   += _("|") + f->name() + _("|*.") + f->extension();
 		}
 	}
-	return _("Set files|") + all_extensions + type_strings + _("|All files (*.*)|*.*");
+	return _("Set files|") + all_extensions + type_strings + _("|All files (*.*)|*");
 }
 
 String export_formats(const Game& game) {

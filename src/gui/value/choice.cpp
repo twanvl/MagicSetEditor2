@@ -23,6 +23,9 @@ class ChoiceThumbnailRequest : public ThumbnailRequest {
 	ChoiceThumbnailRequest(ValueViewer* cve, int id, bool from_disk);
 	virtual Image generate();
 	virtual void store(const Image&);
+
+	bool isThreadSafe;
+	virtual bool threadSafe() const {return isThreadSafe;}
   private:
 	StyleSheetP stylesheet;
 	int id;
@@ -37,7 +40,12 @@ ChoiceThumbnailRequest::ChoiceThumbnailRequest(ValueViewer* cve, int id, bool fr
 	)
 	, stylesheet(cve->viewer.stylesheet)
 	, id(id)
-{}
+{
+	ChoiceValueEditor& e = *(ChoiceValueEditor*)cve;
+	String name = cannocial_name_form(e.field().choices->choiceName(id));
+	ScriptableImage& img = e.style().choice_images[name];
+	isThreadSafe = img.threadSafe();
+}
 
 Image ChoiceThumbnailRequest::generate() {
 	ChoiceValueEditor& cve = *(ChoiceValueEditor*)owner;

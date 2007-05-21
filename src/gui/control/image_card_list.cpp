@@ -84,6 +84,8 @@ class CardThumbnailRequest : public ThumbnailRequest {
 			parent->Refresh(false);
 		}
 	}
+
+	virtual bool threadSafe() const {return true;}
   private:
 	String filename;
 };

@@ -31,6 +31,9 @@ class ThumbnailRequest : public IntrusivePtrVirtualBase {
 	virtual Image generate() = 0;
 	/// Store the thumbnail, called from the main thread
 	virtual void store(const Image&) = 0;
+
+	/// Can the thumbnail safely be generated from another thread?
+	virtual bool threadSafe() const = 0;
 	
 	/// Object that requested the thumbnail
 	void* const owner;

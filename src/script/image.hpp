@@ -45,6 +45,9 @@ class ScriptableImage {
 	inline void initDependencies(Context& ctx, const Dependency& dep) const {
 		script.initDependencies(ctx, dep);
 	}
+
+	/// Can this be safely generated from another thread?
+	bool threadSafe() const {return value->threadSafe();}
 	
   private:
 	OptionalScript  script;		///< The script, not really optional
