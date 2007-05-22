@@ -1,0 +1,44 @@
+#!/bin/bash
+
+# Magic Set Editor 2 beta.
+# This script and this program are licensed under the GNU General Public License Version 2
+# The full text of this license is in the file COPYING
+
+# This script installs Magic Set Editor onto your system.
+# If executed as root (including via sudo), it is installed to /usr/local/share/magicseteditor. (with an executable symlink in /usr/local/bin)
+# If executed as any other user, it will fail.
+
+$VERSION=0.3.3
+
+case `id -un` in
+	root)
+		INSTALL_DIR='/usr/local/share/magicseteditor/';
+		EXEC_SYMLINK='/usr/local/bin/magicseteditor';;
+	*)
+		echo "Unfortunately, our installer system currently does not support installation except as root.
+This is because the program currently requires a specific data directory.
+Our apologies." && exit;;
+esac
+
+echo "Magic Set Editor version $VERSION Installer Script.
+
+Magic Set Editor will be installed to $INSTALL_DIR.
+A symbolic link to the executable will be put at $EXEC_SYMLINK.
+
+Is this correct [y/N]? ";
+
+read -n 1 CONFIRM;
+
+case $CONFIRM in
+	[yY])
+		:;;
+	*)
+		exit;;
+esac;
+
+echo "Installing...";
+
+mkdir "$INSTALL_DIR";
+cp -r program/* "$INSTALL_DIR";
+
+ln -s "$INSTALL_DIR/magicseteditor" "$EXEC_SYMLINK"
