@@ -108,18 +108,19 @@ void SymbolSelectEditor::drawRotationCenter(DC& dc, const Vector2D& pos) {
 
 void SymbolSelectEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->AddSeparator();
-	tb->AddTool(ID_PART_MERGE,			_TOOL_("merge"),	load_resource_image(_("combine_or")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("merge"),		_HELP_("merge"));
-	tb->AddTool(ID_PART_SUBTRACT,		_TOOL_("subtract"),	load_resource_image(_("combine_sub_dark")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("subtract"),	_HELP_("subtract"));
-	tb->AddTool(ID_PART_INTERSECTION,	_TOOL_("intersect"),load_resource_image(_("combine_and_dark")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("intersect"),	_HELP_("intersect"));
-	// note: difference doesn't work (yet)
-	tb->AddTool(ID_PART_OVERLAP,		_TOOL_("overlap"),	load_resource_image(_("combine_over")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("overlap"),	_HELP_("overlap"));
-	tb->AddTool(ID_PART_BORDER,			_TOOL_("border"),	load_resource_image(_("combine_border")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("border"),	_HELP_("border"));
+	tb->AddTool(ID_PART_MERGE,			_TOOL_("merge"),	 load_resource_image(_("combine_or")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("merge"),		_HELP_("merge"));
+	tb->AddTool(ID_PART_SUBTRACT,		_TOOL_("subtract"),	 load_resource_image(_("combine_sub_dark")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("subtract"),	_HELP_("subtract"));
+	tb->AddTool(ID_PART_INTERSECTION,	_TOOL_("intersect"), load_resource_image(_("combine_and_dark")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("intersect"),	_HELP_("intersect"));
+	tb->AddTool(ID_PART_DIFFERENCE,		_TOOL_("difference"),load_resource_image(_("combine_xor")),			wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("difference"),	_HELP_("difference"));
+	tb->AddTool(ID_PART_OVERLAP,		_TOOL_("overlap"),	 load_resource_image(_("combine_over")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("overlap"),	_HELP_("overlap"));
+	tb->AddTool(ID_PART_BORDER,			_TOOL_("border"),	 load_resource_image(_("combine_border")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("border"),	_HELP_("border"));
 	tb->Realize();
 }
 void SymbolSelectEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->DeleteTool(ID_PART_MERGE);
 	tb->DeleteTool(ID_PART_SUBTRACT);
 	tb->DeleteTool(ID_PART_INTERSECTION);
+	tb->DeleteTool(ID_PART_DIFFERENCE);
 	tb->DeleteTool(ID_PART_OVERLAP);
 	tb->DeleteTool(ID_PART_BORDER);
 	// HACK: hardcoded size of rest of toolbar

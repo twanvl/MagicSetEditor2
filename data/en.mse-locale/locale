@@ -1,4 +1,4 @@
-﻿mse version: 0.3.2
+mse version: 0.3.2
 full name: English
 
 ############################################################## Menu items
@@ -194,6 +194,7 @@ help:
 	merge:				Merges this shape with those below it
 	subtract:			Subtracts this shape from shapes below it, leaves only the area in that shape that is not in this shape
 	intersect:			Intersects this shape with shapes below it, leaves only the area in both shapes
+	difference:			Differs this shape from the shapes below it, leaves only the area not in any other shape
 	overlap:			Place this shape, and its border above shapes below it
 	border:				Draws this shape as a border
 	
@@ -251,6 +252,7 @@ tool:
 	merge:				Merge
 	subtract:			Subtract
 	intersect:			Intersect
+	difference:			Difference
 	overlap:			Overlap
 	border:				Border
 	
@@ -317,6 +319,7 @@ tooltip:
 	merge:				Merge with shapes below
 	subtract:			Subtract from shapes below
 	intersect:			Intersect with shapes below
+	difference:			Differ from shapes below
 	overlap:			Place above other shapes
 	border:				Draw as a border
 	

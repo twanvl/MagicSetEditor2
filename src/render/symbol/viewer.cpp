@@ -138,39 +138,41 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolPart& part, HighlightStyle 
 void SymbolViewer::combineSymbolPart(const SymbolPart& part, DC& border, DC& interior, bool directB, bool directI) {
 	// what color should the interior be?
 	// use black when drawing to the screen
-	int interiorCol = directI ? 0 : 255;
+	unsigned char interiorCol = directI ? 0 : 255;
 	// how to draw depends on combining mode
 	switch(part.combine) {
 		case PART_OVERLAP:
 		case PART_MERGE: {
-			drawSymbolPart(part, &border, &interior, 255, interiorCol, directB);
+			drawSymbolPart(part, &border, &interior, 255, interiorCol, directB, false);
 			break;
 		} case PART_SUBTRACT: {
 			border.SetLogicalFunction(wxAND);
-			drawSymbolPart(part, &border, &interior, 0, interiorCol ^ 255, directB);
+			drawSymbolPart(part, &border, &interior, 0, ~interiorCol, true, true);
 			border.SetLogicalFunction(wxCOPY);
 			break;
 		} case PART_INTERSECTION: {
 			MemoryDCP keepBorder   = getTempDC(border);
 			MemoryDCP keepInterior = getTempDC(interior);
-			drawSymbolPart(part, keepBorder.get(), keepInterior.get(), 255, 255, false);
+			drawSymbolPart(part, keepBorder.get(), keepInterior.get(), 255, 255, false, false);
 			// combine the temporary dcs with the result using the AND operator
 			wxSize s = border.GetSize();
-			border  .Blit(0, 0, s.GetWidth(), s.GetHeight(), &*keepBorder,   0, 0, wxAND);
+			border  .Blit(0, 0, s.GetWidth(), s.GetHeight(), &*keepBorder  , 0, 0, wxAND);
 			interior.Blit(0, 0, s.GetWidth(), s.GetHeight(), &*keepInterior, 0, 0, wxAND);
 			break;
 		} case PART_DIFFERENCE: {
-			// TODO
+			interior.SetLogicalFunction(wxXOR);
+			drawSymbolPart(part, &border, &interior, 0, ~interiorCol, directB, true);
+			interior.SetLogicalFunction(wxCOPY);
 			break;
 		} case PART_BORDER: {
 			// draw border as interior
-			drawSymbolPart(part, nullptr, &border, 0, 255, false);
+			drawSymbolPart(part, nullptr, &border, 0, 255, false, false);
 			break;
 		}
 	}
 }
 
-void SymbolViewer::drawSymbolPart(const SymbolPart& part, DC* border, DC* interior, int borderCol, int interiorCol, bool directB) {
+void SymbolViewer::drawSymbolPart(const SymbolPart& part, DC* border, DC* interior, unsigned char borderCol, unsigned char interiorCol, bool directB, bool clear) {
 	// create point list
 	vector<wxPoint> points;
 	size_t size = part.points.size();
@@ -179,15 +181,20 @@ void SymbolViewer::drawSymbolPart(const SymbolPart& part, DC* border, DC* interi
 	}
 	// draw border
 	if (border) {
-		if (directB) {
-			// white/green
-			border->SetBrush(Color(borderCol, min(255,borderCol + 128), borderCol));
-		} else {
-			// white/black
-			border->SetBrush(Color(borderCol, borderCol, borderCol));
-		}
+		// white/black
+		border->SetBrush(Color(borderCol, borderCol^(directB ? 128 : 0), borderCol));
 		border->SetPen(wxPen(*wxWHITE, (int) rotation.trS(border_radius)));
 		border->DrawPolygon((int)points.size(), &points[0]);
+
+		if (clear) {
+			border->SetPen(*wxTRANSPARENT_PEN);
+			border->SetBrush(Color(0, (directB ? 128 : 0), 0));
+
+			int func = border->GetLogicalFunction();
+			border->SetLogicalFunction(wxCOPY);
+			border->DrawPolygon((int)points.size(), &points[0]);
+			border->SetLogicalFunction(func);
+		}
 	}
 	// draw interior
 	if (interior) {

@@ -60,7 +60,7 @@ class SymbolViewer : public SymbolView {
 	 *  The **Col parameters give the color to use for the (interior of) the border and the interior
 	 *  default should be white (255) border and black (0) interior.
 	 */
-	void drawSymbolPart(const SymbolPart& part, DC* border, DC* interior, int borderCol, int interiorCol, bool directB);
+	void drawSymbolPart(const SymbolPart& part, DC* border, DC* interior, unsigned char borderCol, unsigned char interiorCol, bool directB, bool oppB);
 /*	
 	// ------------------- Bezier curve calculation
 	
