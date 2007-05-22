@@ -35,7 +35,7 @@ void SymbolBasicShapeEditor::draw(DC& dc) {
 
 void SymbolBasicShapeEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	sides  = new wxSpinCtrl(  tb, ID_SIDES, _("3"), wxDefaultPosition, wxDefaultSize, wxSP_ARROW_KEYS, 3, 50, 3);
-	sidesL = new wxStaticText(tb, ID_SIDES, _(" ") + _LABEL_("sides") + _(": "));
+// 	sidesL = new wxStaticText(tb, ID_SIDES, _(" ") + _LABEL_("sides") + _(": "));
 	sides->SetHelpText(_HELP_("sides"));
 	sides->SetSize(50, -1);
 	tb->AddSeparator();
@@ -43,7 +43,7 @@ void SymbolBasicShapeEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->AddTool(ID_SHAPE_RECTANGLE,	_TOOL_("rectangle"),	load_resource_tool_image(_("rectangle")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("rectangle"),	_HELP_("rectangle"));
 	tb->AddTool(ID_SHAPE_POLYGON,	_TOOL_("polygon"),		load_resource_tool_image(_("triangle")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("polygon"),	_HELP_("polygon"));
 	tb->AddTool(ID_SHAPE_STAR,		_TOOL_("star"),			load_resource_tool_image(_("star")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("star"),		_HELP_("star"));
-	tb->AddControl(sidesL);
+// 	tb->AddControl(sidesL);
 	tb->AddControl(sides);
 	tb->Realize();
 	control.SetCursor(*wxCROSS_CURSOR);
@@ -54,12 +54,10 @@ void SymbolBasicShapeEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->DeleteTool(ID_SHAPE_RECTANGLE);
 	tb->DeleteTool(ID_SHAPE_POLYGON);
 	tb->DeleteTool(ID_SHAPE_STAR);
-	tb->RemoveChild(sidesL);
-	tb->RemoveChild(sides);
 	// HACK: hardcoded size of rest of toolbar
 	tb->DeleteToolByPos(7); // delete separator
-	tb->DeleteToolByPos(7); // delete sidesL
-	tb->DeleteToolByPos(7); // delete sides
+// 	tb->DeleteTool(ID_SIDES_LBEL); // delete sidesL
+	tb->DeleteTool(ID_SIDES); // delete sides
 	#if wxVERSION_NUMBER < 2600
 		delete sides;
 		delete sidesL;
@@ -214,11 +212,11 @@ void SymbolBasicShapeEditor::makeCenteredShape(const Vector2D& c, Vector2D r, bo
 			int n = sides->GetValue();  // number of sides
 			if (mode == ID_SHAPE_POLYGON) {
 				switch (n) {
-					case 3:  shape->name = capitalize(_TYPE_("triangle"));
-					case 4:  shape->name = capitalize(_TYPE_("rhombus"));
-					case 5:  shape->name = capitalize(_TYPE_("pentagon"));
-					case 6:  shape->name = capitalize(_TYPE_("hexagon"));
-					default: shape->name = capitalize(_TYPE_("polygon"));
+					case 3:  shape->name = capitalize(_TYPE_("triangle")); break;
+					case 4:  shape->name = capitalize(_TYPE_("rhombus")); break;
+					case 5:  shape->name = capitalize(_TYPE_("pentagon")); break;
+					case 6:  shape->name = capitalize(_TYPE_("hexagon")); break;
+					default: shape->name = capitalize(_TYPE_("polygon")); break;
 				}
 			} else { // star
 				shape->name = capitalize(_TYPE_("star"));
