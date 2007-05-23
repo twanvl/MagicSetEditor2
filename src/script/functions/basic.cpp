@@ -510,7 +510,7 @@ String spec_sort(const String& spec, const String& input) {
 			pos = end;
 			
 		} else if (c == _('(')) {	// in a cycle
-			size_t end = spec.find_first_of(_(')'));
+			size_t end = spec.find_first_of(_(')'), pos);
 			if (end == String::npos) throw ParseError(_("Expected ')' in sort_rule specification"));
 			ret += cycle_sort(spec.substr(pos + 1, end - pos - 1), input);
 			pos = end;

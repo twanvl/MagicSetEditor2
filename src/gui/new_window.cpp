@@ -91,10 +91,15 @@ void NewSetWindow::OnOK(wxCommandEvent&) {
 }
 
 void NewSetWindow::done() {
+	try {
 	StyleSheetP stylesheet = stylesheet_list->getSelection<StyleSheet>();
 	set = new_intrusive1<Set>(stylesheet);
 	set->validate();
 	EndModal(wxID_OK);
+	} catch (Error& e) {
+	handle_error(e);
+	throw; // We want to crash.
+	}
 }
 
 void NewSetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
