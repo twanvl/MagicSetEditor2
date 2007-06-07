@@ -38,8 +38,10 @@ init script:
 	
 	# Does the card have a color that requires a white font for copyright/artist?
 	black_font_colors := filter_rule(match:"^(hybrid 2 color [^/]*/ )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid 4 color [^/]*/[^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(hybrid 5 color horizontal  [^/]*/[^/]*/[^/]*/[^/]*/ )?(white)")
+	white_font_colors := filter_rule(match:"^(hybrid 2 color overlay green / white|hybrid 2 color overlay red / white)")
 	font_color := {
-		if black_font_colors(input: card.card_color) != "" then rgb(0,0,0)
+		if white_font_colors(input: card.card_color) != "" then rgb(255,255,255)
+		else if black_font_colors(input: card.card_color) != "" then rgb(0,0,0)
 		else rgb(255,255,255)
 	}
 	

@@ -39,7 +39,7 @@ init script:
 	guild_mana := { styling.use_guild_mana_symbols }
 	
 	# Does the card have a color that requires a white font for copyright/artist?
-	white_font_colors := filter_rule(match:"^(hybrid 2 color )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(black|land|hybrid 4 color white / blue / black / red)")
+	white_font_colors := filter_rule(match:"^(hybrid 2 color )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(black|land|hybrid 4 color white / blue / black / red|hybrid 2 color overlay blue / black|hybrid 2 color overlay black / red|hybrid 2 color overlay black / green)")
 	font_color := {
 		if white_font_colors(input: card.card_color) != "" then rgb(255,255,255)
 		else rgb(0,0,0)
@@ -185,19 +185,6 @@ card style:
 			weight: bold
 			color: rgb(0,0,0)
 			separator color: rgb(200,0,0)
-
-	pt box:
-		left:	277
-		top:	442
-		width:	81
-		height:	42
-		z index: 1
-		visible:
-			script: card.pt != ""
-		render style: image
-		mask: mask_pt.png
-		include file: magic-blends.mse-include/card-ptboxes
-
 	############################# Card sorting / numbering
 	############################# Copyright stuff
 
@@ -209,7 +196,7 @@ card style:
 		z index: 1
 		font:
 			name: Matrix
-			size: 12
+			size: 10
 			color:
 				script: font_color()
 
@@ -221,6 +208,27 @@ card style:
 		z index: 1
 		font:
 			name: MPlantin
-			size: 8
+			size: 6.5
 			color:
 				script: font_color()
+
+############################################################## Extra card fields
+
+extra card field:
+	type: choice
+	name: pt box
+	script: card.card_color
+	editable: false
+
+extra card style:
+	pt box:
+		left:	277
+		top:	442
+		width:	81
+		height:	42
+		z index: 1
+		visible:
+			script: card.pt != ""
+		render style: image
+		mask: mask_pt.png
+		include file: magic-blends.mse-include/card-ptboxes

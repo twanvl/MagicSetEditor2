@@ -88,6 +88,18 @@ choice:
 		choice: artifact / black
 		choice: artifact / red
 		choice: artifact / green
+		choice:
+			name: overlay
+			choice: white / blue
+			choice: blue / black
+			choice: black / red
+			choice: red / green
+			choice: green / white
+			choice: white / black
+			choice: blue / red
+			choice: black / green
+			choice: red / white
+			choice: green / blue
 	choice:
 		name: 3 color
 		choice: white / blue / black
