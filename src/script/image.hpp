@@ -47,7 +47,7 @@ class ScriptableImage {
 	}
 
 	/// Can this be safely generated from another thread?
-	bool threadSafe() const {return value->threadSafe();}
+	bool threadSafe() const {return value != nullptr ? value->threadSafe() : false; }
 	
   private:
 	OptionalScript  script;		///< The script, not really optional

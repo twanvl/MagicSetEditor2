@@ -41,9 +41,9 @@ ChoiceThumbnailRequest::ChoiceThumbnailRequest(ValueViewer* cve, int id, bool fr
 	, stylesheet(cve->viewer.stylesheet)
 	, id(id)
 {
-	ChoiceValueEditor& e = *(ChoiceValueEditor*)cve;
+	ChoiceValueEditor e = *(ChoiceValueEditor*)cve;
 	String name = cannocial_name_form(e.field().choices->choiceName(id));
-	ScriptableImage& img = e.style().choice_images[name];
+	ScriptableImage img = e.style().choice_images[name];
 	isThreadSafe = img.threadSafe();
 }
 

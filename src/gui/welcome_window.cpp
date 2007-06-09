@@ -39,11 +39,12 @@ WelcomeWindow::WelcomeWindow()
 	wxControl* open_last = nullptr;
 	if (!settings.recent_sets.empty()) {
 		wxFileName n(settings.recent_sets.front());
-		#ifdef USE_HOVERBUTTON
-			open_last       = new HoverButtonExt(this, ID_FILE_RECENT, load_resource_image(_("welcome_last")), _BUTTON_("last opened set"), _("Open '") + n.GetName() + _("'"));
-		#else
-			open_last       = new wxButton(this, ID_FILE_RECENT, _BUTTON_("last opened set"));
-		#endif
+		if (n.FileExists())
+			#ifdef USE_HOVERBUTTON
+				open_last       = new HoverButtonExt(this, ID_FILE_RECENT, load_resource_image(_("welcome_last")), _BUTTON_("last opened set"), _("Open '") + n.GetName() + _("'"));
+			#else
+				open_last       = new wxButton(this, ID_FILE_RECENT, _BUTTON_("last opened set"));
+			#endif
 	}
 	
 	wxSizer* s1  = new wxBoxSizer(wxHORIZONTAL);
@@ -60,10 +61,9 @@ WelcomeWindow::WelcomeWindow()
 
 void WelcomeWindow::onPaint(wxPaintEvent&) {
 	wxBufferedPaintDC dc(this);
-	dc.BeginDrawing();
 	draw(dc);
-	dc.EndDrawing();
 }
+
 void WelcomeWindow::draw(DC& dc) {
 	wxSize ws = GetClientSize();
 	// draw background
