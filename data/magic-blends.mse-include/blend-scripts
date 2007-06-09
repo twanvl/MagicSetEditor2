@@ -1411,8 +1411,14 @@ card_hybrid_pt := {
 	then land_hybrid_pt()
 	else pt_template()
 }
-# 'overlay' 2 color pt hybrid
+# For overlay p/t box
 card_hybrid_pt_overlay := {
+	if mask_hybrid_with_land()
+	then land_hybrid_pt_overlay()
+	else card_hybrid_pt_overlayer()
+}
+# 'overlay' 2 color pt hybrid
+card_hybrid_pt_overlayer := {
 	combine_blend(
 		image1: pt_template(input[0]),
 		image2: pt_template(input[1]),
@@ -1425,6 +1431,18 @@ land_hybrid_pt := {
 		mask:  "hybrid_blend_pt.png",
 		dark:  "hpt.jpg",
 		light: pt_template(),
+	)
+}
+# Mask part of the input p/t box with "hpt.jpg" file, do the rest as an overlay hybrid
+land_hybrid_pt_overlay := {
+	masked_blend(
+		mask: "hybrid_blend_pt.png",
+		dark: "hpt.jpg",
+		light: combine_blend(
+			image1: pt_template(input[0]),
+			image2: pt_template(input[1]),
+			combine: "symmetric overlay"
+		)
 	)
 }
 # Multicolor blend for pt box

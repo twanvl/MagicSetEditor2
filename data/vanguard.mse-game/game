@@ -465,7 +465,7 @@ keyword:
 	keyword: Flying
 	match: Flying
 	mode: core
-	reminder: This creature can’t be blocked except by creatures with flying and/or reach.
+	reminder: This creature can’t be blocked except by creatures with flying or reach.
 keyword:
 	keyword: First strike
 	match: First strike
