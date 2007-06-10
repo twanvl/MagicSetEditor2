@@ -216,9 +216,9 @@ init script:
 				if mode == "pseudo" then "<i-auto>{keyword}</i-auto>"
 				else "{keyword}<atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
 			) +
-		# step 2b : move inline keywords' reminder text to the end of the line
+		# step 2b : move action keywords' reminder text to the end of the line
 		replace_rule(
-			match: "(<atom-reminder-inline>.*</atom-reminder-inline></kw[^>]*>)([^\n(]+)",
+			match: "(<atom-reminder-action>.*</atom-reminder-action></kw[^>]*>)([^\n(]+)",
 			replace: "\\2\\1"
 			) +
 		# step 3a : expand shortcut words ~ and CARDNAME
@@ -418,9 +418,9 @@ set field:
 	choice: core
 	choice: expert
 	choice: pseudo
-	choice: inline
+	choice: action
 	choice: custom
-	initial: old, core, expert, pseudo, inline, custom
+	initial: old, core, expert, pseudo, action, custom
 	# Convert from older mse versions
 	script:
 		if value = "yes" then "old, core, expert, custom"
@@ -1172,8 +1172,8 @@ keyword mode:
 	name: pseudo
 	description: Pseudo keyword / named ability (Hellbent, Threshold, etc.)
 keyword mode:
-	name: inline
-	description: Inline keyword, reminder text at end of line (Scry, Regenerate, etc.)
+	name: action
+	description: Keyword actions, reminder text at end of line (Scry, Regenerate, etc.)
 keyword mode:
 	is default: true
 	name: custom
@@ -1280,8 +1280,8 @@ keyword:
 keyword:
 	keyword: Regeneration
 	match: Regenerate
-	mode: inline
-	reminder: The next time this creature would be destroyed this turn, it isn't. Instead tap it, remove all damage from it, and remove it from combat.
+	mode: action
+	reminder: The next time {if has_pt() then "this creature" else "this"} would be destroyed this turn, it isn't.{if has_pt() then " Instead tap it, remove all damage from it, and remove it from combat." else ""}
 keyword:
 	keyword: Bands with other
 	match: Bands with other <atom-param>name</atom-param>
@@ -1301,7 +1301,7 @@ keyword:
 	keyword: Phasing
 	match: Phasing
 	mode: old
-	reminder: At the beginning of your upkeep, put this and any cards attached to it in the phased-out zone. If this is already in the phased-out zone, return it and any card and/or counters attached to it to play. This ability does not cause comes-into-play or leaves-play abilities to trigger.
+	reminder: At the beginning of your upkeep, put this and any cards and/or counters attached to it in the phased-out zone. If this is already in the phased-out zone, return it and any cards and/or counters attached to it to play. This ability does not cause comes-into-play or leaves-play abilities to trigger.
 keyword:
 	keyword: Flanking
 	match: Flanking
@@ -1434,7 +1434,7 @@ keyword:
 keyword:
 	keyword: Scry
 	match: Scry <atom-param>number</atom-param>
-	mode: inline
+	mode: action
 	reminder:
 		To scry {param1}, look at the top {
 		 if param1.value==1 then "card of your library, then you may put that card on the bottom of your library."
@@ -1540,7 +1540,7 @@ keyword:
 	keyword: Graft
 	match: Graft <atom-param>number</atom-param>
 	mode: expert
-	reminder: This creature comes into play with {english_number_a(param1)} +1/+1 counter(s) on it. Whenever another creature comes into play, you may move a +1/+1 counter from this creature onto it.
+	reminder: {if has_pt() then "This creature" else "This permanent"} comes into play with {english_number_a(param1)} +1/+1 counter(s) on it. Whenever {if has_pt() then "another" else "a"} creature comes into play, you may move a +1/+1 counter from {if has_pt() then "this creature" else "this permanent"} onto it.
 keyword:
 	keyword: Forecast
 	match: Forecast — <atom-param>cost</atom-param>, Reveal <atom-param>name</atom-param> from your hand: <atom-param>action</atom-param>
@@ -1612,7 +1612,7 @@ keyword:
 keyword:
 	keyword: Fateseal
 	match: Fateseal <atom-param>number</atom-param>
-	mode: inline
+	mode: action
 	reminder:
 		Look at the top {
 		 if param1.value==1 then "card of an opponent's library, then you may put it on the bottom of that player's library."
