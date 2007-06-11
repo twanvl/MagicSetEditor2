@@ -45,7 +45,7 @@ class GeneratedImage : public ScriptValue {
 	/// Equality should mean that every pixel in the generated images is the same if the same options are used
 	virtual bool operator == (const GeneratedImage& that) const = 0;
 	inline  bool operator != (const GeneratedImage& that) const { return !(*this == that); }
-
+	
 	/// Can this image be generated safely from another thread?
 	virtual bool threadSafe() const = 0;
 	
@@ -64,8 +64,8 @@ class LinearBlendImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-
-	virtual bool threadSafe() const {return true;}
+	
+	virtual bool threadSafe() const { return true; }
   private:
 	GeneratedImageP image1, image2;
 	double x1, y1, x2, y2;
@@ -82,8 +82,8 @@ class MaskedBlendImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-
-	virtual bool threadSafe() const {return true;}
+	
+	virtual bool threadSafe() const { return true; }
   private:
 	GeneratedImageP light, dark, mask;
 };
@@ -99,8 +99,8 @@ class CombineBlendImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-
-	virtual bool threadSafe() const {return true;}
+	
+	virtual bool threadSafe() const { return true; }
   private:
 	GeneratedImageP image1, image2;
 	ImageCombine image_combine;
@@ -117,8 +117,8 @@ class SetMaskImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-
-	virtual bool threadSafe() const {return true;}
+	
+	virtual bool threadSafe() const { return true; }
   private:
 	GeneratedImageP image, mask;
 };
@@ -151,8 +151,8 @@ class PackagedImage : public GeneratedImage {
 	{}
 	virtual Image generate(const Options& opt) const;
 	virtual bool operator == (const GeneratedImage& that) const;
-
-	virtual bool threadSafe() const {return true;}
+	
+	virtual bool threadSafe() const { return true; }
   private:
 	String filename;
 };
@@ -167,8 +167,8 @@ class BuiltInImage : public GeneratedImage {
 	{}
 	virtual Image generate(const Options& opt) const;
 	virtual bool operator == (const GeneratedImage& that) const;
-
-	virtual bool threadSafe() const {return true;}
+	
+	virtual bool threadSafe() const { return true; }
   private:
 	String name;
 };
@@ -182,8 +182,12 @@ class SymbolToImage : public GeneratedImage {
 	~SymbolToImage();
 	virtual Image generate(const Options& opt) const;
 	virtual bool operator == (const GeneratedImage& that) const;
-
-	virtual bool threadSafe() const {return false;}
+	
+	#ifdef __WXGTK__
+		virtual bool threadSafe() const { return false; }
+	#else
+		virtual bool threadSafe() const { return true; }
+	#endif
   private:
 	SymbolToImage(const SymbolToImage&); // copy ctor
 	String           filename;

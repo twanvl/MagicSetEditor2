@@ -173,8 +173,6 @@ SetWindow::~SetWindow() {
 	delete find_dialog;
 	// remove from list of set windows
 	set_windows.erase(remove(set_windows.begin(), set_windows.end(), this));
-	// stop updating
-	onBeforeChangeSet();
 }
 
 // ----------------------------------------------------------------------------- : Panel managment
