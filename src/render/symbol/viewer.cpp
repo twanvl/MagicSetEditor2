@@ -138,7 +138,7 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolPart& part, HighlightStyle 
 void SymbolViewer::combineSymbolPart(const SymbolPart& part, DC& border, DC& interior, bool directB, bool directI) {
 	// what color should the interior be?
 	// use black when drawing to the screen
-	unsigned char interiorCol = directI ? 0 : 255;
+	Byte interiorCol = directI ? 0 : 255;
 	// how to draw depends on combining mode
 	switch(part.combine) {
 		case PART_OVERLAP:
@@ -147,7 +147,7 @@ void SymbolViewer::combineSymbolPart(const SymbolPart& part, DC& border, DC& int
 			break;
 		} case PART_SUBTRACT: {
 			border.SetLogicalFunction(wxAND);
-			drawSymbolPart(part, &border, &interior, 0, ~interiorCol, true, true);
+			drawSymbolPart(part, &border, &interior, 0, ~interiorCol, directB, false);
 			border.SetLogicalFunction(wxCOPY);
 			break;
 		} case PART_INTERSECTION: {
@@ -172,7 +172,7 @@ void SymbolViewer::combineSymbolPart(const SymbolPart& part, DC& border, DC& int
 	}
 }
 
-void SymbolViewer::drawSymbolPart(const SymbolPart& part, DC* border, DC* interior, unsigned char borderCol, unsigned char interiorCol, bool directB, bool clear) {
+void SymbolViewer::drawSymbolPart(const SymbolPart& part, DC* border, DC* interior, Byte borderCol, Byte interiorCol, bool directB, bool clear) {
 	// create point list
 	vector<wxPoint> points;
 	size_t size = part.points.size();
@@ -181,8 +181,8 @@ void SymbolViewer::drawSymbolPart(const SymbolPart& part, DC* border, DC* interi
 	}
 	// draw border
 	if (border) {
-		// white/black
-		border->SetBrush(Color(borderCol, borderCol^(directB ? 128 : 0), borderCol));
+		// white/black or, if directB white/green
+		border->SetBrush(Color(borderCol, (directB && borderCol == 0 ? 128 : borderCol), borderCol));
 		border->SetPen(wxPen(*wxWHITE, (int) rotation.trS(border_radius)));
 		border->DrawPolygon((int)points.size(), &points[0]);
 
