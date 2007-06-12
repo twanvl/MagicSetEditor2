@@ -567,7 +567,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 					t = input.peek();
 				}
 			}
-			input.read(); // skip the )
+			expectToken(input, _(")"));
 			// generate instruction
 			script.addInstruction(I_CALL, (unsigned int)arguments.size());
 			FOR_EACH(arg,arguments) {

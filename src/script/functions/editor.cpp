@@ -13,6 +13,7 @@
 #include <data/game.hpp>
 #include <data/field/text.hpp>
 #include <data/field/choice.hpp>
+#include <data/field/multiple_choice.hpp>
 
 DECLARE_TYPEOF_COLLECTION(FieldP);
 DECLARE_TYPEOF_COLLECTION(TextValue*);
@@ -140,7 +141,7 @@ SCRIPT_FUNCTION(primary_choice) {
 	SCRIPT_PARAM(ValueP,input);
 	ChoiceValueP value = dynamic_pointer_cast<ChoiceValue>(input);
 	if (!value) {
-		throw ScriptError(_("Argument to 'primary_choice' should be a choice field")); 
+		throw ScriptError(_("Argument to 'primary_choice' should be a choice value")); 
 	}
 	// determine choice
 	int id = value->field().choices->choiceId(value->value);
@@ -154,10 +155,46 @@ SCRIPT_FUNCTION(primary_choice) {
 	SCRIPT_RETURN(_(""));
 }
 
+// ----------------------------------------------------------------------------- : Multiple choice values
+
+// is the given choice active?
+SCRIPT_FUNCTION(chosen) {
+	SCRIPT_PARAM(String,choice);
+	SCRIPT_PARAM(String,input);
+	for (size_t pos = 0 ; pos < input.size() ; ) {
+		if (input.GetChar(pos) == _(' ')) {
+			++pos; // ingore whitespace
+		} else {
+			// does this choice match the one asked about?
+			size_t end = input.find_first_of(_(','), pos);
+			if (end == String::npos) end = input.size();
+			if (end - pos == choice.size() && is_substr(input, pos, choice)) {
+				SCRIPT_RETURN(true);
+			}
+			pos = end + 1;
+		}
+	}
+	SCRIPT_RETURN(false);
+}
+
+// add the given choice if it is not already active
+SCRIPT_FUNCTION(require_choice) {
+	SCRIPT_PARAM(ValueP,input);
+	MultipleChoiceValueP value = dynamic_pointer_cast<MultipleChoiceValue>(input);
+	if (!value) {
+		throw ScriptError(_("Argument 'input' to 'require_choice' should be a multiple choice value")); 
+	}
+	SCRIPT_PARAM(String,choice);
+	// TODO
+	SCRIPT_RETURN(input);
+}
+
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_editor_functions(Context& ctx) {
 	ctx.setVariable(_("forward editor"),  script_combined_editor); // combatability
 	ctx.setVariable(_("combined editor"), script_combined_editor);
 	ctx.setVariable(_("primary choice"),  script_primary_choice);
+	ctx.setVariable(_("chosen"),          script_chosen);
+	ctx.setVariable(_("require choice"),  script_require_choice);
 }

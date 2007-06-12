@@ -61,7 +61,7 @@ void draw_menu_arrow(Window* win, DC& dc, const wxRect& rect, bool active);
 void draw_drop_down_arrow(Window* win, DC& dc, const wxRect& rect, bool active);
 
 /// Draws a check box
-void draw_checkbox(Window* win, DC& dc, const wxRect& rect, bool checked);
+void draw_checkbox(Window* win, DC& dc, const wxRect& rect, bool checked, bool enabled = true);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

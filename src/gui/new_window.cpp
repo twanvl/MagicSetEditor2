@@ -60,6 +60,7 @@ NewSetWindow::NewSetWindow(Window* parent)
 void NewSetWindow::onGameSelect(wxCommandEvent&) {
 	wxBusyCursor wait;
 	GameP game = game_list->getSelection<Game>();
+	handle_pending_errors();
 	settings.default_game = game->name();
 	GameSettings& gs = settings.gameSettingsFor(*game);
 	stylesheet_list->showData<StyleSheet>(game->name() + _("-*"));
@@ -78,6 +79,7 @@ void NewSetWindow::onStyleSheetSelect(wxCommandEvent&) {
 	// store this as default selection
 	GameP       game       = game_list      ->getSelection<Game>();
 	StyleSheetP stylesheet = stylesheet_list->getSelection<StyleSheet>();
+	handle_pending_errors();
 	GameSettings& gs = settings.gameSettingsFor(*game);
 	gs.default_stylesheet = stylesheet->name();
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);
@@ -113,10 +115,16 @@ void NewSetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 	}
 }
 
+void NewSetWindow::onIdle(wxIdleEvent& ev) {
+	// Stuff that must be done in the main thread
+	handle_pending_errors();
+}
+
 BEGIN_EVENT_TABLE(NewSetWindow, wxDialog)
 	EVT_GALLERY_SELECT  (ID_GAME_LIST,       NewSetWindow::onGameSelect)
 	EVT_GALLERY_SELECT  (ID_STYLESHEET_LIST, NewSetWindow::onStyleSheetSelect)
 	EVT_GALLERY_ACTIVATE(ID_STYLESHEET_LIST, NewSetWindow::onStyleSheetActivate)
 	EVT_BUTTON          (wxID_OK,            NewSetWindow::OnOK)
 	EVT_UPDATE_UI       (wxID_ANY,           NewSetWindow::onUpdateUI)
+	EVT_IDLE            (                    NewSetWindow::onIdle)
 END_EVENT_TABLE  ()

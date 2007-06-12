@@ -48,9 +48,11 @@ class DropDownChoiceListBase : public DropDownList {
   public:
 	DropDownChoiceListBase(Window* parent, bool is_submenu, ValueViewer& cve, ChoiceField::ChoiceP group);
 	
-  protected:		
+  protected:
+	virtual void          onShow();
 	virtual size_t        itemCount() const;
 	virtual bool          lineBelow(size_t item) const;
+	virtual bool          itemEnabled(size_t item) const;
 	virtual String        itemText(size_t item) const;
 	virtual void          drawIcon(DC& dc, int x, int y, size_t item, bool selected) const;
 	virtual DropDownList* submenu(size_t item) const;
@@ -92,6 +94,7 @@ class DropDownChoiceList : public DropDownChoiceListBase {
 	DropDownChoiceList(Window* parent, bool is_submenu, ValueViewer& cve, ChoiceField::ChoiceP group);
 	
   protected:
+	virtual void   onShow();
 	virtual void   select(size_t item);
 	virtual size_t selection() const;
 	virtual DropDownList* createSubMenu(ChoiceField::ChoiceP group) const;

@@ -25,6 +25,7 @@ IMPLEMENT_REFLECTION(MultipleChoiceField) {
 	REFLECT_BASE(ChoiceField);
 	REFLECT(minimum_selection);
 	REFLECT(maximum_selection);
+	REFLECT(empty_choice);
 }
 
 // ----------------------------------------------------------------------------- : MultipleChoiceStyle

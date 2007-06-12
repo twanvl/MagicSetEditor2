@@ -106,6 +106,14 @@ DropDownChoiceListBase::DropDownChoiceListBase
 	item_size.height = max(16., item_size.height);
 }
 
+void DropDownChoiceListBase::onShow() {
+	// update 'enabled'
+	Context& ctx = cve.viewer.getContext();
+	FOR_EACH(c, group->choices) {
+		c->enabled.update(ctx);
+	}
+}
+
 size_t DropDownChoiceListBase::itemCount() const {
 	return group->choices.size() + hasDefault();
 }
@@ -129,7 +137,10 @@ String DropDownChoiceListBase::itemText(size_t item) const {
 	}
 }
 bool DropDownChoiceListBase::lineBelow(size_t item) const {
-	return isDefault(item);
+	return isDefault(item) || getChoice(item)->line_below;
+}
+bool DropDownChoiceListBase::itemEnabled(size_t item) const {
+	return isDefault(item) || getChoice(item)->enabled;
 }
 DropDownList* DropDownChoiceListBase::submenu(size_t item) const {
 	if (isDefault(item)) return nullptr;
@@ -157,7 +168,7 @@ void DropDownChoiceListBase::drawIcon(DC& dc, int x, int y, size_t item, bool se
 	}
 	// draw image
 	if (image_id < il->GetImageCount()) {
-		il->Draw(image_id, dc, x, y);
+		il->Draw(image_id, dc, x, y, itemEnabled(item) ? wxIMAGELIST_DRAW_NORMAL : wxIMAGELIST_DRAW_TRANSPARENT);
 	}
 }
 
@@ -196,6 +207,12 @@ DropDownChoiceList::DropDownChoiceList(Window* parent, bool is_submenu, ValueVie
 	: DropDownChoiceListBase(parent, is_submenu, cve, group)
 {}
 
+void DropDownChoiceList::onShow() {
+	DropDownChoiceListBase::onShow();
+	// we need thumbnail images soon
+	generateThumbnailImages();
+}
+
 void DropDownChoiceList::select(size_t item) {
 	if (isFieldDefault(item)) {
 		dynamic_cast<ChoiceValueEditor&>(cve).change( Defaultable<String>() );
@@ -206,8 +223,6 @@ void DropDownChoiceList::select(size_t item) {
 }
 
 size_t DropDownChoiceList::selection() const {
-	// we need thumbnail images soon
-	const_cast<DropDownChoiceList*>(this)->generateThumbnailImages();
 	// selected item
 	const Defaultable<String>& value = dynamic_cast<ChoiceValueEditor&>(cve).value().value();
 	int id = field().choices->choiceId(value);

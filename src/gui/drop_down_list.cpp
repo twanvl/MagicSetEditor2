@@ -84,6 +84,7 @@ DropDownList::~DropDownList() {
 
 void DropDownList::show(bool in_place, wxPoint pos) {
 	if (IsShown()) return;
+	onShow();
 	// find selection
 	selected_item = selection();
 	// width
@@ -248,6 +249,9 @@ void DropDownList::drawItem(DC& dc, int y, size_t item) {
 		dc.SetBrush         (wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
 		dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
 		dc.DrawRectangle(marginW, y, (int)item_size.width, (int)item_size.height);
+	} else if (!itemEnabled(item)) {
+		// mix between foreground and background
+		dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
 	} else if (highlightItem(item)) {
 		// mix a color between selection and window
 		dc.SetBrush         (lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT),
@@ -266,7 +270,7 @@ void DropDownList::drawItem(DC& dc, int y, size_t item) {
 	}
 	// draw line below
 	if (lineBelow(item)) {
-		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 		dc.DrawLine(marginW, y + (int)item_size.height, marginW + (int)item_size.width, y + (int)item_size.height);
 	}
 }
@@ -295,8 +299,10 @@ void DropDownList::onMotion(wxMouseEvent& ev) {
 	for (size_t i = 0 ; i < count ; ++i) {
 		int endY = startY + (int)item_size.height;
 		if (ev.GetY() >= startY && ev.GetY() < endY) {
-			selected_item = i;
-			showSubMenu(i, startY);
+			if (itemEnabled(i)) {
+				selected_item = i;
+				showSubMenu(i, startY);
+			}
 			Refresh(false);
 			return;
 		}
@@ -321,18 +327,27 @@ bool DropDownList::onCharInParent(wxKeyEvent& ev) {
 			// sub menu always takes keys
 			return open_sub_menu->onCharInParent(ev);
 		} else {
+			size_t old_sel = selected_item;
 			switch (k) {
 				case WXK_UP:
-					if (selected_item > 0) {
+					while (selected_item > 0) {
 						selected_item -= 1;
-						Refresh(false);
+						if (itemEnabled(selected_item)) {
+							Refresh(false);
+							return true;
+						}
 					}
+					selected_item = old_sel;
 					break;
 				case WXK_DOWN:
-					if (selected_item + 1 < itemCount()) {
+					while (selected_item + 1 < itemCount()) {
 						selected_item += 1;
-						Refresh(false);
+						if (itemEnabled(selected_item)) {
+							Refresh(false);
+							return true;
+						}
 					}
+					selected_item = old_sel;
 					break;
 				case WXK_RETURN:
 					if (!showSubMenu()) {
@@ -351,6 +366,7 @@ bool DropDownList::onCharInParent(wxKeyEvent& ev) {
 					size_t count = itemCount();
 					for (size_t i = 0 ; i < count ; ++i) {
 						size_t index = (si + i) % count;
+						if (!itemEnabled(index)) continue;
 						String c = itemText(index);
 #ifdef UNICODE
 						if (!c.empty() && toUpper(c.GetChar(0)) == toUpper(ev.GetUnicodeKey())) {

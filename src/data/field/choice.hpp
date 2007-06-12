@@ -52,9 +52,11 @@ class ChoiceField::Choice : public IntrusivePtrBase<ChoiceField::Choice> {
 	Choice();
 	Choice(const String& name);
 	
-	String          name;			///< Name/value of the item
-	String          default_name;	///< A default item, if this is a group and default_name.empty() there is no default
-	vector<ChoiceP> choices;		///< Choices and sub groups in this group
+	String           name;			///< Name/value of the item
+	String           default_name;	///< A default item, if this is a group and default_name.empty() there is no default
+	vector<ChoiceP>  choices;		///< Choices and sub groups in this group
+	bool             line_below;	///< Show a line after this item?
+	Scriptable<bool> enabled;		///< Is this item enabled?
 	/// First item-id in this group (can be the default item)
 	/** Item-ids are consecutive integers, a group uses all ids [first_id..lastId()).
 	 *  The top level group has first_id 0.
@@ -109,11 +111,15 @@ enum ChoiceRenderStyle
 ,	RENDER_IMAGE           = 0x10	// render an image
 ,	RENDER_HIDDEN          = 0x20	// don't render anything, only have a menu
 ,	RENDER_CHECKLIST       = 0x100	// render as a checklist, intended for multiple choice
+,	RENDER_LIST            = 0x200	// render as a list of images/text, intended for multiple choice
 ,	RENDER_BOTH            = RENDER_TEXT | RENDER_IMAGE
 ,	RENDER_HIDDEN_IMAGE    = RENDER_HIDDEN | RENDER_IMAGE
 ,	RENDER_TEXT_CHECKLIST  = RENDER_CHECKLIST | RENDER_TEXT
 ,	RENDER_IMAGE_CHECKLIST = RENDER_CHECKLIST | RENDER_IMAGE
 ,	RENDER_BOTH_CHECKLIST  = RENDER_CHECKLIST | RENDER_BOTH
+,	RENDER_TEXT_LIST       = RENDER_LIST      | RENDER_TEXT
+,	RENDER_IMAGE_LIST      = RENDER_LIST      | RENDER_IMAGE
+,	RENDER_BOTH_LIST       = RENDER_LIST      | RENDER_BOTH
 };
 
 enum ThumbnailStatus

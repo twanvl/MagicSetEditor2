@@ -42,10 +42,11 @@ class NewSetWindow : public wxDialog {
 	
 	void onStyleSheetSelect  (wxCommandEvent&);
 	void onStyleSheetActivate(wxCommandEvent&);
-	
+		
 	virtual void OnOK(wxCommandEvent&);
 	
 	void onUpdateUI(wxUpdateUIEvent&);
+	void onIdle(wxIdleEvent&);
 	
 	// we are done, close the window
 	void done();

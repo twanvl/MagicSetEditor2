@@ -14,19 +14,19 @@
 // ----------------------------------------------------------------------------- : Reader
 
 Reader::Reader(const InputStreamP& input, const String& filename, bool ignore_invalid)
-	: indent(0), expected_indent(0), just_opened(false)
-	, filename(filename), line_number(0)
+	: indent(0), expected_indent(0), state(OUTSIDE)
+	, filename(filename), line_number(0), previous_line_number(0)
 	, ignore_invalid(ignore_invalid)
-	, input(input), stream(*input)
+	, input(input)
 {
 	moveNext();
 	handleAppVersion();
 }
 
 Reader::Reader(const String& filename)
-	: indent(0), expected_indent(0), just_opened(false)
-	, filename(filename), line_number(0)
-	, input(packages.openFileFromPackage(filename)), stream(*input)
+	: indent(0), expected_indent(0), state(OUTSIDE)
+	, filename(filename), line_number(0), previous_line_number(0)
+	, input(packages.openFileFromPackage(filename))
 {
 	moveNext();
 	handleAppVersion();
@@ -48,8 +48,10 @@ void Reader::handleAppVersion() {
 	}
 }
 
-void Reader::warning(const String& msg) {
-	warnings += String(_("\nOn line ")) << line_number << _(": \t") << msg;
+void Reader::warning(const String& msg, int line_number_delta, bool warn_on_previous_line) {
+	warnings += String(_("\nOn line "))
+	         << ((warn_on_previous_line ? previous_line_number : line_number) + line_number_delta)
+	         << _(": \t") << msg;
 }
 
 void Reader::showWarnings() {
@@ -59,11 +61,19 @@ void Reader::showWarnings() {
 	}
 }
 
+bool Reader::enterAnyBlock() {
+	if (state == ENTERED) moveNext(); // on the key of the parent block, first move inside it
+	if (indent != expected_indent) return false; // not enough indentation
+	state = ENTERED;
+	expected_indent += 1; // the indent inside the block must be at least this much
+	return true;
+}
+
 bool Reader::enterBlock(const Char* name) {
-	if (just_opened) moveNext(); // on the key of the parent block, first move inside it
+	if (state == ENTERED) moveNext(); // on the key of the parent block, first move inside it
 	if (indent != expected_indent) return false; // not enough indentation
 	if (cannocial_name_compare(key, name)) {
-		just_opened = true;
+		state = ENTERED;
 		expected_indent += 1; // the indent inside the block must be at least this much
 		return true;
 	} else {
@@ -74,20 +84,21 @@ bool Reader::enterBlock(const Char* name) {
 void Reader::exitBlock() {
 	assert(expected_indent > 0);
 	expected_indent -= 1;
-	multi_line_str.clear();
-	if (just_opened) moveNext(); // leave this key
+	assert(state != UNHANDLED);
+	previous_value.clear();
+	if (state == ENTERED) moveNext(); // leave this key
 	// Dump the remainder of the block
 	// TODO: issue warnings?
 	while (indent > expected_indent) {
 		moveNext();
 	}
-	handled = true;
+	state = HANDLED;
 }
 
 void Reader::moveNext() {
-	just_opened = false;
+	previous_line_number = line_number;
+	state = HANDLED;
 	key.clear();
-	multi_line_str.clear();
 	indent = -1; // if no line is read it never has the expected indentation
 	// repeat until we have a good line
 	while (key.empty() && !input->Eof()) {
@@ -100,10 +111,55 @@ void Reader::moveNext() {
 	}
 }
 
+/// Read an UTF-8 encoded line from an input stream
+/** As opposed to wx functions, this one actually reports errors
+ */
+String read_utf8_line(wxInputStream& input, bool eat_bom = true, bool until_eof = false);
+String read_utf8_line(wxInputStream& input, bool eat_bom, bool until_eof) {
+	vector<char> buffer;
+	while (!input.Eof()) {
+		Byte c = input.GetC(); if (input.LastRead() <= 0) break;
+		if (!until_eof) {
+			if (c == '\n') break;
+			if (c == '\r') {
+				if (input.Eof()) break;
+				c = input.GetC(); if (input.LastRead() <= 0) break;
+				if (c != '\n') {
+					input.Ungetch(c); // \r but not \r\n
+				}
+				break; 
+			}
+		}
+		buffer.push_back(c);
+	}
+	// convert to string
+	buffer.push_back('\0');
+	size_t size = wxConvUTF8.MB2WC(nullptr, &buffer[0], 0);
+	if (size == -1) {
+		throw ParseError(_("Invalid UTF-8 sequence"));
+	} else if (size == 0) {
+		return _("");
+	}
+	String result;
+	#ifdef UNICODE
+		// NOTE: wx doc is wrong, parameter to GetWritableChar is numer of characters, not bytes
+		Char* result_buf = result.GetWriteBuf(size + 1);
+		wxConvUTF8.MB2WC(result_buf, &buffer[0], size + 1);
+		result.UngetWriteBuf(size);
+	#else
+		// TODO!
+	#endif
+	return eat_bom ? decodeUTF8BOM(result) : result;
+}
+
 void Reader::readLine(bool in_string) {
-	// fix UTF8 in ascii builds; skip BOM
-	line = decodeUTF8BOM(stream.ReadLine());
 	line_number += 1;
+	// We have to do our own line reading, because wxTextInputStream is insane
+	try {
+		line = read_utf8_line(*input, line_number == 1);
+	} catch (const ParseError& e) {
+		throw ParseError(e.what() + String(_(" on line ")) << line_number);
+	}
 	// read indentation
 	indent = 0;
 	while ((UInt)indent < line.size() && line.GetChar(indent) == _('\t')) {
@@ -118,7 +174,7 @@ void Reader::readLine(bool in_string) {
 	}
 	key   = line.substr(indent, pos - indent);
 	if (!ignore_invalid && !in_string && starts_with(key, _(" "))) {
-		warning(_("key: '") + key + _("' starts with a space; only use TABs for indentation!"));
+		warning(_("key: '") + key + _("' starts with a space; only use TABs for indentation!"), 0, false);
 		// try to fix up: 8 spaces is a tab
 		while (starts_with(key, _("        "))) {
 			key = key.substr(8);
@@ -146,7 +202,7 @@ void Reader::unknownKey() {
 		} else if (it->second.end_version <= file_app_version) {
 			// alias not used for this version, use in warning
 			if (indent == expected_indent) {
-				warning(_("Unexpected key: '") + key + _("'  use  '") + it->second.new_key + _("'"));
+				warning(_("Unexpected key: '") + key + _("'  use  '") + it->second.new_key + _("'"), 0, false);
 				do {
 					moveNext();
 				} while (indent > expected_indent);
@@ -159,7 +215,7 @@ void Reader::unknownKey() {
 		}
 	}
 	if (indent >= expected_indent) {
-		warning(_("Unexpected key: '") + key + _("'"));
+		warning(_("Unexpected key: '") + key + _("'"), 0, false);
 		do {
 			moveNext();
 		} while (indent > expected_indent);
@@ -169,23 +225,31 @@ void Reader::unknownKey() {
 
 // ----------------------------------------------------------------------------- : Handling basic types
 
+void Reader::unhandle() {
+	assert(state == HANDLED);
+	state = UNHANDLED;
+}
+
 const String& Reader::getValue() {
-	handled = true;
-	if (!multi_line_str.empty()) {
-		return multi_line_str;
+	assert(state != HANDLED); // don't try to handle things twice
+	if (state == UNHANDLED) {
+		state = HANDLED;
+		return previous_value;
 	} else if (value.empty()) {
 		// a multiline string
+		previous_value.clear();
 		bool first = true;
 		// read all lines that are indented enough
 		readLine();
+		previous_line_number = line_number;
 		while (indent >= expected_indent && !input->Eof()) {
-			if (!first) multi_line_str += _('\n');
+			if (!first) previous_value += _('\n');
 			first = false;
-			multi_line_str += line.substr(expected_indent); // strip expected indent
+			previous_value += line.substr(expected_indent); // strip expected indent
 			readLine(true);
 		}
-		// moveNext(), but without emptying multi_line_str
-		just_opened = false;
+		// moveNext(), but without the initial readLine()
+		state = HANDLED;
 		while (key.empty() && !input->Eof()) {
 			readLine();
 		}
@@ -194,9 +258,16 @@ const String& Reader::getValue() {
 			line_number += 1;
 			indent = -1;
 		}
-		return multi_line_str;
+		if (indent >= expected_indent) {
+			warning(_("Blank line or comment in text block, that is insufficiently indented.\n")
+			        _("\t\tEither indent the comment/blank line, or add a 'key:' after it.\n")
+			        _("\t\tThis could cause more more error messages.\n"), -1, false);
+		}
+		return previous_value;
 	} else {
-		return value;
+		previous_value = value;
+		moveNext();
+		return previous_value;
 	}
 }
 
@@ -217,7 +288,8 @@ template <> void Reader::handle(double& d) {
 	getValue().ToDouble(&d);
 }
 template <> void Reader::handle(bool& b) {
-	b = (getValue()==_("true") || getValue()==_("1") || getValue()==_("yes"));
+	const String& v = getValue();
+	b = (v==_("true") || v==_("1") || v==_("yes"));
 }
 // ----------------------------------------------------------------------------- : Handling less basic util types
 

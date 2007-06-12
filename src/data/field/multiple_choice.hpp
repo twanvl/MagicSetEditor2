@@ -25,6 +25,7 @@ class MultipleChoiceField : public ChoiceField {
 	DECLARE_FIELD_TYPE(MultipleChoiceField);
 	
 	UInt minimum_selection, maximum_selection; ///< How many choices can be selected simultaniously?
+	String empty_choice; ///< Name to use when nothing is selected
 	
   private:
 	DECLARE_REFLECTION();
@@ -56,7 +57,7 @@ class MultipleChoiceValue : public ChoiceValue {
 	inline MultipleChoiceValue(const MultipleChoiceFieldP& field) : ChoiceValue(field, true) {}
 	DECLARE_HAS_FIELD(MultipleChoice);
 	
-	// no extra data
+	String last_choice; ///< Which of the choices was selected/deselected last?
 	
 	/// Splits the value, stores the selected choices in the out parameter
 	void get(vector<String>& out) const;
@@ -65,6 +66,10 @@ class MultipleChoiceValue : public ChoiceValue {
 	DECLARE_REFLECTION();
 };
 
+// ----------------------------------------------------------------------------- : Utilities
+
+/// Is the given choice selected in the value?
+bool chosen(const String& multiple_choice_value, const String& chioce);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

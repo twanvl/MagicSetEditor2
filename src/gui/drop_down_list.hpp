@@ -40,6 +40,10 @@ class DropDownList : public wxPopupWindow {
 	bool onMouseInParent(wxMouseEvent&, bool open_in_place);
   
   protected:
+	
+	/// Prepare for showing the list
+	virtual void onShow() {}
+	
 	// --------------------------------------------------- : Selection
 	static const size_t NO_SELECTION = (size_t)-1;
 	
@@ -59,6 +63,8 @@ class DropDownList : public wxPopupWindow {
 	virtual bool lineBelow(size_t item)        const { return false; }
 	/// Should the item be highlighted?
 	virtual bool highlightItem(size_t item)    const { return false; }
+	/// Is the item enabled?
+	virtual bool itemEnabled(size_t item)      const { return true; }
 	// An extra submenu that pops up from an item, or null if there is no popup menu
 	virtual DropDownList* submenu(size_t item) const { return nullptr; }
 	

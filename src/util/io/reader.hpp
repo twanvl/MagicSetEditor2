@@ -11,7 +11,6 @@
 
 #include <util/prec.hpp>
 #include <util/version.hpp>
-#include <wx/txtstrm.h>
 
 template <typename T> class Defaultable;
 template <typename T> class Scriptable;
@@ -57,7 +56,7 @@ class Reader {
 	void handleAppVersion();
 	
 	/// Add a warning message, but continue reading
-	void warning(const String& msg);
+	void warning(const String& msg, int line_number_delta = 0, bool warn_on_previous_line = true);
 	/// Show all warning messages, but continue reading
 	void showWarnings();
 	
@@ -66,11 +65,9 @@ class Reader {
 	template <typename T>
 	void handle_greedy(T& object) {
 		do {
-//			UInt l = line_number;
-			handled = false;
 			handle(object);
-//			if (l == line_number && !handled) unknownKey(object);
-			if (!handled) unknownKey(object);
+			if (state != HANDLED) unknownKey(object);
+			state = OUTSIDE;
 		} while (indent >= expected_indent);
 	}
 	
@@ -106,6 +103,9 @@ class Reader {
 	void handle(GameP&);
 	void handle(StyleSheetP&);
 	
+	/// Indicate that the last value from getValue() was not handled, allowing it to be handled again
+	void unhandle();
+	
 	// --------------------------------------------------- : Data
 	/// App version this file was made with
 	Version file_app_version;
@@ -114,16 +114,19 @@ class Reader {
 	String line;
 	/// The key and value of the last line we read
 	String key, value;
-	/// A string spanning multiple lines
-	String multi_line_str;
-	/// Has the current line been handled?
-	bool handled;
+	/// Value of the *previous* line, only valid in state==HANDLED
+	String previous_value;
 	/// Indentation of the last line we read
 	int indent;
 	/// Indentation of the block we are in
 	int expected_indent;
-	/// Did we just open a block (i.e. not read any more lines of it)?
-	bool just_opened;
+	/// State of the reader
+	enum State {
+		OUTSIDE,		///< We have not entered the block of the current key
+		ENTERED,		///< We just entered the block of the current key
+		HANDLED,		///< We have handled a value, and moved to the next line, previous_value is the value we just handled
+		UNHANDLED,		///< Something has been 'unhandled()'
+	} state;
 	/// Aliasses for compatability
 	struct Alias {
 		String  new_key;
@@ -136,19 +139,21 @@ class Reader {
 	
 	/// Filename for error messages
 	String filename;
-	/// Line number for error messages
-	UInt line_number;
+	/// Line number of the current line for error messages
+	int line_number;
+	/// Line number of the previous_line
+	int previous_line_number;
 	/// Input stream we are reading from
 	InputStreamP input;
-	/// Text stream wrapping the input stream
-	wxTextInputStream stream;
 	/// Accumulated warning messages
 	String warnings;
 	
 	// --------------------------------------------------- : Reading the stream
 	
-	/// Is there a block with the given key under the current cursor?
+	/// Is there a block with the given key under the current cursor? if so, enter it
 	bool enterBlock(const Char* name);
+	/// Enter any block, no matter what the key
+	bool enterAnyBlock();
 	/// Leave the block we are in
 	void exitBlock();
 	
@@ -208,13 +213,7 @@ void Reader::handle(intrusive_ptr<T>& pointer) {
 
 template <typename V>
 void Reader::handle(map<String, V>& m) {
-	while (true) {
-		// same as enterBlock
-		if (just_opened) moveNext(); // on the key of the parent block, first move inside it
-		if (indent != expected_indent) return; // not enough indentation
-		just_opened = true;
-		expected_indent += 1;
-		// now read the value
+	while (enterAnyBlock()) {
 		handle_greedy(m[key]);
 		exitBlock();
 	}

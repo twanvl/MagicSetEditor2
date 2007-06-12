@@ -49,9 +49,11 @@ IMPLEMENT_REFLECTION(ChoiceField) {
 
 ChoiceField::Choice::Choice()
 	: first_id(0)
+	, line_below(false), enabled(true)
 {}
 ChoiceField::Choice::Choice(const String& name)
 	: name(name), first_id(0)
+	, line_below(false), enabled(true)
 {}
 
 
@@ -138,11 +140,13 @@ String ChoiceField::Choice::choiceNameNice(int id) const {
 
 
 IMPLEMENT_REFLECTION_NO_GET_MEMBER(ChoiceField::Choice) {
-	if (isGroup() || (tag.reading() && tag.isComplex())) {
+	if (isGroup() || line_below || enabled.isScripted() || (tag.reading() && tag.isComplex())) {
 		// complex values are groups
 		REFLECT(name);
 		REFLECT_N("group_choice", default_name);
 		REFLECT(choices);
+		REFLECT(line_below);
+		REFLECT(enabled);
 	} else {
 		REFLECT_NAMELESS(name);
 	}
@@ -237,6 +241,9 @@ IMPLEMENT_REFLECTION_ENUM(ChoiceRenderStyle) {
 	VALUE_N("checklist",		RENDER_TEXT_CHECKLIST);
 	VALUE_N("image checklist",	RENDER_IMAGE_CHECKLIST);
 	VALUE_N("both checklist",	RENDER_BOTH_CHECKLIST);
+	VALUE_N("text list",		RENDER_IMAGE_LIST);
+	VALUE_N("image list",		RENDER_IMAGE_LIST);
+	VALUE_N("both list",		RENDER_IMAGE_LIST);
 }
 
 IMPLEMENT_REFLECTION(ChoiceStyle) {

@@ -14,6 +14,8 @@
 
 Alignment from_string(const String&);
 
+DECLARE_TYPEOF_COLLECTION(ScriptParseError);
+
 // ----------------------------------------------------------------------------- : Store
 
 void store(const ScriptValueP& val, String& var)              { var = val->toString(); }
@@ -43,10 +45,16 @@ ScriptValueP OptionalScript::invoke(Context& ctx, bool open_scope) const {
 }
 
 void OptionalScript::parse(Reader& reader, bool string_mode) {
-	try {
-		script = ::parse(unparsed, string_mode);
-	} catch (const ParseError& e) {
-		reader.warning(e.what());
+	vector<ScriptParseError> errors;
+	script = ::parse(unparsed, string_mode, errors);
+	// show parse errors as warnings
+	FOR_EACH(e, errors) {
+		// find line number
+		int line = 0;
+		for (size_t i = 0 ; i < unparsed.size() && i < e.start ; ++i) {
+			if (unparsed.GetChar(i) == _('\n')) line++;
+		}
+		reader.warning(e.ParseError::what(), line); // use ParseError::what because we don't want e.start in the error message
 	}
 }
 
