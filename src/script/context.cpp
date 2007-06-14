@@ -101,6 +101,11 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 					}
 					break;
 				}
+				// Make an object
+				case I_MAKE_OBJECT: {
+					makeObject(i.data);
+					break;
+				}
 				
 				// Function call
 				case I_CALL: {
@@ -323,4 +328,21 @@ void instrTernary(TernaryInstructionType i, ScriptValueP& a, const ScriptValueP&
 			a = to_script(Color((int)*a, (int)*b, (int)*c));
 			break;
 	}
+}
+
+// ----------------------------------------------------------------------------- : Simple instructions : object
+
+void Context::makeObject(size_t n) {
+	intrusive_ptr<ScriptCustomCollection> ret(new ScriptCustomCollection());
+	size_t begin = stack.size() - 2 * n;
+	for (size_t i = 0 ; i < n ; ++i) {
+		const ScriptValueP& key = stack[begin + 2 * i];
+		const ScriptValueP& val = stack[begin + 2 * i + 1];
+		ret->value.push_back(val);
+		if (key != script_nil) { // valid key
+			ret->key_value[key->toString()] = val;
+		}
+	}
+	stack.resize(begin);
+	stack.push_back(ret);
 }

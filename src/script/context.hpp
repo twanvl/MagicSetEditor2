@@ -94,6 +94,8 @@ class Context {
 	void getBindings(size_t scope, vector<Binding>&);
 	/// Remove all bindings made in the current scope
 	void resetBindings(size_t scope);
+	/// Make an object with n elements, popping 2n values from the stack, and push it onto the stack
+	void makeObject(size_t n);
 };
 
 // ----------------------------------------------------------------------------- : EOF

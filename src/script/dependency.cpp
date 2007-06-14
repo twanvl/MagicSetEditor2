@@ -231,6 +231,11 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					}
 					break;
 				}
+				// Make an object
+				case I_MAKE_OBJECT: {
+					makeObject(i.data);
+					break;
+				}
 				
 				// Function call (as normal)
 				case I_CALL: {

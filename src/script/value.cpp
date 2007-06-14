@@ -257,11 +257,16 @@ class ScriptCustomCollectionIterator : public ScriptIterator {
 };
 
 ScriptValueP ScriptCustomCollection::getMember(const String& name) const {
-	long index;
-	if (name.ToLong(&index) && index >= 0 && (size_t)index < value.size()) {
-		return value.at(index);
+	map<String,ScriptValueP>::const_iterator it = key_value.find(name);
+	if (it != key_value.end()) {
+		return it->second;
 	} else {
-		return ScriptValue::getMember(name);
+		long index;
+		if (name.ToLong(&index) && index >= 0 && (size_t)index < value.size()) {
+			return value.at(index);
+		} else {
+			return ScriptValue::getMember(name);
+		}
 	}
 }
 ScriptValueP ScriptCustomCollection::makeIterator(const ScriptValueP& thisP) const {

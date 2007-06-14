@@ -147,8 +147,10 @@ class ScriptCustomCollection : public ScriptValue {
 	/// Collections can be compared by comparing pointers
 	virtual const void* comparePointer() const { return &value; }
 	
-	/// The collection
+	/// The collection as a list (contains all values)
 	vector<ScriptValueP> value;
+	/// The collection as a map (contains only the values that have a key)
+	map<String,ScriptValueP> key_value;
 };
 
 // ----------------------------------------------------------------------------- : Objects

@@ -385,6 +385,31 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 			parseOper(input, *subScript, PREC_ALL, I_RET);
 			expectToken(input, _("}"));
 			script.addInstruction(I_PUSH_CONST, subScript);
+		} else if (token == _("[")) {
+			// [] = list or map literal
+			unsigned int count = 0;
+			Token t = input.peek();
+			while (t != _("]") && t != TOK_EOF) {
+				if (input.peek(2) == _(":") && (t.type == TOK_NAME || t.type == TOK_INT || t.type == TOK_STRING)) {
+					// name: ...
+					script.addInstruction(I_PUSH_CONST, to_script(t.value));
+					input.read(); // skip the name
+					input.read(); // and the :
+				} else {
+					// implicit numbered element
+					script.addInstruction(I_PUSH_CONST, script_nil);
+				}
+				parseOper(input, script, PREC_SEQ);
+				++count;
+				t = input.peek();
+				if (t == _(",")) {
+					// Comma separating the elements
+					input.read();
+					t = input.peek();
+				}
+			}
+			expectToken(input, _("]"));
+			script.addInstruction(I_MAKE_OBJECT, count);
 		} else if (minPrec <= PREC_UNARY && token == _("-")) {
 			parseOper(input, script, PREC_UNARY, I_UNARY, I_NEGATE); // unary negation
 		} else if (token == TOK_NAME) {
@@ -549,7 +574,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			vector<Variable> arguments;
 			Token t = input.peek();
 			while (t != _(")") && t != TOK_EOF) {
-				if (input.peek(2) == _(":")) {
+				if (input.peek(2) == _(":") && t.type == TOK_NAME) {
 					// name: ...
 					arguments.push_back(string_to_variable(t.value));
 					input.read(); // skip the name

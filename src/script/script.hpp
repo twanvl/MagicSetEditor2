@@ -33,13 +33,14 @@ enum InstructionType
 ,	I_MEMBER_C		= 7  ///< arg = name  : finds a member of the top of the stack replaces the top of the stack with the member
 ,	I_LOOP			= -8 ///< arg = int   : loop over the elements of an iterator, which is the *second* element of the stack (this allows for combing the results of multiple iterations)
 					     ///<               at the end performs a jump and pops the iterator. note: The second element of the stack must be an iterator!
+,	I_MAKE_OBJECT   = -7 ///< arg = int   : make a list/map with n elements, pops 2n values of the stack, n key/value pairs
 	// Functions
-,	I_CALL			= -7 ///< arg = int, int+ : call the top item of the stack, with the given number of arguments (set with SET_VAR, but in the activation record of the call)
-,	I_RET			= -6 ///< return from the current function
+,	I_CALL			= -6 ///< arg = int, int+ : call the top item of the stack, with the given number of arguments (set with SET_VAR, but in the activation record of the call)
+,	I_RET			= -5 ///< return from the current function
 	// Simple instructions
-,	I_UNARY			= -5 ///< pop 1 value,  apply a function, push the result
-,	I_BINARY		= -4 ///< pop 2 values, apply a function, push the result
-,	I_TERNARY		= -3 ///< pop 3 values, apply a function, push the result
+,	I_UNARY			= -4 ///< pop 1 value,  apply a function, push the result
+,	I_BINARY		= -3 ///< pop 2 values, apply a function, push the result
+,	I_TERNARY		= -2 ///< pop 3 values, apply a function, push the result
 };
 
 /// Types of unary instructions (taking one argument from the stack)
