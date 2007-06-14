@@ -31,6 +31,37 @@ ScriptValueP make_iterator(const T& v) {
 template <typename T>
 void mark_dependency_member(const T& value, const String& name, const Dependency& dep) {}
 
+// ----------------------------------------------------------------------------- : Errors
+
+/// A delayed error message.
+/** Only when trying to use the object will the error be thrown.
+ *  This can be 'caught' by the "or else" construct
+ */
+class ScriptDelayedError : public ScriptValue {
+  public:
+	inline ScriptDelayedError(const ScriptError& error) : error(error) {}
+	
+	virtual ScriptType type() const;// { return SCRIPT_ERROR; }
+	
+	// all of these throw
+	virtual String typeName() const;
+	virtual operator String() const;
+	virtual operator double() const;
+	virtual operator int()    const;
+	virtual operator Color()  const;
+	virtual int itemCount() const;
+	virtual const void* comparePointer() const;
+	// these can propagate the error
+	virtual ScriptValueP getMember(const String& name) const;
+	virtual ScriptValueP dependencyMember(const String& name, const Dependency&) const;
+	virtual ScriptValueP eval(Context&) const;
+	virtual ScriptValueP dependencies(Context&, const Dependency&) const;
+	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
+  private:
+	ScriptError error; // the error message
+};
+
+
 // ----------------------------------------------------------------------------- : Iterators
 
 // Iterator over a collection

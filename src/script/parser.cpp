@@ -399,7 +399,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					// implicit numbered element
 					script.addInstruction(I_PUSH_CONST, script_nil);
 				}
-				parseOper(input, script, PREC_SEQ);
+				parseOper(input, script, PREC_AND);
 				++count;
 				t = input.peek();
 				if (t == _(",")) {
@@ -419,10 +419,12 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 				script.addInstruction(I_PUSH_CONST, script_true); // boolean constant : true
 			} else if (token == _("false")) {
 				script.addInstruction(I_PUSH_CONST, script_false); // boolean constant : false
+			} else if (token == _("nil")) {
+				script.addInstruction(I_PUSH_CONST, script_nil); // universal constant : nil
 			} else if (token == _("if")) {
 				// if AAA then BBB else CCC
 				unsigned int jmpElse, jmpEnd;
-				parseOper(input, script, PREC_SET);						// AAA
+				parseOper(input, script, PREC_AND);						// AAA
 				jmpElse = script.getLabel();							//		jmp_else:
 				script.addInstruction(I_JUMP_IF_NOT, 0xFFFF);			//		jnz lbl_else
 				expectToken(input, _("then"));							// then
@@ -449,7 +451,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 						input.expected(_("name"));
 					}
 					expectToken(input, _("in"));						// in
-					parseOper(input, script, PREC_SET);					// BBB
+					parseOper(input, script, PREC_AND);					// BBB
 					script.addInstruction(I_UNARY, I_ITERATOR_C);		//		iterator_collection
 					script.addInstruction(I_PUSH_CONST, script_nil);	//		push nil
 					lblStart = script.getLabel();						//		lbl_start:
@@ -465,9 +467,9 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					// for AAA from BBB to CCC do DDD
 					Token name = input.read();							// AAA
 					expectToken(input, _("from"));						// from
-					parseOper(input, script, PREC_SET);					// BBB
+					parseOper(input, script, PREC_AND);					// BBB
 					expectToken(input, _("to"));						// to
-					parseOper(input, script, PREC_SET);					// CCC
+					parseOper(input, script, PREC_AND);					// CCC
 					script.addInstruction(I_BINARY, I_ITERATOR_R);		//		iterator_range
 					script.addInstruction(I_PUSH_CONST, script_nil);	//		push nil
 					lblStart = script.getLabel();						//		lbl_start:
@@ -546,8 +548,21 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			parseOper(input, script, PREC_SET,  I_SET_VAR, instr.data);
 		}
 		else if (minPrec <= PREC_AND    && token==_("and"))   parseOper(input, script, PREC_CMP,   I_BINARY, I_AND);
-		else if (minPrec <= PREC_AND    && token==_("or" ))   parseOper(input, script, PREC_CMP,   I_BINARY, I_OR);
-		else if (minPrec <= PREC_CMP    && token==_("="))     parseOper(input, script, PREC_ADD,   I_BINARY, I_EQ);
+		else if (minPrec <= PREC_AND    && token==_("or" )) {
+			Token t = input.peek();
+			if (t == _("else")) {// or else
+				input.read(); // skip else
+				parseOper(input, script, PREC_CMP,   I_BINARY, I_OR_ELSE);
+			} else {
+				parseOper(input, script, PREC_CMP,   I_BINARY, I_OR);
+			}
+		}
+		else if (minPrec <= PREC_CMP    && token==_("=")) {
+			if (minPrec <= PREC_SET) {
+				input.add_error(_("Use of '=', did you mean ':=' or '=='?"));
+			}
+			parseOper(input, script, PREC_ADD,   I_BINARY, I_EQ);
+		}
 		else if (minPrec <= PREC_CMP    && token==_("=="))    parseOper(input, script, PREC_ADD,   I_BINARY, I_EQ);
 		else if (minPrec <= PREC_CMP    && token==_("!="))    parseOper(input, script, PREC_ADD,   I_BINARY, I_NEQ);
 		else if (minPrec <= PREC_CMP    && token==_("<"))     parseOper(input, script, PREC_ADD,   I_BINARY, I_LT);

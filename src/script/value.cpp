@@ -14,19 +14,41 @@
 // ----------------------------------------------------------------------------- : ScriptValue
 // Base cases
 
+inline ScriptValueP delayError(const String& m) {
+	return new_intrusive1<ScriptDelayedError>(ScriptError(m));
+}
+
 ScriptValue::operator String()                              const { return _("[[") + typeName() + _("]]"); }
 ScriptValue::operator int()                                 const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("integer" ))); }
 ScriptValue::operator double()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("real"    ))); }
 ScriptValue::operator Color()                               const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("color"   ))); }
-ScriptValueP ScriptValue::eval(Context&)                    const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("function"))); }
-ScriptValueP ScriptValue::getMember(const String& name)     const { throw ScriptError(_ERROR_2_("has no member", typeName(), name));              }
+ScriptValueP ScriptValue::eval(Context&)                    const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("function"))); }
+ScriptValueP ScriptValue::getMember(const String& name)     const { return delayError(_ERROR_2_("has no member", typeName(), name));              }
 ScriptValueP ScriptValue::next()                                  { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
-ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
+ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
 int          ScriptValue::itemCount()                       const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
 const void*  ScriptValue::comparePointer()                  const { return nullptr; }
 
 ScriptValueP ScriptValue::dependencyMember(const String& name, const Dependency&) const { return dependency_dummy; }
 ScriptValueP ScriptValue::dependencies(Context&,               const Dependency&) const { return dependency_dummy; }
+
+
+// ----------------------------------------------------------------------------- : Errors
+
+ScriptType ScriptDelayedError::type() const { return SCRIPT_ERROR; }
+
+String ScriptDelayedError::typeName() const            { throw error; }
+ScriptDelayedError::operator String() const            { throw error; }
+ScriptDelayedError::operator double() const            { throw error; }
+ScriptDelayedError::operator int()    const            { throw error; }
+ScriptDelayedError::operator Color()  const            { throw error; }
+int ScriptDelayedError::itemCount() const              { throw error; }
+const void* ScriptDelayedError::comparePointer() const { throw error; }
+ScriptValueP ScriptDelayedError::getMember(const String&) const                           { return new_intrusive1<ScriptDelayedError>(error); }
+ScriptValueP ScriptDelayedError::dependencyMember(const String&, const Dependency&) const { return new_intrusive1<ScriptDelayedError>(error); }
+ScriptValueP ScriptDelayedError::eval(Context&) const                                     { return new_intrusive1<ScriptDelayedError>(error); }
+ScriptValueP ScriptDelayedError::dependencies(Context&, const Dependency&) const          { return new_intrusive1<ScriptDelayedError>(error); }
+ScriptValueP ScriptDelayedError::makeIterator(const ScriptValueP& thisP) const            { return thisP; }
 
 
 // ----------------------------------------------------------------------------- : Iterators

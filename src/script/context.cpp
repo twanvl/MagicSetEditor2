@@ -317,6 +317,9 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 		case I_GT:		OPERATOR_DI(>);
 		case I_LE:		OPERATOR_DI(<=);
 		case I_GE:		OPERATOR_DI(>=);
+		case I_OR_ELSE:
+			if (at == SCRIPT_ERROR) a = b;
+			break;
 	}
 }
 

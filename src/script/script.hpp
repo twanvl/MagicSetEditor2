@@ -70,6 +70,8 @@ enum BinaryInstructionType
 ,	I_GT			///< operator >
 ,	I_LE			///< operator <=
 ,	I_GE			///< operator >=
+// Error handling
+,	I_OR_ELSE		///< if a != error then a else b
 };
 
 /// Types of ternary instructions (taking three arguments from the stack)

@@ -29,10 +29,12 @@ class ScriptableImage {
 	inline ScriptableImage(const String& script) : script(script) {}
 	inline ScriptableImage(const GeneratedImageP& gen) : value(gen) {}
 	
-	/// Is there an image set?
+	/// Is there a scripted image set?
 	inline bool isScripted() const { return script; }
 	/// Is there an image generator available?
 	inline bool isReady()    const { return value; }
+	/// Is there an image set?
+	inline bool isSet()      const { return script || value; }
 	
 	/// Generate an image.
 	Image generate(const GeneratedImage::Options& options, bool cache = false) const;
@@ -48,6 +50,11 @@ class ScriptableImage {
 
 	/// Can this be safely generated from another thread?
 	inline bool threadSafe() const { return !value || value->threadSafe(); }
+	
+	/// Get access to the script, be careful
+	inline Script& getScript() { return script.getScript(); }
+	/// Get access to the script, always returns a valid script
+	ScriptP getScriptP();
 	
   private:
 	OptionalScript  script;		///< The script, not really optional

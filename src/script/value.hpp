@@ -29,6 +29,7 @@ enum ScriptType
 ,	SCRIPT_COLLECTION
 ,	SCRIPT_ITERATOR
 ,	SCRIPT_DUMMY
+,	SCRIPT_ERROR
 };
 
 /// A value that can be handled by the scripting engine.
