@@ -489,7 +489,7 @@ String spec_sort(const String& spec, const String& input) {
 		Char c = spec.GetChar(pos);
 		
 		if (c == _('<')) {			// keep only a single copy
-			for ( ; pos < spec.size() ; ++pos) {
+			for ( ++pos ; pos < spec.size() ; ++pos) {
 				Char c = spec.GetChar(pos);
 				if (c == _('>')) break;
 				if (input.find_first_of(c) != String::npos) {
