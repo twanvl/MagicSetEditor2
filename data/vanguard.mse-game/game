@@ -529,7 +529,7 @@ keyword:
 keyword:
 	keyword: Shadow
 	match: shadow
-	mode: core
+	mode: expert
 	reminder: It can block or be blocked by only creatures with shadow.
 keyword:
 	keyword: Denimwalk
@@ -638,7 +638,7 @@ keyword:
 keyword:
 	keyword: Equip
 	match: equip <atom-param>cost</atom-param>
-	mode: expert
+	mode: core
 	reminder: {param1}: Attach to target creature you control. Equip only as a sorcery.
 keyword:
 	keyword: Imprint
@@ -792,7 +792,7 @@ keyword:
 keyword:
 	keyword: Flash
 	match: flash
-	mode: expert
+	mode: core
 	reminder: You may play it anytime you could play an instant.
 keyword:
 	keyword: Split second
@@ -884,7 +884,7 @@ keyword:
 keyword:
 	keyword: Shroud
 	match: shroud
-	mode: expert
+	mode: core
 	reminder: It can't be the target of spells or abilities.
 keyword:
 	keyword: Fortify
