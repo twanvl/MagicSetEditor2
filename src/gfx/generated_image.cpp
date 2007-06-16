@@ -19,6 +19,19 @@
 ScriptType GeneratedImage::type() const { return SCRIPT_IMAGE; }
 String GeneratedImage::typeName() const { return _TYPE_("image"); }
 
+// ----------------------------------------------------------------------------- : BlankImage
+
+Image BlankImage::generate(const Options& opt) const {
+	Image img(opt.width, opt.height);
+	img.InitAlpha();
+	memset(img.GetAlpha(), 0, opt.width * opt.height);
+	return img;
+}
+bool BlankImage::operator == (const GeneratedImage& that) const {
+	const BlankImage* that2 = dynamic_cast<const BlankImage*>(&that);
+	return that2;
+}
+
 // ----------------------------------------------------------------------------- : LinearBlendImage
 
 Image LinearBlendImage::generate(const Options& opt) const {
@@ -145,12 +158,12 @@ SymbolToImage::~SymbolToImage() {}
 
 Image SymbolToImage::generate(const Options& opt) const {
 	// TODO : use opt.width and opt.height?
-	if (!opt.symbol_package) throw ScriptError(_("Can only load images in a context where an image is expected"));
+	if (!opt.local_package) throw ScriptError(_("Can only load images in a context where an image is expected"));
 	SymbolP the_symbol;
 	if (filename.empty()) {
 		the_symbol = default_symbol();
 	} else {
-		the_symbol = opt.symbol_package->readFile<SymbolP>(filename);
+		the_symbol = opt.local_package->readFile<SymbolP>(filename);
 	}
 	return render_symbol(the_symbol, *variation->filter, variation->border_radius);
 }
@@ -159,4 +172,30 @@ bool SymbolToImage::operator == (const GeneratedImage& that) const {
 	return that2 && filename  == that2->filename
 	             && age       == that2->age
 	             && variation == that2->variation;
+}
+
+// ----------------------------------------------------------------------------- : ImageValueToImage
+
+ImageValueToImage::ImageValueToImage(const String& filename, Age age)
+	: filename(filename), age(age)
+{}
+ImageValueToImage::~ImageValueToImage() {}
+
+Image ImageValueToImage::generate(const Options& opt) const {
+	// TODO : use opt.width and opt.height?
+	if (!opt.local_package) throw ScriptError(_("Can only load images in a context where an image is expected"));
+	Image image;
+	if (!filename.empty()) {
+		InputStreamP image_file = opt.local_package->openIn(filename);
+		image.LoadFile(*image_file);
+	}
+	if (!image.Ok()) {
+		image = Image(opt.width, opt.height);
+	}
+	return image;
+}
+bool ImageValueToImage::operator == (const GeneratedImage& that) const {
+	const ImageValueToImage* that2 = dynamic_cast<const ImageValueToImage*>(&that);
+	return that2 && filename == that2->filename
+	             && age      == that2->age;
 }

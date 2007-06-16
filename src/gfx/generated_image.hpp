@@ -27,15 +27,15 @@ class GeneratedImage : public ScriptValue {
   public:
 	/// Options for generating the image
 	struct Options {
-		Options(int width = 0, int height = 0, Package* package = nullptr, Package* symbol_package = nullptr, PreserveAspect preserve_aspect = ASPECT_STRETCH, bool saturate = false)
-			: width(width), height(height), preserve_aspect(preserve_aspect), saturate(saturate), package(package), symbol_package(symbol_package)
+		Options(int width = 0, int height = 0, Package* package = nullptr, Package* local_package = nullptr, PreserveAspect preserve_aspect = ASPECT_STRETCH, bool saturate = false)
+			: width(width), height(height), preserve_aspect(preserve_aspect), saturate(saturate), package(package), local_package(local_package)
 		{}
 		
 		int            width, height;	///< Width to force the image to, or 0 to keep the width of the input
 		PreserveAspect preserve_aspect;
 		bool           saturate;
-		Package* package;        ///< Package to load images from
-		Package* symbol_package; ///< Package to load symbols from
+		Package* package;       ///< Package to load images from
+		Package* local_package; ///< Package to load symbols and ImageValue images from
 	};
 	
 	/// Generate the image
@@ -47,10 +47,19 @@ class GeneratedImage : public ScriptValue {
 	inline  bool operator != (const GeneratedImage& that) const { return !(*this == that); }
 	
 	/// Can this image be generated safely from another thread?
-	virtual bool threadSafe() const = 0;
+	virtual bool threadSafe() const { return true; };
 	
 	virtual ScriptType type() const;
 	virtual String typeName() const;
+};
+
+// ----------------------------------------------------------------------------- : BlankImage
+
+/// An image generator that returns a blank image
+class BlankImage : public GeneratedImage {
+  public:
+	virtual Image generate(const Options&) const;
+	virtual bool operator == (const GeneratedImage& that) const;
 };
 
 // ----------------------------------------------------------------------------- : LinearBlendImage
@@ -64,8 +73,6 @@ class LinearBlendImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-	
-	virtual bool threadSafe() const { return true; }
   private:
 	GeneratedImageP image1, image2;
 	double x1, y1, x2, y2;
@@ -82,8 +89,6 @@ class MaskedBlendImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-	
-	virtual bool threadSafe() const { return true; }
   private:
 	GeneratedImageP light, dark, mask;
 };
@@ -99,8 +104,6 @@ class CombineBlendImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-	
-	virtual bool threadSafe() const { return true; }
   private:
 	GeneratedImageP image1, image2;
 	ImageCombine image_combine;
@@ -117,8 +120,6 @@ class SetMaskImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-	
-	virtual bool threadSafe() const { return true; }
   private:
 	GeneratedImageP image, mask;
 };
@@ -134,8 +135,6 @@ class SetCombineImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-
-	virtual bool threadSafe() const {return true;}
   private:
 	GeneratedImageP image;
 	ImageCombine image_combine;
@@ -151,8 +150,6 @@ class PackagedImage : public GeneratedImage {
 	{}
 	virtual Image generate(const Options& opt) const;
 	virtual bool operator == (const GeneratedImage& that) const;
-	
-	virtual bool threadSafe() const { return true; }
   private:
 	String filename;
 };
@@ -167,8 +164,6 @@ class BuiltInImage : public GeneratedImage {
 	{}
 	virtual Image generate(const Options& opt) const;
 	virtual bool operator == (const GeneratedImage& that) const;
-	
-	virtual bool threadSafe() const { return true; }
   private:
 	String name;
 };
@@ -185,14 +180,27 @@ class SymbolToImage : public GeneratedImage {
 	
 	#ifdef __WXGTK__
 		virtual bool threadSafe() const { return false; }
-	#else
-		virtual bool threadSafe() const { return true; }
 	#endif
   private:
 	SymbolToImage(const SymbolToImage&); // copy ctor
 	String           filename;
 	Age              age; ///< Age the symbol was last updated
 	SymbolVariationP variation;
+};
+
+// ----------------------------------------------------------------------------- : ImageValueToImage
+
+/// Use an image from an ImageValue as an image
+class ImageValueToImage : public GeneratedImage {
+  public:
+	ImageValueToImage(const String& filename, Age age);
+	~ImageValueToImage();
+	virtual Image generate(const Options& opt) const;
+	virtual bool operator == (const GeneratedImage& that) const;
+  private:
+	ImageValueToImage(const ImageValueToImage&); // copy ctor
+	String filename;
+	Age    age; ///< Age the symbol was last updated
 };
 
 // ----------------------------------------------------------------------------- : EOF
