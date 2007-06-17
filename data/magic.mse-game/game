@@ -1,4 +1,4 @@
-﻿mse version: 0.3.3
+mse version: 0.3.3
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
@@ -1133,19 +1133,53 @@ statistics category:
 pack type:
 	name: Starter pack
 pack type:
+	name: Tournament pack
+	card type:
+		name: Rare
+		amount: 3
+		filter: card.rarity == "rare"
+	card type:
+		name: Uncommon
+		amount: 9
+		filter: card.rarity == "uncommon"
+	card type:
+		name: Common
+		amount: 33
+		filter: card.rarity == "common"
+	card type:
+		name: Plains
+		amount: 6
+		filter: card.type == "Plains"
+	card type:
+		name: Island
+		amount: 6
+		filter: card.type == "Island"
+	card type:
+		name: Swamp
+		amount: 6
+		filter: card.type == "Swamp"
+	card type:
+		name: Mountain
+		amount: 6
+		filter: card.type == "Mountain"
+	card type:
+		name: Forest
+		amount: 6
+		filter: card.type == "Forest"
+pack type:
 	name: Booster pack
 	card type:
 		name: Rare
 		amount: 1
-		filter: card.rarity = "rare"
+		filter: card.rarity == "rare"
 	card type:
 		name: Uncommon
 		amount: 3
-		filter: card.rarity = "uncommon"
+		filter: card.rarity == "uncommon"
 	card type:
 		name: Common
 		amount: 11
-		filter: card.rarity = "common"
+		filter: card.rarity == "common"
 
 
 

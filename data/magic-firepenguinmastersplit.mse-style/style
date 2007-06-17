@@ -311,6 +311,7 @@ card style:
 		padding bottom: 2
 		line height hard: 1.2
 		line height line: 1.5
+		line height soft: 0.9
 	text 2:
 		left: 302.74
 		top : 244
