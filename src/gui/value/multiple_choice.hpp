@@ -38,6 +38,8 @@ class MultipleChoiceValueEditor : public MultipleChoiceValueViewer, public Value
 	DropDownList& initDropDown();
 	/// Toggle a choice or on or off
 	void toggle(int id);
+	/// Toggle defaultness or on or off
+	void toggleDefault();
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -57,13 +57,24 @@ class MultipleChoiceValue : public ChoiceValue {
 	inline MultipleChoiceValue(const MultipleChoiceFieldP& field) : ChoiceValue(field, true) {}
 	DECLARE_HAS_FIELD(MultipleChoice);
 	
-	String last_choice; ///< Which of the choices was selected/deselected last?
+	String last_change; ///< Which of the choices was selected/deselected last?
+	
+	// for SimpleValueAction
+	struct ValueType {
+		ChoiceValue::ValueType value;
+		String                 last_change;
+	};
 	
 	/// Splits the value, stores the selected choices in the out parameter
 	void get(vector<String>& out) const;
 	
+	virtual bool update(Context&);
+	
   private:
 	DECLARE_REFLECTION();
+	
+	/// Put the value in normal form (all choices ordered, empty_name
+	void normalForm();
 };
 
 // ----------------------------------------------------------------------------- : Utilities

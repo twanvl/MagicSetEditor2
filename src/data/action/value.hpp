@@ -45,7 +45,7 @@ class ValueAction : public Action {
 
 /// Action that updates a Value to a new value
 ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value);
-ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value);
+ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value, const String& last_change);
 ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value);
 ValueAction* value_action(const ImageValueP&          value, const FileName&            new_value);
 ValueAction* value_action(const SymbolValueP&         value, const FileName&            new_value);

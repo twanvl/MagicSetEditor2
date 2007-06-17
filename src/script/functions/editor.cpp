@@ -157,10 +157,8 @@ SCRIPT_FUNCTION(primary_choice) {
 
 // ----------------------------------------------------------------------------- : Multiple choice values
 
-// is the given choice active?
-SCRIPT_FUNCTION(chosen) {
-	SCRIPT_PARAM(String,choice);
-	SCRIPT_PARAM(String,input);
+/// Is the given choice active?
+bool chosen(const String& choice, const String& input) {
 	for (size_t pos = 0 ; pos < input.size() ; ) {
 		if (input.GetChar(pos) == _(' ')) {
 			++pos; // ingore whitespace
@@ -169,32 +167,147 @@ SCRIPT_FUNCTION(chosen) {
 			size_t end = input.find_first_of(_(','), pos);
 			if (end == String::npos) end = input.size();
 			if (end - pos == choice.size() && is_substr(input, pos, choice)) {
-				SCRIPT_RETURN(true);
+				return true;
 			}
 			pos = end + 1;
 		}
 	}
-	SCRIPT_RETURN(false);
+	return false;
+}
+
+// is the given choice active?
+SCRIPT_FUNCTION(chosen) {
+	SCRIPT_PARAM(String,choice);
+	SCRIPT_PARAM(String,input);
+	SCRIPT_RETURN(chosen(choice, input));
+}
+
+/// Filter the choices
+/** Keep at most max elements of choices,
+ *  and at least min. Use prefered as choice to add/keep in case of conflicts.
+ */
+String filter_choices(const String& input, const vector<String>& choices, int min, int max, String prefered) {
+	if (choices.empty()) return input; // do nothing, shouldn't happen, but better make sure
+	String ret;
+	int count = 0;
+	vector<bool> seen(choices.size()); // which choices have we seen?
+	for (size_t pos = 0 ; pos < input.size() ; ) {
+		if (input.GetChar(pos) == _(' ')) {
+			++pos; // ingore whitespace
+		} else {
+			// does this choice match the one asked about?
+			size_t end = input.find_first_of(_(','), pos);
+			if (end == String::npos) end = input.size();
+			// is this choice in choices
+			bool in_choices = false;
+			for (size_t i = 0 ; i < choices.size() ; ++i) {
+				if (!seen[i] && is_substr(input, pos, choices[i])) {
+					seen[i] = true; ++count;
+					in_choices = true;
+					break;
+				}
+			}
+			// is this choice unaffected?
+			if (!in_choices) {
+				if (!ret.empty()) ret += _(", ");
+				ret += input.substr(pos, end - pos);
+			}
+			pos = end + 1;
+		}
+	}
+	// keep more choices
+	if (count < min) {
+		// add prefered choice
+		for (size_t i = 0 ; i < choices.size() ; ++i) {
+			if (choices[i] == prefered) {
+				if (!seen[i]) {
+					seen[i] = true; ++count;
+				}
+				break;
+			}
+		}
+		// add more choices
+		for (size_t i = 0 ; i < choices.size() ; ++i) {
+			if (count >= min) break;
+			if (!seen[i]) {
+				seen[i] = true; ++count;
+			}
+		}
+	}
+	// keep less choices
+	if (count > max) {
+		for (size_t i = choices.size() - 1 ; i >= 0 ; --i) {
+			if (count <= max) break;
+			if (seen[i]) {
+				if (max > 0 && choices[i] == prefered) continue; // we would rather not remove prefered choice
+				seen[i] = false; --count;
+			}
+		}
+	}
+	// add the 'seen' choices to ret
+	for (size_t i = 0 ; i < choices.size() ; ++i) {
+		if (seen[i]) {
+			if (!ret.empty()) ret += _(", ");
+			ret += choices[i];
+		}
+	}
+	return ret;
+}
+
+// read 'choice#' arguments
+void read_choices_param(Context& ctx, vector<String>& choices) {
+	for (int i = 0 ; ; ++i) {
+		String name = _("choice"); if (i > 0) name = name << i;
+		SCRIPT_OPTIONAL_PARAM_N(String, name, choice) {
+			choices.push_back(choice);
+		} else if (i > 0) break;
+	}
 }
 
 // add the given choice if it is not already active
 SCRIPT_FUNCTION(require_choice) {
-	SCRIPT_PARAM(ValueP,input);
-	MultipleChoiceValueP value = dynamic_pointer_cast<MultipleChoiceValue>(input);
-	if (!value) {
-		throw ScriptError(_("Argument 'input' to 'require_choice' should be a multiple choice value")); 
-	}
-	SCRIPT_PARAM(String,choice);
-	// TODO
-	SCRIPT_RETURN(input);
+	SCRIPT_PARAM(String,input);
+	SCRIPT_OPTIONAL_PARAM_N_(String,_("last change"),last_change);
+	vector<String> choices;
+	read_choices_param(ctx, choices);
+	SCRIPT_RETURN(filter_choices(input, choices, 1, (int)choices.size(), last_change));
+}
+
+// make sure at most one of the choices is active
+SCRIPT_FUNCTION(exclusive_choice) {
+	SCRIPT_PARAM(String,input);
+	SCRIPT_OPTIONAL_PARAM_N_(String,_("last change"),last_change);
+	vector<String> choices;
+	read_choices_param(ctx, choices);
+	SCRIPT_RETURN(filter_choices(input, choices, 0, 1, last_change));
+}
+
+// make sure exactly one of the choices is active
+SCRIPT_FUNCTION(require_exclusive_choice) {
+	SCRIPT_PARAM(String,input);
+	SCRIPT_OPTIONAL_PARAM_N_(String,_("last change"),last_change);
+	vector<String> choices;
+	read_choices_param(ctx, choices);
+	SCRIPT_RETURN(filter_choices(input, choices, 1, 1, last_change));
+}
+
+// make sure none of the choices are active
+SCRIPT_FUNCTION(remove_choice) {
+	SCRIPT_PARAM(String,input);
+	vector<String> choices;
+	read_choices_param(ctx, choices);
+	SCRIPT_RETURN(filter_choices(input, choices, 0, 0, _("")));
 }
 
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_editor_functions(Context& ctx) {
-	ctx.setVariable(_("forward editor"),  script_combined_editor); // combatability
-	ctx.setVariable(_("combined editor"), script_combined_editor);
-	ctx.setVariable(_("primary choice"),  script_primary_choice);
-	ctx.setVariable(_("chosen"),          script_chosen);
-	ctx.setVariable(_("require choice"),  script_require_choice);
+	ctx.setVariable(_("forward editor"),           script_combined_editor); // compatability
+	ctx.setVariable(_("combined editor"),          script_combined_editor);
+	ctx.setVariable(_("primary choice"),           script_primary_choice);
+	ctx.setVariable(_("chosen"),                   script_chosen);
+	ctx.setVariable(_("require choice"),           script_require_choice);
+	ctx.setVariable(_("exclusive choice"),         script_exclusive_choice);
+	ctx.setVariable(_("require exclusive choice"), script_require_exclusive_choice);
+	ctx.setVariable(_("remove choice"),            script_remove_choice);
 }

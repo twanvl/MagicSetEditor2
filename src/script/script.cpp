@@ -61,15 +61,15 @@ ScriptValueP Script::dependencies(Context& ctx, const Dependency& dep) const {
 }
 	
 void Script::addInstruction(InstructionType t) {
-	//if (t == I_MEMBER_V && !instructions.empty() && instructions.back().instr == I_PUSH_CONST) {
-	//	// optimize: push x ; member_v -->  member x
-	//	instructions.back().instr = I_MEMBER;
-	//} else {
 	Instruction i = {t, {0}};
 	instructions.push_back(i);
-	//}
 }
 void Script::addInstruction(InstructionType t, unsigned int d) {
+	if (t == I_BINARY && d == I_MEMBER && !instructions.empty() && instructions.back().instr == I_PUSH_CONST) {
+		// optimize: push x ; member -->  member_c x
+		instructions.back().instr = I_MEMBER_C;
+		return;
+	}
 	Instruction i = {t, {d}};
 	instructions.push_back(i);
 }

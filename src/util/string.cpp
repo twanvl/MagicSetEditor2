@@ -41,6 +41,30 @@ void writeUTF8(wxTextOutputStream& stream, const String& str) {
 	#endif
 }
 
+// ----------------------------------------------------------------------------- : Char functions
+
+#ifdef CHAR_FUNCTIONS_ARE_SLOW
+
+Char toLower(Char c) {
+	if (c <= 128) {
+		if (c >= _('A') && c <= _('Z')) return c + (_('a') - _('A'));
+		else                            return c;
+	} else {
+		return IF_UNICODE( towlower(c) , tolower(c) );
+	}
+}
+
+Char toUpper(Char c) {
+	if (c <= 128) {
+		if (c >= _('a') && c <= _('z')) return c + (_('A') - _('a'));
+		else                            return c;
+	} else {
+		return IF_UNICODE( towupper(c) , toupper(c) );
+	}
+}
+
+#endif
+
 // ----------------------------------------------------------------------------- : String utilities
 
 String trim(const String& s){
@@ -180,7 +204,6 @@ bool smart_less(const String& as, const String& bs) {
 	bool eq = true;      // so far is everything equal?
 	FOR_EACH_2_CONST(a, as, b, bs) {
 		bool na = isDigit(a), nb = isDigit(b);
-		Char la = toLower(a), lb = toLower(b);
 		if (na && nb) {
 			// compare numbers
 			in_num = true;
@@ -198,8 +221,9 @@ bool smart_less(const String& as, const String& bs) {
 			return lt;
 		} else {
 			// compare characters
-			if (la < lb)  return true;
-			if (la > lb)  return false;
+			Char la = toLower(a), lb = toLower(b);
+			if (la < lb) return true;
+			if (la > lb) return false;
 		}
 		in_num = na && nb;
 	}

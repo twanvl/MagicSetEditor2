@@ -46,13 +46,13 @@ class Defaultable {
 		is_default = false;
 		return value;
 	}
+	/// Get access to the value, for changing it, don't change the defaultness
+	inline T& mutateDontChangeDefault() { return value; }
 	
 	/// Is this value in the default state?
 	inline bool isDefault() const { return is_default; }
-	/// Set the defaultness to true
-	inline void makeDefault() { is_default = true; }
-	/// Set the defaultness to false
-	inline void unsetDefault() { is_default = false; }
+	/// Set the defaultness to d
+	inline void makeDefault(bool d = true) { is_default = d; }
 	
 	/// Compare the values, ignore defaultness
 	/** used by scriptable to check for changes */

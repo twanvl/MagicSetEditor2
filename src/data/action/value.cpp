@@ -26,11 +26,14 @@ String ValueAction::getName(bool to_undo) const {
 
 /// Swap the value in a Value object with a new one
 inline void swap_value(ChoiceValue&         a, ChoiceValue        ::ValueType& b) { swap(a.value,    b); }
-inline void swap_value(MultipleChoiceValue& a, MultipleChoiceValue::ValueType& b) { swap(a.value,    b); }
 inline void swap_value(ColorValue&          a, ColorValue         ::ValueType& b) { swap(a.value,    b); }
 inline void swap_value(ImageValue&          a, ImageValue         ::ValueType& b) { swap(a.filename, b); a.last_update.update(); }
 inline void swap_value(SymbolValue&         a, SymbolValue        ::ValueType& b) { swap(a.filename, b); a.last_update.update(); }
 inline void swap_value(TextValue&           a, TextValue          ::ValueType& b) { swap(a.value,    b); a.last_update.update(); }
+inline void swap_value(MultipleChoiceValue& a, MultipleChoiceValue::ValueType& b) {
+	swap(a.value,       b.value);
+	swap(a.last_change, b.last_change);
+}
 
 /// A ValueAction that swaps between old and new values
 template <typename T, bool ALLOW_MERGE>
@@ -62,10 +65,13 @@ class SimpleValueAction : public ValueAction {
 };
 
 ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value) { return new SimpleValueAction<ChoiceValue,         true> (value, new_value); }
-ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value) { return new SimpleValueAction<MultipleChoiceValue, false>(value, new_value); }
 ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value) { return new SimpleValueAction<ColorValue,          true> (value, new_value); }
 ValueAction* value_action(const ImageValueP&          value, const FileName&            new_value) { return new SimpleValueAction<ImageValue,          false>(value, new_value); }
 ValueAction* value_action(const SymbolValueP&         value, const FileName&            new_value) { return new SimpleValueAction<SymbolValue,         false>(value, new_value); }
+ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value, const String& last_change) {
+	MultipleChoiceValue::ValueType v = { new_value, last_change };
+	return new SimpleValueAction<MultipleChoiceValue, false>(value, v);
+}
 
 
 // ----------------------------------------------------------------------------- : Text

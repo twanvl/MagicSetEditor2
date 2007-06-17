@@ -43,9 +43,12 @@ void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
 		double margin = 0;
 		if (style().render_style & RENDER_IMAGE) {
 			// draw image
-			map<String,ScriptableImage>::iterator it = style().choice_images.find(cannocial_name_form(value().value()));
-			if (it != style().choice_images.end() && it->second.isReady()) {
-				ScriptableImage& img = it->second;
+			style().initImage();
+			ScriptableImage& img = style().image;
+			Context& ctx = viewer.getContext();
+			ctx.setVariable(_("input"), to_script(value().value()));
+			img.update(ctx);
+			if (img.isReady()) {
 				GeneratedImage::Options img_options(0,0, viewer.stylesheet.get(), &getSet());
 				if (nativeLook()) {
 					img_options.width = img_options.height = 16;

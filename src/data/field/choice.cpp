@@ -179,6 +179,35 @@ ChoiceStyle::~ChoiceStyle() {
 	delete thumbnails;
 }
 
+void ChoiceStyle::initImage() {
+	if (image.isSet() || choice_images.empty()) return;
+	// for, for example:
+	//     choice images:
+	//          a: {uvw}
+	//          b: {xyz}
+	// generate the script:
+	//     [a: {uvw}, b: {xyz}][input]() or else nil
+	// or in bytecode
+	//         PUSH_CONST [a: {uvw}, b: {xyz}]
+	//         GET_VAR    input
+	//        MEMBER
+	//       CALL       0
+	//       PUSH_CONST nil
+	//      OR_ELSE
+	//     RET
+	intrusive_ptr<ScriptCustomCollection> lookup(new ScriptCustomCollection());
+	FOR_EACH(ci, choice_images) {
+		lookup->key_value[ci.first] = ci.second.getScriptP();
+	}
+	Script& script = image.getScript();
+	script.addInstruction(I_PUSH_CONST, lookup);
+	script.addInstruction(I_GET_VAR,    string_to_variable(_("input")));
+	script.addInstruction(I_BINARY,     I_MEMBER);
+	script.addInstruction(I_CALL,       0);
+	script.addInstruction(I_PUSH_CONST, script_nil);
+	script.addInstruction(I_BINARY,     I_OR_ELSE);
+	script.addInstruction(I_RET);
+}
 
 bool ChoiceStyle::update(Context& ctx) {
 	// Don't update the choice images, leave that to invalidate()
@@ -256,6 +285,7 @@ IMPLEMENT_REFLECTION(ChoiceStyle) {
 	REFLECT(alignment);
 	REFLECT(angle);
 	REFLECT(font);
+	REFLECT(image);
 	REFLECT(choice_images);
 }
 

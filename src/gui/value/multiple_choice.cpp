@@ -35,8 +35,7 @@ DropDownMultipleChoiceList::DropDownMultipleChoiceList
 void DropDownMultipleChoiceList::select(size_t item) {
 	MultipleChoiceValueEditor& mcve = dynamic_cast<MultipleChoiceValueEditor&>(cve);
 	if (isFieldDefault(item)) {
-		// make default
-		mcve.getSet().actions.add(value_action(mcve.valueP(), Defaultable<String>()));
+		mcve.toggleDefault();
 	} else {
 		ChoiceField::ChoiceP choice = getChoice(item);
 		mcve.toggle(choice->first_id);
@@ -143,6 +142,7 @@ void MultipleChoiceValueEditor::onValueChange() {
 
 void MultipleChoiceValueEditor::toggle(int id) {
 	String new_value;
+	String toggled_choice;
 	// old selection
 	vector<String> selected;
 	value().get(selected);
@@ -157,7 +157,12 @@ void MultipleChoiceValueEditor::toggle(int id) {
 			if (!new_value.empty()) new_value += _(", ");
 			new_value += choice;
 		}
+		if (i == id) toggled_choice = choice;
 	}
 	// store value
-	getSet().actions.add(value_action(valueP(), new_value));
+	getSet().actions.add(value_action(valueP(), new_value, toggled_choice));
+}
+
+void MultipleChoiceValueEditor::toggleDefault() {
+	getSet().actions.add(value_action(valueP(), Defaultable<String>(value().value(), !value().value.isDefault()), _("")));
 }

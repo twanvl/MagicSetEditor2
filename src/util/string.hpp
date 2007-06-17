@@ -88,8 +88,18 @@ inline bool isUpper(Char c) { return IF_UNICODE( iswupper(c) , isupper(c) ); }
 inline bool isLower(Char c) { return IF_UNICODE( iswlower(c) , islower(c) ); }
 inline bool isPunct(Char c) { return IF_UNICODE( iswpunct(c) , ispunct(c) ); }
 // Character conversions
-inline Char toUpper(Char c) { return IF_UNICODE( towupper(c) , toupper(c) ); }
-inline Char toLower(Char c) { return IF_UNICODE( towlower(c) , tolower(c) ); }
+#ifdef _MSC_VER
+	#define CHAR_FUNCTIONS_ARE_SLOW
+#endif
+#ifdef CHAR_FUNCTIONS_ARE_SLOW
+	// These functions are slow as hell on msvc.
+	// If also in other compilers, they can also use these routines.
+	Char toLower(Char c);
+	Char toUpper(Char c);
+#else
+	inline Char toLower(Char c) { return IF_UNICODE( towlower(c) , tolower(c) ); }
+	inline Char toUpper(Char c) { return IF_UNICODE( towupper(c) , toupper(c) ); }
+#endif
 
 // ----------------------------------------------------------------------------- : String utilities
 

@@ -35,6 +35,13 @@ SCRIPT_FUNCTION(to_title) {
 	SCRIPT_RETURN(capitalize(input));
 }
 
+// reverse a string
+SCRIPT_FUNCTION(reverse) {
+	SCRIPT_PARAM(String, input);
+	reverse(input.begin(), input.end());
+	SCRIPT_RETURN(input);
+}
+
 // extract a substring
 SCRIPT_FUNCTION(substring) {
 	SCRIPT_PARAM(String, input);
@@ -360,13 +367,19 @@ class ScriptFilterRule : public ScriptValue {
 			size_t start, len;
 			bool ok = regex.GetMatch(&start, &len, 0);
 			assert(ok);
-			ret  += input.substr(start, len);  // the match
-			input = input.substr(start + len); // everything after the match
+			String inside     = input.substr(start, len);  // the match
+			String next_input =  input.substr(start + len); // everything after the match
+			if (!context.IsValid() || context.Matches(input.substr(0,start) + _("<match>") + next_input)) {
+				// no context or context match
+				ret += inside;
+			}
+			input = next_input;
 		}
 		SCRIPT_RETURN(ret);
 	}
 	
-	wxRegEx regex; ///< Regex to match
+	wxRegEx regex;   ///< Regex to match
+	wxRegEx context; ///< Match only in a given context, optional
 };
 
 // Create a regular expression rule for filtering strings
@@ -376,6 +389,12 @@ ScriptValueP filter_rule(Context& ctx) {
 	SCRIPT_PARAM(String, match);
 	if (!ret->regex.Compile(match, wxRE_ADVANCED)) {
 		throw ScriptError(_("Error while compiling regular expression: '")+match+_("'"));
+	}
+	// in_context
+	SCRIPT_OPTIONAL_PARAM_N(String, _("in context"), in_context) {
+		if (!ret->context.Compile(in_context, wxRE_ADVANCED)) {
+			throw ScriptError(_("Error while compiling regular expression: '")+in_context+_("'"));
+		}
 	}
 	return ret;
 }
@@ -592,6 +611,7 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("to upper"),             script_to_upper);
 	ctx.setVariable(_("to lower"),             script_to_lower);
 	ctx.setVariable(_("to title"),             script_to_title);
+	ctx.setVariable(_("reverse"),              script_reverse);
 	ctx.setVariable(_("substring"),            script_substring);
 	ctx.setVariable(_("contains"),             script_contains);
 	ctx.setVariable(_("format"),               script_format);
