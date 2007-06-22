@@ -22,10 +22,13 @@ class HtmlExportWindow : public wxDialog {
 	
   private:
 	PackageList* list; ///< List of templates
+	SetP set; ///< Set to export
 	
 	DECLARE_EVENT_TABLE();
 	
 	void onOk(wxCommandEvent&);
+	void onTemplateSelect(wxCommandEvent&);
+	void onUpdateUI(wxUpdateUIEvent& ev);
 };
 
 // ----------------------------------------------------------------------------- : EOF

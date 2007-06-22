@@ -207,7 +207,7 @@ class ScriptObject : public ScriptValue {
 			if (d) {
 				return d->getMember(name);
 			} else {
-				throw  ScriptValue::getMember(name);
+				return ScriptValue::getMember(name);
 			}
 		}
 	}

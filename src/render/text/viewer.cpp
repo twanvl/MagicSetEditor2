@@ -131,7 +131,7 @@ void TextViewer::drawSeparators(RotatedDC& dc) {
 	}
 }
 
-void TextViewer::prepare(RotatedDC& dc, const String& text, const TextStyle& style, Context& ctx) {
+void TextViewer::prepare(RotatedDC& dc, const String& text, TextStyle& style, Context& ctx) {
 	if (lines.empty()) {
 		// not prepared yet
 		Rotater r(dc, style.getRotation());
@@ -312,7 +312,7 @@ void TextViewer::prepareElements(const String& text, const TextStyle& style, Con
 
 // ----------------------------------------------------------------------------- : Layout
 
-void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle& style, Context& ctx) {
+void TextViewer::prepareLines(RotatedDC& dc, const String& text, TextStyle& style, Context& ctx) {
 	// try to layout, at different scales
 	vector<CharInfo> chars;
 	scale = 1;
@@ -362,6 +362,19 @@ void TextViewer::prepareLines(RotatedDC& dc, const String& text, const TextStyle
 	
 	// returns negative values if it fits, positive if it doesn't
 	*/
+	
+	// store information about the content/layout, allow this to change alignment
+	style.content_width  = 0;
+	FOR_EACH(l, lines) {
+		style.content_width = max(style.content_width, l.width());
+	}
+	style.content_height = 0;
+	FOR_EACH_REVERSE(l, lines) {
+		style.content_height = l.top + l.line_height;
+		if (l.line_height) break; // not an empty line
+	}
+	style.content_lines = (int)lines.size();
+	style.alignment.update(ctx); // allow this to affect the alignment
 	
 	// no text, find a dummy height for the single line we have
 	if (lines.size() == 1 && lines[0].width() < 0.0001) {

@@ -34,6 +34,11 @@ void store(const ScriptValueP& val, Alignment& var);
 
 // ----------------------------------------------------------------------------- : OptionalScript
 
+template <typename T>
+inline void change(T& v, const T& new_v) { v = new_v; }
+template <typename T>
+inline void change(Defaultable<T>& v, const Defaultable<T>& new_v) { v.assignDontChangeDefault(new_v()); }
+
 /// An optional script
 class OptionalScript {
   public:
@@ -57,7 +62,7 @@ class OptionalScript {
 			ctx.setVariable(_("value"), to_script(value));
 			store(ctx.eval(*script), new_value);
 			if (value != new_value) {
-				value = new_value;
+				change(value, new_value);
 				return true;
 			}
 		}
@@ -66,9 +71,8 @@ class OptionalScript {
 	/// Invoke the script on a value if it is in the default state
 	template <typename T>
 	bool invokeOnDefault(Context& ctx, Defaultable<T>& value) const {
-		if (value.isDefault() && invokeOn(ctx, value)) {
-			value.makeDefault(); // restore defaultness
-			return true;
+		if (value.isDefault()) {
+			return invokeOn(ctx, value);
 		} else {
 			return false;
 		}

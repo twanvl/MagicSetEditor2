@@ -204,42 +204,8 @@ void Set::clearOrderCache() {
 
 // ----------------------------------------------------------------------------- : Styling
 
-// Extra set data, for a specific stylesheet
-/* The data is not read immediatly, because we do not know the stylesheet */
-class Set::Styling : public IntrusivePtrBase<Set::Styling> {
-  public:
-	IndexMap<FieldP, ValueP> data;
-	String unread_data;
-	DECLARE_REFLECTION();
-};
-
 IndexMap<FieldP, ValueP>& Set::stylingDataFor(const StyleSheet& stylesheet) {
-	StylingP& styling = styling_data[stylesheet.name()];
-	if (!styling) {
-		styling = new_intrusive<Styling>();
-		styling->data.init(stylesheet.styling_fields);
-	} else if (!styling->unread_data.empty() || (styling->data.empty()) && !stylesheet.styling_fields.empty()) {
-		// we delayed the reading of the data, read it now
-		styling->data.init(stylesheet.styling_fields);
-		Reader reader(new_shared1<wxStringInputStream>(styling->unread_data), _("styling data of ") + stylesheet.stylesheetName());
-		reader.handle_greedy(styling->data);
-		styling->unread_data.clear();
-	}
-	return styling->data;
-}
-
-// custom reflection : read into unread_data
-template <> void Reader::handle(Set::Styling& s) {
-	handle(s.unread_data);
-}
-template <> void Writer::handle(const Set::Styling& s) {
-	handle(s.data);
-}
-template <> void GetMember::handle(const Set::Styling& s) {
-	handle(s.data);
-}
-template <> void GetDefaultMember::handle(const Set::Styling& s) {
-	handle(s.data);
+	return styling_data.get(stylesheet.name(), stylesheet.styling_fields);
 }
 
 // ----------------------------------------------------------------------------- : SetView

@@ -85,7 +85,10 @@ Style::Style(const FieldP& field)
 	, z_index(0)
 	, left(0),  top(0)
 	, width(0), height(0)
+	, right(0), bottom(0)
 	, visible(true)
+	, automatic_side(AUTO_UNKNOWN)
+	, content_dependent(false)
 {}
 
 Style::~Style() {}
@@ -93,9 +96,11 @@ Style::~Style() {}
 IMPLEMENT_REFLECTION(Style) {
 	REFLECT(z_index);
 	REFLECT(left);
-	REFLECT(top);
 	REFLECT(width);
+	REFLECT(right);
+	REFLECT(top);
 	REFLECT(height);
+	REFLECT(bottom);
 	REFLECT(visible);
 }
 
@@ -107,11 +112,35 @@ template <> StyleP read_new<Style>(Reader&) {
 }
 
 bool Style::update(Context& ctx) {
-	return left   .update(ctx)
-	     | top    .update(ctx)
+	bool changed =
+	       left   .update(ctx)
 	     | width  .update(ctx)
+	     | right  .update(ctx)
+	     | top    .update(ctx)
 	     | height .update(ctx)
+	     | bottom .update(ctx)
 	     | visible.update(ctx);
+	// determine automatic_side
+	if (automatic_side == AUTO_UNKNOWN) {
+		if      (right  == 0) automatic_side = (AutomaticSide)(automatic_side | AUTO_RIGHT);
+		else if (width  == 0) automatic_side = (AutomaticSide)(automatic_side | AUTO_WIDTH);
+		else                  automatic_side = (AutomaticSide)(automatic_side | AUTO_LEFT);
+		if      (bottom == 0) automatic_side = (AutomaticSide)(automatic_side | AUTO_BOTTOM);
+		else if (height == 0) automatic_side = (AutomaticSide)(automatic_side | AUTO_HEIGHT);
+		else                  automatic_side = (AutomaticSide)(automatic_side | AUTO_TOP);
+	}
+	if (automatic_side & AUTO_WIDTH){
+		changed=changed;//BREAKPOINT
+	}
+	// update the automatic_side
+	if      (automatic_side & AUTO_LEFT)   left   = right - width;
+	else if (automatic_side & AUTO_WIDTH)  width  = right - left;
+	else                                   right  = left + width;
+	if      (automatic_side & AUTO_TOP)    top    = bottom - height;
+	else if (automatic_side & AUTO_HEIGHT) height = bottom - top;
+	else                                   bottom = top + height;
+	// are there changes?
+	return changed;
 }
 
 void Style::initDependencies(Context& ctx, const Dependency& dep) const {
@@ -120,6 +149,23 @@ void Style::initDependencies(Context& ctx, const Dependency& dep) const {
 //	width  .initDependencies(ctx,dep);
 //	height .initDependencies(ctx,dep);
 //	visible.initDependencies(ctx,dep);
+}
+void Style::checkContentDependencies(Context& ctx, const Dependency& dep) const {
+	left   .initDependencies(ctx,dep);
+	top    .initDependencies(ctx,dep);
+	width  .initDependencies(ctx,dep);
+	height .initDependencies(ctx,dep);
+	right  .initDependencies(ctx,dep);
+	bottom .initDependencies(ctx,dep);
+	visible.initDependencies(ctx,dep);
+}
+
+void Style::markDependencyMember(const String& name, const Dependency& dep) const {
+	// no content specific properties here
+}
+
+void mark_dependency_member(const Style& style, const String& name, const Dependency& dep) {
+	style.markDependencyMember(name,dep);
 }
 
 // ----------------------------------------------------------------------------- : StyleListener

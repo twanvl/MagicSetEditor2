@@ -9,11 +9,21 @@
 #include <script/functions/functions.hpp>
 #include <script/functions/util.hpp>
 #include <util/tagged_string.hpp>
+#include <util/error.hpp>
 #include <data/set.hpp>
 #include <data/card.hpp>
 #include <data/game.hpp>
 
 DECLARE_TYPEOF_COLLECTION(pair<String COMMA ScriptValueP>);
+
+// ----------------------------------------------------------------------------- : Debugging
+
+SCRIPT_FUNCTION(trace) {
+	SCRIPT_PARAM(String, input);
+	//handle_warning(_("Trace:\t") + input, false);
+	wxLogDebug(_("Trace:\t") + input);
+	SCRIPT_RETURN(input);
+}
 
 // ----------------------------------------------------------------------------- : String stuff
 
@@ -607,6 +617,8 @@ SCRIPT_FUNCTION(sort) {
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_basic_functions(Context& ctx) {
+	// debugging
+	ctx.setVariable(_("trace"),                script_trace);
 	// string
 	ctx.setVariable(_("to upper"),             script_to_upper);
 	ctx.setVariable(_("to lower"),             script_to_lower);

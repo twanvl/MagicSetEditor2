@@ -57,6 +57,9 @@ String pending_warnings;
 DECLARE_TYPEOF_COLLECTION(String);
 wxCriticalSection crit_error_handling;
 
+void show_pending_errors();
+void show_pending_warnings();
+
 void handle_error(const String& e, bool allow_duplicate = true, bool now = true) {
 	// Thread safety
 	wxCriticalSectionLocker lock(crit_error_handling);
@@ -68,13 +71,13 @@ void handle_error(const String& e, bool allow_duplicate = true, bool now = true)
 		previous_errors.push_back(e);
 	}
 	// Only show errors in the main thread
-	if (!now || !wxThread::IsMain()) {
-		if (!pending_errors.empty()) pending_errors += _("\n\n");
-		pending_errors += e;
-		return;
+	if (!pending_errors.empty()) pending_errors += _("\n\n");
+	pending_errors += e;
+	// show messages
+	if (now && wxThread::IsMain()) {
+		show_pending_warnings(); // warnings are older, show them first
+		show_pending_errors();
 	}
-	// show message
-	wxMessageBox(e, _("Error"), wxOK | wxICON_ERROR);
 }
 
 void handle_error(const Error& e, bool allow_duplicate, bool now) {
@@ -83,25 +86,35 @@ void handle_error(const Error& e, bool allow_duplicate, bool now) {
 
 void handle_warning(const String& w, bool now) {
 	// Check duplicates
-	// TODO: thread safety
+	wxCriticalSectionLocker lock(crit_error_handling);
 	// Only show errors in the main thread
-	if (!now || !wxThread::IsMain()) {
-		if (!pending_warnings.empty()) pending_warnings += _("\n\n");
-		pending_warnings += w;
-		return;
+	if (!pending_warnings.empty()) pending_warnings += _("\n\n");
+	pending_warnings += w;
+	// show messages
+	if (now && wxThread::IsMain()) {
+		show_pending_errors();
+		show_pending_warnings();
 	}
-	// show message
-	wxMessageBox(w, _("Warning"), wxOK | wxICON_EXCLAMATION);
 }
 
 void handle_pending_errors() {
+	show_pending_errors();
+	show_pending_warnings();
+}
+
+void show_pending_errors() {
 	assert(wxThread::IsMain());
+	wxCriticalSectionLocker lock(crit_error_handling);
 	if (!pending_errors.empty()) {
-		handle_error(pending_errors);
+		wxMessageBox(pending_errors, _("Error"), wxOK | wxICON_ERROR);
 		pending_errors.clear();
 	}
+}
+void show_pending_warnings() {
+	assert(wxThread::IsMain());
+	wxCriticalSectionLocker lock(crit_error_handling);
 	if (!pending_warnings.empty()) {
-		handle_warning(pending_warnings);
+		wxMessageBox(pending_warnings, _("Warning"), wxOK | wxICON_EXCLAMATION);
 		pending_warnings.clear();
 	}
 }

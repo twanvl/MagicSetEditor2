@@ -39,7 +39,10 @@ class ValueViewer : public StyleListener {
 	/// Return the associated value
 	inline const ValueP& getValue() const { return valueP; }
 	
-	// Draw this value
+	/// Prepare before drawing.
+	/** Scripts are updated after preparing, allowing */
+	virtual void prepare(RotatedDC& dc) {};
+	/// Draw this value
 	virtual void draw(RotatedDC& dc) = 0;
 	
 	/// Does this field contian the given point?

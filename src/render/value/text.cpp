@@ -12,7 +12,7 @@
 
 // ----------------------------------------------------------------------------- : TextValueViewer
 
-void TextValueViewer::draw(RotatedDC& dc) {
+void TextValueViewer::prepare(RotatedDC& dc) {
 	if (!style().mask_filename.empty() && !style().mask.ok()) {
 		// load contour mask
 		Image image;
@@ -21,8 +21,11 @@ void TextValueViewer::draw(RotatedDC& dc) {
 			style().mask.load(image);
 		}
 	}
-	drawFieldBorder(dc);
 	v.prepare(dc, value().value(), style(), viewer.getContext());
+}
+
+void TextValueViewer::draw(RotatedDC& dc) {
+	drawFieldBorder(dc);
 	v.draw(dc, style(), (DrawWhat)(
 		  DRAW_NORMAL
 		| (viewer.drawBorders()              ? DRAW_BORDERS : 0)

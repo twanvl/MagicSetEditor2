@@ -68,11 +68,30 @@ void TextStyle::initDependencies(Context& ctx, const Dependency& dep) const {
 //	font       .initDependencies(ctx, dep);
 //	symbol_font.initDependencies(ctx, dep);
 }
+void TextStyle::checkContentDependencies(Context& ctx, const Dependency& dep) const {
+	Style   ::checkContentDependencies(ctx, dep);
+	alignment.initDependencies(ctx, dep);
+}
+void TextStyle::markDependencyMember(const String& name, const Dependency& dep) const {
+	Style::markDependencyMember(name, dep);
+	// mark dependencies on content
+	if (dep.type == DEP_DUMMY && dep.index == false &&
+	    (name == _("content width") || name == _("content height") || name == _("content lines"))) {
+		const_cast<Dependency&>(dep).index = true;
+	}
+}
 
 IMPLEMENT_REFLECTION(TextBackground) {
 	REFLECT(image);
 	REFLECT_N("displacement_x", displacement.width);
 	REFLECT_N("displacement_y", displacement.height);
+}
+
+template <typename T> void reflect_content(T& tag,         const TextStyle& ts) {}
+template <>           void reflect_content(GetMember& tag, const TextStyle& ts) {
+	REFLECT_N("content_width",  ts.content_width);
+	REFLECT_N("content_height", ts.content_height);
+	REFLECT_N("content_lines",  ts.content_lines);
 }
 
 IMPLEMENT_REFLECTION(TextStyle) {
@@ -99,6 +118,7 @@ IMPLEMENT_REFLECTION(TextStyle) {
 	REFLECT(text_background);
 	REFLECT(text_background_left);
 	REFLECT(text_background_right);
+	reflect_content(tag, *this);
 }
 
 // ----------------------------------------------------------------------------- : TextValue

@@ -41,8 +41,7 @@ class Card : public IntrusivePtrVirtualBase {
 	StyleSheetP stylesheet;
 	
 	/// Extra values for specitic stylesheets, indexed by stylesheet name
-	DECLARE_POINTER_TYPE(Styling);
-	map<String, StylingP> extra_data;
+	DelayedIndexMaps<FieldP,ValueP> extra_data;
 	/// Styling information for a particular stylesheet
 	IndexMap<FieldP, ValueP>& extraDataFor(const StyleSheet& stylesheet) ;
 	

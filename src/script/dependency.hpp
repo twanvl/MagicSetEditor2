@@ -22,6 +22,8 @@ enum DependencyType
 ,	DEP_EXTRA_CARD_FIELD	///< dependency of a script in an extra stylesheet specific card field
 ,	DEP_CARD_COPY_DEP		///< copy the dependencies from a card field
 ,	DEP_SET_COPY_DEP		///< copy the dependencies from a set  field
+,	DEP_DUMMY				///< used for other purposes, index and data can be anything
+							//   in particular, this is used for determining /if/ there are dependencies
 };
 
 /// A 'pointer' to some script that depends on another script
@@ -52,6 +54,7 @@ class Dependencies : public vector<Dependency> {
   public:
 	/// Add a dependency, prevents duplicates
 	inline void add(const Dependency& d) {
+		if (d.type == DEP_DUMMY) return;
 		if (find(begin(),end(),d) == end()) {
 			push_back(d);
 		}

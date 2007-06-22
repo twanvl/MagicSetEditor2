@@ -80,9 +80,14 @@ class TextStyle : public Style {
 	Direction direction;						///< In what direction is text layed out?
 	TextBackgroundP text_background;			///< Image behind the text
 	TextBackgroundP text_background_left, text_background_right;
+	// information from text rendering
+	double content_width, content_height;		///< Size of the rendered text
+	int    content_lines;						///< Number of rendered lines
 	
 	virtual bool update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;
+	virtual void checkContentDependencies(Context&, const Dependency&) const;
+	virtual void markDependencyMember(const String& name, const Dependency&) const;
 	
 	/// The rotation to use when drawing
 	inline Rotation getRotation() const {

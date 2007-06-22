@@ -88,13 +88,15 @@ class Reader {
 	void handle(const Char* name, vector<T>& vector);
 	
 	/// Reads an object of type T from the input stream
-	template <typename T> void handle(T& object);
+	template <typename T> void handle(T&);
 	/// Reads a intrusive_ptr from the input stream
-	template <typename T> void handle(intrusive_ptr<T>& pointer);
+	template <typename T> void handle(intrusive_ptr<T>&);
 	/// Reads a map from the input stream
-	template <typename V> void handle(map<String,V>& m);
+	template <typename V> void handle(map<String,V>&);
 	/// Reads an IndexMap from the input stream, reads only keys that already exist in the map
-	template <typename K, typename V> void handle(IndexMap<K,V>& m);
+	template <typename K, typename V> void handle(IndexMap<K,V>&);
+	template <typename K, typename V> void handle(DelayedIndexMaps<K,V>&);
+	template <typename K, typename V> void handle(DelayedIndexMapsData<K,V>&);
 	/// Reads a Defaultable from the input stream
 	template <typename T> void handle(Defaultable<T>&);
 	/// Reads a Scriptable from the input stream

@@ -52,8 +52,7 @@ class Set : public Packaged {
 	/** The indices should correspond to the set_fields in the Game */
 	IndexMap<FieldP, ValueP> data;
 	/// Extra values for specitic stylesheets, indexed by stylesheet name
-	DECLARE_POINTER_TYPE(Styling);
-	map<String, StylingP> styling_data;
+	DelayedIndexMaps<FieldP,ValueP> styling_data;
 	vector<CardP> cards;		///< The cards in the set
 	vector<KeywordP> keywords;	///< Additional keywords used in this set
 	String apprentice_code;		///< Code to use for apprentice (Magic only)

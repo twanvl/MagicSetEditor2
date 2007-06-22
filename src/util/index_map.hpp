@@ -10,6 +10,8 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <vector>
+#include <map>
+#include <util/string.hpp>
 
 // ----------------------------------------------------------------------------- : IndexMap
 
@@ -114,6 +116,35 @@ class IndexMap : private vector<Value> {
 	
   private:
 	using vector<Value>::operator [];
+};
+
+
+// ----------------------------------------------------------------------------- : DelayedIndexMaps
+
+// The data for a specific name.
+/* Invariant: read_data is initialized <=> unread_data.empty()
+ */
+template <typename Key, typename Value>
+struct DelayedIndexMapsData : public IntrusivePtrBase<DelayedIndexMapsData> {
+	String              unread_data;
+	IndexMap<Key,Value> read_data;
+};
+
+/// A map<String,IndexMap> where the reading of the index map depends on the name.
+/** The reading is delayed until the data to initialize the map with is known.
+ *  The only way to access data is using get()
+ */
+template <typename Key, typename Value>
+class DelayedIndexMaps {
+  public:
+	/// Get the data for a specific name. Initialize the map with init_with (if it is not alread initialized)
+	IndexMap<Key,Value>& get(const String& name, const vector<Key>& init_with);
+  private:
+	map<String, intrusive_ptr<DelayedIndexMapsData<Key,Value> > > data;
+	friend class Reader;
+	friend class Writer;
+	friend class GetDefaultMember;
+	friend class GetMember;
 };
 
 

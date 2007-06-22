@@ -58,13 +58,15 @@ class Writer {
 	void handle(const Char* str) { handle(String(str)); }
 	
 	/// Write an object of type T to the output stream
-	template <typename T> void handle(const T& object);
+	template <typename T> void handle(const T&);
 	/// Write a intrusive_ptr to the output stream
-	template <typename T> void handle(const intrusive_ptr<T>& pointer);
+	template <typename T> void handle(const intrusive_ptr<T>&);
 	/// Write a map to the output stream
-	template <typename K, typename V> void handle(const map<K,V>& map);
+	template <typename K, typename V> void handle(const map<K,V>&);
 	/// Write an IndexMap to the output stream
-	template <typename K, typename V> void handle(const IndexMap<K,V>& map);
+	template <typename K, typename V> void handle(const IndexMap<K,V>&);
+	template <typename K, typename V> void handle(const DelayedIndexMaps<K,V>&);
+	template <typename K, typename V> void handle(const DelayedIndexMapsData<K,V>&);
 	/// Write an object of type Defaultable<T> to the output stream
 	template <typename T> void handle(const Defaultable<T>&);
 	/// Write an object of type Scriptable<T> to the output stream

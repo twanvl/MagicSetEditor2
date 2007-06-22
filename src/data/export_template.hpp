@@ -13,16 +13,23 @@
 #include <util/io/package.hpp>
 #include <script/scriptable.hpp>
 
+DECLARE_POINTER_TYPE(Game);
+DECLARE_POINTER_TYPE(Field);
+DECLARE_POINTER_TYPE(Style);
+
 // ----------------------------------------------------------------------------- : ExportTemplate
 
 /// A template for exporting sets to HTML or text format
 class ExportTemplate : public Packaged {
   public:
+	ExportTemplate();
 	
-	OptionalScript script;				///< Export script
-	String         file_type;			///< Type of the created file, in "name|*.ext" format
-	bool           create_directory;	///< The export creates an entire directory
-	
+	GameP                   game;				///< Game this template is for
+	OptionalScript          script;				///< Export script
+	String                  file_type;			///< Type of the created file, in "name|*.ext" format
+	bool                    create_directory;	///< The export creates an entire directory
+	vector<FieldP>          option_fields;		///< Options for exporting
+	IndexMap<FieldP,StyleP> option_style;		///< Style of the options
 	
 	static String typeNameStatic();
 	virtual String typeName() const;

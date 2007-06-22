@@ -54,7 +54,17 @@ void DataViewer::draw(RotatedDC& dc, const Color& background) {
 	} catch (const Error& e) {
 		handle_error(e, false, false);
 	}
-	// draw values
+	// prepare viewers
+	FOR_EACH(v, viewers) { // draw low z index fields first
+		if (v->getStyle()->visible) {
+			try {
+				v->prepare(dc);
+			} catch (const Error& e) {
+				handle_error(e, false, false);
+			}
+		}
+	}
+	// draw viewers
 	FOR_EACH(v, viewers) { // draw low z index fields first
 		if (v->getStyle()->visible) {// visible
 			try {
@@ -133,8 +143,8 @@ void DataViewer::addStyles(IndexMap<FieldP,StyleP>& styles) {
 	FOR_EACH(s, styles) {
 		if ((s->visible || s->visible.isScripted()) &&
 		    nativeLook() || (
-		      (s->width   || s->width  .isScripted()) &&
-		      (s->height  || s->height .isScripted()))) {
+		      (s->width   || s->width  .isScripted() || s->right  || s->right .isScripted()) &&
+		      (s->height  || s->height .isScripted() || s->bottom || s->bottom.isScripted()))) {
 			// no need to make a viewer for things that are always invisible
 			ValueViewerP viewer = makeViewer(s);
 			if (viewer) viewers.push_back(viewer);

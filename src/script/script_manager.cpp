@@ -57,6 +57,7 @@ Context& SetScriptContext::getContext(const StyleSheetP& stylesheet) {
 		ctx->setVariable(_("set"),        new_intrusive1<ScriptObject<Set*> >(&set));
 		ctx->setVariable(_("game"),       to_script(set.game));
 		ctx->setVariable(_("stylesheet"), to_script(stylesheet));
+		ctx->setVariable(_("card style"), to_script(&stylesheet->card_style));
 		ctx->setVariable(_("card"),       set.cards.empty() ? script_nil : to_script(set.cards.front())); // dummy value
 		ctx->setVariable(_("styling"),    to_script(&set.stylingDataFor(*stylesheet)));
 		try {
@@ -130,6 +131,10 @@ void SetScriptManager::initDependencies(Context& ctx, StyleSheet& stylesheet) {
 	// find dependencies of choice images and other style stuff
 	FOR_EACH(s, stylesheet.card_style) {
 		s->initDependencies(ctx, Dependency(DEP_STYLE, s->fieldP->index, &stylesheet));
+		// are there dependencies of this style on other style properties?
+		Dependency test(DEP_DUMMY, false);
+		s->checkContentDependencies(ctx, test);
+		if (test.index) s->content_dependent = true;
 	}
 }
 

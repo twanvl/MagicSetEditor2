@@ -7,8 +7,12 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <data/export_template.hpp>
+#include <data/game.hpp>
+#include <data/field.hpp>
 
 // ----------------------------------------------------------------------------- : Export template, basics
+
+ExportTemplate::ExportTemplate() {}
 
 String ExportTemplate::typeNameStatic() { return _("export-template"); }
 String ExportTemplate::typeName() const { return _("export-template"); }

@@ -88,7 +88,14 @@ class Style : public IntrusivePtrVirtualBase {
 	int                z_index;			///< Stacking of values of this field, higher = on top
 	Scriptable<double> left,  top;		///< Position of this field
 	Scriptable<double> width, height;	///< Position of this field
+	Scriptable<double> right, bottom;	///< Position of this field
 	Scriptable<bool>   visible;			///< Is this field visible?
+	enum AutomaticSide {
+		AUTO_UNKNOWN = 0x00,
+		AUTO_LEFT    = 0x01, AUTO_WIDTH  = 0x02, AUTO_RIGHT  = 0x04,
+		AUTO_TOP     = 0x10, AUTO_HEIGHT = 0x20, AUTO_BOTTOM = 0x40,
+	} automatic_side : 8;	///< Which of (left, width,  right) and (top,  height, bottom) is determined automatically?
+	bool content_dependent;	///< Does this style depend on content properties?
 	
 	inline RealPoint getPos()  const { return RealPoint(left, top               ); }
 	inline RealSize  getSize() const { return RealSize (           width, height); }
@@ -110,6 +117,13 @@ class Style : public IntrusivePtrVirtualBase {
 	/// Add the given dependency to the dependent_scripts list for the variables this style depends on
 	/** Only use for things that need invalidate() */
 	virtual void initDependencies(Context&, const Dependency&) const;
+	/// Check if the style depends on content properties
+	/** If there is such a dependency, set dep.index to true.
+	 *  This is done by mark_dependency_member for those properies */
+	virtual void checkContentDependencies(Context&, const Dependency&) const;
+	/// Dependencies on properies?
+	/** In particular, if dep == DEP_DUMMY and name is a content property, set dep.index=true */
+	virtual void markDependencyMember(const String& name, const Dependency&) const;
 	/// Invalidate scripted images for this style
 	virtual void invalidate(Context&) {}
 	
@@ -130,6 +144,8 @@ void init_object(const FieldP&, StyleP&);
 inline const FieldP& get_key     (const StyleP& s) { return s->fieldP; }
 inline const String& get_key_name(const StyleP& s) { return s->fieldP->name; }
 template <> StyleP read_new<Style>(Reader&);
+
+void mark_dependency_member(const Style& style, const String& name, const Dependency& dep);
 
 // ----------------------------------------------------------------------------- : StyleListener
 

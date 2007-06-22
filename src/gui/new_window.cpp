@@ -50,9 +50,9 @@ NewSetWindow::NewSetWindow(Window* parent)
 	// init lists
 	game_list->showData<Game>();
 	try {
-	game_list->select(settings.default_game);
+		game_list->select(settings.default_game);
 	} catch (FileNotFoundError e) {
-	handle_error(e);
+		handle_error(e);
 	}
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }
@@ -62,9 +62,8 @@ void NewSetWindow::onGameSelect(wxCommandEvent&) {
 	GameP game = game_list->getSelection<Game>();
 	handle_pending_errors();
 	settings.default_game = game->name();
-	GameSettings& gs = settings.gameSettingsFor(*game);
 	stylesheet_list->showData<StyleSheet>(game->name() + _("-*"));
-	stylesheet_list->select(gs.default_stylesheet);
+	stylesheet_list->select(settings.gameSettingsFor(*game).default_stylesheet);
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 	// resize (yuck)
 	SetSize(630,-1);
@@ -80,8 +79,7 @@ void NewSetWindow::onStyleSheetSelect(wxCommandEvent&) {
 	GameP       game       = game_list      ->getSelection<Game>();
 	StyleSheetP stylesheet = stylesheet_list->getSelection<StyleSheet>();
 	handle_pending_errors();
-	GameSettings& gs = settings.gameSettingsFor(*game);
-	gs.default_stylesheet = stylesheet->name();
+	settings.gameSettingsFor(*game).default_stylesheet = stylesheet->name();
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }
 void NewSetWindow::onStyleSheetActivate(wxCommandEvent&) {

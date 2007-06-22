@@ -12,6 +12,8 @@
 #include <util/prec.hpp>
 #include <gui/control/card_editor.hpp>
 
+DECLARE_POINTER_TYPE(ExportTemplate);
+
 // ----------------------------------------------------------------------------- : NativeLookEditor
 
 /// A data editor with a platform native look
@@ -71,7 +73,20 @@ class StylingEditor : public NativeLookEditor {
 	
   protected:
 	virtual void onChangeSet();
+};
+
+// ----------------------------------------------------------------------------- : ExportOptionsEditor
+
+/// Editor for export options
+class ExportOptionsEditor : public NativeLookEditor {
+  public:
+	ExportOptionsEditor(Window* parent, int id, long style = 0);
 	
+	/// Show the options for given export template
+	void showExport(const ExportTemplateP& export);
+	
+  protected:
+	virtual void onChangeSet();
 };
 
 // ----------------------------------------------------------------------------- : EOF
