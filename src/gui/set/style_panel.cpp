@@ -26,14 +26,14 @@ StylePanel::StylePanel(Window* parent, int id)
 	preview     = new CardViewer   (this, wxID_ANY);
 	editor      = new StylingEditor(this, wxID_ANY, wxNO_BORDER);
 	list        = new PackageList  (this, wxID_ANY);
-	use_for_all = new wxButton     (this, ID_STYLE_USE_FOR_ALL, _("Use for &all cards"));
+	use_for_all = new wxButton     (this, ID_STYLE_USE_FOR_ALL, _BUTTON_("use for all cards"));
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
 		s->Add(preview, 0, wxRIGHT,  2);
 		wxSizer* s2 = new wxBoxSizer(wxVERTICAL);
 			s2->Add(list,        0, wxEXPAND | wxBOTTOM,                4);
 			s2->Add(use_for_all, 0, wxRIGHT | wxBOTTOM | wxALIGN_RIGHT, 4);
-			wxSizer* s3 = new wxStaticBoxSizer(wxVERTICAL, this, _("Extra styling options"));
+			wxSizer* s3 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("styling options"));
 				s3->Add(editor, 2, wxEXPAND, 0);
 			s2->Add(s3, 1, wxEXPAND | wxALL, 2);
 		s->Add(s2,      1, wxEXPAND, 8);

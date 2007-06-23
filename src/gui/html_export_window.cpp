@@ -8,6 +8,7 @@
 
 #include <gui/html_export_window.hpp>
 #include <gui/control/package_list.hpp>
+#include <gui/control/native_look_editor.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
 #include <data/settings.hpp>
@@ -20,18 +21,24 @@ DECLARE_POINTER_TYPE(ExportTemplate);
 // ----------------------------------------------------------------------------- : HtmlExportWindow
 
 HtmlExportWindow::HtmlExportWindow(Window* parent, const SetP& set)
-	: wxDialog(parent,wxID_ANY,_TITLE_("export html"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxFULL_REPAINT_ON_RESIZE)
+	: wxDialog(parent,wxID_ANY,_TITLE_("export html"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxCLIP_CHILDREN)
 	, set(set)
 {
 	// init controls
-	list = new PackageList(this, ID_EXPORT_LIST);
+	list    = new PackageList(this, ID_EXPORT_LIST);
+	options = new ExportOptionsEditor(this, wxID_ANY, wxNO_BORDER);
+	options->setSet(set);
 	// init sizers
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		s->Add(new wxStaticText(this, wxID_ANY, _LABEL_("html template")), 0, wxALL, 4);
 		s->Add(list, 0, wxEXPAND | wxALL & ~wxTOP, 4);
+		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("html export options"));
+			s2->Add(options, 2, wxEXPAND, 0);
+		s->Add(s2, 1, wxEXPAND | wxALL, 4);
 		s->Add(CreateButtonSizer(wxOK | wxCANCEL) , 0, wxEXPAND | wxALL, 8);
 		s->SetSizeHints(this);
 	SetSizer(s);
+	SetSize(700,500);
 	// list
 	list->showData<ExportTemplate>(set->game->name() + _("-*"));
 	list->select(settings.gameSettingsFor(*set->game).default_export);
@@ -57,6 +64,7 @@ void HtmlExportWindow::onTemplateSelect(wxCommandEvent&) {
 	wxBusyCursor wait;
 	ExportTemplateP export = list->getSelection<ExportTemplate>();
 	handle_pending_errors();
+	options->showExport(export);
 	settings.gameSettingsFor(*set->game).default_export = export->name();
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }

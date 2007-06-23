@@ -291,6 +291,14 @@ IMPLEMENT_REFLECTION(ChoiceStyle) {
 
 // ----------------------------------------------------------------------------- : ChoiceValue
 
+ChoiceValue::ChoiceValue(const ChoiceFieldP& field, bool initial_first_choice)
+	: Value(field)
+	, value( !field->initial.empty() ? field->initial
+	       : initial_first_choice    ? field->choices->choiceName(0)
+	       :                           _("")
+	       , true)
+{}
+
 String ChoiceValue::toString() const {
 	return value();
 }

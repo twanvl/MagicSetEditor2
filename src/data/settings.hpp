@@ -15,10 +15,13 @@
 
 class Game;
 class StyleSheet;
+class ExportTemplate;
 class Field;
 
 DECLARE_POINTER_TYPE(GameSettings);
 DECLARE_POINTER_TYPE(StyleSheetSettings);
+DECLARE_POINTER_TYPE(Field);
+DECLARE_POINTER_TYPE(Value);
 
 // ----------------------------------------------------------------------------- : Extra data structures
 
@@ -132,6 +135,14 @@ class Settings {
 	map<String,StyleSheetSettingsP> stylesheet_settings;
   public:
 	StyleSheetSettings              default_stylesheet_settings;	///< The default settings for stylesheets
+	
+	// --------------------------------------------------- : Exports
+  private:
+	DelayedIndexMaps<FieldP,ValueP> export_options;
+  public:
+	
+	/// Get the options for an export template
+	IndexMap<FieldP,ValueP>& exportOptionsFor(const ExportTemplate& export);
 	
 	// --------------------------------------------------- : Special game stuff
 	String apprentice_location;

@@ -348,6 +348,9 @@ label:
 		This is a standard %s keyword, you can not edit it.
 		If you make a copy of the keyword your copy will take precedent.
 	
+	# Style tab
+	styling options:	Styling options
+	
 	# Open dialogs
 	all files			All files
 	
@@ -389,6 +392,7 @@ label:
 	
 	# Html export
 	html template:		Template:
+	html export options:Export options
 	
 	# Image slicer
 	original:			Original:

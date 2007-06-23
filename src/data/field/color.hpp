@@ -29,11 +29,12 @@ class ColorField : public Field {
 	class Choice;
 	typedef intrusive_ptr<Choice> ChoiceP;
 	
-	OptionalScript  script;			///< Script to apply to all values
-	OptionalScript  default_script;	///< Script that generates the default value
-	vector<ChoiceP> choices;		///< Color choices available
-	bool            allow_custom;	///< Are colors not in the list of choices allowed?
-	String          default_name;	///< Name of "default" value
+	OptionalScript     script;			///< Script to apply to all values
+	OptionalScript     default_script;	///< Script that generates the default value
+	vector<ChoiceP>    choices;			///< Color choices available
+	bool               allow_custom;	///< Are colors not in the list of choices allowed?
+	Defaultable<Color> initial;			///< Initial choice of a new value, if not set the first choice is used
+	String             default_name;	///< Name of "default" value
 	
 	virtual void initDependencies(Context&, const Dependency&) const;
 	
@@ -76,7 +77,7 @@ class ColorStyle : public Style {
 /// The Value in a ColorField
 class ColorValue : public Value {
   public:
-	inline ColorValue(const ColorFieldP& field) : Value(field) {}
+	ColorValue(const ColorFieldP& field);
 	DECLARE_HAS_FIELD(Color)
 	
 	typedef Defaultable<Color> ValueType;

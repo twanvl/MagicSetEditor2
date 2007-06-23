@@ -10,6 +10,7 @@
 #include <data/game.hpp>
 #include <data/stylesheet.hpp>
 #include <data/field.hpp>
+#include <data/export_template.hpp>
 #include <util/reflect.hpp>
 #include <util/platform.hpp>
 #include <util/io/reader.hpp>
@@ -148,6 +149,10 @@ StyleSheetSettings& Settings::stylesheetSettingsFor(const StyleSheet& stylesheet
 	return *ss;
 }
 
+IndexMap<FieldP,ValueP>& Settings::exportOptionsFor(const ExportTemplate& export) {
+	return export_options.get(export.name(), export.option_fields);
+}
+
 /// Retrieve the directory to use for settings and other data files
 String user_settings_dir() {
 	String dir = wxStandardPaths::Get().GetUserDataDir();
@@ -180,6 +185,7 @@ IMPLEMENT_REFLECTION(Settings) {
 	REFLECT(game_settings);
 	REFLECT(stylesheet_settings);
 	REFLECT(default_stylesheet_settings);
+	REFLECT(export_options);
 }
 
 void Settings::read() {

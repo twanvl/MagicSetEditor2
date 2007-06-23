@@ -19,8 +19,13 @@ String ExportTemplate::typeName() const { return _("export-template"); }
 
 IMPLEMENT_REFLECTION(ExportTemplate) {
 	REFLECT_BASE(Packaged);
+	REFLECT(game);
 	REFLECT(file_type);
 	REFLECT(create_directory);
+	REFLECT(option_fields);
+	REFLECT_IF_READING option_style.init(option_fields);
+	REFLECT(option_style);
+	REFLECT(script);
 }
 
 // ----------------------------------------------------------------------------- : 

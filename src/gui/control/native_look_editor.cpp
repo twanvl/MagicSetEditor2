@@ -10,6 +10,8 @@
 #include <gui/value/editor.hpp>
 #include <gui/util.hpp>
 #include <data/stylesheet.hpp>
+#include <data/export_template.hpp>
+#include <data/settings.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ValueViewerP);
 DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA StyleP>);
@@ -199,3 +201,15 @@ void StylingEditor::showStylesheet(const StyleSheetP& stylesheet) {
 void StylingEditor::onChangeSet() {
 	showStylesheet(set->stylesheet);
 }
+
+// ----------------------------------------------------------------------------- : ExportOptionsEditor
+
+ExportOptionsEditor::ExportOptionsEditor(Window* parent, int id, long style)
+	: NativeLookEditor(parent, id, style)
+{}
+
+void ExportOptionsEditor::showExport(const ExportTemplateP& export) {
+	setStyles(set->stylesheet, export->option_style);
+	setData(settings.exportOptionsFor(*export));
+}
+

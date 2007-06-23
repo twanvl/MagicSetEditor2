@@ -167,12 +167,11 @@ class ChoiceStyle : public Style {
 /// The Value in a ChoiceField
 class ChoiceValue : public Value {
   public:
-	inline ChoiceValue(const ChoiceFieldP& field, bool initial_empty = false)
-		: Value(field)
-		, value(field->initial.empty() && !initial_empty
-		           ? field->choices->choiceName(0) // first choice
-		           : field->initial, true)
-	{}
+	/// Create a value for the given field
+	/** If initial_first_choice then the first choice should be used in the absence of
+	    an explicit initial value
+	 */
+	ChoiceValue(const ChoiceFieldP& field, bool initial_first_choice = true);
 	DECLARE_HAS_FIELD(Choice)
 	
 	typedef Defaultable<String> ValueType;

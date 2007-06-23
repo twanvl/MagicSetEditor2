@@ -19,7 +19,7 @@ DEFINE_EVENT_TYPE(EVENT_SIZE_CHANGE);
 // ----------------------------------------------------------------------------- : CardViewer
 
 CardViewer::CardViewer(Window* parent, int id, long style)
-	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, style)
+	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, style | wxNO_FULL_REPAINT_ON_RESIZE)
 	, up_to_date(false)
 {}
 

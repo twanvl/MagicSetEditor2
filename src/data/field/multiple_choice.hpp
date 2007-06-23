@@ -54,7 +54,7 @@ class MultipleChoiceStyle : public ChoiceStyle {
  */
 class MultipleChoiceValue : public ChoiceValue {
   public:
-	inline MultipleChoiceValue(const MultipleChoiceFieldP& field) : ChoiceValue(field, true) {}
+	inline MultipleChoiceValue(const MultipleChoiceFieldP& field) : ChoiceValue(field, false) {}
 	DECLARE_HAS_FIELD(MultipleChoice);
 	
 	String last_change; ///< Which of the choices was selected/deselected last?

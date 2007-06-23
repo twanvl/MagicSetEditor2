@@ -84,9 +84,6 @@ class ExportOptionsEditor : public NativeLookEditor {
 	
 	/// Show the options for given export template
 	void showExport(const ExportTemplateP& export);
-	
-  protected:
-	virtual void onChangeSet();
 };
 
 // ----------------------------------------------------------------------------- : EOF

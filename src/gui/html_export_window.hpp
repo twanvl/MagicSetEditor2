@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 
 class PackageList;
+class ExportOptionsEditor;
 DECLARE_POINTER_TYPE(Set);
 
 // ----------------------------------------------------------------------------- : HtmlExportWindow
@@ -21,8 +22,9 @@ class HtmlExportWindow : public wxDialog {
 	HtmlExportWindow(Window* parent, const SetP& set);
 	
   private:
-	PackageList* list; ///< List of templates
-	SetP set; ///< Set to export
+	PackageList*         list;    ///< List of templates
+	ExportOptionsEditor* options; ///< Editor for template options
+	SetP                 set;     ///< Set to export
 	
 	DECLARE_EVENT_TABLE();
 	

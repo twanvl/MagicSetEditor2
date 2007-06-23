@@ -35,6 +35,7 @@ IMPLEMENT_REFLECTION(ColorField) {
 	REFLECT_BASE(Field);
 	REFLECT(script);
 	REFLECT_N("default", default_script);
+	REFLECT(initial);
 	REFLECT(default_name);
 	REFLECT(allow_custom);
 	REFLECT(choices);
@@ -73,6 +74,14 @@ bool ColorStyle::update(Context& ctx) {
 
 // ----------------------------------------------------------------------------- : ColorValue
 
+ColorValue::ColorValue(const ColorFieldP& field)
+	: Value(field)
+	, value( !field->initial.isDefault() ? field->initial()
+	       : !field->choices.empty()     ? field->choices[0]->color
+	       :                               *wxBLACK
+	       , true)
+{}
+	
 String ColorValue::toString() const {
 	if (value.isDefault()) return field().default_name;
 	// is this a named color?

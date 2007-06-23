@@ -25,11 +25,11 @@ class ExportTemplate : public Packaged {
 	ExportTemplate();
 	
 	GameP                   game;				///< Game this template is for
-	OptionalScript          script;				///< Export script
 	String                  file_type;			///< Type of the created file, in "name|*.ext" format
 	bool                    create_directory;	///< The export creates an entire directory
 	vector<FieldP>          option_fields;		///< Options for exporting
 	IndexMap<FieldP,StyleP> option_style;		///< Style of the options
+	OptionalScript          script;				///< Export script, for multi file templates and initialization
 	
 	static String typeNameStatic();
 	virtual String typeName() const;
