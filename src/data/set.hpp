@@ -86,6 +86,8 @@ class Set : public Packaged {
 	
 	/// Styling information for a particular stylesheet
 	IndexMap<FieldP, ValueP>& stylingDataFor(const StyleSheet&);
+	/// Styling information for a particular card
+	IndexMap<FieldP, ValueP>& stylingDataFor(const CardP& card);
 	
 	/// Find a value in the data by name and type
 	template <typename T> T& value(const String& name) {

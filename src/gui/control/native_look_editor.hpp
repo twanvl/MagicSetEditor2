@@ -68,8 +68,10 @@ class StylingEditor : public NativeLookEditor {
   public:
 	StylingEditor(Window* parent, int id, long style = 0);
 	
-	/// Show the styling for given stylesheet in the editor	
+	/// Show the styling for given stylesheet in the editor
 	void showStylesheet(const StyleSheetP& stylesheet);
+	/// Show the styling for given card
+	void showCard(const CardP& card);
 	
   protected:
 	virtual void onChangeSet();

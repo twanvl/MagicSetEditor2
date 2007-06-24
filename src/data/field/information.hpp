@@ -68,6 +68,7 @@ class InfoValue : public Value {
 	
 	String value;
 	
+	virtual ValueP clone() const;
 	virtual String toString() const;
 	virtual bool update(Context&);
 	

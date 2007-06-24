@@ -154,6 +154,7 @@ enum ChildMenuID {
 	
 	// Style panel
 ,	ID_STYLE_USE_FOR_ALL	= 3011
+,	ID_STYLE_USE_CUSTOM
 
 	// Keywords panel
 ,	ID_KEYWORD_ADD_PARAM	= 3021

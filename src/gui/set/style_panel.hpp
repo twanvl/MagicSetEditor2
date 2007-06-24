@@ -36,10 +36,12 @@ class StylePanel : public SetWindowPanel {
 	PackageList*   list;		///< List of stylesheets
 	StylingEditor* editor;		///< Editor for styling information
 	wxButton*      use_for_all;
+	wxCheckBox*    use_custom_options;
 	CardP          card;		///< Card we are working on
 	
 	void onStyleSelect(wxCommandEvent&);
 	void onUseForAll(wxCommandEvent&);
+	void onUseCustom(wxCommandEvent&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

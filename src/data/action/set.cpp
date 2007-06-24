@@ -12,6 +12,8 @@
 #include <data/stylesheet.hpp>
 #include <util/error.hpp>
 
+DECLARE_TYPEOF_COLLECTION(IndexMap<FieldP COMMA ValueP>);
+
 // ----------------------------------------------------------------------------- : Add card
 
 AddCardAction::AddCardAction(Set& set)
@@ -91,13 +93,15 @@ void DisplayChangeAction::perform(bool to_undo) {
 
 
 ChangeCardStyleAction::ChangeCardStyleAction(const CardP& card, const StyleSheetP& stylesheet)
-	: card(card), stylesheet(stylesheet)
+	: card(card), stylesheet(stylesheet), has_styling(false) // styling_data(empty)
 {}
 String ChangeCardStyleAction::getName(bool to_undo) const {
 	return _("Change style");
 }
 void ChangeCardStyleAction::perform(bool to_undo) {
-	swap(card->stylesheet, stylesheet);
+	swap(card->stylesheet,   stylesheet);
+	swap(card->has_styling,  has_styling);
+	swap(card->styling_data, styling_data);
 }
 
 
@@ -116,4 +120,22 @@ void ChangeSetStyleAction::perform(bool to_undo) {
 		card->stylesheet = set.stylesheet;
 		set.stylesheet   = stylesheet;
 	}
+}
+
+ChangeCardHasStylingAction::ChangeCardHasStylingAction(Set& set, const CardP& card)
+	: set(set), card(card)
+{
+	if (!card->has_styling) {
+		// copy of the set's styling data
+		styling_data.cloneFrom( set.stylingDataFor(set.stylesheetFor(card)) );
+	} else {
+		// the new styling data is empty
+	}
+}
+String ChangeCardHasStylingAction::getName(bool to_undo) const {
+	return _("Use custom style");
+}
+void ChangeCardHasStylingAction::perform(bool to_undo) {
+	card->has_styling = !card->has_styling;
+	swap(card->styling_data, styling_data);
 }

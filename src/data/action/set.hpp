@@ -20,6 +20,8 @@
 class Set;
 DECLARE_POINTER_TYPE(Card);
 DECLARE_POINTER_TYPE(StyleSheet);
+DECLARE_POINTER_TYPE(Field);
+DECLARE_POINTER_TYPE(Value);
 
 // ----------------------------------------------------------------------------- : Add card
 
@@ -93,8 +95,10 @@ class ChangeCardStyleAction : public DisplayChangeAction {
 	virtual void   perform(bool to_undo);
 	
   //private:
-	CardP       card;			///< The affected card
-	StyleSheetP stylesheet;		///< Its new stylesheet
+	CardP                   card;         ///< The affected card
+	StyleSheetP             stylesheet;   ///< Its old stylesheet
+	bool                    has_styling;  ///< Its old has_styling
+	IndexMap<FieldP,ValueP> styling_data; ///< Its old styling data
 };
 
 /// Changing the style of a set to that of a card
@@ -109,6 +113,21 @@ class ChangeSetStyleAction : public DisplayChangeAction {
 	Set&        set;			///< The affected set
 	CardP       card;			///< The card whos stylesheet is copied to the set
 	StyleSheetP stylesheet;		///< The old stylesheet of the set
+};
+
+/// Changing the styling of a card to become custom/non-custom
+/** i.e. toggle card->has_styling */
+class ChangeCardHasStylingAction : public DisplayChangeAction {
+  public:
+	ChangeCardHasStylingAction(Set& set, const CardP& card);
+	
+	virtual String getName(bool to_undo) const;
+	virtual void   perform(bool to_undo);
+	
+  //private:
+	Set&                    set;          ///< The set to copy styling from
+	CardP                   card;         ///< The affected card
+	IndexMap<FieldP,ValueP> styling_data; ///< The old styling of the card
 };
 
 // ----------------------------------------------------------------------------- : EOF

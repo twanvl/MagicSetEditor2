@@ -91,6 +91,14 @@ StyleSheetP Set::stylesheetForP(const CardP& card) {
 	else                          return stylesheet;
 }
 
+IndexMap<FieldP, ValueP>& Set::stylingDataFor(const StyleSheet& stylesheet) {
+	return styling_data.get(stylesheet.name(), stylesheet.styling_fields);
+}
+IndexMap<FieldP, ValueP>& Set::stylingDataFor(const CardP& card) {
+	if (card && card->has_styling) return card->styling_data;
+	else                           return stylingDataFor(stylesheetFor(card));
+}
+
 String Set::typeName() const { return _("set"); }
 
 // fix values for versions < 0.2.7
@@ -144,6 +152,7 @@ IMPLEMENT_REFLECTION(Set) {
 		}
 		WITH_DYNAMIC_ARG(game_for_reading, game.get());
 		REFLECT(stylesheet);
+		WITH_DYNAMIC_ARG(stylesheet_for_reading, stylesheet.get());
 		REFLECT_N("set_info", data);
 		if (stylesheet) {
 			REFLECT_N("styling", styling_data);
@@ -200,12 +209,6 @@ int Set::positionOfCard(const CardP& card, const ScriptValueP& order_by) {
 }
 void Set::clearOrderCache() {
 	order_cache.clear();
-}
-
-// ----------------------------------------------------------------------------- : Styling
-
-IndexMap<FieldP, ValueP>& Set::stylingDataFor(const StyleSheet& stylesheet) {
-	return styling_data.get(stylesheet.name(), stylesheet.styling_fields);
 }
 
 // ----------------------------------------------------------------------------- : SetView

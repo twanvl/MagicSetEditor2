@@ -21,6 +21,9 @@ DECLARE_POINTER_TYPE(Style);
 
 // ----------------------------------------------------------------------------- : StyleSheet
 
+/// Stylesheet of the set that is currently being read/written
+DECLARE_DYNAMIC_ARG(StyleSheet*, stylesheet_for_reading);
+
 /// A collection of style information for card and set fields
 class StyleSheet : public Packaged {
   public:

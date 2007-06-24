@@ -177,6 +177,7 @@ class ChoiceValue : public Value {
 	typedef Defaultable<String> ValueType;
 	ValueType value;	/// The name of the selected choice
 	
+	virtual ValueP clone() const;
 	virtual String toString() const;
 	virtual bool update(Context&);
 	

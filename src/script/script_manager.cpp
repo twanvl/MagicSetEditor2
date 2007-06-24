@@ -72,11 +72,14 @@ Context& SetScriptContext::getContext(const StyleSheetP& stylesheet) {
 	}
 }
 Context& SetScriptContext::getContext(const CardP& card) {
-	Context& ctx = getContext(set.stylesheetForP(card));
+	StyleSheetP stylesheet = set.stylesheetForP(card);
+	Context& ctx = getContext(stylesheet);
 	if (card) {
 		ctx.setVariable(_("card"), to_script(card));
+		ctx.setVariable(_("styling"), to_script(&set.stylingDataFor(card)));
 	} else {
 		ctx.setVariable(_("card"), ScriptValueP());
+		ctx.setVariable(_("styling"), to_script(&set.stylingDataFor(*stylesheet)));
 	}
 	return ctx;
 }

@@ -19,14 +19,18 @@ DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA ValueP>);
 
 // ----------------------------------------------------------------------------- : Card
 
-Card::Card() {
+Card::Card()
+	: has_styling(false)
+{
 	if (!game_for_reading()) {
 		throw InternalError(_("game_for_reading not set"));
 	}
 	data.init(game_for_reading()->card_fields);
 }
 
-Card::Card(const Game& game) {
+Card::Card(const Game& game)
+	: has_styling(false)
+{
 	data.init(game.card_fields);
 }
 
@@ -55,6 +59,16 @@ void mark_dependency_member(const Card& card, const String& name, const Dependen
 
 IMPLEMENT_REFLECTION(Card) {
 	REFLECT(stylesheet);
+	REFLECT(has_styling);
+	if (has_styling) {
+		if (stylesheet) {
+			REFLECT_IF_READING styling_data.init(stylesheet->styling_fields);
+			REFLECT(styling_data);
+		} else if (stylesheet_for_reading()) {
+			REFLECT_IF_READING styling_data.init(stylesheet_for_reading()->styling_fields);
+			REFLECT(styling_data);
+		}
+	}
 	REFLECT(notes);
 	REFLECT_NO_SCRIPT(extra_data); // don't allow scripts to depend on style specific data
 	REFLECT_NAMELESS(data);

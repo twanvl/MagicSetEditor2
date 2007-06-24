@@ -83,6 +83,7 @@ class ColorValue : public Value {
 	typedef Defaultable<Color> ValueType;
 	ValueType value;	///< The value
 	
+	virtual ValueP clone() const;
 	virtual String toString() const;
 	virtual bool update(Context&);
 	

@@ -52,6 +52,7 @@ class BooleanValue : public ChoiceValue {
   public:
 	inline BooleanValue(const ChoiceFieldP& field) : ChoiceValue(field) {}
 	DECLARE_HAS_FIELD(Boolean);
+	virtual ValueP clone() const;
 	
 	// no extra data
 	

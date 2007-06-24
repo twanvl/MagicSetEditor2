@@ -197,6 +197,11 @@ void StylingEditor::showStylesheet(const StyleSheetP& stylesheet) {
 	setStyles(stylesheet, stylesheet->styling_style);
 	setData(set->stylingDataFor(*stylesheet));
 }
+void StylingEditor::showCard(const CardP& card) {
+	StyleSheetP stylesheet = set->stylesheetForP(card);
+	setStyles(stylesheet, stylesheet->styling_style);
+	setData(set->stylingDataFor(card));
+}
 
 void StylingEditor::onChangeSet() {
 	showStylesheet(set->stylesheet);

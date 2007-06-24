@@ -39,6 +39,11 @@ class Card : public IntrusivePtrVirtualBase {
 	/// Alternative style to use for this card
 	/** Optional; if not set use the card style from the set */
 	StyleSheetP stylesheet;
+	/// Alternative options to use for this card, for this card's stylesheet
+	/** Optional; if not set use the styling data from the set */
+	IndexMap<FieldP,ValueP> styling_data;
+	/// Is the styling_data set?
+	bool has_styling;
 	
 	/// Extra values for specitic stylesheets, indexed by stylesheet name
 	DelayedIndexMaps<FieldP,ValueP> extra_data;

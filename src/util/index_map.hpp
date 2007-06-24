@@ -114,9 +114,18 @@ class IndexMap : private vector<Value> {
 		return end();
 	}
 	
+	inline void swap(IndexMap& b) {
+		vector<Value>::swap(b);
+	}
+	
   private:
 	using vector<Value>::operator [];
 };
+
+template <typename Key, typename Value>
+inline void swap(IndexMap<Key,Value>& a, IndexMap<Key,Value>& b) {
+	a.swap(b);
+}
 
 
 // ----------------------------------------------------------------------------- : DelayedIndexMaps

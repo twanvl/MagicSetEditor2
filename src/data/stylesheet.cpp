@@ -16,6 +16,8 @@ DECLARE_TYPEOF_COLLECTION(FieldP);
 
 // ----------------------------------------------------------------------------- : StyleSheet
 
+IMPLEMENT_DYNAMIC_ARG(StyleSheet*, stylesheet_for_reading, nullptr);
+
 StyleSheet::StyleSheet()
 	: card_width(100), card_height(100)
 	, card_dpi(96), card_background(*wxWHITE)

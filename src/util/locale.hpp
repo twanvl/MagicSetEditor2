@@ -92,6 +92,9 @@ String tr(const SymbolFont&, const String& key, const String& def);
 /// A localized string for tooltip text, with 1 argument (printf style)
 #define _TOOLTIP_1_(s,a)	format_string(_TOOLTIP_(s), a)
 
+/// A localized string for button text, with 1 argument (printf style)
+#define _BUTTON_1_(s,a)		format_string(_BUTTON_(s), a)
+
 /// A localized string for error messages, with 1 argument (printf style)
 #define _ERROR_1_(s,a)		format_string(_ERROR_(s),   a)
 /// A localized string for error messages, with 2 argument (printf style)

@@ -172,6 +172,9 @@ class Value : public IntrusivePtrVirtualBase {
 	const FieldP fieldP;				///< Field this value is for, should have the right type!
 	Age          last_script_update;	///< When where the scripts last updated? (by calling update)
 	
+	/// Get a copy of this value
+	virtual ValueP clone() const = 0;
+	
 	/// Convert this value to a string for use in tables
 	virtual String toString() const = 0;
 	/// Apply scripts to this value, return true if the value has changed
@@ -213,6 +216,9 @@ template <> ValueP read_new<Value>(Reader&);
 	}																					\
 	StyleP Type ## Style::clone() const {												\
 		return new_intrusive1<Type ## Style>(*this);									\
+	}																					\
+	ValueP Type ## Value::clone() const {												\
+		return new_intrusive1<Type ## Value>(*this);									\
 	}
 
 #define DECLARE_STYLE_TYPE(Type)														\

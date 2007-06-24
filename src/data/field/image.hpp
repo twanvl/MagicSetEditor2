@@ -58,6 +58,7 @@ class ImageValue : public Value {
 	ValueType filename;    ///< Filename of the image (in the current package), or ""
 	Age       last_update; ///< When was the image last changed?
 	
+	virtual ValueP clone() const;
 	virtual String toString() const;
 	
   private:

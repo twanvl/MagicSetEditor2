@@ -56,6 +56,7 @@ class MultipleChoiceValue : public ChoiceValue {
   public:
 	inline MultipleChoiceValue(const MultipleChoiceFieldP& field) : ChoiceValue(field, false) {}
 	DECLARE_HAS_FIELD(MultipleChoice);
+	virtual ValueP clone() const;
 	
 	String last_change; ///< Which of the choices was selected/deselected last?
 	
