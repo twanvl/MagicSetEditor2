@@ -62,10 +62,10 @@ void HtmlExportWindow::onOk(wxCommandEvent&) {
 
 void HtmlExportWindow::onTemplateSelect(wxCommandEvent&) {
 	wxBusyCursor wait;
-	ExportTemplateP export = list->getSelection<ExportTemplate>();
+	ExportTemplateP export_template = list->getSelection<ExportTemplate>();
 	handle_pending_errors();
-	options->showExport(export);
-	settings.gameSettingsFor(*set->game).default_export = export->name();
+	options->showExport(export_template);
+	settings.gameSettingsFor(*set->game).default_export = export_template->name();
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }
 

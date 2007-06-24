@@ -85,7 +85,7 @@ class ExportOptionsEditor : public NativeLookEditor {
 	ExportOptionsEditor(Window* parent, int id, long style = 0);
 	
 	/// Show the options for given export template
-	void showExport(const ExportTemplateP& export);
+	void showExport(const ExportTemplateP& export_template);
 };
 
 // ----------------------------------------------------------------------------- : EOF

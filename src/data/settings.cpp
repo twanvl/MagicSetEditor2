@@ -149,8 +149,8 @@ StyleSheetSettings& Settings::stylesheetSettingsFor(const StyleSheet& stylesheet
 	return *ss;
 }
 
-IndexMap<FieldP,ValueP>& Settings::exportOptionsFor(const ExportTemplate& export) {
-	return export_options.get(export.name(), export.option_fields);
+IndexMap<FieldP,ValueP>& Settings::exportOptionsFor(const ExportTemplate& export_template) {
+	return export_options.get(export_template.name(), export_template.option_fields);
 }
 
 /// Retrieve the directory to use for settings and other data files

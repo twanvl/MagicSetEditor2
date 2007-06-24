@@ -142,7 +142,7 @@ class Settings {
   public:
 	
 	/// Get the options for an export template
-	IndexMap<FieldP,ValueP>& exportOptionsFor(const ExportTemplate& export);
+	IndexMap<FieldP,ValueP>& exportOptionsFor(const ExportTemplate& export_template);
 	
 	// --------------------------------------------------- : Special game stuff
 	String apprentice_location;

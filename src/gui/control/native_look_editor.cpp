@@ -213,8 +213,8 @@ ExportOptionsEditor::ExportOptionsEditor(Window* parent, int id, long style)
 	: NativeLookEditor(parent, id, style)
 {}
 
-void ExportOptionsEditor::showExport(const ExportTemplateP& export) {
-	setStyles(set->stylesheet, export->option_style);
-	setData(settings.exportOptionsFor(*export));
+void ExportOptionsEditor::showExport(const ExportTemplateP& export_template) {
+	setStyles(set->stylesheet, export_template->option_style);
+	setData(settings.exportOptionsFor(*export_template));
 }
 

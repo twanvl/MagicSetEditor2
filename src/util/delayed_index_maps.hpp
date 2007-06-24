@@ -60,7 +60,7 @@ void GetMember::handle(const DelayedIndexMapsData<Key,Value>& d) {
 	handle(d.read_data);
 }
 template <typename Key, typename Value>
-void GetDefaultMember::handle(const DelayedIndexMapsData<Key,Value>&) {
+void GetDefaultMember::handle(const DelayedIndexMapsData<Key,Value>& d) {
 	handle(d.read_data);
 }
 

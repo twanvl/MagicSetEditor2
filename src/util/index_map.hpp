@@ -134,7 +134,7 @@ inline void swap(IndexMap<Key,Value>& a, IndexMap<Key,Value>& b) {
 /* Invariant: read_data is initialized <=> unread_data.empty()
  */
 template <typename Key, typename Value>
-struct DelayedIndexMapsData : public IntrusivePtrBase<DelayedIndexMapsData> {
+struct DelayedIndexMapsData : public IntrusivePtrBase<DelayedIndexMapsData<Key, Value> > {
 	String              unread_data;
 	IndexMap<Key,Value> read_data;
 };
