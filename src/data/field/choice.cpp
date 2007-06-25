@@ -212,6 +212,7 @@ void ChoiceStyle::initImage() {
 bool ChoiceStyle::update(Context& ctx) {
 	// Don't update the choice images, leave that to invalidate()
 	bool change = Style       ::update(ctx)
+	            | font         .update(ctx)
 	            | mask_filename.update(ctx);
 	if (!choice_images_initialized) {
 		// we only want to do this once because it is rather slow, other updates are handled by dependencies

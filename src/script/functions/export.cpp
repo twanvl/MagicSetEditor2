@@ -8,9 +8,17 @@
 
 #include <script/functions/functions.hpp>
 #include <script/functions/util.hpp>
+#include <script/image.hpp>
 #include <data/symbol_font.hpp>
+#include <data/set.hpp>
+#include <data/card.hpp>
+#include <data/export_template.hpp>
+#include <data/format/formats.hpp>
 #include <util/tagged_string.hpp>
+#include <gfx/generated_image.hpp>
 #include <util/error.hpp>
+#include <wx/wfstream.h>
+#include <wx/filename.h>
 
 // ----------------------------------------------------------------------------- : HTML
 
@@ -200,37 +208,76 @@ SCRIPT_FUNCTION(to_text) {
 
 // ----------------------------------------------------------------------------- : Files
 
-// copy from source package -> destination package, return new filename (relative)
+void guard_export_info(const String& fun) {
+	if (!export_info()) {
+		throw ScriptError(_("Can only use ") + fun + _(" from export templates"));
+	} else if (export_info()->directory_relative.empty()) {
+		throw ScriptError(_("Can only use ") + fun + _(" when 'create directory' is set to true"));
+	}
+}
+
+// copy from source package -> destination directory, return new filename (relative)
 SCRIPT_FUNCTION(copy_file) {
-	throw InternalError(_("TODO: copy_file")); // TODO
+	guard_export_info(_("copy_file"));
+	SCRIPT_PARAM(String, input); // file to copy
+	ExportInfo& ei = *export_info();
+	wxFileName fn(input);
+	fn.SetPath(ei.directory_absolute);
+	// copy
+	InputStreamP in = ei.export_template->openIn(input);
+	wxFileOutputStream out(fn.GetFullPath());
+	if (!out.Ok()) throw Error(_("Unable to open file '") + fn.GetFullPath() + _("' for output"));
+	out.Write(*in);
+	SCRIPT_RETURN(fn.GetFullName());
 }
 
-// write a file to the destination package.
-// if 'filename' is not set, writes to the 'main' output file.
-SCRIPT_FUNCTION(write_file) {
-	throw InternalError(_("TODO: write_file")); // TODO
+// write a file to the destination directory
+SCRIPT_FUNCTION(write_text_file) {
+	guard_export_info(_("write_text_file"));
+	SCRIPT_PARAM(String, input); // text to write
+	SCRIPT_PARAM(String, file); // file to write to
+	// filename
+	wxFileName fn;
+	fn.SetPath(export_info()->directory_absolute);
+	fn.SetFullName(file);
+	// write
+	wxFileOutputStream out(fn.GetFullPath());
+	if (!out.Ok()) throw Error(_("Unable to open file '") + fn.GetFullPath() + _("' for output"));
+	wxTextOutputStream tout(out);
+	tout.WriteString(BYTE_ORDER_MARK);
+	tout.WriteString(input);
+	SCRIPT_RETURN(fn.GetFullName());
 }
 
-// write an ImageValue to a new file, return the filename
-// if the image was not written, return nil
-// TODO: write a ScriptImage?
-SCRIPT_FUNCTION(image_to_file) {
-	throw InternalError(_("TODO: image_to_file")); // TODO
-}
-
-// render a card, and write the image to a file
-SCRIPT_FUNCTION(render_to_file) {
-	throw InternalError(_("TODO: render_to_file")); // TODO
+SCRIPT_FUNCTION(write_image_file) {
+	guard_export_info(_("write_image_file"));
+	ExportInfo& ei = *export_info();
+	// get image
+	SCRIPT_PARAM(ScriptValueP, input);
+	ScriptObject<CardP>* card = dynamic_cast<ScriptObject<CardP>*>(input.get()); // is it a card?
+	Image image;
+	if (card) {
+		image = export_bitmap(ei.set, card->getValue()).ConvertToImage();
+	} else {
+		image = image_from_script(input)->generate(GeneratedImage::Options(0,0,ei.export_template.get(),ei.set.get()));
+	}
+	if (!image.Ok()) throw Error(_("Unable to convert .. to image"));
+	// filename
+	SCRIPT_PARAM(String, file); // file to write to
+	wxFileName fn;
+	fn.SetPath(ei.directory_absolute);
+	fn.SetFullName(file);
+	// write
+	image.SaveFile(fn.GetFullPath());
+	SCRIPT_RETURN(fn.GetFullName());
 }
 
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_export_functions(Context& ctx) {
-	ctx.setVariable(_("to html"),        script_to_html);
-	ctx.setVariable(_("to text"),        script_to_text);
-	ctx.setVariable(_("copy file"),      script_copy_file);
-	ctx.setVariable(_("write file"),     script_write_file);
-	ctx.setVariable(_("image to file"),  script_image_to_file);
-	ctx.setVariable(_("write image"),    script_image_to_file);
-	ctx.setVariable(_("render to file"), script_render_to_file);
+	ctx.setVariable(_("to html"),          script_to_html);
+	ctx.setVariable(_("to text"),          script_to_text);
+	ctx.setVariable(_("copy file"),        script_copy_file);
+	ctx.setVariable(_("write text file"),  script_write_text_file);
+	ctx.setVariable(_("write image file"), script_write_image_file);
 }

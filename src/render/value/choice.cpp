@@ -57,9 +57,15 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 	}
 	if (style().render_style & RENDER_TEXT) {
 		// draw text
-		dc.DrawText(tr(*viewer.stylesheet, value().value(), capitalize(value().value())),
-			align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(0, dc.GetCharHeight()), style().getRect()) + RealSize(margin, 0)
-		);
+		dc.SetFont(style().font, 1.0);
+		String text = tr(*viewer.stylesheet, value().value(), capitalize(value().value()));
+		RealPoint pos = align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(0, dc.GetCharHeight()), style().getRect()) + RealSize(margin, 0);
+		if (style().font.hasShadow()) {
+			dc.SetTextForeground(style().font.shadow_color);
+			dc.DrawText(text, pos + style().font.shadow_displacement);
+		}
+		dc.SetTextForeground(style().font.color());
+		dc.DrawText(text, pos);
 	}
 }
 

@@ -51,9 +51,11 @@ void HtmlExportWindow::onOk(wxCommandEvent&) {
 	// get filename
 	String name = wxFileSelector(_TITLE_("save html"),_(""),_(""),_(""),exp->file_type, wxSAVE | wxOVERWRITE_PROMPT);
 	if (name.empty()) return;
+	wxBusyCursor wait;
 	// export info for script
 	ExportInfo info;
 	info.export_template = exp;
+	info.set = set;
 	WITH_DYNAMIC_ARG(export_info, &info);
 	// create directory?
 	if (exp->create_directory) {

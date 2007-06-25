@@ -14,6 +14,7 @@
 #include <script/scriptable.hpp>
 
 DECLARE_POINTER_TYPE(Game);
+DECLARE_POINTER_TYPE(Set);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Style);
 DECLARE_POINTER_TYPE(ExportTemplate);
@@ -42,6 +43,7 @@ class ExportTemplate : public Packaged {
 
 /// Information that can be used by export functions
 struct ExportInfo {
+	SetP            set;                ///< The set that is being exported
 	ExportTemplateP export_template;    ///< The export template used
 	String          directory_relative; ///< The directory for storing extra files (or "" if !export->create_directory)
 	                                    ///  This is just the directory name
