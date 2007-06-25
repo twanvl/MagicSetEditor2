@@ -59,7 +59,7 @@ NewSetWindow::NewSetWindow(Window* parent)
 
 void NewSetWindow::onGameSelect(wxCommandEvent&) {
 	wxBusyCursor wait;
-	GameP game = game_list->getSelection<Game>();
+	GameP game = game_list->getSelection<Game>(false);
 	handle_pending_errors();
 	settings.default_game = game->name();
 	stylesheet_list->showData<StyleSheet>(game->name() + _("-*"));
@@ -76,8 +76,8 @@ void NewSetWindow::onGameSelect(wxCommandEvent&) {
 
 void NewSetWindow::onStyleSheetSelect(wxCommandEvent&) {
 	// store this as default selection
-	GameP       game       = game_list      ->getSelection<Game>();
-	StyleSheetP stylesheet = stylesheet_list->getSelection<StyleSheet>();
+	GameP       game       = game_list      ->getSelection<Game>(false);
+	StyleSheetP stylesheet = stylesheet_list->getSelection<StyleSheet>(false);
 	handle_pending_errors();
 	settings.gameSettingsFor(*game).default_stylesheet = stylesheet->name();
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);

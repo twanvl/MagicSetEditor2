@@ -206,7 +206,7 @@ ScriptValueP sort_script(Context& ctx, const ScriptValueP& list, ScriptValue& or
 		sort(s.begin(), s.end());
 		SCRIPT_RETURN(s);
 	} else {
-		// are we sorting a set
+		// are we sorting a set?
 		ScriptObject<Set*>* set = dynamic_cast<ScriptObject<Set*>*>(list.get());
 		// sort a collection
 		vector<pair<String,ScriptValueP> > values;
@@ -254,6 +254,22 @@ SCRIPT_FUNCTION(number_of_items) {
 	SCRIPT_RETURN(ctx.getVariable(_("in"))->itemCount());
 }
 
+// filtering items from a list
+SCRIPT_FUNCTION(filter_list) {
+	SCRIPT_PARAM(ScriptValueP, input);
+	SCRIPT_PARAM(ScriptValueP, filter);
+	// filter a collection
+	intrusive_ptr<ScriptCustomCollection> ret(new ScriptCustomCollection());
+	ScriptValueP it = input->makeIterator(input);
+	while (ScriptValueP v = it->next()) {
+		ctx.setVariable(_("input"), v);
+		if (*filter->eval(ctx)) {
+			ret->value.push_back(v);
+		}
+	}
+	// TODO : somehow preserve keys
+	return ret;
+}
 
 // ----------------------------------------------------------------------------- : Keywords
 
@@ -560,8 +576,11 @@ class ScriptRule_sort_order: public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
 	virtual String typeName() const { return _("sort_rule"); }
 	virtual ScriptValueP eval(Context& ctx) const {
-		SCRIPT_PARAM(String, input);
-		SCRIPT_RETURN(spec_sort(order, input));
+		SCRIPT_PARAM(ScriptValueP, input);
+		if (input->type() == SCRIPT_COLLECTION) {
+			handle_warning(_("Sorting a collection as a string, this is probably not intended, if it is use 'collection+\"\"' to force conversion"), false);
+		}
+		SCRIPT_RETURN(spec_sort(order, input->toString()));
 	}
   private:
 	String order;
@@ -585,9 +604,13 @@ class ScriptRule_sort: public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
 	virtual String typeName() const { return _("sort_rule"); }
 	virtual ScriptValueP eval(Context& ctx) const {
-		SCRIPT_PARAM(String, input);
-		sort(input.begin(), input.end());
-		SCRIPT_RETURN(input);
+		SCRIPT_PARAM(ScriptValueP, input);
+		if (input->type() == SCRIPT_COLLECTION) {
+			handle_warning(_("Sorting a collection as a string, this is probably not intended, if it is use 'collection+\"\"' to force conversion"), false);
+		}
+		String input_str = input->toString();
+		sort(input_str.begin(), input_str.end());
+		SCRIPT_RETURN(input_str);
 	}
   private:
 	ScriptValueP order_by;
@@ -597,7 +620,7 @@ SCRIPT_FUNCTION(sort_rule) {
 	SCRIPT_OPTIONAL_PARAM(String, order) {
 		return new_intrusive1<ScriptRule_sort_order   >(order);
 	}
-	SCRIPT_OPTIONAL_PARAM(ScriptValueP, order_by) {
+	SCRIPT_OPTIONAL_PARAM_N(ScriptValueP, _("order by"), order_by) {
 		return new_intrusive1<ScriptRule_sort_order_by>(order_by);
 	} else {
 		return new_intrusive <ScriptRule_sort         >();
@@ -607,7 +630,7 @@ SCRIPT_FUNCTION(sort) {
 	SCRIPT_OPTIONAL_PARAM(String, order) {
 		return ScriptRule_sort_order   (order   ).eval(ctx);
 	}
-	SCRIPT_OPTIONAL_PARAM(ScriptValueP, order_by) {
+	SCRIPT_OPTIONAL_PARAM_N(ScriptValueP, _("order by"), order_by) {
 		return ScriptRule_sort_order_by(order_by).eval(ctx);
 	} else {
 		return ScriptRule_sort         (        ).eval(ctx);
@@ -637,6 +660,7 @@ void init_script_basic_functions(Context& ctx) {
 	// collection
 	ctx.setVariable(_("position"),             script_position_of);
 	ctx.setVariable(_("number of items"),      script_number_of_items);
+	ctx.setVariable(_("filter list"),          script_filter_list);
 	// keyword
 	ctx.setVariable(_("expand keywords"),      script_expand_keywords);
 	ctx.setVariable(_("expand keywords rule"), script_expand_keywords_rule);
@@ -645,6 +669,7 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("filter"),               script_filter);
 	ctx.setVariable(_("match"),                script_match);
 	ctx.setVariable(_("sort"),                 script_sort);
+	ctx.setVariable(_("sort list"),            script_sort);
 	ctx.setVariable(_("replace rule"),         script_replace_rule);
 	ctx.setVariable(_("filter rule"),          script_filter_rule);
 	ctx.setVariable(_("match rule"),           script_match_rule);

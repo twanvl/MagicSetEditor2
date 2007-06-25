@@ -12,7 +12,10 @@
 
 // ----------------------------------------------------------------------------- : Export template, basics
 
-ExportTemplate::ExportTemplate() {}
+ExportTemplate::ExportTemplate()
+	: create_directory(false)
+	, file_type(_("HTML files (*.html)|*.html"))
+{}
 
 String ExportTemplate::typeNameStatic() { return _("export-template"); }
 String ExportTemplate::typeName() const { return _("export-template"); }
@@ -28,4 +31,6 @@ IMPLEMENT_REFLECTION(ExportTemplate) {
 	REFLECT(script);
 }
 
-// ----------------------------------------------------------------------------- : 
+// ----------------------------------------------------------------------------- : ExportInfo
+
+IMPLEMENT_DYNAMIC_ARG(ExportInfo*, export_info, nullptr);

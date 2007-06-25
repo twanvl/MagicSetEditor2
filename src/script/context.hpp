@@ -57,6 +57,12 @@ class Context {
 	/// Get the value of a variable, returns ScriptValue() if it is not set
 	ScriptValueP getVariableOpt(const String& name);
 	
+	/// Open a new scope
+	/** returns the number of shadowed binding before that scope */
+	size_t openScope();
+	/// Close a scope, must be passed a value from openScope
+	void closeScope(size_t scope);
+	
   public:// public for FOR_EACH
 	/// Record of a variable
 	struct Variable {
@@ -85,17 +91,22 @@ class Context {
 	
 	/// Set a variable to a new value (in the current scope)
 	void setVariable(int name, const ScriptValueP& value);
-	/// Open a new scope
-	/** returns the number of shadowed binding before that scope */
-	size_t openScope();
-	/// Close a scope, must be passed a value from openScope
-	void closeScope(size_t scope);
 	/// Return the bindings in the current scope
 	void getBindings(size_t scope, vector<Binding>&);
 	/// Remove all bindings made in the current scope
 	void resetBindings(size_t scope);
 	/// Make an object with n elements, popping 2n values from the stack, and push it onto the stack
 	void makeObject(size_t n);
+};
+
+/// A class that creates a local scope
+class LocalScope {
+  public:
+	inline LocalScope(Context& ctx) : ctx(ctx), scope(ctx.openScope()) {}
+	inline ~LocalScope() { ctx.closeScope(scope); }
+  private:
+	Context& ctx;
+	size_t scope;
 };
 
 // ----------------------------------------------------------------------------- : EOF

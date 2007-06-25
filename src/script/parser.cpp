@@ -524,7 +524,8 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 	// without left recursion:  expr = expr (oper expr)*
 	while (true) {
 		const Token& token = input.read();
-		if (token != TOK_OPER && token != TOK_NAME && token!=TOK_LPAREN) {
+		if (token != TOK_OPER && token != TOK_NAME && token!=TOK_LPAREN &&
+		    !((token == TOK_STRING || token == TOK_INT || token == TOK_DOUBLE) && minPrec <= PREC_NEWLINE && token.newline)) {
 			// not an operator-like token
 			input.putBack();
 			break;

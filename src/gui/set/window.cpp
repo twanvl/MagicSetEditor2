@@ -508,7 +508,9 @@ void SetWindow::onFileReload(wxCommandEvent&) {
 	String filename = set->absoluteFilename();
 	if (filename.empty()) return;
 	wxBusyCursor busy;
+	settings.write();   // save settings
 	packages.destroy(); // unload all packages
+	settings.read();    // reload settings
 	setSet(import_set(filename));
 }
 

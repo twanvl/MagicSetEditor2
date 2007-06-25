@@ -56,7 +56,9 @@ class TagStack {
 	}
 	// Close all tags, should be called at end of input
 	void close_all(String& ret) {
-		pending_tags.clear();
+		// cancel out tags with pending tags
+		write_pending_tags(ret);
+		// close all open tags
 		while (!tags.empty()) {
 			tags.back()->write(ret, true);
 			tags.pop_back();
@@ -77,7 +79,7 @@ class TagStack {
 	
 	void add(String& ret, const NegTag& tag) {
 		// Cancel out with pending tag?
-		for (size_t i = pending_tags.size() - 1 ; i >= 0 ; --i) {
+		for (int i = (int)pending_tags.size() - 1 ; i >= 0 ; --i) {
 			if (pending_tags[i].tag == tag.tag) {
 				if (pending_tags[i].neg != tag.neg) {
 					pending_tags.erase(pending_tags.begin() + i);
@@ -89,18 +91,18 @@ class TagStack {
 		}
 		// Cancel out with existing tag?
 		if (tag.neg) {
-			for (size_t i = tags.size() - 1 ; i >= 0 ; --i) {
+			for (int i = (int)tags.size() - 1 ; i >= 0 ; --i) {
 				if (tags[i] == tag.tag) {
 					// cancel out with existing tag i, e.g. <b>:
 					// situation was         <a><b><c>text
 					// situation will become <a><b><c>text</c></b><c>
 					vector<NegTag> reopen;
-					for (size_t j = tags.size() - 1 ; j > i ; --j) {
+					for (int j = (int)tags.size() - 1 ; j > i ; --j) {
 						pending_tags.push_back(NegTag(tags[j], true));  // close tag, top down
 						tags.pop_back();
 					}
 					pending_tags.push_back(tag);						// now close tag i
-					for (size_t j = i + 1 ; j < tags.size() ; ++j) {
+					for (int j = i + 1 ; j < (int)tags.size() ; ++j) {
 						pending_tags.push_back(NegTag(tags[j], false)); // reopen later, bottom up
 						tags.pop_back();
 					}
@@ -119,7 +121,7 @@ String symbols_to_html(const String& str, const SymbolFontP& symbol_font) {
 }
 
 String to_html(const String& str_in, const SymbolFontP& symbol_font) {
-	String str = remove_tag_contents(str,_("<sep-soft"));
+	String str = remove_tag_contents(str_in,_("<sep-soft"));
 	String ret;
 	Tag bold  (_("<b>"), _("</b>")),
         italic(_("<i>"), _("</i>")),
@@ -163,6 +165,8 @@ String to_html(const String& str_in, const SymbolFontP& symbol_font) {
 					ret += _("&amp;");
 				} else if (c >= 0x80) {    // escape non ascii
 					ret += String(_("&#")) << (int)c << _(';');
+				} else if (c == _('\n')) {
+					ret += _("<br>\n");
 				} else {
 					ret += c;
 				}

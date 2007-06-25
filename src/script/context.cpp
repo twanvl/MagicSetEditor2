@@ -91,8 +91,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 				// Loop over a container, push next value or jump
 				case I_LOOP: {
 					ScriptValueP& it = stack[stack.size() - 2]; // second element of stack
-					assert(dynamic_pointer_cast<ScriptIterator>(it)); // top of stack must be an iterator
-					ScriptValueP val = static_pointer_cast<ScriptIterator>(it)->next();
+					ScriptValueP val = it->next();
 					if (val) {
 						stack.push_back(val);
 					} else {

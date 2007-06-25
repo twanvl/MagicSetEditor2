@@ -15,6 +15,8 @@
 #include <data/export_template.hpp>
 #include <util/window_id.hpp>
 #include <util/error.hpp>
+#include <wx/filename.h>
+#include <wx/wfstream.h>
 
 DECLARE_POINTER_TYPE(ExportTemplate);
 
@@ -45,17 +47,35 @@ HtmlExportWindow::HtmlExportWindow(Window* parent, const SetP& set)
 }
 
 void HtmlExportWindow::onOk(wxCommandEvent&) {
-	handle_error(Error(_("HTML export is not implemented yet, sorry")));
-	/*;//%%
-	String name = fileSelector(_("Exort to html"),_(""),_(""),_(""), {
-		                        _("HTML files (*.html)|*.html"),
-		                        wxSAVE | wxOVERWRITE_PROMPT);
+	ExportTemplateP exp = list->getSelection<ExportTemplate>();
+	// get filename
+	String name = wxFileSelector(_TITLE_("save html"),_(""),_(""),_(""),exp->file_type, wxSAVE | wxOVERWRITE_PROMPT);
+	if (name.empty()) return;
+	// export info for script
+	ExportInfo info;
+	info.export_template = exp;
+	WITH_DYNAMIC_ARG(export_info, &info);
+	// create directory?
+	if (exp->create_directory) {
+		wxFileName fn(name);
+		info.directory_relative = fn.GetName() + _("-files");
+		fn.SetFullName(info.directory_relative);
+		info.directory_absolute = fn.GetFullPath();
+		wxMkDir(info.directory_absolute);
 	}
-	if (!name.empty()) {
-		HtmlExportWindow wnd(&this, set, name);
-		wnd.showModal();
+	// run export script
+	Context& ctx = set->getContext();
+	LocalScope scope(ctx);
+	ctx.setVariable(_("options"),   to_script(&settings.exportOptionsFor(*exp)));
+	ctx.setVariable(_("directory"), to_script(info.directory_relative));
+	ScriptValueP result = exp->script.invoke(ctx);
+	// Save to file
+	wxFileOutputStream file(name);
+	{ // TODO: write as image?
+		// write as string
+		wxTextOutputStream stream(file);
+		stream.WriteString(*result);
 	}
-	*/
 	// Done
 	EndModal(wxID_OK);
 }

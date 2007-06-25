@@ -38,10 +38,10 @@ class PackageList : public GalleryList {
 	/** @pre hasSelection()
 	 *  Throws if the selection is not of type T */
 	template <typename T>
-	intrusive_ptr<T> getSelection() const {
+	intrusive_ptr<T> getSelection(bool load_fully = true) const {
 		intrusive_ptr<T> ret = dynamic_pointer_cast<T>(packages.at(selection).package);
 		if (!ret) throw InternalError(_("PackageList: Selected package has the wrong type"));
-		ret->loadFully();
+		if (load_fully) ret->loadFully();
 		return ret;
 	}
 	

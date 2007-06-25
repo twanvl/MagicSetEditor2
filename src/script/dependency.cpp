@@ -220,8 +220,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				// Loop over a container, push next value or jump (almost as normal)
 				case I_LOOP: {
 					ScriptValueP& it = stack[stack.size() - 2]; // second element of stack
-					assert(dynamic_pointer_cast<ScriptIterator>(it)); // top of stack must be an iterator
-					ScriptValueP val = static_pointer_cast<ScriptIterator>(it)->next();
+					ScriptValueP val = it->next();
 					if (val) {
 						it = dependency_dummy; // invalidate iterator, so we loop only once
 						stack.push_back(val);

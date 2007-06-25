@@ -16,6 +16,7 @@
 DECLARE_POINTER_TYPE(Game);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Style);
+DECLARE_POINTER_TYPE(ExportTemplate);
 
 // ----------------------------------------------------------------------------- : ExportTemplate
 
@@ -26,7 +27,7 @@ class ExportTemplate : public Packaged {
 	
 	GameP                   game;				///< Game this template is for
 	String                  file_type;			///< Type of the created file, in "name|*.ext" format
-	bool                    create_directory;	///< The export creates an entire directory
+	bool                    create_directory;	///< The export creates a directory for additional data files
 	vector<FieldP>          option_fields;		///< Options for exporting
 	IndexMap<FieldP,StyleP> option_style;		///< Style of the options
 	OptionalScript          script;				///< Export script, for multi file templates and initialization
@@ -37,11 +38,17 @@ class ExportTemplate : public Packaged {
 	DECLARE_REFLECTION();
 };
 
-// ----------------------------------------------------------------------------- : ExportPackage
+// ----------------------------------------------------------------------------- : ExportInfo
 
-/// A package that is being written to when exporting
-class ExportingPackage : public Package {
+/// Information that can be used by export functions
+struct ExportInfo {
+	ExportTemplateP export_template;    ///< The export template used
+	String          directory_relative; ///< The directory for storing extra files (or "" if !export->create_directory)
+	                                    ///  This is just the directory name
+	String          directory_absolute; ///< The absolute path of the directory
 };
+
+DECLARE_DYNAMIC_ARG(ExportInfo*, export_info);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

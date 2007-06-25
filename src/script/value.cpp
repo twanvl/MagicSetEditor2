@@ -172,7 +172,7 @@ class ScriptString : public ScriptValue {
   public:
 	ScriptString(const String& v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_STRING; }
-	virtual String typeName() const { return _TYPE_("string"); }
+	virtual String typeName() const { return _TYPE_("string") + _(" (\"") + (value.size() < 30 ? value : value.substr(0,30) + _("...")) + _("\")"); }
 	virtual operator String() const { return value; }
 	virtual operator double() const {
 		double d;
@@ -209,7 +209,7 @@ class ScriptString : public ScriptValue {
 		if (name.ToLong(&index) && index >= 0 && (size_t)index < value.size()) {
 			return to_script(String(1,value[index]));
 		} else {
-			throw ScriptError(_ERROR_2_("has no member value", value, name));
+			return delayError(_ERROR_2_("has no member value", value, name));
 		}
 	}
   private:
