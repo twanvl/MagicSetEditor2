@@ -1,0 +1,166 @@
+# Simple exporter for HTML files
+mse version: 0.3.4
+game:        magic
+short name:  Spoiler
+full name:   List of cards
+create directory: true
+
+option field:
+	type: choice
+	name: grouping
+	description: How should cards be grouped?
+	choice: no grouping
+	choice: group by color
+	initial: group by color
+option field:
+	type: choice
+	name: images
+	choice: no
+	choice: just the image box, linked
+	choice: just the image box, inline
+	choice: full images, linked
+	choice: full images, preview
+	choice: full images, inline
+	choice: full images only
+	initial: full images, preview
+option field:
+	type: boolean
+	name: mana symbols
+	description: Should mana symbols be used, or should they be written as text?
+option field:
+	type: boolean
+	name: rarity symbols
+	description: Should rarity be shown using a symbol or as text?
+option field:
+	type: boolean
+	name: list keywords
+	description: Should the keywords be listed?
+#option field:
+#	type: boolean
+#	name: fancy scripts
+#	description: Should fancy scripts be used
+option field:
+	type: choice
+	name: font style
+	choice: default
+	choice: serif
+	choice: sans-serif
+option field:
+	type: color
+	name: background color
+	initial: rgb(255,255,255)
+	choice:
+		name: white
+		color: rgb(255,255,255)
+	choice:
+		name: black
+		color: rgb(0,0,0)
+option field:
+	type: color
+	name: text color
+	initial: rgb(0,0,0)
+	choice:
+		name: white
+		color: rgb(255,255,255)
+	choice:
+		name: black
+		color: rgb(0,0,0)
+
+option style:
+	grouping:
+		render style: both
+		choice images:
+			no grouping:    { built_in_image("bool_no") }
+			group by color: /magic.mse-game/stats/card_color.png
+	images:
+		render style: both
+		choice images:
+			no:    { built_in_image("bool_no") }
+	font style:
+		render style: both
+		choice images:
+			serif:       /magic-spoiler.mse-export-template/serif.png
+			sans-serif:  /magic-spoiler.mse-export-template/sans-serif.png
+
+script:
+	write_card := {
+		if contains(options.images, match:= "full images") then
+			card_image_file := write_image_file(card,       file:"card{position(of:card,in:set)}.jpg")
+		else if contains(options.images, match:= "image box") then
+			card_image_file := write_image_file(card.image, file:"card{position(of:card,in:set)}.jpg")
+		else
+			card_image_file := ""
+		#if options.images == "full images only"
+		"<li class='card'>
+		     <a href='{card_image_file}'><img src='{card_image_file}' alt='' class='image'></a>
+		     <span class='name'         >{  to_html(card.name         ) }</span>
+		     <span class='casting-cost' >{  to_html(card.casting_cost, symbol_font: "mana-large", symbol_size: 12 ) }</span>
+		     <span class='type'         >{  to_html(card.type         ) }</span>
+		     <span class='rarity'       >{
+		       if options.rarity_symbols then
+		         "<img src='{ write_image_file(
+		                          name:  "set-symbol-{card.rarity[0] or else "C"}.png",
+		                          width: 20,
+		                          image: symbol_variation(set.symbol, variation:card.rarity)
+		                    )}' alt='{card.rarity}'>"
+		       else
+		         to_upper(card.rarity[0] or else "C") # B,C,U,R,S
+		     }</span>
+		     <span class='rule-text'    >{  to_html(card.rule_text    ) }</span>
+		     <span class='flavor-text'  >{  to_html( remove_tag(tag: "<i-flavor>", card.flavor_text)  ) }</span>
+		     <span class='pt'           >{  to_html(card.pt           ) }</span>
+		     <span class='card-number'  >{  to_html(card.card_number  ) }</span>
+		  </li>"
+	}
+	write_cards := {
+		"<ul class='cards'>{
+		  for each card in sort(cards, order_by: {input.card_number}) do
+		     write_card()
+		}</ul>"
+	}
+	write_group := {
+		cards := filter_list(set.cards, filter: { sort_index(card:input) == code } )
+		count := number_of_items(in:cards)
+		if count > 0 then
+		   "<h2>{title} ({count} {if count == 1 then "card" else "cards"})</h2>" +
+		   write_cards()
+	}
+	html := "<!DOCTYPE html PUBLIC '-//W3C//DTD XHTML 1.0 Strict//EN\' 'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'>
+	<html lang='en'>
+	 <head>
+	  <title>{ to_html(set.title) }</title>
+	  <link rel='stylesheet' type='text/css' href='{copy_file("style.css")}' />
+	  <style type='text/css'>
+	   body \{
+	     background: {options.background_color};
+	     color:      {options.text_color};
+	     {if options.font_style != "default" then
+	      "font-family: {options.font_style};"
+	     }
+	   \}
+	  </style>
+	 </head>
+	 <body>
+	  <h1>{ to_html(set.title) }</h1>
+	  <div class='copyright'>{   to_html(set.copyright)   }</div>
+	  <div class='description'>{ to_html(set.description) }</div>
+	  { if options.grouping == "group by color" then
+	       # Codes as by sort_index
+	       write_group(title: "White",           code:"A") +
+	       write_group(title: "Blue",            code:"B") +
+	       write_group(title: "Black",           code:"C") +
+	       write_group(title: "Red",             code:"D") +
+	       write_group(title: "Green",           code:"E") +
+	       write_group(title: "Multicolor",      code:"F") +
+	       write_group(title: "Hybrids",         code:"G") +
+	       write_group(title: "Colorless",       code:"I") +
+	       write_group(title: "Non-basic lands", code:"J") +
+	       write_group(title: "Basic lands",     code:"K")
+	    else
+	       write_cards(cards: set.cards)
+	  }
+	 </body>
+	</html>"
+	write_text_file(html, file:"index.html")
+	# make sure the urls are relative to the right directory
+	replace(html, match:"<[^<>]*(href|src)=\'", replace:"&{directory}/")

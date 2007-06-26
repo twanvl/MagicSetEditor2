@@ -1,0 +1,47 @@
+ul {
+	list-style:		none;
+	margin:			0;
+	padding:		0;
+}
+.card {
+	margin-top:		1em;
+}
+
+.card span {
+	display:		block;
+}
+
+.card .name {
+	font-weight:	bold;
+	display:		inline;
+	font-family:	"Matrix";
+	font-size:		larger;
+}
+.card .casting-cost {
+	display:		inline;
+	font-family:	"Magic Symbols", "Magic Symbols 2004";
+	font-size:		larger;
+}
+
+.card .flavor-text {
+	font-style:		italic;
+}
+.card .card-number {
+	color:			rgb(128,128,128);
+	font-size:		smaller;
+}
+
+
+.card {
+	margin-top:		1.1em;
+	min-height:		100px;
+	margin-left:	90px;
+	position:		relative;
+}
+.card .image {
+	height:			100px;
+	position:		absolute;
+	left:			-85px;
+	top:			3px;
+	border:			none;
+}
