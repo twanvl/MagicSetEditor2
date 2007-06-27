@@ -85,6 +85,7 @@ card style:
 		height:	523
 		z index: -2
 		render style: image
+		show statistics: false
 		choice images:
 			normal: card.jpg
 
@@ -229,6 +230,7 @@ card style:
 		height: 12
 		alignment: center
 		z index: 1
+		show statistics: false
 		font:
 			name: MPlantin
 			size: 6
