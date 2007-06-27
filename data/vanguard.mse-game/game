@@ -249,6 +249,9 @@ default set style:
 		padding left: 2
 		font:
 			size: 16
+	automatic reminder text:
+		render style: checklist
+		direction: vertical
 
 ############################################################## Card fields
 
@@ -274,6 +277,7 @@ card field:
 	type: choice
 	name: background
 	choice: normal
+	show statistics: false
 	editable: false
 
 ############################# Name line
@@ -360,6 +364,7 @@ card field:
 	type: text
 	name: copyright
 	default: set.copyright
+	show statistics: false
 	editable: false
 card field:
 	type: text
