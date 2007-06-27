@@ -316,7 +316,6 @@ extra card field:
 	name: pt symbols
 	script: "shieldsword"
 	editable: false
-
 extra card style:
 	pt symbols:
 		left:	25

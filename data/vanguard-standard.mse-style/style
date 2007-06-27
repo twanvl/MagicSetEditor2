@@ -43,7 +43,11 @@ styling field:
 	choice: modern
 	choice: old
 	choice: diagonal T
-
+styling field:
+	type: boolean
+	name: flavor text
+	description: Should the cards have flavor text?
+	initial: yes
 styling style:
 	use guild mana symbols:
 		choice images:
@@ -123,10 +127,19 @@ card style:
 
 	############################# Text box
 	rule text:
-		left: 46
+		left:
+			script:
+				if styling.flavor_text then 46
+				else 76
 		top : 328
-		width: 280
-		height: 65
+		width:
+			script:
+				if styling.flavor_text then 280
+				else 220
+		height:
+			script:
+				if styling.flavor_text then 65
+				else 138
 		font:
 			name: MPlantin
 			italic name: MPlantin-Italic
@@ -162,6 +175,8 @@ card style:
 			color: rgb(0,0,0)
 		alignment: bottom left
 		z index: 2
+		visible:
+			script: styling.flavor_text
 		padding left:   2
 		padding top:    2
 		padding right:  2

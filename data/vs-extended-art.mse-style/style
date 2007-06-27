@@ -1,9 +1,13 @@
-mse version: 0.3.2
+mse version: 0.3.3
 game: vs
-short name: Promotional
-full name: Extended Art Promo
+full name: VS Extended Art
+short name: VS Extended
 icon: card-sample.png
-position hint: 2
+position hint: 002
+version: 2007-06-25
+depends on:
+	package: vs.mse-game
+	version: 2007-06-25
 
 card width: 375
 card height: 523
@@ -11,7 +15,15 @@ card dpi: 150
 
 ############################################################## Extra scripts
 
+############################################################## Set info fields
+
 ############################################################## Extra style
+
+styling field:
+	type: boolean
+	name: edition
+	description: Is the set a 1st Edition?
+	initial: no
 
 ############################################################## Card fields
 card style:
@@ -36,7 +48,7 @@ card style:
 			plot twist:		card-plot-twist.jpg
 
 	############################# Name line
-	name:
+	full name:
 		left: 85
 		top : 23
 		width: 224
@@ -57,25 +69,19 @@ card style:
 			alignment: middle center
 		z index: 4
 	cost:
-		left: 31
-		top : 28
+		left: 35
+		top : 34
 		width: 13
 		height: 31
-		alignment: middle center
+		alignment: bottom center
 		font:
-			name: Dirty Headline
-			size: 18
+			name: BadhouseBoldNumbers
+			size: 35
 			color: 
 				script:	if is_equipment()  then rgb(240,221,146)
 				else    if is_location()   then rgb(193,240,250)
 				else    if is_plot_twist() then rgb(161,174,238)
-				else                            rgb(255,210,110)
-		z index: 4
-	card symbol:
-		left: 315
-		top : 31
-		height: 30
-		width: 30
+				else                            rgb(255,236,130)
 		z index: 4
 
 	############################# Image
@@ -89,9 +95,40 @@ card style:
 		mask:
 			script: if is_dual() then "image-mask-dual.png" else "image-mask.png"
 		z index: 1
+	card symbol:
+		left: 310
+		top : 31
+		height: 30
+		width: 45
+		render style: image
+		choice images:
+			Marvel:	marvel.png
+			DC-new:	dcnew.png
+			DC-old:	dcold.png
+			Hellboy: hellboy.png
+			Other...: blank.png
+		z index: 3
+	custom symbol:
+		left: 310
+		top: 31
+		height: 30
+		width: 30
+		visible: script: card.card_symbol=="Other..."
+		z index: 4
+	edition:
+		left: 335
+		top: 472
+		height: 15
+		width: 20
+		render style: image
+		choice images:
+			first edition: first-edition.png
+		z index: 3
+		visible:
+			script: styling.edition
 
 	############################# Type Bar
-	type text:
+	type text full:
 		left:	script: if is_dual() then 87 else 72
 		top:	395
 		width:	script: if is_dual() then 243 else 256
@@ -100,7 +137,6 @@ card style:
 			name: Eurostile
 			size: 11
 			color: rgb(0,0,0)
-			weight: bold
 		visible: script: is_character()
 		alignment: middle center
 		z index: 3
@@ -118,7 +154,7 @@ card style:
 
 	############################# Version
 
-	version:
+	version full:
 		left: 85
 		top : 44
 		width: 224
@@ -135,27 +171,47 @@ card style:
 				else    if is_plot_twist()	then rgb(28,47,87)
 				else                                 rgb(22,10,10)
 			separator color: rgb(128,128,128)
-		symbol font:
-			name: vs-standard-arrow
-			size: 8
-			alignment: middle center
 
 	############################# Card ID
-	number:
+	number line:
 		left: 136
 		top : 495
 		width: 30
 		height: 13
-		z index: 3
+		z index: 4
 		font:
 			name: Eurostile
 			size: 8
 			color:
 				script: if card.rarity=="common"   then rgb(255,255,255)
 				else    if card.rarity=="uncommon" then rgb(80,174,255)
-				else    if card.rarity=="rare"     then rgb(255,210,60)
+				else    if card.rarity=="rare"     then rgb(255,236,130)
 				else    if card.rarity=="promo"    then rgb(255,20,20)
 				else rgb(255,255,255)
+			weight: bold
+	promo outliner:
+		left: 135
+		top : 494
+		width: 30
+		height: 18
+		visible: script: card.rarity=="promo"
+		z index: 3
+		font:
+			name: Eurostile
+			size: 8
+			color: rgb(255,255,255)
+			weight: bold
+	promo outliner 2:
+		left: 137
+		top : 496
+		width: 30
+		height: 18
+		visible: script: card.rarity=="promo"
+		z index: 3
+		font:
+			name: Eurostile
+			size: 8
+			color: rgb(255,255,255)
 			weight: bold
 	rarity:
 		left: 135
@@ -171,7 +227,7 @@ card style:
 			promo:    rarity-promo.png
 
 	############################# Affiliation
-	team 2:
+	team 2 full:
 		left: 18
 		top : 100
 		height: 245
@@ -204,7 +260,7 @@ card style:
 		width: 
 			script: if is_dual() then 38 else 19
 		z index: 4
-		render style: image
+		render style: image list
 		choice images:
 			flight:
 				script: if is_dual() then "flight.png" else "flight2.png"
@@ -261,42 +317,53 @@ card style:
 		padding bottom: 2
 		line height hard: 1.2
 
+	watermark:
+		left: 
+			script: if is_dual() then 217 else 212
+		top:  435
+		width: 40
+		height: 60
+		render style: image
+		z index: 5
+		choice images:
+			BPRD:		bprd-watermark.png
+			Thule Society:	thule-society-watermark.png
 		
 
 	############################# Atack/defence
 	attack:
 		z index: 4
-		left:	50
-		top:	435
-		width:	25
-		height:	32
+		left:	47
+		top:	430
+		width:	30
+		height:	47
 		visible: script: is_character()
 		z index: 4
-		alignment: left middle
+		alignment: bottom left shrink-overflow
 		font:
-			name: Dirty Headline
-			size: 20
-			color: rgb(255,210,110)
+			name: BadhouseBoldNumbers
+			size: 40
+			color: rgb(255,236,130)
 			shadow color: rgb(0,0,0)
-			shadow displacement x: 2
+			shadow displacement x: 3
 			shadow displacement y: 0
 
 	defence:
 		z index: 4
-		left:	50
-		top:	471
-		width:	25
-		height:	32
+		left:	47
+		top:	465
+		width:	30
+		height:	47
 		visible: script: is_character()
 		z index: 4
-		alignment: left middle
+		alignment: bottom left shrink-overflow
 		padding bottom: -4
 		font:
-			name: Dirty Headline
-			size: 20
+			name: BadhouseBoldNumbers
+			size: 40
 			color: rgb(200,213,225)
 			shadow color: rgb(0,0,0)
-			shadow displacement x: -2
+			shadow displacement x: -3
 			shadow displacement y: 0
 
 	############################# Card sorting / numbering
@@ -312,12 +379,11 @@ card style:
 		font:
 			name: Eurostile
 			size: 6
-			weight: bold
 			color: rgb(255,255,255)
 
 	copyright:
 		left: 195
-		top : 495
+		top : 492
 		width: 110
 		height: 13
 		z index: 4
@@ -326,4 +392,3 @@ card style:
 			name: Eurostile
 			size: 4
 			color: rgb(255,255,255)
-

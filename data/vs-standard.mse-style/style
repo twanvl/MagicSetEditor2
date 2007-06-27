@@ -1,15 +1,29 @@
-mse version: 0.3.2
+mse version: 0.3.3
 game: vs
+full name: VS Standard
 short name: Standard
-full name: Normal VS cards
 icon: card-sample.png
-position hint: 1
+position hint: 001
+version: 2007-06-25
+depends on:
+	package: vs.mse-game
+	version: 2007-06-25
 
 card width: 375
 card height: 523
 card dpi: 150
 
 ############################################################## Extra scripts
+
+############################################################## Set info fields
+
+############################################################## Extra style
+
+styling field:
+	type: boolean
+	name: edition
+	description: Is the set a 1st Edition?
+	initial: no
 
 ############################################################## Card fields
 card style:
@@ -34,7 +48,7 @@ card style:
 			plot twist:		card-plot-twist.jpg
 
 	############################# Name line
-	name:
+	full name:
 		left: 90
 		top : 25
 		width: 219
@@ -57,26 +71,20 @@ card style:
 			alignment: middle center
 	cost:
 		left: 33
-		top : 28
+		top : 30
 		width: 25
 		height: 41
-		alignment: middle center
+		alignment: bottom center
 		font:
-			name: Dirty Headline
-			size: 24
+			name: BadhouseBoldNumbers
+			size: 40
 			color: 
 				script:	if is_equipment()  then rgb(240,221,146)
 				else    if is_location()   then rgb(193,240,250)
 				else    if is_plot_twist() then rgb(161,174,238)
-				else                            rgb(255,210,110)
+				else                            rgb(255,236,130)
 		z index: 4
 		padding top: 0
-	card symbol:
-		left: 315
-		top : 31
-		height: 30
-		width: 30
-		z index: 4
 
 	############################# Image
 	image:
@@ -88,9 +96,40 @@ card style:
 		mask:
 			script: if is_dual() then "image-mask-dual.png" else "image-mask.png"
 		z index: 1
+	card symbol:
+		left: 310
+		top : 31
+		height: 30
+		width: 45
+		render style: image
+		choice images:
+			Marvel:	marvel.png
+			DC-new:	dcnew.png
+			DC-old:	dcold.png
+			Hellboy: hellboy.png
+			Other...: blank.png
+		z index: 3
+	custom symbol:
+		left: 310
+		top: 31
+		height: 30
+		width: 30
+		visible: script: card.card_symbol=="Other..."
+		z index: 4
+	edition:
+		left: 315
+		top: 447
+		height: 26
+		width: 34
+		render style: image
+		choice images:
+			first edition: first-edition.png
+		z index: 3
+		visible:
+			script: styling.edition
 
 	############################# Type Bar
-	type text:
+	type text full:
 		left:	72
 		top:	299
 		width:	
@@ -100,7 +139,7 @@ card style:
 			name: Eurostile
 			size: 11
 			color: rgb(0,0,0)
-			weight: bold
+		visible: script: is_character()
 		alignment: middle center
 		z index: 3
 	type bar:
@@ -117,7 +156,7 @@ card style:
 
 	############################# Version
 
-	version:
+	version full:
 		left: 90
 		top : 46
 		width: 219
@@ -136,28 +175,52 @@ card style:
 			separator color: rgb(128,128,128)
 
 	############################# Card ID
-	number:
+	number line:
 		left: 136
 		top : 485
 		width: 30
-		height: 22
-		z index: 3
+		height: 18
+		z index: 4
 		font:
 			name: Eurostile
-			size: 10
+			size: 8
 			color:
 				script: if card.rarity=="common"   then rgb(255,255,255)
 				else    if card.rarity=="uncommon" then rgb(80,174,255)
-				else    if card.rarity=="rare"     then rgb(255,210,60)
-				else    if card.rarity=="promo"    then rgb(255,20,20)
-				else                                    rgb(255,255,255)
+				else    if card.rarity=="rare"     then rgb(255,236,130)
+				else 	if card.rarity=="promo"    then rgb(255,20,20)
+				else rgb(255,255,255)
+			weight: bold
+	promo outliner:
+		left: 135
+		top : 484
+		width: 30
+		height: 18
+		visible: script: card.rarity=="promo"
+		z index: 3
+		font:
+			name: Eurostile
+			size: 8
+			color: rgb(255,255,255)
+			weight: bold
+	promo outliner 2:
+		left: 137
+		top : 486
+		width: 30
+		height: 18
+		visible: script: card.rarity=="promo"
+		z index: 3
+		font:
+			name: Eurostile
+			size: 8
+			color: rgb(255,255,255)
 			weight: bold
 	rarity:
 		left: 135
 		top: 484
 		width: 50
-		height: 16
-		z index: 4
+		height: 30
+		z index: 3
 		render style: image hidden
 		choice images:
 			common:	  rarity-common.png
@@ -166,7 +229,7 @@ card style:
 			promo:    rarity-promo.png
 
 	############################# Affiliation
-	team:
+	team full:
 		left: 23
 		top : 100
 		height: 
@@ -176,20 +239,20 @@ card style:
 		font:
 			name: Percolator Expert
 			size: 19
-			scale down to: 18
+			scale down to: 16
 			color: rgb(245,230,197)
 		symbol font:
 			name: vs-standard-arrow
 			size: 18
 			alignment: middle center
-		alignment: middle center
+		alignment: middle center shrink-overflow
 		z index: 4
 		padding left:   2
 		padding top:    2
 		padding right:  2
 		padding bottom: 2
 
-	team 2:
+	team 2 full:
 		left: 325
 		top : 100
 		height: 200
@@ -203,8 +266,8 @@ card style:
 		symbol font:
 			name: vs-standard-arrow
 			size: 18
-			alignment: middle center
-		visible: { is_dual() }
+			alignment: middle center shrink-overflow
+		visible: is_dual()
 		alignment: middle center
 		z index: 4
 		padding left:   2
@@ -220,7 +283,7 @@ card style:
 		height: 67
 		width: 38
 		z index: 4
-		render style: image
+		render style: image list
 		choice images:
 			flight: flight.png
 			ongoing: ongoing.png
@@ -240,16 +303,16 @@ card style:
 			name: Eurostile
 			italic name: EurostileObl-Normal
 			size: 11
-			scale down to: 8
+			scale down to: 6
 			color: rgb(0,0,0)
 		symbol font:
 			name: vs-standard-arrow
 			size: 11
 			alignment: middle center
-		alignment: top left
+		alignment: top left shrink-overflow
 		z index: 4
 		padding left:   2
-		padding top:    2
+		padding top:    5
 		padding right:  2
 		padding bottom: 2
 		line height hard: 1.4
@@ -258,68 +321,77 @@ card style:
 		left: 84
 		top : 356
 		width: 272
-		height: 120
+		height: 118
 		mask: flavor-text-mask.png
 		font:
 			name: EurostileObl-Normal
-			size: 11
-			scale down to: 8
+			size: 10
+			scale down to: 6
 			color: rgb(0,0,0)
-		alignment: bottom left
+		alignment: bottom left shrink-overflow
 		z index: 3
 		padding left:   2
 		padding top:    2
 		padding right:  2
 		padding bottom: 2
-		line height hard: 1.2
+		line height hard: 1
 
+	watermark:
+		left: 167
+		top:  345
+		width: 106
+		height: 140
+		render style: image
+		choice images:
+			BPRD:		bprd-watermark.png
+			Thule Society:	thule-society-watermark.png
 		
 
-	############################# Atack/defence
+	############################# Attack/defence
 	attack:
 		z index: 4
 		left:	50
-		top:	430
+		top:	427
 		width:	30
-		height:	37
+		height:	47
 		visible: script: is_character()
 		z index: 4
-		alignment: left middle
+		alignment: bottom left shrink-overflow
 		font:
-			name: Dirty Headline
-			size: 24
-			color: rgb(255,210,110)
+			name: BadhouseBoldNumbers
+			size: 50
+			color: rgb(255,236,130)
 			shadow color: rgb(0,0,0)
-			shadow displacement x: 2
+			shadow displacement x: 3
 			shadow displacement y: 0
 
 	defence:
 		z index: 4
 		left:	50
-		top:	468
+		top:	462
 		width:	30
-		height:	37
+		height:	47
 		visible: script: is_character()
 		z index: 4
-		alignment: left middle
+		alignment: bottom left shrink-overflow
 		padding bottom: -4
 		font:
-			name: Dirty Headline
-			size: 24
+			name: BadhouseBoldNumbers
+			size: 50
 			color: rgb(200,213,225)
 			shadow color: rgb(0,0,0)
-			shadow displacement x: -2
+			shadow displacement x: -3
 			shadow displacement y: 0
 
 	############################# Card sorting / numbering
 	############################# Copyright stuff
 
 	illustrator:
-		left: 122
-		top : 320
-		width: 170
+		left: 130
+		top : 322
+		width: 165
 		height: 16
-		alignment: center top
+		alignment: center top shrink-overflow
 		z index: 4
 		font:
 			name: Eurostile
@@ -330,12 +402,11 @@ card style:
 	copyright:
 		left: 195
 		top : 480
-		width: 110
-		height: 26
+		width: 130
+		height: 22
 		z index: 4
 		alignment: middle left
 		font: 
 			name: Eurostile
 			size: 6
 			color: rgb(255,255,255)
-

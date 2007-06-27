@@ -197,11 +197,11 @@ card field:
 ############################# Card type
 card field:
 	type: text
-	name: monster
+	name: type1
 	editable: false
 card field:
 	type: text
-	name: type1
+	name: type2
 	editable: false
 card field:
 	type: text
@@ -209,9 +209,9 @@ card field:
 	script:
 		# Either just monster, monster / type1
 		combined_editor(
-			field1: card.monster,
+			field1: card.type1,
 			separator: " / ",
-			field2: card.type1,
+			field2: card.type2,
 			grey_until_needed: true,
 			hide_when_both_empty: true,
 			type_over1: " / ",
@@ -239,10 +239,12 @@ card field:
 	card list width: 55
 	card list name: #
 	editable: false
+	show statistics: false
 card field:
 	type: text
 	name: edition
 	default: set.edition
+	show statistics: false
 
 ############################# Text box
 card field:
@@ -293,10 +295,12 @@ card field:
 card field:
 	type: text
 	name: gamecode
+	show statistics: false
 card field:
 	type: text
 	name: copyright
 	default: set.copyright
+	show statistics: false
 
 
 ############################################################## Word lists

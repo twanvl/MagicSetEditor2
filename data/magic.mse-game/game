@@ -1,4 +1,4 @@
-mse version: 0.3.3
+﻿mse version: 0.3.3
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
@@ -459,14 +459,6 @@ default set style:
 			fill color:   rgb(0,0,0)
 			border color: rgb(255,255,255)
 		variation:
-			name: olduncommon
-			border radius: 0.10
-			fill type: linear gradient
-			fill color 1:   rgb(224,224,224)
-			fill color 2:   rgb(84, 84, 84)
-			border color 1: rgb(255,255,255)
-			border color 2: rgb(255,255,255)
-		variation:
 			name: uncommon
 			border radius: 0.05
 			fill type: linear gradient
@@ -474,14 +466,6 @@ default set style:
 			fill color 2:   rgb(84, 84, 84)
 			border color 1: rgb(0,  0,  0)
 			border color 2: rgb(0,  0,  0)
-		variation:
-			name: oldrare
-			border radius: 0.10
-			fill type: linear gradient
-			fill color 1:   rgb(214,196,94)
-			fill color 2:   rgb(95, 84, 40)
-			border color 1: rgb(255,255,255)
-			border color 2: rgb(255,255,255)
 		variation:
 			name: rare
 			border radius: 0.05
@@ -534,7 +518,6 @@ card field:
 	# Specify the colors somewhere else, to keep things clean
 	include file: magic-blends.mse-include/card-colors
 	default: card_color(casting_cost: card.casting_cost)
-#needed for FPM temps
 card field:
 	type: choice
 	name: font color
@@ -542,6 +525,7 @@ card field:
 	choice: white
 	description: Font color for the typeline and textbox
 	show statistics: false
+	save value: true
 
 ############################# Name line
 card field:
@@ -647,13 +631,6 @@ card field:
 	card list visible: true
 	card list column:4
 	description: The type of this card, type - to go the sub type
-#needed for FPM temps
-card field:
-	type: choice
-	name: type image
-	include file: magic-blends.mse-include/card-colors
-	default: card.card_color
-	show statistics: false
 card field:
 	type: choice
 	name: rarity
@@ -695,7 +672,13 @@ card field:
 	show statistics: false
 	script:
 		combined_editor(field1: card.rule_text, separator: "<line>\n</line>", field2: card.flavor_text)
-#needed for FPM temps
+card field:
+	type: choice
+	name: watermark
+	icon: stats/watermark.png
+	include file: magic-watermarks.mse-include/watermark-names
+	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, or a guild symbol
+#Required for FPM temps; tried moving to stylesheet; caused errors
 card field:
 	type: choice
 	name: textbox
@@ -703,12 +686,13 @@ card field:
 	default: card.card_color
 	save value: false
 	show statistics: false
+#Required for FPM temps; tried moving to stylesheet; caused errors
 card field:
 	type: choice
-	name: watermark
-	icon: stats/watermark.png
-	include file: magic-watermarks.mse-include/watermark-names
-	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, or a guild symbol
+	name: type image
+	include file: magic-blends.mse-include/card-colors
+	default: card.card_color
+	show statistics: false
 
 ############################# PT
 card field:
@@ -1537,10 +1521,6 @@ keyword:
 	match: Sweep
 	mode: pseudo
 keyword:
-	keyword: Radiance
-	match: Radiance
-	mode: pseudo
-keyword:
 	keyword: Convoke
 	match: Convoke
 	mode: expert
@@ -1555,6 +1535,10 @@ keyword:
 	match: Dredge <atom-param>number</atom-param>
 	mode: expert
 	reminder: If you would draw a card, instead you may put exactly {english_number(param1)} card(s) from the top of your library into your graveyard. If you do, return this card from your graveyard to your hand. Otherwise, draw a card.
+keyword:
+	keyword: Radiance
+	match: Radiance
+	mode: pseudo
 keyword:
 	keyword: Haunt
 	match: Haunt

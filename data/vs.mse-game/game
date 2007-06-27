@@ -1,26 +1,44 @@
-﻿mse version: 0.3.2
-short name: VS System
+﻿mse version: 0.3.3
+full name: VS System
+short name: VS
 icon: card-back.png
+version: 2007-06-25
 position hint: 3
 
 ############################################################## Functions & filters
-## Copied and Pasted from magic-new.mse-style/style, with a few modifications
 # General functions
 init script:
+	# Index for sorting, character/concealed, equipment, location then plot twist
+	sort_index := {
+		if	card.team==""		     then "2"
+		else if	card.team=="Equipment"      then "3"
+		else if card.team=="Location"       then "4"
+		else if card.team=="Plot Twist"     then "5"
+		else 					  "1"
+	};
 	# add symbols to text
 	symbol_filter :=
 		# step 5a : add arrow/diamond/dot symbols
 		replace_rule(
 			match: "->|@",
-			replace: "<sym-auto>&</sym-auto>" ) +
-		# step 5b : dot separator
+			replace: "<sym-auto>&</sym-auto>" )+
+		# step 5b : longdash for keywords
+		replace_rule(
+			match: "--",
+			replace: "—")+
+		# step 5c : dot separator
 		replace_rule(
 			match: "`|::",
 			replace: "•")+
-		# step 5c : longdash for keywords
+		# step 5d : trademark symbol
 		replace_rule(
-			match: "--",
-			replace: "—")
+			match: " TM ",
+			replace: "™")+
+		# step 5e : copyright symbol
+		replace_rule(
+			match: "CR",
+			replace: "©")
+		
 	# the rule text filter
 	#  - adds -> symbols
 	#  - adds @ symbols
@@ -32,44 +50,65 @@ init script:
 		tag_remove_rule(tag: "<i-auto>")   +
 		tag_remove_rule(tag: "<b-auto>")   +
 		# step 2 : reminder text for keywords
-		#keyword_rule(
-		#	expand_reminder_game: { set.automatic_reminder_text == "yes" },
-		#	expand_reminder_set:  { set.automatic_reminder_text != "no" },
-		#	before: " (",
-		#	after:  ")"
-		#	) +
+		expand_keywords_rule(
+			default_expand: { contains(match:mode, set.automatic_reminder_text) },
+			combine:        { "{keyword}<atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
+			) +
 		# step 3 : expand shortcut words ~ and CARDNAME
 		replace_rule(
 			match: "~|~THIS~|CARDNAME",
 			in_context: "(^|[[:space:]])<match>",
-			replace: "<atom-cardname></atom-cardname>"
+			replace: "<atom-cardname>&</atom-cardname>"
 			) +
-		# step 5 : symbols
-		symbol_filter +
 		# step 4 : fill in atom fields
 		tag_contents_rule(
 			tag: "<atom-cardname>",
 			contents: { if card.name=="" then "CARDNAME" else card.name }
 			) +
+		# step 5 : symbols
+		symbol_filter +
+		# step 7b : Bold keywords without reminder text
+		replace_rule(
+		 	match: "<kw[^>]*>[^<]+</kw-a>",
+	 		replace: "<b-auto>&</b-auto>") +
+		# step 7c : Bold keywords with reminder text
+		replace_rule(
+		 	match: "<kw[^>]*>[^<]+</kw-A>",
+	 		replace: "<b-auto>&</b-auto>") +
 		# step 7 : italic reminder text
 		replace_rule(
 		 	match: "[(][^)\n]*[)]?",
-			in_context: "(^|[[:space:]])<match>|<atom-keyword><match></atom-keyword>",
-		 	replace: "<i-auto>&</i-auto>") +
-		# step 7b : Bold keywords
-		replace_rule(
-		 	match: "<kw[^>]*>[^<]+</",
-	 		replace: "<b-auto>&</b-auto>")
+			in_context: "(^|[[:space:]])<match>|<atom-keyword><match></",
+		 	replace: "<i-auto>&</i-auto>")
 	
 	# Determine type of card
-	dual_name := filter_rule(match: "•")
+	concealed_character := filter_rule(match: "Concealed.|Concealed—Optional.")
+	keyword_sort_equipment := filter_rule(match: "Transferable.")
+	keyword_sort_location := filter_rule(match: "Terraform")
+	keyword_sort_plot_twist := filter_rule(match: "Ongoing:")
 	card_type := {
-		if      card.team == "Location"    then "location"
-		else if card.team == "Equipment"   then "equipment"
-		else if card.team == "Plot Twist"  then "plot twist"
-		else if card.team_2 != ""          then "character dual"
-		else if dual_name(card.team) != "" then "character dual (new)"
-		else                                    "character"
+		if      card.team == "Location"    			then "location"
+		else if keyword_sort_location(card.rule_text) != ""     then "location"
+		else if card.team == "Equipment"   			then "equipment"
+		else if keyword_sort_equipment(card.rule_text) != ""    then "equipment"
+		else if card.team == "Plot Twist"  			then "plot twist"
+		else if keyword_sort_plot_twist(card.rule_text) != ""   then "plot twist"
+		else if card.symbols == "ongoing"		        then "plot twist"
+		else if concealed_character(card.rule_text) != ""       then concealed_script()
+		else if card.team_2 != ""        			then "character dual"
+		else if card.team_2_of_2 != "" 	   			then "character dual (new)"
+		else                                    		     "character"
+	}
+	# Default Concealed Card Type
+	concealed_script := {
+		if 	card.team_2 != ""        			then "concealed dual"
+		else if card.team_2_of_2 != "" 	   			then "concealed dual (new)"
+		else                                    		     "concealed"
+	}
+	# Default symbols
+	symbol_default := {
+		if	keyword_sort_plot_twist(card.rule_text) != ""   then "ongoing"
+		else ""
 	}
 	# Default 'team' name of card
 	team := {
@@ -77,6 +116,9 @@ init script:
 		else if is_equipment()  then "Equipment"
 		else if is_plot_twist() then "Plot Twist"
 		else                         ""
+	}
+	true_pass := {
+		if	is_character() then false else true
 	}
 	
 	# Only pass numbers
@@ -92,12 +134,18 @@ init script:
 		card.card_type == "character dual (new)" or
 	        card.card_type == "concealed dual (new)"
 	}
+	is_not_new_dual := {
+		card.card_type == "character" or
+	        card.card_type == "character dual" or
+	        card.card_type == "concealed" or
+	        card.card_type == "concealed dual"
+	}
 	is_character := {
-		card.card_type == "character"            or
-	        card.card_type == "character dual"       or
+		card.card_type == "character" or
+	        card.card_type == "character dual" or
 	        card.card_type == "character dual (new)" or
-	        card.card_type == "concealed"            or
-	        card.card_type == "concealed dual"       or
+	        card.card_type == "concealed" or
+	        card.card_type == "concealed dual" or
 	        card.card_type == "concealed dual (new)"
 	}
 	is_concealed := {
@@ -117,20 +165,26 @@ init script:
 	is_ch_or_pt := {
 		is_character() or is_plot_twist()
 	}
-
 ############################################################## Set fields
 
-set field:
-	type: info
-	name: Set Information
 set field:
 	type: text
 	name: title
 	description: This information will not appear on the card.
 set field:
+	type: choice
+	name: logo
+	choice: none
+	choice: Marvel
+	choice: DC-new
+	choice: DC-old
+	choice: Hellboy
+	choice: Other...
+	initial: none
+	description: The logo for the company.
+set field:
 	type: text
 	name: code
-	default: "COD"
 	description: Recommended only 3 Capital digits. Will appear before card number. ex: MOR-1
 set field:
 	type: text
@@ -146,29 +200,52 @@ set field:
 	name: copyright
 	description: Copytight information. This information will not appear on the card.
 set field:
-	type: info
-	name: Defaults and Automation
-set field:
 	type: choice
+	name: set rarity
+	choice: common
+	choice: uncommon
+	choice: rare
+	choice: promo
+	initial: none
+	description: Set the rarity for all cards in the set.
+set field:
+	type: multiple choice
 	name: automatic reminder text
-	choice: yes
-	choice: only for custom keywords
-	choice: no
-	initial: no
-	description: Should reminder text be added to keywords by default? Note: you can enable/disable reminder text by right clicking the keyword.
+	choice: real
+	choice: custom
+	initial: custom
+	# Convert from older mse versions
+	script:
+		if value = "yes" then "real, custom"
+		else if value = "no" then ""
+		else value
+	description: For which kinds of keywords should reminder text be added by default? Note: you can enable/disable reminder text by right clicking the keyword.
+set field:
+	type: boolean
+	name: automatic card numbers
+	description: Should card numbers be shown on the cards?
+
 
 ############################# Default style
 
 default set style:
+	logo:
+		font:
+			size: 16
+		render style: both
+		choice images:
+			Marvel: marvel.png
+			DC-new:	dcnew.png
+			DC-old: dcold.png
+			Hellboy: hellboy.png
+			Other...: other.png
 	title:
 		padding left: 2
 		font:
 			size: 16
 	automatic reminder text:
-		render style: both
-		choice images:
-			yes: script: built_in_image("bool_yes")
-			no:  script: built_in_image("bool_no")
+		render style: checklist
+		direction: vertical
 
 ############################################################## Card fields
 
@@ -186,93 +263,186 @@ card field:
 	choice: location
 	choice: plot twist
 	default: card_type()
-	choice colors:
-		character:	rgb(240,36,0)
-		character dual:	rgb(240,36,0)
-		concealed:	rgb(33,33,33)
-		concealed dual:	rgb(33,33,33)
-		equipment:	rgb(160,160,160)
-		location:	rgb(60,220,0)
-		plot twist:	rgb(20,0,220)
-	choice colors cardlist:
-		character:	rgb(120,18,0)
-		character dual:	rgb(120,18,0)
-		concealed:	rgb(26,26,26)
-		concealed dual:	rgb(26,26,26)
-		equipment:	rgb(80,80,80)
-		location:	rgb(30,110,0)
-		plot twist:	rgb(10,0,110)
+	show statistics: false
 
 ############################# Name line
 card field:
 	type: text
 	name: name
+	editable: false
+	show statistics: false
 	script: symbol_filter(value)
+card field:
+	type: text
+	name: identity
+	editable: false
+	script: symbol_filter(value)
+	show statistics: false
+card field:
+	type: text
+	name: full name
+	script: 
+		combined_editor(
+			field1: card.name,
+			separator: "™ ",
+			field2: card.identity,
+			grey_until_needed: true_pass(),
+			hide_when_both_empty: true,
+			type_over1: " TM",
+			type_over2: "TM"
+		)
 	identifying: true
 	show statistics: false
-	card list visible: true
 	card list column: 1
-	card list width: 200
 	description: The name of the card, use @ for a diamond
 card field:
 	type: text
 	name: cost
-	icon: stats/cost.png
 	script: only_numbers(value)
-	card list visible: true
 	card list column: 3
 	card list alignment: right
 	card list width: 37
 	card list name: Cost
-card field:
-	type: image
-	name: card symbol
-	show statistics: false
-	description: Double click to load a symbol for the card
 
 ############################# Image
 card field:
 	type: image
 	name: image
 	show statistics: false
+card field:
+	type: choice
+	name: card symbol
+	choice: none
+	choice: Marvel
+	choice: DC-new
+	choice: DC-old
+	choice: Hellboy
+	choice: Other...
+	show statistics: false
+	default: set.logo
+	editable: false
+	description: Double click to load a symbol for the card
+card field:
+	type: image
+	name: custom symbol
+	show statistics: false
+card field:
+	type: choice
+	name: edition
+	choice: first edition
+	editable: false
+	show statistics: false
 
 ############################# Type Bar
 card field:
 	type: text
 	name: type text
+	script: to_upper(value)
+	editable: false
+card field:
+	type: text
+	name: sub type
+	script: to_upper(value)
+	editable: false
+card field:
+	type: text
+	name: type text full
+	script:
+		# Either just type_text, or type_text—sub_type 
+		combined_editor(
+			field1: card.type_text,
+			separator: " - ",
+			field2: card.sub_type,
+			grey_until_needed: true,
+			hide_when_both_empty: true,
+			type_over1: " -",
+			type_over2: "-"
+		)
 	description: The type of the card
 card field:
 	type: choice
 	name: type bar
 	choice: type bar
 	editable: false
+	show statistics: false
 
 ############################# Version
 card field:
 	type: text
 	name: version
-	card list visible: true
+	script: to_lower(value)
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: team affiliation
+	script: to_lower(value)
+	editable: false
+card field:
+	type: text
+	name: version full
+	script:
+		# Either just version, or version • team_affiliation 
+		combined_editor(
+			field1: card.version,
+			separator: " • ",
+			field2: card.team_affiliation,
+			grey_until_needed: true,
+			hide_when_both_empty: true,
+			type_over1: " `"
+			)
 	card list column: 2
-	script: symbol_filter(value)
+	show statistics: false
 
 ############################# Card ID
 card field:
 	type: text
 	name: number
+	save value: false
 	script:
-		set.code
-		+ "-" +
-		format( format: "%03i"
-		      , position(
-				of: card
-				in: set
-				order_by: {card.name}
-			))
-	card list visible: true
+		position(
+			of: card
+			in: set
+			order_by: {
+				sort_index() + card.team + card.team_2_of_2 + card.team_2 + card.team_2_of_2_2 + card.name + card.version + " • " + card.team_affiliation
+			}) 
 	card list column: 6
-	card list width: 65
+	card list width: 55
 	card list name: #
 	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: number text
+	script: to_upper(value)
+	default: set.code + "-" + card.number
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: number line
+	save value: false
+	show statistics: false
+	script:
+		if set.automatic_card_numbers then
+			combined_editor(field1: set.code, separator: "-", field2: card.number)
+		else
+			forward_editor(field: card.number_text)
+	description: Copyright of this card and cardnumber, the default value can be changed on the 'set info' tab
+card field:
+	type: text
+	name: promo outliner
+	save value: false
+	show statistics: false
+	editable: false
+	default: card.number_line
+card field:
+	type: text
+	name: promo outliner 2
+	save value: false
+	show statistics: false
+	editable: false
+	default: card.number_line
 card field:
 	type: choice
 	name: rarity
@@ -280,30 +450,70 @@ card field:
 	choice: uncommon
 	choice: rare
 	choice: promo
+	default: set.set_rarity
 
 ############################# Affiliation
 card field:
 	type: text
 	name: team
 	default: team()
-	script: symbol_filter(value)
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: team 2 of 2
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: team full
+	script:
+		# Either just team, or team • team 2 of 2 
+		combined_editor(
+			field1: card.team,
+			separator: " • ",
+			field2: card.team_2_of_2,
+			grey_until_needed: true,
+			hide_when_both_empty: true,
+			type_over1: " `"
+		)
 	description: The team of the card, use ` for a separator for dual cards
 
 card field:
 	type: text
 	name: team 2
-	script: symbol_filter(value)
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: team 2 of 2 2
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: team 2 full
+	script:
+		# Either just team, or team 2 • team 2 of 2 2
+		combined_editor(
+			field1: card.team_2,
+			separator: " • ",
+			field2: card.team_2_of_2_2,
+			grey_until_needed: true,
+			hide_when_both_empty: true,
+			type_over1: " `"
+		)
 	description: The second affiliation of the card (for dual cards)
 
 ############################# FlightRange
 card field:
 	type: multiple choice
 	name: symbols
-	icon: stats/symbols.png
 	choice: flight
 	choice: range
 	choice: ongoing
+	default: symbol_default()
 	description: Symbols for this card (flight/range/ongoing), multiple symbols can be selected
+	show statistics: false
 
 ############################# Text box
 card field:
@@ -312,20 +522,27 @@ card field:
 	script: text_filter(value)
 	show statistics: false
 	multi line: true
-	description: Rule text of the card, use @ for a diamond, -> for an arrow and :: for a dot
+	description: Rule text of the card, use @ for a diamond, -> for an arrow
 card field:
 	type: text
 	name: flavor text
 	show statistics: false
 	multi line: true
+card field:
+	type: choice
+	name: watermark
+	choice: none
+	choice: BPRD
+	choice: Thule Society
+	description: The Watermark for this set.
+
 
 ############################# Atack / Defense
 card field:
 	type: text
 	name: attack
-	icon: stats/attack.png
+	script: only_numbers(value)
 	save value: true
-	card list visible: true
 	card list column: 4
 	card list width: 33
 	card list name: ATK
@@ -333,9 +550,8 @@ card field:
 card field:
 	type: text
 	name: defence
-	icon: stats/defence.png
+	script: only_numbers(value)
 	save value: true
-	card list visible: true
 	card list column: 5
 	card list width: 33
 	card list name: DEF
@@ -348,56 +564,10 @@ card field:
 card field:
 	type: text
 	name: copyright
+	script: symbol_filter(value)
 	default: set.copyright
 	multi line: true
-
-
-############################################################## Word lists
-# Doesn't do anything yet
-
-#word list:
-#	name: affiliation or type
-#	word: anti-matter
-#	word: arkham inmates
-#	word: darkseid's elite
-#	word: deathstroke
-#	word: emerald enemies
-#	word: fearsome five
-#	word: gotham knights
-#	word: green lantern
-#	word: injustice gang
-#	word: jla
-#	word: jli
-#	word: league of assassins
-#	word: manhunter
-#	word: new gods
-#	word: revenge squad
-#	word: secret society
-#	word: shadowpact
-#	word: team superman
-#	word: teen titans
-#	word: avengers
-#	word: brotherhood
-#	word: crimelords
-#	word: doom
-#	word: fantastic four
-#	word: kang council
-#	word: marvel knights
-#	word: masters of evil
-#	word: negative zone
-#	word: sentinel
-#	word: sinister syndicate
-#	word: skrull
-#	word: spider-friends
-#	word: squadron supreme
-#	word: thunderbolts
-#	word: underworld
-#	word: x-men
-#	word: x-statix
-#	word: equipment
-#	word: location
-#	word: plot twist
-
+	show statistics: false
 
 ############################################################## Keywords
 
@@ -405,87 +575,130 @@ card field:
 
 has keywords: true
 
-keyword parameter type:
-	name: no parameter
+keyword match script: name_filter(value)
+
+keyword mode:
+	name: real
+	description: Actual keywords.
+keyword mode:
+	is default: true
+	name: custom
+	description: Custom keywords.
+
 keyword parameter type:
 	name: number
 	match: [0-9]+
 keyword parameter type:
 	name: action
-	match: [^(,\n]+
+	match: 
+		[^
+		(.,]+
 keyword parameter type:
 	name: name
 	match:
 		[^
 		(.,]+
 
+
 ############################# All VS System keywords
 
 keyword:
-	keyword: Concealed—Optional.
-	match: Concealed—Optional.
-	reminder: You may have ~THIS~ come into play in the hidden area.
+	keyword: Concealed——Optional
+	match: Concealed——Optional
+	mode: real
+	reminder: This card may come into play in the hidden area.
 keyword:
-	keyword: Concealed.
-	match: Concealed.
-	reminder: This character comes into play in the hidden area.
+	keyword: Concealed
+	match: Concealed
+	mode: real
+	reminder: This card comes into play in the hidden area.
 keyword:
-	keyword: Loyalty—Reveal.
-	match: Loyalty—Reveal.
-	reminder: If you don’t control a character that shares an affiliation with ~THIS~, then as an additional cost to recruit ~THIS~, reveal a character card from your hand or resource row that shares an affiliation with ~THIS~.
+	keyword: Loyalty——Reveal
+	match: Loyalty——Reveal
+	mode: real
+	reminder: If you don’t control a character that shares an affiliation with this character, then as an additional cost to recruit this character, reveal a character card from your hand or resource row that shares an affiliation with this character.
 keyword:
-	keyword: Loyalty.
-	match: Loyalty.
-	reminder: As an additional cost to recruit ~THIS~, you must control a character that shares a team affiliation with ~THIS~.
+	keyword: Loyalty
+	match: Loyalty
+	mode: real
+	reminder: Recruit this character only if you control a character that shares at least one team affiliation with this character.
 keyword:
-	keyword: Evasion.
-	match: Evasion.
-	reminder: Stun ~THIS~ -> Recover ~THIS~ at the start of the recovery phase this turn.
+	keyword: Evasion
+	match: Evasion
+	mode: real
+	reminder: Stun this character -> Recover this character at the start of the recovery phase this turn.
 keyword:
-	keyword: Invulnerability.
-	match: Invulnerability.
-	reminder: Whenever ~THIS~ becomes stunned, you do not take stun damage. Breakthrough is applied normally.
+	keyword: Invulnerability
+	match: Invulnerability
+	mode: real
+	reminder: Whenever this character becomes stunned, you do not take stun damage. Breakthrough is applied normally.
+keyword:
+	keyword: Cosmic——Surge:
+	match: Cosmic——Surge: <atom-param>action</atom-param>
+	mode: real
+	reminder: This character does not come into play with a cosmic counter. At the start of the recovery phase each turn, put a cosmic counter on this character.
 keyword:
 	keyword: Cosmic:
-	match: Cosmic:
-	reminder: 
+	match: Cosmic: <atom-param>action</atom-param>
+	mode: real
+	reminder: This character comes into play with a cosmic counter on it. While this character has a cosmic counter on it, it has this ability in addition to any other text it has.
 keyword:
 	keyword: Boost
 	match: Boost <atom-param>action</atom-param>
-	reminder: 
+	mode: real
+	reminder: As an additional cost to play this card, you may pay its boost cost. If you pay, this card has this this this ability in addition to any other text it has this turn.
 keyword:
 	keyword: Willpower
 	match: Willpower <atom-param>number</atom-param>
-	reminder: 
+	mode: real
+	reminder: This character has willpower equal to <param1>.
 keyword:
 	keyword: Leader:
-	match: Leader:
-	reminder:
+	match: Leader: <atom-param>action</atom-param>
+	mode: real
+	reminder: The designated characters are affected by this text.
 keyword:
 	keyword: Ally:
-	match: Ally:
-	reminder: 
+	match: Ally: <atom-param>action</atom-param>
+	mode: real
+	reminder: This character's ally power is activated whenever a character becomes powered-up.
 keyword:
-	keyword: Unique.
-	match: Unique.
-	reminder: 
+	keyword: Unique
+	match: Unique
+	mode: real
+	reminder: You may only have one copy of this card in play at a time.
 keyword:
 	keyword: Ongoing:
-	match: Ongoing:
-	reminder: 
+	match: Ongoing <atom-param>action</atom-param>
+	mode: real
+	reminder: As long as this card remains face-up in your resource row, this text is active.
 keyword:
-	keyword: Reservist.
-	match: Reservist.
+	keyword: Reservist
+	match: Reservist
+	mode: real
 	reminder: You may recruit this card from your resource row. If you do, you may put a card from your hand face down into your resource row.
 keyword:
-	keyword: Transferable.
-	match: Transferable.
-	reminder: During your recruit step you may unequip ~THIS~ and equip it to another character you control.
+	keyword: Press
+	match: Press
+	mode: real
+	reminder: When you recruit this card, your next character costs 1 less to recruit this turn for each press card you recruited this turn, but no less than 1.
+keyword:
+	keyword: Terraform
+	match: Terraform
+	mode: real
+	reminder: Reveal this card -> You may return a face-down resource you control to its owner's hand. If you do, put this card face-down into your resource row. Use this power only if this card is in your hand and only during your recruit step.
+keyword:
+	keyword: Transferable
+	match: Transferable
+	mode: real
+	reminder: At the start of the formation step, you may transfer this card.
 keyword:
 	keyword: Vengeance:
-	match: Vengeance:
-	reminder: This ability is activated whenever ~THIS~ is stunned.
+	match: Vengeance: <atom-param>action</atom-param>
+	mode: real
+	reminder: This ability is activated whenever this character is stunned.
 keyword:
 	keyword: Backup:
-	match: Backup:
-	reminder: This ability can only be used during the build step.
+	match: Backup: <atom-param>action</atom-param>
+	mode: real
+	reminder: This ability can only be used during the build phase.

@@ -191,16 +191,6 @@ card style:
 			size: 10
 			color: rgb(0,0,0)
 			separator color: rgb(128,128,128)
-	type image:
-		left: 53
-		top: 463
-		width: 304
-		height: 41
-		render style: image
-		popup style: in place
-		visible: { card.type != "" or card.illustrator != "" or card.copyright != "" }
-		include file: magic-blends.mse-include/card-typelines
-		z index: 2
 
 	rarity:
 		left: 
@@ -245,6 +235,16 @@ card style:
 		line height hard: 1.2
 		line height line: 1.5
 		line height soft: 0.9
+	watermark:
+		left: 181
+		top : 405
+		width: 45
+		height: 50
+		z index: 3
+		render style: image
+		alignment: middle center
+		visible: { card.rule_text != "" and card.flavor_text != "" }
+		include file: magic-watermarks.mse-include/watermarks
 	textbox:
 		left: 52
 		top: 405
@@ -258,16 +258,16 @@ card style:
 			else 0 }
 		include file: magic-blends.mse-include/card-textboxes
 		z index: 2
-	watermark:
-		left: 181
-		top : 405
-		width: 45
-		height: 50
-		z index: 3
+	type image:
+		left: 53
+		top: 463
+		width: 304
+		height: 41
 		render style: image
-		alignment: middle center
-		visible: { card.rule_text != "" and card.flavor_text != "" }
-		include file: magic-watermarks.mse-include/watermarks
+		popup style: in place
+		visible: { card.type != "" or card.illustrator != "" or card.copyright != "" }
+		include file: magic-blends.mse-include/card-typelines
+		z index: 2
 
 	############################# PT
 	power:
@@ -339,7 +339,6 @@ extra card field:
 	name: pt symbols
 	script: "shieldsword"
 	editable: false
-
 extra card style:
 	pt symbols:
 		left:	25
