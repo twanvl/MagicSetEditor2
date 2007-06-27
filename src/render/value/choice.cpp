@@ -53,6 +53,9 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 				style().angle
 			);
 			margin = dc.trInvS(image.GetWidth()) + 1;
+		} else if (nativeLook()) {
+			// always have the margin
+			margin = 17;
 		}
 	}
 	if (style().render_style & RENDER_TEXT) {

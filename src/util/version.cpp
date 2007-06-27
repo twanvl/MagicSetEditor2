@@ -49,7 +49,7 @@ template <> void GetDefaultMember::handle(const Version& v) {
 // ----------------------------------------------------------------------------- : Versions
 
 // NOTE: Don't use leading zeroes, they mean octal
-const Version app_version  = 303; // 0.3.3
+const Version app_version  = 304; // 0.3.4
 #ifdef UNICODE
 const Char* version_suffix = _(" (beta)");
 #else
@@ -65,5 +65,6 @@ const Char* version_suffix = _(" (beta, ascii build)");
  *     0.3.1 : new keyword system, some new style options
  *     0.3.2 : package dependencies
  *     0.3.3 : keyword separator before/after
+ *     0.3.4 : html export; choice rendering based on scripted 'image'
  */
-const Version file_version = 303; // 0.3.3
+const Version file_version = 304; // 0.3.4

@@ -240,14 +240,13 @@ void instrUnary  (UnaryInstructionType   i, ScriptValueP& a) {
 	}															\
 	break
 
-// operator on strings or doubles or ints
+// operator on strings or doubles or ints, when in doubt, uses strings
 #define OPERATOR_SDI(OP)										\
-	if        (at == SCRIPT_STRING || bt == SCRIPT_STRING) {	\
-		a = to_script(a->toString()  OP  b->toString());		\
-	} else if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {	\
-		a = to_script((double)*a     OP  (double)*b);			\
-	} else if (at == SCRIPT_INT    || bt == SCRIPT_INT   ) {	\
+	if (at == SCRIPT_INT && bt == SCRIPT_INT) {					\
 		a = to_script((int)*a        OP  (int)*b);				\
+	} else if ((at == SCRIPT_INT || at == SCRIPT_DOUBLE) &&		\
+	           (bt == SCRIPT_INT || bt == SCRIPT_DOUBLE)) {		\
+		a = to_script((double)*a     OP  (double)*b);			\
 	} else {													\
 		a = to_script(a->toString()  OP  b->toString());		\
 	}															\
@@ -288,12 +287,11 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 				// a = a;
 			} else if (at == SCRIPT_FUNCTION && bt == SCRIPT_FUNCTION) {
 				a = new_intrusive2<ScriptCompose>(a, b);
-			} else if (at == SCRIPT_STRING || bt == SCRIPT_STRING) {
-				a = to_script(a->toString()  +  b->toString());
-			} else if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {
-				a = to_script((double)*a     +  (double)*b);
-			} else if (at == SCRIPT_INT    || bt == SCRIPT_INT) {
+			} else if (at == SCRIPT_INT    && bt == SCRIPT_INT) {
 				a = to_script((int)*a        +  (int)*b);
+			} else if ((at == SCRIPT_INT || at == SCRIPT_DOUBLE) &&
+			           (bt == SCRIPT_INT || bt == SCRIPT_DOUBLE)) {
+				a = to_script((double)*a     +  (double)*b);
 			} else {
 				a = to_script(a->toString()  +  b->toString());
 			}

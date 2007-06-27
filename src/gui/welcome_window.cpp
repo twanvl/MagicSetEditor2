@@ -39,7 +39,7 @@ WelcomeWindow::WelcomeWindow()
 	wxControl* open_last = nullptr;
 	if (!settings.recent_sets.empty()) {
 		wxFileName n(settings.recent_sets.front());
-		if (n.FileExists())
+		if (n.FileExists() || n.DirExists())
 			#ifdef USE_HOVERBUTTON
 				open_last       = new HoverButtonExt(this, ID_FILE_RECENT, load_resource_image(_("welcome_last")), _BUTTON_("last opened set"), _("Open '") + n.GetName() + _("'"));
 			#else

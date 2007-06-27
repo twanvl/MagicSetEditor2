@@ -214,9 +214,13 @@ void SetScriptManager::updateStyles(const CardP& card) {
 }
 void SetScriptManager::updateStyles(Context& ctx, const IndexMap<FieldP,StyleP>& styles) {
 	FOR_EACH_CONST(s, styles) {
-		if (s->update(ctx)) {
-			// style has changed, tell listeners
-			s->tellListeners();
+		try {
+			if (s->update(ctx)) {
+				// style has changed, tell listeners
+				s->tellListeners();
+			}
+		} catch (const ScriptError& e) {
+			throw ScriptError(e.what() + _("\nWhile updating styles for '") + s->fieldP->name + _("'"));
 		}
 	}
 }
@@ -251,13 +255,21 @@ void SetScriptManager::updateAll() {
 	// update set data
 	Context& ctx = getContext(set.stylesheet);
 	FOR_EACH(v, set.data) {
-		v->update(ctx);
+		try {
+			v->update(ctx);
+		} catch (const ScriptError& e) {
+			throw ScriptError(e.what() + _("\nWhile updating set value '") + v->fieldP->name + _("'"));
+		}
 	}
 	// update card data of all cards
 	FOR_EACH(card, set.cards) {
 		Context& ctx = getContext(card);
 		FOR_EACH(v, card->data) {
-			v->update(ctx);
+			try {
+				v->update(ctx);
+			} catch (const ScriptError& e) {
+				throw ScriptError(e.what() + _("\nWhile updating card value '") + v->fieldP->name + _("'"));
+			}
 		}
 	}
 	// update things that depend on the card list
@@ -286,7 +298,13 @@ void SetScriptManager::updateToUpdate(const ToUpdate& u, deque<ToUpdate>& to_upd
 	Age age = u.value->last_script_update;
 	if (starting_age < age)  return; // this value was already updated
 	Context& ctx = getContext(u.card);
-	if (u.value->update(ctx)) {
+	bool changes;
+	try {
+		changes = u.value->update(ctx);
+	} catch (const ScriptError& e) {
+		throw ScriptError(e.what() + _("\nWhile updating value '") + u.value->fieldP->name + _("'"));
+	}
+	if (changes) {
 		// changed, send event
 		ScriptValueEvent change(u.card.get(), u.value);
 		set.actions.tellListeners(change, false);
