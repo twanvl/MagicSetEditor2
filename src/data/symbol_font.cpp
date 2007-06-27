@@ -74,6 +74,9 @@ class SymbolInFont : public IntrusivePtrBase<SymbolInFont> {
   public:
 	SymbolInFont();
 	
+	/// Get a shrunk, zoomed image
+	Image getImage(Package& pkg, double size);
+	
 	/// Get a shrunk, zoomed bitmap
 	Bitmap getBitmap(Package& pkg, double size);
 	
@@ -107,23 +110,26 @@ SymbolInFont::SymbolInFont()
 	if (img_size <= 0) img_size = 1;
 }
 
+Image SymbolInFont::getImage(Package& pkg, double size) {
+	// generate new image
+	if (!image.isReady()) {
+		throw Error(_("No image specified for symbol with code '") + code + _("' in symbol font."));
+	}
+	Image img = image.generate(GeneratedImage::Options(0, 0, &pkg));
+	actual_size = wxSize(img.GetWidth(), img.GetHeight());
+	// scale to match expected size
+	Image resampled_image((int) (actual_size.GetWidth()  * size / img_size),
+	                      (int) (actual_size.GetHeight() * size / img_size), false);
+	if (!resampled_image.Ok()) return Image(1,1);
+	resample(img, resampled_image);
+	return resampled_image;
+}
 Bitmap SymbolInFont::getBitmap(Package& pkg, double size) {
 	// is this bitmap already loaded/generated?
 	Bitmap& bmp = bitmaps[size];
 	if (!bmp.Ok()) {
-		// generate new bitmap
-		if (!image.isReady()) {
-			throw Error(_("No image specified for symbol with code '") + code + _("' in symbol font."));
-		}
-		Image img = image.generate(GeneratedImage::Options(0, 0, &pkg));
-		actual_size = wxSize(img.GetWidth(), img.GetHeight());
-		// scale to match expected size
-		Image resampled_image((int) (actual_size.GetWidth()  * size / img_size),
-		                      (int) (actual_size.GetHeight() * size / img_size), false);
-		if (!resampled_image.Ok()) return Bitmap(1,1);
-		resample(img, resampled_image);
-		// convert to bitmap, store for later use
-		bmp = Bitmap(resampled_image);
+		// generate image, convert to bitmap, store for later use
+		bmp = Bitmap(getImage(pkg, size));
 	}
 	return bmp;
 }
@@ -165,16 +171,6 @@ IMPLEMENT_REFLECTION(SymbolInFont) {
 }
 
 // ----------------------------------------------------------------------------- : SymbolFont : splitting
-
-class SymbolFont::DrawableSymbol {
-  public:
-	DrawableSymbol(const String& text, SymbolInFont* symbol)
-		: text(text), symbol(symbol)
-	{}
-	
-	String        text;		///< Original text
-	SymbolInFont* symbol;	///< Symbol to draw, if nullptr, use the default symbol and draw the text
-};
 
 void SymbolFont::split(const String& text, SplitSymbols& out) const {
 	// read a single symbol until we are done with the text
@@ -286,6 +282,53 @@ void SymbolFont::drawWithText(RotatedDC& dc, const RealRect& rect, double font_s
 	dc.DrawText(text, text_pos);
 }
 
+Image SymbolFont::getImage(double font_size, const DrawableSymbol& sym) {
+	if (sym.symbol) {
+		return sym.symbol->getImage(*this, font_size);
+	} else {
+		if (!text_font) return Image(1,1); // failed
+		// draw on default symbol
+		SymbolInFont* def = defaultSymbol();
+		if (!def) return Image(1,1); // failed
+		Bitmap bmp(def->getImage(*this, font_size));
+		// memory dc to work with
+		wxMemoryDC dc;
+		dc.SelectObject(bmp);
+		RealRect sym_rect(0,0,bmp.GetWidth(),bmp.GetHeight());
+		RotatedDC rdc(dc, 0, sym_rect, 1, QUALITY_AA);
+		// subtract margins from size
+		sym_rect.x      += text_margin_left;
+		sym_rect.y      += text_margin_top;
+		sym_rect.width  -= text_margin_left + text_margin_right;
+		sym_rect.height -= text_margin_top  + text_margin_bottom;
+		// setup text, shrink it
+		double size = text_font->size; // TODO : incorporate shrink factor?
+		RealSize ts;
+		while (true) {
+			if (size <= 0) return def->getImage(*this, font_size); // text too small
+			rdc.SetFont(*text_font, size / text_font->size);
+			ts = rdc.GetTextExtent(sym.text);
+			if (ts.width <= sym_rect.width && ts.height <= sym_rect.height) {
+				break; // text fits
+			} else {
+				// text doesn't fit
+				size -= rdc.getFontSizeStep();
+			}
+		}
+		// align text
+		RealPoint text_pos = align_in_rect(text_alignment, ts, sym_rect);
+		// draw text
+		if (text_font->hasShadow()) {
+			rdc.SetTextForeground(text_font->shadow_color);
+			rdc.DrawText(sym.text, text_pos + text_font->shadow_displacement);
+		}
+		rdc.SetTextForeground(text_font->color);
+		rdc.DrawText(sym.text, text_pos);
+		// done
+		dc.SelectObject(wxNullBitmap);
+		return bmp.ConvertToImage();
+	}
+}
 
 // ----------------------------------------------------------------------------- : SymbolFont : sizes
 

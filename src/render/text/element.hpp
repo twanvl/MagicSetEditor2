@@ -34,7 +34,8 @@ enum DrawWhat
 enum LineBreak
 {	BREAK_NO		// no line break ever
 ,	BREAK_MAYBE		// break here when in "direction:vertical" mode
-,	BREAK_SOFT		// optional line break (' ')
+,	BREAK_SPACE		// optional line break (' ')
+,	BREAK_SOFT		// always a line break, spacing as a soft break
 ,	BREAK_HARD		// always a line break ('\n')
 ,	BREAK_LINE		// line break with a separator line (<line>)
 };

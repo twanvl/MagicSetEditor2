@@ -20,6 +20,19 @@
 #include <wx/wfstream.h>
 #include <wx/filename.h>
 
+DECLARE_TYPEOF_COLLECTION(SymbolFont::DrawableSymbol);
+
+// ----------------------------------------------------------------------------- : Utility
+
+// Make sure we can export files to a data directory
+void guard_export_info(const String& fun) {
+	if (!export_info()) {
+		throw ScriptError(_("Can only use ") + fun + _(" from export templates"));
+	} else if (export_info()->directory_relative.empty()) {
+		throw ScriptError(_("Can only use ") + fun + _(" when 'create directory' is set to true"));
+	}
+}
+
 // ----------------------------------------------------------------------------- : HTML
 
 // An HTML tag
@@ -124,11 +137,52 @@ class TagStack {
 	}
 };
 
-String symbols_to_html(const String& str, const SymbolFontP& symbol_font) {
-	return str; // TODO
+// html-escape a string
+String html_escape(const String& str) {
+	String ret;
+	FOR_EACH_CONST(c, str) {
+		if (c == _('\1') || c == _('<')) { // escape <
+			ret += _("&lt;");
+		} else if (c == _('>')) {  // escape >
+			ret += _("&gt;");
+		} else if (c == _('&')) {  // escape &
+			ret += _("&amp;");
+		} else if (c == _('\'')) {  // escape '
+			ret += _("&#39;");
+		} else if (c == _('\"')) {  // escape "
+			ret += _("&quot;");
+		} else if (c >= 0x80) {    // escape non ascii
+			ret += String(_("&#")) << (int)c << _(';');
+		} else {
+			ret += c;
+		}
+	}
+	return ret;
 }
 
-String to_html(const String& str_in, const SymbolFontP& symbol_font) {
+// write symbols to html
+String symbols_to_html(const String& str, SymbolFont& symbol_font, double size) {
+	guard_export_info(_("symbols_to_html"));
+	ExportInfo& ei = *export_info();
+	vector<SymbolFont::DrawableSymbol> symbols;
+	symbol_font.split(str, symbols);
+	String html;
+	FOR_EACH(sym, symbols) {
+		String filename = symbol_font.name() + _("-") + clean_filename(sym.text) + _(".png");
+		html += _("<img src='") + filename + _("' alt='") + html_escape(sym.text) + _("'>");
+		if (ei.exported_images.insert(filename).second) {
+			// save symbol image
+			Image img = symbol_font.getImage(size, sym);
+			wxFileName fn;
+			fn.SetPath(ei.directory_absolute);
+			fn.SetFullName(filename);
+			img.SaveFile(fn.GetFullPath());
+		}
+	}
+	return html;
+}
+
+String to_html(const String& str_in, const SymbolFontP& symbol_font, double symbol_size) {
 	String str = remove_tag_contents(str_in,_("<sep-soft"));
 	String ret;
 	Tag bold  (_("<b>"), _("</b>")),
@@ -149,12 +203,12 @@ String to_html(const String& str_in, const SymbolFontP& symbol_font) {
 			} else if (is_substr(str, i, _("/i"))) {
 				tags.close(ret, italic);
 			} else if (is_substr(str, i, _("sym"))) {
-				tags.close(ret, symbol);
+				tags.open (ret, symbol);
 			} else if (is_substr(str, i, _("/sym"))) {
 				if (!symbols.empty()) {
 					// write symbols in a special way
 					tags.write_pending_tags(ret);
-					ret += symbols_to_html(symbols, symbol_font);
+					ret += symbols_to_html(symbols, *symbol_font, symbol_size);
 					symbols.clear();
 				}
 				tags.close(ret, symbol);
@@ -184,7 +238,7 @@ String to_html(const String& str_in, const SymbolFontP& symbol_font) {
 	// end of input
 	if (!symbols.empty()) {
 		tags.write_pending_tags(ret);
-		ret += symbols_to_html(symbols, symbol_font);
+		ret += symbols_to_html(symbols, *symbol_font, symbol_size);
 		symbols.clear();
 	}
 	tags.close_all(ret);
@@ -194,8 +248,91 @@ String to_html(const String& str_in, const SymbolFontP& symbol_font) {
 // convert a tagged string to html
 SCRIPT_FUNCTION(to_html) {
 	SCRIPT_PARAM(String, input);
-	SymbolFontP symbol_font; // TODO
-	SCRIPT_RETURN(to_html(input, symbol_font));
+	// symbol font?
+	SymbolFontP symbol_font;
+	SCRIPT_OPTIONAL_PARAM_N(String, _("symbol font"), font_name) {
+		symbol_font = SymbolFont::byName(font_name);
+		symbol_font->update(ctx);
+	}
+	SCRIPT_OPTIONAL_PARAM_N_(double, _("symbol font size"), symbol_font_size);
+	if (symbol_font_size <= 0) symbol_font_size = 12; // a default
+	SCRIPT_RETURN(to_html(input, symbol_font, symbol_font_size));
+}
+
+// convert a symbol string to html
+SCRIPT_FUNCTION(symbols_to_html) {
+	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_N(String, _("symbol font"), font_name);
+	SCRIPT_OPTIONAL_PARAM_N_(double, _("symbol font size"), symbol_font_size);
+	SymbolFontP symbol_font = SymbolFont::byName(font_name);
+	symbol_font->update(ctx);
+	if (symbol_font_size <= 0) symbol_font_size = 12; // a default
+	SCRIPT_RETURN(symbols_to_html(input, *symbol_font, symbol_font_size));
+}
+
+// ----------------------------------------------------------------------------- : BB Code
+
+String to_bbcode(const String& str_in) {
+	String str = remove_tag_contents(str_in,_("<sep-soft"));
+	String ret;
+	Tag bold  (_("[b]"), _("[/b]")),
+        italic(_("[i]"), _("[/i]"));
+	TagStack tags;
+	String symbols;
+	for (size_t i = 0 ; i < str.size() ; ) {
+		Char c = str.GetChar(i);
+		if (c == _('<')) {
+			++i;
+			if        (is_substr(str, i, _("b"))) {
+				tags.open (ret, bold);
+			} else if (is_substr(str, i, _("/b"))) {
+				tags.close(ret, bold);
+			} else if (is_substr(str, i, _("i"))) {
+				tags.open (ret, italic);
+			} else if (is_substr(str, i, _("/i"))) {
+				tags.close(ret, italic);
+			} /*else if (is_substr(str, i, _("sym"))) {
+				tags.open (ret, symbol);
+			} else if (is_substr(str, i, _("/sym"))) {
+				if (!symbols.empty()) {
+					// write symbols in a special way
+					tags.write_pending_tags(ret);
+					ret += symbols_to_html(symbols, symbol_font);
+					symbols.clear();
+				}
+				tags.close(ret, symbol);
+			}*/
+			i = skip_tag(str, i-1);
+		} else {
+			// normal character
+			tags.write_pending_tags(ret);
+			++i;
+//			if (symbol.opened > 0 && symbol_font) {
+//				symbols += c; // write as symbols instead
+//			} else {
+				if (c == _('\1')) { // unescape <
+					ret += _("<");
+				} else {
+					ret += c;
+				}
+//			}
+		}
+	}
+	// end of input
+/*	if (!symbols.empty()) {
+		tags.write_pending_tags(ret);
+		ret += symbols_to_html(symbols, symbol_font);
+		symbols.clear();
+	}*/
+	tags.close_all(ret);
+	return ret;
+}
+
+// convert a tagged string to BBCode
+SCRIPT_FUNCTION(to_bbcode) {
+	SCRIPT_PARAM(String, input);
+	throw "TODO";
+//	SCRIPT_RETURN(to_bbcode(input, symbol_font));
 }
 
 // ----------------------------------------------------------------------------- : Text
@@ -207,14 +344,6 @@ SCRIPT_FUNCTION(to_text) {
 }
 
 // ----------------------------------------------------------------------------- : Files
-
-void guard_export_info(const String& fun) {
-	if (!export_info()) {
-		throw ScriptError(_("Can only use ") + fun + _(" from export templates"));
-	} else if (export_info()->directory_relative.empty()) {
-		throw ScriptError(_("Can only use ") + fun + _(" when 'create directory' is set to true"));
-	}
-}
 
 // copy from source package -> destination directory, return new filename (relative)
 SCRIPT_FUNCTION(copy_file) {
@@ -252,21 +381,27 @@ SCRIPT_FUNCTION(write_text_file) {
 SCRIPT_FUNCTION(write_image_file) {
 	guard_export_info(_("write_image_file"));
 	ExportInfo& ei = *export_info();
-	// get image
-	SCRIPT_PARAM(ScriptValueP, input);
-	ScriptObject<CardP>* card = dynamic_cast<ScriptObject<CardP>*>(input.get()); // is it a card?
-	Image image;
-	if (card) {
-		image = export_bitmap(ei.set, card->getValue()).ConvertToImage();
-	} else {
-		image = image_from_script(input)->generate(GeneratedImage::Options(0,0,ei.export_template.get(),ei.set.get()));
-	}
-	if (!image.Ok()) throw Error(_("Unable to convert .. to image"));
 	// filename
 	SCRIPT_PARAM(String, file); // file to write to
 	wxFileName fn;
 	fn.SetPath(ei.directory_absolute);
 	fn.SetFullName(file);
+	if (!ei.exported_images.insert(fn.GetFullName()).second) {
+		SCRIPT_RETURN(fn.GetFullName()); // already written an image with this name
+	}
+	// get image
+	SCRIPT_PARAM(ScriptValueP, input);
+	SCRIPT_OPTIONAL_PARAM_(int, width);
+	SCRIPT_OPTIONAL_PARAM_(int, height);
+	ScriptObject<CardP>* card = dynamic_cast<ScriptObject<CardP>*>(input.get()); // is it a card?
+	Image image;
+	GeneratedImage::Options options(width, height, ei.export_template.get(),ei.set.get());
+	if (card) {
+		image = conform_image(export_bitmap(ei.set, card->getValue()).ConvertToImage(), options);
+	} else {
+		image = image_from_script(input)->generateConform(options);
+	}
+	if (!image.Ok()) throw Error(_("Unable to generate image for file ") + file);
 	// write
 	image.SaveFile(fn.GetFullPath());
 	SCRIPT_RETURN(fn.GetFullName());
@@ -276,6 +411,7 @@ SCRIPT_FUNCTION(write_image_file) {
 
 void init_script_export_functions(Context& ctx) {
 	ctx.setVariable(_("to html"),          script_to_html);
+	ctx.setVariable(_("symbols to html"),  script_symbols_to_html);
 	ctx.setVariable(_("to text"),          script_to_text);
 	ctx.setVariable(_("copy file"),        script_copy_file);
 	ctx.setVariable(_("write text file"),  script_write_text_file);

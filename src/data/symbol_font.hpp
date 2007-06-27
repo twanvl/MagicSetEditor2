@@ -35,12 +35,22 @@ class SymbolFont : public Packaged {
 	// Script update
 	void update(Context& ctx) const;
 	
-	class DrawableSymbol;
+	/// A symbol to be drawn
+	class DrawableSymbol {
+	  public:
+		inline DrawableSymbol(const String& text, SymbolInFont* symbol)
+			: text(text), symbol(symbol)
+		{}
+		
+		String        text;		///< Original text
+		SymbolInFont* symbol;	///< Symbol to draw, if nullptr, use the default symbol and draw the text
+	};
 	typedef vector<DrawableSymbol> SplitSymbols;
+	
 	/// Split a string into separate symbols for drawing and for determining their size
 	void split(const String& text, SplitSymbols& out) const;
 	
-	/// Draw a piece of text prepared using split
+	/// Draw a piece of text
 	void draw(RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, const String& text);
 	/// Get information on characters in a string
 	void getCharInfo(RotatedDC& dc, Context& ctx, double font_size, const String& text, vector<CharInfo>& out);
@@ -49,6 +59,9 @@ class SymbolFont : public Packaged {
 	void draw(RotatedDC& dc, RealRect rect, double font_size, const Alignment& align, const SplitSymbols& text);
 	/// Get information on characters in a string
 	void getCharInfo(RotatedDC& dc, double font_size, const SplitSymbols& text, vector<CharInfo>& out);
+	
+	/// Get the image for a symbol
+	Image getImage(double font_size, const DrawableSymbol& symbol);
 	
 	static String typeNameStatic();
 	virtual String typeName() const;

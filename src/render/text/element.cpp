@@ -72,13 +72,13 @@ const size_t param_colors_count = sizeof(param_colors) / sizeof(param_colors[0])
 struct TextElementsFromString {
 	// What formatting is enabled?
 	int bold, italic, symbol;
-	int soft, kwpph, param, line;
+	int soft, kwpph, param, line, soft_line;
 	int code, code_kw, code_string, param_ref, error;
 	int param_id;
 	bool bracket;
 	
 	TextElementsFromString()
-		: bold(0), italic(0), symbol(0), soft(0), kwpph(0), param(0), line(0)
+		: bold(0), italic(0), symbol(0), soft(0), kwpph(0), param(0), line(0), soft_line(0)
 		, code(0), code_kw(0), code_string(0), param_ref(0), error(0)
 		, param_id(0), bracket(false) {}
 	
@@ -125,6 +125,8 @@ struct TextElementsFromString {
 				else if (is_substr(text, tag_start, _("</atom-param"))) param       -= 1;
 				else if (is_substr(text, tag_start, _( "<line")))       line        += 1;
 				else if (is_substr(text, tag_start, _("</line")))       line        -= 1;
+				else if (is_substr(text, tag_start, _( "<soft-line")))  soft_line   += 1;
+				else if (is_substr(text, tag_start, _("</soft-line")))  soft_line   -= 1;
 				else if (is_substr(text, tag_start, _("<atom"))) {
 					// 'atomic' indicator
 					size_t end_tag = min(end, match_close_tag(text, tag_start));
@@ -178,7 +180,8 @@ struct TextElementsFromString {
 									bracket ? pos + 2 : pos + 1,
 									font,
 									soft > 0 ? DRAW_ACTIVE : DRAW_NORMAL,
-									line > 0 ? BREAK_LINE : BREAK_HARD);
+									line > 0 ? BREAK_LINE :
+									soft_line > 0 ? BREAK_SOFT : BREAK_HARD);
 					}
 					if (bracket) {
 						e->content = String(LEFT_ANGLE_BRACKET) + c + RIGHT_ANGLE_BRACKET;

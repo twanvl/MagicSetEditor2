@@ -172,5 +172,10 @@ bool is_substr(const String& str, size_t pos, const String& cmp);
 /// Compare two strings for equality, b may contain '_' where a contains ' '
 bool cannocial_name_compare(const String& a, const Char* b);
 
+// ----------------------------------------------------------------------------- : Filenames
+
+/// Make sure a string is safe to use as a filename
+String clean_filename(const String& name);
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

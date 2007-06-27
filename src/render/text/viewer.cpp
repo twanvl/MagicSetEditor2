@@ -419,7 +419,11 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 		bool   accept_word  = false; // the current word should be added to the line
 		bool   hide_breaker = true;  // hide the \n or _(' ') that caused a line break
 		double line_height_multiplier = 1; // multiplier for line height for next line top
-		if (c.break_after == BREAK_HARD) {
+		if (c.break_after == BREAK_SOFT) {
+			break_now   = true;
+			accept_word = true;
+			line_height_multiplier = style.line_height_soft;
+		} else if (c.break_after == BREAK_HARD) {
 			break_now   = true;
 			accept_word = true;
 			line_height_multiplier = style.line_height_hard;
@@ -428,7 +432,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 			break_now   = true;
 			accept_word = true;
 			line_height_multiplier = style.line_height_line;
-		} else if (c.break_after == BREAK_SOFT && style.field().multi_line) {
+		} else if (c.break_after == BREAK_SPACE && style.field().multi_line) {
 			// Soft break == end of word
 			accept_word = true;
 		} else if (c.break_after == BREAK_MAYBE && style.direction == TOP_TO_BOTTOM) {
@@ -563,13 +567,13 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 			double hdelta = s.width - width;         // amount of space to distribute
 			int count = 0;                           // distribute it among this many words
 			for (size_t k = l.start + 1 ; k < l.end() - 1 ; ++k) {
-				if (chars[k].break_after == BREAK_SOFT) ++count;
+				if (chars[k].break_after == BREAK_SPACE) ++count;
 			}
 			if (count == 0) count = 1;               // prevent div by 0
 			int i = 0; size_t j = l.start;
 			FOR_EACH(c, l.positions) {
 				c += hdelta * i / count;
-				if (j < l.end() && chars[j++].break_after == BREAK_SOFT) i++;
+				if (j < l.end() && chars[j++].break_after == BREAK_SPACE) i++;
 			}
 		} else {
 			// simple alignment

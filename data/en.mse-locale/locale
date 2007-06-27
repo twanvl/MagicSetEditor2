@@ -409,6 +409,7 @@ label:
 button:
 	# Style panel
 	use for all cards:	Use for &all cards
+	use custom styling options: Options &specific to this card
 	
 	# Keywords panel
 	insert parameter:	Insert Parameter...
@@ -476,7 +477,8 @@ title:
 	# export
 	export images:		Export Images
 	export cancled:		Export Cancled
-	export html:		Export HTML
+	export html:		Export to HTML
+	save html:			Export to HTML
 
 ############################################################## Action (undo/redo) names
 action:

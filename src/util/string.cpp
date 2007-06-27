@@ -263,3 +263,22 @@ bool cannocial_name_compare(const String& as, const Char* b) {
 		a++; b++;
 	}
 }
+
+// ----------------------------------------------------------------------------- : Filenames
+
+bool is_filename_char(Char c) {
+	return isAlnum(c) || c == _(' ') || c == _('_') || c == _('-') || c == _('.');
+}
+
+String clean_filename(const String& name) {
+	String clean;
+	FOR_EACH_CONST(c, name) {
+		if (is_filename_char(c)) {
+			clean += c;
+		}
+	}
+	if (clean.empty() || starts_with(clean, _("."))) {
+		clean = _("no-name") + clean;
+	}
+	return clean;
+}

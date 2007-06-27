@@ -48,6 +48,7 @@ struct ExportInfo {
 	String          directory_relative; ///< The directory for storing extra files (or "" if !export->create_directory)
 	                                    ///  This is just the directory name
 	String          directory_absolute; ///< The absolute path of the directory
+	set<String>     exported_images;	///< Images (from symbol font) already exported
 };
 
 DECLARE_DYNAMIC_ARG(ExportInfo*, export_info);

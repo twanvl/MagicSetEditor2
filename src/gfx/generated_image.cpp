@@ -19,6 +19,58 @@
 ScriptType GeneratedImage::type() const { return SCRIPT_IMAGE; }
 String GeneratedImage::typeName() const { return _TYPE_("image"); }
 
+Image GeneratedImage::generateConform(const Options& options) const {
+	return conform_image(generate(options),options);
+}
+
+Image conform_image(const Image& img, const GeneratedImage::Options& options) {
+	Image image = img;
+	// resize?
+	int iw = image.GetWidth(), ih = image.GetHeight();
+	if ((iw == options.width && ih == options.height) || (options.width == 0 && options.height == 0)) {
+		// already the right size
+	} else if (options.height == 0) {
+		// width is given, determine height
+		int h = options.width * ih / iw;
+		Image resampled_image(options.width, h, false);
+		resample(image, resampled_image);
+		image = resampled_image;
+	} else if (options.width == 0) {
+		// height is given, determine width
+		int w = options.height * iw / ih;
+		Image resampled_image(w, options.height, false);
+		resample(image, resampled_image);
+		image = resampled_image;
+	} else if (options.preserve_aspect == ASPECT_FIT) {
+		// determine actual size of resulting image
+		int w, h;
+		if (iw * options.height > ih * options.width) { // too much height requested
+			w = options.width;
+			h = options.width * ih / iw;
+		} else {
+			w = options.height * iw / ih;
+			h = options.height;
+		}
+		Image resampled_image(w, h, false);
+		resample(image, resampled_image);
+		image = resampled_image;
+	} else {
+		Image resampled_image(options.width, options.height, false);
+		if (options.preserve_aspect == ASPECT_BORDER && (options.width < options.height * 3) && (options.height < options.width * 3)) {
+			// preserve the aspect ratio if there is not too much difference
+			resample_preserve_aspect(image, resampled_image);
+		} else {
+			resample(image, resampled_image);
+		}
+		image = resampled_image;
+	}
+	// saturate?
+	if (options.saturate) {
+		saturate(image, 40);
+	}
+	return image;
+}
+
 // ----------------------------------------------------------------------------- : BlankImage
 
 Image BlankImage::generate(const Options& opt) const {
@@ -165,7 +217,7 @@ Image SymbolToImage::generate(const Options& opt) const {
 	} else {
 		the_symbol = opt.local_package->readFile<SymbolP>(filename);
 	}
-	return render_symbol(the_symbol, *variation->filter, variation->border_radius);
+	return render_symbol(the_symbol, *variation->filter, variation->border_radius, max(100, 3*max(opt.width,opt.height)));
 }
 bool SymbolToImage::operator == (const GeneratedImage& that) const {
 	const SymbolToImage* that2 = dynamic_cast<const SymbolToImage*>(&that);
@@ -190,7 +242,7 @@ Image ImageValueToImage::generate(const Options& opt) const {
 		image.LoadFile(*image_file);
 	}
 	if (!image.Ok()) {
-		image = Image(opt.width, opt.height);
+		image = Image(max(1,opt.width), max(1,opt.height));
 	}
 	return image;
 }

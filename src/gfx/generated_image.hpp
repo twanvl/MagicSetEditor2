@@ -38,6 +38,8 @@ class GeneratedImage : public ScriptValue {
 		Package* local_package; ///< Package to load symbols and ImageValue images from
 	};
 	
+	/// Generate the image, and conform to the options
+	Image generateConform(const Options&) const;
 	/// Generate the image
 	virtual Image generate(const Options&) const = 0;
 	/// How must the image be combined with the background?
@@ -52,6 +54,9 @@ class GeneratedImage : public ScriptValue {
 	virtual ScriptType type() const;
 	virtual String typeName() const;
 };
+
+/// Resize an image to conform to the options
+Image conform_image(const Image&, const GeneratedImage::Options&);
 
 // ----------------------------------------------------------------------------- : BlankImage
 

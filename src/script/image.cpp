@@ -61,36 +61,7 @@ Image ScriptableImage::generate(const GeneratedImage::Options& options, bool cac
 		i.SetAlpha(0,0,0);
 		image = i;
 	}
-	// resize?
-	int iw = image.GetWidth(), ih = image.GetHeight();
-	if ((iw == options.width && ih == options.height) || options.width == 0 || options.height == 0) {
-		// already the right size
-	} else if (options.preserve_aspect == ASPECT_FIT) {
-		// determine actual size of resulting image
-		int w, h;
-		if (iw * options.height > ih * options.width) { // too much height requested
-			w = options.width;
-			h = options.width * ih / iw;
-		} else {
-			w = options.height * iw / ih;
-			h = options.height;
-		}
-		Image resampled_image(w, h, false);
-		resample(image, resampled_image);
-		image = resampled_image;
-	} else {
-		Image resampled_image(options.width, options.height, false);
-		if (options.preserve_aspect == ASPECT_BORDER && (options.width < options.height * 3) && (options.height < options.width * 3)) {
-			// preserve the aspect ratio if there is not too much difference
-			resample_preserve_aspect(image, resampled_image);
-		} else {
-			resample(image, resampled_image);
-		}
-		image = resampled_image;
-	}
-	if (options.saturate) {
-		saturate(image, 40);
-	}
+	image = conform_image(image, options);
 	// cache? and return
 	if (cache) cached = image;
 	return image;

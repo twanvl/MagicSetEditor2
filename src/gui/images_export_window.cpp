@@ -56,10 +56,6 @@ ImagesExportWindow::ImagesExportWindow(Window* parent, const SetP& set)
 
 // ----------------------------------------------------------------------------- : Exporting the images
 
-bool is_filename_char(Char c) {
-	return isAlnum(c) || c == _(' ') || c == _('_') || c == _('-') || c == _('.');
-}
-
 void ImagesExportWindow::onOk(wxCommandEvent&) {
 	// Update settings
 	GameSettings& gs = settings.gameSettingsFor(*set->game);
@@ -85,16 +81,7 @@ void ImagesExportWindow::onOk(wxCommandEvent&) {
 			String filename = untag(ctx.eval(*filename_script)->toString());
 			if (!filename) continue; // no filename -> no saving
 			// sanitize filename
-			String clean_filename;
-			FOR_EACH(c, filename) {
-				if (is_filename_char(c)) {
-					clean_filename += c;
-				}
-			}
-			if (clean_filename.empty() || starts_with(clean_filename, _("."))) {
-				clean_filename = _("no-name") + clean_filename;
-			}
-			fn.SetFullName(clean_filename);
+			fn.SetFullName(clean_filename(filename));
 			// does the file exist?
 			if (fn.FileExists()) {
 				// file exists, what to do?
