@@ -1,0 +1,265 @@
+mse version: 0.3.3
+game: magic
+short name: Modern Token
+full name: Post 8th Tokens
+icon: card-sample.png
+position hint: 010
+version: 2007-06-27
+depends on:
+	package: magic.mse-game
+	version: 2007-05-05
+
+card width: 375
+card height: 523
+card dpi: 150
+
+##############################P############################### Extra scripts
+
+init script:
+	# Load blend scripts for hybrids/multicolors
+	include file: magic-blends.mse-include/blend-scripts
+	include file: magic-default-image.mse-include/scripts
+	
+	# Should hybrids have a grey name?
+	mask_hybrid_with_land := { false }
+	
+	# We have no land templates
+	land_template := { "acard.jpg" }
+	
+	# Use the normal tap symbol
+	small_mana_t := "mana_t.png"
+	
+	# Use guild mana symbols?
+	guild_mana := { styling.use_guild_mana_symbols }
+	
+	# Does the card have a color that requires a white font for copyright/artist?
+	white_font_colors := filter_rule(match:"^(hybrid 2 color )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(black|hybrid 4 color white / blue / black / red|hybrid 2 color overlay blue / black|hybrid 2 color overlay black / red|hybrid 2 color overlay black / green)")
+	font_color := {
+		if white_font_colors(input: card.card_color) != "" then rgb(255,255,255)
+		else rgb(0,0,0)
+	}
+	
+############################################################## Set info fields
+
+####################################I######################### Extra style
+
+styling field:
+	type: boolean
+	name: use guild mana symbols
+	description: Use the Ravnica guild symbols instead of the official half/half circles for hybrid mana.
+	initial: no
+styling field:
+	type: boolean
+	name: popup mana symbols
+	description: Use the symbols of the casting cost line inside the text box as well
+	initial: no
+styling field:
+	type: choice
+	name: tap symbol
+	description: What tap symbol should be used on cards?
+	initial: modern
+	choice: modern
+	choice: old
+	choice: diagonal T
+styling style:
+	popup mana symbols:
+		choice images:
+			yes: /magic-mana-large.mse-symbol-font/mana_w.png
+			no:  /magic-mana-small.mse-symbol-font/mana_w.png
+	use guild mana symbols:
+		choice images:
+			yes: /magic-mana-small.mse-symbol-font/mana_guild_rg.png
+			no:  /magic-mana-small.mse-symbol-font/mana_rg.png
+	tap symbol:
+		render style: both
+		choice images:
+			modern:     /magic-mana-large.mse-symbol-font/mana_t.png
+			old:        /magic-mana-large.mse-symbol-font/mana_t_old.png
+			diagonal T: /magic-mana-large.mse-symbol-font/mana_t_older.png
+
+############################################################## Card fields
+card style:
+	############################# Background stuff
+	border color:
+		left: 0
+		top : 0
+		width:	375
+		height:	523
+		radius: 18
+		left width:   17
+		right width:  17
+		top width:    17
+		bottom width: 18
+		z index: -1
+	card color:
+		left:	0
+		top:	0
+		width:	375
+		height:	523
+		z index: -2
+		render style: image
+		popup style: in place
+		include file:  magic-blends.mse-include/card-backgrounds
+
+	###################C######### Name line
+	name:
+		left: 50
+		top: 25
+		width: 275
+		height: 28
+		alignment: bottom center shrink-overflow
+		padding bottom: 0
+		padding top: 2
+		z index: 3
+		symbol font:
+			name: magic-embossedletters
+			size: 100
+			alignment: bottom center
+		always symbol: true
+
+	name box:
+		left: script: number_of_items(in:"" + card.name) * -7 + 187
+		top: 25
+		width: script: number_of_items(in:"" + card.name) * 14 + 6 
+		height: 35
+		z index:	2
+		visible:
+			script: card.name != ""
+		render style: image
+		mask: name_mask.png
+		choice images:
+			black: name.jpg
+
+	name box left:
+		left: script: number_of_items(in:"" + card.name) * -7 + 172
+		top: 25
+		width: 15
+		height: 35
+		z index:	2
+		visible:
+			script: card.name != ""
+		render style: image
+		mask: name_l_mask.png
+		choice images:
+			black: name_l.jpg
+
+	name box right:
+		left: script: number_of_items(in:"" + card.name) * 7 + 193
+		top: 25
+		width: 15
+		height: 35
+		z index:	2
+		visible:
+			script: card.name != ""
+		render style: image
+		mask: name_r_mask.png
+		choice images:
+			black: name_r.jpg
+
+	############################# Image
+	image:
+		left:	30
+		top:	59
+		width:	315
+		height: 366
+		mask: imagemask.png
+		z index: 1
+
+
+	################H############ Card type
+
+	type:
+		left: 35
+		top: 433
+		width: 286
+		height: 20
+		alignment: top shrink-overflow
+		z index: 1
+		padding top: 2
+		padding bottom: 4
+		padding right: 2
+		font:
+			name: Matrix
+			size: 14
+			color: rgb(0,0,0)
+			separator color: rgb(128,128,128)
+
+	rarity:
+		left: 320
+		top: 432
+		width: 22
+		height: 22
+		z index: 1
+		render style: image
+		choice images:
+			# Images based on the set symbol
+			basic land: script: symbol_variation(symbol: set.symbol, variation: "common")
+			common:     script: symbol_variation(symbol: set.symbol, variation: "common")
+			uncommon:   script: symbol_variation(symbol: set.symbol, variation: "uncommon")
+			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
+			special:	script: symbol_variation(symbol: set.symbol, variation: "special")
+
+	############################# Text box
+
+	############################# PT
+	pt:
+		z index: 4
+		left:	284
+		top:	467
+		width:	60
+		height:	28
+		alignment: center middle shrink-overflow
+		font:
+			name: Mplantin
+			size: 18
+			weight: bold
+			color: rgb(0,0,0)
+			separator color: rgb(200,0,0)
+
+	############################# Copyright stuff
+
+	illustrator:
+		left: 56
+		top : 478
+		width: 217
+		height: 16
+		z index: 1
+		font:
+			name: Matrix
+			size: 10
+			weight: bold
+			color:
+				script: font_color()
+
+	copyright line:
+		left: 30
+		top : 493
+		width: 247
+		height: 12
+		z index: 1
+		font:
+			name: MPlantin
+			size: 6.5
+			color:
+				script: font_color()
+
+############################################################## Extra card fields
+
+extra card field:
+	type: choice
+	name: pt box
+	script: card.card_color
+	editable: false
+
+extra card style:
+	pt box:
+		left:	268
+		top:	456
+		width:	90
+		height:	50
+		z index: 1
+		visible:
+			script: card.pt != ""
+		render style: image
+		mask: mask_pt.png
+		include file: magic-blends.mse-include/card-ptboxes
