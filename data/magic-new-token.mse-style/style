@@ -24,7 +24,46 @@ init script:
 	mask_hybrid_with_land := { false }
 	
 	# We have no land templates
-	land_template := { "acard.jpg" }
+	# Which artifact template should be used?
+	text_sensor := { if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then "2"
+		else "" }
+	
+	land_to_artifact := {
+		if input == "w" or input == "u" or input == "b" or input == "r" or input == "g" or input == "m" then ""
+		 else input
+	}
+	
+	land_to_artifact_pt := {
+		if input == "l" or input == "wl" or input == "ul" or input == "bl" or input == "rl" or input == "gl" or input == "ml" then "c"
+		 else input
+	}
+	
+	card_hybrid_nt := {
+		if mask_hybrid_with_land() then
+			masked_blend(
+				mask: (
+					if card.rule_text != "" then "2hybrid_blend_nt.png"
+					else "hybrid_blend_nt.png" ),
+				dark:  land_template(""),
+				light: input,
+			)
+		else input
+	}
+	multi_hybrid := {
+		masked_blend(
+			mask: (
+				if card.rule_text != "" then "2multicolor_dual_blend.png"
+				else "multicolor_dual_blend.png" ),
+			dark: (
+				if card.rule_text != "" then "2mcard.jpg"
+				else "mcard.jpg" ),
+			light: input,
+		)
+	}
+	card_template := { text_sensor() + input + "card.jpg" }
+	land_template   := { text_sensor() + land_to_artifact() + "ccard.jpg" }
+	pt_template   := { text_sensor() + land_to_artifact_pt() + "pt.jpg" }
+	land_hybrid_pt := { text_sensor() + "cpt.jpg" }
 	
 	# Use the normal tap symbol
 	small_mana_t := "mana_t.png"
@@ -159,10 +198,22 @@ card style:
 	############################# Image
 	image:
 		left:	30
-		top:	59
+		top:
+			script: if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
+					58
+				else
+					59
 		width:	315
-		height: 366
-		mask: imagemask.png
+		height:
+			script: if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
+					288
+				else
+					366
+		mask:
+			script: if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
+					"2imagemask.png"
+				else
+					"imagemask.png"
 		z index: 1
 
 
@@ -170,7 +221,11 @@ card style:
 
 	type:
 		left: 35
-		top: 433
+		top:
+			script: if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
+				350
+			else
+				433
 		width: 286
 		height: 20
 		alignment: top shrink-overflow
@@ -180,13 +235,17 @@ card style:
 		padding right: 2
 		font:
 			name: Matrix
-			size: 14
+			size: 15
 			color: rgb(0,0,0)
 			separator color: rgb(128,128,128)
 
 	rarity:
 		left: 320
-		top: 432
+		top:
+			script: if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
+				351
+			else
+				432
 		width: 22
 		height: 22
 		z index: 1
@@ -200,6 +259,46 @@ card style:
 			special:	script: symbol_variation(symbol: set.symbol, variation: "special")
 
 	############################# Text box
+	text:
+		left: 31
+		top:
+			if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
+				388
+			else
+				300
+		width: 311
+		height: 80
+		font:
+			name: MPlantin
+			italic name: MPlantin-Italic
+			size: 15
+			scale down to: 6
+			color: rgb(0,0,0)
+		symbol font:
+			name:
+				script:
+					if styling.popup_mana_symbols
+					then "magic-mana-large"
+					else "magic-mana-small"
+			size: 14
+		alignment:
+			script:
+				if not contains(match:",", card.rule_text) and
+				not contains(match: ".", card.rule_text) and
+				not contains(match: ";", card.rule_text) and
+				not contains(match: ":", card.rule_text) and
+				not contains (match: "!", card.rule_text) and
+				not contains (match: "?", card.rule_text) and
+				   card.flavor_text == "<i-flavor></i-flavor>"
+				then "middle center"
+				else "middle left"
+		z index: 2
+		padding left:   6
+		padding top:    2
+		padding right:  4
+		padding bottom: 2
+		line height hard: 1.2
+		line height line: 1.5
 
 	############################# PT
 	pt:
@@ -211,7 +310,7 @@ card style:
 		alignment: center middle shrink-overflow
 		font:
 			name: Mplantin
-			size: 18
+			size: 16
 			weight: bold
 			color: rgb(0,0,0)
 			separator color: rgb(200,0,0)
@@ -226,7 +325,7 @@ card style:
 		z index: 1
 		font:
 			name: Matrix
-			size: 10
+			size: 11
 			weight: bold
 			color:
 				script: font_color()
@@ -239,7 +338,7 @@ card style:
 		z index: 1
 		font:
 			name: MPlantin
-			size: 6.5
+			size: 7.5
 			color:
 				script: font_color()
 

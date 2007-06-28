@@ -26,7 +26,7 @@ init script:
 	}
 	
 	card_template := { green_template() + "card.jpg" }
-	pt_template   := { green_template() + "pt.jpg" }
+	land_template   := { green_template() + "lcard.jpg" }
 	
 	# Use the normal tap symbol
 	mana_t := {

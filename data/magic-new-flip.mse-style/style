@@ -21,11 +21,26 @@ init script:
 	include file: magic-default-image.mse-include/scripts
 	
 	# Should hybrids have a grey name?
-	# Not supported (yet)
+	# Should hybrids have a grey name?
 	mask_hybrid_with_land := { false }
 	
 	# We have no land templates
-	land_template := { "acard.jpg" }
+	# Which artifact template should be used?
+	land_to_artifact := {
+		if input == "w" or input == "u" or input == "b" or input == "r" or input == "g" or input == "m" then ""
+		 else input
+	}
+	
+	land_to_artifact_pt := {
+		if input == "wl" or input == "ul" or input == "bl" or input == "rl" or input == "gl" or input == "ml" then "c"
+		 else input
+	}
+	
+	land_template   := { land_to_artifact() + "ccard.jpg" }
+	pt_template   := { land_to_artifact_pt() + "pt.jpg" }
+	pt2_template   := { land_to_artifact_pt() + "pt.jpg" }
+	land_hybrid_pt := { "cpt.jpg" }
+	land_hybrid_pt2 := { "cpt.jpg" }
 	
 	# Use the normal tap symbol
 	mana_t := {
