@@ -13,9 +13,10 @@ card width: 375
 card height: 523
 card dpi: 150
 
-#error list
+#error list:
 #error about mask size not matching image size when dealing with p/t boxes
 #error about mask size not matching image size when dealing with name boxes
+#make sure name boxes are working correctly
 #templates do not change properly to one textline versions
 ##############################P############################### Extra scripts
 
@@ -31,7 +32,7 @@ init script:
 	# Which artifact template should be used?
 	text_sensor := {
 		if styling.one_textline_tokens
-		and card_style.rule_text.content_lines == 1
+		and card_style.text.content_lines == 1
 		and card.flavor_text == "<i-flavor></i-flavor>" then "1"
 		else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then "2"
 		else "" }
@@ -51,7 +52,7 @@ init script:
 			masked_blend(
 				mask: (
 					if styling.one_textline_tokens
-					and card_style.rule_text.content_lines == 1
+					and card_style.text.content_lines == 1
 					and card.flavor_text == "<i-flavor></i-flavor>" then "1hybrid_blend_nt.png"
 					else if card.rule_text != "" then "2hybrid_blend_nt.png"
 					else "hybrid_blend_nt.png" ),
@@ -64,7 +65,7 @@ init script:
 		masked_blend(
 			mask: (
 				if styling.one_textline_tokens
-				and card_style.rule_text.content_lines == 1
+				and card_style.text.content_lines == 1
 				and card.flavor_text == "<i-flavor></i-flavor>" then "1multicolor_dual_blend.png"
 				else if card.rule_text != "" then "2multicolor_dual_blend.png"
 				else "multicolor_dual_blend.png" ),
@@ -179,44 +180,44 @@ card style:
 			alignment: bottom center
 		always symbol: true
 
-	name box:
-		left: script: number_of_items(in:"" + card.name) * -7 + 187
-		top: 25
-		width: script: number_of_items(in:"" + card.name) * 14 + 6 
-		height: 35
-		z index:	2
-		visible:
-			script: card.name != ""
-		render style: image
-		mask: name_mask.png
-		choice images:
-			black: name.jpg
+#	name box:
+#		left: script: card_style.name.content_width * -.5 + 172
+#		top: 25
+#		width: script: card_style.name.content_width + 1
+#		height: 35
+#		z index:	2
+#		visible:
+#			script: card.name != ""
+#		render style: image
+#		mask: name_mask.png
+#		choice images:
+#			black: name.jpg
 
-	name box left:
-		left: script: number_of_items(in:"" + card.name) * -7 + 172
-		top: 25
-		width: 15
-		height: 35
-		z index:	2
-		visible:
-			script: card.name != ""
-		render style: image
-		mask: name_l_mask.png
-		choice images:
-			black: name_l.jpg
+#	name box left:
+#		right: script: card_style.name.content_width * -.5 + 172
+#		top: 25
+#		width: 15
+#		height: 35
+#		z index:	2
+#		visible:
+#			script: card.name != ""
+#		render style: image
+#		mask: name_l_mask.png
+#		choice images:
+#			black: name_l.jpg
 
-	name box right:
-		left: script: number_of_items(in:"" + card.name) * 7 + 193
-		top: 25
-		width: 15
-		height: 35
-		z index:	2
-		visible:
-			script: card.name != ""
-		render style: image
-		mask: name_r_mask.png
-		choice images:
-			black: name_r.jpg
+#	name box right:
+#		left: script: card_style.name.content_width * .5 + 173
+#		top: 25
+#		width: 15
+#		height: 35
+#		z index:	2
+#		visible:
+#			script: card.name != ""
+#		render style: image
+#		mask: name_r_mask.png
+#		choice images:
+#			black: name_r.jpg
 
 	############################# Image
 	image:
@@ -228,14 +229,14 @@ card style:
 				59
 		width:	315
 		height:
-			script: if styling.one_textline_tokens and card_style.rule_text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
+			script: if styling.one_textline_tokens and card_style.text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
 				349
 			else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
 				288
 			else
 				366
 		mask:
-			script: if styling.one_textline_tokens and card_style.rule_text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
+			script: if styling.one_textline_tokens and card_style.text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
 				"1imagemask.png"
 			else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
 				"2imagemask.png"
@@ -249,7 +250,7 @@ card style:
 	type:
 		left: 35
 		top:
-			script: if styling.one_textline_tokens and card_style.rule_text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
+			script: if styling.one_textline_tokens and card_style.text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
 				414
 			else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
 				350
@@ -271,7 +272,7 @@ card style:
 	rarity:
 		left: 320
 		top:
-			script: if styling.one_textline_tokens and card_style.rule_text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
+			script: if styling.one_textline_tokens and card_style.text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
 				415
 			else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
 				351
@@ -294,13 +295,13 @@ card style:
 		left: 31
 		top:
 			script:
-				if styling.one_textline_tokens and card_style.rule_text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then 444
+				if styling.one_textline_tokens and card_style.text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then 444
 				else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then 388
 				else 300
 		width: 311
 		height: 
 			script:
-				if styling.one_textline_tokens and card_style.rule_text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then 22
+				if styling.one_textline_tokens and card_style.text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then 22
 				else 80
 		font:
 			name: MPlantin
@@ -352,9 +353,9 @@ card style:
 	############################# Copyright stuff
 
 	illustrator:
-		left: 56
+		left: 27
 		top : 478
-		width: 217
+		width: 246
 		height: 16
 		z index: 1
 		font:
@@ -363,6 +364,9 @@ card style:
 			weight: bold
 			color:
 				script: font_color()
+		symbol font:
+			name: magic-paintbrush
+			size: 10.5
 
 	copyright line:
 		left: 30
