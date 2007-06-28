@@ -13,6 +13,10 @@ card width: 375
 card height: 523
 card dpi: 150
 
+#error list
+#error about mask size not matching image size when dealing with p/t boxes
+#error about mask size not matching image size when dealing with name boxes
+#templates do not change properly to one textline versions
 ##############################P############################### Extra scripts
 
 init script:
@@ -25,7 +29,11 @@ init script:
 	
 	# We have no land templates
 	# Which artifact template should be used?
-	text_sensor := { if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then "2"
+	text_sensor := {
+		if styling.one_textline_tokens
+		and card_style.rule_text.content_lines == 1
+		and card.flavor_text == "<i-flavor></i-flavor>" then "1"
+		else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then "2"
 		else "" }
 	
 	land_to_artifact := {
@@ -42,7 +50,10 @@ init script:
 		if mask_hybrid_with_land() then
 			masked_blend(
 				mask: (
-					if card.rule_text != "" then "2hybrid_blend_nt.png"
+					if styling.one_textline_tokens
+					and card_style.rule_text.content_lines == 1
+					and card.flavor_text == "<i-flavor></i-flavor>" then "1hybrid_blend_nt.png"
+					else if card.rule_text != "" then "2hybrid_blend_nt.png"
 					else "hybrid_blend_nt.png" ),
 				dark:  land_template(""),
 				light: input,
@@ -52,7 +63,10 @@ init script:
 	multi_hybrid := {
 		masked_blend(
 			mask: (
-				if card.rule_text != "" then "2multicolor_dual_blend.png"
+				if styling.one_textline_tokens
+				and card_style.rule_text.content_lines == 1
+				and card.flavor_text == "<i-flavor></i-flavor>" then "1multicolor_dual_blend.png"
+				else if card.rule_text != "" then "2multicolor_dual_blend.png"
 				else "multicolor_dual_blend.png" ),
 			dark: (
 				if card.rule_text != "" then "2mcard.jpg"
@@ -66,7 +80,11 @@ init script:
 	land_hybrid_pt := { text_sensor() + "cpt.jpg" }
 	
 	# Use the normal tap symbol
-	small_mana_t := "mana_t.png"
+	mana_t := {
+		if      styling.tap_symbol == "old"        then "old"
+		else if styling.tap_symbol == "diagonal T" then "older"
+		else                                            "new"
+	}
 	
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
@@ -91,6 +109,11 @@ styling field:
 	type: boolean
 	name: popup mana symbols
 	description: Use the symbols of the casting cost line inside the text box as well
+	initial: no
+styling field:
+	type: boolean
+	name: one textline tokens
+	description: Should token frames with a single line for text be enabled?
 	initial: no
 styling field:
 	type: choice
@@ -200,20 +223,24 @@ card style:
 		left:	30
 		top:
 			script: if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
-					58
-				else
-					59
+				58
+			else
+				59
 		width:	315
 		height:
-			script: if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
-					288
-				else
-					366
+			script: if styling.one_textline_tokens and card_style.rule_text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
+				349
+			else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
+				288
+			else
+				366
 		mask:
-			script: if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
-					"2imagemask.png"
-				else
-					"imagemask.png"
+			script: if styling.one_textline_tokens and card_style.rule_text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
+				"1imagemask.png"
+			else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
+				"2imagemask.png"
+			else
+				"imagemask.png"
 		z index: 1
 
 
@@ -222,7 +249,9 @@ card style:
 	type:
 		left: 35
 		top:
-			script: if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
+			script: if styling.one_textline_tokens and card_style.rule_text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
+				414
+			else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
 				350
 			else
 				433
@@ -242,7 +271,9 @@ card style:
 	rarity:
 		left: 320
 		top:
-			script: if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
+			script: if styling.one_textline_tokens and card_style.rule_text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
+				415
+			else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
 				351
 			else
 				432
@@ -262,12 +293,15 @@ card style:
 	text:
 		left: 31
 		top:
-			if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
-				388
-			else
-				300
+			script:
+				if styling.one_textline_tokens and card_style.rule_text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then 444
+				else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then 388
+				else 300
 		width: 311
-		height: 80
+		height: 
+			script:
+				if styling.one_textline_tokens and card_style.rule_text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then 22
+				else 80
 		font:
 			name: MPlantin
 			italic name: MPlantin-Italic
@@ -289,7 +323,7 @@ card style:
 				not contains(match: ":", card.rule_text) and
 				not contains (match: "!", card.rule_text) and
 				not contains (match: "?", card.rule_text) and
-				   card.flavor_text == "<i-flavor></i-flavor>"
+				card.flavor_text == "<i-flavor></i-flavor>"
 				then "middle center"
 				else "middle left"
 		z index: 2
