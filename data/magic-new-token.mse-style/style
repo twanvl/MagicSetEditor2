@@ -180,45 +180,6 @@ card style:
 			alignment: bottom center
 		always symbol: true
 
-#	name box:
-#		left: script: card_style.name.content_width * -.5 + 172
-#		top: 25
-#		width: script: card_style.name.content_width + 1
-#		height: 35
-#		z index:	2
-#		visible:
-#			script: card.name != ""
-#		render style: image
-#		mask: name_mask.png
-#		choice images:
-#			black: name.jpg
-
-#	name box left:
-#		right: script: card_style.name.content_width * -.5 + 172
-#		top: 25
-#		width: 15
-#		height: 35
-#		z index:	2
-#		visible:
-#			script: card.name != ""
-#		render style: image
-#		mask: name_l_mask.png
-#		choice images:
-#			black: name_l.jpg
-
-#	name box right:
-#		left: script: card_style.name.content_width * .5 + 173
-#		top: 25
-#		width: 15
-#		height: 35
-#		z index:	2
-#		visible:
-#			script: card.name != ""
-#		render style: image
-#		mask: name_r_mask.png
-#		choice images:
-#			black: name_r.jpg
-
 	############################# Image
 	image:
 		left:	30
@@ -387,6 +348,27 @@ extra card field:
 	name: pt box
 	script: card.card_color
 	editable: false
+extra card field:
+	type: choice
+	name: name box
+	choice: black
+	editable: false
+	save value: false
+	show statistics: false
+extra card field:
+	type: choice
+	name: name box left
+	choice: black
+	editable: false
+	save value: false
+	show statistics: false
+extra card field:
+	type: choice
+	name: name box right
+	choice: black
+	editable: false
+	save value: false
+	show statistics: false
 
 extra card style:
 	pt box:
@@ -400,3 +382,41 @@ extra card style:
 		render style: image
 		mask: mask_pt.png
 		include file: magic-blends.mse-include/card-ptboxes
+#	name box:
+#		left: script: card_style.name.content_width * -.5 + 172
+#		top: 25
+#		width: script: card_style.name.content_width + 1
+#		height: 35
+#		z index:	2
+#		visible:
+#			script: card.name != ""
+#		render style: image
+#		mask: name_mask.png
+#		choice images:
+#			black: name.jpg
+
+#	name box left:
+#		right: script: card_style.name.content_width * -.5 + 172
+#		top: 25
+#		width: 15
+#		height: 35
+#		z index:	2
+#		visible:
+#			script: card.name != ""
+#		render style: image
+#		mask: name_l_mask.png
+#		choice images:
+#			black: name_l.jpg
+
+#	name box right:
+#		left: script: card_style.name.content_width * .5 + 173
+#		top: 25
+#		width: 15
+#		height: 35
+#		z index:	2
+#		visible:
+#			script: card.name != ""
+#		render style: image
+#		mask: name_r_mask.png
+#		choice images:
+#			black: name_r.jpg

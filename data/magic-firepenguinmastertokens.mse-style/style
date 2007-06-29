@@ -194,8 +194,8 @@ card style:
 
 	rarity:
 		left: 
-			{ if card.type_image == "" then 20
-			else 75 }
+			{ if card.type != "" or card.illustrator != "" or card.copyright != "" then 75
+			else 23 }
 		top : 468
 		width: 22
 		height: 22
@@ -245,29 +245,6 @@ card style:
 		alignment: middle center
 		visible: { card.rule_text != "" and card.flavor_text != "" }
 		include file: magic-watermarks.mse-include/watermarks
-	textbox:
-		left: 52
-		top: 405
-		width: 299
-		height: 55
-		render style: image
-		popup style: in place
-		visible:
-			{ if card.rule_text != "" then 1
-			else if number_of_items(in:"" + card.flavor_text) > 21 then 1
-			else 0 }
-		include file: magic-blends.mse-include/card-textboxes
-		z index: 2
-	type image:
-		left: 53
-		top: 463
-		width: 304
-		height: 41
-		render style: image
-		popup style: in place
-		visible: { card.type != "" or card.illustrator != "" or card.copyright != "" }
-		include file: magic-blends.mse-include/card-typelines
-		z index: 2
 
 	############################# PT
 	power:
@@ -339,6 +316,19 @@ extra card field:
 	name: pt symbols
 	script: "shieldsword"
 	editable: false
+extra card field:
+	type: choice
+	name: textbox
+	include file: magic-blends.mse-include/card-colors
+	default: card.card_color
+	show statistics: false
+extra card field:
+	type: choice
+	name: type image
+	include file: magic-blends.mse-include/card-colors
+	default: card.card_color
+	show statistics: false
+
 extra card style:
 	pt symbols:
 		left:	25
@@ -350,3 +340,26 @@ extra card style:
 		render style: image
 		choice images:
 			shieldsword: ptshieldsword.png
+	textbox:
+		left: 52
+		top: 405
+		width: 299
+		height: 55
+		render style: image
+		popup style: in place
+		visible:
+			{ if card.rule_text != "" then 1
+			else if number_of_items(in:"" + card.flavor_text) > 21 then 1
+			else 0 }
+		include file: magic-blends.mse-include/card-textboxes
+		z index: 2
+	type image:
+		left: 53
+		top: 463
+		width: 304
+		height: 41
+		render style: image
+		popup style: in place
+		visible: { card.type != "" or card.illustrator != "" or card.copyright != "" }
+		include file: magic-blends.mse-include/card-typelines
+		z index: 2

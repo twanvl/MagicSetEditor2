@@ -557,44 +557,6 @@ card field:
 	choice: none
 	choice: tombstone
 	description: Symbol for this card (tombstone)
-#for use in futureshifts
-card field:
-	type: choice
-	name: type symbol
-	choice: none
-	choice: creature
-	choice: enchantment
-	choice: sorcery
-	choice: instant
-	choice: artifact
-	choice: land
-	choice: multitype
-	description: Symbol for the type of this card (claw marks, chalice, lightning bolt)
-	show statistics: false
-# Part of Name box for new token template
-card field:
-	type: choice
-	name: name box
-	choice: black
-	editable: false
-	save value: false
-	show statistics: false
-# Part of Name box for new token template
-card field:
-	type: choice
-	name: name box left
-	choice: black
-	editable: false
-	save value: false
-	show statistics: false
-# Part of Name box for new token template
-card field:
-	type: choice
-	name: name box right
-	choice: black
-	editable: false
-	save value: false
-	show statistics: false
 
 ############################# Image
 card field:
@@ -678,21 +640,6 @@ card field:
 	icon: stats/watermark.png
 	include file: magic-watermarks.mse-include/watermark-names
 	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, or a guild symbol
-#Required for FPM temps; tried moving to stylesheet; caused errors
-card field:
-	type: choice
-	name: textbox
-	include file: magic-blends.mse-include/card-colors
-	default: card.card_color
-	save value: false
-	show statistics: false
-#Required for FPM temps; tried moving to stylesheet; caused errors
-card field:
-	type: choice
-	name: type image
-	include file: magic-blends.mse-include/card-colors
-	default: card.card_color
-	show statistics: false
 
 ############################# PT
 card field:
