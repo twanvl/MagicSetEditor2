@@ -40,9 +40,9 @@ Variable string_to_variable(const String& s) {
  */
 String variable_to_string(Variable v) {
 	FOR_EACH(vi, variables) {
-		if (vi.second == v) return vi.first;
+		if (vi.second == v) return replace_all(vi.first, _(" "), _("_"));
 	}
-	throw ScriptError(String(_("Variable not found: ")) << v);
+	throw InternalError(String(_("Variable not found: ")) << v);
 }
 
 // ----------------------------------------------------------------------------- : Script
@@ -173,3 +173,74 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 }
 
 #endif
+
+
+// ----------------------------------------------------------------------------- : Backtracing
+
+const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) const {
+	for (;instr >= &instructions[0] && 
+	       (to_skip   || // we have something to skip
+	        instr >= &instructions[1] && (instr-1)->instr == I_JUMP // always look inside a jump
+	       ) ; --instr) {
+		// skip an instruction
+		switch (instr->instr) {
+			case I_PUSH_CONST:
+			case I_GET_VAR:
+				to_skip -= 1; break; // nett stack effect +1
+			case I_POP:
+			case I_BINARY:
+				to_skip += 1; break; // nett stack effect 1-2 == -1
+			case I_TERNARY:
+				to_skip += 2; break; // nett stack effect 1-3 == -1
+			case I_CALL:
+				to_skip += instr->data; // arguments of call
+				break;
+			case I_MAKE_OBJECT:
+				to_skip += 2 * instr->data - 1;
+				break;
+			case I_JUMP: {
+				// jumps outputed by the parser are always backwards
+				// and there will be a way not to take this jump
+				// the part in between will have no significant stack effect
+				assert(&instructions[instr->data] < instr);
+				unsigned int after_jump = instr + 1 - &instructions[0];
+				for (--instr ; instr >= &instructions[0] ; --instr) {
+					if (instr->instr == I_LOOP && instr->data == after_jump) {
+						// code looks like
+						//  1   (nettstack+1)  iterator
+						//  2   (nettstack+1)  accumulator (usually push nil)
+						//   loop:
+						//  3   I_LOOP        end
+						//  4   (netstack+0)
+						//  5   I_JUMP        loop
+						//   end:
+						// we have not handled anything for this loop, current position is 2,
+						// we need to skip two things (iterator+accumulator) instead of one
+						to_skip += 1;
+						break;
+					} else if (instr->instr == I_JUMP_IF_NOT && instr->data == after_jump) {
+						// code looks like
+						//  1   (nettstack+1)
+						//  2   I_JUMP_IF_NOT else
+						//  3   (nettstack+1)
+						//  4   I_JUMP        end
+						//   else:
+						//  5   (nettstack+1)
+						//   end:
+						// we have already handled 4..5, current position is 2,
+						// we need to skip an additional item for 1
+						to_skip += 1;
+						break;
+					}
+				}
+				++instr; // compensate for the -- in the outer loop
+				break;
+			}
+			case I_RET: case I_JUMP_IF_NOT: case I_LOOP:
+				return nullptr; // give up
+			default:
+				break; // nett stack effect 0
+		}
+	}
+	return instr >= &instructions[0] ? instr : nullptr;
+}

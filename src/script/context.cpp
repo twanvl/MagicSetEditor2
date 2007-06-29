@@ -116,8 +116,27 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 						stack.pop_back();
 					}
 					instr += i.data; // skip arguments
-					// get function and call
-					stack.back() = stack.back()->eval(*this);
+					try {
+						// get function and call
+						stack.back() = stack.back()->eval(*this);
+					} catch (const Error& e) {
+						// try to determine what named function was called
+						// the instructions for this look like:
+						//   I_GET_VAR   name of function
+						//   *code*      arguments
+						//   I_CALL      number of arguments = i.data
+						//   I_NOP * n   arg names
+						//   next        <--- instruction pointer points here
+						// skip the stack effect of the arguments themselfs
+						const Instruction* instr_bt = script.backtraceSkip(instr - i.data - 2, i.data);
+						// have we have reached the name
+						if (instr_bt && instr_bt->instr == I_GET_VAR) {
+							// this is a valid instruction, it is I_GET_VAR
+							throw ScriptError(e.what() + _("\n  in function: ") + variable_to_string(instr_bt->data));
+						} else {
+							throw e; // rethrow
+						}
+					}
 					// restore scope
 					closeScope(scope);
 					break;

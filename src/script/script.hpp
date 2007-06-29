@@ -153,6 +153,13 @@ class Script : public ScriptValue {
 	/// Constant values that can be referred to from the script
 	vector<ScriptValueP> constants;
 	
+	/// Do a backtrace for error messages.
+	/** Starting from instr, move backwards until the nett stack effect
+	 *  of the skipped instructions is equal to_skip.
+	 *  If the backtrace fails, returns nullptr
+	 */
+	const Instruction* backtraceSkip(const Instruction* instr, int to_skip) const;
+	
 	friend class Context;
 };
 

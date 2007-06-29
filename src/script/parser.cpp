@@ -426,11 +426,11 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 				unsigned int jmpElse, jmpEnd;
 				parseOper(input, script, PREC_AND);						// AAA
 				jmpElse = script.getLabel();							//		jmp_else:
-				script.addInstruction(I_JUMP_IF_NOT, 0xFFFF);			//		jnz lbl_else
+				script.addInstruction(I_JUMP_IF_NOT, 0xFFFFFFFF);		//		jnz lbl_else
 				expectToken(input, _("then"));							// then
 				parseOper(input, script, PREC_SET);						// BBB
 				jmpEnd = script.getLabel();								//		jmp_end:
-				script.addInstruction(I_JUMP, 0xFFFF);					//		jump lbl_end
+				script.addInstruction(I_JUMP, 0xFFFFFFFF);				//		jump lbl_end
 				script.comeFrom(jmpElse);								//		lbl_else:
 				if (input.peek() == _("else")) {						// else
 					input.read();
@@ -455,7 +455,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					script.addInstruction(I_UNARY, I_ITERATOR_C);		//		iterator_collection
 					script.addInstruction(I_PUSH_CONST, script_nil);	//		push nil
 					lblStart = script.getLabel();						//		lbl_start:
-					script.addInstruction(I_LOOP, 0xFFFF);				//		loop
+					script.addInstruction(I_LOOP, 0xFFFFFFFF);			//		loop
 					expectToken(input, _("do"));						// do
 					script.addInstruction(I_SET_VAR,
 										string_to_variable(name.value));//		set name
@@ -473,7 +473,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					script.addInstruction(I_BINARY, I_ITERATOR_R);		//		iterator_range
 					script.addInstruction(I_PUSH_CONST, script_nil);	//		push nil
 					lblStart = script.getLabel();						//		lbl_start:
-					script.addInstruction(I_LOOP, 0xFFFF);				//		loop
+					script.addInstruction(I_LOOP, 0xFFFFFFFF);			//		loop
 					expectToken(input, _("do"));						// do
 					script.addInstruction(I_SET_VAR,
 										string_to_variable(name.value));//		set name

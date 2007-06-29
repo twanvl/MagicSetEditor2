@@ -169,15 +169,19 @@ String symbols_to_html(const String& str, SymbolFont& symbol_font, double size) 
 	String html;
 	FOR_EACH(sym, symbols) {
 		String filename = symbol_font.name() + _("-") + clean_filename(sym.text) + _(".png");
-		html += _("<img src='") + filename + _("' alt='") + html_escape(sym.text) + _("'>");
-		if (ei.exported_images.insert(filename).second) {
+		map<String,wxSize>::iterator it = ei.exported_images.find(filename);
+		if (it == ei.exported_images.end()) {
 			// save symbol image
 			Image img = symbol_font.getImage(size, sym);
 			wxFileName fn;
 			fn.SetPath(ei.directory_absolute);
 			fn.SetFullName(filename);
 			img.SaveFile(fn.GetFullPath());
+			it = ei.exported_images.insert(make_pair(filename, wxSize(img.GetWidth(), img.GetHeight()))).first;
 		}
+		html += _("<img src='") + filename + _("' alt='") + html_escape(sym.text)
+		     +  _("' width='")  + (String() << it->second.x)
+		     +  _("' height='") + (String() << it->second.y) + _("'>");
 	}
 	return html;
 }
@@ -386,7 +390,7 @@ SCRIPT_FUNCTION(write_image_file) {
 	wxFileName fn;
 	fn.SetPath(ei.directory_absolute);
 	fn.SetFullName(file);
-	if (!ei.exported_images.insert(fn.GetFullName()).second) {
+	if (ei.exported_images.find(fn.GetFullName()) != ei.exported_images.end()) {
 		SCRIPT_RETURN(fn.GetFullName()); // already written an image with this name
 	}
 	// get image
@@ -404,6 +408,7 @@ SCRIPT_FUNCTION(write_image_file) {
 	if (!image.Ok()) throw Error(_("Unable to generate image for file ") + file);
 	// write
 	image.SaveFile(fn.GetFullPath());
+	ei.exported_images.insert(make_pair(fn.GetFullName(), wxSize(image.GetWidth(), image.GetHeight())));
 	SCRIPT_RETURN(fn.GetFullName());
 }
 
