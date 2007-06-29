@@ -1,3 +1,4 @@
+
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
 //| Copyright:    (C) 2001 - 2007 Twan van Laarhoven                           |
@@ -106,7 +107,8 @@ SCRIPT_FUNCTION(curly_quotes) {
 		} else if (c == _('>')) {
 			in_tag = false;
 		} else if (!in_tag) {
-			open = isSpace(c);
+			// Also allow double-nesting of quotes
+			open = isSpace(c) || c == LEFT_DOUBLE_QUOTE || c == LEFT_SINGLE_QUOTE;
 		}
 	}
 	SCRIPT_RETURN(input);

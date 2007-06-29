@@ -15,6 +15,7 @@
 #include <data/export_template.hpp>
 #include <util/window_id.hpp>
 #include <util/error.hpp>
+#include <util/platform.hpp>
 #include <wx/filename.h>
 #include <wx/wfstream.h>
 

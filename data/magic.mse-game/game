@@ -1,4 +1,4 @@
-﻿mse version: 0.3.3
+mse version: 0.3.3
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
@@ -307,9 +307,13 @@ init script:
 	# the flavor text filter
 	#  - makes all text italic
 	flavor_text_filter :=
-		# step 1 : remove italic tags
+		# step 1 : Æ replacement rule
+		replace_rule(
+			match: "AE",
+			replace: "Æ") +
+		# step 2 : remove italic tags
 		tag_remove_rule(tag: "<i-flavor>")   +
-		# step 2 : surround by <i> tags
+		# step 3 : surround by <i> tags
 		{ "<i-flavor>" + input + "</i-flavor>" } +
 		# curly quotes
 		curly_quotes
