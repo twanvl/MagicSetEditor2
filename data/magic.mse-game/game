@@ -1,4 +1,4 @@
-mse version: 0.3.3
+﻿mse version: 0.3.3
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
@@ -1139,7 +1139,7 @@ keyword mode:
 	description: Expert level keywords (Cycling, Vanishing, etc.)
 keyword mode:
 	name: pseudo
-	description: Pseudo keyword / named ability (Hellbent, Threshold, etc.)
+	description: Pseudo keyword / ability word (Hellbent, Threshold, etc.)
 keyword mode:
 	name: action
 	description: Keyword actions, reminder text at end of line (Scry, Regenerate, etc.)
@@ -1151,6 +1151,14 @@ keyword mode:
 keyword parameter type:
 	name: mana
 	match: [STXYZ0-9WUBRG/|]+
+	refer script:
+		name: normal
+		description: No changes made
+		script: \{{input}\}
+	refer script:
+		name: converted mana cost
+		description: Converts mana to number
+		script: \{cmc({input}) + 1\}
 # By pichoro and bunnierein
 keyword parameter type:
 	name: cost
