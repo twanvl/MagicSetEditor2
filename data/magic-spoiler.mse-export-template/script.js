@@ -46,19 +46,24 @@ function nice_preview() {
 	}
 }
 
+var dir;
+function fix_img() {
+	if (this.currentStyle.width == 'auto' && this.currentStyle.height == 'auto') {
+		this.style.width  = this.offsetWidth  + 'px';
+		this.style.height = this.offsetHeight + 'px';
+	}
+	this.onload = null;
+	this.style.filter = 'progid:DXImageTransform.Microsoft.AlphaImageLoader(src="'+this.src+'",sizingMethod="scale")';
+	this.src = dir + "blank.gif";
+}
 function fix_png_alpha() {
 	if (!/MSIE (5\.5|6\.)/.test(navigator.userAgent)) return; // only in ie 5.5 and 6
-	var dir = document.getElementsByTagName("SCRIPT")[0].src.replace(/[^\/]*$/,''); // dir for blank image
+	dir = document.getElementsByTagName("SCRIPT")[0].src.replace(/[^\/]*$/,''); // dir for blank image
 	var imgs = document.getElementsByTagName("IMG");
 	for (var i in imgs) {
 		var img = imgs[i];
 		if ((/\.png$/i).test(img.src)) {
-			if (img.currentStyle.width == 'auto' && img.currentStyle.height == 'auto') {
-				img.style.width  = img.offsetWidth  + 'px';
-				img.style.height = img.offsetHeight + 'px';
-			}
-			img.style.filter = 'progid:DXImageTransform.Microsoft.AlphaImageLoader(src="'+img.src+'",sizingMethod="scale")';
-			img.src = dir + "blank.gif";
+			img.onload = fix_img;
 		}
 	}
 }
@@ -67,4 +72,3 @@ function init() {
 	fix_png_alpha();
 	nice_preview();
 }
-

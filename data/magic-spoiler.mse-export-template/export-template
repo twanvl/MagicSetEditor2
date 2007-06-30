@@ -151,11 +151,24 @@ script:
 		   write_cards()
 	}
 	copy_file("blank.gif")
+	write_image_file(
+		file:  "set-symbol.png",
+		width: 200,
+		symbol_variation(symbol: set.symbol, variation: "rare")
+	)
+	write_image_file(
+		file:  "set-icon.png",
+		width: 16,
+		heght: 16
+		symbol_variation(symbol: set.symbol, variation: "rare")
+	)
+	# the html page
 	html := "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">
 	<html lang='en'>
 	 <head>
 	  <title>{ to_html(set.title) }</title>
-	  <link rel='stylesheet' type='text/css' href='{copy_file("style.css")}' />
+	  <link rel='stylesheet' type='text/css' href='{copy_file("style.css")}'>
+	  <link rel='shortcut icon' type='image/png' href='set-icon.png'>
 	  <script type='text/javascript' src='{copy_file("script.js")}'></script>
 	  <style type='text/css'>
 	   body \{
