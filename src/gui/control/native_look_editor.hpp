@@ -35,10 +35,11 @@ class NativeLookEditor : public DataEditor {
 	virtual void onInit();
 	
   private:
-	static const UInt margin      = 6;
-	static const UInt margin_left = 4;
-	static const UInt label_width = 150;
-	static const UInt vspace      = 10;
+	static const int margin      = 6;
+	static const int margin_left = 4;
+	static const int vspace      = 10;
+	static const int label_margin = 10;
+	int              label_width;
 	
 	DECLARE_EVENT_TABLE();
 	

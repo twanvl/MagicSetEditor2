@@ -58,6 +58,23 @@ void NativeLookEditor::resizeViewers() {
 	int w, h;
 	GetClientSize(&w, &h);
 	const int default_height = 17;
+	// Determine label width
+	{
+		label_width = 0;
+		wxClientDC dc(this);
+		dc.SetFont(*wxNORMAL_FONT);
+		FOR_EACH(v, viewers) {
+			ValueEditor* e = v->getEditor();
+			if (!e || e->drawLabel()) {
+				// width of the label string
+				int w;
+				Style& s = *v->getStyle();
+				String text = tr(*set->game, s.fieldP->name, capitalize_sentence(s.fieldP->name));
+				dc.GetTextExtent(text,&w,nullptr);
+				label_width = max(label_width, w + label_margin);
+			}
+		}
+	}
 	// Set editor sizes
 	FOR_EACH(v, viewers) {
 		StyleP s = v->getStyle();
