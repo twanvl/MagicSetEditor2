@@ -179,9 +179,23 @@ void DropDownChoiceListBase::generateThumbnailImages() {
 	}
 	int image_count = style().thumbnails->GetImageCount();
 	int end = group->lastId();
+	// init choice images
+	if (style().choice_images.empty() && style().image.isScripted()) {
+		Context& ctx = cve.viewer.getContext();
+		for (int i = 0 ; i < end ; ++i) {
+			try {
+				String name = cannocial_name_form(field().choices->choiceName(i));
+				ctx.setVariable(_("input"), to_script(name));
+				GeneratedImageP img = image_from_script(style().image.getScript().eval(ctx));
+				style().choice_images.insert(make_pair(name, ScriptableImage(img)));
+			} catch (const Error& e) {
+				handle_error(Error(e.what() + _("\n  while generating choice images for drop down list")),true,false);
+			}
+		}
+	}
+	// request thumbnails
 	style().thumbnails_status.resize(end, THUMB_NOT_MADE);
 	for (int i = 0 ; i < end ; ++i) {
-		String name = cannocial_name_form(group->choiceName(i));
 		ThumbnailStatus status = style().thumbnails_status[i];
 		if (i >= image_count || status != THUMB_OK) {
 			// request this thumbnail
