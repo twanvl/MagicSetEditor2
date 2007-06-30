@@ -1,7 +1,9 @@
 # The watermark choices
 # Included by a game file
 
-choice: none
+choice:
+	name: none
+	line below: true
 choice:
 	name: mana symbol
 	choice: white
