@@ -279,9 +279,9 @@ wxListItemAttr* CardListBase::OnGetItemAttr(long pos) const {
 
 void CardListBase::onColumnRightClick(wxListEvent&) {
 	// show menu
-	wxMenu* m = new wxMenu;
-	m->Append(ID_SELECT_COLUMNS, _("&Select Columns..."), _("Select what columns should be shown and in what order."));
-	PopupMenu(m);
+	wxMenu m;
+	m.Append(ID_SELECT_COLUMNS, _MENU_("card list columns"), _HELP_("card list columns"));
+	PopupMenu(&m);
 }
 void CardListBase::onColumnResize(wxListEvent& ev) {
 	storeColumns();
