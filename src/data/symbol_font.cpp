@@ -418,8 +418,9 @@ String InsertSymbolMenu::getCode(int id, const SymbolFont& font) const {
 	} else if (id == 0 && type == ITEM_CODE) {
 		return name;
 	} else if (id == 0 && type == ITEM_CUSTOM) {
-		String message = tr(font,name,name);
-		return wxGetTextFromUser(message, message);
+		String caption = tr(font,_("title ")   + name, capitalize_sentence(name));
+		String message = tr(font,_("message ") + name, capitalize_sentence(name));
+		return wxGetTextFromUser(message, caption);
 	}
 	return wxEmptyString;
 }

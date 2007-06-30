@@ -144,3 +144,63 @@ text margin left:   3
 text margin right:  2
 text margin top:    -1
 text margin bottom: -1
+
+##############################################################
+# Insert-symbol menu
+insert symbol menu:
+	item: T
+	item:
+		type: line
+	item: X
+	item: Y
+	item: Z
+	item:
+		type: custom
+		name: colorless
+	item:
+		type: line
+	item: W
+	item: U
+	item: B
+	item: R
+	item: G
+	item: S
+	item:
+		type: line
+	item:
+		name: half
+		item: 1/2
+		item: |W
+		item: |U
+		item: |B
+		item: |R
+		item: |G
+		item: |S
+	item:
+		name: hybrid
+		item: W/U
+		item: U/B
+		item: B/R
+		item: R/G
+		item: G/W
+		item:
+			type: line
+		item: W/B
+		item: U/R
+		item: B/G
+		item: R/W
+		item: G/U
+	item:
+		name: hybrid 3
+		item: W/U/B
+		item: U/B/R
+		item: B/R/G
+		item: R/G/W
+		item: G/W/U
+		item:
+			type: line
+		item: W/B/R
+		item: U/R/G
+		item: B/G/W
+		item: R/W/U
+		item: G/U/B
