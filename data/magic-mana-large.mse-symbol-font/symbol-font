@@ -58,6 +58,56 @@ symbol:
 	image font size: 145
 symbol:
 	code: W/U
+	image: mana_guild_wu.png
+	image font size: 145
+	enabled: { guild_mana() }
+symbol:
+	code: U/B
+	image: mana_guild_ub.png
+	image font size: 145
+	enabled: { guild_mana() }
+symbol:
+	code: B/R
+	image: mana_guild_br.png
+	image font size: 145
+	enabled: { guild_mana() }
+symbol:
+	code: R/G
+	image: mana_guild_rg.png
+	image font size: 145
+	enabled: { guild_mana() }
+symbol:
+	code: G/W
+	image: mana_guild_gw.png
+	image font size: 145
+	enabled: { guild_mana() }
+symbol:
+	code: W/B
+	image: mana_guild_wb.png
+	image font size: 145
+	enabled: { guild_mana() }
+symbol:
+	code: U/R
+	image: mana_guild_ur.png
+	image font size: 145
+	enabled: { guild_mana() }
+symbol:
+	code: B/G
+	image: mana_guild_bg.png
+	image font size: 145
+	enabled: { guild_mana() }
+symbol:
+	code: R/W
+	image: mana_guild_rw.png
+	image font size: 145
+	enabled: { guild_mana() }
+symbol:
+	code: G/U
+	image: mana_guild_gu.png
+	image font size: 145
+	enabled: { guild_mana() }
+symbol:
+	code: W/U
 	image: mana_wu.png
 	image font size: 145
 symbol:
