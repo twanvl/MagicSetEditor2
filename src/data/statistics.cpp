@@ -17,15 +17,17 @@ DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
 // ----------------------------------------------------------------------------- : Statistics dimension
 
 StatsDimension::StatsDimension()
-	: automatic (false)
-	, numeric   (false)
-	, show_empty(false)
+	: automatic    (false)
+	, position_hint(0)
+	, numeric      (false)
+	, show_empty   (false)
 {}
 
 StatsDimension::StatsDimension(const Field& field)
 	: automatic    (true)
 	, name         (field.name)
 	, description  (field.description)
+	, position_hint(0)
 	, icon_filename(field.icon_filename)
 	, numeric      (false)
 	, show_empty   (false)
@@ -63,6 +65,7 @@ IMPLEMENT_REFLECTION_NO_GET_MEMBER(StatsDimension) {
 	if (!automatic) {
 		REFLECT(name);
 		REFLECT(description);
+		REFLECT(position_hint);
 		REFLECT_N("icon", icon_filename);
 		REFLECT(script);
 		REFLECT(numeric);
@@ -76,6 +79,7 @@ IMPLEMENT_REFLECTION_NO_GET_MEMBER(StatsDimension) {
 
 StatsCategory::StatsCategory()
 	: automatic(false)
+	, position_hint(0)
 	, type(GRAPH_TYPE_BAR)
 {}
 
@@ -83,6 +87,7 @@ StatsCategory::StatsCategory(const StatsDimensionP& dim)
 	: automatic(true)
 	, name         (dim->name)
 	, description  (dim->description)
+	, position_hint(dim->position_hint)
 	, icon_filename(dim->icon_filename)
 	, dimensions(1, dim)
 	, type(GRAPH_TYPE_BAR)
@@ -92,6 +97,7 @@ IMPLEMENT_REFLECTION_NO_GET_MEMBER(StatsCategory) {
 	if (!automatic) {
 		REFLECT(name);
 		REFLECT(description);
+		REFLECT(position_hint);
 		REFLECT_N("icon", icon_filename);
 		REFLECT(type);
 		REFLECT_N("dimensions", dimension_names);

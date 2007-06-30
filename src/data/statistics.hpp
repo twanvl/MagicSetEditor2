@@ -27,9 +27,10 @@ class StatsDimension : public IntrusivePtrBase<StatsDimension> {
 	StatsDimension();
 	StatsDimension(const Field&);
 	
-	bool              automatic;		///< Based on a card field?
+	const bool        automatic;		///< Based on a card field?
 	String            name;				///< Name of this dimension
 	String            description;		///< Description, used in status bar
+	int               position_hint;	///< Hint for the ordering
 	String            icon_filename;	///< Icon for lists
 	OptionalScript    script;			///< Script that determines the value(s)
 	bool              numeric;			///< Are the values numeric? If so, they require special sorting
@@ -49,9 +50,10 @@ class StatsCategory : public IntrusivePtrBase<StatsCategory> {
 	StatsCategory();
 	StatsCategory(const StatsDimensionP&);
 	
-	bool                    automatic;		///< Automatically generated?
+	const bool              automatic;		///< Automatically generated?
 	String                  name;			///< Name/label
 	String                  description;	///< Description, used in status bar
+	int                     position_hint;	///< Hint for the ordering
 	String                  icon_filename;	///< Icon for lists
 	Bitmap                  icon;			///< The loaded icon (optional of course)
 	vector<String>          dimension_names;///< Names of the dimensions to use

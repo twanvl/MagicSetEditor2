@@ -39,30 +39,39 @@ class StatCategoryList : public GalleryList {
 	
 	/// The selected category
 	inline StatsCategory& getSelection() {
-		return *game->statistics_categories.at(selection);
+		return *categories.at(selection);
 	}
 	
   protected:
 	virtual size_t itemCount() const;
 	virtual void drawItem(DC& dc, int x, int y, size_t item, bool selected);
-
+	
   private:
 	GameP game;
+	vector<StatsCategoryP> categories; ///< Categories, sorted by position_hint
+};
+
+struct ComparePositionHint{
+	inline bool operator () (const StatsCategoryP& a, const StatsCategoryP& b) {
+		return a->position_hint < b->position_hint;
+	}
 };
 
 void StatCategoryList::show(const GameP& game) {
 	this->game = game;
+	categories = game->statistics_categories;
+	stable_sort(categories.begin(), categories.end(), ComparePositionHint());
 	update();
 	// select first item
 	selection = itemCount() > 0 ? 0 : NO_SELECTION;
 }
 
 size_t StatCategoryList::itemCount() const {
-	return game ? game->statistics_categories.size() : 0;
+	return categories.size();
 }
 
 void StatCategoryList::drawItem(DC& dc, int x, int y, size_t item, bool selected) {
-	StatsCategory& cat = *game->statistics_categories.at(item);
+	StatsCategory& cat = *categories.at(item);
 	// draw icon
 	if (!cat.icon_filename.empty() && !cat.icon.Ok()) {
 		InputStreamP file = game->openIn(cat.icon_filename);
