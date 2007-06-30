@@ -104,13 +104,9 @@ class CardListBase : public ItemList, public SetView {
 	// --------------------------------------------------- : Data
   private:
 	// display stuff
-	ChoiceFieldP   color_field;       ///< Field to use for text color (optional)
-	vector<FieldP> column_fields;     ///< The field to use for each column (by column index)
+	vector<FieldP> column_fields; ///< The field to use for each column (by column index)
 		
 	mutable wxListItemAttr item_attr; // for OnGetItemAttr
-	
-	/// Find the field that determines the color, if any.
-	ChoiceFieldP findColorField();
 	
   public:
 	/// Open a dialog for selecting columns to be shown

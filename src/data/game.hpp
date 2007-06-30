@@ -39,6 +39,7 @@ class Game : public Packaged {
 	vector<FieldP>          set_fields;             ///< Fields for set information
 	IndexMap<FieldP,StyleP> default_set_style;      ///< Default style for the set fields, because it is often the same
 	vector<FieldP>          card_fields;            ///< Fields on each card
+	OptionalScript          card_list_color_script;	///< Script that determines the color of items in the card list
 	vector<StatsDimensionP> statistics_dimensions;  ///< (Additional) statistics dimensions
 	vector<StatsCategoryP>  statistics_categories;  ///< (Additional) statistics categories
 	vector<PackTypeP>       pack_types;				///< Types of random card packs to generate
@@ -58,6 +59,9 @@ class Game : public Packaged {
 	
 	/// Is this Magic the Gathering?
 	bool isMagic() const;
+	
+	/// Initialize card_list_color_script
+	void initCardListColorScript();
 	
 	static String typeNameStatic();
 	virtual String typeName() const;

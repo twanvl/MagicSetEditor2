@@ -61,6 +61,9 @@ class ScriptDelayedError : public ScriptValue {
 	ScriptError error; // the error message
 };
 
+inline ScriptValueP delayError(const String& m) {
+	return new_intrusive1<ScriptDelayedError>(ScriptError(m));
+}
 
 // ----------------------------------------------------------------------------- : Iterators
 
@@ -129,7 +132,7 @@ ScriptValueP get_member(const map<String,V>& m, const String& name) {
 	if (it != m.end()) {
 		return to_script(it->second);
 	} else {
-		throw ScriptError(_ERROR_2_("has no member", _TYPE_("collection"), name));
+		return delayError(_ERROR_2_("has no member", _TYPE_("collection"), name));
 	}
 }
 
@@ -139,7 +142,7 @@ ScriptValueP get_member(const IndexMap<K,V>& m, const String& name) {
 	if (it != m.end()) {
 		return to_script(*it);
 	} else {
-		throw ScriptError(_ERROR_2_("has no member", _TYPE_("collection"), name));
+		return delayError(_ERROR_2_("has no member", _TYPE_("collection"), name));
 	}
 }
 

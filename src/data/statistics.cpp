@@ -14,6 +14,8 @@ DECLARE_TYPEOF_COLLECTION(String);
 DECLARE_TYPEOF_COLLECTION(StatsDimensionP);
 DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
 
+extern ScriptValueP script_primary_choice;
+
 // ----------------------------------------------------------------------------- : Statistics dimension
 
 StatsDimension::StatsDimension()
@@ -44,19 +46,19 @@ StatsDimension::StatsDimension(const Field& field)
 		FOR_EACH_CONST(g, choice_field->choices->choices) {
 			groups.push_back(g->name);
 		}
-		// initialize script, primary_choice(card.{field_name})
+		// initialize script: primary_choice(card.{field_name})
 		Script& s = script.getScript();
-		s.addInstruction(I_GET_VAR,  string_to_variable(_("primary choice")));
-		s.addInstruction(I_GET_VAR,  string_to_variable(_("card")));
-		s.addInstruction(I_MEMBER_C, field.name);
-		s.addInstruction(I_CALL,     1);
-		s.addInstruction(I_NOP,      string_to_variable(_("input")));
+		s.addInstruction(I_PUSH_CONST, script_primary_choice);
+		s.addInstruction(I_GET_VAR,    string_to_variable(_("card")));
+		s.addInstruction(I_MEMBER_C,   field.name);
+		s.addInstruction(I_CALL,       1);
+		s.addInstruction(I_NOP,        string_to_variable(_("input")));
 		s.addInstruction(I_RET);
 	} else {
 		// initialize script, card.{field_name}
 		Script& s = script.getScript();
-		s.addInstruction(I_GET_VAR,  string_to_variable(_("card")));
-		s.addInstruction(I_MEMBER_C, field.name);
+		s.addInstruction(I_GET_VAR,    string_to_variable(_("card")));
+		s.addInstruction(I_MEMBER_C,   field.name);
 		s.addInstruction(I_RET);
 	}
 }

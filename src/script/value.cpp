@@ -14,10 +14,6 @@
 // ----------------------------------------------------------------------------- : ScriptValue
 // Base cases
 
-inline ScriptValueP delayError(const String& m) {
-	return new_intrusive1<ScriptDelayedError>(ScriptError(m));
-}
-
 ScriptValue::operator String()                              const { return _("[[") + typeName() + _("]]"); }
 ScriptValue::operator int()                                 const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("integer" ))); }
 ScriptValue::operator double()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("real"    ))); }

@@ -185,6 +185,8 @@ void CardListBase::rebuild() {
 	selected_item_pos = -1;
 	onRebuild();
 	if (!set) return;
+	// init stuff
+	set->game->initCardListColorScript();
 	// determine column order
 	map<int,FieldP> new_column_fields;
 	FOR_EACH(f, set->game->card_fields) {
@@ -205,8 +207,6 @@ void CardListBase::rebuild() {
 		             align, cs.width);
 		column_fields.push_back(f.second);
 	}
-	// find field that determines color
-	color_field = findColorField();
 	// determine sort settings
 	GameSettings& gs = settings.gameSettingsFor(*set->game);
 	sort_ascending = gs.sort_cards_ascending;
@@ -222,16 +222,6 @@ void CardListBase::rebuild() {
 		++i;
 	}
 	refreshList();
-}
-
-ChoiceFieldP CardListBase::findColorField() {
-	FOR_EACH(s, set->game->card_fields) {
-		ChoiceFieldP cf = dynamic_pointer_cast<ChoiceField>(s);
-		if (cf && !cf->choice_colors_cardlist.empty()) {
-			return cf;
-		}
-	}
-	return ChoiceFieldP();
 }
 
 // ----------------------------------------------------------------------------- : CardListBase : Columns
@@ -279,10 +269,9 @@ int CardListBase::OnGetItemImage(long pos) const {
 }
 
 wxListItemAttr* CardListBase::OnGetItemAttr(long pos) const {
-	if (!color_field) return nullptr;
-	ChoiceValueP val = static_pointer_cast<ChoiceValue>( getCard(pos)->data[color_field]);
-	assert(val);
-	item_attr.SetTextColour(color_field->choice_colors_cardlist[val->value()]); // if it doesn't exist we get black
+	if (!set->game->card_list_color_script) return nullptr;
+	Context& ctx = set->getContext(getCard(pos));
+	item_attr.SetTextColour(*set->game->card_list_color_script.invoke(ctx));
 	return &item_attr;
 }
 

@@ -8,6 +8,7 @@
 
 #include <data/game.hpp>
 #include <data/field.hpp>
+#include <data/field/choice.hpp>
 #include <data/keyword.hpp>
 #include <data/statistics.hpp>
 #include <data/pack.hpp>
@@ -46,6 +47,7 @@ IMPLEMENT_REFLECTION(Game) {
 	}
 	REFLECT_NO_SCRIPT(default_set_style);
 	REFLECT_NO_SCRIPT(card_fields);
+	REFLECT_NO_SCRIPT(card_list_color_script);
 	REFLECT_NO_SCRIPT(statistics_dimensions);
 	REFLECT_NO_SCRIPT(statistics_categories);
 	REFLECT_NO_SCRIPT(pack_types);
@@ -79,7 +81,26 @@ void Game::validate(Version v) {
 	}
 }
 
-void addStatsDimensionsForFields();
+void Game::initCardListColorScript() {
+	if (card_list_color_script) return; // already done
+	// find a field with choice_colors_cardlist
+	FOR_EACH(s, card_fields) {
+		ChoiceFieldP cf = dynamic_pointer_cast<ChoiceField>(s);
+		if (cf && !cf->choice_colors_cardlist.empty()) {
+			// found the field to use
+			// initialize script:  field.colors[card.field-name] or else rgb(0,0,0)
+			Script& s = card_list_color_script.getScript();
+			s.addInstruction(I_PUSH_CONST, to_script(&cf->choice_colors_cardlist));
+			s.addInstruction(I_GET_VAR,    string_to_variable(_("card")));
+			s.addInstruction(I_MEMBER_C,   cf->name);
+			s.addInstruction(I_BINARY,     I_MEMBER);
+			s.addInstruction(I_PUSH_CONST, to_script(Color(0,0,0)));
+			s.addInstruction(I_BINARY,     I_OR_ELSE);
+			s.addInstruction(I_RET);
+			return;
+		}
+	}
+}
 
 // special behaviour of reading/writing GamePs: only read/write the name
 
