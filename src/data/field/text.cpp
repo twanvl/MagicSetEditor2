@@ -81,12 +81,6 @@ void TextStyle::markDependencyMember(const String& name, const Dependency& dep) 
 	}
 }
 
-IMPLEMENT_REFLECTION(TextBackground) {
-	REFLECT(image);
-	REFLECT_N("displacement_x", displacement.width);
-	REFLECT_N("displacement_y", displacement.height);
-}
-
 template <typename T> void reflect_content(T& tag,         const TextStyle& ts) {}
 template <>           void reflect_content(GetMember& tag, const TextStyle& ts) {
 	REFLECT_N("content_width",  ts.content_width);
@@ -115,9 +109,6 @@ IMPLEMENT_REFLECTION(TextStyle) {
 	REFLECT(line_height_line);
 	REFLECT_N("mask", mask_filename);
 	REFLECT(direction);
-	REFLECT(text_background);
-	REFLECT(text_background_left);
-	REFLECT(text_background_right);
 	reflect_content(tag, *this);
 }
 

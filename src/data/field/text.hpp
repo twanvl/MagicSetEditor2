@@ -47,15 +47,6 @@ class TextField : public Field {
 
 // ----------------------------------------------------------------------------- : TextStyle
 
-/// Background behind text
-class TextBackground : public IntrusivePtrBase<TextBackground> {
-  public:
-	ScriptableImage image;        ///< background image, stretched to text size
-	RealSize        displacement;
-  private:
-	DECLARE_REFLECTION();
-};
-
 /// The Style for a TextField
 class TextStyle : public Style {
   public:
@@ -78,8 +69,6 @@ class TextStyle : public Style {
 	String mask_filename;						///< Filename of the mask
 	ContourMask mask;							///< Mask to fit the text to (may be null)
 	Direction direction;						///< In what direction is text layed out?
-	TextBackgroundP text_background;			///< Image behind the text
-	TextBackgroundP text_background_left, text_background_right;
 	// information from text rendering
 	double content_width, content_height;		///< Size of the rendered text
 	int    content_lines;						///< Number of rendered lines
