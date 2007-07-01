@@ -509,9 +509,21 @@ void SetWindow::onFileReload(wxCommandEvent&) {
 	if (filename.empty()) return;
 	wxBusyCursor busy;
 	settings.write();   // save settings
+	// current card
+	size_t card_pos = 0;
+	{
+		vector<CardP>::const_iterator card_it = find(set->cards.begin(), set->cards.end(), current_panel->selectedCard());
+		if (card_it != set->cards.end()) card_pos = card_it - set->cards.begin();
+	}
 	packages.destroy(); // unload all packages
 	settings.read();    // reload settings
 	setSet(import_set(filename));
+	// reselect card
+	if (card_pos < set->cards.size()) {
+		FOR_EACH(p, panels) {
+			p->selectCard(set->cards[card_pos]);
+		}
+	}
 }
 
 void SetWindow::onFileRecent(wxCommandEvent& ev) {
