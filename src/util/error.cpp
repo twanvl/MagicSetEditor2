@@ -24,12 +24,12 @@ String Error::what() const {
 
 // ----------------------------------------------------------------------------- : Parse errors
 
-ScriptParseError::ScriptParseError(size_t pos, const String& error)
-	: start(pos), end(pos)
+ScriptParseError::ScriptParseError(size_t pos, int line, const String& filename, const String& error)
+	: start(pos), end(pos), line(line), filename(filename)
 	, ParseError(error)
 {}
-ScriptParseError::ScriptParseError(size_t pos, const String& exp, const String& found)
-	: start(pos), end(pos + found.size())
+ScriptParseError::ScriptParseError(size_t pos, int line, const String& filename, const String& exp, const String& found)
+	: start(pos), end(pos + found.size()), line(line), filename(filename)
 	, ParseError(_("Expected '") + exp + _("' instead of '") + found + _("'"))
 {}
 String ScriptParseError::what() const {

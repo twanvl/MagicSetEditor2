@@ -130,9 +130,20 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 						// skip the stack effect of the arguments themselfs
 						const Instruction* instr_bt = script.backtraceSkip(instr - i.data - 2, i.data);
 						// have we have reached the name
-						if (instr_bt && instr_bt->instr == I_GET_VAR) {
-							// this is a valid instruction, it is I_GET_VAR
-							throw ScriptError(e.what() + _("\n  in function: ") + variable_to_string(instr_bt->data));
+						if (instr_bt) {
+							if (instr_bt->instr == I_GET_VAR) {
+								throw ScriptError(e.what() + _("\n  in function: ") + variable_to_string(instr_bt->data));
+							} else if (instr_bt->instr == I_MEMBER_C) {
+								throw ScriptError(e.what() + _("\n  in function: ???.") + *script.constants[instr_bt->data]);
+							} else if (instr_bt->instr == I_BINARY && instr_bt->instr2 == I_MEMBER) {
+								throw ScriptError(e.what() + _("\n  in function: ???[???]"));
+							} else if (instr_bt->instr == I_BINARY && instr_bt->instr2 == I_ADD) {
+								throw ScriptError(e.what() + _("\n  in function: ??? + ???"));
+							} else if (instr_bt->instr == I_NOP || instr_bt->instr == I_CALL) {
+								throw ScriptError(e.what() + _("\n  in function: ???(???)"));
+							} else {
+								throw ScriptError(e.what() + _("\n  in function: ???"));
+							}
 						} else {
 							throw e; // rethrow
 						}
@@ -234,10 +245,15 @@ void instrUnary  (UnaryInstructionType   i, ScriptValueP& a) {
 		case I_ITERATOR_C:
 			a = a->makeIterator(a);
 			break;
-		case I_NEGATE:
-			a = to_script(-(int)*a);
+		case I_NEGATE: {
+			ScriptType at = a->type();
+			if (at == SCRIPT_DOUBLE) {
+				a = to_script(-(double)*a);
+			} else {
+				a = to_script(-(int)*a);
+			}
 			break;
-		case I_NOT:
+		} case I_NOT:
 			a = to_script(!(bool)*a);
 			break;
 	}

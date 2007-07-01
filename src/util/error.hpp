@@ -75,10 +75,14 @@ class FileParseError : public ParseError {
 /// Parse error in a script
 class ScriptParseError : public ParseError {
   public:
-	ScriptParseError(size_t pos, const String& str);
-	ScriptParseError(size_t pos, const String& expected, const String& found);
+	ScriptParseError(size_t pos, int line, const String& filename, const String& str);
+	ScriptParseError(size_t pos, int line, const String& filename, const String& expected, const String& found);
 	/// Position of the error
 	size_t start, end;
+	/// Line number of the error (the first line is 1)
+	int line;
+	/// Filename the error was in, or an empty string
+	String filename;
 	/// Return the error message
 	virtual String what() const; 
 };

@@ -65,11 +65,14 @@ void Script::addInstruction(InstructionType t) {
 	instructions.push_back(i);
 }
 void Script::addInstruction(InstructionType t, unsigned int d) {
-	if (t == I_BINARY && d == I_MEMBER && !instructions.empty() && instructions.back().instr == I_PUSH_CONST) {
+	// Don't optimize ...I_PUSH_CONST x; I_MEMBER... to I_MEMBER_C
+	// because the code could be something[if a then "x" else "y"]
+	// the last instruction before I_MEMBER is I_PUSH_CONST "y", but this is only one branch of the if
+	/*if (t == I_BINARY && d == I_MEMBER && !instructions.empty() && instructions.back().instr == I_PUSH_CONST) {
 		// optimize: push x ; member -->  member_c x
 		instructions.back().instr = I_MEMBER_C;
 		return;
-	}
+	}*/
 	Instruction i = {t, {d}};
 	instructions.push_back(i);
 }
@@ -97,76 +100,78 @@ unsigned int Script::getLabel() const {
 
 DECLARE_TYPEOF_COLLECTION(Instruction);
 
-#if 0 // debugging
+#ifdef _DEBUG // debugging
 
 String Script::dumpScript() const {
 	String ret;
 	int pos = 0;
 	FOR_EACH_CONST(i, instructions) {
-		ret += dumpInstr(pos++, i) + "\n";
+		wxLogDebug(dumpInstr(pos, i));
+		ret += dumpInstr(pos++, i) + _("\n");
 	}
 	return ret;
 }
 
 String Script::dumpInstr(unsigned int pos, Instruction i) const {
-	String ret = lexical_cast<String>(pos) + ":\t";
+	String ret = String::Format(_("%d:\t"),pos);
 	// instruction
 	switch (i.instr) {
-		case I_NOP:			ret += "nop";		break;
-		case I_PUSH_CONST:	ret += "push";		break;
-		case I_POP:			ret += "pop";		break;
-		case I_JUMP:		ret += "jump";		break;
-		case I_JUMP_IF_NOT:	ret += "jnz";		break;
-		case I_GET_VAR:		ret += "get";		break;
-		case I_SET_VAR:		ret += "set";		break;
-		case I_MEMBER_C:	ret += "member_c";	break;
-		case I_LOOP:		ret += "loop";		break;
-		case I_CALL:		ret += "call";		break;
-		case I_RET:			ret += "ret";		break;
-		case I_UNARY:		ret += "unary\t";
+		case I_NOP:			ret += _("nop");		break;
+		case I_PUSH_CONST:	ret += _("push");		break;
+		case I_POP:			ret += _("pop");		break;
+		case I_JUMP:		ret += _("jump");		break;
+		case I_JUMP_IF_NOT:	ret += _("jnz");		break;
+		case I_GET_VAR:		ret += _("get");		break;
+		case I_SET_VAR:		ret += _("set");		break;
+		case I_MEMBER_C:	ret += _("member_c");	break;
+		case I_LOOP:		ret += _("loop");		break;
+		case I_MAKE_OBJECT:	ret += _("make object");break;
+		case I_CALL:		ret += _("call");		break;
+		case I_RET:			ret += _("ret");		break;
+		case I_UNARY:		ret += _("unary\t");
 			switch (i.instr1) {
-				case I_ITERATOR_C:	ret += "iterator_c";break;
-				case I_NEGATE:		ret += "negate";	break;
-				case I_NOT:			ret += "not";		break;
+				case I_ITERATOR_C:	ret += _("iterator_c");	break;
+				case I_NEGATE:		ret += _("negate");		break;
+				case I_NOT:			ret += _("not");		break;
 			}
 			break;
-		case I_BINARY:		ret += "binary\t";
+		case I_BINARY:		ret += _("binary\t");
 			switch (i.instr2) {
-				case I_ITERATOR_R:	ret += "iterator_r";break;
-				case I_MEMBER:		ret += "member";	break;
-				case I_ADD:			ret += "+";			break;
-				case I_SUB:			ret += "-";			break;
-				case I_MUL:			ret += "*";			break;
-				case I_DIV:			ret += "/";			break;
-				case I_MOD:			ret += "*";			break;
-				case I_AND:			ret += "and";		break;
-				case I_OR:			ret += "or";		break;
-				case I_EQ:			ret += "==";		break;
-				case I_NEQ:			ret += "!=";		break;
-				case I_LT:			ret += "<";			break;
-				case I_GT:			ret += ">";			break;
-				case I_LE:			ret += "<=";		break;
-				case I_GE:			ret += ">=";		break;
+				case I_ITERATOR_R:	ret += _("iterator_r");	break;
+				case I_MEMBER:		ret += _("member");		break;
+				case I_ADD:			ret += _("+");			break;
+				case I_SUB:			ret += _("-");			break;
+				case I_MUL:			ret += _("*");			break;
+				case I_DIV:			ret += _("/");			break;
+				case I_MOD:			ret += _("mod");		break;
+				case I_AND:			ret += _("and");		break;
+				case I_OR:			ret += _("or");			break;
+				case I_EQ:			ret += _("==");			break;
+				case I_NEQ:			ret += _("!=");			break;
+				case I_LT:			ret += _("<");			break;
+				case I_GT:			ret += _(">");			break;
+				case I_LE:			ret += _("<=");			break;
+				case I_GE:			ret += _(">=");			break;
+				case I_OR_ELSE:		ret += _("or else");	break;
 			}
 			break;
-		case I_TERNARY:		ret += "ternary\t";
+		case I_TERNARY:		ret += _("ternary\t");
 			switch (i.instr3) {
-				case I_RGB:			ret += "rgb";		break;
+				case I_RGB:			ret += _("rgb");		break;
 			}
 			break;
 	}
 	// arg
 	switch (i.instr) {
 		case I_PUSH_CONST: case I_MEMBER_C:							// const
-			ret += "\t" + (String)*constants[i.data];
-			ret += "\t(" + constants[i.data]->typeName();
-			ret += ", #" + lexical_cast<String>(i.data) + ")";
+			ret += _("\t") + constants[i.data]->toString();
+			ret += _("\t(") + constants[i.data]->typeName() + _(")");
 			break;
 		case I_JUMP: case I_JUMP_IF_NOT: case I_LOOP: case I_CALL:	// int
-			ret += "\t" + lexical_cast<String>(i.data);
+			ret += String::Format(_("\t%d"), i.data);
 			break;
 		case I_GET_VAR: case I_SET_VAR: case I_NOP:					// variable
-			ret += "\t" + variable_to_string(i.data) + "\t$" + lexical_cast<String>(i.data);
+			ret += _("\t") + variable_to_string(i.data);
 			break;
 	}
 	return ret;

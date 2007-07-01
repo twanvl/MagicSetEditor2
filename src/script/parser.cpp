@@ -19,6 +19,8 @@ DECLARE_TYPEOF_COLLECTION(Variable);
 #define TokenType TokenType_ // some stupid windows header uses our name
 #endif
 
+String read_utf8_line(wxInputStream& input, bool eat_bom = true, bool until_eof = false);
+
 // ----------------------------------------------------------------------------- : Tokenizing : class
 
 enum TokenType
@@ -72,6 +74,7 @@ class TokenIterator {
   private:
 	String input;
 	size_t pos;
+	String filename;				///< Filename of include files, "" for the main input
 	vector<Token>    buffer;		///< buffer of unread tokens, front() = current
 	stack<OpenBrace> open_braces;	///< braces/quotes we entered from script mode
 	bool             newline;		///< Did we just pass a newline?
@@ -79,6 +82,7 @@ class TokenIterator {
 	struct MoreInput {
 		String input;
 		size_t pos;
+		String filename;
 	};
 	stack<MoreInput> more;		///< Read tokens from here when we are done with the current input
 	
@@ -154,8 +158,9 @@ void TokenIterator::readToken() {
 	if (pos >= input.size()) {
 		// done with input, is there more?
 		if (!more.empty()) {
-			input = more.top().input;
-			pos   = more.top().pos;
+			input    = more.top().input;
+			pos      = more.top().pos;
+			filename = more.top().filename;
 			more.pop();
 		} else {
 			// EOF
@@ -176,17 +181,15 @@ void TokenIterator::readToken() {
 		pos += 12; // "nclude file:"
 		size_t eol = input.find_first_of(_("\r\n"), pos);
 		if (eol == String::npos) eol = input.size();
-		String filename = trim(input.substr(pos, eol - pos));
+		String include_file = trim(input.substr(pos, eol - pos));
 		// store the current input for later retrieval
-		MoreInput m = {input, eol};
+		MoreInput m = {input, eol, filename};
 		more.push(m);
-		// open file
-		InputStreamP is = packages.openFileFromPackage(filename);
-		wxTextInputStream tis(*is);
 		// read the entire file, and start at the beginning of it
 		pos = 0;
-		input.clear();
-		while (!is->Eof()) input += tis.ReadLine() + _('\n');
+		filename = include_file;
+		InputStreamP is = packages.openFileFromPackage(include_file);
+		input = read_utf8_line(*is, true, true);
 	} else if (isAlpha(c)) {
 		// name
 		size_t start = pos - 1;
@@ -285,12 +288,22 @@ void TokenIterator::readStringToken() {
 
 void TokenIterator::add_error(const String& message) {
 	if (!errors.empty() && errors.back().start == pos) return; // already an error here
-	errors.push_back(ScriptParseError(pos, message));
+	// find line number
+	int line = 1;
+	for (size_t i = 0 ; i < input.size() && i < pos ; ++i) {
+		if (input.GetChar(i) == _('\n')) line++;
+	}
+	errors.push_back(ScriptParseError(pos, line, filename, message));
 }
 void TokenIterator::expected(const String& expected) {
 	size_t error_pos = pos - peek(0).value.size();
 	if (!errors.empty() && errors.back().start == pos) return; // already an error here
-	errors.push_back(ScriptParseError(error_pos, expected, peek(0).value));
+	// find line number
+	int line = 1;
+	for (size_t i = 0 ; i < input.size() && i < error_pos ; ++i) {
+		if (input.GetChar(i) == _('\n')) line++;
+	}
+	errors.push_back(ScriptParseError(error_pos, line, filename, expected, peek(0).value));
 }
 
 

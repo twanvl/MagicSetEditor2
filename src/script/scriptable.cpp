@@ -48,13 +48,20 @@ void OptionalScript::parse(Reader& reader, bool string_mode) {
 	vector<ScriptParseError> errors;
 	script = ::parse(unparsed, string_mode, errors);
 	// show parse errors as warnings
-	FOR_EACH(e, errors) {
-		// find line number
-		int line = 0;
-		for (size_t i = 0 ; i < unparsed.size() && i < e.start ; ++i) {
-			if (unparsed.GetChar(i) == _('\n')) line++;
+	String include_warnings;
+	for (size_t i = 0 ; i < errors.size() ; ++i) {
+		const ScriptParseError& e = errors[i];
+		if (!e.filename.empty()) {
+			// error in an include file
+			include_warnings += String::Format(_("\n  On line %d:\t  "), e.line) + e.ParseError::what();
+			if (i + 1 >= errors.size() || errors[i+1].filename != e.filename) {
+				reader.warning(_("In include file '") + e.filename + _("'") + include_warnings);
+				include_warnings.clear();
+			}
+		} else {
+			// use ParseError::what because we don't want e.start in the error message
+			reader.warning(e.ParseError::what(), e.line - 1);
 		}
-		reader.warning(e.ParseError::what(), line); // use ParseError::what because we don't want e.start in the error message
 	}
 }
 
