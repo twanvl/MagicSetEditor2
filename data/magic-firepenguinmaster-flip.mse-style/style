@@ -1,4 +1,4 @@
-mse version: 0.3.2
+mse version: 0.3.4
 game: magic
 full name: FPM's Flip Magic
 short name: FPM Flip
@@ -13,10 +13,10 @@ card dpi: 150
 
 init script:
 	# Load blend scripts for hybrids/multicolors
-	include file: magic-blends.mse-include/blend-scripts
+	include file: magic-default-image.mse-include/scripts
 	
 	# We have no land templates
-	land_template := { "ccard.jpg" }
+	land_template := { "c{type}.jpg" }
 	
 	# Use the normal tap symbol
 	mana_t := {
@@ -28,14 +28,9 @@ init script:
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
 	
-	# Does the card have a color that requires a white font for copyright/artist?
-	black_font_colors := filter_rule(match:"^(hybrid 2 color [^/]*/ )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid 4 color [^/]*/[^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(hybrid 5 color horizontal  [^/]*/[^/]*/[^/]*/[^/]*/ )?(white)")
-	white_font_colors := filter_rule(match:"^(hybrid 2 color overlay green / white|hybrid 2 color overlay red / white)")
-	font_color := {
-		if white_font_colors(input: card.card_color) != "" then rgb(255,255,255)
-		else if black_font_colors(input: card.card_color) != "" then rgb(0,0,0)
-		else rgb(255,255,255)
-	}
+	# Only white cards use a black font
+	# TODO: also for some overlays involving white
+	font_colors_white := { input != "w" }
 
 
 ############################################################## Extra style
@@ -102,7 +97,7 @@ card style:
 		z index: -2
 		render style: image
 		popup style: in place
-		include file: magic-blends.mse-include/card-backgrounds
+		image: { card_background() }
 
 	############################# Name line
 	name:
@@ -180,8 +175,9 @@ card style:
 		height: 20
 		width: 14
 		render style: image
+		angle: 180
 		choice images:
-			tombstone: tombstone-2.png
+			tombstone: tombstone.png
 
 	############################# Image
 	image:
@@ -382,7 +378,7 @@ card style:
 		font:
 			name: MPlantin-Italic
 			size: 8
-			color: { font_color() }
+			color: { font_color(card.card_color) }
 		symbol font:
 			name: magic-paintbrush
 			size: 14
@@ -396,7 +392,7 @@ card style:
 		font:
 			name: MPlantin
 			size: 7
-			color: { font_color() }
+			color: { font_color(card.card_color) }
 
 ############################################################## Extra card fields
 
@@ -430,5 +426,6 @@ extra card style:
 		z index: 1
 		visible: { card.power_2 != "" or card.toughness_2 != "" }
 		render style: image
+		angle: 180
 		choice images:
-			shieldsword: ptshieldsword-2.png
+			shieldsword: ptshieldsword.png

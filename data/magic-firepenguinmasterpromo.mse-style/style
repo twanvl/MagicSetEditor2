@@ -1,4 +1,4 @@
-mse version: 0.2.7
+mse version: 0.3.4
 game: magic
 full name: FPM's Promo Magic
 short name: FPM Promo
@@ -12,19 +12,14 @@ card dpi: 300
 ############################################################## Extra scripts
 
 init script:
-	# Load blend scripts for hybrids/multicolors
-	include file: magic-blends.mse-include/blend-scripts
-	
-	# Which green template should be used?
 	green_template := {
 		if input == "g" then (
-			if       styling.green_style == "light" then "lg"
-			else                                            "g"
+			if   styling.green_style == "light" then "lg"
+			else                                     "g"
 		) else input
 	}
-	
-	card_template := { green_template() + "card.jpg" }
-	land_template := { green_template() + "lcard.jpg" }
+	template      := { green_template() + "{type}.jpg" }
+	land_template := { (if input == "a" then "c" else green_template()) + "l{type}.jpg" }
 	
 	# Use the normal tap symbol
 	mana_t := {
@@ -35,15 +30,7 @@ init script:
 	
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
-	
-	# Does the card have a color that requires a white font for copyright/artist?
-	black_font_colors := filter_rule(match:"^(hybrid 2 color [^/]*/ )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid 4 color [^/]*/[^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(hybrid 5 color horizontal  [^/]*/[^/]*/[^/]*/[^/]*/ )?(white)")
-	white_font_colors := filter_rule(match:"^(hybrid 2 color overlay green / white|hybrid 2 color overlay red / white)")
-	font_color := {
-		if white_font_colors(input: card.card_color) != "" then rgb(255,255,255)
-		else if black_font_colors(input: card.card_color) != "" then rgb(0,0,0)
-		else rgb(255,255,255)
-	}
+
 	
 ############################################################## Extra style
 styling field:
@@ -121,7 +108,7 @@ card style:
 		z index: -2
 		render style: image
 		popup style: in place
-		include file: magic-blends.mse-include/card-backgrounds
+		image: { card_background() }
 	font color:
 		left: 25
 		top: 508
