@@ -1,4 +1,4 @@
-mse version: 0.3.3
+mse version: 0.3.4
 game: magic
 short name: Modern Token
 full name: Post 8th Tokens
@@ -21,65 +21,23 @@ card dpi: 150
 ##############################P############################### Extra scripts
 
 init script:
-	# Load blend scripts for hybrids/multicolors
-	include file: magic-blends.mse-include/blend-scripts
+	# Load scripts for default images
 	include file: magic-default-image.mse-include/scripts
-	
-	# Should hybrids have a grey name?
-	mask_hybrid_with_land := { false }
-	
-	# We have no land templates
-	# Which artifact template should be used?
-	text_sensor := {
+		
+	# What should the textbox look like?
+	text_shape := {
 		if styling.one_textline_tokens
-		and card_style.text.content_lines == 1
-		and card.flavor_text == "<i-flavor></i-flavor>" then "1"
-		else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then "2"
-		else "" }
-	
-	land_to_artifact := {
-		if input == "w" or input == "u" or input == "b" or input == "r" or input == "g" or input == "m" then ""
-		 else input
+		   and card_style.text.content_lines <= 2
+		   and card.flavor_text == "<i-flavor></i-flavor>"  then "1" # small
+		else if card.rule_text != "" or
+		     number_of_items(in:"" + card.flavor_text) > 21 then "2" # large
+		else                                                     "0" # none
 	}
 	
-	land_to_artifact_pt := {
-		if input == "l" or input == "wl" or input == "ul" or input == "bl" or input == "rl" or input == "gl" or input == "ml" then "c"
-		 else input
-	}
-	
-	card_hybrid_nt := {
-		if mask_hybrid_with_land() then
-			masked_blend(
-				mask: (
-					if styling.one_textline_tokens
-					and card_style.text.content_lines == 1
-					and card.flavor_text == "<i-flavor></i-flavor>" then "1hybrid_blend_nt.png"
-					else if card.rule_text != "" then "2hybrid_blend_nt.png"
-					else "hybrid_blend_nt.png" ),
-				dark:  land_template(""),
-				light: input,
-			)
-		else input
-	}
-	multi_hybrid := {
-		masked_blend(
-			mask: (
-				if styling.one_textline_tokens
-				and card_style.text.content_lines == 1
-				and card.flavor_text == "<i-flavor></i-flavor>" then "1multicolor_dual_blend.png"
-				else if card.rule_text != "" then "2multicolor_dual_blend.png"
-				else "multicolor_dual_blend.png" ),
-			dark: (
-				if card.rule_text != "" then "2mcard.jpg"
-				else "mcard.jpg" ),
-			light: input,
-		)
-	}
-	card_template := { text_sensor() + input + "card.jpg" }
-	land_template   := { text_sensor() + land_to_artifact() + "ccard.jpg" }
-	pt_template   := { text_sensor() + land_to_artifact_pt() + "pt.jpg" }
-	land_hybrid_pt := { text_sensor() + "cpt.jpg" }
-	
+	suffix := ""
+	template      := { input + "{type}{suffix}.jpg" }
+	land_template := { "c{type}{suffix}.jpg" }
+		
 	# Use the normal tap symbol
 	mana_t := {
 		if      styling.tap_symbol == "old"        then "old"
@@ -89,13 +47,7 @@ init script:
 	
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
-	
-	# Does the card have a color that requires a white font for copyright/artist?
-	white_font_colors := filter_rule(match:"^(hybrid 2 color )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(black|hybrid 4 color white / blue / black / red|hybrid 2 color overlay blue / black|hybrid 2 color overlay black / red|hybrid 2 color overlay black / green)")
-	font_color := {
-		if white_font_colors(input: card.card_color) != "" then rgb(255,255,255)
-		else rgb(0,0,0)
-	}
+
 	
 ############################################################## Set info fields
 
@@ -162,7 +114,7 @@ card style:
 		z index: -2
 		render style: image
 		popup style: in place
-		include file:  magic-blends.mse-include/card-backgrounds
+		image: { color_background(type:"card" + text_shape(), base_hybrid:card_hybrid) }
 
 	###################C######### Name line
 	name:
@@ -183,26 +135,13 @@ card style:
 	############################# Image
 	image:
 		left:	30
-		top:
-			script: if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
-				58
-			else
-				59
+		top: { if text_shape() == 2 then 58 else 59 }
 		width:	315
 		height:
-			script: if styling.one_textline_tokens and card_style.text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
-				349
-			else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
-				288
-			else
-				366
-		mask:
-			script: if styling.one_textline_tokens and card_style.text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
-				"1imagemask.png"
-			else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
-				"2imagemask.png"
-			else
-				"imagemask.png"
+			{ if      text_shape() == "1" then 349
+			  else if text_shape() == "2" then 288
+			  else                             366 }
+		mask: { "imagemask{text_shape()}.png" }
 		z index: 1
 
 
@@ -211,12 +150,9 @@ card style:
 	type:
 		left: 35
 		top:
-			script: if styling.one_textline_tokens and card_style.text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
-				414
-			else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
-				350
-			else
-				433
+			{ if      text_shape() == "1" then 414
+			  else if text_shape() == "2" then 350
+			  else                             433 }
 		width: 286
 		height: 20
 		alignment: top shrink-overflow
@@ -233,12 +169,9 @@ card style:
 	rarity:
 		left: 320
 		top:
-			script: if styling.one_textline_tokens and card_style.text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then
-				415
-			else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then
-				351
-			else
-				432
+			{ if      text_shape() == "1" then 415
+			  else if text_shape() == "2" then 351
+			  else                             432 }
 		width: 22
 		height: 22
 		z index: 1
@@ -249,21 +182,19 @@ card style:
 			common:     script: symbol_variation(symbol: set.symbol, variation: "common")
 			uncommon:   script: symbol_variation(symbol: set.symbol, variation: "uncommon")
 			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
-			special:	script: symbol_variation(symbol: set.symbol, variation: "special")
+			special:    script: symbol_variation(symbol: set.symbol, variation: "special")
 
 	############################# Text box
 	text:
 		left: 31
 		top:
-			script:
-				if styling.one_textline_tokens and card_style.text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then 444
-				else if card.rule_text != "" or number_of_items(in:"" + card.flavor_text) > 21 then 388
-				else 300
+			{ if      text_shape() == "1" then 444
+			  else if text_shape() == "2" then 388
+			  else                             300 }
 		width: 311
 		height: 
-			script:
-				if styling.one_textline_tokens and card_style.text.content_lines == 1and card.flavor_text == "<i-flavor></i-flavor>" then 22
-				else 80
+			{ if   text_shape() == "1" then 22
+			  else                          80 }
 		font:
 			name: MPlantin
 			italic name: MPlantin-Italic
@@ -280,12 +211,12 @@ card style:
 		alignment:
 			script:
 				if not contains(match:",", card.rule_text) and
-				not contains(match: ".", card.rule_text) and
-				not contains(match: ";", card.rule_text) and
-				not contains(match: ":", card.rule_text) and
-				not contains (match: "!", card.rule_text) and
-				not contains (match: "?", card.rule_text) and
-				card.flavor_text == "<i-flavor></i-flavor>"
+				   not contains(match: ".", card.rule_text) and
+				   not contains(match: ";", card.rule_text) and
+				   not contains(match: ":", card.rule_text) and
+				   not contains (match: "!", card.rule_text) and
+				   not contains (match: "?", card.rule_text) and
+				   card.flavor_text == "<i-flavor></i-flavor>"
 				then "middle center"
 				else "middle left"
 		z index: 2
@@ -323,8 +254,7 @@ card style:
 			name: Matrix
 			size: 11
 			weight: bold
-			color:
-				script: font_color()
+			color: { font_color(card.card_color) }
 		symbol font:
 			name: magic-paintbrush
 			size: 10.5
@@ -338,8 +268,7 @@ card style:
 		font:
 			name: MPlantin
 			size: 7.5
-			color:
-				script: font_color()
+			color: { font_color(card.card_color) }
 
 ############################################################## Extra card fields
 
@@ -348,6 +277,8 @@ extra card field:
 	name: pt box
 	script: card.card_color
 	editable: false
+	save value: false
+	show statistics: false
 extra card field:
 	type: choice
 	name: name box
@@ -377,46 +308,38 @@ extra card style:
 		width:	90
 		height:	50
 		z index: 1
-		visible:
-			script: card.pt != ""
+		visible: { card.pt != "" }
 		render style: image
 		mask: mask_pt.png
-		include file: magic-blends.mse-include/card-ptboxes
-#	name box:
-#		left: script: card_style.name.content_width * -.5 + 172
-#		top: 25
-#		width: script: card_style.name.content_width + 1
-#		height: 35
-#		z index:	2
-#		visible:
-#			script: card.name != ""
-#		render style: image
-#		mask: name_mask.png
-#		choice images:
-#			black: name.jpg
+		image: { card_ptbox(suffix: text_shape()) }
 
-#	name box left:
-#		right: script: card_style.name.content_width * -.5 + 172
-#		top: 25
-#		width: 15
-#		height: 35
-#		z index:	2
-#		visible:
-#			script: card.name != ""
-#		render style: image
-#		mask: name_l_mask.png
-#		choice images:
-#			black: name_l.jpg
-
-#	name box right:
-#		left: script: card_style.name.content_width * .5 + 173
-#		top: 25
-#		width: 15
-#		height: 35
-#		z index:	2
-#		visible:
-#			script: card.name != ""
-#		render style: image
-#		mask: name_r_mask.png
-#		choice images:
-#			black: name_r.jpg
+	name box:
+		left: { card_style.name.content_width * -0.5 + 187.5 }
+		top: 25
+		width: { card_style.name.content_width + 1 }
+		height: 35
+		z index: 2
+		visible: { card.name != "" }
+		render style: image
+		choice images:
+			black: name.jpg
+	name box left:
+		right: { card_style.name.content_width * -0.5 + 187.5 }
+		top: 25
+		width: 15
+		height: 35
+		z index: 2
+		visible: { card.name != "" }
+		render style: image
+		choice images:
+			black: name_l.jpg
+	name box right:
+		left: { card_style.name.content_width * 0.5 + 188.5 }
+		top: 25
+		width: 15
+		height: 35
+		z index: 2
+		visible: { card.name != "" }
+		render style: image
+		choice images:
+			black: name_r.jpg
