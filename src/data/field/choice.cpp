@@ -49,11 +49,11 @@ IMPLEMENT_REFLECTION(ChoiceField) {
 
 ChoiceField::Choice::Choice()
 	: first_id(0)
-	, line_below(false), enabled(true)
+	, line_below(false), enabled(true), type(CHOICE_TYPE_CHECK)
 {}
 ChoiceField::Choice::Choice(const String& name)
 	: name(name), first_id(0)
-	, line_below(false), enabled(true)
+	, line_below(false), enabled(true), type(CHOICE_TYPE_CHECK)
 {}
 
 
@@ -139,6 +139,11 @@ String ChoiceField::Choice::choiceNameNice(int id) const {
 }
 
 
+IMPLEMENT_REFLECTION_ENUM(ChoiceChoiceType) {
+	VALUE_N("check", CHOICE_TYPE_CHECK);
+	VALUE_N("radio", CHOICE_TYPE_RADIO);
+}
+
 IMPLEMENT_REFLECTION_NO_GET_MEMBER(ChoiceField::Choice) {
 	if (isGroup() || line_below || enabled.isScripted() || (tag.reading() && tag.isComplex())) {
 		// complex values are groups
@@ -147,6 +152,7 @@ IMPLEMENT_REFLECTION_NO_GET_MEMBER(ChoiceField::Choice) {
 		REFLECT(choices);
 		REFLECT(line_below);
 		REFLECT(enabled);
+		REFLECT(type);
 	} else {
 		REFLECT_NAMELESS(name);
 	}

@@ -214,3 +214,24 @@ void draw_checkbox(Window* win, DC& dc, const wxRect& rect, bool checked, bool e
 	dc.SetBrush(*wxTRANSPARENT_BRUSH);
 	dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
 }
+
+void draw_radiobox(Window* win, DC& dc, const wxRect& rect, bool checked, bool enabled) {
+	#if wxUSE_UXTHEME && defined(__WXMSW__)
+		// TODO: Windows version?
+	#endif
+	// portable version
+	#if 1
+		// circle drawing on windows looks absolutely horrible
+		// so use rounded rectangles instead
+		dc.SetPen(wxSystemSettings::GetColour(enabled ? wxSYS_COLOUR_WINDOWTEXT: wxSYS_COLOUR_GRAYTEXT));
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		//dc.DrawEllipse(rect.x, rect.y, rect.width, rect.height);
+		dc.DrawRoundedRectangle(rect.x, rect.y, rect.width, rect.height, rect.width*0.5-1);
+		if (checked) {
+			dc.SetBrush(wxSystemSettings::GetColour(enabled ? wxSYS_COLOUR_WINDOWTEXT: wxSYS_COLOUR_GRAYTEXT));
+			dc.SetPen(*wxTRANSPARENT_PEN);
+			//dc.DrawEllipse(rect.x+2,rect.y+2,rect.width-4,rect.height-4);
+			dc.DrawRoundedRectangle(rect.x+3, rect.y+3, rect.width-6, rect.height-6, rect.width*0.5-4);
+		}
+	#endif
+}

@@ -46,6 +46,12 @@ class ChoiceField : public Field {
 	DECLARE_REFLECTION();
 };
 
+
+enum ChoiceChoiceType {
+	CHOICE_TYPE_CHECK,
+	CHOICE_TYPE_RADIO
+};
+
 /// An item that can be chosen for this field
 class ChoiceField::Choice : public IntrusivePtrBase<ChoiceField::Choice> {
   public:
@@ -57,6 +63,7 @@ class ChoiceField::Choice : public IntrusivePtrBase<ChoiceField::Choice> {
 	vector<ChoiceP>  choices;		///< Choices and sub groups in this group
 	bool             line_below;	///< Show a line after this item?
 	Scriptable<bool> enabled;		///< Is this item enabled?
+	ChoiceChoiceType type;			///< How should this item be shown, only for multiple choice fields
 	/// First item-id in this group (can be the default item)
 	/** Item-ids are consecutive integers, a group uses all ids [first_id..lastId()).
 	 *  The top level group has first_id 0.

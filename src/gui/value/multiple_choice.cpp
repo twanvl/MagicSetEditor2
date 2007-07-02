@@ -45,9 +45,11 @@ void DropDownMultipleChoiceList::select(size_t item) {
 void DropDownMultipleChoiceList::drawIcon(DC& dc, int x, int y, size_t item, bool selected) const {
 	// is this item active/checked?
 	bool active = false;
+	bool radio  = false;
 	if (!isFieldDefault(item)) {
 		ChoiceField::ChoiceP choice = getChoice(item);
 		active = dynamic_cast<MultipleChoiceValueEditor&>(cve).active[choice->first_id];
+		radio  = choice->type == CHOICE_TYPE_RADIO;
 	} else {
 		active = dynamic_cast<MultipleChoiceValueEditor&>(cve).value().value.isDefault();
 	}
@@ -56,7 +58,11 @@ void DropDownMultipleChoiceList::drawIcon(DC& dc, int x, int y, size_t item, boo
 	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	dc.DrawRectangle(x,y,16,16);
 	wxRect rect = RealRect(x+2,y+2,12,12);
-	draw_checkbox(nullptr, dc, rect, active, itemEnabled(item));
+	if (radio) {
+		draw_radiobox(nullptr, dc, rect, active, itemEnabled(item));
+	} else {
+		draw_checkbox(nullptr, dc, rect, active, itemEnabled(item));
+	}
 	// draw icon
 	DropDownChoiceListBase::drawIcon(dc, x + 16, y, item, selected);
 }
