@@ -12,23 +12,15 @@ card dpi: 300
 ############################################################## Extra scripts
 
 init script:
-	# Load blend scripts for hybrids/multicolors
-	include file: magic-blends.mse-include/blend-scripts
-	
-	# Which green template should be used?
 	green_template := {
 		if input == "g" then (
-			if       styling.green_style == "light" then "lg"
-			else                                            "g"
+			if   styling.green_style == "light" then "lg"
+			else                                     "g"
 		) else input
 	}
-	
-	card_template := { green_template() + "card.jpg" }
-	land_template := { green_template() + "lcard.jpg" }
-	typeline_template := { green_template() + "typeline.png" }
-	typelineland_template := { green_template() + "ltypeline.png" }
-	textbox_template := { green_template() + "textbox.png" }
-	textboxland_template := { green_template() + "ltextbox.png" }
+	suffix := [card: "card.jpg", textbox: "textbox.png", typeline: "typeline.png"]
+	template      := { green_template() + suffix[type] }
+	land_template := { (if input == "a" then "c" else green_template()) + "l" + suffix[type] }
 	
 	# Use the normal tap symbol
 	mana_t := {
@@ -40,14 +32,9 @@ init script:
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
 	
-	# Does the card have a color that requires a white font for copyright/artist?
-	black_font_colors := filter_rule(match:"^(hybrid 2 color [^/]*/ )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid 4 color [^/]*/[^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(hybrid 5 color horizontal  [^/]*/[^/]*/[^/]*/[^/]*/ )?(white)")
-	white_font_colors := filter_rule(match:"^(hybrid 2 color overlay green / white|hybrid 2 color overlay red / white)")
-	font_color := {
-		if white_font_colors(input: card.card_color) != "" then rgb(255,255,255)
-		else if black_font_colors(input: card.card_color) != "" then rgb(0,0,0)
-		else rgb(255,255,255)
-	}
+	# Only white cards use a black font
+	# TODO: also for some overlays involving white
+	font_colors_white := { input != "w" }
 	
 ############################################################## Extra style
 styling field:
@@ -125,7 +112,7 @@ card style:
 		z index: -2
 		render style: image
 		popup style: in place
-		include file: magic-blends.mse-include/card-backgrounds
+		image: { card_background() }
 
 	############################# Name line
 	name:
@@ -291,7 +278,7 @@ card style:
 		font:
 			name: MPlantin-Italic
 			size: 8
-			color: { font_color() }
+			color: { font_color(card.card_color) }
 		symbol font:
 			name: magic-paintbrush
 			size: 14
@@ -306,7 +293,7 @@ card style:
 		font:
 			name: MPlantin
 			size: 7
-			color: { font_color() }
+			color: { font_color(card.card_color) }
 
 
 ############################################################## Extra card fields
@@ -319,15 +306,17 @@ extra card field:
 extra card field:
 	type: choice
 	name: textbox
-	include file: magic-blends.mse-include/card-colors
-	default: card.card_color
+	script: card.card_color
 	show statistics: false
+	editable: false
+	save value: false
 extra card field:
 	type: choice
-	name: type image
-	include file: magic-blends.mse-include/card-colors
-	default: card.card_color
+	name: typeline
+	script: card.card_color
 	show statistics: false
+	editable: false
+	save value: false
 
 extra card style:
 	pt symbols:
@@ -348,12 +337,11 @@ extra card style:
 		render style: image
 		popup style: in place
 		visible:
-			{ if card.rule_text != "" then 1
-			else if number_of_items(in:"" + card.flavor_text) > 21 then 1
-			else 0 }
-		include file: magic-blends.mse-include/card-textboxes
+			{ card.rule_text != "" or
+			  (number_of_items(in:"" + card.flavor_text) > 21) }
+		image: { card_textbox() }
 		z index: 2
-	type image:
+	typeline:
 		left: 53
 		top: 463
 		width: 304
@@ -361,5 +349,5 @@ extra card style:
 		render style: image
 		popup style: in place
 		visible: { card.type != "" or card.illustrator != "" or card.copyright != "" }
-		include file: magic-blends.mse-include/card-typelines
+		image: { card_typeline() }
 		z index: 2
