@@ -24,13 +24,14 @@ card_hybrid_2 := {
 	)
 }
 
-overlay_hybrid := {
-	combine_blend(
+overlay_hybrid := [
+	1: { template(colors[0]) }
+	2: { combine_blend(
 		image1: template(colors[0]),
 		image2: template(colors[1]),
 		combine: "symmetric overlay"
-	)
-}
+	   )}
+]
 
 # vertical version of a horizontal hybrid
 vertical_card_hybrid := {
@@ -204,10 +205,7 @@ card_hybrid := [
 		6: vertical_card_hybrid
 		7: vertical_card_hybrid
 	]
-	overlay: [
-		1: { template(colors[0]) }
-		2: overlay_hybrid
-	]
+	overlay: overlay_hybrid
 ]
 
 
@@ -272,10 +270,7 @@ pt_hybrid := [
 		6: { template(colors[5]) } # Probably not right
 		7: { template(colors[6]) }
 	]
-	overlay: [
-		1: { template(colors[0]) }
-		2: overlay_hybrid
-	]
+	overlay: overlay_hybrid
 ]
 
 ########################################################################
@@ -328,10 +323,7 @@ flip_pt_hybrid := [
 		6: { template(colors[1]) } # Probably not right
 		7: { template(colors[2]) }
 	]
-	overlay: [
-		1: { template(colors[0]) }
-		2: overlay_hybrid
-	]
+	overlay: overlay_hybrid
 ]
 
 flip_pt_hybrid2 := [
@@ -388,11 +380,39 @@ flip_pt_hybrid2 := [
 		6: { template(colors[5]) } # Probably not right
 		7: { template(colors[6]) }
 	]
-	overlay: [
-		1: { template(colors[0]) }
-		2: overlay_hybrid
-	]
+	overlay: overlay_hybrid
 ]
+
+########################################################################
+# Textbox and typeline for FPM templates
+########################################################################
+
+textbox_hybrid := [
+	radial: [
+		0: { template("c")       }
+		1: { template(colors[0]) }
+		2: card_hybrid_2
+		3: { template(colors[2]) }
+		4: { card_hybrid_2(colors: colors[3] + colors[2]) }
+		5: { template(colors[3]) }
+		6: { card_hybrid_2(colors: colors[4] + colors[3]) }
+		7: { template(colors[4]) }
+	]
+	horizonal: card_hybrid.horizontal # the same
+	vertical:  [
+		0: { template("c")       }
+		1: { template(colors[0]) }
+		2: { template(colors[1]) }
+		3: { template(colors[2]) } # TODO
+		4: { template(colors[3]) }
+		5: { template(colors[4]) }
+		6: { template(colors[5]) }
+		7: { template(colors[6]) }
+	]
+	overlay: overlay_hybrid
+]
+
+typeline_hybrid := textbox_hybrid
 
 ########################################################################
 # Putting it all together.
@@ -477,10 +497,12 @@ color_combination := {
 # Specific types
 ########################################################################
 
-card_background := { color_background(type:"card", base_hybrid:card_hybrid) }
-card_ptbox      := { color_background(type:"pt",   base_hybrid:pt_hybrid) }
-flip_ptbox      := { color_background(type:"pt",   base_hybrid:flip_pt_hybrid) }
-flip_ptbox2     := { color_background(type:"pt2",  base_hybrid:flip_pt_hybrid2) }
+card_background := { color_background(type:"card",     base_hybrid:card_hybrid) }
+card_ptbox      := { color_background(type:"pt",       base_hybrid:pt_hybrid) }
+flip_ptbox      := { color_background(type:"pt",       base_hybrid:flip_pt_hybrid) }
+flip_ptbox2     := { color_background(type:"pt2",      base_hybrid:flip_pt_hybrid2) }
+card_textbox    := { color_background(type:"textbox",  base_hybrid:textbox_hybrid) }
+card_typeline   := { color_background(type:"typeline", base_hybrid:typeline_hybrid) }
 
 ########################################################################
 # Font colors
