@@ -1,14 +1,17 @@
-﻿mse version: 0.3.3
+﻿mse version: 0.3.4
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
-version: 2007-05-05
+version: 2007-07-01
 position hint: 1
 
 ############################################################## Functions & filters
 
 # General functions
 init script:
+	
+	############################################################## Sorting mana symbols
+	
 	# Used in FPM and Future Sight
 	brush_sort := sort_rule(order: "OP")
 	# correctly sort a mana symbol (no guild mana)
@@ -54,6 +57,8 @@ init script:
 				replace: ""
 			) + { tap_filter() + mana_filter() }
 	
+	############################################################## Determine card color
+	
 	# Names of colors
 	color_name := {
 		if      input = "W" then "white"
@@ -63,8 +68,13 @@ init script:
 		else if input = "G" then "green"
 		else                     ""
 	}
+	color_names_1 := { color_name(colors.0) }
+	color_names_2 := { color_name(colors.0) + ", " + color_name(colors.1) }
+	color_names_3 := { color_name(colors.0) + ", " + color_name(colors.1) + ", " + color_name(colors.2) }
+	color_names_4 := { color_name(colors.0) + ", " + color_name(colors.1) + ", " + color_name(colors.2) + ", " + color_name(colors.3) }
+	color_names_5 := { color_name(colors.0) + ", " + color_name(colors.1) + ", " + color_name(colors.2) + ", " + color_name(colors.3) + ", " + color_name(colors.4) }
 	# color based on mana cost, input = a mana cost
-	color_filter  := sort_rule(order: "<WUBRG>") + sort_rule(order: "(WUBRG)")
+	color_filter  := sort_rule(order: "<WUBRG>")
 	color_filterH := sort_rule(order: "</>")
 	mana_to_color := {
 		colors := color_filter()
@@ -73,19 +83,19 @@ init script:
 		if hybrid == "" then
 			# not a hybrid
 			if      count == 0 then  "colorless"
-			else if count == 1 then  color_name(colors[0])
+			else if count == 1 then  color_names_1()
 			else if set.set_info.use_gradient_multicolor == "no"  then "multicolor" # stop here
-			else if count == 2 then  "multicolor 2 color " + color_name(colors[0]) + " / " + color_name(colors[1])
+			else if count == 2 then  color_names_2() + ", multicolor"
 			else if set.set_info.use_gradient_multicolor != "yes" then "multicolor" # stop here
-			else if count == 3 then  "multicolor 3 color " + color_name(colors[0]) + " / " + color_name(colors[1]) + " / " + color_name(colors[2])
-			else if count == 4 then  "multicolor 4 color " + color_name(colors[0]) + " / " + color_name(colors[1]) + " / " + color_name(colors[2]) + " / " + color_name(colors[3])
-			else if count == 5 then  "multicolor 5 color " + color_name(colors[0]) + " / " + color_name(colors[1]) + " / " + color_name(colors[2]) + " / " + color_name(colors[3]) + " / " + color_name(colors[4])
+			else if count == 3 then  color_names_3() + ", multicolor"
+			else if count == 4 then  color_names_4() + ", multicolor"
+			else if count == 5 then  color_names_5() + ", multicolor"
 			else                     "multicolor"
 		else
 			# hybrid
-			if count == 2 then  "hybrid 2 color " + color_name(colors[0]) + " / " + color_name(colors[1])
-			else if count == 3 then  "hybrid 3 color " + color_name(colors[0]) + " / " + color_name(colors[1]) + " / " + color_name(colors[2])
-			else                "multicolor"
+			if      count == 2 then  color_names_2() + ", hybrid"
+			else if count == 3 then  color_names_3() + ", hybrid"
+			else                     "multicolor"
 	}
 	
 	# color based on land text box, input = textbox contents
@@ -100,40 +110,26 @@ init script:
 		filter_rule(match: "<sym[^>]*>([^<]+)") + color_filter;
 	land_to_color := {
 		# Based on watermark
-		if      card.watermark = "mana symbol white" then "land 1 color white"
-		else if card.watermark = "mana symbol blue"  then "land 1 color blue"
-		else if card.watermark = "mana symbol black" then "land 1 color black"
-		else if card.watermark = "mana symbol red"   then "land 1 color red"
-		else if card.watermark = "mana symbol green" then "land 1 color green"
+		if      card.watermark = "mana symbol white" then "white, land"
+		else if card.watermark = "mana symbol blue"  then "blue, land"
+		else if card.watermark = "mana symbol black" then "black, land"
+		else if card.watermark = "mana symbol red"   then "red, land"
+		else if card.watermark = "mana symbol green" then "green, land"
 		else (
 			# Based on colors in text box
 			colors := color_text_filter(input: card.rule_text);
-			if      colors = ""   then "land"
-			else if colors = "W"  then "land 1 color white"
-			else if colors = "U"  then "land 1 color blue"
-			else if colors = "B"  then "land 1 color black"
-			else if colors = "R"  then "land 1 color red"
-			else if colors = "G"  then "land 1 color green"
-			else if colors = "WU" then "land 2 color white / blue"
-			else if colors = "UB" then "land 2 color blue / black"
-			else if colors = "BR" then "land 2 color black / red"
-			else if colors = "RG" then "land 2 color red / green"
-			else if colors = "GW" then "land 2 color green / white"
-			else if colors = "WB" then "land 2 color white / black"
-			else if colors = "UR" then "land 2 color blue / red"
-			else if colors = "BG" then "land 2 color black / green"
-			else if colors = "RW" then "land 2 color red / white"
-			else if colors = "GU" then "land 2 color green / blue"
-			else                       "land 1 color multicolor"
+			count  := number_of_items(in: colors)
+			if      count == 0 then "land"
+			else if count == 1 then color_names_1() + ", land"
+			else if count == 2 then color_names_2() + ", land"
 		)
 	};
 	
 	# Index for sorting, white cards are first, so white->A, blue->B, .. ,
 	#  multi->F, hybrid->G, arti->H, land->J, basic land->I
-	is_multicolor := match_rule(match: "^multicolor")
-	is_hybrid     := match_rule(match: "^hybrid")
-	is_colorless  := match_rule(match: "^colorless")
-	is_artifact   := match_rule(match: "^artifact")
+	is_multicolor := { chosen(choice: "multicolor") }
+	is_hybrid     := { chosen(choice: "hybrid") }
+	is_colorless  := { not chosen(choice: "land") }
 	sort_index := {
 		if card.casting_cost_2 !="" and card.card_color != card.card_color_2 then "H"
 		else if card.card_color=="white"        then "A"
@@ -143,8 +139,8 @@ init script:
 		else if card.card_color=="green"        then "E"
 		else if is_multicolor(card.card_color)  then "F"
 		else if is_hybrid    (card.card_color)  then "G"
-		else if is_colorless (card.card_color) or is_artifact (card.card_color)  then "I"
-		else if card.rarity!="basic land"   then "J"
+		else if is_colorless (card.card_color)  then "I"
+		else if card.rarity!="basic land"       then "J"
 		else                                         "K"
 	};
 	
@@ -158,6 +154,31 @@ init script:
 		else if mana_color == "colorless" and is_artifact(input: card.super_type)  then "artifact"
 		else mana_color
 	};
+	
+	# Number of colors in a card_color
+	card_color_color_count := {
+		chosen(choice:"white") + chosen(choice:"blue") + chosen(choice:"black") + chosen(choice:"red") + chosen(choice:"green") + chosen(choice:"artifact")
+	}
+	# Clean up color field
+	card_color_filter := {
+		colors := card_color_color_count()
+		if colors > 2 then
+			input := remove_choice(choice: "overlay")
+		if colors > 1 then (
+			input := require_choice(choice1: "multicolor", choice2: "hybrid", choice3: "land", choice4: "artifact")
+			input := exclusive_choice(choice1: "multicolor", choice2: "hybrid")
+			input := require_exclusive_choice(choice1: "radial", choice2: "horizontal", choice3: "vertical", choice4: "overlay")
+		) else
+			input := remove_choice(choice1: "radial", choice2: "horizontal", choice3: "vertical", choice4: "overlay", choice5: "hybrid", choice6: "reversed")
+		if chosen(choice:"overlay") then
+			input := remove_choice(choice: "reversed")
+		input
+	}
+	
+	# needed by all style files anyway
+	include file: /magic-blends.mse-include/new-blends
+	
+	############################################################## Utilities for keywords
 	
 	# replaces — correctly
 	add := "" # default is nothing
@@ -178,6 +199,8 @@ init script:
 	# Utilities for keywords
 	has_cc := { card.casting_cost != "" }
 	has_pt := { card.pt           != "" }
+	
+	############################################################## The text box
 	
 	# Filters for the text box
 	# context in which mana symbols are found
@@ -211,7 +234,7 @@ init script:
 		tag_remove_rule(tag: "<i-auto>")   +
 		# step 2 : reminder text for keywords
 		expand_keywords_rule(
-			default_expand: { contains(match:mode, set.automatic_reminder_text) },
+			default_expand: { chosen(choice:mode, set.automatic_reminder_text) },
 			combine:        {
 				if mode == "pseudo" then "<i-auto>{keyword}</i-auto>"
 				else "{keyword}<atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
@@ -267,6 +290,8 @@ init script:
 			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>|—<match>| — <match>",
 			replace: { to_upper() }) +
 		curly_quotes
+	
+	############################################################## Other boxes
 	
 	#character filter for title line
 	name_filter :=
@@ -351,17 +376,32 @@ init script:
 	type_over_pt   := replace_rule(match:"/$", replace:"")
 	type_over_type := replace_rule(match:" ?-$", replace:"")
 	
+	# Shape of cards, can be changed in style files
+	card_shape := { "normal" }
+	
+	############################################################## Statistics utilities
+	
 	# Converted mana cost
-	cmc := {
+	cmc := to_text + {
 		  1 * number_of_items(in: sort(order:"SWUBRG")) # colored mana
 		- 1 * number_of_items(in: sort(order:"/"))      # guild mana, W/U -> 2 - 1
 		+ 1 * sort(order: "[0123456789]")               # colorless mana
 	}
-	colored_mana := {
+	colored_mana := to_text + {
 		  number_of_items(in: sort(order: "WUBRG"))     # colored mana
 		- number_of_items(in: sort(order:"/"))          # guild mana, W/U -> 2 - 1
 	}
-	primary_card_color := filter_rule(match:"^[^ ]+")
+	primary_card_color := {
+		artifact := chosen(choice:"artifact")
+		land     := chosen(choice:"land")
+		multi    := chosen(choice:"multicolor")
+		hybrid   := chosen(choice:"hybrid")
+		if      land                                      then "land"
+		else if multi and input != "artifact, multicolor" then "multicolor"
+		else if hybrid                                    then "hybrid"
+		else if artifact                                  then "artifact"
+		else                                                   input
+	}
 
 # TODO : somewhere else?
 #card to conversion:
@@ -497,6 +537,28 @@ default set style:
 
 ############################################################## Card fields
 
+############################# Automatic fields
+
+# The 'shape' of the card (flip, split, etc.)
+card field:
+	type: choice
+	name: shape
+	save value: false
+	show statistics: false
+	editable: false
+	choice: normal
+	choice: token
+	choice: flip
+	choice: split
+	script: card_shape() # determined by the style
+card field:
+	type: text
+	name: full name
+	save value: false
+	show statistics: false
+	editable: false
+	script: if card_shape() == "split" then card.name + "/" + card.name_2 else card.name
+
 ############################# Background stuff
 card field:
 	type: color
@@ -516,12 +578,12 @@ card field:
 		color: rgb(200,180,0)
 	show statistics: false
 card field:
-	type: choice
+	type: multiple choice
 	name: card color
-	icon: stats/card_color.png
-	# Specify the colors somewhere else, to keep things clean
 	include file: magic-blends.mse-include/card-colors
 	default: card_color(casting_cost: card.casting_cost)
+	show statistics: false
+#needed for FPM temps???
 card field:
 	type: choice
 	name: font color
@@ -878,8 +940,26 @@ card field:
 		else
 			forward_editor(field: card.copyright_2)
 
+############################################################## Card list
 
-
+card list color script:
+	input := card.card_color
+	if      input == "white" then rgb(156,134,90)
+	else if input == "blue"  then rgb(0,64,168)
+	else if input == "black" then rgb(0,0,0)
+	else if input == "red"   then rgb(168,0,0)
+	else if input == "green" then rgb(0,168,0)
+	else (
+		artifact := chosen(choice:"artifact")
+		land     := chosen(choice:"land")
+		multi    := chosen(choice:"multicolor")
+		hybrid   := chosen(choice:"hybrid")
+		if      land                                      then rgb(109,62,39) # land
+		else if multi and input != "artifact, multicolor" then rgb(120,120,0) # multicolor
+		else if hybrid                                    then rgb(115,0,160) # hybrid
+		else if artifact                                  then rgb(72,90,100) # artifact
+		else                                                   rgb(119,83,83) # colorless
+	)
 
 
 
@@ -889,31 +969,32 @@ card field:
 
 ############################################################## Statistics categories
 
-#statistics dimension:
-#	name:   card color2
-#	script: primary_card_color(card.card_color)
-#	icon: stats/card_color.png
-#	colors:
-#		white			: rgb(255,237,202)
-#		blue			: rgb(42,141,255)
-#		black			: rgb(33,33,33)
-#		red			: rgb(255,52,0)
-#		green			: rgb(138,230,0)
-#		colorless		: rgb(122,85,85)
-#		artifact		: rgb(188,192,195)
-#		multicolor		: rgb(255,188,14)
-#		land			: rgb(109,62,39)
-#		hybrid			: rgb(243,26,136)
-#	group: white
-#	group: blue
-#	group: black
-#	group: red
-#	group: green
-#	group: colorless
-#	group: artifact
-#	group: multicolor
-#	group: land
-#	group: hybrid
+statistics dimension:
+	name:   card color
+	position hint: -1
+	script: primary_card_color(card.card_color)
+	icon: stats/card_color.png
+	colors:
+		white		: rgb(255,237,202)
+		blue		: rgb(42,141,255)
+		black		: rgb(33,33,33)
+		red		: rgb(255,52,0)
+		green		: rgb(138,230,0)
+		colorless	: rgb(122,85,85)
+		artifact	: rgb(188,192,195)
+		multicolor	: rgb(255,188,14)
+		land		: rgb(109,62,39)
+		hybrid		: rgb(243,26,136)
+	group: white
+	group: blue
+	group: black
+	group: red
+	group: green
+	group: colorless
+	group: artifact
+	group: multicolor
+	group: land
+	group: hybrid
 
 statistics dimension:
 	name:   converted mana cost
@@ -937,12 +1018,6 @@ statistics dimension:
 #	name: word count
 #	type: word count
 #	display: list
-
-#statistics dimension:
-#	name: toughness2
-#	script: card.toughness
-#	numeric: true
-#	icon: stats/toughness.png
 
 statistics category:
 	name: color / rarity
