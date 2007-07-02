@@ -116,7 +116,6 @@ void DropDownList::show(bool in_place, wxPoint pos) {
 			parent_height = (int)r.height + 6;
 		} else {
 			pos           = RealPoint(r.x - 1, r.y - 1);
-			size.width    = max(size.width, r.width + 2);
 			parent_height = (int)r.height;
 		}
 	} else if (parent_menu) {
@@ -148,7 +147,7 @@ void DropDownList::hide(bool event) {
 	}
 	root->realHide();
 	// send event
-	if (event && selected_item != NO_SELECTION) select(selected_item);
+	if (event && selected_item != NO_SELECTION && itemEnabled(selected_item)) select(selected_item);
 }
 
 void DropDownList::realHide() {
@@ -246,8 +245,13 @@ void DropDownList::drawItem(DC& dc, int y, size_t item) {
 	// draw background
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	if (item == selected_item) {
-		dc.SetBrush         (wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-		dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+		if (itemEnabled(item)) {
+			dc.SetBrush         (wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+			dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+		} else {
+			dc.SetBrush         (wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
+			dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+		}
 		dc.DrawRectangle(marginW, y, (int)item_size.width, (int)item_size.height);
 	} else if (!itemEnabled(item)) {
 		// mix between foreground and background
@@ -283,6 +287,7 @@ void DropDownList::onLeftDown(wxMouseEvent&) {
 
 void DropDownList::onLeftUp(wxMouseEvent&) {
 	if (mouse_down) {
+		if (selected_item != NO_SELECTION && !itemEnabled(selected_item)) return; // disabled item
 		// don't hide if there is a child menu
 		if (selected_item != NO_SELECTION && submenu(selected_item)) return;
 		hide(true);
@@ -299,8 +304,8 @@ void DropDownList::onMotion(wxMouseEvent& ev) {
 	for (size_t i = 0 ; i < count ; ++i) {
 		int endY = startY + (int)item_size.height;
 		if (ev.GetY() >= startY && ev.GetY() < endY) {
+			selected_item = i;
 			if (itemEnabled(i)) {
-				selected_item = i;
 				showSubMenu(i, startY);
 			}
 			Refresh(false);
@@ -327,30 +332,23 @@ bool DropDownList::onCharInParent(wxKeyEvent& ev) {
 			// sub menu always takes keys
 			return open_sub_menu->onCharInParent(ev);
 		} else {
-			size_t old_sel = selected_item;
 			switch (k) {
 				case WXK_UP:
-					while (selected_item > 0) {
+					if (selected_item > 0) {
 						selected_item -= 1;
-						if (itemEnabled(selected_item)) {
-							Refresh(false);
-							return true;
-						}
+						Refresh(false);
+						return true;
 					}
-					selected_item = old_sel;
 					break;
 				case WXK_DOWN:
-					while (selected_item + 1 < itemCount()) {
+					if (selected_item + 1 < itemCount()) {
 						selected_item += 1;
-						if (itemEnabled(selected_item)) {
-							Refresh(false);
-							return true;
-						}
+						Refresh(false);
+						return true;
 					}
-					selected_item = old_sel;
 					break;
 				case WXK_RETURN:
-					if (!showSubMenu()) {
+					if (!showSubMenu() && (selected_item == NO_SELECTION || itemEnabled(selected_item))) {
 						hide(true);
 					}
 					break;

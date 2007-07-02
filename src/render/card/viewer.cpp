@@ -142,9 +142,9 @@ void DataViewer::setStyles(const StyleSheetP& stylesheet, IndexMap<FieldP,StyleP
 void DataViewer::addStyles(IndexMap<FieldP,StyleP>& styles) {
 	FOR_EACH(s, styles) {
 		if ((s->visible || s->visible.isScripted()) &&
-		    nativeLook() || (
+		    (nativeLook() || (
 		      (s->width   || s->width  .isScripted() || s->right  || s->right .isScripted()) &&
-		      (s->height  || s->height .isScripted() || s->bottom || s->bottom.isScripted()))) {
+		      (s->height  || s->height .isScripted() || s->bottom || s->bottom.isScripted())))) {
 			// no need to make a viewer for things that are always invisible
 			ValueViewerP viewer = makeViewer(s);
 			if (viewer) viewers.push_back(viewer);
