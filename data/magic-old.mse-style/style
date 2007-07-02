@@ -4,7 +4,7 @@
 ############################################################## 
 ############################################################## 
 
-mse version: 0.3.2
+mse version: 0.3.4
 game: magic
 short name: Old style
 full name: Before 8th edition
@@ -14,6 +14,34 @@ position hint: 101
 card width: 337
 card height: 469
 card dpi: 134.98
+
+############################################################## Extra scripts
+## COPY/PASTE from magic-new.mse-style/style
+
+init script:
+	# Use the normal tap symbol
+	mana_t := {
+		if      styling.tap_symbol == "old"        then "old"
+		else if styling.tap_symbol == "diagonal T" then "older"
+		else                                            "new"
+	}
+	# Use guild mana symbols?
+	guild_mana := { styling.use_guild_mana_symbols }
+	
+	# Only white cards use a black font
+	font_colors_white := { input != "w" }
+	
+	# Alpha style lands?
+	color_combination_std := color_combination
+	color_combination := {
+		if type == "card" and land and color_count == 2 and shape != "overlay" and styling.alpha_style_blending then
+			masked_blend(
+				mask:  "alpha_blend.png",
+				dark:  land_template(colors[0]),
+				light: land_template(colors[1]),
+			)
+		else color_combination_std()
+	}
 
 ############################################################## Set info fields
 set info style:
@@ -34,50 +62,6 @@ set info style:
 			fill color 2:   rgb(95, 84, 40)
 			border color 1: rgb(255,255,255)
 			border color 2: rgb(255,255,255)
-
-############################################################## Extra scripts
-## COPY/PASTE from magic-new.mse-style/style
-
-init script:
-	# Load blend scripts for hybrids/multicolors
-	include file: magic-blends.mse-include/blend-scripts
-	
-	# Horizontal 5 color blends are not supported
-	card_hybrid_5b := card_hybrid_5
-	
-	# Use the normal tap symbol
-	mana_t := {
-		if      styling.tap_symbol == "old"        then "old"
-		else if styling.tap_symbol == "diagonal T" then "older"
-		else                                            "new"
-	}
-	# Use guild mana symbols?
-	guild_mana := { styling.use_guild_mana_symbols }
-	
-	# Does the card have a color that requires a black font for copyright/artist?
-	black_font_colors := filter_rule(match:"^(hybrid 2 color)?white")
-	font_color := {
-		if  black_font_colors(input:card.card_color) != "" then
-			rgb(0,0,0)
-		else
-			rgb(255,255,255)
-	}
-	land_hybrid_2 := { if styling.alpha_style_blending then
-				masked_blend(
-					mask:  "alpha_blend.png",
-					dark:  land_template(input[0]),
-					light: land_template(input[1]),
-				)
-			else
-				card_hybrid_nt(
-					linear_blend(
-						image1: land_template(input[0])
-						image2: land_template(input[1])
-						x1: 0.4,  y1: 0
-						x2: 0.6,  y2: 0
-					)
-				)
-	}
 
 ############################################################## Extra style options
 
@@ -143,7 +127,7 @@ card style:
 		z index: -2
 		render style: image
 		popup style: in place
-		include file: magic-blends.mse-include/card-backgrounds
+		image: { card_background() }
 
 	############################# Name line
 	name:
@@ -308,4 +292,4 @@ card style:
 		font:
 			name: MPlantin
 			size: 6
-			color: script: font_color()
+			color: { font_color(card.card_color) }

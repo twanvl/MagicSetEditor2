@@ -9,7 +9,7 @@
 mask_hybrid_with_land	:= { false }
 template		:= { input + "{type}.jpg" }
 land_template		:= { (if input == "a" then "c" else input) + "l{type}.jpg" }
-hybrid_previews         := "land,hybrid"
+hybrid_previews         := "hybrid"
 
 ########################################################################
 # Combining multiple colors (hybrids)
@@ -437,13 +437,19 @@ color_background := {
 	color_count := number_of_items(in: colors)
 	if colors == "" then colors == "c"
 	
+	# 'shape' / type of hybrid
+	shape := if      chosen(choice:"horizontal") then "horizontal"
+	         else if chosen(choice:"vertical")   then "vertical"
+	         else if chosen(choice:"overlay")    then "overlay"
+	         else                                     "radial"
+	
+	# Determine background (allows styles to hook something else here)
+	color_combination()
+}
+
+color_combination := {
 	# The base hybrid, without the outer frame blended over it
-	base := base_hybrid
-	[	if      chosen(choice:"horizontal") then "horizontal"
-		else if chosen(choice:"vertical")   then "vertical"
-		else if chosen(choice:"overlay")    then "overlay"
-		else                                     "radial"
-	][color_count]()
+	base := base_hybrid[shape][color_count]()
 	
 	# Put a frame around it?
 	if multi then 

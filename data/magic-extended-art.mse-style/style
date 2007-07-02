@@ -1,4 +1,4 @@
-mse version: 0.2.7
+mse version: 0.3.4
 game: magic
 full name: Extended Art
 short name: Extended Art
@@ -13,8 +13,7 @@ card dpi: 150
 ############################################################## Extra scripts
 
 init script:
-	# Load blend scripts for hybrids/multicolors
-	include file: magic-blends.mse-include/blend-scripts
+	# Load scripts for image box
 	include file: magic-default-image.mse-include/scripts
 	
 	# Should hybrids have a grey name?
@@ -26,9 +25,8 @@ init script:
 		then	"oa"
 		else	input
 	}
-	
-	card_template := { artifact_template() + "card.jpg" }
-	pt_template   := { "/magic-new.mse-style/" + artifact_template() + "pt.jpg" }
+	template      := { (if type == "pt" then "/magic-new.mse-style/" else "") + artifact_template() + "{type}.jpg" }
+	land_template := { (if type == "pt" then "/magic-new.mse-style/" else "") +(if input == "a" then "c" else input) + "l{type}.jpg" }
 	
 	# Use the normal tap symbol
 	mana_t := {
@@ -38,15 +36,6 @@ init script:
 	}
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
-	
-	# Does the card have a color that requires a white font for copyright/artist?
-	white_font_colors := filter_rule(match:"^(hybrid 2 color )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(black|land|hybrid 4 color white / blue / black / red|hybrid 2 color overlay blue / black|hybrid 2 color overlay black / red|hybrid 2 color overlay black / green)")
-	font_color := {
-		if  white_font_colors(input:card.card_color) != "" then
-			rgb(255,255,255)
-		else
-			rgb(0,0,0)
-	}
 
 ############################################################## Extra style
 
@@ -111,7 +100,7 @@ card style:
 		z index: -2
 		render style: image
 		popup style: in place
-		include file: magic-blends.mse-include/card-backgrounds
+		image: { card_background() }
 
 	############################# Name line
 	name:
@@ -246,7 +235,7 @@ card style:
 		font:
 			name: Matrix
 			size: 10
-			color: { font_color() }
+			color: { font_color(card.card_color) }
 
 	copyright line:
 		left: 26
@@ -257,7 +246,7 @@ card style:
 		font:
 			name: MPlantin
 			size: 6.5
-			color: { font_color() }
+			color: { font_color(card.card_color) }
 
 ############################################################## Extra card fields
 
@@ -277,4 +266,4 @@ extra card style:
 		visible: { card.pt != "" }
 		render style: image
 		mask: mask_pt.png
-		include file: magic-blends.mse-include/card-ptboxes
+		image: { card_ptbox() }

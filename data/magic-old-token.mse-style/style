@@ -4,7 +4,7 @@
 ############################################################## 
 ############################################################## 
 
-mse version: 0.3.2
+mse version: 0.3.4
 game: magic
 short name: Tokens
 full name: Old style
@@ -14,6 +14,25 @@ position hint: 121
 card width: 312
 card height: 444
 card dpi: 127.34225621414913957934990439771
+
+############################################################## Extra scripts
+## COPY/PASTE from magic-old.mse-style/style
+
+init script:
+	# There is no land template
+	land_template := { "c{type}.jpg" }
+	
+	# Use the normal tap symbol
+	mana_t := {
+		if      styling.tap_symbol == "old"        then "old"
+		else if styling.tap_symbol == "diagonal T" then "older"
+		else                                            "new"
+	}
+	# Use guild mana symbols?
+	guild_mana := { styling.use_guild_mana_symbols }
+	
+	# Only white cards use a black font
+	font_colors_white := { input != "w" }
 
 ############################################################## Set info fields
 set info style:
@@ -34,37 +53,6 @@ set info style:
 			fill color 2:   rgb(95, 84, 40)
 			border color 1: rgb(255,255,255)
 			border color 2: rgb(255,255,255)
-
-############################################################## Extra scripts
-## COPY/PASTE from magic-old.mse-style/style
-
-init script:
-	# Load blend scripts for hybrids/multicolors
-	include file: magic-blends.mse-include/blend-scripts
-	
-	# There is no land template
-	land_template := { "acard.jpg" }
-	
-	# Horizontal 5 color blends are not supported
-	card_hybrid_5b := card_hybrid_5
-	
-	# Use the normal tap symbol
-	mana_t := {
-		if      styling.tap_symbol == "old"        then "old"
-		else if styling.tap_symbol == "diagonal T" then "older"
-		else                                            "new"
-	}
-	# Use guild mana symbols?
-	guild_mana := { styling.use_guild_mana_symbols }
-	
-	# Does the card have a color that requires a black font for copyright/artist?
-	black_font_colors := filter_rule(match:"^(hybrid 2 color)?white")
-	font_color := {
-		if  black_font_colors(input:card.card_color) != "" then
-			rgb(0,0,0)
-		else
-			rgb(255,255,255)
-	}
 
 ############################################################## Extra style options
 
@@ -125,7 +113,7 @@ card style:
 		z index: -2
 		render style: image
 		popup style: in place
-		include file: magic-blends.mse-include/card-backgrounds
+		image: { card_background() }
 
 	############################# Name line
 	name:
@@ -260,4 +248,4 @@ card style:
 		font:
 			name: MPlantin
 			size: 6
-			color: script: font_color()
+			color: { font_color(card.card_color) }

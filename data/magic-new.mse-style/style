@@ -8,7 +8,7 @@ position hint: 001
 version: 2007-05-05
 depends on:
 	package: magic.mse-game
-	version: 2007-05-05
+	version: 2007-07-01
 depends on:
 	package: magic-watermarks.mse-include
 	version: 2006-08-03
@@ -36,6 +36,8 @@ init script:
 	}
 	template      := { artifact_template() + "{type}.jpg" }
 	land_template := { (if input == "a" then "c" else input) + "l{type}.jpg" }
+	# Use land templates for previews because they show more contrast
+	hybrid_previews := "land,hybrid"
 	
 	# Use the normal tap symbol
 	mana_t := {
