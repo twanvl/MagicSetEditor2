@@ -176,15 +176,18 @@ card style:
 	############################# Copyright stuff
 
 	illustrator:
-		left: 56
+		left: 23
 		top : 477
-		width: 217
+		width: 250
 		height: 16
 		z index: 1
 		font:
 			name: Matrix
 			size: 10
 			color: { font_color(card.card_color) }
+		symbol font:
+			name: magic-paintbrush
+			size: 10
 
 	copyright line:
 		left: 26

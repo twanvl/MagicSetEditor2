@@ -1663,7 +1663,7 @@ keyword:
 	reminder: {if has_pt() then "This creature" else "This permanent"} comes into play with {english_number_a(param1)} +1/+1 counter(s) on it. Whenever {if has_pt() then "another" else "a"} creature comes into play, you may move a +1/+1 counter from {if has_pt() then "this creature" else "this permanent"} onto it.
 keyword:
 	keyword: Forecast
-	match: Forecast — <atom-param>cost</atom-param>, Reveal <atom-param>name</atom-param> from your hand: <atom-param>action</atom-param>
+	match: Forecast — <atom-param>mana</atom-param>, Reveal <atom-param>name</atom-param> from your hand: <atom-param>action</atom-param>
 	mode: expert
 	reminder: Play this ability only during your upkeep and only once each turn.
 keyword:

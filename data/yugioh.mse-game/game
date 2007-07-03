@@ -210,11 +210,11 @@ card field:
 		# Either just monster, monster / type1
 		combined_editor(
 			field1: card.type1,
-			separator: " / ",
+			separator: " ",
 			field2: card.type2,
 			grey_until_needed: true,
 			hide_when_both_empty: true,
-			type_over1: " / ",
+			type_over1: "/",
 			type_over2: "/"
 		)
 	card list visible: true
