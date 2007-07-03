@@ -26,12 +26,12 @@ init script:
 		
 	# What should the textbox look like?
 	text_shape := {
-		if styling.one_textline_tokens
-		   and card_style.text.content_lines <= 2
-		   and card.flavor_text == "<i-flavor></i-flavor>"  then "1" # small
-		else if card.rule_text != "" or
-		     number_of_items(in:"" + card.flavor_text) > 21 then "2" # large
-		else                                                     "0" # none
+		if card.rule_text == ""
+		   and card.flavor_text == "<i-flavor></i-flavor>" then "0" # no textbox
+		else if styling.one_textline_tokens
+		   and card_style.text.content_lines == 2
+		   and card.flavor_text == "<i-flavor></i-flavor>" then "1" # small textbox
+		else "2" # large textbox
 	}
 	
 	suffix := ""
@@ -152,7 +152,7 @@ card style:
 		top:
 			{ if      text_shape() == "1" then 414
 			  else if text_shape() == "2" then 350
-			  else                             433 }
+			  else                             430 }
 		width: 286
 		height: 20
 		alignment: top shrink-overflow
@@ -199,7 +199,7 @@ card style:
 			name: MPlantin
 			italic name: MPlantin-Italic
 			size: 15
-			scale down to: 6
+			scale down to: 15
 			color: rgb(0,0,0)
 		symbol font:
 			name:
