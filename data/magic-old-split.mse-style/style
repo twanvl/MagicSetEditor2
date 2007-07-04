@@ -67,7 +67,7 @@ styling field:
 	type: choice
 	name: tap symbol
 	description: What tap symbol should be used on cards?
-	initial: modern
+	initial: old
 	choice: modern
 	choice: old
 	choice: diagonal T
