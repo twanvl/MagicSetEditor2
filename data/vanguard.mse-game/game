@@ -1,4 +1,4 @@
-﻿mse version: 0.3.2
+﻿mse version: 0.3.4
 short name: Vanguard
 full name: Magic Vanguard
 icon: card-sample.png
@@ -183,6 +183,12 @@ init script:
 			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>|—<match>| — <match>",
 			replace: { to_upper() })
 	
+	# Converted mana cost
+	cmc := to_text + {
+		  1 * number_of_items(in: sort(order:"SWUBRG")) # colored mana
+		- 1 * number_of_items(in: sort(order:"/"))      # guild mana, W/U -> 2 - 1
+		+ 1 * sort(order: "[0123456789]")               # colorless mana
+	}
 
 ############################################################## Set fields
 
@@ -406,6 +412,15 @@ keyword mode:
 keyword parameter type:
 	name: mana
 	match: [STXYZ0-9WUBRG/|]+
+	refer script:
+		name: normal
+		description: No changes made
+		script: \{{input}\}
+	refer script:
+		name: converted mana cost
+		description: Converts mana to number
+		# "0" left in so users can easily see how to edit script.
+		script: \{cmc({input}) + 0\}
 # By pichoro and bunnierein
 keyword parameter type:
 	name: cost
@@ -777,7 +792,7 @@ keyword:
 	reminder: It comes into play with {english_number_a(param1)} +1/+1 counter(s) on it. Whenever a creature comes into play, you may move a +1/+1 counter from the permanent onto it.
 keyword:
 	keyword: Forecast
-	match: forecast — <atom-param>cost</atom-param>, Reveal <atom-param>name</atom-param> from your hand: <atom-param>action</atom-param>
+	match: forecast — <atom-param>mana</atom-param>, Reveal <atom-param>name</atom-param> from your hand: <atom-param>action</atom-param>
 	mode: expert
 	reminder: Play the ability only during your upkeep and only once each turn.
 keyword:
