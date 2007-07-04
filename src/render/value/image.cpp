@@ -77,10 +77,10 @@ void ImageValueViewer::onValueChange() {
 	bitmap = Bitmap();
 }
 
-void ImageValueViewer::onStyleChange() {
+void ImageValueViewer::onStyleChange(bool already_prepared) {
 	bitmap = Bitmap();
 	alpha_mask = AlphaMaskP(); // TODO: only reload whatever has changed
-	viewer.redraw(*this);
+	if (!already_prepared) viewer.redraw(*this);
 }
 
 void ImageValueViewer::loadMask(const Rotation& rot) const {

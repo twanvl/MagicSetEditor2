@@ -27,7 +27,7 @@ class ImageValueViewer : public ValueViewer {
 	virtual bool containsPoint(const RealPoint& p) const;
 	
 	virtual void onValueChange();
-	virtual void onStyleChange();
+	virtual void onStyleChange(bool);
 			
   private:
 	Bitmap bitmap;

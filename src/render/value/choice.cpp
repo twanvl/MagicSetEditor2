@@ -72,6 +72,6 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 	}
 }
 
-void ChoiceValueViewer::onStyleChange() {
-	viewer.redraw(*this);
+void ChoiceValueViewer::onStyleChange(bool already_prepared) {
+	if (!already_prepared) viewer.redraw(*this);
 }

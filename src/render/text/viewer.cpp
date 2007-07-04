@@ -146,6 +146,9 @@ void TextViewer::reset() {
 	elements.clear();
 	lines.clear();
 }
+bool TextViewer::prepared() const {
+	return !lines.empty();
+}
 
 // ----------------------------------------------------------------------------- : Positions
 

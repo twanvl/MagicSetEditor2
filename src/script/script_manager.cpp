@@ -226,7 +226,7 @@ void SetScriptManager::updateStyles(Context& ctx, const IndexMap<FieldP,StyleP>&
 		try {
 			if (s->update(ctx)) {
 				// style has changed, tell listeners
-				s->tellListeners();
+				s->tellListeners(only_content_dependent);
 			}
 		} catch (const ScriptError& e) {
 			throw ScriptError(e.what() + _("\n  while updating styles for '") + s->fieldP->name + _("'"));

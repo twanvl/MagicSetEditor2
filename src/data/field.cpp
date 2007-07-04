@@ -183,8 +183,8 @@ void Style::removeListener(StyleListener* listener) {
 		listeners.end()
 		);
 }
-void Style::tellListeners() {
-	FOR_EACH(l, listeners) l->onStyleChange();
+void Style::tellListeners(bool already_prepared) {
+	FOR_EACH(l, listeners) l->onStyleChange(already_prepared);
 }
 
 StyleListener::StyleListener(const StyleP& style)

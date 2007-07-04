@@ -252,7 +252,7 @@ void ChoiceStyle::invalidate(Context& ctx) {
 			thumbnails_status[i] = THUMB_CHANGED;
 		}
 	}
-	if (change) tellListeners();
+	if (change) tellListeners(false);
 }
 
 void ChoiceStyle::loadMask(Package& pkg) {

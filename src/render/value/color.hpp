@@ -25,7 +25,7 @@ class ColorValueViewer : public ValueViewer {
 	virtual void draw(RotatedDC& dc);
 	virtual bool containsPoint(const RealPoint& p) const;
 	
-	virtual void onStyleChange();
+	virtual void onStyleChange(bool);
 	
   private:
 	mutable AlphaMaskP alpha_mask;

@@ -58,6 +58,8 @@ class TextViewer {
 	bool prepare(RotatedDC& dc, const String& text, TextStyle& style, Context&);
 	/// Reset the cached data, at a new call to draw it will be recalculated
 	void reset();
+	/// Is the viewer prepare()d?
+	bool prepared() const;
 	
 	// --------------------------------------------------- : Positions
 	

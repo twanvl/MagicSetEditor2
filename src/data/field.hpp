@@ -132,7 +132,7 @@ class Style : public IntrusivePtrVirtualBase {
 	/// Remove a StyleListener
 	void removeListener(StyleListener*);
 	/// Tell the StyleListeners that this style has changed
-	void tellListeners();
+	void tellListeners(bool already_prepared);
 	
   private:
 	DECLARE_REFLECTION_VIRTUAL();
@@ -156,7 +156,8 @@ class StyleListener : public IntrusivePtrVirtualBase {
 	virtual ~StyleListener();
 	
 	/// Called when a (scripted) property of the viewed style has changed
-	virtual void onStyleChange() {}
+	/** already_prepared indicates that this change happend after preparing text for content properties */
+	virtual void onStyleChange(bool already_prepared) {}
   protected:
 	const StyleP styleP; ///< The style we are listening to
 };

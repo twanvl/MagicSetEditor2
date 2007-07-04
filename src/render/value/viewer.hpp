@@ -57,7 +57,8 @@ class ValueViewer : public StyleListener {
 	 */
 	virtual void onValueChange() {}
 	/// Called when a (scripted) property of the associated style has changed
-	virtual void onStyleChange() {}
+	/** If alread_prepared, should make sure the viewer stays in a state similair to that after prepare() */
+	virtual void onStyleChange(bool already_prepared) {}
 	/// Called when an action is performed on the associated value
 	virtual void onAction(const Action&, bool undone) { onValueChange(); }
 	

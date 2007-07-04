@@ -21,12 +21,14 @@ bool TextValueViewer::prepare(RotatedDC& dc) {
 			style().mask.load(image);
 		}
 	}
-	v.prepare(dc, value().value(), style(), viewer.getContext());
-	return true;
+	return v.prepare(dc, value().value(), style(), viewer.getContext());
 }
 
 void TextValueViewer::draw(RotatedDC& dc) {
 	drawFieldBorder(dc);
+	if (!v.prepared()) {
+		v.prepare(dc, value().value(), style(), viewer.getContext());
+	}
 	v.draw(dc, style(), (DrawWhat)(
 		  DRAW_NORMAL
 		| (viewer.drawBorders()              ? DRAW_BORDERS : 0)
@@ -38,7 +40,7 @@ void TextValueViewer::onValueChange() {
 	v.reset();
 }
 
-void TextValueViewer::onStyleChange() {
+void TextValueViewer::onStyleChange(bool already_prepared) {
 	v.reset();
-	viewer.redraw(*this);
+	if (!already_prepared) viewer.redraw(*this);
 }

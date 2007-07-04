@@ -21,7 +21,7 @@ class ChoiceValueViewer : public ValueViewer {
 	DECLARE_VALUE_VIEWER(Choice) : ValueViewer(parent,style) {}
 	
 	virtual void draw(RotatedDC& dc);
-	virtual void onStyleChange();
+	virtual void onStyleChange(bool);
 };
 
 // ----------------------------------------------------------------------------- : EOF

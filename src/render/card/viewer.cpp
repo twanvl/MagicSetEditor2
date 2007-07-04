@@ -83,7 +83,7 @@ void DataViewer::updateStyles(bool only_content_dependent) {
 				Style& s = *v->getStyle();
 				if (only_content_dependent && !s.content_dependent) continue;
 				if (s.update(ctx)) {
-					s.tellListeners();
+					s.tellListeners(only_content_dependent);
 				}
 			}
 		}
