@@ -73,18 +73,27 @@ wxFont Font::toWxFont(double scale) const {
 	int size_i = scale * size;
 	int weight_i = flags & FONT_BOLD   ? wxFONTWEIGHT_BOLD  : wxFONTWEIGHT_NORMAL;
 	int style_i  = flags & FONT_ITALIC ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL;
+	// make font
+	wxFont font;
 	if (flags & FONT_CODE) {
 		if (size_i < 2) size_i = wxNORMAL_FONT->GetPointSize();
-		return wxFont(size_i, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, weight_i, underline(), _("Courier New"));
+		font = wxFont(size_i, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, weight_i, underline(), _("Courier New"));
 	} else if (name().empty()) {
-		wxFont font = *wxNORMAL_FONT;
+		font = *wxNORMAL_FONT;
 		font.SetPointSize(size > 1 ? size_i : scale * font.GetPointSize());
 		return font;
 	} else if (flags & FONT_ITALIC && !italic_name().empty()) {
-		return wxFont(size_i, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, weight_i, underline(), italic_name());
+		font = wxFont(size_i, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, weight_i, underline(), italic_name());
 	} else {
-		return wxFont(size_i, wxFONTFAMILY_DEFAULT, style_i, weight_i, underline(), name());
+		font = wxFont(size_i, wxFONTFAMILY_DEFAULT, style_i, weight_i, underline(), name());
 	}
+	// fix size
+	#ifdef __WXMSW__
+		// make it independent of screen dpi, always use 96 dpi
+		// TODO: do something more sensible, and more portable
+		font.SetPixelSize(wxSize(0, -(int)(scale*size*96.0/72.0 + 0.5) ));
+	#endif
+	return font;
 }
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(Font) {

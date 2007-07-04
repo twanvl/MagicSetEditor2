@@ -101,14 +101,13 @@ SCRIPT_FUNCTION(curly_quotes) {
 			c = open ? LEFT_SINGLE_QUOTE : RIGHT_SINGLE_QUOTE;
 		} else if (c == _('\"') || c == LEFT_DOUBLE_QUOTE || c == RIGHT_DOUBLE_QUOTE) {
 			c = open ? LEFT_DOUBLE_QUOTE : RIGHT_DOUBLE_QUOTE;
-		}
-		if (c == _('<')) {
+		} else if (c == _('<')) {
 			in_tag = true;
 		} else if (c == _('>')) {
 			in_tag = false;
 		} else if (!in_tag) {
 			// Also allow double-nesting of quotes
-			open = isSpace(c) || c == LEFT_DOUBLE_QUOTE || c == LEFT_SINGLE_QUOTE;
+			open = isSpace(c) || c == _('(') || c == _('[');
 		}
 	}
 	SCRIPT_RETURN(input);
