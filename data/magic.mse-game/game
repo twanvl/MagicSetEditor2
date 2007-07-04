@@ -718,7 +718,6 @@ card field:
 	type: text
 	name: rule text
 	script: text_filter(input: value, card_name: card.name)
-	editable: false
 	show statistics: false
 card field:
 	type: text
