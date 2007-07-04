@@ -163,7 +163,7 @@ card style:
 			shadow displacement x: -1
 			shadow displacement y: 1
 			scale down to: 6
-			separator color: rgb(128,128,128)
+			separator color: rgb(192,192,192)
 
 	rarity:
 		left: 320
