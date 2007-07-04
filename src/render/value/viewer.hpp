@@ -40,8 +40,9 @@ class ValueViewer : public StyleListener {
 	inline const ValueP& getValue() const { return valueP; }
 	
 	/// Prepare before drawing.
-	/** Scripts are updated after preparing, allowing */
-	virtual void prepare(RotatedDC& dc) {};
+	/** Should return true if a content property has changed
+	 *  Scripts are re-updated after preparing if they depend on content properties. */
+	virtual bool prepare(RotatedDC& dc) { return false; };
 	/// Draw this value
 	virtual void draw(RotatedDC& dc) = 0;
 	

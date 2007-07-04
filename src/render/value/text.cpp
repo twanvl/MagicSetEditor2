@@ -12,7 +12,7 @@
 
 // ----------------------------------------------------------------------------- : TextValueViewer
 
-void TextValueViewer::prepare(RotatedDC& dc) {
+bool TextValueViewer::prepare(RotatedDC& dc) {
 	if (!style().mask_filename.empty() && !style().mask.ok()) {
 		// load contour mask
 		Image image;
@@ -22,6 +22,7 @@ void TextValueViewer::prepare(RotatedDC& dc) {
 		}
 	}
 	v.prepare(dc, value().value(), style(), viewer.getContext());
+	return true;
 }
 
 void TextValueViewer::draw(RotatedDC& dc) {

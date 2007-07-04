@@ -131,12 +131,15 @@ void TextViewer::drawSeparators(RotatedDC& dc) {
 	}
 }
 
-void TextViewer::prepare(RotatedDC& dc, const String& text, TextStyle& style, Context& ctx) {
+bool TextViewer::prepare(RotatedDC& dc, const String& text, TextStyle& style, Context& ctx) {
 	if (lines.empty()) {
 		// not prepared yet
 		Rotater r(dc, style.getRotation());
 		prepareElements(text, style, ctx);
 		prepareLines(dc, text, style, ctx);
+		return true;
+	} else {
+		return false;
 	}
 }
 void TextViewer::reset() {

@@ -66,7 +66,7 @@ class Set : public Packaged {
 	/** Should only be used from the main thread! */
 	Context& getContext(const CardP& card);
 	/// Update styles and extra_card_fields for a card
-	void updateStyles(const CardP& card);
+	void updateStyles(const CardP& card, bool only_content_dependent);
 	/// Update scripts that were delayed
 	void updateDelayed();
 	/// A context for performing scripts

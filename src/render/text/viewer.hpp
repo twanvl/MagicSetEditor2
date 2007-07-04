@@ -54,7 +54,8 @@ class TextViewer {
 	void drawSeparators(RotatedDC& dc);
 	
 	/// Prepare the text for drawing, if it is not already prepared
-	void prepare(RotatedDC& dc, const String& text, TextStyle& style, Context&);
+	/** Returns true if something has been done */
+	bool prepare(RotatedDC& dc, const String& text, TextStyle& style, Context&);
 	/// Reset the cached data, at a new call to draw it will be recalculated
 	void reset();
 	

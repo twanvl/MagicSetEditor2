@@ -75,6 +75,8 @@ class DataViewer : public SetView {
   private:
 	/// Create some viewers for the given styles
 	void addStyles(IndexMap<FieldP,StyleP>& styles);
+	/// Update style scripts
+	void updateStyles(bool only_content_dependent);
   protected:
 	/// Set the styles for the data to be shown, recreating the viewers
 	void setStyles(const StyleSheetP& stylesheet, IndexMap<FieldP,StyleP>& styles, IndexMap<FieldP,StyleP>* extra_styles = nullptr);

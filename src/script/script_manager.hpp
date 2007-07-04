@@ -61,7 +61,7 @@ class SetScriptManager : public SetScriptContext, public ActionListener {
 	~SetScriptManager();
 	
 	/// Update all styles for a particular card
-	void updateStyles(const CardP& card);
+	void updateStyles(const CardP& card, bool only_content_dependent);
 	
 	/// Update expensive things that were previously delayed
 	void updateDelayed();
@@ -79,7 +79,7 @@ class SetScriptManager : public SetScriptContext, public ActionListener {
 	void initDependencies(Context&, StyleSheet&);
 	
 	/// Update a map of styles
-	void updateStyles(Context& ctx, const IndexMap<FieldP,StyleP>& styles);
+	void updateStyles(Context& ctx, const IndexMap<FieldP,StyleP>& styles, bool only_content_dependent);
 	/// Updates scripts, starting at some value
 	/** if the value changes any dependend values are updated as well */
 	void updateValue(Value& value, const CardP& card);

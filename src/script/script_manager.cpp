@@ -139,6 +139,12 @@ void SetScriptManager::initDependencies(Context& ctx, StyleSheet& stylesheet) {
 		s->checkContentDependencies(ctx, test);
 		if (test.index) s->content_dependent = true;
 	}
+	FOR_EACH(s, stylesheet.extra_card_style) {
+		// are there dependencies of this style on other style properties?
+		Dependency test(DEP_DUMMY, false);
+		s->checkContentDependencies(ctx, test);
+		if (test.index) s->content_dependent = true;
+	}
 }
 
 // ----------------------------------------------------------------------------- : ScriptManager : updating
@@ -199,21 +205,24 @@ void SetScriptManager::onAction(const Action& action, bool undone) {
 	}
 }
 
-void SetScriptManager::updateStyles(const CardP& card) {
+void SetScriptManager::updateStyles(const CardP& card, bool only_content_dependent) {
 	assert(card);
 	const StyleSheet& stylesheet = set.stylesheetFor(card);
 	Context& ctx = getContext(card);
-	// update extra card fields
-	IndexMap<FieldP,ValueP>& extra_data = card->extraDataFor(stylesheet);
-	FOR_EACH(v, extra_data) {
-		v->update(ctx);
+	if (!only_content_dependent) {
+		// update extra card fields
+		IndexMap<FieldP,ValueP>& extra_data = card->extraDataFor(stylesheet);
+		FOR_EACH(v, extra_data) {
+			v->update(ctx);
+		}
 	}
 	// update all styles
-	updateStyles(ctx, stylesheet.card_style);
-	updateStyles(ctx, stylesheet.extra_card_style);
+	updateStyles(ctx, stylesheet.card_style,       only_content_dependent);
+	updateStyles(ctx, stylesheet.extra_card_style, only_content_dependent);
 }
-void SetScriptManager::updateStyles(Context& ctx, const IndexMap<FieldP,StyleP>& styles) {
+void SetScriptManager::updateStyles(Context& ctx, const IndexMap<FieldP,StyleP>& styles, bool only_content_dependent) {
 	FOR_EACH_CONST(s, styles) {
+		if (only_content_dependent && !s->content_dependent) continue;
 		try {
 			if (s->update(ctx)) {
 				// style has changed, tell listeners

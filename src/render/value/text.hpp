@@ -21,7 +21,7 @@ class TextValueViewer : public ValueViewer {
   public:
 	DECLARE_VALUE_VIEWER(Text) : ValueViewer(parent,style) {}
 	
-	virtual void prepare(RotatedDC& dc);
+	virtual bool prepare(RotatedDC& dc);
 	virtual void draw(RotatedDC& dc);
 	virtual void onValueChange();
 	virtual void onStyleChange();

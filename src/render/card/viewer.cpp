@@ -40,29 +40,22 @@ void DataViewer::draw(RotatedDC& dc, const Color& background) {
 	// fill with background color
 	clearDC(dc.getDC(), background);
 	// update style scripts
-	try {
-		if (card) {
-			set->updateStyles(card);
-		} else {
-			Context& ctx = getContext();
-			FOR_EACH(v, viewers) {
-				if (v->getStyle()->update(ctx)) {
-					v->getStyle()->tellListeners();
-				}
-			}
-		}
-	} catch (const Error& e) {
-		handle_error(e, false, false);
-	}
+	updateStyles(false);
 	// prepare viewers
+	bool changed_content_properties = false;
 	FOR_EACH(v, viewers) { // draw low z index fields first
 		if (v->getStyle()->visible) {
 			try {
-				v->prepare(dc);
+				if (v->prepare(dc)) {
+					changed_content_properties = true;
+				}
 			} catch (const Error& e) {
 				handle_error(e, false, false);
 			}
 		}
+	}
+	if (changed_content_properties) {
+		updateStyles(true);
 	}
 	// draw viewers
 	FOR_EACH(v, viewers) { // draw low z index fields first
@@ -78,6 +71,25 @@ void DataViewer::draw(RotatedDC& dc, const Color& background) {
 }
 void DataViewer::drawViewer(RotatedDC& dc, ValueViewer& v) {
 	v.draw(dc);
+}
+
+void DataViewer::updateStyles(bool only_content_dependent) {
+	try {
+		if (card) {
+			set->updateStyles(card, only_content_dependent);
+		} else {
+			Context& ctx = getContext();
+			FOR_EACH(v, viewers) {
+				Style& s = *v->getStyle();
+				if (only_content_dependent && !s.content_dependent) continue;
+				if (s.update(ctx)) {
+					s.tellListeners();
+				}
+			}
+		}
+	} catch (const Error& e) {
+		handle_error(e, false, false);
+	}
 }
 
 // ----------------------------------------------------------------------------- : Utility for ValueViewers
