@@ -38,6 +38,10 @@ void CardViewer::redraw(const ValueViewer& v) {
 }
 
 void CardViewer::onChange() {
+	redraw();
+}
+
+void CardViewer::redraw() {
 	if (drawing) return;
 	up_to_date = false;
 	Refresh(false);

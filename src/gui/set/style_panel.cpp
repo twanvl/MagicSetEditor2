@@ -16,6 +16,9 @@
 #include <data/card.hpp>
 #include <data/stylesheet.hpp>
 #include <data/action/set.hpp>
+#include <data/action/value.hpp>
+
+DECLARE_TYPEOF_COLLECTION(FieldP);
 
 // ----------------------------------------------------------------------------- : StylePanel
 
@@ -66,6 +69,17 @@ void StylePanel::onAction(const Action& action, bool undone) {
 	TYPE_CASE(action, ChangeCardHasStylingAction) {
 		if (action.card == card) {
 			editor->showCard(card);
+		}
+	}
+	TYPE_CASE(action, ValueAction) {
+		// is it a styling action?
+		const StyleSheet& s = set->stylesheetFor(card);
+		FOR_EACH_CONST(f, s.styling_fields) {
+			if (action.valueP->fieldP == f) {
+				// refresh the viewer
+				preview->redraw();
+				return;
+			}
 		}
 	}
 	use_for_all->Enable(card && card->stylesheet);

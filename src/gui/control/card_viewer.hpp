@@ -30,6 +30,8 @@ class CardViewer : public wxControl, public DataViewer {
 	/** May NOT be called while in onPaint/draw */
 	shared_ptr<DC> overdrawDC();
 	
+	/// Invalidate and redraw the entire viewer
+	void redraw();
 	/// Invalidate and redraw (the area of) a single value viewer
 	virtual void redraw(const ValueViewer&);
 	
