@@ -86,6 +86,12 @@ AColor SolidFillSymbolFilter::color(double x, double y, SymbolSet point) const {
 	else                             return AColor(0,0,0,0);
 }
 
+bool SolidFillSymbolFilter::operator == (const SymbolFilter& that) const {
+	const SolidFillSymbolFilter* that2 = dynamic_cast<const SolidFillSymbolFilter*>(&that);
+	return that2 && fill_color   == that2->fill_color
+	             && border_color == that2->border_color;
+}
+
 IMPLEMENT_REFLECTION(SolidFillSymbolFilter) {
 	REFLECT_BASE(SymbolFilter);
 	REFLECT(fill_color);
@@ -99,6 +105,13 @@ AColor GradientSymbolFilter::color(double x, double y, SymbolSet point, const T*
 	if      (point == SYMBOL_INSIDE) return lerp(fill_color_1,   fill_color_2,   t->t(x,y));
 	else if (point == SYMBOL_BORDER) return lerp(border_color_1, border_color_2, t->t(x,y));
 	else                             return AColor(0,0,0,0);
+}
+
+bool GradientSymbolFilter::equal(const GradientSymbolFilter& that) const {
+	return fill_color_1   == that.fill_color_1
+	    && fill_color_2   == that.fill_color_2
+	    && border_color_1 == that.border_color_1
+	    && border_color_2 == that.border_color_2;
 }
 
 IMPLEMENT_REFLECTION(GradientSymbolFilter) {
@@ -120,6 +133,14 @@ LinearGradientSymbolFilter::LinearGradientSymbolFilter()
 	: center_x(0.5), center_y(0.5)
 	, end_x(1), end_y(1)
 {}
+LinearGradientSymbolFilter::LinearGradientSymbolFilter
+		( const Color& fill_color_1, const Color& border_color_1
+		, const Color& fill_color_2, const Color& border_color_2
+		, double center_x, double center_y, double end_x, double end_y)
+	: GradientSymbolFilter(fill_color_1, border_color_1, fill_color_2, border_color_2)
+	, center_x(center_x), center_y(center_y)
+	, end_x(end_x), end_y(end_y)
+{}
 
 AColor LinearGradientSymbolFilter::color(double x, double y, SymbolSet point) const {
 	len = sqr(end_x - center_x) + sqr(end_y - center_y);
@@ -130,6 +151,13 @@ AColor LinearGradientSymbolFilter::color(double x, double y, SymbolSet point) co
 double LinearGradientSymbolFilter::t(double x, double y) const {
 	double t= fabs( (x - center_x) * (end_x - center_x) + (y - center_y) * (end_y - center_y)) / len;
 	return min(1.,max(0.,t));
+}
+
+bool LinearGradientSymbolFilter::operator == (const SymbolFilter& that) const {
+	const LinearGradientSymbolFilter* that2 = dynamic_cast<const LinearGradientSymbolFilter*>(&that);
+	return that2 && equal(*that2)
+	             && center_x == that2->center_x && end_x == that2->end_x
+	             && center_y == that2->center_y && end_y == that2->end_y;
 }
 
 IMPLEMENT_REFLECTION(LinearGradientSymbolFilter) {
@@ -148,4 +176,9 @@ AColor RadialGradientSymbolFilter::color(double x, double y, SymbolSet point) co
 
 double RadialGradientSymbolFilter::t(double x, double y) const {
 	return sqrt( (sqr(x - 0.5) + sqr(y - 0.5)) * 2); 
+}
+
+bool RadialGradientSymbolFilter::operator == (const SymbolFilter& that) const {
+	const RadialGradientSymbolFilter* that2 = dynamic_cast<const RadialGradientSymbolFilter*>(&that);
+	return that2 && equal(*that2);
 }

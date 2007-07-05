@@ -86,3 +86,13 @@ void set_alpha(Image& img, const Image& img_alpha) {
 		im[i] = (im[i] * al[i*3]) / 255;
 	}
 }
+
+void set_alpha(Image& img, double alpha) {
+	if (!img.HasAlpha()) img.InitAlpha();
+	Byte b_alpha = alpha * 255;
+	Byte *im = img.GetAlpha();
+	UInt size = img.GetWidth() * img.GetHeight();
+	for (UInt i = 0 ; i < size ; ++i) {
+		im[i] = (im[i] * b_alpha) / 255;
+	}
+}

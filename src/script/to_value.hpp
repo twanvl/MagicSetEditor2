@@ -274,6 +274,7 @@ template <> inline String       from_script<String>      (const ScriptValueP& va
 template <> inline int          from_script<int>         (const ScriptValueP& value) { return *value; }
 template <> inline double       from_script<double>      (const ScriptValueP& value) { return *value; }
 template <> inline bool         from_script<bool>        (const ScriptValueP& value) { return *value; }
+template <> inline Color        from_script<Color>       (const ScriptValueP& value) { return *value; }
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

@@ -123,6 +123,8 @@ void draw_combine_image(DC& dc, UInt x, UInt y, const Image& img, ImageCombine c
 
 /// Use the red channel of img_alpha as alpha channel for img
 void set_alpha(Image& img, const Image& img_alpha);
+/// Set the transparency of img
+void set_alpha(Image& img, double alpha);
 
 /// An alpha mask is an alpha channel that can be copied to another image
 /** It is created by treating black in the source image as transparent and white (red) as opaque

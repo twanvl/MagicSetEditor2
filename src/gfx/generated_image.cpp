@@ -152,6 +152,20 @@ bool SetMaskImage::operator == (const GeneratedImage& that) const {
 	             && *mask  == *that2->mask;
 }
 
+Image SetAlphaImage::generate(const Options& opt) const {
+	Image img = image->generate(opt);
+	set_alpha(img, alpha);
+	return img;
+}
+ImageCombine SetAlphaImage::combine() const {
+	return image->combine();
+}
+bool SetAlphaImage::operator == (const GeneratedImage& that) const {
+	const SetAlphaImage* that2 = dynamic_cast<const SetAlphaImage*>(&that);
+	return that2 && *image == *that2->image
+	             && alpha  == that2->alpha;
+}
+
 // ----------------------------------------------------------------------------- : SetCombineImage
 
 Image SetCombineImage::generate(const Options& opt) const {
@@ -164,6 +178,146 @@ bool SetCombineImage::operator == (const GeneratedImage& that) const {
 	const SetCombineImage* that2 = dynamic_cast<const SetCombineImage*>(&that);
 	return that2 && *image == *that2->image
 	             && image_combine == that2->image_combine;
+}
+
+// ----------------------------------------------------------------------------- : EnlargeImage
+
+Image EnlargeImage::generate(const Options& opt) const {
+	// generate 'sub' image
+	Options sub_opt
+		( opt.width  * (border_size < 0.5 ? 1 - 2 * border_size : 0)
+		, opt.height * (border_size < 0.5 ? 1 - 2 * border_size : 0)
+		, opt.package
+		, opt.local_package
+		, opt.preserve_aspect);
+	Image img = image->generate(sub_opt);
+	// size of generated image
+	int w  = img.GetWidth(),  h = img.GetHeight();  // original image size
+	int dw = w * border_size, dh = h * border_size; // delta
+	int w2 = w + dw + dw,     h2 = h + dh + dh;     // new image size
+	Image larger(w2,h2);
+	larger.InitAlpha();
+	memset(larger.GetAlpha(),0,w2*h2); // blank
+	// copy to sub-part of larger image
+	Byte* data1 = img.GetData(), *data2 = larger.GetData();
+	for (int y = 0 ; y < h ; ++y) {
+		memcpy(data2 + 3*(dw + (y+dh)*w2), data1 + 3*y*w, 3*w); // copy a line
+	}
+	if (img.HasAlpha()) {
+		data1 = img.GetAlpha(), data2 = larger.GetAlpha();
+		for (int y = 0 ; y < h ; ++y) {
+			memcpy(data2 + dw + (y+dh)*w2, data1 + y*w, w); // copy a line
+		}
+	}
+	// done
+	return larger;
+}
+ImageCombine EnlargeImage::combine() const {
+	return image->combine();
+}
+bool EnlargeImage::operator == (const GeneratedImage& that) const {
+	const EnlargeImage* that2 = dynamic_cast<const EnlargeImage*>(&that);
+	return that2 && *image      == *that2->image
+	             && border_size == that2->border_size;
+}
+
+// ----------------------------------------------------------------------------- : DropShadowImage
+
+/// Preform a gaussian blur, from the image in of w*h bytes to out
+/** out is scaled some scaling, this is the return value */
+UInt gaussian_blur(Byte* in, UInt* out, int w, int h, double radius) {
+	// blur horizontally
+	UInt* blur_x = new UInt[w*h]; // scaled by total_x, so in [0..255*total_x]
+	memset(blur_x, 0, w*h*sizeof(UInt));
+	UInt total_x = 0;
+	{
+		double sigma = radius * w;
+		double mult = (1 << 8) / (sqrt(2 * M_PI) * sigma);
+		double sigsqr2 = 1 / (2 * sigma * sigma);
+		int range = min(w, (int)(3*sigma));
+		for (int d = -range ; d <= range ; ++d) {
+			UInt factor = (int)( mult * exp(-d * d * sigsqr2) );
+			total_x += factor;
+			if (factor > 0) {
+				int x_start = max(0, -d), x_end = min(w, w-d);
+				for (int y = 0 ; y < h ; ++y) {
+					for (int x = x_start ; x < x_end ; ++x) {
+						blur_x[x + y*w] += in[x + d + y*w] * factor;
+					}
+				}
+			}
+		}
+	}
+	// blur vertically
+	memset(out, 0, w*h*sizeof(UInt));
+	UInt total_y = 0;
+	{
+		double sigma = radius * h;
+		double mult = (1 << 8) / (sqrt(2 * M_PI) * sigma);
+		double sigsqr2 = 1 / (2 * sigma * sigma);
+		int range = min(h, (int)(3*sigma));
+		for (int d = -range ; d <= range ; ++d) {
+			UInt factor = (UInt)( mult * exp(-d * d * sigsqr2) );
+			total_y += factor;
+			if (factor > 0) {
+				int y_start = max(0, -d), y_end = min(h, h-d);
+				for (int y = y_start ; y < y_end ; ++y) {
+					for (int x = 0 ; x < w ; ++x) {
+						out[x + y*w] += blur_x[x + (d + y)*w] * factor;
+					}
+				}
+			}
+		}
+	}
+	delete[] blur_x;
+	return total_x * total_y;
+}
+
+Image DropShadowImage::generate(const Options& opt) const {
+	// sub image
+	Image img = image->generate(opt);
+	if (!img.HasAlpha()) {
+		// no alpha, there is nothing we can do
+		return img;
+	}
+	int w = img.GetWidth(), h = img.GetHeight();
+	Byte* alpha = img.GetAlpha();
+	// blur
+	UInt* shadow = new UInt[w*h];
+	UInt total = 255 * gaussian_blur(alpha, shadow, w, h, shadow_blur_radius);
+	// combine
+	Byte* data = img.GetData();
+	int dw = w * offset_x, dh = h * offset_y;
+	int x_start = max(0,   dw), y_start = max(0,   dh);
+	int x_end   = min(w, w+dw), y_end   = min(h, h+dh);
+	int delta = dw + w * dh;
+	int sa = (int)(shadow_alpha * (1 << 16));
+	for (int y = y_start ; y < y_end ; ++y) {
+		for (int x = x_start ; x < x_end ; ++x) {
+			int p  = x + y * w; // pixel we are working on
+			int a = alpha[p];
+			int shad = ((((255 - a)*sa)>>16) * shadow[p - delta]) / total; // amount of shadow to add
+			int factor = max(1, a + shad); // divide by this
+			data[3 * p    ] = (a * data[3 * p    ] + shad * shadow_color.Red()  ) / factor;
+			data[3 * p + 1] = (a * data[3 * p + 1] + shad * shadow_color.Green()) / factor;
+			data[3 * p + 2] = (a * data[3 * p + 2] + shad * shadow_color.Blue() ) / factor;
+			alpha[p] = a + shad;
+		}
+	}
+	//memset(data,0,3*w*h);
+	// cleanup
+	delete[] shadow;
+	return img;
+}
+ImageCombine DropShadowImage::combine() const {
+	return image->combine();
+}
+bool DropShadowImage::operator == (const GeneratedImage& that) const {
+	const DropShadowImage* that2 = dynamic_cast<const DropShadowImage*>(&that);
+	return that2 && *image   == *that2->image
+	             && offset_x == that2->offset_x && offset_y == that2->offset_y
+	             && shadow_alpha == that2->shadow_alpha && shadow_blur_radius == that2->shadow_blur_radius
+	             && shadow_color == that2->shadow_color;
 }
 
 // ----------------------------------------------------------------------------- : PackagedImage
@@ -223,7 +377,9 @@ bool SymbolToImage::operator == (const GeneratedImage& that) const {
 	const SymbolToImage* that2 = dynamic_cast<const SymbolToImage*>(&that);
 	return that2 && filename  == that2->filename
 	             && age       == that2->age
-	             && variation == that2->variation;
+	             && (variation == that2->variation ||
+	                 *variation == *that2->variation // custom variation
+	                );
 }
 
 // ----------------------------------------------------------------------------- : ImageValueToImage

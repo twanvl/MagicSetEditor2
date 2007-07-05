@@ -16,6 +16,7 @@
 #include <data/symbol.hpp>
 #include <data/field/symbol.hpp>
 #include <gfx/generated_image.hpp>
+#include <render/symbol/filter.hpp>
 
 DECLARE_TYPEOF_COLLECTION(SymbolVariationP);
 
@@ -61,6 +62,12 @@ SCRIPT_FUNCTION(set_mask) {
 	return new_intrusive2<SetMaskImage>(image, mask);
 }
 
+SCRIPT_FUNCTION(set_alpha) {
+	SCRIPT_PARAM(GeneratedImageP, input);
+	SCRIPT_PARAM(double, alpha);
+	return new_intrusive2<SetAlphaImage>(input, alpha);
+}
+
 SCRIPT_FUNCTION(set_combine) {
 	SCRIPT_PARAM(String, combine);
 	SCRIPT_PARAM(GeneratedImageP, input);
@@ -71,24 +78,72 @@ SCRIPT_FUNCTION(set_combine) {
 	return new_intrusive2<SetCombineImage>(input, image_combine);
 }
 
+SCRIPT_FUNCTION(enlarge) {
+	SCRIPT_PARAM(GeneratedImageP, input);
+	SCRIPT_PARAM_N(double, _("border size"), border_size);
+	return new_intrusive2<EnlargeImage>(input, border_size);
+}
+
+SCRIPT_FUNCTION(drop_shadow) {
+	SCRIPT_PARAM(GeneratedImageP, input);
+	SCRIPT_OPTIONAL_PARAM_N_(double, _("offset x"),    offset_x);
+	SCRIPT_OPTIONAL_PARAM_N_(double, _("offset y"),    offset_y);
+	SCRIPT_OPTIONAL_PARAM_N_(double, _("alpha"),       alpha);
+	SCRIPT_OPTIONAL_PARAM_N_(double, _("blur radius"), blur_radius);
+	SCRIPT_OPTIONAL_PARAM_N_(Color,  _("color"),       color);
+	return new_intrusive6<DropShadowImage>(input, offset_x, offset_y, alpha, blur_radius, color);
+}
+
 SCRIPT_FUNCTION(symbol_variation) {
 	// find symbol
 	SCRIPT_PARAM(ValueP, symbol);
 	SymbolValueP value = dynamic_pointer_cast<SymbolValue>(symbol);
-	SCRIPT_PARAM(String, variation);
-	// find style
-	SCRIPT_PARAM(Set*, set);
-	SCRIPT_OPTIONAL_PARAM_(CardP, card);
-	SymbolStyleP style = dynamic_pointer_cast<SymbolStyle>(set->stylesheetForP(card)->styleFor(value->fieldP));
-	if (!style) throw InternalError(_("Symbol value has a style of the wrong type"));
-	// find variation
-	FOR_EACH(v, style->variations) {
-		if (v->name == variation) {
-			// found it
-			return new_intrusive3<SymbolToImage>(value->filename, value->last_update, v);
+	SCRIPT_OPTIONAL_PARAM(String, variation) {
+		// find style
+		SCRIPT_PARAM(Set*, set);
+		SCRIPT_OPTIONAL_PARAM_(CardP, card);
+		SymbolStyleP style = dynamic_pointer_cast<SymbolStyle>(set->stylesheetForP(card)->styleFor(value->fieldP));
+		if (!style) throw InternalError(_("Symbol value has a style of the wrong type"));
+		// find variation
+		FOR_EACH(v, style->variations) {
+			if (v->name == variation) {
+				// found it
+				return new_intrusive3<SymbolToImage>(value->filename, value->last_update, v);
+			}
 		}
+		throw ScriptError(_("Variation of symbol not found ('") + variation + _("')"));
+	} else {
+		// custom variation
+		SCRIPT_PARAM_N(double, _("border radius"), border_radius);
+		SCRIPT_OPTIONAL_PARAM_N_(String, _("fill type"), fill_type);
+		SymbolVariationP var(new SymbolVariation);
+		var->border_radius = border_radius;
+		if (fill_type == _("solid") || fill_type.empty()) {
+			SCRIPT_PARAM_N(Color, _("fill color"),   fill_color);
+			SCRIPT_PARAM_N(Color, _("border color"), border_color);
+			var->filter = new_intrusive2<SolidFillSymbolFilter>(fill_color, border_color);
+		} else if (fill_type == _("linear gradient")) {
+			SCRIPT_PARAM_N(Color, _("fill color 1"),   fill_color_1);
+			SCRIPT_PARAM_N(Color, _("border color 1"), border_color_1);
+			SCRIPT_PARAM_N(Color, _("fill color 2"),   fill_color_2);
+			SCRIPT_PARAM_N(Color, _("border color 2"), border_color_2);
+			SCRIPT_PARAM_N(double, _("center x"), center_x);
+			SCRIPT_PARAM_N(double, _("center y"), center_y);
+			SCRIPT_PARAM_N(double, _("end x"), end_x);
+			SCRIPT_PARAM_N(double, _("end y"), end_y);
+			var->filter = new_intrusive8<LinearGradientSymbolFilter>(fill_color_1, border_color_1, fill_color_2, border_color_2
+			                                                        ,center_x, center_y, end_x, end_y);
+		} else if (fill_type == _("radial gradient")) {
+			SCRIPT_PARAM_N(Color, _("fill color 1"),   fill_color_1);
+			SCRIPT_PARAM_N(Color, _("border color 1"), border_color_1);
+			SCRIPT_PARAM_N(Color, _("fill color 2"),   fill_color_2);
+			SCRIPT_PARAM_N(Color, _("border color 2"), border_color_2);
+			var->filter = new_intrusive4<RadialGradientSymbolFilter>(fill_color_1, border_color_1, fill_color_2, border_color_2);
+		} else {
+			throw ScriptError(_("Unknown fill type for symbol_variation: ") + fill_type);
+		}
+		return new_intrusive3<SymbolToImage>(value->filename, value->last_update, var);
 	}
-	throw ScriptError(_("Variation of symbol not found ('") + variation + _("')"));
 }
 
 SCRIPT_FUNCTION(built_in_image) {
@@ -103,7 +158,10 @@ void init_script_image_functions(Context& ctx) {
 	ctx.setVariable(_("masked blend"),     script_masked_blend);
 	ctx.setVariable(_("combine blend"),    script_combine_blend);
 	ctx.setVariable(_("set mask"),         script_set_mask);
+	ctx.setVariable(_("set alpha"),        script_set_alpha);
 	ctx.setVariable(_("set combine"),      script_set_combine);
+	ctx.setVariable(_("enlarge"),          script_enlarge);
+	ctx.setVariable(_("drop shadow"),      script_drop_shadow);
 	ctx.setVariable(_("symbol variation"), script_symbol_variation);
 	ctx.setVariable(_("built in image"),   script_built_in_image);
 }

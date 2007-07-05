@@ -34,6 +34,12 @@ SymbolVariation::SymbolVariation()
 {}
 SymbolVariation::~SymbolVariation() {}
 
+bool SymbolVariation::operator == (const SymbolVariation& that) const {
+	return name          == that.name
+	    && border_radius == that.border_radius
+	    && *filter       == *that.filter;
+}
+
 IMPLEMENT_REFLECTION_NO_SCRIPT(SymbolVariation) {
 	REFLECT(name);
 	REFLECT(border_radius);

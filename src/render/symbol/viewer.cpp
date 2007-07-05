@@ -180,7 +180,7 @@ void SymbolViewer::drawSymbolPart(const SymbolPart& part, DC* border, DC* interi
 		segment_subdivide(*part.getPoint((int)i), *part.getPoint((int)i+1), rotation, points);
 	}
 	// draw border
-	if (border) {
+	if (border && border_radius > 0) {
 		// white/black or, if directB white/green
 		border->SetBrush(Color(borderCol, (directB && borderCol == 0 ? 128 : borderCol), borderCol));
 		border->SetPen(wxPen(*wxWHITE, (int) rotation.trS(border_radius)));

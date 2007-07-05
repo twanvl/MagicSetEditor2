@@ -42,7 +42,10 @@ GeneratedImageP image_from_script(const ScriptValueP& value) {
 // ----------------------------------------------------------------------------- : ScriptableImage
 
 Image ScriptableImage::generate(const GeneratedImage::Options& options, bool cache) const {
-	if (cached.Ok() && cached.GetWidth() == options.width && cached.GetHeight() == options.height) {
+	if (cached.Ok() && (cached.GetWidth() == options.width && cached.GetHeight() == options.height
+	                 || (options.preserve_aspect == ASPECT_FIT && // only one dimension has to fit
+	                     (cached.GetWidth() == options.width || cached.GetHeight() == options.height)
+	                   ))) {
 		// cached, so we are done
 		return cached;
 	}

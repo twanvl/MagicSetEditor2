@@ -129,6 +129,20 @@ class SetMaskImage : public GeneratedImage {
 	GeneratedImageP image, mask;
 };
 
+/// Change the alpha channel of an image
+class SetAlphaImage : public GeneratedImage {
+  public:
+	inline SetAlphaImage(const GeneratedImageP& image, double alpha)
+		: image(image), alpha(alpha)
+	{}
+	virtual Image generate(const Options& opt) const;
+	virtual ImageCombine combine() const;
+	virtual bool operator == (const GeneratedImage& that) const;
+  private:
+	GeneratedImageP image;
+	double alpha;
+};
+
 // ----------------------------------------------------------------------------- : SetCombineImage
 
 /// Change the combine mode
@@ -143,6 +157,42 @@ class SetCombineImage : public GeneratedImage {
   private:
 	GeneratedImageP image;
 	ImageCombine image_combine;
+};
+
+// ----------------------------------------------------------------------------- : EnlargeImage
+
+/// Enlarge an image by adding a border around it
+class EnlargeImage : public GeneratedImage {
+  public:
+	inline EnlargeImage(const GeneratedImageP& image, double border_size)
+		: image(image), border_size(abs(border_size))
+	{}
+	virtual Image generate(const Options& opt) const;
+	virtual ImageCombine combine() const;
+	virtual bool operator == (const GeneratedImage& that) const;
+  private:
+	GeneratedImageP image;
+	double border_size;
+};
+
+// ----------------------------------------------------------------------------- : DropShadowImage
+
+/// Add a drop shadow to an image
+class DropShadowImage : public GeneratedImage {
+  public:
+	inline DropShadowImage(const GeneratedImageP& image, double offset_x, double offset_y, double shadow_alpha, double shadow_blur_radius, Color shadow_color)
+		: image(image), offset_x(offset_x), offset_y(offset_y)
+		, shadow_alpha(shadow_alpha), shadow_blur_radius(shadow_blur_radius), shadow_color(shadow_color)
+	{}
+	virtual Image generate(const Options& opt) const;
+	virtual ImageCombine combine() const;
+	virtual bool operator == (const GeneratedImage& that) const;
+  private:
+	GeneratedImageP image;
+	double offset_x, offset_y;
+	double shadow_alpha;
+	double shadow_blur_radius;
+	Color shadow_color;
 };
 
 // ----------------------------------------------------------------------------- : PackagedImage

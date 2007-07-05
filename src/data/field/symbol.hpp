@@ -54,6 +54,9 @@ class SymbolVariation : public IntrusivePtrBase<SymbolVariation> {
 	String        name;				///< Name of this variation
 	SymbolFilterP filter;			///< Filter to color the symbol
 	double        border_radius;	///< Border radius for the symbol
+	
+	bool operator == (const SymbolVariation&) const;
+	
 	DECLARE_REFLECTION();
 };
 
