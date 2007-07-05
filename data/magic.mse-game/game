@@ -206,7 +206,7 @@ init script:
 	# context in which mana symbols are found
 	mana_context :=
 		"(?ix)				# case insensitive, ignore whitespace
-		 (^|[[:space:]\"(])		# start of a word
+		 (^|[[:space:]\"(“'])		# start of a word
 		 (  <match>:			# G: something
 		 |  <match>,			# G, tap: something
 		 |  <match>[ ]can[ ]be[ ]pay
@@ -241,7 +241,12 @@ init script:
 			) +
 		# step 2b : move action keywords' reminder text to the end of the line
 		replace_rule(
-			match: "(<atom-reminder-action>.*</atom-reminder-action></kw[^>]*>)([^\n(]+)",
+			match: "(<atom-reminder-action>(?:(?!<kw-).)*</atom-reminder-action></kw[^>]*>)(((?!<atom-reminder| ?<kw-)[^\n(])+)",
+			replace: "\\2\\1"
+			) +
+		# step 2c : remove duplicate reminder text
+		replace_rule(
+			match: "(<atom-reminder-[^>]*>[^)]+[)]</atom-reminder-[^>]*>)([^\n]+)\\1"
 			replace: "\\2\\1"
 			) +
 		# step 3a : expand shortcut words ~ and CARDNAME
