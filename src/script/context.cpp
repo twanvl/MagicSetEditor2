@@ -275,6 +275,15 @@ void instrUnary  (UnaryInstructionType   i, ScriptValueP& a) {
 	}															\
 	break
 
+// operator on doubles or ints, defined as a function
+#define OPERATOR_FUN_DI(OP)										\
+	if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {			\
+		a = to_script(OP((double)*a,  (double)*b));				\
+	} else {													\
+		a = to_script(OP((int)*a,     (int)*b));				\
+	}															\
+	break
+
 // operator on strings or doubles or ints, when in doubt, uses strings
 #define OPERATOR_SDI(OP)										\
 	if (at == SCRIPT_INT && bt == SCRIPT_INT) {					\
@@ -349,6 +358,8 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 		case I_GT:		OPERATOR_DI(>);
 		case I_LE:		OPERATOR_DI(<=);
 		case I_GE:		OPERATOR_DI(>=);
+		case I_MIN:		OPERATOR_FUN_DI(min);
+		case I_MAX:		OPERATOR_FUN_DI(max);
 		case I_OR_ELSE:
 			if (at == SCRIPT_ERROR) a = b;
 			break;

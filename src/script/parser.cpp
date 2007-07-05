@@ -505,9 +505,20 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 				parseOper(input, script, PREC_ALL); // b
 				expectToken(input, _(")"));
 				script.addInstruction(I_TERNARY, I_RGB);
+			} else if (token == _("min") || token == _("max")) {
+				// min(x,y,z,...)
+				unsigned int op = token == _("min") ? I_MIN : I_MAX;
+				expectToken(input, _("("));
+				parseOper(input, script, PREC_ALL); // first
+				while(input.peek() == _(",")) {
+					expectToken(input, _(","));
+					parseOper(input, script, PREC_ALL); // second, third, etc.
+					script.addInstruction(I_BINARY, op);
+				}
+				expectToken(input, _(")"));
 			} else {
 				// variable
-				unsigned int var = string_to_variable(token.value);
+				Variable var = string_to_variable(token.value);
 				script.addInstruction(I_GET_VAR, var);
 			}
 		} else if (token == TOK_INT) {

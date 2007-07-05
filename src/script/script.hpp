@@ -70,6 +70,8 @@ enum BinaryInstructionType
 ,	I_GT			///< operator >
 ,	I_LE			///< operator <=
 ,	I_GE			///< operator >=
+,	I_MIN			///< minimum
+,	I_MAX			///< maximum
 // Error handling
 ,	I_OR_ELSE		///< if a != error then a else b
 };
