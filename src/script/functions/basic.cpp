@@ -303,50 +303,58 @@ class ScriptReplaceRule : public ScriptValue {
 	virtual String typeName() const { return _("replace_rule"); }
 	virtual ScriptValueP eval(Context& ctx) const {
 		SCRIPT_PARAM(String, input);
-		if (context.IsValid() || replacement_function) {
-			// match first, then check context of match
-			String ret;
-			while (regex.Matches(input)) {
-				// for each match ...
-				size_t start, len;
-				bool ok = regex.GetMatch(&start, &len, 0);
-				assert(ok);
-				ret                 += input.substr(0, start);          // everything before the match position stays
-				String inside        = input.substr(start, len);        // inside the match
-				String next_input    = input.substr(start + len);       // next loop the input is after this match
-				String after_replace = ret + _("<match>") + next_input; // after replacing, the resulting context would be
-				if (!context.IsValid() || context.Matches(after_replace)) {
-					// the context matches -> perform replacement
-					if (replacement_function) {
-						// set match results in context
-						for (UInt m = 0 ; m < regex.GetMatchCount() ; ++m) {
-							regex.GetMatch(&start, &len, m);
-							String name  = m == 0 ? _("input") : String(_("_")) << m;
-							String value = input.substr(start, len);
-							ctx.setVariable(name, to_script(value));
-						}
-						// call
-						inside = replacement_function->eval(ctx)->toString();
-					} else {
-						regex.Replace(&inside, replacement, 1); // replace inside
-					}
-				}
-				ret  += inside;
-				input = next_input;
-			}
-			ret += input;
-			SCRIPT_RETURN(ret);
+		if (context.IsValid() || replacement_function || recursive) {
+			SCRIPT_RETURN(apply(ctx, input));
 		} else {
 			// dumb replacing
 			regex.Replace(&input, replacement);
 			SCRIPT_RETURN(input);
 		}
 	}
+	String apply(Context& ctx, String& input, int level = 0) const {
+		// match first, then check context of match
+		String ret;
+		while (regex.Matches(input)) {
+			// for each match ...
+			size_t start, len;
+			bool ok = regex.GetMatch(&start, &len, 0);
+			assert(ok);
+			ret                 += input.substr(0, start);          // everything before the match position stays
+			String inside        = input.substr(start, len);        // inside the match
+			String next_input    = input.substr(start + len);       // next loop the input is after this match
+			String after_replace = ret + _("<match>") + next_input; // after replacing, the resulting context would be
+			if (!context.IsValid() || context.Matches(after_replace)) {
+				// the context matches -> perform replacement
+				if (replacement_function) {
+					// set match results in context
+					for (UInt m = 0 ; m < regex.GetMatchCount() ; ++m) {
+						regex.GetMatch(&start, &len, m);
+						String name  = m == 0 ? _("input") : String(_("_")) << m;
+						String value = input.substr(start, len);
+						ctx.setVariable(name, to_script(value));
+					}
+					// call
+					inside = replacement_function->eval(ctx)->toString();
+				} else {
+					regex.Replace(&inside, replacement, 1); // replace inside
+				}
+			}
+			if (recursive && level < 20) {
+				ret += apply(ctx, inside, level + 1);
+			} else {
+				ret += inside;
+			}
+			input = next_input;
+		}
+		ret += input;
+		return ret;
+	}
 	
 	wxRegEx      regex;					///< Regex to match
 	wxRegEx      context;				///< Match only in a given context, optional
 	String       replacement;			///< Replacement
 	ScriptValueP replacement_function;	///< Replacement function instead of a simple string, optional
+	bool         recursive;				///< Recurse into the replacement
 };
 
 // Create a regular expression rule for replacing in strings
@@ -370,6 +378,8 @@ ScriptValueP replace_rule(Context& ctx) {
 			throw ScriptError(_("Error while compiling regular expression: '")+in_context+_("'"));
 		}
 	}
+	SCRIPT_OPTIONAL_PARAM_(bool, recursive);
+	ret->recursive = recursive;
 	return ret;
 }
 

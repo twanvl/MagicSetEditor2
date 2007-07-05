@@ -76,8 +76,11 @@ wxFont Font::toWxFont(double scale) const {
 	// make font
 	wxFont font;
 	if (flags & FONT_CODE) {
-		if (size_i < 2) size_i = wxNORMAL_FONT->GetPointSize();
-		font = wxFont(size_i, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, weight_i, underline(), _("Courier New"));
+		if (size_i < 2) {
+			return wxFont(wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, weight_i, underline(), _("Courier New"));
+		} else {
+			font = wxFont(size_i, wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, weight_i, underline(), _("Courier New"));
+		}
 	} else if (name().empty()) {
 		font = *wxNORMAL_FONT;
 		font.SetPointSize(size > 1 ? size_i : scale * font.GetPointSize());
