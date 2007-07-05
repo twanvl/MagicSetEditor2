@@ -14,16 +14,16 @@ choice:
 	choice: snow
 choice:
 	name: guild symbol
-	choice: Azorius Senate (W/U)
+	choice: The Azorius Senate (W/U)
 	choice: House Dimir (U/B)
-	choice: Cult of Rakdos (B/R)
-	choice: Gruul Clans (R/G)
-	choice: Selesnya Conclave (G/W)
-	choice: Orzhov Syndicate (W/B)
+	choice: The Cult of Rakdos (B/R)
+	choice: The Gruul Clans (R/G)
+	choice: The Selesnya Conclave (G/W)
+	choice: The Orzhov Syndicate (W/B)
 	choice: The Izzet (U/R)
 	choice: The Golgari (B/G)
-	choice: Boros Legion (R/W)
-	choice: The Simic (G/U)
+	choice: The Boros Legion (R/W)
+	choice: The Simic Combine (G/U)
 choice: 
 	name: xander hybrid mana
 	choice: B/R
