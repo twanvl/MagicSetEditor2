@@ -7,6 +7,7 @@ choice images:
 	mana symbol red:			/magic-watermarks.mse-include/watermark_r.png
 	mana symbol green:			/magic-watermarks.mse-include/watermark_g.png
 	mana symbol snow:			/magic-watermarks.mse-include/watermark_s.png
+	
 	guild symbol Azorius Senate (W/U):    	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_azorius.png")
 	guild symbol House Dimir (U/B):       	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_dimir.png")
 	guild symbol Cult of Rakdos (B/R):    	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_rakados.png")
@@ -17,6 +18,7 @@ choice images:
 	guild symbol The Golgari (B/G):       	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_golgari.png")
 	guild symbol Boros Legion (R/W):      	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_boros.png")
 	guild symbol The Simic (G/U):         	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_simic.png")
+	
 	xander hybrid mana B/R:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_brmana.png")
 	xander hybrid mana U/B:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_ubmana.png")
 	xander hybrid mana B/G:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_bgmana.png")
@@ -27,3 +29,17 @@ choice images:
 	xander hybrid mana G/W:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_gwmana.png")
 	xander hybrid mana R/W:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_rwmana.png")
 	xander hybrid mana W/U:		    	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_wumana.png")
+	
+	set symbol:
+		{ set_combine(combine:"shadow",
+		   set_alpha(
+		    alpha: 0.5,
+		    #symbol_variation(symbol: set.symbol, variation: "common")
+		    drop_shadow(offset_x: -0.01, offset_y: 0.03, blur_radius: 0.02, alpha: 1, color: rgb(0,0,0),
+		     enlarge(border_size: 0.03,
+		      symbol_variation(symbol: set.symbol, border_radius: 0, fill_color:rgb(255,255,255), border_color:rgb(0,0,0))
+		     )
+		    )
+		   )
+		  )
+		}

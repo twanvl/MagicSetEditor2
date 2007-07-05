@@ -36,3 +36,5 @@ choice:
 	choice: G/W
 	choice: R/W
 	choice: W/U
+choice:
+	name: set symbol
