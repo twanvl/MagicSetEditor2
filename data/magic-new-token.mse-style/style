@@ -14,11 +14,7 @@ card height: 523
 card dpi: 150
 
 #error list:
-#error about mask size not matching image size when dealing with p/t boxes
-#error about mask size not matching image size when dealing with name boxes
-#make sure name boxes are working correctly
-#templates do not change properly to one textline versions
-##############################P############################### Extra scripts
+############################################################## Extra scripts
 
 init script:
 	# Load scripts for default images
@@ -34,9 +30,13 @@ init script:
 		else "2" # large textbox
 	}
 	
-	suffix := ""
-	template      := { input + "{type}{suffix}.jpg" }
-	land_template := { "c{type}{suffix}.jpg" }
+	artifact_template := {
+		if input == "a" and styling.artifact_style == "light" then "oa"
+		else input
+	}
+	
+	template      := { artifact_template() + "{type}.jpg" }
+	land_template := { "c{type}.jpg" }
 	colored_lands := false
 		
 	# Use the normal tap symbol
@@ -48,12 +48,22 @@ init script:
 	
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
+	
+	# We have no land template
+	font_colors_white := { input == "b" }
 
 	
 ############################################################## Set info fields
 
-####################################I######################### Extra style
+############################################################## Extra style
 
+styling field:
+	type: choice
+	name: artifact style
+	description: Choose the style of artifacts: light = before Fifth Dawn, dark = used since Fifth Dawn
+	initial: dark
+	choice: light
+	choice: dark
 styling field:
 	type: boolean
 	name: use guild mana symbols
@@ -77,7 +87,13 @@ styling field:
 	choice: modern
 	choice: old
 	choice: diagonal T
+
 styling style:
+	artifact style:
+		render style: both
+		choice images:
+			light: oacard0.jpg
+			dark:  acard0.jpg
 	popup mana symbols:
 		choice images:
 			yes: /magic-mana-large.mse-symbol-font/mana_w.png
@@ -153,7 +169,7 @@ card style:
 		top:
 			{ if      text_shape() == "0" then 432
 			  else if text_shape() == "1" then 414
-			  else                             350 }
+			  else                             353 }
 		width: 286
 		height: 20
 		alignment: top shrink-overflow
@@ -172,7 +188,7 @@ card style:
 		top:
 			{ if      text_shape() == "0" then 432
 			  else if text_shape() == "1" then 414
-			  else                             351 }
+			  else                             353 }
 		width: 22
 		height: 22
 		z index: 1
@@ -231,8 +247,12 @@ card style:
 	############################# PT
 	pt:
 		z index: 4
-		left:	284
-		top:	467
+		left:
+			{ if text_shape() == "2" then 288
+			  else                        284 }
+		top:
+			{ if text_shape() == "2" then 472
+			  else                        467 }
 		width:	60
 		height:	28
 		alignment: center middle shrink-overflow
@@ -250,7 +270,7 @@ card style:
 		top : 478
 		width: 246
 		height: 16
-		z index: 1
+		z index: 2
 		font:
 			name: Matrix
 			size: 11
@@ -265,7 +285,7 @@ card style:
 		top : 493
 		width: 247
 		height: 12
-		z index: 1
+		z index: 2
 		font:
 			name: MPlantin
 			size: 7.5
@@ -315,8 +335,7 @@ extra card style:
 		z index: 1
 		visible: { card.pt != "" }
 		render style: image
-		#mask: mask_pt.png
-		image: { card_ptbox(suffix: text_shape()) }
+		image: { color_background(type:"pt" + text_shape(), base_hybrid:pt_hybrid) }
 
 	name box:
 		left: { card_style.name.content_width * -0.5 + 187.5 }
