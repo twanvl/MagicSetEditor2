@@ -37,6 +37,7 @@ init script:
 	suffix := ""
 	template      := { input + "{type}{suffix}.jpg" }
 	land_template := { "c{type}{suffix}.jpg" }
+	colored_lands := false
 		
 	# Use the normal tap symbol
 	mana_t := {
@@ -123,12 +124,12 @@ card style:
 		width: 275
 		height: 28
 		alignment: bottom center shrink-overflow
-		padding bottom: 0
+		padding bottom: -2
 		padding top: 2
 		z index: 3
 		symbol font:
 			name: magic-embossedletters
-			size: 100
+			size: 22
 			alignment: bottom center
 		always symbol: true
 
@@ -138,9 +139,9 @@ card style:
 		top: { if text_shape() == 2 then 58 else 59 }
 		width:	315
 		height:
-			{ if      text_shape() == "1" then 349
-			  else if text_shape() == "2" then 288
-			  else                             366 }
+			{ if      text_shape() == "0" then 366
+			  else if text_shape() == "1" then 349
+			  else                             288 }
 		mask: { "imagemask{text_shape()}.png" }
 		z index: 1
 
@@ -150,9 +151,9 @@ card style:
 	type:
 		left: 35
 		top:
-			{ if      text_shape() == "1" then 414
-			  else if text_shape() == "2" then 350
-			  else                             430 }
+			{ if      text_shape() == "0" then 432
+			  else if text_shape() == "1" then 414
+			  else                             350 }
 		width: 286
 		height: 20
 		alignment: top shrink-overflow
@@ -169,9 +170,9 @@ card style:
 	rarity:
 		left: 320
 		top:
-			{ if      text_shape() == "1" then 415
-			  else if text_shape() == "2" then 351
-			  else                             432 }
+			{ if      text_shape() == "0" then 432
+			  else if text_shape() == "1" then 414
+			  else                             351 }
 		width: 22
 		height: 22
 		z index: 1
@@ -188,9 +189,9 @@ card style:
 	text:
 		left: 31
 		top:
-			{ if      text_shape() == "1" then 444
-			  else if text_shape() == "2" then 388
-			  else                             300 }
+			{ if      text_shape() == "0" then 300
+			  else if text_shape() == "1" then 444
+			  else                             388 }
 		width: 311
 		height: 
 			{ if   text_shape() == "1" then 22
@@ -303,43 +304,45 @@ extra card field:
 
 extra card style:
 	pt box:
-		left:	268
-		top:	456
-		width:	90
-		height:	50
+		left:
+			{ if text_shape() == "2" then 275
+			  else                        271 }
+		top:
+			{ if text_shape() == "2" then 463
+			  else                        461 }
+		width:	81
+		height:	42
 		z index: 1
 		visible: { card.pt != "" }
 		render style: image
-		mask: mask_pt.png
+		#mask: mask_pt.png
 		image: { card_ptbox(suffix: text_shape()) }
 
 	name box:
 		left: { card_style.name.content_width * -0.5 + 187.5 }
-		top: 25
-		width: { card_style.name.content_width + 1 }
+		top: 26
+		width: { card_style.name.content_width }
 		height: 35
 		z index: 2
 		visible: { card.name != "" }
 		render style: image
-		choice images:
-			black: name.jpg
+		image: name-mid.png
 	name box left:
 		right: { card_style.name.content_width * -0.5 + 187.5 }
-		top: 25
+		top: 26
 		width: 15
 		height: 35
 		z index: 2
 		visible: { card.name != "" }
 		render style: image
-		choice images:
-			black: name_l.jpg
+		image: name-left.png
 	name box right:
-		left: { card_style.name.content_width * 0.5 + 188.5 }
-		top: 25
-		width: 15
+		left: { card_style.name.content_width * 0.5 + 187.5 }
+		top: 26
+		width: 14
 		height: 35
 		z index: 2
 		visible: { card.name != "" }
 		render style: image
-		choice images:
-			black: name_r.jpg
+		image: name-right.png
+
