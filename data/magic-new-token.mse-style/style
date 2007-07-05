@@ -227,7 +227,8 @@ card style:
 			size: 14
 		alignment:
 			script:
-				if not contains(match:",", card.rule_text) and
+				if card_style.text.content_lines == 2 and
+				   not contains(match:",", card.rule_text) and
 				   not contains(match: ".", card.rule_text) and
 				   not contains(match: ";", card.rule_text) and
 				   not contains(match: ":", card.rule_text) and
@@ -267,7 +268,7 @@ card style:
 
 	illustrator:
 		left: 27
-		top : 478
+		top : 481
 		width: 246
 		height: 16
 		z index: 2
@@ -288,7 +289,7 @@ card style:
 		z index: 2
 		font:
 			name: MPlantin
-			size: 7.5
+			size: 6.5
 			color: { font_color(card.card_color) }
 
 ############################################################## Extra card fields
@@ -338,16 +339,22 @@ extra card style:
 		image: { color_background(type:"pt" + text_shape(), base_hybrid:pt_hybrid) }
 
 	name box:
-		left: { card_style.name.content_width * -0.5 + 187.5 }
+		left:
+			{ if card_style.name.content_width > 275 then 50
+			   else card_style.name.content_width * -0.5 + 187.5 }
 		top: 26
-		width: { card_style.name.content_width }
+		width:
+			{ if card_style.name.content_width > 275 then 275
+			   else card_style.name.content_width }
 		height: 35
 		z index: 2
 		visible: { card.name != "" }
 		render style: image
 		image: name-mid.png
 	name box left:
-		right: { card_style.name.content_width * -0.5 + 187.5 }
+		right:
+			{ if card_style.name.content_width > 275 then 50
+			   else card_style.name.content_width * -0.5 + 187.5 }
 		top: 26
 		width: 15
 		height: 35
@@ -356,7 +363,9 @@ extra card style:
 		render style: image
 		image: name-left.png
 	name box right:
-		left: { card_style.name.content_width * 0.5 + 187.5 }
+		left:
+			{ if card_style.name.content_width > 275 then 325
+			   else card_style.name.content_width * 0.5 + 187.5 }
 		top: 26
 		width: 14
 		height: 35
