@@ -3,6 +3,7 @@ mse version: 0.3.4
 game:        magic
 short name:  Spoiler
 full name:   List of cards
+icon: preview.png
 create directory: true
 
 option field:
