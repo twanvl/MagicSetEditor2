@@ -1,6 +1,7 @@
 mse version: 0.3.3
 
-horizontal space: 2
+image font size: 46
+horizontal space: 1.2
 symbol:
 	code: Ae
 	image: ae.png
@@ -181,3 +182,6 @@ symbol:
 symbol:
 	code: z
 	image: z.png
+symbol:
+	code: 
+	image: space.png
