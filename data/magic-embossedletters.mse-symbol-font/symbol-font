@@ -185,3 +185,11 @@ symbol:
 symbol:
 	code: 
 	image: space.png
+text font:
+	name: MPlantin
+	size: 19
+	color: rgb(225,198,77)
+text margin top:    -1
+text margin bottom: 3
+text margin left:   -2
+text margin right:  -2
