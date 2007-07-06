@@ -40,7 +40,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib odbc32.lib odbccp32.lib wxbase26d.lib wxmsw26d_core.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase26d.lib wxmsw26d_core.lib wxjpegd.lib wxpngd.lib wxtiffd.lib wxzlibd.lib wxregexd.lib wxbase26d_net.lib wxmsw26d_html.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libcd.lib,libcid.lib"

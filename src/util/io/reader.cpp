@@ -147,7 +147,7 @@ String read_utf8_line(wxInputStream& input, bool eat_bom, bool until_eof) {
 		wxConvUTF8.MB2WC(result_buf, &buffer[0], size + 1);
 		result.UngetWriteBuf(size);
 	#else
-		// TODO!
+		result = String(&buffer[0], *wxConvCurrent);
 	#endif
 	return eat_bom ? decodeUTF8BOM(result) : result;
 }
