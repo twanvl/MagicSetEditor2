@@ -29,38 +29,40 @@ class ChoiceThumbnailRequest : public ThumbnailRequest {
   private:
 	StyleSheetP stylesheet;
 	int id;
+	
+	inline ChoiceStyle& style()  { return *static_cast<ChoiceStyle*>(viewer().getStyle().get()); }
+	inline ValueViewer& viewer() { return *static_cast<ValueViewer*>(owner); }
 };
 
-ChoiceThumbnailRequest::ChoiceThumbnailRequest(ValueViewer* cve, int id, bool from_disk)
+ChoiceThumbnailRequest::ChoiceThumbnailRequest(ValueViewer* viewer, int id, bool from_disk)
 	: ThumbnailRequest(
-		reinterpret_cast<void *> (cve),
-		cve->viewer.stylesheet->name() + _("/") + cve->getField()->name + _("/") << id,
-		from_disk ? cve->viewer.stylesheet->lastModified()
+		static_cast<void*>(viewer),
+		viewer->viewer.stylesheet->name() + _("/") + viewer->getField()->name + _("/") << id,
+		from_disk ? viewer->viewer.stylesheet->lastModified()
 		          : wxDateTime::Now()
 	)
-	, stylesheet(cve->viewer.stylesheet)
+	, stylesheet(viewer->viewer.stylesheet)
 	, id(id)
 {
-	ChoiceValueEditor* e = dynamic_cast<ChoiceValueEditor*> (cve);
-	if (!e)
-		throw InternalError(_("Non-editor passed to ChoiceThumbnailRequest"));
-	String name = cannocial_name_form(e->field().choices->choiceName(id));
-	ScriptableImage img = e->style().choice_images[name];
+	assert(dynamic_pointer_cast<ChoiceStyle>(viewer->getStyle())); // only works on choice styles
+	ChoiceStyle& s = style();
+	String name = cannocial_name_form(s.field().choices->choiceName(id));
+	ScriptableImage img = s.choice_images[name];
 	isThreadSafe = img.threadSafe();
 }
 
 Image ChoiceThumbnailRequest::generate() {
-	ChoiceValueEditor* cve = reinterpret_cast<ChoiceValueEditor*> (owner);
-	String name = cannocial_name_form(cve->field().choices->choiceName(id));
-	ScriptableImage& img = cve->style().choice_images[name];
+	ChoiceStyle& s = style();
+	String name = cannocial_name_form(s.field().choices->choiceName(id));
+	ScriptableImage& img = s.choice_images[name];
 	return img.isReady()
-		? img.generate(GeneratedImage::Options(16,16, stylesheet.get(), &cve->getSet(), ASPECT_BORDER, true), false)
+		? img.generate(GeneratedImage::Options(16,16, stylesheet.get(), viewer().viewer.getSet().get(), ASPECT_BORDER, true), false)
 		: wxImage();
 }
 
 void ChoiceThumbnailRequest::store(const Image& img) {
-	ChoiceValueEditor* cve = reinterpret_cast<ChoiceValueEditor*> (owner);
-	wxImageList* il = cve->style().thumbnails;
+	ChoiceStyle& s = style();
+	wxImageList* il = s.thumbnails;
 	while (id > il->GetImageCount()) {
 		il->Add(wxBitmap(16,16),*wxBLACK);
 	}
@@ -91,7 +93,7 @@ void ChoiceThumbnailRequest::store(const Image& img) {
 		} else {
 			il->Replace(id, img);
 		}
-		cve->style().thumbnails_status[id] = THUMB_OK;
+		s.thumbnails_status[id] = THUMB_OK;
 	}
 }
 
@@ -201,7 +203,7 @@ void DropDownChoiceListBase::generateThumbnailImages() {
 		ThumbnailStatus status = style().thumbnails_status[i];
 		if (i >= image_count || status != THUMB_OK) {
 			// request this thumbnail
-			thumbnail_thread.request( createThumbnailRequest(&cve, i, status == THUMB_NOT_MADE));
+			thumbnail_thread.request( new_intrusive3<ChoiceThumbnailRequest>(&cve, i, status == THUMB_NOT_MADE) );
 		}
 	}
 }
@@ -268,10 +270,6 @@ size_t DropDownChoiceList::selection() const {
 
 DropDownList* DropDownChoiceList::createSubMenu(ChoiceField::ChoiceP group) const {
 	return new DropDownChoiceList(const_cast<DropDownChoiceList*>(this), true, cve, group);
-}
-
-ThumbnailRequestP DropDownChoiceList::createThumbnailRequest(ValueViewer * e, int index, bool from_disk) const {
-	return new_intrusive3<ChoiceThumbnailRequest>(e, index, from_disk);
 }
 
 // ----------------------------------------------------------------------------- : ChoiceValueEditor

@@ -60,7 +60,6 @@ class DropDownChoiceListBase : public DropDownList {
 	
   protected:
 	virtual DropDownList* createSubMenu(ChoiceField::ChoiceP group) const = 0;
-	virtual ThumbnailRequestP createThumbnailRequest(ValueViewer * e, int index, bool from_disk) const = 0;
 	
   private:
 	DECLARE_EVENT_TABLE();
@@ -100,7 +99,6 @@ class DropDownChoiceList : public DropDownChoiceListBase {
 	virtual bool   select(size_t item);
 	virtual size_t selection() const;
 	virtual DropDownList* createSubMenu(ChoiceField::ChoiceP group) const;
-	virtual ThumbnailRequestP createThumbnailRequest(ValueViewer * e, int index, bool from_disk) const;
 };
 
 // ----------------------------------------------------------------------------- : EOF
