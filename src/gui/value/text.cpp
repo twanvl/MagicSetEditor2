@@ -192,7 +192,12 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 			break;
 		case WXK_RETURN:
 			if (field().multi_line) {
-				replaceSelection(_("\n"), _("Enter"));
+				if (ev.ShiftDown()) {
+					// soft line break
+					replaceSelection(_("<soft-line>\n</soft-line>"), _("Soft line break"));
+				} else {
+					replaceSelection(_("\n"), _("Enter"));
+				}
 			}
 			break;
 		default:

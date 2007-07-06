@@ -26,6 +26,10 @@ class StatsPanel : public SetWindowPanel {
 	// --------------------------------------------------- : UI
 	
 	virtual void onChangeSet();
+	virtual void onAction(const Action&, bool undone);
+	
+	virtual void initUI   (wxToolBar*, wxMenuBar*);
+	virtual void destroyUI(wxToolBar*, wxMenuBar*);
 	virtual void onCommand(int id);
 	
 	// --------------------------------------------------- : Selection
@@ -40,8 +44,12 @@ class StatsPanel : public SetWindowPanel {
 	GraphControl*     graph;
 	FilteredCardList* card_list;
 	
-	void onCategorySelect();
+	bool up_to_date; ///< Are the graph and card list up to date?
+	bool active;     ///< Is this panel selected?
+	
+	void onChange();
 	void onGraphSelect(wxCommandEvent&);
+	void showCategory();
 	void filterCards();
 };
 

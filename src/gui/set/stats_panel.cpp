@@ -98,6 +98,7 @@ void StatCategoryList::drawItem(DC& dc, int x, int y, size_t item, bool selected
 
 StatsPanel::StatsPanel(Window* parent, int id)
 	: SetWindowPanel(parent, id)
+	, up_to_date(true), active(false)
 {
 	// init controls
 	wxSplitterWindow* splitter;
@@ -120,13 +121,25 @@ StatsPanel::StatsPanel(Window* parent, int id)
 void StatsPanel::onChangeSet() {
 	card_list->setSet(set);
 	categories->show(set->game);
-	onCategorySelect();
+	onChange();
+}
+
+void StatsPanel::onAction(const Action&, bool undone) {
+	onChange();
+}
+
+void StatsPanel::initUI   (wxToolBar*, wxMenuBar*) {
+	active = true;
+	if (!up_to_date) showCategory();
+}
+void StatsPanel::destroyUI(wxToolBar*, wxMenuBar*) {
+	active = false;
 }
 
 void StatsPanel::onCommand(int id) {
 	switch (id) {
 		case ID_FIELD_LIST: {
-			onCategorySelect();
+			onChange();
 			break;
 		}
 	}
@@ -151,7 +164,16 @@ class StatsFilter : public CardListFilter {
 	Set& set;
 };
 
-void StatsPanel::onCategorySelect() {
+void StatsPanel::onChange() {
+	if (active) {
+		showCategory();
+	} else {
+		up_to_date = false; // update later
+	}
+}
+
+void StatsPanel::showCategory() {
+	up_to_date = true;
 	// change graph data
 	if (categories->hasSelection()) {
 		StatsCategory& cat = categories->getSelection();
