@@ -18,7 +18,7 @@ BackColor               = $FFF7F0
 BackColor2              = $FFF7F0
 InfoBeforeFile          = tools/msw-installer/beta-readme.rtf
 ;LicenseFile             = COPYING
-OutputBaseFilename      = mse2-
+OutputBaseFilename      = mse2-small-
 OutputDir               = tools/msw-installer/
 WizardImageFile         = tools/msw-installer/WizModernImage.bmp
 WizardSmallImageFile    = tools/msw-installer/WizModernSmallImage.bmp
@@ -43,30 +43,14 @@ Name: "style/mtg/new";           Description: "Modern style, after 8th edition";
 Name: "style/mtg/new/base";      Description: "Normal cards";                      Types: full custom magic
 Name: "style/mtg/new/flip";      Description: "Flip cards";                        Types: full custom magic
 Name: "style/mtg/new/split";     Description: "Split cards";                       Types: full custom magic
-  Name: "style/mtg/new/promo";     Description: "Promotional cards";                 Types: full custom magic
-  Name: "style/mtg/new/extart";    Description: "Extended art style";                Types: full custom magic
 Name: "style/mtg/new/textless";  Description: "Textless cards";                    Types: full custom magic
-  Name: "style/mtg/new/token";     Description: "Tokens";                            Types: full custom magic
 Name: "style/mtg/new/planeshift";Description: "Planeshifted";                      Types: full custom magic
 Name: "style/mtg/old";           Description: "Old style, before 8th edition";     Types: full custom magic
 Name: "style/mtg/old/base";      Description: "Normal cards";                      Types: full custom magic
 Name: "style/mtg/old/split";     Description: "Split cards";                       Types: full custom magic
-  Name: "style/mtg/old/token";     Description: "Tokens";                            Types: full custom magic
-  Name: "style/mtg/fpm";           Description: "Fire Pinguin Master (FPM)";         Types: full custom magic
-  Name: "style/mtg/fpm/base";      Description: "Normal cards";                      Types: full custom magic
-  Name: "style/mtg/fpm/flip";      Description: "Flip cards";                        Types: full custom magic
-  Name: "style/mtg/fpm/split";     Description: "Split cards";                       Types: full custom magic
-  Name: "style/mtg/fpm/promo";     Description: "Promotional cards";                 Types: full custom magic
-  Name: "style/mtg/fpm/token";     Description: "Tpokens";                           Types: full custom magic
-  Name: "style/mtg/vanguard";      Description: "Vanguard";                          Types: full custom magic
 Name: "style/vs";                Description: "VS System";                         Types: full custom vs
 Name: "style/vs/std";            Description: "Standard style";                    Types: full custom vs
-  Name: "style/vs/ext";            Description: "Extended art promo";                Types: full custom vs
-  Name: "style/vs/hstd";           Description: "Hellboy style";                     Types: full custom vs
-  Name: "style/vs/hext";           Description: "Hellboy extended art";              Types: full custom vs
 Name: "style/yugioh";            Description: "Yu-Gi-Oh!";                         Types: full custom yugioh
-
-; (indented lines are full installer only)
 
 [Files]
 
@@ -143,32 +127,6 @@ Source: "tools/msw-installer/font/percexp.ttf";       DestDir: "{fonts}"; FontIn
 Source: "tools/msw-installer/font/matrixbsc.ttf";  DestDir: "{fonts}"; FontInstall: "MatrixBoldSmallCaps"; Components: style/mtg/new;  Flags: onlyifdoesntexist uninsneveruninstall
 
 ; ------------------------------------------------------------------------- : Large installer
-
-; game : magic
-Source: "data/magic-new-promo.mse-style/*";                     DestDir:    "{app}/data/magic-new-promo.mse-style/";        Components: style/mtg/new/promo;
-Source: "data/magic-extended-art.mse-style/*";                  DestDir:    "{app}/data/magic-extended-art.mse-style/";     Components: style/mtg/new/extart;
-
-Source: "data/magic-new-token.mse-style/*";                     DestDir:    "{app}/data/magic-new-token.mse-style/";              Components: style/mtg/new/token;
-Source: "data/magic-embossedletters.mse-symbol-font/*";         DestDir:    "{app}/data/magic-embossedletters.mse-symbol-font/";  Components: style/mtg/new/token;
-
-Source: "data/magic-old-token.mse-style/*";                     DestDir:    "{app}/data/magic-old-token.mse-style/";        Components: style/mtg/old/token;
-
-Source: "data/magic-firepenguinmaster.mse-style/*";             DestDir:    "{app}/data/magic-firepenguinmaster.mse-style/";        Components: style/mtg/fpm/base;
-Source: "data/magic-firepenguinmaster-flip.mse-style/*";        DestDir:    "{app}/data/magic-firepenguinmaster-flip.mse-style/";   Components: style/mtg/fpm/flip;
-Source: "data/magic-firepenguinmastersplit.mse-style/*";        DestDir:    "{app}/data/magic-firepenguinmastersplit.mse-style/";   Components: style/mtg/fpm/split;
-Source: "data/magic-firepenguinmasterpromo.mse-style/*";        DestDir:    "{app}/data/magic-firepenguinmasterpromo.mse-style/";   Components: style/mtg/fpm/promo;
-Source: "data/magic-firepenguinmastertokens.mse-style/*";       DestDir:    "{app}/data/magic-firepenguinmastertokens.mse-style/";  Components: style/mtg/fpm/token;
-Source: "data/magic-mana-beveled.mse-symbol-font/*";            DestDir:    "{app}/data/magic-mana-beveled.mse-symbol-font/";       Components: style/mtg/fpm;
-
-; game : vanguard
-Source: "data/vanguard.mse-game/*";                             DestDir:    "{app}/data/vanguard.mse-game/";                Components: style/mtg/vanguard;
-Source: "data/vanguard-standard.mse-style/*";                   DestDir:    "{app}/data/vanguard-standard.mse-style/";      Components: style/mtg/vanguard;
-
-; game : vs
-Source: "data/vs-extended-art.mse-style/*";                     DestDir:    "{app}/data/vs-extended-art.mse-style/";        Components: style/vs/ext;
-Source: "data/vs-hellboy.mse-style/*";                          DestDir:    "{app}/data/vs-hellboy.mse-style/";             Components: style/vs/hstd;
-Source: "data/vs-extended-hellboy.mse-style/*";                 DestDir:    "{app}/data/vs-extended-hellboy.mse-style/";    Components: style/vs/hext;
-
 
 ; ------------------------------------------------------------------------- : Rest of installer
 
