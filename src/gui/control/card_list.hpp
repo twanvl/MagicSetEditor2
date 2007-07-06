@@ -84,6 +84,8 @@ class CardListBase : public ItemList, public SetView {
 	virtual void onRebuild() {}
 	/// Can the card list be modified?
 	virtual bool allowModify() const { return false; }
+	/// Sort all card lists
+	virtual void sortBy(long column, bool ascending);
 	
 	/// Send an 'item selected' event for the currently selected item (selected_item)
 	virtual void sendEvent();

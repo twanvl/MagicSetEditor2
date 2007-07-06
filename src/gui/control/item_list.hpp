@@ -66,7 +66,7 @@ class ItemList : public wxListView {
 	/// Return the card at the given position in the sorted list
 	inline const VoidP& getItem(long pos) const { return sorted_list[pos]; }
 	/// Sort by the given column
-	void sortBy(long column, bool ascending);
+	virtual void sortBy(long column, bool ascending);
 	/// Refresh the card list (resort, refresh and reselect current item)
 	void refreshList();
 	/// Set the image of a column header (fixes wx bug)

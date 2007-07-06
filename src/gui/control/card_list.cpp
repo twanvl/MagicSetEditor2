@@ -224,6 +224,15 @@ void CardListBase::rebuild() {
 	refreshList();
 }
 
+void CardListBase::sortBy(long column, bool ascending) {
+	// sort all card lists for this game
+	FOR_EACH(card_list, card_lists) {
+		if (card_list->set && card_list->set->game == set->game) {
+			card_list->ItemList::sortBy(column, ascending);
+		}
+	}
+}
+
 // ----------------------------------------------------------------------------- : CardListBase : Columns
 
 void CardListBase::storeColumns() {
