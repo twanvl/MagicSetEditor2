@@ -1,11 +1,13 @@
-version: 0.3.3
+version: 0.3.4
 description:
-	<font size="+2"><b>Version 0.3.3 beta is out</b></font>
+	<font size="+2"><b>Version 0.3.4 beta is out</b></font>
 	<hr>
-	This is a small new release, new stuff:
+	New in this release:
 	<ul>
-	 <li>The crashes are finally fixed.</li>
-	 <li>Two dimensional statistics (e.g. color vs. rarity)</li>
-	 <li>All keyword problems are fixed.</li>
+	 <li>Export to HTML.</li>
+	 <li>New color combination dialog for magic.</li>
+	 <li>Modern style magic tokens.</li>
+	 <li>VS-System hellboy templates.</li>
+	 <li>and of course lots of minor improvements and bugfixes.</li>
 	</ul>
 	You can download the new version on <a href="http://magicseteditor.sourceforge.net/download">the MSE download page</a>.
