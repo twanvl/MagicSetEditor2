@@ -19,20 +19,26 @@ class DropDownMultipleChoiceList : public DropDownChoiceListBase {
 	DropDownMultipleChoiceList(Window* parent, bool is_submenu, ValueViewer& cve, ChoiceField::ChoiceP group);
 	
   protected:
-	virtual void   select(size_t item);
+	virtual void   onShow();
+	virtual bool   select(size_t item);
 	virtual size_t selection() const;
 	virtual DropDownList* createSubMenu(ChoiceField::ChoiceP group) const;
 	virtual void drawIcon(DC& dc, int x, int y, size_t item, bool selected) const;
+	
+	virtual void onMotion(wxMouseEvent&);
+  private:
+	bool kept_open; ///< Was the list kept open after selecting a choice, if so, be eager to close it
 };
 
 DropDownMultipleChoiceList::DropDownMultipleChoiceList
 		(Window* parent, bool is_submenu, ValueViewer& cve, ChoiceField::ChoiceP group)
 	: DropDownChoiceListBase(parent, is_submenu, cve, group)
+	, kept_open(false)
 {
 	icon_size.width += 16;
 }
 
-void DropDownMultipleChoiceList::select(size_t item) {
+bool DropDownMultipleChoiceList::select(size_t item) {
 	MultipleChoiceValueEditor& mcve = dynamic_cast<MultipleChoiceValueEditor&>(cve);
 	if (isFieldDefault(item)) {
 		mcve.toggleDefault();
@@ -40,6 +46,10 @@ void DropDownMultipleChoiceList::select(size_t item) {
 		ChoiceField::ChoiceP choice = getChoice(item);
 		mcve.toggle(choice->first_id);
 	}
+	// keep the box open
+	DropDownChoiceListBase::onShow(); // update 'enabled'
+	kept_open = true;
+	return false;
 }
 
 void DropDownMultipleChoiceList::drawIcon(DC& dc, int x, int y, size_t item, bool selected) const {
@@ -67,15 +77,29 @@ void DropDownMultipleChoiceList::drawIcon(DC& dc, int x, int y, size_t item, boo
 	DropDownChoiceListBase::drawIcon(dc, x + 16, y, item, selected);
 }
 
-size_t DropDownMultipleChoiceList::selection() const {
+void DropDownMultipleChoiceList::onShow() {
+	DropDownChoiceListBase::onShow();
 	// we need thumbnail images soon
 	const_cast<DropDownMultipleChoiceList*>(this)->generateThumbnailImages();
-	// we don't know the selection
-	return NO_SELECTION;
+	kept_open = false;
+}
+
+size_t DropDownMultipleChoiceList::selection() const {
+	return NO_SELECTION; // we don't know the selection
 }
 
 DropDownList* DropDownMultipleChoiceList::createSubMenu(ChoiceField::ChoiceP group) const {
 	return new DropDownMultipleChoiceList(const_cast<DropDownMultipleChoiceList*>(this), true, cve, group);
+}
+
+void DropDownMultipleChoiceList::onMotion(wxMouseEvent& ev) {
+	if (kept_open) {
+		wxSize cs = GetClientSize();
+		if (ev.GetX() < 0 || ev.GetY() < 0 || ev.GetX() >= cs.x || ev.GetY() >= cs.y) {
+			hide(false); // outside box; hide it
+		}
+	}
+	DropDownChoiceListBase::onMotion(ev);
 }
 
 // ----------------------------------------------------------------------------- : MultipleChoiceValueEditor

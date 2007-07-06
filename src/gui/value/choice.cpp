@@ -227,13 +227,14 @@ void DropDownChoiceList::onShow() {
 	generateThumbnailImages();
 }
 
-void DropDownChoiceList::select(size_t item) {
+bool DropDownChoiceList::select(size_t item) {
 	if (isFieldDefault(item)) {
 		dynamic_cast<ChoiceValueEditor&>(cve).change( Defaultable<String>() );
 	} else {
 		ChoiceField::ChoiceP choice = getChoice(item);
 		dynamic_cast<ChoiceValueEditor&>(cve).change( field().choices->choiceName(choice->first_id) );
 	}
+	return true;
 }
 
 size_t DropDownChoiceList::selection() const {
@@ -278,8 +279,6 @@ ChoiceValueEditor::~ChoiceValueEditor() {
 }
 
 bool ChoiceValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
-	//HACK TODO REMOVEME
-	//thumbnail_thread.abortAll();
 	return drop_down->onMouseInParent(ev, style().popup_style == POPUP_DROPDOWN_IN_PLACE && !nativeLook());
 }
 bool ChoiceValueEditor::onChar(wxKeyEvent& ev) {

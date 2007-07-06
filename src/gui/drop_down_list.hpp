@@ -31,7 +31,7 @@ class DropDownList : public wxPopupWindow {
 	/** if in_place, then shows the list at the position pos */
 	void show(bool in_place, wxPoint pos);
 	/// Close the list, optionally send an onSelect event
-	void hide(bool event);
+	void hide(bool event, bool allow_veto = true);
 	
 	// --------------------------------------------------- : Parent control
 	/// Takes all keyboard events from a FieldEditor
@@ -48,7 +48,9 @@ class DropDownList : public wxPopupWindow {
 	static const size_t NO_SELECTION = (size_t)-1;
 	
 	/// Signal that the list is closed and something is selected
-	virtual void select(size_t selection) = 0;
+	/** Returns true if the event was handled and the list should be hidden,
+	 *  false keeps the list open. */
+	virtual bool select(size_t selection) = 0;
 	/// When the list is being opened, what should be selected?
 	virtual size_t selection() const = 0;
 	
@@ -86,7 +88,7 @@ class DropDownList : public wxPopupWindow {
 	DropDownList* open_sub_menu;	///< The sub menu that is currently shown, if any
 	DropDownList* parent_menu;		///< The parent menu, only applies to sub menus
 	ValueViewer*  viewer;			///< The parent viewer object (optional)
-	DropDownHider* hider;			///< Class to hide this window when we lose focus
+	DropDownHider* hider, *hider2;	///< Class to hide this window when we lose focus
 		
 	// --------------------------------------------------- : Events
 	DECLARE_EVENT_TABLE();
@@ -94,7 +96,9 @@ class DropDownList : public wxPopupWindow {
 	void onPaint(wxPaintEvent&);
 	void onLeftDown(wxMouseEvent&);
 	void onLeftUp  (wxMouseEvent&);
-	void onMotion  (wxMouseEvent&);
+  protected:
+	virtual void onMotion(wxMouseEvent&); // allow override
+  private:
 	
 	// --------------------------------------------------- : Privates
 	

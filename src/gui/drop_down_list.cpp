@@ -40,6 +40,10 @@ class DropDownHider : public wxEvtHandler {
 			list.hide(false);
 			if (nh) nh->ProcessEvent(ev);
 			return false;
+		} else if (t == wxEVT_MOTION) {
+			// send along all motion events
+			list.ProcessEvent(ev);
+			return wxEvtHandler::ProcessEvent(ev);
 		} else {
 //			if (t !=10093 && t !=10098 && t !=10097 && t !=10099 && t !=10004 && t !=10062
 //			 && t !=10025 && t !=10035 && t !=10034 && t !=10036 && t !=10042 && t !=10119)
@@ -64,7 +68,8 @@ DropDownList::DropDownList(Window* parent, bool is_submenu, ValueViewer* viewer)
 	, open_sub_menu(nullptr)
 	, parent_menu(nullptr)
 	, viewer(viewer)
-	, hider(is_submenu ? nullptr : new DropDownHider(*this))
+	, hider (is_submenu ? nullptr : new DropDownHider(*this))
+	, hider2(is_submenu ? nullptr : new DropDownHider(*this))
 {
 	if (is_submenu) {
 		parent_menu = &dynamic_cast<DropDownList&>(*GetParent());
@@ -80,6 +85,7 @@ DropDownList::DropDownList(Window* parent, bool is_submenu, ValueViewer* viewer)
 DropDownList::~DropDownList() {
 	realHide(); // restore event handler before deleting it
 	delete hider;
+	delete hider2;
 }
 
 void DropDownList::show(bool in_place, wxPoint pos) {
@@ -128,8 +134,9 @@ void DropDownList::show(bool in_place, wxPoint pos) {
 	Position(pos, wxSize(0, parent_height));
 	// set event handler
 	if (hider) {
-		Window* parent = wxGetTopLevelParent(GetParent());
-		parent->PushEventHandler(hider);
+		assert(hider2);
+		wxGetTopLevelParent(GetParent())->PushEventHandler(hider);
+		GetParent()                     ->PushEventHandler(hider2);
 	}
 	// show
 	if (selected_item == NO_SELECTION && itemCount() > 0) selected_item = 0; // select first item by default
@@ -139,15 +146,21 @@ void DropDownList::show(bool in_place, wxPoint pos) {
 	redrawArrowOnParent();
 }
 
-void DropDownList::hide(bool event) {
+void DropDownList::hide(bool event, bool allow_veto) {
+	// send event
+	if (event && selected_item != NO_SELECTION && itemEnabled(selected_item)) {
+		bool close = select(selected_item);
+		if (allow_veto && !close) {
+			Refresh(false);
+			return;
+		}
+	}
 	// hide root
 	DropDownList* root = this;
 	while (root->parent_menu) {
 		root = root->parent_menu;
 	}
 	root->realHide();
-	// send event
-	if (event && selected_item != NO_SELECTION && itemEnabled(selected_item)) select(selected_item);
 }
 
 void DropDownList::realHide() {
@@ -160,8 +173,8 @@ void DropDownList::realHide() {
 	} else {
 		redrawArrowOnParent();
 		// disconnect event handler
-		Window* parent = wxGetTopLevelParent(GetParent());
-		parent->RemoveEventHandler(hider);
+		GetParent()                     ->RemoveEventHandler(hider2);
+		wxGetTopLevelParent(GetParent())->RemoveEventHandler(hider);
 	}
 }
 
@@ -348,6 +361,11 @@ bool DropDownList::onCharInParent(wxKeyEvent& ev) {
 					}
 					break;
 				case WXK_RETURN:
+					if (!showSubMenu() && (selected_item == NO_SELECTION || itemEnabled(selected_item))) {
+						hide(true, false); // don't veto; always close
+					}
+					break;
+				case WXK_SPACE:
 					if (!showSubMenu() && (selected_item == NO_SELECTION || itemEnabled(selected_item))) {
 						hide(true);
 					}
