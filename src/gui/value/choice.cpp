@@ -33,7 +33,7 @@ class ChoiceThumbnailRequest : public ThumbnailRequest {
 
 ChoiceThumbnailRequest::ChoiceThumbnailRequest(ValueViewer* cve, int id, bool from_disk)
 	: ThumbnailRequest(
-		cve,
+		reinterpret_cast<void *> (cve),
 		cve->viewer.stylesheet->name() + _("/") + cve->getField()->name + _("/") << id,
 		from_disk ? cve->viewer.stylesheet->lastModified()
 		          : wxDateTime::Now()
@@ -41,24 +41,26 @@ ChoiceThumbnailRequest::ChoiceThumbnailRequest(ValueViewer* cve, int id, bool fr
 	, stylesheet(cve->viewer.stylesheet)
 	, id(id)
 {
-	ChoiceValueEditor e = *(ChoiceValueEditor*)cve;
-	String name = cannocial_name_form(e.field().choices->choiceName(id));
-	ScriptableImage img = e.style().choice_images[name];
+	ChoiceValueEditor* e = dynamic_cast<ChoiceValueEditor*> (cve);
+	if (!e)
+		throw InternalError(_("Non-editor passed to ChoiceThumbnailRequest"));
+	String name = cannocial_name_form(e->field().choices->choiceName(id));
+	ScriptableImage img = e->style().choice_images[name];
 	isThreadSafe = img.threadSafe();
 }
 
 Image ChoiceThumbnailRequest::generate() {
-	ChoiceValueEditor& cve = *(ChoiceValueEditor*)owner;
-	String name = cannocial_name_form(cve.field().choices->choiceName(id));
-	ScriptableImage& img = cve.style().choice_images[name];
+	ChoiceValueEditor* cve = reinterpret_cast<ChoiceValueEditor*> (owner);
+	String name = cannocial_name_form(cve->field().choices->choiceName(id));
+	ScriptableImage& img = cve->style().choice_images[name];
 	return img.isReady()
-		? img.generate(GeneratedImage::Options(16,16, stylesheet.get(), &cve.getSet(), ASPECT_BORDER, true), false)
+		? img.generate(GeneratedImage::Options(16,16, stylesheet.get(), &cve->getSet(), ASPECT_BORDER, true), false)
 		: wxImage();
 }
 
 void ChoiceThumbnailRequest::store(const Image& img) {
-	ChoiceValueEditor& cve = *(ChoiceValueEditor*)owner;
-	wxImageList* il = cve.style().thumbnails;
+	ChoiceValueEditor* cve = reinterpret_cast<ChoiceValueEditor*> (owner);
+	wxImageList* il = cve->style().thumbnails;
 	while (id > il->GetImageCount()) {
 		il->Add(wxBitmap(16,16),*wxBLACK);
 	}
@@ -89,7 +91,7 @@ void ChoiceThumbnailRequest::store(const Image& img) {
 		} else {
 			il->Replace(id, img);
 		}
-		cve.style().thumbnails_status[id] = THUMB_OK;
+		cve->style().thumbnails_status[id] = THUMB_OK;
 	}
 }
 

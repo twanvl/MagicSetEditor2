@@ -134,15 +134,15 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 							if (instr_bt->instr == I_GET_VAR) {
 								throw ScriptError(e.what() + _("\n  in function: ") + variable_to_string(instr_bt->data));
 							} else if (instr_bt->instr == I_MEMBER_C) {
-								throw ScriptError(e.what() + _("\n  in function: ???.") + *script.constants[instr_bt->data]);
+								throw ScriptError(e.what() + _("\n  in function: ??\?.") + script.constants[instr_bt->data]->operator String());
 							} else if (instr_bt->instr == I_BINARY && instr_bt->instr2 == I_MEMBER) {
-								throw ScriptError(e.what() + _("\n  in function: ???[???]"));
+								throw ScriptError(e.what() + _("\n  in function: ??\?[??\?]"));
 							} else if (instr_bt->instr == I_BINARY && instr_bt->instr2 == I_ADD) {
 								throw ScriptError(e.what() + _("\n  in function: ??? + ???"));
 							} else if (instr_bt->instr == I_NOP || instr_bt->instr == I_CALL) {
-								throw ScriptError(e.what() + _("\n  in function: ???(???)"));
+								throw ScriptError(e.what() + _("\n  in function: ??\?(??\?)"));
 							} else {
-								throw ScriptError(e.what() + _("\n  in function: ???"));
+								throw ScriptError(e.what() + _("\n  in function: ??\?"));
 							}
 						} else {
 							throw e; // rethrow

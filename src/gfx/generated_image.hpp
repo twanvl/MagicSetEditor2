@@ -165,7 +165,7 @@ class SetCombineImage : public GeneratedImage {
 class EnlargeImage : public GeneratedImage {
   public:
 	inline EnlargeImage(const GeneratedImageP& image, double border_size)
-		: image(image), border_size(abs(border_size))
+		: image(image), border_size(fabs(border_size))
 	{}
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
