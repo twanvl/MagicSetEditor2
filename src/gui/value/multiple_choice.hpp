@@ -34,6 +34,7 @@ class MultipleChoiceValueEditor : public MultipleChoiceValueViewer, public Value
 	DropDownListP drop_down;
 	vector<int> active;      ///< Which choices are active? (note: vector<bool> is evil)
 	friend class DropDownMultipleChoiceList;
+	friend class MultipleChoiceThumbnailRequest;
 	/// Initialize the drop down list
 	DropDownList& initDropDown();
 	/// Toggle a choice or on or off

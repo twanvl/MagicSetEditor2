@@ -10,6 +10,87 @@
 #include <gui/thumbnail_thread.hpp>
 #include <gui/util.hpp>
 #include <data/action/value.hpp>
+#include <data/stylesheet.hpp>
+#include <wx/imaglist.h>
+
+// ----------------------------------------------------------------------------- : ChoiceThumbnailRequest
+
+class MultipleChoiceThumbnailRequest : public ThumbnailRequest {
+  public:
+	MultipleChoiceThumbnailRequest(ValueViewer* cve, int id, bool from_disk);
+	virtual Image generate();
+	virtual void store(const Image&);
+
+	bool isThreadSafe;
+	virtual bool threadSafe() const {return isThreadSafe;}
+  private:
+	StyleSheetP stylesheet;
+	int id;
+};
+
+MultipleChoiceThumbnailRequest::MultipleChoiceThumbnailRequest(ValueViewer* cve, int id, bool from_disk)
+	: ThumbnailRequest(
+		reinterpret_cast<void *> (cve),
+		cve->viewer.stylesheet->name() + _("/") + cve->getField()->name + _("/") << id,
+		from_disk ? cve->viewer.stylesheet->lastModified()
+		          : wxDateTime::Now()
+	)
+	, stylesheet(cve->viewer.stylesheet)
+	, id(id)
+{
+	MultipleChoiceValueEditor* e = dynamic_cast<MultipleChoiceValueEditor*> (cve);
+	if (!e)
+		throw InternalError(_("Non-editor passed to MultipleChoiceThumbnailRequest"));
+	String name = cannocial_name_form(e->field().choices->choiceName(id));
+	ScriptableImage img = e->style().choice_images[name];
+	isThreadSafe = img.threadSafe();
+}
+
+Image MultipleChoiceThumbnailRequest::generate() {
+	MultipleChoiceValueEditor* cve = reinterpret_cast<MultipleChoiceValueEditor*> (owner);
+	String name = cannocial_name_form(cve->field().choices->choiceName(id));
+	ScriptableImage& img = cve->style().choice_images[name];
+	return img.isReady()
+		? img.generate(GeneratedImage::Options(16,16, stylesheet.get(), &cve->getSet(), ASPECT_BORDER, true), false)
+		: wxImage();
+}
+
+void MultipleChoiceThumbnailRequest::store(const Image& img) {
+	MultipleChoiceValueEditor* cve = reinterpret_cast<MultipleChoiceValueEditor*> (owner);
+	wxImageList* il = cve->style().thumbnails;
+	while (id > il->GetImageCount()) {
+		il->Add(wxBitmap(16,16),*wxBLACK);
+	}
+	if (img.Ok()) {
+		#ifdef __WXMSW__
+			// for some reason windows doesn't like completely transparent images if they do not have a mask
+			// HACK:
+			if (img.HasAlpha() && img.GetWidth() == 16 && img.GetHeight() == 16) {
+				// is the image empty?
+				bool empty = true;
+				int* b = (int*)img.GetAlpha();
+				int* e = b + 16*16/sizeof(int);
+				while (b != e) {
+					if (*b++) {
+						empty = false;
+						break;
+					}
+				}
+				// if so, use a mask instead
+				if (empty) {
+					const_cast<Image&>(img).ConvertAlphaToMask();
+				}
+			}
+			// Hack ends here
+		#endif
+		if (id == il->GetImageCount()) {
+			il->Add(img);
+		} else {
+			il->Replace(id, img);
+		}
+		cve->style().thumbnails_status[id] = THUMB_OK;
+	}
+}
 
 // ----------------------------------------------------------------------------- : DropDownMultipleChoiceList
 
@@ -23,6 +104,7 @@ class DropDownMultipleChoiceList : public DropDownChoiceListBase {
 	virtual bool   select(size_t item);
 	virtual size_t selection() const;
 	virtual DropDownList* createSubMenu(ChoiceField::ChoiceP group) const;
+	virtual ThumbnailRequestP createThumbnailRequest(ValueViewer * e, int index, bool from_disk) const;
 	virtual void drawIcon(DC& dc, int x, int y, size_t item, bool selected) const;
 	
 	virtual void onMotion(wxMouseEvent&);
@@ -90,6 +172,10 @@ size_t DropDownMultipleChoiceList::selection() const {
 
 DropDownList* DropDownMultipleChoiceList::createSubMenu(ChoiceField::ChoiceP group) const {
 	return new DropDownMultipleChoiceList(const_cast<DropDownMultipleChoiceList*>(this), true, cve, group);
+}
+
+ThumbnailRequestP DropDownMultipleChoiceList::createThumbnailRequest(ValueViewer * e, int index, bool from_disk) const {
+	return new_intrusive3<MultipleChoiceThumbnailRequest>(e, index, from_disk);
 }
 
 void DropDownMultipleChoiceList::onMotion(wxMouseEvent& ev) {

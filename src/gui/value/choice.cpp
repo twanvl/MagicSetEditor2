@@ -201,7 +201,7 @@ void DropDownChoiceListBase::generateThumbnailImages() {
 		ThumbnailStatus status = style().thumbnails_status[i];
 		if (i >= image_count || status != THUMB_OK) {
 			// request this thumbnail
-			thumbnail_thread.request( new_intrusive3<ChoiceThumbnailRequest>(&cve, i, status == THUMB_NOT_MADE) );
+			thumbnail_thread.request( createThumbnailRequest(&cve, i, status == THUMB_NOT_MADE));
 		}
 	}
 }
@@ -268,6 +268,10 @@ size_t DropDownChoiceList::selection() const {
 
 DropDownList* DropDownChoiceList::createSubMenu(ChoiceField::ChoiceP group) const {
 	return new DropDownChoiceList(const_cast<DropDownChoiceList*>(this), true, cve, group);
+}
+
+ThumbnailRequestP DropDownChoiceList::createThumbnailRequest(ValueViewer * e, int index, bool from_disk) const {
+	return new_intrusive3<ChoiceThumbnailRequest>(e, index, from_disk);
 }
 
 // ----------------------------------------------------------------------------- : ChoiceValueEditor
