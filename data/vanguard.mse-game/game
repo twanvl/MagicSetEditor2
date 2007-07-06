@@ -505,7 +505,7 @@ keyword:
 	keyword: Banding
 	match: banding
 	mode: old
-	reminder: When declaring attackers or blockers it may group with other creatures with banding and one creature without banding. When damage is dealt, you decide where damage is dealt.
+	reminder: When declaring attackers or blockers, it may group with other creatures with banding and one creature without banding. When damage is dealt, you decide where damage is dealt.
 keyword:
 	keyword: Landwalk
 	match: <atom-param>prefix</atom-param>walk
@@ -525,7 +525,7 @@ keyword:
 	keyword: Bands with other
 	match: bands with other <atom-param>name</atom-param>
 	mode: old
-	reminder: When declaring attackers or blockers it may group with other creatures with banding or bands with {param1}. When damage is dealt, you decide where damage is dealt.
+	reminder: When declaring attackers or blockers, it may group with other creatures with banding or bands with {param1}. When damage is dealt, you decide where damage is dealt.
 keyword:
 	keyword: Rampage
 	match: rampage <atom-param>number</atom-param>
@@ -774,7 +774,7 @@ keyword:
 	keyword: Haunt
 	match: haunt
 	mode: expert
-	reminder: When it is put into a graveyard from play, remove it from the game haunting target creature.
+	reminder: When it is put into a graveyard from play, or when it resolves if it is not a permanent, remove it from the game haunting target creature.
 keyword:
 	keyword: Bloodthirst
 	match: bloodthirst <atom-param>number</atom-param>

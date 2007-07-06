@@ -23,9 +23,12 @@ init script:
 	
 	# Which artifact template should be used?
 	artifact_template := {
-		if styling.darker_artifacts then "a" else "oa"
+		if input == "a" and not styling.darker_artifacts
+		then	"oa"
+		else	input
 	}
-	
+	template      := { artifact_template() + "{type}.jpg" }
+		
 	# Use the normal tap symbol
 	mana_t := {
 		if      styling.tap_symbol == "old"        then "old"

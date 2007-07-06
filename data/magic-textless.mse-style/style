@@ -36,10 +36,6 @@ init script:
 
 styling field:
 	type: boolean
-	name: darker artifacts
-	description: Use darker artifacts, as used by Wizards since Fifth Dawn.
-styling field:
-	type: boolean
 	name: grey hybrid name
 	description: Use a grey background for the name and type line on hybrid cards. This is done on real cards.
 	initial: no

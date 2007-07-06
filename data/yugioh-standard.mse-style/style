@@ -3,9 +3,10 @@ game: yugioh
 short name: Standard
 icon: card-sample.png
 
-card width: 375
+card width: 361
 card height: 523
-card dpi: 300
+card dpi: 152.6265
+
 
 ############################################################## Extra scripts
 
@@ -18,7 +19,7 @@ card style:
 	card type:
 		left:	0
 		top:	0
-		width:	375
+		width:	361
 		height:	523
 		z index: -2
 		render style: image
@@ -37,9 +38,9 @@ card style:
 
 	############################# Name line
 	name:
-		left: 35
+		left: 34
 		top : 31
-		width: 265
+		width: 250
 		height: 35
 		alignment: bottom shrink-overflow
 		padding bottom: 0
@@ -51,7 +52,7 @@ card style:
 				script: if is_nmonster() then rgb(255,255,255)
 				else			      rgb(0,0,0)
 	attribute:
-		left: 302
+		left: 290
 		top : 32
 		width: 35
 		height: 35
@@ -69,10 +70,10 @@ card style:
 			spell:		spell.png
 			trap:		trap.png
 	level:
-		left: 45
+		left: 43
 		top : 78
 		height: 25
-		width: 285
+		width: 275
 		z index: 2
 		alignment: middle right
 		font:
@@ -88,18 +89,18 @@ card style:
 
 	############################# Image
 	image:
-		left:	53
+		left:	51
 		top:	114
-		width: 267
+		width: 257
 		height:	261
 		z index: 1
 
 	############################# Card type
 
 	monster type:
-		left: 38
+		left: 37
 		top : 403
-		width: 200
+		width: 193
 		height: 14
 		alignment: top left
 		z index: 2
@@ -113,9 +114,9 @@ card style:
 	############################# Edition and Card ID
 
 	number:
-		left: 210
+		left: 202
 		top : 383
-		width: 120
+		width: 116
 		height: 28
 		z index: 2
 		alignment: top right
@@ -124,9 +125,9 @@ card style:
 			size: 8
 			color: rgb(0,0,0)
 	edition:
-		left: 45
+		left: 43
 		top: 383
-		width: 120
+		width: 116
 		height: 18
 		z index: 2
 		font:
@@ -136,10 +137,10 @@ card style:
 
 	############################# Text box
 	rule text:
-		left: 35
+		left: 34
 		top : 
 			script: if is_nmonster() then 400 else 413
-		width: 301
+		width: 290
 		height: 
 			script: if is_nmonster() then 90 else 63
 		font:
@@ -158,9 +159,9 @@ card style:
 
 	############################# Attack/Defense
 	attack:
-		left:	205
+		left:	197
 		top:	477
-		width:	50
+		width:	48
 		height:	18
 		z index: 2
 		alignment: left middle
@@ -171,10 +172,9 @@ card style:
 		visible: script: if is_nmonster() then false else true
 
 	defense:
-		z index: 4
-		left:	276
+		left:	266
 		top:	477
-		width:	50
+		width:	48
 		height:	18
 		z index: 2
 		alignment: left middle
@@ -188,9 +188,9 @@ card style:
 	############################# Copyright stuff
 
 	gamecode:
-		left: 15
+		left: 14
 		top : 499
-		width: 100
+		width: 96
 		height: 18
 		alignment: top left
 		z index: 2
@@ -200,9 +200,9 @@ card style:
 			color: rgb(0,0,0)
 
 	copyright:
-		left: 195
+		left: 188
 		top : 499
-		width: 150
+		width: 145
 		height: 18
 		z index: 2
 		alignment: top right

@@ -132,17 +132,18 @@ init script:
 	is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicolor" }
 	is_hybrid     := { chosen(choice: "hybrid") }
 	is_land       := { chosen(choice: "land") }
+	
 	sort_index := {
 		if card.casting_cost_2 !="" and card.card_color != card.card_color_2 then "H"
-		else if card.card_color=="white"        then "A"
-		else if card.card_color=="blue"         then "B"
-		else if card.card_color=="black"        then "C"
-		else if card.card_color=="red"          then "D"
-		else if card.card_color=="green"        then "E"
 		else if is_land      (card.card_color)  then (if card.rarity != "basic land" then "J" else "K")
-		else if is_multicolor(card.card_color)  then "F"
+		else if is_multicolor(card.card_color) then "F"
 		else if is_hybrid    (card.card_color)  then "G"
-		else                                         "I" # colorless
+		else if chosen(choice:"white", card.card_color) then "A"
+		else if chosen(choice:"blue", card.card_color) then "B"
+		else if chosen(choice:"black", card.card_color) then "C"
+		else if chosen(choice:"red", card.card_color) then "D"
+		else if chosen(choice:"green", card.card_color) then "E"
+		else "I" # colorless, artifacts
 	};
 	
 	# The color of a card
@@ -1393,7 +1394,7 @@ keyword:
 	keyword: Banding
 	match: Banding
 	mode: old
-	reminder: When declaring attackers or blockers this creature may group with other creatures with banding and one creature without banding. When damage is dealt, you decide where damage is dealt.
+	reminder: When declaring attackers or blockers, this creature may group with other creatures with banding and one creature without banding. When damage is dealt, you decide where damage is dealt.
 keyword:
 	keyword: Landwalk
 	match: <atom-param>prefix</atom-param>walk
@@ -1413,7 +1414,7 @@ keyword:
 	keyword: Bands with other
 	match: Bands with other <atom-param>name</atom-param>
 	mode: old
-	reminder: When declaring attackers or blockers this creature may group with other creatures with banding or bands with {param1}. When damage is dealt, you decide where damage is dealt.
+	reminder: When declaring attackers or blockers, this creature may group with other creatures with banding or bands with other {param1}. When damage is dealt, you decide where damage is dealt.
 keyword:
 	keyword: Rampage
 	match: Rampage <atom-param>number</atom-param>
@@ -1652,7 +1653,7 @@ keyword:
 	keyword: Haunt
 	match: Haunt
 	mode: expert
-	reminder: When this card is put into a graveyard from play, remove it from the game haunting target creature.
+	reminder: When this { if contains(card.type,match:"Instant") or contains(card.type,match:"Sorcery") then "spell card is put into a graveyard after resolving," else "card is put into a graveyard from play," } remove it from the game haunting target creature.
 keyword:
 	keyword: Bloodthirst
 	match: Bloodthirst <atom-param>number</atom-param>
