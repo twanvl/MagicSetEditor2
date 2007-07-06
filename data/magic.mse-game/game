@@ -103,7 +103,7 @@ init script:
 		# remove activation costs
 		replace_rule(
 			match: "<sym[^>]*>[^<]+</sym[^>]*>"
-			in_context: "(?ix)<match>(,|:)|(pays?|additional|costs?)[ ]<match>",
+			in_context: "(?ix) (\\n|^)[^:]*<match>(,|:) | (pays?|additional|costs?)[ ]<match>",
 			replace: ""
 		) +
 		# keep only mana
@@ -122,14 +122,16 @@ init script:
 			if      count == 0 then "land"
 			else if count == 1 then color_names_1() + ", land"
 			else if count == 2 then color_names_2() + ", land"
+			else if count == 3 then color_names_3() + ", land"
+			else                    "land, multicolor"
 		)
 	};
 	
 	# Index for sorting, white cards are first, so white->A, blue->B, .. ,
 	#  multi->F, hybrid->G, arti->H, land->J, basic land->I
-	is_multicolor := { chosen(choice: "multicolor") }
+	is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicolor" }
 	is_hybrid     := { chosen(choice: "hybrid") }
-	is_colorless  := { not chosen(choice: "land") }
+	is_land       := { chosen(choice: "land") }
 	sort_index := {
 		if card.casting_cost_2 !="" and card.card_color != card.card_color_2 then "H"
 		else if card.card_color=="white"        then "A"
@@ -137,11 +139,10 @@ init script:
 		else if card.card_color=="black"        then "C"
 		else if card.card_color=="red"          then "D"
 		else if card.card_color=="green"        then "E"
+		else if is_land      (card.card_color)  then (if card.rarity != "basic land" then "J" else "K")
 		else if is_multicolor(card.card_color)  then "F"
 		else if is_hybrid    (card.card_color)  then "G"
-		else if is_colorless (card.card_color)  then "I"
-		else if card.rarity!="basic land"       then "J"
-		else                                         "K"
+		else                                         "I" # colorless
 	};
 	
 	# The color of a card
@@ -167,7 +168,7 @@ init script:
 		if colors > 1 then (
 			input := require_choice(choice1: "multicolor", choice2: "hybrid", choice3: "land", choice4: "artifact")
 			input := exclusive_choice(choice1: "multicolor", choice2: "hybrid")
-			input := require_exclusive_choice(choice1: "radial", choice2: "horizontal", choice3: "vertical", choice4: "overlay")
+			input := require_exclusive_choice(choice1: "horizontal", choice2: "vertical", choice3: "radial", choice4: "overlay")
 		) else
 			input := remove_choice(choice1: "radial", choice2: "horizontal", choice3: "vertical", choice4: "overlay", choice5: "hybrid", choice6: "reversed")
 		if chosen(choice:"overlay") then
@@ -214,6 +215,7 @@ init script:
 		    |adds?|pay(ed)?[ ](with|using)
 		    )
 		    ([ ]either)?			 # pay either X or Y
+		    ([ ]<sym[^>]*>[STXYZWUBRG0-9/|]+</sym[^>]*>,)* # pay X, Y or Z
 		    ([ ]<sym[^>]*>[STXYZWUBRG0-9/|]+</sym[^>]*>[ ](and|or|and/or))* # pay X or Y
 		    [ ]<match> 
 		    ([,.)]|$				# (end of word)
