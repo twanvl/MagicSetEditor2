@@ -60,6 +60,8 @@ class Package : public IntrusivePtrVirtualBase {
 	bool needSaveAs() const;
 	/// Determines the short name of this package: the filename without path or extension
 	String name() const;
+	/// Return the relative filename of this file, the name and extension
+	String relativeFilename() const;
 	/// Return the absolute filename of this file
 	const String& absoluteFilename() const;
 	/// The time this package was last modified
@@ -71,14 +73,14 @@ class Package : public IntrusivePtrVirtualBase {
 	
 	/// Saves the package, by default saves as a zip file, unless
 	/// it was already a directory
-	/** If removeUnused=true all files that were in the file and
+	/** If remove_unused=true all files that were in the file and
 	 *  are not touched with referenceFile will be deleted from the new archive!
 	 *  This is a form of garbage collection, to get rid of old picture files for example.
 	 */
-	void save(bool removeUnused = true);
+	void save(bool remove_unused = true);
 	
 	/// Saves the package under a different filename
-	void saveAs(const String& package, bool removeUnused = true);
+	void saveAs(const String& package, bool remove_unused = true);
 	
 	
 	// --------------------------------------------------- : Managing the inside of the package
@@ -157,6 +159,7 @@ class Package : public IntrusivePtrVirtualBase {
 	/// Information on files in the package
 	/** Note: must be public for DECLARE_TYPEOF to work */
 	typedef map<String, FileInfo> FileInfos;
+	inline const FileInfos& getFileInfos() const { return files; }
   private:
 	/// All files in the package
 	FileInfos files;
@@ -210,7 +213,7 @@ class Packaged : public Package {
 	/// Ensure the package is fully loaded.
 	void loadFully();
 	void save();
-	void saveAs(const String& package);
+	void saveAs(const String& package, bool remove_unused = true);
 	
   protected:
 	/// filename of the data file, and extension of the package file

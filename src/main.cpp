@@ -12,6 +12,7 @@
 #include <data/set.hpp>
 #include <data/settings.hpp>
 #include <data/locale.hpp>
+#include <data/installer.hpp>
 #include <data/format/formats.hpp>
 #include <gui/welcome_window.hpp>
 #include <gui/update_checker.hpp>
@@ -19,6 +20,8 @@
 #include <gui/symbol/window.hpp>
 #include <gui/thumbnail_thread.hpp>
 #include <wx/fs_inet.h>
+#include <wx/wfstream.h>
+#include <wx/txtstrm.h>
 
 // ----------------------------------------------------------------------------- : Main function/class
 
@@ -36,6 +39,24 @@ class MSE : public wxApp {
 };
 
 IMPLEMENT_APP(MSE)
+
+// ----------------------------------------------------------------------------- : GUI/Console
+
+/// Write a message to the console if it is available, and to a message box otherwise
+void write_stdout(const String& str) {
+	bool have_console = false;
+	#ifndef __WXMSW__
+		// somehow detect whether to use console output
+	#endif
+	if (have_console) {
+		wxFileOutputStream file(wxFile::fd_stdout);
+		wxTextOutputStream t(file);
+		t.WriteString(str);
+	} else {
+		// no console, use a message box
+		wxMessageBox(str, _("Magic Set Editor"), wxOK | wxICON_INFORMATION);
+	}
+}
 
 // ----------------------------------------------------------------------------- : Initialization
 
@@ -59,6 +80,7 @@ bool MSE::OnInit() {
 		if (argc > 1) {
 			try {
 				// Command line argument, find its extension
+				String arg = argv[1];
 				wxFileName f(argv[1]);
 				if (f.GetExt() == _("mse-symbol")) {
 					// Show the symbol editor
@@ -70,6 +92,41 @@ bool MSE::OnInit() {
 					Window* wnd = new SetWindow(nullptr, import_set(argv[1]));
 					wnd->Show();
 					return true;
+				} else if (f.GetExt() == _("mse-installer")) {
+					// Installer; install it
+					Installer::installFrom(argv[1], true);
+					return false;
+				} else if (arg == _("--create-installer")) {
+					// create an installer
+					Installer inst;
+					for (int i = 2 ; i < argc ; ++i) {
+						inst.addPackage(argv[i]);
+					}
+					if (inst.prefered_filename.empty()) {
+						throw Error(_("Specify packages to include in installer"));
+					} else {
+						inst.saveAs(inst.prefered_filename, false);
+					}
+					return false;
+				} else if (arg == _("--help") || arg == _("-?")) {
+					// command line help
+					write_stdout( String(_("Magic Set Editor\n\n"))
+					            + _("Usage: ") + argv[0] + _("[OPTIONS]\n\n")
+					            + _("  no options        \tStart the MSE user interface showing the welcome window.\n")
+					            + _("  FILE.mse-set,\n")
+					            + _("   FILE.set,\n")
+					            + _("   FILE.mse         \tLoad the set file in the MSE user interface.\n")
+					            + _("  FILE.mse-symbol   \tLoad the symbol into the MSE symbol editor.\n")
+					            + _("  FILE.mse-installer\tInstall the packages from the installer.\n")
+					            + _("  -? --help         \tShows this help screen.\n")
+					            + _("  -v --version      \tShow version information.\n")
+					            + _("  --create-installer\n")
+					            + _("      FILE [FILE]...\tCreate an instaler named FILE, containing the listed packges.\n") );
+					return false;
+				} else if (arg == _("--version") || arg == _("-v")) {
+					// dump version
+					write_stdout( _("Magic Set Editor\nVersion ") + app_version.toString() + version_suffix );
+					return false;
 				} else {
 					handle_error(_("Invalid command line argument:\n") + String(argv[1]));
 				}
@@ -82,9 +139,9 @@ bool MSE::OnInit() {
 		(new WelcomeWindow())->Show();
 		return true;
 			
-	} catch (Error e) {
+	} catch (const Error& e) {
 		handle_error(e, false);
-	} catch (std::exception e) {
+	} catch (const std::exception& e) {
 		// we don't throw std::exception ourselfs, so this is probably something serious
 		handle_error(InternalError(String(e.what(), IF_UNICODE(wxConvLocal, wxSTRING_MAXLEN) )), false);
 	} catch (...) {
@@ -108,9 +165,9 @@ int MSE::OnExit() {
 bool MSE::OnExceptionInMainLoop() {
 	try {
 		throw;	// rethrow the exception, so we can examine it
-	} catch (Error e) {
+	} catch (const Error& e) {
 		handle_error(e, false);
-	} catch (std::exception e) {
+	} catch (const std::exception& e) {
 		// we don't throw std::exception ourselfs, so this is probably something serious
 		handle_error(InternalError(String(e.what(), IF_UNICODE(wxConvLocal, wxSTRING_MAXLEN) )), false);
 	} catch (...) {

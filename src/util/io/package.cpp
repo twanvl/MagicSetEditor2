@@ -56,6 +56,11 @@ String Package::name() const {
 	else if (                         ext == String::npos) return filename.substr(slash+1);
 	else                                                   return filename.substr(slash+1, ext-slash-1);
 }
+String Package::relativeFilename() const {
+	size_t slash = filename.find_last_of(_("/\\:"));
+	if (slash == String::npos) return filename;
+	else                       return filename.substr(slash+1);
+}
 const String& Package::absoluteFilename() const {
 	return filename;
 }
@@ -81,17 +86,17 @@ void Package::open(const String& n) {
 	}
 }
 
-void Package::save(bool removeUnused) {
+void Package::save(bool remove_unused) {
 	assert(!needSaveAs());
-	saveAs(filename, removeUnused);
+	saveAs(filename, remove_unused);
 }
 
-void Package::saveAs(const String& name, bool removeUnused) {
+void Package::saveAs(const String& name, bool remove_unused) {
 	// type of package
 	if (wxDirExists(name)) {
-		saveToDirectory(name, removeUnused);
+		saveToDirectory(name, remove_unused);
 	} else {
-		saveToZipfile  (name, removeUnused);
+		saveToZipfile  (name, remove_unused);
 	}
 	filename = name;
 	// cleanup : remove temp files, remove deleted files from the list
@@ -101,7 +106,7 @@ void Package::saveAs(const String& name, bool removeUnused) {
 			// remove corresponding temp file
 			wxRemoveFile(it->second.tempName);
 		}
-		if (!it->second.keep && removeUnused) {
+		if (!it->second.keep && remove_unused) {
 			// also remove the record of deleted files
 			FileInfos::iterator toRemove = it;
 			++it;
@@ -294,6 +299,9 @@ void Package::openSubdir(const String& name) {
 	}
 	// find subdirs
 	for(bool ok = d.GetFirst(&f, wxEmptyString, wxDIR_DIRS | wxDIR_HIDDEN) ; ok ; ok = d.GetNext(&f)) {
+		if (f.empty() || f.GetChar(0) == _('.')) {
+			return; // skip directories starting with '.', like ., .. and .svn
+		}
 		openSubdir(name+f+_("/"));
 	}
 }
@@ -318,10 +326,10 @@ void Package::openZipfile() {
 }
 
 
-void Package::saveToDirectory(const String& saveAs, bool removeUnused) {
+void Package::saveToDirectory(const String& saveAs, bool remove_unused) {
 	// write to a directory
 	FOR_EACH(f, files) {
-		if (!f.second.keep && removeUnused) {
+		if (!f.second.keep && remove_unused) {
 			// remove files that are not to be kept
 			// ignore failure (new file that is not kept)
 			wxRemoveFile(saveAs+_("/")+f.first);
@@ -342,7 +350,7 @@ void Package::saveToDirectory(const String& saveAs, bool removeUnused) {
 	}
 }
 
-void Package::saveToZipfile(const String& saveAs, bool removeUnused) {
+void Package::saveToZipfile(const String& saveAs, bool remove_unused) {
 	// create a temporary zip file name
 	String tempFile = saveAs + _(".tmp");
 	wxRemoveFile(tempFile);
@@ -355,7 +363,7 @@ void Package::saveToZipfile(const String& saveAs, bool removeUnused) {
 		// copy everything to a new zip file, unless it's updated or removed
 		if (zipStream) newZip->CopyArchiveMetaData(*zipStream);
 		FOR_EACH(f, files) {
-			if (!f.second.keep && removeUnused) {
+			if (!f.second.keep && remove_unused) {
 				// to remove a file simply don't copy it
 			} else if (f.second.zipEntry && !f.second.wasWritten()) {
 				// old file, was also in zip, not changed
@@ -474,11 +482,11 @@ void Packaged::save() {
 	referenceFile(typeName());
 	Package::save();
 }
-void Packaged::saveAs(const String& package) {
+void Packaged::saveAs(const String& package, bool remove_unused) {
 	WITH_DYNAMIC_ARG(writing_package, this);
 	writeFile(typeName(), *this);
 	referenceFile(typeName());
-	Package::saveAs(package);
+	Package::saveAs(package, remove_unused);
 }
 
 void Packaged::validate(Version) {

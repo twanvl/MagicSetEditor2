@@ -9,10 +9,8 @@
 // -------------------------------------------------------- : Icons
 
 icon/app				ICON	"icon/app.ico" // has to come first in alphabet!!
-icon/export				ICON	"icon/set.ico" //todo
-icon/game				ICON	"icon/set.ico" //todo
+icon/installer			ICON	"icon/installer.ico"
 icon/set				ICON	"icon/set.ico"
-icon/style				ICON	"icon/set.ico" //todo
 icon/symbol				ICON	"icon/symbol.ico"
 
 // -------------------------------------------------------- : Toolbar
