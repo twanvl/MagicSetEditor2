@@ -221,6 +221,7 @@ bool smart_less(const String& as, const String& bs) {
 			return lt;
 		} else {
 			// compare characters
+			// TODO: decompose characters, in particular AE and accents
 			Char la = toLower(a), lb = toLower(b);
 			if (la < lb) return true;
 			if (la > lb) return false;

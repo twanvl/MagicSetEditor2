@@ -47,7 +47,7 @@ struct OrderCache<T>::CompareValues {
 	CompareValues(const vector<String>& values) : values(values) {}
 	
 	inline bool operator () (const KV& a, const KV& b) {
-		return values[a.second] < values[b.second];
+		return smart_less(values[a.second], values[b.second]);
 	}
 };
 
