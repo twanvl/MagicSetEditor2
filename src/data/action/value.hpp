@@ -61,6 +61,8 @@ class TextValueAction : public ValueAction {
 	virtual void perform(bool to_undo);
 	virtual bool merge(const Action& action);
 	
+	inline const String& newValue() const { return new_value(); }
+	
 	/// The modified selection
 	size_t selection_start, selection_end;
   private:

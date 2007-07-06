@@ -528,6 +528,8 @@ String KeywordDatabase::expand(const String& text,
 								// note: start_u can be (uint)-1 when len_u == 0
 								size_t part_end = len_u > 0 ? untagged_to_index(s, start_u + len_u, true) : start;
 								String part = s.substr(start, part_end - start);
+								// strip left over </kw tags
+								part = remove_tag(part,_("</kw-"));
 								if ((j % 2) == 0) {
 									// parameter
 									KeywordParam& kwp = *kw->parameters[j/2-1];

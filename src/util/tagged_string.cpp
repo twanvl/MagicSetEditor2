@@ -301,6 +301,10 @@ size_t cursor_to_index(const String& str, size_t cursor, Movement dir) {
 						return i;
 					}
 				}
+				if (starts_with(tag1, _("/sym"))) {
+					// we like to be inside <b> and <i> tags, but outside <sym> tags
+					start = i;
+				}
 			} else {
 				i++;
 			}
@@ -308,6 +312,28 @@ size_t cursor_to_index(const String& str, size_t cursor, Movement dir) {
 	}
 	// This allows formating to be enabled without a selection
 	return dir <= 0 /*MOVE_LEFT*/ ? start : end - 1;
+}
+
+String untag_for_cursor(const String& str) {
+	String ret; ret.reserve(str.size());
+	for (size_t i = 0 ; i < str.size() ; ) {
+		Char c = str.GetChar(i);
+		if (c == _('<')) {
+			if (is_substr(str, i, _("<atom"))) {
+				i = match_close_tag_end(str, i);
+				ret += _('\2'); // use a random character here
+			} else if (is_substr(str, i, _("<sep"))) {
+				i = match_close_tag_end(str, i);
+				ret += _('\3'); // use a random character here
+			} else {
+				i = skip_tag(str, i);
+			}
+		} else {
+			ret += c;
+			++i;
+		}
+	}
+	return ret;
 }
 
 // ----------------------------------------------------------------------------- : Untagged position

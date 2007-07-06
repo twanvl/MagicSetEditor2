@@ -504,6 +504,27 @@ void TextValueEditor::showCaret() {
 void TextValueEditor::insert(const String& text, const String& action_name) {
 	replaceSelection(text, action_name);
 }
+
+/// compare two cursor positions, determine how much the text matches before and after
+size_t match_cursor_position(size_t pos1, const String& text1, size_t pos2, const String& text2) {
+	size_t penalty = 0; // penalty for case mismatches
+	size_t before;
+	for (before = 0 ; before < min(pos1,pos2) ; ++before) {
+		Char c1 = text1.GetChar(pos1-before-1), c2 = text2.GetChar(pos2-before-1);
+		if (toLower(c1) != toLower(c2)) break;
+		else if (c1 != c2) ++penalty;
+	}
+	if (pos1 == before && pos2 == before) ++before; // bonus points for matching start of string
+	size_t after;
+	for (after = 0 ; after < min(text1.size() - pos1, text2.size() - pos2) ; ++after) {
+		Char c1 = text1.GetChar(pos1+after), c2 = text2.GetChar(pos2+after);
+		if (toLower(c1) != toLower(c2)) break;
+		else if (c1 != c2) ++penalty;
+	}
+	if (pos1+after == text1.size() && pos2+after == text2.size()) ++after; // bonus points for matching end of string
+	return 1000 * before + 2 * after - penalty; // matching 'before' is more important
+}
+
 void TextValueEditor::replaceSelection(const String& replacement, const String& name) {
 	if (replacement.empty() && selection_start == selection_end) {
 		// no text selected, nothing to delete
@@ -514,43 +535,53 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 	fixSelection();
 	// execute the action before adding it to the stack,
 	// because we want to run scripts before action listeners see the action
-	ValueAction* action = typing_action(valueP(), selection_start_i, selection_end_i, selection_start, selection_end, replacement, name);
+	TextValueAction* action = typing_action(valueP(), selection_start_i, selection_end_i, selection_start, selection_end, replacement, name);
 	if (!action) {
 		// nothing changes, but move the selection anyway
 		moveSelection(TYPE_CURSOR, selection_start);
 		return;
 	}
+	// what we would expect if no scripts take place
+	String expected_value  = untag_for_cursor(action->newValue());
+	size_t expected_cursor = min(selection_start, selection_end) + untag(replacement).size();
 	// perform the action
 	// NOTE: this calls our onAction, invalidating the text viewer and moving the selection around the new text
 	getSet().actions.add(action);
 	// move cursor
-	if (field().move_cursor_with_sort && replacement.size() == 1) {
-		String val = value().value();
-		Char typed  = replacement.GetChar(0);
-		Char typedU = toUpper(typed);
-		Char cur    = val.GetChar(selection_start_i);
-		// the cursor may have moved because of sorting...
-		// is 'replacement' just after the current cursor?
-		if (selection_start_i >= 0 && selection_start_i < val.size() && (cur == typed || cur == typedU)) {
-			// no need to move cursor in a special way
-			selection_end_i = selection_start_i = min(selection_end_i, selection_start_i) + 1;
+	{
+		String real_value = untag_for_cursor(value().value());
+		// where real and expected value are the same, nothing has happend, so don't look there
+		size_t start, end_min;
+		for (start = 0 ; start < min(real_value.size(), expected_value.size()) ; ++start) {
+			if (real_value.GetChar(start) != expected_value.GetChar(start)) break;
+		}
+		for (end_min = 0 ; end_min < min(real_value.size(), expected_value.size()) ; ++end_min) {
+			if (real_value.GetChar(real_value.size() - end_min - 1) !=
+				expected_value.GetChar(expected_value.size() - end_min - 1)) break;
+		}
+		// what is the best cursor position?
+		size_t best_cursor = expected_cursor;
+		if (real_value.size() < expected_value.size()
+			&& expected_cursor < expected_value.size()
+			&& expected_value.GetChar(expected_cursor) == _('\3') // \3 == <sep>
+			&& real_value.GetChar(start)               == _('\3') // \3 == <sep>
+			&& real_value.size() - end_min == start) {
+			// exception for type-over separators
+			best_cursor = start + 1;
 		} else {
-			// find the last occurence of 'replacement' in the value
-			size_t pos = val.find_last_of(typed);
-			if (pos == String::npos) {
-				// try upper case
-				pos = val.find_last_of(typedU);
-			}
-			if (pos != String::npos) {
-				selection_end_i = selection_start_i = pos + 1;
-			} else {
-				selection_end_i = selection_start_i;
+			// try to find the best match
+			size_t best_match  = 0;
+			for (size_t i = min(start, expected_cursor) ; i <= real_value.size() - end_min ; ++i) {
+				size_t match = match_cursor_position(expected_cursor, expected_value, i, real_value);
+				if (match > best_match) {
+					best_match = match;
+					best_cursor = i;
+				}
 			}
 		}
-	} else {
-		selection_end_i = selection_start_i = min(selection_end_i, selection_start_i) + replacement.size();
+		selection_end = selection_start = best_cursor;
+		fixSelection(TYPE_CURSOR, MOVE_RIGHT);
 	}
-	fixSelection(TYPE_INDEX, MOVE_RIGHT);
 	// scroll with next update
 	scroll_with_cursor = true;
 }
