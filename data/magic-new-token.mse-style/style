@@ -216,7 +216,7 @@ card style:
 			name: MPlantin
 			italic name: MPlantin-Italic
 			size: 15
-			scale down to: 15
+			scale down to: 8
 			color: rgb(0,0,0)
 		symbol font:
 			name:
@@ -235,8 +235,8 @@ card style:
 				   not contains (match: "!", card.rule_text) and
 				   not contains (match: "?", card.rule_text) and
 				   card.flavor_text == "<i-flavor></i-flavor>"
-				then "middle center"
-				else "middle left"
+				then "middle center shrink-overflow"
+				else "middle left shrink-overflow"
 		z index: 2
 		padding left:   6
 		padding top:    2
@@ -365,7 +365,7 @@ extra card style:
 	name box right:
 		left:
 			{ if card_style.name.content_width > 275 then 325
-			   else card_style.name.content_width * 0.5 + 187.5 }
+			   else card_style.name.content_width * 0.5 + 186.5 }
 		top: 26
 		width: 14
 		height: 35
