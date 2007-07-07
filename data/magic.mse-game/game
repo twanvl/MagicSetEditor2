@@ -128,22 +128,35 @@ init script:
 	};
 	
 	# Index for sorting, white cards are first, so white->A, blue->B, .. ,
-	#  multi->F, hybrid->G, arti->H, land->J, basic land->I
+	#  multi->F, hybrid->G, splits -> H, arti->I, land->K, basic land->J
 	is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicolor" }
 	is_hybrid     := { chosen(choice: "hybrid") }
 	is_land       := { chosen(choice: "land") }
+	is_multicolor_cost := {
+		colors := color_filter()
+		count  := number_of_items(in: colors)
+		if count >= 2 then "yes"
+		else "no"
+	}
 	
 	sort_index := {
-		if card.casting_cost_2 !="" and card.card_color != card.card_color_2 then "H"
-		else if is_land      (card.card_color)  then (if card.rarity != "basic land" then "J" else "K")
-		else if is_multicolor(card.card_color) then "F"
-		else if is_hybrid    (card.card_color)  then "G"
-		else if chosen(choice:"white", card.card_color) then "A"
-		else if chosen(choice:"blue", card.card_color) then "B"
-		else if chosen(choice:"black", card.card_color) then "C"
-		else if chosen(choice:"red", card.card_color) then "D"
-		else if chosen(choice:"green", card.card_color) then "E"
-		else "I" # colorless, artifacts
+		if card.casting_cost_2 !="" and card.card_color != card.card_color_2 then "H"                            # splits that aren't the same color on both sides
+		else if is_land      (card.card_color)  then (if card.rarity != "basic land" then "J" else "K")             # lands, basic and non-basic
+		else if contains(card.casting_cost,match:"/") then "G"                                                  # hybrid cards, hybrid artifacts
+		else if is_multicolor_cost(card.casting_cost) == "yes" then "F"                                 # multicolor cards, multicolor artifacts
+		else if contains(card.casting_cost,match:"W") then "A"                                               # white cards, white artifacts
+		else if contains(card.casting_cost,match:"U") then "B"                                               # blue cards, blue artifacts
+		else if contains(card.casting_cost,match:"B") then "C"                                               # black cards, black artifacts
+		else if contains(card.casting_cost,match:"R") then "D"                                               # red cards, red artifacts
+		else if contains(card.casting_cost,match:"G") then "E"                                               # green cards, green artifacts
+		else if is_multicolor(card.card_color) and card.casting_cost == "" then "F"                                 # costless multicolor cards
+		else if is_hybrid    (card.card_color) and card.casting_cost == "" then "G"                                    # costless hybrid cards
+		else if chosen(choice:"white", card.card_color) and card.casting_cost == "" then "A"                 # costless white cards
+		else if chosen(choice:"blue", card.card_color) and card.casting_cost == "" then "B"                   # costless blue cards
+		else if chosen(choice:"black", card.card_color) and card.casting_cost == "" then "C"                  # costless black cards
+		else if chosen(choice:"red", card.card_color) and card.casting_cost == "" then "D"                     # costless red cards
+		else if chosen(choice:"green", card.card_color) and card.casting_cost == "" then "E"                 # costless green cards
+		else "I"                      # colorless, artifacts
 	};
 	
 	# The color of a card
