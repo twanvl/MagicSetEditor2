@@ -80,6 +80,8 @@ class SetWindow : public wxFrame, public SetView {
 	// minSize = mainSizer->getMinWindowSize(this)
 	// but wx made that private
 	void fixMinWindowSize();
+	/// Update the window title based on the set name
+	void updateTitle();
 	
 	// --------------------------------------------------- : Window events - close
 	

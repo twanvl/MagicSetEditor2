@@ -99,6 +99,22 @@ IndexMap<FieldP, ValueP>& Set::stylingDataFor(const CardP& card) {
 	else                           return stylingDataFor(stylesheetFor(card));
 }
 
+String Set::identification() const {
+	// an identifying field
+	FOR_EACH_CONST(v, data) {
+		if (v->fieldP->identifying) {
+			return v->toString();
+		}
+	}
+	// otherwise the first field
+	if (!data.empty()) {
+		return data.at(0)->toString();
+	} else {
+		return wxEmptyString;
+	}
+}
+
+
 String Set::typeName() const { return _("set"); }
 
 // fix values for versions < 0.2.7

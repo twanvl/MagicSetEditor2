@@ -354,6 +354,12 @@ label:
 	# Open dialogs
 	all files			All files
 	
+	# Other set window dialogs
+	save changes:
+		The set '%s' has changed.
+		
+		Do you want to save the changes?
+	
 	# New set window
 	game type:			&Game type:
 	style type:			&Card style:
@@ -451,6 +457,8 @@ button:
 ############################################################## Titles in the GUI
 title:
 	magic set editor:	Magic Set Editor
+	%s - magic set editor:	%s - Magic Set Editor
+	untitled:			Untitled
 	about:				About Magic Set Editor
 	symbol editor:		Symbol Editor
 	# dialogs
@@ -458,6 +466,7 @@ title:
 	save set:			Save Set As
 	save image:			Save Image
 	updates availible:	Updates Availible
+	save changes:		Save Changes?
 	#preferences
 	preferences:		Preferences
 	global:					Global

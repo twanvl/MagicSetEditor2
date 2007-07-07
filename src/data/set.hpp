@@ -89,6 +89,10 @@ class Set : public Packaged {
 	/// Styling information for a particular card
 	IndexMap<FieldP, ValueP>& stylingDataFor(const CardP& card);
 	
+	/// Get the identification of this set, an identification is something like a name, title, etc.
+	/** May return "" */
+	String identification() const;
+	
 	/// Find a value in the data by name and type
 	template <typename T> T& value(const String& name) {
 		for(IndexMap<FieldP, ValueP>::iterator it = data.begin() ; it != data.end() ; ++it) {

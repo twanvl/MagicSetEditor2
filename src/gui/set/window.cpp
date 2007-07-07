@@ -32,6 +32,7 @@
 #include <data/card.hpp>
 #include <data/settings.hpp>
 #include <data/format/formats.hpp>
+#include <data/action/value.hpp>
 #include <data/action/set.hpp>
 
 DECLARE_TYPEOF_COLLECTION(SetWindowPanel*);
@@ -232,6 +233,8 @@ bool SetWindow::isOnlyWithSet() {
 // ----------------------------------------------------------------------------- : Set actions
 
 void SetWindow::onChangeSet() {
+	// window title
+	updateTitle();
 	// make sure there is always at least one card
 	// some things need this
 	if (set->cards.empty()) set->cards.push_back(new_intrusive1<Card>(*set->game));
@@ -247,6 +250,11 @@ void SetWindow::onChangeSet() {
 }
 
 void SetWindow::onAction(const Action& action, bool undone) {
+	TYPE_CASE(action, ValueAction) {
+		if (set->data.contains(action.valueP) && action.valueP->fieldP->identifying) {
+			updateTitle();
+		}
+	}
 /*	TYPE_CASE_(action, DisplayChangeAction) {
 		// The style changed, maybe also the size of card viewers
 		if (current_panel) current_panel->Layout();
@@ -254,8 +262,20 @@ void SetWindow::onAction(const Action& action, bool undone) {
 	}
 */
 }
-	
-	
+
+void SetWindow::updateTitle() {
+	if (!set) {
+		SetTitle(_TITLE_("magic set editor"));
+	} else {
+		String identification = set->identification();
+		if (identification.empty()) identification = set->name();
+		if (identification.empty()) identification = _TITLE_("untitled");
+		set->short_name = identification;
+		SetTitle(format_string(_TITLE_("%s - magic set editor"),identification));
+	}
+}
+
+
 void SetWindow::onCardSelect(CardSelectEvent& ev) {
 	FOR_EACH(p, panels) {
 		p->selectCard(ev.card);
@@ -297,13 +317,13 @@ void SetWindow::onClose(wxCloseEvent& ev) {
 bool SetWindow::askSaveAndContinue() {
 	if (set->actions.atSavePoint()) return true;
 	// todo : if more then one window has the set selected it's ok to proceed
-	int save = wxMessageBox(_("The set has changed\n\nDo you want to save the changes?"), _("Save changes"), wxYES_NO | wxCANCEL | wxICON_EXCLAMATION);
+	int save = wxMessageBox(format_string(_LABEL_("save changes"), set->short_name), _TITLE_("save changes"), wxYES_NO | wxCANCEL | wxICON_EXCLAMATION);
 	if (save == wxYES) {
 		// save the set
 		try {
 			if (set->needSaveAs()) {
 				// need save as
-				wxFileDialog dlg(this, _("Save a set"), _(""), _(""), export_formats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
+				wxFileDialog dlg(this, _TITLE_("save set"), _(""), set->short_name, export_formats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
 				if (dlg.ShowModal() == wxID_OK) {
 					export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
 					return true;
@@ -422,9 +442,10 @@ void SetWindow::onFileSave(wxCommandEvent& ev) {
 }
 
 void SetWindow::onFileSaveAs(wxCommandEvent&) {
-	wxFileDialog dlg(this, _TITLE_("save set"), _(""), _(""), export_formats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
+	wxFileDialog dlg(this, _TITLE_("save set"), _(""), set->short_name, export_formats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
 	if (dlg.ShowModal() == wxID_OK) {
 		export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
+		updateTitle(); // title may depend on filename
 	}
 }
 
