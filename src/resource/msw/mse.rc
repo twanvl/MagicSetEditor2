@@ -54,6 +54,12 @@ tool/card_rotate_270	IMAGE	"tool/card_rotate_270.png"
 tool/keyword_add		IMAGE	"tool/keyword_add.png"
 tool/keyword_del		IMAGE	"tool/keyword_del.png"
 
+tool/window_cards		IMAGE	"tool/window_cards.png"
+tool/window_set_info	IMAGE	"tool/window_set_info.png"
+tool/window_style		IMAGE	"tool/window_style.png"
+tool/window_keywords	IMAGE	"tool/window_keywords.png"
+tool/window_statistics	IMAGE	"tool/window_statistics.png"
+
 tool/help				IMAGE	"tool/help.png"
 
 // -------------------------------------------------------- : Symbol editor
@@ -140,6 +146,8 @@ btn_expand_down			IMAGE	"../common/btn_expand_down.png"
 welcome_new				IMAGE	"../common/welcome_new.png"
 welcome_open			IMAGE	"../common/welcome_open.png"
 welcome_last			IMAGE	"../common/welcome_last.png"
+
+edit_symbol				IMAGE	"../common/edit_symbol.png"
 
 // -------------------------------------------------------- : WX
 

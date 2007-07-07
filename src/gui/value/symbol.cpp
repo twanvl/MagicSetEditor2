@@ -8,12 +8,15 @@
 
 #include <gui/value/symbol.hpp>
 #include <gui/symbol/window.hpp>
+#include <gui/util.hpp>
 
 // ----------------------------------------------------------------------------- : SymbolValueEditor
 
 IMPLEMENT_VALUE_EDITOR(Symbol)
 	, button_down(-2)
-{}
+{
+	button_images[0] = Bitmap(load_resource_image(_("edit_symbol")));
+}
 
 void SymbolValueEditor::draw(RotatedDC& dc) {
 	SymbolValueViewer::draw(dc);
@@ -27,8 +30,8 @@ void SymbolValueEditor::draw(RotatedDC& dc) {
 	if (nativeLook()) {
 		// draw editor buttons
 		dc.SetFont(*wxNORMAL_FONT);
-		drawButton(dc, 0, _("Edit"));
-		drawButton(dc, 1, _("Gallery"));
+		drawButton(dc, 0, _BUTTON_("edit symbol"));
+		//drawButton(dc, 1, _BUTTON_("symbol gallery"));
 	}
 }
 void SymbolValueEditor::drawButton(RotatedDC& dc, int button, const String& text) {
@@ -49,6 +52,10 @@ void SymbolValueEditor::drawButton(RotatedDC& dc, int button, const String& text
 	// draw text
 	RealSize text_size = dc.GetTextExtent(text);
 	dc.DrawText(text, align_in_rect((Alignment)(ALIGN_BOTTOM | ALIGN_CENTER), text_size, RealRect(x, y, size,size*0.9)));
+	// draw image
+	const Bitmap& bmp = button_images[button];
+	RealSize image_size(bmp.GetWidth(), bmp.GetHeight());
+	dc.DrawBitmap(bmp, align_in_rect(ALIGN_MIDDLE_CENTER, image_size, RealRect(x,y,size,size * 0.8)));
 }
 
 int SymbolValueEditor::findButton(const RealPoint& pos) {

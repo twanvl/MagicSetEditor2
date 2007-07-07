@@ -129,17 +129,17 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	tb->Realize();
 	
 	// tab bar, sizer
-	wxToolBar* tabBar = new wxToolBar(this, ID_TAB_BAR, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL | wxTB_HORZ_TEXT | wxTB_NOICONS);
+	wxToolBar* tabBar = new wxToolBar(this, ID_TAB_BAR, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL | wxTB_HORZ_TEXT);
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 	s->Add(tabBar, 0, wxEXPAND | wxBOTTOM, 3);
 	SetSizer(s);
 	
 	// panels
-	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 0, _("cards tab"));
-	addPanel(menuWindow, tabBar, new SetInfoPanel (this, wxID_ANY), 1, _("set info tab"));
-	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 2, _("style tab"));
-	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 3, _("keywords tab"));
-	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 4, _("stats tab"));
+	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 0, _("window_cards"),      _("cards tab"));
+	addPanel(menuWindow, tabBar, new SetInfoPanel (this, wxID_ANY), 1, _("window_set_info"),   _("set info tab"));
+	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 2, _("window_style"),      _("style tab"));
+	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 3, _("window_keywords"),   _("keywords tab"));
+	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 4, _("window_statistics"), _("stats tab"));
 //	addPanel(*s, *menuWindow, *tabBar, new DraftPanel   (&this, wxID_ANY), 5, _("F10")) 
 	selectPanel(ID_WINDOW_CARDS); // select cards panel
 	
@@ -178,7 +178,7 @@ SetWindow::~SetWindow() {
 
 // ----------------------------------------------------------------------------- : Panel managment
 
-void SetWindow::addPanel(wxMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* panel, UInt pos, const String& name) {
+void SetWindow::addPanel(IconMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* panel, UInt pos, const String& image_name, const String& name) {
 	// insert in list
 	if (panels.size() <= pos) panels.resize(pos + 1);
 	panels[pos] = panel;
@@ -189,9 +189,10 @@ void SetWindow::addPanel(wxMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel* 
 	String tab_help    = tr(LOCALE_CAT_TOOLTIP, name);
 	// add to tab bar
 	int id = ID_WINDOW_MIN + pos;
-	tabBar->AddTool(id, tab_name, wxNullBitmap, wxNullBitmap, wxITEM_CHECK, tab_help, description);
+	tabBar->AddTool(id, tab_name + _("   "), load_resource_tool_image(image_name), wxNullBitmap, wxITEM_CHECK, tab_help, description);
+	tabBar->AddSeparator();
 	// add to menu bar
-	windowMenu->AppendCheckItem(id, menu_name, description);
+	windowMenu->Append(id, image_name, menu_name, description, wxITEM_CHECK);
 	// add to sizer
 	GetSizer()->Add(panel, 1, wxEXPAND);
 }

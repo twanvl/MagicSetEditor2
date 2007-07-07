@@ -34,6 +34,7 @@ class SymbolValueEditor : public SymbolValueViewer, public ValueEditor {
 	
 	// button, or -1 for mouse down, but not on button, or -2 for mouse not down
 	int button_down;
+	Bitmap button_images[1];
 };
 
 // ----------------------------------------------------------------------------- : EOF
