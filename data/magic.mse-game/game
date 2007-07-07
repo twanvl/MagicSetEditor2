@@ -344,6 +344,13 @@ init script:
 		replace_rule(
 			match: "AE",
 			replace: "Æ") +
+		# step 1.5 : longdash
+		replace_rule(
+			match: "--",
+			replace: "—") +
+		replace_rule(
+			match: " - ",
+			replace: " — ") +
 		# step 2 : remove italic tags
 		tag_remove_rule(tag: "<i-flavor>")   +
 		# step 3 : surround by <i> tags
@@ -625,15 +632,6 @@ card field:
 	script: card_color_filter(value)
 	default: card_color(casting_cost: card.casting_cost)
 	show statistics: false
-#needed for FPM temps???
-card field:
-	type: choice
-	name: font color
-	choice: black
-	choice: white
-	description: Font color for the typeline and textbox
-	show statistics: false
-	save value: true
 
 ############################# Name line
 card field:

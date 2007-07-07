@@ -41,6 +41,13 @@ styling field:
 	choice: Matrix
 	choice: MatrixBoldSmallCaps
 styling field:
+	type: choice
+	name: font color
+	description: Use white or black for the card's font color?
+	initial: black
+	choice: black
+	choice: white
+styling field:
 	type: boolean
 	name: beveled mana symbols
 	description: Use the symbols of the casting cost line inside the text box as well
@@ -109,16 +116,6 @@ card style:
 		render style: image
 		popup style: in place
 		image: { card_background() }
-	font color:
-		left: 25
-		top: 508
-		width: 19
-		height: 12
-		z index: 5
-		render style: image
-		choice images:
-			black: clear.png
-			white: clear.png
 
 	############################# Name line
 	name:
@@ -183,8 +180,8 @@ card style:
 			name: Matrix
 			size: 10
 			color: 
-				{ if card.font_color = "white" then rgb(255,255,255)
-				else if card.font_color = "black" then rgb(0,0,0)
+				{ if styling.font_color = "white" then rgb(255,255,255)
+				else if styling.font_color = "black" then rgb(0,0,0)
 				else rgb(0,0,0) }
 			separator color: rgb(128,128,128)
 
@@ -200,8 +197,8 @@ card style:
 			size: 14
 			scale down to: 6
 			color: 
-				{ if card.font_color = "white" then rgb(255,255,255)
-				else if card.font_color = "black" then rgb(0,0,0)
+				{ if styling.font_color = "white" then rgb(255,255,255)
+				else if styling.font_color = "black" then rgb(0,0,0)
 				else rgb(0,0,0) }
 		symbol font:
 			name:
@@ -273,8 +270,8 @@ card style:
 			name: MPlantin-Italic
 			size: 8
 			color: 
-				{ if card.font_color = "white" then rgb(255,255,255)
-				else if card.font_color = "black" then rgb(0,0,0)
+				{ if styling.font_color = "white" then rgb(255,255,255)
+				else if styling.font_color = "black" then rgb(0,0,0)
 				else rgb(0,0,0) }
 		symbol font:
 			name: magic-paintbrush
@@ -291,8 +288,8 @@ card style:
 			name: MPlantin
 			size: 7
 			color: 
-				{ if card.font_color = "white" then rgb(255,255,255)
-				else if card.font_color = "black" then rgb(0,0,0)
+				{ if styling.font_color = "white" then rgb(255,255,255)
+				else if styling.font_color = "black" then rgb(0,0,0)
 				else rgb(0,0,0) }
 
 

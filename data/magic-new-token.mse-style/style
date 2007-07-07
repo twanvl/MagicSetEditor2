@@ -30,12 +30,6 @@ init script:
 		else "2" # large textbox
 	}
 	
-	artifact_template := {
-		if input == "a" and styling.artifact_style == "light" then "oa"
-		else input
-	}
-	
-	template      := { artifact_template() + "{type}.jpg" }
 	land_template := { "c{type}.jpg" }
 	colored_lands := false
 		
@@ -52,18 +46,10 @@ init script:
 	# We have no land template
 	font_colors_white := { input == "b" }
 
-	
 ############################################################## Set info fields
 
 ############################################################## Extra style
 
-styling field:
-	type: choice
-	name: artifact style
-	description: Choose the style of artifacts: light = before Fifth Dawn, dark = used since Fifth Dawn
-	initial: dark
-	choice: light
-	choice: dark
 styling field:
 	type: boolean
 	name: use guild mana symbols
@@ -89,11 +75,6 @@ styling field:
 	choice: diagonal T
 
 styling style:
-	artifact style:
-		render style: both
-		choice images:
-			light: oacard0.jpg
-			dark:  acard0.jpg
 	popup mana symbols:
 		choice images:
 			yes: /magic-mana-large.mse-symbol-font/mana_w.png
