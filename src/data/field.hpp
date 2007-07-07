@@ -29,6 +29,9 @@ class DataViewer; class DataEditor;
 DECLARE_POINTER_TYPE(ValueViewer);
 DECLARE_POINTER_TYPE(ValueEditor);
 
+// Value for which script updates are being run
+DECLARE_DYNAMIC_ARG(Value*, value_being_updated);
+
 // ----------------------------------------------------------------------------- : Field
 
 /// Information on how to store a value

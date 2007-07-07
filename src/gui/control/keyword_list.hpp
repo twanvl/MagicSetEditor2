@@ -44,6 +44,7 @@ class KeywordList : public ItemList, public SetView {
 	virtual void onBeforeChangeSet();
 	virtual void onChangeSet();
 	virtual void onAction(const Action&, bool);
+	void updateUsageStatistics();
 	
 	// --------------------------------------------------- : Selection
 	
@@ -85,6 +86,10 @@ class KeywordList : public ItemList, public SetView {
 	void storeColumns();
 	
 	mutable wxListItemAttr item_attr; // for OnGetItemAttr
+	
+	/// How often is a keyword used in the set?
+	int usage(const Keyword&) const;
+	map<const Keyword*,int> usage_statistics;
 	
 	// --------------------------------------------------- : Window events
 	DECLARE_EVENT_TABLE();

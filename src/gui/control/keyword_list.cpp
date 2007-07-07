@@ -10,6 +10,7 @@
 #include <gui/icon_menu.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
+#include <data/card.hpp>
 #include <data/keyword.hpp>
 #include <data/action/value.hpp>
 #include <data/action/keyword.hpp>
@@ -20,6 +21,7 @@
 #include <wx/clipbrd.h>
 
 DECLARE_TYPEOF_COLLECTION(KeywordP);
+DECLARE_TYPEOF_COLLECTION(CardP);
 
 // ----------------------------------------------------------------------------- : Events
 
@@ -49,6 +51,7 @@ void KeywordList::onBeforeChangeSet() {
 	storeColumns();
 }
 void KeywordList::onChangeSet() {
+	updateUsageStatistics();
 	refreshList();
 }
 
@@ -80,6 +83,15 @@ void KeywordList::onAction(const Action& action, bool undone) {
 	}
 	TYPE_CASE_(action, ChangeKeywordModeAction) {
 		refreshList();
+	}
+}
+
+void KeywordList::updateUsageStatistics() {
+	usage_statistics.clear();
+	FOR_EACH_CONST(card, set->cards) {
+		for (KeywordUsageStatistics::const_iterator it = card->keyword_usage.begin() ; it != card->keyword_usage.end() ; ++it) {
+			usage_statistics[it->second]++;
+		}
 	}
 }
 
@@ -154,11 +166,17 @@ bool KeywordList::compareItems(void* a, void* b) const {
 		case 0:	return ka.keyword < kb.keyword;
 		case 1: return ka.match   < kb.match;
 		case 2: return ka.mode    < kb.mode;
-		//case 3:
+		case 3: return usage(ka)  < usage(kb);
 		case 4: return ka.reminder.getUnparsed() < kb.reminder.getUnparsed();
 		default: // TODO: 3
 				return ka.keyword < kb.keyword;
 	}
+}
+
+int KeywordList::usage(const Keyword& kw) const {
+	map<const Keyword*,int>::const_iterator it = usage_statistics.find(&kw);
+	if (it == usage_statistics.end()) return 0;
+	else return it->second;
 }
 
 // ----------------------------------------------------------------------------- : KeywordList : Item text
@@ -169,7 +187,7 @@ String KeywordList::OnGetItemText (long pos, long col) const {
 		case 0:		return kw.keyword;
 		case 1:		return match_string(kw);
 		case 2:		return kw.mode;
-		case 3:		return _("?");
+		case 3:		return String::Format(_("%d"), usage(kw));
 		case 4: {
 			// convert all whitespace to ' '
 			String formatted;

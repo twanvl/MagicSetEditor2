@@ -17,6 +17,8 @@ DECLARE_TYPEOF_COLLECTION(KeywordModeP);
 DECLARE_TYPEOF_COLLECTION(KeywordParamP);
 DECLARE_TYPEOF_COLLECTION(const Keyword*);
 DECLARE_POINTER_TYPE(KeywordParamValue);
+class Value;
+DECLARE_DYNAMIC_ARG(Value*, value_being_updated);
 
 // ----------------------------------------------------------------------------- : Reflection
 
@@ -329,6 +331,8 @@ KeywordTrie* KeywordTrie::insertAnyStar() {
 
 // ----------------------------------------------------------------------------- : KeywordDatabase
 
+IMPLEMENT_DYNAMIC_ARG(KeywordUsageStatistics*, keyword_usage_statistics, nullptr);
+
 KeywordDatabase::KeywordDatabase()
 	: root(nullptr)
 {}
@@ -439,6 +443,17 @@ String KeywordDatabase::expand(const String& text,
                                const ScriptValueP& combine_script,
                                Context& ctx) const {
 	assert(combine_script);
+	
+	// Clean up usage statistics
+	KeywordUsageStatistics* stat = keyword_usage_statistics();
+	Value* stat_key = value_being_updated();
+	if (stat && stat_key) {
+		for (size_t i = stat->size() - 1 ; i + 1 > 0 ; --i) { // loop backwards
+			if ((*stat)[i].first == stat_key) {
+				stat->erase(stat->begin() + i);
+			}
+		}
+	}
 	
 	// Remove all old reminder texts
 	String s = remove_tag_contents(text, _("<atom-reminder"));
@@ -612,6 +627,11 @@ String KeywordDatabase::expand(const String& text,
 								result +=  _("<kw-"); result += expand_type; result += _(">");
 								result += total;
 								result += _("</kw-"); result += expand_type; result += _(">");
+							}
+							
+							// Add to usage statistics
+							if (stat && stat_key) {
+								stat->push_back(make_pair(stat_key, kw));
 							}
 							
 							// After keyword

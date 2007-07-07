@@ -19,7 +19,7 @@
 /** Age is counted using a global variable */
 class Age {
   public:
-	/// Construct a new age value, 
+	/// Construct a new age value
 	Age() {
 		update();
 	}

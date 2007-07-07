@@ -92,7 +92,7 @@ class TextStyle : public Style {
 /// The Value in a TextField
 class TextValue : public Value {
   public:
-	inline TextValue(const TextFieldP& field) : Value(field) {}
+	inline TextValue(const TextFieldP& field) : Value(field), last_update(1) {}
 	DECLARE_HAS_FIELD(Text)
 	
 	typedef Defaultable<String> ValueType;

@@ -16,6 +16,7 @@
 
 class Game;
 class Dependency;
+class Keyword;
 DECLARE_POINTER_TYPE(Card);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
@@ -49,6 +50,9 @@ class Card : public IntrusivePtrVirtualBase {
 	DelayedIndexMaps<FieldP,ValueP> extra_data;
 	/// Styling information for a particular stylesheet
 	IndexMap<FieldP, ValueP>& extraDataFor(const StyleSheet& stylesheet) ;
+	
+	/// Keyword usage statistics
+	vector<pair<Value*,const Keyword*> > keyword_usage;
 	
 	/// Get the identification of this card, an identification is something like a name, title, etc.
 	/** May return "" */

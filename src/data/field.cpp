@@ -199,6 +199,8 @@ StyleListener::~StyleListener() {
 
 // ----------------------------------------------------------------------------- : Value
 
+IMPLEMENT_DYNAMIC_ARG(Value*, value_being_updated, nullptr);
+
 Value::~Value() {}
 
 IMPLEMENT_REFLECTION_NAMELESS(Value) {

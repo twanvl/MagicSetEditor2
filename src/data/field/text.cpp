@@ -119,7 +119,8 @@ String TextValue::toString() const {
 }
 bool TextValue::update(Context& ctx) {
 	Value::update(ctx);
-	WITH_DYNAMIC_ARG(last_update_age, value.isDefault() ? 0 : last_update.get());
+	WITH_DYNAMIC_ARG(last_update_age,     last_update.get());
+	WITH_DYNAMIC_ARG(value_being_updated, this);
 	bool change = field().default_script.invokeOnDefault(ctx, value)
 	            | field().        script.invokeOn(ctx, value);
 	if (change) last_update.update();

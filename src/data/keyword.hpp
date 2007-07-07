@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <script/scriptable.hpp>
+#include <util/dynamic_arg.hpp>
 #include <wx/regex.h>
 
 DECLARE_POINTER_TYPE(KeywordParam);
@@ -18,6 +19,7 @@ DECLARE_POINTER_TYPE(KeywordMode);
 DECLARE_POINTER_TYPE(Keyword);
 DECLARE_POINTER_TYPE(ParamReferenceType);
 class KeywordTrie;
+class Value;
 
 // ----------------------------------------------------------------------------- : Keyword parameters
 
@@ -114,6 +116,10 @@ class Keyword : public IntrusivePtrVirtualBase {
 
 
 // ----------------------------------------------------------------------------- : Using keywords
+
+/// Store keyword usage statistics here, using value_being_updated as the key
+typedef vector<pair<Value*, const Keyword*> > KeywordUsageStatistics;
+DECLARE_DYNAMIC_ARG(KeywordUsageStatistics*, keyword_usage_statistics);
 
 /// A database of keywords to allow for fast matching
 /** NOTE: keywords may not be altered after they are added to the database,

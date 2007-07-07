@@ -285,6 +285,8 @@ SCRIPT_RULE_2_N_DEP(expand_keywords, ScriptValueP, _("default expand"), default_
 		db.add(set->game->keywords);
 		db.add(set->keywords);
 	}
+	SCRIPT_OPTIONAL_PARAM_(CardP, card);
+	WITH_DYNAMIC_ARG(keyword_usage_statistics, card ? &card->keyword_usage : nullptr);
 	SCRIPT_RETURN(db.expand(input, default_expand, combine, ctx));
 }
 SCRIPT_RULE_2_DEPENDENCIES(expand_keywords) {
