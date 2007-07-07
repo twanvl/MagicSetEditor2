@@ -23,6 +23,7 @@ StatsDimension::StatsDimension()
 	, position_hint(0)
 	, numeric      (false)
 	, show_empty   (false)
+	, split_list   (false)
 {}
 
 StatsDimension::StatsDimension(const Field& field)
@@ -33,6 +34,7 @@ StatsDimension::StatsDimension(const Field& field)
 	, icon_filename(field.icon_filename)
 	, numeric      (false)
 	, show_empty   (false)
+	, split_list   (false)
 {
 	// choice field?
 	const ChoiceField* choice_field = dynamic_cast<const ChoiceField*>(&field);
@@ -72,6 +74,7 @@ IMPLEMENT_REFLECTION_NO_GET_MEMBER(StatsDimension) {
 		REFLECT(script);
 		REFLECT(numeric);
 		REFLECT(show_empty);
+		REFLECT(split_list);
 		REFLECT(colors);
 		REFLECT(groups);
 	}

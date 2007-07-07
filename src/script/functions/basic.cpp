@@ -297,6 +297,30 @@ SCRIPT_RULE_2_DEPENDENCIES(expand_keywords) {
 	SCRIPT_RETURN(_(""));
 }
 
+SCRIPT_FUNCTION(keyword_usage) {
+	SCRIPT_PARAM(CardP, card);
+	SCRIPT_OPTIONAL_PARAM_(bool, unique);
+	// make a list "kw1, kw2, kw3" of keywords used on card
+	String ret;
+	for (KeywordUsageStatistics::const_iterator it = card->keyword_usage.begin() ; it != card->keyword_usage.end() ; ++it) {
+		bool keep = true;
+		if (unique) {
+			// prevent duplicates
+			for (KeywordUsageStatistics::const_iterator it2 = card->keyword_usage.begin() ; it != it2 ; ++it2) {
+				if (it->second == it2->second) {
+					keep = false;
+					break;
+				}
+			}
+		}
+		if (keep) {
+			if (!ret.empty()) ret += _(", ");
+			ret += it->second->keyword;
+		}
+	}
+	SCRIPT_RETURN(ret);
+}
+
 // ----------------------------------------------------------------------------- : Rules : regex replace
 
 class ScriptReplaceRule : public ScriptValue {
@@ -677,6 +701,7 @@ void init_script_basic_functions(Context& ctx) {
 	// keyword
 	ctx.setVariable(_("expand keywords"),      script_expand_keywords);
 	ctx.setVariable(_("expand keywords rule"), script_expand_keywords_rule);
+	ctx.setVariable(_("keyword usage"),        script_keyword_usage);
 	// advanced string rules
 	ctx.setVariable(_("replace"),              script_replace);
 	ctx.setVariable(_("filter"),               script_filter);

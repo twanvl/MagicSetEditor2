@@ -35,6 +35,7 @@ class StatsDimension : public IntrusivePtrBase<StatsDimension> {
 	OptionalScript    script;			///< Script that determines the value(s)
 	bool              numeric;			///< Are the values numeric? If so, they require special sorting
 	bool              show_empty;		///< Should "" be shown?
+	bool              split_list;		///< Split values into multiple ones separated by commas
 	map<String,Color> colors;			///< Colors for the categories
 	vector<String>    groups;			///< Order of the items
 	

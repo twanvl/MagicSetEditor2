@@ -87,6 +87,8 @@ class GraphDataPre {
   public:
 	vector<GraphAxisP>    axes;
 	vector<GraphElementP> elements;
+	/// Split compound elements, "a,b,c" -> "a" and "b" and "c"
+	void splitList(size_t axis);
 };
 
 /// Data to be displayed in a graph

@@ -147,6 +147,8 @@ void StatsPanel::onCommand(int id) {
 
 // ----------------------------------------------------------------------------- : Filtering card list
 
+bool chosen(const String& choice, const String& input);
+
 class StatsFilter : public CardListFilter {
   public:
 	StatsFilter(Set& set)
@@ -155,7 +157,13 @@ class StatsFilter : public CardListFilter {
 	virtual bool keep(const CardP& card) {
 		Context& ctx = set.getContext(card);
 		FOR_EACH(v, values) {
-			if (v.first->script.invoke(ctx)->toString() != v.second) return false;
+			StatsDimension& dim = *v.first;
+			String value = dim.script.invoke(ctx)->toString();
+			if (dim.split_list) {
+				if (!chosen(v.second, value)) return false;
+			} else {
+				if (value != v.second) return false;
+			}
 		}
 		return true;
 	}
@@ -207,6 +215,12 @@ void StatsPanel::showCategory() {
 			if (show) {
 				d.elements.push_back(e);
 			}
+		}
+		// split lists
+		size_t dim_id = 0;
+		FOR_EACH(dim, cat.dimensions) {
+			if (dim->split_list) d.splitList(dim_id);
+			++dim_id;
 		}
 		graph->setLayout(cat.type);
 		graph->setData(d);

@@ -37,6 +37,24 @@ GraphElement::GraphElement(const String& v1, const String& v2) {
 	values.push_back(v2);
 }
 
+void GraphDataPre::splitList(size_t axis) {
+	size_t count = elements.size(); // only the elements that were already there
+	for (size_t i = 0 ; i < count ; ++i) {
+		GraphElement& e = *elements[i];
+		String& v = e.values[axis];
+		size_t comma = v.find_first_of(_(','));
+		while (comma != String::npos) {
+			// split
+			GraphElementP e2(new GraphElement(e));
+			e2->values[axis] = v.substr(0,comma);
+			elements.push_back(e2);
+			if (is_substr(v, comma, _(", "))) ++comma; // skip space after it
+			v = v.substr(comma + 1);
+			comma = v.find_first_of(_(','));
+		}
+	}
+}
+
 
 GraphData::GraphData(const GraphDataPre& d)
 	: axes(d.axes)
@@ -50,13 +68,12 @@ GraphData::GraphData(const GraphDataPre& d)
 		FOR_EACH_CONST(e, d.elements) {
 			counts[e->values[i]] += 1;
 		}
-		// TODO: allow some ordering in the groups
 		if (a->numeric) {
 			// TODO: start at something other than 0?
 			// TODO: support fractions?
 			size_t left = counts.size();
 			int i = 0;
-			while (left) {
+			while (!counts.empty() && i < 100) {
 				String is = String() << i++;
 				map<String,UInt>::const_iterator it = counts.find(is);
 				if (it == counts.end()) {
@@ -66,16 +83,19 @@ GraphData::GraphData(const GraphDataPre& d)
 					a->groups.push_back(GraphGroup(is, it->second));
 					a->max = max(a->max, it->second);
 					a->total += it->second;
+					counts.erase(is);
 					left--;
 				}
-				if (i > 100) {
-					// prevent infinite loops if there are non-numeric entries
-					// drop empty tail
-					while (a->groups.size() > 1 && a->groups.back().size == 0) {
-						a->groups.pop_back();
-					}
-					break;
-				}
+			}
+			// Also keep non-numeric entries
+			FOR_EACH(c, counts) {
+				a->groups.push_back(GraphGroup(c.first, c.second));
+				a->max = max(a->max, c.second);
+				a->total += c.second;
+			}
+			// drop empty tail
+			while (a->groups.size() > 1 && a->groups.back().size == 0) {
+				a->groups.pop_back();
 			}
 		} else if (a->order) {
 			// specific group order
