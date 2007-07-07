@@ -43,13 +43,6 @@ void SymbolValueViewer::draw(RotatedDC& dc) {
 		// todo : labels?
 		dc.DrawBitmap(symbols[i], style().getPos() + RealSize(i * (wh + 2), 0));
 	}
-	// draw helper text if there are no symbols
-	if (symbols.empty()) {
-		dc.SetFont(wxFont(10,wxSWISS,wxNORMAL,wxNORMAL));
-		dc.SetTextForeground(*wxBLACK);
-		RealSize text_size = dc.GetTextExtent(_("double click to edit symbol"));
-		dc.DrawText(_("double click to edit symbol"), align_in_rect(ALIGN_MIDDLE_CENTER, text_size, style().getRect()));
-	}
 }
 
 void SymbolValueViewer::onValueChange() {

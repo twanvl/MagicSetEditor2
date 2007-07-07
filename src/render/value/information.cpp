@@ -12,6 +12,7 @@
 // ----------------------------------------------------------------------------- : InfoValueViewer
 
 void InfoValueViewer::draw(RotatedDC& dc) {
+	dc.SetPen(*wxTRANSPARENT_PEN);
 	if (nativeLook()) {
 		dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 		dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_APPWORKSPACE));

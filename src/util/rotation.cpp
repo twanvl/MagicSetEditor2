@@ -120,7 +120,7 @@ Rotater::~Rotater() {
 // ----------------------------------------------------------------------------- : RotatedDC
 
 RotatedDC::RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, RenderQuality quality, bool is_internal)
-	: Rotation(angle, rect, zoom, is_internal)
+	: Rotation(angle, rect, zoom, 1.0, is_internal)
 	, dc(dc), quality(quality)
 {}
 

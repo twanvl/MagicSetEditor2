@@ -23,7 +23,7 @@ class SymbolValueViewer : public ValueViewer {
 	virtual void draw(RotatedDC& dc);
 	void onValueChange();
 	
-  private:
+  protected:
 	vector<Bitmap> symbols;	///< Cached images
 };
 
