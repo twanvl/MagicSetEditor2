@@ -299,7 +299,7 @@ card style:
 	############################# PT
 	pt:
 		z index: 4
-		left:	287
+		left:	290
 		top:	131
 		width:	60
 		height:	28

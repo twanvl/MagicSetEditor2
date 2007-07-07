@@ -333,7 +333,7 @@ flip_pt_hybrid2 := [
 	radial: [
 		0: { template("c")       }
 		1: { template(colors[0]) }
-		2: { template(colors[1]) }
+		2: { template(colors[0]) }
 		3: { linear_blend(
 			image1: template(colors[0])
 			image2: template(colors[2])
