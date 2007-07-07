@@ -36,16 +36,18 @@ RealPoint align_in_rect(Alignment align, const RealSize& to_align, const RealRec
 /// Convert a String to an Alignment
 Alignment from_string(const String& s) {
 	int al = ALIGN_TOP_LEFT;
-	if (s.find(_("left"))           !=String::npos) al = ALIGN_LEFT				| (al & ~ALIGN_HORIZONTAL);
-	if (s.find(_("center"))         !=String::npos) al = ALIGN_CENTER			| (al & ~ALIGN_HORIZONTAL);
-	if (s.find(_("right"))          !=String::npos) al = ALIGN_RIGHT			| (al & ~ALIGN_HORIZONTAL);
-	if (s.find(_("justify"))        !=String::npos) al = ALIGN_JUSTIFY			| (al & ~ALIGN_HORIZONTAL);
-	if (s.find(_("justify-words"))  !=String::npos) al = ALIGN_JUSTIFY_WORDS	| (al & ~ALIGN_HORIZONTAL);
-	if (s.find(_("shrink-overflow"))!=String::npos) al = ALIGN_JUSTIFY_OVERFLOW	| (al & ~ALIGN_JUSTIFY_OVERFLOW);
-	if (s.find(_("top"))            !=String::npos) al = ALIGN_TOP				| (al & ~ALIGN_VERTICAL);
-	if (s.find(_("middle"))         !=String::npos) al = ALIGN_MIDDLE			| (al & ~ALIGN_VERTICAL);
-	if (s.find(_("bottom"))         !=String::npos) al = ALIGN_BOTTOM			| (al & ~ALIGN_VERTICAL);
-	if (s.find(_("stretch"))        !=String::npos) al = ALIGN_STRETCH;
+	if (s.find(_("left"))             !=String::npos) al = ALIGN_LEFT             | (al & ~ALIGN_HORIZONTAL);
+	if (s.find(_("center"))           !=String::npos) al = ALIGN_CENTER           | (al & ~ALIGN_HORIZONTAL);
+	if (s.find(_("right"))            !=String::npos) al = ALIGN_RIGHT            | (al & ~ALIGN_HORIZONTAL);
+	if (s.find(_("justify"))          !=String::npos) al = ALIGN_JUSTIFY          | (al & ~ALIGN_HORIZONTAL);
+	if (s.find(_("justify-words"))    !=String::npos) al = ALIGN_JUSTIFY_WORDS    | (al & ~ALIGN_HORIZONTAL);
+	if (s.find(_("justify-overflow")) !=String::npos) al = ALIGN_JUSTIFY_OVERFLOW | (al & ~ALIGN_JUSTIFY_OVERFLOW);
+	if (s.find(_("shrink-overflow"))  !=String::npos) al = ALIGN_STRETCH_OVERFLOW | (al & ~ALIGN_STRETCH_OVERFLOW); // compatability
+	if (s.find(_("stretch-overflow")) !=String::npos) al = ALIGN_STRETCH_OVERFLOW | (al & ~ALIGN_STRETCH_OVERFLOW);
+	if (s.find(_("top"))              !=String::npos) al = ALIGN_TOP              | (al & ~ALIGN_VERTICAL);
+	if (s.find(_("middle"))           !=String::npos) al = ALIGN_MIDDLE           | (al & ~ALIGN_VERTICAL);
+	if (s.find(_("bottom"))           !=String::npos) al = ALIGN_BOTTOM           | (al & ~ALIGN_VERTICAL);
+	if (s.find(_("stretch"))          !=String::npos) al = ALIGN_STRETCH;
 	return static_cast<Alignment>(al);
 }
 
@@ -62,8 +64,9 @@ String to_string(Alignment align) {
 	if (align & ALIGN_LEFT)				ret += _(" right");
 	if (align & ALIGN_LEFT)				ret += _(" justify");
 	if (align & ALIGN_LEFT)				ret += _(" justify-words");
+	if (align & ALIGN_JUSTIFY_OVERFLOW) ret += _(" justify-overflow");
 	// modifier
-	if (align & ALIGN_JUSTIFY_OVERFLOW) ret += _(" shrink-overflow");
+	if (align & ALIGN_STRETCH_OVERFLOW) ret += _(" stretch-overflow");
 	if (align & ALIGN_STRETCH)			ret += _(" stretch");
 	return ret.substr(1);
 }

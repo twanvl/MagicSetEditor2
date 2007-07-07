@@ -22,7 +22,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 			InputStreamP image_file = getSet().openIn(value().filename);
 			Image image;
 			if (image.LoadFile(*image_file)) {
-				image.Rescale((int)dc.trS(style().width), (int)dc.trS(style().height));
+				image.Rescale((int)dc.trX(style().width), (int)dc.trY(style().height));
 				// apply mask to image
 				loadMask(dc);
 				if (alpha_mask) alpha_mask->setAlpha(image);
@@ -34,7 +34,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 	}
 	// if there is no image, generate a placeholder
 	if (!bitmap.Ok()) {
-		UInt w = (UInt)dc.trS(style().width), h = (UInt)dc.trS(style().height);
+		UInt w = (UInt)dc.trX(style().width), h = (UInt)dc.trY(style().height);
 		loadMask(dc);
 		if (style().default_image.isReady()) {
 			// we have a script to use for the default image
@@ -85,7 +85,7 @@ void ImageValueViewer::onStyleChange(bool already_prepared) {
 
 void ImageValueViewer::loadMask(const Rotation& rot) const {
 	if (style().mask_filename().empty()) return; // no mask
-	int w = (int) rot.trS(style().width), h = (int) rot.trS(style().height);
+	int w = (int) rot.trX(style().width), h = (int) rot.trY(style().height);
 	if (alpha_mask && alpha_mask->size == wxSize(w,h)) return; // mask loaded and right size
 	// (re) load the mask
 	Image image;

@@ -28,10 +28,10 @@ class Rotation {
 	/** with the given rectangle of external coordinates and a given rotation angle and zoom factor.
 	 *  if is_internal then the rect gives the internal coordinates, its origin should be (0,0)
 	 */
-	Rotation(int angle, const RealRect& rect, double zoom = 1.0, bool is_internal = false);
+	Rotation(int angle, const RealRect& rect, double zoom = 1.0, double strectch = 1.0, bool is_internal = false);
 	
 	/// Change the zoom factor
-	inline void setZoom(double z) { zoom = z; }
+	inline void setZoom(double z) { zoomX = zoomY = z; }
 	/// Change the angle
 	void setAngle(int a);
 	/// The internal size
@@ -44,7 +44,9 @@ class Rotation {
 	RealRect getExternalRect() const;
 	
 	/// Translate a size or length
-	inline double trS(double s) const { return s * zoom; }
+	inline double trS(double s) const { return s * zoomY; }
+	inline double trX(double s) const { return s * zoomX; }
+	inline double trY(double s) const { return s * zoomY; }
 	
 	/// Translate a single point
 	RealPoint tr(const RealPoint& p) const;
@@ -62,9 +64,11 @@ class Rotation {
 	RealRect trNoNegNoZoom(const RealRect& r) const;
 	
 	/// Translate a size or length back to internal 'coordinates'
-	inline double   trInvS(double s)           const { return s / zoom; }
+	inline double   trInvS(double s)           const { return s / zoomY; }
+	inline double   trInvX(double s)           const { return s / zoomX; }
+	inline double   trInvY(double s)           const { return s / zoomY; }
 	/// Translate a size back to internal 'coordinates', doesn't rotate
-	inline RealSize trInvS(const RealSize& s) const { return RealSize(s.width / zoom, s.height / zoom); }
+	inline RealSize trInvS(const RealSize& s) const { return RealSize(s.width / zoomX, s.height / zoomY); }
 	
 	/// Translate a point back to internal coordinates
 	RealPoint trInv(const RealPoint& p) const;
@@ -73,11 +77,15 @@ class Rotation {
 	/// Translate a size back to internal coordinates, that are not negative
 	RealSize  trInvNoNeg(const RealSize&  s) const;
 	
+	/// Stretch factor
+	inline double stretch() const { return zoomX / zoomY; }
+	
   protected:
 	int angle;				///< The angle of rotation in degrees (counterclockwise)
 	RealSize size;			///< Size of the rectangle, in external coordinates
 	RealPoint origin;		///< tr(0,0)
-	double zoom;			///< Zoom factor, zoom = 2.0 means that 1 internal = 2 external
+	double zoomX;			///< Zoom factor, zoom = 2.0 means that 1 internal = 2 external
+	double zoomY;
 	
 	friend class Rotater;
 	

@@ -56,8 +56,8 @@ void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
 				} else if(style().render_style & RENDER_TEXT) {
 					// also drawing text, use original size
 				} else {
-					img_options.width  = (int) dc.trS(style().width);
-					img_options.height = (int) dc.trS(style().height);
+					img_options.width  = (int) dc.trX(style().width);
+					img_options.height = (int) dc.trY(style().height);
 					img_options.preserve_aspect = style().alignment == ALIGN_STRETCH ? ASPECT_STRETCH : ASPECT_FIT;
 				}
 				Image image = img.generate(img_options, true);

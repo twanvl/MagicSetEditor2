@@ -776,10 +776,10 @@ void TextValueEditor::determineSize(bool force_fit) {
 		int sbw = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
 		RealPoint pos = rot.tr(style().getPos());
 		scrollbar->SetSize(
-			(int)(pos.x + rot.trS(style().width) + 1 - sbw),
+			(int)(pos.x + rot.trX(style().width) + 1 - sbw),
 			(int)pos.y - 1,
 			(int)sbw,
-			(int)rot.trS(style().height) + 2);
+			(int)rot.trY(style().height) + 2);
 		v.reset();
 	} else {
 		// Height depends on font

@@ -56,6 +56,16 @@ TextStyle::TextStyle(const TextFieldP& field)
 	, direction(LEFT_TO_RIGHT)
 {}
 
+double TextStyle::getStretch() const {
+	if (content_width > 0 && ((alignment() & ALIGN_STRETCH) || (alignment() & ALIGN_STRETCH_OVERFLOW))) {
+		double factor = (width - padding_left - padding_right) / content_width;
+		if (alignment() == ALIGN_STRETCH || factor < 1.0) {
+			return factor;
+		}
+	}
+	return 1.0;
+}
+
 bool TextStyle::update(Context& ctx) {
 	return Style     ::update(ctx)
 	     | font       .update(ctx)

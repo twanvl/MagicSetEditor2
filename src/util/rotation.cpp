@@ -18,11 +18,12 @@ int constrain_angle(int angle) {
 	return (a / 90) * 90; // multiple of 90
 }
 
-Rotation::Rotation(int angle, const RealRect& rect, double zoom, bool is_internal)
+Rotation::Rotation(int angle, const RealRect& rect, double zoom, double strectch, bool is_internal)
 	: angle(constrain_angle(angle))
 	, size(rect.size())
 	, origin(rect.position())
-	, zoom(zoom)
+	, zoomX(zoom * strectch)
+	, zoomY(zoom)
 {
 	if (is_internal) {
 		size = trNoNeg(size);
@@ -41,9 +42,9 @@ RealPoint Rotation::tr(const RealPoint& p) const {
 }
 RealSize Rotation::tr(const RealSize& s) const {
 	if (sideways()) {
-		return RealSize(negX(s.height), negY(s.width)) * zoom;
+		return RealSize(negX(s.height) * zoomY, negY(s.width) * zoomX);
 	} else {
-		return RealSize(negX(s.width), negY(s.height)) * zoom;
+		return RealSize(negX(s.width) * zoomX, negY(s.height) * zoomY);
 	}
 }
 RealRect Rotation::tr(const RealRect& r) const {
@@ -52,13 +53,13 @@ RealRect Rotation::tr(const RealRect& r) const {
 
 RealSize Rotation::trNoNeg(const RealSize& s) const {
 	if (sideways()) {
-		return RealSize(s.height, s.width) * zoom;
+		return RealSize(s.height * zoomY, s.width * zoomX);
 	} else {
-		return RealSize(s.width, s.height) * zoom;
+		return RealSize(s.width * zoomX, s.height * zoomY);
 	}
 }
 RealRect Rotation::trNoNeg(const RealRect& r) const {
-	RealSize s = (sideways() ? RealSize(r.height, r.width) : r.size()) * zoom;
+	RealSize s = trNoNeg(r.size());
 	return RealRect(tr(r.position()) - RealSize(revX()?s.width:0, revY()?s.height:0), s);
 }
 RealRect Rotation::trNoNegNoZoom(const RealRect& r) const {
@@ -69,14 +70,14 @@ RealRect Rotation::trNoNegNoZoom(const RealRect& r) const {
 
 RealSize Rotation::trInv(const RealSize& s) const {
 	if (sideways()) {
-		return RealSize(negY(s.height), negX(s.width)) / zoom;
+		return RealSize(negY(s.height) / zoomY, negX(s.width) / zoomX);
 	} else {
-		return RealSize(negX(s.width), negY(s.height)) / zoom;
+		return RealSize(negX(s.width) / zoomX, negY(s.height) / zoomY);
 	}
 }
 
 RealPoint Rotation::trInv(const RealPoint& p) const {
-	RealPoint p2 = (p - origin) / zoom;
+	RealPoint p2((p.x - origin.x) / zoomX, (p.y - origin.y) / zoomY);
 	if (sideways()) {
 		return RealPoint(negY(p2.y), negX(p2.x));
 	} else {
@@ -86,9 +87,9 @@ RealPoint Rotation::trInv(const RealPoint& p) const {
 
 RealSize Rotation::trInvNoNeg(const RealSize& s) const {
 	if (sideways()) {
-		return RealSize(s.height, s.width) / zoom;
+		return RealSize(s.height / zoomY, s.width / zoomX);
 	} else {
-		return RealSize(s.width, s.height) / zoom;
+		return RealSize(s.width / zoomX, s.height / zoomY);
 	}
 }
 
@@ -101,7 +102,13 @@ Rotater::Rotater(Rotation& rot, const Rotation& by)
 	// apply rotation
 	RealRect new_ext = rot.trNoNeg(by.getExternalRect());
 	rot.angle = constrain_angle(rot.angle + by.angle);
-	rot.zoom *= by.zoom;
+	if (by.sideways()) {
+		rot.zoomX *= by.zoomY;
+		rot.zoomY *= by.zoomX;
+	} else {
+		rot.zoomX *= by.zoomX;
+		rot.zoomY *= by.zoomY;
+	}
 	rot.size   = new_ext.size();
 	rot.origin = new_ext.position() + RealSize(rot.revX() ? rot.size.width : 0, rot.revY() ? rot.size.height : 0);
 }
@@ -129,7 +136,7 @@ void RotatedDC::DrawText  (const String& text, const RealPoint& pos, int blur_ra
 	if (quality == QUALITY_AA) {
 		RealRect r(pos, GetTextExtent(text));
 		RealRect r_ext = trNoNeg(r);
-		draw_resampled_text(dc, r_ext, revX(), revY(), angle, text, blur_radius, boldness);
+		draw_resampled_text(dc, r_ext, stretch(), revX(), revY(), angle, text, blur_radius, boldness);
 	} else if (quality == QUALITY_SUB_PIXEL) {
 		RealPoint p_ext = tr(pos)*text_scaling;
 		double usx,usy;
@@ -210,14 +217,14 @@ void RotatedDC::SetTextForeground(const Color& color) { dc.SetTextForeground(col
 void RotatedDC::SetLogicalFunction(int function)      { dc.SetLogicalFunction(function); }
 
 void RotatedDC::SetFont(const wxFont& font) {
-	if (quality == QUALITY_LOW && zoom == 1) {
+	if (quality == QUALITY_LOW && zoomX == 1 && zoomY == 1) {
 		dc.SetFont(font);
 	} else {
 		wxFont scaled = font;
 		if (quality == QUALITY_LOW) {
-			scaled.SetPointSize((int)  trS(font.GetPointSize()));
+			scaled.SetPointSize((int)  trY(font.GetPointSize()));
 		} else {
-			scaled.SetPointSize((int) (trS(font.GetPointSize()) * text_scaling));
+			scaled.SetPointSize((int) (trY(font.GetPointSize()) * text_scaling));
 		}
 		dc.SetFont(scaled);
 	}
@@ -244,9 +251,9 @@ RealSize RotatedDC::GetTextExtent(const String& text) const {
 			h += h - charHeight;
 	#endif
 	if (quality == QUALITY_LOW) {
-		return RealSize(w,h) / zoom;
+		return RealSize(w / zoomX, h / zoomY);
 	} else {
-		return RealSize(w,h) / zoom / text_scaling;
+		return RealSize(w / (zoomX * text_scaling), h / (zoomY * text_scaling));
 	}
 }
 double RotatedDC::GetCharHeight() const {
@@ -259,9 +266,9 @@ double RotatedDC::GetCharHeight() const {
 			h = 2 * extent - h;
 	#endif
 	if (quality == QUALITY_LOW) {
-		return h / zoom;
+		return h / zoomY;
 	} else {
-		return h / zoom / text_scaling;
+		return h / (zoomY * text_scaling);
 	}
 }
 

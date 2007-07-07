@@ -80,8 +80,14 @@ class TextStyle : public Style {
 	
 	/// The rotation to use when drawing
 	inline Rotation getRotation() const {
+		return Rotation(angle, getRect(), 1.0, getStretch());
+	}
+	/// The rotation to use when determining content layout, does not include the stretch factor
+	inline Rotation getRotationNoStretch() const {
 		return Rotation(angle, getRect());
 	}
+	/// Stretch factor to use
+	double getStretch() const;
 	
   private:
 	DECLARE_REFLECTION();
