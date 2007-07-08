@@ -203,7 +203,7 @@ bool pos_on_line(const Vector2D& pos, double range, const Vector2D& p1, const Ve
 	Vector2D p21 = p2 - p1;
 	double p21len = p21.lengthSqr();
 	if (p21len < 0.00001) return false; // line is too short
-	t = p21.dot(pos - p1) / p21len; // 'time' on line p1->p2
+	t = dot(p21, pos - p1) / p21len; // 'time' on line p1->p2
 	if (t < 0 || t > 1) return false; // outside segment
 	pOut = p1 + p21 * t; // point on line
 	Vector2D dist = pOut - pos; // distance to line

@@ -349,8 +349,8 @@ SinglePointRemoveAction::SinglePointRemoveAction(const SymbolShapeP& shape, UInt
 		Vector2D p = c.pointAt(t);
 		Vector2D distP = point->pos - p;
 		// adjust handle sizes
-		point1.other.delta_after  *= ssqrt(distP.dot(point1.other.delta_after) /point1.other.delta_after.lengthSqr())  + 1;
-		point2.other.delta_before *= ssqrt(distP.dot(point2.other.delta_before)/point2.other.delta_before.lengthSqr()) + 1;
+		point1.other.delta_after  *= ssqrt(dot(distP, point1.other.delta_after) /point1.other.delta_after.lengthSqr())  + 1;
+		point2.other.delta_before *= ssqrt(dot(distP, point2.other.delta_before)/point2.other.delta_before.lengthSqr()) + 1;
 	
 		// unlock if needed
 		if (point1.other.lock == LOCK_SIZE) point1.other.lock = LOCK_DIR;

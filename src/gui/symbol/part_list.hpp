@@ -11,61 +11,80 @@
 
 #include <util/prec.hpp>
 #include <data/symbol.hpp>
-#include <wx/listctrl.h>
+
+// ----------------------------------------------------------------------------- : Events
+
+DECLARE_EVENT_TYPE(EVENT_PART_SELECT,   <not used>)
+DECLARE_EVENT_TYPE(EVENT_PART_ACTIVATE, <not used>)
+
+/// Handle EVENT_PART_SELECT events
+#define EVT_PART_SELECT(  id, handler) EVT_COMMAND(id, EVENT_PART_SELECT,   handler)
+/// Handle EVENT_PART_ACTIVATE events
+#define EVT_PART_ACTIVATE(id, handler) EVT_COMMAND(id, EVENT_PART_ACTIVATE, handler)
 
 // ----------------------------------------------------------------------------- : SymbolPartList
 
-// A list view of parts of a symbol
-class SymbolPartList : public wxListCtrl, public SymbolView {
+class SymbolPartList : public wxScrolledWindow, public SymbolView {
   public:
-	SymbolPartList(Window* parent, int id, SymbolP symbol = SymbolP());
-	
-	/// Update the list
-	void update();
-	
-	/// Is there a selection?
-	inline bool hasSelection() const { return selected != -1; }
-	/// Return the last part that was selected
-	/** @pre hasSelection()
-	 */
-	inline SymbolPartP getSelection() const { return getPart(selected); }
-	
-	/// Get a set of selected parts
-	void getSelectedParts(set<SymbolPartP>& sel);
-	/// Select the specified parts, and nothing else
-	void selectParts(const set<SymbolPartP>& sel);
+	SymbolPartList(Window* parent, int id, set<SymbolPartP>& selection, SymbolP symbol = SymbolP());
 	
 	/// Another symbol is being viewed
-	void onChangeSymbol();
-	
+	virtual void onChangeSymbol();
 	/// Event handler for changes to the symbol
-	virtual void onAction(const Action& a, bool undone);
+	virtual void onAction(const Action&, bool);
+	
+	/// Update the control
+	void update();
+	/// Update only a subset of the parts
+	void updateParts(const set<SymbolPartP>& parts);
 	
   protected:
-	/// Get the text of an item
-	virtual String OnGetItemText(long item, long col) const;
-	/// Get the icon of an item
-	virtual int OnGetItemImage(long item) const;
-	
+	virtual wxSize DoGetBestSize() const;
   private:
-	/// The selected item, or -1 if there is no selection
-	long selected;
+	set<SymbolPartP>& selection; ///< Store selection here
 	
-	/// Get a part from the symbol
-	SymbolPartP getPart(long item) const;
+	SymbolPartP mouse_down_on;
+	int drop_position;
+	int number_of_items;
 	
-	/// Select an item, also in the list control
-	/// Deselects all other items
-	void selectItem(long item);
+	SymbolPartP typing_in;
+	size_t cursor;
 	
+	wxImageList state_icons;
+	struct Preview {
+		Preview() : up_to_date(false), image(25,25) {}
+		bool  up_to_date;
+		Image image;
+	};
+	Preview symbol_preview; ///< Preview of the whole symbol
+	vector<Preview> part_previews;
+	
+	static const int ITEM_HEIGHT = 25;
 	// --------------------------------------------------- : Event handling
 	DECLARE_EVENT_TABLE();
 	
-	void onSelect   (wxListEvent& ev);
-	void onDeselect (wxListEvent& ev);
-	void onLabelEdit(wxListEvent& ev);
-	void onSize     (wxSizeEvent& ev);
-	void onDrag     (wxMouseEvent& ev);
+	void onLeftDown  (wxMouseEvent& ev);
+	void onLeftDClick(wxMouseEvent& ev);
+	void onLeftUp    (wxMouseEvent& ev);
+	void onMotion    (wxMouseEvent& ev);
+	void onChar(wxKeyEvent& ev);
+	void onPaint(wxPaintEvent&);
+	void onSize(wxSizeEvent&);
+	void OnDraw(DC& dc);
+	
+	void sendEvent(int type);
+	
+	void drawItem(DC& dc, int x, int& i, bool parent_active, const SymbolPartP& part);
+	const Image& itemPreview(int i, const SymbolPartP& part);
+	const Image& symbolPreview();
+	void updatePart(const set<SymbolPartP>& parts, int& i, bool parent_updated, const SymbolPartP& part);
+	
+	SymbolPartP findItem(int i) const;
+	static SymbolPartP findItem(int& i, const SymbolPartP& part);
+	
+	static int childCount(const SymbolPartP& part);
+	
+	void updateCaret(DC& dc, int x, int y, int h, const SymbolPartP& part);
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -112,6 +112,9 @@ class SymbolPart : public IntrusivePtrVirtualBase {
   public:
 	/// Name/label for this part
 	String name;
+	/// Position and size of the part.
+	/** this is the smallest axis aligned bounding box that fits around the part */
+	Vector2D min_pos, max_pos;
 	
 	/// Type of this part
 	virtual String typeName() const = 0;
@@ -129,6 +132,9 @@ class SymbolPart : public IntrusivePtrVirtualBase {
 	/// Convert to SymbolGroup?
 	virtual       SymbolGroup*    isSymbolGroup()          { return nullptr; }
 	virtual const SymbolGroup*    isSymbolGroup()    const { return nullptr; }
+	
+	/// Calculate the position and size of the part (min_pos and max_pos)
+	virtual void calculateBounds();
 	
 	DECLARE_REFLECTION_VIRTUAL();
 };
@@ -162,9 +168,6 @@ class SymbolShape : public SymbolPart {
 	SymbolShapeCombine combine;
 	// Center of rotation, relative to the part, when the part is scaled to [0..1]
 	Vector2D rotation_center;
-	/// Position and size of the part
-	/// this is the smallest axis aligned bounding box that fits around the part
-	Vector2D min_pos, max_pos;
 	
 	SymbolShape();
 	
@@ -183,7 +186,7 @@ class SymbolShape : public SymbolPart {
 	void enforceConstraints();
 	
 	/// Calculate the position and size of the part
-	void calculateBounds();
+	virtual void calculateBounds();
 	
 	DECLARE_REFLECTION();
 };
@@ -221,7 +224,7 @@ class SymbolSymmetry : public SymbolPart {
 /// A group of symbol parts
 class SymbolGroup : public SymbolPart {
   public:
-	vector<SymbolPartP> parts;	///< The parts in this group
+	vector<SymbolPartP> parts;	///< The parts in this group, first item is on top
 	
 	virtual String typeName() const;
 	virtual SymbolPartP clone() const;
@@ -229,16 +232,18 @@ class SymbolGroup : public SymbolPart {
 	virtual       SymbolGroup* isSymbolGroup()       { return this; }
 	virtual const SymbolGroup* isSymbolGroup() const { return this; }
 	
+	virtual void calculateBounds();
+	/// re-calculate the bounds, but not of the contained parts
+	void calculateBoundsNonRec();
+	
 	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : Symbol
 
 /// An editable symbol, consists of any number of SymbolParts
-class Symbol : public IntrusivePtrBase<Symbol> {
+class Symbol : public SymbolGroup {
   public:
-	/// The parts of this symbol, first item is on top
-	vector<SymbolPartP> parts;
 	/// Actions performed on this symbol and the parts in it
 	ActionStack actions;
 	

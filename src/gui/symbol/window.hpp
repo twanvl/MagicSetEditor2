@@ -14,6 +14,7 @@
 #include <wx/listctrl.h>
 
 class SymbolControl;
+//%%class SymbolPartList;
 class SymbolPartList;
 DECLARE_POINTER_TYPE(SymbolValue);
 DECLARE_POINTER_TYPE(Set);
@@ -62,9 +63,9 @@ class SymbolWindow : public Frame {
 	void onUpdateUI(wxUpdateUIEvent&);
 	
 	/// Changing selected parts in the list
-	void onSelectFromList(wxListEvent& ev);
+	void onSelectFromList(wxCommandEvent& ev);
 	/// Activating a part: open the point editor
-	void onActivateFromList(wxListEvent& ev);
+	void onActivateFromList(wxCommandEvent& ev);
 	
 	bool inSelectionEvent; ///< Prevent recursion in onSelect...
 	

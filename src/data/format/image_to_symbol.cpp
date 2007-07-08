@@ -245,7 +245,7 @@ void mark_corners(SymbolShape& shape) {
 		Vector2D after   = .6 * shape.getPoint(i+1)->pos + .2 * shape.getPoint(i+2)->pos + .1 * shape.getPoint(i+3)->pos + .1 * shape.getPoint(i+4)->pos;
 		before = (before - current.pos).normalized();
 		after  = (after  - current.pos).normalized();
-		if (before.dot(after) >= -0.25f) {
+		if (dot(before,after) >= -0.25f) {
 			// corner
 			current.lock = LOCK_FREE;
 		} else {
@@ -285,8 +285,8 @@ void merge_corners(SymbolShape& shape) {
 		for (int j = 0 ; j < 4 ; ++j) {
 			Vector2D a_ = (shape.getPoint(i-j-1)->pos - prev.pos).normalized();
 			Vector2D b_ = (shape.getPoint(i+j)->pos   - cur.pos).normalized();
-			double a_dot =  a_.dot(ab);
-			double b_dot = -b_.dot(ab);
+			double a_dot =  dot(a_, ab);
+			double b_dot = -dot(b_, ab);
 			if (a_dot < min_a_dot) {
 				min_a_dot = a_dot;
 				a = a_;
@@ -300,8 +300,8 @@ void merge_corners(SymbolShape& shape) {
 		//  t a + ab = u b, solve for t,u
 		// Gives us:
 		//  t = ab cross b / b cross a
-		double tden = max(0.00000001, b.cross(a));
-		double t  = ab.cross(b) / tden;
+		double tden = max(0.00000001, cross(b,a));
+		double t  = cross(ab,b) / tden;
 		// do these tangent lines intersect, and not too far away?
 		// if so, then the intersection point is the merged point
 		if (t >= 0 && t < 20.0) {
@@ -358,7 +358,7 @@ void straighten(SymbolShape& shape) {
 		Vector2D bb = next.delta_before.normalized();
 		// if the area beneath the polygon formed by the handles is small
 		// then it is a straight line
-		double cpDot = abs(aa.cross(ab)) + abs(bb.cross(ab));
+		double cpDot = abs(cross(aa,ab)) + abs(cross(bb,ab));
 		if (cpDot < treshold) {
 			cur.segment_after = next.segment_before = SEGMENT_LINE;
 			cur.delta_after = next.delta_before = Vector2D();

@@ -74,6 +74,9 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
 		menuEdit->Append(ID_EDIT_UNDO,		_("undo"),			_MENU_1_("undo",wxEmptyString),	_HELP_("undo"));
 		menuEdit->Append(ID_EDIT_REDO,		_("redo"),			_MENU_1_("redo",wxEmptyString),	_HELP_("redo"));
 		menuEdit->AppendSeparator();
+		menuEdit->Append(ID_EDIT_GROUP,		_("group"),			_MENU_("group"),				_HELP_("group"));
+		menuEdit->Append(ID_EDIT_UNGROUP,	_("ungroup"),		_MENU_("ungroup"),				_HELP_("ungroup"));
+		menuEdit->AppendSeparator();
 		menuEdit->Append(ID_EDIT_DUPLICATE,	_("duplicate"),		_MENU_("duplicate"),			_HELP_("duplicate"));
 	menuBar->Append(menuEdit, _MENU_("edit"));
 	
@@ -82,6 +85,7 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
 		menuTool->Append(ID_MODE_ROTATE,	_("mode_rotate"),	_MENU_("rotate"),				_HELP_("rotate"),		wxITEM_CHECK);
 		menuTool->Append(ID_MODE_POINTS,	_("mode_curve"),	_MENU_("points"),				_HELP_("points"),		wxITEM_CHECK);
 		menuTool->Append(ID_MODE_SHAPES,	_("circle"),		_MENU_("basic shapes"),			_HELP_("basic shapes"),	wxITEM_CHECK);
+		menuTool->Append(ID_MODE_SYMMETRY,	_("mode_symmetry"),	_MENU_("symmetry"),				_HELP_("symmetry"),		wxITEM_CHECK);
 		menuTool->Append(ID_MODE_PAINT,		_("mode_paint"),	_MENU_("paint"),				_HELP_("paint"),		wxITEM_CHECK);
 	menuBar->Append(menuTool, _MENU_("tool"));
 	
@@ -118,11 +122,11 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
 	
 	// Controls
 	control = new SymbolControl (this, ID_CONTROL, symbol);
-	parts   = new SymbolPartList(this, ID_PART_LIST, symbol);
+	parts   = new SymbolPartList(this, ID_PART_LIST, control->selected_parts, symbol);
 	
 	// Lay out
 	wxSizer* es = new wxBoxSizer(wxHORIZONTAL);
-	es->Add(em, 0, wxEXPAND | wxTOP | wxBOTTOM | wxALIGN_CENTER, 1);
+	es->Add(em, 1, wxEXPAND | wxTOP | wxBOTTOM | wxALIGN_CENTER, 1);
 	emp->SetSizer(es);
 	
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
@@ -246,21 +250,21 @@ void SymbolWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 }
 
 
-void SymbolWindow::onSelectFromList(wxListEvent& ev) {
+void SymbolWindow::onSelectFromList(wxCommandEvent& ev) {
 	if (inSelectionEvent) return ;
 	inSelectionEvent = true;
-	parts->getSelectedParts(control->selected_parts);
 	control->onUpdateSelection();
 	inSelectionEvent = false;
 }
-void SymbolWindow::onActivateFromList(wxListEvent& ev) {
-	control->activatePart(control->getSymbol()->parts.at(ev.GetIndex()));
+void SymbolWindow::onActivateFromList(wxCommandEvent& ev) {
+//%	control->activatePart(control->getSymbol()->parts.at(ev.GetIndex()));
+	// TODO
 }
 
 void SymbolWindow::onSelectFromControl() {
 	if (inSelectionEvent) return ;
 	inSelectionEvent = true;
-	parts->selectParts(control->selected_parts);
+	parts->Refresh(false);
 	inSelectionEvent = false;
 }
 
@@ -280,7 +284,6 @@ BEGIN_EVENT_TABLE(SymbolWindow, wxFrame)
 	EVT_TOOL_RANGE	(ID_CHILD_MIN, ID_CHILD_MAX,	SymbolWindow::onExtraTool)
 	EVT_UPDATE_UI	(wxID_ANY,						SymbolWindow::onUpdateUI)
 
-	EVT_LIST_ITEM_SELECTED   (ID_PART_LIST, SymbolWindow::onSelectFromList)
-	EVT_LIST_ITEM_DESELECTED (ID_PART_LIST, SymbolWindow::onSelectFromList)
-	EVT_LIST_ITEM_ACTIVATED  (ID_PART_LIST, SymbolWindow::onActivateFromList)
+	EVT_PART_SELECT   (ID_PART_LIST, SymbolWindow::onSelectFromList)
+	EVT_PART_ACTIVATE (ID_PART_LIST, SymbolWindow::onActivateFromList)
 END_EVENT_TABLE  ()

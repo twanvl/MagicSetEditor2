@@ -12,6 +12,29 @@
 #include <util/error.hpp>
 #include <script/value.hpp> // for some strange reason the profile build needs this :(
 
+// ----------------------------------------------------------------------------- : Color
+
+template <> void GetDefaultMember::handle(const AColor& col) {
+	handle((const Color&)col);
+}
+template <> void Reader::handle(AColor& col) {
+	UInt r,g,b,a;
+	if (wxSscanf(getValue().c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
+		col.Set(r,g,b);
+		col.alpha = 255;
+	} else if (wxSscanf(getValue().c_str(),_("rgba(%u,%u,%u,%u)"),&r,&g,&b,&a)) {
+		col.Set(r,g,b);
+		col.alpha = a;
+	}
+}
+template <> void Writer::handle(const AColor& col) {
+	if (col.alpha == 255) {
+		handle(String::Format(_("rgb(%u,%u,%u)"), col.Red(), col.Green(), col.Blue()));
+	} else {
+		handle(String::Format(_("rgba(%u,%u,%u,%u)"), col.Red(), col.Green(), col.Blue(), col.alpha));
+	}
+}
+
 // ----------------------------------------------------------------------------- : Symbol filtering
 
 void filter_symbol(Image& symbol, const SymbolFilter& filter) {

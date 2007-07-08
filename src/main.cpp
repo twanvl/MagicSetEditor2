@@ -96,6 +96,10 @@ bool MSE::OnInit() {
 					// Installer; install it
 					Installer::installFrom(argv[1], true);
 					return false;
+				} else if (arg == _("--symbol-editor")) {
+					Window* wnd = new SymbolWindow(nullptr);
+					wnd->Show();
+					return true;
 				} else if (arg == _("--create-installer")) {
 					// create an installer
 					Installer inst;

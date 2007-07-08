@@ -9,7 +9,9 @@
 #include <gui/symbol/basic_shape_editor.hpp>
 #include <gui/util.hpp>
 #include <util/window_id.hpp>
+#include <data/settings.hpp>
 #include <data/action/symbol.hpp>
+#include <data/action/symbol_part.hpp>
 #include <wx/spinctrl.h>
 
 // ----------------------------------------------------------------------------- : SymbolBasicShapeEditor
@@ -108,7 +110,7 @@ void SymbolBasicShapeEditor::onMouseDrag  (const Vector2D& from, const Vector2D&
 	// Resize the object
 	if (drawing) {
 		end = to;
-		makeShape(start, end, ev.ControlDown(), ev.ShiftDown());
+		makeShape(start, end, ev.ControlDown(), settings.symbol_grid_snap, ev.ShiftDown());
 		control.Refresh(false);
 	}
 }
@@ -119,7 +121,7 @@ void SymbolBasicShapeEditor::onKeyChange(wxKeyEvent& ev) {
 	if (drawing) {
 		if (ev.GetKeyCode() == WXK_CONTROL || ev.GetKeyCode() == WXK_SHIFT) {
 			// changed constrains
-			makeShape(start, end, ev.ControlDown(), ev.ShiftDown());
+			makeShape(start, end, ev.ControlDown(), settings.symbol_grid_snap, ev.ShiftDown());
 			control.Refresh(false);
 		} else if (ev.GetKeyCode() == WXK_ESCAPE) {
 			// cancel drawing
@@ -156,7 +158,12 @@ inline double sgn(double d) {
 	return d < 0 ? - 1 : 1;
 }
 
-void SymbolBasicShapeEditor::makeShape(const Vector2D& a, const Vector2D& b, bool constrained, bool centered) {
+void SymbolBasicShapeEditor::makeShape(Vector2D a, Vector2D b, bool constrained, bool snap, bool centered) {
+	// snap
+	if (snap) {
+		a = snap_vector(a, settings.symbol_grid_size);
+		b = snap_vector(b, settings.symbol_grid_size);
+	}
 	// constrain
 	Vector2D size = b - a;
 	if (constrained) {

@@ -162,20 +162,20 @@ void SymbolControl::draw(DC& dc) {
 	SymbolViewer::draw(dc);
 	// draw grid
 	if (settings.symbol_grid) {
-		wxSize s = dc.GetSize();
 		double lines = settings.symbol_grid_size;
+		double end = rotation.trS(1);
 		for (int i = 0 ; i <= lines ; ++i) {
 			int x = (int) floor(rotation.trS(i/lines-0.0001));
 			//dc.SetPen(Color(0, i%5 == 0 ? 64 : 31, 0));
 			//dc.SetPen(Color(i%5 == 0 ? 64 : 31, 0, 0));
 			dc.SetLogicalFunction(wxAND);
 			dc.SetPen(i%5 == 0 ? Color(191,255,191) : Color(191, 255, 191));
-			dc.DrawLine(x, 0, x, s.y);
-			dc.DrawLine(0, x, s.x, x);
+			dc.DrawLine(x, 0, x, end);
+			dc.DrawLine(0, x, end, x);
 			dc.SetLogicalFunction(wxOR);
 			dc.SetPen(i%5 == 0 ? Color(0,63,0) : Color(0, 31, 0));
-			dc.DrawLine(x, 0, x, s.y);
-			dc.DrawLine(0, x, s.x, x);
+			dc.DrawLine(x, 0, x, end);
+			dc.DrawLine(0, x, end, x);
 		}
 		dc.SetLogicalFunction(wxCOPY);
 	}
@@ -251,7 +251,7 @@ void SymbolControl::onUpdateUI(wxUpdateUIEvent& ev) {
 			ev.Check(editor->modeToolId() == ev.GetId());
 			if (ev.GetId() == ID_MODE_POINTS) {
 				// can only edit points when a single part is selected <TODO?>
-				ev.Enable(selected_parts.size() == 1);
+				ev.Enable(selected_parts.size() == 1 && (*selected_parts.begin())->isSymbolShape());
 			}
 			break;
 		case ID_MODE_PAINT:

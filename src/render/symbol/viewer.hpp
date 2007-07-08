@@ -21,9 +21,11 @@ Image render_symbol(const SymbolP& symbol, double border_radius = 0.05, int size
 
 // ----------------------------------------------------------------------------- : Symbol Viewer
 
-enum HighlightStyle {
-	HIGHLIGHT_BORDER,
-	HIGHLIGHT_INTERIOR
+enum HighlightStyle
+{	HIGHLIGHT_BORDER     = 0x01
+,	HIGHLIGHT_INTERIOR   = 0x02
+,	HIGHLIGHT_LESS       = 0x10
+,	HIGHLIGHT_BORDER_DOT = HIGHLIGHT_BORDER | HIGHLIGHT_LESS
 };
 
 /// Class that knows how to draw a symbol

@@ -74,15 +74,6 @@ class Vector2D {
 		x /= r;  y /= r;
 	}
 	
-	/// Inner product with another vector
-	inline double dot(Vector2D p2) const {
-		return (x * p2.x) + (y * p2.y);
-	}
-	/// Outer product with another vector
-	inline double cross(Vector2D p2) const {
-		return (x * p2.y) - (y * p2.x);
-	}
-	
 	/// Piecewise multiplication
 	inline Vector2D mul(Vector2D p2) {
 		return Vector2D(x * p2.x, y * p2.y);
@@ -91,12 +82,7 @@ class Vector2D {
 	inline Vector2D div(Vector2D p2) {
 		return Vector2D(x / p2.x, y / p2.y);
 	}
-	
-	/// Apply a 'matrix' to this vector
-	inline Vector2D mul(Vector2D mx, Vector2D my) {
-		return Vector2D(dot(mx), dot(my));
-	}
-	
+		
 	/// Returns the square of the length of this vector
 	inline double lengthSqr() const {
 		return x*x + y*y;
@@ -106,7 +92,7 @@ class Vector2D {
 		return sqrt(lengthSqr());
 	}
 	/// Returns a normalized version of this vector
-	/// i.e. length() == 1
+	/** i.e. length() == 1 */
 	inline Vector2D normalized() const {
 		return *this / length();
 	}
@@ -121,6 +107,15 @@ class Vector2D {
 		return Vector2D(inf, inf);
 	}
 };
+
+/// Inner product of two vectors
+inline double dot(const Vector2D& a, const Vector2D& b) {
+	return (a.x * b.x) + (a.y * b.y);
+}
+/// Length of the outer product of two vectors
+inline double cross(const Vector2D& a, const Vector2D& b) {
+	return (a.x * b.y) - (a.y * b.x);
+}
 
 /// Piecewise minimum
 inline Vector2D piecewise_min(const Vector2D& a, const Vector2D& b) {
@@ -139,6 +134,23 @@ inline Vector2D piecewise_max(const Vector2D& a, const Vector2D& b) {
 }
 
 inline Vector2D operator * (double a, const Vector2D& b) { return b * a; }
+
+// ----------------------------------------------------------------------------- : Matrix2D
+
+/// A two dimensional transformation matrix, simply two vectors
+class Matrix2D {
+  public:
+	Vector2D mx, my;
+	
+	inline Matrix2D() {}
+	inline Matrix2D(const Vector2D& mx, const Vector2D& my) : mx(mx),  my(my)  {}
+	inline Matrix2D(double a, double b, double c, double d) : mx(a,b), my(c,d) {}
+};
+
+/// vector-matrix product
+inline Vector2D operator * (const Vector2D& a, const Matrix2D& m) {
+	return Vector2D(dot(a,m.mx), dot(a,m.my));
+}
 
 
 // ----------------------------------------------------------------------------- : EOF

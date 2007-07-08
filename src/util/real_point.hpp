@@ -37,7 +37,14 @@ class RealSize {
 		: width(w), height(h)
 	{}
 	inline RealSize(wxSize s)
-		: width(s.GetWidth()), height(s.GetHeight())
+		: width(s.x), height(s.y)
+	{}
+	inline explicit RealSize(const Vector2D& v)
+		: width(v.x), height(v.y)
+	{}
+	/// size of an image
+	inline explicit RealSize(const wxImage& img)
+		: width(img.GetWidth()), height(img.GetHeight())
 	{}
 	
 	/// Negation of a size, negates both components

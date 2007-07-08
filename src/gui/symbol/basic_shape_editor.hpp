@@ -63,7 +63,7 @@ class SymbolBasicShapeEditor : public SymbolEditorBase {
 	/**  when centered: a = center, b-a = radius
 	 *   otherwise:     a = top left, b = bottom right
 	 */
-	void makeShape(const Vector2D& a, const Vector2D& b, bool constrained, bool centered);
+	void makeShape(Vector2D a, Vector2D b, bool constrained, bool snap, bool centered);
 	
 	/// Make the shape, centered in c, with radius r
 	void makeCenteredShape(const Vector2D& c, Vector2D r, bool constrained);

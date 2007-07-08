@@ -20,8 +20,16 @@
 
 // ----------------------------------------------------------------------------- : Transform symbol part
 
-/// Anything that changes a part
+/// Anything that changes one or more parts
 class SymbolPartAction : public Action {};
+
+/// Anything that changes a set of parts
+class SymbolPartsAction : public SymbolPartAction {
+  public:
+	SymbolPartsAction(const set<SymbolPartP>& parts);
+	
+	const set<SymbolPartP> parts;	///< Affected parts
+};
 
 /// Anything that changes a part as displayed in the part list
 class SymbolPartListAction : public SymbolPartAction {};
@@ -29,7 +37,7 @@ class SymbolPartListAction : public SymbolPartAction {};
 // ----------------------------------------------------------------------------- : Moving symbol parts
 
 /// Move some symbol parts
-class SymbolPartMoveAction : public SymbolPartAction {
+class SymbolPartMoveAction : public SymbolPartsAction {
   public:
 	SymbolPartMoveAction(const set<SymbolPartP>& parts, const Vector2D& delta = Vector2D());
 	
@@ -40,10 +48,11 @@ class SymbolPartMoveAction : public SymbolPartAction {
 	void move(const Vector2D& delta);
 	
   private:
-	set<SymbolPartP> parts;		///< Parts to move
 	Vector2D delta;				///< How much to move
 	Vector2D moved;				///< How much has been moved
 	Vector2D min_pos, max_pos;	///< Bounding box of the thing we are moving
+	
+	void movePart(SymbolPart& part); ///< Move a single part
   public:
 	bool constrain;				///< Constrain movement?
 	int snap;					///< Snap to grid?
@@ -52,7 +61,7 @@ class SymbolPartMoveAction : public SymbolPartAction {
 // ----------------------------------------------------------------------------- : Rotating symbol parts
 
 /// Transforming symbol parts using a matrix
-class SymbolPartMatrixAction : public SymbolPartAction {
+class SymbolPartMatrixAction : public SymbolPartsAction {
   public:
 	SymbolPartMatrixAction(const set<SymbolPartP>& parts, const Vector2D& center);
 	
@@ -61,10 +70,10 @@ class SymbolPartMatrixAction : public SymbolPartAction {
 	
   protected:
 	/// Perform the transformation using the given matrix
-	void transform(const Vector2D& mx, const Vector2D& my);
+	void transform(const Matrix2D& m);
+	void transform(SymbolPart& part, const Matrix2D& m);
 	
-	set<SymbolPartP> parts;	///< Parts to transform
-	Vector2D center;			///< Center to transform around
+	Vector2D center; ///< Center to transform around
 };
 
 /// Rotate some symbol parts
@@ -114,7 +123,7 @@ class SymbolPartShearAction : public SymbolPartMatrixAction {
 // ----------------------------------------------------------------------------- : Scaling symbol parts
 
 /// Scale some symbol parts
-class SymbolPartScaleAction : public SymbolPartAction {
+class SymbolPartScaleAction : public SymbolPartsAction {
   public:
 	SymbolPartScaleAction(const set<SymbolPartP>& parts, int scaleX, int scaleY);
 	
@@ -127,13 +136,13 @@ class SymbolPartScaleAction : public SymbolPartAction {
 	void update();
 	
   private:
-	set<SymbolPartP> parts;					///< Parts to scale
 	Vector2D old_min,      old_size;		///< the original pos/size
 	Vector2D new_real_min, new_real_size;	///< the target pos/sizevoid shearBy(const Vector2D& shear)
 	Vector2D new_min,      new_size;		///< the target pos/size after applying constrains
 	int scaleX, scaleY;						///< to what corner are we attached?
 	/// Transform everything in the parts
 	void transformAll();
+	void transformPart(SymbolPart&);
 	/// Transform a single vector
 	inline Vector2D transform(const Vector2D& v);
   public:
@@ -144,7 +153,7 @@ class SymbolPartScaleAction : public SymbolPartAction {
 // ----------------------------------------------------------------------------- : Change combine mode
 
 /// Change the name of a symbol part
-class CombiningModeAction : public SymbolPartListAction {
+class CombiningModeAction : public SymbolPartsAction {
   public:
 	// All parts must be SymbolParts
 	CombiningModeAction(const set<SymbolPartP>& parts, SymbolShapeCombine mode);
@@ -153,22 +162,26 @@ class CombiningModeAction : public SymbolPartListAction {
 	virtual void   perform(bool to_undo);
 	
   private:
+	void add(const SymbolPartP&, SymbolShapeCombine mode);
 	vector<pair<SymbolShapeP,SymbolShapeCombine> > parts;	///< Affected parts with new combining modes
 };
 
 // ----------------------------------------------------------------------------- : Change name
 
 /// Change the name of a symbol part
-class SymbolPartNameAction : public SymbolPartListAction {
+class SymbolPartNameAction : public SymbolPartAction {
   public:
-	SymbolPartNameAction(const SymbolPartP& part, const String& name);
+	SymbolPartNameAction(const SymbolPartP& part, const String& name, size_t old_cursor, size_t new_cursor);
 	
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);
+	virtual bool merge(const Action& action);
 	
-  private:
+  public:
 	SymbolPartP part;	///< Affected part
 	String part_name;	///< New name
+	size_t old_cursor;	///< Cursor position
+	size_t new_cursor;	///< Cursor position
 };
 
 // ----------------------------------------------------------------------------- : Add symbol part
@@ -224,18 +237,18 @@ class DuplicateSymbolPartsAction : public SymbolPartListAction {
 
 // ----------------------------------------------------------------------------- : Reorder symbol parts
 
-/// Change the position of a part in a symbol, by swapping two parts.
+/// Change the position of a part in a symbol, by moving a part.
 class ReorderSymbolPartsAction : public SymbolPartListAction {
   public:
-	ReorderSymbolPartsAction(Symbol& symbol, size_t part_id1, size_t part_id2);
+	ReorderSymbolPartsAction(Symbol& symbol, size_t old_position, size_t new_position);
   
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);
 	
   private:
-	Symbol& symbol;				///< Symbol to swap the parts in
+	Symbol& symbol;						///< Symbol to swap the parts in
   public:
-	size_t part_id1, part_id2;	///< Indices of parts to swap
+	size_t old_position, new_position;	///< Positions to move from and to
 };
 
 

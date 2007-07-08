@@ -94,6 +94,11 @@ Vector2D& ControlPoint::getOther(WhichHandle wh) {
 
 // ----------------------------------------------------------------------------- : SymbolPart
 
+void SymbolPart::calculateBounds() {
+	min_pos =  Vector2D::infinity();
+	max_pos = -Vector2D::infinity();
+}
+
 IMPLEMENT_REFLECTION(SymbolPart) {
 	REFLECT_IF_NOT_READING {
 		String type = typeName();
@@ -233,6 +238,19 @@ SymbolPartP SymbolGroup::clone() const {
 		p = p->clone();
 	}
 	return part;
+}
+
+void SymbolGroup::calculateBounds() {
+	FOR_EACH(p, parts) p->calculateBounds();
+	calculateBoundsNonRec();
+}
+void SymbolGroup::calculateBoundsNonRec() {
+	min_pos =  Vector2D::infinity();
+	max_pos = -Vector2D::infinity();
+	FOR_EACH(p, parts) {
+		min_pos = piecewise_min(min_pos, p->min_pos);
+		max_pos = piecewise_max(max_pos, p->max_pos);
+	}
 }
 
 IMPLEMENT_REFLECTION(SymbolGroup) {

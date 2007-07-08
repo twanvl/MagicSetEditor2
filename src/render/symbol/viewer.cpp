@@ -72,10 +72,8 @@ void SymbolViewer::draw(DC& dc) {
 			}
 		}
 	}
-	// Draw all parts, in reverse order (bottom to top)
-	FOR_EACH_REVERSE(p, symbol->parts) {
-		combineSymbolPart(dc, *p, paintedSomething, buffersFilled, borderDC, interiorDC);
-	}
+	// Draw all parts
+	combineSymbolPart(dc, *symbol, paintedSomething, buffersFilled, borderDC, interiorDC);
 	
 	// Output the final parts from the buffer
 	if (buffersFilled) {
@@ -118,7 +116,8 @@ void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paint
 	} else if (const SymbolSymmetry* s = part.isSymbolSymmetry()) {
 		// symmetry, already handled above
 	} else if (const SymbolGroup* g = part.isSymbolGroup()) {
-		FOR_EACH_CONST(p, g->parts) {
+		// Draw all parts, in reverse order (bottom to top)
+		FOR_EACH_CONST_REVERSE(p, g->parts) {
 			combineSymbolPart(dc, *p, paintedSomething, buffersFilled, borderDC, interiorDC);
 		}
 	}
@@ -147,6 +146,10 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolShape& shape, HighlightStyl
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		dc.SetPen  (wxPen(Color(255,0,0), 2));
 		dc.DrawPolygon((int)points.size(), &points[0]);
+	} else if (style == HIGHLIGHT_BORDER_DOT) {
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.SetPen  (wxPen(Color(255,0,0), 1, wxDOT));
+		dc.DrawPolygon((int)points.size(), &points[0]);
 	} else {
 		dc.SetLogicalFunction(wxOR);
 		dc.SetBrush(Color(0,0,64));
@@ -164,8 +167,13 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolSymmetry& sym) {
 	// TODO
 }
 void SymbolViewer::highlightPart(DC& dc, const SymbolGroup& group, HighlightStyle style) {
+	if (style == HIGHLIGHT_BORDER) {
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.SetPen  (wxPen(Color(255,0,0), 2));
+		dc.DrawRectangle(rotation.tr(RealRect(group.min_pos, RealSize(group.max_pos - group.min_pos))));
+	}
 	FOR_EACH_CONST(part, group.parts) {
-		highlightPart(dc, *part, style);
+		highlightPart(dc, *part, (HighlightStyle)(style | HIGHLIGHT_LESS));
 	}
 }
 

@@ -37,11 +37,7 @@ SymbolSelectEditor::SymbolSelectEditor(SymbolControl* control, bool rotate)
 	handleShearY = wxBitmap(rotate_image(shear,90));
 	handleCenter = wxBitmap(load_resource_image(_("handle_center")));
 	// Make sure all parts have updated bounds
-	FOR_EACH(p, getSymbol()->parts) {
-		if (SymbolShape* s = p->isSymbolShape()) {
-			s->calculateBounds();
-		}
-	}
+	getSymbol()->calculateBounds();
 	resetActions();
 }
 
@@ -132,24 +128,32 @@ void SymbolSelectEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 
 void SymbolSelectEditor::onUpdateUI(wxUpdateUIEvent& ev) {
 	if (ev.GetId() >= ID_SYMBOL_COMBINE && ev.GetId() < ID_SYMBOL_COMBINE_MAX) {
-		if (control.selected_parts.empty()) {
-			ev.Check(false);
-			ev.Enable(false);
-		} else {
-			ev.Enable(true);
-			bool check = true;
-			FOR_EACH(p, control.selected_parts) {
-				if (SymbolShape* s = p->isSymbolShape()) {
-					if (s->combine != ev.GetId() - ID_SYMBOL_COMBINE) {
-						check = false;
-						break;
-					}
-				} // disable when symmetries are selected?
-			}
-			ev.Check(check);
+		bool enable = false;
+		bool check = true;
+		FOR_EACH(p, control.selected_parts) {
+			if (SymbolShape* s = p->isSymbolShape()) {
+				enable = true;
+				if (s->combine != ev.GetId() - ID_SYMBOL_COMBINE) {
+					check = false;
+					break;
+				}
+			} // disable when symmetries are selected?
 		}
+		ev.Enable(enable);
+		ev.Check(enable && check);
 	} else if (ev.GetId() == ID_EDIT_DUPLICATE) {
 		ev.Enable(!control.selected_parts.empty());
+	} else if (ev.GetId() == ID_EDIT_GROUP) {
+		ev.Enable(control.selected_parts.size() >= 2);
+	} else if (ev.GetId() == ID_EDIT_UNGROUP) {
+		// is a group selected
+		FOR_EACH(p, control.selected_parts) {
+			if (p->isSymbolGroup()) {
+				ev.Enable(true);
+				return;
+			}
+		}
+		ev.Enable(false);
 	} else {
 		ev.Enable(false); // we don't know about this item
 	}
@@ -165,10 +169,15 @@ void SymbolSelectEditor::onCommand(int id) {
 		control.Refresh(false);
 	} else if (id == ID_EDIT_DUPLICATE && !isEditing()) {
 		// duplicate selection, not when dragging
-		DuplicateSymbolPartsAction* action = new DuplicateSymbolPartsAction(
-				*getSymbol(), control.selected_parts
-			);
-		getSymbol()->actions.add(action);
+		getSymbol()->actions.add(new DuplicateSymbolPartsAction(*getSymbol(), control.selected_parts));
+		control.Refresh(false);
+	} else if (id == ID_EDIT_GROUP && !isEditing()) {
+		// group selection, not when dragging
+		getSymbol()->actions.add(new GroupSymbolPartsAction(*getSymbol(), control.selected_parts));
+		control.Refresh(false);
+	} else if (id == ID_EDIT_UNGROUP && !isEditing()) {
+		// ungroup selection, not when dragging
+		getSymbol()->actions.add(new UngroupSymbolPartsAction(*getSymbol(), control.selected_parts));
 		control.Refresh(false);
 	}
 }
@@ -383,6 +392,7 @@ void SymbolSelectEditor::onChar(wxKeyEvent& ev) {
 	if (ev.GetKeyCode() == WXK_DELETE) {
 		// delete selected parts
 		getSymbol()->actions.add(new RemoveSymbolPartsAction(*getSymbol(), control.selected_parts));
+		if (control.selected_parts.find(highlightPart) != control.selected_parts.end()) highlightPart = SymbolPartP(); // deleted it
 		control.selected_parts.clear();
 		resetActions();
 		control.Refresh(false);
@@ -441,15 +451,25 @@ double SymbolSelectEditor::angleTo(const Vector2D& pos) {
 }
 
 
+SymbolPartP find_part(const SymbolPartP& part, const Vector2D& pos) {
+	if (SymbolShape* s = part->isSymbolShape()) {
+		if (point_in_shape(pos, *s)) return part;
+	} else if (SymbolSymmetry* s = part->isSymbolSymmetry()) {
+		// TODO
+	} else if (SymbolGroup* g = part->isSymbolGroup()) {
+		FOR_EACH(p, g->parts) {
+			if (find_part(p,pos)) return part;
+		}
+	} else {
+		throw InternalError(_("Invalid symbol part type"));
+	}
+	return SymbolPartP();
+}
+
 SymbolPartP SymbolSelectEditor::findPart(const Vector2D& pos) {
 	FOR_EACH(p, getSymbol()->parts) {
-		if (SymbolShape* s = p->isSymbolShape()) {
-			if (point_in_shape(pos, *s)) return p;
-		} else if (SymbolSymmetry* s = p->isSymbolSymmetry()) {
-			// TODO
-		} else {
-			throw InternalError(_("Invalid symbol part type"));
-		}
+		SymbolPartP found = find_part(p, pos);
+		if (found) return found;
 	}
 	return SymbolPartP();
 }
@@ -459,10 +479,8 @@ void SymbolSelectEditor::updateBoundingBox() {
 	minV =  Vector2D::infinity();
 	maxV = -Vector2D::infinity();
 	FOR_EACH(p, control.selected_parts) {
-		if (SymbolShape* s = p->isSymbolShape()) {
-			minV = piecewise_min(minV, s->min_pos);
-			maxV = piecewise_max(maxV, s->max_pos);
-		}
+		minV = piecewise_min(minV, p->min_pos);
+		maxV = piecewise_max(maxV, p->max_pos);
 	}
 /*	// Find rotation center
 	center = Vector2D(0,0);

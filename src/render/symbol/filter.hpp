@@ -20,9 +20,10 @@ class SymbolFilter;
 /// Color with alpha channel
 class AColor : public Color {
   public:
-	int alpha;	///< The alpha value, in the range [0..255]
-	inline AColor(int r, int g, int b, int a = 255) : Color(r,g,b), alpha(a) {}
-	inline AColor(const Color& color,  int a = 255) : Color(color), alpha(a) {}
+	Byte alpha;	///< The alpha value, in the range [0..255]
+	inline AColor()                                     :               alpha(0) {}
+	inline AColor(Byte r, Byte g, Byte b, Byte a = 255) : Color(r,g,b), alpha(a) {}
+	inline AColor(const Color& color,     Byte a = 255) : Color(color), alpha(a) {}
 };
 
 // ----------------------------------------------------------------------------- : Symbol filtering
@@ -69,14 +70,14 @@ intrusive_ptr<SymbolFilter> read_new<SymbolFilter>(Reader& reader);
 class SolidFillSymbolFilter : public SymbolFilter {
   public:
 	inline SolidFillSymbolFilter() {}
-	inline SolidFillSymbolFilter(Color fill_color, Color border_color)
+	inline SolidFillSymbolFilter(const AColor& fill_color, const AColor& border_color)
 		: fill_color(fill_color), border_color(border_color)
 	{}
 	virtual AColor color(double x, double y, SymbolSet point) const;
 	virtual String fillType() const;
 	virtual bool operator == (const SymbolFilter& that) const;
   private:
-	Color fill_color, border_color;
+	AColor fill_color, border_color;
 	DECLARE_REFLECTION();
 };
 
