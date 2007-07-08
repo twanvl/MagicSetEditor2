@@ -10,7 +10,6 @@
 #include <script/to_value.hpp>
 #include <gfx/bezier.hpp>
 
-DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 DECLARE_TYPEOF_COLLECTION(ControlPointP);
 
 // ----------------------------------------------------------------------------- : ControlPoint
@@ -94,17 +93,39 @@ Vector2D& ControlPoint::getOther(WhichHandle wh) {
 
 // ----------------------------------------------------------------------------- : SymbolPart
 
-IMPLEMENT_REFLECTION_ENUM(SymbolPartCombine) {
-	VALUE_N("overlap",		PART_OVERLAP);
-	VALUE_N("merge",		PART_MERGE);
-	VALUE_N("subtract",		PART_SUBTRACT);
-	VALUE_N("intersection",	PART_INTERSECTION);
-	VALUE_N("difference",	PART_DIFFERENCE);
-	VALUE_N("border",		PART_BORDER);
+IMPLEMENT_REFLECTION(SymbolPart) {
+	REFLECT_IF_NOT_READING {
+		String type = typeName();
+		REFLECT(type);
+	}
+	REFLECT(name);
 }
 
-IMPLEMENT_REFLECTION(SymbolPart) {
-	REFLECT(name);
+template <>
+SymbolPartP read_new<SymbolPart>(Reader& reader) {
+	// there must be a type specified
+	String type;
+	reader.handle(_("type"), type);
+	if      (type == _("shape") || type.empty())	return new_intrusive<SymbolShape>();
+	else if (type == _("symmetry"))					return new_intrusive<SymbolSymmetry>();
+	else {
+		throw ParseError(_("Unsupported symbol part type: '") + type + _("'"));
+	}
+}
+
+// ----------------------------------------------------------------------------- : SymbolShape
+
+IMPLEMENT_REFLECTION_ENUM(SymbolShapeCombine) {
+	VALUE_N("overlap",		SYMBOL_COMBINE_OVERLAP);
+	VALUE_N("merge",		SYMBOL_COMBINE_MERGE);
+	VALUE_N("subtract",		SYMBOL_COMBINE_SUBTRACT);
+	VALUE_N("intersection",	SYMBOL_COMBINE_INTERSECTION);
+	VALUE_N("difference",	SYMBOL_COMBINE_DIFFERENCE);
+	VALUE_N("border",		SYMBOL_COMBINE_BORDER);
+}
+
+IMPLEMENT_REFLECTION(SymbolShape) {
+	REFLECT_BASE(SymbolPart);
 	REFLECT(combine);
 	REFLECT(points);
 	// Fixes after reading
@@ -126,12 +147,16 @@ IMPLEMENT_REFLECTION(SymbolPart) {
 	}
 }
 
-SymbolPart::SymbolPart()
-	: combine(PART_OVERLAP), rotation_center(.5, .5)
+SymbolShape::SymbolShape()
+	: combine(SYMBOL_COMBINE_OVERLAP), rotation_center(.5, .5)
 {}
 
-SymbolPartP SymbolPart::clone() const {
-	SymbolPartP part = new_intrusive1<SymbolPart>(*this);
+String SymbolShape::typeName() const {
+	return _("shape");
+}
+
+SymbolPartP SymbolShape::clone() const {
+	SymbolShapeP part(new SymbolShape(*this));
 	// also clone the control points
 	FOR_EACH(p, part->points) {
 		p = new_intrusive1<ControlPoint>(*p);
@@ -139,7 +164,7 @@ SymbolPartP SymbolPart::clone() const {
 	return part;
 }
 
-void SymbolPart::enforceConstraints() {
+void SymbolShape::enforceConstraints() {
 	for (int i = 0 ; i < (int)points.size() ; ++i) {
 		ControlPointP p1 = getPoint(i);
 		ControlPointP p2 = getPoint(i + 1);
@@ -148,11 +173,48 @@ void SymbolPart::enforceConstraints() {
 	}
 }
 
-void SymbolPart::calculateBounds() {
+void SymbolShape::calculateBounds() {
 	min_pos =  Vector2D::infinity();
 	max_pos = -Vector2D::infinity();
 	for (int i = 0 ; i < (int)points.size() ; ++i) {
 		segment_bounds(*getPoint(i), *getPoint(i + 1), min_pos, max_pos);
+	}
+}
+
+// ----------------------------------------------------------------------------- : SymbolSymmetry
+
+IMPLEMENT_REFLECTION_ENUM(SymbolSymmetryType) {
+	VALUE_N("rotation",   SYMMETRY_ROTATION);
+	VALUE_N("reflection", SYMMETRY_REFLECTION);
+}
+
+SymbolSymmetry::SymbolSymmetry()
+	: kind(SYMMETRY_ROTATION), copies(2)
+{}
+
+String SymbolSymmetry::typeName() const {
+	return _("symmetry");
+}
+
+SymbolPartP SymbolSymmetry::clone() const {
+	return new_intrusive1<SymbolSymmetry>(*this);
+}
+
+IMPLEMENT_REFLECTION(SymbolSymmetry) {
+	REFLECT_BASE(SymbolPart);
+	REFLECT(kind);
+	REFLECT(copies);
+	REFLECT(center);
+	REFLECT(handle);
+	// Fixes after reading
+	REFLECT_IF_READING {
+		if (name.empty()) {
+			if (kind == SYMMETRY_REFLECTION) {
+				name = _("Mirror");
+			} else {
+				name = _("Symmetry");
+			}
+		}
 	}
 }
 
@@ -165,8 +227,8 @@ IMPLEMENT_REFLECTION(Symbol) {
 // ----------------------------------------------------------------------------- : Default symbol
 
 // A default symbol part, a square, moved by d
-SymbolPartP default_symbol_part(double d) {
-	SymbolPartP part = new_intrusive<SymbolPart>();
+SymbolShapeP default_symbol_part(double d) {
+	SymbolShapeP part = new_intrusive<SymbolShape>();
 	part->points.push_back(new_intrusive2<ControlPoint>(d + .2, d + .2));
 	part->points.push_back(new_intrusive2<ControlPoint>(d + .2, d + .8));
 	part->points.push_back(new_intrusive2<ControlPoint>(d + .8, d + .8));

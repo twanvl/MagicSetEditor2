@@ -19,7 +19,7 @@ DECLARE_TYPEOF_COLLECTION(ControlPointP);
 
 // ----------------------------------------------------------------------------- : SymbolPointEditor
 
-SymbolPointEditor::SymbolPointEditor(SymbolControl* control, const SymbolPartP& part)
+SymbolPointEditor::SymbolPointEditor(SymbolControl* control, const SymbolShapeP& part)
 	: SymbolEditorBase(control)
 	, part(part)
 	, selection(SELECTED_NONE)
@@ -261,7 +261,7 @@ void SymbolPointEditor::onLeftDClick(const Vector2D& pos, wxMouseEvent& ev) {
 		// Delete point
 		selected_points.clear();
 		selectPoint(hover_handle.point, false);
-		getSymbol()->actions.add(controlPointRemoveAction(part, selected_points));
+		getSymbol()->actions.add(control_point_remove_action(part, selected_points));
 		selected_points.clear();
 		selection = SELECTED_NONE;
 	}
@@ -439,7 +439,7 @@ void SymbolPointEditor::resetActions() {
 
 void SymbolPointEditor::deleteSelection() {
 	if (!selected_points.empty()) {
-		getSymbol()->actions.add(controlPointRemoveAction(part, selected_points));
+		getSymbol()->actions.add(control_point_remove_action(part, selected_points));
 		selected_points.clear();
 		resetActions();
 		control.Refresh(false);

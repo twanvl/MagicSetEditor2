@@ -8,11 +8,18 @@
 
 #include <data/action/symbol.hpp>
 #include <data/action/symbol_part.hpp>
+#include <util/error.hpp>
 
-DECLARE_TYPEOF_COLLECTION(pair<SymbolPartP COMMA SymbolPartCombine>);
-DECLARE_TYPEOF_COLLECTION(pair<SymbolPartP COMMA size_t           >);
+DECLARE_TYPEOF_COLLECTION(pair<SymbolShapeP COMMA SymbolShapeCombine>);
+DECLARE_TYPEOF_COLLECTION(pair<SymbolPartP  COMMA size_t            >);
 DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 DECLARE_TYPEOF_COLLECTION(ControlPointP);
+
+// ----------------------------------------------------------------------------- : Utility
+
+String action_name_for(const set<SymbolPartP>& parts, const String& action) {
+	return format_string(action, parts.size() == 1 ? _TYPE_("shape") : _TYPE_("shapes"));
+}
 
 // ----------------------------------------------------------------------------- : Moving symbol parts
 
@@ -23,23 +30,31 @@ SymbolPartMoveAction::SymbolPartMoveAction(const set<SymbolPartP>& parts)
 	, snap(0)
 {
 	// Determine min/max_pos
-	FOR_EACH(p,parts) {
-		min_pos = piecewise_min(min_pos, p->min_pos);
-		max_pos = piecewise_max(max_pos, p->max_pos);
+	FOR_EACH(p, parts) {
+		if (SymbolShape* s = p->isSymbolShape()) {
+			min_pos = piecewise_min(min_pos, s->min_pos);
+			max_pos = piecewise_max(max_pos, s->max_pos);
+		}
 	}
 }
 
 String SymbolPartMoveAction::getName(bool to_undo) const {
-	return parts.size() == 1 ? _("Move shape") : _("Move shapes");
+	return action_name_for(parts, _ACTION_("move"));
 }
 
 void SymbolPartMoveAction::perform(bool to_undo) {
 	// move the points back
 	FOR_EACH(p, parts) {
-		p->min_pos -= moved;
-		p->max_pos -= moved;
-		FOR_EACH(pnt, p->points) {
-			pnt->pos -= moved;
+		if (SymbolShape* s = p->isSymbolShape()) {
+			s->min_pos -= moved;
+			s->max_pos -= moved;
+			FOR_EACH(pnt, s->points) {
+				pnt->pos -= moved;
+			}
+		} else if (SymbolSymmetry* s = p->isSymbolSymmetry()) {
+			s->center -= moved;
+		} else {
+			throw InternalError(_("Invalid symbol part type"));
 		}
 	}
 	moved = -moved;
@@ -49,15 +64,10 @@ void SymbolPartMoveAction::move(const Vector2D& deltaDelta) {
 	delta += deltaDelta;
 	// Determine actual delta, possibly constrained and snapped
 	Vector2D d = constrain_snap_vector_offset(min_pos, max_pos, delta, constrain, snap);
-	Vector2D dd = d - moved;
+	Vector2D dd = d - moved; // move this much more
 	// Move each point by d
-	FOR_EACH(p, parts) {
-		p->min_pos += dd;
-		p->max_pos += dd;
-		FOR_EACH(pnt, p->points) {
-			pnt->pos += dd;
-		}
-	}
+	moved = -dd;
+	perform(false); // (ab)use perform to move by +dd
 	moved = d;
 }
 
@@ -71,13 +81,19 @@ SymbolPartMatrixAction::SymbolPartMatrixAction(const set<SymbolPartP>& parts, co
 void SymbolPartMatrixAction::transform(const Vector2D& mx, const Vector2D& my) {
 	// Transform each point
 	FOR_EACH(p, parts) {
-		FOR_EACH(pnt, p->points) {
-			pnt->pos         = (pnt->pos - center).mul(mx,my) + center;
-			pnt->delta_before = pnt->delta_before.mul(mx,my);
-			pnt->delta_after  = pnt->delta_after .mul(mx,my);
+		if (SymbolShape* s = p->isSymbolShape()) {
+			FOR_EACH(pnt, s->points) {
+				pnt->pos         = (pnt->pos - center).mul(mx,my) + center;
+				pnt->delta_before = pnt->delta_before.mul(mx,my);
+				pnt->delta_after  = pnt->delta_after .mul(mx,my);
+			}
+			// bounds change after transforming
+			s->calculateBounds();
+		} else if (SymbolSymmetry* s = p->isSymbolSymmetry()) {
+			s->handle = s->handle.mul(mx,my);
+		} else {
+			throw InternalError(_("Invalid symbol part type"));
 		}
-		// bounds change after transforming
-		p->calculateBounds();
 	}
 }
 
@@ -89,7 +105,7 @@ SymbolPartRotateAction::SymbolPartRotateAction(const set<SymbolPartP>& parts, co
 {}
 
 String SymbolPartRotateAction::getName(bool to_undo) const {
-	return parts.size() == 1 ? _("Rotate shape") : _("Rotate shapes");
+	return action_name_for(parts, _ACTION_("rotate"));
 }
 
 void SymbolPartRotateAction::perform(bool to_undo) {
@@ -128,7 +144,7 @@ SymbolPartShearAction::SymbolPartShearAction(const set<SymbolPartP>& parts, cons
 {}
 
 String SymbolPartShearAction::getName(bool to_undo) const {
-	return parts.size() == 1 ? _("Shear shape") : _("Shear shapes");
+	return action_name_for(parts, _ACTION_("shear"));
 }
 
 void SymbolPartShearAction::perform(bool to_undo) {
@@ -169,89 +185,104 @@ SymbolPartScaleAction::SymbolPartScaleAction(const set<SymbolPartP>& parts, int 
 	, snap(0)
 {
 	// Find min and max coordinates
-	oldMin          =  Vector2D::infinity();
-	Vector2D oldMax = -Vector2D::infinity();
+	old_min = Vector2D( 1e6, 1e6);
+	Vector2D old_max  (-1e6,-1e6);
 	FOR_EACH(p, parts) {
-		oldMin = piecewise_min(oldMin, p->min_pos);
-		oldMax = piecewise_max(oldMax, p->max_pos);
+		if (SymbolShape* s = p->isSymbolShape()) {
+			old_min = piecewise_min(old_min, s->min_pos);
+			old_max = piecewise_max(old_max, s->max_pos);
+		}
 	}
 	// new == old
-	newMin  = newRealMin  = oldMin;
-	newSize = newRealSize = oldSize = oldMax - oldMin;
+	new_min  = new_real_min  = old_min;
+	new_size = new_real_size = old_size = old_max - old_min;
 }
 
 String SymbolPartScaleAction::getName(bool to_undo) const {
-	return parts.size() == 1 ? _("Scale shape") : _("Scale shapes");
+	return action_name_for(parts, _ACTION_("scale"));
 }
 
 void SymbolPartScaleAction::perform(bool to_undo) {
-	swap(oldMin,  newMin);
-	swap(oldSize, newSize);
+	swap(old_min,  new_min);
+	swap(old_size, new_size);
 	transformAll();
 }
 
-void SymbolPartScaleAction::move(const Vector2D& deltaMin, const Vector2D& deltaMax) {
-	newRealMin  += deltaMin;
-	newRealSize += deltaMax - deltaMin;
+void SymbolPartScaleAction::move(const Vector2D& delta_min, const Vector2D& delta_max) {
+	new_real_min  += delta_min;
+	new_real_size += delta_max - delta_min;
 	update();
 }
 
 void SymbolPartScaleAction::update() {
-	// Move each point so the range <oldMin...oldMax> maps to <newMin...newMax>
-	// we have already moved to the current <newMin...newMax>
-	Vector2D tmpMin = oldMin, tmpSize = oldSize; // the size before any scaling
-	         oldMin = newMin; oldSize = newSize; // the size before this move
+	// Move each point so the range [old_min...old_max] maps to [new_min...new_max]
+	// we have already moved to the current [new_min...new_max]
+	Vector2D tmp_min = old_min, tmp_size = old_size; // the size before any scaling
+	         old_min = new_min; old_size = new_size; // the size before this move
 	// the size after the move
-	newMin = newRealMin; newSize = newRealSize;
+	new_min = new_real_min; new_size = new_real_size;
 	if (constrain && scaleX != 0 && scaleY != 0) {
-		Vector2D scale = newSize.div(tmpSize);
+		Vector2D scale = new_size.div(tmp_size);
 		scale = constrain_vector(scale, true, true);
-		newSize = tmpSize.mul(scale);
-		newMin += (newRealSize - newSize).mul(Vector2D(scaleX == -1 ? 1 : 0, scaleY == -1 ? 1 : 0));
+		new_size = tmp_size.mul(scale);
+		new_min += (new_real_size - new_size).mul(Vector2D(scaleX == -1 ? 1 : 0, scaleY == -1 ? 1 : 0));
 		// TODO : snapping
 	} else if (snap >= 0) {
 		if (scaleX + scaleY < 0) {
-			newMin = snap_vector(newMin, snap);
-			newSize += newRealMin - newMin;
+			new_min = snap_vector(new_min, snap);
+			new_size += new_real_min - new_min;
 		} else {
-			Vector2D newMax = snap_vector(newMin + newSize, snap);
-			newSize = newMax - newMin;
+			Vector2D new_max = snap_vector(new_min + new_size, snap);
+			new_size = new_max - new_min;
 		}
 	}
 	// now move all points
 	transformAll();
-	// restore oldMin/Size
-	oldMin = tmpMin;  oldSize = tmpSize;
+	// restore old_min/size
+	old_min = tmp_min;  old_size = tmp_size;
 }
 
 void SymbolPartScaleAction::transformAll() {
-	Vector2D scale = newSize.div(oldSize);
+	Vector2D scale = new_size.div(old_size);
 	FOR_EACH(p, parts) {
-		p->min_pos = transform(p->min_pos);
-		p->max_pos = transform(p->max_pos);
-		// make sure that max >= min
-		if (p->min_pos.x > p->max_pos.x) swap(p->min_pos.x, p->max_pos.x);
-		if (p->min_pos.y > p->max_pos.y) swap(p->min_pos.y, p->max_pos.y);
-		// scale all points
-		FOR_EACH(pnt, p->points) {
-			pnt->pos = transform(pnt->pos);
-			// also scale handles
-			pnt->delta_before = pnt->delta_before.mul(scale);
-			pnt->delta_after  = pnt->delta_after .mul(scale);
+		if (SymbolShape* s = p->isSymbolShape()) {
+			s->min_pos = transform(s->min_pos);
+			s->max_pos = transform(s->max_pos);
+			// make sure that max >= min
+			if (s->min_pos.x > s->max_pos.x) swap(s->min_pos.x, s->max_pos.x);
+			if (s->min_pos.y > s->max_pos.y) swap(s->min_pos.y, s->max_pos.y);
+			// scale all points
+			FOR_EACH(pnt, s->points) {
+				pnt->pos = transform(pnt->pos);
+				// also scale handles
+				pnt->delta_before = pnt->delta_before.mul(scale);
+				pnt->delta_after  = pnt->delta_after .mul(scale);
+			}
+		} else if (SymbolSymmetry* s = p->isSymbolSymmetry()) {
+			throw "TODO";
+		} else {
+			throw InternalError(_("Invalid symbol part type"));
 		}
 	}
 }
 
+Vector2D SymbolPartScaleAction::transform(const Vector2D& v) {
+	// TODO: prevent div by 0
+	return (v - old_min).div(old_size).mul(new_size) + new_min;
+}
+
 // ----------------------------------------------------------------------------- : Change combine mode
 
-CombiningModeAction::CombiningModeAction(const set<SymbolPartP>& parts, SymbolPartCombine mode) {
+CombiningModeAction::CombiningModeAction(const set<SymbolPartP>& parts, SymbolShapeCombine mode) {
 	FOR_EACH(p, parts) {
-		this->parts.push_back(make_pair(p,mode));
+		if (p->isSymbolShape()) {
+			this->parts.push_back(make_pair(static_pointer_cast<SymbolShape>(p),mode));
+		}
 	}
 }
 
 String CombiningModeAction::getName(bool to_undo) const {
-	return _("Change combine mode");
+	return _ACTION_("change combine mode");
 }
 
 void CombiningModeAction::perform(bool to_undo) {
@@ -263,15 +294,15 @@ void CombiningModeAction::perform(bool to_undo) {
 // ----------------------------------------------------------------------------- : Change name
 
 SymbolPartNameAction::SymbolPartNameAction(const SymbolPartP& part, const String& name)
-	: part(part), partName(name)
+	: part(part), part_name(name)
 {}
 
 String SymbolPartNameAction::getName(bool to_undo) const {
-	return _("Change shape name");
+	return _ACTION_("change shape name");
 }
 
 void SymbolPartNameAction::perform(bool to_undo) {
-	swap(part->name, partName);
+	swap(part->name, part_name);
 }
 
 // ----------------------------------------------------------------------------- : Add symbol part
@@ -281,7 +312,7 @@ AddSymbolPartAction::AddSymbolPartAction(Symbol& symbol, const SymbolPartP& part
 {}
 
 String AddSymbolPartAction::getName(bool to_undo) const {
-	return _("Add ") + part->name;
+	return format_string(_ACTION_("add"), part->name);
 }
 
 void AddSymbolPartAction::perform(bool to_undo) {
@@ -308,7 +339,7 @@ RemoveSymbolPartsAction::RemoveSymbolPartsAction(Symbol& symbol, const set<Symbo
 }
 
 String RemoveSymbolPartsAction::getName(bool to_undo) const {
-	return removals.size() == 1 ? _("Remove shape") : _("Remove shapes");
+	return format_string(_ACTION_("remove parts"), removals.size() == 1 ? _TYPE_("shape") : _TYPE_("shapes"));
 }
 
 void RemoveSymbolPartsAction::perform(bool to_undo) {
@@ -346,7 +377,7 @@ DuplicateSymbolPartsAction::DuplicateSymbolPartsAction(Symbol& symbol, const set
 }
 
 String DuplicateSymbolPartsAction::getName(bool to_undo) const {
-	return duplications.size() == 1 ? _("Duplicate shape") : _("Duplicate shapes");
+	return format_string(_ACTION_("duplicate"), duplications.size() == 1 ? _TYPE_("shape") : _TYPE_("shapes"));
 }
 
 void DuplicateSymbolPartsAction::perform(bool to_undo) {
@@ -380,7 +411,7 @@ ReorderSymbolPartsAction::ReorderSymbolPartsAction(Symbol& symbol, size_t part_i
 {}
 
 String ReorderSymbolPartsAction::getName(bool to_undo) const {
-	return _("Reorder");
+	return _ACTION_("reorder parts");
 }
 
 void ReorderSymbolPartsAction::perform(bool to_undo) {

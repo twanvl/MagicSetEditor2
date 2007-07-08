@@ -22,7 +22,7 @@ class CurveDragAction;
 // Symbol editor for editing control points and handles
 class SymbolPointEditor : public SymbolEditorBase {
   public:
-	SymbolPointEditor(SymbolControl* control, const SymbolPartP& part);
+	SymbolPointEditor(SymbolControl* control, const SymbolShapeP& part);
 	
 	// --------------------------------------------------- : Drawing
 	
@@ -81,7 +81,7 @@ class SymbolPointEditor : public SymbolEditorBase {
 	// --------------------------------------------------- : Data
 	
 	// The symbol part we are editing
-	SymbolPartP part;
+	SymbolShapeP part;
 	
 	// Actions in progress
 	// All are owned by the action stack, or they are 0

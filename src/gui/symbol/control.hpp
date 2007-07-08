@@ -44,7 +44,7 @@ class SymbolControl : public wxControl, public SymbolViewer {
 	/// The selection has changed, tell the part list
 	void signalSelectionChange();
 	
-	/// Activate a part, open it in the point editor
+	/// Activate a part, open it in the point editor, if it is a shape
 	void activatePart(const SymbolPartP& part);
 	
 	/// Select a specific part from the symbol
@@ -70,9 +70,9 @@ class SymbolControl : public wxControl, public SymbolViewer {
 	// --------------------------------------------------- : Data
 	
   public: 
-	/// What parts are selected
+	/// What parts are selected?
 	set<SymbolPartP> selected_parts;
-	SymbolPartP single_selection;
+	SymbolShapeP     selected_shape; // if there is a single selection
 	
 	/// Parent window 
 	SymbolWindow* parent;

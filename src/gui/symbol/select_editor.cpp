@@ -12,6 +12,7 @@
 #include <util/window_id.hpp>
 #include <data/action/symbol.hpp>
 #include <data/settings.hpp>
+#include <util/error.hpp>
 #include <gfx/gfx.hpp>
 
 DECLARE_TYPEOF_COLLECTION(SymbolPartP);
@@ -37,7 +38,9 @@ SymbolSelectEditor::SymbolSelectEditor(SymbolControl* control, bool rotate)
 	handleCenter = wxBitmap(load_resource_image(_("handle_center")));
 	// Make sure all parts have updated bounds
 	FOR_EACH(p, getSymbol()->parts) {
-		p->calculateBounds();
+		if (SymbolShape* s = p->isSymbolShape()) {
+			s->calculateBounds();
+		}
 	}
 	resetActions();
 }
@@ -108,27 +111,27 @@ void SymbolSelectEditor::drawRotationCenter(DC& dc, const Vector2D& pos) {
 
 void SymbolSelectEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->AddSeparator();
-	tb->AddTool(ID_PART_MERGE,			_TOOL_("merge"),	 load_resource_image(_("combine_or")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("merge"),		_HELP_("merge"));
-	tb->AddTool(ID_PART_SUBTRACT,		_TOOL_("subtract"),	 load_resource_image(_("combine_sub_dark")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("subtract"),	_HELP_("subtract"));
-	tb->AddTool(ID_PART_INTERSECTION,	_TOOL_("intersect"), load_resource_image(_("combine_and_dark")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("intersect"),	_HELP_("intersect"));
-	tb->AddTool(ID_PART_DIFFERENCE,		_TOOL_("difference"),load_resource_image(_("combine_xor")),			wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("difference"),	_HELP_("difference"));
-	tb->AddTool(ID_PART_OVERLAP,		_TOOL_("overlap"),	 load_resource_image(_("combine_over")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("overlap"),	_HELP_("overlap"));
-	tb->AddTool(ID_PART_BORDER,			_TOOL_("border"),	 load_resource_image(_("combine_border")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("border"),	_HELP_("border"));
+	tb->AddTool(ID_SYMBOL_COMBINE_MERGE,        _TOOL_("merge"),      load_resource_image(_("combine_or")),       wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("merge"),      _HELP_("merge"));
+	tb->AddTool(ID_SYMBOL_COMBINE_SUBTRACT,     _TOOL_("subtract"),   load_resource_image(_("combine_sub_dark")), wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("subtract"),   _HELP_("subtract"));
+	tb->AddTool(ID_SYMBOL_COMBINE_INTERSECTION, _TOOL_("intersect"),  load_resource_image(_("combine_and_dark")), wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("intersect"),  _HELP_("intersect"));
+	tb->AddTool(ID_SYMBOL_COMBINE_DIFFERENCE,   _TOOL_("difference"), load_resource_image(_("combine_xor")),      wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("difference"), _HELP_("difference"));
+	tb->AddTool(ID_SYMBOL_COMBINE_OVERLAP,      _TOOL_("overlap"),    load_resource_image(_("combine_over")),     wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("overlap"),    _HELP_("overlap"));
+	tb->AddTool(ID_SYMBOL_COMBINE_BORDER,       _TOOL_("border"),     load_resource_image(_("combine_border")),   wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("border"),     _HELP_("border"));
 	tb->Realize();
 }
 void SymbolSelectEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
-	tb->DeleteTool(ID_PART_MERGE);
-	tb->DeleteTool(ID_PART_SUBTRACT);
-	tb->DeleteTool(ID_PART_INTERSECTION);
-	tb->DeleteTool(ID_PART_DIFFERENCE);
-	tb->DeleteTool(ID_PART_OVERLAP);
-	tb->DeleteTool(ID_PART_BORDER);
+	tb->DeleteTool(ID_SYMBOL_COMBINE_MERGE);
+	tb->DeleteTool(ID_SYMBOL_COMBINE_SUBTRACT);
+	tb->DeleteTool(ID_SYMBOL_COMBINE_INTERSECTION);
+	tb->DeleteTool(ID_SYMBOL_COMBINE_DIFFERENCE);
+	tb->DeleteTool(ID_SYMBOL_COMBINE_OVERLAP);
+	tb->DeleteTool(ID_SYMBOL_COMBINE_BORDER);
 	// HACK: hardcoded size of rest of toolbar
 	tb->DeleteToolByPos(7); // delete separator
 }
 
 void SymbolSelectEditor::onUpdateUI(wxUpdateUIEvent& ev) {
-	if (ev.GetId() >= ID_PART && ev.GetId() < ID_PART_MAX) {
+	if (ev.GetId() >= ID_SYMBOL_COMBINE && ev.GetId() < ID_SYMBOL_COMBINE_MAX) {
 		if (control.selected_parts.empty()) {
 			ev.Check(false);
 			ev.Enable(false);
@@ -136,10 +139,12 @@ void SymbolSelectEditor::onUpdateUI(wxUpdateUIEvent& ev) {
 			ev.Enable(true);
 			bool check = true;
 			FOR_EACH(p, control.selected_parts) {
-				if (p->combine != ev.GetId() - ID_PART) {
-					check = false;
-					break;
-				}
+				if (SymbolShape* s = p->isSymbolShape()) {
+					if (s->combine != ev.GetId() - ID_SYMBOL_COMBINE) {
+						check = false;
+						break;
+					}
+				} // disable when symmetries are selected?
 			}
 			ev.Check(check);
 		}
@@ -151,11 +156,11 @@ void SymbolSelectEditor::onUpdateUI(wxUpdateUIEvent& ev) {
 }
 
 void SymbolSelectEditor::onCommand(int id) {
-	if (id >= ID_PART && id < ID_PART_MAX) {
+	if (id >= ID_SYMBOL_COMBINE && id < ID_SYMBOL_COMBINE_MAX) {
 		// change combine mode
 		getSymbol()->actions.add(new CombiningModeAction(
 				control.selected_parts,
-				static_cast<SymbolPartCombine>(id - ID_PART)
+				static_cast<SymbolShapeCombine>(id - ID_SYMBOL_COMBINE)
 			));
 		control.Refresh(false);
 	} else if (id == ID_EDIT_DUPLICATE && !isEditing()) {
@@ -427,7 +432,13 @@ double SymbolSelectEditor::angleTo(const Vector2D& pos) {
 
 SymbolPartP SymbolSelectEditor::findPart(const Vector2D& pos) {
 	FOR_EACH(p, getSymbol()->parts) {
-		if (point_in_part(pos, *p)) return p;
+		if (SymbolShape* s = p->isSymbolShape()) {
+			if (point_in_shape(pos, *s)) return p;
+		} else if (SymbolSymmetry* s = p->isSymbolSymmetry()) {
+			// TODO
+		} else {
+			throw InternalError(_("Invalid symbol part type"));
+		}
 	}
 	return SymbolPartP();
 }
@@ -437,8 +448,10 @@ void SymbolSelectEditor::updateBoundingBox() {
 	minV =  Vector2D::infinity();
 	maxV = -Vector2D::infinity();
 	FOR_EACH(p, control.selected_parts) {
-		minV = piecewise_min(minV, p->min_pos);
-		maxV = piecewise_max(maxV, p->max_pos);
+		if (SymbolShape* s = p->isSymbolShape()) {
+			minV = piecewise_min(minV, s->min_pos);
+			maxV = piecewise_max(maxV, s->max_pos);
+		}
 	}
 /*	// Find rotation center
 	center = Vector2D(0,0);

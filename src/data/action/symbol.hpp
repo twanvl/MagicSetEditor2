@@ -63,7 +63,7 @@ class SymbolPartMatrixAction : public SymbolPartAction {
 	/// Perform the transformation using the given matrix
 	void transform(const Vector2D& mx, const Vector2D& my);
 	
-	set<SymbolPartP> parts;		///< Parts to transform
+	set<SymbolPartP> parts;	///< Parts to transform
 	Vector2D center;			///< Center to transform around
 };
 
@@ -122,22 +122,20 @@ class SymbolPartScaleAction : public SymbolPartAction {
 	virtual void   perform(bool to_undo);
 	
 	/// Change min and max coordinates
-	void move(const Vector2D& deltaMin, const Vector2D& deltaMax);
+	void move(const Vector2D& delta_min, const Vector2D& delta_max);
 	/// Update the action's effect
 	void update();
 	
   private:
-	set<SymbolPartP> parts;				///< Parts to scale
-	Vector2D oldMin,     oldSize;		///< the original pos/size
-	Vector2D newRealMin, newRealSize;	///< the target pos/sizevoid shearBy(const Vector2D& shear)
-	Vector2D newMin,     newSize;		///< the target pos/size after applying constrains
-	int scaleX, scaleY;					///< to what corner are we attached?
+	set<SymbolPartP> parts;					///< Parts to scale
+	Vector2D old_min,      old_size;		///< the original pos/size
+	Vector2D new_real_min, new_real_size;	///< the target pos/sizevoid shearBy(const Vector2D& shear)
+	Vector2D new_min,      new_size;		///< the target pos/size after applying constrains
+	int scaleX, scaleY;						///< to what corner are we attached?
 	/// Transform everything in the parts
 	void transformAll();
 	/// Transform a single vector
-	inline Vector2D transform(const Vector2D& v) {
-		return (v - oldMin).div(oldSize).mul(newSize) + newMin;
-	}
+	inline Vector2D transform(const Vector2D& v);
   public:
 	bool constrain;				///< Constrain movement?
 	int snap;					///< Snap to grid?
@@ -148,13 +146,14 @@ class SymbolPartScaleAction : public SymbolPartAction {
 /// Change the name of a symbol part
 class CombiningModeAction : public SymbolPartListAction {
   public:
-	CombiningModeAction(const set<SymbolPartP>& parts, SymbolPartCombine mode);
+	// All parts must be SymbolParts
+	CombiningModeAction(const set<SymbolPartP>& parts, SymbolShapeCombine mode);
 	
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);
 	
   private:
-	vector<pair<SymbolPartP,SymbolPartCombine> > parts;	///< Affected parts with new combining modes
+	vector<pair<SymbolShapeP,SymbolShapeCombine> > parts;	///< Affected parts with new combining modes
 };
 
 // ----------------------------------------------------------------------------- : Change name
@@ -168,8 +167,8 @@ class SymbolPartNameAction : public SymbolPartListAction {
 	virtual void   perform(bool to_undo);
 	
   private:
-	SymbolPartP part;		///< Affected part
-	String partName;		///< New name
+	SymbolPartP part;	///< Affected part
+	String part_name;	///< New name
 };
 
 // ----------------------------------------------------------------------------- : Add symbol part
@@ -183,8 +182,8 @@ class AddSymbolPartAction : public SymbolPartListAction {
 	virtual void   perform(bool to_undo);
 	
   private:
-	Symbol& symbol;			///< Symbol to add the part to
-	SymbolPartP part;		///< Part to add
+	Symbol& symbol;		///< Symbol to add the part to
+	SymbolPartP part;	///< Part to add
 };
 
 // ----------------------------------------------------------------------------- : Remove symbol part

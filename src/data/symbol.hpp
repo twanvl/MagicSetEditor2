@@ -16,6 +16,8 @@
 
 DECLARE_POINTER_TYPE(ControlPoint);
 DECLARE_POINTER_TYPE(SymbolPart);
+DECLARE_POINTER_TYPE(SymbolShape);
+DECLARE_POINTER_TYPE(SymbolSymmetry);
 DECLARE_POINTER_TYPE(Symbol);
 
 // ----------------------------------------------------------------------------- : ControlPoint
@@ -43,7 +45,7 @@ enum WhichHandle
 ,	HANDLE_AFTER
 };
 
-/// A control point (corner) of a SymbolPart (polygon/bezier-gon)
+/// A control point (corner) of a SymbolShape (polygon/bezier-gon)
 class ControlPoint : public IntrusivePtrBase<ControlPoint> {
   public:
 	Vector2D pos;			///< position of the control point itself
@@ -104,14 +106,41 @@ class SelectedHandle {
 
 // ----------------------------------------------------------------------------- : SymbolPart
 
+/// A part of a symbol, not necesserly a shape
+class SymbolPart : public IntrusivePtrVirtualBase {
+  public:
+	/// Name/label for this part
+	String name;
+	
+	/// Type of this part
+	virtual String typeName() const = 0;
+	/// Create a clone of this symbol part
+	virtual SymbolPartP clone() const = 0;
+	/// Icon for this part
+	virtual int icon() const = 0;
+	
+	/// Convert tot SymbolShape?
+	virtual       SymbolShape*    isSymbolShape()          { return nullptr; }
+	virtual const SymbolShape*    isSymbolShape()    const { return nullptr; }
+	/// Convert tot SymbolSymmetry?
+	virtual       SymbolSymmetry* isSymbolSymmetry()       { return nullptr; }
+	virtual const SymbolSymmetry* isSymbolSymmetry() const { return nullptr; }
+		
+	DECLARE_REFLECTION_VIRTUAL();
+};
+
+template <> SymbolPartP read_new<SymbolPart>(Reader& reader);
+
+// ----------------------------------------------------------------------------- : SymbolShape
+
 /// How are symbol parts combined with parts below it?
-enum SymbolPartCombine
-{	PART_MERGE
-,	PART_SUBTRACT
-,	PART_INTERSECTION
-,	PART_DIFFERENCE
-,	PART_OVERLAP
-,	PART_BORDER
+enum SymbolShapeCombine
+{	SYMBOL_COMBINE_MERGE
+,	SYMBOL_COMBINE_SUBTRACT
+,	SYMBOL_COMBINE_INTERSECTION
+,	SYMBOL_COMBINE_DIFFERENCE
+,	SYMBOL_COMBINE_OVERLAP
+,	SYMBOL_COMBINE_BORDER
 };
 
 /// A sane mod function, always returns a result in the range [0..size)
@@ -120,25 +149,26 @@ inline size_t mod(int a, size_t size) {
 	return m >= 0 ? m : m + size;
 }
 
-/// A single part (polygon/bezier-gon) in a Symbol
-class SymbolPart : public IntrusivePtrBase<SymbolPart> {
+/// A single shape (polygon/bezier-gon) in a Symbol
+class SymbolShape : public SymbolPart {
   public:
 	/// The points of this polygon
 	vector<ControlPointP> points;
-	/// Name/label for this part
-	String name;
 	/// How is this part combined with parts below it?
-	SymbolPartCombine combine;
+	SymbolShapeCombine combine;
 	// Center of rotation, relative to the part, when the part is scaled to [0..1]
 	Vector2D rotation_center;
 	/// Position and size of the part
 	/// this is the smallest axis aligned bounding box that fits around the part
 	Vector2D min_pos, max_pos;
 	
-	SymbolPart();
+	SymbolShape();
 	
-	/// Create a clone of this symbol part
-	SymbolPartP clone() const;
+	virtual String typeName() const;
+	virtual SymbolPartP clone() const;
+	virtual int icon() const { return combine; }
+	virtual       SymbolShape* isSymbolShape()       { return this; }
+	virtual const SymbolShape* isSymbolShape() const { return this; }
 	
 	/// Get a control point, wraps around
 	inline ControlPointP getPoint(int id) const {
@@ -154,6 +184,34 @@ class SymbolPart : public IntrusivePtrBase<SymbolPart> {
 	DECLARE_REFLECTION();
 };
 
+
+// ----------------------------------------------------------------------------- : SymbolSymmetry
+
+enum SymbolSymmetryType
+{	SYMMETRY_ROTATION   = SYMBOL_COMBINE_BORDER + 1 // for icons
+,	SYMMETRY_REFLECTION
+};
+
+/// A mirror, reflecting part of the symbol
+/** Can handle rotation symmetry with any number of reflections */
+class SymbolSymmetry : public SymbolPart {
+  public:
+	SymbolSymmetryType kind;	///< What kind of symmetry
+	int                copies;	///< How many times is the orignal reflected (including the original itself)
+	bool               clip;	///< Clip the orignal so it doesn't intersect the mirror(s)
+	Vector2D           center;	///< Center point of the mirror
+	Vector2D           handle;	///< A handle pointing in the direction of the original, relative to the center
+	
+	SymbolSymmetry();
+	
+	virtual String typeName() const;
+	virtual SymbolPartP clone() const;
+	virtual int icon() const { return kind; }
+	virtual       SymbolSymmetry* isSymbolSymmetry()       { return this; }
+	virtual const SymbolSymmetry* isSymbolSymmetry() const { return this; }
+	
+	DECLARE_REFLECTION();
+};
 
 // ----------------------------------------------------------------------------- : Symbol
 

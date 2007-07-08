@@ -413,6 +413,10 @@ label:
 
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
+	# Editor
+	edit symbol:		Edit
+	symbol gallery:		Gallery
+	
 	# Style panel
 	use for all cards:	Use for &all cards
 	use custom styling options: Options &specific to this card
@@ -491,10 +495,35 @@ title:
 
 ############################################################## Action (undo/redo) names
 action:
-	typing:			Typing
-	backspace:		Backspace
-	delete:			Delete
-	change:			Change %s
+	# Text editor
+	typing:				Typing
+	backspace:			Backspace
+	delete:				Delete
+	# Choice/color editors
+	change:				Change %s
+	
+	# Symbol Actions
+	move:				Move %s
+	rotate:				Rotate %s
+	shear:				Shear %s
+	scale:				Resize %s
+	add part:			Add %s
+	remove parts:		Remove %s
+	duplicate:			Duplicate %s
+	reorder parts:		Reorder
+	change combine mode:Change combine mode
+	change shape name:	Change shape name
+	
+	# Symbol Part Actions
+	convert to line:	Convert to line
+	convert to curve:	Convert to curve
+	lock point:			Lock point
+	move handle:		Move handle
+	move curve:			Move curve
+	add control point:	Add control point
+	delete point:		Delete point
+	delete points:		Delete points
+	
 
 ############################################################## Error messages
 error:
@@ -578,6 +607,10 @@ type:
 	hexagon:		hexagon
 	polygon:		polygon
 	star:			star
+	
+	point:			point
+	points:			points
+	handle:			handle
 	
 
 ############################################################## Magic

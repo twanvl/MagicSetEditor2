@@ -80,6 +80,10 @@ Vector2D constrain_snap_vector_offset(const Vector2D& off1, const Vector2D& off2
 	return dd;
 }
 
+String action_name_for(const set<ControlPointP>& points, const String& action) {
+	return format_string(action, points.size() == 1 ? _TYPE_("point") : _TYPE_("points"));
+}
+
 
 // ----------------------------------------------------------------------------- : Move control point
 
@@ -95,7 +99,7 @@ ControlPointMoveAction::ControlPointMoveAction(const set<ControlPointP>& points)
 }
 
 String ControlPointMoveAction::getName(bool to_undo) const {
-	return points.size() == 1 ? _("Move point") : _("Move points");
+	return action_name_for(points, _ACTION_("move"));
 }
 
 void ControlPointMoveAction::perform(bool to_undo) {
@@ -126,7 +130,7 @@ HandleMoveAction::HandleMoveAction(const SelectedHandle& handle)
 {}
 
 String HandleMoveAction::getName(bool to_undo) const {
-	return _("Move handle");
+	return _ACTION_("move handle");
 }
 
 void HandleMoveAction::perform(bool to_undo) {
@@ -171,8 +175,8 @@ SegmentModeAction::SegmentModeAction(const ControlPointP& p1, const ControlPoint
 }
 String SegmentModeAction::getName(bool to_undo) const {
 	SegmentMode mode = to_undo ? point1.point->segment_after : point1.other.segment_after;
-	if (mode == SEGMENT_LINE) return _("Convert to line");
-	else                      return _("Convert to curve");
+	if (mode == SEGMENT_LINE) return _ACTION_("convert to line");
+	else                      return _ACTION_("convert to curve");
 }
 
 void SegmentModeAction::perform(bool to_undo) {
@@ -191,7 +195,7 @@ LockModeAction::LockModeAction(const ControlPointP& p, LockMode lock)
 }
 
 String LockModeAction::getName(bool to_undo) const {
-	return _("Lock point");
+	return _ACTION_("lock point");
 }
 
 void LockModeAction::perform(bool to_undo) {
@@ -206,7 +210,7 @@ CurveDragAction::CurveDragAction(const ControlPointP& point1, const ControlPoint
 {}
 
 String CurveDragAction::getName(bool to_undo) const {
-	return _("Move curve");
+	return _ACTION_("move curve");
 }
 
 void CurveDragAction::perform(bool to_undo) {
@@ -239,12 +243,12 @@ void CurveDragAction::move(const Vector2D& delta, double t) {
 
 // ----------------------------------------------------------------------------- : Add control point
 
-ControlPointAddAction::ControlPointAddAction(const SymbolPartP& part, UInt insert_after, double t)
-	: part(part)
+ControlPointAddAction::ControlPointAddAction(const SymbolShapeP& shape, UInt insert_after, double t)
+	: shape(shape)
 	, new_point(new ControlPoint())
 	, insert_after(insert_after)
-	, point1(part->getPoint(insert_after))
-	, point2(part->getPoint(insert_after + 1))
+	, point1(shape->getPoint(insert_after))
+	, point2(shape->getPoint(insert_after + 1))
 {
 	// calculate new point
 	if (point1.other.segment_after == SEGMENT_CURVE) {
@@ -265,14 +269,14 @@ ControlPointAddAction::ControlPointAddAction(const SymbolPartP& part, UInt inser
 }
 
 String ControlPointAddAction::getName(bool to_undo) const {
-	return _("Add control point");
+	return _ACTION_("add control point");
 }
 
 void ControlPointAddAction::perform(bool to_undo) {
 	if (to_undo) { // remove the point
-		part->points.erase( part->points.begin() + insert_after + 1);
+		shape->points.erase( shape->points.begin() + insert_after + 1);
 	} else {
-		part->points.insert(part->points.begin() + insert_after + 1, new_point);
+		shape->points.insert(shape->points.begin() + insert_after + 1, new_point);
 	}
 	// update points before/after
 	point1.perform();
@@ -291,24 +295,24 @@ double ssqrt(double x) {
 // Remove a single control point
 class SinglePointRemoveAction : public Action, public IntrusivePtrBase<SinglePointRemoveAction> {
   public:
-	SinglePointRemoveAction(const SymbolPartP& part, UInt position);
+	SinglePointRemoveAction(const SymbolShapeP& shape, UInt position);
 	
 	virtual String getName(bool to_undo) const { return _("Delete point"); }
 	virtual void   perform(bool to_undo);
 	
   private:
-	SymbolPartP part;
+	SymbolShapeP shape;
 	UInt position;
 	ControlPointP point;               ///< Removed point
 	ControlPointUpdate point1, point2; ///< Points before/after
 };
 
-SinglePointRemoveAction::SinglePointRemoveAction(const SymbolPartP& part, UInt position)
-	: part(part)
+SinglePointRemoveAction::SinglePointRemoveAction(const SymbolShapeP& shape, UInt position)
+	: shape(shape)
 	, position(position)
-	, point (part->getPoint(position))
-	, point1(part->getPoint(position - 1))
-	, point2(part->getPoint(position + 1))
+	, point (shape->getPoint(position))
+	, point1(shape->getPoint(position - 1))
+	, point2(shape->getPoint(position + 1))
 {
 	if (point1.other.segment_after == SEGMENT_CURVE || point2.other.segment_before == SEGMENT_CURVE) {
 		// try to preserve curve
@@ -359,10 +363,10 @@ SinglePointRemoveAction::SinglePointRemoveAction(const SymbolPartP& part, UInt p
 void SinglePointRemoveAction::perform(bool to_undo) {
 	if (to_undo) {
 		// reinsert the point
-		part->points.insert(part->points.begin() + position, point);
+		shape->points.insert(shape->points.begin() + position, point);
 	} else {
 		// remove the point
-		part->points.erase( part->points.begin() + position);
+		shape->points.erase( shape->points.begin() + position);
 	}
 	// update points around removed point
 	point1.perform();
@@ -373,12 +377,12 @@ DECLARE_POINTER_TYPE(SinglePointRemoveAction);
 DECLARE_TYPEOF_COLLECTION(SinglePointRemoveActionP);
 
 
-// Remove a set of points from a symbol part.
+// Remove a set of points from a symbol shape.
 // Internally represented as a list of Single Point Remove Actions.
 // Not all points mat be removed, at least two points must remain.
 class ControlPointRemoveAction : public Action {
   public:
-	ControlPointRemoveAction(const SymbolPartP& part, const set<ControlPointP>& toDelete);
+	ControlPointRemoveAction(const SymbolShapeP& shape, const set<ControlPointP>& to_delete);
 	
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);
@@ -387,20 +391,20 @@ class ControlPointRemoveAction : public Action {
 	vector<SinglePointRemoveActionP> removals;
 };
 
-ControlPointRemoveAction::ControlPointRemoveAction(const SymbolPartP& part, const set<ControlPointP>& toDelete) {
+ControlPointRemoveAction::ControlPointRemoveAction(const SymbolShapeP& shape, const set<ControlPointP>& to_delete) {
 	int index = 0;
 	// find points to remove, in reverse order
-	FOR_EACH(point, part->points) {
-		if (toDelete.find(point) != toDelete.end()) {
+	FOR_EACH(point, shape->points) {
+		if (to_delete.find(point) != to_delete.end()) {
 			// remove this point
-			removals.push_back(new_intrusive2<SinglePointRemoveAction>(part, index));
+			removals.push_back(new_intrusive2<SinglePointRemoveAction>(shape, index));
 		}
 		++index;
 	}
 }
 
 String ControlPointRemoveAction::getName(bool to_undo) const {
-	return removals.size() == 1 ? _("Delete point") : _("Delete points");
+	return removals.size() == 1 ? _ACTION_("delete point") : _ACTION_("delete points");
 }
 
 void ControlPointRemoveAction::perform(bool to_undo) {
@@ -414,12 +418,12 @@ void ControlPointRemoveAction::perform(bool to_undo) {
 }
 
 
-Action* controlPointRemoveAction(const SymbolPartP& part, const set<ControlPointP>& toDelete) {
-	if (part->points.size() - toDelete.size() < 2) {
+Action* control_point_remove_action(const SymbolShapeP& shape, const set<ControlPointP>& to_delete) {
+	if (shape->points.size() - to_delete.size() < 2) {
 		// TODO : remove part?
 		//new_intrusive<ControlPointRemoveAllAction>(part);
 		return 0; // no action
 	} else {
-		return new ControlPointRemoveAction(part, toDelete);
+		return new ControlPointRemoveAction(shape, to_delete);
 	}
 }

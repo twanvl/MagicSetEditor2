@@ -48,7 +48,7 @@ class SymbolBasicShapeEditor : public SymbolEditorBase {
 	// --------------------------------------------------- : Data
   private:
 	int mode;
-	SymbolPartP shape;
+	SymbolShapeP shape;
 	Vector2D start;
 	Vector2D end;
 	bool drawing;

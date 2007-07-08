@@ -98,8 +98,8 @@ void point_bounds(const Vector2D& p, Vector2D& min, Vector2D& max);
 
 // ----------------------------------------------------------------------------- : Point tests
 
-/// Is a point inside the given symbol part?
-bool point_in_part(const Vector2D& p, const SymbolPart& part);
+/// Is a point inside the given shape?
+bool point_in_shape(const Vector2D& p, const SymbolShape& part);
 
 // ----------------------------------------------------------------------------- : Finding points
 

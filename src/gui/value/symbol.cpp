@@ -36,31 +36,32 @@ void SymbolValueEditor::draw(RotatedDC& dc) {
 }
 void SymbolValueEditor::drawButton(RotatedDC& dc, int button, const String& text) {
 	bool down = button == button_down;
-	double size = style().height;
-	double x = style().right - size - (size + 1) * button;
+	double height = style().height;
+	double width  = style().height + 2;
+	double x = style().right - width - (width + 1) * button;
 	double y = style().top;
 	// draw button
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-	dc.DrawRectangle(RealRect(x, y, size, size));
+	dc.DrawRectangle(RealRect(x, y, width, height));
 	dc.SetPen(wxSystemSettings::GetColour(down ? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_BTNHIGHLIGHT));
-	dc.DrawLine(RealPoint(x,y),RealPoint(x+size,y));
-	dc.DrawLine(RealPoint(x,y),RealPoint(x,y+size));
+	dc.DrawLine(RealPoint(x,y),RealPoint(x+width,y));
+	dc.DrawLine(RealPoint(x,y),RealPoint(x,y+height));
 	dc.SetPen(wxSystemSettings::GetColour(down ? wxSYS_COLOUR_BTNHIGHLIGHT : wxSYS_COLOUR_BTNSHADOW));
-	dc.DrawLine(RealPoint(x+size-1,y),RealPoint(x+size-1,y+size));
-	dc.DrawLine(RealPoint(x,y+size-1),RealPoint(x+size,y+size-1));
+	dc.DrawLine(RealPoint(x+width-1,y),RealPoint(x+width-1,y+height));
+	dc.DrawLine(RealPoint(x,y+height-1),RealPoint(x+width,y+height-1));
 	// draw text
 	RealSize text_size = dc.GetTextExtent(text);
-	dc.DrawText(text, align_in_rect((Alignment)(ALIGN_BOTTOM | ALIGN_CENTER), text_size, RealRect(x, y, size,size*0.9)));
+	dc.DrawText(text, align_in_rect((Alignment)(ALIGN_BOTTOM | ALIGN_CENTER), text_size, RealRect(x, y, width,height*0.9)));
 	// draw image
 	const Bitmap& bmp = button_images[button];
 	RealSize image_size(bmp.GetWidth(), bmp.GetHeight());
-	dc.DrawBitmap(bmp, align_in_rect(ALIGN_MIDDLE_CENTER, image_size, RealRect(x,y,size,size * 0.8)));
+	dc.DrawBitmap(bmp, align_in_rect(ALIGN_MIDDLE_CENTER, image_size, RealRect(x,y,width,height * 0.8)));
 }
 
 int SymbolValueEditor::findButton(const RealPoint& pos) {
 	if (pos.y < style().top || pos.y >= style().bottom) return -1;
-	int button = (int)floor( (style().right - pos.x) / (style().height + 1) );
+	int button = (int)floor( (style().right - pos.x) / (style().height + 3) );
 	if (button >= 0 && button <= 1) return button;
 	return -1;
 }

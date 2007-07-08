@@ -45,6 +45,8 @@ class SymbolViewer : public SymbolView {
 	void draw(DC& dc);
 	
 	void highlightPart(DC& dc, const SymbolPart& part, HighlightStyle style);
+	void highlightPart(DC& dc, const SymbolShape& shap, HighlightStyle style);
+	void highlightPart(DC& dc, const SymbolSymmetry& sym);
 	
 	void onAction(const Action&, bool) {}
 	
@@ -53,14 +55,14 @@ class SymbolViewer : public SymbolView {
 	/** directB/directI are true if the border/interior is the screen dc, false if it
 	 *  is a temporary 1 bit one
 	 */
-	void combineSymbolPart(const SymbolPart& part, DC& border, DC& interior, bool directB, bool directI);
+	void combineSymbolShape(const SymbolShape& part, DC& border, DC& interior, bool directB, bool directI);
 	
 	/// Draw a symbol part, draws the border and the interior to separate DCs
 	/** The DCs may be null. directB should be true when drawing the border directly to the screen.
 	 *  The **Col parameters give the color to use for the (interior of) the border and the interior
 	 *  default should be white (255) border and black (0) interior.
 	 */
-	void drawSymbolPart(const SymbolPart& part, DC* border, DC* interior, unsigned char borderCol, unsigned char interiorCol, bool directB, bool oppB);
+	void drawSymbolShape(const SymbolShape& shape, DC* border, DC* interior, unsigned char borderCol, unsigned char interiorCol, bool directB, bool oppB);
 /*	
 	// ------------------- Bezier curve calculation
 	

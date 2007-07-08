@@ -141,17 +141,17 @@ bool point_in_bounds(const Vector2D& p, const Vector2D& min, const Vector2D& max
 
 // ----------------------------------------------------------------------------- : Point tests
 
-// As a point inside a symbol part?
-bool point_in_part(const Vector2D& pos, const SymbolPart& part) {
+// Is a point inside a symbol shape?
+bool point_in_shape(const Vector2D& pos, const SymbolShape& shape) {
 	// Step 1. compare bounding box of the part
-	if (!point_in_bounds(pos, part.min_pos, part.max_pos)) return false;
+	if (!point_in_bounds(pos, shape.min_pos, shape.max_pos)) return false;
 	
 	// Step 2. trace ray outward, count intersections
 	int count = 0;
-	size_t size = part.points.size();
+	size_t size = shape.points.size();
 	for(size_t i = 0 ; i < size ; ++i) {
-		ControlPointP p1 = part.getPoint((int) i);
-		ControlPointP p2 = part.getPoint((int) i + 1);
+		ControlPointP p1 = shape.getPoint((int) i);
+		ControlPointP p2 = shape.getPoint((int) i + 1);
 		if (p1->segment_after == SEGMENT_LINE) {
 			count += intersect_line_ray  (p1->pos, p2->pos, pos);
 		} else {

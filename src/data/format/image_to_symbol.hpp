@@ -31,7 +31,7 @@ SymbolP image_to_symbol(Image& img);
 void simplify_symbol(Symbol&);
 
 /// Simplify a symbol parts, i.e. use bezier curves instead of lots of lines
-void simplify_symbol_part(SymbolPart&);
+void simplify_symbol_shape(SymbolShape&);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

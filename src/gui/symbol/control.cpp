@@ -51,8 +51,10 @@ void SymbolControl::onModeChange(wxCommandEvent& ev) {
 			break;
 		case ID_MODE_POINTS:
 			if (selected_parts.size() == 1) {
-				single_selection = *selected_parts.begin();
-				switchEditor(new_intrusive2<SymbolPointEditor>(this, single_selection));
+				selected_shape = dynamic_pointer_cast<SymbolShape>(*selected_parts.begin());
+				if (selected_shape) {
+					switchEditor(new_intrusive2<SymbolPointEditor>(this, selected_shape));
+				}
 			}
 			break;
 		case ID_MODE_SHAPES:
@@ -88,25 +90,34 @@ void SymbolControl::onAction(const Action& action, bool undone) {
 
 void SymbolControl::onUpdateSelection() {
 	switch(editor->modeToolId()) {
-		case ID_MODE_POINTS:
+		case ID_MODE_POINTS: {
 			// can only select a single part!
 			if (selected_parts.size() > 1) {
+				// TODO: find a part that is a shape
 				SymbolPartP part = *selected_parts.begin();
 				selected_parts.clear();
 				selected_parts.insert(part);
 				signalSelectionChange();
 			} else if (selected_parts.empty()) {
-				selected_parts.insert(single_selection);
+				selected_parts.insert(selected_shape);
 				signalSelectionChange();
+				break;
 			}
-			if (single_selection != *selected_parts.begin()) {
+			SymbolShapeP shape = dynamic_pointer_cast<SymbolShape>(*selected_parts.begin());
+			if (!shape) {
+				selected_parts.clear();
+				selected_parts.insert(selected_shape);
+				signalSelectionChange();
+				break;
+			}
+			if (shape != selected_shape) {
 				// begin editing another part
-				single_selection = *selected_parts.begin();
-				editor = new_intrusive2<SymbolPointEditor>(this, single_selection);
+				selected_shape = shape;
+				editor = new_intrusive2<SymbolPointEditor>(this, selected_shape);
 				Refresh(false);
 			}
 			break;
-		case ID_MODE_SHAPES:
+		} case ID_MODE_SHAPES:
 			if (!selected_parts.empty()) {
 				// there can't be a selection
 				selected_parts.clear();
@@ -127,9 +138,11 @@ void SymbolControl::selectPart(const SymbolPartP& part) {
 }
 
 void SymbolControl::activatePart(const SymbolPartP& part) {
-	selected_parts.clear();
-	selected_parts.insert(part);
-	switchEditor(new_intrusive2<SymbolPointEditor>(this, part));
+	if (part->isSymbolShape()) {
+		selected_parts.clear();
+		selected_parts.insert(part);
+		switchEditor(new_intrusive2<SymbolPointEditor>(this, static_pointer_cast<SymbolShape>(part)));
+	}
 }
 
 void SymbolControl::signalSelectionChange() {

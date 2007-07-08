@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <render/symbol/viewer.hpp>
+#include <util/error.hpp> // clearDC_black
 #include <gui/util.hpp> // clearDC_black
 
 DECLARE_TYPEOF_COLLECTION(SymbolPartP);
@@ -64,41 +65,49 @@ void SymbolViewer::draw(DC& dc) {
 	// Check if we can paint directly to the dc
 	// This will fail if there are parts with combine == intersection
 	FOR_EACH(p, symbol->parts) {
-		if (p->combine == PART_INTERSECTION) {
-			paintedSomething = true;
-			break;
+		if (SymbolShape* s = p->isSymbolShape()) {
+			if (s->combine == SYMBOL_COMBINE_INTERSECTION) {
+				paintedSomething = true;
+				break;
+			}
 		}
 	}
 	// Draw all parts, in reverse order (bottom to top)
 	FOR_EACH_REVERSE(p, symbol->parts) {
-		const SymbolPart& part = *p;
-		if (part.combine == PART_OVERLAP && buffersFilled) {
-			// We will be overlapping some previous parts, write them to the screen
-			combineBuffers(dc, borderDC.get(), interiorDC.get());
-			// Clear the buffers
-			buffersFilled = false;
-			paintedSomething = true;
-			wxSize s = dc.GetSize();
-			if (borderDC) {
-				borderDC->SetBrush(*wxBLACK_BRUSH);
-				borderDC->SetPen(  *wxTRANSPARENT_PEN);
-				borderDC->DrawRectangle(0, 0, s.GetWidth(), s.GetHeight());
+		if (SymbolShape* s = p->isSymbolShape()) {
+			if (s->combine == SYMBOL_COMBINE_OVERLAP && buffersFilled) {
+				// We will be overlapping some previous parts, write them to the screen
+				combineBuffers(dc, borderDC.get(), interiorDC.get());
+				// Clear the buffers
+				buffersFilled = false;
+				paintedSomething = true;
+				wxSize s = dc.GetSize();
+				if (borderDC) {
+					borderDC->SetBrush(*wxBLACK_BRUSH);
+					borderDC->SetPen(  *wxTRANSPARENT_PEN);
+					borderDC->DrawRectangle(0, 0, s.GetWidth(), s.GetHeight());
+				}
+				interiorDC->SetBrush(*wxBLACK_BRUSH);
+				interiorDC->DrawRectangle(0, 0, s.GetWidth(), s.GetHeight());
 			}
-			interiorDC->SetBrush(*wxBLACK_BRUSH);
-			interiorDC->DrawRectangle(0, 0, s.GetWidth(), s.GetHeight());
-		}
-		
-		if (!paintedSomething) {
-			// No need to buffer
-			if (!interiorDC) interiorDC = getTempDC(dc);
-			combineSymbolPart(part, dc, *interiorDC, true, false);
-			buffersFilled = true;
+			
+			// Paint the part itself
+			if (!paintedSomething) {
+				// No need to buffer
+				if (!interiorDC) interiorDC = getTempDC(dc);
+				combineSymbolShape(*s, dc, *interiorDC, true, false);
+				buffersFilled = true;
+			} else {
+				if (!borderDC)   borderDC   = getTempDC(dc);
+				if (!interiorDC) interiorDC = getTempDC(dc);
+				// Draw this shape to the buffer
+				combineSymbolShape(*s, *borderDC, *interiorDC, false, false);
+				buffersFilled = true;
+			}
+			// Paint symmetric versions of this part
+			// TODO
 		} else {
-			if (!borderDC)    borderDC   = getTempDC(dc);
-			if (!interiorDC)  interiorDC = getTempDC(dc);
-			// Draw this part to the buffer
-			combineSymbolPart(part, *borderDC, *interiorDC, false, false);
-			buffersFilled = true;
+			// symmetry, already handled above
 		}
 	}
 	
@@ -109,11 +118,20 @@ void SymbolViewer::draw(DC& dc) {
 }
 
 void SymbolViewer::highlightPart(DC& dc, const SymbolPart& part, HighlightStyle style) {
+	if (const SymbolShape* s = part.isSymbolShape()) {
+		highlightPart(dc, *s, style);
+	} else if (const SymbolSymmetry* s = part.isSymbolSymmetry()) {
+		highlightPart(dc, *s);
+	} else {
+		throw InternalError(_("Invalid symbol part type"));
+	}
+}
+void SymbolViewer::highlightPart(DC& dc, const SymbolShape& shape, HighlightStyle style) {
 	// create point list
 	vector<wxPoint> points;
-	size_t size = part.points.size();
+	size_t size = shape.points.size();
 	for(size_t i = 0 ; i < size ; ++i) {
-		segment_subdivide(*part.getPoint((int)i), *part.getPoint((int)i+1), rotation, points);
+		segment_subdivide(*shape.getPoint((int)i), *shape.getPoint((int)i+1), rotation, points);
 	}
 	// draw
 	if (style == HIGHLIGHT_BORDER) {
@@ -125,7 +143,7 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolPart& part, HighlightStyle 
 		dc.SetBrush(Color(0,0,64));
 		dc.SetPen  (*wxTRANSPARENT_PEN);
 		dc.DrawPolygon((int)points.size(), &points[0]);
-		if (part.combine == PART_SUBTRACT || part.combine == PART_BORDER) {
+		if (shape.combine == SYMBOL_COMBINE_SUBTRACT || shape.combine == SYMBOL_COMBINE_BORDER) {
 			dc.SetLogicalFunction(wxAND);
 			dc.SetBrush(Color(191,191,255));
 			dc.DrawPolygon((int)points.size(), &points[0]);
@@ -133,51 +151,54 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolPart& part, HighlightStyle 
 		dc.SetLogicalFunction(wxCOPY);
 	}
 }
+void SymbolViewer::highlightPart(DC& dc, const SymbolSymmetry& sym) {
+	// TODO
+}
 
 
-void SymbolViewer::combineSymbolPart(const SymbolPart& part, DC& border, DC& interior, bool directB, bool directI) {
+void SymbolViewer::combineSymbolShape(const SymbolShape& shape, DC& border, DC& interior, bool directB, bool directI) {
 	// what color should the interior be?
 	// use black when drawing to the screen
 	Byte interiorCol = directI ? 0 : 255;
 	// how to draw depends on combining mode
-	switch(part.combine) {
-		case PART_OVERLAP:
-		case PART_MERGE: {
-			drawSymbolPart(part, &border, &interior, 255, interiorCol, directB, false);
+	switch(shape.combine) {
+		case SYMBOL_COMBINE_OVERLAP:
+		case SYMBOL_COMBINE_MERGE: {
+			drawSymbolShape(shape, &border, &interior, 255, interiorCol, directB, false);
 			break;
-		} case PART_SUBTRACT: {
+		} case SYMBOL_COMBINE_SUBTRACT: {
 			border.SetLogicalFunction(wxAND);
-			drawSymbolPart(part, &border, &interior, 0, ~interiorCol, directB, false);
+			drawSymbolShape(shape, &border, &interior, 0, ~interiorCol, directB, false);
 			border.SetLogicalFunction(wxCOPY);
 			break;
-		} case PART_INTERSECTION: {
+		} case SYMBOL_COMBINE_INTERSECTION: {
 			MemoryDCP keepBorder   = getTempDC(border);
 			MemoryDCP keepInterior = getTempDC(interior);
-			drawSymbolPart(part, keepBorder.get(), keepInterior.get(), 255, 255, false, false);
+			drawSymbolShape(shape, keepBorder.get(), keepInterior.get(), 255, 255, false, false);
 			// combine the temporary dcs with the result using the AND operator
 			wxSize s = border.GetSize();
 			border  .Blit(0, 0, s.GetWidth(), s.GetHeight(), &*keepBorder  , 0, 0, wxAND);
 			interior.Blit(0, 0, s.GetWidth(), s.GetHeight(), &*keepInterior, 0, 0, wxAND);
 			break;
-		} case PART_DIFFERENCE: {
+		} case SYMBOL_COMBINE_DIFFERENCE: {
 			interior.SetLogicalFunction(wxXOR);
-			drawSymbolPart(part, &border, &interior, 0, ~interiorCol, directB, true);
+			drawSymbolShape(shape, &border, &interior, 0, ~interiorCol, directB, true);
 			interior.SetLogicalFunction(wxCOPY);
 			break;
-		} case PART_BORDER: {
+		} case SYMBOL_COMBINE_BORDER: {
 			// draw border as interior
-			drawSymbolPart(part, nullptr, &border, 0, 255, false, false);
+			drawSymbolShape(shape, nullptr, &border, 0, 255, false, false);
 			break;
 		}
 	}
 }
 
-void SymbolViewer::drawSymbolPart(const SymbolPart& part, DC* border, DC* interior, Byte borderCol, Byte interiorCol, bool directB, bool clear) {
+void SymbolViewer::drawSymbolShape(const SymbolShape& shape, DC* border, DC* interior, Byte borderCol, Byte interiorCol, bool directB, bool clear) {
 	// create point list
 	vector<wxPoint> points;
-	size_t size = part.points.size();
+	size_t size = shape.points.size();
 	for(size_t i = 0 ; i < size ; ++i) {
-		segment_subdivide(*part.getPoint((int)i), *part.getPoint((int)i+1), rotation, points);
+		segment_subdivide(*shape.getPoint((int)i), *shape.getPoint((int)i+1), rotation, points);
 	}
 	// draw border
 	if (border && border_radius > 0) {

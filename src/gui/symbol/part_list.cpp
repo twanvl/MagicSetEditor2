@@ -19,13 +19,15 @@ SymbolPartList::SymbolPartList(Window* parent, int id, SymbolP symbol)
 {
 	// Create image list
 	wxImageList* images = new wxImageList(16,16);
-	// NOTE: this is based on the order of the SymbolPartCombine enum!
+	// NOTE: this is based on the order of the SymbolShapeCombine and SymbolSymmetryType enums!
 	images->Add(load_resource_image(_("combine_or")));
 	images->Add(load_resource_image(_("combine_sub")));
 	images->Add(load_resource_image(_("combine_and")));
 	images->Add(load_resource_image(_("combine_xor")));
 	images->Add(load_resource_image(_("combine_over")));
 	images->Add(load_resource_image(_("combine_border")));
+	images->Add(load_resource_image(_("symmetry_rotation")));
+	images->Add(load_resource_image(_("symmetry_reflection")));
 	AssignImageList(images, wxIMAGE_LIST_SMALL);
 	// create columns
 	InsertColumn(0, _("Name"));
@@ -59,7 +61,7 @@ String SymbolPartList::OnGetItemText(long item, long col) const {
 	return getPart(item)->name;
 }
 int SymbolPartList::OnGetItemImage(long item) const {
-	return getPart(item)->combine;
+	return getPart(item)->icon();
 }
 
 SymbolPartP SymbolPartList::getPart(long item) const {
@@ -74,14 +76,12 @@ void SymbolPartList::selectItem(long item) {
 	}
 }
 
-void SymbolPartList::getselected_parts(set<SymbolPartP>& sel) {
+void SymbolPartList::getSelectedParts(set<SymbolPartP>& sel) {
 	sel.clear();
 	long count = GetItemCount();
 	for (long i = 0 ; i < count ; ++ i) {
 		bool selected = GetItemState(i, wxLIST_STATE_SELECTED);
-		if (selected) {
-			sel.insert(symbol->parts.at(i));
-		}
+		if (selected) sel.insert(symbol->parts.at(i));
 	}
 }
 
@@ -94,7 +94,7 @@ void SymbolPartList::selectParts(const set<SymbolPartP>& sel) {
 			                       wxLIST_STATE_SELECTED);
 	}	
 }
-	
+
 void SymbolPartList::update() {
 	if (symbol->parts.empty()) {
 		// deleting all items requires a full refresh on win32

@@ -9,7 +9,7 @@
 
 /** @file data/action/symbol_part.hpp
  *
- *  Actions operating on the insides of SymbolParts (ControlPoints and the like).
+ *  Actions operating on the insides of SymbolParts/SymbolShapes (ControlPoints and the like).
  */
 
 // ----------------------------------------------------------------------------- : Includes
@@ -147,11 +147,11 @@ class CurveDragAction : public SegmentModeAction {
 
 // ----------------------------------------------------------------------------- : Add control point
 
-/// Insert a new point in a symbol part
+/// Insert a new point in a symbol shape
 class ControlPointAddAction : public Action {
   public:
-	/// Insert a new point in part, after position insertAfter_, at the time t on the segment
-	ControlPointAddAction(const SymbolPartP& part, UInt insert_after, double t);
+	/// Insert a new point in shape, after position insertAfter_, at the time t on the segment
+	ControlPointAddAction(const SymbolShapeP& shape, UInt insert_after, double t);
 	
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);
@@ -159,17 +159,17 @@ class ControlPointAddAction : public Action {
 	inline ControlPointP getNewPoint() const { return new_point; }
 	
   private:
-	SymbolPartP   part;					///< SymbolPart we are in
-	ControlPointP new_point;				///< The point to insert
+	SymbolShapeP  shape;				///< SymbolShape we are in
+	ControlPointP new_point;			///< The point to insert
 	UInt          insert_after;			///< Insert after index .. in the array
 	ControlPointUpdate point1, point2;	///< Update the points around the new point
 };
 
 // ----------------------------------------------------------------------------- : Remove control point
 
-/// Action that removes any number of points from a symbol part
-/// TODO: If less then 3 points are left removes the entire part?
-Action* controlPointRemoveAction(const SymbolPartP& part, const set<ControlPointP>& toDelete);
+/// Action that removes any number of points from a symbol shape
+/// TODO: If less then 3 points are left removes the entire shape?
+Action* control_point_remove_action(const SymbolShapeP& shape, const set<ControlPointP>& to_delete);
 
 
 // ----------------------------------------------------------------------------- : EOF

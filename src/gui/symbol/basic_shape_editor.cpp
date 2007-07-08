@@ -133,7 +133,7 @@ bool SymbolBasicShapeEditor::isEditing() { return drawing; }
 // ----------------------------------------------------------------------------- : Generating shapes
 
 void SymbolBasicShapeEditor::stopActions() {
-	shape = SymbolPartP();
+	shape = SymbolShapeP();
 	drawing = false;
 	switch (mode) {
 		case ID_SHAPE_CIRCLE:
@@ -176,7 +176,7 @@ void SymbolBasicShapeEditor::makeShape(const Vector2D& a, const Vector2D& b, boo
 
 // TODO : Move out of this class
 void SymbolBasicShapeEditor::makeCenteredShape(const Vector2D& c, Vector2D r, bool constrained) {
-	shape = new_intrusive<SymbolPart>();
+	shape = new_intrusive<SymbolShape>();
 	// What shape to make?
 	switch (mode) {
 		case ID_SHAPE_CIRCLE: {
