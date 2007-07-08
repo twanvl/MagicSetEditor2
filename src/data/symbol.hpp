@@ -18,6 +18,7 @@ DECLARE_POINTER_TYPE(ControlPoint);
 DECLARE_POINTER_TYPE(SymbolPart);
 DECLARE_POINTER_TYPE(SymbolShape);
 DECLARE_POINTER_TYPE(SymbolSymmetry);
+DECLARE_POINTER_TYPE(SymbolGroup);
 DECLARE_POINTER_TYPE(Symbol);
 
 // ----------------------------------------------------------------------------- : ControlPoint
@@ -119,13 +120,16 @@ class SymbolPart : public IntrusivePtrVirtualBase {
 	/// Icon for this part
 	virtual int icon() const = 0;
 	
-	/// Convert tot SymbolShape?
+	/// Convert to SymbolShape?
 	virtual       SymbolShape*    isSymbolShape()          { return nullptr; }
 	virtual const SymbolShape*    isSymbolShape()    const { return nullptr; }
-	/// Convert tot SymbolSymmetry?
+	/// Convert to SymbolSymmetry?
 	virtual       SymbolSymmetry* isSymbolSymmetry()       { return nullptr; }
 	virtual const SymbolSymmetry* isSymbolSymmetry() const { return nullptr; }
-		
+	/// Convert to SymbolGroup?
+	virtual       SymbolGroup*    isSymbolGroup()          { return nullptr; }
+	virtual const SymbolGroup*    isSymbolGroup()    const { return nullptr; }
+	
 	DECLARE_REFLECTION_VIRTUAL();
 };
 
@@ -184,7 +188,6 @@ class SymbolShape : public SymbolPart {
 	DECLARE_REFLECTION();
 };
 
-
 // ----------------------------------------------------------------------------- : SymbolSymmetry
 
 enum SymbolSymmetryType
@@ -213,12 +216,28 @@ class SymbolSymmetry : public SymbolPart {
 	DECLARE_REFLECTION();
 };
 
+// ----------------------------------------------------------------------------- : SymbolGroup
+
+/// A group of symbol parts
+class SymbolGroup : public SymbolPart {
+  public:
+	vector<SymbolPartP> parts;	///< The parts in this group
+	
+	virtual String typeName() const;
+	virtual SymbolPartP clone() const;
+	virtual int icon() const { return SYMMETRY_REFLECTION + 1; }
+	virtual       SymbolGroup* isSymbolGroup()       { return this; }
+	virtual const SymbolGroup* isSymbolGroup() const { return this; }
+	
+	DECLARE_REFLECTION();
+};
+
 // ----------------------------------------------------------------------------- : Symbol
 
 /// An editable symbol, consists of any number of SymbolParts
 class Symbol : public IntrusivePtrBase<Symbol> {
   public:
-	/// The parts of this symbol
+	/// The parts of this symbol, first item is on top
 	vector<SymbolPartP> parts;
 	/// Actions performed on this symbol and the parts in it
 	ActionStack actions;

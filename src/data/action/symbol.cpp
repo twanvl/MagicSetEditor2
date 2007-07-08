@@ -23,8 +23,9 @@ String action_name_for(const set<SymbolPartP>& parts, const String& action) {
 
 // ----------------------------------------------------------------------------- : Moving symbol parts
 
-SymbolPartMoveAction::SymbolPartMoveAction(const set<SymbolPartP>& parts)
+SymbolPartMoveAction::SymbolPartMoveAction(const set<SymbolPartP>& parts, const Vector2D& delta)
 	: parts(parts)
+	, delta(delta), moved(-delta)
 	, min_pos(Vector2D::infinity()), max_pos(-Vector2D::infinity())
 	, constrain(false)
 	, snap(0)
@@ -418,4 +419,58 @@ void ReorderSymbolPartsAction::perform(bool to_undo) {
 	assert(part_id1 < symbol.parts.size());
 	assert(part_id2 < symbol.parts.size());
 	swap(symbol.parts[part_id1], symbol.parts[part_id2]);
+}
+
+// ----------------------------------------------------------------------------- : Group symbol parts
+
+GroupSymbolPartsActionBase::GroupSymbolPartsActionBase(Symbol& symbol)
+	: symbol(symbol)
+{}
+void GroupSymbolPartsActionBase::perform(bool to_undo) {
+	swap(symbol.parts, old_part_list);
+}
+
+GroupSymbolPartsAction::GroupSymbolPartsAction(Symbol& symbol, const set<SymbolPartP>& parts)
+	: GroupSymbolPartsActionBase(symbol)
+{
+	// group parts in the old parts list
+	bool done = false;
+	SymbolGroupP group(new SymbolGroup);
+	group->name = _("Group");
+	FOR_EACH(p, symbol.parts) {
+		if (parts.find(p) != parts.end()) {
+			group->parts.push_back(p);
+			if (!done) {
+				done = true;
+				old_part_list.push_back(group);
+			}
+		} else {
+			// not affected
+			old_part_list.push_back(p);
+		}
+	}
+}
+String GroupSymbolPartsAction::getName(bool to_undo) const {
+	return _ACTION_("group parts");
+}
+
+UngroupSymbolPartsAction::UngroupSymbolPartsAction(Symbol& symbol, const set<SymbolPartP>& parts)
+	: GroupSymbolPartsActionBase(symbol)
+{
+	// break up the parts in the old parts list
+	FOR_EACH(p, symbol.parts) {
+		if (parts.find(p) != parts.end() && p->isSymbolGroup()) {
+			// break up the group
+			SymbolGroup* g = p->isSymbolGroup();
+			FOR_EACH(p, g->parts) {
+				old_part_list.push_back(p);
+			}
+		} else {
+			// not affected
+			old_part_list.push_back(p);
+		}
+	}
+}
+String UngroupSymbolPartsAction::getName(bool to_undo) const {
+	return _ACTION_("ungroup parts");
 }

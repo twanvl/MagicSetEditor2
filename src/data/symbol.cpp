@@ -11,6 +11,7 @@
 #include <gfx/bezier.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ControlPointP);
+DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 
 // ----------------------------------------------------------------------------- : ControlPoint
 
@@ -108,6 +109,7 @@ SymbolPartP read_new<SymbolPart>(Reader& reader) {
 	reader.handle(_("type"), type);
 	if      (type == _("shape") || type.empty())	return new_intrusive<SymbolShape>();
 	else if (type == _("symmetry"))					return new_intrusive<SymbolSymmetry>();
+	else if (type == _("group"))					return new_intrusive<SymbolGroup>();
 	else {
 		throw ParseError(_("Unsupported symbol part type: '") + type + _("'"));
 	}
@@ -216,6 +218,26 @@ IMPLEMENT_REFLECTION(SymbolSymmetry) {
 			}
 		}
 	}
+}
+
+// ----------------------------------------------------------------------------- : SymbolGroup
+
+String SymbolGroup::typeName() const {
+	return _("group");
+}
+
+SymbolPartP SymbolGroup::clone() const {
+	SymbolGroupP part(new SymbolGroup(*this));
+	// also clone the parts inside
+	FOR_EACH(p, part->parts) {
+		p = p->clone();
+	}
+	return part;
+}
+
+IMPLEMENT_REFLECTION(SymbolGroup) {
+	REFLECT_BASE(SymbolPart);
+	REFLECT(parts);
 }
 
 // ----------------------------------------------------------------------------- : Symbol

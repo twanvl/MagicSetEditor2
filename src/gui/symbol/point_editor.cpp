@@ -352,7 +352,33 @@ void SymbolPointEditor::onChar(wxKeyEvent& ev) {
 	if (ev.GetKeyCode() == WXK_DELETE) {
 		deleteSelection();
 	} else {
-		ev.Skip();
+		// move selection using arrow keys
+		double step = 1.0 / settings.symbol_grid_size;
+		Vector2D delta;
+		if      (ev.GetKeyCode() == WXK_LEFT)  delta = Vector2D(-step, 0);
+		else if (ev.GetKeyCode() == WXK_RIGHT) delta = Vector2D( step, 0);
+		else if (ev.GetKeyCode() == WXK_UP)    delta = Vector2D(0, -step);
+		else if (ev.GetKeyCode() == WXK_DOWN)  delta = Vector2D(0,  step);
+		else {
+			ev.Skip();
+			return;
+		}
+		// what to move
+		if (selection == SELECTED_POINTS || selection == SELECTED_LINE) {
+			// Move all selected points
+			controlPointMoveAction = new ControlPointMoveAction(selected_points);
+			getSymbol()->actions.add(controlPointMoveAction);
+			controlPointMoveAction->move(delta);
+			new_point += delta;
+			control.Refresh(false);
+		} else if (selection == SELECTED_HANDLE) {
+			// Move the selected handle
+			handleMoveAction = new HandleMoveAction(selected_handle);
+			getSymbol()->actions.add(handleMoveAction);
+			handleMoveAction->move(delta);
+			control.Refresh(false);
+		}
+		resetActions();
 	}
 }
 

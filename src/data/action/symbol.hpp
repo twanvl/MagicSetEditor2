@@ -31,7 +31,7 @@ class SymbolPartListAction : public SymbolPartAction {};
 /// Move some symbol parts
 class SymbolPartMoveAction : public SymbolPartAction {
   public:
-	SymbolPartMoveAction(const set<SymbolPartP>& parts);
+	SymbolPartMoveAction(const set<SymbolPartP>& parts, const Vector2D& delta = Vector2D());
 	
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);
@@ -235,7 +235,38 @@ class ReorderSymbolPartsAction : public SymbolPartListAction {
   private:
 	Symbol& symbol;				///< Symbol to swap the parts in
   public:
-	size_t part_id1, part_id2;	///< Indeces of parts to swap
+	size_t part_id1, part_id2;	///< Indices of parts to swap
+};
+
+
+// ----------------------------------------------------------------------------- : Group symbol parts
+
+/// Group multiple symbol parts together
+class GroupSymbolPartsActionBase : public SymbolPartListAction {
+  public:
+	GroupSymbolPartsActionBase(Symbol& symbol);
+	
+	virtual void perform(bool to_undo);
+	
+  protected:
+	Symbol&             symbol;			///< Symbol to group stuff in
+	vector<SymbolPartP> old_part_list;	///< Old part list of the symbol
+};
+
+/// Group multiple symbol parts together
+class GroupSymbolPartsAction : public GroupSymbolPartsActionBase {
+  public:
+	GroupSymbolPartsAction(Symbol& symbol, const set<SymbolPartP>& parts);
+	
+	virtual String getName(bool to_undo) const;
+};
+
+/// Break up one or more SymbolGroups
+class UngroupSymbolPartsAction : public GroupSymbolPartsActionBase {
+  public:
+	UngroupSymbolPartsAction(Symbol& symbol, const set<SymbolPartP>& groups);
+	
+	virtual String getName(bool to_undo) const;
 };
 
 

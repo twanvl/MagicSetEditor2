@@ -45,12 +45,18 @@ class SymbolViewer : public SymbolView {
 	void draw(DC& dc);
 	
 	void highlightPart(DC& dc, const SymbolPart& part, HighlightStyle style);
-	void highlightPart(DC& dc, const SymbolShape& shap, HighlightStyle style);
+	void highlightPart(DC& dc, const SymbolShape& shape, HighlightStyle style);
 	void highlightPart(DC& dc, const SymbolSymmetry& sym);
+	void highlightPart(DC& dc, const SymbolGroup& group, HighlightStyle style);
 	
 	void onAction(const Action&, bool) {}
 	
   private:
+	typedef shared_ptr<wxMemoryDC> MemoryDCP;
+	
+	/// Combine a symbol part with the dc
+	void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paintedSomething, bool& buffersFilled, MemoryDCP& borderDC, MemoryDCP& interiorDC);
+	
 	/// Combines a symbol part with what is currently drawn, the border and interior are drawn separatly
 	/** directB/directI are true if the border/interior is the screen dc, false if it
 	 *  is a temporary 1 bit one

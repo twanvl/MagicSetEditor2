@@ -74,46 +74,53 @@ void SymbolViewer::draw(DC& dc) {
 	}
 	// Draw all parts, in reverse order (bottom to top)
 	FOR_EACH_REVERSE(p, symbol->parts) {
-		if (SymbolShape* s = p->isSymbolShape()) {
-			if (s->combine == SYMBOL_COMBINE_OVERLAP && buffersFilled) {
-				// We will be overlapping some previous parts, write them to the screen
-				combineBuffers(dc, borderDC.get(), interiorDC.get());
-				// Clear the buffers
-				buffersFilled = false;
-				paintedSomething = true;
-				wxSize s = dc.GetSize();
-				if (borderDC) {
-					borderDC->SetBrush(*wxBLACK_BRUSH);
-					borderDC->SetPen(  *wxTRANSPARENT_PEN);
-					borderDC->DrawRectangle(0, 0, s.GetWidth(), s.GetHeight());
-				}
-				interiorDC->SetBrush(*wxBLACK_BRUSH);
-				interiorDC->DrawRectangle(0, 0, s.GetWidth(), s.GetHeight());
-			}
-			
-			// Paint the part itself
-			if (!paintedSomething) {
-				// No need to buffer
-				if (!interiorDC) interiorDC = getTempDC(dc);
-				combineSymbolShape(*s, dc, *interiorDC, true, false);
-				buffersFilled = true;
-			} else {
-				if (!borderDC)   borderDC   = getTempDC(dc);
-				if (!interiorDC) interiorDC = getTempDC(dc);
-				// Draw this shape to the buffer
-				combineSymbolShape(*s, *borderDC, *interiorDC, false, false);
-				buffersFilled = true;
-			}
-			// Paint symmetric versions of this part
-			// TODO
-		} else {
-			// symmetry, already handled above
-		}
+		combineSymbolPart(dc, *p, paintedSomething, buffersFilled, borderDC, interiorDC);
 	}
 	
 	// Output the final parts from the buffer
 	if (buffersFilled) {
 		combineBuffers(dc, borderDC.get(), interiorDC.get());
+	}
+}
+void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paintedSomething, bool& buffersFilled, MemoryDCP& borderDC, MemoryDCP& interiorDC) {
+	if (const SymbolShape* s = part.isSymbolShape()) {
+		if (s->combine == SYMBOL_COMBINE_OVERLAP && buffersFilled) {
+			// We will be overlapping some previous parts, write them to the screen
+			combineBuffers(dc, borderDC.get(), interiorDC.get());
+			// Clear the buffers
+			buffersFilled = false;
+			paintedSomething = true;
+			wxSize s = dc.GetSize();
+			if (borderDC) {
+				borderDC->SetBrush(*wxBLACK_BRUSH);
+				borderDC->SetPen(  *wxTRANSPARENT_PEN);
+				borderDC->DrawRectangle(0, 0, s.GetWidth(), s.GetHeight());
+			}
+			interiorDC->SetBrush(*wxBLACK_BRUSH);
+			interiorDC->DrawRectangle(0, 0, s.GetWidth(), s.GetHeight());
+		}
+		
+		// Paint the part itself
+		if (!paintedSomething) {
+			// No need to buffer
+			if (!interiorDC) interiorDC = getTempDC(dc);
+			combineSymbolShape(*s, dc, *interiorDC, true, false);
+			buffersFilled = true;
+		} else {
+			if (!borderDC)   borderDC   = getTempDC(dc);
+			if (!interiorDC) interiorDC = getTempDC(dc);
+			// Draw this shape to the buffer
+			combineSymbolShape(*s, *borderDC, *interiorDC, false, false);
+			buffersFilled = true;
+		}
+		// Paint symmetric versions of this part
+		// TODO
+	} else if (const SymbolSymmetry* s = part.isSymbolSymmetry()) {
+		// symmetry, already handled above
+	} else if (const SymbolGroup* g = part.isSymbolGroup()) {
+		FOR_EACH_CONST(p, g->parts) {
+			combineSymbolPart(dc, *p, paintedSomething, buffersFilled, borderDC, interiorDC);
+		}
 	}
 }
 
@@ -122,6 +129,8 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolPart& part, HighlightStyle 
 		highlightPart(dc, *s, style);
 	} else if (const SymbolSymmetry* s = part.isSymbolSymmetry()) {
 		highlightPart(dc, *s);
+	} else if (const SymbolGroup* g = part.isSymbolGroup()) {
+		highlightPart(dc, *g, style);
 	} else {
 		throw InternalError(_("Invalid symbol part type"));
 	}
@@ -153,6 +162,11 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolShape& shape, HighlightStyl
 }
 void SymbolViewer::highlightPart(DC& dc, const SymbolSymmetry& sym) {
 	// TODO
+}
+void SymbolViewer::highlightPart(DC& dc, const SymbolGroup& group, HighlightStyle style) {
+	FOR_EACH_CONST(part, group.parts) {
+		highlightPart(dc, *part, style);
+	}
 }
 
 

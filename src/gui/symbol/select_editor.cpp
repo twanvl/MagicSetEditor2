@@ -387,7 +387,18 @@ void SymbolSelectEditor::onChar(wxKeyEvent& ev) {
 		resetActions();
 		control.Refresh(false);
 	} else {
-		ev.Skip();
+		// move selection using arrow keys
+		double step = 1.0 / settings.symbol_grid_size;
+		Vector2D delta;
+		if      (ev.GetKeyCode() == WXK_LEFT)  delta = Vector2D(-step, 0);
+		else if (ev.GetKeyCode() == WXK_RIGHT) delta = Vector2D( step, 0);
+		else if (ev.GetKeyCode() == WXK_UP)    delta = Vector2D(0, -step);
+		else if (ev.GetKeyCode() == WXK_DOWN)  delta = Vector2D(0,  step);
+		else {
+			ev.Skip();
+			return;
+		}
+		getSymbol()->actions.add(new SymbolPartMoveAction(control.selected_parts, delta));
 	}
 }
 
