@@ -449,6 +449,7 @@ set field:
 set field:
 	type: text
 	name: title
+	identifying: true
 set field:
 	type: text
 	name: description
@@ -1093,6 +1094,13 @@ statistics dimension:
 	script: colored_mana(card.casting_cost)
 	numeric: true
 	icon: stats/colored_casting_cost.png
+
+statistics dimension:
+	name: keywords
+	script: keyword_usage(unique:true)
+	show empty: false
+	split list: true
+	icon: stats/keywords.png
 
 #statistics dimension:
 #	name: p/t
