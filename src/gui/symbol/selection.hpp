@@ -73,8 +73,6 @@ class SymbolPartsSelection {
 	
 	/// Make sure not both a parent and its child/decendant are selected
 	void clearChildren (SymbolPart* part);
-	/// Is a part another's ancestor?
-	static bool isAncestor(SymbolPart* ancestor, SymbolPart* part);
 };
 
 // ----------------------------------------------------------------------------- : EOF

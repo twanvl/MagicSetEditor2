@@ -17,6 +17,8 @@
 /// Editor for adding symmetries
 class SymbolSymmetryEditor : public SymbolEditorBase {
   public:
+	/** The symmetry parameter is optional, if it is not set, then only new ones can be created */
+	//%SymbolSymmetryEditor(SymbolControl* control, SymbolSymmetryP symmetry);
 	SymbolSymmetryEditor(SymbolControl* control);
 	
 	// --------------------------------------------------- : Drawing

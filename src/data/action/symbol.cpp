@@ -62,13 +62,12 @@ void SymbolPartMoveAction::movePart(SymbolPart& part) {
 		}
 	} else if (SymbolSymmetry* s = part.isSymbolSymmetry()) {
 		s->center -= moved;
-	} else if (SymbolGroup* g = part.isSymbolGroup()) {
+	}
+	if (SymbolGroup* g = part.isSymbolGroup()) {
 		FOR_EACH(p, g->parts) {
 			movePart(*p);
 		}
 		g->calculateBoundsNonRec();
-	} else {
-		throw InternalError(_("Invalid symbol part type"));
 	}
 }
 
@@ -108,13 +107,12 @@ void SymbolPartMatrixAction::transform(SymbolPart& part, const Matrix2D& m) {
 	} else if (SymbolSymmetry* s = part.isSymbolSymmetry()) {
 		s->center = (s->center - center) * m + center;
 		s->handle = s->handle * m;
-	} else if (SymbolGroup* g = part.isSymbolGroup()) {
+	}
+	if (SymbolGroup* g = part.isSymbolGroup()) {
 		FOR_EACH(p, g->parts) {
 			transform(*p, m);
 		}
 		g->calculateBoundsNonRec();
-	} else {
-		throw InternalError(_("Invalid symbol part type"));
 	}
 }
 
@@ -284,13 +282,12 @@ void SymbolPartScaleAction::transformPart(SymbolPart& part) {
 	} else if (SymbolSymmetry* s = part.isSymbolSymmetry()) {
 		transform(s->center);
 		s->handle.mul(new_size.div(old_size));
-	} else if (SymbolGroup* g = part.isSymbolGroup()) {
+	}
+	if (SymbolGroup* g = part.isSymbolGroup()) {
 		FOR_EACH(p, g->parts) {
 			transformPart(*p);
 		}
 		g->calculateBoundsNonRec();
-	} else {
-		throw InternalError(_("Invalid symbol part type"));
 	}
 }
 

@@ -78,14 +78,17 @@ menu:
 	store symbol:		S&tore	Ctrl+Enter
 	close symbol editor:Close	Alt+F4
 	
-	duplicate:			Duplicate	Ctrl+D
+	duplicate:			&Duplicate	Ctrl+D
+	group:				&Group	Ctrl+G
+	ungroup:			&Ungroup	Ctrl+U
 	
 	tool:			&Tool
 	select:				&Select	F5
 	rotate:				&Rotate	F6
 	points:				&Points	F7
 	basic shapes:		&Basic Shapes	F8
-	paint:				P&aint	F9
+	symmetry:			S&ymmetry	F9
+	paint:				P&aint	F10
 
 ############################################################## Menu help texts
 help:
@@ -179,6 +182,8 @@ help:
 	close symbol editor:Closes the symbol editor
 	
 	duplicate:			Duplicates the selected shapes
+	group:				Group the selected shapes together
+	ungroup:			Break up the selected group
 	
 	grid:				Show gridlines
 	snap:				Snap shapes and points to gridlines
@@ -188,6 +193,7 @@ help:
 	rotate:				Rotate and shear shapes
 	points:				Edit control points for a shape in the symbol
 	basic shapes:		Draw basic shapes, such as rectangles and circles
+	symmetry:			Add symmetries to the symbol
 	paint:				Paint on the shape using a paintbrush
 	
 	select editor:
@@ -247,6 +253,7 @@ tool:
 	rotate:				Rotate
 	points:				Points
 	basic shapes:		Basic Shapes
+	symmetry:			Symmetry
 	paint:				Paint
 	
 	merge:				Merge
@@ -260,6 +267,9 @@ tool:
 	rectangle:			Rectangle
 	polygon:			Polygon
 	star:				Star
+	
+	rotation:			Rotation
+	reflection:			Reflection
 	
 	line segment:		Line
 	curve segment:		Curve
@@ -314,7 +324,8 @@ tooltip:
 	rotate:				Rotate (F6)
 	points:				Points (F7)
 	basic shapes:		Basic Shapes (F8)
-	paint:				Paint on Shape (F9)
+	symmetry:			Symmetry (F9)
+	paint:				Paint on Shape (F10)
 	
 	merge:				Merge with shapes below
 	subtract:			Subtract from shapes below
@@ -327,6 +338,9 @@ tooltip:
 	rectangle:			Square / Rectangle
 	polygon:			Polygon
 	star:				Star
+	
+	rotation:			Rotational symmetry (wheel)
+	reflection:			Reflectional symmetry (mirror)
 	
 	line segment:		To straigt line
 	curve segment:		To curve
@@ -513,6 +527,8 @@ action:
 	reorder parts:		Reorder
 	change combine mode:Change combine mode
 	change shape name:	Change shape name
+	group parts:		Group
+	ungroup parts:		Ungroup
 	
 	# Symbol Part Actions
 	convert to line:	Convert to line
@@ -607,6 +623,10 @@ type:
 	hexagon:		hexagon
 	polygon:		polygon
 	star:			star
+	
+	rotation:		rotation
+	reflection:		reflection
+	group:			group
 	
 	point:			point
 	points:			points

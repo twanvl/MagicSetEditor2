@@ -59,7 +59,7 @@ void deCasteljau(const Vector2D& a1, Vector2D& a21, Vector2D& a34, const Vector2
 
 // ----------------------------------------------------------------------------- : Drawing
 
-void curve_subdivide(const BezierCurve& c, const Vector2D& p0, const Vector2D& p1, double t0, double t1, const Rotation& rot, vector<wxPoint>& out, UInt level) {
+void curve_subdivide(const BezierCurve& c, const Vector2D& p0, const Vector2D& p1, double t0, double t1, const Vector2D& origin, const Matrix2D& m, vector<wxPoint>& out, UInt level) {
 	if (level <= 0)  return;
 	double midtime = (t0+t1) * 0.5f;
 	Vector2D midpoint = c.pointAt(midtime);
@@ -70,23 +70,23 @@ void curve_subdivide(const BezierCurve& c, const Vector2D& p0, const Vector2D& p
 	double treshold = fabs(  atan2(d0.x,d0.y) - atan2(d1.x,d1.y))  * (p0-p1).lengthSqr();
 	bool subdivide = treshold >= .0001;
 	// subdivide left
-	curve_subdivide(c, p0, midpoint, t0, midtime, rot, out, level - 1);
+	curve_subdivide(c, p0, midpoint, t0, midtime, origin, m, out, level - 1);
 	// add midpoint
 	if (subdivide) {
-		out.push_back(rot.tr(midpoint));
+		out.push_back(origin + midpoint * m);
 	}
 	// subdivide right
-	curve_subdivide(c, midpoint, p1, midtime, t1, rot, out, level - 1);
+	curve_subdivide(c, midpoint, p1, midtime, t1, origin, m, out, level - 1);
 }
 
-void segment_subdivide(const ControlPoint& p0, const ControlPoint& p1, const Rotation& rot, vector<wxPoint>& out) {
+void segment_subdivide(const ControlPoint& p0, const ControlPoint& p1, const Vector2D& origin, const Matrix2D& m, vector<wxPoint>& out) {
 	assert(p0.segment_after == p1.segment_before);
 	// always the start
-	out.push_back(rot.tr(p0.pos));
+	out.push_back(origin + p0.pos * m);
 	if (p0.segment_after == SEGMENT_CURVE) {
 		// need more points?
 		BezierCurve curve(p0,p1);
-		curve_subdivide(curve, p0.pos, p1.pos, 0, 1, rot, out, 5);
+		curve_subdivide(curve, p0.pos, p1.pos, 0, 1, origin, m, out, 5);
 	}
 }
 

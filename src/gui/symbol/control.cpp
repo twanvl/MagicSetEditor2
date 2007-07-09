@@ -235,7 +235,7 @@ void SymbolControl::onChar(wxKeyEvent& ev) {
 
 void SymbolControl::onSize(wxSizeEvent& ev) {
 	wxSize s = GetClientSize();
-	rotation.setZoom(min(s.GetWidth(), s.GetHeight()));
+	setZoom(min(s.GetWidth(), s.GetHeight()));
 	Refresh(false);
 }
 void SymbolControl::onUpdateUI(wxUpdateUIEvent& ev) {
@@ -247,6 +247,9 @@ void SymbolControl::onUpdateUI(wxUpdateUIEvent& ev) {
 			if (ev.GetId() == ID_MODE_POINTS) {
 				// can only edit points when a shape is available
 				ev.Enable(selected_parts.getAShape());
+			}
+			if (ev.GetId() == ID_MODE_SYMMETRY) {
+				ev.Enable(!selected_parts.empty());
 			}
 			break;
 		case ID_MODE_PAINT:

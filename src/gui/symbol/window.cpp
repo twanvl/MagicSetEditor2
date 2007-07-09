@@ -29,7 +29,7 @@ SymbolWindow::SymbolWindow(Window* parent) {
 
 SymbolWindow::SymbolWindow(Window* parent, const String& filename) {
 	// open file
-	Reader reader(filename);
+	Reader reader(new_shared1<wxFileInputStream>(filename), filename);
 	SymbolP symbol;
 	reader.handle_greedy(symbol);
 	init(parent, symbol);

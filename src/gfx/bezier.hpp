@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
-#include <util/rotation.hpp>
+#include <util/vector2d.hpp>
 #include <data/symbol.hpp>
 
 // ----------------------------------------------------------------------------- : Evaluation
@@ -65,9 +65,9 @@ void deCasteljau(const Vector2D& a1, Vector2D& a21, Vector2D& a34, const Vector2
 
 /// Devide a segment into a number of straight lines for display purposes
 /** Adds the resulting corner points of those lines to out, the last point is not added.
- *  All points are converted to display coordinates using rot.tr
+ *  All points are converted to display coordinates by multiplying with m and adding origin
  */
-void segment_subdivide(const ControlPoint& p0, const ControlPoint& p1, const Rotation& rot, vector<wxPoint>& out);
+void segment_subdivide(const ControlPoint& p0, const ControlPoint& p1, const Vector2D& origin, const Matrix2D& m, vector<wxPoint>& out);
 
 // ----------------------------------------------------------------------------- : Bounds
 

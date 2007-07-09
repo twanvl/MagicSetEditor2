@@ -24,10 +24,11 @@ void SymbolPartsSelection::clear() {
 }
 
 bool SymbolPartsSelection::select(const SymbolPartP& part, SelectMode mode) {
+	assert(part);
 	// make sure part is not the decendent of a part that is already selected
 	if (mode != SELECT_OVERRIDE) {
 		FOR_EACH(s, selection) {
-			if (isAncestor(s.get(), part.get())) return false;
+			if (s != part && s->isAncestor(*part)) return false;
 		}
 	}
 	// select
@@ -70,15 +71,6 @@ void SymbolPartsSelection::clearChildren(SymbolPart* part) {
 	}
 }
 
-bool SymbolPartsSelection::isAncestor(SymbolPart* ancestor, SymbolPart* part) {
-	if (SymbolGroup* g = ancestor->isSymbolGroup()) {
-		FOR_EACH(p, g->parts) {
-			if (part == p.get()) return true;
-			if (isAncestor(p.get(), part)) return true;
-		}
-	}
-	return false;
-}
 
 // ----------------------------------------------------------------------------- : Position based
 
@@ -116,7 +108,7 @@ bool SymbolPartsSelection::selectRect(const Vector2D& a, const Vector2D& b, cons
 }
 bool SymbolPartsSelection::selectRect(const SymbolGroup& parent, const Vector2D& a, const Vector2D& b, const Vector2D& c) {
 	bool changes = false;
-	FOR_EACH_CONST(p, root->parts) {
+	FOR_EACH_CONST(p, parent.parts) {
 		bool in_ab = (p->min_pos.x >= min(a.x, b.x) && p->min_pos.y >= min(a.y, b.y) && p->max_pos.x <= max(a.x, b.x) && p->max_pos.y <= max(a.y, b.y));
 		bool in_bc = (p->min_pos.x >= min(a.x, c.x) && p->min_pos.y >= min(a.y, c.y) && p->max_pos.x <= max(a.x, c.x) && p->max_pos.y <= max(a.y, c.y));
 		if (in_ab != in_bc) {

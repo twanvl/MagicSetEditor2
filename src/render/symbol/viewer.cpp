@@ -15,12 +15,12 @@ DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 // ----------------------------------------------------------------------------- : Simple rendering
 
 Image render_symbol(const SymbolP& symbol, double border_radius, int size) {
-	SymbolViewer viewer(symbol, border_radius);
+	SymbolViewer viewer(symbol, size, border_radius);
 	Bitmap bmp(size, size);
 	wxMemoryDC dc;
 	dc.SelectObject(bmp);
 	clearDC(dc, Color(0,128,0));
-	viewer.rotation.setZoom(size);
+	viewer.setZoom(size);
 	viewer.draw(dc);
 	dc.SelectObject(wxNullBitmap);
 	return bmp.ConvertToImage();
@@ -28,11 +28,18 @@ Image render_symbol(const SymbolP& symbol, double border_radius, int size) {
 
 // ----------------------------------------------------------------------------- : Constructor
 
-SymbolViewer::SymbolViewer(const SymbolP& symbol, double border_radius)
+SymbolViewer::SymbolViewer(const SymbolP& symbol, double size, double border_radius)
 	: border_radius(border_radius)
-	, rotation(0, RealRect(0,0,500,500), 500)
+	, rotation(0, RealRect(0,0,size,size), size)
+	, multiply(size,0,0,size)
+	, origin(0,0)
 {
 	setSymbol(symbol);
+}
+
+void SymbolViewer::setZoom(double zoom) {
+	rotation.setZoom(zoom);
+	multiply = Matrix2D(zoom,0, 0,zoom);
 }
 
 // ----------------------------------------------------------------------------- : Drawing
@@ -73,16 +80,16 @@ void SymbolViewer::draw(DC& dc) {
 		}
 	}
 	// Draw all parts
-	combineSymbolPart(dc, *symbol, paintedSomething, buffersFilled, borderDC, interiorDC);
+	combineSymbolPart(dc, *symbol, paintedSomething, buffersFilled, true, borderDC, interiorDC);
 	
 	// Output the final parts from the buffer
 	if (buffersFilled) {
 		combineBuffers(dc, borderDC.get(), interiorDC.get());
 	}
 }
-void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paintedSomething, bool& buffersFilled, MemoryDCP& borderDC, MemoryDCP& interiorDC) {
+void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paintedSomething, bool& buffersFilled, bool allow_overlap, MemoryDCP& borderDC, MemoryDCP& interiorDC) {
 	if (const SymbolShape* s = part.isSymbolShape()) {
-		if (s->combine == SYMBOL_COMBINE_OVERLAP && buffersFilled) {
+		if (s->combine == SYMBOL_COMBINE_OVERLAP && buffersFilled && allow_overlap) {
 			// We will be overlapping some previous parts, write them to the screen
 			combineBuffers(dc, borderDC.get(), interiorDC.get());
 			// Clear the buffers
@@ -111,14 +118,61 @@ void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paint
 			combineSymbolShape(*s, *borderDC, *interiorDC, false, false);
 			buffersFilled = true;
 		}
-		// Paint symmetric versions of this part
-		// TODO
 	} else if (const SymbolSymmetry* s = part.isSymbolSymmetry()) {
-		// symmetry, already handled above
+		// Draw all parts, in reverse order (bottom to top), also draw rotated copies
+		double b = 2 * atan2(s->handle.y, s->handle.x);
+		Matrix2D old_m = multiply;
+		Vector2D old_o = origin;
+		int copies = s->kind == SYMMETRY_REFLECTION ? s->copies / 2 * 2 : s->copies;
+		FOR_EACH_CONST_REVERSE(p, s->parts) {
+			for (int i = 0 ; i < copies ; ++i) {
+				if (s->clip) {
+					// todo: clip
+				}
+				double a = i * 2 * M_PI / copies;
+				if (s->kind == SYMMETRY_ROTATION || i % 2 == 0) {
+					// set matrix
+					// Calling:
+					//  - p  the input point
+					//  - p' the output point
+					//  - rot our rotation matrix
+					//  - d   out origin
+					//  - o   the current origin (old_o)
+					//  - m   the current matrix (old_m)
+					// We want:
+					//   p' = ((p - d) * rot + d) * m + o
+					//      =  (p * rot - d * rot + d) * m + o
+					//      =  p * rot * m + (d - d * rot) * m + o
+					Matrix2D rot(cos(a),-sin(a), sin(a),cos(a));
+					multiply.mx = rot.mx * old_m;
+					multiply.my = rot.my * old_m;
+					origin = old_o + (s->center - s->center * rot) * old_m;
+				} else {
+					// reflection
+					//  Calling angle = b
+					// Matrix2D ref(cos(b),sin(b), sin(b),-cos(b));
+					// Matrix2D rot(cos(a),-sin(a), sin(a),cos(a));
+					// 
+					//  ref * rot
+					//    /cos b   sin b\ /cos a  -sin a\
+					//  = \sin b  -cos b/ \sin a   cos a/
+					//  = /cos(a+b)  sin(a+b)\
+					//    \sin(a+b) -cos(a+b)/
+					Matrix2D rot(cos(a+b),sin(a+b), sin(a+b),-cos(a+b));
+					multiply.mx = rot.mx * old_m;
+					multiply.my = rot.my * old_m;
+					origin = old_o + (s->center - s->center * rot) * old_m;
+				}
+				// draw rotated copy
+				combineSymbolPart(dc, *p, paintedSomething, buffersFilled, allow_overlap && i == 0, borderDC, interiorDC);
+			}
+		}
+		multiply = old_m;
+		origin   = old_o;
 	} else if (const SymbolGroup* g = part.isSymbolGroup()) {
 		// Draw all parts, in reverse order (bottom to top)
 		FOR_EACH_CONST_REVERSE(p, g->parts) {
-			combineSymbolPart(dc, *p, paintedSomething, buffersFilled, borderDC, interiorDC);
+			combineSymbolPart(dc, *p, paintedSomething, buffersFilled, allow_overlap, borderDC, interiorDC);
 		}
 	}
 }
@@ -139,7 +193,7 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolShape& shape, HighlightStyl
 	vector<wxPoint> points;
 	size_t size = shape.points.size();
 	for(size_t i = 0 ; i < size ; ++i) {
-		segment_subdivide(*shape.getPoint((int)i), *shape.getPoint((int)i+1), rotation, points);
+		segment_subdivide(*shape.getPoint((int)i), *shape.getPoint((int)i+1), origin, multiply, points);
 	}
 	// draw
 	if (style == HIGHLIGHT_BORDER) {
@@ -238,7 +292,7 @@ void SymbolViewer::drawSymbolShape(const SymbolShape& shape, DC* border, DC* int
 	vector<wxPoint> points;
 	size_t size = shape.points.size();
 	for(size_t i = 0 ; i < size ; ++i) {
-		segment_subdivide(*shape.getPoint((int)i), *shape.getPoint((int)i+1), rotation, points);
+		segment_subdivide(*shape.getPoint((int)i), *shape.getPoint((int)i+1), origin, multiply, points);
 	}
 	// draw border
 	if (border && border_radius > 0) {
