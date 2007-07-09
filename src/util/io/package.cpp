@@ -299,10 +299,10 @@ void Package::openSubdir(const String& name) {
 	}
 	// find subdirs
 	for(bool ok = d.GetFirst(&f, wxEmptyString, wxDIR_DIRS | wxDIR_HIDDEN) ; ok ; ok = d.GetNext(&f)) {
-		if (f.empty() || f.GetChar(0) == _('.')) {
-			return; // skip directories starting with '.', like ., .. and .svn
+		if (!f.empty() && f.GetChar(0) != _('.')) {
+			// skip directories starting with '.', like ., .. and .svn
+			openSubdir(name+f+_("/"));
 		}
-		openSubdir(name+f+_("/"));
 	}
 }
 
