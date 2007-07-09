@@ -12,6 +12,7 @@
 
 DECLARE_TYPEOF_COLLECTION(pair<SymbolShapeP COMMA SymbolShapeCombine>);
 DECLARE_TYPEOF_COLLECTION(pair<SymbolPartP  COMMA size_t            >);
+DECLARE_TYPEOF_COLLECTION(RemoveSymbolPartsAction::Removal);
 DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 DECLARE_TYPEOF_COLLECTION(ControlPointP);
 
@@ -375,12 +376,24 @@ void AddSymbolPartAction::perform(bool to_undo) {
 RemoveSymbolPartsAction::RemoveSymbolPartsAction(Symbol& symbol, const set<SymbolPartP>& parts)
 	: symbol(symbol)
 {
+	check(symbol, parts);
+}
+
+void RemoveSymbolPartsAction::check(SymbolGroup& group, const set<SymbolPartP>& parts) {
 	size_t index = 0;
-	FOR_EACH(p, symbol.parts) {
+	size_t removed = 0;
+	FOR_EACH(p, group.parts) {
 		if (parts.find(p) != parts.end()) {
-			removals.push_back(make_pair(p, index)); // remove this part
+			removals.push_back(Removal(group, index, p)); // remove this part
+			++ removed;
+		} else if (SymbolGroup* g = p->isSymbolGroup()) {
+			check(*g, parts);
 		}
 		++index;
+	}
+	if (!group.isSymbolSymmetry() && &group != &symbol) {
+		// remove empty groups
+		// TODO
 	}
 }
 
@@ -393,15 +406,15 @@ void RemoveSymbolPartsAction::perform(bool to_undo) {
 		// reinsert the parts
 		// ascending order, this is the reverse of removal
 		FOR_EACH(r, removals) {
-			assert(r.second <= symbol.parts.size());
-			symbol.parts.insert(symbol.parts.begin() + r.second, r.first);
+			assert(r.pos <= r.parent->parts.size());
+			r.parent->parts.insert(r.parent->parts.begin() + r.pos, r.removed);
 		}
 	} else {
 		// remove the parts
 		// descending order, because earlier removals shift the rest of the vector
 		FOR_EACH_REVERSE(r, removals) {
-			assert(r.second < symbol.parts.size());
-			symbol.parts.erase(symbol.parts.begin() + r.second);
+			assert(r.pos < r.parent->parts.size());
+			r.parent->parts.erase(r.parent->parts.begin() + r.pos);
 		}
 	}
 }

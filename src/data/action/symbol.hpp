@@ -211,8 +211,21 @@ class RemoveSymbolPartsAction : public SymbolPartListAction {
 	
   private:
 	Symbol& symbol;
-	/// Removed parts and their positions, sorted by ascending pos
-	vector<pair<SymbolPartP, size_t> > removals;
+	/// Check for removals in a group
+	void check(SymbolGroup& group, const set<SymbolPartP>& parts);
+  public:
+	/// A removal step
+	struct Removal {
+		inline Removal(SymbolGroup& parent, size_t pos, const SymbolPartP& removed)
+			: parent(&parent), pos(pos), removed(removed)
+		{}
+		SymbolGroup* parent;
+		size_t       pos;
+		SymbolPartP  removed;
+	};
+  private:
+	/// Removed parts, sorted by ascending pos
+	vector<Removal> removals;
 };
 
 // ----------------------------------------------------------------------------- : Duplicate symbol parts

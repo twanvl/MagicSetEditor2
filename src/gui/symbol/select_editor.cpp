@@ -56,7 +56,7 @@ void SymbolSelectEditor::draw(DC& dc) {
 	if (click_mode == CLICK_RECT) {
 		// draw selection rectangle
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
-		dc.SetPen(wxPen(*wxBLUE,1,wxDOT));
+		dc.SetPen(wxPen(*wxCYAN,1,wxDOT));
 		RealRect rect = control.rotation.tr(RealRect(selection_rect_a, RealSize(selection_rect_b - selection_rect_a)));
 		dc.DrawRectangle(rect);
 	} else {
@@ -292,13 +292,16 @@ template <typename Event> int snap(Event& ev) {
 
 void SymbolSelectEditor::onMouseDrag  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev) {
 	if (click_mode == CLICK_NONE) return;
-	if (control.selected_parts.empty()) return;
 	if (click_mode == CLICK_RECT) {
 		// rectangle
-		control.selected_parts.selectRect(selection_rect_a, selection_rect_b, to, SELECT_TOGGLE);
+		if (control.selected_parts.selectRect(selection_rect_a, selection_rect_b, to)) {
+			control.signalSelectionChange();
+		}
 		selection_rect_b = to;
 		control.Refresh(false);
+		return;
 	}
+	if (control.selected_parts.empty()) return;
 	if (!isEditing()) {
 		// we don't have an action yet, determine what to do
 		// note: base it on the from position, which is the position where dragging started

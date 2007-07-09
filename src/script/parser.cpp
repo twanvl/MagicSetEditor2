@@ -565,6 +565,8 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 		} else if (minPrec <= PREC_SET && token==_(":=")) {
 			// We made a mistake, the part before the := should be a variable name,
 			// not an expression. Remove that instruction.
+			// TODO: There is a bug here:
+			//    (if x then a else b) := c will use the 'b' as variable name
 			Instruction instr = script.getInstructions().back();
 			if (instr.instr != I_GET_VAR) {
 				input.add_error(_("Can only assign to variables"));
