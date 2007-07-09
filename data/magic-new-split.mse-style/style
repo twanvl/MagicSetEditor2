@@ -120,7 +120,7 @@ card style:
 	name:
 		left: { if card.card_symbol=="none" then 30 else 51 }
 		top : 27
-		width: { if card.card_symbol=="none" then 175 else 168 }
+		right:  { 242 - card_style.casting_cost.content_width }
 		height: 17
 		alignment: top shrink-overflow
 		padding bottom: 0
@@ -133,7 +133,7 @@ card style:
 	name 2:
 		left: { if card.card_symbol_2=="none" then 282 else 51 }
 		top : 27
-		width: { if card.card_symbol_2=="none" then 215 else 227 }
+		right:  { 493 - card_style.casting_cost_2.content_width }
 		height: 17
 		alignment: top shrink-overflow
 		padding bottom: 0
@@ -144,9 +144,9 @@ card style:
 			weight: bold
 			color: rgb(0,0,0)
 	casting cost:
-		left: 207
+		right: 243
 		top : 27
-		width: 35
+		width: { max(19, card_style.casting_cost.content_width) + 3 }
 		height: 16
 		alignment: bottom right
 		symbol font:
@@ -158,9 +158,9 @@ card style:
 		padding top: 0
 
 	casting cost 2:
-		left: 459
+		right: 494
 		top : 27
-		width: 35
+		width: { max(19, card_style.casting_cost_2.content_width) + 3 }
 		height: 16
 		alignment: bottom right
 		symbol font:

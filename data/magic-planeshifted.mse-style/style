@@ -102,7 +102,7 @@ card style:
 	name:
 		left:   { if card.card_symbol=="none" then 32 else 51 }
 		top :   30
-		width:  { if card.card_symbol=="none" then 246 else 227 }
+		right:  { 341 - card_style.casting_cost.content_width }
 		height: 23
 		alignment: middle shrink-overflow
 		padding bottom: 0
@@ -116,9 +116,9 @@ card style:
 			shadow displacement x: -1
 			shadow displacement y: 1
 	casting cost:
-		left: 280
+		right: 343
 		top : 30
-		width: 63
+		width: { max(30, card_style.casting_cost.content_width) + 5 }
 		height: 23
 		alignment: bottom right
 		symbol font:
