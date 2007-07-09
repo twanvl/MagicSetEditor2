@@ -146,6 +146,7 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 				case I_MOD:			ret += _("mod");		break;
 				case I_AND:			ret += _("and");		break;
 				case I_OR:			ret += _("or");			break;
+				case I_XOR:			ret += _("xor");		break;
 				case I_EQ:			ret += _("==");			break;
 				case I_NEQ:			ret += _("!=");			break;
 				case I_LT:			ret += _("<");			break;

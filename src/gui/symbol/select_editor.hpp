@@ -74,6 +74,15 @@ class SymbolSelectEditor : public SymbolEditorBase {
 	Vector2D minV, maxV;
 	// Where is the rotation center?
 	Vector2D center;
+	// What kind of clicking/dragging are we doing
+	enum ClickMode {
+		CLICK_NONE,
+		CLICK_MOVE,		// moving parts around
+		CLICK_HANDLE,	// dragging a handle
+		CLICK_CENTER,	// dragging the rotation center
+		CLICK_RECT,		// selection rectangle
+		CLICK_TOGGLE,	// same selection, not moved -> switch to rotate mode
+	} click_mode;
 	// At what angle is the handle we started draging for rotation
 	double startAngle;
 	// what side are we dragging/rotating on?
@@ -82,6 +91,8 @@ class SymbolSelectEditor : public SymbolEditorBase {
 	bool have_dragged;
 	// Do we want to rotate?
 	bool rotate;
+	// selection rectangle
+	Vector2D selection_rect_a, selection_rect_b;
 	// Graphics assets
 	wxCursor cursorRotate;
 	wxCursor cursorShearX;
@@ -103,9 +114,6 @@ class SymbolSelectEditor : public SymbolEditorBase {
 	
 	/// Return the position of a handle, dx,dy in <-1, 0, 1>
 	Vector2D handlePos(int dx, int dy);
-	
-	/// Find the first part at the given position
-	SymbolPartP findPart(const Vector2D& pos);
 	
 	/// Update minV and maxV to be the bounding box of the selected_parts
 	/// Updates center to be the rotation center of the parts

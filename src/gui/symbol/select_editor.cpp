@@ -21,6 +21,7 @@ DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 
 SymbolSelectEditor::SymbolSelectEditor(SymbolControl* control, bool rotate)
 	: SymbolEditorBase(control)
+	, click_mode(CLICK_NONE)
 	, rotate(rotate)
 	, cursorRotate(load_resource_cursor(_("rotate")))
 	, cursorShearX(load_resource_cursor(_("shear_x")))
@@ -45,19 +46,27 @@ SymbolSelectEditor::SymbolSelectEditor(SymbolControl* control, bool rotate)
 
 void SymbolSelectEditor::draw(DC& dc) {
 	// highlight selected parts
-	FOR_EACH(p, control.selected_parts) {
+	FOR_EACH(p, control.selected_parts.get()) {
 		control.highlightPart(dc, *p, HIGHLIGHT_INTERIOR);
 	}
 	// highlight the part under the cursor
 	if (highlightPart) {
 		control.highlightPart(dc, *highlightPart, HIGHLIGHT_BORDER);
 	}
-	// draw handles
-	drawHandles(dc);
+	if (click_mode == CLICK_RECT) {
+		// draw selection rectangle
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.SetPen(wxPen(*wxBLUE,1,wxDOT));
+		RealRect rect = control.rotation.tr(RealRect(selection_rect_a, RealSize(selection_rect_b - selection_rect_a)));
+		dc.DrawRectangle(rect);
+	} else {
+		// draw handles
+		drawHandles(dc);
+	}
 }
 
 void SymbolSelectEditor::drawHandles(DC& dc) {
-	if (control.selected_parts.empty())  return;
+	if (control.selected_parts.empty()) return;
 	if (rotateAction) return; // not when rotating
 	updateBoundingBox();
 	// Draw handles on all sides
@@ -130,7 +139,7 @@ void SymbolSelectEditor::onUpdateUI(wxUpdateUIEvent& ev) {
 	if (ev.GetId() >= ID_SYMBOL_COMBINE && ev.GetId() < ID_SYMBOL_COMBINE_MAX) {
 		bool enable = false;
 		bool check = true;
-		FOR_EACH(p, control.selected_parts) {
+		FOR_EACH(p, control.selected_parts.get()) {
 			if (SymbolShape* s = p->isSymbolShape()) {
 				enable = true;
 				if (s->combine != ev.GetId() - ID_SYMBOL_COMBINE) {
@@ -147,8 +156,8 @@ void SymbolSelectEditor::onUpdateUI(wxUpdateUIEvent& ev) {
 		ev.Enable(control.selected_parts.size() >= 2);
 	} else if (ev.GetId() == ID_EDIT_UNGROUP) {
 		// is a group selected
-		FOR_EACH(p, control.selected_parts) {
-			if (p->isSymbolGroup()) {
+		FOR_EACH(p, control.selected_parts.get()) {
+			if (p->isSymbolGroup() && !p->isSymbolSymmetry()) {
 				ev.Enable(true);
 				return;
 			}
@@ -163,21 +172,21 @@ void SymbolSelectEditor::onCommand(int id) {
 	if (id >= ID_SYMBOL_COMBINE && id < ID_SYMBOL_COMBINE_MAX) {
 		// change combine mode
 		getSymbol()->actions.add(new CombiningModeAction(
-				control.selected_parts,
+				control.selected_parts.get(),
 				static_cast<SymbolShapeCombine>(id - ID_SYMBOL_COMBINE)
 			));
 		control.Refresh(false);
 	} else if (id == ID_EDIT_DUPLICATE && !isEditing()) {
 		// duplicate selection, not when dragging
-		getSymbol()->actions.add(new DuplicateSymbolPartsAction(*getSymbol(), control.selected_parts));
+		getSymbol()->actions.add(new DuplicateSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
 		control.Refresh(false);
 	} else if (id == ID_EDIT_GROUP && !isEditing()) {
 		// group selection, not when dragging
-		getSymbol()->actions.add(new GroupSymbolPartsAction(*getSymbol(), control.selected_parts));
+		getSymbol()->actions.add(new GroupSymbolPartsAction(*getSymbol(), control.selected_parts.get(), new_intrusive<SymbolGroup>()));
 		control.Refresh(false);
 	} else if (id == ID_EDIT_UNGROUP && !isEditing()) {
 		// ungroup selection, not when dragging
-		getSymbol()->actions.add(new UngroupSymbolPartsAction(*getSymbol(), control.selected_parts));
+		getSymbol()->actions.add(new UngroupSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
 		control.Refresh(false);
 	}
 }
@@ -189,35 +198,27 @@ int SymbolSelectEditor::modeToolId() {
 // ----------------------------------------------------------------------------- : Mouse Events
 
 void SymbolSelectEditor::onLeftDown  (const Vector2D& pos, wxMouseEvent& ev) {
-	have_dragged = true;
 	// change selection
 	// Are we on a handle?
 	int dx, dy;
-	if (onAnyHandle(pos, &dx, &dy)) return; // don't change the selection
+	if (onAnyHandle(pos, &dx, &dy)) {
+		click_mode = CLICK_HANDLE;
+		return; // don't change the selection
+	}
 	// Select the part under the cursor
-	SymbolPartP part = findPart(pos);
+	SymbolPartP part = control.selected_parts.find(pos);
 	if (part) {
-		if (ev.ShiftDown()) {
-			// toggle selection
-			set<SymbolPartP>::iterator it = control.selected_parts.find(part);
-			if (it != control.selected_parts.end()) {
-				control.selected_parts.erase(it);
-			} else {
-				control.selected_parts.insert(part);
-			}
-		} else {
-			if (control.selected_parts.find(part) != control.selected_parts.end()) {
-				// already selected, do nothing
-				have_dragged = false; // we haven't done anything
-			} else {
-				// select the part under the cursor
-				control.selected_parts.clear();
-				control.selected_parts.insert(part);
-			}
+		click_mode = control.selected_parts.select(part, ev.ShiftDown() ? SELECT_TOGGLE : SELECT_IF_OUTSIDE)
+		           ? (ev.ShiftDown() ? CLICK_NONE : CLICK_MOVE)
+		           : CLICK_TOGGLE;
+	} else {
+		// selection rectangle
+		click_mode = CLICK_RECT;
+		selection_rect_a = selection_rect_b = pos;
+		if (!ev.ShiftDown()) {
+			// select nothing
+			control.selected_parts.clear();
 		}
-	} else if (!ev.ShiftDown()) {
-		// select nothing
-		control.selected_parts.clear();
 	}
 	// selection has changed
 	updateBoundingBox();
@@ -231,24 +232,18 @@ void SymbolSelectEditor::onLeftUp    (const Vector2D& pos, wxMouseEvent& ev) {
 		resetActions();
 	} else {
 		// mouse not moved -> change selection
-		if (!have_dragged && !ev.ShiftDown()) {
-			int dx, dy;
-			if (onAnyHandle(pos, &dx, &dy)) return; // don't change the selection
-			// Find the part under the cursor
-			SymbolPartP part = findPart(pos);
-			if (control.selected_parts.find(part) != control.selected_parts.end()) {
-				// already selected, don't change selection
-				// instead switch between rotate and resize mode
-				rotate = !rotate;
-			}
+		if (click_mode == CLICK_TOGGLE) {
+			// switch between rotate and resize mode
+			rotate = !rotate;
 		}
 	}
+	click_mode = CLICK_NONE;
 	control.Refresh(false);
 }
 
 void SymbolSelectEditor::onLeftDClick(const Vector2D& pos, wxMouseEvent& ev) {
 	// start editing the points of the clicked part
-	highlightPart = findPart(pos);
+	highlightPart = control.selected_parts.find(pos);
 	if (highlightPart) {
 		control.activatePart(highlightPart);
 	}
@@ -256,7 +251,7 @@ void SymbolSelectEditor::onLeftDClick(const Vector2D& pos, wxMouseEvent& ev) {
 
 void SymbolSelectEditor::onMouseMove  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev) {
 	// can we highlight a part?
-	highlightPart = findPart(to);
+	highlightPart = control.selected_parts.find(to);
 	// are we on a handle?
 	int dx, dy;
 	if (!control.selected_parts.empty() && onAnyHandle(to, &dx, &dy)) {
@@ -296,31 +291,39 @@ template <typename Event> int snap(Event& ev) {
 }
 
 void SymbolSelectEditor::onMouseDrag  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev) {
-	have_dragged = true;
+	if (click_mode == CLICK_NONE) return;
 	if (control.selected_parts.empty()) return;
+	if (click_mode == CLICK_RECT) {
+		// rectangle
+		control.selected_parts.selectRect(selection_rect_a, selection_rect_b, to, SELECT_TOGGLE);
+		selection_rect_b = to;
+		control.Refresh(false);
+	}
 	if (!isEditing()) {
 		// we don't have an action yet, determine what to do
 		// note: base it on the from position, which is the position where dragging started
 		if (onAnyHandle(from, &scaleX, &scaleY)) {
+			click_mode = CLICK_HANDLE;
 			if (rotate) {
 				if (scaleX == 0 || scaleY == 0) {
 					// shear, center/fixed point on the opposite side
-					shearAction = new SymbolPartShearAction(control.selected_parts, handlePos(-scaleX, -scaleY));
+					shearAction = new SymbolPartShearAction(control.selected_parts.get(), handlePos(-scaleX, -scaleY));
 					getSymbol()->actions.add(shearAction);
 				} else {
 					// rotate	
-					rotateAction = new SymbolPartRotateAction(control.selected_parts, center);
+					rotateAction = new SymbolPartRotateAction(control.selected_parts.get(), center);
 					getSymbol()->actions.add(rotateAction);
 					startAngle = angleTo(to);
 				}
 			} else {
 				// we are on a handle; start scaling
-				scaleAction = new SymbolPartScaleAction(control.selected_parts, scaleX, scaleY);
+				scaleAction = new SymbolPartScaleAction(control.selected_parts.get(), scaleX, scaleY);
 				getSymbol()->actions.add(scaleAction);
 			}
 		} else {
 			// move
-			moveAction = new SymbolPartMoveAction(control.selected_parts);
+			click_mode = CLICK_MOVE;
+			moveAction = new SymbolPartMoveAction(control.selected_parts.get());
 			getSymbol()->actions.add(moveAction);
 		}
 	}
@@ -391,8 +394,8 @@ void SymbolSelectEditor::onKeyChange (wxKeyEvent& ev) {
 void SymbolSelectEditor::onChar(wxKeyEvent& ev) {
 	if (ev.GetKeyCode() == WXK_DELETE) {
 		// delete selected parts
-		getSymbol()->actions.add(new RemoveSymbolPartsAction(*getSymbol(), control.selected_parts));
-		if (control.selected_parts.find(highlightPart) != control.selected_parts.end()) highlightPart = SymbolPartP(); // deleted it
+		getSymbol()->actions.add(new RemoveSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
+		if (control.selected_parts.selected(highlightPart)) highlightPart = SymbolPartP(); // deleted it
 		control.selected_parts.clear();
 		resetActions();
 		control.Refresh(false);
@@ -408,7 +411,7 @@ void SymbolSelectEditor::onChar(wxKeyEvent& ev) {
 			ev.Skip();
 			return;
 		}
-		getSymbol()->actions.add(new SymbolPartMoveAction(control.selected_parts, delta));
+		getSymbol()->actions.add(new SymbolPartMoveAction(control.selected_parts.get(), delta));
 	}
 }
 
@@ -450,35 +453,11 @@ double SymbolSelectEditor::angleTo(const Vector2D& pos) {
 	return atan2(center.x - pos.x, center.y - pos.y);
 }
 
-
-SymbolPartP find_part(const SymbolPartP& part, const Vector2D& pos) {
-	if (SymbolShape* s = part->isSymbolShape()) {
-		if (point_in_shape(pos, *s)) return part;
-	} else if (SymbolSymmetry* s = part->isSymbolSymmetry()) {
-		// TODO
-	} else if (SymbolGroup* g = part->isSymbolGroup()) {
-		FOR_EACH(p, g->parts) {
-			if (find_part(p,pos)) return part;
-		}
-	} else {
-		throw InternalError(_("Invalid symbol part type"));
-	}
-	return SymbolPartP();
-}
-
-SymbolPartP SymbolSelectEditor::findPart(const Vector2D& pos) {
-	FOR_EACH(p, getSymbol()->parts) {
-		SymbolPartP found = find_part(p, pos);
-		if (found) return found;
-	}
-	return SymbolPartP();
-}
-
 void SymbolSelectEditor::updateBoundingBox() {
 	// Find min and max coordinates
 	minV =  Vector2D::infinity();
 	maxV = -Vector2D::infinity();
-	FOR_EACH(p, control.selected_parts) {
+	FOR_EACH(p, control.selected_parts.get()) {
 		minV = piecewise_min(minV, p->min_pos);
 		maxV = piecewise_max(maxV, p->max_pos);
 	}

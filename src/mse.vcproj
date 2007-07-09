@@ -878,6 +878,18 @@
 					RelativePath=".\gui\symbol\select_editor.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\symbol\selection.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\symbol\selection.hpp">
+				</File>
+				<File
+					RelativePath=".\gui\symbol\symmetry_editor.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\symbol\symmetry_editor.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\symbol\window.cpp">
 					<FileConfiguration
 						Name="Debug|Win32">

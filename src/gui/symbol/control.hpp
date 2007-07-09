@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <data/symbol.hpp>
+#include <gui/symbol/selection.hpp>
 #include <render/symbol/viewer.hpp>
 
 class SymbolWindow;
@@ -71,9 +72,9 @@ class SymbolControl : public wxControl, public SymbolViewer {
 	
   public: 
 	/// What parts are selected?
-	set<SymbolPartP> selected_parts;
-	SymbolPartP      highlight_part; ///< part the mouse cursor is over
-	SymbolShapeP     selected_shape; ///< if there is a single selection
+	SymbolPartsSelection selected_parts;
+	SymbolPartP          highlight_part; ///< part the mouse cursor is over
+	SymbolShapeP         selected_shape; ///< if there is a single selection
 	
 	/// Parent window 
 	SymbolWindow* parent;

@@ -240,36 +240,52 @@ class DuplicateSymbolPartsAction : public SymbolPartListAction {
 /// Change the position of a part in a symbol, by moving a part.
 class ReorderSymbolPartsAction : public SymbolPartListAction {
   public:
-	ReorderSymbolPartsAction(Symbol& symbol, size_t old_position, size_t new_position);
+	ReorderSymbolPartsAction(SymbolGroup& old_parent, size_t old_position, SymbolGroup& new_parent, size_t new_position);
   
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);
 	
   private:
-	Symbol& symbol;						///< Symbol to swap the parts in
+	SymbolGroup* old_parent, *new_parent;///< Parents to move from and to
   public:
 	size_t old_position, new_position;	///< Positions to move from and to
 };
 
+/// Break up a single group, and put its contents at a specific position
+class UngroupReorderSymbolPartsAction : public SymbolPartListAction {
+  public:
+	/// Remove all the given groups
+	UngroupReorderSymbolPartsAction(SymbolGroup& group_parent, size_t group_pos, SymbolGroup& target_parent, size_t target_pos);
+	
+	virtual String getName(bool to_undo) const;
+	virtual void   perform(bool to_undo);
+	
+  private:
+	SymbolGroup& group_parent;
+	size_t       group_pos;
+	SymbolGroupP group;      ///< Group to destroy
+	SymbolGroup& target_parent;
+	size_t       target_pos;
+};
 
 // ----------------------------------------------------------------------------- : Group symbol parts
 
 /// Group multiple symbol parts together
 class GroupSymbolPartsActionBase : public SymbolPartListAction {
   public:
-	GroupSymbolPartsActionBase(Symbol& symbol);
+	GroupSymbolPartsActionBase(SymbolGroup& root);
 	
 	virtual void perform(bool to_undo);
 	
   protected:
-	Symbol&             symbol;			///< Symbol to group stuff in
+	SymbolGroup&        root;			///< Symbol or group to group stuff in
 	vector<SymbolPartP> old_part_list;	///< Old part list of the symbol
 };
 
 /// Group multiple symbol parts together
 class GroupSymbolPartsAction : public GroupSymbolPartsActionBase {
   public:
-	GroupSymbolPartsAction(Symbol& symbol, const set<SymbolPartP>& parts);
+	GroupSymbolPartsAction(SymbolGroup& root, const set<SymbolPartP>& parts, const SymbolGroupP& group);
 	
 	virtual String getName(bool to_undo) const;
 };
@@ -277,11 +293,11 @@ class GroupSymbolPartsAction : public GroupSymbolPartsActionBase {
 /// Break up one or more SymbolGroups
 class UngroupSymbolPartsAction : public GroupSymbolPartsActionBase {
   public:
-	UngroupSymbolPartsAction(Symbol& symbol, const set<SymbolPartP>& groups);
+	/// Remove all the given groups
+	UngroupSymbolPartsAction(SymbolGroup& root, const set<SymbolPartP>& groups);
 	
 	virtual String getName(bool to_undo) const;
 };
-
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

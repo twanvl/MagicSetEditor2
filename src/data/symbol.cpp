@@ -204,7 +204,12 @@ String SymbolSymmetry::typeName() const {
 }
 
 SymbolPartP SymbolSymmetry::clone() const {
-	return new_intrusive1<SymbolSymmetry>(*this);
+	SymbolSymmetryP part(new SymbolSymmetry(*this));
+	// also clone the parts inside
+	FOR_EACH(p, part->parts) {
+		p = p->clone();
+	}
+	return part;
 }
 
 IMPLEMENT_REFLECTION(SymbolSymmetry) {
@@ -213,19 +218,15 @@ IMPLEMENT_REFLECTION(SymbolSymmetry) {
 	REFLECT(copies);
 	REFLECT(center);
 	REFLECT(handle);
-	// Fixes after reading
-	REFLECT_IF_READING {
-		if (name.empty()) {
-			if (kind == SYMMETRY_REFLECTION) {
-				name = _("Mirror");
-			} else {
-				name = _("Symmetry");
-			}
-		}
-	}
+	REFLECT(parts);
+	REFLECT_IF_READING calculateBoundsNonRec();
 }
 
 // ----------------------------------------------------------------------------- : SymbolGroup
+
+SymbolGroup::SymbolGroup() {
+	name = capitalize(_TYPE_("group"));
+}
 
 String SymbolGroup::typeName() const {
 	return _("group");
@@ -238,6 +239,14 @@ SymbolPartP SymbolGroup::clone() const {
 		p = p->clone();
 	}
 	return part;
+}
+
+bool SymbolGroup::isAncestor(const SymbolPart& that) const {
+	if (this == &that) return true;
+	FOR_EACH_CONST(p, parts) {
+		if (p->isAncestor(that)) return true;
+	}
+	return false;
 }
 
 void SymbolGroup::calculateBounds() {
@@ -256,12 +265,14 @@ void SymbolGroup::calculateBoundsNonRec() {
 IMPLEMENT_REFLECTION(SymbolGroup) {
 	REFLECT_BASE(SymbolPart);
 	REFLECT(parts);
+	REFLECT_IF_READING calculateBoundsNonRec();
 }
 
 // ----------------------------------------------------------------------------- : Symbol
 
 IMPLEMENT_REFLECTION(Symbol) {
 	REFLECT(parts);
+	REFLECT_IF_READING calculateBoundsNonRec();
 }
 
 // ----------------------------------------------------------------------------- : Default symbol

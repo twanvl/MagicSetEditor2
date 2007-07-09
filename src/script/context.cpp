@@ -352,6 +352,7 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 			break;
 		case I_AND:		OPERATOR_I(&&);
 		case I_OR:		OPERATOR_I(||);
+		case I_XOR:		a = to_script((bool)*a != (bool)*b); break;
 		case I_EQ:		OPERATOR_SDI(==);
 		case I_NEQ:		OPERATOR_SDI(!=);
 		case I_LT:		OPERATOR_DI(<);

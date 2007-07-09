@@ -152,6 +152,13 @@ enum ChildMenuID {
 ,	ID_SHAPE_MAX
 ,	ID_SIDES
 	
+	// SymbolSymmetryEditor toolbar/menu
+,	ID_SYMMETRY				= 2201
+,	ID_SYMMETRY_ROTATION	= ID_SHAPE
+,	ID_SYMMETRY_REFLECTION
+,	ID_SYMMETRY_MAX
+,	ID_COPIES
+	
 	// On cards panel
 ,	ID_COLLAPSE_NOTES		= 3001
 	

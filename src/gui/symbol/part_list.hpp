@@ -12,6 +12,8 @@
 #include <util/prec.hpp>
 #include <data/symbol.hpp>
 
+class SymbolPartsSelection;
+
 // ----------------------------------------------------------------------------- : Events
 
 DECLARE_EVENT_TYPE(EVENT_PART_SELECT,   <not used>)
@@ -26,7 +28,7 @@ DECLARE_EVENT_TYPE(EVENT_PART_ACTIVATE, <not used>)
 
 class SymbolPartList : public wxScrolledWindow, public SymbolView {
   public:
-	SymbolPartList(Window* parent, int id, set<SymbolPartP>& selection, SymbolP symbol = SymbolP());
+	SymbolPartList(Window* parent, int id, SymbolPartsSelection& selection, SymbolP symbol = SymbolP());
 	
 	/// Another symbol is being viewed
 	virtual void onChangeSymbol();
@@ -41,11 +43,13 @@ class SymbolPartList : public wxScrolledWindow, public SymbolView {
   protected:
 	virtual wxSize DoGetBestSize() const;
   private:
-	set<SymbolPartP>& selection; ///< Store selection here
-	
-	SymbolPartP mouse_down_on;
-	int drop_position;
+	SymbolPartsSelection& selection; ///< Store selection here
 	int number_of_items;
+	
+	SymbolPartP drag;
+	SymbolGroupP drag_parent, drop_parent;
+	size_t drag_position, drop_position;
+	bool drop_inside; // drop inside the drop parent, not at a specific position
 	
 	SymbolPartP typing_in;
 	size_t cursor;
@@ -79,8 +83,20 @@ class SymbolPartList : public wxScrolledWindow, public SymbolView {
 	const Image& symbolPreview();
 	void updatePart(const set<SymbolPartP>& parts, int& i, bool parent_updated, const SymbolPartP& part);
 	
-	SymbolPartP findItem(int i) const;
-	static SymbolPartP findItem(int& i, const SymbolPartP& part);
+	/// find item by position
+	SymbolPartP findItem(int i, int x) const;
+	static SymbolPartP findItem(int& i, int x, const SymbolPartP& part);
+	
+	/// parent of 'of' and the position of 'of' in that parent
+	void findParent(const SymbolPart& of, SymbolGroupP& parent_out, size_t& pos_out);
+	static bool findParent(const SymbolPart& of, const SymbolGroupP& in, SymbolGroupP& parent_out, size_t& pos_out);
+	
+	/// Where is the drop position?
+	/**   i      = index before which the cursor is
+	 *    before = is the cursor before or after the separator line?
+	 *  Returns whether a drop position was found, sets drop_...
+	 */
+	bool findDropTarget(const SymbolPartP& parent, int& i, bool before);
 	
 	static int childCount(const SymbolPartP& part);
 	

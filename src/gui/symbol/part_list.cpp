@@ -7,10 +7,12 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <gui/symbol/part_list.hpp>
+#include <gui/symbol/selection.hpp>
 #include <gui/util.hpp>
 #include <data/action/symbol.hpp>
 #include <gfx/gfx.hpp>
 #include <render/symbol/filter.hpp>
+#include <util/error.hpp>
 #include <wx/dcbuffer.h>
 #include <wx/caret.h>
 
@@ -24,11 +26,12 @@ DEFINE_EVENT_TYPE(EVENT_PART_ACTIVATE);
 // ----------------------------------------------------------------------------- : SymbolPartList
 
 
-SymbolPartList::SymbolPartList(Window* parent, int id, set<SymbolPartP>& selection, SymbolP symbol)
+SymbolPartList::SymbolPartList(Window* parent, int id, SymbolPartsSelection& selection, SymbolP symbol)
 	: wxScrolledWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER | wxVSCROLL)
 	, selection(selection)
 	, state_icons(9,8)
 {
+	SetScrollRate(0, ITEM_HEIGHT+1);
 	// NOTE: this is based on the order of the SymbolShapeCombine and SymbolSymmetryType enums!
 	state_icons.Add(load_resource_image(_("icon_combine_merge")));
 	state_icons.Add(load_resource_image(_("icon_combine_subtract")));
@@ -69,7 +72,7 @@ void SymbolPartList::onAction(const Action& action, bool undone) {
 	TYPE_CASE_(action, SymbolPartAction) {
 		symbol_preview.up_to_date = false;
 		// some part changed, but we don't know which one, assume it is the selection
-		updateParts(selection);
+		updateParts(selection.get());
 		return;
 	}
 }
@@ -84,7 +87,7 @@ wxSize SymbolPartList::DoGetBestSize() const {
 void SymbolPartList::update() {
 	// count items
 	number_of_items = childCount(symbol);
-	SetVirtualSize(110, number_of_items * (ITEM_HEIGHT+1));
+	SetVirtualSize(110, number_of_items * (ITEM_HEIGHT + 1));
 	// invalidate previews
 	symbol_preview.up_to_date = false;
 	for (size_t i = 0 ; i < part_previews.size() ; ++i) {
@@ -118,23 +121,19 @@ void SymbolPartList::updatePart(const set<SymbolPartP>& parts, int& i, bool pare
 // ----------------------------------------------------------------------------- : Events
 
 void SymbolPartList::onLeftDown(wxMouseEvent& ev) {
+	int top; GetViewStart(0, &top);
 	// find item under cursor
 	if (ev.GetX() < 0 || ev.GetX() >= GetClientSize().x) return;
-	SymbolPartP part = findItem(ev.GetY() / (ITEM_HEIGHT + 1));
+	int pos = top + ev.GetY() / (ITEM_HEIGHT + 1);
+	SymbolPartP part = findItem(pos, ev.GetX());
 	if (part) {
 		// toggle/select
-		if (!ev.ShiftDown()) {
-			selection.clear();
-		}
-		if (selection.find(part) != selection.end()) {
-			selection.erase(part);
-		} else {
-			selection.insert(part);
-		}
-		if (!ev.ShiftDown()) {
+		selection.select(part, ev.ShiftDown() ? SELECT_TOGGLE : SELECT_OVERRIDE);
+		if (!ev.ShiftDown() && selection.selected(part)) {
 			// drag item
-			mouse_down_on = part;
-			drop_position = -1;
+			drag = part;
+			findParent(*part, drag_parent, drag_position);
+			drop_parent = SymbolGroupP();
 			CaptureMouse();
 		}
 		sendEvent(EVENT_PART_SELECT);
@@ -144,43 +143,65 @@ void SymbolPartList::onLeftDown(wxMouseEvent& ev) {
 }
 void SymbolPartList::onLeftUp(wxMouseEvent& ev) {
 	if (HasCapture()) ReleaseMouse();
-	if (mouse_down_on && drop_position != -1) {
+	if (drag_parent && drop_parent) {
 		// move part
-		// find old position
-		vector<SymbolPartP>::const_iterator it = find(symbol->parts.begin(), symbol->parts.end(), mouse_down_on);
-		mouse_down_on = SymbolPartP();
-		if (it == symbol->parts.end()) {
-			Refresh(false);
-			return;
-		}
-		size_t old_position = it - symbol->parts.begin();
-		// find new position
-		size_t new_position;
-		SymbolPartP drop_before = findItem(drop_position);
-		it = find(symbol->parts.begin(), symbol->parts.end(), drop_before);
-		if (it == symbol->parts.end()) {
-			new_position = number_of_items - 1;
-		} else {
-			new_position = it - symbol->parts.begin();
-			if (old_position < new_position) new_position -= 1;
+		if (drag_parent == drop_parent && drag_position < drop_position) {
+			drop_position -= 1; // adjust for removal of the dragged part
 		}
 		// move part
-		if (old_position != new_position) {
-			symbol->actions.add(new ReorderSymbolPartsAction(*symbol, old_position, new_position));
+		SymbolGroupP par = drag_parent; drag_parent = SymbolGroupP();
+		if (par != drop_parent || drag_position != drop_position) {
+			if (par != drop_parent && par->parts.size() == 1 && !par->isSymbolSymmetry()) {
+				// this leaves a group without elements, remove it
+				findParent(*par, par, drag_position); // parent of the group
+				symbol->actions.add(new UngroupReorderSymbolPartsAction(*par, drag_position, *drop_parent, drop_position));
+			} else {
+				symbol->actions.add(new ReorderSymbolPartsAction(*par, drag_position, *drop_parent, drop_position));
+			}
 		} else {
 			Refresh(false);
 		}
 	} else {
-		mouse_down_on = SymbolPartP();
+		drag_parent = SymbolGroupP();
 	}
 }
 void SymbolPartList::onMotion(wxMouseEvent& ev) {
-	if (mouse_down_on) {
-		int new_drop_position = (ev.GetY() + ITEM_HEIGHT/2) / (ITEM_HEIGHT + 1);
-		if (new_drop_position < 0 || new_drop_position > number_of_items) new_drop_position = -1;
-		// TODO: make sure it is not in a group
-		if (drop_position != new_drop_position) {
-			drop_position = new_drop_position;
+	int top; GetViewStart(0, &top);
+	if (drag_parent) {
+		int pos = top + (ev.GetY() + ITEM_HEIGHT/2) / (ITEM_HEIGHT + 1);
+		if (pos < 0) pos = 0;
+		if (pos >= number_of_items) pos = number_of_items;
+		bool before = ev.GetY() < (pos - top) * (ITEM_HEIGHT + 1);
+		// old stuff
+		SymbolGroupP old_drop_parent   = drop_parent;
+		size_t       old_drop_position = drop_position;
+		bool         old_drop_inside   = drop_inside;
+		// find drop target
+		drop_parent = SymbolGroupP();
+		findDropTarget(symbol, pos, before);
+		// the drop parent must be an ancestor or sibling of ancestor of the drag_parent
+		// i.e. the drop parent's parent must be an ancestor of drag_parent
+		if (drop_parent) {
+			drop_inside = !drop_parent->isAncestor(*drag_parent);
+			while(drop_parent != symbol) {
+				// is drop_parent a sibling of an ancestor of drag_parent?
+				SymbolGroupP drop_parent_parent;
+				size_t       drop_parent_position;
+				findParent(*drop_parent, drop_parent_parent, drop_parent_position);
+				if (!drop_parent_parent->isAncestor(*drag_parent)) {
+					// move up one level
+					drop_parent   = drop_parent_parent;
+					drop_position = drop_parent_position;
+				} else {
+					break;
+				}
+			}
+			if (drop_parent == symbol) {
+				drop_inside = false;
+			}
+		}
+		// refresh?
+		if (drop_parent != old_drop_parent || drop_position != old_drop_position || drop_inside != old_drop_inside) {
 			Refresh(false);
 		}
 	}
@@ -262,25 +283,75 @@ void SymbolPartList::sendEvent(int type) {
 
 // ----------------------------------------------------------------------------- : Items
 
-SymbolPartP SymbolPartList::findItem(int i) const {
+SymbolPartP SymbolPartList::findItem(int i, int x) const {
 	FOR_EACH(p, symbol->parts) {
-		SymbolPartP f = findItem(i, p);
+		SymbolPartP f = findItem(i, x, p);
 		if (f) return f;
 	}
 	return SymbolPartP();
 }
-SymbolPartP SymbolPartList::findItem(int& i, const SymbolPartP& part) {
+SymbolPartP SymbolPartList::findItem(int& i, int x, const SymbolPartP& part) {
 	if (i < 0 ) return SymbolPartP();
 	if (i == 0) return part;
 	i -= 1;
 	// sub item?
 	if (SymbolGroup* g = part->isSymbolGroup()) {
 		FOR_EACH(p, g->parts) {
-			if (findItem(i, p)) return part;
+			SymbolPartP f = findItem(i, x - 5, p);
+			if (f) return x < 5 ? part : f; // clicked on bar at the left of group?
 		}
 	}
 	return SymbolPartP();
 }
+
+void SymbolPartList::findParent(const SymbolPart& of, SymbolGroupP& parent_out, size_t& pos_out) {
+	if (!findParent(of, symbol, parent_out, pos_out)) {
+		throw InternalError(_("Symbol part without a parent"));
+	}
+}
+bool SymbolPartList::findParent(const SymbolPart& of, const SymbolGroupP& g, SymbolGroupP& parent_out, size_t& pos_out) {
+	if (!g) return false;
+	for (size_t i = 0 ; i < g->parts.size() ; ++i) {
+		if (g->parts[i].get() == &of) {
+			parent_out = g;
+			pos_out    = i;
+			return true;
+		}
+		if (findParent(of, dynamic_pointer_cast<SymbolGroup>(g->parts[i]), parent_out, pos_out)) return true;
+	}
+	return false;
+}
+
+bool SymbolPartList::findDropTarget(const SymbolPartP& parent, int& i, bool before) {
+	if (parent != symbol) --i;
+	if (SymbolGroup* g = parent->isSymbolGroup()) {
+		size_t pos = 0;
+		FOR_EACH(p, g->parts) {
+			if (i <= 0) {
+				// drop before this part
+				drop_parent   = static_pointer_cast<SymbolGroup>(parent);
+				drop_position = pos;
+				return true;
+			}
+			if (p == drag) {
+				i -= childCount(p) + 1; // don't drop inside
+			} else {
+				if (findDropTarget(p, i, before)) {
+					return true;
+				}
+			}
+			++pos;
+		}
+		if (i <= 0 && (parent == symbol || before)) {
+			// drop at the end
+			drop_parent   = static_pointer_cast<SymbolGroup>(parent);
+			drop_position = g->parts.size();
+			return true;
+		}
+	}
+	return false;
+}
+
 
 int SymbolPartList::childCount(const SymbolPartP& part) {
 	if (SymbolGroup* g = part->isSymbolGroup()) {
@@ -291,9 +362,6 @@ int SymbolPartList::childCount(const SymbolPartP& part) {
 		return 0;
 	}
 }
-
-// ----------------------------------------------------------------------------- : Text editor
-
 
 // ----------------------------------------------------------------------------- : Drawing
 
@@ -307,23 +375,13 @@ void SymbolPartList::OnDraw(DC& dc) {
 	// init
 	dc.SetFont(*wxNORMAL_FONT);
 	// clear background
-	wxSize size = GetClientSize();
+	wxSize size = piecewise_max(GetVirtualSize() + RealSize(0,ITEM_HEIGHT+1), GetClientSize());
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	dc.DrawRectangle(0,0,size.x,size.y);
 	// items
 	int i = 0;
-	FOR_EACH(p, symbol->parts) {
-		drawItem(dc, 0, i, false, p);
-	}
-	// drag/drop indicator
-	if (mouse_down_on && drop_position != -1) {
-		dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT), 3));
-		int y = drop_position * (ITEM_HEIGHT + 1) - 1;
-		dc.DrawLine(0,y,size.x,y);
-		dc.DrawLine(0,y-3,0,y+3);
-		dc.DrawLine(size.x-1,y-3,size.x-1,y+3);
-	}
+	drawItem(dc, 0, i, false, symbol);
 	// hide caret
 	if (selection.size() != 1) {
 		typing_in = SymbolPartP();
@@ -339,7 +397,7 @@ void SymbolPartList::drawItem(DC& dc, int x, int& i, bool parent_active, const S
 	// draw item : highlight
 	Color background;
 	dc.SetPen(*wxTRANSPARENT_PEN);
-	bool active = selection.find(part) != selection.end();
+	bool active = selection.selected(part);
 	if (active) {
 		background = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
 		dc.SetBrush(background);
@@ -352,47 +410,67 @@ void SymbolPartList::drawItem(DC& dc, int x, int& i, bool parent_active, const S
 		background = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
 		dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 	}
-	// draw item : name
-	int h = dc.GetCharHeight();
-	dc.DrawText(part->name, ITEM_HEIGHT + x + 3, y + (ITEM_HEIGHT - h) / 2);
-	// draw item : icon
-	dc.SetBrush(lerp(background,wxColour(0,128,0),0.7));
-	dc.DrawRectangle(x,y,ITEM_HEIGHT,ITEM_HEIGHT);
-	dc.DrawBitmap(symbolPreview(),     x, y);
-	dc.DrawBitmap(itemPreview(i,part), x, y);
-	// draw item : border
 	wxPen line_pen = lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
-	                      wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT),0.5);
-	dc.SetPen(line_pen);
-	dc.DrawLine(x+ITEM_HEIGHT, y, x+ITEM_HEIGHT, y + ITEM_HEIGHT + 1); // line after image
-	dc.DrawLine(x, y + ITEM_HEIGHT, size.x, y + ITEM_HEIGHT); // line below
-	// update caret
-	if (selection.size() == 1 && active) {
-		updateCaret(dc, x + ITEM_HEIGHT + 3, y + (ITEM_HEIGHT - h) / 2, h, part);
-	}
-	// move down
-	i += 1;
-	// draw more?
-	if (SymbolShape* s = part->isSymbolShape()) {
-		// combine state
-		state_icons.Draw(s->combine, dc, size.x - 10, y + 1);
-	} else if (SymbolSymmetry* s = part->isSymbolSymmetry()) {
-		// kind of symmetry
-		state_icons.Draw(s->kind, dc, size.x - 10, y + 1);
-		// TODO: show clip mode?
-	} else if (SymbolGroup* g = part->isSymbolGroup()) {
-		state_icons.Draw(SYMMETRY_REFLECTION + 1, dc, size.x - 10, y + 1);
-		FOR_EACH(p, g->parts) drawItem(dc, x + 5, i, active || parent_active, p);
-		// draw bar on the left
-		int new_y = i * (ITEM_HEIGHT + 1);
-		y += ITEM_HEIGHT+1;
-		if (y != new_y) {
-			dc.SetPen(line_pen);
-			dc.SetBrush(background);
-			dc.DrawRectangle(x-1,y-1,5+1,new_y-y+1);
+						wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT),0.5);
+	if (part != symbol) {
+		// draw item : name
+		int h = dc.GetCharHeight();
+		dc.DrawText(part->name, ITEM_HEIGHT + x + 3, y + (ITEM_HEIGHT - h) / 2);
+		// draw item : icon
+		dc.SetBrush(lerp(background,wxColour(0,128,0),0.7));
+		dc.DrawRectangle(x,y,ITEM_HEIGHT,ITEM_HEIGHT);
+		dc.DrawBitmap(symbolPreview(),     x, y);
+		dc.DrawBitmap(itemPreview(i,part), x, y);
+		// draw item : border
+		dc.SetPen(line_pen);
+		dc.DrawLine(x+ITEM_HEIGHT, y, x+ITEM_HEIGHT, y + ITEM_HEIGHT + 1); // line after image
+		dc.DrawLine(x, y + ITEM_HEIGHT, size.x, y + ITEM_HEIGHT); // line below
+		// update caret
+		if (selection.size() == 1 && active) {
+			updateCaret(dc, x + ITEM_HEIGHT + 3, y + (ITEM_HEIGHT - h) / 2, h, part);
 		}
-	} else {
-		throw "Unknown symbol part type";
+		// draw icon
+		state_icons.Draw(part->icon(), dc, size.x - 10, y + 1);
+		// move down
+		i += 1;
+	}
+	// Draw children
+	int child_x = part == symbol ? x : x + 5;
+	if (SymbolGroup* g = part->isSymbolGroup()) {
+		FOR_EACH(p, g->parts) drawItem(dc, child_x, i, active || parent_active, p);
+	}
+	// draw bar on the left?
+	int old_y = y + ITEM_HEIGHT+1; // after part itself
+	int new_y = i * (ITEM_HEIGHT + 1); // after children
+	if (old_y != new_y && part != symbol) {
+		dc.SetPen(line_pen);
+		dc.SetBrush(background);
+		dc.DrawRectangle(x-1,old_y-1,5+1,new_y-old_y+1);
+	}
+	// Drop indicator?
+	if (drag_parent && drop_parent) {
+		dc.SetPen(wxPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT), 3));
+		if (drop_inside) {
+			if (part == drop_parent) {
+				// drop inside part
+				dc.SetBrush(*wxTRANSPARENT_BRUSH);
+				dc.DrawRectangle(x, y, w, new_y - y);
+			}
+		} else if (drop_position < drop_parent->parts.size()) {
+			if (part == drop_parent->parts[drop_position]) {
+				// drop before part
+				dc.DrawLine(x,y,size.x,y);
+				dc.DrawLine(x,y-3,x,y+3);
+				dc.DrawLine(size.x-1,y-3,size.x-1,y+3);
+			}
+		} else {
+			if (part == drop_parent) {
+				// drop after part
+				dc.DrawLine(child_x,new_y,size.x,new_y);
+				dc.DrawLine(child_x,new_y-3,child_x,new_y+3);
+				dc.DrawLine(size.x-1,new_y-3,size.x-1,new_y+3);
+			}
+		}
 	}
 }
 
@@ -432,6 +510,7 @@ const Image& SymbolPartList::symbolPreview() {
 }
 
 void SymbolPartList::updateCaret(DC& dc, int x, int y, int h, const SymbolPartP& part) {
+	int top; GetViewStart(0, &top);
 	// make caret
 	wxCaret* caret = GetCaret();
 	if (!caret) {
@@ -446,7 +525,7 @@ void SymbolPartList::updateCaret(DC& dc, int x, int y, int h, const SymbolPartP&
 	cursor = min(cursor, typing_in->name.size());
 	int w;
 	dc.GetTextExtent(typing_in->name.substr(0,cursor), &w, nullptr);
-	caret->Move(x+w,y);
+	caret->Move(x+w, y - top*(ITEM_HEIGHT+1));
 	if (!caret->IsVisible()) caret->Show();
 }
 

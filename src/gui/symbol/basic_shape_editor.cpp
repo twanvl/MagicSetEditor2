@@ -28,7 +28,7 @@ SymbolBasicShapeEditor::SymbolBasicShapeEditor(SymbolControl* control)
 
 void SymbolBasicShapeEditor::draw(DC& dc) {
 	// highlight the part we are drawing
-	if (drawing) {
+	if (shape) {
 		control.highlightPart(dc, *shape, HIGHLIGHT_BORDER);
 	}
 }
@@ -64,6 +64,7 @@ void SymbolBasicShapeEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 		delete sides;
 		delete sidesL;
 	#endif
+	stopActions(); // set status text
 }
 
 void SymbolBasicShapeEditor::onUpdateUI(wxUpdateUIEvent& ev) {
@@ -80,6 +81,7 @@ void SymbolBasicShapeEditor::onCommand(int id) {
 	if (id >= ID_SHAPE && id < ID_SHAPE_MAX) {
 		// change shape mode
 		mode = id;
+		stopActions();
 	}
 }
 

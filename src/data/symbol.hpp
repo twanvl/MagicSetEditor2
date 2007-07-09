@@ -133,6 +133,10 @@ class SymbolPart : public IntrusivePtrVirtualBase {
 	virtual       SymbolGroup*    isSymbolGroup()          { return nullptr; }
 	virtual const SymbolGroup*    isSymbolGroup()    const { return nullptr; }
 	
+	/// Does this part contain another?
+	/** also true if this==that*/
+	virtual bool isAncestor(const SymbolPart& that) const { return this == &that; }
+	
 	/// Calculate the position and size of the part (min_pos and max_pos)
 	virtual void calculateBounds();
 	
@@ -191,6 +195,30 @@ class SymbolShape : public SymbolPart {
 	DECLARE_REFLECTION();
 };
 
+// ----------------------------------------------------------------------------- : SymbolGroup
+
+/// A group of symbol parts
+class SymbolGroup : public SymbolPart {
+  public:
+	vector<SymbolPartP> parts;	///< The parts in this group, first item is on top
+	
+	SymbolGroup();
+	
+	virtual String typeName() const;
+	virtual SymbolPartP clone() const;
+	virtual int icon() const { return SYMBOL_COMBINE_BORDER + 3; }
+	virtual       SymbolGroup* isSymbolGroup()       { return this; }
+	virtual const SymbolGroup* isSymbolGroup() const { return this; }
+	
+	virtual bool isAncestor(const SymbolPart& that) const;
+	
+	virtual void calculateBounds();
+	/// re-calculate the bounds, but not of the contained parts
+	void calculateBoundsNonRec();
+	
+	DECLARE_REFLECTION();
+};
+
 // ----------------------------------------------------------------------------- : SymbolSymmetry
 
 enum SymbolSymmetryType
@@ -198,9 +226,9 @@ enum SymbolSymmetryType
 ,	SYMMETRY_REFLECTION
 };
 
-/// A mirror, reflecting part of the symbol
+/// A mirror, reflecting the part of the symbol in the group
 /** Can handle rotation symmetry with any number of reflections */
-class SymbolSymmetry : public SymbolPart {
+class SymbolSymmetry : public SymbolGroup {
   public:
 	SymbolSymmetryType kind;	///< What kind of symmetry
 	int                copies;	///< How many times is the orignal reflected (including the original itself)
@@ -215,26 +243,6 @@ class SymbolSymmetry : public SymbolPart {
 	virtual int icon() const { return kind; }
 	virtual       SymbolSymmetry* isSymbolSymmetry()       { return this; }
 	virtual const SymbolSymmetry* isSymbolSymmetry() const { return this; }
-	
-	DECLARE_REFLECTION();
-};
-
-// ----------------------------------------------------------------------------- : SymbolGroup
-
-/// A group of symbol parts
-class SymbolGroup : public SymbolPart {
-  public:
-	vector<SymbolPartP> parts;	///< The parts in this group, first item is on top
-	
-	virtual String typeName() const;
-	virtual SymbolPartP clone() const;
-	virtual int icon() const { return SYMMETRY_REFLECTION + 1; }
-	virtual       SymbolGroup* isSymbolGroup()       { return this; }
-	virtual const SymbolGroup* isSymbolGroup() const { return this; }
-	
-	virtual void calculateBounds();
-	/// re-calculate the bounds, but not of the contained parts
-	void calculateBoundsNonRec();
 	
 	DECLARE_REFLECTION();
 };

@@ -12,6 +12,7 @@
 #include <gui/symbol/select_editor.hpp>
 #include <gui/symbol/point_editor.hpp>
 #include <gui/symbol/basic_shape_editor.hpp>
+#include <gui/symbol/symmetry_editor.hpp>
 #include <gui/util.hpp>
 #include <data/action/symbol.hpp>
 #include <data/settings.hpp>
@@ -36,7 +37,7 @@ void SymbolControl::switchEditor(const SymbolEditorBaseP& e) {
 }
 
 void SymbolControl::onChangeSymbol() {
-	selected_parts.clear();
+	selected_parts.setSymbol(symbol);
 	switchEditor(new_intrusive2<SymbolSelectEditor>(this, false));
 	Refresh(false);
 }
@@ -51,7 +52,7 @@ void SymbolControl::onModeChange(wxCommandEvent& ev) {
 			break;
 		case ID_MODE_POINTS:
 			if (selected_parts.size() == 1) {
-				selected_shape = dynamic_pointer_cast<SymbolShape>(*selected_parts.begin());
+				selected_shape = selected_parts.getAShape();
 				if (selected_shape) {
 					switchEditor(new_intrusive2<SymbolPointEditor>(this, selected_shape));
 				}
@@ -63,6 +64,9 @@ void SymbolControl::onModeChange(wxCommandEvent& ev) {
 				signalSelectionChange();
 			}
 			switchEditor(new_intrusive1<SymbolBasicShapeEditor>(this));
+			break;
+		case ID_MODE_SYMMETRY:
+			switchEditor(new_intrusive1<SymbolSymmetryEditor>(this));
 			break;
 	}
 }
@@ -92,25 +96,17 @@ void SymbolControl::onUpdateSelection() {
 	switch(editor->modeToolId()) {
 		case ID_MODE_POINTS: {
 			// can only select a single part!
-			if (selected_parts.size() > 1) {
-				// TODO: find a part that is a shape
-				SymbolPartP part = *selected_parts.begin();
-				selected_parts.clear();
-				selected_parts.insert(part);
-				signalSelectionChange();
-			} else if (selected_parts.empty()) {
-				selected_parts.insert(selected_shape);
-				signalSelectionChange();
-				break;
-			}
-			SymbolShapeP shape = dynamic_pointer_cast<SymbolShape>(*selected_parts.begin());
+			SymbolShapeP shape = selected_parts.getAShape();
 			if (!shape) {
-				selected_parts.clear();
-				selected_parts.insert(selected_shape);
-				signalSelectionChange();
+				if (selected_parts.select(selected_shape)) {
+					signalSelectionChange();
+				}
 				break;
 			}
 			if (shape != selected_shape) {
+				if (selected_parts.select(shape)) {
+					signalSelectionChange();
+				}
 				// begin editing another part
 				selected_shape = shape;
 				editor = new_intrusive2<SymbolPointEditor>(this, selected_shape);
@@ -131,16 +127,14 @@ void SymbolControl::onUpdateSelection() {
 }
 
 void SymbolControl::selectPart(const SymbolPartP& part) {
-	selected_parts.clear();
-	selected_parts.insert(part);
+	selected_parts.select(part);
 	switchEditor(new_intrusive2<SymbolSelectEditor>(this, false));
 	signalSelectionChange();
 }
 
 void SymbolControl::activatePart(const SymbolPartP& part) {
 	if (part->isSymbolShape()) {
-		selected_parts.clear();
-		selected_parts.insert(part);
+		selected_parts.select(part);
 		switchEditor(new_intrusive2<SymbolPointEditor>(this, static_pointer_cast<SymbolShape>(part)));
 	}
 }
@@ -247,11 +241,12 @@ void SymbolControl::onSize(wxSizeEvent& ev) {
 void SymbolControl::onUpdateUI(wxUpdateUIEvent& ev) {
 	if (!editor) return;
 	switch (ev.GetId()) {
-		case ID_MODE_SELECT: case ID_MODE_ROTATE: case ID_MODE_POINTS: case ID_MODE_SHAPES: //case ID_MODE_PAINT:
+		case ID_MODE_SELECT: case ID_MODE_ROTATE: case ID_MODE_POINTS:
+		case ID_MODE_SHAPES: case ID_MODE_SYMMETRY: //case ID_MODE_PAINT:
 			ev.Check(editor->modeToolId() == ev.GetId());
 			if (ev.GetId() == ID_MODE_POINTS) {
-				// can only edit points when a single part is selected <TODO?>
-				ev.Enable(selected_parts.size() == 1 && (*selected_parts.begin())->isSymbolShape());
+				// can only edit points when a shape is available
+				ev.Enable(selected_parts.getAShape());
 			}
 			break;
 		case ID_MODE_PAINT:

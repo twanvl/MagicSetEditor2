@@ -582,6 +582,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 				parseOper(input, script, PREC_CMP,   I_BINARY, I_OR);
 			}
 		}
+		else if (minPrec <= PREC_AND    && token==_("xor"))   parseOper(input, script, PREC_CMP,   I_BINARY, I_XOR);
 		else if (minPrec <= PREC_CMP    && token==_("=")) {
 			if (minPrec <= PREC_SET) {
 				input.add_error(_("Use of '=', did you mean ':=' or '=='?"));

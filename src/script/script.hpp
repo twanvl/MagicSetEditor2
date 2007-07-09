@@ -63,6 +63,7 @@ enum BinaryInstructionType
 // Logical
 ,	I_AND			///< logical and			
 ,	I_OR			///< logical or
+,	I_XOR			///< logical xor
 // Comparison
 ,	I_EQ			///< operator ==
 ,	I_NEQ			///< operator !=

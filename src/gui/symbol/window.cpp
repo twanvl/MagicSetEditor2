@@ -108,26 +108,26 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
 	
 	// Edit mode toolbar
 	wxPanel* emp = new wxPanel(this, wxID_ANY);
-	wxToolBar* em = new wxToolBar(emp, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_VERTICAL | wxTB_TEXT | wxTB_HORZ_LAYOUT);
+	wxToolBar* em = new wxToolBar(emp, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_VERTICAL | wxTB_HORZ_TEXT);
+	em->SetToolBitmapSize(wxSize(17,17));
 	em->AddTool(ID_MODE_SELECT,		_TOOL_("select"),		load_resource_tool_image(_("mode_select")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("select"),		_HELP_("select"));
 	em->AddTool(ID_MODE_ROTATE,		_TOOL_("rotate"),		load_resource_tool_image(_("mode_rotate")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("rotate"),		_HELP_("rotate"));
 	em->AddSeparator();
 	em->AddTool(ID_MODE_POINTS,		_TOOL_("points"),		load_resource_tool_image(_("mode_curve")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("points"),		_HELP_("points"));
 	em->AddSeparator();
 	em->AddTool(ID_MODE_SHAPES,		_TOOL_("basic shapes"),	load_resource_tool_image(_("circle")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("basic shapes"),	_HELP_("basic shapes"));
-	em->AddSeparator();
-	em->AddTool(ID_MODE_PAINT,		_TOOL_("paint"),		load_resource_tool_image(_("mode_paint")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("paint"),			_HELP_("paint"));
-	em->AddSeparator();
+	em->AddTool(ID_MODE_SYMMETRY,	_TOOL_("symmetry"),		load_resource_tool_image(_("mode_symmetry")),wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("symmetry"),		_HELP_("symmetry"));
+	//em->AddTool(ID_MODE_PAINT,		_TOOL_("paint"),		load_resource_tool_image(_("mode_paint")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("paint"),			_HELP_("paint"));
 	em->Realize();
+	
+	// Lay out
+	wxSizer* es = new wxBoxSizer(wxVERTICAL);
+	es->Add(em, 1, wxEXPAND | wxBOTTOM | wxALIGN_CENTER, 5);
+	emp->SetSizer(es);
 	
 	// Controls
 	control = new SymbolControl (this, ID_CONTROL, symbol);
 	parts   = new SymbolPartList(this, ID_PART_LIST, control->selected_parts, symbol);
-	
-	// Lay out
-	wxSizer* es = new wxBoxSizer(wxHORIZONTAL);
-	es->Add(em, 1, wxEXPAND | wxTOP | wxBOTTOM | wxALIGN_CENTER, 1);
-	emp->SetSizer(es);
 	
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
 		wxSizer* v = new wxBoxSizer(wxVERTICAL);
@@ -136,6 +136,52 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
 	s->Add(v,       0, wxEXPAND);
 	s->Add(control, 1, wxEXPAND);
 	SetSizer(s);
+	
+	#ifdef __WXMSW__
+		// only tested on msw, may not even be needed on other platforms
+		#define USE_HORRIBLE_HORRIBLE_HACK_TO_MAKE_TOOLBAR_THE_RIGHT_SIZE
+	#endif
+	
+	#ifdef USE_HORRIBLE_HORRIBLE_HACK_TO_MAKE_TOOLBAR_THE_RIGHT_SIZE
+		// Welcome to HackWorld
+		
+		// Prevent clipping of the bottom tool
+		Layout();
+		em->SetSize(emp->GetSize());
+		
+		// HACK: force edit mode toolbar to be wide enough by adding spaces to tool names
+		int n = 0;
+		while (em->GetSize().x + 5 < emp->GetSize().x) {
+			++n;
+			for (int id = ID_MODE_SELECT ; id <= ID_MODE_SYMMETRY ; ++id) {
+				wxToolBarToolBase* tool = em->FindById(id);
+				tool->SetLabel(tool->GetLabel() + _(" "));
+			}
+			em->Realize();
+		}
+		// And now rebuild it, because the above meddling broke the toolbar for some unknown reason
+		em->Destroy();
+		em = new wxToolBar(emp, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxTB_VERTICAL | wxTB_HORZ_TEXT);
+		em->SetToolBitmapSize(wxSize(17,17));
+		String spaces(max(0,n-1), _(' '));
+		em->AddTool(ID_MODE_SELECT,		_TOOL_("select")       + spaces, load_resource_tool_image(_("mode_select")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("select"),		_HELP_("select"));
+		em->AddTool(ID_MODE_ROTATE,		_TOOL_("rotate")       + spaces, load_resource_tool_image(_("mode_rotate")),  wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("rotate"),		_HELP_("rotate"));
+		em->AddSeparator();
+		em->AddTool(ID_MODE_POINTS,		_TOOL_("points")       + spaces, load_resource_tool_image(_("mode_curve")),   wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("points"),		_HELP_("points"));
+		em->AddSeparator();
+		em->AddTool(ID_MODE_SHAPES,		_TOOL_("basic shapes") + spaces, load_resource_tool_image(_("circle")),       wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("basic shapes"),_HELP_("basic shapes"));
+		em->AddTool(ID_MODE_SYMMETRY,	_TOOL_("symmetry")     + spaces, load_resource_tool_image(_("mode_symmetry")),wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("symmetry"),	_HELP_("symmetry"));
+		//em->AddTool(ID_MODE_PAINT,	_TOOL_("paint")        + spaces, load_resource_tool_image(_("mode_paint")),   wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("paint"),		_HELP_("paint"));
+		em->Realize();
+		
+		es = new wxBoxSizer(wxVERTICAL);
+		es->Add(em, 1, wxEXPAND | wxBOTTOM | wxALIGN_CENTER, 5);
+		emp->SetSizer(es);
+		
+		// Prevent clipping of the bottom tool
+		Layout();
+		em->SetSize(emp->GetSize());
+	#endif
 	
 	// we want update ui events
 	wxUpdateUIEvent::SetMode(wxUPDATE_UI_PROCESS_SPECIFIED);

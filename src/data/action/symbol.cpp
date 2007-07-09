@@ -105,6 +105,7 @@ void SymbolPartMatrixAction::transform(SymbolPart& part, const Matrix2D& m) {
 		// bounds change after transforming
 		s->calculateBounds();
 	} else if (SymbolSymmetry* s = part.isSymbolSymmetry()) {
+		s->center = (s->center - center) * m + center;
 		s->handle = s->handle * m;
 	} else if (SymbolGroup* g = part.isSymbolGroup()) {
 		FOR_EACH(p, g->parts) {
@@ -280,7 +281,8 @@ void SymbolPartScaleAction::transformPart(SymbolPart& part) {
 			pnt->delta_after  = pnt->delta_after .mul(scale);
 		}
 	} else if (SymbolSymmetry* s = part.isSymbolSymmetry()) {
-		throw "TODO";
+		transform(s->center);
+		s->handle.mul(new_size.div(old_size));
 	} else if (SymbolGroup* g = part.isSymbolGroup()) {
 		FOR_EACH(p, g->parts) {
 			transformPart(*p);
@@ -450,8 +452,9 @@ void DuplicateSymbolPartsAction::getParts(set<SymbolPartP>& parts) {
 
 // ----------------------------------------------------------------------------- : Reorder symbol parts
 
-ReorderSymbolPartsAction::ReorderSymbolPartsAction(Symbol& symbol, size_t old_position, size_t new_position)
-	: symbol(symbol), old_position(old_position), new_position(new_position)
+ReorderSymbolPartsAction::ReorderSymbolPartsAction(SymbolGroup& old_parent, size_t old_position, SymbolGroup& new_parent, size_t new_position)
+	: old_parent(&old_parent), new_parent(&new_parent)
+	, old_position(old_position), new_position(new_position)
 {}
 
 String ReorderSymbolPartsAction::getName(bool to_undo) const {
@@ -459,31 +462,58 @@ String ReorderSymbolPartsAction::getName(bool to_undo) const {
 }
 
 void ReorderSymbolPartsAction::perform(bool to_undo) {
-	assert(old_position < symbol.parts.size());
-	assert(new_position < symbol.parts.size());
-	SymbolPartP part = symbol.parts.at(old_position);
-	symbol.parts.erase( symbol.parts.begin() + old_position);
-	symbol.parts.insert(symbol.parts.begin() + new_position, part);
+	// remove from old
+	assert(old_position < old_parent->parts.size());
+	SymbolPartP part = old_parent->parts.at(old_position);
+	old_parent->parts.erase( old_parent->parts.begin() + old_position);
+	// add to new
+	assert(new_position <= new_parent->parts.size());
+	new_parent->parts.insert(new_parent->parts.begin() + new_position, part);
+	// next time the other way around
+	swap(old_parent,   new_parent);
 	swap(old_position, new_position);
 }
 
-// ----------------------------------------------------------------------------- : Group symbol parts
 
-GroupSymbolPartsActionBase::GroupSymbolPartsActionBase(Symbol& symbol)
-	: symbol(symbol)
-{}
-void GroupSymbolPartsActionBase::perform(bool to_undo) {
-	swap(symbol.parts, old_part_list);
+UngroupReorderSymbolPartsAction::UngroupReorderSymbolPartsAction(SymbolGroup& group_parent, size_t group_pos, SymbolGroup& target_parent, size_t target_pos)
+	: group_parent(group_parent), group_pos(group_pos)
+	, target_parent(target_parent), target_pos(target_pos)
+{
+	group = dynamic_pointer_cast<SymbolGroup>(group_parent.parts.at(group_pos));
+	assert(group);
 }
 
-GroupSymbolPartsAction::GroupSymbolPartsAction(Symbol& symbol, const set<SymbolPartP>& parts)
-	: GroupSymbolPartsActionBase(symbol)
+String UngroupReorderSymbolPartsAction::getName(bool to_undo) const {
+	return _ACTION_("reorder parts");
+}
+
+void UngroupReorderSymbolPartsAction::perform(bool to_undo) {
+	if (!to_undo) {
+		group_parent.parts.erase(group_parent.parts.begin() + group_pos);
+		target_parent.parts.insert(target_parent.parts.begin() + target_pos, group->parts.begin(), group->parts.end());
+	} else {
+		target_parent.parts.erase(target_parent.parts.begin() + target_pos, target_parent.parts.begin() + target_pos + group->parts.size());
+		group_parent.parts.insert(group_parent.parts.begin() + group_pos, group);
+	}
+}
+
+
+// ----------------------------------------------------------------------------- : Group symbol parts
+
+GroupSymbolPartsActionBase::GroupSymbolPartsActionBase(SymbolGroup& root)
+	: root(root)
+{}
+void GroupSymbolPartsActionBase::perform(bool to_undo) {
+	swap(root.parts, old_part_list);
+}
+
+GroupSymbolPartsAction::GroupSymbolPartsAction(SymbolGroup& root, const set<SymbolPartP>& parts, const SymbolGroupP& group)
+	: GroupSymbolPartsActionBase(root)
 {
 	// group parts in the old parts list
 	bool done = false;
-	SymbolGroupP group(new SymbolGroup);
-	group->name = _("Group");
-	FOR_EACH(p, symbol.parts) {
+	FOR_EACH(p, root.parts) {
+		assert(p != group);
 		if (parts.find(p) != parts.end()) {
 			// add to group instead
 			group->parts.push_back(p);
@@ -502,11 +532,11 @@ String GroupSymbolPartsAction::getName(bool to_undo) const {
 	return _ACTION_("group parts");
 }
 
-UngroupSymbolPartsAction::UngroupSymbolPartsAction(Symbol& symbol, const set<SymbolPartP>& parts)
-	: GroupSymbolPartsActionBase(symbol)
+UngroupSymbolPartsAction::UngroupSymbolPartsAction(SymbolGroup& root, const set<SymbolPartP>& parts)
+	: GroupSymbolPartsActionBase(root)
 {
 	// break up the parts in the old parts list
-	FOR_EACH(p, symbol.parts) {
+	FOR_EACH(p, root.parts) {
 		if (parts.find(p) != parts.end() && p->isSymbolGroup()) {
 			// break up the group
 			SymbolGroup* g = p->isSymbolGroup();

@@ -164,7 +164,25 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolShape& shape, HighlightStyl
 	}
 }
 void SymbolViewer::highlightPart(DC& dc, const SymbolSymmetry& sym) {
-	// TODO
+	// center
+	RealPoint center = rotation.tr(sym.center);
+	// draw 'spokes'
+	double angle = atan2(sym.handle.y, sym.handle.x);
+	dc.SetPen(wxPen(Color(255,200,0),3));
+	for (int i = 0; i < sym.copies ; ++i) {
+		double a = angle + (i + 0.5) * 2 * M_PI / sym.copies;
+		Vector2D dir(cos(a), sin(a));
+		Vector2D dir2 = rotation.tr(sym.center + 2 * dir);
+		dc.DrawLine(center.x, center.y, dir2.x, dir2.y);
+	}
+	// draw center
+	dc.SetPen(*wxBLACK_PEN);
+	dc.SetBrush(Color(255,200,0));
+	dc.DrawCircle(center.x, center.y, 5);
+	// draw handle
+	Vector2D dir2 = rotation.tr(sym.center + sym.handle);
+	dc.SetPen(wxPen(Color(255,200,0),1,wxDOT));
+	dc.DrawLine(center.x, center.y, dir2.x, dir2.y);
 }
 void SymbolViewer::highlightPart(DC& dc, const SymbolGroup& group, HighlightStyle style) {
 	if (style == HIGHLIGHT_BORDER) {
