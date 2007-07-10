@@ -23,7 +23,7 @@ init script:
 	mask_hybrid_with_land := { false }
 	
 	# We have no land templates
-	land_template := { "c{type}.jpg" }
+	land_template := { "cl{type}.jpg" }
 	
 	# Use the normal tap symbol
 	mana_t := {
