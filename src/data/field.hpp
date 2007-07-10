@@ -79,6 +79,10 @@ inline void update_index(FieldP& f, size_t index) {
 	f->index = index;
 }
 
+inline String type_name(const Field&) {
+	return _TYPE_("field");
+}
+
 // ----------------------------------------------------------------------------- : Style
 
 /// Style information needed to display a Value in a Field.
@@ -148,6 +152,10 @@ inline const FieldP& get_key     (const StyleP& s) { return s->fieldP; }
 inline const String& get_key_name(const StyleP& s) { return s->fieldP->name; }
 template <> StyleP read_new<Style>(Reader&);
 
+inline String type_name(const Style&) {
+	return _TYPE_("style");
+}
+
 void mark_dependency_member(const Style& style, const String& name, const Dependency& dep);
 
 // ----------------------------------------------------------------------------- : StyleListener
@@ -200,6 +208,10 @@ void init_object(const FieldP&, ValueP&);
 inline const FieldP& get_key     (const ValueP& v) { return v->fieldP; }
 inline const String& get_key_name(const ValueP& v) { return v->fieldP->name; }
 template <> ValueP read_new<Value>(Reader&);
+
+inline String type_name(const Value&) {
+	return _TYPE_("value");
+}
 
 // ----------------------------------------------------------------------------- : Utilities
 

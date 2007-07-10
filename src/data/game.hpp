@@ -72,5 +72,9 @@ class Game : public Packaged {
 	DECLARE_REFLECTION();
 };
 
+inline String type_name(const Game&) {
+	return _TYPE_("game");
+}
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

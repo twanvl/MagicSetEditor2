@@ -83,6 +83,10 @@ class Card : public IntrusivePtrVirtualBase {
 	DECLARE_REFLECTION();
 };
 
+inline String type_name(const Card&) {
+	return _TYPE_("card");
+}
+
 void mark_dependency_member(const Card& value, const String& name, const Dependency& dep);
 
 // ----------------------------------------------------------------------------- : EOF

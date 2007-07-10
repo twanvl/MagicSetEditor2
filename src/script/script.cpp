@@ -184,9 +184,13 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 // ----------------------------------------------------------------------------- : Backtracing
 
 const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) const {
+	unsigned int initial = instr - &instructions[0];
 	for (;instr >= &instructions[0] && 
 	       (to_skip   || // we have something to skip
-	        instr >= &instructions[1] && (instr-1)->instr == I_JUMP // always look inside a jump
+	        instr >= &instructions[1] && (
+	              (instr-1)->instr == I_JUMP // always look inside a jump
+	           || (instr-1)->instr == I_NOP  // and skip nops
+	           )
 	       ) ; --instr) {
 		// skip an instruction
 		switch (instr->instr) {
@@ -205,6 +209,10 @@ const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) 
 				to_skip += 2 * instr->data - 1;
 				break;
 			case I_JUMP: {
+				if (instr->data > initial) {
+					// we were in an else branch all along, ignore this jump
+					return instr + 1;
+				}
 				// there will be a way not to take this jump
 				// the part in between will have no significant stack effect
 				unsigned int after_jump = instr + 1 - &instructions[0];
@@ -247,4 +255,25 @@ const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) 
 		}
 	}
 	return instr >= &instructions[0] ? instr : nullptr;
+}
+
+String Script::instructionName(const Instruction* instr) const {
+	if (instr < &instructions[0] || instr >= &instructions[instructions.size()]) return _("??\?");
+	if (instr->instr == I_GET_VAR) {
+		return variable_to_string(instr->data);
+	} else if (instr->instr == I_MEMBER_C) {
+		return instructionName(backtraceSkip(instr - 1, 0))
+		     + _(".")
+		     + constants[instr->data]->toString();
+	} else if (instr->instr == I_BINARY && instr->instr2 == I_MEMBER) {
+		throw _("??\?[...]");
+	} else if (instr->instr == I_BINARY && instr->instr2 == I_ADD) {
+		return _("??? + ???");
+	} else if (instr->instr == I_NOP) {
+		return _("??\?(...)");
+	} else if (instr->instr == I_CALL) {
+		return instructionName(backtraceSkip(instr - 1, instr->data)) + _("(...)");
+	} else {
+		return _("??\?");
+	}
 }

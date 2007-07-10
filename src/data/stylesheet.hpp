@@ -70,5 +70,9 @@ class StyleSheet : public Packaged {
 	DECLARE_REFLECTION();
 };
 
+inline String type_name(const StyleSheet&) {
+	return _TYPE_("stylesheet");
+}
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

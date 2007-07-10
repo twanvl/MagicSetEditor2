@@ -125,6 +125,9 @@ class Set : public Packaged {
 	map<ScriptValueP,OrderCacheP> order_cache;
 };
 
+inline String type_name(const Set&) {
+	return _TYPE_("set");
+}
 inline int item_count(const Set& set) {
 	return (int)set.cards.size();
 }

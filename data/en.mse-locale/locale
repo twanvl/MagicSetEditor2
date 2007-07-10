@@ -229,6 +229,12 @@ help:
 	drag to move line:	Alt + drag to move curve;  double click to add a point on this line
 	drag to move point:	Click and drag to move control point;  double click to remove the point
 	
+	rotation:			Rotational symmetry (wheel)
+	reflection:			Reflectional symmetry (mirror)
+	add symmetry:		Add symmetries to the symbol
+	remove symmetry:	Remove this symmetry
+	copies:				Number of reflections (including the original)
+	
 	# Card select
 	filename format:	(Use {card.name} for the name of the card  ;  The filetype is determined based on the extension)
 
@@ -270,6 +276,8 @@ tool:
 	
 	rotation:			Rotation
 	reflection:			Reflection
+	add symmetry:		Add
+	remove symmetry:	Remove
 	
 	line segment:		Line
 	curve segment:		Curve
@@ -341,6 +349,8 @@ tooltip:
 	
 	rotation:			Rotational symmetry (wheel)
 	reflection:			Reflectional symmetry (mirror)
+	add symmetry:		Add symmetry to selected parts
+	remove symmetry:	Remove this symmetry
 	
 	line segment:		To straigt line
 	curve segment:		To curve
@@ -540,6 +550,14 @@ action:
 	delete point:		Delete point
 	delete points:		Delete points
 	
+	# Symmetry
+	add symmetry:			Add symmetry
+	remove symmetry:		Remove symmetry
+	move symmetry center:	Move symmetry center
+	move symmetry handle:	Change symmetry orientation
+	change symmetry type:	Change symmetry type
+	change symmetry copies:	Number of reflections
+	
 
 ############################################################## Error messages
 error:
@@ -601,6 +619,7 @@ error:
 type:
 	function:		function
 	collection:		collection
+	collection of:	collection of %ss
 	object:			object
 	real:			real number
 	integer:		integer number
@@ -609,6 +628,15 @@ type:
 	color:			color
 	image:			image
 	nil:			nothing
+	
+	# Object types
+	game:			game
+	set:			set
+	stylesheet:		stylesheet
+	card:			card
+	field:			field
+	style:			style
+	value:			value
 	
 	# Symbol editor shapes
 	shape:			shape

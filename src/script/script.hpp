@@ -162,6 +162,8 @@ class Script : public ScriptValue {
 	 *  If the backtrace fails, returns nullptr
 	 */
 	const Instruction* backtraceSkip(const Instruction* instr, int to_skip) const;
+	/// Find the name of an instruction
+	String instructionName(const Instruction* instr) const;
 	
 	friend class Context;
 };

@@ -36,7 +36,6 @@ class TextField : public Field {
 	OptionalScript script;			///< Script to apply to all values
 	OptionalScript default_script;	///< Script that generates the default value
 	bool multi_line;				///< Are newlines allowed in the text?
-	bool move_cursor_with_sort;		///< When the text is reordered by a script should the cursor position be updated?
 	String default_name;			///< Name of "default" value
 	
 	virtual void initDependencies(Context&, const Dependency&) const;

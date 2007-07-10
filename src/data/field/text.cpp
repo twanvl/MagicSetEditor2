@@ -13,7 +13,7 @@
 // ----------------------------------------------------------------------------- : TextField
 
 TextField::TextField()
-	: multi_line(false), move_cursor_with_sort(false)
+	: multi_line(false)
 	, default_name(_("Default"))
 {}
 
@@ -35,7 +35,6 @@ IMPLEMENT_REFLECTION(TextField) {
 	REFLECT(multi_line);
 	REFLECT(script);
 	REFLECT_N("default", default_script);
-	REFLECT(move_cursor_with_sort);
 	REFLECT(default_name);
 }
 

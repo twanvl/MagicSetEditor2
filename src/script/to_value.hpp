@@ -31,6 +31,14 @@ ScriptValueP make_iterator(const T& v) {
 template <typename T>
 void mark_dependency_member(const T& value, const String& name, const Dependency& dep) {}
 
+/// Type name of an object, for error messages
+template <typename T> inline String type_name(const T&) {
+	return _TYPE_("object");
+}
+template <typename K, typename V> inline String type_name(const pair<K,V>& p) {
+	return type_name(p.second); // for maps
+}
+
 // ----------------------------------------------------------------------------- : Errors
 
 /// A delayed error message.
@@ -104,7 +112,7 @@ class ScriptCollection : public ScriptValue {
   public:
 	inline ScriptCollection(const Collection* v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
-	virtual String typeName() const { return _TYPE_("collection"); }
+	virtual String typeName() const { return format_string(_TYPE_("collection"), type_name(*value->begin())); }
 	virtual ScriptValueP getMember(const String& name) const {
 		long index;
 		if (name.ToLong(&index) && index >= 0 && (size_t)index < value->size()) {
@@ -152,7 +160,7 @@ class ScriptMap : public ScriptValue {
   public:
 	inline ScriptMap(const Collection* v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
-	virtual String typeName() const { return _TYPE_("collection"); }
+	virtual String typeName() const { return format_string(_TYPE_("collection"), type_name(value->begin())); }
 	virtual ScriptValueP getMember(const String& name) const {
 		return get_member(*value, name);
 	}
@@ -195,7 +203,7 @@ class ScriptObject : public ScriptValue {
   public:
 	inline ScriptObject(const T& v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_OBJECT; }
-	virtual String typeName() const { return _TYPE_("object"); }
+	virtual String typeName() const { return type_name(*value); }
 	virtual operator String() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator String(); }
 	virtual operator double() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator double(); }
 	virtual operator int()    const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator int(); }
