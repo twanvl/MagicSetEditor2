@@ -164,7 +164,7 @@ init script:
 	############################################################## Card number
 	
 	# Index for sorting, white cards are first, so white->A, blue->B, .. ,
-	#  multi->F, hybrid->G, splits -> H, arti->I, land->K, basic land->J
+	#  multi->F, hybrid->G, splits -> H, arti->I, land->K, basic land->L, plains->M, island->N, swamp->O, mountain->P, forest->Q
 	is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicolor" }
 	is_null_cost  := { input == "" or input == "0" }
 	sort_index := {
@@ -174,8 +174,15 @@ init script:
 		        card_color != card.card_color_2                      then "H"    # multicolor splits
 		else if chosen(choice: "land", card_color) then (
 			# land
-			if card.rarity != "basic land"                       then "J"    # basic land
-			else                                                      "K"    # non-basic land
+			if card.rarity != "basic land"                       then "K"    # nonbasic land
+			else (
+				if contains(card.name, match:"Plains") then "M"
+				else if contains(card.name, match:"Island") then "N"
+				else if contains(card.name, match:"Swamp") then "O"
+				else if contains(card.name, match:"Mountain") then "P"
+				else if contains(card.name, match:"Forest") then "Q"
+				else                                                      "L"    # other basic land
+			)
 		) else if is_null_cost(casting_cost) then (
 			# no casting cost; use frame
 			if      chosen(choice: "hybrid", card_color)         then "G"    # Hybrid frame
