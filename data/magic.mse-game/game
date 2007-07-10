@@ -142,19 +142,26 @@ init script:
 	sort_index := {
 		if card.casting_cost_2 !="" and card.card_color != card.card_color_2 then "H"                            # splits that aren't the same color on both sides
 		else if is_land      (card.card_color)  then (if card.rarity != "basic land" then "J" else "K")             # lands, basic and non-basic
-		else if contains(card.casting_cost,match:"/") then "G"                                                  # hybrid cards, hybrid artifacts
-		else if is_multicolor_cost(card.casting_cost) == "yes" then "F"                                 # multicolor cards, multicolor artifacts
-		else if contains(card.casting_cost,match:"W") then "A"                                               # white cards, white artifacts
-		else if contains(card.casting_cost,match:"U") then "B"                                               # blue cards, blue artifacts
-		else if contains(card.casting_cost,match:"B") then "C"                                               # black cards, black artifacts
-		else if contains(card.casting_cost,match:"R") then "D"                                               # red cards, red artifacts
-		else if contains(card.casting_cost,match:"G") then "E"                                               # green cards, green artifacts
+		else if contains(card.casting_cost,match:"/") then "G"                       	                                 # hybrid cards, hybrid artifacts
+		else if is_multicolor_cost(card.casting_cost) == "yes" then "F"                   		              # multicolor cards, multicolor artifacts
+		else if contains(card.casting_cost,match:"W") then "A"                                  	             # white cards, white artifacts
+		else if contains(card.casting_cost,match:"U") then "B"                                   	            # blue cards, blue artifacts
+		else if contains(card.casting_cost,match:"B") then "C"                                   	            # black cards, black artifacts
+		else if contains(card.casting_cost,match:"R") then "D"                                   	            # red cards, red artifacts
+		else if contains(card.casting_cost,match:"G") then "E"                                   	            # green cards, green artifacts
+		else if is_multicolor(card.card_color) and card.casting_cost == "0" then "F"	               # free multicolor cards
 		else if is_multicolor(card.card_color) and card.casting_cost == "" then "F"                                 # costless multicolor cards
+		else if is_hybrid    (card.card_color) and card.casting_cost == "0" then "G"	             	                # free hybrid cards
 		else if is_hybrid    (card.card_color) and card.casting_cost == "" then "G"                                    # costless hybrid cards
+		else if chosen(choice:"white", card.card_color) and card.casting_cost== "0" then "A"	               # free white cards
 		else if chosen(choice:"white", card.card_color) and card.casting_cost == "" then "A"                 # costless white cards
+		else if chosen(choice:"blue", card.card_color) and card.casting_cost == "0" then "B"	               # free blue cards
 		else if chosen(choice:"blue", card.card_color) and card.casting_cost == "" then "B"                   # costless blue cards
+		else if chosen(choice:"black", card.card_color) and card.casting_cost == "0" then "C"	               # free black cards
 		else if chosen(choice:"black", card.card_color) and card.casting_cost == "" then "C"                  # costless black cards
+		else if chosen(choice:"red", card.card_color) and card.casting_cost == "0" then "D"	               # free red cards
 		else if chosen(choice:"red", card.card_color) and card.casting_cost == "" then "D"                     # costless red cards
+		else if chosen(choice:"green", card.card_color) and card.casting_cost == "0" then "E"               # free green cards
 		else if chosen(choice:"green", card.card_color) and card.casting_cost == "" then "E"                 # costless green cards
 		else "I"                      # colorless, artifacts
 	};
@@ -1388,7 +1395,7 @@ keyword parameter type:
 	name: prefix
 	description: Prefix for things like "<something>walk"
 	optional: false
-	match: [A-Z][a-z, ]*
+	match: [A-Z,a-z][A-Z,a-z ]*
 	example: Forest
 
 ############################# All Magic keywords
