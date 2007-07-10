@@ -599,8 +599,11 @@ error:
 	no stylesheet specified for the set:				No stylesheet specified for the set
 	stylesheet and set refer to different game:
 		stylesheet and set don't refer to the same game, this is an error in the stylesheet file
+	unsupported field type:								Unsupported field type: '%s'
 	unsupported fill type:								Unsupported fill type: '%s'
 	unrecognized value:									Unrecognized value: '%s'
+	expected key:										Expected key: '%s'
+	aborting parsing:									Fatal errors encountered, aborting reading.
 	newer version:
 		%s
 		This file is made with a newer version of Magic Set Editor (%s)

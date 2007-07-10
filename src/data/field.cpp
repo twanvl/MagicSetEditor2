@@ -73,8 +73,12 @@ intrusive_ptr<Field> read_new<Field>(Reader& reader) {
 	else if (type == _("symbol"))			return new_intrusive<SymbolField>();
 	else if (type == _("color"))			return new_intrusive<ColorField>();
 	else if (type == _("info"))				return new_intrusive<InfoField>();
-	else {
-		throw ParseError(_("Unsupported field type: '") + type + _("'"));
+	else if (type.empty()) {
+		reader.warning(_ERROR_1_("expected key", _("type")));
+		throw ParseError(_ERROR_("aborting parsing"));
+	} else {
+		reader.warning(_ERROR_1_("Unsupported field type", type));
+		throw ParseError(_ERROR_("aborting parsing"));
 	}
 }
 

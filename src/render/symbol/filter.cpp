@@ -52,7 +52,7 @@ void filter_symbol(Image& symbol, const SymbolFilter& filter) {
 			// Determine set
 			//  green           -> border or outside
 			//  green+red=white -> border
-			if (data[1] != data[2]) {
+			if (data[0] != data[2]) {
 				// yellow/blue = editing hint, leave alone
 			} else {
 				SymbolSet point = data[1] ? (data[0] ? SYMBOL_BORDER : SYMBOL_OUTSIDE) : SYMBOL_INSIDE;
@@ -97,8 +97,12 @@ intrusive_ptr<SymbolFilter> read_new<SymbolFilter>(Reader& reader) {
 	if      (fill_type == _("solid"))			return new_intrusive<SolidFillSymbolFilter>();
 	else if (fill_type == _("linear gradient"))	return new_intrusive<LinearGradientSymbolFilter>();
 	else if (fill_type == _("radial gradient"))	return new_intrusive<RadialGradientSymbolFilter>();
-	else {
-		throw ParseError(_ERROR_1_("unsupported fill type", fill_type));
+	else if (fill_type.empty()) {
+		reader.warning(_ERROR_1_("expected key", _("fill type")));
+		throw ParseError(_ERROR_("aborting parsing"));
+	} else {
+		reader.warning(_ERROR_1_("unsupported fill type", fill_type));
+		throw ParseError(_ERROR_("aborting parsing"));
 	}
 }
 

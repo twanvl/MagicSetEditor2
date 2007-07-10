@@ -198,41 +198,142 @@ String remove_shortcut(const String& str) {
 
 // ----------------------------------------------------------------------------- : Comparing / finding
 
-bool smart_less(const String& as, const String& bs) {
+// Nice unicode normalization tables, probably not conform the standards
+char latin_1[] = "aaaaaaaceeeeiiii"
+                 "dnooooo ouuuuy  "
+                 "aaaaaaaceeeeiiii"
+                 "dnooooo ouuuuy y";
+char latin_A[] = "aaaaaaccccccccdd"
+                 "ddeeeeeeeeeegggg"
+                 "gggghhhhiiiiiiii"
+                 "iiiijjkkklllllll"
+                 "lllnnnnnnnnnoooo"
+                 "oooorrrrrrssssss"
+                 "ssttttttuuuuuuuu"
+                 "uuuuwwyyyzzzzzzs";
+char latin_B[] = "bbbbbbcccdddddee"
+                 "effgg iikkllmnno"
+                 "oo  pprssssttttu"
+                 "uuuyyzz         "
+                 "    dddlllnnnaai"
+                 "ioouuuuuuuuuueaa"
+                 "aaaaggggkkoooo  "
+                 "jdddgg  nnaaaaoo"
+                 "aaaaeeeeiiiioooo"
+                 "rrrruuuusstt  hh"
+                 "nd  zzaaeeoooooo"
+                 "ooyylntj  acclts"
+                 "z  buveejjqqrryy";
+char latin_E[] = "aabbbbbbccdddddd"
+                 "ddddeeeeeeeeeeff"
+                 "gghhhhhhhhhhiiii"
+                 "kkkkkkllllllllmm"
+                 "mmmmnnnnnnnnoooo"
+                 "oooopppprrrrrrrr"
+                 "sssssssssstttttt"
+                 "ttuuuuuuuuuuvvvv"
+                 "wwwwwwwwwwxxxxyy"
+                 "zzzzzzhtwyas    "
+                 "aaaaaaaaaaaaaaaa"
+                 "aaaaaaaaeeeeeeee"
+                 "eeeeeeeeiiiioooo"
+                 "oooooooooooooooo"
+                 "oooouuuuuuuuuuuu"
+                 "uuyyyyyyyy      ";
+
+/// Remove accents from a (lowercase) character
+Char remove_accents(Char c) {
+	char dec = ' ';
+	if (c >= 0xC0) {
+		if (c <= 0xFF) { // Latin 1
+			dec = latin_1[c - 0xC0];
+		} else if (c <= 0x17E) { // Latin extended A
+			dec = latin_A[c - 0x100];
+		} else if (c <= 0x180 && c <= 0x240) { // Latin extended B
+			dec = latin_B[c - 0x180];
+		} else if (c <= 0x1E00 && c <= 0x1EFF) { // Latin additional
+			dec = latin_E[c - 0x1E00];
+		}
+	}
+	return dec == ' ' ? toLower(c) : dec;
+}
+
+/// Is c a precomposed character (not counting accent marks)
+/** If so, returns the second character of the decomposition */
+Char decompose_char2(Char c) {
+	if (c <  0xC6) {
+		return 0;
+	} else if (c == 0xC6 || c == 0xE6 || c == 0x152 || c == 0x153 || c == 0x1E2 || c == 0x1E3 || c == 0x1FC || c == 0x1FD) {
+		return _('e'); // "ae" or "oe"
+	} else if (c == 0x132 || c == 0x133 || (c >= 0x1C7 && c <= 0x1CC)) {
+		return _('j'); // "ij", "lj", "nj"
+	} else if ((c >= 0x1C4 && c <= 0x1C6) || (c >= 0x1F1 && c <= 0x1F3)) {
+		return _('z'); // "dz"
+	} else {
+		return 0;
+	}
+}
+
+bool smart_less(const String& sa, const String& sb) {
 	bool in_num = false; // are we inside a number?
-	bool lt = false;     // is as less than bs?
+	bool lt = false;     // is sa less than sb?
 	bool eq = true;      // so far is everything equal?
-	FOR_EACH_2_CONST(a, as, b, bs) {
-		bool na = isDigit(a), nb = isDigit(b);
-		if (na && nb) {
+	size_t na = sa.size(), nb = sb.size();
+	for (size_t pa = 0, pb = 0 ; pa < na && pb < nb ; ++pa, ++pb) {
+		Char a = sa.GetChar(pa), b = sb.GetChar(pb);
+	next:
+		bool da = isDigit(a), db = isDigit(b);
+		if (da && db) {
 			// compare numbers
 			in_num = true;
 			if (eq && a != b) {
 				eq = false;
 				lt = a < b;
 			}
-		} else if (in_num && na) {
+		} else if (in_num && da) {
 			// comparing numbers, one is longer, therefore it is greater
 			return false;
-		} else if (in_num && nb) {
+		} else if (in_num && db) {
 			return true;
 		} else if (in_num && !eq) {
 			// two numbers of the same length, but not equal
 			return lt;
-		} else {
-			// compare characters
-			// TODO: decompose characters, in particular AE and accents
-			Char la = toLower(a), lb = toLower(b);
-			if (la < lb) return true;
-			if (la > lb) return false;
+		} else if (a != b) {
+			if (a >= 0x20 && b >= 0x20) {
+				// compare characters
+				Char la = remove_accents(a), lb = remove_accents(b);
+				// Decompose characters
+				Char la2 = decompose_char2(a), lb2 = decompose_char2(b);
+				// Compare
+				if (la < lb) return true;
+				if (la > lb) return false;
+				// Remaining from decomposition
+				if (la2 || lb2) {
+					if (la2) a = la2;
+					else {
+						if (++pa >= na) return false;
+						a = sa.GetChar(pa);
+					}
+					if (lb2) b = lb2;
+					else {
+						if (++pb >= nb) return true;
+						b = sb.GetChar(pb);
+					}
+					goto next; // don't move to the next character in both strings
+				}
+			} else {
+				// control characters
+				if (a < b) return true;
+				else       return false;
+			}
 		}
-		in_num = na && nb;
+		in_num = da && db;
 	}
 	// When we are at the end; shorter strings come first
 	// This is true for normal string collation
 	// and also when both end in a number and another digit follows
-	if (as.size() != bs.size()) {
-		return as.size() < bs.size();
+	if (na - pa != nb - pb) {
+		return na - pa < nb - pb;
 	} else {
 		return lt;
 	}
