@@ -205,10 +205,8 @@ const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) 
 				to_skip += 2 * instr->data - 1;
 				break;
 			case I_JUMP: {
-				// jumps outputed by the parser are always backwards
-				// and there will be a way not to take this jump
+				// there will be a way not to take this jump
 				// the part in between will have no significant stack effect
-				assert(&instructions[instr->data] < instr);
 				unsigned int after_jump = instr + 1 - &instructions[0];
 				for (--instr ; instr >= &instructions[0] ; --instr) {
 					if (instr->instr == I_LOOP && instr->data == after_jump) {
