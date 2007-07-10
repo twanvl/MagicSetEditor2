@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <data/symbol.hpp>
+#include <wx/imaglist.h>
 
 class SymbolPartsSelection;
 

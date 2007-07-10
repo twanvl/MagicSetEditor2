@@ -65,6 +65,7 @@ class BlankImage : public GeneratedImage {
   public:
 	virtual Image generate(const Options&) const;
 	virtual bool operator == (const GeneratedImage& that) const;
+	virtual bool threadSafe() const { return false; };
 };
 
 // ----------------------------------------------------------------------------- : LinearBlendImage

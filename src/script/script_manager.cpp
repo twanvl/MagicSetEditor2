@@ -229,7 +229,7 @@ void SetScriptManager::updateStyles(Context& ctx, const IndexMap<FieldP,StyleP>&
 				s->tellListeners(only_content_dependent);
 			}
 		} catch (const ScriptError& e) {
-			throw ScriptError(e.what() + _("\n  while updating styles for '") + s->fieldP->name + _("'"));
+			handle_error(ScriptError(e.what() + _("\n  while updating styles for '") + s->fieldP->name + _("'")));
 		}
 	}
 }
@@ -267,7 +267,7 @@ void SetScriptManager::updateAll() {
 		try {
 			v->update(ctx);
 		} catch (const ScriptError& e) {
-			throw ScriptError(e.what() + _("\n  while updating set value '") + v->fieldP->name + _("'"));
+			handle_error(ScriptError(e.what() + _("\n  while updating set value '") + v->fieldP->name + _("'")));
 		}
 	}
 	// update card data of all cards
@@ -277,7 +277,7 @@ void SetScriptManager::updateAll() {
 			try {
 				v->update(ctx);
 			} catch (const ScriptError& e) {
-				throw ScriptError(e.what() + _("\n  while updating card value '") + v->fieldP->name + _("'"));
+				handle_error(ScriptError(e.what() + _("\n  while updating card value '") + v->fieldP->name + _("'")));
 			}
 		}
 	}
@@ -311,7 +311,7 @@ void SetScriptManager::updateToUpdate(const ToUpdate& u, deque<ToUpdate>& to_upd
 	try {
 		changes = u.value->update(ctx);
 	} catch (const ScriptError& e) {
-		throw ScriptError(e.what() + _("\n  while updating value '") + u.value->fieldP->name + _("'"));
+		handle_error(ScriptError(e.what() + _("\n  while updating value '") + u.value->fieldP->name + _("'")));
 	}
 	if (changes) {
 		// changed, send event

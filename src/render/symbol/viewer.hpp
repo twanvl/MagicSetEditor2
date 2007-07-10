@@ -67,7 +67,7 @@ class SymbolViewer : public SymbolView {
 	int in_symmetry;
 	
 	/// Combine a symbol part with the dc
-	void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paintedSomething, bool& buffersFilled, bool allow_overlap, MemoryDCP& borderDC, MemoryDCP& interiorDC);
+	void combineSymbolPart(DC& dc, const SymbolPart& part, bool& paintedSomething, bool& buffersFilled, bool allow_overlap, MemoryDCP& borderDC, MemoryDCP& interiorDC);
 	
 	/// Combines a symbol part with what is currently drawn, the border and interior are drawn separatly
 	/** directB/directI are true if the border/interior is the screen dc, false if it

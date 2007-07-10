@@ -176,7 +176,7 @@ bool CardListBase::compareItems(void* a, void* b) const {
 	ValueP va = reinterpret_cast<Card*>(a)->data[sort_field];
 	ValueP vb = reinterpret_cast<Card*>(b)->data[sort_field];
 	if (!va || !vb)  return va < vb; // got to do something, compare pointers
-	return smart_less(  va->toString() , vb->toString() );
+	return smart_less(  va->getSortKey(), vb->getSortKey() );
 }
 
 void CardListBase::rebuild() {

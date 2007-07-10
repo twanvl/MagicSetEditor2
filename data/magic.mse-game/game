@@ -1,4 +1,4 @@
-﻿mse version: 0.3.4
+mse version: 0.3.4
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
@@ -138,32 +138,50 @@ init script:
 		if count >= 2 then "yes"
 		else "no"
 	}
+	is_null_cost := {
+		input == "" or input == "0"
+	};
+	is_color := {
+		name := color_name();
+		contains(object.casting_cost, match:input) or (chosen(choice: name, object.card_color) and is_null_cost(object.casting_cost))
+	};
+	monocolor_sort := {
+		if is_color(object:input, "W") then "A"
+		else if is_color(object:input, "U") then "B"
+		else if is_color(object:input, "B") then "C"
+		else if is_color(object:input, "R") then "D"
+		else if is_color(object:input, "G") then "E"
+		else false
+	};
 	
 	sort_index := {
-		if card.casting_cost_2 !="" and card.card_color != card.card_color_2 then "H"                            # splits that aren't the same color on both sides
-		else if is_land      (card.card_color)  then (if card.rarity != "basic land" then "J" else "K")             # lands, basic and non-basic
-		else if contains(card.casting_cost,match:"/") then "G"                       	                                 # hybrid cards, hybrid artifacts
-		else if is_multicolor_cost(card.casting_cost) == "yes" then "F"                   		              # multicolor cards, multicolor artifacts
-		else if contains(card.casting_cost,match:"W") then "A"                                  	             # white cards, white artifacts
-		else if contains(card.casting_cost,match:"U") then "B"                                   	            # blue cards, blue artifacts
-		else if contains(card.casting_cost,match:"B") then "C"                                   	            # black cards, black artifacts
-		else if contains(card.casting_cost,match:"R") then "D"                                   	            # red cards, red artifacts
-		else if contains(card.casting_cost,match:"G") then "E"                                   	            # green cards, green artifacts
-		else if is_multicolor(card.card_color) and card.casting_cost == "0" then "F"	               # free multicolor cards
-		else if is_multicolor(card.card_color) and card.casting_cost == "" then "F"                                 # costless multicolor cards
-		else if is_hybrid    (card.card_color) and card.casting_cost == "0" then "G"	             	                # free hybrid cards
-		else if is_hybrid    (card.card_color) and card.casting_cost == "" then "G"                                    # costless hybrid cards
-		else if chosen(choice:"white", card.card_color) and card.casting_cost== "0" then "A"	               # free white cards
-		else if chosen(choice:"white", card.card_color) and card.casting_cost == "" then "A"                 # costless white cards
-		else if chosen(choice:"blue", card.card_color) and card.casting_cost == "0" then "B"	               # free blue cards
-		else if chosen(choice:"blue", card.card_color) and card.casting_cost == "" then "B"                   # costless blue cards
-		else if chosen(choice:"black", card.card_color) and card.casting_cost == "0" then "C"	               # free black cards
-		else if chosen(choice:"black", card.card_color) and card.casting_cost == "" then "C"                  # costless black cards
-		else if chosen(choice:"red", card.card_color) and card.casting_cost == "0" then "D"	               # free red cards
-		else if chosen(choice:"red", card.card_color) and card.casting_cost == "" then "D"                     # costless red cards
-		else if chosen(choice:"green", card.card_color) and card.casting_cost == "0" then "E"               # free green cards
-		else if chosen(choice:"green", card.card_color) and card.casting_cost == "" then "E"                 # costless green cards
-		else "I"                      # colorless, artifacts
+		if input.casting_cost_2 != "" and input.card_color != input.card_color_2 then "H"           # multicolor splits
+		else if is_land (input.card_color) then (if input.rarity != "basic land" then "J" else "K") # lands, both basic and non-basic
+		else if contains(input.casting_cost, match:"/") then "G"                                    # generic multicolor cards
+		else if is_multicolor_cost(input.casting_cost) == "yes" then "F"                            # multicolors (including artifacts)
+		else if is_multicolor(input.card_color) and is_null_cost(input.casting_cost) then "F"       # costless multicolor cards
+		else if is_hybrid    (input.card_color) and is_null_cost(input.casting_cost) then "G"       # costless hybrid cards
+		else if monocolor_sort() != false then monocolor_sort()                                     # regular monocolor cards
+	};
+	rarity_sort := {
+		if set.special_rarity_sort == "normally" or input.rarity != "special" then sort_index()
+		else "Z" + sort_index()
+	};
+	collation_set := {
+		if set.special_rarity_sort != "separate numbering" then filter := { true }
+		else if card.rarity == "special" then filter := { input.rarity == "special" }
+		else filter := {input.rarity != "special"}
+		filter_list (set, filter: filter)
+	};
+	
+	card_number := {
+		sort_set := sort_list (collation_set(), order_by: {rarity_sort() + input.name} )
+		position (
+			of: card
+			in: sort_set
+		) + 1
+		+ "/" +
+		number_of_items(in: sort_set)
 	};
 	
 	# The color of a card
@@ -243,7 +261,7 @@ init script:
 		    |[ ][^ .,]*$			# still typing...
 		    |[ ]( or | and | in | less | more | to ) # or next word is ...
 		    )
-	         )
+		    )
 		 |  <param-mana><match></param-mana>		# keyword argument that is declared as mana
 		 |  <param-cost>[ ]*<match></param-cost>		# keyword argument that is declared as cost
 		 |  <param-cost><match>,		# keyword argument that is declared as cost
@@ -382,7 +400,7 @@ init script:
 		"(?ix)				# case insensitive, ignore whitespace
 		 (^|[[:space:]\"(])		# start of a word
 		 (  (^)<match>(A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|Æ)
-	         )
+		 )
 		 ";
 	# Used in FPM and Future Sight
 	artist_line_filter :=
@@ -523,6 +541,14 @@ set field:
 	choice: no
 	description: Use gradients on multicolor cards by default, you can always change it be clicking on the card border.
 	initial: no
+set field:
+	type: choice
+	name: special rarity sort
+	description: Determines how cards with special rarity are sorted.
+	choice: normally
+	choice: last
+	choice: separate numbering
+	initial: last
 
 ############################# Default style
 
@@ -670,7 +696,6 @@ card field:
 	name: casting cost
 	icon: stats/casting_cost.png
 	script: mana_filter(value)
-	move cursor with sort: true
 	card list visible: true
 	card list column: 2
 	card list alignment: right
@@ -802,13 +827,9 @@ card field:
 	name: card number
 	save value: false
 	script:
-		position(
-			of: card
-			in: set
-			order_by: { sort_index() + card.name }
-			) + 1
-		+ "/" +
-		number_of_items(in: set)
+		card_number()
+	sort script:
+		rarity_sort(card) + card.name
 	card list visible: true
 	card list column: 10
 	card list width: 50
@@ -901,7 +922,6 @@ card field:
 	name: casting cost 2
 	icon: stats/casting_cost.png
 	script: mana_filter(value)
-	move cursor with sort: true
 	card list alignment: right
 	card list width: 50
 	card list name: CC

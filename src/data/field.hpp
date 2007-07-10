@@ -54,6 +54,7 @@ class Field : public IntrusivePtrVirtualBase {
 	bool      card_list_allow;  ///< Is this field allowed to appear in the card list?
 	String    card_list_name;   ///< Alternate name to use in card list.
 	Alignment card_list_align;  ///< Alignment of the card list colummn.
+	OptionalScript sort_script; ///< The script to use when sorting this, if not the value.
 	int       tab_index;        ///< Tab index in editor
 	Dependencies dependent_scripts; ///< Scripts that depend on values of this field
 	
@@ -67,7 +68,9 @@ class Field : public IntrusivePtrVirtualBase {
 	virtual String typeName() const = 0;
 	
 	/// Add the given dependency to the dependet_scripts list for the variables this field depends on
-	virtual void initDependencies(Context&, const Dependency&) const {}
+	inline virtual void initDependencies(Context& ctx, const Dependency& dep) const {
+		sort_script.initDependencies(ctx, dep);
+	}
 	
   private:
 	DECLARE_REFLECTION_VIRTUAL();
@@ -183,6 +186,7 @@ class Value : public IntrusivePtrVirtualBase {
 	
 	const FieldP fieldP;				///< Field this value is for, should have the right type!
 	Age          last_script_update;	///< When where the scripts last updated? (by calling update)
+	ScriptValueP sortValue;				///< How this should be sorted.
 	
 	/// Get a copy of this value
 	virtual ValueP clone() const = 0;
@@ -190,7 +194,11 @@ class Value : public IntrusivePtrVirtualBase {
 	/// Convert this value to a string for use in tables
 	virtual String toString() const = 0;
 	/// Apply scripts to this value, return true if the value has changed
-	virtual bool update(Context&) { last_script_update.update(); return false; }
+	inline virtual bool update(Context& ctx) {
+		sortValue = fieldP->sort_script.invoke(ctx);
+		last_script_update.update();
+		return false;
+	}
 	/// This value has been updated by an action
 	/** Does nothing for most Values, only FakeValues can update underlying data */
 	virtual void onAction(Action& a, bool undone) {}
@@ -199,6 +207,11 @@ class Value : public IntrusivePtrVirtualBase {
 	 *  In that case, afterwards this becomes equal to that if they use the same underlying object.
 	 */
 	virtual bool equals(const Value* that);
+
+	/// Get the sort key for this value.
+	inline String getSortKey () const {
+		return sortValue == script_nil ? *sortValue : toString();
+	}
 	
   private:
 	DECLARE_REFLECTION_VIRTUAL();

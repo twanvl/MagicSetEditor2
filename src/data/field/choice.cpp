@@ -8,6 +8,8 @@
 
 #include <data/field/choice.hpp>
 #include <util/io/package.hpp>
+#include <wx/spinctrl.h>
+#include <wx/imaglist.h>
 
 DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
 DECLARE_TYPEOF(map<String COMMA ScriptableImage>);

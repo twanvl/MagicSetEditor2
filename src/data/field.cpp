@@ -55,6 +55,7 @@ IMPLEMENT_REFLECTION(Field) {
 	REFLECT(card_list_visible);
 	REFLECT(card_list_allow);
 	REFLECT(card_list_name);
+	REFLECT(sort_script);
 	REFLECT_IF_READING if(card_list_name.empty()) card_list_name = name;
 	REFLECT_N("card_list_alignment", card_list_align);
 	REFLECT(tab_index);
@@ -215,7 +216,8 @@ bool Value::equals(const Value* that) {
 }
 
 void init_object(const FieldP& field, ValueP& value) {
-	if (!value) value = field->newValue(field);
+	if (!value)
+		value = field->newValue(field);
 }
 template <> ValueP read_new<Value>(Reader&) {
 	throw InternalError(_("IndexMap contains nullptr ValueP the application should have crashed already"));
