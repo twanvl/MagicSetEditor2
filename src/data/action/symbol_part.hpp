@@ -210,6 +210,7 @@ class SymmetryTypeAction : public Action {
 	SymbolSymmetry&    symmetry;
 	SymbolSymmetryType type;
 	String             old_name;
+	int                copies; /// may be changed to make it a multiple of two
 };
 
 // ----------------------------------------------------------------------------- : Change symmetry copies

@@ -129,8 +129,8 @@ void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paint
 		Matrix2D old_m = multiply;
 		Vector2D old_o = origin;
 		int copies = s->kind == SYMMETRY_REFLECTION ? s->copies / 2 * 2 : s->copies;
-		if (copies > 1) ++in_symmetry;
 		FOR_EACH_CONST_REVERSE(p, s->parts) {
+			if (copies > 1) ++in_symmetry;
 			for (int i = copies - 1 ; i >= 0 ; --i) {
 				if (i == 0) --in_symmetry;
 				if (s->clip) {
@@ -323,8 +323,9 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolSymmetry& sym, HighlightSty
 	// draw 'spokes'
 	double angle = atan2(sym.handle.y, sym.handle.x);
 	dc.SetPen(wxPen(color, sym.kind == SYMMETRY_ROTATION ? 1 : 3));
-	for (int i = 0; i < sym.copies ; ++i) {
-		double a = angle + (i + 0.5) * 2 * M_PI / sym.copies;
+	int copies = sym.kind == SYMMETRY_REFLECTION ? sym.copies / 2 * 2 : sym.copies;
+	for (int i = 0; i < copies ; ++i) {
+		double a = angle + (i + 0.5) * 2 * M_PI / copies;
 		Vector2D dir(cos(a), sin(a));
 		Vector2D dir2 = rotation.tr(sym.center + 2 * dir);
 		dc.DrawLine(center.x, center.y, dir2.x, dir2.y);

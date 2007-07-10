@@ -474,7 +474,12 @@ void SymmetryMoveAction::move(const Vector2D& deltaDelta) {
 SymmetryTypeAction::SymmetryTypeAction(SymbolSymmetry& symmetry, SymbolSymmetryType type)
 	: symmetry(symmetry), type(type)
 	, old_name(symmetry.name)
+	, copies(symmetry.copies)
 {
+	if (type == SYMMETRY_REFLECTION && symmetry.copies % 2 == 1) {
+		// make sure it is a multiple of two
+		copies = copies / 2 * 2;
+	}
 	// update name?
 	if (old_name == symmetry.expectedName()) {
 		swap(symmetry.kind, type);
@@ -489,15 +494,21 @@ String SymmetryTypeAction::getName(bool to_undo) const {
 
 void SymmetryTypeAction::perform(bool to_undo) {
 	swap(symmetry.kind, type);
+	swap(symmetry.copies, copies);
 	swap(symmetry.name, old_name);
 }
 
 // ----------------------------------------------------------------------------- : Change symmetry copies
 
-SymmetryCopiesAction::SymmetryCopiesAction(SymbolSymmetry& symmetry, int copies)
-	: symmetry(symmetry), copies(copies)
+SymmetryCopiesAction::SymmetryCopiesAction(SymbolSymmetry& symmetry, int copies_)
+	: symmetry(symmetry), copies(copies_)
 	, old_name(symmetry.name)
 {
+	if (symmetry.kind == SYMMETRY_REFLECTION && copies % 2 == 1) {
+		// make sure it is a multiple of two
+		if (copies > symmetry.copies) copies++;
+		else                          copies--;
+	}
 	// update name?
 	if (old_name == symmetry.expectedName()) {
 		swap(symmetry.copies, copies);

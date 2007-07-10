@@ -96,6 +96,7 @@ tool/group				IMAGE	"tool/group.png"
 tool/ungroup			IMAGE	"tool/ungroup.png"
 
 tool/symmetry_add		IMAGE	"tool/symmetry_add.png"
+tool/symmetry_remove	IMAGE	"tool/symmetry_remove.png"
 
 combine_or				IMAGE	"../common/combine_or.png"
 combine_sub				IMAGE	"../common/combine_sub.png"

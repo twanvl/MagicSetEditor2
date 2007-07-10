@@ -10,6 +10,7 @@
 #include <gui/symbol/selection.hpp>
 #include <gui/util.hpp>
 #include <data/action/symbol.hpp>
+#include <data/action/symbol_part.hpp>
 #include <gfx/gfx.hpp>
 #include <render/symbol/filter.hpp>
 #include <util/error.hpp>
@@ -73,6 +74,16 @@ void SymbolPartList::onAction(const Action& action, bool undone) {
 		symbol_preview.up_to_date = false;
 		// some part changed, but we don't know which one, assume it is the selection
 		updateParts(selection.get());
+		return;
+	}
+	TYPE_CASE_(action, SymmetryTypeAction) {
+		if (typing_in) cursor = typing_in->name.size(); // can change the name
+		Refresh(false);
+		return;
+	}
+	TYPE_CASE_(action, SymmetryCopiesAction) {
+		if (typing_in) cursor = typing_in->name.size();
+		Refresh(false);
 		return;
 	}
 }

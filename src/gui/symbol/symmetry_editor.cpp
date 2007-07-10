@@ -57,7 +57,8 @@ void SymbolSymmetryEditor::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	copies->SetHelpText(_HELP_("copies"));
 	copies->SetSize(50, -1);
 	tb->AddSeparator();
-	tb->AddTool(ID_ADD_SYMMETRY,		_TOOL_("add symmetry"),	load_resource_tool_image(_("symmetry_add")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("add symmetry"), _HELP_("add symmetry"));
+	tb->AddTool(ID_ADD_SYMMETRY,		_TOOL_("add symmetry"),		load_resource_tool_image(_("symmetry_add")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("add symmetry"),    _HELP_("add symmetry"));
+	tb->AddTool(ID_REMOVE_SYMMETRY,		_TOOL_("remove symmetry"),	load_resource_tool_image(_("symmetry_remove")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("remove symmetry"), _HELP_("remove symmetry"));
 	tb->AddSeparator();
 	tb->AddTool(ID_SYMMETRY_ROTATION,	_TOOL_("rotation"),		load_resource_image(_("symmetry_rotation")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("rotation"),   _HELP_("rotation"));
 	tb->AddTool(ID_SYMMETRY_REFLECTION,	_TOOL_("reflection"),	load_resource_image(_("symmetry_reflection")),	wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("reflection"), _HELP_("reflection"));
@@ -72,6 +73,7 @@ void SymbolSymmetryEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->DeleteTool(ID_SYMMETRY_REFLECTION);
 	tb->DeleteTool(ID_SYMMETRY_ROTATION);
 	tb->DeleteTool(ID_ADD_SYMMETRY);
+	tb->DeleteTool(ID_REMOVE_SYMMETRY);
 	// HACK: hardcoded size of rest of toolbar
 	tb->DeleteToolByPos(7); // delete separator
 	tb->DeleteToolByPos(7); // delete separator
@@ -93,6 +95,8 @@ void SymbolSymmetryEditor::onUpdateUI(wxUpdateUIEvent& ev) {
 		}
 	} else if (ev.GetId() == ID_ADD_SYMMETRY) {
 		ev.Enable(true);
+	} else if (ev.GetId() == ID_REMOVE_SYMMETRY) {
+		ev.Enable(symmetry);
 	} else {
 		ev.Enable(false); // we don't know about this item
 	}
@@ -121,6 +125,10 @@ void SymbolSymmetryEditor::onCommand(int id) {
 		symmetry->name   = symmetry->expectedName();
 		getSymbol()->actions.add(new GroupSymbolPartsAction(*getSymbol(), control.selected_parts.get(), symmetry));
 		control.selected_parts.select(symmetry);
+		control.Refresh(false);
+	} else if (id == ID_REMOVE_SYMMETRY) {
+		getSymbol()->actions.add(new UngroupSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
+		symmetry = SymbolSymmetryP();
 		control.Refresh(false);
 	}
 }
