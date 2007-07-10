@@ -19,8 +19,10 @@ template <typename T>
 class OrderCache : public IntrusivePtrBase<OrderCache<T> > {
   public:
 	/// Initialize the order cache, ordering the keys by their string values from the other vector
-	/** @pre keys.size() == values.size() */
-	OrderCache(const vector<T>& keys, const vector<String>& values);
+	/** Optionally filter the list using a vector of booleans of items to keep (note: vector<bool> is evil)
+	 *  @pre keys.size() == values.size()
+	 */
+	OrderCache(const vector<T>& keys, const vector<String>& values, vector<int>* keep = nullptr);
 	
 	/// Find the position of the given key in the cache, returns -1 if not found
 	int find(const T& key) const;
@@ -52,13 +54,16 @@ struct OrderCache<T>::CompareValues {
 };
 
 template <typename T>
-OrderCache<T>::OrderCache(const vector<T>& keys, const vector<String>& values) {
+OrderCache<T>::OrderCache(const vector<T>& keys, const vector<String>& values, vector<int>* keep) {
 	assert(keys.size() == values.size());
+	assert(!keep || keep->size() == keys.size());
 	// initialize positions, use pos to point back to the values vector
 	positions.reserve(keys.size());
 	int i = 0;
 	for (typename vector<T>::const_iterator it = keys.begin() ; it != keys.end() ; ++it, ++i) {
-		positions.push_back(KV(&**it, i));
+		if (!keep || (*keep)[i]) {
+			positions.push_back(KV(&**it, i));
+		}
 	}
 	// sort the KVs by the values
 	sort(positions.begin(), positions.end(), CompareValues(values));

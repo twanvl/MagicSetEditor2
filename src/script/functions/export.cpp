@@ -225,7 +225,8 @@ String to_html(const String& str_in, const SymbolFontP& symbol_font, double symb
 			if (symbol.opened > 0 && symbol_font) {
 				symbols += c; // write as symbols instead
 			} else {
-				if (c == _('\1')) { // escape <
+				c = untag_char(c);
+				if (c == _('<')) { // escape <
 					ret += _("&lt;");
 				} else if (c == _('&')) {  // escape &
 					ret += _("&amp;");
@@ -314,11 +315,7 @@ String to_bbcode(const String& str_in) {
 //			if (symbol.opened > 0 && symbol_font) {
 //				symbols += c; // write as symbols instead
 //			} else {
-				if (c == _('\1')) { // unescape <
-					ret += _("<");
-				} else {
-					ret += c;
-				}
+				ret += untag_char(c);
 //			}
 		}
 	}

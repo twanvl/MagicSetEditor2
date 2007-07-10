@@ -50,7 +50,11 @@ typedef shared_ptr<wxMemoryDC> MemoryDCP;
 // Return a temporary DC with the same size as the parameter
 MemoryDCP getTempDC(DC& dc) {
 	wxSize s = dc.GetSize();
-	Bitmap buffer(s.GetWidth(), s.GetHeight(), 24);
+	#ifdef __WXMSW__
+		Bitmap buffer(s.GetWidth(), s.GetHeight(), 1);
+	#else
+		Bitmap buffer(s.GetWidth(), s.GetHeight(), 24);
+	#endif
 	MemoryDCP newDC(new wxMemoryDC);
 	newDC->SelectObject(buffer);
 	clearDC(*newDC, *wxBLACK_BRUSH);
@@ -161,10 +165,10 @@ void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paint
 					// Matrix2D rot(cos(a),-sin(a), sin(a),cos(a));
 					// 
 					//  ref * rot
-					//    /cos b   sin b\ /cos a  -sin a\;
-					//  = \sin b  -cos b/ \sin a   cos a/;s
-					//  = /cos(a+b)  sin(a+b)\;
-					//    \sin(a+b) -cos(a+b)/;
+					//    [ cos b   sin b !  [ cos a  -sin a !
+					//  = ! sin b  -cos b ]  ! sin a   cos a ]
+					//  = [ cos(a+b)  sin(a+b) !
+					//    ! sin(a+b) -cos(a+b) ]
 					Matrix2D rot(cos(a+b),sin(a+b), sin(a+b),-cos(a+b));
 					multiply.mx = rot.mx * old_m;
 					multiply.my = rot.my * old_m;

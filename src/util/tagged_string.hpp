@@ -18,6 +18,9 @@
 
 // ----------------------------------------------------------------------------- : Conversion to/from normal string
 
+Char untag_char(Char c);
+Char tag_char(Char c);
+
 /// Remove all tags from a string and convert escaped '<' back to normal '<'
 /** e.g. "<sym>R</> something <i>(note)</>"
  *  becomes "R something (note)"

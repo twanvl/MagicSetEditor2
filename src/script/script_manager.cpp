@@ -229,7 +229,8 @@ void SetScriptManager::updateStyles(Context& ctx, const IndexMap<FieldP,StyleP>&
 				s->tellListeners(only_content_dependent);
 			}
 		} catch (const ScriptError& e) {
-			handle_error(ScriptError(e.what() + _("\n  while updating styles for '") + s->fieldP->name + _("'")));
+			// NOTE: don't handle errors now, we are likely in an onPaint handler
+			handle_error(ScriptError(e.what() + _("\n  while updating styles for '") + s->fieldP->name + _("'")), false, false);
 		}
 	}
 }
@@ -267,7 +268,7 @@ void SetScriptManager::updateAll() {
 		try {
 			v->update(ctx);
 		} catch (const ScriptError& e) {
-			handle_error(ScriptError(e.what() + _("\n  while updating set value '") + v->fieldP->name + _("'")));
+			handle_error(ScriptError(e.what() + _("\n  while updating set value '") + v->fieldP->name + _("'")), false, true);
 		}
 	}
 	// update card data of all cards
@@ -277,7 +278,7 @@ void SetScriptManager::updateAll() {
 			try {
 				v->update(ctx);
 			} catch (const ScriptError& e) {
-				handle_error(ScriptError(e.what() + _("\n  while updating card value '") + v->fieldP->name + _("'")));
+				handle_error(ScriptError(e.what() + _("\n  while updating card value '") + v->fieldP->name + _("'")), false, true);
 			}
 		}
 	}
@@ -307,11 +308,11 @@ void SetScriptManager::updateToUpdate(const ToUpdate& u, deque<ToUpdate>& to_upd
 	Age age = u.value->last_script_update;
 	if (starting_age < age)  return; // this value was already updated
 	Context& ctx = getContext(u.card);
-	bool changes;
+	bool changes = false;
 	try {
 		changes = u.value->update(ctx);
 	} catch (const ScriptError& e) {
-		handle_error(ScriptError(e.what() + _("\n  while updating value '") + u.value->fieldP->name + _("'")));
+		handle_error(ScriptError(e.what() + _("\n  while updating value '") + u.value->fieldP->name + _("'")), false, true);
 	}
 	if (changes) {
 		// changed, send event

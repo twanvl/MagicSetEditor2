@@ -11,8 +11,8 @@
 
 #include <util/prec.hpp>
 #include <gui/symbol/editor.hpp>
-#include <wx/spinctrl.h>
 
+class wxSpinCtrl;
 class SymmetryMoveAction;
 
 // ----------------------------------------------------------------------------- : SymbolSymmetryEditor

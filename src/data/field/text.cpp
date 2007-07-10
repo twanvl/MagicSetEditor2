@@ -127,12 +127,13 @@ String TextValue::toString() const {
 	return untag_hide_sep(value());
 }
 bool TextValue::update(Context& ctx) {
-	Value::update(ctx);
+	updateAge();
 	WITH_DYNAMIC_ARG(last_update_age,     last_update.get());
 	WITH_DYNAMIC_ARG(value_being_updated, this);
 	bool change = field().default_script.invokeOnDefault(ctx, value)
 	            | field().        script.invokeOn(ctx, value);
 	if (change) last_update.update();
+	updateSortValue(ctx);
 	return change;
 }
 

@@ -208,23 +208,43 @@ void reflect_set_info_get_member(GetMember& tag, const IndexMap<FieldP, ValueP>&
 	REFLECT_NAMELESS(data);
 }
 
-int Set::positionOfCard(const CardP& card, const ScriptValueP& order_by) {
+int Set::positionOfCard(const CardP& card, const ScriptValueP& order_by, const ScriptValueP& filter) {
 	// TODO : Lock the map?
 	assert(order_by);
-	OrderCacheP& order = order_cache[order_by];
+	OrderCacheP& order = order_cache[make_pair(order_by,filter)];
 	if (!order) {
 		// 1. make a list of the order value for each card
 		vector<String> values; values.reserve(cards.size());
+		vector<int>    keep;   if(filter) keep.reserve(cards.size());
 		FOR_EACH_CONST(c, cards) {
-			values.push_back(*order_by->eval(getContext(c)));
+			Context& ctx = getContext(c);
+			values.push_back(*order_by->eval(ctx));
+			if (filter) {
+				keep.push_back(*filter->eval(ctx));
+			}
 		}
-		// 2. initialize order cache
-		order = new_intrusive2<OrderCache<CardP> >(cards, values);
+		// 3. initialize order cache
+		order = new_intrusive3<OrderCache<CardP> >(cards, values, filter ? &keep : nullptr);
 	}
 	return order->find(card);
 }
+int Set::numberOfCards(const ScriptValueP& filter) {
+	if (!filter) return (int)cards.size();
+	map<ScriptValueP,int>::const_iterator it = filter_cache.find(filter);
+	if (it !=filter_cache.end()) {
+		return it->second;
+	} else {
+		int n = 0;
+		FOR_EACH_CONST(c, cards) {
+			if (*filter->eval(getContext(c))) ++n;
+		}
+		filter_cache.insert(make_pair(filter,n));
+		return n;
+	}
+}
 void Set::clearOrderCache() {
 	order_cache.clear();
+	filter_cache.clear();
 }
 
 // ----------------------------------------------------------------------------- : SetView

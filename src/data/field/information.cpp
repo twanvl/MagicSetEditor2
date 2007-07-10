@@ -66,9 +66,10 @@ String InfoValue::toString() const {
 	return value;
 }
 bool InfoValue::update(Context& ctx) {
-	Value::update(ctx);
 	if (value.empty()) value = field().name;
-	return field().script.invokeOn(ctx, value);
+	bool change = field().script.invokeOn(ctx, value);
+	Value::update(ctx);
+	return change;
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(InfoValue) {

@@ -68,6 +68,7 @@ void writeUTF8(wxTextOutputStream& stream, const String& str);
 	#define RIGHT_SINGLE_QUOTE  _('\x2019')
 	#define  LEFT_DOUBLE_QUOTE  _('\x201C')
 	#define RIGHT_DOUBLE_QUOTE  _('\x201D')
+	#define CONNECTION_SPACE    _('\xEB00') // in private use are, untags to ' '
 #else
 	#define  LEFT_ANGLE_BRACKET _("<")
 	#define RIGHT_ANGLE_BRACKET _(">")
@@ -75,18 +76,19 @@ void writeUTF8(wxTextOutputStream& stream, const String& str);
 	#define RIGHT_SINGLE_QUOTE  _('\'')
 	#define  LEFT_DOUBLE_QUOTE  _('\"')
 	#define RIGHT_DOUBLE_QUOTE  _('\"')
+	#define CONNECTION_SPACE    _(' ') // too bad
 #endif
 
 // ----------------------------------------------------------------------------- : Char functions
 
 // Character set tests
-inline bool isSpace(Char c) { return IF_UNICODE( iswspace(c) , isspace(c) ); }
-inline bool isAlpha(Char c) { return IF_UNICODE( iswalpha(c) , isalpha(c) ); }
-inline bool isDigit(Char c) { return IF_UNICODE( iswdigit(c) , isdigit(c) ); }
-inline bool isAlnum(Char c) { return IF_UNICODE( iswalnum(c) , isalnum(c) ); }
-inline bool isUpper(Char c) { return IF_UNICODE( iswupper(c) , isupper(c) ); }
-inline bool isLower(Char c) { return IF_UNICODE( iswlower(c) , islower(c) ); }
-inline bool isPunct(Char c) { return IF_UNICODE( iswpunct(c) , ispunct(c) ); }
+inline bool isSpace(Char c) { return IF_UNICODE( iswspace(c) , isspace((unsigned char)c) ) || c == CONNECTION_SPACE; }
+inline bool isAlpha(Char c) { return IF_UNICODE( iswalpha(c) , isalpha((unsigned char)c) ); }
+inline bool isDigit(Char c) { return IF_UNICODE( iswdigit(c) , isdigit((unsigned char)c) ); }
+inline bool isAlnum(Char c) { return IF_UNICODE( iswalnum(c) , isalnum((unsigned char)c) ); }
+inline bool isUpper(Char c) { return IF_UNICODE( iswupper(c) , isupper((unsigned char)c) ); }
+inline bool isLower(Char c) { return IF_UNICODE( iswlower(c) , islower((unsigned char)c) ); }
+inline bool isPunct(Char c) { return IF_UNICODE( iswpunct(c) , ispunct((unsigned char)c) ); }
 // Character conversions
 #ifdef _MSC_VER
 	#define CHAR_FUNCTIONS_ARE_SLOW

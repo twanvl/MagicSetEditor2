@@ -68,9 +68,7 @@ class Field : public IntrusivePtrVirtualBase {
 	virtual String typeName() const = 0;
 	
 	/// Add the given dependency to the dependet_scripts list for the variables this field depends on
-	inline virtual void initDependencies(Context& ctx, const Dependency& dep) const {
-		sort_script.initDependencies(ctx, dep);
-	}
+	virtual void initDependencies(Context& ctx, const Dependency& dep) const;
 	
   private:
 	DECLARE_REFLECTION_VIRTUAL();
@@ -186,7 +184,7 @@ class Value : public IntrusivePtrVirtualBase {
 	
 	const FieldP fieldP;				///< Field this value is for, should have the right type!
 	Age          last_script_update;	///< When where the scripts last updated? (by calling update)
-	ScriptValueP sortValue;				///< How this should be sorted.
+	String       sort_value;			///< How this should be sorted.
 	
 	/// Get a copy of this value
 	virtual ValueP clone() const = 0;
@@ -194,11 +192,7 @@ class Value : public IntrusivePtrVirtualBase {
 	/// Convert this value to a string for use in tables
 	virtual String toString() const = 0;
 	/// Apply scripts to this value, return true if the value has changed
-	inline virtual bool update(Context& ctx) {
-		sortValue = fieldP->sort_script.invoke(ctx);
-		last_script_update.update();
-		return false;
-	}
+	virtual bool update(Context& ctx);
 	/// This value has been updated by an action
 	/** Does nothing for most Values, only FakeValues can update underlying data */
 	virtual void onAction(Action& a, bool undone) {}
@@ -208,10 +202,16 @@ class Value : public IntrusivePtrVirtualBase {
 	 */
 	virtual bool equals(const Value* that);
 
-	/// Get the sort key for this value.
-	inline String getSortKey () const {
-		return sortValue == script_nil ? *sortValue : toString();
+	/// Get the key to use for sorting this value
+	inline String getSortKey() const {
+		return fieldP->sort_script ? sort_value : toString();
 	}
+	
+  protected:
+	/// update() split into two functions;.
+	/** Derived classes should put their stuff in between if they need the age in scripts */
+	void updateAge();
+	void updateSortValue(Context& ctx);
 	
   private:
 	DECLARE_REFLECTION_VIRTUAL();

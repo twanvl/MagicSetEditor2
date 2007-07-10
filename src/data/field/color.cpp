@@ -91,9 +91,10 @@ String ColorValue::toString() const {
 	return _("<color>");
 }
 bool ColorValue::update(Context& ctx) {
+	bool change = field().default_script.invokeOnDefault(ctx, value)
+	            | field().        script.invokeOn(ctx, value);
 	Value::update(ctx);
-	return field().default_script.invokeOnDefault(ctx, value)
-	     | field().        script.invokeOn(ctx, value);
+	return change;
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(ColorValue) {

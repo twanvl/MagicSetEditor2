@@ -145,7 +145,7 @@ struct TextElementsFromString {
 					// ignore other tags
 				}
 			} else {
-				if (c == _('\1')) c = _('<'); // unescape
+				c = untag_char(c); // unescape
 				// A character of normal text, add to the last text element (if possible)
 				SimpleTextElement* e = nullptr;
 				if (!te.elements.empty()) e = dynamic_cast<SimpleTextElement*>(te.elements.back().get());

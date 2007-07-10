@@ -106,7 +106,9 @@ class Set : public Packaged {
 	}
 	
 	/// Find the position of a card in this set, when the card list is sorted using the given cirterium
-	int positionOfCard(const CardP& card, const ScriptValueP& order_by);
+	int positionOfCard(const CardP& card, const ScriptValueP& order_by, const ScriptValueP& filter);
+	/// Find the number of cards that match the given filter
+	int numberOfCards(const ScriptValueP& filter);
 	/// Clear the order_cache used by positionOfCard
 	void clearOrderCache();
 	
@@ -122,7 +124,8 @@ class Set : public Packaged {
 	/// Object for executing scripts from the thumbnail thread
 	scoped_ptr<SetScriptContext> thumbnail_script_context;
 	/// Cache of cards ordered by some criterion
-	map<ScriptValueP,OrderCacheP> order_cache;
+	map<pair<ScriptValueP,ScriptValueP>,OrderCacheP> order_cache;
+	map<ScriptValueP,int>                            filter_cache;
 };
 
 inline String type_name(const Set&) {

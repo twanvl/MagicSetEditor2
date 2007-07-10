@@ -1,4 +1,4 @@
-mse version: 0.3.4
+﻿mse version: 0.3.4
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
@@ -126,72 +126,15 @@ init script:
 			else                    "land, multicolor"
 		)
 	};
-	
-	# Index for sorting, white cards are first, so white->A, blue->B, .. ,
-	#  multi->F, hybrid->G, splits -> H, arti->I, land->K, basic land->J
-	is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicolor" }
-	is_hybrid     := { chosen(choice: "hybrid") }
-	is_land       := { chosen(choice: "land") }
-	is_multicolor_cost := {
-		colors := color_filter()
-		count  := number_of_items(in: colors)
-		if count >= 2 then "yes"
-		else "no"
-	}
-	is_null_cost := {
-		input == "" or input == "0"
-	};
-	is_color := {
-		name := color_name();
-		contains(object.casting_cost, match:input) or (chosen(choice: name, object.card_color) and is_null_cost(object.casting_cost))
-	};
-	monocolor_sort := {
-		if is_color(object:input, "W") then "A"
-		else if is_color(object:input, "U") then "B"
-		else if is_color(object:input, "B") then "C"
-		else if is_color(object:input, "R") then "D"
-		else if is_color(object:input, "G") then "E"
-		else false
-	};
-	
-	sort_index := {
-		if input.casting_cost_2 != "" and input.card_color != input.card_color_2 then "H"           # multicolor splits
-		else if is_land (input.card_color) then (if input.rarity != "basic land" then "J" else "K") # lands, both basic and non-basic
-		else if contains(input.casting_cost, match:"/") then "G"                                    # generic multicolor cards
-		else if is_multicolor_cost(input.casting_cost) == "yes" then "F"                            # multicolors (including artifacts)
-		else if is_multicolor(input.card_color) and is_null_cost(input.casting_cost) then "F"       # costless multicolor cards
-		else if is_hybrid    (input.card_color) and is_null_cost(input.casting_cost) then "G"       # costless hybrid cards
-		else if monocolor_sort() != false then monocolor_sort()                                     # regular monocolor cards
-	};
-	rarity_sort := {
-		if set.special_rarity_sort == "normally" or input.rarity != "special" then sort_index()
-		else "Z" + sort_index()
-	};
-	collation_set := {
-		if set.special_rarity_sort != "separate numbering" then filter := { true }
-		else if card.rarity == "special" then filter := { input.rarity == "special" }
-		else filter := {input.rarity != "special"}
-		filter_list (set, filter: filter)
-	};
-	
-	card_number := {
-		sort_set := sort_list (collation_set(), order_by: {rarity_sort() + input.name} )
-		position (
-			of: card
-			in: sort_set
-		) + 1
-		+ "/" +
-		number_of_items(in: sort_set)
-	};
-	
+		
 	# The color of a card
 	is_artifact := match_rule(match: "(?i)Artifact")
 	is_land     := match_rule(match: "(?i)Land")
 	card_color := {
 		# usually the color of mana
 		mana_color := mana_to_color(casting_cost);
-		if      mana_color == "colorless" and is_land    (input: card.super_type)  then land_to_color()
-		else if mana_color == "colorless" and is_artifact(input: card.super_type)  then "artifact"
+		if      mana_color == "colorless" and is_land    (card.super_type)  then land_to_color()
+		else if mana_color == "colorless" and is_artifact(card.super_type)  then "artifact"
 		else mana_color
 	};
 	
@@ -217,6 +160,66 @@ init script:
 	
 	# needed by all style files anyway
 	include file: /magic-blends.mse-include/new-blends
+	
+	############################################################## Card number
+	
+	# Index for sorting, white cards are first, so white->A, blue->B, .. ,
+	#  multi->F, hybrid->G, splits -> H, arti->I, land->K, basic land->J
+	is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicolor" }
+	is_null_cost  := { input == "" or input == "0" }
+	sort_index := {
+		card_color   := card.card_color
+		casting_cost := card.casting_cost
+		if      card.casting_cost_2 != "" and
+		        card_color != card.card_color_2                      then "H"    # multicolor splits
+		else if chosen(choice: "land", card_color) then (
+			# land
+			if card.rarity != "basic land"                       then "J"    # basic land
+			else                                                      "K"    # non-basic land
+		) else if is_null_cost(casting_cost) then (
+			# no casting cost; use frame
+			if      chosen(choice: "hybrid", card_color)         then "G"    # Hybrid frame
+			else if is_multicolor(card_color)                    then "F"    # Multicolor frame
+			else if chosen(choice:"white", card_color)           then "A"    # White
+			else if chosen(choice:"blue",  card_color)           then "B"    # Blue
+			else if chosen(choice:"black", card_color)           then "C"    # Black
+			else if chosen(choice:"red",   card_color)           then "D"    # Red
+			else if chosen(choice:"white", card_color)           then "E"    # Green
+			else                                                      "I"    # Non of the above = Colorless/artifact
+		) else (
+			# use the casting cost
+			colors := sort_rule(casting_cost, order: "<WUBRG>")
+			if      colors == ""                                 then "I"    # Colorless
+			else if contains(casting_cost, match:"/")            then "G"    # Hybrid cost
+			else if casting_cost == "W"                          then "A"    # White
+			else if casting_cost == "U"                          then "B"    # Blue
+			else if casting_cost == "B"                          then "C"    # Black
+			else if casting_cost == "R"                          then "D"    # Red
+			else if casting_cost == "G"                          then "E"    # Green
+			else                                                      "F"    # non of the above = multicolor
+		)
+	}
+	
+	rarity_sort := {
+		if set.sort_special_rarity == "with the rest" or card.rarity != "special" then "A" else "Z"
+	}
+	set_filter := {
+		if set.sort_special_rarity != "separate numbering" then nil
+		else if card.rarity == "special"                   then { card.rarity == "special" }
+		else                                                    { card.rarity != "special" }
+	}
+	
+	card_number := {
+		position (
+			of: card
+			in: set
+			order_by: { rarity_sort() + sort_index() + card.name }
+			filter:   set_filter()
+		) + 1
+	}
+	card_count := {
+		number_of_items(in: set, filter: set_filter())
+	}
 	
 	############################################################## Utilities for keywords
 	
@@ -530,6 +533,14 @@ set field:
 	name: automatic card numbers
 	description: Should card numbers be shown on the cards?
 set field:
+	type: choice
+	name: sort special rarity
+	description: Determines how cards with special rarity are sorted.
+	choice: with the rest
+	choice: after other cards
+	choice: separate numbering
+	initial: after other cards
+set field:
 	type: boolean
 	name: mark errors
 	description: Marks errors on cards, for example wording and spelling errors, non unique card names, etc.
@@ -541,14 +552,6 @@ set field:
 	choice: no
 	description: Use gradients on multicolor cards by default, you can always change it be clicking on the card border.
 	initial: no
-set field:
-	type: choice
-	name: special rarity sort
-	description: Determines how cards with special rarity are sorted.
-	choice: normally
-	choice: last
-	choice: separate numbering
-	initial: last
 
 ############################# Default style
 
@@ -561,12 +564,14 @@ default set style:
 		variation:
 			name: common
 			border radius: 0.10
+			#max aspect ratio: 2.5
 			fill type: solid
 			fill color:   rgb(0,0,0)
 			border color: rgb(255,255,255)
 		variation:
 			name: uncommon
 			border radius: 0.05
+			#max aspect ratio: 2.5
 			fill type: linear gradient
 			fill color 1:   rgb(224,224,224)
 			fill color 2:   rgb(84, 84, 84)
@@ -826,10 +831,8 @@ card field:
 	type: text
 	name: card number
 	save value: false
-	script:
-		card_number()
-	sort script:
-		rarity_sort(card) + card.name
+	script:      card_number() + "/" + card_count()
+	sort script: rarity_sort() + card.card_number
 	card list visible: true
 	card list column: 10
 	card list width: 50
@@ -1415,7 +1418,7 @@ keyword parameter type:
 	name: prefix
 	description: Prefix for things like "<something>walk"
 	optional: false
-	match: [A-Z,a-z][A-Z,a-z ]*
+	match: [A-Z][a-z, ]*([A-Z][a-z, ]*\xEB00)
 	example: Forest
 
 ############################# All Magic keywords

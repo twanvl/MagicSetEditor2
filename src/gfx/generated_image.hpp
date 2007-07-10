@@ -65,7 +65,11 @@ class BlankImage : public GeneratedImage {
   public:
 	virtual Image generate(const Options&) const;
 	virtual bool operator == (const GeneratedImage& that) const;
-	virtual bool threadSafe() const { return false; };
+	
+	// Why is this not thread safe? What is GTK smoking?
+	#ifdef __WXGTK__
+		virtual bool threadSafe() const { return false; }
+	#endif
 };
 
 // ----------------------------------------------------------------------------- : LinearBlendImage

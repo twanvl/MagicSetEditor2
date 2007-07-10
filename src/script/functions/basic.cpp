@@ -173,18 +173,18 @@ bool equal(const ScriptValue& a, const ScriptValue& b) {
 
 /// position of some element in a vector
 /** 0 based index, -1 if not found */
-int position_in_vector(const ScriptValueP& of, const ScriptValueP& in, const ScriptValueP& order_by) {
+int position_in_vector(const ScriptValueP& of, const ScriptValueP& in, const ScriptValueP& order_by, const ScriptValueP& filter) {
 	ScriptType of_t = of->type(), in_t = in->type();
 	if (of_t == SCRIPT_STRING || in_t == SCRIPT_STRING) {
 		// string finding
 		return (int)of->toString().find(in->toString()); // (int)npos == -1
-	} else if (order_by) {
+	} else if (order_by || filter) {
 		ScriptObject<Set*>*  s = dynamic_cast<ScriptObject<Set*>* >(in.get());
 		ScriptObject<CardP>* c = dynamic_cast<ScriptObject<CardP>*>(of.get());
 		if (s && c) {
-			return s->getValue()->positionOfCard(c->getValue(), order_by);
+			return s->getValue()->positionOfCard(c->getValue(), order_by, filter);
 		} else {
-			throw ScriptError(_("position: using 'order_by' is only supported for finding cards in the set"));
+			throw ScriptError(_("position: using 'order_by' or 'filter' is only supported for finding cards in the set"));
 		}
 	} else {
 		// unordered position
@@ -231,12 +231,15 @@ SCRIPT_FUNCTION_WITH_DEP(position_of) {
 	ScriptValueP of       = ctx.getVariable(_("of"));
 	ScriptValueP in       = ctx.getVariable(_("in"));
 	ScriptValueP order_by = ctx.getVariableOpt(_("order by"));
-	SCRIPT_RETURN(position_in_vector(of, in, order_by));
+	ScriptValueP filter   = ctx.getVariableOpt(_("filter"));
+	if (filter == script_nil) filter = ScriptValueP();
+	SCRIPT_RETURN(position_in_vector(of, in, order_by, filter));
 }
 SCRIPT_FUNCTION_DEPENDENCIES(position_of) {
 	ScriptValueP of       = ctx.getVariable(_("of"));
 	ScriptValueP in       = ctx.getVariable(_("in"));
 	ScriptValueP order_by = ctx.getVariableOpt(_("order by"));
+	ScriptValueP filter   = ctx.getVariableOpt(_("filter"));
 	ScriptObject<Set*>*  s = dynamic_cast<ScriptObject<Set*>* >(in.get());
 	ScriptObject<CardP>* c = dynamic_cast<ScriptObject<CardP>*>(of.get());
 	if (s && c) {
@@ -246,13 +249,25 @@ SCRIPT_FUNCTION_DEPENDENCIES(position_of) {
 			// dependency on order_by function
 			order_by->dependencies(ctx, dep.makeCardIndependend());
 		}
+		if (filter && filter != script_nil) {
+			// dependency on filter function
+			filter->dependencies(ctx, dep.makeCardIndependend());
+		}
 	}
 	return dependency_dummy;
 };
 
 // finding sizes
 SCRIPT_FUNCTION(number_of_items) {
-	SCRIPT_RETURN(ctx.getVariable(_("in"))->itemCount());
+	SCRIPT_PARAM(ScriptValueP, in);
+	if (ScriptObject<Set*>* setobj = dynamic_cast<ScriptObject<Set*>*>(in.get())) {
+		Set* set = setobj->getValue();
+		SCRIPT_OPTIONAL_PARAM_(ScriptValueP, filter);
+		if (filter == script_nil) filter = ScriptValueP();
+		SCRIPT_RETURN(set->numberOfCards(filter));
+	} else {
+		SCRIPT_RETURN(in->itemCount());
+	}
 }
 
 // filtering items from a list
@@ -465,7 +480,7 @@ ScriptValueP filter_rule(Context& ctx) {
 SCRIPT_FUNCTION(filter_rule) {
 	return filter_rule(ctx);
 }
-SCRIPT_FUNCTION(filter) {
+SCRIPT_FUNCTION(filter_text) {
 	return filter_rule(ctx)->eval(ctx);
 }
 
@@ -704,7 +719,7 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("keyword usage"),        script_keyword_usage);
 	// advanced string rules
 	ctx.setVariable(_("replace"),              script_replace);
-	ctx.setVariable(_("filter"),               script_filter);
+	ctx.setVariable(_("filter text"),          script_filter_text);
 	ctx.setVariable(_("match"),                script_match);
 	ctx.setVariable(_("sort"),                 script_sort);
 	ctx.setVariable(_("sort list"),            script_sort);

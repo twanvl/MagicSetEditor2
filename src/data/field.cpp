@@ -37,6 +37,10 @@ Field::Field()
 
 Field::~Field() {}
 
+void Field::initDependencies(Context& ctx, const Dependency& dep) const {
+	sort_script.initDependencies(ctx, dep);
+}
+
 IMPLEMENT_REFLECTION(Field) {
 	REFLECT_IF_NOT_READING {
 		String type = typeName();
@@ -213,6 +217,18 @@ IMPLEMENT_REFLECTION_NAMELESS(Value) {
 
 bool Value::equals(const Value* that) {
 	return this == that;
+}
+
+bool Value::update(Context& ctx) {
+	updateAge();
+	updateSortValue(ctx);
+	return false;
+}
+void Value::updateAge() {
+	last_script_update.update();
+}
+void Value::updateSortValue(Context& ctx) {
+	sort_value = fieldP->sort_script.invoke(ctx)->toString();
 }
 
 void init_object(const FieldP& field, ValueP& value) {

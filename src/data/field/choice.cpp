@@ -8,7 +8,6 @@
 
 #include <data/field/choice.hpp>
 #include <util/io/package.hpp>
-#include <wx/spinctrl.h>
 #include <wx/imaglist.h>
 
 DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
@@ -312,9 +311,10 @@ String ChoiceValue::toString() const {
 	return value();
 }
 bool ChoiceValue::update(Context& ctx) {
+	bool change = field().default_script.invokeOnDefault(ctx, value)
+	            | field().        script.invokeOn(ctx, value);
 	Value::update(ctx);
-	return field().default_script.invokeOnDefault(ctx, value)
-	     | field().        script.invokeOn(ctx, value);
+	return change;
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(ChoiceValue) {
