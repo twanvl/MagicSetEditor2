@@ -279,7 +279,8 @@ bool smart_less(const String& sa, const String& sb) {
 	bool lt = false;     // is sa less than sb?
 	bool eq = true;      // so far is everything equal?
 	size_t na = sa.size(), nb = sb.size();
-	for (size_t pa = 0, pb = 0 ; pa < na && pb < nb ; ++pa, ++pb) {
+	size_t pa = 0, pb = 0;
+	for (; pa < na && pb < nb ; ++pa, ++pb) {
 		Char a = sa.GetChar(pa), b = sb.GetChar(pb);
 	next:
 		bool da = isDigit(a), db = isDigit(b);
