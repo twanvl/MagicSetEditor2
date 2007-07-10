@@ -184,18 +184,18 @@ init script:
 			else if chosen(choice:"blue",  card_color)           then "B"    # Blue
 			else if chosen(choice:"black", card_color)           then "C"    # Black
 			else if chosen(choice:"red",   card_color)           then "D"    # Red
-			else if chosen(choice:"white", card_color)           then "E"    # Green
+			else if chosen(choice:"green", card_color)           then "E"    # Green
 			else                                                      "I"    # Non of the above = Colorless/artifact
 		) else (
 			# use the casting cost
-			colors := sort_rule(casting_cost, order: "<WUBRG>")
+			colors := sort(casting_cost, order: "<WUBRG>")
 			if      colors == ""                                 then "I"    # Colorless
 			else if contains(casting_cost, match:"/")            then "G"    # Hybrid cost
-			else if casting_cost == "W"                          then "A"    # White
-			else if casting_cost == "U"                          then "B"    # Blue
-			else if casting_cost == "B"                          then "C"    # Black
-			else if casting_cost == "R"                          then "D"    # Red
-			else if casting_cost == "G"                          then "E"    # Green
+			else if colors == "W"                                then "A"    # White
+			else if colors == "U"                                then "B"    # Blue
+			else if colors == "B"                                then "C"    # Black
+			else if colors == "R"                                then "D"    # Red
+			else if colors == "G"                                then "E"    # Green
 			else                                                      "F"    # non of the above = multicolor
 		)
 	}
@@ -1400,6 +1400,10 @@ keyword parameter type:
 		name: as words, use "" for 1
 		description: (, two, three)
 		script: \{english_number_multiple({input})\}
+	refer script:
+		name: as ordinal words
+		description: (first, second, third)
+		script: \{english_number_ordinal({input})\}
 keyword parameter type:
 	name: action
 	match: [^(,\n]+
