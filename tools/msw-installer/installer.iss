@@ -180,13 +180,18 @@ Name: "{commonprograms}\Magic Set Editor"; Filename: "{app}\mse.exe"; WorkingDir
 ; .mse-set file association
 Root: HKCR; Subkey: ".mse-set";                                 ValueType: string; ValueName: ""; ValueData: "MagicSetEditor2Set";   Flags: uninsdeletevalue
 Root: HKCR; Subkey: "MagicSetEditor2Set";                       ValueType: string; ValueName: ""; ValueData: "Magic Set Editor Set"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "MagicSetEditor2Set\DefaultIcon";           ValueType: string; ValueName: ""; ValueData: "{app}\mse.exe,3"
+Root: HKCR; Subkey: "MagicSetEditor2Set\DefaultIcon";           ValueType: string; ValueName: ""; ValueData: "{app}\mse.exe,2"
 Root: HKCR; Subkey: "MagicSetEditor2Set\shell\open\command";    ValueType: string; ValueName: ""; ValueData: """{app}\mse.exe"" ""%1"""
 ; .mse-symbol file association
 Root: HKCR; Subkey: ".mse-symbol";                              ValueType: string; ValueName: ""; ValueData: "MagicSetEditor2Symbol";   Flags: uninsdeletevalue
 Root: HKCR; Subkey: "MagicSetEditor2Symbol";                    ValueType: string; ValueName: ""; ValueData: "Magic Set Editor Symbol"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "MagicSetEditor2Symbol\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\mse.exe,5"
+Root: HKCR; Subkey: "MagicSetEditor2Symbol\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\mse.exe,3"
 Root: HKCR; Subkey: "MagicSetEditor2Symbol\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\mse.exe"" ""%1"""
+; .mse-installer file association
+Root: HKCR; Subkey: ".mse-installer";                              ValueType: string; ValueName: ""; ValueData: "MagicSetEditor2Installer";   Flags: uninsdeletevalue
+Root: HKCR; Subkey: "MagicSetEditor2Installer";                    ValueType: string; ValueName: ""; ValueData: "Magic Set Editor Installer"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "MagicSetEditor2Installer\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\mse.exe,1"
+Root: HKCR; Subkey: "MagicSetEditor2Installer\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\mse.exe"" ""%1"""
 
 
 
