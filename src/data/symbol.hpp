@@ -222,7 +222,7 @@ class SymbolGroup : public SymbolPart {
 // ----------------------------------------------------------------------------- : SymbolSymmetry
 
 enum SymbolSymmetryType
-{	SYMMETRY_ROTATION   = SYMBOL_COMBINE_BORDER + 1 // for icons
+{	SYMMETRY_ROTATION
 ,	SYMMETRY_REFLECTION
 };
 
@@ -240,9 +240,11 @@ class SymbolSymmetry : public SymbolGroup {
 	
 	virtual String typeName() const;
 	virtual SymbolPartP clone() const;
-	virtual int icon() const { return kind; }
+	virtual int icon() const { return kind + SYMBOL_COMBINE_BORDER + 1; }
 	virtual       SymbolSymmetry* isSymbolSymmetry()       { return this; }
 	virtual const SymbolSymmetry* isSymbolSymmetry() const { return this; }
+	
+	String expectedName() const;
 	
 	DECLARE_REFLECTION();
 };

@@ -35,7 +35,7 @@ class AColor : public Color {
 void filter_symbol(Image& symbol, const SymbolFilter& filter);
 
 /// Render a Symbol to an Image and filter it
-Image render_symbol(const SymbolP& symbol, const SymbolFilter& filter, double border_radius = 0.05, int size = 100);
+Image render_symbol(const SymbolP& symbol, const SymbolFilter& filter, double border_radius = 0.05, int size = 100, bool edit_hints = false);
 
 /// Is a point inside a symbol?
 enum SymbolSet

@@ -427,3 +427,90 @@ Action* control_point_remove_action(const SymbolShapeP& shape, const set<Control
 		return new ControlPointRemoveAction(shape, to_delete);
 	}
 }
+
+
+
+// ----------------------------------------------------------------------------- : Move symmetry center/handle
+
+SymmetryMoveAction::SymmetryMoveAction(SymbolSymmetry& symmetry, bool is_handle)
+	: symmetry(symmetry)
+	, is_handle(is_handle)
+	, original(is_handle ? symmetry.handle : symmetry.center)
+	, constrain(false)
+	, snap(0)
+{}
+
+String SymmetryMoveAction::getName(bool to_undo) const {
+	return is_handle ? _ACTION_("move symmetry handle") : _ACTION_("move symmetry center");
+}
+
+void SymmetryMoveAction::perform(bool to_undo) {
+	if (is_handle) {
+		swap(symmetry.handle, original);
+	} else {
+		swap(symmetry.center, original);
+	}
+}
+
+void SymmetryMoveAction::move(const Vector2D& deltaDelta) {
+	delta += deltaDelta;
+	if (is_handle) {
+		symmetry.handle = snap_vector(symmetry.center + original + delta, snap) - symmetry.center;
+		if (constrain) {
+			// constrain to multiples of 2pi/24 i.e. 24 stops
+			double angle = atan2(symmetry.handle.y, symmetry.handle.x);
+			double mult = (2 * M_PI) / 24;
+			angle = floor(angle / mult + 0.5) * mult;
+			symmetry.handle = Vector2D(cos(angle), sin(angle)) * symmetry.handle.length();
+		}
+	} else {
+		// Determine actual delta, possibly constrained and snapped
+		symmetry.center = constrain_snap_vector(original, delta, constrain, snap);
+	}
+}
+
+// ----------------------------------------------------------------------------- : Change symmetry kind
+
+SymmetryTypeAction::SymmetryTypeAction(SymbolSymmetry& symmetry, SymbolSymmetryType type)
+	: symmetry(symmetry), type(type)
+	, old_name(symmetry.name)
+{
+	// update name?
+	if (old_name == symmetry.expectedName()) {
+		swap(symmetry.kind, type);
+		old_name = symmetry.expectedName();
+		swap(symmetry.kind, type);
+	}
+}
+
+String SymmetryTypeAction::getName(bool to_undo) const {
+	return _ACTION_("change symmetry type");
+}
+
+void SymmetryTypeAction::perform(bool to_undo) {
+	swap(symmetry.kind, type);
+	swap(symmetry.name, old_name);
+}
+
+// ----------------------------------------------------------------------------- : Change symmetry copies
+
+SymmetryCopiesAction::SymmetryCopiesAction(SymbolSymmetry& symmetry, int copies)
+	: symmetry(symmetry), copies(copies)
+	, old_name(symmetry.name)
+{
+	// update name?
+	if (old_name == symmetry.expectedName()) {
+		swap(symmetry.copies, copies);
+		old_name = symmetry.expectedName();
+		swap(symmetry.copies, copies);
+	}
+}
+
+String SymmetryCopiesAction::getName(bool to_undo) const {
+	return _ACTION_("change symmetry copies");
+}
+
+void SymmetryCopiesAction::perform(bool to_undo) {
+	swap(symmetry.copies, copies);
+	swap(symmetry.name, old_name);
+}

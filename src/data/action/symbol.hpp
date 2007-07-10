@@ -301,6 +301,8 @@ class GroupSymbolPartsAction : public GroupSymbolPartsActionBase {
 	GroupSymbolPartsAction(SymbolGroup& root, const set<SymbolPartP>& parts, const SymbolGroupP& group);
 	
 	virtual String getName(bool to_undo) const;
+  private:
+	SymbolGroupP group;
 };
 
 /// Break up one or more SymbolGroups

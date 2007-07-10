@@ -172,5 +172,60 @@ class ControlPointAddAction : public Action {
 Action* control_point_remove_action(const SymbolShapeP& shape, const set<ControlPointP>& to_delete);
 
 
+
+
+// ----------------------------------------------------------------------------- : Move symmetry center/handle
+
+/// Moving the handle or the center of a symbol symmetry
+class SymmetryMoveAction : public Action {
+  public:
+	SymmetryMoveAction(SymbolSymmetry& symmetry, bool is_handle);
+	
+	virtual String getName(bool to_undo) const;
+	virtual void   perform(bool to_undo);
+	
+	/// Update this action to move some more
+	void move(const Vector2D& delta);
+	
+  private:
+	SymbolSymmetry& symmetry; ///< Affected part
+	bool is_handle;			///< Move the handle or the center?
+	Vector2D delta;			///< Amount we moved
+	Vector2D original;		///< Original value
+  public:
+	bool constrain;			///< Constrain movement?
+	int snap;				///< Snap to grid?
+};
+
+// ----------------------------------------------------------------------------- : Change symmetry kind
+
+/// Change the type of symmetry
+class SymmetryTypeAction : public Action {
+  public:
+	SymmetryTypeAction(SymbolSymmetry& symmetry, SymbolSymmetryType type);
+	
+	virtual String getName(bool to_undo) const;
+	virtual void   perform(bool to_undo);
+  private:
+	SymbolSymmetry&    symmetry;
+	SymbolSymmetryType type;
+	String             old_name;
+};
+
+// ----------------------------------------------------------------------------- : Change symmetry copies
+
+/// Change the number of copies of a symmetry
+class SymmetryCopiesAction : public Action {
+  public:
+	SymmetryCopiesAction(SymbolSymmetry& symmetry, int copies);
+	
+	virtual String getName(bool to_undo) const;
+	virtual void   perform(bool to_undo);
+  private:
+	SymbolSymmetry& symmetry;
+	int             copies;
+	String          old_name;
+};
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

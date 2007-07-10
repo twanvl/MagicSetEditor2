@@ -12,14 +12,15 @@
 #include <util/prec.hpp>
 #include <gui/symbol/editor.hpp>
 
+class SymmetryMoveAction;
+
 // ----------------------------------------------------------------------------- : SymbolSymmetryEditor
 
 /// Editor for adding symmetries
 class SymbolSymmetryEditor : public SymbolEditorBase {
   public:
 	/** The symmetry parameter is optional, if it is not set, then only new ones can be created */
-	//%SymbolSymmetryEditor(SymbolControl* control, SymbolSymmetryP symmetry);
-	SymbolSymmetryEditor(SymbolControl* control);
+	SymbolSymmetryEditor(SymbolControl* control, const SymbolSymmetryP& symmetry);
 	
 	// --------------------------------------------------- : Drawing
 	
@@ -37,6 +38,7 @@ class SymbolSymmetryEditor : public SymbolEditorBase {
 	
 	virtual void onLeftDown   (const Vector2D& pos, wxMouseEvent& ev);
 	virtual void onLeftUp     (const Vector2D& pos, wxMouseEvent& ev);
+	virtual void onMouseMove  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev);
 	virtual void onMouseDrag  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev);
 	
 	// --------------------------------------------------- : Other events
@@ -47,18 +49,23 @@ class SymbolSymmetryEditor : public SymbolEditorBase {
 	
 	// --------------------------------------------------- : Data
   private:
-	int mode;
-	SymbolSymmetryP symmetry;
-	bool drawing;
-	Vector2D center, handle;
+	SymbolSymmetryP& symmetry;
 	// controls
 	wxSpinCtrl* copies;
+	// Actions
+	SymmetryMoveAction* symmetryMoveAction;
 	
-	/// Cancel the drawing
-	void stopActions();
+	// What is selected?
+	enum Selection {
+		SELECTION_NONE,
+		SELECTION_HANDLE,	// dragging a handle
+		SELECTION_CENTER,	// dragging the rotation center
+	} selection, hovered;
 	
-	/// Make the symmetry object
-	void makePart(Vector2D a, Vector2D b, bool constrained, bool snap);
+	Selection findSelection(const Vector2D& pos);
+	
+	/// Done with dragging
+	void resetActions();
 	
 };
 

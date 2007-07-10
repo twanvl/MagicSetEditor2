@@ -23,7 +23,7 @@
 
 SymbolControl::SymbolControl(SymbolWindow* parent, int id, const SymbolP& symbol)
 	: wxControl(parent, id)
-	, SymbolViewer(symbol)
+	, SymbolViewer(symbol, true)
 	, parent(parent)
 {
 	onChangeSymbol();
@@ -66,7 +66,7 @@ void SymbolControl::onModeChange(wxCommandEvent& ev) {
 			switchEditor(new_intrusive1<SymbolBasicShapeEditor>(this));
 			break;
 		case ID_MODE_SYMMETRY:
-			switchEditor(new_intrusive1<SymbolSymmetryEditor>(this));
+			switchEditor(new_intrusive2<SymbolSymmetryEditor>(this, selected_parts.getASymmetry()));
 			break;
 	}
 }
@@ -113,6 +113,24 @@ void SymbolControl::onUpdateSelection() {
 				Refresh(false);
 			}
 			break;
+		} case ID_MODE_SYMMETRY: {
+			// can only select a single part!
+			SymbolSymmetryP symmetry = selected_parts.getASymmetry();
+			if (!symmetry) {
+				if (selected_symmetry && selected_parts.select(selected_symmetry)) {
+					signalSelectionChange();
+				}
+				break;
+			}
+			if (symmetry != selected_symmetry) {
+				if (symmetry && selected_parts.select(symmetry)) {
+					signalSelectionChange();
+				}
+				// begin editing another part
+				selected_symmetry = symmetry;
+				Refresh(false);
+			}
+			break;
 		} case ID_MODE_SHAPES:
 			if (!selected_parts.empty()) {
 				// there can't be a selection
@@ -136,6 +154,9 @@ void SymbolControl::activatePart(const SymbolPartP& part) {
 	if (part->isSymbolShape()) {
 		selected_parts.select(part);
 		switchEditor(new_intrusive2<SymbolPointEditor>(this, static_pointer_cast<SymbolShape>(part)));
+	} else if (part->isSymbolSymmetry()) {
+		selected_parts.select(part);
+		switchEditor(new_intrusive2<SymbolSymmetryEditor>(this, static_pointer_cast<SymbolSymmetry>(part)));
 	}
 }
 

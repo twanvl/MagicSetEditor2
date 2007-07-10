@@ -212,6 +212,11 @@ SymbolPartP SymbolSymmetry::clone() const {
 	return part;
 }
 
+String SymbolSymmetry::expectedName() const {
+	return capitalize(kind == SYMMETRY_ROTATION ? _TYPE_("rotation") : _TYPE_("reflection"))
+	     + String::Format(_(" (%d)"), copies);
+}
+
 IMPLEMENT_REFLECTION(SymbolSymmetry) {
 	REFLECT_BASE(SymbolPart);
 	REFLECT(kind);

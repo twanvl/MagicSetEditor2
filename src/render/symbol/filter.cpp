@@ -44,8 +44,7 @@ void filter_symbol(Image& symbol, const SymbolFilter& filter) {
 	// HACK: wxGTK seems to fail sometimes if you ask it to allocate the alpha channel.
 	//       This manually allocates the memory and gives it to the image to handle.
 	if (!alpha) {
-		alpha = (Byte*) malloc (sizeof(Byte) * width * height);
-		memset(alpha, 255, width * height);
+		alpha = (Byte*) malloc(width * height);
 		symbol.SetAlpha(alpha);
 	}
 	for (UInt y = 0 ; y < width ; ++y) {
@@ -53,14 +52,18 @@ void filter_symbol(Image& symbol, const SymbolFilter& filter) {
 			// Determine set
 			//  green           -> border or outside
 			//  green+red=white -> border
-			SymbolSet point = data[1] ? (data[0] ? SYMBOL_BORDER : SYMBOL_OUTSIDE) : SYMBOL_INSIDE;
-			// Call filter
-			AColor result = filter.color((double)x / width, (double)y / height, point);
-			// Store color
-			data[0]  = result.Red();
-			data[1]  = result.Green();
-			data[2]  = result.Blue();
-			alpha[0] = result.alpha;
+			if (data[1] != data[2]) {
+				// yellow/blue = editing hint, leave alone
+			} else {
+				SymbolSet point = data[1] ? (data[0] ? SYMBOL_BORDER : SYMBOL_OUTSIDE) : SYMBOL_INSIDE;
+				// Call filter
+				AColor result = filter.color((double)x / width, (double)y / height, point);
+				// Store color
+				data[0]  = result.Red();
+				data[1]  = result.Green();
+				data[2]  = result.Blue();
+				alpha[0] = result.alpha;
+			}
 			// next
 			data  += 3;
 			alpha += 1;
@@ -68,8 +71,8 @@ void filter_symbol(Image& symbol, const SymbolFilter& filter) {
 	}
 }
 
-Image render_symbol(const SymbolP& symbol, const SymbolFilter& filter, double border_radius, int size) {
-	Image i = render_symbol(symbol, border_radius, size);
+Image render_symbol(const SymbolP& symbol, const SymbolFilter& filter, double border_radius, int size, bool edit_hints) {
+	Image i = render_symbol(symbol, border_radius, size, edit_hints);
 	filter_symbol(i, filter);
 	return i;
 }

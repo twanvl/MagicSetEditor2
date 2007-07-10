@@ -297,14 +297,15 @@ void SymbolWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 
 
 void SymbolWindow::onSelectFromList(wxCommandEvent& ev) {
-	if (inSelectionEvent) return ;
+	if (inSelectionEvent) return;
 	inSelectionEvent = true;
 	control->onUpdateSelection();
 	inSelectionEvent = false;
 }
 void SymbolWindow::onActivateFromList(wxCommandEvent& ev) {
-//%	control->activatePart(control->getSymbol()->parts.at(ev.GetIndex()));
-	// TODO
+	if (control->selected_parts.size() == 1) {
+		control->activatePart(control->selected_parts.getOnlyOne());
+	}
 }
 
 void SymbolWindow::onSelectFromControl() {
@@ -329,6 +330,7 @@ BEGIN_EVENT_TABLE(SymbolWindow, wxFrame)
 	EVT_TOOL_RANGE	(ID_MODE_MIN,  ID_MODE_MAX,		SymbolWindow::onModeChange)
 	EVT_TOOL_RANGE	(ID_CHILD_MIN, ID_CHILD_MAX,	SymbolWindow::onExtraTool)
 	EVT_UPDATE_UI	(wxID_ANY,						SymbolWindow::onUpdateUI)
+	EVT_COMMAND_RANGE(ID_CHILD_MIN, ID_CHILD_MAX, wxEVT_COMMAND_SPINCTRL_UPDATED, SymbolWindow::onExtraTool)
 
 	EVT_PART_SELECT   (ID_PART_LIST, SymbolWindow::onSelectFromList)
 	EVT_PART_ACTIVATE (ID_PART_LIST, SymbolWindow::onActivateFromList)

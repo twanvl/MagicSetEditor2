@@ -55,13 +55,6 @@ bool SymbolPartsSelection::select(const SymbolPartP& part, SelectMode mode) {
 	return true;
 }
 
-SymbolShapeP SymbolPartsSelection::getAShape() const {
-	FOR_EACH(s, selection) {
-		if (s->isSymbolShape()) return static_pointer_cast<SymbolShape>(s);
-	}
-	return SymbolShapeP();
-}
-
 void SymbolPartsSelection::clearChildren(SymbolPart* part) {
 	if (SymbolGroup* g = part->isSymbolGroup()) {
 		FOR_EACH(p, g->parts) {
@@ -69,6 +62,20 @@ void SymbolPartsSelection::clearChildren(SymbolPart* part) {
 			clearChildren(p.get());
 		}
 	}
+}
+
+SymbolShapeP SymbolPartsSelection::getAShape() const {
+	FOR_EACH(s, selection) {
+		if (s->isSymbolShape()) return static_pointer_cast<SymbolShape>(s);
+	}
+	return SymbolShapeP();
+}
+
+SymbolSymmetryP SymbolPartsSelection::getASymmetry() const {
+	FOR_EACH(s, selection) {
+		if (s->isSymbolSymmetry()) return static_pointer_cast<SymbolSymmetry>(s);
+	}
+	return SymbolSymmetryP();
 }
 
 

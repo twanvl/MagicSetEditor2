@@ -14,7 +14,7 @@ DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 
 // ----------------------------------------------------------------------------- : Simple rendering
 
-Image render_symbol(const SymbolP& symbol, double border_radius, int size) {
+Image render_symbol(const SymbolP& symbol, double border_radius, int size, bool editing_hints) {
 	SymbolViewer viewer(symbol, size, border_radius);
 	Bitmap bmp(size, size);
 	wxMemoryDC dc;
@@ -28,11 +28,12 @@ Image render_symbol(const SymbolP& symbol, double border_radius, int size) {
 
 // ----------------------------------------------------------------------------- : Constructor
 
-SymbolViewer::SymbolViewer(const SymbolP& symbol, double size, double border_radius)
-	: border_radius(border_radius)
+SymbolViewer::SymbolViewer(const SymbolP& symbol, bool editing_hints, double size, double border_radius)
+	: border_radius(border_radius), editing_hints(editing_hints)
 	, rotation(0, RealRect(0,0,size,size), size)
 	, multiply(size,0,0,size)
 	, origin(0,0)
+	, in_symmetry(0)
 {
 	setSymbol(symbol);
 }
@@ -42,7 +43,7 @@ void SymbolViewer::setZoom(double zoom) {
 	multiply = Matrix2D(zoom,0, 0,zoom);
 }
 
-// ----------------------------------------------------------------------------- : Drawing
+// ----------------------------------------------------------------------------- : Drawing : Combining
 
 typedef shared_ptr<wxMemoryDC> MemoryDCP;
 
@@ -52,7 +53,7 @@ MemoryDCP getTempDC(DC& dc) {
 	Bitmap buffer(s.GetWidth(), s.GetHeight(), 1);
 	MemoryDCP newDC(new wxMemoryDC);
 	newDC->SelectObject(buffer);
-	clearDC_black(*newDC);
+	clearDC(*newDC, *wxBLACK_BRUSH);
 	return newDC;
 }
 
@@ -66,6 +67,7 @@ void combineBuffers(DC& dc, DC* borders, DC* interior) {
 void SymbolViewer::draw(DC& dc) {
 	bool paintedSomething = false;
 	bool buffersFilled    = false;
+	in_symmetry = 0;
 	// Temporary dcs
 	MemoryDCP borderDC;
 	MemoryDCP interiorDC;
@@ -80,11 +82,14 @@ void SymbolViewer::draw(DC& dc) {
 		}
 	}
 	// Draw all parts
-	combineSymbolPart(dc, *symbol, paintedSomething, buffersFilled, true, borderDC, interiorDC);
-	
+	combineSymbolPart(dc, *symbol, paintedSomething, buffersFilled, false, borderDC, interiorDC);
 	// Output the final parts from the buffer
 	if (buffersFilled) {
 		combineBuffers(dc, borderDC.get(), interiorDC.get());
+	}
+	// Editing hints?
+	if (editing_hints) {
+		drawEditingHints(dc);
 	}
 }
 void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paintedSomething, bool& buffersFilled, bool allow_overlap, MemoryDCP& borderDC, MemoryDCP& interiorDC) {
@@ -124,8 +129,10 @@ void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paint
 		Matrix2D old_m = multiply;
 		Vector2D old_o = origin;
 		int copies = s->kind == SYMMETRY_REFLECTION ? s->copies / 2 * 2 : s->copies;
+		if (copies > 1) ++in_symmetry;
 		FOR_EACH_CONST_REVERSE(p, s->parts) {
-			for (int i = 0 ; i < copies ; ++i) {
+			for (int i = copies - 1 ; i >= 0 ; --i) {
+				if (i == 0) --in_symmetry;
 				if (s->clip) {
 					// todo: clip
 				}
@@ -164,11 +171,14 @@ void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paint
 					origin = old_o + (s->center - s->center * rot) * old_m;
 				}
 				// draw rotated copy
-				combineSymbolPart(dc, *p, paintedSomething, buffersFilled, allow_overlap && i == 0, borderDC, interiorDC);
+				combineSymbolPart(dc, *p, paintedSomething, buffersFilled, allow_overlap && i == copies - 1, borderDC, interiorDC);
 			}
 		}
 		multiply = old_m;
 		origin   = old_o;
+		if (editing_hints) {
+			highlightPart(dc, *s, HIGHLIGHT_LESS);
+		}
 	} else if (const SymbolGroup* g = part.isSymbolGroup()) {
 		// Draw all parts, in reverse order (bottom to top)
 		FOR_EACH_CONST_REVERSE(p, g->parts) {
@@ -177,83 +187,14 @@ void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paint
 	}
 }
 
-void SymbolViewer::highlightPart(DC& dc, const SymbolPart& part, HighlightStyle style) {
-	if (const SymbolShape* s = part.isSymbolShape()) {
-		highlightPart(dc, *s, style);
-	} else if (const SymbolSymmetry* s = part.isSymbolSymmetry()) {
-		highlightPart(dc, *s);
-	} else if (const SymbolGroup* g = part.isSymbolGroup()) {
-		highlightPart(dc, *g, style);
-	} else {
-		throw InternalError(_("Invalid symbol part type"));
-	}
-}
-void SymbolViewer::highlightPart(DC& dc, const SymbolShape& shape, HighlightStyle style) {
-	// create point list
-	vector<wxPoint> points;
-	size_t size = shape.points.size();
-	for(size_t i = 0 ; i < size ; ++i) {
-		segment_subdivide(*shape.getPoint((int)i), *shape.getPoint((int)i+1), origin, multiply, points);
-	}
-	// draw
-	if (style == HIGHLIGHT_BORDER) {
-		dc.SetBrush(*wxTRANSPARENT_BRUSH);
-		dc.SetPen  (wxPen(Color(255,0,0), 2));
-		dc.DrawPolygon((int)points.size(), &points[0]);
-	} else if (style == HIGHLIGHT_BORDER_DOT) {
-		dc.SetBrush(*wxTRANSPARENT_BRUSH);
-		dc.SetPen  (wxPen(Color(255,0,0), 1, wxDOT));
-		dc.DrawPolygon((int)points.size(), &points[0]);
-	} else {
-		dc.SetLogicalFunction(wxOR);
-		dc.SetBrush(Color(0,0,64));
-		dc.SetPen  (*wxTRANSPARENT_PEN);
-		dc.DrawPolygon((int)points.size(), &points[0]);
-		if (shape.combine == SYMBOL_COMBINE_SUBTRACT || shape.combine == SYMBOL_COMBINE_BORDER) {
-			dc.SetLogicalFunction(wxAND);
-			dc.SetBrush(Color(191,191,255));
-			dc.DrawPolygon((int)points.size(), &points[0]);
-		}
-		dc.SetLogicalFunction(wxCOPY);
-	}
-}
-void SymbolViewer::highlightPart(DC& dc, const SymbolSymmetry& sym) {
-	// center
-	RealPoint center = rotation.tr(sym.center);
-	// draw 'spokes'
-	double angle = atan2(sym.handle.y, sym.handle.x);
-	dc.SetPen(wxPen(Color(255,200,0),3));
-	for (int i = 0; i < sym.copies ; ++i) {
-		double a = angle + (i + 0.5) * 2 * M_PI / sym.copies;
-		Vector2D dir(cos(a), sin(a));
-		Vector2D dir2 = rotation.tr(sym.center + 2 * dir);
-		dc.DrawLine(center.x, center.y, dir2.x, dir2.y);
-	}
-	// draw center
-	dc.SetPen(*wxBLACK_PEN);
-	dc.SetBrush(Color(255,200,0));
-	dc.DrawCircle(center.x, center.y, 5);
-	// draw handle
-	Vector2D dir2 = rotation.tr(sym.center + sym.handle);
-	dc.SetPen(wxPen(Color(255,200,0),1,wxDOT));
-	dc.DrawLine(center.x, center.y, dir2.x, dir2.y);
-}
-void SymbolViewer::highlightPart(DC& dc, const SymbolGroup& group, HighlightStyle style) {
-	if (style == HIGHLIGHT_BORDER) {
-		dc.SetBrush(*wxTRANSPARENT_BRUSH);
-		dc.SetPen  (wxPen(Color(255,0,0), 2));
-		dc.DrawRectangle(rotation.tr(RealRect(group.min_pos, RealSize(group.max_pos - group.min_pos))));
-	}
-	FOR_EACH_CONST(part, group.parts) {
-		highlightPart(dc, *part, (HighlightStyle)(style | HIGHLIGHT_LESS));
-	}
-}
-
 
 void SymbolViewer::combineSymbolShape(const SymbolShape& shape, DC& border, DC& interior, bool directB, bool directI) {
 	// what color should the interior be?
 	// use black when drawing to the screen
 	Byte interiorCol = directI ? 0 : 255;
+	if (editing_hints && in_symmetry) {
+		interiorCol = directI ? 16 : 240;
+	}
 	// how to draw depends on combining mode
 	switch(shape.combine) {
 		case SYMBOL_COMBINE_OVERLAP:
@@ -287,6 +228,10 @@ void SymbolViewer::combineSymbolShape(const SymbolShape& shape, DC& border, DC& 
 	}
 }
 
+
+// ----------------------------------------------------------------------------- : Drawing : Basic
+
+
 void SymbolViewer::drawSymbolShape(const SymbolShape& shape, DC* border, DC* interior, Byte borderCol, Byte interiorCol, bool directB, bool clear) {
 	// create point list
 	vector<wxPoint> points;
@@ -317,4 +262,91 @@ void SymbolViewer::drawSymbolShape(const SymbolShape& shape, DC* border, DC* int
 		interior->SetPen(*wxTRANSPARENT_PEN);
 		interior->DrawPolygon((int)points.size(), &points[0]);
 	}
+}
+
+// ----------------------------------------------------------------------------- : Drawing : Highlighting
+
+void SymbolViewer::highlightPart(DC& dc, const SymbolPart& part, HighlightStyle style) {
+	if (const SymbolShape* s = part.isSymbolShape()) {
+		highlightPart(dc, *s, style);
+	} else if (const SymbolSymmetry* s = part.isSymbolSymmetry()) {
+		highlightPart(dc, *s, style);
+	} else if (const SymbolGroup* g = part.isSymbolGroup()) {
+		highlightPart(dc, *g, style);
+	} else {
+		throw InternalError(_("Invalid symbol part type"));
+	}
+}
+
+void SymbolViewer::highlightPart(DC& dc, const SymbolShape& shape, HighlightStyle style) {
+	if (style == HIGHLIGHT_LESS) return;
+	// create point list
+	vector<wxPoint> points;
+	size_t size = shape.points.size();
+	for(size_t i = 0 ; i < size ; ++i) {
+		segment_subdivide(*shape.getPoint((int)i), *shape.getPoint((int)i+1), origin, multiply, points);
+	}
+	// draw
+	if (style == HIGHLIGHT_BORDER) {
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.SetPen  (wxPen(Color(255,0,0), 2));
+		dc.DrawPolygon((int)points.size(), &points[0]);
+	} else if (style == HIGHLIGHT_BORDER_DOT) {
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.SetPen  (wxPen(Color(255,0,0), 1, wxDOT));
+		dc.DrawPolygon((int)points.size(), &points[0]);
+	} else {
+		dc.SetLogicalFunction(wxOR);
+		dc.SetBrush(Color(0,0,64));
+		dc.SetPen  (*wxTRANSPARENT_PEN);
+		dc.DrawPolygon((int)points.size(), &points[0]);
+		if (shape.combine == SYMBOL_COMBINE_SUBTRACT || shape.combine == SYMBOL_COMBINE_BORDER) {
+			dc.SetLogicalFunction(wxAND);
+			dc.SetBrush(Color(191,191,255));
+			dc.DrawPolygon((int)points.size(), &points[0]);
+		}
+		dc.SetLogicalFunction(wxCOPY);
+	}
+}
+
+void SymbolViewer::highlightPart(DC& dc, const SymbolSymmetry& sym, HighlightStyle style) {
+	// highlight parts?
+	FOR_EACH_CONST(part, sym.parts) {
+		highlightPart(dc, *part, (HighlightStyle)(style | HIGHLIGHT_LESS));
+	}
+	// Color?
+	Color color = style & HIGHLIGHT_BORDER   ? Color(255,100,0)
+	            : style & HIGHLIGHT_INTERIOR ? Color(255,200,0)
+	            : Color(200,170,0);
+	// center
+	RealPoint center = rotation.tr(sym.center);
+	// draw 'spokes'
+	double angle = atan2(sym.handle.y, sym.handle.x);
+	dc.SetPen(wxPen(color, sym.kind == SYMMETRY_ROTATION ? 1 : 3));
+	for (int i = 0; i < sym.copies ; ++i) {
+		double a = angle + (i + 0.5) * 2 * M_PI / sym.copies;
+		Vector2D dir(cos(a), sin(a));
+		Vector2D dir2 = rotation.tr(sym.center + 2 * dir);
+		dc.DrawLine(center.x, center.y, dir2.x, dir2.y);
+	}
+	// draw center
+	dc.SetPen(*wxBLACK_PEN);
+	dc.SetBrush(color);
+	dc.DrawCircle(center.x, center.y, sym.kind == SYMMETRY_ROTATION ? 7 : 5);
+}
+
+void SymbolViewer::highlightPart(DC& dc, const SymbolGroup& group, HighlightStyle style) {
+	if (style == HIGHLIGHT_BORDER) {
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.SetPen  (wxPen(Color(255,0,0), 2));
+		dc.DrawRectangle(rotation.tr(RealRect(group.min_pos, RealSize(group.max_pos - group.min_pos))));
+	}
+	FOR_EACH_CONST(part, group.parts) {
+		highlightPart(dc, *part, (HighlightStyle)(style | HIGHLIGHT_LESS));
+	}
+}
+
+
+void SymbolViewer::drawEditingHints(DC& dc) {
+	// TODO?
 }

@@ -17,7 +17,7 @@
 // ----------------------------------------------------------------------------- : Simple rendering
 
 /// Render a Symbol to an Image
-Image render_symbol(const SymbolP& symbol, double border_radius = 0.05, int size = 100);
+Image render_symbol(const SymbolP& symbol, double border_radius = 0.05, int size = 100, bool editing_hints = false);
 
 // ----------------------------------------------------------------------------- : Symbol Viewer
 
@@ -32,11 +32,12 @@ enum HighlightStyle
 class SymbolViewer : public SymbolView {
   public:
 	// --------------------------------------------------- : Data
-	SymbolViewer(const SymbolP& symbol, double size = 500, double border_radius = 0.05);
+	SymbolViewer(const SymbolP& symbol, bool editing_hints, double size = 500, double border_radius = 0.05);
 	
 	// drawing
 	double border_radius;
-
+	bool editing_hints;
+	
 	// --------------------------------------------------- : Point translation
 	
 	void setZoom(double zoom);
@@ -50,15 +51,20 @@ class SymbolViewer : public SymbolView {
 	/// Draw the symbol to a dc
 	void draw(DC& dc);
 	
-	void highlightPart(DC& dc, const SymbolPart& part, HighlightStyle style);
-	void highlightPart(DC& dc, const SymbolShape& shape, HighlightStyle style);
-	void highlightPart(DC& dc, const SymbolSymmetry& sym);
-	void highlightPart(DC& dc, const SymbolGroup& group, HighlightStyle style);
+	void highlightPart(DC& dc, const SymbolPart& part,    HighlightStyle style);
+	void highlightPart(DC& dc, const SymbolShape& shape,  HighlightStyle style);
+	void highlightPart(DC& dc, const SymbolSymmetry& sym, HighlightStyle style);
+	void highlightPart(DC& dc, const SymbolGroup& group,  HighlightStyle style);
+	
+	void drawEditingHints(DC& dc);
 	
 	void onAction(const Action&, bool) {}
 	
+	
   private:
 	typedef shared_ptr<wxMemoryDC> MemoryDCP;
+	/// Inside a reflection?
+	int in_symmetry;
 	
 	/// Combine a symbol part with the dc
 	void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paintedSomething, bool& buffersFilled, bool allow_overlap, MemoryDCP& borderDC, MemoryDCP& interiorDC);

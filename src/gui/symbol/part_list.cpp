@@ -486,13 +486,13 @@ const Image& SymbolPartList::itemPreview(int i, const SymbolPartP& part) {
 			if (s->combine == SYMBOL_COMBINE_SUBTRACT) {
 				// temporarily render using subtract instead, otherwise we don't see anything
 				s->combine = SYMBOL_COMBINE_BORDER;
-				img = render_symbol(sym, filter, 0.08, ITEM_HEIGHT * 4);
+				img = render_symbol(sym, filter, 0.08, ITEM_HEIGHT * 4, true);
 				s->combine = SYMBOL_COMBINE_SUBTRACT;
 			} else {
-				img = render_symbol(sym, filter, 0.08, ITEM_HEIGHT * 4);
+				img = render_symbol(sym, filter, 0.08, ITEM_HEIGHT * 4, true);
 			}
 		} else {
-			img = render_symbol(sym, filter, 0.08, ITEM_HEIGHT * 4);
+			img = render_symbol(sym, filter, 0.08, ITEM_HEIGHT * 4, true);
 		}
 		resample(img, p.image);
 		p.up_to_date = true;

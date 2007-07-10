@@ -15,6 +15,7 @@ class Vector2D;
 DECLARE_POINTER_TYPE(Symbol);
 DECLARE_POINTER_TYPE(SymbolPart);
 DECLARE_POINTER_TYPE(SymbolShape);
+DECLARE_POINTER_TYPE(SymbolSymmetry);
 class SymbolGroup;
 
 // ----------------------------------------------------------------------------- : Selection
@@ -61,6 +62,13 @@ class SymbolPartsSelection {
 	
 	/// Get any SymbolShape if there is one selected
 	SymbolShapeP getAShape() const;
+	/// Get any SymbolSymmetry if there is one selected
+	SymbolSymmetryP getASymmetry() const;
+	/// Get the only selected thing
+	inline SymbolPartP getOnlyOne() const {
+		assert(selection.size() == 1);
+		return *selection.begin();
+	}
 	
   private:
 	Symbol* root;

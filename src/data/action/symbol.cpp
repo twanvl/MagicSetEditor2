@@ -519,6 +519,7 @@ void GroupSymbolPartsActionBase::perform(bool to_undo) {
 
 GroupSymbolPartsAction::GroupSymbolPartsAction(SymbolGroup& root, const set<SymbolPartP>& parts, const SymbolGroupP& group)
 	: GroupSymbolPartsActionBase(root)
+	, group(group)
 {
 	// group parts in the old parts list
 	bool done = false;
@@ -539,7 +540,7 @@ GroupSymbolPartsAction::GroupSymbolPartsAction(SymbolGroup& root, const set<Symb
 	group->calculateBounds();
 }
 String GroupSymbolPartsAction::getName(bool to_undo) const {
-	return _ACTION_("group parts");
+	return group->isSymbolSymmetry() ? _ACTION_("add symmetry") : _ACTION_("group parts");
 }
 
 UngroupSymbolPartsAction::UngroupSymbolPartsAction(SymbolGroup& root, const set<SymbolPartP>& parts)

@@ -95,6 +95,8 @@ tool/grid_snap			IMAGE	"tool/grid_snap.png"
 tool/group				IMAGE	"tool/group.png"
 tool/ungroup			IMAGE	"tool/ungroup.png"
 
+tool/symmetry_add		IMAGE	"tool/symmetry_add.png"
+
 combine_or				IMAGE	"../common/combine_or.png"
 combine_sub				IMAGE	"../common/combine_sub.png"
 combine_sub_dark		IMAGE	"../common/combine_sub_dark.png"
