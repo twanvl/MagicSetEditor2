@@ -1,4 +1,4 @@
-mse version: 0.3.4
+﻿mse version: 0.3.4
 game: magic
 short name: Modern style
 full name: After 8th edition
@@ -94,9 +94,12 @@ styling field:
 	choice: old
 	choice: diagonal T
 styling field:
-	type: boolean
-	name: center short text
-	description: Center the text on cards with short rule text and no flavor text.
+	type: choice
+	name: center text
+	description: When to center text (short text only means only on one-line cards with no flavor text)
+	choice: always
+	choice: short text only
+	choice: never
 	initial: no
 
 styling style:
@@ -243,10 +246,11 @@ card style:
 			size: 14
 		alignment:
 			script:
-				if styling.center_short_text and
+				if (styling.center_text == "short text only" and
 				   not contains(match:"\n", card.rule_text) and
 				   card.flavor_text == "<i-flavor></i-flavor>" and
-				   card_style.text.content_lines <= 2
+				   card_style.text.content_lines <= 2) or
+				   styling.center_text == "always"
 				then "middle center"
 				else "middle left"
 		z index: 2

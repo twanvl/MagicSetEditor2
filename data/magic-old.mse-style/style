@@ -1,4 +1,4 @@
-############################################################## 
+﻿############################################################## 
 ############################################################## 
 ############################################################## OLD STYLE MAGIC
 ############################################################## 
@@ -88,6 +88,14 @@ styling field:
 	choice: modern
 	choice: old
 	choice: diagonal T
+styling field:
+	type: choice
+	name: center text
+	description: When to center text (short text only means only on one-line cards with no flavor text)
+	choice: always
+	choice: short text only
+	choice: never
+	initial: never
 
 styling style:
 	use guild mana symbols:
@@ -227,7 +235,15 @@ card style:
 					then "magic-mana-large"
 					else "magic-mana-small"
 			size: 13
-		alignment: middle left
+		alignment:
+			script:
+				if (styling.center_text == "short text only" and
+				   not contains(match:"\n", card.rule_text) and
+				   card.flavor_text == "<i-flavor></i-flavor>" and
+				   card_style.text.content_lines <= 2) or
+				   styling.center_text == "always"
+				then "middle center"
+				else "middle left"
 		z index: 2
 		padding left:   2
 		padding top:    2

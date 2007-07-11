@@ -77,8 +77,6 @@ init script:
 	color_filter  := sort_rule(order: "<WUBRG>")
 	color_filterH := sort_rule(order: "</>")
 	mana_to_color := {
-		colors := color_filter()
-		hybrid := color_filterH()
 		count  := number_of_items(in: colors)
 		if hybrid == "" then
 			# not a hybrid
@@ -108,34 +106,58 @@ init script:
 		) +
 		# keep only mana
 		filter_rule(match: "<sym[^>]*>([^<]+)") + color_filter;
+	# get the land frame for a "WUBRG"-style input.
+	land_multicolor := {
+		count  := number_of_items(in: colors)
+		if      count == 0 then "land"
+		else if count == 1 then color_names_1() + ", land"
+		else if count == 2 then color_names_2() + ", land"
+		else if count == 3 then color_names_3() + ", land"
+		else                    "land, multicolor"
+	}
 	land_to_color := {
 		# Based on watermark
-		if      card.watermark = "mana symbol white" then "white, land"
-		else if card.watermark = "mana symbol blue"  then "blue, land"
-		else if card.watermark = "mana symbol black" then "black, land"
-		else if card.watermark = "mana symbol red"   then "red, land"
-		else if card.watermark = "mana symbol green" then "green, land"
-		else (
-			# Based on colors in text box
-			colors := color_text_filter(input: card.rule_text);
-			count  := number_of_items(in: colors)
-			if      count == 0 then "land"
-			else if count == 1 then color_names_1() + ", land"
-			else if count == 2 then color_names_2() + ", land"
-			else if count == 3 then color_names_3() + ", land"
-			else                    "land, multicolor"
-		)
+		if      watermark = "mana symbol white" then "white, land"
+		else if watermark = "mana symbol blue"  then "blue, land"
+		else if watermark = "mana symbol black" then "black, land"
+		else if watermark = "mana symbol red"   then "red, land"
+		else if watermark = "mana symbol green" then "green, land"
+		else land_multicolor(colors:color_text_filter(input: card.rule_text))
 	};
-		
+	
+	# Look for a CDA that defines colors
+	text_to_color := {
+		text := filter_text(match: card_name+"(</[-a-z]+>)? is (colorless|all colors|((blue|white|green|red|black)((,|,? and) (blue|white|green|red|black))*))\\.")
+		if text == "" then ""
+		else if contains(text, match: "all colors") then (
+			colors := "WUBRG"
+			if land = "land" then land_multicolor()
+			else mana_to_color(hybrid: "")
+		) else (
+			colors := ""
+			if contains(text, match: "white") then colors := colors + "W"
+			if contains(text, match: "blue")  then colors := colors + "U"
+			if contains(text, match: "black") then colors := colors + "B"
+			if contains(text, match: "red")   then colors := colors + "R"
+			if contains(text, match: "green") then colors := colors + "G"
+			if land = "land" then land_multicolor()
+			else mana_to_color(hybrid: "")
+		)
+	}
+	
 	# The color of a card
 	is_artifact := match_rule(match: "(?i)Artifact")
 	is_land     := match_rule(match: "(?i)Land")
 	card_color := {
 		# usually the color of mana
-		mana_color := mana_to_color(casting_cost);
-		if      mana_color == "colorless" and is_land    (card.super_type)  then land_to_color()
-		else if mana_color == "colorless" and is_artifact(card.super_type)  then "artifact"
-		else mana_color
+		text_color := text_to_color(rules_text, land: is_land(type), card_name: card_name);
+		if text_color == "" then (
+			mana_color := mana_to_color(colors: color_filter(casting_cost), hybrid: color_filterH(casting_cost))
+			if      mana_color == "colorless" and is_land    (type)  then land_to_color(watermark)
+			else if mana_color == "colorless" and is_artifact(type)  then "artifact"
+			else mana_color
+		)
+		else text_color
 	};
 	
 	# Number of colors in a card_color
@@ -631,7 +653,12 @@ card field:
 	save value: false
 	show statistics: false
 	editable: false
-	script: if card_shape() == "split" then card.name + "/" + card.name_2 else card.name
+	card list visible: true
+	card list name: Name
+	card list column: 1
+	card list width: 150
+	description: The name of the card
+	script: if card_shape() == "split" then card.name + "//" + card.name_2 else card.name
 
 ############################# Background stuff
 card field:
@@ -689,20 +716,17 @@ card field:
 		name: reversed
 		enabled: { card_color_color_count(card.card_color) >= 2 and not chosen(choice:"overlay",card.card_color) }
 	script: card_color_filter(value)
-	default: card_color(casting_cost: card.casting_cost)
+	default: card_color(casting_cost: card.casting_cost, rules_text: card.rule_text, type: card.super_type, watermark: card.watermark, card_name: card.name)
 	show statistics: false
 
 ############################# Name line
 card field:
 	type: text
 	name: name
+	card list visible: false
 	script: name_filter(value)
 	identifying: true
 	show statistics: false
-	card list visible: true
-	card list column: 1
-	card list width: 150
-	description: The name of the card
 card field:
 	type: text
 	name: casting cost
@@ -919,7 +943,7 @@ card field:
 		name: reversed
 		enabled: { card_color_color_count(card.card_color) >= 2 and not chosen(choice:"overlay",card.card_color_2) }
 	script: card_color_filter(value)
-	default: card_color(casting_cost: card.casting_cost_2)
+	default: card_color(casting_cost: card.casting_cost_2, type: card.super_type_2, rules_text: card.rule_text_2, watermark: card.watermark_2, card_name: card.name_2)
 	show statistics: false
 card field:
 	type: text

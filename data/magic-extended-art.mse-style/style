@@ -1,4 +1,4 @@
-mse version: 0.3.4
+﻿mse version: 0.3.4
 game: magic
 full name: Extended Art
 short name: Extended Art
@@ -65,6 +65,14 @@ styling field:
 	choice: modern
 	choice: old
 	choice: diagonal T
+styling field:
+	type: choice
+	name: center text
+	description: When to center text (short text only means only on one-line cards with no flavor text)
+	choice: always
+	choice: short text only
+	choice: never
+	initial: never
 
 styling style:
 	popup mana symbols:
@@ -199,7 +207,15 @@ card style:
 					then "magic-mana-large"
 					else "magic-mana-small"
 			size: 14
-		alignment: bottom left
+		alignment:
+			script:
+				if (styling.center_text == "short text only" and
+				   not contains(match:"\n", card.rule_text) and
+				   card.flavor_text == "<i-flavor></i-flavor>" and
+				   card_style.text.content_lines <= 2) or
+				   styling.center_text == "always"
+				then "bottom center"
+				else "bottom left"
 		z index: 2
 		padding left:   6
 		padding top:    2
