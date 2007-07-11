@@ -45,6 +45,9 @@ init script:
 	
 	# We have no land template
 	font_colors_white := { input == "b" }
+	
+	# AE replacement shouldn't happen in the title, or else MSE compresses the symbol
+	name_filter := { input }
 
 ############################################################## Set info fields
 

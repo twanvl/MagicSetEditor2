@@ -376,14 +376,7 @@ init script:
 		# step 1 : Æ replacement rule
 		replace_rule(
 			match: "AE",
-			replace: "Æ") +
-		# step 2 : longdash for keywords
-		replace_rule(
-			match: "--",
-			replace: "—") +
-		replace_rule(
-			match: " - ",
-			replace: " — ")
+			replace: "Æ")
 	
 	#character filter for copyright line
 	copyright_filter :=

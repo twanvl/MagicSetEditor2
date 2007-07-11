@@ -3,13 +3,13 @@ mse version: 0.3.3
 image font size: 46
 horizontal space: 1.2
 symbol:
-	code: Ae
-	image: ae.png
-symbol:
 	code: AE
 	image: ae.png
 symbol:
 	code: aE
+	image: ae.png
+symbol:
+	code: Ae
 	image: ae.png
 symbol:
 	code: &
