@@ -286,8 +286,8 @@ card field:
 			field1: card.name,
 			separator: "™ ",
 			field2: card.identity,
-			grey_until_needed: true_pass(),
-			hide_when_both_empty: true,
+			soft_before_empty: true,
+			hide_when_empty:   true,
 			type_over1: " TM",
 			type_over2: "TM"
 		)
@@ -353,8 +353,8 @@ card field:
 			field1: card.type_text,
 			separator: " - ",
 			field2: card.sub_type,
-			grey_until_needed: true,
-			hide_when_both_empty: true,
+			soft_before_empty: true,
+			hide_when_empty:   true,
 			type_over1: " -",
 			type_over2: "-"
 		)
@@ -387,8 +387,8 @@ card field:
 			field1: card.version,
 			separator: " • ",
 			field2: card.team_affiliation,
-			grey_until_needed: true,
-			hide_when_both_empty: true,
+			soft_before_empty: true,
+			hide_when_empty:   true,
 			type_over1: " `"
 			)
 	card list column: 2
@@ -473,8 +473,8 @@ card field:
 			field1: card.team,
 			separator: " • ",
 			field2: card.team_2_of_2,
-			grey_until_needed: true,
-			hide_when_both_empty: true,
+			soft_before_empty: true,
+			hide_when_empty:   true,
 			type_over1: " `"
 		)
 	description: The team of the card, use ` for a separator for dual cards
@@ -498,8 +498,8 @@ card field:
 			field1: card.team_2,
 			separator: " • ",
 			field2: card.team_2_of_2_2,
-			grey_until_needed: true,
-			hide_when_both_empty: true,
+			soft_before_empty: true,
+			hide_when_empty:   true,
 			type_over1: " `"
 		)
 	description: The second affiliation of the card (for dual cards)
@@ -643,6 +643,11 @@ keyword:
 	mode: real
 	reminder: This character comes into play with a cosmic counter on it. While this character has a cosmic counter on it, it has this ability in addition to any other text it has.
 keyword:
+	keyword: Cosmic
+	match: Cosmic
+	mode: real
+	reminder: This character comes into play with a cosmic counter on it.
+keyword:
 	keyword: Boost
 	match: Boost <atom-param>action</atom-param>
 	mode: real
@@ -702,3 +707,17 @@ keyword:
 	match: Backup: <atom-param>action</atom-param>
 	mode: real
 	reminder: This ability can only be used during the build phase.
+keyword:
+	keyword: Dual Loyalty
+	match: Dual Loaylty
+	mode: real
+	reminder: Recruit this card only if both its printed affiliations are among the affiliations of characters you control.
+keyword:
+	keyword: Substitute
+	match: Substitute
+	mode: real
+	reminder: Reveal this card -> You may remove from the game a ready character you control with cost greater than or equal to the cost of this card. If you do, put this card into play. Use only if this card is in your hand and only during your recruit step."
+#keyword:
+#	keyword: Mutant Traits
+#	keyword: Instanity
+#	keyword: Free

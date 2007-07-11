@@ -141,7 +141,7 @@ card style:
 	name:
 		left: 39
 		top : 21
-		width: 210
+		right: { 300 - card_style.casting_cost.content_width }
 		height: 22
 		alignment: bottom shrink-overflow
 		padding bottom: 0
@@ -154,9 +154,9 @@ card style:
 			shadow displacement x: 1
 			shadow displacement y: 1
 	casting cost:
-		left: 250
+		right: 304
 		top : 21
-		width: 54
+		width: { max(30, card_style.casting_cost.content_width) + 5 }
 		height: 22
 		alignment: middle right
 		symbol font:

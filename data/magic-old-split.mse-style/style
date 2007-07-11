@@ -127,9 +127,9 @@ card style:
 
 	############################# Name line
 	name:
-		left: { if card.card_symbol=="none" then 32 else 51 }
+		left: 32
 		top : 20
-		width: { if card.card_symbol=="none" then 175 else 168 }
+		right: { 237 - card_style.casting_cost.content_width }
 		height: 17
 		alignment: top shrink-overflow
 		padding bottom: 0
@@ -142,9 +142,9 @@ card style:
 			shadow displacement x: 1
 			shadow displacement y: 1
 	name 2:
-		left: { if card.card_symbol=="none" then 284 else 51 }
+		left: 284
 		top : 20
-		width: { if card.card_symbol=="none" then 175 else 168 }
+		right: { 489 - card_style.casting_cost.content_width }
 		height: 17
 		alignment: top shrink-overflow
 		padding bottom: 0
@@ -157,9 +157,9 @@ card style:
 			shadow displacement x: 1
 			shadow displacement y: 1
 	casting cost:
-		left: 209
+		right: 244
 		top : 18.5
-		width: 35
+		width: { max(30, card_style.casting_cost.content_width) + 5 }
 		height: 16
 		alignment: bottom right
 		symbol font:
@@ -171,9 +171,9 @@ card style:
 		padding top: 0
 
 	casting cost 2:
-		left: 461
+		right: 496
 		top : 18.5
-		width: 35
+		width: { max(30, card_style.casting_cost.content_width) + 5 }
 		height: 16
 		alignment: bottom right
 		symbol font:
