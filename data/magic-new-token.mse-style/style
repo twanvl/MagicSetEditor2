@@ -144,7 +144,7 @@ card style:
 	############################# Image
 	image:
 		left:	30
-		top: { if text_shape() == 2 then 58 else 59 }
+		top: { if text_shape() == 2 or text_shape() == 1 then 58 else 59 }
 		width:	315
 		height:
 			{ if      text_shape() == "0" then 366
@@ -198,8 +198,8 @@ card style:
 		left: 31
 		top:
 			{ if      text_shape() == "0" then 300
-			  else if text_shape() == "1" then 444
-			  else                             388 }
+			  else if text_shape() == "1" then 445
+			  else                             388}
 		width: 311
 		height: 
 			{ if   text_shape() == "1" then 22
@@ -208,7 +208,7 @@ card style:
 			name: MPlantin
 			italic name: MPlantin-Italic
 			size: 15
-			scale down to: 8
+			scale down to: 15
 			color: rgb(0,0,0)
 		symbol font:
 			name:
