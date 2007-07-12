@@ -29,7 +29,7 @@ void Installer::installFrom(const String& filename, bool message_on_success) {
 	i.open(filename);
 	i.install();
 	if (message_on_success) {
-		wxMessageBox(String::Format(_("'%s' successfully installed %d package%s."), i.name(), i.packages.size(), i.packages.size() == 1 ? _("") : _("s")),
+		wxMessageBox(String::Format(_("'%s' successfully installed %d package%s."), i.name().c_str(), i.packages.size(), i.packages.size() == 1 ? _("") : _("s")),
 		             _("Magic Set Editor"), wxOK | wxICON_INFORMATION);
 	}
 }
@@ -56,7 +56,7 @@ void Installer::install(const String& package) {
 
 void Installer::addPackage(const String& package) {
 	wxFileName fn(package);
-	if (fn.GetExt() == _(".mse-installer")) {
+	if (fn.GetExt() == _("mse-installer")) {
 		prefered_filename = package;
 	} else {
 		PackagedP p = ::packages.openAny(package);
