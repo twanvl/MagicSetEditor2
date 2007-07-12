@@ -171,8 +171,8 @@ class Package : public IntrusivePtrVirtualBase {
 	void openDirectory();
 	void openSubdir(const String&);
 	void openZipfile();
-	void saveToDirectory(const String&, bool);
 	void saveToZipfile(const String&, bool);
+	void saveToDirectory(const String&, bool);
 	FileInfos::iterator addFile(const String& file);
 	static String toStandardName(const String& file);
 };
@@ -226,6 +226,15 @@ class Packaged : public Package {
   private:
 	bool   fully_loaded;	///< Is the package fully loaded?
 	friend struct JustAsPackageProxy;
+};
+
+// ----------------------------------------------------------------------------- : IncludePackage
+
+/// A package that just contains a bunch of files that are used from other packages
+class IncludePackage : public Packaged {
+  protected:
+	String typeName() const;
+	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : EOF

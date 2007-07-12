@@ -21,15 +21,6 @@
 
 // ----------------------------------------------------------------------------- : Linux
 
-#ifdef __linux__
-	
-	/// wxMkDir as documented
-	inline void wxMkDir(const String& dir) {
-		wxMkDir(wxConvLocal.cWX2MB(dir), 0777);
-	}
-	
-#endif
-
 // ----------------------------------------------------------------------------- : GCC
 
 #ifdef __GNUC__

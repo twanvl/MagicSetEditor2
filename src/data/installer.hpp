@@ -21,9 +21,9 @@ class Installer : public Packaged {
 	vector<String> packages;	///< Packages to install
 	
 	/// Load an installer from a file, and run it
-	static void installFrom(const String& filename, bool message_on_success);
+	static void installFrom(const String& filename, bool message_on_success, bool local);
 	/// Install all the packages
-	void install();
+	void install(bool local);
 	/// Install a specific package
 	void install(const String& package);
 	

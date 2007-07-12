@@ -70,6 +70,9 @@ class PackageManager {
 	
 	/// Check if the given dependency is currently installed
 	bool checkDependency(const PackageDependency& dep, bool report_errors = false);
+
+	inline String getGlobalDataDir() const { return global_data_directory; }
+	inline String getLocalDataDir() const { return local_data_directory; }
 	
   private:
 	map<String, PackagedP> loaded_packages;

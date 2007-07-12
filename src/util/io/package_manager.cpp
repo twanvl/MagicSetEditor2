@@ -15,21 +15,6 @@
 #include <data/export_template.hpp>
 #include <wx/stdpaths.h>
 
-// ----------------------------------------------------------------------------- : IncludePackage
-
-/// A package that just contains a bunch of files that are used from other packages
-class IncludePackage : public Packaged {
-  protected:
-	String typeName() const;
-	DECLARE_REFLECTION();
-};
-
-String IncludePackage::typeName() const { return _("include"); }
-
-IMPLEMENT_REFLECTION(IncludePackage) {
-	REFLECT_BASE(Packaged);
-}
-
 // ----------------------------------------------------------------------------- : PackageManager
 
 PackageManager packages;

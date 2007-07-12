@@ -94,9 +94,13 @@ bool MSE::OnInit() {
 					return true;
 				} else if (f.GetExt() == _("mse-installer")) {
 					// Installer; install it
-					Installer::installFrom(argv[1], true);
-					packages.destroy();
-					return false;
+					bool local = false;
+					if (argc > 2) {
+						String arg2 = argv[2];
+						local = arg2 == _("--local");
+					}
+					Installer::installFrom(argv[1], true, local);
+					return true;
 				} else if (arg == _("--symbol-editor")) {
 					Window* wnd = new SymbolWindow(nullptr);
 					wnd->Show();
@@ -112,8 +116,7 @@ bool MSE::OnInit() {
 					} else {
 						inst.saveAs(inst.prefered_filename, false);
 					}
-					packages.destroy();
-					return false;
+					return true;
 				} else if (arg == _("--help") || arg == _("-?")) {
 					// command line help
 					write_stdout( String(_("Magic Set Editor\n\n"))
@@ -128,17 +131,18 @@ bool MSE::OnInit() {
 					            + _("  -v --version      \tShow version information.\n")
 					            + _("  --create-installer\n")
 					            + _("      FILE [FILE]...\tCreate an instaler named FILE, containing the listed packges.\n") );
-					return false;
+					return true;
 				} else if (arg == _("--version") || arg == _("-v")) {
 					// dump version
 					write_stdout( _("Magic Set Editor\nVersion ") + app_version.toString() + version_suffix );
-					packages.destroy();
-					return false;
+					return true;
 				} else {
 					handle_error(_("Invalid command line argument:\n") + String(argv[1]));
 				}
 			} catch (const Error& e) {
 				handle_error(e);
+				OnExit();
+				return false;
 			}
 		}
 		

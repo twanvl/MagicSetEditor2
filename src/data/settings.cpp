@@ -156,7 +156,7 @@ IndexMap<FieldP,ValueP>& Settings::exportOptionsFor(const ExportTemplate& export
 /// Retrieve the directory to use for settings and other data files
 String user_settings_dir() {
 	String dir = wxStandardPaths::Get().GetUserDataDir();
-	if (!wxDirExists(dir)) wxMkDir(dir);
+	if (!wxDirExists(dir)) wxMkdir(dir);
 	return dir + _("/");
 }
 

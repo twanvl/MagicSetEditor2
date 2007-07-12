@@ -64,7 +64,7 @@ void HtmlExportWindow::onOk(wxCommandEvent&) {
 		info.directory_relative = fn.GetName() + _("-files");
 		fn.SetFullName(info.directory_relative);
 		info.directory_absolute = fn.GetFullPath();
-		wxMkDir(info.directory_absolute);
+		wxMkdir(info.directory_absolute);
 	}
 	// run export script
 	Context& ctx = set->getContext();

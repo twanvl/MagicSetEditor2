@@ -497,3 +497,11 @@ void Packaged::validate(Version) {
 		packages.checkDependency(*dep, true);
 	}
 }
+
+// ----------------------------------------------------------------------------- : IncludePackage
+
+String IncludePackage::typeName() const { return _("include"); }
+
+IMPLEMENT_REFLECTION(IncludePackage) {
+	REFLECT_BASE(Packaged);
+}
