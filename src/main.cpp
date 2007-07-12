@@ -86,13 +86,11 @@ bool MSE::OnInit() {
 					// Show the symbol editor
 					Window* wnd = new SymbolWindow(nullptr, argv[1]);
 					wnd->Show();
-					packages.destroy();
 					return true;
 				} else if (f.GetExt() == _("mse-set") || f.GetExt() == _("mse") || f.GetExt() == _("set")) {
 					// Show the set window
 					Window* wnd = new SetWindow(nullptr, import_set(argv[1]));
 					wnd->Show();
-					packages.destroy();
 					return true;
 				} else if (f.GetExt() == _("mse-installer")) {
 					// Installer; install it
@@ -102,7 +100,6 @@ bool MSE::OnInit() {
 				} else if (arg == _("--symbol-editor")) {
 					Window* wnd = new SymbolWindow(nullptr);
 					wnd->Show();
-					packages.destroy();
 					return true;
 				} else if (arg == _("--create-installer")) {
 					// create an installer
@@ -147,7 +144,6 @@ bool MSE::OnInit() {
 		
 		// no command line arguments, or error, show welcome window
 		(new WelcomeWindow())->Show();
-		packages.destroy();
 		return true;
 			
 	} catch (const Error& e) {

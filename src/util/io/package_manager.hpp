@@ -61,11 +61,9 @@ class PackageManager {
 	 */
 	PackagedP openAny(const String& name, bool just_header = false);
 	
-	/// Find a package whos name matches a pattern
-	/** Find more using wxFindNextFile().
-	 *  If no package is found returns an empty string.
-	 */
-	String findFirst(const String& pattern);
+	/// Find all packages that match a filename pattern, store them in out
+	/** Only reads the package headers */
+	void findMatching(const String& pattern, vector<PackagedP>& out);
 	
 	/// Open a file from a package, with a name encoded as "package/file"
 	InputStreamP openFileFromPackage(const String& name);

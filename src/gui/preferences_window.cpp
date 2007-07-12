@@ -15,6 +15,8 @@
 #include <wx/filename.h>
 #include <wx/notebook.h>
 
+DECLARE_TYPEOF_COLLECTION(PackagedP);
+
 // ----------------------------------------------------------------------------- : Preferences pages
 
 // A page from the preferences dialog
@@ -131,16 +133,15 @@ GlobalPreferencesPage::GlobalPreferencesPage(Window* parent)
 	// init controls
 	language = new wxComboBox(this, wxID_ANY, _(""), wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY | wxCB_SORT);
 	// set values
-	String f = ::packages.findFirst(_("*.mse-locale"));
+	vector<PackagedP> locales;
+	::packages.findMatching(_("*.mse-locale"), locales);
 	int n = 0;
-	while (!f.empty()) {
-		PackagedP package = packages.openAny(f);
+	FOR_EACH(package, locales) {
 		language->Append(package->name() + _(": ") + package->full_name, package.get());
 		if (settings.locale == package->name()) {
 			language->SetSelection(n);
 		}
 		n++;
-		f = wxFindNextFile();
 	}
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);

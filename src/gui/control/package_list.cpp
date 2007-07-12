@@ -10,6 +10,8 @@
 #include <util/io/package_manager.hpp>
 #include <util/alignment.hpp>
 
+DECLARE_TYPEOF_COLLECTION(PackagedP);
+
 // ----------------------------------------------------------------------------- : PackageList
 
 PackageList::PackageList(Window* parent, int id, int direction)
@@ -58,32 +60,18 @@ void PackageList::showData(const String& pattern) {
 	// clear
 	packages.clear();
 	// find matching packages
-	String f = ::packages.findFirst(pattern);
-	while (!f.empty()) {
-		// try to open the package
-//		try {
-			PackagedP package = ::packages.openAny(f, true);
-			// open image
-			InputStreamP stream = package->openIconFile();
-			Image img;
-			Bitmap bmp;
-			if (stream && img.LoadFile(*stream)) {
-				bmp = Bitmap(img);
-			}
-			// add to list
-			packages.push_back(PackageData(package, bmp));
-/*		}
-		// If there are errors we don't add the package to the list
-		catch (Error e) {
-			handleError(e, false);
-		} catch (std::exception e) {
-			// we don't throw Exceptions ourselfs, so this is probably something serious
-			handleError(InternalError(String(csconv_(e.what()))), false);
-		} catch (...) {
-			handleError(InternalError(_("An unexpected exception occurred, \nplease save your work (use save as to so you don't overwrite things).\n And restart Magic Set Editor")), false);
-		}*/
-		// Next package
-		f = wxFindNextFile();
+	vector<PackagedP> matching;
+	::packages.findMatching(pattern, matching);
+	FOR_EACH(p, matching) {
+		// open image
+		InputStreamP stream = p->openIconFile();
+		Image img;
+		Bitmap bmp;
+		if (stream && img.LoadFile(*stream)) {
+			bmp = Bitmap(img);
+		}
+		// add to list
+		packages.push_back(PackageData(p, bmp));
 	}
 	// sort list
 	sort(packages.begin(), packages.end(), ComparePackagePosHint());
