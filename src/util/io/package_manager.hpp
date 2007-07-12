@@ -34,9 +34,14 @@ class PackageManager {
 	/// Open a package with the specified name (including extension)
 	template <typename T>
 	intrusive_ptr<T> open(const String& name) {
-		wxFileName fn(data_directory + _("/") + name);
-		fn.Normalize();
-		String filename = fn.GetFullPath();
+		wxFileName loc(local_data_directory + _("/") + name);
+		loc.Normalize();
+		String filename = loc.GetFullPath();
+		if (!wxFileExists(filename) && !wxDirExists(filename)) {
+			wxFileName glob(global_data_directory + _("/") + name);
+			glob.Normalize();
+			filename = glob.GetFullPath();
+		}
 		// Is this package already loaded?
 		PackagedP& p = loaded_packages[filename];
 		intrusive_ptr<T> typedP = dynamic_pointer_cast<T>(p);
@@ -70,7 +75,8 @@ class PackageManager {
 	
   private:
 	map<String, PackagedP> loaded_packages;
-	String data_directory;
+	String global_data_directory;
+	String local_data_directory;
 };
 
 /// The global PackageManager instance

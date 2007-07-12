@@ -37,50 +37,67 @@ PackageManager packages;
 
 void PackageManager::init() {
 	// determine data directory
-	data_directory = wxStandardPaths::Get().GetDataDir();
+	global_data_directory = wxStandardPaths::Get().GetDataDir();
+	local_data_directory = wxStandardPaths::Get().GetUserDataDir();
 	// check if this is the actual data directory, especially during debugging,
 	// the data may be higher up:
 	//  exe path  = mse/build/debug/mse.exe
 	//  data path = mse/data
-	while (!wxDirExists(data_directory + _("/data"))) {
-		String d = data_directory;
-		data_directory = wxPathOnly(data_directory);
-		if (d == data_directory) {
+	while (!wxDirExists(global_data_directory + _("/data"))) {
+		String d = global_data_directory;
+		global_data_directory = wxPathOnly(global_data_directory);
+		if (d == global_data_directory) {
 			// we are at the root -> 'data' not found anywhere in the path -> fatal error
-			throw Error(_("The MSE data files can not be found, there should be a directory called 'data' with these files. The expected directory to find it in was ") + wxStandardPaths::Get().GetDataDir());
+			throw Error(_("The global MSE data files can not be found, there should be a directory called 'data' with these files. The expected directory to find it in was ") + wxStandardPaths::Get().GetDataDir());
 		}
 	}
-	data_directory += _("/data");
+	global_data_directory += _("/data");
+	// It's not an error for the local directory not to exist.
+	local_data_directory += _("/data");
 }
 
 PackagedP PackageManager::openAny(const String& name, bool just_header) {
-	wxFileName fn(
-		(wxFileName(name).IsRelative() ? data_directory + _("/") : wxString(wxEmptyString))
-		+ name);
-	fn.Normalize();
-	String filename = fn.GetFullPath();
+	// Attempt to load local data first.
+	String filename;
+	wxFileName* fn;
+	if (wxFileName(name).IsRelative()) {
+		fn = new wxFileName(local_data_directory + _("/") + name);
+		fn->Normalize();
+		filename = fn->GetFullPath();
+		if (!wxFileExists(filename) && !wxDirExists(filename)) {
+			delete fn;
+			fn = new wxFileName(global_data_directory + _("/") + name);
+			fn->Normalize();
+			filename = fn->GetFullPath();
+		}
+	} else { // Absolute filename
+		fn = new wxFileName(name);
+		fn->Normalize();
+		filename = fn->GetFullPath();
+	}
+
 	// Is this package already loaded?
 	PackagedP& p = loaded_packages[filename];
-	if (p) {
-		return p;
-	} else {
+	if (!p) {
 		// load with the right type, based on extension
-		if      (fn.GetExt() == _("mse-game"))            p = new_intrusive<Game>();
-		else if (fn.GetExt() == _("mse-style"))           p = new_intrusive<StyleSheet>();
-		else if (fn.GetExt() == _("mse-locale"))          p = new_intrusive<Locale>();
-		else if (fn.GetExt() == _("mse-include"))         p = new_intrusive<IncludePackage>();
-		else if (fn.GetExt() == _("mse-symbol-font"))     p = new_intrusive<SymbolFont>();
-		else if (fn.GetExt() == _("mse-export-template")) p = new_intrusive<ExportTemplate>();
+		if      (fn->GetExt() == _("mse-game"))            p = new_intrusive<Game>();
+		else if (fn->GetExt() == _("mse-style"))           p = new_intrusive<StyleSheet>();
+		else if (fn->GetExt() == _("mse-locale"))          p = new_intrusive<Locale>();
+		else if (fn->GetExt() == _("mse-include"))         p = new_intrusive<IncludePackage>();
+		else if (fn->GetExt() == _("mse-symbol-font"))     p = new_intrusive<SymbolFont>();
+		else if (fn->GetExt() == _("mse-export-template")) p = new_intrusive<ExportTemplate>();
 		else {
-			throw PackageError(_("Unrecognized package type: '") + fn.GetExt() + _("'\nwhile trying to open: ") + name);
+			throw PackageError(_("Unrecognized package type: '") + fn->GetExt() + _("'\nwhile trying to open: ") + name);
 		}
 		p->open(filename, just_header);
-		return p;
 	}
+	delete fn;
+	return p;
 }
 
 String PackageManager::findFirst(const String& pattern) {
-	return wxFindFirstFile(data_directory + _("/") + pattern, 0);
+	String file = wxFindFirstFile(local_data_directory + _("/") + pattern, 0);
+	return file.IsEmpty() ? wxFindFirstFile(global_data_directory + _("/") + pattern, 0) : file;
 }
 
 InputStreamP PackageManager::openFileFromPackage(const String& name) {
@@ -97,10 +114,13 @@ InputStreamP PackageManager::openFileFromPackage(const String& name) {
 }
 
 bool PackageManager::checkDependency(const PackageDependency& dep, bool report_errors) {
-	String name = data_directory + _("/") + dep.package;
+	String name = local_data_directory + _("/") + dep.package;
 	if (!wxFileExists(name) && !wxDirExists(name)) {
-		handle_warning(_ERROR_1_("package not found", dep.package),false);
-		return false;
+		name = global_data_directory + _("/") + dep.package;
+		if (!wxFileExists(name) && !wxDirExists(name)) {
+			handle_warning(_ERROR_1_("package not found", dep.package),false);
+			return false;
+		}
 	}
 	PackagedP package = openAny(dep.package, true);
 	if (package->version < dep.version) {
