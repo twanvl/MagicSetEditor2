@@ -6,6 +6,13 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+	// VS 8 has the audacity to give a warning about fill_n
+	// That is both STUPID and WRONG, so disable that warning
+	// This has to be done before includes, because the warning is reported in standard headers!
+	#pragma warning(disable:4996)
+#endif
+
 #include <data/format/image_to_symbol.hpp>
 #include <gfx/bezier.hpp>
 #include <util/error.hpp>

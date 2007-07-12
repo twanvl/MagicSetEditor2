@@ -62,6 +62,35 @@ String english_number(int i) {
 		}
 	}
 }
+
+/// Write an ordinal number using words, for example 23 -> "twenty-third"
+String english_ordinal(int i) {
+	switch (i) {
+		case 1:  return _("first");
+		case 2:  return _("second");
+		case 3:  return _("third");
+		case 5:  return _("fifth");
+		case 8:  return _("eighth");
+		case 9:  return _("ninth");
+		case 11: return _("eleventh");
+		case 12: return _("twelfth");
+		default: {
+			if (i <= 0 || i >= 100) {
+				// number too large, keep as digits
+				return String::Format(_("%dth"), i);
+			} else if (i < 20) {
+				return english_number(i) + _("th");
+			} else if (i % 10 == 0) {
+				String num = english_number(i);
+				return num.substr(0,num.size()-1) + _("ieth"); // twentieth
+			} else {
+				// <a>ty-<b>th
+				return english_number(i/10*10) + _("-") + english_ordinal(i%10);
+			}
+		}
+	}
+}
+
 /// Write a number using words, use "a" for 1
 String english_number_a(int i) {
 	if (i == 1) return _("a");
@@ -113,6 +142,10 @@ SCRIPT_FUNCTION(english_number_a) {
 SCRIPT_FUNCTION(english_number_multiple) {
 	SCRIPT_PARAM(String, input);
 	SCRIPT_RETURN(do_english_num(input, english_number_multiple));
+}
+SCRIPT_FUNCTION(english_number_ordinal) {
+	SCRIPT_PARAM(String, input);
+	SCRIPT_RETURN(do_english_num(input, english_ordinal));
 }
 
 // ----------------------------------------------------------------------------- : Singular/plural
@@ -284,6 +317,7 @@ void init_script_english_functions(Context& ctx) {
 	ctx.setVariable(_("english number"),          script_english_number);
 	ctx.setVariable(_("english number a"),        script_english_number_a);
 	ctx.setVariable(_("english number multiple"), script_english_number_multiple);
+	ctx.setVariable(_("english number ordinal"),  script_english_number_ordinal);
 	ctx.setVariable(_("english singular"),        script_english_singular);
 	ctx.setVariable(_("english plural"),          script_english_plural);
 	ctx.setVariable(_("process english hints"),   script_process_english_hints);

@@ -17,7 +17,7 @@
 // ----------------------------------------------------------------------------- : Simple rendering
 
 /// Render a Symbol to an Image
-Image render_symbol(const SymbolP& symbol, double border_radius = 0.05, int size = 100, bool editing_hints = false);
+Image render_symbol(const SymbolP& symbol, double border_radius = 0.05, int width = 100, int height = 100, bool editing_hints = false);
 
 // ----------------------------------------------------------------------------- : Symbol Viewer
 
@@ -41,6 +41,7 @@ class SymbolViewer : public SymbolView {
 	// --------------------------------------------------- : Point translation
 	
 	void setZoom(double zoom);
+	void setOrigin(const Vector2D& origin);
 	
 	Rotation rotation; ///< Object that handles rotation, scaling and translation
 	Matrix2D multiply; ///< Scaling/rotation of actual parts

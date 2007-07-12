@@ -37,8 +37,13 @@ class SymbolField : public Field {
 /// The Style for a SymbolField
 class SymbolStyle : public Style {
   public:
-	inline SymbolStyle(const SymbolFieldP& field) : Style(field) {}
+	inline SymbolStyle(const SymbolFieldP& field)
+		: Style(field)
+		, min_aspect_ratio(1), max_aspect_ratio(1)
+	{}
 	DECLARE_STYLE_TYPE(Symbol);
+	double        min_aspect_ratio;
+	double        max_aspect_ratio;	///< Bounds for the symbol's aspect ratio
 	
 	vector<SymbolVariationP> variations; ///< Different variantions of the same symbol
 	

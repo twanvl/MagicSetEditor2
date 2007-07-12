@@ -353,9 +353,7 @@ wxSize ImageSlicePreview::DoGetBestSize() const {
 
 void ImageSlicePreview::onPaint(wxPaintEvent&) {
 	wxPaintDC dc(this);
-	dc.BeginDrawing();
 	draw(dc);
-	dc.EndDrawing();
 }
 void ImageSlicePreview::draw(DC& dc) {
 	if (!bitmap.Ok()) {
@@ -436,9 +434,7 @@ void ImageSliceSelector::onSize(wxSizeEvent&) {
 
 void ImageSliceSelector::onPaint(wxPaintEvent&) {
 	wxBufferedPaintDC dc(this);
-	dc.BeginDrawing();
 	draw(dc);
-	dc.EndDrawing();
 }
 void ImageSliceSelector::draw(DC& dc) {
 	if (!bitmap.Ok()) createBitmap();

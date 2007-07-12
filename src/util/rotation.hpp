@@ -34,6 +34,9 @@ class Rotation {
 	inline void setZoom(double z) { zoomX = zoomY = z; }
 	/// Change the angle
 	void setAngle(int a);
+	/// Change the origin
+	inline void setOrigin(const RealPoint& o) { origin = o; }
+	
 	/// The internal size
 	inline RealSize getInternalSize() const { return trInvNoNeg(size); }
 	/// The intarnal rectangle (origin at (0,0))

@@ -14,13 +14,29 @@ DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 
 // ----------------------------------------------------------------------------- : Simple rendering
 
-Image render_symbol(const SymbolP& symbol, double border_radius, int size, bool editing_hints) {
-	SymbolViewer viewer(symbol, size, border_radius);
-	Bitmap bmp(size, size);
+Image render_symbol(const SymbolP& symbol, double border_radius, int width, int height, bool editing_hints) {
+	SymbolViewer viewer(symbol, editing_hints, width, border_radius);
+	// limit width/height ratio to aspect ratio of symbol
+	double ar  = symbol->aspectRatio();
+	double par = (double)width/height;
+	if (par > ar && ar > 1) {
+		width  = height * ar;
+	} else if (par < ar && ar < 1) {
+		height = width / ar;
+	}
+	if (width > height) {
+		viewer.setZoom(width);
+		viewer.setOrigin(Vector2D(0,-(width-height) * 0.5));
+		viewer.border_radius *= (double)height / width;
+	} else {
+		viewer.setZoom(height);
+		viewer.setOrigin(Vector2D(-(height-width) * 0.5,0));
+		viewer.border_radius *= (double)width / height;
+	}
+	Bitmap bmp(width, height);
 	wxMemoryDC dc;
 	dc.SelectObject(bmp);
 	clearDC(dc, Color(0,128,0));
-	viewer.setZoom(size);
 	viewer.draw(dc);
 	dc.SelectObject(wxNullBitmap);
 	return bmp.ConvertToImage();
@@ -40,7 +56,12 @@ SymbolViewer::SymbolViewer(const SymbolP& symbol, bool editing_hints, double siz
 
 void SymbolViewer::setZoom(double zoom) {
 	rotation.setZoom(zoom);
+	rotation.setOrigin(zoom * origin);
 	multiply = Matrix2D(zoom,0, 0,zoom);
+}
+void SymbolViewer::setOrigin(const Vector2D& origin) {
+	this->origin = origin;
+	rotation.setOrigin(origin);
 }
 
 // ----------------------------------------------------------------------------- : Drawing : Combining

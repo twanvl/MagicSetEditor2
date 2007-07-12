@@ -177,20 +177,18 @@ void SymbolControl::draw(DC& dc) {
 	SymbolViewer::draw(dc);
 	// draw grid
 	if (settings.symbol_grid) {
+		RotatedDC rdc(dc, rotation, QUALITY_LOW);
 		double lines = settings.symbol_grid_size;
-		double end = rotation.trS(1);
 		for (int i = 0 ; i <= lines ; ++i) {
-			int x = (int) floor(rotation.trS(i/lines-0.0001));
-			//dc.SetPen(Color(0, i%5 == 0 ? 64 : 31, 0));
-			//dc.SetPen(Color(i%5 == 0 ? 64 : 31, 0, 0));
-			dc.SetLogicalFunction(wxAND);
-			dc.SetPen(i%5 == 0 ? Color(191,255,191) : Color(191, 255, 191));
-			dc.DrawLine(x, 0, x, end);
-			dc.DrawLine(0, x, end, x);
-			dc.SetLogicalFunction(wxOR);
-			dc.SetPen(i%5 == 0 ? Color(0,63,0) : Color(0, 31, 0));
-			dc.DrawLine(x, 0, x, end);
-			dc.DrawLine(0, x, end, x);
+			double x = (double)i/lines;
+			rdc.SetLogicalFunction(wxAND);
+			rdc.SetPen(i%5 == 0 ? Color(191,255,191) : Color(191, 255, 191));
+			rdc.DrawLine(RealPoint(0,x), RealPoint(1,x));
+			rdc.DrawLine(RealPoint(x,0), RealPoint(x,1));
+			rdc.SetLogicalFunction(wxOR);
+			rdc.SetPen(i%5 == 0 ? Color(0,63,0) : Color(0, 31, 0));
+			rdc.DrawLine(RealPoint(0,x), RealPoint(1,x));
+			rdc.DrawLine(RealPoint(x,0), RealPoint(x,1));
 		}
 		dc.SetLogicalFunction(wxCOPY);
 	}
@@ -201,9 +199,7 @@ void SymbolControl::draw(DC& dc) {
 }
 void SymbolControl::onPaint(wxPaintEvent&) {
 	wxBufferedPaintDC dc(this);
-	dc.BeginDrawing();
 	draw(dc);
-	dc.EndDrawing();
 }
 
 // ----------------------------------------------------------------------------- : Events
@@ -256,7 +252,13 @@ void SymbolControl::onChar(wxKeyEvent& ev) {
 
 void SymbolControl::onSize(wxSizeEvent& ev) {
 	wxSize s = GetClientSize();
-	setZoom(min(s.GetWidth(), s.GetHeight()));
+	int zoom = min(s.x, s.y);
+	setZoom(zoom);
+	if (s.x > zoom) {
+		setOrigin(Vector2D((s.x - zoom) * 0.5, 0));
+	} else {
+		setOrigin(Vector2D(0, (s.y - zoom) * 0.5));
+	}
 	Refresh(false);
 }
 void SymbolControl::onUpdateUI(wxUpdateUIEvent& ev) {

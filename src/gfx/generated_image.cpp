@@ -371,7 +371,8 @@ Image SymbolToImage::generate(const Options& opt) const {
 	} else {
 		the_symbol = opt.local_package->readFile<SymbolP>(filename);
 	}
-	return render_symbol(the_symbol, *variation->filter, variation->border_radius, max(100, 3*max(opt.width,opt.height)));
+	int size = max(100, 3*max(opt.width,opt.height));
+	return render_symbol(the_symbol, *variation->filter, variation->border_radius, size, size);
 }
 bool SymbolToImage::operator == (const GeneratedImage& that) const {
 	const SymbolToImage* that2 = dynamic_cast<const SymbolToImage*>(&that);

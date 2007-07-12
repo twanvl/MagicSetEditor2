@@ -104,10 +104,6 @@ class CardViewer::OverdrawDC : private wxClientDC, public wxBufferedDC {
 		: wxClientDC(window)
 	{
 		wxBufferedDC::Init((wxClientDC*)this, window->buffer);
-		wxBufferedDC::BeginDrawing();
-	}
-	~OverdrawDC() {
-		wxBufferedDC::EndDrawing();
 	}
 };
 

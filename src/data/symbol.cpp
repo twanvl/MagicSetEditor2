@@ -280,6 +280,17 @@ IMPLEMENT_REFLECTION(Symbol) {
 	REFLECT_IF_READING calculateBoundsNonRec();
 }
 
+double Symbol::aspectRatio() const {
+	double margin_x = min(0.4999, max(0., min(min_pos.x, 1-max_pos.x)));
+	double margin_y = min(0.4999, max(0., min(min_pos.y, 1-max_pos.y)));
+	double delta = 2 * (margin_y - margin_x);
+	if (delta > 0) {
+		return 1 / (1 - delta);
+	} else {
+		return 1 + delta;
+	}
+}
+
 // ----------------------------------------------------------------------------- : Default symbol
 
 // A default symbol part, a square, moved by d

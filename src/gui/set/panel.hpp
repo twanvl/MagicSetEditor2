@@ -66,9 +66,9 @@ class SetWindowPanel : public wxPanel, public SetView {
 	virtual bool doReplaceAll(wxFindReplaceData&) { return false; }	///< Replace all matches
 	
 	// --------------------------------------------------- : Selection
-	virtual CardP selectedCard() const;				///< Return the currently selected card, or CardP()
-	virtual void  selectCard(const CardP& card) {}			///< Switch the view to another card
-	virtual void  selectFirstCard() {}						///< Switch the view to the first card
+	virtual CardP selectedCard() const;					///< Return the currently selected card, or CardP()
+	virtual void  selectCard(const CardP& card) {}		///< Switch the view to another card, can be null
+	virtual void  selectFirstCard() {}					///< Switch the view to the first card
 };
 
 // ----------------------------------------------------------------------------- : EOF

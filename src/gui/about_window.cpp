@@ -26,9 +26,7 @@ AboutWindow::AboutWindow(Window* parent)
 
 void AboutWindow::onPaint(wxPaintEvent& ev) {
 	wxBufferedPaintDC dc(this);
-	dc.BeginDrawing();
 	draw(dc);
-	dc.EndDrawing();
 }
 
 void AboutWindow::draw(DC& dc) {
@@ -151,9 +149,7 @@ void HoverButton::refreshIfNeeded() {
 
 void HoverButton::onPaint(wxPaintEvent&) {
 	wxPaintDC dc(this);
-	dc.BeginDrawing();
 	draw(dc);
-	dc.EndDrawing();
 }
 void HoverButton::draw(DC& dc) {
 	// clear background (for transparent button images)

@@ -232,9 +232,7 @@ void DropDownList::redrawArrowOnParent() {
 
 void DropDownList::onPaint(wxPaintEvent&) {
 	wxBufferedPaintDC dc(this);
-	dc.BeginDrawing();
 	draw(dc);
-	dc.EndDrawing();
 }
 
 void DropDownList::draw(DC& dc) {

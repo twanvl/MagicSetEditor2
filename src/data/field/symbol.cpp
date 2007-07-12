@@ -26,6 +26,8 @@ IMPLEMENT_REFLECTION(SymbolField) {
 
 IMPLEMENT_REFLECTION(SymbolStyle) {
 	REFLECT_BASE(Style);
+	REFLECT(min_aspect_ratio);
+	REFLECT(max_aspect_ratio);
 	REFLECT(variations);
 }
 

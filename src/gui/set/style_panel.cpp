@@ -84,7 +84,7 @@ void StylePanel::onAction(const Action& action, bool undone) {
 	}
 	use_for_all->Enable(card && card->stylesheet);
 	use_custom_options->Enable(card);
-	use_custom_options->SetValue(card->has_styling);
+	use_custom_options->SetValue(card ? card->has_styling : false);
 }
 
 // ----------------------------------------------------------------------------- : Selection
@@ -97,7 +97,7 @@ void StylePanel::selectCard(const CardP& card) {
 	list->select(set->stylesheetFor(card).name(), false);
 	use_for_all->Enable(card && card->stylesheet);
 	use_custom_options->Enable(card);
-	use_custom_options->SetValue(card->has_styling);
+	use_custom_options->SetValue(card ? card->has_styling : false);
 }
 
 // ----------------------------------------------------------------------------- : Events

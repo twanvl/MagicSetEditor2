@@ -183,8 +183,10 @@ size_t TextViewer::lineEnd(size_t index) const {
 }
 
 struct CompareTop {
-	inline bool operator () (const TextViewer::Line& l, double y) const { return l.top < y; }
-	inline bool operator () (double y, const TextViewer::Line& l) const { return y < l.top; }
+	inline bool operator () (double                  a, double                  b) const { return a     < b;     }
+	inline bool operator () (const TextViewer::Line& a, double                  b) const { return a.top < b;     }
+	inline bool operator () (double                  a, const TextViewer::Line& b) const { return a     < b.top; }
+	inline bool operator () (const TextViewer::Line& a, const TextViewer::Line& b) const { return a.top < b.top; }
 };
 size_t TextViewer::indexAt(const RealPoint& pos) const {
 	// 1. find the line

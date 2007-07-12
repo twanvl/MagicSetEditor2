@@ -257,6 +257,9 @@ class Symbol : public SymbolGroup {
 	/// Actions performed on this symbol and the parts in it
 	ActionStack actions;
 	
+	/// Determine the aspect ratio best suited for this symbol
+	double aspectRatio() const;
+	
 	DECLARE_REFLECTION();
 };
 

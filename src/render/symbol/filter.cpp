@@ -47,8 +47,8 @@ void filter_symbol(Image& symbol, const SymbolFilter& filter) {
 		alpha = (Byte*) malloc(width * height);
 		symbol.SetAlpha(alpha);
 	}
-	for (UInt y = 0 ; y < width ; ++y) {
-		for (UInt x = 0 ; x < height ; ++x) {
+	for (UInt y = 0 ; y < height ; ++y) {
+		for (UInt x = 0 ; x < width ; ++x) {
 			// Determine set
 			//  green           -> border or outside
 			//  green+red=white -> border
@@ -71,8 +71,8 @@ void filter_symbol(Image& symbol, const SymbolFilter& filter) {
 	}
 }
 
-Image render_symbol(const SymbolP& symbol, const SymbolFilter& filter, double border_radius, int size, bool edit_hints) {
-	Image i = render_symbol(symbol, border_radius, size, edit_hints);
+Image render_symbol(const SymbolP& symbol, const SymbolFilter& filter, double border_radius, int width, int height, bool edit_hints) {
+	Image i = render_symbol(symbol, border_radius, width, height, edit_hints);
 	filter_symbol(i, filter);
 	return i;
 }
