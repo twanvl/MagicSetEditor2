@@ -40,7 +40,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase26d.lib wxmsw26d_core.lib wxjpegd.lib wxpngd.lib wxtiffd.lib wxzlibd.lib wxregexd.lib wxbase26d_net.lib wxmsw26d_html.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)d.lib wxmsw$(WX_VERSION)d_core.lib wxjpegd.lib wxpngd.lib wxtiffd.lib wxzlibd.lib wxregexd.lib wxbase$(WX_VERSION)d_net.lib wxmsw$(WX_VERSION)d_html.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libcd.lib,libcid.lib"
@@ -110,7 +110,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase26.lib wxmsw26_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregex.lib wxbase26_net.lib wxmsw26_html.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION).lib wxmsw$(WX_VERSION)_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregex.lib wxbase$(WX_VERSION)_net.lib wxmsw$(WX_VERSION)_html.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -178,7 +178,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase26ud.lib wxmsw26ud_core.lib wxjpegd.lib wxpngd.lib wxtiffd.lib wxzlibd.lib wxregexud.lib wxbase26ud_net.lib wxmsw26ud_html.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)ud.lib wxmsw$(WX_VERSION)ud_core.lib wxjpegd.lib wxpngd.lib wxtiffd.lib wxzlibd.lib wxregexud.lib wxbase$(WX_VERSION)ud_net.lib wxmsw$(WX_VERSION)ud_html.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libcd.lib,libcid.lib"
@@ -250,7 +250,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase26u.lib wxmsw26u_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregexu.lib wxbase26u_net.lib wxmsw26u_html.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)u.lib wxmsw$(WX_VERSION)u_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregexu.lib wxbase$(WX_VERSION)u_net.lib wxmsw$(WX_VERSION)u_html.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -325,7 +325,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase26u.lib wxmsw26u_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregexu.lib wxbase26u_net.lib wxmsw26u_html.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)u.lib wxmsw$(WX_VERSION)u_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregexu.lib wxbase$(WX_VERSION)u_net.lib wxmsw$(WX_VERSION)u_html.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -401,7 +401,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase26u.lib wxmsw26u_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregexu.lib wxbase26u_net.lib wxmsw26u_html.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)u.lib wxmsw$(WX_VERSION)u_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregexu.lib wxbase$(WX_VERSION)u_net.lib wxmsw$(WX_VERSION)u_html.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -470,7 +470,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase26ud.lib wxmsw26ud_core.lib wxjpegd.lib wxpngd.lib wxtiffd.lib wxzlibd.lib wxregexud.lib wxbase26ud_net.lib wxmsw26ud_html.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)ud.lib wxmsw$(WX_VERSION)ud_core.lib wxjpegd.lib wxpngd.lib wxtiffd.lib wxzlibd.lib wxregexud.lib wxbase$(WX_VERSION)ud_net.lib wxmsw$(WX_VERSION)ud_html.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libcd.lib,libcid.lib"
