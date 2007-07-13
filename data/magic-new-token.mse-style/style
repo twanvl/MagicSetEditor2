@@ -198,17 +198,17 @@ card style:
 		left: 31
 		top:
 			{ if      text_shape() == "0" then 300
-			  else if text_shape() == "1" then 445
+			  else if text_shape() == "1" then 443
 			  else                             388}
 		width: 311
 		height: 
-			{ if   text_shape() == "1" then 22
+			{ if   text_shape() == "1" then 27
 			  else                          80 }
 		font:
 			name: MPlantin
 			italic name: MPlantin-Italic
 			size: 15
-			scale down to: 15
+			scale down to: 10
 			color: rgb(0,0,0)
 		symbol font:
 			name:
