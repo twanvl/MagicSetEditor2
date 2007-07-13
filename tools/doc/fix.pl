@@ -1,6 +1,6 @@
 #! /usr/bin/perl
 
-@html = <../../doc/*.html>;
+@html = <../../doc/doxygen/*.html>;
 
 # for each html file
 foreach $file (@html) {
