@@ -67,5 +67,13 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:symbol_variation]]	Render a variation of a [[type:symbol]].
 | [[fun:built_in_image]]	Return an image built into the program.
 	
+! HTML export			<<<
+| [[fun:to_html]]		Convert [[type:tagged text]] to html.
+| [[fun:symbols_to_html]]	Convert text to html using a [[type:symbol font]].
+| [[fun:to_text]]		Remove all tags from tagged text.
+| [[fun:copy_file]]		Copy a file from the [[type:export template]] to the output directory.
+| [[fun:write_text_file]]	Write a text file to the output directory.
+| [[fun:write_image_file]]	Write an image file to the output directory.
+	
 ! Other functions		<<<
 | [[fun:trace]]			Output a message for debugging purposes.

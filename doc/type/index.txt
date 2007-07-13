@@ -3,20 +3,18 @@ Data types
 Magic Set Editor uses many data types in the files and in scripting.
 There are for instance [[type:card]]s in [[type:set]]s, [[type:stylesheet]]s describing the layout of [[type:field]]s, etc.
 
---Styling trinity--
-
 --File types--
 These are the 'major' data types that are written directly to [[file:package]]s.
-| [[type:game]]		What information is on each card?
-| [[type:stylesheets]]	What do cards look like?
-| [[type:set]]		Sets of cards.
-| [[type:symbol_font]]	Fonts consisting of symbols, for instance mana symbols.
-| [[type:export_template]]	How to export sets to HTML files?
-| [[type:locale]]	Translations of MSE.
-| [[type:include]]	Files to include in other templates.
-| [[type:installer]]	Installers containing several packages.
-| [[type:symbol]]	Expansion symbols.
-| [[type:settings]]	MSE settings.
+| [[type:Game]]		What information is on each card?
+| [[type:Stylesheets]]	What do cards look like?
+| [[type:Set]]		Sets of cards.
+| [[type:Symbol font]]	Fonts consisting of symbols, for instance mana symbols.
+| [[type:Export template]]	How to export sets to HTML files?
+| [[type:Locale]]	Translations of MSE.
+| [[type:Include]]	Files to include in other templates.
+| [[type:Installer]]	Installers containing several packages.
+| [[type:Symbol]]	Expansion symbols.
+| [[type:Settings]]	MSE settings.
 
 --Compound types--
 These contain several properties, similair to the file types. But they are part of some other file type.
@@ -26,8 +24,7 @@ These contain several properties, similair to the file types. But they are part 
 | [[type:card]]		A card containing values.
 | [[type:keyword]]	A keyword.
 | [[type:font]]		Description of a font.
-| [[type:script]]	A script to execute to update a field, or for initialization.
-| [[type:symbol_part]]	Part of a [[type:symbol]].
+| [[type:symbol part]]	Part of a [[type:symbol]].
 
 --Collection types--
 | [[type:list]]		Lists of items
@@ -39,10 +36,14 @@ These contain several properties, similair to the file types. But they are part 
 			<tr><td>type:</td><td>something</td></tr></table>
 | [[type:map]]		Lists indexed by other text
 
+--Script related--
+| [[type:script]]	A script to execute to update a field, or for initialization.
+| [[type:scriptable]]	A primitive type whose value can depend on a script.
+| [[type:image]]	An image defined by a script.
+| [[type:function]]	Functions in scripts. These have no direct representation in a file.
+
 --Primitive types--
 | [[type:string]]	Text, @"abc"@
 | [[type:int]]		Integer numbers, @1, 2, 100@
 | [[type:double]]	Real numbers, @1, 0.5, 21.3@
 | [[type:color]]	Colors
-| [[type:scriptable]]	A primitive type whose value can depend on a script.
-| [[type:function]]	Functions in scripts. These have no direct representation in a file.
