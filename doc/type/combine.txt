@@ -1,7 +1,41 @@
-==Data type: image combine type==
+Enumeration: image combine type
 
 This specifies how an image is to be combined with the background.
 This is similair to the feature found in more advanced drawing programs.
 
+The formula's are from [[http://www.pegtop.net/delphi/articles/blendmodes/]].
+
+--Script syntax--
+In scripts, combine modes are stored as a string.
+
 --Possible values--
-| overlay
+! Value			Description
+| @normal@		Normal behaviour, don't combine.
+| @add@			 
+| @subtract@		 
+| @stamp@		 
+| @difference@		 
+| @negation@		 
+| @multiply@		 
+| @darken@		 
+| @lighten@		 
+| @color dodge@		 
+| @color burn@		 
+| @screen@		 
+| @overlay@		 
+| @hard light@		 
+| @soft light@		 
+| @reflect@		 
+| @glow@		 
+| @freeze@		 
+| @heat@		 
+| <tt>and</tt>		Bitwise and
+| <tt>or</tt>		Bitwise or
+| <tt>xor</tt>		Bitwise xot
+| @shadow@		Dark colors normally, white colors darken the background.
+| @symmetric overlay@	@(overlay(a,b) + overlay(b,a)) / 2@
+
+--Examples--
+> combine: overlay
+> combine_image(image1: ..., image2: ..., combine: "shadow")
+

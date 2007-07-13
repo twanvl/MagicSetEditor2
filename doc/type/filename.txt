@@ -1,0 +1,10 @@
+Primitve type: filename
+
+Filenames are regular [[type:string]]s, pointing to a file.
+There are two types of filenames, relative and absolute:
+! Syntax				Description
+| <tt>path/to/file</tt>			A relative file, this is retrieved from the current package.
+					i.e. for a filename in a stylesheet, the file is retrieved from that stylesheet.
+| <tt>/package/path/to/file</tt>	An absolute filename includes the name of the package. This is a package somewhere in the MSE data directory.
+
+Don't forget the double quotes (@""@) in scripts.

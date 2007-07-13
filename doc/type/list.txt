@@ -21,6 +21,7 @@ The first element of a list is numbered 0, the next 1, etc.
 > list.0  # The first element of the list 'list'
 > list[0] # The same thing
 
+--Functions--
 There are several functions for working with lists:
 | [[fun:position]]		Find the position of an element in a list
 | [[fun:number_of_items]]	Find the number of items in a list

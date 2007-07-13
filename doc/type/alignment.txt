@@ -1,0 +1,29 @@
+Enumeration: alignment
+
+Specifies how text and images are aligned in boxes.
+An alignment consists of a vertical and a horizontal component.
+Optionally there are some modifiers.
+
+--Script syntax--
+In scripts, alignment is passed around as a string.
+
+--Possible values--
+The value is a combination of one or more flags, separated by spaces.
+! Value			Description
+| @left@		Horizontally, align at the left
+| @center@		Horizontally, align in the middle
+| @right@		Horizontally, align at the right
+| @top@			Vertically, align at the top
+| @middle@		Vertically, align in the middle
+| @bottom@		Vertically, align at the bottom
+| @justify@		Move characters apart or together to exactly fill the width of the box.
+| @justify-words@	Move words apart or together to exactly fill the width of the box.
+| @justify-overflow@	If the text becomes to long, move characters closer together.
+| @stretch		Stretch text, so it always fills the width of the box.<br/>
+			For images; stretch them, but preserve the aspect ratio.
+| @stretch-overflow@	Stretch (compress) the text when it becomes too long.
+
+--Examples--
+> alignment: top left
+> alignment: middle center
+> alignment: { "middle" + " " + "left" }

@@ -1,0 +1,13 @@
+Primitive type: integer number
+
+Integer numbers are numbers without a decimal point.
+In many cases negative numbers don't make sense, but the program never complains about them.
+
+--File syntax--
+> something: 123
+
+--Script syntax--
+> 123 + 456 * -1
+
+--See also--
+* [[type:double]]

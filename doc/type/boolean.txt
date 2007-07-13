@@ -1,0 +1,24 @@
+Primitive type: boolean
+
+A boolean is either @true@ or @false@.
+
+In a script, numbers are implicitly converted to booleans, a non-zero number is @true@, 0 is @false@.
+
+When converted to a number, @true@ becomes @1@ and @false@ becomes @0@.
+
+The strings @"yes"@ and @"no"@ can also be converted to booleans.
+
+--File syntax--
+> boolean: true
+> boolean: false
+
+--Script syntax--
+> true or false
+
+The operators @or@, @and@ and @xor@ combine two booleans:
+! @a@		@b@		<tt>a or b</tt>	<tt>a and b</tt>	<tt>a xor b</tt>
+| @false@	@false@		@false@		@false@		@false@
+| @false@	@true@		@true@		@false@		@true@
+| @true@	@false@		@true@		@false@		@true@
+| @true@	@true@		@true@		@true@		@false@
+

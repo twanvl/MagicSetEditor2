@@ -1,0 +1,15 @@
+Primitive type: real number
+
+Real or floating point numbers are numbers with a decimal point.
+
+Conversio from integer to real numbers happens automatically in scripting.
+
+--File syntax--
+> something: 123
+> something: 0.5
+
+--Script syntax--
+> 123.1 + 456 * -1
+
+--See also--
+* [[type:int]]

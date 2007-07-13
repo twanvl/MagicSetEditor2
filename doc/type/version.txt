@@ -1,0 +1,11 @@
+Primitive type: version number
+
+--File syntax--
+A version number consists of three components, in the form "a.b.c".
+Higher numbers mean newer versions.
+
+The version number can also be a date, of the form "YYYY-MM-DD"
+
+--Examples--
+> version: 1.2.3
+> version: 2007-07-12

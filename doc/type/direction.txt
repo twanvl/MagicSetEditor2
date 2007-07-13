@@ -1,0 +1,20 @@
+Enumeration: direction
+
+Specifies the direction of text flow in a text box.
+
+--Script syntax--
+In scripts, direction is passed around as a string.
+
+--Possible values--
+! Value			Description
+| @left to right@	Text starts at the left.
+| @right to left@	Text starts at the right ''(currently not implemented)''
+| @top to bottom@	Text starts at the top, each character is on a new line.
+| @bottom to top@	Text starts at the bottom ''(currently not implemented)''
+| @horizontal@		Same as @left to right@.
+| @vertical@		Same as @top to bottom@.
+
+--Examples--
+> direction: horizontal
+> direction: top to bottom
+

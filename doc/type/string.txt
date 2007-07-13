@@ -1,5 +1,28 @@
-==Data type: character string==
+Primitive type: character string
+
+A string is just a piece of text.
 
 --File syntax--
+In files, strings are written just as their value:
+> string: this is some string
+The whitespace at the beginning is removed by the program.
+Multiline strings are written on a new line, indented by a TAB:
+> string:
+>	This is a very long string
+>	It contains a line break.
 
 --Script syntax--
+In scripts, strings are written between double quotes, @"this is a string"@.
+The backslash character is used to escape values:
+! Code	Represents
+| @\"@	A " character
+| @\{@	A { character
+| @\n@	A newline character (line break)
+| @\\@	A backslash
+| @\<@	An escaped &lt; for [[type:tagged string]]s.
+
+Sections between curly braces are interpreted as script code, that is concatentated with the string, for example
+> "ab{1 + 1}c" == "ab2c"
+This can be nested arbitrarily.
+
+The @+@ operator concatenates strings. Numbers and most other values are automatically converted to strings when needed.

@@ -1,12 +1,42 @@
 Object type: Stylesheet
 
+--Overview--
+
+Stylesheets are part of the [[file:style triangle]]:
+| Description		Looks			Data
+| [[type:Game]]		'''Stylesheet'''	[[type:Set]]
+| [[type:Field]]	[[type:Style]]		[[type:Value]]
+
+Stylesheets provide the ''look and feel'' of cards.
+
+--Package format--
+A stylesheet is described in a [[file:package]] with the <tt>.mse-style</tt> file extension,
+such a package contains a data file called <tt>style</tt>.
+
 --Properties--
-| @game@		Name of a [[type:game]]			Game this stylesheet is made for
-| @init script@		[[type:script]]				
-| @card width@		[[type:double]]				Width of cards in pixels
-| @card height@		[[type:double]]				Height of cards in pixels
-| @card dpi@		[[type:double]]				Resoltion of cards in dots-per-inch
-| @card background@	[[type:color]]				Background color of cards
-| @card style@		[[type:indexmap] of [[type:style]]s	Styles for the [[property:game:card fields]] defined in the game
-| 
+! Property		Type			Default	Description
+| '''Common to all packages'''	<<<	<<<	<<<
+| @mse version@		[[type:version]]	''required''	Version of MSE this stylesheet is made for.
+| @short name@		[[type:string]]		file name	A short name of this stylesheet, for the 'new set' and style panel lists.
+| @full name@		[[type:string]]		file name	A longer name of this stylesheet.
+| @icon@		[[type:filename]]	''none''	Filename of an icon / preview for this stylesheet, for the 'new set' and style panel lists.
+| @position hint@	[[type:int]]		&infin;		Where to place this item in the list? Lower numbers come first.
+| @version@		[[type:version]]	@0.0.0@		Version number of this package.
+| @depends on@		[[type:list]] of [[type:dependency]]s
+			 			 		Packages this package depends on.
+	
+| '''Specific to stylesheets'''		<<<	<<<	<<<
+| @game@		Name of a [[type:game]]			''required''	Game this stylesheet is made for
+| @card width@		[[type:double]]				100		Width of cards in pixels
+| @card height@		[[type:double]]				100		Height of cards in pixels
+| @card dpi@		[[type:double]]				96		Resoltion of cards in dots-per-inch
+| @card background@	[[type:color]]				white		Background color of cards
+| @init script@		[[type:script]]				@;@		Script to run when this stylesheet is loaded, after the game's init script.
+| @styling fields@	[[type:list] of [[type:field]]s		 		Fields for styling options, shown on the 'style' panel.
+| @styling style@	[[type:indexmap] of [[type:style]]s	 		Styles for the styling fields.
+| @set info style@	[[type:indexmap] of [[type:style]]s	game.default_set_style	Styling for the 'set info' panel
+| @card style@		[[type:indexmap] of [[type:style]]s	 		Styles for the card fields defined in the game
+| @extra card fields@	[[type:list] of [[type:field]]s		 		Additional fields to add to each card.<br/>
+			 					 		These fields are intended for things like lines and boxes, whose value is determined automatically.
+| @extra card style@	[[type:indexmap] of [[type:style]]s	 		Styling for the extra card fields
 
