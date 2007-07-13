@@ -1,0 +1,73 @@
+<?php
+
+require_once('./modules/mse-drupal-modules/autoformat.inc');
+
+/**
+ * Implementation of hook_help().
+ */
+function autoformat_help($section) {
+  switch ($section) {
+    case 'admin/modules#description':
+      // This description is shown in the listing at admin/modules.
+      return t('Automatic formating of text using the same tags as MediaWiki (wikipedia).');
+  }
+}
+
+/**
+ * Implementation of hook_filter_tips().
+ */
+function autoformat_filter_tips($delta, $format, $long = FALSE) {
+  if ($long) {
+    $tips = array(
+                'p'   => array( t('Paragraphs'), "A single line break\nhas no effect.\n\nBut two line breaks start a new paragraph."),
+                'h2'  => array( t('Headings'), '=='.   t('Section')        ."==\n".
+                                               '==='.  t('Subsection')     ."===\n".
+                                               '===='. t('Subsection two') ."===="),
+                'ul'  => array( t('Unordered lists'), "* First list item\n* Second list item\n** A nested list item"),
+                'ol'  => array( t('Ordered lists'), "# First list item\n# Second list item\n## A nested list item"),
+                'dl'  => array( t('Definition lists'), ": A term\n; The defenition of that term\n; can span multiple lines\n: Another term\n; And another definition."),
+                'mix' => array( t('List types can be mixed'), "* A list\n*: Contains a definition \n*; It is both:\n*;# Inside that list, and\n*;# Correctly formated"),
+                'pre' => array( t('Preformated text'), " If you start with a space\n the formating is preserved"),
+                'em'  => array( t('Emphasis'), "''Emphasized text''"),
+                'strong'=> array( t('Strong Emphasis'), "'''Strongly emphasized text'''"),
+    );
+    $header = array(t('Description'), t('You Type'), t('You Get'));
+    foreach($tips as $tip) {
+      $rows[] = array(
+        array('data' => $tip[0], 'class' => 'description'),
+        array('data' => strpos($tip[1],"\n") !== false
+                          ? '<pre>'.  check_plain($tip[1]) .'</pre>'
+                          : '<code>'. check_plain($tip[1]) .'</code>',
+              'class' => 'type'),
+        array('data' => autoformat($tip[1]), 'class' => 'get')
+      );
+    }
+    $output = t('Automatic formating of text using the same tags as <a href="http://en.wikipedia.org/wiki/Wikipedia:How_to_edit_a_page#Wiki_markup">MediaWiki (wikipedia)</a>.');
+    $output .= t('<p>This table provides examples for each formating tag that is enabled on this site.</p>');
+    $output .= theme('table', $header, $rows);
+    return $output;
+  } else {
+    return t('Automatic formating of text using the same tags as <a href="http://en.wikipedia.org/wiki/Wikipedia:How_to_edit_a_page#Wiki_markup">MediaWiki (wikipedia)</a>.');
+  }
+}
+
+/**
+ * Implementation of hook_filter().
+ */
+function autoformat_filter($op, $delta = 0, $format = -1, $text = '') {
+  switch ($op) {
+    case 'list':
+      return array(  t('Automatic formating') );
+
+    case 'description':
+      return t('Automatic formating of text using the same tags as MediaWiki (wikipedia). HTML is untouched.');
+
+    case 'process':
+       return autoformat($text);
+
+    default:
+      return $text;
+  }
+}
+
+?>
