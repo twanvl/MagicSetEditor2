@@ -8,6 +8,7 @@ require_once('./modules/mse-drupal-modules/highlight.inc');
 global $nice_names;
 $nice_names = array(
 	'type:double'   => 'real number',
+	'type:int'      => 'number',
 	'type:indexmap' => 'map',
 );
 
@@ -17,21 +18,21 @@ $nice_names = array(
  * Format $text, recognizes commands at the start of each line
  */
 function autoformat($text, $first = true) {
-	global $autoformat_lines;
+	global $autoformat__lines;
 	// Lines in the input
-	$autoformat_lines = is_array($text) ? $text : explode("\n",$text);
+	$autoformat__lines = is_array($text) ? $text : explode("\n",$text);
 	// Result text
 	$i = 0;
-	return autoformat_handle($i, '', $first);
+	return autoformat__handle($i, '', $first);
 }
 
-function autoformat_handle(&$i, $prefix, $first, $fail_same = false) {
-	global $autoformat_lines;
+function autoformat__handle(&$i, $prefix, $first, $fail_same = false) {
+	global $autoformat__lines;
 	$text = '';
 	$state = '';
 	// While not at the end...
-	while ($i < count($autoformat_lines)) {
-		$line = $autoformat_lines[$i++];
+	while ($i < count($autoformat__lines)) {
+		$line = $autoformat__lines[$i++];
 		
 		$len = min(strlen($line),strlen($prefix));
 		
@@ -39,7 +40,7 @@ function autoformat_handle(&$i, $prefix, $first, $fail_same = false) {
 		for ($j = 0 ; $j < $len ; ++$j) {
 			if ($prefix{$j} != $line{$j} && $line{$j} != ' ') {
 				$i--;
-				if ($state == '|') $text .= autoformat_table($table);
+				if ($state == '|') $text .= autoformat__table($table);
 				return $text;
 			}
 		}
@@ -55,11 +56,11 @@ function autoformat_handle(&$i, $prefix, $first, $fail_same = false) {
 		// Determine line type
 		if (strlen($oldline) < strlen($prefix)) {
 			// empty line => break out of this level
-			if ($state == '|') $text .= autoformat_table($table);
+			if ($state == '|') $text .= autoformat__table($table);
 			return $text;
 		} else if ($line == '') {
 			// empty line => paragraph separator
-			if ($state == '|') $text .= autoformat_table($table);
+			if ($state == '|') $text .= autoformat__table($table);
 			$state = '';
 			$text .= "\n";
 		
@@ -76,20 +77,20 @@ function autoformat_handle(&$i, $prefix, $first, $fail_same = false) {
 			$table[count($table)-1]['lines'][] = $line;
 		} else {
 		
-		if ($state == '|') $text .= autoformat_table($table);
+		if ($state == '|') $text .= autoformat__table($table);
 		
 		// Headings
 		if ($prefix == '' && preg_match('@^====.*====$@',$line)) {
 			// level 4 heading
-			$text .= '<h4>' . autoformat_line(substr($line,4,-4)) . "</h4>\n";
+			$text .= '<h4>' . autoformat__line(substr($line,4,-4)) . "</h4>\n";
 			$state = '';
 		} elseif ($prefix == '' && preg_match('@^===.*===$@',$line)) {
 			// level 3 heading
-			$text .= '<h3>' . autoformat_line(substr($line,3,-3)) . "</h3>\n";
+			$text .= '<h3>' . autoformat__line(substr($line,3,-3)) . "</h3>\n";
 			$state = '';
 		} elseif ($prefix == '' && (preg_match('@^==.*==$@',$line) || preg_match('@^--.*--$@',$line))) {
 			// level 2 heading
-			$text .= '<h2>' . autoformat_line(substr($line,2,-2)) . "</h2>\n";
+			$text .= '<h2>' . autoformat__line(substr($line,2,-2)) . "</h2>\n";
 			$state = '';
 		
 		// Lists
@@ -97,14 +98,14 @@ function autoformat_handle(&$i, $prefix, $first, $fail_same = false) {
 			if ($state == '*') $text = substr($text,0,-5);
 			else               $text .= '<ul>';
 			$i--;
-			$text .= '<li>' . autoformat_handle($i, $current_prefix . '*', false, true) . "</li>\n";
+			$text .= '<li>' . autoformat__handle($i, $current_prefix . '*', false, true) . "</li>\n";
 			$text .= '</ul>';
 			$state = '*';
 		} elseif ($line{0} == '#') {
 			if ($state == '#') $text = substr($text,0,-5);
 			else               $text .= '<ol>';
 			$i--;
-			$text .= '<li>' . autoformat_handle($i, $current_prefix . '#', false, true) . "</li>\n";
+			$text .= '<li>' . autoformat__handle($i, $current_prefix . '#', false, true) . "</li>\n";
 			$text .= '</ol>';
 			$state = '#';
 		} elseif ($line{0} == ':') {
@@ -112,7 +113,7 @@ function autoformat_handle(&$i, $prefix, $first, $fail_same = false) {
 			elseif ($state == ';') $text = substr($text,0,-5) . '<dt>';
 			else                   $text .= '<dl><dt>';
 			$i--;
-			$text .= "\n" . autoformat_handle($i, $current_prefix . ':', false);
+			$text .= "\n" . autoformat__handle($i, $current_prefix . ':', false);
 			$text .= '</dt></dl>';
 			$state = ':';
 		} elseif ($line{0} == ';') {
@@ -120,7 +121,7 @@ function autoformat_handle(&$i, $prefix, $first, $fail_same = false) {
 			elseif ($state == ':') $text = substr($text,0,-5) . '<dd>';
 			else                   $text .= '<dl><dd>';
 			$i--;
-			$text .= "\n" . autoformat_handle($i, $current_prefix . ';', false);
+			$text .= "\n" . autoformat__handle($i, $current_prefix . ';', false);
 			$text .= '</dd></dl>';
 			$state = ';';
 		} elseif ($line{0} == '>') {
@@ -139,7 +140,7 @@ function autoformat_handle(&$i, $prefix, $first, $fail_same = false) {
 			$state = ']';
 		
 		// Just text
-		} else if ($fail_same && $autoformat_lines[$i-1]{$len-1} != ' ' && $text != '') {
+		} else if ($fail_same && $autoformat__lines[$i-1]{$len-1} != ' ' && $text != '') {
 			// consecutive * and # lines are different items
 			$i--;
 			return $text;
@@ -149,7 +150,7 @@ function autoformat_handle(&$i, $prefix, $first, $fail_same = false) {
 				if ($state == 'P') $text = substr($text,0,-4);
 				else               $text .= '<p>';
 			}
-			$text .= autoformat_line($line) . "\n";
+			$text .= autoformat__line($line) . "\n";
 			if ($first) {
 				$text .= '</p>';
 			}
@@ -159,14 +160,14 @@ function autoformat_handle(&$i, $prefix, $first, $fail_same = false) {
 	}
 	//print_r("\n\n==================[$prefix]=================\n$text");
 	//print_r("\n==================///=================\n");
-	if ($state == '|') $text .= autoformat_table($table);
+	if ($state == '|') $text .= autoformat__table($table);
 	return $text;
 }
 
 /**
  * Format a table, given the rows
  */
-function autoformat_table($rows) {
+function autoformat__table($rows) {
 	foreach ($rows as $k=>$r) {
 		// split lines into columns
 		$cols = array();
@@ -207,8 +208,8 @@ function autoformat_table($rows) {
 		}
 	}
 	
-	global $autoformat_lines;
-	$l = $autoformat_lines;
+	global $autoformat__lines;
+	$l = $autoformat__lines;
 	$text = '<table>';
 	foreach ($newrows as $k=>$r) {
 		$text .= $k %2 == 0 ? '<tr class="even">' : '<tr class="odd">';
@@ -226,7 +227,7 @@ function autoformat_table($rows) {
 		$text .= '</tr>';
 	}
 	$text .= '</table>';
-	$autoformat_lines = $l;
+	$autoformat__lines = $l;
 	return $text;
 }
 
@@ -234,42 +235,51 @@ function autoformat_table($rows) {
 /**
  * Expand formting tags inside a single line,
  */
-function autoformat_line($line) {
+function autoformat__line($line) {
 	$line = preg_replace("/'''(.*?)'''/",  "<strong>\\1</strong>", $line);
 	$line = preg_replace("/''(.*?)''/",    "<em>\\1</em>", $line);
-	$line = preg_replace_callback("/@(.*?)@/", "autoformat_code", $line);
-	$line = preg_replace_callback("/\[\[(.*?)\|(.*?)]](s?)/", "autoformat_link_s", $line);
-	$line = preg_replace_callback("/\[\[(.*?)]](s?)/", "autoformat_link", $line);
+	$line = preg_replace_callback("/@(.*?)@/", "autoformat__code", $line);
+	$line = preg_replace_callback("/\[\[(.*?)\|(.*?)]]/", "autoformat__link_s", $line);
+	$line = preg_replace_callback("/\[\[(.*?)]](s?)/", "autoformat__link", $line);
 	return $line;
 }
 
-function autoformat_code($matches) {
+function autoformat__code($matches) {
 	return '<tt>' . syntax_highlight(htmlspecialchars($matches[1])) . '</tt>';
 }
 
-function autoformat_link($matches) {
-	return '<a href="' . autoformat_url($matches[1]) . '">' . autoformat_title($matches[1]) . $matches[2] . '</a>';
+function autoformat__link($matches) {
+	return '<a href="' . autoformat__url($matches[1]) . '">' . autoformat__title($matches[1], $matches[2]) . '</a>';
 }
-function autoformat_link_s($matches) {
-	return '<a href="' . autoformat_url($matches[1]) . '">' . $matches[2] . $matches[3] . '</a>';
+function autoformat__link_s($matches) {
+	return '<a href="' . autoformat__url($matches[1]) . '">' . $matches[2] . '</a>';
 }
 
-function autoformat_url($url) {
-	if (preg_match("/^type:/",$url)) {
-		return url("doc/type/" . substr($url,5));
-	} elseif (preg_match("/^fun:/",$url)) {
-		return url("doc/function/" . substr($url,4));
+function autoformat__url($url) {
+	if (preg_match("/^(type|fun|script|file):(.*)/i",$url,$matches)) {
+		$part = $matches[1];
+		if ($part == 'fun') $part = 'function';
+		$sub = str_replace(' ','_',strtolower($matches[2]));
+		return url('doc/' . $part . '/' . $sub);
 	} else {
 		return url($url);
 	}
 }
-function autoformat_title($url) {
+function autoformat__title($url, $s = '') {
 	global $nice_names;
 	if (isset($nice_names[$url])) {
-		return $nice_names[$url];
-	} else {
-		return preg_replace("/.*:/","",$url);
+		$url = $nice_names[$url];
+	} else if (preg_match("/.*:$/",$url)) {
+		$url = preg_replace("/:/","",$url);
+	} else if (!preg_match("@^http://@",$url)) {
+		$url = preg_replace("/.*:/","",$url);
 	}
+	if ($s == 's' && $url{strlen($url)-1}=='y') {
+		$url = substr($url,0,-1) . 'ies';
+	} else {
+		$url .= $s;
+	}
+	return $url;
 }
 
 ?>

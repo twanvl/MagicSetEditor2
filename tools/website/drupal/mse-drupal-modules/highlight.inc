@@ -3,7 +3,7 @@
 // Syntax highlighting of script and reader code
 
 function syntax_highlight($code) {
-	if (preg_match("@^(\s*#.*\n)*\s*[a-zA-Z0-9 _/,]+:[^=]@", $code)) {
+	if (preg_match("@^(\s*#.*\n)*\s*[-a-zA-Z0-9 _/,]+:([^=]|$)@", $code)) {
 		return highlight_reader($code);
 	} else {
 		return highlight_script($code);
@@ -55,11 +55,11 @@ function highlight_reader($code) {
 function highlight_script($code) {
 	$ret = '';
 	while(strlen($code)) {
-		if (preg_match("@^(if|then|else|for|in|do|and|or|not|rgb)\b@",$code, $matches)) {
+		if (preg_match("@^(if|then|else|for|in|do|and|or|xor|not|rgb)\b@",$code, $matches)) {
 			$ret .= "<span class='hl-kw'>" . $matches[0] . "</span>";
 		} else if (preg_match("@^(include file:)(.*)@",$code, $matches)) {
 			$ret .= "<span class='hl-key'>" . $matches[1] . "</span>" . $matches[2];
-		} else if (preg_match("@^[0-9][0-9.]*@",$code, $matches)) {
+		} else if (preg_match("@^([0-9][0-9.]*|true|false)@",$code, $matches)) {
 			$ret .= "<span class='hl-num'>" . $matches[0] . "</span>";
 		} else if (preg_match("@^(\"|&quot;)(\\\\.|[^\\\\])*?(\"|&quot;)@",$code, $matches)) {
 			$ret .= "<span class='hl-str'>" . $matches[0] . "</span>";
