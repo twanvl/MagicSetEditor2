@@ -1,0 +1,23 @@
+Magic Set Editor credits
+
+! Programming			<<<
+| [[user/1|Twan van Laarhoven]]	Main developer
+| [[user/430|coppro]]		Linux programmer
+	
+! Template development		<<<
+| [[user/14|Pichoro]]		Template maintainer, keywords and lots more
+| Artfreakwiu			Old style tokens, VS System, Pokemon, split cards
+| Guinea Pig			Hybrid blending masks, Non-creature flip cards
+| TheWarden			Collecting template images
+| Basilisk			Card frames
+| Jeff Torres (Wolfwood)	Vanguard, Flip cards, split cards
+| JrEye				Magic keyword list
+| Neko_Asakami			Multicolor blended flip cards, keywords
+	
+! Resources and libraries	<<<
+| [[http://boost.org|Boost]]				Boost C++ library
+| [[http://wxwidgets.org|wxWidgets]]			GUI library
+| [[http://famfamfam.com/lab/icons/silk/|Mark James]]	Icons for the program
+	
+! Alpha and beta testing	<<<
+| ''Too many people to mention!''	<<<

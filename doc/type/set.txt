@@ -1,0 +1,85 @@
+==Object type: Set==
+
+--Package--
+A set is described in a package with the <tt>.mse-set</tt> file extension,
+such a package contains a data file called <tt>set</tt>.
+
+--Properties--
+| game		Name of a [[type:game]]			The game this set is made for.
+| stylesheet	Name of a [[type:stylesheet]]		The default style for drawing cards in this set.
+| set info	[[type:indexmap]] of [[type:value]]s	The data for the [[prop:game:set fields]] defined in the game.
+| styling	[[type:indexmap]] of [[type:value]]s	
+| cards		[[type:list] of [[type:card]]s		The cards in the set.
+
+--Example--
+
+|-
+| <tt>set info:</tt>
+| Contains custom information about the set, corresponding to the <tt>set field</tt>s in the game.
+|-
+| <tt>extra set info:</tt>
+| Contains information about the set for a specific style, corresponding to the <tt>extra field</tt>s in the style. <br>
+  Stored with an index for the game, see the example below.
+|-
+| <tt>card:<br>card:<br><i>...</i></tt>
+| Contains information about each card, corresponding to the <tt>card field</tt>s in the game.
+|-
+| <tt>keyword:<br>keyword:<br><i>...</i></tt>
+| Extra keywords specific to this set, in addition to those defined in the game. 
+  For more information see the <a href="/extending/game">game file</a>
+|}
+
+The <tt>set info</tt> and <tt>card</tt>s contain a list of keys that correspond to the names fields in the game,
+For example if the game looks like:
+ name: my game
+ set field:
+ 	name: copyright
+ 	type: text
+ card field:
+ 	name: card name
+ 	type: text
+ card field:
+ 	name: power
+ 	type: text
+
+The the set file looks like:
+ game: my game
+ name: my set
+ set info:
+ 	copyright: something
+ extra set info:
+ 	name-of-style:
+ 		name-of-field: something
+ card:
+ 	card name: first card
+ 	power: 100
+ card:
+ 	card name: second card
+ 	power: 50
+
+
+The value that is stored depends on the type of field of course, in the above example the fields have <tt>type: text</tt>, so the value is just the text.
+For other types of fields the value is encoded as follows:
+{|
+! Attribute !! Description
+|-
+| <tt>text</tt>
+| The text that is stored in the field. This text can contain <a href="/extending/tags">tags</a>.
+|-
+| <tt>choice</tt>
+| One of the choices specified in the game.
+|-
+| <tt>boolean</tt>
+| One of <tt>yes</tt> or <tt>no</tt>.
+|-
+| <tt>color</tt>
+| The color is encoded as <tt>rgb(red,green,blue)</tt> where red, green and blue are numbers between 0 and 255 that indicate the color components.
+|-
+| <tt>image</tt>
+| The filename containing the image, this file must also be in the set package. It can be empty to indicate that no image is selected.
+|-
+| <tt>symbol</tt>
+| The filename containing the <a href="/extending/symbol">symbol specification</a>, this file must also be in the set package.
+  It can be empty to indicate that no symbol is selected.
+|}
+If a field has the default value (calculated by the default script), then the field name and value are ommited from the set file.

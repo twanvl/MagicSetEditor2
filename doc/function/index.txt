@@ -1,0 +1,71 @@
+Script functions by category
+
+These functions are built into the program, other [[type:function]]s can be defined using the scripting language.
+
+! Text manipulation		<<<
+| [[fun:to_upper]]		Convert a string to upper case, @"aBc" -> "ABC"@.
+| [[fun:to_lower]]		Convert a string to lower case, @"aBc" -> "abc"@.
+| [[fun:to_title]]		Convert a string to title case, @"aBc" -> "Abc"@.
+| [[fun:reverse]]		Reverse a string, @"aBc" -> "cBa"@.
+| [[fun:substring]]		Extract a part of a string.
+| [[fun:format]]		Format a number as a string (printf).
+| [[fun:format_rule]]		^^^
+| [[fun:curly_quotes]]		Make quotes curly.
+| [[fun:replace]]		Replace text matching a regular expression.
+| [[fun:replace_rule]]		^^^
+| [[fun:filter_text]]		Keep only the text matching a regular expression.
+| [[fun:filter_rule]]		^^^
+| [[fun:sort_text]]		Sort the letters in a string using a custom order.
+| [[fun:sort_rule]]		^^^
+| [[fun:contains]]		Does a string contain another one?
+| [[fun:match]]			Does a string match a regular expression?
+| [[fun:match_rule]]		^^^
+! [[type:tagged_string|Tags]]	<<<
+| [[fun:tag_contents]]		Change the contents of a specific tag.
+| [[fun:tag_contents_rule]]	^^^
+| [[fun:remove_tag]]		Remove a tag, keep the contents.
+| [[fun:tag_remove_rule]]	^^^
+! [[type:list|Lists]]		<<<
+| [[fun:position]]		Find the position of an element in a list.
+| [[fun:number_of_items]]	Find the number of items in a list.
+| [[fun:sort_list]]		Sort a list.
+| [[fun:filter_list]]		Filter a list, keeping only elements that match a predicate.
+	
+! Keywords			<<<
+| [[fun:expand_keywords]]	Expand the keywords in a piece of text.
+| [[fun:expand_keywords_rule]]	^^^
+| [[fun:keyword_usage]]		What keywords are used on a card, and how often are they used?
+	
+! English language			<<<
+| [[fun:english_number]]		Convert a number to text (@"one"@, @"two"@, ''etc.'')
+| [[fun:english_number_a]]		Convert a number to text (@"a"@, @"two"@, ''etc.'')
+| [[fun:english_number_multiple]]	Convert a number to text (@""@, @"two"@, ''etc.'')
+| [[fun:english_number_ordinal]]	Convert a number to text (@"first"@, @"second"@, ''etc.'')
+| [[fun:english_plural]]		Find the plural of a word, @"card" -> "cards"@.
+| [[fun:english_singular]]		Find the singular of a word, @"cards" -> "card"@.
+| [[fun:process_english_hints]]		Process the hints left by english_ functions in a keyword's reminder text.
+	
+! Fields and values			<<<
+| [[fun:combined_editor|forward_editor]]	Use one field to edit another.
+| [[fun:combined_editor]]		Use one field to edit multiple others.
+| [[fun:primary_choice]]		Return the top level choice chosen from a choice field.
+| [[fun:chosen]]			Is the given choice selected in a multiple choice value?
+| [[fun:require_choice]]		Require that at least one of the given choices is selected.
+| [[fun:exclusive_choice]]		Require that at most one of the given choices is selected.
+| [[fun:require_exclusive_choice]]	Require that exactly one of the given choices is selected.
+| [[fun:remove_choice]]			Remove the given choices from a multiple choice value.
+	
+! Images			<<<
+| [[fun:linear_blend]]		Blend two images together using a linear gradient.
+| [[fun:masked_blend]]		Blend two images together using a third mask image.
+| [[fun:combine_blend]]		Blend two images together using a given [[type:combine|combining mode]].
+| [[fun:set_mask]]		Set the transparancy mask of an image.
+| [[fun:set_alpha]]		Change the transparency of an image.
+| [[fun:set_combine]]		Chnage how the image should be combined with the background.
+| [[fun:enlarge]]		Enlarge an image by putting a border around it.
+| [[fun:drop_shadow]]		Add a drop shadow to an image.
+| [[fun:symbol_variation]]	Render a variation of a [[type:symbol]].
+| [[fun:built_in_image]]	Return an image built into the program.
+	
+! Other functions		<<<
+| [[fun:trace]]			Output a message for debugging purposes.

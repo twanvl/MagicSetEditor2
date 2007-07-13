@@ -1,0 +1,4 @@
+doc/*
+
+This directory contains the Magic Set Editor technical documentation, as shown on the website.
+The files are converted to HTML using the 'autoformat' php script in tools/website/drupal.

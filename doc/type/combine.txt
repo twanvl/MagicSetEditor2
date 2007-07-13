@@ -1,0 +1,7 @@
+==Data type: image combine type==
+
+This specifies how an image is to be combined with the background.
+This is similair to the feature found in more advanced drawing programs.
+
+--Possible values--
+| overlay

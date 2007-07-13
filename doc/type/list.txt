@@ -1,0 +1,28 @@
+Data type: Lists
+
+--File syntax--
+In files a list is represented as multiple keys, one for each element.
+The keys are all in the singular for of the name of the list,
+if the list is named for instance @symbols@ each key will be named @symbol@.
+] symbol:
+]	# first symbol here
+] symbol:
+]	# second symbol here
+] # etc.
+
+--Script syntax--
+In a script lists can be declared using square brackets.
+> []    # An empty list
+> [1]   # A list with a single element, the value 1
+> [1,2] # A list with two elements
+
+Lists can be accessed using either the bracket operator, or the dot operator.
+The first element of a list is numbered 0, the next 1, etc.
+> list.0  # The first element of the list 'list'
+> list[0] # The same thing
+
+There are several functions for working with lists:
+| [[fun:position]]		Find the position of an element in a list
+| [[fun:number_of_items]]	Find the number of items in a list
+| [[fun:sort_list]]		Sort a list
+| [[fun:filter_list]]		Filter a list, keeping only elements that match a predicate

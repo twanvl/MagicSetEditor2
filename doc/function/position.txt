@@ -1,0 +1,25 @@
+Function: position
+
+--Usage--
+> position(of: some_item, in: some_list)
+
+Returns the position of an item in a list.
+The first position is @0@.
+If the item is not found in the list, returns @-1@.
+
+--Parameters--
+| @of@		''anything''			Item to look for.
+| @in@		[[type:list]] or [[type:set]]	List to look in.
+		  				Can be a [[type:set]] when looking for a card.
+| @order_by@	[[type:function]] (optional)	Find the position as if the list was [[fun:sort_list|sorted]] by this criterion.
+		  				Only when looking in a set.
+| @filter@	[[type:function]] (optional)	Find the position as if the list was [[fun:filter_list|filtered]] by this criterion.
+		  				Only when looking in a set.
+
+--Examples--
+> postion(of: "x", in: ["x", "y", "z"]) == 0
+> postion(of: "z", in: ["x", "y", "z"]) == 2
+> postion(of: "a", in: ["x", "y", "z"]) == -1
+>
+> # The position of the card in the list of red cards, ordered by name
+> postion(of: card, in: set, order_by: {card.name}, filter:{card.color == "red"})

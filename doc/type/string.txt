@@ -1,0 +1,5 @@
+==Data type: character string==
+
+--File syntax--
+
+--Script syntax--

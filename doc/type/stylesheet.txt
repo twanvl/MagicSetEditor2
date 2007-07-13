@@ -1,0 +1,12 @@
+Object type: Stylesheet
+
+--Properties--
+| @game@		Name of a [[type:game]]			Game this stylesheet is made for
+| @init script@		[[type:script]]				
+| @card width@		[[type:double]]				Width of cards in pixels
+| @card height@		[[type:double]]				Height of cards in pixels
+| @card dpi@		[[type:double]]				Resoltion of cards in dots-per-inch
+| @card background@	[[type:color]]				Background color of cards
+| @card style@		[[type:indexmap] of [[type:style]]s	Styles for the [[property:game:card fields]] defined in the game
+| 
+
