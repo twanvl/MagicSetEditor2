@@ -1,0 +1,18 @@
+Function: filter_list
+
+--Usage--
+> filter_list(some_list, filter: some_predicate)
+
+Returns a new list that contain all elements in the list for which the filter predicate returns @true@.
+
+If possible, when using a set, use the [[fun:position]] and [[fun:number_of_items]] functions instead.
+
+--Parameters--
+| @input@	[[type:list]] or [[type:set]]	List to filter.
+| @filter@	[[type:function]]		Function indicating which values to keep,
+		  				Will be called with @input@ set to an item in the list.
+
+--Examples--
+> filter_list([1,2,3,4], filter: { input > 2 }     ) == [3,4]
+> filter_list([1,2,3,4], filter: { input % 2 == 0 }) == [2,4]
+> filter_list(set,       filter: { input.color == "red" }) == # red cards in the set

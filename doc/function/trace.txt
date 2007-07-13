@@ -1,0 +1,12 @@
+Function: trace
+
+--Usage--
+> trace(some_string)
+
+Output a message for debugging purposes, for example to investigate what is going on in some function.
+
+--Parameters--
+| @input@	[[type:string]]		Message
+
+--Examples--
+> trace("message") == "message"   # the message is reported in a message box

@@ -1,0 +1,21 @@
+Function: format
+
+--Usage--
+> format(some_number, format: format_specification)
+> format_rule(format: format_specification)(some_number)
+
+Format a number or other string as a string, [[http://www.cplusplus.com/reference/clibrary/cstdio/printf.html|printf]] style.
+This function is available in [[script:rule form]].
+
+--Parameters--
+| @input@	[[type:int]] or [[type:double]] or [[type:string]]
+		  			Item to format.
+| @format@	[[type:string]]		Format specification.
+
+--Examples--
+> format(format: "%03X", 13)    ==  "00D"
+> format(format: "%03d", 13)    ==  "013"
+> format(format: "%3s",  "xy")  ==  " xy"
+>
+> f := format_rule(format: "%03d")
+> f(1) == "001"

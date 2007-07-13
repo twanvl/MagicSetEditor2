@@ -1,0 +1,17 @@
+Function: sort_list
+
+--Usage--
+> sort_list(some_list, order_by: some_function)
+
+Order the elements in a list in lexicographical order, from smallest to largest.
+Optionally order by some other property.
+
+--Parameters--
+| @input@	[[type:list]] or [[type:set]]	List to sort.
+| @order_by@	[[type:function]] (optional)	Function to order by, for example when @order_by: {input.name}@ orders items by their name property.
+
+--Examples--
+> sort_list([5,2,3,1,4])          ==  [1,2,3,4,5]
+> sort_list(["aaa","cccc","bb"])  ==  ["aaa","bb","cccc"]
+> sort_list(["aaa","cccc","bb"], order_by: {number_of_items(in:input)})
+>                                 ==  ["bb","aaa","cccc"]

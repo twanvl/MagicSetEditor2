@@ -1,0 +1,17 @@
+Function: to_lower
+
+--Usage--
+> to_lower(some_string)
+
+Convert a string to lower case.
+
+--Parameters--
+| @input@	[[type:string]]		String to convert.
+
+--Examples--
+> to_lower("ABC")     == "abc"
+> to_lower("123 aBc") == "123 abc"
+
+--See also--
+| [[fun:to_upper]]		Convert a string to upper case, @"aBc" -> "ABC"@.
+| [[fun:to_title]]		Convert a string to title case, @"aBc" -> "Abc"@.

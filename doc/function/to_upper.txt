@@ -1,0 +1,17 @@
+Function: to_upper
+
+--Usage--
+> to_upper(some_string)
+
+Convert a string to upper case.
+
+--Parameters--
+| @input@	[[type:string]]		String to convert.
+
+--Examples--
+> to_upper("abc")     == "ABC"
+> to_upper("123 aBc") == "123 ABC"
+
+--See also--
+| [[fun:to_lower]]		Convert a string to lower case, @"aBc" -> "abc"@.
+| [[fun:to_title]]		Convert a string to title case, @"aBc" -> "Abc"@.

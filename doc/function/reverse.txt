@@ -1,0 +1,12 @@
+Function: reverse
+
+--Usage--
+> reverse(some_string)
+
+Reverse a string.
+
+--Parameters--
+| @input@	[[type:string]]		String to reverse.
+
+--Examples--
+> reverse("abc")     == "cba"

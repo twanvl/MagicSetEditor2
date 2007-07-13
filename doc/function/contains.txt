@@ -1,0 +1,18 @@
+Function: contains
+
+--Usage--
+> contains(some_string, match: to_search_for)
+
+Does one string contain another at any position?
+
+--Parameters--
+| @input@	[[type:string]]		String to look in
+| @match@	[[type:string]]		String to look for
+
+--Examples--
+> contains("abcdefg", match:"abc")    == true
+> contains("abcdefg", match:"defg")   == true
+> contains("abcdefg", match:"abd")    == false
+
+--See also--
+| [[fun:match|match / match_rule]]	Does a string match a regular expression?

@@ -1,0 +1,19 @@
+Function: substring
+
+--Usage--
+> substring(some_string, begin: number, end: number)
+
+Extract a subsection of a string.
+
+--Parameters--
+| @input@	[[type:string]]		String to extract something from.
+| @begin@	[[type:int]] (optional)	Index of first character to keep (the first index is 0).
+		  			If ommitted, starts at the begining of the string.
+| @end@		[[type:int]] (optional)	Index just beyond the last character to keep.
+		  			If ommitted, runs to the end of the string.
+
+--Examples--
+> substring("abcdefg", end:2)          == "ab"
+> substring("abcdefg", begin:2)        == "cdefg"
+> substring("abcdefg", begin:2, end:4) == "cd"
+> substring("abcdefg", begin:2, end:2) == ""

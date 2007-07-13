@@ -1,0 +1,17 @@
+Function: to_title
+
+--Usage--
+> to_title(some_string)
+
+Convert a string to title case, where each words starts with an upper case leter.
+
+--Parameters--
+| @input@	[[type:string]]		String to convert.
+
+--Examples--
+> to_title("ABC")     == "Abc"
+> to_title("123 aBc") == "123 Abc"
+
+--See also--
+| [[fun:to_lower]]		Convert a string to lower case, @"aBc" -> "abc"@.
+| [[fun:to_upper]]		Convert a string to upper case, @"aBc" -> "ABC"@.

@@ -1,0 +1,22 @@
+Function: number_of_items
+
+--Usage--
+> number_of_items(in: some_collection)
+
+Returns the position of an item in a list or characters in a string.
+
+--Parameters--
+| @in@		[[type:list]] or [[type:map]] or [[type:set]] or [[type:string]]
+		  				Object to determine the number of items of.
+		  				When it is a set, returns the number of cards.
+		  				When it is a string, returns the number of characters.
+| @filter@	[[type:function]] (optional)	Act as if the list was [[fun:filter_list|filtered]] by this criterion.
+		  				Only when @in@ is a set.
+
+--Examples--
+> number_of_items(in: ["x", "y", "z"]) == 3
+> number_of_items(in: "pink") == 4
+> number_of_items(in: set) == # number of cards in the set
+>
+> # the number of red cards in the set
+> number_of_items(in: set, filter: { card.color == "red" } )

@@ -8,23 +8,25 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:to_title]]		Convert a string to title case, @"aBc" -> "Abc"@.
 | [[fun:reverse]]		Reverse a string, @"aBc" -> "cBa"@.
 | [[fun:substring]]		Extract a part of a string.
-| [[fun:format]]		Format a number as a string (printf).
-| [[fun:format_rule]]		^^^
+| [[fun:format|format / format_rule]]
+				Format a number as a string (printf).
 | [[fun:curly_quotes]]		Make quotes curly.
-| [[fun:replace]]		Replace text matching a regular expression.
-| [[fun:replace_rule]]		^^^
-| [[fun:filter_text]]		Keep only the text matching a regular expression.
-| [[fun:filter_rule]]		^^^
-| [[fun:sort_text]]		Sort the letters in a string using a custom order.
-| [[fun:sort_rule]]		^^^
+| [[fun:replace|replace / replace_rule]]
+				Replace text matching a regular expression.
+| [[fun:filter_text|filter_text / filter_rule]]
+				Keep only the text matching a regular expression.
+| [[fun:sort_text|sort_text / sort_rule]]
+				Sort the letters in a string using a custom order.
 | [[fun:contains]]		Does a string contain another one?
-| [[fun:match]]			Does a string match a regular expression?
-| [[fun:match_rule]]		^^^
+| [[fun:match|match / match_rule]]
+				Does a string match a regular expression?
+	
 ! [[type:tagged_string|Tags]]	<<<
-| [[fun:tag_contents]]		Change the contents of a specific tag.
-| [[fun:tag_contents_rule]]	^^^
-| [[fun:remove_tag]]		Remove a tag, keep the contents.
-| [[fun:tag_remove_rule]]	^^^
+| [[fun:tag_contents|tag_contents / tag_contents_rule]]
+				Change the contents of a specific tag.
+| [[fun:remove_tag|remove_tag / tag_remove_rule]]
+				Remove a tag, keep the contents.
+	
 ! [[type:list|Lists]]		<<<
 | [[fun:position]]		Find the position of an element in a list.
 | [[fun:number_of_items]]	Find the number of items in a list.
@@ -32,8 +34,8 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:filter_list]]		Filter a list, keeping only elements that match a predicate.
 	
 ! Keywords			<<<
-| [[fun:expand_keywords]]	Expand the keywords in a piece of text.
-| [[fun:expand_keywords_rule]]	^^^
+| [[fun:expand_keywords|expand_keywords / expand_keywords_rule]]
+				Expand the keywords in a piece of text.
 | [[fun:keyword_usage]]		What keywords are used on a card, and how often are they used?
 	
 ! English language			<<<
