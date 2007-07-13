@@ -11,6 +11,7 @@
 #include <util/io/package_manager.hpp>
 #include <util/version.hpp>
 #include <script/value.hpp> // for some strange reason the profile build needs this :(
+#include <script/to_value.hpp>
 #include <wx/dialup.h>
 #include <wx/url.h>
 #include <wx/html/htmlwin.h>
@@ -30,7 +31,10 @@ class PackageVersionData : public IntrusivePtrBase<PackageVersionData> {
 	String  url;						///< Where can the package be downloaded?
 	bool    is_installer;				///< Download url refers to a .mse-installer
 	Version version;					///< Version number of the download
+	Version app_version;				///< The minimium version of MSE required
 	vector<PackageDependencyP> depends;	///< Packages this depends on
+
+	DECLARE_REFLECTION();
 };
 
 /// Information on the latest availible version
@@ -44,10 +48,21 @@ class VersionData : public IntrusivePtrBase<VersionData> {
 	DECLARE_REFLECTION();
 };
 
+IMPLEMENT_REFLECTION(PackageVersionData) {
+	REFLECT(name);
+	REFLECT(description);
+	REFLECT(url);
+	REFLECT(is_installer);
+	REFLECT(version);
+	REFLECT(app_version);
+	REFLECT(depends);
+}
+
 IMPLEMENT_REFLECTION(VersionData) {
 	REFLECT(version);
 	REFLECT(description);
 	REFLECT(new_updates_url);
+	REFLECT(packages);
 }
 
 // The information for the latest version

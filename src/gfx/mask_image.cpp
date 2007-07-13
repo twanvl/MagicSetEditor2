@@ -26,7 +26,7 @@ AlphaMask::AlphaMask(const Image& img)
 }
 
 AlphaMask::~AlphaMask() {
-	delete alpha;
+	delete[] alpha;
 }
 
 void AlphaMask::setAlpha(Image& img) const {

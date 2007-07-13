@@ -26,6 +26,7 @@ Reader::Reader(const InputStreamP& input, const String& filename, bool ignore_in
 Reader::Reader(const String& filename)
 	: indent(0), expected_indent(0), state(OUTSIDE)
 	, filename(filename), line_number(0), previous_line_number(0)
+	, ignore_invalid(false)
 	, input(packages.openFileFromPackage(filename))
 {
 	moveNext();

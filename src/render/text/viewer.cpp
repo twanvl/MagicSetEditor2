@@ -59,7 +59,7 @@ size_t TextViewer::Line::posToIndex(double x) const {
 // ----------------------------------------------------------------------------- : TextViewer
 
 // can't be declared in header because we need to know sizeof(Line)
-TextViewer:: TextViewer() {}
+TextViewer:: TextViewer() : justifying (false) {}
 TextViewer::~TextViewer() {}
 
 // ----------------------------------------------------------------------------- : Drawing
