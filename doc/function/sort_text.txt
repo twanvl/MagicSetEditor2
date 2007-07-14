@@ -1,0 +1,37 @@
+Function: sort_text
+
+--Usage--
+> sort_text(order: order specification, some_text)
+> sort_rule(order: order specification)(some_text)
+
+Sort a string or filter it by keeping specific characters.
+
+When the @order@ parameter is not given, the input is sorted in alphabetical order.
+
+Otherwise the @order@ parameter determines what characters to show in the output.
+The @order@ is a string consisting of multiple ''parts'', each part selects a specific thing from the input.
+! Part		<tt>sort("zzyyxx")</tt>	Description
+| @"x"@		@"xx"@			A normal character, selects all matching characters from the input
+| @"<wxy>"@	@"xy"@			Selects the characters from the input, but only once.
+		 			@"<xy>"@ is the same as @"<x><y>"@.
+| @"[wxy]"@	@"yyxx"@		Selects the given characters, but keep them in the same order as in the input.
+| @"(xwz)"@	@"zzxx"@		Selects the given characters, and put them in the order that minimizes the distance.
+		 			around a 'circle'. Imagine w x and y in a circle, then "zx" is shorter then "x.z" because the latter passes the "w" space.
+		 			This sorting option is used to sort colored mana symbols in Magic.
+
+This function is available in [[script:rule form]].
+
+--Parameters--
+! Parameter	Type				Description
+| @input@	[[type:string]]			Text to sort
+| @order@	[[type:string]] (optional)	Order specification
+
+--Examples--
+> sort_text("banana")                 ==  "aaabnn"
+> sort_text(order: "na",   "banana")  ==  "nnaaa"
+> sort_text(order: "<na>", "banana")  ==  "na"
+> sort_text(order: "[na]", "banana")  ==  "anana"
+> sort_text(order: "[1234567890](wubrg)", "21wg")  ==  "21gw"
+>
+> f := sort_rule(order: "[1234567890](wubrg)")
+> f("21wg")  ==  "21gw"

@@ -1,0 +1,17 @@
+Function: curly_quotes
+
+--Usage--
+> curly_quotes(some_tagged_string)
+
+Make quotes 'curly'.
+Single and double quotation marks are changed to opening or closing versions depending on where they appear in the text.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:tagged string]]	String to make quotes curly in.
+
+--Examples--
+>>> curly_quotes("He said: 'This is cool!', she said: \"No way!\" ")
+>>>   ==  "He said: &#8216;This is cool!&#8217;, she said: &#8220;No way!&#8221; "
+>>> curly_quotes("Also: &#8217;Wrong quotes&#8216; ")
+>>>   ==  "Also: &#8216;Wrong quotes&#8217; "

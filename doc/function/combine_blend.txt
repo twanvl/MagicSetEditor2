@@ -15,7 +15,7 @@ The images must have the same size.
 
 --Examples--
 > combine_blend(image1: "image1.png", image2: "image2.png", combine: "add")  ==  [[Image]]
-<pre style="padding-top:2px;padding-bottom:2px;"> combine_blend(image1: <img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;" />, image2: <img src="image2.png" alt='"image2.png"' style="border:1px solid black;vertical-align:middle;" />, combine: "add") == <img src="image_combine_blend.png" alt='"image_combine_blend.png"' style="border:1px solid black;vertical-align:middle;" /></pre>
+>>> combine_blend(image1: <img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, image2: <img src="image2.png" alt='"image2.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, combine: "add") == <img src="image_combine_blend.png" alt='"image_combine_blend.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
 
 --See also--
 | [[fun:linear_blend]]		Blend two images together using a linear gradient.

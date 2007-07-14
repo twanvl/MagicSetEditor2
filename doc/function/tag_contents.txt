@@ -1,0 +1,31 @@
+Function: tag_contents
+
+--Usage--
+> tag_contents(tag: some_tag, contents: some_function, some_string)
+> tag_contents_rule(tag: some_tag, contents: some_function)(some_string)
+
+Apply a function to the contents of a particular tag.
+The function is called with @input@ set to the old value inside the tag.
+
+The tag can be a whole tag, @"<tag>"@, or a prefix @"<i"@. In the latter case all tags starting with @"<i"@ are removed.
+
+This function is available in [[script:rule form]].
+
+--Parameters--
+! Parameter	Type			Description
+| @tag@		[[type:string]]		Tag to match
+| @contents@	[[type:function]]	Function to apply to the contents
+| @input@	[[type:tagged string]]	String to change
+
+--Examples--
+> tag_contents(tag: "<up>", contents: to_upper, "this <up>is text</up>")
+>     ==  "this <up>IS TEXT</up>"
+> tag_contents(tag: "<atom-name", contents: { card.name }, "<atom-name-auto></atom-name-auto> loses 1 life")
+>   ==  "<atom-name-auto>Pink Elephant</atom-name-auto> loses 1 life"
+>
+> f := tag_contents_rule(tag: "<i>", contents: {""})
+> f("text, <i-auto>reminder</i-auto> <i>italic</i>") == "text, <i-auto>reminder</i-auto> <i></i>"
+
+--See also--
+| [[fun:remove_tag|remove_tag / tag_remove_rule]]
+				Remove a tag, keep the contents.

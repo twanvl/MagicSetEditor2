@@ -1,0 +1,17 @@
+Function: set_combine
+
+--Usage--
+> set_combine(input: image, combine: combine_mode)
+
+Set how the resulting image should be combined with the background.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:image]]		Image to change combining mode of
+| @combine@	[[type:combine]]	Combining function to use
+
+--Examples--
+> set_combine(input: "image1.png", combine: "shadow")  ==  [[Image]]
+
+--See also--
+| [[fun:combine_blend]]		Blend two images together using a given [[type:combine|combining mode]].

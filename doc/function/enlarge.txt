@@ -1,0 +1,16 @@
+Function: enlarge
+
+--Usage--
+> enlarge(input: image, border_size: amount_to_enlarge)
+
+Enlarge an image by putting a transparent border around it.
+The border size is given in percentages of the image size, so @border_size: 1@ makes the image three times as large by putting a border of 100% the size on all sides.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:image]]		Image to enlarge
+| @border_size@	[[type:double]]		Amount of border to add
+
+--Examples--
+> enlarge(input: "image1.png", border_size: 0.1)  ==  [[Image]]
+>>> enlarge(light: <img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, border_size: 0.1) == <img src="image_enlarge.png" alt='"image_enlarge.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />

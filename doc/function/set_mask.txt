@@ -1,0 +1,21 @@
+Function: set_mask
+
+--Usage--
+> set_mask(image: image, mask: mask_image)
+
+Make parts of an image (more) transparent using a mask.
+Black areas in the mask make the image transparent, white areas stay opaque.
+
+The images must have the same size.
+
+--Parameters--
+! Parameter	Type			Description
+| @image@	[[type:image]]		Image to apply the mask to
+| @mask@	[[type:image]]		Mask image.
+
+--Examples--
+> set_mask(image: "image1.png", mask: "image3.png")  ==  [[Image]]
+>>> set_mask(image: <img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, mask: <img src="image3.png" alt='"image3.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />) == <img src="image_set_mask.png" alt='"image_set_mask.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
+
+--See also--
+| [[fun:set_alpha]]		Change the transparency of an image.
