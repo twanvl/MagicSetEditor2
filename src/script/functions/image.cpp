@@ -84,6 +84,15 @@ SCRIPT_FUNCTION(enlarge) {
 	return new_intrusive2<EnlargeImage>(input, border_size);
 }
 
+SCRIPT_FUNCTION(crop) {
+	SCRIPT_PARAM(GeneratedImageP, input);
+	SCRIPT_PARAM_N(int, _("width"),       width);
+	SCRIPT_PARAM_N(int, _("height"),      height);
+	SCRIPT_PARAM_N(double, _("offset x"), offset_x);
+	SCRIPT_PARAM_N(double, _("offset y"), offset_y);
+	return new_intrusive5<CropImage>(input, width, height, offset_x, offset_y);
+}
+
 SCRIPT_FUNCTION(drop_shadow) {
 	SCRIPT_PARAM(GeneratedImageP, input);
 	SCRIPT_OPTIONAL_PARAM_N_(double, _("offset x"),    offset_x);
@@ -161,6 +170,7 @@ void init_script_image_functions(Context& ctx) {
 	ctx.setVariable(_("set alpha"),        script_set_alpha);
 	ctx.setVariable(_("set combine"),      script_set_combine);
 	ctx.setVariable(_("enlarge"),          script_enlarge);
+	ctx.setVariable(_("crop"),             script_crop);
 	ctx.setVariable(_("drop shadow"),      script_drop_shadow);
 	ctx.setVariable(_("symbol variation"), script_symbol_variation);
 	ctx.setVariable(_("built in image"),   script_built_in_image);

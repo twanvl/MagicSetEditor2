@@ -2,7 +2,7 @@ Primitive type: real number
 
 Real or floating point numbers are numbers with a decimal point.
 
-Conversio from integer to real numbers happens automatically in scripting.
+Conversion from integer to real numbers happens automatically in scripting.
 
 --File syntax--
 > something: 123

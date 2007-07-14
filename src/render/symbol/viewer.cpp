@@ -242,7 +242,7 @@ void SymbolViewer::combineSymbolShape(const SymbolShape& shape, DC& border, DC& 
 			break;
 		} case SYMBOL_COMBINE_DIFFERENCE: {
 			interior.SetLogicalFunction(wxXOR);
-			drawSymbolShape(shape, &border, &interior, 0, ~interiorCol, directB, true);
+			drawSymbolShape(shape, &border, &interior, 0, interiorCol, directB, true);
 			interior.SetLogicalFunction(wxCOPY);
 			break;
 		} case SYMBOL_COMBINE_BORDER: {

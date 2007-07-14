@@ -180,6 +180,23 @@ class EnlargeImage : public GeneratedImage {
 	double border_size;
 };
 
+// ----------------------------------------------------------------------------- : CropImage
+
+/// Crop an image at a certain point, to a certain size
+class CropImage : public GeneratedImage {
+  public:
+	inline CropImage(const GeneratedImageP& image, double width, double height, double offset_x, double offset_y)
+		: image(image), width(width), height(height), offset_x(offset_x), offset_y(offset_y)
+	{}
+	virtual Image generate(const Options& opt) const;
+	virtual ImageCombine combine() const;
+	virtual bool operator == (const GeneratedImage& that) const;
+  private:
+	GeneratedImageP image;
+	double width, height;
+	double offset_x, offset_y;
+};
+
 // ----------------------------------------------------------------------------- : DropShadowImage
 
 /// Add a drop shadow to an image

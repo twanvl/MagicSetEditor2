@@ -185,15 +185,15 @@ bool SetCombineImage::operator == (const GeneratedImage& that) const {
 Image EnlargeImage::generate(const Options& opt) const {
 	// generate 'sub' image
 	Options sub_opt
-		( opt.width  * (border_size < 0.5 ? 1 - 2 * border_size : 0)
-		, opt.height * (border_size < 0.5 ? 1 - 2 * border_size : 0)
+		( int(opt.width  * (border_size < 0.5 ? 1 - 2 * border_size : 0))
+		, int(opt.height * (border_size < 0.5 ? 1 - 2 * border_size : 0))
 		, opt.package
 		, opt.local_package
 		, opt.preserve_aspect);
 	Image img = image->generate(sub_opt);
 	// size of generated image
 	int w  = img.GetWidth(),  h = img.GetHeight();  // original image size
-	int dw = w * border_size, dh = h * border_size; // delta
+	int dw = int(w * border_size), dh = int(h * border_size); // delta
 	int w2 = w + dw + dw,     h2 = h + dh + dh;     // new image size
 	Image larger(w2,h2);
 	larger.InitAlpha();
@@ -219,6 +219,21 @@ bool EnlargeImage::operator == (const GeneratedImage& that) const {
 	const EnlargeImage* that2 = dynamic_cast<const EnlargeImage*>(&that);
 	return that2 && *image      == *that2->image
 	             && border_size == that2->border_size;
+}
+
+// ----------------------------------------------------------------------------- : CropImage
+
+Image CropImage::generate(const Options& opt) const {
+	return image->generate(opt).Size(wxSize((int)width, (int)height), wxPoint(-(int)offset_x, -(int)offset_y));
+}
+ImageCombine CropImage::combine() const {
+	return image->combine();
+}
+bool CropImage::operator == (const GeneratedImage& that) const {
+	const CropImage* that2 = dynamic_cast<const CropImage*>(&that);
+	return that2 && *image      == *that2->image
+	             && width    == that2->width    && height   == that2->height
+	             && offset_x == that2->offset_x && offset_y == that2->offset_y;
 }
 
 // ----------------------------------------------------------------------------- : DropShadowImage
@@ -287,7 +302,7 @@ Image DropShadowImage::generate(const Options& opt) const {
 	UInt total = 255 * gaussian_blur(alpha, shadow, w, h, shadow_blur_radius);
 	// combine
 	Byte* data = img.GetData();
-	int dw = w * offset_x, dh = h * offset_y;
+	int dw = int(w * offset_x), dh = int(h * offset_y);
 	int x_start = max(0,   dw), y_start = max(0,   dh);
 	int x_end   = min(w, w+dw), y_end   = min(h, h+dh);
 	int delta = dw + w * dh;

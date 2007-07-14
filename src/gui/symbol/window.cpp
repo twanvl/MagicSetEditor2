@@ -246,14 +246,14 @@ void SymbolWindow::onFileExit(wxCommandEvent& ev) {
 
 
 void SymbolWindow::onEditUndo(wxCommandEvent& ev) {
-	if (!control->isEditing()) {
+	if (!control->isEditing() && control->getSymbol()->actions.canUndo()) {
 		control->getSymbol()->actions.undo();
 		control->Refresh(false);
 	}
 }
 
 void SymbolWindow::onEditRedo(wxCommandEvent& ev) {
-	if (!control->isEditing()) {
+	if (!control->isEditing() && control->getSymbol()->actions.canRedo()) {
 		control->getSymbol()->actions.redo();
 		control->Refresh(false);
 	}
