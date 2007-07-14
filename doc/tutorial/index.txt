@@ -1,0 +1,4 @@
+Templating tutorial
+
+This space is reserved for a tutorial on making new templates for MSE.
+An announcement will be posted in the forum when the tutorial becomes available.
