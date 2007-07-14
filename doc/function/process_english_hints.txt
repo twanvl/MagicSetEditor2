@@ -1,0 +1,31 @@
+Function: process_english_hints
+
+--Usage--
+> process_english_hints(some_string_with_hints)
+
+Process the hints left in the string by [[fun:english_number]] and by inserting keyword parameters.
+There are two types of hints:
+! Hint			Description
+| <tt>&lt;hint-1>	Indicates that a number 1 was inserted, the following should be in singular form.
+| <tt>&lt;hint-2>	Indicates that a number not 1 was inserted, the following should be in plural form.
+| <tt>&lt;param>	Indicates that a keyword was inserted, if the text is @"a something"@ where something begins with a vowel,
+			turns it into @"an something"@.
+
+For the plurality hints, the text following it can contain information on how to use it
+! Code			Example			Description
+| <tt>(...)</tt>	<tt>house(s)</tt>	When the thing preceding it is singular the contents of the parentheses are removed, otherwise they are kept.<br />
+			 			So this will result in @"house"@ or @"houses"@.
+| <tt>&lt;singular>...&lt;/singular></tt>	<tt>&lt;singular>mouse&lt;/singular></tt>	Only kept when in singular mode.
+| <tt>&lt;plural>...&lt;/plural></tt>		<tt>&lt;plural>mice&lt;/plural></tt>		Only kept when in plural mode.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:tagged string]]	String to process hints in.
+
+--Examples--
+> process_english_hints("a {param1}") == "a card"
+> process_english_hints("a {param1}") == "an apple"
+> process_english_hints("{english_number(1)} house(s)") == "one house"
+> process_english_hints("{english_number(2)} house(s)") == "two houses"
+> process_english_hints("{english_number(1)} <singular>mouse</singular><plural>mice</plural>") == "one mouse"
+> process_english_hints("{english_number(1)} <singular>mouse</singular><plural>mice</plural>") == "two mice"

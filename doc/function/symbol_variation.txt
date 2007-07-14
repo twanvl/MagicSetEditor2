@@ -1,0 +1,53 @@
+Function: symbol_variation
+
+--Usage--
+> symbol_variation(symbol: symbol_value, variation: name_of_variation)
+
+Render a [[type:symbol variation|variation]] of a symbol.
+The variation name refers to one of the varations declared in the [[type:style]] of the symbol field.
+
+> symbol_variation(symbol: symbol_value, border_radius: .., fill_type: .., ...)
+
+Render a custom variation of a symbol.
+Additional parameters corresponding to the properties of a [[type:symbol filter]] must be present.
+
+--Parameters--
+! Parameter	Type			Description
+| @symbol@	[[type:value#symbol|symbol value]]	Symbol to render.
+| @variation@	[[type:string]]		Name of the variation to use.
+
+or
+
+! Parameter		Type			Description
+| @symbol@		[[type:value#symbol|symbol value]]	Symbol to render.
+| @border_radius@	[[type:double]]		Border radius of the symbol.
+| @fill_type@		@"solid"@ (default)	Use the solid fill type, this is the default.
+| @fill_color@		[[type:color]]		Color to use for filling the symbol.
+| @border_color@	[[type:color]]		Color to use for the border of the symbol.
+
+or
+
+! Parameter		Type			Description
+| @symbol@		[[type:value#symbol|symbol value]]	Symbol to render.
+| @border_radius@	[[type:double]]		Border radius of the symbol.
+| @fill_type@		@"linear gradient"@	Use the linear gradient fill type.
+| @fill_color_1@	[[type:color]]		Color to use for filling the symbol at the center of the gradient.
+| @border_color_1@	[[type:color]]		Color to use for the border of the symbol at the center of the gradient.
+| @fill_color_2@	[[type:color]]		Color to use for filling the symbol at the ends of the gradient.
+| @border_color_2@	[[type:color]]		Color to use for the border of the symbol at the ends of the gradient.
+| @center_x@, @center_y@	[[type:double]]	Position of the center point of the gradient (in the range 0 to 1)
+| @end_x@, @end_y@		[[type:double]]	Position of the end point of the gradient (in the range 0 to 1)
+
+or
+
+! Parameter		Type			Description
+| @symbol@		[[type:value#symbol|symbol value]]	Symbol to render.
+| @border_radius@	[[type:double]]		Border radius of the symbol.
+| @fill_type@		@"radial gradient"@	Use the radial gradient fill type.
+| @fill_color_1@	[[type:color]]		Color to use for filling the symbol at the center of the symbol.
+| @border_color_1@	[[type:color]]		Color to use for the border of the symbol at the center of the symbol.
+| @fill_color_2@	[[type:color]]		Color to use for filling the symbol at the edges of the symbol.
+| @border_color_2@	[[type:color]]		Color to use for the border of the symbol at the edges of the symbol.
+
+--Examples--
+> symbol_variation(symbol: set.set_symbol, variation: "common")  ==  [[Image]]

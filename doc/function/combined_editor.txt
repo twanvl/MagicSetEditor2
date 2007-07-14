@@ -1,0 +1,44 @@
+Function: combined_editor
+
+--Usage--
+> forward_editor(field: some_text_value)
+> combined_editor(field1: some_text_value, field2: some_text_value, ..., separtor1: some_string, ...)
+
+Use one text field to edit one or more others.
+
+This function must be used in the @script@ of a [[type:field#text|text field]].
+This field will then contain the combined values of the given fields, separated by the separtors in <tt>&lt;sep></tt> tags.
+When the field changes the underlying values are updated and vice versa.
+
+Note: @forward_editor@ and @combined_editor@ are the same function.
+
+--Parameters--
+! Parameter	Type			Description
+| @field@	[[type:value#text|text value]]		Text value to edit
+| @field1@	[[type:value#text|text value]]		Another text value to edit
+| @field2@	[[type:value#text|text value]]		''etc.''
+| @separator@	[[type:string]]				Separator between field 1 and 2
+| @separator1@	[[type:string]]				Multiple separators
+| @separator2@	[[type:string]]				Next separator, ''etc.''
+| @hide when empty@	[[type:boolean]]		Don't include separators if the entire value is empty.
+| @soft before empty@	[[type:boolean]]		Make separators 'soft' when the value folowing it is empty.
+			 				Soft separators are hidden by default and shown grayed when the field is selected.
+
+--Examples--
+>card field:
+>	...
+>	script:
+>>		combined_editor(
+>>			field1: card.first_part
+>>			separator: " - "
+>>			field2: card.second_part
+>>		)
+
+Forwarding just one field should be used in cases when two fields share a value, or when sometimes multiple fields are combined.
+For example the Magic uses:
+>> if set.include_automatic_card_numbers then
+>>   combined_editor(field1:    card.copyright,
+>>                   separator: "/",
+>>                   field2:    card.card_number)
+>> else
+>>   forward_editor(field: card.copyright)

@@ -1,0 +1,29 @@
+Function: exclusive_choice
+
+--Usage--
+> exclusive_choice(choices: some_strings, some_multiple_choice_value)
+
+Requre that ''at most one'' of the given choices is selected in a [[type:value#multiple_choice|multiple choice value]].
+
+If more then one is selected, deselects the last ones until one remains.
+The choice that was just toggled in the GUI is never deselected if possible
+
+If non of the choices is selected the selection stays the same.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		Multiple choice value to look update.
+| @choice@	[[type:string]]		Choice to look for.
+| @choice1@	[[type:string]]		Exclusion between multiple choices.
+| @choice2@	[[type:string]]		''etc.''
+
+--Examples--
+> exclusive_choice(choice1: "red", choice2: "green", "red, blue")    ==  "red, blue"
+> exclusive_choice(choice1: "red", choice2: "green", "red, green")   ==  "red"
+> exclusive_choice(choice1: "red", choice2: "green", "green, blue")  ==  "green, blue"
+> exclusive_choice(choice1: "red", choice2: "green", "black, blue")  ==  "black, blue"
+
+--See also--
+| [[fun:require_choice]]		Require that ''at least one'' of the given choices is selected.
+| [[fun:require_exclusive_choice]]	Require that ''exactly one'' of the given choices is selected.
+| [[fun:remove_choice]]			Remove the given choices from a multiple choice value.

@@ -1,0 +1,28 @@
+Function: remove_choice
+
+--Usage--
+> remove_choice(choice: some_strings, some_multiple_choice_value)
+
+Deselect the given choice(s) from a [[type:value#multiple_choice|multiple choice value]],
+returns the new value.
+
+If a choice is not selected it is ignored.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		Multiple choice value to look update.
+| @choice@	[[type:string]]		Choice to remove.
+| @choice1@	[[type:string]]		Remove multiple choices.
+| @choice2@	[[type:string]]		''etc.''
+
+--Examples--
+> remove_choice(choice: "red",  "red")        ==  ""
+> remove_choice(choice: "red",  "blue")       ==  "blue"
+> remove_choice(choice: "red",  "red, blue")  ==  "blue"
+> remove_choice(choice: "blue", "red, blue")  ==  "red"
+> remove_choice(choice1: "red", choice2: "green", "red, blue")  ==  "blue"
+
+--See also--
+| [[fun:require_choice]]		Require that at least one of the given choices is selected.
+| [[fun:exclusive_choice]]		Require that at most one of the given choices is selected.
+| [[fun:require_exclusive_choice]]	Require that exactly one of the given choices is selected.

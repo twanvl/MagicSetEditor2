@@ -8,6 +8,9 @@ Filter text by only keeping the parts of the input that match the regular expres
 
 If @in_context@ is given, the context must also match the string where the match is represented as <tt>&lt;match></tt>.
 
+This function is available in [[script:rule form]].
+When the filter is used many times the rule form is more efficient, because the regular expression is only compiled once.
+
 --Parameters--
 ! Parameter	Type			Description
 | @input@	[[type:string]]		String to replace in.

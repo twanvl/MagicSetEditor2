@@ -1,0 +1,17 @@
+Function: chosen
+
+--Usage--
+> chosen(choice: some_string, some_multiple_choice_value)
+
+Is the given choice selected in the [[type:value#multiple_choice|multiple choice value]]?
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		Multiple choice value to look in.
+| @choice@	[[type:string]]		Choice to look for.
+
+--Examples--
+> chosen(choice: "red",  "red")        ==  true
+> chosen(choice: "red",  "blue")       ==  false
+> chosen(choice: "red",  "red, blue")  ==  true
+> chosen(choice: "blue", "red, blue")  ==  true

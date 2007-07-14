@@ -1,0 +1,26 @@
+Function: require_exclusive_choice
+
+--Usage--
+>>> require_exclusive_choice(choices some_strings, some_multiple_choice_value)
+
+Requre that ''exacttly one'' of the given choices is selected in a [[type:value#multiple_choice|multiple choice value]].
+
+This is a combination of [[fun:require_choice]] and [[fun:exclusive_choice]].
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		Multiple choice value to look update.
+| @choice@	[[type:string]]		Choice to require.
+| @choice1@	[[type:string]]		Require multiple choices.
+| @choice2@	[[type:string]]		''etc.''
+
+--Examples--
+> require_exclusive_choice(choice1: "red", choice2: "green", "red, blue")    ==  "red, blue"
+> require_exclusive_choice(choice1: "red", choice2: "green", "red, green")   ==  "red"
+> require_exclusive_choice(choice1: "red", choice2: "green", "green, blue")  ==  "green, blue"
+> require_exclusive_choice(choice1: "red", choice2: "green", "black, blue")  ==  "black, blue, red"
+
+--See also--
+| [[fun:require_choice]]		Require that ''at least one'' of the given choices is selected.
+| [[fun:exclusive_choice]]		Require that ''at most one'' of the given choices is selected.
+| [[fun:remove_choice]]			Remove the given choices from a multiple choice value.

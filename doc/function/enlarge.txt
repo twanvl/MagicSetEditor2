@@ -13,4 +13,4 @@ The border size is given in percentages of the image size, so @border_size: 1@ m
 
 --Examples--
 > enlarge(input: "image1.png", border_size: 0.1)  ==  [[Image]]
->>> enlarge(light: <img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, border_size: 0.1) == <img src="image_enlarge.png" alt='"image_enlarge.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
+>>> enlarge(input: <img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, border_size: 0.1) == <img src="image_enlarge.png" alt='"image_enlarge.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
