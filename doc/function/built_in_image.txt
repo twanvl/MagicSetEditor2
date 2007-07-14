@@ -1,0 +1,18 @@
+Function: built_in_image
+
+--Usage--
+> built_in_image(image_name)
+
+Retrieve an image built into the program.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		Name of the image to retrieve
+
+--Possible values--
+! Image name	Image
+| @"bool_yes"@	<img src="bool_yes.png" alt="bool_yes" />
+| @"bool_no"@	<img src="bool_no.png" alt="bool_no"  />
+
+--Examples--
+> built_in_image("bool_yes")  ==  [[Image]]

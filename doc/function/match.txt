@@ -2,7 +2,7 @@ Function: match
 
 --Usage--
 > match(some_string, match: regular expression)
-> match_rule(regular expression)()
+> match_rule(match:regular expression)(some_string)
 
 Does a string match the given [[type:regex|regular expression]]?
 
@@ -10,6 +10,7 @@ This function is available in [[script:rule form]].
 When the match is performed many times the rule form is more efficient, because the regular expression is only compiled once.
 
 --Parameters--
+! Parameter	Type			Description
 | @input@	[[type:string]]		String to match.
 | @match@	[[type:regex]]		Regular expression to match.
 

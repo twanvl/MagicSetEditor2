@@ -6,6 +6,7 @@ Function: to_upper
 Convert a string to upper case.
 
 --Parameters--
+! Parameter	Type			Description
 | @input@	[[type:string]]		String to convert.
 
 --Examples--

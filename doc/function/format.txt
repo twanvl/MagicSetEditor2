@@ -5,9 +5,11 @@ Function: format
 > format_rule(format: format_specification)(some_number)
 
 Format a number or other string as a string, [[http://www.cplusplus.com/reference/clibrary/cstdio/printf.html|printf]] style.
+
 This function is available in [[script:rule form]].
 
 --Parameters--
+! Parameter	Type			Description
 | @input@	[[type:int]] or [[type:double]] or [[type:string]]
 		  			Item to format.
 | @format@	[[type:string]]		Format specification.

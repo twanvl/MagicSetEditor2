@@ -7,6 +7,7 @@ Order the elements in a list in lexicographical order, from smallest to largest.
 Optionally order by some other property.
 
 --Parameters--
+! Parameter	Type			Description
 | @input@	[[type:list]] or [[type:set]]	List to sort.
 | @order_by@	[[type:function]] (optional)	Function to order by, for example when @order_by: {input.name}@ orders items by their name property.
 

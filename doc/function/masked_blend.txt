@@ -1,0 +1,24 @@
+Function: linear_blend
+
+--Usage--
+> linear_blend(light: image, dark: image, mask: image)
+
+Blend two images together using a third as a mask.
+On pixels the mask is white the 'light' image is used, where the mask is black the 'dark' image is used.
+For grey pixels the images are blended.
+
+The images must have the same size.
+
+--Parameters--
+! Parameter	Type			Description
+| @light@	[[type:image]]		Image for the light colores in the mask
+| @dark@	[[type:image]]		Image for the dark colores in the mask
+| @mask@	[[type:image]]		Mask image that selects between the two images
+
+--Examples--
+> masked_blend(light: "image1.png", dark: "image2.png", mask: "image3.png")  ==  [[Image]]
+<pre style="padding-top:2px;padding-bottom:2px;"> masked_blend(light: <img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;" />, dark: <img src="image2.png" alt='"image2.png"' style="border:1px solid black;vertical-align:middle;" />, mask: <img src="image3.png" alt='"image3.png"' style="border:1px solid black;vertical-align:middle;" />) == <img src="image_masked_blend.png" alt='"image_masked_blend.png"' style="border:1px solid black;vertical-align:middle;" /></pre>
+
+--See also--
+| [[fun:linear_blend]]		Blend two images together using a linear gradient.
+| [[fun:combine_blend]]		Blend two images together using a given [[type:combine|combining mode]].

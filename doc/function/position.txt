@@ -8,6 +8,7 @@ The first position is @0@.
 If the item is not found in the list, returns @-1@.
 
 --Parameters--
+! Parameter	Type				Description
 | @of@		''anything''			Item to look for.
 | @in@		[[type:list]] or [[type:set]]	List to look in.
 		  				Can be a [[type:set]] when looking for a card.

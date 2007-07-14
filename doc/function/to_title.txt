@@ -6,6 +6,7 @@ Function: to_title
 Convert a string to title case, where each words starts with an upper case leter.
 
 --Parameters--
+! Parameter	Type			Description
 | @input@	[[type:string]]		String to convert.
 
 --Examples--

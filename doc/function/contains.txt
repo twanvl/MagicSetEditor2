@@ -16,3 +16,4 @@ Does one string contain another at any position?
 
 --See also--
 | [[fun:match|match / match_rule]]	Does a string match a regular expression?
+| [[fun:chosen]]			Is the given choice selected in a multiple choice value?

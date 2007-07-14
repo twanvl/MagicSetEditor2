@@ -6,6 +6,7 @@ Function: substring
 Extract a subsection of a string.
 
 --Parameters--
+! Parameter	Type			Description
 | @input@	[[type:string]]		String to extract something from.
 | @begin@	[[type:int]] (optional)	Index of first character to keep (the first index is 0).
 		  			If ommitted, starts at the begining of the string.

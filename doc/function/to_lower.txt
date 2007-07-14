@@ -6,6 +6,7 @@ Function: to_lower
 Convert a string to lower case.
 
 --Parameters--
+! Parameter	Type			Description
 | @input@	[[type:string]]		String to convert.
 
 --Examples--

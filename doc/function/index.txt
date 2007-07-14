@@ -39,13 +39,13 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:keyword_usage]]		What keywords are used on a card, and how often are they used?
 	
 ! English language			<<<
-| [[fun:english_number]]		Convert a number to text (@"one"@, @"two"@, ''etc.'')
-| [[fun:english_number_a]]		Convert a number to text (@"a"@, @"two"@, ''etc.'')
-| [[fun:english_number_multiple]]	Convert a number to text (@""@, @"two"@, ''etc.'')
-| [[fun:english_number_ordinal]]	Convert a number to text (@"first"@, @"second"@, ''etc.'')
-| [[fun:english_plural]]		Find the plural of a word, @"card" -> "cards"@.
-| [[fun:english_singular]]		Find the singular of a word, @"cards" -> "card"@.
-| [[fun:process_english_hints]]		Process the hints left by english_ functions in a keyword's reminder text.
+| [[fun:english_number]]				Convert a number to text (@"one"@, @"two"@, ''etc.'')
+| [[fun:english_number|english_number_a]]		Convert a number to text (@"a"@, @"two"@, ''etc.'')
+| [[fun:english_number|english_number_multiple]]	Convert a number to text (@""@, @"two"@, ''etc.'')
+| [[fun:english_number|english_number_ordinal]]		Convert a number to text (@"first"@, @"second"@, ''etc.'')
+| [[fun:english_plural]]				Find the plural of a word, @"card" -> "cards"@.
+| [[fun:english_plural|english_singular]]		Find the singular of a word, @"cards" -> "card"@.
+| [[fun:process_english_hints]]				Process the hints left by english_ functions in a keyword's reminder text.
 	
 ! Fields and values			<<<
 | [[fun:combined_editor|forward_editor]]	Use one field to edit another.

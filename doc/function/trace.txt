@@ -6,6 +6,7 @@ Function: trace
 Output a message for debugging purposes, for example to investigate what is going on in some function.
 
 --Parameters--
+! Parameter	Type			Description
 | @input@	[[type:string]]		Message
 
 --Examples--

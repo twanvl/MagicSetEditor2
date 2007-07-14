@@ -6,6 +6,7 @@ Function: reverse
 Reverse a string.
 
 --Parameters--
+! Parameter	Type			Description
 | @input@	[[type:string]]		String to reverse.
 
 --Examples--

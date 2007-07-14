@@ -1,0 +1,24 @@
+Function: english_number
+
+--Usage--
+> english_number(number)
+> english_number_a(number)
+> english_number_multiple(number)
+> english_number_ordinal(number)
+
+Convert a number to English.
+These four functions all behave slightly differently:
+! Function			function(1)	function(2)	function(3)
+| @english_number@		@"one"@		@"two"@		@"three"@
+| @english_number_a@		@"a"@		@"two"@		@"three"@
+| @english_number_multiple@	@""@		@"two"@		@"three"@
+| @english_number_ordinal@	@"first"@	@"second"@	@"third"@
+
+If the input is a keyword parameter value, it leaves a hint tag for [[fun:process_english_hints]], to indicate whether the following word should be plural or singular.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:int]]		Number to convert
+
+--Examples--
+> english_number(1) == "one"

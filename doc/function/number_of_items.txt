@@ -6,6 +6,7 @@ Function: number_of_items
 Returns the position of an item in a list or characters in a string.
 
 --Parameters--
+! Parameter	Type				Description
 | @in@		[[type:list]] or [[type:map]] or [[type:set]] or [[type:string]]
 		  				Object to determine the number of items of.
 		  				When it is a set, returns the number of cards.

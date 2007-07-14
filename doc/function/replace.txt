@@ -1,0 +1,36 @@
+Function: replace
+
+--Usage--
+> replace(some_string, match: regular expression, replace: replacement, in_context: regular expression)
+> replace_rule(match: ..., replace: ..., in_context: ...)(some_string)
+
+Replace all matches of a regular expression with a replacement value.
+The replacement can either be a string or a function.
+* The string can contain backreference @"\\0"@, @"\\1"@, etc. refering to the components captured by the parentheses in the regular expression.
+* When the replacement is a function, the variable @input@ contains the whole match and @_1@, @_2@, etc. contains the components.
+
+Optionally a context can be given. The replacement is only performed if the string where the match is represented as <tt>&lt;match></tt> also matches the context.
+
+This function is available in [[script:rule form]].
+When the replacement is performed many times the rule form is more efficient, because the regular expression is only compiled once.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		String to replace in.
+| @match@	[[type:regex]]		Regular expression to match.
+| @replace@	[[type:string]] or [[type:function]]
+		 			Replacement
+| @in_context@	[[type:regex]] (optional)	Context to match
+
+--Examples--
+> replace(match: "a", replace: "e", "banana")  ==  "benene"
+> replace(match: "a", replace: "e", in_context: "<match>n", "banana")  ==  "benena"
+> replace(match: "(a|b)x", replace: "[\\0,\\1]", "axabxc")  ==  "[ax,a]a[bx,b]c"
+> replace(match: "[ab]", replace: { to_upper(input) }, "banana")  ==  "BAnAnA"
+>
+> f := replace_rule(match: "xx+", replace: "A")
+> f("xyzxxyyzz") == "xyzAAyyzz"
+
+--See also--
+| [[fun:filter_text|filter_text / filter_rule]]
+				Keep only the text matching a regular expression.

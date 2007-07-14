@@ -8,6 +8,7 @@ Returns a new list that contain all elements in the list for which the filter pr
 If possible, when using a set, use the [[fun:position]] and [[fun:number_of_items]] functions instead.
 
 --Parameters--
+! Parameter	Type				Description
 | @input@	[[type:list]] or [[type:set]]	List to filter.
 | @filter@	[[type:function]]		Function indicating which values to keep,
 		  				Will be called with @input@ set to an item in the list.
