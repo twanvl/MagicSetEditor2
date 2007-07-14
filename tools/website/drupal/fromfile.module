@@ -4,8 +4,8 @@ require_once('./modules/mse-drupal-modules/autoformat.inc');
 
 global $nice_ff_names;
 $nice_ff_names = array(
-	'function' => 'Functions',
-	'type'     => 'Types'
+	'Function' => 'Functions',
+	'Type'     => 'Types'
 );
 
 define('FROMFILE_DIR', 'doc');
@@ -55,8 +55,19 @@ function fromfile_page() {
   $args = func_get_args();
   $file = implode('/', $args);
   
+  $file = str_replace('..','',$file);
   // open file
-  $file = str_replace('.','',$file);
+  if (preg_match("/\.(png|jpg|gif)$/",$file,$type) && file_exists("$path/$file")) {
+     $type = $type[1];
+     if ($type == 'jpg') $type = 'jpeg';
+     header("Content-Type: image/$type");
+     if ($fd = fopen("$path/$file", 'rb')) {
+       fpassthru($fd);
+       exit();
+     } else {
+       echo "ERROR Opening image file";
+     }
+  }
   $file1 = "$path/$file.txt";
   $file2 = "$path/$file/index.txt";
   $file1 = str_replace('//','/',$file1);
@@ -80,7 +91,7 @@ function fromfile_page() {
   $breadcrumbs = array(l(t('Home'), NULL));
   $path = FROMFILE_DIR;
   for ($i = -1 ; $i < count($args) ; ++$i) {
-    $path .= '/' . $args[$i];
+    if ($i != -1) $path .= '/' . $args[$i];
     if ($i == count($args) - 1) {
 	$name = $title;
 	$name = preg_replace("/.*: ?/","",$name);

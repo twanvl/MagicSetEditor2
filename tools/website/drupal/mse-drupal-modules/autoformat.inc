@@ -139,6 +139,12 @@ function autoformat__handle(&$i, $prefix, $first, $fail_same = false) {
 			$text .= "\n</pre>";
 			$state = ']';
 		
+		// Html
+		} elseif (preg_match("@^</?(pre|ul|ol|li|div|blockquote|>)@", $line)) {
+			$line = preg_replace("@^<>@","",$line);
+			$text .= $line;
+			$state = '';
+		
 		// Just text
 		} else if ($fail_same && $autoformat__lines[$i-1]{$len-1} != ' ' && $text != '') {
 			// consecutive * and # lines are different items
