@@ -1,4 +1,4 @@
-Function: linear_blend
+Function: combine_blend
 
 --Usage--
 > combine_blend(image1: image, image2: image, combine: combine_mode)

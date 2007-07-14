@@ -1,0 +1,17 @@
+Function: to_text
+
+--Usage--
+> to_text(some_tagged_text)
+
+Convert a [[type:tagged string]] to a normal string by removing all tags and restoring escaped &lt; characters.
+
+
+--Parameters--
+! Parameter	Type				Description
+| @input@	[[type:tagged string]]		String to convert to text
+
+--Examples--
+> to_text("<b>bold text</b>") == "bold text"
+
+--See also--
+| [[fun:to_html]]		Convert [[type:tagged text]] to html.

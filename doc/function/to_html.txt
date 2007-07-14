@@ -1,0 +1,30 @@
+Function: to_html
+
+--Usage--
+> to_html(some_tagged_text)
+
+Convert a [[type:tagged string]] to HTML code for use in web pages.
+Characters are correctly escaped for HTML code.
+
+The following tags are converted to html:
+! Tag			Description
+| <tt>&lt;b></tt>	Bold
+| <tt>&lt;i></tt>	Italic
+| <tt>&lt;sym></tt>	Symbols, if the @symbol_font@ parameter is set.
+
+Symbol fonts can only be used in an [[type:export template]], when <tt>create directory</tt> is true, as the images
+of the font are written to the output directory.
+
+--Parameters--
+! Parameter		Type				Description
+| @input@		[[type:tagged string]]		String to convert to html
+| @symbol_font@		[[type:string]] (optional)	Name of a symbol font to use for images.
+| @symbol_font_size@	[[type:double]] (optional)	Size in points to use for the symbol font, default 12
+
+--Examples--
+> to_html("<b>bold text</b>") == "<b>bold text</b>"
+> to_html("<sym>WU</sym>")    == "<img src='data-dir/w.png' alt='W'><img src='data-dir/u.png' alt='U'>"
+
+--See also--
+| [[fun:symbols_to_html]]	Convert text to html using a [[type:symbol font]].
+| [[fun:to_text]]		Remove all tags from tagged text.

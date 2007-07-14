@@ -1,0 +1,22 @@
+Function: symbols_to_html
+
+--Usage--
+> symbols_to_html(some_tagged_text)
+
+Convert a [[type:tagged string]] to HTML code for use in web pages, entirely using a symbol font.
+This is intended for fields with @always symbol:true@.
+
+This function can only be used in an [[type:export template]], when <tt>create directory</tt> is true, as the images
+of the font are written to the output directory.
+
+--Parameters--
+! Parameter		Type				Description
+| @input@		[[type:tagged string]]		String to convert to html
+| @symbol_font@		[[type:string]]			Name of a symbol font to use.
+| @symbol_font_size@	[[type:double]] (optional)	Size in points to use for the symbol font, default 12
+
+--Examples--
+> symbols_to_html("WU")    == "<img src='data-dir/w.png' alt='W'><img src='data-dir/u.png' alt='U'>"
+
+--See also--
+| [[fun:to_html]]		Convert [[type:tagged text]] to html.

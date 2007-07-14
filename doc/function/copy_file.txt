@@ -1,0 +1,22 @@
+Function: copy_file
+
+--Usage--
+> copy_file(filename)
+
+Copy a file from the export template package to the output directory.
+If a file with the given name already exists it is overwritten.
+
+Returns the name of the file written.
+
+This function can only be used in an [[type:export template]], when <tt>create directory</tt> is true.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:filename]]	File to copy
+
+--Examples--
+> copy_file("logo.png") == "logo.png" # this file is now in the output directory
+
+--See also--
+| [[fun:write_text_file]]	Write a text file to the output directory.
+| [[fun:write_image_file]]	Write an image file to the output directory.

@@ -1,0 +1,22 @@
+Function: write_text_file
+
+--Usage--
+> write_text_file(some_string, file: filename)
+
+Write a string to a file in the output directory.
+If a file with the given name already exists it is overwritten.
+
+Returns the name of the file written.
+
+This function can only be used in an [[type:export template]], when <tt>create directory</tt> is true.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		Text to write to the file.
+| @file@	[[type:string]]		Name of the file to write to
+
+--Examples--
+> write_file("index.html", lots_of_html_code) == "index.html" # index.html now contains the given text
+
+--See also--
+| [[fun:write_image_file]]	Write an image file to the output directory.

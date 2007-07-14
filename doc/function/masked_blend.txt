@@ -1,4 +1,4 @@
-Function: linear_blend
+Function: masked_blend
 
 --Usage--
 > linear_blend(light: image, dark: image, mask: image)

@@ -1,0 +1,24 @@
+Function: write_image_file
+
+--Usage--
+> write_image_file(some_image, file: filename)
+
+Write an image to a file in the output directory.
+If a file with the given name already exists it is overwritten.
+
+Returns the name of the file written.
+
+This function can only be used in an [[type:export template]], when <tt>create directory</tt> is true.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:image]]		Image to write to the file.
+| @file@	[[type:string]]		Name of the file to write to
+| @width@	[[type:int]]		Width in pixels to use for the image, by default the size of the image is used if available.
+| @height@	[[type:int]]		Height in pixels to use for the image, by default the size of the image is used if available.
+
+--Examples--
+> write_image("image_out.png", linear_blend(...)) == "image_out.png" # image_out.png now contains the given image
+
+--See also--
+| [[fun:write_text_file]]	Write a text file to the output directory.

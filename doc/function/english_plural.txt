@@ -1,0 +1,16 @@
+Function: english_plural
+
+--Usage--
+> english_plural(some_word)
+> english_singular(some_word)
+
+Convert a word to the plural or singular form.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		String to convert
+
+--Examples--
+> english_plural("apple") == "apples"
+> english_plural("berry") == "berries"
+> english_singular("Red Horses") == "Red Horse"

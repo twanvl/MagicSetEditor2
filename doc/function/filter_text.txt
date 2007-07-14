@@ -1,0 +1,27 @@
+Function: filter_text
+
+--Usage--
+> filter_text(some_string, match: regular expression, in_context: regular expression)
+> filter_rule(match: ..., in_context: ...)(some_string)
+
+Filter text by only keeping the parts of the input that match the regular expression.
+
+If @in_context@ is given, the context must also match the string where the match is represented as <tt>&lt;match></tt>.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		String to replace in.
+| @match@	[[type:regex]]		Regular expression to match.
+| @in_context@	[[type:regex]] (optional)	Context to match
+
+--Examples--
+> filter_text(match: "a", "banana")  ==  "aaa"
+> filter_text(match: ".", in_context:"a<match>", "banana")  ==  "nn"
+> filter_text(match: "[xy]", "xyz")  ==  "xy"
+>
+> f := filter_rule(match: "xx+")
+> f("xyzxxyyzz") == "xx"
+
+--See also--
+| [[fun:replace|replace / replace_rule]]
+				Replace text matching a regular expression.
