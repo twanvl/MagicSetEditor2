@@ -226,6 +226,7 @@ class Packaged : public Package {
   private:
 	bool   fully_loaded;	///< Is the package fully loaded?
 	friend struct JustAsPackageProxy;
+	friend class Installer;
 };
 
 // ----------------------------------------------------------------------------- : IncludePackage

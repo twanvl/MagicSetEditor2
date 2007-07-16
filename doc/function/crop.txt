@@ -1,0 +1,15 @@
+Function: crop
+
+--Usage--
+> crop(input: image, height: height_of_new_image, width: width_of_new_image, offset_x: x_position_to_start_crop, offset_y: y_position_to_start_crop)
+
+Shrink an image by cutting off some of the image, starting at the position denoted by the offsets. The resulting image size is specified in the parameters.
+
+--Parameters--
+! Parameter		Type				Description
+| @input@		[[type:image]]		Image to enlarge
+| @height@		[[type:double]]		Height of the resulting image
+| @width@		[[type:double]]		Width of the resulting image
+| @offset_x@	[[type:double]]		Offset of crop, horizontally
+| @offset_y@	[[type:double]]		Offset of crop, vertically
+

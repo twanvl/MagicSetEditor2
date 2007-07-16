@@ -21,7 +21,7 @@
 #include <wx/stdpaths.h>
 
 DECLARE_TYPEOF_COLLECTION(String);
-DECLARE_TYPEOF_COLLECTION(PackageP);
+DECLARE_TYPEOF_COLLECTION(PackagedP);
 DECLARE_TYPEOF_COLLECTION(PackageDependencyP);
 DECLARE_POINTER_TYPE(wxFileInputStream);
 DECLARE_POINTER_TYPE(wxZipInputStream);
@@ -85,7 +85,7 @@ void Installer::install(bool local) {
 		else {
 			throw PackageError(_("Unrecognized package type: '") + fn + _("'\nwhile trying to install: ") + p);
 		}
-		Reader reader(openIn(p + _("/") + fn.Mid(4)));
+		Reader reader(openIn(p + _("/") + pack->typeName()));
 		pack->Packaged::reflect_impl(reader);
 		new_packages.push_back(pack);
 	}
