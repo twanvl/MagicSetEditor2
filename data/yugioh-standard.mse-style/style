@@ -7,7 +7,6 @@ card width: 361
 card height: 523
 card dpi: 152.6265
 
-
 ############################################################## Extra scripts
 
 
@@ -46,29 +45,29 @@ card style:
 		padding bottom: 0
 		z index: 2
 		font:
-			name: MatrixBoldSmallCaps
+			name: MatrixRegularSmallCaps
 			size: 24
 			color: 
 				script: if is_nmonster() then rgb(255,255,255)
 				else			      rgb(0,0,0)
 	attribute:
 		left: 290
-		top : 32
-		width: 35
-		height: 35
+		top : 31
+		width: 37
+		height: 37
 		z index: 2
 		render style: image
 		popup style: in place
 		choice images:
 			earth:		earth.png
 			water:		water.png
-			fire:		fire.png
-			wind:		wind.png
+			fire:			fire.png
+			wind:			wind.png
 			light:		light.png
-			dark:		dark.png
+			dark:			dark.png
 			divine:		divine.png
 			spell:		spell.png
-			trap:		trap.png
+			trap:			trap.png
 	level:
 		left: 43
 		top : 78
@@ -78,14 +77,14 @@ card style:
 		alignment: middle right
 		font:
 			name: MatrixBoldSmallCaps
-			italic name: Matrix
-			scale down to: 12
-			size: 12
+			italic name: Matrix-Bold
+			scale down to: 17
+			size: 17
 			color: rgb(0,0,0)
 		symbol font:
 			name: yugioh-standard-levels
 			alignment: middle center
-			size: 8
+			size: 7
 
 	############################# Image
 	image:
@@ -99,7 +98,7 @@ card style:
 
 	monster type:
 		left: 37
-		top : 403
+		top : 401
 		width: 193
 		height: 14
 		alignment: top left
@@ -140,7 +139,7 @@ card style:
 		left: 34
 		top : 
 			script: if is_nmonster() then 400 else 413
-		width: 290
+		width: 287
 		height: 
 			script: if is_nmonster() then 90 else 63
 		font:
@@ -159,7 +158,7 @@ card style:
 
 	############################# Attack/Defense
 	attack:
-		left:	197
+		left:	194
 		top:	477
 		width:	48
 		height:	18
@@ -172,7 +171,8 @@ card style:
 		visible: script: if is_nmonster() then false else true
 
 	defense:
-		left:	266
+		z index: 4
+		left:	263
 		top:	477
 		width:	48
 		height:	18
@@ -210,3 +210,4 @@ card style:
 			name: Times New Roman
 			size: 8
 			color: rgb(0,0,0)
+

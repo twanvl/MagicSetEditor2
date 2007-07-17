@@ -284,9 +284,9 @@ card style:
 				else "middle left"
 		z index: 2
 		padding left:   2
-		padding top:    2
+#		padding top:    2
 		padding right:  2
-		padding bottom: 2
+#		padding bottom: 2
 		line height hard: 1.2
 		line height line: 1.5
 		line height soft: 0.9
@@ -320,9 +320,9 @@ card style:
 				else "middle left"
 		z index: 2
 		padding left:   2
-		padding top:    2
+#		padding top:    2
 		padding right:  2
-		padding bottom: 2
+#		padding bottom: 2
 		line height hard: 1.2
 		line height line: 1.5
 		line height soft: 0.9

@@ -1359,10 +1359,10 @@ keyword mode:
 	description: Core set keywords (Flying, Haste, etc.)
 keyword mode:
 	name: expert
-	description: Expert level keywords (Cycling, Vanishing, etc.)
+	description: Expert set keywords (Cycling, Vanishing, etc.)
 keyword mode:
 	name: pseudo
-	description: Pseudo keyword / ability word (Hellbent, Threshold, etc.)
+	description: Pseudo keyword / Ability words (Hellbent, Threshold, etc.)
 keyword mode:
 	name: action
 	description: Keyword actions, reminder text at end of line (Scry, Regenerate, etc.)
@@ -1542,7 +1542,7 @@ keyword:
 	keyword: Haste
 	match: Haste
 	mode: core
-	reminder: This creature can attack and tap the turn it comes under your control.
+	reminder: This creature can attack and <sym>T</sym> as soon as it comes under your control.
 keyword:
 	keyword: Horsemanship
 	match: Horsemanship
@@ -1595,7 +1595,7 @@ keyword:
 keyword:
 	keyword: Double strike
 	match: Double strike
-	mode: expert
+	mode: core
 	reminder: This creature deals both first-strike and regular combat damage.
 keyword:
 	keyword: Provoke

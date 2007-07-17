@@ -480,7 +480,7 @@ keyword parameter type:
 	name: prefix
 	description: Prefix for things like "<something>walk"
 	optional: false
-	match: [A-Z][a-z, ]*
+	match: [A-Z][A-Z,a-z ]*
 	example: Forest
 
 ############################# All Magic keywords
@@ -575,7 +575,7 @@ keyword:
 	keyword: Haste
 	match: haste
 	mode: core
-	reminder: It can attack and tap the turn it comes under your control.
+	reminder: It can attack and <sym>T</sym> as soon as it comes under your control.
 keyword:
 	keyword: Horsemanship
 	match: horsemanship
@@ -628,7 +628,7 @@ keyword:
 keyword:
 	keyword: Double strike
 	match: double strike
-	mode: expert
+	mode: core
 	reminder: It deals both first-strike and regular combat damage.
 keyword:
 	keyword: Provoke
@@ -752,10 +752,6 @@ keyword:
 	match: Sweep
 	mode: pseudo
 keyword:
-	keyword: Radiance
-	match: Radiance
-	mode: pseudo
-keyword:
 	keyword: Convoke
 	match: convoke
 	mode: expert
@@ -770,6 +766,10 @@ keyword:
 	match: dredge <atom-param>number</atom-param>
 	mode: expert
 	reminder: If you would draw a card, instead you may put exactly {english_number(param1)} card(s) from the top of your library into your graveyard. If you do, return the card from your graveyard to your hand. Otherwise, draw a card.
+keyword:
+	keyword: Radiance
+	match: Radiance
+	mode: pseudo
 keyword:
 	keyword: Haunt
 	match: haunt
