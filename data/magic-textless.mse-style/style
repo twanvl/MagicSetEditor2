@@ -20,8 +20,13 @@ init script:
 	# There is no land template
 	land_template := { "a{type}.jpg" }
 	
-	# there is no multi template
-	template := { (if input == "m" then "a" else input) + "{type}.jpg" }
+	# Which artifact template should be used?
+	artifact_template := {
+		if input == "a" and not styling.darker_artifacts
+		then	"oa"
+		else	input
+	}
+	template := { artifact_template() + "{type}.jpg" }
 	
 	# Use the normal tap symbol
 	mana_t := {
@@ -39,6 +44,10 @@ styling field:
 	name: grey hybrid name
 	description: Use a grey background for the name and type line on hybrid cards. This is done on real cards.
 	initial: no
+styling field:
+	type: boolean
+	name: darker artifacts
+	description: Use darker artifacts, as used by Wizards since Fifth Dawn.
 styling field:
 	type: boolean
 	name: use guild mana symbols
@@ -130,10 +139,10 @@ card style:
 
 	############################# Image
 	image:
-		left:	0
-		top:	55
-		width:	375
-		height:	472
+		left:	31
+		top:	60
+		width:	314
+		height:	410
 		mask: mask_image.png
 		z index: 1
 
