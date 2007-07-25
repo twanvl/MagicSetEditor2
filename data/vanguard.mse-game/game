@@ -70,17 +70,22 @@ init script:
 	# replaces — correctly
 	add := "" # default is nothing
 	for_mana_costs := format_cost := {
-		if input.separator_before == "—" then
-			"<param-cost>{input.param}</param-cost>"
-		else
+		if input.separator_before == "—" then (
+			if not contains(input.param, match:",") then
+				"<param-cost>{input.param}</param-cost>"
+			else
+				"{add}<param-cost>{input.param}</param-cost>"
+		) else
 			"{add}<param-mana>{input.param}</param-mana>"
 	}
 	alternative_cost := replace_rule(match:"^[A-Z]", replace: { to_lower() })
+	combined_cost := replace_rule(match:", [A-Z]", replace: { to_lower() })+
+		replace_rule(match:",", replace:", and")
 	format_alt_cost := {
-		if input.separator_before == "—" then
+		if input.separator_before == "—" and not contains(input.param, match:",") then
 			alternative_cost(input.param)
 		else
-			input.param
+			combined_cost(input.param)
 	}
 	long_dash := replace_rule(match:"-", replace:"—")
 	# Utilities for keywords
@@ -465,6 +470,8 @@ keyword parameter type:
 keyword parameter type:
 	name: action
 	match: [^(\n]+
+	separator after is: [.]
+	reminder script: alternative_cost()
 keyword parameter type:
 	name: name
 	match: [^(.,\n—-]+
