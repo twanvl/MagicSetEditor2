@@ -11,41 +11,7 @@ position hint: 2
 
 # General functions
 init script:
-	#character filter for copyright line
-	copyright_filter :=
-		# step 1 : Æ replacement rule
-		replace_rule(
-			match: "AE",
-			replace: "Æ") +
-		# step 2 : longdash for keywords
-		replace_rule(
-			match: "--",
-			replace: "—") +
-		replace_rule(
-			match: " - ",
-			replace: " — ") +
-		# step 3 : trademark symbol
-		replace_rule(
-			match: "TM",
-			replace: "™") +
-		# step 4 : copyright symbol
-		replace_rule(
-			match: "CR",
-			replace: "©")
-	
-	#character filter for title line
-	name_filter :=
-		# step 1 : Æ replacement rule
-		replace_rule(
-			match: "AE",
-			replace: "Æ") +
-		# step 2 : longdash for keywords
-		replace_rule(
-			match: "--",
-			replace: "—") +
-		replace_rule(
-			match: " - ",
-			replace: " — ")
+	############################################################## Sorting mana symbols
 	
 	# correctly sort a mana symbol (no guild mana)
 	mana_sort       := sort_rule(order: "XYZ[0123456789]S(WUBRG)")
@@ -66,6 +32,8 @@ init script:
 				match: "[\\[\\]]",
 				replace: ""
 			) + { tap_filter() + mana_filter() }
+	
+	############################################################## Utilities for keywords
 	
 	# replaces — correctly
 	add := "" # default is nothing
@@ -91,6 +59,15 @@ init script:
 	# Utilities for keywords
 	has_cc := { card.casting_cost != "" }
 	has_pt := { card.pt           != "" }
+	
+	# Converted mana cost
+	cmc := to_text + {
+		  1 * number_of_items(in: sort(order:"SWUBRG")) # colored mana
+		- 1 * number_of_items(in: sort(order:"/"))      # guild mana, W/U -> 2 - 1
+		+ 1 * sort(order: "[0123456789]")               # colorless mana
+	}
+	
+	############################################################## The text box
 	
 	# Filters for the text box
 	# context in which mana symbols are found
@@ -182,18 +159,70 @@ init script:
 		 	match: "[(][^)\n]*[)]?",
 			in_context: "(^|[[:space:]])<match>|<atom-keyword><match></>",
 		 	replace: "<i-auto>&</i-auto>") +
-		# step 8 : post ( capitalization
+		# step 8 : automatic capitalization
 		replace_rule(
 			match: "[a-z]",
 			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>|—<match>| — <match>",
 			replace: { to_upper() })
+		curly_quotes
 	
-	# Converted mana cost
-	cmc := to_text + {
-		  1 * number_of_items(in: sort(order:"SWUBRG")) # colored mana
-		- 1 * number_of_items(in: sort(order:"/"))      # guild mana, W/U -> 2 - 1
-		+ 1 * sort(order: "[0123456789]")               # colorless mana
-	}
+	############################################################## Other boxes
+	# the flavor text filter
+	#  - makes all text italic
+	flavor_text_filter :=
+		# step 1 : Æ replacement rule
+		replace_rule(
+			match: "AE",
+			replace: "Æ") +
+		# step 1.5 : longdash
+		replace_rule(
+			match: "--",
+			replace: "—") +
+		replace_rule(
+			match: " - ",
+			replace: " — ") +
+		# step 2 : remove italic tags
+		tag_remove_rule(tag: "<i-flavor>")   +
+		# step 3 : surround by <i> tags
+		{ "<i-flavor>" + input + "</i-flavor>" } +
+		# curly quotes
+		curly_quotes
+	
+	#character filter for copyright line
+	copyright_filter :=
+		# step 1 : Æ replacement rule
+		replace_rule(
+			match: "AE",
+			replace: "Æ") +
+		# step 2 : longdash for keywords
+		replace_rule(
+			match: "--",
+			replace: "—") +
+		replace_rule(
+			match: " - ",
+			replace: " — ") +
+		# step 3 : trademark symbol
+		replace_rule(
+			match: "TM",
+			replace: "™") +
+		# step 4 : copyright symbol
+		replace_rule(
+			match: "CR",
+			replace: "©")
+	
+	#character filter for title line
+	name_filter :=
+		# step 1 : Æ replacement rule
+		replace_rule(
+			match: "AE",
+			replace: "Æ") +
+		# step 2 : longdash for keywords
+		replace_rule(
+			match: "--",
+			replace: "—") +
+		replace_rule(
+			match: " - ",
+			replace: " — ")
 
 ############################################################## Set fields
 
@@ -213,6 +242,7 @@ set field:
 set field:
 	type: text
 	name: copyright
+	script: copyright_filter(value)
 set field:
 	type: info
 	name: Defaults and Automation
@@ -325,6 +355,7 @@ card field:
 card field:
 	type: text
 	name: flavor text
+	script: flavor_text_filter(value)
 	show statistics: false
 	multi line: true
 
