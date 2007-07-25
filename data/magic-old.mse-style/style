@@ -190,7 +190,7 @@ card style:
 		top : 260
 		width: 240
 		height: 18
-		alignment: top left
+		alignment: top left shrink-overflow
 		z index: 1
 		font:
 			name: MPlantin

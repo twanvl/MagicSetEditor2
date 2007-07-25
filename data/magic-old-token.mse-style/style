@@ -155,7 +155,7 @@ card style:
 		top : 296
 		width: 199
 		height: 18
-		alignment: top left
+		alignment: top left shrink-overflow
 		z index: 1
 		font:
 			name: MPlantin
