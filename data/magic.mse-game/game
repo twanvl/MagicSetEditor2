@@ -256,16 +256,20 @@ init script:
 	add := "" # default is nothing
 	for_mana_costs := format_cost := {
 		if input.separator_before == "—" then (
-			if not contains(input.param, match:",") then
+			if not contains(input.param, match:"and") then
+				"<param-cost>{input.param}</param-cost>"
+			else if not contains(input.param, match:"<sym>") and not contains(input.param, match:"<sym-auto>") then
 				"<param-cost>{input.param}</param-cost>"
 			else
 				"{add}<param-cost>{input.param}</param-cost>"
 		) else
-			"{add}<param-mana>{input.param}</param-mana>"
+			"{add}<param-cost>{input.param}</param-cost>"
 	}
 	alternative_cost := replace_rule(match:"^[A-Z]", replace: { to_lower() })
 	combined_cost := replace_rule(match:", [A-Z]", replace: { to_lower() })+
-		replace_rule(match:",", replace:", and")
+		replace_rule(match:",", replace:" and")+
+		replace_rule(match:"^[STXYZWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
+		replace_rule(match:"^[A-Z]", replace: { to_lower() })
 	format_alt_cost := {
 		if input.separator_before == "—" and not contains(input.param, match:",") then
 			alternative_cost(input.param)
