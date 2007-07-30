@@ -1,0 +1,20 @@
+Packages
+
+Most files used by Magic Set Editor are stored in ''packages''.
+
+A package is either a zip file or simply a directory.
+
+A package has an extension to indicate its type, for example @"*.mse-set"@ is a [[type:set]] file and @"*.mse-symbol-font"@ is a [[type:symbol font]].
+To open a zipped package using a program like winzip you may need to rename it to @"something.zip"@
+
+--Contents--
+
+A package always contains a [[file:format|heirarchical data file]] with the same name as the package type and no extension.
+For example @"my-set.mse-set"@ contains a file called @"set"@.
+
+A package can also contain other files like images.
+
+--Examples--
+
+The [[file:index|data directory]] contains packages in the form of directories.
+Each of the subdirectories is a package.

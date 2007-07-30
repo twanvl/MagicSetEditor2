@@ -1,0 +1,38 @@
+Data files
+
+MSE uses several different types of [[file:format|data files]], usually organized into [[file:package]]s.
+
+--File types--
+The following types are stored in [[file:package]]s in the:
+* [[type:game]]
+* [[type:stylesheet]]
+* [[type:symbol font]]
+* [[type:export template]]
+* [[type:locale]]
+
+The following types are stored in [[file:package]]s that can be located anywhere:
+* [[type:set]]
+* [[type:installer]]
+
+The following types are stored diractly in [[file:format|heirarchical files]], they can be located anywhere:
+* [[type:symbol]]
+
+--Data directories--
+The data files that come with Magic Set Editor are stored in [[file:package]]s in the ''data directory'',
+these are usually subdirectories of that directory.
+
+There are two data directories, a ''global'' one with data files installed with the program,
+and a ''local'' data directory for the current logged in user.
+The latter is used for installing packages if the user doesn't have administrator priviliges.
+
+The location of the global data directory is
+! On windows	<<<
+| Location	<tt><i>%MSE_DIR%</i>\data</tt>
+| Usually	<tt>C:\Program Files\Magic Set Editor 2\data</tt>
+! On linux/unix	<<<
+| Location	???
+
+The location of the local data directory is
+! On windows	<<<
+| Location	<tt><i>%USER_APPLICATION_DATA%</i>\Magic Set Editor\data</tt>
+| Usually	<tt>C:\Documents and Settings\<i>%USERNAME%</i>\Application Data\Magic Set Editor\data</tt>
