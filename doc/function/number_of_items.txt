@@ -3,7 +3,9 @@ Function: number_of_items
 --Usage--
 > number_of_items(in: some_collection)
 
-Returns the position of an item in a list or characters in a string.
+Returns the number of items in a list or the number of characters in a string.
+
+Note: This function is exactly the same as [[fun:length]].
 
 --Parameters--
 ! Parameter	Type				Description
@@ -21,3 +23,8 @@ Returns the position of an item in a list or characters in a string.
 >
 > # the number of red cards in the set
 > number_of_items(in: set, filter: { card.color == "red" } )
+
+--See also--
+| [[fun:length]]	Return the number of items in a list.
+| [[fun:sort_list]]	Sort a list.
+| [[fun:filter_list]]	Filter a list, keeping only elements that match a predicate.

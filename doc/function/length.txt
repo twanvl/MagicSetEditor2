@@ -1,0 +1,22 @@
+Function: length
+
+--Usage--
+> length(some_collection)
+
+Returns the number of items in a list or the number of characters in a string.
+
+Note: This function is exactly the same as [[fun:number_of_items]].
+
+--Parameters--
+! Parameter	Type				Description
+| @input@	[[type:list]] or [[type:map]] or [[type:set]] or [[type:string]]
+		  				Object to determine the number of items of.
+		  				When it is a set, returns the number of cards.
+		  				When it is a string, returns the number of characters.
+
+--Examples--
+> length(["x", "y", "z"]) == 3
+> length("pink") == 4
+
+--See also--
+| [[fun:number_of_items]]	Return the number of items in a list.

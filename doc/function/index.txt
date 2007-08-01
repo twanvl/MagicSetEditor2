@@ -29,7 +29,8 @@ These functions are built into the program, other [[type:function]]s can be defi
 	
 ! [[type:list|Lists]]		<<<
 | [[fun:position]]		Find the position of an element in a list.
-| [[fun:number_of_items]]	Find the number of items in a list.
+| [[fun:length]]		Return the number of items in a list.
+| [[fun:number_of_items]]	Return the number of items in a list.
 | [[fun:sort_list]]		Sort a list.
 | [[fun:filter_list]]		Filter a list, keeping only elements that match a predicate.
 	

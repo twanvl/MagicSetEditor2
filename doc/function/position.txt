@@ -24,3 +24,8 @@ If the item is not found in the list, returns @-1@.
 >
 > # The position of the card in the list of red cards, ordered by name
 > postion(of: card, in: set, order_by: {card.name}, filter:{card.color == "red"})
+
+--See also--
+| [[fun:length]] / [[fun:number_of_items]]	Return the number of items in a list.
+| [[fun:sort_list]]		Sort a list.
+| [[fun:filter_list]]		Filter a list, keeping only elements that match a predicate.
