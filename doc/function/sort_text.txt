@@ -10,14 +10,36 @@ When the @order@ parameter is not given, the input is sorted in alphabetical ord
 
 Otherwise the @order@ parameter determines what characters to show in the output.
 The @order@ is a string consisting of multiple ''parts'', each part selects a specific thing from the input.
-! Part		<tt>sort("zzyyxx")</tt>	Description
-| @"x"@		@"xx"@			A normal character, selects all matching characters from the input
-| @"<wxy>"@	@"xy"@			Selects the characters from the input, but only once.
-		 			@"<xy>"@ is the same as @"<x><y>"@.
-| @"[wxy]"@	@"yyxx"@		Selects the given characters, but keep them in the same order as in the input.
-| @"(xwz)"@	@"zzxx"@		Selects the given characters, and put them in the order that minimizes the distance.
-		 			around a 'circle'. Imagine w x and y in a circle, then "zx" is shorter then "x.z" because the latter passes the "w" space.
-		 			This sorting option is used to sort colored mana symbols in Magic.
+Parts
+! Part			<tt>sort("zzyyxxy")</tt>	Description
+| @"x"@			@"xx"@			A normal character, selects all matching characters from the input
+| @" "@			@""@			Whitespace is ignored.
+| @"\\<"@		@""@			Characters can be escaped with a backslash, normally the character @"<"@ has special behaviour.
+			 			Note that you also need to escape the backslash for the [[type:string]].
+| @"<wxy>"@		@"xy"@			Selects the characters from the input, but only once.
+			 			@"<xy>"@ is the same as @"<x><y>"@.
+| @"[wxy]"@		@"yyyxx"@		Selects the given characters, but keep them in the same order as in the input.
+| @"ordered(wxy)"@	@"xxyyy"@		The same as just @"wxy"@.
+| @"once(wxy)"@		@"xy"@			The same as @"<wxy>"@.
+| @"mixed(wxy)"@		@"yyyxx"@		The same as @"[wxy]"@.
+| @"compound(yx)"@	@"yx"@			Selects the literal substring @"xy"@ only where it matches exactly. Selects it as many times as it appears
+| @"any()"@		@"zzyyxxy"@		Selects the remaining part of the input.
+| @"cycle(xwz)"@	@"zzxx"@		Selects the given characters, and put them in the order that minimizes the distance.
+			 			around a 'circle'. Imagine w x and y in a circle, then "zx" is shorter then "x.z" because the latter passes the "w" space.
+			 			This sorting option is used to sort colored mana symbols in Magic.
+| @"reverse_order(x y)"@	@"yyyxx"@	Inside the parentheses can be multiple parts (that can again include part-functions).
+			 			@"reverse_order(x y)"@ is ''not'' the same as just @"y x"@, because in the first case x is evaluated first.
+			 			For example @"x compound(xy)"@ doesn't work, because the xs are all matched by the time the compound part is evaluated.
+			 			So instead you can use @"reverse_order(compound(xy) x)"@.
+| @"pattern(.z. xyz)"@	@"yzz"@			Selects all things that match the pattern, where @"."@ is a wildcard.
+			 			The things matching the wildcards are then sorted using the given pattern (separated by a space), and subsituted back in.
+			 			So in <tt>"zzyyxxy"</tt> the pattern matches <tt>"<b>zzy</b>xxy"</tt> with wildcards <tt>"zy"</tt> these sort as <tt>"yz"</tt> and in the pattern this becomes <tt>"yzz"</tt>.
+
+The parts are read from left to right, each part that matches something removes it from the input, so for example
+> sort_text(order: "xx")
+behaves the same as
+> sort_text(order: "x")
+because the first @"x"@ already selects all xs from the input.
 
 This function is available in [[script:rule form]].
 
@@ -27,11 +49,19 @@ This function is available in [[script:rule form]].
 | @order@	[[type:string]] (optional)	Order specification
 
 --Examples--
-> sort_text("banana")                 ==  "aaabnn"
-> sort_text(order: "na",   "banana")  ==  "nnaaa"
-> sort_text(order: "<na>", "banana")  ==  "na"
-> sort_text(order: "[na]", "banana")  ==  "anana"
-> sort_text(order: "[1234567890](wubrg)", "21wg")  ==  "21gw"
+> sort_text("banana")                                      ==  "aaabnn"
+> sort_text(order: "na",                        "banana")  ==  "nnaaa"
+> sort_text(order: "n a",                       "banana")  ==  "nnaaa"
+> sort_text(order: "<na>",                      "banana")  ==  "na"
+> sort_text(order: "once(na)",                  "banana")  ==  "na"
+> sort_text(order: "[na]",                      "banana")  ==  "anana"
+> sort_text(order: "mixed(na)",                 "banana")  ==  "anana"
+> sort_text(order: "compound(na)",              "banana")  ==  "nana"
+> sort_text(order: "reverse_order(na)",         "banana")  ==  "aaann"
+> sort_text(order: "a n <a>",                   "banana")  ==  "aaann"
+> sort_text(order: "reverse_order(<a> n a)",    "banana")  ==  "aanna"
+> sort_text(order: "pattern(./. cycle(wubrg))", "wgw/g")   ==  "g/w"
+> sort_text(order: "[1234567890]cycle(wubrg)",  "21wg")    ==  "21gw"
 >
-> f := sort_rule(order: "[1234567890](wubrg)")
+> f := sort_rule(order: "[1234567890]cycle(wubrg)")
 > f("21wg")  ==  "21gw"

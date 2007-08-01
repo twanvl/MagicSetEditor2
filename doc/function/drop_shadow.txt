@@ -5,6 +5,10 @@ Function: drop_shadow
 
 Add a drop shadow to an image.
 
+The shadow is based on the opacity of the image.
+
+To make sure the shadow doesn't fall outside the image, it can be a good idea to [[fun:enlarge]] the image first.
+
 --Parameters--
 ! Parameter	Type			Default	Description
 | @input@	[[type:image]]		 	Image to add drop shadow to
@@ -12,9 +16,9 @@ Add a drop shadow to an image.
 		 			 	Value is in the range 0 (no movement) to 1 (move by the width of the image)
 | @offset_y@	[[type:double]]		0	Relative position of the shadow, a positive number moves the shadow down.<br />
 		 			 	Value is in the range 0 (no movement) to 1 (move by the height of the image)
-| @blur_radius@	[[type:double]]		0	Amount to blur
+| @blur_radius@	[[type:double]]		0	Amount to blur the shadow.
 | @alpha@	[[type:double]]		0	Opacity of the shadow, in the range 0 (fully transparent) to 1 (fully opaque)
-| @color@	[[type:color]]		black	Color of the shadow
+| @color@	[[type:color]]		black	Color of the shadow.
 
 --Examples--
 > drop_shadow("image4.png", offset_x: 0.08, offset_y: 0.08, alpha: 0.5)  ==  [[Image]]

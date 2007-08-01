@@ -1,0 +1,19 @@
+Function: keyword_usage
+
+--Usage--
+> keyword_usage(card: some_card)
+
+Returns a comma separated list of the keywords that appear on the card.
+
+For example if a card contains the keywords "Flying" and "Haste" the function will return @"Flying, Haste"@.
+
+If a keyword appears multiple times on the card it will also appear multiple times in the output, unless @unique@ is specified.
+
+--Parameters--
+! Parameter	Type				Description
+| @card@	[[type:card]]			Card to find keywords on.
+| @unique@	[[type:boolean]] (optional)	Return each keyword at most once.
+
+--Examples--
+> keyword_usage(card: some_card, unique: false) == "Flying, Flying, Haste"
+> keyword_usage(card: some_card, unique: true)  == "Flying, Haste"
