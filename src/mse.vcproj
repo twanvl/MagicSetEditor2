@@ -2179,6 +2179,12 @@
 					RelativePath=".\util\smart_ptr.hpp">
 				</File>
 				<File
+					RelativePath=".\util\spec_sort.cpp">
+				</File>
+				<File
+					RelativePath=".\util\spec_sort.hpp">
+				</File>
+				<File
 					RelativePath=".\util\string.cpp">
 					<FileConfiguration
 						Name="Release|Win32">

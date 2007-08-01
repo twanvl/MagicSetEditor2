@@ -107,7 +107,7 @@ void SymbolViewer::draw(DC& dc) {
 		}
 	}
 	// Draw all parts
-	combineSymbolPart(dc, *symbol, paintedSomething, buffersFilled, false, borderDC, interiorDC);
+	combineSymbolPart(dc, *symbol, paintedSomething, buffersFilled, true, borderDC, interiorDC);
 	// Output the final parts from the buffer
 	if (buffersFilled) {
 		combineBuffers(dc, borderDC.get(), interiorDC.get());

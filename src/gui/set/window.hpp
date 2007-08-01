@@ -76,6 +76,7 @@ class SetWindow : public wxFrame, public SetView {
   private:
 	/// A different card has been selected
 	void onCardSelect(CardSelectEvent&);
+	void onCardActivate(CardSelectEvent&);
 		
 	// minSize = mainSizer->getMinWindowSize(this)
 	// but wx made that private

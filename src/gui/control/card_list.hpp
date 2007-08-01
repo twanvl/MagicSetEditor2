@@ -19,17 +19,25 @@ DECLARE_POINTER_TYPE(Field);
 
 // ----------------------------------------------------------------------------- : Events
 
-DECLARE_EVENT_TYPE(EVENT_CARD_SELECT, <not used>)
-/// Handle CardSelectEvents
+DECLARE_EVENT_TYPE(EVENT_CARD_SELECT,   <not used>)
+DECLARE_EVENT_TYPE(EVENT_CARD_ACTIVATE, <not used>)
+
+/// Handle EVENT_CARD_SELECT events
 #define EVT_CARD_SELECT(id, handler)										\
 	DECLARE_EVENT_TABLE_ENTRY(EVENT_CARD_SELECT, id, -1,					\
 	 (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction)		\
 	 (void (wxEvtHandler::*)(CardSelectEvent&)) (&handler), (wxObject*) NULL),
 
+/// Handle EVENT_CARD_ACTIVATE events
+#define EVT_CARD_ACTIVATE(id, handler)										\
+	DECLARE_EVENT_TABLE_ENTRY(EVENT_CARD_ACTIVATE, id, -1,					\
+	 (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction)		\
+	 (void (wxEvtHandler::*)(CardSelectEvent&)) (&handler), (wxObject*) NULL),
+
 /// The event of selecting a card
 struct CardSelectEvent : public wxCommandEvent {
-	inline CardSelectEvent(const CardP& card)
-		: wxCommandEvent(EVENT_CARD_SELECT), card(card)
+	inline CardSelectEvent(const CardP& card, int type = EVENT_CARD_SELECT)
+		: wxCommandEvent(type), card(card)
 	{}
 	
 	CardP card; ///< The selected card
@@ -122,11 +130,12 @@ class CardListBase : public ItemList, public SetView {
 	// --------------------------------------------------- : Window events
 	DECLARE_EVENT_TABLE();
 	
-	void onColumnRightClick(wxListEvent& ev);
-	void onColumnResize    (wxListEvent& ev);
-	void onSelectColumns   (wxCommandEvent& ev);
-	void onChar            (wxKeyEvent& ev);
-	void onDrag            (wxMouseEvent& ev);
+	void onColumnRightClick(wxListEvent&);
+	void onColumnResize    (wxListEvent&);
+	void onItemActivate    (wxListEvent&);
+	void onSelectColumns   (wxCommandEvent&);
+	void onChar            (wxKeyEvent&);
+	void onDrag            (wxMouseEvent&);
 	void onContextMenu     (wxContextMenuEvent&);
 };
 

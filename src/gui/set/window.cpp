@@ -199,12 +199,19 @@ void SetWindow::addPanel(IconMenu* windowMenu, wxToolBar* tabBar, SetWindowPanel
 
 void SetWindow::selectPanel(int id) {
 	SetWindowPanel* toSelect = panels.at(id - ID_WINDOW_MIN);
-	if (current_panel != toSelect) {
-		// destroy & create menus
-		if (current_panel) current_panel->destroyUI(GetToolBar(), GetMenuBar());
-		current_panel = toSelect;
-		current_panel->initUI(GetToolBar(), GetMenuBar());
+	if (current_panel == toSelect) {
+		// don't change, but fix tab bar
+		wxToolBar* tabBar  = (wxToolBar*)FindWindow(ID_TAB_BAR);
+		int wid = ID_WINDOW_MIN;
+		FOR_EACH(p, panels) {
+			tabBar->ToggleTool(wid++, p == current_panel);
+		}
+		return;
 	}
+	// destroy & create menus
+	if (current_panel) current_panel->destroyUI(GetToolBar(), GetMenuBar());
+	current_panel = toSelect;
+	current_panel->initUI(GetToolBar(), GetMenuBar());
 	// show/hide panels and select tabs
 	wxSizer*   sizer   = GetSizer();
 	wxToolBar* tabBar  = (wxToolBar*)FindWindow(ID_TAB_BAR);
@@ -281,6 +288,9 @@ void SetWindow::onCardSelect(CardSelectEvent& ev) {
 	FOR_EACH(p, panels) {
 		p->selectCard(ev.card);
 	}
+}
+void SetWindow::onCardActivate(CardSelectEvent& ev) {
+	selectPanel(ID_WINDOW_CARDS);
 }
 
 void SetWindow::fixMinWindowSize() {
@@ -699,5 +709,6 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
 	EVT_CLOSE			(						SetWindow::onClose)
 	EVT_IDLE			(						SetWindow::onIdle)
 	EVT_CARD_SELECT		(wxID_ANY,				SetWindow::onCardSelect)
+	EVT_CARD_ACTIVATE	(wxID_ANY,				SetWindow::onCardActivate)
 	EVT_SIZE_CHANGE		(wxID_ANY,				SetWindow::onSizeChange)
 END_EVENT_TABLE  ()

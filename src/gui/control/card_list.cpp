@@ -33,6 +33,7 @@ DECLARE_TYPEOF_COLLECTION(CardListBase*);
 // ----------------------------------------------------------------------------- : Events
 
 DEFINE_EVENT_TYPE(EVENT_CARD_SELECT);
+DEFINE_EVENT_TYPE(EVENT_CARD_ACTIVATE);
 
 // ----------------------------------------------------------------------------- : CardListBase
 
@@ -352,11 +353,18 @@ void CardListBase::onContextMenu(wxContextMenuEvent&) {
 	}
 }
 
+void CardListBase::onItemActivate(wxListEvent& ev) {
+	selectItemPos(ev.GetIndex(), false);
+	CardSelectEvent event(getCard(), EVENT_CARD_ACTIVATE);
+	ProcessEvent(event);
+}
+
 // ----------------------------------------------------------------------------- : CardListBase : Event table
 
 BEGIN_EVENT_TABLE(CardListBase, ItemList)
 	EVT_LIST_COL_RIGHT_CLICK	(wxID_ANY,			CardListBase::onColumnRightClick)
 	EVT_LIST_COL_END_DRAG		(wxID_ANY,			CardListBase::onColumnResize)
+	EVT_LIST_ITEM_ACTIVATED		(wxID_ANY,			CardListBase::onItemActivate)
 	EVT_CHAR					(					CardListBase::onChar)
 	EVT_MOTION					(					CardListBase::onDrag)
 	EVT_MENU					(ID_SELECT_COLUMNS,	CardListBase::onSelectColumns)

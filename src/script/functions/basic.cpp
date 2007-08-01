@@ -10,6 +10,7 @@
 #include <script/functions/functions.hpp>
 #include <script/functions/util.hpp>
 #include <util/tagged_string.hpp>
+#include <util/spec_sort.hpp>
 #include <util/error.hpp>
 #include <data/set.hpp>
 #include <data/card.hpp>
@@ -258,16 +259,22 @@ SCRIPT_FUNCTION_DEPENDENCIES(position_of) {
 };
 
 // finding sizes
-SCRIPT_FUNCTION(number_of_items) {
-	SCRIPT_PARAM(ScriptValueP, in);
-	if (ScriptObject<Set*>* setobj = dynamic_cast<ScriptObject<Set*>*>(in.get())) {
+int script_length_of(Context& ctx, const ScriptValueP& collection) {
+	if (ScriptObject<Set*>* setobj = dynamic_cast<ScriptObject<Set*>*>(collection.get())) {
 		Set* set = setobj->getValue();
 		SCRIPT_OPTIONAL_PARAM_(ScriptValueP, filter);
-		if (filter == script_nil) filter = ScriptValueP();
-		SCRIPT_RETURN(set->numberOfCards(filter));
+		return set->numberOfCards(filter);
 	} else {
-		SCRIPT_RETURN(in->itemCount());
+		return collection->itemCount();
 	}
+}
+SCRIPT_FUNCTION(length) {
+	SCRIPT_PARAM(ScriptValueP, input);
+	SCRIPT_RETURN(script_length_of(ctx, input));
+}
+SCRIPT_FUNCTION(number_of_items) {
+	SCRIPT_PARAM(ScriptValueP, in);
+	SCRIPT_RETURN(script_length_of(ctx, in));
 }
 
 // filtering items from a list
@@ -285,6 +292,12 @@ SCRIPT_FUNCTION(filter_list) {
 	}
 	// TODO : somehow preserve keys
 	return ret;
+}
+
+SCRIPT_FUNCTION(sort_list) {
+	SCRIPT_PARAM(ScriptValueP, input);
+	SCRIPT_PARAM_N(ScriptValueP, _("order by"), order_by);
+	return sort_script(ctx, input, *order_by);
 }
 
 // ----------------------------------------------------------------------------- : Keywords
@@ -516,110 +529,7 @@ SCRIPT_FUNCTION(match) {
 	return match_rule(ctx)->eval(ctx);
 }
 
-// ----------------------------------------------------------------------------- : Rules : sort
-
-/// Sort a string using a specification using the shortest cycle metric, see spec_sort
-String cycle_sort(const String& spec, const String& input) {
-	size_t size = spec.size();
-	vector<UInt> counts;
-	// count occurences of each char in spec
-	FOR_EACH_CONST(s, spec) {
-		UInt c = 0;
-		FOR_EACH_CONST(i, input) {
-			if (s == i) c++;
-		}
-		counts.push_back(c);
-	}
-	// determine best start point
-	size_t best_start = 0;
-	UInt   best_start_score = 0xffffffff;
-	for (size_t start = 0 ; start < size ; ++start) {
-		// score of a start position, can be considered as:
-		//  - count saturated to binary
-		//  - rotated left by start
-		//  - interpreted as a binary number, but without trailing 0s
-		UInt score = 0, mul = 1;
-		for (size_t i = 0 ; i < size ; ++i) {
-			mul *= 2;
-			if (counts[(start + i) % size]) {
-				score = score * mul + 1;
-				mul = 1;
-			}
-		}
-		if (score < best_start_score) {
-			best_start_score = score;
-			best_start       = start;
-		}
-	}
-	// return string
-	String ret;
-	for (size_t i = 0 ; i < size ; ++i) {
-		size_t pos = (best_start + i) % size;
-		ret.append(counts[pos], spec[pos]);
-	}
-	return ret;
-}
-
-/// Sort a string using a sort specification
-/** The specificatio can contain:
- *   - a       = all 'a's go here
- *   - [abc]   = 'a', 'b' and 'c' go here, in the same order as in the input
- *   - <abc>   = 'a', 'b' and 'c' go here in that order, and only zero or one time.
- *   - (abc)   = 'a', 'b' and 'c' go here, in the shortest order
- *               consider the specified characters as a clockwise circle
- *               then returns the input in the order that:
- *                 1. takes the shortest clockwise path over this circle.
- *                 2. has _('holes') early, a hole means a character that is in the specification
- *                    but not in the input
- *                 3. prefer the one that comes the earliest in the expression (a in this case)
- *
- *  example:
- *    spec_sort("XYZ<0123456789>(WUBRG)",..)  // used by magic
- *     "W1G")      -> "1GW"      // could be "W...G" or "...GW", second is shorter
- *     "GRBUWWUG") -> "WWUUBRGG" // no difference by rule 1,2, could be "WUBRG", "UBRGW", etc.
- *                               // becomes _("WUBRG") by rule 3
- *     "WUR")      -> "RWU"      // by rule 1 could be "R WU" or "WU R", "RWU" has an earlier hole
- */
-String spec_sort(const String& spec, const String& input) {
-	String ret;
-	for (size_t pos = 0 ; pos < spec.size() ; ++pos) {
-		Char c = spec.GetChar(pos);
-		
-		if (c == _('<')) {			// keep only a single copy
-			for ( ++pos ; pos < spec.size() ; ++pos) {
-				Char c = spec.GetChar(pos);
-				if (c == _('>')) break;
-				if (input.find_first_of(c) != String::npos) {
-					ret += c; // input contains c
-				}
-			}
-			if (pos == String::npos) throw ParseError(_("Expected '>' in sort_rule specification"));
-			
-		} else if (c == _('[')) {	// in any order
-			size_t end = spec.find_first_of(_(']'));
-			if (end == String::npos) throw ParseError(_("Expected ']' in sort_rule specification"));
-			FOR_EACH_CONST(d, input) {
-				size_t in_spec = spec.find_first_of(d, pos);
-				if (in_spec < end) {
-					ret += d; // d is in the part between [ and ]
-				}
-			}
-			pos = end;
-			
-		} else if (c == _('(')) {	// in a cycle
-			size_t end = spec.find_first_of(_(')'), pos);
-			if (end == String::npos) throw ParseError(_("Expected ')' in sort_rule specification"));
-			ret += cycle_sort(spec.substr(pos + 1, end - pos - 1), input);
-			pos = end;
-		
-		} else {					// single char
-			FOR_EACH_CONST(d, input) {
-				if (c == d) ret += c;
-			}
-		}
-	}
-	return ret;
-}
+// ----------------------------------------------------------------------------- : Rules : sort text
 
 // Sort using spec_sort
 class ScriptRule_sort_order: public ScriptValue {
@@ -636,19 +546,6 @@ class ScriptRule_sort_order: public ScriptValue {
 	}
   private:
 	String order;
-};
-// Sort using sort_script
-class ScriptRule_sort_order_by: public ScriptValue {
-  public:
-	inline ScriptRule_sort_order_by(const ScriptValueP& order_by) : order_by(order_by) {}
-	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
-	virtual String typeName() const { return _("sort_rule"); }
-	virtual ScriptValueP eval(Context& ctx) const {
-		SCRIPT_PARAM(ScriptValueP, input);
-		return sort_script(ctx, input, *order_by);
-	}
-  private:
-	ScriptValueP order_by;
 };
 // Sort a string alphabetically
 class ScriptRule_sort: public ScriptValue {
@@ -670,23 +567,15 @@ class ScriptRule_sort: public ScriptValue {
 
 SCRIPT_FUNCTION(sort_rule) {
 	SCRIPT_OPTIONAL_PARAM(String, order) {
-		return new_intrusive1<ScriptRule_sort_order   >(order);
+		return new_intrusive1<ScriptRule_sort_order>(order);
 	}
-	SCRIPT_OPTIONAL_PARAM_N(ScriptValueP, _("order by"), order_by) {
-		return new_intrusive1<ScriptRule_sort_order_by>(order_by);
-	} else {
-		return new_intrusive <ScriptRule_sort         >();
-	}
+	return new_intrusive <ScriptRule_sort>();
 }
-SCRIPT_FUNCTION(sort) {
+SCRIPT_FUNCTION(sort_text) {
 	SCRIPT_OPTIONAL_PARAM(String, order) {
-		return ScriptRule_sort_order   (order   ).eval(ctx);
+		return ScriptRule_sort_order(order).eval(ctx);
 	}
-	SCRIPT_OPTIONAL_PARAM_N(ScriptValueP, _("order by"), order_by) {
-		return ScriptRule_sort_order_by(order_by).eval(ctx);
-	} else {
-		return ScriptRule_sort         (        ).eval(ctx);
-	}
+	return ScriptRule_sort().eval(ctx);
 }
 
 // ----------------------------------------------------------------------------- : Init
@@ -711,8 +600,10 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("tag remove rule"),      script_tag_remove_rule);
 	// collection
 	ctx.setVariable(_("position"),             script_position_of);
+	ctx.setVariable(_("length"),               script_number_of_items);
 	ctx.setVariable(_("number of items"),      script_number_of_items);
 	ctx.setVariable(_("filter list"),          script_filter_list);
+	ctx.setVariable(_("sort list"),            script_sort_list);
 	// keyword
 	ctx.setVariable(_("expand keywords"),      script_expand_keywords);
 	ctx.setVariable(_("expand keywords rule"), script_expand_keywords_rule);
@@ -721,8 +612,7 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("replace"),              script_replace);
 	ctx.setVariable(_("filter text"),          script_filter_text);
 	ctx.setVariable(_("match"),                script_match);
-	ctx.setVariable(_("sort"),                 script_sort);
-	ctx.setVariable(_("sort list"),            script_sort);
+	ctx.setVariable(_("sort text"),            script_sort_text);
 	ctx.setVariable(_("replace rule"),         script_replace_rule);
 	ctx.setVariable(_("filter rule"),          script_filter_rule);
 	ctx.setVariable(_("match rule"),           script_match_rule);

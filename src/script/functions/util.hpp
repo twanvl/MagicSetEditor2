@@ -92,8 +92,7 @@
 		SCRIPT_OPTIONAL_PARAM_N(Type, _(#name), name)
 /// Retrieve a named optional parameter
 #define SCRIPT_OPTIONAL_PARAM_N(Type, str, name)							\
-		ScriptValueP name##_ = ctx.getVariableOpt(str);						\
-		Type name = name##_ ? from_script<Type>(name##_) : Type();			\
+		SCRIPT_OPTIONAL_PARAM_N_(Type, str, name)							\
 		if (name##_)
 
 /// Retrieve an optional parameter, can't be used as an if statement
@@ -102,7 +101,8 @@
 /// Retrieve a named optional parameter, can't be used as an if statement
 #define SCRIPT_OPTIONAL_PARAM_N_(Type, str, name)							\
 		ScriptValueP name##_ = ctx.getVariableOpt(str);						\
-		Type name = name##_ ? from_script<Type>(name##_) : Type();
+		Type name = name##_ && name##_ != script_nil						\
+						? from_script<Type>(name##_) : Type();
 
 /// Retrieve an optional parameter with a default value
 #define SCRIPT_PARAM_DEFAULT(Type, name, def)								\
