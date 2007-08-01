@@ -84,8 +84,10 @@ option style:
 			sans-serif:  /magic-spoiler.mse-export-template/sans-serif.png
 
 script:
-	symbol_font      := "magic-mana-small"
-	symbol_font_size := 12
+	if options.mana_symbols then (
+		symbol_font      := "magic-mana-small"
+		symbol_font_size := 12
+	)
 	write_card := {
 		if contains(options.images, match:"full card image") then
 			card_image_file := write_image_file(card,       file:"card{position(of:card,in:set)}.jpg")

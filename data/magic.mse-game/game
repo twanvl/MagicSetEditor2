@@ -14,42 +14,21 @@ init script:
 	
 	# Used in FPM and Future Sight
 	brush_sort := sort_rule(order: "OP")
-	# correctly sort a mana symbol (no guild mana)
-	mana_sort       := sort_rule(order: "XYZ[0123456789]S(WUBRG)")
-	# correctly sort guild mana
-	mana_sort_guild := replace_rule( # swap these:
-				match: "U/W|B/U|R/B|G/R|W/G|B/W|R/U|G/B|W/R|U/G",
-				in_context: "(^|[^/])<match>($|[^/])",
-				replace: {input[2] + "/" + input[0]}) +
-			   replace_rule(
-				match: "W/B/U|W/R/B|U/R/B|U/G/R|B/G/R|B/W/G|R/W/G|R/U/W|G/U/W|G/B/U",
-				in_context: "(^|[^/])<match>($|[^/])",
-				replace: {input[0] + "/" + input[4] + "/" + input[2]}) +
-			   replace_rule(
-				match: "B/U/W|R/B/W|R/B/U|G/R/U|G/R/B|W/G/B|W/G/R|U/W/R|U/W/G|B/U/G",
-				in_context: "(^|[^/])<match>($|[^/])",
-				replace: {input[4] + "/" + input[2] + "/" + input[0]}) +
-			   replace_rule(
-				match: "U/W/B|B/W/R|B/U/R|R/U/G|R/B/G|G/B/W|G/R/W|W/R/U|W/G/U|U/G/B",
-				in_context: "(^|[^/])<match>($|[^/])",
-				replace: {input[2] + "/" + input[0] + "/" + input[4]}) +
-			   replace_rule(
-				match: "U/B/W|B/R/U|R/G/B|G/W/R|W/U/G|B/R/W|R/G/U|G/W/B|W/U/R|U/B/G",
-				in_context: "(^|[^/])<match>($|[^/])",
-				replace: {input[4] + "/" + input[0] + "/" + input[2]}) +
-			   replace_rule(
-				match: "B/W/U|R/U/B|G/B/R|W/R/G|U/G/W|R/W/B|G/U/R|W/B/G|U/R/W|B/G/U",
-				in_context: "(^|[^/])<match>($|[^/])",
-				replace: {input[2] + "/" + input[4] + "/" + input[0]}) +
-			   replace_rule(
-				match: "T", replace: ""
-			   )
+	# correctly sort mana symbols
+	mana_sort := sort_rule(order: "ordered(XYZ)"
+	                            + "mixed(0123456789)"
+	                            + "ordered(S)"
+	                            + "reverse_order("
+	                            + " pattern(./././.  cycle(WUBRG))"
+	                            + " pattern(././.    cycle(WUBRG))"
+	                            + " pattern(./.      cycle(WUBRG))"
+	                            + " pattern(|.       WUBRG)|"
+	                            + " pattern(./       WUBRG)"
+	                            + " pattern(/.       WUBRG)"
+	                            + " cycle(WUBRG)"
+	                            + ")")
 	mana_has_guild := sort_rule(order: "</|>") # Is there guild or half mana in the input?
-	# A mana cost can contain both normal and guild mana
-	mana_filter := to_upper + {
-		if mana_has_guild()!="" then mana_sort_guild()
-		else                         mana_sort()
-	}
+	mana_filter := to_upper + mana_sort
 	# Like mana filter, only also allow tap symbols:
 	tap_filter := sort_rule(order: "<T>")
 	mana_filter_t := replace_rule(               # Remove [] used for forcing mana symbols
@@ -217,7 +196,7 @@ init script:
 			else                                                      "I"    # Non of the above = Colorless/artifact
 		) else (
 			# use the casting cost
-			colors := sort(casting_cost, order: "<WUBRG>")
+			colors := sort_text(casting_cost, order: "<WUBRG>")
 			if      colors == ""                                 then "I"    # Colorless
 			else if contains(casting_cost, match:"/")            then "G"    # Hybrid cost
 			else if colors == "W"                                then "A"    # White
@@ -470,13 +449,13 @@ init script:
 	
 	# Converted mana cost
 	cmc := to_text + {
-		  1 * number_of_items(in: sort(order:"SWUBRG")) # colored mana
-		- 1 * number_of_items(in: sort(order:"/"))      # guild mana, W/U -> 2 - 1
-		+ 1 * sort(order: "[0123456789]")               # colorless mana
+		  1 * number_of_items(in: sort_text(order:"SWUBRG")) # colored mana
+		- 1 * number_of_items(in: sort_text(order:"/"))      # guild mana, W/U -> 2 - 1
+		+ 1 * sort_text(order: "[0123456789]")               # colorless mana
 	}
 	colored_mana := to_text + {
-		  number_of_items(in: sort(order: "WUBRG"))     # colored mana
-		- number_of_items(in: sort(order:"/"))          # guild mana, W/U -> 2 - 1
+		  number_of_items(in: sort_text(order: "WUBRG"))     # colored mana
+		- number_of_items(in: sort_text(order:"/"))          # guild mana, W/U -> 2 - 1
 	}
 	primary_card_color := {
 		artifact := chosen(choice:"artifact")
@@ -592,17 +571,16 @@ default set style:
 		font:
 			size: 16
 	symbol:
+		max aspect ratio: 2.5
 		variation:
 			name: common
 			border radius: 0.10
-			#max aspect ratio: 2.5
 			fill type: solid
 			fill color:   rgb(0,0,0)
 			border color: rgb(255,255,255)
 		variation:
 			name: uncommon
 			border radius: 0.05
-			#max aspect ratio: 2.5
 			fill type: linear gradient
 			fill color 1:   rgb(224,224,224)
 			fill color 2:   rgb(84, 84, 84)

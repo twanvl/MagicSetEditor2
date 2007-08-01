@@ -442,12 +442,12 @@ color_background := {
 	if land and colored_lands then template := land_template # use land template instead?
 	
 	# The selected colors
-	colors := sort( order: "(wubrg)"
-	              , (if chosen(choice:"white") then "w")
-	              + (if chosen(choice:"blue")  then "u")
-	              + (if chosen(choice:"black") then "b")
-	              + (if chosen(choice:"red")   then "r")
-	              + (if chosen(choice:"green") then "g"))
+	colors := sort_text( order: "(wubrg)"
+	                   , (if chosen(choice:"white") then "w")
+	                   + (if chosen(choice:"blue")  then "u")
+	                   + (if chosen(choice:"black") then "b")
+	                   + (if chosen(choice:"red")   then "r")
+	                   + (if chosen(choice:"green") then "g"))
 	if multi and (hybrid or colors == "") then (
 		colors := colors + "m"
 		multi := false
@@ -531,18 +531,18 @@ font_color_positions := [
 font_white := {
 	hybrid   := chosen(choice:"hybrid")
 	artifact := chosen(choice:"artifact")
-	colors := sort( order: "(wubrg)"
-		      , (if chosen(choice:"white") then "w")
-		      + (if chosen(choice:"blue")  then "u")
-		      + (if chosen(choice:"black") then "b")
-		      + (if chosen(choice:"red")   then "r")
-		      + (if chosen(choice:"green") then "g"))
-		      + (if artifact               then "a")
+	colors := sort_text( order: "(wubrg)"
+		           , (if chosen(choice:"white") then "w")
+		           + (if chosen(choice:"blue")  then "u")
+		           + (if chosen(choice:"black") then "b")
+		           + (if chosen(choice:"red")   then "r")
+		           + (if chosen(choice:"green") then "g"))
+		           + (if artifact               then "a")
 	font_colors_white(
 		if chosen(choice:"land") then "l"
 		else if input == "artifact, multicolor" then "a"
 		else if chosen(choice:"multicolor")     then "m"
-		else if artifact and not hybrid        then "a"
+		else if artifact and not hybrid         then "a"
 		else if colors == ""                    then "c"
 		else colors[
 			font_color_positions
