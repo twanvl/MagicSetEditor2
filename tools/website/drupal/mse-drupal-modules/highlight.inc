@@ -54,21 +54,35 @@ function highlight_reader($code) {
 
 function highlight_script($code) {
 	$ret = '';
+	$string = '';
 	while(strlen($code)) {
-		if (preg_match("@^(if|then|else|for|in|do|and|or|xor|not|rgb)\b@",$code, $matches)) {
+		if (preg_match("@^<[^>]+>@",$code, $matches)) {
+			$ret .= $matches[0]; // plain tag
+		} else if (preg_match("@^(if|then|else|for|in|do|and|or|xor|not|rgb)\b@",$code, $matches)) {
 			$ret .= "<span class='hl-kw'>" . $matches[0] . "</span>";
 		} else if (preg_match("@^(include file:)(.*)@",$code, $matches)) {
 			$ret .= "<span class='hl-key'>" . $matches[1] . "</span>" . $matches[2];
 		} else if (preg_match("@^([0-9][0-9.]*|true|false)@",$code, $matches)) {
 			$ret .= "<span class='hl-num'>" . $matches[0] . "</span>";
-		} else if (preg_match("@^(\"|&quot;)(\\\\.|[^\\\\])*?(\"|&quot;)@",$code, $matches)) {
-			$ret .= "<span class='hl-str'>" . $matches[0] . "</span>";
+//		} else if (preg_match("@^(\"|&quot;)(\\\\.|[^\\\\])*?(\"|&quot;)@",$code, $matches)) {
+//			$ret .= "<span class='hl-str'>" . $matches[0] . "</span>";
+		} else if (preg_match("@^(\"|&quot;)(\\\\.|[^\\\\{])*?(\"|&quot;|{)@",$code, $matches)) {
+			$ret .= "<span class='hl-str'>" . highlight_script_string($matches[0]) . "</span>";
+			if ($matches[3] == '{') $string .= 's';
+		} else if ($string != '' && $string{strlen($string)-1}=='s' &&
+		           preg_match("@^}(\\\\.|[^\\\\{])*?(\"|&quot;|{)@",$code, $matches)) {
+			// return from string quote
+			$ret .= "<span class='hl-str'>" . highlight_script_string($matches[0]) . "</span>";
+			$string = substr($string,0,-1);
+			if ($matches[3] == '{') $string .= 's';
 		} else if (preg_match("@^\\#.*@",$code, $matches)) {
 			$ret .= "<span class='hl-comment'>" . $matches[0] . "</span>";
 		} else if (preg_match("@^([-+*/=!.]|&lt;|&gt;)+|^:=@",$code, $matches)) {
 			$ret .= "<span class='hl-op'>" . $matches[0] . "</span>";
-		} else if (preg_match("@^[\\(\\)\\[\\]{},]+@",$code, $matches)) {
+		} else if (preg_match("@^([}]|[\\(\\)\\[\\]{,]+)@",$code, $matches)) {
 			$ret .= "<span class='hl-paren'>" . $matches[0] . "</span>";
+			if     ($matches[0] == '{') $string .= 'p';
+			elseif ($matches[0] == '}') $string = substr($string,0,-1);
 		} else if (preg_match("@^[a-zA-Z_][a-zA-Z0-9_]*:@",$code, $matches)) {
 			$ret .= "<span class='hl-ckey'>" . $matches[0] . "</span>";
 		} else if (preg_match("@^([a-zA-Z0-9_]+\s*|\s+|&#?[a-zA-Z0-9]+;)@",$code, $matches)) {
@@ -83,6 +97,10 @@ function highlight_script($code) {
 		$code = substr($code, strlen($matches[0]));
 	}
 	return $ret;
+}
+function highlight_script_string($code) {
+	$code = preg_replace("@&lt;.*?(&gt;|>)@", "<span class='hl-tag'>\\0</span>", $code);
+	return $code;
 }
 
 ?>

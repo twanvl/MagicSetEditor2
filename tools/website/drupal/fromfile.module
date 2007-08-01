@@ -105,9 +105,18 @@ function fromfile_page() {
   }
   
   // done
-  drupal_set_title($title);
   drupal_set_breadcrumb($breadcrumbs);
-  return $content;
+  // view as a node
+  $node = array(
+	'title'   => $title,
+	'body'    => $content,
+	'created' => 0,
+	'links'   => FALSE,
+	'name'    => '',
+	'nid'     => ''
+  );
+  //return node_view((object)$node, FALSE, TRUE);
+  return theme('node', (object)$node, FALSE, TRUE);
 }
 
 

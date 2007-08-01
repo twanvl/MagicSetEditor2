@@ -53,9 +53,12 @@ function autoformat__handle(&$i, $prefix, $first, $fail_same = false) {
 			$current_prefix .= ' ';
 		}
 		
+		//$line = $line . '{' . $current_prefix . '|' . strlen($prefix) . substr($oldline, 0, strlen($prefix)) . '}';
+		
 		// Determine line type
 		if (strlen($oldline) < strlen($prefix)) {
 			// empty line => break out of this level
+			$i--;
 			if ($state == '|') $text .= autoformat__table($table);
 			return $text;
 		} else if ($line == '') {
@@ -128,7 +131,15 @@ function autoformat__handle(&$i, $prefix, $first, $fail_same = false) {
 			// source code
 			if ($state == '>') $text = substr($text,0,-6);
 			else               $text .= '<pre>';
-			$text .= syntax_highlight(htmlspecialchars(substr($line, 1)));
+			if (substr($line,0,4)=='>>>>') { // always code, not escaped
+				$text .= highlight_script(substr($line, 4));
+			} else if (substr($line,0,3)=='>>>') { // not escaped
+				$text .= syntax_highlight(substr($line, 3));
+			} else if (substr($line,0,2)=='>>') { // always code
+				$text .= highlight_script(htmlspecialchars(substr($line, 2)));
+			} else {
+				$text .= syntax_highlight(htmlspecialchars(substr($line, 1)));
+			}
 			$text .= "\n</pre>";
 			$state = '>';
 		} elseif ($line{0} == ']') {
@@ -142,7 +153,7 @@ function autoformat__handle(&$i, $prefix, $first, $fail_same = false) {
 		// Html
 		} elseif (preg_match("@^</?(pre|ul|ol|li|div|blockquote|>)@", $line)) {
 			$line = preg_replace("@^<>@","",$line);
-			$text .= $line;
+			$text .= $line . "\n";
 			$state = '';
 		
 		// Just text
