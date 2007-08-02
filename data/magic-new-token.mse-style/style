@@ -131,7 +131,7 @@ card style:
 		top: 25
 		width: 275
 		height: 28
-		alignment: bottom center shrink-overflow
+		alignment: bottom center justify-overflow
 		padding bottom: -2
 		padding top: 2
 		z index: 3
