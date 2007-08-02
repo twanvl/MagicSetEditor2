@@ -235,9 +235,11 @@ init script:
 	add := "" # default is nothing
 	for_mana_costs := format_cost := {
 		if input.separator_before == "—" then (
-			if contains(input.param, match:",") then
-				"{add}<param-cost>{combined_cost(input.param)}</param-cost>"
-			else
+			if contains(input.param, match:",") then (
+				if match(match: "^[STXYZWUBRG0-9/|]+,", input.param) then
+					"{add}<param-cost>{combined_cost(input.param)}</param-cost>"
+				else "<param-cost>{combined_cost(input.param)}</param-cost>"
+			) else
 				"<param-cost>{alternative_cost(input.param)}</param-cost>"
 		) else
 			"{add}<param-mana>{input.param}</param-mana>"
@@ -247,12 +249,6 @@ init script:
 		replace_rule(match:",", replace:" and")+
 		replace_rule(match:"^[STXYZWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
 		replace_rule(match:"^[A-Z]", replace: { to_lower() })
-	#format_alt_cost := {
-	#	if input.separator_before == "—" then
-	#		alternative_cost(input.param)
-	#	else
-	#		input.param
-	#}
 	long_dash := replace_rule(match:"-", replace:"—")
 	# Utilities for keywords
 	has_cc := { card.casting_cost != "" }
@@ -1409,7 +1405,6 @@ keyword parameter type:
 		name: add "pay " for mana costs
 		description: When using mana only costs, words the reminder text as "pay <cost>"
 		script: \{for_mana_costs(add:"pay ", {input})\}
-	#reminder script: format_alt_cost()
 	separator script: long_dash()
 keyword parameter type:
 	name: number
@@ -1801,11 +1796,6 @@ keyword:
 	mode: expert
 	reminder: This permanent comes into play with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it.
 keyword:
-	keyword: Grandeur
-	match: Grandeur
-	mode: pseudo
-	rules: Grandeur — Discard another card named ~: [effect].
-keyword:
 	keyword: Deathtouch
 	match: Deathtouch
 	mode: expert
@@ -1874,3 +1864,8 @@ keyword:
 	match: Fortify <atom-param>cost</atom-param>
 	mode: expert
 	reminder: {param1}: Attach to target land you control. Fortify only as a sorcery. This card comes into play unattached and stays in play if the land leaves play.
+keyword:
+	keyword: Grandeur
+	match: Grandeur
+	mode: pseudo
+	rules: Grandeur — Discard another card named ~: [effect].
