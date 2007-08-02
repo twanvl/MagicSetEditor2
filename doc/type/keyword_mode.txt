@@ -1,0 +1,22 @@
+Data type: keyword mode
+
+--Overview--
+
+A mode for [[type:keyword]]s.
+
+This becomes a choice in the 'mode' box on the keywords panel.
+
+The idea behind modes is that a mode indicates what type of keyword it is, for example an "official" keyword, a "simple" keyword or a "custom" keyword.
+This information can then be used to determine whether to expand the reminder text.
+
+--Properties--
+! Property		Type			Default		Description
+| @name@		[[type:string]]		''required''	Name of the mode, this is shown in the box and used in scripts.
+| @description@		[[type:string]]		@""@		A description of this mode.
+| @is default@		[[type:boolean]]	@false@		Is this the default mode for new keywords?
+
+--Example--
+>keyword mode:
+>	name: custom
+>	description: Custom keywords
+>	is default: true

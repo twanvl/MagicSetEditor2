@@ -1,0 +1,40 @@
+Data type: keyword parameter type
+
+--Overview--
+
+A type of parameter that can be used in a [[type:keyword]].
+
+--Properties--
+! Property		Type					Default		Description
+| @name@		[[type:string]]				''required''	Name of the parameter type.
+| @description@		[[type:string]]				''required''	Description of the parameter type.
+| @placeholder@		[[type:string]]		@name@ of this param type	Placeholder to use for empty parameters, the name is used if this is empty.
+| @optional@		[[type:boolean]]			@true@		Is a placeholder used when a keyword is encountered with no parameter,<br/> for example @"Cycling "@ would become @"Cycling <atom-kwpph>cost</atom-kwpph>"@.
+| @match@		[[type:regex]]				''required''	Regular expression that this param type matches.
+| @separator before is@	[[type:regex]]				@""@		Regular expression of separator before parameters of this type.
+| @separator after is@	[[type:regex]]				@""@		Regular expression of separator after  parameters of this type.
+| @eat separator@	[[type:boolean]]			@true@		Allow the user to 'type over' the separator.<br/>
+			 					 		For example if the separator is @" "@ in the keyword @"Cycling"@, and the user types @"Cycling"@,
+			 					 		a space and a placeholder is automatically inserted, making @"Cycling <cost>"@.
+			 					 		If the user now presses space the cursor is only moved, no additional space is inserted, the space is 'eaten'.
+| @script@		[[type:script]]				 		Script to apply to parameters of this type before substituting them back into the text.
+| @reminder script@	[[type:script]]				 		Script to apply to parameters of this type before using them in the reminder text.
+| @example@		[[type:string]]				 		Example for in the keyword editor, currently not used.
+| @refer scripts@	[[type:list]] of [[type:keyword param reference script]]s
+			 					 		Scripts for inserting paramaters of this type into the reminder text.
+			 					 		To make this easy for the user, a menu of ways to use a parameter is provided.
+
+--Example--
+The 'number' parameter type. It matches a sequence of digits.
+It can be included in the reminder text directly, or by applying some function first.
+>keyword parameter type:
+>	name: number
+>	match: [0-9]+
+>	refer script:
+>		name: normal
+>		description: (1,2,3)
+>		script: \{{input}\}
+>	refer script:
+>		name: as words
+>		description: (one, two, three)
+>		script: \{english_number({input})\}

@@ -1,0 +1,27 @@
+Data type: keyword
+
+--Overview--
+
+A keyword in a [[type:set]] or a [[type:game]].
+
+A keyword is something that matches a piece of text, and optionally some kind of reminder text can be shown.
+
+--Properties--
+! Property		Type					Default		Description
+| @keyword@		[[type:string]]				''required''	Name of the keyword.
+| @match@		[[type:string]]				''required''	String to match.
+| @reminder@		[[type:scriptable]] [[type:string]]	''required''	Script to generate the reminder text of this keyword.
+| @rules@		[[type:string]]				@""@		Explanation or additional rules for this keyword.
+| @mode@		Name of a [[type:keyword mode]]		 		Mode of this keyword.
+
+The match string can include parameters, @"<atom-param>type</atom-param>"@ where @"type"@ is the name of a [[type:keyword param type|keyword parameter type]] in the game.
+These will match according to the @match@ property of that parameter type.
+
+When expanding the reminder text @param1@ refers to the first parameter in the match string, @param2@ to the second, etc.
+
+--Example--
+>keyword:
+>	keyword: Equip
+>	match: Equip <atom-param>cost</atom-param>
+>	mode: core
+>	reminder: {param1}: Attach to target creature you control. Equip only as a sorcery.

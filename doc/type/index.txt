@@ -48,10 +48,11 @@ These contain several properties, similair to the file types. But they are part 
 | [[type:function]]	Functions in scripts. These have no direct representation in a file.
 
 --Enumerations--
-| [[type:alignment]]		Alignment of text and images
-| [[type:direction]]		Direction of text
-| [[type:combine]]		How to combine images with the background
-| [[type:symbol combine]]	How to combine [[type:symbol part|symbol shapes]] with the background
+| [[type:alignment]]		Alignment of text and images.
+| [[type:direction]]		Direction of text.
+| [[type:combine]]		How to combine images with the background.
+| [[type:symbol combine]]	How to combine [[type:symbol part|symbol shapes]] with the background.
+| [[type:graph type]]		Type of statistics graphs.
 
 --Primitive types--
 | [[type:string]]		Text, @"abc"@

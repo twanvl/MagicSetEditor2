@@ -1,0 +1,25 @@
+Data type: keyword parameter reference script
+
+--Overview--
+
+A wat to use a [[type:keyword param type|keyword parameter]] in a [[type:keyword]]'s reminder text.
+
+Usually the parameters are included as @"{param1}"@, etc.
+But in some cases for instance a function should be applied, @"{fun(param1)}"@.
+
+To make this easy for the user, a menu of choices is provided, this type describes such a choice.
+
+--Properties--
+! Property		Type		Default		Description
+| @name@		[[type:string]]	''required''	Name of the parameter type.
+| @description@		[[type:string]]	''required''	A description of the reference script.
+| @script@		[[type:script]]	''required''	Script that generates the code using the parameter.<br/>
+			 		 		This means you will likely need to do some escaping.<br/>
+			 		 		In the script, @input@ refers to the name of the parameter, for example @"param1"@.
+
+--Example--
+Apply the [[fun:english_number]] function to the parameter:
+>refer script:
+>	name: as words
+>	description: (one, two, three)
+>	script: \{english_number({input})\}
