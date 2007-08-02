@@ -1,0 +1,13 @@
+File type: Settings
+
+--Overview--
+
+The MSE settings are stored in a separate file.
+
+--Location--
+
+On Windows XP the settings are located in:
+> "C:\Documents and Settings\Application Data\Magic Set Editor\mse8.config"
+
+--Properties--
+See the settings file for the properties.

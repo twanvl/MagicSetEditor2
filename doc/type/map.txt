@@ -1,0 +1,26 @@
+Collection type: Map
+
+A map is like a [[type:list]] with [[type:string]] keys.
+
+--File syntax--
+In files a map is represented as key/value pairs.
+For instance a map of [[type:color]]s could be:
+>some map:
+>	red:   rgb(255,0,0)
+>	green: rgb(0,255,0)
+>	blue:  rgb(0,0,255)
+
+--Script syntax--
+In a script maps can be declared using square brackets.
+> []      # An empty map
+> [key:1] # A map with a single element, the value 1 under the key "key"
+> [red:rgb(255,0,0), green:rgb(0,255,0)] # A map with two elements
+
+Like lists, maps can be accessed using either the bracket operator, or the dot operator.
+> map.key       # The elment named "key"
+> map["k"+"ey"] # The same thing
+
+It is possible to iterate over the values maps using the @for@ construct:
+> for x in [one: 1, two: 2] do "x = {x}. "
+evaluates to:
+> "x = 1. x = 2. "

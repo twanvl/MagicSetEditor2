@@ -36,7 +36,7 @@ These contain several properties, similair to the file types. But they are part 
 			* item
 			* item
 			* item
-| [[type:indexmap|'index' map]]	Lists indexed by field name
+| [[type:indexmap]]	Lists indexed by field name
 			<table><tr><td>name:</td><td>someone</td></tr>
 			<tr><td>type:</td><td>something</td></tr></table>
 | [[type:map]]		Lists indexed by other text

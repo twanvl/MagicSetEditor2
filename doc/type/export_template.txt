@@ -1,0 +1,51 @@
+File type: Export template
+
+--Overview--
+
+An export template describes a way for a set to be exported to a HTML or other text files.
+
+--Package format--
+An export template is described in a [[file:package]] with the <tt>.mse-export-template</tt> file extension.
+Its name should begin with <tt><i>game</i>-</tt> where <i>game</i> is the name of the game the template is made for.
+It should contain a [[file:format|data file]] called <tt>export-template</tt> with the following properties.
+
+--Properties--
+! Property		Type			Default	Description
+| '''Common to all packages'''	<<<	<<<	<<<
+| @mse version@		[[type:version]]	''required''	Version of MSE this export template is made for.
+| @short name@		[[type:string]]		file name	A short name of this export template, for the 'new set' and style panel lists.
+| @full name@		[[type:string]]		file name	A longer name of this export template.
+| @icon@		[[type:filename]]	''none''	Filename of an icon / preview for this export template, for the 'export to HTML' dialog.
+| @position hint@	[[type:int]]		&infin;		Where to place this item in the list? Lower numbers come first.
+| @version@		[[type:version]]	@0.0.0@		Version number of this package.
+| @depends on@		[[type:list]] of [[type:dependency]]s
+			 			 		Packages this package depends on.
+	
+| '''Specific to export template'''		<<<	<<<	<<<
+| @game@		Name of a [[type:game]]	''required''	Game this export template is made for
+| @file type@		[[type:string]]		@"HTML files (*.html)|*.html"@
+			 			 		File type to use, this is a list separated by @|@ characters.
+			 			 		Alternatingly, a human description and a file pattern to match are given.
+| @create directory@	[[type:boolean]]	@false@		Should a directory for data files be created? This is required for some script function.
+| @option fields@	[[type:list]] of [[type:field]]s	 	Fields for additional options to show.
+| @option style@	[[type:indexmap]] of [[type:style]]s	 	Styling for the @option fields@.
+| @script@		[[type:script]]		 		Script that generates the text that will be written to the exported file.
+
+During the evaluation of the script the following variables are available:
+| @game@	The current game.
+| @style@	The current stylesheet.
+| @set@		The set being exported.
+| @options@	The values of the @option fields@.
+| @directory@	Name of the directory created (if @create directory@ is set).
+
+--See also--
+The following functions are made specifically for exporting to html:
+| [[fun:to_html]]		Convert [[type:tagged text]] to html.
+| [[fun:symbols_to_html]]	Convert text to html using a [[type:symbol font]].
+| [[fun:to_text]]		Remove all tags from tagged text.
+| [[fun:copy_file]]		Copy a file from the [[type:export template]] to the output directory.
+| [[fun:write_text_file]]	Write a text file to the output directory.
+| [[fun:write_image_file]]	Write an image file to the output directory.
+
+--Example--
+Look at the @"magic-spoiler.mse-export-template"@ for an example.

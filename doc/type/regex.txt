@@ -1,2 +1,10 @@
 Primitive type: regular expression
 
+Regular expressions (regexes) are things that can match parts of [[type:string]]s.
+
+Regexes are represented by normal [[type:string]]s.
+Note that to escape something in a regex the backslash is used, in script code this also needs to be escaped.
+For example, in a script, the regex matching a single backslash is @"\\\\"@.
+
+For more information, see
+[[http://www.wxwidgets.org/manuals/stable/wx_wxresyn.html|the wxWidgets regular expression documentation]].

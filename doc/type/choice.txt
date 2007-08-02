@@ -1,0 +1,43 @@
+Data type: choice for a choice field
+
+A possible choice for a choice [[type:field]].
+
+--Properties--
+! Property		Type			Default		Description
+| @name@		[[type:string]]		''Required''	Name of this choice, displayed in the drop down list.
+| @line below@		[[type:boolean]]	@false@		Display a line below this item?
+| @group choice@	[[type:string]]		''no''		Can this submenu of choices itself be selected?
+| @choices@		[[type:list]] of [[type:choice]]s	 	Submenu of choices.
+| @enabled@		[[type:scriptable]] [[type:boolean]]	 	Is this choice selectable?
+| @type@		@"check"@ or @"radio"@	@"check"@	How should this choice be displayed? As a checkbox or a radio box?<br/>
+			 			 		Only applies to multiple choice fields.
+
+A choice can also be given in a short form, in that case only the name is specified.
+
+--Names--
+
+The full name of a choice is that of the choice and its parents, separated by spaces.
+This is the value actually stored in values and manipulated by scripts.
+
+For example
+>field:
+>	type: choice
+>	choice:
+>		name: large
+>		choice: red
+>		choice: blue
+>	choice:
+>		name: small
+>		group choice: just small
+>		choice: green
+>		choice: yellow
+
+The choice red is called @"large red"@, while green is @"small green"@.
+The group choice 'just small' gets the name of the group, @"small"@.
+
+--Example--
+In short form:
+>choice: apples
+Is the same as:
+>choice:
+>	name: apples

@@ -1,0 +1,13 @@
+Data type: choice for a color field
+
+A possible choice for a color [[type:field]].
+
+--Properties--
+! Property	Type		Description
+| @name@	[[type:string]]	Name of this choice, displayed in the drop down list.
+| @color@	[[type:color]]	Color this choice corresponds with.
+
+--Example--
+>choice:
+>	name: red
+>	color: rgb(255,0,0)

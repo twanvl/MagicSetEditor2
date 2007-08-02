@@ -1,0 +1,33 @@
+Collection type: field map
+
+--Overview--
+
+A 'field map' is a [[type:map]], but indexed by [[type:field]]s.
+
+For instance if a game specifies the fields:
+>field:
+>	type: text
+>	name: field1
+>field:
+>	type: color
+>	name: field2
+
+Then the a field map of ''things'' for those fields would look like:
+>field1: thing
+>field2: thing
+
+A field map of [[type:style]]s would be:
+>field1: # some text style for field1 goes here
+>field2: # some color style for field2 goes here
+
+And a field map of [[type:value]]s would be:
+>field1: text goes here
+>field2: rgb(1,2,3)
+
+--Script syntax--
+
+In a script field maps can be accessed like normal [[type:map]]s based on the field name.
+So:
+>card.field1 # retrieve the value of field1
+>card["field" + 1] # the same thing
+>card_style.field2 # retrieve the styling for field2
