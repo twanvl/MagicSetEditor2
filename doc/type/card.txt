@@ -1,0 +1,37 @@
+Data type: card
+
+--Overview--
+
+A '''card''' in a [[type:set]].
+
+--Properties--
+! Property			Type					Default		Description
+| @stylesheet@			Name of a [[type:stylesheet]]		''none''	Use a different stylesheet for this card than the [[type:set]]'s default.
+| @has styling@			[[type:boolean]]			false		This card has styling data different from the set's default.
+| @styling data@		[[type:indexmap]] of [[type:value]]s	false		Styling data, based on the [[type:stylesheet]]'s @style fields@.
+| @notes@			[[type:tagged string]]			@""@		Notes for this card.
+| @extra data@			[[type:map]] of [[type:indexmap]]s of [[type:value]]s
+				 					 		Data for the 'extra card fields' of the stylesheet.<br/>
+				 					 		This is first indexed by stylesheet name, then by field name.
+| ''remaining keys''		[[type:indexmap]] of [[type:value]]s	 		The remaining keys contain the data for the game's @card fields@.<br/>
+				 					 		So for example @card.some_field@ corresponds to the value of the card field @some field@.
+
+--Examples--
+
+With the following game:
+>card field:
+>	type: text
+>	name: title
+>card field:
+>	type: color
+>	name: card color
+
+A card could look like:
+>card:
+>	stylesheet: new
+>	has styling: false
+>	notes: This card is not finished yet!
+>	styling data:
+>		extra large cards: true
+>	title: My Card
+>	card color: rgb(0,128,255)

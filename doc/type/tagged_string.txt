@@ -1,37 +1,47 @@
-==Data type: string with tags==
+Data type: string with tags
 
 --Syntax--
-&1;
+Strings in [[type:value|text values]] can contain markup tags.
+These tags affect the presentation and sometimes the behaviour of the text.
+
+A tag is something like @"<tag>some text</tag>"@, similair to HTML.
+Tags are closed by the same tag with a @/@ before it.
+
+To represent the character @"<"@ in a tagged string use @"\<"@ in script code.
+This is written as the character with code 1 in files.
 
 --Basic markup--
-! Tag		Description
-| <b>		The text inside the tag is bold.
-| <i>		The text inside the tag is italic.
-| <sym>		The text inside the tag is rendered as symbols, if a [[prop:style:symbol font]] is set for the text box.
-| <line>	Line breaks inside this tag use the [[prop:style:line height line]], and they show a horizontal line.
-| <soft-line>	Line breaks inside this tag use the [[prop:style:soft line height]].
-| <atom>	An atomic piece of text. The cursor can never be inside it; it is selected as a whole.
-		The program automatically inserts <atom-soft>
-| <code>	The text inside the text is rendered in a monospace font. This is used for syntax highlighting script code.
-| <code-kw>	The text inside the text is highlighted as a keyword in source code.
-| <code-str>	The text inside the text is highlighted as a string in source code.
+! Tag			Description
+| @"<b>"@		The text inside the tag is bold.
+| @"<i>"@		The text inside the tag is italic.
+| @"<sym>"@		The text inside the tag is rendered as symbols, if a [[prop:style:symbol font]] is set for the text box.
+| @"<line>"@		Line breaks inside this tag use the [[prop:style:line height line]], and they show a horizontal line.
+| @"<soft-line>"@	Line breaks inside this tag use the [[prop:style:soft line height]].
+| @"<atom>"@		An atomic piece of text. The cursor can never be inside it; it is selected as a whole.
+			The program automatically inserts <atom-soft>
+| @"<code>"@		The text inside the text is rendered in a monospace font. This is used for syntax highlighting script code.
+| @"<code-kw>"@		The text inside the text is highlighted as a keyword in source code.
+| @"<code-str>"@	The text inside the text is highlighted as a string in source code.
 
 
 --Other tags--
-! Tag		Description
-| <kw-?>	Indicates that the text inside it is a keyword. This tag is automatically inserted by
-		The [[fun:expand_keywords] function. There are four versions, indicating whether or not reminder text is shown
-		| <kw-0>	Reminder text hidden, by default
-		| <kw-1>	Reminder text shown, by default
-		| <kw-a>	Remder hidden manually
-		| <kw-A>	Remder shown manually
-| <sep>		A separator between fields. This tag is automatically inserted by the [[fun:combined_editor]] function.
-		Inserting this tag manually will confuse that function!
-		This tag can never be selected, and its contents can not be edited.
-| <sep-soft>	Like &lt;sep>, only hidden. This is inserted by [[fun:combined_editor]]
-		...
-| any other tag	Other tags are ignored.
+! Tag			Description
+| @"<kw-?>"@		Indicates that the text inside it is a keyword. This tag is automatically inserted by
+			The [[fun:expand_keywords]] function.<br/>
+			There are four versions, indicating whether or not reminder text is shown:
+			* @"<kw-0>"@, Reminder text hidden, by default
+			* @"<kw-1>"@, Reminder text shown, by default
+			* @"<kw-a>"@, Reminder hidden manually
+			* @"<kw-A>"@, Reminder shown manually
+| @"<sep>"@		A separator between fields. This tag is automatically inserted by the [[fun:combined_editor]] function.<br/>
+			Inserting this tag manually will confuse that function!<br/>
+			This tag can never be selected, and its contents can not be edited.
+| @"<sep-soft>"@	Like @"<sep>"@, only hidden. This is inserted by [[fun:combined_editor]]
+| any other tag		Other tags are ignored.
 
 --Related functions--
 The following script functions deal with tags:
-| [[fun:remove_tag]]
+| [[fun:tag_contents|tag_contents / tag_contents_rule]]
+				Change the contents of a specific tag.
+| [[fun:remove_tag|remove_tag / tag_remove_rule]]
+				Remove a tag, keep the contents.

@@ -1,0 +1,29 @@
+Data type: symbol part
+
+--Overview--
+
+A part of a symbol, corresponds to an item you see in the list on the left of the editor.
+
+--Properties--
+! Property		Type			Default		Description
+| @type@		One of:			@"shape"@	What type of symbol part is this?
+			* @shape@
+			* @group@
+			* @symmetry@
+| @name@		[[type:string]]		@""@		The name of this part, for the part list.
+
+The rest of the properties depends on the @type@.
+
+! Type		Property	Type					Default		Description
+| @"shape"@	@combine@	[[type:symbol combine]]			@"overlap"@	How to combine the shape with those below it?
+| ^^^		@points@	[[type:list]] of [[type:control point]]s	 	The points that form this shape
+| @"symmetry"@	@kind@		@rotation@ or @reflection@		@"rotation"@	What kind of symmetry is this?
+| ^^^		@copies@	[[type:int]]				2		How many times is the original copied (including the original itself)?
+| ^^^		@center@	[[type:vector2d]]			 		Coordinates of the center of symmetry.
+| ^^^		@handle@	[[type:vector2d]]			 		Direction perpendicular to the 'mirror' (this is a direction, so relative to the center).
+| @"group"@ and @"symmetry"@
+		@parts@		[[type:list]] of [[type:symbol part]]s		 	Parts in this group.
+
+
+--Example--
+Look at a symbol file made with the program.

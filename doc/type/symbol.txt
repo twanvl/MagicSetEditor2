@@ -1,0 +1,20 @@
+File type: Symbol
+
+--Overview--
+
+A symbol file contains a symbol created with the symbol editor.
+
+Symbols are not stored in packages, the data file is directly written to a @".mse-symbol"@ file.
+
+--Coordinates--
+
+Various parts of a symbol use [[type:vector2d|coordinates]].
+These are pairs of numbers in the range @0@ to @1@. @(0,0)@ is the top-left of the symbol, @(1,1)@ the bottom-right.
+
+--Properties--
+! Property		Type					Default		Description
+| @mse version@		[[type:version]]			''required''	Version of MSE this symbol is made with.
+| @parts@		[[type:list]] of [[type:symbol part]]s	 		The parts in this symbol.
+
+--Example--
+Look at a file made with the program.

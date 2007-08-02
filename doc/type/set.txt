@@ -21,7 +21,8 @@ such a package contains a data file called <tt>set</tt>.
 	
 | '''Specific to sets'''		<<<	<<<	<<<
 | game		Name of a [[type:game]]			''required''	The game this set is made for.
-| stylesheet	Name of a [[type:stylesheet]]		''required''	The default style for drawing cards in this set.
+| stylesheet	Name of a [[type:stylesheet]]		''required''	The default style for drawing cards in this set.<br/>
+		 					 		This is without the game name or extension, so @"new"@ refers to the package @"gamename-new.mse-style"@.
 | set info	[[type:indexmap]] of [[type:value]]s	 	The data for the [[prop:game:set fields]] defined in the game.
 | styling	[[type:map]] of [[type:indexmap]]s of [[type:value]]s
 		 	 				Data for the 'extra fields' of the stylesheet.<br/>

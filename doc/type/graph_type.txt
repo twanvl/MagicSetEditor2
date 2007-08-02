@@ -1,0 +1,21 @@
+Enumeration: graph type
+
+Types of graphs for the statistics panel.
+
+--Possible values--
+The value is one of the following options:
+! Value		Dimensions	Sketch	Description
+| @bar@		1		<img src="graph-type-bar.png" alt="bar graph"/>
+		 	 	One bar for each value on the axis, the height represent the number of cards with that value.
+| @pie@		1		<img src="graph-type-pie.png" alt="pie graph"/>
+		 	 	A pie graph, the size of the slice represents the numer of cards with a particular value.
+| @stack@	2		<img src="graph-type-stack.png" alt="stack graph"/>	
+		 	 	One bar for each value on the first axis, bars for each value on axis2 are stacked on top of each other.
+| @scatter@	2		<img src="graph-type-scatter.png" alt="scatter graph"/>
+		 	 	Scatter plot, the size of the circles corresponds to the number of cards with those two values.
+| @scatter pie@	3		<img src="graph-type-scatter-pie.png" alt="scatter-pie graph"/>
+		 	 	Scatter plot, the size of the circles corresponds to the number of cards with those two values.
+		 	 	Each circle is a small pie graph for the third axis.
+
+--Examples--
+> type: bar

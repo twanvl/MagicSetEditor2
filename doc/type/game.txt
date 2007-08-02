@@ -12,7 +12,7 @@ Games provide the ''description'', i.e. what kinds of things are on a card.
 --Package format--
 
 A game is described in a [[file:package]] with the <tt>.mse-game</tt> file extension.
-Such a package contains a data file called <tt>game</tt> that has the following properties.
+Such a package contains a [[file:format|data file]] called <tt>game</tt> that has the following properties.
 
 --Properties--
 ! Property		Type			Default	Description

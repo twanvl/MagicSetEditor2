@@ -1,0 +1,58 @@
+File type: Symbol font
+
+--Overview--
+
+A symbol font is a font for drawing with images.
+Each [[type:symbol font symbol|symbol-font-symbol]] in the font is an image.
+
+A symbol font is referenced in [[type:stylesheet]]s using a [[type:symbol font reference]].
+
+--Splitting--
+
+A piece of text drawn with the symbol font is split into separate symbols.
+The list of symbols in the font is scanned from top to bottom to find matches.
+
+If the text is for instance "W/GR" and "W/G" should be rendered as a single symbol, then it should appear before the symbol "W".
+Otherwise the "W" is seen as a symbol and the program continues with rendering "/GR".
+
+--Font size--
+
+A symbol font is drawn using a specific point size, similair to normal fonts.
+Usually the images that make up the font are given in a very high resolution, for example 200x200.
+This resulution could correspond to a point size of for instance 150pt.
+
+When the symbol is drawn at for instance 12pt the image well then be scalled down to @200/150*12 == 16@ pixels.
+
+--Package format--
+
+A symbol font is described in a [[file:package]] with the <tt>.mse-symbol-font</tt> file extension.
+Such a package contains a [[file:format|data file]] called <tt>symbol-font</tt> that has the following properties.
+
+--Properties--
+! Property		Type			Default	Description
+| '''Common to all packages'''	<<<	<<<	<<<
+| @mse version@		[[type:version]]	''required''	Version of MSE this symbol font is made for.
+| @short name@		[[type:string]]		file name	A short name of this symbol font, currently not used by the program.
+| @full name@		[[type:string]]		file name	A longer name of this symbol font, currently not used by the program.
+| @icon@		[[type:filename]]	''none''	Filename of an icon, currently not used by the program.
+| @version@		[[type:version]]	@0.0.0@		Version number of this package.
+| @depends on@		[[type:list]] of [[type:dependency]]s
+			 			 		Packages this package depends on.
+	
+| '''Specific to symbol fonts'''		<<<	<<<	<<<
+| @image font size@		[[type:double]]			@12@		To what point size do the images correspond?
+| @horizontal space@		[[type:double]]			@0@		Horizontal spacing between symbols, in pixels.
+| @vertical space@		[[type:double]]			@0@		Vertical spacing between symbols, in pixels.
+| @symbols@			[[type:list]] of [[type:symbol font symbol]]s	 	Symbols that make up this font.
+| @text font@			[[type:font]]					Font to use for drawing text on symbols, only used if there is a default symbol.
+| @scale text@			[[type:boolean]]		@false@		Should text be scaled down to fit in a symbol?
+| @merge numbers@		[[type:boolean]]		@false@		Should a numeric value of multiple digits be rendered as a single symbol?
+| @text margin left@		[[type:double]]			@0@		Margin on the left   of the text in pixels.
+| @text margin right@		[[type:double]]			@0@		Margin on the right  of the text in pixels.
+| @text margin top@		[[type:double]]			@0@		Margin on the top    of the text in pixels.
+| @text margin bottom@		[[type:double]]			@0@		Margin on the bottom of the text in pixels.
+| @text alignment@		[[type:alignment]]		@"middle center"@	How should text be aligned on symbols?
+| @insert symbol menu@		[[type:insert symbol menu|"insert symbol" menu]]	''none''	A description of the menu to insert a symbol into the text.
+
+--Examples--
+See for instance the @"magic-mana-small.mse-symbol-font"@ package in the MSE distribution.

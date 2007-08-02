@@ -1,0 +1,15 @@
+Data type: two dimensional vector
+
+A coordinate or direction in a symbol.
+This is a pair of [[type:double]]s.
+
+The coordinates are usually in the range @0@ to @1@.
+@(0,0)@ is the top-left of the symbol, @(1,1)@ the bottom-right.
+
+--File syntax--
+> (x-coordinate,y-coordinate)
+For example
+> (0.5,0.5)
+
+--Script syntax--
+Vectors can not be represented in script syntax.

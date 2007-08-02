@@ -1,0 +1,46 @@
+Data type: statistics dimension
+
+--Overview--
+
+A dimension or axis for the statistics panel.
+
+One or more dimensions are combined in a graph, these combinations are called [[type:statistics category]]s.
+
+Statistics dimensions are automatically generated for all card fields in a [[type:game]] that don't set @show statistics@ to @false@.
+
+Categories are also automatically generated from dimensions.
+
+--Properties--
+! Property		Type			Default		Description
+| @name@		[[type:string]]		''required''	Name of this dimension, used as an axis label and a label for automatically generated categories.
+| @description@		[[type:string]]		@""@		A description of the dimension, currently not used.
+| @position hint@	[[type:string]]		@0@		Hint for ordering dimensions.
+| @icon@		[[type:filename]]	 		Filename of an icon for this dimension.
+| @script@		[[type:script]]		''required''	Script that generates a value for each card in the set.
+| @numeric@		[[type:boolean]]	@false@		Is the value always a number?
+| @show empty@		[[type:boolean]]	@false@		Should cards with the value @""@ be included?
+| @split list@		[[type:boolean]]	@false@		Indicates the value is a list of the form @"item1, item2"@. The card is put under both items.
+| @colors@		[[type:map]] of [[type:color]]s		 	Colors to use for specific values
+| @groups@		[[type:list]] of [[type:string]]s	 	Values to always show, and the order to show them in.
+
+--Example--
+Automatically generated statistics dimensions look like this:
+>statistics dimension:
+>	name: power
+>	script: card.power
+
+Specify a specific order and color of values, otherwise they are ordered alphabeticaly and groups with no cards are not shown:
+>statistics dimension:
+>	name: color
+>	script: card.color
+>	group: white
+>	group: blue
+>	group: black
+>	group: red
+>	group: green
+>	colors:
+>		white: rgb(255,255,255)
+>		blue:  rgb(0,0,255)
+>		black: rgb(0,0,0)
+>		red:   rgb(255,0,0)
+>		green: rgb(0,255,0)

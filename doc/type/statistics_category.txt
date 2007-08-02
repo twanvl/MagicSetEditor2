@@ -1,0 +1,27 @@
+Data type: statistics category
+
+--Overview--
+
+A category in the statistics panel.
+This is a single choice in the list on the left of that panel.
+
+Statistics dimensions are automatically generated for all [[type:statistics dimension]]s a [[type:game]].
+
+--Properties--
+! Property		Type			Default		Description
+| @name@		[[type:string]]		''required''	Name of this category.
+| @description@		[[type:string]]		@""@		A description of the category, currently not used.
+| @position hint@	[[type:string]]		@0@		Hint for ordering category, lower numbers are at the top of the list.
+| @icon@		[[type:filename]]	 		Filename of an icon for this category, the image should be 21x21 pixels.
+| @type@		[[type:graph type]]	@"bar"@		Type of graph to use.
+| @dimensions@		[[type:list]] of names of [[type:statistics dimension]]s
+			 			 		Dimensions for the axes of the graph.<br/>
+			 			 		The number of dimensions must be the same as that needed for the [[type:graph type]].
+
+--Example--
+A graph with power on the horizontal axis, toughness on the vertical axis:
+>statistics category:
+>	name: power/toughness
+>	type: scatter
+>	dimension: power
+>	dimension: toughness

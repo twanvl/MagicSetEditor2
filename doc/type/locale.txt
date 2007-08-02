@@ -1,0 +1,52 @@
+File type: Locale
+
+--Overview--
+
+A locale gives a translation of the user interface of the program.
+
+--Package format--
+
+A locale is described in a [[file:package]] with the <tt>.mse-locale</tt> file extension.
+Such a package contains a data file called <tt>locale</tt> that has the following properties.
+There are usually no other files in the package.
+
+--Properties--
+! Property		Type			Default	Description
+| '''Common to all packages'''	<<<	<<<	<<<
+| @mse version@		[[type:version]]	''required''	Version of MSE this locale is made for.
+| @short name@		[[type:string]]		file name	A short name of this locale, for the options dialog.
+| @full name@		[[type:string]]		file name	A longer name of this locale.
+| @icon@		[[type:filename]]	''none''	Filename of an icon / preview for this locale, currently not used.
+| @version@		[[type:version]]	@0.0.0@		Version number of this package.
+	
+| '''Specific to locales'''		<<<	<<<	<<<
+| @menu@		[[type:map]] of [[type:string]]s	 	Translations of menu items.<br/>
+			 					 	Menu items can contain shortcut keys (like Ctrl+C for copy) by using a ''single'' TAB between the text and the shortcut key.<br/>
+			 					 	Keys to use with Alt+Something (displayed underlined) can be specified &</br>
+			 					 	For exmaple
+			 					 	>>>new set: &amp;New...&#9;Ctrl+N
+| @help@		[[type:map]] of [[type:string]]s	 	Translations of help texts for the status bar.
+| @tool@		[[type:map]] of [[type:string]]s	 	Translations of toolbar item texts.
+| @tooltip@		[[type:map]] of [[type:string]]s	 	Translations of tooltips for toolbar items.
+| @label@		[[type:map]] of [[type:string]]s	 	Labels of controls in the GUI.
+| @button@		[[type:map]] of [[type:string]]s	 	Labels of buttons in the GUI.
+| @title@		[[type:map]] of [[type:string]]s	 	Titles of windows.
+| @action@		[[type:map]] of [[type:string]]s	 	Names of actions for undo/redo, things like "typing" and "add card".
+| @error@		[[type:map]] of [[type:string]]s	 	Error messages.
+| @type@		[[type:map]] of [[type:string]]s	 	Types of objects for error messages.
+| @game@		[[type:map]] of [[type:map]] of [[type:string]]s
+			 					 	Translations for specific [[type:game]]s.<br/>
+			 					 	Field names and field descriptions are looked up in the locale, if they are found the translation is used, otherwise the value from the game file.<br/>
+			 					 	Extra keys not present in the English locale can be added here.
+| @stylesheet@		[[type:map]] of [[type:map]] of [[type:string]]s
+			 					 	Translations for specific [[type:stylesheet]]s.
+| @symbol font@		[[type:map]] of [[type:map]] of [[type:string]]s
+			 					 	Translations for specific [[type:symbol font]]s, in particular the "insert symbol" menu.
+
+Some of the items can contain placeholders for other values, for example:
+> undo: &Undo%s	Ctrl+Z
+The @%s@ is replaced by the name of the action to undo.
+This @%s@ should be used in exactly those entries that also contain it in the English locale.
+
+--Examples--
+Look at the @"en.mse-locale"@ file in the standard MSE distribution for an example.

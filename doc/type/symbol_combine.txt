@@ -1,0 +1,19 @@
+Enumeration: symbol combine
+
+Specifies how symbol shapes are combined with those below it
+
+--Script syntax--
+In scripts, symbol combine modes are passed around as a string.
+
+--Possible values--
+The value is one of the following options:
+! Value			Description
+| @overlap@		Place this shape on top of those below it.<br/> Further combine options only apply to this shape.
+| @merge@		Marge this shape with the one below it, they are considered a single shape for further combining.
+| @subtract@		Subtract this shape from the one below it.
+| @intersection@	Take the intersection of this shape and the one below it, only areas that are in both shapes remain.
+| @difference@		Take the difference of this shape and the one below it, only areas that are in exactly one of the shapes remain.
+| @border@		Use this shape as additional border for the shape below it.
+
+--Examples--
+> combine: overlap

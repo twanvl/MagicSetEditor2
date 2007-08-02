@@ -1,0 +1,24 @@
+Data type: symbol control point
+
+--Overview--
+
+A single [[http://en.wikipedia.org/wiki/Bezier_curve|B&eacute;zier curve]] control point in a [[type:symbol part|symbol shape]].
+
+A control point is a point on the polygon.
+It also optionally has two 'handles' corresponding to the boxes attached with dotted lines in the editor.
+
+The control points of a shape are circular, the point after the last point in the list is the first point.
+
+--Properties--
+! Property		Type			Default		Description
+| @position@		[[type:vector2d]]	 		Position of the control point.
+| @lock@		@free@, @direction@ or @size@	 @"free"@
+			 			 		Is this point 'locked', i.e. is the relation between the two handles fixed?<br/>
+			 			 		If @lock@ is @"direction"@ then the two handles must lie on a line.<br/>
+			 			 		If @lock@ is @"direction"@ then the two handles must lie exactly oppisite each other on the same distance from the point.
+| @line after@		@line@ or @curve@	@"line"@	Is the segment between this control point and the next one in the list a straight line or a cubic B&eacute;zier curve?
+| @handle before@	[[type:vector2d]]	 		Position of the handle for the segment between this point and the previous one, relative to the point's @position@.<br/>Only when that point's @line after == "curve"@.
+| @handle after@	[[type:vector2d]]	 		Position of the handle for the segment between this point and the next one, relative to the point's @position@.<br/>Only when @line after == "curve"@.
+
+--Example--
+Look at a symbol file made with the program.

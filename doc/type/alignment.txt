@@ -19,7 +19,7 @@ The value is a combination of one or more flags, separated by spaces.
 | @justify@		Move characters apart or together to exactly fill the width of the box.
 | @justify-words@	Move words apart or together to exactly fill the width of the box.
 | @justify-overflow@	If the text becomes to long, move characters closer together.
-| @stretch		Stretch text, so it always fills the width of the box.<br/>
+| @stretch@		Stretch text, so it always fills the width of the box.<br/>
 			For images; stretch them, but preserve the aspect ratio.
 | @stretch-overflow@	Stretch (compress) the text when it becomes too long.
 

@@ -1,0 +1,30 @@
+Data type: symbol font symbol
+
+--Overview--
+
+A single symbol in a [[type:symbol font]].
+
+--Properties--
+! Property		Type					Default			Description
+| @image font size@	[[type:double]]				value from symbol font	To what point size does the images correspond?
+| @code@		[[type:string]]				''required''		Text this symbol matches.<br/>
+			 					 			A single symbol can omit the code, this then becomes the ''default symbol'', on which text is drawn.
+| @image@		[[type:scriptable]] [[type:image]]	''required''		Image of this symbol.
+| @enabled@		[[type:scriptable]] [[type:boolean]]	@true@			Is this symbol actually used?<br/>
+			 					 			This can be scripted to optionally disable certain symbols.<br/>
+			 					 			If multiple symbols with the same code are given disabling the first switches to the second one.
+
+--Examples--
+A default symbol:
+>symbol:
+>	image: blank.png
+
+Two symbols for the same code, which one is used depends on a function from the [[type:stylesheet]].
+It is recommended to only use functions in @enabled@, so each stylesheet can determine how the font should be used.
+>symbol:
+>	code: T
+>	image: mana_t_old.png
+>	enabled: { use_old_tap_symbol() }
+>symbol:
+>	code: T
+>	image: mana_t.png

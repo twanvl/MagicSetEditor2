@@ -1,0 +1,44 @@
+Data type: "insert symbol" menu.
+
+--Overview--
+
+A description of the "Insert symbol" menu for a specific [[type:symbol font]].
+
+The menu consists of a number of entries, either items, separators or submenus.
+
+--Properties--
+! Property	Type					Default				Description
+| @type@	One of:					@"code"@ or @"submenu"@		What type of menu item is this?
+		* @code@, inserts a symbol with the given code.
+		* @custom@, pops up a dialog where the user can choose a code to insert.
+		* @line@, a separating line.
+		* @submenu@, a submenu.
+| @name@	[[type:string]]				''required''			Name of this menu item, corresponding to the code to insert.
+| @items@	[[type:list]] of [[type:insert symbol menu|submenu items]]	 	Items in the submenu, when items are present the @type@ is set to @"submenu"@.
+
+In the user interface the items are shown as @"menu item {name}"@, the [[type:locale]] should be used to give a beter label.
+
+For custom items the dialog will be titled @"title {name}"@ and have message text @"message {name}"@, again this should be changed in the locale.
+
+--Examples--
+A menu for magic mana symbols (simplified). Containing all types of items.
+>insert symbol menu:
+>	item:
+>		type: custom
+>		name: colorless
+>	item:
+>		type: line
+>	item: W
+>	item: U
+>	item: B
+>	item: R
+>	item: G
+>	item:
+>		type: line
+>	item:
+>		name: hybrid
+>		item: W/U
+>		item: U/B
+>		item: B/R
+>		item: R/G
+>		item: G/W
