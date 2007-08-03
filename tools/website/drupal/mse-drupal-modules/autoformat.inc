@@ -9,7 +9,8 @@ global $nice_names;
 $nice_names = array(
 	'type:double'   => 'real number',
 	'type:int'      => 'number',
-	'type:indexmap' => 'map',
+	'type:indexmap' => 'field map',
+	'type:vector2d'	=> '2D-vector',
 );
 
 

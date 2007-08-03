@@ -80,6 +80,8 @@ function fromfile_page() {
 	return drupal_not_found();
   }
   $raw = file($full_path);
+  global $current_doc_file;
+  $current_doc_file = "$file";
   
   foreach($raw as $k=>$l) $raw[$k] = preg_replace("/\r?\n/","",$l);
   
@@ -106,6 +108,7 @@ function fromfile_page() {
   
   // done
   drupal_set_breadcrumb($breadcrumbs);
+  drupal_set_title($title);
   // view as a node
   $node = array(
 	'title'   => $title,
