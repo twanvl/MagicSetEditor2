@@ -1,0 +1,28 @@
+Primitive type: image
+
+Images are generated using scripts.
+
+It is either given using a [[type:filename]] or as the output of a function.
+
+--File syntax--
+The syntax for files is similair to that of [[type:scriptable]] properties:
+> image: image.png
+> image: { "image.png" }
+> image: { linear_blend(...) }
+
+--Script syntax--
+[[type:Filename]]s are implicitly converted to images as needed.
+
+--See also--
+The following functions transform images:
+| [[fun:linear_blend]]		Blend two images together using a linear gradient.
+| [[fun:masked_blend]]		Blend two images together using a third mask image.
+| [[fun:combine_blend]]		Blend two images together using a given [[type:combine|combining mode]].
+| [[fun:set_mask]]		Set the transparancy mask of an image.
+| [[fun:set_alpha]]		Change the transparency of an image.
+| [[fun:set_combine]]		Chnage how the image should be combined with the background.
+| [[fun:enlarge]]		Enlarge an image by putting a border around it.
+| [[fun:crop]]			Crop an image, giving only a small subset of it.
+| [[fun:drop_shadow]]		Add a drop shadow to an image.
+| [[fun:symbol_variation]]	Render a variation of a [[type:symbol]].
+| [[fun:built_in_image]]	Return an image built into the program.

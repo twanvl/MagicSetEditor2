@@ -21,6 +21,19 @@ When the value is longer then a single line it can be written indented on the fo
 >	T: Draw a card
 >	WW: Gain 1 life
 
+--Order--
+
+Usually the order in which keys appear in a file doesn't matter.
+However some keys, like @mse version@ and @type@ must come first because they influence how the following keys are interpreted.
+
+--Includes--
+
+A heirachical file can contain a reference to another file:
+>>>include file: <em>filename</em>
+Where filename must be an absolute [[type:filename]].
+
+That file is included literally into the current one; except for indentation, the included file never escapes from the level the 'include file' line is on.
+
 --Example--
 For example, a [[type:set]] might look like this:
 >game: magic

@@ -1,2 +1,4 @@
 Scripting language
 
+MSE uses a custom scripting language to add complicated behaviour to fields and styles.
+

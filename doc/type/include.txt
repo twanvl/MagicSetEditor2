@@ -1,0 +1,22 @@
+File type: Include package
+
+--Overview--
+
+An include package contains files used by other packages, for example scripts or images.
+
+--Package format--
+An include package is described in a [[file:package]] with the <tt>.mse-include</tt> file extension.
+It should contain a [[file:format|data file]] called <tt>include</tt> with the following properties.
+
+--Properties--
+! Property		Type			Default	Description
+| '''Common to all packages'''	<<<	<<<	<<<
+| @mse version@		[[type:version]]	''required''	Version of MSE this include package is made for.
+| @short name@		[[type:string]]		file name	A short name of this include package, currently not used.
+| @full name@		[[type:string]]		file name	A longer name of this include package, currently not used.
+| @icon@		[[type:filename]]	''none''	Filename of an icon / preview for this export template, currently not used.
+| @version@		[[type:version]]	@0.0.0@		Version number of this package.
+| @depends on@		[[type:list]] of [[type:dependency]]s
+			 			 		Packages this package depends on.
+
+No additional properties are available.

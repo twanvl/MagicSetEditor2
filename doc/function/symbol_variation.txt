@@ -9,7 +9,7 @@ The variation name refers to one of the varations declared in the [[type:style]]
 > symbol_variation(symbol: symbol_value, border_radius: .., fill_type: .., ...)
 
 Render a custom variation of a symbol.
-Additional parameters corresponding to the properties of a [[type:symbol filter]] must be present.
+Additional parameters corresponding to the properties of a [[type:symbol variation]] must be present.
 
 --Parameters--
 ! Parameter	Type			Description

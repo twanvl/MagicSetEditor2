@@ -1,0 +1,17 @@
+Data type: dependency
+
+--Overview--
+
+[[type:Package]]s can depend on other packages.
+For example a [[type:stylesheet]] needs a particular version of the corresponding [[type:game]] package, and maybe some additional [[type:include]]s.
+
+--Proeprties--
+! Property	Type			Description
+| @package@	[[type:string]]		Filename of the package this package depends on.
+| @version@	[[type:version]]	Minimal version of that package that is required.
+
+--Example--
+The magic-new stylesheet depends on a particular version of the game file:
+>depends on:
+>	package: magic.mse-game
+>	version: 2007-06-06

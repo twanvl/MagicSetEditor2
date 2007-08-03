@@ -9,6 +9,7 @@ The following types are stored in [[file:package]]s in the:
 * [[type:symbol font]]
 * [[type:export template]]
 * [[type:locale]]
+* [[type:include]]
 
 The following types are stored in [[file:package]]s that can be located anywhere:
 * [[type:set]]
