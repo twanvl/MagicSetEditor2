@@ -1,0 +1,31 @@
+Enumeration: render style
+
+A way to render a choice [[type:field]], see [[type:style]].
+
+--Possible values--
+! Value			Sketch		Description
+| @text@		<img src="choice-render-style-text.png" alt=""/>
+		 	Rendered as text
+| @image@		<img src="choice-render-style-image.png" alt=""/>
+		 	Rendered as an image
+| @both@		<img src="choice-render-style-both.png" alt=""/>
+		 	Both an image and text
+| @hidden@		<img src="choice-render-style-hidden.png" alt=""/>
+		 	The box is hidden, but the value can still be edited.
+| @image hidden@	<img src="choice-render-style-hidden.png" alt=""/>
+		 	The box is hidden, but the value can still be edited.
+| @checklist@		<img src="choice-render-style-checklist-text.png" alt=""/>
+		 	A list of checkboxes, for multiple choice styles.
+| @image checklist@	<img src="choice-render-style-checklist-image.png" alt=""/>
+		 	A list of checkboxes with images instead of text.
+| @both checklist@	<img src="choice-render-style-checklist-both.png" alt=""/>
+		 	A list of checkboxes with both images and text.
+| @text list@		<img src="choice-render-style-list-text.png" alt=""/>
+		 	A list of the selected items, for multiple choice styles.
+| @image list@		<img src="choice-render-style-list-image.png" alt=""/>
+		 	A list of the selected items with images instead of text.
+| @both list@		<img src="choice-render-style-list-both.png" alt=""/>
+		 	A list of the selected items with both images and text.
+
+--Examples--
+> render style: image

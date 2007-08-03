@@ -43,14 +43,15 @@ Fields are part of the [[file:style triangle]]:
 | @tab index@		[[type:int]]		@0@		Index for moving through the fields with the tab key. The default is from left to right and then top to bottom.
 
 The @type@ determines what values of this field contain:
-! Type			Values contain
-| @text@		Text with markup (a [[type:tagged string]])
-| @choice@		A choice from a list
-| @multiple choice@	Zero or more choices from a list
-| @boolean@		@yes@ or @no@
-| @image@		Any image
-| @symbol@		A [[type:symbol]] edited with the symbol editor
-| @info@		An informational message, for example to group fields together.
+! Type			Values contain								Displayed as
+| @text@		Text with markup (a [[type:tagged string]])				Text
+| @choice@		A choice from a list							Text or an image
+| @multiple choice@	Zero or more choices from a list					A single image or multiple images
+| @boolean@		@yes@ or @no@								Text or an image or both
+| @color@		Any color or a restricted selection from a list				A box filled with the color
+| @image@		Any image								The image
+| @symbol@		A [[type:symbol]] edited with the symbol editor				The image
+| @info@		An informational message, for example to group fields together.		A box containing the label
 
 Additional properties are available, depending on the type of field:
 

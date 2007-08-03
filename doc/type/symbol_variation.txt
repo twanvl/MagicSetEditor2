@@ -1,0 +1,46 @@
+Data type: symbol variation
+
+--Overview--
+
+A variation of a symbol, describes color and border.
+
+--Properties--
+! Property		Type			Default		Description
+| @name@		[[type:string]]		''Required''	Name of this variation, refered to by the [[fun:symbol_variation]] function.
+| @border radius@	[[type:double]]		@0.05@		Border radius of the symbol.
+| @fill type@		@solid@ or @linear gradient@ or @radial gradient@
+			 			@"solid"@	How to fill the symbol.
+
+Depending on the @fill type@ there are additional properties:
+! Fill type		Property		Type		Description
+| @"solid"@		@fill color@		[[type:color]]	Color to use for filling the symbol.
+| ^^^			@border color@		[[type:color]]	Color to use for the border of the symbol.
+| @"linear gradient"@	@fill color 1@		[[type:color]]	Color to use for filling the symbol at the center of the gradient.
+| ^^^			@border color 1@	[[type:color]]	Color to use for the border of the symbol at the center of the gradient.
+| ^^^			@fill color 2@		[[type:color]]	Color to use for filling the symbol at the ends of the gradient.
+| ^^^			@border color 2@	[[type:color]]	Color to use for the border of the symbol at the ends of the gradient.
+| ^^^			@center x@, @center y@	[[type:double]]	Position of the center point of the gradient (in the range 0 to 1)
+| ^^^			@end x@, @end y@	[[type:double]]	Position of the end point of the gradient (in the range 0 to 1)
+| @"radial gradient"@	@fill color 1@		[[type:color]]	Color to use for filling the symbol at the center of the symbol.
+| ^^^			@border color 1@	[[type:color]]	Color to use for the border of the symbol at the center of the symbol.
+| ^^^			@fill color 2@		[[type:color]]	Color to use for filling the symbol at the edges of the symbol.
+| ^^^			@border color 2@	[[type:color]]	Color to use for the border of the symbol at the edges of the symbol.
+
+--Examples--
+'Common' and 'uncommon' magic expansion symbol styles:
+>variation:
+>	name: common
+>	border radius: 0.10
+>	# White border, black fill
+>	fill type: solid
+>	fill color:   rgb(0,0,0)
+>	border color: rgb(255,255,255)
+>variation:
+>	name: uncommon
+>	border radius: 0.05
+>	fill type: linear gradient
+>	# Black border, silver gradient fill
+>	fill color 1:   rgb(224,224,224)
+>	fill color 2:   rgb(84, 84, 84)
+>	border color 1: rgb(0,  0,  0)
+>	border color 2: rgb(0,  0,  0)

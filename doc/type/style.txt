@@ -1,0 +1,128 @@
+Data type: style
+
+--Overview--
+
+A style specifies how a [[type:field]] should look,
+things like position, size, fonts, colors, etc.
+
+Styles are part of the [[file:style triangle]]:
+| Description		Looks			Data
+| [[type:Game]]		[[type:Stylesheet]]	[[type:Set]]
+| [[type:Field]]	'''Style'''		[[type:Value]]
+
+--Positioning--
+
+<img src="style-positioning.png" alt="" style="float:right;border:1px solid #ccc;"/>
+A style specifies the position of a box for the content.
+To specify the horizontal location ''two'' of @left@, @width@ and @right@ must be specified.
+
+For example:
+> left:  10
+> width: 20
+Implies that @right@ is 30 pixels if the card is 60 pixels wide.
+
+Similairly:
+> left: 10
+> right: 30
+Implies the @width@ is 20.
+
+The same holds for the vertical location and size; @top@, @height@ and @bottom@.
+
+--Rotation--
+Some types of styles allow an @angle@ to be specified.
+The angle gives a counter clockwise rotation in degrees of the ''contents'' of the box.
+
+For example, a text field with style:
+>example:
+>	width: 60
+>	height: 40
+>	alignment: top left
+Would, with different angles, look like:<br/>
+<img src="style-angle.png" alt=""/>
+
+--Properties--
+! Property		Type					Default		Description
+| @z index@		[[type:int]]				@0@		Stacking of this box, fields with a heigher @z index@ are placed on top of those with a lower index.
+| @left@		[[type:scriptable]] [[type:double]]	''Required''	Distance between left edge of the box and the left of the card in pixels.
+| @width@		[[type:scriptable]] [[type:double]]	''Required''	Width of the box in pixels.
+| @right@		[[type:scriptable]] [[type:double]]	''Required''	Distance between right edge of the box and the right of the card in pixels.
+| @top@			[[type:scriptable]] [[type:double]]	''Required''	Distance between top edge of the box and the top of the card in pixels.
+| @height@		[[type:scriptable]] [[type:double]]	''Required''	Height of the box in pixels.
+| @bottom@		[[type:scriptable]] [[type:double]]	''Required''	Distance between bottom edge of the box and the bottom of the card in pixels.
+| @visible@		[[type:scriptable]] [[type:boolean]]	@true@		Is this field visible at all?
+
+The rest of the properties depend on the type of [[type:field]] this style is for.
+! Type		Property		Type			Default		Description
+| @"text"@	@font@			[[type:font]]		''Required'' 	Font to render the text.
+| ^^^		@symbol font@		[[type:symbol font]]	 		Font to render symbols in the text (optional).
+| ^^^		@always symbol@		[[type:boolean]]	@false@		Should all text be rendered with symbols?<br/>If set, @font@ is not needed.
+| ^^^		@allow formating@	[[type:boolean]]	@true@		Is custom formating (bold, italic) allowed?
+| ^^^		@alignment@		[[type:scriptable]] [[type:alignment]]	@top left@	Alignment of the text.
+| ^^^		@angle@			[[type:scriptable]] [[type:int]]	@0@		Rotation of the text inside the box, in degrees.
+| ^^^		@direction@		[[type:direction]]	@"left to right"@	Direction in which the text flows. If set to @"vertical"@ it is as if a line break is inserted after each character.
+| ^^^		@padding left@		[[type:double]]		@0@		Padding between the text and the border of the box, in pixels.
+| ^^^		@padding right@		^^^			^^^		^^^
+| ^^^		@padding top@		^^^			^^^		^^^
+| ^^^		@padding bottom@	^^^			^^^		^^^
+| ^^^		@padding left min@	[[type:double]]		&infin;		Minimal padding around the field.<br/> When the text is scalled down the padding is scalled as well, but it becomes no smaller than this.
+| ^^^		@padding right min@	^^^			^^^		^^^
+| ^^^		@padding top min@	^^^			^^^		^^^
+| ^^^		@padding bottom min@	^^^			^^^		^^^
+| ^^^		@line height soft@	[[type:double]]		@1@		Multiplier for the line height of 'soft' line breaks. These are breaks caused by wrapping around lines that are too long.<br/>
+		 			 			 		A line height of @0@ means all lines are in the same position, @1@ is normal behaviour, @2@ skips a line, etc.
+| ^^^		@line height hard@	[[type:double]]		@1@		Multiplier for the line height of 'hard' line breaks. These are breaks caused by the enter key.
+| ^^^		@line height line@	[[type:double]]		@1@		Multiplier for the line height of 'soft' line breaks. These are breaks caused by @"<line>\n</line>"@ tags.
+| ^^^		@mask@			[[type:filename]]	''none''	A mask that indicates where in the box text can be placed.<br/>
+		 			 			 		Text is never put in black areas of the box:<br/>
+		 			 			 		<img src="style-text-mask.png" alt=""/>
+| ^^^		@content width@		[[type:double]]		''automatic''	When read from a script, gives the width of the current content in this box.
+| ^^^		@content height@	[[type:double]]		''automatic''	When read from a script, gives the height of the current content in this box.
+| ^^^		@content lines@		[[type:int]]		''automatic''	When read from a script, gives the number of lines of the current content in this box.
+	
+!	<<<	<<<	<<<	<<<
+| @"choice"@, @"multiple choice"@, @"boolean"@
+		@popup style@	@"drop down"@ or @"in place"@		@"drop down"@	Where to place the drop down box for editing the value.<br/>
+		 		 					 		@"drop down"@ places the box below the field, similair to normal combo boxes.<br/>
+		 		 					 		@"in place"@ places the box at the mouse coordinates.
+| ^^^		@render style@	[[type:choice render style]]		@"text"@	How should the field be rendered?
+| ^^^		@mask@		[[type:scriptable]] [[type:filename]]	''none''	A mask to apply to the image, black areas in the mask become transparent, similair to [[fun:set_mask]].
+| ^^^		@combine@	[[type:combine]]			@"normal"@	How to combine the image with the background? Can be overriden using the [[fun:set_combine]] function.
+| ^^^		@alignment@	[[type:alignment]]	 				Alignment of text and images in the box.
+| ^^^		@angle@		[[type:int]]				@0@		Rotation of the text and images inside the box, in degrees.
+| ^^^		@font@		[[type:font]]				 		Font to use for rendering text (depending on @render style@)
+| ^^^		@image@		[[type:image|scriptable image]]		 		Image to show (depending on @render style@).<br/>
+		 		 					 		The script will be called with @input@ set to the value to determine an image for.
+| ^^^		@choice images@	[[type:map]] of [[type:image]]s		 		An alternative way to specify what image to show.<br/>
+		 		 					 		For each [[type:choice]] a separate image is specified.
+| @"multiple choice"@
+		@direction@	[[type:direction]]		@"left to right"@	Direction the items are layed out in, only when @render style@ is @list@.
+| ^^^		@spacing@	[[type:double]]			@0@			Spacing between the items.
+	
+!	<<<	<<<	<<<	<<<
+| @"color"@	@radius@	[[type:script]]		@0@	Radius of rounded corners for the box in pixels.
+| ^^^		@left width@	[[type:double]]		&infin;	Draw only this many pixels from the side, creating a box with a hole in it, or a card border.
+| ^^^		@right width@	^^^			^^^	^^^
+| ^^^		@top width@	^^^			^^^	^^^
+| ^^^		@bottom width@	^^^			^^^	^^^
+| ^^^		@mask@	[[type:scriptable]] [[type:filename]]	''none''	A mask to apply to the box, black areas in the mask become transparent.
+	
+!	<<<	<<<	<<<	<<<
+| @"image"@	@mask@		[[type:scriptable]] [[type:filename]]	''none''	A mask to apply to the image, black areas in the mask become transparent, similair to [[fun:set_mask]].
+		@default@	[[type:image|scriptable image]]		''none''	A default image to use when the card has none.
+	
+!	<<<	<<<	<<<	<<<
+| @"symbol"@	@variations@	[[type:list]] of [[type:symbol variation]]s	 	Available variations of the symbol, a variation describes color and border size.
+|		@min aspec ratio@	[[type:double]]		@1@		Bounds for the aspect ratio, @width/height@ symbols can take. This can be used to make non-squary symbols.
+|		@max aspec ratio@	[[type:double]]		@1@		^^^
+	
+!	<<<	<<<	<<<	<<<
+| @"info"@	@font@			[[type:font]]		''Required'' 	Font to render the text.
+| ^^^		@alignment@		[[type:scriptable]] [[type:alignment]]	@top left@	Alignment of the text.
+| ^^^		@padding left@		[[type:double]]		@0@		Padding between the text and the border of the box, in pixels.
+| ^^^		@padding right@		^^^			^^^		^^^
+| ^^^		@padding top@		^^^			^^^		^^^
+| ^^^		@padding bottom@	^^^			^^^		^^^
+| ^^^		@background color@	[[type:color]]		@rgb(255,255,255)@	Background color for the box, can be used to make it stand out.
+
+--Example--
+

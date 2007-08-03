@@ -1,0 +1,34 @@
+Data type: scriptable
+
+--Overview--
+
+Many [[type:style]] properties are ''scriptable''; their value can be changed by a script.
+
+Consider for example:
+>left: 123
+This defines that the left coordinate of a field is 123 pixels.
+To script this you can write:
+>left: { if card.name == "" then 100 else 123 }
+Now the left position depends on whether or not the name is empty.
+
+--File syntax--
+A 'scriptable something' can take three forms:
+# It can be a regular 'something'
+  >something: 123
+# It can be a script that produces 'something', enclosed in curly braces:
+  >something: {100 + 23}
+# It can be a script that produces 'something', indented and preceded by @script:@:
+  >something:
+  >	script: 100 + 23
+
+Note: To use a multiline script the following does not work:
+>something: { 100 +
+>             23 }
+If the script has multiple lines, it must start on a new line, and be indented with a TAB:
+>something:
+>	{ 100 +
+>	  23 }
+or
+>something:
+>	script: 100 +
+>	        23

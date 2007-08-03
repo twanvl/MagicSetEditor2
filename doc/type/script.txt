@@ -1,0 +1,19 @@
+Data type: script
+
+--Overview--
+
+A script object is a piece of code written in the [[script:index|MSE scripting language]].
+
+--File syntax--
+
+A script is given in the same way as a [[type:string]].
+
+--Example--
+A simple [[type:field]] script that converts everything to upper case:
+>script: to_upper(value)
+
+A larger script, changes @"y"@s to @"x"@s and @"a"@s to @"b"@s:
+>script:
+>	new_value := replace(value, match: "x", replace: "y")
+>	new_value := replace(value, match: "a", replace: "b")
+>	new_value
