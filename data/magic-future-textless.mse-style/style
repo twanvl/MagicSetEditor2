@@ -127,6 +127,7 @@ card style:
 			scale down to: 22
 			alignment: bottom right
 		always symbol: true
+		mask: costmask.png
 		z index: 2
 		padding top: 0
 	card symbol:
