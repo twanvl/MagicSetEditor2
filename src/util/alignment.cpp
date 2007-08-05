@@ -92,6 +92,10 @@ IMPLEMENT_REFLECTION_ENUM(Direction) {
 	VALUE_N("bottom to top", BOTTOM_TO_TOP);
 	VALUE_N("horizontal",    LEFT_TO_RIGHT);
 	VALUE_N("vertical",      TOP_TO_BOTTOM);
+	VALUE_N("top-right to bottom-left", TOP_RIGHT_TO_BOTTOM_LEFT);
+	VALUE_N("bottom-left to top-right", BOTTOM_LEFT_TO_TOP_RIGHT);
+	VALUE_N("top-left to bottom-right", TOP_LEFT_TO_BOTTOM_RIGHT);
+	VALUE_N("bottom-right to top-left", BOTTOM_RIGHT_TO_TOP_LEFT);
 }
 
 RealPoint move_in_direction(Direction dir, const RealPoint& point, const RealSize to_move, double spacing) {
@@ -100,6 +104,10 @@ RealPoint move_in_direction(Direction dir, const RealPoint& point, const RealSiz
 		case RIGHT_TO_LEFT: return RealPoint(point.x - to_move.width - spacing, point.y);
 		case TOP_TO_BOTTOM: return RealPoint(point.x, point.y + to_move.height + spacing);
 		case BOTTOM_TO_TOP: return RealPoint(point.x, point.y - to_move.height - spacing);
+		case TOP_RIGHT_TO_BOTTOM_LEFT: return RealPoint(point.x - to_move.width - spacing, point.y + to_move.height + spacing);
+		case BOTTOM_LEFT_TO_TOP_RIGHT: return RealPoint(point.x + to_move.width + spacing, point.y - to_move.height - spacing);
+		case TOP_LEFT_TO_BOTTOM_RIGHT: return RealPoint(point.x + to_move.width + spacing, point.y + to_move.height + spacing);
+		case BOTTOM_RIGHT_TO_TOP_LEFT: return RealPoint(point.x - to_move.width - spacing, point.y - to_move.height - spacing);
 		default:            return point; // should not happen
 	}
 }

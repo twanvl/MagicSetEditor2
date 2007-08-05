@@ -27,7 +27,6 @@ init script:
 	                            + " pattern(/.       WUBRG)"
 	                            + " cycle(WUBRG)"
 	                            + ")")
-	mana_has_guild := sort_rule(order: "</|>") # Is there guild or half mana in the input?
 	mana_filter := to_upper + mana_sort
 	# Like mana filter, only also allow tap symbols:
 	tap_filter := sort_rule(order: "<T>")
@@ -171,7 +170,7 @@ init script:
 	sort_index := {
 		card_color   := card.card_color
 		casting_cost := card.casting_cost
-		if      card.casting_cost_2 != "" and
+		if      card.shape = "split" and
 		        card_color != card.card_color_2                      then "H"    # multicolor splits
 		else if chosen(choice: "land", card_color) then (
 			# land
@@ -1490,7 +1489,7 @@ keyword:
 	keyword: Regeneration
 	match: Regenerate
 	mode: action
-	reminder: The next time {if has_pt() then "this creature" else "this"} would be destroyed this turn, it isn't.{if has_pt() then " Instead tap it, remove all damage from it, and remove it from combat." else ""}
+	reminder: The next time {if has_pt() then "this creature" else "this"} would be destroyed this turn, it isn't.{if has_pt() then " Instead tap it, remove all damage from it, and remove it from combat." else " Instead tap it"}
 keyword:
 	keyword: Bands with other
 	match: Bands with other <atom-param>name</atom-param>
@@ -1510,7 +1509,7 @@ keyword:
 	keyword: Phasing
 	match: Phasing
 	mode: old
-	reminder: At the beginning of your upkeep, put this and any cards and/or counters attached to it in the phased-out zone. If this is already in the phased-out zone, return it and any cards and/or counters attached to it to play. This ability does not cause comes-into-play or leaves-play abilities to trigger.
+	reminder: At the beginning of your untap step, put this and any cards and/or counters attached to it in the phased-out zone. If this is already in the phased-out zone, return it and any cards and/or counters attached to it to play. This ability does not cause comes-into-play or leaves-play abilities to trigger.
 keyword:
 	keyword: Flanking
 	match: Flanking

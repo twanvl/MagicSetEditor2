@@ -65,6 +65,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 			menuExport->Append(ID_FILE_EXPORT_MWS,		_("export_mws"),		_MENU_("export mws"),		_HELP_("export mws"));
 		menuFile->Append(wxID_ANY,			_("export"),	_MENU_("export"),					_HELP_("export"), wxITEM_NORMAL, menuExport);
 		menuFile->AppendSeparator();
+		menuFile->Append(ID_FILE_CHECK_UPDATES,	_MENU_("check updates"),	_HELP_("check updates"));
 //		menuFile->Append(ID_FILE_INSPECT,					_("Inspect Internal Data..."),	_("Shows a the data in the set using a tree structure"));
 //		menuFile->AppendSeparator();
 		menuFile->Append(ID_FILE_RELOAD,					_MENU_("reload data"),		_HELP_("reload data"));
@@ -527,6 +528,10 @@ void SetWindow::onFileExportMWS(wxCommandEvent&) {
 	export_mws(this, set);
 }
 
+void SetWindow::onFileCheckUpdates(wxCommandEvent&) {
+	(new UpdateWindow)->Show();
+}
+
 void SetWindow::onFilePrint(wxCommandEvent&) {
 	print_set(this, set);
 }
@@ -677,6 +682,7 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
 	EVT_MENU			(ID_FILE_EXPORT_HTML,	SetWindow::onFileExportHTML)
 	EVT_MENU			(ID_FILE_EXPORT_APPR,	SetWindow::onFileExportApprentice)
 	EVT_MENU			(ID_FILE_EXPORT_MWS,	SetWindow::onFileExportMWS)
+	EVT_MENU			(ID_FILE_CHECK_UPDATES,	SetWindow::onFileCheckUpdates)
 //	EVT_MENU			(ID_FILE_INSPECT,		SetWindow::onFileInspect)
 	EVT_MENU			(ID_FILE_PRINT,			SetWindow::onFilePrint)
 	EVT_MENU			(ID_FILE_PRINT_PREVIEW,	SetWindow::onFilePrintPreview)

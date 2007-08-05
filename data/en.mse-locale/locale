@@ -14,6 +14,7 @@ menu:
 	export images:			All Card I&mages...
 	export apprentice:		&Apprentice...
 	export mws:				Magic &Workstation...
+	check updates:		Check &Updates...
 	print preview:		Print Pre&view...
 	print:				&Print...	Ctrl+P
 	reload data:		Reload Data	Ctrl+F5
@@ -35,7 +36,7 @@ menu:
 	next card:			Select &Next Card	PgDn
 	add card:			&Add Card	Ctrl++
 	add cards:			Add &Multiple Cards...
-	remove card:		&Remove Select Card	Del
+	remove card:		&Delete Selected Card
 	orientation:		&Orientation
 	rotate 0:				&Normal
 	rotate 270:				Rotated 90° &Clockwise
@@ -105,6 +106,7 @@ help:
 	export images:			Export images for all cards
 	export apprentice:		Export the set so it can be played with in Apprentice
 	export mws:				Export the set so it can be played with in Magic Workstation
+	check updates:		Open the update window to download new packages, such as games, styles, and locales.
 	print preview:		Shows cards as they will be printed
 	print:				Print cards from this set
 	reload data:		Reload all template files (game and style) as well as the set.
@@ -516,6 +518,12 @@ title:
 	export cancled:		Export Cancled
 	export html:		Export to HTML
 	save html:			Export to HTML
+	
+	# Package Update Window
+	package list:		Package Updates
+	package name:		Package Name
+	package status:		Current Status
+	new status:			New Status
 
 ############################################################## Action (undo/redo) names
 action:
@@ -617,6 +625,11 @@ error:
 	
 	# Stats panel
 	dimension not found:				There is no statistics dimension '%s'
+	
+	# Package update window
+	no packages:						Found no package updates.
+	checking updates:					Checking for updates.
+
 
 ############################################################## Types used in scripts / shape names
 type:
@@ -662,6 +675,17 @@ type:
 	point:			point
 	points:			points
 	handle:			handle
+	
+	# Package manager
+	installed:		installed
+	uninstalled:	uninstalled
+	upgradeable:	upgradeable
+	
+	install:		install
+	uninstall:		uninstalled
+	upgrade:		upgrade
+	do nothing:		do nothing
+	new mse:		MSE outdated
 	
 
 ############################################################## Magic

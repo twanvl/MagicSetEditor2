@@ -41,6 +41,7 @@ enum MenuID {
 ,	ID_FILE_RELOAD			= 9
 ,	ID_FILE_RECENT			= wxID_FILE1
 ,	ID_FILE_RECENT_MAX		= wxID_FILE9
+,	ID_FILE_CHECK_UPDATES	= 10
 
 	// Edit menu
 ,	ID_EDIT_UNDO			= wxID_UNDO

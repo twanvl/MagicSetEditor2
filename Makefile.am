@@ -158,5 +158,6 @@ magicseteditor_SOURCES += ./src/util/alignment.cpp
 magicseteditor_SOURCES += ./src/util/tagged_string.cpp
 magicseteditor_SOURCES += ./src/util/error.cpp
 magicseteditor_SOURCES += ./src/util/age.cpp
+magicseteditor_SOURCES += ./src/util/spec_sort.cpp
 magicseteditor_SOURCES += ./src/main.cpp
 magicseteditor_SOURCES += ./src/code_template.cpp
