@@ -12,18 +12,17 @@ card dpi: 150
 #By: Pichoro
 #
 #Todo:
-#More frames (missing colored lands)
 #Make different colored colorless mana symbols work
 #Casting cost mask
 #Frames can be changed to jpegs
-#Multicolor masks
-#hybrid masks
 #make colored artifacts look right
 #white font color for blue land, red land, black land, and green land
 ############################################################## Extra scripts
 
 init script:
-	# there are only wubrg templates
+	# Should hybrids have a grey name?
+	mask_hybrid_with_land := { styling.grey_hybrid_name }
+	
 	suffix := [card: "card.png", pt: "pt.png"]
 	template := { input + suffix[type] }
 	land_template := { (if input == "a" then "c" else input) + "l" + suffix[type] }
@@ -32,10 +31,30 @@ init script:
 		base := base_hybrid[shape][color_count]()
 		
 		# Put a frame around it?
-		if land and not colored_lands then "l" + suffix[type]
-		else if multi then "m" + suffix[type]
-		else if artifact then "a" + suffix[type]
-		else if color_count > 1 and mask_hybrid_with_land() then base
+		if land and not colored_lands then
+			masked_blend(
+				mask:  "multicolor_blend_{type}.png",
+				dark:  land_template("c"),
+				light: base,
+			)
+		else if multi then 
+			masked_blend(
+				mask:  "multicolor_blend_{type}.png",
+				dark:  template("m"),
+				light: base,
+			)
+		else if artifact then 
+			masked_blend(
+				mask:  "multicolor_blend_{type}.png",
+				dark:  template("a"),
+				light: base,
+			)
+		else if color_count > 1 and mask_hybrid_with_land() then
+			masked_blend(
+				mask:  "hybrid_blend_{type}.png",
+				dark:  land_template("c"),
+				light: base,
+			)
 		else base
 	}
 	
@@ -50,6 +69,10 @@ init script:
 
 ############################################################## Extra style options
 
+styling field:
+	type: boolean
+	name: grey hybrid name
+	description: Use a grey background for the name and type line on hybrid cards. This is done on real cards.
 styling field:
 	type: boolean
 	name: use guild mana symbols
@@ -274,3 +297,4 @@ extra card style:
 		visible: { card.pt != "" }
 		render style: image
 		image: { card_ptbox() }
+		mask: mask_pt.png

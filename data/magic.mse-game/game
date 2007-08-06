@@ -170,7 +170,7 @@ init script:
 	sort_index := {
 		card_color   := card.card_color
 		casting_cost := card.casting_cost
-		if      card.shape = "split" and
+		if      card.casting_cost_2 != "" and
 		        card_color != card.card_color_2                      then "H"    # multicolor splits
 		else if chosen(choice: "land", card_color) then (
 			# land
@@ -1474,7 +1474,7 @@ keyword:
 	keyword: Banding
 	match: Banding
 	mode: old
-	reminder: When declaring attackers or blockers, this creature may group with other creatures with banding and one creature without banding. When damage is dealt, you decide where damage is dealt.
+	reminder: Any number of attacking creatures with banding, and up to one without, can form a band. Blocking a creature in the band blocks all of them. You assign combat damage for any creature blocking or blocked by this creature.
 keyword:
 	keyword: Landwalk
 	match: <atom-param>prefix</atom-param>walk
@@ -1489,12 +1489,12 @@ keyword:
 	keyword: Regeneration
 	match: Regenerate
 	mode: action
-	reminder: The next time {if has_pt() then "this creature" else "this"} would be destroyed this turn, it isn't.{if has_pt() then " Instead tap it, remove all damage from it, and remove it from combat." else " Instead tap it"}
+	reminder: The next time {if has_pt() then "this creature" else "this"} would be destroyed this turn, it isn't.{if has_pt() then " Instead tap it, remove all damage from it, and remove it from combat." else " Instead tap it."}
 keyword:
 	keyword: Bands with other
 	match: Bands with other <atom-param>name</atom-param>
 	mode: old
-	reminder: When declaring attackers or blockers, this creature may group with other creatures with banding or bands with other {param1}. When damage is dealt, you decide where damage is dealt.
+	reminder: Any number of attacking creatures with banding or bands with other {param1} can form a band. Blocking a creature in the band blocks all of them. You assign combat damage for any creature blocking or blocked by this creature and another creature with bands with other {param1}.
 keyword:
 	keyword: Rampage
 	match: Rampage <atom-param>number</atom-param>

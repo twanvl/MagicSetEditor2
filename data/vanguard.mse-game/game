@@ -540,7 +540,7 @@ keyword:
 	keyword: Banding
 	match: banding
 	mode: old
-	reminder: When declaring attackers or blockers, it may group with other creatures with banding and one creature without banding. When damage is dealt, you decide where damage is dealt.
+	reminder: Any number of attacking creatures with banding, and up to one without, can form a band. Blocking a creature in the band blocks all of them. You assign combat damage for any creature blocking or blocked by this creature.
 keyword:
 	keyword: Landwalk
 	match: <atom-param>prefix</atom-param>walk
@@ -560,7 +560,7 @@ keyword:
 	keyword: Bands with other
 	match: bands with other <atom-param>name</atom-param>
 	mode: old
-	reminder: When declaring attackers or blockers, it may group with other creatures with banding or bands with {param1}. When damage is dealt, you decide where damage is dealt.
+	reminder: Any number of attacking creatures with banding or bands with other {param1} can form a band. Blocking a creature in the band blocks all of them. You assign combat damage for any creature blocking or blocked by this creature and another creature with bands with other {param1}.
 keyword:
 	keyword: Rampage
 	match: rampage <atom-param>number</atom-param>
