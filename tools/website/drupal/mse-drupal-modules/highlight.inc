@@ -127,7 +127,7 @@ function highlight_script($code) {
 	while(strlen($code)) {
 		if (preg_match("@^<[^>]+>@",$code, $matches)) {
 			$ret .= $matches[0]; // plain tag
-		} else if (preg_match("@^(if|then|else|for( each)?|in(?= )|do|and|or|xor|not|rgb|from|to)\b(?!:)@",$code, $matches)) {
+		} else if (preg_match("@^(if|then|else|for( each)?|in(?= )|do|mod|and|or|xor|not|rgb|from|to)\b(?!:)@",$code, $matches)) {
 			$ret .= "<span class='hl-kw'>" . $matches[0] . "</span>";
 		} else if (preg_match("@^(include file:)(.*)@",$code, $matches)) {
 			$ret .= "<span class='hl-key'>" . $matches[1] . "</span>" . $matches[2];
@@ -157,8 +157,9 @@ function highlight_script($code) {
 		} else if (preg_match("@^([a-zA-Z0-9_]+|\s+|&#?[a-zA-Z0-9]+;)@",$code, $matches)) {
 			$m = $matches[0];
 			// function call?
-			if (isset($built_in_functions[$m]) // to built in function
-			    ) {
+			if (isset($built_in_functions[$m]) && // to built in function
+			    preg_match("@\s*[+(){}]@",substr($code, strlen($matches[0]))) // in a function context
+			    ) { 
 				$f = $built_in_functions[$m];
 				if ($f == '') $f = $m;
 				$f = 'function/' . $f;

@@ -5,7 +5,8 @@ require_once('./modules/mse-drupal-modules/autoformat.inc');
 global $nice_ff_names;
 $nice_ff_names = array(
 	'Function' => 'Functions',
-	'Type'     => 'Types'
+	'Type'     => 'Types',
+	'Script'   => 'Scripting'
 );
 
 define('FROMFILE_DIR', 'doc');
