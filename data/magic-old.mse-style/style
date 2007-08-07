@@ -31,16 +31,44 @@ init script:
 	# Only white cards use a black font
 	font_colors_white := { input != "w" }
 	
-	# Alpha style lands?
-	color_combination_std := color_combination
+	# Alpha style lands?  Different blending for multicolored lands.
+	#Did it this way because was getting longer other way, due to redefining color_background parts.
 	color_combination := {
+		# The base hybrid, without the outer frame blended over it
+		base := base_hybrid[shape][color_count]()
+		
+		# Put a frame around it?
 		if type == "card" and land and color_count == 2 and shape != "overlay" and styling.alpha_style_blending then
 			masked_blend(
 				mask:  "alpha_blend.png",
 				dark:  land_template(colors[0]),
 				light: land_template(colors[1]),
 			)
-		else color_combination_std()
+		else if land then
+			masked_blend(
+				mask:  "land_blend_{type}.png",
+				dark:  land_template("c"),
+				light: base,
+			)
+		else if multi then 
+			masked_blend(
+				mask:  "multicolor_blend_{type}.png",
+				dark:  template("m"),
+				light: base,
+			)
+		else if artifact then 
+			masked_blend(
+				mask:  "multicolor_blend_{type}.png",
+				dark:  template("a"),
+				light: base,
+			)
+		else if color_count > 1 and mask_hybrid_with_land() then
+			masked_blend(
+				mask:  "hybrid_blend_{type}.png",
+				dark:  land_template("c"),
+				light: base,
+			)
+		else base
 	}
 
 ############################################################## Set info fields

@@ -45,7 +45,7 @@ init script:
 			)
 		else if artifact then 
 			masked_blend(
-				mask:  "multicolor_blend_{type}.png",
+				mask:  "artifact_blend_{type}.png",
 				dark:  template("a"),
 				light: base,
 			)
@@ -86,6 +86,14 @@ styling field:
 	choice: modern
 	choice: old
 	choice: diagonal T
+styling field:
+	type: choice
+	name: font color
+	description: What color should the font on cards be?
+	initial: automatic
+	choice: automatic
+	choice: black
+	choice: white
 
 styling style:
 	use guild mana symbols:

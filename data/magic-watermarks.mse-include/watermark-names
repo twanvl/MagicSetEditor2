@@ -37,4 +37,16 @@ choice:
 	choice: R/W
 	choice: W/U
 choice:
+	name: colored xander hybrid mana
+	choice: B/R
+	choice: U/B
+	choice: B/G
+	choice: R/G
+	choice: G/U
+	choice: U/R
+	choice: W/B
+	choice: G/W
+	choice: R/W
+	choice: W/U
+choice:
 	name: set symbol
