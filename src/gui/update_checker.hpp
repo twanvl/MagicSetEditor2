@@ -10,7 +10,6 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
-#include <wx/html/htmlwin.h>
 
 // ----------------------------------------------------------------------------- : Update checking
 
@@ -27,14 +26,20 @@ void check_updates_now(bool async = true);
  *  Call this function from an onIdle loop */
 void show_update_dialog(Window* parent);
 
+// ----------------------------------------------------------------------------- : Update window
+
 class PackageUpdateList;
+class wxHtmlWindow;
 
 DECLARE_POINTER_TYPE(PackageVersionData);
 
 /// A window that displays the updates and allows the user to select some.
-class UpdateWindow : public Frame {
+/** NOTE: cannot be called 'UpdateWindow' because there is a Win32 function with that name
+ */
+class UpdatesWindow : public Frame {
   public:
-	UpdateWindow();
+	UpdatesWindow();
+	
 	void DrawTitles(wxPaintEvent&);
 
 	enum PackageStatus {
@@ -54,13 +59,16 @@ class UpdateWindow : public Frame {
 
 	map<PackageVersionDataP, PackageData> package_data;
 
-	void SetDefaultPackageStatus(wxCommandEvent&);
   private:
 	DECLARE_EVENT_TABLE();
-	PackageUpdateList* package_list;
+	PackageUpdateList* package_list; ///< List of available packages
 	wxHtmlWindow* description_window;
 
 	wxStaticText *package_title, *status_title, *new_title;
+	
+	void onUpdateCheckFinished(wxCommandEvent&);
+	
+	void setDefaultPackageStatus();
 };
 
 /// Was update data found?

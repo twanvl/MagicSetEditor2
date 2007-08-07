@@ -11,6 +11,7 @@
 #include <gui/control/card_editor.hpp>
 #include <gui/control/text_ctrl.hpp>
 #include <gui/about_window.hpp>
+#include <gui/update_checker.hpp>
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <data/set.hpp>
@@ -64,7 +65,8 @@ CardsPanel::CardsPanel(Window* parent, int id)
 		menuCard->Append(ID_CARD_ADD_MULT,	_("card_add_multiple"),	_MENU_("add cards"),		_HELP_("add cards"));
 																	// NOTE: space after "Del" prevents wx from making del an accellerator
 																	// otherwise we delete a card when delete is pressed inside the editor
-		menuCard->Append(ID_CARD_REMOVE,	_("card_del"),			_MENU_("remove card"),_HELP_("remove card"));
+																	// Adding a space never hurts, please keep it just to be safe.
+		menuCard->Append(ID_CARD_REMOVE,	_("card_del"),			_MENU_("remove card")+_(" "),_HELP_("remove card"));
 		menuCard->AppendSeparator();
 		IconMenu* menuRotate = new IconMenu();
 			menuRotate->Append(ID_CARD_ROTATE_0,		_("card_rotate_0"),		_MENU_("rotate 0"),		_HELP_("rotate 0"),		wxITEM_CHECK);

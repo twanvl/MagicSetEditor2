@@ -529,7 +529,7 @@ void SetWindow::onFileExportMWS(wxCommandEvent&) {
 }
 
 void SetWindow::onFileCheckUpdates(wxCommandEvent&) {
-	(new UpdateWindow)->Show();
+	(new UpdatesWindow)->Show();
 }
 
 void SetWindow::onFilePrint(wxCommandEvent&) {
