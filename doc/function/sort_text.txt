@@ -19,6 +19,7 @@ Parts
 | @"<wxy>"@		@"xy"@			Selects the characters from the input, but only once.
 			 			@"<xy>"@ is the same as @"<x><y>"@.
 | @"[wxy]"@		@"yyyxx"@		Selects the given characters, but keep them in the same order as in the input.
+| @"(xwz)"@		@"zzxx"@		The same as @"cycle(xyz)"@.
 | @"ordered(wxy)"@	@"xxyyy"@		The same as just @"wxy"@.
 | @"once(wxy)"@		@"xy"@			The same as @"<wxy>"@.
 | @"mixed(wxy)"@		@"yyyxx"@		The same as @"[wxy]"@.

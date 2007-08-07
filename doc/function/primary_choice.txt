@@ -1,0 +1,29 @@
+Function: primary_choice
+
+--Usage--
+> primary_choice(some_choice_value)
+
+Returns the name of the 'top level' choice selected.
+
+For example if a [[type:field|choice field]] is declared with the [[type:choice]]s:
+>choice:
+>	name: large
+>	choice: red
+>	choice: blue
+>choice:
+>	name: small
+>	group choice: just small
+>	choice: green
+>	choice: yellow
+Then @primary_choice("large red") == "large"@.
+
+This function is used to keep [[type:statiscs_dimension|statistics]] cleaner by not having columns for all possible sub choices.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		Choice value to look at.
+
+--Examples--
+> primary_choice("large red")    ==  "large"
+> primary_choice("large")        ==  "large"
+> primary_choice("small green")  ==  "small"

@@ -1,4 +1,14 @@
 Scripting language
 
-MSE uses a custom scripting language to add complicated behaviour to fields and styles.
+MSE uses a custom scripting language to add complicated behaviour to [[type:field]]s and [[type:style]]s.
 
+--Topics--
+* [[script:introduction|Introduction to scripting]]
+* [[script:Operators]]
+* [[script:variables|Variables and functions]]
+* [[script:Control structures]]
+* [[script:Predefined variables]]
+* [[script:Best practices]]
+See also:
+* [[type:index|Data types used]]
+* [[fun:index|Built in functions]]

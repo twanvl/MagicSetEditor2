@@ -1,0 +1,60 @@
+Control structures
+
+MSE Script has two types of control structures.
+
+--If-Then-Else--
+
+To switch between two options use:
+
+> if condition then a else b
+
+If the condition evaluates to @true@,
+then the expression evaluates to @a@, otherwise it evaluates to @b@.
+The else part is optional.
+
+For example:
+> if 1 + 1 == 2 then "yes sir!" else "something is wrong"
+Will evaluate to @"yes sir!"@.
+
+Note that if-then-else is an ''expression'', it can be used almost everywhere:
+> 1 + (if card.color == "red" then 1 else 2)
+> color := (if card.color == "red"   then "r") +
+>          (if card.color == "green" then "g")
+
+The @then@ and @else@ parts can also contain assignments and other control structures.
+> if card.color == "red" then
+>     filter := filter + "r"
+
+To use multiple statements in the then or else branches you must use parentheses:
+> # WRONG
+> if 1 + 1 == 2 then
+>     x := y
+>     y := z
+> # RIGHT
+> if 1 + 1 == 2 then (
+>     x := y
+>     y := z
+> )
+
+--For-Each--
+
+To iterate over all elements in a [[type:list]] the @for each@ construct
+
+> for each variable in list do expression
+
+If list is a list of items, for example set.cards, the expression is evaluated for each item in that list.
+The variable becomes set to that each item in succession.
+The results of the expression are combined using the @+@ [[script:operators|operator]].
+
+It is also possible to iterate over a range of values
+
+> for variable from begin to end do expression
+
+The expression is evaluated for each number from begin to end (including begin, not including end). The variable becomes set to that each number in succession. The results of the expression are combined using +.
+
+--Summary--
+
+! Syntax				Description
+| @if a then b else c@			If @a@ is @true@ evaluates to @b@, otherwise evaluates to @c@
+| @for each x in list do something@	Does something for each element in a list
+| @for x from 1 to 100 do something@	Does something for all numbers from 1 to 100

@@ -1,0 +1,33 @@
+Scripting introduction
+
+MSE uses a custom scripting language to add complicated behaviour to [[type:field]]s and [[type:style]]s.
+
+This documentation assumes that the reader has some programming experience.
+In particular it is assumed that you know what 'functions', 'variables' and 'operators' are.
+
+Scripts in MSE are usually small, just a few lines.
+A piece of script code is also called an ''expression''.
+Expressions can be ''evaluated'' to give a result.
+For example the expression @1 + 1@ will evaluate to @2@.
+
+An important idea behind MSE is that it tries to be ''pure'',
+there are no global variables and there is no way to change properties of objects.
+This means that when you evaluate an expression the result is always the same (unless it contains variable assignments).
+
+Basic elements of scripts are ''constants''.
+A constant is something with a fixed value.
+Possible constants are:
+! Syntax		Type
+| @nil@			Nothing
+| @true@, @false@	[[type:boolean]]
+| @123@			[[type:int]]
+| @123.5@		[[type:double]]
+| @"abc"@		[[type:string]]
+| @rgb(255,0,0)@	[[type:color]]
+| @[a,b,c]@		[[type:list]]
+Note: Strings, list and colors don't have to be constants, they can contain other code.
+
+The @nil@ value has a special meaning, it is 'nothing'.
+Adding @nil@ to something has no effect (it returns 'something'), calling @nil@ as a function just returns the input, etc.
+
+<div style="text-align:right;">next: <a href="operators">Operators &rarr;</a></div>

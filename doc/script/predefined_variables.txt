@@ -1,0 +1,16 @@
+Predefined variables
+
+When evaluating scripts several variables are predefined containing useful information.
+Aside from the [[fun:index|built in functions]] the following variables are provided:
+! Variable	Type		When available?		Description
+| @game@	[[type:game]]	always		The current game, the same as @set.game@
+| @set@		[[type:set]]	always		The current set.
+| @stylesheet@	[[type:stylesheet]]	not in the @init script@ of the game
+		 		 		The current stylesheet
+| @card@	[[type:card]]	not in @init script@s or when exporting
+		 		 		The current card.
+| @card_style@	[[type:indexmap]] of [[type:style]]s	where @card@ is available	Style properties for the current card, the same as @stylesheet.card_style@.
+| @styling@	[[type:indexmap]] of [[type:value]]s	where @card@ is available	Styling options for the stylesheet/card.
+| @value@	[[type:value]]				when evaluating a [[type:field]]'s @script@ or @default@ script		Current value in the field.
+| @options@	[[type:indexmap]] of [[type:value]]s	when exporting			Options of the [[type:export template]].
+Variables are only available where they make sense.

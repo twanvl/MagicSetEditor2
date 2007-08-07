@@ -21,6 +21,6 @@ Like lists, maps can be accessed using either the bracket operator, or the dot o
 > map["k"+"ey"] # The same thing
 
 It is possible to iterate over the values maps using the @for@ construct:
-> for x in [one: 1, two: 2] do "x = {x}. "
+> for each x in [one: 1, two: 2] do "x = {x}. "
 evaluates to:
 > "x = 1. x = 2. "

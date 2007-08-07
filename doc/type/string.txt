@@ -26,3 +26,9 @@ Sections between curly braces are interpreted as script code, that is concatenta
 This can be nested arbitrarily.
 
 The @+@ operator concatenates strings. Numbers and most other values are automatically converted to strings when needed.
+
+Using the @[]@ or @.@ operator characters in a string can be selected. 0 is the first character:
+> "xyz"[0]  ==  "x"
+> "xyz".0   ==  "x"  # same thing
+It is an error to select characters outside the string
+> "xyz".10  # error

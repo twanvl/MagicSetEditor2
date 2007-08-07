@@ -1,0 +1,113 @@
+Best practices
+
+Here are some best practices and tricks for using scripts, try to follow this as much as possible.
+
+--Use comments--
+Put comments before function definitions to describe what the function does:
+> # Transmogrifies a flubble value for in grunk costs
+> flubble_script := { ... }
+
+--Use short scripts--
+Try to put as little as possible in [[type:field]] scripts.
+Instead define a function in the init script.
+
+'''bad''':
+>field:
+>	name: flubble
+>	script:
+>		some very complicted expression
+'''good''':
+>init script:
+>	...
+>	flubble_script := { some very complicted expression }
+>field:
+>	script: flubble_script()
+
+--Use rule form--
+If a function is available in [[script:rule form]] use it where possible.
+
+Many rules can be chained together using the @+@ operator.
+Have a look at @text_filter@ in the magic game file for an example.
+
+--Don't be afraid to nest--
+Don't be afraid to nest complex things like @if@ expressions inside other expressions.
+For example the blend scripts for magic use:
+> colors := sort_text( order: "(wubrg)"
+>                    , (if chosen(choice:"white") then "w")
+>                    + (if chosen(choice:"blue")  then "u")
+>                    + (if chosen(choice:"black") then "b")
+>                    + (if chosen(choice:"red")   then "r")
+>                    + (if chosen(choice:"green") then "g"))
+and:
+> font_color_positions
+> [	if      chosen(choice:"horizontal") then "horizontal"
+>	else if chosen(choice:"vertical")   then "vertical"
+>	else if chosen(choice:"overlay")    then "overlay"
+>	else                                     "radial"
+> ][number_of_items(in: colors)]
+
+--Re-use functions--
+If two scripts or functions are very similair put the common part into another function.
+The differences can be passed in parameters.
+
+A good example is in the @something 2@ fields used for Magic split and flip cards.
+They behave exactly the same as the non-2 variants.
+Don't use:
+>init script:
+>	automatic_card_color_based_on_casting_cost   := { ... card.casting_cost   ... }
+>	automatic_card_color_based_on_casting_cost_2 := { ... card.casting_cost_2 ... }
+>field:
+>	name: card color
+>	default: automatic_card_color_based_on_casting_cost()
+>field:
+>	name: card color
+>	default: automatic_card_color_based_on_casting_cost_2()
+Instead use:
+>init script:
+>	automatic_card_color := { ... input ... }
+>field:
+>	name: card color
+>	default: automatic_card_color(card.casting_cost)
+>field:
+>	name: card color
+>	default: automatic_card_color(card.casting_cost_2)
+
+--Trick: hooks--
+Use this trick when defining a large function that might be overridden by stylesheets.
+
+For example things like the blend scripts for Magic cards are very large, and they are shared by all stylesheets.
+Some stylesheets need to do something special, or they don't support a particular template.
+This can be handled using hooks.
+
+What this means is that you don't do:
+> blend := { large and complicated function bla bla, use "template.png" bla bla }
+But instead
+> template := "template.png"
+> blend := { large and complicated function bla bla, use template bla bla }
+Now a stylesheet can override this template by just changing that variable.
+
+Another option is splitting up the template
+> blend := { large and complicated function bla bla, continue_blend() }
+> continue_blend := { use template bla bla, etc. }
+
+A stylesheet can override just a part of this, or even put something in between:
+> really_continue_blend := continue_blend
+> continue_blend := { do_this_first; really_continue_blend() }
+
+--Trick: lookup tables--
+Sometimes the behaviour of a function depends on a particular value.
+A good example of this are (again) the magic blend scripts.
+What way cards are blended depends on the number of colors and on the 'style' of blending.
+
+Instead of using a lot of @if@ statements it can be cleaner to use a [[type:map]] as a lookup table.
+So, instead of:
+> if      style == "horizontal" then  lots of code
+> else if style == "vertical"   then  lots of code
+> # etc.
+use:
+> blends := [
+>	horizontal: { lots of code }
+>	vertical:   { lots of code }
+> ]
+> ...
+> blends(style)() # lookup and call the function

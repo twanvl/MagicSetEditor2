@@ -1,2 +1,102 @@
 Operators
 
+To get more complicated expressions you combine them using operators.
+
+--Basic mathematics--
+MSE script supports most basic mathamatical operators:
+! Operator	Example			Description
+| @a + b@	@3 + 2 == 5@<br/>	Add two numbers,
+		@"3" + "2" == "32"@	concatenate two strings or compose two functions (see below)
+| @a - b@	@3 - 2 == 1@		Substract two numbers
+| @a * b@	@3 * 2 == 6@		Multiply two numbers
+| @a / b@	@3 / 2   == 1@<br/>	Divide two numbers.<br/> Rounds towards zero for [[type:int]]s.<br/>
+		@3 / 2.0 == 1.5@	Does not round for [[type:double]]s.
+| @a mod b@	@3 mod 2 == 1@		Take the remainder after integer division (modulo)
+| @-a@		@-(3 + 2) == -5@	Negate a number (make it negative if positive and vice versa)
+
+===The + operator===
+The @+@ operator has three functions
+* It adds [[type:int]]s (also [[type:double]]s), @1+1 == 2@
+* It concatenates strings, @"1" + "1" == "11"@
+* It composes [[type:function]]s @(f + g) () == g( input: f() )@
+
+--Comparison--
+It is also possible to compare values. All comparisons evaluate to either @true@ or @false@.
+! Operator	Example		Description
+| @a == b@	@1 + 1 == 2@<br/>
+		@"x" == "x"@<br/>
+		@1 + 1 == "2"@	Are two numbers or strings the same? @=@ can also be used instead.
+| @a != b@	@1 + 1 != 3@<br/>
+		@"x" != "y"@	Are two numbers or strings different?
+| @a < b@	@1 < 2@<br/>
+		@"x" < "y"@ 	Is a less than b? Uses [[http://en.wikipedia.org/wiki/Lexicographical_order|lexicographic order]] for strings.
+| @a > b@	@2 > 1@<br/>
+		@"y" > "x"@	Is a greater than b?
+| @a <= b@	@1 <= 1@<br/>
+		@"x" <= "y"@	Is a less than b or are they equal?
+| @a >= b@	@2 >= 1@<br/>
+		@"x" >= "x"@	Is a greater than b or are they equal?
+
+--Booleans--
+[[type:Boolean]]s (for example from comparisons) can be combined using:
+| @a and b@	Are both @a@ and @b@ true?
+| @a or b@	Is at least one of @a@ and @b@ true?
+| @a xor b@	Is exactly one of @a@ and @b@ true?
+| @not a@	Is @a@ false?
+In a table:
+! @a@		@b@		<tt>a or b</tt>	<tt>a and b</tt>	<tt>a xor b</tt>
+| @false@	@false@		@false@		@false@		@false@
+| @false@	@true@		@true@		@false@		@true@
+| @true@	@false@		@true@		@false@		@true@
+| @true@	@true@		@true@		@true@		@false@
+
+--Grouping and order--
+
+Operators are ordered as usual, so
+> 1 + 2 * 3  ==  1 + (2 * 3)  ==  7
+Operators can be grouped differently using parentheses.
+> (1 + 2) * 3  ==  3 * 3  ==  9
+
+The exact order of precedence is given in the following table,
+higher in the table means that this operator binds tighter to its arguments, @*@ binds tighter then @+@.
+| @a(...)@, @a.b@, @a[b]@	Function calls, property access, see below
+| @-a@, @not@ 		Unary operators
+| @*@, @/@, @mod@	Multiplication and division
+| @+@, @-@ 		Addition and substraction
+| @==@, @!=@, @<@, @>@, @<=@, @>=@ 	Comparisons
+| @and@, @or@, @xor@ 	Boolean operators
+| @:=@ 			Assignement, see below
+| @;@ 			Sequence, see below
+
+--Properties--
+Properties of types, as described in the [[type:index|data type section]] of the documentation, can be accessed using the @.@ operator:
+> set.cards	# retrieve the 'cards' property of a set
+The @[]@ operator has a similair purpose, only the property retrieved is determined by a string, so it can be changed:
+> set["cards"]  # same as above
+> c := "cards"
+> set[c]        # again, the same
+
+Multiple uses of these operators can be combined, for example:
+> set.cards[0].card_color  #  the card color of the first card in the set
+
+Note that a property named @card color@ is refered to as @card_color@ when using the @.@ operator, all spaces become underscores.
+> style.padding left  # syntax error
+> style.padding_left  # use this instead
+
+--Assignment and sequence--
+Values can be assigned to [[script:variables]] using the @:=@ operator:
+> variable := 1 + 1
+The result of this expression is the value assigned, this can be used to assign to multiple variables:
+> var1 := var2 := 1 + 1
+> # now var1 == 2 and var2 == 2
+
+To combine multiple assignments into a single expression the ''sequencing operator'', @;@ can be used.
+This first executes an expression, discards the result and then evaluates another one:
+> var1 := 1 + 1  # assign
+>    ;           # discard the result (i.e. 2)
+> var1 * 2       # retrieve the value again, returns 4
+Semicolons at the end of a line can be omitted, so the above can also be written simply as:
+> var1 := 1 + 1
+> var1 * 2
+
+<div style="text-align:right;">next: <a href="variables">Variables and functions &rarr;</a></div>
