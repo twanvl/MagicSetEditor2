@@ -241,7 +241,7 @@ const String& Reader::getValue() {
 		previous_value.clear();
 		bool first = true;
 		// read all lines that are indented enough
-		readLine();
+		readLine(true);
 		previous_line_number = line_number;
 		while (indent >= expected_indent && !input->Eof()) {
 			if (!first) previous_value += _('\n');

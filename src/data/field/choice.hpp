@@ -119,8 +119,8 @@ enum ChoiceRenderStyle
 ,	RENDER_HIDDEN          = 0x20	// don't render anything, only have a menu
 ,	RENDER_CHECKLIST       = 0x100	// render as a checklist, intended for multiple choice
 ,	RENDER_LIST            = 0x200	// render as a list of images/text, intended for multiple choice
-,	RENDER_BOTH            = RENDER_TEXT | RENDER_IMAGE
-,	RENDER_HIDDEN_IMAGE    = RENDER_HIDDEN | RENDER_IMAGE
+,	RENDER_BOTH            = RENDER_TEXT      | RENDER_IMAGE
+,	RENDER_HIDDEN_IMAGE    = RENDER_HIDDEN    | RENDER_IMAGE
 ,	RENDER_TEXT_CHECKLIST  = RENDER_CHECKLIST | RENDER_TEXT
 ,	RENDER_IMAGE_CHECKLIST = RENDER_CHECKLIST | RENDER_IMAGE
 ,	RENDER_BOTH_CHECKLIST  = RENDER_CHECKLIST | RENDER_BOTH

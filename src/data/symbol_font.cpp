@@ -26,7 +26,7 @@ DECLARE_DYNAMIC_ARG(SymbolFont*, symbol_font_for_reading);
 IMPLEMENT_DYNAMIC_ARG(SymbolFont*, symbol_font_for_reading, nullptr);
 
 SymbolFont::SymbolFont()
-	: img_size(12), min_size(1)
+	: img_size(12)
 	, spacing(1,1)
 	, scale_text(false)
 	, text_margin_left(0), text_margin_right(0)
@@ -51,7 +51,6 @@ IMPLEMENT_REFLECTION(SymbolFont) {
 	REFLECT_ALIAS(300, "text align", "text alignment");
 	
 	REFLECT_N("image font size",  img_size);
-	REFLECT_N("scale down to",    min_size);
 	REFLECT_N("horizontal space", spacing.width);
 	REFLECT_N("vertical space",   spacing.height);
 	WITH_DYNAMIC_ARG(symbol_font_for_reading, this);

@@ -278,9 +278,9 @@ IMPLEMENT_REFLECTION_ENUM(ChoiceRenderStyle) {
 	VALUE_N("checklist",		RENDER_TEXT_CHECKLIST);
 	VALUE_N("image checklist",	RENDER_IMAGE_CHECKLIST);
 	VALUE_N("both checklist",	RENDER_BOTH_CHECKLIST);
-	VALUE_N("text list",		RENDER_IMAGE_LIST);
+	VALUE_N("text list",		RENDER_TEXT_LIST);
 	VALUE_N("image list",		RENDER_IMAGE_LIST);
-	VALUE_N("both list",		RENDER_IMAGE_LIST);
+	VALUE_N("both list",		RENDER_BOTH_LIST);
 }
 
 IMPLEMENT_REFLECTION(ChoiceStyle) {

@@ -138,7 +138,7 @@ bool TextValue::update(Context& ctx) {
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(TextValue) {
-	if (fieldP->save_value || tag.scripting()) REFLECT_NAMELESS(value);
+	if (fieldP->save_value || tag.scripting() || tag.reading()) REFLECT_NAMELESS(value);
 }
 
 // ----------------------------------------------------------------------------- : FakeTextValue

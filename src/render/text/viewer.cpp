@@ -414,6 +414,11 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 	line.top = style.padding_top;
 	// size of the line so far
 	RealSize line_size(lineLeft(dc, style, 0), 0);
+	while (line.top < style.height && line_size.width + 1 >= style.width - style.padding_right) {
+		// nothing fits on this line, move down one pixel
+		line.top += 1;
+		line_size.width = lineLeft(dc, style, line.top);
+	}
 	line.positions.push_back(line_size.width);
 	// The word we are currently reading
 	RealSize       word_size;
@@ -513,7 +518,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 			while (line.top < style.height && line_size.width + 1 >= style.width - style.padding_right) {
 				// nothing fits on this line, move down one pixel
 				line.top += 1;
-				line_size = RealSize(lineLeft(dc, style, line.top), 0);
+				line_size.width = lineLeft(dc, style, line.top);
 			}
 			line.positions.push_back(line_size.width); // start position
 		}

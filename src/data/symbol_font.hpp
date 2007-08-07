@@ -77,8 +77,7 @@ class SymbolFont : public Packaged {
 	String insertSymbolCode(int menu_id) const;
 		
   private:
-	UInt img_size;		///< Font size that the images use
-	UInt min_size;		///< Minimum font size
+	double img_size;	///< Font size that the images use
 	RealSize spacing;	///< Spacing between sybmols (for the default font size)
 	// writing text
 	bool scale_text;	///< Should text be scaled down to fit in a symbol?
