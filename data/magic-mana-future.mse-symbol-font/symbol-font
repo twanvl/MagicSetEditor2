@@ -4,13 +4,23 @@ mse version: 0.3.3
 image font size: 135
 horizontal space: 2
 symbol:
-	image:
-		{ if card.card_color=="white" then "mana_circle_w.png"
-		else if card.card_color=="blue" then "mana_circle_u.png"
-		else if card.card_color=="black" then "mana_circle_b.png"
-		else if card.card_color=="red" then "mana_circle_r.png"
-		else if card.card_color=="green" then "mana_circle_g.png"
-		else "mana_circle.png" }
+	image: mana_circle_w.png
+	enabled: { contains(card.card_color, match:"white") and not contains(card.card_color, match:"blue") and not contains(card.card_color, match:"black") and not contains(card.card_color, match:"red") and not contains(card.card_color, match:"green") }
+symbol:
+	image: mana_circle_u.png
+	enabled: { contains(card.card_color, match:"blue") and not contains(card.card_color, match:"white") and not contains(card.card_color, match:"black") and not contains(card.card_color, match:"red") and not contains(card.card_color, match:"green") }
+symbol:
+	image: mana_circle_b.png
+	enabled: { contains(card.card_color, match:"black") and not contains(card.card_color, match:"blue") and not contains(card.card_color, match:"white") and not contains(card.card_color, match:"red") and not contains(card.card_color, match:"green") }
+symbol:
+	image: mana_circle_r.png
+	enabled: { contains(card.card_color, match:"red") and not contains(card.card_color, match:"blue") and not contains(card.card_color, match:"black") and not contains(card.card_color, match:"white") and not contains(card.card_color, match:"green") }
+symbol:
+	image: mana_circle_g.png
+	enabled: { contains(card.card_color, match:"green") and not contains(card.card_color, match:"blue") and not contains(card.card_color, match:"black") and not contains(card.card_color, match:"red") and not contains(card.card_color, match:"white") }
+symbol:
+	image: mana_circle.png
+	enabled: { not contains(card.card_color, match:"white") and not contains(card.card_color, match:"blue") and not contains(card.card_color, match:"black") and not contains(card.card_color, match:"red") and not contains(card.card_color, match:"green") }
 symbol:
 	code: T
 	image: mana_t.png
