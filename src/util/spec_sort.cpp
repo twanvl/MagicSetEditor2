@@ -242,6 +242,8 @@ String spec_sort(const String& spec, String& input, String& ret) {
 			
 		} else if (it.keyword(_("cycle("))) {
 			cycle_sort(it.readParam(_(')')), input, ret);
+		} else if (it.value == _('(')) {
+			cycle_sort(it.readParam(_(')')), input, ret);
 		
 		} else if (it.keyword(_("compound("))) { // compound item
 			compound_sort(it.readParam(_(')')), input, ret);
