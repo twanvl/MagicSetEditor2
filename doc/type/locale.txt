@@ -50,3 +50,13 @@ This @%s@ should be used in exactly those entries that also contain it in the En
 
 --Examples--
 Look at the @"en.mse-locale"@ file in the standard MSE distribution for an example.
+
+--Translating MSE--
+To translate the MSE user interface:
+* Create a copy of the @"en.mse-locale"@ directory, name it @"**.mse-locale"@, where @"**"@ is a two or three letter [[http://en.wikipedia.org/wiki/ISO_language_code|ISO language code]].
+* Open the @"locale"@ file with Notepad (or another program that supports UTF-8), and translate the strings.
+* Add new keys for game, stylesheet or symbol font specific keys as described above.
+* Save the file, select the new locale from Edit->Preferences.
+* Restart MSE, and make sure everything looks right.
+* Submit the new locale to the [[http://magicseteditor.sourceforge.net/forum/7|MSE forum].
+* Maintain the locale when new versions of MSE come out. A new version may have new user interface items and therefore new keys.
