@@ -98,6 +98,7 @@ help:
 	file:
 	new set:			Create a new set
 	open set:			Open an existing set
+	last opened set:	Open '%s'
 	save set:			Save the set
 	save set as:		Save the set with a new name
 	export:				Export the set...

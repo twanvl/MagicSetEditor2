@@ -236,43 +236,6 @@ card style:
 		render style: image
 		choice images:
 			tombstone: tombstone.png
-	type symbol:
-		left:
-			{ if card.type_symbol=="white artifact" or card.type_symbol=="black artifact" then 26
-			else if card.type_symbol=="white enchantment" or card.type_symbol=="black enchantment" then 25
-			else 25 }
-		top:
-			{ if card.type_symbol=="white artifact" or card.type_symbol=="black artifact" then 26
-			else if card.type_symbol=="white enchantment" or card.type_symbol=="black enchantment" then 23
-			else if card.type_symbol=="white instant" or card.type_symbol=="black instant" then 25
-			else if card.type_symbol=="black land" or card.type_symbol=="white land" then 25
-			else 24 }
-		width:
-			{ if card.type_symbol=="white artifact" or card.type_symbol=="black artifact" then 15
-			else if card.type_symbol=="white instant" or card.type_symbol=="black instant" then 15
-			else 18 }
-		height:
-			{ if card.type_symbol=="white artifact" or card.type_symbol=="black artifact" then 15
-			else if card.type_symbol=="white enchantment" or card.type_symbol=="black enchantment" then 15
-			else if card.type_symbol=="white land" or card.type_symbol=="black land" then 15
-			else 18 }
-		z index: 4
-		render style: image
-		choice images:
-			white artifact: artifact_white.png
-			black artifact: artifact_black.png
-			white creature: creature_white.png
-			black creature: creature_black.png
-			white enchantment: enchantment_white.png
-			black enchantment: enchantment_black.png
-			white instant: instant_white.png
-			black instant: instant_black.png
-			white land: land_white.png
-			black land: land_black.png
-			white multitype: multitype_white.png
-			black multitype: multitype_black.png
-			white sorcery: sorcery_white.png
-			black sorcery: sorcery_black.png
 
 	############################# Image
 	image:
@@ -417,6 +380,27 @@ extra card field:
 	save value: false
 extra card field:
 	type: choice
+	name: type symbol
+	choice:
+		name: white
+		choice: artifact
+		choice: creature
+		choice: enchantment
+		choice: instant
+		choice: land
+		choice: multitype
+		choice: sorcery
+	choice:
+		name: black
+		choice: artifact
+		choice: creature
+		choice: enchantment
+		choice: instant
+		choice: land
+		choice: multitype
+		choice: sorcery
+extra card field:
+	type: choice
 	name: paintbrush
 	script: paintbrush_color(card.card_color)
 	editable: false
@@ -451,6 +435,28 @@ extra card style:
 		visible: { card.pt != "" }
 		render style: image
 		image: { card_ptbox() }
+	type symbol:
+		left: 23
+		top: 25
+		width: 21
+		height: 20
+		z index: 4
+		render style: image
+		choice images:
+			white artifact: artifact_white.png
+			black artifact: artifact_black.png
+			white creature: creature_white.png
+			black creature: creature_black.png
+			white enchantment: enchantment_white.png
+			black enchantment: enchantment_black.png
+			white instant: instant_white.png
+			black instant: instant_black.png
+			white land: land_white.png
+			black land: land_black.png
+			white multitype: multitype_white.png
+			black multitype: multitype_black.png
+			white sorcery: sorcery_white.png
+			black sorcery: sorcery_black.png
 	paintbrush:
 		right: { ( if card.pt != "" then 275 else 338 ) - card_style.illustrator.content_width }
 		top : 476

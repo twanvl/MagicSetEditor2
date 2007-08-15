@@ -698,27 +698,6 @@ card field:
 	choice: none
 	choice: tombstone
 	description: Symbol for this card (tombstone)
-card field:
-	type: choice
-	name: type symbol
-	choice:
-		name: white
-		choice: artifact
-		choice: creature
-		choice: enchantment
-		choice: instant
-		choice: land
-		choice: multitype
-		choice: sorcery
-	choice:
-		name: black
-		choice: artifact
-		choice: creature
-		choice: enchantment
-		choice: instant
-		choice: land
-		choice: multitype
-		choice: sorcery
 
 ############################# Image
 card field:
