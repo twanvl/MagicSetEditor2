@@ -36,6 +36,8 @@ init script:
 	}
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
+	
+	paintbrush_color := { if font_white() then "white" else "black" }
 
 ############################################################## Extra style options
 
@@ -180,18 +182,15 @@ card style:
 	############################# Copyright stuff
 
 	illustrator:
-		left: 23
+		left: 54
 		top : 477
-		width: 250
+		width: 219
 		height: 16
 		z index: 1
 		font:
 			name: Matrix
 			size: 10
 			color: { font_color(card.card_color) }
-		symbol font:
-			name: magic-paintbrush
-			size: 10
 
 	copyright line:
 		left: 26
@@ -211,7 +210,13 @@ extra card field:
 	name: pt box
 	script: card.card_color
 	editable: false
-
+extra card field:
+	type: choice
+	name: paintbrush
+	script: paintbrush_color(card.card_color)
+	editable: false
+	choice: black
+	choice: white
 extra card style:
 	pt box:
 		left:	277
@@ -223,3 +228,13 @@ extra card style:
 		render style: image
 		mask: mask_pt.png
 		image: { card_ptbox() }
+	paintbrush:
+		left: 23
+		top : 480
+		width: 30
+		height: 11
+		z index: 1
+		render style: image
+		choice images:
+			black: paintbrush.png
+			white: paintbrush_w.png

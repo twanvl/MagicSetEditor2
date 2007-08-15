@@ -31,7 +31,8 @@ init script:
 	# Only white cards use a black font
 	# TODO: also for some overlays involving white
 	font_colors_white := { input != "w" }
-
+	
+	paintbrush_color := { if font_white() then "white" else "black" }
 
 ############################################################## Extra style
 styling field:
@@ -394,19 +395,16 @@ card style:
 
 	############################# Copyright stuff
 	illustrator:
-		left: 200
+		right: 350
 		top : 340
-		width: 150
+		width: { max(20, card_style.illustrator.content_width) + 5 }
 		height: 16
 		z index: 1
-		alignment: bottom right
+		alignment: middle right
 		font:
 			name: MPlantin-Italic
 			size: 8
 			color: { font_color(card.card_color) }
-		symbol font:
-			name: magic-paintbrush
-			size: 14
 	copyright line:
 		left: 65
 		top : 493
@@ -431,6 +429,13 @@ extra card field:
 	name: pt symbols 2
 	script: "shieldsword"
 	editable: false
+extra card field:
+	type: choice
+	name: paintbrush
+	script: paintbrush_color(card.card_color)
+	editable: false
+	choice: black
+	choice: white
 
 extra card style:
 	pt symbols:
@@ -454,3 +459,13 @@ extra card style:
 		angle: 180
 		choice images:
 			shieldsword: ptshieldsword.png
+	paintbrush:
+		right: { 350 - card_style.illustrator.content_width }
+		top : 341
+		width: 40
+		height: 15
+		z index: 1
+		render style: image
+		choice images:
+			black: paintbrush.png
+			white: paintbrush_w.png

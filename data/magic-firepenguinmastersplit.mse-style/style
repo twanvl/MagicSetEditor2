@@ -40,6 +40,8 @@ init script:
 	# Only white cards use a black font
 	# TODO: also for some overlays involving white
 	font_colors_white := { input != "w" }
+	
+	paintbrush_color := { if font_white() then "white" else "black" }
 
 ############################################################## Extra style
 styling field:
@@ -435,33 +437,27 @@ card style:
 		
 	############################# Copyright stuff
 	illustrator:
-		left: 142.52
+		right: 246.41
 		top : 208
-		width: 103.89
+		width: { max(20, card_style.illustrator.content_width) + 5 }
 		height: 11.08
 		z index: 1
-		alignment: bottom right
+		alignment: middle right
 		font:
 			name: MPlantin-Italic
 			size: 5.54
 			color: { font_color(card.card_color) }
-		symbol font:
-			name: magic-paintbrush
-			size: 9.7
 	illustrator 2:
-		left: 396.01
+		right: 499.9
 		top : 208
-		width: 103.89
+		width: { max(20, card_style.illustrator.content_width) + 5 }
 		height: 11.08
 		z index: 1
-		alignment: bottom right
+		alignment: middle right
 		font:
 			name: MPlantin-Italic
 			size: 5.54
 			color: { font_color(card.card_color_2) }
-		symbol font:
-			name: magic-paintbrush
-			size: 9.7
 	copyright line:
 		left: 45.02
 		top : 348
@@ -497,6 +493,20 @@ extra card field:
 	name: pt symbols 2
 	script: "shieldsword"
 	editable: false
+extra card field:
+	type: choice
+	name: paintbrush
+	script: paintbrush_color(card.card_color)
+	editable: false
+	choice: black
+	choice: white
+extra card field:
+	type: choice
+	name: paintbrush 2
+	script: paintbrush_color(card.card_color_2)
+	editable: false
+	choice: black
+	choice: white
 
 extra card style:
 	pt symbols:
@@ -519,3 +529,23 @@ extra card style:
 		render style: image
 		choice images:
 			shieldsword: ptshieldsword.png
+	paintbrush:
+		right: { 246.41 - card_style.illustrator.content_width }
+		top : 209
+		width: 30
+		height: 10
+		z index: 1
+		render style: image
+		choice images:
+			black: paintbrush.png
+			white: paintbrush_w.png
+	paintbrush 2:
+		right: { 499.9 - card_style.illustrator_2.content_width }
+		top : 209
+		width: 30
+		height: 10
+		z index: 1
+		render style: image
+		choice images:
+			black: paintbrush.png
+			white: paintbrush_w.png

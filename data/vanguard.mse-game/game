@@ -38,7 +38,7 @@ init script:
 	# replaces — correctly
 	add := "" # default is nothing
 	for_mana_costs := format_cost := {
-		if input.separator_before == "—" then (
+		if input.separator_before == "—" and contains(input.param, " ") then (
 			if contains(input.param, match:",") then (
 				if match(match: "^[STXYZWUBRG0-9/|]+,", input.param) then
 					"{add}<param-cost>{combined_cost(input.param)}</param-cost>"
@@ -715,16 +715,6 @@ keyword:
 		 else "{english_number(param1)} cards of your library. Put any number of them on the bottom of your library in any order and the rest on top in any order."
 		}
 keyword:
-	keyword: Scry
-	match: scry <atom-param>number</atom-param>
-	mode: expert
-	reminder:
-		To scry {param1}, look at the top {
-		 if param1.value==1 then "card of your library, then you may put that card on the bottom of your library."
-		 else "{english_number(param1)} cards of your library. Put any number of them on the bottom of your library in any order and the rest on top in any order."
-		}
-
-keyword:
 	keyword: Sunburst
 	match: sunburst
 	mode: expert
@@ -827,7 +817,7 @@ keyword:
 	reminder: It comes into play with {english_number_a(param1)} +1/+1 counter(s) on it. Whenever a creature comes into play, you may move a +1/+1 counter from the permanent onto it.
 keyword:
 	keyword: Forecast
-	match: forecast — <atom-param>mana</atom-param>, Reveal <atom-param>name</atom-param> from your hand: <atom-param>action</atom-param>
+	match: forecast — <atom-param>action</atom-param>, Reveal <atom-param>name</atom-param> from your hand: <atom-param>action</atom-param>
 	mode: expert
 	reminder: Play the ability only during your upkeep and only once each turn.
 keyword:
@@ -856,7 +846,7 @@ keyword:
 	reminder: As long as it is on the stack, players can't play spells or activated abilities that aren't mana abilities.
 keyword:
 	keyword: Suspend
-	match: suspend <atom-param>number</atom-param>—<atom-param>mana</atom-param>
+	match: suspend <atom-param>number</atom-param>—<atom-param>cost</atom-param>
 	mode: expert
 	reminder: Rather than play it from your hand, you may pay {param2} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost. If it is a creature, it has haste.
 keyword:

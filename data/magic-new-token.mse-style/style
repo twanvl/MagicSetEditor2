@@ -13,7 +13,6 @@ card width: 375
 card height: 523
 card dpi: 150
 
-#error list:
 ############################################################## Extra scripts
 
 init script:
@@ -48,6 +47,8 @@ init script:
 	
 	# AE replacement shouldn't happen in the title, or else MSE compresses the symbol
 	name_filter := { input }
+	
+	paintbrush_color := { if font_white() then "white" else "black" }
 
 ############################################################## Set info fields
 
@@ -127,9 +128,13 @@ card style:
 
 	###################C######### Name line
 	name:
-		left: 50
+		left:
+			{ if card_style.name.content_width > 269 then 50
+			   else card_style.name.content_width * -0.5 + 184.5 }
 		top: 25
-		width: 275
+		width:
+			{ if card_style.name.content_width > 269 then 275
+			   else card_style.name.content_width + 6 }
 		height: 28
 		alignment: bottom center justify-overflow
 		padding bottom: -2
@@ -262,9 +267,9 @@ card style:
 	############################# Copyright stuff
 
 	illustrator:
-		left: 27
-		top : 481
-		width: 246
+		left: 58
+		top : 479
+		width: 215
 		height: 16
 		z index: 2
 		font:
@@ -272,9 +277,6 @@ card style:
 			size: 11
 			weight: bold
 			color: { font_color(card.card_color) }
-		symbol font:
-			name: magic-paintbrush
-			size: 10.5
 
 	copyright line:
 		left: 30
@@ -317,6 +319,13 @@ extra card field:
 	editable: false
 	save value: false
 	show statistics: false
+extra card field:
+	type: choice
+	name: paintbrush
+	script: paintbrush_color(card.card_color)
+	editable: false
+	choice: black
+	choice: white
 
 extra card style:
 	pt box:
@@ -354,7 +363,6 @@ extra card style:
 		width: 15
 		height: 35
 		z index: 2
-		visible: { card.name != "" }
 		render style: image
 		image: name-left.png
 	name box right:
@@ -365,7 +373,15 @@ extra card style:
 		width: 14
 		height: 35
 		z index: 2
-		visible: { card.name != "" }
 		render style: image
 		image: name-right.png
-
+	paintbrush:
+		left: 27
+		top : 481
+		width: 30
+		height: 11
+		z index: 2
+		render style: image
+		choice images:
+			black: paintbrush.png
+			white: paintbrush_w.png

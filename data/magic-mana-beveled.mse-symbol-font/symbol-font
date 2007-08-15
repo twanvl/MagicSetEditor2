@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.2
-# Symbol font in the normal, flat, style, used for text boxes and on old style cards
+# Symbol font in the beveled style used for casting costs on FPM cards
 # Note:
 #  Define  small_mana_t:="mana_t(_old)?.png" in the init script of the style
 #

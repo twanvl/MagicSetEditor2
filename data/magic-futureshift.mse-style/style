@@ -14,9 +14,6 @@ card dpi: 150
 #Todo:
 #Colorless Frame
 #Make different colored colorless mana symbols work
-#white font color blue land, red land, black land, and green land
-#style choice to override font color?
-#mana gears on colored artifacts need more color.
 ############################################################## Extra scripts
 
 init script:
@@ -66,7 +63,70 @@ init script:
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
 	
-	font_colors_white := { input != "w" and input != "c" and input != "a" and input != "l" and input != "m" }
+	colorless_color := {
+		if contains(card.card_color, match: "white")
+		   and not contains(card.card_color, match: "hybrid")
+		   and not contains(card.card_color, match: "multicolor")
+		   and not contains(card.card_color, match: "artifact")
+		   and not contains(card.card_color, match: "land") then "w"
+		else if contains(card.card_color, match: "blue")
+		   and not contains(card.card_color, match: "hybrid")
+		   and not contains(card.card_color, match: "multicolor")
+		   and not contains(card.card_color, match: "artifact")
+		   and not contains(card.card_color, match: "land") then "u"
+		else if contains(card.card_color, match: "black")
+		   and not contains(card.card_color, match: "hybrid")
+		   and not contains(card.card_color, match: "multicolor")
+		   and not contains(card.card_color, match: "artifact")
+		   and not contains(card.card_color, match: "land") then "b"
+		else if contains(card.card_color, match: "red")
+		   and not contains(card.card_color, match: "hybrid")
+		   and not contains(card.card_color, match: "multicolor")
+		   and not contains(card.card_color, match: "artifact")
+		   and not contains(card.card_color, match: "land") then "r"
+		else if contains(card.card_color, match: "green")
+		   and not contains(card.card_color, match: "hybrid")
+		   and not contains(card.card_color, match: "multicolor")
+		   and not contains(card.card_color, match: "artifact")
+		   and not contains(card.card_color, match: "land") then "g"
+		else "c"
+	}
+	
+	font_colors_white := { input == "b" or input == "bl" or input == "u" or input == "ul" or input == "r" or input == "rl" or input == "g" or input == "gl" }
+	
+	font_white := {
+		hybrid   := chosen(choice:"hybrid")
+		artifact := chosen(choice:"artifact")
+		colors := sort_text( order: "(wubrg)"
+			           , (if chosen(choice:"white") then "w")
+			           + (if chosen(choice:"blue")  then "u")
+			           + (if chosen(choice:"black") then "b")
+			           + (if chosen(choice:"red")   then "r")
+			           + (if chosen(choice:"green") then "g"))
+			           + (if artifact               then "a")
+		font_colors_white(
+			if chosen(choice:"land") and chosen(choice:"white") then "wl"
+			else if chosen(choice:"land") and chosen(choice:"blue") then "ul"
+			else if chosen(choice:"land") and chosen(choice:"black") then "bl"
+			else if chosen(choice:"land") and chosen(choice:"red") then "rl"
+			else if chosen(choice:"land") and chosen(choice:"green") then "gl"
+			else if chosen(choice:"land") then "l"
+			else if input == "artifact, multicolor" then "a"
+			else if chosen(choice:"multicolor")     then "m"
+			else if artifact and not hybrid         then "a"
+			else if colors == ""                    then "c"
+			else colors[
+				font_color_positions
+				[	if      chosen(choice:"horizontal") then "horizontal"
+					else if chosen(choice:"vertical")   then "vertical"
+					else if chosen(choice:"overlay")    then "overlay"
+					else                                     "radial"
+				][number_of_items(in: colors)]
+			]
+		)
+	}
+	
+	paintbrush_color := { if font_white() then "white" else "black" }
 
 ############################################################## Extra style options
 
@@ -278,7 +338,7 @@ card style:
 				   styling.center_text == "always"
 				then "middle center"
 				else "middle left"
-		z index: 2
+		z index: 3
 		padding left:   6
 		padding top:    2
 		padding right:  4
@@ -290,7 +350,7 @@ card style:
 		top : 321
 		width: 152
 		height: 152
-		z index: 1
+		z index: 2
 		render style: image
 		alignment: middle center
 		include file: magic-watermarks.mse-include/watermarks
@@ -313,19 +373,16 @@ card style:
 	############################# Copyright stuff
 
 	illustrator:
-		left: 131
+		right: { if card.pt != "" then 275 else 338 }
 		top : 475
-		width: { if card.pt != "" then 144 else 207 }
+		width: { max(150, card_style.illustrator.content_width) + 5 }
 		height: 16
 		z index: 2
-		alignment: bottom right
+		alignment: middle right
 		font:
 			name: MPlantin
 			size: 8
 			color: { font_color(card.card_color) }
-		symbol font:
-			name: magic-paintbrush
-			size: 14
 
 	copyright line:
 		left: 20
@@ -358,6 +415,13 @@ extra card field:
 	script: card.card_color
 	editable: false
 	save value: false
+extra card field:
+	type: choice
+	name: paintbrush
+	script: paintbrush_color(card.card_color)
+	editable: false
+	choice: black
+	choice: white
 
 extra card style:
 	textbox:
@@ -387,3 +451,13 @@ extra card style:
 		visible: { card.pt != "" }
 		render style: image
 		image: { card_ptbox() }
+	paintbrush:
+		right: { ( if card.pt != "" then 275 else 338 ) - card_style.illustrator.content_width }
+		top : 476
+		width: 40
+		height: 15
+		z index: 2
+		render style: image
+		choice images:
+			black: paintbrush.png
+			white: paintbrush_w.png

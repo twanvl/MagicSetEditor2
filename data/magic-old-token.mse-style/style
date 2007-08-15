@@ -33,6 +33,40 @@ init script:
 	
 	# Only white cards use a black font
 	font_colors_white := { input != "w" }
+	
+	color_combination := {
+		# The base hybrid, without the outer frame blended over it
+		base := base_hybrid[shape][color_count]()
+		
+		# Put a frame around it?
+		if land and not colored_lands then
+			masked_blend(
+				mask:  "multicolor_blend_{type}.png",
+				dark:  land_template("c"),
+				light: base,
+			)
+		else if multi then 
+			masked_blend(
+				mask: ( if styling.type_of_gradient_multicolor == "full card" then "multicolor_blend_{type}.png"
+					else if styling.type_of_gradient_multicolor == "trim only" then "multicolor_blend_{type}2.png"
+					else "multicolor_blend_{type}.png" ),
+				dark:  template("m"),
+				light: base,
+			)
+		else if artifact then 
+			masked_blend(
+				mask:  "multicolor_blend_{type}.png",
+				dark:  template("a"),
+				light: base,
+			)
+		else if color_count > 1 and mask_hybrid_with_land() then
+			masked_blend(
+				mask:  "hybrid_blend_{type}.png",
+				dark:  land_template("c"),
+				light: base,
+			)
+		else base
+	}
 
 ############################################################## Set info fields
 set info style:
@@ -68,6 +102,13 @@ styling field:
 	initial: no
 styling field:
 	type: choice
+	name: type of gradient multicolor
+	description: What parts of the card should be blended for gradient multicolor?
+	choice: full card
+	choice: trim only
+	initial: full card
+styling field:
+	type: choice
 	name: tap symbol
 	description: What tap symbol should be used on cards?
 	initial: old
@@ -82,6 +123,11 @@ styling field:
 	choice: short text only
 	choice: never
 	initial: short text only
+styling field:
+	type: boolean
+	name: colored rarities
+	description: Should rarity symbols be different colors, such as gold, silver, and purple?
+	initial: yes
 
 styling style:
 	use guild mana symbols:
@@ -177,9 +223,21 @@ card style:
 			# Images based on the set symbol
 			basic land: script: symbol_variation(symbol: set.symbol, variation: "common")
 			common:     script: symbol_variation(symbol: set.symbol, variation: "common")
-			uncommon:   script: symbol_variation(symbol: set.symbol, variation: "olduncommon")
-			rare:       script: symbol_variation(symbol: set.symbol, variation: "oldrare")
-			special:    script: symbol_variation(symbol: set.symbol, variation: "special")
+			uncommon:
+				script:
+					if styling.colored_rarities
+					then symbol_variation(symbol: set.symbol, variation: "olduncommon")
+					else symbol_variation(symbol: set.symbol, variation: "common")
+			rare:
+				script:
+					if styling.colored_rarities
+					then symbol_variation(symbol: set.symbol, variation: "oldrare")
+					else symbol_variation(symbol: set.symbol, variation: "common")
+			special:
+				script:
+					if styling.colored_rarities
+					then symbol_variation(symbol: set.symbol, variation: "special")
+					else symbol_variation(symbol: set.symbol, variation: "common")
 
 	############################# Text box
 	text:

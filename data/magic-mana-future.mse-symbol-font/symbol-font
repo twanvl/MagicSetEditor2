@@ -1,29 +1,69 @@
 mse version: 0.3.3
-# Symbol font in the 'popup' style, used for casting costs on modern cards
+# Symbol font in the 'futuristic' style, used for casting costs on futureshift cards
 
 image font size: 135
 horizontal space: 2
 symbol:
 	image: mana_circle_w.png
-	enabled: { contains(card.card_color, match:"white") and not contains(card.card_color, match:"blue") and not contains(card.card_color, match:"black") and not contains(card.card_color, match:"red") and not contains(card.card_color, match:"green") }
+	enabled: { colorless_color() == "w" }
 symbol:
 	image: mana_circle_u.png
-	enabled: { contains(card.card_color, match:"blue") and not contains(card.card_color, match:"white") and not contains(card.card_color, match:"black") and not contains(card.card_color, match:"red") and not contains(card.card_color, match:"green") }
+	enabled: { colorless_color() == "u" }
 symbol:
 	image: mana_circle_b.png
-	enabled: { contains(card.card_color, match:"black") and not contains(card.card_color, match:"blue") and not contains(card.card_color, match:"white") and not contains(card.card_color, match:"red") and not contains(card.card_color, match:"green") }
+	enabled: { colorless_color() == "b" }
 symbol:
 	image: mana_circle_r.png
-	enabled: { contains(card.card_color, match:"red") and not contains(card.card_color, match:"blue") and not contains(card.card_color, match:"black") and not contains(card.card_color, match:"white") and not contains(card.card_color, match:"green") }
+	enabled: { colorless_color() == "r" }
 symbol:
 	image: mana_circle_g.png
-	enabled: { contains(card.card_color, match:"green") and not contains(card.card_color, match:"blue") and not contains(card.card_color, match:"black") and not contains(card.card_color, match:"red") and not contains(card.card_color, match:"white") }
+	enabled: { colorless_color() == "g" }
 symbol:
 	image: mana_circle.png
-	enabled: { not contains(card.card_color, match:"white") and not contains(card.card_color, match:"blue") and not contains(card.card_color, match:"black") and not contains(card.card_color, match:"red") and not contains(card.card_color, match:"green") }
+	enabled: { colorless_color() == "c" }
 symbol:
 	code: T
 	image: mana_t.png
+symbol:
+	code: W/U
+	image: mana_guild_wu.png
+	enabled: { guild_mana() }
+symbol:
+	code: U/B
+	image: mana_guild_ub.png
+	enabled: { guild_mana() }
+symbol:
+	code: B/R
+	image: mana_guild_br.png
+	enabled: { guild_mana() }
+symbol:
+	code: R/G
+	image: mana_guild_rg.png
+	enabled: { guild_mana() }
+symbol:
+	code: G/W
+	image: mana_guild_gw.png
+	enabled: { guild_mana() }
+symbol:
+	code: W/B
+	image: mana_guild_wb.png
+	enabled: { guild_mana() }
+symbol:
+	code: U/R
+	image: mana_guild_ur.png
+	enabled: { guild_mana() }
+symbol:
+	code: B/G
+	image: mana_guild_bg.png
+	enabled: { guild_mana() }
+symbol:
+	code: R/W
+	image: mana_guild_rw.png
+	enabled: { guild_mana() }
+symbol:
+	code: G/U
+	image: mana_guild_gu.png
+	enabled: { guild_mana() }
 symbol:
 	code: W/U
 	image: mana_wu.png

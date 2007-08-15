@@ -65,7 +65,38 @@ init script:
 		else                                            "new"
 	}
 	
+	colorless_color := {
+		if contains(card.card_color, match: "white")
+		   and not contains(card.card_color, match: "hybrid")
+		   and not contains(card.card_color, match: "multicolor")
+		   and not contains(card.card_color, match: "artifact")
+		   and not contains(card.card_color, match: "land") then "w"
+		else if contains(card.card_color, match: "blue")
+		   and not contains(card.card_color, match: "hybrid")
+		   and not contains(card.card_color, match: "multicolor")
+		   and not contains(card.card_color, match: "artifact")
+		   and not contains(card.card_color, match: "land") then "u"
+		else if contains(card.card_color, match: "black")
+		   and not contains(card.card_color, match: "hybrid")
+		   and not contains(card.card_color, match: "multicolor")
+		   and not contains(card.card_color, match: "artifact")
+		   and not contains(card.card_color, match: "land") then "b"
+		else if contains(card.card_color, match: "red")
+		   and not contains(card.card_color, match: "hybrid")
+		   and not contains(card.card_color, match: "multicolor")
+		   and not contains(card.card_color, match: "artifact")
+		   and not contains(card.card_color, match: "land") then "r"
+		else if contains(card.card_color, match: "green")
+		   and not contains(card.card_color, match: "hybrid")
+		   and not contains(card.card_color, match: "multicolor")
+		   and not contains(card.card_color, match: "artifact")
+		   and not contains(card.card_color, match: "land") then "g"
+		else "c"
+	}
+	
 	font_colors_white := { input != "w" and input != "c" and input != "a" and input != "l" and input != "m" }
+	
+	paintbrush_color := { if font_white() then "white" else "black" }
 
 ############################################################## Extra style options
 
@@ -262,19 +293,16 @@ card style:
 	############################# Copyright stuff
 
 	illustrator:
-		left: 131
+		right: { if card.pt != "" then 281 else 341 }
 		top : 478
-		width: { if card.pt != "" then 150 else 210 }
+		width: { max(150, card_style.illustrator.content_width) + 5 }
 		height: 16
 		z index: 2
-		alignment: bottom right
+		alignment: middle right
 		font:
 			name: MPlantin
 			size: 8
 			color: { font_color(card.card_color) }
-		symbol font:
-			name: magic-paintbrush
-			size: 14
 
 	copyright line:
 		left: 22
@@ -294,6 +322,13 @@ extra card field:
 	name: pt box
 	script: card.card_color
 	editable: false
+extra card field:
+	type: choice
+	name: paintbrush
+	script: paintbrush_color(card.card_color)
+	editable: false
+	choice: black
+	choice: white
 
 extra card style:
 	pt box:
@@ -306,3 +341,13 @@ extra card style:
 		render style: image
 		image: { card_ptbox() }
 		mask: mask_pt.png
+	paintbrush:
+		right: { ( if card.pt != "" then 281 else 341 ) - card_style.illustrator.content_width }
+		top : 479
+		width: 40
+		height: 15
+		z index: 2
+		render style: image
+		choice images:
+			black: paintbrush.png
+			white: paintbrush_w.png

@@ -12,8 +12,6 @@ init script:
 	
 	############################################################## Sorting mana symbols
 	
-	# Used in FPM and Future Sight
-	brush_sort := sort_rule(order: "OP")
 	# correctly sort mana symbols
 	mana_sort := sort_rule(order: "ordered(XYZ)"
 	                            + "mixed(0123456789)"
@@ -233,7 +231,7 @@ init script:
 	# replaces — correctly
 	add := "" # default is nothing
 	for_mana_costs := format_cost := {
-		if input.separator_before == "—" then (
+		if input.separator_before == "—" and contains(input.param, match: " ") then (
 			if contains(input.param, match:",") then (
 				if match(match: "^[STXYZWUBRG0-9/|]+,", input.param) then
 					"{add}<param-cost>{combined_cost(input.param)}</param-cost>"
@@ -402,25 +400,7 @@ init script:
 		# curly quotes
 		curly_quotes
 	# Used in FPM and Future Sight
-	brush_context :=
-		"(?ix)				# case insensitive, ignore whitespace
-		 (^|[[:space:]\"(])		# start of a word
-		 (  (^)<match>(A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z|Æ)
-		 )
-		 ";
-	# Used in FPM and Future Sight
 	artist_line_filter :=
-		tag_remove_rule(tag: "<sym-auto>") +
-		replace_rule(
-			match: "\\][OP]+\\[",
-			replace: {"<nosym>" + brush_sort() + "</nosym>"} ) +
-		replace_rule(
-			match: "[OP|]+",
-			in_context: brush_context,
-			replace: {"<sym-auto>" + brush_sort() + "</sym-auto>"} ) +
-		replace_rule(
-			match: "\\[[OP]+\\]",
-			replace: {"<sym>" + brush_sort() + "</sym>"} ) +
 		replace_rule(
 			match: "AE",
 			replace: "Æ") +
@@ -1756,7 +1736,7 @@ keyword:
 	reminder: {if has_pt() then "This creature" else "This permanent"} comes into play with {english_number_a(param1)} +1/+1 counter(s) on it. Whenever {if has_pt() then "another" else "a"} creature comes into play, you may move a +1/+1 counter from {if has_pt() then "this creature" else "this permanent"} onto it.
 keyword:
 	keyword: Forecast
-	match: Forecast — <atom-param>mana</atom-param>, Reveal <atom-param>name</atom-param> from your hand: <atom-param>action</atom-param>
+	match: Forecast — <atom-param>action</atom-param>, Reveal <atom-param>name</atom-param> from your hand: <atom-param>action</atom-param>
 	mode: expert
 	reminder: Play this ability only during your upkeep and only once each turn.
 keyword:
@@ -1786,9 +1766,9 @@ keyword:
 	reminder: As long as this spell is on the stack, players can't play spells or activated abilities that aren't mana abilities.
 keyword:
 	keyword: Suspend
-	match: Suspend <atom-param>number</atom-param>—<atom-param>mana</atom-param>
+	match: Suspend <atom-param>number</atom-param>—<atom-param>cost</atom-param>
 	mode: expert
-	reminder: Rather than play this card from your hand,{if has_cc() then " you may" else ""} pay {param2} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost.{if has_pt() then " It has haste." else ""}
+	reminder: Rather than play this card from your hand,{if has_cc() then " you may" else ""} {for_mana_costs(add:"pay ", param2)} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost.{if has_pt() then " It has haste." else ""}
 keyword:
 	keyword: Vanishing
 	match: Vanishing <atom-param>number</atom-param>
