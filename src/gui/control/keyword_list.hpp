@@ -70,7 +70,7 @@ class KeywordList : public ItemList, public SetView {
 	
 	/// Send an 'item selected' event for the currently selected item (selected_item)
 	virtual void sendEvent();
-	/// Compare cards
+	/// Compare keywords
 	virtual bool compareItems(void* a, void* b) const;
 	
 	/// Get the text of an item in a specific column

@@ -16,7 +16,7 @@
 
 ScriptValue::operator String()                              const { return _("[[") + typeName() + _("]]"); }
 ScriptValue::operator int()                                 const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("integer" ))); }
-ScriptValue::operator double()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("real"    ))); }
+ScriptValue::operator double()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("double"  ))); }
 ScriptValue::operator Color()                               const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("color"   ))); }
 ScriptValueP ScriptValue::eval(Context&)                    const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("function"))); }
 ScriptValueP ScriptValue::getMember(const String& name)     const { return delayError(_ERROR_2_("has no member", typeName(), name));              }
@@ -149,7 +149,7 @@ class ScriptDouble : public ScriptValue {
   public:
 	ScriptDouble(double v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_DOUBLE; }
-	virtual String typeName() const { return _TYPE_("real"); }
+	virtual String typeName() const { return _TYPE_("double"); }
 	virtual operator String() const { return String() << value; }
 	virtual operator double() const { return value; }
 	virtual operator int()    const { return (int)value; }

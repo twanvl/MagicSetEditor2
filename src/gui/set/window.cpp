@@ -141,7 +141,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 2, _("window_style"),      _("style tab"));
 	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 3, _("window_keywords"),   _("keywords tab"));
 	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 4, _("window_statistics"), _("stats tab"));
-//	addPanel(*s, *menuWindow, *tabBar, new DraftPanel   (&this, wxID_ANY), 5, _("F10")) 
+//	addPanel(menuWindow, tabBar, new DraftPanel   (this, wxID_ANY), 5, _("window_draft"),      _("draft tab")) 
 	selectPanel(ID_WINDOW_CARDS); // select cards panel
 	
 	// loose ends

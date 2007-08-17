@@ -16,6 +16,7 @@
 
 DECLARE_POINTER_TYPE(Locale);
 DECLARE_POINTER_TYPE(SubLocale);
+class SubLocaleValidator;
 
 // ----------------------------------------------------------------------------- : Locale class
 
@@ -28,6 +29,9 @@ class SubLocale : public IntrusivePtrBase<SubLocale> {
 	String tr(const String& key);
 	/// Translate a key with a default value
 	String tr(const String& key, const String& def);
+	
+	/// Is this a valid sublocale? Returns errors
+	String validate(const String& name, const SubLocaleValidator&) const;
 	
 	DECLARE_REFLECTION();
 };
@@ -46,6 +50,9 @@ class Locale : public Packaged {
 	
 	/// Open a locale with the given name
 	static LocaleP byName(const String& name);
+	
+	/// Validate that the locale is valid for this MSE version
+	virtual void validate(Version = app_version);
 	
   protected:
 	String typeName() const;

@@ -82,7 +82,7 @@ intrusive_ptr<Field> read_new<Field>(Reader& reader) {
 		reader.warning(_ERROR_1_("expected key", _("type")));
 		throw ParseError(_ERROR_("aborting parsing"));
 	} else {
-		reader.warning(_ERROR_1_("Unsupported field type", type));
+		reader.warning(_ERROR_1_("unsupported field type", type));
 		throw ParseError(_ERROR_("aborting parsing"));
 	}
 }

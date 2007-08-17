@@ -173,6 +173,10 @@ edit_symbol				IMAGE	"../common/edit_symbol.png"
 wxBITMAP_STD_COLOURS	BITMAP "wx/msw/colours.bmp"
 WXCURSOR_HAND           CURSOR  DISCARDABLE     "wx/msw/hand.cur"
 
+// -------------------------------------------------------- : Other
+
+expected_locale_keys	TEXT	"../common/expected_locale_keys"
+
 // -------------------------------------------------------- : Version info
 
 1 VERSIONINFO

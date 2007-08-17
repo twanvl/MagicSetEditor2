@@ -177,7 +177,7 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 					return true;
 				}
 			}
-			replaceSelection(wxEmptyString, _("Backspace"));
+			replaceSelection(wxEmptyString, _ACTION_("backspace"));
 			break;
 		case WXK_DELETE:
 			if (selection_start == selection_end) {
@@ -188,15 +188,15 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 					moveSelection(TYPE_CURSOR, nextCharBoundry(selection_end), true, MOVE_RIGHT);
 				}
 			}
-			replaceSelection(wxEmptyString, _("Delete"));
+			replaceSelection(wxEmptyString, _ACTION_("delete"));
 			break;
 		case WXK_RETURN:
 			if (field().multi_line) {
 				if (ev.ShiftDown()) {
 					// soft line break
-					replaceSelection(_("<soft-line>\n</soft-line>"), _("Soft line break"));
+					replaceSelection(_("<soft-line>\n</soft-line>"), _ACTION_("soft line break"));
 				} else {
-					replaceSelection(_("\n"), _("Enter"));
+					replaceSelection(_("\n"), _ACTION_("enter"));
 				}
 			}
 			break;
@@ -212,9 +212,9 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 				//       this might not work for internationalized input.
 				//       It might also not be portable!
 				#ifdef UNICODE
-					replaceSelection(escape(String(ev.GetUnicodeKey(),    1)), _("Typing"));
+					replaceSelection(escape(String(ev.GetUnicodeKey(),    1)), _ACTION_("typing"));
 				#else
-					replaceSelection(escape(String((Char)ev.GetKeyCode(), 1)), _("Typing"));
+					replaceSelection(escape(String((Char)ev.GetKeyCode(), 1)), _ACTION_("typing"));
 				#endif
 			} else {
 				return false;
@@ -256,7 +256,7 @@ bool TextValueEditor::onCommand(int id) {
 			if (!style().always_symbol) {
 				code = _("<sym>") + code + _("</sym>");
 			}
-			replaceSelection(code, _("Insert Symbol"));
+			replaceSelection(code, _ACTION_("insert symbol"));
 			return true;
 		}
 	}
@@ -350,7 +350,7 @@ bool TextValueEditor::doPaste() {
 	wxTheClipboard->Close();
 	if (!ok) return false;
 	// paste
-	replaceSelection(escape(data.GetText()), _("Paste"));
+	replaceSelection(escape(data.GetText()), _ACTION_("paste"));
 	return true;
 }
 
@@ -370,7 +370,7 @@ bool TextValueEditor::doCopy() {
 }
 
 bool TextValueEditor::doDelete() {
-	replaceSelection(wxEmptyString, _("Cut"));
+	replaceSelection(wxEmptyString, _ACTION_("cut"));
 	return true;
 }
 

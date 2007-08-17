@@ -207,7 +207,7 @@ help:
 	overlap:			Place this shape, and its border above shapes below it
 	border:				Draws this shape as a border
 	
-	drag to shear:		Drag to shear selected shape
+	drag to shear:		Drag to shear selected %s
 	drag to rotate:		Drag to rotate selected %s, Ctrl constrains angle to multiples of 15 degrees
 	drag to resize:		Drag to resize selected %s, Ctrl constrains size
 	click to select shape:	Click to select shape, drag to move shape, double click to edit shape
@@ -421,7 +421,7 @@ label:
 	
 	# apprentice export
 	set code:			Set &Code:
-	apprentice export cancled: Export to Apprentice is cancled
+	apprentice export cancelled: Export to Apprentice is cancelled
 	
 	# Html export
 	html template:		Template:
@@ -516,7 +516,7 @@ title:
 	print preview:		Print Preview
 	# export
 	export images:		Export Images
-	export cancled:		Export Cancled
+	export cancelled:	Export Cancelled
 	export html:		Export to HTML
 	save html:			Export to HTML
 	
@@ -530,8 +530,13 @@ title:
 action:
 	# Text editor
 	typing:				Typing
+	enter:				Enter
+	soft line break:	Soft line break
+	insert symbol:		Insert symbol
 	backspace:			Backspace
 	delete:				Delete
+	cut:				Cut
+	paste:				Paste
 	# Choice/color editors
 	change:				Change %s
 	
@@ -561,7 +566,7 @@ action:
 	
 	# Symmetry
 	add symmetry:			Add symmetry
-	remove symmetry:		Remove symmetry
+	#remove symmetry:		Remove symmetry
 	move symmetry center:	Move symmetry center
 	move symmetry handle:	Change symmetry orientation
 	change symmetry type:	Change symmetry type
@@ -597,7 +602,6 @@ error:
 	has no member value:		String "%s" has no member '%s'
 	can't convert value:		Can't convert "%s" from %s to %s
 	unsupported format:			Invalid string format: '%s'
-	can not sort:				I don't know how to sort a %s
 	
 	# Image stuff
 	coordinates for blending overlap:					Coordinates for blending overlap
@@ -638,7 +642,7 @@ type:
 	collection:		collection
 	collection of:	collection of %ss
 	object:			object
-	real:			real number
+	double:			real number
 	integer:		integer number
 	string:			string
 	boolean:		boolean
@@ -675,7 +679,6 @@ type:
 	
 	point:			point
 	points:			points
-	handle:			handle
 	
 	# Package manager
 	installed:		installed

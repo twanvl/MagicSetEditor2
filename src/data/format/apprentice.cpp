@@ -697,7 +697,7 @@ void ApprenticeExportWindow::onOk(wxCommandEvent& ev) {
 		}
 	} catch (const AbortException&) {
 		// aborted, cleanup is already handled by dtors
-		wxMessageBox(_LABEL_("apprentice export cancled"), _TITLE_("export canceled"), wxOK | wxICON_INFORMATION);
+		wxMessageBox(_LABEL_("apprentice export cancelled"), _TITLE_("export cancelled"), wxOK | wxICON_INFORMATION);
 	}
 	// Done, close progress window
 	progress_target->Hide();

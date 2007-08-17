@@ -25,6 +25,8 @@ struct Version {
 	Version()             : version(0)       {}
 	Version(UInt version) : version(version) {}
 	
+	inline bool operator == (Version v) const { return version == v.version; }
+	inline bool operator != (Version v) const { return version != v.version; }
 	inline bool operator <  (Version v) const { return version <  v.version; }
 	inline bool operator <= (Version v) const { return version <= v.version; }
 	inline bool operator >  (Version v) const { return version >  v.version; }
