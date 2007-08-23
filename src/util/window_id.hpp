@@ -237,6 +237,12 @@ enum ControlID {
 ,	ID_ZOOM_Y
 ,	ID_SHARPEN
 ,	ID_SHARPEN_AMOUNT
+	// Updates window
+,	ID_PACKAGE_LIST
+,	ID_INSTALL
+,	ID_UPGRADE
+,	ID_REMOVE
+,	ID_CANCEL
 };
 
 // ----------------------------------------------------------------------------- : EOF

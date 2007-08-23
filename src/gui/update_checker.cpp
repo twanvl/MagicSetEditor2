@@ -10,6 +10,7 @@
 #include <data/settings.hpp>
 #include <util/io/package_manager.hpp>
 #include <util/version.hpp>
+#include <util/window_id.hpp>
 #include <script/value.hpp> // for some strange reason the profile build needs this :(
 #include <script/to_value.hpp>
 #include <wx/dialup.h>
@@ -184,7 +185,7 @@ void show_update_dialog(Window* parent) {
 class PackageUpdateList : public wxVListBox {
   public:
 	PackageUpdateList(UpdatesWindow* parent)
-		: wxVListBox (parent, wxID_ANY, wxDefaultPosition, wxSize(480,210), wxNO_BORDER | wxVSCROLL)
+		: wxVListBox (parent, ID_PACKAGE_LIST, wxDefaultPosition, wxSize(480,210), wxNO_BORDER | wxVSCROLL)
 		, parent(parent)
 	{
 		if (!checking_updates && !update_version_data) {
@@ -258,14 +259,11 @@ class PackageUpdateList : public wxVListBox {
 				,_TYPE_("new mse")
 			};
 			
-			// this doesn't work for me, is it really necessary?
-			//static Color textBack(0,0,0,wxALPHA_TRANSPARENT);
 			static Color packageFront(64,64,64);
 			
 			#define SELECT_WHITE(color) (IsSelected(n) ? *wxWHITE : color)
 			
 			dc.SetTextForeground(SELECT_WHITE(packageFront));
-			//dc.SetTextBackground(textBack);
 			dc.DrawText(pack->name, rect.GetLeft() + 1, rect.GetTop());
 			
 			dc.SetTextForeground(SELECT_WHITE(status_colors[status]));
@@ -274,7 +272,7 @@ class PackageUpdateList : public wxVListBox {
 			dc.SetTextForeground(SELECT_WHITE(action_colors[action]));
 			dc.DrawText(action_texts[action], rect.GetLeft() + 360, rect.GetTop());
 			
-			#undef SELECT_INVERT
+			#undef SELECT_WHITE
 		}
 	}
 	
@@ -304,33 +302,102 @@ END_EVENT_TABLE()
 // ----------------------------------------------------------------------------- : UpdateWindow
 
 UpdatesWindow::UpdatesWindow()
-	: Frame(nullptr, wxID_ANY, _TITLE_("package list"), wxDefaultPosition, wxSize(480,375), wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN)
+	: Frame(nullptr, wxID_ANY, _TITLE_("package list"), wxDefaultPosition, wxSize(480,400), wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN)
 {
 	SetIcon(wxIcon());
 	wxBoxSizer *v = new wxBoxSizer(wxVERTICAL);
+	wxBoxSizer *h1 = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *h2 = new wxBoxSizer(wxHORIZONTAL);
 	
 	package_list = new PackageUpdateList(this);
 	description_window = new HtmlWindowToBrowser(this, wxID_ANY, wxDefaultPosition, wxSize(480,100), wxHW_SCROLLBAR_AUTO | wxSUNKEN_BORDER);
 	
 	setDefaultPackageStatus();
 	
-	// TODO: No absolute positioning please!
 	package_title = new wxStaticText(this, wxID_ANY, _TITLE_("package name"),   wxDefaultPosition, wxSize(120,15), wxALIGN_LEFT | wxST_NO_AUTORESIZE);
 	status_title  = new wxStaticText(this, wxID_ANY, _TITLE_("package status"), wxDefaultPosition, wxSize(120,15), wxALIGN_LEFT | wxST_NO_AUTORESIZE);
 	new_title     = new wxStaticText(this, wxID_ANY, _TITLE_("new status"),     wxDefaultPosition, wxSize(120,15), wxALIGN_LEFT | wxST_NO_AUTORESIZE);
-	package_title->Move(1,0);
-	status_title->Move(240,0);
-	new_title->Move(360,0);
 	
-	v->AddSpacer(15);
+	h1->Add(package_title);
+	h1->Add(status_title);
+	h1->Add(new_title, 2);
+	
+	(install_button = new wxButton(this, ID_INSTALL, _("Install")))->Disable();
+	(upgrade_button = new wxButton(this, ID_UPGRADE, _("Update")))->Disable();
+	(remove_button  = new wxButton(this, ID_REMOVE,  _("Remove")))->Disable();
+	(cancel_button  = new wxButton(this, ID_CANCEL,  _("Cancel")))->Disable();
+	
+	h2->AddStretchSpacer(1);
+	h2->Add(install_button);
+	h2->AddStretchSpacer(2);
+	h2->Add(upgrade_button);
+	h2->AddStretchSpacer(2);
+	h2->Add(remove_button);
+	h2->AddStretchSpacer(2);
+	h2->Add(cancel_button);
+	h2->AddStretchSpacer(1);
+	
+	v->Add(h1);
 	v->Add(package_list);
+	v->AddStretchSpacer(1);
 	v->Add(description_window);
+	v->AddStretchSpacer(1);
+	v->Add(h2);
+	v->AddStretchSpacer(1);
 	
 	SetSizer(v);
 }
 
 void UpdatesWindow::onUpdateCheckFinished(wxCommandEvent&) {
 	setDefaultPackageStatus();
+}
+
+void UpdatesWindow::onPackageSelect(wxCommandEvent& ev) {
+	updateButtons(ev.GetInt());
+}
+
+void UpdatesWindow::onButton(wxCommandEvent& ev) {
+	PackageVersionDataP pack = update_version_data->packages[package_list->GetSelection()];
+	PackageAction& action = package_data[pack].second;
+	switch (ev.GetId()) {
+		case ID_INSTALL: action = ACTION_INSTALL; break;
+		case ID_REMOVE:  action = ACTION_UNINSTALL; break;
+		case ID_UPGRADE: action = ACTION_UPGRADE; break;
+		case ID_CANCEL:  action = (pack->app_version > file_version) ? ACTION_NEW_MSE : ACTION_NOTHING; break;
+	}
+	updateButtons(package_list->GetSelection());
+	package_list->Refresh();
+}
+
+void UpdatesWindow::updateButtons(int id) {
+	PackageVersionDataP pack = update_version_data->packages[id];
+
+	description_window->SetPage(pack->description);
+
+	PackageStatus status = package_data[pack].first;
+	PackageAction action = package_data[pack].second;
+
+	if (action == ACTION_NEW_MSE) {
+		install_button->Disable();
+		remove_button->Enable(status != STATUS_NOT_INSTALLED);
+		upgrade_button->Disable();
+		cancel_button->Disable();
+	} else if (status == STATUS_INSTALLED) {
+		install_button->Disable();
+		remove_button->Enable(action != ACTION_UNINSTALL);
+		upgrade_button->Disable();
+		cancel_button->Enable(action == ACTION_UNINSTALL);
+	} else if (status == STATUS_NOT_INSTALLED) {
+		install_button->Enable(action != ACTION_INSTALL);
+		remove_button->Disable();
+		upgrade_button->Disable();
+		cancel_button->Enable(action == ACTION_INSTALL);
+	} else /* status == STATUS_UPGRADEABLE */ {
+		install_button->Disable();
+		remove_button->Enable(action != ACTION_UNINSTALL);
+		upgrade_button->Enable(action != ACTION_UPGRADE);
+		cancel_button->Enable(action != ACTION_NOTHING);
+	}
 }
 
 void UpdatesWindow::setDefaultPackageStatus() {
@@ -362,4 +429,9 @@ void UpdatesWindow::setDefaultPackageStatus() {
 
 BEGIN_EVENT_TABLE(UpdatesWindow, Frame)
 	EVT_COMMAND(wxID_ANY, UPDATE_CHECK_FINISHED_EVT, UpdatesWindow::onUpdateCheckFinished)
+	EVT_LISTBOX(ID_PACKAGE_LIST, UpdatesWindow::onPackageSelect)
+	EVT_BUTTON(ID_INSTALL, UpdatesWindow::onButton)
+	EVT_BUTTON(ID_REMOVE,  UpdatesWindow::onButton)
+	EVT_BUTTON(ID_UPGRADE, UpdatesWindow::onButton)
+	EVT_BUTTON(ID_CANCEL,  UpdatesWindow::onButton)
 END_EVENT_TABLE()

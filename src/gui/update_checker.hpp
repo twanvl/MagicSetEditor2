@@ -65,8 +65,14 @@ class UpdatesWindow : public Frame {
 	wxHtmlWindow* description_window;
 
 	wxStaticText *package_title, *status_title, *new_title;
+	wxButton *install_button, *upgrade_button, *remove_button, *cancel_button;
 	
 	void onUpdateCheckFinished(wxCommandEvent&);
+	void onPackageSelect(wxCommandEvent&);
+	void onButton(wxCommandEvent&);
+
+	/// Update the buttons to indicate that this is selected.
+	void updateButtons(int index);
 	
 	void setDefaultPackageStatus();
 };

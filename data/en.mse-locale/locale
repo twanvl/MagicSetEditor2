@@ -1,4 +1,4 @@
-mse version: 0.3.2
+﻿mse version: 0.3.2
 full name: English
 
 ############################################################## Menu items
@@ -686,7 +686,7 @@ type:
 	upgradeable:	upgradeable
 	
 	install:		install
-	uninstall:		uninstalled
+	uninstall:		uninstall
 	upgrade:		upgrade
 	do nothing:		do nothing
 	new mse:		MSE outdated

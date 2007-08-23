@@ -12,6 +12,7 @@
 #include <data/symbol_font.hpp>
 #include <util/io/package_manager.hpp>
 #include <script/to_value.hpp>
+#include <wx/wfstream.h>
 
 #include <wx/stdpaths.h>
 #if defined(__WXMSW__)
@@ -209,16 +210,26 @@ void Locale::validate(Version ver) {
 	r.handle_greedy(v);
 	// validate
 	String errors;
-	errors += translations[LOCALE_CAT_MENU   ].validate(_("menu"),    *v.sublocales[_("menu")   ]);
-	errors += translations[LOCALE_CAT_HELP   ].validate(_("help"),    *v.sublocales[_("help")   ]);
-	errors += translations[LOCALE_CAT_TOOL   ].validate(_("tool"),    *v.sublocales[_("tool")   ]);
-	errors += translations[LOCALE_CAT_TOOLTIP].validate(_("tooltip"), *v.sublocales[_("tooltip")]);
-	errors += translations[LOCALE_CAT_LABEL  ].validate(_("label"),   *v.sublocales[_("label")  ]);
-	errors += translations[LOCALE_CAT_BUTTON ].validate(_("button"),  *v.sublocales[_("button") ]);
-	errors += translations[LOCALE_CAT_TITLE  ].validate(_("title"),   *v.sublocales[_("title")  ]);
-	errors += translations[LOCALE_CAT_ACTION ].validate(_("action"),  *v.sublocales[_("action") ]);
-	errors += translations[LOCALE_CAT_ERROR  ].validate(_("error"),   *v.sublocales[_("error")  ]);
-	errors += translations[LOCALE_CAT_TYPE   ].validate(_("type"),    *v.sublocales[_("type")   ]);
+	// For efficiency, this needs to be parallel to LocaleCategory's values.
+	String sublocales[10] = {
+		_("menu"),
+		_("help"),
+		_("tool"),
+		_("tooltip"),
+		_("label"),
+		_("button"),
+		_("title"),
+		_("type"),
+		_("action"),
+		_("error")
+	};
+
+	for (String * current = sublocales; current < sublocales + 10; ++current) {
+		if (v.sublocales[*current])
+			errors += translations[current - sublocales].validate(*current,    *v.sublocales[*current]);
+		else
+			errors += _("\nError validating local file: expected keys file missing \"") + *current + _("\" section.");
+	}
 	// errors?
 	if (!errors.empty()) {
 		if (ver != app_version) {
