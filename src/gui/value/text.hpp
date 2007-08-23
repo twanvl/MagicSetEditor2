@@ -15,6 +15,8 @@
 #include <render/value/text.hpp>
 
 class TextValueEditorScrollBar;
+DECLARE_POINTER_TYPE(WordListPos);
+DECLARE_SHARED_POINTER_TYPE(DropDownWordList);
 
 // ----------------------------------------------------------------------------- : TextValueEditor
 
@@ -85,7 +87,7 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	
 	// --------------------------------------------------- : Other
 	
-	virtual wxCursor cursor() const;
+	virtual wxCursor cursor(const RealPoint& pos) const;
 	virtual void determineSize(bool force_fit = false);
 	virtual void onShow(bool);
 	virtual void draw(RotatedDC&);
@@ -94,9 +96,11 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
   private:
 	size_t selection_start,   selection_end;   ///< Cursor position/selection (if any), cursor positions
 	size_t selection_start_i, selection_end_i; ///< Cursor position/selection, character indices
+	bool selecting;                            ///< Selecting text?
 	bool select_words;                         ///< Select whole words when dragging the mouse?
 	TextValueEditorScrollBar* scrollbar;       ///< Scrollbar for multiline fields in native look
 	bool scroll_with_cursor;                   ///< When the cursor moves, should the scrollposition change?
+	vector<WordListPosP> word_lists;           ///< Word lists in the text
 	
 	// --------------------------------------------------- : Selection / movement
 	
@@ -147,6 +151,22 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	bool ensureCaretVisible();
 	/// Prepare for drawing if there is a scrollbar
 	void prepareDrawScrollbar(RotatedDC& dc);
+	
+	// --------------------------------------------------- : Word lists
+	
+	friend class DropDownWordList;
+	DropDownWordListP drop_down;
+	bool dropDownShown();
+	
+	/// Find all word lists in the current value
+	void findWordLists();
+	/// Draw word list indicators
+	void drawWordListIndicators(RotatedDC& dc);
+	/// Find a WordListPos under the mouse cursor (if any), pos is in internal coordinates
+	WordListPosP findWordList(const RealPoint& pos) const;
+	/// Show a word list drop down menu
+	void wordListDropDown(const WordListPosP& pos);
+	
 };
 
 // ----------------------------------------------------------------------------- : EOF

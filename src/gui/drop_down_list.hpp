@@ -48,11 +48,11 @@ class DropDownList : public wxPopupWindow {
 	static const size_t NO_SELECTION = (size_t)-1;
 	
 	/// Signal that the list is closed and something is selected
-	/** Returns true if the event was handled and the list should be hidden,
-	 *  false keeps the list open. */
-	virtual bool select(size_t selection) = 0;
+	virtual void select(size_t selection) = 0;
 	/// When the list is being opened, what should be selected?
 	virtual size_t selection() const = 0;
+	/** Should the list stay open after selecting something? */
+	virtual bool stayOpen() const { return false; }
 	
 	// --------------------------------------------------- : Item information
 	/// Number of items
@@ -60,7 +60,7 @@ class DropDownList : public wxPopupWindow {
 	/// Text of an item
 	virtual String itemText(size_t item) const = 0;
 	/// Draw an icon at the specified location
-	virtual void drawIcon(DC& dc, int x, int y, size_t item, bool selected) const = 0;
+	virtual void drawIcon(DC& dc, int x, int y, size_t item, bool selected) const {}
 	/// Is there a line below an item?
 	virtual bool lineBelow(size_t item)        const { return false; }
 	/// Should the item be highlighted?

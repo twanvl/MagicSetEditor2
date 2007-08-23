@@ -217,7 +217,7 @@ void DataEditor::onMotion(wxMouseEvent& ev) {
 		wxFrame* frame = dynamic_cast<wxFrame*>( wxGetTopLevelParent(this) );
 		FOR_EACH_EDITOR_REVERSE { // find high z index fields first
 			if (v->containsPoint(pos) && v->getField()->editable) {
-				wxCursor c = e->cursor();
+				wxCursor c = e->cursor(pos);
 				if (c.Ok()) SetCursor(c);
 				else        SetCursor(wxCURSOR_ARROW);
 				if (frame) frame->SetStatusText(v->getField()->description);

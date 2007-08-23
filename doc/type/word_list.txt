@@ -1,0 +1,18 @@
+Data type: word list
+
+A list of words. Used for drop down lists in the text editor, for example for card types.
+
+--Properties--
+! Property	Type						Default		Description
+| @name@	[[type:string]]					''Required''	Name of this word list, refered to using a @"<word-list-...>"@ tag.
+| @words@	[[type:list]] of [[type:word list word]]s	''Required''	The words in the list
+
+--Example--
+>word list:
+>	name: type
+>	word: Creature
+>	word: Spell
+>	word: Artifact
+This can be used with for example:
+> @"<word-list-type>Creature</word-list-type>"@
+Which gives the creature choice, and that can be changed with a drop down list.

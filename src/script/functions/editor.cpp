@@ -18,6 +18,7 @@
 DECLARE_TYPEOF_COLLECTION(FieldP);
 DECLARE_TYPEOF_COLLECTION(TextValue*);
 DECLARE_TYPEOF_COLLECTION(String);
+DECLARE_TYPEOF_COLLECTION(pair<String COMMA bool>);
 DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
 
 // ----------------------------------------------------------------------------- : Combined editor
@@ -53,41 +54,43 @@ SCRIPT_FUNCTION_WITH_DEP(combined_editor) {
 	}
 	// split the value
 	SCRIPT_PARAM(String, value);
-	vector<String> value_parts;
+	vector<pair<String,bool> > value_parts; // (value part, is empty)
 	size_t pos = value.find(_("<sep"));
 	while (pos != String::npos) {
-		value_parts.push_back(value.substr(0, pos));
+		String part = value.substr(0, pos);
+		value_parts.push_back(make_pair(part, false));
 		value = value.substr(min(match_close_tag_end(value,pos), value.size()));
 		pos = value.find(_("<sep"));
 	}
-	value_parts.push_back(value);
+	value_parts.push_back(make_pair(value, false));
 	value_parts.resize(values.size()); // TODO: what if there are more value_parts than values?
 	// update the values if our input value is newer?
 	Age new_value_update = last_update_age();
 	FOR_EACH_2(v, values, nv, value_parts) {
-		if (v->value() != nv && v->last_update < new_value_update) {
-			// TODO : type over
-			v->value.assign(nv);
+		if (v->value() != nv.first && v->last_update < new_value_update) {
+			v->value.assign(nv.first);
 			v->update(ctx);
 		}
-		nv = v->value();
+		nv.first = v->value();
+		nv.second = index_to_untagged(nv.first, nv.first.size()) == 0;
 	}
 	// options
 	SCRIPT_PARAM_DEFAULT_N(bool, _("hide when empty"),   hide_when_empty,   false);
 	SCRIPT_PARAM_DEFAULT_N(bool, _("soft before empty"), soft_before_empty, false);
 	// recombine the parts
-	String new_value = value_parts.front();
+	String new_value = value_parts.front().first;
+	bool   new_value_empty = value_parts.front().second;
 	for (size_t i = 1 ; i < value_parts.size() ; ++i) {
-		if (value_parts[i].empty() && new_value.empty() && hide_when_empty) {
+		if (value_parts[i].second && new_value_empty && hide_when_empty) {
 			// no separator
-		} else if (value_parts[i].empty() && soft_before_empty) {
+		} else if (value_parts[i].second && soft_before_empty) {
 			// soft separator
 			new_value += _("<sep-soft>") + separators[i - 1] + _("</sep-soft>");
 		} else {
 			// normal separator
 			new_value += _("<sep>")      + separators[i - 1] + _("</sep>");
-			new_value += value_parts[i];
 		}
+		new_value += value_parts[i].first;
 	}
 	SCRIPT_RETURN(new_value);
 }

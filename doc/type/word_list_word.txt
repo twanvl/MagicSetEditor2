@@ -1,0 +1,18 @@
+Data type: word list word
+
+A word in a [[type:word list]].
+
+--Properties--
+! Property	Type						Default		Description
+| @name@	[[type:string]]					''Required''	The word
+| @line below@	[[type:boolean]]				@false@		Display a line below this item in the list?
+| @words@	[[type:list]] of [[type:word list word]]s			A submenu
+
+A word can also be given in a short form, in that case only the name is specified.
+
+--Example--
+In short form:
+>word: xyz
+Is the same as:
+>word:
+>	name: xyz

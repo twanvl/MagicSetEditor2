@@ -20,13 +20,15 @@ class DropDownMultipleChoiceList : public DropDownChoiceListBase {
 	
   protected:
 	virtual void   onShow();
-	virtual bool   select(size_t item);
+	virtual void   select(size_t item);
 	virtual size_t selection() const;
+	virtual bool stayOpen() const { return true; }
 	virtual DropDownList* createSubMenu(ChoiceField::ChoiceP group) const;
 	virtual void drawIcon(DC& dc, int x, int y, size_t item, bool selected) const;
 	
-	virtual void onMotion(wxMouseEvent&);
+	virtual void onMouseLeave(wxMouseEvent&);
   private:
+	DECLARE_EVENT_TABLE();
 	bool kept_open; ///< Was the list kept open after selecting a choice, if so, be eager to close it
 };
 
@@ -38,7 +40,7 @@ DropDownMultipleChoiceList::DropDownMultipleChoiceList
 	icon_size.width += 16;
 }
 
-bool DropDownMultipleChoiceList::select(size_t item) {
+void DropDownMultipleChoiceList::select(size_t item) {
 	MultipleChoiceValueEditor& mcve = dynamic_cast<MultipleChoiceValueEditor&>(cve);
 	if (isFieldDefault(item)) {
 		mcve.toggleDefault();
@@ -49,7 +51,6 @@ bool DropDownMultipleChoiceList::select(size_t item) {
 	// keep the box open
 	DropDownChoiceListBase::onShow(); // update 'enabled'
 	kept_open = true;
-	return false;
 }
 
 void DropDownMultipleChoiceList::drawIcon(DC& dc, int x, int y, size_t item, bool selected) const {
@@ -92,15 +93,20 @@ DropDownList* DropDownMultipleChoiceList::createSubMenu(ChoiceField::ChoiceP gro
 	return new DropDownMultipleChoiceList(const_cast<DropDownMultipleChoiceList*>(this), true, cve, group);
 }
 
-void DropDownMultipleChoiceList::onMotion(wxMouseEvent& ev) {
+void DropDownMultipleChoiceList::onMouseLeave(wxMouseEvent& ev) {
 	if (kept_open) {
 		wxSize cs = GetClientSize();
 		if (ev.GetX() < 0 || ev.GetY() < 0 || ev.GetX() >= cs.x || ev.GetY() >= cs.y) {
 			hide(false); // outside box; hide it
+			ev.Skip();
+			return;
 		}
 	}
-	DropDownChoiceListBase::onMotion(ev);
 }
+
+BEGIN_EVENT_TABLE(DropDownMultipleChoiceList, DropDownChoiceListBase)
+	EVT_LEAVE_WINDOW(DropDownMultipleChoiceList::onMouseLeave)
+END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------- : MultipleChoiceValueEditor
 

@@ -113,7 +113,7 @@ class ValueEditor {
 	// --------------------------------------------------- : Other
 	
 	/// The cursor type to use when the mouse is over this control
-	virtual wxCursor cursor() const { return wxCursor(); }
+	virtual wxCursor cursor(const RealPoint& pos) const { return wxCursor(); }
 	/// Determines prefered size in the native look, update the style
 	virtual void determineSize(bool force_fit = false) {}
 	/// Should a label and control border be drawn in the native look?

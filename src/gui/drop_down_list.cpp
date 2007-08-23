@@ -37,13 +37,9 @@ class DropDownHider : public wxEvtHandler {
 			// don't just use ev.Skip(), because this event handler will be removed by hiding,
 			// so there will be no next handler to skip to
 			wxEvtHandler* nh = GetNextHandler();
-			list.hide(false);
 			if (nh) nh->ProcessEvent(ev);
+			list.hide(false);
 			return false;
-		} else if (t == wxEVT_MOTION) {
-			// send along all motion events
-			list.ProcessEvent(ev);
-			return wxEvtHandler::ProcessEvent(ev);
 		} else {
 //			if (t !=10093 && t !=10098 && t !=10097 && t !=10099 && t !=10004 && t !=10062
 //			 && t !=10025 && t !=10035 && t !=10034 && t !=10036 && t !=10042 && t !=10119)
@@ -142,25 +138,31 @@ void DropDownList::show(bool in_place, wxPoint pos) {
 	if (selected_item == NO_SELECTION && itemCount() > 0) selected_item = 0; // select first item by default
 	mouse_down = false;
 	Window::Show();
+	if (!parent_menu && GetParent()->HasCapture()) {
+		// release capture on parent
+		GetParent()->ReleaseMouse();
+	}
 	// fix drop down arrow
 	redrawArrowOnParent();
 }
 
 void DropDownList::hide(bool event, bool allow_veto) {
+	// hide?
+	bool keep_open = event && allow_veto && stayOpen();
+	if (keep_open) {
+		Refresh(false);
+	} else {
+		// hide root
+		DropDownList* root = this;
+		while (root->parent_menu) {
+			root = root->parent_menu;
+		}
+		root->realHide();
+	}
 	// send event
 	if (event && selected_item != NO_SELECTION && itemEnabled(selected_item)) {
-		bool close = select(selected_item);
-		if (allow_veto && !close) {
-			Refresh(false);
-			return;
-		}
+		select(selected_item);
 	}
-	// hide root
-	DropDownList* root = this;
-	while (root->parent_menu) {
-		root = root->parent_menu;
-	}
-	root->realHide();
 }
 
 void DropDownList::realHide() {
@@ -292,7 +294,13 @@ void DropDownList::drawItem(DC& dc, int y, size_t item) {
 
 // ----------------------------------------------------------------------------- : DropDownList : Events
 
-void DropDownList::onLeftDown(wxMouseEvent&) {
+void DropDownList::onLeftDown(wxMouseEvent& ev) {
+	wxSize cs = GetClientSize();
+	if (ev.GetX() < 0 || ev.GetX() >= cs.x || ev.GetY() < marginH || ev.GetY() >= cs.y) {
+		hide(false);
+		ev.Skip();
+		return;
+	}
 	mouse_down = true; // prevent closing on mouseup of the click that opened the window
 }
 
@@ -309,7 +317,10 @@ void DropDownList::onMotion(wxMouseEvent& ev) {
 	// size
 	wxSize cs = GetClientSize();
 	// find selected item
-	if (ev.GetX() < marginW || ev.GetX() + marginW >= cs.GetWidth() || ev.GetY() < marginH || ev.GetY() + marginH >= cs.GetHeight()) return;
+	if (ev.GetX() < marginW || ev.GetX() + marginW >= cs.GetWidth() || ev.GetY() < marginH || ev.GetY() + marginH >= cs.GetHeight()) {
+		ev.Skip();
+		return;
+	}
 	int startY = marginH;
 	size_t count = itemCount();
 	for (size_t i = 0 ; i < count ; ++i) {

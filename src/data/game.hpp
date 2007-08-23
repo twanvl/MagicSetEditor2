@@ -24,6 +24,7 @@ DECLARE_POINTER_TYPE(PackType);
 DECLARE_POINTER_TYPE(KeywordParam);
 DECLARE_POINTER_TYPE(KeywordMode);
 DECLARE_POINTER_TYPE(Keyword);
+DECLARE_POINTER_TYPE(WordList);
 
 // ----------------------------------------------------------------------------- : Game
 
@@ -43,6 +44,7 @@ class Game : public Packaged {
 	vector<StatsDimensionP> statistics_dimensions;  ///< (Additional) statistics dimensions
 	vector<StatsCategoryP>  statistics_categories;  ///< (Additional) statistics categories
 	vector<PackTypeP>       pack_types;				///< Types of random card packs to generate
+	vector<WordListP>       word_lists;				///< Word lists for editing with a drop down list
 
 	bool                    has_keywords;           ///< Does this game use keywords?
 	OptionalScript          keyword_match_script;	///< For the keyword editor

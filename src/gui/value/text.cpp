@@ -9,12 +9,19 @@
 #include <gui/value/text.hpp>
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
+#include <gui/drop_down_list.hpp>
+#include <data/word_list.hpp>
+#include <data/game.hpp>
 #include <data/action/value.hpp>
 #include <util/tagged_string.hpp>
 #include <util/find_replace.hpp>
 #include <util/window_id.hpp>
 #include <wx/clipbrd.h>
 #include <wx/caret.h>
+
+DECLARE_SHARED_POINTER_TYPE(DropDownList);
+DECLARE_TYPEOF_COLLECTION(WordListP);
+DECLARE_TYPEOF_COLLECTION(WordListPosP);
 
 // ----------------------------------------------------------------------------- : TextValueEditorScrollBar
 
@@ -54,12 +61,97 @@ END_EVENT_TABLE  ()
 
 
 
+// ----------------------------------------------------------------------------- : WordListPos
+
+class WordListPos : public IntrusivePtrBase<WordListPos> {
+  public:
+	WordListPos(size_t start, size_t end, WordListP word_list)
+		: start(start), end(end)
+		, rect(-1,-1,-1,-1)
+		, word_list(word_list)
+		, active(false)
+	{}
+	
+	const size_t start, end; ///< Start and ending indices
+	RealRect  rect;          ///< Rectangle around word list text
+	WordListP word_list;     ///< Word list to use
+	bool active;             ///< Is the list dropped down right now?
+};
+
+class DropDownWordList : public DropDownList {
+  public:
+	DropDownWordList(Window* parent, bool is_submenu, TextValueEditor& tve, const WordListPosP& pos, const WordListWordP& list);
+	
+	void setWords(const WordListPosP& pos2);
+	
+  protected:
+	virtual void          onShow();
+	virtual size_t        itemCount() const             { return words->words.size(); }
+	virtual bool          lineBelow(size_t item) const  { return words->words[item]->line_below; }
+	virtual String        itemText(size_t item) const   { return words->words[item]->name; }
+	virtual DropDownList* submenu(size_t item) const;
+	virtual size_t        selection() const;
+	virtual void          select(size_t item);
+  private:
+	TextValueEditor& tve;
+	WordListPosP pos;
+	mutable vector<DropDownListP> submenus;
+	WordListWordP words; ///< The words we are listing
+};
+
+
+DropDownWordList::DropDownWordList(Window* parent, bool is_submenu, TextValueEditor& tve, const WordListPosP& pos, const WordListWordP& words)
+	: DropDownList(parent, is_submenu, is_submenu ? nullptr : &tve)
+	, tve(tve), pos(pos)
+	, words(words)
+{
+	item_size.height = max(16., item_size.height);
+}
+
+void DropDownWordList::setWords(const WordListPosP& pos2) {
+	if (words != pos2->word_list) {
+		// switch to different list
+		submenus.clear();
+	}
+	pos = pos2;
+	words = pos2->word_list;
+}
+
+void DropDownWordList::onShow() {
+	pos->active = true;
+}
+
+DropDownList* DropDownWordList::submenu(size_t item) const {
+	if (item >= submenus.size()) submenus.resize(item + 1);
+	if (submenus[item]) return submenus[item].get();
+	WordListWordP word = words->words[item];
+	if (word->isGroup()) {
+		// create submenu
+		submenus[item].reset(new DropDownWordList(const_cast<DropDownWordList*>(this), true, tve, pos, word));
+	}
+	return submenus[item].get();
+}
+
+
+size_t DropDownWordList::selection() const {
+	// TODO: find selection
+	return NO_SELECTION;
+}
+
+void DropDownWordList::select(size_t item) {
+	pos->active = false;
+	tve.selection_start_i = pos->start;
+	tve.selection_end_i   = pos->end;
+	tve.fixSelection(TYPE_INDEX);
+	tve.replaceSelection(words->words[item]->name, _ACTION_("?????"));
+}
+
 // ----------------------------------------------------------------------------- : TextValueEditor
 
 IMPLEMENT_VALUE_EDITOR(Text)
 	, selection_start  (0), selection_end  (0)
 	, selection_start_i(0), selection_end_i(0)
-	, select_words(false)
+	, selecting(false), select_words(false)
 	, scrollbar(nullptr), scroll_with_cursor(false)
 {
 	if (viewer.nativeLook() && field().multi_line) {
@@ -75,16 +167,33 @@ TextValueEditor::~TextValueEditor() {
 
 bool TextValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
 	select_words = false;
-	moveSelection(TYPE_INDEX, v.indexAt(style().getRotation().trInv(pos)), !ev.ShiftDown(), MOVE_MID);
+	RealPoint pos2 = style().getRotation().trInv(pos);
+	// on word list dropdown button?
+	WordListPosP wl_pos = findWordList(pos2);
+	if (wl_pos) {
+		// show dropdown
+		if (drop_down) {
+			drop_down->setWords(wl_pos);
+		} else {
+			drop_down.reset(new DropDownWordList(&editor(), false, *this, wl_pos, wl_pos->word_list));
+		}
+		drop_down->show(false, wxPoint(0,0)); // TODO: position?
+	} else {
+		// no, select text
+		selecting = true;
+		moveSelection(TYPE_INDEX, v.indexAt(pos2), !ev.ShiftDown(), MOVE_MID);
+	}
 	return true;
 }
 bool TextValueEditor::onLeftUp(const RealPoint& pos, wxMouseEvent&) {
 	// TODO: lookup position of click?
+	selecting = false;
 	return false;
 }
 
 bool TextValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
-	if (ev.LeftIsDown()) {
+	if (dropDownShown()) return false;
+	if (ev.LeftIsDown() && selecting) {
 		size_t index = v.indexAt(style().getRotation().trInv(pos));
 		if (select_words) {
 			// on the left, swap start and end
@@ -126,6 +235,10 @@ bool TextValueEditor::onRightDown(const RealPoint& pos, wxMouseEvent& ev) {
 // ----------------------------------------------------------------------------- : Keyboard
 
 bool TextValueEditor::onChar(wxKeyEvent& ev) {
+	if (dropDownShown()) {
+		// forward to drop down list
+		return drop_down->onCharInParent(ev);
+	}
 	if (ev.AltDown()) return false;
 	fixSelection();
 	switch (ev.GetKeyCode()) {
@@ -293,6 +406,8 @@ void TextValueEditor::draw(RotatedDC& dc) {
 	prepareDrawScrollbar(dc);
 	// draw text
 	TextValueViewer::draw(dc);
+	// draw word list thingamajigies
+	drawWordListIndicators(dc);
 	// draw selection
 	if (isCurrent()) {
 		v.drawSelection(dc, style(), selection_start_i, selection_end_i);
@@ -306,8 +421,11 @@ void TextValueEditor::draw(RotatedDC& dc) {
 
 wxCursor rotated_ibeam;
 
-wxCursor TextValueEditor::cursor() const {
-	if (viewer.getRotation().sideways() ^ style().getRotation().sideways()) { // 90 or 270 degrees
+wxCursor TextValueEditor::cursor(const RealPoint& pos) const {
+	RealPoint pos2 = style().getRotation().trInv(pos);
+	if (findWordList(pos2)) {
+		return wxCursor();
+	} else if (viewer.getRotation().sideways() ^ style().getRotation().sideways()) { // 90 or 270 degrees
 		if (!rotated_ibeam.Ok()) {
 			rotated_ibeam = wxCursor(load_resource_cursor(_("rot_text")));
 		}
@@ -321,10 +439,12 @@ void TextValueEditor::onValueChange() {
 	TextValueViewer::onValueChange();
 	selection_start   = selection_end   = 0;
 	selection_start_i = selection_end_i = 0;
+	findWordLists();
 }
 
 void TextValueEditor::onAction(const Action& action, bool undone) {
 	TextValueViewer::onValueChange();
+	findWordLists();
 	TYPE_CASE(action, TextValueAction) {
 		selection_start = action.selection_start;
 		selection_end   = action.selection_end;
@@ -439,6 +559,11 @@ void TextValueEditor::doFormat(int type) {
 // ----------------------------------------------------------------------------- : Selection
 
 void TextValueEditor::showCaret() {
+	if (dropDownShown()) {
+		wxCaret* caret = editor().GetCaret();
+		if (caret && caret->IsVisible()) caret->Hide();
+		return;
+	}
 	// Rotation
 	Rotation rot(viewer.getRotation());
 	Rotater rot2(rot, style().getRotation());
@@ -854,4 +979,89 @@ void TextValueEditor::prepareDrawScrollbar(RotatedDC& dc) {
 		updateScrollbar();
 		style().width.mutate() += scrollbar_width;
 	}
+}
+
+// ----------------------------------------------------------------------------- : Word lists
+
+bool TextValueEditor::dropDownShown() {
+	return drop_down && drop_down->IsShown();
+}
+
+void TextValueEditor::findWordLists() {
+	word_lists.clear();
+	// for each word list...
+	const String& str = value().value();
+	size_t pos = str.find(_("<word-list-"));
+	while (pos != String::npos) {
+		size_t type_end = str.find_first_of(_('>'), pos);
+		size_t end = match_close_tag_end(str, pos);
+		if (type_end == String::npos || end == String::npos) return;
+		String name = str.substr(pos + 11, type_end - pos - 11);
+		WordListP word_list;
+		// find word list type
+		FOR_EACH(wl, getSet().game->word_lists) {
+			if (wl->name == name) {
+				word_list = wl;
+				break;
+			}
+		}
+		if (!word_list) {
+			throw Error(_ERROR_1_("word list type not found", name));
+		}
+		// add to word_lists
+		word_lists.push_back(new_intrusive3<WordListPos>(pos, end, word_list));
+		// next
+		pos = str.find(_("<word-list-"), end);
+	}
+}
+
+void TextValueEditor::drawWordListIndicators(RotatedDC& dc) {
+	bool current = isCurrent();
+	FOR_EACH(wl, word_lists) {
+		RealRect& r = wl->rect;
+		if (r.height < 0) {
+			// find the rectangle for this indicator
+			RealRect start = v.charRect(wl->start);
+			RealRect end   = v.charRect(wl->end);
+			r.x = start.x;
+			r.y = start.y;
+			r.width  = end.right() - start.left() + 0.5;
+			r.height = end.bottom() - start.top();
+		}
+		// draw background
+		if (current && wl->active) {
+			dc.SetPen  (Color(0,  128,255));
+			dc.SetBrush(Color(128,192,255));
+		} else if (current) {
+			dc.SetPen  (Color(64, 160,255));
+			dc.SetBrush(Color(160,208,255));
+		} else {
+			dc.SetPen  (Color(128,128,128));
+			dc.SetBrush(Color(192,192,192));
+		}
+		dc.DrawRectangle(RealRect(style().left + r.right(), style().top + r.top(), 9, r.height));
+		// draw foreground
+		/*
+		dc.SetPen  (*wxTRANSPARENT_PEN);
+		dc.SetBrush(*wxBLACK_BRUSH);
+		wxPoint poly[] = {dc.tr(RealPoint(0,0)), dc.tr(RealPoint(5,0)), dc.tr(RealPoint(3,2))};
+		dc.getDC().DrawPolygon(3, poly, style().left + r.right() + 2, style().top + r.bottom() - 5);
+		*/
+		dc.SetPen  (*wxBLACK_PEN);
+		double x = style().left + r.right(), y = style().top + r.bottom();
+		dc.DrawLine(RealPoint(x + 4, y - 3), RealPoint(x + 5, y - 3));
+		dc.DrawLine(RealPoint(x + 3, y - 4), RealPoint(x + 6, y - 4));
+		dc.DrawLine(RealPoint(x + 2, y - 5), RealPoint(x + 7, y - 5));
+	}
+}
+
+WordListPosP TextValueEditor::findWordList(const RealPoint& pos) const {
+	FOR_EACH_CONST(wl, word_lists) {
+		const RealRect& r = wl->rect;
+		if (pos.x >= r.right() && pos.x < r.right() + 9 &&
+		    pos.y >= r.top()   && pos.y < r.bottom()) {
+			return wl;
+		}
+	}
+	return WordListPosP();
 }

@@ -96,7 +96,7 @@ class DropDownChoiceList : public DropDownChoiceListBase {
 	
   protected:
 	virtual void   onShow();
-	virtual bool   select(size_t item);
+	virtual void   select(size_t item);
 	virtual size_t selection() const;
 	virtual DropDownList* createSubMenu(ChoiceField::ChoiceP group) const;
 };

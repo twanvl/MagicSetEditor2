@@ -1,0 +1,34 @@
+//+----------------------------------------------------------------------------+
+//| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
+//| Copyright:    (C) 2001 - 2007 Twan van Laarhoven                           |
+//| License:      GNU General Public License 2 or later (see file COPYING)     |
+//+----------------------------------------------------------------------------+
+
+// ----------------------------------------------------------------------------- : Includes
+
+#include <data/word_list.hpp>
+
+// ----------------------------------------------------------------------------- : WordList
+
+WordListWord::WordListWord()
+	: line_below(false)
+	, is_prefix(false)
+{}
+
+IMPLEMENT_REFLECTION_NO_SCRIPT(WordListWord) {
+	if (line_below || is_prefix || isGroup() || (tag.reading() && tag.isComplex())) {
+		// complex value
+		REFLECT(name);
+		REFLECT(line_below);
+		REFLECT(is_prefix);
+		REFLECT(words);
+	} else {
+		REFLECT_NAMELESS(name);
+	}
+}
+
+IMPLEMENT_REFLECTION_NO_SCRIPT(WordList) {
+	REFLECT(name);
+	REFLECT(words);
+}
+

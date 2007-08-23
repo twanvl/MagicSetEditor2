@@ -1891,6 +1891,12 @@
 				<File
 					RelativePath=".\data\symbol_font.hpp">
 				</File>
+				<File
+					RelativePath=".\data\word_list.cpp">
+				</File>
+				<File
+					RelativePath=".\data\word_list.hpp">
+				</File>
 			</Filter>
 			<Filter
 				Name="base"

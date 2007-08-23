@@ -27,7 +27,7 @@ class DropDownColorList : public DropDownList {
 	virtual String itemText(size_t item) const;
 	virtual void   drawIcon(DC& dc, int x, int y, size_t item, bool selected) const;
 	
-	virtual bool   select(size_t item);
+	virtual void   select(size_t item);
 	virtual size_t selection() const;
 	
   private:
@@ -112,7 +112,7 @@ size_t DropDownColorList::selection() const {
 	}
 	return selection;
 }
-bool DropDownColorList::select(size_t item) {
+void DropDownColorList::select(size_t item) {
 	if (isDefault(item)) {
 		cve.change( Defaultable<Color>());
 	} else if (isCustom(item)) {
@@ -120,7 +120,6 @@ bool DropDownColorList::select(size_t item) {
 	} else {
 		cve.change(field().choices[item - hasDefault()]->color);
 	}
-	return true;
 }
 
 // ----------------------------------------------------------------------------- : ColorValueEditor

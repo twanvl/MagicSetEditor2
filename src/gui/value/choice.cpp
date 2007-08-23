@@ -231,14 +231,13 @@ void DropDownChoiceList::onShow() {
 	generateThumbnailImages();
 }
 
-bool DropDownChoiceList::select(size_t item) {
+void DropDownChoiceList::select(size_t item) {
 	if (isFieldDefault(item)) {
 		dynamic_cast<ChoiceValueEditor&>(cve).change( Defaultable<String>() );
 	} else {
 		ChoiceField::ChoiceP choice = getChoice(item);
 		dynamic_cast<ChoiceValueEditor&>(cve).change( field().choices->choiceName(choice->first_id) );
 	}
-	return true;
 }
 
 size_t DropDownChoiceList::selection() const {

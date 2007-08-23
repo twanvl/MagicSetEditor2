@@ -35,6 +35,9 @@ Parts
 | @"pattern(.z. xyz)"@	@"yzz"@			Selects all things that match the pattern, where @"."@ is a wildcard.
 			 			The things matching the wildcards are then sorted using the given pattern (separated by a space), and subsituted back in.
 			 			So in <tt>"zzyyxxy"</tt> the pattern matches <tt>"<b>zzy</b>xxy"</tt> with wildcards <tt>"zy"</tt> these sort as <tt>"yz"</tt> and in the pattern this becomes <tt>"yzz"</tt>.
+| @"in_place(yz)"@	@"yyyzxxz"@		Sort everything with the given pattern, and insert the remaining characters in their orignal places.<br/>
+			 			For example, in @"zzyyxxy"@ we match <tt>y</tt> and <tt>z</tt>, leaving @"....xx."@.
+			 			The result of the pattern is @"yyyzz"@, subsituting that back in gives @"yyyzxxz"@.
 
 The parts are read from left to right, each part that matches something removes it from the input, so for example
 > sort_text(order: "xx")

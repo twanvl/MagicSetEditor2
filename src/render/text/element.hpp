@@ -112,7 +112,7 @@ class SimpleTextElement : public TextElement {
 /// A text element that uses a normal font
 class FontTextElement : public SimpleTextElement {
   public:
-	FontTextElement(const String& text, size_t start ,size_t end, const FontP& font, DrawWhat draw_as, LineBreak break_style)
+	FontTextElement(const String& text, size_t start, size_t end, const FontP& font, DrawWhat draw_as, LineBreak break_style)
 		: SimpleTextElement(text, start, end)
 		, font(font), draw_as(draw_as), break_style(break_style)
 	{}
@@ -130,7 +130,7 @@ class FontTextElement : public SimpleTextElement {
 /// A text element that uses a symbol font
 class SymbolTextElement : public SimpleTextElement {
   public:
-	SymbolTextElement(const String& text, size_t start ,size_t end, const SymbolFontRef& font, Context* ctx)
+	SymbolTextElement(const String& text, size_t start, size_t end, const SymbolFontRef& font, Context* ctx)
 		: SimpleTextElement(text, start, end)
 		, font(font), ctx(*ctx)
 	{}
@@ -149,7 +149,7 @@ class SymbolTextElement : public SimpleTextElement {
 /// A TextElement consisting of sub elements
 class CompoundTextElement : public TextElement {
   public:
-	CompoundTextElement(const String& text, size_t start ,size_t end) : TextElement(text, start, end) {}
+	CompoundTextElement(const String& text, size_t start, size_t end) : TextElement(text, start, end) {}
 	
 	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
@@ -162,7 +162,7 @@ class CompoundTextElement : public TextElement {
 /// A TextElement drawn using a grey background
 class AtomTextElement : public CompoundTextElement {
   public:
-	AtomTextElement(const String& text, size_t start ,size_t end) : CompoundTextElement(text, start, end) {}
+	AtomTextElement(const String& text, size_t start, size_t end) : CompoundTextElement(text, start, end) {}
 	
 	virtual void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 };
@@ -170,7 +170,7 @@ class AtomTextElement : public CompoundTextElement {
 /// A TextElement drawn using a red wavy underline
 class ErrorTextElement : public CompoundTextElement {
   public:
-	ErrorTextElement(const String& text, size_t start ,size_t end) : CompoundTextElement(text, start, end) {}
+	ErrorTextElement(const String& text, size_t start, size_t end) : CompoundTextElement(text, start, end) {}
 	
 	virtual void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 };

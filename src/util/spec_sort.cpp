@@ -12,6 +12,8 @@
 const Char REMOVED     = _('\2');
 const Char PLACEHOLDER = _('\3');
 
+String spec_sort(const String& spec, String& input, String& ret);
+
 // ----------------------------------------------------------------------------- : Iterator for reading specs
 
 /// Iterator over a sort specification (for spec_sort)
@@ -213,6 +215,24 @@ void pattern_sort(const String& pattern, const String& spec, String& input, Stri
 	}
 }
 
+/// Sort things in place, keep the rest of the input
+void in_place_sort(const String& spec, String& input, String& ret) {
+	String result;
+	spec_sort(spec, input, result);
+	// restore into the same order as in 'input'
+	size_t pos_r = 0;
+	FOR_EACH(c, input) {
+		if (c == REMOVED) {
+			if (pos_r < result.size()) {
+				ret += result.GetChar(pos_r++);
+			}
+		} else {
+			ret += c;
+		}
+	}
+	input.clear(); // we ate all the input
+}
+
 // ----------------------------------------------------------------------------- : spec_sort
 
 String spec_sort(const String& spec, String& input, String& ret) {
@@ -247,7 +267,7 @@ String spec_sort(const String& spec, String& input, String& ret) {
 		
 		} else if (it.keyword(_("compound("))) { // compound item
 			compound_sort(it.readParam(_(')')), input, ret);
-			
+		
 		} else if (it.keyword(_("pattern("))) { // recurse with pattern
 			String pattern;
 			// read pattern
@@ -261,6 +281,11 @@ String spec_sort(const String& spec, String& input, String& ret) {
 			String sub_spec = it.readRawParam(_(')'));
 			// sort
 			pattern_sort(pattern, sub_spec, input, ret);
+		
+		} else if (it.keyword(_("in_place("))) { // recurse without pattern
+			// read spec to apply to pattern
+			String sub_spec = it.readRawParam(_(')'));
+			in_place_sort(sub_spec, input, ret);
 		
 		} else if (it.keyword(_("any()"))) { // remaining input
 			FOR_EACH(d, input) {

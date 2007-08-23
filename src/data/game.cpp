@@ -12,6 +12,7 @@
 #include <data/keyword.hpp>
 #include <data/statistics.hpp>
 #include <data/pack.hpp>
+#include <data/word_list.hpp>
 #include <util/io/package_manager.hpp>
 #include <script/script.hpp>
 
@@ -56,7 +57,7 @@ IMPLEMENT_REFLECTION(Game) {
 	REFLECT(keyword_modes);
 	REFLECT(keyword_parameter_types);
 	REFLECT_NO_SCRIPT(keywords);
-//	REFLECT(word_lists);
+	REFLECT(word_lists);
 }
 
 void Game::validate(Version v) {
