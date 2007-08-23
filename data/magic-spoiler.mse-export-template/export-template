@@ -142,7 +142,7 @@ script:
 	}
 	write_cards := {
 		"<ul class='cards'>{
-		  for each card in sort(cards, order_by: {input.card_number}) do
+		  for each card in sort_list(cards, order_by: {input.card_number}) do
 		     write_card()
 		}</ul>"
 	}
