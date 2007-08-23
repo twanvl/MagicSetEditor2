@@ -164,8 +164,10 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	void drawWordListIndicators(RotatedDC& dc);
 	/// Find a WordListPos under the mouse cursor (if any), pos is in internal coordinates
 	WordListPosP findWordList(const RealPoint& pos) const;
-	/// Show a word list drop down menu
-	void wordListDropDown(const WordListPosP& pos);
+	/// Find a WordListPos for a index position
+	WordListPosP findWordList(size_t index) const;
+	/// Show a word list drop down menu, if wl
+	bool wordListDropDown(const WordListPosP& wl);
 	
 };
 

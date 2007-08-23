@@ -67,7 +67,8 @@ SCRIPT_FUNCTION_WITH_DEP(combined_editor) {
 	// update the values if our input value is newer?
 	Age new_value_update = last_update_age();
 	FOR_EACH_2(v, values, nv, value_parts) {
-		if (v->value() != nv.first && v->last_update < new_value_update) {
+		//if (v->value() != nv.first && v->last_update < new_value_update) {
+		if (v->last_update < new_value_update) {
 			v->value.assign(nv.first);
 			v->update(ctx);
 		}

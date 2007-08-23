@@ -21,6 +21,7 @@
 
 DECLARE_SHARED_POINTER_TYPE(DropDownList);
 DECLARE_TYPEOF_COLLECTION(WordListP);
+DECLARE_TYPEOF_COLLECTION(WordListWordP);
 DECLARE_TYPEOF_COLLECTION(WordListPosP);
 
 // ----------------------------------------------------------------------------- : TextValueEditorScrollBar
@@ -134,7 +135,14 @@ DropDownList* DropDownWordList::submenu(size_t item) const {
 
 
 size_t DropDownWordList::selection() const {
-	// TODO: find selection
+	// current selection
+	String current = untag(tve.value().value().substr(pos->start, pos->end - pos->start));
+	// find selection
+	size_t i = 0;
+	FOR_EACH(w, words->words) {
+		if (current == w->name) return i;
+		++i;
+	}
 	return NO_SELECTION;
 }
 
@@ -143,7 +151,8 @@ void DropDownWordList::select(size_t item) {
 	tve.selection_start_i = pos->start;
 	tve.selection_end_i   = pos->end;
 	tve.fixSelection(TYPE_INDEX);
-	tve.replaceSelection(words->words[item]->name, _ACTION_("?????"));
+	tve.replaceSelection(escape(words->words[item]->name),
+	                     format_string(_ACTION_("change"), tve.field().name));
 }
 
 // ----------------------------------------------------------------------------- : TextValueEditor
@@ -171,13 +180,7 @@ bool TextValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
 	// on word list dropdown button?
 	WordListPosP wl_pos = findWordList(pos2);
 	if (wl_pos) {
-		// show dropdown
-		if (drop_down) {
-			drop_down->setWords(wl_pos);
-		} else {
-			drop_down.reset(new DropDownWordList(&editor(), false, *this, wl_pos, wl_pos->word_list));
-		}
-		drop_down->show(false, wxPoint(0,0)); // TODO: position?
+		wordListDropDown(wl_pos);
 	} else {
 		// no, select text
 		selecting = true;
@@ -215,6 +218,7 @@ bool TextValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
 }
 
 bool TextValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent& ev) {
+	if (dropDownShown()) return false;
 	select_words = true;
 	size_t index = v.indexAt(style().getRotation().trInv(pos));
 	moveSelection(TYPE_INDEX, prevWordBoundry(index), true, MOVE_MID);
@@ -223,6 +227,7 @@ bool TextValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent& ev) {
 }
 
 bool TextValueEditor::onRightDown(const RealPoint& pos, wxMouseEvent& ev) {
+	if (dropDownShown()) return false;
 	size_t index = v.indexAt(style().getRotation().trInv(pos));
 	if (index < min(selection_start_i, selection_end_i) ||
 		index > max(selection_start_i, selection_end_i)) {
@@ -259,10 +264,18 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 			}
 			break;
 		case WXK_UP:
-			moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, -1), !ev.ShiftDown(), MOVE_LEFT_OPT);
+			if (field().multi_line) {
+				moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, -1), !ev.ShiftDown(), MOVE_LEFT_OPT);
+			} else {
+				wordListDropDown(findWordList(selection_end_i));
+			}
 			break;
 		case WXK_DOWN:
-			moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, +1), !ev.ShiftDown(), MOVE_RIGHT_OPT);
+			if (field().multi_line) {
+				moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, +1), !ev.ShiftDown(), MOVE_RIGHT_OPT);
+			} else {
+				wordListDropDown(findWordList(selection_end_i));
+			}
 			break;
 		case WXK_HOME:
 			// move to begining of line / all (if control)
@@ -1016,6 +1029,7 @@ void TextValueEditor::findWordLists() {
 }
 
 void TextValueEditor::drawWordListIndicators(RotatedDC& dc) {
+	Rotater rot(dc, style().getRotation());
 	bool current = isCurrent();
 	FOR_EACH(wl, word_lists) {
 		RealRect& r = wl->rect;
@@ -1039,16 +1053,16 @@ void TextValueEditor::drawWordListIndicators(RotatedDC& dc) {
 			dc.SetPen  (Color(128,128,128));
 			dc.SetBrush(Color(192,192,192));
 		}
-		dc.DrawRectangle(RealRect(style().left + r.right(), style().top + r.top(), 9, r.height));
+		dc.DrawRectangle(RealRect(r.right(), r.top(), 9, r.height));
 		// draw foreground
 		/*
 		dc.SetPen  (*wxTRANSPARENT_PEN);
 		dc.SetBrush(*wxBLACK_BRUSH);
 		wxPoint poly[] = {dc.tr(RealPoint(0,0)), dc.tr(RealPoint(5,0)), dc.tr(RealPoint(3,2))};
-		dc.getDC().DrawPolygon(3, poly, style().left + r.right() + 2, style().top + r.bottom() - 5);
+		dc.getDC().DrawPolygon(3, poly, r.right() + 2, r.bottom() - 5);
 		*/
 		dc.SetPen  (*wxBLACK_PEN);
-		double x = style().left + r.right(), y = style().top + r.bottom();
+		double x = r.right(), y = r.bottom();
 		dc.DrawLine(RealPoint(x + 4, y - 3), RealPoint(x + 5, y - 3));
 		dc.DrawLine(RealPoint(x + 3, y - 4), RealPoint(x + 6, y - 4));
 		dc.DrawLine(RealPoint(x + 2, y - 5), RealPoint(x + 7, y - 5));
@@ -1064,4 +1078,25 @@ WordListPosP TextValueEditor::findWordList(const RealPoint& pos) const {
 		}
 	}
 	return WordListPosP();
+}
+WordListPosP TextValueEditor::findWordList(size_t index) const {
+	FOR_EACH_CONST(wl, word_lists) {
+		if (index >= wl->start && index <= wl->end) {
+			return wl;
+		}
+	}
+	return WordListPosP();
+}
+
+bool TextValueEditor::wordListDropDown(const WordListPosP& wl) {
+	if (!wl) return false;
+	// show dropdown
+	if (drop_down) {
+		drop_down->setWords(wl);
+	} else {
+		drop_down.reset(new DropDownWordList(&editor(), false, *this, wl, wl->word_list));
+	}
+	RealRect rect = wl->rect.move(style().left, style().top, 0, 0);
+	drop_down->show(false, wxPoint(0,0), &rect);
+	return true;
 }

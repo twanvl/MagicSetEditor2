@@ -84,7 +84,7 @@ DropDownList::~DropDownList() {
 	delete hider2;
 }
 
-void DropDownList::show(bool in_place, wxPoint pos) {
+void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
 	if (IsShown()) return;
 	onShow();
 	// find selection
@@ -111,7 +111,7 @@ void DropDownList::show(bool in_place, wxPoint pos) {
 	int parent_height = 0;
 	if (!in_place && viewer) {
 		// Position the drop down list below the editor control (based on the style)
-		RealRect r = viewer->viewer.getRotation().trNoNeg(viewer->getStyle()->getRect());
+		RealRect r = viewer->viewer.getRotation().trNoNeg(rect ? *rect : viewer->getStyle()->getRect());
 		if (viewer->viewer.nativeLook()) {
 			pos           = RealPoint(r.x - 3, r.y - 3);
 			size.width    = max(size.width, r.width + 6);

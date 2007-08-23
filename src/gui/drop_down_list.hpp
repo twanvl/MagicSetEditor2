@@ -28,8 +28,10 @@ class DropDownList : public wxPopupWindow {
 	DropDownList(Window* parent, bool is_submenu = false, ValueViewer* viewer = nullptr);
 	
 	/// Show the editor
-	/** if in_place, then shows the list at the position pos */
-	void show(bool in_place, wxPoint pos);
+	/** if in_place, then shows the list at the position pos.
+	 *  Otherwise around the rect or the viewer rectangle
+	 */
+	void show(bool in_place, wxPoint pos, RealRect* rect = nullptr);
 	/// Close the list, optionally send an onSelect event
 	void hide(bool event, bool allow_veto = true);
 	
