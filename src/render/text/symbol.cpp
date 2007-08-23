@@ -12,6 +12,7 @@
 // ----------------------------------------------------------------------------- : SymbolTextElement
 
 void SymbolTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const {
+	if (!(what & DRAW_NORMAL)) return;
 	if (font.font) {
 		font.font->draw(dc, ctx, rect, font.size * scale, font.alignment, content.substr(start - this->start, end-start));
 	}

@@ -40,9 +40,9 @@ struct TextViewer::Line {
 		return top + line_height > 0 && top < rot.getInternalSize().height;
 	}
 	
-	/// Draws a selection indicator on this line from start to end
+	/// Get a rectangle of the selection on this line
 	/** start and end need not be in this line */
-	void drawSelection(RotatedDC& dc, size_t start, size_t end);
+	RealRect selectionRectangle(const Rotation& rot, size_t start, size_t end);
 };
 
 size_t TextViewer::Line::posToIndex(double x) const {
@@ -89,6 +89,13 @@ void TextViewer::draw(RotatedDC& dc, const TextStyle& style, DrawWhat what) {
 	}
 }
 
+/// Intersection between two rectangles
+RealRect intersect(const RealRect& a, const RealRect& b) {
+	RealPoint tl = piecewise_max(a.topLeft(),     b.topLeft());
+	RealPoint br = piecewise_min(a.bottomRight(), b.bottomRight());
+	return RealRect(tl, RealSize(br - tl));
+}
+
 void TextViewer::drawSelection(RotatedDC& dc, const TextStyle& style, size_t sel_start, size_t sel_end) {
 	Rotater r(dc, style.getRotation());
 	if (sel_start == sel_end) return;
@@ -96,18 +103,25 @@ void TextViewer::drawSelection(RotatedDC& dc, const TextStyle& style, size_t sel
 	dc.SetBrush(*wxBLACK_BRUSH);
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetLogicalFunction(wxINVERT);
+	RealRect prev_rect(0,0,0,0);
 	FOR_EACH(l, lines) {
-		l.drawSelection(dc, sel_start, sel_end);
+		RealRect rect = l.selectionRectangle(dc, sel_start, sel_end);
+		if (rect.height > 0) dc.DrawRectangle(rect);
+		// compensate for overlap between lines
+		RealRect overlap = intersect(rect, prev_rect);
+		if (overlap.height > 0 && overlap.width > 0) dc.DrawRectangle(overlap);
+		prev_rect = rect;
 	}
 	dc.SetLogicalFunction(wxCOPY);
 }
 
-void TextViewer::Line::drawSelection(RotatedDC& dc, size_t sel_start, size_t sel_end) {
-	if (!visible(dc)) return;
-	if (sel_start < end() && sel_end > start) {
+RealRect TextViewer::Line::selectionRectangle(const Rotation& rot, size_t sel_start, size_t sel_end) {
+	if (visible(rot) && sel_start < end() && sel_end > start) {
 		double x1 = positions[max(start, sel_start) - start];
 		double x2 = positions[min(end(), sel_end)   - start];
-		dc.DrawRectangle(RealRect(x1, top, x2 - x1, line_height));
+		return RealRect(x1, top, x2 - x1, line_height);
+	} else {
+		return RealRect(0,0,0,0);
 	}
 }
 

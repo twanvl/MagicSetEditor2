@@ -83,43 +83,83 @@ class DropDownWordList : public DropDownList {
   public:
 	DropDownWordList(Window* parent, bool is_submenu, TextValueEditor& tve, const WordListPosP& pos, const WordListWordP& list);
 	
+	void setWords(const WordListWordP& words2);
 	void setWords(const WordListPosP& pos2);
 	
   protected:
 	virtual void          onShow();
+	virtual void          onHide();
+	virtual void          redrawArrowOnParent();
 	virtual size_t        itemCount() const             { return words->words.size(); }
 	virtual bool          lineBelow(size_t item) const  { return words->words[item]->line_below; }
 	virtual String        itemText(size_t item) const   { return words->words[item]->name; }
+	virtual void          drawIcon(DC& dc, int x, int y, size_t item, bool selected) const;
 	virtual DropDownList* submenu(size_t item) const;
 	virtual size_t        selection() const;
 	virtual void          select(size_t item);
   private:
 	TextValueEditor& tve;
 	WordListPosP pos;
-	mutable vector<DropDownListP> submenus;
 	WordListWordP words; ///< The words we are listing
+	bool has_checkboxes; ///< Do we need checkboxes?
+	mutable vector<int> active;  ///< Which items are checked?
+	mutable vector<DropDownListP> submenus;
 };
 
 
 DropDownWordList::DropDownWordList(Window* parent, bool is_submenu, TextValueEditor& tve, const WordListPosP& pos, const WordListWordP& words)
 	: DropDownList(parent, is_submenu, is_submenu ? nullptr : &tve)
 	, tve(tve), pos(pos)
-	, words(words)
+	, has_checkboxes(false)
 {
-	item_size.height = max(16., item_size.height);
+	setWords(words);
 }
 
 void DropDownWordList::setWords(const WordListPosP& pos2) {
-	if (words != pos2->word_list) {
-		// switch to different list
-		submenus.clear();
-	}
+	setWords((WordListWordP)pos2->word_list);
 	pos = pos2;
-	words = pos2->word_list;
+}
+void DropDownWordList::setWords(const WordListWordP& words2) {
+	if (words == words2) return;
+	// switch to different list
+	submenus.clear();
+	words = words2;
+	// do we need checkboxes?
+	has_checkboxes = false;
+	FOR_EACH(w, words->words) {
+		if (w->is_prefix) {
+			has_checkboxes = true;
+			break;
+		}
+	}
+	// size of items
+	icon_size.width = has_checkboxes ? 16 : 0;
+	item_size.height = max(16., item_size.height);
 }
 
 void DropDownWordList::onShow() {
 	pos->active = true;
+}
+void DropDownWordList::onHide() {
+	if (isRoot()) {
+		pos->active = false;
+	}
+}
+
+void DropDownWordList::drawIcon(DC& dc, int x, int y, size_t item, bool selected) const {
+	if (has_checkboxes) {
+		bool radio = !words->words[item]->is_prefix;
+		// draw checkbox
+		dc.SetPen(*wxTRANSPARENT_PEN);
+		dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+		dc.DrawRectangle(x,y,16,16);
+		wxRect rect = RealRect(x+2,y+2,12,12);
+		if (radio) {
+			draw_radiobox(nullptr, dc, rect, active[item], itemEnabled(item));
+		} else {
+			draw_checkbox(nullptr, dc, rect, active[item], itemEnabled(item));
+		}
+	}
 }
 
 DropDownList* DropDownWordList::submenu(size_t item) const {
@@ -138,21 +178,53 @@ size_t DropDownWordList::selection() const {
 	// current selection
 	String current = untag(tve.value().value().substr(pos->start, pos->end - pos->start));
 	// find selection
+	size_t selected = NO_SELECTION;
+	bool prefix_selected = true;
 	size_t i = 0;
+	active.resize(words->words.size());
 	FOR_EACH(w, words->words) {
-		if (current == w->name) return i;
+		if (w->is_prefix) {
+			if (starts_with(current, w->name)) {
+				active[i] = true;
+				current = current.substr(w->name.size());
+			} else {
+				active[i] = false;
+			}
+		} else {
+			active[i] = (current == w->name);
+		}
+		if (active[i] && (selected == NO_SELECTION || (prefix_selected && !w->is_prefix))) {
+			selected = i;
+			prefix_selected = w->is_prefix;
+		}
 		++i;
 	}
-	return NO_SELECTION;
+	return selected;
 }
 
 void DropDownWordList::select(size_t item) {
+	// determine new value
+	String new_value;
+	bool toggling_prefix = words->words[item]->is_prefix;
+	for (size_t i = 0 ; i < words->words.size() ; ++i) {
+		const WordListWord& w = *words->words[i];
+		if (w.is_prefix && active[i] != (i == item)) {
+			new_value += w.name;
+		} else if (!w.is_prefix && (i == item || (toggling_prefix && active[i]))) {
+			new_value += w.name;
+		}
+	}
+	// set value
 	pos->active = false;
 	tve.selection_start_i = pos->start;
 	tve.selection_end_i   = pos->end;
 	tve.fixSelection(TYPE_INDEX);
-	tve.replaceSelection(escape(words->words[item]->name),
+	tve.replaceSelection(escape(new_value),
 	                     format_string(_ACTION_("change"), tve.field().name));
+}
+
+void DropDownWordList::redrawArrowOnParent() {
+	tve.redrawSelection(tve.selection_start_i, tve.selection_end_i, !tve.dropDownShown());
 }
 
 // ----------------------------------------------------------------------------- : TextValueEditor
@@ -220,6 +292,7 @@ bool TextValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
 bool TextValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent& ev) {
 	if (dropDownShown()) return false;
 	select_words = true;
+	selecting = true;
 	size_t index = v.indexAt(style().getRotation().trInv(pos));
 	moveSelection(TYPE_INDEX, prevWordBoundry(index), true, MOVE_MID);
 	moveSelection(TYPE_INDEX, nextWordBoundry(index), false, MOVE_MID);
@@ -412,7 +485,7 @@ void TextValueEditor::onMenu(wxCommandEvent& ev) {
 }
 */
 
-// ----------------------------------------------------------------------------- : Other overrides
+// ----------------------------------------------------------------------------- : Drawing
 
 void TextValueEditor::draw(RotatedDC& dc) {
 	// update scrollbar
@@ -431,6 +504,45 @@ void TextValueEditor::draw(RotatedDC& dc) {
 		showCaret();
 	}
 }
+
+void TextValueEditor::redrawSelection(size_t old_selection_start_i, size_t old_selection_end_i, bool old_drop_down_shown) {
+	if (!isCurrent()) return;
+	if (old_drop_down_shown && dropDownShown()) return;
+	// Hide caret
+	wxCaret* caret = editor().GetCaret();
+	if (caret->IsVisible()) caret->Hide();
+	// Destroy the clientDC before reshowing the caret, prevent flicker on MSW
+	{
+		// Move selection
+		shared_ptr<RotatedDC> dcP = editor().overdrawDC();
+		RotatedDC& dc = *dcP;
+		if (nativeLook()) {
+			// clip the dc to the region of this control
+			dc.SetClippingRegion(style().getRect());
+		}
+		// clear old selection by drawing it again
+		if (!old_drop_down_shown) {
+			v.drawSelection(dc, style(), old_selection_start_i, old_selection_end_i);
+		}
+		// scroll?
+		scroll_with_cursor = true;
+		if (ensureCaretVisible()) {
+			// we can't redraw just the selection because we must scroll
+			updateScrollbar();
+			redraw();
+		} else {
+			// draw new selection
+			if (!dropDownShown()) {
+				v.drawSelection(dc, style(), selection_start_i, selection_end_i);
+			}
+			// redraw drop down indicators
+			drawWordListIndicators(dc);
+		}
+	}
+	showCaret();
+}
+
+// ----------------------------------------------------------------------------- : Other overrides
 
 wxCursor rotated_ibeam;
 
@@ -725,39 +837,10 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 }
 
 void TextValueEditor::moveSelection(IndexType t, size_t new_end, bool also_move_start, Movement dir) {
-	if (!isCurrent()) {
-		// selection is only visible for curent editor, we can do a move the simple way
-		moveSelectionNoRedraw(t, new_end, also_move_start, dir);
-		return;
-	}
-	// Hide caret
-	wxCaret* caret = editor().GetCaret();
-	if (caret->IsVisible()) caret->Hide();
-	// Destroy the clientDC before reshowing the caret, prevent flicker on MSW
-	{
-		// Move selection
-		shared_ptr<DC> dc = editor().overdrawDC();
-		RotatedDC rdc(*dc, viewer.getRotation(), QUALITY_LOW);
-		if (nativeLook()) {
-			// clip the dc to the region of this control
-			rdc.SetClippingRegion(style().getRect());
-		}
-		// clear old selection by drawing it again
-		v.drawSelection(rdc, style(), selection_start_i, selection_end_i);
-		// move
-		moveSelectionNoRedraw(t, new_end, also_move_start, dir);
-		// scroll?
-		scroll_with_cursor = true;
-		if (ensureCaretVisible()) {
-			// we can't redraw just the selection because we must scroll
-			updateScrollbar();
-			redraw();
-		} else {
-			// draw new selection
-			v.drawSelection(rdc, style(), selection_start_i, selection_end_i);
-		}
-	}
-	showCaret();
+	size_t old_start = selection_start_i;
+	size_t old_end   = selection_end_i;
+	moveSelectionNoRedraw(t, new_end, also_move_start, dir);
+	redrawSelection(old_start, old_end, dropDownShown());
 }
 
 void TextValueEditor::moveSelectionNoRedraw(IndexType t, size_t new_end, bool also_move_start, Movement dir) {
@@ -1045,15 +1128,18 @@ void TextValueEditor::drawWordListIndicators(RotatedDC& dc) {
 		// draw background
 		if (current && wl->active) {
 			dc.SetPen  (Color(0,  128,255));
-			dc.SetBrush(Color(128,192,255));
-		} else if (current) {
+			dc.SetBrush(Color(64, 160,255));
+		} else if (current && selection_end_i >= wl->start && selection_end_i <= wl->end) {
 			dc.SetPen  (Color(64, 160,255));
 			dc.SetBrush(Color(160,208,255));
 		} else {
 			dc.SetPen  (Color(128,128,128));
 			dc.SetBrush(Color(192,192,192));
 		}
-		dc.DrawRectangle(RealRect(r.right(), r.top(), 9, r.height));
+		dc.DrawRectangle(RealRect(r.right(), r.top() - 1, 9, r.height + 2));
+		// draw rectangle around value
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.DrawRectangle(r.move(-1,-1,2,2));
 		// draw foreground
 		/*
 		dc.SetPen  (*wxTRANSPARENT_PEN);
@@ -1062,7 +1148,7 @@ void TextValueEditor::drawWordListIndicators(RotatedDC& dc) {
 		dc.getDC().DrawPolygon(3, poly, r.right() + 2, r.bottom() - 5);
 		*/
 		dc.SetPen  (*wxBLACK_PEN);
-		double x = r.right(), y = r.bottom();
+		double x = r.right(), y = r.bottom() - 1;
 		dc.DrawLine(RealPoint(x + 4, y - 3), RealPoint(x + 5, y - 3));
 		dc.DrawLine(RealPoint(x + 3, y - 4), RealPoint(x + 6, y - 4));
 		dc.DrawLine(RealPoint(x + 2, y - 5), RealPoint(x + 7, y - 5));
@@ -1090,13 +1176,14 @@ WordListPosP TextValueEditor::findWordList(size_t index) const {
 
 bool TextValueEditor::wordListDropDown(const WordListPosP& wl) {
 	if (!wl) return false;
+	if (dropDownShown()) return false;
 	// show dropdown
 	if (drop_down) {
 		drop_down->setWords(wl);
 	} else {
 		drop_down.reset(new DropDownWordList(&editor(), false, *this, wl, wl->word_list));
 	}
-	RealRect rect = wl->rect.move(style().left, style().top, 0, 0);
+	RealRect rect = wl->rect.move(style().left, style().top - 1, 0, 2);
 	drop_down->show(false, wxPoint(0,0), &rect);
 	return true;
 }

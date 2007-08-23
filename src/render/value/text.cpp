@@ -29,10 +29,12 @@ void TextValueViewer::draw(RotatedDC& dc) {
 	if (!v.prepared()) {
 		v.prepare(dc, value().value(), style(), viewer.getContext());
 	}
+	if (viewer.drawFocus() && isCurrent()) {
+		v.draw(dc, style(), DRAW_ACTIVE);
+	}
 	v.draw(dc, style(), (DrawWhat)(
 		  DRAW_NORMAL
 		| (viewer.drawBorders()              ? DRAW_BORDERS : 0)
-		| (viewer.drawFocus() && isCurrent() ? DRAW_ACTIVE  : 0)
 		));
 }
 

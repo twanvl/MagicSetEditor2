@@ -442,11 +442,13 @@ init script:
 	cmc := to_text + {
 		  1 * number_of_items(in: sort_text(order:"SWUBRG")) # colored mana
 		- 1 * number_of_items(in: sort_text(order:"/"))      # guild mana, W/U -> 2 - 1
-		+ 1 * sort_text(order: "[0123456789]")               # colorless mana
+		+ 1 * filter_text(match: "^[0123456789]+(?!/)")      # colorless mana, but not 1/2
+		+ 1 * (length(sort_text(order:"compound(1/2)")) / 3) # compensate for 1/2. Should actually be 1.5 *
 	}
 	colored_mana := to_text + {
 		  number_of_items(in: sort_text(order: "WUBRG"))     # colored mana
 		- number_of_items(in: sort_text(order:"/"))          # guild mana, W/U -> 2 - 1
+		+ 1 * (length(sort_text(order:"compound(1/2)")) / 3) # compensate for 1/2.
 	}
 	primary_card_color := {
 		artifact := chosen(choice:"artifact")
@@ -1232,14 +1234,18 @@ statistics category:
 word list:
 	name: type
 	word:
-		name: Basic
+		name: Basic 
 		is prefix: true
 	word:
-		name: Legendary
-		line below: true
+		name: Legendary 
 		is prefix: true
+	word:
+		name: Tribal 
+		is prefix: true
+		line below: true
 	word: Creature
 	word: Artifact
+	word: Artifact Creature
 	word: Enchantment
 	word: Instant
 	word: Sorcery
@@ -1256,11 +1262,15 @@ word list:
 word list:
 	name: artifact
 	word:
+		name:
+		line below: true
 	word: Equipment
 
 word list:
 	name: land
 	word:
+		name:
+		line below: true
 	word: Plains
 	word: Island
 	word: Swamp
@@ -1270,11 +1280,15 @@ word list:
 word list:
 	name: enchantment
 	word:
+		name:
+		line below: true
 	word: Aura
 
 word list:
 	name: spell
 	word:
+		name:
+		line below: true
 	word: Arcane
 
 
@@ -1455,6 +1469,9 @@ keyword parameter type:
 #	match: [A-Z][a-z, ]*([A-Z][a-z, ]*\xEB00) # commented out because it stopped prefix param from working, version below allows all "walks", including "Dame Judi Denchwalk", doesn't trigger #in middle of sentences, and doesn't trigger in chains of keywords.
 	match: [A-Z][A-Z,a-z ]*
 	example: Forest
+keyword parameter type:
+	name: a
+	match: an?
 
 ############################# All Magic keywords
 # By JrEye and Neko_Asakami, Updated by Pichoro and Buttock1234
@@ -1872,3 +1889,8 @@ keyword:
 	match: Grandeur
 	mode: pseudo
 	rules: Grandeur — Discard another card named ~: [effect].
+keyword:
+	keyword: Champion
+	match: Champion <atom-param>a</atom-param> <atom-param>name</atom-param>
+	mode: core
+	reminder: When this comes into play, sacrifice it unless you remove another {param2} you control from the game. When this leaves play, that card returns to play.

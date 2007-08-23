@@ -111,6 +111,9 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	/** t specifies what kind of position new_end is */
 	void moveSelectionNoRedraw(IndexType t, size_t new_end, bool also_move_start=true, Movement dir = MOVE_MID);
 	
+	/// Redraw the selection
+	void redrawSelection(size_t old_selection_start_i, size_t old_selection_end_i, bool old_drop_down_shown);
+	
 	/// Replace the current selection with 'replacement', name the action
 	/** replacement should be a tagged string (i.e. already escaped) */
 	void replaceSelection(const String& replacement, const String& name);

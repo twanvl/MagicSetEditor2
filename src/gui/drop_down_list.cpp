@@ -138,7 +138,7 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
 	if (selected_item == NO_SELECTION && itemCount() > 0) selected_item = 0; // select first item by default
 	mouse_down = false;
 	Window::Show();
-	if (!parent_menu && GetParent()->HasCapture()) {
+	if (isRoot() && GetParent()->HasCapture()) {
 		// release capture on parent
 		GetParent()->ReleaseMouse();
 	}
@@ -168,7 +168,7 @@ void DropDownList::hide(bool event, bool allow_veto) {
 void DropDownList::realHide() {
 	if (!IsShown()) return;
 	Window::Hide();
-//	onHide();
+	onHide();
 	hideSubMenu();
 	if (parent_menu) {
 		parent_menu->open_sub_menu = nullptr;
@@ -226,7 +226,12 @@ int DropDownList::itemPosition(size_t item) const {
 void DropDownList::redrawArrowOnParent() {
 	if (viewer) {
 		ValueEditor* e = viewer->getEditor();
-		if (e) e->redraw();
+		if (e && viewer->viewer.nativeLook()) {
+			CardEditor& editor = static_cast<CardEditor&>(viewer->viewer);
+			shared_ptr<RotatedDC> dcP = editor.overdrawDC();
+			RotatedDC& dc = *dcP;
+			draw_drop_down_arrow(&editor, dc.getDC(), dc.tr(viewer->getStyle()->getRect().grow(1)), IsShown());
+		}
 	}
 }
 

@@ -45,6 +45,10 @@ class DropDownList : public wxPopupWindow {
 	
 	/// Prepare for showing the list
 	virtual void onShow() {}
+	/// Do something after hiding the list
+	virtual void onHide() {}
+	
+	inline bool isRoot() { return parent_menu == nullptr; }
 	
 	// --------------------------------------------------- : Selection
 	static const size_t NO_SELECTION = (size_t)-1;
@@ -98,9 +102,7 @@ class DropDownList : public wxPopupWindow {
 	void onPaint(wxPaintEvent&);
 	void onLeftDown(wxMouseEvent&);
 	void onLeftUp  (wxMouseEvent&);
-  protected:
-	virtual void onMotion(wxMouseEvent&); // allow override
-  private:
+	void onMotion(wxMouseEvent&);
 	
 	// --------------------------------------------------- : Privates
 	
@@ -115,7 +117,8 @@ class DropDownList : public wxPopupWindow {
 	void draw(DC& dc);
 	void drawItem(DC& dc, int y, size_t item);
 	
-	void redrawArrowOnParent();
+  protected:
+	virtual void redrawArrowOnParent(); // allow override
 };
 
 // ----------------------------------------------------------------------------- : EOF

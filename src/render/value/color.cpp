@@ -70,8 +70,8 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 
 bool ColorValueViewer::containsPoint(const RealPoint& p) const {
 	// distance to each side
-	double left = p.x - style().left,  right  = style().left + style().width  - p.x - 1;
-	double top  = p.y - style().top,   bottom = style().top  + style().height - p.y - 1;
+	double left = p.x - style().left,  right  = style().right  - p.x - 1;
+	double top  = p.y - style().top,   bottom = style().bottom - p.y - 1;
 	if (left < 0 || right < 0 || top < 0 || bottom < 0 ||                 // outside bounding box
 	    (left >= style().left_width && right  >= style().right_width &&   // outside horizontal border
 	     top  >= style().top_width  && bottom >= style().bottom_width)) { // outside vertical border

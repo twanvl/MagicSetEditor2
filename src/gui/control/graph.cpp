@@ -87,15 +87,15 @@ GraphData::GraphData(const GraphDataPre& d)
 					left--;
 				}
 			}
+			// drop empty tail
+			while (a->groups.size() > 1 && a->groups.back().size == 0) {
+				a->groups.pop_back();
+			}
 			// Also keep non-numeric entries
 			FOR_EACH(c, counts) {
 				a->groups.push_back(GraphGroup(c.first, c.second));
 				a->max = max(a->max, c.second);
 				a->total += c.second;
-			}
-			// drop empty tail
-			while (a->groups.size() > 1 && a->groups.back().size == 0) {
-				a->groups.pop_back();
 			}
 		} else if (a->order) {
 			// specific group order

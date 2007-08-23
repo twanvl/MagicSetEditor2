@@ -600,7 +600,7 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("tag remove rule"),      script_tag_remove_rule);
 	// collection
 	ctx.setVariable(_("position"),             script_position_of);
-	ctx.setVariable(_("length"),               script_number_of_items);
+	ctx.setVariable(_("length"),               script_length);
 	ctx.setVariable(_("number of items"),      script_number_of_items);
 	ctx.setVariable(_("filter list"),          script_filter_list);
 	ctx.setVariable(_("sort list"),            script_sort_list);

@@ -98,21 +98,30 @@ bool CardViewer::shouldDraw(const ValueViewer& v) const {
 }
 
 // helper class for overdrawDC()
-class CardViewer::OverdrawDC : private wxClientDC, public wxBufferedDC {
-  public:
-	OverdrawDC(CardViewer* window)
+class CardViewer::OverdrawDC_aux : private wxClientDC {
+  protected:
+	wxBufferedDC bufferedDC;
+	
+	OverdrawDC_aux(CardViewer* window)
 		: wxClientDC(window)
 	{
-		wxBufferedDC::Init((wxClientDC*)this, window->buffer);
+		bufferedDC.Init((wxClientDC*)this, window->buffer);
 	}
 };
+class CardViewer::OverdrawDC : private OverdrawDC_aux, public RotatedDC {
+  public:
+	OverdrawDC(CardViewer* window)
+		: OverdrawDC_aux(window)
+		, RotatedDC(bufferedDC, window->getRotation(), QUALITY_LOW)
+	{}
+};
 
-shared_ptr<DC> CardViewer::overdrawDC() {
+shared_ptr<RotatedDC> CardViewer::overdrawDC() {
 	#ifdef _DEBUG
 		// don't call from onPaint
 		assert(!inOnPaint());
 	#endif
-	return shared_ptr<DC>((wxBufferedDC*)new OverdrawDC(this));
+	return shared_ptr<RotatedDC>(new OverdrawDC(this));
 }
 
 Rotation CardViewer::getRotation() const {

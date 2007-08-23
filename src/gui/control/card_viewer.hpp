@@ -28,7 +28,7 @@ class CardViewer : public wxControl, public DataViewer {
 	
 	/// Get a dc to draw on the card outside onPaint	
 	/** May NOT be called while in onPaint/draw */
-	shared_ptr<DC> overdrawDC();
+	shared_ptr<RotatedDC> overdrawDC();
 	
 	/// Invalidate and redraw the entire viewer
 	void redraw();
@@ -59,6 +59,7 @@ class CardViewer : public wxControl, public DataViewer {
 	bool   up_to_date; ///< Is the buffer up to date?
 	
 	class OverdrawDC;
+	class OverdrawDC_aux;
 };
 
 // ----------------------------------------------------------------------------- : EOF

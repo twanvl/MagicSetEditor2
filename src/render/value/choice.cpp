@@ -37,7 +37,7 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 			} else {
 				img_options.width  = (int) dc.trX(style().width);
 				img_options.height = (int) dc.trY(style().height);
-				img_options.preserve_aspect = style().alignment == ALIGN_STRETCH ? ASPECT_STRETCH : ASPECT_FIT;
+				img_options.preserve_aspect = (style().alignment & ALIGN_STRETCH) ? ASPECT_STRETCH : ASPECT_FIT;
 			}
 			Image image = img.generate(img_options, true);
 			ImageCombine combine = img.combine();

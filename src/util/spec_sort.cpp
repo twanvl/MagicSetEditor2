@@ -169,7 +169,8 @@ void mixed_sort(const String& spec, String& input, String& ret) {
 /// Sort a string, find a compound item
 /** Removed used characters from input! */
 void compound_sort(const String& spec, String& input, String& ret) {
-	while (size_t pos = input.find(spec)) {
+	size_t pos = input.find(spec);
+	while (pos != String::npos) {
 		ret += spec;
 		for (size_t j = 0 ; j < spec.size() ; ++j) input.SetChar(pos + j, REMOVED);
 		pos = input.find(spec, pos + 1);

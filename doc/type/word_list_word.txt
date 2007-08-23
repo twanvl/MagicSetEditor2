@@ -6,6 +6,8 @@ A word in a [[type:word list]].
 ! Property	Type						Default		Description
 | @name@	[[type:string]]					''Required''	The word
 | @line below@	[[type:boolean]]				@false@		Display a line below this item in the list?
+| @is prefix@	[[type:boolean]]				@false@		Should this word be used as a prefix before another word from the list?<br/>
+		 						 		Think "Legendary ". Note the space after it, words are directly concatenated.
 | @words@	[[type:list]] of [[type:word list word]]s			A submenu
 
 A word can also be given in a short form, in that case only the name is specified.

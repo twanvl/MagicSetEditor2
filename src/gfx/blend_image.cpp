@@ -81,18 +81,22 @@ void set_alpha(Image& img, const Image& img_alpha) {
 	}
 	if (!img.HasAlpha()) img.InitAlpha();
 	Byte *im = img.GetAlpha(), *al = img_alpha.GetData();
-	UInt size = img.GetWidth() * img.GetHeight();
-	for (UInt i = 0 ; i < size ; ++i) {
+	size_t size = img.GetWidth() * img.GetHeight();
+	for (size_t i = 0 ; i < size ; ++i) {
 		im[i] = (im[i] * al[i*3]) / 255;
 	}
 }
 
 void set_alpha(Image& img, double alpha) {
-	if (!img.HasAlpha()) img.InitAlpha();
 	Byte b_alpha = alpha * 255;
-	Byte *im = img.GetAlpha();
-	UInt size = img.GetWidth() * img.GetHeight();
-	for (UInt i = 0 ; i < size ; ++i) {
-		im[i] = (im[i] * b_alpha) / 255;
+	if (!img.HasAlpha()) {
+		img.InitAlpha();
+		memset(img.GetAlpha(), b_alpha, img.GetWidth() * img.GetHeight());
+	} else {
+		Byte *im = img.GetAlpha();
+		size_t size = img.GetWidth() * img.GetHeight();
+		for (size_t i = 0 ; i < size ; ++i) {
+			im[i] = (im[i] * b_alpha) / 255;
+		}
 	}
 }
