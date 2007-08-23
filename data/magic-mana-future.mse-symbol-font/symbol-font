@@ -98,6 +98,9 @@ symbol:
 	code: 1/2
 	image: mana_1_half.png
 symbol:
+	code: |1
+	image: mana_1_half.png
+symbol:
 	code: |W
 	image: mana_w_half.png
 symbol:
