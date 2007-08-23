@@ -57,7 +57,7 @@ IMPLEMENT_REFLECTION(SymbolFont) {
 	  REFLECT(symbols);
 	REFLECT(text_font);
 	REFLECT(scale_text);
-	REFLECT(merge_numbers);
+	REFLECT(as_text);
 	REFLECT(text_margin_left);
 	REFLECT(text_margin_right);
 	REFLECT(text_margin_top);
@@ -192,7 +192,23 @@ void SymbolFont::split(const String& text, SplitSymbols& out) const {
 				goto next_symbol; // continue two levels
 			}
 		}
-		// 3. unknown code, draw single character as text
+		// 3. draw multiple together as text?
+		if (!as_text.empty()) {
+			if (!as_text_r.IsValid()) {
+				as_text_r.Compile(_("^") + as_text, wxRE_ADVANCED);
+			}
+			if (as_text_r.IsValid()) {
+				if (as_text_r.Matches(text.substr(pos))) {
+					size_t start, len;
+					if (as_text_r.GetMatch(&start,&len) && start == 0) {
+						out.push_back(DrawableSymbol(text.substr(pos, len), 0));
+						pos += len;
+						goto next_symbol;
+					}
+				}
+			}
+		}
+		// 4. unknown code, draw single character as text
 		out.push_back(DrawableSymbol(text.substr(pos, 1), 0));
 		pos += 1;
 next_symbol:;

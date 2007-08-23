@@ -12,20 +12,20 @@ init script:
 	
 	############################################################## Sorting mana symbols
 	
-	# correctly sort mana symbols
-	mana_sort := sort_rule(order: "ordered(XYZ)"
-	                            + "mixed(0123456789)"
-	                            + "ordered(S)"
-	                            + "reverse_order("
-	                            + " pattern(./././.  cycle(WUBRG))"
-	                            + " pattern(././.    cycle(WUBRG))"
-	                            + " pattern(./.      cycle(WUBRG))"
-	                            + " pattern(|.       WUBRG)|"
-	                            + " pattern(./       WUBRG)"
-	                            + " pattern(/.       WUBRG)"
-	                            + " cycle(WUBRG)"
-	                            + ")")
-	mana_filter := to_upper + mana_sort
+	# correctly sort a mana symbol (no guild mana)
+	mana_sort       := sort_rule(order: "XYZ[0123456789]S(WUBRG)")
+	# correctly sort guild mana
+	mana_sort_guild := replace_rule(
+			match: "./.|././.|./././.|.[|]",
+			in_context: "(^|[^/])<match>($|[^/])",
+			replace: {sort_text(order:"in_place((WUBRG)")}
+			)
+	mana_has_guild := match_rule(match: "[/|]") # Is there guild or half mana in the input?
+	# A mana cost can contain both normal and guild mana
+	mana_filter := to_upper + {
+		if mana_has_guild() then mana_sort_guild()
+		else                     mana_sort()
+	}
 	# Like mana filter, only also allow tap symbols:
 	tap_filter := sort_rule(order: "<T>")
 	mana_filter_t := replace_rule(               # Remove [] used for forcing mana symbols
@@ -122,8 +122,11 @@ init script:
 	}
 	
 	# The color of a card
-	is_artifact := match_rule(match: "(?i)Artifact")
-	is_land     := match_rule(match: "(?i)Land")
+	is_creature    := match_rule(match: "(?i)Creature|Tribal")
+	is_artifact    := match_rule(match: "(?i)Artifact")
+	is_land        := match_rule(match: "(?i)Land")
+	is_enchantment := match_rule(match: "(?i)Enchantment")
+	is_spell       := match_rule(match: "(?i)Instant|Sorcery")
 	card_color := {
 		# usually the color of mana
 		text_color := text_to_color(rules_text, land: is_land(type), card_name: card_name);
@@ -174,11 +177,11 @@ init script:
 			# land
 			if card.rarity != "basic land"                       then "K"    # nonbasic land
 			else (
-				if contains(card.name, match:"Plains") then "M"
-				else if contains(card.name, match:"Island") then "N"
-				else if contains(card.name, match:"Swamp") then "O"
+				if      contains(card.name, match:"Plains")   then "M"
+				else if contains(card.name, match:"Island")   then "N"
+				else if contains(card.name, match:"Swamp")    then "O"
 				else if contains(card.name, match:"Mountain") then "P"
-				else if contains(card.name, match:"Forest") then "Q"
+				else if contains(card.name, match:"Forest")   then "Q"
 				else                                                      "L"    # other basic land
 			)
 		) else if is_null_cost(casting_cost) then (
@@ -410,10 +413,25 @@ init script:
 		replace_rule(
 			match: " - ",
 			replace: " — ");
-	
+		
 	# Move the cursor past the separator in the p/t and type boxes
 	type_over_pt   := replace_rule(match:"/$", replace:"")
 	type_over_type := replace_rule(match:" ?-$", replace:"")
+	
+	super_type_filter :=
+		type_over_type +
+		tag_remove_rule(tag: "<word-list-") +
+		{ "<word-list-type>{input}</word-list-type>" }
+	
+	sub_type_filter :=
+		tag_remove_rule(tag: "<word-list-") +
+		{ if      is_creature(type)    then "<word-list-creature>{   input}</word-list-creature>"
+		  else if is_land(type)        then "<word-list-land>{       input}</word-list-land>"
+		  else if is_artifact(type)    then "<word-list-artifact>{   input}</word-list-artifact>"
+		  else if is_enchantment(type) then "<word-list-enchantment>{input}</word-list-enchantment>"
+		  else if is_spell(type)       then "<word-list-spell>{      input}</word-list-spell>"
+		  else                              input
+		}
 	
 	# Shape of cards, can be changed in style files
 	card_shape := { "normal" }
@@ -711,11 +729,12 @@ card field:
 	name: super type
 	icon: stats/creature_type.png
 	editable: false
-	script: type_over_type(value)
+	script: super_type_filter(value)
 card field:
 	type: text
 	name: sub type
 	icon: stats/creature_type.png
+	script: sub_type_filter(value, type:card.super_type)
 	editable: false
 card field:
 	type: text
@@ -930,13 +949,14 @@ card field:
 	icon: stats/creature_type.png
 	editable: false
 	show statistics: false
-	script: type_over_type(value)
+	script: super_type_filter(value)
 card field:
 	type: text
 	name: sub type 2
 	icon: stats/creature_type.png
 	editable: false
 	show statistics: false
+	script: sub_type_filter(value, type:card.super_type_2)
 card field:
 	type: text
 	name: type 2
@@ -1205,32 +1225,57 @@ statistics category:
 
 # The following (until keywords) doesn't do anything yet
 
+
+
 ############################################################## Word lists
 
-#word list:
-#	name: card types
-#	word: Creature
-#	word: Artifact
-#	word: Enchantment
-#	word: Instant
-#	word: Sorcery
-#	word: Land
-#	word: Legendary Creature
-#	word: Legendary Artifact
-#	word: Legendary Enchantment
-#	word: Legendary Land
+word list:
+	name: type
+	word:
+		name: Basic
+		is prefix: true
+	word:
+		name: Legendary
+		line below: true
+		is prefix: true
+	word: Creature
+	word: Artifact
+	word: Enchantment
+	word: Instant
+	word: Sorcery
+	word: Land
 
-#word list:
-#	name: creature types
-#	word: Goblin
-#	word: Elf
-#	word: Wizard
-#	word: Human
+word list:
+	name: creature
+	word: Goblin
+	word: Elf
+	word: Wizard
+	word: Human
+	# TODO: lots more
 
-#word list:
-#	name: enchantment types
-#	word:
-#	word: Aura
+word list:
+	name: artifact
+	word:
+	word: Equipment
+
+word list:
+	name: land
+	word:
+	word: Plains
+	word: Island
+	word: Swamp
+	word: Mountain
+	word: Forest
+
+word list:
+	name: enchantment
+	word:
+	word: Aura
+
+word list:
+	name: spell
+	word:
+	word: Arcane
 
 
 

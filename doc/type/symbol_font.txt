@@ -46,7 +46,9 @@ Such a package contains a [[file:format|data file]] called <tt>symbol-font</tt> 
 | @symbols@			[[type:list]] of [[type:symbol font symbol]]s	 	Symbols that make up this font.
 | @text font@			[[type:font]]					Font to use for drawing text on symbols, only used if there is a default symbol.
 | @scale text@			[[type:boolean]]		@false@		Should text be scaled down to fit in a symbol?
-| @merge numbers@		[[type:boolean]]		@false@		Should a numeric value of multiple digits be rendered as a single symbol?
+| @merge numbers@		[[type:boolean]]		@false@		Should a numeric value of multiple digits be rendered as a single symbol?<br/>
+				 				 		Note: @merge numbers@ is deprecated, use @as text: [0-9]+@ instead.
+| @as text@			[[type:regex]]			@"."@		What should be rendered as a single piece of text?
 | @text margin left@		[[type:double]]			@0@		Margin on the left   of the text in pixels.
 | @text margin right@		[[type:double]]			@0@		Margin on the right  of the text in pixels.
 | @text margin top@		[[type:double]]			@0@		Margin on the top    of the text in pixels.

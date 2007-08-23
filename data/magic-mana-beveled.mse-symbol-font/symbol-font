@@ -1,4 +1,4 @@
-﻿mse version: 0.3.2
+﻿mse version: 0.3.5
 # Symbol font in the beveled style used for casting costs on FPM cards
 # Note:
 #  Define  small_mana_t:="mana_t(_old)?.png" in the init script of the style
@@ -175,7 +175,7 @@ symbol:
 symbol:
 	code: S
 	image: mana_s.png
-merge numbers: true
+as text: .|[0-9]+(?!/)
 text font:
 	name: MPlantin
 	size: 15

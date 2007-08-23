@@ -13,6 +13,7 @@
 #include <util/alignment.hpp>
 #include <util/io/package.hpp>
 #include <data/font.hpp>
+#include <wx/regex.h>
 
 DECLARE_POINTER_TYPE(Font);
 DECLARE_POINTER_TYPE(SymbolFont);
@@ -88,6 +89,8 @@ class SymbolFont : public Packaged {
 	double text_margin_bottom;
 	Alignment text_alignment;
 	bool merge_numbers;	///< Merge numbers? e.g. "11" is a single symbol ('1' must not exist as a symbol)
+	String  as_text;    ///< Things to render as text
+	mutable wxRegEx as_text_r;
 	InsertSymbolMenuP insert_symbol_menu;
 	wxMenu* processed_insert_symbol_menu;
 	
