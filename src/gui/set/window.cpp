@@ -402,7 +402,7 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 	}
 }
 
-static const int FILE_MENU_SIZE_BEFORE_RECENT_SETS = 11; // HACK; we should calculate the position to insert!
+static const int FILE_MENU_SIZE_BEFORE_RECENT_SETS = 12; // HACK; we should calculate the position to insert!
 void SetWindow::updateRecentSets() {
 	wxMenuBar* mb = GetMenuBar();
 	assert(number_of_recent_sets <= (UInt)settings.recent_sets.size()); // the number of recent sets should only increase
