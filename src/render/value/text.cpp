@@ -39,10 +39,14 @@ void TextValueViewer::draw(RotatedDC& dc) {
 }
 
 void TextValueViewer::onValueChange() {
-	v.reset();
+	v.reset(false);
 }
 
 void TextValueViewer::onStyleChange(bool already_prepared) {
-	v.reset();
+	v.reset(true);
 	if (!already_prepared) viewer.redraw(*this);
+}
+
+void TextValueViewer::onAction(const Action&, bool undone) {
+	v.reset(true);
 }

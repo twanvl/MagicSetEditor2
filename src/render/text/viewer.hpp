@@ -57,7 +57,9 @@ class TextViewer {
 	/** Returns true if something has been done */
 	bool prepare(RotatedDC& dc, const String& text, TextStyle& style, Context&);
 	/// Reset the cached data, at a new call to draw it will be recalculated
-	void reset();
+	/** If related, the new value is related to the old one, and layout information should be reused where possible
+	 */
+	void reset(bool related);
 	/// Is the viewer prepare()d?
 	bool prepared() const;
 	
@@ -134,8 +136,11 @@ class TextViewer {
 	
 	/// Prepare the lines, layout the text
 	void prepareLines(RotatedDC& dc, const String& text, TextStyle& style, Context& ctx);
+	/// Find the scale to use for the text
+	void prepareLinesTryScales(RotatedDC& dc, const String& text, const TextStyle& style, vector<CharInfo>& chars_out);
 	/// Prepare the lines, layout the text; at a specific scale
-	bool prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style, bool stop_if_too_long);
+	/** Stores output in lines_out */
+	bool prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style, bool stop_if_too_long, vector<Line>& lines_out) const;
 	/// Align the lines within the textbox
 	void alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style);
 	
@@ -143,9 +148,9 @@ class TextViewer {
 	const Line& findLine(size_t index) const;
 	
 	// helper : get the start coordinate of a line, this is 0 unless there is a contour mask
-	double lineLeft (RotatedDC& dc, const TextStyle& style, double y);
+	double lineLeft (RotatedDC& dc, const TextStyle& style, double y) const;
 	// helper : get the end coordinate of a line, this is width unless there is a contour mask
-	double lineRight(RotatedDC& dc, const TextStyle& style, double y);
+	double lineRight(RotatedDC& dc, const TextStyle& style, double y) const;
 };
 
 

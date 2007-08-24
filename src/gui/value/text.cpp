@@ -568,7 +568,7 @@ void TextValueEditor::onValueChange() {
 }
 
 void TextValueEditor::onAction(const Action& action, bool undone) {
-	TextValueViewer::onValueChange();
+	TextValueViewer::onAction(action, undone);
 	findWordLists();
 	TYPE_CASE(action, TextValueAction) {
 		selection_start = action.selection_start;
@@ -1001,7 +1001,7 @@ void TextValueEditor::determineSize(bool force_fit) {
 			(int)pos.y - 1,
 			(int)sbw,
 			(int)rot.trY(style().height) + 2);
-		v.reset();
+		v.reset(true);
 	} else {
 		// Height depends on font
 		wxMemoryDC dc;

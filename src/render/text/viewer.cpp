@@ -156,9 +156,10 @@ bool TextViewer::prepare(RotatedDC& dc, const String& text, TextStyle& style, Co
 		return false;
 	}
 }
-void TextViewer::reset() {
+void TextViewer::reset(bool related) {
 	elements.clear();
 	lines.clear();
+	if (!related) scale = 1.0;
 }
 bool TextViewer::prepared() const {
 	return !lines.empty();
@@ -335,55 +336,8 @@ void TextViewer::prepareElements(const String& text, const TextStyle& style, Con
 // ----------------------------------------------------------------------------- : Layout
 
 void TextViewer::prepareLines(RotatedDC& dc, const String& text, TextStyle& style, Context& ctx) {
-	// try to layout, at different scales
 	vector<CharInfo> chars;
-	scale = 1;
-	double min_scale = elements.minScale();
-	double scale_step = max(0.05,elements.scaleStep());
-	while (true) {
-		double next_scale = scale - scale_step;
-		bool   last = next_scale < min_scale;
-		// fits?
-		chars.clear();
-		elements.getCharInfo(dc, scale, 0, text.size(), chars);
-		bool fits = prepareLinesScale(dc, chars, style, last);
-		if (fits && (lines.empty() || lines.back().bottom() <= dc.getInternalSize().height - style.padding_bottom)) {
-			break; // text fits in box
-		}
-		if (last) break;
-		// TODO: smarter iteration
-		scale = next_scale;
-	}
-	
-	/*
-	double scale_1 = 1.
-	double fit_1   = fitLines(dc, text, style, scale_1);
-	if (fit_1 <= 0 || scale_1 >= scale_2) {
-		// ok
-	} else {
-		// find best text size, using the 'false position' root finding method
-		double scale_2 = elements.minScale();
-		double fit_2   = fitLines(dc, text, style, scale_2);
-		if (fit_2 > 0) {
-			// still doesn't fit at smallest size
-		} else {
-			// invariant: fit_1 > 0 && fit_2 <= 0
-			while (abs(scale_2 - scale_1) > 0.01) {
-				double scale_3 = scale_2 - fit_2 * (scale_2 - scale_1)/(fit_2 - fit_1);
-				double fit_3 = fitLines(dc, text, style, scale_3);
-				if (fit_3 > 0) {
-					scale_2 = scale_3;
-					fit_2   = fit_3;
-				} else {
-					scale_2 = scale_3;
-					fit_2   = fit_3;
-				}
-			}
-		}
-	}
-	
-	// returns negative values if it fits, positive if it doesn't
-	*/
+	prepareLinesTryScales(dc, text, style, chars);
 	
 	// store information about the content/layout, allow this to change alignment
 	style.content_width  = 0;
@@ -420,7 +374,122 @@ void TextViewer::prepareLines(RotatedDC& dc, const String& text, TextStyle& styl
 	}
 }
 
-bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style, bool stop_if_too_long) {
+// bound on max_scale, given that scale fits and produces the given lines
+inline double bound_on_max_scale(RotatedDC& dc, const TextStyle& style, const vector<TextViewer::Line>& lines, double scale) {
+	double tot_height = dc.getInternalSize().height + 1;
+	double height = min(tot_height, lines.back().bottom() + style.padding_bottom);
+	return scale * tot_height / height;
+}
+// bound on min_scale, given that scale doesn't fit and produces the given lines
+inline double bound_on_min_scale(RotatedDC& dc, const TextStyle& style, const vector<TextViewer::Line>& lines, double scale) {
+	double tot_height = dc.getInternalSize().height;
+	double height = lines.back().bottom() + style.padding_bottom;
+	return scale * tot_height / height;
+}
+
+void TextViewer::prepareLinesTryScales(RotatedDC& dc, const String& text, const TextStyle& style, vector<CharInfo>& chars) {
+	// Bounds
+	double min_scale = elements.minScale();
+	double scale_step = max(0.01,elements.scaleStep());
+	// Is there any scaling (common case is: no)
+	if (min_scale >= 1.0) {
+		scale = 1.0;
+		elements.getCharInfo(dc, scale, 0, text.size(), chars);
+		prepareLinesScale(dc, chars, style, false, lines);
+		return;
+	}
+	
+	// More complicated fitting
+	double max_scale = 1.0 + scale_step;
+	double best_scale;
+	
+	// Assumption:
+	//    It is likely that the text should have the same scale as the previous render attempt
+	//    So:
+	//       - try that scale first
+	//       - if it fits
+	//           - change min_scale
+	//           - then try the scale just before it
+	//               - if that doesn't fit, we are done
+	//               - if it doesn't, we have just (almost) wasted 1 cycle, start binary search
+	//       - if it doesn't
+	//           - change max_scale	
+	
+	// Try the layout at the previous scale, this could give a quick upper bound
+	elements.getCharInfo(dc, scale, 0, text.size(), chars);
+	bool fits = prepareLinesScale(dc, chars, style, true, lines);
+	if (fits) {
+		min_scale = scale;
+		max_scale = min(max_scale, bound_on_max_scale(dc,style,lines,scale));
+		// is there a before?
+		if (scale + scale_step >= max_scale) return;
+		// try just before
+		scale += scale_step;
+		vector<Line> lines_before;
+		vector<CharInfo> chars_before;
+		elements.getCharInfo(dc, scale, 0, text.size(), chars_before);
+		fits = prepareLinesScale(dc, chars_before, style, true, lines_before);
+		if (fits) {
+			// too bad
+			swap(lines, lines_before);
+			swap(chars, chars_before);
+			best_scale = min_scale = scale;
+			max_scale = min(max_scale, bound_on_max_scale(dc,style,lines,scale));
+		} else {
+			// yay
+			scale = min_scale;
+			return;
+		}
+	} else {
+		max_scale = scale;
+		min_scale = max(min_scale, bound_on_min_scale(dc,style,lines,scale));
+		// ensure invariant d (below)
+		best_scale = scale = min_scale;
+		chars.clear();
+		elements.getCharInfo(dc, scale, 0, text.size(), chars);
+		prepareLinesScale(dc, chars, style, false, lines);
+		max_scale = min(max_scale, bound_on_max_scale(dc,style,lines,scale));
+	}
+	
+	// The common case optimization fialed, try a binary search
+	// Invariant:
+	//    a. The text fits at min_scale (or we force it anyway)
+	//    b. but not at max_scale
+	//    c. 0 < min_scale <= real_scale < max_scale <= 1.0+epsilon
+	//    d. lines and chars give the best fitting positioning, at best_scale
+	//    try: e. min_scale <= best_scale
+		
+	// go binary search!
+	while(min_scale + scale_step < max_scale) {
+		scale = (min_scale + max_scale) / 2;
+		vector<Line> lines_try;
+		vector<CharInfo> chars_try;
+		elements.getCharInfo(dc, scale, 0, text.size(), chars_try);
+		fits = prepareLinesScale(dc, chars_try, style, false, lines_try);
+		if (fits) {
+			min_scale = scale;
+			max_scale = min(max_scale, bound_on_max_scale(dc,style,lines_try,scale));
+			best_scale = scale; // invariant d
+			swap(lines,lines_try); 
+			swap(chars,chars_try);
+		} else {
+			max_scale = scale;
+			min_scale = max(min_scale, bound_on_min_scale(dc,style,lines_try,scale));
+			// the above can break pseudo invariant e
+		}
+	}
+	if (best_scale != min_scale) {
+		// we'd better update lines, e doesn't hold
+		scale = min_scale;
+		chars.clear();
+		elements.getCharInfo(dc, scale, 0, text.size(), chars);
+		fits = prepareLinesScale(dc, chars, style, false, lines);
+	}
+	scale = min_scale;
+}
+
+
+bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style, bool stop_if_too_long, vector<Line>& lines) const {
 	// Try to layout the text at the current scale
 	// first line
 	lines.clear();
@@ -519,6 +588,10 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 			} else {
 				line.line_height = line_size.height;
 			}
+//			// too low?
+//			if (stop_if_too_long && line.bottom() > dc.getInternalSize().height - style.padding_bottom) {
+//				return false;
+//			}
 			// push
 			lines.push_back(line);
 			// reset line object for next line
@@ -549,15 +622,18 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 		line.line_height = line_size.height;
 	}
 	lines.push_back(line);
-	return true;
+	// does it fit vertically?
+	return lines.empty() ||
+	       lines.back().bottom() <= dc.getInternalSize().height - style.padding_bottom;
 }
 
-double TextViewer::lineLeft(RotatedDC& dc, const TextStyle& style, double y) {
+double TextViewer::lineLeft(RotatedDC& dc, const TextStyle& style, double y) const {
 	return style.mask.rowLeft(y, dc.getInternalSize()) + style.padding_left;
 }
-double TextViewer::lineRight(RotatedDC& dc, const TextStyle& style, double y) {
+double TextViewer::lineRight(RotatedDC& dc, const TextStyle& style, double y) const {
 	return style.mask.rowRight(y, dc.getInternalSize()) - style.padding_right;
 }
+
 
 void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style) {
 	if (style.alignment == ALIGN_TOP_LEFT) return;

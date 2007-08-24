@@ -25,6 +25,7 @@ class TextValueViewer : public ValueViewer {
 	virtual void draw(RotatedDC& dc);
 	virtual void onValueChange();
 	virtual void onStyleChange(bool);
+	virtual void onAction(const Action&, bool undone);
 	
   protected:
 	TextViewer v;
