@@ -598,6 +598,12 @@ default set style:
 	automatic reminder text:
 		render style: checklist
 		direction: vertical
+	sort special rarity:
+		render style: both
+		choice images:
+			with the rest:      /magic.mse-game/icons/number_cards_mixed.png
+			after other cards:  /magic.mse-game/icons/number_cards_after.png
+			separate numbering: /magic.mse-game/icons/number_cards_separate.png
 	use gradient multicolor:
 		render style: both
 		choice images:

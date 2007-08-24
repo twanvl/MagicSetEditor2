@@ -87,13 +87,16 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 | ^^^		@render style@	[[type:choice render style]]		@"text"@	How should the field be rendered?
 | ^^^		@mask@		[[type:scriptable]] [[type:filename]]	''none''	A mask to apply to the image, black areas in the mask become transparent, similair to [[fun:set_mask]].
 | ^^^		@combine@	[[type:combine]]			@"normal"@	How to combine the image with the background? Can be overriden using the [[fun:set_combine]] function.
-| ^^^		@alignment@	[[type:alignment]]	 				Alignment of text and images in the box.
+| ^^^		@alignment@	[[type:alignment]]			@"stretch"@	Alignment of text and images in the box.
 | ^^^		@angle@		[[type:int]]				@0@		Rotation of the text and images inside the box, in degrees.
 | ^^^		@font@		[[type:font]]				 		Font to use for rendering text (depending on @render style@)
 | ^^^		@image@		[[type:image|scriptable image]]		 		Image to show (depending on @render style@).<br/>
 		 		 					 		The script will be called with @input@ set to the value to determine an image for.
 | ^^^		@choice images@	[[type:map]] of [[type:image]]s		 		An alternative way to specify what image to show.<br/>
 		 		 					 		For each [[type:choice]] a separate image is specified.
+| ^^^		@content width@		[[type:double]]			''automatic''	When read from a script, gives the width of the current choice image in this box. <br/>
+		 			 				 		This is only useful when the alignment is changed, otherwise it is always equal the box size itself.
+| ^^^		@content height@	[[type:double]]			''automatic''	When read from a script, gives the height of the current choice image in this box.
 | @"multiple choice"@
 		@direction@	[[type:direction]]		@"left to right"@	Direction the items are layed out in, only when @render style@ is @list@.
 | ^^^		@spacing@	[[type:double]]			@0@			Spacing between the items.

@@ -157,55 +157,6 @@ size_t Keyword::findMode(const vector<KeywordModeP>& modes) const {
 
 // ----------------------------------------------------------------------------- : Regex stuff
 
-/// Make sure the given regex does no capturing
-/** Basicly replaces "(" with "(?:" */
-String make_non_capturing(const String& re) {
-	String ret;
-	bool escape = false, bracket = false, capture = false;
-	FOR_EACH_CONST(c, re) {
-		if (capture && c != _('?')) {
-			// change this capture into a non-capturing "(" by appending "?:"
-			ret += _("?:");
-			capture = false;
-		}
-		if (escape) { // second char of escape sequence
-			escape = false;
-		} else if (c == _('\\')) { // start of escape sequence
-			escape = true;
-		} else if (c == _('[')) { // start of [...]
-			bracket = true;
-		} else if (c == _(']')) { // end of [...]
-			bracket = false;
-		} else if (bracket && c == _('(')) {
-			// wx has a bug, it counts the '(' in "[(]" as a matching group
-			// escape it so wx doesn't see it
-			ret += _('\\');
-		} else if (c == _('(')) { // start of capture?
-			capture = true;
-		}
-		ret += c;
-	}
-	return ret;
-}
-
-/// Escape a single character for use in regular expressions
-String regex_escape(Char c) {
-	if (c == _('(') || c == _(')') || c == _('[') || c == _(']') || c == _('{') ||
-	    c == _('.') || c == _('^') || c == _('$') || c == _('#') || c == _('\\') ||
-	    c == _('|') || c == _('+') || c == _('*') || c == _('?')) {
-		// c needs to be escaped
-		return _("\\") + String(1,c);
-	} else {
-		return String(1,c);
-	}
-}
-/// Escape a string for use in regular expressions
-String regex_escape(const String& s) {
-	String ret;
-	FOR_EACH_CONST(c,s) ret += regex_escape(c);
-	return ret;
-}
-
 void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
 	if (!force && match_re.IsValid()) return;
 	parameters.clear();

@@ -17,6 +17,7 @@ $built_in_functions = array(
 	'sort_text'		=>'',	'sort_rule'	=> 'sort_text',
 	'contains'		=>'',
 	'match'			=>'',	'match_rule'	=> 'match',
+	'regex_escape'		=>'',
 	// tags
 	'tag_contents'		=>'',	'tag_contents_rule'=>'tag_contents',
 	'remove_tag'		=>'',	'tag_remove_rule'  =>'remove_tag',

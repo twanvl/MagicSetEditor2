@@ -114,6 +114,11 @@ SCRIPT_FUNCTION(curly_quotes) {
 	SCRIPT_RETURN(input);
 }
 
+// regex escape a string
+SCRIPT_FUNCTION(regex_escape) {
+	SCRIPT_PARAM(String, input);
+	SCRIPT_RETURN(regex_escape(input));
+}
 
 // ----------------------------------------------------------------------------- : Tagged string
 
@@ -593,6 +598,7 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("format"),               script_format);
 	ctx.setVariable(_("format rule"),          script_format_rule);
 	ctx.setVariable(_("curly quotes"),         script_curly_quotes);
+	ctx.setVariable(_("regex_escape"),         script_regex_escape);
 	// tagged string
 	ctx.setVariable(_("tag contents"),         script_tag_contents);
 	ctx.setVariable(_("remove tag"),           script_tag_remove);
@@ -608,7 +614,7 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("expand keywords"),      script_expand_keywords);
 	ctx.setVariable(_("expand keywords rule"), script_expand_keywords_rule);
 	ctx.setVariable(_("keyword usage"),        script_keyword_usage);
-	// advanced string rules
+	// advanced string rules/functions
 	ctx.setVariable(_("replace"),              script_replace);
 	ctx.setVariable(_("filter text"),          script_filter_text);
 	ctx.setVariable(_("match"),                script_match);

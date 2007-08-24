@@ -20,6 +20,7 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:contains]]		Does a string contain another one?
 | [[fun:match|match / match_rule]]
 				Does a string match a regular expression?
+| [[fun:regex_escape]]		Escape a string for use in a regular expression.
 	
 ! [[type:tagged_string|Tags]]	<<<
 | [[fun:tag_contents|tag_contents / tag_contents_rule]]

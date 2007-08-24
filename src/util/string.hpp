@@ -179,5 +179,16 @@ bool cannocial_name_compare(const String& a, const Char* b);
 /// Make sure a string is safe to use as a filename
 String clean_filename(const String& name);
 
+// ----------------------------------------------------------------------------- : Regular expressions
+
+/// Escape a single character for use in regular expressions
+String regex_escape(Char c);
+/// Escape a string for use in regular expressions
+String regex_escape(const String& s);
+
+/// Make sure the given regex does no capturing
+/** Basicly replaces "(" with "(?:" */
+String make_non_capturing(const String& re);
+
 // ----------------------------------------------------------------------------- : EOF
 #endif
