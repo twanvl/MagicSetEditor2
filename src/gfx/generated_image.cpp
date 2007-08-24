@@ -387,7 +387,13 @@ Image SymbolToImage::generate(const Options& opt) const {
 		the_symbol = opt.local_package->readFile<SymbolP>(filename);
 	}
 	int size = max(100, 3*max(opt.width,opt.height));
-	return render_symbol(the_symbol, *variation->filter, variation->border_radius, size, size);
+	if (opt.width <= 1 || opt.height <= 1) {
+		return render_symbol(the_symbol, *variation->filter, variation->border_radius, size, size);
+	} else {
+		int width  = size * opt.width  / max(opt.width,opt.height);
+		int height = size * opt.height / max(opt.width,opt.height);
+		return render_symbol(the_symbol, *variation->filter, variation->border_radius, width, height, false, true);
+	}
 }
 bool SymbolToImage::operator == (const GeneratedImage& that) const {
 	const SymbolToImage* that2 = dynamic_cast<const SymbolToImage*>(&that);

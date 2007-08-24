@@ -71,8 +71,8 @@ void filter_symbol(Image& symbol, const SymbolFilter& filter) {
 	}
 }
 
-Image render_symbol(const SymbolP& symbol, const SymbolFilter& filter, double border_radius, int width, int height, bool edit_hints) {
-	Image i = render_symbol(symbol, border_radius, width, height, edit_hints);
+Image render_symbol(const SymbolP& symbol, const SymbolFilter& filter, double border_radius, int width, int height, bool edit_hints, bool allow_smaller) {
+	Image i = render_symbol(symbol, border_radius, width, height, edit_hints, allow_smaller);
 	filter_symbol(i, filter);
 	return i;
 }

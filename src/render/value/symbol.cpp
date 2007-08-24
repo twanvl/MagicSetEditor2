@@ -32,7 +32,7 @@ void SymbolValueViewer::draw(RotatedDC& dc) {
 			ar = min(style().max_aspect_ratio, max(style().min_aspect_ratio, ar));
 			// render and filter variations
 			FOR_EACH(variation, style().variations) {
-				Image img = render_symbol(symbol, *variation->filter, variation->border_radius, 100 * ar, 100);
+				Image img = render_symbol(symbol, *variation->filter, variation->border_radius, 200 * ar, 200);
 				Image resampled((int) (wh * ar), (int) wh, false);
 				resample(img, resampled);
 				symbols.push_back(Bitmap(resampled));

@@ -283,6 +283,12 @@ IMPLEMENT_REFLECTION_ENUM(ChoiceRenderStyle) {
 	VALUE_N("both list",		RENDER_BOTH_LIST);
 }
 
+template <typename T> void reflect_content(T& tag,         const ChoiceStyle& cs) {}
+template <>           void reflect_content(GetMember& tag, const ChoiceStyle& cs) {
+	REFLECT_N("content_width",  cs.content_width);
+	REFLECT_N("content_height", cs.content_height);
+}
+
 IMPLEMENT_REFLECTION(ChoiceStyle) {
 	REFLECT_ALIAS(300, "card list colors", "colors card list");
 	REFLECT_BASE(Style);
@@ -295,6 +301,7 @@ IMPLEMENT_REFLECTION(ChoiceStyle) {
 	REFLECT(font);
 	REFLECT(image);
 	REFLECT(choice_images);
+	reflect_content(tag, *this);
 }
 
 // ----------------------------------------------------------------------------- : ChoiceValue

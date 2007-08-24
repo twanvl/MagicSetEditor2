@@ -81,14 +81,6 @@ void TextStyle::checkContentDependencies(Context& ctx, const Dependency& dep) co
 	Style   ::checkContentDependencies(ctx, dep);
 	alignment.initDependencies(ctx, dep);
 }
-void TextStyle::markDependencyMember(const String& name, const Dependency& dep) const {
-	Style::markDependencyMember(name, dep);
-	// mark dependencies on content
-	if (dep.type == DEP_DUMMY && dep.index == false &&
-	    (name == _("content width") || name == _("content height") || name == _("content lines"))) {
-		const_cast<Dependency&>(dep).index = true;
-	}
-}
 
 template <typename T> void reflect_content(T& tag,         const TextStyle& ts) {}
 template <>           void reflect_content(GetMember& tag, const TextStyle& ts) {

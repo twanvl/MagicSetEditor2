@@ -155,6 +155,8 @@ class ChoiceStyle : public Style {
 	int                         angle;				///< Angle by which the images are rotated
 	wxImageList*                thumbnails;         ///< Thumbnails for the choices
 	vector<ThumbnailStatus>     thumbnails_status;	///< Which thumbnails are up to date?
+	// information from image rendering
+	double content_width, content_height;		///< Size of the rendered image/text
 	
 	/// Load the mask image, if it's not already done
 	void loadMask(Package& pkg);

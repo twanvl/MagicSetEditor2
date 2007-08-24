@@ -170,7 +170,11 @@ void Style::checkContentDependencies(Context& ctx, const Dependency& dep) const 
 }
 
 void Style::markDependencyMember(const String& name, const Dependency& dep) const {
-	// no content specific properties here
+	// mark dependencies on content
+	if (dep.type == DEP_DUMMY && dep.index == false && starts_with(name, _("content "))) {
+		// anything that starts with "content_" is a content property
+		const_cast<Dependency&>(dep).index = true;
+	}
 }
 
 void mark_dependency_member(const Style& style, const String& name, const Dependency& dep) {

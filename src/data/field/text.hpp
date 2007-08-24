@@ -75,7 +75,6 @@ class TextStyle : public Style {
 	virtual bool update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;
 	virtual void checkContentDependencies(Context&, const Dependency&) const;
-	virtual void markDependencyMember(const String& name, const Dependency&) const;
 	
 	/// The rotation to use when drawing
 	inline Rotation getRotation() const {

@@ -17,7 +17,7 @@
 // ----------------------------------------------------------------------------- : Simple rendering
 
 /// Render a Symbol to an Image
-Image render_symbol(const SymbolP& symbol, double border_radius = 0.05, int width = 100, int height = 100, bool editing_hints = false);
+Image render_symbol(const SymbolP& symbol, double border_radius = 0.05, int width = 100, int height = 100, bool editing_hints = false, bool allow_smaller = false);
 
 // ----------------------------------------------------------------------------- : Symbol Viewer
 

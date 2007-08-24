@@ -20,6 +20,7 @@ class ChoiceValueViewer : public ValueViewer {
   public:
 	DECLARE_VALUE_VIEWER(Choice) : ValueViewer(parent,style) {}
 	
+	virtual bool prepare(RotatedDC& dc);
 	virtual void draw(RotatedDC& dc);
 	virtual void onStyleChange(bool);
 };

@@ -12,6 +12,40 @@
 
 // ----------------------------------------------------------------------------- : ChoiceValueViewer
 
+bool ChoiceValueViewer::prepare(RotatedDC& dc) {
+	if (style().render_style & RENDER_IMAGE) {
+		style().initImage();
+		ScriptableImage& img = style().image;
+		Context& ctx = viewer.getContext();
+		ctx.setVariable(_("input"), to_script(value().value()));
+		img.update(ctx);
+		//generate
+		if (img.isReady()) {
+			GeneratedImage::Options img_options(0,0, viewer.stylesheet.get(), &getSet());
+			if (nativeLook()) {
+				img_options.width = img_options.height = 16;
+				img_options.preserve_aspect = ASPECT_BORDER;
+			} else if(style().render_style & RENDER_TEXT) {
+				// also drawing text, use original size
+			} else {
+				img_options.width  = (int) dc.trX(style().width);
+				img_options.height = (int) dc.trY(style().height);
+				img_options.preserve_aspect = (style().alignment & ALIGN_STRETCH) ? ASPECT_STRETCH : ASPECT_FIT;
+			}
+			// don't worry we cache the image
+			Image image = img.generate(img_options, true);
+			// store content properties
+			if (style().content_width  != image.GetWidth() ||
+			    style().content_height != image.GetHeight()) {
+				style().content_width  = image.GetWidth();
+				style().content_height = image.GetHeight();
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 void ChoiceValueViewer::draw(RotatedDC& dc) {
 	drawFieldBorder(dc);
 	if (style().render_style & RENDER_HIDDEN) return;
@@ -19,14 +53,7 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 	double margin = 0;
 	if (style().render_style & RENDER_IMAGE) {
 		// draw image
-//		map<String,ScriptableImage>::iterator it = style().choice_images.find(cannocial_name_form(value().value()));
-//		if (it != style().choice_images.end() && it->second.isReady()) {
-//			ScriptableImage& img = it->second;
-		style().initImage();
 		ScriptableImage& img = style().image;
-		Context& ctx = viewer.getContext();
-		ctx.setVariable(_("input"), to_script(value().value()));
-		img.update(ctx);
 		if (img.isReady()) {
 			GeneratedImage::Options img_options(0,0, viewer.stylesheet.get(), &getSet());
 			if (nativeLook()) {

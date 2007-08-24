@@ -14,14 +14,14 @@ DECLARE_TYPEOF_COLLECTION(SymbolPartP);
 
 // ----------------------------------------------------------------------------- : Simple rendering
 
-Image render_symbol(const SymbolP& symbol, double border_radius, int width, int height, bool editing_hints) {
+Image render_symbol(const SymbolP& symbol, double border_radius, int width, int height, bool editing_hints, bool allow_smaller) {
 	SymbolViewer viewer(symbol, editing_hints, width, border_radius);
 	// limit width/height ratio to aspect ratio of symbol
 	double ar  = symbol->aspectRatio();
 	double par = (double)width/height;
-	if (par > ar && ar > 1) {
+	if (par > ar && (ar > 1 || (allow_smaller && height < width))) {
 		width  = height * ar;
-	} else if (par < ar && ar < 1) {
+	} else if (par < ar && (ar < 1 || (allow_smaller && width < height))) {
 		height = width / ar;
 	}
 	if (width > height) {
