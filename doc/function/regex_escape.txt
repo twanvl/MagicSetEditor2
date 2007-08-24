@@ -1,0 +1,14 @@
+Function: regex_escape
+
+--Usage--
+> regex_escape(some_string)
+
+Escape a string so it can safely be used in a [[type:regex|regular expression]].
+The regular expression will match the literal string, and nothing else.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		String to escape.
+
+--Examples--
+> regex_escape("some(thing)") == "some\\(thing\\)"
