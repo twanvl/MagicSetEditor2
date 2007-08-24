@@ -360,6 +360,8 @@ void ImageSlicePreview::draw(DC& dc) {
 		Image image = slice.getSlice();
 		if (mask && mask->size == slice.target_size) {
 			mask->setAlpha(image);
+		}
+		if (image.HasAlpha()) {
 			// create bitmap
 			bitmap = Bitmap(image.GetWidth(), image.GetHeight());
 			wxMemoryDC mdc; mdc.SelectObject(bitmap);
@@ -446,9 +448,22 @@ void ImageSliceSelector::draw(DC& dc) {
 	int width  = int(slice.selection.width  * scaleX);
 	int height = int(slice.selection.height * scaleY);
 	// background
-	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(Color(128,128,128));
-	dc.DrawRectangle(0, 0, s.GetWidth(), s.GetHeight());
+	{
+		RotatedDC rdc(dc, 0, RealRect(0,0,s.x,s.y), 1, QUALITY_LOW);
+		draw_checker(rdc, RealRect(0,0,s.x,s.y));
+	}
+	// edge
+	{
+		wxRegion r(0,0,s.x,s.y);
+		r.Subtract(wxRect(border,border, s.x-2*border, s.y-2*border));
+		dc.SetClippingRegion(r);
+		dc.SetPen(*wxTRANSPARENT_PEN);
+		dc.SetBrush(Color(191,191,191));
+		dc.SetLogicalFunction(wxAND);
+		dc.DrawRectangle(0, 0, s.x, s.y);
+		dc.SetLogicalFunction(wxCOPY);
+		dc.DestroyClippingRegion();
+	}
 	// bitmap : unselected
 	dc.DrawBitmap(bitmap_no_sel, border, border);
 	// draw selected part ungreyed over it
@@ -536,6 +551,11 @@ void ImageSliceSelector::createBitmap() {
 	blur_image(img_no_sel, img_no_sel);
 	blur_image(img_no_sel, img_no_sel);
 	desaturate_image(img_no_sel);
+	if (img.HasAlpha()) {
+		// copy alpha
+		img_no_sel.InitAlpha();
+		memcpy(img_no_sel.GetAlpha(), img.GetAlpha(), img.GetWidth() * img.GetHeight());
+	}
 	bitmap_no_sel = Bitmap(img_no_sel);
 }
 

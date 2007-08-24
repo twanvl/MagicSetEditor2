@@ -193,34 +193,83 @@ void sharp_downsample(const Image& img_in, Image& img_out, int amount) {
 	assert(4 * center_weight - 8 * border_weight > 0);
 	
 	Byte *in = img_in.GetData(), *out = img_out.GetData();
+	Byte *al = nullptr, *outa = nullptr;
+	if (img_in.HasAlpha()) {
+		img_out.InitAlpha();
+		al = img_in.GetAlpha();
+		outa = img_out.GetAlpha();
+	}
 	
 	for (int y = 0 ; y < height ; ++y) {
 		for (int x = 0 ; x < width ; ++x) {
-			for (int c = 0 ; c < 3 ; ++c) { // for each component
-				// Filter using a kernel of the form
-				/*     -1 -1
-				 *  -1  c  c -1
-				 *  -1  c  c -1
-				 *     -1 -1
-				 * But when we are near the edge replicate the edge pixel
-				 */
-				int tot =
-				  center_weight * (in[0] + in[3] + in[line] + in[line+3]) - // center
-				  border_weight * (
-				    (x   == 0      ? in[0]    + in[line]   : in[-3]     + in[line-3])  +  // left
-				    (x+1 == width  ? in[3]    + in[line+3] : in[6]      + in[line+6])  +  // right
-				    (y   == 0      ? in[0]    + in[3]      : in[-line]  + in[3-line])  +  // top
-				    (y+1 == height ? in[line] + in[line+3] : in[line*2] + in[line*2+3]) );// bottom
-				// And then avarage the result into a single pixel (downsample by factor 2)
-				out[0] = col( tot / (4 * center_weight - 8 * border_weight) );
-				// next pixel
-				++in;
-				++out;
+			if (x==150&&y==150) {
+			x=x;//break
 			}
-			// skip a pixel
-			in += 3;
+			// Filter using a kernel of the form
+			/*     -1 -1
+			 *  -1  c  c -1
+			 *  -1  c  c -1
+			 *     -1 -1
+			 * But when we are near the edge ignore the pixel
+			 */
+			// when there is alpha, all weights are multiplied by 4*255
+			int center_alpha = al ? al[0] + al[1] + al[width*2] + al[width*2+1] : 1;
+			int weight = center_weight * center_alpha * 4;
+			int sumR   = center_weight * center_alpha * (in[0] + in[3] + in[line+0] + in[line+3]);
+			int sumG   = center_weight * center_alpha * (in[1] + in[4] + in[line+1] + in[line+4]);
+			int sumB   = center_weight * center_alpha * (in[2] + in[5] + in[line+2] + in[line+5]);
+			// edges
+			if (x != 0) {
+				int a = al ? border_weight * min(2 * (al[-1] + al[width*2-1]), center_alpha)
+				           : border_weight;
+				sumR -= a * (in[-3] + in[line-3]);
+				sumG -= a * (in[-2] + in[line-2]);
+				sumB -= a * (in[-1] + in[line-1]);
+				weight -= a * 2;
+			}
+			if (x+1 != width) {
+				int a = al ? border_weight * min(2 * (al[2] + al[width*2+2]), center_alpha)
+				           : border_weight;
+				sumR -= a * (in[6] + in[line+6]);
+				sumG -= a * (in[7] + in[line+7]);
+				sumB -= a * (in[8] + in[line+8]);
+				weight -= a * 2;
+			}
+			if (y != 0) {
+				int a = al ? border_weight * min(2 * (al[-width*2] + al[-width*2+1]), center_alpha)
+				           : border_weight;
+				sumR -= a * (in[-line+0] + in[-line+3]);
+				sumG -= a * (in[-line+1] + in[-line+4]);
+				sumB -= a * (in[-line+2] + in[-line+5]);
+				weight -= a * 2;
+			}
+			if (y+1 != height) {
+				int a = al ? border_weight * min(2 * (al[width*2*2] + al[width*2*2+1]), center_alpha)
+				           : border_weight;
+				sumR -= a * (in[line*2+0] + in[line*2+3]);
+				sumG -= a * (in[line*2+1] + in[line*2+4]);
+				sumB -= a * (in[line*2+2] + in[line*2+5]);
+				weight -= a * 2;
+			}
+			// And then avarage the result into a single pixel (downsample by factor 2 in both dimensions)
+			if (weight > 0) {
+				out[0] = col( sumR / weight );
+				out[1] = col( sumG / weight );
+				out[2] = col( sumB / weight );
+			} else {
+				out[0] = out[1] = out[2] = 0;
+			}
+			if (al) {
+				outa[0] = center_alpha / 4;
+				outa += 1;
+				al += 2;
+			}
+			// next pixel
+			in  += 6;
+			out += 3;
 		}
 		// skip a line
 		in += line;
+		if (al) al += width*2;
 	}
 }

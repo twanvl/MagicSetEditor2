@@ -46,7 +46,8 @@ void ImageValueEditor::sliceImage(const Image& image) {
 	if (s.ShowModal() == wxID_OK) {
 		// store the image into the set
 		FileName new_image_file = getSet().newFileName(field().name,_("")); // a new unique name in the package
-		s.getImage().SaveFile(getSet().nameOut(new_image_file), wxBITMAP_TYPE_JPEG);
+		Image img = s.getImage();
+		img.SaveFile(getSet().nameOut(new_image_file), img.HasAlpha() ? wxBITMAP_TYPE_PNG : wxBITMAP_TYPE_JPEG);
 		getSet().actions.add(value_action(valueP(), new_image_file));
 	}
 }
