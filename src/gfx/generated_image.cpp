@@ -68,6 +68,10 @@ Image conform_image(const Image& img, const GeneratedImage::Options& options) {
 	if (options.saturate) {
 		saturate(image, 40);
 	}
+	// rotate?
+	if (options.angle != 0) {
+		image = rotate_image(image, options.angle);
+	}
 	return image;
 }
 

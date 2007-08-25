@@ -120,7 +120,7 @@ template <> StyleP read_new<Style>(Reader&) {
 	throw InternalError(_("IndexMap contains nullptr StyleP the application should have crashed already"));
 }
 
-bool Style::update(Context& ctx) {
+int Style::update(Context& ctx) {
 	bool changed =
 	       left   .update(ctx)
 	     | width  .update(ctx)
@@ -196,8 +196,8 @@ void Style::removeListener(StyleListener* listener) {
 		listeners.end()
 		);
 }
-void Style::tellListeners(bool already_prepared) {
-	FOR_EACH(l, listeners) l->onStyleChange(already_prepared);
+void Style::tellListeners(int changes) {
+	FOR_EACH(l, listeners) l->onStyleChange(changes);
 }
 
 StyleListener::StyleListener(const StyleP& style)

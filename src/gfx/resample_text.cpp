@@ -163,7 +163,7 @@ void draw_resampled_text(DC& dc, const RealRect& rect, double stretch, int wc, i
 	mdc.SelectObject(wxNullBitmap);
 	Image img_large = buffer.ConvertToImage();
 	// step 2. sample down
-	if ((angle & 2) == 0) w *= stretch;
+	if (!sideways(angle)) w *= stretch;
 	else                  h *= stretch;
 	Image img_small(w, h, false);
 	fill_image(img_small, dc.GetTextForeground());

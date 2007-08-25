@@ -51,6 +51,9 @@ class Rotation {
 	inline double trX(double s) const { return s * zoomX; }
 	inline double trY(double s) const { return s * zoomY; }
 	
+	/// Translate an angle
+	inline int trAngle(int a) { return (angle + a) % 360; }
+	
 	/// Translate a single point
 	RealPoint tr(const RealPoint& p) const;
 	/// Translate a single size, the result may be negative
@@ -94,8 +97,7 @@ class Rotation {
 	
   public:
 	/// Is the rotation sideways (90 or 270 degrees)?
-	// Note: angle & 2 == 0 for angle in {0, 180} and != 0 for angle in {90, 270)
-	inline bool sideways() const { return  (angle & 2) != 0; }
+	inline bool sideways() const { return ::sideways(angle); }
 	
   protected:
 	/// Is the x axis 'reversed' (after turning sideways)?
@@ -153,7 +155,11 @@ class RotatedDC : public Rotation {
 	/// Draw abitmap, it must already be zoomed!
 	void DrawBitmap(const Bitmap& bitmap, const RealPoint& pos);
 	/// Draw an image using the given combining mode, the image must already be zoomed!
-	void DrawImage (const Image& image,   const RealPoint& pos, ImageCombine combine = COMBINE_NORMAL, int angle = 0);
+	void DrawImage (const Image& image,   const RealPoint& pos, ImageCombine combine = COMBINE_DEFAULT, int angle = 0);
+	/// Draw a bitmap that is already zoomed and rotated
+	void DrawPreRotatedBitmap(const Bitmap& bitmap, const RealPoint& pos);
+	/// Draw an image that is already zoomed and rotated
+	void DrawPreRotatedImage(const Image& image, const RealPoint& pos, ImageCombine combine = COMBINE_DEFAULT);
 	void DrawLine  (const RealPoint& p1,  const RealPoint& p2);
 	void DrawRectangle(const RealRect& r);
 	void DrawRoundedRectangle(const RealRect& r, double radius);

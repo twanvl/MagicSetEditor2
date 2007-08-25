@@ -16,22 +16,64 @@
 
 void ImageValueViewer::draw(RotatedDC& dc) {
 	drawFieldBorder(dc);
+	// reset?
+	int w = (int)dc.trX(style().width), h = (int)dc.trY(style().height);
+	int a = dc.trAngle(style().angle);
+	if (bitmap.Ok() && (a != angle || bitmap.GetWidth() != w || bitmap.GetHeight() != h)) {
+		bitmap = Bitmap();
+	}
 	// try to load image
-	if (!bitmap.Ok() && !value().filename.empty()) {
-		try {
-			InputStreamP image_file = getSet().openIn(value().filename);
-			Image image;
-			if (image.LoadFile(*image_file)) {
-				image.Rescale((int)dc.trX(style().width), (int)dc.trY(style().height));
-				// apply mask to image
-				loadMask(dc);
-				if (alpha_mask) alpha_mask->setAlpha(image);
-				bitmap = Bitmap(image);
+	if (!bitmap.Ok()) {
+		angle = a;
+		is_default = false;
+		Image image;
+		loadMask(dc);
+		// load from file
+		if (!value().filename.empty()) {
+			try {
+				InputStreamP image_file = getSet().openIn(value().filename);
+				if (image.LoadFile(*image_file)) {
+					image.Rescale(w, h);
+				}
+			} catch (Error e) {
+				handle_error(e, false, false); // don't handle now, we are in onPaint
 			}
-		} catch (Error e) {
-			handle_error(e, false, false); // don't handle now, we are in onPaint
+		}
+		// nice placeholder
+		if (!image.Ok() && style().default_image.isReady()) {
+			image = style().default_image.generate(GeneratedImage::Options(w, h, viewer.stylesheet.get(), &getSet()));
+			is_default = true;
+			if (viewer.drawEditing()) {
+				bitmap = imagePlaceholder(dc, w, h, image, viewer.drawEditing());
+				if (alpha_mask || a) {
+					image = bitmap.ConvertToImage(); // we need to convert back to an image
+				} else {
+					image = Image();
+				}
+			}
+		}
+		// checkerboard placeholder
+		if (!image.Ok() && !bitmap.Ok() && style().width > 40) {
+			// placeholder bitmap
+			bitmap = imagePlaceholder(dc, w, h, wxNullImage, viewer.drawEditing());
+			if (alpha_mask || a) {
+				// we need to convert back to an image
+				image = bitmap.ConvertToImage();
+			}
+		}
+		// done
+		if (image.Ok()) {
+			// apply mask and rotate
+			if (alpha_mask) alpha_mask->setAlpha(image);
+			image = rotate_image(image, angle);
+			bitmap = Bitmap(image);
 		}
 	}
+	// draw image, if any
+	if (bitmap.Ok()) {
+		dc.DrawPreRotatedBitmap(bitmap, style().getPos());
+	}
+	/*
 	// if there is no image, generate a placeholder
 	if (!bitmap.Ok()) {
 		UInt w = (UInt)dc.trX(style().width), h = (UInt)dc.trY(style().height);
@@ -56,6 +98,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 	if (bitmap.Ok()) {
 		dc.DrawBitmap(bitmap, style().getPos());
 	}
+	*/
 }
 
 bool ImageValueViewer::containsPoint(const RealPoint& p) const {
@@ -77,10 +120,13 @@ void ImageValueViewer::onValueChange() {
 	bitmap = Bitmap();
 }
 
-void ImageValueViewer::onStyleChange(bool already_prepared) {
-	bitmap = Bitmap();
-	alpha_mask = AlphaMaskP(); // TODO: only reload whatever has changed
-	if (!already_prepared) viewer.redraw(*this);
+void ImageValueViewer::onStyleChange(int changes) {
+	if ((changes & CHANGE_MASK) ||
+	    ((changes & CHANGE_DEFAULT) && is_default)) {
+		bitmap = Bitmap();
+	}
+	if (changes & CHANGE_MASK) alpha_mask = AlphaMaskP();
+	ValueViewer::onStyleChange(changes);
 }
 
 void ImageValueViewer::loadMask(const Rotation& rot) const {

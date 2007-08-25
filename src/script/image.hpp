@@ -20,7 +20,6 @@
 /// An image that can also be scripted
 /** Differs from Scriptable<Image> in that:
  *   - A script is always used
- *   - Age is checked, chached images are used if possible
  *   - The image can be scaled
  */
 class ScriptableImage {
@@ -37,7 +36,7 @@ class ScriptableImage {
 	inline bool isSet()      const { return script || value; }
 	
 	/// Generate an image.
-	Image generate(const GeneratedImage::Options& options, bool cache = false) const;
+	Image generate(const GeneratedImage::Options& options) const;
 	/// How should images be combined with the background?
 	ImageCombine combine() const;
 	
@@ -56,10 +55,9 @@ class ScriptableImage {
 	/// Get access to the script, always returns a valid script
 	ScriptP getScriptP();
 	
-  private:
+  protected:
 	OptionalScript  script;		///< The script, not really optional
 	GeneratedImageP value;		///< The image generator
-	mutable Image   cached;		///< The cached actual image
 	
 	DECLARE_REFLECTION();
 };
@@ -69,6 +67,39 @@ inline ScriptValueP to_script(const ScriptableImage&) { return script_nil; }
 
 /// Convert a script value to a GeneratedImageP
 GeneratedImageP image_from_script(const ScriptValueP& value);
+
+// ----------------------------------------------------------------------------- : CachedScriptableImage
+
+/// A version of ScriptableImage that does caching
+class CachedScriptableImage : public ScriptableImage {
+  public:
+	inline CachedScriptableImage() {}
+	inline CachedScriptableImage(const String& script) : ScriptableImage(script) {}
+	inline CachedScriptableImage(const GeneratedImageP& gen) : ScriptableImage(gen) {}
+	
+	/// Generate an image, using caching if possible.
+	/** *combine should be set to the combine value of the style.
+	 *  It will be overwritten if the image specifies a non-default combine.
+	 *  After this call, either:
+	 *     -    combine <= COMBINE_NORMAL && bitmap->Ok()
+	 *     - or combine >  COMBINE_NORMAL && image->Ok()
+	 *  Optionally, an alpha mask is applied to the image.
+	 */
+	void generateCached(const GeneratedImage::Options& img_options,
+	                    Image* mask,
+	                    ImageCombine* combine, wxBitmap* bitmap, wxImage* image);
+	
+	/// Update the script, returns true if the value has changed
+	bool update(Context& ctx);
+	
+	/// Clears the cache
+	void clearCache();
+	
+  private:
+	Image  cached_i; ///< The cached image
+	Bitmap cached_b; ///< *or* the cached bitmap
+	int    cached_angle;
+};
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

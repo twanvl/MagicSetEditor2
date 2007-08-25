@@ -41,14 +41,7 @@ GeneratedImageP image_from_script(const ScriptValueP& value) {
 
 // ----------------------------------------------------------------------------- : ScriptableImage
 
-Image ScriptableImage::generate(const GeneratedImage::Options& options, bool cache) const {
-	if (cached.Ok() && (cached.GetWidth() == options.width && cached.GetHeight() == options.height
-	                 || (options.preserve_aspect == ASPECT_FIT && // only one dimension has to fit
-	                     (cached.GetWidth() == options.width || cached.GetHeight() == options.height)
-	                   ))) {
-		// cached, so we are done
-		return cached;
-	}
+Image ScriptableImage::generate(const GeneratedImage::Options& options) const {
 	// generate
 	Image image;
 	if (isReady()) {
@@ -64,14 +57,11 @@ Image ScriptableImage::generate(const GeneratedImage::Options& options, bool cac
 		i.SetAlpha(0,0,0);
 		image = i;
 	}
-	image = conform_image(image, options);
-	// cache? and return
-	if (cache) cached = image;
-	return image;
+	return conform_image(image, options);
 }
 
 ImageCombine ScriptableImage::combine() const {
-	if (!isReady()) return COMBINE_NORMAL;
+	if (!isReady()) return COMBINE_DEFAULT;
 	return value->combine();
 }
 
@@ -80,7 +70,6 @@ bool ScriptableImage::update(Context& ctx) {
 	GeneratedImageP new_value = image_from_script(script.invoke(ctx));
 	if (!new_value || !value || *new_value != *value) {
 		value = new_value;
-		cached = Image();
 		return true;
 	} else {
 		return false;
@@ -117,4 +106,98 @@ template <> void Writer::handle(const ScriptableImage& s) {
 }
 template <> void GetDefaultMember::handle(const ScriptableImage& s) {
 	handle(s.script.unparsed);
+}
+
+
+// ----------------------------------------------------------------------------- : CachedScriptableImage
+
+void CachedScriptableImage::generateCached(const GeneratedImage::Options& options,
+	                                       Image* mask,
+	                                       ImageCombine* combine, wxBitmap* bitmap, wxImage* image) {
+	// ready?
+	if (!isReady()) {
+		// error, return blank image
+		Image i(1,1);
+		i.InitAlpha();
+		i.SetAlpha(0,0,0);
+		*image = i;
+		return;
+	}
+	// find combine mode
+	ImageCombine combine_i = value->combine();
+	if (combine_i != COMBINE_DEFAULT) *combine = combine_i;
+	// desired size
+	int ow = options.width, oh = options.height;
+	if (sideways(options.angle)) swap(ow,oh);
+	// image or bitmap?
+	if (*combine <= COMBINE_NORMAL) {
+		// bitmap
+		if (cached_b.Ok() && options.angle == cached_angle) {
+			bool w_ok = cached_b.GetWidth()  == ow,
+			     h_ok = cached_b.GetHeight() == oh;
+			if ((w_ok && h_ok) || (options.preserve_aspect == ASPECT_FIT && (w_ok || h_ok))) { // only one dimension has to fit when fitting
+				// cached, we are done
+				*bitmap = cached_b;
+				return;
+			}
+		}
+	} else {
+		// image
+		if (cached_i.Ok()) {
+			bool w_ok = cached_i.GetWidth()  == options.width,
+			     h_ok = cached_i.GetHeight() == options.height;
+			if ((w_ok && h_ok) || (options.preserve_aspect == ASPECT_FIT && (w_ok || h_ok))) { // only one dimension has to fit when fitting
+				if (options.angle != cached_angle) {
+					// rotate cached image
+					cached_i = rotate_image(cached_i, options.angle - cached_angle + 360);
+					cached_angle = options.angle;
+				}
+				*image = cached_i;
+				return;
+			}
+		}
+	}
+	// generate
+	cached_i = generate(options);
+	cached_angle = options.angle;
+	if (mask && mask->Ok()) {
+		// apply mask
+		if (mask->GetWidth() == cached_i.GetWidth() && mask->GetHeight() == cached_i.GetHeight()) {
+			set_alpha(cached_i, *mask);
+		} else {
+			Image mask_scaled(cached_i.GetWidth(),cached_i.GetHeight(), false);
+			resample(mask,mask_scaled);
+			set_alpha(cached_i, mask_scaled);
+		}
+	}
+	if (*combine <= COMBINE_NORMAL) {
+		*bitmap = cached_b = Bitmap(cached_i);
+		cached_i = Image();
+	} else {
+		*image = cached_i;
+	}
+}
+
+bool CachedScriptableImage::update(Context& ctx) {
+	bool change = ScriptableImage::update(ctx);
+	if (change) {
+		clearCache();
+	}
+	return change;
+}
+
+void CachedScriptableImage::clearCache() {
+	cached_i = Image();
+	cached_b = Bitmap();
+}
+
+
+template <> void Reader::handle(CachedScriptableImage& s) {
+	handle((ScriptableImage&)s);
+}
+template <> void Writer::handle(const CachedScriptableImage& s) {
+	handle((const ScriptableImage&)s);
+}
+template <> void GetDefaultMember::handle(const CachedScriptableImage& s) {
+	handle((const ScriptableImage&)s);
 }

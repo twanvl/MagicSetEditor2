@@ -38,10 +38,11 @@ class ImageStyle : public Style {
 	inline ImageStyle(const ImageFieldP& field) : Style(field) {}
 	DECLARE_STYLE_TYPE(Image);
 	
+	Scriptable<int>    angle;         ///< Rotation of images
 	Scriptable<String> mask_filename; ///< Filename for a mask image
 	ScriptableImage    default_image; ///< Placeholder
 	
-	virtual bool update(Context&);
+	virtual int update(Context&);
 	
   private:
 	DECLARE_REFLECTION();

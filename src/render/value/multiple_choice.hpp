@@ -25,6 +25,7 @@ class MultipleChoiceValueViewer : public ValueViewer {
 	double item_height; ///< Height of a single item, or 0 if non uniform
   private:
 	void drawChoice(RotatedDC& dc, RealPoint& pos, const String& choice, bool active = true);
+	void getOptions(Rotation& rot, GeneratedImage::Options& opts);
 };
 
 // ----------------------------------------------------------------------------- : EOF

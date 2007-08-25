@@ -224,9 +224,9 @@ void SetScriptManager::updateStyles(Context& ctx, const IndexMap<FieldP,StyleP>&
 	FOR_EACH_CONST(s, styles) {
 		if (only_content_dependent && !s->content_dependent) continue;
 		try {
-			if (s->update(ctx)) {
+			if (int change = s->update(ctx)) {
 				// style has changed, tell listeners
-				s->tellListeners(only_content_dependent);
+				s->tellListeners(change | (only_content_dependent ? CHANGE_ALREADY_PREPARED : 0) );
 			}
 		} catch (const ScriptError& e) {
 			// NOTE: don't handle errors now, we are likely in an onPaint handler

@@ -119,9 +119,11 @@ class Style : public IntrusivePtrVirtualBase {
 	/** thisP is a smart pointer to this */
 	virtual ValueViewerP makeEditor(DataEditor& parent, const StyleP& thisP) = 0;
 	
-	/// Update scripted values of this style, return true if anything has changed.
-	/** The caller should tellListeners() */
-	virtual bool update(Context&);
+	/// Update scripted values of this style, return nonzero if anything has changed.
+	/** The caller should tellListeners()
+	 *  The result is a combination of StyleChange flags
+	 */
+	virtual int update(Context&);
 	/// Add the given dependency to the dependent_scripts list for the variables this style depends on
 	/** Only use for things that need invalidate() */
 	virtual void initDependencies(Context&, const Dependency&) const;
@@ -140,12 +142,22 @@ class Style : public IntrusivePtrVirtualBase {
 	/// Remove a StyleListener
 	void removeListener(StyleListener*);
 	/// Tell the StyleListeners that this style has changed
-	void tellListeners(bool already_prepared);
+	/** change_info is a subset of StyleChange flags */
+	void tellListeners(int changes);
 	
   private:
 	DECLARE_REFLECTION_VIRTUAL();
 	/// Things that are listening to changes in this style
 	vector<StyleListener*> listeners;
+};
+
+/// What changed in a style update?
+enum StyleChange
+{	CHANGE_NONE              = 0x00 // nothing changed
+,	CHANGE_OTHER             = 0x01 // some other change (note: result of casting from bool)
+,	CHANGE_DEFAULT           = 0x02 // only the 'default' state is affected
+,	CHANGE_MASK              = 0x04 // a mask image changed, must be reloaded
+,	CHANGE_ALREADY_PREPARED  = 0x80 // hint that the change was the result of a content property change, viewers are already prepared
 };
 
 void init_object(const FieldP&, StyleP&);
@@ -168,8 +180,8 @@ class StyleListener : public IntrusivePtrVirtualBase {
 	virtual ~StyleListener();
 	
 	/// Called when a (scripted) property of the viewed style has changed
-	/** already_prepared indicates that this change happend after preparing text for content properties */
-	virtual void onStyleChange(bool already_prepared) {}
+	/** changes is a combination of StyleChange flags */
+	virtual void onStyleChange(int changes) {}
   protected:
 	const StyleP styleP; ///< The style we are listening to
 };

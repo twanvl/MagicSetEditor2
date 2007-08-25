@@ -27,10 +27,12 @@ class ImageValueViewer : public ValueViewer {
 	virtual bool containsPoint(const RealPoint& p) const;
 	
 	virtual void onValueChange();
-	virtual void onStyleChange(bool);
+	virtual void onStyleChange(int);
 			
   private:
-	Bitmap bitmap;
+	Bitmap bitmap; ///< Cached bitmap
+	int    angle;  ///< Angle of cached bitmap
+	int    is_default; ///< Is the default placeholder image used?
 	mutable AlphaMaskP alpha_mask;
 	
 	void loadMask(const Rotation& rot) const;

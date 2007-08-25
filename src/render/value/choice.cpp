@@ -15,30 +15,33 @@
 bool ChoiceValueViewer::prepare(RotatedDC& dc) {
 	if (style().render_style & RENDER_IMAGE) {
 		style().initImage();
-		ScriptableImage& img = style().image;
+		CachedScriptableImage& img = style().image;
 		Context& ctx = viewer.getContext();
 		ctx.setVariable(_("input"), to_script(value().value()));
-		img.update(ctx);
-		//generate
-		if (img.isReady()) {
-			GeneratedImage::Options img_options(0,0, viewer.stylesheet.get(), &getSet());
-			if (nativeLook()) {
-				img_options.width = img_options.height = 16;
-				img_options.preserve_aspect = ASPECT_BORDER;
-			} else if(style().render_style & RENDER_TEXT) {
-				// also drawing text, use original size
+		// generate to determine the size
+		if (img.update(ctx) && img.isReady()) {
+			GeneratedImage::Options img_options;
+			getOptions(dc, img_options);
+			// Generate image/bitmap (whichever is available)
+			// don't worry, we cache the image
+			ImageCombine combine = style().combine;
+			style().loadMask(*viewer.stylesheet);
+			Bitmap bitmap; Image image;
+			img.generateCached(img_options, &style().mask, &combine, &bitmap, &image);
+			int w, h;
+			if (bitmap.Ok()) {
+				w = bitmap.GetWidth();
+				h = bitmap.GetHeight();
 			} else {
-				img_options.width  = (int) dc.trX(style().width);
-				img_options.height = (int) dc.trY(style().height);
-				img_options.preserve_aspect = (style().alignment & ALIGN_STRETCH) ? ASPECT_STRETCH : ASPECT_FIT;
+				assert(image.Ok());
+				w = image.GetWidth();
+				h = image.GetHeight();
 			}
-			// don't worry we cache the image
-			Image image = img.generate(img_options, true);
+			if (sideways(img_options.angle)) swap(w,h);
 			// store content properties
-			if (style().content_width  != image.GetWidth() ||
-			    style().content_height != image.GetHeight()) {
-				style().content_width  = image.GetWidth();
-				style().content_height = image.GetHeight();
+			if (style().content_width  != w || style().content_height != h) {
+				style().content_width  = w;
+				style().content_height = h;
 				return true;
 			}
 		}
@@ -53,33 +56,29 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 	double margin = 0;
 	if (style().render_style & RENDER_IMAGE) {
 		// draw image
-		ScriptableImage& img = style().image;
+		CachedScriptableImage& img = style().image;
 		if (img.isReady()) {
-			GeneratedImage::Options img_options(0,0, viewer.stylesheet.get(), &getSet());
-			if (nativeLook()) {
-				img_options.width = img_options.height = 16;
-				img_options.preserve_aspect = ASPECT_BORDER;
-			} else if(style().render_style & RENDER_TEXT) {
-				// also drawing text, use original size
-			} else {
-				img_options.width  = (int) dc.trX(style().width);
-				img_options.height = (int) dc.trY(style().height);
-				img_options.preserve_aspect = (style().alignment & ALIGN_STRETCH) ? ASPECT_STRETCH : ASPECT_FIT;
-			}
-			Image image = img.generate(img_options, true);
-			ImageCombine combine = img.combine();
-			// apply mask?
+			GeneratedImage::Options img_options;
+			getOptions(dc, img_options);
+			// Generate image/bitmap
+			ImageCombine combine = style().combine;
 			style().loadMask(*viewer.stylesheet);
-			if (style().mask.Ok()) {
-				set_alpha(image, style().mask);
+			Bitmap bitmap; Image image;
+			img.generateCached(img_options, &style().mask, &combine, &bitmap, &image);
+			if (bitmap.Ok()) {
+				// just draw it
+				dc.DrawPreRotatedBitmap(bitmap,
+					align_in_rect(style().alignment, dc.trInvNoNeg(RealSize(bitmap)), style().getRect())
+				);
+				margin = dc.trInv(RealSize(bitmap)).width + 1;
+			} else {
+				// use combine mode
+				dc.DrawPreRotatedImage(image,
+					align_in_rect(style().alignment, dc.trInvNoNeg(RealSize(image)), style().getRect()),
+					combine
+				);
+				margin = dc.trInv(RealSize(image)).width + 1;
 			}
-			// draw
-			dc.DrawImage(image,
-				align_in_rect(style().alignment, dc.trInvS(RealSize(image.GetWidth(), image.GetHeight())), style().getRect()),
-				combine == COMBINE_NORMAL ? style().combine : combine,
-				style().angle
-			);
-			margin = dc.trInvS(image.GetWidth()) + 1;
 		} else if (nativeLook()) {
 			// always have the margin
 			margin = 17;
@@ -99,6 +98,23 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 	}
 }
 
-void ChoiceValueViewer::onStyleChange(bool already_prepared) {
-	if (!already_prepared) viewer.redraw(*this);
+void ChoiceValueViewer::onStyleChange(int changes) {
+	if (changes & CHANGE_MASK) style().image.clearCache();
+	ValueViewer::onStyleChange(changes);
+}
+
+void ChoiceValueViewer::getOptions(Rotation& rot, GeneratedImage::Options& opts) {
+	opts.package       = viewer.stylesheet.get();
+	opts.local_package = &getSet();
+	opts.angle         = rot.trAngle(style().angle);
+	if (nativeLook()) {
+		opts.width = opts.height = 16;
+		opts.preserve_aspect = ASPECT_BORDER;
+	} else if(style().render_style & RENDER_TEXT) {
+		// also drawing text, use original size
+	} else {
+		opts.width  = (int) rot.trX(style().width);
+		opts.height = (int) rot.trY(style().height);
+		opts.preserve_aspect = (style().alignment & ALIGN_STRETCH) ? ASPECT_STRETCH : ASPECT_FIT;
+	}
 }

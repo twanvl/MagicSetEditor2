@@ -26,6 +26,7 @@ Set& ValueViewer::getSet() const { return *viewer.getSet(); }
 
 void ValueViewer::setValue(const ValueP& value) {
 	assert(value->fieldP == styleP->fieldP); // matching field
+	if (valueP == value) return;
 	valueP = value;
 	onValueChange();
 }
@@ -53,6 +54,12 @@ bool ValueViewer::nativeLook() const {
 }
 bool ValueViewer::isCurrent() const {
 	return viewer.focusedViewer() == this;
+}
+
+void ValueViewer::onStyleChange(int changes) {
+	if (!(changes & CHANGE_ALREADY_PREPARED)) {
+		viewer.redraw(*this);
+	}
 }
 
 // ----------------------------------------------------------------------------- : Type dispatch

@@ -160,8 +160,16 @@ void RotatedDC::DrawBitmap(const Bitmap& bitmap, const RealPoint& pos) {
 }
 void RotatedDC::DrawImage (const Image& image, const RealPoint& pos, ImageCombine combine, int angle) {
 	Image rotated = rotate_image(image, angle + this->angle);
-	wxRect r = trNoNegNoZoom(RealRect(pos, RealSize(image.GetWidth(), image.GetHeight())));
+	wxRect r = trNoNegNoZoom(RealRect(pos, RealSize(image)));
 	draw_combine_image(dc, r.x, r.y, rotated, combine);
+}
+void RotatedDC::DrawPreRotatedBitmap(const Bitmap& bitmap, const RealPoint& pos) {
+	RealPoint p_ext = tr(pos) - RealSize(revX()?bitmap.GetWidth():0, revY()?bitmap.GetHeight():0);
+	dc.DrawBitmap(bitmap, (int) p_ext.x, (int) p_ext.y, true);
+}
+void RotatedDC::DrawPreRotatedImage (const Image& image, const RealPoint& pos, ImageCombine combine) {
+	RealPoint p_ext = tr(pos) - RealSize(revX()?image.GetWidth():0, revY()?image.GetHeight():0);
+	draw_combine_image(dc, p_ext.x, p_ext.y, image, combine);
 }
 
 void RotatedDC::DrawLine  (const RealPoint& p1,  const RealPoint& p2) {

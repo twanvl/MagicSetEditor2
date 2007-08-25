@@ -44,36 +44,32 @@ void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
 		if (style().render_style & RENDER_IMAGE) {
 			// draw image
 			style().initImage();
-			ScriptableImage& img = style().image;
+			CachedScriptableImage& img = style().image;
 			Context& ctx = viewer.getContext();
 			ctx.setVariable(_("input"), to_script(value().value()));
 			img.update(ctx);
 			if (img.isReady()) {
-				GeneratedImage::Options img_options(0,0, viewer.stylesheet.get(), &getSet());
-				if (nativeLook()) {
-					img_options.width = img_options.height = 16;
-					img_options.preserve_aspect = ASPECT_BORDER;
-				} else if(style().render_style & RENDER_TEXT) {
-					// also drawing text, use original size
-				} else {
-					img_options.width  = (int) dc.trX(style().width);
-					img_options.height = (int) dc.trY(style().height);
-					img_options.preserve_aspect = style().alignment == ALIGN_STRETCH ? ASPECT_STRETCH : ASPECT_FIT;
-				}
-				Image image = img.generate(img_options, true);
-				ImageCombine combine = img.combine();
-				// apply mask?
+				GeneratedImage::Options img_options;
+				getOptions(dc, img_options);
+				// Generate image/bitmap
+				ImageCombine combine = style().combine;
 				style().loadMask(*viewer.stylesheet);
-				if (style().mask.Ok()) {
-					set_alpha(image, style().mask);
+				Bitmap bitmap; Image image;
+				img.generateCached(img_options, &style().mask, &combine, &bitmap, &image);
+				if (bitmap.Ok()) {
+					// just draw it
+					dc.DrawPreRotatedBitmap(bitmap,
+						align_in_rect(style().alignment, dc.trInvNoNeg(RealSize(bitmap)), style().getRect())
+					);
+					margin = dc.trInv(RealSize(bitmap)).width + 1;
+				} else {
+					// use combine mode
+					dc.DrawPreRotatedImage(image,
+						align_in_rect(style().alignment, dc.trInvNoNeg(RealSize(image)), style().getRect()),
+						combine
+					);
+					margin = dc.trInv(RealSize(image)).width + 1;
 				}
-				// draw
-				dc.DrawImage(image,
-					align_in_rect(style().alignment, RealSize(image.GetWidth(), image.GetHeight()), style().getRect()),
-					combine == COMBINE_NORMAL ? style().combine : combine,
-					style().angle
-				);
-				margin = dc.trInvS(image.GetWidth()) + 1;
 			}
 		}
 		if (style().render_style & RENDER_TEXT) {
@@ -96,10 +92,11 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 	if (style().render_style & RENDER_IMAGE) {
 		map<String,ScriptableImage>::iterator it = style().choice_images.find(cannocial_name_form(choice));
 		if (it != style().choice_images.end() && it->second.isReady()) {
-			Image image = it->second.generate(GeneratedImage::Options(0,0, viewer.stylesheet.get(),&getSet()), true);
+			// TODO: scaling, caching
+			Image image = it->second.generate(GeneratedImage::Options(0,0, viewer.stylesheet.get(),&getSet()));
 			ImageCombine combine = it->second.combine();
 			// TODO : alignment?
-			dc.DrawImage(image, pos + RealSize(size.width, 0), combine == COMBINE_NORMAL ? style().combine : combine);
+			dc.DrawImage(image, pos + RealSize(size.width, 0), combine == COMBINE_DEFAULT ? style().combine : combine);
 			size = add_horizontal(size, dc.trInv(RealSize(image.GetWidth() + 1, image.GetHeight())));
 		}
 	}
@@ -113,4 +110,21 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 	}
 	// next position
 	pos = move_in_direction(style().direction, pos, size, style().spacing);
+}
+
+// COPY from ChoiceValueViewer
+void MultipleChoiceValueViewer::getOptions(Rotation& rot, GeneratedImage::Options& opts) {
+	opts.package       = viewer.stylesheet.get();
+	opts.local_package = &getSet();
+	opts.angle         = rot.trAngle(style().angle);
+	if (nativeLook()) {
+		opts.width = opts.height = 16;
+		opts.preserve_aspect = ASPECT_BORDER;
+	} else if(style().render_style & RENDER_TEXT) {
+		// also drawing text, use original size
+	} else {
+		opts.width  = (int) rot.trX(style().width);
+		opts.height = (int) rot.trY(style().height);
+		opts.preserve_aspect = (style().alignment & ALIGN_STRETCH) ? ASPECT_STRETCH : ASPECT_FIT;
+	}
 }

@@ -56,6 +56,10 @@ extern const int text_scaling;
 
 // ----------------------------------------------------------------------------- : Image rotation
 
+/// Is an angle sideways (90 or 270 degrees)?
+// Note: angle & 2 == 0 for angle in {0, 180} and != 0 for angle in {90, 270)
+inline bool sideways(int angle) { return (angle & 2) != 0; }
+
 /// Rotates an image counter clockwise
 /// angle must be a multiple of 90, i.e. {0,90,180,270}
 Image rotate_image(const Image& image, int angle);
@@ -85,7 +89,9 @@ void saturate(Image& image, int amount);
 
 /// Ways in which images can be combined, similair to what Photoshop supports
 enum ImageCombine
-{	COMBINE_NORMAL
+{	COMBINE_DEFAULT	// normal combine, but with a low priority, i.e. "apply default instead of add" == "add"
+	                // it is not representable in scripting/files, so should only be used internally
+,	COMBINE_NORMAL
 ,	COMBINE_ADD
 ,	COMBINE_SUBTRACT
 ,	COMBINE_STAMP

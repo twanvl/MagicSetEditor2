@@ -42,9 +42,9 @@ void TextValueViewer::onValueChange() {
 	v.reset(false);
 }
 
-void TextValueViewer::onStyleChange(bool already_prepared) {
+void TextValueViewer::onStyleChange(int changes) {
 	v.reset(true);
-	if (!already_prepared) viewer.redraw(*this);
+	ValueViewer::onStyleChange(changes);
 }
 
 void TextValueViewer::onAction(const Action&, bool undone) {

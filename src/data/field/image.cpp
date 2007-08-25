@@ -25,14 +25,16 @@ IMPLEMENT_REFLECTION(ImageField) {
 
 IMPLEMENT_REFLECTION(ImageStyle) {
 	REFLECT_BASE(Style);
+	REFLECT(angle);
 	REFLECT_N("mask", mask_filename);
 	REFLECT_N("default", default_image);
 }
 
-bool ImageStyle::update(Context& ctx) {
+int ImageStyle::update(Context& ctx) {
 	return Style       ::update(ctx)
-	     | mask_filename.update(ctx)
-	     | default_image.update(ctx);
+	     | angle        .update(ctx) * CHANGE_OTHER
+	     | mask_filename.update(ctx) * CHANGE_MASK
+	     | default_image.update(ctx) * CHANGE_DEFAULT;
 }
 
 // ----------------------------------------------------------------------------- : ImageValue

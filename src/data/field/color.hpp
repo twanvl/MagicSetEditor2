@@ -66,7 +66,7 @@ class ColorStyle : public Style {
 	double             bottom_width;    ///< Width of the colored region on the bottom side
 	Scriptable<String> mask_filename;   ///< Filename of an additional mask over the images
 	
-	virtual bool update(Context&);
+	virtual int update(Context&);
 	
   private:
 	DECLARE_REFLECTION();

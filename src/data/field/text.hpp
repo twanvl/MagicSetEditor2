@@ -75,7 +75,7 @@ class TextStyle : public Style {
 	double content_width, content_height;		///< Size of the rendered text
 	int    content_lines;						///< Number of rendered lines
 	
-	virtual bool update(Context&);
+	virtual int  update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;
 	virtual void checkContentDependencies(Context&, const Dependency&) const;
 	

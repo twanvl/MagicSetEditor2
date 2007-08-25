@@ -40,9 +40,9 @@ InfoStyle::InfoStyle(const InfoFieldP& field)
 	, background_color(255,255,255)
 {}
 
-bool InfoStyle::update(Context& ctx) {
+int InfoStyle::update(Context& ctx) {
 	return Style     ::update(ctx)
-	     | font       .update(ctx);
+	     | font       .update(ctx) * CHANGE_OTHER;
 }
 void InfoStyle::initDependencies(Context& ctx, const Dependency& dep) const {
 	Style     ::initDependencies(ctx, dep);

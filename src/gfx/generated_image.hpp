@@ -28,10 +28,13 @@ class GeneratedImage : public ScriptValue {
 	/// Options for generating the image
 	struct Options {
 		Options(int width = 0, int height = 0, Package* package = nullptr, Package* local_package = nullptr, PreserveAspect preserve_aspect = ASPECT_STRETCH, bool saturate = false)
-			: width(width), height(height), preserve_aspect(preserve_aspect), saturate(saturate), package(package), local_package(local_package)
+			: width(width), height(height), angle(0)
+			, preserve_aspect(preserve_aspect), saturate(saturate)
+			, package(package), local_package(local_package)
 		{}
 		
 		int            width, height;	///< Width to force the image to, or 0 to keep the width of the input
+		int            angle;           ///< Angle to rotate image by afterwards
 		PreserveAspect preserve_aspect;
 		bool           saturate;
 		Package* package;       ///< Package to load images from
@@ -43,7 +46,7 @@ class GeneratedImage : public ScriptValue {
 	/// Generate the image
 	virtual Image generate(const Options&) const = 0;
 	/// How must the image be combined with the background?
-	virtual ImageCombine combine() const { return COMBINE_NORMAL; }
+	virtual ImageCombine combine() const { return COMBINE_DEFAULT; }
 	/// Equality should mean that every pixel in the generated images is the same if the same options are used
 	virtual bool operator == (const GeneratedImage& that) const = 0;
 	inline  bool operator != (const GeneratedImage& that) const { return !(*this == that); }

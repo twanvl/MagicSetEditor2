@@ -56,7 +56,7 @@ Image ChoiceThumbnailRequest::generate() {
 	String name = cannocial_name_form(s.field().choices->choiceName(id));
 	ScriptableImage& img = s.choice_images[name];
 	return img.isReady()
-		? img.generate(GeneratedImage::Options(16,16, stylesheet.get(), viewer().viewer.getSet().get(), ASPECT_BORDER, true), false)
+		? img.generate(GeneratedImage::Options(16,16, stylesheet.get(), viewer().viewer.getSet().get(), ASPECT_BORDER, true))
 		: wxImage();
 }
 

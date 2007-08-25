@@ -22,7 +22,9 @@ class ChoiceValueViewer : public ValueViewer {
 	
 	virtual bool prepare(RotatedDC& dc);
 	virtual void draw(RotatedDC& dc);
-	virtual void onStyleChange(bool);
+	virtual void onStyleChange(int);
+  private:
+	void getOptions(Rotation& rot, GeneratedImage::Options& opts);
 };
 
 // ----------------------------------------------------------------------------- : EOF

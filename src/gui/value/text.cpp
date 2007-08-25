@@ -1183,7 +1183,7 @@ bool TextValueEditor::wordListDropDown(const WordListPosP& wl) {
 	} else {
 		drop_down.reset(new DropDownWordList(&editor(), false, *this, wl, wl->word_list));
 	}
-	RealRect rect = wl->rect.move(style().left, style().top - 1, 0, 2);
+	RealRect rect = style().getRotation().tr(wl->rect).move(0, -1, 0, 2);
 	drop_down->show(false, wxPoint(0,0), &rect);
 	return true;
 }

@@ -216,17 +216,17 @@ void ChoiceStyle::initImage() {
 	script.addInstruction(I_RET);
 }
 
-bool ChoiceStyle::update(Context& ctx) {
+int ChoiceStyle::update(Context& ctx) {
 	// Don't update the choice images, leave that to invalidate()
-	bool change = Style       ::update(ctx)
-	            | font         .update(ctx)
-	            | mask_filename.update(ctx);
+	int change = Style       ::update(ctx)
+	           | font         .update(ctx) * CHANGE_OTHER
+	           | mask_filename.update(ctx) * CHANGE_MASK;
 	if (!choice_images_initialized) {
 		// we only want to do this once because it is rather slow, other updates are handled by dependencies
 		choice_images_initialized = true;
 		FOR_EACH(ci, choice_images) {
 			if (ci.second.update(ctx)) {
-				change = true;
+				change |= CHANGE_OTHER;
 				// TODO : remove this thumbnail
 			}
 		}
@@ -253,7 +253,7 @@ void ChoiceStyle::invalidate(Context& ctx) {
 			thumbnails_status[i] = THUMB_CHANGED;
 		}
 	}
-	if (change) tellListeners(false);
+	if (change) tellListeners(CHANGE_OTHER);
 }
 
 void ChoiceStyle::loadMask(Package& pkg) {

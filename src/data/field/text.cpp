@@ -68,12 +68,12 @@ double TextStyle::getStretch() const {
 	return 1.0;
 }
 
-bool TextStyle::update(Context& ctx) {
+int TextStyle::update(Context& ctx) {
 	return Style     ::update(ctx)
-	     | font       .update(ctx)
-	     | symbol_font.update(ctx)
-	     | alignment  .update(ctx)
-	     | angle      .update(ctx);
+	     | font       .update(ctx) * CHANGE_OTHER
+	     | symbol_font.update(ctx) * CHANGE_OTHER
+	     | alignment  .update(ctx) * CHANGE_OTHER
+	     | angle      .update(ctx) * CHANGE_OTHER;
 }
 void TextStyle::initDependencies(Context& ctx, const Dependency& dep) const {
 	Style     ::initDependencies(ctx, dep);

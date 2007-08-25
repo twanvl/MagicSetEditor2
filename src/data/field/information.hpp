@@ -51,7 +51,7 @@ class InfoStyle : public Style {
 	double padding_top, padding_bottom;
 	Color background_color;
 	
-	virtual bool update(Context&);
+	virtual int  update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;
 	
   private:
