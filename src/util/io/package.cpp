@@ -155,6 +155,26 @@ class ZipFileInputStream : private wxFileInputStream, public wxZipInputStream {
 };
 #endif
 
+class BufferedFileInputStream_aux {
+  protected:
+	wxFileInputStream file_stream;
+	inline BufferedFileInputStream_aux(const String& filename)
+		: file_stream(filename)
+	{}
+};
+/// A buffered version of wxFileInputStream
+/** 2007-08-24:
+ *    According to profiling this gives a significant speedup
+ *    Bringing the avarage run time of read_utf8_line from 186k to 54k (in cpu time units)
+ */
+class BufferedFileInputStream : private BufferedFileInputStream_aux, public wxBufferedInputStream {
+  public:
+	inline BufferedFileInputStream(const String& filename)
+		: BufferedFileInputStream_aux(filename)
+		, wxBufferedInputStream(file_stream)
+	{}
+};
+
 InputStreamP Package::openIn(const String& file) {
 	if (!file.empty() && file.GetChar(0) == _('/')) {
 		// absolute path, open file from another package
@@ -167,10 +187,10 @@ InputStreamP Package::openIn(const String& file) {
 	InputStreamP stream;
 	if (it->second.wasWritten()) {
 		// written to this file, open the temp file
-		stream = new_shared1<wxFileInputStream>(it->second.tempName);
+		stream = new_shared1<BufferedFileInputStream>(it->second.tempName);
 	} else if (wxFileExists(filename+_("/")+file)) {
 		// a file in directory package
-		stream = new_shared1<wxFileInputStream>(filename+_("/")+file);
+		stream = new_shared1<BufferedFileInputStream>(filename+_("/")+file);
 	} else if (wxFileExists(filename) && it->second.zipEntry) {
 		// a file in a zip archive
 		// somebody in wx thought seeking was no longer needed, it now only works with the 'compatability constructor'

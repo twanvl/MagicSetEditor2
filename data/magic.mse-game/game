@@ -103,13 +103,15 @@ init script:
 	
 	# Look for a CDA that defines colors
 	text_to_color := {
-		text := filter_text(match: card_name+"(</[-a-z]+>)? is (colorless|all colors|((blue|white|green|red|black)((,|,? and) (blue|white|green|red|black))*))\\.")
-		if text == "" then ""
-		else if contains(text, match: "all colors") then (
+		# Note: running filter_text is quite slow, do a quick 'contains' check first
+		if contains(match: card_name) then (
+		  text := filter_text(match: card_name+"(</[-a-z]+>)? is (colorless|all colors|((blue|white|green|red|black)((,|,? and) (blue|white|green|red|black))*))\\.")
+		  if text != "" then (
+		    if contains(text, match: "all colors") then (
 			colors := "WUBRG"
 			if land = "land" then land_multicolor()
 			else mana_to_color(hybrid: "")
-		) else (
+		    ) else (
 			colors := ""
 			if contains(text, match: "white") then colors := colors + "W"
 			if contains(text, match: "blue")  then colors := colors + "U"
@@ -118,6 +120,8 @@ init script:
 			if contains(text, match: "green") then colors := colors + "G"
 			if land = "land" then land_multicolor()
 			else mana_to_color(hybrid: "")
+		    )
+		  )
 		)
 	}
 	
@@ -129,7 +133,7 @@ init script:
 	is_spell       := match_rule(match: "(?i)Instant|Sorcery")
 	card_color := {
 		# usually the color of mana
-		text_color := text_to_color(rules_text, land: is_land(type), card_name: card_name);
+		text_color := text_to_color(rules_text, land: is_land(type));
 		if text_color == "" then (
 			mana_color := mana_to_color(colors: color_filter(casting_cost), hybrid: color_filterH(casting_cost))
 			if      mana_color == "colorless" and is_land    (type)  then land_to_color(watermark)

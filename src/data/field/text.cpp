@@ -52,6 +52,9 @@ TextStyle::TextStyle(const TextFieldP& field)
 	, line_height_soft(1.0)
 	, line_height_hard(1.0)
 	, line_height_line(1.0)
+	, line_height_soft_max(0.0)
+	, line_height_hard_max(0.0)
+	, line_height_line_max(0.0)
 	, direction(LEFT_TO_RIGHT)
 {}
 
@@ -108,6 +111,9 @@ IMPLEMENT_REFLECTION(TextStyle) {
 	REFLECT(line_height_soft);
 	REFLECT(line_height_hard);
 	REFLECT(line_height_line);
+	REFLECT(line_height_soft_max);
+	REFLECT(line_height_hard_max);
+	REFLECT(line_height_line_max);
 	REFLECT_N("mask", mask_filename);
 	REFLECT(direction);
 	reflect_content(tag, *this);

@@ -19,10 +19,11 @@ struct TextViewer::Line {
 	vector<double> positions;	///< x position of each character in this line, gives the number of characters + 1, never empty
 	double         top;			///< y position of (the top of) this line
 	double         line_height;	///< The height of this line in pixels
-	bool           separator_after;	///< Is there a saparator after this line?
+	LineBreak      break_after;	///< Is there a saparator after this line?
+//%	Alignment      alignment;   ///< Alignment of this line
 	
 	Line()
-		: start(0), top(0), line_height(0), separator_after(false)
+		: start(0), top(0), line_height(0), break_after(BREAK_NO)
 	{}
 	
 	/// The position (just beyond) the bottom of this line
@@ -136,7 +137,7 @@ void TextViewer::drawSeparators(RotatedDC& dc) {
 			y = (y + l.top) / 2;
 			dc.DrawLine(RealPoint(0, y), RealPoint(dc.getInternalRect().width, y));
 		}
-		separator = l.separator_after;
+		separator = l.break_after == BREAK_LINE;
 		y = y2;
 	}
 	// separator at the end?
@@ -376,14 +377,18 @@ void TextViewer::prepareLines(RotatedDC& dc, const String& text, TextStyle& styl
 
 // bound on max_scale, given that scale fits and produces the given lines
 inline double bound_on_max_scale(RotatedDC& dc, const TextStyle& style, const vector<TextViewer::Line>& lines, double scale) {
+	if (lines.empty()) return 1.0;
 	double tot_height = dc.getInternalSize().height + 1;
 	double height = min(tot_height, lines.back().bottom() + style.padding_bottom);
+	if (height < 1) return 1.0;
 	return scale * tot_height / height;
 }
 // bound on min_scale, given that scale doesn't fit and produces the given lines
 inline double bound_on_min_scale(RotatedDC& dc, const TextStyle& style, const vector<TextViewer::Line>& lines, double scale) {
+	if (lines.empty()) return 0.0;
 	double tot_height = dc.getInternalSize().height;
 	double height = lines.back().bottom() + style.padding_bottom;
+	if (height < 1) return 0.0;
 	return scale * tot_height / height;
 }
 
@@ -511,23 +516,13 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 	for(size_t i = 0 ; i < chars.size() ; ++i) {
 		const CharInfo& c = chars[i];
 		// Should we break?
-		bool   break_now    = false;
-		bool   accept_word  = false; // the current word should be added to the line
-		bool   hide_breaker = true;  // hide the \n or _(' ') that caused a line break
-		double line_height_multiplier = 1; // multiplier for line height for next line top
-		if (c.break_after == BREAK_SOFT) {
+		bool break_now    = false;
+		bool accept_word  = false; // the current word should be added to the line
+		bool hide_breaker = true;  // hide the \n or _(' ') that caused a line break
+		if (c.break_after == BREAK_SOFT || c.break_after == BREAK_HARD || c.break_after == BREAK_LINE) {
 			break_now   = true;
 			accept_word = true;
-			line_height_multiplier = style.line_height_soft;
-		} else if (c.break_after == BREAK_HARD) {
-			break_now   = true;
-			accept_word = true;
-			line_height_multiplier = style.line_height_hard;
-		} else if (c.break_after == BREAK_LINE) {
-			line.separator_after = true;
-			break_now   = true;
-			accept_word = true;
-			line_height_multiplier = style.line_height_line;
+			line.break_after = c.break_after;
 		} else if (c.break_after == BREAK_SPACE && style.field().multi_line) {
 			// Soft break == end of word
 			accept_word = true;
@@ -535,7 +530,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 			break_now   = true;
 			accept_word = true;
 			hide_breaker = false;
-			line_height_multiplier = style.line_height_soft;
+			line.break_after = BREAK_SOFT;
 		}
 		// Add size of the character
 		if (c.break_after != BREAK_LINE) {
@@ -556,12 +551,12 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 					break_now = true;
 					accept_word = true;
 					hide_breaker = false;
-					line_height_multiplier = style.line_height_soft;
+					line.break_after = BREAK_SOFT;
 				}
 			} else if (line_size.width + word_size.width > max_width) {
 				// line would become too long, break before the current word
 				break_now = true;
-				line_height_multiplier = style.line_height_soft;
+				line.break_after = BREAK_SOFT;
 			}
 		}
 		// Ending the current word
@@ -595,11 +590,14 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 			// push
 			lines.push_back(line);
 			// reset line object for next line
+			double line_height_multiplier = line.break_after == BREAK_HARD ? style.line_height_hard
+			                              : line.break_after == BREAK_LINE ? style.line_height_line
+			                              :                                  style.line_height_soft;
 			line.top += line.line_height * line_height_multiplier;
 			line.start = word_start;
 			line.positions.clear();
-			if (line.separator_after) line.line_height = 0;
-			line.separator_after = false;
+			if (line.break_after == BREAK_LINE) line.line_height = 0;
+			line.break_after = BREAK_NO;
 			// reset line_size
 			line_size = RealSize(lineLeft(dc, style, line.top), 0);
 			while (line.top < style.height && line_size.width + 1 >= style.width - style.padding_right) {
@@ -636,7 +634,6 @@ double TextViewer::lineRight(RotatedDC& dc, const TextStyle& style, double y) co
 
 
 void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style) {
-	if (style.alignment == ALIGN_TOP_LEFT) return;
 	// Find height of the text, don't count the last lines if they are empty
 	double height = 0;
 	FOR_EACH_REVERSE(l, lines) {
@@ -647,6 +644,45 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 	RealSize s = add_diagonal(
 					dc.getInternalSize(),
 					-RealSize(style.padding_left+style.padding_right, style.padding_top + style.padding_bottom));
+	
+	// stretch lines by increasing the space between them
+	if (height < s.height) {
+		double d_soft = max(0.0, style.line_height_soft_max - style.line_height_soft);
+		double d_hard = max(0.0, style.line_height_hard_max - style.line_height_hard);
+		double d_line = max(0.0, style.line_height_line_max - style.line_height_line);
+		double stops[] = {0.0, d_soft, d_hard, d_line};
+		sort(stops + 1, stops + 4);
+		for (int i = 1 ; i < 4 && height < s.height ; ++i) {
+			double stop = stops[i] - stops[i-1];
+			if (stop <= 0) continue;
+			// which types can use this stop?
+			bool soft = d_soft >= stop;
+			bool hard = d_hard >= stop;
+			bool line = d_line >= stop;
+			// sum of the line height we can apply this to?
+			double sum = 0;
+			FOR_EACH(l, lines) {
+				if ((soft && l.break_after == BREAK_SOFT)
+				 || (hard && l.break_after == BREAK_HARD)
+				 || (line && l.break_after == BREAK_LINE)) sum += l.line_height;
+			}
+			if (sum == 0) break;
+			// how much do we need to add?
+			double to_add = min(stop, (s.height - height) / sum);
+			// apply
+			double add = 0;
+			FOR_EACH(l, lines) {
+				l.top  += add;
+				// adjust next line by..
+				if ((soft && l.break_after == BREAK_SOFT)
+				 || (hard && l.break_after == BREAK_HARD)
+				 || (line && l.break_after == BREAK_LINE)) add += to_add * l.line_height;
+			}
+			height += add;
+		}
+	}
+	if (style.alignment == ALIGN_TOP_LEFT) return;
+	// align
 	double vdelta = align_delta_y(style.alignment, s.height, height);
 	// align all lines
 	FOR_EACH(l, lines) {

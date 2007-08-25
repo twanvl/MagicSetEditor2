@@ -65,6 +65,9 @@ class TextStyle : public Style {
 	double line_height_soft;					///< Line height for soft linebreaks
 	double line_height_hard;					///< Line height for hard linebreaks
 	double line_height_line;					///< Line height for <line> tags
+	double line_height_soft_max;				///< Maximum line height
+	double line_height_hard_max;				///< Maximum line height
+	double line_height_line_max;				///< Maximum line height
 	String mask_filename;						///< Filename of the mask
 	ContourMask mask;							///< Mask to fit the text to (may be null)
 	Direction direction;						///< In what direction is text layed out?
