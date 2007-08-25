@@ -75,7 +75,7 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 			}
 			// draw
 			dc.DrawImage(image,
-				align_in_rect(style().alignment, RealSize(image.GetWidth(), image.GetHeight()), style().getRect()),
+				align_in_rect(style().alignment, dc.trInvS(RealSize(image.GetWidth(), image.GetHeight())), style().getRect()),
 				combine == COMBINE_NORMAL ? style().combine : combine,
 				style().angle
 			);
