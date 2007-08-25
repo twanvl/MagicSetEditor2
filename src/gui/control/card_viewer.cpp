@@ -19,14 +19,19 @@ DEFINE_EVENT_TYPE(EVENT_SIZE_CHANGE);
 // ----------------------------------------------------------------------------- : CardViewer
 
 CardViewer::CardViewer(Window* parent, int id, long style)
-	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, style | wxNO_FULL_REPAINT_ON_RESIZE)
+	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, style)
 	, up_to_date(false)
 {}
 
 wxSize CardViewer::DoGetBestSize() const {
 	wxSize ws = GetSize(), cs = GetClientSize();
 	if (set) {
-		return (wxSize)getRotation().getExternalSize() + ws - cs;
+		if (!stylesheet) stylesheet = set->stylesheet;
+		StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
+		wxSize size(stylesheet->card_width * ss.card_zoom(), stylesheet->card_height * ss.card_zoom());
+		bool sideways = (ss.card_angle() & 2) != 0;
+		if (sideways) swap(size.x, size.y);
+		return size + ws - cs;
 	}
 	return cs;
 }
@@ -129,7 +134,7 @@ Rotation CardViewer::getRotation() const {
 	if (!stylesheet) stylesheet = set->stylesheet;
 	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
 	int dx = GetScrollPos(wxHORIZONTAL), dy = GetScrollPos(wxVERTICAL);
-	return Rotation(ss.card_angle(), stylesheet->getCardRect().move(-dx,-dy,0,0), ss.card_zoom(), true);
+	return Rotation(ss.card_angle(), stylesheet->getCardRect().move(-dx,-dy,0,0), ss.card_zoom(), 1.0, true);
 }
 
 // ----------------------------------------------------------------------------- : Event table

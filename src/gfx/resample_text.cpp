@@ -20,8 +20,6 @@ const int text_scaling = 4;
 // Downsamples the red channel of the input image to the alpha channel of the output image
 // img_in must be text_scaling times as large as img_out
 void downsample_to_alpha(Image& img_in, Image& img_out) {
-	assert(img_in.GetHeight() == img_out.GetHeight() * text_scaling);
-	
 	Byte* temp = nullptr;
 	Byte* in  = img_in.GetData();
 	Byte* out = img_in.GetData();
@@ -74,13 +72,46 @@ void downsample_to_alpha(Image& img_in, Image& img_out) {
 	img_out.InitAlpha();
 	out = img_out.GetAlpha();
 	int line_size = img_out.GetWidth();
-	for (int y = 0 ; y < img_out.GetHeight() ; ++y) {
-		for (int x = 0 ; x < line_size ; ++x) {
-			int total = 0;
-			for (int j = 0 ; j < text_scaling ; ++j) {
-				total += in[x + line_size * (j + text_scaling * y)];
+	int h = img_out.GetHeight();
+	if (img_in.GetHeight() == h * text_scaling) {
+		// no stretching
+		for (int y = 0 ; y < h ; ++y) {
+			for (int x = 0 ; x < line_size ; ++x) {
+				int total = 0;
+				for (int j = 0 ; j < text_scaling ; ++j) {
+					total += in[x + line_size * (j + text_scaling * y)];
+				}
+				out[x + line_size * y] = total / text_scaling;
 			}
-			out[x + line_size * y] = total / text_scaling;
+		}
+	} else {
+		const int shift = 32-12-8; // => max size = 4096, max alpha = 255
+		int h1 = img_in.GetHeight(), w = img_out.GetWidth();
+		int out_fact = (h << shift) / h1; // how much to output for 256 input = 1 pixel
+		int out_rest = (h << shift) % h1;
+		for (int x = 0 ; x < w ; ++x) {
+			int in_rem = out_fact + out_rest;
+			for (int y = 0 ; y < h ; ++y) {
+				int out_rem = 1 << shift;
+				int tot = 0;
+				while (out_rem >= in_rem) {
+					// eat a whole input pixel
+					tot += *in * in_rem;
+					out_rem -= in_rem;
+					in_rem = out_fact;
+					in += line_size;
+				}
+				if (out_rem > 0) {
+					// eat a partial input pixel
+					tot += *in * out_rem;
+					in_rem -= out_rem;
+				}
+				// store
+				*out = tot >> shift;
+				out += line_size;
+			}
+			in  = in  - h1 * line_size + 1;
+			out = out - h  * line_size + 1;
 		}
 	}
 	
@@ -113,7 +144,7 @@ void blur_image_alpha(Image& img) {
 // optionally rotated by an angle
 //  (w2,h2) = size of text
 //  (wc,hc) = the corner where drawing should begin, (0,0) for top-left, (1,1) for bottom-right
-void draw_resampled_text(DC& dc, const RealRect& rect, double stretch_x, int wc, int hc, int angle, const String& text, int blur_radius, int repeat) {
+void draw_resampled_text(DC& dc, const RealRect& rect, double stretch, int wc, int hc, int angle, const String& text, int blur_radius, int repeat) {
 	// enlarge slightly; some fonts are larger then the GetTextExtent tells us (especially italic fonts)
 	int w = static_cast<int>(rect.width) + 3 + 2 * blur_radius, h = static_cast<int>(rect.height) + 1 + 2 * blur_radius;
 	// determine sub-pixel position
@@ -132,7 +163,9 @@ void draw_resampled_text(DC& dc, const RealRect& rect, double stretch_x, int wc,
 	mdc.SelectObject(wxNullBitmap);
 	Image img_large = buffer.ConvertToImage();
 	// step 2. sample down
-	Image img_small(stretch_x * w, h, false);
+	if ((angle & 2) == 0) w *= stretch;
+	else                  h *= stretch;
+	Image img_small(w, h, false);
 	fill_image(img_small, dc.GetTextForeground());
 	downsample_to_alpha(img_large, img_small);
 	// blur
