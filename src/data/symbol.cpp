@@ -281,9 +281,16 @@ IMPLEMENT_REFLECTION(Symbol) {
 }
 
 double Symbol::aspectRatio() const {
+	// Margin between the edges and the symbol.
+	// In each direction take the lowest one
+	// This is at most 0.5 (if the symbol is just a line in the middle)
+	// Multiply by 2 (below) to give something in the range [0...1] i.e. [touches the edge...only in the middle]
 	double margin_x = min(0.4999, max(0., min(min_pos.x, 1-max_pos.x)));
 	double margin_y = min(0.4999, max(0., min(min_pos.y, 1-max_pos.y)));
+	// The difference between these two,
+	// e.g. if the vertical margin is more then the horizontal one, the symbol is 'flat'
 	double delta = 2 * (margin_y - margin_x);
+	// The aspect ratio, i.e. width/height
 	if (delta > 0) {
 		return 1 / (1 - delta);
 	} else {

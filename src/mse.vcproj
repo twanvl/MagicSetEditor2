@@ -948,6 +948,12 @@
 					RelativePath=".\gui\about_window.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\auto_replace_window.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\auto_replace_window.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\card_select_window.cpp">
 				</File>
 				<File

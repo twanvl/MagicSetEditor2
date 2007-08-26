@@ -57,7 +57,8 @@ IMPLEMENT_REFLECTION(Game) {
 	REFLECT(keyword_modes);
 	REFLECT(keyword_parameter_types);
 	REFLECT_NO_SCRIPT(keywords);
-	REFLECT(word_lists);
+	REFLECT_NO_SCRIPT(word_lists);
+	REFLECT_NO_SCRIPT(auto_replaces);
 }
 
 void Game::validate(Version v) {

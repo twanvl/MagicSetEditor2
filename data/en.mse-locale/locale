@@ -29,6 +29,7 @@ menu:
 	find:				&Find	Ctrl+F
 	find next:			Find &Next	F3
 	replace:			R&eplace	Ctrl+H
+	auto replace:		Auto Rep&lace...
 	preferences:		&Preferences...
 	
 	cards:			&Cards
@@ -125,6 +126,10 @@ help:
 	paste:				Inserts the text from the clipboard
 	paste card:			Inserts the card from the clipboard
 	paste keyword:		Inserts the keyword from the clipboard
+	find:				Search the card texts
+	find next:			Find the next match
+	replace:			Replace in the card texts
+	auto replace:		What text should automatically be replaced?
 	preferences:		Change the configuration of Magic Set Editor
 	
 	cards:
@@ -435,6 +440,10 @@ label:
 	zoom:				Zoom
 	filter:				Filter
 	
+	# Auto replace
+	auto match:			Match
+	auto replace:		Replace
+	
 	# Symbol editor
 	sides:				sides
 
@@ -484,6 +493,14 @@ button:
 	
 	# Update checker
 	close:				&Close
+	
+	# Auto replace
+	use auto replace:	Use auto replace
+	add item:			&Add
+	remove item:		&Remove
+	defaults:			Reset to &Defaults
+	enabled:			Enabled
+	whole word:			Match whole word only
 
 ############################################################## Titles in the GUI
 title:
@@ -519,6 +536,8 @@ title:
 	export cancelled:	Export Cancelled
 	export html:		Export to HTML
 	save html:			Export to HTML
+	# auto replace
+	auto replaces:		Auto Replace
 	
 	# Package Update Window
 	package list:		Package Updates
@@ -537,6 +556,7 @@ action:
 	delete:				Delete
 	cut:				Cut
 	paste:				Paste
+	auto replace:		Auto Replace
 	# Choice/color editors
 	change:				Change %s
 	
@@ -623,6 +643,7 @@ error:
 		When you open it, some aspects of the file may be lost.
 		It is recommended that you upgrade to the latest version.
 		Visit http:://magicseteditor.sourceforge.net/
+	word list type not found:			The word list type %s was not found (from a <word-list> tag)
 	
 	# Update checking
 	checking updates failed:			Checking updates failed.

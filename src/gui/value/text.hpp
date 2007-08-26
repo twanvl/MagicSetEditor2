@@ -116,7 +116,9 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	
 	/// Replace the current selection with 'replacement', name the action
 	/** replacement should be a tagged string (i.e. already escaped) */
-	void replaceSelection(const String& replacement, const String& name);
+	void replaceSelection(const String& replacement, const String& name, bool allow_auto_replace = false, bool select_on_undo = true);
+	/// Try to autoreplace at the position before the cursor
+	void tryAutoReplace();
 	
 	/// Make sure the selection satisfies its constraints
 	/** - selection_start and selection_end are inside the text
@@ -135,12 +137,13 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	
 	/// Position of previous visible & selectable character
 	/** Uses cursor positions */
-	size_t prevCharBoundry(size_t pos) const;
-	size_t nextCharBoundry(size_t pos) const;
+	size_t prevCharBoundary(size_t pos) const;
+	size_t nextCharBoundary(size_t pos) const;
 	/// Front of previous word, used witch Ctrl+Left/right
 	/** Uses character indices */
-	size_t prevWordBoundry(size_t pos_i) const;
-	size_t nextWordBoundry(size_t pos_i) const;
+	size_t prevWordBoundary(size_t pos_i) const;
+	size_t nextWordBoundary(size_t pos_i) const;
+	bool   isWordBoundary(size_t pos_i) const;
 	
 	// --------------------------------------------------- : Scrolling
 	

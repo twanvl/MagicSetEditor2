@@ -64,8 +64,8 @@ void Writer::handle(const String& value) {
 	// write indentation and key
 	writeKey();
 	writeUTF8(stream, _(": "));
-	if (value.find_first_of(_('\n')) != String::npos) {
-		// multiline string
+	if (value.find_first_of(_('\n')) != String::npos || (!value.empty() && isSpace(value.GetChar(0)))) {
+		// multiline string, or contains leading whitespace
 		stream.PutChar(_('\n'));
 		indentation += 1;
 		// split lines, and write each line

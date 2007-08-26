@@ -16,7 +16,7 @@ close F;
 
 # insert stuff
 
-$hpp =~ s/_\n/_$macro\n/g;
+$hpp =~ s/_\r?\n/_$macro\n/g;
 
 $cpp =~ s@<util/prec.hpp>@<$file.hpp>@g;
 

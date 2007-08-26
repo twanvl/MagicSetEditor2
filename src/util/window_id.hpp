@@ -53,7 +53,8 @@ enum MenuID {
 ,	ID_EDIT_FIND			= wxID_FIND
 ,	ID_EDIT_FIND_NEXT		= 103
 ,	ID_EDIT_REPLACE			= wxID_REPLACE
-,	ID_EDIT_PREFERENCES		= 104
+,	ID_EDIT_AUTO_REPLACE	= 104
+,	ID_EDIT_PREFERENCES		= 105
 
 	// Window menu (MainWindow)
 ,	ID_WINDOW_NEW			= 201
@@ -242,7 +243,13 @@ enum ControlID {
 ,	ID_INSTALL
 ,	ID_UPGRADE
 ,	ID_REMOVE
-,	ID_CANCEL
+,	ID_CANCEL = wxID_CANCEL
+	// Auto replace window
+,	ID_USE_AUTO_REPLACE
+,	ID_ITEM_VALUE
+,	ID_ADD_ITEM
+,	ID_REMOVE_ITEM
+,	ID_DEFAULTS
 };
 
 // ----------------------------------------------------------------------------- : EOF

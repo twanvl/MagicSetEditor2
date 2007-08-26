@@ -23,6 +23,7 @@
 #include <gui/print_window.hpp>
 #include <gui/images_export_window.hpp>
 #include <gui/html_export_window.hpp>
+#include <gui/auto_replace_window.hpp>
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <util/io/package_manager.hpp>
@@ -86,9 +87,10 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 		menuEdit->Append(ID_EDIT_COPY,		_("copy"),		_MENU_("copy"),				_HELP_("copy"));
 		menuEdit->Append(ID_EDIT_PASTE,		_("paste"),		_MENU_("paste"),			_HELP_("paste"));
 		menuEdit->AppendSeparator();
-		menuEdit->Append(ID_EDIT_FIND,		_("find"),		_MENU_("find"),				_(""));
-		menuEdit->Append(ID_EDIT_FIND_NEXT,					_MENU_("find next"),		_(""));
-		menuEdit->Append(ID_EDIT_REPLACE,					_MENU_("replace"),			_(""));
+		menuEdit->Append(ID_EDIT_FIND,		_("find"),		_MENU_("find"),				_HELP_("find"));
+		menuEdit->Append(ID_EDIT_FIND_NEXT,					_MENU_("find next"),		_HELP_("find next"));
+		menuEdit->Append(ID_EDIT_REPLACE,					_MENU_("replace"),			_HELP_("replace"));
+		menuEdit->Append(ID_EDIT_AUTO_REPLACE,				_MENU_("auto replace"),		_HELP_("auto replace"));
 		menuEdit->AppendSeparator();
 		menuEdit->Append(ID_EDIT_PREFERENCES,				_MENU_("preferences"),		_HELP_("preferences"));
 	menuBar->Append(menuEdit, _MENU_("edit"));
@@ -619,6 +621,10 @@ void SetWindow::onReplaceAll(wxFindDialogEvent&) {
 	current_panel->doReplaceAll(find_data);
 }
 
+void SetWindow::onEditAutoReplace(wxCommandEvent&) {
+	(new AutoReplaceWindow(this, *set->game))->Show();
+}
+
 void SetWindow::onEditPreferences(wxCommandEvent&) {
 	PreferencesWindow wnd(this);
 	if (wnd.ShowModal() == wxID_OK) {
@@ -697,6 +703,7 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
 	EVT_MENU			(ID_EDIT_FIND,			SetWindow::onEditFind)
 	EVT_MENU			(ID_EDIT_FIND_NEXT,		SetWindow::onEditFindNext)
 	EVT_MENU			(ID_EDIT_REPLACE,		SetWindow::onEditReplace)
+	EVT_MENU			(ID_EDIT_AUTO_REPLACE,	SetWindow::onEditAutoReplace)
 	EVT_MENU			(ID_EDIT_PREFERENCES,	SetWindow::onEditPreferences)
 	EVT_MENU			(ID_WINDOW_NEW,			SetWindow::onWindowNewWindow)
 	EVT_TOOL_RANGE		(ID_WINDOW_MIN, ID_WINDOW_MAX, SetWindow::onWindowSelect)

@@ -11,6 +11,7 @@
 #include <data/stylesheet.hpp>
 #include <data/field.hpp>
 #include <data/export_template.hpp>
+#include <data/word_list.hpp>
 #include <util/reflect.hpp>
 #include <util/platform.hpp>
 #include <util/io/reader.hpp>
@@ -18,6 +19,8 @@
 #include <wx/filename.h>
 #include <wx/wfstream.h>
 #include <wx/stdpaths.h>
+
+DECLARE_TYPEOF_COLLECTION(AutoReplaceP);
 
 // ----------------------------------------------------------------------------- : Extra types
 
@@ -43,7 +46,7 @@ ColumnSettings::ColumnSettings()
 // dummy for ColumnSettings reflection
 ScriptValueP to_script(const ColumnSettings&) { return script_nil; }
 
-IMPLEMENT_REFLECTION(ColumnSettings) {
+IMPLEMENT_REFLECTION_NO_SCRIPT(ColumnSettings) {
 	REFLECT(width);
 	REFLECT(position);
 	REFLECT(visible);
@@ -53,9 +56,33 @@ GameSettings::GameSettings()
 	: sort_cards_ascending(true)
 	, images_export_filename(_("{card.name}.jpg"))
 	, images_export_conflicts(CONFLICT_NUMBER_OVERWRITE)
+	, use_auto_replace(true)
+	, initialized(false)
 {}
 
-IMPLEMENT_REFLECTION(GameSettings) {
+void GameSettings::initDefaults(const Game& game) {
+	if (initialized) return;
+	initialized = true;
+	// init auto_replaces, copy from game file
+	FOR_EACH_CONST(ar, game.auto_replaces) {
+		// do we have this one?
+		bool already_have = false;
+		FOR_EACH(ar2, auto_replaces) {
+			if (ar->match == ar2->match) {
+				ar2->custom = false;
+				already_have = true;
+				break;
+			}
+		}
+		if (!already_have) {
+			// TODO: when we start saving games, clone here
+			ar->custom = false;
+			auto_replaces.push_back(ar);
+		}
+	}
+}
+
+IMPLEMENT_REFLECTION_NO_SCRIPT(GameSettings) {
 	REFLECT(default_stylesheet);
 	REFLECT(default_export);
 	REFLECT_N("cardlist columns",     columns);
@@ -63,6 +90,8 @@ IMPLEMENT_REFLECTION(GameSettings) {
 	REFLECT(sort_cards_ascending);
 	REFLECT(images_export_filename);
 	REFLECT(images_export_conflicts);
+	REFLECT(use_auto_replace);
+	REFLECT(auto_replaces);
 }
 
 
@@ -82,7 +111,7 @@ void StyleSheetSettings::useDefault(const StyleSheetSettings& ss) {
 	if (card_normal_export.isDefault()) card_normal_export.assignDefault(ss.card_normal_export);
 }
 
-IMPLEMENT_REFLECTION(StyleSheetSettings) {
+IMPLEMENT_REFLECTION_NO_SCRIPT(StyleSheetSettings) {
 	REFLECT(card_zoom);
 	REFLECT(card_angle);
 	REFLECT(card_anti_alias);
@@ -127,6 +156,7 @@ void Settings::addRecentFile(const String& filename) {
 GameSettings& Settings::gameSettingsFor(const Game& game) {
 	GameSettingsP& gs = game_settings[game.name()];
 	if (!gs) gs = new_intrusive<GameSettings>();
+	gs->initDefaults(game);
 	return *gs;
 }
 ColumnSettings& Settings::columnSettingsFor(const Game& game, const Field& field) {
@@ -165,7 +195,7 @@ String Settings::settingsFile() {
 	return user_settings_dir() + _("mse8.config"); // use different file during development of C++ port
 }
 
-IMPLEMENT_REFLECTION(Settings) {
+IMPLEMENT_REFLECTION_NO_SCRIPT(Settings) {
 	REFLECT_ALIAS(300,         "style settings",         "stylesheet settings");
 	REFLECT_ALIAS(300, "default style settings", "default stylesheet settings");
 	REFLECT(locale);

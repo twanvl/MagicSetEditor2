@@ -12,6 +12,7 @@
 #include <gui/drop_down_list.hpp>
 #include <data/word_list.hpp>
 #include <data/game.hpp>
+#include <data/settings.hpp>
 #include <data/action/value.hpp>
 #include <util/tagged_string.hpp>
 #include <util/find_replace.hpp>
@@ -23,6 +24,7 @@ DECLARE_SHARED_POINTER_TYPE(DropDownList);
 DECLARE_TYPEOF_COLLECTION(WordListP);
 DECLARE_TYPEOF_COLLECTION(WordListWordP);
 DECLARE_TYPEOF_COLLECTION(WordListPosP);
+DECLARE_TYPEOF_COLLECTION(AutoReplaceP);
 
 // ----------------------------------------------------------------------------- : TextValueEditorScrollBar
 
@@ -273,8 +275,8 @@ bool TextValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
 		if (select_words) {
 			// on the left, swap start and end
 			bool left = selection_end_i < selection_start_i;
-			size_t next = nextWordBoundry(index);
-			size_t prev = prevWordBoundry(index);
+			size_t next = nextWordBoundary(index);
+			size_t prev = prevWordBoundary(index);
 			if (( left && next > max(selection_start_i, selection_end_i)) ||
 			    (!left && prev < min(selection_start_i, selection_end_i))) {
 				left = !left;
@@ -294,8 +296,8 @@ bool TextValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent& ev) {
 	select_words = true;
 	selecting = true;
 	size_t index = v.indexAt(style().getRotation().trInv(pos));
-	moveSelection(TYPE_INDEX, prevWordBoundry(index), true, MOVE_MID);
-	moveSelection(TYPE_INDEX, nextWordBoundry(index), false, MOVE_MID);
+	moveSelection(TYPE_INDEX, prevWordBoundary(index), true, MOVE_MID);
+	moveSelection(TYPE_INDEX, nextWordBoundary(index), false, MOVE_MID);
 	return true;
 }
 
@@ -323,17 +325,17 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 		case WXK_LEFT:
 			// move left (selection?)
 			if (ev.ControlDown()) {
-				moveSelection(TYPE_INDEX,  prevWordBoundry(selection_end_i),!ev.ShiftDown(), MOVE_LEFT);
+				moveSelection(TYPE_INDEX,  prevWordBoundary(selection_end_i),!ev.ShiftDown(), MOVE_LEFT);
 			} else {
-				moveSelection(TYPE_CURSOR, prevCharBoundry(selection_end),  !ev.ShiftDown(), MOVE_LEFT);
+				moveSelection(TYPE_CURSOR, prevCharBoundary(selection_end),  !ev.ShiftDown(), MOVE_LEFT);
 			}
 			break;
 		case WXK_RIGHT:
 			// move left (selection?)
 			if (ev.ControlDown()) {
-				moveSelection(TYPE_INDEX,  nextWordBoundry(selection_end_i),!ev.ShiftDown(), MOVE_RIGHT);
+				moveSelection(TYPE_INDEX,  nextWordBoundary(selection_end_i),!ev.ShiftDown(), MOVE_RIGHT);
 			} else {
-				moveSelection(TYPE_CURSOR, nextCharBoundry(selection_end),  !ev.ShiftDown(), MOVE_RIGHT);
+				moveSelection(TYPE_CURSOR, nextCharBoundary(selection_end),  !ev.ShiftDown(), MOVE_RIGHT);
 			}
 			break;
 		case WXK_UP:
@@ -369,10 +371,10 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 		case WXK_BACK:
 			if (selection_start == selection_end) {
 				// if no selection, select previous character
-				moveSelectionNoRedraw(TYPE_CURSOR, prevCharBoundry(selection_end), false);
+				moveSelectionNoRedraw(TYPE_CURSOR, prevCharBoundary(selection_end), false);
 				if (selection_start == selection_end) {
 					// Walk over a <sep> as if we are the LEFT key
-					moveSelection(TYPE_CURSOR, prevCharBoundry(selection_end), true, MOVE_LEFT);
+					moveSelection(TYPE_CURSOR, prevCharBoundary(selection_end), true, MOVE_LEFT);
 					return true;
 				}
 			}
@@ -381,10 +383,10 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 		case WXK_DELETE:
 			if (selection_start == selection_end) {
 				// if no selection select next
-				moveSelectionNoRedraw(TYPE_CURSOR, nextCharBoundry(selection_end), false);
+				moveSelectionNoRedraw(TYPE_CURSOR, nextCharBoundary(selection_end), false);
 				if (selection_start == selection_end) {
 					// Walk over a <sep> as if we are the RIGHT key
-					moveSelection(TYPE_CURSOR, nextCharBoundry(selection_end), true, MOVE_RIGHT);
+					moveSelection(TYPE_CURSOR, nextCharBoundary(selection_end), true, MOVE_RIGHT);
 				}
 			}
 			replaceSelection(wxEmptyString, _ACTION_("delete"));
@@ -411,9 +413,9 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 				//       this might not work for internationalized input.
 				//       It might also not be portable!
 				#ifdef UNICODE
-					replaceSelection(escape(String(ev.GetUnicodeKey(),    1)), _ACTION_("typing"));
+					replaceSelection(escape(String(ev.GetUnicodeKey(),    1)), _ACTION_("typing"), true);
 				#else
-					replaceSelection(escape(String((Char)ev.GetKeyCode(), 1)), _ACTION_("typing"));
+					replaceSelection(escape(String((Char)ev.GetKeyCode(), 1)), _ACTION_("typing"), true);
 				#endif
 			} else {
 				return false;
@@ -775,7 +777,7 @@ size_t match_cursor_position(size_t pos1, const String& text1, size_t pos2, cons
 	return 1000 * before + 2 * after - penalty; // matching 'before' is more important
 }
 
-void TextValueEditor::replaceSelection(const String& replacement, const String& name) {
+void TextValueEditor::replaceSelection(const String& replacement, const String& name, bool allow_auto_replace, bool select_on_undo) {
 	if (replacement.empty() && selection_start == selection_end) {
 		// no text selected, nothing to delete
 		return;
@@ -785,10 +787,10 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 	fixSelection();
 	// execute the action before adding it to the stack,
 	// because we want to run scripts before action listeners see the action
-	TextValueAction* action = typing_action(valueP(), selection_start_i, selection_end_i, selection_start, selection_end, replacement, name);
+	TextValueAction* action = typing_action(valueP(), selection_start_i, selection_end_i, select_on_undo ? selection_start : selection_end, selection_end, replacement, name);
 	if (!action) {
 		// nothing changes, but move the selection anyway
-		moveSelection(TYPE_CURSOR, selection_start);
+		moveSelection(TYPE_CURSOR, selection_end);
 		return;
 	}
 	// what we would expect if no scripts take place
@@ -832,8 +834,29 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 		selection_end = selection_start = best_cursor;
 		fixSelection(TYPE_CURSOR, MOVE_RIGHT);
 	}
+	// auto replace after typing?
+	if (allow_auto_replace) tryAutoReplace();
 	// scroll with next update
 	scroll_with_cursor = true;
+}
+
+void TextValueEditor::tryAutoReplace() {
+	size_t end = selection_start_i;
+	GameSettings& gs = settings.gameSettingsFor(*getSet().game);
+	FOR_EACH(ar, gs.auto_replaces) {
+		if (ar->enabled && ar->match.size() <= end) {
+			size_t start = end - ar->match.size();
+			if (is_substr(value().value(), start, ar->match) &&
+			    (!ar->whole_word || (isWordBoundary(start) && isWordBoundary(end)))
+			   ) {
+				// replace
+				selection_start_i = start;
+				selection_end_i   = end;
+				fixSelection(TYPE_INDEX);
+				replaceSelection(ar->replace, _ACTION_("auto replace"), false, false);
+			}
+		}
+	}
 }
 
 void TextValueEditor::moveSelection(IndexType t, size_t new_end, bool also_move_start, Movement dir) {
@@ -891,27 +914,63 @@ void TextValueEditor::fixSelection(IndexType t, Movement dir) {
 }
 
 
-size_t TextValueEditor::prevCharBoundry(size_t pos) const {
+size_t TextValueEditor::prevCharBoundary(size_t pos) const {
 	return max(0, (int)pos - 1);
 }
-size_t TextValueEditor::nextCharBoundry(size_t pos) const {
+size_t TextValueEditor::nextCharBoundary(size_t pos) const {
 	return min(index_to_cursor(value().value(), String::npos), pos + 1);
 }
-size_t TextValueEditor::prevWordBoundry(size_t pos_i) const {
+
+static const Char word_bound_chars[] = _(" ,.:;()\n");
+bool isWordBoundaryChar(Char c) {
+	return c == _(' ') || c == _(',') || c == _('.') || c == _(':') || c == _(';') ||
+	       c == _('(') || c == _(')') || c == _('\n') || isPunct(c);
+}
+
+size_t TextValueEditor::prevWordBoundary(size_t pos_i) const {
 	const String& val = value().value();
-	size_t p = val.find_last_not_of(_(" ,.:;()\n"), max(0, (int)pos_i - 1));
+	size_t p = val.find_last_not_of(word_bound_chars, max(0, (int)pos_i - 1));
 	if (p == String::npos) return 0;
-	p = val.find_last_of(_(" ,.:;()\n"), p);
+	p = val.find_last_of(word_bound_chars, p);
 	if (p == String::npos) return 0;
 	return p + 1;
 }
-size_t TextValueEditor::nextWordBoundry(size_t pos_i) const {
+size_t TextValueEditor::nextWordBoundary(size_t pos_i) const {
 	const String& val = value().value();
-	size_t p = val.find_first_of(_(" ,.:;()\n"), pos_i);
+	size_t p = val.find_first_of(word_bound_chars, pos_i);
 	if (p == String::npos) return val.size();
-	p = val.find_first_not_of(_(" ,.:;()\n"), p);
+	p = val.find_first_not_of(word_bound_chars, p);
 	if (p == String::npos) return val.size();
 	return p;
+}
+bool TextValueEditor::isWordBoundary(size_t pos_i) const {
+	const String& val = value().value();
+	// boundary after?
+	size_t pos = pos_i;
+	while (true) {
+		if (pos >= val.size()) return true;
+		Char c = val.GetChar(pos);
+		if (c == _('<')) pos = skip_tag(val,pos); // skip tags
+		else if (isWordBoundaryChar(c)) return true;
+		else break;
+	}
+	// boundary before?
+	pos = pos_i;
+	while (true) {
+		if (pos == 0) return true;
+		Char c = val.GetChar(pos - 1);
+		if (c == _('>')) {
+			// (try to) skip tags in reverse
+			while (true) {
+				if (pos == 0) return false; // not a tag
+				--pos;
+				c = val.GetChar(pos - 1);
+				if      (c == _('<')) { --pos; break; } // was a tag
+				else if (c == _('>')) return false; // was not a tag
+			}
+		}
+		else return isWordBoundaryChar(c);
+	}
 }
 
 void TextValueEditor::select(size_t start, size_t end) {
@@ -1129,7 +1188,7 @@ void TextValueEditor::drawWordListIndicators(RotatedDC& dc) {
 		if (current && wl->active) {
 			dc.SetPen  (Color(0,  128,255));
 			dc.SetBrush(Color(64, 160,255));
-		} else if (current && selection_end_i >= wl->start && selection_end_i <= wl->end) {
+		} else if (current && selection_end_i >= wl->start && selection_end_i <= wl->end && !dropDownShown()) {
 			dc.SetPen  (Color(64, 160,255));
 			dc.SetBrush(Color(160,208,255));
 		} else {

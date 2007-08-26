@@ -131,6 +131,7 @@ class SetWindow : public wxFrame, public SetView {
 	void onEditFind            (wxCommandEvent&);
 	void onEditFindNext        (wxCommandEvent&);
 	void onEditReplace         (wxCommandEvent&);
+	void onEditAutoReplace     (wxCommandEvent&);
 	void onEditPreferences     (wxCommandEvent&);
 	
 	void onFind                (wxFindDialogEvent&);

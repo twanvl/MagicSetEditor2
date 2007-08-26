@@ -32,3 +32,18 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(WordList) {
 	REFLECT(words);
 }
 
+
+// ----------------------------------------------------------------------------- : Auto replace words
+
+AutoReplace::AutoReplace()
+	: enabled(true)
+	, whole_word(true)
+	, custom(true)
+{}
+
+IMPLEMENT_REFLECTION_NO_SCRIPT(AutoReplace) {
+	REFLECT(enabled);
+	REFLECT(whole_word);
+	REFLECT(match);
+	REFLECT(replace);
+}

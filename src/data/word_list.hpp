@@ -14,6 +14,7 @@
 
 DECLARE_POINTER_TYPE(WordListWord);
 DECLARE_POINTER_TYPE(WordList);
+DECLARE_POINTER_TYPE(AutoReplace);
 
 // ----------------------------------------------------------------------------- : WordList
 
@@ -38,6 +39,23 @@ class WordList : public WordListWord {
 	DECLARE_REFLECTION();
 };
 
+// ----------------------------------------------------------------------------- : Auto replace words
+
+/// Autoreplace specific shortcut words
+class AutoReplace : public IntrusivePtrVirtualBase {
+  public:
+	AutoReplace();
+	
+	bool   enabled;
+	bool   whole_word;
+	bool   custom; ///< Is this a custom auto replace?
+	String match;
+	String replace;
+	
+	inline AutoReplaceP clone() const { return new_intrusive1<AutoReplace>(*this); }
+	
+	DECLARE_REFLECTION();
+};
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

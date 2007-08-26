@@ -22,6 +22,7 @@ DECLARE_POINTER_TYPE(GameSettings);
 DECLARE_POINTER_TYPE(StyleSheetSettings);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
+DECLARE_POINTER_TYPE(AutoReplace);
 
 // ----------------------------------------------------------------------------- : Extra data structures
 
@@ -56,6 +57,9 @@ class GameSettings : public IntrusivePtrBase<GameSettings> {
   public:
 	GameSettings();
 	
+	/// Where the settings have defaults, initialize with the values from the game
+	void initDefaults(const Game& g);
+	
 	String                      default_stylesheet;
 	String                      default_export;
 	map<String, ColumnSettings> columns;
@@ -63,8 +67,12 @@ class GameSettings : public IntrusivePtrBase<GameSettings> {
 	bool                        sort_cards_ascending;
 	String                      images_export_filename;
 	FilenameConflicts           images_export_conflicts;
+	bool                        use_auto_replace;
+	vector<AutoReplaceP>        auto_replaces;     ///< Things to autoreplace in textboxes
 	
 	DECLARE_REFLECTION();
+  private:
+	bool initialized;
 };
 
 /// Settings for a StyleSheet
