@@ -1119,11 +1119,21 @@ statistics dimension:
 	split list: true
 	icon: stats/keywords.png
 
-#statistics dimension:
-#	name: p/t
-#	script: card.pt
-#	numeric: true
-#	icon: stats/power.png
+statistics dimension:
+	name: race
+	description: Race of creatures and tribal cards
+	script:
+		if is_creature(card.super_type) or is_tribal(card.super_type) then
+			only_first(card.sub_type)
+	show empty: false
+statistics dimension:
+	name: creature class
+	description: Class of creature cards
+	script:
+		if is_creature(card.super_type) then
+			space_to_comma(trim(remove_tags(only_next(card.sub_type))))
+	show empty: false
+	split list: true
 
 #statistics dimension:
 #	name: word count
@@ -1185,6 +1195,13 @@ statistics category:
 	type: scatter pie
 	dimension: converted mana cost
 	dimension: colored mana cost
+	dimension: card color
+
+statistics category:
+	name: creature race / class
+	type: scatter pie
+	dimension: race
+	dimension: creature class
 	dimension: card color
 
 #statistics field:
