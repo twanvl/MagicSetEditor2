@@ -250,7 +250,7 @@ card style:
 	type:
 		left: 49
 		top : 300
-		width: 270
+		width: { 291 - max(21,card_style.rarity.content_width) }
 		height: 20
 		alignment: middle shrink-overflow
 		z index: 3
@@ -261,11 +261,12 @@ card style:
 			color: { font_color(card.card_color) }
 			separator color: rgb(128,128,128)
 	rarity:
-		left: 332
+		right: 353
 		top : 301
-		width: 21
+		width: 42
 		height: 21
 		z index: 3
+		alignment: middle right
 		render style: image
 		choice images:
 			# Images based on the set symbol

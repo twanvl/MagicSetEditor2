@@ -3,7 +3,7 @@ game: magic
 full name: FPM's Token Magic
 short name: FPM Token
 icon: card-sample.png
-position hint: 421
+position hint: 407
 
 card width: 375
 card height: 523
@@ -20,7 +20,11 @@ init script:
 	}
 	suffix := [card: "card.jpg", textbox: "textbox.png", typeline: "typeline.png"]
 	template      := { green_template() + suffix[type] }
-	land_template := { (if input == "a" then "c" else green_template()) + "l" + suffix[type] }
+	land_template := {
+		(if input == "a" then (
+			if styling.land_style == "grey" then "e"
+			else "c"
+		) else green_template()) + "l" + suffix[type] }
 	
 	# Use the normal tap symbol
 	mana_t := {
@@ -63,6 +67,13 @@ styling field:
 	initial: dark
 	choice: light
 	choice: dark
+styling field:
+	type: choice
+	name: land style
+	description: Should colorless lands be normal or grey?
+	initial: normal
+	choice: normal
+	choice: grey
 styling field:
 	type: choice
 	name: tap symbol
@@ -192,12 +203,13 @@ card style:
 
 	rarity:
 		left: 
-			{ if card.type != "" or card.illustrator != "" or card.copyright != "" then 75
+			{ if card.type != "" or card.illustrator != "" or card.copyright != "" then 64
 			else 23 }
 		top : 468
-		width: 22
+		width: 44
 		height: 22
 		z index: 3
+		alignment: middle center
 		render style: image
 		choice images:
 			# Images based on the set symbol

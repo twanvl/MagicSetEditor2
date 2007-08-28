@@ -3,7 +3,7 @@ game: magic
 short name: Textless
 full name: Modern style
 icon: card-sample.png
-position hint: 007
+position hint: 005
 
 card width: 375
 card height: 523
@@ -150,11 +150,12 @@ card style:
 
 	############################# Card type
 	rarity:
-		left: 320
+		left: 309
 		top : 480
-		width: 22
+		width: 44
 		height: 22
 		z index: 1
+		alignment: middle center
 		render style: image
 		choice images:
 			# Images based on the set symbol

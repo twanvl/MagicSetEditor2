@@ -9,7 +9,7 @@ game: magic
 short name: Tokens
 full name: Old style
 icon: card-sample.png
-position hint: 121
+position hint: 107
 
 card width: 312
 card height: 444
@@ -199,7 +199,7 @@ card style:
 	type:
 		left: 47
 		top : 296
-		width: 199
+		width: { 221 - max(22,card_style.rarity.content_width) }
 		height: 18
 		alignment: top left shrink-overflow
 		z index: 1
@@ -213,11 +213,12 @@ card style:
 			separator color: rgb(192,192,192)
 
 	rarity:
-		left: 247
+		right: 269
 		top : 294
-		width: 22
+		width: 44
 		height: 22
 		z index: 1
+		alignment: middle right
 		render style: image
 		choice images:
 			# Images based on the set symbol

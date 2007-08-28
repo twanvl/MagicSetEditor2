@@ -227,11 +227,12 @@ card style:
 			color: rgb(0,0,0)
 			separator color: rgb(128,128,128)
 	rarity:
-		left: 75
+		left: 64
 		top : 348
-		width: 22
+		width: 44
 		height: 22
 		z index: 1
+		alignment: middle center
 		render style: image
 		choice images:
 			# Images based on the set symbol

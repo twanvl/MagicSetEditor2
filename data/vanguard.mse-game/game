@@ -2,7 +2,7 @@
 short name: Vanguard
 full name: Magic Vanguard
 icon: card-sample.png
-position hint: 2
+position hint: 02
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -517,6 +517,9 @@ keyword parameter type:
 	optional: false
 	match: [A-Z][A-Z,a-z ]*
 	example: Forest
+keyword parameter type:
+	name: a
+	match: an?
 
 ############################# All Magic keywords
 # By JrEye and Neko_Asakami, Updated by Pichoro and Buttock1234
@@ -927,3 +930,13 @@ keyword:
 	keyword: Grandeur
 	match: Grandeur
 	mode: pseudo
+keyword:
+	keyword: Evoke
+	match: Evoke <atom-param>cost</atom-param>
+	mode: expert
+	reminder: You may play this spell for its evoke cost. If you do, it's sacrificed when it comes into play.
+keyword:
+	keyword: Champion
+	match: Champion <atom-param>a</atom-param> <atom-param>name</atom-param>
+	mode: expert
+	reminder: When this comes into play, sacrifice it unless you remove another {param2} you control from the game. When this leaves play, that card returns to play.

@@ -3,7 +3,7 @@ short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
 version: 2007-07-01
-position hint: 1
+position hint: 01
 
 ############################################################## Functions & filters
 
@@ -237,6 +237,8 @@ init script:
 	
 	# replaces — correctly
 	add := "" # default is nothing
+	separate_words := replace_rule(match:" ", replace: " and/or ")+
+		tag_remove_rule(tag: "<word-list")
 	for_mana_costs := format_cost := {
 		if input.separator_before == "—" and contains(input.param, match: " ") then (
 			if contains(input.param, match:",") then (
@@ -1472,6 +1474,10 @@ keyword parameter type:
 		name: singular
 		description: Removes plurality from words.
 		script: \{english_singular({input})\}
+	refer script:
+		name: separate words
+		description: Changes spaces to " and/or ". "Elf Warrior" becomes "Elf and/or Warrior".
+		script: \{separate_words({input})\}
 keyword parameter type:
 	name: prefix
 	description: Prefix for things like "<something>walk"
@@ -1625,7 +1631,7 @@ keyword:
 	keyword: Amplify
 	match: Amplify <atom-param>number</atom-param>
 	mode: expert
-	reminder: As this card comes into play, put {english_number_a(param1)} +1/+1 counter(s) on it for each creature that shares a type with this that you reveal in your hand.
+	reminder: As this card comes into play, put {english_number_a(param1)} +1/+1 counter(s) on it for each {separate_words(card.sub_type)} card you reveal in your hand.
 keyword:
 	keyword: Double strike
 	match: Double strike
@@ -1645,7 +1651,7 @@ keyword:
 	keyword: Storm
 	match: Storm
 	mode: expert
-	reminder: When you play this spell, copy it for each spell played before it this turn. You may choose new targets for the copies.
+	reminder: When you play this spell, copy it for each spell played before it this turn.{ if contains(card.rule_text, match:"target") or contains(card.rule_text, match:"Target") then " You may choose new targets for the copies." else "" }
 keyword:
 	keyword: Affinity for
 	match: Affinity for <atom-param>name</atom-param>
@@ -1734,7 +1740,7 @@ keyword:
 	keyword: Epic
 	match: Epic
 	mode: expert
-	reminder: For the rest of the game, you can’t play spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability. If the spell has any targets, you may choose new targets for the copy.
+	reminder: For the rest of the game, you can’t play spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability.{ if contains(card.rule_text, match:"target") or contains(card.rule_text, match:"Target") then " You may choose a new target for the copy." else "" }
 keyword:
 	keyword: Channel
 	match: Channel
@@ -1779,7 +1785,7 @@ keyword:
 	keyword: Replicate
 	match: Replicate <atom-param>cost</atom-param>
 	mode: expert
-	reminder: When you play this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.
+	reminder: When you play this spell, copy it for each time you paid its replicate cost.{ if contains(card.rule_text, match:"target") or contains(card.rule_text, match:"Target") then " You may choose new targets for the copies." else "" }
 keyword:
 	keyword: Graft
 	match: Graft <atom-param>number</atom-param>
@@ -1839,7 +1845,7 @@ keyword:
 	keyword: Gravestorm
 	match: Gravestorm
 	mode: expert
-	reminder: When you play this spell, copy it for each permanent put into a graveyard this turn. You may choose new targets for the copies.
+	reminder: When you play this spell, copy it for each permanent put into a graveyard this turn.{ if contains(card.rule_text, match:"target") or contains(card.rule_text, match:"Target") then " You may choose new targets for the copies." else "" }
 keyword:
 	keyword: Lifelink
 	match: Lifelink
@@ -1900,7 +1906,12 @@ keyword:
 	mode: pseudo
 	rules: Grandeur — Discard another card named ~: [effect].
 keyword:
+	keyword: Evoke
+	match: Evoke <atom-param>cost</atom-param>
+	mode: expert
+	reminder: You may play this spell for its evoke cost. If you do, it's sacrificed when it comes into play.
+keyword:
 	keyword: Champion
 	match: Champion <atom-param>a</atom-param> <atom-param>name</atom-param>
-	mode: core
+	mode: expert
 	reminder: When this comes into play, sacrifice it unless you remove another {param2} you control from the game. When this leaves play, that card returns to play.

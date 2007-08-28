@@ -258,7 +258,7 @@ card style:
 	type:
 		left: 32
 		top : 206
-		width: 197
+		width: { 210 - max(13,card_style.rarity.content_width) }
 		height: 16
 		alignment: middle shrink-overflow
 		z index: 1
@@ -274,7 +274,7 @@ card style:
 	type 2:
 		left: 284
 		top : 206
-		width: 197
+		width: { 210 - max(13,card_style.rarity.content_width) }
 		height: 16
 		alignment: middle shrink-overflow
 		z index: 1
@@ -288,11 +288,12 @@ card style:
 			separator color: rgb(128,128,128)
 
 	rarity:
-		left: 228
+		right: 241
 		top : 207
-		width: 13
+		width: 26
 		height: 13
 		z index: 1
+		alignment: middle right
 		render style: image
 		choice images:
 			# Images based on the set symbol
@@ -315,11 +316,12 @@ card style:
 					else symbol_variation(symbol: set.symbol, variation: "common")
 
 	rarity 2:
-		left: 480
+		right: 493
 		top : 207
-		width: 13
+		width: 26
 		height: 13
 		z index: 1
+		alignment: middle right
 		render style: image
 		choice images:
 			# Images based on the set symbol

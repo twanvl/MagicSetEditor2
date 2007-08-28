@@ -25,7 +25,11 @@ init script:
 		) else input
 	}
 	template      := { green_template() + "{type}.jpg" }
-	land_template := { (if input == "a" then "c" else green_template()) + "l{type}.jpg" }
+	land_template := {
+		(if input == "a" then (
+			if styling.land_style == "grey" then "e"
+			else "c"
+		) else green_template()) + "l{type}.jpg" }
 	
 	# Use the normal tap symbol
 	mana_t := {
@@ -63,6 +67,13 @@ styling field:
 	initial: dark
 	choice: light
 	choice: dark
+styling field:
+	type: choice
+	name: land style
+	description: Should colorless lands be normal or grey?
+	initial: normal
+	choice: normal
+	choice: grey
 styling field:
 	type: boolean
 	name: use guild mana symbols
@@ -259,11 +270,12 @@ card style:
 			color: rgb(0,0,0)
 			separator color: rgb(128,128,128)
 	rarity:
-		left: 56.95
+		left: 48.45
 		top : 214
-		width: 17
+		width: 34
 		height: 17
 		z index: 1
+		alignment: middle center
 		render style: image
 		choice images:
 			# Images based on the set symbol
@@ -273,11 +285,12 @@ card style:
 			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
 			special:	    script: symbol_variation(symbol: set.symbol, variation: "special")
 	rarity 2:
-		left: 310.44
+		left: 301.54
 		top : 214
-		width: 17
+		width: 34
 		height: 17
 		z index: 1
+		alignment: middle center
 		render style: image
 		choice images:
 			# Images based on the set symbol

@@ -19,7 +19,11 @@ init script:
 		) else input
 	}
 	template      := { green_template() + "{type}.jpg" }
-	land_template := { (if input == "a" then "c" else green_template()) + "l{type}.jpg" }
+	land_template := {
+		(if input == "a" then (
+			if styling.land_style == "grey" then "e"
+			else "c"
+		) else green_template()) + "l{type}.jpg" }
 	
 	# Use the normal tap symbol
 	mana_t := {
@@ -58,6 +62,13 @@ styling field:
 	initial: dark
 	choice: light
 	choice: dark
+styling field:
+	type: choice
+	name: land style
+	description: Should colorless lands be normal or grey?
+	initial: normal
+	choice: normal
+	choice: grey
 styling field:
 	type: boolean
 	name: use guild mana symbols
@@ -289,9 +300,6 @@ card style:
 				{ if styling.font_color = "white" then rgb(255,255,255)
 				else if styling.font_color = "black" then rgb(0,0,0)
 				else rgb(0,0,0) }
-		symbol font:
-			name: magic-paintbrush
-			size: 14
 
 	copyright line:
 		left: 65
