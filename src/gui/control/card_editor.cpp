@@ -25,6 +25,7 @@ DataEditor::DataEditor(Window* parent, int id, long style)
 	: CardViewer(parent, id, style)
 	, current_viewer(nullptr)
 	, current_editor(nullptr)
+	, hovered_viewer(nullptr)
 {
 	// Create a caret
 	SetCaret(new wxCaret(this,1,1));
@@ -134,6 +135,7 @@ void DataEditor::onInit() {
 	createTabIndex();
 	current_viewer = nullptr;
 	current_editor = nullptr;
+	hovered_viewer = nullptr;
 }
 // ----------------------------------------------------------------------------- : Search / replace
 
@@ -213,24 +215,44 @@ void DataEditor::onMotion(wxMouseEvent& ev) {
 		current_editor->onMotion(pos, ev);
 	}
 	if (!HasCapture()) {
-		// change cursor and set status text
-		wxFrame* frame = dynamic_cast<wxFrame*>( wxGetTopLevelParent(this) );
+		// find editor under mouse
+		ValueViewer* new_hovered_viewer = nullptr;
 		FOR_EACH_EDITOR_REVERSE { // find high z index fields first
 			if (v->containsPoint(pos) && v->getField()->editable) {
-				wxCursor c = e->cursor(pos);
-				if (c.Ok()) SetCursor(c);
-				else        SetCursor(wxCURSOR_ARROW);
-				if (frame) frame->SetStatusText(v->getField()->description);
-				return;
+				new_hovered_viewer = v.get();
+				break;
 			}
 		}
-		// no field under cursor
-		SetCursor(wxCURSOR_ARROW);
-		if (frame) frame->SetStatusText(wxEmptyString);
+		if (hovered_viewer && hovered_viewer != new_hovered_viewer) {
+			ValueEditor* e = hovered_viewer->getEditor();
+			if (e) e->onMouseLeave(pos, ev);
+		}
+		hovered_viewer = new_hovered_viewer;
+		// change cursor and set status text
+		wxFrame* frame = dynamic_cast<wxFrame*>( wxGetTopLevelParent(this) );
+		if (hovered_viewer) {
+			ValueEditor* e = hovered_viewer->getEditor();
+			wxCursor c;
+			if (e) c = e->cursor(pos);
+			if (c.Ok()) SetCursor(c);
+			else        SetCursor(wxCURSOR_ARROW);
+			if (frame) frame->SetStatusText(hovered_viewer->getField()->description);
+		} else {
+			// no field under cursor
+			SetCursor(wxCURSOR_ARROW);
+			if (frame) frame->SetStatusText(wxEmptyString);
+		}
 	}
 }
 
 void DataEditor::onMouseLeave(wxMouseEvent& ev) {
+	// on mouse leave for editor
+	if (hovered_viewer) {
+		ValueEditor* e = hovered_viewer->getEditor();
+		if (e) e->onMouseLeave(mousePoint(ev), ev);
+		hovered_viewer = nullptr;
+	}
+	// clear status text
 	wxFrame* frame = dynamic_cast<wxFrame*>( wxGetTopLevelParent(this) );
 	if (frame) frame->SetStatusText(wxEmptyString);
 }

@@ -54,6 +54,12 @@ SCRIPT_FUNCTION(reverse) {
 	SCRIPT_RETURN(input);
 }
 
+// remove leading and trailing whitespace from a string
+SCRIPT_FUNCTION(trim) {
+	SCRIPT_PARAM(String, input);
+	SCRIPT_RETURN(trim(input));
+}
+
 // extract a substring
 SCRIPT_FUNCTION(substring) {
 	SCRIPT_PARAM(String, input);
@@ -154,6 +160,11 @@ SCRIPT_RULE_2(tag_contents,  String, tag,  ScriptValueP, contents) {
 SCRIPT_RULE_1(tag_remove, String, tag) {
 	SCRIPT_PARAM(String, input);
 	SCRIPT_RETURN(remove_tag(input, tag));
+}
+
+SCRIPT_FUNCTION(remove_tags) {
+	SCRIPT_PARAM(String, input);
+	SCRIPT_RETURN(untag_no_escape(input));
 }
 
 // ----------------------------------------------------------------------------- : Collection stuff
@@ -593,6 +604,7 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("to lower"),             script_to_lower);
 	ctx.setVariable(_("to title"),             script_to_title);
 	ctx.setVariable(_("reverse"),              script_reverse);
+	ctx.setVariable(_("trim"),                 script_trim);
 	ctx.setVariable(_("substring"),            script_substring);
 	ctx.setVariable(_("contains"),             script_contains);
 	ctx.setVariable(_("format"),               script_format);
@@ -602,6 +614,7 @@ void init_script_basic_functions(Context& ctx) {
 	// tagged string
 	ctx.setVariable(_("tag contents"),         script_tag_contents);
 	ctx.setVariable(_("remove tag"),           script_tag_remove);
+	ctx.setVariable(_("remove tags"),          script_remove_tags);
 	ctx.setVariable(_("tag contents rule"),    script_tag_contents_rule);
 	ctx.setVariable(_("tag remove rule"),      script_tag_remove_rule);
 	// collection

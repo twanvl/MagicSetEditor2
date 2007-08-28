@@ -86,6 +86,7 @@ class DataEditor : public CardViewer {
 	// --------------------------------------------------- : Data
 	ValueViewer* current_viewer;	///< The currently selected viewer
 	ValueEditor* current_editor;	///< The currently selected editor, corresponding to the viewer
+	ValueViewer* hovered_viewer;	///< The editor under the mouse cursor
 	vector<ValueViewer*> by_tab_index;	///< The editable viewers, sorted by tab index
 	
   private:

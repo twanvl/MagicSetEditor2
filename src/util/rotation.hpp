@@ -172,7 +172,7 @@ class RotatedDC : public Rotation {
 	// Fill the dc with the color of the current brush
 	void Fill();
 	
-	// --------------------------------------------------- : Forwarded properties
+	// --------------------------------------------------- : Properties
 	
 	/// Sets the pen for the dc, does not scale the line width
 	void SetPen(const wxPen&);
@@ -192,6 +192,11 @@ class RotatedDC : public Rotation {
 	
 	void SetClippingRegion(const RealRect& rect);
 	void DestroyClippingRegion();
+	
+	// --------------------------------------------------- : Other
+	
+	/// Get the current contents of the given ractangle, for later restoring
+	Bitmap GetBackground(const RealRect& r);
 	
 	inline wxDC& getDC() { return dc; }
 	

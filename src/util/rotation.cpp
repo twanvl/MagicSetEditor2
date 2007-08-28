@@ -286,3 +286,15 @@ void RotatedDC::SetClippingRegion(const RealRect& rect) {
 void RotatedDC::DestroyClippingRegion() {
 	dc.DestroyClippingRegion();
 }
+
+// ----------------------------------------------------------------------------- : Other
+
+Bitmap RotatedDC::GetBackground(const RealRect& r) {
+	wxRect wr = trNoNeg(r);
+	Bitmap background(wr.width, wr.height);
+	wxMemoryDC mdc;
+	mdc.SelectObject(background);
+	mdc.Blit(0, 0, wr.width, wr.height, &dc, wr.x, wr.y);
+	mdc.SelectObject(wxNullBitmap);
+	return background;
+}

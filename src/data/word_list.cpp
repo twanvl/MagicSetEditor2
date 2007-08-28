@@ -16,12 +16,13 @@ WordListWord::WordListWord()
 {}
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(WordListWord) {
-	if (line_below || is_prefix || isGroup() || (tag.reading() && tag.isComplex())) {
+	if (line_below || is_prefix || isGroup() || script || (tag.reading() && tag.isComplex())) {
 		// complex value
 		REFLECT(name);
 		REFLECT(line_below);
 		REFLECT(is_prefix);
 		REFLECT(words);
+		REFLECT(script);
 	} else {
 		REFLECT_NAMELESS(name);
 	}

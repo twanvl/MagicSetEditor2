@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
+#include <script/scriptable.hpp>
 
 DECLARE_POINTER_TYPE(WordListWord);
 DECLARE_POINTER_TYPE(WordList);
@@ -27,6 +28,7 @@ class WordListWord : public IntrusivePtrBase<WordListWord> {
 	bool    line_below;   ///< Line below in the list?
 	bool    is_prefix;    ///< Is this a prefix before other words?
 	vector<WordListWordP> words; ///< Sublist
+	OptionalScript script;	///< Generate words using a script
 	
 	inline bool isGroup() const { return !words.empty(); }
 	

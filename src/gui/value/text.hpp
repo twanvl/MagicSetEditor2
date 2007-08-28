@@ -43,7 +43,8 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	virtual bool onLeftDClick(const RealPoint& pos, wxMouseEvent&);
 	virtual bool onRightDown (const RealPoint& pos, wxMouseEvent&);
 	virtual bool onMotion    (const RealPoint& pos, wxMouseEvent&);
-	virtual bool onMouseWheel(const RealPoint& pos, wxMouseEvent& ev);
+	virtual void onMouseLeave(const RealPoint& pos, wxMouseEvent&);
+	virtual bool onMouseWheel(const RealPoint& pos, wxMouseEvent&);
 	
 	virtual bool onContextMenu(IconMenu& m, wxContextMenuEvent&);
 	virtual wxMenu* getMenu(int type) const;
@@ -89,6 +90,8 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	
 	virtual wxCursor cursor(const RealPoint& pos) const;
 	virtual void determineSize(bool force_fit = false);
+	virtual bool containsPoint(const RealPoint& p) const;
+	virtual RealRect boundingBox() const;
 	virtual void onShow(bool);
 	virtual void draw(RotatedDC&);
 	
@@ -162,14 +165,19 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	
 	friend class DropDownWordList;
 	DropDownWordListP drop_down;
-	bool dropDownShown();
+	bool dropDownShown() const;
+	mutable WordListPos* hovered_words;
 	
 	/// Find all word lists in the current value
 	void findWordLists();
 	/// Draw word list indicators
-	void drawWordListIndicators(RotatedDC& dc);
+	void drawWordListIndicators(RotatedDC& dc, bool redrawing = false);
+	/// Re-draw word list indicators
+	void redrawWordListIndicators();
 	/// Find a WordListPos under the mouse cursor (if any), pos is in internal coordinates
 	WordListPosP findWordList(const RealPoint& pos) const;
+	/// Find a WordListPos rectangle under the mouse cursor (if any), pos is in internal coordinates
+	WordListPosP findWordListBody(const RealPoint& pos) const;
 	/// Find a WordListPos for a index position
 	WordListPosP findWordList(size_t index) const;
 	/// Show a word list drop down menu, if wl

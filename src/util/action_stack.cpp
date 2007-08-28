@@ -30,6 +30,7 @@ void ActionStack::add(Action* action, bool allow_merge) {
 	action->perform(false); // TODO: delete action if perform throws
 	tellListeners(*action, false);
 	// clear redo list
+	if (!redo_actions.empty()) allow_merge = false; // don't merge after undo
 	FOR_EACH(a, redo_actions) delete a;
 	redo_actions.clear();
 	// try to merge?

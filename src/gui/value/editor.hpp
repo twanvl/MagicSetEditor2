@@ -47,6 +47,7 @@ class ValueEditor {
 	virtual bool onLeftDClick (const RealPoint& pos, wxMouseEvent& ev) { return false; }
 	virtual bool onRightDown  (const RealPoint& pos, wxMouseEvent& ev) { return false; }
 	virtual bool onMotion     (const RealPoint& pos, wxMouseEvent& ev) { return false; }
+	virtual void onMouseLeave (const RealPoint& pos, wxMouseEvent& ev) {}
 	virtual bool onMouseWheel (const RealPoint& pos, wxMouseEvent& ev) { return false; }
 	
 	/// Key events

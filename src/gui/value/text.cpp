@@ -20,11 +20,16 @@
 #include <wx/clipbrd.h>
 #include <wx/caret.h>
 
+#undef small // some evil windows header defines this
+
 DECLARE_SHARED_POINTER_TYPE(DropDownList);
 DECLARE_TYPEOF_COLLECTION(WordListP);
 DECLARE_TYPEOF_COLLECTION(WordListWordP);
 DECLARE_TYPEOF_COLLECTION(WordListPosP);
 DECLARE_TYPEOF_COLLECTION(AutoReplaceP);
+struct DropDownWordListItem;
+DECLARE_TYPEOF_COLLECTION(DropDownWordListItem);
+DECLARE_TYPEOF_COLLECTION(String);
 
 // ----------------------------------------------------------------------------- : TextValueEditorScrollBar
 
@@ -72,13 +77,40 @@ class WordListPos : public IntrusivePtrBase<WordListPos> {
 		: start(start), end(end)
 		, rect(-1,-1,-1,-1)
 		, word_list(word_list)
-		, active(false)
 	{}
 	
 	const size_t start, end; ///< Start and ending indices
 	RealRect  rect;          ///< Rectangle around word list text
 	WordListP word_list;     ///< Word list to use
-	bool active;             ///< Is the list dropped down right now?
+	Bitmap    behind;        ///< Bitmap behind the button
+};
+
+enum WordListItemFlags
+{	FLAG_ACTIVE  = 0x01
+,	FLAG_SUBMENU = 0x02
+,	FLAG_LINE_BELOW = 0x04
+};
+struct DropDownWordListItem {
+	DropDownWordListItem() : word(nullptr), flags(0) {}
+	DropDownWordListItem(WordListWord* word, int flags = 0)
+		: word(word)
+		, name(word->name)
+		, flags(flags | (word->isGroup() * FLAG_SUBMENU)
+		              | (word->line_below * FLAG_LINE_BELOW))
+	{}
+	DropDownWordListItem(WordListWord* word, const String& name, int flags = 0)
+		: word(word)
+		, name(name)
+		, flags(flags)
+	{}
+	
+	WordListWord* word;
+	String        name;
+	int           flags;
+	DropDownListP submenu;
+	
+	inline bool active() const { return flags & FLAG_ACTIVE; }
+	inline void setActive(bool a) { flags = flags & ~FLAG_ACTIVE | a * FLAG_ACTIVE; }
 };
 
 class DropDownWordList : public DropDownList {
@@ -88,13 +120,13 @@ class DropDownWordList : public DropDownList {
 	void setWords(const WordListWordP& words2);
 	void setWords(const WordListPosP& pos2);
 	
+	inline WordListPosP getPos() const { return pos; }
+	
   protected:
-	virtual void          onShow();
-	virtual void          onHide();
 	virtual void          redrawArrowOnParent();
-	virtual size_t        itemCount() const             { return words->words.size(); }
-	virtual bool          lineBelow(size_t item) const  { return words->words[item]->line_below; }
-	virtual String        itemText(size_t item) const   { return words->words[item]->name; }
+	virtual size_t        itemCount() const             { return items.size(); }
+	virtual bool          lineBelow(size_t item) const  { return items[item].flags & FLAG_LINE_BELOW; }
+	virtual String        itemText(size_t item) const   { return items[item].name; }
 	virtual void          drawIcon(DC& dc, int x, int y, size_t item, bool selected) const;
 	virtual DropDownList* submenu(size_t item) const;
 	virtual size_t        selection() const;
@@ -104,8 +136,9 @@ class DropDownWordList : public DropDownList {
 	WordListPosP pos;
 	WordListWordP words; ///< The words we are listing
 	bool has_checkboxes; ///< Do we need checkboxes?
-	mutable vector<int> active;  ///< Which items are checked?
-	mutable vector<DropDownListP> submenus;
+	mutable vector <DropDownWordListItem> items;
+	
+	void addWordsFromScript(const WordListWordP& w);
 };
 
 
@@ -124,27 +157,64 @@ void DropDownWordList::setWords(const WordListPosP& pos2) {
 void DropDownWordList::setWords(const WordListWordP& words2) {
 	if (words == words2) return;
 	// switch to different list
-	submenus.clear();
+	items.clear();
 	words = words2;
+	// init items; do we need checkboxes?
 	// do we need checkboxes?
 	has_checkboxes = false;
 	FOR_EACH(w, words->words) {
-		if (w->is_prefix) {
-			has_checkboxes = true;
-			break;
+		if (w->is_prefix) has_checkboxes = true;
+		if (w->script) {
+			addWordsFromScript(w);
+		} else {
+			// only if not duplicating
+			bool already_added = false;
+			FOR_EACH(i,items) {
+				if (i.name == w->name) {
+					already_added = true;
+					break;
+				}
+			}
+			if (!already_added || w->isGroup()) {
+				items.push_back(DropDownWordListItem(w.get()));
+			}
 		}
 	}
 	// size of items
 	icon_size.width = has_checkboxes ? 16 : 0;
 	item_size.height = max(16., item_size.height);
 }
-
-void DropDownWordList::onShow() {
-	pos->active = true;
-}
-void DropDownWordList::onHide() {
-	if (isRoot()) {
-		pos->active = false;
+void DropDownWordList::addWordsFromScript(const WordListWordP& w) {
+	assert(w->script);
+	// run script
+	Context& ctx = tve.viewer.getContext();
+	String str = w->script.invoke(ctx)->toString();
+	// collect items
+	vector<String> strings;
+	{
+		size_t prev  = 0;
+		size_t comma = str.find_first_of(_(','));
+		while (comma != String::npos) {
+			strings.push_back(str.substr(prev, comma - prev));
+			prev = comma + 1;
+			if (prev + 1 < str.size() && str.GetChar(prev + 1) == _(' ')) ++prev; // skip space after comma
+			comma = str.find_first_of(_(','), prev);
+		}
+		strings.push_back(str.substr(prev));
+		sort(strings.begin(), strings.end());
+	}
+	// add to menu
+	size_t prev = items.size();
+	FOR_EACH(s, strings) {
+		if (prev >= items.size() || s != items[prev].name) {
+			// no line below prev
+			if (prev < items.size() && !items[prev].name.empty()) {
+				items[prev].flags = 0;
+			}
+			// not a duplicate
+			prev = items.size();
+			items.push_back(DropDownWordListItem(w.get(), s, w->line_below * FLAG_LINE_BELOW));
+		}
 	}
 }
 
@@ -157,22 +227,25 @@ void DropDownWordList::drawIcon(DC& dc, int x, int y, size_t item, bool selected
 		dc.DrawRectangle(x,y,16,16);
 		wxRect rect = RealRect(x+2,y+2,12,12);
 		if (radio) {
-			draw_radiobox(nullptr, dc, rect, active[item], itemEnabled(item));
+			draw_radiobox(nullptr, dc, rect, items[item].active(), itemEnabled(item));
 		} else {
-			draw_checkbox(nullptr, dc, rect, active[item], itemEnabled(item));
+			draw_checkbox(nullptr, dc, rect, items[item].active(), itemEnabled(item));
 		}
 	}
 }
 
 DropDownList* DropDownWordList::submenu(size_t item) const {
-	if (item >= submenus.size()) submenus.resize(item + 1);
-	if (submenus[item]) return submenus[item].get();
-	WordListWordP word = words->words[item];
-	if (word->isGroup()) {
-		// create submenu
-		submenus[item].reset(new DropDownWordList(const_cast<DropDownWordList*>(this), true, tve, pos, word));
+	DropDownWordListItem& i = items[item];
+	if (i.submenu) return i.submenu.get();
+	if (i.flags & FLAG_SUBMENU) {
+		// create submenu?
+		if (!i.submenu) {
+			i.submenu.reset(new DropDownWordList(const_cast<DropDownWordList*>(this), true, tve, pos, i.word));
+		}
+		return i.submenu.get();
+	} else {
+		return nullptr;
 	}
-	return submenus[item].get();
 }
 
 
@@ -182,24 +255,23 @@ size_t DropDownWordList::selection() const {
 	// find selection
 	size_t selected = NO_SELECTION;
 	bool prefix_selected = true;
-	size_t i = 0;
-	active.resize(words->words.size());
-	FOR_EACH(w, words->words) {
-		if (w->is_prefix) {
-			if (starts_with(current, w->name)) {
-				active[i] = true;
-				current = current.substr(w->name.size());
+	size_t n = 0;
+	FOR_EACH(item, items) {
+		if (item.word->is_prefix) {
+			if (starts_with(current, item.name)) {
+				item.setActive(true);
+				current = current.substr(item.name.size());
 			} else {
-				active[i] = false;
+				item.setActive(false);
 			}
 		} else {
-			active[i] = (current == w->name);
+			item.setActive((current == item.name));
 		}
-		if (active[i] && (selected == NO_SELECTION || (prefix_selected && !w->is_prefix))) {
-			selected = i;
-			prefix_selected = w->is_prefix;
+		if (item.active() && (selected == NO_SELECTION || (prefix_selected && !item.word->is_prefix))) {
+			selected = n;
+			prefix_selected = item.word->is_prefix;
 		}
-		++i;
+		++n;
 	}
 	return selected;
 }
@@ -207,17 +279,20 @@ size_t DropDownWordList::selection() const {
 void DropDownWordList::select(size_t item) {
 	// determine new value
 	String new_value;
-	bool toggling_prefix = words->words[item]->is_prefix;
+	bool toggling_prefix = items[item].word->is_prefix;
 	for (size_t i = 0 ; i < words->words.size() ; ++i) {
-		const WordListWord& w = *words->words[i];
-		if (w.is_prefix && active[i] != (i == item)) {
-			new_value += w.name;
-		} else if (!w.is_prefix && (i == item || (toggling_prefix && active[i]))) {
-			new_value += w.name;
+		const DropDownWordListItem& it = items[i];
+		if (it.word->is_prefix) {
+			if (it.active() != (i == item)) {
+				new_value += it.name;
+			}
+		} else {
+			if (i == item || (toggling_prefix && items[i].active())) {
+				new_value += it.name;
+			}
 		}
 	}
 	// set value
-	pos->active = false;
 	tve.selection_start_i = pos->start;
 	tve.selection_end_i   = pos->end;
 	tve.fixSelection(TYPE_INDEX);
@@ -226,7 +301,7 @@ void DropDownWordList::select(size_t item) {
 }
 
 void DropDownWordList::redrawArrowOnParent() {
-	tve.redrawSelection(tve.selection_start_i, tve.selection_end_i, !tve.dropDownShown());
+	tve.redrawWordListIndicators();
 }
 
 // ----------------------------------------------------------------------------- : TextValueEditor
@@ -236,6 +311,7 @@ IMPLEMENT_VALUE_EDITOR(Text)
 	, selection_start_i(0), selection_end_i(0)
 	, selecting(false), select_words(false)
 	, scrollbar(nullptr), scroll_with_cursor(false)
+	, hovered_words(nullptr)
 {
 	if (viewer.nativeLook() && field().multi_line) {
 		scrollbar = new TextValueEditorScrollBar(*this);
@@ -289,6 +365,13 @@ bool TextValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
 		}
 	}
 	return true;
+}
+
+void TextValueEditor::onMouseLeave(const RealPoint& pos, wxMouseEvent& ev) {
+	if (hovered_words) {
+		hovered_words = nullptr;
+		redrawWordListIndicators();
+	}
 }
 
 bool TextValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent& ev) {
@@ -538,7 +621,7 @@ void TextValueEditor::redrawSelection(size_t old_selection_start_i, size_t old_s
 				v.drawSelection(dc, style(), selection_start_i, selection_end_i);
 			}
 			// redraw drop down indicators
-			drawWordListIndicators(dc);
+			drawWordListIndicators(dc, true);
 		}
 	}
 	showCaret();
@@ -550,16 +633,44 @@ wxCursor rotated_ibeam;
 
 wxCursor TextValueEditor::cursor(const RealPoint& pos) const {
 	RealPoint pos2 = style().getRotation().trInv(pos);
-	if (findWordList(pos2)) {
-		return wxCursor();
-	} else if (viewer.getRotation().sideways() ^ style().getRotation().sideways()) { // 90 or 270 degrees
-		if (!rotated_ibeam.Ok()) {
-			rotated_ibeam = wxCursor(load_resource_cursor(_("rot_text")));
+	WordListPosP p = findWordList(pos2);
+	if (p) {
+		if (hovered_words != p.get()) {
+			hovered_words = p.get();
+			const_cast<TextValueEditor*>(this)->redrawWordListIndicators();
 		}
-		return rotated_ibeam;
+		return wxCursor();
 	} else {
-		return wxCURSOR_IBEAM;
+		p = findWordListBody(pos2);
+		if (hovered_words != p.get()) {
+			hovered_words = p.get();
+			const_cast<TextValueEditor*>(this)->redrawWordListIndicators();
+		}
+		if (viewer.getRotation().sideways() ^ style().getRotation().sideways()) { // 90 or 270 degrees
+			if (!rotated_ibeam.Ok()) {
+				rotated_ibeam = wxCursor(load_resource_cursor(_("rot_text")));
+			}
+			return rotated_ibeam;
+		} else {
+			return wxCURSOR_IBEAM;
+		}
 	}
+}
+
+bool TextValueEditor::containsPoint(const RealPoint& pos) const {
+	if (TextValueViewer::containsPoint(pos)) return true;
+	if (word_lists.empty()) return false;
+	RealPoint pos2 = style().getRotation().trInv(pos);
+	return findWordList(pos2);
+}
+RealRect TextValueEditor::boundingBox() const {
+	if (word_lists.empty()) return ValueViewer::boundingBox();
+	RealRect r = style().getRect().grow(1);
+	Rotation rot = style().getRotation();
+	FOR_EACH_CONST(wl, word_lists) {
+		r.width = max(r.width, rot.tr(wl->rect).right() + 9);
+	}
+	return r;
 }
 
 void TextValueEditor::onValueChange() {
@@ -1138,12 +1249,13 @@ void TextValueEditor::prepareDrawScrollbar(RotatedDC& dc) {
 
 // ----------------------------------------------------------------------------- : Word lists
 
-bool TextValueEditor::dropDownShown() {
+bool TextValueEditor::dropDownShown() const {
 	return drop_down && drop_down->IsShown();
 }
 
 void TextValueEditor::findWordLists() {
 	word_lists.clear();
+	hovered_words = nullptr;
 	// for each word list...
 	const String& str = value().value();
 	size_t pos = str.find(_("<word-list-"));
@@ -1170,22 +1282,60 @@ void TextValueEditor::findWordLists() {
 	}
 }
 
-void TextValueEditor::drawWordListIndicators(RotatedDC& dc) {
+void TextValueEditor::redrawWordListIndicators() {
+	if (isCurrent()) {
+		// Hide caret
+		wxCaret* caret = editor().GetCaret();
+		if (caret->IsVisible()) caret->Hide();
+	}
+	drawWordListIndicators(*editor().overdrawDC(), true);
+	if (isCurrent()) {
+		showCaret();
+	}
+}
+
+void TextValueEditor::drawWordListIndicators(RotatedDC& dc, bool redrawing) {
 	Rotater rot(dc, style().getRotation());
 	bool current = isCurrent();
+	// Draw lines around fields
 	FOR_EACH(wl, word_lists) {
 		RealRect& r = wl->rect;
 		if (r.height < 0) {
 			// find the rectangle for this indicator
 			RealRect start = v.charRect(wl->start);
-			RealRect end   = v.charRect(wl->end);
+			RealRect end   = v.charRect(wl->end > wl->start ? wl->end - 1 : wl->start);
 			r.x = start.x;
 			r.y = start.y;
 			r.width  = end.right() - start.left() + 0.5;
 			r.height = end.bottom() - start.top();
 		}
-		// draw background
-		if (current && wl->active) {
+		// color?
+		bool small = false;
+		if (current && drop_down && drop_down->IsShown() && drop_down->getPos() == wl) {
+			dc.SetPen  (Color(0,  128,255));
+		} else if (current && selection_end_i >= wl->start && selection_end_i <= wl->end && !dropDownShown()) {
+			dc.SetPen  (Color(64, 160,255));
+		} else {
+			dc.SetPen  (Color(128,128,128));
+			small = (wl.get() != hovered_words);
+		}
+		// capture background?
+		if (!redrawing) {
+			wl->behind = dc.GetBackground(RealRect(r.right(), r.top() - 1, 10, r.height + 3));
+		} else if (small && wl->behind.Ok()) {
+			// restore background
+			dc.DrawBitmap(wl->behind, r.topRight() + RealSize(0,-1));
+		}
+		// draw rectangle around value
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		dc.DrawRectangle(r.move(-1,-1,2,2));
+	}
+	// Draw drop down arrows
+	FOR_EACH_REVERSE(wl, word_lists) {
+		RealRect& r = wl->rect;
+		// color
+		bool small = false;
+		if (current && drop_down && drop_down->IsShown() && drop_down->getPos() == wl) {
 			dc.SetPen  (Color(0,  128,255));
 			dc.SetBrush(Color(64, 160,255));
 		} else if (current && selection_end_i >= wl->start && selection_end_i <= wl->end && !dropDownShown()) {
@@ -1194,36 +1344,50 @@ void TextValueEditor::drawWordListIndicators(RotatedDC& dc) {
 		} else {
 			dc.SetPen  (Color(128,128,128));
 			dc.SetBrush(Color(192,192,192));
+			small = (wl.get() != hovered_words);
 		}
-		dc.DrawRectangle(RealRect(r.right(), r.top() - 1, 9, r.height + 2));
-		// draw rectangle around value
-		dc.SetBrush(*wxTRANSPARENT_BRUSH);
-		dc.DrawRectangle(r.move(-1,-1,2,2));
-		// draw foreground
-		/*
-		dc.SetPen  (*wxTRANSPARENT_PEN);
-		dc.SetBrush(*wxBLACK_BRUSH);
-		wxPoint poly[] = {dc.tr(RealPoint(0,0)), dc.tr(RealPoint(5,0)), dc.tr(RealPoint(3,2))};
-		dc.getDC().DrawPolygon(3, poly, r.right() + 2, r.bottom() - 5);
-		*/
-		dc.SetPen  (*wxBLACK_PEN);
-		double x = r.right(), y = r.bottom() - 1;
-		dc.DrawLine(RealPoint(x + 4, y - 3), RealPoint(x + 5, y - 3));
-		dc.DrawLine(RealPoint(x + 3, y - 4), RealPoint(x + 6, y - 4));
-		dc.DrawLine(RealPoint(x + 2, y - 5), RealPoint(x + 7, y - 5));
+		if (small) {
+			dc.DrawRectangle(RealRect(r.right(), r.top() - 1, 2, r.height + 2));
+		} else {
+			// draw background of drop down button
+			dc.DrawRectangle(RealRect(r.right(), r.top() - 1, 9, r.height + 2));
+			// draw foreground
+			/*
+			dc.SetPen  (*wxTRANSPARENT_PEN);
+			dc.SetBrush(*wxBLACK_BRUSH);
+			wxPoint poly[] = {dc.tr(RealPoint(0,0)), dc.tr(RealPoint(5,0)), dc.tr(RealPoint(3,2))};
+			dc.getDC().DrawPolygon(3, poly, r.right() + 2, r.bottom() - 5);
+			*/
+			dc.SetPen  (*wxBLACK_PEN);
+			double x = r.right(), y = r.bottom() - 1;
+			dc.DrawLine(RealPoint(x + 4, y - 3), RealPoint(x + 5, y - 3));
+			dc.DrawLine(RealPoint(x + 3, y - 4), RealPoint(x + 6, y - 4));
+			dc.DrawLine(RealPoint(x + 2, y - 5), RealPoint(x + 7, y - 5));
+		}
 	}
 }
 
 WordListPosP TextValueEditor::findWordList(const RealPoint& pos) const {
 	FOR_EACH_CONST(wl, word_lists) {
 		const RealRect& r = wl->rect;
-		if (pos.x >= r.right() && pos.x < r.right() + 9 &&
-		    pos.y >= r.top()   && pos.y < r.bottom()) {
+		if (pos.x >= r.right() - 0.5 && pos.x < r.right() + 9 &&
+		    pos.y >= r.top()         && pos.y < r.bottom()) {
 			return wl;
 		}
 	}
 	return WordListPosP();
 }
+WordListPosP TextValueEditor::findWordListBody(const RealPoint& pos) const {
+	FOR_EACH_CONST(wl, word_lists) {
+		const RealRect& r = wl->rect;
+		if (pos.x >= r.left() && pos.x < r.right() &&
+		    pos.y >= r.top()  && pos.y < r.bottom()) {
+			return wl;
+		}
+	}
+	return WordListPosP();
+}
+
 WordListPosP TextValueEditor::findWordList(size_t index) const {
 	FOR_EACH_CONST(wl, word_lists) {
 		if (index >= wl->start && index <= wl->end) {

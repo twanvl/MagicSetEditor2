@@ -291,7 +291,7 @@ void DropDownList::drawItem(DC& dc, int y, size_t item) {
 		draw_menu_arrow(this, dc, RealRect(marginW, y, item_size.width, item_size.height), item == selected_item);
 	}
 	// draw line below
-	if (lineBelow(item)) {
+	if (lineBelow(item) && item != itemCount()) {
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 		dc.DrawLine(marginW, y + (int)item_size.height, marginW + (int)item_size.width, y + (int)item_size.height);
 	}

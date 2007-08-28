@@ -16,7 +16,7 @@
 
 DECLARE_POINTER_TYPE(Locale);
 DECLARE_POINTER_TYPE(SubLocale);
-class SubLocaleValidator;
+DECLARE_POINTER_TYPE(SubLocaleValidator);
 
 // ----------------------------------------------------------------------------- : Locale class
 
@@ -31,7 +31,7 @@ class SubLocale : public IntrusivePtrBase<SubLocale> {
 	String tr(const String& key, const String& def);
 	
 	/// Is this a valid sublocale? Returns errors
-	String validate(const String& name, const SubLocaleValidator&) const;
+	String validate(const String& name, const SubLocaleValidatorP&) const;
 	
 	DECLARE_REFLECTION();
 };

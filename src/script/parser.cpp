@@ -327,22 +327,22 @@ enum Precedence
 };
 
 /// Parse an expression
-/** @param input   Read tokens from the input
- *  @param scrip   Add resulting instructions to the script
- *  @param minPrec Minimum precedence level for operators
+/** @param input    Read tokens from the input
+ *  @param scrip    Add resulting instructions to the script
+ *  @param min_prec Minimum precedence level for operators
  *  NOTE: The net stack effect of an expression should be +1
  */
-void parseExpr(TokenIterator& input, Script& script, Precedence minPrec);
+void parseExpr(TokenIterator& input, Script& script, Precedence min_prec);
 
 /// Parse an expression, possibly with operators applied. Optionally adds an instruction at the end.
-/** @param input     Read tokens from the input
- *  @param script    Add resulting instructions to the script
- *  @param minPrec   Minimum precedence level for operators
- *  @param closeWith Add this instruction at the end
- *  @param closeWithData Data for the instruction at the end
+/** @param input           Read tokens from the input
+ *  @param script          Add resulting instructions to the script
+ *  @param min_prec        Minimum precedence level for operators
+ *  @param close_with      Add this instruction at the end
+ *  @param close_with_data Data for the instruction at the end
  *  NOTE: The net stack effect of an expression should be +1
  */
-void parseOper(TokenIterator& input, Script& script, Precedence minPrec, InstructionType closeWith = I_NOP, int closeWithData = 0);
+void parseOper(TokenIterator& input, Script& script, Precedence min_prec, InstructionType close_with = I_NOP, int close_with_data = 0);
 
 
 ScriptP parse(const String& s, bool string_mode, vector<ScriptParseError>& errors_out) {
@@ -542,7 +542,9 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 }
 
 void parseOper(TokenIterator& input, Script& script, Precedence minPrec, InstructionType closeWith, int closeWithData) {
+	size_t added = script.getInstructions().size(); // number of instructions added
 	parseExpr(input, script, minPrec); // first argument
+	added -= script.getInstructions().size();
 	// read any operators after an expression
 	// EBNF:                    expr = expr | expr oper expr
 	// without left recursion:  expr = expr (oper expr)*
@@ -565,10 +567,8 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 		} else if (minPrec <= PREC_SET && token==_(":=")) {
 			// We made a mistake, the part before the := should be a variable name,
 			// not an expression. Remove that instruction.
-			// TODO: There is a bug here:
-			//    (if x then a else b) := c will use the 'b' as variable name
-			Instruction instr = script.getInstructions().back();
-			if (instr.instr != I_GET_VAR) {
+			Instruction& instr = script.getInstructions().back();
+			if (added == 1 && instr.instr != I_GET_VAR) {
 				input.add_error(_("Can only assign to variables"));
 			}
 			script.getInstructions().pop_back();
@@ -610,7 +610,18 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 				input.expected(_("name"));
 			}
 		} else if (minPrec <= PREC_FUN && token==_("[")) { // get member by expr
-			parseOper(input, script, PREC_ALL, I_BINARY, I_MEMBER);
+			size_t before = script.getInstructions().size();
+			parseOper(input, script, PREC_ALL);
+			if (script.getInstructions().size() == before + 1 && script.getInstructions().back().instr == I_PUSH_CONST) {
+				// optimize:
+				//   PUSH_CONST x
+				//   MEMBER
+				// becomes
+				//   MEMBER_CONST x
+				script.getInstructions().back().instr = I_MEMBER_C;
+			} else {
+				script.addInstruction(I_BINARY, I_MEMBER);
+			}
 			expectToken(input, _("]"));
 		} else if (minPrec <= PREC_FUN && token==_("(")) {
 			// function call, read arguments

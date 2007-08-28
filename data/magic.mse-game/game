@@ -237,8 +237,7 @@ init script:
 	
 	# replaces — correctly
 	add := "" # default is nothing
-	separate_words := replace_rule(match:" ", replace: " and/or ")+
-		tag_remove_rule(tag: "<word-list")
+	separate_words := replace_rule(match:" ", replace: " and/or ")+ remove_tags
 	for_mana_costs := format_cost := {
 		if input.separator_before == "—" and contains(input.param, match: " ") then (
 			if contains(input.param, match:",") then (
@@ -259,6 +258,8 @@ init script:
 	# Utilities for keywords
 	has_cc := { card.casting_cost != "" }
 	has_pt := { card.pt           != "" }
+	contains_target := match_rule(match:"(?i)([^a-z]|^)target([^a-z]|$)")
+	is_targeted := { contains_target(card.rule_text) }
 	
 	############################################################## The text box
 	
@@ -334,17 +335,6 @@ init script:
 		replace_rule(
 			match: "\\[[STXYZWUBRG0-9/|]+\\]",
 			replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
-		# step 6 : longdash
-		replace_rule(
-			match: "--",
-			replace: "—") +
-		replace_rule(
-			match: " - ",
-			replace: " — ") +
-		# step 6b : Æ replacement
-		replace_rule(
-			match: "AE",
-			replace: "Æ" ) +
 		# step 7 : italic reminder text
 		replace_rule(
 		 	match: "[(][^)\n]*[)]?",
@@ -354,90 +344,68 @@ init script:
 		replace_rule(
 			match: "[a-z]",
 			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>|—<match>| — <match>",
-			replace: { to_upper() }) +
+			replace: to_upper) +
 		curly_quotes
 	
 	############################################################## Other boxes
 	
-	#character filter for title line
-	name_filter :=
-		# step 1 : Æ replacement rule
-		replace_rule(
-			match: "AE",
-			replace: "Æ")
-	
-	#character filter for copyright line
-	copyright_filter :=
-		# step 1 : Æ replacement rule
-		replace_rule(
-			match: "AE",
-			replace: "Æ") +
-		# step 2 : longdash for keywords
-		replace_rule(
-			match: "--",
-			replace: "—") +
-		replace_rule(
-			match: " - ",
-			replace: " — ") +
-		# step 3 : trademark symbol
-		replace_rule(
-			match: "TM",
-			replace: "™") +
-		# step 4 : copyright symbol
-		replace_rule(
-			match: "CR|\\(C\\)",
-			replace: "©")
-	
 	# the flavor text filter
 	#  - makes all text italic
 	flavor_text_filter :=
-		# step 1 : Æ replacement rule
-		replace_rule(
-			match: "AE",
-			replace: "Æ") +
-		# step 1.5 : longdash
-		replace_rule(
-			match: "--",
-			replace: "—") +
-		replace_rule(
-			match: " - ",
-			replace: " — ") +
-		# step 2 : remove italic tags
+		# step 1 : remove italic tags
 		tag_remove_rule(tag: "<i-flavor>")   +
-		# step 3 : surround by <i> tags
+		# step 2 : surround by <i> tags
 		{ "<i-flavor>" + input + "</i-flavor>" } +
 		# curly quotes
 		curly_quotes
-	# Used in FPM and Future Sight
-	artist_line_filter :=
-		replace_rule(
-			match: "AE",
-			replace: "Æ") +
-		replace_rule(
-			match: "--",
-			replace: "—") +
-		replace_rule(
-			match: " - ",
-			replace: " — ");
 		
 	# Move the cursor past the separator in the p/t and type boxes
 	type_over_pt   := replace_rule(match:"/$", replace:"")
 	type_over_type := replace_rule(match:" ?-$", replace:"")
 	
 	super_type_filter :=
-		type_over_type +
 		tag_remove_rule(tag: "<word-list-") +
+		type_over_type +
 		{ "<word-list-type>{input}</word-list-type>" }
 	
+	space_to_wlclass := replace_rule(match:" +", replace:"</word-list-class> <word-list-class>")
 	sub_type_filter :=
 		tag_remove_rule(tag: "<word-list-") +
-		{ if      is_creature(type)    then "<word-list-creature>{   input}</word-list-creature>"
+		{ if      is_creature(type)    then (
+		     if input == "" then "<word-list-race></word-list-race>"
+		     else (
+		       first := only_first(input);
+		       next := trim(only_next(input));
+		       if next != "" then next := next + " ";
+		       "<word-list-race>{first}</word-list-race> " +
+		       "<word-list-class>" + space_to_wlclass(next) + "</word-list-class>"
+		     )
+		  )
 		  else if is_land(type)        then "<word-list-land>{       input}</word-list-land>"
 		  else if is_artifact(type)    then "<word-list-artifact>{   input}</word-list-artifact>"
 		  else if is_enchantment(type) then "<word-list-enchantment>{input}</word-list-enchantment>"
 		  else if is_spell(type)       then "<word-list-spell>{      input}</word-list-spell>"
 		  else                              input
 		}
+	
+	# all sub types, for word list
+	space_to_comma := replace_rule(match:" ", replace:",")
+	only_first     := replace_rule(match:" .*", replace:"")
+	only_next      := replace_rule(match:"^[^ ]* ?", replace:"")
+	all_sub_types := {
+		for each card in set do
+			if contains(card.super_type) then "," + space_to_comma(to_text(card.sub_type))
+	}
+	all_races := {
+		for each card in set do
+			if contains(card.super_type, match:"Creature") then
+				"," + only_first(to_text(card.sub_type))
+	}
+	all_classes := {
+		for each card in set do
+			if contains(card.super_type, match:"Creature") then
+				"," + space_to_comma(only_next(to_text(card.sub_type)))
+	}
 	
 	# Shape of cards, can be changed in style files
 	card_shape := { "normal" }
@@ -497,7 +465,6 @@ set field:
 set field:
 	type: text
 	name: copyright
-	script: copyright_filter(value)
 set field:
 	type: symbol
 	name: symbol
@@ -709,7 +676,6 @@ card field:
 	type: text
 	name: name
 	card list visible: false
-	script: name_filter(value)
 	identifying: true
 	show statistics: false
 card field:
@@ -862,14 +828,12 @@ card field:
 card field:
 	type: text
 	name: illustrator
-	script: artist_line_filter(value)
 	icon: stats/illustrator.png
 	default: set.artist
 	description: Illustrator of this card, the default value can be changed on the 'set info' tab
 card field:
 	type: text
 	name: copyright
-	script: copyright_filter(value)
 	default: set.copyright
 	editable: false
 	show statistics: false
@@ -934,7 +898,6 @@ card field:
 card field:
 	type: text
 	name: name 2
-	script: name_filter(value)
 	identifying: true
 	show statistics: false
 card field:
@@ -1053,14 +1016,12 @@ card field:
 card field:
 	type: text
 	name: illustrator 2
-	script: artist_line_filter(value)
 	icon: stats/illustrator.png
 	default: set.artist
 	show statistics: false
 card field:
 	type: text
 	name: copyright 2
-	script: copyright_filter(value)
 	default: set.copyright
 	editable: false
 	show statistics: false
@@ -1254,6 +1215,9 @@ word list:
 	word:
 		name: Tribal 
 		is prefix: true
+	word:
+		name: Snow 
+		is prefix: true
 		line below: true
 	word: Creature
 	word: Artifact
@@ -1264,12 +1228,36 @@ word list:
 	word: Land
 
 word list:
-	name: creature
-	word: Goblin
+	name: race
+	word:
+		script: all_races()
+		line below: true
+	word: Beast
+	word: Bird
+	word: Elemental
 	word: Elf
-	word: Wizard
+	word: Goblin
 	word: Human
-	# TODO: lots more
+	word: Merfolk
+	word: Zombie
+	# TODO: lots more?
+word list:
+	name: class
+	word:
+		script: all_classes()
+		line below: true
+	word: Cleric
+	word: Lord
+	word: Soldier
+	word: Warrior
+	word:
+		name: Wizard
+		line below: true
+	word:
+		name: All types
+		word: A
+		word: B
+		# TODO: Add all types here
 
 word list:
 	name: artifact
@@ -1281,7 +1269,7 @@ word list:
 word list:
 	name: land
 	word:
-		name:
+		script: all_sub_types(match: "Land")
 		line below: true
 	word: Plains
 	word: Island
@@ -1304,6 +1292,38 @@ word list:
 	word: Arcane
 
 
+############################################################## Auto replace
+
+# Do we need categories?
+#auto replace category: text box
+#auto replace category: copyright
+#auto replace category: everywhere
+auto replace:
+	match: (C)
+	replace: ©
+auto replace:
+	match: AE
+	replace: Æ
+	whole word: false
+auto replace:
+	match: TM
+	replace: ™
+	whole word: false
+auto replace:
+	match: --
+	replace: —
+auto replace:
+	# note the spaces
+	match:
+		 - 
+	replace:
+		 — 
+auto replace:
+	match: CIP
+	replace: comes into play
+auto replace:
+	match: AAA
+	replace: as an additional cost to play
 
 ############################################################## Add multiple cards
 
@@ -1379,7 +1399,7 @@ pack type:
 
 has keywords: true
 
-keyword match script: name_filter(value)
+#keyword match script: name_filter(value)
 #keyword preview: {keyword} <i>({reminder})</i>
 
 keyword mode:
@@ -1651,7 +1671,7 @@ keyword:
 	keyword: Storm
 	match: Storm
 	mode: expert
-	reminder: When you play this spell, copy it for each spell played before it this turn.{ if contains(card.rule_text, match:"target") or contains(card.rule_text, match:"Target") then " You may choose new targets for the copies." else "" }
+	reminder: When you play this spell, copy it for each spell played before it this turn.{ if is_targeted() then " You may choose new targets for the copies." }
 keyword:
 	keyword: Affinity for
 	match: Affinity for <atom-param>name</atom-param>
@@ -1740,7 +1760,7 @@ keyword:
 	keyword: Epic
 	match: Epic
 	mode: expert
-	reminder: For the rest of the game, you can’t play spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability.{ if contains(card.rule_text, match:"target") or contains(card.rule_text, match:"Target") then " You may choose a new target for the copy." else "" }
+	reminder: For the rest of the game, you can’t play spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability.{ if is_targeted() then " You may choose a new target for the copy." }
 keyword:
 	keyword: Channel
 	match: Channel
@@ -1785,7 +1805,7 @@ keyword:
 	keyword: Replicate
 	match: Replicate <atom-param>cost</atom-param>
 	mode: expert
-	reminder: When you play this spell, copy it for each time you paid its replicate cost.{ if contains(card.rule_text, match:"target") or contains(card.rule_text, match:"Target") then " You may choose new targets for the copies." else "" }
+	reminder: When you play this spell, copy it for each time you paid its replicate cost.{ if is_targeted() then " You may choose new targets for the copies." }
 keyword:
 	keyword: Graft
 	match: Graft <atom-param>number</atom-param>
@@ -1825,7 +1845,7 @@ keyword:
 	keyword: Suspend
 	match: Suspend <atom-param>number</atom-param>—<atom-param>cost</atom-param>
 	mode: expert
-	reminder: Rather than play this card from your hand,{if has_cc() then " you may" else ""} {for_mana_costs(add:"pay ", param2)} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost.{if has_pt() then " It has haste." else ""}
+	reminder: Rather than play this card from your hand,{if has_cc() then " you may" else ""} {for_mana_costs(add:"pay ", param2)} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, play it without paying its mana cost.{if has_pt() then " It has haste." }
 keyword:
 	keyword: Vanishing
 	match: Vanishing <atom-param>number</atom-param>
@@ -1845,7 +1865,7 @@ keyword:
 	keyword: Gravestorm
 	match: Gravestorm
 	mode: expert
-	reminder: When you play this spell, copy it for each permanent put into a graveyard this turn.{ if contains(card.rule_text, match:"target") or contains(card.rule_text, match:"Target") then " You may choose new targets for the copies." else "" }
+	reminder: When you play this spell, copy it for each permanent put into a graveyard this turn.{ if is_targeted() then " You may choose new targets for the copies." }
 keyword:
 	keyword: Lifelink
 	match: Lifelink

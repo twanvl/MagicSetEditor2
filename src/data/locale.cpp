@@ -210,26 +210,16 @@ void Locale::validate(Version ver) {
 	r.handle_greedy(v);
 	// validate
 	String errors;
-	// For efficiency, this needs to be parallel to LocaleCategory's values.
-	String sublocales[10] = {
-		_("menu"),
-		_("help"),
-		_("tool"),
-		_("tooltip"),
-		_("label"),
-		_("button"),
-		_("title"),
-		_("type"),
-		_("action"),
-		_("error")
-	};
-
-	for (String * current = sublocales; current < sublocales + 10; ++current) {
-		if (v.sublocales[*current])
-			errors += translations[current - sublocales].validate(*current,    *v.sublocales[*current]);
-		else
-			errors += _("\nError validating local file: expected keys file missing \"") + *current + _("\" section.");
-	}
+	errors += translations[LOCALE_CAT_MENU   ].validate(_("menu"),    v.sublocales[_("menu")   ]);
+	errors += translations[LOCALE_CAT_HELP   ].validate(_("help"),    v.sublocales[_("help")   ]);
+	errors += translations[LOCALE_CAT_TOOL   ].validate(_("tool"),    v.sublocales[_("tool")   ]);
+	errors += translations[LOCALE_CAT_TOOLTIP].validate(_("tooltip"), v.sublocales[_("tooltip")]);
+	errors += translations[LOCALE_CAT_LABEL  ].validate(_("label"),   v.sublocales[_("label")  ]);
+	errors += translations[LOCALE_CAT_BUTTON ].validate(_("button"),  v.sublocales[_("button") ]);
+	errors += translations[LOCALE_CAT_TITLE  ].validate(_("title"),   v.sublocales[_("title")  ]);
+	errors += translations[LOCALE_CAT_ACTION ].validate(_("action"),  v.sublocales[_("action") ]);
+	errors += translations[LOCALE_CAT_ERROR  ].validate(_("error"),   v.sublocales[_("error")  ]);
+	errors += translations[LOCALE_CAT_TYPE   ].validate(_("type"),    v.sublocales[_("type")   ]);
 	// errors?
 	if (!errors.empty()) {
 		if (ver != app_version) {
@@ -242,10 +232,13 @@ void Locale::validate(Version ver) {
 	}
 }
 
-String SubLocale::validate(const String& name, const SubLocaleValidator& v) const {
+String SubLocale::validate(const String& name, const SubLocaleValidatorP& v) const {
+	if (!v) {
+		return _("\nInternal error validating local file: expected keys file missing for \"") + name + _("\" section.");
+	}
 	String errors;
 	// 1. keys in v but not in this, check arg count
-	FOR_EACH_CONST(kc, v.keys) {
+	FOR_EACH_CONST(kc, v->keys) {
 		map<String,String>::const_iterator it = translations.find(kc.first);
 		if (it == translations.end()) {
 			if (!kc.second.optional) {
@@ -258,8 +251,8 @@ String SubLocale::validate(const String& name, const SubLocaleValidator& v) cons
 	}
 	// 2. keys in this but not in v
 	FOR_EACH_CONST(kv, translations) {
-		map<String,KeyValidator>::const_iterator it = v.keys.find(kv.first);
-		if (it == v.keys.end() && !kv.second.empty()) {
+		map<String,KeyValidator>::const_iterator it = v->keys.find(kv.first);
+		if (it == v->keys.end() && !kv.second.empty()) {
 			// allow extra keys with empty values as a kind of documentation
 			// for example in the help stirngs:
 			//   help:
