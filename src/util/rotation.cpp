@@ -153,7 +153,7 @@ void RotatedDC::DrawText  (const String& text, const RealPoint& pos, int blur_ra
 void RotatedDC::DrawBitmap(const Bitmap& bitmap, const RealPoint& pos) {
 	if (angle == 0) {
 		RealPoint p_ext = tr(pos);
-		dc.DrawBitmap(bitmap, (int) p_ext.x, (int) p_ext.y, true);
+		dc.DrawBitmap(bitmap, to_int(p_ext.x), to_int(p_ext.y), true);
 	} else {
 		DrawImage(bitmap.ConvertToImage(), pos);
 	}
@@ -161,15 +161,15 @@ void RotatedDC::DrawBitmap(const Bitmap& bitmap, const RealPoint& pos) {
 void RotatedDC::DrawImage (const Image& image, const RealPoint& pos, ImageCombine combine, int angle) {
 	Image rotated = rotate_image(image, angle + this->angle);
 	wxRect r = trNoNegNoZoom(RealRect(pos, RealSize(image)));
-	draw_combine_image(dc, r.x, r.y, rotated, combine);
+	draw_combine_image(dc, to_int(r.x), to_int(r.y), rotated, combine);
 }
 void RotatedDC::DrawPreRotatedBitmap(const Bitmap& bitmap, const RealPoint& pos) {
 	RealPoint p_ext = tr(pos) - RealSize(revX()?bitmap.GetWidth():0, revY()?bitmap.GetHeight():0);
-	dc.DrawBitmap(bitmap, (int) p_ext.x, (int) p_ext.y, true);
+	dc.DrawBitmap(bitmap, to_int(p_ext.x), to_int(p_ext.y), true);
 }
 void RotatedDC::DrawPreRotatedImage (const Image& image, const RealPoint& pos, ImageCombine combine) {
 	RealPoint p_ext = tr(pos) - RealSize(revX()?image.GetWidth():0, revY()?image.GetHeight():0);
-	draw_combine_image(dc, p_ext.x, p_ext.y, image, combine);
+	draw_combine_image(dc, to_int(p_ext.x), to_int(p_ext.y), image, combine);
 }
 
 void RotatedDC::DrawLine  (const RealPoint& p1,  const RealPoint& p2) {

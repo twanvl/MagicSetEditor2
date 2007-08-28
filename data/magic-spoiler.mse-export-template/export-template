@@ -147,7 +147,7 @@ script:
 		}</ul>"
 	}
 	write_group := {
-		cards := filter_list(set.cards, filter: { sort_index(card:input) == code } )
+		cards := filter_list(set.cards, filter: { contains(match:sort_index(card:input), code } )
 		count := number_of_items(in:cards)
 		if count > 0 then
 		   "<h2>{title} ({count} {if count == 1 then "card" else "cards"})</h2>" +
@@ -194,16 +194,17 @@ script:
 	  <div class='description'>{ to_html(set.description) }</div>
 	  { if options.grouping == "group by color" then
 	       # Codes as by sort_index
-	       write_group(title: "White",           code:"A") +
-	       write_group(title: "Blue",            code:"B") +
-	       write_group(title: "Black",           code:"C") +
-	       write_group(title: "Red",             code:"D") +
-	       write_group(title: "Green",           code:"E") +
-	       write_group(title: "Multicolor",      code:"F") +
-	       write_group(title: "Hybrids",         code:"G") +
-	       write_group(title: "Colorless",       code:"I") +
-	       write_group(title: "Non-basic lands", code:"J") +
-	       write_group(title: "Basic lands",     code:"K")
+	       write_group(title: "White",                  code:"A") +
+	       write_group(title: "Blue",                   code:"B") +
+	       write_group(title: "Black",                  code:"C") +
+	       write_group(title: "Red",                    code:"D") +
+	       write_group(title: "Green",                  code:"E") +
+	       write_group(title: "Multicolor",             code:"F") +
+	       write_group(title: "Hybrids",                code:"G") +
+	       write_group(title: "Multicolor split cards", code:"H") +
+	       write_group(title: "Colorless",              code:"I") +
+	       write_group(title: "Non-basic lands",        code:"K") +
+	       write_group(title: "Basic lands",            code:"LMNOPQ")
 	    else
 	       write_cards(cards: set.cards)
 	  }

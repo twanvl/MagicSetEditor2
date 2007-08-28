@@ -1297,7 +1297,7 @@ void TextValueEditor::clearWordListIndicators(RotatedDC& dc) {
 		}
 		// restore background
 		if (wl->behind.Ok()) {
-			dc.DrawBitmap(wl->behind, wl->rect.topRight() + RealSize(0,-1));
+			dc.DrawPreRotatedBitmap(wl->behind, wl->rect.topRight() + RealSize(0,-1));
 		}
 	}
 }

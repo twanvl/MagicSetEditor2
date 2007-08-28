@@ -1,8 +1,8 @@
-﻿mse version: 0.3.4
+﻿mse version: 0.3.5
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
-version: 2007-07-01
+version: 2007-08-28
 position hint: 01
 
 ############################################################## Functions & filters
@@ -126,7 +126,8 @@ init script:
 	}
 	
 	# The color of a card
-	is_creature    := match_rule(match: "(?i)Creature|Tribal")
+	is_creature    := match_rule(match: "(?i)Creature")
+	is_tribal      := match_rule(match: "(?i)Tribal")
 	is_artifact    := match_rule(match: "(?i)Artifact")
 	is_land        := match_rule(match: "(?i)Land")
 	is_enchantment := match_rule(match: "(?i)Enchantment")
@@ -176,17 +177,17 @@ init script:
 		card_color   := card.card_color
 		casting_cost := card.casting_cost
 		if      card.casting_cost_2 != "" and
-		        card_color != card.card_color_2                      then "H"    # multicolor splits
+		        card_color != card.card_color_2                       then "H"    # multicolor splits
 		else if chosen(choice: "land", card_color) then (
 			# land
-			if card.rarity != "basic land"                       then "K"    # nonbasic land
+			if card.rarity != "basic land"                        then "K"    # nonbasic land
 			else (
 				if      contains(card.name, match:"Plains")   then "M"
 				else if contains(card.name, match:"Island")   then "N"
 				else if contains(card.name, match:"Swamp")    then "O"
 				else if contains(card.name, match:"Mountain") then "P"
 				else if contains(card.name, match:"Forest")   then "Q"
-				else                                                      "L"    # other basic land
+				else                                               "L"    # other basic land
 			)
 		) else if is_null_cost(casting_cost) then (
 			# no casting cost; use frame
@@ -368,24 +369,31 @@ init script:
 		type_over_type +
 		{ "<word-list-type>{input}</word-list-type>" }
 	
-	space_to_wlclass := replace_rule(match:" +", replace:"</word-list-class> <word-list-class>")
+	space_to_wltags := replace_rule(match:"( +|<soft> </soft>)",
+	                                replace:{"</word-list-{list_type}>{_1}<word-list-{list_type}>"})
 	sub_type_filter :=
 		tag_remove_rule(tag: "<word-list-") +
-		{ if      is_creature(type)    then (
-		     if input == "" then "<word-list-race></word-list-race>"
-		     else (
-		       first := only_first(input);
-		       next := trim(only_next(input));
-		       if next != "" then next := next + " ";
-		       "<word-list-race>{first}</word-list-race> " +
-		       "<word-list-class>" + space_to_wlclass(next) + "</word-list-class>"
-		     )
+		replace_rule(match: " </soft>$", replace: "") + # remove trailing soft space
+		tag_remove_rule(tag: "<soft") +
+		{ list_type := if      is_creature(type)    then "class"
+		               else if is_land(type)        then "land"
+		               else if is_artifact(type)    then "artifact"
+		               else if is_enchantment(type) then "enchantment"
+		               else if is_spell(type)       then "spell"
+		  if is_creature(type) or is_tribal(type) then (
+		      first := "<word-list-race>{ only_first(input) }</word-list-race>"
+		      next  := only_next(input)
+		      if input == ""     then list_type := "" # only edit the race
+		      else if next == "" then first := first + "<soft> </soft>"
+		      else                    first := first + " "
+		      input := next
+		  ) else (
+		      first := ""
 		  )
-		  else if is_land(type)        then "<word-list-land>{       input}</word-list-land>"
-		  else if is_artifact(type)    then "<word-list-artifact>{   input}</word-list-artifact>"
-		  else if is_enchantment(type) then "<word-list-enchantment>{input}</word-list-enchantment>"
-		  else if is_spell(type)       then "<word-list-spell>{      input}</word-list-spell>"
-		  else                              input
+		  if list_type != "" then (
+		      if input != "" then input := input + "<soft> </soft>" # Add a new box at the end
+		      first + "<word-list-{list_type}>{ space_to_wltags(input) }</word-list-{list_type}>"
+		  ) else first + input
 		}
 	
 	# all sub types, for word list
@@ -398,7 +406,7 @@ init script:
 	}
 	all_races := {
 		for each card in set do
-			if contains(card.super_type, match:"Creature") then
+			if is_creature(card.super_type) or is_tribal(card.super_type) then
 				"," + only_first(to_text(card.sub_type))
 	}
 	all_classes := {
@@ -1247,7 +1255,9 @@ word list:
 		script: all_classes()
 		line below: true
 	word: Cleric
+	word: Druid
 	word: Lord
+	word: Shaman
 	word: Soldier
 	word: Warrior
 	word:

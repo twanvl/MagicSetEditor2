@@ -33,12 +33,12 @@ void TextElements::getCharInfo(RotatedDC& dc, double scale, size_t start, size_t
 	FOR_EACH_CONST(e, elements) {
 		// characters before this element, after the previous
 		while (out.size() < e->start) {
-			out.push_back(CharInfo(RealSize(0,0), BREAK_NO));
+			out.push_back(CharInfo());
 		}
 		e->getCharInfo(dc, scale, out);
 	}
 	while (out.size() < end) {
-		out.push_back(CharInfo(RealSize(0,0), BREAK_NO));
+		out.push_back(CharInfo());
 	}
 }
 
@@ -100,6 +100,8 @@ struct TextElementsFromString {
 				else if (is_substr(text, tag_start, _("</sym")))        symbol      -= 1;
 				else if (is_substr(text, tag_start, _( "<sep-soft")))   soft        += 1;
 				else if (is_substr(text, tag_start, _("</sep-soft")))   soft        -= 1;
+				else if (is_substr(text, tag_start, _( "<soft")))       soft        += 1;
+				else if (is_substr(text, tag_start, _("</soft")))       soft        -= 1;
 				else if (is_substr(text, tag_start, _( "<atom-kwpph"))) kwpph       += 1;
 				else if (is_substr(text, tag_start, _("</atom-kwpph"))) kwpph       -= 1;
 				else if (is_substr(text, tag_start, _( "<code-kw")))    code_kw     += 1;

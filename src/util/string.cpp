@@ -166,7 +166,7 @@ String cannocial_name_form(const String& str) {
 	bool leading = true;
 	FOR_EACH_CONST(c, str) {
 		if ((c == _('_') || c == _(' '))) {
-			if (!leading) ret += _(' ');
+			ret += leading ? c : _(' ');
 		} else {
 			ret += c;
 			leading = false;

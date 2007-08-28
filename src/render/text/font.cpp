@@ -37,13 +37,15 @@ void FontTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>&
 	for (size_t i = start ; i < end ; ++i) {
 		Char c = content.GetChar(i - this->start);
 		if (c == _('\n')) {
-			out.push_back(CharInfo(RealSize(0, dc.GetCharHeight()), break_style));
+			out.push_back(CharInfo(RealSize(0, dc.GetCharHeight()), break_style, draw_as == DRAW_ACTIVE));
 			line_start = i + 1;
 			prev_width = 0;
 		} else {
 			RealSize s = dc.GetTextExtent(content.substr(line_start - this->start, i - line_start + 1));
-			out.push_back(CharInfo(RealSize(s.width - prev_width, s.height),
-			                 c == _(' ') ? BREAK_SPACE : BREAK_MAYBE
+			out.push_back(CharInfo(
+			                 RealSize(s.width - prev_width, s.height),
+			                 c == _(' ') ? BREAK_SPACE : BREAK_MAYBE,
+			                 draw_as == DRAW_ACTIVE // from <soft> tag
 			             ));
 			prev_width = s.width;
 		}

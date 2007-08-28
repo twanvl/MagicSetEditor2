@@ -42,10 +42,16 @@ enum LineBreak
 
 /// Information on a character in a TextElement
 struct CharInfo {
-	RealSize  size;
-	LineBreak break_after;
+	RealSize  size;             ///< Size of this character
+	LineBreak break_after : 31; ///< How/when to break after it?
+	bool      soft : 1;         ///< Is this a 'soft' character? soft characters are ignored for alignment
 	
-	inline CharInfo(RealSize size, LineBreak break_after) : size(size), break_after(break_after) {}
+	explicit CharInfo()
+		: break_after(BREAK_NO), soft(true)
+	{}
+	inline CharInfo(RealSize size, LineBreak break_after, bool soft = false)
+		: size(size), break_after(break_after), soft(soft)
+	{}
 };
 
 /// A section of text that can be rendered using a TextViewer
@@ -74,7 +80,7 @@ class TextElement : public IntrusivePtrBase<TextElement> {
 // ----------------------------------------------------------------------------- : TextElements
 
 /// A list of text elements
-class TextElements : public vector<TextElementP> {
+class TextElements {
   public:
 	/// Draw all the elements (as need to show the range start..end)
 	void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;

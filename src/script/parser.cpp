@@ -190,7 +190,7 @@ void TokenIterator::readToken() {
 		filename = include_file;
 		InputStreamP is = packages.openFileFromPackage(include_file);
 		input = read_utf8_line(*is, true, true);
-	} else if (isAlpha(c)) {
+	} else if (isAlpha(c) || c == _('_')) {
 		// name
 		size_t start = pos - 1;
 		while (pos < input.size() && isAlnum_(input.GetChar(pos))) ++pos;

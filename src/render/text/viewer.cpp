@@ -16,6 +16,7 @@ DECLARE_TYPEOF_COLLECTION(double);
 
 struct TextViewer::Line {
 	size_t         start;		///< Index of the first character in this line
+	size_t         end_or_soft;	///< Index just beyond the last non-soft character
 	vector<double> positions;	///< x position of each character in this line, gives the number of characters + 1, never empty
 	double         top;			///< y position of (the top of) this line
 	double         line_height;	///< The height of this line in pixels
@@ -23,13 +24,13 @@ struct TextViewer::Line {
 //%	Alignment      alignment;   ///< Alignment of this line
 	
 	Line()
-		: start(0), top(0), line_height(0), break_after(BREAK_NO)
+		: start(0), end_or_soft(0), top(0), line_height(0), break_after(BREAK_NO)
 	{}
 	
 	/// The position (just beyond) the bottom of this line
 	double bottom() const { return top + line_height; }
 	/// The width of this line
-	double width()  const { return positions.back() - positions.front(); }
+	double width()  const { return positions[end_or_soft-start] - positions.front(); }
 	/// Index just beyond the last character on this line
 	size_t end() const { return start + positions.size() - 1; }
 	/// Find the index of the character at the given position on this line
@@ -158,7 +159,7 @@ bool TextViewer::prepare(RotatedDC& dc, const String& text, TextStyle& style, Co
 	}
 }
 void TextViewer::reset(bool related) {
-	elements.clear();
+	elements.elements.clear();
 	lines.clear();
 	if (!related) scale = 1.0;
 }
@@ -169,6 +170,7 @@ bool TextViewer::prepared() const {
 // ----------------------------------------------------------------------------- : Positions
 
 const TextViewer::Line& TextViewer::findLine(size_t index) const {
+	assert(!lines.empty());
 	FOR_EACH_CONST(l, lines) {
 		if (l.end() >= index) return l;
 	}
@@ -295,6 +297,7 @@ void TextViewer::scrollBy(double delta) {
 }
 
 bool TextViewer::ensureVisible(double height, size_t char_id) {
+	if (lines.empty()) return true;
 	const Line& line = findLine(char_id);
 	if (line.top < 0) {
 		// scroll up
@@ -511,6 +514,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 	// The word we are currently reading
 	RealSize       word_size;
 	vector<double> positions_word; // positios for this word
+	size_t         word_end_or_soft = 0;
 	size_t         word_start = 0;
 	// For each character ...
 	for(size_t i = 0 ; i < chars.size() ; ++i) {
@@ -539,6 +543,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 			word_size = add_horizontal(word_size, c.size);
 		}
 		positions_word.push_back(word_size.width);
+		if (!c.soft) word_end_or_soft = i + 1;
 		// Did the word become too long?
 		if (style.field().multi_line && !break_now) {
 			double max_width = lineRight(dc, style, line.top);
@@ -565,11 +570,13 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 			FOR_EACH(p, positions_word) {
 				line.positions.push_back(line_size.width + p);
 			}
-			// add size; next word
+			if (word_end_or_soft != 0) line.end_or_soft = word_end_or_soft;
 			line_size = add_horizontal(line_size, word_size);
+			// next word
 			word_size = RealSize(0, 0);
 			word_start = i + 1;
 			positions_word.clear();
+			word_end_or_soft = 0;
 		}
 		// Breaking (ending the current line)
 		if (break_now) {
@@ -583,10 +590,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 			} else {
 				line.line_height = line_size.height;
 			}
-//			// too low?
-//			if (stop_if_too_long && line.bottom() > dc.getInternalSize().height - style.padding_bottom) {
-//				return false;
-//			}
+			line.end_or_soft = max(line.start, min(line.end_or_soft, line.end()));
 			// push
 			lines.push_back(line);
 			// reset line object for next line
@@ -612,6 +616,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 	FOR_EACH(p, positions_word) {
 		line.positions.push_back(line_size.width + p);
 	}
+	if (word_end_or_soft != 0) line.end_or_soft = word_end_or_soft;
 	line_size = add_horizontal(line_size, word_size);
 	// the last line
 	if (line_size.height < 0.01 && !lines.empty()) {
@@ -619,6 +624,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 	} else {
 		line.line_height = line_size.height;
 	}
+	line.end_or_soft = max(line.start, min(line.end_or_soft, line.end()));
 	lines.push_back(line);
 	// does it fit vertically?
 	return lines.empty() ||
@@ -688,14 +694,14 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 	FOR_EACH(l, lines) {
 		l.top += vdelta;
 		// amount to shift all characters horizontally
-		double width = l.positions.back();
+		double width = l.positions[l.end_or_soft - l.start];
 		if ((style.alignment & ALIGN_JUSTIFY) ||
 			(style.alignment & ALIGN_JUSTIFY_OVERFLOW && width > s.width)) {
 			// justify text
 			justifying = true;
-			double hdelta = s.width - width;         // amount of space to distribute
-			int count = (int)l.positions.size() - 1; // distribute it among this many characters
-			if (count == 0) count = 1;               // prevent div by 0
+			double hdelta = s.width - width;            // amount of space to distribute
+			int count = (int)(l.end_or_soft - l.start); // distribute it among this many characters
+			if (count <= 0) count = 1;                  // prevent div by 0
 			int i = 0;
 			FOR_EACH(c, l.positions) {
 				c += hdelta * i++ / count;
@@ -703,16 +709,16 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 		} else if (style.alignment & ALIGN_JUSTIFY_WORDS) {
 			// justify text, by words
 			justifying = true;
-			double hdelta = s.width - width;         // amount of space to distribute
-			int count = 0;                           // distribute it among this many words
-			for (size_t k = l.start + 1 ; k < l.end() - 1 ; ++k) {
+			double hdelta = s.width - width; // amount of space to distribute
+			int count = 0;                   // distribute it among this many words
+			for (size_t k = l.start + 1 ; k < l.end_or_soft - 1 ; ++k) {
 				if (chars[k].break_after == BREAK_SPACE) ++count;
 			}
-			if (count == 0) count = 1;               // prevent div by 0
+			if (count == 0) count = 1;       // prevent div by 0
 			int i = 0; size_t j = l.start;
 			FOR_EACH(c, l.positions) {
 				c += hdelta * i / count;
-				if (j < l.end() && chars[j++].break_after == BREAK_SPACE) i++;
+				if (j < l.end_or_soft && chars[j++].break_after == BREAK_SPACE) i++;
 			}
 		} else {
 			// simple alignment
