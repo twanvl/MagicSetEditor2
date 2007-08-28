@@ -172,8 +172,10 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	void findWordLists();
 	/// Draw word list indicators
 	void drawWordListIndicators(RotatedDC& dc, bool redrawing = false);
+	/// Remove word list indicators
+	void clearWordListIndicators(RotatedDC& dc);
 	/// Re-draw word list indicators
-	void redrawWordListIndicators();
+	void redrawWordListIndicators(bool toggling_dropdown = false);
 	/// Find a WordListPos under the mouse cursor (if any), pos is in internal coordinates
 	WordListPosP findWordList(const RealPoint& pos) const;
 	/// Find a WordListPos rectangle under the mouse cursor (if any), pos is in internal coordinates

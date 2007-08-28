@@ -301,7 +301,7 @@ void DropDownWordList::select(size_t item) {
 }
 
 void DropDownWordList::redrawArrowOnParent() {
-	tve.redrawWordListIndicators();
+	tve.redrawWordListIndicators(true);
 }
 
 // ----------------------------------------------------------------------------- : TextValueEditor
@@ -591,8 +591,8 @@ void TextValueEditor::draw(RotatedDC& dc) {
 }
 
 void TextValueEditor::redrawSelection(size_t old_selection_start_i, size_t old_selection_end_i, bool old_drop_down_shown) {
-	if (!isCurrent()) return;
-	if (old_drop_down_shown && dropDownShown()) return;
+//%	if (!isCurrent()) return;
+//%	if (old_drop_down_shown && dropDownShown()) return;
 	// Hide caret
 	wxCaret* caret = editor().GetCaret();
 	if (caret->IsVisible()) caret->Hide();
@@ -616,6 +616,8 @@ void TextValueEditor::redrawSelection(size_t old_selection_start_i, size_t old_s
 			updateScrollbar();
 			redraw();
 		} else {
+			// remove indicators
+			clearWordListIndicators(dc);
 			// draw new selection
 			if (!dropDownShown()) {
 				v.drawSelection(dc, style(), selection_start_i, selection_end_i);
@@ -1282,8 +1284,27 @@ void TextValueEditor::findWordLists() {
 	}
 }
 
-void TextValueEditor::redrawWordListIndicators() {
-	if (isCurrent()) {
+void TextValueEditor::clearWordListIndicators(RotatedDC& dc) {
+	Rotater rot(dc, style().getRotation());
+	bool current = isCurrent();
+	FOR_EACH(wl, word_lists) {
+		if (current && drop_down && drop_down->IsShown() && drop_down->getPos() == wl) {
+			continue;
+		} else if (current && selection_end_i >= wl->start && selection_end_i <= wl->end && !dropDownShown()) {
+			continue;
+		} else if (wl.get() == hovered_words) {
+			continue;
+		}
+		// restore background
+		if (wl->behind.Ok()) {
+			dc.DrawBitmap(wl->behind, wl->rect.topRight() + RealSize(0,-1));
+		}
+	}
+}
+
+void TextValueEditor::redrawWordListIndicators(bool toggling_dropdown) {
+	redrawSelection(selection_start_i, selection_end_i, dropDownShown() != toggling_dropdown);
+	/*//%%if (isCurrent()) {
 		// Hide caret
 		wxCaret* caret = editor().GetCaret();
 		if (caret->IsVisible()) caret->Hide();
@@ -1291,7 +1312,7 @@ void TextValueEditor::redrawWordListIndicators() {
 	drawWordListIndicators(*editor().overdrawDC(), true);
 	if (isCurrent()) {
 		showCaret();
-	}
+	}*/
 }
 
 void TextValueEditor::drawWordListIndicators(RotatedDC& dc, bool redrawing) {
@@ -1322,9 +1343,6 @@ void TextValueEditor::drawWordListIndicators(RotatedDC& dc, bool redrawing) {
 		// capture background?
 		if (!redrawing) {
 			wl->behind = dc.GetBackground(RealRect(r.right(), r.top() - 1, 10, r.height + 3));
-		} else if (small && wl->behind.Ok()) {
-			// restore background
-			dc.DrawBitmap(wl->behind, r.topRight() + RealSize(0,-1));
 		}
 		// draw rectangle around value
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
