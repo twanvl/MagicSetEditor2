@@ -217,7 +217,7 @@ next_symbol:;
 
 SymbolInFont* SymbolFont::defaultSymbol() const {
 	FOR_EACH_CONST(sym, symbols) {
-		if (sym->code.empty()) return sym.get();
+		if (sym->code.empty() && sym->enabled) return sym.get();
 	}
 	return nullptr;
 }

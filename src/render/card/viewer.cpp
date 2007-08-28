@@ -29,9 +29,8 @@ DataViewer::~DataViewer() {}
 
 void DataViewer::draw(DC& dc) {
 	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
-	RotatedDC rdc(dc, ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(),
-	              nativeLook() ? QUALITY_LOW : (ss.card_anti_alias() ? QUALITY_AA : QUALITY_SUB_PIXEL),
-	              true);
+	RotatedDC rdc(dc, getRotation(),
+	              nativeLook() ? QUALITY_LOW : (ss.card_anti_alias() ? QUALITY_AA : QUALITY_SUB_PIXEL));
 	draw(rdc, stylesheet->card_background);
 }
 void DataViewer::draw(RotatedDC& dc, const Color& background) {
@@ -105,7 +104,7 @@ Context& DataViewer::getContext()  const { return set->getContext(card); }
 Rotation DataViewer::getRotation() const {
 	if (!stylesheet) stylesheet = set->stylesheet;
 	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
-	return Rotation(ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(), true);
+	return Rotation(ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(), 1.0, true);
 }
 
 // ----------------------------------------------------------------------------- : Setting data

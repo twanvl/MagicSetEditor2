@@ -8,6 +8,7 @@
 
 #include <data/format/formats.hpp>
 #include <data/set.hpp>
+#include <data/stylesheet.hpp>
 #include <data/settings.hpp>
 #include <render/card/viewer.hpp>
 
@@ -19,17 +20,30 @@ void export_image(const SetP& set, const CardP& card, const String& filename) {
 							// but image.saveFile determines it automagicly
 }
 
+class UnzoomedDataViewer : public DataViewer {
+  public:
+	UnzoomedDataViewer(bool use_zoom_settings)
+		: use_zoom_settings(use_zoom_settings)
+	{}
+	virtual Rotation getRotation() const;
+  private:
+	bool use_zoom_settings;
+};
+Rotation UnzoomedDataViewer::getRotation() const {
+	if (use_zoom_settings) {
+		return DataViewer::getRotation();
+	} else {
+		if (!stylesheet) stylesheet = set->stylesheet;
+		return Rotation(0, stylesheet->getCardRect(), 1.0, 1.0, true);
+	}
+}
+
 Bitmap export_bitmap(const SetP& set, const CardP& card) {
 	// create viewer
-	DataViewer viewer;
+	UnzoomedDataViewer viewer(!settings.stylesheetSettingsFor(set->stylesheetFor(card)).card_normal_export());
 	viewer.setSet(set);
 	viewer.setCard(card);
 	// size of cards
-	if (settings.stylesheetSettingsFor(set->stylesheetFor(card)).card_normal_export()) {
-		// TODO
-//		viewer.rotation.angle = 0;
-//		viewer.rotation.zoom  = 1.0;
-	}
 	RealSize size = viewer.getRotation().getExternalSize();
 	// create bitmap & dc
 	Bitmap bitmap((int) size.width, (int) size.height);

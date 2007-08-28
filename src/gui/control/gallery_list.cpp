@@ -115,6 +115,13 @@ void GalleryList::onChar(wxKeyEvent& ev) {
 							update();
 							sendEvent(EVENT_GALLERY_SELECT);
 						} break;
+		case WXK_TAB: {
+			// send a navigation event to our parent, to select another control
+			// we need this because tabs are not handled on the set window panels
+			wxNavigationKeyEvent nev;
+			nev.SetDirection(!ev.ShiftDown());
+			GetParent()->ProcessEvent(nev);
+			} break;
 	}
 }
 

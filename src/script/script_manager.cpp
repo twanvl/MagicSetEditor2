@@ -78,7 +78,7 @@ Context& SetScriptContext::getContext(const CardP& card) {
 		ctx.setVariable(_("card"), to_script(card));
 		ctx.setVariable(_("styling"), to_script(&set.stylingDataFor(card)));
 	} else {
-		ctx.setVariable(_("card"), ScriptValueP());
+		ctx.setVariable(_("card"), script_nil);
 		ctx.setVariable(_("styling"), to_script(&set.stylingDataFor(*stylesheet)));
 	}
 	return ctx;

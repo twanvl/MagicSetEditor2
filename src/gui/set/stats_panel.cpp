@@ -97,7 +97,7 @@ void StatCategoryList::drawItem(DC& dc, int x, int y, size_t item, bool selected
 // ----------------------------------------------------------------------------- : StatsPanel
 
 StatsPanel::StatsPanel(Window* parent, int id)
-	: SetWindowPanel(parent, id)
+	: SetWindowPanel(parent, id, true)
 	, up_to_date(true), active(false)
 {
 	// init controls
