@@ -1,0 +1,14 @@
+Function: trim
+
+--Usage--
+> trim(some_string)
+
+Remove leading and trailing whitespace from a string.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		String to remove whitespace from.
+
+--Examples--
+> trim(" abc ")           == "abc"
+> trim(" one two three ") == "one two three"

@@ -7,6 +7,7 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:to_lower]]		Convert a string to lower case, @"aBc" -> "abc"@.
 | [[fun:to_title]]		Convert a string to title case, @"aBc" -> "Abc"@.
 | [[fun:reverse]]		Reverse a string, @"aBc" -> "cBa"@.
+| [[fun:trim]]			Remove leading and trailing whitespace from a string, @" abc " -> "abc"@.
 | [[fun:substring]]		Extract a part of a string.
 | [[fun:format|format / format_rule]]
 				Format a number as a string (printf).
@@ -27,6 +28,7 @@ These functions are built into the program, other [[type:function]]s can be defi
 				Change the contents of a specific tag.
 | [[fun:remove_tag|remove_tag / tag_remove_rule]]
 				Remove a tag, keep the contents.
+| [[fun:remove_tags]]		Remove all tags from tagged text.
 	
 ! [[type:list|Lists]]		<<<
 | [[fun:position]]		Find the position of an element in a list.
@@ -75,7 +77,7 @@ These functions are built into the program, other [[type:function]]s can be defi
 ! HTML export			<<<
 | [[fun:to_html]]		Convert [[type:tagged text]] to html.
 | [[fun:symbols_to_html]]	Convert text to html using a [[type:symbol font]].
-| [[fun:to_text]]		Remove all tags from tagged text.
+| [[fun:to_text]]		Remove all tags from tagged text, and convert it to a [[type:string]].
 | [[fun:copy_file]]		Copy a file from the [[type:export template]] to the output directory.
 | [[fun:write_text_file]]	Write a text file to the output directory.
 | [[fun:write_image_file]]	Write an image file to the output directory.

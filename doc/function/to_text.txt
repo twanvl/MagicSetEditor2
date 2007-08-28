@@ -12,6 +12,8 @@ Convert a [[type:tagged string]] to a normal string by removing all tags and res
 
 --Examples--
 > to_text("<b>bold text</b>") == "bold text"
+> to_text("1 \< 2") == "1 < 2"
 
 --See also--
 | [[fun:to_html]]		Convert [[type:tagged text]] to html.
+| [[fun:remove_tags]]		Remove all tags from tagged text.

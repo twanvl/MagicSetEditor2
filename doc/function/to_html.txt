@@ -27,4 +27,4 @@ of the font are written to the output directory.
 
 --See also--
 | [[fun:symbols_to_html]]	Convert text to html using a [[type:symbol font]].
-| [[fun:to_text]]		Remove all tags from tagged text.
+| [[fun:to_text]]		Remove all tags from tagged text, and convert it to a [[type:string]].
