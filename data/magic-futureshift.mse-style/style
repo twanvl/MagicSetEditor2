@@ -12,6 +12,7 @@ card dpi: 150
 #By: Pichoro
 #
 #Todo:
+#Casting Cost Mask Ajustments
 #Colorless Frame
 #Make different colored colorless mana symbols work
 ############################################################## Extra scripts
@@ -126,7 +127,10 @@ init script:
 		)
 	}
 	
-	paintbrush_color := { if font_white() then "white" else "black" }
+	paintbrush_font:= { if contains(card.card_color, match:"land") then "white"
+		else if contains(card.card_color, match:"artifact") or contains(card.card_color, match:"multicolor") or contains(card.card_color, match:"white") then "black"
+		else "white"
+	}
 
 ############################################################## Extra style options
 
@@ -287,7 +291,10 @@ card style:
 			italic name: MPlantin-Italic
 			size: 15
 			scale down to: 6
-			color: rgb(0,0,0)
+			color:
+				script:
+					if not contains(card.card_color, match:"land") then rgb(0,0,0)
+					else font_color(card.card_color)
 		symbol font:
 			name:
 				{ if styling.futuristic_mana_symbols then "magic-mana-future"
@@ -346,7 +353,13 @@ card style:
 		font:
 			name: MPlantin
 			size: 8
-			color: { font_color(card.card_color) }
+			color:
+				script:
+					if contains(card.card_color, match:"land") then rgb(255,255,255)
+					else if contains(card.card_color, match:"artifact") or
+					contains(card.card_color, match:"multicolor") or
+					contains(card.card_color, match:"white") then rgb(0,0,0)
+					else rgb(255,255,255)
 
 	copyright line:
 		left: 20
@@ -358,8 +371,13 @@ card style:
 		font:
 			name: MPlantin
 			size: 7
-			color: { font_color(card.card_color) }
-
+			color:
+				script:
+					if contains(card.card_color, match:"land") then rgb(255,255,255)
+					else if contains(card.card_color, match:"artifact") or
+					contains(card.card_color, match:"multicolor") or
+					contains(card.card_color, match:"white") then rgb(0,0,0)
+					else rgb(255,255,255)
 ############################################################## Extra card fields
 extra card field:
 	type: choice
@@ -403,7 +421,7 @@ extra card field:
 extra card field:
 	type: choice
 	name: paintbrush
-	script: paintbrush_color(card.card_color)
+	script: paintbrush_font(value)
 	editable: false
 	choice: black
 	choice: white
