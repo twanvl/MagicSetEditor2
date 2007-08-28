@@ -120,7 +120,7 @@ void StatsCategory::find_dimensions(const vector<StatsDimensionP>& available) {
 			}
 		}
 		if (!dim) {
-			handle_error(_ERROR_1_("dimension not found",dim),false);
+			handle_error(_ERROR_1_("dimension not found",n),false);
 		} else {
 			dimensions.push_back(dim);
 		}

@@ -158,7 +158,7 @@ class StatsFilter : public CardListFilter {
 		Context& ctx = set.getContext(card);
 		FOR_EACH(v, values) {
 			StatsDimension& dim = *v.first;
-			String value = dim.script.invoke(ctx)->toString();
+			String value = untag(dim.script.invoke(ctx)->toString());
 			if (dim.split_list) {
 				if (!chosen(v.second, value)) return false;
 			} else {
