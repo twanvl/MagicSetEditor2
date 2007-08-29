@@ -340,20 +340,20 @@ extra card style:
 		z index: 2
 		render style: image
 		choice images:
-			white artifact: artifact_white.png
-			black artifact: artifact_black.png
-			white creature: creature_white.png
-			black creature: creature_black.png
-			white enchantment: enchantment_white.png
-			black enchantment: enchantment_black.png
-			white instant: instant_white.png
-			black instant: instant_black.png
-			white land: land_white.png
-			black land: land_black.png
-			white multitype: multitype_white.png
-			black multitype: multitype_black.png
-			white sorcery: sorcery_white.png
-			black sorcery: sorcery_black.png
+			white artifact:    /magic-future-common.mse-include/artifact_white.png
+			black artifact:    /magic-future-common.mse-include/artifact_black.png
+			white creature:    /magic-future-common.mse-include/creature_white.png
+			black creature:    /magic-future-common.mse-include/creature_black.png
+			white enchantment: /magic-future-common.mse-include/enchantment_white.png
+			black enchantment: /magic-future-common.mse-include/enchantment_black.png
+			white instant:     /magic-future-common.mse-include/instant_white.png
+			black instant:     /magic-future-common.mse-include/instant_black.png
+			white land:        /magic-future-common.mse-include/land_white.png
+			black land:        /magic-future-common.mse-include/land_black.png
+			white multitype:   /magic-future-common.mse-include/multitype_white.png
+			black multitype:   /magic-future-common.mse-include/multitype_black.png
+			white sorcery:     /magic-future-common.mse-include/sorcery_white.png
+			black sorcery:     /magic-future-common.mse-include/sorcery_black.png
 	paintbrush:
 		right: { ( if card.pt != "" then 281 else 341 ) - card_style.illustrator.content_width }
 		top : 479
@@ -362,5 +362,5 @@ extra card style:
 		z index: 2
 		render style: image
 		choice images:
-			black: paintbrush.png
-			white: paintbrush_w.png
+			black: /magic-future-common.mse-include/paintbrush_black.png
+			white: /magic-future-common.mse-include/paintbrush_white.png
