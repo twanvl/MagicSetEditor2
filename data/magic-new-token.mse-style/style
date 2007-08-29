@@ -51,6 +51,14 @@ init script:
 	paintbrush_color := { if font_white() then "white" else "black" }
 
 ############################################################## Set info fields
+set info style:
+	symbol:
+		variation:
+			name: invertedcommon
+			border radius: 0.10
+			fill type: solid
+			fill color:   rgb(255,255,255)
+			border color: rgb(0,0,0)
 
 ############################################################## Extra style
 
@@ -85,7 +93,11 @@ styling field:
 	choice: short text only
 	choice: never
 	initial: short text only
-
+styling field:
+	type: boolean
+	name: inverted common symbol
+	description: Should the common rarity symbol be inverted, like in Coldsnap?
+	initial: no
 styling style:
 	popup mana symbols:
 		choice images:
@@ -193,8 +205,14 @@ card style:
 		render style: image
 		choice images:
 			# Images based on the set symbol
-			basic land: script: symbol_variation(symbol: set.symbol, variation: "common")
-			common:     script: symbol_variation(symbol: set.symbol, variation: "common")
+			basic land:
+				script:
+					if styling.inverted_common_symbol then symbol_variation(symbol: set.symbol, variation: "invertedcommon")
+					else symbol_variation(symbol: set.symbol, variation: "common")
+			common:
+				script:
+					if styling.inverted_common_symbol then symbol_variation(symbol: set.symbol, variation: "invertedcommon")
+					else symbol_variation(symbol: set.symbol, variation: "common")
 			uncommon:   script: symbol_variation(symbol: set.symbol, variation: "uncommon")
 			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
 			special:    script: symbol_variation(symbol: set.symbol, variation: "special")
@@ -384,5 +402,5 @@ extra card style:
 		z index: 2
 		render style: image
 		choice images:
-			black: paintbrush.png
-			white: paintbrush_w.png
+			black: /magic-future-common.mse-include/paintbrush_black.png
+			white: /magic-future-common.mse-include/paintbrush_white.png

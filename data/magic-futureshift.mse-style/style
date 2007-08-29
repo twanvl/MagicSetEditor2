@@ -306,6 +306,7 @@ card style:
 		padding right:  4
 		padding bottom: 2
 		line height hard: 1.2
+		line height soft: 0.9
 		line height line: 1.5
 	watermark:
 		left: 117

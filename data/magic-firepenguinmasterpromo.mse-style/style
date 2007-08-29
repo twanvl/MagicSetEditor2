@@ -355,7 +355,7 @@ extra card style:
 		render style: image
 		visible: { styling.font_color == "black" }
 		choice images:
-			black: paintbrush.png
+			black: /magic-future-common.mse-include/paintbrush_black.png
 	white paintbrush:
 		right: { 350 - card_style.illustrator.content_width }
 		top : 294
@@ -365,4 +365,4 @@ extra card style:
 		render style: image
 		visible: { styling.font_color == "white" }
 		choice images:
-			white: paintbrush_w.png
+			white: /magic-future-common.mse-include/paintbrush_white.png

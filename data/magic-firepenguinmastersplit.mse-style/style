@@ -550,8 +550,8 @@ extra card style:
 		z index: 1
 		render style: image
 		choice images:
-			black: paintbrush.png
-			white: paintbrush_w.png
+			black: /magic-future-common.mse-include/paintbrush_black.png
+			white: /magic-future-common.mse-include/paintbrush_white.png
 	paintbrush 2:
 		right: { 499.9 - card_style.illustrator_2.content_width }
 		top : 209
@@ -560,5 +560,5 @@ extra card style:
 		z index: 1
 		render style: image
 		choice images:
-			black: paintbrush.png
-			white: paintbrush_w.png
+			black: /magic-future-common.mse-include/paintbrush_black.png
+			white: /magic-future-common.mse-include/paintbrush_white.png
