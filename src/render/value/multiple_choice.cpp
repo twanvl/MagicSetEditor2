@@ -92,12 +92,15 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 	if (style().render_style & RENDER_IMAGE) {
 		map<String,ScriptableImage>::iterator it = style().choice_images.find(cannocial_name_form(choice));
 		if (it != style().choice_images.end() && it->second.isReady()) {
-			// TODO: scaling, caching
-			Image image = it->second.generate(GeneratedImage::Options(0,0, viewer.stylesheet.get(),&getSet()));
+			// TODO: caching
+			GeneratedImage::Options options(0,0, viewer.stylesheet.get(),&getSet());
+			options.zoom = dc.getZoom();
+			options.angle = dc.trAngle(style().angle);
+			Image image = it->second.generate(options);
 			ImageCombine combine = it->second.combine();
 			// TODO : alignment?
-			dc.DrawImage(image, pos + RealSize(size.width, 0), combine == COMBINE_DEFAULT ? style().combine : combine);
-			size = add_horizontal(size, dc.trInv(RealSize(image.GetWidth() + 1, image.GetHeight())));
+			dc.DrawPreRotatedImage(image, pos + RealSize(size.width, 0), combine == COMBINE_DEFAULT ? style().combine : combine);
+			size = add_horizontal(size, dc.trInvNoNeg(RealSize(image.GetWidth() + 1, image.GetHeight())));
 		}
 	}
 	if (style().render_style & RENDER_TEXT) {

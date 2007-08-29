@@ -206,7 +206,8 @@ void DataEditor::onRightDown(wxMouseEvent& ev) {
 	selectField(ev, &ValueEditor::onRightDown);
 }
 void DataEditor::onMouseWheel(wxMouseEvent& ev) {
-	if (current_editor) current_editor->onMouseWheel(mousePoint(ev), ev);
+	if (current_editor && current_editor->onMouseWheel(mousePoint(ev), ev));
+	else ev.Skip();
 }
 
 void DataEditor::onMotion(wxMouseEvent& ev) {

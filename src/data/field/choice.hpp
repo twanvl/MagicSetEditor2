@@ -130,9 +130,9 @@ enum ChoiceRenderStyle
 };
 
 enum ThumbnailStatus
-{	THUMB_NOT_MADE
-,	THUMB_OK
-,	THUMB_CHANGED
+{	THUMB_NOT_MADE // there is no image
+,	THUMB_OK       // image is ok
+,	THUMB_CHANGED  // there is an image, but it may need to be updated
 };
 
 /// The Style for a ChoiceField
@@ -165,7 +165,7 @@ class ChoiceStyle : public Style {
 	
 	virtual int  update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;
-	virtual void invalidate(Context&);
+	virtual void invalidate();
 	
   private:
 	DECLARE_REFLECTION();

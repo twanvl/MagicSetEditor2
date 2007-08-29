@@ -397,6 +397,8 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 		case ID_EDIT_REPLACE   : ev.Enable(current_panel->canReplace());break;
 		// windows
 		case ID_WINDOW_KEYWORDS: ev.Enable(set->game->has_keywords);	break;
+		// help
+		case ID_HELP_INDEX     : ev.Enable(false);						break; // not implemented
 		// other
 		default:
 			// items created by the panel, and cut/copy/paste and find/replace

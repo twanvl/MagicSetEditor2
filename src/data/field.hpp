@@ -135,7 +135,7 @@ class Style : public IntrusivePtrVirtualBase {
 	/** In particular, if dep == DEP_DUMMY and name is a content property, set dep.index=true */
 	virtual void markDependencyMember(const String& name, const Dependency&) const;
 	/// Invalidate scripted images for this style
-	virtual void invalidate(Context&) {}
+	virtual void invalidate() {}
 	
 	/// Add a StyleListener
 	void addListener(StyleListener*);

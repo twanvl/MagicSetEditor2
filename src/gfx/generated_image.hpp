@@ -28,12 +28,13 @@ class GeneratedImage : public ScriptValue {
 	/// Options for generating the image
 	struct Options {
 		Options(int width = 0, int height = 0, Package* package = nullptr, Package* local_package = nullptr, PreserveAspect preserve_aspect = ASPECT_STRETCH, bool saturate = false)
-			: width(width), height(height), angle(0)
+			: width(width), height(height), zoom(1.0), angle(0)
 			, preserve_aspect(preserve_aspect), saturate(saturate)
 			, package(package), local_package(local_package)
 		{}
 		
 		int            width, height;	///< Width to force the image to, or 0 to keep the width of the input
+		double         zoom;            ///< Zoom factor to use, when witdth=height=0
 		int            angle;           ///< Angle to rotate image by afterwards
 		PreserveAspect preserve_aspect;
 		bool           saturate;
@@ -52,7 +53,10 @@ class GeneratedImage : public ScriptValue {
 	inline  bool operator != (const GeneratedImage& that) const { return !(*this == that); }
 	
 	/// Can this image be generated safely from another thread?
-	virtual bool threadSafe() const { return true; };
+	virtual bool threadSafe() const { return true; }
+	
+	/// Is this image specific to the set (the local_package)?
+	virtual bool local() const { return false; }
 	
 	virtual ScriptType type() const;
 	virtual String typeName() const;
@@ -86,6 +90,7 @@ class LinearBlendImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
+	virtual bool local() const { return image1->local() && image2->local(); }
   private:
 	GeneratedImageP image1, image2;
 	double x1, y1, x2, y2;
@@ -102,6 +107,7 @@ class MaskedBlendImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
+	virtual bool local() const { return light->local() && dark->local() && mask->local(); }
   private:
 	GeneratedImageP light, dark, mask;
 };
@@ -117,6 +123,7 @@ class CombineBlendImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
+	virtual bool local() const { return image1->local() && image2->local(); }
   private:
 	GeneratedImageP image1, image2;
 	ImageCombine image_combine;
@@ -133,6 +140,7 @@ class SetMaskImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
+	virtual bool local() const { return image->local() && mask->local(); }
   private:
 	GeneratedImageP image, mask;
 };
@@ -146,6 +154,7 @@ class SetAlphaImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
+	virtual bool local() const { return image->local(); }
   private:
 	GeneratedImageP image;
 	double alpha;
@@ -162,6 +171,7 @@ class SetCombineImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
+	virtual bool local() const { return image->local(); }
   private:
 	GeneratedImageP image;
 	ImageCombine image_combine;
@@ -178,6 +188,7 @@ class EnlargeImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
+	virtual bool local() const { return image->local(); }
   private:
 	GeneratedImageP image;
 	double border_size;
@@ -194,6 +205,7 @@ class CropImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
+	virtual bool local() const { return image->local(); }
   private:
 	GeneratedImageP image;
 	double width, height;
@@ -212,6 +224,7 @@ class DropShadowImage : public GeneratedImage {
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
+	virtual bool local() const { return image->local(); }
   private:
 	GeneratedImageP image;
 	double offset_x, offset_y;
@@ -257,6 +270,7 @@ class SymbolToImage : public GeneratedImage {
 	~SymbolToImage();
 	virtual Image generate(const Options& opt) const;
 	virtual bool operator == (const GeneratedImage& that) const;
+	virtual bool local() const { return true; }
 	
 	#ifdef __WXGTK__
 		virtual bool threadSafe() const { return false; }
@@ -277,6 +291,7 @@ class ImageValueToImage : public GeneratedImage {
 	~ImageValueToImage();
 	virtual Image generate(const Options& opt) const;
 	virtual bool operator == (const GeneratedImage& that) const;
+	virtual bool local() const { return true; }
   private:
 	ImageValueToImage(const ImageValueToImage&); // copy ctor
 	String filename;

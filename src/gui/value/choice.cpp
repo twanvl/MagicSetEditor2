@@ -20,7 +20,7 @@ DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
 
 class ChoiceThumbnailRequest : public ThumbnailRequest {
   public:
-	ChoiceThumbnailRequest(ValueViewer* cve, int id, bool from_disk);
+	ChoiceThumbnailRequest(ValueViewer* cve, int id, bool from_disk, bool thread_safe);
 	virtual Image generate();
 	virtual void store(const Image&);
 
@@ -34,22 +34,17 @@ class ChoiceThumbnailRequest : public ThumbnailRequest {
 	inline ValueViewer& viewer() { return *static_cast<ValueViewer*>(owner); }
 };
 
-ChoiceThumbnailRequest::ChoiceThumbnailRequest(ValueViewer* viewer, int id, bool from_disk)
+ChoiceThumbnailRequest::ChoiceThumbnailRequest(ValueViewer* viewer, int id, bool from_disk, bool thread_safe)
 	: ThumbnailRequest(
 		static_cast<void*>(viewer),
 		viewer->viewer.stylesheet->name() + _("/") + viewer->getField()->name + _("/") << id,
 		from_disk ? viewer->viewer.stylesheet->lastModified()
 		          : wxDateTime::Now()
 	)
+	, isThreadSafe(thread_safe)
 	, stylesheet(viewer->viewer.stylesheet)
 	, id(id)
-{
-	assert(dynamic_pointer_cast<ChoiceStyle>(viewer->getStyle())); // only works on choice styles
-	ChoiceStyle& s = style();
-	String name = cannocial_name_form(s.field().choices->choiceName(id));
-	ScriptableImage img = s.choice_images[name];
-	isThreadSafe = img.threadSafe();
-}
+{}
 
 Image ChoiceThumbnailRequest::generate() {
 	ChoiceStyle& s = style();
@@ -184,8 +179,8 @@ void DropDownChoiceListBase::generateThumbnailImages() {
 	int image_count = style().thumbnails->GetImageCount();
 	int end = group->lastId();
 	// init choice images
+	Context& ctx = cve.viewer.getContext();
 	if (style().choice_images.empty() && style().image.isScripted()) {
-		Context& ctx = cve.viewer.getContext();
 		for (int i = 0 ; i < end ; ++i) {
 			try {
 				String name = cannocial_name_form(field().choices->choiceName(i));
@@ -200,10 +195,20 @@ void DropDownChoiceListBase::generateThumbnailImages() {
 	// request thumbnails
 	style().thumbnails_status.resize(end, THUMB_NOT_MADE);
 	for (int i = 0 ; i < end ; ++i) {
-		ThumbnailStatus status = style().thumbnails_status[i];
+		ThumbnailStatus& status = style().thumbnails_status[i];
 		if (i >= image_count || status != THUMB_OK) {
-			// request this thumbnail
-			thumbnail_thread.request( new_intrusive3<ChoiceThumbnailRequest>(&cve, i, status == THUMB_NOT_MADE) );
+			// update image
+			ChoiceStyle& s = style();
+			String name = cannocial_name_form(s.field().choices->choiceName(i));
+			ScriptableImage& img = s.choice_images[name];
+			if (!img.update(ctx) && status == THUMB_CHANGED) {
+				status = THUMB_OK; // no need to rebuild
+			} else {
+				// request this thumbnail
+				thumbnail_thread.request( new_intrusive4<ChoiceThumbnailRequest>(
+						&cve, i, status == THUMB_NOT_MADE && !img.local(), img.threadSafe()
+					));
+			}
 		}
 	}
 }

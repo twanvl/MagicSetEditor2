@@ -357,7 +357,7 @@ void SetScriptManager::alsoUpdate(deque<ToUpdate>& to_update, const vector<Depen
 				// because the index is not exact enough, it only gives the field
 				StyleSheet* stylesheet = reinterpret_cast<StyleSheet*>(d.data);
 				StyleP style = stylesheet->card_style.at(d.index);
-				style->invalidate(getContext(card));
+				style->invalidate();
 				// something changed, send event
 				ScriptStyleEvent change(stylesheet, style.get());
 				set.actions.tellListeners(change, false);

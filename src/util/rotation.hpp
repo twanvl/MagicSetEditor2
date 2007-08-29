@@ -32,6 +32,8 @@ class Rotation {
 	
 	/// Change the zoom factor
 	inline void setZoom(double z) { zoomX = zoomY = z; }
+	/// Retrieve the zoom factor
+	inline double getZoom() const { return zoomY; }
 	/// Change the angle
 	void setAngle(int a);
 	/// Change the origin

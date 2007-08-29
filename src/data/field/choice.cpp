@@ -239,21 +239,15 @@ void ChoiceStyle::initDependencies(Context& ctx, const Dependency& dep) const {
 		ci.second.initDependencies(ctx, dep);
 	}
 }
-void ChoiceStyle::invalidate(Context& ctx) {
+void ChoiceStyle::invalidate() {
 	// TODO : this is also done in update(), once should be enough
 	// Update choice images and thumbnails
-	bool change = false;
 	int end = field().choices->lastId();
 	thumbnails_status.resize(end, THUMB_NOT_MADE);
 	for (int i = 0 ; i < end ; ++i) {
-		String name = cannocial_name_form(field().choices->choiceName(i));
-		ScriptableImage& img = choice_images[name];
-		if (img.update(ctx)) {
-			change = true;
-			thumbnails_status[i] = THUMB_CHANGED;
-		}
+		if (thumbnails_status[i] == THUMB_OK) thumbnails_status[i] = THUMB_CHANGED;
 	}
-	if (change) tellListeners(CHANGE_OTHER);
+	tellListeners(CHANGE_OTHER);
 }
 
 void ChoiceStyle::loadMask(Package& pkg) {

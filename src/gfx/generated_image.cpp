@@ -28,7 +28,14 @@ Image conform_image(const Image& img, const GeneratedImage::Options& options) {
 	// resize?
 	int iw = image.GetWidth(), ih = image.GetHeight();
 	if ((iw == options.width && ih == options.height) || (options.width == 0 && options.height == 0)) {
-		// already the right size
+		// zoom?
+		if (options.zoom != 1.0) {
+			Image resampled_image(iw * options.zoom, ih * options.zoom, false);
+			resample(image, resampled_image);
+			image = resampled_image;
+		} else {
+			// already the right size
+		}
 	} else if (options.height == 0) {
 		// width is given, determine height
 		int h = options.width * ih / iw;

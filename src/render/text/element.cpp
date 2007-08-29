@@ -98,9 +98,13 @@ struct TextElementsFromString {
 				else if (is_substr(text, tag_start, _("</i")))          italic      -= 1;
 				else if (is_substr(text, tag_start, _( "<sym")))        symbol      += 1;
 				else if (is_substr(text, tag_start, _("</sym")))        symbol      -= 1;
+				else if (is_substr(text, tag_start, _( "<line")))       line        += 1;
+				else if (is_substr(text, tag_start, _("</line")))       line        -= 1;
+				else if (is_substr(text, tag_start, _( "<soft-line")))  soft_line   += 1;
+				else if (is_substr(text, tag_start, _("</soft-line")))  soft_line   -= 1;
 				else if (is_substr(text, tag_start, _( "<sep-soft")))   soft        += 1;
 				else if (is_substr(text, tag_start, _("</sep-soft")))   soft        -= 1;
-				else if (is_substr(text, tag_start, _( "<soft")))       soft        += 1;
+				else if (is_substr(text, tag_start, _( "<soft")))       soft        += 1; // must be after <soft-line
 				else if (is_substr(text, tag_start, _("</soft")))       soft        -= 1;
 				else if (is_substr(text, tag_start, _( "<atom-kwpph"))) kwpph       += 1;
 				else if (is_substr(text, tag_start, _("</atom-kwpph"))) kwpph       -= 1;
@@ -125,10 +129,6 @@ struct TextElementsFromString {
 				else if (is_substr(text, tag_start, _("</ref-param")))  param_ref   -= 1;
 				else if (is_substr(text, tag_start, _( "<atom-param"))) param       += 1;
 				else if (is_substr(text, tag_start, _("</atom-param"))) param       -= 1;
-				else if (is_substr(text, tag_start, _( "<line")))       line        += 1;
-				else if (is_substr(text, tag_start, _("</line")))       line        -= 1;
-				else if (is_substr(text, tag_start, _( "<soft-line")))  soft_line   += 1;
-				else if (is_substr(text, tag_start, _("</soft-line")))  soft_line   -= 1;
 				else if (is_substr(text, tag_start, _("<atom"))) {
 					// 'atomic' indicator
 					size_t end_tag = min(end, match_close_tag(text, tag_start));

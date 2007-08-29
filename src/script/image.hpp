@@ -46,9 +46,12 @@ class ScriptableImage {
 	inline void initDependencies(Context& ctx, const Dependency& dep) const {
 		script.initDependencies(ctx, dep);
 	}
-
+	
 	/// Can this be safely generated from another thread?
 	inline bool threadSafe() const { return !value || value->threadSafe(); }
+	
+	/// Is this image specific to the set (the local_package)?
+	inline bool local() const { return value && value->local(); }
 	
 	/// Get access to the script, be careful
 	inline Script& getScript() { return script.getScript(); }

@@ -160,6 +160,7 @@ void CardsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 			ev.Check(ss.card_angle() == a);
 			break;
 		}
+		case ID_CARD_ADD_MULT:   ev.Enable(false);							break; // not implemented
 		case ID_CARD_REMOVE:     ev.Enable(set->cards.size() > 1);			break;
 		case ID_FORMAT_BOLD: case ID_FORMAT_ITALIC: case ID_FORMAT_SYMBOL: case ID_FORMAT_REMINDER: {
 			if (focused_control(this) == ID_EDITOR) {
