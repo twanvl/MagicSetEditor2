@@ -238,7 +238,7 @@ init script:
 	
 	# replaces — correctly
 	add := "" # default is nothing
-	separate_words := replace_rule(match:" ", replace: " and/or ")+ remove_tags
+	separate_words := remove_tags + replace_rule(match:" ", replace: " and/or ")
 	for_mana_costs := format_cost := {
 		if input.separator_before == "—" and contains(input.param, match: " ") then (
 			if contains(input.param, match:",") then (
