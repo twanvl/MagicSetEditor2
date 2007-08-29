@@ -39,6 +39,7 @@ class Font : public IntrusivePtrBase<Font> {
 	Scriptable<String> weight, style;		///< Weight and style of the font (bold/italic)
 	Scriptable<bool>   underline;			///< Underlined?
 	double             scale_down_to;		///< Smallest size to scale down to
+	double             max_stretch;			///< How much should the font be stretched before scaling down?
 	Scriptable<Color>  color;				///< Color to use
 	Scriptable<Color>  shadow_color;		///< Color for shadow
 	RealSize           shadow_displacement;	///< Position of the shadow

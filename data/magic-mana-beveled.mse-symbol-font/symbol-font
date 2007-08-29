@@ -178,9 +178,10 @@ symbol:
 as text: .|[0-9]+(?!/)
 text font:
 	name: MPlantin
-	size: 15
+	size: 1
 	color: rgb(0,0,0)
-text margin left:   3
-text margin right:  2
-text margin top:    -1
-text margin bottom: -1
+	max stretch: 0.5
+text margin left:   .26
+text margin right:  .2
+text margin top:    -.12
+text margin bottom: -.12

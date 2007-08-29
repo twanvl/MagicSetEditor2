@@ -4,11 +4,14 @@ A word in a [[type:word list]].
 
 --Properties--
 ! Property	Type						Default		Description
-| @name@	[[type:string]]					''Required''	The word
+| @name@	[[type:string]]					''Required''	The word.
 | @line below@	[[type:boolean]]				@false@		Display a line below this item in the list?
 | @is prefix@	[[type:boolean]]				@false@		Should this word be used as a prefix before another word from the list?<br/>
 		 						 		Think "Legendary ". Note the space after it, words are directly concatenated.
-| @words@	[[type:list]] of [[type:word list word]]s			A submenu
+| @words@	[[type:list]] of [[type:word list word]]s			A submenu. If given, the @name@ of this word is only used as a label for the menu.
+| @script@	[[type:script]]					''Optional''	A script that determines zero or more words.<br/>
+		 						 		The result should be a list of comma separated words, for example @"x,y,z"@ specifies three words.
+		 						 		The words are included in the parent menu, not a sub menu.
 
 A word can also be given in a short form, in that case only the name is specified.
 
@@ -18,3 +21,14 @@ In short form:
 Is the same as:
 >word:
 >	name: xyz
+
+Using a script,
+>word:
+>	script: "red,green,blue"
+>	line below: true
+Is the same as
+>word: blue
+>word: green
+>word:
+>	name: red
+>	line below: true

@@ -15,6 +15,7 @@ Font::Font()
 	, size(1)
 	, underline(false)
 	, scale_down_to(100000)
+	, max_stretch(1.0)
 	, shadow_displacement(0,0)
 	, separator_color(128,128,128)
 	, flags(FONT_NORMAL)
@@ -70,7 +71,7 @@ FontP Font::make(int add_flags, Color* other_color) const {
 }
 
 wxFont Font::toWxFont(double scale) const {
-	int size_i = scale * size;
+	int size_i = to_int(scale * size);
 	int weight_i = flags & FONT_BOLD   ? wxFONTWEIGHT_BOLD  : wxFONTWEIGHT_NORMAL;
 	int style_i  = flags & FONT_ITALIC ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL;
 	// make font
@@ -108,6 +109,7 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(Font) {
 	REFLECT(italic_name);
 	REFLECT(color);
 	REFLECT(scale_down_to);
+	REFLECT(max_stretch);
 	REFLECT_N("shadow_displacement_x", shadow_displacement.width);
 	REFLECT_N("shadow_displacement_y", shadow_displacement.height);
 	REFLECT(shadow_color);

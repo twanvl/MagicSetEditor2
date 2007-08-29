@@ -268,33 +268,39 @@ void SymbolFont::drawWithText(RotatedDC& dc, const RealRect& rect, double font_s
 	// 2. draw text
 	if (!text_font) return;
 	// subtract margins from size
-	sym_rect.x      += text_margin_left;
-	sym_rect.y      += text_margin_top;
-	sym_rect.width  -= text_margin_left + text_margin_right;
-	sym_rect.height -= text_margin_top  + text_margin_bottom;
+	sym_rect.x      += font_size * text_margin_left;
+	sym_rect.y      += font_size * text_margin_top;
+	sym_rect.width  -= font_size * (text_margin_left + text_margin_right);
+	sym_rect.height -= font_size * (text_margin_top  + text_margin_bottom);
 	// setup text, shrink it
-	double size = text_font->size; // TODO : incorporate shrink factor?
+	double size = font_size * text_font->size;
+	double stretch = 1.0;
 	RealSize ts;
 	while (true) {
 		if (size <= 0) return; // text too small
 		dc.SetFont(*text_font, size / text_font->size);
 		ts = dc.GetTextExtent(text);
-		if (ts.width <= sym_rect.width && ts.height <= sym_rect.height) {
-			break; // text fits
-		} else {
-			// text doesn't fit
-			size -= dc.getFontSizeStep();
+		if (ts.height <= sym_rect.height) {
+			if (ts.width <= sym_rect.width) {
+				break; // text fits
+			} else if (ts.width * text_font->max_stretch <= sym_rect.width) {
+				stretch = sym_rect.width / ts.width;
+				ts.width = sym_rect.width; // for alignment
+				break;
+			}
 		}
+		// text doesn't fit
+		size -= dc.getFontSizeStep();
 	}
 	// align text
 	RealPoint text_pos = align_in_rect(text_alignment, ts, sym_rect);
 	// draw text
 	if (text_font->hasShadow()) {
 		dc.SetTextForeground(text_font->shadow_color);
-		dc.DrawText(text, text_pos + text_font->shadow_displacement);
+		dc.DrawText(text, text_pos + text_font->shadow_displacement * font_size, 0, 1, stretch);
 	}
 	dc.SetTextForeground(text_font->color);
-	dc.DrawText(text, text_pos);
+	dc.DrawText(text, text_pos, 0, 1, stretch);
 }
 
 Image SymbolFont::getImage(double font_size, const DrawableSymbol& sym) {
@@ -312,33 +318,39 @@ Image SymbolFont::getImage(double font_size, const DrawableSymbol& sym) {
 		RealRect sym_rect(0,0,bmp.GetWidth(),bmp.GetHeight());
 		RotatedDC rdc(dc, 0, sym_rect, 1, QUALITY_AA);
 		// subtract margins from size
-		sym_rect.x      += text_margin_left;
-		sym_rect.y      += text_margin_top;
-		sym_rect.width  -= text_margin_left + text_margin_right;
-		sym_rect.height -= text_margin_top  + text_margin_bottom;
+		sym_rect.x      += font_size * text_margin_left;
+		sym_rect.y      += font_size * text_margin_top;
+		sym_rect.width  -= font_size * (text_margin_left + text_margin_right);
+		sym_rect.height -= font_size * (text_margin_top  + text_margin_bottom);
 		// setup text, shrink it
-		double size = text_font->size; // TODO : incorporate shrink factor?
+		double size = font_size * text_font->size;
+		double stretch = 1.0;
 		RealSize ts;
 		while (true) {
 			if (size <= 0) return def->getImage(*this, font_size); // text too small
 			rdc.SetFont(*text_font, size / text_font->size);
 			ts = rdc.GetTextExtent(sym.text);
-			if (ts.width <= sym_rect.width && ts.height <= sym_rect.height) {
-				break; // text fits
-			} else {
-				// text doesn't fit
-				size -= rdc.getFontSizeStep();
+			if (ts.height <= sym_rect.height) {
+				if (ts.width <= sym_rect.width) {
+					break; // text fits
+				} else if (ts.width * text_font->max_stretch <= sym_rect.width) {
+					stretch = sym_rect.width / ts.width;
+					ts.width = sym_rect.width; // for alignment
+					break;
+				}
 			}
+			// text doesn't fit
+			size -= rdc.getFontSizeStep();
 		}
 		// align text
 		RealPoint text_pos = align_in_rect(text_alignment, ts, sym_rect);
 		// draw text
 		if (text_font->hasShadow()) {
 			rdc.SetTextForeground(text_font->shadow_color);
-			rdc.DrawText(sym.text, text_pos + text_font->shadow_displacement);
+			rdc.DrawText(sym.text, text_pos + text_font->shadow_displacement * font_size, 0, 1, stretch);
 		}
 		rdc.SetTextForeground(text_font->color);
-		rdc.DrawText(sym.text, text_pos);
+		rdc.DrawText(sym.text, text_pos, 0, 1, stretch);
 		// done
 		dc.SelectObject(wxNullBitmap);
 		return bmp.ConvertToImage();

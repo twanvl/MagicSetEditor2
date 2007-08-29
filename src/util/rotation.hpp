@@ -151,7 +151,7 @@ class RotatedDC : public Rotation {
   
 	// --------------------------------------------------- : Drawing
 	
-	void DrawText  (const String& text,   const RealPoint& pos, int blur_radius = 0, int boldness = 1);
+	void DrawText  (const String& text,   const RealPoint& pos, int blur_radius = 0, int boldness = 1, double stretch = 1.0);
 	/// Draw abitmap, it must already be zoomed!
 	void DrawBitmap(const Bitmap& bitmap, const RealPoint& pos);
 	/// Draw an image using the given combining mode, the image must already be zoomed!

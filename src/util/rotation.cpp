@@ -131,12 +131,12 @@ RotatedDC::RotatedDC(DC& dc, const Rotation& rotation, RenderQuality quality)
 
 // ----------------------------------------------------------------------------- : RotatedDC : Drawing
 
-void RotatedDC::DrawText  (const String& text, const RealPoint& pos, int blur_radius, int boldness) {
+void RotatedDC::DrawText  (const String& text, const RealPoint& pos, int blur_radius, int boldness, double stretch_) {
 	if (text.empty()) return;
 	if (quality == QUALITY_AA) {
 		RealRect r(pos, GetTextExtent(text));
 		RealRect r_ext = trNoNeg(r);
-		draw_resampled_text(dc, r_ext, stretch(), revX(), revY(), angle, text, blur_radius, boldness);
+		draw_resampled_text(dc, r_ext, stretch_ * stretch(), revX(), revY(), angle, text, blur_radius, boldness);
 	} else if (quality == QUALITY_SUB_PIXEL) {
 		RealPoint p_ext = tr(pos)*text_scaling;
 		double usx,usy;

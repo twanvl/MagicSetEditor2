@@ -10,6 +10,7 @@ A reference to a normal [[type:font]] for drawing text.
 | @italic name@		[[type:scriptable]] [[type:string]]	 		Optionally, a different font to use for italic text instead of the normal italic version of the font.
 | @size@		[[type:scriptable]] [[type:double]]	''required''	Size of the font in points on a 96 DPI display.
 | @scale down to@	[[type:double]]				&infin;		Minimum size in points to scale the size down to.
+| @max stretch@		[[type:double]]				@1.0@		Maximum multiplier by which the width of the text is compressed, so @max width: 0.5@ means the text can be compressed to half the normal width.
 | @weight@		[[type:scriptable]] font weight		@"normal"@	Weight of the font, one of @"normal"@ or @"bold"@. This can be changed locally by [[type:tagged string|tags]].
 | @style@		[[type:scriptable]] font style		@"normal"@	Style of the font, one of @"normal"@ or @"italic"@. This can be changed locally by [[type:tagged string|tags]].
 | @underline@		[[type:scriptable]] [[type:boolean]]	@false@		Should the font be underlined?

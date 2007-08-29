@@ -293,12 +293,15 @@ card field:
 		)
 	identifying: true
 	show statistics: false
+	card list visible: true
 	card list column: 1
+	card list width: 200
 	description: The name of the card, use @ for a diamond
 card field:
 	type: text
 	name: cost
 	script: only_numbers(value)
+	card list visible: true
 	card list column: 3
 	card list alignment: right
 	card list width: 37
@@ -391,6 +394,7 @@ card field:
 			hide_when_empty:   true,
 			type_over1: " `"
 			)
+	card list visible: true
 	card list column: 2
 	show statistics: false
 
@@ -406,9 +410,11 @@ card field:
 			order_by: {
 				sort_index() + card.team + card.team_2_of_2 + card.team_2 + card.team_2_of_2_2 + card.name + card.version + " • " + card.team_affiliation
 			}) 
+	card list visible: true
 	card list column: 6
 	card list width: 55
 	card list name: #
+	card list alignment: right
 	editable: false
 	show statistics: false
 card field:
@@ -543,18 +549,22 @@ card field:
 	name: attack
 	script: only_numbers(value)
 	save value: true
+	card list visible: true
 	card list column: 4
 	card list width: 33
 	card list name: ATK
+	card list alignment: right
 
 card field:
 	type: text
 	name: defence
 	script: only_numbers(value)
 	save value: true
+	card list visible: true
 	card list column: 5
 	card list width: 33
 	card list name: DEF
+	card list alignment: right
 
 ############################# Copyright stuff
 card field:

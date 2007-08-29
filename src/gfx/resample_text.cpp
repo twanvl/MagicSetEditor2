@@ -43,6 +43,8 @@ void downsample_to_alpha(Image& img_in, Image& img_out) {
 		int w1 = img_in.GetWidth(), w2 = img_out.GetWidth(), h = img_in.GetHeight();
 		int out_fact = (w2 << shift) / w1; // how much to output for 256 input = 1 pixel
 		int out_rest = (w2 << shift) % w1;
+		// make the image 'bolder' to compensate for compressing it
+		int mul = 128 + min(256, 128*w1/(text_scaling*w2));
 		for (int y = 0 ; y < h ; ++y) {
 			int in_rem = out_fact + out_rest;
 			for (int x = 0 ; x < w2 ; ++x) {
@@ -61,7 +63,7 @@ void downsample_to_alpha(Image& img_in, Image& img_out) {
 					in_rem -= out_rem;
 				}
 				// store
-				*out = tot >> shift;
+				*out = top(((tot >> shift) * mul) >> 8);
 				out += 1;
 			}
 		}
@@ -89,6 +91,7 @@ void downsample_to_alpha(Image& img_in, Image& img_out) {
 		int h1 = img_in.GetHeight(), w = img_out.GetWidth();
 		int out_fact = (h << shift) / h1; // how much to output for 256 input = 1 pixel
 		int out_rest = (h << shift) % h1;
+		int mul = 128 + min(256, 128*h1/(text_scaling*h));
 		for (int x = 0 ; x < w ; ++x) {
 			int in_rem = out_fact + out_rest;
 			for (int y = 0 ; y < h ; ++y) {
@@ -107,7 +110,7 @@ void downsample_to_alpha(Image& img_in, Image& img_out) {
 					in_rem -= out_rem;
 				}
 				// store
-				*out = tot >> shift;
+				*out = top(((tot >> shift) * mul) >> 8);
 				out += line_size;
 			}
 			in  = in  - h1 * line_size + 1;

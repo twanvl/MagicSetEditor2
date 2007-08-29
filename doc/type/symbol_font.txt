@@ -23,6 +23,10 @@ This resulution could correspond to a point size of for instance 150pt.
 
 When the symbol is drawn at for instance 12pt the image well then be scalled down to @200/150*12 == 16@ pixels.
 
+Sizes like margin, padding and font size are given in 'pixels per point'. If for instance
+> text margin left: 0.1
+is specified, and the symbol is rendered at 12pt, the margin will be @12*0.1 == 1.2@ pixels.
+
 --Package format--
 
 A symbol font is described in a [[file:package]] with the <tt>.mse-symbol-font</tt> file extension.
@@ -44,15 +48,15 @@ Such a package contains a [[file:format|data file]] called <tt>symbol-font</tt> 
 | @horizontal space@		[[type:double]]			@0@		Horizontal spacing between symbols, in pixels.
 | @vertical space@		[[type:double]]			@0@		Vertical spacing between symbols, in pixels.
 | @symbols@			[[type:list]] of [[type:symbol font symbol]]s	 	Symbols that make up this font.
-| @text font@			[[type:font]]					Font to use for drawing text on symbols, only used if there is a default symbol.
+| @text font@			[[type:font]]					Font to use for drawing text on symbols, only used if there is a default symbol. The font size is in points per point.
 | @scale text@			[[type:boolean]]		@false@		Should text be scaled down to fit in a symbol?
 | @merge numbers@		[[type:boolean]]		@false@		Should a numeric value of multiple digits be rendered as a single symbol?<br/>
 				 				 		Note: @merge numbers@ is deprecated, use @as text: [0-9]+@ instead.
 | @as text@			[[type:regex]]			@"."@		What should be rendered as a single piece of text?
-| @text margin left@		[[type:double]]			@0@		Margin on the left   of the text in pixels.
-| @text margin right@		[[type:double]]			@0@		Margin on the right  of the text in pixels.
-| @text margin top@		[[type:double]]			@0@		Margin on the top    of the text in pixels.
-| @text margin bottom@		[[type:double]]			@0@		Margin on the bottom of the text in pixels.
+| @text margin left@		[[type:double]]			@0@		Margin on the left   of the text in pixels per point.
+| @text margin right@		[[type:double]]			@0@		Margin on the right  of the text in pixels per point.
+| @text margin top@		[[type:double]]			@0@		Margin on the top    of the text in pixels per point.
+| @text margin bottom@		[[type:double]]			@0@		Margin on the bottom of the text in pixels per point.
 | @text alignment@		[[type:alignment]]		@"middle center"@	How should text be aligned on symbols?
 | @insert symbol menu@		[[type:insert symbol menu|"insert symbol" menu]]	''none''	A description of the menu to insert a symbol into the text.
 

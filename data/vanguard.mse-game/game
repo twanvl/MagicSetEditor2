@@ -60,9 +60,9 @@ init script:
 	
 	# Converted mana cost
 	cmc := to_text + {
-		  1 * number_of_items(in: sort(order:"SWUBRG")) # colored mana
-		- 1 * number_of_items(in: sort(order:"/"))      # guild mana, W/U -> 2 - 1
-		+ 1 * sort(order: "[0123456789]")               # colorless mana
+		  1 * number_of_items(in: sort_text(order:"SWUBRG")) # colored mana
+		- 1 * number_of_items(in: sort_text(order:"/"))      # guild mana, W/U -> 2 - 1
+		+ 1 * sort_text(order: "[0123456789]")               # colorless mana
 	}
 	
 	############################################################## The text box
