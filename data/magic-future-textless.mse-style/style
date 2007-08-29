@@ -68,31 +68,11 @@ init script:
 	guild_mana := { styling.use_guild_mana_symbols }
 	
 	colorless_color := {
-		if contains(card.card_color, match: "white")
-		   and not contains(card.card_color, match: "hybrid")
-		   and not contains(card.card_color, match: "multicolor")
-		   and not contains(card.card_color, match: "artifact")
-		   and not contains(card.card_color, match: "land") then "w"
-		else if contains(card.card_color, match: "blue")
-		   and not contains(card.card_color, match: "hybrid")
-		   and not contains(card.card_color, match: "multicolor")
-		   and not contains(card.card_color, match: "artifact")
-		   and not contains(card.card_color, match: "land") then "u"
-		else if contains(card.card_color, match: "black")
-		   and not contains(card.card_color, match: "hybrid")
-		   and not contains(card.card_color, match: "multicolor")
-		   and not contains(card.card_color, match: "artifact")
-		   and not contains(card.card_color, match: "land") then "b"
-		else if contains(card.card_color, match: "red")
-		   and not contains(card.card_color, match: "hybrid")
-		   and not contains(card.card_color, match: "multicolor")
-		   and not contains(card.card_color, match: "artifact")
-		   and not contains(card.card_color, match: "land") then "r"
-		else if contains(card.card_color, match: "green")
-		   and not contains(card.card_color, match: "hybrid")
-		   and not contains(card.card_color, match: "multicolor")
-		   and not contains(card.card_color, match: "artifact")
-		   and not contains(card.card_color, match: "land") then "g"
+		if card.card_color=="white" then "w"
+		else if card.card_color=="blue" then "u"
+		else if card.card_color=="black" then "b"
+		else if card.card_color=="red" then "r"
+		else if card.card_color=="green" then "g"
 		else "c"
 	}
 	
@@ -180,7 +160,11 @@ card style:
 		font:
 			name: Matrix
 			size: 18
-			color: { font_color(card.card_color) }
+			color:
+				script:
+					if styling.grey_hybrid_name and contains(card.card_color, match:"land") and not contains(card.card_color, match:"multicolor") then rgb(0,0,0)
+					else if styling.grey_hybrid_name and contains(card.card_color, match:"hybrid") then rgb(0,0,0)
+					else font_color(card.card_color)
 	casting cost:
 		left: 18
 		top: 57
@@ -228,7 +212,11 @@ card style:
 		font:
 			name: Matrix
 			size: 14
-			color: { font_color(card.card_color) }
+			color:
+				script:
+					if styling.grey_hybrid_name and contains(card.card_color, match:"land") and not contains(card.card_color, match:"multicolor") then rgb(0,0,0)
+					else if styling.grey_hybrid_name and contains(card.card_color, match:"hybrid") then rgb(0,0,0)
+					else font_color(card.card_color)
 			separator color: rgb(128,128,128)
 	rarity:
 		right: 352
