@@ -220,20 +220,20 @@ card style:
 	type:
 		left: 49
 		top : 434
-		width: { 288 - max(18,card_style.rarity.content_width) }
+		width: { 300 - max(18,card_style.rarity.content_width) }
 		height: 28
 		alignment: top shrink-overflow
 		z index: 1
 		padding top: 2
 		font:
 			name: Matrix
-			size: 16
+			size: 14
 			color: { font_color(card.card_color) }
 			separator color: rgb(128,128,128)
 	rarity:
 		right: 352
 		top : 439
-		width: 36
+		width: 19
 		height: 19
 		z index: 2
 		alignment: middle right
@@ -271,8 +271,8 @@ card style:
 		z index: 2
 		alignment: middle right
 		font:
-			name: MPlantin
-			size: 8
+			name: Matrix
+			size: 10
 			color:
 				script:
 					if contains(card.card_color, match:"land") then rgb(255,255,255)
@@ -346,7 +346,7 @@ extra card style:
 		image: { card_ptbox() }
 		mask: mask_pt.png
 	type symbol:
-		left: 23
+		left: 24
 		top: 25
 		width: 21
 		height: 20

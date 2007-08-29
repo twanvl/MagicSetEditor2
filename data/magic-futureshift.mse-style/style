@@ -12,13 +12,12 @@ card dpi: 150
 #By: Pichoro
 #
 #Todo:
-#Casting Cost Mask Ajustments
 #Colorless Frame
-#Make different colored colorless mana symbols work
 ############################################################## Extra scripts
 
 init script:
-	# there are only wubrg templates
+	mask_hybrid_with_land := { styling.grey_hybrid_name }
+	
 	suffix := [card: "card.png", pt: "pt.png", textbox: "textbox.png", typeline: "typeline.png"]
 	template := { input + suffix[type] }
 	land_template := { (if input == "a" then "c" else input) + "l" + suffix[type] }
@@ -65,31 +64,11 @@ init script:
 	guild_mana := { styling.use_guild_mana_symbols }
 	
 	colorless_color := {
-		if contains(card.card_color, match: "white")
-		   and not contains(card.card_color, match: "hybrid")
-		   and not contains(card.card_color, match: "multicolor")
-		   and not contains(card.card_color, match: "artifact")
-		   and not contains(card.card_color, match: "land") then "w"
-		else if contains(card.card_color, match: "blue")
-		   and not contains(card.card_color, match: "hybrid")
-		   and not contains(card.card_color, match: "multicolor")
-		   and not contains(card.card_color, match: "artifact")
-		   and not contains(card.card_color, match: "land") then "u"
-		else if contains(card.card_color, match: "black")
-		   and not contains(card.card_color, match: "hybrid")
-		   and not contains(card.card_color, match: "multicolor")
-		   and not contains(card.card_color, match: "artifact")
-		   and not contains(card.card_color, match: "land") then "b"
-		else if contains(card.card_color, match: "red")
-		   and not contains(card.card_color, match: "hybrid")
-		   and not contains(card.card_color, match: "multicolor")
-		   and not contains(card.card_color, match: "artifact")
-		   and not contains(card.card_color, match: "land") then "r"
-		else if contains(card.card_color, match: "green")
-		   and not contains(card.card_color, match: "hybrid")
-		   and not contains(card.card_color, match: "multicolor")
-		   and not contains(card.card_color, match: "artifact")
-		   and not contains(card.card_color, match: "land") then "g"
+		if card.card_color=="white" then "w"
+		else if card.card_color=="blue" then "u"
+		else if card.card_color=="black" then "b"
+		else if card.card_color=="red" then "r"
+		else if card.card_color=="green" then "g"
 		else "c"
 	}
 	
@@ -134,6 +113,10 @@ init script:
 
 ############################################################## Extra style options
 
+styling field:
+	type: boolean
+	name: grey hybrid name
+	description: Use a grey background for the name and type line on hybrid cards. This is done on real cards.
 styling field:
 	type: boolean
 	name: use guild mana symbols
@@ -214,7 +197,11 @@ card style:
 		font:
 			name: Matrix
 			size: 18
-			color: { font_color(card.card_color) }
+			color:
+				script:
+					if styling.grey_hybrid_name and contains(card.card_color, match:"land") and not contains(card.card_color, match:"multicolor") then rgb(0,0,0)
+					else if styling.grey_hybrid_name and contains(card.card_color, match:"hybrid") then rgb(0,0,0)
+					else font_color(card.card_color)
 	casting cost:
 		left: 4
 		top: 39
@@ -254,21 +241,25 @@ card style:
 	type:
 		left: 49
 		top : 300
-		width: { 291 - max(21,card_style.rarity.content_width) }
+		width: { 300 - max(21,card_style.rarity.content_width) }
 		height: 20
 		alignment: middle shrink-overflow
 		z index: 3
 		padding top: 2
 		font:
 			name: Matrix
-			size: 15
-			color: { font_color(card.card_color) }
+			size: 14
+			color:
+				script:
+					if styling.grey_hybrid_name and contains(card.card_color, match:"land") and not contains(card.card_color, match:"multicolor") then rgb(0,0,0)
+					else if styling.grey_hybrid_name and contains(card.card_color, match:"hybrid") then rgb(0,0,0)
+					else font_color(card.card_color)
 			separator color: rgb(128,128,128)
 	rarity:
 		right: 353
-		top : 301
-		width: 42
-		height: 21
+		top : 304
+		width: 19
+		height: 19
 		z index: 3
 		alignment: middle right
 		render style: image
@@ -351,8 +342,8 @@ card style:
 		z index: 2
 		alignment: middle right
 		font:
-			name: MPlantin
-			size: 8
+			name: Matrix
+			size: 10
 			color:
 				script:
 					if contains(card.card_color, match:"land") then rgb(255,255,255)
@@ -455,8 +446,8 @@ extra card style:
 		render style: image
 		image: { card_ptbox() }
 	type symbol:
-		left: 23
-		top: 25
+		left: 24
+		top: 24
 		width: 21
 		height: 20
 		z index: 4
