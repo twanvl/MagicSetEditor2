@@ -171,6 +171,8 @@ class Settings {
   private:
 	/// Name of the settings file
 	String settingsFile();
+	/// Clear settings before reading them
+	void clear();
 	
 	DECLARE_REFLECTION();
 };

@@ -16,6 +16,7 @@
 #include <util/platform.hpp>
 #include <util/io/reader.hpp>
 #include <util/io/writer.hpp>
+#include <util/delayed_index_maps.hpp>
 #include <wx/filename.h>
 #include <wx/wfstream.h>
 #include <wx/stdpaths.h>
@@ -218,7 +219,18 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(Settings) {
 	REFLECT(export_options);
 }
 
+void Settings::clear() {
+	recent_sets.clear();
+	game_settings.clear();
+	stylesheet_settings.clear();
+	default_stylesheet_settings = StyleSheetSettings();
+	export_options.clear();
+}
+
 void Settings::read() {
+	// clear current settings, otherwise we duplicate vector elements
+	clear();
+	// (re)load settings
 	String filename = settingsFile();
 	if (wxFileExists(filename)) {
 		// settings file not existing is not an error

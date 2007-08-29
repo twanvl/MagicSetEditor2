@@ -148,6 +148,8 @@ class DelayedIndexMaps {
   public:
 	/// Get the data for a specific name. Initialize the map with init_with (if it is not alread initialized)
 	IndexMap<Key,Value>& get(const String& name, const vector<Key>& init_with);
+	/// Clear the delayed index map
+	void clear();
   private:
 	map<String, intrusive_ptr<DelayedIndexMapsData<Key,Value> > > data;
 	friend class Reader;

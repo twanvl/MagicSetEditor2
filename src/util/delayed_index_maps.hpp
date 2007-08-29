@@ -32,6 +32,11 @@ IndexMap<Key,Value>& DelayedIndexMaps<Key,Value>::get(const String& name, const 
 	return item->read_data;
 }
 
+template <typename Key, typename Value>
+void DelayedIndexMaps<Key,Value>::clear() {
+	data.clear();
+}
+
 // ----------------------------------------------------------------------------- : Reflection
 
 // custom reflection : it's a template class
