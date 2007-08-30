@@ -10,9 +10,6 @@ card height: 523
 card dpi: 150
 
 #By: Pichoro
-#
-#Todo:
-#Colorless Frame
 ############################################################## Extra scripts
 
 init script:
@@ -201,7 +198,13 @@ card style:
 				script:
 					if styling.grey_hybrid_name and contains(card.card_color, match:"land") and not contains(card.card_color, match:"multicolor") then rgb(0,0,0)
 					else if styling.grey_hybrid_name and contains(card.card_color, match:"hybrid") then rgb(0,0,0)
-					else font_color(card.card_color)
+					else if contains(card.card_color, match:"artifact") then (
+						if contains(card.card_color, match:"blue") or
+						contains(card.card_color, match:"black") or
+						contains(card.card_color, match:"red") or
+						contains(card.card_color, match:"green") then rgb(255,255,255)
+						else rgb(0,0,0)
+					) else font_color(card.card_color)
 	casting cost:
 		left: 4
 		top: 39
@@ -253,7 +256,13 @@ card style:
 				script:
 					if styling.grey_hybrid_name and contains(card.card_color, match:"land") and not contains(card.card_color, match:"multicolor") then rgb(0,0,0)
 					else if styling.grey_hybrid_name and contains(card.card_color, match:"hybrid") then rgb(0,0,0)
-					else font_color(card.card_color)
+					else if contains(card.card_color, match:"artifact") then (
+						if contains(card.card_color, match:"blue") or
+						contains(card.card_color, match:"black") or
+						contains(card.card_color, match:"red") or
+						contains(card.card_color, match:"green") then rgb(255,255,255)
+						else rgb(0,0,0)
+					) else font_color(card.card_color)
 			separator color: rgb(128,128,128)
 	rarity:
 		right: 353
@@ -330,7 +339,17 @@ card style:
 			name: Mplantin
 			size: 17
 			weight: bold
-			color: { font_color(card.card_color) }
+			color:
+				script:
+					if styling.grey_hybrid_name and contains(card.card_color, match:"land") and not contains(card.card_color, match:"multicolor") then rgb(0,0,0)
+					else if styling.grey_hybrid_name and contains(card.card_color, match:"hybrid") then rgb(0,0,0)
+					else if contains(card.card_color, match:"artifact") then (
+						if contains(card.card_color, match:"blue") or
+						contains(card.card_color, match:"black") or
+						contains(card.card_color, match:"red") or
+						contains(card.card_color, match:"green") then rgb(255,255,255)
+						else rgb(0,0,0)
+					) else font_color(card.card_color)
 			separator color: rgb(200,0,0)
 	############################# Card sorting / numbering
 	############################# Copyright stuff
