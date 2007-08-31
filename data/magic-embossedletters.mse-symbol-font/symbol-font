@@ -3,13 +3,7 @@
 image font size: 46
 horizontal space: 1.2
 symbol:
-	code: AE
-	image: ae.png
-symbol:
-	code: aE
-	image: ae.png
-symbol:
-	code: Ae
+	code: Æ
 	image: ae.png
 symbol:
 	code: &
@@ -184,9 +178,9 @@ symbol:
 	image: space.png
 text font:
 	name: MPlantin
-	size: 19
+	size: 1
 	color: rgb(225,198,77)
-text margin top:    -1
-text margin bottom: 3
-text margin left:   -2
-text margin right:  -2
+text margin left:   .26
+text margin right:  .2
+text margin top:    -.12
+text margin bottom: -.12

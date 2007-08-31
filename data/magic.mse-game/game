@@ -973,7 +973,6 @@ card field:
 	type: text
 	name: rule text 2
 	script: text_filter(input: value, card_name: card.name_2)
-	editable: false
 	show statistics: false
 card field:
 	type: text

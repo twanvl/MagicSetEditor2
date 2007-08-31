@@ -269,7 +269,7 @@ card style:
 	illustrator:
 		right: { if card.pt != "" then 281 else 341 }
 		top : 478
-		width: { max(150, card_style.illustrator.content_width) + 5 }
+		left: 30
 		height: 16
 		z index: 2
 		alignment: middle right
@@ -285,9 +285,9 @@ card style:
 					else rgb(255,255,255)
 
 	copyright line:
-		left: 22
+		left: 30
 		top : 491
-		width: { if card.pt != "" then 260 else 320 }
+		right: { if card.pt != "" then 281 else 341 }
 		height: 12
 		z index: 2
 		alignment: bottom right

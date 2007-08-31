@@ -265,7 +265,7 @@ card style:
 					) else font_color(card.card_color)
 			separator color: rgb(128,128,128)
 	rarity:
-		right: 353
+		right: 351
 		top : 304
 		width: 19
 		height: 19
@@ -357,7 +357,7 @@ card style:
 	illustrator:
 		right: { if card.pt != "" then 275 else 338 }
 		top : 475
-		width: { max(150, card_style.illustrator.content_width) + 5 }
+		left: 30
 		height: 16
 		z index: 2
 		alignment: middle right
@@ -373,9 +373,9 @@ card style:
 					else rgb(255,255,255)
 
 	copyright line:
-		left: 20
+		left: 30
 		top : 488
-		width: { if card.pt != "" then 254 else 317 }
+		right: { if card.pt != "" then 275 else 338 }
 		height: 12
 		z index: 2
 		alignment: bottom right
