@@ -396,6 +396,10 @@ label:
 	game type:			&Game type:
 	style type:			&Card style:
 	
+	stylesheet not found:
+		The set you are trying to open uses the stylesheet "%s".
+		This stylesheet is not found on your system, please select an alternative.
+	
 	# Preferences
 	language:			Language
 	app language:		Language of the user interface:
@@ -510,11 +514,13 @@ title:
 	about:				About Magic Set Editor
 	symbol editor:		Symbol Editor
 	# dialogs
+	new set:			New Set
 	open set:			Open Set
 	save set:			Save Set As
 	save image:			Save Image
-	updates availible:	Updates Availible
+	updates available:	Updates Available
 	save changes:		Save Changes?
+	select stylesheet:	Select Stylesheet
 	#preferences
 	preferences:		Preferences
 	global:					Global

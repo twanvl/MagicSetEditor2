@@ -82,7 +82,7 @@ void Package::open(const String& n) {
 	} else if (wxFileExists(filename)) {
 		openZipfile();
 	} else {
-		throw PackageError(_("Package not found: '") + filename + _("'"));
+		throw PackageNotFoundError(_("Package not found: '") + filename + _("'"));
 	}
 }
 

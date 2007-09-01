@@ -10,6 +10,7 @@
 #include <data/game.hpp>
 #include <data/field.hpp>
 #include <util/io/package_manager.hpp>
+#include <gui/new_window.hpp> // for selecting stylesheets on load error
 
 DECLARE_TYPEOF_COLLECTION(StyleSheet*);
 DECLARE_TYPEOF_COLLECTION(FieldP);
@@ -25,7 +26,30 @@ StyleSheet::StyleSheet()
 {}
 
 StyleSheetP StyleSheet::byGameAndName(const Game& game, const String& name) {
-	return packages.open<StyleSheet>(game.name() + _("-") + name + _(".mse-style"));
+	/// Alternative stylesheets for game
+	static map<String, String> stylesheet_alternatives;
+	String full_name = game.name() + _("-") + name + _(".mse-style");
+	try {
+		map<String, String>::const_iterator it = stylesheet_alternatives.find(full_name);
+		if (it != stylesheet_alternatives.end()) {
+			return packages.open<StyleSheet>(it->second);
+		} else {
+			return packages.open<StyleSheet>(full_name);
+		}
+	} catch (PackageNotFoundError& e) {
+		if (stylesheet_for_reading()) {
+			// we already have a stylesheet higher up, so just return a null pointer
+			return StyleSheetP();
+		}
+		// load an alternative stylesheet
+		StyleSheetP ss = select_stylesheet(game, name);
+		if (ss) {
+			stylesheet_alternatives[full_name] = ss->relativeFilename();
+			return ss;
+		} else {
+			throw e;
+		}
+	}
 }
 String StyleSheet::stylesheetName() const {
 	String sn = name(), gn = game->name();
