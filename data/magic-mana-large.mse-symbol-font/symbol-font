@@ -188,7 +188,7 @@ symbol:
 symbol:
 	code: S
 	image: mana_s.png
-as text: .|[0-9]+(?!/)
+as text: [X-Z]|[0-9]+(?!/)
 text font:
 	name: MPlantin
 	size: 1
