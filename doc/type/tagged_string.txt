@@ -36,6 +36,8 @@ This is written as the character with code 1 in files.
 | @"<sep>"@		A separator between fields. This tag is automatically inserted by the [[fun:combined_editor]] function.<br/>
 			Inserting this tag manually will confuse that function!<br/>
 			This tag can never be selected, and its contents can not be edited.
+| @"<prefix>"@		At the beginning of a string, indicates a part that can not be selected. This tag is automatically inserted by the [[fun:combined_editor]] function.
+| @"<suffix>"@		At the end of a string, indicates a part that can not be selected. This tag is automatically inserted by the [[fun:combined_editor]] function.
 | @"<sep-soft>"@	Like @"<sep>"@, only hidden. This is inserted by [[fun:combined_editor]]
 | @"<soft>"@		Text who's width is ignored for alignment, similair to @"<sep-soft>"@, but not a separator.
 | @"<word-list-?>"@	Indicate that the text inside the tag should be selected from a [[type:word list]].

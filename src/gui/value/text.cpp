@@ -956,6 +956,7 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 void TextValueEditor::tryAutoReplace() {
 	size_t end = selection_start_i;
 	GameSettings& gs = settings.gameSettingsFor(*getSet().game);
+	if (!gs.use_auto_replace) return;
 	FOR_EACH(ar, gs.auto_replaces) {
 		if (ar->enabled && ar->match.size() <= end) {
 			size_t start = end - ar->match.size();

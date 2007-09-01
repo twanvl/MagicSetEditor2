@@ -47,9 +47,12 @@ class SymbolFont : public Packaged {
 		SymbolInFont* symbol;	///< Symbol to draw, if nullptr, use the default symbol and draw the text
 	};
 	typedef vector<DrawableSymbol> SplitSymbols;
-	
+		
 	/// Split a string into separate symbols for drawing and for determining their size
 	void split(const String& text, SplitSymbols& out) const;
+	
+	/// How many consecutive characters of the text, starting at start can be rendered with this symbol font?
+	size_t recognizePrefix(const String& text, size_t start) const;
 	
 	/// Draw a piece of text
 	void draw(RotatedDC& dc, Context& ctx, const RealRect& rect, double font_size, const Alignment& align, const String& text);

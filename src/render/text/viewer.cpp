@@ -328,12 +328,7 @@ void TextViewer::setExactScrollPosition(double pos) {
 // ----------------------------------------------------------------------------- : Elements
 
 void TextViewer::prepareElements(const String& text, const TextStyle& style, Context& ctx) {
-	if (style.always_symbol) {
-		elements.elements.clear();
-		elements.elements.push_back(new_intrusive5<SymbolTextElement>(text, 0, text.size(), style.symbol_font, &ctx));
-	} else {
-		elements.fromString(text, 0, text.size(), style, ctx);
-	}
+	elements.fromString(text, 0, text.size(), style, ctx);
 }
 
 

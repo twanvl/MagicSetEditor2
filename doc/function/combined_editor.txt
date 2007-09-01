@@ -13,16 +13,18 @@ When the field changes the underlying values are updated and vice versa.
 Note: @forward_editor@ and @combined_editor@ are the same function.
 
 --Parameters--
-! Parameter	Type			Description
-| @field@	[[type:value#text|text value]]		Text value to edit
-| @field1@	[[type:value#text|text value]]		Another text value to edit
-| @field2@	[[type:value#text|text value]]		''etc.''
-| @separator@	[[type:string]]				Separator between field 1 and 2
-| @separator1@	[[type:string]]				Multiple separators
-| @separator2@	[[type:string]]				Next separator, ''etc.''
-| @hide when empty@	[[type:boolean]]		Don't include separators if the entire value is empty.
-| @soft before empty@	[[type:boolean]]		Make separators 'soft' when the value folowing it is empty.
-			 				Soft separators are hidden by default and shown grayed when the field is selected.
+! Parameter	Type				Default	Description
+| @field@	[[type:value#text|text value]]	 	Text value to edit
+| @field1@	[[type:value#text|text value]]	 	Another text value to edit
+| @field2@	[[type:value#text|text value]]	 	''etc.''
+| @separator@	[[type:string]]			 	Separator between field 1 and 2
+| @separator1@	[[type:string]]			 	Multiple separators
+| @separator2@	[[type:string]]			 	Next separator, ''etc.''
+| @prefix@	[[type:string]]		''optional''	Prefix before the combined editor; like a separtor between the start and the first field.
+| @suffix@	[[type:string]]		''optional''	Suffix after the combined editor; like a separtor between the last field and the end.
+| @hide when empty@	[[type:boolean]]	@false@	Don't include separators if the entire value is empty.
+| @soft before empty@	[[type:boolean]]	@false@	Make separators 'soft' when the value folowing it is empty.
+			 			 	Soft separators are hidden by default and shown grayed when the field is selected.
 
 --Examples--
 >card field:

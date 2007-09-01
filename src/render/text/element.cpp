@@ -75,6 +75,7 @@ struct TextElementsFromString {
 	int soft, kwpph, param, line, soft_line;
 	int code, code_kw, code_string, param_ref, error;
 	int param_id;
+	/// put angle brackets around the text?
 	bool bracket;
 	
 	TextElementsFromString()
@@ -86,10 +87,15 @@ struct TextElementsFromString {
 	void fromString(TextElements& te, const String& text, size_t start, size_t end, const TextStyle& style, Context& ctx) {
 		te.elements.clear();
 		end = min(end, text.size());
+		size_t text_start = start;
 		// for each character...
 		for (size_t pos = start ; pos < end ; ) {
 			Char c = text.GetChar(pos);
 			if (c == _('<')) {
+				if (text_start < pos) {
+					// text element before this tag?
+					addText(te, text, text_start, pos, style, ctx);
+				}
 				size_t tag_start = pos;
 				pos = skip_tag(text, tag_start);
 				if      (is_substr(text, tag_start, _( "<b")))          bold        += 1;
@@ -132,69 +138,90 @@ struct TextElementsFromString {
 				else if (is_substr(text, tag_start, _("<atom"))) {
 					// 'atomic' indicator
 					size_t end_tag = min(end, match_close_tag(text, tag_start));
-					intrusive_ptr<AtomTextElement> e(new AtomTextElement(text, pos, end_tag));
+					intrusive_ptr<AtomTextElement> e(new AtomTextElement(pos, end_tag));
 					fromString(e->elements, text, pos, end_tag, style, ctx);
 					te.elements.push_back(e);
 					pos = skip_tag(text, end_tag);
 				} else if (is_substr(text, tag_start, _( "<error"))) {
 					// error indicator
 					size_t end_tag = min(end, match_close_tag(text, tag_start));
-					intrusive_ptr<ErrorTextElement> e(new ErrorTextElement(text, pos, end_tag));
+					intrusive_ptr<ErrorTextElement> e(new ErrorTextElement(pos, end_tag));
 					fromString(e->elements, text, pos, end_tag, style, ctx);
 					te.elements.push_back(e);
 					pos = skip_tag(text, end_tag);
 				} else {
 					// ignore other tags
 				}
+				text_start = pos;
 			} else {
-				c = untag_char(c); // unescape
-				// A character of normal text, add to the last text element (if possible)
-				SimpleTextElement* e = nullptr;
-				if (!te.elements.empty()) e = dynamic_cast<SimpleTextElement*>(te.elements.back().get());
-				if (e && e->end == (bracket ? pos + 1 : pos)) {
-					e->end = bracket ? pos + 2 : pos + 1; // just move the end, no need to make a new element
-					e->content += c;
-					if (bracket) {
-						// content is "<somethin>g" should be "<something>"
-						swap(e->content[e->content.size() - 2], e->content[e->content.size() - 1]);
-					}
-				} else {
-					// add a new element for this text
-					if (symbol > 0 && style.symbol_font.valid()) {
-						e = new SymbolTextElement(text, pos, pos + 1, style.symbol_font, &ctx);
-						bracket = false;
-					} else {
-						FontP font = style.font.make(
-							(bold        > 0 ? FONT_BOLD        : FONT_NORMAL) |
-							(italic      > 0 ? FONT_ITALIC      : FONT_NORMAL) |
-							(soft        > 0 ? FONT_SOFT        : FONT_NORMAL) |
-							(kwpph       > 0 ? FONT_SOFT        : FONT_NORMAL) |
-							(code        > 0 ? FONT_CODE        : FONT_NORMAL) |
-							(code_kw     > 0 ? FONT_CODE_KW     : FONT_NORMAL) |
-							(code_string > 0 ? FONT_CODE_STRING : FONT_NORMAL),
-							param > 0 || param_ref > 0
-								? &param_colors[(param_id++) % param_colors_count]
-								: nullptr);
-						bracket = kwpph > 0 || param > 0;
-						e = new FontTextElement(
-									text,
-									bracket ? pos - 1 : pos,
-									bracket ? pos + 2 : pos + 1,
-									font,
-									soft > 0 ? DRAW_ACTIVE : DRAW_NORMAL,
-									line > 0 ? BREAK_LINE :
-									soft_line > 0 ? BREAK_SOFT : BREAK_HARD);
-					}
-					if (bracket) {
-						e->content = String(LEFT_ANGLE_BRACKET) + c + RIGHT_ANGLE_BRACKET;
-					} else {
-						e->content = c;
-					}
-					te.elements.push_back(TextElementP(e));
-				}
 				pos += 1;
 			}
 		}
+		if (text_start < end) {
+			addText(te, text, text_start, end, style, ctx);
+		}
+	}
+	
+  private:
+	/// Create a text element for a piece of text
+	void addText(TextElements& te, const String& text, size_t start, size_t end, const TextStyle& style, Context& ctx) {
+		String content = untag(text.substr(start, end - start));
+		assert(content.size() == end-start);
+		// use symbol font?
+		if (symbol > 0 && style.symbol_font.valid()) {
+			te.elements.push_back(new_intrusive5<SymbolTextElement>(content, start, end, style.symbol_font, &ctx));
+		} else {
+			// text, possibly mixed with symbols
+			DrawWhat what = soft > 0 ? DRAW_ACTIVE : DRAW_NORMAL;
+			LineBreak line_break = line > 0 ? BREAK_LINE :
+			                       soft_line > 0 ? BREAK_SOFT : BREAK_HARD;
+			if (kwpph > 0 || param > 0) {
+				// bracket the text
+				content = String(LEFT_ANGLE_BRACKET) + content + RIGHT_ANGLE_BRACKET;
+				start -= 1;
+				end   += 1;
+			}
+			if (style.always_symbol && style.symbol_font.valid()) {
+				// mixed symbols/text, autodetected by symbol font
+				size_t text_pos = 0;
+				size_t pos = 0;
+				FontP font;
+				while (pos < end-start) {
+					if (size_t n = style.symbol_font.font->recognizePrefix(content,pos)) {
+						// at 'pos' there are n symbol font characters
+						if (text_pos < pos) {
+							// text before it?
+							if (!font) font = makeFont(style);
+							te.elements.push_back(new_intrusive6<FontTextElement>(content.substr(text_pos, pos-text_pos), start+text_pos, start+pos, font, what, line_break));
+						}
+						te.elements.push_back(new_intrusive5<SymbolTextElement>(content.substr(pos,n), start+pos, start+pos+n, style.symbol_font, &ctx));
+						text_pos = pos += n;
+					} else {
+						++pos;
+					}
+				}
+				if (text_pos < pos) {
+					if (!font) font = makeFont(style);
+					te.elements.push_back(new_intrusive6<FontTextElement>(content.substr(text_pos), start+text_pos, end, font, what, line_break));
+				}
+			} else {
+				te.elements.push_back(new_intrusive6<FontTextElement>(content, start, end, makeFont(style), what, line_break));
+			}
+		}
+	}
+	
+	FontP makeFont(const TextStyle& style) {
+		return style.font.make(
+			(bold        > 0 ? FONT_BOLD        : FONT_NORMAL) |
+			(italic      > 0 ? FONT_ITALIC      : FONT_NORMAL) |
+			(soft        > 0 ? FONT_SOFT        : FONT_NORMAL) |
+			(kwpph       > 0 ? FONT_SOFT        : FONT_NORMAL) |
+			(code        > 0 ? FONT_CODE        : FONT_NORMAL) |
+			(code_kw     > 0 ? FONT_CODE_KW     : FONT_NORMAL) |
+			(code_string > 0 ? FONT_CODE_STRING : FONT_NORMAL),
+			param > 0 || param_ref > 0
+				? &param_colors[(param_id++) % param_colors_count]
+				: nullptr);
 	}
 };
 

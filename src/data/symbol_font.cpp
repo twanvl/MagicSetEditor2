@@ -215,6 +215,46 @@ next_symbol:;
 	}
 }
 
+size_t SymbolFont::recognizePrefix(const String& text, size_t start) const {
+	size_t pos;
+	for (pos = start ; pos < text.size() ; ) {
+		// 1. check merged numbers
+		if (merge_numbers && pos + 1 < text.size()) {
+			size_t num_count = text.find_first_not_of(_("0123456789"), pos) - pos;
+			if (num_count >= 2) {
+				pos += num_count;
+				goto next_symbol;
+			}
+		}
+		// 2. check symbol list
+		FOR_EACH_CONST(sym, symbols) {
+			if (!sym->code.empty() && sym->enabled && is_substr(text, pos, sym->code)) { // symbol matches
+				pos += sym->code.size();
+				goto next_symbol; // continue two levels
+			}
+		}
+		// 3. draw multiple together as text?
+		if (!as_text.empty()) {
+			if (!as_text_r.IsValid()) {
+				as_text_r.Compile(_("^") + as_text, wxRE_ADVANCED);
+			}
+			if (as_text_r.IsValid()) {
+				if (as_text_r.Matches(text.substr(pos))) {
+					size_t start, len;
+					if (as_text_r.GetMatch(&start,&len) && start == 0) {
+						pos += len;
+						goto next_symbol;
+					}
+				}
+			}
+		}
+		// 4. failed
+		break;
+next_symbol:;
+	}
+	return pos - start;
+}
+
 SymbolInFont* SymbolFont::defaultSymbol() const {
 	FOR_EACH_CONST(sym, symbols) {
 		if (sym->code.empty() && sym->enabled) return sym.get();

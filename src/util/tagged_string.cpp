@@ -249,6 +249,13 @@ size_t index_to_cursor(const String& str, size_t index, Movement dir) {
 					}
 				}
 				i = after;
+			} else if (i == 0 && is_substr(str, i, _("<prefix"))) {
+				// prefix at start of string, skip contents
+				i = match_close_tag_end(str, i);
+				has_width = false;
+			} else if (is_substr(str, i, _("<suffix")) && match_close_tag_end(str,i) >= str.size()) {
+				// suffix at end of string
+				break;
 			} else {
 				i = skip_tag(str, i);
 				has_width = false;
@@ -268,7 +275,8 @@ void cursor_to_index_range(const String& str, size_t cursor, size_t& start, size
 	start = end = 0;
 	size_t cur = 0;
 	size_t i = 0;
-	while (cur <= cursor && i < str.size()) {
+	size_t size = str.size(); // can be changed by <suffix> tags
+	while (cur <= cursor && i < size) {
 		Char c = str.GetChar(i);
 		bool has_width = true;
 		if (c == _('<')) {
@@ -278,6 +286,14 @@ void cursor_to_index_range(const String& str, size_t cursor, size_t& start, size
 				if (cur >= cursor) { ++i; break; }
 				// skip tag contents, tag counts as a single 'character'
 				i = match_close_tag_end(str, i);
+			} else if (i == 0 && is_substr(str, i, _("<prefix"))) {
+				// prefix at start of string, skip contents, index never before
+				start = i = match_close_tag_end(str,i);
+				has_width = false;
+			} else if (is_substr(str, i, _("<suffix")) && match_close_tag_end(str,i) >= str.size()) {
+				// suffix at start of string, skip contents
+				size = i;
+				has_width = false;
 			} else {
 				i = skip_tag(str, i);
 				has_width = false;
@@ -290,8 +306,8 @@ void cursor_to_index_range(const String& str, size_t cursor, size_t& start, size
 			if (cur == cursor) start = i;
 		}
 	}
-	end = min(i, str.size());
-	if (cur < cursor) start = end = str.size();
+	end = min(i, size);
+	if (cur < cursor) start = end = size;
 	if (end <= start) end = start + 1;
 }
 
@@ -336,6 +352,12 @@ String untag_for_cursor(const String& str) {
 			} else if (is_substr(str, i, _("<sep"))) {
 				i = match_close_tag_end(str, i);
 				ret += _('\3'); // use a random character here
+			} else if (i == 0 && is_substr(str, i, _("<prefix"))) {
+				// prefix at start of string, skip contents, index never before
+				i = match_close_tag_end(str,i);
+			} else if (is_substr(str, i, _("<suffix")) && match_close_tag_end(str,i) >= str.size()) {
+				// suffix at start of string, skip contents
+				i = str.size();
 			} else {
 				i = skip_tag(str, i);
 			}

@@ -52,10 +52,21 @@ SCRIPT_FUNCTION_WITH_DEP(combined_editor) {
 	if (separators.size() < values.size() - 1) {
 		throw ScriptError(String::Format(_("Not enough separators for combine_editor, expected %d"), values.size()-1));
 	}
-	// split the value
+	// the value
 	SCRIPT_PARAM(String, value);
+	// remove suffix/prefix
+	SCRIPT_OPTIONAL_PARAM_(String, prefix);
+	SCRIPT_OPTIONAL_PARAM_(String, suffix);
+	if (is_substr(value,0,_("<prefix"))) {
+		value = value.substr(min(value.size(), match_close_tag_end(value, 0)));
+	}
+	size_t pos = value.rfind(_("<suffix"));
+	if (pos != String::npos && match_close_tag_end(value,pos) >= value.size()) {
+		value = value.substr(0, pos);
+	}
+	// split the value
 	vector<pair<String,bool> > value_parts; // (value part, is empty)
-	size_t pos = value.find(_("<sep"));
+	pos = value.find(_("<sep"));
 	while (pos != String::npos) {
 		String part = value.substr(0, pos);
 		value_parts.push_back(make_pair(part, false));
@@ -81,17 +92,47 @@ SCRIPT_FUNCTION_WITH_DEP(combined_editor) {
 	// recombine the parts
 	String new_value = value_parts.front().first;
 	bool   new_value_empty = value_parts.front().second;
+	size_t size_before_last = 0;
 	for (size_t i = 1 ; i < value_parts.size() ; ++i) {
+		size_before_last = new_value.size();
 		if (value_parts[i].second && new_value_empty && hide_when_empty) {
 			// no separator
 		} else if (value_parts[i].second && soft_before_empty) {
 			// soft separator
 			new_value += _("<sep-soft>") + separators[i - 1] + _("</sep-soft>");
+			new_value_empty = false;
 		} else {
 			// normal separator
 			new_value += _("<sep>")      + separators[i - 1] + _("</sep>");
+			new_value_empty = false;
 		}
 		new_value += value_parts[i].first;
+	}
+	if (!new_value_empty || !hide_when_empty) {
+		if (!suffix.empty()) {
+			if (is_substr(new_value, size_before_last, _("<sep-soft>")) && value_parts.size() >= 2) {
+				// If the value ends in a soft separator, we have this situation:
+				//   [blah]<sep-soft>ABC</sep-soft><suffix>XYZ</suffix>
+				// This renderes as:
+				//   [blah]   XYZ
+				// Which looks bad, so instead change the text to
+				//   [blah]<sep>XYZ<soft>ABC</soft></sep>
+				// Which might be slightly incorrect, but soft text doesn't matter anyway.
+				size_t after = min(new_value.size(), match_close_tag_end(new_value, size_before_last));
+				new_value = new_value.substr(0, size_before_last)
+				          + _("<sep>")
+				          + suffix
+				          + _("<soft>")
+				          + separators[value_parts.size() - 2]
+				          + _("</soft></sep>")
+				          + new_value.substr(after);
+			} else {
+				new_value += _("<suffix>") + suffix + _("</suffix>");
+			}
+		}
+		if (!prefix.empty()) {
+			new_value = _("<prefix>") + prefix + _("</prefix>") + new_value;
+		}
 	}
 	SCRIPT_RETURN(new_value);
 }

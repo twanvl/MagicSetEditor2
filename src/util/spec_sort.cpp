@@ -239,7 +239,14 @@ void in_place_sort(const String& spec, String& input, String& ret) {
 String spec_sort(const String& spec, String& input, String& ret) {
 	SpecIterator it(spec);
 	while(it.nextUntil(0)) {
-		if (it.value == _('<')) {		// keep only a single copy
+		if (it.escaped) {					// single character, escaped
+			FOR_EACH(d, input) {
+				if (d == it.value) {
+					ret += d;
+					d = REMOVED;
+				}
+			}
+		} else if (it.value == _('<')) {		// keep only a single copy
 			while (it.nextUntil(_('>'))) {
 				size_t pos = input.find_first_of(it.value);
 				if (pos != String::npos) {

@@ -57,12 +57,10 @@ struct CharInfo {
 /// A section of text that can be rendered using a TextViewer
 class TextElement : public IntrusivePtrBase<TextElement> {
   public:
-	/// The text of which a subsection is drawn
-	String text;
 	/// What section of the input string is this element?
 	size_t start, end;
 	
-	inline TextElement(const String& text, size_t start ,size_t end) : text(text), start(start), end(end) {}
+	inline TextElement(size_t start ,size_t end) : start(start), end(end) {}
 	virtual ~TextElement() {}
 	
 	/// Draw a subsection section of the text in the given rectangle
@@ -109,8 +107,8 @@ class TextElements {
 /// A text element that just shows text
 class SimpleTextElement : public TextElement {
   public:
-	SimpleTextElement(const String& text, size_t start, size_t end)
-		: TextElement(text, start, end), content(text.substr(start,end-start))
+	SimpleTextElement(const String& content, size_t start, size_t end)
+		: TextElement(start, end), content(content)
 	{}
 	String content;	///< Text to show
 };
@@ -118,8 +116,8 @@ class SimpleTextElement : public TextElement {
 /// A text element that uses a normal font
 class FontTextElement : public SimpleTextElement {
   public:
-	FontTextElement(const String& text, size_t start, size_t end, const FontP& font, DrawWhat draw_as, LineBreak break_style)
-		: SimpleTextElement(text, start, end)
+	FontTextElement(const String& content, size_t start, size_t end, const FontP& font, DrawWhat draw_as, LineBreak break_style)
+		: SimpleTextElement(content, start, end)
 		, font(font), draw_as(draw_as), break_style(break_style)
 	{}
 	
@@ -136,8 +134,8 @@ class FontTextElement : public SimpleTextElement {
 /// A text element that uses a symbol font
 class SymbolTextElement : public SimpleTextElement {
   public:
-	SymbolTextElement(const String& text, size_t start, size_t end, const SymbolFontRef& font, Context* ctx)
-		: SimpleTextElement(text, start, end)
+	SymbolTextElement(const String& content, size_t start, size_t end, const SymbolFontRef& font, Context* ctx)
+		: SimpleTextElement(content, start, end)
 		, font(font), ctx(*ctx)
 	{}
 	
@@ -155,7 +153,7 @@ class SymbolTextElement : public SimpleTextElement {
 /// A TextElement consisting of sub elements
 class CompoundTextElement : public TextElement {
   public:
-	CompoundTextElement(const String& text, size_t start, size_t end) : TextElement(text, start, end) {}
+	CompoundTextElement(size_t start, size_t end) : TextElement(start, end) {}
 	
 	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
@@ -168,7 +166,7 @@ class CompoundTextElement : public TextElement {
 /// A TextElement drawn using a grey background
 class AtomTextElement : public CompoundTextElement {
   public:
-	AtomTextElement(const String& text, size_t start, size_t end) : CompoundTextElement(text, start, end) {}
+	AtomTextElement(size_t start, size_t end) : CompoundTextElement(start, end) {}
 	
 	virtual void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 };
@@ -176,23 +174,10 @@ class AtomTextElement : public CompoundTextElement {
 /// A TextElement drawn using a red wavy underline
 class ErrorTextElement : public CompoundTextElement {
   public:
-	ErrorTextElement(const String& text, size_t start, size_t end) : CompoundTextElement(text, start, end) {}
+	ErrorTextElement(size_t start, size_t end) : CompoundTextElement(start, end) {}
 	
 	virtual void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 };
-
-// ----------------------------------------------------------------------------- : Other text elements
-/*
-/// A text element that displays a horizontal separator line
-class HorizontalLineTextElement : public TextElement {
-  public:
-	HorizontalLineTextElement(const String& text, size_t start ,size_t end) : TextElement(text, start, end) {}
-
-	virtual void draw       (RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
-	virtual void getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const;
-	virtual double minScale() const;
-};
-*/
 
 // ----------------------------------------------------------------------------- : EOF
 #endif
