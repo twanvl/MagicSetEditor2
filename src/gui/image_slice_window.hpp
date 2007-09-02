@@ -19,6 +19,13 @@ DECLARE_POINTER_TYPE(AlphaMask);
 
 // ----------------------------------------------------------------------------- : ImageSlice
 
+/// Which option is just changed, and therefore more important?
+enum PreferedProperty
+{	PREFER_NONE
+,	PREFER_WIDTH
+,	PREFER_HEIGHT
+};
+
 /// A slice of an image, i.e. a selected rectangle
 class ImageSlice {
   public:
@@ -35,7 +42,7 @@ class ImageSlice {
 	int sharpen_amount;
 	
 	/// Enforce relations between values
-	void constrain();
+	void constrain(PreferedProperty prefer = PREFER_NONE);
 	/// Get the sliced image
 	Image getSlice() const;
 	
@@ -97,7 +104,7 @@ class ImageSliceWindow : public wxDialog {
 	// --------------------------------------------------- : Updating
 	
 	// The manual controls were changed
-	void onUpdateFromControl();
+	void onUpdateFromControl(PreferedProperty prefer = PREFER_NONE);
 	// Update the values in the controls
 	void updateControls();
 };

@@ -23,7 +23,7 @@ ImageSlice::ImageSlice(const Image& source, const wxSize& target_size)
 	, sharpen(true), sharpen_amount(25)
 {}
 
-void ImageSlice::constrain() {
+void ImageSlice::constrain(PreferedProperty prefer) {
 	sharpen_amount = min(100, max(0, sharpen_amount));
 	// minimum size
 	selection.width  = max(1, selection.width);
@@ -40,7 +40,7 @@ void ImageSlice::constrain() {
 	// fix aspect ratio
 	if (aspect_fixed) {
 		int diff = selection.width * target_size.GetHeight() - selection.height * target_size.GetWidth();
-		if (diff > 0) {
+		if ((diff > 0 && prefer != PREFER_WIDTH) || prefer == PREFER_HEIGHT) {
 			// too wide
 			selection.width  -= int(diff / target_size.GetHeight());
 		} else {
@@ -217,11 +217,11 @@ void ImageSliceWindow::onChangeTop(wxCommandEvent&) {
 }
 void ImageSliceWindow::onChangeWidth(wxCommandEvent&) {
 	slice.selection.width = width->GetValue();
-	onUpdateFromControl();
+	onUpdateFromControl(PREFER_WIDTH);
 }
 void ImageSliceWindow::onChangeHeight(wxCommandEvent&) {
 	slice.selection.height = height->GetValue();
-	onUpdateFromControl();
+	onUpdateFromControl(PREFER_HEIGHT);
 }
 
 void ImageSliceWindow::onChangeFixAspect(wxCommandEvent&) {
@@ -239,7 +239,7 @@ void ImageSliceWindow::onChangeZoomX(wxSpinEvent&) {
 	onUpdateFromControl();
 }
 void ImageSliceWindow::onChangeZoomY(wxSpinEvent&) {
-	slice.zoomY(zoom_x->GetValue() / 100.0);
+	slice.zoomY(zoom_y->GetValue() / 100.0);
 	onUpdateFromControl();
 }
 
@@ -261,8 +261,8 @@ void ImageSliceWindow::onSliceChange(wxCommandEvent&) {
 	updateControls();
 }
 
-void ImageSliceWindow::onUpdateFromControl() {
-	slice.constrain();
+void ImageSliceWindow::onUpdateFromControl(PreferedProperty prefer) {
+	slice.constrain(prefer);
 	preview->update();
 	selector->update();
 	updateControls();
