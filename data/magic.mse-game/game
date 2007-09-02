@@ -1961,3 +1961,8 @@ keyword:
 	match: Champion <atom-param>a</atom-param> <atom-param>name</atom-param>
 	mode: expert
 	reminder: When this comes into play, sacrifice it unless you remove another {param2} you control from the game. When this leaves play, that card returns to play.
+keyword:
+	keyword: Clash
+	match: Clash
+	mode: action
+	reminder: Each clashing player reveals the top card of his or her library then puts that card on the top or bottom. A player wins if his or her card had a higher converted mana cost.

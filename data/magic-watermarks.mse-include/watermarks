@@ -40,7 +40,15 @@ choice images:
 	colored xander hybrid mana G/W:			/magic-watermarks.mse-include/watermark_gwmana_colored.png
 	colored xander hybrid mana R/W:			/magic-watermarks.mse-include/watermark_rwmana_colored.png
 	colored xander hybrid mana W/U:			/magic-watermarks.mse-include/watermark_wumana_colored.png
-	
+
+	future sight type symbols artifact:			script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/FUTsymbol_artifact.png")
+	future sight type symbols creature:			script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/FUTsymbol_creature.png")
+	future sight type symbols enchantment:			script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/FUTsymbol_enchantment.png")
+	future sight type symbols instant:			script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/FUTsymbol_instant.png")
+	future sight type symbols land:				script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/FUTsymbol_land.png")
+	future sight type symbols multiple:			script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/FUTsymbol_multiple.png")
+	future sight type symbols sorcery:			script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/FUTsymbol_sorcery.png")
+
 	set symbol:
 		{ set_combine(combine:"shadow",
 		   set_alpha(

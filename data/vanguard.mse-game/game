@@ -932,11 +932,16 @@ keyword:
 	mode: pseudo
 keyword:
 	keyword: Evoke
-	match: Evoke <atom-param>cost</atom-param>
+	match: evoke <atom-param>cost</atom-param>
 	mode: expert
 	reminder: You may play this spell for its evoke cost. If you do, it's sacrificed when it comes into play.
 keyword:
 	keyword: Champion
-	match: Champion <atom-param>a</atom-param> <atom-param>name</atom-param>
+	match: champion <atom-param>a</atom-param> <atom-param>name</atom-param>
 	mode: expert
 	reminder: When this comes into play, sacrifice it unless you remove another {param2} you control from the game. When this leaves play, that card returns to play.
+keyword:
+	keyword: Clash
+	match: clash
+	mode: expert
+	reminder: Each clashing player reveals the top card of his or her library then puts that card on the top or bottom. A player wins if his or her card had a higher converted mana cost.

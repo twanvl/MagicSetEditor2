@@ -116,6 +116,13 @@ styling field:
 	name: inverted common symbol
 	description: Should the common rarity symbol be inverted, like in Coldsnap?
 	initial: no
+styling field:
+	type: choice
+	name: image size
+	description: Should the art extend into a transparent textbox?
+	initial: standard
+	choice: standard
+	choice: extended
 styling style:
 	artifact style:
 		render style: both
@@ -204,11 +211,13 @@ card style:
 
 	############################# Image
 	image:
-		left:	32
+		left:	31
 		top:	62
-		width:	311
-		height:	228
+		width:	312
+		height:	{ if styling.image_size == "extended" then 407 else 228 }
 		z index: 1
+		mask:
+			script: if styling.image_size == "extended" then "imagemask_extended.png" else "imagemask_standard.png"
 		default: {default_image(card.card_color)}
 
 	############################# Card type

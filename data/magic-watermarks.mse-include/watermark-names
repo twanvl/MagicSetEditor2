@@ -49,4 +49,13 @@ choice:
 	choice: R/W
 	choice: W/U
 choice:
+	name: future sight type symbols
+	choice: artifact
+	choice: creature
+	choice: enchantment
+	choice: instant
+	choice: land
+	choice: multiple
+	choice: sorcery
+choice:
 	name: set symbol

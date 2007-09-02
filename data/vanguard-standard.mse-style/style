@@ -1,4 +1,4 @@
-﻿mse version: 0.3.2
+mse version: 0.3.2
 game: vanguard
 short name: Standard
 icon: card-sample.png
@@ -233,3 +233,34 @@ card style:
 			name: MPlantin
 			size: 6
 			color: rgb(0,0,0)
+
+############################################################## Extra card fields
+
+extra card field:
+	type: choice
+	name: orb
+	choice: none
+	choice: white
+	choice: blue
+	choice: black
+	choice: red
+	choice: green
+	choice: artifact
+	choice: multicolor
+
+extra card style:
+	orb:
+		left:	179
+		top:	483
+		width:	17
+		height:	17
+		z index: 2
+		render style: image
+		choice images:
+			white:		cost_w.png
+			blue:		cost_u.png
+			black:		cost_b.png
+			red:		cost_r.png
+			green:		cost_g.png
+			artifact:		cost_a.png
+			multicolor:	cost_m.png
