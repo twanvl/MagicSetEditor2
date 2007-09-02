@@ -39,8 +39,8 @@ KeywordsPanel::KeywordsPanel(Window* parent, int id)
 	mode      = new wxChoice(panel, ID_KEYWORD_MODE, wxDefaultPosition, wxDefaultSize, 0, nullptr);
 	match     = new TextCtrl(panel, ID_MATCH,    false);
 	add_param = new wxButton(panel, ID_KEYWORD_ADD_PARAM, _BUTTON_("insert parameter"));
-	ref_param = new wxButton(panel, ID_KEYWORD_REF_PARAM, _BUTTON_("refer parameter"));
 	reminder  = new TextCtrl(panel, ID_REMINDER, true); // allow multiline for wordwrap
+	ref_param = new wxButton(panel, ID_KEYWORD_REF_PARAM, _BUTTON_("refer parameter"));
 	rules     = new TextCtrl(panel, ID_RULES,    true);
 	errors    = new wxStaticText(panel, wxID_ANY, _(""));
 	errors->SetForegroundColour(*wxRED);

@@ -18,7 +18,6 @@ DECLARE_TYPEOF_COLLECTION(ValueViewerP);
 
 TextCtrl::TextCtrl(Window* parent, int id, bool multi_line, long style)
 	: DataEditor(parent, id, style)
-	, value(nullptr)
 	, multi_line(multi_line)
 {}
 TextCtrl::~TextCtrl() {}
@@ -34,6 +33,12 @@ void TextCtrl::draw(DC& dc) {
 	} else {
 		DataViewer::draw(rdc, wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 	}
+}
+
+bool TextCtrl::AcceptsFocus() const {
+	return wxControl::AcceptsFocus() && 
+	       !viewers.empty() &&
+	       static_cast<FakeTextValue&>(*viewers.front()->getValue()).editable;
 }
 
 

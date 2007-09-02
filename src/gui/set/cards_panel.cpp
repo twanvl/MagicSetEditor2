@@ -37,6 +37,7 @@ CardsPanel::CardsPanel(Window* parent, int id)
 	notes     = new TextCtrl(notesP, ID_NOTES, true);
 	collapse_notes = new HoverButton(notesP, ID_COLLAPSE_NOTES, _("btn_collapse"), wxNullColour, false);
 	collapse_notes->SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
+	filter    = nullptr;
 	// init sizer for notes panel
 	wxSizer* sn = new wxBoxSizer(wxVERTICAL);
 		wxSizer* sc = new wxBoxSizer(wxHORIZONTAL);
@@ -124,6 +125,9 @@ void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->AddTool(ID_CARD_REMOVE,		_(""), load_resource_tool_image(_("card_del")),		wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("remove card"),	_HELP_("remove card"));
 	tb->AddSeparator();
 	tb->AddTool(ID_CARD_ROTATE,		_(""), load_resource_tool_image(_("card_rotate")),	wxNullBitmap,wxITEM_NORMAL, _TOOLTIP_("rotate card"),	_HELP_("rotate card"));
+//%	tb->AddSeparator();
+//%	if (!filter) filter = new wxTextCtrl(tb, wxID_ANY, _(""), wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
+//%	tb->AddControl(filter);
 	tb->Realize();
 	// Menus
 	mb->Insert(2, menuCard,   _MENU_("cards"));
@@ -139,9 +143,11 @@ void CardsPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->DeleteTool(ID_CARD_ADD);
 	tb->DeleteTool(ID_CARD_REMOVE);
 	tb->DeleteTool(ID_CARD_ROTATE);
+//%	tb->DeleteTool(filter->GetId()); filter = nullptr;
 	// HACK: hardcoded size of rest of toolbar
 	tb->DeleteToolByPos(12); // delete separator
 	tb->DeleteToolByPos(12); // delete separator
+//%	tb->DeleteToolByPos(12); // delete separator
 	// Menus
 	mb->Remove(3);
 	mb->Remove(2);

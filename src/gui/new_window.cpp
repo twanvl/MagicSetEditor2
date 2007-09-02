@@ -53,6 +53,7 @@ NewSetWindow::NewSetWindow(Window* parent)
 	} catch (FileNotFoundError e) {
 		handle_error(e);
 	}
+	game_list->SetFocus();
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }
 

@@ -55,6 +55,8 @@ class TextCtrl : public DataEditor {
 	
 	virtual void draw(DC& dc);
 	
+	virtual bool AcceptsFocus() const;
+	
 	virtual void onChangeSet();
 	
   protected:
@@ -62,7 +64,6 @@ class TextCtrl : public DataEditor {
 	virtual wxSize DoGetBestSize() const;
 	
   private:
-	String* value;   ///< Value to edit
 	bool multi_line; ///< Multi line text control?
 	
 	DECLARE_EVENT_TABLE();

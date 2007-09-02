@@ -79,17 +79,23 @@ void DataEditor::selectFirst() {
 	selectByTabPos(0);
 }
 bool DataEditor::selectNext() {
-	return selectByTabPos(currentTabPos() + 1);
+	return selectByTabPos(currentTabPos() + 1, true);
 }
 bool DataEditor::selectPrevious() {
-	return selectByTabPos(currentTabPos() - 1);
+	return selectByTabPos(currentTabPos() - 1, false);
 }
 
-bool DataEditor::selectByTabPos(int tab_pos) {
-	if (tab_pos >= 0 && (size_t)tab_pos < by_tab_index.size()) {
-		select(by_tab_index[tab_pos]);
-		return true;
-	} else if (!by_tab_index.empty()) {
+bool DataEditor::selectByTabPos(int tab_pos, bool forward) {
+	while (tab_pos >= 0 && (size_t)tab_pos < by_tab_index.size()) {
+		ValueViewer* v = by_tab_index[tab_pos];
+		if (v->getField()->editable) {
+			select(v);
+			return true;
+		}
+		// not enabled, maybe the next one?
+		tab_pos += forward ? 1 : -1;
+	}
+	if (!by_tab_index.empty()) {
 		// also select something! so when we regain focus the selected editor makes sense
 		if (tab_pos < 0) select(by_tab_index.back());
 		else             select(by_tab_index.front());
@@ -235,7 +241,7 @@ void DataEditor::onMotion(wxMouseEvent& ev) {
 	if (!HasCapture()) {
 		// find editor under mouse
 		ValueViewer* new_hovered_viewer = nullptr;
-		FOR_EACH_EDITOR_REVERSE { // find high z index fields first
+		FOR_EACH_REVERSE(v,viewers) { // find high z index fields first
 			if (v->containsPoint(pos) && v->getField()->editable) {
 				new_hovered_viewer = v.get();
 				break;
@@ -305,8 +311,6 @@ void DataEditor::selectFieldNoEvents(const RealPoint& p) {
 			return;
 		}
 	}
-//%	current_viewer = nullptr;
-//%	current_editor = nullptr;
 }
 
 RealPoint DataEditor::mousePoint(const wxMouseEvent& ev) {

@@ -77,6 +77,7 @@ class CardsPanel : public SetWindowPanel {
 	ImageCardList*    card_list;
 	TextCtrl*         notes;
 	HoverButton*      collapse_notes;
+	wxTextCtrl*       filter;
 	
 	// --------------------------------------------------- : Menus & tools
 	IconMenu* menuCard, *menuFormat;

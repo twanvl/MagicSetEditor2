@@ -126,7 +126,7 @@ class DataEditor : public CardViewer {
 	void createTabIndex();
 	/// Select the field with the given position in the by_tab_index list
 	/** Returns success */
-	bool selectByTabPos(int tab_pos);
+	bool selectByTabPos(int tab_pos, bool forward = true);
 	/// Find the tab pos of the current viewer, returns -1 if not found
 	int currentTabPos() const;
 };
