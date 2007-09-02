@@ -202,9 +202,6 @@ void sharp_downsample(const Image& img_in, Image& img_out, int amount) {
 	
 	for (int y = 0 ; y < height ; ++y) {
 		for (int x = 0 ; x < width ; ++x) {
-			if (x==150&&y==150) {
-			x=x;//break
-			}
 			// Filter using a kernel of the form
 			/*     -1 -1
 			 *  -1  c  c -1

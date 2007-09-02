@@ -22,20 +22,14 @@ class DropDownMultipleChoiceList : public DropDownChoiceListBase {
 	virtual void   onShow();
 	virtual void   select(size_t item);
 	virtual size_t selection() const;
-	virtual bool stayOpen() const { return true; }
+	virtual bool stayOpen(size_t selection) const { return true; }
 	virtual DropDownList* createSubMenu(ChoiceField::ChoiceP group) const;
 	virtual void drawIcon(DC& dc, int x, int y, size_t item, bool selected) const;
-	
-	virtual void onMouseLeave(wxMouseEvent&);
-  private:
-	DECLARE_EVENT_TABLE();
-	bool kept_open; ///< Was the list kept open after selecting a choice, if so, be eager to close it
 };
 
 DropDownMultipleChoiceList::DropDownMultipleChoiceList
 		(Window* parent, bool is_submenu, ValueViewer& cve, ChoiceField::ChoiceP group)
 	: DropDownChoiceListBase(parent, is_submenu, cve, group)
-	, kept_open(false)
 {
 	icon_size.width += 16;
 }
@@ -50,7 +44,6 @@ void DropDownMultipleChoiceList::select(size_t item) {
 	}
 	// keep the box open
 	DropDownChoiceListBase::onShow(); // update 'enabled'
-	kept_open = true;
 }
 
 void DropDownMultipleChoiceList::drawIcon(DC& dc, int x, int y, size_t item, bool selected) const {
@@ -82,7 +75,6 @@ void DropDownMultipleChoiceList::onShow() {
 	DropDownChoiceListBase::onShow();
 	// we need thumbnail images soon
 	const_cast<DropDownMultipleChoiceList*>(this)->generateThumbnailImages();
-	kept_open = false;
 }
 
 size_t DropDownMultipleChoiceList::selection() const {
@@ -92,21 +84,6 @@ size_t DropDownMultipleChoiceList::selection() const {
 DropDownList* DropDownMultipleChoiceList::createSubMenu(ChoiceField::ChoiceP group) const {
 	return new DropDownMultipleChoiceList(const_cast<DropDownMultipleChoiceList*>(this), true, cve, group);
 }
-
-void DropDownMultipleChoiceList::onMouseLeave(wxMouseEvent& ev) {
-	if (kept_open) {
-		wxSize cs = GetClientSize();
-		if (ev.GetX() < 0 || ev.GetY() < 0 || ev.GetX() >= cs.x || ev.GetY() >= cs.y) {
-			hide(false); // outside box; hide it
-			ev.Skip();
-			return;
-		}
-	}
-}
-
-BEGIN_EVENT_TABLE(DropDownMultipleChoiceList, DropDownChoiceListBase)
-	EVT_LEAVE_WINDOW(DropDownMultipleChoiceList::onMouseLeave)
-END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------- : MultipleChoiceValueEditor
 

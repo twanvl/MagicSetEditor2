@@ -66,6 +66,7 @@ DropDownList::DropDownList(Window* parent, bool is_submenu, ValueViewer* viewer)
 	, viewer(viewer)
 	, hider (is_submenu ? nullptr : new DropDownHider(*this))
 	, hider2(is_submenu ? nullptr : new DropDownHider(*this))
+	, close_on_mouse_out(false)
 {
 	if (is_submenu) {
 		parent_menu = &dynamic_cast<DropDownList&>(*GetParent());
@@ -148,9 +149,9 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
 
 void DropDownList::hide(bool event, bool allow_veto) {
 	// hide?
-	bool keep_open = event && allow_veto && stayOpen();
+	bool keep_open = event && allow_veto && stayOpen(selected_item);
 	if (keep_open) {
-		Refresh(false);
+		close_on_mouse_out = true;
 	} else {
 		// hide root
 		DropDownList* root = this;
@@ -162,6 +163,7 @@ void DropDownList::hide(bool event, bool allow_veto) {
 	// send event
 	if (event && selected_item != NO_SELECTION && itemEnabled(selected_item)) {
 		select(selected_item);
+		if (IsShown()) Refresh(false);
 	}
 }
 
@@ -343,6 +345,17 @@ void DropDownList::onMotion(wxMouseEvent& ev) {
 	hideSubMenu();
 }
 
+void DropDownList::onMouseLeave(wxMouseEvent& ev) {
+	if (close_on_mouse_out) {
+		wxSize cs = GetClientSize();
+		if (ev.GetX() < 0 || ev.GetY() < 0 || ev.GetX() >= cs.x || ev.GetY() >= cs.y) {
+			hide(false); // outside box; hide it
+			ev.Skip();
+			return;
+		}
+	}
+}
+
 // ----------------------------------------------------------------------------- : DropDownList : Parent events
 
 bool DropDownList::onMouseInParent(wxMouseEvent& ev, bool open_in_place) {
@@ -429,4 +442,5 @@ BEGIN_EVENT_TABLE(DropDownList,wxPopupWindow)
 	EVT_LEFT_DOWN    (DropDownList::onLeftDown)
 	EVT_LEFT_UP      (DropDownList::onLeftUp)
 	EVT_MOTION       (DropDownList::onMotion)
+	EVT_LEAVE_WINDOW (DropDownList::onMouseLeave)
 END_EVENT_TABLE  ()

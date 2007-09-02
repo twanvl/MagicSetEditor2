@@ -90,3 +90,13 @@ Image rotate_image(const Image& image, int angle) {
 		default:  return image;
 	}
 }
+
+/*Bitmap rotate_bitmap(const Bitmap& bitmap, int angle) {
+	switch (angle % 360) {
+		case 90:  
+		case 180: 
+		case 270: 
+		default:  return bitmap;
+	}
+}
+*/

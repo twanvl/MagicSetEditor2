@@ -131,6 +131,7 @@ class DropDownWordList : public DropDownList {
 	virtual DropDownList* submenu(size_t item) const;
 	virtual size_t        selection() const;
 	virtual void          select(size_t item);
+	virtual bool          stayOpen(size_t selection) const;
   private:
 	TextValueEditor& tve;
 	WordListPosP pos;
@@ -280,7 +281,7 @@ void DropDownWordList::select(size_t item) {
 	// determine new value
 	String new_value;
 	bool toggling_prefix = items[item].word->is_prefix;
-	for (size_t i = 0 ; i < words->words.size() ; ++i) {
+	for (size_t i = 0 ; i < items.size() ; ++i) {
 		const DropDownWordListItem& it = items[i];
 		if (it.word->is_prefix) {
 			if (it.active() != (i == item)) {
@@ -298,6 +299,13 @@ void DropDownWordList::select(size_t item) {
 	tve.fixSelection(TYPE_INDEX);
 	tve.replaceSelection(escape(new_value),
 	                     format_string(_ACTION_("change"), tve.field().name));
+	// stay open?
+	if (IsShown()) selection(); // update 'enabled'
+}
+
+bool DropDownWordList::stayOpen(size_t selection) const {
+	if (selection == NO_SELECTION) return false;
+	return items[selection].word->is_prefix;
 }
 
 void DropDownWordList::redrawArrowOnParent() {

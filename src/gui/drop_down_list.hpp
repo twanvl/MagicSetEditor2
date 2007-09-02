@@ -58,7 +58,7 @@ class DropDownList : public wxPopupWindow {
 	/// When the list is being opened, what should be selected?
 	virtual size_t selection() const = 0;
 	/** Should the list stay open after selecting something? */
-	virtual bool stayOpen() const { return false; }
+	virtual bool stayOpen(size_t selection) const { return false; }
 	
 	// --------------------------------------------------- : Item information
 	/// Number of items
@@ -95,6 +95,7 @@ class DropDownList : public wxPopupWindow {
 	DropDownList* parent_menu;		///< The parent menu, only applies to sub menus
 	ValueViewer*  viewer;			///< The parent viewer object (optional)
 	DropDownHider* hider, *hider2;	///< Class to hide this window when we lose focus
+	bool          close_on_mouse_out; ///< Was the list kept open after selecting a choice, if so, be eager to close it
 		
 	// --------------------------------------------------- : Events
 	DECLARE_EVENT_TABLE();
@@ -103,6 +104,7 @@ class DropDownList : public wxPopupWindow {
 	void onLeftDown(wxMouseEvent&);
 	void onLeftUp  (wxMouseEvent&);
 	void onMotion(wxMouseEvent&);
+	void onMouseLeave(wxMouseEvent&);
 	
 	// --------------------------------------------------- : Privates
 	

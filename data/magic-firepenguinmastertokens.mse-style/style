@@ -18,13 +18,13 @@ init script:
 			else                                     "g"
 		) else input
 	}
-	suffix := [card: "card.jpg", textbox: "textbox.png", typeline: "typeline.png"]
-	template      := { green_template() + suffix[type] }
+	template_suffix := [card: "card.jpg", textbox: "textbox.png", typeline: "typeline.png"]
+	template      := { green_template() + template_suffix[type] }
 	land_template := {
 		(if input == "a" then (
 			if styling.land_style == "grey" then "e"
 			else "c"
-		) else green_template()) + "l" + suffix[type] }
+		) else green_template()) + "l" + template_suffix[type] }
 	
 	# Use the normal tap symbol
 	mana_t := {
