@@ -30,8 +30,13 @@
  */
 class MSE : public wxApp {
   public:
+	/// Do nothing. The command line parsing, etc. is done in OnRun
+	bool OnInit() { return true; }
 	/// Main startup function of the program
-	bool OnInit();
+	/** Use OnRun instead of OnInit, so we can determine whether or not we need a main loop
+	 *  Also, OnExit is always run.
+	 */
+	int OnRun();
 	/// On exit: write the settings to the config file
 	int  OnExit();
 	/// On exception: display error message
@@ -60,7 +65,7 @@ void write_stdout(const String& str) {
 
 // ----------------------------------------------------------------------------- : Initialization
 
-bool MSE::OnInit() {
+int MSE::OnRun() {
 	try {
 		#ifdef __WXMSW__
 			SetAppName(_("Magic Set Editor"));
@@ -86,12 +91,12 @@ bool MSE::OnInit() {
 					// Show the symbol editor
 					Window* wnd = new SymbolWindow(nullptr, argv[1]);
 					wnd->Show();
-					return true;
+					return wxApp::OnRun();
 				} else if (f.GetExt() == _("mse-set") || f.GetExt() == _("mse") || f.GetExt() == _("set")) {
 					// Show the set window
 					Window* wnd = new SetWindow(nullptr, import_set(argv[1]));
 					wnd->Show();
-					return true;
+					return wxApp::OnRun();
 				} else if (f.GetExt() == _("mse-installer")) {
 					// Installer; install it
 					bool local = false;
@@ -100,11 +105,11 @@ bool MSE::OnInit() {
 						local = arg2 == _("--local");
 					}
 					Installer::installFrom(argv[1], true, local);
-					return true;
+					return EXIT_SUCCESS;
 				} else if (arg == _("--symbol-editor")) {
 					Window* wnd = new SymbolWindow(nullptr);
 					wnd->Show();
-					return true;
+					return wxApp::OnRun();
 				} else if (arg == _("--create-installer")) {
 					// create an installer
 					Installer inst;
@@ -116,7 +121,7 @@ bool MSE::OnInit() {
 					} else {
 						inst.saveAs(inst.prefered_filename, false);
 					}
-					return true;
+					return EXIT_SUCCESS;
 				} else if (arg == _("--help") || arg == _("-?")) {
 					// command line help
 					write_stdout( String(_("Magic Set Editor\n\n"))
@@ -127,29 +132,30 @@ bool MSE::OnInit() {
 					            + _("   FILE.mse         \tLoad the set file in the MSE user interface.\n")
 					            + _("  FILE.mse-symbol   \tLoad the symbol into the MSE symbol editor.\n")
 					            + _("  FILE.mse-installer\tInstall the packages from the installer.\n")
+					            + _("      --local       \tInstall packages for this user only.\n")
 					            + _("  -? --help         \tShows this help screen.\n")
 					            + _("  -v --version      \tShow version information.\n")
+					            + _("  --symbol-editor   \tShow the symbol editor instead of the welcome window.\n")
 					            + _("  --create-installer\n")
 					            + _("      FILE [FILE]...\tCreate an instaler named FILE, containing the listed packges.\n") );
-					return true;
+					return EXIT_SUCCESS;
 				} else if (arg == _("--version") || arg == _("-v")) {
 					// dump version
 					write_stdout( _("Magic Set Editor\nVersion ") + app_version.toString() + version_suffix );
-					return true;
+					return EXIT_SUCCESS;
 				} else {
 					handle_error(_("Invalid command line argument:\n") + String(argv[1]));
 				}
 			} catch (const Error& e) {
 				handle_error(e);
-				OnExit();
-				return false;
+				return EXIT_FAILURE;
 			}
 		}
 		
 		// no command line arguments, or error, show welcome window
 		(new WelcomeWindow())->Show();
-		return true;
-			
+		return wxApp::OnRun();
+		
 	} catch (const Error& e) {
 		handle_error(e, false);
 	} catch (const std::exception& e) {
@@ -158,8 +164,7 @@ bool MSE::OnInit() {
 	} catch (...) {
 		handle_error(InternalError(_("An unexpected exception occurred!")), false);
 	}
-	OnExit();
-	return false;
+	return EXIT_FAILURE;
 }
 
 // ----------------------------------------------------------------------------- : Exit
