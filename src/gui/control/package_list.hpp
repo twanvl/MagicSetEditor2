@@ -20,7 +20,7 @@ DECLARE_POINTER_TYPE(Packaged);
 /// A list of Packages of a specific type
 class PackageList : public GalleryList {
   public:
-	PackageList(Window* parent, int id, int direction = wxHORIZONTAL);
+	PackageList(Window* parent, int id, int direction = wxHORIZONTAL, bool always_focused = true);
 	
 	/// Shows packages that match a specific patern, and that are of the given type
 	template <typename T>

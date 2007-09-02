@@ -97,13 +97,13 @@ void StatCategoryList::drawItem(DC& dc, int x, int y, size_t item, bool selected
 // ----------------------------------------------------------------------------- : StatsPanel
 
 StatsPanel::StatsPanel(Window* parent, int id)
-	: SetWindowPanel(parent, id, true)
+	: SetWindowPanel(parent, id)
 	, up_to_date(true), active(false)
 {
 	// init controls
 	wxSplitterWindow* splitter;
 	categories = new StatCategoryList(this, ID_FIELD_LIST);
-	splitter   = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
+	splitter   = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	graph      = new GraphControl    (splitter, wxID_ANY);
 	card_list  = new FilteredCardList(splitter, wxID_ANY);
 	// init splitter

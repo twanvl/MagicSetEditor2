@@ -29,8 +29,8 @@ NewSetWindow::NewSetWindow(Window* parent)
 {
 	wxBusyCursor wait;
 	// init controls
-	game_list       = new PackageList (this, ID_GAME_LIST);
-	stylesheet_list = new PackageList (this, ID_STYLESHEET_LIST);
+	game_list       = new PackageList (this, ID_GAME_LIST,       wxHORIZONTAL, false);
+	stylesheet_list = new PackageList (this, ID_STYLESHEET_LIST, wxHORIZONTAL, false);
 	wxStaticText* game_text       = new wxStaticText(this, ID_GAME_LIST,       _LABEL_("game type"));
 	wxStaticText* stylesheet_text = new wxStaticText(this, ID_STYLESHEET_LIST, _LABEL_("style type"));
 	// init sizer
@@ -43,10 +43,9 @@ NewSetWindow::NewSetWindow(Window* parent)
 		s->SetSizeHints(this);
 	SetSizer(s);
 	// Resize
-	SetSize(630,-1);
 	Layout();
-	GetSizer()->SetSizeHints(this);
-	SetSize(630,-1);
+	wxSize min_size = GetSizer()->GetMinSize() + GetSize() - GetClientSize();
+	SetSize(630,min_size.y);
 	// init lists
 	game_list->showData<Game>();
 	try {
@@ -66,12 +65,9 @@ void NewSetWindow::onGameSelect(wxCommandEvent&) {
 	stylesheet_list->select(settings.gameSettingsFor(*game).default_stylesheet);
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 	// resize (yuck)
-	SetSize(630,-1);
 	Layout();
-	GetSizer()->SetSizeHints(this);
-	Layout();
-	GetSizer()->SetSizeHints(this);
-	SetSize(630,-1);
+	wxSize min_size = GetSizer()->GetMinSize() + GetSize() - GetClientSize();
+	SetSize(630,min_size.y);
 }
 
 void NewSetWindow::onStyleSheetSelect(wxCommandEvent&) {
@@ -157,10 +153,9 @@ SelectStyleSheetWindow::SelectStyleSheetWindow(Window* parent, const Game& game,
 	stylesheet_list->showData<StyleSheet>(game.name() + _("-*"));
 	stylesheet_list->select(settings.gameSettingsFor(game).default_stylesheet);
 	// Resize
-	SetSize(630,-1);
 	Layout();
-	GetSizer()->SetSizeHints(this);
-	SetSize(630,-1);
+	wxSize min_size = GetSizer()->GetMinSize() + GetSize() - GetClientSize();
+	SetSize(630,min_size.y);
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }
 

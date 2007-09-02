@@ -26,7 +26,7 @@ DECLARE_POINTER_TYPE(InfoValue);
  */
 class InfoField : public Field {
   public:
-	InfoField() {}
+	InfoField() { editable = false; }
 	DECLARE_FIELD_TYPE(Text);
 	
 	OptionalScript script;			///< Script to apply to all values

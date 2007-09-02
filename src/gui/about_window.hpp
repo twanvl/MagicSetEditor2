@@ -37,10 +37,12 @@ class HoverButton : public wxControl {
 	/** name+"_normal", name+"_hover", name+"_focus", name+"_down"
 	 *  are the resource names of the images used.
 	 */
-	HoverButton(Window* parent, int id, const String& name, const Color& background = Color(240,247,255));
+	HoverButton(Window* parent, int id, const String& name, const Color& background = Color(240,247,255), bool accepts_focus = true);
 	
 	/// Load different bitmaps for this button
 	void loadBitmaps(const String& name);
+	
+	virtual bool AcceptsFocus() const;
 	
   private:
 	DECLARE_EVENT_TABLE();
@@ -49,6 +51,7 @@ class HoverButton : public wxControl {
 	Bitmap bg_normal, bg_hover, bg_focus, bg_down; ///< Bitmaps for the states of the button
 	bool hover, focus, mouse_down, key_down;
 	Color background;
+	const bool accepts_focus;
 	
 	void onMouseEnter(wxMouseEvent&);
 	void onMouseLeave(wxMouseEvent&);

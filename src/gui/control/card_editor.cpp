@@ -22,7 +22,7 @@ DECLARE_TYPEOF_COLLECTION(ValueViewer*);
 // ----------------------------------------------------------------------------- : DataEditor
 
 DataEditor::DataEditor(Window* parent, int id, long style)
-	: CardViewer(parent, id, style)
+	: CardViewer(parent, id, style | wxWANTS_CHARS)
 	, current_viewer(nullptr)
 	, current_editor(nullptr)
 	, hovered_viewer(nullptr)
@@ -58,6 +58,10 @@ ValueViewer* DataEditor::focusedViewer() const {
 }
 
 // ----------------------------------------------------------------------------- : Selection
+
+bool DataEditor::AcceptsFocus() const {
+	return wxControl::AcceptsFocus();
+}
 
 void DataEditor::select(ValueViewer* v) {
 	ValueEditor* old_editor = current_editor;
@@ -125,7 +129,8 @@ struct CompareTabIndex {
 void DataEditor::createTabIndex() {
 	by_tab_index.clear();
 	FOR_EACH(v, viewers) {
-		if (v->getField()->editable && v->getStyle()->visible) {
+		ValueEditor* e = v->getEditor();
+		if (e && v->getField()->editable && v->getStyle()->visible) {
 			by_tab_index.push_back(v.get());
 		}
 	}
@@ -136,6 +141,9 @@ void DataEditor::onInit() {
 	current_viewer = nullptr;
 	current_editor = nullptr;
 	hovered_viewer = nullptr;
+	// hide caret if it is shown
+	wxCaret* caret = GetCaret();
+	if (caret->IsVisible()) caret->Hide();
 }
 // ----------------------------------------------------------------------------- : Search / replace
 
@@ -195,10 +203,16 @@ void DataEditor::onLeftDown(wxMouseEvent& ev) {
 }
 void DataEditor::onLeftUp(wxMouseEvent& ev) {
 	if (HasCapture()) ReleaseMouse();
-	if (current_editor) current_editor->onLeftUp(mousePoint(ev), ev);
+	RealPoint pos = mousePoint(ev);
+	if (current_editor && current_viewer && current_viewer->containsPoint(pos)) {
+		current_editor->onLeftUp(pos, ev);
+	}
 }
 void DataEditor::onLeftDClick(wxMouseEvent& ev) {
-	if (current_editor) current_editor->onLeftDClick(mousePoint(ev), ev);
+	RealPoint pos = mousePoint(ev);
+	if (current_editor && current_viewer && current_viewer->containsPoint(pos)) {
+		current_editor->onLeftDClick(pos, ev);
+	}
 }
 void DataEditor::onRightDown(wxMouseEvent& ev) {
 	ev.Skip(); // for context menu
@@ -206,8 +220,11 @@ void DataEditor::onRightDown(wxMouseEvent& ev) {
 	selectField(ev, &ValueEditor::onRightDown);
 }
 void DataEditor::onMouseWheel(wxMouseEvent& ev) {
-	if (current_editor && current_editor->onMouseWheel(mousePoint(ev), ev));
-	else ev.Skip();
+	RealPoint pos = mousePoint(ev);
+	if (current_editor && current_viewer && current_viewer->containsPoint(pos)) {
+		if (current_editor->onMouseWheel(pos, ev)) return;
+	}
+	ev.Skip();
 }
 
 void DataEditor::onMotion(wxMouseEvent& ev) {
@@ -269,7 +286,9 @@ void DataEditor::selectField(wxMouseEvent& ev, bool (ValueEditor::*event)(const 
 		if (current_editor) current_editor->onFocus();
 	}
 	// pass event
-	if (current_editor) (current_editor->*event)(pos, ev);
+	if (current_editor && current_viewer && current_viewer->containsPoint(pos)) {
+		(current_editor->*event)(pos, ev);
+	}
 	// refresh?
 	if (old_editor != current_editor) {
 		// selection has changed, refresh viewers
@@ -279,14 +298,15 @@ void DataEditor::selectField(wxMouseEvent& ev, bool (ValueEditor::*event)(const 
 }
 void DataEditor::selectFieldNoEvents(const RealPoint& p) {
 	FOR_EACH_EDITOR_REVERSE { // find high z index fields first
-		if (v->containsPoint(p) && v->getField()->editable) {
+		if (v->getField()->editable && (v->containsPoint(p) ||
+		    (nativeLook() && p.y >= v->getStyle()->top && p.y < v->getStyle()->bottom) )) {
 			current_viewer = v.get();
 			current_editor = e;
 			return;
 		}
 	}
-	current_viewer = nullptr;
-	current_editor = nullptr;
+//%	current_viewer = nullptr;
+//%	current_editor = nullptr;
 }
 
 RealPoint DataEditor::mousePoint(const wxMouseEvent& ev) {
@@ -348,6 +368,8 @@ void DataEditor::onFocus(wxFocusEvent& ev) {
 	if (current_editor) {
 		current_editor->onFocus();
 		onChange();
+	} else {
+		selectFirst();
 	}
 }
 void DataEditor::onLoseFocus(wxFocusEvent& ev) {

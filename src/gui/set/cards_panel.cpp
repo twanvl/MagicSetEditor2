@@ -26,16 +26,16 @@
 // ----------------------------------------------------------------------------- : CardsPanel
 
 CardsPanel::CardsPanel(Window* parent, int id)
-	: SetWindowPanel(parent, id, false)
+	: SetWindowPanel(parent, id)
 {
 	// init controls
 	wxPanel* notesP;
 	editor    = new CardEditor(this, ID_EDITOR);
-	splitter  = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
+	splitter  = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	card_list = new ImageCardList(splitter, ID_CARD_LIST);
-	notesP    = new Panel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 /* no tab traversal*/);
+	notesP    = new Panel(splitter, wxID_ANY);
 	notes     = new TextCtrl(notesP, ID_NOTES, true);
-	collapse_notes = new HoverButton(notesP, ID_COLLAPSE_NOTES, _("btn_collapse"), wxNullColour);
+	collapse_notes = new HoverButton(notesP, ID_COLLAPSE_NOTES, _("btn_collapse"), wxNullColour, false);
 	collapse_notes->SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
 	// init sizer for notes panel
 	wxSizer* sn = new wxBoxSizer(wxVERTICAL);

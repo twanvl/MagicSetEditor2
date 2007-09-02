@@ -14,8 +14,8 @@ DECLARE_TYPEOF_COLLECTION(PackagedP);
 
 // ----------------------------------------------------------------------------- : PackageList
 
-PackageList::PackageList(Window* parent, int id, int direction)
-	: GalleryList(parent, id, direction)
+PackageList::PackageList(Window* parent, int id, int direction, bool always_focused)
+	: GalleryList(parent, id, direction, always_focused)
 {
 	item_size = wxSize(108, 150);
 	SetThemeEnabled(true);

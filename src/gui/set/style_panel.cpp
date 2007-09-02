@@ -27,10 +27,10 @@ StylePanel::StylePanel(Window* parent, int id)
 {
 	// init controls
 	preview       = new CardViewer   (this, wxID_ANY);
-	editor        = new StylingEditor(this, wxID_ANY, wxNO_BORDER);
 	list          = new PackageList  (this, wxID_ANY);
 	use_for_all   = new wxButton     (this, ID_STYLE_USE_FOR_ALL, _BUTTON_("use for all cards"));
 	use_custom_options = new wxCheckBox(this, ID_STYLE_USE_CUSTOM, _BUTTON_("use custom styling options"));
+	editor        = new StylingEditor(this, wxID_ANY, wxNO_BORDER);
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
 		s->Add(preview, 0, wxRIGHT,  2);

@@ -228,6 +228,8 @@ void SetWindow::selectPanel(int id) {
 	}
 	// fix sizer stuff
 	fixMinWindowSize();
+	// select something
+	current_panel->SetFocus();
 }
 
 // ----------------------------------------------------------------------------- : Window managment

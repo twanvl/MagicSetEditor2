@@ -41,6 +41,8 @@ class DataEditor : public CardViewer {
 	/// Select the previous editable editor, returns false if the current editor is the first one
 	bool selectPrevious();
 	
+	virtual bool AcceptsFocus() const;
+	
 	// --------------------------------------------------- : Clipboard
 	
 	bool canCut()   const;

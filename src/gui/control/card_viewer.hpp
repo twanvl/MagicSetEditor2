@@ -38,6 +38,8 @@ class CardViewer : public wxControl, public DataViewer {
 	/// The rotation to use
 	virtual Rotation getRotation() const;
 	
+	virtual bool AcceptsFocus() const { return false; }
+	
   protected:
 	/// Return the desired size of control
 	virtual wxSize DoGetBestSize() const;

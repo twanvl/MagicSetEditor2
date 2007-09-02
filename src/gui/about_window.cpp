@@ -62,10 +62,11 @@ END_EVENT_TABLE  ()
 // ----------------------------------------------------------------------------- : Button with image and hover effect
 
 
-HoverButton::HoverButton(Window* parent, int id, const String& name, const Color& background)
+HoverButton::HoverButton(Window* parent, int id, const String& name, const Color& background, bool accepts_focus)
 	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxNO_BORDER )
 	, hover(false), focus(false), mouse_down(false), key_down(false)
 	, background(background)
+	, accepts_focus(accepts_focus)
 	, last_drawn(nullptr)
 {
 	loadBitmaps(name);
@@ -135,6 +136,9 @@ void HoverButton::onKeyUp(wxKeyEvent& ev) {
 
 wxSize HoverButton::DoGetBestSize() const {
 	return wxSize(bg_normal.GetWidth(), bg_normal.GetHeight());
+}
+bool HoverButton::AcceptsFocus() const {
+	return wxControl::AcceptsFocus() && accepts_focus;
 }
 
 const Bitmap* HoverButton::toDraw() const {

@@ -32,18 +32,18 @@ KeywordsPanel::KeywordsPanel(Window* parent, int id)
 	: SetWindowPanel(parent, id)
 {
 	// init controls
-	splitter  = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0);
+	splitter  = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	list      = new KeywordList(splitter, ID_KEYWORD_LIST);
-	panel     = new Panel(splitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, 0 /* no tab traversal*/);
+	panel     = new Panel(splitter, wxID_ANY);
 	keyword   = new TextCtrl(panel, ID_KEYWORD,  false);
+	mode      = new wxChoice(panel, ID_KEYWORD_MODE, wxDefaultPosition, wxDefaultSize, 0, nullptr);
 	match     = new TextCtrl(panel, ID_MATCH,    false);
+	add_param = new wxButton(panel, ID_KEYWORD_ADD_PARAM, _BUTTON_("insert parameter"));
+	ref_param = new wxButton(panel, ID_KEYWORD_REF_PARAM, _BUTTON_("refer parameter"));
 	reminder  = new TextCtrl(panel, ID_REMINDER, true); // allow multiline for wordwrap
 	rules     = new TextCtrl(panel, ID_RULES,    true);
 	errors    = new wxStaticText(panel, wxID_ANY, _(""));
 	errors->SetForegroundColour(*wxRED);
-	mode      = new wxChoice(panel, ID_KEYWORD_MODE, wxDefaultPosition, wxDefaultSize, 0, nullptr);
-	add_param = new wxButton(panel, ID_KEYWORD_ADD_PARAM, _BUTTON_("insert parameter"));
-	ref_param = new wxButton(panel, ID_KEYWORD_REF_PARAM, _BUTTON_("refer parameter"));
 	// warning about fixed keywords
 	fixedL    = new wxStaticText(panel, wxID_ANY, _(""));
 	wxStaticBitmap* fixedI = new wxStaticBitmap(panel, wxID_ANY, wxArtProvider::GetBitmap(wxART_WARNING));

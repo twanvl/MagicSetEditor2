@@ -29,17 +29,18 @@ DECLARE_EVENT_TYPE(EVENT_GALLERY_ACTIVATE, <not used>)
  */
 class GalleryList : public wxScrolledWindow {
   public:
-	GalleryList(Window* parent, int id, int direction = wxHORIZONTAL);
+	GalleryList(Window* parent, int id, int direction = wxHORIZONTAL, bool always_focused = true);
 	
 	/// Is there an item selected?
 	inline bool hasSelection() const { return selection < itemCount(); }
 	
   protected:
 	static const size_t NO_SELECTION = (size_t)-1;
-	size_t selection;	  ///< The selected item, or NO_SELECTION if there is no selection
-	wxSize item_size;	  ///< The size of a single item
-	int direction;		  ///< Direction of the list, can be wxHORIZONTAL or wxVERTICAL
-	int scroll_increment;     ///< How large are the scroll steps?
+	size_t selection;      ///< The selected item, or NO_SELECTION if there is no selection
+	wxSize item_size;      ///< The size of a single item
+	int direction;	       ///< Direction of the list, can be wxHORIZONTAL or wxVERTICAL
+	int scroll_increment;  ///< How large are the scroll steps?
+	bool always_focused;   ///< Always draw as if focused
 	
 	/// Redraw the list after changing the selection or the number of items
 	void update();
@@ -58,6 +59,7 @@ class GalleryList : public wxScrolledWindow {
 	void onLeftDown  (wxMouseEvent& ev);
 	void onLeftDClick(wxMouseEvent& ev);
 	void onChar(wxKeyEvent& ev);
+	void onFocus(wxFocusEvent&);
 	void onPaint(wxPaintEvent&);
 	void onSize(wxSizeEvent&);
 	void OnDraw(DC& dc);

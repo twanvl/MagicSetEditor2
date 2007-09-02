@@ -798,7 +798,7 @@ void GraphContainer::add(const GraphP& graph) {
 // ----------------------------------------------------------------------------- : GraphControl
 
 GraphControl::GraphControl(Window* parent, int id)
-	: wxControl(parent, id)
+	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
 {}
 
 void GraphControl::setLayout(GraphType type) {
@@ -912,6 +912,13 @@ void GraphControl::onChar(wxKeyEvent& ev) {
 				onSelectionChange();
 			}
 			break;
+		case WXK_TAB: {
+			// send a navigation event to our parent, to select another control
+			// we need this because of wxWANTS_CHARS
+			wxNavigationKeyEvent nev;
+			nev.SetDirection(!ev.ShiftDown());
+			GetParent()->ProcessEvent(nev);
+			} break;
 	}
 }
 

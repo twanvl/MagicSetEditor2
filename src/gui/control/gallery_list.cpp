@@ -21,11 +21,12 @@ const int MARGIN = 1; // margin between items (excluding border)
 const int BORDER = 1; // border aroung items
 const int SPACING = MARGIN + 2*BORDER; // distance between items
 
-GalleryList::GalleryList(Window* parent, int id, int direction)
-	: wxScrolledWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER | (direction == wxHORIZONTAL ? wxHSCROLL : wxVSCROLL) )
+GalleryList::GalleryList(Window* parent, int id, int direction, bool always_focused)
+	: wxScrolledWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER | wxWANTS_CHARS | (direction == wxHORIZONTAL ? wxHSCROLL : wxVSCROLL) )
 	, selection(NO_SELECTION)
 	, direction(direction)
 	, scroll_increment(10)
+	, always_focused(always_focused)
 {}
 
 void GalleryList::update() {
@@ -117,7 +118,7 @@ void GalleryList::onChar(wxKeyEvent& ev) {
 						} break;
 		case WXK_TAB: {
 			// send a navigation event to our parent, to select another control
-			// we need this because tabs are not handled on the set window panels
+			// we need this because tabs of wxWANTS_CHARS
 			wxNavigationKeyEvent nev;
 			nev.SetDirection(!ev.ShiftDown());
 			GetParent()->ProcessEvent(nev);
@@ -168,7 +169,12 @@ void GalleryList::OnDraw(DC& dc) {
 	for (size_t i = start ; i < end ; ++i) {
 		// draw selection rectangle
 		bool selected = i == selection;
-		Color c = selected ? wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT) : unselected;
+		Color c = selected ? ( always_focused || FindFocus() == this
+		                            ? wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT)
+		                            : lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
+		                                   wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT), 0.7)
+		                     )
+		                   : unselected;
 		dc.SetPen(c);
 		dc.SetBrush(saturate(lerp(background, c, 0.3), selected ? 0.5 : 0));
 		wxPoint pos = itemPos(i);
@@ -176,6 +182,10 @@ void GalleryList::OnDraw(DC& dc) {
 		// draw item
 		drawItem(dc, pos.x, pos.y, i, selected);
 	}
+}
+
+void GalleryList::onFocus(wxFocusEvent&) {
+	if (!always_focused) Refresh(false);
 }
 
 void GalleryList::onSize(wxSizeEvent&) {
@@ -193,6 +203,8 @@ BEGIN_EVENT_TABLE(GalleryList, wxScrolledWindow)
 	EVT_LEFT_DOWN      (GalleryList::onLeftDown)
 	EVT_LEFT_DCLICK    (GalleryList::onLeftDClick)
 	EVT_CHAR           (GalleryList::onChar)
+	EVT_SET_FOCUS      (GalleryList::onFocus)
+	EVT_KILL_FOCUS     (GalleryList::onFocus)
 	EVT_PAINT          (GalleryList::onPaint)
 	EVT_SIZE           (GalleryList::onSize)
 END_EVENT_TABLE  ()
