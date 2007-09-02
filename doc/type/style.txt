@@ -76,6 +76,8 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 | ^^^		@line height soft max@	^^^			''disabled''	When there is still vertical room in the text box, increase the line heights to at most these values to spread the text more evenly.
 | ^^^		@line height hard max@	^^^			^^^		^^^
 | ^^^		@line height line max@	^^^			^^^		^^^
+| ^^^		@paragraph height@	[[type:double]]		''flexible''	The height of paragraphs. If specified, each paragraph is given this much space, and aligned inside that space as specified by @alignment@.<br/>
+		 			 			 		A paragraph break is any line break that is not soft (i.e. caused by word wrap or a @"<soft>"@ break).
 | ^^^		@mask@			[[type:filename]]	''none''	A mask that indicates where in the box text can be placed.<br/>
 		 			 			 		Text is never put in black areas of the box:<br/>
 		 			 			 		<img src="style-text-mask.png" alt=""/>

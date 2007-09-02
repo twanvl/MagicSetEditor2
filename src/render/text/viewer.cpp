@@ -635,17 +635,37 @@ double TextViewer::lineRight(RotatedDC& dc, const TextStyle& style, double y) co
 
 
 void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style) {
-	// Find height of the text, don't count the last lines if they are empty
-	double height = 0;
-	FOR_EACH_REVERSE(l, lines) {
-		height = l.top + l.line_height;
-		if (l.line_height) break; // not an empty line
-	}
-	// amount to shift all lines vertically
+	// Size of the box
 	RealSize s = add_diagonal(
 					dc.getInternalSize(),
 					-RealSize(style.padding_left+style.padding_right, style.padding_top + style.padding_bottom));
-	
+	if (style.paragraph_height <= 0) {
+		// whole text box alignment
+		alignParagraph(0, lines.size(), chars, style, RealRect(RealPoint(0,0),s));
+	} else {
+		// per paragraph alignment
+		size_t start = 0;
+		int n = 0;
+		for (size_t last = 0 ; last < lines.size() ; ++last) {
+			if (lines[last].break_after != BREAK_SOFT || last == lines.size()) {
+				alignParagraph(start, last + 1, chars, style, RealRect(0, n*style.paragraph_height, s.width, style.paragraph_height));
+				start = last + 1;
+				++n;
+			}
+		}
+	}
+}
+
+void TextViewer::alignParagraph(size_t start_line, size_t end_line, const vector<CharInfo>& chars, const TextStyle& style, const RealRect& s) {
+	if (start_line >= end_line) return;
+	// Find height of the text, don't count the last lines if they are empty
+	double height = 0;
+	for (size_t li = end_line - 1 ; li + 1 > start_line ; --li) {
+		Line& l = lines[li];
+		height = l.top + l.line_height;
+		if (l.line_height) break; // not an empty line
+	}
+	height -= lines[start_line].top;
 	// stretch lines by increasing the space between them
 	if (height < s.height) {
 		double d_soft = max(0.0, style.line_height_soft_max - style.line_height_soft);
@@ -662,7 +682,8 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 			bool line = d_line >= stop;
 			// sum of the line height we can apply this to?
 			double sum = 0;
-			FOR_EACH(l, lines) {
+			for (size_t li = start_line ; li < end_line ; ++li) {
+				const Line& l = lines[li];
 				if ((soft && l.break_after == BREAK_SOFT)
 				 || (hard && l.break_after == BREAK_HARD)
 				 || (line && l.break_after == BREAK_LINE)) sum += l.line_height;
@@ -672,7 +693,8 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 			double to_add = min(stop, (s.height - height) / sum);
 			// apply
 			double add = 0;
-			FOR_EACH(l, lines) {
+			for (size_t li = start_line ; li < end_line ; ++li) {
+				Line& l = lines[li];
 				l.top  += add;
 				// adjust next line by..
 				if ((soft && l.break_after == BREAK_SOFT)
@@ -684,9 +706,11 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 	}
 	if (style.alignment == ALIGN_TOP_LEFT) return;
 	// align
-	double vdelta = align_delta_y(style.alignment, s.height, height);
+	double vdelta = align_delta_y(style.alignment, s.height, height)
+	              + s.y - lines[start_line].top;
 	// align all lines
-	FOR_EACH(l, lines) {
+	for (size_t li = start_line ; li < end_line ; ++li) {
+		Line& l = lines[li];
 		l.top += vdelta;
 		// amount to shift all characters horizontally
 		double width = l.positions[l.end_or_soft - l.start];
@@ -699,7 +723,7 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 			if (count <= 0) count = 1;                  // prevent div by 0
 			int i = 0;
 			FOR_EACH(c, l.positions) {
-				c += hdelta * i++ / count;
+				c += s.x + hdelta * i++ / count;
 			}
 		} else if (style.alignment & ALIGN_JUSTIFY_WORDS) {
 			// justify text, by words
@@ -712,13 +736,13 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 			if (count == 0) count = 1;       // prevent div by 0
 			int i = 0; size_t j = l.start;
 			FOR_EACH(c, l.positions) {
-				c += hdelta * i / count;
+				c += s.x + hdelta * i / count;
 				if (j < l.end_or_soft && chars[j++].break_after == BREAK_SPACE) i++;
 			}
 		} else {
 			// simple alignment
 			justifying = false;
-			double hdelta = align_delta_x(style.alignment, s.width, width);
+			double hdelta = s.x + align_delta_x(style.alignment, s.width, width);
 			FOR_EACH(c, l.positions) {
 				c += hdelta;
 			}

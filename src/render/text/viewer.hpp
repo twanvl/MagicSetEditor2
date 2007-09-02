@@ -143,6 +143,8 @@ class TextViewer {
 	bool prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style, bool stop_if_too_long, vector<Line>& lines_out) const;
 	/// Align the lines within the textbox
 	void alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const TextStyle& style);
+	/// Align the lines of a single paragraph (a set of lines)
+	void alignParagraph(size_t start_line, size_t end_line, const vector<CharInfo>& chars, const TextStyle& style, const RealRect& box);
 	
 	/// Find the line the given index is on, returns the first line if the index is not found
 	const Line& findLine(size_t index) const;
