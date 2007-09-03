@@ -1,0 +1,17 @@
+mse version: 0.3.4
+# Symbol font for missing characters
+
+image font size: 16
+horizontal space: 2
+symbol:
+	code: [
+	image: leftbracket.png
+symbol:
+	code: ]
+	image: rightbracket.png
+symbol:
+	code: @
+	image: infinity.png
+symbol:
+	code: `
+	image: dot.png

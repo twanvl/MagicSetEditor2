@@ -1,14 +1,14 @@
-﻿mse version: 0.3.2
+﻿mse version: 0.3.4
 short name: Yu-Gi-Oh!
 icon: card-back.png
-position hint: 04
+position hint: 4
 
 ############################################################## Functions & filters
 ## Copied and Pasted from vs.mse-game, with a few modifications
 # General functions
 init script:
 	# level codes
-	level_sort := sort_rule(order: "%!+&$#*")
+	level_sort := sort_rule(order: "[%!+&$#*@]")
 	# the rule text filter
 	#  - adds continuous symbols
 	#  - adds counter symbols
@@ -17,27 +17,58 @@ init script:
 	#  - adds quickplay symbols
 	#  - adds ritual symbols
 	#  - adds level symbols
+	#  - adds infinity symbols
 	#  - makes text in parentheses italic
 	text_filter := 
 		# step 1 : remove all automatic tags
 		tag_remove_rule(tag: "<sym-auto>") +
 		tag_remove_rule(tag: "<i-auto>")   +
-		# step 2 : fill in atom fields
+		# step 2a : fill in atom fields
 		tag_contents_rule(
 			tag: "<atom-cardname>",
 			contents: { if card.name=="" then "CARDNAME" else card.name }
 			) +
-		# step 3a : explict non symbols
+		# step 2b : explict non symbols
 		replace_rule(
-			match: "\\][%!+&$#*]+\\[",
+			match: "\\][\\[@\\]]+\\[",
 			replace: {"<nosym>" +level_sort() + "</nosym>"} ) +
-		# step 3b : add symbols
+		# step 2c : add symbols
 		replace_rule(
-			match: "[%!+&$#*]+",
+			match: "[\\[@\\]]+",
 			replace: {"<sym-auto>" + level_sort() + "</sym-auto>"} ) +
-		# step 3c : add explict symbols
+		# step 2d : add explict symbols
 		replace_rule(
-			match: "\\[[%!+&$#*]+\\]",
+			match: "\\[[\\[@\\]]+\\]",
+			replace: {"<sym>" + level_sort() + "</sym>"} );
+	level_filter := 
+		# step 1 : remove all automatic tags
+		tag_remove_rule(tag: "<sym-auto>") +
+		# step 3b : explict non symbols
+		replace_rule(
+			match: "\\][\\[%!+&$#*\\]]+\\[",
+			replace: {"<nosym>" +level_sort() + "</nosym>"} ) +
+		# step 3c : add symbols
+		replace_rule(
+			match: "[\\[%!+&$#*\\]]+",
+			replace: {"<sym-auto>" + level_sort() + "</sym-auto>"} ) +
+		# step 3d : add explict symbols
+		replace_rule(
+			match: "\\[[\\[%!+&$#*\\]]+\\]",
+			replace: {"<sym>" + level_sort() + "</sym>"} );
+	a_and_d_filter := 
+		# step 1 : remove all automatic tags
+		tag_remove_rule(tag: "<sym-auto>") +
+		# step 2b : explict non symbols
+		replace_rule(
+			match: "\\][\\[@\\]]+\\[",
+			replace: {"<nosym>" +level_sort() + "</nosym>"} ) +
+		# step 2c : add symbols
+		replace_rule(
+			match: "[\\[@\\]]+",
+			replace: {"<sym-auto>" + level_sort() + "</sym-auto>"} ) +
+		# step 2d : add explict symbols
+		replace_rule(
+			match: "\\[[\\[@\\]]+\\]",
 			replace: {"<sym>" + level_sort() + "</sym>"} );
 	
 	# the flavor text filter
@@ -49,14 +80,35 @@ init script:
 	
 	# Determine type of card
 	card_type := {
-		if      card.attribute == "spell"   then "spell card"
-		else if card.attribute == "trap"    then "trap card"
-		else                                     "normal monster"
+		if	card.type2 == "Effect]" then "effect monster"
+		else if card.type2 == "Fusion]" then "fusion monster"
+		else if card.type2 == "Fusion/Effect]" then "fusion monster"
+		else if card.type2 == "Ritual]" then "ritual monster"
+		else if card.type2 == "Ritual/Effect]" then "ritual monster"
+		else if card.type1 == "[Legendary Dragon" then "legendary dragon"
+		else if card.type1 == "[Divine-Beast" then "obelisk"
+		else if card.attribute == "spell"          then "spell card"
+		else if card.level     == "[Spell Card]"   then "spell card"
+		else if card.level     == "[Spell Card%]"   then "spell card"
+		else if card.level     == "[Spell Card!]"   then "spell card"
+		else if card.level     == "[Spell Card+]"   then "spell card"
+		else if card.level     == "[Spell Card&]"   then "spell card"
+		else if card.level     == "[Spell Card$]"   then "spell card"
+		else if card.level     == "[Spell Card#]"   then "spell card"
+		else if card.attribute == "trap"    	   then "trap card"
+		else if card.level     == "[Trap Card]"    then "trap card"
+		else if card.level     == "[Trap Card%]"    then "trap card"
+		else if card.level     == "[Trap Card!]"    then "trap card"
+		else if card.level     == "[Trap Card+]"    then "trap card"
+		else if card.level     == "[Trap Card&]"    then "trap card"
+		else if card.level     == "[Trap Card$]"    then "trap card"
+		else if card.level     == "[Trap Card#]"    then "trap card"
+		else                                            "normal monster"
 	}
 	# Default 'attribute' of card
 	attribute := {
-		if      is_spell_card() then "spell"
-		else if is_trap_card()  then "trap"
+		if      is_spell_card() then "Spell"
+		else if is_trap_card()  then "Trap"
 		else                         ""
 	}
 	
@@ -84,10 +136,14 @@ init script:
 		card.card_type == "legendary dragons"
 	}
 	is_spell_card := {
-		card.card_type == "spell card"
+		card.card_type == "spell card"	or
+		card.attribute == "spell"	or
+		card.level     == "Spell"
 	}
 	is_trap_card := {
-	        card.card_type == "trap card"
+	        card.card_type == "trap card"	or
+		card.attribute == "trap"	or
+		card.level     == "Trap"
 	}
 
 ############################################################## Set fields
@@ -158,6 +214,14 @@ card field:
 		legendary dragons: rgb(26,26,26)
 		spell card:	   rgb(80,80,80)
 		trap card:	   rgb(30,110,0)
+card field:
+	type: choice
+	name: foils
+	editable: false
+	choice: none
+	choice: holo image
+	choice: secret holo image
+	choice: parallel holo card
 
 ############################# Name line
 card field:
@@ -186,7 +250,7 @@ card field:
 	type: text
 	name: level
 	description: Level, * = star, % = continuous, ! = counter, + = equipment, & = field, $ = quickplay, # = ritual
-	script: text_filter(value)
+	script: level_filter(value)
 
 ############################# Image
 card field:
@@ -198,10 +262,12 @@ card field:
 card field:
 	type: text
 	name: type1
+	script: a_and_d_filter(value)
 	editable: false
 card field:
 	type: text
 	name: type2
+	script: a_and_d_filter(value)
 	editable: false
 card field:
 	type: text
@@ -210,12 +276,10 @@ card field:
 		# Either just monster, monster / type1
 		combined_editor(
 			field1: card.type1,
-			separator: " ",
+			separator: "/",
 			field2: card.type2,
-			grey_until_needed: true,
-			hide_when_both_empty: true,
-			type_over1: "/",
-			type_over2: "/"
+			soft_before_empty: true,
+			hide_when_empty:   true,
 		)
 	card list visible: true
 	card list column: 3
@@ -276,7 +340,7 @@ card field:
 	type: text
 	name: attack
 	save value: true
-	script: to_upper(value)
+	script: a_and_d_filter(value)
 	card list visible: true
 	card list column: 4
 	card list width: 33
@@ -285,7 +349,7 @@ card field:
 	type: text
 	name: defense
 	save value: true
-	script: to_upper(value)
+	script: a_and_d_filter(value)
 	card list visible: true
 	card list column: 5
 	card list width: 33

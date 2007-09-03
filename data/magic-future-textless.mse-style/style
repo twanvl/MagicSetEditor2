@@ -77,6 +77,16 @@ init script:
 		else "white"
 	}
 
+############################################################## Set info fields
+set info style:
+	symbol:
+		variation:
+			name: invertedcommon
+			border radius: 0.10
+			fill type: solid
+			fill color:   rgb(255,255,255)
+			border color: rgb(0,0,0)
+
 ############################################################## Extra style options
 
 styling field:
@@ -97,13 +107,10 @@ styling field:
 	choice: old
 	choice: diagonal T
 styling field:
-	type: choice
-	name: font color
-	description: What color should the font on cards be?
-	initial: automatic
-	choice: automatic
-	choice: black
-	choice: white
+	type: boolean
+	name: inverted common symbol
+	description: Should the common rarity symbol be inverted, like in Coldsnap?
+	initial: no
 
 styling style:
 	use guild mana symbols:
@@ -156,13 +163,19 @@ card style:
 			size: 18
 			color:
 				script:
-					if styling.grey_hybrid_name and contains(card.card_color, match:"land") and not contains(card.card_color, match:"multicolor") then rgb(0,0,0)
+					if styling.grey_hybrid_name and contains(card.card_color, match:"land") and
+					   contains(card.card_color, match:"horizontal") or
+					   contains(card.card_color, match:"radial") or
+					   contains(card.card_color, match:"vertical") and
+					   not contains(card.card_color, match:"multicolor") then rgb(0,0,0)
+					else if contains(card.card_color, match:"land") and
+					   contains(card.card_color, match:"multicolor") then rgb(0,0,0)
 					else if styling.grey_hybrid_name and contains(card.card_color, match:"hybrid") then rgb(0,0,0)
 					else if contains(card.card_color, match:"artifact") then (
 						if contains(card.card_color, match:"blue") or
-						contains(card.card_color, match:"black") or
-						contains(card.card_color, match:"red") or
-						contains(card.card_color, match:"green") then rgb(255,255,255)
+						   contains(card.card_color, match:"black") or
+						   contains(card.card_color, match:"red") or
+						   contains(card.card_color, match:"green") then rgb(255,255,255)
 						else rgb(0,0,0)
 					) else font_color(card.card_color)
 	casting cost:
@@ -213,13 +226,19 @@ card style:
 			size: 14
 			color:
 				script:
-					if styling.grey_hybrid_name and contains(card.card_color, match:"land") and not contains(card.card_color, match:"multicolor") then rgb(0,0,0)
+					if styling.grey_hybrid_name and contains(card.card_color, match:"land") and
+					   contains(card.card_color, match:"horizontal") or
+					   contains(card.card_color, match:"radial") or
+					   contains(card.card_color, match:"vertical") and
+					   not contains(card.card_color, match:"multicolor") then rgb(0,0,0)
+					else if contains(card.card_color, match:"land") and
+					   contains(card.card_color, match:"multicolor") then rgb(0,0,0)
 					else if styling.grey_hybrid_name and contains(card.card_color, match:"hybrid") then rgb(0,0,0)
 					else if contains(card.card_color, match:"artifact") then (
 						if contains(card.card_color, match:"blue") or
-						contains(card.card_color, match:"black") or
-						contains(card.card_color, match:"red") or
-						contains(card.card_color, match:"green") then rgb(255,255,255)
+						   contains(card.card_color, match:"black") or
+						   contains(card.card_color, match:"red") or
+						   contains(card.card_color, match:"green") then rgb(255,255,255)
 						else rgb(0,0,0)
 					) else font_color(card.card_color)
 			separator color: rgb(128,128,128)
@@ -233,8 +252,14 @@ card style:
 		render style: image
 		choice images:
 			# Images based on the set symbol
-			basic land: script: symbol_variation(symbol: set.symbol, variation: "common")
-			common:     script: symbol_variation(symbol: set.symbol, variation: "common")
+			basic land:
+				script:
+					if styling.inverted_common_symbol then symbol_variation(symbol: set.symbol, variation: "invertedcommon")
+					else symbol_variation(symbol: set.symbol, variation: "common")
+			common:
+				script:
+					if styling.inverted_common_symbol then symbol_variation(symbol: set.symbol, variation: "invertedcommon")
+					else symbol_variation(symbol: set.symbol, variation: "common")
 			uncommon:   script: symbol_variation(symbol: set.symbol, variation: "uncommon")
 			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
 			special:    script: symbol_variation(symbol: set.symbol, variation: "special")
@@ -253,13 +278,19 @@ card style:
 			weight: bold
 			color:
 				script:
-					if styling.grey_hybrid_name and contains(card.card_color, match:"land") and not contains(card.card_color, match:"multicolor") then rgb(0,0,0)
+					if styling.grey_hybrid_name and contains(card.card_color, match:"land") and
+					   contains(card.card_color, match:"horizontal") or
+					   contains(card.card_color, match:"radial") or
+					   contains(card.card_color, match:"vertical") and
+					   not contains(card.card_color, match:"multicolor") then rgb(0,0,0)
+					else if contains(card.card_color, match:"land") and
+					   contains(card.card_color, match:"multicolor") then rgb(0,0,0)
 					else if styling.grey_hybrid_name and contains(card.card_color, match:"hybrid") then rgb(0,0,0)
 					else if contains(card.card_color, match:"artifact") then (
 						if contains(card.card_color, match:"blue") or
-						contains(card.card_color, match:"black") or
-						contains(card.card_color, match:"red") or
-						contains(card.card_color, match:"green") then rgb(255,255,255)
+						   contains(card.card_color, match:"black") or
+						   contains(card.card_color, match:"red") or
+						   contains(card.card_color, match:"green") then rgb(255,255,255)
 						else rgb(0,0,0)
 					) else font_color(card.card_color)
 			separator color: rgb(200,0,0)

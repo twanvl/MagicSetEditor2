@@ -1,4 +1,4 @@
-﻿mse version: 0.3.2
+mse version: 0.3.4
 # Symbol font for level symbols
 
 image font size: 16
@@ -21,6 +21,14 @@ symbol:
 symbol:
 	code: #
 	image: ritual.png
+symbol:
+	code: [
+	image: leftbracket.png
+	image font size: 24
+symbol:
+	code: ]
+	image: rightbracket.png
+	image font size: 24
 symbol:
 	code: *
 	image: star.png
