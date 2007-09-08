@@ -13,5 +13,5 @@ symbol:
 	code: @
 	image: infinity.png
 symbol:
-	code: `
+	code: ::
 	image: dot.png

@@ -7,8 +7,6 @@ position hint: 4
 ## Copied and Pasted from vs.mse-game, with a few modifications
 # General functions
 init script:
-	# level codes
-	level_sort := sort_rule(order: "[%!+&$#*@]")
 	# the rule text filter
 	#  - adds continuous symbols
 	#  - adds counter symbols
@@ -22,54 +20,44 @@ init script:
 	text_filter := 
 		# step 1 : remove all automatic tags
 		tag_remove_rule(tag: "<sym-auto>") +
-		tag_remove_rule(tag: "<i-auto>")   +
-		# step 2a : fill in atom fields
+		# step 2 : expand shortcut words ~ and CARDNAME
+		replace_rule(
+			match: "~|~THIS~|CARDNAME",
+			in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
+			replace: "<atom-cardname></atom-cardname>"
+			) +
+		# step 3 : fill in the cardname atom field
 		tag_contents_rule(
 			tag: "<atom-cardname>",
 			contents: { if card.name=="" then "CARDNAME" else card.name }
 			) +
-		# step 2b : explict non symbols
+		# step 4 : symbols
 		replace_rule(
-			match: "\\][\\[@\\]]+\\[",
-			replace: {"<nosym>" +level_sort() + "</nosym>"} ) +
-		# step 2c : add symbols
-		replace_rule(
-			match: "[\\[@\\]]+",
-			replace: {"<sym-auto>" + level_sort() + "</sym-auto>"} ) +
-		# step 2d : add explict symbols
-		replace_rule(
-			match: "\\[[\\[@\\]]+\\]",
-			replace: {"<sym>" + level_sort() + "</sym>"} );
+			match: "[|@|::|]",
+			replace: "<sym-auto>&</sym-auto>" );
 	level_filter := 
 		# step 1 : remove all automatic tags
 		tag_remove_rule(tag: "<sym-auto>") +
-		# step 3b : explict non symbols
+		# step 2 : symbols
 		replace_rule(
-			match: "\\][\\[%!+&$#*\\]]+\\[",
-			replace: {"<nosym>" +level_sort() + "</nosym>"} ) +
-		# step 3c : add symbols
-		replace_rule(
-			match: "[\\[%!+&$#*\\]]+",
-			replace: {"<sym-auto>" + level_sort() + "</sym-auto>"} ) +
-		# step 3d : add explict symbols
-		replace_rule(
-			match: "\\[[\\[%!+&$#*\\]]+\\]",
-			replace: {"<sym>" + level_sort() + "</sym>"} );
+			match: "[|%|!|+|&|$|#|*|]",
+			replace: "<sym-auto>&</sym-auto>" );
 	a_and_d_filter := 
 		# step 1 : remove all automatic tags
 		tag_remove_rule(tag: "<sym-auto>") +
-		# step 2b : explict non symbols
+		# step 2 : symbols
 		replace_rule(
-			match: "\\][\\[@\\]]+\\[",
-			replace: {"<nosym>" +level_sort() + "</nosym>"} ) +
-		# step 2c : add symbols
+			match: "@",
+			replace: "<sym-auto>&</sym-auto>" );
+	copyright_filter :=
+		# step 1 : trademark symbol
 		replace_rule(
-			match: "[\\[@\\]]+",
-			replace: {"<sym-auto>" + level_sort() + "</sym-auto>"} ) +
-		# step 2d : add explict symbols
+			match: "TM",
+			replace: "™") +
+		# step 2 : copyright symbol
 		replace_rule(
-			match: "\\[[\\[@\\]]+\\]",
-			replace: {"<sym>" + level_sort() + "</sym>"} );
+			match: "CR|\\(C\\)",
+			replace: "©")
 	
 	# the flavor text filter
 	flavor_text_filter :=
@@ -80,36 +68,38 @@ init script:
 	
 	# Determine type of card
 	card_type := {
-		if	card.type2 == "Effect]" then "effect monster"
-		else if card.type2 == "Fusion]" then "fusion monster"
-		else if card.type2 == "Fusion/Effect]" then "fusion monster"
-		else if card.type2 == "Ritual]" then "ritual monster"
-		else if card.type2 == "Ritual/Effect]" then "ritual monster"
-		else if card.type1 == "[Legendary Dragon" then "legendary dragon"
-		else if card.type1 == "[Divine-Beast" then "obelisk"
-		else if card.attribute == "spell"          then "spell card"
-		else if card.level     == "[Spell Card]"   then "spell card"
-		else if card.level     == "[Spell Card%]"   then "spell card"
-		else if card.level     == "[Spell Card!]"   then "spell card"
-		else if card.level     == "[Spell Card+]"   then "spell card"
-		else if card.level     == "[Spell Card&]"   then "spell card"
-		else if card.level     == "[Spell Card$]"   then "spell card"
-		else if card.level     == "[Spell Card#]"   then "spell card"
-		else if card.attribute == "trap"    	   then "trap card"
-		else if card.level     == "[Trap Card]"    then "trap card"
-		else if card.level     == "[Trap Card%]"    then "trap card"
-		else if card.level     == "[Trap Card!]"    then "trap card"
-		else if card.level     == "[Trap Card+]"    then "trap card"
-		else if card.level     == "[Trap Card&]"    then "trap card"
-		else if card.level     == "[Trap Card$]"    then "trap card"
-		else if card.level     == "[Trap Card#]"    then "trap card"
-		else                                            "normal monster"
+		if	card.type2	== "Effect<sym>]</sym>"				then "effect monster"
+		else if card.type2	== "Fusion<sym>]</sym>"				then "fusion monster"
+		else if card.type2	== "Fusion / Effect<sym>]</sym>"		then "fusion monster"
+		else if card.type2	== "Fusion/Effect<sym>]</sym>"			then "fusion monster"
+		else if card.type2	== "Ritual<sym>]</sym>"				then "ritual monster"
+		else if card.type2	== "Ritual / Effect<sym>]</sym>"		then "ritual monster"
+		else if card.type2	== "Ritual/Effect<sym>]</sym>"			then "ritual monster"
+		else if card.type1	== "<sym>[</sym>Legendary Dragon"		then "legendary dragon"
+		else if card.type1	== "<sym>[</sym>Divine-Beast"			then "obelisk"
+		else if card.attribute	== "spell"					then "spell card"
+		else if card.level	== "<sym>[</sym>Spell Card<sym>]</sym>"		then "spell card"
+		else if card.level	== "<sym>[</sym>Spell Card%<sym>]</sym>"	then "spell card"
+		else if card.level	== "<sym>[</sym>Spell Card!<sym>]</sym>"	then "spell card"
+		else if card.level	== "<sym>[</sym>Spell Card+<sym>]</sym>"	then "spell card"
+		else if card.level	== "<sym>[</sym>Spell Card&<sym>]</sym>"	then "spell card"
+		else if card.level	== "<sym>[</sym>Spell Card$<sym>]</sym>"	then "spell card"
+		else if card.level	== "<sym>[</sym>Spell Card#<sym>]</sym>"	then "spell card"
+		else if card.attribute	== "trap"					then "trap card"
+		else if card.level	== "<sym>[</sym>Trap Card<sym>]</sym>"		then "trap card"
+		else if card.level	== "<sym>[</sym>Trap Card%<sym>]</sym>"		then "trap card"
+		else if card.level	== "<sym>[</sym>Trap Card!<sym>]</sym>"		then "trap card"
+		else if card.level	== "<sym>[</sym>Trap Card+<sym>]</sym>"		then "trap card"
+		else if card.level	== "<sym>[</sym>Trap Card&<sym>]</sym>"		then "trap card"
+		else if card.level	== "<sym>[</sym>Trap Card$<sym>]</sym>"		then "trap card"
+		else if card.level	== "<sym>[</sym>Trap Card#<sym>]</sym>"		then "trap card"
+		else                                          				     "normal monster"
 	}
 	# Default 'attribute' of card
 	attribute := {
 		if      is_spell_card() then "Spell"
 		else if is_trap_card()  then "Trap"
-		else                         ""
+		else                         "none"
 	}
 	
 	############### Type of card
@@ -144,6 +134,15 @@ init script:
 	        card.card_type == "trap card"	or
 		card.attribute == "trap"	or
 		card.level     == "Trap"
+	}
+	############### Determine Card Position
+	pos_of_card := {
+		position(
+			of: card
+			in: set
+			order_by: {
+				card.card_type + card.attribute + card.monster_type + card.name
+			}) + 1
 	}
 
 ############################################################## Set fields
@@ -244,12 +243,13 @@ card field:
 	choice: divine
 	choice: spell
 	choice: trap
+	default: attribute()
 	card list visible: true
 	card list column: 2
 card field:
 	type: text
 	name: level
-	description: Level, * = star, % = continuous, ! = counter, + = equipment, & = field, $ = quickplay, # = ritual
+	description: `=] * = star, % = continuous, ! = counter, + = equipment, & = field, $ = quickplay, # = ritual
 	script: level_filter(value)
 
 ############################# Image
@@ -263,11 +263,13 @@ card field:
 	type: text
 	name: type1
 	script: a_and_d_filter(value)
+	default: "<sym>[</sym>"
 	editable: false
 card field:
 	type: text
 	name: type2
 	script: a_and_d_filter(value)
+	default: "<sym>]</sym>"
 	editable: false
 card field:
 	type: text
@@ -276,7 +278,7 @@ card field:
 		# Either just monster, monster / type1
 		combined_editor(
 			field1: card.type1,
-			separator: "/",
+			separator: " / ",
 			field2: card.type2,
 			soft_before_empty: true,
 			hide_when_empty:   true,
@@ -292,12 +294,9 @@ card field:
 		set.code
 		+ "-" +
 		set.language +
-		position(
-			of: card
-			in: set
-			order_by: {
-				card.name
-			})
+		if pos_of_card()<=9 then "00" + pos_of_card(value) else
+		if pos_of_card()>=9 and pos_of_card()<=99 then "0" + pos_of_card(value) else
+		"" + pos_of_card(value)
 	card list visible: true
 	card list column: 6
 	card list width: 55
@@ -364,6 +363,7 @@ card field:
 	type: text
 	name: copyright
 	default: set.copyright
+	script: copyright_filter(value)
 	show statistics: false
 
 

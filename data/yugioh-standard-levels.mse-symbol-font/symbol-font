@@ -24,11 +24,11 @@ symbol:
 symbol:
 	code: [
 	image: leftbracket.png
-	image font size: 24
+	image font size: 28
 symbol:
 	code: ]
 	image: rightbracket.png
-	image font size: 24
+	image font size: 28
 symbol:
 	code: *
 	image: star.png
