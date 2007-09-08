@@ -170,47 +170,59 @@ init script:
 	############################################################## Card number
 	
 	# Index for sorting, white cards are first, so white->A, blue->B, .. ,
-	#  multi->F, hybrid->G, splits -> H, arti->I, land->K, basic land->L, plains->M, island->N, swamp->O, mountain->P, forest->Q
+	#  multi->F, hybrid->G, diff color splits -> H, arti->I, land->K, basic land->L, plains->M, island->N, swamp->O, mountain->P, forest->Q
 	is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicolor" }
 	is_null_cost  := { input == "" or input == "0" }
-	sort_index := {
-		card_color   := card.card_color
+	basic_land_sort := {
+		if contains(card.name, match:"Plains") then "LB"                            # Plains
+		else if contains(card.name, match:"Island") then "LC"                    # Islands
+		else if contains(card.name, match:"Swamp") then "LD"                  # Swamps
+		else if contains(card.name, match:"Mountain") then "LE"              # Mountains
+		else if contains(card.name, match:"Forest") then "LF"                    # Forests
+		else "LA"                                                                                              # other basic lands
+	}
+	norm_or_token := {
+		if contains(card.shape, match:"token") then "T"
+		else "N"
+	}
+	color_of_card := {
+		card_color := card.card_color
 		casting_cost := card.casting_cost
-		if      card.casting_cost_2 != "" and
-		        card_color != card.card_color_2                       then "H"    # multicolor splits
+		if card.shape == "split" and
+		   casting_cost != card.casting_cost_2 then "H"                              # Diff Color Splits
 		else if chosen(choice: "land", card_color) then (
-			# land
-			if card.rarity != "basic land"                        then "K"    # nonbasic land
-			else (
-				if      contains(card.name, match:"Plains")   then "M"
-				else if contains(card.name, match:"Island")   then "N"
-				else if contains(card.name, match:"Swamp")    then "O"
-				else if contains(card.name, match:"Mountain") then "P"
-				else if contains(card.name, match:"Forest")   then "Q"
-				else                                               "L"    # other basic land
-			)
+			if card.rarity != "basic land" then "K"                              # Nonbasic Land
+			else basic_land_sort()
 		) else if is_null_cost(casting_cost) then (
-			# no casting cost; use frame
-			if      chosen(choice: "hybrid", card_color)         then "G"    # Hybrid frame
-			else if is_multicolor(card_color)                    then "F"    # Multicolor frame
-			else if chosen(choice:"white", card_color)           then "A"    # White
-			else if chosen(choice:"blue",  card_color)           then "B"    # Blue
-			else if chosen(choice:"black", card_color)           then "C"    # Black
-			else if chosen(choice:"red",   card_color)           then "D"    # Red
-			else if chosen(choice:"green", card_color)           then "E"    # Green
-			else                                                      "I"    # Non of the above = Colorless/artifact
+			if chosen(choice: "hybrid", card_color) then "G"          # Hybrids
+			else if is_multicolor(card_color) then "F"                    #  Multicolor
+			else if chosen(choice:"white", card_color) then "A"     # White
+			else if chosen(choice:"blue", card_color) then "B"       # Blue
+			else if chosen(choice:"black", card_color) then "C"     # Black
+			else if chosen(choice:"red", card_color) then "D"        # Red
+			else if chosen(choice:"green", card_color) then "E"     # Green
+			else "I"                                                                                # Colorless / Artifact
 		) else (
 			# use the casting cost
 			colors := sort_text(casting_cost, order: "<WUBRG>")
-			if      colors == ""                                 then "I"    # Colorless
-			else if contains(casting_cost, match:"/")            then "G"    # Hybrid cost
-			else if colors == "W"                                then "A"    # White
-			else if colors == "U"                                then "B"    # Blue
-			else if colors == "B"                                then "C"    # Black
-			else if colors == "R"                                then "D"    # Red
-			else if colors == "G"                                then "E"    # Green
-			else                                                      "F"    # non of the above = multicolor
+			if      colors == "" then "I"                                                  # Colorless / Artifact
+			else if colors == "W" then "A"                                         # White
+			else if colors == "U" then "B"                                          # Blue
+			else if colors == "B" then "C"                                          # Black
+			else if colors == "R" then "D"                                          # Red
+			else if colors == "G" then "E"                                          # Green
+			else "F"                                                                               # Multicolor
 		)
+	}
+	is_shifted := {
+		if contains(card.shape, match:"shifted") then "1"
+		else "0"
+	}
+	is_split := {
+		if contains(card.shape, match:"split") then "1"
+		else "0"
+	}
+	sort_index := { norm_or_token() + color_of_card() + is_shifted() + is_split()
 	}
 	
 	rarity_sort := {
@@ -606,6 +618,7 @@ card field:
 	choice: token
 	choice: flip
 	choice: split
+	choice: shifted
 	script: card_shape() # determined by the style
 card field:
 	type: text
@@ -618,7 +631,7 @@ card field:
 	card list column: 1
 	card list width: 150
 	description: The name of the card
-	script: if card_shape() == "split" then card.name + "//" + card.name_2 else card.name
+	script: if card_shape() == "split" then card.name + " // " + card.name_2 else card.name
 
 ############################# Background stuff
 card field:
@@ -1738,6 +1751,16 @@ keyword:
 	mode: expert
 	reminder: This comes into play with a {if has_pt() then "+1/+1" else "charge"} counter on it for each color of mana used to pay its cost.
 keyword:
+	keyword: Art rampage
+	match: Art rampage <atom-param>number</atom-param>
+	mode: expert
+	reminder: Whenever this becomes blocked by a creature, it gets +{param1}/+{param1} for each creature in the blocker's art beyond the first.
+keyword:
+	keyword: Super haste
+	match: Super haste
+	mode: expert
+	reminder: This may attack the turn before you play it. (You may put this card into play from your hand, tapped and attacking, during your declare attackers step. If you do, you lose the game at the end of your next turn unless you pay this card's mana cost during that turn.)
+keyword:
 	keyword: Gotcha
 	match: Gotcha
 	mode: pseudo
@@ -1966,3 +1989,8 @@ keyword:
 	match: Clash
 	mode: action
 	reminder: Each clashing player reveals the top card of his or her library then puts that card on the top or bottom. A player wins if his or her card had a higher converted mana cost.
+keyword:
+	keyword: Shapeshift
+	match: Shapeshift
+	mode: expert
+	reminder: This creature is every creature type even if this card isn't in play.

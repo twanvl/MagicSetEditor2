@@ -29,6 +29,8 @@ init script:
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
 	
+	card_shape := { "shifted" }
+
 ############################################################## Set info fields
 set info style:
 	symbol:

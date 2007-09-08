@@ -7,7 +7,7 @@ position hint: 407
 
 card width: 375
 card height: 523
-card dpi: 300
+card dpi: 150
 
 ############################################################## Extra scripts
 
@@ -41,6 +41,8 @@ init script:
 	font_colors_white := { input != "w" }
 	
 	paintbrush_color := { if font_white() then "white" else "black" }
+	
+	card_shape := { "token" }
 
 ############################################################## Extra style
 styling field:

@@ -10,6 +10,7 @@ card height: 523
 card dpi: 150
 
 #By: Pichoro
+#Images by Spiderboy4, Buttock1234, and Artfreakwiu
 ############################################################## Extra scripts
 
 init script:
@@ -76,6 +77,8 @@ init script:
 		else if contains(card.card_color, match:"artifact") or contains(card.card_color, match:"multicolor") or contains(card.card_color, match:"white") then "black"
 		else "white"
 	}
+	
+	card_shape := { "shifted" }
 
 ############################################################## Set info fields
 set info style:
@@ -218,7 +221,7 @@ card style:
 		top : 434
 		width: { 300 - max(18,card_style.rarity.content_width) }
 		height: 28
-		alignment: top shrink-overflow
+		alignment: middle shrink-overflow
 		z index: 1
 		padding top: 2
 		font:

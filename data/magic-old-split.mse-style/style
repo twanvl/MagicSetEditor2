@@ -68,6 +68,8 @@ init script:
 			)
 		else base
 	}
+	
+	card_shape := { "split" }
 
 ############################################################## Set info fields
 set info style:

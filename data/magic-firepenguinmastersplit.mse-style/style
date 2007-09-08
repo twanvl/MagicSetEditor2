@@ -46,6 +46,8 @@ init script:
 	font_colors_white := { input != "w" }
 	
 	paintbrush_color := { if font_white() then "white" else "black" }
+	
+	card_shape := { "split" }
 
 ############################################################## Extra style
 styling field:

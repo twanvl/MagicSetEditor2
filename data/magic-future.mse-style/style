@@ -10,6 +10,7 @@ card height: 523
 card dpi: 150
 
 #By: Pichoro
+#Images by Spiderboy4, Buttock1234, and Artfreakwiu
 ############################################################## Extra scripts
 
 init script:
@@ -143,6 +144,8 @@ init script:
 		   not contains(card.type, match:"Creature") then "enchantment"
 		else "multitype"
 		}
+	
+	card_shape := { "shifted" }
 
 ############################################################## Set info fields
 set info style:

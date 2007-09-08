@@ -723,6 +723,16 @@ keyword:
 	mode: expert
 	reminder: It comes into play with a +1/+1 counter on it for each color of mana used to pay its cost. If it isn't a creature, use charge counters instead.
 keyword:
+	keyword: Art rampage
+	match: art rampage <atom-param>number</atom-param>
+	mode: expert
+	reminder: Whenever it blocked by a creature, it gets +{param1}/+{param1} for each creature in the blocker's art beyond the first.
+keyword:
+	keyword: Super haste
+	match: Super haste
+	mode: expert
+	reminder: It may attack the turn before you play it. (You may put it into play from your hand, tapped and attacking, during your declare attackers step. If you do, you lose the game at the end of your next turn unless you pay its mana cost during that turn.)
+keyword:
 	keyword: Gotcha
 	match: Gotcha
 	mode: pseudo
@@ -934,14 +944,19 @@ keyword:
 	keyword: Evoke
 	match: evoke <atom-param>cost</atom-param>
 	mode: expert
-	reminder: You may play this spell for its evoke cost. If you do, it's sacrificed when it comes into play.
+	reminder: You may it for its evoke cost. If you do, it's sacrificed when it comes into play.
 keyword:
 	keyword: Champion
 	match: champion <atom-param>a</atom-param> <atom-param>name</atom-param>
 	mode: expert
-	reminder: When this comes into play, sacrifice it unless you remove another {param2} you control from the game. When this leaves play, that card returns to play.
+	reminder: When it comes into play, sacrifice it unless you remove another {param2} you control from the game. When it leaves play, that card returns to play.
 keyword:
 	keyword: Clash
 	match: clash
 	mode: expert
 	reminder: Each clashing player reveals the top card of his or her library then puts that card on the top or bottom. A player wins if his or her card had a higher converted mana cost.
+keyword:
+	keyword: Shapeshift
+	match: shapeshift
+	mode: expert
+	reminder: It is every creature type even if it isn't in play.
