@@ -108,42 +108,41 @@ init script:
 		else if contains(card.card_color, match:"artifact") or contains(card.card_color, match:"multicolor") or contains(card.card_color, match:"white") then "black"
 		else "white"
 	}
-	
 	typesymbol_color:= { if contains(card.card_color, match:"artifact") then "black"
-		else if card.card_color == "multicolor" then "black"
+		else if card.card_color == "multicolor" then "white"
 		else if card.card_color == "white" then "black"
-		else if card.card_color == "land" then (
-			if contains(card.card_color, match:"black") or
-			   contains(card.card_color, match:"blue") or
-			   contains(card.card_color, match:"red") or
-			   contains(card.card_color, match:"green") then "white"
+		else if contains(card.card_color, match:"land") then (
+			if contains(card.card_color, match:"green") then "white"
+			else if contains(card.card_color, match:"red") then "white"
+			else if contains(card.card_color, match:"black") then "white"
+			else if contains(card.card_color, match:"blue") then "white"
 			else "black"
-		) else "white"
+		) else if card.card_color == "colorless" then "black"
+		else "white"
 	}
 	
-	#Use of "Enchant" rather than "Enchantment" below is intentional, to allow functionality for users who wish to use "Enchant Creature" and the like.
-	typesymbol_type:= { if contains(card.type, match:"Instant") then "instant"
+	typesymbol_type:= { if contains(card.type, match:"Tribal") then "multitype"
 		else if contains(card.type, match:"Sorcery") then "sorcery"
-		else if contains(card.type, match:"Tribal") then "multitype"
+		else if contains(card.type, match:"Instant") then "instant"
 		else if contains(card.type, match:"Planeswalker") then "multitype"
 		else if contains(card.type, match:"Creature") and
 		   not contains(card.type, match:"Land") and
 		   not contains(card.type, match:"Artifact") and
-		   not contains(card.type, match:"Enchant") then "creature"
+		   not contains(card.type, match:"Enchantment") then "creature"
 		else if contains(card.type, match:"Artifact") and
 		   not contains(card.type, match:"Land") and
 		   not contains(card.type, match:"Creature") and
-		   not contains(card.type, match:"Enchant") then "artifact"
+		   not contains(card.type, match:"Enchantment") then "artifact"
 		else if contains(card.type, match:"Land") and
 		   not contains(card.type, match:"Creature") and
 		   not contains(card.type, match:"Artifact") and
-		   not contains(card.type, match:"Enchant") then "land"
-		else if contains(card.type, match:"Enchant") and
+		   not contains(card.type, match:"Enchantment") then "land"
+		else if contains(card.type, match:"Enchantment") and
 		   not contains(card.type, match:"Land") and
 		   not contains(card.type, match:"Artifact") and
 		   not contains(card.type, match:"Creature") then "enchantment"
 		else "multitype"
-		}
+	}
 	
 	card_shape := { "shifted" }
 
@@ -489,24 +488,14 @@ extra card field:
 extra card field:
 	type: choice
 	name: type symbol
-	choice:
-		name: white
-		choice: artifact
-		choice: creature
-		choice: enchantment
-		choice: instant
-		choice: land
-		choice: multitype
-		choice: sorcery
-	choice:
-		name: black
-		choice: artifact
-		choice: creature
-		choice: enchantment
-		choice: instant
-		choice: land
-		choice: multitype
-		choice: sorcery
+	default: typesymbol_type(value)
+	choice: artifact
+	choice: creature
+	choice: enchantment
+	choice: instant
+	choice: land
+	choice: multitype
+	choice: sorcery
 extra card field:
 	type: choice
 	name: paintbrush
@@ -514,7 +503,6 @@ extra card field:
 	editable: false
 	choice: black
 	choice: white
-
 extra card style:
 	textbox:
 		left: 23
@@ -551,20 +539,13 @@ extra card style:
 		z index: 4
 		render style: image
 		choice images:
-			white artifact:    /magic-future-common.mse-include/artifact_white.png
-			black artifact:    /magic-future-common.mse-include/artifact_black.png
-			white creature:    /magic-future-common.mse-include/creature_white.png
-			black creature:    /magic-future-common.mse-include/creature_black.png
-			white enchantment: /magic-future-common.mse-include/enchantment_white.png
-			black enchantment: /magic-future-common.mse-include/enchantment_black.png
-			white instant:     /magic-future-common.mse-include/instant_white.png
-			black instant:     /magic-future-common.mse-include/instant_black.png
-			white land:        /magic-future-common.mse-include/land_white.png
-			black land:        /magic-future-common.mse-include/land_black.png
-			white multitype:   /magic-future-common.mse-include/multitype_white.png
-			black multitype:   /magic-future-common.mse-include/multitype_black.png
-			white sorcery:     /magic-future-common.mse-include/sorcery_white.png
-			black sorcery:     /magic-future-common.mse-include/sorcery_black.png
+			artifact: { "/magic-future-common.mse-include/artifact_" + typesymbol_color(value) + ".png" }
+			creature: { "/magic-future-common.mse-include/creature_" + typesymbol_color(value) + ".png" }
+			enchantment: { "/magic-future-common.mse-include/enchantment_" + typesymbol_color(value) + ".png" }
+			instant: { "/magic-future-common.mse-include/instant_" + typesymbol_color(value) + ".png" }
+			land: { "/magic-future-common.mse-include/land_" + typesymbol_color(value) + ".png" }
+			multitype: { "/magic-future-common.mse-include/multitype_" + typesymbol_color(value) + ".png" }
+			sorcery: { "/magic-future-common.mse-include/sorcery_" + typesymbol_color(value) + ".png" }
 	paintbrush
 		right: { ( if card.pt != "" then 275 else 338 ) - card_style.illustrator.content_width }
 		top : 476
