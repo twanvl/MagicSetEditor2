@@ -1,13 +1,16 @@
-﻿mse version: 0.3.3
+mse version: 0.3.5
 game: vs
 full name: VS Extended Art
 short name: VS Extended
 icon: card-sample.png
 position hint: 002
-version: 2007-06-25
+version: 2007-09-06
 depends on:
 	package: vs.mse-game
-	version: 2007-06-25
+	version: 2007-09-06
+depends on:
+	package: vs-common.mse-include
+	version: 2007-09-06
 
 card width: 375
 card height: 523
@@ -19,6 +22,16 @@ card dpi: 150
 
 ############################################################## Extra style
 
+styling field:
+	type: boolean
+	name: foils
+	description: Use foil backgrounds?
+	initial: no
+styling field:
+	type: boolean
+	name: watermarkings
+	description: Use watermarks?
+	initial: no
 styling field:
 	type: boolean
 	name: edition
@@ -37,15 +50,20 @@ card style:
 		render style: image
 		popup style: in place
 		choice images:
-			character:		card-character.jpg
-			character dual:		card-character-dual.jpg
-			character dual (new):	card-character-dual.jpg
-			concealed:		card-concealed.jpg
-			concealed dual:		card-concealed-dual.jpg
-			concealed dual (new):	card-concealed-dual.jpg
-			equipment:		card-equipment.jpg
-			location:		card-location.jpg
-			plot twist:		card-plot-twist.jpg
+			characters visible character:					cvchcard.jpg
+			characters visible character dual:				cvchcard.jpg
+			characters visible character dual (new):			cvcncard.jpg
+			characters hidden concealed:					chcocard.jpg
+			characters hidden concealed dual:				chcocard.jpg
+			characters hidden concealed dual (new):				choncard.jpg
+			characters concealed-optional concealed-optional character:	chcocard.jpg
+			characters concealed-optional concealed-optional dual:		chcocard.jpg
+			characters concealed-optional concealed-optional dual (new):	choncard.jpg
+			equipment visible equipment:					eveqcard.jpg
+			equipment concealed equipment:					eveqcard.jpg
+			equipment concealed-optional equipment:				eveqcard.jpg
+			location:							locard.jpg
+			plot twist:							ptcard.jpg
 
 	############################# Name line
 	full name:
@@ -87,13 +105,13 @@ card style:
 	############################# Image
 	image:
 		left:	
-			script: if is_dual() then 60 else 42
+			script: if is_new_dual() then 60 else 42
 		top:	73
 		width:	
-			script:	if is_dual() then 283 else 301
+			script:	if is_new_dual() then 283 else 301
 		height: 342
 		mask:
-			script: if is_dual() then "image-mask-dual.png" else "image-mask.png"
+			script: if is_new_dual() then "image-mask-dual.png" else "image-mask.png"
 		z index: 1
 	card symbol:
 		left: 310
@@ -102,11 +120,11 @@ card style:
 		width: 45
 		render style: image
 		choice images:
-			Marvel:	marvel.png
-			DC-new:	dcnew.png
-			DC-old:	dcold.png
-			Hellboy: hellboy.png
-			Other...: blank.png
+			Marvel:	/vs-common.mse-include/marvel.png
+			DC-new:	/vs-common.mse-include/dcnew.png
+			DC-old:	/vs-common.mse-include/dcold.png
+			Hellboy: /vs-common.mse-include/hellboy.png
+			Other...: /vs-common.mse-include/blank.png
 		z index: 3
 	custom symbol:
 		left: 310
@@ -122,16 +140,16 @@ card style:
 		width: 20
 		render style: image
 		choice images:
-			first edition: first-edition.png
+			first edition: /vs-common.mse-include/first-edition.png
 		z index: 3
 		visible:
 			script: styling.edition
 
 	############################# Type Bar
 	type text full:
-		left:	script: if is_dual() then 87 else 72
+		left:	script: if is_new_dual() then 87 else 72
 		top:	395
-		width:	script: if is_dual() then 243 else 256
+		width:	script: if is_new_dual() then 243 else 256
 		height: 20
 		font:
 			name: Eurostile
@@ -141,9 +159,9 @@ card style:
 		alignment: middle center
 		z index: 3
 	type bar:
-		left:	script: if is_dual() then 87 else 72
+		left:	script: if is_new_dual() then 87 else 72
 		top:	395
-		width:	script: if is_dual() then 243 else 256
+		width:	script: if is_new_dual() then 243 else 256
 		height: 20
 		visible:
 			script: card.type_text != ""
@@ -221,10 +239,10 @@ card style:
 		z index: 4
 		render style: image hidden
 		choice images:
-			common:	  rarity-common.png
-			uncommon: rarity-uncommon.png
-			rare:	  rarity-rare.png
-			promo:    rarity-promo.png
+			common:	  /vs-common.mse-include/rarity-common.png
+			uncommon: /vs-common.mse-include/rarity-uncommon.png
+			rare:	  /vs-common.mse-include/rarity-rare.png
+			promo:    /vs-common.mse-include/rarity-promo.png
 
 	############################# Affiliation
 	team 2 full:
@@ -238,11 +256,7 @@ card style:
 			size: 19
 			scale down to: 18
 			color: rgb(245,230,197)
-		symbol font:
-			name: vs-standard-arrow
-			size: 18
-			alignment: middle center
-		visible: is_dual()
+		visible: { is_new_dual() }
 		alignment: center shrink-overflow
 		z index: 4
 		padding left:   2
@@ -254,29 +268,30 @@ card style:
 	symbols:
 		left: 20
 		top : 
-			script: if is_dual() then 365 else 320
+			script: if is_new_dual() then 365 else 320
 		height: 
-			script: if is_dual() then 34 else 17
+			script: if is_new_dual() then 34 else 17
 		width: 
-			script: if is_dual() then 38 else 19
+			script: if is_new_dual() then 38 else 19
 		z index: 4
 		render style: image list
 		choice images:
 			flight:
-				script: if is_dual() then "flight.png" else "flight2.png"
+				script: if is_new_dual() then "/vs-common.mse-include/flight.png" else "/vs-common.mse-include/flight2.png"
 			ongoing:
-				script: if is_dual() then "ongoing.png" else "ongoing2.png"
+				script: if is_new_dual() then "/vs-common.mse-include/ongoing.png" else "/vs-common.mse-include/ongoing2.png"
 			range:
-				script: if is_dual() then "range.png" else "range2.png"
+				script: if is_new_dual() then "/vs-common.mse-include/range.png" else "/vs-common.mse-include/range2.png"
 		direction: vertical
 		spacing: 0
 
 	############################# Text box
 	rule text:
 		left: 
-			script: if is_dual() then 95 else 90
+			script: if is_new_dual() then 105 else 90
 		top : 430
-		width: 265
+		width: 
+			script: if is_new_dual() then 250 else 265
 		height: 50
 		mask: text-mask.png
 		font:
@@ -299,7 +314,7 @@ card style:
 
 	flavor text:
 		left: 
-			script: if is_dual() then 95 else 90
+			script: if is_new_dual() then 95 else 90
 		top : 440
 		width: 265
 		height: 50
@@ -319,16 +334,19 @@ card style:
 
 	watermark:
 		left: 
-			script: if is_dual() then 217 else 212
+			script: if watermark_narrow() then 190 else
+				if watermark_wide() then 180 else
+				if is_new_dual() then 217 else 200
 		top:  435
-		width: 40
-		height: 60
+		width: 
+			script: if watermark_narrow() then 35 else
+				if watermark_wide() then 90 else 50
+		height: 50
+		visible:
+			script: styling.watermarkings
 		render style: image
-		z index: 5
-		choice images:
-			BPRD:		bprd-watermark.png
-			Thule Society:	thule-society-watermark.png
-		
+		include file: vs-common.mse-include/watermarks
+		z index: 4
 
 	############################# Atack/defence
 	attack:
@@ -392,3 +410,25 @@ card style:
 			name: Eurostile
 			size: 4
 			color: rgb(255,255,255)
+############################################################## Extra card fields
+
+extra card field:
+	type: choice
+	name: foil layer
+	choice: foil
+	editable: false
+
+extra card style:
+	foil layer:
+		left: 0
+		top : 0
+		width:  
+			script: if styling.foils=="no" then 0 else 375
+		height:
+			script: if styling.foils=="no" then 0 else 523
+		z index: 8
+		render style: image
+		choice images:
+			foil: /vs-common.mse-include/foil.png
+		visible:
+			script: styling.foils

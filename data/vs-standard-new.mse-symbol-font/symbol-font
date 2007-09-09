@@ -1,0 +1,206 @@
+mse version: 0.3.5
+# Symbol font for the new template
+
+image font size: 135
+horizontal space: 0
+symbol:
+	code: ->
+	image: arrow.png
+symbol:
+	code: >>>
+	image: arrow.png
+symbol:
+	code: @
+	image: diamond.png
+symbol:
+	code: <>
+	image: diamond.png
+symbol:
+	code: Activate
+	image: activate.png
+symbol:
+	code: AIM
+	image: aim.png
+symbol:
+	code: Alpha Flight
+	image: alphaflight.png
+symbol:
+	code: Anti-Matter
+	image: antimatter.png
+symbol:
+	code: Autobot
+	image: autobots.png
+symbol:
+	code: Decepticon
+	image: decepticons.png
+symbol:
+	code: Quintesson
+	image: quintessons.png
+symbol:
+	code: Horsemen of Apocalypse
+	image: apocalypse.png
+symbol:
+	code: Arkham Inmates
+	image: arkhaminmates.png
+symbol:
+	code: Avengers
+	image: avengers.png
+symbol:
+	code: Birds of Prey
+	image: birdsofprey.png
+symbol:
+	code: B.P.R.D.
+	image: bprd.png
+symbol:
+	code: Brood
+	image: brood.png
+symbol:
+	code: Brotherhood
+	image: brotherhood.png
+symbol:
+	code: Captain America
+	image: captainamerica.png
+symbol:
+	code: Marvel Defenders
+	image: defenders.png
+symbol:
+	code: Doom
+	image: doom.png
+symbol:
+	code: Excalibur
+	image: excalibur.png
+symbol:
+	code: Fantastic Four
+	image: f4.png
+symbol:
+	code: Femizons
+	image: femizons.png
+symbol:
+	code: Gotham Knights
+	image: gothamknights.png
+symbol:
+	code: Green Lantern
+	image: greenlantern.png
+symbol:
+	code: The Hand
+	image: hand.png
+symbol:
+	code: Hellfire Club
+	image: hellfire.png
+symbol:
+	code: Heralds of Galactus
+	image: heralds.png
+symbol:
+	code: Heroes for Hire
+	image: heroesforhire.png
+symbol:
+	code: Hydra
+	image: hydra.png
+symbol:
+	code: JLA
+	image: jla.png
+symbol:
+	code: JSA
+	image: jsa.png
+symbol:
+	code: Kree
+	image: kree.png
+symbol:
+	code: Legionnaires
+	image: legion.png
+symbol:
+	code: Marvel Knights
+	image: marvelknights.png
+symbol:
+	code: Masters of Evil
+	image: mastersofevil.png
+symbol:
+	code: Outsiders
+	image: outsiders.png
+symbol:
+	code: Omega Flight
+	image: omegaflight.png
+symbol:
+	code: New Warriors
+	image: newwarriors.png
+symbol:
+	code: Secret Six
+	image: secretsix.png
+symbol:
+	code: Serpent Society
+	image: serpentsociety.png
+symbol:
+	code: Shadowpact
+	image: shadowpact.png
+symbol:
+	code: Shi'ar
+	image: shiar.png
+symbol:
+	code: SHIELD
+	image: shield.png
+symbol:
+	code: Sinister Syndicate
+	image: sinistersyndicate.png
+symbol:
+	code: Skeleton  Crew
+	image: skeletoncrew.png
+symbol:
+	code: Spider-Friends
+	image: spiderman.png
+symbol:
+	code: Starjammers
+	image: starjammers.png
+symbol:
+	code: Team Superman
+	image: superman.png
+symbol:
+	code: The Order
+	image: theorder.png
+symbol:
+	code: Thor
+	image: thor.png
+symbol:
+	code: Thule Society
+	image: thule.png
+symbol:
+	code: Thunderbolts
+	image: thunderbolts.png
+symbol:
+	code: Teen Titans
+	image: titans.png
+symbol:
+	code: The Ultimates
+	image: ultimates.png
+symbol:
+	code: X-Men
+	image: xmen.png			
+symbol:
+	code: 0
+	image: 0.png
+symbol:
+	code: 1
+	image: 1.png
+symbol:
+	code: 2
+	image: 2.png
+symbol:
+	code: 3
+	image: 3.png
+symbol:
+	code: 4
+	image: 4.png
+symbol:
+	code: 5
+	image: 5.png
+symbol:
+	code: 6
+	image: 6.png
+symbol:
+	code: 7
+	image: 7.png
+symbol:
+	code: 8
+	image: 8.png
+symbol:
+	code: 9
+	image: 9.png

@@ -1,0 +1,7 @@
+mse version: 0.3.5
+full name: VS System, textbox watermarks
+version: 2007.09.06
+
+# This file doesn't do anything, other files in this directory can be included
+# in game/style files:
+#    watermarks		Includes references to the watermark images, to be used in a style file

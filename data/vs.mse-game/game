@@ -1,26 +1,31 @@
-﻿mse version: 0.3.3
+﻿mse version: 0.3.5
 full name: VS System
 short name: VS
 icon: card-back.png
-version: 2007-06-25
-position hint: 03
+version: 2007-09-06
+position hint: 3
 
 ############################################################## Functions & filters
 # General functions
 init script:
 	# Index for sorting, character/concealed, equipment, location then plot twist
 	sort_index := {
-		if	card.team==""		     then "2"
-		else if	card.team=="Equipment"      then "3"
-		else if card.team=="Location"       then "4"
-		else if card.team=="Plot Twist"     then "5"
-		else 					  "1"
+		if	card.team==""			then "2"
+		else if	card.team=="EQUIPMENT"		then "3"
+		else if	card.team=="Equipment"		then "3"
+		else if card.team=="LOCATION"		then "4"
+		else if card.team=="Location"		then "4"
+		else if card.team=="PLOT TWIST"		then "5"
+		else if card.team=="Plot Twist"		then "5"
+		else 					     "1"
 	};
+	############################################################## Text Filters
+	
 	# add symbols to text
 	symbol_filter :=
 		# step 5a : add arrow/diamond/dot symbols
 		replace_rule(
-			match: "->|@",
+			match: "->|>>>|@|<>",
 			replace: "<sym-auto>&</sym-auto>" )+
 		# step 5b : longdash for keywords
 		replace_rule(
@@ -52,7 +57,7 @@ init script:
 		# step 2 : reminder text for keywords
 		expand_keywords_rule(
 			default_expand: { contains(match:mode, set.automatic_reminder_text) },
-			combine:        { "{keyword}<atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
+			combine:        { "<b-auto>{keyword}</b-auto><atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
 			) +
 		# step 3 : expand shortcut words ~ and CARDNAME
 		replace_rule(
@@ -67,43 +72,54 @@ init script:
 			) +
 		# step 5 : symbols
 		symbol_filter +
-		# step 7b : Bold keywords without reminder text
+		# step 6a : Bold keywords without reminder text
 		replace_rule(
 		 	match: "<kw[^>]*>[^<]+</kw-a>",
 	 		replace: "<b-auto>&</b-auto>") +
-		# step 7c : Bold keywords with reminder text
+		# step 6b : Bold keywords with reminder text
 		replace_rule(
 		 	match: "<kw[^>]*>[^<]+</kw-A>",
 	 		replace: "<b-auto>&</b-auto>") +
 		# step 7 : italic reminder text
 		replace_rule(
 		 	match: "[(][^)\n]*[)]?",
-			in_context: "(^|[[:space:]])<match>|<atom-keyword><match></",
+			in_context: "(^|[[:space:]])<match>|<atom-keyword><match>",
 		 	replace: "<i-auto>&</i-auto>")
 	
-	# Determine type of card
-	concealed_character := filter_rule(match: "Concealed.|Concealed—Optional.")
-	keyword_sort_equipment := filter_rule(match: "Transferable.")
+	############### Determine type of card
+	c_optional_character := filter_rule(match: "Concealed—Optional")
+	concealed_character := filter_rule(match: "Concealed")
+	keyword_sort_equipment := filter_rule(match: "Transferable")
 	keyword_sort_location := filter_rule(match: "Terraform")
 	keyword_sort_plot_twist := filter_rule(match: "Ongoing:")
 	card_type := {
-		if      card.team == "Location"    			then "location"
-		else if keyword_sort_location(card.rule_text) != ""     then "location"
-		else if card.team == "Equipment"   			then "equipment"
-		else if keyword_sort_equipment(card.rule_text) != ""    then "equipment"
-		else if card.team == "Plot Twist"  			then "plot twist"
-		else if keyword_sort_plot_twist(card.rule_text) != ""   then "plot twist"
-		else if card.symbols == "ongoing"		        then "plot twist"
-		else if concealed_character(card.rule_text) != ""       then concealed_script()
-		else if card.team_2 != ""        			then "character dual"
-		else if card.team_2_of_2 != "" 	   			then "character dual (new)"
-		else                                    		     "character"
+		if      card.team == "Location"    				then "location"
+		else if card.team == "LOCATION"					then "location"
+		else if keyword_sort_location(card.rule_text) != ""     	then "location"
+		else if card.team == "Equipment"   				then "equipment visible equipment"
+		else if card.team == "EQUIPMENT"				then "equipment visible equipment"
+		else if keyword_sort_equipment(card.rule_text) != ""    	then "equipment visible equipment"
+		else if card.team == "Plot Twist"  				then "plot twist"
+		else if card.team == "PLOT TWIST"				then "plot twist"
+		else if keyword_sort_plot_twist(card.rule_text) != ""   	then "plot twist"
+		else if card.symbols == "ongoing"		        	then "plot twist"
+		else if c_optional_character(card.rule_text) != ""		then c_optional_script()
+		else if concealed_character(card.rule_text) != ""      		then concealed_script()
+		else if card.team_2 != ""        				then "characters visible character dual"
+		else if card.team_2_of_2 != "" 	   				then "characters visible character dual (new)"
+		else								     "characters visible character"
+	}
+	# Default Concealed Optional Card Type
+	c_optional_script := {
+		if 	card.team_2 != ""        			then "characters concealed-optional concealed-optional dual"
+		else if card.team_2_of_2 != "" 	   			then "characters concealed-optional concealed-optional dual (new)"
+		else                                    		     "characters concealed-optional concealed-optional character"
 	}
 	# Default Concealed Card Type
 	concealed_script := {
-		if 	card.team_2 != ""        			then "concealed dual"
-		else if card.team_2_of_2 != "" 	   			then "concealed dual (new)"
-		else                                    		     "concealed"
+		if 	card.team_2 != ""        			then "characters hidden concealed dual"
+		else if card.team_2_of_2 != "" 	   			then "characters hidden concealed dual (new)"
+		else                                    		     "characters hidden concealed"
 	}
 	# Default symbols
 	symbol_default := {
@@ -127,34 +143,48 @@ init script:
 	############### Type of card
 	
 	is_dual := {
-		card.card_type == "character dual" or
-	        card.card_type == "concealed dual"
+		card.card_type == "characters visible character dual" or
+	        card.card_type == "characters hidden concealed dual" or
+	        card.card_type == "characters concealed-optional concealed-optional dual"
 	}
 	is_new_dual := {
-		card.card_type == "character dual (new)" or
-	        card.card_type == "concealed dual (new)"
+		card.card_type == "characters visible character dual (new)" or
+	        card.card_type == "characters hidden concealed dual (new)" or
+	        card.card_type == "characters concealed-optional concealed-optional dual (new)"
 	}
 	is_not_new_dual := {
-		card.card_type == "character" or
-	        card.card_type == "character dual" or
-	        card.card_type == "concealed" or
-	        card.card_type == "concealed dual"
+		card.card_type == "characters visible character" or
+	        card.card_type == "characters visible character dual" or
+	        card.card_type == "characters hidden character concealed" or
+	        card.card_type == "characters hidden character concealed dual" or
+		card.card_type == "characters concealed-optional concealed-optional character" or
+	        card.card_type == "characters concealed-optional concealed-optional dual"
 	}
 	is_character := {
-		card.card_type == "character" or
-	        card.card_type == "character dual" or
-	        card.card_type == "character dual (new)" or
-	        card.card_type == "concealed" or
-	        card.card_type == "concealed dual" or
-	        card.card_type == "concealed dual (new)"
+		card.card_type == "characters visible character" or
+	        card.card_type == "characters visible character dual" or
+	        card.card_type == "characters visible character dual (new)" or
+	        card.card_type == "characters hidden concealed" or
+	        card.card_type == "characters hidden concealed dual" or
+	        card.card_type == "characters hidden concealed dual (new)" or
+	        card.card_type == "characters concealed-optional concealed-optional character" or
+	        card.card_type == "characters concealed-optional concealed-optional character dual" or
+	        card.card_type == "characters concealed-optional concealed-optional character dual (new)"
 	}
 	is_concealed := {
-	        card.card_type == "concealed" or
-	        card.card_type == "concealed dual" or
-	        card.card_type == "concealed dual (new)"
+	        card.card_type == "characters hidden concealed" or
+	        card.card_type == "characters hidden concealed dual" or
+	        card.card_type == "characters hidden concealed dual (new)" or
+		card.card_type == "characters concealed-optional concealed-optional character" or
+	        card.card_type == "characters concealed-optional concealed-optional dual" or
+	        card.card_type == "characters concealed-optional concealed-optional dual (new)" or
+	        card.card_type == "concealed equipment" or
+	        card.card_type == "concealed-optional equipment"
 	}
 	is_equipment := {
-		card.card_type == "equipment"
+		card.card_type == "visible equipment" or
+		card.card_type == "concealed equipment" or
+	        card.card_type == "concealed-optional equipment"
 	}
 	is_location := {
 		card.card_type == "location"
@@ -164,6 +194,30 @@ init script:
 	}
 	is_ch_or_pt := {
 		is_character() or is_plot_twist()
+	}
+	############### Watermark Scripts
+	
+	watermark_narrow := {
+		card.watermark == "Marvel A-C Brood" or
+		card.watermark == "Marvel A-C Brotherhood" or
+		card.watermark == "Marvel D-H Hellfire Club" or
+		card.watermark == "DC A-C Anti-Matter" or
+		card.watermark == "DC A-C Arkham Inmates" or
+		card.watermark == "DC N-S Shadowpact"
+	}
+	watermark_wide := {
+		card.watermark == "Marvel D-H Horsemen of Apocalypse" or
+		card.watermark == "DC I-M JLA" or
+		card.watermark == "DC I-M JSA"
+	}
+	############### Determine Card Position
+	pos_of_card := {
+		position(
+			of: card
+			in: set
+			order_by: {
+				sort_index() + card.team + card.team_2_of_2 + card.team_2 + card.team_2_of_2_2 + card.name + card.version + " • " + card.team_affiliation
+			}) + 1
 	}
 ############################################################## Set fields
 
@@ -234,11 +288,11 @@ default set style:
 			size: 16
 		render style: both
 		choice images:
-			Marvel: marvel.png
-			DC-new:	dcnew.png
-			DC-old: dcold.png
-			Hellboy: hellboy.png
-			Other...: other.png
+			Marvel: /vs-common.mse-include/marvel.png
+			DC-new:	/vs-common.mse-include/dcnew.png
+			DC-old: /vs-common.mse-include/dcold.png
+			Hellboy: /vs-common.mse-include/hellboy.png
+			Other...: /vs-common.mse-include/other.png
 	title:
 		padding left: 2
 		font:
@@ -253,13 +307,27 @@ default set style:
 card field:
 	type: choice
 	name: card type
-	choice: character
-	choice: character dual
-	choice: character dual (new)
-	choice: concealed
-	choice: concealed dual
-	choice: concealed dual (new)
-	choice: equipment
+	choice: characters
+		choice: 
+			name: visible
+			choice: character
+			choice: character dual
+			choice: character dual (new)
+		choice:
+			name: hidden
+			choice: concealed
+			choice: concealed dual
+			choice: concealed dual (new)
+		choice:
+			name: concealed-optional
+			choice: concealed-optional character
+			choice: concealed-optional dual
+			choice: concealed-optional dual (new)
+	choice:
+		name: equipment
+		choice: visible equipment
+		choice: concealed equipment
+		choice: concealed-optional equipment
 	choice: location
 	choice: plot twist
 	default: card_type()
@@ -271,25 +339,27 @@ card field:
 	name: name
 	editable: false
 	show statistics: false
-	script: symbol_filter(value)
+card field:
+	type: text
+	name: sep
+	editable: false
+	script: if is_character() and card.identity=="" then "™ " else if is_character() and card.identity!="" then "™ <sym>@</sym>" else ""
 card field:
 	type: text
 	name: identity
 	editable: false
-	script: symbol_filter(value)
-	show statistics: false
 card field:
 	type: text
 	name: full name
 	script: 
 		combined_editor(
 			field1: card.name,
-			separator: "™ ",
+			separator: card.sep,
 			field2: card.identity,
-			soft_before_empty: true,
-			hide_when_empty:   true,
-			type_over1: " TM",
-			type_over2: "TM"
+			soft_before_empty: false,
+			hide_when_empty:   false,
+			type_over1: "TM",
+			type_over2: "@"
 		)
 	identifying: true
 	show statistics: false
@@ -301,6 +371,7 @@ card field:
 	type: text
 	name: cost
 	script: only_numbers(value)
+	icon: stats/cost.png
 	card list visible: true
 	card list column: 3
 	card list alignment: right
@@ -404,12 +475,9 @@ card field:
 	name: number
 	save value: false
 	script:
-		position(
-			of: card
-			in: set
-			order_by: {
-				sort_index() + card.team + card.team_2_of_2 + card.team_2 + card.team_2_of_2_2 + card.name + card.version + " • " + card.team_affiliation
-			}) 
+		if pos_of_card()<=9 then "00" + pos_of_card(value) else
+		if pos_of_card()>=9 and pos_of_card()<=99 then "0" + pos_of_card(value) else
+		"" + pos_of_card(value)
 	card list visible: true
 	card list column: 6
 	card list width: 55
@@ -514,6 +582,7 @@ card field:
 card field:
 	type: multiple choice
 	name: symbols
+	icon: stats/symbols.png
 	choice: flight
 	choice: range
 	choice: ongoing
@@ -525,9 +594,9 @@ card field:
 card field:
 	type: text
 	name: rule text
-	script: text_filter(value)
 	show statistics: false
 	multi line: true
+	script: text_filter(value)
 	description: Rule text of the card, use @ for a diamond, -> for an arrow
 card field:
 	type: text
@@ -537,9 +606,8 @@ card field:
 card field:
 	type: choice
 	name: watermark
-	choice: none
-	choice: BPRD
-	choice: Thule Society
+	include file: vs-common.mse-include/watermark-names
+	editable: false
 	description: The Watermark for this set.
 
 
@@ -548,6 +616,7 @@ card field:
 	type: text
 	name: attack
 	script: only_numbers(value)
+	icon: stats/attack.png
 	save value: true
 	card list visible: true
 	card list column: 4
@@ -559,6 +628,7 @@ card field:
 	type: text
 	name: defence
 	script: only_numbers(value)
+	icon: stats/defence.png
 	save value: true
 	card list visible: true
 	card list column: 5
@@ -579,13 +649,45 @@ card field:
 	multi line: true
 	show statistics: false
 
+############################################################## Auto replace
+
+# Do we need categories?
+#auto replace category: text box
+#auto replace category: copyright
+#auto replace category: everywhere
+auto replace:
+	match: (C)
+	replace: ©
+auto replace:
+	match: AE
+	replace: Æ
+	whole word: false
+auto replace:
+	match: TM
+	replace: ™
+	whole word: false
+auto replace:
+	match: --
+	replace: —
+auto replace:
+	# note the spaces
+	match:
+		 - 
+	replace:
+		 — 
+auto replace:
+	match: `
+	replace: •
+auto replace:
+	match: ::
+	replace: •
 ############################################################## Keywords
 
 ############################# Keyword rules
 
 has keywords: true
 
-keyword match script: name_filter(value)
+keyword match script: text_filter(value)
 
 keyword mode:
 	name: real
@@ -597,7 +699,7 @@ keyword mode:
 
 keyword parameter type:
 	name: number
-	match: [0-9]+
+	match: [0-9XYZ?!]+
 keyword parameter type:
 	name: action
 	match: 
@@ -613,23 +715,23 @@ keyword parameter type:
 ############################# All VS System keywords
 
 keyword:
-	keyword: Concealed——Optional
-	match: Concealed——Optional
+	keyword: Concealed—Optional
+	match: Concealed—Optional
 	mode: real
 	reminder: This card may come into play in the hidden area.
 keyword:
 	keyword: Concealed
-	match: Concealed
+	match: Concealed 
 	mode: real
 	reminder: This card comes into play in the hidden area.
 keyword:
-	keyword: Loyalty——Reveal
-	match: Loyalty——Reveal
+	keyword: Loyalty—Reveal
+	match: Loyalty—Reveal
 	mode: real
 	reminder: If you don’t control a character that shares an affiliation with this character, then as an additional cost to recruit this character, reveal a character card from your hand or resource row that shares an affiliation with this character.
 keyword:
 	keyword: Loyalty
-	match: Loyalty
+	match: Loyalty 
 	mode: real
 	reminder: Recruit this character only if you control a character that shares at least one team affiliation with this character.
 keyword:
@@ -643,8 +745,8 @@ keyword:
 	mode: real
 	reminder: Whenever this character becomes stunned, you do not take stun damage. Breakthrough is applied normally.
 keyword:
-	keyword: Cosmic——Surge:
-	match: Cosmic——Surge: <atom-param>action</atom-param>
+	keyword: Cosmic—Surge:
+	match: Cosmic—Surge: <atom-param>action</atom-param>
 	mode: real
 	reminder: This character does not come into play with a cosmic counter. At the start of the recovery phase each turn, put a cosmic counter on this character.
 keyword:
@@ -659,7 +761,7 @@ keyword:
 	reminder: This character comes into play with a cosmic counter on it.
 keyword:
 	keyword: Boost
-	match: Boost <atom-param>action</atom-param>
+	match: Boost <atom-param>number</atom-param>
 	mode: real
 	reminder: As an additional cost to play this card, you may pay its boost cost. If you pay, this card has this this this ability in addition to any other text it has this turn.
 keyword:
@@ -719,15 +821,11 @@ keyword:
 	reminder: This ability can only be used during the build phase.
 keyword:
 	keyword: Dual Loyalty
-	match: Dual Loaylty
+	match: Dual Loyalty
 	mode: real
 	reminder: Recruit this card only if both its printed affiliations are among the affiliations of characters you control.
 keyword:
 	keyword: Substitute
 	match: Substitute
 	mode: real
-	reminder: Reveal this card -> You may remove from the game a ready character you control with cost greater than or equal to the cost of this card. If you do, put this card into play. Use only if this card is in your hand and only during your recruit step."
-#keyword:
-#	keyword: Mutant Traits
-#	keyword: Instanity
-#	keyword: Free
+	reminder: Reveal this card -> You may remove from the game a ready character you control with cost greater than or equal to the cost of this card. If you do, put this card into play. Use only if this card is in your hand and only during your recruit step." 

@@ -1,0 +1,180 @@
+# Simple exporter for HTML files
+mse version: 0.3.4
+game:        vs
+short name:  Spoiler
+full name:   List of cards
+icon: preview.png
+create directory: true
+
+option field:
+	type: choice
+	name: grouping
+	description: How should cards be grouped?
+	choice: no grouping
+	choice: group by card type
+	initial: no grouping
+option field:
+	type: choice
+	name: images
+	choice: no
+	choice: just the image box, linked
+	choice: just the image box, inline
+	choice: full card image, linked
+	choice: full card image, preview
+	choice: full card image only
+	initial: full images, preview
+option field:
+	type: boolean
+	name: in-text symbols
+	description: Should arrow and diamond symbols be used, or should they be written as text?
+#doesn't work yet:
+#option field:
+#	type: boolean
+#	name: list keywords
+#	description: Should the keywords be listed?
+#option field:
+#	type: boolean
+#	name: fancy scripts
+#	description: Should fancy scripts be used
+option field:
+	type: choice
+	name: font style
+	choice: default
+	choice: serif
+	choice: sans-serif
+option field:
+	type: color
+	name: background color
+	initial: rgb(255,255,255)
+	choice:
+		name: white
+		color: rgb(255,255,255)
+	choice:
+		name: black
+		color: rgb(0,0,0)
+option field:
+	type: color
+	name: text color
+	initial: rgb(0,0,0)
+	choice:
+		name: white
+		color: rgb(255,255,255)
+	choice:
+		name: black
+		color: rgb(0,0,0)
+
+option style:
+	grouping:
+		render style: text
+		choice images:
+			no grouping:    { built_in_image("bool_no") }
+			group by card type: { built_in_image("bool_yes") }
+	images:
+		render style: both
+		choice images:
+			no:    { built_in_image("bool_no") }
+	font style:
+		render style: both
+		choice images:
+			serif:       /vs-spoiler.mse-export-template/serif.png
+			sans-serif:  /vs-spoiler.mse-export-template/sans-serif.png
+
+script:
+	symbol_font      := "vs-standard-arrow"
+	symbol_font_size := 12
+	write_card := {
+		if contains(options.images, match:"full card image") then
+			card_image_file := write_image_file(card,       file:"card{position(of:card,in:set)}.jpg")
+		else if contains(options.images, match:"image box") and
+		        card.image != "" then
+			card_image_file := write_image_file(card.image, file:"card{position(of:card,in:set)}.jpg")
+		else
+			card_image_file := ""
+		if options.images == "full card image, preview" then
+			card_image_preview := write_image_file(card, file:"card-preview{position(of:card,in:set)}.jpg", height: 100)
+		else
+			card_image_preview := card_image_file
+		if options.images == "full card image only" then
+		  "<li class='fullcard'><img src='{card_image_file}' alt=''></li>"
+		else
+		  "<li class='card'>
+		     {if options.images == "full card image, preview" then
+		         "<a href='{card_image_file}'><img src='{card_image_preview}' alt='' class='card-image'></a>
+		          <span class='name'    >{  to_html(card.full_name         ) }</span>"
+		      else if card_image_file != "" and contains(options.images, match:"linked") then
+		         "<span class='name'    ><a href='{card_image_file}'>{  to_html(card.full_name) }</a></span>"
+		      else
+		         "<span class='name'    >{  to_html(card.full_name) }</span>"
+		    }<span class='version'      >{  to_html(card.version_full  ) }</span>
+		     {if card_image_file != "" and contains(options.images, match:"inline") then
+		         "<img src='{card_image_preview}' alt='' class='image'>"
+		     }
+		     <span class='cost'         >{  to_html(card.cost          ) }</span>
+		     <span class='team'         >{  to_html(card.team_full     ) }</span>
+		     <span class='team 2'       >{  to_html(card.team_2_full   ) }</span>
+		     <span class='type'         >{  to_html(card.type_text_full) }</span>
+		     <span class='fro'          >{  to_html(card.symbols       ) }</span>
+		     <span class='rule-text'    >{  to_html(card.rule_text     ) }</span>
+		     <span class='flavor-text'  >{  to_html( remove_tag(tag: "<i-flavor>", card.flavor_text)  ) }</span>
+		     <span class='attack'       >{  to_html(card.attack) } / {  to_html(card.defence) }</span>
+		     <span class='rarity'       >{  to_html(card.rarity        ) }</span>
+		     <span class='illustrator'  >{  to_html(card.illustrator   ) }</span>
+		     <span class='card-number'  >{  to_html(card.number_line   ) }</span>
+		  </li>"
+	}
+	write_cards := {
+		"<ul class='cards'>{
+		  for each card in sort(cards, order_by: {input.number_line}) do
+		     write_card()
+		}</ul>"
+	}
+	write_group := {
+		cards := filter_list(set.cards, filter: { sort_index(card:input) == code } )
+		count := number_of_items(in:cards)
+		if count > 0 then
+		   "<h2>{title} ({count} {if count == 1 then "card" else "cards"})</h2>" +
+		   write_cards()
+	}
+	copy_file("blank.gif")
+	copy_file("blank.gif")
+	copy_file("blank.gif")
+	# the html page
+	html := "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">
+	<html lang='en'>
+	 <head>
+	  <title>{ to_html(set.title) }</title>
+	  <link rel='stylesheet' type='text/css' href='{copy_file("style.css")}'>
+	  <link rel='shortcut icon' type='image/png' href='set-icon.png'>
+	  <script type='text/javascript' src='{copy_file("script.js")}'></script>
+	  <style type='text/css'>
+	   body \{
+	     background: {options.background_color};
+	     color:      {options.text_color};
+	     {if options.font_style != "default" then
+	      "font-family: {options.font_style};"
+	     }
+	   \}
+	  </style>
+	 </head>
+	 <body{if options.images == "full card image, preview" then " class='with-previews'"}>
+	  <img src='{ copy_file("blank.gif")}' alt='' class='set-symbol'>
+	  <h1>{ to_html(set.title) }</h1>
+	  <div class='copyright'>{   to_html(set.copyright)   }</div>
+	  <div class='description'>{ to_html(set.description) }</div>
+	  { if options.grouping == "group by card type" then
+	       # Codes as by sort_index
+	       write_group(title: "Character",       code:"A") +
+	       write_group(title: "Equipment",       code:"B") +
+	       write_group(title: "Location",        code:"C") +
+	       write_group(title: "Plot Twist",      code:"D")
+	    else
+	       write_cards(cards: set.cards)
+	  }
+	  <script><!--
+	  init();
+	  --></script>
+	 </body>
+	</html>"
+	write_text_file(html, file:"index.html")
+	# make sure the urls are relative to the right directory
+	replace(html, match:"<[^<>]*(href|src)=\'", replace:"&{directory}/")
