@@ -944,7 +944,7 @@ keyword:
 	keyword: Evoke
 	match: evoke <atom-param>cost</atom-param>
 	mode: expert
-	reminder: You may it for its evoke cost. If you do, it's sacrificed when it comes into play.
+	reminder: You may play it for its evoke cost. If you do, it's sacrificed when it comes into play.
 keyword:
 	keyword: Champion
 	match: champion <atom-param>a</atom-param> <atom-param>name</atom-param>
