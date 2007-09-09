@@ -147,7 +147,7 @@ script:
 		}</ul>"
 	}
 	write_group := {
-		cards := filter_list(set.cards, filter: { contains(match:sort_index(card:input), code } )
+		cards := filter_list(set.cards, filter: { contains(color_of_card(card:input), match:code) } )
 		count := number_of_items(in:cards)
 		if count > 0 then
 		   "<h2>{title} ({count} {if count == 1 then "card" else "cards"})</h2>" +
@@ -204,7 +204,7 @@ script:
 	       write_group(title: "Multicolor split cards", code:"H") +
 	       write_group(title: "Colorless",              code:"I") +
 	       write_group(title: "Non-basic lands",        code:"K") +
-	       write_group(title: "Basic lands",            code:"LMNOPQ")
+	       write_group(title: "Basic lands",            code:"L")
 	    else
 	       write_cards(cards: set.cards)
 	  }

@@ -73,7 +73,7 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 		 			 			 		A line height of @0@ means all lines are in the same position, @1@ is normal behaviour, @2@ skips a line, etc.
 | ^^^		@line height hard@	[[type:double]]		@1@		Multiplier for the line height of 'hard' line breaks. These are breaks caused by the enter key.
 | ^^^		@line height line@	[[type:double]]		@1@		Multiplier for the line height of 'soft' line breaks. These are breaks caused by @"<line>\n</line>"@ tags.
-| ^^^		@line height soft max@	^^^			''disabled''	When there is still vertical room in the text box, increase the line heights to at most these values to spread the text more evenly.
+| ^^^		@line height soft max@	[[type:double]]		''disabled''	When there is still vertical room in the text box, increase the line heights to at most these values to spread the text more evenly.
 | ^^^		@line height hard max@	^^^			^^^		^^^
 | ^^^		@line height line max@	^^^			^^^		^^^
 | ^^^		@paragraph height@	[[type:double]]		''flexible''	The height of paragraphs. If specified, each paragraph is given this much space, and aligned inside that space as specified by @alignment@.<br/>
@@ -86,7 +86,7 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 | ^^^		@content lines@		[[type:int]]		''automatic''	When read from a script, gives the number of lines of the current content in this box.
 	
 !	<<<	<<<	<<<	<<<
-| @"choice"@, @"multiple choice"@, @"boolean"@
+| @"choice"@,<br/>@"multiple choice"@,<br/>@"boolean"@
 		@popup style@	@"drop down"@ or @"in place"@		@"drop down"@	Where to place the drop down box for editing the value.<br/>
 		 		 					 		@"drop down"@ places the box below the field, similair to normal combo boxes.<br/>
 		 		 					 		@"in place"@ places the box at the mouse coordinates.
