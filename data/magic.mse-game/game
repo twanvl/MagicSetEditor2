@@ -759,7 +759,7 @@ card field:
 card field:
 	type: text
 	name: type
-	icon: stats/creature_type.png
+	show statistics: false
 	save value: false
 	script:
 		# Either just supertype, or subtype - supertype
@@ -1152,6 +1152,7 @@ statistics dimension:
 
 statistics dimension:
 	name: race
+	icon: stats/creature_type.png
 	description: Race of creatures and tribal cards
 	script:
 		if is_creature(card.super_type) or is_tribal(card.super_type) then
@@ -1159,6 +1160,7 @@ statistics dimension:
 	show empty: false
 statistics dimension:
 	name: creature class
+	icon: stats/creature_type.png
 	description: Class of creature cards
 	script:
 		if is_creature(card.super_type) then
@@ -1217,12 +1219,14 @@ statistics category:
 
 statistics category:
 	name: color / colored cost
+	icon: stats/color_colored_cost.png
 	type: scatter
 	dimension: card color
 	dimension: colored mana cost
 
 statistics category:
 	name: cost / colored cost
+	icon: stats/cost_colored_cost.png
 	type: scatter pie
 	dimension: converted mana cost
 	dimension: colored mana cost
@@ -1230,6 +1234,7 @@ statistics category:
 
 statistics category:
 	name: creature race / class
+	icon: stats/creature_type.png
 	type: scatter pie
 	dimension: race
 	dimension: creature class
