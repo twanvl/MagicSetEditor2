@@ -416,9 +416,9 @@ extra card field:
 extra card style:
 	paintbrush:
 		right: { 206 + card_style.illustrator.content_width * -0.5 }
-		top : 484
-		width: 40
-		height: 15
+		top : 486
+		width: 30
+		height: 12
 		z index: 1
 		render style: image
 		choice images:
