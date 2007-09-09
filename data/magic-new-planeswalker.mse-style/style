@@ -11,7 +11,6 @@ card dpi: 150
 
 #Images by Artfreakwiu
 #Code by Pichoro
-#Todo: paragraph height property behaves strangely; doesn't always work right, depending on length of abilities.  Can be manipulated with soft line breaks; but this isn't ideal.
 #Todo: update images after lorwyn release to feature proper frames rather than guesses.
 #Todo: add textures to namebox and type/rarity box.
 ############################################################## Extra scripts
@@ -295,13 +294,13 @@ card style:
 	#starting loyalty
 	toughness:
 		z index: 4
-		left:	325
-		top:	468
+		left:	326
+		top:	467
 		width:	13.16
 		height:	34.63
 		alignment: center middle
 		font:
-			name: Mplantin
+			name: MatrixBoldSmallCaps
 			size: 16
 			weight: bold
 			color: rgb(255,255,255)
