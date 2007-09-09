@@ -149,7 +149,7 @@ void ColorValueEditor::determineSize(bool) {
 }
 
 void ColorValueEditor::change(const Defaultable<Color>& c) {
-	getSet().actions.add(value_action(valueP(), c));
+	perform(value_action(card(), valueP(), c));
 }
 void ColorValueEditor::changeCustom() {
 	Color c = wxGetColourFromUser(0, value().value());

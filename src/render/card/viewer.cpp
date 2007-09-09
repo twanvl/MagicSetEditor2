@@ -192,12 +192,14 @@ void DataViewer::onAction(const Action& action, bool undone) {
 		return;
 	}
 	TYPE_CASE(action, ValueAction) {
-		FOR_EACH(v, viewers) {
-			if (v->getValue()->equals( action.valueP.get() )) {
-				// refresh the viewer
-				v->onAction(action, undone);
-				onChange();
-				return;
+		if (action.card == card.get()) {
+			FOR_EACH(v, viewers) {
+				if (v->getValue()->equals( action.valueP.get() )) {
+					// refresh the viewer
+					v->onAction(action, undone);
+					onChange();
+					return;
+				}
 			}
 		}
 	}

@@ -73,12 +73,14 @@ void StylePanel::onAction(const Action& action, bool undone) {
 	}
 	TYPE_CASE(action, ValueAction) {
 		// is it a styling action?
-		const StyleSheet& s = set->stylesheetFor(card);
-		FOR_EACH_CONST(f, s.styling_fields) {
-			if (action.valueP->fieldP == f) {
-				// refresh the viewer
-				preview->redraw();
-				return;
+		if (!action.card) {
+			const StyleSheet& s = set->stylesheetFor(card);
+			FOR_EACH_CONST(f, s.styling_fields) {
+				if (action.valueP->fieldP == f) {
+					// refresh the viewer
+					preview->redraw();
+					return;
+				}
 			}
 		}
 	}

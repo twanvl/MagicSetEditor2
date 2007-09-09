@@ -39,8 +39,8 @@ inline void swap_value(MultipleChoiceValue& a, MultipleChoiceValue::ValueType& b
 template <typename T, bool ALLOW_MERGE>
 class SimpleValueAction : public ValueAction {
   public:
-	inline SimpleValueAction(const intrusive_ptr<T>& value, const typename T::ValueType& new_value)
-		: ValueAction(value), new_value(new_value)
+	inline SimpleValueAction(const Card* card, const intrusive_ptr<T>& value, const typename T::ValueType& new_value)
+		: ValueAction(card, value), new_value(new_value)
 	{}
 	
 	virtual void perform(bool to_undo) {
@@ -64,20 +64,20 @@ class SimpleValueAction : public ValueAction {
 	typename T::ValueType new_value;
 };
 
-ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value) { return new SimpleValueAction<ChoiceValue,         true> (value, new_value); }
-ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value) { return new SimpleValueAction<ColorValue,          true> (value, new_value); }
-ValueAction* value_action(const ImageValueP&          value, const FileName&            new_value) { return new SimpleValueAction<ImageValue,          false>(value, new_value); }
-ValueAction* value_action(const SymbolValueP&         value, const FileName&            new_value) { return new SimpleValueAction<SymbolValue,         false>(value, new_value); }
-ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value, const String& last_change) {
+ValueAction* value_action(const Card* card, const ChoiceValueP&         value, const Defaultable<String>& new_value) { return new SimpleValueAction<ChoiceValue,         true> (card, value, new_value); }
+ValueAction* value_action(const Card* card, const ColorValueP&          value, const Defaultable<Color>&  new_value) { return new SimpleValueAction<ColorValue,          true> (card, value, new_value); }
+ValueAction* value_action(const Card* card, const ImageValueP&          value, const FileName&            new_value) { return new SimpleValueAction<ImageValue,          false>(card, value, new_value); }
+ValueAction* value_action(const Card* card, const SymbolValueP&         value, const FileName&            new_value) { return new SimpleValueAction<SymbolValue,         false>(card, value, new_value); }
+ValueAction* value_action(const Card* card, const MultipleChoiceValueP& value, const Defaultable<String>& new_value, const String& last_change) {
 	MultipleChoiceValue::ValueType v = { new_value, last_change };
-	return new SimpleValueAction<MultipleChoiceValue, false>(value, v);
+	return new SimpleValueAction<MultipleChoiceValue, false>(card, value, v);
 }
 
 
 // ----------------------------------------------------------------------------- : Text
 
-TextValueAction::TextValueAction(const TextValueP& value, size_t start, size_t end, size_t new_end, const Defaultable<String>& new_value, const String& name)
-	: ValueAction(value)
+TextValueAction::TextValueAction(const Card* card, const TextValueP& value, size_t start, size_t end, size_t new_end, const Defaultable<String>& new_value, const String& name)
+	: ValueAction(card, value)
 	, selection_start(start), selection_end(end), new_selection_end(new_end)
 	, new_value(new_value)
 	, name(name)
@@ -107,7 +107,7 @@ TextValue& TextValueAction::value() const {
 }
 
 
-TextValueAction* toggle_format_action(const TextValueP& value, const String& tag, size_t start_i, size_t end_i, size_t start, size_t end, const String& action_name) {
+TextValueAction* toggle_format_action(const Card* card, const TextValueP& value, const String& tag, size_t start_i, size_t end_i, size_t start, size_t end, const String& action_name) {
 	if (start > end) {
 		swap(start, end);
 		swap(start_i, end_i);
@@ -140,11 +140,11 @@ TextValueAction* toggle_format_action(const TextValueP& value, const String& tag
 	if (value->value() == new_value) {
 		return nullptr; // no changes
 	} else {
-		return new TextValueAction(value, start, end, end, new_value, action_name);
+		return new TextValueAction(card, value, start, end, end, new_value, action_name);
 	}
 }
 
-TextValueAction* typing_action(const TextValueP& value, size_t start_i, size_t end_i, size_t start, size_t end, const String& replacement, const String& action_name)  {
+TextValueAction* typing_action(const Card* card, const TextValueP& value, size_t start_i, size_t end_i, size_t start, size_t end, const String& replacement, const String& action_name)  {
 	bool reverse = start > end;
 	if (reverse) {
 		swap(start, end);
@@ -156,17 +156,17 @@ TextValueAction* typing_action(const TextValueP& value, size_t start_i, size_t e
 		return nullptr;
 	} else {
 		if (reverse) {
-			return new TextValueAction(value, end, start, start+untag(replacement).size(), new_value, action_name);
+			return new TextValueAction(card, value, end, start, start+untag(replacement).size(), new_value, action_name);
 		} else {
-			return new TextValueAction(value, start, end, start+untag(replacement).size(), new_value, action_name);
+			return new TextValueAction(card, value, start, end, start+untag(replacement).size(), new_value, action_name);
 		}
 	}
 }
 
 // ----------------------------------------------------------------------------- : Reminder text
 
-TextToggleReminderAction::TextToggleReminderAction(const TextValueP& value, size_t pos_in)
-	: ValueAction(value)
+TextToggleReminderAction::TextToggleReminderAction(const Card* card, const TextValueP& value, size_t pos_in)
+	: ValueAction(card, value)
 {
 	pos = in_tag(value->value(), _("<kw-"), pos_in, pos_in);
 	if (pos == String::npos) {

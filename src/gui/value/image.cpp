@@ -48,7 +48,7 @@ void ImageValueEditor::sliceImage(const Image& image) {
 		FileName new_image_file = getSet().newFileName(field().name,_("")); // a new unique name in the package
 		Image img = s.getImage();
 		img.SaveFile(getSet().nameOut(new_image_file), img.HasAlpha() ? wxBITMAP_TYPE_PNG : wxBITMAP_TYPE_JPEG);
-		getSet().actions.add(value_action(valueP(), new_image_file));
+		perform(value_action(card(), valueP(), new_image_file));
 	}
 }
 
@@ -88,7 +88,7 @@ bool ImageValueEditor::doPaste() {
 }
 
 bool ImageValueEditor::doDelete() {
-	getSet().actions.add(value_action(valueP(), FileName()));
+	perform(value_action(card(), valueP(), FileName()));
 	return true;
 }
 

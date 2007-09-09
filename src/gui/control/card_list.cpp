@@ -113,9 +113,8 @@ void CardListBase::onAction(const Action& action, bool undone) {
 		// No refresh needed, a ScriptValueEvent is only generated in response to a ValueAction
 		return;
 	}
-	TYPE_CASE_(action, ValueAction) {
-		refreshList();
-		return;
+	TYPE_CASE(action, ValueAction) {
+		if (action.card) refreshList();
 	}
 }
 

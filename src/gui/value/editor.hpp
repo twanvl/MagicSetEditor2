@@ -133,9 +133,14 @@ class ValueEditor {
 		virtual ValueEditor* getEditor() { return this; }					\
 		virtual void redraw();												\
 	  private:																\
+		/** Retrieve the parent editor object */							\
 		inline DataEditor& editor() const {									\
 			return static_cast<DataEditor&>(viewer);						\
 		}																	\
+		/** Card this editor is on, or nullptr */							\
+		inline const Card* card() const { return viewer.getCard().get(); }	\
+		/** Perform an action */											\
+		void perform(Action* a) { getSet().actions.add(a); }				\
 	  public:
 
 #define IMPLEMENT_VALUE_EDITOR(Type)													\

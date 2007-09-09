@@ -563,21 +563,6 @@ wxMenu* TextValueEditor::getMenu(int type) const {
 	}
 }
 
-/*
-/// TODO : move to doFormat
-void TextValueEditor::onMenu(wxCommandEvent& ev) {
-	if (ev.GetId() == ID_FORMAT_REMINDER) {
-		// toggle reminder text
-		size_t kwpos = in_tag(value().value(), _("<kw-"), selection_start_i, selection_start_i);
-		if (kwpos != String::npos) {
-//			getSet().actions.add(new TextToggleReminderAction(value, kwpos));
-		}
-	} else {
-		ev.Skip();
-	}
-}
-*/
-
 // ----------------------------------------------------------------------------- : Drawing
 
 void TextValueEditor::draw(RotatedDC& dc) {
@@ -783,19 +768,19 @@ void TextValueEditor::doFormat(int type) {
 	size_t ss = selection_start, se = selection_end;
 	switch (type) {
 		case ID_FORMAT_BOLD: {
-			getSet().actions.add(toggle_format_action(valueP(), _("b"),   selection_start_i, selection_end_i, selection_start, selection_end, _("Bold")));
+			perform(toggle_format_action(card(), valueP(), _("b"),   selection_start_i, selection_end_i, selection_start, selection_end, _("Bold")));
 			break;
 		}
 		case ID_FORMAT_ITALIC: {
-			getSet().actions.add(toggle_format_action(valueP(), _("i"),   selection_start_i, selection_end_i, selection_start, selection_end, _("Italic")));
+			perform(toggle_format_action(card(), valueP(), _("i"),   selection_start_i, selection_end_i, selection_start, selection_end, _("Italic")));
 			break;
 		}
 		case ID_FORMAT_SYMBOL: {
-			getSet().actions.add(toggle_format_action(valueP(), _("sym"), selection_start_i, selection_end_i, selection_start, selection_end, _("Symbols")));
+			perform(toggle_format_action(card(), valueP(), _("sym"), selection_start_i, selection_end_i, selection_start, selection_end, _("Symbols")));
 			break;
 		}
 		case ID_FORMAT_REMINDER: {
-			getSet().actions.add(new TextToggleReminderAction(valueP(), selection_start_i));
+			perform(new TextToggleReminderAction(card(), valueP(), selection_start_i));
 			break;
 		}
 	}
@@ -908,7 +893,7 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 	fixSelection();
 	// execute the action before adding it to the stack,
 	// because we want to run scripts before action listeners see the action
-	TextValueAction* action = typing_action(valueP(), selection_start_i, selection_end_i, select_on_undo ? selection_start : selection_end, selection_end, replacement, name);
+	TextValueAction* action = typing_action(card(), valueP(), selection_start_i, selection_end_i, select_on_undo ? selection_start : selection_end, selection_end, replacement, name);
 	if (!action) {
 		// nothing changes, but move the selection anyway
 		moveSelection(TYPE_CURSOR, selection_end);
@@ -919,7 +904,7 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 	size_t expected_cursor = min(selection_start, selection_end) + untag(replacement).size();
 	// perform the action
 	// NOTE: this calls our onAction, invalidating the text viewer and moving the selection around the new text
-	getSet().actions.add(action);
+	perform(action);
 	// move cursor
 	{
 		String real_value = untag_for_cursor(value().value());

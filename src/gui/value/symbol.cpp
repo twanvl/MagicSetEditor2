@@ -92,7 +92,7 @@ bool SymbolValueEditor::onLeftUp(const RealPoint& pos, wxMouseEvent&) {
 		// edit
 		button_down = -2;
 		viewer.redraw(*this);
-		SymbolWindow* wnd = new SymbolWindow(nullptr, valueP(), viewer.getSet());
+		SymbolWindow* wnd = new SymbolWindow(nullptr, viewer.getSet(), card(), valueP());
 		wnd->Show();
 		return true;
 	} else if (button_down == 1) {
@@ -109,7 +109,7 @@ bool SymbolValueEditor::onLeftUp(const RealPoint& pos, wxMouseEvent&) {
 
 bool SymbolValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent&) {
 	// Use SetWindow as parent? Maybe not, the symbol editor will stay open when mainwindow closes
-	SymbolWindow* wnd = new SymbolWindow(nullptr, valueP(), viewer.getSet());
+	SymbolWindow* wnd = new SymbolWindow(nullptr, viewer.getSet(), card(), valueP());
 	wnd->Show();
 	return true;
 }

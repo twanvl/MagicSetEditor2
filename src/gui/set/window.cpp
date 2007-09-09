@@ -264,8 +264,10 @@ void SetWindow::onChangeSet() {
 
 void SetWindow::onAction(const Action& action, bool undone) {
 	TYPE_CASE(action, ValueAction) {
-		if (set->data.contains(action.valueP) && action.valueP->fieldP->identifying) {
-			updateTitle();
+		if (!action.card) {
+			if (set->data.contains(action.valueP) && action.valueP->fieldP->identifying) {
+				updateTitle();
+			}
 		}
 	}
 /*	TYPE_CASE_(action, DisplayChangeAction) {

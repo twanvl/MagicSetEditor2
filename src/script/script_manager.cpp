@@ -151,29 +151,39 @@ void SetScriptManager::initDependencies(Context& ctx, StyleSheet& stylesheet) {
 
 void SetScriptManager::onAction(const Action& action, bool undone) {
 	TYPE_CASE(action, ValueAction) {
-		// is it a keyword's fake value?
-		KeywordTextValue* value = dynamic_cast<KeywordTextValue*>(action.valueP.get());
-		if (value) {
-			if (value->underlying == &value->keyword.match) {
-				// script
-				Context& ctx = getContext(set.stylesheet);
-				value->update(ctx);
-				// changed the 'match' string of a keyword, rebuild database and regex so matching is correct
-				value->keyword.prepare(set.game->keyword_parameter_types, true);
-				set.keyword_db.clear();
-			}
-			delay |= DELAY_KEYWORDS;
-			return;
-		}
-		// find the affected card
-		FOR_EACH(card, set.cards) {
-			if (card->data.contains(action.valueP)) {
-				updateValue(*action.valueP, card);
+		if (action.card) {
+			#ifdef USE_INTRUSIVE_PTR
+				// we can just turn the Card* into a CardP
+				updateValue(*action.valueP, CardP(const_cast<Card*>(action.card)));
+				return;
+			#else
+				// find the affected card
+				FOR_EACH(card, set.cards) {
+					if (card->data.contains(action.valueP)) {
+						updateValue(*action.valueP, card);
+						return;
+					}
+				}
+				assert(false);
+			#endif
+		} else {
+			// is it a keyword's fake value?
+			KeywordTextValue* value = dynamic_cast<KeywordTextValue*>(action.valueP.get());
+			if (value) {
+				if (value->underlying == &value->keyword.match) {
+					// script
+					Context& ctx = getContext(set.stylesheet);
+					value->update(ctx);
+					// changed the 'match' string of a keyword, rebuild database and regex so matching is correct
+					value->keyword.prepare(set.game->keyword_parameter_types, true);
+					set.keyword_db.clear();
+				}
+				delay |= DELAY_KEYWORDS;
 				return;
 			}
+			// a set or styling value
+			updateValue(*action.valueP, CardP());
 		}
-		// not a card value
-		updateValue(*action.valueP, CardP());
 	}
 	TYPE_CASE_(action, ScriptValueEvent) {
 		return; // Don't go into an infinite loop because of our own events

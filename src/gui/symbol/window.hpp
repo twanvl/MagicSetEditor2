@@ -14,8 +14,8 @@
 #include <wx/listctrl.h>
 
 class SymbolControl;
-//%%class SymbolPartList;
 class SymbolPartList;
+class Card;
 DECLARE_POINTER_TYPE(SymbolValue);
 DECLARE_POINTER_TYPE(Set);
 
@@ -29,7 +29,7 @@ class SymbolWindow : public Frame {
 	/// Construct a SymbolWindow showing a symbol from a file
 	SymbolWindow(Window* parent, const String& filename);
 	/// Construct a SymbolWindow showing a symbol value in a set
-	SymbolWindow(Window* parent, const SymbolValueP& value, const SetP& set);
+	SymbolWindow(Window* parent, const SetP& set, const Card* card, const SymbolValueP& value);
 	
   private:
 	// --------------------------------------------------- : Children
@@ -42,6 +42,7 @@ class SymbolWindow : public Frame {
 	
 	// when editing a symbol field
 	SymbolValueP value;
+	const Card* card;
 	SetP set;
 	
 	// --------------------------------------------------- : Event handling

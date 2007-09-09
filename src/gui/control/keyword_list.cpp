@@ -75,10 +75,12 @@ void KeywordList::onAction(const Action& action, bool undone) {
 		}
 	}
 	TYPE_CASE(action, ValueAction) {
-		KeywordTextValue* value = dynamic_cast<KeywordTextValue*>(action.valueP.get());
-		if (value) {
-			// this is indeed an action on a keyword, refresh
-			refreshList();
+		if (!action.card) {
+			KeywordTextValue* value = dynamic_cast<KeywordTextValue*>(action.valueP.get());
+			if (value) {
+				// this is indeed an action on a keyword, refresh
+				refreshList();
+			}
 		}
 	}
 	TYPE_CASE_(action, ChangeKeywordModeAction) {

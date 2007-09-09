@@ -280,18 +280,20 @@ void KeywordsPanel::onChangeSet() {
 
 void KeywordsPanel::onAction(const Action& action, bool undone) {
 	TYPE_CASE(action, ValueAction) {
-		{
-			KeywordReminderTextValue* value = dynamic_cast<KeywordReminderTextValue*>(action.valueP.get());
-			if (value && &value->keyword == list->getKeyword().get()) {
-				// the current keyword's reminder text changed
-				errors->SetLabel(value->errors);
+		if (!action.card) {
+			{
+				KeywordReminderTextValue* value = dynamic_cast<KeywordReminderTextValue*>(action.valueP.get());
+				if (value && &value->keyword == list->getKeyword().get()) {
+					// the current keyword's reminder text changed
+					errors->SetLabel(value->errors);
+				}
 			}
-		}
-		{
-			KeywordTextValue* value = dynamic_cast<KeywordTextValue*>(action.valueP.get());
-			if (value && value->underlying == &list->getKeyword()->match) {
-				// match string changes, maybe there are parameters now
-				ref_param->Enable(!value->keyword.fixed && !value->keyword.parameters.empty());
+			{
+				KeywordTextValue* value = dynamic_cast<KeywordTextValue*>(action.valueP.get());
+				if (value && value->underlying == &list->getKeyword()->match) {
+					// match string changes, maybe there are parameters now
+					ref_param->Enable(!value->keyword.fixed && !value->keyword.parameters.empty());
+				}
 			}
 		}
 	}

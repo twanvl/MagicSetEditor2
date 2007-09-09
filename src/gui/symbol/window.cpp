@@ -35,8 +35,8 @@ SymbolWindow::SymbolWindow(Window* parent, const String& filename) {
 	init(parent, symbol);
 }
 
-SymbolWindow::SymbolWindow(Window* parent, const SymbolValueP& value, const SetP& set)
-	: value(value), set(set)
+SymbolWindow::SymbolWindow(Window* parent, const SetP& set, const Card* card, const SymbolValueP& value)
+	: value(value), card(card), set(set)
 {
 	// attempt to load symbol
 	SymbolP symbol;
@@ -236,7 +236,7 @@ void SymbolWindow::onFileStore(wxCommandEvent& ev) {
 		FileName new_filename = set->newFileName(value->field().name,_(".mse-symbol")); // a new unique name in the package
 		Writer writer(set->openOut(new_filename));
 		writer.handle(control->getSymbol());
-		set->actions.add(value_action(value, new_filename));
+		set->actions.add(value_action(card, value, new_filename));
 	}
 }
 

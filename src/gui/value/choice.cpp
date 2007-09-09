@@ -307,5 +307,5 @@ void ChoiceValueEditor::determineSize(bool) {
 }
 
 void ChoiceValueEditor::change(const Defaultable<String>& c) {
-	getSet().actions.add(value_action(valueP(), c));
+	perform(value_action(card(), valueP(), c));
 }

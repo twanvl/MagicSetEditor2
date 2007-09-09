@@ -57,7 +57,7 @@ class DataViewer : public SetView {
 	Context& getContext() const;
 	/// The rotation to use
 	virtual Rotation getRotation() const;
-	/// The card we are viewing
+	/// The card we are viewing, can be null
 	inline const CardP& getCard() const { return card; }
 	/// Invalidate and redraw (the area of) a single value viewer
 	virtual void redraw(const ValueViewer&) {}

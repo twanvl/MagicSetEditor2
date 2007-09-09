@@ -34,28 +34,29 @@ DECLARE_POINTER_TYPE(SymbolValue);
 /// An Action the changes a Value
 class ValueAction : public Action {
   public:
-	inline ValueAction(const ValueP& value) : valueP(value) {}
+	inline ValueAction(const Card* card, const ValueP& value) : card(card), valueP(value) {}
 	
 	virtual String getName(bool to_undo) const;
 	
 	const ValueP valueP; ///< The modified value
+	const Card*  card;   ///< The card the value is on, or null if it is not a card value
 };
 
 // ----------------------------------------------------------------------------- : Simple
 
 /// Action that updates a Value to a new value
-ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value);
-ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value, const String& last_change);
-ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value);
-ValueAction* value_action(const ImageValueP&          value, const FileName&            new_value);
-ValueAction* value_action(const SymbolValueP&         value, const FileName&            new_value);
+ValueAction* value_action(const Card* card, const ChoiceValueP&         value, const Defaultable<String>& new_value);
+ValueAction* value_action(const Card* card, const MultipleChoiceValueP& value, const Defaultable<String>& new_value, const String& last_change);
+ValueAction* value_action(const Card* card, const ColorValueP&          value, const Defaultable<Color>&  new_value);
+ValueAction* value_action(const Card* card, const ImageValueP&          value, const FileName&            new_value);
+ValueAction* value_action(const Card* card, const SymbolValueP&         value, const FileName&            new_value);
 
 // ----------------------------------------------------------------------------- : Text
 
 /// An action that changes a TextValue
 class TextValueAction : public ValueAction {
   public:
-	TextValueAction(const TextValueP& value, size_t start, size_t end, size_t new_end, const Defaultable<String>& new_value, const String& name);
+	TextValueAction(const Card* card, const TextValueP& value, size_t start, size_t end, size_t new_end, const Defaultable<String>& new_value, const String& name);
 	
 	virtual String getName(bool to_undo) const;
 	virtual void perform(bool to_undo);
@@ -74,18 +75,18 @@ class TextValueAction : public ValueAction {
 };
 
 /// Action for toggling some formating tag on or off in some range
-TextValueAction* toggle_format_action(const TextValueP& value, const String& tag, size_t start_i, size_t end_i, size_t start, size_t end, const String& action_name);
+TextValueAction* toggle_format_action(const Card* card, const TextValueP& value, const String& tag, size_t start_i, size_t end_i, size_t start, size_t end, const String& action_name);
 
 /// Typing in a TextValue, replace the selection [start...end) with replacement
 /** start and end are cursor positions, start_i and end_i are indices*/
-TextValueAction* typing_action(const TextValueP& value, size_t start_i, size_t end_i, size_t start, size_t end, const String& replacement, const String& action_name);
+TextValueAction* typing_action(const Card* card, const TextValueP& value, size_t start_i, size_t end_i, size_t start, size_t end, const String& replacement, const String& action_name);
 
 // ----------------------------------------------------------------------------- : Reminder text
 
 /// Toggle reminder text for a keyword on or off
 class TextToggleReminderAction : public ValueAction {
   public:
-	TextToggleReminderAction(const TextValueP& value, size_t pos);
+	TextToggleReminderAction(const Card* card, const TextValueP& value, size_t pos);
 	
 	virtual String getName(bool to_undo) const;
 	virtual void perform(bool to_undo);
@@ -101,7 +102,7 @@ class TextToggleReminderAction : public ValueAction {
 /// A TextValueAction without the start and end stuff
 class SimpleTextValueAction : public ValueAction {
   public:
-	SimpleTextValueAction(const TextValueP& value, const Defaultable<String>& new_value);
+	SimpleTextValueAction(const Card* card, const TextValueP& value, const Defaultable<String>& new_value);
 	virtual void perform(bool to_undo);
 	bool merge(const SimpleTextValueAction& action);
   private:
