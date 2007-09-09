@@ -24,8 +24,8 @@ init script:
 	mask_hybrid_with_land := { styling.grey_hybrid_name }
 	
 	# Which artifact template should be used?
-	template := { input + "{type}.png" }
-	land_template := { "c{type}.png" }
+	template := { input + "{type}.jpg" }
+	land_template := { "c{type}.jpg" }
 	# Use land templates for previews because they show more contrast
 	hybrid_previews := "land,hybrid"
 	
@@ -339,7 +339,7 @@ card style:
 
 	copyright line:
 		left: 43
-		top : 500
+		top : 497
 		width: 287
 		height: 12
 		z index: 1

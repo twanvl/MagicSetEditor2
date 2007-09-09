@@ -17,9 +17,8 @@ init script:
 	# Should hybrids have a grey name?
 	mask_hybrid_with_land := { styling.grey_hybrid_name }
 	
-	template_suffix := [card: "card.png", pt: "pt.png"]
-	template := { input + template_suffix[type] }
-	land_template := { (if input == "a" then "c" else input) + "l" + template_suffix[type] }
+	template      := { input + "{type}.jpg" }
+	land_template := { (if input == "a" then "c" else input) + "l{type}.jpg" }
 	color_combination := {
 		# The base hybrid, without the outer frame blended over it
 		base := base_hybrid[shape][color_count]()

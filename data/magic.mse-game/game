@@ -1293,6 +1293,9 @@ word list:
 	word:
 		name: Snow 
 		is prefix: true
+	word:
+		name: World 
+		is prefix: true
 		line below: true
 	word: Creature
 	word: Artifact
@@ -1301,6 +1304,7 @@ word list:
 	word: Instant
 	word: Sorcery
 	word: Land
+	word: Planeswalker
 
 word list:
 	name: race
