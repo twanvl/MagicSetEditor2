@@ -50,8 +50,9 @@ class PackageManager {
 			return typedP;
 		} else {
 			// not loaded, or loaded with wrong type (i.e. with just_header)
-			p = typedP = new_intrusive<T>();
+			typedP = new_intrusive<T>();
 			typedP->open(filename);
+			p = typedP;
 			return typedP;
 		}
 	}

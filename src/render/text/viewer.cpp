@@ -622,8 +622,22 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 	line.end_or_soft = max(line.start, min(line.end_or_soft, line.end()));
 	lines.push_back(line);
 	// does it fit vertically?
-	return lines.empty() ||
-	       lines.back().bottom() <= dc.getInternalSize().height - style.padding_bottom;
+	if (style.paragraph_height > 0) {
+		// height = max(paragraph_height) * paragraph_count
+		double max_height = 0;
+		// per paragraph alignment
+		size_t start = 0;
+		for (size_t last = 0 ; last < lines.size() ; ++last) {
+			if (lines[last].break_after != BREAK_SOFT || last == lines.size()) {
+				max_height = max(max_height, lines[last].bottom() - lines[start].top);
+				start = last + 1;
+			}
+		}
+		// how many paragraphs would fit?
+		int n = floor(0.5 + (dc.getInternalSize().height - style.padding_bottom) / style.paragraph_height);
+		lines.back().top = max_height * n - lines.back().line_height;
+	}
+	return lines.back().bottom() <= dc.getInternalSize().height - style.padding_bottom;
 }
 
 double TextViewer::lineLeft(RotatedDC& dc, const TextStyle& style, double y) const {
