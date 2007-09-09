@@ -121,29 +121,6 @@ init script:
 		else "white"
 	}
 	
-	typesymbol_type:= { if contains(card.type, match:"Tribal") then "multitype"
-		else if contains(card.type, match:"Sorcery") then "sorcery"
-		else if contains(card.type, match:"Instant") then "instant"
-		else if contains(card.type, match:"Planeswalker") then "multitype"
-		else if contains(card.type, match:"Creature") and
-		   not contains(card.type, match:"Land") and
-		   not contains(card.type, match:"Artifact") and
-		   not contains(card.type, match:"Enchantment") then "creature"
-		else if contains(card.type, match:"Artifact") and
-		   not contains(card.type, match:"Land") and
-		   not contains(card.type, match:"Creature") and
-		   not contains(card.type, match:"Enchantment") then "artifact"
-		else if contains(card.type, match:"Land") and
-		   not contains(card.type, match:"Creature") and
-		   not contains(card.type, match:"Artifact") and
-		   not contains(card.type, match:"Enchantment") then "land"
-		else if contains(card.type, match:"Enchantment") and
-		   not contains(card.type, match:"Land") and
-		   not contains(card.type, match:"Artifact") and
-		   not contains(card.type, match:"Creature") then "enchantment"
-		else "multitype"
-	}
-	
 	card_shape := { "shifted" }
 
 ############################################################## Set info fields
@@ -289,6 +266,21 @@ card style:
 		render style: image
 		choice images:
 			tombstone: tombstone.png
+	type symbol:
+		left: 24
+		top: 24
+		width: 21
+		height: 20
+		z index: 4
+		render style: image
+		choice images:
+			artifact: { "/magic-future-common.mse-include/artifact_" + typesymbol_color(value) + ".png" }
+			creature: { "/magic-future-common.mse-include/creature_" + typesymbol_color(value) + ".png" }
+			enchantment: { "/magic-future-common.mse-include/enchantment_" + typesymbol_color(value) + ".png" }
+			instant: { "/magic-future-common.mse-include/instant_" + typesymbol_color(value) + ".png" }
+			land: { "/magic-future-common.mse-include/land_" + typesymbol_color(value) + ".png" }
+			multitype: { "/magic-future-common.mse-include/multitype_" + typesymbol_color(value) + ".png" }
+			sorcery: { "/magic-future-common.mse-include/sorcery_" + typesymbol_color(value) + ".png" }
 
 	############################# Image
 	image:
@@ -487,17 +479,6 @@ extra card field:
 	save value: false
 extra card field:
 	type: choice
-	name: type symbol
-	default: typesymbol_type(value)
-	choice: artifact
-	choice: creature
-	choice: enchantment
-	choice: instant
-	choice: land
-	choice: multitype
-	choice: sorcery
-extra card field:
-	type: choice
 	name: paintbrush
 	script: paintbrush_color(value)
 	editable: false
@@ -531,21 +512,6 @@ extra card style:
 		visible: { card.pt != "" }
 		render style: image
 		image: { card_ptbox() }
-	type symbol:
-		left: 24
-		top: 24
-		width: 21
-		height: 20
-		z index: 4
-		render style: image
-		choice images:
-			artifact: { "/magic-future-common.mse-include/artifact_" + typesymbol_color(value) + ".png" }
-			creature: { "/magic-future-common.mse-include/creature_" + typesymbol_color(value) + ".png" }
-			enchantment: { "/magic-future-common.mse-include/enchantment_" + typesymbol_color(value) + ".png" }
-			instant: { "/magic-future-common.mse-include/instant_" + typesymbol_color(value) + ".png" }
-			land: { "/magic-future-common.mse-include/land_" + typesymbol_color(value) + ".png" }
-			multitype: { "/magic-future-common.mse-include/multitype_" + typesymbol_color(value) + ".png" }
-			sorcery: { "/magic-future-common.mse-include/sorcery_" + typesymbol_color(value) + ".png" }
 	paintbrush
 		right: { ( if card.pt != "" then 275 else 338 ) - card_style.illustrator.content_width }
 		top : 476
