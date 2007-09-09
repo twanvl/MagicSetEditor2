@@ -508,4 +508,4 @@ extra card style:
 			scale down to: 15
 			color: rgb(0,0,0)
 		alignment: middle center
-		visible: { card.power_2 !="" }
+		visible: { card.toughness_2 !="" }
