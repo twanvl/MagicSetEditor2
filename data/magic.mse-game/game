@@ -423,30 +423,18 @@ init script:
 	# Shape of cards, can be changed in style files
 	card_shape := { "normal" }
 	
-	typesymbol_type:= {
-		type := to_text(card.super_type)
-		if contains(type, match:"Tribal") then "multitype"
-		else if contains(type, match:"Sorcery") then "sorcery"
-		else if contains(type, match:"Instant") then "instant"
-		else if contains(type, match:"Planeswalker") then "multitype"
-		else if contains(type, match:"Creature") and
-		   not contains(type, match:"Land") and
-		   not contains(type, match:"Artifact") and
-		   not contains(type, match:"Enchantment") then "creature"
-		else if contains(type, match:"Artifact") and
-		   not contains(type, match:"Land") and
-		   not contains(type, match:"Creature") and
-		   not contains(type, match:"Enchantment") then "artifact"
-		else if contains(type, match:"Land") and
-		   not contains(type, match:"Creature") and
-		   not contains(type, match:"Artifact") and
-		   not contains(type, match:"Enchantment") then "land"
-		else if contains(type, match:"Enchantment") and
-		   not contains(type, match:"Land") and
-		   not contains(type, match:"Artifact") and
-		   not contains(type, match:"Creature") then "enchantment"
-		else "multitype"
-	}
+	typesymbol_for :=
+		to_text +
+		replace_rule(match: "(Legendary|Basic|Snow|World| )", replace: "") +
+		{ if      input == "Creature"    then "creature"
+		  else if input == "Sorcery"     then "sorcery"
+		  else if input == "Instant"     then "instant"
+		  else if input == "Artifact"    then "artifact"
+		  else if input == "Enchantment" then "enchantment"
+		  else if input == "Land"        then "land"
+		  else                                "multitype"
+		}
+	typesymbol_type := { typesymbol_for(card.super_type) }
 	
 	############################################################## Statistics utilities
 	
