@@ -18,6 +18,20 @@ card dpi: 150
 
 ############################################################## Extra scripts
 
+init script:
+	con_opt_template_1 := {
+			if   styling.con_optional == "c-left" then "ccoccard2.png"
+			else                  		           "ccoccard.png"
+	}
+	con_opt_template_2 := {
+			if   styling.con_optional == "c-left" then "ccoccard2.png"
+			else                  		           "ccoccard.png"
+	}
+	con_opt_template_3 := {
+			if   styling.con_optional == "c-left" then "ccoccard2.png"
+			else                  		           "ccoccard.png"
+	}
+
 ############################################################## Set info fields
 
 ############################################################## Extra style
@@ -34,11 +48,25 @@ styling field:
 	initial: no
 styling field:
 	type: choice
+	name: con optional
+	description: Use which concealed-optional?
+	initial: c-left
+	choice: c-left
+	choice: c-right
+styling field:
+	type: choice
 	name: symbol font
 	description: Use which symbol font?
 	initial: new
 	choice: new
 	choice: old
+
+styling style:
+	con optional:
+		render style: both
+		choice images:
+			c-left: ccoccard2.png
+			c-right: ccoccard.png
 
 ############################################################## Card fields
 card style:
@@ -58,9 +86,9 @@ card style:
 			characters hidden concealed:					chcocard.png
 			characters hidden concealed dual:				chcocard.png
 			characters hidden concealed dual (new):				chcocard.png
-			characters concealed-optional concealed-optional character:	ccoccard.png
-			characters concealed-optional concealed-optional dual:		ccoccard.png
-			characters concealed-optional concealed-optional dual (new):	ccoccard.png
+			characters concealed-optional concealed-optional character:	{ con_opt_template_1(value) }
+			characters concealed-optional concealed-optional dual:		{ con_opt_template_2(value) }
+			characters concealed-optional concealed-optional dual (new):	{ con_opt_template_3(value) }
 			equipment visible equipment:					eveqcard.png
 			equipment concealed equipment:					eceqcard.png
 			equipment concealed-optional equipment:				eoeqcard.png
