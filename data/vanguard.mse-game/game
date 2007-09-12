@@ -929,7 +929,7 @@ keyword:
 	mode: expert
 	reminder: Each clashing player reveals the top card of his or her library then puts that card on the top or bottom. A player wins if his or her card had a higher converted mana cost.
 keyword:
-	keyword: Shapeshift
-	match: shapeshift
+	keyword: Changeling
+	match: changeling
 	mode: expert
 	reminder: It is every creature type even if it isn't in play.
