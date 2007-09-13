@@ -282,6 +282,8 @@ card field:
 			field2: card.type2,
 			soft_before_empty: true,
 			hide_when_empty:   true,
+			type_over1: " /",
+			type_over2: "/"
 		)
 	card list visible: true
 	card list column: 3
