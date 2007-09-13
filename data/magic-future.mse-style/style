@@ -153,10 +153,13 @@ styling field:
 	choice: old
 	choice: diagonal T
 styling field:
-	type: boolean
-	name: futuristic mana symbols
-	description: Use the symbols of the casting cost line inside the text box as well
-	initial: no
+	type: choice
+	name: mana symbols
+	choice: future
+	choice: shadowed
+	choice: normal
+	description: What style of mana symbols should be used?
+	initial: normal
 styling field:
 	type: choice
 	name: center text
@@ -176,10 +179,12 @@ styling style:
 		choice images:
 			yes: /magic-mana-small.mse-symbol-font/mana_guild_rg.png
 			no:  /magic-mana-small.mse-symbol-font/mana_rg.png
-	futuristic mana symbols:
+	mana symbols:
+		render style: both
 		choice images:
-			yes: /magic-mana-future.mse-symbol-font/mana_w.png
-			no:  /magic-mana-small.mse-symbol-font/mana_w.png
+			future: /magic-mana-future.mse-symbol-font/mana_w.png
+			shadowed:  /magic-mana-large.mse-symbol-font/mana_w.png
+			normal:  /magic-mana-small.mse-symbol-font/mana_w.png
 	tap symbol:
 		render style: both
 		choice images:
@@ -360,8 +365,8 @@ card style:
 					else font_color(card.card_color)
 		symbol font:
 			name:
-				{ if styling.futuristic_mana_symbols then "magic-mana-future"
-				else "magic-mana-small" }
+				{ if styling.mana_symbols=="future" then "magic-mana-future"	else
+				if styling.mana_symbols=="shadowed" then "magic-mana-large"	else "magic-mana-small" }
 			size: 15
 		alignment:
 			script:
