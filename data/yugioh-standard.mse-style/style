@@ -199,9 +199,11 @@ card style:
 		padding top:    2
 		padding right:  -3
 		padding bottom: 0
-		line height hard: 1.2
-		line height line: 1.5
+		line height hard: 1.0
+		line height line: 1.0
 		line height soft: 0.9
+		line height hard max: 1.2
+		line height line max: 1.2
 
 	############################# Attack/Defense
 	attack:
