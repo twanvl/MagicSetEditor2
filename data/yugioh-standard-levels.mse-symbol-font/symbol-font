@@ -2,7 +2,7 @@ mse version: 0.3.4
 # Symbol font for level symbols
 
 image font size: 16
-horizontal space: 2
+horizontal space: 3
 symbol:
 	code: %
 	image: continuous.png
@@ -32,4 +32,4 @@ symbol:
 symbol:
 	code: *
 	image: star.png
-	image font size: 14
+	image font size: 20
