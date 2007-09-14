@@ -420,6 +420,7 @@ extra card style:
 		z index: 1
 		visible: { card.pt != "" }
 		render style: image
+		mask: mask_pt.png
 		image: { flip_ptbox() }
 
 	pt box 2:
@@ -430,4 +431,5 @@ extra card style:
 		z index: 2
 		visible: { card.pt_2 != "" }
 		render style: image
+		mask: mask_pt2.png
 		image: { flip_ptbox2() }
