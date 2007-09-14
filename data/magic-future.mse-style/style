@@ -156,7 +156,7 @@ styling field:
 	type: choice
 	name: mana symbols
 	choice: future
-	choice: shadowed
+	choice: popup
 	choice: normal
 	description: What style of mana symbols should be used?
 	initial: normal
@@ -183,7 +183,7 @@ styling style:
 		render style: both
 		choice images:
 			future: /magic-mana-future.mse-symbol-font/mana_w.png
-			shadowed:  /magic-mana-large.mse-symbol-font/mana_w.png
+			popup:  /magic-mana-large.mse-symbol-font/mana_w.png
 			normal:  /magic-mana-small.mse-symbol-font/mana_w.png
 	tap symbol:
 		render style: both
@@ -365,8 +365,8 @@ card style:
 					else font_color(card.card_color)
 		symbol font:
 			name:
-				{ if styling.mana_symbols=="future" then "magic-mana-future"	else
-				if styling.mana_symbols=="shadowed" then "magic-mana-large"	else "magic-mana-small" }
+				{ if styling.mana_symbols=="future" then "magic-mana-future" else
+				if styling.mana_symbols=="popup" then "magic-mana-large" else "magic-mana-small" }
 			size: 15
 		alignment:
 			script:

@@ -820,6 +820,23 @@ card field:
 	include file: magic-watermarks.mse-include/watermark-names
 	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, or a guild symbol
 
+############################# Loyalty
+card field:
+	type: text
+	name: loyalty
+	icon: stats/toughness.png
+card field:
+	type: text
+	name: loyalty cost 1
+	show statistics: false
+card field:
+	type: text
+	name: loyalty cost 2
+	show statistics: false
+card field:
+	type: text
+	name: loyalty cost 3
+	show statistics: false
 ############################# PT
 card field:
 	type: text

@@ -9,7 +9,7 @@ card width: 375
 card height: 523
 card dpi: 150
 
-#Images by Artfreakwiu
+#Images by Artfreakwiu, Buttock1234, and Twanvl
 #Code by Pichoro
 #Todo: update images after lorwyn release to feature proper frames rather than guesses.
 #Todo: add textures to namebox and type/rarity box.
@@ -265,34 +265,7 @@ card style:
 		include file: magic-watermarks.mse-include/watermarks
 
 	############################# Loyalty
-	#loyalty cost 1
-	power:
-		z index: 4
-		left:	32
-		top:	342
-		width:	13.16
-		height:	34.63
-		alignment: center middle
-		font:
-			name: Mplantin
-			size: 12
-			weight: bold
-			color: rgb(255,255,255)
-	#loyalty cost 2
-	power 2:
-		z index: 4
-		left:	32
-		top:	390
-		width:	13.16
-		height:	34.63
-		alignment: center middle
-		font:
-			name: Mplantin
-			size: 12
-			weight: bold
-			color: rgb(255,255,255)
-	#starting loyalty
-	toughness:
+	loyalty:
 		z index: 4
 		left:	326
 		top:	467
@@ -304,8 +277,31 @@ card style:
 			size: 16
 			weight: bold
 			color: rgb(255,255,255)
-	#loyalty cost 3
-	toughness 2:
+	loyalty cost 1:
+		z index: 4
+		left:	32
+		top:	342
+		width:	13.16
+		height:	34.63
+		alignment: center middle
+		font:
+			name: Mplantin
+			size: 12
+			weight: bold
+			color: rgb(255,255,255)
+	loyalty cost 2:
+		z index: 4
+		left:	32
+		top:	390
+		width:	13.16
+		height:	34.63
+		alignment: center middle
+		font:
+			name: Mplantin
+			size: 12
+			weight: bold
+			color: rgb(255,255,255)
+	loyalty cost 3:
 		z index: 4
 		left:	32
 		top:	436
@@ -354,12 +350,12 @@ card style:
 ############################################################## Extra card fields
 extra card field:
 	type: choice
-	name: loyalty
+	name: loyalty box
 	editable: false
 	choice: loyalty
 extra card field:
 	type: choice
-	name: loyalty cost 1
+	name: loyalty cost box 1
 	editable: false
 	script:
 		if contains(card.power, match: "+") then "loyalty up"
@@ -370,7 +366,7 @@ extra card field:
 	choice: loyalty naught
 extra card field:
 	type: choice
-	name: loyalty cost 2
+	name: loyalty cost box 2
 	editable: false
 	script:
 		if contains(card.power_2, match: "+") then "loyalty up"
@@ -381,7 +377,7 @@ extra card field:
 	choice: loyalty naught
 extra card field:
 	type: choice
-	name: loyalty cost 3
+	name: loyalty cost box 3
 	editable: false
 	script:
 		if contains(card.toughness_2, match: "+") then "loyalty up"
@@ -423,48 +419,48 @@ extra card style:
 		choice images:
 			black: /magic-future-common.mse-include/paintbrush_black.png
 			white: /magic-future-common.mse-include/paintbrush_white.png
-	loyalty:
+	loyalty box:
 		right: 362
 		top: 465
 		width: 60
 		height: 38
 		z index: 3
 		render style: image
-		visible: { card.toughness !="" }
+		visible: { card.loyalty !="" }
 		choice images:
 			loyalty: loyalty.png
-	loyalty cost 1:
+	loyalty cost box 1:
 		left: 18
 		top: 340
 		width: 42
 		height: 40
 		z index: 3
 		render style: image
-		visible: { card.power !="" }
+		visible: { card.loyalty_cost_1 !="" }
 		choice images:
 			loyalty up: loyaltyup.png
 			loyalty down: loyaltydown.png
 			loyalty naught: loyaltynaught.png
-	loyalty cost 2:
+	loyalty cost box 2:
 		left: 18
 		top: 388
 		width: 42
 		height: 40
 		z index: 3
 		render style: image
-		visible: { card.power_2 !="" }
+		visible: { card.loyalty_cost_2 !="" }
 		choice images:
 			loyalty up: loyaltyup.png
 			loyalty down: loyaltydown.png
 			loyalty naught: loyaltynaught.png
-	loyalty cost 3:
+	loyalty cost box 3:
 		left: 18
 		top: 434
 		width: 42
 		height: 40
 		z index: 3
 		render style: image
-		visible: { card.toughness_2 !="" }
+		visible: { card.loyalty_cost_3 !="" }
 		choice images:
 			loyalty up: loyaltyup.png
 			loyalty down: loyaltydown.png
@@ -481,7 +477,7 @@ extra card style:
 			scale down to: 15
 			color: rgb(0,0,0)
 		alignment: middle center
-		visible: { card.power !="" }
+		visible: { card.loyalty_cost_1 !="" }
 	colon 2:
 		left: 59
 		top: 402
@@ -494,7 +490,7 @@ extra card style:
 			scale down to: 15
 			color: rgb(0,0,0)
 		alignment: middle center
-		visible: { card.power_2 !="" }
+		visible: { card.loyalty_cost_2 !="" }
 	colon 3:
 		left: 59
 		top: 448
@@ -507,4 +503,4 @@ extra card style:
 			scale down to: 15
 			color: rgb(0,0,0)
 		alignment: middle center
-		visible: { card.toughness_2 !="" }
+		visible: { card.loyalty_cost_3 !="" }
