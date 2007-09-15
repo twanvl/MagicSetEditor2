@@ -11,8 +11,8 @@ full name: Old style
 icon: card-sample.png
 position hint: 107
 
-card width: 312
-card height: 444
+card width: 375
+card height: 523
 card dpi: 127.34225621414913957934990439771
 
 ############################################################## Extra scripts
@@ -153,19 +153,19 @@ card style:
 	border color:
 		left: 0
 		top : 0
-		width:	312
-		height:	444
-		radius: 0
-		left width:   12
-		right width:  12
-		top width:    12
-		bottom width: 12
+		width:	375
+		height:	523
+		radius: 18
+		left width:   17
+		right width:  17
+		top width:    17
+		bottom width: 18
 		z index: -1
 	card color:
 		left:	0
 		top:	0
-		width:	312
-		height:	444
+		width:	375
+		height:	523
 		z index: -2
 		render style: image
 		popup style: in place
@@ -173,16 +173,16 @@ card style:
 
 	############################# Name line
 	name:
-		left: 29
-		top : 16
-		width: 250
-		height: 22
+		left: 40
+		top : 23
+		width: 295
+		height: 25
 		alignment: middle center
 		padding bottom: 0
 		z index: 1
 		font:
 			name: MPlantin
-			size: 14
+			size: 17
 			color: rgb(255,255,255)
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
@@ -190,24 +190,24 @@ card style:
 
 	############################# Image
 	image:
-		left:	33
-		top:	46
-		width:	244
-		height:	232
+		left:	44
+		top:	58
+		width:	286
+		height:	270
 		z index: 1
 
 	############################# Card type
 
 	type:
-		left: 47
-		top : 296
-		width: { 221 - max(22,card_style.rarity.content_width) }
+		left: 58
+		top : 348
+		width: { 271 - max(22,card_style.rarity.content_width) }
 		height: 18
 		alignment: top left shrink-overflow
 		z index: 1
 		font:
 			name: MPlantin
-			size: 11
+			size: 12
 			color: rgb(255,255,255)
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
@@ -215,10 +215,10 @@ card style:
 			separator color: rgb(192,192,192)
 
 	rarity:
-		right: 269
-		top : 294
-		width: 44
-		height: 22
+		right: 320
+		top : 346
+		width: 50
+		height: 25
 		z index: 1
 		alignment: middle right
 		render style: image
@@ -244,9 +244,9 @@ card style:
 
 	############################# Text box
 	text:
-		left: 47
-		top : 318
-		width: 216
+		left: 63
+		top : 378
+		width: 246
 		height: 67
 		font:
 			name: MPlantin
@@ -287,14 +287,14 @@ card style:
 	############################# PT
 	pt:
 		z index: 4
-		left:	233
-		top:	391
-		width:	42
-		height:	28
+		left:	283
+		top:	458
+		width:	45
+		height:	30
 		alignment: right top
 		font:
 			name: Mplantin
-			size: 16
+			size: 18
 			weight: bold
 			color: rgb(255,255,255)
 			shadow color: rgb(0,0,0)
@@ -306,12 +306,12 @@ card style:
 	############################# Copyright stuff
 
 	illustrator:
-		left: 47
-		top : 391
-		width: 160
-		height: 13
+		left: 97
+		top : 459
+		width: 180
+		height: 15
 		z index: 1
-		alignment: middle left
+		alignment: middle center
 		font:
 			name: Mplantin
 			size: 9
@@ -321,13 +321,13 @@ card style:
 			shadow displacement y: 1
 
 	copyright line:
-		left: 47
-		top : 404
-		width: 160
-		height: 10
+		left: 97
+		top : 472
+		width: 180
+		height: 12
 		z index: 1
-		alignment: middle left
+		alignment: middle center
 		font:
 			name: MPlantin
-			size: 6
+			size: 8
 			color: { font_color(card.card_color) }
