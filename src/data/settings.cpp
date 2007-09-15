@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <data/settings.hpp>
+#include <data/installer.hpp>
 #include <data/game.hpp>
 #include <data/stylesheet.hpp>
 #include <data/field.hpp>
@@ -29,6 +30,12 @@ IMPLEMENT_REFLECTION_ENUM(CheckUpdates) {
 	VALUE_N("if connected", CHECK_IF_CONNECTED); //default
 	VALUE_N("always",       CHECK_ALWAYS);
 	VALUE_N("never",        CHECK_NEVER);
+}
+
+IMPLEMENT_REFLECTION_ENUM(InstallType) {
+	VALUE_N("default",	INSTALL_DEFAULT); //default
+	VALUE_N("local",	INSTALL_LOCAL);
+	VALUE_N("global",	INSTALL_GLOBAL);
 }
 
 IMPLEMENT_REFLECTION_ENUM(FilenameConflicts) {
@@ -135,6 +142,7 @@ Settings::Settings()
 	, symbol_grid_snap     (false)
 	, updates_url          (_("http://magicseteditor.sourceforge.net/updates"))
 	, check_updates        (CHECK_IF_CONNECTED)
+	, install_type         (INSTALL_DEFAULT)
 	, website_url          (_("http://magicseteditor.sourceforge.net/"))
 {}
 
@@ -212,6 +220,7 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(Settings) {
 	REFLECT(apprentice_location);
 	REFLECT(updates_url);
 	REFLECT(check_updates);
+	REFLECT(install_type);
 	REFLECT(website_url);
 	REFLECT(game_settings);
 	REFLECT(stylesheet_settings);

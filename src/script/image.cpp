@@ -166,7 +166,7 @@ void CachedScriptableImage::generateCached(const GeneratedImage::Options& option
 			set_alpha(cached_i, *mask);
 		} else {
 			Image mask_scaled(cached_i.GetWidth(),cached_i.GetHeight(), false);
-			resample(mask,mask_scaled);
+			resample(*mask,mask_scaled);
 			set_alpha(cached_i, mask_scaled);
 		}
 	}

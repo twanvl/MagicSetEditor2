@@ -270,9 +270,11 @@ menu:
 	add card:	0
 	add cards:	0
 	add keyword:	0
+	apply changes:	0
 	auto replace:	0
 	basic shapes:	0
 	bold:	0
+	cancel changes:	0
 	card list columns:	0
 	cards:	0
 	cards tab:	0
@@ -298,6 +300,7 @@ menu:
 	help:	0
 	index:	0
 	insert symbol:	0
+	install package:	0
 	italic:	0
 	keywords:	0
 	keywords tab:	0
@@ -322,6 +325,7 @@ menu:
 	reminder text:	0
 	remove card:	0
 	remove keyword:	0
+	remove package:	0
 	replace:	0
 	rotate:	0
 	rotate 0:	0
@@ -342,6 +346,7 @@ menu:
 	tool:	0
 	undo:	1
 	ungroup:	0
+	upgrade package:	0
 	website:	0
 	window:	0
 title:

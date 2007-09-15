@@ -33,6 +33,15 @@ enum CheckUpdates
 ,	CHECK_NEVER
 };
 
+/// Where to install to?
+enum InstallType
+{	INSTALL_DEFAULT	// the platform default.
+,	INSTALL_LOCAL	// install to the user's files
+,	INSTALL_GLOBAL	// install to the global files
+};
+
+bool parse_enum(const String&, InstallType&);
+
 /// How to handle filename conflicts
 enum FilenameConflicts
 {	CONFLICT_KEEP_OLD			// always keep old file
@@ -160,6 +169,9 @@ class Settings {
 	String updates_url;
 	CheckUpdates check_updates;
 	String website_url;
+	
+	// --------------------------------------------------- : Installation settings
+	InstallType install_type;
 	
 	// --------------------------------------------------- : The io
 	

@@ -302,12 +302,13 @@ END_EVENT_TABLE()
 // ----------------------------------------------------------------------------- : UpdateWindow
 
 UpdatesWindow::UpdatesWindow()
-	: Frame(nullptr, wxID_ANY, _TITLE_("package list"), wxDefaultPosition, wxSize(480,400), wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN)
+	: Frame(nullptr, wxID_ANY, _TITLE_("package list"), wxDefaultPosition, wxSize(480,440), wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN)
 {
 	SetIcon(wxIcon());
 	wxBoxSizer *v = new wxBoxSizer(wxVERTICAL);
 	wxBoxSizer *h1 = new wxBoxSizer(wxHORIZONTAL);
 	wxBoxSizer *h2 = new wxBoxSizer(wxHORIZONTAL);
+	wxBoxSizer *h3 = new wxBoxSizer(wxHORIZONTAL);
 	
 	package_list = new PackageUpdateList(this);
 	description_window = new HtmlWindowToBrowser(this, wxID_ANY, wxDefaultPosition, wxSize(480,100), wxHW_SCROLLBAR_AUTO | wxSUNKEN_BORDER);
@@ -322,10 +323,10 @@ UpdatesWindow::UpdatesWindow()
 	h1->Add(status_title);
 	h1->Add(new_title, 2);
 	
-	(install_button = new wxButton(this, ID_INSTALL, _("Install")))->Disable();
-	(upgrade_button = new wxButton(this, ID_UPGRADE, _("Update")))->Disable();
-	(remove_button  = new wxButton(this, ID_REMOVE,  _("Remove")))->Disable();
-	(cancel_button  = new wxButton(this, ID_CANCEL,  _("Cancel")))->Disable();
+	(install_button = new wxButton(this, ID_INSTALL, _MENU_("install package")))->Disable();
+	(upgrade_button = new wxButton(this, ID_UPGRADE, _MENU_("upgrade package")))->Disable();
+	(remove_button  = new wxButton(this, ID_REMOVE,  _MENU_("remove package")))->Disable();
+	(cancel_button  = new wxButton(this, ID_CANCEL,  _MENU_("cancel changes")))->Disable();
 	
 	h2->AddStretchSpacer(1);
 	h2->Add(install_button);
@@ -336,14 +337,22 @@ UpdatesWindow::UpdatesWindow()
 	h2->AddStretchSpacer(2);
 	h2->Add(cancel_button);
 	h2->AddStretchSpacer(1);
+
+	apply_button = new wxButton(this, ID_APPLY,   _MENU_("apply changes"));
+
+	h3->AddStretchSpacer(1);
+	h3->Add(apply_button);
+	h3->AddStretchSpacer(1);
 	
 	v->Add(h1);
 	v->Add(package_list);
-	v->AddStretchSpacer(1);
+	v->AddStretchSpacer(2);
 	v->Add(description_window);
-	v->AddStretchSpacer(1);
+	v->AddStretchSpacer(2);
 	v->Add(h2);
 	v->AddStretchSpacer(1);
+	v->Add(h3);
+	v->AddStretchSpacer(2);
 	
 	SetSizer(v);
 }
@@ -356,7 +365,7 @@ void UpdatesWindow::onPackageSelect(wxCommandEvent& ev) {
 	updateButtons(ev.GetInt());
 }
 
-void UpdatesWindow::onButton(wxCommandEvent& ev) {
+void UpdatesWindow::onActionChange(wxCommandEvent& ev) {
 	PackageVersionDataP pack = update_version_data->packages[package_list->GetSelection()];
 	PackageAction& action = package_data[pack].second;
 	switch (ev.GetId()) {
@@ -367,6 +376,9 @@ void UpdatesWindow::onButton(wxCommandEvent& ev) {
 	}
 	updateButtons(package_list->GetSelection());
 	package_list->Refresh();
+}
+
+void UpdatesWindow::onApplyChanges(wxCommandEvent& ev) {
 }
 
 void UpdatesWindow::updateButtons(int id) {
@@ -405,7 +417,7 @@ void UpdatesWindow::setDefaultPackageStatus() {
 	FOR_EACH(p, update_version_data->packages) {
 		PackagedP pack;
 		try { pack = packages.openAny(p->name, true); }
-		catch (const Error&) { } // We couldn't open a package... wonder why?
+		catch (const PackageError&) { } // We couldn't open a package... wonder why?
 		
 		if (!pack) {
 			// not installed
@@ -430,8 +442,9 @@ void UpdatesWindow::setDefaultPackageStatus() {
 BEGIN_EVENT_TABLE(UpdatesWindow, Frame)
 	EVT_COMMAND(wxID_ANY, UPDATE_CHECK_FINISHED_EVT, UpdatesWindow::onUpdateCheckFinished)
 	EVT_LISTBOX(ID_PACKAGE_LIST, UpdatesWindow::onPackageSelect)
-	EVT_BUTTON(ID_INSTALL, UpdatesWindow::onButton)
-	EVT_BUTTON(ID_REMOVE,  UpdatesWindow::onButton)
-	EVT_BUTTON(ID_UPGRADE, UpdatesWindow::onButton)
-	EVT_BUTTON(ID_CANCEL,  UpdatesWindow::onButton)
+	EVT_BUTTON(ID_INSTALL, UpdatesWindow::onActionChange)
+	EVT_BUTTON(ID_REMOVE,  UpdatesWindow::onActionChange)
+	EVT_BUTTON(ID_UPGRADE, UpdatesWindow::onActionChange)
+	EVT_BUTTON(ID_CANCEL,  UpdatesWindow::onActionChange)
+	EVT_BUTTON(ID_APPLY,   UpdatesWindow::onApplyChanges)
 END_EVENT_TABLE()

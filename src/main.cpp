@@ -99,12 +99,13 @@ int MSE::OnRun() {
 					return wxApp::OnRun();
 				} else if (f.GetExt() == _("mse-installer")) {
 					// Installer; install it
-					bool local = false;
+					InstallType type = settings.install_type;
 					if (argc > 2) {
-						String arg2 = argv[2];
-						local = arg2 == _("--local");
-					}
-					Installer::installFrom(argv[1], true, local);
+						String arg = argv[2];
+						if (arg.Mid(0,2) == _("--"))
+							parse_enum(arg.Mid(2), type);
+						}
+					Installer::installFrom(argv[1], true, isInstallLocal(type));
 					return EXIT_SUCCESS;
 				} else if (arg == _("--symbol-editor")) {
 					Window* wnd = new SymbolWindow(nullptr);

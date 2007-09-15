@@ -241,7 +241,7 @@ DropDownList* DropDownWordList::submenu(size_t item) const {
 	if (i.flags & FLAG_SUBMENU) {
 		// create submenu?
 		if (!i.submenu) {
-			i.submenu.reset(new DropDownWordList(const_cast<DropDownWordList*>(this), true, tve, pos, i.word));
+			i.submenu.reset(new DropDownWordList(const_cast<DropDownWordList*>(this), true, tve, pos, WordListWordP(i.word)));
 		}
 		return i.submenu.get();
 	} else {

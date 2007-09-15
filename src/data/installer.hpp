@@ -9,8 +9,22 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <data/settings.hpp>
 #include <util/prec.hpp>
 #include <util/io/package.hpp>
+
+// ----------------------------------------------------------------------------- : InstallType
+// Platform default install directory.
+#ifdef __WXMSW__
+#define DEFAULT_INSTALL_LOCAL false
+#else
+#define DEFAULT_INSTALL_LOCAL true
+#endif
+
+inline bool isInstallLocal(const InstallType& type)
+{
+	return type == INSTALL_DEFAULT ? DEFAULT_INSTALL_LOCAL : type == INSTALL_LOCAL;
+}
 
 // ----------------------------------------------------------------------------- : Installer
 

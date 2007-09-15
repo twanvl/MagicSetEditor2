@@ -32,6 +32,7 @@ String card_rarity_code(const String& rarity);
 class WithProgress {
   public:
 	virtual void onProgress(float progress, const String& message) = 0;
+	virtual ~WithProgress () {}
 };
 
 /// Exception thrown to indicate exporting should be aborted
@@ -64,7 +65,7 @@ void ExportProgressDialog::onProgress(float progress, const String& message) {
 class ApprDatabase {
   public:
 	ApprDatabase(WithProgress* progress_target, const String& name);
-	~ApprDatabase();
+	virtual ~ApprDatabase();
 	
 	/// Read the database
 	void read();
