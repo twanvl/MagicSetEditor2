@@ -1564,7 +1564,7 @@ keyword parameter type:
 		script: \{english_number_ordinal({input})\}
 keyword parameter type:
 	name: action
-	match: [^(:;\n]+
+	match: [^(:\n]+
 	separator after is: [.]
 	reminder script: alternative_cost()
 keyword parameter type:
