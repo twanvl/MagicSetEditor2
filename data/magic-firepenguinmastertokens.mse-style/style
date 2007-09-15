@@ -191,7 +191,7 @@ card style:
 
 	type:
 		left: 110
-		top : 475
+		top : 479
 		width: 220
 		height: 20
 		alignment: top shrink-overflow
@@ -207,7 +207,7 @@ card style:
 		left: 
 			{ if card.type != "" or card.illustrator != "" or card.copyright != "" then 64
 			else 23 }
-		top : 468
+		top : 471
 		width: 44
 		height: 22
 		z index: 3
@@ -303,7 +303,7 @@ card style:
 
 	illustrator:
 		right: 350
-		top : 460
+		top : 461
 		width: { max(20, card_style.illustrator.content_width) + 5 }
 		height: 16
 		z index: 3
@@ -315,7 +315,7 @@ card style:
 
 	copyright line:
 		left: 65
-		top : 492
+		top : 494
 		width: 285
 		height: 12
 		z index: 3
@@ -380,7 +380,7 @@ extra card style:
 		z index: 2
 	typeline:
 		left: 53
-		top: 463
+		top: 464
 		width: 304
 		height: 41
 		render style: image
