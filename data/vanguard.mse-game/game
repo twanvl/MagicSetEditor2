@@ -470,12 +470,12 @@ keyword parameter type:
 		script: \{english_number_multiple({input})\}
 keyword parameter type:
 	name: action
-	match: [^(\n]+
+	match: [^(;:\n]+
 	separator after is: [.]
 	reminder script: alternative_cost()
 keyword parameter type:
 	name: name
-	match: [^(.,\n—-]+
+	match: [^(.:;\n—]+
 	refer script:
 		name: normal
 		description: No changes made.
@@ -488,7 +488,7 @@ keyword parameter type:
 	name: prefix
 	description: Prefix for things like "<something>walk"
 	optional: false
-	match: [A-Z][A-Z,a-z ]*
+	match: [A-Z][A-Z,a-z’ ]*
 	example: Forest
 keyword parameter type:
 	name: a

@@ -1564,12 +1564,12 @@ keyword parameter type:
 		script: \{english_number_ordinal({input})\}
 keyword parameter type:
 	name: action
-	match: [^(\n]+
+	match: [^(:;\n]+
 	separator after is: [.]
 	reminder script: alternative_cost()
 keyword parameter type:
 	name: name
-	match: [^(.,\n—-]+
+	match: [^(.:;\n—]+
 	refer script:
 		name: normal
 		description: No changes made.
@@ -1587,7 +1587,7 @@ keyword parameter type:
 	description: Prefix for things like "<something>walk"
 	optional: false
 #	match: [A-Z][a-z, ]*([A-Z][a-z, ]*\xEB00) # commented out because it stopped prefix param from working, version below allows all "walks", including "Dame Judi Denchwalk", doesn't trigger #in middle of sentences, and doesn't trigger in chains of keywords.
-	match: [A-Z][A-Z,a-z ]*
+	match: [A-Z][A-Z,a-z’ ]*
 	example: Forest
 keyword parameter type:
 	name: a
@@ -1620,7 +1620,7 @@ keyword:
 	keyword: Landwalk
 	match: <atom-param>prefix</atom-param>walk
 	mode: core
-	reminder: This creature is unblockable as long as defending player controls a {param1}.
+	reminder: This creature is unblockable as long as defending player controls a {if match(param1.value, match: " land$") then "{to_lower(param1)}" else "{param1}"}.
 keyword:
 	keyword: Protection from
 	match: Protection from <atom-param>name</atom-param>
