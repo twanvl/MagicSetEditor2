@@ -30,9 +30,9 @@ init script:
 	
 	# Use the normal tap symbol
 	mana_t := {
-		if      styling.tap_symbol == "old"        then "mana_t_old.png"
-		else if styling.tap_symbol == "diagonal T" then "mana_t_older.png"
-		else                                            "mana_t.png"
+		if      styling.tap_symbol == "old"        then "old"
+		else if styling.tap_symbol == "diagonal T" then "older"
+		else                                            "new"
 	}
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
