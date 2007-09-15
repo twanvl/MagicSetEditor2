@@ -247,9 +247,9 @@ card style:
 	############################# Card type
 	type:
 		left: 90.11
-		top : 220
+		top : 223
 		width: 152.38
-		height: 13.85
+		height: 10.85
 		alignment: top shrink-overflow
 		z index: 1
 		padding top: 2
@@ -260,9 +260,9 @@ card style:
 			separator color: rgb(128,128,128)
 	type 2:
 		left: 343.6
-		top : 220
+		top : 223
 		width: 152.38
-		height: 13.85
+		height: 10.85
 		alignment: top shrink-overflow
 		z index: 1
 		padding top: 2

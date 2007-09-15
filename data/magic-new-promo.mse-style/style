@@ -166,18 +166,10 @@ card style:
 
 	type:
 		left: 33
-		top : 317
+		top : 309
 		width: 286
 		height: 18
-		alignment:
-			script:
-				if (styling.center_text == "short text only" and
-				   not contains(match:"\n", card.rule_text) and
-				   card.flavor_text == "<i-flavor></i-flavor>" and
-				   card_style.text.content_lines <= 2) or
-				   styling.center_text == "always"
-				then "top center shrink-overflow"
-				else "top left shrink-overflow"
+		alignment: top shrink-overflow
 		z index: 1
 		font:
 			name: Matrix
@@ -191,7 +183,7 @@ card style:
 	############################# Text box
 	text:
 		left: 31
-		top : 328
+		top : 330
 		width: 311
 		height: 138
 		font:
@@ -210,7 +202,15 @@ card style:
 					then "magic-mana-large"
 					else "magic-mana-small"
 			size: 14
-		alignment: middle left
+		alignment:
+			script:
+				if (styling.center_text == "short text only" and
+				   not contains(match:"\n", card.rule_text) and
+				   card.flavor_text == "<i-flavor></i-flavor>" and
+				   card_style.text.content_lines <= 2) or
+				   styling.center_text == "always"
+				then "top center shrink-overflow"
+				else "top left shrink-overflow"
 		z index: 2
 		padding left:   4
 		padding top:    2
