@@ -13,7 +13,7 @@ position hint: 107
 
 card width: 375
 card height: 523
-card dpi: 127.34225621414913957934990439771
+card dpi: 150
 
 ############################################################## Extra scripts
 ## COPY/PASTE from magic-old.mse-style/style
@@ -216,9 +216,9 @@ card style:
 
 	rarity:
 		right: 320
-		top : 346
-		width: 50
-		height: 25
+		top : 347
+		width: 46
+		height: 23
 		z index: 1
 		alignment: middle right
 		render style: image
