@@ -521,7 +521,7 @@ keyword:
 	keyword: Landwalk
 	match: <atom-param>prefix</atom-param>walk
 	mode: core
-	reminder: It is unblockable as long as defending player controls a {param1}.
+	reminder: This creature is unblockable as long as defending player controls a {if match(param1.value, match: " land$") or contains(param1.value, match: "Snow") or contains(param1.value, match:"Basic") or contains(param1.value, match:"Legendary") then "{to_lower(param1)}" else "{param1}"}.
 keyword:
 	keyword: Protection from
 	match: protection from <atom-param>name</atom-param>
@@ -933,3 +933,8 @@ keyword:
 	match: changeling
 	mode: expert
 	reminder: It is every creature type even if it isn't in play.
+keyword:
+	keyword: Hideaway
+	match: hideaway
+	mode: expert
+	reminder: The land comes into play tapped. When it does, look at the top four cards of your library, remove one from the game face down, then put the rest on the bottom of your library.

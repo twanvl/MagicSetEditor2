@@ -2,6 +2,7 @@ mse version: 0.3.4
 game: yugioh
 short name: Standard
 icon: card-sample.png
+position hint: 01
 
 card width: 375
 card height: 523
