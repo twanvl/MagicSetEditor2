@@ -167,7 +167,7 @@ card style:
 	type:
 		left: 33
 		top : 309
-		width: 286
+		width: 306
 		height: 18
 		alignment: top shrink-overflow
 		z index: 1

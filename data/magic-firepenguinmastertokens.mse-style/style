@@ -180,10 +180,10 @@ card style:
 
 	############################# Image
 	image:
-		left:	50
-		top:	67
-		width:	306
-		height:	437
+		left:	49
+		top:	65
+		width:	307
+		height:	439
 		mask:	imagemask.png
 		z index: 1
 

@@ -195,7 +195,7 @@ card style:
 		top : 312
 		width: 220
 		height: 20
-		alignment: top shrink-overflow
+		alignment: middle shrink-overflow
 		z index: 2
 		padding top: 2
 		font:

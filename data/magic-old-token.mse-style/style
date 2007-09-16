@@ -201,7 +201,7 @@ card style:
 	type:
 		left: 58
 		top : 348
-		width: { 271 - max(22,card_style.rarity.content_width) }
+		width: { 262 - max(22,card_style.rarity.content_width) }
 		height: 18
 		alignment: top left shrink-overflow
 		z index: 1

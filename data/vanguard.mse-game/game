@@ -492,7 +492,7 @@ keyword parameter type:
 	example: Forest
 keyword parameter type:
 	name: a
-	match: an?
+	match: [ ]*|[ an?]*
 
 ############################# All Magic keywords
 # By JrEye and Neko_Asakami, Updated by Pichoro and Buttock1234
@@ -920,7 +920,7 @@ keyword:
 	reminder: You may play it for its evoke cost. If you do, it's sacrificed when it comes into play.
 keyword:
 	keyword: Champion
-	match: champion <atom-param>a</atom-param> <atom-param>name</atom-param>
+	match: champion<atom-param>a</atom-param><atom-param>name</atom-param>
 	mode: expert
 	reminder: When it comes into play, sacrifice it unless you remove another {param2} you control from the game. When it leaves play, that card returns to play.
 keyword:

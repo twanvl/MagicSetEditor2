@@ -204,7 +204,7 @@ card style:
 	type:
 		left: 33
 		top : 134
-		width: 253
+		width: { if card.pt !="" then 253 else 310 }
 		height: 18
 		alignment: top shrink-overflow
 		z index: 1
@@ -215,9 +215,9 @@ card style:
 			separator color: rgb(128,128,128)
 
 	type 2:
-		left: 86
+		left: { if card.pt != "" then 86 else 34 }
 		top : 353
-		width: 256
+		width: { if card.pt != "" then 256 else 308 }
 		height: 18
 		alignment: top shrink-overflow
 		angle: 180
