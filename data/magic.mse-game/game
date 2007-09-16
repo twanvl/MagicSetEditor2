@@ -2038,7 +2038,7 @@ keyword:
 	keyword: Changeling
 	match: Changeling
 	mode: expert
-	reminder: This creature is every creature type even if this card isn't in play.
+	reminder: This card is every creature type even if it isn't in play.
 keyword:
 	keyword: Hideaway
 	match: Hideaway
