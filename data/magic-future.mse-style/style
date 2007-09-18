@@ -109,8 +109,12 @@ init script:
 		else "white"
 	}
 	typesymbol_color:= { if contains(card.card_color, match:"artifact") then "black"
-		else if card.card_color == "multicolor" then "white"
-		else if card.card_color == "white" then "black"
+		else if contains(card.card_color, match:"multicolor") then (
+			if card.card_color=="multicolor" then "black"
+			else if not contains(card.card_color, match:"white") then "white"
+			else if contains(card.card_color, match:"red") or contains(card.card_color, match:"green") then "white"
+			else "black"
+		) else if card.card_color == "white" then "black"
 		else if contains(card.card_color, match:"land") then (
 			if contains(card.card_color, match:"green") then "white"
 			else if contains(card.card_color, match:"red") then "white"
