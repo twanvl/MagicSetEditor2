@@ -91,20 +91,20 @@ enum WordListItemFlags
 ,	FLAG_LINE_BELOW = 0x04
 };
 struct DropDownWordListItem {
-	DropDownWordListItem() : word(nullptr), flags(0) {}
-	DropDownWordListItem(WordListWord* word, int flags = 0)
+	DropDownWordListItem() : flags(0) {}
+	DropDownWordListItem(WordListWordP word, int flags = 0)
 		: word(word)
 		, name(word->name)
 		, flags(flags | (word->isGroup() * FLAG_SUBMENU)
 		              | (word->line_below * FLAG_LINE_BELOW))
 	{}
-	DropDownWordListItem(WordListWord* word, const String& name, int flags = 0)
+	DropDownWordListItem(WordListWordP word, const String& name, int flags = 0)
 		: word(word)
 		, name(name)
 		, flags(flags)
 	{}
 	
-	WordListWord* word;
+	WordListWordP word;
 	String        name;
 	int           flags;
 	DropDownListP submenu;
@@ -177,7 +177,7 @@ void DropDownWordList::setWords(const WordListWordP& words2) {
 				}
 			}
 			if (!already_added || w->isGroup()) {
-				items.push_back(DropDownWordListItem(w.get()));
+				items.push_back(DropDownWordListItem(w));
 			}
 		}
 	}
@@ -214,7 +214,7 @@ void DropDownWordList::addWordsFromScript(const WordListWordP& w) {
 			}
 			// not a duplicate
 			prev = items.size();
-			items.push_back(DropDownWordListItem(w.get(), s, w->line_below * FLAG_LINE_BELOW));
+			items.push_back(DropDownWordListItem(w, s, w->line_below * FLAG_LINE_BELOW));
 		}
 	}
 }
@@ -241,7 +241,7 @@ DropDownList* DropDownWordList::submenu(size_t item) const {
 	if (i.flags & FLAG_SUBMENU) {
 		// create submenu?
 		if (!i.submenu) {
-			i.submenu.reset(new DropDownWordList(const_cast<DropDownWordList*>(this), true, tve, pos, WordListWordP(i.word)));
+			i.submenu.reset(new DropDownWordList(const_cast<DropDownWordList*>(this), true, tve, pos, i.word));
 		}
 		return i.submenu.get();
 	} else {

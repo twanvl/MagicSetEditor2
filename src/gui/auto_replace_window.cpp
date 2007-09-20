@@ -103,7 +103,8 @@ void AutoReplaceList::removeSelected() {
 			items.erase(items.begin() + i);
 			// select next
 			refreshList();
-			selectItem(items.empty() ? VoidP() : VoidP(items[min(i, items.size())]), true, true);
+			selectItem(items.empty() ? VoidP() : static_pointer_cast<IntrusivePtrVirtualBase>(items[min(i, items.size())]),
+			           true, true);
 			return;
 		}
 	}
