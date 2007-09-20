@@ -65,7 +65,7 @@ option field:
 
 option style:
 	grouping:
-		render style: text
+		render style: both
 		choice images:
 			no grouping:    { built_in_image("bool_no") }
 			group by card type: { built_in_image("bool_yes") }
@@ -124,12 +124,12 @@ script:
 	}
 	write_cards := {
 		"<ul class='cards'>{
-		  for each card in sort(cards, order_by: {input.number_line}) do
+		  for each card in sort_list(cards, order_by: {input.number_line}) do
 		     write_card()
 		}</ul>"
 	}
 	write_group := {
-		cards := filter_list(set.cards, filter: { sort_index(card:input) == code } )
+		cards := filter_list(set.cards, filter: { contains(match:sort_index(card:input), code) } )
 		count := number_of_items(in:cards)
 		if count > 0 then
 		   "<h2>{title} ({count} {if count == 1 then "card" else "cards"})</h2>" +
@@ -163,10 +163,10 @@ script:
 	  <div class='description'>{ to_html(set.description) }</div>
 	  { if options.grouping == "group by card type" then
 	       # Codes as by sort_index
-	       write_group(title: "Character",       code:"A") +
-	       write_group(title: "Equipment",       code:"B") +
-	       write_group(title: "Location",        code:"C") +
-	       write_group(title: "Plot Twist",      code:"D")
+	       write_group(title: "Character",       code:"12") +
+	       write_group(title: "Equipment",       code:"3") +
+	       write_group(title: "Location",        code:"4") +
+	       write_group(title: "Plot Twist",      code:"5")
 	    else
 	       write_cards(cards: set.cards)
 	  }
