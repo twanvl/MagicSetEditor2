@@ -129,11 +129,18 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
             'Components: style/'+component+';'              + \
             'Flags: onlyifdoesntexist uninsneveruninstall'    \
           : ''
+; Declare a font that must be installed, but not registered
+#define FontNoReg(large_only, file,name,component)            \
+          INSTALL_ALL || !large_only ?                        \
+            'Source:  "tools/msw-installer/font/'+file+'";' + \
+            'DestDir: "{fonts}";'                           + \
+            'Components: style/'+component+';'              + \
+            'Flags: onlyifdoesntexist uninsneveruninstall'    \
+          : ''
 
 ; ----------------------------- : Magic
 
-#emit Package(0, 'magic', '',                'game',            'mtg')
-#emit Package(0, 'magic', '',                'game/stats',      'mtg')
+#emit Package(0, 'magic', '',                'game',            'mtg') + 'Flags: recursesubdirs'
 #emit Package(0, 'magic', 'blends',          'include',         'mtg')
 #emit Package(0, 'magic', 'default-image',   'include',         'mtg')
 #emit Package(0, 'magic', 'watermarks',      'include',         'mtg')
@@ -166,7 +173,7 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
 #emit Package(1, 'magic', 'future',          'style',           'mtg/future/base')
 #emit Package(1, 'magic', 'future-textless', 'style',           'mtg/future/textless')
 
-#emit Font   (0, 'matrixb.ttf',     'Matrix',                   'mtg')
+#emit Font   (0, 'matrixb.ttf',     'Matrix',                   'mtg style/yugioh')
 #emit Font   (0, 'matrixbsc.ttf',   'MatrixBoldSmallCaps',      'mtg')
 #emit Font   (0, 'magmed.ttf',      'MagicMedieval',            'mtg/old')
 #emit Font   (0, 'mplantin.ttf',    'MPlantin',                 'mtg')
@@ -177,19 +184,22 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
 
 ; ----------------------------- : VS System
 
-#emit Package(0, 'vs', '',                 'game',        'vs')
-#emit Package(0, 'vs', 'common',           'include',     'vs')
-#emit Package(0, 'vs', 'standard-arrow',   'symbol-font', 'vs')
-#emit Package(0, 'vs', 'standard',         'style',       'vs/std')
-#emit Package(1, 'vs', 'extended-art',     'style',       'vs/ext')
-#emit Package(1, 'vs', 'hellboy',          'style',       'vs/hstd')
-#emit Package(1, 'vs', 'extended-hellboy', 'style',       'vs/hext')
-#emit Package(1, 'vs', 'alter',            'style',       'vs/alter')
-#emit Package(1, 'vs', 'new',              'style',       'vs/new')
+#emit Package(0, 'vs', '',                 'game',            'vs')
+#emit Package(0, 'vs', 'common',           'include',         'vs')
+#emit Package(0, 'vs', 'standard-arrow',   'symbol-font',     'vs')
+#emit Package(0, 'vs', 'spoiler',          'export-template', 'vs')
+#emit Package(0, 'vs', 'standard',         'style',           'vs/std')
+#emit Package(1, 'vs', 'extended-art',     'style',           'vs/ext')
+#emit Package(1, 'vs', 'hellboy',          'style',           'vs/hstd')
+#emit Package(1, 'vs', 'extended-hellboy', 'style',           'vs/hext')
+#emit Package(1, 'vs', 'alter',            'style',           'vs/alter')
+#emit Package(1, 'vs', 'new',              'style',           'vs/new')
 
-#emit Font   (0, 'BadhouseBoldNumbers.ttf', 'BadhouseBoldNumbers', 'vs')
-#emit Font   (0, 'eurosti.ttf',             'Eurostile',           'vs')
-#emit Font   (0, 'percexp.ttf',             'Percolator Expert',   'vs')
+#emit Font   (0, 'BadhouseBoldNumbers.ttf', 'BadhouseBoldNumbers',    'vs')
+#emit Font   (0, 'eurosti.ttf',             'Eurostile',              'vs')
+#emit Font   (0, 'eurostile.oblique.ttf',   'EurostileObl-Normal',    'vs')
+#emit Font   (0, 'percexp.ttf',             'Percolator Expert',      'vs')
+#emit Font   (1, 'GILC____.TTF',            'Gill Sans MT Condensed', 'vs/new')
 
 ; ----------------------------- : YuGiOh
 
@@ -197,6 +207,10 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
 #emit Package(0, 'yugioh', 'standard-levels',   'symbol-font', 'yugioh')
 #emit Package(0, 'yugioh', 'text-replacements', 'symbol-font', 'yugioh')
 #emit Package(0, 'yugioh', 'standard',          'style',       'yugioh')
+
+#emit FontNoReg (0, 'MatrixRegularSmallCaps.pfm',   'MatrixRegularSmallCaps',  'yugioh')
+#emit FontNoReg (0, 'MatrixRegularSmallCaps.pfb',   'MatrixRegularSmallCaps',  'yugioh')
+#emit Font      (0, 'pala.ttf',                     'Palatino Linotype',       'yugioh')
 
 ; ------------------------------------------------------------------------- : Rest of installer
 
