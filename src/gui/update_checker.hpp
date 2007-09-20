@@ -21,7 +21,7 @@ void check_updates();
  */
 void check_updates_now(bool async = true);
 
-/// Show a dialog to inform the user that updates are availible (if there are any)
+/// Show a dialog to inform the user that updates are available (if there are any)
 /** Call check_updates first.
  *  Call this function from an onIdle loop */
 void show_update_dialog(Window* parent);

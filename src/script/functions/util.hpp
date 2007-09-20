@@ -62,6 +62,15 @@
 
 // ----------------------------------------------------------------------------- : Parameters
 
+template <typename Type>
+inline Type from_script(const ScriptValueP& v, const String& str) {
+	try {
+		return from_script<Type>(v);
+	} catch (ScriptError& e) {
+		throw ScriptError(_ERROR_2_("in parameter", str, e.what()));
+	}
+}
+
 /// Retrieve a parameter to a SCRIPT_FUNCTION with the given name and type
 /** Usage:
  *  @code
@@ -75,7 +84,7 @@
 #define SCRIPT_PARAM(Type, name)											\
 		SCRIPT_PARAM_N(Type, _(#name), name)
 #define SCRIPT_PARAM_N(Type, str, name)										\
-		Type name = from_script<Type>(ctx.getVariable(str))
+		Type name = from_script<Type>(ctx.getVariable(str), str)
 
 /// Retrieve an optional parameter
 /** Usage:
@@ -102,7 +111,7 @@
 #define SCRIPT_OPTIONAL_PARAM_N_(Type, str, name)							\
 		ScriptValueP name##_ = ctx.getVariableOpt(str);						\
 		Type name = name##_ && name##_ != script_nil						\
-						? from_script<Type>(name##_) : Type();
+						? from_script<Type>(name##_, str) : Type();
 
 /// Retrieve an optional parameter with a default value
 #define SCRIPT_PARAM_DEFAULT(Type, name, def)								\
@@ -110,7 +119,7 @@
 /// Retrieve a named optional parameter with a default value
 #define SCRIPT_PARAM_DEFAULT_N(Type, str, name, def)						\
 		ScriptValueP name##_ = ctx.getVariableOpt(str);						\
-		Type name = name##_ ? from_script<Type>(name##_) : def
+		Type name = name##_ ? from_script<Type>(name##_, str) : def
 
 // ----------------------------------------------------------------------------- : Rules
 

@@ -131,7 +131,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 						const Instruction* instr_bt = script.backtraceSkip(instr - i.data - 2, i.data);
 						// have we have reached the name
 						if (instr_bt) {
-							throw ScriptError(e.what() + _("\n  in function: ") + script.instructionName(instr_bt));
+							throw ScriptError(_ERROR_2_("in function", e.what(), script.instructionName(instr_bt)));
 						} else {
 							throw e; // rethrow
 						}

@@ -41,7 +41,7 @@ class PackageVersionData : public IntrusivePtrBase<PackageVersionData> {
 	DECLARE_REFLECTION();
 };
 
-/// Information on the latest availible version
+/// Information on the latest available version
 class VersionData : public IntrusivePtrBase<VersionData> {
   public:
 	Version version;				///< Latest version number of MSE
@@ -163,7 +163,7 @@ struct HtmlWindowToBrowser : public wxHtmlWindow {
 void show_update_dialog(Window* parent) {
 	if (!update_available() || shown_dialog) return; // we already have the latest version, or this has already been displayed.
 	// Show update dialog
-	wxDialog* dlg = new wxDialog(parent, wxID_ANY, _TITLE_("updates availible"), wxDefaultPosition);
+	wxDialog* dlg = new wxDialog(parent, wxID_ANY, _TITLE_("updates available"), wxDefaultPosition);
 	// controls
 	wxHtmlWindow* html = new HtmlWindowToBrowser(dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO | wxSUNKEN_BORDER);
 	html->SetPage(update_version_data->description);

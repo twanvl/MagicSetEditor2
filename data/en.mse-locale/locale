@@ -635,6 +635,11 @@ error:
 	has no member value:		String "%s" has no member '%s'
 	can't convert value:		Can't convert "%s" from %s to %s
 	unsupported format:			Invalid string format: '%s'
+	in function:
+		%s
+		  in function %s
+	in parameter:
+		Parameter %s: %s
 	
 	# Image stuff
 	coordinates for blending overlap:					Coordinates for blending overlap

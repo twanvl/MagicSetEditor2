@@ -14,7 +14,7 @@
 // ----------------------------------------------------------------------------- : ScriptValue
 // Base cases
 
-ScriptValue::operator String()                              const { return _("[[") + typeName() + _("]]"); }
+ScriptValue::operator String()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("string" ))); }
 ScriptValue::operator int()                                 const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("integer" ))); }
 ScriptValue::operator double()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("double"  ))); }
 ScriptValue::operator Color()                               const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("color"   ))); }
