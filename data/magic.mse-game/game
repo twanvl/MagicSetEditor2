@@ -343,13 +343,13 @@ init script:
 			replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
 		# step 7 : italic reminder text
 		replace_rule(
-		 	match: "[(][^)\n]*[)]?",
+		 	match: "[(]([^)\n]|[(][^)\n]*[)])*[)]?",
 			in_context: "(^|[[:space:]])<match>|<atom-keyword><match></",
 		 	replace: "<i-auto>&</i-auto>") +
 		# step 8 : automatic capitalization
 		replace_rule(
 			match: "[a-z]",
-			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>|—<match>| — <match>",
+			in_context: "[(](<param-[a-z]*>)?<match>[^)]|[ ]*: <param-cost><match>|—<match>| — <match>",
 			replace: to_upper) +
 		curly_quotes
 	
@@ -709,6 +709,7 @@ card field:
 	type: text
 	name: casting cost
 	icon: stats/casting_cost.png
+	position hint: 1
 	script: mana_filter(value)
 	card list visible: true
 	card list column: 2
@@ -719,6 +720,7 @@ card field:
 card field:
 	type: choice
 	name: card symbol
+	position hint: 10
 	icon: stats/card_symbol.png
 	choice: none
 	choice: tombstone
@@ -747,13 +749,15 @@ card field:
 card field:
 	type: text
 	name: super type
-	icon: stats/creature_type.png
+	icon: stats/card_type.png
+	position hint: 30
 	editable: false
 	script: super_type_filter(value)
 card field:
 	type: text
 	name: sub type
 	icon: stats/creature_type.png
+	position hint: 31
 	script: sub_type_filter(value, type:card.super_type)
 	editable: false
 card field:
@@ -777,6 +781,7 @@ card field:
 	type: choice
 	name: rarity
 	icon: stats/rarity.png
+	position hint: 100
 	choice: basic land
 	choice: common
 	choice: uncommon
@@ -817,6 +822,7 @@ card field:
 	type: choice
 	name: watermark
 	icon: stats/watermark.png
+	position hint: 200
 	include file: magic-watermarks.mse-include/watermark-names
 	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, or a guild symbol
 
@@ -825,6 +831,7 @@ card field:
 	type: text
 	name: loyalty
 	icon: stats/toughness.png
+	position hint: 59
 card field:
 	type: text
 	name: loyalty cost 1
@@ -842,10 +849,12 @@ card field:
 	type: text
 	name: power
 	icon: stats/power.png
+	show statistics: false
 	script: type_over_pt(value)
 card field:
 	type: text
 	name: toughness
+	show statistics: false
 	icon: stats/toughness.png
 card field:
 	type: text
@@ -886,6 +895,7 @@ card field:
 	type: text
 	name: illustrator
 	icon: stats/illustrator.png
+	position hint: 210
 	default: set.artist
 	description: Illustrator of this card, the default value can be changed on the 'set info' tab
 card field:
@@ -1042,6 +1052,7 @@ card field:
 	name: watermark 2
 	include file: magic-watermarks.mse-include/watermark-names
 	icon: stats/watermark.png
+	show statistics: false
 	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, a special symbol, or a guild symbol
 card field:
 	type: text
@@ -1123,7 +1134,7 @@ card list color script:
 
 statistics dimension:
 	name:   card color
-	position hint: -1
+	position hint: 0
 	script: primary_card_color(card.card_color)
 	icon: stats/card_color.png
 	colors:
@@ -1149,19 +1160,36 @@ statistics dimension:
 	group: hybrid
 
 statistics dimension:
+	position hint: 2
 	name:   converted mana cost
 	script: cmc(card.casting_cost)
 	numeric: true
 	icon: stats/casting_cost.png
 
 statistics dimension:
+	position hint: 3
 	name:   colored mana cost
 	script: colored_mana(card.casting_cost)
 	numeric: true
 	icon: stats/colored_casting_cost.png
 
 statistics dimension:
+	position hint: 50
+	name: power
+	script: card.power
+	numeric: true
+	icon: stats/power.png
+
+statistics dimension:
+	position hint: 51
+	name: toughness
+	script: card.toughness
+	numeric: true
+	icon: stats/toughness.png
+
+statistics dimension:
 	name: keywords
+	position hint: 1000
 	script: keyword_usage(unique:true)
 	show empty: false
 	split list: true
@@ -1169,6 +1197,7 @@ statistics dimension:
 
 statistics dimension:
 	name: race
+	position hint: 32
 	icon: stats/creature_type.png
 	description: Race of creatures and tribal cards
 	script:
@@ -1177,6 +1206,7 @@ statistics dimension:
 	show empty: false
 statistics dimension:
 	name: creature class
+	position hint: 33
 	icon: stats/creature_type.png
 	description: Class of creature cards
 	script:
@@ -1185,35 +1215,17 @@ statistics dimension:
 	show empty: false
 	split list: true
 
-#statistics dimension:
-#	name: word count
-#	type: word count
-#	display: list
-
 statistics category:
 	name: color / rarity
+	position hint: 101
 	type: stack
 	icon: stats/color_rarity.png
 	dimension: card color
 	dimension: rarity
 
-#statistics category:
-#	name: power / toughness
-#	type: scatter
-#	icon: stats/pt.png
-#	dimension: power
-#	dimension: toughness
-
-#statistics category:
-#	name: power / toughness / color
-#	type: scatter pie
-#	icon: stats/pt.png
-#	dimension: power
-#	dimension: toughness
-#	dimension: card color
-
 statistics category:
 	name: power / toughness
+	position hint: 52
 	type: scatter pie
 	icon: stats/pt.png
 	dimension: power
@@ -1228,6 +1240,7 @@ statistics category:
 
 statistics category:
 	name: color / cost
+	position hint: 4
 	type: scatter pie
 	icon: stats/color_cost.png
 	dimension: card color
@@ -1236,6 +1249,7 @@ statistics category:
 
 statistics category:
 	name: color / colored cost
+	position hint: 5
 	icon: stats/color_colored_cost.png
 	type: scatter
 	dimension: card color
@@ -1243,6 +1257,7 @@ statistics category:
 
 statistics category:
 	name: cost / colored cost
+	position hint: 6
 	icon: stats/cost_colored_cost.png
 	type: scatter pie
 	dimension: converted mana cost
@@ -1251,32 +1266,12 @@ statistics category:
 
 statistics category:
 	name: creature race / class
+	position hint: 34
 	icon: stats/creature_type.png
 	type: scatter pie
 	dimension: race
 	dimension: creature class
 	dimension: card color
-
-#statistics field:
-#	name: creature type
-#	data 1:
-#		if card.super_type == "Creature" or card.super_type == "Legendary Creature" then
-#			split(around:" ", input: card.sub_type)
-
-#statistics field:
-#	name: converted mana cost
-#	graph style: bar
-#	data 1:
-#		card.casting_cost
-#		# TODO
-
-#statistics field:
-#	name: color / rarity
-#	graph style: cross
-#	data 1: card.card_color
-#	data 2: card.rarity
-
-# The following (until keywords) doesn't do anything yet
 
 
 

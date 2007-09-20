@@ -26,6 +26,7 @@ Field::Field()
 	, editable         (true)
 	, save_value       (true)
 	, show_statistics  (true)
+	, position_hint    (0)
 	, identifying      (false)
 	, card_list_column (100)
 	, card_list_width  (100)
@@ -53,6 +54,7 @@ IMPLEMENT_REFLECTION(Field) {
 	REFLECT(editable);
 	REFLECT(save_value);
 	REFLECT(show_statistics);
+	REFLECT(position_hint);
 	REFLECT(identifying);
 	REFLECT(card_list_column);
 	REFLECT(card_list_width);

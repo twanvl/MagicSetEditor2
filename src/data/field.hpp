@@ -47,6 +47,7 @@ class Field : public IntrusivePtrVirtualBase {
 	bool      editable;         ///< Can values of this field be edited?
 	bool      save_value;       ///< Should values of this field be written to files? Can be false for script generated fields.
 	bool      show_statistics;  ///< Should this field appear as a group by choice in the statistics panel?
+	int       position_hint;    ///< Position in the statistics list
 	bool      identifying;      ///< Does this field give Card::identification()?
 	int       card_list_column; ///< What column to use in the card list?
 	UInt      card_list_width;  ///< Width of the card list column (pixels).
