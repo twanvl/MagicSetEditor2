@@ -41,6 +41,13 @@ init script:
 	paintbrush_color:= { if card.border_color == "black" or card.border_color == rgb(0,0,0) then "white"
 		else "black"
 	}
+	
+	# Loyalty cost arrows
+	loyalty_image := {
+		if      contains(input, match: "+") then "loyalty up"
+		else if contains(input, match: "-") then "loyalty down"
+		else                                     "loyalty naught"
+	}
 
 ############################################################## Set info fields
 set info style:
@@ -357,10 +364,7 @@ extra card field:
 	type: choice
 	name: loyalty cost box 1
 	editable: false
-	script:
-		if contains(card.power, match: "+") then "loyalty up"
-		else if contains(card.power, match: "-") then "loyalty down"
-		else "loyalty naught"
+	script: loyalty_image(card.loyalty_cost_1)
 	choice: loyalty up
 	choice: loyalty down
 	choice: loyalty naught
@@ -368,10 +372,7 @@ extra card field:
 	type: choice
 	name: loyalty cost box 2
 	editable: false
-	script:
-		if contains(card.power_2, match: "+") then "loyalty up"
-		else if contains(card.power_2, match: "-") then "loyalty down"
-		else "loyalty naught"
+	script: loyalty_image(card.loyalty_cost_2)
 	choice: loyalty up
 	choice: loyalty down
 	choice: loyalty naught
@@ -379,10 +380,7 @@ extra card field:
 	type: choice
 	name: loyalty cost box 3
 	editable: false
-	script:
-		if contains(card.toughness_2, match: "+") then "loyalty up"
-		else if contains(card.toughness_2, match: "-") then "loyalty down"
-		else "loyalty naught"
+	script: loyalty_image(card.loyalty_cost_3)
 	choice: loyalty up
 	choice: loyalty down
 	choice: loyalty naught
