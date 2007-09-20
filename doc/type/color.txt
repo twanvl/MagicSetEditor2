@@ -5,6 +5,12 @@ In files and scritps a color can be represented as
 <pre>rgb(<i>red_component</i>, <i>green_component</i>, <i>blue_component</i>)</pre>
 where red_component, green_component and blue_component are numbers between 0 and 255 (inclusive).
 
+--Named colors--
+MSE also supports named colors, for instance @"white"@ is the same as @rgb(255,255,255)@.
+For a full list of supported colors, see [[http://www.wxwidgets.org/manuals/stable/wx_wxcolourdatabase.html|the wxWidgets documentation]].
+
+In scripts named colors are represented as [[type:string]]s.
+
 --Examples--
 For example:
 ! Code			Represents	<<<

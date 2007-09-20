@@ -329,6 +329,9 @@ template <> void Reader::handle(Color& col) {
 	UInt r,g,b;
 	if (wxSscanf(getValue().c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
 		col.Set(r, g, b);
+	} else {
+		col = Color(previous_value);
+		if (!col.Ok()) col = *wxBLACK;
 	}
 }
 

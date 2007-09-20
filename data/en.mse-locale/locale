@@ -91,6 +91,13 @@ menu:
 	basic shapes:		&Basic Shapes	F8
 	symmetry:			S&ymmetry	F9
 	paint:				P&aint	F10
+	
+	# Updates window
+	apply changes:		Apply changes
+	cancel changes:		Cancel changes
+	install package:	Install package
+	upgrade package:	Upgrade package
+	remove package:		Remove package
 
 ############################################################## Menu help texts
 help:

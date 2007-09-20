@@ -38,8 +38,8 @@ init script:
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }	
 	
-	paintbrush_color:= { if card.border_color == "black" or card.border_color == rgb(0,0,0) then "white"
-		else "black"
+	paintbrush_color:= {
+		if card.border_color < 96 then "white" else "black"
 	}
 	
 	# Loyalty cost arrows
@@ -334,10 +334,7 @@ card style:
 			name: Matrix
 			size: 10
 			weight: bold
-			color:
-				script:
-					if card.border_color == "black" or card.border_color == rgb(0,0,0) then rgb(255,255,255)
-					else rgb(0,0,0)
+			color: { paintbrush_color() }
 
 	copyright line:
 		left: 43
@@ -349,10 +346,7 @@ card style:
 		font:
 			name: MPlantin
 			size: 7
-			color:
-				script:
-					if card.border_color == "black" or card.border_color == rgb(0,0,0) then rgb(255,255,255)
-					else rgb(0,0,0)
+			color: { paintbrush_color() }
 
 ############################################################## Extra card fields
 extra card field:

@@ -195,7 +195,12 @@ class ScriptString : public ScriptValue {
 		if (wxSscanf(value.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
 			return Color(r, g, b);
 		} else {
-			throw ScriptError(_ERROR_3_("can't convert value", value, typeName(), _TYPE_("color")));
+			// color from database?
+			Color c(value);
+			if (!c.Ok()) {
+				throw ScriptError(_ERROR_3_("can't convert value", value, typeName(), _TYPE_("color")));
+			}
+			return c;
 		}
 	}
 	virtual int itemCount() const { return (int)value.size(); }
@@ -226,6 +231,7 @@ class ScriptColor : public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_COLOR; }
 	virtual String typeName() const { return _TYPE_("color"); }
 	virtual operator Color()  const { return value; }
+	virtual operator int()    const { return (value.Red() + value.Blue() + value.Green()) / 3; }
 	virtual operator String() const {
 		return String::Format(_("rgb(%u,%u,%u)"), value.Red(), value.Green(), value.Blue());
 	}
