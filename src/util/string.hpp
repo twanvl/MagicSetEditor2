@@ -68,7 +68,7 @@ void writeUTF8(wxTextOutputStream& stream, const String& str);
 	#define RIGHT_SINGLE_QUOTE  _('\u2019')
 	#define  LEFT_DOUBLE_QUOTE  _('\u201C')
 	#define RIGHT_DOUBLE_QUOTE  _('\u201D')
-	#define CONNECTION_SPACE    _('\uEB00') // in private use are, untags to ' '
+	#define CONNECTION_SPACE    _('\uEB00') // in private use area, untags to ' '
 #else
 	#define  LEFT_ANGLE_BRACKET _("<")
 	#define RIGHT_ANGLE_BRACKET _(">")

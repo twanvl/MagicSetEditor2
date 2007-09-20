@@ -1298,15 +1298,6 @@ void TextValueEditor::clearWordListIndicators(RotatedDC& dc) {
 
 void TextValueEditor::redrawWordListIndicators(bool toggling_dropdown) {
 	redrawSelection(selection_start_i, selection_end_i, dropDownShown() != toggling_dropdown);
-	/*//%%if (isCurrent()) {
-		// Hide caret
-		wxCaret* caret = editor().GetCaret();
-		if (caret->IsVisible()) caret->Hide();
-	}
-	drawWordListIndicators(*editor().overdrawDC(), true);
-	if (isCurrent()) {
-		showCaret();
-	}*/
 }
 
 void TextValueEditor::drawWordListIndicators(RotatedDC& dc, bool redrawing) {

@@ -257,7 +257,7 @@ void SymbolPointEditor::onLeftDClick(const Vector2D& pos, wxMouseEvent& ev) {
 		// select the new point
 		selectPoint(act->getNewPoint(), false);
 		selection = SELECTED_POINTS;
-	} else if (hovering == SELECTED_HANDLE && hover_handle.handle == HANDLE_MAIN) { //%%%%%%% ||/&&
+	} else if (hovering == SELECTED_HANDLE && hover_handle.handle == HANDLE_MAIN) {
 		// Delete point
 		selected_points.clear();
 		selectPoint(hover_handle.point, false);

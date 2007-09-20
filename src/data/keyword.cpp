@@ -479,6 +479,7 @@ String KeywordDatabase::expand(const String& text,
 							kw->match_re.GetMatch(&start_u, &len_u, 0);
 							size_t start = untagged_to_index(s, start_u, true),
 							       end   = untagged_to_index(s, start_u + len_u, true);
+							if (start == end) continue; // don't match empty keywords
 							result += s.substr(0, start);
 							
 							// Split the keyword, set parameters in context
