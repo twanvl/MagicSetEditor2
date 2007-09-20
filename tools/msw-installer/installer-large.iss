@@ -4,7 +4,7 @@
 ;//| License:      GNU General Public License 2 or later (see file COPYING)     |
 ;//+----------------------------------------------------------------------------+
 
-#define INSTALL_ALL 0
+#define INSTALL_ALL 1
 
 #include 'installer.iss'
 

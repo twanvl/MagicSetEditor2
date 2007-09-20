@@ -4,10 +4,18 @@
 ;//| License:      GNU General Public License 2 or later (see file COPYING)     |
 ;//+----------------------------------------------------------------------------+
 
+; Note: This installer requires the Inno Setup Preprocessor add on
+
+#ifndef INSTALL_ALL
+  #error installer.iss must not be used directly, use either installer-large or installer-small
+#endif
+
+#define Debug
+
 [setup]
 AppName                 = Magic Set Editor 2
-AppVerName              = Magic Set Editor 2 - 0.3.4 beta
-AppCopyright            = Copyright © 2001-2006 Twan van Laarhoven
+AppVerName              = Magic Set Editor 2 - 0.3.5 beta
+AppCopyright            = Copyright © 2001-2007 Twan van Laarhoven
 DefaultDirName          = {pf}\Magic Set Editor 2
 DisableStartupPrompt    = 1
 DisableProgramGroupPage = 1
@@ -18,11 +26,19 @@ BackColor               = $FFF7F0
 BackColor2              = $FFF7F0
 InfoBeforeFile          = tools/msw-installer/beta-readme.rtf
 ;LicenseFile             = COPYING
-OutputBaseFilename      = mse2-
 OutputDir               = tools/msw-installer/
 WizardImageFile         = tools/msw-installer/WizModernImage.bmp
 WizardSmallImageFile    = tools/msw-installer/WizModernSmallImage.bmp
 SourceDir               = ../..
+
+; Filename of the installer
+#define INSTALLER_DATE GetDateTimeString('yyyy-mm-dd','-',':')
+#if INSTALL_ALL
+  #define INSTALLER_SUFFIX ''
+#else
+  #define INSTALLER_SUFFIX '-reduced'
+#endif
+#emit 'OutputBaseFilename = mse2-' + INSTALLER_DATE + INSTALLER_SUFFIX
 
 
 [Types]
@@ -36,164 +52,168 @@ Name: "custom";     Description: "Custom installation"; Flags: iscustom
 [Components]
 ; Note: The following line does nothing other than provide a visual cue
 ; to the user that the program files are installed no matter what.
-Name: "prog";                    Description: "MSE Program Files";   Flags: fixed; Types: full custom magic vs yugioh
-Name: "style";                   Description: "Templates";                         Types: full custom magic vs yugioh
-Name: "style/mtg";               Description: "Magic the Gathering";               Types: full custom magic
-Name: "style/mtg/new";           Description: "Modern style, after 8th edition";   Types: full custom magic
-Name: "style/mtg/new/base";      Description: "Normal cards";                      Types: full custom magic
-Name: "style/mtg/new/flip";      Description: "Flip cards";                        Types: full custom magic
-Name: "style/mtg/new/split";     Description: "Split cards";                       Types: full custom magic
-  Name: "style/mtg/new/promo";     Description: "Promotional cards";                 Types: full custom magic
-  Name: "style/mtg/new/extart";    Description: "Extended art style";                Types: full custom magic
-Name: "style/mtg/new/textless";  Description: "Textless cards";                    Types: full custom magic
-  Name: "style/mtg/new/token";     Description: "Tokens";                            Types: full custom magic
-Name: "style/mtg/new/planeshift";Description: "Planeshifted";                      Types: full custom magic
-Name: "style/mtg/old";           Description: "Old style, before 8th edition";     Types: full custom magic
-Name: "style/mtg/old/base";      Description: "Normal cards";                      Types: full custom magic
-Name: "style/mtg/old/split";     Description: "Split cards";                       Types: full custom magic
-  Name: "style/mtg/old/token";     Description: "Tokens";                            Types: full custom magic
-  Name: "style/mtg/fpm";           Description: "Fire Pinguin Master (FPM)";         Types: full custom magic
-  Name: "style/mtg/fpm/base";      Description: "Normal cards";                      Types: full custom magic
-  Name: "style/mtg/fpm/flip";      Description: "Flip cards";                        Types: full custom magic
-  Name: "style/mtg/fpm/split";     Description: "Split cards";                       Types: full custom magic
-  Name: "style/mtg/fpm/promo";     Description: "Promotional cards";                 Types: full custom magic
-  Name: "style/mtg/fpm/token";     Description: "Tpokens";                           Types: full custom magic
-  Name: "style/mtg/vanguard";      Description: "Vanguard";                          Types: full custom magic
-Name: "style/vs";                Description: "VS System";                         Types: full custom vs
-Name: "style/vs/std";            Description: "Standard style";                    Types: full custom vs
-  Name: "style/vs/ext";            Description: "Extended art promo";                Types: full custom vs
-  Name: "style/vs/hstd";           Description: "Hellboy style";                     Types: full custom vs
-  Name: "style/vs/hext";           Description: "Hellboy extended art";              Types: full custom vs
-Name: "style/yugioh";            Description: "Yu-Gi-Oh!";                         Types: full custom yugioh
+Name: "prog";                      Description: "MSE Program Files";   Flags: fixed; Types: full custom magic vs yugioh
+Name: "style";                     Description: "Templates";                         Types: full custom magic vs yugioh
+Name: "style/mtg";                 Description: "Magic the Gathering";               Types: full custom magic
+Name: "style/mtg/new";             Description: "Modern style, after 8th edition";   Types: full custom magic
+Name: "style/mtg/new/base";        Description: "Normal cards";                      Types: full custom magic
+Name: "style/mtg/new/flip";        Description: "Flip cards";                        Types: full custom magic
+Name: "style/mtg/new/split";       Description: "Split cards";                       Types: full custom magic
+#if INSTALL_ALL
+  Name: "style/mtg/new/promo";       Description: "Promotional cards";                 Types: full custom magic
+  Name: "style/mtg/new/extart";      Description: "Extended art style";                Types: full custom magic
+#endif
+Name: "style/mtg/new/textless";    Description: "Textless cards";                    Types: full custom magic
+#if INSTALL_ALL
+  Name: "style/mtg/new/token";       Description: "Tokens";                            Types: full custom magic
+  Name: "style/mtg/new/planeshift";  Description: "Planeshifted";                      Types: full custom magic
+  Name: "style/mtg/new/walker";      Description: "Planeswalkers";                     Types: full custom magic
+#endif
+Name: "style/mtg/old";             Description: "Old style, before 8th edition";     Types: full custom magic
+Name: "style/mtg/old/base";        Description: "Normal cards";                      Types: full custom magic
+Name: "style/mtg/old/split";       Description: "Split cards";                       Types: full custom magic
+#if INSTALL_ALL
+  Name: "style/mtg/old/token";       Description: "Tokens";                            Types: full custom magic
+  Name: "style/mtg/fpm";             Description: "Fire Pinguin Master (FPM)";         Types: full custom magic
+  Name: "style/mtg/fpm/base";        Description: "Normal cards";                      Types: full custom magic
+  Name: "style/mtg/fpm/flip";        Description: "Flip cards";                        Types: full custom magic
+  Name: "style/mtg/fpm/split";       Description: "Split cards";                       Types: full custom magic
+  Name: "style/mtg/fpm/promo";       Description: "Promotional cards";                 Types: full custom magic
+  Name: "style/mtg/fpm/token";       Description: "Tokens";                            Types: full custom magic
+  Name: "style/mtg/future";          Description: "Future sight";                      Types: full custom magic
+  Name: "style/mtg/future/base";     Description: "Normal cards";                      Types: full custom magic
+  Name: "style/mtg/future/textless"; Description: "Textless cards";                    Types: full custom magic
+  Name: "style/mtg/vanguard";        Description: "Vanguard";                          Types: full custom magic
+#endif
+Name: "style/vs";                  Description: "VS System";                         Types: full custom vs
+Name: "style/vs/std";              Description: "Standard style";                    Types: full custom vs
+#if INSTALL_ALL
+  Name: "style/vs/ext";              Description: "Extended art promo";                Types: full custom vs
+  Name: "style/vs/hstd";             Description: "Hellboy style";                     Types: full custom vs
+  Name: "style/vs/hext";             Description: "Hellboy extended art";              Types: full custom vs
+  Name: "style/vs/alter";            Description: "Alter Ego";                         Types: full custom vs
+  Name: "style/vs/new";              Description: "New style";                         Types: full custom vs
+#endif
+Name: "style/yugioh";              Description: "Yu-Gi-Oh!";                         Types: full custom yugioh
 
 ; (indented lines are full installer only)
 
 [Files]
 
-; ------------------------------------------------------------------------- : Small installer
-
-; ------------------------------ : Program
+; ------------------------------------------------------------------------- : Program files
 
 ; program
-Source: "build/Release Unicode/mse.exe";                        DestDir: "{app}";                                           Components: prog; Flags: replacesameversion
-; No longer needed:
-;Source: "tools/msw-installer/msvcr71.dll";                      DestDir: "{sys}";                                           Components: prog; Flags: restartreplace sharedfile uninsneveruninstall onlyifdoesntexist
+Source: "build/Release Unicode/mse.exe";  DestDir: "{app}";                      Components: prog; Flags: replacesameversion
 
-; locale : en
-Source: "data/en.mse-locale/*";                                 DestDir:    "{app}/data/en.mse-locale/";                    Components: prog; Flags: recursesubdirs
+; locales: en
+Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/";  Components: prog; Flags: recursesubdirs
 
-; ------------------------------ : Magic
+; ------------------------------------------------------------------------- : Style packages
 
-; Basic
-Source: "data/magic.mse-game/*";                                DestDir:    "{app}/data/magic.mse-game/";                   Components: style/mtg;
-Source: "data/magic.mse-game/stats/*";                          DestDir:    "{app}/data/magic.mse-game/stats/";             Components: style/mtg;
-Source: "data/magic-blends.mse-include/*";                      DestDir:    "{app}/data/magic-blends.mse-include/";         Components: style/mtg;
-Source: "data/magic-default-image.mse-include/*";               DestDir:    "{app}/data/magic-default-image.mse-include/";  Components: style/mtg;
-Source: "data/magic-watermarks.mse-include/*";                  DestDir:    "{app}/data/magic-watermarks.mse-include/";     Components: style/mtg;
-Source: "data/magic-mana-small.mse-symbol-font/*";              DestDir:    "{app}/data/magic-mana-small.mse-symbol-font/"; Components: style/mtg;
-Source: "data/magic-mana-large.mse-symbol-font/*";              DestDir:    "{app}/data/magic-mana-large.mse-symbol-font/"; Components: style/mtg;
-Source: "data/magic-paintbrush.mse-symbol-font/*";              DestDir:    "{app}/data/magic-paintbrush.mse-symbol-font/"; Components: style/mtg;
+; ----------------------------- : Utilities
 
-; style : magic-new
-Source: "data/magic-new.mse-style/*";                           DestDir:    "{app}/data/magic-new.mse-style/";              Components: style/mtg/new/base;
-Source: "data/magic-new-flip.mse-style/*";                      DestDir:    "{app}/data/magic-new-flip.mse-style/";         Components: style/mtg/new/flip;
-Source: "data/magic-new-split.mse-style/*";                     DestDir:    "{app}/data/magic-new-split.mse-style/";        Components: style/mtg/new/split;
+; Declare a (style) package that must be installed
+#define Package(large_only, base,name,type,component) \
+          INSTALL_ALL || !large_only ? \
+            'Source:        "data/' + base + (name == '' ? '' : '-'+name) + '.mse-' + type + '/*"; ' + \
+            'DestDir: "{app}/data/' + base + (name == '' ? '' : '-'+name) + '.mse-' + type + '/";  ' + \
+            'Components: style/' + component + ';' \
+          : ''
 
-Source: "data/magic-textless.mse-style/*";                      DestDir:    "{app}/data/magic-textless.mse-style/";         Components: style/mtg/new/textless;
+; Declare a font that must be installed
+#define Font(large_only, file,name,component)                 \
+          INSTALL_ALL || !large_only ?                        \
+            'Source:  "tools/msw-installer/font/'+file+'";' + \
+            'DestDir: "{fonts}";'                           + \
+            'FontInstall: "'+name+'";'                      + \
+            'Components: style/'+component+';'              + \
+            'Flags: onlyifdoesntexist uninsneveruninstall'    \
+          : ''
 
-Source: "data/magic-planeshifted.mse-style/*";                  DestDir:    "{app}/data/magic-planeshifted.mse-style/";     Components: style/mtg/new/planeshift;
+; ----------------------------- : Magic
 
-Source: "data/magic-old.mse-style/*";                           DestDir:    "{app}/data/magic-old.mse-style/";              Components: style/mtg/old/base;
-Source: "data/magic-old-split.mse-style/*";                     DestDir:    "{app}/data/magic-old-split.mse-style/";        Components: style/mtg/old/split;
+#emit Package(0, 'magic', '',                'game',            'mtg')
+#emit Package(0, 'magic', '',                'game/stats',      'mtg')
+#emit Package(0, 'magic', 'blends',          'include',         'mtg')
+#emit Package(0, 'magic', 'default-image',   'include',         'mtg')
+#emit Package(0, 'magic', 'watermarks',      'include',         'mtg')
+#emit Package(0, 'magic', 'future-common',   'include',         'mtg')
+#emit Package(0, 'magic', 'spoiler',         'export-template', 'mtg')
+#emit Package(0, 'magic', 'mana-small',      'symbol-font',     'mtg')
+#emit Package(0, 'magic', 'mana-large',      'symbol-font',     'mtg')
+#emit Package(1, 'magic', 'mana-beveled',    'symbol-font',     'mtg/fpm')
+#emit Package(1, 'magic', 'mana-future',     'symbol-font',     'mtg/future')
+#emit Package(0, 'magic', 'new',             'style',           'mtg/new/base')
+#emit Package(0, 'magic', 'new-flip',        'style',           'mtg/new/flip')
+#emit Package(0, 'magic', 'new-split',       'style',           'mtg/new/split')
+#emit Package(1, 'magic', 'new-promo',       'style',           'mtg/new/promo')
+#emit Package(1, 'magic', 'extended-art',    'style',           'mtg/new/extart')
+#emit Package(0, 'magic', 'textless',        'style',           'mtg/new/textless')
+#emit Package(1, 'magic', 'new-token',       'style',           'mtg/new/token')
+#emit Package(1, 'magic', 'embossedletters', 'symbol-font',     'mtg/new/token')
+#emit Package(1, 'magic', 'planeshifted',    'style',           'mtg/new/planeshift')
+#emit Package(1, 'magic', 'new-planeswalker','style',           'mtg/new/walker')
+#emit Package(0, 'magic', 'old',             'style',           'mtg/old/base')
+;#emit Package(0, 'magic', 'old-flip',        'style',           'mtg/old/flip')
+#emit Package(0, 'magic', 'old-split',       'style',           'mtg/old/split')
+#emit Package(1, 'magic', 'old-token',       'style',           'mtg/old/token')
+#define fpm 'firepenguinmaster'
+#emit Package(1, 'magic', fpm,               'style',           'mtg/fpm/base')
+#emit Package(1, 'magic', fpm+'-flip',       'style',           'mtg/fpm/flip')
+#emit Package(1, 'magic', fpm+'split',       'style',           'mtg/fpm/split')
+#emit Package(1, 'magic', fpm+'promo',       'style',           'mtg/fpm/promo')
+#emit Package(1, 'magic', fpm+'tokens',      'style',           'mtg/fpm/token')
+#emit Package(1, 'magic', 'future',          'style',           'mtg/future/base')
+#emit Package(1, 'magic', 'future-textless', 'style',           'mtg/future/textless')
 
-; export : magic-spoiler
-Source: "data/magic-spoiler.mse-export-template/*";             DestDir:   "{app}/data/magic-spoiler.mse-export-template/"; Components: style/mtg;
+#emit Font   (0, 'matrixb.ttf',     'Matrix',                   'mtg')
+#emit Font   (0, 'matrixbsc.ttf',   'MatrixBoldSmallCaps',      'mtg')
+#emit Font   (0, 'magmed.ttf',      'MagicMedieval',            'mtg/old')
+#emit Font   (0, 'mplantin.ttf',    'MPlantin',                 'mtg')
+#emit Font   (0, 'mplantinit.ttf',  'MPlantin-Italic',          'mtg')
 
-; ------------------------------ : VS System
+#emit Package(1, 'vanguard', '',         'game',   'mtg/vanguard')
+#emit Package(1, 'vanguard', 'standard', 'style',  'mtg/vanguard')
 
-; Basic : vs
-Source: "data/vs.mse-game/*";                                   DestDir:    "{app}/data/vs.mse-game/";                      Components: style/vs;
-Source: "data/vs-standard-arrow.mse-symbol-font/*";             DestDir:    "{app}/data/vs-standard-arrow.mse-symbol-font/";Components: style/vs
+; ----------------------------- : VS System
 
-; style : vs-standard
-Source: "data/vs-standard.mse-style/*";                         DestDir:    "{app}/data/vs-standard.mse-style/";            Components: style/vs/std;
+#emit Package(0, 'vs', '',                 'game',        'vs')
+#emit Package(0, 'vs', 'common',           'include',     'vs')
+#emit Package(0, 'vs', 'standard-arrow',   'symbol-font', 'vs')
+#emit Package(0, 'vs', 'standard',         'style',       'vs/std')
+#emit Package(1, 'vs', 'extended-art',     'style',       'vs/ext')
+#emit Package(1, 'vs', 'hellboy',          'style',       'vs/hstd')
+#emit Package(1, 'vs', 'extended-hellboy', 'style',       'vs/hext')
+#emit Package(1, 'vs', 'alter',            'style',       'vs/alter')
+#emit Package(1, 'vs', 'new',              'style',       'vs/new')
 
-; ------------------------------ : Yu-Gi-Oh
+#emit Font   (0, 'BadhouseBoldNumbers.ttf', 'BadhouseBoldNumbers', 'vs')
+#emit Font   (0, 'eurosti.ttf',             'Eurostile',           'vs')
+#emit Font   (0, 'percexp.ttf',             'Percolator Expert',   'vs')
 
-; game : yugioh
-Source: "data/yugioh.mse-game/*";                               DestDir:    "{app}/data/yugioh.mse-game/";                       Components: style/yugioh
+; ----------------------------- : YuGiOh
 
-; style : yugioh-standard
-Source: "data/yugioh-standard.mse-style/*";                     DestDir:    "{app}/data/yugioh-standard.mse-style/";             Components: style/yugioh
-
-; font : yugioh-standard-levels
-Source: "data/yugioh-standard-levels.mse-symbol-font/*";        DestDir:    "{app}/data/yugioh-standard-levels.mse-symbol-font/";Components: style/yugioh
-
-; fonts
-Source: "tools/msw-installer/font/matrixb.ttf";    DestDir: "{fonts}"; FontInstall: "Matrix";              Components: style/mtg/new;  Flags: onlyifdoesntexist uninsneveruninstall
-Source: "tools/msw-installer/font/magmed.ttf";     DestDir: "{fonts}"; FontInstall: "MagicMedieval";       Components: style/mtg/old;  Flags: onlyifdoesntexist uninsneveruninstall
-Source: "tools/msw-installer/font/mplantin.ttf";   DestDir: "{fonts}"; FontInstall: "MPlantin";            Components: style/mtg;      Flags: onlyifdoesntexist uninsneveruninstall
-Source: "tools/msw-installer/font/mplantinit.ttf"; DestDir: "{fonts}"; FontInstall: "MPlantin-Italic";     Components: style/mtg;      Flags: onlyifdoesntexist uninsneveruninstall
-
-Source: "tools/msw-installer/font/BadhouseBoldNumbers.ttf"; DestDir: "{fonts}"; FontInstall: "BadhouseBoldNumbers"; Components: style/vs;  Flags: onlyifdoesntexist uninsneveruninstall
-;Source: "tools/msw-installer/font/dirtyheadline.ttf"; DestDir: "{fonts}"; FontInstall: "Dirty Headline";      Components: style/vs;  Flags: onlyifdoesntexist uninsneveruninstall
-Source: "tools/msw-installer/font/eurosti.ttf";       DestDir: "{fonts}"; FontInstall: "Eurostile";           Components: style/vs;  Flags: onlyifdoesntexist uninsneveruninstall
-Source: "tools/msw-installer/font/percexp.ttf";       DestDir: "{fonts}"; FontInstall: "Percolator Expert";   Components: style/vs;  Flags: onlyifdoesntexist uninsneveruninstall
-
-Source: "tools/msw-installer/font/matrixbsc.ttf";  DestDir: "{fonts}"; FontInstall: "MatrixBoldSmallCaps"; Components: style/mtg/new;  Flags: onlyifdoesntexist uninsneveruninstall
-
-; ------------------------------------------------------------------------- : Large installer
-
-; game : magic
-Source: "data/magic-new-promo.mse-style/*";                     DestDir:    "{app}/data/magic-new-promo.mse-style/";        Components: style/mtg/new/promo;
-Source: "data/magic-extended-art.mse-style/*";                  DestDir:    "{app}/data/magic-extended-art.mse-style/";     Components: style/mtg/new/extart;
-
-Source: "data/magic-new-token.mse-style/*";                     DestDir:    "{app}/data/magic-new-token.mse-style/";              Components: style/mtg/new/token;
-Source: "data/magic-embossedletters.mse-symbol-font/*";         DestDir:    "{app}/data/magic-embossedletters.mse-symbol-font/";  Components: style/mtg/new/token;
-
-Source: "data/magic-old-token.mse-style/*";                     DestDir:    "{app}/data/magic-old-token.mse-style/";        Components: style/mtg/old/token;
-
-Source: "data/magic-firepenguinmaster.mse-style/*";             DestDir:    "{app}/data/magic-firepenguinmaster.mse-style/";        Components: style/mtg/fpm/base;
-Source: "data/magic-firepenguinmaster-flip.mse-style/*";        DestDir:    "{app}/data/magic-firepenguinmaster-flip.mse-style/";   Components: style/mtg/fpm/flip;
-Source: "data/magic-firepenguinmastersplit.mse-style/*";        DestDir:    "{app}/data/magic-firepenguinmastersplit.mse-style/";   Components: style/mtg/fpm/split;
-Source: "data/magic-firepenguinmasterpromo.mse-style/*";        DestDir:    "{app}/data/magic-firepenguinmasterpromo.mse-style/";   Components: style/mtg/fpm/promo;
-Source: "data/magic-firepenguinmastertokens.mse-style/*";       DestDir:    "{app}/data/magic-firepenguinmastertokens.mse-style/";  Components: style/mtg/fpm/token;
-Source: "data/magic-mana-beveled.mse-symbol-font/*";            DestDir:    "{app}/data/magic-mana-beveled.mse-symbol-font/";       Components: style/mtg/fpm;
-
-; game : vanguard
-Source: "data/vanguard.mse-game/*";                             DestDir:    "{app}/data/vanguard.mse-game/";                Components: style/mtg/vanguard;
-Source: "data/vanguard-standard.mse-style/*";                   DestDir:    "{app}/data/vanguard-standard.mse-style/";      Components: style/mtg/vanguard;
-
-; game : vs
-Source: "data/vs-extended-art.mse-style/*";                     DestDir:    "{app}/data/vs-extended-art.mse-style/";        Components: style/vs/ext;
-Source: "data/vs-hellboy.mse-style/*";                          DestDir:    "{app}/data/vs-hellboy.mse-style/";             Components: style/vs/hstd;
-Source: "data/vs-extended-hellboy.mse-style/*";                 DestDir:    "{app}/data/vs-extended-hellboy.mse-style/";    Components: style/vs/hext;
-
+#emit Package(0, 'yugioh', '',                  'game',        'yugioh')
+#emit Package(0, 'yugioh', 'standard-levels',   'symbol-font', 'yugioh')
+#emit Package(0, 'yugioh', 'text-replacements', 'symbol-font', 'yugioh')
+#emit Package(0, 'yugioh', 'standard',          'style',       'yugioh')
 
 ; ------------------------------------------------------------------------- : Rest of installer
 
 [Icons]
 Name: "{commonprograms}\Magic Set Editor"; Filename: "{app}\mse.exe"; WorkingDir: "{app}"
 
-
 [Registry]
-; .mse-set file association
-Root: HKCR; Subkey: ".mse-set";                                 ValueType: string; ValueName: ""; ValueData: "MagicSetEditor2Set";   Flags: uninsdeletevalue
-Root: HKCR; Subkey: "MagicSetEditor2Set";                       ValueType: string; ValueName: ""; ValueData: "Magic Set Editor Set"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "MagicSetEditor2Set\DefaultIcon";           ValueType: string; ValueName: ""; ValueData: "{app}\mse.exe,2"
-Root: HKCR; Subkey: "MagicSetEditor2Set\shell\open\command";    ValueType: string; ValueName: ""; ValueData: """{app}\mse.exe"" ""%1"""
-; .mse-symbol file association
-Root: HKCR; Subkey: ".mse-symbol";                              ValueType: string; ValueName: ""; ValueData: "MagicSetEditor2Symbol";   Flags: uninsdeletevalue
-Root: HKCR; Subkey: "MagicSetEditor2Symbol";                    ValueType: string; ValueName: ""; ValueData: "Magic Set Editor Symbol"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "MagicSetEditor2Symbol\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\mse.exe,3"
-Root: HKCR; Subkey: "MagicSetEditor2Symbol\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\mse.exe"" ""%1"""
-; .mse-installer file association
-Root: HKCR; Subkey: ".mse-installer";                              ValueType: string; ValueName: ""; ValueData: "MagicSetEditor2Installer";   Flags: uninsdeletevalue
-Root: HKCR; Subkey: "MagicSetEditor2Installer";                    ValueType: string; ValueName: ""; ValueData: "Magic Set Editor Installer"; Flags: uninsdeletekey
-Root: HKCR; Subkey: "MagicSetEditor2Installer\DefaultIcon";        ValueType: string; ValueName: ""; ValueData: "{app}\mse.exe,1"
-Root: HKCR; Subkey: "MagicSetEditor2Installer\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\mse.exe"" ""%1"""
+#pragma parseroption -p-
+#define Association(ext, name, icon) \
+    'Root: HKCR; Subkey: "'+ext+'";                                       ValueType: string; ValueName: ""; ValueData: "MagicSetEditor2'+name+'";   Flags: uninsdeletevalue;\n' + \
+    'Root: HKCR; Subkey: "MagicSetEditor2'+name+'";                       ValueType: string; ValueName: ""; ValueData: "Magic Set Editor '+name+'"; Flags: uninsdeletekey;\n' + \
+    'Root: HKCR; Subkey: "MagicSetEditor2'+name+'\\DefaultIcon";          ValueType: string; ValueName: ""; ValueData: "{app}\\mse.exe,'+icon+'";\n' + \
+    'Root: HKCR; Subkey: "MagicSetEditor2'+name+'\\shell\\open\\command"; ValueType: string; ValueName: ""; ValueData: """{app}\\mse.exe"" ""%1""";'
 
-
+#emit Association('.mse-set',       'Set',       '2')
+#emit Association('.mse-symbol',    'Symbol',    '3')
+;#emit Association('.mse-installer', 'Installer', '1')
 
 [Run]
 Filename: "{app}\mse.exe"; Description: "Start Magic Set Editor"; Flags: postinstall nowait skipifsilent unchecked
@@ -202,4 +222,9 @@ Filename: "{app}\mse.exe"; Description: "Start Magic Set Editor"; Flags: postins
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{userappdata}\Magic Set Editor"
+
+; Debugging
+#ifdef Debug
+  #expr SaveToFile(AddBackslash(SourcePath) + "Preprocessed.iss")
+#endif
 
