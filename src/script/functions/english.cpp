@@ -122,13 +122,14 @@ String do_english_num(String input, String(*fun)(int)) {
 				}
 			}
 		}
+		return _("<hint-2>") + input;
 	} else {
 		long i = 0;
 		if (input.ToLong(&i)) {
 			return fun(i);
 		}
+		return input;
 	}
-	return input;
 }
 
 SCRIPT_FUNCTION(english_number) {

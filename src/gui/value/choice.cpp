@@ -203,7 +203,7 @@ void DropDownChoiceListBase::generateThumbnailImages() {
 			ScriptableImage& img = s.choice_images[name];
 			if (!img.update(ctx) && status == THUMB_CHANGED) {
 				status = THUMB_OK; // no need to rebuild
-			} else {
+			} else if (img.isReady()) {
 				// request this thumbnail
 				thumbnail_thread.request( new_intrusive4<ChoiceThumbnailRequest>(
 						&cve, i, status == THUMB_NOT_MADE && !img.local(), img.threadSafe()
