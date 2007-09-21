@@ -22,8 +22,8 @@ Rotation::Rotation(int angle, const RealRect& rect, double zoom, double strectch
 	: angle(constrain_angle(angle))
 	, size(rect.size())
 	, origin(rect.position())
-	, zoomX(zoom * strectch)
-	, zoomY(zoom)
+	, zoomX(::sideways(angle)  ? zoom : zoom * strectch)
+	, zoomY(!::sideways(angle) ? zoom : zoom * strectch)
 {
 	if (is_internal) {
 		size = trNoNeg(size);
