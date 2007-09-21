@@ -188,16 +188,26 @@ symbol:
 symbol:
 	code: S
 	image: mana_s.png
-as text: [X-Z]|[0-9]+(?!/)
+symbol:
+	code: X
+	image: mana_x.png
+symbol:
+	code: Y
+	image: mana_y.png
+symbol:
+	code: Z
+	image: mana_z.png
+as text: [0-9]+(?!/)
 text font:
 	name: MPlantin
 	size: 1
 	color: rgb(0,0,0)
 	max stretch: 0.5
 text margin left:   .28
-text margin right:  .2
-text margin top:    -.12
+text margin right:  .20
+text margin top:    -.15
 text margin bottom: -.06
+
 
 ##############################################################
 # Insert-symbol menu
