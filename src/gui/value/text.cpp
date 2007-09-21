@@ -584,11 +584,11 @@ void TextValueEditor::draw(RotatedDC& dc) {
 }
 
 void TextValueEditor::redrawSelection(size_t old_selection_start_i, size_t old_selection_end_i, bool old_drop_down_shown) {
-//%	if (!isCurrent()) return;
-//%	if (old_drop_down_shown && dropDownShown()) return;
 	// Hide caret
-	wxCaret* caret = editor().GetCaret();
-	if (caret->IsVisible()) caret->Hide();
+	if (isCurrent()) {
+		wxCaret* caret = editor().GetCaret();
+		if (caret->IsVisible()) caret->Hide();
+	}
 	// Destroy the clientDC before reshowing the caret, prevent flicker on MSW
 	{
 		// Move selection
@@ -619,7 +619,9 @@ void TextValueEditor::redrawSelection(size_t old_selection_start_i, size_t old_s
 			drawWordListIndicators(dc, true);
 		}
 	}
-	showCaret();
+	if (isCurrent()) {
+		showCaret();
+	}
 }
 
 // ----------------------------------------------------------------------------- : Other overrides
@@ -1279,6 +1281,7 @@ void TextValueEditor::findWordLists() {
 }
 
 void TextValueEditor::clearWordListIndicators(RotatedDC& dc) {
+	if (word_lists.empty()) return;
 	Rotater rot(dc, style().getRotation());
 	bool current = isCurrent();
 	FOR_EACH(wl, word_lists) {
@@ -1301,6 +1304,7 @@ void TextValueEditor::redrawWordListIndicators(bool toggling_dropdown) {
 }
 
 void TextValueEditor::drawWordListIndicators(RotatedDC& dc, bool redrawing) {
+	if (word_lists.empty()) return;
 	Rotater rot(dc, style().getRotation());
 	bool current = isCurrent();
 	// Draw lines around fields
