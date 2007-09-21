@@ -21,7 +21,7 @@ init script:
 	template_suffix := [card: "card.jpg", textbox: "textbox.png", typeline: "typeline.png"]
 	template      := { green_template() + template_suffix[type] }
 	land_template := {
-		(if input == "a" then (
+		(if input == "a" or input == "c" then (
 			if styling.land_style == "grey" then "e"
 			else "c"
 		) else green_template()) + "l" + template_suffix[type] }

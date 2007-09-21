@@ -20,7 +20,7 @@ init script:
 	}
 	template      := { green_template() + "{type}.jpg" }
 	land_template := {
-		(if input == "a" then (
+		(if input == "a" or input == "c" then (
 			if styling.land_style == "grey" then "e"
 			else "c"
 		) else green_template()) + "l{type}.jpg" }
