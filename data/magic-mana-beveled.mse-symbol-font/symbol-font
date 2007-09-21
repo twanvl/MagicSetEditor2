@@ -175,13 +175,22 @@ symbol:
 symbol:
 	code: S
 	image: mana_s.png
+symbol:
+	code: X
+	image: mana_x.png
+symbol:
+	code: Y
+	image: mana_y.png
+symbol:
+	code: Z
+	image: mana_z.png
 as text: .|[0-9]+(?!/)
 text font:
 	name: MPlantin
 	size: 1
 	color: rgb(0,0,0)
 	max stretch: 0.5
-text margin left:   .26
-text margin right:  .2
-text margin top:    -.12
+text margin left:   .24
+text margin right:  .24
+text margin top:    -.16
 text margin bottom: -.12
