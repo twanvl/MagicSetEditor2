@@ -194,6 +194,7 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
 #emit Package(1, 'vs', 'extended-hellboy', 'style',           'vs/hext')
 #emit Package(1, 'vs', 'alter',            'style',           'vs/alter')
 #emit Package(1, 'vs', 'new',              'style',           'vs/new')
+#emit Package(1, 'vs', 'standard-new',     'symbol-font',     'vs/new')
 
 #emit Font   (0, 'BadhouseBoldNumbers.ttf', 'BadhouseBoldNumbers',    'vs')
 #emit Font   (0, 'eurosti.ttf',             'Eurostile',              'vs')
