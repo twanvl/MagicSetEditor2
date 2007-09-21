@@ -6,5 +6,5 @@ If, after Magic Set Editor is installed, it complains about being unable to find
 is slightly different, and should be installed to that directory, minus the "/data". This can be done by modifying the install script.
 After the install script is run and loading is confirmed, you may delete all the contents of this tarball if you wish.
 
-Magic Set Editor stores data only in the primary installation directory and in ~/.magicseteditor.
+Magic Set Editor stores data only in the primary installation directory, a symlink to the executable at /usr/local/bin, and in ~/.magicseteditor. 
 If you need to uninstall, removing these directories should completely purge your system.
