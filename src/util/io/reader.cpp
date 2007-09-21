@@ -10,6 +10,7 @@
 #include <util/vector2d.hpp>
 #include <util/error.hpp>
 #include <util/io/package_manager.hpp>
+#undef small
 
 // ----------------------------------------------------------------------------- : Reader
 
@@ -112,12 +113,43 @@ void Reader::moveNext() {
 	}
 }
 
+/// Faster vector, uses large local storage
+/** Usually a line from a file doesn't use very many characters.
+ *  In that case, allocating a vector is a waste of resources.
+ *  2007-09-21: Profiling => Using this class roughly halves the runtime of read_utf8_line,
+ *              making startup slightly faster.
+ */
+template <typename T> class LocalVector {
+  public:
+	LocalVector() : size(0), alloced(SMALL_SIZE), buffer(small) {}
+	~LocalVector() { if (buffer != small) free(buffer); }
+	void push_back(T t) {
+		if (size >= alloced) {
+			// double buffer size
+			if (buffer != small) {
+				buffer = (T*)realloc(buffer, sizeof(T) * alloced * 2);
+			} else {
+				buffer = (T*)malloc(sizeof(T) * alloced * 2);
+				memcpy(buffer, small, alloced * sizeof(T));
+			}
+			alloced *= 2;
+		}
+		buffer[size++] = t;
+	}
+	const T* get() { return buffer; }
+  private:
+	static const int SMALL_SIZE = 1024;
+	size_t size, alloced;
+	T* buffer;
+	T small[SMALL_SIZE];
+};
+
 /// Read an UTF-8 encoded line from an input stream
 /** As opposed to wx functions, this one actually reports errors
  */
 String read_utf8_line(wxInputStream& input, bool eat_bom = true, bool until_eof = false);
 String read_utf8_line(wxInputStream& input, bool eat_bom, bool until_eof) {
-	vector<char> buffer;
+	LocalVector<char> buffer;
 	while (!input.Eof()) {
 		Byte c = input.GetC(); if (input.LastRead() <= 0) break;
 		if (!until_eof) {
@@ -135,7 +167,7 @@ String read_utf8_line(wxInputStream& input, bool eat_bom, bool until_eof) {
 	}
 	// convert to string
 	buffer.push_back('\0');
-	size_t size = wxConvUTF8.MB2WC(nullptr, &buffer[0], 0);
+	size_t size = wxConvUTF8.MB2WC(nullptr, buffer.get(), 0);
 	if (size == -1) {
 		throw ParseError(_("Invalid UTF-8 sequence"));
 	} else if (size == 0) {
@@ -145,13 +177,13 @@ String read_utf8_line(wxInputStream& input, bool eat_bom, bool until_eof) {
 	#ifdef UNICODE
 		// NOTE: wx doc is wrong, parameter to GetWritableChar is numer of characters, not bytes
 		Char* result_buf = result.GetWriteBuf(size + 1);
-		wxConvUTF8.MB2WC(result_buf, &buffer[0], size + 1);
+		wxConvUTF8.MB2WC(result_buf, buffer.get(), size + 1);
 		result.UngetWriteBuf(size);
 		return eat_bom ? decodeUTF8BOM(result) : result;
 	#else
 		// first to wchar, then back to local
 		vector<wchar_t> buf2; buf2.resize(size+1);
-		wxConvUTF8.MB2WC(&buf2[0], &buffer[0], size + 1);
+		wxConvUTF8.MB2WC(&buf2[0], buffer.get(), size + 1);
 		// eat BOM?
 		if (eat_bom && buf2[0]==0xFEFF ) {
 			buf2.erase(buf2.begin()); // remove BOM

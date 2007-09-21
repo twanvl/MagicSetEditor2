@@ -62,10 +62,15 @@ void fill_image(Image& image, const Color& color) {
 	Byte* pos = image.GetData();
 	Byte* end = pos + image.GetWidth() * image.GetHeight() * 3;
 	Byte r = color.Red(), g = color.Green(), b = color.Blue();
-	// fill the image
-	while (pos != end) {
-		*pos++ = r;
-		*pos++ = g;
-		*pos++ = b;
+	if (r == g && r == b) {
+		// optimization: use memset
+		memset(pos, r, end-pos);
+	} else {
+		// fill the image
+		while (pos != end) {
+			*pos++ = r;
+			*pos++ = g;
+			*pos++ = b;
+		}
 	}
 }
