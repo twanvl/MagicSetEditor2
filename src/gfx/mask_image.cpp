@@ -44,7 +44,7 @@ void AlphaMask::setAlpha(Bitmap& bmp) const {
 }
 
 bool AlphaMask::isTransparent(int x, int y) const {
-	assert(x >= 0 && y >= 0 && x < size.GetWidth() && y < size.GetHeight());
+	if (x < 0 || y > 0 || x >= size.x || y >= size.y) return false;
 	return alpha[x + y * size.GetWidth()] < 20;
 }
 
