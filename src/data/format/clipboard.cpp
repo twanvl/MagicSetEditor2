@@ -11,6 +11,7 @@
 #include <data/card.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
+#include <data/stylesheet.hpp>
 #include <data/keyword.hpp>
 #include <util/io/package.hpp>
 #include <script/scriptable.hpp>
@@ -59,7 +60,15 @@ wxDataFormat CardDataObject::format = _("application/x-mse-card");
 
 CardDataObject::CardDataObject(const SetP& set, const CardP& card) {
 	WrappedCard data = { set->game.get(), set->game->name(), card };
+	bool has_styling = card->has_styling && !card->stylesheet;
+	if (has_styling) {
+		// set the stylsheet, so when deserializing we know whos style options we are reading
+		card->stylesheet = set->stylesheet;
+	}
 	SetText(serialize_for_clipboard(*set, data));
+	if (has_styling) {
+		card->stylesheet = StyleSheetP(); // restore card
+	}
 	SetFormat(format);
 }
 
