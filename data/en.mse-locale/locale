@@ -482,6 +482,7 @@ button:
 	browse:				&Browse...
 	high quality:		&High quality rendering
 	show lines:			Show &lines around fields
+	show editing hints:	Show boxes and hints for &editing
 	zoom export:		Use zoom and rotation settings when e&xporting
 	check now:			Check &Now
 	always:							Always

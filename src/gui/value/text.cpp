@@ -1329,9 +1329,11 @@ void TextValueEditor::drawWordListIndicators(RotatedDC& dc, bool redrawing) {
 		if (!redrawing) {
 			wl->behind = dc.GetBackground(RealRect(r.right(), r.top() - 1, 10, r.height + 3));
 		}
-		// draw rectangle around value
-		dc.SetBrush(*wxTRANSPARENT_BRUSH);
-		dc.DrawRectangle(r.move(-1,-1,2,2));
+		if (current || viewer.drawEditing()) {
+			// draw rectangle around value
+			dc.SetBrush(*wxTRANSPARENT_BRUSH);
+			dc.DrawRectangle(r.move(-1,-1,2,2));
+		}
 	}
 	// Draw drop down arrows
 	FOR_EACH_REVERSE(wl, word_lists) {
@@ -1350,7 +1352,9 @@ void TextValueEditor::drawWordListIndicators(RotatedDC& dc, bool redrawing) {
 			small = (wl.get() != hovered_words);
 		}
 		if (small) {
-			dc.DrawRectangle(RealRect(r.right(), r.top() - 1, 2, r.height + 2));
+			if (viewer.drawEditing()) {
+				dc.DrawRectangle(RealRect(r.right(), r.top() - 1, 2, r.height + 2));
+			}
 		} else {
 			// draw background of drop down button
 			dc.DrawRectangle(RealRect(r.right(), r.top() - 1, 9, r.height + 2));

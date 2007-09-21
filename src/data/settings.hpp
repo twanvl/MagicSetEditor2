@@ -94,6 +94,7 @@ class StyleSheetSettings : public IntrusivePtrBase<StyleSheetSettings> {
 	Defaultable<int>    card_angle;
 	Defaultable<bool>   card_anti_alias;
 	Defaultable<bool>   card_borders;
+	Defaultable<bool>   card_draw_editing;
 	Defaultable<bool>   card_normal_export;
 	
 	/// Where the settings are the default, use the value from ss

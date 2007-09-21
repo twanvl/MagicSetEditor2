@@ -49,7 +49,7 @@ class DisplayPreferencesPage : public PreferencesPage {
   private:
 	DECLARE_EVENT_TABLE();
 	
-	wxCheckBox* high_quality, *borders;
+	wxCheckBox* high_quality, *borders, *draw_editing;
 	wxSpinCtrl* zoom;
 	wxCheckBox* non_normal_export;
 	
@@ -170,12 +170,14 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 	// init controls
 	high_quality      = new wxCheckBox(this, wxID_ANY, _BUTTON_("high quality"));
 	borders           = new wxCheckBox(this, wxID_ANY, _BUTTON_("show lines"));
+	draw_editing      = new wxCheckBox(this, wxID_ANY, _BUTTON_("show editing hints"));
 	zoom              = new wxSpinCtrl(this, wxID_ANY);
 	non_normal_export = new wxCheckBox(this, wxID_ANY, _BUTTON_("zoom export"));
 	//wxButton* columns = new wxButton(this, ID_SELECT_COLUMNS, _BUTTON_("select"));
 	// set values
 	high_quality->     SetValue( settings.default_stylesheet_settings.card_anti_alias());
 	borders->          SetValue( settings.default_stylesheet_settings.card_borders());
+	draw_editing->     SetValue( settings.default_stylesheet_settings.card_draw_editing());
 	non_normal_export->SetValue(!settings.default_stylesheet_settings.card_normal_export());
 	zoom->SetRange(1, 1000);
 	zoom->             SetValue(static_cast<int>(settings.default_stylesheet_settings.card_zoom() * 100));
@@ -184,6 +186,7 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("card display"));
 			s2->Add(high_quality, 0, wxEXPAND | wxALL, 4);
 			s2->Add(borders,      0, wxEXPAND | wxALL, 4);
+			s2->Add(draw_editing, 0, wxEXPAND | wxALL, 4);
 			wxSizer* s3 = new wxBoxSizer(wxHORIZONTAL);
 				s3->Add(new wxStaticText(this, wxID_ANY, _LABEL_("zoom")),             0, wxALL & ~wxLEFT,  4);
 				s3->Add(zoom);
@@ -207,6 +210,7 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 void DisplayPreferencesPage::store() {
 	settings.default_stylesheet_settings.card_anti_alias    = high_quality->GetValue();
 	settings.default_stylesheet_settings.card_borders       = borders->GetValue();
+	settings.default_stylesheet_settings.card_draw_editing  = draw_editing->GetValue();
 	settings.default_stylesheet_settings.card_zoom          = zoom->GetValue() / 100.0;
 	settings.default_stylesheet_settings.card_normal_export = !non_normal_export->GetValue();
 }

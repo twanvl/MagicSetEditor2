@@ -108,6 +108,7 @@ StyleSheetSettings::StyleSheetSettings()
 	, card_angle        (0,    true)
 	, card_anti_alias   (true, true)
 	, card_borders      (true, true)
+	, card_draw_editing (true, true)
 	, card_normal_export(true, true)
 {}
 
@@ -116,6 +117,7 @@ void StyleSheetSettings::useDefault(const StyleSheetSettings& ss) {
 	if (card_angle        .isDefault()) card_angle        .assignDefault(ss.card_angle);
 	if (card_anti_alias   .isDefault()) card_anti_alias   .assignDefault(ss.card_anti_alias);
 	if (card_borders      .isDefault()) card_borders      .assignDefault(ss.card_borders);
+	if (card_draw_editing .isDefault()) card_draw_editing .assignDefault(ss.card_draw_editing);
 	if (card_normal_export.isDefault()) card_normal_export.assignDefault(ss.card_normal_export);
 }
 
@@ -124,6 +126,7 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(StyleSheetSettings) {
 	REFLECT(card_angle);
 	REFLECT(card_anti_alias);
 	REFLECT(card_borders);
+	REFLECT(card_draw_editing);
 	REFLECT(card_normal_export);
 }
 

@@ -42,7 +42,8 @@ bool DataEditor::drawBorders() const {
 	        settings.stylesheetSettingsFor(set->stylesheetFor(card)).card_borders();
 }
 bool DataEditor::drawEditing() const {
-	return true;
+	return nativeLook() ||
+	       settings.stylesheetSettingsFor(set->stylesheetFor(card)).card_draw_editing();
 }
 bool DataEditor::drawFocus() const {
 	return FindFocus() == this;
