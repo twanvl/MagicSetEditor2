@@ -82,7 +82,12 @@ class TextStyle : public Style {
 	
 	/// The rotation to use when drawing
 	inline Rotation getRotation() const {
-		return Rotation(angle, getRect(), 1.0, getStretch());
+		double stretch = getStretch();
+		if (sideways(angle)) {
+			return Rotation(angle, getRect(), stretch, 1/stretch);
+		} else {
+			return Rotation(angle, getRect(), 1.0, stretch);
+		}
 	}
 	/// The rotation to use when determining content layout, does not include the stretch factor
 	inline Rotation getRotationNoStretch() const {

@@ -44,10 +44,10 @@ Alignment from_string(const String& s) {
 	if (s.find(_("justify-overflow")) !=String::npos) al = ALIGN_JUSTIFY_OVERFLOW | (al & ~ALIGN_JUSTIFY_OVERFLOW);
 	if (s.find(_("shrink-overflow"))  !=String::npos) al = ALIGN_STRETCH_OVERFLOW | (al & ~ALIGN_STRETCH_OVERFLOW); // compatability
 	if (s.find(_("stretch-overflow")) !=String::npos) al = ALIGN_STRETCH_OVERFLOW | (al & ~ALIGN_STRETCH_OVERFLOW);
+	else if (s.find(_("stretch"))     !=String::npos) al = ALIGN_STRETCH;
 	if (s.find(_("top"))              !=String::npos) al = ALIGN_TOP              | (al & ~ALIGN_VERTICAL);
 	if (s.find(_("middle"))           !=String::npos) al = ALIGN_MIDDLE           | (al & ~ALIGN_VERTICAL);
 	if (s.find(_("bottom"))           !=String::npos) al = ALIGN_BOTTOM           | (al & ~ALIGN_VERTICAL);
-	if (s.find(_("stretch"))          !=String::npos) al = ALIGN_STRETCH;
 	return static_cast<Alignment>(al);
 }
 

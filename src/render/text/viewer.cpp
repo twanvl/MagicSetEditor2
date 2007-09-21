@@ -753,6 +753,9 @@ void TextViewer::alignParagraph(size_t start_line, size_t end_line, const vector
 				c += s.x + hdelta * i / count;
 				if (j < l.end_or_soft && chars[j++].break_after == BREAK_SPACE) i++;
 			}
+		} else if (style.alignment & ALIGN_STRETCH_OVERFLOW && width >= s.width) {
+			// stretching, don't center or align right
+			justifying = false;
 		} else {
 			// simple alignment
 			justifying = false;
