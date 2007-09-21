@@ -1331,12 +1331,12 @@ word list:
 	word: Warrior
 	word:
 		name: Wizard
-		line below: true
-	word:
-		name: All types
-		word: A
-		word: B
-		# TODO: Add all types here
+	#	line below: true
+	#word:
+	#	name: All types
+	#	word: A
+	#	word: B
+	#	# TODO: Add all types here
 
 word list:
 	name: artifact
