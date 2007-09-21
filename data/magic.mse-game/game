@@ -214,6 +214,7 @@ init script:
 			else if colors == "B" then "C"                       # Black
 			else if colors == "R" then "D"                       # Red
 			else if colors == "G" then "E"                       # Green
+			else if contains(casting_cost, match:"/") then "G"  #Hybrid
 			else                       "F"                       # Multicolor
 		)
 	}

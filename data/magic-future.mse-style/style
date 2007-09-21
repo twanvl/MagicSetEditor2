@@ -420,14 +420,16 @@ card style:
 					   not contains(card.card_color, match:"multicolor") then rgb(0,0,0)
 					else if contains(card.card_color, match:"land") and
 					   contains(card.card_color, match:"multicolor") then rgb(0,0,0)
-					else if styling.grey_hybrid_name and contains(card.card_color, match:"hybrid") then rgb(0,0,0)
 					else if contains(card.card_color, match:"artifact") then (
 						if contains(card.card_color, match:"blue") or
 						   contains(card.card_color, match:"black") or
 						   contains(card.card_color, match:"red") or
 						   contains(card.card_color, match:"green") then rgb(255,255,255)
 						else rgb(0,0,0)
-					) else font_color(card.card_color)
+					) else if contains(card.card_color, match:"hybrid") and contains(card.card_color, match:"white") and
+					   not contains(card.card_color, match:"red") and not contains(card.card_color, match:"green") then rgb(255,255,255)
+					else if contains(card.card_color, match:"hybrid") and contains(card.card_color, match:"white") then rgb(0,0,0)
+					else font_color(card.card_color)
 			separator color: rgb(200,0,0)
 	############################# Card sorting / numbering
 	############################# Copyright stuff

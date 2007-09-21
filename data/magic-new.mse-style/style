@@ -224,7 +224,7 @@ card style:
 
 	type:
 		left: 35
-		top : 298
+		top : 299
 		width: { 308 - max(22,card_style.rarity.content_width) }
 		height: 20
 		alignment: top shrink-overflow
