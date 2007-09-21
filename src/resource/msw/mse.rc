@@ -180,19 +180,19 @@ expected_locale_keys	TEXT	"../common/expected_locale_keys"
 // -------------------------------------------------------- : Version info
 
 1 VERSIONINFO
-FILEVERSION    0,3,4
-PRODUCTVERSION 0,3,4
+FILEVERSION    0,3,5
+PRODUCTVERSION 0,3,5
 FILETYPE VFT_APP
 {
   BLOCK "StringFileInfo"
   {
     BLOCK "040904E4"
     {
-      VALUE "FileVersion",			"0.3.4"
+      VALUE "FileVersion",			"0.3.5b"
       VALUE "License",				"GNU General Public License 2 or later; This is free software, and you are welcome to redistribute it under certain conditions; See the help file for details"
       VALUE "FileDescription",		"Magic Set Editor"
       VALUE "InternalName",			"mse2/8"
-      VALUE "LegalCopyright",		"\169 2001-2007 Twan van Laarhoven"
+      VALUE "LegalCopyright",		"\xA9 2001-2007 Twan van Laarhoven"
       VALUE "ProductName",			"Magic Set Editor"
     }
   }
