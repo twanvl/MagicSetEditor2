@@ -204,11 +204,9 @@ card style:
 			separator color: rgb(128,128,128)
 
 	rarity:
-		left: 
-			{ if card.type != "" or card.illustrator != "" or card.copyright != "" then 64
-			else 23 }
-		top : 471
-		width: 44
+		left: { if to_text(card.type) != "" or card.illustrator != "" or card.copyright != "" then 70 else 21 }
+		top : { if to_text(card.type) != "" or card.illustrator != "" or card.copyright != "" then 468 else 471 }
+		width: 33
 		height: 22
 		z index: 3
 		alignment: middle center
@@ -385,7 +383,7 @@ extra card style:
 		height: 41
 		render style: image
 		popup style: in place
-		visible: { card.type != "" or card.illustrator != "" or card.copyright != "" }
+		visible: { to_text(card.type) != "" or card.illustrator != "" or card.copyright != "" }
 		image: { card_typeline() }
 		z index: 2
 	paintbrush:

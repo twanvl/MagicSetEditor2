@@ -272,9 +272,9 @@ card style:
 			color: rgb(0,0,0)
 			separator color: rgb(128,128,128)
 	rarity:
-		left: 48.45
+		left: 53
 		top : 214
-		width: 34
+		width: 25
 		height: 17
 		z index: 1
 		alignment: middle center
@@ -287,9 +287,9 @@ card style:
 			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
 			special:	    script: symbol_variation(symbol: set.symbol, variation: "special")
 	rarity 2:
-		left: 301.54
+		left: 306
 		top : 214
-		width: 34
+		width: 25
 		height: 17
 		z index: 1
 		alignment: middle center

@@ -205,10 +205,10 @@ card style:
 			separator color: rgb(128,128,128)
 
 	rarity:
-		left: 64
+		left: 70
 		top : 302
-		width: 44
-		height: 22
+		width: 33
+		height: 23
 		z index: 1
 		alignment: middle center
 		render style: image
