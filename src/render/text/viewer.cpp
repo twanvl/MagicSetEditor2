@@ -655,14 +655,14 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 					-RealSize(style.padding_left+style.padding_right, style.padding_top + style.padding_bottom));
 	if (style.paragraph_height <= 0) {
 		// whole text box alignment
-		alignParagraph(0, lines.size(), chars, style, RealRect(RealPoint(0,0),s));
+		alignParagraph(0, lines.size(), chars, style, RealRect(RealPoint(0,style.padding_top),s));
 	} else {
 		// per paragraph alignment
 		size_t start = 0;
 		int n = 0;
 		for (size_t last = 0 ; last < lines.size() ; ++last) {
 			if (lines[last].break_after != BREAK_SOFT || last == lines.size()) {
-				alignParagraph(start, last + 1, chars, style, RealRect(0, n*style.paragraph_height, s.width, style.paragraph_height));
+				alignParagraph(start, last + 1, chars, style, RealRect(0, style.padding_top+n*style.paragraph_height, s.width, style.paragraph_height));
 				start = last + 1;
 				++n;
 			}
