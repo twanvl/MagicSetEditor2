@@ -175,8 +175,9 @@ init script:
 	sort_index := {
 		(if contains(card.shape, match:"token")   then "T" else "N") + # Tokens come last
 		color_of_card() +
-		(if contains(card.shape, match:"shifted") then "1" else "0") + # planeshifted cards come after normal ones
-		(if contains(card.shape, match:"split")   then "1" else "0")   # split cards come after normal ones
+		(if contains(card.shape, match:"shifted") then "S" else "N") + # planeshifted cards come after normal ones
+		(if contains(card.shape, match:"split")   then "S" else "N") + # split cards come after normal ones
+		":"
 	}
 	is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicolor" }
 	is_null_cost  := { input == "" or input == "0" }
