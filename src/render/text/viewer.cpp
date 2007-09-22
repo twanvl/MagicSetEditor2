@@ -216,11 +216,18 @@ size_t TextViewer::indexAt(const RealPoint& pos) const {
 	return l->posToIndex(pos.x);
 }
 
-RealRect TextViewer::charRect(size_t index) const {
+RealRect TextViewer::charRect(size_t index, bool first) const {
 	if (lines.empty()) return RealRect(0,0,0,0);
 	const Line& l = findLine(index);
 	size_t pos = index - l.start;
 	if (pos + 1 >= l.positions.size()) {
+		if (!first && &l < &lines.back()) {
+			// try the start of the next line
+			const Line& l2 = *(&l+1);
+			if (index == l2.start) {
+				return RealRect(l2.positions.front(), l2.top, 0, l2.line_height);
+			}
+		}
 		return RealRect(l.positions.back(), l.top, 0, l.line_height);
 	} else {
 		return RealRect(l.positions[pos], l.top, l.positions[pos + 1] - l.positions[pos], l.line_height);
@@ -420,7 +427,7 @@ void TextViewer::prepareLinesTryScales(RotatedDC& dc, const String& text, const 
 	
 	// Try the layout at the previous scale, this could give a quick upper bound
 	elements.getCharInfo(dc, scale, 0, text.size(), chars);
-	bool fits = prepareLinesScale(dc, chars, style, true, lines);
+	bool fits = prepareLinesScale(dc, chars, style, false, lines);
 	if (fits) {
 		min_scale = scale;
 		max_scale = min(max_scale, bound_on_max_scale(dc,style,lines,scale));
@@ -431,7 +438,7 @@ void TextViewer::prepareLinesTryScales(RotatedDC& dc, const String& text, const 
 		vector<Line> lines_before;
 		vector<CharInfo> chars_before;
 		elements.getCharInfo(dc, scale, 0, text.size(), chars_before);
-		fits = prepareLinesScale(dc, chars_before, style, true, lines_before);
+		fits = prepareLinesScale(dc, chars_before, style, false, lines_before);
 		if (fits) {
 			// too bad
 			swap(lines, lines_before);
@@ -542,21 +549,23 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 		// Did the word become too long?
 		if (style.field().multi_line && !break_now) {
 			double max_width = lineRight(dc, style, line.top);
-			if (word_start == line.start && word_size.width > max_width) {
-				// single word on this line; the word is too long
-				if (stop_if_too_long) {
-					return false; // just give up
+			if (line_size.width + word_size.width > max_width) {
+				if (word_start == line.start) {
+					// single word on this line; the word is too long
+					if (stop_if_too_long) {
+						return false; // just give up
+					} else {
+						// force a word break
+						break_now = true;
+						accept_word = true;
+						hide_breaker = false;
+						line.break_after = BREAK_SOFT;
+					}
 				} else {
-					// force a word break
+					// line would become too long, break before the current word
 					break_now = true;
-					accept_word = true;
-					hide_breaker = false;
 					line.break_after = BREAK_SOFT;
 				}
-			} else if (line_size.width + word_size.width > max_width) {
-				// line would become too long, break before the current word
-				break_now = true;
-				line.break_after = BREAK_SOFT;
 			}
 		}
 		// Ending the current word
@@ -572,6 +581,14 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 			word_start = i + 1;
 			positions_word.clear();
 			word_end_or_soft = 0;
+			// move character that goes outside the box to the next line
+			if (!hide_breaker && line.positions.size() > 2) {
+				line.positions.pop_back();
+				word_start = i;
+				word_size = add_horizontal(word_size, c.size);
+				positions_word.push_back(word_size.width);
+				if (!c.soft) word_end_or_soft = i + 1;
+			}
 		}
 		// Breaking (ending the current line)
 		if (break_now) {

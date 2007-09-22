@@ -84,7 +84,8 @@ class TextViewer {
 	RealPoint posOf(size_t index) const;
 	
 	/// Return the rectangle around a single character
-	RealRect charRect(size_t index) const;
+	/** If 'first' prefers earlier lines */
+	RealRect charRect(size_t index, bool first) const;
 	/// Is the character at the given index visible?
 	bool isVisible(size_t index) const;
 	/// Find the first character index that is at/before/after the given index, and which has a nonzero width

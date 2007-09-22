@@ -300,6 +300,8 @@ bool smart_less(const String& sa, const String& sb) {
 			// two numbers of the same length, but not equal
 			return lt;
 		} else if (a != b) {
+			// not a number
+			eq = true; lt = false;
 			if (a >= 0x20 && b >= 0x20) {
 				// compare characters
 				Char la = remove_accents(a), lb = remove_accents(b);
@@ -333,10 +335,18 @@ bool smart_less(const String& sa, const String& sb) {
 	// When we are at the end; shorter strings come first
 	// This is true for normal string collation
 	// and also when both end in a number and another digit follows
-	if (na - pa != nb - pb) {
-		return na - pa < nb - pb;
+	if (in_num) {
+		if (na - pa < nb - pb) {
+			// number b continues?
+			Char b = sb.GetChar(pb);
+			if (isDigit(b) || eq) return true;  // b is longer
+		} else if (na - pa > nb - pb) {
+			Char a = sa.GetChar(pa);
+			if (isDigit(a) || eq) return false; // a is longer
+		}
+		return lt; // compare numbers
 	} else {
-		return lt;
+		return na - pa < nb - pb; // outside number, shorter string comes first
 	}
 }
 

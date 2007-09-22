@@ -182,7 +182,7 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
 	WordListPosP findWordListBody(const RealPoint& pos) const;
 	/// Find a WordListPos for a index position
 	WordListPosP findWordList(size_t index) const;
-	/// Show a word list drop down menu, if wl
+	/// Show a word list drop down menu, if wl. Returns true if a list is shown
 	bool wordListDropDown(const WordListPosP& wl);
 	
 };

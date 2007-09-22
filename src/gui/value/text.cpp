@@ -430,18 +430,12 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 			}
 			break;
 		case WXK_UP:
-			if (field().multi_line) {
-				moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, -1), !ev.ShiftDown(), MOVE_LEFT_OPT);
-			} else {
-				wordListDropDown(findWordList(selection_end_i));
-			}
+			if ( wordListDropDown(findWordList(selection_end_i)) ) break;
+			moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, -1), !ev.ShiftDown(), MOVE_LEFT_OPT);
 			break;
 		case WXK_DOWN:
-			if (field().multi_line) {
-				moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, +1), !ev.ShiftDown(), MOVE_RIGHT_OPT);
-			} else {
-				wordListDropDown(findWordList(selection_end_i));
-			}
+			if ( wordListDropDown(findWordList(selection_end_i)) ) break;
+			moveSelection(TYPE_INDEX, v.moveLine(selection_end_i, +1), !ev.ShiftDown(), MOVE_RIGHT_OPT);
 			break;
 		case WXK_HOME:
 			// move to begining of line / all (if control)
@@ -805,7 +799,7 @@ void TextValueEditor::showCaret() {
 	// The caret
 	wxCaret* caret = editor().GetCaret();
 	// cursor rectangle
-	RealRect cursor = v.charRect(selection_end_i);
+	RealRect cursor = v.charRect(selection_end_i, selection_start_i <= selection_end_i);
 	cursor.width = 0;
 	// height may be 0 near a <line>
 	// it is not 0 for empty text, because TextRenderer handles that case
@@ -1312,8 +1306,8 @@ void TextValueEditor::drawWordListIndicators(RotatedDC& dc, bool redrawing) {
 		RealRect& r = wl->rect;
 		if (r.height < 0) {
 			// find the rectangle for this indicator
-			RealRect start = v.charRect(wl->start);
-			RealRect end   = v.charRect(wl->end > wl->start ? wl->end - 1 : wl->start);
+			RealRect start = v.charRect(wl->start, true);
+			RealRect end   = v.charRect(wl->end > wl->start ? wl->end - 1 : wl->start, false);
 			r.x = start.x;
 			r.y = start.y;
 			r.width  = end.right() - start.left() + 0.5;
