@@ -4,8 +4,7 @@
 mkdir magicseteditor
 mkdir magicseteditor/program
 
-cp -rP ../../data /usr/local/share/magicseteditor/resource 
-../../magicseteditor magicseteditor/program;
+cp -rP ../../data /usr/local/share/magicseteditor/resource ../../magicseteditor magicseteditor/program;
 cp install README magicseteditor;
 
 tar -cf magicseteditor.tar.gz --owner root --exclude=.* --exclude=*~ --exclude=.svn magicseteditor;
