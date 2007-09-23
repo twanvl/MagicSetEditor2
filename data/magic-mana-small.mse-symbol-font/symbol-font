@@ -1,4 +1,5 @@
 ﻿mse version: 0.3.5
+version: 2007-09-23
 # Symbol font in the normal, flat, style, used for text boxes and on old style cards
 # Note:
 #  Define  mana_t := {"new|old|older"} in the init script of the style

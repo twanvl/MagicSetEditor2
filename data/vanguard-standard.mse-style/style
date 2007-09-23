@@ -1,8 +1,9 @@
-mse version: 0.3.2
+﻿mse version: 0.3.2
 game: vanguard
 short name: Standard
 icon: card-sample.png
 position hint: 01
+version: 2007-09-23
 
 card width: 375
 card height: 523

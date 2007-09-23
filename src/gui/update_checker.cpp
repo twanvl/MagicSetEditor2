@@ -33,7 +33,6 @@ class PackageVersionData : public IntrusivePtrBase<PackageVersionData> {
 	String  name;						///< Name of the package
 	String  description;				///< html description
 	String  url;						///< Where can the package be downloaded?
-	bool    is_installer;				///< Download url refers to a .mse-installer
 	Version version;					///< Version number of the download
 	Version app_version;				///< The minimium version of MSE required
 	vector<PackageDependencyP> depends;	///< Packages this depends on
@@ -56,7 +55,6 @@ IMPLEMENT_REFLECTION(PackageVersionData) {
 	REFLECT(name);
 	REFLECT(description);
 	REFLECT(url);
-	REFLECT(is_installer);
 	REFLECT(version);
 	REFLECT(app_version);
 	REFLECT_N("depends ons", depends);
@@ -369,16 +367,44 @@ void UpdatesWindow::onActionChange(wxCommandEvent& ev) {
 	PackageVersionDataP pack = update_version_data->packages[package_list->GetSelection()];
 	PackageAction& action = package_data[pack].second;
 	switch (ev.GetId()) {
-		case ID_INSTALL: action = ACTION_INSTALL; break;
-		case ID_REMOVE:  action = ACTION_UNINSTALL; break;
-		case ID_UPGRADE: action = ACTION_UPGRADE; break;
-		case ID_CANCEL:  action = (pack->app_version > file_version) ? ACTION_NEW_MSE : ACTION_NOTHING; break;
+		case ID_INSTALL:
+			action = ACTION_INSTALL;
+			SelectPackageDependencies(pack);
+			break;
+		case ID_REMOVE: 
+			action = ACTION_UNINSTALL;
+			RemovePackageDependencies(pack);
+			break;
+		case ID_UPGRADE:
+			action = ACTION_UPGRADE;
+			SelectPackageDependencies(pack);
+			break;
+		case ID_CANCEL:
+			switch (package_data[pack].first) {
+				case STATUS_INSTALLED:
+					SelectPackageDependencies(pack);
+					break;
+				case STATUS_NOT_INSTALLED:
+					RemovePackageDependencies(pack);
+					break;
+				case STATUS_UPGRADEABLE:
+					if (action == ACTION_UPGRADE)
+						DowngradePackageDependencies(pack);
+					else
+						SelectPackageDependencies(pack);
+					break;
+			}
+			action = (pack->app_version > file_version) ? ACTION_NEW_MSE : ACTION_NOTHING;
+			break;
 	}
 	updateButtons(package_list->GetSelection());
 	package_list->Refresh();
 }
 
 void UpdatesWindow::onApplyChanges(wxCommandEvent& ev) {
+	FOREACH(update_version_data->packages, pack) {
+		PackageAction action = package_data[pack].second;
+	}
 }
 
 void UpdatesWindow::updateButtons(int id) {
@@ -437,6 +463,15 @@ void UpdatesWindow::setDefaultPackageStatus() {
 			package_data[p] = PackageData(STATUS_INSTALLED, ACTION_NOTHING);
 		}
 	}
+}
+
+void SelectPackageDependencies (PackageVersionDataP pack) {
+}
+
+void RemovePackageDependencies (PackageVersionDataP pack) {
+}
+
+void DowngradePackageDependencies (PackageVersionDataP pack) {
 }
 
 BEGIN_EVENT_TABLE(UpdatesWindow, Frame)

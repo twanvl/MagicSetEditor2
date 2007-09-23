@@ -72,6 +72,10 @@ class UpdatesWindow : public Frame {
 	void onActionChange(wxCommandEvent&);
 	void onApplyChanges(wxCommandEvent&);
 
+	void SelectPackageDependencies   (PackageVersionDataP);
+	void RemovePackageDependencies   (PackageVersionDataP);
+	void DowngradePackageDependencies(PackageVersionDataP);
+
 	/// Update the buttons to indicate that this is selected.
 	void updateButtons(int index);
 	
