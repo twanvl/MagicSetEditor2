@@ -1,7 +1,7 @@
 Function: set_alpha
 
 --Usage--
-> set_alpha(image: image, alpha: transparency value)
+> set_alpha(input: image, alpha: transparency value)
 
 Make an image more transparent.
 
@@ -10,12 +10,12 @@ If @alpha@ is 1 the image stays the same, if @alpha@ is 0 the image becomes comp
 
 --Parameters--
 ! Parameter	Type			Description
-| @image@	[[type:image]]		Image to make transparent.
+| @input@	[[type:image]]		Image to make transparent.
 | @alpha@	[[type:double]]		Transparency factor.
 
 --Examples--
-> set_alpha(image: "image1.png", alpha: 0.5)  ==  [[Image]]
->>> set_mask(image: <img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, alpha: 0.5) == <img src="image_set_alpha.png" alt='"image_set_alpha.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
+> set_alpha("image1.png", alpha: 0.5)  ==  [[Image]]
+>>> set_mask(<img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, alpha: 0.5) == <img src="image_set_alpha.png" alt='"image_set_alpha.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
 
 --See also--
 | [[fun:set_mask]]		Set the transparancy mask of an image.
