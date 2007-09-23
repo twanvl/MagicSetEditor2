@@ -193,7 +193,7 @@ init script:
 		card_color := card.card_color
 		casting_cost := card.casting_cost
 		if card.shape == "split" and
-		   casting_cost != card.casting_cost_2 then "H"              # Diff Color Splits
+		   card_color != card.card_color_2 then "H"              # Diff Color Splits
 		else if chosen(choice: "land", card_color) then (
 			if card.rarity != "basic land" then "K"              # Nonbasic Land
 			else basic_land_sort()
@@ -245,7 +245,7 @@ init script:
 	
 	# replaces — correctly
 	add := "" # default is nothing
-	separate_words := remove_tags + replace_rule(match:" ", replace: " and/or ")
+	separate_words := remove_tags + trim + replace_rule(match:" ", replace: " and/or ")
 	for_mana_costs := format_cost := {
 		if input.separator_before == "—" and contains(input.param, match: " ") then (
 			if contains(input.param, match:",") then (
@@ -639,7 +639,7 @@ card field:
 	card list column: 1
 	card list width: 150
 	description: The name of the card
-	script: if card_shape() == "split" then card.name + " // " + card.name_2 else card.name
+	script: if contains(card.shape, match:"split") then card.name + " // " + card.name_2 else card.name
 
 ############################# Background stuff
 card field:

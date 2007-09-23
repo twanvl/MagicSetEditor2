@@ -189,7 +189,7 @@ card style:
 					else if contains(card.card_color, match:"land") and
 					   contains(card.card_color, match:"multicolor") then rgb(0,0,0)
 					else if styling.grey_hybrid_name and contains(card.card_color, match:"hybrid") then rgb(0,0,0)
-					else if contains(card.card_color, match:"artifact") then (
+					else if contains(card.card_color, match:"artifact") or contains(card.card_color, match:"land") then (
 						if contains(card.card_color, match:"blue") or
 						   contains(card.card_color, match:"black") or
 						   contains(card.card_color, match:"red") or
@@ -267,7 +267,7 @@ card style:
 					else if contains(card.card_color, match:"land") and
 					   contains(card.card_color, match:"multicolor") then rgb(0,0,0)
 					else if styling.grey_hybrid_name and contains(card.card_color, match:"hybrid") then rgb(0,0,0)
-					else if contains(card.card_color, match:"artifact") then (
+					else if contains(card.card_color, match:"artifact") or contains(card.card_color, match:"land") then (
 						if contains(card.card_color, match:"blue") or
 						   contains(card.card_color, match:"black") or
 						   contains(card.card_color, match:"red") or
