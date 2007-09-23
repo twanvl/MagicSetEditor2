@@ -465,13 +465,13 @@ void UpdatesWindow::setDefaultPackageStatus() {
 	}
 }
 
-void SelectPackageDependencies (PackageVersionDataP pack) {
+void UpdatesWindow::SelectPackageDependencies (PackageVersionDataP pack) {
 }
 
-void RemovePackageDependencies (PackageVersionDataP pack) {
+void UpdatesWindow::RemovePackageDependencies (PackageVersionDataP pack) {
 }
 
-void DowngradePackageDependencies (PackageVersionDataP pack) {
+void UpdatesWindow::DowngradePackageDependencies (PackageVersionDataP pack) {
 }
 
 BEGIN_EVENT_TABLE(UpdatesWindow, Frame)
