@@ -48,6 +48,8 @@ SymbolFontP SymbolFont::byName(const String& name) {
 }
 
 IMPLEMENT_REFLECTION(SymbolFont) {
+	REFLECT_BASE(Packaged);
+
 	REFLECT_ALIAS(300, "text align", "text alignment");
 	
 	REFLECT_N("image font size",  img_size);

@@ -28,7 +28,7 @@ DECLARE_TYPEOF_COLLECTION(PackageVersionDataP);
 /// Information on available packages
 class PackageVersionData : public IntrusivePtrBase<PackageVersionData> {
   public:
-	PackageVersionData() : is_installer(true) {}
+	PackageVersionData() {}
 	
 	String  name;						///< Name of the package
 	String  description;				///< html description
@@ -402,7 +402,7 @@ void UpdatesWindow::onActionChange(wxCommandEvent& ev) {
 }
 
 void UpdatesWindow::onApplyChanges(wxCommandEvent& ev) {
-	FOREACH(update_version_data->packages, pack) {
+	FOR_EACH(pack, update_version_data->packages) {
 		PackageAction action = package_data[pack].second;
 	}
 }
