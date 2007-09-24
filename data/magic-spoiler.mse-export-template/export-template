@@ -148,7 +148,11 @@ script:
 		}</ul>"
 	}
 	write_group := {
-		cards := filter_list(set.cards, filter: { contains(color_of_card(card:input), match:code) } )
+		cards := filter_list(set.cards, filter:
+				if code == "L"
+				then  { contains(color_of_card(card:input), match:"L") }
+				else  { color_of_card(card:input) == code }
+		)
 		count := number_of_items(in:cards)
 		if count > 0 then
 		   "<h2>{title} ({count} {if count == 1 then "card" else "cards"})</h2>" +
