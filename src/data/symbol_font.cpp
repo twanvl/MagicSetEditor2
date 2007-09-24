@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <data/symbol_font.hpp>
+#include <data/stylesheet.hpp>
 #include <util/dynamic_arg.hpp>
 #include <util/io/package_manager.hpp>
 #include <util/rotation.hpp>
@@ -581,10 +582,10 @@ bool SymbolFontRef::valid() const {
 bool SymbolFontRef::update(Context& ctx) {
 	if (name.update(ctx)) {
 		// font name changed, load another font
-		loadFont();
+		loadFont(ctx);
 		return true;
 	} else {
-		if (!font) loadFont();
+		if (!font) loadFont(ctx);
 		return false;
 	}
 }
@@ -592,11 +593,15 @@ void SymbolFontRef::initDependencies(Context& ctx, const Dependency& dep) const 
 	name.initDependencies(ctx, dep);
 }
 
-void SymbolFontRef::loadFont() {
+void SymbolFontRef::loadFont(Context& ctx) {
 	if (name().empty()) {
 		font = SymbolFontP();
 	} else {
 		font = SymbolFont::byName(name);
+		// ensure the dependency on the font is present in the stylesheet this ref is in
+		// Getting this stylesheet from the context is a bit of a hack
+		StyleSheetP stylesheet = from_script<StyleSheetP>(ctx.getVariable(_("stylesheet")));
+		stylesheet->requireDependency(font.get());
 	}
 }
 

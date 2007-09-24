@@ -10,7 +10,20 @@ short name: Old style
 full name: Before 8th edition
 icon: card-sample.png
 position hint: 101
+
 version: 2007-09-23
+depends on:
+	package: magic.mse-game
+	version: 2007-09-23
+depends on:
+	package: magic-watermarks.mse-include
+	version: 2007-09-23
+depends on:
+	package: magic-mana-large.mse-symbol-font
+	version: 2007-09-23
+depends on:
+	package: magic-mana-small.mse-symbol-font
+	version: 2007-09-23
 
 card width: 337
 card height: 469

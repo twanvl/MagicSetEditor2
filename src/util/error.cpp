@@ -52,6 +52,7 @@ ScriptParseErrors::ScriptParseErrors(const vector<ScriptParseError>& errors)
 
 // Errors for which a message box was already shown
 vector<String> previous_errors;
+vector<String> previous_warnings;
 String pending_errors;
 String pending_warnings;
 DECLARE_TYPEOF_COLLECTION(String);
@@ -90,6 +91,11 @@ void handle_warning(const String& w, bool now) {
 	{
 		// Check duplicates
 		wxCriticalSectionLocker lock(crit_error_handling);
+		// Check duplicates
+		FOR_EACH(pw, previous_warnings) {
+			if (w == pw) return;
+		}
+		previous_warnings.push_back(w);
 		// Only show errors in the main thread
 		if (!pending_warnings.empty()) pending_warnings += _("\n\n");
 		pending_warnings += w;

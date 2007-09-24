@@ -169,10 +169,11 @@ class SymbolFontRef {
 	Alignment          alignment;		///< Alignment of symbols in a line of text
 	SymbolFontP        font;			///< The font, if it is loaded
 	
-	/// (re)load the symbol font based on name
-	void loadFont();
-	
+  private:
 	DECLARE_REFLECTION();
+	
+	/// (re)load the symbol font based on name
+	void loadFont(Context& ctx);
 };
 
 // ----------------------------------------------------------------------------- : EOF

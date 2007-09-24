@@ -4,7 +4,20 @@ full name: Magic Old Split Cards
 short name: Old Splits
 icon: card-sample.png
 position hint: 103
+
 version: 2007-09-23
+depends on:
+	package: magic.mse-game
+	version: 2007-09-23
+depends on:
+	package: magic-watermarks.mse-include
+	version: 2007-09-23
+depends on:
+	package: magic-mana-large.mse-symbol-font
+	version: 2007-09-23
+depends on:
+	package: magic-mana-small.mse-symbol-font
+	version: 2007-09-23
 
 card width: 523
 card height: 375

@@ -4,7 +4,17 @@ short name: Future Textless
 full name: Futureshift Textless
 icon: card-sample.png
 position hint: 051
+
 version: 2007-09-23
+depends on:
+	package: magic.mse-game
+	version: 2007-09-23
+depends on:
+	package: magic-future-common.mse-include
+	version: 2007-09-23
+depends on:
+	package: magic-mana-future.mse-symbol-font
+	version: 2007-09-23
 
 card width: 375
 card height: 523
@@ -118,14 +128,6 @@ styling field:
 	description: Use the Ravnica guild symbols instead of the official half/half circles for hybrid mana.
 	initial: no
 styling field:
-	type: choice
-	name: tap symbol
-	description: What tap symbol should be used on cards?
-	initial: modern
-	choice: modern
-	choice: old
-	choice: diagonal T
-styling field:
 	type: boolean
 	name: inverted common symbol
 	description: Should the common rarity symbol be inverted, like in Coldsnap?
@@ -134,14 +136,8 @@ styling field:
 styling style:
 	use guild mana symbols:
 		choice images:
-			yes: /magic-mana-small.mse-symbol-font/mana_guild_rg.png
-			no:  /magic-mana-small.mse-symbol-font/mana_rg.png
-	tap symbol:
-		render style: both
-		choice images:
-			modern:     /magic-mana-large.mse-symbol-font/mana_t.png
-			old:        /magic-mana-large.mse-symbol-font/mana_t_old.png
-			diagonal T: /magic-mana-large.mse-symbol-font/mana_t_older.png
+			yes: /magic-mana-future.mse-symbol-font/mana_guild_rg.png
+			no:  /magic-mana-future.mse-symbol-font/mana_rg.png
 
 ############################################################## Card fields
 card style:

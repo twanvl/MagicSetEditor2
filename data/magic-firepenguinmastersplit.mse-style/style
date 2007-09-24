@@ -4,7 +4,23 @@ full name: FPM's Split Magic
 short name: FPM Split
 icon: card-sample.png
 position hint: 403
+
 version: 2007-09-23
+depends on:
+	package: magic.mse-game
+	version: 2007-09-23
+depends on:
+	package: magic-future-common.mse-include
+	version: 2007-09-23
+depends on:
+	package: magic-watermarks.mse-include
+	version: 2007-09-23
+depends on:
+	package: magic-mana-beveled.mse-symbol-font
+	version: 2007-09-23
+depends on:
+	package: magic-mana-small.mse-symbol-font
+	version: 2007-09-23
 
 card width: 523
 card height: 375

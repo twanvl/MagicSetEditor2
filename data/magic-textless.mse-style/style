@@ -4,7 +4,17 @@ short name: Textless
 full name: Modern style
 icon: card-sample.png
 position hint: 005
+
 version: 2007-09-23
+depends on:
+	package: magic.mse-game
+	version: 2007-09-23
+depends on:
+	package: magic-future-common.mse-include
+	version: 2007-09-23
+depends on:
+	package: magic-mana-large.mse-symbol-font
+	version: 2007-09-23
 
 card width: 375
 card height: 523
@@ -82,8 +92,8 @@ styling field:
 styling style:
 	use guild mana symbols:
 		choice images:
-			yes: /magic-mana-small.mse-symbol-font/mana_guild_rg.png
-			no:  /magic-mana-small.mse-symbol-font/mana_rg.png
+			yes: /magic-mana-large.mse-symbol-font/mana_guild_rg.png
+			no:  /magic-mana-large.mse-symbol-font/mana_rg.png
 	tap symbol:
 		render style: both
 		choice images:

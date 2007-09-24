@@ -2,8 +2,15 @@
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
-version: 2007-09-23
 position hint: 01
+
+version: 2007-09-23
+depends on:
+	package: magic-blends.mse-include
+	version: 2007-09-23
+depends on:
+	package: magic-watermarks.mse-include
+	version: 2007-09-23
 
 ############################################################## Functions & filters
 
