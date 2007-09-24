@@ -31,7 +31,7 @@ String serialize_for_clipboard(Package& package, T& object) {
 template <typename T>
 void deserialize_from_clipboard(T& object, Package& package, const String& data) {
 	shared_ptr<wxStringInputStream> stream( new wxStringInputStream(data) );
-	Reader reader(stream, _("clipboard"));
+	Reader reader(stream, nullptr, _("clipboard"));
 	WITH_DYNAMIC_ARG(clipboard_package, &package);
 		reader.handle_greedy(object);
 }

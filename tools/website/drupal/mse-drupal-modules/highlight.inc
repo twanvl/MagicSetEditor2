@@ -17,10 +17,12 @@ $built_in_functions = array(
 	'sort_text'		=>'',	'sort_rule'	=> 'sort_text',
 	'contains'		=>'',
 	'match'			=>'',	'match_rule'	=> 'match',
+	'trim'			=>'',
 	'regex_escape'		=>'',
 	// tags
 	'tag_contents'		=>'',	'tag_contents_rule'=>'tag_contents',
 	'remove_tag'		=>'',	'tag_remove_rule'  =>'remove_tag',
+	'remove_tags'		=>'',
 	// lists
 	'postion'		=>'',
 	'length'		=>'',
@@ -39,8 +41,8 @@ $built_in_functions = array(
 	'english_singular'	 =>'english_plural',
 	'process_english_hints'	=>'',
 	// fields and values
-	'forward_editor'	=>'',
-	'combined_editor'	=>'combined_editor',
+	'forward_editor'	=>'combined_editor',
+	'combined_editor'	=>'',
 	'primary_choice'	=>'',
 	'chosen'		=>'',
 	'require_choice'	=>'',

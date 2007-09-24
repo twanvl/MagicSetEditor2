@@ -178,10 +178,15 @@ class BufferedFileInputStream : private BufferedFileInputStream_aux, public wxBu
 InputStreamP Package::openIn(const String& file) {
 	if (!file.empty() && file.GetChar(0) == _('/')) {
 		// absolute path, open file from another package
-		return packages.openFileFromPackage(file);
+		Packaged* p = dynamic_cast<Packaged*>(this);
+		return packages.openFileFromPackage(p, file);
 	}
 	FileInfos::iterator it = files.find(toStandardName(file));
 	if (it == files.end()) {
+		// does it look like a relative filename?
+		if (filename.find(_(".mse-")) != String::npos) {
+			throw PackageError(_ERROR_2_("file not found package like", file, filename));
+		}
 		throw FileNotFoundError(file, filename);
 	}
 	InputStreamP stream;
@@ -442,6 +447,7 @@ IMPLEMENT_REFLECTION(Packaged) {
 	REFLECT_N("icon", icon_filename);
 	REFLECT_NO_SCRIPT(position_hint);
 	REFLECT(version);
+	REFLECT(compatible_version);
 	REFLECT_NO_SCRIPT_N("depends ons", dependencies); // hack for singular_form
 }
 
@@ -472,7 +478,7 @@ void Packaged::open(const String& package, bool just_header) {
 	fully_loaded = false;
 	if (just_header) {
 		// Read just the header (the part common to all Packageds)
-		Reader reader(openIn(typeName()), absoluteFilename() + _("/") + typeName(), true);
+		Reader reader(openIn(typeName()), this, absoluteFilename() + _("/") + typeName(), true);
 		try {
 			JustAsPackageProxy proxy(this);
 			reader.handle_greedy(proxy);
@@ -487,7 +493,7 @@ void Packaged::open(const String& package, bool just_header) {
 void Packaged::loadFully() {
 	if (fully_loaded) return;
 	fully_loaded = true;
-	Reader reader(openIn(typeName()), absoluteFilename() + _("/") + typeName());
+	Reader reader(openIn(typeName()), this, absoluteFilename() + _("/") + typeName());
 	try {
 		reader.handle_greedy(*this);
 		validate(reader.file_app_version);
@@ -516,6 +522,24 @@ void Packaged::validate(Version) {
 	FOR_EACH(dep, dependencies) {
 		packages.checkDependency(*dep, true);
 	}
+}
+
+void Packaged::requireDependency(Packaged* package) {
+	if (package == this) return; // dependency on self
+	String n = package->relativeFilename();
+	FOR_EACH(dep, dependencies) {
+		if (dep->package == n) {
+			if (package->version < dep->version) {
+				handle_warning(_ERROR_3_("package out of date", n, package->version.toString(), dep->version.toString()), false);
+			} else if (package->compatible_version > dep->version) {
+				handle_warning(_ERROR_4_("package too new",     n, package->version.toString(), dep->version.toString(), relativeFilename()), false);
+			} else {
+				return; // ok
+			}
+		}
+	}
+	// dependency not found
+	handle_warning(_ERROR_4_("dependency not given", name(), package->relativeFilename(), package->relativeFilename(), package->version.toString()), false);
 }
 
 // ----------------------------------------------------------------------------- : IncludePackage

@@ -286,7 +286,7 @@ void SetWindow::updateTitle() {
 		if (identification.empty()) identification = set->name();
 		if (identification.empty()) identification = _TITLE_("untitled");
 		set->short_name = identification;
-		SetTitle(format_string(_TITLE_("%s - magic set editor"),identification));
+		SetTitle(_TITLE_1_("%s - magic set editor",identification));
 	}
 }
 
@@ -335,7 +335,7 @@ void SetWindow::onClose(wxCloseEvent& ev) {
 bool SetWindow::askSaveAndContinue() {
 	if (set->actions.atSavePoint()) return true;
 	// todo : if more then one window has the set selected it's ok to proceed
-	int save = wxMessageBox(format_string(_LABEL_("save changes"), set->short_name), _TITLE_("save changes"), wxYES_NO | wxCANCEL | wxICON_EXCLAMATION);
+	int save = wxMessageBox(_LABEL_1_("save changes", set->short_name), _TITLE_("save changes"), wxYES_NO | wxCANCEL | wxICON_EXCLAMATION);
 	if (save == wxYES) {
 		// save the set
 		try {

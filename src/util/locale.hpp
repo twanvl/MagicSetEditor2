@@ -98,12 +98,23 @@ String tr(const SymbolFont&, const String& key, const String& def);
 /// A localized string for button text, with 1 argument (printf style)
 #define _BUTTON_1_(s,a)		format_string(_BUTTON_(s), a)
 
+/// A localized string for window titles, with 1 argument (printf style)
+#define _TITLE_1_(s,a)		format_string(_TITLE_(s), a)
+
+/// A localized string for type names in scripts, with 1 argument (printf style)
+#define _TYPE_1_(s,a)		format_string(_TYPE_(s), a)
+
+/// A localized string for action names, with 1 argument (printf style)
+#define _ACTION_1_(s,a)		format_string(_ACTION_(s), a)
+
 /// A localized string for error messages, with 1 argument (printf style)
 #define _ERROR_1_(s,a)		format_string(_ERROR_(s),   a)
 /// A localized string for error messages, with 2 argument (printf style)
 #define _ERROR_2_(s,a,b)	format_string(_ERROR_(s),   a, b)
 /// A localized string for error messages, with 3 argument (printf style)
 #define _ERROR_3_(s,a,b,c)	format_string(_ERROR_(s),   a, b, c)
+/// A localized string for error messages, with 4 argument (printf style)
+#define _ERROR_4_(s,a,b,c,d) format_string(_ERROR_(s),   a, b, c, d)
 
 /// Format a string
 /** Equivalent to sprintf / String::Format, but allows strings to be passed as arguments (gcc)
@@ -123,6 +134,9 @@ inline String format_string(const String& format, const String& a0, const String
 }
 inline String format_string(const String& format, const String& a0, const String& a1, const String& a2) {
 	return String::Format(format, a0.c_str(), a1.c_str(), a2.c_str());
+}
+inline String format_string(const String& format, const String& a0, const String& a1, const String& a2, const String& a3) {
+	return String::Format(format, a0.c_str(), a1.c_str(), a2.c_str(), a3.c_str());
 }
 
 // ----------------------------------------------------------------------------- : EOF

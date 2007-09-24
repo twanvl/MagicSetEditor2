@@ -17,7 +17,7 @@ card dpi: 150
 
 init script:
 	# Load scripts for default images
-	include file: magic-default-image.mse-include/scripts
+	include file: /magic-default-image.mse-include/scripts
 		
 	# What should the textbox look like?
 	text_shape := {

@@ -18,7 +18,7 @@ card dpi: 150
 
 init script:
 	# Load scripts for image box
-	include file: magic-default-image.mse-include/scripts
+	include file: /magic-default-image.mse-include/scripts
 	
 	# Should hybrids have a grey name?
 	mask_hybrid_with_land := { false }
@@ -332,7 +332,7 @@ card style:
 		z index: 1
 		render style: image
 		alignment: middle center
-		include file: magic-watermarks.mse-include/watermarks
+		include file: /magic-watermarks.mse-include/watermarks
 	watermark 2:
 		left: 151
 		top : 378
@@ -342,7 +342,7 @@ card style:
 		z index: 1
 		render style: image
 		alignment: middle center
-		include file: magic-watermarks.mse-include/watermarks
+		include file: /magic-watermarks.mse-include/watermarks
 
 	############################# PT
 	pt:

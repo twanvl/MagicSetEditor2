@@ -173,10 +173,10 @@ init script:
 	# The code consists of 4 parts:
 	#   normal/token,  color,  shifted,   split
 	sort_index := {
-		(if contains(card.shape, match:"token")   then "T" else "N") + # Tokens come last
+		(if contains(card.shape, match:"token")   then "T" else " ") + # Tokens come last
 		color_of_card() +
-		(if contains(card.shape, match:"shifted") then "S" else "N") + # planeshifted cards come after normal ones
-		(if contains(card.shape, match:"split")   then "S" else "N") + # split cards come after normal ones
+		(if contains(card.shape, match:"shifted") then "S" else " ") + # planeshifted cards come after normal ones
+		(if contains(card.shape, match:"split")   then "S" else " ") + # split cards come after normal ones
 		":"
 	}
 	is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicolor" }
@@ -221,7 +221,7 @@ init script:
 	}
 	
 	rarity_sort := {
-		if set.sort_special_rarity == "with the rest" or card.rarity != "special" then "A" else "Z"
+		if set.sort_special_rarity == "with the rest" or card.rarity != "special" then " " else "S"
 	}
 	set_filter := {
 		if set.sort_special_rarity != "separate numbering" then nil
@@ -825,7 +825,7 @@ card field:
 	name: watermark
 	icon: stats/watermark.png
 	position hint: 200
-	include file: magic-watermarks.mse-include/watermark-names
+	include file: /magic-watermarks.mse-include/watermark-names
 	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, or a guild symbol
 
 ############################# Loyalty
@@ -1052,7 +1052,7 @@ card field:
 card field:
 	type: choice
 	name: watermark 2
-	include file: magic-watermarks.mse-include/watermark-names
+	include file: /magic-watermarks.mse-include/watermark-names
 	icon: stats/watermark.png
 	show statistics: false
 	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, a special symbol, or a guild symbol

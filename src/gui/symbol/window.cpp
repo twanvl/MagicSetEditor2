@@ -29,7 +29,7 @@ SymbolWindow::SymbolWindow(Window* parent) {
 
 SymbolWindow::SymbolWindow(Window* parent, const String& filename) {
 	// open file
-	Reader reader(new_shared1<wxFileInputStream>(filename), filename);
+	Reader reader(new_shared1<wxFileInputStream>(filename), nullptr, filename);
 	SymbolP symbol;
 	reader.handle_greedy(symbol);
 	init(parent, symbol);
@@ -204,7 +204,7 @@ void SymbolWindow::onFileOpen(wxCommandEvent& ev) {
 		String ext = n.GetExt();
 		SymbolP symbol;
 		if (ext.Lower() == _("mse-symbol")) {
-			Reader reader(new_shared1<wxFileInputStream>(name), name);
+			Reader reader(new_shared1<wxFileInputStream>(name), nullptr, name);
 			reader.handle_greedy(symbol);
 		} else {
 			wxBusyCursor busy;

@@ -102,9 +102,10 @@ int MSE::OnRun() {
 					InstallType type = settings.install_type;
 					if (argc > 2) {
 						String arg = argv[2];
-						if (arg.Mid(0,2) == _("--"))
-							parse_enum(arg.Mid(2), type);
+						if (starts_with(argv[2], _("--"))) {
+							parse_enum(String(argv[2]).substr(2), type);
 						}
+					}
 					Installer::installFrom(argv[1], true, isInstallLocal(type));
 					return EXIT_SUCCESS;
 				} else if (arg == _("--symbol-editor")) {

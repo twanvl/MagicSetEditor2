@@ -57,7 +57,7 @@ enum OpenBrace
 /** Also stores errors found when tokenizing or parsing */
 class TokenIterator {
   public:
-	TokenIterator(const String& str, bool string_mode, vector<ScriptParseError>& errors);
+	TokenIterator(const String& str, Packaged* package, bool string_mode, vector<ScriptParseError>& errors);
 	
 	/// Peek at the next token, doesn't move to the one after that
 	/** Can peek further forward by using higher values of offset.
@@ -75,6 +75,7 @@ class TokenIterator {
 	String input;
 	size_t pos;
 	String filename;				///< Filename of include files, "" for the main input
+	Packaged* package;				///< Package the input is from
 	vector<Token>    buffer;		///< buffer of unread tokens, front() = current
 	stack<OpenBrace> open_braces;	///< braces/quotes we entered from script mode
 	bool             newline;		///< Did we just pass a newline?
@@ -83,6 +84,7 @@ class TokenIterator {
 		String input;
 		size_t pos;
 		String filename;
+		Package* package;
 	};
 	stack<MoreInput> more;		///< Read tokens from here when we are done with the current input
 	
@@ -115,9 +117,10 @@ bool isLongOper(const String& s) { return s==_(":=") || s==_("==") || s==_("!=")
 
 // ----------------------------------------------------------------------------- : Tokenizing
 
-TokenIterator::TokenIterator(const String& str, bool string_mode, vector<ScriptParseError>& errors)
+TokenIterator::TokenIterator(const String& str, Packaged* package, bool string_mode, vector<ScriptParseError>& errors)
 	: input(str)
 	, pos(0)
+	, package(package)
 	, newline(false)
 	, errors(errors)
 {
@@ -183,12 +186,12 @@ void TokenIterator::readToken() {
 		if (eol == String::npos) eol = input.size();
 		String include_file = trim(input.substr(pos, eol - pos));
 		// store the current input for later retrieval
-		MoreInput m = {input, eol, filename};
+		MoreInput m = {input, eol, filename, package};
 		more.push(m);
 		// read the entire file, and start at the beginning of it
 		pos = 0;
 		filename = include_file;
-		InputStreamP is = packages.openFileFromPackage(include_file);
+		InputStreamP is = packages.openFileFromPackage(package, include_file);
 		input = read_utf8_line(*is, true, true);
 	} else if (isAlpha(c) || c == _('_')) {
 		// name
@@ -345,10 +348,10 @@ void parseExpr(TokenIterator& input, Script& script, Precedence min_prec);
 void parseOper(TokenIterator& input, Script& script, Precedence min_prec, InstructionType close_with = I_NOP, int close_with_data = 0);
 
 
-ScriptP parse(const String& s, bool string_mode, vector<ScriptParseError>& errors_out) {
+ScriptP parse(const String& s, Packaged* package, bool string_mode, vector<ScriptParseError>& errors_out) {
 	errors_out.clear();
 	// parse
-	TokenIterator input(s, string_mode, errors_out);
+	TokenIterator input(s, package, string_mode, errors_out);
 	ScriptP script(new Script);
 	parseOper(input, *script, PREC_ALL, I_RET);
 	Token eof = input.read();
@@ -363,9 +366,9 @@ ScriptP parse(const String& s, bool string_mode, vector<ScriptParseError>& error
 	}
 }
 
-ScriptP parse(const String& s, bool string_mode) {
+ScriptP parse(const String& s, Packaged* package, bool string_mode) {
 	vector<ScriptParseError> errors;
-	ScriptP script = parse(s, string_mode, errors);
+	ScriptP script = parse(s, package, string_mode, errors);
 	if (!errors.empty()) {
 		throw ScriptParseErrors(errors);
 	}

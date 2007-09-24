@@ -250,7 +250,7 @@ void KeywordsPanel::doPaste()        { CUT_COPY_PASTE(doPaste,  return (void), !
 void KeywordsPanel::onChangeSet() {
 	list->setSet(set);
 	// warning label (depends on game name)
-	fixedL->SetLabel(format_string(_LABEL_("standard keyword"), set->game->short_name));
+	fixedL->SetLabel(_LABEL_1_("standard keyword", set->game->short_name));
 	// init text controls
 	keyword ->setSet(set);
 	keyword ->getStyle().font.size = 16;

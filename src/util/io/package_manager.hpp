@@ -66,12 +66,18 @@ class PackageManager {
 	/** Only reads the package headers */
 	void findMatching(const String& pattern, vector<PackagedP>& out);
 	
-	/// Open a file from a package, with a name encoded as "package/file"
-	InputStreamP openFileFromPackage(const String& name);
+	/// Open a file from a package, with a name encoded as "/package/file"
+	/** If 'package' is set then:
+	 *    - tries to open a relative file from the package if the name is "file"
+	 *    - verifies a dependency from that package if an absolute filename is used
+	 *      this is to force people to fill in the dependencies
+	 *  Afterwards, package will be set to the package the file is opened from
+	 */
+	InputStreamP openFileFromPackage(Packaged*& package, const String& name);
 	
 	/// Check if the given dependency is currently installed
-	bool checkDependency(const PackageDependency& dep, bool report_errors = false);
-
+	bool checkDependency(const PackageDependency& dep, bool report_errors = true);
+	
 	inline String getGlobalDataDir() const { return global_data_directory; }
 	inline String getLocalDataDir() const { return local_data_directory; }
 	

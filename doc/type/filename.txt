@@ -8,3 +8,13 @@ There are two types of filenames, relative and absolute:
 | <tt>/package/path/to/file</tt>	An absolute filename includes the name of the package. This is a package somewhere in the MSE data directory.
 
 Don't forget the double quotes (@""@) in scripts.
+
+--Dependencies--
+When using an absolute filename to refer to a file from another [[file:package]],
+the [[type:dependency]] on that package must be declared.
+For example,
+>include file: /common.mse-include/something
+Will give a warning message, unless the file also lists
+>depends on:
+>	package: common.mse-include
+>	version: 2007-01-01

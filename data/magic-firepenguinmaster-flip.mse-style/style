@@ -33,7 +33,7 @@ card dpi: 150
 
 init script:
 	# Load blend scripts for hybrids/multicolors
-	include file: magic-default-image.mse-include/scripts
+	include file: /magic-default-image.mse-include/scripts
 	
 	# We have no land templates
 	land_template := { "c{type}.jpg" }
@@ -305,7 +305,7 @@ card style:
 		z index: 1
 		render style: image
 		alignment: middle center
-		include file: magic-watermarks.mse-include/watermarks
+		include file: /magic-watermarks.mse-include/watermarks
 	text 2:
 		left: 33
 		top : 65
@@ -348,7 +348,7 @@ card style:
 		render style: image
 		alignment: middle center
 		angle: 180
-		include file: magic-watermarks.mse-include/watermarks
+		include file: /magic-watermarks.mse-include/watermarks
 
 	############################# PT
 	power:

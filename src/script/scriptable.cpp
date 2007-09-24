@@ -46,7 +46,7 @@ ScriptValueP OptionalScript::invoke(Context& ctx, bool open_scope) const {
 
 void OptionalScript::parse(Reader& reader, bool string_mode) {
 	vector<ScriptParseError> errors;
-	script = ::parse(unparsed, string_mode, errors);
+	script = ::parse(unparsed, reader.getPackage(), string_mode, errors);
 	// show parse errors as warnings
 	String include_warnings;
 	for (size_t i = 0 ; i < errors.size() ; ++i) {
@@ -104,7 +104,7 @@ const String& StringScript::get() const {
 
 void StringScript::set(const String& s) {
 	unparsed = s;
-	script = ::parse(unparsed, true);
+	script = ::parse(unparsed, nullptr, true);
 }
 
 template <> void Reader::handle(StringScript& os) {

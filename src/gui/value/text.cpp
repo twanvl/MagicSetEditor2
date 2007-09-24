@@ -297,8 +297,7 @@ void DropDownWordList::select(size_t item) {
 	tve.selection_start_i = pos->start;
 	tve.selection_end_i   = pos->end;
 	tve.fixSelection(TYPE_INDEX);
-	tve.replaceSelection(escape(new_value),
-	                     format_string(_ACTION_("change"), tve.field().name));
+	tve.replaceSelection(escape(new_value), _ACTION_1_("change", tve.field().name));
 	// stay open?
 	if (IsShown()) selection(); // update 'enabled'
 }

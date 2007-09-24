@@ -42,12 +42,12 @@ void Installer::installFrom(const String& filename, bool message_on_success, boo
 	i.open(filename);
 	try {
 		i.install(local);
-	}
-	catch (Error& e) {
+	} catch (const Error& e) {
 		handle_error(e);
 		return;
 	}
 	if (message_on_success) {
+		//wxMessageBox(_ERROR_2_("successful install", i.name(), String() << i.packaged.size(), 
 		wxMessageBox(String::Format(_("'%s' successfully installed %d package%s."), i.name().c_str(), i.packages.size(), i.packages.size() == 1 ? _("") : _("s")),
 		             _("Magic Set Editor"), wxOK | wxICON_INFORMATION);
 	}
@@ -65,15 +65,17 @@ struct dependency_check : public unary_function<bool, PackagedP> {
 void Installer::install(bool local) {
 	// Destination directory
 	String install_dir = local ? ::packages.getLocalDataDir() : ::packages.getGlobalDataDir();
-	if (!wxDirExists(install_dir))
+	if (!wxDirExists(install_dir)) {
 		wxMkdir(install_dir, 0755);
+	}
 	
 	// All the packages we're installing.
 	vector<PackagedP> new_packages;
 
 	FOR_EACH(p, packages) {
-		if (wxDirExists(install_dir + _("/") + p) || wxFileExists(install_dir + _("/") + p))
+		if (wxDirExists(install_dir + _("/") + p) || wxFileExists(install_dir + _("/") + p)) {
 			throw PackageError(_("Package ") + p + _(" is already installed. Overwriting currently not supported."));
+		}
 		PackagedP pack;
 		wxString fn(wxFileName(p).GetExt());
 		if      (fn == _("mse-game"))            pack = new_intrusive<Game>();
@@ -90,7 +92,6 @@ void Installer::install(bool local) {
 		new_packages.push_back(pack);
 	}
 	
-
 	// Check dependencies for each and every package.
 	FOR_EACH(p, new_packages) {
 		FOR_EACH(d, p->dependencies) {
@@ -100,28 +101,31 @@ void Installer::install(bool local) {
 			}
 		}
 	}
-
+	
 	const FileInfos& file_infos = getFileInfos();
 	for (FileInfos::const_iterator it = file_infos.begin() ; it != file_infos.end() ; ++it) {
 		String file = it->first;
-
+		
 		wxFileName fn(file);
 		wxArrayString dirs = fn.GetDirs();
-
-		if (fn.IsDir() || !dirs.GetCount() || find(packages.begin(), packages.end(), dirs[0]) == packages.end())
+		
+		if (fn.IsDir() || !dirs.GetCount() || find(packages.begin(), packages.end(), dirs[0]) == packages.end()) {
 			continue;
-
+		}
+		
 		String current_dir = install_dir;
 		for (size_t j = 0; j < dirs.GetCount(); ++j) {
 			current_dir += _("/") + dirs[j];
-			if (!wxDirExists(current_dir) && !wxMkdir(current_dir, 0755))
+			if (!wxDirExists(current_dir) && !wxMkdir(current_dir, 0755)) {
 				throw PackageError(_("Cannot create folder ") + current_dir + _(" for install. Warning: some packages may have been installed anyway, and some may only be partially installed."));
+			}
 		}
-
+		
 		InputStreamP is = openIn(file);
 		wxFileOutputStream os (install_dir + _("/") + file);
-		if (!os.IsOk())
+		if (!os.IsOk()) {
 			throw PackageError(_("Cannot create file ") + install_dir + _("/") + file + _(" for install. Warning: some packages may have been installed anyway, and some may only be partially installed."));
+		}
 		os.Write(*is);
 	}
 }

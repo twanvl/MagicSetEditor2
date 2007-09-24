@@ -30,7 +30,7 @@ However some keys, like @mse version@ and @type@ must come first because they in
 
 A heirachical file can contain a reference to another file:
 >>>include file: <em>filename</em>
-Where filename must be an absolute [[type:filename]].
+Where filename must be an absolute or relative [[type:filename]].
 
 That file is included literally into the current one; except for indentation, the included file never escapes from the level the 'include file' line is on.
 

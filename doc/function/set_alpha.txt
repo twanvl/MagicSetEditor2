@@ -15,7 +15,7 @@ If @alpha@ is 1 the image stays the same, if @alpha@ is 0 the image becomes comp
 
 --Examples--
 > set_alpha("image1.png", alpha: 0.5)  ==  [[Image]]
->>> set_mask(<img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, alpha: 0.5) == <img src="image_set_alpha.png" alt='"image_set_alpha.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
+>>> set_alpha(<img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, alpha: 0.5) == <img src="image_set_alpha.png" alt='"image_set_alpha.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
 
 --See also--
 | [[fun:set_mask]]		Set the transparancy mask of an image.

@@ -66,7 +66,7 @@ void ImagesExportWindow::onOk(wxCommandEvent&) {
 	else if (sel == 2) gs.images_export_conflicts = CONFLICT_NUMBER;
 	else               gs.images_export_conflicts = CONFLICT_NUMBER_OVERWRITE;
 	// Script
-	ScriptP filename_script = parse(gs.images_export_filename, true);
+	ScriptP filename_script = parse(gs.images_export_filename, nullptr, true);
 	// Select filename
 	String name = wxFileSelector(_TITLE_("export images"),_(""), _LABEL_("filename is ignored"),_(""),
 		                         _LABEL_("filename is ignored")+_("|*"), wxSAVE, this);

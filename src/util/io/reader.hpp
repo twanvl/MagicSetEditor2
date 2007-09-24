@@ -16,6 +16,7 @@ template <typename T> class Defaultable;
 template <typename T> class Scriptable;
 DECLARE_POINTER_TYPE(Game);
 DECLARE_POINTER_TYPE(StyleSheet);
+class Packaged;
 
 // ----------------------------------------------------------------------------- : Reader
 
@@ -35,11 +36,13 @@ class Reader {
 	/// Construct a reader that reads from the given input stream
 	/** filename is used only for error messages
 	 */
-	Reader(const InputStreamP& input, const String& filename = wxEmptyString, bool ignore_invalid = false);
+	Reader(const InputStreamP& input, Packaged* package = nullptr, const String& filename = wxEmptyString, bool ignore_invalid = false);
 	
 	/// Construct a reader that reads a file in a package
-	/** Used for "include file" keys. */
-	Reader(const String& filename);
+	/** Used for "include file" keys.
+	 *  package can be nullptr
+	 */
+	Reader(Packaged* package, const String& filename);
 	
 	~Reader() { showWarnings(); }
 	
@@ -108,6 +111,9 @@ class Reader {
 	/// Indicate that the last value from getValue() was not handled, allowing it to be handled again
 	void unhandle();
 	
+	/// The package being read from
+	inline Packaged* getPackage() const { return package; }
+	
 	// --------------------------------------------------- : Data
 	/// App version this file was made with
 	Version file_app_version;
@@ -141,6 +147,8 @@ class Reader {
 	
 	/// Filename for error messages
 	String filename;
+	/// Package this file is from, if any
+	Packaged* package;
 	/// Line number of the current line for error messages
 	int line_number;
 	/// Line number of the previous_line
@@ -172,7 +180,7 @@ class Reader {
 	template <typename T>
 	void unknownKey(T& v) {
 		if (key == _("include file")) {
-			Reader reader(value);
+			Reader reader(package, value);
 			reader.handle_greedy(v);
 			moveNext();
 		} else {

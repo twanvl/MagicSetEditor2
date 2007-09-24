@@ -112,7 +112,7 @@ class ScriptCollection : public ScriptValue {
   public:
 	inline ScriptCollection(const Collection* v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
-	virtual String typeName() const { return format_string(_TYPE_("collection of"), type_name(*value->begin())); }
+	virtual String typeName() const { return _TYPE_1_("collection of", type_name(*value->begin())); }
 	virtual ScriptValueP getMember(const String& name) const {
 		long index;
 		if (name.ToLong(&index) && index >= 0 && (size_t)index < value->size()) {
@@ -160,7 +160,7 @@ class ScriptMap : public ScriptValue {
   public:
 	inline ScriptMap(const Collection* v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
-	virtual String typeName() const { return format_string(_TYPE_("collection of"), type_name(value->begin())); }
+	virtual String typeName() const { return _TYPE_1_("collection of", type_name(value->begin())); }
 	virtual ScriptValueP getMember(const String& name) const {
 		return get_member(*value, name);
 	}

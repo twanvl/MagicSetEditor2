@@ -70,7 +70,7 @@ void KeywordReminderTextValue::store() {
 	String new_value = untag(value);
 	// Try to parse the script
 	vector<ScriptParseError> parse_errors;
-	ScriptP new_script = parse(new_value, true, parse_errors);
+	ScriptP new_script = parse(new_value, nullptr, true, parse_errors);
 	if (parse_errors.empty()) {
 		// parsed okay, assign
 		errors.clear();

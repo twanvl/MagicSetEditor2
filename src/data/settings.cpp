@@ -248,7 +248,7 @@ void Settings::read() {
 		// settings file not existing is not an error
 		shared_ptr<wxFileInputStream> file = new_shared1<wxFileInputStream>(filename);
 		if (!file->Ok()) return; // failure is not an error
-		Reader reader(file, filename);
+		Reader reader(file, nullptr, filename);
 		reader.handle_greedy(*this);
 	}
 }

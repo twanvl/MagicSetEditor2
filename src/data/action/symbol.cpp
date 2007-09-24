@@ -356,7 +356,7 @@ AddSymbolPartAction::AddSymbolPartAction(Symbol& symbol, const SymbolPartP& part
 {}
 
 String AddSymbolPartAction::getName(bool to_undo) const {
-	return format_string(_ACTION_("add part"), part->name);
+	return _ACTION_1_("add part", part->name);
 }
 
 void AddSymbolPartAction::perform(bool to_undo) {
@@ -395,7 +395,7 @@ void RemoveSymbolPartsAction::check(SymbolGroup& group, const set<SymbolPartP>& 
 }
 
 String RemoveSymbolPartsAction::getName(bool to_undo) const {
-	return format_string(_ACTION_("remove parts"), removals.size() == 1 ? _TYPE_("shape") : _TYPE_("shapes"));
+	return _ACTION_1_("remove parts", removals.size() == 1 ? _TYPE_("shape") : _TYPE_("shapes"));
 }
 
 void RemoveSymbolPartsAction::perform(bool to_undo) {
@@ -433,7 +433,7 @@ DuplicateSymbolPartsAction::DuplicateSymbolPartsAction(Symbol& symbol, const set
 }
 
 String DuplicateSymbolPartsAction::getName(bool to_undo) const {
-	return format_string(_ACTION_("duplicate"), duplications.size() == 1 ? _TYPE_("shape") : _TYPE_("shapes"));
+	return _ACTION_1_("duplicate", duplications.size() == 1 ? _TYPE_("shape") : _TYPE_("shapes"));
 }
 
 void DuplicateSymbolPartsAction::perform(bool to_undo) {

@@ -117,7 +117,7 @@ class Package : public IntrusivePtrVirtualBase {
 	
 	template <typename T>
 	void readFile(const String& file, T& obj) {
-		Reader reader(openIn(file), absoluteFilename() + _("/") + file);
+		Reader reader(openIn(file), dynamic_cast<Packaged*>(this), absoluteFilename() + _("/") + file);
 		try {
 			reader.handle_greedy(obj);
 		} catch (const ParseError& err) {
@@ -196,12 +196,13 @@ class Packaged : public Package {
 	Packaged();
 	virtual ~Packaged() {}
 	
-	Version version;		///< Version number of this package
-	String short_name;		///< Short name of this package
-	String full_name;		///< Name of this package, for menus etc.
-	String icon_filename;	///< Filename of icon to use in package lists
+	Version version;			///< Version number of this package
+	Version compatible_version;	///< Earliest version number this package is compatible with
+	String short_name;			///< Short name of this package
+	String full_name;			///< Name of this package, for menus etc.
+	String icon_filename;		///< Filename of icon to use in package lists
 	vector<PackageDependencyP> dependencies;	///< Dependencies of this package
-	int    position_hint;	///< A hint for the package list
+	int    position_hint;		///< A hint for the package list
 	
 	/// Get an input stream for the package icon, if there is any
 	InputStreamP openIconFile();
@@ -214,6 +215,10 @@ class Packaged : public Package {
 	void loadFully();
 	void save();
 	void saveAs(const String& package, bool remove_unused = true);
+	
+	/// Check if this package lists a dependency on the given package
+	/** This is done to force people to fill in the dependencies */
+	void requireDependency(Packaged* package);
 	
   protected:
 	/// filename of the data file, and extension of the package file

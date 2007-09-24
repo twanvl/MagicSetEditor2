@@ -13,6 +13,8 @@
 #include <util/error.hpp>
 #include <script/script.hpp>
 
+class Packaged;
+
 // ----------------------------------------------------------------------------- : Parser
 
 /// Parse a String to a Script
@@ -21,8 +23,10 @@
  *
  *  Errors are stored in the output vector.
  *  If there are errors, the result is a null pointer
+ *
+ *  The package is for loading included files, it may be null
  */
-ScriptP parse(const String& s, bool string_mode, vector<ScriptParseError>& errors_out);
+ScriptP parse(const String& s, Packaged* package, bool string_mode, vector<ScriptParseError>& errors_out);
 
 /// Parse a String to a Script
 /** If string_mode then s is interpreted as a string,
@@ -30,7 +34,7 @@ ScriptP parse(const String& s, bool string_mode, vector<ScriptParseError>& error
  *
  *  If an error is encountered, an exception is thrown.
  */
-ScriptP parse(const String& s, bool string_mode = false);
+ScriptP parse(const String& s, Packaged* package = nullptr, bool string_mode = false);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

@@ -14,9 +14,9 @@
 
 // ----------------------------------------------------------------------------- : Reader
 
-Reader::Reader(const InputStreamP& input, const String& filename, bool ignore_invalid)
+Reader::Reader(const InputStreamP& input, Packaged* package, const String& filename, bool ignore_invalid)
 	: indent(0), expected_indent(0), state(OUTSIDE)
-	, filename(filename), line_number(0), previous_line_number(0)
+	, package(package), filename(filename), line_number(0), previous_line_number(0)
 	, ignore_invalid(ignore_invalid)
 	, input(input)
 {
@@ -24,12 +24,12 @@ Reader::Reader(const InputStreamP& input, const String& filename, bool ignore_in
 	handleAppVersion();
 }
 
-Reader::Reader(const String& filename)
+Reader::Reader(Packaged* pkg, const String& filename)
 	: indent(0), expected_indent(0), state(OUTSIDE)
-	, filename(filename), line_number(0), previous_line_number(0)
+	, package(pkg), filename(filename), line_number(0), previous_line_number(0)
 	, ignore_invalid(false)
-	, input(packages.openFileFromPackage(filename))
 {
+	input = packages.openFileFromPackage(package, filename);
 	moveNext();
 	handleAppVersion();
 }

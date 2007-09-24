@@ -263,7 +263,7 @@ card style:
 		render style: image
 		alignment: middle center
 		visible: { card.rule_text != "" and card.flavor_text != "" }
-		include file: magic-watermarks.mse-include/watermarks
+		include file: /magic-watermarks.mse-include/watermarks
 
 	############################# PT
 	power:

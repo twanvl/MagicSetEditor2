@@ -188,7 +188,7 @@ void CardsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 			ev.Enable(menu);
 			if (insertSymbolMenu->GetSubMenu() != menu  ||  (menu && menu->GetParent() != menuFormat)) {
 				// re-add the menu
-				menuFormat->Remove(insertSymbolMenu);
+				menuFormat->Remove(ID_INSERT_SYMBOL);
 				insertSymbolMenu->SetSubMenu(menu);
 				menuFormat->Append(insertSymbolMenu);
 			}

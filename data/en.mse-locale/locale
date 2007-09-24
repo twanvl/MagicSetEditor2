@@ -622,14 +622,24 @@ error:
 		You should leave a bug report on http://magicseteditor.sourceforge.net/
 	
 	# File related
-	file not found:				File not found: '%s' in package '%s'
+	file not found:					File not found: '%s' in package '%s'
+	file not found package like:
+		File not found: '%s' in package '%s'
+		If you are trying to open a file from another package, use "/package/filename"
 	file parse error:
 		Error while parsing file: '%s'
 		%s
 	package not found:			Package not found: '%s'
 	package out of date:		The package '%s' (version %s) is out of date, version %s is required.
+	package too new:			The package '%s' (version %s) is not compatible with version %s, required by '%s'
 	unable to open output file:	Error while saving, unable to open output file
 	unable to store file:		Error while saving, unable to store file
+	dependency not given:
+		The package '%s' uses files from the package '%s', but it does not list a dependency.
+		To resolve this, add:
+		depends on:
+			package: %s
+			version: %s
 	
 	# Script stuff
 	has no member:				%s has no member '%s'

@@ -101,17 +101,24 @@ void PackageManager::findMatching(const String& pattern, vector<PackagedP>& out)
 	}
 }
 
-InputStreamP PackageManager::openFileFromPackage(const String& name) {
-	// we don't want an absolute path (for security reasons)
-	String n;
-	if (!name.empty() && name.GetChar(0) == _('/')) n = name.substr(1);
-	else                                            n = name;
-	// break
-	size_t pos = n.find_first_of(_("/\\"));
-	if (pos == String::npos) throw FileNotFoundError(n, _("No package name specified, use 'package/filename'"));
-	// open package and file
-	PackagedP p = openAny(n.substr(0, pos));
-	return p->openIn(n.substr(pos+1));
+InputStreamP PackageManager::openFileFromPackage(Packaged*& package, const String& name) {
+	if (!name.empty() && name.GetChar(0) == _('/')) {
+		// absolute name; break name
+		size_t pos = name.find_first_of(_("/\\"), 1);
+		if (pos != String::npos) {
+			// open package
+			PackagedP p = openAny(name.substr(1, pos-1));
+			if (package) {
+				package->requireDependency(p.get());
+			}
+			package = p.get();
+			return p->openIn(name.substr(pos + 1));
+		}
+	} else if (package) {
+		// relative name
+		return package->openIn(name);
+	}
+	throw FileNotFoundError(name, _("No package name specified, use '/package/filename'"));
 }
 
 bool PackageManager::checkDependency(const PackageDependency& dep, bool report_errors) {
