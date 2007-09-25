@@ -116,7 +116,7 @@ help:
 	export images:			Export images for all cards
 	export apprentice:		Export the set so it can be played with in Apprentice
 	export mws:				Export the set so it can be played with in Magic Workstation
-	check updates:		Open the update window to download new packages, such as games, styles, and locales.
+	check updates:		Install/update packages.
 	print preview:		Shows cards as they will be printed
 	print:				Print cards from this set
 	reload data:		Reload all template files (game and style) as well as the set.
@@ -476,6 +476,7 @@ button:
 	# Welcome
 	new set:			New set
 	open set:			Open set
+	check updates:		Check updates
 	last opened set:	Last opened set
 	
 	# Preferences

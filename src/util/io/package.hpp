@@ -71,6 +71,9 @@ class Package : public IntrusivePtrVirtualBase {
 	/// @pre open not called before [TODO]
 	void open(const String& package);
 	
+	/// Open a package from a zipstream that doesn't necessarily have a filename (i.e. a URL).
+	void openZipStream(wxZipInputStream* input);
+	
 	/// Saves the package, by default saves as a zip file, unless
 	/// it was already a directory
 	/** If remove_unused=true all files that were in the file and
@@ -168,6 +171,7 @@ class Package : public IntrusivePtrVirtualBase {
 	/// Filestream for reading zip files
 	wxZipInputStream*  zipStream;
 	
+	void loadZipStream();
 	void openDirectory();
 	void openSubdir(const String&);
 	void openZipfile();

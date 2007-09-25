@@ -128,13 +128,15 @@ bool PackageManager::checkDependency(const PackageDependency& dep, bool report_e
 		// try global package
 		name = global_data_directory + _("/") + dep.package;
 		if (!wxFileExists(name) && !wxDirExists(name)) {
-			handle_warning(_ERROR_1_("package not found", dep.package),false);
+			if (report_errors)
+				handle_warning(_ERROR_1_("package not found", dep.package),false);
 			return false;
 		}
 	}
 	PackagedP package = openAny(dep.package, true);
 	if (package->version < dep.version) {
-		handle_warning(_ERROR_3_("package out of date", dep.package, package->version.toString(), dep.version.toString()),false);
+		if (report_errors)
+			handle_warning(_ERROR_3_("package out of date", dep.package, package->version.toString(), dep.version.toString()),false);
 		return false;
 	}
 	return true;

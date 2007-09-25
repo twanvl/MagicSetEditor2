@@ -65,7 +65,6 @@ const String& Package::absoluteFilename() const {
 	return filename;
 }
 
-
 void Package::open(const String& n) {
 	assert(!isOpened()); // not already opened
 	// get absolute path
@@ -84,6 +83,17 @@ void Package::open(const String& n) {
 	} else {
 		throw PackageNotFoundError(_("Package not found: '") + filename + _("'"));
 	}
+}
+
+void Package::openZipStream(wxZipInputStream* input) {
+	// close old streams
+	delete fileStream; fileStream = nullptr;
+	delete zipStream;
+
+	zipStream = input;
+	if (!zipStream->IsOk()) throw InternalError(_("Error opening package!"));
+
+	loadZipStream();
 }
 
 void Package::save(bool remove_unused) {
@@ -304,6 +314,15 @@ Package::FileInfo::~FileInfo() {
 	delete zipEntry;
 }
 
+void Package::loadZipStream() {
+	while (true) {
+		wxZipEntry* entry = zipStream->GetNextEntry();
+		if (!entry) break;
+		String name = toStandardName(entry->GetName());
+		files[name].zipEntry = entry;
+	}
+	zipStream->CloseEntry();
+}
 
 void Package::openDirectory() {
 	openSubdir(wxEmptyString);
@@ -341,15 +360,8 @@ void Package::openZipfile() {
 	zipStream  = new wxZipInputStream(*fileStream);
 	if (!zipStream->IsOk())  throw PackageError(_ERROR_1_("package not found", filename));
 	// read zip entries
-	while (true) {
-		wxZipEntry* entry = zipStream->GetNextEntry();
-		if (!entry) break;
-		String name = toStandardName(entry->GetName());
-		files[name].zipEntry = entry;
-	}
-	zipStream->CloseEntry();
+	loadZipStream();
 }
-
 
 void Package::saveToDirectory(const String& saveAs, bool remove_unused) {
 	// write to a directory

@@ -374,7 +374,6 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 		case ID_FILE_EXPORT_IMAGE: ev.Enable(!!current_panel->selectedCard());					break;
 		case ID_FILE_EXPORT_APPR:  ev.Enable(set->game->isMagic());								break;
 		case ID_FILE_EXPORT_MWS:   ev.Enable(set->game->isMagic());								break;
-		case ID_FILE_CHECK_UPDATES:ev.Enable(false); break; // no update checking in 0.3.5
 		case ID_FILE_EXIT:
 			// update for ID_FILE_RECENT done for a different id, because ID_FILE_RECENT may not be in the menu yet
 			updateRecentSets();
@@ -538,7 +537,9 @@ void SetWindow::onFileExportMWS(wxCommandEvent&) {
 }
 
 void SetWindow::onFileCheckUpdates(wxCommandEvent&) {
+	if (!askSaveAndContinue()) return;
 	(new UpdatesWindow)->Show();
+	Destroy();
 }
 
 void SetWindow::onFilePrint(wxCommandEvent&) {

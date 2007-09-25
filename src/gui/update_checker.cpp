@@ -22,6 +22,7 @@ DECLARE_POINTER_TYPE(PackageVersionData);
 DECLARE_POINTER_TYPE(VersionData);
 
 DECLARE_TYPEOF_COLLECTION(PackageVersionDataP);
+DECLARE_TYPEOF_COLLECTION(PackageDependencyP);
 
 // ----------------------------------------------------------------------------- : Update data
 
@@ -105,7 +106,7 @@ class CheckUpdateThread : public wxThread {
 			InputStreamP is(isP);
 			// Read version data
 			VersionDataP version_data;
-			Reader reader(is, _("updates"));
+			Reader reader(is, nullptr, _("updates"));
 			reader.handle(version_data);
 			// has the updates url changed?
 			if (!version_data->new_updates_url.empty()) {
@@ -261,8 +262,10 @@ class PackageUpdateList : public wxVListBox {
 			
 			#define SELECT_WHITE(color) (IsSelected(n) ? *wxWHITE : color)
 			
+			dc.SetClippingRegion(wxRect(rect.x, rect.y, rect.width / 2, rect.height));
 			dc.SetTextForeground(SELECT_WHITE(packageFront));
 			dc.DrawText(pack->name, rect.GetLeft() + 1, rect.GetTop());
+			dc.DestroyClippingRegion();
 			
 			dc.SetTextForeground(SELECT_WHITE(status_colors[status]));
 			dc.DrawText(status_texts[status], rect.GetLeft() + 240, rect.GetTop());
@@ -465,13 +468,102 @@ void UpdatesWindow::setDefaultPackageStatus() {
 	}
 }
 
+/// Select the dependencies for a package
+/**
+ *  \param pack The package data to check dependencies for.
+ *
+ *  This function will select all the dependencies for the package, to ensure
+ *  that the user can't install a package without it's dependencies.
+ */
 void UpdatesWindow::SelectPackageDependencies (PackageVersionDataP pack) {
+	FOR_EACH(dep, pack->depends) {
+		if (packages.checkDependency(*dep)) //It's already installed.
+			continue;
+		FOR_EACH(p, update_version_data->packages) {
+			if (p->name == dep->package) { //We have a match.
+				if (p->version >= dep->version) { //Versions line up
+
+					PackageStatus& status = package_data[p].first;
+					PackageAction& action = package_data[p].second;
+					if (status == STATUS_NOT_INSTALLED)
+						action = ACTION_INSTALL;
+					else if (status == STATUS_UPGRADEABLE)
+						action = ACTION_UPGRADE;
+					else //status == STATUS_INSTALLED
+						action = ACTION_NOTHING;
+					break;
+				}
+			}
+		}
+		// TODO: Decide what to do if a dependency can't be met.
+		//       It shouldn't happen with a decently maintained updates list.
+		//       But it could, and we need to decide what to do in this situation.
+	}
 }
 
+/// This finds all packages that depend on the one provided and marks them for removal.
 void UpdatesWindow::RemovePackageDependencies (PackageVersionDataP pack) {
+	FOR_EACH(p, update_version_data->packages) {
+		FOR_EACH(dep, p->depends) {
+			if (pack->name == dep->package) {
+				PackageStatus& status = package_data[p].first;
+				PackageAction& action = package_data[p].second;
+
+				if (status != STATUS_NOT_INSTALLED)
+					action = ACTION_UNINSTALL;
+				else // status == STATUS_NOT_INSTALLED
+					action = p->app_version > file_version ? ACTION_NOTHING : ACTION_NEW_MSE;
+				break;
+			}
+		}
+	}
 }
 
+/// This deals with the complexities of a downgrade and its dependencies.
 void UpdatesWindow::DowngradePackageDependencies (PackageVersionDataP pack) {
+	PackagedP old_pack = packages.openAny(pack->name, true);
+	FOR_EACH(dep, old_pack->dependencies) {
+		// dependencies the old version has, but the new one might not.
+		if (packages.checkDependency(*dep)) //It's already installed.
+			continue;
+		FOR_EACH(p, update_version_data->packages) {
+			if (p->name == dep->package) { //We have a match.
+				if (p->version >= dep->version) { //Versions line up
+					if (p->app_version > file_version) //We can't install this
+						continue;
+
+					PackageStatus& status = package_data[p].first;
+					PackageAction& action = package_data[p].second;
+					if (status == STATUS_NOT_INSTALLED)
+						action = ACTION_INSTALL;
+					else if (status == STATUS_UPGRADEABLE)
+						action = ACTION_UPGRADE;
+					break;
+				}
+			}
+		}
+		// TODO: Decide what to do if a dependency can't be met.
+		//       It shouldn't happen with a decently maintained updates list.
+		//       But it could, and we need to decide what to do in this situation.
+	}
+
+	FOR_EACH(p, update_version_data->packages) {
+		// dependencies that can no longer be met.
+		FOR_EACH(dep, p->depends) {
+			if (pack->name == dep->package) {
+				if (old_pack->version > dep->version) {
+					PackageStatus& status = package_data[p].first;
+					PackageAction& action = package_data[p].second;
+
+					if (status != STATUS_NOT_INSTALLED)
+						action = ACTION_UNINSTALL;
+					else // status == STATUS_NOT_INSTALLED
+						action = p->app_version > file_version ? ACTION_NOTHING : ACTION_NEW_MSE;
+					break;
+				}
+			}
+		}
+	}
 }
 
 BEGIN_EVENT_TABLE(UpdatesWindow, Frame)

@@ -37,9 +37,10 @@ class WelcomeWindow : public Frame {
 	void onPaint(wxPaintEvent&);
 	void draw(DC& dc);
 		
-	void onOpenSet (wxCommandEvent&);
-	void onNewSet  (wxCommandEvent&);
-	void onOpenLast(wxCommandEvent&);
+	void onOpenSet     (wxCommandEvent&);
+	void onNewSet      (wxCommandEvent&);
+	void onOpenLast    (wxCommandEvent&);
+	void onCheckUpdates(wxCommandEvent&);
 //	void onIdle    (wxIdleEvent& ev);
 	
 	/// Close the welcome window, and show the given set

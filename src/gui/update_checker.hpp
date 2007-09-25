@@ -10,6 +10,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <gui/welcome_window.hpp>
 
 // ----------------------------------------------------------------------------- : Update checking
 
@@ -39,6 +40,7 @@ DECLARE_POINTER_TYPE(PackageVersionData);
 class UpdatesWindow : public Frame {
   public:
 	UpdatesWindow();
+	~UpdatesWindow() { (new WelcomeWindow)->Show(); }
 	
 	void DrawTitles(wxPaintEvent&);
 
@@ -52,7 +54,7 @@ class UpdatesWindow : public Frame {
 		ACTION_UNINSTALL,
 		ACTION_UPGRADE,
 		ACTION_NOTHING,
-		ACTION_NEW_MSE
+		ACTION_NEW_MSE // means that you need a new version of MSE to install/upgrade
 	};
 
 	typedef pair<PackageStatus, PackageAction> PackageData;

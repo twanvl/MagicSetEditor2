@@ -42,6 +42,7 @@ button:
 	add item:	0
 	always:	0
 	browse:	0
+	check updates: 0
 	check now:	0
 	close:	0
 	defaults:	0
