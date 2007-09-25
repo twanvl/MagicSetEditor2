@@ -40,7 +40,7 @@ DECLARE_POINTER_TYPE(PackageVersionData);
 class UpdatesWindow : public Frame {
   public:
 	UpdatesWindow();
-	~UpdatesWindow() { (new WelcomeWindow)->Show(); }
+	~UpdatesWindow();
 	
 	void DrawTitles(wxPaintEvent&);
 

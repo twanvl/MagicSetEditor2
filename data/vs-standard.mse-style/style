@@ -367,7 +367,7 @@ card style:
 		visible:
 			script: styling.watermarkings
 		render style: image
-		include file: vs-common.mse-include/watermarks
+		include file: /vs-common.mse-include/watermarks
 		z index: 4
 		
 

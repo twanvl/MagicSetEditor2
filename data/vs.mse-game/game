@@ -4,6 +4,9 @@ short name: VS
 icon: card-back.png
 version: 2007-09-23
 position hint: 3
+depends on:
+	package: vs-common.mse-include
+	version: 2007-09-23
 
 ############################################################## Functions & filters
 # General functions
@@ -606,7 +609,7 @@ card field:
 card field:
 	type: choice
 	name: watermark
-	include file: vs-common.mse-include/watermark-names
+	include file: /vs-common.mse-include/watermark-names
 	editable: false
 	description: The Watermark for this set.
 

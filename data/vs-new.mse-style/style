@@ -342,7 +342,7 @@ card style:
 		visible: 
 			script: styling.watermarkings
 		render style: image
-		include file: vs-common.mse-include/watermarks
+		include file: /vs-common.mse-include/watermarks
 		z index: 4
 		
 
@@ -447,7 +447,7 @@ extra card field:
 	name: affiliation
 	editable: false
 	initial: none
-	include file: vs-common.mse-include/watermark-names
+	include file: /vs-common.mse-include/watermark-names
 
 extra card style:
 	playarea:
@@ -505,4 +505,4 @@ extra card style:
 		z index: 5
 		alignment: middle right
 		render style: image
-		include file: vs-common.mse-include/affiliations
+		include file: /vs-common.mse-include/affiliations

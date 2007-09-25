@@ -62,7 +62,7 @@ struct dependency_check : public unary_function<bool, PackagedP> {
 	PackageDependencyP dep;
 };
 
-void Installer::install(bool local) {
+void Installer::install(bool local, bool check_dependencies) {
 	// Destination directory
 	String install_dir = local ? ::packages.getLocalDataDir() : ::packages.getGlobalDataDir();
 	if (!wxDirExists(install_dir)) {
@@ -92,12 +92,14 @@ void Installer::install(bool local) {
 		new_packages.push_back(pack);
 	}
 	
-	// Check dependencies for each and every package.
-	FOR_EACH(p, new_packages) {
-		FOR_EACH(d, p->dependencies) {
-			if (find_if(new_packages.begin(), new_packages.end(), dependency_check(d)) == new_packages.end() &&
-				!::packages.checkDependency(*d, false)) {
-				throw PackageError(_("Unmet dependency for package ") + p->relativeFilename() + _(": ") + d->package + _(", version ") + d->version.toString() + _(" or higher."));
+	if (check_dependencies) {
+		// Check dependencies for each and every package.
+		FOR_EACH(p, new_packages) {
+			FOR_EACH(d, p->dependencies) {
+				if (find_if(new_packages.begin(), new_packages.end(), dependency_check(d)) == new_packages.end() &&
+					!::packages.checkDependency(*d, false)) {
+					throw PackageError(_("Unmet dependency for package ") + p->relativeFilename() + _(": ") + d->package + _(", version ") + d->version.toString() + _(" or higher."));
+				}
 			}
 		}
 	}

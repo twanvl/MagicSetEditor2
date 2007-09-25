@@ -8,6 +8,7 @@
 
 #include <gui/update_checker.hpp>
 #include <data/settings.hpp>
+#include <data/installer.hpp>
 #include <util/io/package_manager.hpp>
 #include <util/version.hpp>
 #include <util/window_id.hpp>
@@ -17,8 +18,11 @@
 #include <wx/url.h>
 #include <wx/html/htmlwin.h>
 #include <wx/vlbox.h>
+#include <wx/zipstrm.h>
+#include <list>
 
 DECLARE_POINTER_TYPE(PackageVersionData);
+DECLARE_POINTER_TYPE(Installer);
 DECLARE_POINTER_TYPE(VersionData);
 
 DECLARE_TYPEOF_COLLECTION(PackageVersionDataP);
@@ -358,6 +362,10 @@ UpdatesWindow::UpdatesWindow()
 	SetSizer(v);
 }
 
+UpdatesWindow::~UpdatesWindow() {
+	(new WelcomeWindow)->Show();
+}
+
 void UpdatesWindow::onUpdateCheckFinished(wxCommandEvent&) {
 	setDefaultPackageStatus();
 }
@@ -405,9 +413,53 @@ void UpdatesWindow::onActionChange(wxCommandEvent& ev) {
 }
 
 void UpdatesWindow::onApplyChanges(wxCommandEvent& ev) {
+	list<PackageVersionDataP> to_install, to_remove;
+
 	FOR_EACH(pack, update_version_data->packages) {
-		PackageAction action = package_data[pack].second;
+		switch (package_data[pack].second) {
+			case ACTION_INSTALL:
+				to_install.push_back(pack);
+				break;
+			case ACTION_UPGRADE:
+				to_install.push_back(pack);
+			case ACTION_UNINSTALL:
+				to_remove.push_back(pack);
+			default:;
+		}
 	}
+
+	FOR_EACH(pack, to_remove) {
+		wxFileName filename (packages.openAny(pack->name, true)->absoluteFilename());
+		if (filename.DirExists()) {
+			// TODO: Recursive removal of directory.
+		} else {
+			if (!wxRemoveFile(filename.GetFullPath()))
+				handle_error(_("Cannot delete ") + filename.GetFullPath() + _(" to remove package ") + pack->name + _(". "
+					"Other packages may have been removed, including packages that this on is dependent on. Please remove manually."));
+		}
+	}
+
+	FOR_EACH(pack, to_install) {
+		wxURL url(pack->url);
+		wxInputStream* is = url.GetInputStream();
+		if (!is) {
+			handle_error(_("Cannot fetch file ") + pack->url + _(" to install package ") + pack->name + _(". "
+				"Other packages may have been installed, including packages that depend on this one. "
+				"Please remove those packages manually or install this one manually."));
+		}
+		wxZipInputStream zis(is);
+		InstallerP inst(new Installer);
+
+		inst->openZipStream(&zis);
+		inst->install(isInstallLocal(settings.install_type), false);
+		delete is;
+	}
+
+	setDefaultPackageStatus();
+	updateButtons(package_list->GetSelection());
+	package_list->Refresh();
+
+	packages.clearPackageCache();
 }
 
 void UpdatesWindow::updateButtons(int id) {
@@ -446,9 +498,9 @@ void UpdatesWindow::setDefaultPackageStatus() {
 	FOR_EACH(p, update_version_data->packages) {
 		PackagedP pack;
 		try { pack = packages.openAny(p->name, true); }
-		catch (const PackageError&) { } // We couldn't open a package... wonder why?
+		catch (PackageNotFoundError&) { } // We couldn't open a package... no cause for alarm
 		
-		if (!pack) {
+		if (!pack || !(wxFileExists(pack->absoluteFilename()) || wxDirExists(pack->absoluteFilename()))) {
 			// not installed
 			if (p->app_version > file_version) {
 				package_data[p] = PackageData(STATUS_NOT_INSTALLED, ACTION_NEW_MSE);
@@ -512,7 +564,7 @@ void UpdatesWindow::RemovePackageDependencies (PackageVersionDataP pack) {
 				if (status != STATUS_NOT_INSTALLED)
 					action = ACTION_UNINSTALL;
 				else // status == STATUS_NOT_INSTALLED
-					action = p->app_version > file_version ? ACTION_NOTHING : ACTION_NEW_MSE;
+					action = p->app_version > file_version ? ACTION_NEW_MSE : ACTION_NOTHING;
 				break;
 			}
 		}
@@ -545,6 +597,8 @@ void UpdatesWindow::DowngradePackageDependencies (PackageVersionDataP pack) {
 		// TODO: Decide what to do if a dependency can't be met.
 		//       It shouldn't happen with a decently maintained updates list.
 		//       But it could, and we need to decide what to do in this situation.
+		//       Ideally, some sort of error should occur, such that we don't have packages
+		//       with unmet dependencies.
 	}
 
 	FOR_EACH(p, update_version_data->packages) {
@@ -558,7 +612,7 @@ void UpdatesWindow::DowngradePackageDependencies (PackageVersionDataP pack) {
 					if (status != STATUS_NOT_INSTALLED)
 						action = ACTION_UNINSTALL;
 					else // status == STATUS_NOT_INSTALLED
-						action = p->app_version > file_version ? ACTION_NOTHING : ACTION_NEW_MSE;
+						action = p->app_version > file_version ? ACTION_NEW_MSE : ACTION_NOTHING;
 					break;
 				}
 			}

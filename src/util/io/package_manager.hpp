@@ -78,6 +78,11 @@ class PackageManager {
 	/// Check if the given dependency is currently installed
 	bool checkDependency(const PackageDependency& dep, bool report_errors = true);
 	
+	/// Clear that cache of opened packages
+	/** Used by the update manager
+	 */
+	inline void clearPackageCache() { loaded_packages.clear(); }
+	
 	inline String getGlobalDataDir() const { return global_data_directory; }
 	inline String getLocalDataDir() const { return local_data_directory; }
 	
