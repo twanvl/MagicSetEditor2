@@ -7,7 +7,7 @@
 $url = shift;
 
 while ($ARGV = shift) {
-	$f = $ARGV =~ /(([-a-z]+).mse-(game|style|symbol-font|include|export-template|locale))/;
+	$f = $ARGV =~ /((([a-z]+)[-a-z]*).mse-(game|style|symbol-font|include|export-template|locale))/;
 	if (!$f) {
 		warn "$ARGV not an appropriate package.";
 		next;
@@ -15,19 +15,17 @@ while ($ARGV = shift) {
 
 	$fullname = $1;
 	$name = $2;
+	$prefix = $3;
+	$type = $4;
 
-	open(FILE, "$ARGV/$3");
+	open(FILE, "$ARGV/$type");
 
-	$version = $msever = $dependencies = "";
+	$version = $msever = $dependencies = $shortname = "";
 
 	while (<FILE>) {
-		$version = $1 if /^(?:\xef\xbb\xbf)?version: (.*)$/;
-		$msever = $1 if /^(?:\xef\xbb\xbf)?mse[ _]version: (.*)$/;
 		while (/^(?:\xef\xbb\xbf)?depends[ _]on:\s*$/) {
 			$dep = $depver = "";
 			while (<FILE>) {
-				$version = $1 if /^(?:\xef\xbb\xbf)?version: (.*)$/;
-				$msever = $1 if /^(?:\xef\xbb\xbf)?mse[ _]version: (.*)$/;
 				last unless /^\t/;
 				$dep = $1 if /^\tpackage: (.*)$/;
 				$depver = $1 if /^\tversion: (.*)$/;
@@ -38,6 +36,9 @@ while ($ARGV = shift) {
 			}
 			$dependencies .= "\tdepends on:\n\t\tpackage: $dep\n\t\tversion: $depver\n";
 		}
+		$version = $1 if /^(?:\xef\xbb\xbf)?version: (.*)$/;
+		$msever = $1 if /^(?:\xef\xbb\xbf)?mse[ _]version: (.*)$/;
+		$shortname = $1 if /^(?:\xef\xbb\xbf)?short[ _]name: (.*)$/;
 	}
 
 	close(FILE);
@@ -48,5 +49,13 @@ while ($ARGV = shift) {
 		next;
 	}
 
-	print "package:\n\tname: $fullname\n\turl: $url$name.mse-installer\n\tversion: $version\n\tapp version: $msever\n$dependencies\tdescription:\n\n";
+	$shortname = $name unless $shortname;
+
+	if ($type ne "locale" && $type ne "game") {
+		$packagetype = "$prefix $type";
+	} else {
+		$packagetype = $type;
+	}
+
+	print "package:\n\tname: $fullname\n\ttype: $packagetype\n\turl: $url$name.mse-installer\n\tversion: $version\n\tapp version: $msever\n$dependencies\tdisplay name: $shortname\n\tdescription:\n\n";
 }

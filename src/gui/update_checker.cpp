@@ -18,8 +18,11 @@
 #include <wx/url.h>
 #include <wx/html/htmlwin.h>
 #include <wx/vlbox.h>
-#include <wx/zipstrm.h>
+#include <wx/wfstream.h>
+#include <wx/dir.h>
 #include <list>
+#include <set>
+#include <iostream>
 
 DECLARE_POINTER_TYPE(PackageVersionData);
 DECLARE_POINTER_TYPE(Installer);
@@ -36,6 +39,8 @@ class PackageVersionData : public IntrusivePtrBase<PackageVersionData> {
 	PackageVersionData() {}
 	
 	String  name;						///< Name of the package
+	String  type;						///< Type of package ("magic style" or "game")
+	String  display_name;				///< Name to show on package list.
 	String  description;				///< html description
 	String  url;						///< Where can the package be downloaded?
 	Version version;					///< Version number of the download
@@ -58,6 +63,8 @@ class VersionData : public IntrusivePtrBase<VersionData> {
 
 IMPLEMENT_REFLECTION(PackageVersionData) {
 	REFLECT(name);
+	REFLECT(type);
+	REFLECT(display_name);
 	REFLECT(description);
 	REFLECT(url);
 	REFLECT(version);
@@ -97,7 +104,7 @@ class CheckUpdateThread : public wxThread {
   public:
 	virtual void* Entry() {
 		Work();
-		return 0;;
+		return 0;
 	}
 	
 	static void Work() {
@@ -188,7 +195,7 @@ void show_update_dialog(Window* parent) {
 class PackageUpdateList : public wxVListBox {
   public:
 	PackageUpdateList(UpdatesWindow* parent)
-		: wxVListBox (parent, ID_PACKAGE_LIST, wxDefaultPosition, wxSize(480,210), wxNO_BORDER | wxVSCROLL)
+		: wxVListBox (parent, ID_PACKAGE_LIST, wxDefaultPosition, wxSize(540,210), wxNO_BORDER | wxVSCROLL)
 		, parent(parent)
 	{
 		if (!checking_updates && !update_version_data) {
@@ -266,16 +273,20 @@ class PackageUpdateList : public wxVListBox {
 			
 			#define SELECT_WHITE(color) (IsSelected(n) ? *wxWHITE : color)
 			
-			dc.SetClippingRegion(wxRect(rect.x, rect.y, rect.width / 2, rect.height));
+			dc.SetClippingRegion(wxRect(rect.x, rect.y, 180, rect.height));
 			dc.SetTextForeground(SELECT_WHITE(packageFront));
-			dc.DrawText(pack->name, rect.GetLeft() + 1, rect.GetTop());
+			dc.DrawText(pack->display_name, rect.GetLeft() + 1, rect.GetTop());
+			dc.DestroyClippingRegion();
+			
+			dc.SetClippingRegion(wxRect(rect.x + 180, rect.y, 120, rect.height));
+			dc.DrawText(pack->type, rect.GetLeft() + 180, rect.GetTop());
 			dc.DestroyClippingRegion();
 			
 			dc.SetTextForeground(SELECT_WHITE(status_colors[status]));
-			dc.DrawText(status_texts[status], rect.GetLeft() + 240, rect.GetTop());
+			dc.DrawText(status_texts[status], rect.GetLeft() + 300, rect.GetTop());
 			
 			dc.SetTextForeground(SELECT_WHITE(action_colors[action]));
-			dc.DrawText(action_texts[action], rect.GetLeft() + 360, rect.GetTop());
+			dc.DrawText(action_texts[action], rect.GetLeft() + 420, rect.GetTop());
 			
 			#undef SELECT_WHITE
 		}
@@ -304,10 +315,43 @@ BEGIN_EVENT_TABLE(PackageUpdateList, wxVListBox)
 	EVT_CUSTOM(UPDATE_CHECK_FINISHED_EVT, wxID_ANY, PackageUpdateList::onUpdateCheckingFinished)
 END_EVENT_TABLE()
 
+// ----------------------------------------------------------------------------- : RecursiveDelete
+// Move somewhere better?
+
+class RecursiveDeleter : public wxDirTraverser {
+	public:
+		set<String> to_delete;
+		String start_dir;
+		RecursiveDeleter (String start)
+		: start_dir (start)
+		{
+			to_delete.insert(start_dir);
+		}
+
+		wxDirTraverseResult OnFile(const String& filename) {
+			if (!wxRemoveFile(filename))
+				handle_error(_("Cannot delete ") + filename + _(". "
+					"The remainder of the package has still been removed, if possible."
+					"Other packages may have been removed, including packages that this on is dependent on. Please remove manually."));
+			return wxDIR_CONTINUE;
+		}
+
+		wxDirTraverseResult OnDir(const String& dirname) {
+			to_delete.insert(dirname);
+			return wxDIR_CONTINUE;
+		}
+
+		void finishDelete() {
+			FOR_EACH_REVERSE(dir, to_delete) {
+				wxRmdir(dir);
+			}
+		}
+};
+
 // ----------------------------------------------------------------------------- : UpdateWindow
 
 UpdatesWindow::UpdatesWindow()
-	: Frame(nullptr, wxID_ANY, _TITLE_("package list"), wxDefaultPosition, wxSize(480,440), wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN)
+	: Frame(nullptr, wxID_ANY, _TITLE_("package list"), wxDefaultPosition, wxSize(540,440), wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN)
 {
 	SetIcon(wxIcon());
 	wxBoxSizer *v = new wxBoxSizer(wxVERTICAL);
@@ -316,38 +360,40 @@ UpdatesWindow::UpdatesWindow()
 	wxBoxSizer *h3 = new wxBoxSizer(wxHORIZONTAL);
 	
 	package_list = new PackageUpdateList(this);
-	description_window = new HtmlWindowToBrowser(this, wxID_ANY, wxDefaultPosition, wxSize(480,100), wxHW_SCROLLBAR_AUTO | wxSUNKEN_BORDER);
+	description_window = new HtmlWindowToBrowser(this, wxID_ANY, wxDefaultPosition, wxSize(540,100), wxHW_SCROLLBAR_AUTO | wxSUNKEN_BORDER);
 	
 	setDefaultPackageStatus();
 	
-	package_title = new wxStaticText(this, wxID_ANY, _TITLE_("package name"),   wxDefaultPosition, wxSize(120,15), wxALIGN_LEFT | wxST_NO_AUTORESIZE);
+	package_title = new wxStaticText(this, wxID_ANY, _TITLE_("package name"),   wxDefaultPosition, wxSize(180,15), wxALIGN_LEFT | wxST_NO_AUTORESIZE);
+	type_title    = new wxStaticText(this, wxID_ANY, _TITLE_("package type"),   wxDefaultPosition, wxSize(120,15), wxALIGN_LEFT | wxST_NO_AUTORESIZE);
 	status_title  = new wxStaticText(this, wxID_ANY, _TITLE_("package status"), wxDefaultPosition, wxSize(120,15), wxALIGN_LEFT | wxST_NO_AUTORESIZE);
 	new_title     = new wxStaticText(this, wxID_ANY, _TITLE_("new status"),     wxDefaultPosition, wxSize(120,15), wxALIGN_LEFT | wxST_NO_AUTORESIZE);
 	
-	h1->Add(package_title);
-	h1->Add(status_title);
+	h1->Add(package_title, 3);
+	h1->Add(type_title, 2);
+	h1->Add(status_title, 2);
 	h1->Add(new_title, 2);
 	
 	(install_button = new wxButton(this, ID_INSTALL, _MENU_("install package")))->Disable();
 	(upgrade_button = new wxButton(this, ID_UPGRADE, _MENU_("upgrade package")))->Disable();
 	(remove_button  = new wxButton(this, ID_REMOVE,  _MENU_("remove package")))->Disable();
 	(cancel_button  = new wxButton(this, ID_CANCEL,  _MENU_("cancel changes")))->Disable();
-	
-	h2->AddStretchSpacer(1);
-	h2->Add(install_button);
-	h2->AddStretchSpacer(2);
-	h2->Add(upgrade_button);
-	h2->AddStretchSpacer(2);
-	h2->Add(remove_button);
-	h2->AddStretchSpacer(2);
-	h2->Add(cancel_button);
-	h2->AddStretchSpacer(1);
 
 	apply_button = new wxButton(this, ID_APPLY,   _MENU_("apply changes"));
+	
+	h2->AddStretchSpacer();
+	h2->Add(install_button);
+	h2->AddStretchSpacer();
+	h2->Add(upgrade_button);
+	h2->AddStretchSpacer();
+	h2->Add(remove_button);
+	h2->AddStretchSpacer();
+	h2->Add(cancel_button);
+	h2->AddStretchSpacer();
 
-	h3->AddStretchSpacer(1);
+	h3->AddStretchSpacer();
 	h3->Add(apply_button);
-	h3->AddStretchSpacer(1);
+	h3->AddStretchSpacer();
 	
 	v->Add(h1);
 	v->Add(package_list);
@@ -429,12 +475,15 @@ void UpdatesWindow::onApplyChanges(wxCommandEvent& ev) {
 	}
 
 	FOR_EACH(pack, to_remove) {
-		wxFileName filename (packages.openAny(pack->name, true)->absoluteFilename());
-		if (filename.DirExists()) {
-			// TODO: Recursive removal of directory.
+		String filename = packages.openAny(pack->name, true)->absoluteFilename();
+		if (wxDirExists(filename)) {
+			wxDir dir(filename);
+			RecursiveDeleter rd (filename);
+			dir.Traverse(rd);
+			rd.finishDelete();
 		} else {
-			if (!wxRemoveFile(filename.GetFullPath()))
-				handle_error(_("Cannot delete ") + filename.GetFullPath() + _(" to remove package ") + pack->name + _(". "
+			if (!wxRemoveFile(filename))
+				handle_error(_("Cannot delete ") + filename + _(" to remove package ") + pack->name + _(". "
 					"Other packages may have been removed, including packages that this on is dependent on. Please remove manually."));
 		}
 	}
@@ -447,17 +496,25 @@ void UpdatesWindow::onApplyChanges(wxCommandEvent& ev) {
 				"Other packages may have been installed, including packages that depend on this one. "
 				"Please remove those packages manually or install this one manually."));
 		}
-		wxZipInputStream zis(is);
-		InstallerP inst(new Installer);
+		wxString filename = wxFileName::CreateTempFileName(_(""));
+		wxFileOutputStream os (filename);
 
-		inst->openZipStream(&zis);
+		os.Write(*is);
+		os.Close();
+
+		InstallerP inst(new Installer);
+		inst->open(filename);
 		inst->install(isInstallLocal(settings.install_type), false);
+
 		delete is;
+		wxRemoveFile(filename);
 	}
 
 	setDefaultPackageStatus();
 	updateButtons(package_list->GetSelection());
 	package_list->Refresh();
+
+	handle_pending_errors();
 
 	packages.clearPackageCache();
 }
@@ -529,7 +586,7 @@ void UpdatesWindow::setDefaultPackageStatus() {
  */
 void UpdatesWindow::SelectPackageDependencies (PackageVersionDataP pack) {
 	FOR_EACH(dep, pack->depends) {
-		if (packages.checkDependency(*dep)) //It's already installed.
+		if (packages.checkDependency(*dep, false)) //It's already installed.
 			continue;
 		FOR_EACH(p, update_version_data->packages) {
 			if (p->name == dep->package) { //We have a match.
@@ -576,7 +633,7 @@ void UpdatesWindow::DowngradePackageDependencies (PackageVersionDataP pack) {
 	PackagedP old_pack = packages.openAny(pack->name, true);
 	FOR_EACH(dep, old_pack->dependencies) {
 		// dependencies the old version has, but the new one might not.
-		if (packages.checkDependency(*dep)) //It's already installed.
+		if (packages.checkDependency(*dep, false)) //It's already installed.
 			continue;
 		FOR_EACH(p, update_version_data->packages) {
 			if (p->name == dep->package) { //We have a match.

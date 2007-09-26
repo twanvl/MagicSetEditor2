@@ -85,17 +85,6 @@ void Package::open(const String& n) {
 	}
 }
 
-void Package::openZipStream(wxZipInputStream* input) {
-	// close old streams
-	delete fileStream; fileStream = nullptr;
-	delete zipStream;
-
-	zipStream = input;
-	if (!zipStream->IsOk()) throw InternalError(_("Error opening package!"));
-
-	loadZipStream();
-}
-
 void Package::save(bool remove_unused) {
 	assert(!needSaveAs());
 	saveAs(filename, remove_unused);
