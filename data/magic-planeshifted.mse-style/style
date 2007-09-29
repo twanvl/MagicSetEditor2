@@ -5,7 +5,7 @@ full name: Planar Chaos Timeshifts
 icon: card-sample.png
 position hint: 011
 
-version: 2007-09-23
+version: 2007-09-29
 depends on:
 	package: magic.mse-game
 	version: 2007-09-23
@@ -184,9 +184,9 @@ card style:
 
 	############################# Image
 	image:
-		left:	31
+		left:	32
 		top:	62
-		width:	312
+		width:	311
 		height:	{ if styling.image_size == "extended" then 408 else 228 }
 		z index: 1
 		mask:

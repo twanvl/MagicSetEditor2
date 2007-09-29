@@ -3,7 +3,7 @@ short name: Vanguard
 full name: Magic Vanguard
 icon: card-sample.png
 position hint: 02
-version: 2007-09-23
+version: 2007-09-29
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -928,12 +928,12 @@ keyword:
 	keyword: Clash
 	match: clash
 	mode: expert
-	reminder: Each clashing player reveals the top card of his or her library then puts that card on the top or bottom. A player wins if his or her card had a higher converted mana cost.
+	reminder: Each clashing player reveals the top card of his or her library, then puts that card on the top or bottom. A player wins if his or her card had a higher converted mana cost.
 keyword:
 	keyword: Changeling
 	match: changeling
 	mode: expert
-	reminder: It is every creature type even if it isn't in play.
+	reminder: It is every creature type at all times.
 keyword:
 	keyword: Hideaway
 	match: hideaway

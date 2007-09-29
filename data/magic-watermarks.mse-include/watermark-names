@@ -13,6 +13,13 @@ choice:
 	choice: green
 	choice: snow
 choice:
+	name: transparent mana symbol
+	choice: white
+	choice: blue
+	choice: black
+	choice: red
+	choice: green
+choice:
 	name: guild symbol
 	choice: The Azorius Senate (W/U)
 	choice: House Dimir (U/B)
@@ -24,8 +31,8 @@ choice:
 	choice: The Golgari (B/G)
 	choice: The Boros Legion (R/W)
 	choice: The Simic Combine (G/U)
-choice: 
-	name: xander hybrid mana
+choice:
+	name: colored xander hybrid mana
 	choice: B/R
 	choice: U/B
 	choice: B/G
@@ -36,8 +43,8 @@ choice:
 	choice: G/W
 	choice: R/W
 	choice: W/U
-choice:
-	name: colored xander hybrid mana
+choice: 
+	name: xander hybrid mana
 	choice: B/R
 	choice: U/B
 	choice: B/G
