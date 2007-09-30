@@ -610,7 +610,7 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("format"),               script_format);
 	ctx.setVariable(_("format rule"),          script_format_rule);
 	ctx.setVariable(_("curly quotes"),         script_curly_quotes);
-	ctx.setVariable(_("regex_escape"),         script_regex_escape);
+	ctx.setVariable(_("regex escape"),         script_regex_escape);
 	// tagged string
 	ctx.setVariable(_("tag contents"),         script_tag_contents);
 	ctx.setVariable(_("remove tag"),           script_tag_remove);

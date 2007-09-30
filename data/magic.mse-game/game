@@ -1,4 +1,4 @@
-﻿mse version: 0.3.5
+mse version: 0.3.5
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
@@ -112,7 +112,7 @@ init script:
 	text_to_color := {
 		# Note: running filter_text is quite slow, do a quick 'contains' check first
 		if contains(match: card_name) then (
-		  text := filter_text(match: card_name+"(</[-a-z]+>)? is (colorless|all colors|((blue|white|green|red|black)((,|,? and) (blue|white|green|red|black))*))\\.")
+		  text := filter_text(match: regex_escape(card_name)+"(</[-a-z]+>)? is (colorless|all colors|((blue|white|green|red|black)((,|,? and) (blue|white|green|red|black))*))\\.")
 		  if text != "" then (
 		    if contains(text, match: "all colors") then (
 			colors := "WUBRG"
