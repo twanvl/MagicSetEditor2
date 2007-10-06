@@ -4,12 +4,19 @@ full name: New Style EM
 short name: New Style
 icon: card-sample.png
 position hint: 006
-version: 2007-09-23
+
+version: 2007-10-05
 depends on:
 	package: vs.mse-game
 	version: 2007-09-23
 depends on:
 	package: vs-common.mse-include
+	version: 2007-09-23
+depends on:
+	package: vs-standard-new.mse-symbol-font
+	version: 2007-09-23
+depends on:
+	package: vs-standard-arrow.mse-symbol-font
 	version: 2007-09-23
 
 card width: 375
