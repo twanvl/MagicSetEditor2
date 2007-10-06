@@ -143,14 +143,14 @@ card style:
 			color: rgb(0,0,0)
 	casting cost:
 		right: 343
-		top : 29
+		top : 30
 		width: { max(30, card_style.casting_cost.content_width) + 5 }
 		height: 23
 		alignment: bottom right
 		symbol font:
 			name: magic-mana-large
 			size: 15
-			alignment: bottom right
+			alignment: middle right
 		always symbol: true
 		z index: 2
 		padding top: 0

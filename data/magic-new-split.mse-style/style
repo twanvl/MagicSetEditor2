@@ -193,7 +193,7 @@ card style:
 		symbol font:
 			name: magic-mana-large
 			size: 12
-			alignment: bottom right
+			alignment: middle right
 		always symbol: true
 		z index: 2
 		padding top: 0
@@ -207,7 +207,7 @@ card style:
 		symbol font:
 			name: magic-mana-large
 			size: 12
-			alignment: bottom right
+			alignment: middle right
 		always symbol: true
 		z index: 2
 		padding top: 0
