@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.5
-version: 2007-09-23
+version: 2007-10-12
 # Symbol font in the 'popup' style, used for casting costs on modern cards
 
 image font size: 135
@@ -198,6 +198,9 @@ symbol:
 symbol:
 	code: Z
 	image: mana_z.png
+symbol:
+	code: I
+	image: mana_infinite.png
 as text: [0-9]+(?!/)
 text font:
 	name: MPlantin
@@ -219,6 +222,7 @@ insert symbol menu:
 	item: X
 	item: Y
 	item: Z
+	item: I
 	item:
 		type: custom
 		name: colorless

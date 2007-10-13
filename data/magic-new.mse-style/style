@@ -195,7 +195,7 @@ card style:
 			color: rgb(0,0,0)
 	casting cost:
 		right: 343
-		top : 32
+		top : 31
 		width: { max(30, card_style.casting_cost.content_width) + 5 }
 		height: 23
 		alignment: bottom right

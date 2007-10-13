@@ -1,6 +1,6 @@
 ﻿mse version: 0.3.5
 # Symbol font for missing characters
-version: 2007-09-23
+version: 2007-10-13
 
 image font size: 16
 horizontal space: 2
@@ -16,3 +16,11 @@ symbol:
 symbol:
 	code: ::
 	image: dot.png
+
+##############################################################
+# Insert-symbol menu
+insert symbol menu:
+	item: [
+	item: ]
+	item: @
+	item: ::

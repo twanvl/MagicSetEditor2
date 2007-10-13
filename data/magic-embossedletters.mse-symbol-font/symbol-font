@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.5
-version: 2007-09-23
+version: 2007-10-13
 
 image font size: 46
 horizontal space: 1.2
@@ -185,3 +185,45 @@ text margin left:   .26
 text margin right:  .2
 text margin top:    -.12
 text margin bottom: -.12
+
+
+##############################################################
+# Insert-symbol menu
+insert symbol menu:
+	item:
+		name: A-M
+		item: A
+		item: Æ
+		item: B
+		item: C
+		item: D
+		item: E
+		item: F
+		item: G
+		item: H
+		item: I
+		item: J
+		item: K
+		item: L
+		item: M
+	item:
+		name: N-Z
+		item: N
+		item: O
+		item: P
+		item: Q
+		item: R
+		item: S
+		item: T
+		item: U
+		item: V
+		item: W
+		item: X
+		item: Y
+		item: Z
+	item:
+		name: punctuation
+		item: &
+		item: '
+		item: ,
+		item: -

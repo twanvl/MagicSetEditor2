@@ -1,11 +1,11 @@
-﻿mse version: 0.3.4
+﻿mse version: 0.3.5
 game: magic
 full name: FPM's Promo Magic
 short name: FPM Promo
 icon: card-sample.png
 position hint: 404
 
-version: 2007-09-23
+version: 2007-10-13
 depends on:
 	package: magic.mse-game
 	version: 2007-09-23
@@ -61,12 +61,15 @@ styling field:
 	choice: Matrix
 	choice: MatrixBoldSmallCaps
 styling field:
-	type: choice
+	type: color
 	name: font color
-	description: Use white or black for the card's font color?
-	initial: black
-	choice: black
-	choice: white
+	description: The default text and typeline color for cards
+	choice:
+		name: black
+		color: rgb(0,0,0)
+	choice:
+		name: white
+		color: rgb(255,255,255)
 styling field:
 	type: boolean
 	name: beveled mana symbols
@@ -215,10 +218,7 @@ card style:
 		font:
 			name: Matrix
 			size: 10
-			color: 
-				{ if styling.font_color = "white" then rgb(255,255,255)
-				else if styling.font_color = "black" then rgb(0,0,0)
-				else rgb(0,0,0) }
+			color: { styling.font_color }
 			separator color: rgb(128,128,128)
 
 	############################# Text box
@@ -232,10 +232,7 @@ card style:
 			italic name: MPlantin-Italic
 			size: 14
 			scale down to: 6
-			color: 
-				{ if styling.font_color = "white" then rgb(255,255,255)
-				else if styling.font_color = "black" then rgb(0,0,0)
-				else rgb(0,0,0) }
+			color: { styling.font_color }
 		symbol font:
 			name:
 				{ if styling.beveled_mana_symbols then "magic-mana-beveled"
@@ -313,10 +310,7 @@ card style:
 		font:
 			name: MPlantin-Italic
 			size: 8
-			color: 
-				{ if styling.font_color = "white" then rgb(255,255,255)
-				else if styling.font_color = "black" then rgb(0,0,0)
-				else rgb(0,0,0) }
+			color: { styling.font_color }
 
 	copyright line:
 		left: 65
@@ -328,10 +322,7 @@ card style:
 		font:
 			name: MPlantin
 			size: 7
-			color: 
-				{ if styling.font_color = "white" then rgb(255,255,255)
-				else if styling.font_color = "black" then rgb(0,0,0)
-				else rgb(0,0,0) }
+			color: { styling.font_color }
 
 
 ############################################################## Extra card fields

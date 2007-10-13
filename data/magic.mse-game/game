@@ -1,10 +1,10 @@
-mse version: 0.3.5
+﻿mse version: 0.3.5
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
 position hint: 01
 
-version: 2007-09-29
+version: 2007-10-13
 depends on:
 	package: magic-blends.mse-include
 	version: 2007-09-23
@@ -20,7 +20,7 @@ init script:
 	############################################################## Sorting mana symbols
 	
 	# correctly sort a mana symbol (no guild mana)
-	mana_sort       := sort_rule(order: "XYZ[0123456789]S(WUBRG)")
+	mana_sort       := sort_rule(order: "XYZI[0123456789]S(WUBRG)")
 	# correctly sort guild mana
 	mana_sort_guild := replace_rule(
 			match: "./.|././.|./././.|.[|]",
@@ -256,7 +256,7 @@ init script:
 	for_mana_costs := format_cost := {
 		if input.separator_before == "—" and contains(input.param, match: " ") then (
 			if contains(input.param, match:",") then (
-				if match(match: "^[STXYZWUBRG0-9/|]+,", input.param) then
+				if match(match: "^[STXYZIWUBRG0-9/|]+,", input.param) then
 					"{add}<param-cost>{combined_cost(input.param)}</param-cost>"
 				else "<param-cost>{combined_cost(input.param)}</param-cost>"
 			) else
@@ -267,7 +267,7 @@ init script:
 	alternative_cost := replace_rule(match:"^[A-Z]", replace: { to_lower() })
 	combined_cost := replace_rule(match:", [A-Z]", replace: { to_lower() })+
 		replace_rule(match:",", replace:" and")+
-		replace_rule(match:"^[STXYZWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
+		replace_rule(match:"^[STXYZIWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
 		replace_rule(match:"^[A-Z]", replace: { to_lower() })
 	long_dash := replace_rule(match:"-", replace:"—")
 	# Utilities for keywords
@@ -290,8 +290,8 @@ init script:
 		    |adds?|pay(ed)?[ ](with|using)
 		    )
 		    ([ ]either)?			 # pay either X or Y
-		    ([ ]<sym[^>]*>[STXYZWUBRG0-9/|]+</sym[^>]*>,)* # pay X, Y or Z
-		    ([ ]<sym[^>]*>[STXYZWUBRG0-9/|]+</sym[^>]*>[ ](and|or|and/or))* # pay X or Y
+		    ([ ]<sym[^>]*>[STXYZIWUBRG0-9/|]+</sym[^>]*>,)* # pay X, Y or Z
+		    ([ ]<sym[^>]*>[STXYZIWUBRG0-9/|]+</sym[^>]*>[ ](and|or|and/or))* # pay X or Y
 		    [ ]<match> 
 		    ([,.)]|$				# (end of word)
 		    |[ ][^ .,]*$			# still typing...
@@ -339,16 +339,16 @@ init script:
 			) +
 		# step 4 : explict non mana symbols
 		replace_rule(
-			match: "\\][STXYZWUBRG0-9/|]+\\[",
+			match: "\\][STXYZIWUBRG0-9/|]+\\[",
 			replace: {"<nosym>" + mana_filter_t() + "</nosym>"} ) +
 		# step 5 : add mana & tap symbols
 		replace_rule(
-			match: "[STXYZWUBRG0-9/|]+",
+			match: "[STXYZIWUBRG0-9/|]+",
 			in_context: mana_context,
 			replace: {"<sym-auto>" + mana_filter_t() + "</sym-auto>"} ) +
 		# step 5b : add explict mana symbols
 		replace_rule(
-			match: "\\[[STXYZWUBRG0-9/|]+\\]",
+			match: "\\[[STXYZIWUBRG0-9/|]+\\]",
 			replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
 		# step 7 : italic reminder text
 		replace_rule(
@@ -1978,7 +1978,7 @@ keyword mode:
 
 keyword parameter type:
 	name: mana
-	match: [STXYZ0-9WUBRG/|]+
+	match: [STXYZI0-9WUBRG/|]+
 	refer script:
 		name: normal
 		description: No changes made
@@ -1991,7 +1991,7 @@ keyword parameter type:
 # By pichoro and bunnierein
 keyword parameter type:
 	name: cost
-	match: [ ][STXYZ0-9WUBRG/|]*|[-—][^(\n]*
+	match: [ ][STXYZI0-9WUBRG/|]*|[-—][^(\n]*
 	separator before is: [ —-]
 	separator after is: [.]
 	optional: false

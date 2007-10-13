@@ -39,8 +39,8 @@ init script:
 		then	"oa"
 		else	input
 	}
-	template      := { (if type == "pt" then "/magic-new.mse-style/" else "") + artifact_template() + "{type}.jpg" }
-	land_template := { (if type == "pt" then "/magic-new.mse-style/" else "") +(if input == "a" then "c" else input) + "l{type}.jpg" }
+	template      := { artifact_template() + "{type}.jpg" }
+	land_template := { (if input == "a" then "c" else input) + "l{type}.jpg" }
 	
 	# Use the normal tap symbol
 	mana_t := {
@@ -188,7 +188,7 @@ card style:
 
 	type:
 		left: 33
-		top : 445
+		top : 447
 		width: { 308 - max(22,card_style.rarity.content_width) }
 		height: 18
 		alignment: top shrink-overflow

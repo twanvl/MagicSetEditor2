@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.5
-version: 2007-09-23
+version: 2007-10-13
 # Symbol font for the new template
 
 image font size: 135
@@ -143,7 +143,7 @@ symbol:
 	code: Sinister Syndicate
 	image: sinistersyndicate.png
 symbol:
-	code: Skeleton  Crew
+	code: Skeleton Crew
 	image: skeletoncrew.png
 symbol:
 	code: Spider-Friends
@@ -174,7 +174,7 @@ symbol:
 	image: ultimates.png
 symbol:
 	code: X-Men
-	image: xmen.png			
+	image: xmen.png
 symbol:
 	code: 0
 	image: 0.png
@@ -205,3 +205,81 @@ symbol:
 symbol:
 	code: 9
 	image: 9.png
+
+##############################################################
+# Insert-symbol menu
+insert symbol menu:
+	item: ->
+	item: <>
+	item: Activate
+	item:
+		name: numbers
+		item: 0
+		item: 1
+		item: 2
+		item: 3
+		item: 4
+		item: 5
+		item: 6
+		item: 7
+		item: 8
+		item: 9
+	item:
+		name: Marvel Teams
+		item: AIM
+		item: Alpha Flight
+		item: Avengers
+		item: Brood
+		item: Brotherhood
+		item: Captain America
+		item: Doom
+		item: Excalibur
+		item: Fantastic Four
+		item: The Hand
+		item: Hellfire Club
+		item: Heralds of Galactus
+		item: Heroes for Hire
+		item: Horsemen of Apocalypse
+		item: Hydra
+		item: Kree
+		item: Marvel Defenders
+		item: Marvel Knights
+		item: Masters of Evil
+		item: New Warriors
+		item: Omega Flight
+		item: Outsiders
+		item: Serpent Society
+		item: Shi'ar
+		item: SHIELD
+		item: Sinister Syndicate
+		item: Spider-Friends
+		item: Starjammers
+		item: Thor
+		item: Thunderbolts
+		item: The Ultimates
+		item: X-Men
+	item:
+		name: DC Teams
+		item: Anti-Matter
+		item: Arkham Inmates
+		item: Birds of Prey
+		item: Femizons
+		item: Gotham Knights
+		item: Green Lantern
+		item: JLA
+		item: JSA
+		item: Legionnaires
+		item: The Order
+		item: Outsiders
+		item: Secret Six
+		item: Shadowpact
+		item: Skeleton Crew
+		item: Team Superman
+		item: Teen Titans
+	item:
+		name: Other Teams
+		item: B.P.R.D.
+		item: Thule Society
+		item: Autobot
+		item: Decepticon
+		item: Quintesson
