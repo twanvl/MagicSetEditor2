@@ -8,8 +8,8 @@
 # If executed as root (including via sudo), it is installed to /usr/local/share/magicseteditor. (with an executable symlink in /usr/local/bin)
 # If executed as any other user, it will fail.
 
-case `id -un` in
-	root)
+case $UID in
+	0)
 		INSTALL_DIR='/usr/local/share/magicseteditor/';
 		EXEC_SYMLINK='/usr/local/bin/magicseteditor';;
 	*)

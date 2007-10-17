@@ -330,9 +330,9 @@ class RecursiveDeleter : public wxDirTraverser {
 
 		wxDirTraverseResult OnFile(const String& filename) {
 			if (!wxRemoveFile(filename))
-				handle_error(_("Cannot delete ") + filename + _(". "
-					"The remainder of the package has still been removed, if possible."
-					"Other packages may have been removed, including packages that this on is dependent on. Please remove manually."));
+				handle_error(_("Cannot delete ") + filename + _(". ")
+					_("The remainder of the package has still been removed, if possible.")
+					_("Other packages may have been removed, including packages that this on is dependent on. Please remove manually."));
 			return wxDIR_CONTINUE;
 		}
 
@@ -483,8 +483,8 @@ void UpdatesWindow::onApplyChanges(wxCommandEvent& ev) {
 			rd.finishDelete();
 		} else {
 			if (!wxRemoveFile(filename))
-				handle_error(_("Cannot delete ") + filename + _(" to remove package ") + pack->name + _(". "
-					"Other packages may have been removed, including packages that this on is dependent on. Please remove manually."));
+				handle_error(_("Cannot delete ") + filename + _(" to remove package ") + pack->name + _(". ")
+					_("Other packages may have been removed, including packages that this on is dependent on. Please remove manually."));
 		}
 	}
 
@@ -492,9 +492,9 @@ void UpdatesWindow::onApplyChanges(wxCommandEvent& ev) {
 		wxURL url(pack->url);
 		wxInputStream* is = url.GetInputStream();
 		if (!is) {
-			handle_error(_("Cannot fetch file ") + pack->url + _(" to install package ") + pack->name + _(". "
-				"Other packages may have been installed, including packages that depend on this one. "
-				"Please remove those packages manually or install this one manually."));
+			handle_error(_("Cannot fetch file ") + pack->url + _(" to install package ") + pack->name + _(". ")
+				_("Other packages may have been installed, including packages that depend on this one. ")
+				_("Please remove those packages manually or install this one manually."));
 		}
 		wxString filename = wxFileName::CreateTempFileName(_(""));
 		wxFileOutputStream os (filename);
