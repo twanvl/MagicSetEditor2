@@ -23,7 +23,7 @@
 #ifdef _MSC_VER
 #	define THREAD_LOCAL __declspec(thread)
 #	define HAVE_TLS 1
-#elseif defined __linux__
+#elseif defined __linux
 #	define THREAD_LOCAL __thread
 #	define HAVE_TLS 1
 #else
@@ -102,7 +102,7 @@
 
 		~ThreadLocalObject () {
 			for (typename map<int,T*>::iterator i = objects.begin(); i != objects.end(); ++i) {
-				delete *i;
+				delete (*i).second;
 			}
 		}
 	};
