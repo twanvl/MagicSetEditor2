@@ -23,7 +23,7 @@
 #ifdef _MSC_VER
 #	define THREAD_LOCAL __declspec(thread)
 #	define HAVE_TLS 1
-#elseif defined __linux
+#elif defined __linux
 #	define THREAD_LOCAL __thread
 #	define HAVE_TLS 1
 #else
