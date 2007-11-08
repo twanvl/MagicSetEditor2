@@ -16,6 +16,7 @@
 #include <gfx/gfx.hpp> // for ImageCombine
 #include <script/scriptable.hpp>
 #include <script/image.hpp>
+#include <wx/image.h>
 
 // ----------------------------------------------------------------------------- : ChoiceField
 

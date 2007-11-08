@@ -1,4 +1,4 @@
-﻿mse version: 0.3.5
+mse version: 0.3.5
 game: magic
 short name: Future
 full name: Futureshift
@@ -35,6 +35,7 @@ card dpi: 150
 
 init script:
 	mask_hybrid_with_land := { styling.grey_hybrid_name }
+	text_filter := { card.extra_data.paintbrush }
 	
 	template_suffix := [card: "card.jpg", pt: "pt.png", textbox: "textbox.png", typeline: "typeline.png"]
 	template := { input + template_suffix[type] }

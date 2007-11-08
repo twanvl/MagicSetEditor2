@@ -82,7 +82,7 @@ size_t DropDownMultipleChoiceList::selection() const {
 }
 
 DropDownList* DropDownMultipleChoiceList::createSubMenu(ChoiceField::ChoiceP group) const {
-	return new DropDownMultipleChoiceList(const_cast<DropDownMultipleChoiceList*>(this), true, cve, group);
+	return new DropDownMultipleChoiceList(static_cast<Window*>(const_cast<DropDownMultipleChoiceList*>(this)), true, cve, group);
 }
 
 // ----------------------------------------------------------------------------- : MultipleChoiceValueEditor
