@@ -127,14 +127,19 @@ END_EVENT_TABLE  ()
 
 // ----------------------------------------------------------------------------- : Preferences page : global
 
+bool compare_package_name(const PackagedP& a, const PackagedP& b) {
+	return a->name() < b->name();
+}
+
 GlobalPreferencesPage::GlobalPreferencesPage(Window* parent)
 	: PreferencesPage(parent)
 {
 	// init controls
-	language = new wxComboBox(this, wxID_ANY, _(""), wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY | wxCB_SORT);
+	language = new wxComboBox(this, wxID_ANY, _(""), wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
 	// set values
 	vector<PackagedP> locales;
 	::packages.findMatching(_("*.mse-locale"), locales);
+	sort(locales.begin(), locales.end(), compare_package_name);
 	int n = 0;
 	FOR_EACH(package, locales) {
 		language->Append(package->name() + _(": ") + package->full_name, package.get());

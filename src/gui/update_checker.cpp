@@ -30,6 +30,8 @@ DECLARE_POINTER_TYPE(VersionData);
 
 DECLARE_TYPEOF_COLLECTION(PackageVersionDataP);
 DECLARE_TYPEOF_COLLECTION(PackageDependencyP);
+DECLARE_TYPEOF(list<PackageVersionDataP>);
+DECLARE_TYPEOF(set<String>);
 
 // ----------------------------------------------------------------------------- : Update data
 
