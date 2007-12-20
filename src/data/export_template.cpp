@@ -20,6 +20,15 @@ ExportTemplate::ExportTemplate()
 String ExportTemplate::typeNameStatic() { return _("export-template"); }
 String ExportTemplate::typeName() const { return _("export-template"); }
 
+void ExportTemplate::validate(Version) {
+	if (!game) {
+		throw Error(_ERROR_("no game specified for export template"));
+	}
+	// an export template depends on the game it is made for
+	requireDependency(game.get());
+}
+
+
 IMPLEMENT_REFLECTION(ExportTemplate) {
 	REFLECT_BASE(Packaged);
 	REFLECT(game);

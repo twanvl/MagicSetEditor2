@@ -63,6 +63,15 @@ String StyleSheet::stylesheetName() const {
 String StyleSheet::typeNameStatic() { return _("style"); }
 String StyleSheet::typeName() const { return _("style"); }
 
+void StyleSheet::validate(Version) {
+	if (!game) {
+		throw Error(_ERROR_("no game specified for stylesheet"));
+	}
+	// a stylsheet depends on the game it is made for
+	requireDependency(game.get());
+}
+
+
 StyleP StyleSheet::styleFor(const FieldP& field) {
 	if (card_style.containsKey(field)) {
 		return card_style[field];
