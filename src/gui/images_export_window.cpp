@@ -56,26 +56,13 @@ ImagesExportWindow::ImagesExportWindow(Window* parent, const SetP& set)
 
 // ----------------------------------------------------------------------------- : Exporting the images
 
-void ImagesExportWindow::onOk(wxCommandEvent&) {
-	// Update settings
-	GameSettings& gs = settings.gameSettingsFor(*set->game);
-	gs.images_export_filename  = format->GetValue();
-	int sel = conflicts->GetSelection();
-	if      (sel == 0) gs.images_export_conflicts = CONFLICT_KEEP_OLD;
-	else if (sel == 1) gs.images_export_conflicts = CONFLICT_OVERWRITE;
-	else if (sel == 2) gs.images_export_conflicts = CONFLICT_NUMBER;
-	else               gs.images_export_conflicts = CONFLICT_NUMBER_OVERWRITE;
+void ExportCardImages::export(const SetP& set, wxFileName& fn, const String& filename_template, FilenameConflicts conflicts) {
 	// Script
-	ScriptP filename_script = parse(gs.images_export_filename, nullptr, true);
-	// Select filename
-	String name = wxFileSelector(_TITLE_("export images"),_(""), _LABEL_("filename is ignored"),_(""),
-		                         _LABEL_("filename is ignored")+_("|*"), wxSAVE, this);
-	if (name.empty()) return;
-	wxFileName fn(name);
+	ScriptP filename_script = parse(filename_template, nullptr, true);
 	// Export
 	std::set<String> used; // for CONFLICT_NUMBER_OVERWRITE
 	FOR_EACH(card, set->cards) {
-		if (isSelected(card)) {
+		if (exportCard(card)) {
 			// filename for this card
 			Context& ctx = set->getContext(card);
 			String filename = untag(ctx.eval(*filename_script)->toString());
@@ -85,7 +72,7 @@ void ImagesExportWindow::onOk(wxCommandEvent&) {
 			// does the file exist?
 			if (fn.FileExists()) {
 				// file exists, what to do?
-				switch (gs.images_export_conflicts) {
+				switch (conflicts) {
 					case CONFLICT_KEEP_OLD:  goto next_card;
 					case CONFLICT_OVERWRITE: break;
 					case CONFLICT_NUMBER: {
@@ -111,8 +98,30 @@ void ImagesExportWindow::onOk(wxCommandEvent&) {
 		}
 		next_card:;
 	}
+}
+
+void ImagesExportWindow::onOk(wxCommandEvent&) {
+	// Update settings
+	GameSettings& gs = settings.gameSettingsFor(*set->game);
+	gs.images_export_filename  = format->GetValue();
+	int sel = conflicts->GetSelection();
+	if      (sel == 0) gs.images_export_conflicts = CONFLICT_KEEP_OLD;
+	else if (sel == 1) gs.images_export_conflicts = CONFLICT_OVERWRITE;
+	else if (sel == 2) gs.images_export_conflicts = CONFLICT_NUMBER;
+	else               gs.images_export_conflicts = CONFLICT_NUMBER_OVERWRITE;
+	// Select filename
+	String name = wxFileSelector(_TITLE_("export images"),_(""), _LABEL_("filename is ignored"),_(""),
+		                         _LABEL_("filename is ignored")+_("|*"), wxSAVE, this);
+	if (name.empty()) return;
+	wxFileName fn(name);
+	// Export
+	export(set, fn, gs.images_export_filename, gs.images_export_conflicts);
 	// Done
 	EndModal(wxID_OK);
+}
+
+bool ImagesExportWindow::exportCard(const CardP& card) const {
+	return isSelected(card);
 }
 
 

@@ -16,6 +16,7 @@
 #include <data/format/formats.hpp>
 #include <gui/welcome_window.hpp>
 #include <gui/update_checker.hpp>
+#include <gui/images_export_window.hpp>
 #include <gui/set/window.hpp>
 #include <gui/symbol/window.hpp>
 #include <gui/thumbnail_thread.hpp>
@@ -139,11 +140,35 @@ int MSE::OnRun() {
 					            + _("  -v --version      \tShow version information.\n")
 					            + _("  --symbol-editor   \tShow the symbol editor instead of the welcome window.\n")
 					            + _("  --create-installer\n")
-					            + _("      FILE [FILE]...\tCreate an instaler named FILE, containing the listed packges.\n") );
+					            + _("      FILE [FILE]...\tCreate an instaler named FILE, containing the listed packges.\n")
+					            + _("  --export\n")
+					            + _("      FILE IMAGE    \tExport the cards in a set to image files,\n")
+					            + _("                    \tIMAGE is the same format as for 'export all card images'.\n") );
 					return EXIT_SUCCESS;
 				} else if (arg == _("--version") || arg == _("-v")) {
 					// dump version
 					write_stdout( _("Magic Set Editor\nVersion ") + app_version.toString() + version_suffix );
+					return EXIT_SUCCESS;
+				} else if (arg == _("--export")) {
+					if (argc <= 2) {
+						handle_error(Error(_("No input file specified for --export")));
+						return EXIT_FAILURE;
+					}
+					SetP set = import_set(argv[2]);
+					// path
+					String out = argc >= 3 ? argv[3] : settings.gameSettingsFor(*set->game).images_export_filename;
+					String path = _(".");
+					size_t pos = out.find_last_of(_("/\\"));
+					if (pos != String::npos) {
+						path = out.substr(0, pos);
+						if (!wxDirExists(path)) wxMkdir(path);
+						path += _("/x");
+						out  = out.substr(pos + 1);
+					}
+					wxFileName fn(path);
+					// export
+					ExportCardImages export;
+					export.export(set, fn, out, CONFLICT_NUMBER_OVERWRITE);
 					return EXIT_SUCCESS;
 				} else {
 					handle_error(_("Invalid command line argument:\n") + String(argv[1]));
