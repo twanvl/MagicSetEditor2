@@ -87,6 +87,24 @@ void set_alpha(Image& img, const Image& img_alpha) {
 	}
 }
 
+void set_alpha(Image& img, Byte* al, const wxSize& alpha_size) {
+	if (img.GetWidth() != alpha_size.GetWidth() || img.GetHeight() != alpha_size.GetHeight()) {
+		throw Error(_("Image must have same size as mask"));
+	}
+	if (!img.HasAlpha()) {
+		// copy
+		img.InitAlpha();
+		memcpy(img.GetAlpha(), al, img.GetWidth() * img.GetHeight());
+	} else{
+		// merge
+		Byte *im = img.GetAlpha();
+		size_t size = img.GetWidth() * img.GetHeight();
+		for (size_t i = 0 ; i < size ; ++i) {
+			im[i] = (im[i] * al[i]) / 255;
+		}
+	}
+}
+
 void set_alpha(Image& img, double alpha) {
 	Byte b_alpha = alpha * 255;
 	if (!img.HasAlpha()) {

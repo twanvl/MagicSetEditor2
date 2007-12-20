@@ -126,6 +126,10 @@ void resample(const Image& img_in, Image& img_out) {
 }
 
 void resample_and_clip(const Image& img_in, Image& img_out, wxRect rect) {
+	// mask to alpha
+	if (img_in.HasMask() && !img_in.HasAlpha()) {
+		const_cast<Image&>(img_in).InitAlpha();
+	}
 	// starting position in data
 	int offset_in = (rect.x + img_in.GetWidth() * rect.y);
 	if (img_out.GetHeight() == rect.height) {

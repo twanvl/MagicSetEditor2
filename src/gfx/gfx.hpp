@@ -130,6 +130,8 @@ void draw_combine_image(DC& dc, UInt x, UInt y, const Image& img, ImageCombine c
 
 /// Use the red channel of img_alpha as alpha channel for img
 void set_alpha(Image& img, const Image& img_alpha);
+/// Use the given bytes as alpha channel for img
+void set_alpha(Image& img, Byte* alphas, const wxSize& alphas_size);
 /// Set the transparency of img
 void set_alpha(Image& img, double alpha);
 

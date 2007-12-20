@@ -30,11 +30,7 @@ AlphaMask::~AlphaMask() {
 }
 
 void AlphaMask::setAlpha(Image& img) const {
-	if (img.GetWidth() != size.GetWidth() || img.GetHeight() != size.GetHeight()) {
-		throw InternalError(_("Image used with maks must have same size as mask"));
-	}
-	if (!img.HasAlpha()) img.InitAlpha();
-	memcpy(img.GetAlpha(), alpha, size.GetWidth() * size.GetHeight());
+	set_alpha(img, alpha, size);
 }
 
 void AlphaMask::setAlpha(Bitmap& bmp) const {
