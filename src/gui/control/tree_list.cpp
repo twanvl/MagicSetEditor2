@@ -263,30 +263,13 @@ void TreeList::onLeftDClick(wxMouseEvent& ev) {
 // ----------------------------------------------------------------------------- : TreeList : Copy of VScrolledWindow
 
 void TreeList::ScrollToLine(size_t line) {
-	// Based on VScrolledWindow::ScrollToLine
-	
     // determine the real first line to scroll to: we shouldn't scroll beyond the end
     line = (size_t)min((int)line, (int)(total_lines - visible_lines_t));
-	
-    // nothing to do?
+	// nothing to do?
     if (line == first_line) return;
-	
-    //%size_t first_line_old = first_line;
     first_line = line;
-    
     UpdateScrollbar();
-	
 	Refresh(false);
-	/*
-    // finally refresh the display -- but only redraw as few lines as possible to avoid flicker
-    wxSize cs = GetClientSize();
-    int dy = (int)(first_line_old - first_line) * item_height;
-    if (abs(dy) >= cs.y - header_height) {
-        Refresh(false);
-    } else {
-        wxRect rect(0, header_height, cs.x, cs.y - header_height);
-        ScrollWindow(0, dy, &rect);
-    }*/
 }
 
 void TreeList::UpdateScrollbar() {
