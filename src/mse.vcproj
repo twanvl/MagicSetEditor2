@@ -615,6 +615,12 @@
 				<File
 					RelativePath=".\gui\control\package_list.hpp">
 				</File>
+				<File
+					RelativePath=".\gui\control\tree_list.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\control\tree_list.hpp">
+				</File>
 				<Filter
 					Name="card_list"
 					Filter="">

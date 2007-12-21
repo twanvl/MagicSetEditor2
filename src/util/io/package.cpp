@@ -436,9 +436,25 @@ String Package::toStandardName(const String& name) {
 
 // ----------------------------------------------------------------------------- : Packaged
 
-IMPLEMENT_REFLECTION(PackageDependency) {
-	REFLECT(package);
-	REFLECT(version);
+template <> void Reader::handle(PackageDependency& dep) {
+	if (!isComplex()) {
+		handle(dep.package);
+		size_t pos = dep.package.find_first_of(_(' '));
+		if (pos != String::npos) {
+			dep.version = Version::fromString(dep.package.substr(pos+1));
+			dep.package = dep.package.substr(0,pos);
+		}
+	} else {
+		handle(_("package"), dep.package);
+		handle(_("version"), dep.version);
+	}
+}
+template <> void Writer::handle(const PackageDependency& dep) {
+	if (dep.version != Version()) {
+		handle(dep.package + _(" ") + dep.version.toString());
+	} else {
+		handle(dep.package);
+	}
 }
 
 // note: reflection must be declared before it is used
