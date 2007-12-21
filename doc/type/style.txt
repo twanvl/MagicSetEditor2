@@ -19,7 +19,7 @@ To specify the horizontal location ''two'' of @left@, @width@ and @right@ must b
 For example:
 > left:  10
 > width: 20
-Implies that @right@ is 30 pixels if the card is 60 pixels wide.
+Implies that @right@ is 30 pixels.
 
 Similairly:
 > left: 10
@@ -45,10 +45,10 @@ Would, with different angles, look like:<br/>
 | @z index@		[[type:int]]				@0@		Stacking of this box, fields with a heigher @z index@ are placed on top of those with a lower index.
 | @left@		[[type:scriptable]] [[type:double]]	''Required''	Distance between left edge of the box and the left of the card in pixels.
 | @width@		[[type:scriptable]] [[type:double]]	''Required''	Width of the box in pixels.
-| @right@		[[type:scriptable]] [[type:double]]	''Required''	Distance between right edge of the box and the right of the card in pixels.
+| @right@		[[type:scriptable]] [[type:double]]	''Required''	Distance between right edge of the box and the ''left'' of the card in pixels.
 | @top@			[[type:scriptable]] [[type:double]]	''Required''	Distance between top edge of the box and the top of the card in pixels.
 | @height@		[[type:scriptable]] [[type:double]]	''Required''	Height of the box in pixels.
-| @bottom@		[[type:scriptable]] [[type:double]]	''Required''	Distance between bottom edge of the box and the bottom of the card in pixels.
+| @bottom@		[[type:scriptable]] [[type:double]]	''Required''	Distance between bottom edge of the box and the ''top'' of the card in pixels.
 | @visible@		[[type:scriptable]] [[type:boolean]]	@true@		Is this field visible at all?
 
 The rest of the properties depend on the type of [[type:field]] this style is for.
