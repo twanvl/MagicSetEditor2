@@ -151,6 +151,9 @@ class AlphaMask : public IntrusivePtrBase<AlphaMask> {
 	/// Is the given location fully transparent?
 	bool isTransparent(int x, int y) const;
 	
+	/// Determine a convex hull polygon *around* the mask
+	void convexHull(vector<wxPoint>& points) const;
+	
 	/// Size of the mask
 	wxSize size;
   private:

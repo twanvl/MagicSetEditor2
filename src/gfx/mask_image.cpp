@@ -41,7 +41,61 @@ void AlphaMask::setAlpha(Bitmap& bmp) const {
 
 bool AlphaMask::isTransparent(int x, int y) const {
 	if (x < 0 || y > 0 || x >= size.x || y >= size.y) return false;
-	return alpha[x + y * size.GetWidth()] < 20;
+	return alpha[x + y * size.x] < 20;
+}
+
+bool convex(const wxPoint& p, const wxPoint& q, const wxPoint& r) {
+	return p.y*q.x - p.x*q.y - p.y*r.x + q.y*r.x + p.x*r.y - q.x*r.y > 0;
+}
+void make_convex(vector<wxPoint>& points) {
+	while (points.size() > 2 &&
+	       !convex(points[points.size() - 3]
+	              ,points[points.size() - 2]
+	              ,points[points.size() - 1])) {
+		points.erase(points.end() - 2);
+	}
+}
+
+void AlphaMask::convexHull(vector<wxPoint>& points) const {
+	// Left side
+	int miny = size.y, maxy = -1, lastx = 0;
+	for (int y = 0 ; y < size.y ; ++y) {
+		for (int x = 0 ; x < size.x ; ++x) {
+			if (alpha[x + y * size.x] >= 20) {
+				// opaque pixel
+				miny = min(miny,y);
+				maxy = y;
+				if (y == miny) {
+					points.push_back(wxPoint(x-1,y-1));
+				}
+				points.push_back(wxPoint(x-1,y));
+				make_convex(points);
+				lastx = x;
+				break;
+			}
+		}
+	}
+	if (maxy == -1) return; // No image
+	points.push_back(wxPoint(lastx-1,maxy+1));
+	make_convex(points);
+	// Right side
+	for (int y = maxy ; y >= miny ; --y) {
+		for (int x = size.x - 1 ; x >= 0 ; --x) {
+			if (alpha[x + y * size.x] >= 20) {
+				// opaque pixel
+				if (y == maxy) {
+					points.push_back(wxPoint(x+1,y+1));
+					make_convex(points);
+				}
+				points.push_back(wxPoint(x+1,y));
+				make_convex(points);
+				lastx = x;
+				break;
+			}
+		}
+	}
+	points.push_back(wxPoint(lastx+1,miny-1));
+	make_convex(points);
 }
 
 // ----------------------------------------------------------------------------- : ContourMask
