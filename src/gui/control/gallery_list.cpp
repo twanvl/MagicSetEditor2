@@ -22,60 +22,125 @@ const int BORDER = 1; // border aroung items
 const int SPACING = MARGIN + 2*BORDER; // distance between items
 
 GalleryList::GalleryList(Window* parent, int id, int direction, bool always_focused)
-	: wxScrolledWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER | wxWANTS_CHARS | (direction == wxHORIZONTAL ? wxHSCROLL : wxVSCROLL) )
+	: wxPanel(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER | wxWANTS_CHARS | (direction == wxHORIZONTAL ? wxHSCROLL : wxVSCROLL) )
 	, selection(NO_SELECTION)
 	, direction(direction)
-	, scroll_increment(10)
 	, always_focused(always_focused)
+	, visible_start(0)
 {}
 
+void GalleryList::select(size_t item, bool event) {
+	if (item >= itemCount()) return;
+	// select
+	size_t old_sel = selection;
+	selection = item;
+	// ensure visible
+	if (itemStart(selection) < visible_start) {
+		scrollTo(itemStart(selection));
+	} else if (itemEnd(selection) > visibleEnd()) {
+		scrollTo(itemEnd(selection) + visible_start - visibleEnd());
+	} else {
+		RefreshItem(old_sel);
+		RefreshItem(selection);
+	}
+	// send event
+	if (event && selection != old_sel) {
+		sendEvent(EVENT_GALLERY_SELECT);
+	}
+}
+
 void GalleryList::update() {
-	const int w = item_size.x + SPACING;
-	const int h = item_size.y + SPACING;
-	// resize and scroll
-	if (direction == wxHORIZONTAL) {
-		SetVirtualSize(w * (int)itemCount() + MARGIN, h + MARGIN);
-		SetScrollRate(scroll_increment, 0);
-	} else { // wxVERTICAL
-		SetVirtualSize(w + MARGIN, h * (int)itemCount() + MARGIN);
-		SetScrollRate(0, scroll_increment);
-	}
-	// ensure selected item + its margin is visible
-	if (selection < itemCount()) {
-		int x, y, cw, ch;
-		GetViewStart (&x,  &y);
-		GetClientSize(&cw, &ch);
-		cw = (cw - scroll_increment + 1) / scroll_increment;
-		ch = (ch - scroll_increment + 1) / scroll_increment;
-		wxPoint pos = itemPos(selection);
-		x = min(x,      (int)(selection * w) / scroll_increment);
-		y = min(y,      (int)(selection * h) / scroll_increment);
-		x = max(x + cw, (int)(selection * w + w - 1) / scroll_increment) - cw;
-		y = max(y + ch, (int)(selection * h + h - 1) / scroll_increment) - ch;
-		Scroll(x,y);
-	}
-	// redraw
+	select(selection);
+	updateScrollbar();
 	Refresh(false);
 }
 
 size_t GalleryList::findItem(const wxMouseEvent& ev) const {
-	if (direction == wxHORIZONTAL) {
-		int x, w = item_size.x  + SPACING;
-		GetViewStart (&x, 0);
-		return static_cast<size_t>( max(0, x * scroll_increment + ev.GetX() - MARGIN) / w );
-	} else { // wxVERTICAL
-		int y, h = item_size.y + SPACING;
-		GetViewStart (0, &y);
-		return static_cast<size_t>( max(0, y * scroll_increment + ev.GetY() - MARGIN) / h );
-	}
+	int x = visible_start + (direction == wxHORIZONTAL ? ev.GetX() : ev.GetY());
+	int w = mainSize(item_size) + SPACING;
+	return static_cast<size_t>( max(0, x - MARGIN) / w ); 
 }
 
 wxPoint GalleryList::itemPos(size_t item) const {
 	if (direction == wxHORIZONTAL) {
-		return wxPoint((int)item * (item_size.x + SPACING) + MARGIN + BORDER, MARGIN + BORDER);
+		return wxPoint((int)item * (item_size.x + SPACING) + MARGIN + BORDER - visible_start, MARGIN + BORDER);
 	} else {
-		return wxPoint(MARGIN + BORDER, (int)item * (item_size.y + SPACING) + MARGIN + BORDER);
+		return wxPoint(MARGIN + BORDER, (int)item * (item_size.y + SPACING) + MARGIN + BORDER - visible_start);
 	}
+}
+
+// ----------------------------------------------------------------------------- : Scrolling & sizing
+
+int GalleryList::visibleEnd() const {
+	return visible_start + mainSize(GetClientSize());
+}
+int GalleryList::itemStart(size_t item) const {
+	return (int)item * (mainSize(item_size) + SPACING);
+}
+int GalleryList::itemEnd(size_t item) const {
+	return (int)(item + 1) * (mainSize(item_size) + SPACING) + MARGIN;
+}
+int GalleryList::mainSize(wxSize s) const {
+	return direction == wxHORIZONTAL ? s.x : s.y;
+}
+
+void GalleryList::scrollTo(int top, bool update_scrollbar) {
+	wxSize cs = GetClientSize();
+	int total_height = itemEnd(itemCount() - 1);
+	top = min(total_height - mainSize(cs), top);
+	top = max(0, top);
+	// scroll
+	if (top == visible_start) return;
+	//%int old_top = visible_start;
+	visible_start = top;
+	if (update_scrollbar) {
+		// scroll bar
+		updateScrollbar();
+		// scroll actual window content
+		Refresh(false);
+	}
+}
+
+void GalleryList::updateScrollbar() {
+	scrollTo(visible_start, false);
+    // how many lines fit on the screen?
+    int screen_height = mainSize(GetClientSize());
+	int total_height  = itemEnd(itemCount() - 1);
+	// set the scrollbar parameters to reflect this
+    SetScrollbar(direction, visible_start, screen_height, total_height);
+}
+
+void GalleryList::RefreshItem(size_t item) {
+	if (item >= itemCount()) return;
+	RefreshRect(wxRect(itemPos(item),item_size).Inflate(BORDER,BORDER), false);
+}
+
+void GalleryList::onScroll(wxScrollWinEvent& ev) {
+    wxEventType type = ev.GetEventType();
+    if (type == wxEVT_SCROLLWIN_TOP) {
+		scrollTo(0);
+	} else if (type == wxEVT_SCROLLWIN_BOTTOM) {
+		scrollTo(INT_MAX);
+	} else if (type == wxEVT_SCROLLWIN_LINEUP) {
+		scrollTo(visible_start - (mainSize(item_size) + SPACING));
+	} else if (type == wxEVT_SCROLLWIN_LINEDOWN) {
+		scrollTo(visible_start + (mainSize(item_size) + SPACING));
+	} else if (type == wxEVT_SCROLLWIN_PAGEUP) {
+		scrollTo(visible_start - visibleEnd() + mainSize(item_size));
+	} else if (type == wxEVT_SCROLLWIN_PAGEDOWN) {
+		scrollTo(visibleEnd() - mainSize(item_size));
+	} else {
+		scrollTo(ev.GetPosition());
+    }
+}
+
+void GalleryList::onSize(wxSizeEvent& ev) {
+	update();
+	ev.Skip();
+}
+
+void GalleryList::onMouseWheel(wxMouseEvent& ev) {
+	scrollTo(visible_start - (mainSize(item_size) + SPACING) * ev.GetWheelRotation() / ev.GetWheelDelta());
 }
 
 // ----------------------------------------------------------------------------- : Events
@@ -83,9 +148,7 @@ wxPoint GalleryList::itemPos(size_t item) const {
 void GalleryList::onLeftDown(wxMouseEvent& ev) {
 	size_t item = findItem(ev);
 	if (item != selection && item < itemCount()) {
-		selection = item;
-		update();
-		sendEvent(EVENT_GALLERY_SELECT);
+		select(item);
 	}
 	ev.Skip(); // focus
 }
@@ -96,25 +159,17 @@ void GalleryList::onLeftDClick(wxMouseEvent& ev) {
 
 void GalleryList::onChar(wxKeyEvent& ev) {
 	switch (ev.GetKeyCode()) {
-		case WXK_LEFT:	if (direction == wxHORIZONTAL && selection > 0) {
-							selection -= 1;
-							update();
-							sendEvent(EVENT_GALLERY_SELECT);
+		case WXK_LEFT:	if (direction == wxHORIZONTAL) {
+							select(selection - 1);
 						} break;
-		case WXK_RIGHT:	if (direction == wxHORIZONTAL && selection + 1 < itemCount()) {
-							selection += 1;
-							update();
-							sendEvent(EVENT_GALLERY_SELECT);
+		case WXK_RIGHT:	if (direction == wxHORIZONTAL) {
+							select(selection + 1);
 						} break;
-		case WXK_UP:	if (direction == wxVERTICAL   && selection > 0) {
-							selection -= 1;
-							update();
-							sendEvent(EVENT_GALLERY_SELECT);
+		case WXK_UP:	if (direction == wxVERTICAL) {
+							select(selection - 1);
 						} break;
-		case WXK_DOWN:	if (direction == wxVERTICAL   && selection + 1 < itemCount()) {
-							selection += 1;
-							update();
-							sendEvent(EVENT_GALLERY_SELECT);
+		case WXK_DOWN:	if (direction == wxVERTICAL) {
+							select(selection + 1);
 						} break;
 		case WXK_TAB: {
 			// send a navigation event to our parent, to select another control
@@ -135,33 +190,19 @@ wxSize GalleryList::DoGetBestSize() const {
 
 void GalleryList::onPaint(wxPaintEvent&) {
 	wxBufferedPaintDC dc(this);
-	DoPrepareDC(dc);
 	OnDraw(dc);
 }
 void GalleryList::OnDraw(DC& dc) {
-	int x,  y;
-	int cw, ch;
-	int dx, dy;
+	wxSize cs = GetClientSize();
 	size_t start, end; // items to draw
 	// number of visble items
-	GetViewStart(&x, &y);
-	GetClientSize(&cw, &ch);
-	if (direction == wxHORIZONTAL) {
-		dx = item_size.x + MARGIN + 2*BORDER;
-		dy = 0;
-		start = (size_t) max(0, x * scroll_increment - MARGIN) / dx;
-		end   = (size_t) max(0, x * scroll_increment - MARGIN + cw + dx) / dx;
-	} else {
-		dx = 0;
-		dy = item_size.y + MARGIN + 2*BORDER;
-		start = (size_t) max(0, y * scroll_increment - MARGIN) / dy;
-		end   = (size_t) max(0, y * scroll_increment - MARGIN + ch + dy) / dy;
-	}
+	start = (size_t) max(0, visible_start / (mainSize(item_size) + SPACING));
+	end   = (size_t) max(0, visibleEnd()  / (mainSize(item_size) + SPACING) + 1);
 	end = min(end, itemCount());
 	// clear background
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-	dc.DrawRectangle(0, 0, dx * x + cw, dy * y + ch);
+	dc.DrawRectangle(0, 0, cs.x, cs.y);
 	// draw all visible items
 	Color unselected = lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
 		                    wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT), 0.1);
@@ -188,10 +229,6 @@ void GalleryList::onFocus(wxFocusEvent&) {
 	if (!always_focused) Refresh(false);
 }
 
-void GalleryList::onSize(wxSizeEvent&) {
-	update();
-}
-
 void GalleryList::sendEvent(WXTYPE type) {
 	wxCommandEvent ev(type, GetId());
 	ProcessEvent(ev);
@@ -199,12 +236,14 @@ void GalleryList::sendEvent(WXTYPE type) {
 
 // ----------------------------------------------------------------------------- : Event table
 
-BEGIN_EVENT_TABLE(GalleryList, wxScrolledWindow)
+BEGIN_EVENT_TABLE(GalleryList, wxPanel)
 	EVT_LEFT_DOWN      (GalleryList::onLeftDown)
 	EVT_LEFT_DCLICK    (GalleryList::onLeftDClick)
+	EVT_MOUSEWHEEL     (GalleryList::onMouseWheel)
 	EVT_CHAR           (GalleryList::onChar)
 	EVT_SET_FOCUS      (GalleryList::onFocus)
 	EVT_KILL_FOCUS     (GalleryList::onFocus)
 	EVT_PAINT          (GalleryList::onPaint)
 	EVT_SIZE           (GalleryList::onSize)
+	EVT_SCROLLWIN      (GalleryList::onScroll)
 END_EVENT_TABLE  ()

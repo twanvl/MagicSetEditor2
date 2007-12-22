@@ -27,10 +27,12 @@ DECLARE_EVENT_TYPE(EVENT_GALLERY_ACTIVATE, <not used>)
 /// A list of items with custom drawing
 /** A derived class should implement the abstract members to determine how the items look.
  */
-class GalleryList : public wxScrolledWindow {
+class GalleryList : public wxPanel {
   public:
 	GalleryList(Window* parent, int id, int direction = wxHORIZONTAL, bool always_focused = true);
 	
+	/// Select the given item
+	void select(size_t item, bool event = true);
 	/// Is there an item selected?
 	inline bool hasSelection() const { return selection < itemCount(); }
 	
@@ -39,7 +41,6 @@ class GalleryList : public wxScrolledWindow {
 	size_t selection;      ///< The selected item, or NO_SELECTION if there is no selection
 	wxSize item_size;      ///< The size of a single item
 	int direction;	       ///< Direction of the list, can be wxHORIZONTAL or wxVERTICAL
-	int scroll_increment;  ///< How large are the scroll steps?
 	bool always_focused;   ///< Always draw as if focused
 	
 	/// Redraw the list after changing the selection or the number of items
@@ -58,16 +59,36 @@ class GalleryList : public wxScrolledWindow {
 	
 	void onLeftDown  (wxMouseEvent& ev);
 	void onLeftDClick(wxMouseEvent& ev);
+	void onMouseWheel(wxMouseEvent& ev);
 	void onChar(wxKeyEvent& ev);
 	void onFocus(wxFocusEvent&);
 	void onPaint(wxPaintEvent&);
 	void onSize(wxSizeEvent&);
+	void onScroll(wxScrollWinEvent&);
 	void OnDraw(DC& dc);
 	
 	/// Find the item corresponding to the given location
 	size_t findItem(const wxMouseEvent&) const;
 	/// Find the coordinates of an item
 	wxPoint itemPos(size_t item) const;
+	
+	/// Scroll to the given position (note: 'top' can also mean 'left')
+	void GalleryList::scrollTo(int top, bool update_scrollbar = true);
+	/// Update the scrollbar(s)
+	void GalleryList::updateScrollbar();
+	/// Redraw just a single item
+	void GalleryList::RefreshItem(size_t item);
+	
+	/// First visible pixel position
+	int visible_start;
+	/// First no-longer-visible pixel position
+	inline int GalleryList::visibleEnd() const;
+	/// Pixel position of an item
+	inline int GalleryList::itemStart(size_t item) const;
+	inline int GalleryList::itemEnd(size_t item) const;
+	/// Main component of a size (i.e. in the direction of this list)
+	inline int GalleryList::mainSize(wxSize s) const;
+
   protected:
 	/// Send an event
 	void sendEvent(WXTYPE type);
