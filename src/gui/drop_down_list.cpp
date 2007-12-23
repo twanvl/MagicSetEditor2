@@ -112,7 +112,9 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
 	int parent_height = 0;
 	if (!in_place && viewer) {
 		// Position the drop down list below the editor control (based on the style)
-		RealRect r = viewer->viewer.getRotation().trNoNeg(rect ? *rect : viewer->getStyle()->getRect());
+		Rotation rot = viewer->viewer.getRotation();
+		Rotater rr(rot, viewer->getRotation());
+		RealRect r = rot.trRectToBB(rect ? *rect : rot.getInternalRect());
 		if (viewer->viewer.nativeLook()) {
 			pos           = RealPoint(r.x - 3, r.y - 3);
 			size.width    = max(size.width, r.width + 6);
@@ -233,7 +235,8 @@ void DropDownList::redrawArrowOnParent() {
 			CardEditor& editor = static_cast<CardEditor&>(viewer->viewer);
 			shared_ptr<RotatedDC> dcP = editor.overdrawDC();
 			RotatedDC& dc = *dcP;
-			draw_drop_down_arrow(&editor, dc.getDC(), dc.tr(viewer->getStyle()->getRect().grow(1)), IsShown());
+			Rotater r(dc, viewer->getRotation());
+			draw_drop_down_arrow(&editor, dc.getDC(), dc.trRectToBB(dc.getInternalRect().grow(1)), IsShown());
 		}
 	}
 }

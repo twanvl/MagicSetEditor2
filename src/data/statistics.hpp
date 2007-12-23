@@ -32,6 +32,7 @@ class StatsDimension : public IntrusivePtrBase<StatsDimension> {
 	String            description;		///< Description, used in status bar
 	int               position_hint;	///< Hint for the ordering
 	String            icon_filename;	///< Icon for lists
+	Bitmap            icon;				///< The loaded icon (optional of course)
 	OptionalScript    script;			///< Script that determines the value(s)
 	bool              numeric;			///< Are the values numeric? If so, they require special sorting
 	bool              show_empty;		///< Should "" be shown?

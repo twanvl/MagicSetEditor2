@@ -32,20 +32,24 @@ void ValueViewer::setValue(const ValueP& value) {
 }
 
 bool ValueViewer::containsPoint(const RealPoint& p) const {
-	return p.x >= styleP->left
-	    && p.y >= styleP->top
-	    && p.x <  styleP->left + (int)(styleP->width)
-	    && p.y <  styleP->top  + (int)(styleP->height);
+	return p.x >= 0
+	    && p.y >= 0
+	    && p.x <  styleP->width
+	    && p.y <  styleP->height;
 }
 RealRect ValueViewer::boundingBox() const {
-	return styleP->getRect().grow(1);
+	return styleP->getExternalRect().grow(1);
+}
+
+Rotation ValueViewer::getRotation() const {
+	return Rotation(getStyle()->angle, getStyle()->getExternalRect(), 1.0, getStretch());
 }
 
 void ValueViewer::drawFieldBorder(RotatedDC& dc) {
 	if (viewer.drawBorders() && getField()->editable) {
 		dc.SetPen(viewer.borderPen(isCurrent()));
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
-		dc.DrawRectangle(styleP->getRect().grow(dc.trInvS(1)));
+		dc.DrawRectangle(dc.getInternalRect().grow(dc.trInvS(1)));
 	}
 }
 

@@ -145,14 +145,14 @@ void blur_image_alpha(Image& img) {
 
 // Draw text by first drawing it using a larger font and then downsampling it
 // optionally rotated by an angle
-//  (w2,h2) = size of text
-//  (wc,hc) = the corner where drawing should begin, (0,0) for top-left, (1,1) for bottom-right
-void draw_resampled_text(DC& dc, const RealRect& rect, double stretch, int wc, int hc, int angle, const String& text, int blur_radius, int repeat) {
+void draw_resampled_text(DC& dc, const RealPoint& pos, const RealRect& rect, double stretch, int angle, const String& text, int blur_radius, int repeat) {
 	// enlarge slightly; some fonts are larger then the GetTextExtent tells us (especially italic fonts)
 	int w = static_cast<int>(rect.width) + 3 + 2 * blur_radius, h = static_cast<int>(rect.height) + 1 + 2 * blur_radius;
 	// determine sub-pixel position
-	int xi = static_cast<int>(rect.x), yi = static_cast<int>(rect.y);
-	int xsub = static_cast<int>(text_scaling * (rect.x - xi)), ysub = static_cast<int>(text_scaling * (rect.y - yi));
+	int xi = static_cast<int>(rect.x) - blur_radius / text_scaling,
+	    yi = static_cast<int>(rect.y) - blur_radius / text_scaling;
+	int xsub = static_cast<int>(text_scaling * (pos.x - xi)),
+	    ysub = static_cast<int>(text_scaling * (pos.y - yi));
 	// draw text
 	Bitmap buffer(w * text_scaling, h * text_scaling, 24); // should be initialized to black
 	wxMemoryDC mdc;
@@ -161,7 +161,7 @@ void draw_resampled_text(DC& dc, const RealRect& rect, double stretch, int wc, i
 	// now draw the text
 	mdc.SetFont(dc.GetFont());
 	mdc.SetTextForeground(*wxWHITE);
-	mdc.DrawRotatedText(text, (wc * w + blur_radius) * text_scaling + xsub, (hc * h + blur_radius) * text_scaling + ysub, angle);
+	mdc.DrawRotatedText(text, xsub, ysub, angle);
 	// get image
 	mdc.SelectObject(wxNullBitmap);
 	Image img_large = buffer.ConvertToImage();
@@ -177,8 +177,7 @@ void draw_resampled_text(DC& dc, const RealRect& rect, double stretch, int wc, i
 	}
 	// step 3. draw to dc
 	for (int i = 0 ; i < repeat ; ++i) {
-		dc.DrawBitmap(img_small, xi + static_cast<int>(wc * (rect.width  - w)) - blur_radius,
-		                         yi + static_cast<int>(hc * (rect.height - h)) - blur_radius);
+		dc.DrawBitmap(img_small, xi, yi);
 	}
 }
 

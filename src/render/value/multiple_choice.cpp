@@ -18,7 +18,7 @@ DECLARE_TYPEOF_COLLECTION(String);
 void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
 	drawFieldBorder(dc);
 	if (style().render_style & RENDER_HIDDEN) return;
-	RealPoint pos = align_in_rect(style().alignment, RealSize(0,0), style().getRect());
+	RealPoint pos = align_in_rect(style().alignment, RealSize(0,0), style().getInternalRect());
 	// selected choices
 	vector<String> selected;
 	value().get(selected);
@@ -55,27 +55,24 @@ void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
 				ImageCombine combine = style().combine;
 				style().loadMask(*viewer.stylesheet);
 				Bitmap bitmap; Image image;
-				img.generateCached(img_options, &style().mask, &combine, &bitmap, &image);
+				RealSize size;
+				img.generateCached(img_options, &style().mask, &combine, &bitmap, &image, &size);
+				size = dc.trInvS(size);
+				RealRect rect(align_in_rect(style().alignment, size, dc.getInternalRect()), size);
 				if (bitmap.Ok()) {
 					// just draw it
-					dc.DrawPreRotatedBitmap(bitmap,
-						align_in_rect(style().alignment, dc.trInvNoNeg(RealSize(bitmap)), style().getRect())
-					);
-					margin = dc.trInv(RealSize(bitmap)).width + 1;
+					dc.DrawPreRotatedBitmap(bitmap,rect);
 				} else {
 					// use combine mode
-					dc.DrawPreRotatedImage(image,
-						align_in_rect(style().alignment, dc.trInvNoNeg(RealSize(image)), style().getRect()),
-						combine
-					);
-					margin = dc.trInv(RealSize(image)).width + 1;
+					dc.DrawPreRotatedImage(image,rect,combine);
 				}
+				margin = size.width + 1;
 			}
 		}
 		if (style().render_style & RENDER_TEXT) {
 			// draw text
 			dc.DrawText(tr(*viewer.stylesheet, value().value(), capitalize(value().value())),
-				align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(0, dc.GetCharHeight()), style().getRect()) + RealSize(margin, 0)
+				align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(0, dc.GetCharHeight()), dc.getInternalRect()) + RealSize(margin, 0)
 			);
 		}
 		// COPY ENDS HERE
@@ -85,7 +82,7 @@ void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
 void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const String& choice, bool active) {
 	RealSize size; size.height = item_height;
 	if (nativeLook() && (style().render_style & RENDER_CHECKLIST)) {
-		wxRect rect = dc.tr(RealRect(pos + RealSize(1,1), RealSize(12,12)));
+		wxRect rect = dc.trRectStraight(RealRect(pos + RealSize(1,1), RealSize(12,12)));
 		draw_checkbox(nullptr, dc.getDC(), rect, active); // TODO
 		size = add_horizontal(size, RealSize(14,16));
 	}
@@ -99,8 +96,8 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 			Image image = it->second.generate(options);
 			ImageCombine combine = it->second.combine();
 			// TODO : alignment?
-			dc.DrawPreRotatedImage(image, pos + RealSize(size.width, 0), combine == COMBINE_DEFAULT ? style().combine : combine);
-			size = add_horizontal(size, dc.trInvNoNeg(RealSize(image.GetWidth() + 1, image.GetHeight())));
+			dc.DrawPreRotatedImage(image, RealRect(pos.x + size.width, pos.y, options.width, options.height), combine == COMBINE_DEFAULT ? style().combine : combine);
+			size.width += options.width;
 		}
 	}
 	if (style().render_style & RENDER_TEXT) {
@@ -119,7 +116,7 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 void MultipleChoiceValueViewer::getOptions(Rotation& rot, GeneratedImage::Options& opts) {
 	opts.package       = viewer.stylesheet.get();
 	opts.local_package = &getSet();
-	opts.angle         = rot.trAngle(style().angle);
+	opts.angle         = rot.trAngle(0); //%%
 	if (nativeLook()) {
 		opts.width = opts.height = 16;
 		opts.preserve_aspect = ASPECT_BORDER;

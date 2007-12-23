@@ -302,7 +302,7 @@ void SymbolFont::drawWithText(RotatedDC& dc, const RealRect& rect, double font_s
 	if (def) {
 		Bitmap bmp = def->getBitmap(*this, dc.trS(font_size));
 		// align symbol
-		sym_rect.size()     = dc.trInvS(RealSize(bmp.GetWidth(), bmp.GetHeight()));
+		sym_rect.size()     = dc.trInvS(RealSize(bmp));
 		sym_rect.position() = align_in_rect(align, sym_rect.size(), rect);
 		// draw
 		dc.DrawBitmap(bmp, sym_rect.position());

@@ -26,6 +26,7 @@ class TextValueViewer : public ValueViewer {
 	virtual void onValueChange();
 	virtual void onStyleChange(int);
 	virtual void onAction(const Action&, bool undone);
+	virtual double getStretch() const;
 	
   protected:
 	TextViewer v;

@@ -25,7 +25,7 @@ void SymbolValueEditor::draw(RotatedDC& dc) {
 		dc.SetFont(wxFont(10,wxSWISS,wxNORMAL,wxNORMAL));
 		dc.SetTextForeground(*wxBLACK);
 		RealSize text_size = dc.GetTextExtent(_("double click to edit symbol"));
-		dc.DrawText(_("double click to edit symbol"), align_in_rect(ALIGN_MIDDLE_CENTER, text_size, style().getRect()));
+		dc.DrawText(_("double click to edit symbol"), align_in_rect(ALIGN_MIDDLE_CENTER, text_size, style().getInternalRect()));
 	}
 	if (nativeLook()) {
 		// draw editor buttons
@@ -38,8 +38,8 @@ void SymbolValueEditor::drawButton(RotatedDC& dc, int button, const String& text
 	bool down = button == button_down;
 	double height = style().height;
 	double width  = style().height + 2;
-	double x = style().right - width - (width + 1) * button;
-	double y = style().top;
+	double x = style().width - width - (width + 1) * button;
+	double y = 0;
 	// draw button
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
@@ -60,8 +60,8 @@ void SymbolValueEditor::drawButton(RotatedDC& dc, int button, const String& text
 }
 
 int SymbolValueEditor::findButton(const RealPoint& pos) {
-	if (pos.y < style().top || pos.y >= style().bottom) return -1;
-	int button = (int)floor( (style().right - pos.x) / (style().height + 3) );
+	if (pos.y < 0 || pos.y >= style().height) return -1;
+	int button = (int)floor( (style().width - pos.x) / (style().height + 3) );
 	if (button >= 0 && button <= 1) return button;
 	return -1;
 }

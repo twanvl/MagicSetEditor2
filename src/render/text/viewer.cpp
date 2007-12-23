@@ -39,7 +39,7 @@ struct TextViewer::Line {
 	
 	/// Is this line visible using the given rectangle?
 	bool visible(const Rotation& rot) const {
-		return top + line_height > 0 && top < rot.getInternalSize().height;
+		return top + line_height > 0 && top < rot.getHeight();
 	}
 	
 	/// Get a rectangle of the selection on this line
@@ -68,7 +68,6 @@ TextViewer::~TextViewer() {}
 
 void TextViewer::draw(RotatedDC& dc, const TextStyle& style, DrawWhat what) {
 	assert(!lines.empty());
-	Rotater r(dc, style.getRotation());
 	// separator lines?
 	// do this first, so pen is still set from drawing the field border
 	if (what & DRAW_BORDERS) {
@@ -99,7 +98,6 @@ RealRect intersect(const RealRect& a, const RealRect& b) {
 }
 
 void TextViewer::drawSelection(RotatedDC& dc, const TextStyle& style, size_t sel_start, size_t sel_end) {
-	Rotater r(dc, style.getRotation());
 	if (sel_start == sel_end) return;
 	if (sel_end < sel_start) swap(sel_start, sel_end);
 	dc.SetBrush(*wxBLACK_BRUSH);
@@ -148,9 +146,8 @@ void TextViewer::drawSeparators(RotatedDC& dc) {
 }
 
 bool TextViewer::prepare(RotatedDC& dc, const String& text, TextStyle& style, Context& ctx) {
-	if (lines.empty()) {
+	if (!prepared()) {
 		// not prepared yet
-		Rotater r(dc, style.getRotationNoStretch());
 		prepareElements(text, style, ctx);
 		prepareLines(dc, text, style, ctx);
 		return true;

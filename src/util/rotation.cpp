@@ -12,86 +12,157 @@
 
 // ----------------------------------------------------------------------------- : Rotation
 
-// constrain an angle to {0,90,180,270}
+// constrain an angle to [0..360)
 int constrain_angle(int angle) {
-	int a = ((angle + 45) % 360 + 360) % 360; // [0..360)
-	return (a / 90) * 90; // multiple of 90
+	return (angle + 3600) % 360;
 }
 
-Rotation::Rotation(int angle, const RealRect& rect, double zoom, double strectch, bool is_internal)
+Rotation::Rotation(int angle, const RealRect& rect, double zoom, double stretch, RotationFlags flags)
 	: angle(constrain_angle(angle))
 	, size(rect.size())
 	, origin(rect.position())
-	, zoomX(::sideways(angle)  ? zoom : zoom * strectch)
-	, zoomY(!::sideways(angle) ? zoom : zoom * strectch)
+	, zoomX(zoom * stretch)
+	, zoomY(zoom)
 {
-	if (is_internal) {
-		size = trNoNeg(size);
+	if (stretch != 1.0) {
+		size.width /= stretch;
 	}
 	// set origin
-	if (revX()) origin.x += size.width;
-	if (revY()) origin.y += size.height;
+	if (flags & ROTATION_ATTACH_TOP_LEFT) {
+		if (revX()) origin.x += zoom * (sideways() ? size.height : size.width);
+		if (revY()) origin.y += zoom * (sideways() ? size.width : size.height);
+	}
 }
 
-RealRect Rotation::getExternalRect() const {
-	return RealRect(origin - RealSize(revX() ? size.width : 0, revY() ? size.height : 0), size);
+void Rotation::setStretch(double s) {
+	size.width *= s * getStretch();
+	zoomX = zoomY * s;
 }
+
 
 RealPoint Rotation::tr(const RealPoint& p) const {
-	return tr(RealSize(p.x, p.y)) + origin; // TODO : optimize?
+	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	double x = p.x * zoomX, y = p.y * zoomY;
+	return RealPoint(c * x + s * y + origin.x,
+	                -s * x + c * y + origin.y);
 }
-RealSize Rotation::tr(const RealSize& s) const {
-	if (sideways()) {
-		return RealSize(negX(s.height) * zoomY, negY(s.width) * zoomX);
+RealPoint Rotation::trPixel(const RealPoint& p) const {
+	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	double x = p.x * zoomX + 0.5, y = p.y * zoomY + 0.5;
+	return RealPoint(c * x + s * y + origin.x - 0.5,
+	                -s * x + c * y + origin.y - 0.5);
+}
+RealPoint Rotation::trNoZoom(const RealPoint& p) const {
+	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	double x = p.x, y = p.y;
+	return RealPoint(c * x + s * y + origin.x,
+	                -s * x + c * y + origin.y);
+}
+RealPoint Rotation::trPixelNoZoom(const RealPoint& p) const {
+	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	double x = p.x + 0.5, y = p.y + 0.5;
+	return RealPoint(c * x + s * y + origin.x - 0.5,
+	                -s * x + c * y + origin.y - 0.5);
+}
+/*
+RealSize Rotation::trSize(const RealSize& size) const {
+	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	double x = size.width * zoomX, y = size.height * zoomY;
+	return RealSize(c * x + s * y, s * x + c * y);
+}
+*/
+RealSize Rotation::trSizeToBB(const RealSize& size) const {
+	if (straight()) {
+		if (sideways()) {
+			return RealSize(size.height * zoomY, size.width * zoomX);
+		} else {
+			return RealSize(size.width * zoomX, size.height * zoomY);
+		}
 	} else {
-		return RealSize(negX(s.width) * zoomX, negY(s.height) * zoomY);
+		double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+		double x = size.width * zoomX, y = size.height * zoomY;
+		return RealSize(fabs(c * x) + fabs(s * y), fabs(s * x) + fabs(c * y));
 	}
 }
-RealRect Rotation::tr(const RealRect& r) const {
-	return RealRect(tr(r.position()), tr(r.size()));
-}
-
-RealSize Rotation::trNoNeg(const RealSize& s) const {
-	if (sideways()) {
-		return RealSize(s.height * zoomY, s.width * zoomX);
+RealRect Rotation::trRectToBB(const RealRect& r) const {
+	if (straight()) {
+		RealSize s = trSizeToBB(r.size());
+		return RealRect(tr(r.position()) - RealSize(revX()?s.width:0, revY()?s.height:0), s);
 	} else {
-		return RealSize(s.width * zoomX, s.height * zoomY);
+		double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+		double x = r.x     * zoomX, y = r.y      * zoomY;
+		double w = r.width * zoomX, h = r.height * zoomY;
+		RealRect result(c * x + s * y + origin.x,
+		               -s * x + c * y + origin.y,
+		               0,0);
+		if (c > 0) {
+			result.width  += c * w;
+			result.height += c * h;
+		} else {
+			result.x      += c * w;
+			result.width  -= c * w;
+			result.y      += c * h;
+			result.height -= c * h;
+		}
+		if (s > 0) {
+			result.width  += s * h;
+			result.y      -= s * w;
+			result.height += s * w;
+		} else {
+			result.x      += s * h;
+			result.width  -= s * h;
+			result.height -= s * w;
+		}
+		return result;
 	}
 }
-RealRect Rotation::trNoNeg(const RealRect& r) const {
-	RealSize s = trNoNeg(r.size());
-	return RealRect(tr(r.position()) - RealSize(revX()?s.width:0, revY()?s.height:0), s);
+RealRect Rotation::trRectStraight(const RealRect& r) const {
+	assert(angle == 0);
+	return RealRect(r.position() + origin, r.size());
 }
-RealRect Rotation::trNoNegNoZoom(const RealRect& r) const {
-	RealSize s = sideways() ? RealSize(r.height, r.width) : r.size();
-	return RealRect(tr(r.position()) - RealSize(revX()?s.width:0, revY()?s.height:0), s);
-}
-
-
-RealSize Rotation::trInv(const RealSize& s) const {
-	if (sideways()) {
-		return RealSize(negY(s.height) / zoomY, negX(s.width) / zoomX);
+wxRegion Rotation::trRectToRegion(const RealRect& r) const {
+	if (straight()) {
+		return trRectToBB(r).toRect();
 	} else {
-		return RealSize(negX(s.width) / zoomX, negY(s.height) / zoomY);
+		wxPoint points[4] = {trPixel(RealPoint(r.left(),  r.top()   ))
+		                    ,trPixel(RealPoint(r.left(),  r.bottom()))
+		                    ,trPixel(RealPoint(r.right(), r.bottom()))
+		                    ,trPixel(RealPoint(r.right(), r.top()   ))};
+		return wxRegion(4,points);
 	}
 }
 
 RealPoint Rotation::trInv(const RealPoint& p) const {
-	RealPoint p2((p.x - origin.x) / zoomX, (p.y - origin.y) / zoomY);
-	if (sideways()) {
-		return RealPoint(negY(p2.y), negX(p2.x));
-	} else {
-		return RealPoint(negX(p2.x), negY(p2.y));
-	}
+	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	double x = (p.x - origin.x) / zoomX, y = (p.y - origin.y) / zoomY;
+	return RealPoint(c * x - s * y,
+	                 s * x + c * y);
 }
 
-RealSize Rotation::trInvNoNeg(const RealSize& s) const {
-	if (sideways()) {
-		return RealSize(s.height / zoomY, s.width / zoomX);
-	} else {
-		return RealSize(s.width / zoomX, s.height / zoomY);
-	}
+RealPoint Rotation::boundingBoxCorner(const RealSize& size) const {
+	// This function is a bit tricky,
+	// I derived it by drawing the four cases.
+	// Two succeeding cases must agree where they overlap (0,90,180,270 degrees)
+	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	double w = size.width * zoomX, h = size.height * zoomY;
+	if (angle <= 90)  return RealPoint(0,            -w * s);
+	if (angle <= 180) return RealPoint(w * c,         h * c - w * s);
+	if (angle <= 270) return RealPoint(w * c + h * s, h * c);
+	else              return RealPoint(h * s,         0);
 }
+/*
+RealPoint Rotation::boundingBoxCorner(const RealSize& size) const {
+	//if(true)return RealPoint(0,0);
+	// This function is a bit tricky,
+	// I derived it by drawing the four cases.
+	// Two succeeding cases must agree where they overlap (0,90,180,270 degrees)
+	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	if (angle <= 90)  return RealPoint(           + size.width  * s * s,             - size.width  * s * c);
+	if (angle <= 180) return RealPoint(size.width - size.height * s * c,               size.height * c * c);
+	if (angle <= 270) return RealPoint(size.width - size.width  * s * s, size.height + size.width  * s * c);
+	else              return RealPoint(             size.height * s * c, size.height - size.height * c * c);
+}
+*/
 
 // ----------------------------------------------------------------------------- : Rotater
 
@@ -100,17 +171,12 @@ Rotater::Rotater(Rotation& rot, const Rotation& by)
 	, rot(rot)
 {
 	// apply rotation
-	RealRect new_ext = rot.trNoNeg(by.getExternalRect());
-	rot.angle = constrain_angle(rot.angle + by.angle);
-	if (by.sideways()) {
-		rot.zoomX *= by.zoomY;
-		rot.zoomY *= by.zoomX;
-	} else {
-		rot.zoomX *= by.zoomX;
-		rot.zoomY *= by.zoomY;
-	}
-	rot.size   = new_ext.size();
-	rot.origin = new_ext.position() + RealSize(rot.revX() ? rot.size.width : 0, rot.revY() ? rot.size.height : 0);
+	rot.origin = rot.tr(by.origin);
+	rot.size   = by.size;
+	rot.angle  = constrain_angle(rot.angle + by.angle);
+	// zooming is not really correct if rot.zoomX != rot.zoomY
+	rot.zoomX *= by.zoomX;
+	rot.zoomY *= by.zoomY;
 }
 
 Rotater::~Rotater() {
@@ -119,8 +185,8 @@ Rotater::~Rotater() {
 
 // ----------------------------------------------------------------------------- : RotatedDC
 
-RotatedDC::RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, RenderQuality quality, bool is_internal)
-	: Rotation(angle, rect, zoom, 1.0, is_internal)
+RotatedDC::RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, RenderQuality quality, RotationFlags flags)
+	: Rotation(angle, rect, zoom, 1.0, flags)
 	, dc(dc), quality(quality)
 {}
 
@@ -133,11 +199,11 @@ RotatedDC::RotatedDC(DC& dc, const Rotation& rotation, RenderQuality quality)
 
 void RotatedDC::DrawText  (const String& text, const RealPoint& pos, int blur_radius, int boldness, double stretch_) {
 	if (text.empty()) return;
-	if (quality == QUALITY_AA) {
+	if (quality >= QUALITY_AA) {
 		RealRect r(pos, GetTextExtent(text));
-		RealRect r_ext = trNoNeg(r);
-		draw_resampled_text(dc, r_ext, stretch_ * stretch(), revX(), revY(), angle, text, blur_radius, boldness);
-	} else if (quality == QUALITY_SUB_PIXEL) {
+		RealRect r_ext = trRectToBB(r);
+		draw_resampled_text(dc, tr(pos), r_ext, stretch_ * getStretch(), angle, text, blur_radius, boldness);
+	} else if (quality >= QUALITY_SUB_PIXEL) {
 		RealPoint p_ext = tr(pos)*text_scaling;
 		double usx,usy;
 		dc.GetUserScale(&usx, &usy);
@@ -158,17 +224,16 @@ void RotatedDC::DrawBitmap(const Bitmap& bitmap, const RealPoint& pos) {
 		DrawImage(bitmap.ConvertToImage(), pos);
 	}
 }
-void RotatedDC::DrawImage (const Image& image, const RealPoint& pos, ImageCombine combine, int angle) {
-	Image rotated = rotate_image(image, angle + this->angle);
-	wxRect r = trNoNegNoZoom(RealRect(pos, RealSize(image)));
-	draw_combine_image(dc, to_int(r.x), to_int(r.y), rotated, combine);
+void RotatedDC::DrawImage(const Image& image, const RealPoint& pos, ImageCombine combine) {
+	Image rotated = rotate_image(image, angle);
+	DrawPreRotatedImage(rotated, RealRect(pos,trInvS(RealSize(image))), combine);
 }
-void RotatedDC::DrawPreRotatedBitmap(const Bitmap& bitmap, const RealPoint& pos) {
-	RealPoint p_ext = tr(pos) - RealSize(revX()?bitmap.GetWidth():0, revY()?bitmap.GetHeight():0);
+void RotatedDC::DrawPreRotatedBitmap(const Bitmap& bitmap, const RealRect& rect) {
+	RealPoint p_ext = tr(rect.position()) + boundingBoxCorner(rect.size());
 	dc.DrawBitmap(bitmap, to_int(p_ext.x), to_int(p_ext.y), true);
 }
-void RotatedDC::DrawPreRotatedImage (const Image& image, const RealPoint& pos, ImageCombine combine) {
-	RealPoint p_ext = tr(pos) - RealSize(revX()?image.GetWidth():0, revY()?image.GetHeight():0);
+void RotatedDC::DrawPreRotatedImage (const Image& image, const RealRect& rect, ImageCombine combine) {
+	RealPoint p_ext = tr(rect.position()) + boundingBoxCorner(rect.size());
 	draw_combine_image(dc, to_int(p_ext.x), to_int(p_ext.y), image, combine);
 }
 
@@ -178,13 +243,26 @@ void RotatedDC::DrawLine  (const RealPoint& p1,  const RealPoint& p2) {
 }
 
 void RotatedDC::DrawRectangle(const RealRect& r) {
-	wxRect r_ext = trNoNeg(r);
-	dc.DrawRectangle(r_ext.x, r_ext.y, r_ext.width, r_ext.height);
+	if (straight()) {
+		wxRect r_ext = trRectToBB(r);
+		dc.DrawRectangle(r_ext.x, r_ext.y, r_ext.width, r_ext.height);
+	} else {
+		wxPoint points[4] = {trPixel(RealPoint(r.left(),  r.top()   ))
+		                    ,trPixel(RealPoint(r.left(),  r.bottom()))
+		                    ,trPixel(RealPoint(r.right(), r.bottom()))
+		                    ,trPixel(RealPoint(r.right(), r.top()   ))};
+		dc.DrawPolygon(4,points);
+	}
 }
 
 void RotatedDC::DrawRoundedRectangle(const RealRect& r, double radius) {
-	wxRect r_ext = trNoNeg(r);
-	dc.DrawRoundedRectangle(r_ext.x, r_ext.y, r_ext.width, r_ext.height, trS(radius));
+	if (straight()) {
+		wxRect r_ext = trRectToBB(r);
+		dc.DrawRoundedRectangle(r_ext.x, r_ext.y, r_ext.width, r_ext.height, trS(radius));
+	} else {
+		// TODO
+		DrawRectangle(r);
+	}
 }
 
 void RotatedDC::DrawCircle(const RealPoint& center, double radius) {
@@ -192,19 +270,14 @@ void RotatedDC::DrawCircle(const RealPoint& center, double radius) {
 	dc.DrawCircle(p.x + 1, p.y + 1, trS(radius));
 }
 
-/// Convert radians to degrees
-double rad_to_deg(double rad) { return  rad * (180.0 / M_PI); }
-/// Convert degrees to radians
-double deg_to_rad(double deg) { return  deg * (M_PI / 180.0); }
-
 void RotatedDC::DrawEllipticArc(const RealPoint& center, const RealSize& size, double start, double end) {
 	wxPoint c_ext = tr(center - size/2);
-	wxSize  s_ext = trNoNeg(size);
+	wxSize  s_ext = trSizeToBB(size);
 	dc.DrawEllipticArc(c_ext.x, c_ext.y, s_ext.x, s_ext.y, rad_to_deg(start) + angle, rad_to_deg(end) + angle);
 }
 void RotatedDC::DrawEllipticSpoke(const RealPoint& center, const RealSize& size, double angle) {
 	wxPoint c_ext = tr(center - size/2);
-	wxSize  s_ext = trNoNeg(size);
+	wxSize  s_ext = trSizeToBB(size);
 	double rot_angle = angle + deg_to_rad(this->angle);
 	double sin_angle = sin(rot_angle), cos_angle = cos(rot_angle);
 	// position of center and of point on the boundary can vary because of rounding errors,
@@ -281,7 +354,7 @@ double RotatedDC::GetCharHeight() const {
 }
 
 void RotatedDC::SetClippingRegion(const RealRect& rect) {
-	dc.SetClippingRegion(trNoNeg(rect));
+	dc.SetClippingRegion(trRectToRegion(rect));
 }
 void RotatedDC::DestroyClippingRegion() {
 	dc.DestroyClippingRegion();
@@ -290,7 +363,7 @@ void RotatedDC::DestroyClippingRegion() {
 // ----------------------------------------------------------------------------- : Other
 
 Bitmap RotatedDC::GetBackground(const RealRect& r) {
-	wxRect wr = trNoNeg(r);
+	wxRect wr = trRectToBB(r);
 	Bitmap background(wr.width, wr.height);
 	wxMemoryDC mdc;
 	mdc.SelectObject(background);

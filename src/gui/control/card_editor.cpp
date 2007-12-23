@@ -210,15 +210,19 @@ void DataEditor::onLeftDown(wxMouseEvent& ev) {
 }
 void DataEditor::onLeftUp(wxMouseEvent& ev) {
 	if (HasCapture()) ReleaseMouse();
-	RealPoint pos = mousePoint(ev);
-	if (current_editor && current_viewer && current_viewer->containsPoint(pos)) {
-		current_editor->onLeftUp(pos, ev);
+	if (current_editor && current_viewer) {
+		RealPoint pos = mousePoint(ev, *current_viewer);
+		if (current_viewer->containsPoint(pos)) {
+			current_editor->onLeftUp(pos, ev);
+		}
 	}
 }
 void DataEditor::onLeftDClick(wxMouseEvent& ev) {
-	RealPoint pos = mousePoint(ev);
-	if (current_editor && current_viewer && current_viewer->containsPoint(pos)) {
-		current_editor->onLeftDClick(pos, ev);
+	if (current_editor && current_viewer) {
+		RealPoint pos = mousePoint(ev, *current_viewer);
+		if (current_viewer->containsPoint(pos)) {
+			current_editor->onLeftDClick(pos, ev);
+		}
 	}
 }
 void DataEditor::onRightDown(wxMouseEvent& ev) {
@@ -227,22 +231,25 @@ void DataEditor::onRightDown(wxMouseEvent& ev) {
 	selectField(ev, &ValueEditor::onRightDown);
 }
 void DataEditor::onMouseWheel(wxMouseEvent& ev) {
-	RealPoint pos = mousePoint(ev);
-	if (current_editor && current_viewer && current_viewer->containsPoint(pos)) {
-		if (current_editor->onMouseWheel(pos, ev)) return;
+	if (current_editor && current_viewer) {
+		RealPoint pos = mousePoint(ev, *current_viewer);
+		if (current_viewer->containsPoint(pos)) {
+			if (current_editor->onMouseWheel(pos, ev)) return;
+		}
 	}
 	ev.Skip();
 }
 
 void DataEditor::onMotion(wxMouseEvent& ev) {
-	RealPoint pos = mousePoint(ev);
-	if (current_editor && ev.LeftIsDown()) {
+	if (current_editor && current_viewer) {
+		RealPoint pos = mousePoint(ev, *current_viewer);
 		current_editor->onMotion(pos, ev);
 	}
 	if (!HasCapture()) {
 		// find editor under mouse
 		ValueViewer* new_hovered_viewer = nullptr;
 		FOR_EACH_REVERSE(v,viewers) { // find high z index fields first
+			RealPoint pos = mousePoint(ev, *v);
 			if (v->containsPoint(pos) && v->getField()->editable) {
 				new_hovered_viewer = v.get();
 				break;
@@ -250,6 +257,7 @@ void DataEditor::onMotion(wxMouseEvent& ev) {
 		}
 		if (hovered_viewer && hovered_viewer != new_hovered_viewer) {
 			ValueEditor* e = hovered_viewer->getEditor();
+			RealPoint pos = mousePoint(ev, *hovered_viewer);
 			if (e) e->onMouseLeave(pos, ev);
 		}
 		hovered_viewer = new_hovered_viewer;
@@ -257,6 +265,7 @@ void DataEditor::onMotion(wxMouseEvent& ev) {
 		wxFrame* frame = dynamic_cast<wxFrame*>( wxGetTopLevelParent(this) );
 		if (hovered_viewer) {
 			ValueEditor* e = hovered_viewer->getEditor();
+			RealPoint pos = mousePoint(ev, *hovered_viewer);
 			wxCursor c;
 			if (e) c = e->cursor(pos);
 			if (c.Ok()) SetCursor(c);
@@ -274,7 +283,7 @@ void DataEditor::onMouseLeave(wxMouseEvent& ev) {
 	// on mouse leave for editor
 	if (hovered_viewer) {
 		ValueEditor* e = hovered_viewer->getEditor();
-		if (e) e->onMouseLeave(mousePoint(ev), ev);
+		if (e) e->onMouseLeave(mousePoint(ev,*hovered_viewer), ev);
 		hovered_viewer = nullptr;
 	}
 	// clear status text
@@ -283,18 +292,20 @@ void DataEditor::onMouseLeave(wxMouseEvent& ev) {
 }
 
 void DataEditor::selectField(wxMouseEvent& ev, bool (ValueEditor::*event)(const RealPoint&, wxMouseEvent&)) {
-	RealPoint pos = mousePoint(ev);
 	// change viewer/editor
 	ValueEditor* old_editor = current_editor;
-	selectFieldNoEvents(pos);
+	selectFieldNoEvents(ev);
 	if (old_editor != current_editor) {
 		// selection has changed, send focus events
 		if (old_editor)     old_editor->onLoseFocus();
 		if (current_editor) current_editor->onFocus();
 	}
 	// pass event
-	if (current_editor && current_viewer && current_viewer->containsPoint(pos)) {
-		(current_editor->*event)(pos, ev);
+	if (current_editor && current_viewer) {
+		RealPoint pos = mousePoint(ev, *current_viewer);
+		if (current_viewer->containsPoint(pos)) {
+			(current_editor->*event)(pos, ev);
+		}
 	}
 	// refresh?
 	if (old_editor != current_editor) {
@@ -303,10 +314,10 @@ void DataEditor::selectField(wxMouseEvent& ev, bool (ValueEditor::*event)(const 
 		onChange();
 	}
 }
-void DataEditor::selectFieldNoEvents(const RealPoint& p) {
+void DataEditor::selectFieldNoEvents(const wxMouseEvent& ev) {
 	FOR_EACH_EDITOR_REVERSE { // find high z index fields first
-		if (v->getField()->editable && (v->containsPoint(p) ||
-		    (nativeLook() && p.y >= v->getStyle()->top && p.y < v->getStyle()->bottom) )) {
+		if (v->getField()->editable && (v->containsPoint(mousePoint(ev,*v)) ||
+		    (nativeLook() && ev.GetY() >= v->getStyle()->top && ev.GetY() < v->getStyle()->bottom) )) {
 			current_viewer = v.get();
 			current_editor = e;
 			return;
@@ -314,8 +325,10 @@ void DataEditor::selectFieldNoEvents(const RealPoint& p) {
 	}
 }
 
-RealPoint DataEditor::mousePoint(const wxMouseEvent& ev) {
-	return getRotation().trInv(RealPoint(ev.GetX(), ev.GetY()));
+RealPoint DataEditor::mousePoint(const wxMouseEvent& ev, const ValueViewer& viewer) {
+	Rotation rot = getRotation();
+	Rotater r(rot,viewer.getRotation());
+	return rot.trInv(RealPoint(ev.GetX(), ev.GetY()));
 }
 
 // ----------------------------------------------------------------------------- : Keyboard events

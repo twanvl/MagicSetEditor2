@@ -27,21 +27,12 @@ bool ChoiceValueViewer::prepare(RotatedDC& dc) {
 			ImageCombine combine = style().combine;
 			style().loadMask(*viewer.stylesheet);
 			Bitmap bitmap; Image image;
-			img.generateCached(img_options, &style().mask, &combine, &bitmap, &image);
-			int w, h;
-			if (bitmap.Ok()) {
-				w = bitmap.GetWidth();
-				h = bitmap.GetHeight();
-			} else {
-				assert(image.Ok());
-				w = image.GetWidth();
-				h = image.GetHeight();
-			}
-			if (sideways(img_options.angle)) swap(w,h);
+			RealSize size;
+			img.generateCached(img_options, &style().mask, &combine, &bitmap, &image, &size);
 			// store content properties
-			if (style().content_width  != w || style().content_height != h) {
-				style().content_width  = w;
-				style().content_height = h;
+			if (style().content_width  != size.width || style().content_height != size.height) {
+				style().content_width  = size.width;
+				style().content_height = size.height;
 				return true;
 			}
 		}
@@ -64,21 +55,18 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 			ImageCombine combine = style().combine;
 			style().loadMask(*viewer.stylesheet);
 			Bitmap bitmap; Image image;
-			img.generateCached(img_options, &style().mask, &combine, &bitmap, &image);
+			RealSize size;
+			img.generateCached(img_options, &style().mask, &combine, &bitmap, &image, &size);
+			size = dc.trInvS(size);
+			RealRect rect(align_in_rect(style().alignment, size, dc.getInternalRect()), size);
 			if (bitmap.Ok()) {
 				// just draw it
-				dc.DrawPreRotatedBitmap(bitmap,
-					align_in_rect(style().alignment, dc.trInvNoNeg(RealSize(bitmap)), style().getRect())
-				);
-				margin = dc.trInv(RealSize(bitmap)).width + 1;
+				dc.DrawPreRotatedBitmap(bitmap,rect);
 			} else {
 				// use combine mode
-				dc.DrawPreRotatedImage(image,
-					align_in_rect(style().alignment, dc.trInvNoNeg(RealSize(image)), style().getRect()),
-					combine
-				);
-				margin = dc.trInv(RealSize(image)).width + 1;
+				dc.DrawPreRotatedImage(image,rect,combine);
 			}
+			margin = size.width + 1;
 		} else if (nativeLook()) {
 			// always have the margin
 			margin = 17;
@@ -88,7 +76,7 @@ void ChoiceValueViewer::draw(RotatedDC& dc) {
 		// draw text
 		dc.SetFont(style().font, 1.0);
 		String text = tr(*viewer.stylesheet, value().value(), capitalize(value().value()));
-		RealPoint pos = align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(0, dc.GetCharHeight()), style().getRect()) + RealSize(margin, 0);
+		RealPoint pos = align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(0, dc.GetCharHeight()), dc.getInternalRect()) + RealSize(margin, 0);
 		if (style().font.hasShadow()) {
 			dc.SetTextForeground(style().font.shadow_color);
 			dc.DrawText(text, pos + style().font.shadow_displacement);
@@ -106,7 +94,7 @@ void ChoiceValueViewer::onStyleChange(int changes) {
 void ChoiceValueViewer::getOptions(Rotation& rot, GeneratedImage::Options& opts) {
 	opts.package       = viewer.stylesheet.get();
 	opts.local_package = &getSet();
-	opts.angle         = rot.trAngle(style().angle);
+	opts.angle         = rot.trAngle(0);
 	if (nativeLook()) {
 		opts.width = opts.height = 16;
 		opts.preserve_aspect = ASPECT_BORDER;

@@ -75,6 +75,8 @@ Image conform_image(const Image& img, const GeneratedImage::Options& options) {
 	if (options.saturate) {
 		saturate(image, 40);
 	}
+	options.width  = image.GetWidth();
+	options.height = image.GetHeight();
 	// rotate?
 	if (options.angle != 0) {
 		image = rotate_image(image, options.angle);

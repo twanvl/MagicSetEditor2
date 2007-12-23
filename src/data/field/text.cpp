@@ -44,7 +44,6 @@ TextStyle::TextStyle(const TextFieldP& field)
 	: Style(field)
 	, always_symbol(false), allow_formating(true)
 	, alignment(ALIGN_TOP_LEFT)
-	, angle(0)
 	, padding_left  (0), padding_left_min  (10000)
 	, padding_right (0), padding_right_min (10000)
 	, padding_top   (0), padding_top_min   (10000)
@@ -73,8 +72,7 @@ int TextStyle::update(Context& ctx) {
 	return Style     ::update(ctx)
 	     | font       .update(ctx) * CHANGE_OTHER
 	     | symbol_font.update(ctx) * CHANGE_OTHER
-	     | alignment  .update(ctx) * CHANGE_OTHER
-	     | angle      .update(ctx) * CHANGE_OTHER;
+	     | alignment  .update(ctx) * CHANGE_OTHER;
 }
 void TextStyle::initDependencies(Context& ctx, const Dependency& dep) const {
 	Style     ::initDependencies(ctx, dep);
@@ -100,7 +98,6 @@ IMPLEMENT_REFLECTION(TextStyle) {
 	REFLECT(always_symbol);
 	REFLECT(allow_formating);
 	REFLECT(alignment);
-	REFLECT(angle);
 	REFLECT(padding_left);
 	REFLECT(padding_right);
 	REFLECT(padding_top);

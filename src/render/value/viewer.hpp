@@ -51,6 +51,11 @@ class ValueViewer : public StyleListener {
 	/// Get a bounding rectangle for this field (including any border it may have)
 	virtual RealRect boundingBox() const;
 	
+	/// Rotation to use for drawing this field
+	virtual Rotation getRotation() const;
+	/// Stretch factor
+	virtual double getStretch() const { return 1.0; }
+	
 	/// Called when the associated value is changed
 	/** Both when we are associated with another value,
 	 *  and by default when the value itself changes (called from onAction)

@@ -118,9 +118,9 @@ class DataEditor : public CardViewer {
 	/** Sends an event to the event function of the current viewer */
 	void selectField(wxMouseEvent& ev, bool (ValueEditor::*event)(const RealPoint&, wxMouseEvent&));
 	// selectField, but don't send events
-	void selectFieldNoEvents(const RealPoint& pos);
+	void selectFieldNoEvents(const wxMouseEvent&);
 	/// Convert mouse coordinates to internal coordinates
-	RealPoint mousePoint(const wxMouseEvent&);
+	RealPoint mousePoint(const wxMouseEvent&, const ValueViewer& viewer);
 	
 	// Create tab index ordering of the (editable) viewers
 	void createTabIndex();

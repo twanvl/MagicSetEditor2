@@ -333,15 +333,14 @@ TextValueEditor::~TextValueEditor() {
 
 bool TextValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
 	select_words = false;
-	RealPoint pos2 = style().getRotation().trInv(pos);
 	// on word list dropdown button?
-	WordListPosP wl_pos = findWordList(pos2);
+	WordListPosP wl_pos = findWordList(pos);
 	if (wl_pos) {
 		wordListDropDown(wl_pos);
 	} else {
 		// no, select text
 		selecting = true;
-		moveSelection(TYPE_INDEX, v.indexAt(pos2), !ev.ShiftDown(), MOVE_MID);
+		moveSelection(TYPE_INDEX, v.indexAt(pos), !ev.ShiftDown(), MOVE_MID);
 	}
 	return true;
 }
@@ -354,7 +353,7 @@ bool TextValueEditor::onLeftUp(const RealPoint& pos, wxMouseEvent&) {
 bool TextValueEditor::onMotion(const RealPoint& pos, wxMouseEvent& ev) {
 	if (dropDownShown()) return false;
 	if (ev.LeftIsDown() && selecting) {
-		size_t index = v.indexAt(style().getRotation().trInv(pos));
+		size_t index = v.indexAt(pos);
 		if (select_words) {
 			// on the left, swap start and end
 			bool left = selection_end_i < selection_start_i;
@@ -385,7 +384,7 @@ bool TextValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent& ev) {
 	if (dropDownShown()) return false;
 	select_words = true;
 	selecting = true;
-	size_t index = v.indexAt(style().getRotation().trInv(pos));
+	size_t index = v.indexAt(pos);
 	moveSelection(TYPE_INDEX, prevWordBoundary(index), true, MOVE_MID);
 	moveSelection(TYPE_INDEX, nextWordBoundary(index), false, MOVE_MID);
 	return true;
@@ -393,7 +392,7 @@ bool TextValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent& ev) {
 
 bool TextValueEditor::onRightDown(const RealPoint& pos, wxMouseEvent& ev) {
 	if (dropDownShown()) return false;
-	size_t index = v.indexAt(style().getRotation().trInv(pos));
+	size_t index = v.indexAt(pos);
 	if (index < min(selection_start_i, selection_end_i) ||
 		index > max(selection_start_i, selection_end_i)) {
 		// only move cursor when outside selection
@@ -587,9 +586,10 @@ void TextValueEditor::redrawSelection(size_t old_selection_start_i, size_t old_s
 		// Move selection
 		shared_ptr<RotatedDC> dcP = editor().overdrawDC();
 		RotatedDC& dc = *dcP;
+		Rotater r(dc, getRotation());
 		if (nativeLook()) {
 			// clip the dc to the region of this control
-			dc.SetClippingRegion(style().getRect());
+			dc.SetClippingRegion(style().getInternalRect());
 		}
 		// clear old selection by drawing it again
 		if (!old_drop_down_shown) {
@@ -622,8 +622,7 @@ void TextValueEditor::redrawSelection(size_t old_selection_start_i, size_t old_s
 wxCursor rotated_ibeam;
 
 wxCursor TextValueEditor::cursor(const RealPoint& pos) const {
-	RealPoint pos2 = style().getRotation().trInv(pos);
-	WordListPosP p = findWordList(pos2);
+	WordListPosP p = findWordList(pos);
 	if (p) {
 		if (hovered_words != p.get()) {
 			hovered_words = p.get();
@@ -631,12 +630,13 @@ wxCursor TextValueEditor::cursor(const RealPoint& pos) const {
 		}
 		return wxCursor();
 	} else {
-		p = findWordListBody(pos2);
+		p = findWordListBody(pos);
 		if (hovered_words != p.get()) {
 			hovered_words = p.get();
 			const_cast<TextValueEditor*>(this)->redrawWordListIndicators();
 		}
-		if (viewer.getRotation().sideways() ^ style().getRotation().sideways()) { // 90 or 270 degrees
+		int angle = viewer.getRotation().getAngle() + style().angle;
+		if (sideways(angle)) { // 90 or 270 degrees
 			if (!rotated_ibeam.Ok()) {
 				rotated_ibeam = wxCursor(load_resource_cursor(_("rot_text")));
 			}
@@ -648,17 +648,16 @@ wxCursor TextValueEditor::cursor(const RealPoint& pos) const {
 }
 
 bool TextValueEditor::containsPoint(const RealPoint& pos) const {
-	if (TextValueViewer::containsPoint(pos)) return true;
+	RealPoint pos2(pos.x * style().getStretch(), pos.y);
+	if (TextValueViewer::containsPoint(pos2)) return true;
 	if (word_lists.empty()) return false;
-	RealPoint pos2 = style().getRotation().trInv(pos);
-	return findWordList(pos2);
+	return findWordList(pos);
 }
 RealRect TextValueEditor::boundingBox() const {
 	if (word_lists.empty()) return ValueViewer::boundingBox();
-	RealRect r = style().getRect().grow(1);
-	Rotation rot = style().getRotation();
+	RealRect r = style().getInternalRect().grow(1);
 	FOR_EACH_CONST(wl, word_lists) {
-		r.width = max(r.width, rot.tr(wl->rect).right() + 9);
+		r.width = max(r.width, wl->rect.right() + 9);
 	}
 	return r;
 }
@@ -794,7 +793,7 @@ void TextValueEditor::showCaret() {
 	}
 	// Rotation
 	Rotation rot(viewer.getRotation());
-	Rotater rot2(rot, style().getRotation());
+	Rotater rot2(rot, getRotation());
 	// The caret
 	wxCaret* caret = editor().GetCaret();
 	// cursor rectangle
@@ -841,7 +840,8 @@ void TextValueEditor::showCaret() {
 		}
 	}
 	// rotate
-	cursor = rot.tr(cursor);
+	// TODO: handle rotated cursor
+	cursor = rot.trRectToBB(cursor);
 	// set size
 	wxSize size = cursor.size();
 	if (size.GetWidth()  == 0) size.SetWidth (1);
@@ -1154,9 +1154,10 @@ void TextValueEditor::determineSize(bool force_fit) {
 	if (scrollbar) {
 		// muliline, determine scrollbar size
 		Rotation rot = viewer.getRotation();
+		Rotater r(rot, getRotation());
 		if (!force_fit) style().height = 100;
 		int sbw = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X);
-		RealPoint pos = rot.tr(style().getPos());
+		RealPoint pos = rot.tr(RealPoint(0,0));
 		scrollbar->SetSize(
 			(int)(pos.x + rot.trX(style().width) + 1 - sbw),
 			(int)pos.y - 1,
@@ -1275,7 +1276,6 @@ void TextValueEditor::findWordLists() {
 
 void TextValueEditor::clearWordListIndicators(RotatedDC& dc) {
 	if (word_lists.empty()) return;
-	Rotater rot(dc, style().getRotation());
 	bool current = isCurrent();
 	FOR_EACH(wl, word_lists) {
 		if (current && drop_down && drop_down->IsShown() && drop_down->getPos() == wl) {
@@ -1287,7 +1287,7 @@ void TextValueEditor::clearWordListIndicators(RotatedDC& dc) {
 		}
 		// restore background
 		if (wl->behind.Ok()) {
-			dc.DrawPreRotatedBitmap(wl->behind, wl->rect.topRight() + RealSize(0,-1));
+			dc.DrawPreRotatedBitmap(wl->behind, RealRect(wl->rect.right(), wl->rect.y - 1, 10, wl->rect.height+3));
 		}
 	}
 }
@@ -1298,7 +1298,6 @@ void TextValueEditor::redrawWordListIndicators(bool toggling_dropdown) {
 
 void TextValueEditor::drawWordListIndicators(RotatedDC& dc, bool redrawing) {
 	if (word_lists.empty()) return;
-	Rotater rot(dc, style().getRotation());
 	bool current = isCurrent();
 	// Draw lines around fields
 	FOR_EACH(wl, word_lists) {
@@ -1410,7 +1409,7 @@ bool TextValueEditor::wordListDropDown(const WordListPosP& wl) {
 	} else {
 		drop_down.reset(new DropDownWordList(&editor(), false, *this, wl, wl->word_list));
 	}
-	RealRect rect = style().getRotation().tr(wl->rect).move(0, -1, 0, 2);
+	RealRect rect = wl->rect.grow(1);
 	drop_down->show(false, wxPoint(0,0), &rect);
 	return true;
 }

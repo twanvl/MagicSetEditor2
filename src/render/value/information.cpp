@@ -23,7 +23,7 @@ void InfoValueViewer::draw(RotatedDC& dc) {
 		dc.SetFont(style().font, 1.0);
 	}
 	// draw background
-	RealRect rect = style().getRect();
+	RealRect rect = style().getInternalRect();
 	dc.DrawRectangle(rect.grow(2));
 	// draw text
 	rect = rect.move(

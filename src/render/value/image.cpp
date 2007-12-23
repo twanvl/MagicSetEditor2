@@ -12,14 +12,15 @@
 #include <data/stylesheet.hpp>
 #include <gui/util.hpp>
 
+DECLARE_TYPEOF_COLLECTION(wxPoint);
+
 // ----------------------------------------------------------------------------- : ImageValueViewer
 
 void ImageValueViewer::draw(RotatedDC& dc) {
-	drawFieldBorder(dc);
 	// reset?
 	int w = (int)dc.trX(style().width), h = (int)dc.trY(style().height);
-	int a = dc.trAngle(style().angle);
-	if (bitmap.Ok() && (a != angle || bitmap.GetWidth() != w || bitmap.GetHeight() != h)) {
+	int a = dc.trAngle(0); //% TODO : Add getAngle()?
+	if (bitmap.Ok() && (a != angle || size.width != w || size.height != h)) {
 		bitmap = Bitmap();
 	}
 	// try to load image
@@ -65,53 +66,40 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 		if (image.Ok()) {
 			// apply mask and rotate
 			if (alpha_mask) alpha_mask->setAlpha(image);
+			size = RealSize(image);
 			image = rotate_image(image, angle);
 			bitmap = Bitmap(image);
 		}
 	}
+	// border
+	drawFieldBorder(dc);
 	// draw image, if any
 	if (bitmap.Ok()) {
-		dc.DrawPreRotatedBitmap(bitmap, style().getPos());
+		dc.DrawPreRotatedBitmap(bitmap, dc.getInternalRect());
 	}
-	/*
-	// if there is no image, generate a placeholder
-	if (!bitmap.Ok()) {
-		UInt w = (UInt)dc.trX(style().width), h = (UInt)dc.trY(style().height);
-		loadMask(dc);
-		if (style().default_image.isReady()) {
-			// we have a script to use for the default image
-			Image img = style().default_image.generate(GeneratedImage::Options(w, h, viewer.stylesheet.get(), &getSet()));
-			if (viewer.drawEditing()) {
-				bitmap = imagePlaceholder(dc, w, h, img, viewer.drawEditing());
-				if (alpha_mask) alpha_mask->setAlpha(bitmap);
-			} else {
-				if (alpha_mask) alpha_mask->setAlpha(img);
-				bitmap = Bitmap(img);
-			}
-		} else if (style().width > 40) {
-			// still not okay, use a checkered image, but only if there is enough room for it
-			bitmap = imagePlaceholder(dc, w, h, wxNullImage, viewer.drawEditing());
-			if (alpha_mask) alpha_mask->setAlpha(bitmap);
-		}
+}
+
+void ImageValueViewer::drawFieldBorder(RotatedDC& dc) {
+	if (!alpha_mask) {
+		ValueViewer::drawFieldBorder(dc);
+	} else if (viewer.drawBorders() && field().editable) {
+		dc.SetPen(viewer.borderPen(isCurrent()));
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		vector<wxPoint> points;
+		alpha_mask->convexHull(points);
+		if (points.size() < 3) return;
+		FOR_EACH(p, points) p = dc.trPixelNoZoom(RealPoint(p.x,p.y));
+		dc.getDC().DrawPolygon((int)points.size(), &points[0]);
 	}
-	// draw image, if any
-	if (bitmap.Ok()) {
-		dc.DrawBitmap(bitmap, style().getPos());
-	}
-	*/
 }
 
 bool ImageValueViewer::containsPoint(const RealPoint& p) const {
-	double x = p.x - style().left;
-	double y = p.y - style().top;
-	if (x < 0 || y < 0 || x >= style().width || y >= style().height) {
-		return false; // outside rectangle
-	}
+	if (!ValueViewer::containsPoint(p)) return false;
 	// check against mask
 	if (!style().mask_filename().empty()) {
 		loadMask(viewer.getRotation());
 		Rotation rot = viewer.getRotation();
-		return !alpha_mask || !alpha_mask->isTransparent((int)rot.trX(x), (int)rot.trY(y));
+		return !alpha_mask || !alpha_mask->isTransparent((int)rot.trX(p.x), (int)rot.trY(p.y));
 	} else {
 		return true;
 	}

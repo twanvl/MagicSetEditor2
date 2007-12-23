@@ -113,7 +113,7 @@ template <> void GetDefaultMember::handle(const ScriptableImage& s) {
 
 void CachedScriptableImage::generateCached(const GeneratedImage::Options& options,
 	                                       Image* mask,
-	                                       ImageCombine* combine, wxBitmap* bitmap, wxImage* image) {
+	                                       ImageCombine* combine, wxBitmap* bitmap, wxImage* image, RealSize* size) {
 	// ready?
 	if (!isReady()) {
 		// error, return blank image
@@ -121,20 +121,20 @@ void CachedScriptableImage::generateCached(const GeneratedImage::Options& option
 		i.InitAlpha();
 		i.SetAlpha(0,0,0);
 		*image = i;
+		*size = RealSize(0,0);
 		return;
 	}
 	// find combine mode
 	ImageCombine combine_i = value->combine();
 	if (combine_i != COMBINE_DEFAULT) *combine = combine_i;
-	// desired size
-	int ow = options.width, oh = options.height;
-	if (sideways(options.angle)) swap(ow,oh);
+	*size = cached_size;
+	// does the size match?
+	bool w_ok = cached_size.width  == options.width,
+	     h_ok = cached_size.height == options.height;
 	// image or bitmap?
 	if (*combine <= COMBINE_NORMAL) {
 		// bitmap
 		if (cached_b.Ok() && options.angle == cached_angle) {
-			bool w_ok = cached_b.GetWidth()  == ow,
-			     h_ok = cached_b.GetHeight() == oh;
 			if ((w_ok && h_ok) || (options.preserve_aspect == ASPECT_FIT && (w_ok || h_ok))) { // only one dimension has to fit when fitting
 				// cached, we are done
 				*bitmap = cached_b;
@@ -143,9 +143,7 @@ void CachedScriptableImage::generateCached(const GeneratedImage::Options& option
 		}
 	} else {
 		// image
-		if (cached_i.Ok()) {
-			bool w_ok = cached_i.GetWidth()  == options.width,
-			     h_ok = cached_i.GetHeight() == options.height;
+		if (cached_i.Ok() && (options.angle - cached_angle + 360) % 90 == 0) {
 			if ((w_ok && h_ok) || (options.preserve_aspect == ASPECT_FIT && (w_ok || h_ok))) { // only one dimension has to fit when fitting
 				if (options.angle != cached_angle) {
 					// rotate cached image
@@ -160,6 +158,7 @@ void CachedScriptableImage::generateCached(const GeneratedImage::Options& option
 	// generate
 	cached_i = generate(options);
 	cached_angle = options.angle;
+	*size = cached_size = RealSize(options.width, options.height);
 	if (mask && mask->Ok()) {
 		// apply mask
 		if (mask->GetWidth() == cached_i.GetWidth() && mask->GetHeight() == cached_i.GetHeight()) {

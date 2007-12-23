@@ -39,14 +39,14 @@ void NativeLookEditor::drawViewer(RotatedDC& dc, ValueViewer& v) {
 		Style& s = *v.getStyle();
 		dc.SetPen(*wxTRANSPARENT_PEN);
 		dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-		dc.DrawRectangle(s.getRect().grow(1));
+		dc.DrawRectangle(s.getInternalRect().grow(1));
 		// draw label
 		dc.SetFont(*wxNORMAL_FONT);
 		// TODO : tr using stylesheet or using game?
 		dc.DrawText(tr(*set->game, s.fieldP->name, capitalize_sentence(s.fieldP->name)),
-					RealPoint(margin_left, s.top + 1));
+					RealPoint(margin_left - s.left, 1));
 		// draw 3D border
-		draw_control_border(this, dc.getDC(), dc.tr(RealRect(s.left - 1, s.top - 1, s.width + 2, s.height + 2)));
+		draw_control_border(this, dc.getDC(), dc.trRectStraight(s.getInternalRect().grow(1)));
 	}
 	// draw viewer
 	v.draw(dc);
@@ -152,10 +152,10 @@ void NativeLookEditor::onScroll(wxScrollWinEvent& ev) {
 }
 void NativeLookEditor::onMouseWheel(wxMouseEvent& ev) {
 	// send scroll event to field under cursor
-	RealPoint pos = mousePoint(ev);
 	FOR_EACH_EDITOR_REVERSE { // find high z index fields first
+		RealPoint pos = mousePoint(ev, *v);
 		if (v->containsPoint(pos) && v->getField()->editable) {
-			bool scrolled = e->onMouseWheel(mousePoint(ev), ev);
+			bool scrolled = e->onMouseWheel(pos, ev);
 			if (scrolled) return;
 			break;
 		}

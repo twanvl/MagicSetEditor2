@@ -45,20 +45,30 @@ void sharp_resample_and_clip(const Image& img_in, Image& img_out, wxRect rect, i
 
 /// Draw text by first drawing it using a larger font and then downsampling it
 /** optionally rotated by an angle.
- *  rect    = rectangle to draw in
+ *  pos     = the position to draw
+ *  rect    = rectangle to draw in (a rectangle somewhere around pos)
  *  stretch = amount to stretch in the direction of the text after drawing
- *  (wc,hc) = the corner where drawing should begin, (0,0) for top-left, (1,1) for bottom-right
  */
-void draw_resampled_text(DC& dc, const RealRect& rect, double stretch, int wc, int hc, int angle, const String& text, int blur_radius = 0, int repeat = 1);
+void draw_resampled_text(DC& dc, const RealPoint& pos, const RealRect& rect, double stretch, int angle, const String& text, int blur_radius = 0, int repeat = 1);
 
 // scaling factor to use when drawing resampled text
 extern const int text_scaling;
 
 // ----------------------------------------------------------------------------- : Image rotation
 
+/// Is an angle a {0,90,180,270}?
+inline bool straight(int angle) { return angle % 90 == 0; }
+
 /// Is an angle sideways (90 or 270 degrees)?
-// Note: angle & 2 == 0 for angle in {0, 180} and != 0 for angle in {90, 270)
-inline bool sideways(int angle) { return (angle & 2) != 0; }
+inline bool sideways(int angle) {
+	int a = (angle + 3600) % 180;
+	return (a > 45 && a < 135);
+}
+
+/// Convert radians to degrees
+inline double rad_to_deg(double rad) { return  rad * (180.0 / M_PI); }
+/// Convert degrees to radians
+inline double deg_to_rad(double deg) { return  deg * (M_PI / 180.0); }
 
 /// Rotates an image counter clockwise
 /// angle must be a multiple of 90, i.e. {0,90,180,270}

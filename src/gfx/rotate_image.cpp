@@ -84,10 +84,13 @@ struct Rotate270 {
 
 Image rotate_image(const Image& image, int angle) {
 	switch (angle % 360) {
+		case 0:   return image;
 		case 90:  return rotate_image_impl<Rotate90> (image);
 		case 180: return rotate_image_impl<Rotate180>(image);
 		case 270: return rotate_image_impl<Rotate270>(image);
-		default:  return image;
+		default:
+			if (!image.HasAlpha()) const_cast<Image&>(image).InitAlpha();
+			return image.Rotate(angle * M_PI / 180, wxPoint(0,0));
 	}
 }
 

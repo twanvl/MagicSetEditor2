@@ -90,7 +90,7 @@ class CachedScriptableImage : public ScriptableImage {
 	 */
 	void generateCached(const GeneratedImage::Options& img_options,
 	                    Image* mask,
-	                    ImageCombine* combine, wxBitmap* bitmap, wxImage* image);
+	                    ImageCombine* combine, wxBitmap* bitmap, wxImage* image, RealSize* size);
 	
 	/// Update the script, returns true if the value has changed
 	bool update(Context& ctx);
@@ -101,6 +101,7 @@ class CachedScriptableImage : public ScriptableImage {
   private:
 	Image  cached_i; ///< The cached image
 	Bitmap cached_b; ///< *or* the cached bitmap
+	RealSize cached_size; ///< The size of the image before rotating
 	int    cached_angle;
 };
 

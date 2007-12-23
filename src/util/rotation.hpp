@@ -17,6 +17,11 @@ class Font;
 
 // ----------------------------------------------------------------------------- : Rotation
 
+enum RotationFlags
+{	ROTATION_NORMAL
+,	ROTATION_ATTACH_TOP_LEFT
+};
+
 /// An object that can rotate coordinates inside a specified rectangle
 /** This class has lots of tr*** functions, they convert
  *  internal coordinates to external/screen coordinates.
@@ -28,48 +33,61 @@ class Rotation {
 	/** with the given rectangle of external coordinates and a given rotation angle and zoom factor.
 	 *  if is_internal then the rect gives the internal coordinates, its origin should be (0,0)
 	 */
-	Rotation(int angle, const RealRect& rect, double zoom = 1.0, double strectch = 1.0, bool is_internal = false);
+	Rotation(int angle, const RealRect& rect, double zoom = 1.0, double strectch = 1.0, RotationFlags flags = ROTATION_NORMAL);
 	
 	/// Change the zoom factor
 	inline void setZoom(double z) { zoomX = zoomY = z; }
 	/// Retrieve the zoom factor
 	inline double getZoom() const { return zoomY; }
-	/// Change the angle
-	void setAngle(int a);
+	/// Change the stretch factor
+	void setStretch(double s);
+	/// Stretch factor
+	inline double getStretch() const { return zoomX / zoomY; }
+	/// Get the angle
+	inline int getAngle() const { return angle; }
 	/// Change the origin
 	inline void setOrigin(const RealPoint& o) { origin = o; }
 	
+	
 	/// The internal size
-	inline RealSize getInternalSize() const { return trInvNoNeg(size); }
+	inline RealSize getInternalSize() const { return size; }
+	inline double   getWidth()  const { return size.width; }
+	inline double   getHeight() const { return size.height; }
 	/// The intarnal rectangle (origin at (0,0))
-	inline RealRect getInternalRect() const { return RealRect(RealPoint(0,0), getInternalSize()); }
+	inline RealRect getInternalRect() const { return RealRect(RealPoint(0,0), size); }
 	/// The size of the external rectangle (as passed to the constructor) == trNoNeg(getInternalSize())
-	inline RealSize getExternalSize() const { return size; }
+	inline RealSize getExternalSize() const { return trSizeToBB(size); }
 	/// The external rectangle (as passed to the constructor) == trNoNeg(getInternalRect())
-	RealRect getExternalRect() const;
+	inline RealRect getExternalRect() const { return trRectToBB(getInternalRect()); }
 	
 	/// Translate a size or length
 	inline double trS(double s) const { return s * zoomY; }
 	inline double trX(double s) const { return s * zoomX; }
 	inline double trY(double s) const { return s * zoomY; }
+	inline RealSize trS(const RealSize& s) const { return RealSize(s.width * zoomX, s.height * zoomY); }
 	
 	/// Translate an angle
 	inline int trAngle(int a) { return (angle + a) % 360; }
 	
 	/// Translate a single point
 	RealPoint tr(const RealPoint& p) const;
-	/// Translate a single size, the result may be negative
-	RealSize tr(const RealSize& s) const;
-	/// Translate a rectangle, the size of the result may be negative
-	RealRect tr(const RealRect& r) const;
-	
-	/// Translate a size, the result will never be negative
-	RealSize trNoNeg(const RealSize& s) const;
-	/// Translate a rectangle, the result will never have a negative size
-	RealRect trNoNeg(const RealRect& r) const;
-	/// Translate a rectangle, the result will never have a negative size
-	/** The rectangle is also not zoomed */
-	RealRect trNoNegNoZoom(const RealRect& r) const;
+	/// Translate a single point, but don't zoom
+	RealPoint trNoZoom(const RealPoint& p) const;
+	/// Translate a 'pixel'. A pixel has size 1*1
+	RealPoint trPixel(const RealPoint& p) const;
+	/// Translate a 'pixel', but don't zoom
+	RealPoint trPixelNoZoom(const RealPoint& p) const;
+	/// Translate a single size
+	RealSize trSize(const RealSize& s) const;
+	/// Translate a single size, returns the bounding box size (non-negative)
+	RealSize trSizeToBB(const RealSize& s) const;
+	/// Translate a rectangle, returns the bounding box
+	/* //%%the size of the result may be negative*/
+	RealRect trRectToBB(const RealRect& r) const;
+	/// Translate a rectangle, can only be used when not rotating
+	RealRect trRectStraight(const RealRect& r) const;
+	/// Translate a rectangle into a region (supports rotation
+	wxRegion trRectToRegion(const RealRect& rect) const;
 	
 	/// Translate a size or length back to internal 'coordinates'
 	inline double   trInvS(double s)           const { return s / zoomY; }
@@ -80,36 +98,28 @@ class Rotation {
 	
 	/// Translate a point back to internal coordinates
 	RealPoint trInv(const RealPoint& p) const;
-	/// Translate a size back to internal coordinates
-	RealSize  trInv(const RealSize&  s) const;
-	/// Translate a size back to internal coordinates, that are not negative
-	RealSize  trInvNoNeg(const RealSize&  s) const;
-	
-	/// Stretch factor
-	inline double stretch() const { return zoomX / zoomY; }
 	
   protected:
 	int angle;				///< The angle of rotation in degrees (counterclockwise)
-	RealSize size;			///< Size of the rectangle, in external coordinates
+	RealSize size;			///< Size of the rectangle, in internal coordinates
 	RealPoint origin;		///< tr(0,0)
 	double zoomX;			///< Zoom factor, zoom = 2.0 means that 1 internal = 2 external
 	double zoomY;
 	
 	friend class Rotater;
 	
-  public:
-	/// Is the rotation sideways (90 or 270 degrees)?
-	inline bool sideways() const { return ::sideways(angle); }
-	
-  protected:
 	/// Is the x axis 'reversed' (after turning sideways)?
 	inline bool revX()     const { return  angle >= 180; }
 	/// Is the y axis 'reversed' (after turning sideways)?
 	inline bool revY()     const { return  angle == 90 || angle == 180; }
-	/// Negate if revX
-	inline double negX(double d) const { return revX() ? -d : d; }
-	/// Negate if revY
-	inline double negY(double d) const { return revY() ? -d : d; }
+	/// Is the rotation 'simple', i.e. a multiple of 90 degrees?
+	inline bool straight() const { return  ::straight(angle); }
+	/// Is the rotation sideways (90 or 270 degrees)?
+	//  Note: angle & 2 == 0 for angle in {0, 180} and != 0 for angle in {90, 270)
+	inline bool sideways() const { return (angle & 2) != 0; }
+	
+	/// Determine the top-left corner of the bounding box around the rotated box s (in external coordinates)
+	RealPoint boundingBoxCorner(const RealSize& s) const;
 };
 
 // ----------------------------------------------------------------------------- : Rotater
@@ -138,9 +148,9 @@ class Rotater {
 
 /// Render quality of text
 enum RenderQuality {
-	QUALITY_AA,			///< Our own anti aliassing
-	QUALITY_SUB_PIXEL,	///< Sub-pixel positioning
 	QUALITY_LOW,		///< Normal
+	QUALITY_SUB_PIXEL,	///< Sub-pixel positioning
+	QUALITY_AA,			///< Our own anti aliassing
 };
 
 /// A DC with rotation applied
@@ -148,20 +158,21 @@ enum RenderQuality {
  */
 class RotatedDC : public Rotation {
   public:
-	RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, RenderQuality quality, bool is_internal = false);
+	RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, RenderQuality quality, RotationFlags flags = ROTATION_NORMAL);
 	RotatedDC(DC& dc, const Rotation& rotation, RenderQuality quality);
-  
+	
 	// --------------------------------------------------- : Drawing
 	
 	void DrawText  (const String& text,   const RealPoint& pos, int blur_radius = 0, int boldness = 1, double stretch = 1.0);
 	/// Draw abitmap, it must already be zoomed!
 	void DrawBitmap(const Bitmap& bitmap, const RealPoint& pos);
 	/// Draw an image using the given combining mode, the image must already be zoomed!
-	void DrawImage (const Image& image,   const RealPoint& pos, ImageCombine combine = COMBINE_DEFAULT, int angle = 0);
-	/// Draw a bitmap that is already zoomed and rotated
-	void DrawPreRotatedBitmap(const Bitmap& bitmap, const RealPoint& pos);
+	void DrawImage (const Image& image,   const RealPoint& pos, ImageCombine combine = COMBINE_DEFAULT);
+	/// Draw a bitmap that is already zoomed and rotated.
+	/** The rectangle the position in internal coordinates, and the size before rotating and zooming */
+	void DrawPreRotatedBitmap(const Bitmap& bitmap, const RealRect& rect);
 	/// Draw an image that is already zoomed and rotated
-	void DrawPreRotatedImage(const Image& image, const RealPoint& pos, ImageCombine combine = COMBINE_DEFAULT);
+	void DrawPreRotatedImage(const Image& image, const RealRect& rect, ImageCombine combine = COMBINE_DEFAULT);
 	void DrawLine  (const RealPoint& p1,  const RealPoint& p2);
 	void DrawRectangle(const RealRect& r);
 	void DrawRoundedRectangle(const RealRect& r, double radius);

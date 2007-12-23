@@ -44,6 +44,7 @@ void DataViewer::draw(RotatedDC& dc, const Color& background) {
 	bool changed_content_properties = false;
 	FOR_EACH(v, viewers) { // draw low z index fields first
 		if (v->getStyle()->visible) {
+			Rotater r(dc, v->getRotation());
 			try {
 				if (v->prepare(dc)) {
 					changed_content_properties = true;
@@ -59,6 +60,7 @@ void DataViewer::draw(RotatedDC& dc, const Color& background) {
 	// draw viewers
 	FOR_EACH(v, viewers) { // draw low z index fields first
 		if (v->getStyle()->visible) {// visible
+			Rotater r(dc, v->getRotation());
 			try {
 				drawViewer(dc, *v);
 			} catch (const Error& e) {
@@ -104,7 +106,7 @@ Context& DataViewer::getContext()  const { return set->getContext(card); }
 Rotation DataViewer::getRotation() const {
 	if (!stylesheet) stylesheet = set->stylesheet;
 	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
-	return Rotation(ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(), 1.0, true);
+	return Rotation(ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(), 1.0, ROTATION_ATTACH_TOP_LEFT);
 }
 
 // ----------------------------------------------------------------------------- : Setting data
@@ -154,8 +156,8 @@ void DataViewer::addStyles(IndexMap<FieldP,StyleP>& styles) {
 	FOR_EACH(s, styles) {
 		if ((s->visible || s->visible.isScripted()) &&
 		    (nativeLook() || (
-		      (s->width   || s->width  .isScripted() || s->right  || s->right .isScripted()) &&
-		      (s->height  || s->height .isScripted() || s->bottom || s->bottom.isScripted())))) {
+		      (s->width  != -1 || s->width  .isScripted() || s->right  != -1 || s->right .isScripted()) &&
+		      (s->height != -1 || s->height .isScripted() || s->bottom != -1 || s->bottom.isScripted())))) {
 			// no need to make a viewer for things that are always invisible
 			ValueViewerP viewer = makeViewer(s);
 			if (viewer) viewers.push_back(viewer);

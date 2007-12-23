@@ -34,7 +34,7 @@ Rotation UnzoomedDataViewer::getRotation() const {
 		return DataViewer::getRotation();
 	} else {
 		if (!stylesheet) stylesheet = set->stylesheet;
-		return Rotation(0, stylesheet->getCardRect(), 1.0, 1.0, true);
+		return Rotation(0, stylesheet->getCardRect(), 1.0, 1.0, ROTATION_ATTACH_TOP_LEFT);
 	}
 }
 

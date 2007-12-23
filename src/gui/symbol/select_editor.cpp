@@ -57,7 +57,8 @@ void SymbolSelectEditor::draw(DC& dc) {
 		// draw selection rectangle
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		dc.SetPen(wxPen(*wxCYAN,1,wxDOT));
-		RealRect rect = control.rotation.tr(RealRect(selection_rect_a, RealSize(selection_rect_b - selection_rect_a)));
+		//% TODO: use RotatedDC?
+		RealRect rect = control.rotation.trRectToBB(RealRect(selection_rect_a, RealSize(selection_rect_b - selection_rect_a)));
 		dc.DrawRectangle(rect);
 	} else {
 		// draw handles

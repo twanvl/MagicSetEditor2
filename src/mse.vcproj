@@ -996,6 +996,12 @@
 					RelativePath=".\gui\new_window.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\packages_window.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\packages_window.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\preferences_window.cpp">
 				</File>
 				<File
@@ -2022,6 +2028,12 @@
 				</File>
 				<File
 					RelativePath=".\util\io\package_manager.hpp">
+				</File>
+				<File
+					RelativePath=".\util\io\package_repository.cpp">
+				</File>
+				<File
+					RelativePath=".\util\io\package_repository.hpp">
 				</File>
 				<File
 					RelativePath=".\util\io\reader.cpp">

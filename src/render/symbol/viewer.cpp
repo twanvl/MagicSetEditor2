@@ -365,7 +365,7 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolGroup& group, HighlightStyl
 	if (style == HIGHLIGHT_BORDER) {
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		dc.SetPen  (wxPen(Color(255,0,0), 2));
-		dc.DrawRectangle(rotation.tr(RealRect(group.min_pos, RealSize(group.max_pos - group.min_pos))));
+		dc.DrawRectangle(rotation.trRectToBB(RealRect(group.min_pos, RealSize(group.max_pos - group.min_pos))));
 	}
 	FOR_EACH_CONST(part, group.parts) {
 		highlightPart(dc, *part, (HighlightStyle)(style | HIGHLIGHT_LESS));

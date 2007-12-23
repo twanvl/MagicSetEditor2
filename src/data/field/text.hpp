@@ -35,6 +35,8 @@ class TextField : public Field {
 	
 	OptionalScript script;			///< Script to apply to all values
 	OptionalScript default_script;	///< Script that generates the default value
+	//%OptionalScript view_script;		///< Script to apply before viewing
+	//%OptionalScript unview_script;	///< Script to apply after changes to the view
 	bool multi_line;				///< Are newlines allowed in the text?
 	String default_name;			///< Name of "default" value
 	
@@ -57,7 +59,6 @@ class TextStyle : public Style {
 	bool always_symbol;							///< Should everything be drawn as symbols?
 	bool allow_formating;						///< Is formating (bold/italic/..) allowed?
 	Scriptable<Alignment> alignment;			///< Alignment inside the box
-	Scriptable<int> angle;						///< Angle of the text inside the box
 	double padding_left,   padding_left_min;	///< Padding
 	double padding_right,  padding_right_min;	///< Padding
 	double padding_top,    padding_top_min;		///< Padding
@@ -80,14 +81,6 @@ class TextStyle : public Style {
 	virtual void initDependencies(Context&, const Dependency&) const;
 	virtual void checkContentDependencies(Context&, const Dependency&) const;
 	
-	/// The rotation to use when drawing
-	inline Rotation getRotation() const {
-		return Rotation(angle, getRect(), 1.0, getStretch());
-	}
-	/// The rotation to use when determining content layout, does not include the stretch factor
-	inline Rotation getRotationNoStretch() const {
-		return Rotation(angle, getRect());
-	}
 	/// Stretch factor to use
 	double getStretch() const;
 	

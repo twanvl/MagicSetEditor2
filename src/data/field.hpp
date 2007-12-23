@@ -13,6 +13,7 @@
 #include <util/reflect.hpp>
 #include <util/alignment.hpp>
 #include <util/age.hpp>
+#include <util/rotation.hpp>
 #include <script/scriptable.hpp>
 #include <script/dependency.hpp>
 
@@ -98,17 +99,21 @@ class Style : public IntrusivePtrVirtualBase {
 	Scriptable<double> left,  top;		///< Position of this field
 	Scriptable<double> width, height;	///< Position of this field
 	Scriptable<double> right, bottom;	///< Position of this field
+	Scriptable<int>    angle;			///< Rotation of the box
 	Scriptable<bool>   visible;			///< Is this field visible?
 	enum AutomaticSide {
 		AUTO_UNKNOWN = 0x00,
-		AUTO_LEFT    = 0x01, AUTO_WIDTH  = 0x02, AUTO_RIGHT  = 0x04,
-		AUTO_TOP     = 0x10, AUTO_HEIGHT = 0x20, AUTO_BOTTOM = 0x40,
+		AUTO_LEFT    = 0x01, AUTO_WIDTH  = 0x02, AUTO_RIGHT  = 0x04, AUTO_LR = 0x08,
+		AUTO_TOP     = 0x10, AUTO_HEIGHT = 0x20, AUTO_BOTTOM = 0x40, AUTO_TB = 0x80,
+		ATTACH_LEFT  = 0x04, ATTACH_CENTER = 0x02, ATTACH_RIGHT  = 0x01,
+		ATTACH_TOP   = 0x40, ATTACH_MIDDLE = 0x20, ATTACH_BOTTOM = 0x10,
 	} automatic_side : 8;	///< Which of (left, width,  right) and (top,  height, bottom) is determined automatically?
 	bool content_dependent;	///< Does this style depend on content properties?
 	
 	inline RealPoint getPos()  const { return RealPoint(left, top               ); }
 	inline RealSize  getSize() const { return RealSize (           width, height); }
-	inline RealRect  getRect() const { return RealRect (left, top, width, height); }
+	inline RealRect  getExternalRect() const { return RealRect (left, top, width, height); }
+	inline RealRect  getInternalRect() const { return RealRect(0, 0, width, height); }
 	
 	/// Get a copy of this style
 	virtual StyleP clone() const = 0;

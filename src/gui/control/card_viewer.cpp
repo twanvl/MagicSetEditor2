@@ -38,7 +38,7 @@ wxSize CardViewer::DoGetBestSize() const {
 void CardViewer::redraw(const ValueViewer& v) {
 	if (drawing) return;
 	up_to_date = false;
-	RefreshRect(getRotation().tr(v.boundingBox()), false);
+	RefreshRect(getRotation().trRectToBB(v.boundingBox()), false);
 }
 
 void CardViewer::onChange() {
@@ -98,7 +98,7 @@ bool CardViewer::shouldDraw(const ValueViewer& v) const {
 //	int dx = GetScrollPos(wxHORIZONTAL), dy = GetScrollPos(wxVERTICAL);
 //	wxRegion clip = GetUpdateRegion();
 //	clip.Offset(dx, dy);
-	return GetUpdateRegion().Contains(getRotation().tr(v.boundingBox().toRect()).toRect()) != wxOutRegion;
+	return GetUpdateRegion().Contains(getRotation().trRectToBB(v.boundingBox().toRect()).toRect()) != wxOutRegion;
 }
 
 // helper class for overdrawDC()
@@ -133,7 +133,7 @@ Rotation CardViewer::getRotation() const {
 	if (!stylesheet) stylesheet = set->stylesheet;
 	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
 	int dx = GetScrollPos(wxHORIZONTAL), dy = GetScrollPos(wxVERTICAL);
-	return Rotation(ss.card_angle(), stylesheet->getCardRect().move(-dx,-dy,0,0), ss.card_zoom(), 1.0, true);
+	return Rotation(ss.card_angle(), stylesheet->getCardRect().move(-dx,-dy,0,0), ss.card_zoom(), 1.0, ROTATION_ATTACH_TOP_LEFT);
 }
 
 // ----------------------------------------------------------------------------- : Event table

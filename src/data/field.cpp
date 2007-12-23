@@ -94,9 +94,10 @@ intrusive_ptr<Field> read_new<Field>(Reader& reader) {
 Style::Style(const FieldP& field)
 	: fieldP(field)
 	, z_index(0)
-	, left(0),  top(0)
-	, width(0), height(0)
-	, right(0), bottom(0)
+	, left(-1),  top(-1)
+	, width(-1), height(-1)
+	, right(-1), bottom(-1)
+	, angle(0)
 	, visible(true)
 	, automatic_side(AUTO_UNKNOWN)
 	, content_dependent(false)
@@ -112,6 +113,7 @@ IMPLEMENT_REFLECTION(Style) {
 	REFLECT(top);
 	REFLECT(height);
 	REFLECT(bottom);
+	REFLECT(angle);
 	REFLECT(visible);
 }
 
@@ -130,28 +132,44 @@ int Style::update(Context& ctx) {
 	     | top    .update(ctx)
 	     | height .update(ctx)
 	     | bottom .update(ctx)
+	     | angle  .update(ctx)
 	     | visible.update(ctx);
-	// determine automatic_side
+	// determine automatic_side and attachment of rotation point
 	if (automatic_side == AUTO_UNKNOWN) {
-		if      (right  == 0) automatic_side = (AutomaticSide)(automatic_side | AUTO_RIGHT);
-		else if (width  == 0) automatic_side = (AutomaticSide)(automatic_side | AUTO_WIDTH);
-		else                  automatic_side = (AutomaticSide)(automatic_side | AUTO_LEFT);
-		if      (bottom == 0) automatic_side = (AutomaticSide)(automatic_side | AUTO_BOTTOM);
-		else if (height == 0) automatic_side = (AutomaticSide)(automatic_side | AUTO_HEIGHT);
-		else                  automatic_side = (AutomaticSide)(automatic_side | AUTO_TOP);
+		if      (right  == -1) automatic_side = (AutomaticSide)(automatic_side | AUTO_RIGHT);
+		else if (width  == -1) automatic_side = (AutomaticSide)(automatic_side | AUTO_WIDTH);
+		else if (left   == -1) automatic_side = (AutomaticSide)(automatic_side | AUTO_LEFT);
+		else                   automatic_side = (AutomaticSide)(automatic_side | AUTO_LR);
+		if      (bottom == -1) automatic_side = (AutomaticSide)(automatic_side | AUTO_BOTTOM);
+		else if (height == -1) automatic_side = (AutomaticSide)(automatic_side | AUTO_HEIGHT);
+		else if (top    == -1) automatic_side = (AutomaticSide)(automatic_side | AUTO_TOP);
+		else                   automatic_side = (AutomaticSide)(automatic_side | AUTO_TB);
+		changed = true;
 	}
-	if (automatic_side & AUTO_WIDTH){
-		changed=changed;//BREAKPOINT
-	}
+	if (!changed) return CHANGE_NONE;
 	// update the automatic_side
 	if      (automatic_side & AUTO_LEFT)   left   = right - width;
 	else if (automatic_side & AUTO_WIDTH)  width  = right - left;
-	else                                   right  = left + width;
+	else if (automatic_side & AUTO_RIGHT)  right  = left + width;
+	else                                   {int lr = left + right; left = (lr - width) / 2; right = (lr + width) / 2; }
 	if      (automatic_side & AUTO_TOP)    top    = bottom - height;
 	else if (automatic_side & AUTO_HEIGHT) height = bottom - top;
-	else                                   bottom = top + height;
-	// are there changes?
-	return changed;
+	else if (automatic_side & AUTO_BOTTOM) bottom = top + height;
+	else                                   {int tb = top + bottom; top = (tb - height) / 2; bottom = (tb + height) / 2; }
+	// adjust rotation point
+	if (angle != 0 && (automatic_side & (AUTO_LEFT | AUTO_TOP))) {
+		double s = sin(angle * M_PI / 180), c = cos(angle * M_PI / 180);
+		if (automatic_side & AUTO_LEFT) { // attach right corner instead of left
+			left = left + width * (1 - c);
+			top  = top  + width * s;
+		}
+		if (automatic_side & AUTO_TOP) { // attach botom corner instead of top
+			left = left - height * s;
+			top  = top  + height * (1 - c);
+		}
+	}
+	// done
+	return CHANGE_OTHER;
 }
 
 void Style::initDependencies(Context& ctx, const Dependency& dep) const {

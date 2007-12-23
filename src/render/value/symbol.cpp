@@ -20,8 +20,8 @@ DECLARE_TYPEOF_COLLECTION(SymbolVariationP);
 void SymbolValueViewer::draw(RotatedDC& dc) {
 	drawFieldBorder(dc);
 	// draw checker background
-	draw_checker(dc, style().getRect());
-	double wh = min(style().width, style().height);
+	draw_checker(dc, style().getInternalRect());
+	double wh = min(dc.getWidth(), dc.getHeight());
 	// try to load symbol
 	if (symbols.empty() && !value().filename.empty()) {
 		try {
@@ -45,7 +45,7 @@ void SymbolValueViewer::draw(RotatedDC& dc) {
 	int x = 0;
 	for (size_t i = 0 ; i < symbols.size() ; ++i) {
 		// todo : labels?
-		dc.DrawBitmap(symbols[i], style().getPos() + RealSize(x, 0));
+		dc.DrawBitmap(symbols[i], RealPoint(x, 0));
 		x += symbols[i].GetWidth() + 2;
 	}
 }

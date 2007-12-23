@@ -178,7 +178,6 @@ ChoiceStyle::ChoiceStyle(const ChoiceFieldP& field)
 	, choice_images_initialized(false)
 	, combine(COMBINE_NORMAL)
 	, alignment(ALIGN_STRETCH)
-	, angle(0)
 	, thumbnails(nullptr)
 {}
 
@@ -291,7 +290,6 @@ IMPLEMENT_REFLECTION(ChoiceStyle) {
 	REFLECT_N("mask",mask_filename);
 	REFLECT(combine);
 	REFLECT(alignment);
-	REFLECT(angle);
 	REFLECT(font);
 	REFLECT(image);
 	REFLECT(choice_images);

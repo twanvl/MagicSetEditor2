@@ -465,7 +465,7 @@ void ImageSliceSelector::draw(DC& dc) {
 		dc.DestroyClippingRegion();
 	}
 	// bitmap : unselected
-	dc.DrawBitmap(bitmap_no_sel, border, border);
+	dc.DrawBitmap(bitmap_no_sel, border, border, true);
 	// draw selected part ungreyed over it
 	{
 		wxMemoryDC mdc;

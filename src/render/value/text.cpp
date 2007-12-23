@@ -28,6 +28,7 @@ void TextValueViewer::draw(RotatedDC& dc) {
 	drawFieldBorder(dc);
 	if (!v.prepared()) {
 		v.prepare(dc, value().value(), style(), viewer.getContext());
+		dc.setStretch(getStretch());
 	}
 	if (viewer.drawFocus() && isCurrent()) {
 		v.draw(dc, style(), DRAW_ACTIVE);
@@ -49,4 +50,8 @@ void TextValueViewer::onStyleChange(int changes) {
 
 void TextValueViewer::onAction(const Action&, bool undone) {
 	v.reset(true);
+}
+
+double TextValueViewer::getStretch() const {
+	return v.prepared() ? style().getStretch() : 1.0;
 }

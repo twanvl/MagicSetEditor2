@@ -33,7 +33,8 @@ class GeneratedImage : public ScriptValue {
 			, package(package), local_package(local_package)
 		{}
 		
-		int            width, height;	///< Width to force the image to, or 0 to keep the width of the input
+		mutable int    width, height;	///< Width to force the image to, or 0 to keep the width of the input
+										///< In that case, width and height will be later set to the actual size
 		double         zoom;            ///< Zoom factor to use, when witdth=height=0
 		int            angle;           ///< Angle to rotate image by afterwards
 		PreserveAspect preserve_aspect;

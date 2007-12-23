@@ -34,11 +34,11 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 		}
 		// draw name and color
 		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-		dc.DrawRectangle(RealRect(style().left, style().top, 40, style().height));
+		dc.DrawRectangle(RealRect(0, 0, 40, dc.getHeight()));
 		dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
 		dc.SetPen(*wxTRANSPARENT_PEN);
-		dc.DrawRectangle(style().getRect().move(40, 0, -40, 0));
-		dc.DrawText(color_name, style().getPos() + RealSize(43, 3));
+		dc.DrawRectangle(RealRect(40, 0, dc.getWidth()-40, dc.getHeight()));
+		dc.DrawText(color_name, RealPoint(43, 3));
 	} else {
 		// is there a mask?
 		loadMask(dc);
@@ -53,8 +53,8 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 						style().top_width  < style().height && style().bottom_width < style().height;
 			if (clip) {
 				// clip away the inside of the rectangle
-				wxRegion r = dc.tr(style().getRect()).toRect();
-				r.Subtract(dc.tr(RealRect(
+				wxRegion r = dc.trRectToRegion(style().getInternalRect());
+				r.Subtract(dc.trRectToRegion(RealRect(
 					style().left + style().left_width,
 					style().top  + style().top_width,
 					style().width  - style().left_width - style().right_width,
@@ -62,7 +62,7 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 				)));
 				dc.getDC().SetClippingRegion(r);
 			}
-			dc.DrawRoundedRectangle(style().getRect(), style().radius);
+			dc.DrawRoundedRectangle(style().getInternalRect(), style().radius);
 			if (clip) dc.getDC().DestroyClippingRegion();
 		}
 	}
@@ -70,8 +70,8 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 
 bool ColorValueViewer::containsPoint(const RealPoint& p) const {
 	// distance to each side
-	double left = p.x - style().left,  right  = style().right  - p.x - 1;
-	double top  = p.y - style().top,   bottom = style().bottom - p.y - 1;
+	double left = p.x, right  = style().width  - p.x - 1;
+	double top  = p.y, bottom = style().height - p.y - 1;
 	if (left < 0 || right < 0 || top < 0 || bottom < 0 ||                 // outside bounding box
 	    (left >= style().left_width && right  >= style().right_width &&   // outside horizontal border
 	     top  >= style().top_width  && bottom >= style().bottom_width)) { // outside vertical border
@@ -93,7 +93,7 @@ void ColorValueViewer::onStyleChange(int changes) {
 
 void ColorValueViewer::loadMask(const Rotation& rot) const {
 	if (style().mask_filename().empty()) return; // no mask
-	int w = (int) rot.trX(style().width), h = (int) rot.trY(style().height);
+	int w = (int) rot.trX(rot.getWidth()), h = (int) rot.trY(rot.getHeight());
 	if (alpha_mask && alpha_mask->size == wxSize(w,h)) return; // mask loaded and right size
 	// (re) load the mask
 	Image image;
