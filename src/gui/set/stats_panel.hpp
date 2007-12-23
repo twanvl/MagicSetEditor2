@@ -13,6 +13,7 @@
 #include <gui/set/panel.hpp>
 
 class StatCategoryList;
+class StatDimensionList;
 class GraphControl;
 class FilteredCardList;
 
@@ -41,6 +42,7 @@ class StatsPanel : public SetWindowPanel {
 	DECLARE_EVENT_TABLE();
 	
 	StatCategoryList* categories;
+	StatDimensionList* dimensions[3];
 	GraphControl*     graph;
 	FilteredCardList* card_list;
 	
