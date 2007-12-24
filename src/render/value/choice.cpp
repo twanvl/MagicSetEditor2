@@ -17,7 +17,7 @@ bool ChoiceValueViewer::prepare(RotatedDC& dc) {
 		style().initImage();
 		CachedScriptableImage& img = style().image;
 		Context& ctx = viewer.getContext();
-		ctx.setVariable(_("input"), to_script(value().value()));
+		ctx.setVariable(SCRIPT_VAR_input, to_script(value().value()));
 		// generate to determine the size
 		if (img.update(ctx) && img.isReady()) {
 			GeneratedImage::Options img_options;

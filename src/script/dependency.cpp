@@ -242,7 +242,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					size_t scope = openScope();
 					// prepare arguments
 					for (unsigned int j = 0 ; j < i.data ; ++j) {
-						setVariable(instr[i.data - j - 1].data, stack.back());
+						setVariable((Variable)instr[i.data - j - 1].data, stack.back());
 						stack.pop_back();
 					}
 					instr += i.data; // skip arguments, there had better not be any jumps into the argument list
@@ -267,14 +267,14 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				case I_GET_VAR: {
 					ScriptValueP value = variables[i.data].value;
 					if (!value) {
-						value = new_intrusive1<ScriptMissingVariable>(variable_to_string(i.data)); // no errors here
+						value = new_intrusive1<ScriptMissingVariable>(variable_to_string((Variable)i.data)); // no errors here
 					}
 					stack.push_back(value);
 					break;
 				}
 				// Set a variable (as normal)
 				case I_SET_VAR: {
-					setVariable(i.data, stack.back());
+					setVariable((Variable)i.data, stack.back());
 					break;
 				}
 				

@@ -21,9 +21,12 @@ DECLARE_TYPEOF_COLLECTION(pair<String COMMA ScriptValueP>);
 // ----------------------------------------------------------------------------- : Debugging
 
 SCRIPT_FUNCTION(trace) {
-	SCRIPT_PARAM(String, input);
-	//handle_warning(_("Trace:\t") + input, false);
-	wxLogDebug(_("Trace:\t") + input);
+	SCRIPT_PARAM_C(String, input);
+	#ifdef _DEBUG
+		wxLogDebug(_("Trace:\t") + input);
+	#else
+		handle_warning(_("Trace:\t") + input, false);
+	#endif
 	SCRIPT_RETURN(input);
 }
 
@@ -31,38 +34,38 @@ SCRIPT_FUNCTION(trace) {
 
 // convert a string to upper case
 SCRIPT_FUNCTION(to_upper) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(input.Upper());
 }
 
 // convert a string to lower case
 SCRIPT_FUNCTION(to_lower) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(input.Lower());
 }
 
 // convert a string to title case
 SCRIPT_FUNCTION(to_title) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(capitalize(input));
 }
 
 // reverse a string
 SCRIPT_FUNCTION(reverse) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	reverse(input.begin(), input.end());
 	SCRIPT_RETURN(input);
 }
 
 // remove leading and trailing whitespace from a string
 SCRIPT_FUNCTION(trim) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(trim(input));
 }
 
 // extract a substring
 SCRIPT_FUNCTION(substring) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_PARAM_DEFAULT(int, begin, 0);
 	SCRIPT_PARAM_DEFAULT(int, end,   INT_MAX);
 	if (begin < 0) begin = 0;
@@ -78,22 +81,22 @@ SCRIPT_FUNCTION(substring) {
 
 // does a string contain a substring?
 SCRIPT_FUNCTION(contains) {
-	SCRIPT_PARAM(String, input);
-	SCRIPT_PARAM(String, match);
+	SCRIPT_PARAM_C(String, input);
+	SCRIPT_PARAM_C(String, match);
 	SCRIPT_RETURN(input.find(match) != String::npos);
 }
 
-SCRIPT_RULE_1(format, String, format) {
+SCRIPT_RULE_1_C(format, String, format) {
 	String fmt = _("%") + replace_all(format, _("%"), _(""));
 	// determine type expected by format string
 	if (format.find_first_of(_("DdIiOoXx")) != String::npos) {
-		SCRIPT_PARAM(int, input);
+		SCRIPT_PARAM_C(int, input);
 		SCRIPT_RETURN(String::Format(fmt, input));
 	} else if (format.find_first_of(_("EeFfGg")) != String::npos) {
-		SCRIPT_PARAM(double, input);
+		SCRIPT_PARAM_C(double, input);
 		SCRIPT_RETURN(String::Format(fmt, input));
 	} else if (format.find_first_of(_("Ss")) != String::npos) {
-		SCRIPT_PARAM(String, input);
+		SCRIPT_PARAM_C(String, input);
 		SCRIPT_RETURN(format_string(fmt, input));
 	} else {
 		throw ScriptError(_ERROR_1_("unsupported format", format));
@@ -101,7 +104,7 @@ SCRIPT_RULE_1(format, String, format) {
 }
 
 SCRIPT_FUNCTION(curly_quotes) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	bool open = true, in_tag = false;
 	FOR_EACH(c, input) {
 		if (c == _('\'') || c == LEFT_SINGLE_QUOTE || c == RIGHT_SINGLE_QUOTE) {
@@ -122,7 +125,7 @@ SCRIPT_FUNCTION(curly_quotes) {
 
 // regex escape a string
 SCRIPT_FUNCTION(regex_escape) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(regex_escape(input));
 }
 
@@ -152,18 +155,18 @@ String replace_tag_contents(String input, const String& tag, const ScriptValueP&
 }
 
 // Replace the contents of a specific tag
-SCRIPT_RULE_2(tag_contents,  String, tag,  ScriptValueP, contents) {
-	SCRIPT_PARAM(String, input);
+SCRIPT_RULE_2_C(tag_contents,  String, tag,  ScriptValueP, contents) {
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(replace_tag_contents(input, tag, contents, ctx));
 }
 
-SCRIPT_RULE_1(tag_remove, String, tag) {
-	SCRIPT_PARAM(String, input);
+SCRIPT_RULE_1_C(tag_remove, String, tag) {
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(remove_tag(input, tag));
 }
 
 SCRIPT_FUNCTION(remove_tags) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(untag_no_escape(input));
 }
 
@@ -278,30 +281,30 @@ SCRIPT_FUNCTION_DEPENDENCIES(position_of) {
 int script_length_of(Context& ctx, const ScriptValueP& collection) {
 	if (ScriptObject<Set*>* setobj = dynamic_cast<ScriptObject<Set*>*>(collection.get())) {
 		Set* set = setobj->getValue();
-		SCRIPT_OPTIONAL_PARAM_(ScriptValueP, filter);
+		SCRIPT_OPTIONAL_PARAM_C_(ScriptValueP, filter);
 		return set->numberOfCards(filter);
 	} else {
 		return collection->itemCount();
 	}
 }
 SCRIPT_FUNCTION(length) {
-	SCRIPT_PARAM(ScriptValueP, input);
+	SCRIPT_PARAM_C(ScriptValueP, input);
 	SCRIPT_RETURN(script_length_of(ctx, input));
 }
 SCRIPT_FUNCTION(number_of_items) {
-	SCRIPT_PARAM(ScriptValueP, in);
+	SCRIPT_PARAM_C(ScriptValueP, in);
 	SCRIPT_RETURN(script_length_of(ctx, in));
 }
 
 // filtering items from a list
 SCRIPT_FUNCTION(filter_list) {
-	SCRIPT_PARAM(ScriptValueP, input);
-	SCRIPT_PARAM(ScriptValueP, filter);
+	SCRIPT_PARAM_C(ScriptValueP, input);
+	SCRIPT_PARAM_C(ScriptValueP, filter);
 	// filter a collection
 	intrusive_ptr<ScriptCustomCollection> ret(new ScriptCustomCollection());
 	ScriptValueP it = input->makeIterator(input);
 	while (ScriptValueP v = it->next()) {
-		ctx.setVariable(_("input"), v);
+		ctx.setVariable(SCRIPT_VAR_input, v);
 		if (*filter->eval(ctx)) {
 			ret->value.push_back(v);
 		}
@@ -311,7 +314,7 @@ SCRIPT_FUNCTION(filter_list) {
 }
 
 SCRIPT_FUNCTION(sort_list) {
-	SCRIPT_PARAM(ScriptValueP, input);
+	SCRIPT_PARAM_C(ScriptValueP, input);
 	SCRIPT_PARAM_N(ScriptValueP, _("order by"), order_by);
 	return sort_script(ctx, input, *order_by);
 }
@@ -320,8 +323,8 @@ SCRIPT_FUNCTION(sort_list) {
 
 SCRIPT_RULE_2_N_DEP(expand_keywords, ScriptValueP, _("default expand"), default_expand,
                                      ScriptValueP, _("combine"),        combine) {
-	SCRIPT_PARAM(String, input);
-	SCRIPT_PARAM(Set*, set);
+	SCRIPT_PARAM_C(String, input);
+	SCRIPT_PARAM_C(Set*, set);
 	KeywordDatabase& db = set->keyword_db;
 	if (db.empty()) {
 		db.prepare_parameters(set->game->keyword_parameter_types, set->game->keywords);
@@ -329,20 +332,20 @@ SCRIPT_RULE_2_N_DEP(expand_keywords, ScriptValueP, _("default expand"), default_
 		db.add(set->game->keywords);
 		db.add(set->keywords);
 	}
-	SCRIPT_OPTIONAL_PARAM_(CardP, card);
+	SCRIPT_OPTIONAL_PARAM_C_(CardP, card);
 	WITH_DYNAMIC_ARG(keyword_usage_statistics, card ? &card->keyword_usage : nullptr);
 	SCRIPT_RETURN(db.expand(input, default_expand, combine, ctx));
 }
 SCRIPT_RULE_2_DEPENDENCIES(expand_keywords) {
 	default_expand->dependencies(ctx, dep);
 	combine       ->dependencies(ctx, dep);
-	SCRIPT_PARAM(Set*, set);
+	SCRIPT_PARAM_C(Set*, set);
 	set->game->dependent_scripts_keywords.add(dep); // this depends on the set's keywords
 	SCRIPT_RETURN(_(""));
 }
 
 SCRIPT_FUNCTION(keyword_usage) {
-	SCRIPT_PARAM(CardP, card);
+	SCRIPT_PARAM_C(CardP, card);
 	SCRIPT_OPTIONAL_PARAM_(bool, unique);
 	// make a list "kw1, kw2, kw3" of keywords used on card
 	String ret;
@@ -372,7 +375,7 @@ class ScriptReplaceRule : public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
 	virtual String typeName() const { return _("replace_rule"); }
 	virtual ScriptValueP eval(Context& ctx) const {
-		SCRIPT_PARAM(String, input);
+		SCRIPT_PARAM_C(String, input);
 		if (context.IsValid() || replacement_function || recursive) {
 			SCRIPT_RETURN(apply(ctx, input));
 		} else {
@@ -431,12 +434,12 @@ class ScriptReplaceRule : public ScriptValue {
 ScriptValueP replace_rule(Context& ctx) {
 	intrusive_ptr<ScriptReplaceRule> ret(new ScriptReplaceRule);
 	// match
-	SCRIPT_PARAM(String, match);
+	SCRIPT_PARAM_C(String, match);
 	if (!ret->regex.Compile(match, wxRE_ADVANCED)) {
 		throw ScriptError(_("Error while compiling regular expression: '")+match+_("'"));
 	}
 	// replace
-	SCRIPT_PARAM(ScriptValueP, replace);
+	SCRIPT_PARAM_C(ScriptValueP, replace);
 	if (replace->type() == SCRIPT_FUNCTION) {
 		ret->replacement_function = replace;
 	} else {
@@ -467,7 +470,7 @@ class ScriptFilterRule : public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
 	virtual String typeName() const { return _("filter_rule"); }
 	virtual ScriptValueP eval(Context& ctx) const {
-		SCRIPT_PARAM(String, input);
+		SCRIPT_PARAM_C(String, input);
 		String ret;
 		while (regex.Matches(input)) {
 			// match, append to result
@@ -493,7 +496,7 @@ class ScriptFilterRule : public ScriptValue {
 ScriptValueP filter_rule(Context& ctx) {
 	intrusive_ptr<ScriptFilterRule> ret(new ScriptFilterRule);
 	// match
-	SCRIPT_PARAM(String, match);
+	SCRIPT_PARAM_C(String, match);
 	if (!ret->regex.Compile(match, wxRE_ADVANCED)) {
 		throw ScriptError(_("Error while compiling regular expression: '")+match+_("'"));
 	}
@@ -520,7 +523,7 @@ class ScriptMatchRule : public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
 	virtual String typeName() const { return _("match_rule"); }
 	virtual ScriptValueP eval(Context& ctx) const {
-		SCRIPT_PARAM(String, input);
+		SCRIPT_PARAM_C(String, input);
 		SCRIPT_RETURN(regex.Matches(input));
 	}
 	
@@ -531,7 +534,7 @@ class ScriptMatchRule : public ScriptValue {
 ScriptValueP match_rule(Context& ctx) {
 	intrusive_ptr<ScriptMatchRule> ret(new ScriptMatchRule);
 	// match
-	SCRIPT_PARAM(String, match);
+	SCRIPT_PARAM_C(String, match);
 	if (!ret->regex.Compile(match, wxRE_ADVANCED)) {
 		throw ScriptError(_("Error while compiling regular expression: '")+match+_("'"));
 	}
@@ -554,7 +557,7 @@ class ScriptRule_sort_order: public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
 	virtual String typeName() const { return _("sort_rule"); }
 	virtual ScriptValueP eval(Context& ctx) const {
-		SCRIPT_PARAM(ScriptValueP, input);
+		SCRIPT_PARAM_C(ScriptValueP, input);
 		if (input->type() == SCRIPT_COLLECTION) {
 			handle_warning(_("Sorting a collection as a string, this is probably not intended, if it is use 'collection+\"\"' to force conversion"), false);
 		}
@@ -569,7 +572,7 @@ class ScriptRule_sort: public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
 	virtual String typeName() const { return _("sort_rule"); }
 	virtual ScriptValueP eval(Context& ctx) const {
-		SCRIPT_PARAM(ScriptValueP, input);
+		SCRIPT_PARAM_C(ScriptValueP, input);
 		if (input->type() == SCRIPT_COLLECTION) {
 			handle_warning(_("Sorting a collection as a string, this is probably not intended, if it is use 'collection+\"\"' to force conversion"), false);
 		}
@@ -582,13 +585,13 @@ class ScriptRule_sort: public ScriptValue {
 };
 
 SCRIPT_FUNCTION(sort_rule) {
-	SCRIPT_OPTIONAL_PARAM(String, order) {
+	SCRIPT_OPTIONAL_PARAM_C(String, order) {
 		return new_intrusive1<ScriptRule_sort_order>(order);
 	}
 	return new_intrusive <ScriptRule_sort>();
 }
 SCRIPT_FUNCTION(sort_text) {
-	SCRIPT_OPTIONAL_PARAM(String, order) {
+	SCRIPT_OPTIONAL_PARAM_C(String, order) {
 		return ScriptRule_sort_order(order).eval(ctx);
 	}
 	return ScriptRule_sort().eval(ctx);

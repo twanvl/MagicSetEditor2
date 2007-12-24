@@ -63,14 +63,14 @@ SCRIPT_FUNCTION(set_mask) {
 }
 
 SCRIPT_FUNCTION(set_alpha) {
-	SCRIPT_PARAM(GeneratedImageP, input);
+	SCRIPT_PARAM_C(GeneratedImageP, input);
 	SCRIPT_PARAM(double, alpha);
 	return new_intrusive2<SetAlphaImage>(input, alpha);
 }
 
 SCRIPT_FUNCTION(set_combine) {
 	SCRIPT_PARAM(String, combine);
-	SCRIPT_PARAM(GeneratedImageP, input);
+	SCRIPT_PARAM_C(GeneratedImageP, input);
 	ImageCombine image_combine;
 	if (!parse_enum(combine, image_combine)) {
 		throw ScriptError(_("Not a valid combine mode: '") + combine + _("'"));
@@ -79,13 +79,13 @@ SCRIPT_FUNCTION(set_combine) {
 }
 
 SCRIPT_FUNCTION(enlarge) {
-	SCRIPT_PARAM(GeneratedImageP, input);
+	SCRIPT_PARAM_C(GeneratedImageP, input);
 	SCRIPT_PARAM_N(double, _("border size"), border_size);
 	return new_intrusive2<EnlargeImage>(input, border_size);
 }
 
 SCRIPT_FUNCTION(crop) {
-	SCRIPT_PARAM(GeneratedImageP, input);
+	SCRIPT_PARAM_C(GeneratedImageP, input);
 	SCRIPT_PARAM_N(int, _("width"),       width);
 	SCRIPT_PARAM_N(int, _("height"),      height);
 	SCRIPT_PARAM_N(double, _("offset x"), offset_x);
@@ -94,7 +94,7 @@ SCRIPT_FUNCTION(crop) {
 }
 
 SCRIPT_FUNCTION(drop_shadow) {
-	SCRIPT_PARAM(GeneratedImageP, input);
+	SCRIPT_PARAM_C(GeneratedImageP, input);
 	SCRIPT_OPTIONAL_PARAM_N_(double, _("offset x"),    offset_x);
 	SCRIPT_OPTIONAL_PARAM_N_(double, _("offset y"),    offset_y);
 	SCRIPT_OPTIONAL_PARAM_N_(double, _("alpha"),       alpha);
@@ -156,7 +156,7 @@ SCRIPT_FUNCTION(symbol_variation) {
 }
 
 SCRIPT_FUNCTION(built_in_image) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	return new_intrusive1<BuiltInImage>(input);
 }
 

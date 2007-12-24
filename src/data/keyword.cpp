@@ -462,7 +462,9 @@ String KeywordDatabase::expand(const String& text,
 			}
 			// next becomes current
 			swap(current, next);
-			next.clear();
+			// in the MSVC stl clear frees memory, that is a waste, because we need it again in the next iteration
+			//next.clear();
+			next.resize(0);
 			closure(current);
 			// are we done?
 			FOR_EACH(n, current) {

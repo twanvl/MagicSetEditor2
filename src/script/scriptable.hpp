@@ -59,7 +59,7 @@ class OptionalScript {
 	bool invokeOn(Context& ctx, T& value) const {
 		if (script) {
 			T new_value;
-			ctx.setVariable(_("value"), to_script(value));
+			ctx.setVariable(SCRIPT_VAR_value, to_script(value));
 			store(ctx.eval(*script), new_value);
 			if (value != new_value) {
 				change(value, new_value);

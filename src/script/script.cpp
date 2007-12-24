@@ -22,7 +22,7 @@ DECLARE_TYPEOF(Variables);
 
 /// Return a unique name for a variable to allow for faster loopups
 Variable string_to_variable(const String& s) {
-	map<String, unsigned int>::iterator it = variables.find(s);
+	Variables::iterator it = variables.find(s);
 	if (it == variables.end()) {
 		#ifdef _DEBUG
 			variable_names.push_back(s);
@@ -43,6 +43,31 @@ String variable_to_string(Variable v) {
 		if (vi.second == v) return replace_all(vi.first, _(" "), _("_"));
 	}
 	throw InternalError(String(_("Variable not found: ")) << v);
+}
+
+// ----------------------------------------------------------------------------- : CommonVariables
+
+void init_script_variables() {
+	#define VarN(X,name) if (SCRIPT_VAR_##X != string_to_variable(name)) assert(false);
+	#define Var(X)       VarN(X,_(#X))
+	Var(input);
+	Var(in);
+	Var(match);
+	Var(replace);
+	Var(order);
+	Var(filter);
+	Var(choice);
+	Var(format);
+	Var(tag);
+	Var(contents);
+	Var(set);
+	Var(game);
+	Var(stylesheet);
+	VarN(card_style,_("card style"));
+	Var(card);
+	Var(styling);
+	Var(value);
+	assert(variables.size() == SCRIPT_VAR_CUSTOM_FIRST);
 }
 
 // ----------------------------------------------------------------------------- : Script
@@ -172,7 +197,7 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 			ret += String::Format(_("\t%d"), i.data);
 			break;
 		case I_GET_VAR: case I_SET_VAR: case I_NOP:					// variable
-			ret += _("\t") + variable_to_string(i.data);
+			ret += _("\t") + variable_to_string((Variable)i.data);
 			break;
 	}
 	return ret;
@@ -260,7 +285,7 @@ const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) 
 String Script::instructionName(const Instruction* instr) const {
 	if (instr < &instructions[0] || instr >= &instructions[instructions.size()]) return _("??\?");
 	if (instr->instr == I_GET_VAR) {
-		return variable_to_string(instr->data);
+		return variable_to_string((Variable)instr->data);
 	} else if (instr->instr == I_MEMBER_C) {
 		return instructionName(backtraceSkip(instr - 1, 0))
 		     + _(".")

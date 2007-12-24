@@ -53,7 +53,7 @@ SCRIPT_FUNCTION_WITH_DEP(combined_editor) {
 		throw ScriptError(String::Format(_("Not enough separators for combine_editor, expected %d"), values.size()-1));
 	}
 	// the value
-	SCRIPT_PARAM(String, value);
+	SCRIPT_PARAM_C(String, value);
 	// remove suffix/prefix
 	SCRIPT_OPTIONAL_PARAM_(String, prefix);
 	SCRIPT_OPTIONAL_PARAM_(String, suffix);
@@ -147,7 +147,7 @@ SCRIPT_FUNCTION_DEPENDENCIES(combined_editor) {
 		} else if (i > 0) break;
 	}
 	// Find the target field
-	SCRIPT_PARAM(Set*, set);
+	SCRIPT_PARAM_C(Set*, set);
 	GameP game = set->game;
 	FieldP target_field;
 	if      (dep.type == DEP_CARD_FIELD) target_field = game->card_fields[dep.index];
@@ -183,7 +183,7 @@ SCRIPT_FUNCTION_DEPENDENCIES(combined_editor) {
 
 // convert a full choice name into the name of the top level group it is in
 SCRIPT_FUNCTION(primary_choice) {
-	SCRIPT_PARAM(ValueP,input);
+	SCRIPT_PARAM_C(ValueP,input);
 	ChoiceValueP value = dynamic_pointer_cast<ChoiceValue>(input);
 	if (!value) {
 		throw ScriptError(_("Argument to 'primary_choice' should be a choice value")); 
@@ -222,8 +222,8 @@ bool chosen(const String& choice, const String& input) {
 
 // is the given choice active?
 SCRIPT_FUNCTION(chosen) {
-	SCRIPT_PARAM(String,choice);
-	SCRIPT_PARAM(String,input);
+	SCRIPT_PARAM_C(String,choice);
+	SCRIPT_PARAM_C(String,input);
 	SCRIPT_RETURN(chosen(choice, input));
 }
 
@@ -311,7 +311,7 @@ void read_choices_param(Context& ctx, vector<String>& choices) {
 
 // add the given choice if it is not already active
 SCRIPT_FUNCTION(require_choice) {
-	SCRIPT_PARAM(String,input);
+	SCRIPT_PARAM_C(String,input);
 	SCRIPT_OPTIONAL_PARAM_N_(String,_("last change"),last_change);
 	vector<String> choices;
 	read_choices_param(ctx, choices);
@@ -320,7 +320,7 @@ SCRIPT_FUNCTION(require_choice) {
 
 // make sure at most one of the choices is active
 SCRIPT_FUNCTION(exclusive_choice) {
-	SCRIPT_PARAM(String,input);
+	SCRIPT_PARAM_C(String,input);
 	SCRIPT_OPTIONAL_PARAM_N_(String,_("last change"),last_change);
 	vector<String> choices;
 	read_choices_param(ctx, choices);
@@ -329,7 +329,7 @@ SCRIPT_FUNCTION(exclusive_choice) {
 
 // make sure exactly one of the choices is active
 SCRIPT_FUNCTION(require_exclusive_choice) {
-	SCRIPT_PARAM(String,input);
+	SCRIPT_PARAM_C(String,input);
 	SCRIPT_OPTIONAL_PARAM_N_(String,_("last change"),last_change);
 	vector<String> choices;
 	read_choices_param(ctx, choices);
@@ -338,7 +338,7 @@ SCRIPT_FUNCTION(require_exclusive_choice) {
 
 // make sure none of the choices are active
 SCRIPT_FUNCTION(remove_choice) {
-	SCRIPT_PARAM(String,input);
+	SCRIPT_PARAM_C(String,input);
 	vector<String> choices;
 	read_choices_param(ctx, choices);
 	SCRIPT_RETURN(filter_choices(input, choices, 0, 0, _("")));

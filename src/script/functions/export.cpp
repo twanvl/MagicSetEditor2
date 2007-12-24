@@ -252,7 +252,7 @@ String to_html(const String& str_in, const SymbolFontP& symbol_font, double symb
 
 // convert a tagged string to html
 SCRIPT_FUNCTION(to_html) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	// symbol font?
 	SymbolFontP symbol_font;
 	SCRIPT_OPTIONAL_PARAM_N(String, _("symbol font"), font_name) {
@@ -266,7 +266,7 @@ SCRIPT_FUNCTION(to_html) {
 
 // convert a symbol string to html
 SCRIPT_FUNCTION(symbols_to_html) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_PARAM_N(String, _("symbol font"), font_name);
 	SCRIPT_OPTIONAL_PARAM_N_(double, _("symbol font size"), symbol_font_size);
 	SymbolFontP symbol_font = SymbolFont::byName(font_name);
@@ -331,7 +331,7 @@ String to_bbcode(const String& str_in) {
 
 // convert a tagged string to BBCode
 SCRIPT_FUNCTION(to_bbcode) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	throw "TODO";
 //	SCRIPT_RETURN(to_bbcode(input, symbol_font));
 }
@@ -340,7 +340,7 @@ SCRIPT_FUNCTION(to_bbcode) {
 
 // convert a tagged string to plain text
 SCRIPT_FUNCTION(to_text) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(untag_hide_sep(input));
 }
 
@@ -349,7 +349,7 @@ SCRIPT_FUNCTION(to_text) {
 // copy from source package -> destination directory, return new filename (relative)
 SCRIPT_FUNCTION(copy_file) {
 	guard_export_info(_("copy_file"));
-	SCRIPT_PARAM(String, input); // file to copy
+	SCRIPT_PARAM_C(String, input); // file to copy
 	ExportInfo& ei = *export_info();
 	wxFileName fn(input);
 	fn.SetPath(ei.directory_absolute);
@@ -364,7 +364,7 @@ SCRIPT_FUNCTION(copy_file) {
 // write a file to the destination directory
 SCRIPT_FUNCTION(write_text_file) {
 	guard_export_info(_("write_text_file"));
-	SCRIPT_PARAM(String, input); // text to write
+	SCRIPT_PARAM_C(String, input); // text to write
 	SCRIPT_PARAM(String, file); // file to write to
 	// filename
 	wxFileName fn;
@@ -391,7 +391,7 @@ SCRIPT_FUNCTION(write_image_file) {
 		SCRIPT_RETURN(fn.GetFullName()); // already written an image with this name
 	}
 	// get image
-	SCRIPT_PARAM(ScriptValueP, input);
+	SCRIPT_PARAM_C(ScriptValueP, input);
 	SCRIPT_OPTIONAL_PARAM_(int, width);
 	SCRIPT_OPTIONAL_PARAM_(int, height);
 	ScriptObject<CardP>* card = dynamic_cast<ScriptObject<CardP>*>(input.get()); // is it a card?

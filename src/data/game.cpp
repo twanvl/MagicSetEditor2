@@ -93,7 +93,7 @@ void Game::initCardListColorScript() {
 			// initialize script:  field.colors[card.field-name] or else rgb(0,0,0)
 			Script& s = card_list_color_script.getScript();
 			s.addInstruction(I_PUSH_CONST, to_script(&cf->choice_colors_cardlist));
-			s.addInstruction(I_GET_VAR,    string_to_variable(_("card")));
+			s.addInstruction(I_GET_VAR,    SCRIPT_VAR_card);
 			s.addInstruction(I_MEMBER_C,   cf->name);
 			s.addInstruction(I_BINARY,     I_MEMBER);
 			s.addInstruction(I_PUSH_CONST, to_script(Color(0,0,0)));

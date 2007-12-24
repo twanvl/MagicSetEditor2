@@ -133,19 +133,19 @@ String do_english_num(String input, String(*fun)(int)) {
 }
 
 SCRIPT_FUNCTION(english_number) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(do_english_num(input, english_number));
 }
 SCRIPT_FUNCTION(english_number_a) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(do_english_num(input, english_number_a));
 }
 SCRIPT_FUNCTION(english_number_multiple) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(do_english_num(input, english_number_multiple));
 }
 SCRIPT_FUNCTION(english_number_ordinal) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(do_english_num(input, english_ordinal));
 }
 
@@ -210,11 +210,11 @@ String do_english(String input, String(*fun)(const String&)) {
 }
 
 SCRIPT_FUNCTION(english_singular) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(do_english(input, english_singular));
 }
 SCRIPT_FUNCTION(english_plural) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(do_english(input, english_plural));
 }
 
@@ -308,7 +308,7 @@ String process_english_hints(const String& str) {
 }
 
 SCRIPT_FUNCTION(process_english_hints) {
-	SCRIPT_PARAM(String, input);
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_RETURN(process_english_hints(input));
 }
 

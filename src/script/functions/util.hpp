@@ -70,6 +70,14 @@ inline Type from_script(const ScriptValueP& v, const String& str) {
 		throw ScriptError(_ERROR_2_("in parameter", str, e.what()));
 	}
 }
+template <typename Type>
+inline Type from_script(const ScriptValueP& v, Variable var) {
+	try {
+		return from_script<Type>(v);
+	} catch (ScriptError& e) {
+		throw ScriptError(_ERROR_2_("in parameter", variable_to_string(var), e.what()));
+	}
+}
 
 /// Retrieve a parameter to a SCRIPT_FUNCTION with the given name and type
 /** Usage:
@@ -85,6 +93,10 @@ inline Type from_script(const ScriptValueP& v, const String& str) {
 		SCRIPT_PARAM_N(Type, _(#name), name)
 #define SCRIPT_PARAM_N(Type, str, name)										\
 		Type name = from_script<Type>(ctx.getVariable(str), str)
+/// Faster variant of SCRIPT_PARAM when name is a CommonScriptVariable
+/** Doesn't require a runtime lookup of the name */
+#define SCRIPT_PARAM_C(Type, name)											\
+		SCRIPT_PARAM_N(Type, SCRIPT_VAR_ ## name, name)
 
 /// Retrieve an optional parameter
 /** Usage:
@@ -103,6 +115,8 @@ inline Type from_script(const ScriptValueP& v, const String& str) {
 #define SCRIPT_OPTIONAL_PARAM_N(Type, str, name)							\
 		SCRIPT_OPTIONAL_PARAM_N_(Type, str, name)							\
 		if (name##_)
+#define SCRIPT_OPTIONAL_PARAM_C(Type, name)									\
+		SCRIPT_OPTIONAL_PARAM_N(Type, SCRIPT_VAR_ ## name, name)
 
 /// Retrieve an optional parameter, can't be used as an if statement
 #define SCRIPT_OPTIONAL_PARAM_(Type, name)									\
@@ -112,6 +126,8 @@ inline Type from_script(const ScriptValueP& v, const String& str) {
 		ScriptValueP name##_ = ctx.getVariableOpt(str);						\
 		Type name = name##_ && name##_ != script_nil						\
 						? from_script<Type>(name##_, str) : Type();
+#define SCRIPT_OPTIONAL_PARAM_C_(Type, name)									\
+		SCRIPT_OPTIONAL_PARAM_N_(Type, SCRIPT_VAR_ ## name, name)
 
 /// Retrieve an optional parameter with a default value
 #define SCRIPT_PARAM_DEFAULT(Type, name, def)								\
@@ -126,6 +142,8 @@ inline Type from_script(const ScriptValueP& v, const String& str) {
 /// Utility for defining a script rule with a single parameter
 #define SCRIPT_RULE_1(funname, type1, name1)								\
         SCRIPT_RULE_1_N(funname, type1, _(#name1), name1)
+#define SCRIPT_RULE_1_C(funname, type1, name1)								\
+        SCRIPT_RULE_1_N(funname, type1, SCRIPT_VAR_ ## name1, name1)
 /// Utility for defining a script rule with a single named parameter
 #define SCRIPT_RULE_1_N(funname, type1, str1, name1)						\
 	class ScriptRule_##funname: public ScriptValue {						\
@@ -150,6 +168,8 @@ inline Type from_script(const ScriptValueP& v, const String& str) {
 /// Utility for defining a script rule with two parameters
 #define SCRIPT_RULE_2(funname, type1, name1, type2, name2)					\
         SCRIPT_RULE_2_N(funname, type1, _(#name1), name1, type2, _(#name2), name2)
+#define SCRIPT_RULE_2_C(funname, type1, name1, type2, name2)					\
+        SCRIPT_RULE_2_N(funname, type1, SCRIPT_VAR_ ## name1, name1, type2, SCRIPT_VAR_ ## name2, name2)
 /// Utility for defining a script rule with two named parameters
 #define SCRIPT_RULE_2_N(funname, type1, str1, name1, type2, str2, name2)	\
 	SCRIPT_RULE_2_N_AUX(funname, type1, str1, name1, type2, str2, name2, ;)

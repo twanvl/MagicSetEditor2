@@ -54,12 +54,12 @@ Context& SetScriptContext::getContext(const StyleSheetP& stylesheet) {
 		//  NOTE: do not use a smart pointer for the pointer to the set, because the set owns this
 		//        which would lead to a reference cycle.
 		init_script_functions(*ctx);
-		ctx->setVariable(_("set"),        new_intrusive1<ScriptObject<Set*> >(&set));
-		ctx->setVariable(_("game"),       to_script(set.game));
-		ctx->setVariable(_("stylesheet"), to_script(stylesheet));
-		ctx->setVariable(_("card style"), to_script(&stylesheet->card_style));
-		ctx->setVariable(_("card"),       set.cards.empty() ? script_nil : to_script(set.cards.front())); // dummy value
-		ctx->setVariable(_("styling"),    to_script(&set.stylingDataFor(*stylesheet)));
+		ctx->setVariable(SCRIPT_VAR_set,        new_intrusive1<ScriptObject<Set*> >(&set));
+		ctx->setVariable(SCRIPT_VAR_game,       to_script(set.game));
+		ctx->setVariable(SCRIPT_VAR_stylesheet, to_script(stylesheet));
+		ctx->setVariable(SCRIPT_VAR_card_style, to_script(&stylesheet->card_style));
+		ctx->setVariable(SCRIPT_VAR_card,       set.cards.empty() ? script_nil : to_script(set.cards.front())); // dummy value
+		ctx->setVariable(SCRIPT_VAR_styling,    to_script(&set.stylingDataFor(*stylesheet)));
 		try {
 			// perform init scripts, don't use a scope, variables stay bound in the context
 			set.game  ->init_script.invoke(*ctx, false);
@@ -75,11 +75,11 @@ Context& SetScriptContext::getContext(const CardP& card) {
 	StyleSheetP stylesheet = set.stylesheetForP(card);
 	Context& ctx = getContext(stylesheet);
 	if (card) {
-		ctx.setVariable(_("card"), to_script(card));
-		ctx.setVariable(_("styling"), to_script(&set.stylingDataFor(card)));
+		ctx.setVariable(SCRIPT_VAR_card,    to_script(card));
+		ctx.setVariable(SCRIPT_VAR_styling, to_script(&set.stylingDataFor(card)));
 	} else {
-		ctx.setVariable(_("card"), script_nil);
-		ctx.setVariable(_("styling"), to_script(&set.stylingDataFor(*stylesheet)));
+		ctx.setVariable(SCRIPT_VAR_card,    script_nil);
+		ctx.setVariable(SCRIPT_VAR_styling, to_script(&set.stylingDataFor(*stylesheet)));
 	}
 	return ctx;
 }

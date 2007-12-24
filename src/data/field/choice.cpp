@@ -207,7 +207,7 @@ void ChoiceStyle::initImage() {
 	}
 	Script& script = image.getScript();
 	script.addInstruction(I_PUSH_CONST, lookup);
-	script.addInstruction(I_GET_VAR,    string_to_variable(_("input")));
+	script.addInstruction(I_GET_VAR,    SCRIPT_VAR_input);
 	script.addInstruction(I_BINARY,     I_MEMBER);
 	script.addInstruction(I_CALL,       0);
 	script.addInstruction(I_PUSH_CONST, script_nil);

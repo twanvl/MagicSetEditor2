@@ -45,6 +45,8 @@ struct Token {
 	inline bool operator != (TokenType     t) const { return type  != t; }
 	inline bool operator == (const String& s) const { return type != TOK_STRING && value == s; }
 	inline bool operator != (const String& s) const { return type == TOK_STRING || value != s; }
+	inline bool operator == (const Char*   s) const { return type != TOK_STRING && value == s; }
+	inline bool operator != (const Char*   s) const { return type == TOK_STRING || value != s; }
 };
 
 enum OpenBrace 
@@ -639,7 +641,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 					parseOper(input, script, PREC_SEQ);
 				} else {
 					// implicit "input" argument
-					arguments.push_back(string_to_variable(_("input")));
+					arguments.push_back(SCRIPT_VAR_input);
 					parseOper(input, script, PREC_SEQ);
 				}
 				t = input.peek();

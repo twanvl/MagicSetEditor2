@@ -216,7 +216,7 @@ String KeywordsPanel::runRefScript(int find_i) {
 			FOR_EACH(r, p->refer_scripts) {
 				if (i++ == find_i) {
 					Context& ctx = set->getContext();
-					ctx.setVariable(_("input"), to_script(param_s));
+					ctx.setVariable(SCRIPT_VAR_input, to_script(param_s));
 					return r->script.invoke(ctx)->toString();
 				}
 			}

@@ -73,13 +73,13 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 				// Get a variable
 				case I_GET_VAR: {
 					ScriptValueP value = variables[i.data].value;
-					if (!value) throw ScriptError(_("Variable not set: ") + variable_to_string(i.data));
+					if (!value) throw ScriptError(_("Variable not set: ") + variable_to_string((Variable)i.data));
 					stack.push_back(value);
 					break;
 				}
 				// Set a variable
 				case I_SET_VAR: {
-					setVariable(i.data, stack.back());
+					setVariable((Variable)i.data, stack.back());
 					break;
 				}
 				
@@ -112,7 +112,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 					size_t scope = openScope();
 					// prepare arguments
 					for (unsigned int j = 0 ; j < i.data ; ++j) {
-						setVariable(instr[i.data - j - 1].data, stack.back());
+						setVariable((Variable)instr[i.data - j - 1].data, stack.back());
 						stack.pop_back();
 					}
 					instr += i.data; // skip arguments
@@ -189,8 +189,8 @@ void Context::setVariable(const String& name, const ScriptValueP& value) {
 	setVariable(string_to_variable(name), value);
 }
 
-void Context::setVariable(int name, const ScriptValueP& value) {
-	Variable& var = variables[name];
+void Context::setVariable(Variable name, const ScriptValueP& value) {
+	VariableValue& var = variables[name];
 	if (var.level < level) {
 		// keep shadow copy
 		Binding bind = {name, var};
@@ -208,6 +208,10 @@ ScriptValueP Context::getVariable(const String& name) {
 
 ScriptValueP Context::getVariableOpt(const String& name) {
 	return variables[string_to_variable(name)].value;
+}
+ScriptValueP Context::getVariable(Variable var) {
+	if (variables[var].value) return variables[var].value;
+	throw ScriptError(_("Variable not set: ") + variable_to_string(var));
 }
 
 
@@ -290,13 +294,13 @@ class ScriptCompose : public ScriptValue {
 	ScriptCompose(ScriptValueP a, ScriptValueP b) : a(a), b(b) {}
 	
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
-	virtual String typeName() const { return _("replace_rule"); }
+	virtual String typeName() const { return _("function composition"); }
 	virtual ScriptValueP eval(Context& ctx) const {
-		ctx.setVariable(_("input"), a->eval(ctx));
+		ctx.setVariable(SCRIPT_VAR_input, a->eval(ctx));
 		return b->eval(ctx);
 	}
 	virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const {
-		ctx.setVariable(_("input"), a->dependencies(ctx, dep));
+		ctx.setVariable(SCRIPT_VAR_input, a->dependencies(ctx, dep));
 		return b->dependencies(ctx, dep);
 	}
   private:

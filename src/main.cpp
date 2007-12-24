@@ -76,6 +76,7 @@ int MSE::OnRun() {
 		#endif
 		wxInitAllImageHandlers();
 		wxFileSystem::AddHandler(new wxInternetFSHandler); // needed for update checker
+		init_script_variables();
 		init_file_formats();
 		packages.init();
 		settings.read();
@@ -128,22 +129,27 @@ int MSE::OnRun() {
 				} else if (arg == _("--help") || arg == _("-?")) {
 					// command line help
 					write_stdout( String(_("Magic Set Editor\n\n"))
-					            + _("Usage: ") + argv[0] + _("[OPTIONS]\n\n")
-					            + _("  no options        \tStart the MSE user interface showing the welcome window.\n")
-					            + _("  FILE.mse-set,\n")
-					            + _("   FILE.set,\n")
-					            + _("   FILE.mse         \tLoad the set file in the MSE user interface.\n")
-					            + _("  FILE.mse-symbol   \tLoad the symbol into the MSE symbol editor.\n")
-					            + _("  FILE.mse-installer\tInstall the packages from the installer.\n")
-					            + _("      --local       \tInstall packages for this user only.\n")
-					            + _("  -? --help         \tShows this help screen.\n")
-					            + _("  -v --version      \tShow version information.\n")
-					            + _("  --symbol-editor   \tShow the symbol editor instead of the welcome window.\n")
-					            + _("  --create-installer\n")
-					            + _("      FILE [FILE]...\tCreate an instaler named FILE, containing the listed packges.\n")
-					            + _("  --export\n")
-					            + _("      FILE IMAGE    \tExport the cards in a set to image files,\n")
-					            + _("                    \tIMAGE is the same format as for 'export all card images'.\n") );
+					            + _("Usage: ") + argv[0] + _(" [OPTIONS]\n\n")
+					            + _("  no options\n")
+					            + _("         \tStart the MSE user interface showing the welcome window.\n\n")
+					            + _("  -? or --help\n")
+					            + _("         \tShows this help screen.\n\n")
+					            + _("  -v or --version\n")
+					            + _("         \tShow version information.\n\n")
+					            + _("  FILE.mse-set, FILE.set, FILE.mse\n")
+					            + _("         \tLoad the set file in the MSE user interface.\n\n")
+					            + _("  FILE.mse-symbol\n")
+					            + _("         \tLoad the symbol into the MSE symbol editor.\n\n")
+					            + _("  FILE.mse-installer [--local]\n")
+					            + _("         \tInstall the packages from the installer.\n")
+					            + _("         \tIf the --local flag is passed, install packages for this user only.\n\n")
+					            + _("  --symbol-editor\n")
+					            + _("         \tShow the symbol editor instead of the welcome window.\n\n")
+					            + _("  --create-installer FILE [PACKAGE [PACKAGE ...]]\n")
+					            + _("         \tCreate an instaler named FILE, containing the listed packages.\n\n")
+					            + _("  --export FILE [IMAGE]\n")
+					            + _("         \tExport the cards in a set to image files,\n")
+					            + _("         \tIMAGE is the same format as for 'export all card images'.\n") );
 					return EXIT_SUCCESS;
 				} else if (arg == _("--version") || arg == _("-v")) {
 					// dump version

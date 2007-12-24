@@ -98,7 +98,28 @@ struct Instruction {
 
 // ----------------------------------------------------------------------------- : Variables
 
-typedef unsigned int Variable;
+// for faster lookup from code
+enum Variable
+{	SCRIPT_VAR_input
+,	SCRIPT_VAR_in
+,	SCRIPT_VAR_match
+,	SCRIPT_VAR_replace
+,	SCRIPT_VAR_order
+,	SCRIPT_VAR_filter
+,	SCRIPT_VAR_choice
+,	SCRIPT_VAR_format
+,	SCRIPT_VAR_tag
+,	SCRIPT_VAR_contents
+,	SCRIPT_VAR_set
+,	SCRIPT_VAR_game
+,	SCRIPT_VAR_stylesheet
+,	SCRIPT_VAR_card_style
+,	SCRIPT_VAR_card
+,	SCRIPT_VAR_styling
+,	SCRIPT_VAR_value
+,	SCRIPT_VAR_CUSTOM_FIRST // other variables start from here
+,	SCRIPT_VAR_CUSTOM_LOTS = 0xFFFFFF // ensure that sizeof(Variable) is large enough
+};
 
 /// Return a unique name for a variable to allow for faster loopups
 Variable string_to_variable(const String& s);
@@ -107,6 +128,10 @@ Variable string_to_variable(const String& s);
 /** Warning: this function is slow, it should only be used for error messages and such.
  */
 String variable_to_string(Variable v);
+
+/// initialze the script variables
+void init_script_variables();
+
 
 // ----------------------------------------------------------------------------- : Script
 

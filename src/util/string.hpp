@@ -82,7 +82,6 @@ void writeUTF8(wxTextOutputStream& stream, const String& str);
 // ----------------------------------------------------------------------------- : Char functions
 
 // Character set tests
-inline bool isSpace(Char c) { return IF_UNICODE( iswspace(c) , isspace((unsigned char)c) ) || c == CONNECTION_SPACE; }
 inline bool isAlpha(Char c) { return IF_UNICODE( iswalpha(c) , isalpha((unsigned char)c) ); }
 inline bool isDigit(Char c) { return IF_UNICODE( iswdigit(c) , isdigit((unsigned char)c) ); }
 inline bool isAlnum(Char c) { return IF_UNICODE( iswalnum(c) , isalnum((unsigned char)c) ); }
@@ -98,9 +97,17 @@ inline bool isPunct(Char c) { return IF_UNICODE( iswpunct(c) , ispunct((unsigned
 	// If also in other compilers, they can also use these routines.
 	Char toLower(Char c);
 	Char toUpper(Char c);
+	inline bool isSpace(Char c) {
+		if (c <= 128) {
+			return (c >= 0x09 && c <= 0x0D) || c == 0x20;
+		} else {
+			return IF_UNICODE( iswspace(c) , isspace((unsigned char)c) ) || c == CONNECTION_SPACE;
+		}
+	}
 #else
 	inline Char toLower(Char c) { return IF_UNICODE( towlower(c) , tolower(c) ); }
 	inline Char toUpper(Char c) { return IF_UNICODE( towupper(c) , toupper(c) ); }
+	inline bool isSpace(Char c) { return IF_UNICODE( iswspace(c) , isspace((unsigned char)c) ) || c == CONNECTION_SPACE; }
 #endif
 
 // ----------------------------------------------------------------------------- : String utilities

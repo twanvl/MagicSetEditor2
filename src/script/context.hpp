@@ -51,11 +51,17 @@ class Context {
 		
 	/// Set a variable to a new value (in the current scope)
 	void setVariable(const String& name, const ScriptValueP& value);
+	/// Set a variable to a new value (in the current scope)
+	void setVariable(Variable name, const ScriptValueP& value);
 	
 	/// Get the value of a variable, throws if it not set
 	ScriptValueP getVariable(const String& name);
 	/// Get the value of a variable, returns ScriptValue() if it is not set
 	ScriptValueP getVariableOpt(const String& name);
+	/// Get the value of a variable, throws if it not set
+	ScriptValueP getVariable(Variable var);
+	/// Get the value of a variable, returns ScriptValue() if it is not set
+	inline ScriptValueP getVariableOpt(Variable var) { return variables[var].value; }
 	
 	/// Open a new scope
 	/** returns the number of shadowed binding before that scope */
@@ -65,19 +71,19 @@ class Context {
 	
   public:// public for FOR_EACH
 	/// Record of a variable
-	struct Variable {
-		Variable() : level(0) {}
+	struct VariableValue {
+		VariableValue() : level(0) {}
 		unsigned int level; ///< Scope level on which this variable was set
 		ScriptValueP value; ///< Value of this variable
 	};
 	/// Record of a variable binding that is being shadowed (overwritten) by another binding
 	struct Binding {
-		int      variable; ///< Name of the overwritten variable.
-		Variable value;    ///< Old value of that variable.
+		Variable      variable; ///< Name of the overwritten variable.
+		VariableValue value;    ///< Old value of that variable.
 	};
   private:
 	/// Variables, indexed by integer name (using string_to_variable)
-	VectorIntMap<unsigned int, Variable> variables;
+	VectorIntMap<unsigned int, VariableValue> variables;
 	/// Shadowed variable bindings
 	vector<Binding> shadowed;
 	/// Number of scopes opened
@@ -89,8 +95,6 @@ class Context {
 	struct Jump;
 	struct JumpOrder;
 	
-	/// Set a variable to a new value (in the current scope)
-	void setVariable(int name, const ScriptValueP& value);
 	/// Return the bindings in the current scope
 	void getBindings(size_t scope, vector<Binding>&);
 	/// Remove all bindings made in the current scope
