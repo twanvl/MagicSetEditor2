@@ -9,6 +9,9 @@
 #include <gfx/gfx.hpp>
 #include <util/error.hpp>
 #include <gui/util.hpp> // clearDC_black
+#if defined(__WXMSW__) && wxUSE_WXDIB
+	#include <wx/msw/dib.h>
+#endif
 
 void blur_image(const Image& img_in, Image& img_out);
 
@@ -19,8 +22,17 @@ const int text_scaling = 4;
 
 // Downsamples the red channel of the input image to the alpha channel of the output image
 // img_in must be text_scaling times as large as img_out
-void downsample_to_alpha(Image& img_in, Image& img_out) {
+void downsample_to_alpha(Bitmap& bmp_in, Image& img_out) {
 	Byte* temp = nullptr;
+	#if defined(__WXMSW__) && wxUSE_WXDIB
+		wxDIB img_in(bmp_in);
+		if (!img_in.IsOk()) return;
+		// if text_scaling = 4, then the line always is dword aligned, so we need no adjusting
+		// we created a bitmap with depth 24, so that is what we should have here
+		if (img_in.GetDepth() != 24) throw InternalError(_("DIB has wrong bit depth"));
+	#else
+		Image img_in = bmp_in.ConvertToImage();
+	#endif
 	Byte* in  = img_in.GetData();
 	Byte* out = img_in.GetData();
 	// scale in the x direction, this overwrites parts of the input image
@@ -72,18 +84,25 @@ void downsample_to_alpha(Image& img_in, Image& img_out) {
 	
 	// now scale in the y direction, and write to the output alpha
 	img_out.InitAlpha();
-	out = img_out.GetAlpha();
-	int line_size = img_out.GetWidth();
+	int line_size_in = img_out.GetWidth();
+	#if defined(__WXMSW__) && wxUSE_WXDIB
+		// DIBs are upside down
+		out = img_out.GetAlpha() + (img_out.GetHeight() - 1) * line_size_in;
+		int line_size_out = -line_size_in;
+	#else
+		out = img_out.GetAlpha();
+		int line_size_out = line_size_in;
+	#endif
 	int h = img_out.GetHeight();
 	if (img_in.GetHeight() == h * text_scaling) {
 		// no stretching
 		for (int y = 0 ; y < h ; ++y) {
-			for (int x = 0 ; x < line_size ; ++x) {
+			for (int x = 0 ; x < line_size_in ; ++x) {
 				int total = 0;
 				for (int j = 0 ; j < text_scaling ; ++j) {
-					total += in[x + line_size * (j + text_scaling * y)];
+					total += in[x + line_size_in * (j + text_scaling * y)];
 				}
-				out[x + line_size * y] = total / text_scaling;
+				out[x + line_size_out * y] = total / text_scaling;
 			}
 		}
 	} else {
@@ -102,7 +121,7 @@ void downsample_to_alpha(Image& img_in, Image& img_out) {
 					tot += *in * in_rem;
 					out_rem -= in_rem;
 					in_rem = out_fact;
-					in += line_size;
+					in += line_size_in;
 				}
 				if (out_rem > 0) {
 					// eat a partial input pixel
@@ -111,10 +130,10 @@ void downsample_to_alpha(Image& img_in, Image& img_out) {
 				}
 				// store
 				*out = top(((tot >> shift) * mul) >> 8);
-				out += line_size;
+				out += line_size_out;
 			}
-			in  = in  - h1 * line_size + 1;
-			out = out - h  * line_size + 1;
+			in  = in  - h1 * line_size_in  + 1;
+			out = out - h  * line_size_out + 1;
 		}
 	}
 	
@@ -164,13 +183,12 @@ void draw_resampled_text(DC& dc, const RealPoint& pos, const RealRect& rect, dou
 	mdc.DrawRotatedText(text, xsub, ysub, angle);
 	// get image
 	mdc.SelectObject(wxNullBitmap);
-	Image img_large = buffer.ConvertToImage();
 	// step 2. sample down
 	if (!sideways(angle)) w *= stretch;
 	else                  h *= stretch;
 	Image img_small(w, h, false);
 	fill_image(img_small, dc.GetTextForeground());
-	downsample_to_alpha(img_large, img_small);
+	downsample_to_alpha(buffer, img_small);
 	// blur
 	for (int i = 0 ; i < blur_radius ; ++i) {
 		blur_image_alpha(img_small);
