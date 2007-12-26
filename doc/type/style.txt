@@ -29,16 +29,41 @@ Implies the @width@ is 20.
 The same holds for the vertical location and size; @top@, @height@ and @bottom@.
 
 --Rotation--
-Some types of styles allow an @angle@ to be specified.
-The angle gives a counter clockwise rotation in degrees of the ''contents'' of the box.
+Rotating a box can be done with the @angle@ property.
+The angle gives a counter clockwise rotation in degrees of the box.
+The box is rotated such that the corner for which the position is specified is at the correct position after rotating.
 
-For example, a text field with style:
->example:
->	width: 60
->	height: 40
->	alignment: top left
-Would, with different angles, look like:<br/>
-<img src="style-angle.png" alt=""/>
+Here are some examples:
+
+|<img src="style-angle-examples.png" alt=""/>
+	>red box:
+	>       width:  30
+	>       height: 25
+	>       left:   10
+	>       top:    20
+	>       angle:  30
+	
+	>green box:
+	>       width:  25
+	>       height: 30
+	>       left:   10
+	>       top:    80
+	>       angle:  90
+	
+	 	>blue box:
+	 	>       width:  30
+	 	>       height: 25
+	 	>       right:  90
+	 	>       bottom: 30
+	 	>       angle:  30
+	 	
+	 	>yellow box:
+	 	>       width:  20
+	 	>       height: 35
+	 	>       right:  60
+	 	>       bottom: 60
+	 	>       angle:  180
+
 
 --Properties--
 ! Property		Type					Default		Description
@@ -49,6 +74,7 @@ Would, with different angles, look like:<br/>
 | @top@			[[type:scriptable]] [[type:double]]	''Required''	Distance between top edge of the box and the top of the card in pixels.
 | @height@		[[type:scriptable]] [[type:double]]	''Required''	Height of the box in pixels.
 | @bottom@		[[type:scriptable]] [[type:double]]	''Required''	Distance between bottom edge of the box and the ''top'' of the card in pixels.
+| @angle@		[[type:scriptable]] [[type:int]]	@0@		Rotation of this box, in degrees counter clockwise.
 | @visible@		[[type:scriptable]] [[type:boolean]]	@true@		Is this field visible at all?
 
 The rest of the properties depend on the type of [[type:field]] this style is for.
@@ -59,7 +85,6 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 		 			 			 		Text that is not supported by the symbol font is still rendered as normal text.
 | ^^^		@allow formating@	[[type:boolean]]	@true@		Is custom formating (bold, italic) allowed?
 | ^^^		@alignment@		[[type:scriptable]] [[type:alignment]]	@top left@	Alignment of the text.
-| ^^^		@angle@			[[type:scriptable]] [[type:int]]	@0@		Rotation of the text inside the box, in degrees.
 | ^^^		@direction@		[[type:direction]]	@"left to right"@	Direction in which the text flows. If set to @"vertical"@ it is as if a line break is inserted after each character.
 | ^^^		@padding left@		[[type:double]]		@0@		Padding between the text and the border of the box, in pixels.
 | ^^^		@padding right@		^^^			^^^		^^^
@@ -94,7 +119,6 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 | ^^^		@mask@		[[type:scriptable]] [[type:filename]]	''none''	A mask to apply to the image, black areas in the mask become transparent, similair to [[fun:set_mask]].
 | ^^^		@combine@	[[type:combine]]			@"normal"@	How to combine the image with the background? Can be overriden using the [[fun:set_combine]] function.
 | ^^^		@alignment@	[[type:alignment]]			@"stretch"@	Alignment of text and images in the box.
-| ^^^		@angle@		[[type:int]]				@0@		Rotation of the text and images inside the box, in degrees.
 | ^^^		@font@		[[type:font]]				 		Font to use for rendering text (depending on @render style@)
 | ^^^		@image@		[[type:image|scriptable image]]		 		Image to show (depending on @render style@).<br/>
 		 		 					 		The script will be called with @input@ set to the value to determine an image for.
@@ -117,7 +141,6 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 	
 !	<<<	<<<	<<<	<<<
 | @"image"@	@mask@		[[type:scriptable]] [[type:filename]]	''none''	A mask to apply to the image, black areas in the mask become transparent, similair to [[fun:set_mask]].
-| ^^^		@angle@		[[type:scriptable]] [[type:int]]	@0@		Rotation of the image inside the box, in degrees.
 | ^^^		@default@	[[type:image|scriptable image]]		''none''	A default image to use when the card has none.
 	
 !	<<<	<<<	<<<	<<<
