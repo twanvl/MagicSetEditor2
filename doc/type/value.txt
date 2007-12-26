@@ -17,6 +17,7 @@ The type of a value depends on the corresponding field:
 | @"choice"@		[[type:string]]			One of the choices of the field.
 | @"multiple choice"@	[[type:string]]			A list of choices from the field, separated by commas.<br/>
 			 				For example: @"red, green, blue"@.
+| @"package choice"@	Name of a package		The (file)name of a package, including the extension.
 | @"boolean"@		@"yes"@ or @"no"@		This can be directly used as a [[type:boolean]] value in scripts.
 | @"image"@		[[type:filename]]		Filename of an image file in the [[type:set]] package.
 | @"symbol"@		[[type:filename]]		Filename of a [[type:symbol]] file in the [[type:set]] package.<br/>

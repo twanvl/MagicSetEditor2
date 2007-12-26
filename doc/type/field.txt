@@ -20,6 +20,7 @@ Fields are part of the [[file:style triangle]]:
 			* @text@
 			* @choice@
 			* @multiple choice@
+			* @package choice@
 			* @boolean@
 			* @image@
 			* @symbol@
@@ -77,6 +78,13 @@ Additional properties are available, depending on the type of field:
 		These choices must apear in the same order as they do in the @choices@ property.
 	
 | @"boolean"@	''A boolean field is a choice field with the choices @"yes"@ and @"no"@.''	<<<	<<<	<<<
+	
+| @"package choice"@
+		@script@	[[type:script]]		 	Script to apply to values of this field after each change.<br/>
+		 		 		 		If the script evaluates to a constant (i.e. doesn't use @value@) then values in this field can effectively not be edited.
+| ^^^		@match@		[[type:string]]	''required'' 	Filenames of the pakcages to match, can include wildcards @"*"@. For example @"magic-mana-*.mse-symbol-font"@.
+| ^^^		@initial@	[[type:string]]	''required'' 	Initial package for new values for this field.
+| ^^^		@reqired@	[[type:boolean]]	@true@ 	Must a package always be selected? Or is it allowed to select nothing?
 	
 | @"color"@	@script@	[[type:script]]		 	Script to apply to values of this field after each change.<br/>
 		 		 		 		If the script evaluates to a constant (i.e. doesn't use @value@) then values in this field can effectively not be edited.

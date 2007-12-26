@@ -132,6 +132,10 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 | ^^^		@spacing@	[[type:double]]			@0@			Spacing between the items.
 	
 !	<<<	<<<	<<<	<<<
+| @"package choice"@
+| ^^^		@font@		[[type:font]]				 		Font to use for rendering text.
+	
+!	<<<	<<<	<<<	<<<
 | @"color"@	@radius@	[[type:script]]		@0@	Radius of rounded corners for the box in pixels.
 | ^^^		@left width@	[[type:double]]		&infin;	Draw only this many pixels from the side, creating a box with a hole in it, or a card border.
 | ^^^		@right width@	^^^			^^^	^^^
