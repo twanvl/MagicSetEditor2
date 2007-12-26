@@ -494,14 +494,37 @@ class ScriptFilterRule : public ScriptValue {
 
 // Create a regular expression rule for filtering strings
 ScriptValueP filter_rule(Context& ctx) {
-	intrusive_ptr<ScriptFilterRule> ret(new ScriptFilterRule);
-	// match
+	// cached?
 	SCRIPT_PARAM_C(String, match);
+	SCRIPT_PARAM_DEFAULT_N(String, _("in context"), in_context, String());
+	
+	// cache
+	const int CACHE_SIZE = 6;
+	struct CacheItem{
+		String match, in_context;
+		intrusive_ptr<ScriptFilterRule> rule;
+	};
+	static CacheItem cache[CACHE_SIZE];
+	static int cache_pos = 0;
+	// find in cache?
+	for (int i = 0 ; i < CACHE_SIZE ; ++i) {
+		if (cache[i].rule && cache[i].match == match && cache[i].in_context == in_context) {
+			return cache[i].rule;
+		}
+	}
+	// add item
+	cache[cache_pos].match = match;
+	cache[cache_pos].in_context = in_context;
+	cache[cache_pos].rule = intrusive_ptr<ScriptFilterRule>(new ScriptFilterRule);
+	intrusive_ptr<ScriptFilterRule>& ret = cache[cache_pos].rule;
+	cache_pos = (cache_pos+1) % CACHE_SIZE;
+	
+	// match
 	if (!ret->regex.Compile(match, wxRE_ADVANCED)) {
 		throw ScriptError(_("Error while compiling regular expression: '")+match+_("'"));
 	}
 	// in_context
-	SCRIPT_OPTIONAL_PARAM_N(String, _("in context"), in_context) {
+	if (!in_context.empty()) {
 		if (!ret->context.Compile(in_context, wxRE_ADVANCED)) {
 			throw ScriptError(_("Error while compiling regular expression: '")+in_context+_("'"));
 		}
