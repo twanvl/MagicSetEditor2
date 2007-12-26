@@ -145,8 +145,9 @@ int MSE::OnRun() {
 					            + _("         \tIf the --local flag is passed, install packages for this user only.\n\n")
 					            + _("  --symbol-editor\n")
 					            + _("         \tShow the symbol editor instead of the welcome window.\n\n")
-					            + _("  --create-installer FILE [PACKAGE [PACKAGE ...]]\n")
-					            + _("         \tCreate an instaler named FILE, containing the listed packages.\n\n")
+					            + _("  --create-installer [OUTFILE.mse-installer] [PACKAGE [PACKAGE ...]]\n")
+					            + _("         \tCreate an instaler, containing the listed packages.\n")
+					            + _("         \tIf no filename is specified, the name of the first package is used.\n\n")
 					            + _("  --export FILE [IMAGE]\n")
 					            + _("         \tExport the cards in a set to image files,\n")
 					            + _("         \tIMAGE is the same format as for 'export all card images'.\n") );
