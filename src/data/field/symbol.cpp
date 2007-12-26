@@ -11,11 +11,7 @@
 
 // ----------------------------------------------------------------------------- : SymbolField
 
-IMPLEMENT_FIELD_TYPE(Symbol)
-
-String SymbolField::typeName() const {
-	return _("symbol");
-}
+IMPLEMENT_FIELD_TYPE(Symbol, "symbol");
 
 IMPLEMENT_REFLECTION(SymbolField) {
 	REFLECT_BASE(Field);

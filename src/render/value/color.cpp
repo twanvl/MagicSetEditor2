@@ -14,6 +14,8 @@ DECLARE_TYPEOF_COLLECTION(ColorField::ChoiceP);
 
 // ----------------------------------------------------------------------------- : ColorValueViewer
 
+IMPLEMENT_VALUE_VIEWER(Color);
+
 void ColorValueViewer::draw(RotatedDC& dc) {
 	// draw in the value color
 	dc.SetPen(*wxTRANSPARENT_PEN);

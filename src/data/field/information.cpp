@@ -11,11 +11,7 @@
 
 // ----------------------------------------------------------------------------- : InfoField
 
-IMPLEMENT_FIELD_TYPE(Info)
-
-String InfoField::typeName() const {
-	return _("info");
-}
+IMPLEMENT_FIELD_TYPE(Info, "info");
 
 void InfoField::initDependencies(Context& ctx, const Dependency& dep) const {
 	Field ::initDependencies(ctx, dep);

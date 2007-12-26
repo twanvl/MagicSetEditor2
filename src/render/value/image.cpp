@@ -16,6 +16,8 @@ DECLARE_TYPEOF_COLLECTION(wxPoint);
 
 // ----------------------------------------------------------------------------- : ImageValueViewer
 
+IMPLEMENT_VALUE_VIEWER(Image);
+
 void ImageValueViewer::draw(RotatedDC& dc) {
 	// reset?
 	int w = (int)dc.trX(style().width), h = (int)dc.trY(style().height);

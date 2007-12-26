@@ -72,6 +72,8 @@ String trim(const String& s){
 	size_t end   = s.find_last_not_of( _(" \t"));
 	if (start == String::npos) {
 		return String();
+	} else if (start == 0 && end == s.size() - 1) {
+		return s;
 	} else {
 		return s.substr(start, end - start + 1);
 	}

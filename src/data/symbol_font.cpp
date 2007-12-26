@@ -45,7 +45,9 @@ String SymbolFont::typeNameStatic() { return _("symbol-font"); }
 String SymbolFont::typeName() const { return _("symbol-font"); }
 
 SymbolFontP SymbolFont::byName(const String& name) {
-	return packages.open<SymbolFont>(name + _(".mse-symbol-font"));
+	return packages.open<SymbolFont>(
+		name.size() > 16 && is_substr(name, name.size() - 16, _(".mse-symbol-font"))
+		? name : name + _(".mse-symbol-font"));
 }
 
 IMPLEMENT_REFLECTION(SymbolFont) {
@@ -588,10 +590,14 @@ void SymbolFontRef::loadFont(Context& ctx) {
 		font = SymbolFontP();
 	} else {
 		font = SymbolFont::byName(name);
-		// ensure the dependency on the font is present in the stylesheet this ref is in
-		// Getting this stylesheet from the context is a bit of a hack
-		StyleSheetP stylesheet = from_script<StyleSheetP>(ctx.getVariable(_("stylesheet")));
-		stylesheet->requireDependency(font.get());
+		if (name().GetChar(0) != _(' ')) {
+			// ensure the dependency on the font is present in the stylesheet this ref is in
+			// Getting this stylesheet from the context is a bit of a hack
+			// If the name starts with a ' ', no dependency is needed;
+			//  this is for packages selected with a PackageChoiceList
+			StyleSheetP stylesheet = from_script<StyleSheetP>(ctx.getVariable(_("stylesheet")));
+			stylesheet->requireDependency(font.get());
+		}
 	}
 }
 

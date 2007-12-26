@@ -15,6 +15,7 @@
 #include <data/field/symbol.hpp>
 #include <data/field/color.hpp>
 #include <data/field/information.hpp>
+#include <data/field/package_choice.hpp>
 #include <util/error.hpp>
 
 DECLARE_TYPEOF_COLLECTION(StyleListener*);
@@ -80,6 +81,7 @@ intrusive_ptr<Field> read_new<Field>(Reader& reader) {
 	else if (type == _("symbol"))			return new_intrusive<SymbolField>();
 	else if (type == _("color"))			return new_intrusive<ColorField>();
 	else if (type == _("info"))				return new_intrusive<InfoField>();
+	else if (type == _("package choice"))	return new_intrusive<PackageChoiceField>();
 	else if (type.empty()) {
 		reader.warning(_ERROR_1_("expected key", _("type")));
 		throw ParseError(_ERROR_("aborting parsing"));

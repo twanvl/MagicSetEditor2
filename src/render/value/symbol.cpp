@@ -17,6 +17,8 @@ DECLARE_TYPEOF_COLLECTION(SymbolVariationP);
 
 // ----------------------------------------------------------------------------- : SymbolValueViewer
 
+IMPLEMENT_VALUE_VIEWER(Symbol);
+
 void SymbolValueViewer::draw(RotatedDC& dc) {
 	drawFieldBorder(dc);
 	// draw checker background

@@ -11,6 +11,8 @@
 
 // ----------------------------------------------------------------------------- : InfoValueViewer
 
+IMPLEMENT_VALUE_VIEWER(Info);
+
 void InfoValueViewer::draw(RotatedDC& dc) {
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	if (nativeLook()) {

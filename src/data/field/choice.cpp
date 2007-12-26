@@ -20,11 +20,7 @@ ChoiceField::ChoiceField()
 	, default_name(_("Default"))
 {}
 
-IMPLEMENT_FIELD_TYPE(Choice)
-
-String ChoiceField::typeName() const {
-	return _("choice");
-}
+IMPLEMENT_FIELD_TYPE(Choice, "choice");
 
 void ChoiceField::initDependencies(Context& ctx, const Dependency& dep) const {
 	Field        ::initDependencies(ctx, dep);

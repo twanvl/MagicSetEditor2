@@ -12,6 +12,8 @@
 
 // ----------------------------------------------------------------------------- : ChoiceValueViewer
 
+IMPLEMENT_VALUE_VIEWER(Choice);
+
 void get_options(Rotation& rot, DataViewer& viewer, const ChoiceStyle& style, GeneratedImage::Options& opts);
 
 bool ChoiceValueViewer::prepare(RotatedDC& dc) {

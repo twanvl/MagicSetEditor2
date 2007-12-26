@@ -12,6 +12,8 @@
 
 // ----------------------------------------------------------------------------- : TextValueViewer
 
+IMPLEMENT_VALUE_VIEWER(Text);
+
 bool TextValueViewer::prepare(RotatedDC& dc) {
 	if (!style().mask_filename.empty() && !style().mask.ok()) {
 		// load contour mask

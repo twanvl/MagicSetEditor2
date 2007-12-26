@@ -18,11 +18,7 @@ ColorField::ColorField()
 	, default_name(_("Default"))
 {}
 
-IMPLEMENT_FIELD_TYPE(Color)
-
-String ColorField::typeName() const {
-	return _("color");
-}
+IMPLEMENT_FIELD_TYPE(Color, "color");
 
 void ColorField::initDependencies(Context& ctx, const Dependency& dep) const {
 	Field        ::initDependencies(ctx, dep);

@@ -10,11 +10,7 @@
 
 // ----------------------------------------------------------------------------- : ImageField
 
-IMPLEMENT_FIELD_TYPE(Image)
-
-String ImageField::typeName() const {
-	return _("image");
-}
+IMPLEMENT_FIELD_TYPE(Image, "image");
 
 IMPLEMENT_REFLECTION(ImageField) {
 	REFLECT_BASE(Field);

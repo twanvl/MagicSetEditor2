@@ -14,6 +14,7 @@
 #include <data/field/color.hpp>
 #include <data/field/image.hpp>
 #include <data/field/symbol.hpp>
+#include <data/field/package_choice.hpp>
 #include <util/tagged_string.hpp>
 
 // ----------------------------------------------------------------------------- : ValueAction
@@ -30,6 +31,7 @@ inline void swap_value(ColorValue&          a, ColorValue         ::ValueType& b
 inline void swap_value(ImageValue&          a, ImageValue         ::ValueType& b) { swap(a.filename, b); a.last_update.update(); }
 inline void swap_value(SymbolValue&         a, SymbolValue        ::ValueType& b) { swap(a.filename, b); a.last_update.update(); }
 inline void swap_value(TextValue&           a, TextValue          ::ValueType& b) { swap(a.value,    b); a.last_update.update(); }
+inline void swap_value(PackageChoiceValue&  a, PackageChoiceValue ::ValueType& b) { swap(a.package_name, b); }
 inline void swap_value(MultipleChoiceValue& a, MultipleChoiceValue::ValueType& b) {
 	swap(a.value,       b.value);
 	swap(a.last_change, b.last_change);
@@ -68,6 +70,7 @@ ValueAction* value_action(const Card* card, const ChoiceValueP&         value, c
 ValueAction* value_action(const Card* card, const ColorValueP&          value, const Defaultable<Color>&  new_value) { return new SimpleValueAction<ColorValue,          true> (card, value, new_value); }
 ValueAction* value_action(const Card* card, const ImageValueP&          value, const FileName&            new_value) { return new SimpleValueAction<ImageValue,          false>(card, value, new_value); }
 ValueAction* value_action(const Card* card, const SymbolValueP&         value, const FileName&            new_value) { return new SimpleValueAction<SymbolValue,         false>(card, value, new_value); }
+ValueAction* value_action(const Card* card, const PackageChoiceValueP&  value, const String&              new_value) { return new SimpleValueAction<PackageChoiceValue,  false>(card, value, new_value); }
 ValueAction* value_action(const Card* card, const MultipleChoiceValueP& value, const Defaultable<String>& new_value, const String& last_change) {
 	MultipleChoiceValue::ValueType v = { new_value, last_change };
 	return new SimpleValueAction<MultipleChoiceValue, false>(card, value, v);

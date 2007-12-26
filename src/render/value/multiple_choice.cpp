@@ -16,6 +16,8 @@ DECLARE_TYPEOF_COLLECTION(String);
 
 // ----------------------------------------------------------------------------- : MultipleChoiceValueViewer
 
+IMPLEMENT_VALUE_VIEWER(MultipleChoice);
+
 bool MultipleChoiceValueViewer::prepare(RotatedDC& dc) {
 	if (style().render_style & (RENDER_CHECKLIST | RENDER_LIST)) return false;
 	return prepare_choice_viewer(dc, viewer, style(), value().value());

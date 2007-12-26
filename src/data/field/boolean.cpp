@@ -16,11 +16,7 @@ BooleanField::BooleanField() {
 	choices->initIds();
 }
 
-IMPLEMENT_FIELD_TYPE(Boolean)
-
-String BooleanField::typeName() const {
-	return _("boolean");
-}
+IMPLEMENT_FIELD_TYPE(Boolean, "boolean");
 
 IMPLEMENT_REFLECTION(BooleanField) {
 	REFLECT_BASE(Field); // NOTE: don't reflect as a ChoiceField

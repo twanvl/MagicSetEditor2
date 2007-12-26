@@ -28,6 +28,7 @@ DECLARE_POINTER_TYPE(MultipleChoiceValue);
 DECLARE_POINTER_TYPE(ColorValue);
 DECLARE_POINTER_TYPE(ImageValue);
 DECLARE_POINTER_TYPE(SymbolValue);
+DECLARE_POINTER_TYPE(PackageChoiceValue);
 
 // ----------------------------------------------------------------------------- : ValueAction (based class)
 
@@ -50,6 +51,7 @@ ValueAction* value_action(const Card* card, const MultipleChoiceValueP& value, c
 ValueAction* value_action(const Card* card, const ColorValueP&          value, const Defaultable<Color>&  new_value);
 ValueAction* value_action(const Card* card, const ImageValueP&          value, const FileName&            new_value);
 ValueAction* value_action(const Card* card, const SymbolValueP&         value, const FileName&            new_value);
+ValueAction* value_action(const Card* card, const PackageChoiceValueP&  value, const String&              new_value);
 
 // ----------------------------------------------------------------------------- : Text
 

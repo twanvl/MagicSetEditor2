@@ -17,11 +17,7 @@ TextField::TextField()
 	, default_name(_("Default"))
 {}
 
-IMPLEMENT_FIELD_TYPE(Text)
-
-String TextField::typeName() const {
-	return _("text");
-}
+IMPLEMENT_FIELD_TYPE(Text, "text");
 
 void TextField::initDependencies(Context& ctx, const Dependency& dep) const {
 	Field        ::initDependencies(ctx, dep);

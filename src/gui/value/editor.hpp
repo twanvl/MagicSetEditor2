@@ -147,6 +147,10 @@ class ValueEditor {
 	void Type##ValueEditor::redraw() {													\
 		editor().redraw(*this);															\
 	}																					\
+	ValueViewerP Type##Style::makeEditor(DataEditor& parent, const StyleP& thisP) {		\
+		assert(thisP.get() == this);													\
+		return ValueViewerP(new Type##ValueEditor(parent, static_pointer_cast<Type##Style>(thisP)));	\
+	}																					\
 	Type##ValueEditor::Type##ValueEditor(DataEditor& parent, const Type##StyleP& style)	\
 		: Type##ValueViewer(parent, style)
 

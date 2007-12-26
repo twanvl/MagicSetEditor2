@@ -7,13 +7,6 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <render/value/viewer.hpp>
-#include <render/value/text.hpp>
-#include <render/value/choice.hpp>
-#include <render/value/multiple_choice.hpp>
-#include <render/value/image.hpp>
-#include <render/value/symbol.hpp>
-#include <render/value/color.hpp>
-#include <render/value/information.hpp>
 #include <render/card/viewer.hpp>
 
 // ----------------------------------------------------------------------------- : ValueViewer
@@ -65,19 +58,3 @@ void ValueViewer::onStyleChange(int changes) {
 		viewer.redraw(*this);
 	}
 }
-
-// ----------------------------------------------------------------------------- : Type dispatch
-
-#define IMPLEMENT_MAKE_VIEWER(Type)														\
-	ValueViewerP Type##Style::makeViewer(DataViewer& parent, const StyleP& thisP) {		\
-		assert(thisP.get() == this);													\
-		return ValueViewerP(new Type##ValueViewer(parent, static_pointer_cast<Type##Style>(thisP)));	\
-	}
-
-IMPLEMENT_MAKE_VIEWER(Text);
-IMPLEMENT_MAKE_VIEWER(Choice);
-IMPLEMENT_MAKE_VIEWER(MultipleChoice);
-IMPLEMENT_MAKE_VIEWER(Color);
-IMPLEMENT_MAKE_VIEWER(Image);
-IMPLEMENT_MAKE_VIEWER(Symbol);
-IMPLEMENT_MAKE_VIEWER(Info);

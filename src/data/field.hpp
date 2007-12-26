@@ -253,7 +253,7 @@ inline String type_name(const Value&) {
 	virtual String typeName() const
 
 // implement newStyle and newValue
-#define IMPLEMENT_FIELD_TYPE(Type)														\
+#define IMPLEMENT_FIELD_TYPE(Type, NAME)												\
 	StyleP Type ## Field::newStyle(const FieldP& thisP) const {							\
 		assert(thisP.get() == this);													\
 		return new_intrusive1<Type ## Style>(static_pointer_cast<Type ## Field>(thisP));\
@@ -267,6 +267,9 @@ inline String type_name(const Value&) {
 	}																					\
 	ValueP Type ## Value::clone() const {												\
 		return new_intrusive1<Type ## Value>(*this);									\
+	}																					\
+	String Type ## Field::typeName() const {											\
+		return _(NAME);																	\
 	}
 
 #define DECLARE_STYLE_TYPE(Type)														\
