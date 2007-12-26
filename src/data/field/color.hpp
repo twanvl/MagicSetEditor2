@@ -37,9 +37,6 @@ class ColorField : public Field {
 	String             default_name;	///< Name of "default" value
 	
 	virtual void initDependencies(Context&, const Dependency&) const;
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 /// A color that can be chosen for this field
@@ -67,9 +64,6 @@ class ColorStyle : public Style {
 	Scriptable<String> mask_filename;   ///< Filename of an additional mask over the images
 	
 	virtual int update(Context&);
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : ColorValue
@@ -78,17 +72,11 @@ class ColorStyle : public Style {
 class ColorValue : public Value {
   public:
 	ColorValue(const ColorFieldP& field);
-	DECLARE_HAS_FIELD(Color)
+	DECLARE_VALUE_TYPE(Color, Defaultable<Color>);
 	
-	typedef Defaultable<Color> ValueType;
 	ValueType value;	///< The value
 	
-	virtual ValueP clone() const;
-	virtual String toString() const;
 	virtual bool update(Context&);
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 

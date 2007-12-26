@@ -247,6 +247,7 @@ inline String type_name(const Value&) {
 // ----------------------------------------------------------------------------- : Utilities
 
 #define DECLARE_FIELD_TYPE(Type)														\
+	DECLARE_REFLECTION(); public:														\
 	virtual ValueP newValue(const FieldP& thisP) const;									\
 	virtual StyleP newStyle(const FieldP& thisP) const;									\
 	virtual String typeName() const
@@ -269,10 +270,18 @@ inline String type_name(const Value&) {
 	}
 
 #define DECLARE_STYLE_TYPE(Type)														\
+	DECLARE_REFLECTION(); public:														\
 	DECLARE_HAS_FIELD(Type)																\
 	virtual StyleP clone() const;														\
 	virtual ValueViewerP makeViewer(DataViewer& parent, const StyleP& thisP);			\
-	virtual ValueViewerP makeEditor(DataEditor& parent, const StyleP& thisP);
+	virtual ValueViewerP makeEditor(DataEditor& parent, const StyleP& thisP)
+
+#define DECLARE_VALUE_TYPE(Type,ValueType_)												\
+	DECLARE_REFLECTION(); public:														\
+	DECLARE_HAS_FIELD(Type)																\
+	virtual ValueP clone() const;														\
+	virtual String toString() const;													\
+	typedef ValueType_ ValueType
 
 // implement field() which returns a field with the right (derived) type
 #define DECLARE_HAS_FIELD(Type)															\

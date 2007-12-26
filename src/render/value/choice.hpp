@@ -23,9 +23,10 @@ class ChoiceValueViewer : public ValueViewer {
 	virtual bool prepare(RotatedDC& dc);
 	virtual void draw(RotatedDC& dc);
 	virtual void onStyleChange(int);
-  private:
-	void getOptions(Rotation& rot, GeneratedImage::Options& opts);
 };
+
+bool prepare_choice_viewer(RotatedDC& dc, DataViewer& viewer, ChoiceStyle& style, const String& value);
+void draw_choice_viewer(RotatedDC& dc, DataViewer& viewer, ChoiceStyle& style, const String& value);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

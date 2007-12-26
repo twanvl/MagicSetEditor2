@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <render/value/multiple_choice.hpp>
+#include <render/value/choice.hpp>
 #include <render/card/viewer.hpp>
 #include <data/stylesheet.hpp>
 #include <gui/util.hpp>
@@ -14,6 +15,11 @@
 DECLARE_TYPEOF_COLLECTION(String);
 
 // ----------------------------------------------------------------------------- : MultipleChoiceValueViewer
+
+bool MultipleChoiceValueViewer::prepare(RotatedDC& dc) {
+	if (style().render_style & (RENDER_CHECKLIST | RENDER_LIST)) return false;
+	return prepare_choice_viewer(dc, viewer, style(), value().value());
+}
 
 void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
 	drawFieldBorder(dc);
@@ -38,44 +44,7 @@ void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
 			drawChoice(dc, pos, choice);
 		}
 	} else {
-		// COPY FROM ChoiceValueViewer
-		if (value().value().empty()) return;
-		double margin = 0;
-		if (style().render_style & RENDER_IMAGE) {
-			// draw image
-			style().initImage();
-			CachedScriptableImage& img = style().image;
-			Context& ctx = viewer.getContext();
-			ctx.setVariable(SCRIPT_VAR_input, to_script(value().value()));
-			img.update(ctx);
-			if (img.isReady()) {
-				GeneratedImage::Options img_options;
-				getOptions(dc, img_options);
-				// Generate image/bitmap
-				ImageCombine combine = style().combine;
-				style().loadMask(*viewer.stylesheet);
-				Bitmap bitmap; Image image;
-				RealSize size;
-				img.generateCached(img_options, &style().mask, &combine, &bitmap, &image, &size);
-				size = dc.trInvS(size);
-				RealRect rect(align_in_rect(style().alignment, size, dc.getInternalRect()), size);
-				if (bitmap.Ok()) {
-					// just draw it
-					dc.DrawPreRotatedBitmap(bitmap,rect);
-				} else {
-					// use combine mode
-					dc.DrawPreRotatedImage(image,rect,combine);
-				}
-				margin = size.width + 1;
-			}
-		}
-		if (style().render_style & RENDER_TEXT) {
-			// draw text
-			dc.DrawText(tr(*viewer.stylesheet, value().value(), capitalize(value().value())),
-				align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(0, dc.GetCharHeight()), dc.getInternalRect()) + RealSize(margin, 0)
-			);
-		}
-		// COPY ENDS HERE
+		draw_choice_viewer(dc, viewer, style(), value().value());
 	}
 }
 
@@ -110,21 +79,4 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 	}
 	// next position
 	pos = move_in_direction(style().direction, pos, size, style().spacing);
-}
-
-// COPY from ChoiceValueViewer
-void MultipleChoiceValueViewer::getOptions(Rotation& rot, GeneratedImage::Options& opts) {
-	opts.package       = viewer.stylesheet.get();
-	opts.local_package = &getSet();
-	opts.angle         = rot.trAngle(0); //%%
-	if (nativeLook()) {
-		opts.width = opts.height = 16;
-		opts.preserve_aspect = ASPECT_BORDER;
-	} else if(style().render_style & RENDER_TEXT) {
-		// also drawing text, use original size
-	} else {
-		opts.width  = (int) rot.trX(style().width);
-		opts.height = (int) rot.trY(style().height);
-		opts.preserve_aspect = (style().alignment & ALIGN_STRETCH) ? ASPECT_STRETCH : ASPECT_FIT;
-	}
 }

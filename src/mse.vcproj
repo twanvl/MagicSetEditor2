@@ -87,6 +87,7 @@
 				Optimization="2"
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="1"
+				ImproveFloatingPointConsistency="TRUE"
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="0"
 				OptimizeForWindowsApplication="TRUE"
@@ -225,6 +226,7 @@
 				Optimization="3"
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="1"
+				ImproveFloatingPointConsistency="TRUE"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="3"
@@ -300,6 +302,7 @@
 				Optimization="3"
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="1"
+				ImproveFloatingPointConsistency="TRUE"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="3"
@@ -375,6 +378,7 @@
 				Optimization="3"
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="1"
+				ImproveFloatingPointConsistency="TRUE"
 				FavorSizeOrSpeed="1"
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="3"
@@ -2173,12 +2177,6 @@
 				Name="base"
 				Filter="">
 				<File
-					RelativePath=".\util\atomic.hpp">
-				</File>
-				<File
-					RelativePath=".\util\dynamic_arg.hpp">
-				</File>
-				<File
 					RelativePath=".\util\error.cpp">
 				</File>
 				<File
@@ -2186,9 +2184,6 @@
 				</File>
 				<File
 					RelativePath=".\util\for_each.hpp">
-				</File>
-				<File
-					RelativePath=".\util\order_cache.hpp">
 				</File>
 				<File
 					RelativePath=".\util\platform.hpp">
@@ -2207,12 +2202,6 @@
 				</File>
 				<File
 					RelativePath=".\util\smart_ptr.hpp">
-				</File>
-				<File
-					RelativePath=".\util\spec_sort.cpp">
-				</File>
-				<File
-					RelativePath=".\util\spec_sort.hpp">
 				</File>
 				<File
 					RelativePath=".\util\string.cpp">
@@ -2253,6 +2242,25 @@
 				<File
 					RelativePath=".\util\window_id.hpp">
 				</File>
+				<Filter
+					Name="aux"
+					Filter="">
+					<File
+						RelativePath=".\util\atomic.hpp">
+					</File>
+					<File
+						RelativePath=".\util\dynamic_arg.hpp">
+					</File>
+					<File
+						RelativePath=".\util\order_cache.hpp">
+					</File>
+					<File
+						RelativePath=".\util\spec_sort.cpp">
+					</File>
+					<File
+						RelativePath=".\util\spec_sort.hpp">
+					</File>
+				</Filter>
 			</Filter>
 		</Filter>
 		<Filter

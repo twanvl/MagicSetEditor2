@@ -338,12 +338,7 @@ void SymbolFont::drawWithText(RotatedDC& dc, const RealRect& rect, double font_s
 	// align text
 	RealPoint text_pos = align_in_rect(text_alignment, ts, sym_rect);
 	// draw text
-	if (text_font->hasShadow()) {
-		dc.SetTextForeground(text_font->shadow_color);
-		dc.DrawText(text, text_pos + text_font->shadow_displacement * font_size, 0, 1, stretch);
-	}
-	dc.SetTextForeground(text_font->color);
-	dc.DrawText(text, text_pos, 0, 1, stretch);
+	dc.DrawTextWithShadow(text, *text_font, text_pos, font_size, stretch);
 }
 
 Image SymbolFont::getImage(double font_size, const DrawableSymbol& sym) {
@@ -388,12 +383,7 @@ Image SymbolFont::getImage(double font_size, const DrawableSymbol& sym) {
 		// align text
 		RealPoint text_pos = align_in_rect(text_alignment, ts, sym_rect);
 		// draw text
-		if (text_font->hasShadow()) {
-			rdc.SetTextForeground(text_font->shadow_color);
-			rdc.DrawText(sym.text, text_pos + text_font->shadow_displacement * font_size, 0, 1, stretch);
-		}
-		rdc.SetTextForeground(text_font->color);
-		rdc.DrawText(sym.text, text_pos, 0, 1, stretch);
+		rdc.DrawTextWithShadow(sym.text, *text_font, text_pos, font_size, stretch);
 		// done
 		dc.SelectObject(wxNullBitmap);
 		return bmp.ConvertToImage();

@@ -20,12 +20,12 @@ class MultipleChoiceValueViewer : public ValueViewer {
   public:
 	DECLARE_VALUE_VIEWER(MultipleChoice) : ValueViewer(parent,style), item_height(0) {}
 	
+	virtual bool prepare(RotatedDC& dc);
 	virtual void draw(RotatedDC& dc);
   protected:
 	double item_height; ///< Height of a single item, or 0 if non uniform
   private:
 	void drawChoice(RotatedDC& dc, RealPoint& pos, const String& choice, bool active = true);
-	void getOptions(Rotation& rot, GeneratedImage::Options& opts);
 };
 
 // ----------------------------------------------------------------------------- : EOF

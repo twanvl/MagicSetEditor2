@@ -25,9 +25,6 @@ class ImageField : public Field {
   public:
 	// no extra data
 	DECLARE_FIELD_TYPE(Image);
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : ImageStyle
@@ -42,9 +39,6 @@ class ImageStyle : public Style {
 	ScriptableImage    default_image; ///< Placeholder
 	
 	virtual int update(Context&);
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : ImageValue
@@ -53,16 +47,10 @@ class ImageStyle : public Style {
 class ImageValue : public Value {
   public:
 	inline ImageValue(const ImageFieldP& field) : Value(field) {}
+	DECLARE_VALUE_TYPE(Image, FileName);
 	
-	typedef FileName ValueType;
 	ValueType filename;    ///< Filename of the image (in the current package), or ""
 	Age       last_update; ///< When was the image last changed?
-	
-	virtual ValueP clone() const;
-	virtual String toString() const;
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : EOF

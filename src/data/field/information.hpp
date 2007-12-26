@@ -32,9 +32,6 @@ class InfoField : public Field {
 	OptionalScript script;			///< Script to apply to all values
 	
 	virtual void initDependencies(Context&, const Dependency&) const;
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : InfoStyle
@@ -53,9 +50,6 @@ class InfoStyle : public Style {
 	
 	virtual int  update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : InfoValue
@@ -64,16 +58,11 @@ class InfoStyle : public Style {
 class InfoValue : public Value {
   public:
 	inline InfoValue(const InfoFieldP& field) : Value(field) {}
-	DECLARE_HAS_FIELD(Info)
+	DECLARE_VALUE_TYPE(Info, String);
 	
-	String value;
+	ValueType value;
 	
-	virtual ValueP clone() const;
-	virtual String toString() const;
 	virtual bool update(Context&);
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -42,9 +42,6 @@ class ChoiceField : public Field {
 	map<String,Color> choice_colors_cardlist;	///< Colors for the various choices, for in the card list
 	
 	virtual void initDependencies(Context&, const Dependency&) const;
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 
@@ -166,9 +163,6 @@ class ChoiceStyle : public Style {
 	virtual int  update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;
 	virtual void invalidate();
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : ChoiceValue
@@ -181,17 +175,11 @@ class ChoiceValue : public Value {
 	    an explicit initial value
 	 */
 	ChoiceValue(const ChoiceFieldP& field, bool initial_first_choice = true);
-	DECLARE_HAS_FIELD(Choice)
+	DECLARE_VALUE_TYPE(Choice, Defaultable<String>);
 	
-	typedef Defaultable<String> ValueType;
 	ValueType value;	/// The name of the selected choice
 	
-	virtual ValueP clone() const;
-	virtual String toString() const;
 	virtual bool update(Context&);
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -41,9 +41,6 @@ class TextField : public Field {
 	String default_name;			///< Name of "default" value
 	
 	virtual void initDependencies(Context&, const Dependency&) const;
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : TextStyle
@@ -83,9 +80,6 @@ class TextStyle : public Style {
 	
 	/// Stretch factor to use
 	double getStretch() const;
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : TextValue
@@ -94,18 +88,12 @@ class TextStyle : public Style {
 class TextValue : public Value {
   public:
 	inline TextValue(const TextFieldP& field) : Value(field), last_update(1) {}
-	DECLARE_HAS_FIELD(Text)
+	DECLARE_VALUE_TYPE(Text, Defaultable<String>);
 	
-	typedef Defaultable<String> ValueType;
 	ValueType value;				///< The text of this value
 	Age       last_update;			///< When was the text last changed?
 	
-	virtual ValueP clone() const;
-	virtual String toString() const;
 	virtual bool update(Context&);
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : TextValue

@@ -13,19 +13,14 @@
 
 void FontTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const {
 	if ((what & draw_as) != draw_as) return; // don't draw
-	dc.SetFont(*font, scale);
-	// draw shadow
+	// text
 	String text = content.substr(start - this->start, end - start);
 	if (!text.empty() && text.GetChar(text.size() - 1) == _('\n')) {
 		text = text.substr(0, text.size() - 1); // don't draw last \n
 	}
-	if (font->hasShadow()) {
-		dc.SetTextForeground(font->shadow_color);
-		dc.DrawText(text, rect.position() + font->shadow_displacement);
-	}
 	// draw
-	dc.SetTextForeground(font->color);
-	dc.DrawText(text, rect.position());
+	dc.SetFont(*font, scale);
+	dc.DrawTextWithShadow(text, *font, rect.position());
 }
 
 void FontTextElement::getCharInfo(RotatedDC& dc, double scale, vector<CharInfo>& out) const {

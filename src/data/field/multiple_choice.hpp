@@ -26,9 +26,6 @@ class MultipleChoiceField : public ChoiceField {
 	
 	UInt minimum_selection, maximum_selection; ///< How many choices can be selected simultaniously?
 	String empty_choice; ///< Name to use when nothing is selected
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : MultipleChoiceStyle
@@ -41,9 +38,6 @@ class MultipleChoiceStyle : public ChoiceStyle {
 	
 	Direction direction;	///< In what direction are choices layed out?
 	double spacing;			///< Spacing between choices (images) in pixels
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : MultipleChoiceValue

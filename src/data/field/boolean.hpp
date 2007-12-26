@@ -25,9 +25,6 @@ class BooleanField : public ChoiceField {
 	DECLARE_FIELD_TYPE(Boolean);
 	
 	// no extra data
-		
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : BooleanStyle

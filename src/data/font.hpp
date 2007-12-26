@@ -54,7 +54,9 @@ class Font : public IntrusivePtrBase<Font> {
 	void initDependencies(Context&, const Dependency&) const;
 	
 	/// Does this font have a shadow?
-	inline bool hasShadow() { return shadow_displacement.width != 0 || shadow_displacement.height != 0; }
+	inline bool hasShadow() const {
+		return shadow_displacement.width != 0 || shadow_displacement.height != 0;
+	}
 	
 	/// Add style to a font, and optionally change the color
 	FontP make(int add_flags, Color* other_color) const;

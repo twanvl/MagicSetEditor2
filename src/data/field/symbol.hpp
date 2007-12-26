@@ -25,11 +25,9 @@ DECLARE_POINTER_TYPE(SymbolValue);
 /// A field for image values
 class SymbolField : public Field {
   public:
-	// no extra data
 	DECLARE_FIELD_TYPE(Symbol);
 	
-  private:
-	DECLARE_REFLECTION();
+	// no extra data
 };
 
 // ----------------------------------------------------------------------------- : SymbolStyle
@@ -46,9 +44,6 @@ class SymbolStyle : public Style {
 	double        max_aspect_ratio;	///< Bounds for the symbol's aspect ratio
 	
 	vector<SymbolVariationP> variations; ///< Different variantions of the same symbol
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 /// Styling for a symbol variation, defines color, border, etc.
@@ -71,17 +66,10 @@ class SymbolVariation : public IntrusivePtrBase<SymbolVariation> {
 class SymbolValue : public Value {
   public:
 	inline SymbolValue(const SymbolFieldP& field) : Value(field) {}
-	DECLARE_HAS_FIELD(Symbol)
+	DECLARE_VALUE_TYPE(Symbol, FileName);
 	
-	typedef FileName ValueType;
 	ValueType filename;    ///< Filename of the symbol (in the current package)
 	Age       last_update; ///< When was the symbol last changed?
-	
-	virtual ValueP clone() const;
-	virtual String toString() const;
-	
-  private:
-	DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : EOF
