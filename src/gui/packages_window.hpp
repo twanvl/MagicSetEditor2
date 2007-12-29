@@ -44,13 +44,17 @@ class PackagesWindow : public wxDialog {
 	InstallablePackageP package; ///< Selected package
 	PackageAction       where;   ///< Where to install? (PACKAGE_LOCAL or PACKAGE_GLOBAL)
 	
+	bool waiting_for_list; ///< waiting for the list of installers?
+	
 	DECLARE_EVENT_TABLE();
 	
 	void onOk(wxCommandEvent&);
 	void onActionChange(wxCommandEvent&);
 	void onPackageSelect(wxCommandEvent&);
 	void onUpdateUI(wxUpdateUIEvent&);
+	void onIdle(wxIdleEvent&);
 	
+	bool checkInstallerList();
 	/*
 	wxHtmlWindow* description_window;
 

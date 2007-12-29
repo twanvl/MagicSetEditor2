@@ -327,6 +327,7 @@ void merge(InstallablePackages& installed, const DownloadableInstallerP& install
 		ip->installer = installer;
 		ips.push_back(ip);
 	}
+	sort(ips);
 	merge(installed, ips);
 }
 

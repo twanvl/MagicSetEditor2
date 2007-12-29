@@ -156,6 +156,8 @@ void PackageManager::installedPackages(vector<InstallablePackageP>& packages) {
 	merge(packages, more_packages);
 	// the magic appliation package
 	packages.push_back(mse_installable_package());
+	// invariant: sorted:
+	sort(packages);
 }
 
 void PackageManager::install(const InstallablePackage& package) {

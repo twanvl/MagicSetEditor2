@@ -2089,12 +2089,6 @@
 					RelativePath=".\util\io\package_manager.hpp">
 				</File>
 				<File
-					RelativePath=".\util\io\package_repository.cpp">
-				</File>
-				<File
-					RelativePath=".\util\io\package_repository.hpp">
-				</File>
-				<File
 					RelativePath=".\util\io\reader.cpp">
 					<FileConfiguration
 						Name="Release|Win32">

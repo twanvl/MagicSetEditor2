@@ -14,48 +14,15 @@
 #include <util/io/package_manager.hpp>
 #include <util/version.hpp>
 #include <util/window_id.hpp>
-#include <script/value.hpp> // for some strange reason the profile build needs this :(
-#include <script/to_value.hpp>
+//#include <script/value.hpp> // for some strange reason the profile build needs this :(
+//#include <script/to_value.hpp>
 #include <wx/dialup.h>
 #include <wx/url.h>
-#include <wx/html/htmlwin.h>
-
-//%DECLARE_POINTER_TYPE(PackageVersionData);
 
 DECLARE_POINTER_TYPE(VersionData);
 DECLARE_TYPEOF_COLLECTION(PackageDependencyP);
 
 // ----------------------------------------------------------------------------- : Update data
-
-/*
-/// Information on available packages
-class PackageVersionData : public IntrusivePtrVirtualBase {
-  public:
-	PackageVersionData() {}
-	
-	String  name;						///< Name of the package
-	String  type;						///< Type of package ("magic style" or "game")
-	String  display_name;				///< Name to show on package list.
-	String  description;				///< html description
-	String  url;						///< Where can the package be downloaded?
-	Version version;					///< Version number of the download
-	Version app_version;				///< The minimium version of MSE required
-	vector<PackageDependencyP> depends;	///< Packages this depends on
-
-	DECLARE_REFLECTION();
-};
-
-/// Information on the latest available version
-class VersionData : public IntrusivePtrBase<VersionData> {
-  public:
-	Version version;				///< Latest version number of MSE
-	String  description;			///< html description of the latest MSE release
-	String  new_updates_url;		///< updates url has moved?
-	vector<PackageVersionDataP> packages;	///< Available packages
-	
-	DECLARE_REFLECTION();
-};
-*/
 
 /// Information on the latest available versions
 class VersionData : public IntrusivePtrBase<VersionData> {
@@ -65,25 +32,6 @@ class VersionData : public IntrusivePtrBase<VersionData> {
 	
 	DECLARE_REFLECTION();
 };
-
-/*
-IMPLEMENT_REFLECTION_NO_SCRIPT(PackageVersionData) {
-	REFLECT_NO_SCRIPT(name);
-	REFLECT_NO_SCRIPT(type);
-	REFLECT_NO_SCRIPT(display_name);
-	REFLECT_NO_SCRIPT(description);
-	REFLECT_NO_SCRIPT(url);
-	REFLECT_NO_SCRIPT(version);
-	REFLECT_NO_SCRIPT(app_version);
-	REFLECT_NO_SCRIPT_N("depends ons", depends);
-}
-
-IMPLEMENT_REFLECTION_NO_SCRIPT(VersionData) {
-	REFLECT_NO_SCRIPT(version);
-	REFLECT_NO_SCRIPT(description);
-	REFLECT_NO_SCRIPT(new_updates_url);
-	REFLECT_NO_SCRIPT(packages);
-}*/
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(VersionData) {
 	REFLECT_NO_SCRIPT(packages);
@@ -112,12 +60,6 @@ bool update_available()  {
 }
 
 // ----------------------------------------------------------------------------- : Update checking
-
-BEGIN_DECLARE_EVENT_TYPES()
-DECLARE_EVENT_TYPE(UPDATE_CHECK_FINISHED_EVT, -1)
-END_DECLARE_EVENT_TYPES()
-
-DEFINE_EVENT_TYPE(UPDATE_CHECK_FINISHED_EVT)
 
 // Thread to retrieve update information
 // Checks if the current version is the latest version
@@ -182,36 +124,8 @@ void check_updates_now(bool async) {
 
 // ----------------------------------------------------------------------------- : Dialog
 
-// A HTML control that opens all pages in an actual browser
-struct HtmlWindowToBrowser : public wxHtmlWindow {
-	HtmlWindowToBrowser(Window* parent, int id, const wxPoint& pos, const wxSize& size, long flags)
-		: wxHtmlWindow(parent, id, pos, size, flags)
-	{}
-		
-	virtual void OnLinkClicked(const wxHtmlLinkInfo& info) {
-		wxLaunchDefaultBrowser( info.GetHref() );
-	}
-};
-
 void show_update_dialog(Window* parent) {
 	if (!update_available() || shown_dialog) return; // we already have the latest version, or this has already been displayed.
 	shown_dialog = true;
 	(new PackagesWindow(parent))->Show();
-	/*
-	// Show update dialog
-	wxDialog* dlg = new wxDialog(parent, wxID_ANY, _TITLE_("updates available"), wxDefaultPosition);
-	// controls
-	wxHtmlWindow* html = new HtmlWindowToBrowser(dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO | wxSUNKEN_BORDER);
-//%	html->SetPage(update_version_data->description);
-	wxButton* close = new wxButton(dlg, wxID_OK, _BUTTON_("close"));
-	close->SetDefault();
-	// layout
-	wxSizer* s = new wxBoxSizer(wxVERTICAL);
-	s->Add(html, 1, wxEXPAND | wxALL, 8);
-	s->Add(close, 0, wxALIGN_RIGHT | wxALL & ~wxTOP, 8);
-	dlg->SetSizer(s);
-	dlg->SetSize(400,400);
-	dlg->Show();
-	// And never show it again this run
-	*/
 }
