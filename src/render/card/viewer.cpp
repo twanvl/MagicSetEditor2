@@ -44,7 +44,7 @@ void DataViewer::draw(RotatedDC& dc, const Color& background) {
 	// prepare viewers
 	bool changed_content_properties = false;
 	FOR_EACH(v, viewers) { // draw low z index fields first
-		if (v->getStyle()->visible) {
+		if (v->getStyle()->isVisible()) {
 			Rotater r(dc, v->getRotation());
 			try {
 				if (v->prepare(dc)) {
@@ -60,7 +60,7 @@ void DataViewer::draw(RotatedDC& dc, const Color& background) {
 	}
 	// draw viewers
 	FOR_EACH(v, viewers) { // draw low z index fields first
-		if (v->getStyle()->visible) {// visible
+		if (v->getStyle()->isVisible()) {// visible
 			Rotater r(dc, v->getRotation());
 			try {
 				drawViewer(dc, *v);
@@ -155,10 +155,7 @@ void DataViewer::setStyles(const StyleSheetP& stylesheet, IndexMap<FieldP,StyleP
 }
 void DataViewer::addStyles(IndexMap<FieldP,StyleP>& styles) {
 	FOR_EACH(s, styles) {
-		if ((s->visible || s->visible.isScripted()) &&
-		    (nativeLook() || (
-		      (s->width  != -1 || s->width  .isScripted() || s->right  != -1 || s->right .isScripted()) &&
-		      (s->height != -1 || s->height .isScripted() || s->bottom != -1 || s->bottom.isScripted())))) {
+		if ((s->visible || s->visible.isScripted()) && (nativeLook() || s->hasSize())) {
 			// no need to make a viewer for things that are always invisible
 			ValueViewerP viewer = makeViewer(s);
 			if (viewer) viewers.push_back(viewer);

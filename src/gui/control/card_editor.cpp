@@ -138,7 +138,7 @@ void DataEditor::createTabIndex() {
 	by_tab_index.clear();
 	FOR_EACH(v, viewers) {
 		ValueEditor* e = v->getEditor();
-		if (e && v->getField()->editable && v->getStyle()->visible) {
+		if (e && v->getField()->editable && v->getStyle()->isVisible()) {
 			by_tab_index.push_back(v.get());
 		}
 	}

@@ -23,7 +23,7 @@ String ExportTemplate::typeName() const { return _("export-template"); }
 
 void ExportTemplate::validate(Version) {
 	if (!game) {
-		throw Error(_ERROR_("no game specified for export template"));
+		throw Error(_ERROR_1_("no game specified",_TYPE_("export template")));
 	}
 	// an export template depends on the game it is made for
 	requireDependency(game.get());

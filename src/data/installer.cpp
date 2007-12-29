@@ -217,6 +217,10 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(PackageDescription) {
 	REFLECT_N("depends ons", dependencies);
 }
 
+void PackageDescription::merge(const PackageDescription& p2) {
+	if (!icon.Ok() && !icon_url) icon = p2.icon;
+}
+
 IMPLEMENT_REFLECTION_NO_SCRIPT(InstallerDescription) {
 	REFLECT(packages);
 }
@@ -290,6 +294,7 @@ bool InstallablePackage::has(PackageAction act) const {
 void InstallablePackage::merge(const InstallablePackage& p) {
 	if (!installed) installed = p.installed;
 	if (!installer) {
+		p.description->merge(*description);
 		description = p.description; // installer has new description
 		installer = p.installer;
 	}

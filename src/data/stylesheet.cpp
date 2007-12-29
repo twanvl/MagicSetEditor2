@@ -67,7 +67,7 @@ String StyleSheet::typeName() const { return _("style"); }
 void StyleSheet::validate(Version ver) {
 	Packaged::validate(ver);
 	if (!game) {
-		throw Error(_ERROR_("no game specified for stylesheet"));
+		throw Error(_ERROR_1_("no game specified",_TYPE_("stylesheet")));
 	}
 	// a stylsheet depends on the game it is made for
 	requireDependency(game.get());

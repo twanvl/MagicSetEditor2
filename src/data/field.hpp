@@ -115,6 +115,11 @@ class Style : public IntrusivePtrVirtualBase {
 	inline RealRect  getExternalRect() const { return RealRect (left, top, width, height); }
 	inline RealRect  getInternalRect() const { return RealRect(0, 0, width, height); }
 	
+	/// Does this style have a non-zero size (or is it scripted)?
+	bool hasSize() const;
+	/// Is this style visible, and does it have a sane size 
+	bool isVisible() const;
+	
 	/// Get a copy of this style
 	virtual StyleP clone() const = 0;
 	

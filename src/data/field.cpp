@@ -97,9 +97,9 @@ intrusive_ptr<Field> read_new<Field>(Reader& reader) {
 Style::Style(const FieldP& field)
 	: fieldP(field)
 	, z_index(0)
-	, left(-1),  top(-1)
-	, width(-1), height(-1)
-	, right(-1), bottom(-1)
+	, left (1000000), top   (1000000)
+	, width(0),       height(0)
+	, right(1000000), bottom(1000000)
 	, angle(0)
 	, visible(true)
 	, automatic_side(AUTO_UNKNOWN)
@@ -139,14 +139,14 @@ int Style::update(Context& ctx) {
 	     | visible.update(ctx);
 	// determine automatic_side and attachment of rotation point
 	if (automatic_side == AUTO_UNKNOWN) {
-		if      (right  == -1) automatic_side = (AutomaticSide)(automatic_side | AUTO_RIGHT);
-		else if (width  == -1) automatic_side = (AutomaticSide)(automatic_side | AUTO_WIDTH);
-		else if (left   == -1) automatic_side = (AutomaticSide)(automatic_side | AUTO_LEFT);
-		else                   automatic_side = (AutomaticSide)(automatic_side | AUTO_LR);
-		if      (bottom == -1) automatic_side = (AutomaticSide)(automatic_side | AUTO_BOTTOM);
-		else if (height == -1) automatic_side = (AutomaticSide)(automatic_side | AUTO_HEIGHT);
-		else if (top    == -1) automatic_side = (AutomaticSide)(automatic_side | AUTO_TOP);
-		else                   automatic_side = (AutomaticSide)(automatic_side | AUTO_TB);
+		if      (right  == 1000000) automatic_side = (AutomaticSide)(automatic_side | AUTO_RIGHT);
+		else if (width  == 0)       automatic_side = (AutomaticSide)(automatic_side | AUTO_WIDTH);
+		else if (left   == 1000000) automatic_side = (AutomaticSide)(automatic_side | AUTO_LEFT);
+		else                        automatic_side = (AutomaticSide)(automatic_side | AUTO_LR);
+		if      (bottom == 1000000) automatic_side = (AutomaticSide)(automatic_side | AUTO_BOTTOM);
+		else if (height == 0)       automatic_side = (AutomaticSide)(automatic_side | AUTO_HEIGHT);
+		else if (top    == 1000000) automatic_side = (AutomaticSide)(automatic_side | AUTO_TOP);
+		else                        automatic_side = (AutomaticSide)(automatic_side | AUTO_TB);
 		changed = true;
 	}
 	if (!changed) return CHANGE_NONE;
@@ -171,8 +171,29 @@ int Style::update(Context& ctx) {
 			top  = top  + height * (1 - c);
 		}
 	}
+	if (width  < 0) width  = -width;
+	if (height < 0) height = -height;
 	// done
 	return CHANGE_OTHER;
+}
+
+bool Style::isVisible() const {
+	return visible
+	    &&    (width)  > 0      
+	    && abs(left)   < 100000
+	    && abs(right)  < 100000
+	    &&    (height) > 0      
+	    && abs(top)    < 100000
+	    && abs(bottom) < 100000;
+}
+bool Style::hasSize() const {
+	int h = (abs(width)  > 0      || width .isScripted())
+	      + (abs(left)   < 100000 || left  .isScripted())
+	      + (abs(right)  < 100000 || right .isScripted());
+	int v = (abs(height) > 0      || height.isScripted())
+	      + (abs(top)    < 100000 || top   .isScripted())
+	      + (abs(bottom) < 100000 || bottom.isScripted());
+	return h >= 2 && v >= 2;
 }
 
 void Style::initDependencies(Context& ctx, const Dependency& dep) const {

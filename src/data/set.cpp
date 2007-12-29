@@ -134,7 +134,7 @@ void Set::validate(Version file_app_version) {
 	Packaged::validate(file_app_version);
 	// are the
 	if (!game) {
-		throw Error(_ERROR_("no game specified for the set"));
+		throw Error(_ERROR_1_("no game specified",_TYPE_("set")));
 	}
 	if (!stylesheet) {
 		// TODO : Allow user to select a different style

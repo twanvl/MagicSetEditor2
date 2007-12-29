@@ -456,8 +456,6 @@ label:
 	
 	# Packages window
 	package name:				Package
-	package installed version:	Installed version
-	package remote version:		Latest version
 	package status:				Status
 	package action:				Action
 	
@@ -516,10 +514,7 @@ button:
 	keep old:			Keep old files
 	number:				Add a number to the filename
 	number overwrite:	Add a number to the filename, overwrite previous exports
-	
-	# Update checker
-	close:				&Close
-	
+		
 	# Auto replace
 	use auto replace:	Use auto replace
 	add item:			&Add
@@ -549,7 +544,7 @@ title:
 	open set:			Open Set
 	save set:			Save Set As
 	save image:			Save Image
-	updates available:	Updates Available
+	#updates available:	Updates Available
 	save changes:		Save Changes?
 	select stylesheet:	Select Stylesheet
 	#preferences
@@ -577,11 +572,10 @@ title:
 	auto replaces:		Auto Replace
 	
 	# Package Update Window
-	package list:		Package Updates
-	package type:		Package Type
-	package name:		Package Name
-	package status:		Current Status
-	new status:			New Status
+	packages window:	Package Manager
+	installing updates:	Installing updates
+	
+	cannot create file:	Cannot create file
 
 ############################################################## Action (undo/redo) names
 action:
@@ -679,7 +673,7 @@ error:
 	images used for blending must have the same size:	Images used for blending must have the same size
 	
 	# Error from files
-	no game specified for the set:						No game specified for the set
+	no game specified:									No game specified for the %s
 	no stylesheet specified for the set:				No stylesheet specified for the set
 	stylesheet and set refer to different game:
 		stylesheet and set don't refer to the same game, this is an error in the stylesheet file
@@ -704,8 +698,7 @@ error:
 	dimension not found:				There is no statistics dimension '%s'
 	
 	# Package update window
-	no packages:						Found no package updates.
-	checking updates:					Checking for updates.
+#	checking updates:					Checking for updates.
 	can't download installer:
 		Unable to download installer for package %s from %s.
 		Nothing has been installed.
@@ -742,6 +735,7 @@ type:
 	game:			game
 	set:			set
 	stylesheet:		stylesheet
+	export template:export template
 	card:			card
 	field:			field
 	style:			style
@@ -767,17 +761,6 @@ type:
 	
 	point:			point
 	points:			points
-	
-	# Package manager
-	installed:		installed
-	uninstalled:	uninstalled
-	upgradeable:	upgradeable
-	
-	install:		install
-	uninstall:		uninstall
-	upgrade:		upgrade
-	do nothing:		do nothing
-	new mse:		MSE outdated
 	
 
 ############################################################## Magic

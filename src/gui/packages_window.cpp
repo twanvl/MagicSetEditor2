@@ -9,13 +9,14 @@
 #include <util/prec.hpp>
 #include <gui/packages_window.hpp>
 #include <gui/control/tree_list.hpp>
-//%#include <gui/update_checker.hpp>
+#include <gui/thumbnail_thread.hpp>
 #include <gui/util.hpp>
 #include <util/io/package_manager.hpp>
 #include <util/window_id.hpp>
 #include <data/installer.hpp>
 #include <data/settings.hpp>
 #include <gfx/gfx.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <wx/wfstream.h>
 #include <wx/html/htmlwin.h>
 #include <wx/dialup.h>
@@ -111,6 +112,9 @@ class PackageUpdateList : public TreeList {
 		item_height = max(item_height,17);
 		rebuild();
 	}
+	~PackageUpdateList() {
+		thumbnail_thread.abort(this);
+	}
 	
 	InstallablePackageP getSelection() const {
 		return selection == NOTHING ? InstallablePackageP() : get(selection);
@@ -130,10 +134,9 @@ class PackageUpdateList : public TreeList {
 	
   private:
 	PackagesWindow* parent;
-	class TreeItem;
   public:
+	class TreeItem;
 	typedef intrusive_ptr<TreeItem> TreeItemP;
-  private:
 	class TreeItem : public Item {
 	  public:
 		String label;
@@ -146,6 +149,8 @@ class PackageUpdateList : public TreeList {
 		bool highlight() const;
 	};
 };
+
+// ----------------------------------------------------------------------------- : PackageUpdateList::TreeItem
 
 DECLARE_TYPEOF_COLLECTION(PackageUpdateList::TreeItemP);
 
@@ -209,6 +214,80 @@ bool PackageUpdateList::TreeItem::highlight() const {
 	return false;
 }
 
+// ----------------------------------------------------------------------------- : PackageIconRequest
+
+/// wx doesn't allow seeking on InputStreams from a wxURL
+/// The built in buffer class is too stupid to seek, so we must do it ourselfs
+class SeekAtStartInputStream : public wxFilterInputStream {
+  public:
+	SeekAtStartInputStream(wxInputStream& stream)
+		: wxFilterInputStream(stream)
+		, buffer_pos(0)
+	{
+		m_parent_i_stream->Read(buffer, 1024);
+		buffer_size = m_parent_i_stream->LastRead();
+	}
+	
+	bool IsSeekable() const { return true; }
+  protected:
+    virtual size_t OnSysRead(void *buffer, size_t bufsize) {
+		size_t len = min(buffer_size - buffer_pos, bufsize);
+		memcpy(buffer, this->buffer + buffer_pos, len);
+		buffer_pos += len;
+		m_parent_i_stream->Read((Byte*)buffer + len, bufsize - len);
+		return m_parent_i_stream->LastRead() + len; 
+    }
+    virtual wxFileOffset OnSysSeek(wxFileOffset seek, wxSeekMode mode) {
+		if      (mode == wxFromStart)   buffer_pos = seek;
+		else if (mode == wxFromCurrent) buffer_pos += seek;
+		else                            assert(false);
+		assert(buffer_pos < buffer_size);
+		return buffer_pos;
+    }
+    virtual wxFileOffset OnSysTell() const {
+		assert(buffer_pos < buffer_size);
+		return buffer_pos;
+    }
+  private:
+	size_t buffer_size, buffer_pos;
+	Byte buffer[1024];
+};
+
+class PackageIconRequest : public ThumbnailRequest {
+  public:
+	PackageIconRequest(PackageUpdateList* list, PackageUpdateList::TreeItem* ti)
+		: ThumbnailRequest(
+			list,
+			_("package_") + ti->package->description->icon_url + _("_") + ti->package->description->version.toString(),
+			wxDateTime(1,wxDateTime::Jan,2000))
+		, list(list), ti(ti)
+	{}
+	
+	virtual Image generate() {
+		wxURL url(ti->package->description->icon_url);
+		scoped_ptr<wxInputStream> isP(url.GetInputStream());
+		if (!isP) return wxImage();
+		SeekAtStartInputStream is2(*isP);
+		Image result(is2);
+		return result;
+	}
+	virtual void store(const Image& image) {
+		if (!image.Ok()) return;
+		ti->package->description->icon = image;
+		Image resampled(16,16,false);
+		resample_preserve_aspect(image,resampled);
+		ti->icon = Bitmap(resampled);
+		desaturate(resampled);
+		set_alpha(resampled,0.5);
+		ti->icon_grey = Bitmap(resampled);
+		list->Refresh(false);
+	}
+  private:
+	PackageUpdateList* list;
+	PackageUpdateList::TreeItem* ti;
+};
+
+// ----------------------------------------------------------------------------- : PackageUpdateList : implementation
 
 void PackageUpdateList::initItems() {
 	// packages to tree
@@ -242,6 +321,10 @@ void PackageUpdateList::initItems() {
 		desaturate(image);
 		set_alpha(image, 0.5);
 		ti.icon_grey = Bitmap(image);
+		if (p && !p->description->icon.Ok() && !p->description->icon_url.empty()) {
+			// download icon
+			thumbnail_thread.request(new_intrusive2<PackageIconRequest>(this,&ti));
+		}
 	}
 }
 
@@ -367,7 +450,7 @@ END_EVENT_TABLE()
 // ----------------------------------------------------------------------------- : PackagesWindow
 
 PackagesWindow::PackagesWindow(Window* parent, bool download_package_list)
-	: wxDialog(parent, wxID_ANY, _TITLE_("package list"), wxDefaultPosition, wxSize(640,480), wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER)
+	: wxDialog(parent, wxID_ANY, _TITLE_("packages window"), wxDefaultPosition, wxSize(640,480), wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER)
 	, where(is_install_local(settings.install_type) ? PACKAGE_LOCAL : PACKAGE_GLOBAL)
 	, waiting_for_list(download_package_list)
 {

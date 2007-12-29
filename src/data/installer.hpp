@@ -26,15 +26,6 @@ class Installer : public Packaged {
 	String prefered_filename;	///< What filename should be used (by default)
 	vector<PackageDescriptionP> packages;	///< Packages to install
 	
-	/*
-	/// Load an installer from a file, and run it
-	static void installFrom(const String& filename, bool message_on_success, bool local);
-	/// Install all the packages
-	void install(bool local, bool check_dependencies = true);
-	/// Install a specific package
-	void install(const String& package);
-	*/
-	
 	/// Add a package to the installer (if it is not already added).
 	/** If the package is named *.mse-installer uses it as the filename instead */
 	void addPackage(const String& package);
@@ -66,6 +57,9 @@ class PackageDescription : public IntrusivePtrBase<PackageDescription> {
 	int    position_hint;		///< A hint for the package list
 	String description;			///< Changelog/description
 	vector<PackageDependencyP> dependencies;	///< Dependencies of this package
+	
+	/// Merge two descriptions a package. This package takes precedence
+	void merge(const PackageDescription& p2);
 	
 	DECLARE_REFLECTION();
 };
