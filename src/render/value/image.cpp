@@ -21,7 +21,7 @@ IMPLEMENT_VALUE_VIEWER(Image);
 
 void ImageValueViewer::draw(RotatedDC& dc) {
 	// reset?
-	int w = (int)dc.trX(style().width), h = (int)dc.trY(style().height);
+	int w = max(0,(int)dc.trX(style().width)), h = max(0,(int)dc.trY(style().height));
 	int a = dc.trAngle(0); //% TODO : Add getAngle()?
 	if (bitmap.Ok() && (a != angle || size.width != w || size.height != h)) {
 		bitmap = Bitmap();

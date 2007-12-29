@@ -108,6 +108,9 @@ void StylePanel::selectCard(const CardP& card) {
 void StylePanel::onStyleSelect(wxCommandEvent&) {
 	if (list->hasSelection() && card) {
 		StyleSheetP stylesheet = list->getSelection<StyleSheet>();
+		if (stylesheet->game != set->game) {
+			throw PackageError(_("Stylesheet made for the wrong game"));
+		}
 		if (stylesheet == set->stylesheet) {
 			// select no special style when selecting the same style as the set default
 			stylesheet = StyleSheetP();
