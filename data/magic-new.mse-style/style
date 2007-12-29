@@ -22,6 +22,7 @@ depends on:
 	package: magic-mana-small.mse-symbol-font
 	version: 2007-09-23
 
+card background: white
 card width: 375
 card height: 523
 card dpi: 150
@@ -57,6 +58,7 @@ init script:
 	
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
+	colorless_color := { "c" } # MOVE TO GAME FILE
 	
 	# Does the card have a color that requires a white font for copyright/artist?
 	#white_font_colors := filter_rule(match:"^(hybrid 2 color )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(black|land|hybrid 4 color white / blue / black / red|hybrid 2 color overlay blue / black|hybrid 2 color overlay black / red|hybrid 2 color overlay black / green)")
@@ -132,6 +134,11 @@ styling field:
 	initial: standard
 	choice: standard
 	choice: extended
+styling field:
+	type: package choice
+	name: text box mana symbols
+	match: magic-mana-*.mse-symbol-font
+	initial: magic-mana-small.mse-symbol-font
 styling style:
 	artifact style:
 		render style: both
@@ -280,11 +287,7 @@ card style:
 			scale down to: 6
 			color: rgb(0,0,0)
 		symbol font:
-			name:
-				script:
-					if styling.popup_mana_symbols
-					then "magic-mana-large"
-					else "magic-mana-small"
+			name: { styling.text_box_mana_symbols }
 			size: 14
 		alignment:
 			script:
