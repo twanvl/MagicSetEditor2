@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <data/statistics.hpp>
 #include <data/field.hpp>
 #include <data/field/choice.hpp>

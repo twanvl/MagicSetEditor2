@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/print_window.hpp>
 #include <gui/card_select_window.hpp>
 #include <gui/util.hpp>

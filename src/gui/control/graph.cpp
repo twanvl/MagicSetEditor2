@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/control/graph.hpp>
 #include <util/alignment.hpp>
 #include <gfx/gfx.hpp>

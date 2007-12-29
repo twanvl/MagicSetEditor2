@@ -49,7 +49,7 @@ class Card : public IntrusivePtrVirtualBase {
 	/// Extra values for specitic stylesheets, indexed by stylesheet name
 	DelayedIndexMaps<FieldP,ValueP> extra_data;
 	/// Styling information for a particular stylesheet
-	IndexMap<FieldP, ValueP>& extraDataFor(const StyleSheet& stylesheet) ;
+	IndexMap<FieldP, ValueP>& extraDataFor(const StyleSheet& stylesheet);
 	
 	/// Keyword usage statistics
 	vector<pair<Value*,const Keyword*> > keyword_usage;

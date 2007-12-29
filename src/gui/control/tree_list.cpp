@@ -6,12 +6,13 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/control/tree_list.hpp>
 #include <gfx/gfx.hpp>
 #include <wx/renderer.h>
 #include <wx/dcbuffer.h>
 
-DECLARE_TYPEOF_COLLECTION(TreeList::Item);
+DECLARE_TYPEOF_COLLECTION(TreeList::ItemP);
 
 // ----------------------------------------------------------------------------- : TreeList : item managment
 
@@ -23,21 +24,28 @@ void TreeList::rebuild(bool full) {
 }
 
 bool TreeList::hasChildren(size_t item) const {
-	return item < items.size() && items[item].level < items[item+1].level;
+	return item + 1 < items.size() && items[item]->level < items[item+1]->level;
 }
 
 void TreeList::expand(size_t item, bool expand) {
-	if (hasChildren(item) && items[item].expanded != expand) {
-		items[item].expanded = expand;
+	if (hasChildren(item) && items[item]->expanded != expand) {
+		items[item]->expanded = expand;
 		rebuild(false);
 	}
 }
 
-void TreeList::select(size_t item) {
+void TreeList::select(size_t item, bool event) {
 	if (item >= items.size() || selection == item) return;
-	size_t oldpos = selection < items.size() ? items[selection].position : 0;
+	// select
+	size_t oldpos = selection < items.size() ? items[selection]->position : 0;
 	selection = item;
-	size_t pos = items[selection].position;
+	size_t pos = items[selection]->position;
+	// event
+	if (event) {
+		wxCommandEvent ev(wxEVT_COMMAND_LISTBOX_SELECTED, GetId());
+		ProcessEvent(ev);
+	}
+	// redraw
 	if (pos < first_line) {
 		ScrollToLine(pos);
 	} else if (pos >= first_line + visible_lines_t) {
@@ -53,28 +61,28 @@ void TreeList::calcItemCount() {
 	total_lines = 0;
 	int visible_level = 0;
 	FOR_EACH(i,items) {
-		if (i.level <= visible_level) {
-			i.position = total_lines;
+		if (i->level <= visible_level) {
+			i->position = total_lines;
 			++total_lines;
-			if (i.expanded) visible_level = i.level + 1;
-			else            visible_level = i.level;
+			if (i->expanded) visible_level = i->level + 1;
+			else             visible_level = i->level;
 		} else {
-			i.position = NOTHING;
+			i->position = NOTHING;
 		}
 	}
 	// update lines
 	UInt lines = 0;
 	FOR_EACH_REVERSE(i,items) {
-		if (i.visible()) {
-			i.lines = lines;
-			lines &= (1 << i.level) - 1;
-			lines |= 1 << i.level;
+		if (i->visible()) {
+			i->lines = lines;
+			lines &= (1 << i->level) - 1;
+			lines |= 1 << i->level;
 		}
 	}
 	// selection hidden? move to first visible item before it
 	if (selection < items.size()) {
 		for ( ; selection + 1 > 0 ; --selection) {
-			if (items[selection].visible()) break; // visible
+			if (items[selection]->visible()) break; // visible
 		}
 		if (selection >= items.size()) selection = 0;
 	}
@@ -86,20 +94,20 @@ size_t TreeList::findItemByPos(int y) const {
 }
 size_t TreeList::findItem(size_t line, size_t start) const {
 	for (size_t i = start ; i < items.size() ; ++i) {
-		if (items[i].visible() && items[i].position >= line) return i;
+		if (items[i]->visible() && items[i]->position >= line) return i;
 	}
 	return items.size();
 }
 size_t TreeList::findLastItem(size_t start) const {
 	for (size_t i = min(items.size(), start) - 1 ; i + 1 > 0 ; --i) {
-		if (items[i].visible()) return i;
+		if (items[i]->visible()) return i;
 	}
 	return items.size();
 }
 size_t TreeList::findParent(size_t start) const {
-	int level = items[start].level;
+	int level = items[start]->level;
 	for (size_t i = start - 1 ; i + 1 > 0 ; --i) {
-		if (items[i].visible() && items[i].level < level) return i;
+		if (items[i]->visible() && items[i]->level < level) return i;
 	}
 	return items.size();
 }
@@ -147,9 +155,13 @@ void TreeList::onPaint(wxPaintEvent& ev) {
 	size_t start = findItem(first_line);
 	size_t end   = findItem(first_line + visible_lines);
 	for (size_t i = start ; i < end ; ++i) {
-		const Item& item = items[i];
+		const Item& item = *items[i];
 		if (!item.visible()) continue; // invisible
 		x = level_width * (item.level + 1);
+		// line below
+		dc.SetPen(lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
+		               wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT),0.2));
+		dc.DrawLine(x,y+item_height-1,cs.x,y+item_height-1);
 		// draw lines
 		dc.SetPen(lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
 		               wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT),0.4));
@@ -171,15 +183,12 @@ void TreeList::onPaint(wxPaintEvent& ev) {
 		if (selection == i) {
 			dc.SetPen(*wxTRANSPARENT_PEN);
 			dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-			dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
-			dc.DrawRectangle(x, y, cs.x-x, item_height);
+			dc.DrawRectangle(x, y, cs.x-x, item_height-1);
 		}
 		// draw text(s)
 		for (size_t j = 0 ; j < cols ; ++j) {
 			int w = columnWidth(j);
-			if (selection != i)
-				dc.SetTextForeground(itemColor(i,j));
-			dc.DrawText(itemText(i,j),x+1,y+1);
+			drawItem(dc, i, j, x+1, y, selection == i);
 			if (j == 0) x = 0;
 			x += w;
 		}
@@ -197,7 +206,7 @@ void TreeList::onChar(wxKeyEvent& ev) {
 			break;
 		} case WXK_LEFT: {
 			if (selection < items.size()) {
-				if (hasChildren(selection) && items[selection].expanded) {
+				if (hasChildren(selection) && items[selection]->expanded) {
 					expand(selection, false);
 				} else {
 					// select parent
@@ -207,7 +216,7 @@ void TreeList::onChar(wxKeyEvent& ev) {
 			break;
 		} case WXK_RIGHT: {
 			if (selection < items.size() && hasChildren(selection)) {
-				if (items[selection].expanded) {
+				if (items[selection]->expanded) {
 					// select first child
 					select(selection+1);
 					Refresh(false);
@@ -216,10 +225,10 @@ void TreeList::onChar(wxKeyEvent& ev) {
 				}
 			}
 			break;
-		} case WXK_PAGEUP: {
+		} case WXK_PAGEUP: case WXK_PRIOR: {
 			ScrollToLine(first_line > visible_lines_t ? first_line - visible_lines_t : 0);
 			break;
-		} case WXK_PAGEDOWN: {
+		} case WXK_PAGEDOWN: case WXK_NEXT: {
 			ScrollToLine(first_line + visible_lines_t);
 			break;
 		} case WXK_HOME: {
@@ -242,9 +251,9 @@ void TreeList::onChar(wxKeyEvent& ev) {
 void TreeList::onLeftDown(wxMouseEvent& ev) {
 	size_t i = findItemByPos(ev.GetY());
 	if (i >= items.size()) return;
-	int left = items[i].level * level_width;
+	int left = items[i]->level * level_width;
 	if (hasChildren(i) && ev.GetX() >= left && ev.GetX() < left + level_width) {
-		expand(i, !items[i].expanded);
+		expand(i, !items[i]->expanded);
 	} else {
 		select(i);
 	}
@@ -255,7 +264,7 @@ void TreeList::onLeftDClick(wxMouseEvent& ev) {
 	size_t i = findItemByPos(ev.GetY());
 	if (i >= items.size()) return;
 	if (hasChildren(i)) {
-		expand(i, !items[i].expanded);
+		expand(i, !items[i]->expanded);
 	}
 	ev.Skip();
 }
@@ -264,7 +273,8 @@ void TreeList::onLeftDClick(wxMouseEvent& ev) {
 
 void TreeList::ScrollToLine(size_t line) {
     // determine the real first line to scroll to: we shouldn't scroll beyond the end
-    line = (size_t)min((int)line, (int)(total_lines - visible_lines_t));
+    line = (size_t)max((int)line, 0);
+    line = (size_t)min((int)line, max(0, (int)(total_lines - visible_lines_t)));
 	// nothing to do?
     if (line == first_line) return;
     first_line = line;
@@ -314,12 +324,13 @@ void TreeList::onScroll(wxScrollWinEvent& ev) {
 
 void TreeList::onSize(wxSizeEvent& ev) {
 	UpdateScrollbar();
+	Refresh(false);
 	ev.Skip();
 }
 
 void TreeList::onMouseWheel(wxMouseEvent& ev) {
-	ScrollLines(-ev.GetWheelRotation() * ev.GetLinesPerAction() / ev.GetWheelDelta());
-	Refresh(false);
+	int delta = -ev.GetWheelRotation() * ev.GetLinesPerAction() / ev.GetWheelDelta();
+	ScrollToLine(first_line + delta);
 }
 
 

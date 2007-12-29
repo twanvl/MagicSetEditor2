@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/value/choice.hpp>
 #include <gui/util.hpp>
 #include <gui/thumbnail_thread.hpp>

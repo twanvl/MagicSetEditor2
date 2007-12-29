@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include "writer.hpp"
 #include <util/vector2d.hpp>
 #include <util/error.hpp>

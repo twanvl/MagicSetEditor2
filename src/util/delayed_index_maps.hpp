@@ -58,7 +58,11 @@ void Reader::handle(DelayedIndexMapsData<Key,Value>& d) {
 }
 template <typename Key, typename Value>
 void Writer::handle(const DelayedIndexMapsData<Key,Value>& d) {
-	handle(d.read_data);
+	if (!d.unread_data.empty()) {
+		handle(d.unread_data); // TODO: how to handle filenames
+	} else {
+		handle(d.read_data);
+	}
 }
 template <typename Key, typename Value>
 void GetMember::handle(const DelayedIndexMapsData<Key,Value>& d) {

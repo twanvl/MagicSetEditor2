@@ -33,6 +33,7 @@ class Writer {
 	inline bool scripting() const { return false; }
 	inline bool isComplex() const { return false; }
 	inline void addAlias(int, const Char*, const Char*) {}
+	inline void handleIgnore(int, const Char*) {}
 	
 	/// Write the application version
 	void handleAppVersion();

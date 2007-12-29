@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/new_window.hpp>
 #include <gui/control/gallery_list.hpp>
 #include <gui/control/package_list.hpp>

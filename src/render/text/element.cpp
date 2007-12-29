@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <render/text/element.hpp>
 #include <util/tagged_string.hpp>
 #include <data/field/text.hpp>

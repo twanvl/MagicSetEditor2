@@ -1,6 +1,8 @@
-mse version: 0.3.5
+mse version: 0.3.6
+installer group: locales
 full name: English
 version: 2007-09-23
+icon: usgb.png
 
 ############################################################## Menu items
 menu:
@@ -92,13 +94,6 @@ menu:
 	basic shapes:		&Basic Shapes	F8
 	symmetry:			S&ymmetry	F9
 	paint:				P&aint	F10
-	
-	# Updates window
-	apply changes:		Apply changes
-	cancel changes:		Cancel changes
-	install package:	Install package
-	upgrade package:	Upgrade package
-	remove package:		Remove package
 
 ############################################################## Menu help texts
 help:
@@ -458,6 +453,23 @@ label:
 	
 	# Symbol editor
 	sides:				sides
+	
+	# Packages window
+	package name:				Package
+	package installed version:	Installed version
+	package remote version:		Latest version
+	package status:				Status
+	package action:				Action
+	
+	package conflicts:		conflicting modifications
+	package modified:		local modifications
+	package updates:		updates available
+	package installed:		installed
+	package installable:	not installed
+	install package:		install
+	upgrade package:		upgrade
+	remove package:			remove
+	
 
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
@@ -515,6 +527,15 @@ button:
 	defaults:			Reset to &Defaults
 	enabled:			Enabled
 	whole word:			Match whole word only
+	
+	# Packages window
+	install package:	&Install
+	upgrade package:	&Upgrade
+	remove package:		&Remove
+	install group:		&Install All
+	upgrade group:		&Upgrade All
+	remove group:		&Remove All
+	
 
 ############################################################## Titles in the GUI
 title:
@@ -639,9 +660,7 @@ error:
 	dependency not given:
 		The package '%s' uses files from the package '%s', but it does not list a dependency.
 		To resolve this, add:
-		depends on:
-			package: %s
-			version: %s
+		  depends on: %s %s
 	
 	# Script stuff
 	has no member:				%s has no member '%s'
@@ -687,6 +706,22 @@ error:
 	# Package update window
 	no packages:						Found no package updates.
 	checking updates:					Checking for updates.
+	can't download installer:
+		Unable to download installer for package %s from %s.
+		Nothing has been installed.
+	
+	downloading updates:				Downloading updates (%d of %d)
+	installing updates:					Updating packages (%d of %d)
+	
+	remove packages:
+		This will remove %s packages, do you want to continue?
+	remove packages modified:
+		This will remove %s packages, %s of those have been modified after installing.
+		Removing them can not be undone.
+		
+		Do you want to continue?
+	
+	cannot create file:		Can not create file '%s', continue installation?
 
 
 ############################################################## Types used in scripts / shape names

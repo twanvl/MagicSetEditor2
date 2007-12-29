@@ -12,8 +12,6 @@
 #include <util/prec.hpp>
 #include <wx/vscroll.h>
 
-typedef intrusive_ptr<IntrusivePtrVirtualBase> VoidP;
-
 // ----------------------------------------------------------------------------- : TreeList
 
 /// A combination of a TreeCtrl and a ListCtrl. A tree with multiple columns.
@@ -24,7 +22,7 @@ class TreeList : public wxPanel {
 	/// Expand/collapse an item
 	void expand(size_t item, bool expand = true);
 	/// Select an item
-	void select(size_t item);
+	void select(size_t item, bool event = true);
 	
 	/// (re)build the list
 	void rebuild(bool full = true);
@@ -32,24 +30,26 @@ class TreeList : public wxPanel {
   public:
 	
 	/// An item in the tree list
-	struct Item {
-		Item() {}
-		Item(int level, bool expanded = false, VoidP data = VoidP())
-			: level(level), expanded(expanded), data(data)
-		{}
+	class Item : public IntrusivePtrBase<Item> {
+	  public:
+		Item() : level(0), expanded(false) {}
+		virtual ~Item() {}
 		
 		int    level;
 		bool   expanded;
-		VoidP  data;
+		inline bool visible() const { return position != NOTHING; }
+		
+	  private:
+		friend class TreeList;
 		size_t position; // NOTHING if invisible, otherwise the line the item is on
 		UInt   lines;    // lines in front of this item (bit set)
-		inline bool visible() const { return position != NOTHING; }
 	};
+	typedef intrusive_ptr<Item> ItemP;
 	
   protected:
 	
 	/// The items in the tree list
-	vector<Item> items;
+	vector<ItemP> items;
 	
 	static const size_t NOTHING = (size_t)-1;
 	size_t selection;
@@ -57,10 +57,8 @@ class TreeList : public wxPanel {
 	/// Initialize the items
 	virtual void initItems() = 0;
 	
-	/// Get the text of an item
-	virtual String itemText(size_t item, size_t column) const = 0;
-	/// Get the color of an item
-	virtual Color  itemColor(size_t item, size_t column) const = 0;
+	/// Draw the text of an item
+	virtual void drawItem(DC& dc, size_t index, size_t column, int x, int y, bool selected) const = 0;
 	
 	/// The number of columns
 	virtual size_t columnCount() const = 0;
@@ -69,11 +67,11 @@ class TreeList : public wxPanel {
 	/// The width of a column in pixels
 	virtual int    columnWidth(size_t column) const = 0;
 	
-  private:
 	int    item_height;
 	static const int header_height = 17;
 	static const int level_width   = 17;
 	
+  private:
 	size_t total_lines;     // number of shown items
 	size_t first_line;      // first visible line
 	size_t visible_lines;   // number of (partially) visible lines

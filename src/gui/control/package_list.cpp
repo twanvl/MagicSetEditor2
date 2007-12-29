@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/control/package_list.hpp>
 #include <util/io/package_manager.hpp>
 #include <util/alignment.hpp>

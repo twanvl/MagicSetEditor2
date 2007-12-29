@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <data/field/symbol.hpp>
 #include <render/symbol/filter.hpp>
 

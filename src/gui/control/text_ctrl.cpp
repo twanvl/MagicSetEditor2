@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/control/text_ctrl.hpp>
 #include <gui/value/editor.hpp>
 #include <gui/util.hpp>

@@ -14,11 +14,86 @@
 #include <wx/filename.h>
 
 DECLARE_POINTER_TYPE(Packaged);
+DECLARE_POINTER_TYPE(PackageVersion);
+DECLARE_POINTER_TYPE(InstallablePackage);
 class PackageDependency;
+
+// ----------------------------------------------------------------------------- : PackageVersion
+
+/*
+
+/// Information on a package in a repository
+class PackageVersionData : public IntrusivePtrVirtualBase {
+  public:
+	PackageVersionData() {}
+	
+	String  name;						///< Name of the package
+	String  short_name;					///< Name to show on package list.
+	String  description;				///< html description
+	bool    hidden;						///< Not shown in the package list (installed automatically as a dependency)
+	
+	PackageVersionP base_version;		///< The locally installed version (if installed)
+	PackageVersionP local_version;		///< Modifications made to the locally installed version?
+	PackageVersionP remote_version;		///< The version available from the server (if available)
+	bool global;						///< The installed package is in the global location, not the user-local one
+	bool new_global;					///< 
+	
+	bool source_local;					///< Is the source
+	String source;						///< Where can the package be downloaded/found?
+	
+	DECLARE_REFLECTION();
+};
+
+class UpdateData {
+	vector<PackageDependencyP> packages;         ///< package/latest-version-number pairs
+	String                     new_updates_url;  ///< updates url has changed? 
+};
+
+IMPLEMENT_REFLECTION_NO_SCRIPT(UpdateData) {
+	REFLECT_NO_SCRIPT(packages);
+	REFLECT_NO_SCRIPT(new_updates_url);
+}
+*/
+
+// ----------------------------------------------------------------------------- : PackageDirectory
+
+/// A directory for packages
+class PackageDirectory {
+  public:
+	void init(bool local);
+	void init(const String& dir);
+	
+	/// Name of a package in this directory
+	String name(const String& name) const;
+	/// Does a package with the given name exist?
+	bool exists(const String& name) const;
+	
+	/// Find all packages that match a filename pattern (using wxFindFirst)
+	String findFirstMatching(const String& pattern) const;
+	
+	/// Get all installed packages
+	void installedPackages(vector<InstallablePackageP>& packages);
+	
+	/// Install/uninstall a package
+	bool install(const InstallablePackage& package);
+	
+	void loadDatabase();
+	void saveDatabase();
+  private:
+	bool   is_local;
+	String directory;
+	vector<PackageVersionP> packages; // sorted by name
+	
+	String databaseFile();
+	// Do the actual installation of a package
+	bool actual_install(const InstallablePackage& package, const String& install_dir);
+	
+	DECLARE_REFLECTION();
+};
 
 // ----------------------------------------------------------------------------- : PackageManager
 
-/// Package manager, loads data files from the default data directory
+/// Package manager, loads data files from the default data directory.
 /** The PackageManager ensures that each package is only loaded once.
  *  There is a single global instance of the PackageManager, called packages
  */
@@ -30,30 +105,20 @@ class PackageManager {
 	/** This function MUST be called before the program terminates, otherwise
 	 *  we could get into fights with pool allocators used by ScriptValues */
 	void destroy();
+	/// Empty the list of packages, they will all be reloaded
+	void reset();
+	
+	// --------------------------------------------------- : Packages in memory
 	
 	/// Open a package with the specified name (including extension)
 	template <typename T>
 	intrusive_ptr<T> open(const String& name) {
-		wxFileName loc(local_data_directory + _("/") + name);
-		loc.Normalize();
-		String filename = loc.GetFullPath();
-		if (!wxFileExists(filename) && !wxDirExists(filename)) {
-			wxFileName glob(global_data_directory + _("/") + name);
-			glob.Normalize();
-			filename = glob.GetFullPath();
-		}
-		// Is this package already loaded?
-		PackagedP& p = loaded_packages[filename];
+		PackagedP p = openAny(name);
 		intrusive_ptr<T> typedP = dynamic_pointer_cast<T>(p);
 		if (typedP) {
-			typedP->loadFully();
 			return typedP;
 		} else {
-			// not loaded, or loaded with wrong type (i.e. with just_header)
-			typedP = new_intrusive<T>();
-			typedP->open(filename);
-			p = typedP;
-			return typedP;
+			throw InternalError(format_string(_("Package %s loaded as wrong type"),name));
 		}
 	}
 	
@@ -75,25 +140,77 @@ class PackageManager {
 	 */
 	InputStreamP openFileFromPackage(Packaged*& package, const String& name);
 	
+	// --------------------------------------------------- : Packages on disk
+	
 	/// Check if the given dependency is currently installed
 	bool checkDependency(const PackageDependency& dep, bool report_errors = true);
+	/// Determine the latest version of the given package
+	/** If it is not installed, returns false */
+	bool installedVersion(const String& pkg, Version& version_out);
 	
-	/// Clear that cache of opened packages
-	/** Used by the update manager
-	 */
-	inline void clearPackageCache() { loaded_packages.clear(); }
+	/// Get all installed packages
+	void installedPackages(vector<InstallablePackageP>& packages);
 	
-	inline String getGlobalDataDir() const { return global_data_directory; }
-	inline String getLocalDataDir() const { return local_data_directory; }
+	/// Install/uninstall a package
+	void install(const InstallablePackage& package);
+	
+	// --------------------------------------------------- : Packages on a server
 	
   private:
 	map<String, PackagedP> loaded_packages;
-	String global_data_directory;
-	String local_data_directory;
+	PackageDirectory local, global;
 };
 
 /// The global PackageManager instance
 extern PackageManager packages;
+
+// ----------------------------------------------------------------------------- : PackageVersion
+
+/// Version information for an installed package
+class PackageVersion : public IntrusivePtrBase<PackageVersion> {
+  public:
+	PackageVersion() : status(0) {}
+	PackageVersion(int status) : status(status) {}
+	
+	String  name;
+	Version version;
+	enum Status
+	{	STATUS_LOCAL    = 0x01 ///< Package is installed in the local package dir
+	,	STATUS_GLOBAL   = 0x02 ///< Package is installed in the global package dir
+	,	STATUS_BLESSED  = 0x10 ///< Package is an official version, installed with the installer
+	,	STATUS_MODIFIED = 0x20 ///< Package has been modified after installing
+	,	STATUS_FIXED    = 0x40 ///< The package can not be uninstalled
+	};
+	int status;
+	
+	/// Check the status of the files in this package
+	void check_status(Packaged& package);
+	/// Set blessed status to true
+	void bless();
+	
+  public:
+	/// Status of a single file
+	enum FileStatus
+	{	FILE_UNCHANGED
+	,	FILE_MODIFIED
+	,	FILE_ADDED
+	,	FILE_DELETED
+	};
+	/// Information on files in this package
+	struct FileInfo {
+		inline FileInfo() {}
+		inline FileInfo(const String& file, const DateTime& time, FileStatus status)
+			: file(file), time(time), status(status)
+		{}
+		String     file;
+		DateTime   time;
+		FileStatus status;
+		inline bool operator < (const FileInfo& f) const { return file < f.file; }
+	};
+  private:
+	vector<FileInfo> files; // sorted by filename
+	DECLARE_REFLECTION();
+};
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

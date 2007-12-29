@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/control/native_look_editor.hpp>
 #include <gui/value/editor.hpp>
 #include <gui/util.hpp>

@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <script/value.hpp>
 #include <script/to_value.hpp>
 #include <util/error.hpp>

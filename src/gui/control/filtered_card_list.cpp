@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/control/filtered_card_list.hpp>
 
 DECLARE_TYPEOF_COLLECTION(CardP);

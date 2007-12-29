@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <data/symbol_font.hpp>
 #include <data/stylesheet.hpp>
 #include <util/dynamic_arg.hpp>

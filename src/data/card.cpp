@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <data/card.hpp>
 #include <data/game.hpp>
 #include <data/stylesheet.hpp>

@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/value/image.hpp>
 #include <gui/image_slice_window.hpp>
 #include <data/format/clipboard.hpp>

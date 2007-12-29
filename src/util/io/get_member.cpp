@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <util/io/get_member.hpp>
 #include <util/vector2d.hpp>
 #include <script/script.hpp>

@@ -18,7 +18,7 @@ close F;
 
 $hpp =~ s/_\r?\n/_$macro\n/g;
 
-$cpp =~ s@<util/prec.hpp>@<$file.hpp>@g;
+$cpp =~ s@<util/prec.hpp>@$&\n#include <$file.hpp>@g;
 
 # write files
 

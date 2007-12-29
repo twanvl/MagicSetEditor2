@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/set/keywords_panel.hpp>
 #include <gui/control/keyword_list.hpp>
 #include <gui/control/text_ctrl.hpp>

@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/control/keyword_list.hpp>
 #include <gui/icon_menu.hpp>
 #include <data/set.hpp>

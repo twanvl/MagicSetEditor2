@@ -35,13 +35,6 @@
 #include <set>
 using namespace std;
 
-// MSE utility headers (ones unlikely to change and used everywhere)
-#include "for_each.hpp"
-#include "string.hpp"
-#include "smart_ptr.hpp"
-#include "index_map.hpp"
-#include "locale.hpp"
-
 // ----------------------------------------------------------------------------- : Wx Aliasses
 
 // Remove some of the wxUglyness
@@ -68,11 +61,22 @@ typedef unsigned int  UInt;
 #define nullptr 0
 
 /// A string standing for a filename, has different behaviour when reading/writing
-class FileName : public String {
+class FileName : public wxString {
   public:
-	FileName()                            {}
-	FileName(const String& s) : String(s) {}
+	FileName()                                {}
+	FileName(const wxString& s) : wxString(s) {}
 };
+
+// ----------------------------------------------------------------------------- : MSE Headers
+
+// MSE utility headers (ones unlikely to change and used everywhere)
+#include "for_each.hpp"
+#include "string.hpp"
+#include "smart_ptr.hpp"
+#include "index_map.hpp"
+#include "locale.hpp"
+#include "error.hpp"
+#include "reflect.hpp"
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

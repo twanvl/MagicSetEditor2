@@ -12,8 +12,6 @@
 #include <util/prec.hpp>
 #include <wx/listctrl.h>
 
-typedef intrusive_ptr<IntrusivePtrVirtualBase> VoidP;
-
 // ----------------------------------------------------------------------------- : ItemList
 
 /// A generic list of items

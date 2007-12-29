@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/control/gallery_list.hpp>
 #include <gfx/gfx.hpp>
 #include <wx/dcbuffer.h>
@@ -91,7 +92,6 @@ void GalleryList::scrollTo(int top, bool update_scrollbar) {
 	top = max(0, top);
 	// scroll
 	if (top == visible_start) return;
-	//%int old_top = visible_start;
 	visible_start = top;
 	if (update_scrollbar) {
 		// scroll bar

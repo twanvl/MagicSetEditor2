@@ -13,6 +13,7 @@
 	#pragma warning(disable:4996)
 #endif
 
+#include <util/prec.hpp>
 #include <data/format/image_to_symbol.hpp>
 #include <gfx/bezier.hpp>
 #include <util/error.hpp>

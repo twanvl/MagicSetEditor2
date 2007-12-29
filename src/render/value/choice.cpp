@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <render/value/choice.hpp>
 #include <render/card/viewer.hpp>
 #include <data/stylesheet.hpp>

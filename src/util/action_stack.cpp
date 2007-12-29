@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <util/action_stack.hpp>
 #include <util/for_each.hpp>
 #include <algorithm>

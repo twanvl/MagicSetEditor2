@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/html_export_window.hpp>
 #include <gui/control/package_list.hpp>
 #include <gui/control/native_look_editor.hpp>

@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <util/alignment.hpp>
 #include <util/reflect.hpp>
 

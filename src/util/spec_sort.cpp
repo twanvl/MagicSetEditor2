@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <util/spec_sort.hpp>
 #include <util/error.hpp>
 

@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/thumbnail_thread.hpp>
 #include <util/platform.hpp>
 #include <util/error.hpp>

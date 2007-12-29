@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <util/error.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ScriptParseError);

@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/control/image_card_list.hpp>
 #include <gui/thumbnail_thread.hpp>
 #include <data/field/image.hpp>

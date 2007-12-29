@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <render/value/package_choice.hpp>
 #include <util/io/package_manager.hpp>
 

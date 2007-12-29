@@ -240,5 +240,8 @@ inline shared_ptr<T> new_shared9(const A0& a0, const A1& a1, const A2& a2, const
 	
 #endif
 
+/// Pointer to 'anything'
+typedef intrusive_ptr<IntrusivePtrVirtualBase> VoidP;
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

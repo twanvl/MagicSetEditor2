@@ -4,6 +4,7 @@
 	Version="7.10"
 	Name="mse"
 	ProjectGUID="{DB9DCD62-4679-47DD-8BEE-8A0191161A51}"
+	RootNamespace="mse"
 	Keyword="Win32Proj">
 	<Platforms>
 		<Platform
@@ -26,9 +27,9 @@
 				RuntimeLibrary="5"
 				BufferSecurityCheck="TRUE"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="util/prec.hpp"
-				PrecompiledHeaderFile=""
+				PrecompiledHeaderFile="$(IntDir)/mse.pch"
 				AssemblerListingLocation="$(OutDir)"
 				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				BrowseInformation="1"
@@ -98,9 +99,9 @@
 				BufferSecurityCheck="FALSE"
 				EnableFunctionLevelLinking="TRUE"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="util/prec.hpp"
-				PrecompiledHeaderFile=""
+				PrecompiledHeaderFile="$(IntDir)/mse.pch"
 				AssemblerListingLocation="$(OutDir)"
 				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				WarningLevel="3"
@@ -165,9 +166,9 @@
 				RuntimeLibrary="3"
 				BufferSecurityCheck="TRUE"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="util/prec.hpp"
-				PrecompiledHeaderFile=""
+				PrecompiledHeaderFile="$(IntDir)/mse.pch"
 				AssemblerListingLocation="$(OutDir)"
 				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				BrowseInformation="1"
@@ -239,9 +240,9 @@
 				EnableFunctionLevelLinking="TRUE"
 				EnableEnhancedInstructionSet="1"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="util/prec.hpp"
-				PrecompiledHeaderFile=""
+				PrecompiledHeaderFile="$(IntDir)/mse.pch"
 				AssemblerListingLocation="$(OutDir)"
 				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				WarningLevel="3"
@@ -315,9 +316,9 @@
 				EnableFunctionLevelLinking="TRUE"
 				EnableEnhancedInstructionSet="1"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="0"
+				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="util/prec.hpp"
-				PrecompiledHeaderFile=""
+				PrecompiledHeaderFile="$(IntDir)/mse.pch"
 				AssemblerListingLocation="$(OutDir)"
 				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
 				WarningLevel="3"
@@ -391,9 +392,9 @@
 				EnableFunctionLevelLinking="TRUE"
 				EnableEnhancedInstructionSet="1"
 				RuntimeTypeInfo="TRUE"
-				UsePrecompiledHeader="2"
+				UsePrecompiledHeader="3"
 				PrecompiledHeaderThrough="util/prec.hpp"
-				PrecompiledHeaderFile=""
+				PrecompiledHeaderFile="$(IntDir)/mse.pch"
 				AssemblerOutput="4"
 				AssemblerListingLocation="$(OutDir)/"
 				ProgramDataBaseFileName="$(IntDir)/vc70.pdb"
@@ -2306,6 +2307,12 @@
 						RelativePath=".\util\dynamic_arg.hpp">
 					</File>
 					<File
+						RelativePath=".\util\file_utils.cpp">
+					</File>
+					<File
+						RelativePath=".\util\file_utils.hpp">
+					</File>
+					<File
 						RelativePath=".\util\order_cache.hpp">
 					</File>
 					<File
@@ -3342,27 +3349,43 @@
 		<File
 			RelativePath=".\code_template.cpp">
 			<FileConfiguration
+				Name="Debug|Win32">
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"/>
+			</FileConfiguration>
+			<FileConfiguration
 				Name="Release|Win32">
 				<Tool
 					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
 					ObjectFile="$(IntDir)/$(InputName)1.obj"/>
+			</FileConfiguration>
+			<FileConfiguration
+				Name="Debug Unicode|Win32">
+				<Tool
+					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"/>
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Release Unicode|Win32">
 				<Tool
 					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
 					ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Release Profile Unicode|Win32">
 				<Tool
 					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
 					ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 			</FileConfiguration>
 			<FileConfiguration
 				Name="Release Unicode fast build|Win32">
 				<Tool
 					Name="VCCLCompilerTool"
+					UsePrecompiledHeader="1"
 					ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 			</FileConfiguration>
 		</File>

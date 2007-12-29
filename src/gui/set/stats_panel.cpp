@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/set/stats_panel.hpp>
 #include <gui/control/graph.hpp>
 #include <gui/control/gallery_list.hpp>

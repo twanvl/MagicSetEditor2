@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <data/action/keyword.hpp>
 #include <data/keyword.hpp>
 #include <data/set.hpp>

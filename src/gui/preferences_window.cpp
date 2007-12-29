@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/preferences_window.hpp>
 #include <gui/update_checker.hpp>
 #include <data/settings.hpp>

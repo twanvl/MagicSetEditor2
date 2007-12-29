@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <data/format/formats.hpp>
 #include <data/settings.hpp>
 #include <data/set.hpp>

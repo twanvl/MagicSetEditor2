@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <script/scriptable.hpp>
 #include <script/context.hpp>
 #include <script/parser.hpp>

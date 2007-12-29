@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <data/export_template.hpp>
 #include <data/game.hpp>
 #include <data/field.hpp>

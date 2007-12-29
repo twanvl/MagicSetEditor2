@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <data/action/value.hpp>
 #include <data/field.hpp>
 #include <data/field/text.hpp>

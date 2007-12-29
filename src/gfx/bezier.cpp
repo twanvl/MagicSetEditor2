@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gfx/bezier.hpp>
 #include <gfx/polynomial.hpp>
 

@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gfx/generated_image.hpp>
 #include <util/io/package.hpp>
 #include <util/error.hpp>

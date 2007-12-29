@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <data/field/choice.hpp>
 #include <util/io/package.hpp>
 #include <wx/imaglist.h>

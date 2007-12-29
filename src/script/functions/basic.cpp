@@ -7,6 +7,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <script/functions/functions.hpp>
 #include <script/functions/util.hpp>
 #include <util/tagged_string.hpp>

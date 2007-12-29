@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/symbol/symmetry_editor.hpp>
 #include <gui/util.hpp>
 #include <util/window_id.hpp>

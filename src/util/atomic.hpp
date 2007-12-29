@@ -16,7 +16,7 @@
 
 // ----------------------------------------------------------------------------- : AtomicInt : windows
 
-#ifdef __WXMSW__
+#if defined(__WXMSW__)
 	
 	#ifdef _MSC_VER
 		extern "C" {
@@ -28,7 +28,7 @@
 		#pragma intrinsic (_InterlockedDecrement)
 		#define InterlockedDecrement _InterlockedDecrement
 	#endif
-		
+	
 	/// An integer which is equivalent to an AtomicInt, but which doesn't support attomic operations
 	typedef LONG AtomicIntEquiv;
 	
@@ -50,7 +50,33 @@
 	  private:
 		AtomicIntEquiv    v;  ///< The value
 	};
-
+	
+	/// We have a fast AtomicInt
+	#define HAVE_FAST_ATOMIC
+	
+// ----------------------------------------------------------------------------- : AtomicInt : GCC
+#elif defined(__GNUC__)
+	
+	/// An integer which is equivalent to an AtomicInt, but which doesn't support attomic operations
+	typedef unsigned int AtomicIntEquiv;
+	
+	/// An integer that can be incremented and decremented atomicly
+	class AtomicIntEquiv {
+	  public:
+		AtomicIntEquiv(AtomicIntEquiv v) : v(v) {}
+		inline operator AtomicIntEquiv() const {
+			return v;
+		}
+		inline AtomicIntEquiv operator ++ () {
+			return __sync_add_and_fetch(&v,1);
+		}
+		inline AtomicIntEquiv operator -- () {
+			return __sync_add_and_fetch(&v,(AtomicIntEquiv)-1);
+		}
+	  private:
+		AtomicIntEquiv v;
+	};
+	
 	/// We have a fast AtomicInt
 	#define HAVE_FAST_ATOMIC
 	

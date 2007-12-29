@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <render/symbol/filter.hpp>
 #include <render/symbol/viewer.hpp>
 #include <gfx/gfx.hpp>

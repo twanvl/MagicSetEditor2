@@ -108,7 +108,7 @@ int MSE::OnRun() {
 							parse_enum(String(argv[2]).substr(2), type);
 						}
 					}
-					Installer::installFrom(argv[1], true, isInstallLocal(type));
+//%%%					Installer::installFrom(argv[1], true, isInstallLocal(type));
 					return EXIT_SUCCESS;
 				} else if (arg == _("--symbol-editor")) {
 					Window* wnd = new SymbolWindow(nullptr);

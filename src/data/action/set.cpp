@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <data/action/set.hpp>
 #include <data/set.hpp>
 #include <data/card.hpp>

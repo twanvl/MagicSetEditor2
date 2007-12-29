@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/set/set_info_panel.hpp>
 #include <gui/control/native_look_editor.hpp>
 #include <gui/icon_menu.hpp>

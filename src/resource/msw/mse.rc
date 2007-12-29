@@ -165,8 +165,14 @@ btn_expand_down			IMAGE	"../common/btn_expand_down.png"
 welcome_new				IMAGE	"../common/welcome_new.png"
 welcome_open			IMAGE	"../common/welcome_open.png"
 welcome_last			IMAGE	"../common/welcome_last.png"
+welcome_updates			IMAGE	"../common/welcome_updates.png"
 
 edit_symbol				IMAGE	"../common/edit_symbol.png"
+
+installer_group			IMAGE	"../common/installer_group.png"
+installer_package		IMAGE	"../common/installer_package.png"
+installer_locales		IMAGE	"../common/installer_locales.png"
+//installer_font		IMAGE	"../common/installer_font.png"
 
 // -------------------------------------------------------- : WX
 

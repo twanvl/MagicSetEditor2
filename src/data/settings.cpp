@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <data/settings.hpp>
 #include <data/installer.hpp>
 #include <data/game.hpp>
@@ -36,6 +37,15 @@ IMPLEMENT_REFLECTION_ENUM(InstallType) {
 	VALUE_N("default",	INSTALL_DEFAULT); //default
 	VALUE_N("local",	INSTALL_LOCAL);
 	VALUE_N("global",	INSTALL_GLOBAL);
+}
+
+bool is_install_local(InstallType type) {
+	#ifdef __WXMSW__
+		#define DEFAULT_INSTALL_LOCAL false
+	#else
+		#define DEFAULT_INSTALL_LOCAL true
+	#endif
+	return type == INSTALL_DEFAULT ? DEFAULT_INSTALL_LOCAL : type == INSTALL_LOCAL;
 }
 
 IMPLEMENT_REFLECTION_ENUM(FilenameConflicts) {
@@ -143,8 +153,10 @@ Settings::Settings()
 	, symbol_grid_size     (30)
 	, symbol_grid          (true)
 	, symbol_grid_snap     (false)
-	, updates_url          (_("http://magicseteditor.sourceforge.net/updates"))
+	, package_versions_url (_("http://magicseteditor.sourceforge.net/packages"))
+	, installer_list_url   (_("http://magicseteditor.sourceforge.net/installers"))
 	, check_updates        (CHECK_IF_CONNECTED)
+	, check_updates_all    (true)
 	, install_type         (INSTALL_DEFAULT)
 	, website_url          (_("http://magicseteditor.sourceforge.net/"))
 {}
@@ -221,8 +233,11 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(Settings) {
 	REFLECT(symbol_grid_snap);
 	REFLECT(default_game);
 	REFLECT(apprentice_location);
-	REFLECT(updates_url);
+	REFLECT_IGNORE(306,"updates url");
+	REFLECT(package_versions_url);
+	REFLECT(installer_list_url);
 	REFLECT(check_updates);
+	REFLECT(check_updates_all);
 	REFLECT(install_type);
 	REFLECT(website_url);
 	REFLECT(game_settings);

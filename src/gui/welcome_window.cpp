@@ -6,11 +6,13 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/welcome_window.hpp>
 #include <gui/util.hpp>
 #include <gui/new_window.hpp>
 #include <gui/set/window.hpp>
 #include <gui/update_checker.hpp>
+#include <gui/packages_window.hpp>
 #include <util/window_id.hpp>
 #include <data/settings.hpp>
 #include <data/format/formats.hpp>
@@ -23,7 +25,7 @@
 // ----------------------------------------------------------------------------- : WelcomeWindow
 
 WelcomeWindow::WelcomeWindow()
-	: Frame(nullptr, wxID_ANY, _TITLE_("magic set editor"), wxDefaultPosition, wxSize(480,340), wxDEFAULT_DIALOG_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN )
+	: Frame(nullptr, wxID_ANY, _TITLE_("magic set editor"), wxDefaultPosition, wxSize(480,380), wxDEFAULT_DIALOG_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN )
 	, logo (load_resource_image(_("about")))
 	, logo2(load_resource_image(_("two_beta")))
 {
@@ -31,9 +33,9 @@ WelcomeWindow::WelcomeWindow()
 	
 	// init controls
 	#ifdef USE_HOVERBUTTON
-		wxControl* new_set   = new HoverButtonExt(this, ID_FILE_NEW,           load_resource_image(_("welcome_new")),  _BUTTON_("new set"),       _HELP_("new set"));	
-		wxControl* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,          load_resource_image(_("welcome_open")), _BUTTON_("open set"),      _HELP_("open set"));
-		wxControl* updates   = new HoverButtonExt(this, ID_FILE_CHECK_UPDATES, wxImage(),                              _BUTTON_("check updates"), _HELP_("check updates"));
+		wxControl* new_set   = new HoverButtonExt(this, ID_FILE_NEW,           load_resource_image(_("welcome_new")),     _BUTTON_("new set"),       _HELP_("new set"));	
+		wxControl* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,          load_resource_image(_("welcome_open")),    _BUTTON_("open set"),      _HELP_("open set"));
+		wxControl* updates   = new HoverButtonExt(this, ID_FILE_CHECK_UPDATES, load_resource_image(_("welcome_updates")), _BUTTON_("check updates"), _HELP_("check updates"));
 	#else
 		wxControl* new_set   = new wxButton(this, ID_FILE_NEW,           _BUTTON_("new set"));
 		wxControl* open_set  = new wxButton(this, ID_FILE_OPEN,          _BUTTON_("open set"));
@@ -106,7 +108,7 @@ void WelcomeWindow::onOpenLast(wxCommandEvent&) {
 }
 
 void WelcomeWindow::onCheckUpdates(wxCommandEvent&) {
-	(new UpdatesWindow)->Show();
+	(new PackagesWindow(nullptr))->Show();
 	Close();
 }
 

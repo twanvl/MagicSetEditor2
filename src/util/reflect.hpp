@@ -141,6 +141,9 @@
  */
 #define REFLECT_ALIAS(version, old, new) tag.addAlias(version, _(old), _(new))
 
+/// Ignore things for backwards compatability for versions < 'version'
+#define REFLECT_IGNORE(version, old) tag.handleIgnore(version, _(old))
+
 /// Reflect a variable, ignores the variable for scripting
 #define REFLECT_NO_SCRIPT(var)          tag.handleNoScript(_(#var), var)
 /// Reflect a variable under the given name

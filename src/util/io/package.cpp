@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <util/io/package.hpp>
 #include <util/io/package_manager.hpp>
 #include <util/error.hpp>
@@ -180,7 +181,7 @@ InputStreamP Package::openIn(const String& file) {
 		Packaged* p = dynamic_cast<Packaged*>(this);
 		return packages.openFileFromPackage(p, file);
 	}
-	FileInfos::iterator it = files.find(toStandardName(file));
+	FileInfos::iterator it = files.find(normalize_internal_filename(file));
 	if (it == files.end()) {
 		// does it look like a relative filename?
 		if (filename.find(_(".mse-")) != String::npos) {
@@ -262,7 +263,7 @@ void Package::referenceFile(const String& file) {
 
 String Package::absoluteName(const String& file) {
 	assert(wxThread::IsMain());
-	FileInfos::iterator it = files.find(toStandardName(file));
+	FileInfos::iterator it = files.find(normalize_internal_filename(file));
 	if (it == files.end()) {
 		throw FileNotFoundError(file, filename);
 	}
@@ -307,7 +308,7 @@ void Package::loadZipStream() {
 	while (true) {
 		wxZipEntry* entry = zipStream->GetNextEntry();
 		if (!entry) break;
-		String name = toStandardName(entry->GetName());
+		String name = normalize_internal_filename(entry->GetName());
 		files[name].zipEntry = entry;
 	}
 	zipStream->CloseEntry();
@@ -323,6 +324,7 @@ void Package::openSubdir(const String& name) {
 	// find files
 	String f; // filename
 	for(bool ok = d.GetFirst(&f, wxEmptyString, wxDIR_FILES | wxDIR_HIDDEN) ; ok ; ok = d.GetNext(&f)) {
+		if (ignore_file(f)) continue;
 		// add file
 		addFile(name + f);
 		// get modified time
@@ -422,17 +424,21 @@ void Package::saveToZipfile(const String& saveAs, bool remove_unused) {
 
 
 Package::FileInfos::iterator Package::addFile(const String& name) {
-	return files.insert(make_pair(toStandardName(name), FileInfo())).first;
+	return files.insert(make_pair(normalize_internal_filename(name), FileInfo())).first;
 }
 
-String Package::toStandardName(const String& name) {
-	String ret;
-	FOR_EACH_CONST(c, name) {
-		if (c==_('\\')) ret += _('/');
-		else            ret += toLower(c);
+DateTime Package::modificationTime(const pair<String, FileInfo>& fi) const {
+	if (fi.second.wasWritten()) {
+		return wxFileName(fi.first).GetModificationTime();
+	} else if (fi.second.zipEntry) {
+		return fi.second.zipEntry->GetDateTime();
+	} else if (wxFileExists(filename+_("/")+fi.first)) {
+		return wxFileName(filename+_("/")+fi.first).GetModificationTime();
+	} else {
+		return DateTime();
 	}
-	return ret;
 }
+
 
 // ----------------------------------------------------------------------------- : Packaged
 
@@ -463,6 +469,7 @@ IMPLEMENT_REFLECTION(Packaged) {
 	REFLECT(full_name);
 	REFLECT_N("icon", icon_filename);
 	REFLECT_NO_SCRIPT(position_hint);
+	REFLECT(installer_group);
 	REFLECT(version);
 	REFLECT(compatible_version);
 	REFLECT_NO_SCRIPT_N("depends ons", dependencies); // hack for singular_form

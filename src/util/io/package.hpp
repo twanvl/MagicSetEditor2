@@ -12,6 +12,7 @@
 #include <util/reflect.hpp>
 #include <util/dynamic_arg.hpp>
 #include <util/error.hpp>
+#include <util/file_utils.hpp>
 
 class Package;
 class wxFileInputStream;
@@ -147,8 +148,8 @@ class Package : public IntrusivePtrVirtualBase {
 		bool keep;               ///< Should this file be kept in the package? (as opposed to deleting it)
 		String tempName;         ///< Name of the temporary file where new contents of this file are placed
 		wxZipEntry* zipEntry;    ///< Entry in the zip file for this file
-		inline bool wasWritten() ///< Is this file changed, and therefore written to a temporary file?
-		 { return !tempName.empty(); }
+		/// Is this file changed, and therefore written to a temporary file?
+		inline bool wasWritten() const { return !tempName.empty(); }
 	};
 		
 	/// Filename of the package
@@ -160,6 +161,8 @@ class Package : public IntrusivePtrVirtualBase {
 	/** Note: must be public for DECLARE_TYPEOF to work */
 	typedef map<String, FileInfo> FileInfos;
 	inline const FileInfos& getFileInfos() const { return files; }
+	/// When was a file last modified?
+	DateTime modificationTime(const pair<String, FileInfo>& fi) const;
   private:
 	/// All files in the package
 	FileInfos files;
@@ -175,7 +178,6 @@ class Package : public IntrusivePtrVirtualBase {
 	void saveToZipfile(const String&, bool);
 	void saveToDirectory(const String&, bool);
 	FileInfos::iterator addFile(const String& file);
-	static String toStandardName(const String& file);
 };
 
 // ----------------------------------------------------------------------------- : Packaged
@@ -199,6 +201,7 @@ class Packaged : public Package {
 	
 	Version version;			///< Version number of this package
 	Version compatible_version;	///< Earliest version number this package is compatible with
+	String installer_group;		///< Group to place this package in in the installer
 	String short_name;			///< Short name of this package
 	String full_name;			///< Name of this package, for menus etc.
 	String icon_filename;		///< Filename of icon to use in package lists

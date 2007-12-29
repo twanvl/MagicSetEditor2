@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/value/text.hpp>
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>

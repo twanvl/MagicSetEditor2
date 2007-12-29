@@ -243,9 +243,6 @@ enum ControlID {
 ,	ID_INSTALL
 ,	ID_UPGRADE
 ,	ID_REMOVE
-	// Don't use wxID_CANCEL because it makes the button look out of place
-,	ID_CANCEL
-,	ID_APPLY
 	// Auto replace window
 ,	ID_USE_AUTO_REPLACE
 ,	ID_ITEM_VALUE

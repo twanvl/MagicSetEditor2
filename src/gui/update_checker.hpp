@@ -10,7 +10,6 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
-#include <gui/welcome_window.hpp>
 
 // ----------------------------------------------------------------------------- : Update checking
 
@@ -26,63 +25,6 @@ void check_updates_now(bool async = true);
 /** Call check_updates first.
  *  Call this function from an onIdle loop */
 void show_update_dialog(Window* parent);
-
-// ----------------------------------------------------------------------------- : Update window
-
-class PackageUpdateList;
-class wxHtmlWindow;
-
-DECLARE_POINTER_TYPE(PackageVersionData);
-
-/// A window that displays the updates and allows the user to select some.
-/** NOTE: cannot be called 'UpdateWindow' because there is a Win32 function with that name
- */
-class UpdatesWindow : public Frame {
-  public:
-	UpdatesWindow();
-	~UpdatesWindow();
-	
-	void DrawTitles(wxPaintEvent&);
-
-	enum PackageStatus {
-		STATUS_INSTALLED,
-		STATUS_NOT_INSTALLED,
-		STATUS_UPGRADEABLE
-	};
-	enum PackageAction {
-		ACTION_INSTALL,
-		ACTION_UNINSTALL,
-		ACTION_UPGRADE,
-		ACTION_NOTHING,
-		ACTION_NEW_MSE // means that you need a new version of MSE to install/upgrade
-	};
-
-	typedef pair<PackageStatus, PackageAction> PackageData;
-
-	map<PackageVersionDataP, PackageData> package_data;
-
-  private:
-	DECLARE_EVENT_TABLE();
-	PackageUpdateList* package_list; ///< List of available packages
-	wxHtmlWindow* description_window;
-
-	wxStaticText *package_title, *type_title, *status_title, *new_title;
-	wxButton *install_button, *upgrade_button, *remove_button, *cancel_button, *apply_button;
-	
-	void onUpdateCheckFinished(wxCommandEvent&);
-	void onPackageSelect(wxCommandEvent&);
-	void onActionChange(wxCommandEvent&);
-	void onApplyChanges(wxCommandEvent&);
-
-	void SelectPackageDependencies   (PackageVersionDataP);
-	void RemovePackageDependencies   (PackageVersionDataP);
-	void DowngradePackageDependencies(PackageVersionDataP);
-
-	/// Update the buttons to indicate that this is selected.
-	void updateButtons(int index);
-	
-	void setDefaultPackageStatus();
-};
 
 /// Was update data found?
 bool update_data_found();

@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/set/window.hpp>
 #include <gui/set/panel.hpp>
 #include <gui/set/cards_panel.hpp>
@@ -18,6 +19,7 @@
 #include <gui/control/gallery_list.hpp>
 #include <gui/about_window.hpp>
 #include <gui/update_checker.hpp>
+#include <gui/packages_window.hpp>
 #include <gui/new_window.hpp>
 #include <gui/preferences_window.hpp>
 #include <gui/print_window.hpp>
@@ -538,8 +540,8 @@ void SetWindow::onFileExportMWS(wxCommandEvent&) {
 
 void SetWindow::onFileCheckUpdates(wxCommandEvent&) {
 	if (!askSaveAndContinue()) return;
-	(new UpdatesWindow)->Show();
-	Destroy();
+	(new PackagesWindow(this))->Show();
+	//Destroy();
 }
 
 void SetWindow::onFilePrint(wxCommandEvent&) {
@@ -562,7 +564,7 @@ void SetWindow::onFileReload(wxCommandEvent&) {
 		vector<CardP>::const_iterator card_it = find(set->cards.begin(), set->cards.end(), current_panel->selectedCard());
 		if (card_it != set->cards.end()) card_pos = card_it - set->cards.begin();
 	}
-	packages.destroy(); // unload all packages
+	packages.reset(); // unload all packages
 	settings.read();    // reload settings
 	setSet(import_set(filename));
 	// reselect card

@@ -41,6 +41,7 @@ enum InstallType
 };
 
 bool parse_enum(const String&, InstallType&);
+bool is_install_local(InstallType type);
 
 /// How to handle filename conflicts
 enum FilenameConflicts
@@ -164,11 +165,12 @@ class Settings {
 	
 	// --------------------------------------------------- : Special game stuff
 	String apprentice_location;
-	String mws_location;
 	
 	// --------------------------------------------------- : Update checking
-	String updates_url;
+	String package_versions_url; ///< latest package versions
+	String installer_list_url;   ///< available installers
 	CheckUpdates check_updates;
+	bool   check_updates_all; ///< Check updates of all packages, not just the program
 	String website_url;
 	
 	// --------------------------------------------------- : Installation settings

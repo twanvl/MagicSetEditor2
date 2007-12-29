@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <util/rotation.hpp>
 #include <gfx/gfx.hpp>
 #include <data/font.hpp>

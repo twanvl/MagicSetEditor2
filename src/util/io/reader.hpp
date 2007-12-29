@@ -54,6 +54,8 @@ class Reader {
 	inline bool isComplex() const { return value.empty(); }
 	/// Add a as an alias for b, all keys a will be replaced with b, only if file_app_version < end_version
 	void addAlias(Version end_version, const Char* a, const Char* b);
+	/// Ignore old keys
+	void handleIgnore(int, const Char*);
 	
 	/// Read and check the application version
 	void handleAppVersion();

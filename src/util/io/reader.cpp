@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include "reader.hpp"
 #include <util/vector2d.hpp>
 #include <util/error.hpp>
@@ -38,6 +39,12 @@ void Reader::addAlias(Version end_version, const Char* a, const Char* b) {
 	Alias& alias = aliasses[a];
 	alias.new_key     = b;
 	alias.end_version = end_version;
+}
+
+void Reader::handleIgnore(int end_version, const Char* a) {
+	if (file_app_version < end_version) {
+		if (enterBlock(a)) exitBlock();
+	}
 }
 
 void Reader::handleAppVersion() {

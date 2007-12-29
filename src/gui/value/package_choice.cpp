@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/value/package_choice.hpp>
 #include <gui/drop_down_list.hpp>
 #include <gui/util.hpp>

@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/control/item_list.hpp>
 #include <gui/util.hpp>
 #include <wx/imaglist.h>

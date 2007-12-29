@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/symbol/part_list.hpp>
 #include <gui/symbol/selection.hpp>
 #include <gui/util.hpp>

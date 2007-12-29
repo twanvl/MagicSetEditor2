@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <data/keyword.hpp>
 #include <util/tagged_string.hpp>
 

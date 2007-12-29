@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/set/style_panel.hpp>
 #include <gui/control/package_list.hpp>
 #include <gui/control/card_viewer.hpp>

@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <gui/util.hpp>
 #include <util/error.hpp>
 #include <util/rotation.hpp>

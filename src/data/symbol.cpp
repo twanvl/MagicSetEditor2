@@ -6,6 +6,7 @@
 
 // ----------------------------------------------------------------------------- : Includes
 
+#include <util/prec.hpp>
 #include <data/symbol.hpp>
 #include <script/to_value.hpp>
 #include <gfx/bezier.hpp>
