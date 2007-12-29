@@ -11,21 +11,9 @@
 
 #include <util/prec.hpp>
 #include <data/installer.hpp>
-// #include <gui/welcome_window.hpp> //???
 
 class PackageUpdateList;
 class PackageInfoPanel;
-//class wxHtmlWindow;
-
-//DECLARE_POINTER_TYPE(PackageVersionData);
-
-//DECLARE_POINTER_TYPE(PackageVersion);
-//DECLARE_POINTER_TYPE(PackageDescription);
-//DECLARE_POINTER_TYPE(InstallableInstaller);
-DECLARE_POINTER_TYPE(InstallablePackage);
-
-// ----------------------------------------------------------------------------- : Available Packages
-
 
 // ----------------------------------------------------------------------------- : Packages window
 
@@ -54,26 +42,7 @@ class PackagesWindow : public wxDialog {
 	void onUpdateUI(wxUpdateUIEvent&);
 	void onIdle(wxIdleEvent&);
 	
-	bool checkInstallerList();
-	/*
-	wxHtmlWindow* description_window;
-
-	wxButton *install_button, *upgrade_button, *remove_button, *cancel_button, *apply_button;
-	
-	void onUpdateCheckFinished(wxCommandEvent&);
-	void onPackageSelect(wxCommandEvent&);
-	void onActionChange(wxCommandEvent&);
-	void onApplyChanges(wxCommandEvent&);
-
-	void SelectPackageDependencies   (PackageVersionDataP);
-	void RemovePackageDependencies   (PackageVersionDataP);
-	void DowngradePackageDependencies(PackageVersionDataP);
-
-	/// Update the buttons to indicate that this is selected.
-	void updateButtons(const PackageVersionDataP& pack);
-	
-	void setDefaultPackageStatus();
-	*/
+	bool checkInstallerList(bool refresh = true);
 };
 
 // ----------------------------------------------------------------------------- : EOF

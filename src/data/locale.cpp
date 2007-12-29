@@ -205,6 +205,7 @@ DECLARE_TYPEOF(map<String COMMA String>);
 DECLARE_TYPEOF(map<String COMMA KeyValidator>);
 
 void Locale::validate(Version ver) {
+	Packaged::validate(ver);
 	// load locale validator
 	LocaleValidator v;
 	Reader r(load_resource_text(_("expected_locale_keys")), nullptr, _("expected_locale_keys"));

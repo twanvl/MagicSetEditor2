@@ -293,7 +293,7 @@ bool PackageDirectory::install(const InstallablePackage& package) {
 	String n = name(package.description->name);
 	if (package.action & PACKAGE_REMOVE) {
 		remove_file_or_dir(n);
-	} else if ((package.action & PACKAGE_UPGRADE) || (package.action & PACKAGE_INSTALL)) {
+	} else if (package.action & PACKAGE_INSTALL) {
 		remove_file_or_dir(n + _(".new"));
 		bool ok = actual_install(package, n + _(".new"));
 		if (!ok) return false;

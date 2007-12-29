@@ -204,10 +204,7 @@ void PackageUpdateList::TreeItem::toItems(vector<TreeList::ItemP>& items) {
 }
 
 bool PackageUpdateList::TreeItem::highlight() const {
-	if (package && ((package->installed && !(package->action & PACKAGE_REMOVE))
-	               || package->action & (PACKAGE_INSTALL | PACKAGE_UPGRADE))) {
-		return true;
-	}
+	if (package && package->willBeInstalled()) return true;
 	FOR_EACH_CONST(c,children) if (c->highlight()) return true;
 	return false;
 }
@@ -281,11 +278,13 @@ void PackageUpdateList::drawItem(DC& dc, size_t index, size_t column, int x, int
 		// Action
 		int act = ti.package->action;
 		if (act & PACKAGE_INSTALL) {
-			dc.SetTextForeground(lerp(color,Color(0,255,0),0.5));
-			dc.DrawText(_LABEL_("install package"), x+1,y+2);
-		} else if (act & PACKAGE_UPGRADE) {
-			dc.SetTextForeground(lerp(color,Color(0,0,255),0.5));
-			dc.DrawText(_LABEL_("upgrade package"), x+1,y+2);
+			if (ti.package->status & PACKAGE_INSTALLED) {
+				dc.SetTextForeground(lerp(color,Color(0,0,255),0.5));
+				dc.DrawText(_LABEL_("upgrade package"), x+1,y+2);
+			} else {
+				dc.SetTextForeground(lerp(color,Color(0,255,0),0.5));
+				dc.DrawText(_LABEL_("install package"), x+1,y+2);
+			}
 		} else if (act & PACKAGE_REMOVE) {
 			dc.SetTextForeground(lerp(color,Color(255,0,0),0.5));
 			dc.DrawText(_LABEL_("remove package"), x+1,y+2);
@@ -364,6 +363,7 @@ BEGIN_EVENT_TABLE(PackageInfoPanel, wxPanel)
 	EVT_PAINT(PackageInfoPanel::onPaint)
 END_EVENT_TABLE()
 
+
 // ----------------------------------------------------------------------------- : PackagesWindow
 
 PackagesWindow::PackagesWindow(Window* parent, bool download_package_list)
@@ -377,7 +377,7 @@ PackagesWindow::PackagesWindow(Window* parent, bool download_package_list)
 	wxBusyCursor busy;
 	packages.installedPackages(installable_packages);
 	FOR_EACH(p, installable_packages) p->determineStatus();
-	checkInstallerList();
+	checkInstallerList(false);
 	
 	// ui elements
 	SetIcon(wxIcon());
@@ -420,13 +420,13 @@ void PackagesWindow::onPackageSelect(wxCommandEvent& ev) {
 void PackagesWindow::onActionChange(wxCommandEvent& ev) {
 	if (package) {
 		PackageAction act = ev.GetId() == ID_INSTALL ? PACKAGE_INSTALL
-		                  : ev.GetId() == ID_UPGRADE ? PACKAGE_UPGRADE
+		                  : ev.GetId() == ID_UPGRADE ? PACKAGE_INSTALL
 		                  : ev.GetId() == ID_REMOVE  ? PACKAGE_REMOVE
 		                  : PACKAGE_NOTHING;
-		act = (PackageAction)(act | where);
+		act = act | where;
 		// toggle action
 		if (package->has(act)) {
-			set_package_action(installable_packages, package, (PackageAction)(PACKAGE_NOTHING | where));
+			set_package_action(installable_packages, package, PACKAGE_NOTHING | where);
 		} else {
 			set_package_action(installable_packages, package, act);
 		}
@@ -455,7 +455,7 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 		if (!progress.Update(n, String::Format(_ERROR_("downloading updates"), n, total))) {
 			return; // aborted
 		}
-		if ((ip->action & (PACKAGE_INSTALL | PACKAGE_UPGRADE)) && ip->installer && !ip->installer->installer) {
+		if ((ip->action & PACKAGE_INSTALL) && ip->installer && !ip->installer->installer) {
 			// download installer
 			wxURL url(ip->installer->installer_url);
 			wxInputStream* is = url.GetInputStream();
@@ -487,17 +487,17 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 void PackagesWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 	switch (ev.GetId()) {
 		case ID_INSTALL:
-		case ID_UPGRADE:
-		case ID_REMOVE: {
-			PackageAction act = ev.GetId() == ID_INSTALL ? PACKAGE_INSTALL
-			                  : ev.GetId() == ID_UPGRADE ? PACKAGE_UPGRADE
-			                  : ev.GetId() == ID_REMOVE  ? PACKAGE_REMOVE
-			                  : PACKAGE_NOTHING;
-			act = (PackageAction)(act | where);
-			ev.Check (package && package->has(act));
-			ev.Enable(package && package->can(act));
+			ev.Check (package && package->has(PACKAGE_INSTALL | where) && !package->installed);
+			ev.Enable(package && package->can(PACKAGE_INSTALL | where) && !package->installed);
 			break;
-		}
+		case ID_UPGRADE:
+			ev.Check (package && package->has(PACKAGE_INSTALL | where) && package->installed);
+			ev.Enable(package && package->can(PACKAGE_INSTALL | where) && package->installed);
+			break;
+		case ID_REMOVE:
+			ev.Check (package && package->has(PACKAGE_REMOVE  | where));
+			ev.Enable(package && package->can(PACKAGE_REMOVE  | where));
+			break;
 	}
 }
 
@@ -505,7 +505,7 @@ void PackagesWindow::onIdle(wxIdleEvent& ev) {
 	ev.RequestMore(!checkInstallerList());
 }
 
-bool PackagesWindow::checkInstallerList() {
+bool PackagesWindow::checkInstallerList(bool refresh) {
 	if (!waiting_for_list) return true;
 	if (!downloadable_installers.done()) return false;
 	waiting_for_list = false;
@@ -515,9 +515,11 @@ bool PackagesWindow::checkInstallerList() {
 	}
 	FOR_EACH(p, installable_packages) p->determineStatus();
 	// refresh
-	package_list->rebuild();
-	package_info->setPackage(package = package_list->getSelection());
-	UpdateWindowUI(wxUPDATE_UI_RECURSE);
+	if (refresh) {
+		package_list->rebuild();
+		package_info->setPackage(package = package_list->getSelection());
+		UpdateWindowUI(wxUPDATE_UI_RECURSE);
+	}
 	return true;
 }
 

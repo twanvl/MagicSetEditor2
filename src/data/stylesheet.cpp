@@ -64,7 +64,8 @@ String StyleSheet::stylesheetName() const {
 String StyleSheet::typeNameStatic() { return _("style"); }
 String StyleSheet::typeName() const { return _("style"); }
 
-void StyleSheet::validate(Version) {
+void StyleSheet::validate(Version ver) {
+	Packaged::validate(ver);
 	if (!game) {
 		throw Error(_ERROR_("no game specified for stylesheet"));
 	}

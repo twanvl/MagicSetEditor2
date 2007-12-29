@@ -38,6 +38,7 @@ IMPLEMENT_REFLECTION(Installer) {
 	REFLECT(packages);
 }
 
+/*
 // ----------------------------------------------------------------------------- : Installing
 
 void Installer::installFrom(const String& filename, bool message_on_success, bool local) {
@@ -134,12 +135,12 @@ void Installer::install(bool local, bool check_dependencies) {
 		}
 		os.Write(*is);
 	}
-	*/
+	* /
 }
 
 void Installer::install(const String& package) {
 	// TODO
-}
+}*/
 
 // ----------------------------------------------------------------------------- : Creating
 
@@ -191,10 +192,6 @@ PackageDescription::PackageDescription(const Packaged& package)
 	, dependencies(package.dependencies)
 {
 	// name
-	if (short_name.empty()) {
-		if (!full_name.empty()) short_name = full_name;
-		else short_name = package.name();
-	}
 	if (full_name.empty()) full_name = short_name;
 	// installer group
 	if (installer_group.empty()) {
@@ -238,17 +235,26 @@ DownloadableInstaller::~DownloadableInstaller() {
 
 // ----------------------------------------------------------------------------- : Installable package
 
-InstallablePackage::InstallablePackage() : action(PACKAGE_NOTHING) {}
 InstallablePackage::InstallablePackage(const PackageVersionP& installed, const PackageDescriptionP& description)
 	: installed(installed)
 	, description(description)
 	, action(PACKAGE_NOTHING)
+	, status(PACKAGE_INSTALLED)
+{}
+InstallablePackage::InstallablePackage(const PackageDescriptionP& description , const DownloadableInstallerP& installer)
+	: description(description)
+	, installer(installer)
+	, action(PACKAGE_NOTHING)
+	, status(PACKAGE_INSTALLABLE)
 {}
 
 void InstallablePackage::determineStatus() {
 	status = PACKAGE_NOT_INSTALLED;
 	if (installer) {
-		status = (PackageStatus)(status | PACKAGE_INSTALLABLE);
+		status = (PackageStatus)(status | PACKAGE_INSTALLER);
+		if (!installed || installed->version < description->version) {
+			status = (PackageStatus)(status | PACKAGE_INSTALLABLE);
+		}
 	}
 	if (installed) {
 		status = (PackageStatus)(status | PACKAGE_INSTALLED);
@@ -256,19 +262,19 @@ void InstallablePackage::determineStatus() {
 			status = (PackageStatus)(status | PACKAGE_REMOVABLE);
 		}
 	}
-	if (installed && installed->version < description->version) {
-		status = (PackageStatus)(status | PACKAGE_UPDATES);
-	}
 	if (installed && (installed->status & PackageVersion::STATUS_MODIFIED)) {
 		status = (PackageStatus)(status | PACKAGE_MODIFIED);
 	}
 }
 
+bool InstallablePackage::willBeInstalled() const {
+	return (action & PACKAGE_INSTALL) ||
+	       ((status & PACKAGE_INSTALLED) && !(action & PACKAGE_REMOVE));
+}
 bool InstallablePackage::can(PackageAction act) const {
-	if (act & PACKAGE_INSTALL) return (status & PACKAGE_INSTALLABLE) == PACKAGE_INSTALLABLE;
-	if (act & PACKAGE_UPGRADE) return (status & PACKAGE_UPDATES)     == PACKAGE_UPDATES;
+	if (act & PACKAGE_INSTALL) return flag(status, PACKAGE_INSTALLABLE);
 	if (act & PACKAGE_REMOVE) {
-		bool ok = (status & PACKAGE_REMOVABLE)   == PACKAGE_REMOVABLE;
+		bool ok = flag(status, PACKAGE_REMOVABLE);
 		if (!(act & PACKAGE_GLOBAL) && installed && PackageVersion::STATUS_GLOBAL) {
 			// package installed globally can't be removed locally
 			return false;
@@ -322,17 +328,14 @@ void merge(InstallablePackages& list1, const InstallablePackages& list2) {
 void merge(InstallablePackages& installed, const DownloadableInstallerP& installer) {
 	InstallablePackages ips;
 	FOR_EACH(p, installer->packages) {
-		InstallablePackageP ip(new InstallablePackage);
-		ip->description = p;
-		ip->installer = installer;
-		ips.push_back(ip);
+		ips.push_back(new_intrusive2<InstallablePackage>(p,installer));
 	}
 	sort(ips);
 	merge(installed, ips);
 }
 
 
-bool add_package_dependency(InstallablePackages& packages, const PackageDependency& dep, int where, bool set) {
+bool add_package_dependency(InstallablePackages& packages, const PackageDependency& dep, PackageAction where, bool set) {
 	FOR_EACH(p, packages) {
 		if (p->description->name == dep.package) {
 			// Some package depends on this package, so install it if needed
@@ -340,7 +343,7 @@ bool add_package_dependency(InstallablePackages& packages, const PackageDependen
 			// if !set then instead the dependency is no longer needed because we are not installing the package
 			if (!p->installed || p->installed->version < dep.version) {
 				bool change = false;
-				if (p->action & (PACKAGE_INSTALL | PACKAGE_UPGRADE)) {
+				if (p->action & PACKAGE_INSTALL) {
 					// this package is already scheduled for installation
 					if (p->automatic) {
 						// we are already automatically depending on this package
@@ -352,8 +355,7 @@ bool add_package_dependency(InstallablePackages& packages, const PackageDependen
 						}
 					}
 				} else if (set) {
-					p->action = (PackageAction)(where |
-					            (p->installed ? PACKAGE_UPGRADE : PACKAGE_INSTALL));
+					p->action = where | PACKAGE_INSTALL;
 					p->automatic = 1;
 					change = true;
 				}
@@ -370,7 +372,7 @@ bool add_package_dependency(InstallablePackages& packages, const PackageDependen
 	return false;
 }
 
-void remove_package_dependency(InstallablePackages& packages, const PackageDescription& ver, int where, bool set) {
+void remove_package_dependency(InstallablePackages& packages, const PackageDescription& ver, PackageAction where, bool set) {
 	FOR_EACH(p, packages) {
 		FOR_EACH(dep, p->description->dependencies) {
 			if (dep->package == ver.name) {
@@ -385,7 +387,7 @@ void remove_package_dependency(InstallablePackages& packages, const PackageDescr
 						}
 					}
 				} else if (set) {
-					p->action = (PackageAction)(where | PACKAGE_REMOVE);
+					p->action = where | PACKAGE_REMOVE;
 					p->automatic = 1;
 					remove_package_dependency(packages, *p->description, where, set);
 				}
@@ -396,8 +398,8 @@ void remove_package_dependency(InstallablePackages& packages, const PackageDescr
 }
 
 bool set_package_action_unsafe(InstallablePackages& packages, const InstallablePackageP& package, PackageAction action) {
-	int where = action & PACKAGE_WHERE;
-	if ((action & PACKAGE_INSTALL) || (action & PACKAGE_UPGRADE) || ((action & PACKAGE_NOTHING) && (package->status & PACKAGE_INSTALLED))) {
+	PackageAction where = (PackageAction)(action & PACKAGE_WHERE);
+	if ((action & PACKAGE_INSTALL) || ((action & PACKAGE_NOTHING) && (package->status & PACKAGE_INSTALLED))) {
 		// need the package
 		package->automatic = 0;
 		package->action    = action;

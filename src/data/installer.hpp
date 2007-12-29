@@ -26,13 +26,15 @@ class Installer : public Packaged {
 	String prefered_filename;	///< What filename should be used (by default)
 	vector<PackageDescriptionP> packages;	///< Packages to install
 	
+	/*
 	/// Load an installer from a file, and run it
 	static void installFrom(const String& filename, bool message_on_success, bool local);
 	/// Install all the packages
 	void install(bool local, bool check_dependencies = true);
 	/// Install a specific package
 	void install(const String& package);
-		
+	*/
+	
 	/// Add a package to the installer (if it is not already added).
 	/** If the package is named *.mse-installer uses it as the filename instead */
 	void addPackage(const String& package);
@@ -99,7 +101,8 @@ enum PackageStatus
 {	PACKAGE_NOT_INSTALLED = 0x0000
 ,	PACKAGE_INSTALLED     = 0x0001
 ,	PACKAGE_REMOVABLE     = 0x0002
-,	PACKAGE_INSTALLABLE   = 0x0010
+,	PACKAGE_INSTALLER     = 0x0010 ///< Package can be installed (there is an installer)
+,	PACKAGE_INSTALLABLE   = 0x0110 ///< Package can be installed (it makes sense to do so)
 ,	PACKAGE_UPDATES       = 0x0111 ///< Remote updates available
 ,	PACKAGE_MODIFIED      = 0x1001 ///< Local changes made
 ,	PACKAGE_CONFLICTS     = PACKAGE_UPDATES | PACKAGE_MODIFIED
@@ -108,18 +111,21 @@ enum PackageStatus
 /// (un)install a package?
 enum PackageAction
 {	PACKAGE_NOTHING = 0x001  ///< Don't change anything
-,	PACKAGE_INSTALL = 0x002  ///< Install the package
-,	PACKAGE_UPGRADE = 0x004  ///< Upgrade the package
-,	PACKAGE_REMOVE  = 0x008  ///< Remove the package
+,	PACKAGE_INSTALL = 0x002  ///< Install or upgrade the package
+,	PACKAGE_REMOVE  = 0x004  ///< Remove the package (if it was installed)
 ,	PACKAGE_LOCAL   = 0x010  ///< In the local package directory
 ,	PACKAGE_GLOBAL  = 0x020  ///< In the global package directory
 ,	PACKAGE_WHERE   = PACKAGE_LOCAL | PACKAGE_GLOBAL
 };
+// bit twidling
+inline PackageAction operator | (PackageAction a, PackageAction b) { return (PackageAction)((int)a | (int) b); }
+inline bool flag(int flags, int flag) { return (flags & flag) == flag; }
 
 /// A package that can be installed, or is already installed
 class InstallablePackage : public IntrusivePtrVirtualBase {
   public:
-	InstallablePackage();
+	//InstallablePackage();
+	InstallablePackage(const PackageDescriptionP&, const DownloadableInstallerP&);
 	InstallablePackage(const PackageVersionP&, const PackageDescriptionP&);
 	
 	PackageVersionP        installed;   ///< The information of the installed package (if installed)
@@ -130,11 +136,13 @@ class InstallablePackage : public IntrusivePtrVirtualBase {
 	
 	int automatic; ///< Install/upgrade/remove automaticly to satisfy this many packages
 	
-	
 	PackageAction old_action;
 	int           old_automatic;
 	
 	void determineStatus();
+	
+	/// After the action, will the package be installed?
+	bool willBeInstalled() const;
 	
 	/// Is the action possible?
 	bool can(PackageAction act) const;

@@ -131,6 +131,7 @@ void fix_value_207(const ValueP& value) {
 }
 
 void Set::validate(Version file_app_version) {
+	Packaged::validate(file_app_version);
 	// are the
 	if (!game) {
 		throw Error(_ERROR_("no game specified for the set"));

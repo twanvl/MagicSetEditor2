@@ -541,7 +541,10 @@ void Packaged::saveAs(const String& package, bool remove_unused) {
 
 void Packaged::validate(Version) {
 	// a default for the short name
-	if (short_name.empty()) short_name = name();
+	if (short_name.empty()) {
+		if (!full_name.empty()) short_name = full_name;
+		short_name = name();
+	}
 	// check dependencies
 	FOR_EACH(dep, dependencies) {
 		packages.checkDependency(*dep, true);
