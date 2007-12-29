@@ -95,6 +95,9 @@ void mask_blend(Image& img1, const Image& img2, const Image& mask);
 /// Saturate an image, amount should be in range [0...100]
 void saturate(Image& image, int amount);
 
+/// Desaturate an image
+void desaturate(Image& image);
+
 // ----------------------------------------------------------------------------- : Combining
 
 /// Ways in which images can be combined, similair to what Photoshop supports

@@ -30,3 +30,15 @@ void saturate(Image& image, int amount) {
 		pix += 3;
 	}
 }
+
+void desaturate(Image& image) {
+	Byte* pix = image.GetData();
+	Byte* end = pix + image.GetWidth() * image.GetHeight() * 3;
+	while (pix != end) {
+		int r = pix[0], g = pix[1], b = pix[2];
+		pix[0] = (r+r+g+b) / 4;
+		pix[1] = (g+r+g+b) / 4;
+		pix[2] = (b+r+g+b) / 4;
+		pix += 3;
+	}
+}
