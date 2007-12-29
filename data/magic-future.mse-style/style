@@ -411,9 +411,9 @@ card style:
 		line height soft: 0.9
 		line height line: 1.5
 	watermark:
-		left: 117
+		left: 127
 		top : 321
-		width: 152
+		width: 132
 		height: 152
 		z index: 2
 		render style: image

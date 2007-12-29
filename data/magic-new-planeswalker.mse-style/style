@@ -196,10 +196,10 @@ card style:
 
 	############################# Image
 	image:
-		left:	29
-		top:	55
-		width:	316
-		height:	425
+		left:	28
+		top:	54
+		width:	317
+		height:	426
 		z index: 1
 		mask: image_mask.png
 

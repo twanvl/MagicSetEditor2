@@ -17,7 +17,8 @@ depends on:
 
 card width: 375
 card height: 523
-card dpi: 150
+#card dpi: 150
+card dpi: { 782 / 7 }
 
 # Author: Wolfwood
 # Based on: magic-new

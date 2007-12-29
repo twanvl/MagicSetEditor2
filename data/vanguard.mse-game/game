@@ -3,7 +3,7 @@ short name: Vanguard
 full name: Magic Vanguard
 icon: card-sample.png
 position hint: 02
-version: 2007-10-13
+version: 2007-12-29
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -940,3 +940,17 @@ keyword:
 	match: hideaway
 	mode: expert
 	reminder: The land comes into play tapped. When it does, look at the top four cards of your library, remove one from the game face down, then put the rest on the bottom of your library.
+keyword:
+	keyword: Kinship
+	match: Kinship
+	mode: pseudo
+keyword:
+	keyword: Prowl
+	match: prowl <atom-param>cost</atom-param>
+	mode: expert
+	reminder: You may play it for its prowl cost if you dealt combat damage to a player this turn with a creature that shares a type with it.
+keyword:
+	keyword: Reinforce
+	match: reinforce <atom-param>number</atom-param>—<atom-param>cost</atom-param>
+	mode: expert
+	reminder: {param2}, Discard it: Put {english_number_a(param1)} +1/+1 counter(s) on target creature.

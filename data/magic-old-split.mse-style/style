@@ -5,13 +5,13 @@ short name: Old Splits
 icon: card-sample.png
 position hint: 103
 
-version: 2007-09-23
+version: 2007-12-29
 depends on:
 	package: magic.mse-game
 	version: 2007-09-23
 depends on:
 	package: magic-watermarks.mse-include
-	version: 2007-09-23
+	version: 2007-12-29
 depends on:
 	package: magic-mana-large.mse-symbol-font
 	version: 2007-09-23
@@ -439,7 +439,7 @@ card style:
 		z index: 1
 		render style: image
 		alignment: middle center
-		include file: /magic-watermarks.mse-include/watermarks
+		include file: /magic-watermarks.mse-include/watermarks-old
 	watermark 2:
 		left: 338
 		top : 228
@@ -448,7 +448,7 @@ card style:
 		z index: 1
 		render style: image
 		alignment: middle center
-		include file: /magic-watermarks.mse-include/watermarks
+		include file: /magic-watermarks.mse-include/watermarks-old
 
 	############################# PT
 	pt:

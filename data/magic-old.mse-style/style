@@ -11,13 +11,13 @@ full name: Before 8th edition
 icon: card-sample.png
 position hint: 101
 
-version: 2007-09-23
+version: 2007-12-29
 depends on:
 	package: magic.mse-game
 	version: 2007-09-23
 depends on:
 	package: magic-watermarks.mse-include
-	version: 2007-09-23
+	version: 2007-12-29
 depends on:
 	package: magic-mana-large.mse-symbol-font
 	version: 2007-09-23
@@ -25,9 +25,9 @@ depends on:
 	package: magic-mana-small.mse-symbol-font
 	version: 2007-09-23
 
-card width: 337
-card height: 469
-card dpi: 134.98
+card width: 375
+card height: 523
+card dpi: 150
 
 ############################################################## Extra scripts
 ## COPY/PASTE from magic-new.mse-style/style
@@ -58,7 +58,7 @@ init script:
 				dark:  land_template(colors[0]),
 				light: land_template(colors[1]),
 			)
-		else if land then
+		else if land and color_count!=1 then
 			masked_blend(
 				mask:  "land_blend_{type}.png",
 				dark:  land_template("c"),
@@ -174,19 +174,19 @@ card style:
 	border color:
 		left: 0
 		top : 0
-		width:	337
-		height:	468
+		width:	375
+		height:	523
 		radius: 18
-		left width:   18
+		left width:   19
 		right width:  19
-		top width:    18
+		top width:    19
 		bottom width: 19
 		z index: -1
 	card color:
-		left:	12
-		top:	12
-		width:	312
-		height:	444
+		left:	0
+		top:	0
+		width:	375
+		height:	523
 		z index: -2
 		render style: image
 		popup style: in place
@@ -194,36 +194,36 @@ card style:
 
 	############################# Name line
 	name:
-		left: 39
-		top : 21
-		right: { 300 - card_style.casting_cost.content_width }
-		height: 22
+		left:   42
+		top :   24
+		right: { 341 - card_style.casting_cost.content_width }
+		height: 23
 		alignment: bottom shrink-overflow
 		padding bottom: 0
 		z index: 1
 		font:
 			name: MagicMedieval
-			size: 14
+			size: 15.5
 			color: rgb(255,255,255)
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
 			shadow displacement y: 1
 	casting cost:
-		right: 304
-		top : 21
+		right: 341
+		top : 22
 		width: { max(30, card_style.casting_cost.content_width) + 5 }
-		height: 22
+		height: 24
 		alignment: middle right
 		symbol font:
 			name: magic-mana-small
-			size: 14
+			size: 16
 			alignment: middle right
 		always symbol: true
 		z index: 2
 		padding top: 0
 	card symbol:
-		left: 22
-		top : 21
+		left: 24
+		top : 24
 		height: 20
 		width: 14
 		render style: image
@@ -232,33 +232,34 @@ card style:
 
 	############################# Image
 	image:
-		left:	41
-		top:	47
-		width:	255
-		height:	207
+		left:	45
+		top:	51
+		width:	286
+		height:	233
 		z index: 1
 
 	############################# Card type
 
 	type:
-		left: 37
-		top : 260
-		width: { 262 - max(22,card_style.rarity.content_width) }
-		height: 18
-		alignment: top left shrink-overflow
+		left: 39
+		top : 292
+		width: { 298 - max(22,card_style.rarity.content_width) }
+		height: 20
+		alignment: middle shrink-overflow
 		z index: 1
+		padding top: 2
 		font:
 			name: MPlantin
-			size: 11
+			size: 12
 			color: rgb(255,255,255)
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
 			shadow displacement y: 1
-			separator color: rgb(192,192,192)
+			separator color: rgb(128,128,128)
 
 	rarity:
-		right: 299
-		top : 257
+		left: 293
+		top : 290
 		width: 44
 		height: 22
 		z index: 1
@@ -287,13 +288,13 @@ card style:
 	############################# Text box
 	text:
 		left: 43
-		top : 283
-		width: 253
-		height: 128
+		top : 318
+		width: 289
+		height: 143
 		font:
 			name: MPlantin
 			italic name: MPlantin-Italic
-			size: 13
+			size: 14
 			scale down to: 6
 			color: rgb(0,0,0)
 		symbol font:
@@ -302,7 +303,7 @@ card style:
 					if styling.popup_mana_symbols
 					then "magic-mana-large"
 					else "magic-mana-small"
-			size: 13
+			size: 14
 		alignment:
 			script:
 				if (styling.center_text == "short text only" and
@@ -313,67 +314,67 @@ card style:
 				then "middle center"
 				else "middle left"
 		z index: 2
-		padding left:   2
+		padding left:   6
 		padding top:    2
-		padding right:  2
-		padding bottom: 2
+		padding right:  4
+		padding bottom: 0
 		line height hard: 1.2
 		line height line: 1.5
 		line height soft: 0.9
 	watermark:
-		left: 111
-		top : 277
-		width: 124
-		height: 140
+		left: 120
+		top : 313
+		width: 138
+		height: 150
 		z index: 1
 		render style: image
 		alignment: middle center
-		include file: /magic-watermarks.mse-include/watermarks
+		include file: /magic-watermarks.mse-include/watermarks-old
 
 	############################# PT
 	pt:
 		z index: 4
-		left:	266
-		top:	420
-		width:	42
-		height:	28
-		alignment: right top
+		left:	295
+		top:	470
+		width:	47
+		height:	27
+		alignment: right middle
 		font:
 			name: Mplantin
-			size: 16
+			size: 17
 			weight: bold
 			color: rgb(255,255,255)
 			shadow color: rgb(0,0,0)
-			shadow displacement x: 2
-			shadow displacement y: 2
-			separator color: rgb(255,50,50)
+			shadow displacement x: 1
+			shadow displacement y: 1
+			separator color: rgb(200,0,0)
 
 	############################# Card sorting / numbering
 	############################# Copyright stuff
 
 	illustrator:
-		left: 68
-		top : 419
-		width: 200
-		height: 14
+		left: 80
+		top : 470
+		width: 217
+		height: 16
 		z index: 1
-		alignment: center
+		alignment: middle center
 		font:
-			name: Mplantin
-			size: 9
+			name: MPlantin
+			size: 10
 			color: rgb(255,255,255)
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
 			shadow displacement y: 1
 
 	copyright line:
-		left: 68
-		top : 434
-		width: 200
-		height: 9
+		left: 65
+		top : 486
+		width: 247
+		height: 12
 		z index: 1
-		alignment: center
+		alignment: middle center
 		font:
 			name: MPlantin
-			size: 6
+			size: 6.5
 			color: { font_color(card.card_color) }

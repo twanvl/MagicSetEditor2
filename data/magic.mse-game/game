@@ -4,7 +4,7 @@ full name: Magic the Gathering
 icon: card-back.png
 position hint: 01
 
-version: 2007-10-13
+version: 2007-12-29
 depends on:
 	package: magic-blends.mse-include
 	version: 2007-09-23
@@ -252,7 +252,7 @@ init script:
 	
 	# replaces — correctly
 	add := "" # default is nothing
-	separate_words := remove_tags + trim + replace_rule(match:" ", replace: " and/or ")
+	separate_words := remove_tags + trim + replace_rule(match:" ", replace: {spacer})
 	for_mana_costs := format_cost := {
 		if input.separator_before == "—" and contains(input.param, match: " ") then (
 			if contains(input.param, match:",") then (
@@ -1313,37 +1313,52 @@ word list:
 	word: Land
 	word: Planeswalker
 
+## I (Pichoro) have altered the race and class lists so that things like "class: Elf" don't happen.
+## If this is really disliked, I have the original lists saved.
+## TODO: Make the alphabetical sublists actually work.
 word list:
 	name: race
 	word:
 		script: all_races()
 		line below: true
+	word: Angel
+	word: Beast
+	word: Bird
+	word: Construct
+	word: Demon
+	word: Dragon
+	word: Drake
+	word: Elemental
+	word: Elf
+	word: Faerie
+	word: Giant
+	word: Goblin
+	word: Golem
+	word: Human
+	word: Illusion
+	word: Merfolk
+	word: Treefolk
+	word: Zombie
 	word:
 		name: All Types
 		word: A
-			word: Advisor
 			word: Anemone
 			word: Angel
 			word: Anteater
 			word: Antelope
 			word: Ape
-			word: Archer
 			word: Archon
-			word: Artificer
-			word: Assassin
 			word: Assembly-Worker
 			word: Atog
 			word: Aurochs
 			word: Avatar
 		word: B
 			word: Badger
-			word: Barbarian
 			word: Basilisk
 			word: Bat
 			word: Bear
 			word: Beast
 			word: Beeble
-			word: Berserker
 			word: Bird
 			word: Blinkmoth
 			word: Boar
@@ -1353,36 +1368,28 @@ word list:
 			word: Camarid
 			word: Camel
 			word: Caribou
-			word: Carrier
 			word: Cat
 			word: Centaur
 			word: Cephalid
 			word: Chimera
-			word: Citizen
-			word: Cleric
 			word: Cockatrice
 			word: Construct
-			word: Coward
 			word: Crab
 			word: Crocodile
 			word: Cyclops
 		word: D
 			word: Dauthi
 			word: Demon
-			word: Deserter
 			word: Devil
 			word: Djinn
 			word: Dragon
 			word: Drake
 			word: Dreadnought
-			word: Drone
-			word: Druid
 			word: Dryad
 			word: Dwarf
 		word: E
 			word: Efreet
 			word: Egg
-			word: Elder
 			word: Elemental
 			word: Elephant
 			word: Elf
@@ -1392,7 +1399,6 @@ word list:
 			word: Faerie
 			word: Ferret
 			word: Fish
-			word: Flagbearer
 			word: Fox
 			word: Frog
 			word: Fungus
@@ -1431,7 +1437,6 @@ word list:
 			word: Kavu
 			word: Kirin
 			word: Kithkin
-			word: Knight
 			word: Kobold
 			word: Kor
 			word: Kraken
@@ -1445,25 +1450,18 @@ word list:
 		word: M
 			word: Manticore
 			word: Masticore
-			word: Mercenary
 			word: Merfolk
 			word: Metathran
-			word: Minion
 			word: Minotaur
-			word: Monger
 			word: Mongoose
-			word: Monk
 			word: Moonfolk
 			word: Mutant
 			word: Myr
-			word: Mystic
 		word: N
 			word: Nautilus
 			word: Nephilim
 			word: Nightmare
 			word: Nightstalker
-			word: Ninja
-			word: Nomad
 		word: O
 			word: Octopus
 			word: Ogre
@@ -1481,31 +1479,23 @@ word list:
 			word: Phelddagrif
 			word: Phoenix
 			word: Pincher
-			word: Pirate
 			word: Plant
 			word: Prism
 		word: R
 			word: Rabbit
 			word: Rat
-			word: Rebel
 			word: Reflection
 			word: Rhino
-			word: Rigger
-			word: Rogue
 		word: S
 			word: Sa-Sl
 				word: Salamander
-				word: Samurai
 				word: Sand
 				word: Saproling
 				word: Satyr
 				word: Scarecrow
 				word: Scorpion
-				word: Scout
-				word: Serf
 				word: Serpent
 				word: Shade
-				word: Shaman
 				word: Shapeshifter
 				word: Sheep
 				word: Skeleton
@@ -1514,11 +1504,9 @@ word list:
 				word: Slug
 			word: Sn-Sz
 				word: Snake
-				word: Soldier
 				word: Soltari
 				word: Spawn
 				word: Specter
-				word: Spellshaper
 				word: Sphinx
 				word: Spider
 				word: Spike
@@ -1528,7 +1516,6 @@ word list:
 				word: Squid
 				word: Squirrel
 				word: Starfish
-				word: Survivor
 		word: T
 			word: Tetravite
 			word: Thalakos
@@ -1547,10 +1534,8 @@ word list:
 			word: Volver
 		word: W
 			word: Wall
-			word: Warrior
 			word: Weird
 			word: Whale
-			word: Wizard
 			word: Wolf
 			word: Wolverine
 			word: Wombat
@@ -1568,250 +1553,81 @@ word list:
 	word:
 		script: all_classes()
 		line below: true
+	word: Advisor
+	word: Archer
+	word: Artificer
+	word: Assassin
+	word: Beast
+	word: Cleric
+	word: Druid
+	word: Knight
+	word: Mutant
+	word: Rogue
+	word: Scout
+	word: Shaman
+	word: Soldier
+	word: Warrior
+	word: Wizard
+	word: Zombie
 	word:
 		name: All Types
-		word: A
+		word: A-C
 			word: Advisor
-			word: Anemone
-			word: Angel
-			word: Anteater
-			word: Antelope
-			word: Ape
 			word: Archer
 			word: Archon
 			word: Artificer
 			word: Assassin
-			word: Assembly-Worker
-			word: Atog
-			word: Aurochs
-			word: Avatar
-		word: B
-			word: Badger
 			word: Barbarian
-			word: Basilisk
-			word: Bat
-			word: Bear
 			word: Beast
-			word: Beeble
 			word: Berserker
-			word: Bird
-			word: Blinkmoth
-			word: Boar
 			word: Bringer
 			word: Brushwagg
-		word: C
-			word: Camarid
-			word: Camel
-			word: Caribou
 			word: Carrier
-			word: Cat
-			word: Centaur
-			word: Cephalid
-			word: Chimera
 			word: Citizen
 			word: Cleric
-			word: Cockatrice
-			word: Construct
 			word: Coward
-			word: Crab
-			word: Crocodile
-			word: Cyclops
-		word: D
-			word: Dauthi
-			word: Demon
+		word: D-I
 			word: Deserter
-			word: Devil
-			word: Djinn
-			word: Dragon
-			word: Drake
 			word: Dreadnought
 			word: Drone
 			word: Druid
-			word: Dryad
-			word: Dwarf
-		word: E
-			word: Efreet
-			word: Egg
 			word: Elder
-			word: Elemental
-			word: Elephant
-			word: Elf
-			word: Elk
-			word: Eye
-		word: F
-			word: Faerie
-			word: Ferret
-			word: Fish
 			word: Flagbearer
-			word: Fox
-			word: Frog
-			word: Fungus
-		word: G
-			word: Gargoyle
-			word: Giant
-			word: Gnome
-			word: Goat
-			word: Goblin
-			word: Golem
-			word: Gorgon
-			word: Graveborn
-			word: Gremlin
-			word: Griffin
-		word: H
 			word: Hag
-			word: Harpy
 			word: Hellion
-			word: Hippo
-			word: Homarid
-			word: Homunculus
 			word: Horror
-			word: Horse
-			word: Hound
-			word: Human
-			word: Hydra
-		word: I
-			word: Illusion
-			word: Imp
 			word: Incarnation
-			word: Insect
-		word: J
-			word: Jellyfish
+		word: J-P
 			word: Juggernaut
-		word: K
-			word: Kavu
-			word: Kirin
-			word: Kithkin
 			word: Knight
-			word: Kobold
-			word: Kor
-			word: Kraken
-		word: L
-			word: Lammasu
-			word: Leech
 			word: Leviathan
-			word: Lhurgoyf
-			word: Licid
-			word: Lizard
-		word: M
-			word: Manticore
-			word: Masticore
 			word: Mercenary
-			word: Merfolk
-			word: Metathran
 			word: Minion
-			word: Minotaur
 			word: Monger
-			word: Mongoose
 			word: Monk
-			word: Moonfolk
 			word: Mutant
-			word: Myr
 			word: Mystic
-		word: N
-			word: Nautilus
-			word: Nephilim
-			word: Nightmare
-			word: Nightstalker
 			word: Ninja
 			word: Nomad
-		word: O
-			word: Octopus
-			word: Ogre
-			word: Ooze
-			word: Orb
-			word: Orc
-			word: Orgg
-			word: Ouphe
-			word: Ox
-			word: Oyster
-		word: P
-			word: Pegasus
-			word: Pentavite
-			word: Pest
-			word: Phelddagrif
-			word: Phoenix
-			word: Pincher
 			word: Pirate
-			word: Plant
-			word: Prism
-		word: R
-			word: Rabbit
-			word: Rat
+		word: R-S
 			word: Rebel
 			word: Reflection
-			word: Rhino
 			word: Rigger
 			word: Rogue
-		word: S
-			word: Sa-Sl
-				word: Salamander
-				word: Samurai
-				word: Sand
-				word: Saproling
-				word: Satyr
-				word: Scarecrow
-				word: Scorpion
-				word: Scout
-				word: Serf
-				word: Serpent
-				word: Shade
-				word: Shaman
-				word: Shapeshifter
-				word: Sheep
-				word: Skeleton
-				word: Slith
-				word: Sliver
-				word: Slug
-			word: Sn-Sz
-				word: Snake
-				word: Soldier
-				word: Soltari
-				word: Spawn
-				word: Specter
-				word: Spellshaper
-				word: Sphinx
-				word: Spider
-				word: Spike
-				word: Spirit
-				word: Splinter
-				word: Sponge
-				word: Squid
-				word: Squirrel
-				word: Starfish
-				word: Survivor
-		word: T
-			word: Tetravite
-			word: Thalakos
+			word: Samurai
+			word: Scout
+			word: Serf
+			word: Shaman
+			word: Soldier
+			word: Spellshaper
+			word: Survivor
+		word: T-Z
 			word: Thopter
-			word: Thrull
-			word: Treefolk
-			word: Triskelavite
-			word: Troll
-			word: Turtle
-		word: U
-			word: Unicorn
-		word: V
 			word: Vampire
-			word: Vedalken
-			word: Viashino
-			word: Volver
-		word: W
-			word: Wall
 			word: Warrior
-			word: Weird
-			word: Whale
 			word: Wizard
-			word: Wolf
-			word: Wolverine
-			word: Wombat
-			word: Worm
-			word: Wraith
-			word: Wurm
-		word: Y
-			word: Yeti
-		word: Z
 			word: Zombie
-			word: Zubera
 
 word list:
 	name: artifact
@@ -2049,9 +1865,13 @@ keyword parameter type:
 		description: Removes plurality from words.
 		script: \{english_singular({input})\}
 	refer script:
-		name: separate words
+		name: separate words with "and/or"
 		description: Changes spaces to " and/or ". "Elf Warrior" becomes "Elf and/or Warrior".
-		script: \{separate_words({input})\}
+		script: \{separate_words(spacer: " and/or ", {input})\}
+	refer script:
+		name: separate words with "or"
+		description: Changes spaces to " or ". "Elf Warrior" becomes "Elf or Warrior".
+		script: \{separate_words(spacer: " or ", {input})\}
 keyword parameter type:
 	name: prefix
 	description: Prefix for things like "<something>walk"
@@ -2061,7 +1881,7 @@ keyword parameter type:
 	example: Forest
 keyword parameter type:
 	name: a
-	match: [ ]*|[ an?]*
+	match: [ ]*|[ ][an?]*
 
 ############################# All Magic keywords
 # By JrEye and Neko_Asakami, Updated by Pichoro and Buttock1234
@@ -2095,7 +1915,7 @@ keyword:
 	keyword: Protection from
 	match: Protection from <atom-param>name</atom-param>
 	mode: core
-	reminder: This creature can’t be blocked, targeted, dealt damage, enchanted, or equipped by anything {english_singular(param1)}.
+	reminder: {if has_pt() then "This creature" else "This permanent"} can’t be blocked, targeted, dealt damage, or enchanted by anything {english_singular(param1)}.
 keyword:
 	keyword: Regeneration
 	match: Regenerate
@@ -2205,7 +2025,7 @@ keyword:
 	keyword: Amplify
 	match: Amplify <atom-param>number</atom-param>
 	mode: expert
-	reminder: As this card comes into play, put {english_number_a(param1)} +1/+1 counter(s) on it for each {separate_words(card.sub_type)} card you reveal in your hand.
+	reminder: As this card comes into play, put {english_number_a(param1)} +1/+1 counter(s) on it for each {separate_words(spacer: " and/or ", card.sub_type)} card you reveal in your hand.
 keyword:
 	keyword: Double strike
 	match: Double strike
@@ -2418,7 +2238,7 @@ keyword:
 keyword:
 	keyword: Deathtouch
 	match: Deathtouch
-	mode: expert
+	mode: core
 	reminder: Whenever this creature deals damage to a creature, destroy that creature.
 keyword:
 	keyword: Reach
@@ -2498,7 +2318,7 @@ keyword:
 	keyword: Champion
 	match: Champion<atom-param>a</atom-param><atom-param>name</atom-param>
 	mode: expert
-	reminder: When this comes into play, sacrifice it unless you remove another {param2} you control from the game. When this leaves play, that card returns to play.
+	reminder: When this comes into play, sacrifice it unless you remove another{param2} you control from the game. When this leaves play, that card returns to play.
 keyword:
 	keyword: Clash
 	match: Clash
@@ -2514,3 +2334,18 @@ keyword:
 	match: Hideaway
 	mode: expert
 	reminder: This land comes into play tapped. When it does, look at the top four cards of your library, remove one from the game face down, then put the rest on the bottom of your library.
+keyword:
+	keyword: Kinship
+	match: Kinship
+	mode: pseudo
+	rules: Kinship — At the beginning of your upkeep, you may look at the top card of your library. If that card shares a creature type with ~, you may reveal it. If you do, [effect].
+keyword:
+	keyword: Prowl
+	match: Prowl <atom-param>cost</atom-param>
+	mode: expert
+	reminder: You may play this for its prowl cost if you dealt combat damage to a player this turn with a {separate_words(spacer: " or ", card.sub_type)}.
+keyword:
+	keyword: Reinforce
+	match: Reinforce <atom-param>number</atom-param>—<atom-param>cost</atom-param>
+	mode: expert
+	reminder: {param2}, Discard this card: Put {english_number_a(param1)} +1/+1 counter(s) on target creature.
