@@ -86,7 +86,8 @@ void TextCtrl::onChangeSet() {
 		field->multi_line = multi_line;
 		style->width = 100;
 		style->height = 20;
-		style->left = style->top = 1;
+		style->left = 1;
+		style->top = 1;
 		style->font.color = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 		// assign to this control
 		IndexMap<FieldP,StyleP> styles; styles.add(field, style);

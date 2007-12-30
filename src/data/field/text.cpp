@@ -53,6 +53,7 @@ TextStyle::TextStyle(const TextFieldP& field)
 	, line_height_line_max(0.0)
 	, paragraph_height(-1)
 	, direction(LEFT_TO_RIGHT)
+	, content_width(0), content_height(0), content_lines(0)
 {}
 
 double TextStyle::getStretch() const {

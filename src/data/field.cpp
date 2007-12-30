@@ -127,6 +127,13 @@ template <> StyleP read_new<Style>(Reader&) {
 	throw InternalError(_("IndexMap contains nullptr StyleP the application should have crashed already"));
 }
 
+inline bool is_set(const Scriptable<double>& x) {
+	return x.isScripted() || x < 100000;
+}
+inline bool is_setw(const Scriptable<double>& x) {
+	return x.isScripted() || abs(x) > 0.001;
+}
+
 int Style::update(Context& ctx) {
 	bool changed =
 	       left   .update(ctx)
@@ -139,14 +146,14 @@ int Style::update(Context& ctx) {
 	     | visible.update(ctx);
 	// determine automatic_side and attachment of rotation point
 	if (automatic_side == AUTO_UNKNOWN) {
-		if      (right  == 1000000) automatic_side = (AutomaticSide)(automatic_side | AUTO_RIGHT);
-		else if (width  == 0)       automatic_side = (AutomaticSide)(automatic_side | AUTO_WIDTH);
-		else if (left   == 1000000) automatic_side = (AutomaticSide)(automatic_side | AUTO_LEFT);
-		else                        automatic_side = (AutomaticSide)(automatic_side | AUTO_LR);
-		if      (bottom == 1000000) automatic_side = (AutomaticSide)(automatic_side | AUTO_BOTTOM);
-		else if (height == 0)       automatic_side = (AutomaticSide)(automatic_side | AUTO_HEIGHT);
-		else if (top    == 1000000) automatic_side = (AutomaticSide)(automatic_side | AUTO_TOP);
-		else                        automatic_side = (AutomaticSide)(automatic_side | AUTO_TB);
+		if      (!is_set (right))  automatic_side = (AutomaticSide)(automatic_side | AUTO_RIGHT);
+		else if (!is_setw(width))  automatic_side = (AutomaticSide)(automatic_side | AUTO_WIDTH);
+		else if (!is_set (left))   automatic_side = (AutomaticSide)(automatic_side | AUTO_LEFT);
+		else                       automatic_side = (AutomaticSide)(automatic_side | AUTO_LR);
+		if      (!is_set (bottom)) automatic_side = (AutomaticSide)(automatic_side | AUTO_BOTTOM);
+		else if (!is_setw(height)) automatic_side = (AutomaticSide)(automatic_side | AUTO_HEIGHT);
+		else if (!is_set (top))    automatic_side = (AutomaticSide)(automatic_side | AUTO_TOP);
+		else                       automatic_side = (AutomaticSide)(automatic_side | AUTO_TB);
 		changed = true;
 	}
 	if (!changed) return CHANGE_NONE;
@@ -187,12 +194,8 @@ bool Style::isVisible() const {
 	    && abs(bottom) < 100000;
 }
 bool Style::hasSize() const {
-	int h = (abs(width)  > 0      || width .isScripted())
-	      + (abs(left)   < 100000 || left  .isScripted())
-	      + (abs(right)  < 100000 || right .isScripted());
-	int v = (abs(height) > 0      || height.isScripted())
-	      + (abs(top)    < 100000 || top   .isScripted())
-	      + (abs(bottom) < 100000 || bottom.isScripted());
+	int h = is_setw(width)  + is_set(left) + is_set(right);
+	int v = is_setw(height) + is_set(top)  + is_set(bottom);
 	return h >= 2 && v >= 2;
 }
 
