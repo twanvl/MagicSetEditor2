@@ -1,11 +1,11 @@
-﻿mse version: 0.3.5
+﻿mse version: 0.3.6
 game: magic
 short name: Flip Cards
 full name: Modern flip cards
 icon: card-sample.png
 position hint: 002
 
-version: 2007-09-23
+version: 2007-12-29
 depends on:
 	package: magic.mse-game
 	version: 2007-09-23
@@ -156,9 +156,9 @@ card style:
 			color: rgb(0,0,0)
 
 	name 2:
-		right: 343
-		top : 454
-		left:  { 34 + card_style.casting_cost_2.content_width }
+		left: 343
+		bottom: 454
+		right:  { 34 + card_style.casting_cost_2.content_width }
 		height: 23
 		alignment: bottom shrink-overflow
 		angle: 180
@@ -184,8 +184,8 @@ card style:
 		z index: 2
 		padding top: 0
 	casting cost 2:
-		left: 32
-		top : 450
+		right: 32
+		bottom: 450
 		width: { max(30, card_style.casting_cost_2.content_width) + 5 }
 		height: 23
 		alignment: bottom right
@@ -232,8 +232,8 @@ card style:
 			separator color: rgb(128,128,128)
 
 	type 2:
-		left: { if card.pt != "" then 86 else 34 }
-		top : 353
+		right: { if card.pt != "" then 86 else 34 }
+		bottom: 353
 		width: { if card.pt != "" then 256 else 308 }
 		height: 18
 		alignment: top shrink-overflow
@@ -305,8 +305,8 @@ card style:
 		line height soft: 0.9
 
 	text 2:
-		left: 32
-		top : 380
+		right: 32
+		bottom: 380
 		width: 310
 		height: 65
 		angle: 180
@@ -350,8 +350,8 @@ card style:
 		alignment: middle center
 		include file: /magic-watermarks.mse-include/watermarks
 	watermark 2:
-		left: 151
-		top : 378
+		right: 151
+		bottom: 378
 		width: 69
 		height: 69
 		angle: 180
@@ -377,8 +377,8 @@ card style:
 
 	pt 2:
 		z index: 4
-		left:	24
-		top:	348
+		right:	24
+		bottom:	348
 		width:	60
 		height:	28
 		alignment: center middle

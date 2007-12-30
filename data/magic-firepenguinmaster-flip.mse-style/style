@@ -1,10 +1,10 @@
-﻿mse version: 0.3.5
+﻿mse version: 0.3.6
 game: magic
 full name: FPM's Flip Magic
 short name: FPM Flip
 icon: card-sample.png
 position hint: 402
-version: 2007-09-23
+version: 2007-12-29
 depends on:
 	package: magic.mse-game
 	version: 2007-09-23
@@ -169,8 +169,8 @@ card style:
 		choice images:
 			tombstone: tombstone.png
 	name 2:
-		left: 32
-		top : 454
+		right: 32
+		bottom: 454
 		width: 300
 		height: 23
 		angle: 180
@@ -185,8 +185,8 @@ card style:
 			size: 20
 			color: rgb(0,0,0)
 	casting cost 2:
-		left: 334
-		top : 170
+		right: 334
+		bottom: 170
 		width: 25
 		height: 170
 		alignment: top right
@@ -200,8 +200,8 @@ card style:
 		padding top:    0
 		z index: 2
 	card symbol 2:
-		left: 331
-		top : 457
+		right: 331
+		bottom: 457
 		height: 20
 		width: 14
 		render style: image
@@ -233,8 +233,8 @@ card style:
 			color: rgb(0,0,0)
 			separator color: rgb(128,128,128)
 	type 2:
-		left: 33
-		top : 127
+		right: 33
+		bottom: 127
 		width: 263
 		height: 18
 		angle: 180
@@ -307,8 +307,8 @@ card style:
 		alignment: middle center
 		include file: /magic-watermarks.mse-include/watermarks
 	text 2:
-		left: 33
-		top : 65
+		right: 33
+		bottom: 65
 		width: 280
 		height: 60
 		angle: 180
@@ -340,8 +340,8 @@ card style:
 		line height hard: 1.2
 		line height line: 1.5
 	watermark 2:
-		left: 33
-		top : 65
+		right: 33
+		bottom: 65
 		width: 300
 		height: 60
 		z index: 1
@@ -383,8 +383,8 @@ card style:
 			shadow displacement y: 1
 	power 2:
 		z index: 4
-		left:	334
-		top:	111
+		right:	334
+		bottom:	111
 		width:	19
 		height:	50
 		angle: 180
@@ -399,8 +399,8 @@ card style:
 			shadow displacement y: 1
 	toughness 2:
 		z index: 4
-		left:	334
-		top:	58
+		right:	334
+		bottom:	58
 		width:	19
 		height:	50
 		angle: 180
@@ -470,8 +470,8 @@ extra card style:
 		choice images:
 			shieldsword: ptshieldsword.png
 	pt symbols 2:
-		left:	333
-		top:	58
+		right:	333
+		bottom:	58
 		width:	19
 		height:	103
 		z index: 1
