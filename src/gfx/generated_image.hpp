@@ -66,6 +66,20 @@ class GeneratedImage : public ScriptValue {
 /// Resize an image to conform to the options
 Image conform_image(const Image&, const GeneratedImage::Options&);
 
+// ----------------------------------------------------------------------------- : SimpleFilterImage
+
+/// Apply some filter to a single image
+class SimpleFilterImage : public GeneratedImage {
+  public:
+	inline SimpleFilterImage(const GeneratedImageP& image)
+		: image(image)
+	{}
+	virtual ImageCombine combine() const { return image->combine(); }
+	virtual bool local() const { return image->local(); }
+  protected:
+	GeneratedImageP image;
+};
+
 // ----------------------------------------------------------------------------- : BlankImage
 
 /// An image generator that returns a blank image
@@ -133,49 +147,57 @@ class CombineBlendImage : public GeneratedImage {
 // ----------------------------------------------------------------------------- : SetMaskImage
 
 /// Change the alpha channel of an image
-class SetMaskImage : public GeneratedImage {
+class SetMaskImage : public SimpleFilterImage {
   public:
 	inline SetMaskImage(const GeneratedImageP& image, const GeneratedImageP& mask)
-		: image(image), mask(mask)
+		: SimpleFilterImage(image), mask(mask)
 	{}
 	virtual Image generate(const Options& opt) const;
-	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-	virtual bool local() const { return image->local() && mask->local(); }
   private:
-	GeneratedImageP image, mask;
+	GeneratedImageP mask;
 };
 
 /// Change the alpha channel of an image
-class SetAlphaImage : public GeneratedImage {
+class SetAlphaImage : public SimpleFilterImage {
   public:
 	inline SetAlphaImage(const GeneratedImageP& image, double alpha)
-		: image(image), alpha(alpha)
+		: SimpleFilterImage(image), alpha(alpha)
 	{}
 	virtual Image generate(const Options& opt) const;
-	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-	virtual bool local() const { return image->local(); }
   private:
-	GeneratedImageP image;
 	double alpha;
 };
 
 // ----------------------------------------------------------------------------- : SetCombineImage
 
 /// Change the combine mode
-class SetCombineImage : public GeneratedImage {
+class SetCombineImage : public SimpleFilterImage {
   public:
 	inline SetCombineImage(const GeneratedImageP& image, ImageCombine image_combine)
-		: image(image), image_combine(image_combine)
+		: SimpleFilterImage(image), image_combine(image_combine)
 	{}
 	virtual Image generate(const Options& opt) const;
 	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-	virtual bool local() const { return image->local(); }
+  private:
+	ImageCombine image_combine;
+};
+
+// ----------------------------------------------------------------------------- : SaturateImage
+
+/// Saturate/desaturate an image
+class SaturateImage : public SimpleFilterImage {
+  public:
+	inline SaturateImage(const GeneratedImageP& image, double alpha)
+		: SimpleFilterImage(image), amount(amount)
+	{}
+	virtual Image generate(const Options& opt) const;
+	virtual bool operator == (const GeneratedImage& that) const;
   private:
 	GeneratedImageP image;
-	ImageCombine image_combine;
+	double amount;
 };
 
 // ----------------------------------------------------------------------------- : EnlargeImage

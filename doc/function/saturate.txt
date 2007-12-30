@@ -1,0 +1,21 @@
+Function: saturate
+
+--Usage--
+> saturate(input: image, amount: saturation amount)
+
+Saturate or desaturate an image. Saturation makes the colors brighter, desaturation makes the image more grey.
+
+To saturate use an amount between @0@ (no saturation) and @1@ (super crazy, too much saturation).
+
+To desaturate use an amount between @0@ (no desaturation) and @-1@ (convert to greyscale).
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:image]]		Image to (de)saturate.
+| @alpha@	[[type:double]]		Saturation factor.
+
+--Examples--
+> saturate("image5.png", amount:  0.5)  ==  [[Image]]
+>>> saturate(<img src="image5.png" alt='"image5.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, amount:  0.5) == <img src="image_saturate1.png" alt='"image_saturate1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
+> saturate("image5.png", amount: -0.5)  ==  [[Image]]
+>>> saturate(<img src="image5.png" alt='"image5.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, amount: -0.5) == <img src="image_saturate2.png" alt='"image_saturate2.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />

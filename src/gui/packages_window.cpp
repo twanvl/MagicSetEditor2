@@ -277,7 +277,7 @@ class PackageIconRequest : public ThumbnailRequest {
 		Image resampled(16,16,false);
 		resample_preserve_aspect(image,resampled);
 		ti->icon = Bitmap(resampled);
-		desaturate(resampled);
+		saturate(resampled, -.75);
 		set_alpha(resampled,0.5);
 		ti->icon_grey = Bitmap(resampled);
 		list->Refresh(false);
@@ -318,7 +318,7 @@ void PackageUpdateList::initItems() {
 			image = load_resource_image(_("installer_group"));
 		}
 		ti.icon = Bitmap(image);
-		desaturate(image);
+		saturate(image, -.75);
 		set_alpha(image, 0.5);
 		ti.icon_grey = Bitmap(image);
 		if (p && !p->description->icon.Ok() && !p->description->icon_url.empty()) {

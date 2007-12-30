@@ -79,6 +79,12 @@ SCRIPT_FUNCTION(set_combine) {
 	return new_intrusive2<SetCombineImage>(input, image_combine);
 }
 
+SCRIPT_FUNCTION(saturate) {
+	SCRIPT_PARAM_C(GeneratedImageP, input);
+	SCRIPT_PARAM(double, amount);
+	return new_intrusive2<SaturateImage>(input, amount);
+}
+
 SCRIPT_FUNCTION(enlarge) {
 	SCRIPT_PARAM_C(GeneratedImageP, input);
 	SCRIPT_PARAM_N(double, _("border size"), border_size);
@@ -170,6 +176,7 @@ void init_script_image_functions(Context& ctx) {
 	ctx.setVariable(_("set mask"),         script_set_mask);
 	ctx.setVariable(_("set alpha"),        script_set_alpha);
 	ctx.setVariable(_("set combine"),      script_set_combine);
+	ctx.setVariable(_("saturate"),         script_saturate);
 	ctx.setVariable(_("enlarge"),          script_enlarge);
 	ctx.setVariable(_("crop"),             script_crop);
 	ctx.setVariable(_("drop shadow"),      script_drop_shadow);

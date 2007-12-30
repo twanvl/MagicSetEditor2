@@ -74,7 +74,7 @@ Image conform_image(const Image& img, const GeneratedImage::Options& options) {
 	}
 	// saturate?
 	if (options.saturate) {
-		saturate(image, 40);
+		saturate(image, .1);
 	}
 	options.width  = image.GetWidth();
 	options.height = image.GetHeight();
@@ -159,9 +159,6 @@ Image SetMaskImage::generate(const Options& opt) const {
 	set_alpha(img, mask->generate(opt));
 	return img;
 }
-ImageCombine SetMaskImage::combine() const {
-	return image->combine();
-}
 bool SetMaskImage::operator == (const GeneratedImage& that) const {
 	const SetMaskImage* that2 = dynamic_cast<const SetMaskImage*>(&that);
 	return that2 && *image == *that2->image
@@ -172,9 +169,6 @@ Image SetAlphaImage::generate(const Options& opt) const {
 	Image img = image->generate(opt);
 	set_alpha(img, alpha);
 	return img;
-}
-ImageCombine SetAlphaImage::combine() const {
-	return image->combine();
 }
 bool SetAlphaImage::operator == (const GeneratedImage& that) const {
 	const SetAlphaImage* that2 = dynamic_cast<const SetAlphaImage*>(&that);
@@ -194,6 +188,19 @@ bool SetCombineImage::operator == (const GeneratedImage& that) const {
 	const SetCombineImage* that2 = dynamic_cast<const SetCombineImage*>(&that);
 	return that2 && *image == *that2->image
 	             && image_combine == that2->image_combine;
+}
+
+// ----------------------------------------------------------------------------- : SaturateImage
+
+Image SaturateImage::generate(const Options& opt) const {
+	Image img = image->generate(opt);
+	saturate(img, amount);
+	return img;
+}
+bool SaturateImage::operator == (const GeneratedImage& that) const {
+	const SaturateImage* that2 = dynamic_cast<const SaturateImage*>(&that);
+	return that2 && *image == *that2->image
+	             && amount == that2->amount;
 }
 
 // ----------------------------------------------------------------------------- : EnlargeImage

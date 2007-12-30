@@ -67,7 +67,8 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:combine_blend]]		Blend two images together using a given [[type:combine|combining mode]].
 | [[fun:set_mask]]		Set the transparancy mask of an image.
 | [[fun:set_alpha]]		Change the transparency of an image.
-| [[fun:set_combine]]		Chnage how the image should be combined with the background.
+| [[fun:set_combine]]		Change how the image should be combined with the background.
+| [[fun:saturate]]		Saturate/desaturate an image.
 | [[fun:enlarge]]		Enlarge an image by putting a border around it.
 | [[fun:crop]]		Crop an image, giving only a small subset of it.
 | [[fun:drop_shadow]]		Add a drop shadow to an image.

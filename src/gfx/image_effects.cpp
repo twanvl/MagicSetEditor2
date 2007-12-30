@@ -12,33 +12,38 @@
 
 // ----------------------------------------------------------------------------- : Saturation
 
-void saturate(Image& image, int amount) {
+void saturate(Image& image, double amount) {
 	if (amount == 0) return; // nothing to do
-	int factor = 300 / amount;
-	int div    = factor - 2;
-	// for each pixel...
 	Byte* pix = image.GetData();
 	Byte* end = pix + image.GetWidth() * image.GetHeight() * 3;
-	while (pix != end) {
-		int r = pix[0], g = pix[1], b = pix[2];
-		int r2 = (factor * r - g - b) / div;
-		int g2 = (factor * g - r - b) / div;
-		int b2 = (factor * b - r - g) / div;
-		pix[0] = col(r2);
-		pix[1] = col(g2);
-		pix[2] = col(b2);
-		pix += 3;
-	}
-}
-
-void desaturate(Image& image/*, int amount*/) {
-	Byte* pix = image.GetData();
-	Byte* end = pix + image.GetWidth() * image.GetHeight() * 3;
-	while (pix != end) {
-		int r = pix[0], g = pix[1], b = pix[2];
-		pix[0] = (r+r+g+b) / 4;
-		pix[1] = (g+r+g+b) / 4;
-		pix[2] = (b+r+g+b) / 4;
-		pix += 3;
+	if (amount > 0) {
+		amount = min(amount,0.99);
+		int factor = 256 * amount;
+		int div    = 768 - 3 * factor;
+		while (pix != end) {
+			int r = pix[0], g = pix[1], b = pix[2];
+			int avg = factor*(r+g+b);
+			pix[0] = col((768*r - avg) / div);
+			pix[1] = col((768*g - avg) / div);
+			pix[2] = col((768*b - avg) / div);
+			pix += 3;
+		}
+	} else if (amount < -0.99) {
+		while (pix != end) {
+			int r = pix[0], g = pix[1], b = pix[2];
+			pix[0] = pix[1] = pix[2] = (r+g+b)/3;
+			pix += 3;
+		}
+	} else {
+		int factor1 = 256 * -amount;
+		int factor2 = 768 - 3*factor1;
+		while (pix != end) {
+			int r = pix[0], g = pix[1], b = pix[2];
+			int avg = factor1*(r+g+b);
+			pix[0] = (factor2*r + avg) / 768;
+			pix[1] = (factor2*g + avg) / 768;
+			pix[2] = (factor2*b + avg) / 768;
+			pix += 3;
+		}
 	}
 }

@@ -92,11 +92,8 @@ void mask_blend(Image& img1, const Image& img2, const Image& mask);
 
 // ----------------------------------------------------------------------------- : Effects
 
-/// Saturate an image, amount should be in range [0...100]
-void saturate(Image& image, int amount);
-
-/// Desaturate an image
-void desaturate(Image& image);
+/// Saturate an image
+void saturate(Image& image, double amount);
 
 // ----------------------------------------------------------------------------- : Combining
 
