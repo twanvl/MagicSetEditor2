@@ -169,10 +169,10 @@ card style:
 
 	casting cost:
 		right: 343
-		top : 33
+		top : 31
 		width: { max(30, card_style.casting_cost.content_width) + 5 }
 		height: 23
-		alignment: bottom right
+		alignment: middle right
 		symbol font:
 			name: magic-mana-large
 			size: 15
@@ -182,10 +182,10 @@ card style:
 		padding top: 0
 	casting cost 2:
 		right: 32
-		bottom: 450
+		bottom: 449
 		width: { max(30, card_style.casting_cost_2.content_width) + 5 }
 		height: 23
-		alignment: bottom right
+		alignment: middle right
 		angle: 180
 		symbol font:
 			name: magic-mana-large

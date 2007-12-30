@@ -147,7 +147,7 @@ card style:
 		top : 30
 		width: { max(30, card_style.casting_cost.content_width) + 5 }
 		height: 23
-		alignment: bottom right
+		alignment: middle right
 		symbol font:
 			name: magic-mana-large
 			size: 15
