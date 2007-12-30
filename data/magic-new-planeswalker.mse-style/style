@@ -1,14 +1,14 @@
-﻿mse version: 0.3.5
+﻿mse version: 0.3.6
 game: magic
 short name: Walkers
 full name: Modern Planeswalkers
 icon: card-sample.png
 position hint: 008
 
-version: 2007-09-23
+version: 2007-12-29
 depends on:
 	package: magic.mse-game
-	version: 2007-09-23
+	version: 2007-12-29
 depends on:
 	package: magic-default-image.mse-include
 	version: 2007-09-23
@@ -25,6 +25,7 @@ depends on:
 	package: magic-mana-small.mse-symbol-font
 	version: 2007-09-23
 
+card background: white
 card width: 375
 card height: 523
 card dpi: 150
@@ -91,10 +92,10 @@ styling field:
 	description: Use the Ravnica guild symbols instead of the official half/half circles for hybrid mana.
 	initial: no
 styling field:
-	type: boolean
-	name: popup mana symbols
-	description: Use the symbols of the casting cost line inside the text box as well
-	initial: no
+	type: package choice
+	name: text box mana symbols
+	match: magic-mana-*.mse-symbol-font
+	initial: magic-mana-small.mse-symbol-font
 styling field:
 	type: choice
 	name: tap symbol
@@ -122,10 +123,6 @@ styling style:
 		choice images:
 			yes: /magic-mana-small.mse-symbol-font/mana_guild_rg.png
 			no:  /magic-mana-small.mse-symbol-font/mana_rg.png
-	popup mana symbols:
-		choice images:
-			yes: /magic-mana-large.mse-symbol-font/mana_w.png
-			no:  /magic-mana-small.mse-symbol-font/mana_w.png
 	tap symbol:
 		render style: both
 		choice images:
@@ -254,11 +251,7 @@ card style:
 			scale down to: 6
 			color: rgb(0,0,0)
 		symbol font:
-			name:
-				script:
-					if styling.popup_mana_symbols
-					then "magic-mana-large"
-					else "magic-mana-small"
+			name: { styling.text_box_mana_symbols }
 			size: 14
 		paragraph height: 48
 		alignment:

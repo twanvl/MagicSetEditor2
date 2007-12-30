@@ -7,7 +7,7 @@ position hint: 402
 version: 2007-12-29
 depends on:
 	package: magic.mse-game
-	version: 2007-09-23
+	version: 2007-12-29
 depends on:
 	package: magic-future-common.mse-include
 	version: 2007-09-23
@@ -24,7 +24,7 @@ depends on:
 	package: magic-mana-small.mse-symbol-font
 	version: 2007-09-23
 
-
+card background: white
 card width: 375
 card height: 523
 card dpi: 150
@@ -63,10 +63,10 @@ styling field:
 	choice: Matrix
 	choice: MatrixBoldSmallCaps
 styling field:
-	type: boolean
-	name: beveled mana symbols
-	description: Use the symbols of the casting cost line inside the text box as well?
-	initial: no
+	type: package choice
+	name: text box mana symbols
+	match: magic-mana-*.mse-symbol-font
+	initial: magic-mana-small.mse-symbol-font
 styling field:
 	type: boolean
 	name: use guild mana symbols
@@ -94,10 +94,6 @@ styling style:
 		choice images:
 			yes: /magic-mana-small.mse-symbol-font/mana_guild_rg.png
 			no:  /magic-mana-small.mse-symbol-font/mana_rg.png
-	beveled mana symbols:
-		choice images:
-			yes: /magic-mana-beveled.mse-symbol-font/mana_w.png
-			no:  /magic-mana-small.mse-symbol-font/mana_w.png
 	tap symbol:
 		render style: both
 		choice images:
@@ -276,9 +272,7 @@ card style:
 			scale down to: 6
 			color: rgb(0,0,0)
 		symbol font:
-			name:
-				{ if styling.beveled_mana_symbols then "magic-mana-beveled"
-				else "magic-mana-small" }
+			name: { styling.text_box_mana_symbols }
 			size: 14
 		alignment:
 			script:
@@ -319,9 +313,7 @@ card style:
 			scale down to: 6
 			color: rgb(0,0,0)
 		symbol font:
-			name:
-				{ if styling.beveled_mana_symbols then "magic-mana-beveled"
-				else "magic-mana-small" }
+			name: { styling.text_box_mana_symbols }
 			size: 14
 		alignment:
 			script:

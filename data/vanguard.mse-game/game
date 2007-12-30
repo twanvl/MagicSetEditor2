@@ -166,6 +166,9 @@ init script:
 		# curly quotes
 		curly_quotes
 	
+	#Necessary to make magic-mana-future play nicely
+	colorless_color := { "c" }
+	
 ############################################################## Set fields
 
 set field:

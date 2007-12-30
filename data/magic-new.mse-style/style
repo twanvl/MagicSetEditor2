@@ -1,14 +1,14 @@
-﻿mse version: 0.3.5
+﻿mse version: 0.3.6
 game: magic
 short name: Modern style
 full name: After 8th edition
 icon: card-sample.png
 position hint: 001
 
-version: 2007-09-23
+version: 2007-12-29
 depends on:
 	package: magic.mse-game
-	version: 2007-09-23
+	version: 2007-12-29
 depends on:
 	package: magic-default-image.mse-include
 	version: 2007-09-23
@@ -58,15 +58,7 @@ init script:
 	
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
-	colorless_color := { "c" } # MOVE TO GAME FILE
-	
-	# Does the card have a color that requires a white font for copyright/artist?
-	#white_font_colors := filter_rule(match:"^(hybrid 2 color )?(hybrid 3 color [^/]*/[^/]*/ )?(hybrid vertical [^/]*/ )?(black|land|hybrid 4 color white / blue / black / red|hybrid 2 color overlay blue / black|hybrid 2 color overlay black / red|hybrid 2 color overlay black / green)")
-	#font_color := {
-	#	if white_font_colors(input: card.card_color) != "" then rgb(255,255,255)
-	#	else rgb(0,0,0)
-	#}
-	
+		
 	
 ############################################################## Set info fields
 set info style:
@@ -100,11 +92,6 @@ styling field:
 	type: boolean
 	name: use guild mana symbols
 	description: Use the Ravnica guild symbols instead of the official half/half circles for hybrid mana.
-	initial: no
-styling field:
-	type: boolean
-	name: popup mana symbols
-	description: Use the symbols of the casting cost line inside the text box as well
 	initial: no
 styling field:
 	type: choice
@@ -150,10 +137,6 @@ styling style:
 		choice images:
 			yes: /magic-mana-small.mse-symbol-font/mana_guild_rg.png
 			no:  /magic-mana-small.mse-symbol-font/mana_rg.png
-	popup mana symbols:
-		choice images:
-			yes: /magic-mana-large.mse-symbol-font/mana_w.png
-			no:  /magic-mana-small.mse-symbol-font/mana_w.png
 	tap symbol:
 		render style: both
 		choice images:

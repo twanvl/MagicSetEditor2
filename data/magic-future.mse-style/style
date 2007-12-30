@@ -1,14 +1,14 @@
-mse version: 0.3.5
+mse version: 0.3.6
 game: magic
 short name: Future
 full name: Futureshift
 icon: card-sample.png
 position hint: 050
 
-version: 2007-09-23
+version: 2007-12-29
 depends on:
 	package: magic.mse-game
-	version: 2007-09-23
+	version: 2007-12-29
 depends on:
 	package: magic-watermarks.mse-include
 	version: 2007-09-23
@@ -25,6 +25,7 @@ depends on:
 	package: magic-mana-future.mse-symbol-font
 	version: 2007-09-23
 
+card background: white
 card width: 375
 card height: 523
 card dpi: 150
@@ -178,13 +179,10 @@ styling field:
 	choice: old
 	choice: diagonal T
 styling field:
-	type: choice
-	name: mana symbols
-	choice: future
-	choice: popup
-	choice: normal
-	description: What style of mana symbols should be used?
-	initial: normal
+	type: package choice
+	name: text box mana symbols
+	match: magic-mana-*.mse-symbol-font
+	initial: magic-mana-small.mse-symbol-font
 styling field:
 	type: choice
 	name: center text
@@ -204,12 +202,6 @@ styling style:
 		choice images:
 			yes: /magic-mana-small.mse-symbol-font/mana_guild_rg.png
 			no:  /magic-mana-small.mse-symbol-font/mana_rg.png
-	mana symbols:
-		render style: both
-		choice images:
-			future: /magic-mana-future.mse-symbol-font/mana_w.png
-			popup:  /magic-mana-large.mse-symbol-font/mana_w.png
-			normal:  /magic-mana-small.mse-symbol-font/mana_w.png
 	tap symbol:
 		render style: both
 		choice images:
@@ -389,9 +381,7 @@ card style:
 					if not contains(card.card_color, match:"land") then rgb(0,0,0)
 					else font_color(card.card_color)
 		symbol font:
-			name:
-				{ if styling.mana_symbols=="future" then "magic-mana-future" else
-				if styling.mana_symbols=="popup" then "magic-mana-large" else "magic-mana-small" }
+			name: { styling.text_box_mana_symbols }
 			size: 15
 		alignment:
 			script:

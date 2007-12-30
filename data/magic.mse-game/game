@@ -1,4 +1,4 @@
-﻿mse version: 0.3.5
+﻿mse version: 0.3.6
 short name: Magic
 full name: Magic the Gathering
 icon: card-back.png
@@ -444,6 +444,9 @@ init script:
 		  else                                "multitype"
 		}
 	typesymbol_type := { typesymbol_for(card.super_type) }
+	
+	#Script to make magic-mana-future compatible w/ other templates
+	colorless_color := { "c" }
 	
 	############################################################## Statistics utilities
 	
