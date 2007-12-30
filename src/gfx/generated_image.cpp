@@ -31,24 +31,18 @@ Image conform_image(const Image& img, const GeneratedImage::Options& options) {
 	if ((iw == options.width && ih == options.height) || (options.width == 0 && options.height == 0)) {
 		// zoom?
 		if (options.zoom != 1.0) {
-			Image resampled_image(iw * options.zoom, ih * options.zoom, false);
-			resample(image, resampled_image);
-			image = resampled_image;
+			image = resample(image, iw * options.zoom, ih * options.zoom);
 		} else {
 			// already the right size
 		}
 	} else if (options.height == 0) {
 		// width is given, determine height
 		int h = options.width * ih / iw;
-		Image resampled_image(options.width, h, false);
-		resample(image, resampled_image);
-		image = resampled_image;
+		image = resample(image, options.width, h);
 	} else if (options.width == 0) {
 		// height is given, determine width
 		int w = options.height * iw / ih;
-		Image resampled_image(w, options.height, false);
-		resample(image, resampled_image);
-		image = resampled_image;
+		image = resample(image, w, options.height);
 	} else if (options.preserve_aspect == ASPECT_FIT) {
 		// determine actual size of resulting image
 		int w, h;
@@ -59,18 +53,14 @@ Image conform_image(const Image& img, const GeneratedImage::Options& options) {
 			w = options.height * iw / ih;
 			h = options.height;
 		}
-		Image resampled_image(w, h, false);
-		resample(image, resampled_image);
-		image = resampled_image;
+		image = resample(image, w, h);
 	} else {
-		Image resampled_image(options.width, options.height, false);
 		if (options.preserve_aspect == ASPECT_BORDER && (options.width < options.height * 3) && (options.height < options.width * 3)) {
 			// preserve the aspect ratio if there is not too much difference
-			resample_preserve_aspect(image, resampled_image);
+			image = resample_preserve_aspect(image, options.width, options.height);
 		} else {
-			resample(image, resampled_image);
+			image = resample(image, options.width, options.height);
 		}
-		image = resampled_image;
 	}
 	// saturate?
 	if (options.saturate) {

@@ -172,6 +172,7 @@ edit_symbol				IMAGE	"../common/edit_symbol.png"
 installer_group			IMAGE	"../common/installer_group.png"
 installer_package		IMAGE	"../common/installer_package.png"
 installer_locales		IMAGE	"../common/installer_locales.png"
+installer_program		IMAGE	"../common/installer_program.png"
 //installer_font		IMAGE	"../common/installer_font.png"
 
 // -------------------------------------------------------- : WX

@@ -65,9 +65,7 @@ class CardThumbnailRequest : public ThumbnailRequest {
 			if (image.LoadFile(*parent->set->openIn(filename))) {
 				// two step anti aliased resampling
 				image.Rescale(36, 28); // step 1: no anti aliassing
-				Image image2(18, 14, false); // step 2: with anti aliassing
-				resample(image, image2);
-				return image2;
+				return resample(image, 18, 14); // step 2: with anti aliassing
 			} else {
 				return Image();
 			}

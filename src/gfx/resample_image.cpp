@@ -125,6 +125,15 @@ void resample_pass(const Image& img_in, Image& img_out, int offset_in, int offse
 void resample(const Image& img_in, Image& img_out) {
 	resample_and_clip(img_in, img_out, wxRect(0, 0, img_in.GetWidth(), img_in.GetHeight()));
 }
+Image resample(const Image& img_in, int width, int height) {
+	if (img_in.GetWidth() == width && img_in.GetHeight() == height) {
+		return img_in; // already the right size
+	} else {
+		Image img_out(width,height,false);
+		resample(img_in, img_out);
+		return img_out;
+	}
+}
 
 void resample_and_clip(const Image& img_in, Image& img_out, wxRect rect) {
 	// mask to alpha
@@ -169,6 +178,16 @@ void resample_preserve_aspect(const Image& img_in, Image& img_out) {
 	img_temp.InitAlpha();
 	resample_pass(img_in,   img_temp, 0, 0,          img_in.GetWidth(),  1,                   rwidth,  1,                  img_in.GetHeight(), img_in.GetWidth(), img_temp.GetWidth());
 	resample_pass(img_temp, img_out,  0, offset_out, img_in.GetHeight(), img_temp.GetWidth(), rheight, img_out.GetWidth(), rwidth,             1,                 1);
+}
+
+Image resample_preserve_aspect(const Image& img_in, int width, int height) {
+	if (img_in.GetWidth() == width && img_in.GetHeight() == height) {
+		return img_in; // already the right size
+	} else {
+		Image img_out(width,height,false);
+		resample_preserve_aspect(img_in, img_out);
+		return img_out;
+	}
 }
 
 // ----------------------------------------------------------------------------- : Sharpening

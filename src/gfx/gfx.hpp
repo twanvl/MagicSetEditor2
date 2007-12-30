@@ -21,6 +21,7 @@
 
 /// Resample (resize) an image, uses bilenear filtering
 void resample(const Image& img_in, Image& img_out);
+Image resample(const Image& img_in, int width, int height);
 
 /// Resamples an image, first clips the input image to a specified rectangle
 /** The selected rectangle is resampled into the entire output image */
@@ -35,6 +36,7 @@ enum PreserveAspect
 
 /// Resample an image, but preserve the aspect ratio by adding a transparent border around the output if needed.
 void resample_preserve_aspect(const Image& img_in, Image& img_out);
+Image resample_preserve_aspect(const Image& img_in, int width, int height);
 
 /// Resample an image to create a sharp result by applying a sharpening filter
 /** Amount must be between 0 and 100 */

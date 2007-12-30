@@ -38,9 +38,7 @@ void PackageChoiceValueViewer::initItems() {
 		Image image;
 		InputStreamP stream = p->openIconFile();
 		if (stream && image.LoadFile(*stream)) {
-			Image resampled(16,16,false);
-			resample(image, resampled);
-			i.image = Bitmap(resampled);
+			i.image = Bitmap(resample(image, 16,16));
 		}
 		items.push_back(i);
 	}

@@ -139,14 +139,31 @@ class PackageUpdateList : public TreeList {
 	typedef intrusive_ptr<TreeItem> TreeItemP;
 	class TreeItem : public Item {
 	  public:
+		TreeItem() : position_type(TYPE_OTHER), position_hint(1000000) {}
 		String label;
 		vector<TreeItemP> children;
 		InstallablePackageP package;
 		Bitmap icon, icon_grey;
+		// positioning
+		enum PackageType {
+			TYPE_PROG,
+			TYPE_LOCALE,
+			TYPE_GAME,
+			TYPE_STYLESHEET,
+			TYPE_EXPORT_TEMPLATE,
+			TYPE_SYMBOL_FONT,
+			TYPE_INCLUDE,
+			TYPE_FONT,
+			TYPE_OTHER,
+		}   position_type;
+		int position_hint;
 		
 		void add(const InstallablePackageP& package, const String& path, int level = -1);
 		void toItems(vector<TreeList::ItemP>& items);
+		void setIcon(const Image& image);
 		bool highlight() const;
+		
+		static PackageType package_type(const PackageDescription& desc);
 	};
 };
 
@@ -156,6 +173,22 @@ DECLARE_TYPEOF_COLLECTION(PackageUpdateList::TreeItemP);
 
 
 void PackageUpdateList::TreeItem::add(const InstallablePackageP& package, const String& path, int level) {
+	// this node
+	this->level = level;
+	PackageType new_type = package_type(*package->description);
+	int new_hint = package->description->position_hint;
+	if (new_type < position_type || (new_type == position_type && new_hint < position_hint)) {
+		// this is a lower position hint, use it
+		position_type = new_type;
+		position_hint = new_hint;
+	}
+	// end of the path?
+	if (path.empty()) {
+		assert(!this->package);
+		this->package = package;
+		return;
+	}
+	// split path
 	size_t pos = path.find_first_of(_('/'));
 	String name = path.substr(0,pos);
 	String rest = pos == String::npos ? _("") : path.substr(pos+1);
@@ -163,17 +196,12 @@ void PackageUpdateList::TreeItem::add(const InstallablePackageP& package, const 
 	FOR_EACH(ti, children) {
 		if (ti->label == name) {
 			// already have this child
-			if (pos == String::npos) {
-				if (ti->package) {
-					// two packages with the same path
-					TreeItemP ti2(new TreeItem);
-					ti2->level = level + 1;
-					ti2->label = name;
-					ti2->package = package;
-					children.insert(ti_IT.first, ti2);
-				} else {
-					ti->package = package;
-				}
+			if (pos == String::npos && ti->package) {
+				// two packages with the same path
+				TreeItemP ti2(new TreeItem);
+				ti2->label = name;
+				children.insert(ti_IT.first, ti2);
+				ti2->add(package, rest, level + 1);
 			} else {
 				ti->add(package, rest, level + 1);
 			}
@@ -183,20 +211,15 @@ void PackageUpdateList::TreeItem::add(const InstallablePackageP& package, const 
 	// don't have this child
 	TreeItemP ti(new TreeItem);
 	children.push_back(ti);
-	ti->level = level + 1;
 	ti->label = name;
-	if (pos == String::npos) {
-		ti->package = package;
-	} else {
-		ti->add(package, rest, level + 1);
-	}
+	ti->add(package, rest, level + 1);
 }
 
 bool compare_pos_hint(const PackageUpdateList::TreeItemP& a, const PackageUpdateList::TreeItemP& b) {
-	int pa = a->package ? a->package->description->position_hint : 0;
-	int pb = b->package ? b->package->description->position_hint : 0;
-	if (pa < pb) return true;
-	if (pa > pb) return false;
+	if (a->position_type < b->position_type) return true;
+	if (a->position_type > b->position_type) return false;
+	if (a->position_hint < b->position_hint) return true;
+	if (a->position_hint > b->position_hint) return false;
 	return a->label < b->label;
 }
 
@@ -212,6 +235,38 @@ bool PackageUpdateList::TreeItem::highlight() const {
 	if (package && package->willBeInstalled()) return true;
 	FOR_EACH_CONST(c,children) if (c->highlight()) return true;
 	return false;
+}
+
+PackageUpdateList::TreeItem::PackageType PackageUpdateList::TreeItem::package_type(const PackageDescription& desc) {
+	if (desc.name == mse_package)                           return TYPE_PROG;
+	size_t pos = desc.name.find_last_of(_('.'));
+	if (pos == String::npos)                                return TYPE_OTHER;
+	if (is_substr(desc.name,pos,_(".mse-locale")))          return TYPE_LOCALE;
+	if (is_substr(desc.name,pos,_(".mse-game")))            return TYPE_GAME;
+	if (is_substr(desc.name,pos,_(".mse-style")))           return TYPE_STYLESHEET;
+	if (is_substr(desc.name,pos,_(".mse-export-template"))) return TYPE_EXPORT_TEMPLATE;
+	if (is_substr(desc.name,pos,_(".mse-symbol-font")))     return TYPE_SYMBOL_FONT;
+	if (is_substr(desc.name,pos,_(".mse-include")))         return TYPE_INCLUDE;
+	if (is_substr(desc.name,pos,_(".ttf")))                 return TYPE_FONT;
+	return TYPE_OTHER;
+}
+
+void PackageUpdateList::TreeItem::setIcon(const Image& img) {
+	Image image = img;
+	int iw = image.GetWidth(), ih = image.GetHeight();
+	if (ih > 107) {
+		int w = 107 * iw / ih;
+		image = resample(image, w, 107);
+	} else if (iw > 107) {
+		int h = 107 * ih / iw;
+		image = resample(image, 107, h);
+	}
+	if (package) package->description->icon = image;
+	Image resampled = resample_preserve_aspect(image,16,16);
+	icon = Bitmap(resampled);
+	saturate(resampled, -.75);
+	set_alpha(resampled,0.5);
+	icon_grey = Bitmap(resampled);
 }
 
 // ----------------------------------------------------------------------------- : PackageIconRequest
@@ -273,13 +328,7 @@ class PackageIconRequest : public ThumbnailRequest {
 	}
 	virtual void store(const Image& image) {
 		if (!image.Ok()) return;
-		ti->package->description->icon = image;
-		Image resampled(16,16,false);
-		resample_preserve_aspect(image,resampled);
-		ti->icon = Bitmap(resampled);
-		saturate(resampled, -.75);
-		set_alpha(resampled,0.5);
-		ti->icon_grey = Bitmap(resampled);
+		ti->setIcon(image);
 		list->Refresh(false);
 	}
   private:
@@ -294,8 +343,7 @@ void PackageUpdateList::initItems() {
 	TreeItem root;
 	FOR_EACH(ip, parent->installable_packages) {
 		String group = ip->description->installer_group;
-		if (!group.empty()) group += _("/");
-		group += ip->description->short_name;
+		if (group.empty()) group = _("custom");
 		root.add(ip, group);
 	}
 	// tree to treelist items
@@ -307,23 +355,17 @@ void PackageUpdateList::initItems() {
 		const InstallablePackageP& p = ti.package;
 		Image image;
 		if (p && p->description->icon.Ok()) {
-			Image resampled(16,16,false);
-			resample_preserve_aspect(p->description->icon, resampled);
-			image = resampled;
+			ti.setIcon(p->description->icon);
 		} else if (p) {
-			image = load_resource_image(_("installer_package"));
-		} else if (ti.label == _("locales")) {
-			image = load_resource_image(_("installer_locales"));
+			ti.setIcon(load_resource_image(_("installer_package")));
+			if (!p->description->icon_url.empty()) {
+				// download icon
+				thumbnail_thread.request(new_intrusive2<PackageIconRequest>(this,&ti));
+			}
+		} else if (ti.position_type == TreeItem::TYPE_LOCALE) {
+			ti.setIcon(load_resource_image(_("installer_locales")));
 		} else {
-			image = load_resource_image(_("installer_group"));
-		}
-		ti.icon = Bitmap(image);
-		saturate(image, -.75);
-		set_alpha(image, 0.5);
-		ti.icon_grey = Bitmap(image);
-		if (p && !p->description->icon.Ok() && !p->description->icon_url.empty()) {
-			// download icon
-			thumbnail_thread.request(new_intrusive2<PackageIconRequest>(this,&ti));
+			ti.setIcon(load_resource_image(_("installer_group")));
 		}
 	}
 }
@@ -336,7 +378,7 @@ void PackageUpdateList::drawItem(DC& dc, size_t index, size_t column, int x, int
 		const Bitmap& bmp = ti.highlight() ? ti.icon : ti.icon_grey;
 		if (bmp.Ok()) dc.DrawBitmap(bmp,x,y);
 		dc.SetTextForeground(color);
-		dc.DrawText(ti.label, x+18, y+2);
+		dc.DrawText(capitalize_sentence(ti.label), x+18, y+2);
 	} else if (column == 1 && ti.package) {
 		// Status
 		int stat = ti.package->status;

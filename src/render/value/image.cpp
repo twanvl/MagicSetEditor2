@@ -129,9 +129,7 @@ void ImageValueViewer::loadMask(const Rotation& rot) const {
 	Image image;
 	InputStreamP image_file = viewer.stylesheet->openIn(style().mask_filename);
 	if (image.LoadFile(*image_file)) {
-		Image resampled(w,h);
-		resample(image, resampled);
-		alpha_mask = new_intrusive1<AlphaMask>(resampled);
+		alpha_mask = new_intrusive1<AlphaMask>(resample(image,w,h));
 	}
 }
 

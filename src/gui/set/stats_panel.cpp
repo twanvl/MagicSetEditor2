@@ -77,9 +77,9 @@ void StatCategoryList::drawItem(DC& dc, int x, int y, size_t item, bool selected
 	if (!cat.icon_filename.empty() && !cat.icon.Ok()) {
 		InputStreamP file = game->openIn(cat.icon_filename);
 		Image img(*file);
-		Image resampled(21, 21);
-		resample_preserve_aspect(img, resampled);
-		if (img.Ok()) cat.icon = Bitmap(resampled);
+		if (img.Ok()) {
+			cat.icon = Bitmap(resample_preserve_aspect(img, 21, 21));
+		}
 	}
 	if (cat.icon.Ok()) {
 		dc.DrawBitmap(cat.icon, x+1, y+1);

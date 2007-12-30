@@ -541,8 +541,7 @@ void ImageSliceSelector::createBitmap() {
 	// create image, resampled to fit in control
 	wxSize s = GetClientSize();
 	int width = s.GetWidth() - 2*border, height = s.GetHeight() - 2*border;
-	Image img(width, height, false);
-	resample(slice.source, img);
+	Image img = resample(slice.source, width, height);
 	bitmap = Bitmap(img);
 	scaleX = (double)width  / slice.source.GetWidth();
 	scaleY = (double)height / slice.source.GetHeight();

@@ -99,6 +99,7 @@ enum PackageStatus
 ,	PACKAGE_INSTALLABLE   = 0x0110 ///< Package can be installed (it makes sense to do so)
 ,	PACKAGE_UPDATES       = 0x0111 ///< Remote updates available
 ,	PACKAGE_MODIFIED      = 0x1001 ///< Local changes made
+,	PACKAGE_MISSING_DEP   = 0x0200 ///< Missing a dependency for installation
 ,	PACKAGE_CONFLICTS     = PACKAGE_UPDATES | PACKAGE_MODIFIED
 };
 

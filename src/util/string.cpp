@@ -155,7 +155,7 @@ String capitalize(const String& s) {
 }
 
 String capitalize_sentence(const String& s) {
-	String ret = s.Lower();
+	String ret = s;//.Lower();
 	if (!ret.empty()) {
 		ret[0] = toUpper(ret[0]);
 	}

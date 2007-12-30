@@ -15,7 +15,7 @@
 #include <data/export_template.hpp>
 #include <util/io/package_manager.hpp>
 #include <util/platform.hpp>
-#include <script/to_value.hpp>
+#include <gui/util.hpp> // load_resource_image
 #include <wx/filename.h>
 #include <wx/wfstream.h>
 #include <wx/zipstrm.h>
@@ -195,10 +195,20 @@ PackageDescription::PackageDescription(const Packaged& package)
 	if (full_name.empty()) full_name = short_name;
 	// installer group
 	if (installer_group.empty()) {
-		// "game-style.mse-something" -> "game/style" -> "game"
-		installer_group = replace_all(package.name(),_("-"),_("/"));
-		size_t pos = installer_group.find_last_of(_('/'));
+		// "game-style.mse-something" -> "game/style_short_name"
+		installer_group = package.name();
+		size_t pos = installer_group.find_last_of(_('-'));
 		if (pos != String::npos) installer_group.resize(pos);
+		if (!installer_group.empty()) {
+			installer_group = _("unclassified/") + replace_all(installer_group,_("-"),_("/")) + _("/");
+		} else {
+			installer_group = _("unclassified/");
+		}
+		if (dynamic_cast<const Game*>(&package)) {
+			installer_group += _("Game files");
+		} else {
+			installer_group += short_name;
+		}
 	}
 	// icon
 	InputStreamP file = const_cast<Packaged&>(package).openIconFile();
@@ -219,6 +229,9 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(PackageDescription) {
 
 void PackageDescription::merge(const PackageDescription& p2) {
 	if (!icon.Ok() && !icon_url) icon = p2.icon;
+	if (installer_group.empty()) installer_group = p2.installer_group;
+	if (short_name.empty()) short_name = p2.short_name;
+	if (full_name.empty()) full_name = p2.full_name;
 }
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(InstallerDescription) {
@@ -454,9 +467,10 @@ InstallablePackageP mse_installable_package() {
 	mse_version->version = app_version;
 	PackageDescriptionP mse_description(new PackageDescription);
 	mse_description->name          = mse_package;
-	mse_description->short_name    = mse_description->full_name = _TITLE_("magic set editor");
+	mse_description->short_name    = mse_description->full_name = mse_description->installer_group
+	        = _TITLE_("magic set editor");
 	mse_description->position_hint = -100;
-	//mse_description->icon          = load_resource_image(_("mse_icon"));
+	mse_description->icon          = load_resource_image(_("installer_program"));
 	//mse_description->description   = _LABEL_("magic set editor package");
 	return new_intrusive2<InstallablePackage>(mse_version,mse_description);
 }
