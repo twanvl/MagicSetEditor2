@@ -44,7 +44,7 @@ init script:
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
 	
-	card_shape := { "shifted" }
+	card_shape := { if styling.shifted_sorting then "shifted" else "normal" }
 
 ############################################################## Set info fields
 set info style:
@@ -58,6 +58,11 @@ set info style:
 
 ############################################################## Extra style options
 
+styling field:
+	type: boolean
+	name: shifted sorting
+	description: Should this style of card sort as a shifted card (after other cards of that color)?
+	initial: yes
 styling field:
 	type: boolean
 	name: colored mana symbols

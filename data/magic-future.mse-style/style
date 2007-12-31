@@ -5,7 +5,7 @@ full name: Futureshift
 icon: card-sample.png
 position hint: 050
 
-version: 2007-12-29
+version: 2007-12-30
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -36,7 +36,6 @@ card dpi: 150
 
 init script:
 	mask_hybrid_with_land := { styling.grey_hybrid_name }
-	text_filter := { card.extra_data.paintbrush }
 	
 	template_suffix := [card: "card.jpg", pt: "pt.png", textbox: "textbox.png", typeline: "typeline.png"]
 	template := { input + template_suffix[type] }
@@ -147,7 +146,7 @@ init script:
 		else "white"
 	}
 	
-	card_shape := { "shifted" }
+	card_shape := { if styling.shifted_sorting then "shifted" else "normal" }
 
 ############################################################## Set info fields
 set info style:
@@ -160,7 +159,11 @@ set info style:
 			border color: rgb(0,0,0)
 
 ############################################################## Extra style options
-
+styling field:
+	type: boolean
+	name: shifted sorting
+	description: Should this style of card sort as a shifted card (after other cards of that color)?
+	initial: yes
 styling field:
 	type: boolean
 	name: grey hybrid name
