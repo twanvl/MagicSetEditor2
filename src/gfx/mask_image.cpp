@@ -41,7 +41,7 @@ void AlphaMask::setAlpha(Bitmap& bmp) const {
 }
 
 bool AlphaMask::isTransparent(int x, int y) const {
-	if (x < 0 || y > 0 || x >= size.x || y >= size.y) return false;
+	if (x < 0 || y < 0 || x >= size.x || y >= size.y) return false;
 	return alpha[x + y * size.x] < 20;
 }
 
