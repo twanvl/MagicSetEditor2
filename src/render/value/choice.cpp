@@ -85,7 +85,7 @@ void draw_choice_viewer(RotatedDC& dc, DataViewer& viewer, ChoiceStyle& style, c
 		}
 	}
 	if (style.render_style & RENDER_TEXT) {
-		String text = tr(*viewer.stylesheet, value, capitalize(value));
+		String text = tr(*viewer.stylesheet, value, capitalize_sentence);
 		dc.SetFont(style.font, 1.0);
 		RealPoint pos = align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(0, dc.GetCharHeight()), dc.getInternalRect()) + RealSize(margin, 0);
 		dc.DrawTextWithShadow(text, style.font, pos);

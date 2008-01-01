@@ -25,10 +25,9 @@ class SubLocale : public IntrusivePtrBase<SubLocale> {
   public:
 	map<String,String> translations;
 	
-	/// Translate a key
-	String tr(const String& key);
-	/// Translate a key with a default value
-	String tr(const String& key, const String& def);
+	/// Translate a key, if not found, apply the default function to the key
+	String tr(const String& key, DefaultLocaleFun def);
+	String tr(const String& subcat, const String& key, DefaultLocaleFun def);
 	
 	/// Is this a valid sublocale? Returns errors
 	String validate(const String& name, const SubLocaleValidatorP&) const;

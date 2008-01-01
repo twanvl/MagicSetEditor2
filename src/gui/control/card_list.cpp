@@ -204,7 +204,7 @@ void CardListBase::rebuild() {
 		else if (f.second->card_list_align & ALIGN_CENTER) align = wxLIST_FORMAT_CENTRE;
 		else                                               align = wxLIST_FORMAT_LEFT;
 		InsertColumn((long)column_fields.size(),
-		             tr(*set->game, f.second->card_list_name, capitalize(f.second->card_list_name)),
+		             tr(*set->game, f.second->card_list_name, capitalize),
 		             align, cs.width);
 		column_fields.push_back(f.second);
 	}

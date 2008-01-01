@@ -481,8 +481,8 @@ String InsertSymbolMenu::getCode(int id, const SymbolFont& font) const {
 	} else if (id == 0 && type == ITEM_CODE) {
 		return name;
 	} else if (id == 0 && type == ITEM_CUSTOM) {
-		String caption = tr(font,_("title ")   + name, capitalize_sentence(name));
-		String message = tr(font,_("message ") + name, capitalize_sentence(name));
+		String caption = tr(font,_("title"),   name, capitalize_sentence);
+		String message = tr(font,_("message"), name, capitalize_sentence);
 		return wxGetTextFromUser(message, caption);
 	}
 	return wxEmptyString;
@@ -501,7 +501,7 @@ wxMenu* InsertSymbolMenu::makeMenu(int id, SymbolFont& font) const {
 }
 wxMenuItem* InsertSymbolMenu::makeMenuItem(wxMenu* parent, int first_id, SymbolFont& font) const {
 	if (type == ITEM_SUBMENU) {
-		wxMenuItem* item = new wxMenuItem(parent, wxID_ANY, tr(font, _("menu item ") + name, name),
+		wxMenuItem* item = new wxMenuItem(parent, wxID_ANY, tr(font, _("menu item"), name, capitalize),
 		                                  wxEmptyString, wxITEM_NORMAL,
 		                                  makeMenu(first_id, font));
 		item->SetBitmap(wxNullBitmap);
@@ -510,7 +510,7 @@ wxMenuItem* InsertSymbolMenu::makeMenuItem(wxMenu* parent, int first_id, SymbolF
 		wxMenuItem* item = new wxMenuItem(parent, wxID_SEPARATOR);
 		return item;
 	} else {
-		wxMenuItem* item = new wxMenuItem(parent, first_id, tr(font, _("menu item ") + name, name));
+		wxMenuItem* item = new wxMenuItem(parent, first_id, tr(font, _("menu item"), name, capitalize));
 		// Generate bitmap for use on this item
 		SymbolInFont* symbol = nullptr;
 		if (type == ITEM_CUSTOM) {

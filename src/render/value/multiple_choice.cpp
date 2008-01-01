@@ -74,7 +74,7 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 	}
 	if (style().render_style & RENDER_TEXT) {
 		// draw text
-		String text = tr(*viewer.stylesheet, choice, capitalize_sentence(choice));
+		String text = tr(*viewer.stylesheet, choice, capitalize_sentence);
 		RealSize text_size = dc.GetTextExtent(text);
 		dc.DrawText(text, align_in_rect(ALIGN_MIDDLE_LEFT, text_size,
 		                                RealRect(pos + RealSize(size.width + 1, 0), RealSize(0,size.height))));

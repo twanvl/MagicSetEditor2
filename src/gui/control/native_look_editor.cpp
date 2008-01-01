@@ -44,7 +44,7 @@ void NativeLookEditor::drawViewer(RotatedDC& dc, ValueViewer& v) {
 		// draw label
 		dc.SetFont(*wxNORMAL_FONT);
 		// TODO : tr using stylesheet or using game?
-		dc.DrawText(tr(*set->game, s.fieldP->name, capitalize_sentence(s.fieldP->name)),
+		dc.DrawText(tr(*set->game, s.fieldP->name, capitalize_sentence),
 					RealPoint(margin_left - s.left, 1));
 		// draw 3D border
 		draw_control_border(this, dc.getDC(), dc.trRectStraight(s.getInternalRect().grow(1)));
@@ -70,7 +70,7 @@ void NativeLookEditor::resizeViewers() {
 				// width of the label string
 				int w;
 				Style& s = *v->getStyle();
-				String text = tr(*set->game, s.fieldP->name, capitalize_sentence(s.fieldP->name));
+				String text = tr(*set->game, s.fieldP->name, capitalize_sentence);
 				dc.GetTextExtent(text,&w,nullptr);
 				label_width = max(label_width, w + label_margin);
 			}

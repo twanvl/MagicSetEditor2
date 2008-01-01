@@ -39,26 +39,26 @@ enum LocaleCategory
 ,	LOCALE_CAT_MAX
 };
 
+typedef String (*DefaultLocaleFun)(const String&);
+/// Return the input and issue a warning
+String warn_and_identity(const String&);
+
 /// Translate 'key' in the category 'cat' using the current locale
-String tr(LocaleCategory cat, const String& key);
+String tr(LocaleCategory cat, const String& key, DefaultLocaleFun def = warn_and_identity);
 
 /// Translate 'key' in the for a Game using the current locale
-String tr(const Game&, const String& key);
+String tr(const Game&, const String& key, DefaultLocaleFun def);
 /// Translate 'key' in the for a StyleSheet using the current locale
-String tr(const StyleSheet&, const String& key);
+String tr(const StyleSheet&, const String& key, DefaultLocaleFun def);
 /// Translate 'key' in the for a SymbolFont using the current locale
-String tr(const SymbolFont&, const String& key);
+String tr(const SymbolFont&, const String& key, DefaultLocaleFun def);
 
 /// Translate 'key' in the for a Game using the current locale
-/** If the key is not found, use the default value */
-String tr(const Game&, const String& key, const String& def);
+String tr(const Game&, const String& subcat, const String& key, DefaultLocaleFun def);
 /// Translate 'key' in the for a StyleSheet using the current locale
-/** If the key is not found, use the default value */
-String tr(const StyleSheet&, const String& key, const String& def);
+String tr(const StyleSheet&, const String& subcat, const String& key, DefaultLocaleFun def);
 /// Translate 'key' in the for a SymbolFont using the current locale
-/** If the key is not found, use the default value */
-String tr(const SymbolFont&, const String& key, const String& def);
-
+String tr(const SymbolFont&, const String& subcat, const String& key, DefaultLocaleFun def);
 
 /// A localized string for menus
 #define _MENU_(s)    tr(LOCALE_CAT_MENU,      _(s))

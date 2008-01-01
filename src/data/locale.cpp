@@ -53,18 +53,23 @@ IMPLEMENT_REFLECTION_NO_GET_MEMBER(SubLocale) {
 
 // ----------------------------------------------------------------------------- : Translation
 
-String SubLocale::tr(const String& key) {
+String warn_and_identity(const String& key) {
+	handle_warning(_("Missing key in locale: ") + key, false);
+	return key;
+}
+
+String SubLocale::tr(const String& key, DefaultLocaleFun def) {
 	map<String,String>::const_iterator it = translations.find(key);
 	if (it == translations.end()) {
-		return _("missing:") + key;
+		return def(key);
 	} else {
 		return it->second;
 	}
 }
-String SubLocale::tr(const String& key, const String& def) {
-	map<String,String>::const_iterator it = translations.find(key);
+String SubLocale::tr(const String& subcat, const String& key, DefaultLocaleFun def) {
+	map<String,String>::const_iterator it = translations.find(subcat + _(" ") + key);
 	if (it == translations.end()) {
-		return def;
+		return def(key);
 	} else {
 		return it->second;
 	}
@@ -72,50 +77,28 @@ String SubLocale::tr(const String& key, const String& def) {
 
 // from util/locale.hpp
 
-String tr(LocaleCategory cat, const String& key) {
-	if (!the_locale) return key; // no locale loaded (yet)
-	return the_locale->translations[cat].tr(key);
+String tr(LocaleCategory cat, const String& key, DefaultLocaleFun def) {
+	if (!the_locale) return def(key); // no locale loaded (yet)
+	return the_locale->translations[cat].tr(key,def);
 }
 
+#define IMPLEMENT_TR_TYPE(Type, type_translations)												\
+	String tr(const Type& t, const String& key, DefaultLocaleFun def) {							\
+		if (!the_locale) return def(key);														\
+		SubLocaleP loc = the_locale->type_translations[t.name()];								\
+		if (!loc)        return def(key);														\
+		return loc->tr(key, def);																\
+	}																							\
+	String tr(const Type& t, const String& subcat, const String& key, DefaultLocaleFun def) {	\
+		if (!the_locale) return def(key);														\
+		SubLocaleP loc = the_locale->type_translations[t.name()];								\
+		if (!loc)        return def(key);														\
+		return loc->tr(subcat, key, def);														\
+	}
 
-String tr(const Game& g, const String& key) {
-	if (!the_locale) return key; // no locale loaded (yet)
-	SubLocaleP loc = the_locale->game_translations[g.name()];
-	if (!loc)        return key; // no information on this game
-	return loc->tr(key);
-}
-String tr(const StyleSheet& s, const String& key) {
-	if (!the_locale) return key; // no locale loaded (yet)
-	SubLocaleP loc = the_locale->stylesheet_translations[s.name()];
-	if (!loc)        return key; // no information on this stylesheet
-	return loc->tr(key);
-}
-String tr(const SymbolFont& f, const String& key) {
-	if (!the_locale) return key; // no locale loaded (yet)
-	SubLocaleP loc = the_locale->symbol_font_translations[f.name()];
-	if (!loc)        return key; // no information on this symbol font
-	return loc->tr(key);
-}
-
-
-String tr(const Game& g, const String& key, const String& def) {
-	if (!the_locale) return def; // no locale loaded (yet)
-	SubLocaleP loc = the_locale->game_translations[g.name()];
-	if (!loc)        return def; // no information on this game
-	return loc->tr(key, def);
-}
-String tr(const StyleSheet& s, const String& key, const String& def) {
-	if (!the_locale) return def; // no locale loaded (yet)
-	SubLocaleP loc = the_locale->stylesheet_translations[s.name()];
-	if (!loc)        return def; // no information on this stylesheet
-	return loc->tr(key, def);
-}
-String tr(const SymbolFont& f, const String& key, const String& def) {
-	if (!the_locale) return def; // no locale loaded (yet)
-	SubLocaleP loc = the_locale->symbol_font_translations[f.name()];
-	if (!loc)        return def; // no information on this symbol font
-	return loc->tr(key, def);
-}
+IMPLEMENT_TR_TYPE(Game,       game_translations)
+IMPLEMENT_TR_TYPE(StyleSheet, stylesheet_translations)
+IMPLEMENT_TR_TYPE(SymbolFont, symbol_font_translations)
 
 // ----------------------------------------------------------------------------- : Validation
 
