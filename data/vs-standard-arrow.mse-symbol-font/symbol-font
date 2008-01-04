@@ -1,5 +1,8 @@
-﻿mse version: 0.3.5
-version: 2007-10-13
+mse version: 0.3.6
+version: 2008-01-03
+short name: old
+position hint: 2
+icon: arrow.png
 # Symbol font for arrow symbol
 
 image font size: 135
@@ -16,9 +19,8 @@ symbol:
 symbol:
 	code: <>
 	image: diamonda.png
-
 ##############################################################
 # Insert-symbol menu
 insert symbol menu:
 	item: ->
-	item: @
+	item: <>

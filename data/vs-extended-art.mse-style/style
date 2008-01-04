@@ -1,31 +1,32 @@
-﻿mse version: 0.3.5
+mse version: 0.3.6
 game: vs
 full name: VS Extended Art
 short name: Extended Art
 icon: card-sample.png
-position hint: 002
+position hint: 005
 
-version: 2007-10-05
+version: 2008-01-03
 depends on:
 	package: vs.mse-game
-	version: 2007-09-23
+	version: 2008-01-03
 depends on:
 	package: vs-common.mse-include
-	version: 2007-09-23
+	version: 2008-01-03
 depends on:
 	package: vs-standard-arrow.mse-symbol-font
-	version: 2007-09-23
+	version: 2008-01-03
+depends on:
+	package: vs-standard-official.mse-symbol-font
+	version: 2008-01-03
 
+card background: white
 card width: 375
 card height: 523
 card dpi: 150
 
 ############################################################## Extra scripts
-
 ############################################################## Set info fields
-
 ############################################################## Extra style
-
 styling field:
 	type: boolean
 	name: foils
@@ -41,7 +42,6 @@ styling field:
 	name: edition
 	description: Is the set a 1st Edition?
 	initial: no
-
 ############################################################## Card fields
 card style:
 	############################# Background stuff
@@ -68,7 +68,7 @@ card style:
 			equipment concealed-optional equipment:				eveqcard.jpg
 			location:							locard.jpg
 			plot twist:							ptcard.jpg
-
+			planet:								locard.jpg
 	############################# Name line
 	full name:
 		left: 85
@@ -105,17 +105,13 @@ card style:
 				else    if is_plot_twist() then rgb(161,174,238)
 				else                            rgb(255,236,130)
 		z index: 4
-
 	############################# Image
 	image:
-		left:	
-			script: if is_new_dual() then 60 else 42
+		left:	{ if is_new_dual() then 60 else 42 }
 		top:	73
-		width:	
-			script:	if is_new_dual() then 283 else 301
+		width:	{ if is_new_dual() then 283 else 301 }
 		height: 342
-		mask:
-			script: if is_new_dual() then "image-mask-dual.png" else "image-mask.png"
+		mask: { if is_new_dual() then "image-mask-dual.png" else "image-mask.png" }
 		z index: 1
 	card symbol:
 		left: 310
@@ -135,7 +131,7 @@ card style:
 		top: 31
 		height: 30
 		width: 30
-		visible: script: card.card_symbol=="Other..."
+		visible: { card.card_symbol=="Other..." }
 		z index: 4
 	edition:
 		left: 335
@@ -146,36 +142,31 @@ card style:
 		choice images:
 			first edition: /vs-common.mse-include/first-edition.png
 		z index: 3
-		visible:
-			script: styling.edition
-
+		visible: { styling.edition }
 	############################# Type Bar
 	type text full:
-		left:	script: if is_new_dual() then 87 else 72
+		left:	{ if is_new_dual() then 87 else 72 }
 		top:	395
-		width:	script: if is_new_dual() then 243 else 256
+		width:	{ if is_new_dual() then 243 else 256 }
 		height: 20
 		font:
 			name: Eurostile
 			size: 11
 			color: rgb(0,0,0)
-		visible: script: is_character()
+		visible: { is_character() }
 		alignment: middle center
 		z index: 3
 	type bar:
-		left:	script: if is_new_dual() then 87 else 72
+		left:	{ if is_new_dual() then 87 else 72 }
 		top:	395
-		width:	script: if is_new_dual() then 243 else 256
+		width:	{ if is_new_dual() then 243 else 256 }
 		height: 20
-		visible:
-			script: card.type_text != ""
+		visible: { card.type_text != "" }
 		render style: image
 		choice images:
 			type bar: type-bar.png
 		z index: 2
-
 	############################# Version
-
 	version full:
 		left: 85
 		top : 44
@@ -193,7 +184,6 @@ card style:
 				else    if is_plot_twist()	then rgb(28,47,87)
 				else                                 rgb(22,10,10)
 			separator color: rgb(128,128,128)
-
 	############################# Card ID
 	number line:
 		left: 136
@@ -216,7 +206,7 @@ card style:
 		top : 494
 		width: 30
 		height: 18
-		visible: script: card.rarity=="promo"
+		visible: { card.rarity=="promo" }
 		z index: 3
 		font:
 			name: Eurostile
@@ -228,7 +218,7 @@ card style:
 		top : 496
 		width: 30
 		height: 18
-		visible: script: card.rarity=="promo"
+		visible: { card.rarity=="promo" }
 		z index: 3
 		font:
 			name: Eurostile
@@ -247,13 +237,12 @@ card style:
 			uncommon: /vs-common.mse-include/rarity-uncommon.png
 			rare:	  /vs-common.mse-include/rarity-rare.png
 			promo:    /vs-common.mse-include/rarity-promo.png
-
 	############################# Affiliation
 	team 2 full:
 		left: 18
-		top : 100
-		height: 245
-		width: 28
+		top : 340
+		height: 28
+		width: 245
 		angle: 90
 		font:
 			name: Percolator Expert
@@ -267,35 +256,25 @@ card style:
 		padding top:    2
 		padding right:  2
 		padding bottom: 2
-
 	############################# FlightRange
 	symbols:
 		left: 20
-		top : 
-			script: if is_new_dual() then 365 else 320
-		height: 
-			script: if is_new_dual() then 34 else 17
-		width: 
-			script: if is_new_dual() then 38 else 19
+		top : { if is_new_dual() then 365 else 320 }
+		height: { if is_new_dual() then 34 else 17 }
+		width: { if is_new_dual() then 38 else 19 }
 		z index: 4
 		render style: image list
 		choice images:
-			flight:
-				script: if is_new_dual() then "/vs-common.mse-include/flight.png" else "/vs-common.mse-include/flight2.png"
-			ongoing:
-				script: if is_new_dual() then "/vs-common.mse-include/ongoing.png" else "/vs-common.mse-include/ongoing2.png"
-			range:
-				script: if is_new_dual() then "/vs-common.mse-include/range.png" else "/vs-common.mse-include/range2.png"
+			flight: { if is_new_dual() then "/vs-common.mse-include/flight.png" else "/vs-common.mse-include/flight2.png" }
+			ongoing: { if is_new_dual() then "/vs-common.mse-include/ongoing.png" else "/vs-common.mse-include/ongoing2.png" }
+			range: { if is_new_dual() then "/vs-common.mse-include/range.png" else "/vs-common.mse-include/range2.png" }
 		direction: vertical
-		spacing: 0
-
+		spacing: { if is_new_dual() then 35 else 20 }
 	############################# Text box
 	rule text:
-		left: 
-			script: if is_new_dual() then 105 else 90
+		left: { if is_new_dual() then 105 else 90 }
 		top : 430
-		width: 
-			script: if is_new_dual() then 250 else 265
+		width: { if is_new_dual() then 250 else 265 }
 		height: 50
 		mask: text-mask.png
 		font:
@@ -315,10 +294,8 @@ card style:
 		padding right:  2
 		padding bottom: 2
 		line height hard: 1.4
-
 	flavor text:
-		left: 
-			script: if is_new_dual() then 95 else 90
+		left: { if is_new_dual() then 95 else 90 }
 		top : 440
 		width: 265
 		height: 50
@@ -335,23 +312,15 @@ card style:
 		padding right:  2
 		padding bottom: 2
 		line height hard: 1.2
-
 	watermark:
-		left: 
-			script: if watermark_narrow() then 190 else
-				if watermark_wide() then 180 else
-				if is_new_dual() then 217 else 200
+		left: { if watermark_narrow() then 190 else if watermark_wide() then 180 else if is_new_dual() then 217 else 200 }
 		top:  435
-		width: 
-			script: if watermark_narrow() then 35 else
-				if watermark_wide() then 90 else 50
+		width: { if watermark_narrow() then 35 else if watermark_wide() then 90 else 50 }
 		height: 50
-		visible:
-			script: styling.watermarkings
+		visible: { styling.watermarkings }
 		render style: image
 		include file: /vs-common.mse-include/watermarks
 		z index: 4
-
 	############################# Atack/defence
 	attack:
 		z index: 4
@@ -359,7 +328,7 @@ card style:
 		top:	430
 		width:	30
 		height:	47
-		visible: script: is_character()
+		visible: { is_character() }
 		z index: 4
 		alignment: bottom left shrink-overflow
 		font:
@@ -369,14 +338,13 @@ card style:
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 3
 			shadow displacement y: 0
-
 	defence:
 		z index: 4
 		left:	47
 		top:	465
 		width:	30
 		height:	47
-		visible: script: is_character()
+		visible: { is_character() }
 		z index: 4
 		alignment: bottom left shrink-overflow
 		padding bottom: -4
@@ -387,10 +355,8 @@ card style:
 			shadow color: rgb(0,0,0)
 			shadow displacement x: -3
 			shadow displacement y: 0
-
 	############################# Card sorting / numbering
 	############################# Copyright stuff
-
 	illustrator:
 		left: 122
 		top : 417
@@ -402,7 +368,6 @@ card style:
 			name: Eurostile
 			size: 6
 			color: rgb(255,255,255)
-
 	copyright:
 		left: 195
 		top : 492
@@ -415,24 +380,19 @@ card style:
 			size: 4
 			color: rgb(255,255,255)
 ############################################################## Extra card fields
-
 extra card field:
 	type: choice
 	name: foil layer
 	choice: foil
 	editable: false
-
 extra card style:
 	foil layer:
 		left: 0
 		top : 0
-		width:  
-			script: if styling.foils=="no" then 0 else 375
-		height:
-			script: if styling.foils=="no" then 0 else 523
+		width:  { if styling.foils=="no" then 0 else 375 }
+		height: { if styling.foils=="no" then 0 else 523 }
 		z index: 8
 		render style: image
 		choice images:
 			foil: /vs-common.mse-include/foil.png
-		visible:
-			script: styling.foils
+		visible: { styling.foils }

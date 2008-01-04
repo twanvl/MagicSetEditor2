@@ -1,0 +1,290 @@
+mse version: 0.3.6
+game: vs
+full name: VS Oversize Avatar
+short name: Oversize Avatar
+icon: card-sample.png
+position hint: 007
+
+version: 2008-01-03
+depends on:
+	package: vs.mse-game
+	version: 2008-01-03
+depends on:
+	package: vs-common.mse-include
+	version: 2008-01-03
+depends on:
+	package: vs-standard-arrow.mse-symbol-font
+	version: 2008-01-03
+depends on:
+	package: vs-standard-official.mse-symbol-font
+	version: 2008-01-03
+
+card background: white
+card width: 375
+card height: 523
+card dpi: 75
+
+############################################################## Extra scripts
+############################################################## Set info fields
+############################################################## Extra style
+styling field:
+	type: boolean
+	name: foils
+	description: Use foil backgrounds?
+	initial: no
+############################################################## Card fields
+card style:
+	############################# Background stuff
+	card type:
+		left:	0
+		top:	0
+		width:	375
+		height:	523
+		z index: -2
+		render style: image
+		popup style: in place
+		choice images:
+			characters visible character:					card.png
+			characters visible character dual:				card.png
+			characters visible character dual (new):			card.png
+			characters hidden concealed:					card.png
+			characters hidden concealed dual:				card.png
+			characters hidden concealed dual (new):				card.png
+			characters concealed-optional concealed-optional character:	card.png
+			characters concealed-optional concealed-optional dual:		card.png
+			characters concealed-optional concealed-optional dual (new):	card.png
+			equipment visible equipment:					card.png
+			equipment concealed equipment:					card.png
+			equipment concealed-optional equipment:				card.png
+			location:							card.png
+			plot twist:							card.png
+			planet:								card.png
+	############################# Name line
+	full name:
+		left: 80
+		top : 24
+		width: 230
+		height: 24
+		alignment: bottom center shrink-overflow
+		padding bottom: 0
+		z index: 4
+		font:
+			name: Percolator Expert
+			size: 22
+			color: rgb(230,230,230)
+		symbol font:
+			name: vs-standard-official
+			size: 15
+			alignment: middle center
+	cost:
+		left: 22
+		top : 30
+		width: 25
+		height: 41
+		alignment: bottom center
+		font:
+			name: BadhouseBoldNumbers
+			size: 40
+			color: rgb(230,230,230)
+		z index: 4
+		padding top: 0
+	############################# Image
+	image:
+		left:	19
+		top:	73
+		width:	339
+		height: 330
+		z index: 1
+		mask: image-mask.png
+	card symbol:
+		left: 310
+		top : 33
+		height: 30
+		width: 45
+		render style: image
+		choice images:
+			Marvel:	/vs-common.mse-include/marvel.png
+			DC-new:	/vs-common.mse-include/dcnew.png
+			DC-old:	/vs-common.mse-include/dcold.png
+			Hellboy: /vs-common.mse-include/hellboy.png
+			Other...: /vs-common.mse-include/blank.png
+		z index: 3
+	custom symbol:
+		left: 310
+		top: 31
+		height: 30
+		width: 30
+		visible: { card.card_symbol=="Other..." }
+		z index: 4
+	############################# Type Bar
+	############################# Version
+	version full:
+		left: 80
+		top : 49
+		width: 230
+		height: 18
+		alignment: middle center shrink-overflow
+		padding bottom: 0
+		z index: 4
+		font:
+			name: Percolator Expert
+			size: 14
+			color: rgb(230,230,230)
+		symbol font:
+			name: vs-standard-arrow
+			size: 15
+			alignment: middle center
+	############################# Card ID
+	number line:
+		left: 24
+		top : 489
+		width: 30
+		height: 16
+		z index: 5
+		alignment: left middle
+		font:
+			name: Eurostile-Black-DTC
+			size: 8
+			color:
+				script: if card.rarity=="common"   then rgb(255,255,255)
+				else    if card.rarity=="uncommon" then rgb(151,183,201)
+				else    if card.rarity=="rare"     then rgb(253,215,125)
+				else 	if card.rarity=="promo"    then rgb(255,20,20)
+				else rgb(255,255,255)
+	promo outliner:
+		left: 23
+		top : 488
+		width: 45
+		height: 15
+		visible: { card.rarity=="promo" }
+		z index: 4
+		alignment: left middle
+		font:
+			name: Eurostile
+			size: 8
+			color: rgb(255,255,255)
+			weight: bold
+	promo outliner 2:
+		left: 25
+		top : 490
+		width: 45
+		height: 15
+		visible: { card.rarity=="promo" }
+		z index: 4
+		alignment: left middle
+		font:
+			name: Eurostile
+			size: 8
+			color: rgb(255,255,255)
+			weight: bold
+	rarity:
+		left: 35
+		top: 488
+		width: 20
+		height: 18
+		z index: 6
+		render style: image hidden
+		choice images:
+			common:	  /vs-common.mse-include/rarity-common.png
+			uncommon: /vs-common.mse-include/rarity-uncommon.png
+			rare:	  /vs-common.mse-include/rarity-rare.png
+			promo:    /vs-common.mse-include/rarity-promo.png
+	############################# Affiliation
+	team full:
+		left: 20
+		top:  406
+		width: 338
+		height: 20
+		font:
+			name: BankGothic Md BT
+			italic name: BankGothic Md BT
+			weight: bold
+			size: 12
+			scale down to: 12
+			color: rgb(230,230,230)
+		alignment: middle center
+	############################# FlightRange
+	############################# Text box
+	rule text:
+		left: 20
+		top : 430
+		width: 338
+		height: 38
+		font:
+			name: Eurostile
+			italic name: EurostileObl-Normal
+			size: 12
+			scale down to: 2
+			color: rgb(0,0,0)
+		symbol font:
+			name: vs-standard-official
+			size: 14
+			alignment: middle center
+		alignment: top left
+		z index: 3
+		padding left:   2
+		padding top:    0
+		padding right:  2
+		padding bottom: 2
+		line height hard: 1.0
+	flavor text:
+		left: 20
+		top : 468
+		width: 338
+		height: 17
+		font:
+			name: EurostileObl-Normal
+			italic name: EurostileObl-Normal
+			size: 10
+			scale down to: 2
+			color: rgb(0,0,0)
+		alignment: bottom center
+		z index: 3
+		padding left:   2
+		padding top:    2
+		padding right:  2
+		padding bottom: 2
+		line height hard: 1.0
+	############################# Attack/defence
+	############################# Card sorting / numbering
+	############################# Copyright stuff
+	illustrator:
+		left: 20
+		top : 489
+		width: 338
+		height: 7
+		alignment: middle center
+		z index: 4
+		font:
+			name: Eurostile
+			size: 6
+			color: rgb(255,255,255)
+	copyright:
+		left: 20
+		top : 497
+		width: 338
+		height: 7
+		z index: 4
+		alignment: bottom center
+		font: 
+			name: Eurostile
+			weight: bold
+			size: 6
+			color: rgb(255,255,255)
+############################################################## Extra card fields
+extra card field:
+	type: choice
+	name: foil layer
+	choice: foil
+	editable: false
+extra card style:
+	foil layer:
+		left: 0
+		top : 0
+		width:  { if styling.foils=="no" then 0 else 375 }
+		height: { if styling.foils=="no" then 0 else 523 }
+		z index: 8
+		render style: image
+		choice images:
+			foil: /vs-common.mse-include/foil.png
+		visible: { styling.foils }

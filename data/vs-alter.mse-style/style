@@ -1,42 +1,37 @@
-﻿mse version: 0.3.5
+mse version: 0.3.6
 game: vs
 full name: VS Alter Ego
 short name: Alter Ego
 icon: card-sample.png
-position hint: 005
+position hint: 008
 
-version: 2007-10-05
+version: 2008-01-03
 depends on:
 	package: vs.mse-game
-	version: 2007-09-23
+	version: 2008-01-03
 depends on:
 	package: vs-common.mse-include
-	version: 2007-09-23
+	version: 2008-01-03
 depends on:
 	package: vs-standard-arrow.mse-symbol-font
-	version: 2007-09-23
+	version: 2008-01-03
+depends on:
+	package: vs-standard-official.mse-symbol-font
+	version: 2008-01-03
 
+card background: white
 card width: 375
 card height: 523
 card dpi: 150
 
 ############################################################## Extra scripts
-
 ############################################################## Set info fields
-
 ############################################################## Extra style
-
 styling field:
 	type: boolean
 	name: foils
 	description: Use foil backgrounds?
 	initial: no
-styling field:
-	type: boolean
-	name: watermarkings
-	description: Use watermarks?
-	initial: no
-
 ############################################################## Card fields
 card style:
 	############################# Background stuff
@@ -63,7 +58,7 @@ card style:
 			equipment concealed-optional equipment:				card.jpg
 			location:							card.jpg
 			plot twist:							card.jpg
-
+			planet:								card.jpg
 	############################# Name line
 	full name:
 		left: 80
@@ -93,7 +88,6 @@ card style:
 			color: rgb(255,213,128)
 		z index: 4
 		padding top: 0
-
 	############################# Image
 	image:
 		left:	19
@@ -119,19 +113,13 @@ card style:
 		top: 31
 		height: 30
 		width: 30
-		visible: script: card.card_symbol=="Other..."
+		visible: { card.card_symbol=="Other..." }
 		z index: 4
-
 	############################# Type Bar
-
 	############################# Version
-
 	############################# Card ID
-
 	############################# Affiliation
-
 	############################# FlightRange
-
 	############################# Text box
 	rule text:
 		left: 20
@@ -155,27 +143,9 @@ card style:
 		padding right:  2
 		padding bottom: 2
 		line height hard: 1.4
-
-	watermark:
-		left: 
-			script: if watermark_narrow() then 182 else
-				if watermark_wide() then 155 else 173
-		top:  423
-		width: 
-			script: if watermark_narrow() then 30 else
-				if watermark_wide() then 75 else 40
-		height: 40
-		visible:
-			script: styling.watermarkings
-		render style: image
-		include file: /vs-common.mse-include/watermarks
-		z index: 4
-
 	############################# Attack/defence
-
 	############################# Card sorting / numbering
 	############################# Copyright stuff
-
 	illustrator:
 		left: 20
 		top : 475
@@ -187,7 +157,6 @@ card style:
 			name: Eurostile
 			size: 9
 			color: rgb(255,255,255)
-
 	copyright:
 		left: 20
 		top : 490
@@ -199,9 +168,7 @@ card style:
 			name: Eurostile
 			size: 8
 			color: rgb(255,255,255)
-
 ############################################################## Extra card fields
-
 extra card field:
 	type: choice
 	name: overlay
@@ -212,7 +179,6 @@ extra card field:
 	name: foil layer
 	choice: foil
 	editable: false
-
 extra card style:
 	overlay:
 		left:	20
@@ -226,13 +192,10 @@ extra card style:
 	foil layer:
 		left: 0
 		top : 0
-		width:  
-			script: if styling.foils=="no" then 0 else 375
-		height:
-			script: if styling.foils=="no" then 0 else 523
+		width:  { if styling.foils=="no" then 0 else 375 }
+		height: { if styling.foils=="no" then 0 else 523 }
 		z index: 8
 		render style: image
 		choice images:
 			foil: /vs-common.mse-include/foil.png
-		visible:
-			script: styling.foils
+		visible: { styling.foils }

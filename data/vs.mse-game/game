@@ -1,26 +1,29 @@
-﻿mse version: 0.3.5
+﻿mse version: 0.3.6
 full name: VS System
 short name: VS
 icon: card-back.png
-version: 2007-09-23
 position hint: 3
+
+version: 2008-01-03
 depends on:
 	package: vs-common.mse-include
-	version: 2007-09-23
+	version: 2008-01-03
 
 ############################################################## Functions & filters
 # General functions
 init script:
 	# Index for sorting, character/concealed, equipment, location then plot twist
 	sort_index := {
-		if	card.team==""			then "2"
-		else if	card.team=="EQUIPMENT"		then "3"
-		else if	card.team=="Equipment"		then "3"
-		else if card.team=="LOCATION"		then "4"
-		else if card.team=="Location"		then "4"
-		else if card.team=="PLOT TWIST"		then "5"
-		else if card.team=="Plot Twist"		then "5"
-		else 					     "1"
+		if	card.team=="Planet"		then "1"
+		else if card.team=="PLANET"		then "1"
+		else if card.team==""			then "3"
+		else if	card.team=="EQUIPMENT"		then "4"
+		else if	card.team=="Equipment"		then "4"
+		else if card.team=="LOCATION"		then "5"
+		else if card.team=="Location"		then "5"
+		else if card.team=="PLOT TWIST"		then "6"
+		else if card.team=="Plot Twist"		then "6"
+		else 					     "2"
 	};
 	############################################################## Text Filters
 	
@@ -38,9 +41,9 @@ init script:
 		replace_rule(
 			match: "`|::",
 			replace: "•")+
-		# step 5d : trademark symbol
+		# step 5e : trademark symbol
 		replace_rule(
-			match: " TM ",
+			match: "TM",
 			replace: "™")+
 		# step 5e : copyright symbol
 		replace_rule(
@@ -99,6 +102,8 @@ init script:
 		if      card.team == "Location"    				then "location"
 		else if card.team == "LOCATION"					then "location"
 		else if keyword_sort_location(card.rule_text) != ""     	then "location"
+		else if card.team == "Planet"					then "planet"
+		else if card.team == "PLANET"					then "planet"
 		else if card.team == "Equipment"   				then "equipment visible equipment"
 		else if card.team == "EQUIPMENT"				then "equipment visible equipment"
 		else if keyword_sort_equipment(card.rule_text) != ""    	then "equipment visible equipment"
@@ -114,8 +119,8 @@ init script:
 	}
 	# Default Concealed Optional Card Type
 	c_optional_script := {
-		if 	card.team_2 != ""        			then "characters concealed-optional concealed-optional dual"
-		else if card.team_2_of_2 != "" 	   			then "characters concealed-optional concealed-optional dual (new)"
+		if	card.team_2 != ""        			then "characters concealed-optional concealed-optional dual"
+		else if	card.team_2_of_2 != "" 	   			then "characters concealed-optional concealed-optional dual (new)"
 		else                                    		     "characters concealed-optional concealed-optional character"
 	}
 	# Default Concealed Card Type
@@ -163,16 +168,16 @@ init script:
 		card.card_type == "characters concealed-optional concealed-optional character" or
 	        card.card_type == "characters concealed-optional concealed-optional dual"
 	}
-	is_character := {
-		card.card_type == "characters visible character" or
-	        card.card_type == "characters visible character dual" or
-	        card.card_type == "characters visible character dual (new)" or
-	        card.card_type == "characters hidden concealed" or
-	        card.card_type == "characters hidden concealed dual" or
-	        card.card_type == "characters hidden concealed dual (new)" or
-	        card.card_type == "characters concealed-optional concealed-optional character" or
-	        card.card_type == "characters concealed-optional concealed-optional character dual" or
-	        card.card_type == "characters concealed-optional concealed-optional character dual (new)"
+	is_character := { contains(card.card_type, match: "characters")
+	#	card.card_type == "characters visible character" or
+	#        card.card_type == "characters visible character dual" or
+	#        card.card_type == "characters visible character dual (new)" or
+	#        card.card_type == "characters hidden concealed" or
+	#        card.card_type == "characters hidden concealed dual" or
+	#        card.card_type == "characters hidden concealed dual (new)" or
+	#        card.card_type == "characters concealed-optional concealed-optional character" or
+	#        card.card_type == "characters concealed-optional concealed-optional character dual" or
+	#        card.card_type == "characters concealed-optional concealed-optional character dual (new)"
 	}
 	is_concealed := {
 	        card.card_type == "characters hidden concealed" or
@@ -194,6 +199,9 @@ init script:
 	}
 	is_plot_twist := {
 		card.card_type == "plot twist"
+	}
+	is_ch_or_eq := {
+		is_character() or is_equipment()
 	}
 	is_ch_or_pt := {
 		is_character() or is_plot_twist()
@@ -222,6 +230,7 @@ init script:
 				sort_index() + card.team + card.team_2_of_2 + card.team_2 + card.team_2_of_2_2 + card.name + card.version + " • " + card.team_affiliation
 			}) + 1
 	}
+		
 ############################################################## Set fields
 
 set field:
@@ -333,6 +342,7 @@ card field:
 		choice: concealed-optional equipment
 	choice: location
 	choice: plot twist
+	choice: planet
 	default: card_type()
 	show statistics: false
 
@@ -346,7 +356,7 @@ card field:
 	type: text
 	name: sep
 	editable: false
-	script: if is_character() and card.identity=="" then "™ " else if is_character() and card.identity!="" then "™ <sym>@</sym>" else ""
+	script: if is_character() and card.identity=="" then "™" else if is_character() and card.identity!="" then "™ <sym>@</sym>" else ""
 card field:
 	type: text
 	name: identity
@@ -832,3 +842,8 @@ keyword:
 	match: Substitute
 	mode: real
 	reminder: Reveal this card -> You may remove from the game a ready character you control with cost greater than or equal to the cost of this card. If you do, put this card into play. Use only if this card is in your hand and only during your recruit step." 
+keyword:
+	keyword: Insanity:
+	match: Insanity: <atom-param>action</atom-param>
+	mode: real
+	reminder: You may not have more than one copy of this card in your deck.
