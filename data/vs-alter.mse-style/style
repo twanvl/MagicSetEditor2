@@ -15,9 +15,6 @@ depends on:
 depends on:
 	package: vs-standard-arrow.mse-symbol-font
 	version: 2008-01-03
-depends on:
-	package: vs-standard-official.mse-symbol-font
-	version: 2008-01-03
 
 card background: white
 card width: 375
@@ -27,6 +24,11 @@ card dpi: 150
 ############################################################## Extra scripts
 ############################################################## Set info fields
 ############################################################## Extra style
+styling field:
+	type: package choice
+	name: text box symbols
+	match: vs-standard-*.mse-symbol-font
+	initial: vs-standard-arrow.mse-symbol-font
 styling field:
 	type: boolean
 	name: foils
@@ -133,7 +135,7 @@ card style:
 			scale down to: 6
 			color: rgb(0,0,0)
 		symbol font:
-			name: vs-standard-arrow
+			name: { styling.text_box_symbols }
 			size: 11
 			alignment: middle center
 		alignment: middle center shrink-overflow

@@ -28,6 +28,11 @@ card dpi: 75
 ############################################################## Set info fields
 ############################################################## Extra style
 styling field:
+	type: package choice
+	name: text box symbols
+	match: vs-standard-*.mse-symbol-font
+	initial: vs-standard-official.mse-symbol-font
+styling field:
 	type: boolean
 	name: foils
 	description: Use foil backgrounds?
@@ -217,7 +222,7 @@ card style:
 			scale down to: 2
 			color: rgb(0,0,0)
 		symbol font:
-			name: vs-standard-official
+			name: { styling.text_box_symbols }
 			size: 14
 			alignment: middle center
 		alignment: top left
