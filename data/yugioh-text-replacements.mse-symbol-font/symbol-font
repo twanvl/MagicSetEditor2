@@ -1,6 +1,6 @@
-﻿mse version: 0.3.5
+﻿mse version: 0.3.6
 # Symbol font for missing characters
-version: 2007-10-13
+version: 2008-01-04
 
 image font size: 16
 horizontal space: 2
@@ -14,7 +14,7 @@ symbol:
 	code: @
 	image: infinity.png
 symbol:
-	code: ::
+	code: *
 	image: dot.png
 
 ##############################################################
@@ -23,4 +23,4 @@ insert symbol menu:
 	item: [
 	item: ]
 	item: @
-	item: ::
+	item: *
