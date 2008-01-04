@@ -341,3 +341,4 @@ extra card style:
 		visible: { card.pt != "" }
 		render style: image
 		image: { card_ptbox() }
+		mask: ptmask.png
