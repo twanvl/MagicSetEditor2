@@ -17,7 +17,6 @@
 // ----------------------------------------------------------------------------- : AtomicInt : windows
 
 #if defined(__WXMSW__)
-	
 	#ifdef _MSC_VER
 		extern "C" {
 			LONG  __cdecl _InterlockedIncrement(LONG volatile *Addend);
@@ -61,16 +60,16 @@
 	typedef unsigned int AtomicIntEquiv;
 	
 	/// An integer that can be incremented and decremented atomicly
-	class AtomicIntEquiv {
+	class AtomicInt {
 	  public:
-		AtomicIntEquiv(AtomicIntEquiv v) : v(v) {}
+		AtomicInt(AtomicIntEquiv v) : v(v) {}
 		inline operator AtomicIntEquiv() const {
 			return v;
 		}
-		inline AtomicIntEquiv operator ++ () {
+		inline AtomicInt operator ++ () {
 			return __sync_add_and_fetch(&v,1);
 		}
-		inline AtomicIntEquiv operator -- () {
+		inline AtomicInt operator -- () {
 			return __sync_add_and_fetch(&v,(AtomicIntEquiv)-1);
 		}
 	  private:

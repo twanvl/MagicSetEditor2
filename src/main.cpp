@@ -174,8 +174,8 @@ int MSE::OnRun() {
 					}
 					wxFileName fn(path);
 					// export
-					ExportCardImages export;
-					export.export(set, fn, out, CONFLICT_NUMBER_OVERWRITE);
+					ExportCardImages exporter;
+					exporter.exportImages(set, fn, out, CONFLICT_NUMBER_OVERWRITE);
 					return EXIT_SUCCESS;
 				} else {
 					handle_error(_("Invalid command line argument:\n") + String(argv[1]));

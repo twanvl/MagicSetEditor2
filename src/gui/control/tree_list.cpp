@@ -225,10 +225,10 @@ void TreeList::onChar(wxKeyEvent& ev) {
 				}
 			}
 			break;
-		} case WXK_PAGEUP: case WXK_PRIOR: {
+		} case WXK_PAGEUP: {
 			ScrollToLine(first_line > visible_lines_t ? first_line - visible_lines_t : 0);
 			break;
-		} case WXK_PAGEDOWN: case WXK_NEXT: {
+		} case WXK_PAGEDOWN: {
 			ScrollToLine(first_line + visible_lines_t);
 			break;
 		} case WXK_HOME: {

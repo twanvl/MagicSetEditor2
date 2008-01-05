@@ -1,4 +1,4 @@
-//+----------------------------------------------------------------------------+
+// //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
 //| Copyright:    (C) 2001 - 2007 Twan van Laarhoven                           |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
@@ -131,7 +131,7 @@ inline bool is_set(const Scriptable<double>& x) {
 	return x.isScripted() || x < 100000;
 }
 inline bool is_setw(const Scriptable<double>& x) {
-	return x.isScripted() || abs(x) > 0.001;
+	return x.isScripted() || fabs(x) > 0.001;
 }
 
 int Style::update(Context& ctx) {
@@ -187,11 +187,11 @@ int Style::update(Context& ctx) {
 bool Style::isVisible() const {
 	return visible
 	    &&    (width)  > 0      
-	    && abs(left)   < 100000
-	    && abs(right)  < 100000
+	    && fabs(left)   < 100000
+	    && fabs(right)  < 100000
 	    &&    (height) > 0      
-	    && abs(top)    < 100000
-	    && abs(bottom) < 100000;
+	    && fabs(top)    < 100000
+	    && fabs(bottom) < 100000;
 }
 bool Style::hasSize() const {
 	int h = is_setw(width)  + is_set(left) + is_set(right);

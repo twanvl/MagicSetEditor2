@@ -73,25 +73,37 @@ class GalleryList : public wxPanel {
 	wxPoint itemPos(size_t item) const;
 	
 	/// Scroll to the given position (note: 'top' can also mean 'left')
-	void GalleryList::scrollTo(int top, bool update_scrollbar = true);
+	void scrollTo(int top, bool update_scrollbar = true);
 	/// Update the scrollbar(s)
-	void GalleryList::updateScrollbar();
+	void updateScrollbar();
 	/// Redraw just a single item
-	void GalleryList::RefreshItem(size_t item);
+	void RefreshItem(size_t item);
 	
 	/// First visible pixel position
 	int visible_start;
 	/// First no-longer-visible pixel position
-	inline int GalleryList::visibleEnd() const;
+	inline int visibleEnd() const {
+		return visible_start + mainSize(GetClientSize());
+	}
 	/// Pixel position of an item
-	inline int GalleryList::itemStart(size_t item) const;
-	inline int GalleryList::itemEnd(size_t item) const;
+	inline int itemStart(size_t item) const {
+		return (int)item * (mainSize(item_size) + SPACING);
+	}
+	inline int itemEnd(size_t item) const {
+		return (int)(item + 1) * (mainSize(item_size) + SPACING) + MARGIN;
+	}
 	/// Main component of a size (i.e. in the direction of this list)
-	inline int GalleryList::mainSize(wxSize s) const;
+	inline int mainSize(wxSize s) const {
+		return direction == wxHORIZONTAL ? s.x : s.y;
+	}
 
   protected:
 	/// Send an event
 	void sendEvent(WXTYPE type);
+
+	static const int MARGIN = 1; // margin between items (excluding border)
+	static const int BORDER = 1; // border aroung items
+	static const int SPACING = MARGIN + 2*BORDER; // distance between items
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -57,7 +57,7 @@ ImagesExportWindow::ImagesExportWindow(Window* parent, const SetP& set)
 
 // ----------------------------------------------------------------------------- : Exporting the images
 
-void ExportCardImages::export(const SetP& set, wxFileName& fn, const String& filename_template, FilenameConflicts conflicts) {
+void ExportCardImages::exportImages(const SetP& set, wxFileName& fn, const String& filename_template, FilenameConflicts conflicts) {
 	// Script
 	ScriptP filename_script = parse(filename_template, nullptr, true);
 	// Export
@@ -116,7 +116,7 @@ void ImagesExportWindow::onOk(wxCommandEvent&) {
 	if (name.empty()) return;
 	wxFileName fn(name);
 	// Export
-	export(set, fn, gs.images_export_filename, gs.images_export_conflicts);
+	exportImages(set, fn, gs.images_export_filename, gs.images_export_conflicts);
 	// Done
 	EndModal(wxID_OK);
 }

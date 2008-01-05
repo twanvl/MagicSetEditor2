@@ -149,6 +149,9 @@ inline shared_ptr<T> new_shared9(const A0& a0, const A1& a1, const A2& a2, const
 	
 	// ----------------------------------------------------------------------------- : Intrusive pointer base
 	
+	template <typename T> class IntrusivePtrBase;
+	template <typename T> void intrusive_ptr_add_ref(IntrusivePtrBase<T>*);
+	template <typename T> void intrusive_ptr_release(IntrusivePtrBase<T>*);
 	/// Base class for objects wishing to use intrusive_ptrs.
 	/** There is no implicit virtual destructor, objects are destructed as type T
 	*   Usage:
@@ -171,19 +174,19 @@ inline shared_ptr<T> new_shared9(const A0& a0, const A1& a1, const A2& a2, const
 		}
 	  private:
 		AtomicInt ref_count;
-		template <typename T> friend void intrusive_ptr_add_ref(IntrusivePtrBase*);
-		template <typename T> friend void intrusive_ptr_release(IntrusivePtrBase*);
+		friend void intrusive_ptr_add_ref <> (IntrusivePtrBase*);
+		friend void intrusive_ptr_release <> (IntrusivePtrBase*);
 	};
-	
-	template <typename T> inline void intrusive_ptr_add_ref(IntrusivePtrBase<T>* p) {
-		++p->ref_count;
+
+	template <typename T> void intrusive_ptr_add_ref(IntrusivePtrBase<T>* p) {
+		++(p->ref_count);
 	}
-	template <typename T> inline void intrusive_ptr_release(IntrusivePtrBase<T>* p) {
+	
+	template <typename T> void intrusive_ptr_release(IntrusivePtrBase<T>* p) {
 		if (--p->ref_count == 0) {
 			static_cast<T*>(p)->destroy();
 		}
 	}
-	
 	// ----------------------------------------------------------------------------- : Intrusive pointer base : virtual
 	
 	/// IntrusivePtrBase with a virtual destructor

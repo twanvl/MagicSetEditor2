@@ -18,10 +18,6 @@ DEFINE_EVENT_TYPE(EVENT_GALLERY_ACTIVATE);
 
 // ----------------------------------------------------------------------------- : GalleryList
 
-const int MARGIN = 1; // margin between items (excluding border)
-const int BORDER = 1; // border aroung items
-const int SPACING = MARGIN + 2*BORDER; // distance between items
-
 GalleryList::GalleryList(Window* parent, int id, int direction, bool always_focused)
 	: wxPanel(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER | wxWANTS_CHARS | (direction == wxHORIZONTAL ? wxHSCROLL : wxVSCROLL) )
 	, selection(NO_SELECTION)
@@ -71,19 +67,6 @@ wxPoint GalleryList::itemPos(size_t item) const {
 }
 
 // ----------------------------------------------------------------------------- : Scrolling & sizing
-
-int GalleryList::visibleEnd() const {
-	return visible_start + mainSize(GetClientSize());
-}
-int GalleryList::itemStart(size_t item) const {
-	return (int)item * (mainSize(item_size) + SPACING);
-}
-int GalleryList::itemEnd(size_t item) const {
-	return (int)(item + 1) * (mainSize(item_size) + SPACING) + MARGIN;
-}
-int GalleryList::mainSize(wxSize s) const {
-	return direction == wxHORIZONTAL ? s.x : s.y;
-}
 
 void GalleryList::scrollTo(int top, bool update_scrollbar) {
 	wxSize cs = GetClientSize();

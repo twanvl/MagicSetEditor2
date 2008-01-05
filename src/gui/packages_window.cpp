@@ -606,7 +606,8 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 		packages.install(*ip);
 	}
 	// Done
-	wxDialog::OnOK(ev);
+	// Continue event propagation into the dialog window so that it closes.
+	ev.Skip();
 }
 
 void PackagesWindow::onUpdateUI(wxUpdateUIEvent& ev) {

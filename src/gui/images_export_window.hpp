@@ -19,7 +19,8 @@ class wxFileName;
 /// Export the cards in a set
 class ExportCardImages {
   public:
-	void export(const SetP& set, wxFileName& filename, const String& filename_template, FilenameConflicts conflicts);
+	void exportImages(const SetP& set, wxFileName& filename, const String& filename_template, FilenameConflicts conflicts);
+	virtual ~ExportCardImages() {}
   protected:
 	virtual bool exportCard(const CardP& card) const { return true; }
 };
