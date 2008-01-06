@@ -51,6 +51,7 @@ button:
 	high quality:	0
 	if internet connection exists:	0
 	insert parameter:	0
+	install group:		0
 	install package:	0
 	keep old:	0
 	last opened set:	0
@@ -64,6 +65,7 @@ button:
 	overwrite:	0
 	refer parameter:	0
 	remove item:	0
+	remove group: 0
 	remove package:	0
 	select:	optional, 0
 	select all:	0
@@ -72,6 +74,7 @@ button:
 	show editing hints:	0
 	show lines:	0
 	symbol gallery:	optional, 0
+	upgrade group:	0
 	upgrade package:	0
 	use auto replace:	0
 	use custom styling options:	0
@@ -107,6 +110,8 @@ error:
 	package not found:	1
 	package out of date:	3
 	package too new:	4
+	remove packages:	1
+	remove packages modified:	2
 	stylesheet and set refer to different game:	0
 	successful install:	optional, 2
 	unable to open output file:	0
