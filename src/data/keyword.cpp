@@ -483,7 +483,24 @@ String KeywordDatabase::expand(const String& text,
 							size_t start = untagged_to_index(s, start_u, true),
 							       end   = untagged_to_index(s, start_u + len_u, true);
 							if (start == end) continue; // don't match empty keywords
-							result += s.substr(0, start);
+							// copy text before keyword
+							result += remove_tag(s.substr(0, start), _("<kw-"));
+							
+							// a part of s has not been searched for <kw- tags
+							// this can happen when the trie incorrectly matches too early
+							for (size_t j = i+1 ; j < start ;) {
+								Char c = s.GetChar(j);
+								if (c == _('<')) {
+									if (is_substr(s, j, _("<kw-")) && j + 4 < s.size()) {
+										expand_type = s.GetChar(j + 4); // <kw-?>
+									} else if (is_substr(s, j, _("</kw-"))) {
+										expand_type = 'a';
+									}
+									j = skip_tag(s, j);
+								} else {
+									++j;
+								}
+							}
 							
 							// Split the keyword, set parameters in context
 							String total; // the total keyword
