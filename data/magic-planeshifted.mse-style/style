@@ -5,7 +5,7 @@ full name: Planar Chaos Timeshifts
 icon: card-sample.png
 position hint: 011
 
-version: 2007-12-30
+version: 2008-01-10
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -63,10 +63,6 @@ styling field:
 	name: shifted sorting
 	description: Should this style of card sort as a shifted card (after other cards of that color)?
 	initial: yes
-styling field:
-	type: boolean
-	name: colored mana symbols
-	description: Use colored mana symbols, as used by Wizards since Fifth Dawn.
 styling field:
 	type: boolean
 	name: grey hybrid name

@@ -186,8 +186,7 @@ card style:
 		height:
 			script: if is_nmonster() then 92 else 62
 		font:
-			name: Palatino Linotype
-			italic name: Palatino Linotype Italic
+			name: MatrixBook
 			size: 9
 			scale down to: 4
 			color: rgb(0,0,0)

@@ -1,9 +1,16 @@
 ﻿mse version: 0.3.6
-version: 2007-10-12
-# Symbol font in the 'popup' style, used for casting costs on modern cards
-short name: popup style
-position hint: 002
+version: 2008-01-10
+short name: normal (colorless)
+position hint: 21
 icon: mana_r.png
+# Symbol font in the normal, flat, style, used for text boxes and on old style cards
+# Note:
+#  Define  mana_t := {"new|old|older"} in the init script of the style
+#
+# So for example: 
+#
+#init script:
+#	mana_t := {"new"}
 
 image font size: 135
 horizontal space: 2
@@ -204,17 +211,16 @@ symbol:
 symbol:
 	code: I
 	image: mana_infinite.png
-as text: [0-9]+(?!/)
+as text: .|[0-9]+(?!/)
 text font:
 	name: MPlantin
 	size: 1
 	color: rgb(0,0,0)
 	max stretch: 0.5
-text margin left:   .28
-text margin right:  .20
-text margin top:    -.15
-text margin bottom: -.06
-
+text margin left:   .26
+text margin right:  .2
+text margin top:    -.14
+text margin bottom: -.14
 
 ##############################################################
 # Insert-symbol menu

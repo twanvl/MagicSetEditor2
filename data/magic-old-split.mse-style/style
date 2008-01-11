@@ -5,7 +5,7 @@ short name: Old Splits
 icon: card-sample.png
 position hint: 103
 
-version: 2007-12-30
+version: 2008-01-10
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -107,11 +107,6 @@ set info style:
 			border color 2: rgb(255,255,255)
 
 ############################################################## styling style
-
-styling field:
-	type: boolean
-	name: colored mana symbols
-	description: Use colored mana symbols, as used by Wizards since Fifth Dawn.
 styling field:
 	type: boolean
 	name: use guild mana symbols

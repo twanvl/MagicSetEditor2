@@ -5,7 +5,7 @@ full name: After 8th edition
 icon: card-sample.png
 position hint: 001
 
-version: 2007-12-29
+version: 2008-01-10
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -72,10 +72,6 @@ set info style:
 
 ############################################################## Extra style options
 
-styling field:
-	type: boolean
-	name: colored mana symbols
-	description: Use colored mana symbols, as used by Wizards since Fifth Dawn.
 styling field:
 	type: choice
 	name: artifact style

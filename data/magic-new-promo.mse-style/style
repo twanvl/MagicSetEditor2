@@ -5,7 +5,7 @@ full name: Large image
 icon: card-sample.png
 position hint: 004
 
-version: 2007-12-29
+version: 2008-01-10
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -56,10 +56,6 @@ init script:
 
 ############################################################## Extra style options
 
-styling field:
-	type: boolean
-	name: colored mana symbols
-	description: Use colored mana symbols, as used by Wizards since Fifth Dawn.
 styling field:
 	type: boolean
 	name: darker artifacts
