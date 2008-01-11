@@ -1,6 +1,7 @@
 ﻿mse version: 0.3.6
 short name: Magic
 full name: Magic the Gathering
+installer group: magic/game files
 icon: card-back.png
 position hint: 01
 
@@ -1341,7 +1342,8 @@ word list:
 	word: Zombie
 	word:
 		name: All Types
-		word: A
+		word:
+			name: A
 			word: Anemone
 			word: Angel
 			word: Anteater
@@ -1352,7 +1354,8 @@ word list:
 			word: Atog
 			word: Aurochs
 			word: Avatar
-		word: B
+		word:
+			name: B
 			word: Badger
 			word: Basilisk
 			word: Bat
@@ -1364,7 +1367,8 @@ word list:
 			word: Boar
 			word: Bringer
 			word: Brushwagg
-		word: C
+		word:
+			name: C
 			word: Camarid
 			word: Camel
 			word: Caribou
@@ -1377,7 +1381,8 @@ word list:
 			word: Crab
 			word: Crocodile
 			word: Cyclops
-		word: D
+		word:
+			name: D
 			word: Dauthi
 			word: Demon
 			word: Devil
@@ -1387,7 +1392,8 @@ word list:
 			word: Dreadnought
 			word: Dryad
 			word: Dwarf
-		word: E
+		word:
+			name: E
 			word: Efreet
 			word: Egg
 			word: Elemental
@@ -1395,14 +1401,16 @@ word list:
 			word: Elf
 			word: Elk
 			word: Eye
-		word: F
+		word:
+			name: F
 			word: Faerie
 			word: Ferret
 			word: Fish
 			word: Fox
 			word: Frog
 			word: Fungus
-		word: G
+		word:
+			name: G
 			word: Gargoyle
 			word: Giant
 			word: Gnome
@@ -1413,7 +1421,8 @@ word list:
 			word: Graveborn
 			word: Gremlin
 			word: Griffin
-		word: H
+		word:
+			name: H
 			word: Hag
 			word: Harpy
 			word: Hellion
@@ -1425,29 +1434,34 @@ word list:
 			word: Hound
 			word: Human
 			word: Hydra
-		word: I
+		word:
+			name: I
 			word: Illusion
 			word: Imp
 			word: Incarnation
 			word: Insect
-		word: J
+		word:
+			name: J
 			word: Jellyfish
 			word: Juggernaut
-		word: K
+		word:
+			name: K
 			word: Kavu
 			word: Kirin
 			word: Kithkin
 			word: Kobold
 			word: Kor
 			word: Kraken
-		word: L
+		word:
+			name: L
 			word: Lammasu
 			word: Leech
 			word: Leviathan
 			word: Lhurgoyf
 			word: Licid
 			word: Lizard
-		word: M
+		word:
+			name: M
 			word: Manticore
 			word: Masticore
 			word: Merfolk
@@ -1457,12 +1471,14 @@ word list:
 			word: Moonfolk
 			word: Mutant
 			word: Myr
-		word: N
+		word:
+			name: N
 			word: Nautilus
 			word: Nephilim
 			word: Nightmare
 			word: Nightstalker
-		word: O
+		word:
+			name: O
 			word: Octopus
 			word: Ogre
 			word: Ooze
@@ -1472,7 +1488,8 @@ word list:
 			word: Ouphe
 			word: Ox
 			word: Oyster
-		word: P
+		word:
+			name: P
 			word: Pegasus
 			word: Pentavite
 			word: Pest
@@ -1481,13 +1498,16 @@ word list:
 			word: Pincher
 			word: Plant
 			word: Prism
-		word: R
+		word:
+			name: R
 			word: Rabbit
 			word: Rat
 			word: Reflection
 			word: Rhino
-		word: S
-			word: Sa-Sl
+		word:
+			name: S
+			word:
+				name: Sa-Sl
 				word: Salamander
 				word: Sand
 				word: Saproling
@@ -1502,7 +1522,8 @@ word list:
 				word: Slith
 				word: Sliver
 				word: Slug
-			word: Sn-Sz
+			word:
+				name: Sn-Sz
 				word: Snake
 				word: Soltari
 				word: Spawn
@@ -1516,7 +1537,8 @@ word list:
 				word: Squid
 				word: Squirrel
 				word: Starfish
-		word: T
+		word:
+			name: T
 			word: Tetravite
 			word: Thalakos
 			word: Thopter
@@ -1525,14 +1547,17 @@ word list:
 			word: Triskelavite
 			word: Troll
 			word: Turtle
-		word: U
+		word:
+			name: U
 			word: Unicorn
-		word: V
+		word:
+			name: V
 			word: Vampire
 			word: Vedalken
 			word: Viashino
 			word: Volver
-		word: W
+		word:
+			name: W
 			word: Wall
 			word: Weird
 			word: Whale
@@ -1542,9 +1567,11 @@ word list:
 			word: Worm
 			word: Wraith
 			word: Wurm
-		word: Y
+		word:
+			name: Y
 			word: Yeti
-		word: Z
+		word:
+			name: Z
 			word: Zombie
 			word: Zubera
 
@@ -1571,7 +1598,8 @@ word list:
 	word: Zombie
 	word:
 		name: All Types
-		word: A-C
+		word:
+			name: A-C
 			word: Advisor
 			word: Archer
 			word: Archon
@@ -1586,7 +1614,8 @@ word list:
 			word: Citizen
 			word: Cleric
 			word: Coward
-		word: D-I
+		word:
+			name: D-I
 			word: Deserter
 			word: Dreadnought
 			word: Drone
@@ -1597,7 +1626,8 @@ word list:
 			word: Hellion
 			word: Horror
 			word: Incarnation
-		word: J-P
+		word:
+			name: J-P
 			word: Juggernaut
 			word: Knight
 			word: Leviathan
@@ -1610,7 +1640,8 @@ word list:
 			word: Ninja
 			word: Nomad
 			word: Pirate
-		word: R-S
+		word:
+			name: R-S
 			word: Rebel
 			word: Reflection
 			word: Rigger
@@ -1622,7 +1653,8 @@ word list:
 			word: Soldier
 			word: Spellshaper
 			word: Survivor
-		word: T-Z
+		word:
+			name: T-Z
 			word: Thopter
 			word: Vampire
 			word: Warrior
