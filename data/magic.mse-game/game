@@ -1,4 +1,5 @@
-﻿mse version: 0.3.6
+
+mse version: 0.3.6
 short name: Magic
 full name: Magic the Gathering
 installer group: magic/game files
@@ -187,6 +188,11 @@ init script:
 		(if contains(card.shape, match:"split")   then "S" else " ") + # split cards come after normal ones
 		":"
 	}
+	# Process the name for sorting rules (specifically, remove "The", "A", and "And" at the beginning, and make lowercase)
+	sort_name :=
+		replace_rule (match: "^(The|An?) ", replace: "") +
+		to_lower
+	
 	is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicolor" }
 	is_null_cost  := { input == "" or input == "0" }
 	basic_land_sort := {
@@ -241,7 +247,7 @@ init script:
 		position (
 			of: card
 			in: set
-			order_by: { rarity_sort() + sort_index() + card.name }
+			order_by: { rarity_sort() + sort_index() + sort_name(card.name) }
 			filter:   set_filter()
 		) + 1
 	}
