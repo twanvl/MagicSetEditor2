@@ -1,12 +1,11 @@
-
-mse version: 0.3.6
+﻿mse version: 0.3.6
 short name: Magic
 full name: Magic the Gathering
 installer group: magic/game files
 icon: card-back.png
 position hint: 01
 
-version: 2008-01-09
+version: 2008-01-12
 depends on:
 	package: magic-blends.mse-include
 	version: 2007-09-23
@@ -1347,7 +1346,7 @@ word list:
 	word: Treefolk
 	word: Zombie
 	word:
-		name: All Types
+		name: All Races
 		word:
 			name: A
 			word: Anemone
@@ -1603,7 +1602,7 @@ word list:
 	word: Wizard
 	word: Zombie
 	word:
-		name: All Types
+		name: All Classes
 		word:
 			name: A-C
 			word: Advisor

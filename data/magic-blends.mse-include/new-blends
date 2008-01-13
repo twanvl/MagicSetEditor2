@@ -7,6 +7,7 @@
 ########################################################################
 
 mask_hybrid_with_land	:= { false }
+mask_multi_land_with_color	:= { false }
 template		:= { input + "{type}.jpg" }
 land_template		:= { (if input == "a" then "c" else input) + "l{type}.jpg" }
 # For what value should thumbnails of hybrids be made?
@@ -482,6 +483,12 @@ color_combination := {
 			mask:  "multicolor_blend_{type}.png",
 			dark:  land_template("c"),
 			light: base,
+		)
+	else if land and multi and mask_multi_land_with_color() then
+		masked_blend(
+			mask:  "hybrid_blend_{type}.png",
+			dark:  base,
+			light:  land_template("m"),
 		)
 	else if multi then 
 		masked_blend(

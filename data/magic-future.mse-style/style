@@ -5,7 +5,7 @@ full name: Futureshift
 icon: card-sample.png
 position hint: 050
 
-version: 2007-12-30
+version: 2008-01-12
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -36,6 +36,8 @@ card dpi: 150
 
 init script:
 	mask_hybrid_with_land := { styling.grey_hybrid_name }
+	
+	mask_multi_land_with_color := { styling.colored_multicolor_land_name }
 	
 	template_suffix := [card: "card.jpg", pt: "pt.png", textbox: "textbox.png", typeline: "typeline.png"]
 	template := { input + template_suffix[type] }
@@ -168,6 +170,10 @@ styling field:
 	type: boolean
 	name: grey hybrid name
 	description: Use a grey background for the name and type line on hybrid cards. This is done on real cards.
+styling field:
+	type: boolean
+	name: colored multicolor land name
+	description: Use a colored background for the name and type on multicolor land cards with a basic land type. This is done on real cards.
 styling field:
 	type: boolean
 	name: use guild mana symbols
