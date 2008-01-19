@@ -4,10 +4,10 @@ short name: Standard
 icon: card-sample.png
 position hint: 01
 
-version: 2008-01-04
+version: 2008-01-18
 depends on:
 	package: yugioh.mse-game
-	version: 2008-01-04
+	version: 2008-01-18
 depends on:
 	package: yugioh-standard-levels.mse-symbol-font
 	version: 2007-09-23
@@ -60,6 +60,7 @@ card style:
 			effect monster: card-effect.jpg
 			ritual monster: card-ritual.jpg
 			fusion monster: card-fusion.jpg
+			token monster: card-token.jpg
 			obelisk: card-obelisk.jpg
 			slifer: card-slifer.jpg
 			ra: card-ra.jpg

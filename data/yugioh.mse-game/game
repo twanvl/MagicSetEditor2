@@ -2,7 +2,8 @@
 short name: Yu-Gi-Oh!
 icon: card-back.png
 position hint: 4
-version: 2008-01-04
+
+version: 2008-01-18
 
 ############################################################## Functions & filters
 ## Copied and Pasted from vs.mse-game, with a few modifications
@@ -114,6 +115,7 @@ init script:
 	        card.card_type == "effect monster" or
 	        card.card_type == "ritual monster" or
 	        card.card_type == "fusion monster" or
+	        card.card_type == "token monster" or
 		card.card_type == "obelisk"        or
 		card.card_type == "slifer"	   or
 		card.card_type == "ra"		   or
@@ -196,6 +198,7 @@ card field:
 	choice: effect monster
 	choice: ritual monster
 	choice: fusion monster
+	choice: token monster
 	choice: obelisk
 	choice: slifer
 	choice: ra
@@ -208,6 +211,7 @@ card field:
 		effect monster:	   rgb(120,18,0)
 		ritual monster:	   rgb(26,26,26)
 		fusion monster:	   rgb(26,26,26)
+		token monster:	   rgb(120,18,0)
 		obelisk:	   rgb(26,26,26)
 		slifer:		   rgb(26,26,26)
 		ra:		   rgb(26,26,26)
