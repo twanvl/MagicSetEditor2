@@ -3,7 +3,7 @@ short name: Yu-Gi-Oh!
 icon: card-back.png
 position hint: 4
 
-version: 2008-01-18
+version: 2008-01-19
 
 ############################################################## Functions & filters
 ## Copied and Pasted from vs.mse-game, with a few modifications
@@ -139,12 +139,29 @@ init script:
 		card.level     == "Trap"
 	}
 	############### Determine Card Position
+	
+	type_sort := {
+		type := card.card_type
+		if chosen(choice:"normal monster", type) then "A"
+		else if chosen(choice:"ra", type) then "B"
+		else if chosen(choice:"effect monster", type) then "C"
+		else if chosen(choice:"slifer", type) then "D"
+		else if chosen(choice:"ritual monster", type) then "E"
+		else if chosen(choice:"obelisk", type) then "F"
+		else if chosen(choice:"fusion monster", type) then "G"
+		else if chosen(choice:"token monster", type) then "H"
+		else if chosen(choice:"legendary dragons", type) then "I"
+		else if chosen(choice:"spell card", type) then "J"
+		else if chosen(choice:"trap card", type) then "K"
+		else "L"
+	}
+	
 	pos_of_card := {
 		position(
 			of: card
 			in: set
 			order_by: {
-				card.card_type + card.attribute + card.monster_type + card.name
+				type_sort() + card.attribute + card.monster_type + card.name
 			}) + 1
 	}
 
@@ -309,6 +326,7 @@ card field:
 	card list width: 55
 	card list name: #
 	editable: false
+	save value: false
 	show statistics: false
 card field:
 	type: text
