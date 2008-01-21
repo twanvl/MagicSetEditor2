@@ -1349,7 +1349,6 @@ word list:
 		name: All Races
 		word:
 			name: A
-			word: Anemone
 			word: Angel
 			word: Anteater
 			word: Antelope
@@ -1424,7 +1423,6 @@ word list:
 			word: Golem
 			word: Gorgon
 			word: Graveborn
-			word: Gremlin
 			word: Griffin
 		word:
 			name: H
@@ -1439,6 +1437,7 @@ word list:
 			word: Hound
 			word: Human
 			word: Hydra
+			word: Hyena
 		word:
 			name: I
 			word: Illusion
