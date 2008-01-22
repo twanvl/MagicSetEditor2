@@ -73,6 +73,6 @@ IMPLEMENT_REFLECTION(Card) {
 		}
 	}
 	REFLECT(notes);
-	REFLECT_NO_SCRIPT(extra_data); // don't allow scripts to depend on style specific data
+	REFLECT(extra_data); // don't allow scripts to depend on style specific data
 	REFLECT_NAMELESS(data);
 }
