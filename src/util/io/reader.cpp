@@ -234,7 +234,10 @@ void Reader::readLine(bool in_string) {
 	size_t pos = line.find_first_of(_(':'), indent);
 	if (trim(line).empty() || line.GetChar(indent) == _('#')) {
 		// empty line or comment
-		key.clear();
+		if (input->Eof())
+			key.clear();
+		else // Recursion allows skipping of blank lines.
+			readLine(in_string);
 		return;
 	}
 	key   = line.substr(indent, pos - indent);
