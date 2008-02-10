@@ -328,10 +328,10 @@ SCRIPT_RULE_2_N_DEP(expand_keywords, ScriptValueP, _("default expand"), default_
 	SCRIPT_PARAM_C(Set*, set);
 	KeywordDatabase& db = set->keyword_db;
 	if (db.empty()) {
-		db.prepare_parameters(set->game->keyword_parameter_types, set->game->keywords);
 		db.prepare_parameters(set->game->keyword_parameter_types, set->keywords);
-		db.add(set->game->keywords);
+		db.prepare_parameters(set->game->keyword_parameter_types, set->game->keywords);
 		db.add(set->keywords);
+		db.add(set->game->keywords);
 	}
 	SCRIPT_OPTIONAL_PARAM_C_(CardP, card);
 	WITH_DYNAMIC_ARG(keyword_usage_statistics, card ? &card->keyword_usage : nullptr);
