@@ -1,0 +1,839 @@
+﻿mse version: 0.3.6
+installer group: locales
+full name: Japanese
+version: 2008-03-12
+icon: jp.png
+
+############################################################## Menu items
+menu:
+	file:			&ファイル
+	new set:			&新しいです...	Ctrl+N
+	open set:			&開けます...	Ctrl+O
+	save set:			&救います	Ctrl+S
+	save set as:		セーブ&として...	F12
+	export:				&輸出
+	export html:			&HTML...
+	export image:			カード&イメージ...
+	export images:			全てのカードイ&メージ...
+	export apprentice:		&実習生...
+	export mws:				魔法&ワークステーション...
+	check updates:		チェック&アップデート...
+	print preview:		プリント・プレ&ビュー...
+	print:				&プリント...	Ctrl+P
+	reload data:		データを再ロードしてください	Ctrl+F5
+	exit:				閉&じます	Alt+F4
+	
+	edit:			&編集します
+	undo:				&ほどきます%s	Ctrl+Z
+	redo:				&やり直します%s	Ctrl+Y
+	cut:				カッ&ト	Ctrl+X
+	copy:				&コピー	Ctrl+C
+	paste:				&ペースト	Ctrl+V
+	find:				&見つけます	Ctrl+F
+	find next:			見つけます &次	F3
+	replace:			取っ&て代わります	Ctrl+H
+	auto replace:		自動的です 取って&代わります...
+	preferences:		&好み...
+	
+	cards:			&カード
+	previous card:		エリートの&前のカード	PgUp
+	next card:			エリートの&次のカード	PgDn
+	add card:			&足し算をするカード	Ctrl++
+	add cards:			&多くのカードを加えてください...
+	remove card:		&削除する選ばれるカード
+	orientation:		&オリエンテーション
+	rotate 0:				&正常です
+	rotate 270:				&時計回りに90°回転させられました
+	rotate 90:				時&計と逆回りです90°回転させられました
+	rotate 180:				180°回転させられた、&上げること側は下がっています
+	card list columns:	カ&ードリストコラム〔列〕...
+	
+	keywords:		&キーワード
+	previous keyword:	エリートの&前のキーワード	PgUp
+	next keyword:		エリートの&次のキーワード	PgDn
+	add keyword:		&足し算をするキーワード		Ctrl++
+	remove keyword:		&隔たり選択するキーワード	Del
+	
+	format:			&フォーマット
+	bold:				&図太いです	Ctrl+B
+	italic:				&イタリック体	Ctrl+I
+	symbols:			&シンボル〔記号〕	Ctrl+M
+	reminder text:		&思い出させるもの文章	Ctrl+R
+	insert symbol:		挿&入物シンボル〔記号〕
+	
+	window:			&プログラム・ウィンドウ〔窓〕
+	new window:			&新しいウィンドウ〔窓〕
+	cards tab:			&カード	F5
+	set info tab:		&セットされた情報	F6
+	style tab:			スタ&イル	F7
+	keywords tab:		&キーワード		F8
+	stats tab:			統&計値	F9
+	
+	help:			&ヘルプ
+	index:				&インデックス...	F1
+	website:			&ウェブサイト...
+	about:				&辺りで魔法のセットされた編集者...
+	
+	# symbol editor
+	
+	new symbol:			&新しいです...	Ctrl+N
+	open symbol:		&開けます...	Ctrl+O
+	save symbol:		&救います	Ctrl+S
+	save symbol as:		セーブ&として...	F12
+	store symbol:		使&います	Ctrl+Enter
+	close symbol editor:閉じます	Alt+F4
+	
+	duplicate:			&写し	Ctrl+D
+	group:				&グループ	Ctrl+G
+	ungroup:			&分かれます	Ctrl+U
+	
+	tool:			&道具
+	select:				&選びます	F5
+	rotate:				&回転します	F6
+	points:				&ポイント〔点〕	F7
+	basic shapes:		&基本的な形	F8
+	symmetry:			対&称	F9
+	paint:				塗&料	F10
+	
+	# Updates window
+	apply changes:		変化を用いてください
+	cancel changes:		キャンセルは変わります
+	install package:	インストールパッケージ
+	upgrade package:	グレードアップパッケージ
+	remove package:		パッケージを取り除いてください
+
+############################################################## Menu help texts
+help:
+	welcome:			魔法のセットされた編集者へようこそ
+	
+	file:
+	new set:			新しいセットを作ってください
+	open set:			存在しているセットを始めてください
+	last opened set:	開けます '%s'
+	save set:			セットを節約してください
+	save set as:		新しい名でのセットを節約してください
+	export:				セットを輸出してください...
+	export html:			セットをウェブページに輸出してください
+	export image:			選ばれたカードをイメージファイルに輸出してください
+	export images:			全てのカードのための輸出イメージ
+	export apprentice:		セットを輸出してくださいそれで実習生で遊ばれることができます
+	export mws:				セットを輸出してくださいそれで魔法ワークステーションで遊ばれることができます
+	check updates:		ゲーム、スタイル、及び舞台〔現場〕のように、新しいパッケージをダウンロードするためにアップデートウィンドウ〔窓〕を開けてください
+	print preview:		それらが印刷される時、カードを見せます
+	print:				このセットからのプリントカード
+	reload data:		セットと共に全てのテンプレート縦列〔ファイル〕(ゲーム及びスタイル)を再ロードしてください
+	exit:				五分五分である魔法のセットされた編集者； セットを節約するプロンプト
+	
+	edit:
+	undo:				最後の行動〔訴訟〕を元に戻します
+	redo:				最後の行動〔訴訟〕をやり直します
+	cut:				選ばれたテキストをクリップボードに動かしてください
+	cut card:			選ばれたカードをクリップボードに動かしてください
+	cut keyword:		選ばれたキーワードをクリップボードに動かしてください
+	copy:				クリップボードの上に選ばれたテキストを置いてください
+	copy card:			クリップボードの上に選ばれたカードを置いてください
+	copy keyword:		クリップボードの上に選ばれたキーワードを置いてください
+	paste:				クリップボードからのテキストを挿入します
+	paste card:			クリップボードからのカードを挿入します
+	paste keyword:		クリップボードからのキーワードを挿入します
+	find:				カードテキストを検索してください
+	find next:			次の試合〔マッチ〕を見つけてください
+	replace:			カードテキストの取って代わること
+	auto replace:		どのようなテキストが自動的に換えられるべきですか？
+	preferences:		構成を変えてください魔法のセットされた編集者
+	
+	cards:
+	previous card:		リストの前のカードを選びます
+	next card:			リストの次のカードを選びます
+	add card:			新しいカードをこのセットに加えてください
+	add cards:			複数のカードをセットに加えてください
+	remove card:		このセットからの選ばれたカードを削除してください
+	orientation:		表示されたカードのオリエンテーション
+	rotate card:			時計回りにカードディスプレイを90°回転させてください
+	rotate 0:				上へ右側の側でのカードを表示してください
+	rotate 270:				カードが時計回りに回転させた展示
+	rotate 90:				カードが時計と逆回りに回転させた展示
+	rotate 180:				下へ側面〔側〕の上のカードを表示してください
+	card list columns:	どのようなコラム〔列〕が見せられるべきかを選んでくださいそしてどのような注文で
+	
+	keywords:
+	previous keyword:	リストの前のキーワードを選びます
+	next keyword:		リストの次のキーワードを選びます
+	add keyword:		新しいキーワードをこのセットに加えてください
+	remove keyword:		このセットからの選ばれたキーワードを削除してください
+	
+	format:
+	bold:				選ばれたテキストを大胆にします
+	italic:				選ばれたテキストを斜字体にします
+	symbols:			シンボル〔記号〕での選ばれたテキストを引きます
+	reminder text:		選ばれたキーワードのためのショー思い出させるもの文章
+	
+	window:
+	new window:			同じセットを編集するためにもう1つのウィンドウ〔窓〕を作ります
+	cards tab:			セットのカードを編集してください
+	set info tab:		セットについての編集情報
+	style tab:			カードのスタイルを変えてください
+	keywords tab:		このセットのための余分なキーワードを定義してください
+	stats tab:			セットのカードについてのショー統計値
+	
+	help:
+	index:				
+	website:			
+	about:				
+	
+	# Preferences
+	app language:
+		メモ： 変化が有効になるために、あなたは魔法のセットされた編集者を再出発させなければなりません。
+	zoom export:
+		(　から離れている時は、カードが輸出されて、
+			100%のサイズと正常な回転でコピーされる　)
+	
+	# apprentice export
+	set code:			セットされたコードは、実習生によってセットを参照することに使われる2キャラクターのコードです。
+	
+	# Symbol editor
+	new symbol:			新しいシンボル〔記号〕を作ってください
+	open symbol:		シンボル〔記号〕を開けてください
+	save symbol:		シンボル〔記号〕をセーブしてください
+	save symbol as:		シンボル〔記号〕を異なりますファイル名の下にセーブしてください
+	store symbol:		シンボル〔記号〕をセットに蓄えます
+	close symbol editor:編集者というシンボル〔記号〕を閉じます
+	
+	duplicate:			選ばれた形を複写します
+	group:				選ばれた形を集めてください
+	ungroup:			選ばれたグループの上の中断〔破損〕
+	
+	grid:				ショー格子〔グリッド〕
+	snap:				格子〔グリッド〕に形とポイント〔点〕をぽきんと折ってください
+	
+	tool:
+	select:				形を選んで、動かしてください
+	rotate:				形を回転させて、刈ってください
+	points:				シンボル〔記号〕の形のための編集コントロールポイント
+	basic shapes:		引き分けの基本的な形は長方形と円のようです
+	symmetry:			対称をシンボル〔記号〕に加えてください
+	paint:				絵筆を使っている形の上の塗料
+	
+	select editor:
+	merge:				それの下でこの形をそれらと合併させます
+	subtract:			それの下の形からこの形を引いて、すなわちこの形でエリアだけをその形に残します
+	intersect:			それ、両方のエリアだけが形成する葉の下の形でのこの形を横切ります
+	difference:			異なってそれの下の形からのこの形、エリアだけを少しの他の形〔状態〕にも残します
+	overlap:			それの下の形の上にこの形と、その縁〔国境〕を置いてください
+	border:				国境〔縁〕としてのこの形を引きます
+	
+	drag to shear:		刈るべき牽引〔障害〕は選ばれています %s
+	drag to rotate:		回転させるべき牽引〔障害〕は選ばれています %s, Ctrlは15度の倍数に角度を制限します
+	drag to resize:		サイズを変更すべき牽引〔障害〕選ばれて %s、Ctrlがサイズを制限します
+	click to select shape:	形を選ぶクリック、形を動かす牽引〔障害〕、形を編集する二重のクリック
+	
+	ellipse:			円と長円を引いてください
+	rectangle:			広場と長方形を引いてください
+	polygon:			三角形、五角形、及び他の通常の多角形を引いてください
+	star:				星〔スター〕を引いてください
+	sides:				多角形あるいは星〔スター〕の点の側面の数
+	drag to draw shape:	形のサイズを変更するために引きずられてください、Ctrlが形を制限して、シフトが形を中心に置きます
+	draw ellipse:		クリック及び長円を引く牽引〔障害〕、円のためのCtrlを開いてください
+	draw rectangle:		クリック及び長方形を引く牽引〔障害〕、広場のためのCtrlを開いてください
+	draw polygon:		クリック及び多角形を引く牽引〔障害〕
+	draw star:			クリック及びスター〔星〕のために引くべき牽引〔障害〕
+	
+	line segment:		選ばれたラインセグメントをまっすぐにします
+	curve segment:		選ばれたラインセグメントが曲げた型式
+	free point:			ポイント〔点〕の2つのコントロールポイントが自由に動かされることを許します
+	smooth point:		お互いの反対側に2つのコントロールポイントを置くことによって選ばれたポイント〔点〕を滑らかにします
+	symmetric point:	選ばれたポイント〔点〕が映した型式
+	drag to move curve:	カーブを動かす牽引〔障害〕
+	drag to move line:	Alt +変えるべき牽引〔障害〕は曲がります；  このライン〔回線〕の上の1ポイント〔点〕を加えるためにダブルクリックしてください
+	drag to move point:	クリック及び変えるべき牽引〔障害〕コントロールポイント；  ポイント〔点〕を取り除くためにダブルクリックしてください
+	
+	rotation:			対称(車輪〔ハンドル〕)を回転させること
+	reflection:			対称(鏡)を反映すること
+	add symmetry:		対称をシンボル〔記号〕に加えてください
+	remove symmetry:	この対称を取り除いてください
+	copies:				(オリジナルを含む)数の反映
+	
+	# Card select
+	filename format:	(カードの名前のための使用{card.name}；  ファイルフォーマットが決定される　延長に基づいて　)
+
+############################################################## Toolbar
+tool:
+	undo:				ほどきます
+	redo:				やり直します
+	
+	cards tab:			カード
+	set info tab:		セットされた情報
+	style tab:			スタイル
+	keywords tab:		キーワード
+	stats tab:			統計値
+	
+	# symbol editor
+	store symbol:		使います
+	
+	grid:				格子〔グリッド〕
+	snap:				楽な仕事
+	
+	select:				選びます
+	rotate:				回転します
+	points:				ポイント〔点〕
+	basic shapes:		基本的な形
+	symmetry:			対称
+	paint:				塗料
+	
+	merge:				一つになります
+	subtract:			引きます
+	intersect:			相交わります
+	difference:			相違
+	overlap:			オーバーラップ
+	border:				国境〔縁〕
+	
+	ellipse:			長円
+	rectangle:			長方形
+	polygon:			多角形
+	star:				星〔スター〕
+	
+	rotation:			回転
+	reflection:			反射
+	add symmetry:		加えます
+	remove symmetry:	削除
+	
+	line segment:		ライン〔回線〕
+	curve segment:		カーブ
+	free point:			解放します
+	smooth point:		滑らかにします
+	symmetric point:	対称的です
+	
+############################################################## Toolbar help text
+tooltip:
+	cards tab:			
+	set info tab:		セットされた情報
+	style tab:			
+	keywords tab:		
+	stats tab:			
+	
+	new set:			新しいセット
+	open set:			オープンセット
+	save set:			セットされたセーブ
+	export:				輸出が固まりました
+	
+	cut:				カット
+	copy:				コピー
+	paste:				ペースト
+	undo:				ほどきます%s
+	redo:				やり直します%s
+	
+	add card:			足し算をすることカード
+	remove card:		選ばれたカードを取り除いてください
+	rotate card:		回転することカード
+	
+	add keyword:		足し算をすることキーワード
+	remove keyword:		選ばれたキーワードを取り除いてください
+	
+	bold:				図太いです
+	italic:				イタリック体
+	symbols:			シンボル〔記号〕
+	reminder text:		思い出させるもの文章
+	
+	cards tab:			
+	set info tab:		セットされた情報
+	style tab:			カード風に
+	keywords tab:		
+	stats tab:			
+	
+	# symbol editor
+	store symbol:		使用セットのシンボル〔記号〕
+	
+	grid:				ショー格子〔グリッド〕
+	snap:				格子〔グリッド〕への楽な仕事
+	
+	select:				選びます (F5)
+	rotate:				回転します (F6)
+	points:				Points (F7)
+	basic shapes:		基本的な形 (F8)
+	symmetry:			対称 (F9)
+	paint:				形の上の塗料 (F10)
+	
+	merge:				下の形と合併してください
+	subtract:			下の形から引き算をしてください
+	intersect:			下の形で相交わってください
+	difference:			下の形と異なってください
+	overlap:			他の形の上の場所
+	border:				国境〔縁〕としての引き分け
+	
+	ellipse:			円/長円
+	rectangle:			広場/長方形
+	polygon:			多角形
+	star:				星〔スター〕
+	
+	rotation:			対称(車輪〔ハンドル〕)を回転させること
+	reflection:			対称(鏡)を反映すること
+	add symmetry:		対称を選ばれた部分〔部品〕に加えてください
+	remove symmetry:	この対称を取り除いてください
+	
+	line segment:		直線部分にライン〔回線〕
+	curve segment:		曲がるために
+	free point:			鍵を開けること意味〔ポイント/点〕
+	smooth point:		ポイント〔点〕を滑らかにしてください
+	symmetric point:	ポイント〔点〕を対称的にしてください
+
+############################################################## Labels in the GUI
+label:
+	# Cards tab
+	card notes:			カードメモ：
+	# Keywords tab
+	keyword:			キーワード
+	match:				試合〔マッチ〕
+	mode:				モード
+	uses:				使います
+	reminder:			思い出させるもの文章
+	standard keyword:
+		これは標準%sのキーワードで、あなたはそれを編集できません。
+		もしあなたがキーワードのコピーを作れば、コピーは先例を取ります。
+	
+	# Style tab
+	styling options:	オプションをデザインすること
+	
+	# Open dialogs
+	all files			全てのファイル
+	
+	# Other set window dialogs
+	save changes:
+		セット'%s'は変わりました。
+		
+		あなたは変更内容を保存したいですか？
+	
+	# New set window
+	game type:			&ゲームタイプ：
+	style type:			&カードスタイル：
+	
+	stylesheet not found:
+		あなたが始めようとしているセットがスタイルシートを使う　"%s"。
+		このstylesheetがあなたのシステムで見つからないで、選択肢を選んでください。
+	
+	# Preferences
+	language:			言語
+	app language:		ユーザー・インタフェースの言語：
+	card display:		カード展示
+	zoom:				&急上昇：
+	percent of normal:	正常なサイズのパーセント値
+	external programs:	外部のプログラム
+	apprentice:			&実習生：
+	apprentice exe:		実習生は実行可能です
+	check at startup:	起動での新しいバージョンについてのチェック
+	checking requires internet:
+		アップデートを調べることはインターネット接続を必要とします。
+		インターネット接続が利用可能でない時、これはチェックされません。
+		
+		情報はアップデートを調べる時、集められません。
+	
+	# Column select
+	select columns:		あなたが表示したいコラム〔列〕を選んでください
+	columns:			コラム〔列〕：
+	
+	# Card select / images export
+	select cards print:	あなたが印刷したいカードを選んでください
+	filename format:	&フォーマット： 
+	filename conflicts:	&取っ手を複写することのファイル名：
+	export filenames:	ファイル名
+	cards to export:	輸出すべきカード
+	filename is ignored: (ファイル名は無視されます)
+	
+	# apprentice export
+	set code:			以下をセットして、暗号化してください：
+	apprentice export cancelled: 実習生への輸出が取り消されます
+	
+	# Html export
+	html template:		テンプレート：
+	html export options:輸出オプション
+	
+	# Image slicer
+	original:			オリジナル：
+	result:				結果：
+	size:				サイズ
+	selection:			選択
+	zoom:				急上昇
+	filter:				フィルター
+	
+	# Auto replace
+	auto match:			試合〔マッチ〕
+	auto replace:		取って代わります
+	
+	# Symbol editor
+	sides:				側
+
+############################################################## Buttons/checkboxes/choices in the GUI
+button:
+	# Editor
+	edit symbol:		編集します
+	symbol gallery:		ギャラリー
+	
+	# Style panel
+	use for all cards:	&全てのカードのための使用
+	use custom styling options: このカードに&特有なオプション
+	
+	# Keywords panel
+	insert parameter:	挿入物パラメーター...
+	refer parameter:	使用パラメーター...
+	
+	# Welcome
+	new set:			新しいセット
+	open set:			オープンセット
+	last opened set:	最後の始められたセット
+	
+	# Preferences
+	select:				&選びます...
+	browse:				&拾い読み...
+	high quality:		&高品質の翻訳〔表現/演奏〕
+	show lines:			フィールドの周りのショー&ライン〔回線〕
+	zoom export:		輸&出する時、ズームと回転設定を使ってください
+	check now:			&今のチェック
+	always:							常に
+	if internet connection exists:	もしインターネット接続が存在すれば
+	never:							決してでない
+	
+	# Column select
+	move up:			動きは&上がっています
+	move down:			動きは&下がっています
+	show:				&ショー
+	hide:				&獣の皮
+	
+	# Card select
+	select all:			&全部を選んでください
+	select none:		&何〔誰〕も選ばないでください
+	overwrite:			古いファイルを上書きしてください
+	keep old:			古いファイルを保持してください
+	number:				番号をファイル名に加えてください
+	number overwrite:	番号をファイル名に加えてください、前の輸出品を上書きしてください
+	
+	# Update checker
+	close:				&閉じます
+	
+	# Auto replace
+	use auto replace:	オートマチックであることが換える使用
+	add item:			&加えます
+	remove item:		&削除
+	defaults:			&デフォルトにリセットされました
+	enabled:			可能にされます
+	whole word:			試合の全ての語だけ
+
+############################################################## Titles in the GUI
+title:
+	magic set editor:	魔法のセットされた編集者
+	%s - magic set editor:	%s - 魔法のセットされた編集者
+	untitled:			肩書がないです
+	about:				辺りで魔法のセットされた編集者
+	symbol editor:		編集者というシンボル〔記号〕
+	# dialogs
+	new set:			新しいセット
+	open set:			オープンセット
+	save set:			セーブ・セット　として
+	save image:			セーブ・イメージ
+	updates available:	アップデートが利用可能です
+	save changes:		セーブは変わりますか？
+	select stylesheet:	エリートのスタイルシート
+	#preferences
+	preferences:		好み
+	global:					世界的です
+	display:				ディスプレイ
+	directories:			ディレクトリ〔住所録〕
+	updates:				アップデート
+	update check:			アップデート・チェック
+	locate apprentice:		実習生捜し出す
+	# select
+	select columns:		エリートのコラム〔列〕
+	select cards:		エリートのカード
+	select cards export:エリートのカード、輸出に
+	# slice
+	slice image:		スライスイメージ
+	# print
+	print preview:		プリント・プレビュー
+	# export
+	export images:		輸出イメージ
+	export cancelled:	輸出が取り消されます
+	export html:		HTMLへの輸出
+	save html:			HTMLへの輸出
+	# auto replace
+	auto replaces:		オートマチックな取って代わること
+	
+	# Package Update Window
+	package list:		パッケージは更新します
+	package name:		パッケージ名前
+	package status:		現在の状態
+	new status:			新しいステータス
+
+############################################################## Action (undo/redo) names
+action:
+	# Text editor
+	typing:				タイピング
+	enter:				入れます
+	soft line break:	柔軟路線中断〔破損〕
+	insert symbol:		挿入物シンボル〔記号〕
+	backspace:			バックスペース
+	delete:				削除します
+	cut:				カット
+	paste:				ペースト
+	auto replace:		オートマチックな取って代わること
+	# Choice/color editors
+	change:				変化〔釣り銭〕 %s
+	
+	# Symbol Actions
+	move:				動き %s
+	rotate:				回転します %s
+	shear:				せん断 %s
+	scale:				サイズを変更します %s
+	add part:			加えます %s
+	remove parts:		削除 %s
+	duplicate:			写し %s
+	reorder parts:		再注文
+	change combine mode:変化連合体モード
+	change shape name:	変化形名
+	group parts:		グループ
+	ungroup parts:		分かれます
+	
+	# Symbol Part Actions
+	convert to line:	線を引くべき転向者
+	convert to curve:	曲げるべき転向者
+	lock point:			ロック意味〔ポイント/点〕
+	move handle:		動き取っ手
+	move curve:			動き曲線
+	add control point:	足し算をすることコントロールポイント
+	delete point:		削除すること意味〔ポイント/点〕
+	delete points:		ポイント〔点〕を削除してください
+	
+	# Symmetry
+	add symmetry:			対称を加えてください
+	#remove symmetry:		対称を取り除いてください
+	move symmetry center:	動き対称センター
+	move symmetry handle:	変化対称オリエンテーション
+	change symmetry type:	変化対称タイプ
+	change symmetry copies:	数の反映
+	
+
+############################################################## Error messages
+error:
+	# General
+	internal error:
+		内部のエラー〔誤り〕が生じました：
+		
+		%s　
+		
+		あなたの仕事をセーブしてください　(　使う　'　セーブ　として　'　に　それで　あなたが事を上書きしない　)　そして　再出発の魔法のセット編集者。
+		
+		あなたはhttp://magicseteditor.sourceforge.net/の報告をバグに残すべきです
+	
+	# File related
+	file not found:				見つかっていないファイル： '%s' パッケージで '%s'
+	file parse error:
+		ファイルをパースし誤り： '%s'
+		%s
+	package not found:			見つかっていないパッケージ： '%s'
+	package out of date:		パッケージ '%s' (バージョン %s) 時代遅れであることがそうである　バージョン　%s　が必要とされる。
+	unable to open output file:	蓄えながらの誤りは出力ファイルを開けることができないです
+	unable to store file:		蓄えながらの誤りはファイルを蓄えることができないです
+	
+	# Script stuff
+	has no member:				%s メンバーを持っていません '%s'
+	can't convert:				転向できない　%s　に　'%s'
+	has no member value:		紐　"%s"　メンバーを持っていない '%s'
+	can't convert value:		転向できない　"%s"　から　%s　に %s
+	unsupported format:			無効な紐フォーマット： '%s'
+	
+	# Image stuff
+	coordinates for blending overlap:					オーバーラップを混ぜることのための座標
+	images used for blending must have the same size:	混ざることのために使われたイメージは同じサイズを持たなければなりません
+	
+	# Error from files
+	no game specified for the set:						セットのために指定されたゲームはありません
+	no stylesheet specified for the set:				セットのために指定されたスタイルシートはありません
+	stylesheet and set refer to different game:
+		スタイルシート及びセットは同じゲームを参照しないで、これはスタイルシートファイルのエラー〔誤り〕です
+	unsupported field type:								サポートされていないフィールドタイプ： '%s'
+	unsupported fill type:								サポートされていないいっぱいタイプ： '%s'
+	unrecognized value:									認識されていない価値〔価格〕： '%s'
+	expected key:										期待されているキー： '%s'
+	aborting parsing:									読書を流産させて、遭われた致命的エラー
+	newer version:
+		%s
+		このファイルが魔法セットEditorのより新しいバージョンで作られる　(%s)　あなたがそれを開けて、ファイルのいくつかの局面が紛失しているかもしれない時
+		あなたは最新のバージョンにアップグレードするように勧められます。
+		http::を訪問してください　/　magicseteditor.sourceforge.net　/
+	word list type not found:			リストタイプという語　%s　(<word-list>タグから)見つからなかった
+	
+	# Update checking
+	checking updates failed:			アップデートが失敗したか調べます。
+	no updates:							利用可能なアップデートはありません。
+	
+	# Stats panel
+	dimension not found:				統計学寸法はありません '%s'
+	
+	# Package update window
+	no packages:						パッケージアップデートを設立しないでください。
+	checking updates:					アップデートを調べます。
+
+
+############################################################## Types used in scripts / shape names
+type:
+	function:		機能
+	collection:		収集
+	collection of:	収集 %ss
+	object:			物〔対象/目的〕
+	double:			実数
+	integer:		整数数
+	string:			紐〔文字列〕
+	boolean:		ブールです
+	color:			色
+	image:			イメージ
+	nil:			何も
+	
+	# Object types
+	game:			ゲーム
+	set:			セット
+	stylesheet:		スタイルシート
+	card:			カード
+	field:			フィールド
+	style:			スタイル
+	value:			価値〔値/価格〕
+	
+	# Symbol editor shapes
+	shape:			形
+	shapes:			形
+	circle:			円
+	ellipse:		長円
+	square:			広場
+	rectangle:		長方形
+	triangle:		三角形
+	rhombus:		菱形
+	pentagon:		五角形
+	hexagon:		六角形
+	polygon:		多角形
+	star:			星〔スター〕
+	
+	rotation:		回転
+	reflection:		反射
+	group:			グループ
+	
+	point:			意味〔ポイント/点〕
+	points:			ポイント〔点〕
+	
+	# Package manager
+	installed:		設置されます
+	uninstalled:	アンインストールされます
+	upgradeable:	アップグレードされることができます
+	
+	install:		設置します
+	uninstall:		アンインストールします
+	upgrade:		グレードアップ
+	do nothing:		何もしないでください
+	new mse:		魔法のセットされた編集者は時代遅れです
+	
+
+############################################################## Magic
+game:
+	magic:
+		# Card fields
+		name:		名前
+		cc:			鋳物コスト
+		type:		タイプ
+		p/t:		力/防衛
+		rarity:		珍品
+		card name:	カード名前
+		
+		# Set info
+		
+		# descriptions/help text
+stylesheet:
+	magic-new:
+		
+symbol font:
+	magic-mana-small:
+		# note: reminder/shortcut must start with a space, otherwise it is used as a shortcut
+		#       so typing T *anywhere* would insert a symbol (which would be bad)
+		menu item T:			&Tap symbol	 T
+		menu item W:			&White mana	 W
+		menu item U:			Bl&ue mana	 U
+		menu item B:			&Black mana	 B
+		menu item R:			&Red mana	 R
+		menu item G:			&Green mana	 G
+		menu item S:			&Snow mana	 S
+		menu item X:			Variable mana &X	 X
+		menu item Y:			Variable mana &Y	 Y
+		menu item Z:			Variable mana &Z	 Z
+		menu item colorless:	&Colorless mana...
+		title colorless:		Colorless mana
+		message colorless:		Enter amount of colorless mana:
+		menu item half:				&Half mana
+		menu item |W:				&White	 |W
+		menu item |U:				Bl&ue	 |U
+		menu item |B:				&Black	 |B
+		menu item |R:				&Red	 |R
+		menu item |G:				&Green	 |G
+		menu item |S:				&Snow	 |S
+		menu item 1/2:				&Colorless	1/2
+		menu item hybrid:		H&ybrid mana (two color)
+		menu item W/U:				White/Blue mana	 W/U
+		menu item U/B:				Blue/Black mana	 U/B
+		menu item B/R:				Black/Red mana	 B/R
+		menu item R/G:				Red/Green mana	 R/G
+		menu item G/W:				Green/White mana	 G/W
+		menu item W/B:				White/Black mana	 W/B
+		menu item U/R:				Blue/Red mana	 U/R
+		menu item B/G:				Black/Green mana	 B/G
+		menu item R/W:				Red/White mana	 R/W
+		menu item G/U:				Green/Blue mana	 G/U
+		menu item hybrid 3:		H&ybrid mana (three color)
+		menu item W/U/B:			White/Blue/Black mana	 W/U/B
+		menu item U/B/R:			Blue/Black/Red mana	 U/B/R
+		menu item B/R/G:			Black/Red/Green mana	 B/R/G
+		menu item R/G/W:			Red/Green/White mana	 R/G/W
+		menu item G/W/U:			Green/White/Blue mana	 G/W/U
+		menu item W/B/R:			White/Black/Red mana	 W/B/R
+		menu item U/R/G:			Blue/Red/Green mana	 U/R/G
+		menu item B/G/W:			Black/Green/White mana	 B/G/W
+		menu item R/W/U:			Red/White/Blue mana	 R/W/U
+		menu item G/U/B:			Green/Blue/Black mana	 G/U/B
+	magic-mana-large:
+		# Exactly the same
+		menu item T:			&Tap symbol	 T
+		menu item W:			&White mana	 W
+		menu item U:			Bl&ue mana	 U
+		menu item B:			&Black mana	 B
+		menu item R:			&Red mana	 R
+		menu item G:			&Green mana	 G
+		menu item S:			&Snow mana	 S
+		menu item X:			Variable mana &X	 X
+		menu item Y:			Variable mana &Y	 Y
+		menu item Z:			Variable mana &Z	 Z
+		menu item colorless:	&Colorless mana...
+		title colorless:		Colorless mana
+		message colorless:		Enter amount of colorless mana:
+		menu item half:				&Half mana
+		menu item |W:				&White	 |W
+		menu item |U:				Bl&ue	 |U
+		menu item |B:				&Black	 |B
+		menu item |R:				&Red	 |R
+		menu item |G:				&Green	 |G
+		menu item |S:				&Snow	 |S
+		menu item 1/2:				&Colorless	1/2
+		menu item hybrid:		H&ybrid mana (two color)
+		menu item W/U:				White/Blue mana	 W/U
+		menu item U/B:				Blue/Black mana	 U/B
+		menu item B/R:				Black/Red mana	 B/R
+		menu item R/G:				Red/Green mana	 R/G
+		menu item G/W:				Green/White mana	 G/W
+		menu item W/B:				White/Black mana	 W/B
+		menu item U/R:				Blue/Red mana	 U/R
+		menu item B/G:				Black/Green mana	 B/G
+		menu item R/W:				Red/White mana	 R/W
+		menu item G/U:				Green/Blue mana	 G/U
+		menu item hybrid 3:		H&ybrid mana (three color)
+		menu item W/U/B:			White/Blue/Black mana	 W/U/B
+		menu item U/B/R:			Blue/Black/Red mana	 U/B/R
+		menu item B/R/G:			Black/Red/Green mana	 B/R/G
+		menu item R/G/W:			Red/Green/White mana	 R/G/W
+		menu item G/W/U:			Green/White/Blue mana	 G/W/U
+		menu item W/B/R:			White/Black/Red mana	 W/B/R
+		menu item U/R/G:			Blue/Red/Green mana	 U/R/G
+		menu item B/G/W:			Black/Green/White mana	 B/G/W
+		menu item R/W/U:			Red/White/Blue mana	 R/W/U
+		menu item G/U/B:			Green/Blue/Black mana	 G/U/B
+
