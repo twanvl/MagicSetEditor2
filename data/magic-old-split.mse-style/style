@@ -5,7 +5,7 @@ short name: Old Splits
 icon: card-sample.png
 position hint: 103
 
-version: 2008-01-10
+version: 2008-03-12
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -145,7 +145,11 @@ styling field:
 	name: colored rarities
 	description: Should rarity symbols be different colors, such as gold, silver, and purple?
 	initial: yes
-
+styling field:
+	type: boolean
+	name: left align artist
+	description: Should the artist and copyright lines be left aligned, as seen in Tempest?
+	initial: no
 styling style:
 	use guild mana symbols:
 		choice images:
@@ -416,7 +420,7 @@ card style:
 		line height line: 1.5
 		line height soft: 0.9
 	watermark:
-		left: 87
+		left: 92
 		top : 228
 		width: 92
 		height: 108
@@ -425,7 +429,7 @@ card style:
 		alignment: middle center
 		include file: /magic-watermarks.mse-include/watermarks-old
 	watermark 2:
-		left: 338
+		left: 343
 		top : 228
 		width: 92
 		height: 108
@@ -472,11 +476,11 @@ card style:
 	############################# Copyright stuff
 
 	illustrator:
-		left: 54
+		left: 34
 		top : 333
-		width: 155
+		width: 205
 		height: 9
-		alignment: center middle
+		alignment: { if styling.left_align_artist then "middle left" else "middle center" }
 		z index: 1
 		font:
 			name: MPlantin
@@ -487,11 +491,11 @@ card style:
 			shadow displacement y: 1
 	
 	illustrator 2:
-		left: 306
+		left: 286
 		top : 333
-		width: 155
+		width: 205
 		height: 9
-		alignment: center middle
+		alignment: { if styling.left_align_artist then "middle left" else "middle center" }
 		z index: 1
 		font:
 			name: MPlantin
@@ -502,11 +506,11 @@ card style:
 			shadow displacement y: 1
 	
 	copyright line:
-		left: 50
+		left: 34
 		top : 342
-		width: 165
+		width: 205
 		height: 12
-		alignment: center middle
+		alignment: { if styling.left_align_artist then "middle left" else "middle center" }
 		z index: 1
 		font:
 			name: MPlantin
@@ -514,11 +518,11 @@ card style:
 			color: { font_color(card.card_color) }
 	
 	copyright line 2:
-		left: 302
+		left: 286
 		top : 342
-		width: 165
+		width: 205
 		height: 12
-		alignment: center middle
+		alignment: { if styling.left_align_artist then "middle left" else "middle center" }
 		z index: 1
 		font:
 			name: MPlantin

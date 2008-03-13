@@ -5,7 +5,7 @@ full name: After 8th edition
 icon: card-sample.png
 position hint: 001
 
-version: 2008-01-12
+version: 2008-03-12
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -309,13 +309,13 @@ card style:
 	pt:
 		z index: 4
 		left:	284
-		top:	467
+		top:	466
 		width:	60
 		height:	28
-		alignment: center middle
+		alignment: center middle shrink-overflow
 		font:
-			name: Mplantin
-			size: 16
+			name: ModMatrix
+			size: 17
 			weight: bold
 			color: rgb(0,0,0)
 			separator color: rgb(200,0,0)

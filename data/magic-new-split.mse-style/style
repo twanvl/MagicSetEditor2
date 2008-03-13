@@ -5,7 +5,7 @@ full name: Modern split cards
 icon: card-sample.png
 position hint: 003
 
-version: 2008-01-12
+version: 2008-03-12
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -388,13 +388,13 @@ card style:
 	pt:
 		z index: 4
 		left:	200
-		top:	328
+		top:	327
 		width:	48
 		height:	25
-		alignment: center middle
+		alignment: center middle shrink-overflow
 		font:
-			name: Mplantin
-			size: 13
+			name: ModMatrix
+			size: 14
 			weight: bold
 			color: rgb(0,0,0)
 			separator color: rgb(200,0,0)
@@ -402,13 +402,13 @@ card style:
 	pt 2:
 		z index: 4
 		left:	451
-		top:	328
+		top:	327
 		width:	48
 		height:	25
-		alignment: center middle
+		alignment: center middle shrink-overflow
 		font:
-			name: Mplantin
-			size: 13
+			name: ModMatrix
+			size: 14
 			weight: bold
 			color: rgb(0,0,0)
 			separator color: rgb(200,0,0)

@@ -5,7 +5,7 @@ installer group: magic/game files
 icon: card-back.png
 position hint: 01
 
-version: 2008-01-12
+version: 2008-03-12
 depends on:
 	package: magic-blends.mse-include
 	version: 2007-09-23
@@ -590,7 +590,7 @@ default set style:
 			border color: rgb(255,255,255)
 		variation:
 			name: uncommon
-			border radius: 0.05
+			border radius: 0.07
 			fill type: linear gradient
 			fill color 1:   rgb(224,224,224)
 			fill color 2:   rgb(84, 84, 84)
@@ -598,7 +598,7 @@ default set style:
 			border color 2: rgb(0,  0,  0)
 		variation:
 			name: rare
-			border radius: 0.05
+			border radius: 0.07
 			fill type: linear gradient
 			fill color 1:   rgb(214,196,94)
 			fill color 2:   rgb(95, 84, 40)
@@ -2220,7 +2220,7 @@ keyword:
 	keyword: Bloodthirst
 	match: Bloodthirst <atom-param>number</atom-param>
 	mode: expert
-	reminder: If an opponent was dealt damage this turn, this creature comes into play with {english_number_a(param1)} +1/+1 counter(s) on it.
+	reminder: If an opponent was dealt damage this turn, this {if has_pt() then "creature" else "permanent"} comes into play with {english_number_a(param1)} +1/+1 counter(s) on it.
 keyword:
 	keyword: Replicate
 	match: Replicate <atom-param>cost</atom-param>
@@ -2255,7 +2255,7 @@ keyword:
 	keyword: Flash
 	match: Flash
 	mode: core
-	reminder: You may play this spell anytime you could play an instant.
+	reminder: You may play this spell any time you could play an instant.
 keyword:
 	keyword: Split second
 	match: Split second

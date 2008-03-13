@@ -4,7 +4,7 @@ full name: Magic Vanguard
 icon: card-sample.png
 position hint: 02
 
-version: 2008-01-09
+version: 2008-03-12
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -830,7 +830,7 @@ keyword:
 	keyword: Flash
 	match: flash
 	mode: core
-	reminder: You may play it anytime you could play an instant.
+	reminder: You may play it any time you could play an instant.
 keyword:
 	keyword: Split second
 	match: split second
