@@ -48,7 +48,7 @@ void Font::initDependencies(Context& ctx, const Dependency& dep) const {
 	shadow_color.initDependencies(ctx, dep);
 }
 
-FontP Font::make(int add_flags, Color* other_color) const {
+FontP Font::make(int add_flags, Color* other_color, double* other_size) const {
 	FontP f(new Font(*this));
 	f->flags |= add_flags;
 	if (add_flags & FONT_CODE_STRING) {
@@ -67,6 +67,9 @@ FontP Font::make(int add_flags, Color* other_color) const {
 	}
 	if (other_color) {
 		f->color = *other_color;
+	}
+	if (other_size) {
+		f->size = *other_size;
 	}
 	return f;
 }

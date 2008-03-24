@@ -76,6 +76,8 @@ struct TextElementsFromString {
 	int soft, kwpph, param, line, soft_line;
 	int code, code_kw, code_string, param_ref, error;
 	int param_id;
+	vector<Color>  colors;
+	vector<double> sizes;
 	/// put angle brackets around the text?
 	bool bracket;
 	
@@ -121,6 +123,27 @@ struct TextElementsFromString {
 				else if (is_substr(text, tag_start, _("</code-str")))   code_string -= 1;
 				else if (is_substr(text, tag_start, _( "<code")))       code        += 1;
 				else if (is_substr(text, tag_start, _("</code")))       code        -= 1;
+				else if (is_substr(text, tag_start, _( "<color"))) {
+					size_t colon = text.find_first_of(_(">:"), tag_start);
+					if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
+						Color c = parse_color(text.substr(colon+1, pos-colon-2));
+						if (!c.Ok()) c = style.font.color;
+						colors.push_back(c);
+					}
+				} else if (is_substr(text, tag_start, _("</color"))) {
+					if (!colors.empty()) colors.pop_back();
+				}
+				else if (is_substr(text, tag_start, _( "<size"))) {
+					size_t colon = text.find_first_of(_(">:"), tag_start);
+					if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
+						double size = style.font.size;
+						String v = text.substr(colon+1, pos-colon-2);
+						v.ToDouble(&size);
+						sizes.push_back(size);
+					}
+				} else if (is_substr(text, tag_start, _("</size"))) {
+					if (!sizes.empty()) sizes.pop_back();
+				}
 				else if (is_substr(text, tag_start, _( "<ref-param"))) {
 					// determine the param being referenced
 					// from a tag <ref-param123>
@@ -222,7 +245,11 @@ struct TextElementsFromString {
 			(code_string > 0 ? FONT_CODE_STRING : FONT_NORMAL),
 			param > 0 || param_ref > 0
 				? &param_colors[(param_id++) % param_colors_count]
-				: nullptr);
+			: !colors.empty()
+				? &colors.back()
+				: nullptr,
+			!sizes.empty() ? &sizes.back() : nullptr
+			);
 	}
 };
 

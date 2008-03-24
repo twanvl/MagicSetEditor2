@@ -20,12 +20,16 @@ template <> void GetDefaultMember::handle(const AColor& col) {
 }
 template <> void Reader::handle(AColor& col) {
 	UInt r,g,b,a;
-	if (wxSscanf(getValue().c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
+	String v = getValue();
+	if (wxSscanf(v.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
 		col.Set(r,g,b);
 		col.alpha = 255;
-	} else if (wxSscanf(getValue().c_str(),_("rgba(%u,%u,%u,%u)"),&r,&g,&b,&a)) {
+	} else if (wxSscanf(v.c_str(),_("rgba(%u,%u,%u,%u)"),&r,&g,&b,&a)) {
 		col.Set(r,g,b);
 		col.alpha = a;
+	} else {
+		col = Color(v);
+		if (!col.Ok()) col = *wxBLACK;
 	}
 }
 template <> void Writer::handle(const AColor& col) {

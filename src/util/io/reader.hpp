@@ -251,6 +251,9 @@ void Reader::handle(IndexMap<K,V>& m) {
 
 // ----------------------------------------------------------------------------- : Reflection for enumerations
 
+/// Parse a color
+Color parse_color(const String& value);
+
 /// Implement enum reflection as used by Reader
 #define REFLECT_ENUM_READER(Enum)								\
 	template<> void Reader::handle<Enum>(Enum& enum_) {			\

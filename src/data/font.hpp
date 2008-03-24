@@ -58,8 +58,8 @@ class Font : public IntrusivePtrBase<Font> {
 		return shadow_displacement.width != 0 || shadow_displacement.height != 0;
 	}
 	
-	/// Add style to a font, and optionally change the color
-	FontP make(int add_flags, Color* other_color) const;
+	/// Add style to a font, and optionally change the color and size
+	FontP make(int add_flags, Color* other_color, double* other_size) const;
 	
 	/// Convert this font to a wxFont
 	wxFont toWxFont(double scale) const;

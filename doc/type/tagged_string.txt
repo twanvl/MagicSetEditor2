@@ -15,10 +15,12 @@ This is written as the character with code 1 in files.
 | @"<b>"@		The text inside the tag is bold.
 | @"<i>"@		The text inside the tag is italic.
 | @"<sym>"@		The text inside the tag is rendered as symbols, if a [[prop:style:symbol font]] is set for the text box.
+| @"<color:???>"@	The text inside the tag is rendered with the given [[type:color]].
+| @"<size:???>"@	The text inside the tag is scaled by the a factor, for example @"<size:2>text</size>"@ makes the text twice as large.
 | @"<line>"@		Line breaks inside this tag use the [[prop:style:line height line]], and they show a horizontal line.
 | @"<soft-line>"@	Line breaks inside this tag use the [[prop:style:soft line height]].
 | @"<atom>"@		An atomic piece of text. The cursor can never be inside it; it is selected as a whole.
-			The program automatically inserts <atom-soft>
+			The program automatically inserts @"<atom-soft>"@.
 | @"<code>"@		The text inside the text is rendered in a monospace font. This is used for syntax highlighting script code.
 | @"<code-kw>"@		The text inside the text is highlighted as a keyword in source code.
 | @"<code-str>"@	The text inside the text is highlighted as a string in source code.

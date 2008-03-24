@@ -368,12 +368,15 @@ template <> void Reader::handle(Vector2D& vec) {
 }
 
 template <> void Reader::handle(Color& col) {
+	col = parse_color(getValue());
+	if (!col.Ok()) col = *wxBLACK;
+}
+Color parse_color(const String& v) {
 	UInt r,g,b;
-	if (wxSscanf(getValue().c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
-		col.Set(r, g, b);
+	if (wxSscanf(v.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
+		return Color(r, g, b);
 	} else {
-		col = Color(previous_value);
-		if (!col.Ok()) col = *wxBLACK;
+		return Color(v);
 	}
 }
 
