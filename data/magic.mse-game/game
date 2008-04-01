@@ -5,7 +5,7 @@ installer group: magic/game files
 icon: card-back.png
 position hint: 01
 
-version: 2008-03-12
+version: 2008-03-25
 depends on:
 	package: magic-blends.mse-include
 	version: 2007-09-23
@@ -675,6 +675,7 @@ card field:
 		name: gold
 		color: rgb(200,180,0)
 	show statistics: false
+	description: The border of the card; can be any solid color.
 card field:
 	type: multiple choice
 	name: card color
@@ -715,6 +716,7 @@ card field:
 	script: card_color_filter(value)
 	default: card_color(casting_cost: card.casting_cost, rules_text: card.rule_text, type: card.super_type, watermark: card.watermark, card_name: card.name)
 	show statistics: false
+	description: The frame of the card, used to indicate card color.
 
 ############################# Name line
 card field:
@@ -723,6 +725,7 @@ card field:
 	card list visible: false
 	identifying: true
 	show statistics: false
+	description: The name of the card
 card field:
 	type: text
 	name: casting cost
@@ -756,12 +759,14 @@ card field:
 	choice: land
 	choice: multitype
 	choice: sorcery
+	description: The card type symbol for this card
 
 ############################# Image
 card field:
 	type: image
 	name: image
 	show statistics: false
+	description: The image of the card
 
 ############################# Card type
 card field:
@@ -822,11 +827,15 @@ card field:
 	name: rule text
 	script: text_filter(input: value, card_name: card.name)
 	show statistics: false
+	multi line: true
+	description: The rules text for the card
 card field:
 	type: text
 	name: flavor text
 	script: flavor_text_filter(value)
 	show statistics: false
+	multi line: true
+	description: The flavor text for the card
 card field:
 	type: text
 	name: text
@@ -835,6 +844,7 @@ card field:
 	show statistics: false
 	script:
 		combined_editor(field1: card.rule_text, separator: "<line>\n</line>", field2: card.flavor_text)
+	description: The rules and flavor text for the card; use up and down arrows to switch
 card field:
 	type: choice
 	name: watermark
@@ -849,18 +859,22 @@ card field:
 	name: loyalty
 	icon: stats/toughness.png
 	position hint: 59
+	description: The initial loyalty of a planeswalker
 card field:
 	type: text
 	name: loyalty cost 1
 	show statistics: false
+	description: The loyalty cost for the first ability of a planeswalker
 card field:
 	type: text
 	name: loyalty cost 2
 	show statistics: false
+	description: The loyalty cost for the second ability of a planeswalker
 card field:
 	type: text
 	name: loyalty cost 3
 	show statistics: false
+	description: The loyalty cost for the third ability of a planeswalker
 ############################# PT
 card field:
 	type: text
@@ -868,11 +882,13 @@ card field:
 	icon: stats/power.png
 	show statistics: false
 	script: type_over_pt(value)
+	description: The power of a creature
 card field:
 	type: text
 	name: toughness
 	show statistics: false
 	icon: stats/toughness.png
+	description: The toughness of a creature
 card field:
 	type: text
 	name: pt
@@ -889,7 +905,7 @@ card field:
 	card list column: 5
 	card list width: 50
 	card list name: P/T
-	description: Power/toughness
+	description: Power/toughness of a creature
 	show statistics: false
 
 ############################# Card sorting / numbering
@@ -979,11 +995,13 @@ card field:
 	script: card_color_filter(value)
 	default: card_color(casting_cost: card.casting_cost_2, type: card.super_type_2, rules_text: card.rule_text_2, watermark: card.watermark_2, card_name: card.name_2)
 	show statistics: false
+	description: The frame of a card
 card field:
 	type: text
 	name: name 2
 	identifying: true
 	show statistics: false
+	description: The name of a card
 card field:
 	type: text
 	name: casting cost 2
@@ -993,6 +1011,7 @@ card field:
 	card list width: 50
 	card list name: CC
 	show statistics: false
+	description: The casting cost of a card
 card field:
 	type: choice
 	name: card symbol 2
@@ -1000,10 +1019,12 @@ card field:
 	choice: none
 	choice: tombstone
 	show statistics: false
+	description: The card symbol of the card (Tombstone)
 card field:
 	type: image
 	name: image 2
 	show statistics: false
+	description: The image of the card
 card field:
 	type: text
 	name: super type 2
@@ -1031,6 +1052,7 @@ card field:
 			hide_when_empty:   true
 		)
 	show statistics: false
+	description: The type of the card; type "-" to go from type to subtype
 card field:
 	type: choice
 	name: rarity 2
@@ -1050,11 +1072,13 @@ card field:
 	name: rule text 2
 	script: text_filter(input: value, card_name: card.name_2)
 	show statistics: false
+	multi line: true
+	description: The rules text of the card
 card field:
 	type: text
 	name: flavor text 2
 	script: flavor_text_filter(value)
-	editable: false
+	multi line: true
 	show statistics: false
 card field:
 	type: text
@@ -1064,6 +1088,7 @@ card field:
 	show statistics: false
 	script:
 		combined_editor(field1: card.rule_text_2, separator: "<line>\n</line>", field2: card.flavor_text_2)
+	description: The rules and flavor text of the card
 card field:
 	type: choice
 	name: watermark 2
@@ -1077,11 +1102,13 @@ card field:
 	icon: stats/power.png
 	show statistics: false
 	script: type_over_pt(value)
+	description: The power of a creature
 card field:
 	type: text
 	name: toughness 2
 	icon: stats/toughness.png
 	show statistics: false
+	description: The toughness of a creature
 card field:
 	type: text
 	name: pt 2
@@ -1097,12 +1124,14 @@ card field:
 	card list width: 50
 	card list name: P/T2
 	show statistics: false
+	description: Power/Toughness of a creature
 card field:
 	type: text
 	name: illustrator 2
 	icon: stats/illustrator.png
 	default: set.artist
 	show statistics: false
+	description: The illustrator of the image
 card field:
 	type: text
 	name: copyright 2
@@ -1119,7 +1148,7 @@ card field:
 			combined_editor(field1: card.copyright_2, separator: " ", field2: card.card_number)
 		else
 			forward_editor(field: card.copyright_2)
-
+	description: The copyright and card number of the card
 ############################################################## Card list
 
 card list color script:
@@ -1613,7 +1642,6 @@ word list:
 			word: Beast
 			word: Berserker
 			word: Bringer
-			word: Brushwagg
 			word: Carrier
 			word: Citizen
 			word: Cleric
@@ -1689,6 +1717,7 @@ word list:
 		name:
 		line below: true
 	word: Aura
+	word: Shrine
 
 word list:
 	name: spell

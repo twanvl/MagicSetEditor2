@@ -5,7 +5,7 @@ full name: After 8th edition
 icon: card-sample.png
 position hint: 001
 
-version: 2008-03-12
+version: 2008-03-13
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -39,16 +39,19 @@ init script:
 	#Should multicolor lands with basic land types have a colored name?
 	mask_multi_land_with_color := { styling.colored_multicolor_land_name }
 	
-	# Which artifact template should be used?
-	artifact_template := {
+	# Which artifact template should be used?  Which multicolor template should be used?
+	alternate_template := {
 		if input == "a" then (
 			if       styling.artifact_style == "light" then "oa"
 			else if  styling.artifact_style == "brown" then "ba"
 			else                                            "a"
+		) else if input == "m" then (
+			if styling.saturated_multicolor then "m"
+			else "om"
 		) else	input
 	}
-	template      := { artifact_template() + "{type}.jpg" }
-	land_template := { (if input == "a" then "c" else input) + "l{type}.jpg" }
+	template      := { alternate_template() + "{type}.jpg" }
+	land_template := { (if input == "a" then "c" else alternate_template()) + "l{type}.jpg" }
 	# Use land templates for previews because they show more contrast
 	hybrid_previews := "land,hybrid"
 	
@@ -61,8 +64,8 @@ init script:
 	
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
-		
 	
+
 ############################################################## Set info fields
 set info style:
 	symbol:
@@ -83,6 +86,11 @@ styling field:
 	choice: light
 	choice: dark
 	choice: brown
+styling field:
+	type: boolean
+	name: saturated multicolor
+	description: Should multicolor cards be more saturated? This is done on real cards.
+	initial: yes
 styling field:
 	type: boolean
 	name: grey hybrid name

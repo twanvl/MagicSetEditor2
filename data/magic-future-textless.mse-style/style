@@ -3,7 +3,7 @@ game: magic
 short name: Future Textless
 full name: Futureshift Textless
 icon: card-sample.png
-position hint: 051
+position hint: 055
 
 version: 2008-03-12
 depends on:
