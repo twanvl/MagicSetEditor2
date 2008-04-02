@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.6
-version: 2008-01-10
+version: 2008-04-01
 short name: normal (colorless)
 position hint: 21
 icon: mana_r.png
@@ -27,6 +27,17 @@ symbol:
 symbol:
 	code: T
 	image: mana_t.png
+symbol:
+	code: Q
+	image: mana_q_older.png
+	enabled: { mana_t() == "older" }
+symbol:
+	code: Q
+	image: mana_q_old.png
+	enabled: { mana_t() == "old" }
+symbol:
+	code: Q
+	image: mana_q.png
 symbol:
 	code: B/G/W
 	image: mana_bgw.png
@@ -226,6 +237,7 @@ text margin bottom: -.14
 # Insert-symbol menu
 insert symbol menu:
 	item: T
+	item: Q
 	item:
 		type: line
 	item: X

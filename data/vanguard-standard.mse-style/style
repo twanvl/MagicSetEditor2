@@ -4,7 +4,7 @@ short name: Standard
 icon: card-sample.png
 position hint: 01
 
-version: 2007-12-30
+version: 2008-04-01
 depends on:
 	package: vanguard.mse-game
 	version: 2007-12-29
@@ -36,7 +36,6 @@ init script:
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
 
-
 ############################################################## Extra style options
 
 styling field:
@@ -52,7 +51,7 @@ styling field:
 styling field:
 	type: choice
 	name: tap symbol
-	description: What tap symbol should be used on cards?
+	description: What tap and untap symbols should be used on cards?
 	initial: old
 	choice: modern
 	choice: old

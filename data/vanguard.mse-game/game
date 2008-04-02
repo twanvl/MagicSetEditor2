@@ -4,7 +4,7 @@ full name: Magic Vanguard
 icon: card-sample.png
 position hint: 02
 
-version: 2008-03-18
+version: 2008-04-01
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -30,7 +30,7 @@ init script:
 		else                         mana_sort()
 	}
 	# Like mana filter, only also allow tap symbols:
-	tap_filter := sort_rule(order: "<T>")
+	tap_filter := sort_rule(order: "<TQ>")
 	mana_filter_t := replace_rule(               # Remove [] used for forcing mana symbols
 				match: "[\\[\\]]",
 				replace: ""
@@ -43,7 +43,7 @@ init script:
 	for_mana_costs := format_cost := {
 		if input.separator_before == "—" and contains(input.param, " ") then (
 			if contains(input.param, match:",") then (
-				if match(match: "^[STXYZIWUBRG0-9/|]+,", input.param) then
+				if match(match: "^[STQXYZIWUBRG0-9/|]+,", input.param) then
 					"{add}<param-cost>{combined_cost(input.param)}</param-cost>"
 				else "<param-cost>{combined_cost(input.param)}</param-cost>"
 			) else
@@ -54,7 +54,7 @@ init script:
 	alternative_cost := replace_rule(match:"^[A-Z]", replace: { to_lower() })
 	combined_cost := replace_rule(match:", [A-Z]", replace: { to_lower() })+
 		replace_rule(match:",", replace:" and")+
-		replace_rule(match:"^[STXYZIWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
+		replace_rule(match:"^[STQXYZIWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
 		replace_rule(match:"^[A-Z]", replace: { to_lower() })
 	long_dash := replace_rule(match:"-", replace:"—")
 	# Utilities for keywords
@@ -82,7 +82,7 @@ init script:
 		    |adds?|pay(ed)?[ ](with|using)
 		    )
 		    ([ ]either)?			 # pay either X or Y
-		    ([ ]<sym[^>]*>[TSXYZIWUBRG0-9/|]+</sym[^>]*>[ ](and|or))* # pay X or Y
+		    ([ ]<sym[^>]*>[TQSXYZIWUBRG0-9/|]+</sym[^>]*>[ ](and|or))* # pay X or Y
 		    [ ]<match> 
 		    ([,.)]|$				# (end of word)
 		    |[ ][^ .,]*$			# still typing...
@@ -133,16 +133,16 @@ init script:
 			) +
 		# step 4.5 : explict non mana symbols
 		replace_rule(
-			match: "\\][STXYZIWUBRG0-9/|]+\\[",
+			match: "\\][STQXYZIWUBRG0-9/|]+\\[",
 			replace: {"<nosym>" + mana_filter_t() + "</nosym>"} ) +
 		# step 5 : add mana & tap symbols
 		replace_rule(
-			match: "[STXYZIWUBRG0-9/|]+",
+			match: "[STQXYZIWUBRG0-9/|]+",
 			in_context: mana_context,
 			replace: {"<sym-auto>" + mana_filter_t() + "</sym-auto>"} ) +
 		# step 5b : add explict mana symbols
 		replace_rule(
-			match: "\\[[STXYZIWUBRG0-9/|]+\\]",
+			match: "\\[[STQXYZIWUBRG0-9/|]+\\]",
 			replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
 		# step 7 : italic reminder text
 		replace_rule(
@@ -422,7 +422,7 @@ keyword mode:
 
 keyword parameter type:
 	name: mana
-	match: [STXYZI0-9WUBRG/|]+
+	match: [STQXYZI0-9WUBRG/|]+
 	refer script:
 		name: normal
 		description: No changes made
@@ -435,7 +435,7 @@ keyword parameter type:
 # By pichoro and bunnierein
 keyword parameter type:
 	name: cost
-	match: [ ][STXYZI0-9WUBRG/|]*|[-—][^(\n]*
+	match: [ ][STQXYZI0-9WUBRG/|]*|[-—][^(\n]*
 	separator before is: [ —-]
 	separator after is: [.]
 	optional: false
@@ -956,3 +956,13 @@ keyword:
 	keyword: Kinship
 	match: Kinship
 	mode: pseudo
+keyword:
+	keyword: Persist
+	match: persist
+	mode: expert
+	reminder: When it is put into a graveyard from play, if it had no -1/-1 counters on it, return it to play under its owner's control with a -1/-1 counter on it.
+keyword:
+	keyword: Wither
+	match: wither
+	mode: expert
+	reminder: It deals damage to creatures in the form of -1/-1 counters.

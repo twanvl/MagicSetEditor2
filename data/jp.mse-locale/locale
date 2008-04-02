@@ -1,7 +1,7 @@
 ﻿mse version: 0.3.6
 installer group: locales
 full name: Japanese
-version: 2008-03-12
+version: 2008-04-01
 icon: jp.png
 
 ############################################################## Menu items
@@ -749,6 +749,7 @@ symbol font:
 		# note: reminder/shortcut must start with a space, otherwise it is used as a shortcut
 		#       so typing T *anywhere* would insert a symbol (which would be bad)
 		menu item T:			&Tap symbol	 T
+		menu item Q:			&Untap symbol	 Q
 		menu item W:			&White mana	 W
 		menu item U:			Bl&ue mana	 U
 		menu item B:			&Black mana	 B

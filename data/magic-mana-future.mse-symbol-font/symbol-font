@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.6
-version: 2007-10-12
+version: 2008-04-01
 # Symbol font in the 'futuristic' style, used for casting costs on futureshift cards
 short name: Future Sight style
 position hint: 005
@@ -28,6 +28,9 @@ symbol:
 symbol:
 	code: T
 	image: mana_t.png
+symbol:
+	code: Q
+	image: mana_q.png
 symbol:
 	code: W/U
 	image: mana_guild_wu.png
@@ -159,6 +162,7 @@ text margin bottom: 0.1
 # Insert-symbol menu
 insert symbol menu:
 	item: T
+	item: Q
 	item:
 		type: line
 	item: I
