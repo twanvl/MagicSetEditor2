@@ -5,16 +5,13 @@ short name: Old Splits
 icon: card-sample.png
 position hint: 103
 
-version: 2008-04-01
+version: 2008-04-05
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
 depends on:
 	package: magic-watermarks.mse-include
 	version: 2007-12-29
-depends on:
-	package: magic-mana-large.mse-symbol-font
-	version: 2007-09-23
 depends on:
 	package: magic-mana-small.mse-symbol-font
 	version: 2007-09-23
@@ -26,7 +23,6 @@ card dpi: 150
 
 # Author: Buttock1234
 # Lots of copy/paste from magic-new.mse-style
-
 ############################################################## Extra scripts
 
 init script:
@@ -105,7 +101,6 @@ set info style:
 			fill color 2:   rgb(95, 84, 40)
 			border color 1: rgb(255,255,255)
 			border color 2: rgb(255,255,255)
-
 ############################################################## styling style
 styling field:
 	type: boolean
@@ -158,9 +153,9 @@ styling style:
 	tap symbol:
 		render style: both
 		choice images:
-			modern:     /magic-mana-large.mse-symbol-font/mana_t.png
-			old:        /magic-mana-large.mse-symbol-font/mana_t_old.png
-			diagonal T: /magic-mana-large.mse-symbol-font/mana_t_older.png
+			modern:     /magic-mana-small.mse-symbol-font/mana_t.png
+			old:        /magic-mana-small.mse-symbol-font/mana_t_old.png
+			diagonal T: /magic-mana-small.mse-symbol-font/mana_t_older.png
 
 ############################################################## Card fields
 card style:
@@ -190,7 +185,6 @@ card style:
 		render style: image
 		popup style: in place
 		image: { card_background() }
-
 	############################# Name line
 	name:
 		left: 32
@@ -235,7 +229,6 @@ card style:
 		always symbol: true
 		z index: 2
 		padding top: 0
-
 	casting cost 2:
 		right: 496
 		top : 18.5
@@ -249,24 +242,21 @@ card style:
 		always symbol: true
 		z index: 2
 		padding top: 0
-
 	############################# Image
 	image:
 		left:	36
-		top:	39
-		width:	201
-		height:	163
+		top:	40
+		width:	200
+		height:	162
 		z index: 1
 
 	image 2:
 		left:	287
-		top:	39
-		width:	201
+		top:	40
+		width:	200
 		height:	163
 		z index: 1
-
 	############################# Card type
-
 	type:
 		left: 32
 		top : 206
@@ -282,7 +272,6 @@ card style:
 			shadow displacement x: 1
 			shadow displacement y: 1
 			separator color: rgb(128,128,128)
-
 	type 2:
 		left: 284
 		top : 206
@@ -298,7 +287,6 @@ card style:
 			shadow displacement x: 1
 			shadow displacement y: 1
 			separator color: rgb(128,128,128)
-
 	rarity:
 		right: 241
 		top : 207
@@ -326,7 +314,6 @@ card style:
 					if styling.colored_rarities
 					then symbol_variation(symbol: set.symbol, variation: "special")
 					else symbol_variation(symbol: set.symbol, variation: "common")
-
 	rarity 2:
 		right: 493
 		top : 207
@@ -354,7 +341,6 @@ card style:
 					if styling.colored_rarities
 					then symbol_variation(symbol: set.symbol, variation: "special")
 					else symbol_variation(symbol: set.symbol, variation: "common")
-
 	############################# Text box
 	text:
 		left: 37
@@ -387,7 +373,6 @@ card style:
 		line height hard: 1.2
 		line height line: 1.5
 		line height soft: 0.9
-
 	text 2:
 		left: 289
 		top : 226
@@ -420,7 +405,7 @@ card style:
 		line height line: 1.5
 		line height soft: 0.9
 	watermark:
-		left: 92
+		left: 87
 		top : 228
 		width: 92
 		height: 108
@@ -429,7 +414,7 @@ card style:
 		alignment: middle center
 		include file: /magic-watermarks.mse-include/watermarks-old
 	watermark 2:
-		left: 343
+		left: 338
 		top : 228
 		width: 92
 		height: 108
@@ -437,7 +422,6 @@ card style:
 		render style: image
 		alignment: middle center
 		include file: /magic-watermarks.mse-include/watermarks-old
-
 	############################# PT
 	pt:
 		z index: 4
@@ -455,7 +439,6 @@ card style:
 			shadow displacement x: 1
 			shadow displacement y: 1
 			separator color: rgb(200,0,0)
-
 	pt 2:
 		z index: 4
 		left:	460
@@ -472,9 +455,7 @@ card style:
 			shadow displacement x: 1
 			shadow displacement y: 1
 			separator color: rgb(200,0,0)
-		
 	############################# Copyright stuff
-
 	illustrator:
 		left: 34
 		top : 333
@@ -489,7 +470,6 @@ card style:
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
 			shadow displacement y: 1
-	
 	illustrator 2:
 		left: 286
 		top : 333
@@ -504,7 +484,6 @@ card style:
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
 			shadow displacement y: 1
-	
 	copyright line:
 		left: 34
 		top : 342
@@ -516,7 +495,6 @@ card style:
 			name: MPlantin
 			size: 6
 			color: { font_color(card.card_color) }
-	
 	copyright line 2:
 		left: 286
 		top : 342
