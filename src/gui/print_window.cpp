@@ -55,7 +55,7 @@ class TextBufferDC : public wxMemoryDC {
 		double user_scale_x, user_scale_y;
 		
 		TextDraw(wxFont font, Color color, double user_scale_x, double user_scale_y, int x, int y, String text, double angle = 0)
-			: font(font), color(color), user_scale_x(user_scale_x), user_scale_y(user_scale_y), x(x), y(y), text(text), angle(angle)
+			: font(font), color(color), x(x), y(y), text(text), angle(angle), user_scale_x(user_scale_x), user_scale_y(user_scale_y)
 		{}
 	};
   public:
@@ -127,8 +127,8 @@ PageLayout::PageLayout(const StyleSheet& stylesheet, const RealSize& page_size)
 	card_size.width  = stylesheet.card_width  * 25.4 / stylesheet.card_dpi;
 	card_size.height = stylesheet.card_height * 25.4 / stylesheet.card_dpi;
 	card_landscape = card_size.width > card_size.height;
-	cols = floor(page_size.width  / card_size.width);
-	rows = floor(page_size.height / card_size.height);
+	cols = int(floor(page_size.width  / card_size.width));
+	rows = int(floor(page_size.height / card_size.height));
 	// distribute whitespace evenly
 	margin_left = margin_right  = card_spacing.width  = (page_size.width  - (cols * card_size.width )) / (cols + 1);
 	margin_top  = margin_bottom = card_spacing.height = (page_size.height - (rows * card_size.height)) / (rows + 1);
@@ -228,7 +228,7 @@ void CardsPrintout::drawCard(DC& dc, const CardP& card, int card_nr) {
 	*/
 	
 	// create buffers
-	int w = stylesheet.card_width, h = stylesheet.card_height; // in pixels
+	int w = int(stylesheet.card_width), h = int(stylesheet.card_height); // in pixels
 	if (rotation == 90) swap(w,h);
 	// Draw using text buffer
 	//TextBufferDC bufferDC(w,h,true);
@@ -241,7 +241,7 @@ void CardsPrintout::drawCard(DC& dc, const CardP& card, int card_nr) {
 	// render buffer to device
 	double px_per_mm = 4 * stylesheet.card_dpi / 25.4;
 	dc.SetUserScale(scale_x / px_per_mm, scale_y / px_per_mm);
-	dc.SetDeviceOrigin(scale_x * pos.x, scale_y * pos.y);
+	dc.SetDeviceOrigin(int(scale_x * pos.x), int(scale_y * pos.y));
 	bufferDC.drawToDevice(dc, 0, 0); // adjust for scaling
 }
 

@@ -651,7 +651,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 			}
 		}
 		// how many paragraphs would fit?
-		int n = floor(0.5 + (dc.getInternalSize().height - style.padding_bottom) / style.paragraph_height);
+		int n = int(floor(0.5 + (dc.getInternalSize().height - style.padding_bottom) / style.paragraph_height));
 		lines.back().top = max_height * n - lines.back().line_height;
 	}
 	return lines.back().bottom() <= dc.getInternalSize().height - style.padding_bottom;

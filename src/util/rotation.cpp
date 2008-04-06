@@ -286,7 +286,7 @@ void RotatedDC::DrawRoundedRectangle(const RealRect& r, double radius) {
 
 void RotatedDC::DrawCircle(const RealPoint& center, double radius) {
 	wxPoint p = tr(center);
-	dc.DrawCircle(p.x + 1, p.y + 1, trS(radius));
+	dc.DrawCircle(p.x + 1, p.y + 1, int(trS(radius)));
 }
 
 void RotatedDC::DrawEllipticArc(const RealPoint& center, const RealSize& size, double start, double end) {

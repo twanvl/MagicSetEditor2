@@ -38,7 +38,7 @@ IMPLEMENT_REFLECTION(Installer) {
 	REFLECT(packages);
 }
 
-/*
+#if 0
 // ----------------------------------------------------------------------------- : Installing
 
 void Installer::installFrom(const String& filename, bool message_on_success, bool local) {
@@ -135,12 +135,14 @@ void Installer::install(bool local, bool check_dependencies) {
 		}
 		os.Write(*is);
 	}
-	* /
+	*/
 }
 
 void Installer::install(const String& package) {
 	// TODO
-}*/
+}
+
+#endif
 
 // ----------------------------------------------------------------------------- : Creating
 
@@ -255,14 +257,14 @@ DownloadableInstaller::~DownloadableInstaller() {
 InstallablePackage::InstallablePackage(const PackageVersionP& installed, const PackageDescriptionP& description)
 	: installed(installed)
 	, description(description)
-	, action(PACKAGE_NOTHING)
 	, status(PACKAGE_INSTALLED)
+	, action(PACKAGE_NOTHING)
 {}
 InstallablePackage::InstallablePackage(const PackageDescriptionP& description , const DownloadableInstallerP& installer)
 	: description(description)
 	, installer(installer)
-	, action(PACKAGE_NOTHING)
 	, status(PACKAGE_INSTALLABLE)
+	, action(PACKAGE_NOTHING)
 {}
 
 void InstallablePackage::determineStatus() {

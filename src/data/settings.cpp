@@ -157,8 +157,8 @@ Settings::Settings()
 	, installer_list_url   (_("http://magicseteditor.sourceforge.net/installers"))
 	, check_updates        (CHECK_IF_CONNECTED)
 	, check_updates_all    (true)
-	, install_type         (INSTALL_DEFAULT)
 	, website_url          (_("http://magicseteditor.sourceforge.net/"))
+	, install_type         (INSTALL_DEFAULT)
 {}
 
 void Settings::addRecentFile(const String& filename) {

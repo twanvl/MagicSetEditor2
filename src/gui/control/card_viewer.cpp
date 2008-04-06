@@ -29,7 +29,7 @@ wxSize CardViewer::DoGetBestSize() const {
 	if (set) {
 		if (!stylesheet) stylesheet = set->stylesheet;
 		StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
-		wxSize size(stylesheet->card_width * ss.card_zoom(), stylesheet->card_height * ss.card_zoom());
+		wxSize size(int(stylesheet->card_width * ss.card_zoom()), int(stylesheet->card_height * ss.card_zoom()));
 		if (sideways(ss.card_angle())) swap(size.x, size.y);
 		return size + ws - cs;
 	}

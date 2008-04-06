@@ -38,16 +38,16 @@ void SymbolSymmetryEditor::draw(DC& dc) {
 		if (symmetry->kind == SYMMETRY_REFLECTION) {
 			// draw line to handle
 			dc.SetPen(wxPen(color,1,wxDOT));
-			dc.DrawLine(center.x, center.y, handle.x, handle.y);
+			dc.DrawLine(int(center.x), int(center.y), int(handle.x), int(handle.y));
 			// draw handle
 			dc.SetPen(*wxBLACK_PEN);
 			dc.SetBrush(color);
-			dc.DrawCircle(handle.x, handle.y, hovered == SELECTION_HANDLE ? 7 : 4);
+			dc.DrawCircle(int(handle.x), int(handle.y), hovered == SELECTION_HANDLE ? 7 : 4);
 		}
 		// draw center
 		dc.SetPen(*wxBLACK_PEN);
 		dc.SetBrush(color);
-		dc.DrawCircle(center.x, center.y, hovered == SELECTION_CENTER ? 8 : 5);
+		dc.DrawCircle(int(center.x), int(center.y), hovered == SELECTION_CENTER ? 8 : 5);
 	}
 }
 

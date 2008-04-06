@@ -185,8 +185,8 @@ void draw_resampled_text(DC& dc, const RealPoint& pos, const RealRect& rect, dou
 	// get image
 	mdc.SelectObject(wxNullBitmap);
 	// step 2. sample down
-	if (!sideways(angle)) w *= stretch;
-	else                  h *= stretch;
+	if (!sideways(angle)) w = int(w * stretch); // GCC makes annoying conversion warnings if *= is used here.
+	else                  h = int(h * stretch);
 	Image img_small(w, h, false);
 	fill_image(img_small, dc.GetTextForeground());
 	downsample_to_alpha(buffer, img_small);

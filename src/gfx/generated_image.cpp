@@ -31,7 +31,7 @@ Image conform_image(const Image& img, const GeneratedImage::Options& options) {
 	if ((iw == options.width && ih == options.height) || (options.width == 0 && options.height == 0)) {
 		// zoom?
 		if (options.zoom != 1.0) {
-			image = resample(image, iw * options.zoom, ih * options.zoom);
+			image = resample(image, int(iw * options.zoom), int(ih * options.zoom));
 		} else {
 			// already the right size
 		}

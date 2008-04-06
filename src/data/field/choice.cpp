@@ -46,12 +46,13 @@ IMPLEMENT_REFLECTION(ChoiceField) {
 // ----------------------------------------------------------------------------- : ChoiceField::Choice
 
 ChoiceField::Choice::Choice()
-	: first_id(0)
-	, line_below(false), enabled(true), type(CHOICE_TYPE_CHECK)
+	: line_below(false), enabled(true), type(CHOICE_TYPE_CHECK)
+	, first_id(0)
 {}
 ChoiceField::Choice::Choice(const String& name)
-	: name(name), first_id(0)
+	: name(name)
 	, line_below(false), enabled(true), type(CHOICE_TYPE_CHECK)
+	, first_id(0)
 {}
 
 

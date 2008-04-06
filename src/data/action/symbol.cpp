@@ -328,7 +328,7 @@ void CombiningModeAction::perform(bool to_undo) {
 
 SymbolPartNameAction::SymbolPartNameAction(const SymbolPartP& part, const String& name, size_t old_cursor, size_t new_cursor)
 	: part(part), part_name(name)
-	, new_cursor(old_cursor), old_cursor(new_cursor) // will be swapped
+	, old_cursor(new_cursor), new_cursor(old_cursor) // will be swapped
 {}
 
 String SymbolPartNameAction::getName(bool to_undo) const {

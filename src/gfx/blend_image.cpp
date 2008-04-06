@@ -107,7 +107,7 @@ void set_alpha(Image& img, Byte* al, const wxSize& alpha_size) {
 }
 
 void set_alpha(Image& img, double alpha) {
-	Byte b_alpha = alpha * 255;
+	Byte b_alpha = Byte(alpha * 255);
 	if (!img.HasAlpha()) {
 		img.InitAlpha();
 		memset(img.GetAlpha(), b_alpha, img.GetWidth() * img.GetHeight());

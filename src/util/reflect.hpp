@@ -163,7 +163,7 @@
  *  When reading the first value declared is the default value
  *
  *  Currently creates the methods:
- *   - Reader::handle(Enum&
+ *   - Reader::handle(Enum&)
  *   - Writer::handle(const Enum&)
  *   - GetDefaultMember::handle(const Enum&)
  */

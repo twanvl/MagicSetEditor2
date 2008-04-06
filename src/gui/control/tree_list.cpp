@@ -116,9 +116,9 @@ size_t TreeList::findParent(size_t start) const {
 
 TreeList::TreeList(Window* parent, int id, long style)
 	: wxPanel(parent, id, wxDefaultPosition, wxDefaultSize, style | wxWANTS_CHARS | wxVSCROLL)
+	, selection(NOTHING)
 	, total_lines(0)
 	, first_line(0)
-	, selection(NOTHING)
 {
 	// determine item size
 	wxClientDC dc(this);

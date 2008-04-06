@@ -161,11 +161,11 @@ int Style::update(Context& ctx) {
 	if      (automatic_side & AUTO_LEFT)   left   = right - width;
 	else if (automatic_side & AUTO_WIDTH)  width  = right - left;
 	else if (automatic_side & AUTO_RIGHT)  right  = left + width;
-	else                                   {int lr = left + right; left = (lr - width) / 2; right = (lr + width) / 2; }
+	else                                   {int lr = int(left + right); left = (lr - width) / 2; right = (lr + width) / 2; }
 	if      (automatic_side & AUTO_TOP)    top    = bottom - height;
 	else if (automatic_side & AUTO_HEIGHT) height = bottom - top;
 	else if (automatic_side & AUTO_BOTTOM) bottom = top + height;
-	else                                   {int tb = top + bottom; top = (tb - height) / 2; bottom = (tb + height) / 2; }
+	else                                   {int tb = int(top + bottom); top = (tb - height) / 2; bottom = (tb + height) / 2; }
 	// adjust rotation point
 	if (angle != 0 && (automatic_side & (AUTO_LEFT | AUTO_TOP))) {
 		double s = sin(angle * M_PI / 180), c = cos(angle * M_PI / 180);

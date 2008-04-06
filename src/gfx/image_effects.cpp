@@ -18,7 +18,7 @@ void saturate(Image& image, double amount) {
 	Byte* end = pix + image.GetWidth() * image.GetHeight() * 3;
 	if (amount > 0) {
 		amount = min(amount,0.99);
-		int factor = 256 * amount;
+		int factor = int(256 * amount);
 		int div    = 768 - 3 * factor;
 		while (pix != end) {
 			int r = pix[0], g = pix[1], b = pix[2];
@@ -35,7 +35,7 @@ void saturate(Image& image, double amount) {
 			pix += 3;
 		}
 	} else {
-		int factor1 = 256 * -amount;
+		int factor1 = int(256 * -amount);
 		int factor2 = 768 - 3*factor1;
 		while (pix != end) {
 			int r = pix[0], g = pix[1], b = pix[2];

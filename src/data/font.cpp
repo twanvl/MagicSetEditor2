@@ -88,7 +88,7 @@ wxFont Font::toWxFont(double scale) const {
 		}
 	} else if (name().empty()) {
 		font = *wxNORMAL_FONT;
-		font.SetPointSize(size > 1 ? size_i : scale * font.GetPointSize());
+		font.SetPointSize(size > 1 ? size_i : int(scale * font.GetPointSize()));
 		return font;
 	} else if (flags & FONT_ITALIC && !italic_name().empty()) {
 		font = wxFont(size_i, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, weight_i, underline(), italic_name());

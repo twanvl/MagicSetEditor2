@@ -35,7 +35,7 @@ DECLARE_POINTER_TYPE(PackageChoiceValue);
 /// An Action the changes a Value
 class ValueAction : public Action {
   public:
-	inline ValueAction(const Card* card, const ValueP& value) : card(card), valueP(value) {}
+	inline ValueAction(const Card* card, const ValueP& value) : valueP(value), card(card) {}
 	
 	virtual String getName(bool to_undo) const;
 	

@@ -17,8 +17,8 @@
 
 Reader::Reader(const InputStreamP& input, Packaged* package, const String& filename, bool ignore_invalid)
 	: indent(0), expected_indent(0), state(OUTSIDE)
-	, package(package), filename(filename), line_number(0), previous_line_number(0)
 	, ignore_invalid(ignore_invalid)
+	, filename(filename), package(package), line_number(0), previous_line_number(0)
 	, input(input)
 {
 	moveNext();
@@ -27,10 +27,10 @@ Reader::Reader(const InputStreamP& input, Packaged* package, const String& filen
 
 Reader::Reader(Packaged* pkg, const String& filename)
 	: indent(0), expected_indent(0), state(OUTSIDE)
-	, package(pkg), filename(filename), line_number(0), previous_line_number(0)
 	, ignore_invalid(false)
+	, filename(filename), package(pkg), line_number(0), previous_line_number(0)
+	, input(packages.openFileFromPackage(package, filename))
 {
-	input = packages.openFileFromPackage(package, filename);
 	moveNext();
 	handleAppVersion();
 }
@@ -175,7 +175,7 @@ String read_utf8_line(wxInputStream& input, bool eat_bom, bool until_eof) {
 	// convert to string
 	buffer.push_back('\0');
 	size_t size = wxConvUTF8.MB2WC(nullptr, buffer.get(), 0);
-	if (size == -1) {
+	if (size == size_t(-1)) {
 		throw ParseError(_("Invalid UTF-8 sequence"));
 	} else if (size == 0) {
 		return _("");

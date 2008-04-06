@@ -21,9 +21,9 @@ Image render_symbol(const SymbolP& symbol, double border_radius, int width, int 
 	double ar  = symbol->aspectRatio();
 	double par = (double)width/height;
 	if (par > ar && (ar > 1 || (allow_smaller && height < width))) {
-		width  = height * ar;
+		width  = int(height * ar);
 	} else if (par < ar && (ar < 1 || (allow_smaller && width < height))) {
-		height = width / ar;
+		height = int(width / ar);
 	}
 	if (width > height) {
 		viewer.setZoom(width);
@@ -354,12 +354,12 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolSymmetry& sym, HighlightSty
 		double a = angle + (i + 0.5) * 2 * M_PI / copies;
 		Vector2D dir(cos(a), sin(a));
 		Vector2D dir2 = rotation.tr(sym.center + 2 * dir);
-		dc.DrawLine(center.x, center.y, dir2.x, dir2.y);
+		dc.DrawLine(int(center.x), int(center.y), int(dir2.x), int(dir2.y));
 	}
 	// draw center
 	dc.SetPen(*wxBLACK_PEN);
 	dc.SetBrush(color);
-	dc.DrawCircle(center.x, center.y, sym.kind == SYMMETRY_ROTATION ? 7 : 5);
+	dc.DrawCircle(int(center.x), int(center.y), sym.kind == SYMMETRY_ROTATION ? 7 : 5);
 }
 
 void SymbolViewer::highlightPart(DC& dc, const SymbolGroup& group, HighlightStyle style) {
