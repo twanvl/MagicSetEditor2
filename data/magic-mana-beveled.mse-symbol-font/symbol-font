@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+mse version: 0.3.6
 version: 2008-04-01
 short name: beveled style (firepenguinmaster)
 position hint: 101
@@ -14,8 +14,6 @@ icon: mana_r.png
 
 image font size: 135
 horizontal space: 2
-symbol:
-	image: mana_circle.png
 symbol:
 	code: T
 	image: mana_t_older.png
@@ -202,16 +200,18 @@ symbol:
 symbol:
 	code: I
 	image: mana_infinite.png
-as text: .|[0-9]+(?!/)
-text font:
-	name: MPlantin
-	size: 1
-	color: rgb(0,0,0)
-	max stretch: 0.5
-text margin left:   .24
-text margin right:  .24
-text margin top:    -.16
-text margin bottom: -.12
+symbol:
+	image: mana_circle.png
+	code: [0-9]+|.
+	text font:
+		name: MPlantin
+		size: 1
+		color: rgb(0,0,0)
+		max stretch: 0.5
+	text margin left:   .24
+	text margin right:  .24
+	text margin top:    -.16
+	text margin bottom: -.12
 
 ##############################################################
 # Insert-symbol menu

@@ -31,8 +31,6 @@ SymbolFont::SymbolFont()
 	: img_size(12)
 	, spacing(1,1)
 	, scale_text(false)
-	, text_margin_left(0), text_margin_right(0)
-	, text_margin_top(0),  text_margin_bottom(0)
 	, text_alignment(ALIGN_MIDDLE_CENTER)
 	, merge_numbers(false)
 	, processed_insert_symbol_menu(nullptr)
@@ -61,13 +59,7 @@ IMPLEMENT_REFLECTION(SymbolFont) {
 	REFLECT_N("vertical space",   spacing.height);
 	WITH_DYNAMIC_ARG(symbol_font_for_reading, this);
 	  REFLECT(symbols);
-	REFLECT(text_font);
 	REFLECT(scale_text);
-	REFLECT(as_text);
-	REFLECT(text_margin_left);
-	REFLECT(text_margin_right);
-	REFLECT(text_margin_top);
-	REFLECT(text_margin_bottom);
 	REFLECT(text_alignment);
 	REFLECT(insert_symbol_menu);
 }
@@ -96,6 +88,14 @@ class SymbolInFont : public IntrusivePtrBase<SymbolInFont> {
 	
 	String           code;			///< Code for this symbol
 	Scriptable<bool> enabled;		///< Is this symbol enabled?
+	bool             regex;			///< Should this symbol be matched by a regex?
+	int              draw_text;		///< The index of the captured regex expression to draw
+	wxRegEx          code_regex;	///< Regex for matching the symbol code
+	double           text_margin_left;
+	double           text_margin_right;
+	double           text_margin_top;
+	double           text_margin_bottom;
+	FontP            text_font;		///< Font to draw text in.
   private:
 	ScriptableImage  image;			///< The image for this symbol
 	double           img_size;		///< Font size used by the image
@@ -108,6 +108,11 @@ class SymbolInFont : public IntrusivePtrBase<SymbolInFont> {
 
 SymbolInFont::SymbolInFont()
 	: enabled(true)
+	, regex(false)
+	, draw_text(-1)
+	, code_regex()
+	, text_margin_left(0), text_margin_right(0)
+	, text_margin_top(0),  text_margin_bottom(0)
 	, actual_size(0,0)
 {
 	assert(symbol_font_for_reading());
@@ -157,19 +162,28 @@ RealSize SymbolInFont::size(Package& pkg, double size) {
 void SymbolInFont::update(Context& ctx) {
 	image.update(ctx);
 	enabled.update(ctx);
+	if (text_font)
+		text_font->update(ctx);
 }
 void SymbolFont::update(Context& ctx) const {
 	// update all symbol-in-fonts
 	FOR_EACH_CONST(sym, symbols) {
 		sym->update(ctx);
 	}
-	if (text_font) {
-		text_font->update(ctx);
-	}
 }
 
 IMPLEMENT_REFLECTION(SymbolInFont) {
 	REFLECT(code);
+	REFLECT(regex);
+	REFLECT_IF_READING
+		if (regex)
+			code_regex.Compile(code);
+	REFLECT(draw_text);
+	REFLECT(text_margin_left);
+	REFLECT(text_margin_right);
+	REFLECT(text_margin_top);
+	REFLECT(text_margin_bottom);
+	REFLECT(text_font);
 	REFLECT(image);
 	REFLECT(enabled);
 	REFLECT_N("image font size", img_size);
@@ -181,41 +195,35 @@ void SymbolFont::split(const String& text, SplitSymbols& out) const {
 	// read a single symbol until we are done with the text
 	for (size_t pos = 0 ; pos < text.size() ; ) {
 		// 1. check merged numbers
-		if (merge_numbers && pos + 1 < text.size()) {
+		/*if (merge_numbers && pos + 1 < text.size()) {
 			size_t num_count = text.find_first_not_of(_("0123456789"), pos) - pos;
 			if (num_count >= 2) {
 				// draw single symbol for the whole number
-				out.push_back(DrawableSymbol(text.substr(pos, num_count), nullptr));
+				out.push_back(DrawableSymbol(text.substr(pos, num_count), _(""), nullptr));
 				pos += num_count;
 				goto next_symbol;
 			}
-		}
+		}*/
 		// 2. check symbol list
 		FOR_EACH_CONST(sym, symbols) {
-			if (!sym->code.empty() && sym->enabled && is_substr(text, pos, sym->code)) { // symbol matches
-				out.push_back(DrawableSymbol(sym->code, sym.get()));
-				pos += sym->code.size();
-				goto next_symbol; // continue two levels
-			}
-		}
-		// 3. draw multiple together as text?
-		if (!as_text.empty()) {
-			if (!as_text_r.IsValid()) {
-				as_text_r.Compile(_("^") + as_text, wxRE_ADVANCED);
-			}
-			if (as_text_r.IsValid()) {
-				if (as_text_r.Matches(text.substr(pos))) {
-					size_t start, len;
-					if (as_text_r.GetMatch(&start,&len) && start == 0) {
-						out.push_back(DrawableSymbol(text.substr(pos, len), 0));
-						pos += len;
-						goto next_symbol;
-					}
+			if (!sym->code.empty() && sym->enabled) {
+				size_t start, end;
+				if (sym->regex && sym->code_regex.IsValid() && sym->code_regex.Matches(text.Mid(pos), wxRE_NOTBOL | wxRE_NOTEOL) &&
+						sym->code_regex.GetMatch(&start, &end) && start == 0) { //Matches the regex
+					size_t draw_end;
+					sym->code_regex.GetMatch(&start, &draw_end, sym->draw_text);
+					out.push_back(DrawableSymbol(text.Mid(pos, end), sym->draw_text >= 0 ? text.Mid(pos + start, draw_end - start) : _(""), sym.get()));
+					pos += end;
+					goto next_symbol;
+				} else if (is_substr(text, pos, sym->code)) {
+					out.push_back(DrawableSymbol(sym->code, sym->draw_text >= 0 ? sym->code : _(""), sym.get()));
+					pos += sym->code.size();
+					goto next_symbol; // continue two levels
 				}
 			}
 		}
-		// 4. unknown code, draw single character as text
-		out.push_back(DrawableSymbol(text.substr(pos, 1), 0));
+		// 3. unknown code, draw single character as text
+		//out.push_back(DrawableSymbol(text.substr(pos, 1), _(""), 0));
 		pos += 1;
 next_symbol:;
 	}
@@ -234,27 +242,19 @@ size_t SymbolFont::recognizePrefix(const String& text, size_t start) const {
 		}
 		// 2. check symbol list
 		FOR_EACH_CONST(sym, symbols) {
-			if (!sym->code.empty() && sym->enabled && is_substr(text, pos, sym->code)) { // symbol matches
-				pos += sym->code.size();
-				goto next_symbol; // continue two levels
-			}
-		}
-		// 3. draw multiple together as text?
-		if (!as_text.empty()) {
-			if (!as_text_r.IsValid()) {
-				as_text_r.Compile(_("^") + as_text, wxRE_ADVANCED);
-			}
-			if (as_text_r.IsValid()) {
-				if (as_text_r.Matches(text.substr(pos))) {
-					size_t start, len;
-					if (as_text_r.GetMatch(&start,&len) && start == 0) {
-						pos += len;
-						goto next_symbol;
-					}
+			if (!sym->code.empty() && sym->enabled) {
+				size_t start, end;
+				if (sym->regex && sym->code_regex.IsValid() && sym->code_regex.Matches(text.Mid(pos), wxRE_NOTBOL | wxRE_NOTEOL) &&
+						sym->code_regex.GetMatch(&start, &end) && start == 0) { //Matches the regex
+					pos = end;
+					goto next_symbol;
+				} else if (is_substr(text, pos, sym->code)) {
+					pos += sym->code.size();
+					goto next_symbol; // continue two levels
 				}
 			}
 		}
-		// 4. failed
+		// 3. failed
 		break;
 next_symbol:;
 	}
@@ -277,59 +277,41 @@ void SymbolFont::draw(RotatedDC& dc, Context& ctx, const RealRect& rect, double 
 	draw(dc, rect, font_size, align, symbols);
 }
 
-void SymbolFont::draw(RotatedDC& dc, RealRect rect, double font_size, const Alignment& align, const SplitSymbols& text) {
+void SymbolFont::draw (RotatedDC& dc, RealRect rect, double font_size, const Alignment& align, const SplitSymbols& text) {
 	FOR_EACH_CONST(sym, text) {
 		RealSize size = dc.trInvS(symbolSize(dc.trS(font_size), sym));
 		RealRect sym_rect = split_left(rect, size);
-		if (sym.symbol) {
-			drawSymbol(  dc, sym_rect, font_size, align, *sym.symbol);
-		} else {
-			drawWithText(dc, sym_rect, font_size, align, sym.text);
-		}
+		if (sym.symbol)
+			drawSymbol(dc, sym_rect, font_size, align, *sym.symbol, sym.draw_text);
 	}
 }
 
-void SymbolFont::drawSymbol  (RotatedDC& dc, const RealRect& rect, double font_size, const Alignment& align, SymbolInFont& sym) {
+void SymbolFont::drawSymbol (RotatedDC& dc, RealRect sym_rect, double font_size, const Alignment& align, SymbolInFont& sym, const String& text) {
+	// 1. draw symbol
 	// find bitmap
 	Bitmap bmp = sym.getBitmap(*this, dc.trS(font_size));
 	// draw aligned in the rectangle
-	dc.DrawBitmap(bmp, align_in_rect(align, dc.trInvS(RealSize(bmp.GetWidth(), bmp.GetHeight())), rect));
-}
-
-void SymbolFont::drawWithText(RotatedDC& dc, const RealRect& rect, double font_size, const Alignment& align, const String& text) {
-	// 1. draw background bitmap
-	// Size and position of symbol
-	RealRect sym_rect = rect;
-	// find and draw background bitmap
-	SymbolInFont* def = defaultSymbol();
-	if (def) {
-		Bitmap bmp = def->getBitmap(*this, dc.trS(font_size));
-		// align symbol
-		sym_rect.size()     = dc.trInvS(RealSize(bmp));
-		sym_rect.position() = align_in_rect(align, sym_rect.size(), rect);
-		// draw
-		dc.DrawBitmap(bmp, sym_rect.position());
-	}
+	dc.DrawBitmap(bmp, align_in_rect(align, dc.trInvS(RealSize(bmp.GetWidth(), bmp.GetHeight())), sym_rect));
 	
 	// 2. draw text
-	if (!text_font) return;
+	if (text.IsEmpty()) return;
 	// subtract margins from size
-	sym_rect.x      += font_size * text_margin_left;
-	sym_rect.y      += font_size * text_margin_top;
-	sym_rect.width  -= font_size * (text_margin_left + text_margin_right);
-	sym_rect.height -= font_size * (text_margin_top  + text_margin_bottom);
+	sym_rect.x      += font_size * sym.text_margin_left;
+	sym_rect.y      += font_size * sym.text_margin_top;
+	sym_rect.width  -= font_size * (sym.text_margin_left + sym.text_margin_right);
+	sym_rect.height -= font_size * (sym.text_margin_top  + sym.text_margin_bottom);
 	// setup text, shrink it
-	double size = font_size * text_font->size;
+	double size = font_size * sym.text_font->size;
 	double stretch = 1.0;
 	RealSize ts;
 	while (true) {
 		if (size <= 0) return; // text too small
-		dc.SetFont(*text_font, size / text_font->size);
+		dc.SetFont(*sym.text_font, size / sym.text_font->size);
 		ts = dc.GetTextExtent(text);
 		if (ts.height <= sym_rect.height) {
 			if (ts.width <= sym_rect.width) {
 				break; // text fits
-			} else if (ts.width * text_font->max_stretch <= sym_rect.width) {
+			} else if (ts.width * sym.text_font->max_stretch <= sym_rect.width) {
 				stretch = sym_rect.width / ts.width;
 				ts.width = sym_rect.width; // for alignment
 				break;
@@ -341,56 +323,50 @@ void SymbolFont::drawWithText(RotatedDC& dc, const RealRect& rect, double font_s
 	// align text
 	RealPoint text_pos = align_in_rect(text_alignment, ts, sym_rect);
 	// draw text
-	dc.DrawTextWithShadow(text, *text_font, text_pos, font_size, stretch);
+	dc.DrawTextWithShadow(text, *sym.text_font, text_pos, font_size, stretch);
 }
 
 Image SymbolFont::getImage(double font_size, const DrawableSymbol& sym) {
-	if (sym.symbol) {
-		return sym.symbol->getImage(*this, font_size);
-	} else {
-		if (!text_font) return Image(1,1); // failed
-		// draw on default symbol
-		SymbolInFont* def = defaultSymbol();
-		if (!def) return Image(1,1); // failed
-		Bitmap bmp(def->getImage(*this, font_size));
-		// memory dc to work with
-		wxMemoryDC dc;
-		dc.SelectObject(bmp);
-		RealRect sym_rect(0,0,bmp.GetWidth(),bmp.GetHeight());
-		RotatedDC rdc(dc, 0, sym_rect, 1, QUALITY_AA);
-		// subtract margins from size
-		sym_rect.x      += font_size * text_margin_left;
-		sym_rect.y      += font_size * text_margin_top;
-		sym_rect.width  -= font_size * (text_margin_left + text_margin_right);
-		sym_rect.height -= font_size * (text_margin_top  + text_margin_bottom);
-		// setup text, shrink it
-		double size = font_size * text_font->size;
-		double stretch = 1.0;
-		RealSize ts;
-		while (true) {
-			if (size <= 0) return def->getImage(*this, font_size); // text too small
-			rdc.SetFont(*text_font, size / text_font->size);
-			ts = rdc.GetTextExtent(sym.text);
-			if (ts.height <= sym_rect.height) {
-				if (ts.width <= sym_rect.width) {
-					break; // text fits
-				} else if (ts.width * text_font->max_stretch <= sym_rect.width) {
-					stretch = sym_rect.width / ts.width;
-					ts.width = sym_rect.width; // for alignment
-					break;
-				}
+	if (!sym.symbol || !sym.symbol->text_font)
+		return Image(1,1);
+	Bitmap bmp(sym.symbol->getImage(*this, font_size));
+	// memory dc to work with
+	wxMemoryDC dc;
+	dc.SelectObject(bmp);
+	RealRect sym_rect(0,0,bmp.GetWidth(),bmp.GetHeight());
+	RotatedDC rdc(dc, 0, sym_rect, 1, QUALITY_AA);
+	// subtract margins from size
+	sym_rect.x      += font_size * sym.symbol->text_margin_left;
+	sym_rect.y      += font_size * sym.symbol->text_margin_top;
+	sym_rect.width  -= font_size * (sym.symbol->text_margin_left + sym.symbol->text_margin_right);
+	sym_rect.height -= font_size * (sym.symbol->text_margin_top  + sym.symbol->text_margin_bottom);
+	// setup text, shrink it
+	double size = font_size * sym.symbol->text_font->size;
+	double stretch = 1.0;
+	RealSize ts;
+	while (true) {
+		if (size <= 0) return sym.symbol->getImage(*this, font_size); // text too small
+		rdc.SetFont(*sym.symbol->text_font, size / sym.symbol->text_font->size);
+		ts = rdc.GetTextExtent(sym.text);
+		if (ts.height <= sym_rect.height) {
+			if (ts.width <= sym_rect.width) {
+				break; // text fits
+			} else if (ts.width * sym.symbol->text_font->max_stretch <= sym_rect.width) {
+				stretch = sym_rect.width / ts.width;
+				ts.width = sym_rect.width; // for alignment
+				break;
 			}
-			// text doesn't fit
-			size -= rdc.getFontSizeStep();
 		}
-		// align text
-		RealPoint text_pos = align_in_rect(text_alignment, ts, sym_rect);
-		// draw text
-		rdc.DrawTextWithShadow(sym.text, *text_font, text_pos, font_size, stretch);
-		// done
-		dc.SelectObject(wxNullBitmap);
-		return bmp.ConvertToImage();
+		// text doesn't fit
+		size -= rdc.getFontSizeStep();
 	}
+	// align text
+	RealPoint text_pos = align_in_rect(text_alignment, ts, sym_rect);
+	// draw text
+	rdc.DrawTextWithShadow(sym.text, *sym.symbol->text_font, text_pos, font_size, stretch);
+	// done
+	dc.SelectObject(wxNullBitmap);
+	return bmp.ConvertToImage();
 }
 
 // ----------------------------------------------------------------------------- : SymbolFont : sizes

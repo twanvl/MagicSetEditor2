@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+mse version: 0.3.6
 version: 2008-04-01
 short name: normal (colorless)
 position hint: 21
@@ -14,8 +14,6 @@ icon: mana_r.png
 
 image font size: 135
 horizontal space: 2
-symbol:
-	image: mana_circle.png
 symbol:
 	code: T
 	image: mana_t_older.png
@@ -222,16 +220,18 @@ symbol:
 symbol:
 	code: I
 	image: mana_infinite.png
-as text: .|[0-9]+(?!/)
-text font:
-	name: MPlantin
-	size: 1
-	color: rgb(0,0,0)
-	max stretch: 0.5
-text margin left:   .26
-text margin right:  .2
-text margin top:    -.14
-text margin bottom: -.14
+symbol:
+	image: mana_circle.png
+	code: .|[0-9]+(?!/)
+	text font:
+		name: MPlantin
+		size: 1
+		color: rgb(0,0,0)
+		max stretch: 0.5
+	text margin left:   .26
+	text margin right:  .2
+	text margin top:    -.14
+	text margin bottom: -.14
 
 ##############################################################
 # Insert-symbol menu

@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+mse version: 0.3.6
 version: 2008-04-01
 # Symbol font in the 'futuristic' style, used for casting costs on futureshift cards
 short name: Future Sight style
@@ -7,24 +7,6 @@ icon: mana_r.png
 
 image font size: 135
 horizontal space: 2
-symbol:
-	image: mana_circle_w.png
-	enabled: { colorless_color() == "w" }
-symbol:
-	image: mana_circle_u.png
-	enabled: { colorless_color() == "u" }
-symbol:
-	image: mana_circle_b.png
-	enabled: { colorless_color() == "b" }
-symbol:
-	image: mana_circle_r.png
-	enabled: { colorless_color() == "r" }
-symbol:
-	image: mana_circle_g.png
-	enabled: { colorless_color() == "g" }
-symbol:
-	image: mana_circle.png
-	enabled: { colorless_color() == "c" }
 symbol:
 	code: T
 	image: mana_t.png
@@ -146,17 +128,90 @@ symbol:
 symbol:
 	code: I
 	image: mana_infinite.png
-as text: .|[0-9]+(?!/)
-text font:
-	name: MPlantin
-	weight: bold
-	size: 1
-	color: rgb(0,0,0)
-	max stretch: 0.5
-text margin left:   .35
-text margin right:  .3
-text margin top:    0.1
-text margin bottom: 0.1
+symbol:
+	image: mana_circle_w.png
+	enabled: { colorless_color() == "w" }
+	code: .|[0-9]+(?!/)
+	text font:
+		name: MPlantin
+		weight: bold
+		size: 1
+		color: rgb(0,0,0)
+		max stretch: 0.5
+	text margin left:   .35
+	text margin right:  .3
+	text margin top:    0.1
+	text margin bottom: 0.1
+symbol:
+	image: mana_circle_u.png
+	enabled: { colorless_color() == "u" }
+	code: .|[0-9]+(?!/)
+	text font:
+		name: MPlantin
+		weight: bold
+		size: 1
+		color: rgb(0,0,0)
+		max stretch: 0.5
+	text margin left:   .35
+	text margin right:  .3
+	text margin top:    0.1
+	text margin bottom: 0.1
+symbol:
+	image: mana_circle_b.png
+	enabled: { colorless_color() == "b" }
+	code: .|[0-9]+(?!/)
+	text font:
+		name: MPlantin
+		weight: bold
+		size: 1
+		color: rgb(0,0,0)
+		max stretch: 0.5
+	text margin left:   .35
+	text margin right:  .3
+	text margin top:    0.1
+	text margin bottom: 0.1
+symbol:
+	image: mana_circle_r.png
+	enabled: { colorless_color() == "r" }
+	code: .|[0-9]+(?!/)
+	text font:
+		name: MPlantin
+		weight: bold
+		size: 1
+		color: rgb(0,0,0)
+		max stretch: 0.5
+	text margin left:   .35
+	text margin right:  .3
+	text margin top:    0.1
+	text margin bottom: 0.1
+symbol:
+	image: mana_circle_g.png
+	enabled: { colorless_color() == "g" }
+	code: .|[0-9]+(?!/)
+	text font:
+		name: MPlantin
+		weight: bold
+		size: 1
+		color: rgb(0,0,0)
+		max stretch: 0.5
+	text margin left:   .35
+	text margin right:  .3
+	text margin top:    0.1
+	text margin bottom: 0.1
+symbol:
+	image: mana_circle.png
+	enabled: { colorless_color() == "c" }
+	code: .|[0-9]+(?!/)
+	text font:
+		name: MPlantin
+		weight: bold
+		size: 1
+		color: rgb(0,0,0)
+		max stretch: 0.5
+	text margin left:   .35
+	text margin right:  .3
+	text margin top:    0.1
+	text margin bottom: 0.1
 
 ##############################################################
 # Insert-symbol menu

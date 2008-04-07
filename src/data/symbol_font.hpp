@@ -39,11 +39,12 @@ class SymbolFont : public Packaged {
 	/// A symbol to be drawn
 	class DrawableSymbol {
 	  public:
-		inline DrawableSymbol(const String& text, SymbolInFont* symbol)
-			: text(text), symbol(symbol)
+		inline DrawableSymbol(const String& text, const String& draw_text, SymbolInFont* symbol)
+			: text(text), draw_text(draw_text), symbol(symbol)
 		{}
 		
 		String        text;		///< Original text
+		String        draw_text;///< Text to draw (extracted from the regex to avoid performance costs)
 		SymbolInFont* symbol;	///< Symbol to draw, if nullptr, use the default symbol and draw the text
 	};
 	typedef vector<DrawableSymbol> SplitSymbols;
@@ -85,15 +86,8 @@ class SymbolFont : public Packaged {
 	RealSize spacing;	///< Spacing between sybmols (for the default font size)
 	// writing text
 	bool scale_text;	///< Should text be scaled down to fit in a symbol?
-	FontP text_font;	///< Font to use for missing symbols
-	double text_margin_left;
-	double text_margin_right;
-	double text_margin_top;
-	double text_margin_bottom;
 	Alignment text_alignment;
 	bool merge_numbers;	///< Merge numbers? e.g. "11" is a single symbol ('1' must not exist as a symbol)
-	String  as_text;    ///< Things to render as text
-	mutable wxRegEx as_text_r;
 	InsertSymbolMenuP insert_symbol_menu;
 	wxMenu* processed_insert_symbol_menu;
 	
@@ -106,9 +100,7 @@ class SymbolFont : public Packaged {
 	SymbolInFont* defaultSymbol() const;
 	
 	/// Draws a single symbol inside the given rectangle
-	void drawSymbol  (RotatedDC& dc, const RealRect& rect, double font_size, const Alignment& align, SymbolInFont& sym);
-	/// Draw the default bitmap to a dc and overlay a string of text
-	void drawWithText(RotatedDC& dc, const RealRect& rect, double font_size, const Alignment& align, const String& text);
+	void drawSymbol  (RotatedDC& dc, RealRect sym_rect, double font_size, const Alignment& align, SymbolInFont& sym, const String& text);
 	
 	/// Size of a single symbol
 	RealSize symbolSize       (double font_size, const DrawableSymbol& sym);
