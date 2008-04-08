@@ -176,16 +176,7 @@ symbol:
 	image: z.png
 symbol:
 	code: 
-	draw_text: 0
 	image: space.png
-	text font:
-		name: MPlantin
-		size: 1
-		color: rgb(225,198,77)
-	text margin left:   .26
-	text margin right:  .2
-	text margin top:    -.12
-	text margin bottom: -.12
 
 
 ##############################################################
