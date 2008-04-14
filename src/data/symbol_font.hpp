@@ -39,13 +39,13 @@ class SymbolFont : public Packaged {
 	/// A symbol to be drawn
 	class DrawableSymbol {
 	  public:
-		inline DrawableSymbol(const String& text, const String& draw_text, SymbolInFont* symbol)
-			: text(text), draw_text(draw_text), symbol(symbol)
+		inline DrawableSymbol(const String& text, const String& draw_text, SymbolInFont& symbol)
+			: text(text), draw_text(draw_text), symbol(&symbol)
 		{}
 		
 		String        text;		///< Original text
 		String        draw_text;///< Text to draw (extracted from the regex to avoid performance costs)
-		SymbolInFont* symbol;	///< Symbol to draw, if nullptr, use the default symbol and draw the text
+		SymbolInFont* symbol;	///< Symbol to draw
 	};
 	typedef vector<DrawableSymbol> SplitSymbols;
 		
@@ -87,7 +87,6 @@ class SymbolFont : public Packaged {
 	// writing text
 	bool scale_text;	///< Should text be scaled down to fit in a symbol?
 	Alignment text_alignment;
-	bool merge_numbers;	///< Merge numbers? e.g. "11" is a single symbol ('1' must not exist as a symbol)
 	InsertSymbolMenuP insert_symbol_menu;
 	wxMenu* processed_insert_symbol_menu;
 	
@@ -105,7 +104,7 @@ class SymbolFont : public Packaged {
 	/// Size of a single symbol
 	RealSize symbolSize       (double font_size, const DrawableSymbol& sym);
   public:
-	/// Size of the default symbol
+	/// The default size of symbols
 	RealSize defaultSymbolSize(double font_size);
 	
 	DECLARE_REFLECTION();

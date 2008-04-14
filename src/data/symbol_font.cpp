@@ -32,7 +32,6 @@ SymbolFont::SymbolFont()
 	, spacing(1,1)
 	, scale_text(false)
 	, text_alignment(ALIGN_MIDDLE_CENTER)
-	, merge_numbers(false)
 	, processed_insert_symbol_menu(nullptr)
 {}
 
@@ -89,7 +88,7 @@ class SymbolInFont : public IntrusivePtrBase<SymbolInFont> {
 	String           code;			///< Code for this symbol
 	Scriptable<bool> enabled;		///< Is this symbol enabled?
 	bool             regex;			///< Should this symbol be matched by a regex?
-	int              draw_text;		///< The index of the captured regex expression to draw
+	int              draw_text;		///< The index of the captured regex expression to draw, or -1 to not draw text
 	wxRegEx          code_regex;	///< Regex for matching the symbol code
 	double           text_margin_left;
 	double           text_margin_right;
@@ -194,36 +193,36 @@ IMPLEMENT_REFLECTION(SymbolInFont) {
 void SymbolFont::split(const String& text, SplitSymbols& out) const {
 	// read a single symbol until we are done with the text
 	for (size_t pos = 0 ; pos < text.size() ; ) {
-		// 1. check merged numbers
-		/*if (merge_numbers && pos + 1 < text.size()) {
-			size_t num_count = text.find_first_not_of(_("0123456789"), pos) - pos;
-			if (num_count >= 2) {
-				// draw single symbol for the whole number
-				out.push_back(DrawableSymbol(text.substr(pos, num_count), _(""), nullptr));
-				pos += num_count;
-				goto next_symbol;
-			}
-		}*/
-		// 2. check symbol list
+		// check symbol list
 		FOR_EACH_CONST(sym, symbols) {
 			if (!sym->code.empty() && sym->enabled) {
-				size_t start, end;
-				if (sym->regex && sym->code_regex.IsValid() && sym->code_regex.Matches(text.Mid(pos), wxRE_NOTBOL | wxRE_NOTEOL) &&
-						sym->code_regex.GetMatch(&start, &end) && start == 0) { //Matches the regex
-					size_t draw_end;
-					sym->code_regex.GetMatch(&start, &draw_end, sym->draw_text);
-					out.push_back(DrawableSymbol(text.Mid(pos, end), sym->draw_text >= 0 ? text.Mid(pos + start, draw_end - start) : _(""), sym.get()));
-					pos += end;
+				size_t start, len = 1;
+				if (sym->regex && sym->code_regex.IsValid() && sym->code_regex.Matches(text.substr(pos), wxRE_NOTBOL | wxRE_NOTEOL) &&
+						sym->code_regex.GetMatch(&start, &len) && start == 0 && len > 0) { //Matches the regex
+					if (sym->draw_text >= 0 && sym->draw_text < (int)sym->code_regex.GetMatchCount()) {
+						size_t draw_end;
+						sym->code_regex.GetMatch(&start, &draw_end, sym->draw_text);
+						out.push_back(DrawableSymbol(
+										text.substr(pos, len),
+										text.substr(pos + start, draw_end - start),
+										*sym));
+					} else {
+						out.push_back(DrawableSymbol(
+										text.substr(pos, len),
+										_(""),
+										*sym));
+					}
+					pos += len;
 					goto next_symbol;
 				} else if (is_substr(text, pos, sym->code)) {
-					out.push_back(DrawableSymbol(sym->code, sym->draw_text >= 0 ? sym->code : _(""), sym.get()));
+					out.push_back(DrawableSymbol(sym->code, sym->draw_text >= 0 ? sym->code : _(""), *sym));
 					pos += sym->code.size();
 					goto next_symbol; // continue two levels
 				}
 			}
 		}
-		// 3. unknown code, draw single character as text
-		//out.push_back(DrawableSymbol(text.substr(pos, 1), _(""), 0));
+		// unknown code, draw single character as text
+		//out.push_back(DrawableSymbol(text.substr(pos, 1), _(""), defaultSymbol()));
 		pos += 1;
 next_symbol:;
 	}
@@ -232,21 +231,13 @@ next_symbol:;
 size_t SymbolFont::recognizePrefix(const String& text, size_t start) const {
 	size_t pos;
 	for (pos = start ; pos < text.size() ; ) {
-		// 1. check merged numbers
-		if (merge_numbers && pos + 1 < text.size()) {
-			size_t num_count = text.find_first_not_of(_("0123456789"), pos) - pos;
-			if (num_count >= 2) {
-				pos += num_count;
-				goto next_symbol;
-			}
-		}
-		// 2. check symbol list
+		// check symbol list
 		FOR_EACH_CONST(sym, symbols) {
 			if (!sym->code.empty() && sym->enabled) {
-				size_t start, end;
-				if (sym->regex && sym->code_regex.IsValid() && sym->code_regex.Matches(text.Mid(pos), wxRE_NOTBOL | wxRE_NOTEOL) &&
-						sym->code_regex.GetMatch(&start, &end) && start == 0) { //Matches the regex
-					pos = end;
+				size_t start, len = 1;
+				if (sym->regex && sym->code_regex.IsValid() && sym->code_regex.Matches(text.substr(pos), wxRE_NOTBOL | wxRE_NOTEOL) &&
+						sym->code_regex.GetMatch(&start, &len) && start == 0 && len > 0) { //Matches the regex
+					pos += len;
 					goto next_symbol;
 				} else if (is_substr(text, pos, sym->code)) {
 					pos += sym->code.size();
@@ -254,7 +245,7 @@ size_t SymbolFont::recognizePrefix(const String& text, size_t start) const {
 				}
 			}
 		}
-		// 3. failed
+		// failed
 		break;
 next_symbol:;
 	}
@@ -277,16 +268,15 @@ void SymbolFont::draw(RotatedDC& dc, Context& ctx, const RealRect& rect, double 
 	draw(dc, rect, font_size, align, symbols);
 }
 
-void SymbolFont::draw (RotatedDC& dc, RealRect rect, double font_size, const Alignment& align, const SplitSymbols& text) {
+void SymbolFont::draw(RotatedDC& dc, RealRect rect, double font_size, const Alignment& align, const SplitSymbols& text) {
 	FOR_EACH_CONST(sym, text) {
 		RealSize size = dc.trInvS(symbolSize(dc.trS(font_size), sym));
 		RealRect sym_rect = split_left(rect, size);
-		if (sym.symbol)
-			drawSymbol(dc, sym_rect, font_size, align, *sym.symbol, sym.draw_text);
+		drawSymbol(dc, sym_rect, font_size, align, *sym.symbol, sym.draw_text);
 	}
 }
 
-void SymbolFont::drawSymbol (RotatedDC& dc, RealRect sym_rect, double font_size, const Alignment& align, SymbolInFont& sym, const String& text) {
+void SymbolFont::drawSymbol(RotatedDC& dc, RealRect sym_rect, double font_size, const Alignment& align, SymbolInFont& sym, const String& text) {
 	// 1. draw symbol
 	// find bitmap
 	Bitmap bmp = sym.getBitmap(*this, dc.trS(font_size));
@@ -294,7 +284,7 @@ void SymbolFont::drawSymbol (RotatedDC& dc, RealRect sym_rect, double font_size,
 	dc.DrawBitmap(bmp, align_in_rect(align, dc.trInvS(RealSize(bmp.GetWidth(), bmp.GetHeight())), sym_rect));
 	
 	// 2. draw text
-	if (text.IsEmpty()) return;
+	if (text.empty()) return;
 	// subtract margins from size
 	sym_rect.x      += font_size * sym.text_margin_left;
 	sym_rect.y      += font_size * sym.text_margin_top;
