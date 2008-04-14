@@ -31,7 +31,6 @@ SymbolFont::SymbolFont()
 	: img_size(12)
 	, spacing(1,1)
 	, scale_text(false)
-	, text_alignment(ALIGN_MIDDLE_CENTER)
 	, processed_insert_symbol_menu(nullptr)
 {}
 
@@ -59,7 +58,6 @@ IMPLEMENT_REFLECTION(SymbolFont) {
 	WITH_DYNAMIC_ARG(symbol_font_for_reading, this);
 	  REFLECT(symbols);
 	REFLECT(scale_text);
-	REFLECT(text_alignment);
 	REFLECT(insert_symbol_menu);
 }
 
@@ -90,11 +88,12 @@ class SymbolInFont : public IntrusivePtrBase<SymbolInFont> {
 	bool             regex;			///< Should this symbol be matched by a regex?
 	int              draw_text;		///< The index of the captured regex expression to draw, or -1 to not draw text
 	wxRegEx          code_regex;	///< Regex for matching the symbol code
+	FontP            text_font;		///< Font to draw text in.
+	Alignment        text_alignment;
 	double           text_margin_left;
 	double           text_margin_right;
 	double           text_margin_top;
 	double           text_margin_bottom;
-	FontP            text_font;		///< Font to draw text in.
   private:
 	ScriptableImage  image;			///< The image for this symbol
 	double           img_size;		///< Font size used by the image
@@ -110,6 +109,7 @@ SymbolInFont::SymbolInFont()
 	, regex(false)
 	, draw_text(-1)
 	, code_regex()
+	, text_alignment(ALIGN_MIDDLE_CENTER)
 	, text_margin_left(0), text_margin_right(0)
 	, text_margin_top(0),  text_margin_bottom(0)
 	, actual_size(0,0)
@@ -178,11 +178,12 @@ IMPLEMENT_REFLECTION(SymbolInFont) {
 		if (regex)
 			code_regex.Compile(code);
 	REFLECT(draw_text);
+	REFLECT(text_font);
+	REFLECT(text_alignment);
 	REFLECT(text_margin_left);
 	REFLECT(text_margin_right);
 	REFLECT(text_margin_top);
 	REFLECT(text_margin_bottom);
-	REFLECT(text_font);
 	REFLECT(image);
 	REFLECT(enabled);
 	REFLECT_N("image font size", img_size);
@@ -311,7 +312,7 @@ void SymbolFont::drawSymbol(RotatedDC& dc, RealRect sym_rect, double font_size, 
 		size -= dc.getFontSizeStep();
 	}
 	// align text
-	RealPoint text_pos = align_in_rect(text_alignment, ts, sym_rect);
+	RealPoint text_pos = align_in_rect(sym.text_alignment, ts, sym_rect);
 	// draw text
 	dc.DrawTextWithShadow(text, *sym.text_font, text_pos, font_size, stretch);
 }
@@ -351,7 +352,7 @@ Image SymbolFont::getImage(double font_size, const DrawableSymbol& sym) {
 		size -= rdc.getFontSizeStep();
 	}
 	// align text
-	RealPoint text_pos = align_in_rect(text_alignment, ts, sym_rect);
+	RealPoint text_pos = align_in_rect(sym.symbol->text_alignment, ts, sym_rect);
 	// draw text
 	rdc.DrawTextWithShadow(sym.text, *sym.symbol->text_font, text_pos, font_size, stretch);
 	// done

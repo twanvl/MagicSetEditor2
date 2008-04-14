@@ -86,7 +86,6 @@ class SymbolFont : public Packaged {
 	RealSize spacing;	///< Spacing between sybmols (for the default font size)
 	// writing text
 	bool scale_text;	///< Should text be scaled down to fit in a symbol?
-	Alignment text_alignment;
 	InsertSymbolMenuP insert_symbol_menu;
 	wxMenu* processed_insert_symbol_menu;
 	
