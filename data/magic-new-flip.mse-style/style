@@ -5,7 +5,7 @@ full name: Modern flip cards
 icon: card-sample.png
 position hint: 002
 
-version: 2008-04-01
+version: 2008-04-13
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -229,9 +229,9 @@ card style:
 			separator color: rgb(128,128,128)
 
 	type 2:
-		right: { if card.pt != "" then 86 else 34 }
+		right: { if card.pt_2 != "" then 86 else 34 }
 		bottom: 353
-		width: { if card.pt != "" then 256 else 308 }
+		width: { if card.pt_2 != "" then 256 else 308 }
 		height: 18
 		alignment: top shrink-overflow
 		angle: 180
@@ -419,7 +419,7 @@ extra card field:
 
 extra card style:
 	pt box:
-		left:	286
+		left:	285
 		top:	123
 		width:	70
 		height:	38
@@ -430,7 +430,7 @@ extra card style:
 		image: { flip_ptbox() }
 
 	pt box 2:
-		left:	17
+		left:	18
 		top:	342
 		width:	70
 		height:	38

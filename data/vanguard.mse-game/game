@@ -4,7 +4,7 @@ full name: Magic Vanguard
 icon: card-sample.png
 position hint: 02
 
-version: 2008-04-01
+version: 2008-04-09
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -966,3 +966,8 @@ keyword:
 	match: wither
 	mode: expert
 	reminder: It deals damage to creatures in the form of -1/-1 counters.
+keyword:
+	keyword: Conspire
+	match: conspire
+	mode: expert
+	reminder: As you play it, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose a new target for the copy.

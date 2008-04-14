@@ -513,7 +513,7 @@ color_combination := {
 		)
 	else if artifact then 
 		masked_blend(
-			mask:  "multicolor_blend_{type}.png",
+			mask:  "artifact_blend_{type}.png",
 			dark:  template("a"),
 			light: base,
 		)

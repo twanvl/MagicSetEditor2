@@ -5,7 +5,7 @@ installer group: magic/game files
 icon: card-back.png
 position hint: 01
 
-version: 2008-04-01
+version: 2008-04-14
 depends on:
 	package: magic-blends.mse-include
 	version: 2007-09-23
@@ -202,6 +202,20 @@ init script:
 		else if contains(card.name, match:"Forest")   then "LF"      # Forests
 		else                                               "LA"      # other basic lands
 	}
+	hybrid_cost_sort := {
+		colors := sort_text(casting_cost, order: "<WUBRG>")
+		if colors = "WU" then "GA"
+		else if colors = "WB" then "GB"
+		else if colors = "UB" then "GC"
+		else if colors = "UR" then "GD"
+		else if colors = "BR" then "GE"
+		else if colors = "BG" then "GF"
+		else if colors = "RG" then "GG"
+		else if colors = "WR" then "GH"
+		else if colors = "WG" then "GI"
+		else if colors = "UG" then "GJ"
+		else "GK"
+	}
 	color_of_card := {
 		card_color := card.card_color
 		casting_cost := card.casting_cost
@@ -211,7 +225,7 @@ init script:
 			if card.rarity != "basic land" then "K"              # Nonbasic Land
 			else basic_land_sort()
 		) else if is_null_cost(casting_cost) then (
-			if chosen(choice: "hybrid", card_color)    then "G"  # Hybrids
+			if chosen(choice: "hybrid", card_color)    then "GK"  # Hybrids
 			else if is_multicolor(card_color)          then "F"  # Multicolor
 			else if chosen(choice:"white", card_color) then "A"  # White
 			else if chosen(choice:"blue", card_color)  then "B"  # Blue
@@ -228,7 +242,7 @@ init script:
 			else if colors == "B" then "C"                       # Black
 			else if colors == "R" then "D"                       # Red
 			else if colors == "G" then "E"                       # Green
-			else if contains(casting_cost, match:"/") then "G"  #Hybrid
+			else if contains(casting_cost, match:"/") then hybrid_cost_sort()  #Hybrid
 			else                       "F"                       # Multicolor
 		)
 	}
@@ -308,6 +322,9 @@ init script:
 		 |  <param-cost>[ ]*<match></param-cost>		# keyword argument that is declared as cost
 		 |  <param-cost><match>,		# keyword argument that is declared as cost
 		 ";
+	# truncates the name of legends
+	legend_filter := replace_rule(match:", [A-Z,a-z,0-9,' ]*", replace: "" )+
+		replace_rule(match:"the [A-Z,a-z,0-9,' ]*", replace: "" )
 	# the rule text filter
 	#  - adds mana symbols
 	#  - makes text in parentheses italic
@@ -338,10 +355,20 @@ init script:
 			in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
 			replace: "<atom-cardname></atom-cardname>"
 			) +
-		# step 3b : fill in atom fields
+		# step 3b : expand shortcut words ` and shortened LEGENDNAME
+		replace_rule(
+			match: "LEGENDNAME",
+			in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
+			replace: "<atom-legname></atom-legname>"
+			) +
+		# step 3c : fill in atom fields
 		tag_contents_rule(
 			tag: "<atom-cardname>",
 			contents: { if card_name=="" then "CARDNAME" else card_name }
+			) +
+		tag_contents_rule(
+			tag: "<atom-legname>",
+			contents: { if card_name=="" then "LEGENDNAME" else legend_filter(card_name) }
 			) +
 		# step 4 : explict non mana symbols
 		replace_rule(
@@ -1759,6 +1786,9 @@ auto replace:
 auto replace:
 	match: AAA
 	replace: as an additional cost to play
+auto replace:
+	match: @
+	replace: LEGENDNAME
 
 ############################################################## Add multiple cards
 
@@ -2424,3 +2454,8 @@ keyword:
 	match: Wither
 	mode: expert
 	reminder: This deals damage to creatures in the form of -1/-1 counters.
+keyword:
+	keyword: Conspire
+	match: Conspire
+	mode: expert
+	reminder: As you play this spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it{ if is_targeted() then " and you may choose a new target for the copy" }.

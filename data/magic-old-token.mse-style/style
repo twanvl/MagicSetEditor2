@@ -11,7 +11,7 @@ full name: Old style
 icon: card-sample.png
 position hint: 107
 
-version: 2008-04-01
+version: 2008-04-13
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -67,7 +67,9 @@ init script:
 			)
 		else if artifact then 
 			masked_blend(
-				mask:  "multicolor_blend_{type}.png",
+				mask: ( if styling.type_of_gradient_artifact == "full card" then "multicolor_blend_{type}.png"
+					else if styling.type_of_gradient_artifact == "trim only" then "multicolor_blend_{type}2.png"
+					else "multicolor_blend_{type}.png" ),
 				dark:  template("a"),
 				light: base,
 			)
@@ -118,6 +120,13 @@ styling field:
 	type: choice
 	name: type of gradient multicolor
 	description: What parts of the card should be blended for gradient multicolor?
+	choice: full card
+	choice: trim only
+	initial: full card
+styling field:
+	type: choice
+	name: type of gradient artifact
+	description: What parts of the card should be blended for gradient artifact?
 	choice: full card
 	choice: trim only
 	initial: full card

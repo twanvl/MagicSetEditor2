@@ -5,7 +5,7 @@ full name: Large image
 icon: card-sample.png
 position hint: 004
 
-version: 2008-04-01
+version: 2008-04-13
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
