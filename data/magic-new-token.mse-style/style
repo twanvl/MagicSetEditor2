@@ -165,7 +165,7 @@ card style:
 		left:
 			{ if card_style.name.content_width > 269 then 50
 			   else card_style.name.content_width * -0.5 + 184.5 }
-		top: 25
+		top: 23
 		width:
 			{ if card_style.name.content_width > 269 then 275
 			   else card_style.name.content_width + 6 }
@@ -382,11 +382,11 @@ extra card style:
 	name box:
 		left:
 			{ if card_style.name.content_width > 275 then 50
-			   else card_style.name.content_width * -0.5 + 187.5 }
+			   else card_style.name.content_width * -0.5 + 185.5 }
 		top: 26
 		width:
 			{ if card_style.name.content_width > 275 then 275
-			   else card_style.name.content_width }
+			   else card_style.name.content_width + 3}
 		height: 35
 		z index: 2
 		visible: { card.name != "" }
@@ -395,7 +395,7 @@ extra card style:
 	name box left:
 		right:
 			{ if card_style.name.content_width > 275 then 50
-			   else card_style.name.content_width * -0.5 + 187.5 }
+			   else card_style.name.content_width * -0.5 + 185.5 }
 		top: 26
 		width: 15
 		height: 35
@@ -405,7 +405,7 @@ extra card style:
 	name box right:
 		left:
 			{ if card_style.name.content_width > 275 then 325
-			   else card_style.name.content_width * 0.5 + 186.5 }
+			   else card_style.name.content_width * 0.5 + 187.5 }
 		top: 26
 		width: 14
 		height: 35
