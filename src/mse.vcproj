@@ -2400,6 +2400,9 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\gfx\color.hpp">
+			</File>
+			<File
 				RelativePath=".\gfx\combine_image.cpp">
 				<FileConfiguration
 					Name="Release|Win32">

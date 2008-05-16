@@ -11,34 +11,6 @@
 #include <render/symbol/viewer.hpp>
 #include <gfx/gfx.hpp>
 #include <util/error.hpp>
-#include <script/value.hpp> // for some strange reason the profile build needs this :(
-
-// ----------------------------------------------------------------------------- : Color
-
-template <> void GetDefaultMember::handle(const AColor& col) {
-	handle((const Color&)col);
-}
-template <> void Reader::handle(AColor& col) {
-	UInt r,g,b,a;
-	String v = getValue();
-	if (wxSscanf(v.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
-		col.Set(r,g,b);
-		col.alpha = 255;
-	} else if (wxSscanf(v.c_str(),_("rgba(%u,%u,%u,%u)"),&r,&g,&b,&a)) {
-		col.Set(r,g,b);
-		col.alpha = a;
-	} else {
-		col = Color(v);
-		if (!col.Ok()) col = *wxBLACK;
-	}
-}
-template <> void Writer::handle(const AColor& col) {
-	if (col.alpha == 255) {
-		handle(String::Format(_("rgb(%u,%u,%u)"), col.Red(), col.Green(), col.Blue()));
-	} else {
-		handle(String::Format(_("rgba(%u,%u,%u,%u)"), col.Red(), col.Green(), col.Blue(), col.alpha));
-	}
-}
 
 // ----------------------------------------------------------------------------- : Symbol filtering
 

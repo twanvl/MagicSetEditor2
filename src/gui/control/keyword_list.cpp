@@ -18,7 +18,7 @@
 #include <data/format/clipboard.hpp>
 #include <util/tagged_string.hpp>
 #include <util/window_id.hpp>
-#include <gfx/gfx.hpp>
+#include <gfx/color.hpp>
 #include <wx/clipbrd.h>
 
 DECLARE_TYPEOF_COLLECTION(KeywordP);

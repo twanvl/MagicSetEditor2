@@ -16,6 +16,7 @@
 
 #include <util/prec.hpp>
 #include <util/real_point.hpp>
+#include <gfx/color.hpp>
 
 // ----------------------------------------------------------------------------- : Resampling
 
@@ -197,27 +198,6 @@ class ContourMask {
 	int width, height;
 	int *lefts, *rights;
 };
-
-// ----------------------------------------------------------------------------- : Color utility functions
-
-inline int bot(int x) { return max(0,   x); } ///< bottom range check for color values
-inline int top(int x) { return min(255, x); } ///< top    range check for color values
-inline int col(int x) { return top(bot(x)); } ///< top and bottom range check for color values
-
-/// Linear interpolation between colors
-Color lerp(const Color& a, const Color& b, double t);
-
-/// convert HSL to RGB, h,s,l must be in range [0...1)
-Color hsl2rgb(double h, double s, double l);
-
-/// A darker version of a color
-Color darken(const Color& c);
-
-/// A saturated version of a color
-Color saturate(const Color& c, double amount);
-
-/// Fills an image with the specified color
-void fill_image(Image& image, const Color& color);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

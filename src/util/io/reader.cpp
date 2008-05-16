@@ -367,19 +367,6 @@ template <> void Reader::handle(Vector2D& vec) {
 	}
 }
 
-template <> void Reader::handle(Color& col) {
-	col = parse_color(getValue());
-	if (!col.Ok()) col = *wxBLACK;
-}
-Color parse_color(const String& v) {
-	UInt r,g,b;
-	if (wxSscanf(v.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
-		return Color(r, g, b);
-	} else {
-		return Color(v);
-	}
-}
-
 template <> void Reader::handle(FileName& f) {
 	if (clipboard_package()) {
 		String str = getValue();

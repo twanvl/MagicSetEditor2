@@ -7,7 +7,54 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
-#include <gfx/gfx.hpp>
+#include <gfx/color.hpp>
+
+// ----------------------------------------------------------------------------- : Parsing etc.
+
+template <> void Reader::handle(Color& col) {
+	col = parse_color(getValue());
+	if (!col.Ok()) col = *wxBLACK;
+}
+
+template <> void GetDefaultMember::handle(const AColor& col) {
+	handle((const Color&)col);
+}
+template <> void Reader::handle(AColor& col) {
+	col = parse_acolor(getValue());
+	if (!col.Ok()) col = AColor(0,0,0,0);
+}
+template <> void Writer::handle(const AColor& col) {
+	if (col.alpha == 255) {
+		handle(String::Format(_("rgb(%u,%u,%u)"), col.Red(), col.Green(), col.Blue()));
+	} else if (col.alpha == 0) {
+		handle(_("transparent"));
+	} else {
+		handle(String::Format(_("rgba(%u,%u,%u,%u)"), col.Red(), col.Green(), col.Blue(), col.alpha));
+	}
+}
+
+
+Color parse_color(const String& v) {
+	UInt r,g,b;
+	if (wxSscanf(v.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
+		return Color(r, g, b);
+	} else {
+		return Color(v);
+	}
+}
+
+AColor parse_acolor(const String& v) {
+	UInt r,g,b,a;
+	if (wxSscanf(v.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
+		return AColor(r, g, b);
+	} else if (wxSscanf(v.c_str(),_("rgba(%u,%u,%u,%u)"),&r,&g,&b,&a)) {
+		return AColor(r, g, b, a);
+	} else if (v == _("transparent")) {
+		return AColor(0,0,0,0);
+	} else {
+		return Color(v);
+	}
+}
 
 // ----------------------------------------------------------------------------- : Color utility functions
 

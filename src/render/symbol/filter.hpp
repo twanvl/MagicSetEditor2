@@ -11,20 +11,10 @@
 
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
+#include <gfx/color.hpp>
 
 DECLARE_POINTER_TYPE(Symbol);
 class SymbolFilter;
-
-// ----------------------------------------------------------------------------- : Color
-
-/// Color with alpha channel
-class AColor : public Color {
-  public:
-	Byte alpha;	///< The alpha value, in the range [0..255]
-	inline AColor()                                     :               alpha(0) {}
-	inline AColor(Byte r, Byte g, Byte b, Byte a = 255) : Color(r,g,b), alpha(a) {}
-	inline AColor(const Color& color,     Byte a = 255) : Color(color), alpha(a) {}
-};
 
 // ----------------------------------------------------------------------------- : Symbol filtering
 
