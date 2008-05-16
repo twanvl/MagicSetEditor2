@@ -15,7 +15,7 @@ A reference to a normal [[type:font]] for drawing text.
 | @style@		[[type:scriptable]] font style		@"normal"@	Style of the font, one of @"normal"@ or @"italic"@. This can be changed locally by [[type:tagged string|tags]].
 | @underline@		[[type:scriptable]] [[type:boolean]]	@false@		Should the font be underlined?
 | @color@		[[type:scriptable]] [[type:color]]	@rgb(0,0,0)@	What color should text be drawn in?
-| @shadow color@	[[type:scriptable]] [[type:color]]	@rgb(0,0,0)@	Color for a shadow below the text.
+| @shadow color@	[[type:scriptable]] [[type:color]]	@"transparent"@	Color for a shadow below the text.
 | @shadow displacement x@	[[type:double]]			@0@		Relative position of the shadow in pixels. A shadow is only drawn if the displacement is nonzero.
 | @shadow displacement y@	[[type:double]]			@0@		^^^
 | @shadow blur@		[[type:double]]				@0@		How much should the shadow be blurred?

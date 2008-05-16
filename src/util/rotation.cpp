@@ -199,7 +199,12 @@ RotatedDC::RotatedDC(DC& dc, const Rotation& rotation, RenderQuality quality)
 // ----------------------------------------------------------------------------- : RotatedDC : Drawing
 
 void RotatedDC::DrawText  (const String& text, const RealPoint& pos, int blur_radius, int boldness, double stretch_) {
+	DrawText(text, pos, dc.GetTextForeground(), blur_radius, boldness, stretch_);
+}
+
+void RotatedDC::DrawText  (const String& text, const RealPoint& pos, AColor color, int blur_radius, int boldness, double stretch_) {
 	if (text.empty()) return;
+	if (color.alpha == 0) return;
 	if (quality >= QUALITY_AA) {
 		RealRect r(pos, GetTextExtent(text));
 		RealRect r_ext = trRectToBB(r);
@@ -212,27 +217,25 @@ void RotatedDC::DrawText  (const String& text, const RealPoint& pos, int blur_ra
 			r_ext.x = r_ext2.x;
 			r_ext.y = r_ext2.y;
 		}
-		draw_resampled_text(dc, pos2, r_ext, stretch_ * getStretch(), angle, text, blur_radius, boldness);
+		draw_resampled_text(dc, pos2, r_ext, stretch_ * getStretch(), angle, color, text, blur_radius, boldness);
 	} else if (quality >= QUALITY_SUB_PIXEL) {
 		RealPoint p_ext = tr(pos)*text_scaling;
 		double usx,usy;
 		dc.GetUserScale(&usx, &usy);
 		dc.SetUserScale(usx/text_scaling, usy/text_scaling);
+		dc.SetTextForeground(color);
 		dc.DrawRotatedText(text, (int) p_ext.x, (int) p_ext.y, angle);
 		dc.SetUserScale(usx, usy);
 	} else {
 		RealPoint p_ext = tr(pos);
+		dc.SetTextForeground(color);
 		dc.DrawRotatedText(text, (int) p_ext.x, (int) p_ext.y, angle);
 	}
 }
 
 void RotatedDC::DrawTextWithShadow(const String& text, const Font& font, const RealPoint& pos, double scale, double stretch) {
-	if (font.hasShadow()) {
-		SetTextForeground(font.shadow_color);
-		DrawText(text, pos + font.shadow_displacement * scale, font.shadow_blur * scale, 1, stretch);
-	}
-	SetTextForeground(font.color);
-	DrawText(text, pos, 0, 1, stretch);
+	DrawText(text, pos + font.shadow_displacement * scale, font.shadow_color, font.shadow_blur * scale, 1, stretch);
+	DrawText(text, pos, font.color, 0, 1, stretch);
 }
 
 void RotatedDC::DrawBitmap(const Bitmap& bitmap, const RealPoint& pos) {

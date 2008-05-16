@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/real_point.hpp>
 #include <script/scriptable.hpp>
+#include <gfx/color.hpp>
 
 DECLARE_POINTER_TYPE(Font);
 
@@ -40,8 +41,8 @@ class Font : public IntrusivePtrBase<Font> {
 	Scriptable<bool>   underline;			///< Underlined?
 	double             scale_down_to;		///< Smallest size to scale down to
 	double             max_stretch;			///< How much should the font be stretched before scaling down?
-	Scriptable<Color>  color;				///< Color to use
-	Scriptable<Color>  shadow_color;		///< Color for shadow
+	Scriptable<AColor> color;				///< Color to use
+	Scriptable<AColor> shadow_color;		///< Color for shadow
 	RealSize           shadow_displacement;	///< Position of the shadow
 	double             shadow_blur;			///< Blur radius of the shadow
 	Color              separator_color;		///< Color for <sep> text

@@ -52,7 +52,7 @@ void sharp_resample_and_clip(const Image& img_in, Image& img_out, wxRect rect, i
  *  rect    = rectangle to draw in (a rectangle somewhere around pos)
  *  stretch = amount to stretch in the direction of the text after drawing
  */
-void draw_resampled_text(DC& dc, const RealPoint& pos, const RealRect& rect, double stretch, int angle, const String& text, int blur_radius = 0, int repeat = 1);
+void draw_resampled_text(DC& dc, const RealPoint& pos, const RealRect& rect, double stretch, int angle, AColor color, const String& text, int blur_radius = 0, int repeat = 1);
 
 // scaling factor to use when drawing resampled text
 extern const int text_scaling;
