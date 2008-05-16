@@ -69,8 +69,8 @@ Additional properties are available, depending on the type of field:
 | ^^^		@initial@	[[type:string]]		 	Initial value for new values for this field.
 | ^^^		@default name@	[[type:string]]	@"Default"@	Name of the default state.
 | ^^^		@choices@	[[type:list]] of [[type:choice]]s	 	Possible values for this field.
-| ^^^		@choice colors@	[[type:map]] of [[type:color]]s		 	Colors of the choices for statistics graphs.
-| ^^^		@choice colors cardlist@	[[type:map]] of [[type:color]]s		 	Colors of the choices for lines in the card list,<br/> see also the @card list color script@ property of [[type:game]]s.
+| ^^^		@choice colors@	[[type:map]] of opaque [[type:color]]s	 	Colors of the choices for statistics graphs.
+| ^^^		@choice colors cardlist@	[[type:map]] of opaque [[type:color]]s	 	Colors of the choices for lines in the card list,<br/> see also the @card list color script@ property of [[type:game]]s.
 	
 | @"multiple choice"@	 	<<<	<<<	<<<
 		'' Multiple choice fields have the same attributes as normal choice fields.''<br/>

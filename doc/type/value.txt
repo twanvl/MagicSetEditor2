@@ -22,7 +22,7 @@ The type of a value depends on the corresponding field:
 | @"image"@		[[type:filename]]		Filename of an image file in the [[type:set]] package.
 | @"symbol"@		[[type:filename]]		Filename of a [[type:symbol]] file in the [[type:set]] package.<br/>
 			 				When accessed from a script, image fields can be directly used as [[type:image]]s.
-| @"color"@		[[type:color]]			A color.
+| @"color"@		opaque [[type:color]]		A color.
 | @"info"@		[[type:string]]			A label for the information box.
 
 --Example--

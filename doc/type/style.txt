@@ -159,7 +159,7 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 | ^^^		@padding right@		^^^			^^^		^^^
 | ^^^		@padding top@		^^^			^^^		^^^
 | ^^^		@padding bottom@	^^^			^^^		^^^
-| ^^^		@background color@	[[type:color]]		@rgb(255,255,255)@	Background color for the box, can be used to make it stand out.
+| ^^^		@background color@	opaque [[type:color]]	@rgb(255,255,255)@	Background color for the box, can be used to make it stand out.
 
 --Example--
 

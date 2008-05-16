@@ -20,7 +20,7 @@ Categories are also automatically generated from dimensions.
 | @numeric@		[[type:boolean]]	@false@		Is the value always a number?
 | @show empty@		[[type:boolean]]	@false@		Should cards with the value @""@ be included?
 | @split list@		[[type:boolean]]	@false@		Indicates the value is a list of the form @"item1, item2"@. The card is put under both items.
-| @colors@		[[type:map]] of [[type:color]]s		 	Colors to use for specific values
+| @colors@		[[type:map]] of opaque [[type:color]]s	 	Colors to use for specific values
 | @groups@		[[type:list]] of [[type:string]]s	 	Values to always show, and the order to show them in.
 
 --Example--
