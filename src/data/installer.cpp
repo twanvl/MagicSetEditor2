@@ -355,6 +355,118 @@ void merge(InstallablePackages& installed, const DownloadableInstallerP& install
 }
 
 
+// ----------------------------------------------------------------------------- : Installable package : dependency stuff
+
+InstallablePackage* find_package(InstallablePackages& packages, const String& name) {
+	// TODO: The packages are sorted, so we could use a binary search.
+	FOR_EACH(p,packages) {
+		if (p->description->name == name) return p.get();
+	}
+	return nullptr;
+}
+
+/// A dependency on the new or installed version of an installable package
+/// Used only inside these algorithms
+struct Dep {
+	InstallablePackage* package;
+	bool new_version;
+};
+
+typedef void (*DependencyFun)(InstallablePackages& packages, Dep dep, PackageAction where);
+
+/// All dependencies of a package(version)
+void for_each_dependency(DependencyFun fun, InstallablePackages& packages, Dep pdep, PackageAction where) {
+	vector<PackageDependencyP>& deps
+		= pdep.new_version
+			? pdep.package->installed->dependencies
+			: pdep.package->description->dependencies;
+	FOR_EACH(dep_,deps) {
+		// NOTE: an old version will never depend on a new version
+		Dep d = {find_package(packages, dep_->package), pdep.new_version};
+		if (d.package && d.package->installed && d.package->installed->version >= dep_->version) {
+			d.new_version = false;
+		}
+		fun(packages,d,where);
+	}
+}
+/// All packages that depend on a package(version)
+void for_each_backwards_dependency(DependencyFun fun, InstallablePackages& packages, Dep pdep, PackageAction where) {
+	FOR_EACH(p,packages) {
+		if (p->installed)
+		FOR_EACH(dep_,p->installed->dependencies) {
+			if (pdep.package->description->name != dep_->package) {
+				continue; // no dependency on p
+			}
+			if (pdep.new_version && pdep.package->installed && pdep.package->installed->version >= dep_->version) {
+				continue; // no need for new version of pdep
+			}
+			Dep d = {p.get(), false};
+			fun(packages,d,where);
+		}
+		if (p->installer)
+		FOR_EACH(dep_,p->description->dependencies) {
+			if (pdep.package->description->name != dep_->package) {
+				continue; // no dependency on p
+			}
+			if (pdep.new_version && pdep.package->installed && pdep.package->installed->version >= dep_->version) {
+				continue; // no need for new version of pdep
+			}
+			Dep d = {p.get(), true};
+			fun(packages,d,where);
+		}
+	}
+}
+
+void inc_if_nonzero(int& x) { if (x) x++; }
+
+void add_package_dependency(InstallablePackages& packages, Dep dep, PackageAction where) {
+	if (!dep.package) return;
+	bool change = false;
+	if (dep.new_version) {
+		change = !(dep.package->action & PACKAGE_INSTALL);
+		dep.package->action = where | PACKAGE_INSTALL;
+		inc_if_nonzero(dep.package->automatic);
+	} else if (dep.package->action & PACKAGE_REMOVE) {
+		dep.package->action = where | PACKAGE_NOTHING;
+		dep.package->automatic = 0;
+	}
+	if (change) {
+		for_each_dependency(add_package_dependency, packages, dep, where);
+	}
+}
+void remove_package_dependency_need_not_install(InstallablePackages& packages, Dep dep, PackageAction where) {
+	if (!dep.package) return;
+	if (dep.new_version && (dep.package->action & PACKAGE_INSTALL) && dep.package->automatic) {
+		// we no longer need to install this package
+		if (--dep.package->automatic == 0) {
+			dep.package->action = where | PACKAGE_NOTHING;
+			for_each_dependency(remove_package_dependency_need_not_install, packages, dep, where);
+		}
+	}
+	// TODO: also uninstall packages that are already installed, and which are 'hidden'?
+}
+void remove_package_dependency(InstallablePackages& packages, Dep dep, PackageAction where) {
+	if (!dep.package) return;
+	bool change = false;
+	if (dep.new_version) {
+		change = !(dep.package->action & PACKAGE_NOTHING);
+		dep.package->action = where | PACKAGE_NOTHING;
+		dep.package->automatic = 0;
+	} else if (dep.package->status & PACKAGE_REMOVABLE) {
+		change = !(dep.package->action & PACKAGE_REMOVE);
+		dep.package->action = where | PACKAGE_REMOVE;
+		inc_if_nonzero(dep.package->automatic);
+	}
+	if (change) {
+		// things that depend on us
+		for_each_backwards_dependency(remove_package_dependency, packages, dep, where);
+		// things we depend on
+		for_each_dependency(remove_package_dependency_need_not_install, packages, dep, where);
+	}
+}
+
+// ----------------------------------------------------------------------------- : Installable package : dependency stuff (OLD)
+
 bool add_package_dependency(InstallablePackages& packages, const PackageDependency& dep, PackageAction where, bool set) {
 	FOR_EACH(p, packages) {
 		if (p->description->name == dep.package) {

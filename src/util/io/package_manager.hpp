@@ -174,6 +174,7 @@ class PackageVersion : public IntrusivePtrBase<PackageVersion> {
 	
 	String  name;
 	Version version;
+	vector<PackageDependencyP> dependencies;
 	enum Status
 	{	STATUS_LOCAL    = 0x01 ///< Package is installed in the local package dir
 	,	STATUS_GLOBAL   = 0x02 ///< Package is installed in the global package dir
