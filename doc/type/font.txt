@@ -18,6 +18,7 @@ A reference to a normal [[type:font]] for drawing text.
 | @shadow color@	[[type:scriptable]] [[type:color]]	@rgb(0,0,0)@	Color for a shadow below the text.
 | @shadow displacement x@	[[type:double]]			@0@		Relative position of the shadow in pixels. A shadow is only drawn if the displacement is nonzero.
 | @shadow displacement y@	[[type:double]]			@0@		^^^
+| @shadow blur@		[[type:double]]				@0@		How much should the shadow be blurred?
 | @separator color@	[[type:color]]				@rgb(128,128,128)@	Color for @"<sep-soft>"@ tags inserted by the [[fun:combined_editor]] function.
 
 --Example--

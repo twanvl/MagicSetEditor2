@@ -18,6 +18,7 @@ Font::Font()
 	, scale_down_to(100000)
 	, max_stretch(1.0)
 	, shadow_displacement(0,0)
+	, shadow_blur(0)
 	, separator_color(128,128,128)
 	, flags(FONT_NORMAL)
 {}
@@ -117,5 +118,6 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(Font) {
 	REFLECT_N("shadow_displacement_x", shadow_displacement.width);
 	REFLECT_N("shadow_displacement_y", shadow_displacement.height);
 	REFLECT(shadow_color);
+	REFLECT(shadow_blur);
 	REFLECT(separator_color);
 }

@@ -229,7 +229,7 @@ void RotatedDC::DrawText  (const String& text, const RealPoint& pos, int blur_ra
 void RotatedDC::DrawTextWithShadow(const String& text, const Font& font, const RealPoint& pos, double scale, double stretch) {
 	if (font.hasShadow()) {
 		SetTextForeground(font.shadow_color);
-		DrawText(text, pos + font.shadow_displacement * scale, 0, 1, stretch);
+		DrawText(text, pos + font.shadow_displacement * scale, font.shadow_blur * scale, 1, stretch);
 	}
 	SetTextForeground(font.color);
 	DrawText(text, pos, 0, 1, stretch);
