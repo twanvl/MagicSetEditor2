@@ -2,20 +2,28 @@ Primitive type: color
 
 --Syntax--
 In files and scritps a color can be represented as
-<pre>rgb(<i>red_component</i>, <i>green_component</i>, <i>blue_component</i>)</pre>
+<pre><span class='hl-kw'>rgb</span>(<i>red_component</i>, <i>green_component</i>, <i>blue_component</i>)</pre>
 where red_component, green_component and blue_component are numbers between 0 and 255 (inclusive).
+
+In some places MSE also supports colors with a transparency value, notated as
+<pre><span class='hl-kw'>rgba</span>(<i>red_component</i>, <i>green_component</i>, <i>blue_component</i>, <i>alpha_component</i>)</pre>
+An alpha value of @0@ indicates a transparent color, an alpha value of @255@ is completely opaque.
 
 --Named colors--
 MSE also supports named colors, for instance @"white"@ is the same as @rgb(255,255,255)@.
 For a full list of supported colors, see [[http://www.wxwidgets.org/manuals/stable/wx_wxcolourdatabase.html|the wxWidgets documentation]].
+In addition, the named color @"transparent"@ stands for the completely transparent color, @rgba(0,0,0,0)@.
 
 In scripts named colors are represented as [[type:string]]s.
 
 --Examples--
 For example:
-! Code			Represents	<<<
-| @rgb(255,255,255)@	white	<div style="border:1px solid black; background:white;width:30px;height:15px;"> </div>
-| @rgb(0,0,0)@		black	<div style="border:1px solid black; background:black;width:30px;height:15px;"> </div>
-| @rgb(255,0,0)@	red	<div style="border:1px solid black; background:red;  width:30px;height:15px;"> </div>
-| @rgb(0,255,0)@	green	<div style="border:1px solid black; background:rgb(0,255,0);width:30px;height:15px;"> </div>
-| @rgb(0,0,255)@	blue	<div style="border:1px solid black; background:blue; width:30px;height:15px;"> </div>
+! Code			Represents		<<<
+| @rgb(255,255,255)@	white			<div style="border:1px solid black; background:white;width:30px;height:15px;"> </div>
+| @rgb(0,0,0)@		black			<div style="border:1px solid black; background:black;width:30px;height:15px;"> </div>
+| @rgb(255,0,0)@	red			<div style="border:1px solid black; background:red;  width:30px;height:15px;"> </div>
+| @rgb(0,255,0)@	green			<div style="border:1px solid black; background:rgb(0,255,0);width:30px;height:15px;"> </div>
+| @rgb(0,0,255)@	blue			<div style="border:1px solid black; background:blue; width:30px;height:15px;"> </div>
+| @rgba(0,0,0,0)@	transparent		<div style="border:1px solid black; width:30px;height:15px;text-align:center;">over</div>
+| @rgba(255,0,0,128)@	transparent red		<div style="border:1px solid black; background:rgb(255,128,128);color:rgb(128,0,0);width:30px;height:15px;text-align:center;">over</div>
+| @rgba(0,0,255,192)@	transparent blue	<div style="border:1px solid black; background:rgb(64,64,255);color:rgb(0,0,192);width:30px;height:15px;text-align:center;">over</div>

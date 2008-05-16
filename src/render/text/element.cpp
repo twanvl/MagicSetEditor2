@@ -60,13 +60,13 @@ double TextElements::scaleStep() const {
 }
 
 // Colors for <atom-param> tags
-Color param_colors[] =
-	{	Color(0,170,0)
-	,	Color(0,0,200)
-	,	Color(200,0,100)
-	,	Color(200,200,0)
-	,	Color(0,170,170)
-	,	Color(200,0,0)
+AColor param_colors[] =
+	{	AColor(0,170,0)
+	,	AColor(0,0,200)
+	,	AColor(200,0,100)
+	,	AColor(200,200,0)
+	,	AColor(0,170,170)
+	,	AColor(200,0,0)
 	};
 const size_t param_colors_count = sizeof(param_colors) / sizeof(param_colors[0]);
 
@@ -77,7 +77,7 @@ struct TextElementsFromString {
 	int soft, kwpph, param, line, soft_line;
 	int code, code_kw, code_string, param_ref, error;
 	int param_id;
-	vector<Color>  colors;
+	vector<AColor> colors;
 	vector<double> sizes;
 	/// put angle brackets around the text?
 	bool bracket;
@@ -127,7 +127,7 @@ struct TextElementsFromString {
 				else if (is_substr(text, tag_start, _( "<color"))) {
 					size_t colon = text.find_first_of(_(">:"), tag_start);
 					if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
-						Color c = parse_color(text.substr(colon+1, pos-colon-2));
+						AColor c = parse_acolor(text.substr(colon+1, pos-colon-2));
 						if (!c.Ok()) c = style.font.color;
 						colors.push_back(c);
 					}

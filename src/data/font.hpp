@@ -45,7 +45,7 @@ class Font : public IntrusivePtrBase<Font> {
 	Scriptable<AColor> shadow_color;		///< Color for shadow
 	RealSize           shadow_displacement;	///< Position of the shadow
 	double             shadow_blur;			///< Blur radius of the shadow
-	Color              separator_color;		///< Color for <sep> text
+	AColor             separator_color;		///< Color for <sep> text
 	int                flags;				///< FontFlags for this font
 	
 	Font();
@@ -61,7 +61,7 @@ class Font : public IntrusivePtrBase<Font> {
 	}
 	
 	/// Add style to a font, and optionally change the color and size
-	FontP make(int add_flags, Color* other_color, double* other_size) const;
+	FontP make(int add_flags, AColor* other_color, double* other_size) const;
 	
 	/// Convert this font to a wxFont
 	wxFont toWxFont(double scale) const;

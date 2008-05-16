@@ -20,7 +20,7 @@ Font::Font()
 	, color(AColor(0,0,0))
 	, shadow_displacement(0,0)
 	, shadow_blur(0)
-	, separator_color(128,128,128)
+	, separator_color(AColor(0,0,0,128))
 	, flags(FONT_NORMAL)
 {}
 
@@ -50,7 +50,7 @@ void Font::initDependencies(Context& ctx, const Dependency& dep) const {
 	shadow_color.initDependencies(ctx, dep);
 }
 
-FontP Font::make(int add_flags, Color* other_color, double* other_size) const {
+FontP Font::make(int add_flags, AColor* other_color, double* other_size) const {
 	FontP f(new Font(*this));
 	f->flags |= add_flags;
 	if (add_flags & FONT_CODE_STRING) {
