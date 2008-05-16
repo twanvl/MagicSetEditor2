@@ -24,13 +24,7 @@ template <> void Reader::handle(AColor& col) {
 	if (!col.Ok()) col = AColor(0,0,0,0);
 }
 template <> void Writer::handle(const AColor& col) {
-	if (col.alpha == 255) {
-		handle(String::Format(_("rgb(%u,%u,%u)"), col.Red(), col.Green(), col.Blue()));
-	} else if (col.alpha == 0) {
-		handle(_("transparent"));
-	} else {
-		handle(String::Format(_("rgba(%u,%u,%u,%u)"), col.Red(), col.Green(), col.Blue(), col.alpha));
-	}
+	handle(format_acolor(col));
 }
 
 
@@ -53,6 +47,16 @@ AColor parse_acolor(const String& v) {
 		return AColor(0,0,0,0);
 	} else {
 		return Color(v);
+	}
+}
+
+String format_acolor(AColor col) {
+	if (col.alpha == 255) {
+		return String::Format(_("rgb(%u,%u,%u)"), col.Red(), col.Green(), col.Blue());
+	} else if (col.alpha == 0) {
+		return _("transparent");
+	} else {
+		return String::Format(_("rgba(%u,%u,%u,%u)"), col.Red(), col.Green(), col.Blue(), col.alpha);
 	}
 }
 

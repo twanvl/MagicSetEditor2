@@ -24,6 +24,7 @@ Possible constants are:
 | @123.5@		[[type:double]]
 | @"abc"@		[[type:string]]
 | @rgb(255,0,0)@	[[type:color]]
+| @rgba(0,0,0,0)@	[[type:color]]
 | @[a,b,c]@		[[type:list]]
 Note: Strings, list and colors don't have to be constants, they can contain other code.
 

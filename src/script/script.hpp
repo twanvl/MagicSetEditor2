@@ -41,6 +41,7 @@ enum InstructionType
 ,	I_UNARY			= -4 ///< pop 1 value,  apply a function, push the result
 ,	I_BINARY		= -3 ///< pop 2 values, apply a function, push the result
 ,	I_TERNARY		= -2 ///< pop 3 values, apply a function, push the result
+,	I_QUATERNARY	= -1 ///< pop 4 values, apply a function, push the result
 };
 
 /// Types of unary instructions (taking one argument from the stack)
@@ -82,17 +83,23 @@ enum TernaryInstructionType
 {	I_RGB			///< pop r,g,b, push a color value
 };
 
+/// Types of quaternary instructions (taking four arguments from the stack)
+enum QuaternaryInstructionType
+{	I_RGBA			///< pop r,g,b,a, push an acolor value
+};
+
 /// An instruction in a script, consists of the opcode and data
-/** If the opcode is one of I_UNARY,I_BINARY,I_TERNARY,
+/** If the opcode is one of I_UNARY,I_BINARY,I_TERNARY,I_QUATERNARY,
  *  Then the instr? member gives the actual instruction to perform
  */
 struct Instruction {
 	InstructionType instr : 4;
 	union {
-		unsigned int			data   : 28;
-		UnaryInstructionType	instr1 : 28;
-		BinaryInstructionType	instr2 : 28;
-		TernaryInstructionType	instr3 : 28;
+		unsigned int				data   : 28;
+		UnaryInstructionType		instr1 : 28;
+		BinaryInstructionType		instr2 : 28;
+		TernaryInstructionType		instr3 : 28;
+		QuaternaryInstructionType	instr4 : 28;
 	};
 };
 

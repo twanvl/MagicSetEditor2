@@ -10,6 +10,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <gfx/color.hpp>
 class Context;
 class Dependency;
 
@@ -55,7 +56,7 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	/// Convert this value to a boolean
 	inline  operator bool()   const { return (int)*this; }
 	/// Convert this value to a color
-	virtual operator Color()  const;
+	virtual operator AColor() const;
 	
 	/// Explicit overload to convert to a string
 	/** This is sometimes necessary, because wxString has an int constructor,

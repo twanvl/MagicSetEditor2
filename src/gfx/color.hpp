@@ -35,6 +35,9 @@ Color parse_color(const String& value);
 /// Parse a color with alpha
 AColor parse_acolor(const String& value);
 
+/// Convert an AColor to a string
+String format_acolor(AColor col);
+
 // ----------------------------------------------------------------------------- : Color utility functions
 
 inline int bot(int x) { return max(0,   x); } ///< bottom range check for color values

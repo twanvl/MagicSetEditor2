@@ -12,6 +12,7 @@
 #include <script/parser.hpp>
 #include <script/script.hpp>
 #include <script/value.hpp>
+#include <gfx/color.hpp>
 
 Alignment from_string(const String&);
 
@@ -23,9 +24,11 @@ void store(const ScriptValueP& val, String& var)              { var = val->toStr
 void store(const ScriptValueP& val, int&    var)              { var = *val; }
 void store(const ScriptValueP& val, double& var)              { var = *val; }
 void store(const ScriptValueP& val, bool&   var)              { var = static_cast<int>(*val); }
-void store(const ScriptValueP& val, Color&  var)              { var = *val; }
+void store(const ScriptValueP& val, Color&  var)              { var = (AColor)*val; }
+void store(const ScriptValueP& val, AColor& var)              { var = *val; }
 void store(const ScriptValueP& val, Defaultable<String>& var) { var.assign(*val); }
-void store(const ScriptValueP& val, Defaultable<Color>& var)  { var.assign(*val); }
+void store(const ScriptValueP& val, Defaultable<Color>&  var) { var.assign((AColor)*val); }
+void store(const ScriptValueP& val, Defaultable<AColor>& var) { var.assign(*val); }
 void store(const ScriptValueP& val, Alignment& var)           { var = from_string(val->toString()); }
 
 // ----------------------------------------------------------------------------- : OptionalScript

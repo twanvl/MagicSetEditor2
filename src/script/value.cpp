@@ -18,7 +18,7 @@
 ScriptValue::operator String()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("string" ))); }
 ScriptValue::operator int()                                 const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("integer" ))); }
 ScriptValue::operator double()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("double"  ))); }
-ScriptValue::operator Color()                               const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("color"   ))); }
+ScriptValue::operator AColor()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("color"   ))); }
 ScriptValueP ScriptValue::eval(Context&)                    const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("function"))); }
 ScriptValueP ScriptValue::getMember(const String& name)     const { return delayError(_ERROR_2_("has no member", typeName(), name));              }
 ScriptValueP ScriptValue::next()                                  { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
@@ -38,7 +38,7 @@ String ScriptDelayedError::typeName() const            { throw error; }
 ScriptDelayedError::operator String() const            { throw error; }
 ScriptDelayedError::operator double() const            { throw error; }
 ScriptDelayedError::operator int()    const            { throw error; }
-ScriptDelayedError::operator Color()  const            { throw error; }
+ScriptDelayedError::operator AColor() const            { throw error; }
 int ScriptDelayedError::itemCount() const              { throw error; }
 const void* ScriptDelayedError::comparePointer() const { throw error; }
 ScriptValueP ScriptDelayedError::getMember(const String&) const                           { return new_intrusive1<ScriptDelayedError>(error); }
@@ -191,18 +191,12 @@ class ScriptString : public ScriptValue {
 			throw ScriptError(_ERROR_3_("can't convert value", value, typeName(), _TYPE_("integer")));
 		}
 	}
-	virtual operator Color() const {
-		UInt r,g,b;
-		if (wxSscanf(value.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
-			return Color(r, g, b);
-		} else {
-			// color from database?
-			Color c(value);
-			if (!c.Ok()) {
-				throw ScriptError(_ERROR_3_("can't convert value", value, typeName(), _TYPE_("color")));
-			}
-			return c;
+	virtual operator AColor() const {
+		AColor c = parse_acolor(value);
+		if (!c.Ok()) {
+			throw ScriptError(_ERROR_3_("can't convert value", value, typeName(), _TYPE_("color")));
 		}
+		return c;
 	}
 	virtual int itemCount() const { return (int)value.size(); }
 	virtual ScriptValueP getMember(const String& name) const {
@@ -225,23 +219,26 @@ ScriptValueP to_script(const String& v) {
 
 // ----------------------------------------------------------------------------- : Color
 
-// Color values
-class ScriptColor : public ScriptValue {
+// AColor values
+class ScriptAColor : public ScriptValue {
   public:
-	ScriptColor(const Color& v) : value(v) {}
+	ScriptAColor(const AColor& v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_COLOR; }
 	virtual String typeName() const { return _TYPE_("color"); }
-	virtual operator Color()  const { return value; }
+	virtual operator AColor() const { return value; }
 	virtual operator int()    const { return (value.Red() + value.Blue() + value.Green()) / 3; }
 	virtual operator String() const {
-		return String::Format(_("rgb(%u,%u,%u)"), value.Red(), value.Green(), value.Blue());
+		return format_acolor(value);
 	}
   private:
-	Color value;
+	AColor value;
 };
 
-ScriptValueP to_script(const Color& v) {
-	return new_intrusive1<ScriptColor>(v);
+ScriptValueP to_script(Color v) {
+	return new_intrusive1<ScriptAColor>(v);
+}
+ScriptValueP to_script(AColor v) {
+	return new_intrusive1<ScriptAColor>(v);
 }
 
 

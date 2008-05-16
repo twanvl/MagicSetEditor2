@@ -56,7 +56,7 @@ class ScriptDelayedError : public ScriptValue {
 	virtual operator String() const;
 	virtual operator double() const;
 	virtual operator int()    const;
-	virtual operator Color()  const;
+	virtual operator AColor() const;
 	virtual int itemCount() const;
 	virtual const void* comparePointer() const;
 	// these can propagate the error
@@ -207,7 +207,7 @@ class ScriptObject : public ScriptValue {
 	virtual operator String() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator String(); }
 	virtual operator double() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator double(); }
 	virtual operator int()    const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator int(); }
-	virtual operator Color()  const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator Color(); }
+	virtual operator AColor() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator AColor(); }
 	virtual ScriptValueP getMember(const String& name) const {
 		GetMember gm(name);
 		gm.handle(*value);
@@ -254,7 +254,8 @@ class ScriptObject : public ScriptValue {
 inline ScriptValueP to_script(long          v) { return to_script((int) v); }
        ScriptValueP to_script(double        v);
        ScriptValueP to_script(const String& v);
-       ScriptValueP to_script(const Color&  v);
+       ScriptValueP to_script(Color         v);
+       ScriptValueP to_script(AColor        v);
 inline ScriptValueP to_script(bool          v) { return v ? script_true : script_false; }
 template <typename T>
 inline ScriptValueP to_script(const vector<T>*     v) { return new_intrusive1<ScriptCollection<vector<T> > >(v); }
@@ -282,7 +283,8 @@ template <> inline String       from_script<String>      (const ScriptValueP& va
 template <> inline int          from_script<int>         (const ScriptValueP& value) { return *value; }
 template <> inline double       from_script<double>      (const ScriptValueP& value) { return *value; }
 template <> inline bool         from_script<bool>        (const ScriptValueP& value) { return *value; }
-template <> inline Color        from_script<Color>       (const ScriptValueP& value) { return *value; }
+template <> inline Color        from_script<Color>       (const ScriptValueP& value) { return (AColor)*value; }
+template <> inline AColor       from_script<AColor>      (const ScriptValueP& value) { return *value; }
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

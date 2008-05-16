@@ -319,6 +319,15 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					a = dependency_dummy;
 					break;
 				}
+				// Simple instruction: quaternary
+				case I_QUATERNARY: {
+					ScriptValueP  d = stack.back(); stack.pop_back();
+					ScriptValueP  c = stack.back(); stack.pop_back();
+					ScriptValueP  b = stack.back(); stack.pop_back();
+					ScriptValueP& a = stack.back();
+					a = dependency_dummy;
+					break;
+				}
 			}
 		}
 	} catch (...) {

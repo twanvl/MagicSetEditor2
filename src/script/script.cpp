@@ -187,6 +187,11 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 				case I_RGB:			ret += _("rgb");		break;
 			}
 			break;
+		case I_QUATERNARY:	ret += _("quaternary\t");
+			switch (i.instr3) {
+				case I_RGBA:		ret += _("rgba");		break;
+			}
+			break;
 	}
 	// arg
 	switch (i.instr) {
@@ -227,7 +232,9 @@ const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) 
 			case I_BINARY:
 				to_skip += 1; break; // nett stack effect 1-2 == -1
 			case I_TERNARY:
-				to_skip += 2; break; // nett stack effect 1-3 == -1
+				to_skip += 2; break; // nett stack effect 1-3 == -2
+			case I_QUATERNARY:
+				to_skip += 3; break; // nett stack effect 1-4 == -3
 			case I_CALL:
 				to_skip += instr->data; // arguments of call
 				break;

@@ -29,6 +29,9 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 // Perform a ternary simple instruction, store the result in a (not in *a)
 void instrTernary(TernaryInstructionType i, ScriptValueP& a, const ScriptValueP& b, const ScriptValueP& c);
 
+// Perform a quaternary simple instruction, store the result in a (not in *a)
+void instrQuaternary(QuaternaryInstructionType i, ScriptValueP& a, const ScriptValueP& b, const ScriptValueP& c, const ScriptValueP& d);
+
 
 ScriptValueP Context::eval(const Script& script, bool useScope) {
 	size_t stack_size = stack.size();
@@ -172,6 +175,16 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 					ScriptValueP  b = stack.back(); stack.pop_back();
 					ScriptValueP& a = stack.back();
 					instrTernary(i.instr3, a, b, c);
+//					cout << "\t\t-> " << (String)*stack.back() << endl;
+					break;
+				}
+				// Simple instruction: quaternary
+				case I_QUATERNARY: {
+					ScriptValueP  d = stack.back(); stack.pop_back();
+					ScriptValueP  c = stack.back(); stack.pop_back();
+					ScriptValueP  b = stack.back(); stack.pop_back();
+					ScriptValueP& a = stack.back();
+					instrQuaternary(i.instr4, a, b, c, d);
 //					cout << "\t\t-> " << (String)*stack.back() << endl;
 					break;
 				}
@@ -366,6 +379,16 @@ void instrTernary(TernaryInstructionType i, ScriptValueP& a, const ScriptValueP&
 	switch (i) {
 		case I_RGB:
 			a = to_script(Color((int)*a, (int)*b, (int)*c));
+			break;
+	}
+}
+
+// ----------------------------------------------------------------------------- : Simple instructions : quaternary
+
+void instrQuaternary(QuaternaryInstructionType i, ScriptValueP& a, const ScriptValueP& b, const ScriptValueP& c, const ScriptValueP& d) {
+	switch (i) {
+		case I_RGBA:
+			a = to_script(AColor((int)*a, (int)*b, (int)*c, (int)*d));
 			break;
 	}
 }
