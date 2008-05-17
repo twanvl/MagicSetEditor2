@@ -154,7 +154,7 @@ void KeywordsPanel::onCommand(int id) {
 			list->selectNext();
 			break;
 		case ID_KEYWORD_ADD:
-			set->actions.add(new AddKeywordAction(ADD, *set));
+			set->actions.add(new AddKeywordAction(*set));
 			break;
 		case ID_KEYWORD_REMOVE:
 			if (!list->getKeyword()->fixed) {

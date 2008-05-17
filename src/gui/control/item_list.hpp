@@ -17,10 +17,14 @@
 /// A generic list of items
 /** The list is shown in report mode, and allows sorting.
  *  Currently used for cards and keywords.
+ *
+ *  Terminology:
+ *     selected item = a single item in the variable selected_item
+ *     focused items = items that are drawn as selected in the control
  */
 class ItemList : public wxListView {
   public:
-	ItemList(Window* parent, int id, long additional_style = 0);
+	ItemList(Window* parent, int id, long additional_style = 0, bool multi_sel = false);
 	
 	// --------------------------------------------------- : Selection
 	
@@ -72,15 +76,20 @@ class ItemList : public wxListView {
 	
 	/// Select an item, send an event to the parent
 	/** If focus then the item is also focused and selected in the actual control.
-	 *  This should abviously not be done when the item is selected because it was focused (leading to a loop).
+	 *  This should not be done when the item is selected because it was focused (leading to a loop).
 	 */
 	void selectItem(const VoidP& item, bool focus, bool event);
 	/// Select a item at the specified position
-	void selectItemPos(long pos, bool focus);
+	void selectItemPos(long pos, bool focus, bool force_focus = false);
 	/// Find the position for the selected_item
 	void findSelectedItemPos();
-	/// Actually select the card at selected_item_pos in the control
-	void selectCurrentItem();
+	/// Actually select the item at selected_item_pos in the control
+	/** if force_focus == true, then the item is highlighted again if it already is focused. */
+	void focusSelectedItem(bool force_focus = false);
+	/// Deselect everything in the control
+	void focusNone();
+	/// Actually select a certain item in the control
+	void focusItem(const VoidP& item, bool focus = true);
 	
 	// --------------------------------------------------- : Data
 	VoidP          selected_item;	  ///< The currently selected item

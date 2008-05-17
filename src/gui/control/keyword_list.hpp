@@ -60,6 +60,7 @@ class KeywordList : public ItemList, public SetView {
 	bool doCut();
 	bool doCopy();
 	bool doPaste();
+	bool doDelete();
 	
 	// --------------------------------------------------- : The keywords
   protected:

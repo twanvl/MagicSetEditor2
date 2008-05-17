@@ -25,7 +25,7 @@ void SymbolPartsSelection::clear() {
 }
 
 bool SymbolPartsSelection::select(const SymbolPartP& part, SelectMode mode) {
-	assert(part);
+	if (!part) return false;
 	// make sure part is not the decendent of a part that is already selected
 	if (mode != SELECT_OVERRIDE) {
 		FOR_EACH(s, selection) {

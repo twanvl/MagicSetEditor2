@@ -18,9 +18,11 @@
 #include <util/action_stack.hpp>
 #include <util/error.hpp>
 #include <data/field/text.hpp>
+#include <data/action/generic.hpp>
 
 class Set;
 DECLARE_POINTER_TYPE(Keyword);
+DECLARE_TYPEOF_COLLECTION(GenericAddAction<KeywordP>::Step);
 
 // ----------------------------------------------------------------------------- : Add Keyword
 
@@ -34,22 +36,16 @@ class KeywordListAction : public Action {
 	          // therefore we don't need a smart pointer
 };
 
-enum Adding   {ADD};
-enum Removing {REMOVE};
-
 /// Adding or removing a keyword from a set
 class AddKeywordAction : public KeywordListAction {
   public:
-	AddKeywordAction(Adding,   Set& set, const KeywordP& keyword = KeywordP());
-	AddKeywordAction(Removing, Set& set, const KeywordP& keyword);
+	AddKeywordAction(Set& set);
+	AddKeywordAction(AddingOrRemoving, Set& set, const KeywordP& keyword);
 	
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);
 	
-  //private:
-	const bool adding;        ///< Was a keyword added? (as opposed to removed)
-	const KeywordP keyword;   ///< The new/removed keyword
-	const size_t keyword_id;  ///< Position of the keyword in the set
+	const GenericAddAction<KeywordP> action;
 };
 
 // ----------------------------------------------------------------------------- : Changing keywords

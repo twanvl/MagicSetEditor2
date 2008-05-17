@@ -71,6 +71,7 @@ class CardListBase : public ItemList, public SetView {
 	bool doCut();
 	bool doCopy();
 	bool doPaste();
+	bool doDelete();
 	
 	// --------------------------------------------------- : Set actions
 	

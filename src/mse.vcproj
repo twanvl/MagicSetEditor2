@@ -1423,6 +1423,9 @@
 				Name="action"
 				Filter="">
 				<File
+					RelativePath=".\data\action\generic.hpp">
+				</File>
+				<File
 					RelativePath=".\data\action\keyword.cpp">
 					<FileConfiguration
 						Name="Debug|Win32">

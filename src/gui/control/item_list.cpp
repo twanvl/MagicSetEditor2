@@ -13,8 +13,8 @@
 
 // ----------------------------------------------------------------------------- : ItemList
 
-ItemList::ItemList(Window* parent, int id, long additional_style)
-	: wxListView(parent, id, wxDefaultPosition, wxDefaultSize, additional_style | wxLC_REPORT | wxLC_VIRTUAL | wxLC_SINGLE_SEL)
+ItemList::ItemList(Window* parent, int id, long additional_style, bool multi_sel)
+	: wxListView(parent, id, wxDefaultPosition, wxDefaultSize, additional_style | wxLC_REPORT | wxLC_VIRTUAL | (multi_sel ? 0 : wxLC_SINGLE_SEL))
 	, selected_item_pos(-1)
 	, sort_by_column(-1), sort_ascending(true)
 {
@@ -52,21 +52,23 @@ void ItemList::selectItem(const VoidP& item, bool focus, bool event) {
 	selected_item = item;
 	if (event) sendEvent();
 	findSelectedItemPos();
-	if (focus) {
-		selectCurrentItem();
-	}
+	if (focus) focusSelectedItem();
 }
 
-void ItemList::selectItemPos(long pos, bool focus) {
-	if (selected_item_pos == pos && !focus) return; // this item is already selected
+void ItemList::selectItemPos(long pos, bool focus, bool force_focus) {
+	VoidP item;
 	if ((size_t)pos < sorted_list.size()) {
-		// only if there is something to select
-		selectItem(getItem(pos), false, true);
+		item = getItem(pos);
+	} else if (!sorted_list.empty()) {
+		item = sorted_list.back();
 	} else {
-		selectItem(VoidP(),      false, true);
+		// clear selection
 	}
-	selected_item_pos = pos;
-	if (focus) selectCurrentItem();
+	if (item != selected_item) {
+		selectItem(item, false, true);
+	}
+	//!selected_item_pos = pos;
+	if (focus) focusSelectedItem(force_focus);
 }
 
 void ItemList::findSelectedItemPos() {
@@ -80,15 +82,30 @@ void ItemList::findSelectedItemPos() {
 		}
 	}
 }
-void ItemList::selectCurrentItem() {
+void ItemList::focusSelectedItem(bool force_focus) {
 	if (GetItemCount() > 0) {
 		if (selected_item_pos == -1 || (size_t)selected_item_pos > sorted_list.size()) {
 			// deselect currently selected item, if any
 			long sel = GetFirstSelected();
 			Select(sel, false);
-		} else {
+		} else if (selected_item_pos != GetFocusedItem() || force_focus) {
 			Select(selected_item_pos);
 			Focus (selected_item_pos);
+		}
+	}
+}
+void ItemList::focusNone() {
+	long count = GetItemCount();
+	for (long pos = 0 ; pos < count ; ++pos) {
+		Select(pos, false);
+	}
+}
+void ItemList::focusItem(const VoidP& item, bool focus) {
+	long count = GetItemCount();
+	for (long pos = 0 ; pos < count ; ++pos) {
+		if (getItem(pos) == item) {
+			Select(pos, focus);
+			break;
 		}
 	}
 }
@@ -124,7 +141,7 @@ void ItemList::refreshList() {
 	if (item_count == 0) Refresh();
 	// (re)select current item
 	findSelectedItemPos();
-	selectCurrentItem();
+	focusSelectedItem();
 }
 
 void ItemList::sortBy(long column, bool ascending) {

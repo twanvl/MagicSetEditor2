@@ -57,10 +57,10 @@ void KeywordList::onChangeSet() {
 }
 
 void KeywordList::onAction(const Action& action, bool undone) {
-	TYPE_CASE(action, AddKeywordAction) {
+	/*TYPE_CASE(action, AddKeywordAction) {
 		if (action.adding != undone) {
 			// select the new keyword
-			selectItem(action.keyword, false /*list will be refreshed anyway*/, true);
+			selectItem(action.keyword, false /*list will be refreshed anyway* /, true);
 			refreshList();
 		} else {
 			long pos = selected_item_pos;
@@ -74,7 +74,7 @@ void KeywordList::onAction(const Action& action, bool undone) {
 				}
 			}
 		}
-	}
+	}*/ // TODO!!!
 	TYPE_CASE(action, ValueAction) {
 		if (!action.card) {
 			KeywordTextValue* value = dynamic_cast<KeywordTextValue*>(action.valueP.get());
@@ -117,7 +117,7 @@ bool KeywordList::doCut() {
 	// cut = copy + delete
 	if (!canCut()) return false;
 	if (!doCopy()) return false;
-	set->actions.add(new AddKeywordAction(REMOVE, *set, getKeyword()));
+	doDelete();
 	return true;
 }
 bool KeywordList::doPaste() {
@@ -136,6 +136,10 @@ bool KeywordList::doPaste() {
 	} else {
 		return false;
 	}
+}
+bool KeywordList::doDelete() {
+	set->actions.add(new AddKeywordAction(REMOVE, *set, getKeyword()));
+	return true;
 }
 
 // ----------------------------------------------------------------------------- : KeywordListBase : for ItemList

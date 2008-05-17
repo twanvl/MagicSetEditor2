@@ -41,7 +41,7 @@ DEFINE_EVENT_TYPE(EVENT_CARD_ACTIVATE);
 vector<CardListBase*> CardListBase::card_lists;
 
 CardListBase::CardListBase(Window* parent, int id, long additional_style)
-	: ItemList(parent, id, additional_style)
+	: ItemList(parent, id, additional_style, true)
 {
 	// add to the list of card lists
 	card_lists.push_back(this);
@@ -62,38 +62,36 @@ void CardListBase::onChangeSet() {
 
 void CardListBase::onAction(const Action& action, bool undone) {
 	TYPE_CASE(action, AddCardAction) {
-		if (undone) {
+		if (action.action.adding != undone) {
+			// select the new cards
+			focusNone();
+			selectItem(action.action.steps.front().item, false, true);
 			refreshList();
-			if (!allowModify()) {
-				// Let some other card list else do the selecting
-				return;
-			}
-			selectItemPos(GetItemCount() - 1, true);
+			FOR_EACH_CONST(s, action.action.steps) focusItem(s.item); // focus all the new cards
 		} else {
-			// select the new card
-			selectItem(action.card, false /*list will be refreshed anyway*/, true);
-			refreshList();
-		}
-	}
-	TYPE_CASE(action, RemoveCardAction) {
-		if (undone) {
-			// select the re-added card
-			selectItem(action.card, false /*list will be refreshed anyway*/, true);
-			refreshList();
-		} else {
-			long pos = selected_item_pos;
-			refreshList();
-			if (!allowModify()) {
-				// Let some other card list else do the selecting
-				return;
-			}
-			if (action.card == selected_item) {
-				// select the next card, if not possible, select the last
-				if (pos + 1 < GetItemCount()) {
-					selectItemPos(pos, true);
-				} else {
-					selectItemPos(GetItemCount() - 1, true);
+			long pos = -1;
+			// adjust focus for all the removed cards
+			//FOR_EACH_CONST(s, action.action.steps) focusItem(s.item, false);
+			long count = GetItemCount();
+			long delta = 0;
+			for (long i = 0 ; i < count ; ++i) {
+				if (delta < (long)action.action.steps.size() && getItem(i) == action.action.steps[delta].item) {
+					Select(i - delta, false);
+					delta++;
+				} else if (delta > 0) {
+					Select(i - delta, IsSelected(i));
 				}
+				if (pos == -1 && IsSelected(i - delta)) pos = i - delta;
+			}
+			if (pos == -1) pos = selected_item_pos; // select next item if selection would become empty
+			refreshList();
+			if (!allowModify()) {
+				// Let some other card list do the selecting, otherwise we get conflicting events
+				return;
+			}
+			if (selected_item_pos == -1) {
+				// selected item was deleted, select something else
+				selectItemPos(pos, true, true);
 			}
 		}
 	}
@@ -105,7 +103,7 @@ void CardListBase::onAction(const Action& action, bool undone) {
 			// reselect the current card, it has moved
 			selected_item_pos = (long)action.card_id1 == selected_item_pos ? (long)action.card_id2 : (long)action.card_id1;
 			// select the right card
-			selectCurrentItem();
+			focusSelectedItem();
 		}
 		RefreshItem((long)action.card_id1);
 		RefreshItem((long)action.card_id2);
@@ -148,7 +146,7 @@ bool CardListBase::doCut() {
 	// cut = copy + delete
 	if (!canCut()) return false;
 	if (!doCopy()) return false;
-	set->actions.add(new RemoveCardAction(*set, getCard()));
+	doDelete();
 	return true;
 }
 bool CardListBase::doPaste() {
@@ -162,11 +160,16 @@ bool CardListBase::doPaste() {
 	// add card to set
 	CardP card = data.getCard(set);
 	if (card) {
-		set->actions.add(new AddCardAction(*set, card));
+		set->actions.add(new AddCardAction(ADD, *set, card));
 		return true;
 	} else {
 		return false;
 	}
+}
+bool CardListBase::doDelete() {
+	//vector<>
+	set->actions.add(new AddCardAction(REMOVE, *set, getCard()));
+	return true;
 }
 
 // ----------------------------------------------------------------------------- : CardListBase : Building the list
@@ -310,7 +313,7 @@ void CardListBase::onSelectColumns(wxCommandEvent&) {
 
 void CardListBase::onChar(wxKeyEvent& ev) {
 	if (ev.GetKeyCode() == WXK_DELETE && allowModify()) {
-		set->actions.add(new RemoveCardAction(*set, getCard()));
+		doDelete();
 	} else if (ev.GetKeyCode() == WXK_TAB) {
 		// send a navigation event to our parent, to select another control
 		// we need this because tabs are not handled on the cards panel

@@ -190,10 +190,15 @@ void SetScriptManager::onAction(const Action& action, bool undone) {
 		return; // Don't go into an infinite loop because of our own events
 	}
 	TYPE_CASE(action, AddCardAction) {
-		// update the added card specificly
-		Context& ctx = getContext(action.card);
-		FOR_EACH(v, action.card->data) {
-			v->update(ctx);
+		if (action.action.adding != undone) {
+			// update the added cards specificly
+			FOR_EACH_CONST(step, action.action.steps) {
+				const CardP& card = step.item;
+				Context& ctx = getContext(card);
+				FOR_EACH(v, card->data) {
+					v->update(ctx);
+				}
+			}
 		}
 		// note: fallthrough
 	}

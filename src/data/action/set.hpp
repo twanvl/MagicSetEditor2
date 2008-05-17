@@ -16,12 +16,14 @@
 
 #include <util/prec.hpp>
 #include <util/action_stack.hpp>
+#include <data/action/generic.hpp>
 
 class Set;
 DECLARE_POINTER_TYPE(Card);
 DECLARE_POINTER_TYPE(StyleSheet);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
+DECLARE_TYPEOF_COLLECTION(GenericAddAction<CardP>::Step);
 
 // ----------------------------------------------------------------------------- : Add card
 
@@ -38,29 +40,15 @@ class CardListAction : public Action {
 /// Adding a new card to a set
 class AddCardAction : public CardListAction {
   public:
+	/// Add a newly allocated card
 	AddCardAction(Set& set);
-	AddCardAction(Set& set, const CardP& card);
+	AddCardAction(AddingOrRemoving, Set& set, const CardP& card);
+	AddCardAction(AddingOrRemoving, Set& set, const vector<CardP>& cards);
 	
 	virtual String getName(bool to_undo) const;
 	virtual void   perform(bool to_undo);
 	
-  //private:
-	const CardP card; ///< The new card
-};
-
-// ----------------------------------------------------------------------------- : Remove card
-
-/// Removing a card from a set
-class RemoveCardAction : public CardListAction {
-  public:
-	RemoveCardAction(Set& set, const CardP& card);
-	
-	virtual String getName(bool to_undo) const;
-	virtual void   perform(bool to_undo);
-	
-  //private:
-	const CardP  card;	///< The removed card
-	const size_t card_id;	///< Position of the card in the set
+	const GenericAddAction<CardP> action;
 };
 
 // ----------------------------------------------------------------------------- : Reorder cards

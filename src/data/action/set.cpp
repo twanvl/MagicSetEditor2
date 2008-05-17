@@ -18,51 +18,26 @@ DECLARE_TYPEOF_COLLECTION(IndexMap<FieldP COMMA ValueP>);
 // ----------------------------------------------------------------------------- : Add card
 
 AddCardAction::AddCardAction(Set& set)
-	: CardListAction(set), card(new Card(*set.game))
+	: CardListAction(set)
+	, action(ADD, new_intrusive1<Card>(*set.game), set.cards)
 {}
 
-AddCardAction::AddCardAction(Set& set, const CardP& card)
-	: CardListAction(set), card(card)
+AddCardAction::AddCardAction(AddingOrRemoving ar, Set& set, const CardP& card)
+	: CardListAction(set)
+	, action(ar, card, set.cards)
+{}
+
+AddCardAction::AddCardAction(AddingOrRemoving ar, Set& set, const vector<CardP>& cards)
+	: CardListAction(set)
+	, action(ar, cards, set.cards)
 {}
 
 String AddCardAction::getName(bool to_undo) const {
-	return _("Add card");
+	return action.getName();
 }
 
 void AddCardAction::perform(bool to_undo) {
-	if (!to_undo) {
-		set.cards.push_back(card);
-	} else {
-		assert(!set.cards.empty());
-		set.cards.pop_back();
-	}
-}
-
-
-// ----------------------------------------------------------------------------- : Remove card
-
-RemoveCardAction::RemoveCardAction(Set& set, const CardP& card)
-	: CardListAction(set), card(card)
-	// find the card_id of the card we want to remove
-	, card_id(find(set.cards.begin(), set.cards.end(), card) - set.cards.begin())
-{
-	if (card_id >= set.cards.size()) {
-		throw InternalError(_("Card to remove not found in set"));
-	}
-}
-
-String RemoveCardAction::getName(bool to_undo) const {
-	return _("Remove card");
-}
-
-void RemoveCardAction::perform(bool to_undo) {
-	if (!to_undo) {
-		assert(card_id < set.cards.size());
-		set.cards.erase(set.cards.begin() + card_id);
-	} else {
-		assert(card_id <= set.cards.size());
-		set.cards.insert(set.cards.begin() + card_id, card);
-	}
+	action.perform(set.cards, to_undo);
 }
 
 
