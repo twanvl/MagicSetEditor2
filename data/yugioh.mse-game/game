@@ -3,7 +3,7 @@ short name: Yu-Gi-Oh!
 icon: card-back.png
 position hint: 4
 
-version: 2008-01-19
+version: 2008-05-14
 
 ############################################################## Functions & filters
 ## Copied and Pasted from vs.mse-game, with a few modifications
@@ -114,6 +114,7 @@ init script:
 		card.card_type == "normal monster" or
 	        card.card_type == "effect monster" or
 	        card.card_type == "ritual monster" or
+	        card.card_type == "synchro monster" or
 	        card.card_type == "fusion monster" or
 	        card.card_type == "token monster" or
 		card.card_type == "obelisk"        or
@@ -148,12 +149,13 @@ init script:
 		else if chosen(choice:"slifer", type) then "D"
 		else if chosen(choice:"ritual monster", type) then "E"
 		else if chosen(choice:"obelisk", type) then "F"
-		else if chosen(choice:"fusion monster", type) then "G"
-		else if chosen(choice:"token monster", type) then "H"
-		else if chosen(choice:"legendary dragons", type) then "I"
-		else if chosen(choice:"spell card", type) then "J"
-		else if chosen(choice:"trap card", type) then "K"
-		else "L"
+		else if chosen(choice:"synchro monster", type) then "G"
+		else if chosen(choice:"fusion monster", type) then "H"
+		else if chosen(choice:"token monster", type) then "I"
+		else if chosen(choice:"legendary dragons", type) then "J"
+		else if chosen(choice:"spell card", type) then "K"
+		else if chosen(choice:"trap card", type) then "L"
+		else "M"
 	}
 	
 	pos_of_card := {
@@ -166,7 +168,6 @@ init script:
 	}
 
 ############################################################## Set fields
-
 set field:
 	type: info
 	name: Set Information
@@ -195,18 +196,13 @@ set field:
 	type: text
 	name: copyright
 	description: Copyright information. This will not appear on the card.
-
-
 ############################# Default style
-
 default set style:
 	title:
 		padding left: 2
 		font:
 			size: 16
-
 ############################################################## Card fields
-
 ############################# Background stuff
 card field:
 	type: choice
@@ -214,6 +210,7 @@ card field:
 	choice: normal monster
 	choice: effect monster
 	choice: ritual monster
+	choice: synchro monster
 	choice: fusion monster
 	choice: token monster
 	choice: obelisk
@@ -227,6 +224,7 @@ card field:
 		normal monster:	   rgb(120,18,0)
 		effect monster:	   rgb(120,18,0)
 		ritual monster:	   rgb(26,26,26)
+		synchro monster:	   rgb(26,26,26)
 		fusion monster:	   rgb(26,26,26)
 		token monster:	   rgb(120,18,0)
 		obelisk:	   rgb(26,26,26)
@@ -243,7 +241,6 @@ card field:
 	choice: holo image
 	choice: secret holo image
 	choice: parallel holo card
-
 ############################# Name line
 card field:
 	type: text
@@ -279,7 +276,6 @@ card field:
 	type: image
 	name: image
 	show statistics: false
-
 ############################# Card type
 card field:
 	type: text
@@ -309,7 +305,6 @@ card field:
 		)
 	card list visible: true
 	card list column: 3
-
 ############################# Edition and Card ID
 card field:
 	type: text
@@ -333,7 +328,6 @@ card field:
 	name: edition
 	default: set.edition
 	show statistics: false
-
 ############################# Text box
 card field:
 	type: text
@@ -358,7 +352,6 @@ card field:
 			combined_editor(field1: card.rules, separator: "<line>\n</>", field2: card.flavor)
 		else 
 			forward_editor(field: card.rules)
-
 ############################# Attack/Defense
 card field:
 	type: text
@@ -391,10 +384,8 @@ card field:
 	script: copyright_filter(value)
 	show statistics: false
 
-
 ############################################################## Word lists
 # Doesn't do anything yet
-
 #word list:
 #	name: type
 #	word: Dragon
@@ -425,4 +416,3 @@ card field:
 #	word: Fusion
 #	word: Ritual
 #	word: Divine
-
