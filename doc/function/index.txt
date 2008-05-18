@@ -16,6 +16,8 @@ These functions are built into the program, other [[type:function]]s can be defi
 				Replace text matching a regular expression.
 | [[fun:filter_text|filter_text / filter_rule]]
 				Keep only the text matching a regular expression.
+| [[fun:break_text|break_text / break_rule]]
+				Break text into parts each matching a regular expression.
 | [[fun:sort_text|sort_text / sort_rule]]
 				Sort the letters in a string using a custom order.
 | [[fun:contains]]		Does a string contain another one?

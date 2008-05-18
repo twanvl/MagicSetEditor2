@@ -9,7 +9,7 @@ Filter text by only keeping the parts of the input that match the regular expres
 If @in_context@ is given, the context must also match the string where the match is represented as <tt>&lt;match></tt>.
 
 This function is available in [[script:rule form]].
-When the filter is used many times the rule form is more efficient, because the regular expression is only compiled once.
+When the @filter_text@ is used many times the rule form is more efficient, because the regular expression is only compiled once.
 
 --Parameters--
 ! Parameter	Type			Description
@@ -26,5 +26,7 @@ When the filter is used many times the rule form is more efficient, because the 
 > f("xyzxxyyzz") == "xx"
 
 --See also--
+| [[fun:break_text|break_text / break_rule]]
+				Break text into parts each matching a regular expression.
 | [[fun:replace|replace / replace_rule]]
 				Replace text matching a regular expression.

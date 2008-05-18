@@ -111,6 +111,7 @@ enum Variable
 ,	SCRIPT_VAR_in
 ,	SCRIPT_VAR_match
 ,	SCRIPT_VAR_replace
+,	SCRIPT_VAR_in_context
 ,	SCRIPT_VAR_order
 ,	SCRIPT_VAR_filter
 ,	SCRIPT_VAR_choice

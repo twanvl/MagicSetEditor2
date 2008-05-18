@@ -1,0 +1,39 @@
+Function: break_text
+
+--Usage--
+> break_text(some_string, match: regular expression, in_context: regular expression)
+> break_rule(match: ..., in_context: ...)(some_string)
+
+Break text by only keeping the parts of the input that match the regular expression.
+The function returns a [[type:list]] of parts.
+
+If @in_context@ is given, the context must also match the string where the match is represented as <tt>&lt;match></tt>.
+
+This function is available in [[script:rule form]].
+When the @break_text@ is used many times the rule form is more efficient, because the regular expression is only compiled once.
+
+--Filter vs. break--
+
+The function @filter_text@ is very similar to @break_text@, instead of returning a list it concatenates the items.
+So for example where @break_text@ would return @["a","b","c"]@, @filter_text@ would return @"abc"@.
+In fact, @filter_text@ could be implemented as
+> filter_text := { for part in break_text() do part }
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		String to replace in.
+| @match@	[[type:regex]]		Regular expression to match.
+| @in_context@	[[type:regex]] (optional)	Context to match
+
+--Examples--
+> break_text(match: "a",    "banana")  ==  ["a","a","a"]
+> break_text(match: "na|.", "banana")  ==  ["b","a","na","na"]
+> break_text(match: "ap",   "banana")  ==  []
+>
+> f := break_rule(match: "xx+")
+> f("xyzxxxxyyzz") == ["xxxx"]
+
+--See also--
+| [[fun:filter_text|filter_text / filter_rule]]
+				Keep only the text matching a regular expression.
+

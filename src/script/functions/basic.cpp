@@ -447,7 +447,7 @@ ScriptValueP replace_rule(Context& ctx) {
 		ret->replacement = replace->toString();
 	}
 	// in_context
-	SCRIPT_OPTIONAL_PARAM_N(String, _("in context"), in_context) {
+	SCRIPT_OPTIONAL_PARAM_C(String, in_context) {
 		if (!ret->context.Compile(in_context, wxRE_ADVANCED)) {
 			throw ScriptError(_("Error while compiling regular expression: '")+in_context+_("'"));
 		}
@@ -479,7 +479,7 @@ class ScriptFilterRule : public ScriptValue {
 			bool ok = regex.GetMatch(&start, &len, 0);
 			assert(ok);
 			String inside     = input.substr(start, len);  // the match
-			String next_input =  input.substr(start + len); // everything after the match
+			String next_input = input.substr(start + len); // everything after the match
 			if (!context.IsValid() || context.Matches(input.substr(0,start) + _("<match>") + next_input)) {
 				// no context or context match
 				ret += inside;
@@ -497,7 +497,7 @@ class ScriptFilterRule : public ScriptValue {
 ScriptValueP filter_rule(Context& ctx) {
 	// cached?
 	SCRIPT_PARAM_C(String, match);
-	SCRIPT_PARAM_DEFAULT_N(String, _("in context"), in_context, String());
+	SCRIPT_PARAM_DEFAULT_C(String, in_context, String());
 	
 	// cache
 	const int CACHE_SIZE = 6;
@@ -538,6 +538,59 @@ SCRIPT_FUNCTION(filter_rule) {
 }
 SCRIPT_FUNCTION(filter_text) {
 	return filter_rule(ctx)->eval(ctx);
+}
+
+// ----------------------------------------------------------------------------- : Rules : regex filter/break
+
+class ScriptBreakRule : public ScriptValue {
+  public:
+	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
+	virtual String typeName() const { return _("break_rule"); }
+	virtual ScriptValueP eval(Context& ctx) const {
+		SCRIPT_PARAM_C(String, input);
+		intrusive_ptr<ScriptCustomCollection> ret(new ScriptCustomCollection);
+		while (regex.Matches(input)) {
+			// match, append to result
+			size_t start, len;
+			bool ok = regex.GetMatch(&start, &len, 0);
+			assert(ok);
+			String inside     = input.substr(start, len);  // the match
+			String next_input = input.substr(start + len); // everything after the match
+			if (!context.IsValid() || context.Matches(input.substr(0,start) + _("<match>") + next_input)) {
+				// no context or context match
+				ret->value.push_back(to_script(inside));
+			}
+			input = next_input;
+		}
+		return ret;
+	}
+	
+	wxRegEx regex;   ///< Regex to match
+	wxRegEx context; ///< Match only in a given context, optional
+};
+
+// Create a regular expression rule for breaking strings
+ScriptValueP break_rule(Context& ctx) {
+	intrusive_ptr<ScriptBreakRule> ret(new ScriptBreakRule);
+	// match
+	SCRIPT_PARAM_C(String, match);
+	if (!ret->regex.Compile(match, wxRE_ADVANCED)) {
+		throw ScriptError(_("Error while compiling regular expression: '")+match+_("'"));
+	}
+	// in_context
+	SCRIPT_OPTIONAL_PARAM_C(String, in_context) {
+		if (!ret->context.Compile(in_context, wxRE_ADVANCED)) {
+			throw ScriptError(_("Error while compiling regular expression: '")+in_context+_("'"));
+		}
+	}
+	return ret;
+}
+
+SCRIPT_FUNCTION(break_rule) {
+	return break_rule(ctx);
+}
+SCRIPT_FUNCTION(break_text) {
+	return break_rule(ctx)->eval(ctx);
 }
 
 // ----------------------------------------------------------------------------- : Rules : regex match
@@ -657,10 +710,12 @@ void init_script_basic_functions(Context& ctx) {
 	// advanced string rules/functions
 	ctx.setVariable(_("replace"),              script_replace);
 	ctx.setVariable(_("filter text"),          script_filter_text);
+	ctx.setVariable(_("break text"),           script_break_text);
 	ctx.setVariable(_("match"),                script_match);
 	ctx.setVariable(_("sort text"),            script_sort_text);
 	ctx.setVariable(_("replace rule"),         script_replace_rule);
 	ctx.setVariable(_("filter rule"),          script_filter_rule);
+	ctx.setVariable(_("break rule"),           script_break_rule);
 	ctx.setVariable(_("match rule"),           script_match_rule);
 	ctx.setVariable(_("sort rule"),            script_sort_rule);
 }
