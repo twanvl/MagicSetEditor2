@@ -74,6 +74,7 @@ void TextCtrl::setValue(const FakeTextValueP& value) {
 }
 
 void TextCtrl::onChangeSet() {
+	wxLogDebug(_("TextCtrl::onChangeSet %p"),this);
 	DataEditor::onChangeSet();
 	// initialize
 	if (viewers.empty()) {
@@ -109,6 +110,8 @@ void TextCtrl::onInit() {
 	FOR_EACH_EDITOR {
 		e->onShow(true);
 	}
+	// also init the DataEditor
+	DataEditor::onInit();
 }
 
 void TextCtrl::onSize(wxSizeEvent&) {
