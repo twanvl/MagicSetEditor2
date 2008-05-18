@@ -559,6 +559,10 @@ wxMenu* TextValueEditor::getMenu(int type) const {
 // ----------------------------------------------------------------------------- : Drawing
 
 void TextValueEditor::draw(RotatedDC& dc) {
+	if (nativeLook()) {
+		// clip the dc to the region of this control
+		dc.SetClippingRegion(style().getInternalRect());
+	}
 	// update scrollbar
 	prepareDrawScrollbar(dc);
 	// draw text
@@ -573,6 +577,9 @@ void TextValueEditor::draw(RotatedDC& dc) {
 		// we could do that ourselfs, but we need a dc for that
 		fixSelection();
 		showCaret();
+	}
+	if (nativeLook()) {
+		dc.DestroyClippingRegion();
 	}
 }
 
