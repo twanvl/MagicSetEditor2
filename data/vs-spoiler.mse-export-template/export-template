@@ -6,6 +6,13 @@ full name:   List of cards
 installer group: VS System/Export/Spoiler
 icon: preview.png
 create directory: true
+version: 2008-05-18
+
+depends on:
+	package: vs.mse-game
+	version: 2008-01-03
+
+######################################################################################
 
 option field:
 	type: choice
