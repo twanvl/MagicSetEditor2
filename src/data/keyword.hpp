@@ -114,6 +114,12 @@ class Keyword : public IntrusivePtrVirtualBase {
 	DECLARE_REFLECTION();
 };
 
+inline String type_name(const Keyword&) {
+	return _TYPE_("keyword");
+}
+inline String type_name(const vector<KeywordP>&) {
+	return _TYPE_("keywords"); // not actually used, only for locale.pl script
+}
 
 // ----------------------------------------------------------------------------- : Using keywords
 

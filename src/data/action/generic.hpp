@@ -91,7 +91,7 @@ GenericAddAction<T>::GenericAddAction(AddingOrRemoving ar, const vector<T>& item
 template <typename T>
 String GenericAddAction<T>::getName() const {
 	String type = type_name(steps.front().item) + (steps.size() == 1 ? _("") : _("s"));
-	return adding ? _ACTION_1_("add object", type) : _ACTION_1_("remove object", type);
+	return adding ? _ACTION_1_("add item", type) : _ACTION_1_("remove item", type);
 }
 
 template <typename T>

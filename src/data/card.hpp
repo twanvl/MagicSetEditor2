@@ -86,6 +86,9 @@ class Card : public IntrusivePtrVirtualBase {
 inline String type_name(const Card&) {
 	return _TYPE_("card");
 }
+inline String type_name(const vector<CardP>&) {
+	return _TYPE_("cards"); // not actually used, only for locale.pl script
+}
 
 void mark_dependency_member(const Card& value, const String& name, const Dependency& dep);
 

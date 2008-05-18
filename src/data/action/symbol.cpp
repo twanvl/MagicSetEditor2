@@ -357,7 +357,7 @@ AddSymbolPartAction::AddSymbolPartAction(Symbol& symbol, const SymbolPartP& part
 {}
 
 String AddSymbolPartAction::getName(bool to_undo) const {
-	return _ACTION_1_("add part", part->name);
+	return _ACTION_1_("add item", part->name);
 }
 
 void AddSymbolPartAction::perform(bool to_undo) {
@@ -396,7 +396,7 @@ void RemoveSymbolPartsAction::check(SymbolGroup& group, const set<SymbolPartP>& 
 }
 
 String RemoveSymbolPartsAction::getName(bool to_undo) const {
-	return _ACTION_1_("remove parts", removals.size() == 1 ? _TYPE_("shape") : _TYPE_("shapes"));
+	return _ACTION_1_("remove item", removals.size() == 1 ? _TYPE_("shape") : _TYPE_("shapes"));
 }
 
 void RemoveSymbolPartsAction::perform(bool to_undo) {

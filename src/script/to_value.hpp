@@ -35,6 +35,9 @@ void mark_dependency_member(const T& value, const String& name, const Dependency
 template <typename T> inline String type_name(const T&) {
 	return _TYPE_("object");
 }
+template <typename T> inline String type_name(const intrusive_ptr<T>& p) {
+	return type_name(*p.get());
+}
 template <typename K, typename V> inline String type_name(const pair<K,V>& p) {
 	return type_name(p.second); // for maps
 }
