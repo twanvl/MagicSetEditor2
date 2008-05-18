@@ -1,5 +1,5 @@
 mse version: 0.3.6
-version: 2008-04-01
+version: 2008-05-18
 short name: normal
 position hint: 001
 icon: mana_r.png
@@ -209,6 +209,79 @@ symbol:
 	code: S
 	image: mana_s.png
 symbol:
+	code: I
+	image: mana_infinite.png
+symbol:
+	image: mana_nw.png
+	code: ([XYZ0-9])+/W
+	regex: yes
+	draw text: 1
+	text margin left:   -.30
+	text margin right:  .2
+	text margin top:    -.14
+	text margin bottom: .34
+	text font:
+		name: MPlantin
+		size: .6
+		color: rgb(0,0,0)
+		max stretch: 0.5
+symbol:
+	image: mana_ng.png
+	code: ([XYZ0-9])+/G
+	regex: yes
+	draw text: 1
+	text margin left:   -.30
+	text margin right:  .2
+	text margin top:    -.14
+	text margin bottom: .34
+	text font:
+		name: MPlantin
+		size: .6
+		color: rgb(0,0,0)
+		max stretch: 0.5
+symbol:
+	image: mana_nu.png
+	code: ([XYZ0-9])+/U
+	regex: yes
+	draw text: 1
+	text margin left:   -.30
+	text margin right:  .2
+	text margin top:    -.14
+	text margin bottom: .34
+	text font:
+		name: MPlantin
+		size: .6
+		color: rgb(0,0,0)
+		max stretch: 0.5
+symbol:
+	image: mana_nb.png
+	code: ([XYZ0-9])+/B
+	regex: yes
+	draw text: 1
+	text margin left:   -.30
+	text margin right:  .2
+	text margin top:    -.14
+	text margin bottom: .34
+	text font:
+		name: MPlantin
+		size: .6
+		color: rgb(0,0,0)
+		max stretch: 0.5
+symbol:
+	image: mana_nr.png
+	code: ([XYZ0-9])+/R
+	regex: yes
+	draw text: 1
+	text margin left:   -.30
+	text margin right:  .2
+	text margin top:    -.14
+	text margin bottom: .34
+	text font:
+		name: MPlantin
+		size: .6
+		color: rgb(0,0,0)
+		max stretch: 0.5
+symbol:
 	code: X
 	image: mana_x.png
 symbol:
@@ -217,9 +290,6 @@ symbol:
 symbol:
 	code: Z
 	image: mana_z.png
-symbol:
-	code: I
-	image: mana_infinite.png
 symbol:
 	image: mana_circle.png
 	code: [0-9]+|.
@@ -295,3 +365,12 @@ insert symbol menu:
 		item: B/G/W
 		item: R/W/U
 		item: G/U/B
+	item:
+		type: line
+	item:
+		name: number hybrids
+		item: 2/W
+		item: 2/U
+		item: 2/B
+		item: 2/R
+		item: 2/G

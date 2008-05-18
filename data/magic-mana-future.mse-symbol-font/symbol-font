@@ -1,5 +1,5 @@
 mse version: 0.3.6
-version: 2008-04-01
+version: 2008-05-18
 # Symbol font in the 'futuristic' style, used for casting costs on futureshift cards
 short name: Future Sight style
 position hint: 005
@@ -13,6 +13,21 @@ symbol:
 symbol:
 	code: Q
 	image: mana_q.png
+symbol:
+	code: 2/W
+	image: mana_2w.png
+symbol:
+	code: 2/U
+	image: mana_2u.png
+symbol:
+	code: 2/B
+	image: mana_2b.png
+symbol:
+	code: 2/R
+	image: mana_2r.png
+symbol:
+	code: 2/G
+	image: mana_2g.png
 symbol:
 	code: W/U
 	image: mana_guild_wu.png
@@ -85,6 +100,26 @@ symbol:
 	image: mana_gu.png
 symbol:
 	code: 1/2
+	enabled: { colorless_color() == "w" }
+	image: mana_1_half_w.png
+symbol:
+	code: 1/2
+	enabled: { colorless_color() == "u" }
+	image: mana_1_half_u.png
+symbol:
+	code: 1/2
+	enabled: { colorless_color() == "b" }
+	image: mana_1_half_b.png
+symbol:
+	code: 1/2
+	enabled: { colorless_color() == "r" }
+	image: mana_1_half_r.png
+symbol:
+	code: 1/2
+	enabled: { colorless_color() == "g" }
+	image: mana_1_half_g.png
+symbol:
+	code: 1/2
 	image: mana_1_half.png
 symbol:
 	code: |1
@@ -127,11 +162,33 @@ symbol:
 	image: mana_s.png
 symbol:
 	code: I
+	enabled: { colorless_color() == "w" }
+	image: mana_infinite_w.png
+symbol:
+	code: I
+	enabled: { colorless_color() == "u" }
+	image: mana_infinite_u.png
+symbol:
+	code: I
+	enabled: { colorless_color() == "b" }
+	image: mana_infinite_b.png
+symbol:
+	code: I
+	enabled: { colorless_color() == "r" }
+	image: mana_infinite_r.png
+symbol:
+	code: I
+	enabled: { colorless_color() == "g" }
+	image: mana_infinite_g.png
+symbol:
+	code: I
 	image: mana_infinite.png
 symbol:
 	image: mana_circle_w.png
 	enabled: { colorless_color() == "w" }
-	code: .|[0-9]+(?!/)
+	code: .|[0-9]+|.
+	regex: yes
+	draw text: 0
 	text font:
 		name: MPlantin
 		weight: bold
@@ -145,7 +202,9 @@ symbol:
 symbol:
 	image: mana_circle_u.png
 	enabled: { colorless_color() == "u" }
-	code: .|[0-9]+(?!/)
+	code: .|[0-9]+|.
+	regex: yes
+	draw text: 0
 	text font:
 		name: MPlantin
 		weight: bold
@@ -159,7 +218,9 @@ symbol:
 symbol:
 	image: mana_circle_b.png
 	enabled: { colorless_color() == "b" }
-	code: .|[0-9]+(?!/)
+	code: .|[0-9]+|.
+	regex: yes
+	draw text: 0
 	text font:
 		name: MPlantin
 		weight: bold
@@ -173,7 +234,9 @@ symbol:
 symbol:
 	image: mana_circle_r.png
 	enabled: { colorless_color() == "r" }
-	code: .|[0-9]+(?!/)
+	code: .|[0-9]+|.
+	regex: yes
+	draw text: 0
 	text font:
 		name: MPlantin
 		weight: bold
@@ -187,7 +250,9 @@ symbol:
 symbol:
 	image: mana_circle_g.png
 	enabled: { colorless_color() == "g" }
-	code: .|[0-9]+(?!/)
+	code: .|[0-9]+|.
+	regex: yes
+	draw text: 0
 	text font:
 		name: MPlantin
 		weight: bold
@@ -200,8 +265,9 @@ symbol:
 	text margin bottom: 0.1
 symbol:
 	image: mana_circle.png
-	enabled: { colorless_color() == "c" }
-	code: .|[0-9]+(?!/)
+	code: .|[0-9]+|.
+	regex: yes
+	draw text: 0
 	text font:
 		name: MPlantin
 		weight: bold
@@ -218,6 +284,9 @@ symbol:
 insert symbol menu:
 	item: T
 	item: Q
+	item: X
+	item: Y
+	item: Z
 	item:
 		type: line
 	item: I
@@ -257,3 +326,12 @@ insert symbol menu:
 		item: B/G
 		item: R/W
 		item: G/U
+	item:
+		type: line
+	item:
+		name: number hybrids
+		item: 2/W
+		item: 2/U
+		item: 2/B
+		item: 2/R
+		item: 2/G

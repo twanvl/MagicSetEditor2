@@ -5,7 +5,7 @@ installer group: magic/game files
 icon: card-back.png
 position hint: 01
 
-version: 2008-04-14
+version: 2008-05-18
 depends on:
 	package: magic-blends.mse-include
 	version: 2007-09-23
@@ -75,7 +75,9 @@ init script:
 			else                     "multicolor"
 		else
 			# hybrid
-			if      count == 2 then  color_names_2() + ", hybrid"
+			if count == 0 then "colorless"
+			else if count == 1 then color_names_1()
+			else if count == 2 then  color_names_2() + ", hybrid"
 			else if count == 3 then  color_names_3() + ", hybrid"
 			else                     "multicolor"
 	}
@@ -194,6 +196,7 @@ init script:
 	
 	is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicolor" }
 	is_null_cost  := { input == "" or input == "0" }
+	is_hybrid_cost := { contains(card.casting_cost, match: "W/") or contains(card.casting_cost, match: "U/") or contains(card.casting_cost, match: "B/") or contains(card.casting_cost, match: "R/") or contains(card.casting_cost, match: "G/") }
 	basic_land_sort := {
 		if contains(card.name, match:"Plains")        then "LB"      # Plains
 		else if contains(card.name, match:"Island")   then "LC"      # Islands
@@ -242,7 +245,8 @@ init script:
 			else if colors == "B" then "C"                       # Black
 			else if colors == "R" then "D"                       # Red
 			else if colors == "G" then "E"                       # Green
-			else if contains(casting_cost, match:"/") then hybrid_cost_sort()  #Hybrid
+			else if is_hybrid_cost() then hybrid_cost_sort()  #Hybrid
+			else if contains(casting_cost, match:"/") and contains(card_color, match:"artifact") then "I" # Colorless/Artifact
 			else                       "F"                       # Multicolor
 		)
 	}
@@ -490,6 +494,7 @@ init script:
 		+ 1 * filter_text(match: "^[0123456789]+(?!/)")      # colorless mana, but not 1/2
 		+ 1 * (length(sort_text(order:"compound(1/2)")) / 3) # compensate for 1/2. Should actually be 1.5 *
 	}
+
 	colored_mana := to_text + {
 		  number_of_items(in: sort_text(order: "WUBRG"))     # colored mana
 		- number_of_items(in: sort_text(order:"/"))          # guild mana, W/U -> 2 - 1
