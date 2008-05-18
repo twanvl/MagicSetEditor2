@@ -19,17 +19,18 @@ DECLARE_POINTER_TYPE(Keyword);
 // ----------------------------------------------------------------------------- : CardDataObject
 
 /// The data format for cards on the clipboard
-class CardDataObject : public wxTextDataObject {
+class CardsDataObject : public wxTextDataObject {
   public:
 	/// Name of the format of MSE cards
 	static wxDataFormat format;
 	
-	CardDataObject();
+	CardsDataObject();
 	/// Store a card
-	CardDataObject(const SetP& set, const CardP& card);
+	CardsDataObject(const SetP& set, const vector<CardP>& cards);
 	
-	/// Retrieve a card, only if it is made with the same game as set
-	CardP getCard(const SetP& set);
+	/// Retrieve the cards, only if it is made with the same game as set
+	/** Return true if the cards are correctly retrieved, and there is at least one card */
+	bool getCards(const SetP& set, vector<CardP>& out);
 };
 
 // ----------------------------------------------------------------------------- : KeywordDataObject
@@ -50,10 +51,10 @@ class KeywordDataObject : public wxTextDataObject {
 
 // ----------------------------------------------------------------------------- : Card on clipboard
 
-/// A DataObject for putting a card on the clipboard, in multiple formats
-class CardOnClipboard : public wxDataObjectComposite {
+/// A DataObject for putting one or more cards on the clipboard, in multiple formats
+class CardsOnClipboard : public wxDataObjectComposite {
   public:
-	CardOnClipboard(const SetP& set, const CardP& card);
+	CardsOnClipboard(const SetP& set, const vector<CardP>& cards);
 };
 
 // ----------------------------------------------------------------------------- : EOF

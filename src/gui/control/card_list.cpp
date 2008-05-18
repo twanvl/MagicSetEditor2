@@ -132,13 +132,23 @@ void CardListBase::sendEvent() {
 bool CardListBase::canCopy()  const { return !!selected_item; }
 bool CardListBase::canCut()   const { return canCopy() && allowModify(); }
 bool CardListBase::canPaste() const {
-	return allowModify() && wxTheClipboard->IsSupported(CardDataObject::format);
+	return allowModify() && wxTheClipboard->IsSupported(CardsDataObject::format);
 }
 
 bool CardListBase::doCopy() {
 	if (!canCopy()) return false;
+	// cards to copy
+	vector<CardP> cards_to_copy;
+	long count = GetItemCount();
+	for (long pos = 0 ; pos < count ; ++pos) {
+		if (IsSelected(pos)) {
+			cards_to_copy.push_back(getCard(pos));
+		}
+	}
+	if (cards_to_copy.empty()) return false;
+	// put on clipboard
 	if (!wxTheClipboard->Open()) return false;
-	bool ok = wxTheClipboard->SetData(new CardOnClipboard(set, getCard())); // ignore result
+	bool ok = wxTheClipboard->SetData(new CardsOnClipboard(set, cards_to_copy)); // ignore result
 	wxTheClipboard->Close();
 	return ok;
 }
@@ -153,22 +163,30 @@ bool CardListBase::doPaste() {
 	// get data
 	if (!canPaste()) return false;
 	if (!wxTheClipboard->Open()) return false;
-	CardDataObject data;
+	CardsDataObject data;
 	bool ok = wxTheClipboard->GetData(data);
 	wxTheClipboard->Close();
 	if (!ok) return false;
+	// get cards
+	vector<CardP> new_cards;
+	ok = data.getCards(set, new_cards);
+	if (!ok) return false;
 	// add card to set
-	CardP card = data.getCard(set);
-	if (card) {
-		set->actions.add(new AddCardAction(ADD, *set, card));
-		return true;
-	} else {
-		return false;
-	}
+	set->actions.add(new AddCardAction(ADD, *set, new_cards));
+	return true;
 }
 bool CardListBase::doDelete() {
-	//vector<>
-	set->actions.add(new AddCardAction(REMOVE, *set, getCard()));
+	// cards to delete
+	vector<CardP> cards_to_delete;
+	long count = GetItemCount();
+	for (long pos = 0 ; pos < count ; ++pos) {
+		if (IsSelected(pos)) {
+			cards_to_delete.push_back(getCard(pos));
+		}
+	}
+	if (cards_to_delete.empty()) return false;
+	// delete cards
+	set->actions.add(new AddCardAction(REMOVE, *set, cards_to_delete));
 	return true;
 }
 

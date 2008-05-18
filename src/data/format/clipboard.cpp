@@ -39,50 +39,62 @@ void deserialize_from_clipboard(T& object, Package& package, const String& data)
 
 // ----------------------------------------------------------------------------- : CardDataObject
 
-/// A wrapped card for storing on the clipboard
-struct WrappedCard {
-	Game*  expected_game;
-	String game_name;
-	CardP  card;
+/// A wrapped cards for storing on the clipboard
+struct WrappedCards {
+	Game*         expected_game;
+	String        game_name;
+	vector<CardP> cards;
 	
 	DECLARE_REFLECTION();
 };
 
-IMPLEMENT_REFLECTION(WrappedCard) {
+IMPLEMENT_REFLECTION(WrappedCards) {
 	REFLECT(game_name);
 	if (game_name == expected_game->name()) {
 		WITH_DYNAMIC_ARG(game_for_reading, expected_game);
-		REFLECT(card);
+		REFLECT(cards);
 	}
 }
 
 
-wxDataFormat CardDataObject::format = _("application/x-mse-card");
+wxDataFormat CardsDataObject::format = _("application/x-mse-cards");
 
-CardDataObject::CardDataObject(const SetP& set, const CardP& card) {
-	WrappedCard data = { set->game.get(), set->game->name(), card };
-	bool has_styling = card->has_styling && !card->stylesheet;
-	if (has_styling) {
-		// set the stylsheet, so when deserializing we know whos style options we are reading
-		card->stylesheet = set->stylesheet;
+CardsDataObject::CardsDataObject(const SetP& set, const vector<CardP>& cards) {
+	// set the stylesheet, so when deserializing we know whos style options we are reading
+	bool* has_styling = new bool[cards.size()];
+	for (size_t i = 0 ; i < cards.size() ; ++i) {
+		has_styling[i] = cards[i]->has_styling && !cards[i]->stylesheet;
+		if (has_styling[i]) {
+			cards[i]->stylesheet = set->stylesheet;
+		}
 	}
+	WrappedCards data = { set->game.get(), set->game->name(), cards };
 	SetText(serialize_for_clipboard(*set, data));
-	if (has_styling) {
-		card->stylesheet = StyleSheetP(); // restore card
+	// restore cards
+	for (size_t i = 0 ; i < cards.size() ; ++i) {
+		if (has_styling[i]) {
+			cards[i]->stylesheet = StyleSheetP();
+		}
 	}
 	SetFormat(format);
+	delete [] has_styling;
 }
 
-CardDataObject::CardDataObject() {
+CardsDataObject::CardsDataObject() {
 	SetFormat(format);
 }
 
-CardP CardDataObject::getCard(const SetP& set) {
-	CardP card(new Card(*set->game));
-	WrappedCard data = { set->game.get(), set->game->name(), card};
+bool CardsDataObject::getCards(const SetP& set, vector<CardP>& out) {
+	WrappedCards data = { set->game.get(), set->game->name() };
 	deserialize_from_clipboard(data, *set, GetText());
-	if (data.game_name != set->game->name()) return CardP(); // Card is from a different game
-	else                                     return card;
+	if (data.cards.empty()) return false;
+	if (data.game_name == set->game->name()) {
+		// Cards are from the same game
+		out = data.cards;
+		return true;
+	} else {
+		return false;
+	}
 }
 
 // ----------------------------------------------------------------------------- : KeywordDataObject
@@ -127,12 +139,14 @@ KeywordP KeywordDataObject::getKeyword(const SetP& set) {
 
 // ----------------------------------------------------------------------------- : Card on clipboard
 
-CardOnClipboard::CardOnClipboard(const SetP& set, const CardP& card) {
+CardsOnClipboard::CardsOnClipboard(const SetP& set, const vector<CardP>& cards) {
 	// Conversion to text format
 		// TODO
 		//Add( new TextDataObject(_("card"))) 
 	// Conversion to bitmap format
-		Add(new wxBitmapDataObject(export_bitmap(set, card)));
+		if (cards.size() == 1) {
+			Add(new wxBitmapDataObject(export_bitmap(set, cards[0])));
+		}
 	// Conversion to serialized card format
-		Add(new CardDataObject(set, card), true);
+		Add(new CardsDataObject(set, cards), true);
 }

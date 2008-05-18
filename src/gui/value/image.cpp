@@ -61,7 +61,7 @@ bool ImageValueEditor::canCopy() const {
 
 bool ImageValueEditor::canPaste() const {
 	return wxTheClipboard->IsSupported(wxDF_BITMAP) &&
-	      !wxTheClipboard->IsSupported(CardDataObject::format); // we don't want to (accidentally) paste card images
+	      !wxTheClipboard->IsSupported(CardsDataObject::format); // we don't want to (accidentally) paste card images
 }
 
 bool ImageValueEditor::doCopy() {
