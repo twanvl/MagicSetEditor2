@@ -1,6 +1,7 @@
 ﻿mse version: 0.3.6
 short name: Vanguard
 full name: Magic Vanguard
+installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 

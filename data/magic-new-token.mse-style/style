@@ -2,6 +2,7 @@
 game: magic
 short name: Tokens
 full name: Modern style
+installer group: magic/new style/tokens
 icon: card-sample.png
 position hint: 007
 

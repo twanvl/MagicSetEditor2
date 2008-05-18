@@ -1,6 +1,7 @@
 ﻿mse version: 0.3.6
 full name: VS System
 short name: VS
+installer group: VS System/game files
 icon: card-back.png
 position hint: 3
 

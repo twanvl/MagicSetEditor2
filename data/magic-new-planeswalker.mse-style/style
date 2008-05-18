@@ -2,6 +2,7 @@
 game: magic
 short name: Walkers
 full name: Modern Planeswalkers
+installer group: magic/new style/planeswalkers
 icon: card-sample.png
 position hint: 008
 

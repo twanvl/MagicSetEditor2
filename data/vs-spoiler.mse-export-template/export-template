@@ -3,6 +3,7 @@ mse version: 0.3.6
 game:        vs
 short name:  Spoiler
 full name:   List of cards
+installer group: VS System/Export/Spoiler
 icon: preview.png
 create directory: true
 

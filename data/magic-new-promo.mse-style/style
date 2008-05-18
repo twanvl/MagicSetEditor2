@@ -2,6 +2,7 @@
 game: magic
 short name: Promotional
 full name: Large image
+installer group: magic/new style/promotional
 icon: card-sample.png
 position hint: 004
 

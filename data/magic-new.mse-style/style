@@ -4,6 +4,7 @@ short name: Modern style
 full name: After 8th edition
 icon: card-sample.png
 position hint: 001
+installer group: magic/new style/normal cards
 
 version: 2008-04-19
 depends on:

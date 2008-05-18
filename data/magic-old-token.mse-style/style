@@ -8,6 +8,7 @@ mse version: 0.3.6
 game: magic
 short name: Tokens
 full name: Old style
+installer group: magic/old style/tokens
 icon: card-sample.png
 position hint: 107
 

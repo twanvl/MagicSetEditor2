@@ -2,6 +2,7 @@
 game: vs
 full name: New Style EM
 short name: New Style
+installer group: VS System/New style
 icon: card-sample.png
 position hint: 001
 

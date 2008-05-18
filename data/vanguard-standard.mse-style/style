@@ -1,6 +1,7 @@
 ﻿mse version: 0.3.6
 game: vanguard
 short name: Standard
+installer group: Magic Vanguard/normal style
 icon: card-sample.png
 position hint: 01
 

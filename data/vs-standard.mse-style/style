@@ -2,6 +2,7 @@
 game: vs
 full name: VS Standard
 short name: Standard
+installer group: VS System/Standard style/Normal
 icon: card-sample.png
 position hint: 002
 

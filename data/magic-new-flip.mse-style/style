@@ -2,6 +2,7 @@
 game: magic
 short name: Flip Cards
 full name: Modern flip cards
+installer group: magic/new style/flip cards
 icon: card-sample.png
 position hint: 002
 

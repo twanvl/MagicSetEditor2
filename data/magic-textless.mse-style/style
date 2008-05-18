@@ -2,6 +2,7 @@
 game: magic
 short name: Textless
 full name: Modern style
+installer group: magic/new style/textless
 icon: card-sample.png
 position hint: 005
 

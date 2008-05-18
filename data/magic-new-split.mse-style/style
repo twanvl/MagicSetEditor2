@@ -2,6 +2,7 @@
 game: magic
 short name: Split Cards
 full name: Modern split cards
+installer group: magic/new style/split cards
 icon: card-sample.png
 position hint: 003
 

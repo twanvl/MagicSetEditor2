@@ -2,6 +2,7 @@ mse version: 0.3.6
 version: 2008-05-18
 # Symbol font in the 'popup' style, used for casting costs on modern cards
 short name: popup style
+installer group: magic/Mana symbols/popup style
 position hint: 002
 icon: mana_r.png
 

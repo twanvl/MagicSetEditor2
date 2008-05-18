@@ -2,6 +2,7 @@
 game: magic
 full name: FPM's Split Magic
 short name: FPM Split
+installer group: magic/Fire Penguin Master/Split cards
 icon: card-sample.png
 position hint: 403
 

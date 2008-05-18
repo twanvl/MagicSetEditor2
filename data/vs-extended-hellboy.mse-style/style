@@ -2,6 +2,7 @@
 game: vs
 full name: Hellboy Extended Art
 short name: Extended Art
+installer group: VS System/Hellboy style/Extended Art
 icon: card-sample.png
 position hint: 006
 

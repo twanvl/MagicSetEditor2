@@ -2,6 +2,7 @@
 game: magic
 full name: FPM's Flip Magic
 short name: FPM Flip
+installer group: magic/Fire Penguin Master/Flip cards
 icon: card-sample.png
 position hint: 402
 

@@ -2,6 +2,7 @@
 game: magic
 full name: FPM's Token Magic
 short name: FPM Token
+installer group: magic/Fire Penguin Master/Tokens
 icon: card-sample.png
 position hint: 407
 
