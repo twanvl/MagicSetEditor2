@@ -55,6 +55,7 @@ void init_script_variables() {
 	Var(in);
 	Var(match);
 	Var(replace);
+	VarN(in_context,_("in context"));
 	Var(order);
 	Var(filter);
 	Var(choice);

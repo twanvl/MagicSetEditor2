@@ -137,7 +137,7 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
 		ScriptValueP name##_ = ctx.getVariableOpt(str);						\
 		Type name = name##_ ? from_script<Type>(name##_, str) : def
 #define SCRIPT_PARAM_DEFAULT_C(Type, name, def)								\
-		SCRIPT_PARAM_DEFAULT_N(Type, SCRIPT_VAR_ ## name, name, name)
+		SCRIPT_PARAM_DEFAULT_N(Type, SCRIPT_VAR_ ## name, name, def)
 
 // ----------------------------------------------------------------------------- : Rules
 
