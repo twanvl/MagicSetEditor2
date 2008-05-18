@@ -78,10 +78,10 @@ void draw_choice_viewer(RotatedDC& dc, DataViewer& viewer, ChoiceStyle& style, c
 				// use combine mode
 				dc.DrawPreRotatedImage(image,rect,combine);
 			}
-			margin = size.width + 1;
+			margin = size.width + 2;
 		} else if (viewer.nativeLook()) {
 			// always have the margin
-			margin = 17;
+			margin = 18;
 		}
 	}
 	if (style.render_style & RENDER_TEXT) {
