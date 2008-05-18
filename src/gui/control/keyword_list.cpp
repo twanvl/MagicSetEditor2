@@ -57,24 +57,20 @@ void KeywordList::onChangeSet() {
 }
 
 void KeywordList::onAction(const Action& action, bool undone) {
-	/*TYPE_CASE(action, AddKeywordAction) {
-		if (action.adding != undone) {
+	TYPE_CASE(action, AddKeywordAction) {
+		if (action.action.adding != undone) {
 			// select the new keyword
-			selectItem(action.keyword, false /*list will be refreshed anyway* /, true);
+			selectItem(action.action.steps[0].item, false /*list will be refreshed anyway*/, true);
 			refreshList();
 		} else {
 			long pos = selected_item_pos;
 			refreshList();
-			if (action.keyword == selected_item) {
-				// select the next keyword, if not possible, select the last
-				if (pos + 1 < GetItemCount()) {
-					selectItemPos(pos, true);
-				} else {
-					selectItemPos(GetItemCount() - 1, true);
-				}
+			if (selected_item_pos == -1) {
+				// selected keyword was deleted, select the next
+				selectItemPos(pos, true);
 			}
 		}
-	}*/ // TODO!!!
+	}
 	TYPE_CASE(action, ValueAction) {
 		if (!action.card) {
 			KeywordTextValue* value = dynamic_cast<KeywordTextValue*>(action.valueP.get());
