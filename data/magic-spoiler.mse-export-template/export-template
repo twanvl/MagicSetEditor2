@@ -3,9 +3,11 @@ mse version: 0.3.5
 game:        magic
 short name:  Spoiler
 full name:   List of cards
+installer group: magic/Export/Spoiler (list of cards)
 icon: preview.png
 create directory: true
 version: 2007-09-23
+depends on: magic.mse-game 2008-05-18
 
 option field:
 	type: choice
@@ -88,6 +90,8 @@ script:
 	if options.mana_symbols then (
 		symbol_font      := "magic-mana-small"
 		symbol_font_size := 12
+	) else (
+		symbols_to_html  := to_html
 	)
 	write_card := {
 		if contains(options.images, match:"full card image") then
