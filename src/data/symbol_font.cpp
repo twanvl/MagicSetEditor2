@@ -318,8 +318,9 @@ void SymbolFont::drawSymbol(RotatedDC& dc, RealRect sym_rect, double font_size, 
 }
 
 Image SymbolFont::getImage(double font_size, const DrawableSymbol& sym) {
-	if (!sym.symbol || !sym.symbol->text_font)
-		return Image(1,1);
+	if (!sym.symbol) return Image(1,1);
+	if (sym.draw_text.empty()) return sym.symbol->getImage(*this, font_size);
+	// with text
 	Bitmap bmp(sym.symbol->getImage(*this, font_size));
 	// memory dc to work with
 	wxMemoryDC dc;
@@ -338,7 +339,7 @@ Image SymbolFont::getImage(double font_size, const DrawableSymbol& sym) {
 	while (true) {
 		if (size <= 0) return sym.symbol->getImage(*this, font_size); // text too small
 		rdc.SetFont(*sym.symbol->text_font, size / sym.symbol->text_font->size);
-		ts = rdc.GetTextExtent(sym.text);
+		ts = rdc.GetTextExtent(sym.draw_text);
 		if (ts.height <= sym_rect.height) {
 			if (ts.width <= sym_rect.width) {
 				break; // text fits
