@@ -443,6 +443,8 @@ String KeywordDatabase::expand(const String& text,
 				} else if (is_substr(s, i, _("</kw-"))) {
 					expand_type = 'a';
 					s = s.erase(i, skip_tag(s,i)-i); // remove the tag from the string
+				} else if (is_substr(s, i, _("<atom"))) {
+					i = match_close_tag_end(s, i); // skip <atom>s
 				} else {
 					i = skip_tag(s, i);
 				}
