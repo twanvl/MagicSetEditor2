@@ -135,9 +135,9 @@ wxRegion Rotation::trRectToRegion(const RealRect& r) const {
 
 RealPoint Rotation::trInv(const RealPoint& p) const {
 	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
-	double x = (p.x - origin.x) / zoomX, y = (p.y - origin.y) / zoomY;
-	return RealPoint(c * x - s * y,
-	                 s * x + c * y);
+	double x = p.x - origin.x, y = p.y - origin.y;
+	return RealPoint((c * x - s * y) / zoomX,
+	                 (s * x + c * y) / zoomY);
 }
 
 RealPoint Rotation::boundingBoxCorner(const RealSize& size) const {
