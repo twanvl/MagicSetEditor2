@@ -2,11 +2,11 @@
 game: magic
 full name: FPM's Normal Magic
 short name: FPM Normal
-installer group: magic/Fire Penguin Master/Normal cards
+installer group: magic/FirePenguinMaster/Normal cards
 icon: card-sample.png
 position hint: 401
 
-version: 2008-04-13
+version: 2008-05-19
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29

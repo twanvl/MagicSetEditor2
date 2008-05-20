@@ -1,10 +1,11 @@
 ﻿mse version: 0.3.6
 game: yugioh
 short name: Standard
+installer group: Yugioh/Standard
 icon: card-sample.png
 position hint: 01
 
-version: 2008-05-14
+version: 2008-05-19
 depends on:
 	package: yugioh.mse-game
 	version: 2008-05-14

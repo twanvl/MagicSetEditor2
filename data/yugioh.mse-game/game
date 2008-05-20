@@ -1,9 +1,10 @@
 ﻿mse version: 0.3.6
 short name: Yu-Gi-Oh!
+installer group: Yugioh/Game Files
 icon: card-back.png
 position hint: 4
 
-version: 2008-05-14
+version: 2008-05-19
 
 ############################################################## Functions & filters
 ## Copied and Pasted from vs.mse-game, with a few modifications
@@ -149,8 +150,8 @@ init script:
 		else if chosen(choice:"slifer", type) then "D"
 		else if chosen(choice:"ritual monster", type) then "E"
 		else if chosen(choice:"obelisk", type) then "F"
-		else if chosen(choice:"synchro monster", type) then "G"
-		else if chosen(choice:"fusion monster", type) then "H"
+		else if chosen(choice:"fusion monster", type) then "G"
+		else if chosen(choice:"synchro monster", type) then "H"
 		else if chosen(choice:"token monster", type) then "I"
 		else if chosen(choice:"legendary dragons", type) then "J"
 		else if chosen(choice:"spell card", type) then "K"

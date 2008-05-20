@@ -1,7 +1,7 @@
 mse version: 0.3.6
 version: 2008-05-18
 short name: beveled style (firepenguinmaster)
-installer group: magic/Mana symbols/beveled style (Fire Penguin Master)
+installer group: magic/Mana symbols/beveled style (FirePenguinMaster)
 position hint: 101
 icon: mana_r.png
 # Symbol font in the beveled style used for casting costs on FPM cards

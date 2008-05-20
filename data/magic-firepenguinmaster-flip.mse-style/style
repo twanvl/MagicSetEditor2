@@ -2,11 +2,11 @@
 game: magic
 full name: FPM's Flip Magic
 short name: FPM Flip
-installer group: magic/Fire Penguin Master/Flip cards
+installer group: magic/FirePenguinMaster/Flip cards
 icon: card-sample.png
 position hint: 402
 
-version: 2008-04-13
+version: 2008-05-19
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29

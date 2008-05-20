@@ -2,11 +2,11 @@
 game: magic
 short name: Planeshifted
 full name: Planar Chaos Timeshifts
-installer group: magic/new style/Planeshifted
+installer group: magic/Planeshifted/Normal Cards
 icon: card-sample.png
 position hint: 011
 
-version: 2008-04-19
+version: 2008-05-19
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29

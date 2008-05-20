@@ -1,7 +1,8 @@
 ﻿mse version: 0.3.6
-version: 2008-01-03
+version: 2008-05-19
 short name: New (official)
 position hint: 1
+installer group: VS System/Symbol Fonts/Official New
 icon: activate.png
 # Official symbol font for the new template
 

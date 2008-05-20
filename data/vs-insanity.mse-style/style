@@ -2,10 +2,11 @@
 game: vs
 full name: VS Insanity
 short name: Insanity
+installer group: VS System/Insanity Style/Normal
 icon: card-sample.png
 position hint: 004
 
-version: 2008-01-03
+version: 2008-05-19
 depends on:
 	package: vs.mse-game
 	version: 2008-01-03

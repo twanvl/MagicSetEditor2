@@ -1,5 +1,9 @@
 ﻿mse version: 0.3.6
-version: 2007-10-13
+version: 2008-05-19
+short name: Standard
+position hint: 001
+icon: star.png
+installer group: Yugioh/Symbol Fonts/Standard
 # Symbol font for level symbols
 
 image font size: 16

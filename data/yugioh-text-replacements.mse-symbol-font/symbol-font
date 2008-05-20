@@ -1,6 +1,10 @@
 ﻿mse version: 0.3.6
+version: 2008-05-19
+short name: Text Replacements
+position hint: 003
+icon: dot.png
+installer group: Yugioh/Symbol Fonts/Bandai
 # Symbol font for missing characters
-version: 2008-01-04
 
 image font size: 16
 horizontal space: 2

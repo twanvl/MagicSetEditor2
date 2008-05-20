@@ -2,11 +2,11 @@
 game: magic
 full name: FPM's Token Magic
 short name: FPM Token
-installer group: magic/Fire Penguin Master/Tokens
+installer group: magic/FirePenguinMaster/Tokens
 icon: card-sample.png
 position hint: 407
 
-version: 2008-04-13
+version: 2008-05-19
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29

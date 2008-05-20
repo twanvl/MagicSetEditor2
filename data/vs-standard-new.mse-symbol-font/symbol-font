@@ -1,7 +1,8 @@
 ﻿mse version: 0.3.6
-version: 2008-01-03
+version: 2008-05-19
 short name: New (unofficial)
 position hint: 3
+installer group: VS System/Symbol Fonts/New
 icon: thunderbolts.png
 # Unofficial symbol font for the new template
 
