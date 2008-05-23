@@ -5,7 +5,7 @@ installer group: magic/game files
 icon: card-back.png
 position hint: 01
 
-version: 2008-05-18
+version: 2008-05-21
 depends on:
 	package: magic-blends.mse-include
 	version: 2007-09-23
@@ -478,6 +478,7 @@ init script:
 		  else if input == "Artifact"    then "artifact"
 		  else if input == "Enchantment" then "enchantment"
 		  else if input == "Land"        then "land"
+		  else if input == "Planeswalker" then "planeswalker"
 		  else                                "multitype"
 		}
 	typesymbol_type := { typesymbol_for(card.super_type) }
@@ -790,7 +791,9 @@ card field:
 	choice: instant
 	choice: land
 	choice: multitype
+	choice: planeswalker
 	choice: sorcery
+	choice: none
 	description: The card type symbol for this card
 
 ############################# Image

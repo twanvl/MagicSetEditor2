@@ -6,13 +6,13 @@ installer group: magic/Future/Textless cards
 icon: card-sample.png
 position hint: 055
 
-version: 2008-04-13
+version: 2008-05-21
 depends on:
 	package: magic.mse-game
 	version: 2007-09-23
 depends on:
 	package: magic-future-common.mse-include
-	version: 2007-09-23
+	version: 2008-05-21
 depends on:
 	package: magic-mana-future.mse-symbol-font
 	version: 2007-09-23
@@ -220,6 +220,7 @@ card style:
 			land: { "/magic-future-common.mse-include/land_" + typesymbol_color(value) + ".png" }
 			multitype: { "/magic-future-common.mse-include/multitype_" + typesymbol_color(value) + ".png" }
 			sorcery: { "/magic-future-common.mse-include/sorcery_" + typesymbol_color(value) + ".png" }
+			planeswalker: { "/magic-future-common.mse-include/planeswalker_" + typesymbol_color(value) + ".png" }
 
 	############################# Image
 	image:

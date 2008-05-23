@@ -53,6 +53,7 @@ choice images:
 	future sight type symbols instant:			script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/futsymbol_instant.png")
 	future sight type symbols land:				script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/futsymbol_land.png")
 	future sight type symbols multiple:			script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/futsymbol_multiple.png")
+	future sight type symbols planeswalker:			script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/futsymbol_planeswalker.png")
 	future sight type symbols sorcery:			script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/futsymbol_sorcery.png")
 
 	set symbol:

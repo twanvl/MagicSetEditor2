@@ -63,6 +63,7 @@ choice:
 	choice: instant
 	choice: land
 	choice: multiple
+	choice: planeswalker
 	choice: sorcery
 choice:
 	name: set symbol
