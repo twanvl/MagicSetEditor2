@@ -159,7 +159,7 @@ card style:
 	############################# Name line
 	name:
 		left:   { if card.card_symbol=="none" then 32 else 51 }
-		top :   24
+		top :   22
 		right:  { 339 - card_style.casting_cost.content_width }
 		height: 23
 		alignment: bottom shrink-overflow
@@ -204,9 +204,9 @@ card style:
 	############################# Card type
 
 	type:
-		left: 37
+		left: 36
 		top : 307
-		width: { 306 - max(22,card_style.rarity.content_width) }
+		width: { 304 - max(22,card_style.rarity.content_width) }
 		height: 20
 		alignment: top shrink-overflow
 		z index: 2
@@ -220,8 +220,8 @@ card style:
 	rarity:
 		right: 342
 		top : 308
-		width: 44
-		height: 22
+		width: 42
+		height: 21
 		z index: 1
 		render style: image
 		alignment: middle right
