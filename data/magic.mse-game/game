@@ -5,7 +5,7 @@ installer group: magic/game files
 icon: card-back.png
 position hint: 01
 
-version: 2008-05-21
+version: 2008-05-25
 depends on:
 	package: magic-blends.mse-include
 	version: 2007-09-23
@@ -970,7 +970,6 @@ card field:
 	type: text
 	name: copyright
 	default: set.copyright
-	editable: false
 	show statistics: false
 card field:
 	type: text
@@ -1171,7 +1170,6 @@ card field:
 	type: text
 	name: copyright 2
 	default: set.copyright
-	editable: false
 	show statistics: false
 card field:
 	type: text
