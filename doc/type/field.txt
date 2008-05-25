@@ -40,7 +40,7 @@ Fields are part of the [[file:style triangle]]:
 | @card list allow@	[[type:boolean]]	@true@		Should this field be allowed in the card list at all?
 | @card list name@	[[type:string]]		field name	Alternate name to use for the card list, for example an abbreviation.
 | @card list alignment@	[[type:alignment]]	@left@		Alignment of the card list column.
-| @sort script@		[[type:script]]				Alternate way to sort the card list when using this column to sort the list.
+| @sort script@		[[type:script]]		 		Alternate way to sort the card list when using this column to sort the list.
 | @tab index@		[[type:int]]		@0@		Index for moving through the fields with the tab key. The default is from left to right and then top to bottom.
 
 The @type@ determines what values of this field contain:
@@ -48,6 +48,7 @@ The @type@ determines what values of this field contain:
 | @text@		Text with markup (a [[type:tagged string]])				Text
 | @choice@		A choice from a list							Text or an image
 | @multiple choice@	Zero or more choices from a list					A single image or multiple images
+| @package choice@	A choice from a list of installed [[type:package]]s			Text and/or an image
 | @boolean@		@yes@ or @no@								Text or an image or both
 | @color@		Any color or a restricted selection from a list				A box filled with the color
 | @image@		Any image								The image
