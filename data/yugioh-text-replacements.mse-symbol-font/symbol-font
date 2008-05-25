@@ -3,7 +3,7 @@ version: 2008-05-19
 short name: Text Replacements
 position hint: 003
 icon: dot.png
-installer group: Yugioh/Symbol Fonts/Bandai
+installer group: Yugioh/Symbol Fonts/Text Replacements
 # Symbol font for missing characters
 
 image font size: 16
