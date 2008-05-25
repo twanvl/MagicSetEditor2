@@ -347,12 +347,15 @@ String untag_for_cursor(const String& str) {
 	for (size_t i = 0 ; i < str.size() ; ) {
 		Char c = str.GetChar(i);
 		if (c == _('<')) {
-			if (is_substr(str, i, _("<atom"))) {
+			if (is_substr(str, i, _("<atom-kwpph"))) {
 				i = match_close_tag_end(str, i);
-				ret += _('\2'); // use a random character here
+				ret += UNTAG_ATOM_KWPPH;
+			} else if (is_substr(str, i, _("<atom"))) {
+				i = match_close_tag_end(str, i);
+				ret += UNTAG_ATOM;
 			} else if (is_substr(str, i, _("<sep"))) {
 				i = match_close_tag_end(str, i);
-				ret += _('\3'); // use a random character here
+				ret += UNTAG_SEP;
 			} else if (i == 0 && is_substr(str, i, _("<prefix"))) {
 				// prefix at start of string, skip contents, index never before
 				i = match_close_tag_end(str,i);

@@ -114,6 +114,11 @@ void cursor_to_index_range(const String& str, size_t cursor, size_t& begin, size
 /// Find the character index corresponding to the given cursor position
 size_t cursor_to_index(const String& str, size_t cursor, Movement dir = MOVE_MID);
 
+
+const Char UNTAG_ATOM       = _('\2');
+const Char UNTAG_SEP        = _('\3');
+const Char UNTAG_ATOM_KWPPH = _('\4');
+
 /// Untag a string for use with cursors, <atom>...</atom> becomes a single character.
 /** This string should only be used for cursor position calculations. */
 String untag_for_cursor(const String& str);

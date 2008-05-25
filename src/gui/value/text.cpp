@@ -868,22 +868,33 @@ void TextValueEditor::insert(const String& text, const String& action_name) {
 
 /// compare two cursor positions, determine how much the text matches before and after
 size_t match_cursor_position(size_t pos1, const String& text1, size_t pos2, const String& text2) {
-	size_t penalty = 0; // penalty for case mismatches
-	size_t before;
-	for (before = 0 ; before < min(pos1,pos2) ; ++before) {
-		Char c1 = text1.GetChar(pos1-before-1), c2 = text2.GetChar(pos2-before-1);
-		if (toLower(c1) != toLower(c2)) break;
-		else if (c1 != c2) ++penalty;
+	size_t score = 0; // total score
+	// Match part before cursor
+	size_t before1, before2;
+	for (before1 = before2 = 0 ; before1 < pos1 && before2 < pos2 ; ++before1, ++before2) {
+		Char c1 = text1.GetChar(pos1-before1-1), c2 = text2.GetChar(pos2-before2-1);
+		if      (c1 == c2)                   score += 10000;
+		else if (toLower(c1) == toLower(c2)) score +=  9999;
+		else if (isPunct(c1) && isPunct(c2)) score +=     1;
+		else if (c1 == UNTAG_ATOM_KWPPH)    {score +=     1; --before2;}
+		else                                 break;
 	}
-	if (pos1 == before && pos2 == before) ++before; // bonus points for matching start of string
-	size_t after;
-	for (after = 0 ; after < min(text1.size() - pos1, text2.size() - pos2) ; ++after) {
-		Char c1 = text1.GetChar(pos1+after), c2 = text2.GetChar(pos2+after);
-		if (toLower(c1) != toLower(c2)) break;
-		else if (c1 != c2) ++penalty;
+	// bonus points for matching start of string
+	if (pos1 == before1 && pos2 == before2) score += 10000;
+	// Match part after cursor
+	size_t after1, after2;
+	for (after1 = after2 = 0 ; pos1 + after1 < text1.size() && pos2 + after2 < text2.size() ; ++after1, ++after2) {
+		Char c1 = text1.GetChar(pos1+after1), c2 = text2.GetChar(pos2+after2);
+		if      (c1 == c2)                   score += 10;
+		else if (toLower(c1) == toLower(c2)) score +=  9;
+		else if (isPunct(c1) && isPunct(c2)) score +=  1;
+		else if (c2 == UNTAG_ATOM_KWPPH)    {score +=  1; --after1;}
+		else                                 break;
 	}
-	if (pos1+after == text1.size() && pos2+after == text2.size()) ++after; // bonus points for matching end of string
-	return 1000 * before + 2 * after - penalty; // matching 'before' is more important
+	// bonus points for matching end of string
+	if (pos1+after1 == text1.size() && pos2+after2 == text2.size()) score += 2;
+	// final score: matching 'before' is more important
+	return score;
 }
 
 void TextValueEditor::replaceSelection(const String& replacement, const String& name, bool allow_auto_replace, bool select_on_undo) {
@@ -924,17 +935,17 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 		size_t best_cursor = expected_cursor;
 		if (real_value.size() < expected_value.size()
 			&& expected_cursor < expected_value.size()
-			&& expected_value.GetChar(expected_cursor) == _('\3') // \3 == <sep>
-			&& real_value.GetChar(start)               == _('\3') // \3 == <sep>
+			&& expected_value.GetChar(expected_cursor) == UNTAG_SEP
+			&& real_value.GetChar(start)               == UNTAG_SEP
 			&& real_value.size() - end_min == start) {
 			// exception for type-over separators
 			best_cursor = start + 1;
 		} else {
-			// try to find the best match
+			// try to find the best match to what text we expected to be around the cursor
 			size_t best_match  = 0;
-			for (size_t i = min(start, expected_cursor) ; i <= real_value.size() - end_min ; ++i) {
+			for (size_t i = min(start, expected_cursor) ; i <= max(real_value.size() - end_min, expected_cursor) ; ++i) {
 				size_t match = match_cursor_position(expected_cursor, expected_value, i, real_value);
-				if (match > best_match) {
+				if (match > best_match || (match == best_match && abs((int)expected_cursor - (int)i) < abs((int)expected_cursor - (int)best_cursor))) {
 					best_match = match;
 					best_cursor = i;
 				}
