@@ -39,11 +39,17 @@ symbol:
 	code: Brotherhood
 	image: brotherhood.png
 symbol:
+	code: Captain America
+	image: captainamerica.png
+symbol:
 	code: Marvel Defenders
 	image: defenders.png
 symbol:
 	code: Doom
 	image: doom.png
+symbol:
+	code: Excalibur
+	image: excalibur.png
 symbol:
 	code: Fantastic Four
 	image: f4.png
@@ -96,6 +102,9 @@ symbol:
 	code: Teen Titans
 	image: titans.png
 symbol:
+	code: The Ultimates
+	image: ultimates.png
+symbol:
 	code: X-Men
 	image: xmen.png
 symbol:
@@ -131,7 +140,6 @@ symbol:
 symbol:
 	code: X
 	image: X.png
-
 ##############################################################
 # Insert-symbol menu
 insert symbol menu:
