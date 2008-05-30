@@ -153,6 +153,9 @@ Settings::Settings()
 	, symbol_grid_size     (30)
 	, symbol_grid          (true)
 	, symbol_grid_snap     (false)
+	#if USE_OLD_STYLE_UPDATE_CHECKER
+	, updates_url          (_("http://magicseteditor.sourceforge.net/updates"))
+	#endif
 	, package_versions_url (_("http://magicseteditor.sourceforge.net/packages"))
 	, installer_list_url   (_("http://magicseteditor.sourceforge.net/installers"))
 	, check_updates        (CHECK_IF_CONNECTED)

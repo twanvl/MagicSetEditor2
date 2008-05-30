@@ -24,6 +24,9 @@ DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(AutoReplace);
 
+// For now, use the old style update checker
+#define USE_OLD_STYLE_UPDATE_CHECKER 1
+
 // ----------------------------------------------------------------------------- : Extra data structures
 
 /// When to check for updates?
@@ -167,6 +170,9 @@ class Settings {
 	String apprentice_location;
 	
 	// --------------------------------------------------- : Update checking
+	#if USE_OLD_STYLE_UPDATE_CHECKER
+		String updates_url;
+	#endif
 	String package_versions_url; ///< latest package versions
 	String installer_list_url;   ///< available installers
 	CheckUpdates check_updates;
