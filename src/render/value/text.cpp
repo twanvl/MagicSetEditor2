@@ -36,6 +36,7 @@ void TextValueViewer::draw(RotatedDC& dc) {
 	if (viewer.drawFocus() && isCurrent()) {
 		v.draw(dc, style(), DRAW_ACTIVE);
 	}
+	if (viewer.drawBorders()) dc.SetPen(viewer.borderPen(isCurrent()));
 	v.draw(dc, style(), (DrawWhat)(
 		  DRAW_NORMAL
 		| (viewer.drawBorders()              ? DRAW_BORDERS : 0)
