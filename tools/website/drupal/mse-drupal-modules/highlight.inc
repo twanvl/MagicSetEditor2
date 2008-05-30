@@ -14,6 +14,7 @@ $built_in_functions = array(
 	'curly_quotes'		=>'',
 	'replace'		=>'',	'replace_rule'	=> 'replace',
 	'filter_text'		=>'',	'filter_rule'	=> 'filter_text',
+	'break_text'		=>'',	'break_rule'	=> 'break_text',
 	'sort_text'		=>'',	'sort_rule'	=> 'sort_text',
 	'contains'		=>'',
 	'match'			=>'',	'match_rule'	=> 'match',
