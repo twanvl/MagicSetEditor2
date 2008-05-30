@@ -94,13 +94,6 @@ menu:
 	basic shapes:		&Formes simples	F8
 	symmetry:			S&ymmetry	F9
 	paint:				P&aindre	F10
-	
-	# Updates window
-	apply changes:		Appliquer les changements
-	cancel changes:		Annuler les changements
-	install package:	Installer package
-	upgrade package:	Upgrader package
-	remove package:		Effacer package
 
 ############################################################## Menu help texts
 help:
@@ -460,6 +453,20 @@ label:
 	
 	# Symbol editor
 	sides:				sides
+	
+	# Packages window
+	package name:				Package
+	package status:				État
+	package action:				Action
+	
+	package conflicts:		modifications en conflit
+	package modified:		modifications locales
+	package updates:		mises à jour disponibles
+	package installed:		installé
+	package installable:	pas installé
+	install package:		installer
+	upgrade package:		upgrader
+	remove package:			effacer
 
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
@@ -478,6 +485,7 @@ button:
 	# Welcome
 	new set:			New set
 	open set:			Open set
+	check updates:		Check updates
 	last opened set:	Last opened set
 	
 	# Preferences
@@ -506,9 +514,6 @@ button:
 	number:				Add a number to the filename
 	number overwrite:	Add a number to the filename, overwrite previous exports
 	
-	# Update checker
-	close:				&Close
-	
 	# Auto replace
 	use auto replace:	Use auto replace
 	add item:			&Add
@@ -516,6 +521,18 @@ button:
 	defaults:			Reset to &Defaults
 	enabled:			Enabled
 	whole word:			Match whole word only
+	
+	# Old style update checker  (NOTE: this will be removed in a feature version)
+	close:				&Fermer
+	
+	# Packages window
+	install package:	&Installer
+	upgrade package:	&Upgrader
+	remove package:		&Effacer
+	install group:		&Installer Tous
+	upgrade group:		&Upgrader Tous
+	remove group:		&Effacer Tous
+	
 
 ############################################################## Titles in the GUI
 title:
@@ -557,13 +574,17 @@ title:
 	auto replaces:		Auto Replace
 	
 	# Package Update Window
-	package list:		Package Updates
-	package name:		Package Name
-	package status:		Current Status
-	new status:			New Status
+	packages window:	Package Manager
+	installing updates:	Installing updates
+	
+	cannot create file:	Cannot create file
 
 ############################################################## Action (undo/redo) names
 action:
+	# List boxes
+	add item:			Add %s
+	remove item:		Remove %s
+	
 	# Text editor
 	typing:				Typing
 	enter:				Enter
@@ -582,8 +603,6 @@ action:
 	rotate:				Rotate %s
 	shear:				Shear %s
 	scale:				Resize %s
-	add part:			Add %s
-	remove parts:		Remove %s
 	duplicate:			Duplicate %s
 	reorder parts:		Reorder
 	change combine mode:Change combine mode
@@ -624,14 +643,22 @@ error:
 		You should leave a bug report on http://magicseteditor.sourceforge.net/
 	
 	# File related
-	file not found:				File not found: '%s' in package '%s'
+	file not found:					File not found: '%s' in package '%s'
+	file not found package like:
+		File not found: '%s' in package '%s'
+		If you are trying to open a file from another package, use "/package/filename"
 	file parse error:
 		Error while parsing file: '%s'
 		%s
 	package not found:			Package not found: '%s'
 	package out of date:		The package '%s' (version %s) is out of date, version %s is required.
+	package too new:			The package '%s' (version %s) is not compatible with version %s, required by '%s'
 	unable to open output file:	Error while saving, unable to open output file
 	unable to store file:		Error while saving, unable to store file
+	dependency not given:
+		The package '%s' uses files from the package '%s', but it does not list a dependency.
+		To resolve this, add:
+		  depends on: %s %s
 	
 	# Script stuff
 	has no member:				%s has no member '%s'
@@ -650,7 +677,7 @@ error:
 	images used for blending must have the same size:	Images used for blending must have the same size
 	
 	# Error from files
-	no game specified for the set:						No game specified for the set
+	no game specified:									No game specified for the %s
 	no stylesheet specified for the set:				No stylesheet specified for the set
 	stylesheet and set refer to different game:
 		stylesheet and set don't refer to the same game, this is an error in the stylesheet file
@@ -675,8 +702,23 @@ error:
 	dimension not found:				There is no statistics dimension '%s'
 	
 	# Package update window
-	no packages:						Found no package updates.
-	checking updates:					Checking for updates.
+#	checking updates:					Checking for updates.
+	can't download installer:
+		Unable to download installer for package %s from %s.
+		Nothing has been installed.
+	
+	downloading updates:				Downloading updates (%d of %d)
+	installing updates:					Updating packages (%d of %d)
+	
+	remove packages:
+		This will remove %s packages, do you want to continue?
+	remove packages modified:
+		This will remove %s packages, %s of those have been modified after installing.
+		Removing them can not be undone.
+		
+		Do you want to continue?
+	
+	cannot create file:		Can not create file '%s', continue installation?
 
 
 ############################################################## Types used in scripts / shape names
@@ -694,13 +736,19 @@ type:
 	nil:			nothing
 	
 	# Object types
+	package:		package
+	locale:			translation
 	game:			game
 	set:			set
 	stylesheet:		stylesheet
+	export template:export template
 	card:			card
+	cards:			cards
 	field:			field
 	style:			style
 	value:			value
+	keyword:		keyword
+	keywords:		keywords
 	
 	# Symbol editor shapes
 	shape:			forme
@@ -722,18 +770,7 @@ type:
 	
 	point:			point
 	points:			points
-	
-	# Package manager
-	installed:		installé
-	uninstalled:	non installé
-	upgradeable:	upgradeable
-	
-	install:		installer
-	uninstall:		desinstaller
-	upgrade:		upgrader
-	do nothing:		Ne rien faire
-	new mse:		MSE obsolete
-	
+
 
 ############################################################## Magic
 game:

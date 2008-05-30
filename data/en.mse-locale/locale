@@ -513,7 +513,7 @@ button:
 	keep old:			Keep old files
 	number:				Add a number to the filename
 	number overwrite:	Add a number to the filename, overwrite previous exports
-		
+	
 	# Auto replace
 	use auto replace:	Use auto replace
 	add item:			&Add
@@ -532,7 +532,6 @@ button:
 	install group:		&Install All
 	upgrade group:		&Upgrade All
 	remove group:		&Remove All
-	
 
 ############################################################## Titles in the GUI
 title:
@@ -627,7 +626,6 @@ action:
 	move symmetry handle:	Change symmetry orientation
 	change symmetry type:	Change symmetry type
 	change symmetry copies:	Number of reflections
-	
 
 ############################################################## Error messages
 error:
@@ -720,7 +718,6 @@ error:
 	
 	cannot create file:		Can not create file '%s', continue installation?
 
-
 ############################################################## Types used in scripts / shape names
 type:
 	function:		function
@@ -770,7 +767,6 @@ type:
 	
 	point:			point
 	points:			points
-	
 
 ############################################################## Magic
 game:

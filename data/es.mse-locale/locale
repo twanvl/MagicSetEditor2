@@ -94,13 +94,6 @@ menu:
 	basic shapes:		&Formas básicas	F8
 	symmetry:			S&imetría	F9
 	paint:				P&intar	F10
-	
-	# Updates window
-	apply changes:		Aplicar cambios
-	cancel changes:		Cancelar cambios
-	install package:	Instalar paquete
-	upgrade package:	Actualizar paquete
-	remove package:		Quitar paquete
 
 ############################################################## Menu help texts
 help:
@@ -460,6 +453,20 @@ label:
 	
 	# Symbol editor
 	sides:				lados
+	
+	# Packages window
+	package name:				Paquete
+	package status:				Situación
+	package action:				Acción
+	
+	package conflicts:		modificaciones en conflicto
+	package modified:		modificaciones locales
+	package updates:		actualizaciones disponibles
+	package installed:		instalado
+	package installable:	no se instala
+	install package:		instalar
+	upgrade package:		actualizar
+	remove package:			quitar 
 
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
@@ -478,6 +485,7 @@ button:
 	# Welcome
 	new set:			Nuevo set
 	open set:			Abrir set
+	check updates:		Buscar actualizaciones
 	last opened set:	Último set abierto
 	
 	# Preferences
@@ -506,9 +514,6 @@ button:
 	number:				Añadir un número al nombre de archivo
 	number overwrite:	Añadir un número al nombre de archivo, sobreescribir las exportaciones anteriores
 	
-	# Update checker
-	close:				&Cerrar
-	
 	# Auto replace
 	use auto replace:	Usar auto-reemplazamiento
 	add item:			&Añadir
@@ -516,6 +521,17 @@ button:
 	defaults:			Por &defecto
 	enabled:			Activado
 	whole word:			Buscar sólo la palabra entera
+	
+	# Old style update checker  (NOTE: this will be removed in a feature version)
+	close:				&Cerrar
+	
+	# Packages window
+	install package:	&Instalar
+	upgrade package:	&Actualizar
+	remove package:		&Quitar
+	install group:		&Instalar Todos
+	upgrade group:		&Actualizar Todos
+	remove group:		&Quitar Todos
 
 ############################################################## Titles in the GUI
 title:
@@ -556,14 +572,18 @@ title:
 	# auto replace
 	auto replaces:		Auto-reemplazar
 	
-	# Package Update Window
-	package list:		Actualizaciones de paquete
-	package name:		Nombre de paquete
-	package status:		Estado actual
-	new status:			Nuevo estado
+	# Package Update Window  TODO: TRANSLATE
+	packages window:	Package Manager
+	installing updates:	Installing updates
+	
+	cannot create file:	Cannot create file
 
 ############################################################## Action (undo/redo) names
 action:
+	# List boxes
+	add item:			Añadir %s
+	remove item:		Quitar %s
+	
 	# Text editor
 	typing:				Escribir
 	enter:				Introducir
@@ -582,8 +602,6 @@ action:
 	rotate:				Girar %s
 	shear:				Cortar %s
 	scale:				Cambiar de tamaño %s
-	add part:			Añadir %s
-	remove parts:		Quitar %s
 	duplicate:			Duplicar %s
 	reorder parts:		Reordenar
 	change combine mode:Cambiar modo combinación
@@ -608,7 +626,6 @@ action:
 	move symmetry handle:	Cambiar la orientación de la simetría
 	change symmetry type:	Cambiar tipo de simetría
 	change symmetry copies:	Número de reflejos
-	
 
 ############################################################## Error messages
 error:
@@ -623,15 +640,23 @@ error:
 		
 		Deberías dejar un informe de errores en http://magicseteditor.sourceforge.net/
 	
-	# File related
+	# File related   TODO: TRANSLATE
 	file not found:				Archivo no encontrado: '%s' in package '%s'
+	file not found package like:
+		Archivo no encontrado: '%s' in package '%s'
+		If you are trying to open a file from another package, use "/package/filename"
 	file parse error:
 		Error mientras se analiza el archivo: '%s'
 		%s
 	package not found:			Paquete no encontrado: '%s'
 	package out of date:		El paquete '%s' (versión %s) está desactualizado, se requiere la versión %s.
+	package too new:			The package '%s' (version %s) is not compatible with version %s, required by '%s'
 	unable to open output file:	Error guardando, imposible crear el archivo
 	unable to store file:		Error guardando, imposible almacenar el archivo
+	dependency not given:
+		The package '%s' uses files from the package '%s', but it does not list a dependency.
+		To resolve this, add:
+		  depends on: %s %s
 	
 	# Script stuff
 	has no member:				%s has no member '%s'
@@ -650,7 +675,7 @@ error:
 	images used for blending must have the same size:	Images used for blending must have the same size
 	
 	# Error from files
-	no game specified for the set:						No game specified for the set
+	no game specified:									No game specified for the %s
 	no stylesheet specified for the set:				No stylesheet specified for the set
 	stylesheet and set refer to different game:
 		stylesheet and set don't refer to the same game, this is an error in the stylesheet file
@@ -674,10 +699,24 @@ error:
 	# Stats panel
 	dimension not found:				There is no statistics dimension '%s'
 	
-	# Package update window
-	no packages:						Found no package updates.
-	checking updates:					Checking for updates.
-
+	# Package update window  TODO: TRANSLATE
+#	checking updates:					Checking for updates.
+	can't download installer:
+		Unable to download installer for package %s from %s.
+		Nothing has been installed.
+	
+	downloading updates:				Downloading updates (%d of %d)
+	installing updates:					Updating packages (%d of %d)
+	
+	remove packages:
+		This will remove %s packages, do you want to continue?
+	remove packages modified:
+		This will remove %s packages, %s of those have been modified after installing.
+		Removing them can not be undone.
+		
+		Do you want to continue?
+	
+	cannot create file:		Can not create file '%s', continue installation?
 
 ############################################################## Types used in scripts / shape names
 type:
@@ -694,13 +733,19 @@ type:
 	nil:			nada
 	
 	# Object types
+	package:		paquete
+	locale:			traducción
 	game:			juego
 	set:			set
 	stylesheet:		estilo
+	export template:plantilla de exportación
 	card:			carta
+	cards:			cartas
 	field:			field
 	style:			style
 	value:			valor
+	keyword:		palabra clave
+	keywords:		palabras clave
 	
 	# Symbol editor shapes
 	shape:			forma
@@ -722,18 +767,6 @@ type:
 	
 	point:			punto
 	points:			puntos
-	
-	# Package manager
-	installed:		instalado
-	uninstalled:	desinstalado
-	upgradeable:	actualizable
-	
-	install:		instalar
-	uninstall:		desinstalar
-	upgrade:		actualizar
-	do nothing:		no hacer nada
-	new mse:		MSE desactualizado
-	
 
 ############################################################## Magic
 game:
@@ -757,6 +790,7 @@ symbol font:
 		# note: reminder/shortcut must start with a space, otherwise it is used as a shortcut
 		#       so typing T *anywhere* would insert a symbol (which would be bad)
 		menu item T:			&Símbolo de girar	 T
+		menu item Q:			&Símbolo de girar contrario	 Q
 		menu item W:			&Maná blanco	 W
 		menu item U:			Maná az&ul	 U
 		menu item B:			&Maná negro	 B
