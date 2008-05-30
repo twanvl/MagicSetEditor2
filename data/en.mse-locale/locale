@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.6
-installer group: locales
+installer group: translations/English
 full name: English
 version: 2007-09-23
 icon: usgb.png
@@ -38,7 +38,7 @@ menu:
 	cards:			&Cards
 	previous card:		Select &Previous Card	PgUp
 	next card:			Select &Next Card	PgDn
-	add card:			&Add Card	Ctrl++
+	add card:			&Add Card	Ctrl+Enter
 	add cards:			Add &Multiple Cards...
 	remove card:		&Delete Selected Card
 	orientation:		&Orientation
@@ -51,7 +51,7 @@ menu:
 	keywords:		&Keywords
 	previous keyword:	Select &Previous Keyword	PgUp
 	next keyword:		Select &Next Keyword	PgDn
-	add keyword:		&Add Keyword	Ctrl++
+	add keyword:		&Add Keyword	Ctrl+Enter
 	remove keyword:		&Remove Select Keyword	Del
 	
 	format:			F&ormat
@@ -467,7 +467,6 @@ label:
 	install package:		install
 	upgrade package:		upgrade
 	remove package:			remove
-	
 
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
@@ -523,6 +522,9 @@ button:
 	enabled:			Enabled
 	whole word:			Match whole word only
 	
+	# Old style update checker  (NOTE: this will be removed in a feature version)
+	close:				&Close
+	
 	# Packages window
 	install package:	&Install
 	upgrade package:	&Upgrade
@@ -544,7 +546,7 @@ title:
 	open set:			Open Set
 	save set:			Save Set As
 	save image:			Save Image
-	#updates available:	Updates Available
+	updates available:	Updates Available
 	save changes:		Save Changes?
 	select stylesheet:	Select Stylesheet
 	#preferences
@@ -579,6 +581,10 @@ title:
 
 ############################################################## Action (undo/redo) names
 action:
+	# List boxes
+	add item:			Add %s
+	remove item:		Remove %s
+	
 	# Text editor
 	typing:				Typing
 	enter:				Enter
@@ -597,8 +603,6 @@ action:
 	rotate:				Rotate %s
 	shear:				Shear %s
 	scale:				Resize %s
-	add part:			Add %s
-	remove parts:		Remove %s
 	duplicate:			Duplicate %s
 	reorder parts:		Reorder
 	change combine mode:Change combine mode
@@ -732,14 +736,19 @@ type:
 	nil:			nothing
 	
 	# Object types
+	package:		package
+	locale:			translation
 	game:			game
 	set:			set
 	stylesheet:		stylesheet
 	export template:export template
 	card:			card
+	cards:			cards
 	field:			field
 	style:			style
 	value:			value
+	keyword:		keyword
+	keywords:		keywords
 	
 	# Symbol editor shapes
 	shape:			shape

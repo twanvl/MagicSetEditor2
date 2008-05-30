@@ -608,6 +608,10 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 	// Done
 	// Continue event propagation into the dialog window so that it closes.
 	ev.Skip();
+	//%% TODO: will we delete packages?
+	//%%       If so, we need to warn with _ERROR_1_("remove packages") and _ERROR_2_("remove packages modified")
+	//%%       We probably also refer to the type of package, _TYPE_("package"), for example _TYPE_("locale")
+	//%%       NOTE: The above text is for the locale.pl program
 }
 
 void PackagesWindow::onUpdateUI(wxUpdateUIEvent& ev) {
@@ -625,6 +629,7 @@ void PackagesWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 			ev.Enable(package && package->can(PACKAGE_REMOVE  | where));
 			break;
 	}
+	// TODO: change labels to _BUTTON_("install group"), _BUTTON_("remove group"), _BUTTON_("upgrade group")
 }
 
 void PackagesWindow::onIdle(wxIdleEvent& ev) {
