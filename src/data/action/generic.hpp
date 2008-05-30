@@ -79,7 +79,6 @@ GenericAddAction<T>::GenericAddAction(AddingOrRemoving ar, const vector<T>& item
 		for (size_t pos = 0 ; pos < container.size() ; ++pos) {
 			if (contains(items, container[pos])) {
 				steps.push_back(Step(pos, container[pos]));
-				return;
 			}
 		}
 		if (steps.size() != items.size()) {
