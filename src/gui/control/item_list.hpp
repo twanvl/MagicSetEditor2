@@ -46,7 +46,7 @@ class ItemList : public wxListView {
 	virtual bool canPaste()  const { return false; }
 	virtual bool canDelete() const { return false; }
 	// Try to perform a clipboard operation, return success
-	virtual bool doCut()    { return false; }
+	virtual bool doCut();
 	virtual bool doCopy()   { return false; }
 	virtual bool doPaste()  { return false; }
 	virtual bool doDelete() { return false; }
@@ -90,6 +90,8 @@ class ItemList : public wxListView {
 	void focusNone();
 	/// Actually select a certain item in the control
 	void focusItem(const VoidP& item, bool focus = true);
+	/// Count the number of focused items
+	long focusCount() const;
 	
 	// --------------------------------------------------- : Data
 	VoidP          selected_item;	  ///< The currently selected item

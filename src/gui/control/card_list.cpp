@@ -60,8 +60,15 @@ void CardListBase::onChangeSet() {
 	rebuild();
 }
 
+struct Freezer{
+	Window* window;
+	Freezer(Window* window) : window(window) { window->Freeze(); }
+	~Freezer()                               { window->Thaw(); }
+};
+
 void CardListBase::onAction(const Action& action, bool undone) {
 	TYPE_CASE(action, AddCardAction) {
+		Freezer freeze(this);
 		if (action.action.adding != undone) {
 			// select the new cards
 			focusNone();
@@ -69,21 +76,8 @@ void CardListBase::onAction(const Action& action, bool undone) {
 			refreshList();
 			FOR_EACH_CONST(s, action.action.steps) focusItem(s.item); // focus all the new cards
 		} else {
-			long pos = -1;
+			long pos = selected_item_pos;
 			// adjust focus for all the removed cards
-			//FOR_EACH_CONST(s, action.action.steps) focusItem(s.item, false);
-			long count = GetItemCount();
-			long delta = 0;
-			for (long i = 0 ; i < count ; ++i) {
-				if (delta < (long)action.action.steps.size() && getItem(i) == action.action.steps[delta].item) {
-					Select(i - delta, false);
-					delta++;
-				} else if (delta > 0) {
-					Select(i - delta, IsSelected(i));
-				}
-				if (pos == -1 && IsSelected(i - delta)) pos = i - delta;
-			}
-			if (pos == -1) pos = selected_item_pos; // select next item if selection would become empty
 			refreshList();
 			if (!allowModify()) {
 				// Let some other card list do the selecting, otherwise we get conflicting events
@@ -129,10 +123,13 @@ void CardListBase::sendEvent() {
 
 // ----------------------------------------------------------------------------- : CardListBase : Clipboard
 
-bool CardListBase::canCopy()  const { return !!selected_item; }
-bool CardListBase::canCut()   const { return canCopy() && allowModify(); }
+bool CardListBase::canCut()   const { return canDelete(); }
+bool CardListBase::canCopy()  const { return focusCount() > 0; }
 bool CardListBase::canPaste() const {
 	return allowModify() && wxTheClipboard->IsSupported(CardsDataObject::format);
+}
+bool CardListBase::canDelete() const {
+	return allowModify() && focusCount() > 0; // TODO: check for selection?
 }
 
 bool CardListBase::doCopy() {
@@ -151,13 +148,6 @@ bool CardListBase::doCopy() {
 	bool ok = wxTheClipboard->SetData(new CardsOnClipboard(set, cards_to_copy)); // ignore result
 	wxTheClipboard->Close();
 	return ok;
-}
-bool CardListBase::doCut() {
-	// cut = copy + delete
-	if (!canCut()) return false;
-	if (!doCopy()) return false;
-	doDelete();
-	return true;
 }
 bool CardListBase::doPaste() {
 	// get data

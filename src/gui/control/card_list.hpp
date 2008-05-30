@@ -64,11 +64,11 @@ class CardListBase : public ItemList, public SetView {
 		
 	// --------------------------------------------------- : Clipboard
 	
-	bool canCut()   const;
-	bool canCopy()  const;
-	bool canPaste() const;
+	bool canCut()    const;
+	bool canCopy()   const;
+	bool canPaste()  const;
+	bool canDelete() const;
 	// Try to perform a clipboard operation, return success
-	bool doCut();
 	bool doCopy();
 	bool doPaste();
 	bool doDelete();

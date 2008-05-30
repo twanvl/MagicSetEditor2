@@ -46,6 +46,14 @@ void ItemList::selectFirst() {
 	selectItemPos(0, true);
 }
 
+bool ItemList::doCut() {
+	// cut = copy + delete
+	if (!canCut()) return false;
+	if (!doCopy()) return false;
+	doDelete();
+	return true;
+}
+
 // ----------------------------------------------------------------------------- : ItemList : Selection (private)
 
 void ItemList::selectItem(const VoidP& item, bool focus, bool event) {
@@ -109,6 +117,14 @@ void ItemList::focusItem(const VoidP& item, bool focus) {
 		}
 	}
 }
+long ItemList::focusCount() const {
+	long count = GetItemCount();
+	long focused = 0;
+	for (long pos = 0 ; pos < count ; ++pos) {
+		if (const_cast<ItemList*>(this)->IsSelected(pos)) focused++;
+	}
+	return focused;
+}
 
 // ----------------------------------------------------------------------------- : ItemList : Building the list
 
@@ -127,6 +143,7 @@ struct ItemList::ItemComparer {
 };
 
 void ItemList::refreshList() {
+	Freeze();
 	// Get all items
 	sorted_list.clear();
 	getItems(sorted_list);
@@ -141,7 +158,9 @@ void ItemList::refreshList() {
 	if (item_count == 0) Refresh();
 	// (re)select current item
 	findSelectedItemPos();
-	focusSelectedItem();
+	focusNone();
+	focusSelectedItem(true);
+	Thaw();
 }
 
 void ItemList::sortBy(long column, bool ascending) {
