@@ -2,11 +2,11 @@
 game: vs
 full name: New Style EM
 short name: New Style
-installer group: VS System/New style
+installer group: VS System/New style/Normal
 icon: card-sample.png
 position hint: 001
 
-version: 2008-01-03
+version: 2008-05-25
 depends on:
 	package: vs.mse-game
 	version: 2007-09-06
