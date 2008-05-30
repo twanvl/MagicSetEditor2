@@ -1,8 +1,8 @@
 ﻿mse version: 0.3.6
-installer group: locales
-full name: Spanish
+installer group: translations/Español
+full name: Español
 version: 2008-03-12
-icon: sp.png
+icon: es.png
 
 ############################################################## Menu items
 menu:

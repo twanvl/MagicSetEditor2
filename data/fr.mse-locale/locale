@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.6
-installer group: locales
+installer group: translations/Français
 full name: Français
 version: 2008-04-01
 icon: fr.png
