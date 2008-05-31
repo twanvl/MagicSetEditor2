@@ -234,13 +234,10 @@ void Reader::readLine(bool in_string) {
 	size_t pos = line.find_first_of(_(':'), indent);
 	if (trim(line).empty() || line.GetChar(indent) == _('#')) {
 		// empty line or comment
-		if (input->Eof())
-			key.clear();
-		else // Recursion allows skipping of blank lines.
-			readLine(in_string);
+		key.clear();
 		return;
 	}
-	key   = line.substr(indent, pos - indent);
+	key = line.substr(indent, pos - indent);
 	if (!ignore_invalid && !in_string && starts_with(key, _(" "))) {
 		warning(_("key: '") + key + _("' starts with a space; only use TABs for indentation!"), 0, false);
 		// try to fix up: 8 spaces is a tab
@@ -306,15 +303,19 @@ const String& Reader::getValue() {
 	} else if (value.empty()) {
 		// a multiline string
 		previous_value.clear();
-		bool first = true;
+		int pending_newlines = 0;
 		// read all lines that are indented enough
 		readLine(true);
 		previous_line_number = line_number;
 		while (indent >= expected_indent && !input->Eof()) {
-			if (!first) previous_value += _('\n');
-			first = false;
+			previous_value.resize(previous_value.size() + pending_newlines, _('\n'));
+			pending_newlines = 0;
 			previous_value += line.substr(expected_indent); // strip expected indent
-			readLine(true);
+			do {
+				readLine(true);
+				pending_newlines++;
+				// skip empty lines that are not indented enough
+			} while(trim(line).empty() && indent < expected_indent && !input->Eof());
 		}
 		// moveNext(), but without the initial readLine()
 		state = HANDLED;
