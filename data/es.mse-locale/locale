@@ -60,13 +60,13 @@ menu:
 	symbols:			&Símbolos	Ctrl+M
 	reminder text:		&Texto recordatorio	Ctrl+R
 	insert symbol:		I&nsertar símbolo
-
+	
 	graph:			&Gráfico
 	pie:				&Pie	1
 	bar:				&Bar	2
 	stack:				&Barras apiladas	3
-	scatter:			S&catter Plot	4
-	scatter pie:		Ambulantes-Pie	5
+	scatter:			A&mbulantes parcela	4
+	scatter pie:		Am&bulantes-Pie	5
 	
 	window:			&Ventana
 	new window:			&Nueva ventana
@@ -167,11 +167,10 @@ help:
 	italic:				Pone el texto seleccionado en cursiva
 	symbols:			Dibuja el texto seleccionado con símbolos
 	reminder text:		Muestra el texto recordatorio de la palabra clave seleccionada
-
+	
 	graph:
-	pie:				A pie gráfico, el radio de la rodaja indica el número de tarjetas 
-Un gráfico de barras, la altura de la barra indica el número de tarjetas
-	bar:				Un gráfico de barras con las barras apiladas
+	pie:				A pie gráfico, el radio de la rodaja indica el número de tarjetas
+	bar:				Un gráfico de barras, la altura de la barra indica el número de tarjetas
 	stack:				Un gráfico de barras con las barras apiladas
 	scatter:			Un gráfico de dispersión, el tamaño indica el número de tarjetas
 	scatter pie:		Un gráfico de dispersión donde cada tema es un pequeño pastel gráfico
@@ -341,11 +340,11 @@ tooltip:
 	italic:				Cursiva
 	symbols:			Símbolos
 	reminder text:		Texto recordatorio
-
+	
 	pie:				Pie Gráfico
 	bar:				Gráfico de barras
 	stack:				Gráfico de barras apiladas
-	scatter:			Scatter Plot
+	scatter:			Ambulantes parcela
 	scatter pie:		Ambulantes-Pie parcela
 	
 	cards tab:			
@@ -476,9 +475,6 @@ label:
 	sides:				lados
 	
 	# Packages window
-
-	keep package:			&No Cambio
-	don't install package:	&No instale
 	package name:				Paquete
 	package status:				Situación
 	package action:				Acción
@@ -550,12 +546,16 @@ button:
 	close:				&Cerrar
 	
 	# Packages window
+	keep package:			&No cambio
+	don't install package:	&No instale
 	install package:	&Instalar
 	upgrade package:	&Actualizar
 	remove package:		&Quitar
 	install group:		&Instalar Todos
 	upgrade group:		&Actualizar Todos
 	remove group:		&Quitar Todos
+	upgrade group:			&Upgrade All
+	remove group:			&Remove All
 
 ############################################################## Titles in the GUI
 title:
@@ -739,7 +739,6 @@ error:
 		Removing them can not be undone.
 		
 		Do you want to continue?
-
 	install packages successful:	%s paquete se instaló con éxito.
 	remove packages successful:		%s paquete se ha eliminado.
 	change packages successful:		%s los paquetes se ha cambiado correctamente.
