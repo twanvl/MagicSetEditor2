@@ -77,7 +77,7 @@ GraphData::GraphData(const GraphDataPre& d)
 			size_t left = counts.size();
 			int i = 0;
 			while (!counts.empty() && i < 100) {
-				String is = String() << i++;
+				String is = String() << i;
 				map<String,UInt>::const_iterator it = counts.find(is);
 				if (it == counts.end()) {
 					// not found, add a 0 bar
@@ -90,6 +90,7 @@ GraphData::GraphData(const GraphDataPre& d)
 					counts.erase(is);
 					left--;
 				}
+				i++;
 			}
 			a->mean /= a->total;
 			// drop empty tail
