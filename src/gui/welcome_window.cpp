@@ -25,7 +25,7 @@
 // ----------------------------------------------------------------------------- : WelcomeWindow
 
 WelcomeWindow::WelcomeWindow()
-	: Frame(nullptr, wxID_ANY, _TITLE_("magic set editor"), wxDefaultPosition, wxSize(480,380), wxDEFAULT_DIALOG_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN )
+	: Frame(nullptr, wxID_ANY, _TITLE_("magic set editor"), wxDefaultPosition, wxSize(520,380), wxDEFAULT_DIALOG_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN )
 	, logo (load_resource_image(_("about")))
 	, logo2(load_resource_image(_("two_beta")))
 {
@@ -35,11 +35,15 @@ WelcomeWindow::WelcomeWindow()
 	#ifdef USE_HOVERBUTTON
 		wxControl* new_set   = new HoverButtonExt(this, ID_FILE_NEW,           load_resource_image(_("welcome_new")),     _BUTTON_("new set"),       _HELP_("new set"));	
 		wxControl* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,          load_resource_image(_("welcome_open")),    _BUTTON_("open set"),      _HELP_("open set"));
+		#if !USE_OLD_STYLE_UPDATE_CHECKER
 		wxControl* updates   = new HoverButtonExt(this, ID_FILE_CHECK_UPDATES, load_resource_image(_("welcome_updates")), _BUTTON_("check updates"), _HELP_("check updates"));
+		#endif
 	#else
 		wxControl* new_set   = new wxButton(this, ID_FILE_NEW,           _BUTTON_("new set"));
 		wxControl* open_set  = new wxButton(this, ID_FILE_OPEN,          _BUTTON_("open set"));
+		#if !USE_OLD_STYLE_UPDATE_CHECKER
 		wxControl* updates   = new wxButton(this, ID_FILE_CHECK_UPDATES, _BUTTON_("check updates"));
+		#endif
 	#endif
 	wxControl* open_last = nullptr;
 	if (!settings.recent_sets.empty()) {
@@ -58,7 +62,9 @@ WelcomeWindow::WelcomeWindow()
 		s2->AddSpacer(100);
 		s2->Add(new_set,   0, wxALL, 2);
 		s2->Add(open_set,  0, wxALL, 2);
+		#if !USE_OLD_STYLE_UPDATE_CHECKER
 		s2->Add(updates,   0, wxALL, 2);
+		#endif
 		if (open_last) s2->Add(open_last, 0, wxALL, 2);
 		s2->AddStretchSpacer();
 	s1->Add(s2);
@@ -108,6 +114,7 @@ void WelcomeWindow::onOpenLast(wxCommandEvent&) {
 }
 
 void WelcomeWindow::onCheckUpdates(wxCommandEvent&) {
+	Show(false); // hide, so the PackagesWindow will not use this window as its parent
 	(new PackagesWindow(nullptr))->Show();
 	Close();
 }
