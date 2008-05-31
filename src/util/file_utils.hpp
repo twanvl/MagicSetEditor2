@@ -30,7 +30,7 @@ bool create_parent_dirs(const String& file);
 /// Remove the given file or directory
 /** It is not an error if the file doesn't exist.
  *  Removes all files in a directory.
- *  Returns true if something was removed
+ *  Returns true if the file is gone or was never there to begin with
  */
 bool remove_file_or_dir(const String& file);
 

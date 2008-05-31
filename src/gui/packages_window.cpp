@@ -9,6 +9,7 @@
 #include <util/prec.hpp>
 #include <gui/packages_window.hpp>
 #include <gui/package_update_list.hpp>
+#include <gui/util.hpp>
 #include <util/io/package_manager.hpp>
 #include <util/window_id.hpp>
 #include <data/installer.hpp>
@@ -19,6 +20,7 @@
 #include <wx/url.h>
 #include <wx/dcbuffer.h>
 #include <wx/progdlg.h>
+#include <wx/tglbtn.h>
 
 DECLARE_POINTER_TYPE(Installer);
 
@@ -156,6 +158,10 @@ END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------- : PackagesWindow
 
+enum Action {
+	KEEP, INSTALL, UPGRADE, REMOVE
+};
+
 PackagesWindow::PackagesWindow(Window* parent, bool download_package_list)
 	: waiting_for_list(download_package_list)
 {
@@ -169,7 +175,12 @@ PackagesWindow::PackagesWindow(Window* parent, const InstallerP& installer)
 	init(parent, true);
 	// add installer
 	merge(installable_packages, new_intrusive1<DownloadableInstaller>(installer));
-	// TODO: mark all packages in the installer for installation
+	// mark all packages in the installer for installation
+	FOR_EACH(p, installable_packages) {
+		if (p->installer) {
+			set_package_action(installable_packages, p, PACKAGE_INSTALL | where);
+		}
+	}
 	// update window
 	package_list->rebuild();
 	package_list->expandAll();
@@ -191,10 +202,16 @@ void PackagesWindow::init(Window* parent, bool show_only_installable) {
 	package_list = new PackageUpdateList(this, installable_packages, show_only_installable, ID_PACKAGE_LIST);
 	package_info = new PackageInfoPanel(this);
 	
-	//wxToolbar* buttons = new wxToolbar
-	wxButton* install_button = new wxButton(this, ID_INSTALL, _BUTTON_("install package"));
-	wxButton* upgrade_button = new wxButton(this, ID_UPGRADE, _BUTTON_("upgrade package"));
-	wxButton* remove_button  = new wxButton(this, ID_REMOVE,  _BUTTON_("remove package"));
+	wxToggleButton* keep_button    = new wxToggleButton(this, ID_KEEP,    _BUTTON_("keep package"));
+	wxToggleButton* install_button = new wxToggleButton(this, ID_INSTALL, _BUTTON_("install package"));
+	wxToggleButton* upgrade_button = new wxToggleButton(this, ID_UPGRADE, _BUTTON_("upgrade package"));
+	wxToggleButton* remove_button  = new wxToggleButton(this, ID_REMOVE,  _BUTTON_("remove package"));
+	/*
+	wxRadioButton* keep_button    = new wxRadioButton(this, ID_KEEP,    _BUTTON_("keep package"));
+	wxRadioButton* install_button = new wxRadioButton(this, ID_INSTALL, _BUTTON_("install package"));
+	wxRadioButton* upgrade_button = new wxRadioButton(this, ID_UPGRADE, _BUTTON_("upgrade package"));
+	wxRadioButton* remove_button  = new wxRadioButton(this, ID_REMOVE,  _BUTTON_("remove package"));
+	*/
 	
 	// Init sizer
 	wxBoxSizer* v = new wxBoxSizer(wxVERTICAL);
@@ -203,15 +220,19 @@ void PackagesWindow::init(Window* parent, bool show_only_installable) {
 		wxBoxSizer* h = new wxBoxSizer(wxHORIZONTAL);
 			h->Add(package_info, 1, wxRIGHT, 4);
 			wxBoxSizer* v2 = new wxBoxSizer(wxVERTICAL);
-				v2->Add(install_button, 0, wxEXPAND | wxBOTTOM, 4);
-				v2->Add(upgrade_button, 0, wxEXPAND | wxBOTTOM, 4);
-				v2->Add(remove_button,  0, wxEXPAND | wxBOTTOM, 4);
+				v2->Add(keep_button,    0, wxEXPAND | wxBOTTOM, 4);
 				v2->AddStretchSpacer();
+				v2->Add(install_button, 0, wxEXPAND | wxBOTTOM, 4);
+				v2->AddStretchSpacer();
+				v2->Add(upgrade_button, 0, wxEXPAND | wxBOTTOM, 4);
+				v2->AddStretchSpacer();
+				v2->Add(remove_button,  0, wxEXPAND | wxBOTTOM, 0);
 			h->Add(v2);
 		v->Add(h, 0, wxEXPAND | wxALL & ~wxTOP, 8);
 		v->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL & ~wxTOP, 8);
 	SetSizer(v);
 	
+	wxUpdateUIEvent::SetMode(wxUPDATE_UI_PROCESS_SPECIFIED);
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }
 
@@ -231,12 +252,8 @@ void PackagesWindow::onActionChange(wxCommandEvent& ev) {
 		                  : ev.GetId() == ID_REMOVE  ? PACKAGE_REMOVE
 		                  : PACKAGE_NOTHING;
 		act = act | where;
-		// toggle action
-		if (package->has(act)) {
-			set_package_action(installable_packages, package, PACKAGE_NOTHING | where);
-		} else {
-			set_package_action(installable_packages, package, act);
-		}
+		// set action
+		set_package_action(installable_packages, package, act);
 		package_list->Refresh(false);
 		UpdateWindowUI(wxUPDATE_UI_RECURSE);
 	}
@@ -244,12 +261,18 @@ void PackagesWindow::onActionChange(wxCommandEvent& ev) {
 
 void PackagesWindow::onOk(wxCommandEvent& ev) {
 	// Do we need a new version of MSE first?
+	// count number of packages to change
+	int to_change   = 0;
+	int to_download = 0;
+	FOR_EACH(ip, installable_packages) {
+		if (!ip->has(PACKAGE_NOTHING)) ++to_change;
+		if ((ip->action & PACKAGE_INSTALL) && ip->installer && !ip->installer->installer) ++to_download;
+	}
 	// progress dialog
-	int total = (int)installable_packages.size();
 	wxProgressDialog progress(
 			_TITLE_("installing updates"),
-			String::Format(_ERROR_("downloading updates"), 0, total),
-			2*total,
+			String::Format(_ERROR_("downloading updates"), 0, to_download),
+			to_change + to_download,
 			this,
 			wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_ABORT | wxPD_SMOOTH
 		);
@@ -258,11 +281,10 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 	// Download installers
 	int package_pos = 0, step = 0;
 	FOR_EACH(ip, installable_packages) {
-		++package_pos; ++step;
-		if (!progress.Update(step, String::Format(_ERROR_("downloading updates"), package_pos, total))) {
-			return; // aborted
-		}
 		if ((ip->action & PACKAGE_INSTALL) && ip->installer && !ip->installer->installer) {
+			if (!progress.Update(step++, String::Format(_ERROR_("downloading updates"), ++package_pos, to_download))) {
+				return; // aborted
+			}
 			// download installer
 			wxURL url(ip->installer->installer_url);
 			wxInputStream* is = url.GetInputStream();
@@ -279,15 +301,27 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 		}
 	}
 	// Install stuff
-	package_pos = 0 ;
+	package_pos = 0;
+	int success = 0, install = 0, remove = 0;
 	FOR_EACH(ip, installable_packages) {
-		++package_pos; ++step;
-		if (!progress.Update(step, String::Format(_ERROR_("installing updates"), package_pos, total))) {
+		if (ip->has(PACKAGE_NOTHING)) continue; // package unchanged
+		if (!progress.Update(step++, String::Format(_ERROR_("installing updates"), ++package_pos, to_change))) {
 			// don't allow abort.
 		}
-		package_manager.install(*ip);
+		bool ok = package_manager.install(*ip);
+		if (ok) {
+			install += ip->has(PACKAGE_INSTALL) && !ip->installed;
+			remove  += ip->has(PACKAGE_REMOVE);
+			success += 1;
+		}
 	}
 	// Done
+	progress.Update(step++);
+	wxMessageBox(
+		install == success ? _ERROR_1_("install packages successful",String()<<success):
+		remove  == success ? _ERROR_1_("remove packages successful", String()<<success):
+		                     _ERROR_1_("change packages successful", String()<<success),
+		_TITLE_("packages window"), wxICON_INFORMATION | wxOK);
 	// Continue event propagation into the dialog window so that it closes.
 	ev.Skip();
 	//%% TODO: will we delete packages?
@@ -297,18 +331,25 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 }
 
 void PackagesWindow::onUpdateUI(wxUpdateUIEvent& ev) {
+	wxToggleButton* w = (wxToggleButton*)ev.GetEventObject();
 	switch (ev.GetId()) {
+		case ID_KEEP:
+			w->SetValue(package && package->has(PACKAGE_NOTHING));
+			w->Enable  (package && package->can(PACKAGE_NOTHING | where));
+			w->SetLabel(package && package->installed ? _BUTTON_("keep package") : _BUTTON_("don't install package"));
+			break;
 		case ID_INSTALL:
-			ev.Check (package && package->has(PACKAGE_INSTALL | where) && !package->installed);
-			ev.Enable(package && package->can(PACKAGE_INSTALL | where) && !package->installed);
+			w->SetValue(package && package->has(PACKAGE_INSTALL | where) && !package->installed);
+			w->Enable  (package && package->can(PACKAGE_INSTALL | where) && !package->installed);
 			break;
 		case ID_UPGRADE:
-			ev.Check (package && package->has(PACKAGE_INSTALL | where) && package->installed);
-			ev.Enable(package && package->can(PACKAGE_INSTALL | where) && package->installed);
+			w->SetValue(package && package->has(PACKAGE_INSTALL | where) && package->installed);
+			w->Enable  (package && package->can(PACKAGE_INSTALL | where) && package->installed);
 			break;
 		case ID_REMOVE:
-			ev.Check (package && package->has(PACKAGE_REMOVE  | where));
-			ev.Enable(package && package->can(PACKAGE_REMOVE  | where));
+			w->SetValue(package && package->has(PACKAGE_REMOVE  | where));
+			w->Enable  (package && package->can(PACKAGE_REMOVE  | where));
+			//w->SetLabel(package && package->... ? _BUTTON_("remove group") : _BUTTON_("remove package"));
 			break;
 	}
 	// TODO: change labels to _BUTTON_("install group"), _BUTTON_("remove group"), _BUTTON_("upgrade group")
@@ -338,9 +379,10 @@ bool PackagesWindow::checkInstallerList(bool refresh) {
 
 BEGIN_EVENT_TABLE(PackagesWindow, wxDialog)
 	EVT_LISTBOX(ID_PACKAGE_LIST, PackagesWindow::onPackageSelect)
-	EVT_BUTTON(ID_INSTALL,  PackagesWindow::onActionChange)
-	EVT_BUTTON(ID_REMOVE,   PackagesWindow::onActionChange)
-	EVT_BUTTON(ID_UPGRADE,  PackagesWindow::onActionChange)
+	EVT_TOGGLEBUTTON(ID_KEEP,     PackagesWindow::onActionChange)
+	EVT_TOGGLEBUTTON(ID_INSTALL,  PackagesWindow::onActionChange)
+	EVT_TOGGLEBUTTON(ID_REMOVE,   PackagesWindow::onActionChange)
+	EVT_TOGGLEBUTTON(ID_UPGRADE,  PackagesWindow::onActionChange)
 	EVT_BUTTON(wxID_OK,     PackagesWindow::onOk)
 	EVT_UPDATE_UI(wxID_ANY, PackagesWindow::onUpdateUI)
 	EVT_IDLE  (             PackagesWindow::onIdle)

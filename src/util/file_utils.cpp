@@ -56,18 +56,29 @@ class RecursiveDeleter : public wxDirTraverser {
   public:
 	RecursiveDeleter(const String& start) {
 		to_delete.push_back(start);
+		ok = true;
 	}
-	~RecursiveDeleter() {
+	
+	bool ok;
+	
+	void remove() {
 		FOR_EACH_REVERSE(dir, to_delete) {
-			wxRmdir(dir);
+			if (!wxRmdir(dir)) {
+				ok = false;
+				handle_error(_("Cannot delete ") + dir + _("\n")
+					_("The remainder of the package has still been removed, if possible.\n")
+					_("Other packages may have been removed, including packages that this on is dependent on. Please remove manually."));
+			}
 		}
 	}
 	
 	wxDirTraverseResult OnFile(const String& filename) {
-		if (!wxRemoveFile(filename))
-			handle_error(_("Cannot delete ") + filename + _(". ")
-				_("The remainder of the package has still been removed, if possible.")
+		if (!wxRemoveFile(filename)) {
+			ok = false;
+			handle_error(_("Cannot delete ") + filename + _("\n")
+				_("The remainder of the package has still been removed, if possible.\n")
 				_("Other packages may have been removed, including packages that this on is dependent on. Please remove manually."));
+		}
 		return wxDIR_CONTINUE;
 	}
 	wxDirTraverseResult OnDir(const String& dirname) {
@@ -82,12 +93,15 @@ bool remove_file_or_dir(const String& name) {
 	if (wxFileExists(name)) {
 		return wxRemoveFile(name);
 	} else if (wxDirExists(name)) {
-		wxDir dir(name);
 		RecursiveDeleter rd(name);
-		dir.Traverse(rd);
-		return true;
+		{
+			wxDir dir(name);
+			dir.Traverse(rd);
+		}
+		rd.remove();
+		return rd.ok;
 	} else {
-		return false;
+		return true;
 	}
 }
 

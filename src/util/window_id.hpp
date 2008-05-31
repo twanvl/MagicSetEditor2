@@ -240,6 +240,7 @@ enum ControlID {
 ,	ID_SHARPEN_AMOUNT
 	// Updates window
 ,	ID_PACKAGE_LIST
+,	ID_KEEP
 ,	ID_INSTALL
 ,	ID_UPGRADE
 ,	ID_REMOVE

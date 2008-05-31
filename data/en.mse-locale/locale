@@ -526,12 +526,14 @@ button:
 	close:				&Close
 	
 	# Packages window
-	install package:	&Install
-	upgrade package:	&Upgrade
-	remove package:		&Remove
-	install group:		&Install All
-	upgrade group:		&Upgrade All
-	remove group:		&Remove All
+	keep package:			&Don't change
+	don't install package:	&Don't install
+	install package:		&Install
+	upgrade package:		&Upgrade
+	remove package:			&Remove
+	install group:			&Install All
+	upgrade group:			&Upgrade All
+	remove group:			&Remove All
 
 ############################################################## Titles in the GUI
 title:
@@ -715,6 +717,9 @@ error:
 		Removing them can not be undone.
 		
 		Do you want to continue?
+	install packages successful:	%s package(s) were successfully installed.
+	remove packages successful:		%s package(s) were successfully removed.
+	change packages successful:		%s package(s) were successfully changed.
 	
 	cannot create file:		Can not create file '%s', continue installation?
 

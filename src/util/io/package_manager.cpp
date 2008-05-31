@@ -160,9 +160,9 @@ void PackageManager::findAllInstalledPackages(vector<InstallablePackageP>& packa
 	sort(packages);
 }
 
-void PackageManager::install(const InstallablePackage& package) {
+bool PackageManager::install(const InstallablePackage& package) {
 	bool install_local = package.action & PACKAGE_LOCAL;
-	(install_local ? local : global).install(package);
+	return (install_local ? local : global).install(package);
 }
 
 // ----------------------------------------------------------------------------- : PackageDirectory
@@ -292,14 +292,14 @@ String PackageDirectory::databaseFile() {
 bool PackageDirectory::install(const InstallablePackage& package) {
 	String n = name(package.description->name);
 	if (package.action & PACKAGE_REMOVE) {
-		remove_file_or_dir(n);
+		if (!remove_file_or_dir(n)) return false;
 	} else if (package.action & PACKAGE_INSTALL) {
-		remove_file_or_dir(n + _(".new"));
+		if (!remove_file_or_dir(n + _(".new"))) return false;
 		bool ok = actual_install(package, n + _(".new"));
 		if (!ok) return false;
-		move_ignored_files(n, n + _(".new"));
-		remove_file_or_dir(n);
-		rename_file_or_dir(n + _(".new"), n);
+		move_ignored_files(n, n + _(".new")); // copy over files from the old installed version to the new one
+		if (!remove_file_or_dir(n)) return false;
+		if (!rename_file_or_dir(n + _(".new"), n)) return false;
 	}
 	return true;
 }
@@ -317,11 +317,11 @@ bool PackageDirectory::actual_install(const InstallablePackage& package, const S
 		String file = it->first;
 		if (!is_substr(file,0,name)) continue; // not the right package
 		// correct filename
-		file = install_dir + file.substr(name.length());
-		create_parent_dirs(file);
+		String local_file = install_dir + file.substr(name.length());
+		create_parent_dirs(local_file);
 		// copy file
 		InputStreamP is = installer.openIn(file);
-		wxFileOutputStream os (install_dir + _("/") + file);
+		wxFileOutputStream os (local_file);
 		if (!os.IsOk()) {
 			int act = wxMessageBox(_ERROR_1_("cannot create file", file), _TITLE_("cannot create file"), wxICON_ERROR | wxYES_NO);
 			if (act == wxNO) return false;
@@ -329,6 +329,7 @@ bool PackageDirectory::actual_install(const InstallablePackage& package, const S
 		os.Write(*is);
 	}
 	// update package database
+	// TODO: bless the package?
 	return true;
 }
 

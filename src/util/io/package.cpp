@@ -199,7 +199,7 @@ InputStreamP Package::openIn(const String& file) {
 	} else if (wxFileExists(filename) && it->second.zipEntry) {
 		// a file in a zip archive
 		// somebody in wx thought seeking was no longer needed, it now only works with the 'compatability constructor'
-		stream = new_shared2<wxZipInputStream>(filename, it->second.zipEntry->GetName());
+		stream = new_shared2<wxZipInputStream>(filename, it->second.zipEntry->GetInternalName());
 		//stream = static_pointer_cast<wxZipInputStream>(
 		//			new_shared2<ZipFileInputStream>(filename, it->second.zipEntry));
 	} else {

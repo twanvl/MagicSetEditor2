@@ -151,8 +151,8 @@ class PackageManager {
 	/// Get all installed packages
 	void findAllInstalledPackages(vector<InstallablePackageP>& packages);
 	
-	/// Install/uninstall a package
-	void install(const InstallablePackage& package);
+	/// Install/uninstall a package, returns success
+	bool install(const InstallablePackage& package);
 	
 	// --------------------------------------------------- : Packages on a server
 	

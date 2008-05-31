@@ -306,6 +306,9 @@ bool InstallablePackage::can(PackageAction act) const {
 		}
 		return ok;
 	}
+	if (act & PACKAGE_NOTHING) {
+		return true;
+	}
 	else return false;
 }
 bool InstallablePackage::has(PackageAction act) const {
