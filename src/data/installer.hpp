@@ -21,9 +21,11 @@ DECLARE_POINTER_TYPE(InstallablePackage);
 // ----------------------------------------------------------------------------- : Installer
 
 /// A package that contains other packages that can be installed
+/** Installers will be sent around the internet, etc. so they are fairly selfcontained.
+ */
 class Installer : public Packaged {
   public:
-	String prefered_filename;	///< What filename should be used (by default)
+	String prefered_filename;	///< What filename should be used (by default), when creating the installer
 	vector<PackageDescriptionP> packages;	///< Packages to install
 	
 	/// Add a package to the installer (if it is not already added).
@@ -41,7 +43,10 @@ class Installer : public Packaged {
 
 // ----------------------------------------------------------------------------- : Installer descriptions
 
-/// A description of a package in an installer
+/// A description of a package in an installer.
+/** This is essentially the same information as in a Packaged object.
+ *  TODO: try to merge these!
+ */
 class PackageDescription : public IntrusivePtrBase<PackageDescription> {
   public:
 	PackageDescription();
@@ -59,6 +64,7 @@ class PackageDescription : public IntrusivePtrBase<PackageDescription> {
 	vector<PackageDependencyP> dependencies;	///< Dependencies of this package
 	
 	/// Merge two descriptions a package. This package takes precedence
+	/** Usually one of the descriptions will refer to the locally installed one, the other to the new one */
 	void merge(const PackageDescription& p2);
 	
 	DECLARE_REFLECTION();

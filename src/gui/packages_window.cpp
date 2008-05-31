@@ -48,6 +48,7 @@ struct HtmlWindowToBrowser : public wxHtmlWindow {
 
 // ----------------------------------------------------------------------------- : DownloadableInstallers
 
+/// Handle downloading of installers
 class DownloadableInstallerList {
   public:
 	DownloadableInstallerList() : status(NONE) {}
@@ -66,6 +67,7 @@ class DownloadableInstallerList {
 	};
 };
 
+/// The global installer downloader
 DownloadableInstallerList downloadable_installers;
 
 bool DownloadableInstallerList::done() {
