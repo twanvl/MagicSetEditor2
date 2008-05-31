@@ -20,6 +20,7 @@
 #include <wx/wfstream.h>
 
 DECLARE_TYPEOF_COLLECTION(InstallablePackageP);
+DECLARE_TYPEOF_COLLECTION(PackageVersionP);
 DECLARE_TYPEOF_COLLECTION(PackageVersion::FileInfo);
 
 // ----------------------------------------------------------------------------- : PackageManager : in memory
@@ -262,6 +263,35 @@ void PackageDirectory::installedPackages(vector<InstallablePackageP>& packages_o
 	}
 }
 
+void PackageDirectory::bless(const String& package_name) {
+	PackagedP pack = package_manager.openAny(package_name, true);
+	// already have this package?
+	FOR_EACH(ver, packages) {
+		if (ver->name == package_name) {
+			ver->check_status(*pack);
+			ver->bless();
+			return;
+		}
+	}
+	// a new package
+	PackageVersionP ver(new PackageVersion(
+		is_local ? PackageVersion::STATUS_LOCAL : PackageVersion::STATUS_GLOBAL));
+	ver->check_status(*pack);
+	ver->bless();
+	packages.push_back(ver);
+	sort(packages.begin(), packages.end(), compare_name);
+}
+
+void PackageDirectory::removeFromDatabase(const String& package_name) {
+	size_t i = 0, j = 0;
+	for ( ; i < packages.size() ; ++i) {
+		if (packages[i]->name != package_name) {
+			packages[j++] = packages[i];
+		}
+	}
+	packages.resize(j);
+}
+
 IMPLEMENT_REFLECTION(PackageDirectory) {
 	REFLECT(packages);
 }
@@ -293,6 +323,7 @@ bool PackageDirectory::install(const InstallablePackage& package) {
 	String n = name(package.description->name);
 	if (package.action & PACKAGE_REMOVE) {
 		if (!remove_file_or_dir(n)) return false;
+		removeFromDatabase(package.description->name);
 	} else if (package.action & PACKAGE_INSTALL) {
 		if (!remove_file_or_dir(n + _(".new"))) return false;
 		bool ok = actual_install(package, n + _(".new"));
@@ -300,7 +331,9 @@ bool PackageDirectory::install(const InstallablePackage& package) {
 		move_ignored_files(n, n + _(".new")); // copy over files from the old installed version to the new one
 		if (!remove_file_or_dir(n)) return false;
 		if (!rename_file_or_dir(n + _(".new"), n)) return false;
+		bless(package.description->name);
 	}
+	saveDatabase();
 	return true;
 }
 

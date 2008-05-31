@@ -112,10 +112,7 @@ int MSE::OnRun() {
 					InstallerP installer = open_package<Installer>(argv[1]);
 					PackagesWindow wnd(nullptr, installer);
 					wnd.ShowModal();
-					//return wxApp::OnRun();
 					return EXIT_SUCCESS;
-//%%%					Installer::installFrom(argv[1], true, isInstallLocal(type));
-//%%%					return EXIT_SUCCESS;
 				} else if (arg == _("--symbol-editor")) {
 					Window* wnd = new SymbolWindow(nullptr);
 					wnd->Show();

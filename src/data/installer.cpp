@@ -29,6 +29,9 @@ DECLARE_TYPEOF_COLLECTION(InstallablePackageP);
 DECLARE_POINTER_TYPE(wxFileInputStream);
 DECLARE_POINTER_TYPE(wxZipInputStream);
 
+// Don't do this check for now, because we can't bless packages
+#define USE_MODIFIED_CHECK 0
+
 // ----------------------------------------------------------------------------- : Installer
 
 String Installer::typeName() const { return _("installer"); }
@@ -287,9 +290,11 @@ void InstallablePackage::determineStatus() {
 			status = (PackageStatus)(status | PACKAGE_REMOVABLE);
 		}
 	}
+	#if USE_MODIFIED_CHECK
 	if (installed && (installed->status & PackageVersion::STATUS_MODIFIED)) {
 		status = (PackageStatus)(status | PACKAGE_MODIFIED);
 	}
+	#endif
 }
 
 bool InstallablePackage::willBeInstalled() const {

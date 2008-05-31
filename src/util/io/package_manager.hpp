@@ -77,6 +77,11 @@ class PackageDirectory {
 	/// Install/uninstall a package
 	bool install(const InstallablePackage& package);
 	
+	/// Bless a package
+	void bless(const String& package_name);
+	/// Remove a package from the database
+	void removeFromDatabase(const String& package_name);
+	
 	void loadDatabase();
 	void saveDatabase();
   private:

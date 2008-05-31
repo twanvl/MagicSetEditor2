@@ -176,9 +176,9 @@ PackagesWindow::PackagesWindow(Window* parent, const InstallerP& installer)
 	// add installer
 	merge(installable_packages, new_intrusive1<DownloadableInstaller>(installer));
 	// mark all packages in the installer for installation
-	FOR_EACH(p, installable_packages) {
-		if (p->installer) {
-			set_package_action(installable_packages, p, PACKAGE_INSTALL | where);
+	FOR_EACH(ip, installable_packages) {
+		if (ip->can(PACKAGE_INSTALL)) {
+			set_package_action(installable_packages, ip, PACKAGE_INSTALL | where);
 		}
 	}
 	// update window
@@ -271,7 +271,7 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 		if ((ip->action & PACKAGE_INSTALL) && ip->installer && !ip->installer->installer) ++to_download;
 		if (ip->action & PACKAGE_REMOVE) {
 			to_remove++;
-			if (ip->status & PACKAGE_MODIFIED) with_modifications++;
+			if ((ip->status & PACKAGE_MODIFIED) == PACKAGE_MODIFIED) with_modifications++;
 		}
 	}
 	// Warn about removing
