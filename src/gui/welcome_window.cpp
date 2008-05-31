@@ -99,14 +99,6 @@ void WelcomeWindow::onNewSet(wxCommandEvent&) {
 	close(new_set_window(this));
 }
 
-// TODO: MOVEME
-template <typename T>
-intrusive_ptr<T> open_package(const String& filename) {
-	intrusive_ptr<T> package(new T);
-	package->open(filename);
-	return package;
-}
-
 void WelcomeWindow::onOpenLast(wxCommandEvent&) {
 	wxBusyCursor wait;
 	assert(!settings.recent_sets.empty());

@@ -247,5 +247,15 @@ class IncludePackage : public Packaged {
 	DECLARE_REFLECTION();
 };
 
+// ----------------------------------------------------------------------------- : Utility
+
+/// Open a package with the given filename
+template <typename T>
+intrusive_ptr<T> open_package(const String& filename) {
+	intrusive_ptr<T> package(new T);
+	package->open(filename);
+	return package;
+}
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

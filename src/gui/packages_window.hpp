@@ -26,13 +26,12 @@ class PackagesWindow : public wxDialog {
 	PackagesWindow(Window* parent, const InstallerP& installer);
 	~PackagesWindow();
 	
-	/// List of the packages shown in this window
-	InstallablePackages installable_packages;
-	
   private:
 	PackageUpdateList* package_list; ///< List of available packages
 	PackageInfoPanel*  package_info; ///< Description of the selected package
 	
+	/// List of the packages shown in this window
+	InstallablePackages installable_packages;
 	InstallablePackageP package; ///< Selected package
 	PackageAction       where;   ///< Where to install? (PACKAGE_LOCAL or PACKAGE_GLOBAL)
 	
@@ -45,6 +44,9 @@ class PackagesWindow : public wxDialog {
 	void onPackageSelect(wxCommandEvent&);
 	void onUpdateUI(wxUpdateUIEvent&);
 	void onIdle(wxIdleEvent&);
+	
+	/// Window initialization
+	void init(Window* parent, bool show_only_installable);
 	
 	/// Check whether we have downloaded the list of installers
 	/** If the download is (partially) complete, update the installable_packages list */

@@ -34,6 +34,15 @@ void TreeList::expand(size_t item, bool expand) {
 	}
 }
 
+void TreeList::expandAll(bool expand) {
+	for (size_t item = 0 ; item < items.size() ; ++item) {
+		if (hasChildren(item)) {
+			items[item]->expanded = expand;
+		}
+	}
+	rebuild(false);
+}
+
 void TreeList::select(size_t item, bool event) {
 	if (item >= items.size() || selection == item) return;
 	// select

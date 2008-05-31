@@ -48,8 +48,8 @@ class DownloadableInstallerList {
   public:
 	DownloadableInstallerList() : status(NONE) {}
 	
-	/// are we done? if not, start downloading
-	bool done();
+	/// start downloading, return true if we are done
+	bool download();
 	
 	vector<DownloadableInstallerP> installers;
 	
@@ -65,7 +65,7 @@ class DownloadableInstallerList {
 /// The global installer downloader
 DownloadableInstallerList downloadable_installers;
 
-bool DownloadableInstallerList::done() {
+bool DownloadableInstallerList::download() {
 	if (status == DONE) return true;
 	if (status == NONE) {
 		status = DOWNLOADING;
@@ -157,12 +157,29 @@ END_EVENT_TABLE()
 // ----------------------------------------------------------------------------- : PackagesWindow
 
 PackagesWindow::PackagesWindow(Window* parent, bool download_package_list)
-	: wxDialog(parent, wxID_ANY, _TITLE_("packages window"), wxDefaultPosition, wxSize(640,480), wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER)
-	, where(is_install_local(settings.install_type) ? PACKAGE_LOCAL : PACKAGE_GLOBAL)
-	, waiting_for_list(download_package_list)
+	: waiting_for_list(download_package_list)
 {
 	// request download before searching disk so we do two things at once
-	if (download_package_list) downloadable_installers.done();
+	if (download_package_list) downloadable_installers.download();
+	init(parent, false);
+}
+PackagesWindow::PackagesWindow(Window* parent, const InstallerP& installer)
+	: waiting_for_list(false)
+{
+	init(parent, true);
+	// add installer
+	merge(installable_packages, new_intrusive1<DownloadableInstaller>(installer));
+	// TODO: mark all packages in the installer for installation
+	// update window
+	package_list->rebuild();
+	package_list->expandAll();
+	UpdateWindowUI(wxUPDATE_UI_RECURSE);
+}
+
+void PackagesWindow::init(Window* parent, bool show_only_installable) {
+	where = is_install_local(settings.install_type) ? PACKAGE_LOCAL : PACKAGE_GLOBAL;
+	Create(parent, wxID_ANY, _TITLE_("packages window"), wxDefaultPosition, wxSize(640,480), wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER);
+	
 	// get packages
 	wxBusyCursor busy;
 	packages.installedPackages(installable_packages);
@@ -171,7 +188,7 @@ PackagesWindow::PackagesWindow(Window* parent, bool download_package_list)
 	
 	// ui elements
 	SetIcon(wxIcon());
-	package_list = new PackageUpdateList(this, installable_packages, ID_PACKAGE_LIST);
+	package_list = new PackageUpdateList(this, installable_packages, show_only_installable, ID_PACKAGE_LIST);
 	package_info = new PackageInfoPanel(this);
 	
 	//wxToolbar* buttons = new wxToolbar
@@ -231,18 +248,18 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 	int total = (int)installable_packages.size();
 	wxProgressDialog progress(
 			_TITLE_("installing updates"),
-			String::Format(_ERROR_("downloading updates"), 0, 2*total),
-			total,
+			String::Format(_ERROR_("downloading updates"), 0, total),
+			2*total,
 			this,
 			wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_ABORT | wxPD_SMOOTH
 		);
 	// Clear package list
 	packages.reset();
 	// Download installers
-	int n = 0;
+	int package_pos = 0, progress = 0;
 	FOR_EACH(ip, installable_packages) {
-		++n;
-		if (!progress.Update(n, String::Format(_ERROR_("downloading updates"), n, total))) {
+		++package_pos; ++progress;
+		if (!progress.Update(progress, String::Format(_ERROR_("downloading updates"), package_pos, total))) {
 			return; // aborted
 		}
 		if ((ip->action & PACKAGE_INSTALL) && ip->installer && !ip->installer->installer) {
@@ -262,10 +279,10 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 		}
 	}
 	// Install stuff
-	int n2 = 0 ;
+	package_pos = 0 ;
 	FOR_EACH(ip, installable_packages) {
-		++n; ++n2;
-		if (!progress.Update(n, String::Format(_ERROR_("installing updates"), n2, total))) {
+		++package_pos; ++progress;
+		if (!progress.Update(progress, String::Format(_ERROR_("installing updates"), package_pos, total))) {
 			// don't allow abort.
 		}
 		packages.install(*ip);
@@ -303,7 +320,7 @@ void PackagesWindow::onIdle(wxIdleEvent& ev) {
 
 bool PackagesWindow::checkInstallerList(bool refresh) {
 	if (!waiting_for_list) return true;
-	if (!downloadable_installers.done()) return false;
+	if (!downloadable_installers.download()) return false;
 	waiting_for_list = false;
 	// merge installer lists
 	FOR_EACH(inst, downloadable_installers.installers) {

@@ -246,6 +246,12 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(DownloadableInstaller) {
 	REFLECT(packages);
 }
 
+DownloadableInstaller::DownloadableInstaller(const InstallerP& installer)
+	: installer(installer)
+	, downloadable(false)
+	, packages(installer->packages)
+{}
+
 DownloadableInstaller::~DownloadableInstaller() {
 	if (!installer_file.empty()) {
 		wxRemoveFile(installer_file);

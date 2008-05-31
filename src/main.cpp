@@ -17,6 +17,7 @@
 #include <gui/welcome_window.hpp>
 #include <gui/update_checker.hpp>
 #include <gui/images_export_window.hpp>
+#include <gui/packages_window.hpp>
 #include <gui/set/window.hpp>
 #include <gui/symbol/window.hpp>
 #include <gui/thumbnail_thread.hpp>
@@ -108,8 +109,13 @@ int MSE::OnRun() {
 							parse_enum(String(argv[2]).substr(2), type);
 						}
 					}
-//%%%					Installer::installFrom(argv[1], true, isInstallLocal(type));
+					InstallerP installer = open_package<Installer>(argv[1]);
+					PackagesWindow wnd(nullptr, installer);
+					wnd.ShowModal();
+					//return wxApp::OnRun();
 					return EXIT_SUCCESS;
+//%%%					Installer::installFrom(argv[1], true, isInstallLocal(type));
+//%%%					return EXIT_SUCCESS;
 				} else if (arg == _("--symbol-editor")) {
 					Window* wnd = new SymbolWindow(nullptr);
 					wnd->Show();

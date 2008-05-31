@@ -18,7 +18,7 @@
 /// A list of installed and downloadable packages
 class PackageUpdateList : public TreeList {
   public:
-	PackageUpdateList(Window* parent, const InstallablePackages& packages, int id = wxID_ANY);
+	PackageUpdateList(Window* parent, const InstallablePackages& packages, bool show_only_installable, int id = wxID_ANY);
 	~PackageUpdateList();
 	
 	inline InstallablePackageP getSelection() const {
@@ -39,7 +39,10 @@ class PackageUpdateList : public TreeList {
 	virtual int    columnWidth(size_t column) const;
 	
   private:
+	/// The list of packages we are displaying
 	const InstallablePackages& packages;
+	/// Show only packages with an installer?
+	bool show_only_installable;
 	
 	class TreeItem;
   public:

@@ -189,8 +189,9 @@ class PackageIconRequest : public ThumbnailRequest {
 
 // ----------------------------------------------------------------------------- : PackageUpdateList : implementation
 
-PackageUpdateList::PackageUpdateList(Window* parent, const InstallablePackages& packages, int id)
+PackageUpdateList::PackageUpdateList(Window* parent, const InstallablePackages& packages, bool show_only_installable, int id)
 	: TreeList(parent, id)
+	, show_only_installable(show_only_installable)
 	, packages(packages)
 {
 	item_height = max(item_height,17);
@@ -206,7 +207,9 @@ void PackageUpdateList::initItems() {
 	FOR_EACH_CONST(ip, packages) {
 		String group = ip->description->installer_group;
 		if (group.empty()) group = _("custom");
-		root.add(ip, group);
+		if (!show_only_installable || ip->installer) {
+			root.add(ip, group);
+		}
 	}
 	// tree to treelist items
 	items.clear();

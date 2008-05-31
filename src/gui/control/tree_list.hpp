@@ -21,6 +21,8 @@ class TreeList : public wxPanel {
 	
 	/// Expand/collapse an item
 	void expand(size_t item, bool expand = true);
+	/// Expand/collapse all items
+	void expandAll(bool expand = true);
 	/// Select an item
 	void select(size_t item, bool event = true);
 	
