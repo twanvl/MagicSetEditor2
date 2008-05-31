@@ -35,11 +35,13 @@ bool ItemList::canSelectNext() const {
 }
 void ItemList::selectPrevious() {
 	assert(selected_item_pos >= 1);
-	selectItemPos(selected_item_pos - 1, true);
+	focusNone();
+	selectItemPos(selected_item_pos - 1, true, true);
 }
 void ItemList::selectNext() {
 	assert(selected_item_pos + 1 < (long)sorted_list.size());
-	selectItemPos(selected_item_pos + 1, true);
+	focusNone();
+	selectItemPos(selected_item_pos + 1, true, true);
 }
 void ItemList::selectFirst() {
 	assert(0 < (long)sorted_list.size());
@@ -57,6 +59,9 @@ bool ItemList::doCut() {
 // ----------------------------------------------------------------------------- : ItemList : Selection (private)
 
 void ItemList::selectItem(const VoidP& item, bool focus, bool event) {
+	if (item != selected_item && focus) {
+		focusNone();
+	}
 	selected_item = item;
 	if (event) sendEvent();
 	findSelectedItemPos();
