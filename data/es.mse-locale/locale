@@ -1,7 +1,7 @@
 ﻿mse version: 0.3.6
 installer group: translations/Español
 full name: Español
-version: 2008-03-12
+version: 2008-05-31
 icon: es.png
 
 ############################################################## Menu items
@@ -60,6 +60,13 @@ menu:
 	symbols:			&Símbolos	Ctrl+M
 	reminder text:		&Texto recordatorio	Ctrl+R
 	insert symbol:		I&nsertar símbolo
+
+	graph:			&Gráfico
+	pie:				&Pie	1
+	bar:				&Bar	2
+	stack:				&Barras apiladas	3
+	scatter:			S&catter Plot	4
+	scatter pie:		Ambulantes-Pie	5
 	
 	window:			&Ventana
 	new window:			&Nueva ventana
@@ -160,6 +167,14 @@ help:
 	italic:				Pone el texto seleccionado en cursiva
 	symbols:			Dibuja el texto seleccionado con símbolos
 	reminder text:		Muestra el texto recordatorio de la palabra clave seleccionada
+
+	graph:
+	pie:				A pie gráfico, el radio de la rodaja indica el número de tarjetas 
+Un gráfico de barras, la altura de la barra indica el número de tarjetas
+	bar:				Un gráfico de barras con las barras apiladas
+	stack:				Un gráfico de barras con las barras apiladas
+	scatter:			Un gráfico de dispersión, el tamaño indica el número de tarjetas
+	scatter pie:		Un gráfico de dispersión donde cada tema es un pequeño pastel gráfico
 	
 	window:
 	new window:			Crea otra ventana para editar el mismo set
@@ -326,6 +341,12 @@ tooltip:
 	italic:				Cursiva
 	symbols:			Símbolos
 	reminder text:		Texto recordatorio
+
+	pie:				Pie Gráfico
+	bar:				Gráfico de barras
+	stack:				Gráfico de barras apiladas
+	scatter:			Scatter Plot
+	scatter pie:		Ambulantes-Pie parcela
 	
 	cards tab:			
 	set info tab:		Información del set
@@ -455,6 +476,9 @@ label:
 	sides:				lados
 	
 	# Packages window
+
+	keep package:			&No Cambio
+	don't install package:	&No instale
 	package name:				Paquete
 	package status:				Situación
 	package action:				Acción
@@ -715,6 +739,10 @@ error:
 		Removing them can not be undone.
 		
 		Do you want to continue?
+
+	install packages successful:	%s paquete se instaló con éxito.
+	remove packages successful:		%s paquete se ha eliminado.
+	change packages successful:		%s los paquetes se ha cambiado correctamente.
 	
 	cannot create file:		Can not create file '%s', continue installation?
 
