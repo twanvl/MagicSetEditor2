@@ -254,9 +254,9 @@ DownloadableInstaller::~DownloadableInstaller() {
 
 // ----------------------------------------------------------------------------- : Installable package
 
-InstallablePackage::InstallablePackage(const PackageVersionP& installed, const PackageDescriptionP& description)
-	: installed(installed)
-	, description(description)
+InstallablePackage::InstallablePackage(const PackageDescriptionP& description, const PackageVersionP& installed)
+	: description(description)
+	, installed(installed)
 	, status(PACKAGE_INSTALLED)
 	, action(PACKAGE_NOTHING)
 {}
@@ -586,5 +586,5 @@ InstallablePackageP mse_installable_package() {
 	mse_description->position_hint = -100;
 	mse_description->icon          = load_resource_image(_("installer_program"));
 	//mse_description->description   = _LABEL_("magic set editor package");
-	return new_intrusive2<InstallablePackage>(mse_version,mse_description);
+	return new_intrusive2<InstallablePackage>(mse_description, mse_version);
 }

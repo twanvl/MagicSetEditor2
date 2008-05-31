@@ -1001,12 +1001,6 @@
 					RelativePath=".\gui\new_window.hpp">
 				</File>
 				<File
-					RelativePath=".\gui\packages_window.cpp">
-				</File>
-				<File
-					RelativePath=".\gui\packages_window.hpp">
-				</File>
-				<File
 					RelativePath=".\gui\preferences_window.cpp">
 				</File>
 				<File
@@ -1025,17 +1019,33 @@
 					RelativePath=".\gui\thumbnail_thread.hpp">
 				</File>
 				<File
-					RelativePath=".\gui\update_checker.cpp">
-				</File>
-				<File
-					RelativePath=".\gui\update_checker.hpp">
-				</File>
-				<File
 					RelativePath=".\gui\welcome_window.cpp">
 				</File>
 				<File
 					RelativePath=".\gui\welcome_window.hpp">
 				</File>
+				<Filter
+					Name="package"
+					Filter="">
+					<File
+						RelativePath=".\gui\package_update_list.cpp">
+					</File>
+					<File
+						RelativePath=".\gui\package_update_list.hpp">
+					</File>
+					<File
+						RelativePath=".\gui\packages_window.cpp">
+					</File>
+					<File
+						RelativePath=".\gui\packages_window.hpp">
+					</File>
+					<File
+						RelativePath=".\gui\update_checker.cpp">
+					</File>
+					<File
+						RelativePath=".\gui\update_checker.hpp">
+					</File>
+				</Filter>
 			</Filter>
 			<Filter
 				Name="value"

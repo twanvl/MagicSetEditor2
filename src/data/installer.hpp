@@ -18,6 +18,13 @@ DECLARE_POINTER_TYPE(PackageDescription);
 DECLARE_POINTER_TYPE(DownloadableInstaller);
 DECLARE_POINTER_TYPE(InstallablePackage);
 
+// The installer system consists of several layers:
+//  - Installer              = an actual package available in memory, containing packages to be installed
+//  - DownloadableInstaller  = an installar (possibly) not yet available, i.e. just its URL
+//  - PackageDescription     = description of a package version
+//  - InstallablePackage     = the complete status of a package, both local and remote
+
+
 // ----------------------------------------------------------------------------- : Installer
 
 /// A package that contains other packages that can be installed
@@ -125,12 +132,13 @@ inline bool flag(int flags, int flag) { return (flags & flag) == flag; }
 /// A package that can be installed, or is already installed
 class InstallablePackage : public IntrusivePtrVirtualBase {
   public:
-	//InstallablePackage();
+	/// A new package
 	InstallablePackage(const PackageDescriptionP&, const DownloadableInstallerP&);
-	InstallablePackage(const PackageVersionP&, const PackageDescriptionP&);
+	/// An installed package
+	InstallablePackage(const PackageDescriptionP&, const PackageVersionP&);
 	
-	PackageVersionP        installed;   ///< The information of the installed package (if installed)
 	PackageDescriptionP    description; ///< The details of the package. Either from the installed package or from an installer
+	PackageVersionP        installed;   ///< The information of the installed package (if installed)
 	DownloadableInstallerP installer;   ///< The installer to install from (if updates are available)
 	PackageStatus          status;      ///< Status of installation
 	PackageAction          action;      ///< What to do with this package?

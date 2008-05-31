@@ -20,9 +20,13 @@ class PackageInfoPanel;
 /// A window that displays the installed packages and updates to them
 class PackagesWindow : public wxDialog {
   public:
+	/// Show the packages window, optionally downloading the package database from the website
 	PackagesWindow(Window* parent, bool download_package_list = true);
+	/// Show the packages window for an installer
+	PackagesWindow(Window* parent, const InstallerP& installer);
 	~PackagesWindow();
-		
+	
+	/// List of the packages shown in this window
 	InstallablePackages installable_packages;
 	
   private:
@@ -42,6 +46,8 @@ class PackagesWindow : public wxDialog {
 	void onUpdateUI(wxUpdateUIEvent&);
 	void onIdle(wxIdleEvent&);
 	
+	/// Check whether we have downloaded the list of installers
+	/** If the download is (partially) complete, update the installable_packages list */
 	bool checkInstallerList(bool refresh = true);
 };
 

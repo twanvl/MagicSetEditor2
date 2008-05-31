@@ -234,7 +234,7 @@ void PackageDirectory::installedPackages(vector<InstallablePackageP>& packages_o
 				PackageVersionP ver(new PackageVersion(
 					is_local ? PackageVersion::STATUS_LOCAL : PackageVersion::STATUS_GLOBAL));
 				ver->check_status(*pack);
-				packages_out.push_back(new_intrusive2<InstallablePackage>(ver, new_intrusive1<PackageDescription>(*pack)));
+				packages_out.push_back(new_intrusive2<InstallablePackage>(new_intrusive1<PackageDescription>(*pack), ver));
 			} catch (const Error&) {}
 			++it2;
 		} else if ((*it1)->name < *it2) {
@@ -246,7 +246,7 @@ void PackageDirectory::installedPackages(vector<InstallablePackageP>& packages_o
 			try {
 				PackagedP pack = ::packages.openAny(*it2, true);
 				(*it1)->check_status(*pack);
-				packages_out.push_back(new_intrusive2<InstallablePackage>(*it1, new_intrusive1<PackageDescription>(*pack)));
+				packages_out.push_back(new_intrusive2<InstallablePackage>(new_intrusive1<PackageDescription>(*pack), *it1));
 			} catch (const Error&) { db_changed = true; }
 			++it1, ++it2;
 		}
