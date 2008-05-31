@@ -382,26 +382,29 @@ void PieGraph::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 		Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 		dc.SetPen(fg);
 		// draw pies
-		double angle = 0;
+		double angle = M_PI/2;
 		int i = 0;
 		FOR_EACH_CONST(g, axis.groups) {
 			// draw pie
 			dc.SetBrush(g.color);
 			if (g.size > 0) {
-				double end_angle = angle + 2 * M_PI * (double)g.size / axis.total;
-				dc.DrawEllipticArc(pie_pos, i == current ? pie_size_large : pie_size, angle, end_angle);
+				double end_angle = angle - 2 * M_PI * (double)g.size / axis.total;
+				dc.DrawEllipticArc(pie_pos, i == current ? pie_size_large : pie_size, end_angle, angle);
 				angle = end_angle;
 			}
 			++i;
 		}
 		// draw spokes
 		if (axis.groups.size() > 1) {
-			angle = 0;
+			int i = 0;
+			double angle = M_PI/2;
 			FOR_EACH_CONST(g, axis.groups) {
-				if (g.size > 0) {
-					dc.DrawEllipticSpoke(pie_pos, pie_size, angle);
-					angle += 2 * M_PI * (double)g.size / axis.total;
+				if (true) {
+					RealSize size = i == current || (i - 1 + (int)axis.groups.size()) % (int)axis.groups.size() == current ? pie_size_large : pie_size;
+					dc.DrawEllipticSpoke(pie_pos, size, angle);
+					angle -= 2 * M_PI * (double)g.size / axis.total;
 				}
+				++i;
 			}
 		}
 	}
@@ -417,14 +420,14 @@ int PieGraph::findItem(const RealPoint& pos, const RealRect& rect) const {
 	if (delta.lengthSqr() > size*size) {
 		return -1; // outside circle
 	}
-	double pos_angle = atan2(-delta.y, delta.x); // in range [-pi..pi]
+	double pos_angle = atan2(-delta.y, delta.x) - M_PI/2; // in range [-pi..pi]
 	if (pos_angle < 0) pos_angle += 2 * M_PI;
 	// find angle
-	double angle = 0;
+	double angle = 2 * M_PI;
 	int i = 0;
 	FOR_EACH_CONST(g, axis.groups) {
-		angle += 2 * M_PI * (double)g.size / axis.total;
-		if (angle > pos_angle) return i;
+		angle -= 2 * M_PI * (double)g.size / axis.total;
+		if (angle < pos_angle) return i;
 		++i;
 	}
 	return -1; //should not happen
@@ -816,7 +819,7 @@ void GraphControl::setLayout(GraphType type, bool force) {
 		} case GRAPH_TYPE_PIE: {
 			intrusive_ptr<GraphContainer> combined(new GraphContainer());
 			combined->add(new_intrusive5<GraphWithMargins>(new_intrusive1<PieGraph>(0), 0,0,120,0));
-			combined->add(new_intrusive3<GraphLegend>(0, ALIGN_TOP_RIGHT, true));
+			combined->add(new_intrusive3<GraphLegend>(0, ALIGN_TOP_RIGHT, false));
 			graph = new_intrusive5<GraphWithMargins>(combined, 20,20,20,20);
 			break;
 		} case GRAPH_TYPE_STACK: {
