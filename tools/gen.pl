@@ -22,6 +22,10 @@ $cpp =~ s@<util/prec.hpp>@$&\n#include <$file.hpp>@g;
 
 # write files
 
+if (-e "../src/$file.hpp" or -e "../src/$file.cpp") {
+	die "The output files already exist!";
+}
+
 open F, "> ../src/$file.hpp";
 print F $hpp;
 close F;
