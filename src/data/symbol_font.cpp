@@ -176,7 +176,7 @@ IMPLEMENT_REFLECTION(SymbolInFont) {
 	REFLECT(regex);
 	REFLECT_IF_READING
 		if (regex)
-			code_regex.Compile(code);
+			code_regex.Compile(code, wxRE_ADVANCED);
 	REFLECT(draw_text);
 	REFLECT(text_font);
 	REFLECT(text_alignment);
