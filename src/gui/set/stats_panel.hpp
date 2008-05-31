@@ -16,6 +16,7 @@ class StatCategoryList;
 class StatDimensionList;
 class GraphControl;
 class FilteredCardList;
+class IconMenu;
 
 // ----------------------------------------------------------------------------- : StatsPanel
 
@@ -23,6 +24,7 @@ class FilteredCardList;
 class StatsPanel : public SetWindowPanel {
   public:
 	StatsPanel(Window* parent, int id);
+	~StatsPanel();
 	
 	// --------------------------------------------------- : UI
 	
@@ -31,6 +33,7 @@ class StatsPanel : public SetWindowPanel {
 	
 	virtual void initUI   (wxToolBar*, wxMenuBar*);
 	virtual void destroyUI(wxToolBar*, wxMenuBar*);
+	virtual void onUpdateUI(wxUpdateUIEvent&);
 	virtual void onCommand(int id);
 	
 	// --------------------------------------------------- : Selection
@@ -45,6 +48,7 @@ class StatsPanel : public SetWindowPanel {
 	StatDimensionList* dimensions[3];
 	GraphControl*     graph;
 	FilteredCardList* card_list;
+	IconMenu*         menuGraph;
 	
 	bool up_to_date; ///< Are the graph and card list up to date?
 	bool active;     ///< Is this panel selected?

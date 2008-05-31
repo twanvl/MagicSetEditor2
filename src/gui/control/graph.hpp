@@ -305,7 +305,7 @@ class GraphControl : public wxControl {
 	GraphControl(Window* parent, int id);
 	
 	/// Set the type of graph used, from a number of predefined choices
-	void setLayout(GraphType type);
+	void setLayout(GraphType type, bool force_refresh = false);
 	/// Update the data in the graph
 	void setData(const GraphDataPre& data);
 	/// Update the data in the graph
@@ -315,6 +315,11 @@ class GraphControl : public wxControl {
 	bool hasSelection(size_t axis) const;
 	/// Get the current item along the given axis
 	String getSelection(size_t axis) const;
+	
+	/// Get the current layout
+	GraphType getLayout() const;
+	/// Get the current dimensionality
+	size_t getDimensionality() const;
 	
   private:
 	/// Graph object

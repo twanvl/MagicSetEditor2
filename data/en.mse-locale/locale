@@ -61,6 +61,13 @@ menu:
 	reminder text:		&Reminder Text	Ctrl+R
 	insert symbol:		I&nsert Symbol
 	
+	graph:			&Graph
+	pie:				&Pie	1
+	bar:				&Bar	2
+	stack:				&Stacked Bars	3
+	scatter:			S&catter Plot	4
+	scatter pie:		Sc&atter-Pie	5
+	
 	window:			&Window
 	new window:			&New Window
 	cards tab:			&Cards	F5
@@ -160,6 +167,13 @@ help:
 	italic:				Makes the selected text italic
 	symbols:			Draws the selected text with symbols
 	reminder text:		Show reminder text for the selected keyword
+	
+	graph:
+	pie:				A pie graph, the radius of the slice indicates the number of cards
+	bar:				A bar graph, the height of the bar indicates the number of cards
+	stack:				A bar graph with stacked bars
+	scatter:			A scatter plot, the size indicates the number of cards
+	scatter pie:		A scatter plot where each item is a small pie graph
 	
 	window:
 	new window:			Creates another window to edit the same set
@@ -326,6 +340,12 @@ tooltip:
 	italic:				Italic
 	symbols:			Symbols
 	reminder text:		Reminder Text
+	
+	pie:				Pie Graph
+	bar:				Bar Graph
+	stack:				Stacked Bar Graph
+	scatter:			Scatter Plot
+	scatter pie:		Scatter-Pie plot
 	
 	cards tab:			
 	set info tab:		Set Information

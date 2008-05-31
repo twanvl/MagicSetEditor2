@@ -11,6 +11,8 @@
 #include <gui/control/graph.hpp>
 #include <gui/control/gallery_list.hpp>
 #include <gui/control/filtered_card_list.hpp>
+#include <gui/icon_menu.hpp>
+#include <gui/util.hpp>
 #include <data/game.hpp>
 #include <data/statistics.hpp>
 #include <util/window_id.hpp>
@@ -26,7 +28,7 @@ typedef pair<StatsDimensionP,String> pair_StatsDimensionP_String;
 DECLARE_TYPEOF_COLLECTION(pair_StatsDimensionP_String);
 
 // Pick the style here:
-#define USE_DIMENSION_LISTS 0
+#define USE_DIMENSION_LISTS 1
 
 // ----------------------------------------------------------------------------- : StatCategoryList
 
@@ -218,6 +220,18 @@ StatsPanel::StatsPanel(Window* parent, int id)
 	s->Add(splitter,   1, wxEXPAND);
 	s->SetSizeHints(this);
 	SetSizer(s);
+	
+	// init menu
+	menuGraph = new IconMenu();
+		menuGraph->Append(ID_GRAPH_PIE,         _("graph_pie"),         _MENU_("pie"),         _HELP_("pie"),         wxITEM_CHECK);
+		menuGraph->Append(ID_GRAPH_BAR,         _("graph_bar"),         _MENU_("bar"),         _HELP_("bar"),         wxITEM_CHECK);
+		menuGraph->Append(ID_GRAPH_STACK,       _("graph_stack"),       _MENU_("stack"),       _HELP_("stack"),       wxITEM_CHECK);
+		menuGraph->Append(ID_GRAPH_SCATTER,     _("graph_scatter"),     _MENU_("scatter"),     _HELP_("scatter"),     wxITEM_CHECK);
+		menuGraph->Append(ID_GRAPH_SCATTER_PIE, _("graph_scatter_pie"), _MENU_("scatter pie"), _HELP_("scatter pie"), wxITEM_CHECK);
+}
+
+StatsPanel::~StatsPanel() {
+	delete menuGraph;
 }
 
 void StatsPanel::onChangeSet() {
@@ -234,18 +248,56 @@ void StatsPanel::onAction(const Action&, bool undone) {
 	onChange();
 }
 
-void StatsPanel::initUI   (wxToolBar*, wxMenuBar*) {
+void StatsPanel::initUI   (wxToolBar* tb, wxMenuBar* mb) {
 	active = true;
 	if (!up_to_date) showCategory();
+	// Toolbar
+	#if USE_DIMENSION_LISTS
+		tb->AddTool(ID_GRAPH_PIE,         _(""), load_resource_tool_image(_("graph_pie")),         wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("pie"),         _HELP_("pie"));
+		tb->AddTool(ID_GRAPH_BAR,         _(""), load_resource_tool_image(_("graph_bar")),         wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("bar"),         _HELP_("bar"));
+		tb->AddTool(ID_GRAPH_STACK,       _(""), load_resource_tool_image(_("graph_stack")),       wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("stack"),       _HELP_("stack"));
+		tb->AddTool(ID_GRAPH_SCATTER,     _(""), load_resource_tool_image(_("graph_scatter")),     wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("scatter"),     _HELP_("scatter"));
+		tb->AddTool(ID_GRAPH_SCATTER_PIE, _(""), load_resource_tool_image(_("graph_scatter_pie")), wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("scatter pie"), _HELP_("scatter pie"));
+		tb->Realize();
+		// Menu
+		mb->Insert(2, menuGraph, _MENU_("graph"));
+	#endif
 }
-void StatsPanel::destroyUI(wxToolBar*, wxMenuBar*) {
+void StatsPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	active = false;
+	#if USE_DIMENSION_LISTS
+		// Toolbar
+		tb->DeleteTool(ID_GRAPH_PIE);
+		tb->DeleteTool(ID_GRAPH_BAR);
+		tb->DeleteTool(ID_GRAPH_STACK);
+		tb->DeleteTool(ID_GRAPH_SCATTER);
+		tb->DeleteTool(ID_GRAPH_SCATTER_PIE);
+		// Menus
+		mb->Remove(2);
+	#endif
+}
+
+void StatsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
+	switch (ev.GetId()) {
+		case ID_GRAPH_PIE: case ID_GRAPH_BAR: case ID_GRAPH_STACK: case ID_GRAPH_SCATTER: case ID_GRAPH_SCATTER_PIE: {
+			GraphType type = (GraphType)(ev.GetId() - ID_GRAPH_PIE);
+			ev.Check(graph->getLayout() == type);
+			ev.Enable(graph->getDimensionality() == dimensionality(type));
+			break;
+		}
+	}
 }
 
 void StatsPanel::onCommand(int id) {
 	switch (id) {
 		case ID_FIELD_LIST: {
 			onChange();
+			break;
+		}
+		case ID_GRAPH_PIE: case ID_GRAPH_BAR: case ID_GRAPH_STACK: case ID_GRAPH_SCATTER: case ID_GRAPH_SCATTER_PIE: {
+			GraphType type = (GraphType)(id - ID_GRAPH_PIE);
+			graph->setLayout(type);
+			graph->Refresh(false);
 			break;
 		}
 	}
@@ -330,9 +382,14 @@ void StatsPanel::showCategory() {
 			if (dim->split_list) d.splitList(dim_id);
 			++dim_id;
 		}
-		graph->setLayout(dims.size() == 1 ? GRAPH_TYPE_BAR
-						:dims.size() == 2 ? GRAPH_TYPE_STACK
-						:                   GRAPH_TYPE_SCATTER_PIE);
+		GraphType layout = graph->getLayout();
+		if (dimensionality(layout) != dims.size()) {
+			// we must switch to another layout
+			layout = dims.size() == 1 ? GRAPH_TYPE_BAR
+			       : dims.size() == 2 ? GRAPH_TYPE_STACK
+			       :                    GRAPH_TYPE_SCATTER_PIE;
+		}
+		graph->setLayout(layout, true);
 		graph->setData(d);
 		filterCards();
 	#else
@@ -376,7 +433,7 @@ void StatsPanel::showCategory() {
 				++dim_id;
 			}
 			graph->setLayout(cat.type);
-			graph->setData(d);
+			graph->setData(d, true);
 			filterCards();
 		}
 	#endif

@@ -802,8 +802,8 @@ GraphControl::GraphControl(Window* parent, int id)
 	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
 {}
 
-void GraphControl::setLayout(GraphType type) {
-	if (graph && type == layout) return;
+void GraphControl::setLayout(GraphType type, bool force) {
+	if (!force && graph && type == layout) return;
 	GraphDataP data = graph ? graph->getData() : GraphDataP();
 	switch (type) {
 		case GRAPH_TYPE_BAR: {
@@ -815,7 +815,8 @@ void GraphControl::setLayout(GraphType type) {
 			break;
 		} case GRAPH_TYPE_PIE: {
 			intrusive_ptr<GraphContainer> combined(new GraphContainer());
-			combined->add(new_intrusive1<PieGraph>(0));
+			combined->add(new_intrusive5<GraphWithMargins>(new_intrusive1<PieGraph>(0), 0,0,120,0));
+			combined->add(new_intrusive3<GraphLegend>(0, ALIGN_TOP_RIGHT, true));
 			graph = new_intrusive5<GraphWithMargins>(combined, 20,20,20,20);
 			break;
 		} case GRAPH_TYPE_STACK: {
@@ -847,6 +848,10 @@ void GraphControl::setLayout(GraphType type) {
 	layout = type;
 }
 
+GraphType GraphControl::getLayout() const {
+	return layout;
+}
+
 void GraphControl::setData(const GraphDataPre& data) {
 	setData(new_intrusive1<GraphData>(data));
 }
@@ -856,6 +861,11 @@ void GraphControl::setData(const GraphDataP& data) {
 		current_item.clear(); // TODO : preserve selection
 	}
 	Refresh(false);
+}
+
+size_t GraphControl::getDimensionality() const {
+	if (graph) return graph->getData()->axes.size();
+	else       return 0;
 }
 
 void GraphControl::onPaint(wxPaintEvent&) {

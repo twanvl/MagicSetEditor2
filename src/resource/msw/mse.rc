@@ -54,6 +54,12 @@ tool/card_rotate_270	IMAGE	"tool/card_rotate_270.png"
 tool/keyword_add		IMAGE	"tool/keyword_add.png"
 tool/keyword_del		IMAGE	"tool/keyword_del.png"
 
+tool/graph_pie			IMAGE	"tool/graph_pie.png"
+tool/graph_bar			IMAGE	"tool/graph_bar.png"
+tool/graph_stack		IMAGE	"tool/graph_stack.png"
+tool/graph_scatter		IMAGE	"tool/graph_scatter.png"
+tool/graph_scatter_pie	IMAGE	"tool/graph_scatter_pie.png"
+
 tool/window_cards		IMAGE	"tool/window_cards.png"
 tool/window_set_info	IMAGE	"tool/window_set_info.png"
 tool/window_style		IMAGE	"tool/window_style.png"
