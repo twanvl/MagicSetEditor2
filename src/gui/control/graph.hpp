@@ -58,6 +58,7 @@ class GraphAxis : public IntrusivePtrBase<GraphAxis> {
 		, numeric(numeric)
 		, max(0)
 		, total(0)
+		, mean(0)
 		, colors(colors)
 		, order(order)
 	{}
@@ -68,6 +69,7 @@ class GraphAxis : public IntrusivePtrBase<GraphAxis> {
 	bool               numeric;		///< Numeric axis?
 	UInt               max;			///< Maximum size of the groups
 	UInt               total;		///< Sum of the size of all groups
+	double             mean;		///< Mean value, only for numeric axes
 	const map<String,Color>* colors;	///< Colors for each choice (optional)
 	const vector<String>*    order;		///< Order of the items (optional)
 };
@@ -229,6 +231,22 @@ class GraphLegend : public Graph1D {
 	mutable RealSize size, item_size;
 	Alignment alignment;
 	bool reverse;
+};
+
+/// Simple statistics like the mean
+class GraphStats : public Graph1D {
+  public:
+	inline GraphStats(size_t axis, Alignment alignment)
+		: Graph1D(axis), alignment(alignment)
+	{}
+	virtual RealSize determineSize(RotatedDC& dc) const;
+	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
+	virtual void setData(const GraphDataP& d);
+  private:
+	mutable RealSize size, item_size;
+	mutable double label_width;
+	Alignment alignment;
+	vector<pair<String,String> > values;
 };
 
 //class GraphTable {

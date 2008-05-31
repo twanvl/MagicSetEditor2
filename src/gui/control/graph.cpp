@@ -20,6 +20,7 @@ DECLARE_TYPEOF_COLLECTION(int);
 DECLARE_TYPEOF_COLLECTION(vector<int>);
 DECLARE_TYPEOF_COLLECTION(String);
 DECLARE_TYPEOF_COLLECTION(UInt);
+DECLARE_TYPEOF_COLLECTION(pair<String COMMA String>);
 DECLARE_TYPEOF(map<String COMMA UInt>);
 
 template <typename T> inline T sgn(T v) { return v < 0 ? -1 : 1; }
@@ -72,6 +73,7 @@ GraphData::GraphData(const GraphDataPre& d)
 		if (a->numeric) {
 			// TODO: start at something other than 0?
 			// TODO: support fractions?
+			a->mean = 0;
 			size_t left = counts.size();
 			int i = 0;
 			while (!counts.empty() && i < 100) {
@@ -84,10 +86,12 @@ GraphData::GraphData(const GraphDataPre& d)
 					a->groups.push_back(GraphGroup(is, it->second));
 					a->max = max(a->max, it->second);
 					a->total += it->second;
+					a->mean  += i * it->second;
 					counts.erase(is);
 					left--;
 				}
 			}
+			a->mean /= a->total;
 			// drop empty tail
 			while (a->groups.size() > 1 && a->groups.back().size == 0) {
 				a->groups.pop_back();
@@ -555,6 +559,58 @@ void ScatterPieGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer 
 }
 
 
+// ----------------------------------------------------------------------------- : Graph Stats table
+
+void GraphStats::setData(const GraphDataP& d) {
+	Graph1D::setData(d);
+	// update values
+	GraphAxis& axis = axis_data();
+	values.clear();
+	if (!axis.numeric) return;
+	values.push_back(make_pair(_("max"),  axis.groups.back().name));
+	values.push_back(make_pair(_("mean"), String::Format(_("%.2f"), axis.mean)));
+}
+
+RealSize GraphStats::determineSize(RotatedDC& dc) const {
+	if (values.empty()) return RealSize(-1,-1);
+	dc.SetFont(*wxNORMAL_FONT);
+	item_size = RealSize(0,0);
+	label_width = 0;
+	FOR_EACH_CONST(v, values) {
+		RealSize this_item_size = dc.GetTextExtent(v.first);
+		double this_label_width = this_item_size.width + 3;
+		this_item_size = dc.GetTextExtent(v.second);
+		this_item_size = RealSize(this_item_size.width + 6, this_item_size.height + 5);
+		item_size = piecewise_max(item_size, this_item_size);
+		label_width = max(label_width, this_label_width);
+	}
+	item_size.width += label_width;
+	size = RealSize(item_size.width + 2, values.size() * item_size.height + 3); // margins
+	return size;
+}
+
+void GraphStats::draw(RotatedDC& dc, int current, DrawLayer layer) const {
+	if (values.empty()) return;
+	if (!size.width) determineSize(dc);
+	if (layer == LAYER_VALUES) {
+		RealRect rect = dc.getInternalRect();
+		RealPoint pos = align_in_rect(alignment, size, rect);
+		Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+		Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+		// draw border
+		dc.SetBrush(bg);
+		dc.DrawRectangle(RealRect(pos,size));
+		// draw items
+		dc.SetFont(*wxNORMAL_FONT);
+		dc.SetPen(fg);
+		double y = pos.y + 1;
+		FOR_EACH_CONST(v, values) {
+			dc.DrawText(v.first,  RealPoint(pos.x + 3,               y + 2));
+			dc.DrawText(v.second, RealPoint(pos.x + 3 + label_width, y + 2));
+			y += item_size.height;
+		}
+	}
+}
 
 // ----------------------------------------------------------------------------- : Graph Legend
 
@@ -814,6 +870,7 @@ void GraphControl::setLayout(GraphType type, bool force) {
 			combined->add(new_intrusive2<GraphValueAxis>(0, true));
 			combined->add(new_intrusive2<GraphLabelAxis>(0, HORIZONTAL));
 			combined->add(new_intrusive1<BarGraph>(0));
+			combined->add(new_intrusive2<GraphStats>(0, ALIGN_TOP_RIGHT));
 			graph = new_intrusive5<GraphWithMargins>(combined, 23,8,7,20);
 			break;
 		} case GRAPH_TYPE_PIE: {
