@@ -29,7 +29,7 @@ struct PackageChoiceValueViewer::ComparePackagePosHint {
 
 void PackageChoiceValueViewer::initItems() {
 	vector<PackagedP> choices;
-	packages.findMatching(field().match, choices);
+	package_manager.findMatching(field().match, choices);
 	sort(choices.begin(), choices.end(), ComparePackagePosHint());
 	FOR_EACH(p, choices) {
 		Item i;

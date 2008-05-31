@@ -151,7 +151,7 @@ void Installer::addPackage(const String& package) {
 	if (fn.GetExt() == _("mse-installer")) {
 		prefered_filename = package;
 	} else {
-		PackagedP p = ::packages.openAny(package);
+		PackagedP p = package_manager.openAny(package);
 		addPackage(*p);
 	}
 }

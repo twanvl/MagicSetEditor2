@@ -57,7 +57,7 @@ String PackageChoiceValue::toString() const {
 
 PackagedP PackageChoiceValue::getPackage() const {
 	if (package_name.empty()) return nullptr;
-	else return packages.openAny(package_name, true);
+	else return package_manager.openAny(package_name, true);
 }
 
 bool PackageChoiceValue::update(Context& ctx) {

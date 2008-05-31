@@ -75,7 +75,7 @@ bool update_available()  {
 		FOR_EACH_CONST(p, update_version_data->packages) {
 			if (!settings.check_updates_all && p->package != mse_package) continue;
 			Version v;
-			if (packages.installedVersion(p->package, v) && v < p->version) {
+			if (package_manager.installedVersion(p->package, v) && v < p->version) {
 				return true;
 			}
 		}

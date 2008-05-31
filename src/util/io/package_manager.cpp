@@ -24,7 +24,7 @@ DECLARE_TYPEOF_COLLECTION(PackageVersion::FileInfo);
 
 // ----------------------------------------------------------------------------- : PackageManager : in memory
 
-PackageManager packages;
+PackageManager package_manager;
 
 
 void PackageManager::init() {
@@ -148,7 +148,7 @@ bool PackageManager::installedVersion(const String& package_name, Version& versi
 	}
 }
 
-void PackageManager::installedPackages(vector<InstallablePackageP>& packages) {
+void PackageManager::findAllInstalledPackages(vector<InstallablePackageP>& packages) {
 	// from directories
 	vector<InstallablePackageP> more_packages;
 	global.installedPackages(packages);
@@ -229,7 +229,7 @@ void PackageDirectory::installedPackages(vector<InstallablePackageP>& packages_o
 		if (it1 == packages.end() || (*it1)->name > *it2) {
 			// add new package to db
 			try {
-				PackagedP pack = ::packages.openAny(*it2, true);
+				PackagedP pack = package_manager.openAny(*it2, true);
 				db_changed = true;
 				PackageVersionP ver(new PackageVersion(
 					is_local ? PackageVersion::STATUS_LOCAL : PackageVersion::STATUS_GLOBAL));
@@ -244,7 +244,7 @@ void PackageDirectory::installedPackages(vector<InstallablePackageP>& packages_o
 		} else {
 			// ok, a package already in the db
 			try {
-				PackagedP pack = ::packages.openAny(*it2, true);
+				PackagedP pack = package_manager.openAny(*it2, true);
 				(*it1)->check_status(*pack);
 				packages_out.push_back(new_intrusive2<InstallablePackage>(new_intrusive1<PackageDescription>(*pack), *it1));
 			} catch (const Error&) { db_changed = true; }

@@ -30,7 +30,7 @@ Game::Game()
 {}
 
 GameP Game::byName(const String& name) {
-	return packages.open<Game>(name + _(".mse-game"));
+	return package_manager.open<Game>(name + _(".mse-game"));
 }
 
 bool Game::isMagic() const {

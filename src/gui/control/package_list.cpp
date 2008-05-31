@@ -62,7 +62,7 @@ void PackageList::showData(const String& pattern) {
 	packages.clear();
 	// find matching packages
 	vector<PackagedP> matching;
-	::packages.findMatching(pattern, matching);
+	package_manager.findMatching(pattern, matching);
 	FOR_EACH(p, matching) {
 		// open image
 		InputStreamP stream = p->openIconFile();

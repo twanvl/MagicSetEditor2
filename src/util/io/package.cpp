@@ -179,7 +179,7 @@ InputStreamP Package::openIn(const String& file) {
 	if (!file.empty() && file.GetChar(0) == _('/')) {
 		// absolute path, open file from another package
 		Packaged* p = dynamic_cast<Packaged*>(this);
-		return packages.openFileFromPackage(p, file);
+		return package_manager.openFileFromPackage(p, file);
 	}
 	FileInfos::iterator it = files.find(normalize_internal_filename(file));
 	if (it == files.end()) {
@@ -547,7 +547,7 @@ void Packaged::validate(Version) {
 	}
 	// check dependencies
 	FOR_EACH(dep, dependencies) {
-		packages.checkDependency(*dep, true);
+		package_manager.checkDependency(*dep, true);
 	}
 }
 

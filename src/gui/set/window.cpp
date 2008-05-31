@@ -564,8 +564,8 @@ void SetWindow::onFileReload(wxCommandEvent&) {
 		vector<CardP>::const_iterator card_it = find(set->cards.begin(), set->cards.end(), current_panel->selectedCard());
 		if (card_it != set->cards.end()) card_pos = card_it - set->cards.begin();
 	}
-	packages.reset(); // unload all packages
-	settings.read();    // reload settings
+	package_manager.reset(); // unload all packages
+	settings.read();         // reload settings
 	setSet(import_set(filename));
 	// reselect card
 	if (card_pos < set->cards.size()) {

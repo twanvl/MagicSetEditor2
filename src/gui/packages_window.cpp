@@ -182,7 +182,7 @@ void PackagesWindow::init(Window* parent, bool show_only_installable) {
 	
 	// get packages
 	wxBusyCursor busy;
-	packages.installedPackages(installable_packages);
+	package_manager.findAllInstalledPackages(installable_packages);
 	FOR_EACH(p, installable_packages) p->determineStatus();
 	checkInstallerList(false);
 	
@@ -254,12 +254,12 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 			wxPD_AUTO_HIDE | wxPD_APP_MODAL | wxPD_CAN_ABORT | wxPD_SMOOTH
 		);
 	// Clear package list
-	packages.reset();
+	package_manager.reset();
 	// Download installers
-	int package_pos = 0, progress = 0;
+	int package_pos = 0, step = 0;
 	FOR_EACH(ip, installable_packages) {
-		++package_pos; ++progress;
-		if (!progress.Update(progress, String::Format(_ERROR_("downloading updates"), package_pos, total))) {
+		++package_pos; ++step;
+		if (!progress.Update(step, String::Format(_ERROR_("downloading updates"), package_pos, total))) {
 			return; // aborted
 		}
 		if ((ip->action & PACKAGE_INSTALL) && ip->installer && !ip->installer->installer) {
@@ -281,11 +281,11 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 	// Install stuff
 	package_pos = 0 ;
 	FOR_EACH(ip, installable_packages) {
-		++package_pos; ++progress;
-		if (!progress.Update(progress, String::Format(_ERROR_("installing updates"), package_pos, total))) {
+		++package_pos; ++step;
+		if (!progress.Update(step, String::Format(_ERROR_("installing updates"), package_pos, total))) {
 			// don't allow abort.
 		}
-		packages.install(*ip);
+		package_manager.install(*ip);
 	}
 	// Done
 	// Continue event propagation into the dialog window so that it closes.

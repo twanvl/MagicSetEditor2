@@ -42,7 +42,7 @@ String SymbolFont::typeNameStatic() { return _("symbol-font"); }
 String SymbolFont::typeName() const { return _("symbol-font"); }
 
 SymbolFontP SymbolFont::byName(const String& name) {
-	return packages.open<SymbolFont>(
+	return package_manager.open<SymbolFont>(
 		name.size() > 16 && is_substr(name, name.size() - 16, _(".mse-symbol-font"))
 		? name : name + _(".mse-symbol-font"));
 }

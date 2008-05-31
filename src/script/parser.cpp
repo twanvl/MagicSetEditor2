@@ -194,7 +194,7 @@ void TokenIterator::readToken() {
 		// read the entire file, and start at the beginning of it
 		pos = 0;
 		filename = include_file;
-		InputStreamP is = packages.openFileFromPackage(package, include_file);
+		InputStreamP is = package_manager.openFileFromPackage(package, include_file);
 		input = read_utf8_line(*is, true, true);
 	} else if (isAlpha(c) || c == _('_')) {
 		// name

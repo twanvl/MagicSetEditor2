@@ -79,7 +79,7 @@ int MSE::OnRun() {
 		wxFileSystem::AddHandler(new wxInternetFSHandler); // needed for update checker
 		init_script_variables();
 		init_file_formats();
-		packages.init();
+		package_manager.init();
 		settings.read();
 		the_locale = Locale::byName(settings.locale);
 		check_updates();
@@ -212,7 +212,7 @@ int MSE::OnRun() {
 int MSE::OnExit() {
 	thumbnail_thread.abortAll();
 	settings.write();
-	packages.destroy();
+	package_manager.destroy();
 	return 0;
 }
 

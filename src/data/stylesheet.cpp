@@ -33,9 +33,9 @@ StyleSheetP StyleSheet::byGameAndName(const Game& game, const String& name) {
 	try {
 		map<String, String>::const_iterator it = stylesheet_alternatives.find(full_name);
 		if (it != stylesheet_alternatives.end()) {
-			return packages.open<StyleSheet>(it->second);
+			return package_manager.open<StyleSheet>(it->second);
 		} else {
-			return packages.open<StyleSheet>(full_name);
+			return package_manager.open<StyleSheet>(full_name);
 		}
 	} catch (PackageNotFoundError& e) {
 		if (stylesheet_for_reading()) {

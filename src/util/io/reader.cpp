@@ -29,7 +29,7 @@ Reader::Reader(Packaged* pkg, const String& filename)
 	: indent(0), expected_indent(0), state(OUTSIDE)
 	, ignore_invalid(false)
 	, filename(filename), package(pkg), line_number(0), previous_line_number(0)
-	, input(packages.openFileFromPackage(package, filename))
+	, input(package_manager.openFileFromPackage(package, filename))
 {
 	moveNext();
 	handleAppVersion();

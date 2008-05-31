@@ -139,7 +139,7 @@ GlobalPreferencesPage::GlobalPreferencesPage(Window* parent)
 	language = new wxComboBox(this, wxID_ANY, _(""), wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
 	// set values
 	vector<PackagedP> locales;
-	::packages.findMatching(_("*.mse-locale"), locales);
+	package_manager.findMatching(_("*.mse-locale"), locales);
 	sort(locales.begin(), locales.end(), compare_package_name);
 	int n = 0;
 	FOR_EACH(package, locales) {

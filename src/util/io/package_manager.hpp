@@ -149,7 +149,7 @@ class PackageManager {
 	bool installedVersion(const String& pkg, Version& version_out);
 	
 	/// Get all installed packages
-	void installedPackages(vector<InstallablePackageP>& packages);
+	void findAllInstalledPackages(vector<InstallablePackageP>& packages);
 	
 	/// Install/uninstall a package
 	void install(const InstallablePackage& package);
@@ -162,7 +162,7 @@ class PackageManager {
 };
 
 /// The global PackageManager instance
-extern PackageManager packages;
+extern PackageManager package_manager;
 
 // ----------------------------------------------------------------------------- : PackageVersion
 

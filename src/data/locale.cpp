@@ -27,7 +27,7 @@ LocaleP the_locale;
 String Locale::typeName() const { return _("locale"); }
 
 LocaleP Locale::byName(const String& name) {
-	return packages.open<Locale>(name + _(".mse-locale"));
+	return package_manager.open<Locale>(name + _(".mse-locale"));
 }
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(Locale) {
