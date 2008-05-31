@@ -264,9 +264,23 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 	// count number of packages to change
 	int to_change   = 0;
 	int to_download = 0;
+	int to_remove   = 0;
+	int with_modifications = 0;
 	FOR_EACH(ip, installable_packages) {
 		if (!ip->has(PACKAGE_NOTHING)) ++to_change;
 		if ((ip->action & PACKAGE_INSTALL) && ip->installer && !ip->installer->installer) ++to_download;
+		if (ip->action & PACKAGE_REMOVE) {
+			to_remove++;
+			if (ip->status & PACKAGE_MODIFIED) with_modifications++;
+		}
+	}
+	// Warn about removing
+	if (to_remove) {
+		int result = wxMessageBox(
+			with_modifications == 0 ? _ERROR_1_("remove packages",           String()<<to_remove)
+			                        : _ERROR_2_("remove packages modified",  String()<<to_remove,  String()<<with_modifications),
+			_TITLE_("packages window"), wxICON_EXCLAMATION | wxYES_NO);
+		if (result == wxNO) return;
 	}
 	// progress dialog
 	wxProgressDialog progress(
