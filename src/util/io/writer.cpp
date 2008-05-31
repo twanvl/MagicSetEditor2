@@ -76,9 +76,9 @@ void Writer::handle(const String& value) {
 			// write the line
 			writeIndentation();
 			writeUTF8(stream, value.substr(start, end - start));
-			stream.PutChar(_('\n'));
 			// Skip \r and \n
 			if (end == String::npos) break;
+			stream.PutChar(_('\n'));
 			start = end + 1;
 			if (start < size) {
 				Char c1 = value.GetChar(start - 1);
