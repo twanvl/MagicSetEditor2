@@ -422,9 +422,11 @@ String make_non_capturing(const String& re) {
 	String ret;
 	bool escape = false, bracket = false, capture = false;
 	FOR_EACH_CONST(c, re) {
-		if (capture && c != _('?')) {
-			// change this capture into a non-capturing "(" by appending "?:"
-			ret += _("?:");
+		if (capture) {
+			if (c != _('?')) {
+				// change this capture into a non-capturing "(" by appending "?:"
+				ret += _("?:");
+			}
 			capture = false;
 		}
 		if (escape) { // second char of escape sequence

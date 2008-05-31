@@ -214,7 +214,7 @@ void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
 		}
 	}
 	regex += _("(") + regex_escape(text) + _(")");
-	regex = _("\\y") + regex + _("(?=$|[^a-zA-Z0-9])"); // only match whole words
+	regex = _("\\y") + regex + _("(?=$|[^a-zA-Z0-9\\(])"); // only match whole words
 	if (match_re.Compile(regex, wxRE_ADVANCED)) {
 		// not valid if it matches "", that would make MSE hang
 		valid = !match_re.Matches(_(""));
