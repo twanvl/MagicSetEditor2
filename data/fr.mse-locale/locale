@@ -1,7 +1,7 @@
 ﻿mse version: 0.3.6
 installer group: translations/Français
 full name: Français
-version: 2008-04-01
+version: 2008-05-31
 icon: fr.png
 
 ############################################################## Menu items
@@ -60,6 +60,13 @@ menu:
 	symbols:			&Symboles	Ctrl+M
 	reminder text:		&Texte de rappel	Ctrl+R
 	insert symbol:		I&nserer Symbole
+	
+	graph:			&Graphique
+	pie:				&Pie	1
+	bar:				&Bar	2
+	stack:				&Stacked Bars	3
+	scatter:			N&uage de points	4
+	scatter pie:		Sc&atter-Pie	5
 	
 	window:			&Fenetre
 	new window:			&Nouvelle fenetre
@@ -160,6 +167,13 @@ help:
 	italic:				Makes the selected text italic
 	symbols:			Draws the selected text with symbols
 	reminder text:		Show reminder text for the selected keyword
+	
+	graph:
+	pie:				Un graphique en secteurs, le rayon de la tranche indique le nombre de cartes
+	bar:				Un graphique à barres, la hauteur de la barre indique le nombre de cartes
+	stack:				Un graphique à barres empilées avec des barres
+	scatter:			Un nuage de points, la taille indique le nombre de cartes
+	scatter pie:		Un nuage de points où chaque point est un petit graphique en secteurs
 	
 	window:
 	new window:			Creates another window to edit the same set
@@ -326,6 +340,12 @@ tooltip:
 	italic:				Italic
 	symbols:			Symbols
 	reminder text:		Reminder Text
+	
+	pie:				Pie Graphique
+	bar:				Diagramme à barres
+	stack:				Graphique à barres empilées
+	scatter:			Scatter Plot
+	scatter pie:		Scatter Plot-Pie
 	
 	cards tab:			
 	set info tab:		Set Information
@@ -526,6 +546,8 @@ button:
 	close:				&Fermer
 	
 	# Packages window
+	keep package:			&Ne pas modifier
+	don't install package:	&Ne pas installer
 	install package:	&Installer
 	upgrade package:	&Upgrader
 	remove package:		&Effacer
@@ -717,6 +739,9 @@ error:
 		Removing them can not be undone.
 		
 		Do you want to continue?
+	install packages successful:	%s paquets ont été installés avec succès.
+	remove packages successful:		%s paquets ont été supprimés avec succès.
+	change packages successful:		%s paquets ont été changé avec succès.
 	
 	cannot create file:		Can not create file '%s', continue installation?
 
