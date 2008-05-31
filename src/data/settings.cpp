@@ -236,7 +236,11 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(Settings) {
 	REFLECT(symbol_grid_snap);
 	REFLECT(default_game);
 	REFLECT(apprentice_location);
-	REFLECT_IGNORE(306,"updates url");
+	#if USE_OLD_STYLE_UPDATE_CHECKER
+		REFLECT(updates_url);
+	#else
+		REFLECT_IGNORE(306,"updates url");
+	#endif
 	REFLECT(package_versions_url);
 	REFLECT(installer_list_url);
 	REFLECT(check_updates);
