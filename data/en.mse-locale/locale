@@ -169,7 +169,7 @@ help:
 	reminder text:		Show reminder text for the selected keyword
 	
 	graph:
-	pie:				A pie graph, the radius of the slice indicates the number of cards
+	pie:				A pie graph, the size of the slice indicates the number of cards
 	bar:				A bar graph, the height of the bar indicates the number of cards
 	stack:				A bar graph with stacked bars
 	scatter:			A scatter plot, the size indicates the number of cards

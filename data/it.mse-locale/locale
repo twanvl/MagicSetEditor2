@@ -61,6 +61,14 @@ menu:
 	reminder text:		&Promemoria	Ctrl+R
 	insert symbol:		I&nserisci Simbolo
 	
+	graph:			&Grafico
+	pie:				&Torta	1
+	bar:				&Barre	2
+	stack:				&Stacked Barre	3
+	scatter:			&Dispersione	4
+	scatter pie:		S&catter-Pie plot	5
+	# TODO: Translate ^^^^^
+	
 	window:			&Finestre
 	new window:			&Nuova Finestra
 	cards tab:			&Carte	F5
@@ -94,14 +102,6 @@ menu:
 	basic shapes:		&Forme Base	F8
 	symmetry:			S&immetria	F9
 	paint:				Disegn&a	F9
-
-	# Updates window
-	apply changes:		Applica modifiche
-	cancel changes:		Cancella modifiche
-	install package:	Installa pacchetto
-	upgrade package:	Aggiorna pacchetto
-	remove package:		Rimuovi pacchetto
-
 
 ############################################################## Menu help texts
 help:
@@ -168,6 +168,13 @@ help:
 	italic:				Applica il corsivo al testo selezionato
 	symbols:			Trasforma il testo selezionato in simboli
 	reminder text:		Mostra promemoria per la parola chiave selezionata
+	
+	graph:
+	pie:				Un grafico a torta, la dimensione della fetta indica il numero di carte.
+	bar:				Un grafico a barre, l'altezza della colonna indica il numero di carte.
+	stack:				Un grafico con barre impilati.
+	scatter:			Una grafico dispersione, la dimensione indica il numero di carte.
+	scatter pie:		Una grafico dispersione in cui ogni elemento è un piccolo grafico a torta.
 	
 	window:
 	new window:			Apri un'altra finestra contenente lo stesso set
@@ -296,7 +303,7 @@ tool:
 	reflection:			Riflesso
 	add symmetry:		Aggiungi
 	remove symmetry:	Rimuovi
-
+	
 	line segment:		Linea
 	curve segment:		Curva
 	free point:		Libero
@@ -333,6 +340,12 @@ tooltip:
 	italic:				Corsivo
 	symbols:			Simboli
 	reminder text:			Promemoria
+	
+	pie:				Grafico a torta
+	bar:				Grafico a barre
+	stack:				Grafico con barre impilati
+	scatter:			Grafico dispersione
+	scatter pie:		Grafico torte dispersione
 	
 	cards tab:			
 	set info tab:		Informazioni set
@@ -386,6 +399,7 @@ label:
 	mode:				Tipo
 	uses:				Usi
 	reminder:			Promemoria
+	rules:				Regole aggiuntive
 	standard keyword:
 		questa è una parola chiave standard di %s, non puoi modificarla.
 		Se crei una copia della parola chiave, la tua copia avrà la precedenza.
@@ -409,7 +423,7 @@ label:
 	stylesheet not found:
 		Il set che stai cercando di aprire usa lo stile "%s".
 		Questo stile non è stato trovato sul tuo sistema, scegli un'alternativa.
-			
+	
 	# Preferences
 	language:			Lingua
 	app language:		Lingua dell'interfaccia:
@@ -445,7 +459,6 @@ label:
 	# Html export
 	html template:		Template:
 	html export options:Opzioni esportazione
-
 	
 	# Image slicer
 	original:			Originale:
@@ -461,10 +474,23 @@ label:
 
 	# Symbol editor
 	sides:				facce
+	
+	# Packages window
+	package name:				Pacchetto
+	package status:				Stato
+	package action:				Azione
+	
+	package conflicts:		conflitto modifiche
+	package modified:		modifiche locali
+	package updates:		aggiornamenti disponibili
+	package installed:		installato
+	package installable:	non installato
+	install package:		installare
+	upgrade package:		aggiornamento
+	remove package:			rimuovere
 
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
-
 	# Editor
 	edit symbol:		Modifica
 	symbol gallery:		Galleria
@@ -480,6 +506,7 @@ button:
 	# Welcome
 	new set:			Nuovo set
 	open set:			Apri set
+	check updates:		Cerca aggiornamenti
 	last opened set:	Ultimo aperto
 	
 	# Preferences
@@ -508,9 +535,6 @@ button:
 	number:				Aggiungi un numero al nome file
 	number overwrite:	Aggiungi un numero al nome file, sovrascrive esportazioni precedenti
 	
-	# Update checker
-	close:				&Chiudi
-
 	# Auto replace
 	use auto replace:	Rimpiazza automaticamente
 	add item:			&Aggiungi
@@ -518,6 +542,19 @@ button:
 	defaults:			Ripristina &predefiniti
 	enabled:			Abilitato
 	whole word:			Trova solo parola intera
+	
+	# Old style update checker  (NOTE: this will be removed in a feature version)
+	close:				&Chiudi
+	
+	# Packages window
+	keep package:			&Non modificare
+	don't install package:	&Non installare
+	install package:		&Installa
+	upgrade package:		&Upgrade
+	remove package:			&Rimuovi
+	install group:			&Installa Tutto
+	upgrade group:			&Upgrade Tutto
+	remove group:			&Rimuovi Tutto
 
 ############################################################## Titles in the GUI
 title:
@@ -559,19 +596,24 @@ title:
 	auto replaces:		Rimpiazza automaticamente
 	
 	# Package Update Window
-	package list:		Aggiornamenti pacchetti
-	package name:		Nome pacchetto
-	package status:		Stato attuale
-	new status:			Nuovo stato
+	packages window:	Package Manager
+	installing updates:	Installazione di aggiornamenti
+	
+	cannot create file:	Impossibile creare il file
 
 ############################################################## Action (undo/redo) names
 action:
-	typing:			Inserimento testo
+	# List boxes
+	add item:			Aggiungi %s
+	remove item:		Rimuovi %s
+	
+	# Text editor
+	typing:				Inserimento testo
 	enter:				Invio
 	soft line break:	Soft line break
 	insert symbol:		Inserisci simbolo
-	backspace:		Backspace
-	delete:			Cancella
+	backspace:			Backspace
+	delete:				Cancella
 	cut:				Taglia
 	paste:				Incolla
 	auto replace:		Rimpiazza automaticamente
@@ -583,8 +625,6 @@ action:
 	rotate:				Ruota %s
 	shear:				Cesoie %s
 	scale:				Ridimensiona %s
-	add part:			Aggiungi %s
-	remove parts:		Rimuovi %s
 	duplicate:			Duplica %s
 	reorder parts:		Riordina
 	change combine mode:Cambia combinazione
@@ -609,8 +649,6 @@ action:
 	move symmetry handle:	Cambia orientamento simmetria
 	change symmetry type:	Cambia tipo di simmetria
 	change symmetry copies:	Numero di riflessi
-	
-
 
 ############################################################## Error messages
 error:
@@ -627,13 +665,21 @@ error:
 	
 	# File related
 	file not found:				File non trovato: '%s' nel pacchetto '%s'
+	file not found package like:
+		File non trovato: '%s' nel pacchetto '%s'
+		Se si sta tentando di aprire un file da un altro pacchetto, utilizzare "/package/filename"
 	file parse error:
 		Errore analizzando il file: '%s'
 		%s
 	package not found:			Pacchetto non trovato: '%s'
-	package out of date:	 	Il pacchetto '%s' (versione %s) è obsoleto, e' richiesta la versione %s.
+	package out of date:		Il pacchetto '%s' (versione %s) è obsoleto, e' richiesta la versione %s.
+	package too new:			Il pacchetto '%s' (versione %s) non è compatibile con la versione %s, richieste di '%s'
 	unable to open output file:	Errore nel salvataggio, incapace di aprire il file prodotto
 	unable to store file:		Errore nel salvataggio, incapace di salvare il file
+	dependency not given:
+		Il pacchetto '%s' utilizza file dal pacchetto '%s', a non ha una dipendenza.
+		Per risolvere questo problema, aggiungere:
+		  depends on: %s %s
 	
 	# Script stuff
 	has no member:				%s non ha membri '%s'
@@ -646,13 +692,16 @@ error:
 		  in function %s
 	in parameter:
 		Parameter %s: %s
-
+	in keyword reminder:
+		%s
+		  in reminder text of keyword '%s'
+	
 	# Image stuff
 	coordinates for blending overlap:					Coordinate per sovrapposizione
 	images used for blending must have the same size:	Le immagini sovrapposte devono avere le stesse misure
 	
 	# Error from files
-	no game specified for the set:						Nessun gioco specificato per il set
+	no game specified:									Nessun gioco specificato per il %s
 	no stylesheet specified for the set:				Nessuno stile specificato per il set
 	stylesheet and set refer to different game:
 		lo stile ed il set non si riferiscono allo stesso gioco, questo è un errore nel file dello stile
@@ -676,10 +725,27 @@ error:
 	# Stats panel
 	dimension not found:				There is no statistics dimension '%s'
 	
-	# Package update window
-	no packages:						Non sono stati trovati aggiornamenti
-	checking updates:					Sto controllando gli aggiornamenti
-
+	# Package update window  (TODO: Translate)
+#	checking updates:					Checking for updates.
+	can't download installer:
+		Unable to download installer for package %s from %s.
+		Nothing has been installed.
+	
+	downloading updates:				Downloading updates (%d of %d)
+	installing updates:					Updating packages (%d of %d)
+	
+	remove packages:
+		This will remove %s packages, do you want to continue?
+	remove packages modified:
+		This will remove %s packages, %s of those have been modified after installing.
+		Removing them can not be undone.
+		
+		Do you want to continue?
+	install packages successful:	%s package(s) were successfully installed.
+	remove packages successful:		%s package(s) were successfully removed.
+	change packages successful:		%s package(s) were successfully changed.
+	
+	cannot create file:		Can not create file '%s', continue installation?
 
 ############################################################## Types used in scripts / shape names
 type:
@@ -695,16 +761,20 @@ type:
 	image:			immagine
 	nil:			nullo
 	
-	# Object types
-	?power
+	# Object types ?power
+	package:		pacchetto
+	locale:			traduzione
 	game:			gioco
 	set:			set
 	stylesheet:		stile
+	export template:modello di esportazione
 	card:			carta
+	cards:			carte
 	field:			campo
 	style:			stile
 	value:			valore
-
+	keyword:		parola chiave
+	keywords:		parole chiave
 	
 	# Symbol editor shapes
 	shape:			forma
@@ -726,19 +796,7 @@ type:
 	
 	point:			punto
 	points:			punti
-	
-	# Package manager
-	installed:		installato
-	uninstalled:	disinstallato
-	upgradeable:	aggiornabile
-	
-	install:		installa
-	uninstall:		disinstalla
-	upgrade:		aggiorna
-	do nothing:		annulla
-	new mse:		MSE obsoleto
 
-	
 ############################################################## Magic
 game:
 	magic:
@@ -779,7 +837,7 @@ game:
 		# descriptions/help text
 stylesheet:
 	magic-new:
-				
+		
 symbol font:
 	magic-mana-small:
 		# note: reminder/shortcut must start with a space, otherwise it is used as a shortcut
@@ -796,6 +854,8 @@ symbol font:
 		menu item Y:			Variable mana &Y	 Y
 		menu item Z:			Variable mana &Z	 Z
 		menu item colorless:	&Mana Incolore...
+		title colorless:		Mana Incolore
+		message colorless:		Inserisci quantità di mana incolore:
 		menu item half:				&Mezzo mana
 		menu item |W:				&Bianco	 |W
 		menu item |U:				Bl&u	 |U
@@ -839,6 +899,8 @@ symbol font:
 		menu item Y:			Variable mana &Y	 Y
 		menu item Z:			Variable mana &Z	 Z
 		menu item colorless:	&Mana Incolore...
+		title colorless:		Mana Incolore
+		message colorless:		Inserisci quantità di mana incolore:
 		menu item half:				&Mezzo mana
 		menu item |W:				&Bianco	 |W
 		menu item |U:				Bl&u	 |U
@@ -869,3 +931,4 @@ symbol font:
 		menu item B/G/W:			Mana Nero/Verde/Bianco	 B/G/W
 		menu item R/W/U:			Mana Rosso/Bianco/Blu	 R/W/U
 		menu item G/U/B:			Mana Verde/Blu/Nero	 G/U/B
+

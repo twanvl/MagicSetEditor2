@@ -61,12 +61,12 @@ menu:
 	reminder text:		&Texte de rappel	Ctrl+R
 	insert symbol:		I&nserer Symbole
 	
-	graph:			&Graphique
-	pie:				&Pie	1
-	bar:				&Bar	2
-	stack:				&Stacked Bars	3
-	scatter:			N&uage de points	4
-	scatter pie:		Sc&atter-Pie	5
+	graph:			&Diagramme
+	pie:				&Circulaire	1
+	bar:				&Rectangles	2
+	stack:				Rectangles &Empilé	3
+	scatter:			N&uage de Points	4
+	scatter pie:		Nu&age de Cercles	5
 	
 	window:			&Fenetre
 	new window:			&Nouvelle fenetre
@@ -399,6 +399,7 @@ label:
 	mode:				Mode
 	uses:				Uses
 	reminder:			Reminder text
+	rules:				Règles supplémentaire
 	standard keyword:
 		This is a standard %s keyword, you can not edit it.
 		If you make a copy of the keyword your copy will take precedent.
@@ -554,7 +555,6 @@ button:
 	install group:		&Installer Tous
 	upgrade group:		&Upgrader Tous
 	remove group:		&Effacer Tous
-	
 
 ############################################################## Titles in the GUI
 title:
@@ -649,7 +649,6 @@ action:
 	move symmetry handle:	Change symmetry orientation
 	change symmetry type:	Change symmetry type
 	change symmetry copies:	Number of reflections
-	
 
 ############################################################## Error messages
 error:
@@ -693,6 +692,9 @@ error:
 		  in function %s
 	in parameter:
 		Parameter %s: %s
+	in keyword reminder:
+		%s
+		  in reminder text of keyword '%s'
 	
 	# Image stuff
 	coordinates for blending overlap:					Coordinates for blending overlap
@@ -745,7 +747,6 @@ error:
 	
 	cannot create file:		Can not create file '%s', continue installation?
 
-
 ############################################################## Types used in scripts / shape names
 type:
 	function:		function
@@ -795,7 +796,6 @@ type:
 	
 	point:			point
 	points:			points
-
 
 ############################################################## Magic
 game:

@@ -399,6 +399,7 @@ label:
 	mode:				Modo
 	uses:				Usos
 	reminder:			Texto recordatorio
+	rules:				Reglas adicionales
 	standard keyword:
 		Esta es una palabra clave %s estándar, no puedes editarla.
 		Si haces una copia de la palabra clave tu copia tendrá preferencia.
@@ -548,14 +549,12 @@ button:
 	# Packages window
 	keep package:			&No cambio
 	don't install package:	&No instale
-	install package:	&Instalar
-	upgrade package:	&Actualizar
-	remove package:		&Quitar
-	install group:		&Instalar Todos
-	upgrade group:		&Actualizar Todos
-	remove group:		&Quitar Todos
-	upgrade group:			&Upgrade All
-	remove group:			&Remove All
+	install package:		&Instalar
+	upgrade package:		&Actualizar
+	remove package:			&Quitar
+	install group:			&Instalar Todos
+	upgrade group:			&Actualizar Todos
+	remove group:			&Quitar Todos
 
 ############################################################## Titles in the GUI
 title:
@@ -693,6 +692,9 @@ error:
 		  in function %s
 	in parameter:
 		Parameter %s: %s
+	in keyword reminder:
+		%s
+		  in reminder text of keyword '%s'
 	
 	# Image stuff
 	coordinates for blending overlap:					Coordinates for blending overlap
