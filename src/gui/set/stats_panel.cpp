@@ -386,7 +386,8 @@ void StatsPanel::showCategory() {
 		if (dimensionality(layout) != dims.size()) {
 			// we must switch to another layout
 			layout = dims.size() == 1 ? GRAPH_TYPE_BAR
-			       : dims.size() == 2 ? GRAPH_TYPE_STACK
+			       : dims.size() == 2 ? (layout == GRAPH_TYPE_SCATTER_PIE || dims[1]->numeric
+			                              ? GRAPH_TYPE_SCATTER : GRAPH_TYPE_STACK)
 			       :                    GRAPH_TYPE_SCATTER_PIE;
 		}
 		graph->setLayout(layout, true);

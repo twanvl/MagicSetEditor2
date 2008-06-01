@@ -129,15 +129,19 @@ GraphData::GraphData(const GraphDataPre& d)
 			}
 		} else {
 			// find some nice colors for the groups
-			double hue = 0.6; // start hue
+			double step = 0;
 			bool first = true;
 			FOR_EACH(g, a->groups) {
 				double amount = a->auto_color == AUTO_COLOR_EVEN
 				                  ? 1. / a->groups.size()
 				                  : double(g.size) / a->total; // amount this group takes
-				if (!first) hue += amount/2;
-				g.color = hsl2rgb(hue, 1.0, 0.5);
-				hue += amount / 2;
+				if (!first) step += amount/2;
+				if (a->numeric) {
+					g.color = hsl2rgb(0.65 - 0.82 * step, 0.9 - 0.2 * fabs(step - 0.5), 0.3 + 0.35 * step);
+				} else {
+					g.color = hsl2rgb(0.6 + step, 0.9, 0.5);
+				}
+				step += amount / 2;
 				first = false;
 			}
 		}
@@ -353,7 +357,7 @@ bool BarGraph2D::findItem(const RealPoint& pos, const RealRect& rect, vector<int
 	// find row
 	int row = -1;
 	size_t vs = col * axis2_data().groups.size();
-	for (int i = 0 ; i < count ; ++i) {
+	for (int i = 0 ; i < (int)values.size() ; ++i) {
 		value -= values[vs+i];
 		if (value < 0) {
 			// in this layer of the stack
