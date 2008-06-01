@@ -1198,7 +1198,7 @@ card field:
 
 card list color script:
 	input := card.card_color
-	if      input == "white" then rgb(156,134,90)
+	if      input == "white" then rgb(156,130,90)
 	else if input == "blue"  then rgb(0,64,168)
 	else if input == "black" then rgb(0,0,0)
 	else if input == "red"   then rgb(168,0,0)
@@ -1209,7 +1209,7 @@ card list color script:
 		multi    := chosen(choice:"multicolor")
 		hybrid   := chosen(choice:"hybrid")
 		if      land                                      then rgb(109,62,39) # land
-		else if multi and input != "artifact, multicolor" then rgb(120,120,0) # multicolor
+		else if multi and input != "artifact, multicolor" then rgb(130,110,0) # multicolor
 		else if hybrid                                    then rgb(115,0,160) # hybrid
 		else if artifact                                  then rgb(72,90,100) # artifact
 		else                                                   rgb(119,83,83) # colorless
@@ -1233,12 +1233,12 @@ statistics dimension:
 		blue		: rgb(42,141,255)
 		black		: rgb(33,33,33)
 		red		: rgb(255,52,0)
-		green		: rgb(138,230,0)
-		colorless	: rgb(122,85,85)
-		artifact	: rgb(188,192,195)
+		green		: rgb(118,230,0)
+		colorless	: rgb(120,90,90)
+		artifact	: rgb(185,192,199)
 		multicolor	: rgb(255,188,14)
 		land		: rgb(109,62,39)
-		hybrid		: rgb(243,26,136)
+		hybrid		: rgb(201,12,230)
 	group: white
 	group: blue
 	group: black

@@ -274,12 +274,17 @@ void BarGraph::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 		}
 	} else if (layer == LAYER_VALUES) {
 		// Draw bars
-		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+		Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 		int i = 0;
 		FOR_EACH_CONST(g, axis.groups) {
 			// draw bar
+			dc.SetPen(i == current ? fg : lerp(fg,g.color,0.5));
 			dc.SetBrush(g.color);
-			dc.DrawRectangle(bar_graph_bar(rect, i++, count, 0, g.size, axis.max));
+			RealRect bar = bar_graph_bar(rect, i++, count, 0, g.size, axis.max);
+			dc.DrawRectangle(bar);
+			// redraw axis part
+			dc.SetPen(fg);
+			dc.DrawLine(bar.bottomLeft()+Vector2D(0,-1), bar.bottomRight()+Vector2D(0,-1));
 		}
 	}
 }
@@ -299,12 +304,12 @@ void BarGraph2D::draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer
 	GraphAxis& axis1 = axis1_data(); // the major axis
 	GraphAxis& axis2 = axis2_data(); // the stacked axis
 	int count = int(axis1.groups.size());
+	int cur1 = this->axis1 < current.size() ? current[this->axis1] : -1;
+	int cur2 = this->axis2 < current.size() ? current[this->axis2] : -1;
 	// Draw
 	if (layer == LAYER_SELECTION) {
 		// Highlight current column
 		Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-		int cur1 = this->axis1 < current.size() ? current[this->axis1] : -1;
-		int cur2 = this->axis2 < current.size() ? current[this->axis2] : -1;
 		if (cur1 >= 0) {
 			// draw selected bar
 			int start = 0;
@@ -327,16 +332,29 @@ void BarGraph2D::draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer
 		}
 	} else if (layer == LAYER_VALUES) {
 		// Draw bars
-		dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+		Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 		for (int i = 0 ; i < count ; ++i) {
 			// draw stacked bars
 			int start = 0;
 			int j = 0;
+			Color prevColor  = fg;
+			bool  prevActive = true;
 			FOR_EACH_CONST(g2, axis2.groups) {
-				int end = start + values[j++ + axis2.groups.size() * i];
-				dc.SetBrush(g2.color);
-				dc.DrawRectangle(bar_graph_bar(rect, i, count, start, end, axis1.max));
-				start = end;
+				bool active = !(cur1 == -1 && cur2 == -1) && (i == cur1 || cur1 == -1) && (j == cur2 || cur2 == -1);
+				int end = start + values[j + axis2.groups.size() * i];
+				if (start != end) {
+					dc.SetBrush(g2.color);
+					dc.SetPen(active ? fg : lerp(fg, g2.color, 0.5));
+					RealRect bar = bar_graph_bar(rect, i, count, start, end, axis1.max);
+					dc.DrawRectangle(bar);
+					// fix up line below
+					dc.SetPen(active || prevActive ? fg : lerp(fg,lerp(prevColor,g2.color,0.5),0.5));
+					dc.DrawLine(bar.bottomLeft()+Vector2D(0,-1), bar.bottomRight()+Vector2D(0,-1));
+					// next
+					prevActive = active;
+					prevColor  = g2.color;
+				}
+				start = end; j++;
 			}
 		}
 	}
@@ -397,8 +415,10 @@ void PieGraph::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			// draw pie
 			dc.SetBrush(g.color);
 			if (g.size > 0) {
+				bool active = i == current;
+				dc.SetPen(active ? fg : lerp(fg,g.color,0.5));
 				double end_angle = angle - 2 * M_PI * (double)g.size / axis.total;
-				dc.DrawEllipticArc(pie_pos, i == current ? pie_size_large : pie_size, end_angle, angle);
+				dc.DrawEllipticArc(pie_pos, active ? pie_size_large : pie_size, end_angle, angle);
 				angle = end_angle;
 			}
 			++i;
@@ -409,7 +429,10 @@ void PieGraph::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			double angle = M_PI/2;
 			FOR_EACH_CONST(g, axis.groups) {
 				if (true) {
-					RealSize size = i == current || (i - 1 + (int)axis.groups.size()) % (int)axis.groups.size() == current ? pie_size_large : pie_size;
+					int i2 = (i - 1 + (int)axis.groups.size()) % (int)axis.groups.size();
+					bool active = i == current || i2 == current;
+					dc.SetPen(active ? fg : lerp(fg,lerp(g.color,axis.groups[i2].color,0.5),0.5));
+					RealSize size = active ? pie_size_large : pie_size;
 					dc.DrawEllipticSpoke(pie_pos, size, angle);
 					angle -= 2 * M_PI * (double)g.size / axis.total;
 				}
@@ -450,14 +473,14 @@ void ScatterGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer lay
 	RealRect rect = dc.getInternalRect();
 	GraphAxis& axis1 = axis1_data(); // the major axis
 	GraphAxis& axis2 = axis2_data(); // the stacked axis
+	int cur1 = this->axis1 < current.size() ? current[this->axis1] : -1;
+	int cur2 = this->axis2 < current.size() ? current[this->axis2] : -1;
 	RealSize size(rect.width / axis1.groups.size(), rect.height / axis2.groups.size()); // size for a single cell
 	double step = min(size.width, size.height) / sqrt((double)max_value) / 2.01;
 	// Draw
 	if (layer == LAYER_SELECTION) {
 		dc.SetPen(*wxTRANSPARENT_PEN);
 		Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
-		int cur1 = this->axis1 < current.size() ? current[this->axis1] : -1;
-		int cur2 = this->axis2 < current.size() ? current[this->axis2] : -1;
 		if (cur1 >= 0 && cur2 >= 0) {
 			UInt value = values[cur1 * axis2.groups.size() + cur2];
 			if (value) {
@@ -475,16 +498,21 @@ void ScatterGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer lay
 		Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 		dc.SetPen(fg);
 		size_t i = 0;
-		double x = rect.left();
+		int x = 0;
 		FOR_EACH_CONST(g1, axis1.groups) {
-			double y = rect.bottom() - size.height;
+			int y = 0;
 			FOR_EACH_CONST(g2, axis2.groups) {
 				UInt value = values[i++];
-				dc.SetBrush(lerp(g1.color, g2.color, 0.5));
-				dc.DrawCircle(RealPoint(x,y) + size/2, sqrt((double)value) * step);
-				y -= size.height;
+				Color color = lerp(fg, lerp(g1.color, g2.color, 0.5 - (axis1.auto_color == AUTO_COLOR_NO ? 0.35 : 0.0) + (axis2.auto_color == AUTO_COLOR_NO ? 0.35 : 0.0)), 0.5 + (axis1.auto_color == AUTO_COLOR_NO || axis2.auto_color == AUTO_COLOR_NO ? 0.5 : 0.0));
+				bool active = !(cur1 == -1 && cur2 == -1) && (x == cur1 || cur1 == -1) && (y == cur2 || cur2 == -1);
+				dc.SetPen(active ? fg : lerp(fg,color,0.5));
+				dc.SetBrush(color);
+				double xx = rect.left()   + x     * size.width;
+				double yy = rect.bottom() - (y+1) * size.height;
+				dc.DrawCircle(RealPoint(xx,yy) + size/2, sqrt((double)value) * step);
+				++y;
 			}
-			x += size.width;
+			++x;
 		}
 	}
 }
@@ -533,6 +561,8 @@ void ScatterPieGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer 
 		GraphAxis& axis1 = axis1_data(); // the major axis
 		GraphAxis& axis2 = axis2_data(); // the stacked axis
 		GraphAxis& axis3 = axis3_data(); // the pie axis
+		int cur1 = this->axis1 < current.size() ? current[this->axis1] : -1;
+		int cur2 = this->axis2 < current.size() ? current[this->axis2] : -1;
 		RealSize size(rect.width / axis1.groups.size(), rect.height / axis2.groups.size()); // size for a single cell
 		double step = min(size.width, size.height) / sqrt((double)max_value) / 2.01;
 		// Draw pies
@@ -543,15 +573,17 @@ void ScatterPieGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer 
 				size_t i = x * axis2.groups.size() + y;
 				UInt value = values[i];
 				double radius = floor(sqrt((double)value) * step * 2);
+				bool active = !(cur1 == -1 && cur2 == -1) && ((int)x == cur1 || cur1 == -1) && ((int)y == cur2 || cur2 == -1);
 				RealSize radius_s(radius,radius);
 				RealPoint center(rect.left() + (x+0.5) * size.width + 0.5, rect.bottom() - (y+0.5) * size.height + 0.5);
 				// draw pie slices
 				double angle = 0;
 				size_t j = 0;
 				FOR_EACH(g, axis3.groups) {
-					dc.SetBrush(g.color);
 					UInt val = values3D[i * axis3.groups.size() + j++];
 					if (val > 0) {
+						dc.SetBrush(g.color);
+						dc.SetPen(active ? fg : lerp(fg,g.color,0.5));
 						double end_angle = angle + 2 * M_PI * (double)val / value;
 						dc.DrawEllipticArc(center, radius_s, angle, end_angle);
 						angle = end_angle;
@@ -604,10 +636,10 @@ void GraphStats::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 		Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
 		// draw border
 		dc.SetBrush(bg);
+		dc.SetPen(fg);
 		dc.DrawRectangle(RealRect(pos,size));
 		// draw items
 		dc.SetFont(*wxNORMAL_FONT);
-		dc.SetPen(fg);
 		double y = pos.y + 1;
 		FOR_EACH_CONST(v, values) {
 			dc.DrawText(v.first,  RealPoint(pos.x + 3,               y + 2));
@@ -643,10 +675,10 @@ void GraphLegend::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 		Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
 		// draw border
 		dc.SetBrush(bg);
+		dc.SetPen(fg);
 		dc.DrawRectangle(RealRect(pos,size));
 		// draw items
 		dc.SetFont(*wxNORMAL_FONT);
-		dc.SetPen(fg);
 		double y = pos.y + 1;
 		for (int j = 0 ; j < (int)axis.groups.size() ; ++j) {
 			int i = reverse ? (int)axis.groups.size() - j - 1 : j;
@@ -658,6 +690,7 @@ void GraphLegend::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 				dc.SetPen(fg);
 			}
 			dc.SetBrush(g.color);
+			dc.SetPen(i == current ? fg : lerp(fg,g.color,0.5));
 			dc.DrawRectangle(RealRect(pos.x+3, y + 2, 26, item_size.height - 3));
 			dc.DrawText(g.name, RealPoint(pos.x + 32, y + 2));
 			y += item_size.height;
@@ -808,7 +841,7 @@ void GraphValueAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			// restore font/pen
 			if (i == highlight) {
 				dc.SetFont(*wxNORMAL_FONT);
-				dc.SetPen(lerp(bg, fg, 0.5));
+				dc.SetPen(lerp(bg, fg, 0.3));
 			}
 		}
 	}
