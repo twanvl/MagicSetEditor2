@@ -434,7 +434,7 @@ void StatsPanel::showCategory() {
 				++dim_id;
 			}
 			graph->setLayout(cat.type);
-			graph->setData(d, true);
+			graph->setData(d);
 			filterCards();
 		}
 	#endif
