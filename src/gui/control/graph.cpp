@@ -11,6 +11,7 @@
 #include <util/alignment.hpp>
 #include <gfx/gfx.hpp>
 #include <wx/dcbuffer.h>
+#include <wx/tooltip.h>
 
 DECLARE_TYPEOF_COLLECTION(GraphAxisP);
 DECLARE_TYPEOF_COLLECTION(GraphElementP);
@@ -196,14 +197,29 @@ void GraphData::crossAxis(size_t axis1, size_t axis2, size_t axis3, vector<UInt>
 	}
 }
 
+UInt GraphData::count(const vector<int>& match) const {
+	if (match.size() != axes.size()) return 0;
+	UInt count = 0;
+	FOR_EACH_CONST(v, values) {
+		bool matches = true;
+		for (size_t i = 0 ; i < match.size() ; ++i) {
+			if (v[i] == -1 || match[i] != -1 && v[i] != match[i]) {
+				matches = false;
+				break;
+			}
+		}
+		count += matches;
+	}
+	return count;
+}
 
 // ----------------------------------------------------------------------------- : Graph1D
 
 void Graph1D::draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const {
 	draw(dc, axis < current.size() ? current.at(axis) : -1, layer);
 }
-bool Graph1D::findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const {
-	int i = findItem(pos, rect);
+bool Graph1D::findItem(const RealPoint& pos, const RealRect& rect, bool tight, vector<int>& out) const {
+	int i = findItem(pos, rect, tight);
 	if (i == -1) return false;
 	else {
 		out.clear();
@@ -288,10 +304,11 @@ void BarGraph::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 		}
 	}
 }
-int BarGraph::findItem(const RealPoint& pos, const RealRect& rect) const {
+int BarGraph::findItem(const RealPoint& pos, const RealRect& rect, bool tight) const {
 	if (!data) return -1;
 	if (pos.y > max(rect.top(), rect.bottom())) return -1; // below
 	if (pos.y < min(rect.top(), rect.bottom())) return -1; // above
+	// TODO: tight check
 	return find_bar_graph_column(rect.width, pos.x - rect.x, (int)axis_data().groups.size());
 }
 
@@ -359,7 +376,7 @@ void BarGraph2D::draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer
 		}
 	}
 }
-bool BarGraph2D::findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const {
+bool BarGraph2D::findItem(const RealPoint& pos, const RealRect& rect, bool tight, vector<int>& out) const {
 	if (!data || data->axes.size() <= max(axis1,axis2)) return false;
 	if (pos.y > max(rect.top(), rect.bottom())) return false; // below
 	if (pos.y < min(rect.top(), rect.bottom())) return false; // above
@@ -441,7 +458,7 @@ void PieGraph::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 		}
 	}
 }
-int PieGraph::findItem(const RealPoint& pos, const RealRect& rect) const {
+int PieGraph::findItem(const RealPoint& pos, const RealRect& rect, bool tight) const {
 	if (!data) return -1;
 	// Rectangle for the pie
 	GraphAxis& axis = axis_data();
@@ -449,7 +466,7 @@ int PieGraph::findItem(const RealPoint& pos, const RealRect& rect) const {
 	RealPoint pie_pos = rect.position() + rect.size() / 2;
 	// position in circle
 	Vector2D delta = pos - pie_pos;
-	if (delta.lengthSqr() > size*size) {
+	if (delta.lengthSqr()*4 > size*size) {
 		return -1; // outside circle
 	}
 	double pos_angle = atan2(-delta.y, delta.x) - M_PI/2; // in range [-pi..pi]
@@ -516,7 +533,7 @@ void ScatterGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer lay
 		}
 	}
 }
-bool ScatterGraph::findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const {
+bool ScatterGraph::findItem(const RealPoint& pos, const RealRect& rect, bool tight, vector<int>& out) const {
 	if (!data || data->axes.size() <= max(axis1,axis2)) return false;
 	// clicked item
 	GraphAxis& axis1 = axis1_data();
@@ -525,6 +542,8 @@ bool ScatterGraph::findItem(const RealPoint& pos, const RealRect& rect, vector<i
 	int row = (int) floor((rect.bottom() - pos.y) / rect.height * axis2.groups.size());
 	if (col < 0 || col >= (int)axis1.groups.size()) return false;
 	if (row < 0 || row >= (int)axis2.groups.size()) return false;
+	// any values here?
+	if (tight && values[row + col * axis2.groups.size()] == 0) return false;
 	// done
 	out.clear();
 	out.insert(out.begin(), data->axes.size(), -1);
@@ -697,7 +716,8 @@ void GraphLegend::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 		}
 	}
 }
-int GraphLegend::findItem(const RealPoint& pos, const RealRect& rect) const {
+int GraphLegend::findItem(const RealPoint& pos, const RealRect& rect, bool tight) const {
+	if (tight) return -1;
 	RealPoint mypos = align_in_rect(alignment, size, rect);
 	RealPoint pos2(pos.x - mypos.x, pos.y - mypos.y);
 	if (pos2.x < 0 || pos2.y < 0 || pos2.x >= size.width || pos2.y >= size.height) return -1;
@@ -787,7 +807,7 @@ void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 		}
 	}
 }
-int GraphLabelAxis::findItem(const RealPoint& pos, const RealRect& rect) const {
+int GraphLabelAxis::findItem(const RealPoint& pos, const RealRect& rect, bool tight) const {
 	GraphAxis& axis = axis_data();
 	int col;
 	if (direction == HORIZONTAL) {
@@ -859,10 +879,10 @@ void GraphWithMargins::draw(RotatedDC& dc, const vector<int>& current, DrawLayer
 	Rotater rot(dc, new_size);
 	graph->draw(dc, current, layer);
 }
-bool GraphWithMargins::findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const {
+bool GraphWithMargins::findItem(const RealPoint& pos, const RealRect& rect, bool tight, vector<int>& out) const {
 	RealRect inner = rect.move(margin_left, margin_top, - margin_left - margin_right, - margin_top - margin_bottom);
 	if (upside_down) { inner.y += inner.height; inner.height = -inner.height; }
-	return graph->findItem(pos, inner, out);
+	return graph->findItem(pos, inner, tight, out);
 }
 void GraphWithMargins::setData(const GraphDataP& d) {
 	Graph::setData(d);
@@ -876,9 +896,9 @@ void GraphContainer::draw(RotatedDC& dc, const vector<int>& current, DrawLayer l
 		g->draw(dc, current, layer);
 	}
 }
-bool GraphContainer::findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const {
+bool GraphContainer::findItem(const RealPoint& pos, const RealRect& rect, bool tight, vector<int>& out) const {
 	FOR_EACH_CONST_REVERSE(g, items) {
-		if (g->findItem(pos, rect, out)) return true;
+		if (g->findItem(pos, rect, tight, out)) return true;
 	}
 	return false;
 }
@@ -988,7 +1008,7 @@ void GraphControl::onSize(wxSizeEvent&) {
 void GraphControl::onMouseDown(wxMouseEvent& ev) {
 	if (!graph) return;
 	wxSize cs = GetClientSize();
-	if (graph->findItem(RealPoint(ev.GetX(), ev.GetY()), RealRect(RealPoint(0,0),cs), current_item)) {
+	if (graph->findItem(RealPoint(ev.GetX(), ev.GetY()), RealRect(RealPoint(0,0),cs), false, current_item)) {
 		onSelectionChange();
 	}
 	ev.Skip(); // focus
@@ -1049,9 +1069,38 @@ String GraphControl::getSelection(size_t axis) const {
 	return a.groups[current_item[axis]].name;
 }
 
+void GraphControl::onMotion(wxMouseEvent& ev) {
+	if (!graph) return;
+	wxSize cs = GetClientSize();
+	vector<int> hovered_item(current_item.size());
+	if (graph->findItem(RealPoint(ev.GetX(), ev.GetY()), RealRect(RealPoint(0,0),cs), true, hovered_item)) {
+		// determine tooltip
+		const GraphData& data = *graph->getData();
+		String tip;
+		for (size_t dim = 0 ; dim < hovered_item.size() ; ++dim) {
+			if (hovered_item[dim] != -1 && (size_t)hovered_item[dim] < data.axes[dim]->groups.size()) {
+				if (!tip.empty()) tip += _("\n");
+				tip += data.axes[dim]->name + _(": ") + data.axes[dim]->groups[hovered_item[dim]].name;
+			}
+		}
+		UInt count = data.count(hovered_item);
+		tip += String::Format(_("\n%d "), count) + (count == 1 ? _TYPE_("card") : _TYPE_("cards"));
+		tip.Replace(_(" "),_("\xA0"));
+		// set tooltip
+		SetToolTip(tip);
+	} else {
+		// Note: don't use SetToolTip directly, we don't want to create a tip if it doesn't exist
+		//       on winXP this destroys the multiline behaviour.
+		wxToolTip* tooltip = GetToolTip();
+		if (tooltip) tooltip->SetTip(_(""));
+	}
+	ev.Skip();
+}
+
 BEGIN_EVENT_TABLE(GraphControl, wxControl)
 	EVT_PAINT		(GraphControl::onPaint)
 	EVT_SIZE		(GraphControl::onSize)
 	EVT_LEFT_DOWN	(GraphControl::onMouseDown)
+	EVT_MOTION		(GraphControl::onMotion)
 	EVT_CHAR		(GraphControl::onChar)
 END_EVENT_TABLE  ()

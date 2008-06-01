@@ -106,6 +106,8 @@ class GraphData : public IntrusivePtrBase<GraphData> {
 	void crossAxis(size_t axis1, size_t axis2, vector<UInt>& out) const;
 	/// Create a cross table for three axes
 	void crossAxis(size_t axis1, size_t axis2, size_t axis3, vector<UInt>& out) const;
+	/// Count the number of elements with the given values, -1 is a wildcard
+	UInt count(const vector<int>& match) const;
 };
 
 
@@ -128,7 +130,7 @@ class Graph : public IntrusivePtrVirtualBase {
 	/// Draw this graph, filling the internalRect() of the dc.
 	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const = 0;
 	/// Find the item at the given position, the rectangle gives the screen size
-	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const { return false; }
+	virtual bool findItem(const RealPoint& pos, const RealRect& rect, bool tight, vector<int>& out) const { return false; }
 	/// Change the data
 	virtual void setData(const GraphDataP& d) { data = d; }
 	/// Get the data
@@ -144,11 +146,11 @@ class Graph1D : public Graph {
   public:
 	inline Graph1D(size_t axis) : axis(axis) {}
 	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
-	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const;
+	virtual bool findItem(const RealPoint& pos, const RealRect& rect, bool tight, vector<int>& out) const;
   protected:
 	size_t axis;
 	/// Find an item, return the position along the axis, or -1 if not found
-	virtual int findItem(const RealPoint& pos, const RealRect& rect) const { return -1; }
+	virtual int findItem(const RealPoint& pos, const RealRect& rect, bool tight) const { return -1; }
 	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const = 0;
 	inline GraphAxis& axis_data() const { return *data->axes.at(axis); }
 };
@@ -170,7 +172,7 @@ class BarGraph : public Graph1D {
   public:
 	inline BarGraph(size_t axis) : Graph1D(axis) {}
 	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
-	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
+	virtual int findItem(const RealPoint& pos, const RealRect& rect, bool tight) const;
 };
 
 // A bar graph with stacked bars
@@ -178,7 +180,7 @@ class BarGraph2D : public Graph2D {
   public:
 	inline BarGraph2D(size_t axis_h, size_t axis_v) : Graph2D(axis_h, axis_v) {}
 	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
-	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const;
+	virtual bool findItem(const RealPoint& pos, const RealRect& rect, bool tight, vector<int>& out) const;
 };
 
 /// A pie graph
@@ -186,7 +188,7 @@ class PieGraph : public Graph1D {
   public:
 	inline PieGraph(size_t axis) : Graph1D(axis) {}
 	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
-	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
+	virtual int findItem(const RealPoint& pos, const RealRect& rect, bool tight) const;
 };
 
 /// A scatter plot
@@ -194,7 +196,7 @@ class ScatterGraph : public Graph2D {
   public:
 	inline ScatterGraph(size_t axis1, size_t axis2) : Graph2D(axis1, axis2) {}
 	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
-	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const;
+	virtual bool findItem(const RealPoint& pos, const RealRect& rect, bool tight, vector<int>& out) const;
 	virtual void setData(const GraphDataP& d);
   protected:
 	UInt max_value; ///< highest value
@@ -226,7 +228,7 @@ class GraphLegend : public Graph1D {
 	{}
 	virtual RealSize determineSize(RotatedDC& dc) const;
 	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
-	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
+	virtual int findItem(const RealPoint& pos, const RealRect& rect, bool tight) const;
   private:
 	mutable RealSize size, item_size;
 	Alignment alignment;
@@ -265,7 +267,7 @@ class GraphLabelAxis : public Graph1D {
 		: Graph1D(axis), direction(direction), rotate(rotate), draw_lines(draw_lines), label(label)
 	{}
 	virtual void draw(RotatedDC& dc, int current, DrawLayer layer) const;
-	virtual int findItem(const RealPoint& pos, const RealRect& rect) const;
+	virtual int findItem(const RealPoint& pos, const RealRect& rect, bool tight) const;
   private:
 	Direction direction;
 	int levels;
@@ -294,7 +296,7 @@ class GraphWithMargins : public Graph {
 		, upside_down(upside_down)
 	{}
 	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
-	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const;
+	virtual bool findItem(const RealPoint& pos, const RealRect& rect, bool tight, vector<int>& out) const;
 	virtual void setData(const GraphDataP& d);
   private:
 	const GraphP graph;
@@ -306,7 +308,7 @@ class GraphWithMargins : public Graph {
 class GraphContainer : public Graph {
   public:
 	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
-	virtual bool findItem(const RealPoint& pos, const RealRect& rect, vector<int>& out) const;
+	virtual bool findItem(const RealPoint& pos, const RealRect& rect, bool tight, vector<int>& out) const;
 	virtual void setData(const GraphDataP& d);
 	
 	void add(const GraphP& graph);
@@ -352,6 +354,7 @@ class GraphControl : public wxControl {
 	void onPaint(wxPaintEvent&);
 	void onSize (wxSizeEvent&);
 	void onMouseDown(wxMouseEvent& ev);
+	void onMotion(wxMouseEvent& ev);
 	void onChar(wxKeyEvent& ev);
 	
 	void onSelectionChange();
