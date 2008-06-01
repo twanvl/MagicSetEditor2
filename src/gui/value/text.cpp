@@ -943,7 +943,9 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 		} else {
 			// try to find the best match to what text we expected to be around the cursor
 			size_t best_match  = 0;
-			for (size_t i = min(start, expected_cursor) ; i <= max(real_value.size() - end_min, expected_cursor) ; ++i) {
+			size_t begin = min(start, expected_cursor);
+			size_t end   = min(real_value.size(), max(real_value.size() - end_min, expected_cursor) + 1);
+			for (size_t i = begin ; i < end ; ++i) {
 				size_t match = match_cursor_position(expected_cursor, expected_value, i, real_value);
 				if (match > best_match || (match == best_match && abs((int)expected_cursor - (int)i) < abs((int)expected_cursor - (int)best_cursor))) {
 					best_match = match;
