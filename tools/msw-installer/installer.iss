@@ -14,7 +14,7 @@
 
 [setup]
 AppName                 = Magic Set Editor 2
-AppVerName              = Magic Set Editor 2 - 0.3.5b beta
+AppVerName              = Magic Set Editor 2 - 0.3.6 beta
 AppCopyright            = Copyright © 2001-2007 Twan van Laarhoven
 DefaultDirName          = {pf}\Magic Set Editor 2
 DisableStartupPrompt    = 1
@@ -53,6 +53,12 @@ Name: "custom";     Description: "Custom installation"; Flags: iscustom
 ; Note: The following line does nothing other than provide a visual cue
 ; to the user that the program files are installed no matter what.
 Name: "prog";                      Description: "MSE Program Files";   Flags: fixed; Types: full custom magic vs yugioh
+Name: "prog/en";                   Description: "English translation"; Flags: fixed; Types: full custom magic vs yugioh
+#if INSTALL_ALL
+  Name: "prog/fr";                   Description: "French translation";                Types: full custom
+  Name: "prog/es";                   Description: "Spanish translation";               Types: full custom
+  Name: "prog/it";                   Description: "Italian translation";               Types: full custom
+#endif
 Name: "style";                     Description: "Templates";                         Types: full custom magic vs yugioh
 Name: "style/mtg";                 Description: "Magic the Gathering";               Types: full custom magic
 Name: "style/mtg/new";             Description: "Modern style, after 8th edition";   Types: full custom magic
@@ -106,7 +112,13 @@ Name: "style/yugioh";              Description: "Yu-Gi-Oh!";                    
 Source: "build/Release Unicode/mse.exe";  DestDir: "{app}";                      Components: prog; Flags: replacesameversion
 
 ; locales: en
-Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/";  Components: prog; Flags: recursesubdirs
+Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/";  Components: prog/en; Flags: recursesubdirs
+#if INSTALL_ALL
+  Source: "data/fr.mse-locale/*";           DestDir: "{app}/data/fr.mse-locale/";  Components: prog/fr; Flags: recursesubdirs
+  Source: "data/it.mse-locale/*";           DestDir: "{app}/data/it.mse-locale/";  Components: prog/it; Flags: recursesubdirs
+  Source: "data/es.mse-locale/*";           DestDir: "{app}/data/es.mse-locale/";  Components: prog/es; Flags: recursesubdirs
+  ;Source: "data/jp.mse-locale/*";           DestDir: "{app}/data/jp.mse-locale/";  Components: prog/jp; Flags: recursesubdirs
+#endif
 
 ; ------------------------------------------------------------------------- : Style packages
 
