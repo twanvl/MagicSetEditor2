@@ -38,7 +38,7 @@ menu:
 	cards:			&カード
 	previous card:		エリートの&前のカード	PgUp
 	next card:			エリートの&次のカード	PgDn
-	add card:			&足し算をするカード	Ctrl++
+	add card:			&足し算をするカード	Ctrl+Enter
 	add cards:			&多くのカードを加えてください...
 	remove card:		&削除する選ばれるカード
 	orientation:		&オリエンテーション
@@ -51,7 +51,7 @@ menu:
 	keywords:		&キーワード
 	previous keyword:	エリートの&前のキーワード	PgUp
 	next keyword:		エリートの&次のキーワード	PgDn
-	add keyword:		&足し算をするキーワード		Ctrl++
+	add keyword:		&足し算をするキーワード		Ctrl+Enter
 	remove keyword:		&隔たり選択するキーワード	Del
 	
 	format:			&フォーマット

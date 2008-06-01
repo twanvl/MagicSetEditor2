@@ -38,7 +38,7 @@ menu:
 	cards:			&Cartas
 	previous card:		Seleccionar &carta anterior	PgUp
 	next card:			Seleccionar &siguiente carta	PgDn
-	add card:			&Añadir carta	Ctrl++
+	add card:			&Añadir carta	Ctrl+Enter
 	add cards:			Añadir &múltiples cartas...
 	remove card:		&Borrar carta seleccionada
 	orientation:		&Orientación
@@ -51,7 +51,7 @@ menu:
 	keywords:		&Palabras clave
 	previous keyword:	Seleccionar &palabra clave anterior	PgUp
 	next keyword:		Seleccionar &siguiente palabra clave	PgDn
-	add keyword:		&Añadir palabra clave	Ctrl++
+	add keyword:		&Añadir palabra clave	Ctrl+Enter
 	remove keyword:		&Borrar palabra clave seleccionada	Del
 	
 	format:			F&ormato
