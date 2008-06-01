@@ -864,6 +864,7 @@ void GraphContainer::add(const GraphP& graph) {
 
 GraphControl::GraphControl(Window* parent, int id)
 	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
+	, layout(GRAPH_TYPE_BAR)
 {}
 
 void GraphControl::setLayout(GraphType type, bool force) {
