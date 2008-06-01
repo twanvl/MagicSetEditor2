@@ -355,7 +355,7 @@ Image SymbolFont::getImage(double font_size, const DrawableSymbol& sym) {
 	// align text
 	RealPoint text_pos = align_in_rect(sym.symbol->text_alignment, ts, sym_rect);
 	// draw text
-	rdc.DrawTextWithShadow(sym.text, *sym.symbol->text_font, text_pos, font_size, stretch);
+	rdc.DrawTextWithShadow(sym.draw_text, *sym.symbol->text_font, text_pos, font_size, stretch);
 	// done
 	dc.SelectObject(wxNullBitmap);
 	return bmp.ConvertToImage();
