@@ -41,6 +41,7 @@ struct Token {
 	TokenType type;
 	String    value;
 	bool      newline; ///< Is there a newline between this token and the previous one?
+	size_t    pos;     ///< Start position of the token
 	
 	inline bool operator == (TokenType     t) const { return type  == t; }
 	inline bool operator != (TokenType     t) const { return type  != t; }
@@ -92,7 +93,7 @@ class TokenIterator {
 	stack<MoreInput> more;		///< Read tokens from here when we are done with the current input
 	
 	/// Add a token to the buffer, with the current newline value, resets newline
-	void addToken(TokenType type, const String& value);
+	void addToken(TokenType type, const String& value, size_t start);
 	/// Read the next token, and add it to the buffer
 	void readToken();
 	/// Read the next token which is a string (after the opening ")
@@ -154,8 +155,8 @@ void TokenIterator::putBack() {
 	buffer.insert(buffer.begin(), t);
 }
 
-void TokenIterator::addToken(TokenType type, const String& value) {
-	Token t = {type, value, newline};
+void TokenIterator::addToken(TokenType type, const String& value, size_t start) {
+	Token t = {type, value, newline, start};
 	buffer.push_back(t);
 	newline = false;
 }
@@ -170,7 +171,7 @@ void TokenIterator::readToken() {
 			more.pop();
 		} else {
 			// EOF
-			addToken(TOK_EOF, _("end of input"));
+			addToken(TOK_EOF, _("end of input"), input.size());
 		}
 		return;
 	}
@@ -200,7 +201,7 @@ void TokenIterator::readToken() {
 		// name
 		size_t start = pos - 1;
 		while (pos < input.size() && isAlnum_(input.GetChar(pos))) ++pos;
-		addToken(TOK_NAME, cannocial_name_form(input.substr(start, pos-start))); // convert name to cannocial form
+		addToken(TOK_NAME, cannocial_name_form(input.substr(start, pos-start)), start); // convert name to cannocial form
 	} else if (isDigit(c)) {
 		// number
 		size_t start = pos - 1;
@@ -208,16 +209,16 @@ void TokenIterator::readToken() {
 		String num = input.substr(start, pos-start);
 		addToken(
 			num.find_first_of('.') == String::npos ? TOK_INT : TOK_DOUBLE,
-			num
+			num, start
 		);
 	} else if (isOper(c)) {
 		// operator
 		if (pos < input.size() && isLongOper(input.substr(pos - 1, 2))) {
 			// long operator
-			addToken(TOK_OPER, input.substr(pos - 1, 2));
+			addToken(TOK_OPER, input.substr(pos - 1, 2), pos-1);
 			pos += 1;
 		} else {
-			addToken(TOK_OPER, input.substr(pos - 1, 1));
+			addToken(TOK_OPER, input.substr(pos - 1, 1), pos-1);
 		}
 	} else if (c==_('"')) {
 		// string
@@ -226,16 +227,16 @@ void TokenIterator::readToken() {
 	} else if (c == _('}') && !open_braces.empty() && open_braces.top() != BRACE_PAREN) {
 		// closing smart string, resume to string parsing
 		//   "a{e}b"  -->  "a"  "{  e  }"  "b"
-		addToken(TOK_RPAREN, _("}\""));
+		addToken(TOK_RPAREN, _("}\""), pos-1);
 		readStringToken();
 	} else if (isLparen(c)) {
 		// paranthesis/brace
 		open_braces.push(BRACE_PAREN);
-		addToken(TOK_LPAREN, String(1,c));
+		addToken(TOK_LPAREN, String(1,c), pos-1);
 	} else if (isRparen(c)) {
 		// paranthesis/brace
 		if (!open_braces.empty()) open_braces.pop();
-		addToken(TOK_RPAREN, String(1,c));
+		addToken(TOK_RPAREN, String(1,c), pos-1);
 	} else if(c==_('#')) {
 		// comment untill end of line
 		while (pos < input.size() && input[pos] != _('\n')) ++pos;
@@ -246,17 +247,18 @@ void TokenIterator::readToken() {
 }
 
 void TokenIterator::readStringToken() {
+	size_t start = max((size_t)1, pos) - 1;
 	String str;
 	while (true) {
 		if (pos >= input.size()) {
 			if (!open_braces.empty() && open_braces.top() == BRACE_STRING_MODE) {
 				// in string mode: end of input = end of string
-				addToken(TOK_STRING, str);
+				addToken(TOK_STRING, str, start);
 				return;
 			} else {
 				add_error(_("Unexpected end of input in string constant"));
 				// fix up
-				addToken(TOK_STRING, str);
+				addToken(TOK_STRING, str, start);
 				return;
 			}
 		}
@@ -264,7 +266,7 @@ void TokenIterator::readStringToken() {
 		// parse the string constant
 		if (c == _('"') && !open_braces.empty() && open_braces.top() == BRACE_STRING) {
 			// end of string
-			addToken(TOK_STRING, str);
+			addToken(TOK_STRING, str, start);
 			open_braces.pop();
 			return;
 		} else if (c == _('\\')) {
@@ -272,7 +274,7 @@ void TokenIterator::readStringToken() {
 			if (pos >= input.size()) {
 				add_error(_("Unexpected end of input in string constant"));
 				// fix up
-				addToken(TOK_STRING, str);
+				addToken(TOK_STRING, str, start);
 				return;
 			}
 			c = input.GetChar(pos++);
@@ -282,8 +284,8 @@ void TokenIterator::readStringToken() {
 		} else if (c == _('{')) {
 			// smart string
 			//   "a{e}b"  -->  "a"  "{  e  }"  "b"
-			addToken(TOK_STRING, str);
-			addToken(TOK_LPAREN, _("\"{"));
+			addToken(TOK_STRING, str, start);
+			addToken(TOK_LPAREN, _("\"{"), pos-1);
 			return;
 		} else {
 			str += c;
@@ -302,7 +304,7 @@ void TokenIterator::add_error(const String& message) {
 	errors.push_back(ScriptParseError(pos, line, filename, message));
 }
 void TokenIterator::expected(const String& expected) {
-	size_t error_pos = pos - peek(0).value.size();
+	size_t error_pos = peek(0).pos;
 	if (!errors.empty() && errors.back().start == pos) return; // already an error here
 	// find line number
 	int line = 1;

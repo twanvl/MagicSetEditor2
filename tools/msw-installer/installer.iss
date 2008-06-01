@@ -173,6 +173,7 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
 #emit Package(1, 'magic', 'future',          'style',           'mtg/future/base')
 #emit Package(1, 'magic', 'future-textless', 'style',           'mtg/future/textless')
 
+#emit Font   (0, 'ModMatrix.ttf',   'ModMatrix',                'mtg')
 #emit Font   (0, 'matrixb.ttf',     'Matrix',                   'mtg style/yugioh')
 #emit Font   (0, 'matrixbsc.ttf',   'MatrixBoldSmallCaps',      'mtg')
 #emit Font   (0, 'magmed.ttf',      'MagicMedieval',            'mtg/old')
@@ -212,6 +213,8 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
 #emit FontNoReg (0, 'MatrixRegularSmallCaps.pfm',   'MatrixRegularSmallCaps',  'yugioh')
 #emit FontNoReg (0, 'MatrixRegularSmallCaps.pfb',   'MatrixRegularSmallCaps',  'yugioh')
 #emit Font      (0, 'pala.ttf',                     'Palatino Linotype',       'yugioh')
+#emit Font      (0, 'palab.ttf',                    'Palatino Linotype Bold',  'yugioh')
+#emit Font      (0, 'MatriBoo.ttf',                 'MatrixBook',              'yugioh')
 
 ; ------------------------------------------------------------------------- : Rest of installer
 
@@ -228,7 +231,7 @@ Name: "{commonprograms}\Magic Set Editor"; Filename: "{app}\mse.exe"; WorkingDir
 
 #emit Association('.mse-set',       'Set',       '2')
 #emit Association('.mse-symbol',    'Symbol',    '3')
-;#emit Association('.mse-installer', 'Installer', '1')
+#emit Association('.mse-installer', 'Installer', '1')
 
 [Run]
 Filename: "{app}\mse.exe"; Description: "Start Magic Set Editor"; Flags: postinstall nowait skipifsilent unchecked

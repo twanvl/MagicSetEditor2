@@ -399,6 +399,7 @@ label:
 	mode:				Mode
 	uses:				Uses
 	reminder:			Reminder text
+	rules:				Additional rules
 	standard keyword:
 		This is a standard %s keyword, you can not edit it.
 		If you make a copy of the keyword your copy will take precedent.
@@ -691,6 +692,9 @@ error:
 		  in function %s
 	in parameter:
 		Parameter %s: %s
+	in keyword reminder:
+		%s
+		  in reminder text of keyword '%s'
 	
 	# Image stuff
 	coordinates for blending overlap:					Coordinates for blending overlap
