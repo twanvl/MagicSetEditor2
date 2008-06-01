@@ -70,9 +70,11 @@ class KeywordTextValue : public FakeTextValue {
 /// A FakeTextValue that is used to edit reminder text scripts
 class KeywordReminderTextValue : public KeywordTextValue {
   public:
-	KeywordReminderTextValue(const TextFieldP& field, Keyword* keyword, bool editable);
+	KeywordReminderTextValue(Set& set, const TextFieldP& field, Keyword* keyword, bool editable);
 	
 	String errors; ///< Errors in the script
+	Set&   set;    ///< Set this keyword is in (for script checking)
+	Keyword& keyword; ///< The keyword we are the reminder text of
 	
 	/// Try to compile the script
 	virtual void store();
@@ -81,6 +83,9 @@ class KeywordReminderTextValue : public KeywordTextValue {
 	
 	/// Syntax highlight, and store in value
 	void highlight(const String& code, const vector<ScriptParseError>& errors);
+	
+	/// Check the script for errors
+	bool checkScript(const ScriptP& script);
 };
 
 /// Changing the mode of a keyword

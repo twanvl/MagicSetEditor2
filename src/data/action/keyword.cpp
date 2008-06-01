@@ -52,8 +52,10 @@ void AddKeywordAction::perform(bool to_undo) {
 
 // ----------------------------------------------------------------------------- : Changing keywords
 
-KeywordReminderTextValue::KeywordReminderTextValue(const TextFieldP& field, Keyword* keyword, bool editable)
+KeywordReminderTextValue::KeywordReminderTextValue(Set& set, const TextFieldP& field, Keyword* keyword, bool editable)
 	: KeywordTextValue(field, keyword, &keyword->reminder.getUnparsed(), editable)
+	, set(set)
+	, keyword(*keyword)
 {}
 
 void KeywordReminderTextValue::store() {
@@ -67,10 +69,12 @@ void KeywordReminderTextValue::store() {
 	vector<ScriptParseError> parse_errors;
 	ScriptP new_script = parse(new_value, nullptr, true, parse_errors);
 	if (parse_errors.empty()) {
-		// parsed okay, assign
-		errors.clear();
-		keyword.reminder.getScriptP()  = new_script;
-		keyword.reminder.getUnparsed() = new_value;
+		// parsed okay
+		if (checkScript(new_script)) {
+			// also runs okay, assign
+			keyword.reminder.getScriptP()  = new_script;
+			keyword.reminder.getUnparsed() = new_value;
+		}
 	} else {
 		// parse errors, report
 		errors = ScriptParseErrors(parse_errors).what();
@@ -170,6 +174,23 @@ void KeywordReminderTextValue::highlight(const String& code, const vector<Script
 	}
 	// set
 	value = new_value;
+}
+
+bool KeywordReminderTextValue::checkScript(const ScriptP& script) {
+	Context& ctx = set.cards.empty() ? set.getContext() : set.getContext(set.cards.front());
+	size_t scope = ctx.openScope();
+	try {
+		for (size_t i = 0 ; i < keyword.parameters.size() ; ++i) {
+			String param = String(_("param")) << (int)(i+1);
+			ctx.setVariable(param, to_script(param));
+		}
+		script->eval(ctx);
+		errors.clear();
+	} catch (const Error& e) {
+		errors = e.what();
+	}
+	ctx.closeScope(scope);
+	return errors.empty();
 }
 
 // ----------------------------------------------------------------------------- : Changing keywords : mode
