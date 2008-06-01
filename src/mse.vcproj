@@ -3411,6 +3411,9 @@
 		<File
 			RelativePath=".\main.cpp">
 		</File>
+		<File
+			RelativePath="C:\Documents and Settings\Administrator\Application Data\Magic Set Editor\mse8.config">
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
