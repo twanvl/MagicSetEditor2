@@ -11,6 +11,7 @@
 #include <gui/control/package_list.hpp>
 #include <gui/control/card_viewer.hpp>
 #include <gui/control/native_look_editor.hpp>
+#include <gui/util.hpp>
 #include <util/window_id.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
@@ -31,7 +32,7 @@ StylePanel::StylePanel(Window* parent, int id)
 	list          = new PackageList  (this, wxID_ANY);
 	use_for_all   = new wxButton     (this, ID_STYLE_USE_FOR_ALL, _BUTTON_("use for all cards"));
 	use_custom_options = new wxCheckBox(this, ID_STYLE_USE_CUSTOM, _BUTTON_("use custom styling options"));
-	editor        = new StylingEditor(this, wxID_ANY, wxNO_BORDER);
+	editor        = new StylingEditor(this, ID_EDITOR, wxNO_BORDER);
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
 		s->Add(preview, 0, wxRIGHT,  2);
@@ -102,6 +103,21 @@ void StylePanel::selectCard(const CardP& card) {
 	use_custom_options->Enable(card);
 	use_custom_options->SetValue(card ? card->has_styling : false);
 }
+
+// ----------------------------------------------------------------------------- : Clipboard
+
+// determine what control to use for clipboard actions
+#define CUT_COPY_PASTE(op,return)					\
+	int id = focused_control(this);					\
+	if (id == ID_EDITOR) { return editor->op(); }	\
+	else                 { return false;          }
+
+bool StylePanel::canCopy()  const { CUT_COPY_PASTE(canCopy,  return) }
+bool StylePanel::canCut()   const { CUT_COPY_PASTE(canCut,   return) }
+bool StylePanel::canPaste() const { CUT_COPY_PASTE(canPaste, return) }
+void StylePanel::doCopy()         { CUT_COPY_PASTE(doCopy,   return (void)) }
+void StylePanel::doCut()          { CUT_COPY_PASTE(doCut,    return (void)) }
+void StylePanel::doPaste()        { CUT_COPY_PASTE(doPaste,  return (void)) }
 
 // ----------------------------------------------------------------------------- : Events
 
