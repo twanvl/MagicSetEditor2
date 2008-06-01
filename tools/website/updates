@@ -1,13 +1,15 @@
-version: 0.3.5
+version: 0.3.6
 description:
-	<font size="+2"><b>Version 0.3.5 is out</b></font>
+	<font size="+2"><b>Version 0.3.6 is out</b></font>
 	<hr>
 	New in this release:
 	<ul>
-	 <li>Future sight templates</li>
-	 <li>Planeswalker template</li>
-	 <li>HTML export for VS-System.</li>
-	 <li>New style VS-System templates.</li>
-	 <li>Many, many bug fixes and minor improvements.</li>
+	 <li><img src="http://magicseteditor.sourceforge.net/files/mana-2R.png" alt="2/R">&nbsp;mana symbols and <img src="http://magicseteditor.sourceforge.net/files/mana-Q.png">, the reverse tap symbol.</li>
+	 <li>Customizable set statistics.</li>
+	 <li>Improved printing quality.</li>
+	 <li>User friendly system for installing templates.</li>
+	 <li>Support for arbitrarilly rotated text in templates.</li>
+	 <li>Support for changing font size and color in templates.</li>
+	 <li><i>Many</i> bug fixes.</li>
 	</ul>
-	You can download the new version on <a href="http://magicseteditor.sourceforge.net/download">the MSE download page</a>.
+	<a href="http://magicseteditor.sourceforge.net/download">Get version 0.3.6 from the MSE download page</a>.
