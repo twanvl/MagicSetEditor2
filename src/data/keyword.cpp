@@ -591,7 +591,12 @@ String KeywordDatabase::expand(const String& text,
 							
 							// Combine keyword & reminder with result
 							if (expand) {
-								String reminder = kw->reminder.invoke(ctx)->toString();
+								String reminder;
+								try {
+									reminder = kw->reminder.invoke(ctx)->toString();
+								} catch (const Error& e) {
+									handle_error(_ERROR_2_("in keyword reminder", e.what(), kw->keyword), true, false);
+								}
 								ctx.setVariable(_("keyword"),  to_script(total));
 								ctx.setVariable(_("reminder"), to_script(reminder));
 								result +=  _("<kw-"); result += expand_type; result += _(">");
