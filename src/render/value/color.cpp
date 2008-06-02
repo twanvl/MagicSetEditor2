@@ -58,8 +58,8 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 				// clip away the inside of the rectangle
 				wxRegion r = dc.trRectToRegion(style().getInternalRect());
 				r.Subtract(dc.trRectToRegion(RealRect(
-					style().left + style().left_width,
-					style().top  + style().top_width,
+					style().left_width,
+					style().top_width,
 					style().width  - style().left_width - style().right_width,
 					style().height - style().top_width  - style().bottom_width
 				)));
