@@ -469,7 +469,13 @@ wxMenu* InsertSymbolMenu::makeMenu(int id, SymbolFont& font) const {
 }
 wxMenuItem* InsertSymbolMenu::makeMenuItem(wxMenu* parent, int first_id, SymbolFont& font) const {
 	wxString menu_name = tr(font, _("menu item"), name, capitalize);
-	menu_name.Replace(_("\t"),_(" "));
+	// ensure that there is not actually an accelerator string,
+	menu_name.Replace(_("\t "),_("\t"));
+	#ifdef __WXMSW__
+		menu_name.Replace(_("\t"),_("\t ")); // by prepending " "
+	#else
+		menu_name.Replace(_("\t"),_("   ")); // by simply dropping the \t
+	#endif
 	if (type == ITEM_SUBMENU) {
 		wxMenuItem* item = new wxMenuItem(parent, wxID_ANY, menu_name,
 		                                  wxEmptyString, wxITEM_NORMAL,
