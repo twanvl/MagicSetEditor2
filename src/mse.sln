@@ -25,6 +25,7 @@ Global
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Profile Unicode.ActiveCfg = Release Profile Unicode|Win32
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Profile Unicode.Build.0 = Release Profile Unicode|Win32
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Unicode.ActiveCfg = Release Unicode|Win32
+		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Unicode.Build.0 = Release Unicode|Win32
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Unicode fast build.ActiveCfg = Release Unicode fast build|Win32
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Unicode fast build.Build.0 = Release Unicode fast build|Win32
 	EndGlobalSection

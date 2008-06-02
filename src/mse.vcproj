@@ -87,8 +87,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				GlobalOptimizations="TRUE"
-				InlineFunctionExpansion="1"
-				ImproveFloatingPointConsistency="TRUE"
+				InlineFunctionExpansion="0"
+				ImproveFloatingPointConsistency="FALSE"
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="0"
 				OptimizeForWindowsApplication="TRUE"
@@ -226,11 +226,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="3"
 				GlobalOptimizations="TRUE"
-				InlineFunctionExpansion="1"
-				ImproveFloatingPointConsistency="TRUE"
-				FavorSizeOrSpeed="1"
+				InlineFunctionExpansion="0"
+				EnableIntrinsicFunctions="TRUE"
+				ImproveFloatingPointConsistency="FALSE"
+				FavorSizeOrSpeed="0"
 				OmitFramePointers="TRUE"
-				OptimizeForProcessor="3"
+				OptimizeForProcessor="2"
 				OptimizeForWindowsApplication="TRUE"
 				AdditionalIncludeDirectories=".; &quot;$(WX_PATH)/include&quot;; &quot;$(WX_PATH)\lib\vc_lib\mswu&quot;"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;__WINDOWS__;__WXMSW__;__WIN95__;__WIN32__;WINVER=0x0400;STRICT;UNICODE;_UNICODE;wxUSE_UNICODE"
@@ -379,8 +380,8 @@
 				Optimization="3"
 				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="1"
-				ImproveFloatingPointConsistency="TRUE"
-				FavorSizeOrSpeed="1"
+				ImproveFloatingPointConsistency="FALSE"
+				FavorSizeOrSpeed="2"
 				OmitFramePointers="TRUE"
 				OptimizeForProcessor="3"
 				OptimizeForWindowsApplication="TRUE"
@@ -2366,6 +2367,12 @@
 			</File>
 			<File
 				RelativePath=".\gfx\blend_image.cpp">
+				<FileConfiguration
+					Name="Release Unicode|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						FavorSizeOrSpeed="1"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gfx\color.cpp">
@@ -2427,6 +2434,7 @@
 					Name="Release Unicode|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
+						FavorSizeOrSpeed="1"
 						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2453,9 +2461,21 @@
 			</File>
 			<File
 				RelativePath=".\gfx\image_effects.cpp">
+				<FileConfiguration
+					Name="Release Unicode|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						FavorSizeOrSpeed="1"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gfx\mask_image.cpp">
+				<FileConfiguration
+					Name="Release Unicode|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						FavorSizeOrSpeed="1"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gfx\polynomial.cpp">
@@ -2465,6 +2485,12 @@
 			</File>
 			<File
 				RelativePath=".\gfx\resample_image.cpp">
+				<FileConfiguration
+					Name="Release Unicode|Win32">
+					<Tool
+						Name="VCCLCompilerTool"
+						FavorSizeOrSpeed="1"/>
+				</FileConfiguration>
 			</File>
 			<File
 				RelativePath=".\gfx\resample_text.cpp">
@@ -2478,6 +2504,7 @@
 					Name="Release Unicode|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
+						FavorSizeOrSpeed="1"
 						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2505,6 +2532,7 @@
 					Name="Release Unicode|Win32">
 					<Tool
 						Name="VCCLCompilerTool"
+						FavorSizeOrSpeed="1"
 						ObjectFile="$(IntDir)/$(InputName)1.obj"/>
 				</FileConfiguration>
 				<FileConfiguration
@@ -2660,6 +2688,12 @@
 				Filter="">
 				<File
 					RelativePath=".\script\context.cpp">
+					<FileConfiguration
+						Name="Release Unicode|Win32">
+						<Tool
+							Name="VCCLCompilerTool"
+							FavorSizeOrSpeed="1"/>
+					</FileConfiguration>
 				</File>
 				<File
 					RelativePath=".\script\context.hpp">
