@@ -193,15 +193,15 @@ expected_locale_keys	TEXT	"../common/expected_locale_keys"
 // -------------------------------------------------------- : Version info
 
 1 VERSIONINFO
-FILEVERSION    0,3,6
-PRODUCTVERSION 0,3,6
+FILEVERSION    0,3,6,1
+PRODUCTVERSION 0,3,6,1
 FILETYPE VFT_APP
 {
   BLOCK "StringFileInfo"
   {
     BLOCK "040904E4"
     {
-      VALUE "FileVersion",			"0.3.6"
+      VALUE "FileVersion",			"0.3.6b"
       VALUE "License",				"GNU General Public License 2 or later; This is free software, and you are welcome to redistribute it under certain conditions; See the help file for details"
       VALUE "FileDescription",		"Magic Set Editor"
       VALUE "InternalName",			"mse2/8"

@@ -14,7 +14,7 @@
 
 [setup]
 AppName                 = Magic Set Editor 2
-AppVerName              = Magic Set Editor 2 - 0.3.6 beta
+AppVerName              = Magic Set Editor 2 - 0.3.6b beta
 AppCopyright            = Copyright © 2001-2007 Twan van Laarhoven
 DefaultDirName          = {pf}\Magic Set Editor 2
 DisableStartupPrompt    = 1
