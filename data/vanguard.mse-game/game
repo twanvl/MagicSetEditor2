@@ -5,7 +5,7 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2008-06-01
+version: 2008-06-02
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -19,10 +19,11 @@ init script:
 	# correctly sort a mana symbol (no guild mana)
 	mana_sort       := sort_rule(order: "XYZI[0123456789]S(WUBRG)")
 	# correctly sort guild mana
-	mana_sort_guild := replace_rule(
-			match: "./.|././.|./././.|.[|]",
-			in_context: "(^|[^/])<match>($|[^/])",
-			replace: {sort_text(order:"in_place((WUBRG)")}
+	mana_sort_guild := sort_rule(order: "[XYZI01234567890SWUBRG/]") +
+			replace_rule(
+				match: "./.|././.|./././.|.[|]",
+				in_context: "(^|[^/])<match>($|[^/])",
+				replace: {sort_text(order:"in_place((WUBRG)")}
 			)
 	mana_has_guild     := sort_rule(order: "</|>") # Is there guild or half mana in the input?
 	# A mana cost can contain both normal and guild mana
