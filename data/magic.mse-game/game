@@ -5,7 +5,7 @@ installer group: magic/game files
 icon: card-back.png
 position hint: 01
 
-version: 2008-06-01
+version: 2008-06-02
 depends on:
 	package: magic-blends.mse-include
 	version: 2007-09-23
@@ -650,6 +650,14 @@ default set style:
 			border color 1: rgb(0,  0,  0)
 			border color 2: rgb(0,  0,  0)
 		variation:
+			name: mythic rare
+			border radius: 0.07
+			fill type: linear gradient
+			fill color 1:   rgb(255, 160, 40)
+			fill color 2:   rgb(202, 49, 35)
+			border color 1: rgb(0,  0,  0)
+			border color 2: rgb(0,  0,  0)
+		variation:
 			name: special
 			border radius: 0.10
 			fill type: linear gradient
@@ -856,6 +864,7 @@ card field:
 	choice: common
 	choice: uncommon
 	choice: rare
+	choice: mythic rare
 	choice: special
 	initial: common
 	card list visible: true
@@ -865,6 +874,7 @@ card field:
 		basic land: rgb(109,62,39)
 		common:     rgb(33,33,33)
 		uncommon:   rgb(224,224,224)
+		mythic rare: rgb(202, 49, 35)
 		rare:       rgb(255,207,52)
 		special:    rgb(190,0,255)
 
@@ -1107,6 +1117,7 @@ card field:
 	choice: common
 	choice: uncommon
 	choice: rare
+	choice: mythic rare
 	choice: special
 	initial: common
 	# Both rarities will be the same

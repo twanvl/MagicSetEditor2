@@ -6,7 +6,7 @@ installer group: magic/FirePenguinMaster/Split cards
 icon: card-sample.png
 position hint: 403
 
-version: 2008-05-19
+version: 2008-06-02
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -300,6 +300,7 @@ card style:
 			common:     script: symbol_variation(symbol: set.symbol, variation: "common")
 			uncommon:   script: symbol_variation(symbol: set.symbol, variation: "uncommon")
 			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
+			mythic rare:       script: symbol_variation(symbol: set.symbol, variation: "mythic rare")
 			special:	    script: symbol_variation(symbol: set.symbol, variation: "special")
 	rarity 2:
 		left: 306
@@ -315,6 +316,7 @@ card style:
 			common:     script: symbol_variation(symbol: set.symbol, variation: "common")
 			uncommon:   script: symbol_variation(symbol: set.symbol, variation: "uncommon")
 			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
+			mythic rare:       script: symbol_variation(symbol: set.symbol, variation: "mythic rare")
 			special:	    script: symbol_variation(symbol: set.symbol, variation: "special")
 
 	############################# Text box

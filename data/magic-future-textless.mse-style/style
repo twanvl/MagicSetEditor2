@@ -6,10 +6,10 @@ installer group: magic/Future/Textless cards
 icon: card-sample.png
 position hint: 055
 
-version: 2008-05-21
+version: 2008-06-02
 depends on:
 	package: magic.mse-game
-	version: 2007-09-23
+	version: 2008-06-02
 depends on:
 	package: magic-future-common.mse-include
 	version: 2008-05-21
@@ -285,6 +285,7 @@ card style:
 					else symbol_variation(symbol: set.symbol, variation: "common")
 			uncommon:   script: symbol_variation(symbol: set.symbol, variation: "uncommon")
 			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
+			mythic rare:       script: symbol_variation(symbol: set.symbol, variation: "mythic rare")
 			special:    script: symbol_variation(symbol: set.symbol, variation: "special")
 
 	############################# PT

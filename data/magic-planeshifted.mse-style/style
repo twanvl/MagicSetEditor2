@@ -6,10 +6,10 @@ installer group: magic/Planeshifted/Normal Cards
 icon: card-sample.png
 position hint: 011
 
-version: 2008-05-19
+version: 2008-06-02
 depends on:
 	package: magic.mse-game
-	version: 2007-12-29
+	version: 2008-06-02
 depends on:
 	package: magic-watermarks.mse-include
 	version: 2007-09-23
@@ -238,6 +238,7 @@ card style:
 					else symbol_variation(symbol: set.symbol, variation: "common")
 			uncommon:   script: symbol_variation(symbol: set.symbol, variation: "uncommon")
 			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
+			mythic rare:       script: symbol_variation(symbol: set.symbol, variation: "mythic rare")
 			special:    script: symbol_variation(symbol: set.symbol, variation: "special")
 
 	############################# Text box

@@ -12,10 +12,10 @@ installer group: magic/old style/normal cards
 icon: card-sample.png
 position hint: 101
 
-version: 2008-04-13
+version: 2008-06-02
 depends on:
 	package: magic.mse-game
-	version: 2007-12-29
+	version: 2008-06-02
 depends on:
 	package: magic-watermarks.mse-include
 	version: 2007-12-29
@@ -290,6 +290,11 @@ card style:
 				script:
 					if styling.colored_rarities
 					then symbol_variation(symbol: set.symbol, variation: "oldrare")
+					else symbol_variation(symbol: set.symbol, variation: "common")
+			mythic rare:
+				script:
+					if styling.colored_rarities
+					then symbol_variation(symbol: set.symbol, variation: "mythic rare")
 					else symbol_variation(symbol: set.symbol, variation: "common")
 			special:
 				script:

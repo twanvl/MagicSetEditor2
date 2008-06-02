@@ -6,8 +6,8 @@ icon: card-sample.png
 position hint: 001
 installer group: magic/new style/normal cards
 
-version: 2008-04-19
-depends on: magic.mse-game                   2007-12-29
+version: 2008-06-02
+depends on: magic.mse-game                   2008-06-02
 depends on: magic-default-image.mse-include  2007-09-23
 depends on: magic-watermarks.mse-include     2007-09-23
 depends on: magic-mana-large.mse-symbol-font 2007-09-23
@@ -257,6 +257,7 @@ card style:
 					else symbol_variation(symbol: set.symbol, variation: "common")
 			uncommon:   script: symbol_variation(symbol: set.symbol, variation: "uncommon")
 			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
+			mythic rare:       script: symbol_variation(symbol: set.symbol, variation: "mythic rare")
 			special:    script: symbol_variation(symbol: set.symbol, variation: "special")
 
 	############################# Text box
