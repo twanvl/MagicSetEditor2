@@ -370,6 +370,17 @@ bool is_substr(const String& str, size_t pos, const String& cmp) {
 	return is_substr(str, pos, cmp.c_str());
 }
 
+
+bool is_substr_i(const String& str, size_t pos, const Char* cmp) {
+	for (String::const_iterator it = str.begin() + pos ; *cmp && it < str.end() ; ++cmp, ++it) {
+		if (toLower(*cmp) != toLower(*it)) return false;
+	}
+	return *cmp == _('\0');
+}
+bool is_substr_i(const String& str, size_t pos, const String& cmp) {
+	return is_substr_i(str, pos, cmp.c_str());
+}
+
 bool cannocial_name_compare(const String& as, const Char* b) {
 	const Char* a = as.c_str();
 	while (true) {

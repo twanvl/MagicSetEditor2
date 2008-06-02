@@ -348,7 +348,7 @@ bool PackageDirectory::actual_install(const InstallablePackage& package, const S
 	const Packaged::FileInfos& file_infos = installer.getFileInfos();
 	for (Packaged::FileInfos::const_iterator it = file_infos.begin() ; it != file_infos.end() ; ++it) {
 		String file = it->first;
-		if (!is_substr(file,0,name)) continue; // not the right package
+		if (!is_substr_i(file,0,name)) continue; // not the right package
 		// correct filename
 		String local_file = install_dir + file.substr(name.length());
 		create_parent_dirs(local_file);
