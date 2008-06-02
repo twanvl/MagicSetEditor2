@@ -5,7 +5,7 @@ installer group: magic/game files
 icon: card-back.png
 position hint: 01
 
-version: 2008-05-25
+version: 2008-06-01
 depends on:
 	package: magic-blends.mse-include
 	version: 2007-09-23
@@ -1917,6 +1917,11 @@ keyword parameter type:
 		description: Converts mana to number
 		# "0" left in so users can easily see how to edit script.
 		script: \{cmc({input}) + 0\}
+	refer script:
+		name: colored mana cost
+		description: Converts mana to number of colored mana
+		# "0" left in so users can easily see how to edit script.
+		script: \{colored_mana({input}) + 0\}
 # By pichoro and bunnierein
 keyword parameter type:
 	name: cost

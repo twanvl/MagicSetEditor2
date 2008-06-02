@@ -5,7 +5,7 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2008-04-09
+version: 2008-06-01
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -63,10 +63,28 @@ init script:
 	has_pt := { card.pt           != "" }
 	
 	# Converted mana cost
-	cmc := to_text + {
-		  1 * number_of_items(in: sort_text(order:"SWUBRG")) # colored mana
-		- 1 * number_of_items(in: sort_text(order:"/"))      # guild mana, W/U -> 2 - 1
-		+ 1 * sort_text(order: "[0123456789]")               # colorless mana
+	is_half_mana    := match_rule(match: "1/2|[|][WUBRGS]")
+	is_zero_slash   := match_rule(match: "^0/")
+	is_colored_mana := match_rule(match: "[WUBRG]")
+	only_numbers    := filter_rule(match: "^[0123456789]+")
+	cmc_split := break_rule(match: "(?ix) 1/2 | [|][WUBRG] | ([0-9]+(?!/2)|[WUBRGS])(/[WUBRGS])\{0,4} ")
+	cmc := to_text + { 0 +
+		for each sym in cmc_split() do (
+			numbers := only_numbers(sym)
+			if is_half_mana(sym)       then 0.5
+			else if is_zero_slash(sym) then 1 # 0/C
+			else if numbers != ""      then 1 * numbers
+			else                            1 # all other symbols are 1
+		)
+	}
+	
+	colored_mana := to_text + { 0 +
+		for each sym in cmc_split() do (
+			numbers := only_numbers(sym)
+			if is_colored_mana(sym) then
+				if is_half_mana(sym) then 0.5 else 1
+			else 0
+		)
 	}
 	
 	############################################################## The text box
@@ -433,6 +451,11 @@ keyword parameter type:
 		description: Converts mana to number
 		# "0" left in so users can easily see how to edit script.
 		script: \{cmc({input}) + 0\}
+	refer script:
+		name: colored mana cost
+		description: Converts mana to number of colored mana
+		# "0" left in so users can easily see how to edit script.
+		script: \{colored_mana({input}) + 0\}
 # By pichoro and bunnierein
 keyword parameter type:
 	name: cost
