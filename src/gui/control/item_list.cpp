@@ -159,7 +159,8 @@ void ItemList::refreshList() {
 		sort(sorted_list.begin(), sorted_list.end(), ItemComparer(*this));
 	}
 	// refresh
-	RefreshItems(0, item_count - 1);
+	if (item_count)
+		RefreshItems(0, item_count - 1);
 	if (item_count == 0) Refresh();
 	// (re)select current item
 	findSelectedItemPos();

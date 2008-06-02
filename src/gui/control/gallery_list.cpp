@@ -163,7 +163,7 @@ void GalleryList::onChar(wxKeyEvent& ev) {
 			} break;
 		case WXK_RETURN: {
 			// same thing: press dialog box default button
-			wxButton* btn = wxDynamicCast(GetParent()->GetDefaultItem(), wxButton);
+			wxButton* btn = wxDynamicCast(wxDynamicCast(GetParent(), wxTopLevelWindow)->GetDefaultItem(), wxButton);
 			if ( btn && btn->IsEnabled() ) {
 				// if we do have a default button, do press it
 				wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, btn->GetId());

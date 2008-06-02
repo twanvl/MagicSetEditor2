@@ -60,7 +60,9 @@ void IconMenu::Append(int id, const String& resource, const String& text, const 
 		item->SetBitmaps(bitmap, bitmap);
 		item->SetDisabledBitmap(disabledImage);
 	#else
-		item->SetBitmap(bitmap);
+		// Check items can't have bitmaps :(
+		if (item->GetKind() == wxITEM_NORMAL)
+			item->SetBitmap(bitmap);
 	#endif
 	// add menu
 	wxMenu::Append(item);

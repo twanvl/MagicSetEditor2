@@ -230,8 +230,8 @@ void CardsPanel::onCommand(int id) {
 		case ID_FORMAT_BOLD: case ID_FORMAT_ITALIC: case ID_FORMAT_SYMBOL: case ID_FORMAT_REMINDER: {
 			if (focused_control(this) == ID_EDITOR) {
 				editor->doFormat(id);
-				break;
 			}
+			break;
 		}
 		case ID_COLLAPSE_NOTES: {
 			bool collapse = notes->GetSize().y > 0;

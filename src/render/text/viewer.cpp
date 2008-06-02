@@ -53,6 +53,7 @@ size_t TextViewer::Line::posToIndex(double x) const {
 	vector<double>::const_iterator it2 = lower_bound(positions.begin(), positions.end(), x);
 	if (it2 == positions.begin()) return start;
 	if (it2 == positions.end()) --it2; // we don't want to find the position beyond the end
+	if (it2 == positions.begin()) return start;
 	// first index with pos > x
 	vector<double>::const_iterator it1 = it2 - 1;
 	if (x - *it1 <= *it2 - x) return it1 - positions.begin() + start; // it1 is closer

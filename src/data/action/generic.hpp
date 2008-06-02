@@ -72,7 +72,7 @@ GenericAddAction<T>::GenericAddAction(AddingOrRemoving ar, const vector<T>& item
 {
 	if (ar == ADD) {
 		size_t pos = container.size();
-		for (vector<T>::const_iterator it = items.begin() ; it != items.end() ; ++it) {
+		for (typename vector<T>::const_iterator it = items.begin() ; it != items.end() ; ++it) {
 			steps.push_back(Step(pos++, *it));
 		}
 	} else {

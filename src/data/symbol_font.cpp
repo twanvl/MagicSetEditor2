@@ -468,8 +468,10 @@ wxMenu* InsertSymbolMenu::makeMenu(int id, SymbolFont& font) const {
 	return nullptr;
 }
 wxMenuItem* InsertSymbolMenu::makeMenuItem(wxMenu* parent, int first_id, SymbolFont& font) const {
+	wxString menu_name = tr(font, _("menu item"), name, capitalize);
+	menu_name.Replace(_("\t"),_(" "));
 	if (type == ITEM_SUBMENU) {
-		wxMenuItem* item = new wxMenuItem(parent, wxID_ANY, tr(font, _("menu item"), name, capitalize),
+		wxMenuItem* item = new wxMenuItem(parent, wxID_ANY, menu_name,
 		                                  wxEmptyString, wxITEM_NORMAL,
 		                                  makeMenu(first_id, font));
 		item->SetBitmap(wxNullBitmap);
@@ -478,7 +480,7 @@ wxMenuItem* InsertSymbolMenu::makeMenuItem(wxMenu* parent, int first_id, SymbolF
 		wxMenuItem* item = new wxMenuItem(parent, wxID_SEPARATOR);
 		return item;
 	} else {
-		wxMenuItem* item = new wxMenuItem(parent, first_id, tr(font, _("menu item"), name, capitalize));
+		wxMenuItem* item = new wxMenuItem(parent, first_id, menu_name);
 		// Generate bitmap for use on this item
 		SymbolInFont* symbol = nullptr;
 		if (type == ITEM_CUSTOM) {
