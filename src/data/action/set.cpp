@@ -52,10 +52,14 @@ String ReorderCardsAction::getName(bool to_undo) const {
 }
 
 void ReorderCardsAction::perform(bool to_undo) {
-	if (card_id1 >= set.cards.size() || card_id2 < set.cards.size())
-		//Too lazy to fix this right now.
-		//assert(false);
+	#ifdef _DEBUG
+		assert(card_id1 < set.cards.size());
+		assert(card_id2 < set.cards.size());
+	#endif
+	if (card_id1 >= set.cards.size() || card_id2 < set.cards.size()) {
+		// TODO : Too lazy to fix this right now.
 		return;
+	}
 	swap(set.cards[card_id1], set.cards[card_id2]);
 }
 
