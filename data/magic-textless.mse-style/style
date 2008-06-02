@@ -6,7 +6,7 @@ installer group: magic/new style/textless
 icon: card-sample.png
 position hint: 005
 
-version: 2008-04-13
+version: 2008-06-02
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -42,11 +42,7 @@ init script:
 	template := { artifact_template() + "{type}.jpg" }
 	
 	# Use the normal tap symbol
-	mana_t := {
-		if      styling.tap_symbol == "old"        then "old"
-		else if styling.tap_symbol == "diagonal T" then "older"
-		else                                            "new"
-	}
+	mana_t := { "old" }
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
 	
