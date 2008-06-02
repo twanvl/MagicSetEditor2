@@ -1,5 +1,5 @@
 mse version: 0.3.6
-version: 2008-05-18
+version: 2008-06-02
 # Symbol font in the 'popup' style, used for casting costs on modern cards
 short name: popup style
 installer group: magic/Mana symbols/popup style
@@ -216,6 +216,7 @@ symbol:
 		size: .6
 		color: rgb(0,0,0)
 		max stretch: 0.5
+	image font size: 145
 symbol:
 	image: mana_ng.png
 	code: ([XYZ0-9])+/G
@@ -230,6 +231,7 @@ symbol:
 		size: .6
 		color: rgb(0,0,0)
 		max stretch: 0.5
+	image font size: 145
 symbol:
 	image: mana_nu.png
 	code: ([XYZ0-9])+/U
@@ -244,6 +246,7 @@ symbol:
 		size: .6
 		color: rgb(0,0,0)
 		max stretch: 0.5
+	image font size: 145
 symbol:
 	image: mana_nb.png
 	code: ([XYZ0-9])+/B
@@ -258,6 +261,7 @@ symbol:
 		size: .6
 		color: rgb(0,0,0)
 		max stretch: 0.5
+	image font size: 145
 symbol:
 	image: mana_nr.png
 	code: ([XYZ0-9])+/R
@@ -272,6 +276,7 @@ symbol:
 		size: .6
 		color: rgb(0,0,0)
 		max stretch: 0.5
+	image font size: 145
 symbol:
 	code: X
 	image: mana_x.png
