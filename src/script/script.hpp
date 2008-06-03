@@ -21,27 +21,25 @@ DECLARE_POINTER_TYPE(Script);
  */
 enum InstructionType
 	// Basic
-{	I_NOP			= 0  ///< no operation, used as placeholder for extra data values
-,	I_PUSH_CONST	= 1  ///< arg = value : push a constant onto the stack
-,	I_POP			= 2  ///< pop the top value from the stack (used for ; operator)
-,	I_JUMP			= 3  ///< arg = int   : move the instruction pointer to the given position
-,	I_JUMP_IF_NOT	= 4  ///< arg = int   : move the instruction pointer if the top of the stack is false
+{	I_NOP			= 0  ///< arg = *          : no operation, used as placeholder for extra data values
+,	I_PUSH_CONST	= 1  ///< arg = const val  : push a constant onto the stack
+,	I_JUMP			= 2  ///< arg = address    : move the instruction pointer to the given position
+,	I_JUMP_IF_NOT	= 3  ///< arg = address    : move the instruction pointer if the top of the stack is false
 	// Variables
-,	I_GET_VAR		= 5  ///< arg = int   : find a variable, push its value onto the stack, it is an error if the variable is not found
-,	I_SET_VAR		= 6  ///< arg = int   : assign the top value from the stack to a variable (doesn't pop)
+,	I_GET_VAR		= 4  ///< arg = var        : find a variable, push its value onto the stack, it is an error if the variable is not found
+,	I_SET_VAR		= 5  ///< arg = var        : assign the top value from the stack to a variable (doesn't pop)
 	// Objects
-,	I_MEMBER_C		= 7  ///< arg = name  : finds a member of the top of the stack replaces the top of the stack with the member
-,	I_LOOP			= -8 ///< arg = int   : loop over the elements of an iterator, which is the *second* element of the stack (this allows for combing the results of multiple iterations)
-					     ///<               at the end performs a jump and pops the iterator. note: The second element of the stack must be an iterator!
-,	I_MAKE_OBJECT   = -7 ///< arg = int   : make a list/map with n elements, pops 2n values of the stack, n key/value pairs
+,	I_MEMBER_C		= 6  ///< arg = const name : finds a member of the top of the stack replaces the top of the stack with the member
+,	I_LOOP			= 7  ///< arg = address    : loop over the elements of an iterator, which is the *second* element of the stack (this allows for combing the results of multiple iterations)
+					     ///<                    at the end performs a jump and pops the iterator. note: The second element of the stack must be an iterator!
+,	I_MAKE_OBJECT   = 8  ///< arg = int        : make a list/map with n elements, pops 2n values of the stack, n key/value pairs
 	// Functions
-,	I_CALL			= -6 ///< arg = int, int+ : call the top item of the stack, with the given number of arguments (set with SET_VAR, but in the activation record of the call)
-,	I_RET			= -5 ///< return from the current function
+,	I_CALL			= 9  ///< arg = int, n*var : call the top item of the stack, with the given number of arguments (set with SET_VAR, but in the activation record of the call)
 	// Simple instructions
-,	I_UNARY			= -4 ///< pop 1 value,  apply a function, push the result
-,	I_BINARY		= -3 ///< pop 2 values, apply a function, push the result
-,	I_TERNARY		= -2 ///< pop 3 values, apply a function, push the result
-,	I_QUATERNARY	= -1 ///< pop 4 values, apply a function, push the result
+,	I_UNARY			= 10 ///< arg = 1ary instr : pop 1 value,  apply a function, push the result
+,	I_BINARY		= 11 ///< arg = 2ary instr : pop 2 values, apply a function, push the result
+,	I_TERNARY		= 12 ///< arg = 3ary instr : pop 3 values, apply a function, push the result
+,	I_QUATERNARY	= 13 ///< arg = 4ary instr : pop 4 values, apply a function, push the result
 };
 
 /// Types of unary instructions (taking one argument from the stack)
@@ -53,7 +51,8 @@ enum UnaryInstructionType
 
 /// Types of binary instructions (taking two arguments from the stack)
 enum BinaryInstructionType
-{	I_ITERATOR_R	///< Make an iterator for a range (two integers)
+{	I_POP			///< Pop the top value of the stack
+,	I_ITERATOR_R	///< Make an iterator for a range (two integers)
 ,	I_MEMBER		///< Member of an object
 // Arithmatic
 ,	I_ADD			///< add     
@@ -93,15 +92,16 @@ enum QuaternaryInstructionType
  *  Then the instr? member gives the actual instruction to perform
  */
 struct Instruction {
-	InstructionType instr : 4;
+	InstructionType instr : 5;
 	union {
-		unsigned int				data   : 28;
-		UnaryInstructionType		instr1 : 28;
-		BinaryInstructionType		instr2 : 28;
-		TernaryInstructionType		instr3 : 28;
-		QuaternaryInstructionType	instr4 : 28;
+		unsigned int				data   : 27;
+		UnaryInstructionType		instr1 : 27;
+		BinaryInstructionType		instr2 : 27;
+		TernaryInstructionType		instr3 : 27;
+		QuaternaryInstructionType	instr4 : 27;
 	};
 };
+static const unsigned int INVALID_ADDRESS = 0x03FFFFFF;
 
 // ----------------------------------------------------------------------------- : Variables
 

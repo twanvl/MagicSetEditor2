@@ -56,13 +56,11 @@ StatsDimension::StatsDimension(const Field& field)
 		s.addInstruction(I_MEMBER_C,   field.name);
 		s.addInstruction(I_CALL,       1);
 		s.addInstruction(I_NOP,        SCRIPT_VAR_input);
-		s.addInstruction(I_RET);
 	} else {
 		// initialize script, card.{field_name}
 		Script& s = script.getScript();
 		s.addInstruction(I_GET_VAR,    SCRIPT_VAR_card);
 		s.addInstruction(I_MEMBER_C,   field.name);
-		s.addInstruction(I_RET);
 	}
 }
 

@@ -140,7 +140,6 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 		
 		// Loop until we are done
 		while (true) {
-			assert(instr < &*script.instructions.end());
 			// Is there a jump going here?
 			// If so, unify with current execution path
 			while (!jumps.empty() && jumps.top()->target == instr) {
@@ -158,6 +157,8 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				delete j;
 			}
 			
+			if (instr >= &*script.instructions.end()) break; // end of script
+			
 			// Analyze the current instruction
 			Instruction i = *instr++;
 			switch (i.instr) {
@@ -165,11 +166,6 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				// Push a constant (as normal)
 				case I_PUSH_CONST: {
 					stack.push_back(script.constants[i.data]);
-					break;
-				}
-				// Pop top value (as normal)
-				case I_POP: {
-					stack.pop_back();
 					break;
 				}
 				// Jump
@@ -253,16 +249,6 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					closeScope(scope);
 					break;
 				}
-				// Function return (as normal)
-				case I_RET: {
-					closeScope(scope);
-					// return top of stack
-					ScriptValueP result = stack.back();
-					stack.pop_back();
-					assert(stack.size() == stack_size); // we end up with the same stack
-					assert(jumps.empty());              // no open jump records
-					return result;
-				}
 				
 				// Get a variable (almost as normal)
 				case I_GET_VAR: {
@@ -293,6 +279,10 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				}
 				// Simple instruction: binary
 				case I_BINARY: {
+					if (i.instr2 == I_POP) {
+						stack.pop_back();
+						continue;
+					}
 					ScriptValueP  b = stack.back(); stack.pop_back();
 					ScriptValueP& a = stack.back();
 					switch (i.instr2) {
@@ -330,6 +320,15 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				}
 			}
 		}
+		
+		// Function return (as normal)
+		closeScope(scope);
+		ScriptValueP result = stack.back();
+		stack.pop_back();
+		assert(stack.size() == stack_size); // we end up with the same stack
+		assert(jumps.empty());              // no open jump records
+		return result;
+		
 	} catch (...) {
 		// cleanup after an exception
 		// the only place where exceptions should be possible is in someValue->getMember

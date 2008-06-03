@@ -99,7 +99,6 @@ void Game::initCardListColorScript() {
 			s.addInstruction(I_BINARY,     I_MEMBER);
 			s.addInstruction(I_PUSH_CONST, to_script(Color(0,0,0)));
 			s.addInstruction(I_BINARY,     I_OR_ELSE);
-			s.addInstruction(I_RET);
 			return;
 		}
 	}

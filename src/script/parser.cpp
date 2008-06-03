@@ -346,11 +346,14 @@ void parseExpr(TokenIterator& input, Script& script, Precedence min_prec);
 /** @param input           Read tokens from the input
  *  @param script          Add resulting instructions to the script
  *  @param min_prec        Minimum precedence level for operators
- *  @param close_with      Add this instruction at the end
+ *  @param close_with      Add this instruction at the end, or I_NOP for no instruction
  *  @param close_with_data Data for the instruction at the end
  *  NOTE: The net stack effect of an expression should be +1
  */
 void parseOper(TokenIterator& input, Script& script, Precedence min_prec, InstructionType close_with = I_NOP, int close_with_data = 0);
+
+/// Parse call arguments, "(...)"
+void parseCallArguments(TokenIterator& input, Script& script, vector<Variable>& arguments);
 
 
 ScriptP parse(const String& s, Packaged* package, bool string_mode, vector<ScriptParseError>& errors_out) {
@@ -358,7 +361,7 @@ ScriptP parse(const String& s, Packaged* package, bool string_mode, vector<Scrip
 	// parse
 	TokenIterator input(s, package, string_mode, errors_out);
 	ScriptP script(new Script);
-	parseOper(input, *script, PREC_ALL, I_RET);
+	parseOper(input, *script, PREC_ALL);
 	Token eof = input.read();
 	if (eof != TOK_EOF) {
 		input.expected(_("end of input"));
@@ -403,7 +406,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 		} else if (token == _("{")) {
 			// {} = function block. Parse a new Script
 			intrusive_ptr<Script> subScript(new Script);
-			parseOper(input, *subScript, PREC_ALL, I_RET);
+			parseOper(input, *subScript, PREC_ALL);
 			expectToken(input, _("}"));
 			script.addInstruction(I_PUSH_CONST, subScript);
 		} else if (token == _("[")) {
@@ -447,11 +450,11 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 				unsigned int jmpElse, jmpEnd;
 				parseOper(input, script, PREC_AND);						// AAA
 				jmpElse = script.getLabel();							//		jmp_else:
-				script.addInstruction(I_JUMP_IF_NOT, 0xFFFFFFFF);		//		jnz lbl_else
+				script.addInstruction(I_JUMP_IF_NOT, INVALID_ADDRESS);	//		jnz lbl_else
 				expectToken(input, _("then"));							// then
 				parseOper(input, script, PREC_SET);						// BBB
 				jmpEnd = script.getLabel();								//		jmp_end:
-				script.addInstruction(I_JUMP, 0xFFFFFFFF);				//		jump lbl_end
+				script.addInstruction(I_JUMP, INVALID_ADDRESS);			//		jump lbl_end
 				script.comeFrom(jmpElse);								//		lbl_else:
 				if (input.peek() == _("else")) {						// else
 					input.read();
@@ -476,11 +479,11 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					script.addInstruction(I_UNARY, I_ITERATOR_C);		//		iterator_collection
 					script.addInstruction(I_PUSH_CONST, script_nil);	//		push nil
 					lblStart = script.getLabel();						//		lbl_start:
-					script.addInstruction(I_LOOP, 0xFFFFFFFF);			//		loop
+					script.addInstruction(I_LOOP, INVALID_ADDRESS);		//		loop
 					expectToken(input, _("do"));						// do
 					script.addInstruction(I_SET_VAR,
 										string_to_variable(name.value));//		set name
-					script.addInstruction(I_POP);						//		 pop
+					script.addInstruction(I_BINARY, I_POP);				//		 pop
 					parseOper(input, script, PREC_SET, I_BINARY, I_ADD);// CCC;	add
 					script.addInstruction(I_JUMP, lblStart);			//		jump lbl_start
 					script.comeFrom(lblStart);							//		lbl_end:
@@ -494,11 +497,11 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					script.addInstruction(I_BINARY, I_ITERATOR_R);		//		iterator_range
 					script.addInstruction(I_PUSH_CONST, script_nil);	//		push nil
 					lblStart = script.getLabel();						//		lbl_start:
-					script.addInstruction(I_LOOP, 0xFFFFFFFF);			//		loop
+					script.addInstruction(I_LOOP, INVALID_ADDRESS);		//		loop
 					expectToken(input, _("do"));						// do
 					script.addInstruction(I_SET_VAR,
 										string_to_variable(name.value));//		set name
-					script.addInstruction(I_POP);						//		 pop
+					script.addInstruction(I_BINARY, I_POP);				//		 pop
 					parseOper(input, script, PREC_SET, I_BINARY, I_ADD);// DDD;	add
 					script.addInstruction(I_JUMP, lblStart);			//		jump lbl_start
 					script.comeFrom(lblStart);							//		lbl_end:
@@ -582,7 +585,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 				// allow ; at end of expression without errors
 				break;
 			}
-			script.addInstruction(I_POP); // discard result of first expression
+			script.addInstruction(I_BINARY, I_POP); // discard result of first expression
 			parseOper(input, script, PREC_SET);
 		} else if (minPrec <= PREC_SET && token==_(":=")) {
 			// We made a mistake, the part before the := should be a variable name,
@@ -646,27 +649,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 		} else if (minPrec <= PREC_FUN && token==_("(")) {
 			// function call, read arguments
 			vector<Variable> arguments;
-			Token t = input.peek();
-			while (t != _(")") && t != TOK_EOF) {
-				if (input.peek(2) == _(":") && t.type == TOK_NAME) {
-					// name: ...
-					arguments.push_back(string_to_variable(t.value));
-					input.read(); // skip the name
-					input.read(); // and the :
-					parseOper(input, script, PREC_SEQ);
-				} else {
-					// implicit "input" argument
-					arguments.push_back(SCRIPT_VAR_input);
-					parseOper(input, script, PREC_SEQ);
-				}
-				t = input.peek();
-				if (t == _(",")) {
-					// Comma separating the arguments
-					input.read();
-					t = input.peek();
-				}
-			}
-			expectToken(input, _(")"));
+			parseCallArguments(input, script, arguments);
 			// generate instruction
 			script.addInstruction(I_CALL, (unsigned int)arguments.size());
 			FOR_EACH(arg,arguments) {
@@ -696,7 +679,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			// newline functions as ;
 			// only if we don't match another token!
 			input.putBack();
-			script.addInstruction(I_POP);
+			script.addInstruction(I_BINARY, I_POP);
 			parseOper(input, script, PREC_SET);
 		} else {
 			input.putBack();
@@ -707,4 +690,28 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 	if (closeWith != I_NOP) {
 		script.addInstruction(closeWith, closeWithData);
 	}
+}
+
+void parseCallArguments(TokenIterator& input, Script& script, vector<Variable>& arguments) {
+	Token t = input.peek();
+	while (t != _(")") && t != TOK_EOF) {
+		if (input.peek(2) == _(":") && t.type == TOK_NAME) {
+			// name: ...
+			arguments.push_back(string_to_variable(t.value));
+			input.read(); // skip the name
+			input.read(); // and the :
+			parseOper(input, script, PREC_SEQ);
+		} else {
+			// implicit "input" argument
+			arguments.push_back(SCRIPT_VAR_input);
+			parseOper(input, script, PREC_SEQ);
+		}
+		t = input.peek();
+		if (t == _(",")) {
+			// Comma separating the arguments
+			input.read();
+			t = input.peek();
+		}
+	}
+	expectToken(input, _(")"));
 }

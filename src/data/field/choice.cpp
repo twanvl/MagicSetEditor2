@@ -198,7 +198,6 @@ void ChoiceStyle::initImage() {
 	//       CALL       0
 	//       PUSH_CONST nil
 	//      OR_ELSE
-	//     RET
 	intrusive_ptr<ScriptCustomCollection> lookup(new ScriptCustomCollection());
 	FOR_EACH(ci, choice_images) {
 		lookup->key_value[ci.first] = ci.second.getScriptP();
@@ -210,7 +209,6 @@ void ChoiceStyle::initImage() {
 	script.addInstruction(I_CALL,       0);
 	script.addInstruction(I_PUSH_CONST, script_nil);
 	script.addInstruction(I_BINARY,     I_OR_ELSE);
-	script.addInstruction(I_RET);
 }
 
 int ChoiceStyle::update(Context& ctx) {

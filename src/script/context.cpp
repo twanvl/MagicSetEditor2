@@ -39,12 +39,10 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 	try {
 		// Instruction pointer
 		const Instruction* instr = &script.instructions[0];
+		const Instruction* end   = &*script.instructions.end();
 		
 		// Loop until we are done
-		while (true) {
-			assert(instr < &*script.instructions.end());
-			// debug
-//			cout << script.dumpInstr(instr - &script.instructions[0], *instr) << endl;
+		while (instr < end) {
 			// Evaluate the current instruction
 			Instruction i = *instr++;
 			switch (i.instr) {
@@ -52,11 +50,6 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 				// Push a constant
 				case I_PUSH_CONST: {
 					stack.push_back(script.constants[i.data]);
-					break;
-				}
-				// Pop top value
-				case I_POP: {
-					stack.pop_back();
 					break;
 				}
 				// Jump
@@ -144,21 +137,10 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 					closeScope(scope);
 					break;
 				}
-				// Function return
-				case I_RET: {
-					// restore shadowed variables
-					if (useScope) closeScope(scope);
-					// return top of stack
-					ScriptValueP result = stack.back();
-					stack.pop_back();
-					assert(stack.size() == stack_size); // we end up with the same stack
-					return result;
-				}
 				
 				// Simple instruction: unary
 				case I_UNARY: {
 					instrUnary(i.instr1, stack.back());
-//					cout << "\t\t-> " << (String)*stack.back() << endl;
 					break;
 				}
 				// Simple instruction: binary
@@ -166,7 +148,6 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 					ScriptValueP  b = stack.back(); stack.pop_back();
 					ScriptValueP& a = stack.back();
 					instrBinary(i.instr2, a, b);
-//					cout << "\t\t-> " << (String)*stack.back() << endl;
 					break;
 				}
 				// Simple instruction: ternary
@@ -175,7 +156,6 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 					ScriptValueP  b = stack.back(); stack.pop_back();
 					ScriptValueP& a = stack.back();
 					instrTernary(i.instr3, a, b, c);
-//					cout << "\t\t-> " << (String)*stack.back() << endl;
 					break;
 				}
 				// Simple instruction: quaternary
@@ -185,11 +165,19 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 					ScriptValueP  b = stack.back(); stack.pop_back();
 					ScriptValueP& a = stack.back();
 					instrQuaternary(i.instr4, a, b, c, d);
-//					cout << "\t\t-> " << (String)*stack.back() << endl;
 					break;
 				}
 			}
 		}
+		
+		// Function return
+		// restore shadowed variables
+		if (useScope) closeScope(scope);
+		// return top of stack
+		ScriptValueP result = stack.back();
+		stack.pop_back();
+		assert(stack.size() == stack_size); // we end up with the same stack
+		return result;
 		
 	} catch (...) {
 		// cleanup after an exception
@@ -322,14 +310,19 @@ class ScriptCompose : public ScriptValue {
 };
 
 void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP& b) {
-	ScriptType at = a->type(), bt = b->type();
 	switch (i) {
+		case I_POP:
+			// a = a;
+			break;
 		case I_MEMBER:
 			a = a->getMember(*b);
 			break;
 		case I_ITERATOR_R:
 			a = rangeIterator(*a, *b);
 			break;
+		default:
+	  ScriptType at = a->type(), bt = b->type();
+	  switch(i) {
 		case I_ADD: // add is quite overloaded
 			if (at == SCRIPT_NIL) {
 				a = b;
@@ -370,7 +363,7 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 		case I_OR_ELSE:
 			if (at == SCRIPT_ERROR) a = b;
 			break;
-	}
+	}}
 }
 
 // ----------------------------------------------------------------------------- : Simple instructions : ternary

@@ -118,6 +118,7 @@ void Script::comeFrom(unsigned int pos) {
 	assert( instructions.at(pos).instr == I_JUMP
 	     || instructions.at(pos).instr == I_JUMP_IF_NOT
 	     || instructions.at(pos).instr == I_LOOP);
+	assert( instructions.at(pos).data == INVALID_ADDRESS );
 	instructions.at(pos).data = (unsigned int)instructions.size();
 }
 
@@ -145,7 +146,6 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 	switch (i.instr) {
 		case I_NOP:			ret += _("nop");		break;
 		case I_PUSH_CONST:	ret += _("push");		break;
-		case I_POP:			ret += _("pop");		break;
 		case I_JUMP:		ret += _("jump");		break;
 		case I_JUMP_IF_NOT:	ret += _("jnz");		break;
 		case I_GET_VAR:		ret += _("get");		break;
@@ -154,7 +154,6 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 		case I_LOOP:		ret += _("loop");		break;
 		case I_MAKE_OBJECT:	ret += _("make object");break;
 		case I_CALL:		ret += _("call");		break;
-		case I_RET:			ret += _("ret");		break;
 		case I_UNARY:		ret += _("unary\t");
 			switch (i.instr1) {
 				case I_ITERATOR_C:	ret += _("iterator_c");	break;
@@ -164,6 +163,7 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 			break;
 		case I_BINARY:		ret += _("binary\t");
 			switch (i.instr2) {
+				case I_POP:			ret += _("pop");		break;
 				case I_ITERATOR_R:	ret += _("iterator_r");	break;
 				case I_MEMBER:		ret += _("member");		break;
 				case I_ADD:			ret += _("+");			break;
@@ -229,7 +229,6 @@ const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) 
 			case I_PUSH_CONST:
 			case I_GET_VAR:
 				to_skip -= 1; break; // nett stack effect +1
-			case I_POP:
 			case I_BINARY:
 				to_skip += 1; break; // nett stack effect 1-2 == -1
 			case I_TERNARY:
@@ -282,7 +281,7 @@ const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) 
 				++instr; // compensate for the -- in the outer loop
 				break;
 			}
-			case I_RET: case I_JUMP_IF_NOT: case I_LOOP:
+			case I_JUMP_IF_NOT: case I_LOOP:
 				return nullptr; // give up
 			default:
 				break; // nett stack effect 0

@@ -82,7 +82,6 @@ ScriptP ScriptableImage::getScriptP() {
 	// return value or a blank image
 	ScriptP s(new Script);
 	s->addInstruction(I_PUSH_CONST, value ? static_pointer_cast<ScriptValue>(value) : script_nil);
-	s->addInstruction(I_RET);
 	return s;
 }
 
