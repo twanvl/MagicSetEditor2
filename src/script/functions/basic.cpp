@@ -201,6 +201,10 @@ int position_in_vector(const ScriptValueP& of, const ScriptValueP& in, const Scr
 	return -1; // TODO?
 }
 
+inline bool smart_less_first(const pair<String,ScriptValueP>& a, const pair<String,ScriptValueP>& b) {
+	return smart_less(a.first, b.first);
+}
+
 // sort a script list
 ScriptValueP sort_script(Context& ctx, const ScriptValueP& list, ScriptValue& order_by) {
 	ScriptType list_t = list->type();
@@ -219,7 +223,7 @@ ScriptValueP sort_script(Context& ctx, const ScriptValueP& list, ScriptValue& or
 			ctx.setVariable(set ? _("card") : _("input"), v);
 			values.push_back(make_pair(order_by.eval(ctx)->toString(), v));
 		}
-		sort(values.begin(), values.end());
+		sort(values.begin(), values.end(), smart_less_first);
 		// return collection
 		intrusive_ptr<ScriptCustomCollection> ret(new ScriptCustomCollection());
 		FOR_EACH(v, values) {
