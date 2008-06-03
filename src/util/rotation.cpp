@@ -209,15 +209,16 @@ void RotatedDC::DrawText  (const String& text, const RealPoint& pos, AColor colo
 		RealRect r(pos, GetTextExtent(text));
 		RealRect r_ext = trRectToBB(r);
 		RealPoint pos2 = tr(pos);
-		if (zoomX != zoomY) {
-			r.width *= zoomX / zoomY;
+		stretch_ *= getStretch();
+		if (fabs(stretch_ - 1) > 1e-6) {
+			r.width *= stretch_;
 			RealRect r_ext2 = trRectToBB(r);
 			pos2.x += r_ext2.x - r_ext.x;
 			pos2.y += r_ext2.y - r_ext.y;
 			r_ext.x = r_ext2.x;
 			r_ext.y = r_ext2.y;
 		}
-		draw_resampled_text(dc, pos2, r_ext, stretch_ * getStretch(), angle, color, text, blur_radius, boldness);
+		draw_resampled_text(dc, pos2, r_ext, stretch_, angle, color, text, blur_radius, boldness);
 	} else if (quality >= QUALITY_SUB_PIXEL) {
 		RealPoint p_ext = tr(pos)*text_scaling;
 		double usx,usy;
