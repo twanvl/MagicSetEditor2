@@ -12,6 +12,8 @@
 #include <util/error.hpp>
 #include <iostream>
 
+DECLARE_TYPEOF_COLLECTION(pair<Variable COMMA ScriptValueP>);
+
 // ----------------------------------------------------------------------------- : Context
 
 Context::Context()
@@ -34,6 +36,10 @@ void instrQuaternary(QuaternaryInstructionType i, ScriptValueP& a, const ScriptV
 
 
 ScriptValueP Context::eval(const Script& script, bool useScope) {
+	if (level > 500) {
+		throw ScriptError(_("Stack overflow"));
+	}
+	
 	size_t stack_size = stack.size();
 	size_t scope = useScope ? openScope() : 0;
 	try {
@@ -140,7 +146,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 				
 				// Closure object
 				case I_CLOSURE: {
-					makeClosure(i.data);
+					makeClosure(i.data, instr);
 					break;
 				}
 				
@@ -221,6 +227,10 @@ ScriptValueP Context::getVariable(Variable var) {
 	if (variables[var].value) return variables[var].value;
 	throw ScriptError(_("Variable not set: ") + variable_to_string(var));
 }
+int Context::getVariableScope(Variable var) {
+	if (variables[var].value) return level - variables[var].level;
+	else                      return -1;
+}
 
 
 size_t Context::openScope() {
@@ -259,6 +269,62 @@ void instrUnary  (UnaryInstructionType   i, ScriptValueP& a) {
 	}
 }
 
+// ----------------------------------------------------------------------------- : Function composition
+
+/// Composition of two functions
+class ScriptCompose : public ScriptValue {
+  public:
+	ScriptCompose(ScriptValueP a, ScriptValueP b) : a(a), b(b) {}
+	
+	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
+	virtual String typeName() const { return _("function composition"); }
+	virtual ScriptValueP eval(Context& ctx) const {
+		ctx.setVariable(SCRIPT_VAR_input, a->eval(ctx));
+		return b->eval(ctx);
+	}
+	virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const {
+		ctx.setVariable(SCRIPT_VAR_input, a->dependencies(ctx, dep));
+		return b->dependencies(ctx, dep);
+	}
+  private:
+	ScriptValueP a,b;
+};
+
+// ----------------------------------------------------------------------------- : Closures
+
+/// A closure around a function
+class ScriptClosure : public ScriptValue {
+  public:
+	ScriptClosure(ScriptValueP fun) : fun(fun) {}
+	
+	/// Add a binding
+	void bind(Variable v, const ScriptValueP& value) {
+		bindings.push_back(make_pair(v,value));
+	}
+	/// Apply the bindings
+	void applyBindings(Context& ctx) const {
+		FOR_EACH_CONST(b, bindings) {
+			if (ctx.getVariableScope(b.first) != 0) {
+				ctx.setVariable(b.first, b.second);
+			}
+		}
+	}
+	
+	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
+	virtual String typeName() const { return _("function closure"); }
+	virtual ScriptValueP eval(Context& ctx) const {
+		applyBindings(ctx);
+		return fun->eval(ctx);
+	}
+	virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const {
+		applyBindings(ctx);
+		return fun->dependencies(ctx, dep);
+	}
+  private:
+	ScriptValueP                         fun;
+	vector<pair<Variable,ScriptValueP> > bindings;
+};
+
 // ----------------------------------------------------------------------------- : Simple instructions : binary
 
 // operator on ints
@@ -284,24 +350,6 @@ void instrUnary  (UnaryInstructionType   i, ScriptValueP& a) {
 	}															\
 	break
 
-/// Composition of two functions
-class ScriptCompose : public ScriptValue {
-  public:
-	ScriptCompose(ScriptValueP a, ScriptValueP b) : a(a), b(b) {}
-	
-	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
-	virtual String typeName() const { return _("function composition"); }
-	virtual ScriptValueP eval(Context& ctx) const {
-		ctx.setVariable(SCRIPT_VAR_input, a->eval(ctx));
-		return b->eval(ctx);
-	}
-	virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const {
-		ctx.setVariable(SCRIPT_VAR_input, a->dependencies(ctx, dep));
-		return b->dependencies(ctx, dep);
-	}
-  private:
-	ScriptValueP a,b;
-};
 
 void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP& b) {
 	switch (i) {
@@ -408,9 +456,14 @@ void Context::makeObject(size_t n) {
 	stack.push_back(ret);
 }
 
-void Context::makeClosure(size_t n) {
-	//intrusive_ptr<ScriptClosure> ret(new ScriptClosure());
-	// TODO
-	//stack.push_back(ret);
-	throw InternalError(_("TODO: makeClosure"));
+void Context::makeClosure(size_t n, const Instruction*& instr) {
+	intrusive_ptr<ScriptClosure> closure(new ScriptClosure(stack[stack.size() - n - 1]));
+	for (size_t j = 0 ; j < n ; ++j) {
+		closure->bind((Variable)instr[n - j - 1].data, stack.back());
+		stack.pop_back();
+	}
+	// skip arguments
+	instr += n;
+	// set value
+	stack.back() = closure;
 }

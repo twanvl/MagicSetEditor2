@@ -131,7 +131,7 @@ function highlight_script($code) {
 	while(strlen($code)) {
 		if (preg_match("@^<[^>]+>@",$code, $matches)) {
 			$ret .= $matches[0]; // plain tag
-		} else if (preg_match("@^(if|then|else|for( each)?|in(?= )|do|div|mod|and|or|xor|not|rgb|rgba|from|to)\b(?!:)@",$code, $matches)) {
+		} else if (preg_match("@^(if|then|else|for( each)?|in(?= )|do|div|mod|and|or|xor|not|rgb|rgba|from|to|min|max)\b(?!:)@",$code, $matches)) {
 			$ret .= "<span class='hl-kw'>" . $matches[0] . "</span>";
 		} else if (preg_match("@^(include file:)(.*)@",$code, $matches)) {
 			$ret .= "<span class='hl-key'>" . $matches[1] . "</span>" . $matches[2];
@@ -150,7 +150,7 @@ function highlight_script($code) {
 			if ($matches[2] == '{') $string .= 's';
 		} else if (preg_match("@^\\#.*@",$code, $matches)) {
 			$ret .= "<span class='hl-comment'>" . $matches[0] . "</span>";
-		} else if (preg_match("@^([-+*/=!.]|&lt;|&gt;)+|^:=@",$code, $matches)) {
+		} else if (preg_match("@^([-+*/=!.\@]|&lt;|&gt;)+|^:=@",$code, $matches)) {
 			$ret .= "<span class='hl-op'>" . $matches[0] . "</span>";
 		} else if (preg_match("@^([}]|[\\(\\)\\[\\]{,]+)@",$code, $matches)) {
 			$ret .= "<span class='hl-paren'>" . $matches[0] . "</span>";

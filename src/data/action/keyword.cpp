@@ -177,20 +177,20 @@ void KeywordReminderTextValue::highlight(const String& code, const vector<Script
 }
 
 bool KeywordReminderTextValue::checkScript(const ScriptP& script) {
-	Context& ctx = set.cards.empty() ? set.getContext() : set.getContext(set.cards.front());
-	size_t scope = ctx.openScope();
 	try {
+		Context& ctx = set.cards.empty() ? set.getContext() : set.getContext(set.cards.front());
+		LocalScope scope(ctx);
 		for (size_t i = 0 ; i < keyword.parameters.size() ; ++i) {
 			String param = String(_("param")) << (int)(i+1);
 			ctx.setVariable(param, to_script(param));
 		}
 		script->eval(ctx);
 		errors.clear();
+		return true;
 	} catch (const Error& e) {
 		errors = e.what();
+		return false;
 	}
-	ctx.closeScope(scope);
-	return errors.empty();
 }
 
 // ----------------------------------------------------------------------------- : Changing keywords : mode

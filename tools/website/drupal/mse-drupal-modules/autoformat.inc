@@ -256,14 +256,15 @@ function autoformat__table($rows) {
 function autoformat__line($line) {
 	$line = preg_replace("/'''(.*?)'''/",  "<strong>\\1</strong>", $line);
 	$line = preg_replace("/''(.*?)''/",    "<em>\\1</em>", $line);
-	$line = preg_replace_callback("/@(.*?)@/", "autoformat__code", $line);
+	$line = preg_replace_callback("/@(([^@]|@@)*)@/", "autoformat__code", $line);
 	$line = preg_replace_callback("/\[\[(.*?)\|(.*?)]]/", "autoformat__link_s", $line);
 	$line = preg_replace_callback("/\[\[(.*?)]](s?)/", "autoformat__link", $line);
 	return $line;
 }
 
 function autoformat__code($matches) {
-	return '<tt>' . syntax_highlight(htmlspecialchars($matches[1])) . '</tt>';
+	$code = str_replace('@@','@',$matches[1]);
+	return '<tt>' . syntax_highlight(htmlspecialchars($code)) . '</tt>';
 }
 
 function autoformat__link($matches) {

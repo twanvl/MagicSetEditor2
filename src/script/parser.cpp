@@ -104,8 +104,8 @@ class TokenIterator {
 	vector<ScriptParseError>& errors;
 	/// Add an error message
 	void add_error(const String& message);
-	/// Expected some token instead of what was found
-	void expected(const String& exp);
+	/// Expected some token instead of what was found, possibly a matching opening bracket is known
+	void expected(const String& exp, const Token* opening = nullptr);
 };
 
 // ----------------------------------------------------------------------------- : Characters
@@ -293,25 +293,28 @@ void TokenIterator::readStringToken() {
 	}
 }
 
-
-void TokenIterator::add_error(const String& message) {
-	if (!errors.empty() && errors.back().start == pos) return; // already an error here
-	// find line number
+int line_number(size_t pos, const String& input) {
 	int line = 1;
 	for (size_t i = 0 ; i < input.size() && i < pos ; ++i) {
 		if (input.GetChar(i) == _('\n')) line++;
 	}
-	errors.push_back(ScriptParseError(pos, line, filename, message));
+	return line;
 }
-void TokenIterator::expected(const String& expected) {
+
+void TokenIterator::add_error(const String& message) {
+	if (!errors.empty() && errors.back().start == pos) return; // already an error here
+	// add error message
+	errors.push_back(ScriptParseError(pos, line_number(pos,input), filename, message));
+}
+void TokenIterator::expected(const String& expected, const Token* opening) {
 	size_t error_pos = peek(0).pos;
 	if (!errors.empty() && errors.back().start == pos) return; // already an error here
-	// find line number
-	int line = 1;
-	for (size_t i = 0 ; i < input.size() && i < error_pos ; ++i) {
-		if (input.GetChar(i) == _('\n')) line++;
+	// add error message
+	if (opening) {
+		errors.push_back(ScriptParseError(opening->pos, error_pos, line_number(opening->pos,input), filename, opening->value, expected, peek(0).value));
+	} else {
+		errors.push_back(ScriptParseError(error_pos, line_number(error_pos,input), filename, expected, peek(0).value));
 	}
-	errors.push_back(ScriptParseError(error_pos, line, filename, expected, peek(0).value));
 }
 
 
@@ -385,12 +388,12 @@ ScriptP parse(const String& s, Packaged* package, bool string_mode) {
 
 
 // Expect a token, adds an error if it is not found
-bool expectToken(TokenIterator& input, const Char* expect, const Char* name_in_error = nullptr) {
+bool expectToken(TokenIterator& input, const Char* expect, const Token* opening = nullptr, const Char* name_in_error = nullptr) {
 	Token token = input.read();
 	if (token == expect) {
 		return true;
 	} else {
-		input.expected(name_in_error ? name_in_error : expect);
+		input.expected(name_in_error ? name_in_error : expect, opening);
 		return false;
 	}
 }
@@ -398,16 +401,16 @@ bool expectToken(TokenIterator& input, const Char* expect, const Char* name_in_e
 void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 	// usually loop only once, unless we encounter newlines
 	while (true) {
-		const Token& token = input.read();
+		Token token = input.read();
 		if (token == _("(")) {
 			// Parentheses = grouping for precedence of expressions
 			parseOper(input, script, PREC_ALL);
-			expectToken(input, _(")"));
+			expectToken(input, _(")"), &token);
 		} else if (token == _("{")) {
 			// {} = function block. Parse a new Script
 			intrusive_ptr<Script> subScript(new Script);
 			parseOper(input, *subScript, PREC_ALL);
-			expectToken(input, _("}"));
+			expectToken(input, _("}"), &token);
 			script.addInstruction(I_PUSH_CONST, subScript);
 		} else if (token == _("[")) {
 			// [] = list or map literal
@@ -432,7 +435,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					t = input.peek();
 				}
 			}
-			expectToken(input, _("]"));
+			expectToken(input, _("]"), &token);
 			script.addInstruction(I_MAKE_OBJECT, count);
 		} else if (minPrec <= PREC_UNARY && token == _("-")) {
 			parseOper(input, script, PREC_UNARY, I_UNARY, I_NEGATE); // unary negation
@@ -538,7 +541,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					parseOper(input, script, PREC_ALL); // second, third, etc.
 					script.addInstruction(I_BINARY, op);
 				}
-				expectToken(input, _(")"));
+				expectToken(input, _(")"), &token);
 			} else {
 				// variable
 				Variable var = string_to_variable(token.value);
@@ -572,7 +575,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 	// EBNF:                    expr = expr | expr oper expr
 	// without left recursion:  expr = expr (oper expr)*
 	while (true) {
-		const Token& token = input.read();
+		Token token = input.read();
 		if (token != TOK_OPER && token != TOK_NAME && token!=TOK_LPAREN &&
 		    !((token == TOK_STRING || token == TOK_INT || token == TOK_DOUBLE) && minPrec <= PREC_NEWLINE && token.newline)) {
 			// not an operator-like token
@@ -646,11 +649,12 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			} else {
 				script.addInstruction(I_BINARY, I_MEMBER);
 			}
-			expectToken(input, _("]"));
+			expectToken(input, _("]"), &token);
 		} else if (minPrec <= PREC_FUN && token==_("(")) {
 			// function call, read arguments
 			vector<Variable> arguments;
 			parseCallArguments(input, script, arguments);
+			expectToken(input, _(")"), &token);
 			// generate instruction
 			script.addInstruction(I_CALL, (unsigned int)arguments.size());
 			FOR_EACH(arg,arguments) {
@@ -658,9 +662,10 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			}
 		} else if (minPrec <= PREC_FUN && token==_("@")) {
 			// closure call, read arguments
-			expectToken(input, _("("));
 			vector<Variable> arguments;
+			expectToken(input, _("("));
 			parseCallArguments(input, script, arguments);
+			expectToken(input, _(")"), &token);
 			// generate instruction
 			script.addInstruction(I_CLOSURE, (unsigned int)arguments.size());
 			FOR_EACH(arg,arguments) {
@@ -676,7 +681,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			} else {
 				parseOper(input, script, PREC_ALL, I_BINARY, I_ADD);	// e
 			}
-			if (expectToken(input, _("}\""), _("}"))) {
+			if (expectToken(input, _("}\""), &token, _("}"))) {
 				parseOper(input, script, PREC_NONE);					// y
 				// optimize: e + ""  -> e
 				i = script.getInstructions().back();
@@ -724,5 +729,4 @@ void parseCallArguments(TokenIterator& input, Script& script, vector<Variable>& 
 			t = input.peek();
 		}
 	}
-	expectToken(input, _(")"));
 }

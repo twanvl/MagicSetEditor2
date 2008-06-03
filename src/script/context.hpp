@@ -62,12 +62,20 @@ class Context {
 	ScriptValueP getVariable(Variable var);
 	/// Get the value of a variable, returns ScriptValue() if it is not set
 	inline ScriptValueP getVariableOpt(Variable var) { return variables[var].value; }
+	/// In what scope was the variable set?
+	/** Returns 0 for the current scope and >0 for outer scopes.
+	 *  Returns -1 if the varible is not set
+	 */
+	int getVariableScope(Variable var);
+	
+  private:
 	
 	/// Open a new scope
 	/** returns the number of shadowed binding before that scope */
 	size_t openScope();
 	/// Close a scope, must be passed a value from openScope
 	void closeScope(size_t scope);
+	friend class LocalScope;
 	
   public:// public for FOR_EACH
 	/// Record of a variable
@@ -102,7 +110,7 @@ class Context {
 	/// Make an object with n elements, popping 2n values from the stack, and push it onto the stack
 	void makeObject(size_t n);
 	/// Make a closure with n arguments
-	void makeClosure(size_t n);
+	void makeClosure(size_t n, const Instruction*& instr);
 };
 
 /// A class that creates a local scope

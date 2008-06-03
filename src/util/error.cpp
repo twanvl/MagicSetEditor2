@@ -33,6 +33,10 @@ ScriptParseError::ScriptParseError(size_t pos, int line, const String& filename,
 	: ParseError(_("Expected '") + exp + _("' instead of '") + found + _("'"))
 	, start(pos), end(pos + found.size()), line(line), filename(filename)
 {}
+ScriptParseError::ScriptParseError(size_t pos1, size_t pos2, int line, const String& filename, const String& open, const String& close, const String& found)
+	: ParseError(_("Expected closing '") + close + _("' for this '") + open + _("' instead of '") + found + _("'"))
+	, start(pos1), end(pos2 + found.size()), line(line), filename(filename)
+{}
 String ScriptParseError::what() const {
 	return String(_("(")) << (int)start << _("): ") << Error::what();
 }

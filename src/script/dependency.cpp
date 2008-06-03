@@ -250,9 +250,9 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					break;
 				}
 				
-				// Closure object
+				// Closure object (as normal)
 				case I_CLOSURE: {
-					makeClosure(i.data);
+					makeClosure(i.data, instr);
 					break;
 				}
 				

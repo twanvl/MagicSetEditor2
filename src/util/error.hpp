@@ -83,6 +83,7 @@ class ScriptParseError : public ParseError {
   public:
 	ScriptParseError(size_t pos, int line, const String& filename, const String& str);
 	ScriptParseError(size_t pos, int line, const String& filename, const String& expected, const String& found);
+	ScriptParseError(size_t pos1, size_t pos2, int line, const String& filename, const String& open, const String& close, const String& found);
 	/// Position of the error
 	size_t start, end;
 	/// Line number of the error (the first line is 1)
