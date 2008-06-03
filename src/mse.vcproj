@@ -576,6 +576,12 @@
 					RelativePath=".\gui\set\panel.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\set\random_pack_panel.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\set\random_pack_panel.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\set\set_info_panel.cpp">
 				</File>
 				<File

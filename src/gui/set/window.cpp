@@ -14,6 +14,7 @@
 #include <gui/set/style_panel.hpp>
 #include <gui/set/keywords_panel.hpp>
 #include <gui/set/stats_panel.hpp>
+#include <gui/set/random_pack_panel.hpp>
 #include <gui/control/card_list.hpp>
 #include <gui/control/card_viewer.hpp>
 #include <gui/control/gallery_list.hpp>
@@ -140,12 +141,12 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	SetSizer(s);
 	
 	// panels
-	addPanel(menuWindow, tabBar, new CardsPanel   (this, wxID_ANY), 0, _("window_cards"),      _("cards tab"));
-	addPanel(menuWindow, tabBar, new SetInfoPanel (this, wxID_ANY), 1, _("window_set_info"),   _("set info tab"));
-	addPanel(menuWindow, tabBar, new StylePanel   (this, wxID_ANY), 2, _("window_style"),      _("style tab"));
-	addPanel(menuWindow, tabBar, new KeywordsPanel(this, wxID_ANY), 3, _("window_keywords"),   _("keywords tab"));
-	addPanel(menuWindow, tabBar, new StatsPanel   (this, wxID_ANY), 4, _("window_statistics"), _("stats tab"));
-//	addPanel(menuWindow, tabBar, new DraftPanel   (this, wxID_ANY), 5, _("window_draft"),      _("draft tab")) 
+	addPanel(menuWindow, tabBar, new CardsPanel     (this, wxID_ANY), 0, _("window_cards"),      _("cards tab"));
+	addPanel(menuWindow, tabBar, new SetInfoPanel   (this, wxID_ANY), 1, _("window_set_info"),   _("set info tab"));
+	addPanel(menuWindow, tabBar, new StylePanel     (this, wxID_ANY), 2, _("window_style"),      _("style tab"));
+	addPanel(menuWindow, tabBar, new KeywordsPanel  (this, wxID_ANY), 3, _("window_keywords"),   _("keywords tab"));
+	addPanel(menuWindow, tabBar, new StatsPanel     (this, wxID_ANY), 4, _("window_statistics"), _("stats tab"));
+	addPanel(menuWindow, tabBar, new RandomPackPanel(this, wxID_ANY), 5, _("window_cards"),      _("random pack tab")); // TODO: Get me an icon
 	selectPanel(ID_WINDOW_CARDS); // select cards panel
 	
 	// loose ends
