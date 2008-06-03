@@ -24,6 +24,7 @@ DECLARE_TYPEOF_COLLECTION(ValueViewer*);
 
 DataEditor::DataEditor(Window* parent, int id, long style)
 	: CardViewer(parent, id, style | wxWANTS_CHARS)
+	, next_in_tab_order(nullptr)
 	, current_viewer(nullptr)
 	, current_editor(nullptr)
 	, hovered_viewer(nullptr)
@@ -78,7 +79,10 @@ void DataEditor::select(ValueViewer* v) {
 }
 
 void DataEditor::selectFirst() {
-	selectByTabPos(0);
+	selectByTabPos(0, true);
+}
+void DataEditor::selectLast() {
+	selectByTabPos((int)by_tab_index.size() - 1, false);
 }
 bool DataEditor::selectNext() {
 	return selectByTabPos(currentTabPos() + 1, true);
@@ -90,18 +94,20 @@ bool DataEditor::selectPrevious() {
 bool DataEditor::selectByTabPos(int tab_pos, bool forward) {
 	while (tab_pos >= 0 && (size_t)tab_pos < by_tab_index.size()) {
 		ValueViewer* v = by_tab_index[tab_pos];
-		if (v->getField()->editable) {
+		if (v->getField()->editable && v->getStyle()->isVisible()) {
 			select(v);
 			return true;
 		}
 		// not enabled, maybe the next one?
 		tab_pos += forward ? 1 : -1;
 	}
-	if (!by_tab_index.empty()) {
-		// also select something! so when we regain focus the selected editor makes sense
-		if (tab_pos < 0) select(by_tab_index.back());
-		else             select(by_tab_index.front());
+	// deselect
+	if (current_editor) {
+		current_editor->onLoseFocus();
+		onChange();
 	}
+	current_viewer = nullptr;
+	current_editor = nullptr;
 	return false;
 }
 int DataEditor::currentTabPos() const {
@@ -138,7 +144,7 @@ void DataEditor::createTabIndex() {
 	by_tab_index.clear();
 	FOR_EACH(v, viewers) {
 		ValueEditor* e = v->getEditor();
-		if (e && v->getField()->editable && v->getStyle()->isVisible()) {
+		if (e) {
 			by_tab_index.push_back(v.get());
 		}
 	}
@@ -160,7 +166,7 @@ bool DataEditor::search(FindInfo& find, bool from_start) {
 	for (size_t i = 0 ; i < by_tab_index.size() ; ++i) {
 		ValueViewer& viewer = *by_tab_index[find.forward() ? i : by_tab_index.size() - i - 1];
 		if (&viewer == current_viewer) include = true;
-		if (include) {
+		if (include && viewer.getField()->editable && viewer.getStyle()->isVisible()) {
 			ValueEditor* editor = viewer.getEditor();
 			if (editor && editor->search(find, from_start || &viewer != current_viewer)) {
 				return true; // done
@@ -388,7 +394,11 @@ void DataEditor::onFocus(wxFocusEvent& ev) {
 		current_editor->onFocus();
 		onChange();
 	} else {
-		selectFirst();
+		if (ev.GetWindow() && ev.GetWindow() == next_in_tab_order) {
+			selectLast();
+		} else {
+			selectFirst();
+		}
 	}
 }
 void DataEditor::onLoseFocus(wxFocusEvent& ev) {

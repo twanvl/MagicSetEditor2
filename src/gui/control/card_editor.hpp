@@ -36,12 +36,17 @@ class DataEditor : public CardViewer {
 	void select(ValueViewer* v);
 	/// Select the first editable and visible editor (by tab index)
 	void selectFirst();
+	/// Select the last editable and visible editor (by tab index)
+	void selectLast();
 	/// Select the next editable editor, returns false if the current editor is the last one
 	bool selectNext();
 	/// Select the previous editable editor, returns false if the current editor is the first one
 	bool selectPrevious();
 	
 	virtual bool AcceptsFocus() const;
+	
+	/// The next window in the tab order (optional)
+	const wxWindow* next_in_tab_order;
 	
 	// --------------------------------------------------- : Clipboard
 	

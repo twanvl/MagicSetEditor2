@@ -39,6 +39,7 @@ CardsPanel::CardsPanel(Window* parent, int id)
 	collapse_notes = new HoverButton(notesP, ID_COLLAPSE_NOTES, _("btn_collapse"), wxNullColour, false);
 	collapse_notes->SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
 	filter    = nullptr;
+	editor->next_in_tab_order = card_list;
 	// init sizer for notes panel
 	wxSizer* sn = new wxBoxSizer(wxVERTICAL);
 		wxSizer* sc = new wxBoxSizer(wxHORIZONTAL);
