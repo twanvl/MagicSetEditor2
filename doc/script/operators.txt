@@ -9,8 +9,8 @@ MSE script supports most basic mathamatical operators:
 		@"3" + "2" == "32"@	concatenate two strings or compose two functions (see below)
 | @a - b@	@3 - 2 == 1@		Substract two numbers
 | @a * b@	@3 * 2 == 6@		Multiply two numbers
-| @a / b@	@3 / 2   == 1@<br/>	Divide two numbers.<br/> Rounds towards zero for [[type:int]]s.<br/>
-		@3 / 2.0 == 1.5@	Does not round for [[type:double]]s.
+| @a / b@	@3 / 2   == 1.5@	Divide two numbers. Does not round, always produces a [[type:double]].
+| @a div b@	@3 div 2 == 1@		Divide two numbers. Rounds towards zero, producing an [[type:int]].<br/>
 | @a mod b@	@3 mod 2 == 1@		Take the remainder after integer division (modulo)
 | @-a@		@-(3 + 2) == -5@	Negate a number (make it negative if positive and vice versa)
 
@@ -36,6 +36,8 @@ It is also possible to compare values. All comparisons evaluate to either @true@
 		@"x" <= "y"@	Is a less than b or are they equal?
 | @a >= b@	@2 >= 1@<br/>
 		@"x" >= "x"@	Is a greater than b or are they equal?
+| @min(a,b)@	@min(1,2) == 1@	Returns the smallest of two values.
+| @max(a,b)@	@max(1,2) == 2@	Returns the largest of two values.
 
 --Booleans--
 [[type:Boolean]]s (for example from comparisons) can be combined using:
@@ -60,13 +62,13 @@ Operators can be grouped differently using parentheses.
 The exact order of precedence is given in the following table,
 higher in the table means that this operator binds tighter to its arguments, @*@ binds tighter then @+@.
 | @a(...)@, @a.b@, @a[b]@	Function calls, property access, see below
-| @-a@, @not@ 		Unary operators
-| @*@, @/@, @mod@	Multiplication and division
-| @+@, @-@ 		Addition and substraction
+| @-a@, @not@ 			Unary operators
+| @*@, @/@, @div@, @mod@	Multiplication and division
+| @+@, @-@ 			Addition and substraction
 | @==@, @!=@, @<@, @>@, @<=@, @>=@ 	Comparisons
-| @and@, @or@, @xor@ 	Boolean operators
-| @:=@ 			Assignement, see below
-| @;@ 			Sequence, see below
+| @and@, @or@, @xor@ 		Boolean operators
+| @:=@ 				Assignement, see below
+| @;@ 				Sequence, see below
 
 --Properties--
 Properties of types, as described in the [[type:index|data type section]] of the documentation, can be accessed using the @.@ operator:

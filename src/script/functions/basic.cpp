@@ -173,24 +173,6 @@ SCRIPT_FUNCTION(remove_tags) {
 
 // ----------------------------------------------------------------------------- : Collection stuff
 
-/// compare script values for equallity
-bool equal(const ScriptValue& a, const ScriptValue& b) {
-	if (&a == &b) return true;
-	ScriptType at = a.type(), bt = b.type();
-	if (at != bt) {
-		return false;
-	} else if (at == SCRIPT_INT) {
-		return    (int)a == (int)b;
-	} else if (at == SCRIPT_DOUBLE) {
-		return (double)a == (double)b;
-	} else if (at == SCRIPT_STRING) {
-		return a.toString() == b.toString();
-	} else {
-		// compare pointers, must be equal and not null
-		const void *ap = a.comparePointer(), *bp = b.comparePointer();
-		return (ap && ap == bp);
-	}
-}
 
 /// position of some element in a vector
 /** 0 based index, -1 if not found */

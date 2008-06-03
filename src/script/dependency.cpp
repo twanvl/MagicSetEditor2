@@ -250,6 +250,12 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					break;
 				}
 				
+				// Closure object
+				case I_CLOSURE: {
+					makeClosure(i.data);
+					break;
+				}
+				
 				// Get a variable (almost as normal)
 				case I_GET_VAR: {
 					ScriptValueP value = variables[i.data].value;

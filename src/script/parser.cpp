@@ -112,7 +112,7 @@ class TokenIterator {
 
 bool isAlpha_(Char c) { return isAlpha(c) || c==_('_'); }
 bool isAlnum_(Char c) { return isAlnum(c) || c==_('_'); }
-bool isOper  (Char c) { return c==_('+') || c==_('-') || c==_('*') || c==_('/') || c==_('!') || c==_('.') ||
+bool isOper  (Char c) { return c==_('+') || c==_('-') || c==_('*') || c==_('/') || c==_('!') || c==_('.') || c==_('@') ||
                                c==_(':') || c==_('=') || c==_('<') || c==_('>') || c==_(';') || c==_(',');  }
 bool isLparen(Char c) { return c==_('(') || c==_('[') || c==_('{'); }
 bool isRparen(Char c) { return c==_(')') || c==_(']') || c==_('}'); }
@@ -623,7 +623,8 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 		else if (minPrec <= PREC_ADD    && token==_("+"))     parseOper(input, script, PREC_MUL,   I_BINARY, I_ADD);
 		else if (minPrec <= PREC_ADD    && token==_("-"))     parseOper(input, script, PREC_MUL,   I_BINARY, I_SUB);
 		else if (minPrec <= PREC_MUL    && token==_("*"))     parseOper(input, script, PREC_UNARY, I_BINARY, I_MUL);
-		else if (minPrec <= PREC_MUL    && token==_("/"))     parseOper(input, script, PREC_UNARY, I_BINARY, I_DIV);
+		else if (minPrec <= PREC_MUL    && token==_("/"))     parseOper(input, script, PREC_UNARY, I_BINARY, I_FDIV);
+		else if (minPrec <= PREC_MUL    && token==_("div"))   parseOper(input, script, PREC_UNARY, I_BINARY, I_DIV);
 		else if (minPrec <= PREC_MUL    && token==_("mod"))   parseOper(input, script, PREC_UNARY, I_BINARY, I_MOD);
 		else if (minPrec <= PREC_FUN    && token==_(".")) { // get member by name
 			const Token& token = input.read();
@@ -652,6 +653,16 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			parseCallArguments(input, script, arguments);
 			// generate instruction
 			script.addInstruction(I_CALL, (unsigned int)arguments.size());
+			FOR_EACH(arg,arguments) {
+				script.addInstruction(I_NOP, arg);
+			}
+		} else if (minPrec <= PREC_FUN && token==_("@")) {
+			// closure call, read arguments
+			expectToken(input, _("("));
+			vector<Variable> arguments;
+			parseCallArguments(input, script, arguments);
+			// generate instruction
+			script.addInstruction(I_CLOSURE, (unsigned int)arguments.size());
 			FOR_EACH(arg,arguments) {
 				script.addInstruction(I_NOP, arg);
 			}

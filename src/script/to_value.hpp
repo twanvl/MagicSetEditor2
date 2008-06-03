@@ -61,7 +61,7 @@ class ScriptDelayedError : public ScriptValue {
 	virtual operator int()    const;
 	virtual operator AColor() const;
 	virtual int itemCount() const;
-	virtual const void* comparePointer() const;
+	virtual CompareWhat compareAs(String&, void const*&) const;
 	// these can propagate the error
 	virtual ScriptValueP getMember(const String& name) const;
 	virtual ScriptValueP dependencyMember(const String& name, const Dependency&) const;
@@ -82,6 +82,7 @@ inline ScriptValueP delayError(const String& m) {
 struct ScriptIterator : public ScriptValue {
 	virtual ScriptType type() const;// { return SCRIPT_ITERATOR; }
 	virtual String typeName() const;// { return "iterator"; }
+	virtual CompareWhat compareAs(String&, void const*&) const; // { return COMPARE_NO; }
 	
 	/// Return the next item for this iterator, or ScriptValueP() if there is no such item
 	virtual ScriptValueP next() = 0;
@@ -129,7 +130,10 @@ class ScriptCollection : public ScriptValue {
 	}
 	virtual int itemCount() const { return (int)value->size(); }
 	/// Collections can be compared by comparing pointers
-	virtual const void* comparePointer() const { return value; }
+	virtual CompareWhat compareAs(String&, void const*& compare_ptr) const {
+		compare_ptr = value;
+		return COMPARE_AS_POINTER;
+	}
   private:
 	/// Store a pointer to a collection, collections are only ever used for structures owned outside the script
 	const Collection* value;
@@ -168,11 +172,14 @@ class ScriptMap : public ScriptValue {
 		return get_member(*value, name);
 	}
 	virtual int itemCount() const { return (int)value->size(); }
-	/// Collections can be compared by comparing pointers
-	virtual const void* comparePointer() const { return value; }
 	virtual ScriptValueP dependencyMember(const String& name, const Dependency& dep) const {
 		mark_dependency_member(*value, name, dep);
 		return getMember(name);
+	}
+	/// Collections can be compared by comparing pointers
+	virtual CompareWhat compareAs(String&, void const*& compare_ptr) const {
+		compare_ptr = value;
+		return COMPARE_AS_POINTER;
 	}
   private:
 	/// Store a pointer to a collection, collections are only ever used for structures owned outside the script
@@ -190,12 +197,37 @@ class ScriptCustomCollection : public ScriptValue {
 	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
 	virtual int itemCount() const { return (int)value.size(); }
 	/// Collections can be compared by comparing pointers
-	virtual const void* comparePointer() const { return &value; }
+	virtual CompareWhat compareAs(String&, void const*& compare_ptr) const {
+		compare_ptr = this;
+		return COMPARE_AS_POINTER;
+	}
 	
 	/// The collection as a list (contains all values)
 	vector<ScriptValueP> value;
 	/// The collection as a map (contains only the values that have a key)
 	map<String,ScriptValueP> key_value;
+};
+
+// ----------------------------------------------------------------------------- : Collections : concatenation
+
+/// Script value containing the concatenation of two collections
+class ScriptConcatCollection : public ScriptValue {
+  public:
+	inline ScriptConcatCollection(ScriptValueP a, ScriptValueP b) : a(a), b(b) {}
+	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
+	virtual String typeName() const { return _TYPE_("collection"); }
+	virtual ScriptValueP getMember(const String& name) const;
+	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
+	virtual int itemCount() const { return a->itemCount() + b->itemCount(); }
+	/// Collections can be compared by comparing pointers
+	virtual CompareWhat compareAs(String&, void const*& compare_ptr) const {
+		compare_ptr = this;
+		return COMPARE_AS_POINTER;
+	}
+	
+  private:
+	ScriptValueP a,b;
+	friend class ScriptConcatCollectionIterator;
 };
 
 // ----------------------------------------------------------------------------- : Objects
@@ -238,7 +270,15 @@ class ScriptObject : public ScriptValue {
 		return i >= 0 ? i : ScriptValue::itemCount();
 	}
 	/// Objects can be compared by comparing pointers
-	virtual const void* comparePointer() const { return &*value; }
+	virtual CompareWhat compareAs(String& compare_str, void const*& compare_ptr) const {
+		ScriptValueP d = getDefault();
+		if (d) {
+			return d->compareAs(compare_str, compare_ptr);
+		} else {
+			compare_ptr = &*value;
+			return COMPARE_AS_POINTER;
+		}
+	}
 	/// Get access to the value
 	inline T getValue() const { return value; }
   private:

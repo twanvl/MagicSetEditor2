@@ -33,6 +33,12 @@ enum ScriptType
 ,	SCRIPT_ERROR
 };
 
+enum CompareWhat
+{	COMPARE_NO
+,	COMPARE_AS_STRING
+,	COMPARE_AS_POINTER
+};
+
 /// A value that can be handled by the scripting engine.
 /// Actual values are derived types
 class ScriptValue : public IntrusivePtrBaseWithDelete {
@@ -43,9 +49,9 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	virtual ScriptType type() const = 0;
 	/// Name of the type of value
 	virtual String typeName() const = 0;
-	/// A pointer that uniquely identifies the value, used for comparing.
-	/** If implementation is not possible, should return nullptr. */
-	virtual const void* comparePointer() const;
+	/// How to compare this object?
+	/** Returns 1 if the pointer should be used, 0 otherwise */
+	virtual CompareWhat compareAs(String& compare_str, void const*& compare_ptr) const;
 	
 	/// Convert this value to a string
 	virtual operator String() const;
@@ -88,6 +94,9 @@ extern ScriptValueP script_nil;   ///< The preallocated nil value
 extern ScriptValueP script_true;  ///< The preallocated true value
 extern ScriptValueP script_false; ///< The preallocated false value
 extern ScriptValueP dependency_dummy; ///< Dummy value used during dependency analysis
+
+/// compare script values for equallity
+bool equal(const ScriptValue& a, const ScriptValue& b);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

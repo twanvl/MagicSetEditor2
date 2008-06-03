@@ -138,6 +138,12 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 					break;
 				}
 				
+				// Closure object
+				case I_CLOSURE: {
+					makeClosure(i.data);
+					break;
+				}
+				
 				// Simple instruction: unary
 				case I_UNARY: {
 					instrUnary(i.instr1, stack.back());
@@ -278,18 +284,6 @@ void instrUnary  (UnaryInstructionType   i, ScriptValueP& a) {
 	}															\
 	break
 
-// operator on strings or doubles or ints, when in doubt, uses strings
-#define OPERATOR_SDI(OP)										\
-	if (at == SCRIPT_INT && bt == SCRIPT_INT) {					\
-		a = to_script((int)*a        OP  (int)*b);				\
-	} else if ((at == SCRIPT_INT || at == SCRIPT_DOUBLE) &&		\
-	           (bt == SCRIPT_INT || bt == SCRIPT_DOUBLE)) {		\
-		a = to_script((double)*a     OP  (double)*b);			\
-	} else {													\
-		a = to_script(a->toString()  OP  b->toString());		\
-	}															\
-	break
-
 /// Composition of two functions
 class ScriptCompose : public ScriptValue {
   public:
@@ -330,6 +324,8 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 				// a = a;
 			} else if (at == SCRIPT_FUNCTION && bt == SCRIPT_FUNCTION) {
 				a = new_intrusive2<ScriptCompose>(a, b);
+			} else if (at == SCRIPT_COLLECTION && bt == SCRIPT_COLLECTION) {
+				a = new_intrusive2<ScriptConcatCollection>(a, b);
 			} else if (at == SCRIPT_INT    && bt == SCRIPT_INT) {
 				a = to_script((int)*a        +  (int)*b);
 			} else if ((at == SCRIPT_INT || at == SCRIPT_DOUBLE) &&
@@ -341,7 +337,16 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 			break;
 		case I_SUB:		OPERATOR_DI(-);
 		case I_MUL:		OPERATOR_DI(*);
-		case I_DIV:		OPERATOR_DI(/);
+		case I_FDIV:
+			a = to_script((double)*a / (double)*b);
+			break;
+		case I_DIV:
+			if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {
+				a = to_script((int)((double)*a / (double)*b));
+			} else {
+				a = to_script((int)*a / (int)*b);
+			}
+			break;
 		case I_MOD:
 			if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {
 				a = to_script(fmod((double)*a, (double)*b));
@@ -352,8 +357,8 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 		case I_AND:		OPERATOR_I(&&);
 		case I_OR:		OPERATOR_I(||);
 		case I_XOR:		a = to_script((bool)*a != (bool)*b); break;
-		case I_EQ:		OPERATOR_SDI(==);
-		case I_NEQ:		OPERATOR_SDI(!=);
+		case I_EQ:		a = to_script( equal(*a,*b));  break;
+		case I_NEQ:		a = to_script(!equal(*a,*b));  break;
 		case I_LT:		OPERATOR_DI(<);
 		case I_GT:		OPERATOR_DI(>);
 		case I_LE:		OPERATOR_DI(<=);
@@ -386,7 +391,7 @@ void instrQuaternary(QuaternaryInstructionType i, ScriptValueP& a, const ScriptV
 	}
 }
 
-// ----------------------------------------------------------------------------- : Simple instructions : object
+// ----------------------------------------------------------------------------- : Simple instructions : objects and closures
 
 void Context::makeObject(size_t n) {
 	intrusive_ptr<ScriptCustomCollection> ret(new ScriptCustomCollection());
@@ -401,4 +406,11 @@ void Context::makeObject(size_t n) {
 	}
 	stack.resize(begin);
 	stack.push_back(ret);
+}
+
+void Context::makeClosure(size_t n) {
+	//intrusive_ptr<ScriptClosure> ret(new ScriptClosure());
+	// TODO
+	//stack.push_back(ret);
+	throw InternalError(_("TODO: makeClosure"));
 }

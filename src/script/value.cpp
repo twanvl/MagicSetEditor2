@@ -24,11 +24,38 @@ ScriptValueP ScriptValue::getMember(const String& name)     const { return delay
 ScriptValueP ScriptValue::next()                                  { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
 ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
 int          ScriptValue::itemCount()                       const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
-const void*  ScriptValue::comparePointer()                  const { return nullptr; }
+CompareWhat  ScriptValue::compareAs(String& compare_str, void const*& compare_ptr) const {
+	compare_str = (String)(*this);
+	return COMPARE_AS_STRING;
+}
 
 ScriptValueP ScriptValue::dependencyMember(const String& name, const Dependency&) const { return dependency_dummy; }
 ScriptValueP ScriptValue::dependencies(Context&,               const Dependency&) const { return dependency_dummy; }
 
+/// compare script values for equallity
+bool equal(const ScriptValue& a, const ScriptValue& b) {
+	if (&a == &b) return true;
+	ScriptType at = a.type(), bt = b.type();
+	if (at == bt && at == SCRIPT_INT) {
+		return (int)a == (int)b;
+	} else if ((at == SCRIPT_INT || at == SCRIPT_DOUBLE) &&
+	           (bt == SCRIPT_INT || bt == SCRIPT_DOUBLE)) {
+		return (double)a == (double)b;
+	} else {
+		String      as,  bs;
+		const void* ap, *bp;
+		CompareWhat aw = a.compareAs(as, ap);
+		CompareWhat bw = b.compareAs(bs, bp);
+		// compare pointers or strings
+		if (aw == COMPARE_AS_STRING || bw == COMPARE_AS_STRING) {
+			return as == bs;
+		} else if (aw == COMPARE_AS_POINTER || bw == COMPARE_AS_POINTER) {
+			return ap == bp;
+		} else {
+			return false;
+		}
+	}
+}
 
 // ----------------------------------------------------------------------------- : Errors
 
@@ -40,7 +67,7 @@ ScriptDelayedError::operator double() const            { throw error; }
 ScriptDelayedError::operator int()    const            { throw error; }
 ScriptDelayedError::operator AColor() const            { throw error; }
 int ScriptDelayedError::itemCount() const              { throw error; }
-const void* ScriptDelayedError::comparePointer() const { throw error; }
+CompareWhat ScriptDelayedError::compareAs(String&, void const*&) const { throw error; }
 ScriptValueP ScriptDelayedError::getMember(const String&) const                           { return new_intrusive1<ScriptDelayedError>(error); }
 ScriptValueP ScriptDelayedError::dependencyMember(const String&, const Dependency&) const { return new_intrusive1<ScriptDelayedError>(error); }
 ScriptValueP ScriptDelayedError::eval(Context&) const                                     { return new_intrusive1<ScriptDelayedError>(error); }
@@ -52,6 +79,7 @@ ScriptValueP ScriptDelayedError::makeIterator(const ScriptValueP& thisP) const  
 
 ScriptType ScriptIterator::type() const { return SCRIPT_ITERATOR; }
 String ScriptIterator::typeName() const { return _("iterator"); }
+CompareWhat ScriptIterator::compareAs(String&, void const*&) const { return COMPARE_NO; }
 
 // Iterator over a range of integers
 class ScriptRangeIterator : public ScriptIterator {
@@ -295,3 +323,37 @@ ScriptValueP ScriptCustomCollection::makeIterator(const ScriptValueP& thisP) con
 	return new_intrusive2<ScriptCustomCollectionIterator>(&value, thisP);
 }
 
+// ----------------------------------------------------------------------------- : Concat collection
+
+// Iterator over a concatenated collection
+class ScriptConcatCollectionIterator : public ScriptIterator {
+  public:	
+	ScriptConcatCollectionIterator(const ScriptValueP& itA, const ScriptValueP& itB)
+		: itA(itA), itB(itB) {}
+	virtual ScriptValueP next() {
+		if (itA) {
+			ScriptValueP v = itA->next();
+			if (v) return v;
+			else   itA = ScriptValueP();
+		}
+		return itB->next();
+	}
+  private:
+	ScriptValueP itA, itB;
+};
+
+ScriptValueP ScriptConcatCollection::getMember(const String& name) const {
+	ScriptValueP member = a->getMember(name);
+	if (member->type() != SCRIPT_ERROR) return member;
+	long index;
+	int  itemsInA = a->itemCount();
+	if (name.ToLong(&index) && index - itemsInA >= 0 && index - itemsInA < b->itemCount()) { 
+		// adjust integer index
+		return b->getMember(String() << (index - itemsInA));
+	} else {
+		return b->getMember(name);
+	}
+}
+ScriptValueP ScriptConcatCollection::makeIterator(const ScriptValueP& thisP) const {
+	return new_intrusive2<ScriptConcatCollectionIterator>(a->makeIterator(a), b->makeIterator(b));
+}

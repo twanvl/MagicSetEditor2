@@ -154,6 +154,7 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 		case I_LOOP:		ret += _("loop");		break;
 		case I_MAKE_OBJECT:	ret += _("make object");break;
 		case I_CALL:		ret += _("call");		break;
+		case I_CLOSURE:		ret += _("closure");	break;
 		case I_UNARY:		ret += _("unary\t");
 			switch (i.instr1) {
 				case I_ITERATOR_C:	ret += _("iterator_c");	break;
@@ -200,7 +201,7 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 			ret += _("\t") + constants[i.data]->toString();
 			ret += _("\t(") + constants[i.data]->typeName() + _(")");
 			break;
-		case I_JUMP: case I_JUMP_IF_NOT: case I_LOOP: case I_CALL:	// int
+		case I_JUMP: case I_JUMP_IF_NOT: case I_LOOP: case I_MAKE_OBJECT: case I_CALL: case I_CLOSURE:	// int
 			ret += String::Format(_("\t%d"), i.data);
 			break;
 		case I_GET_VAR: case I_SET_VAR: case I_NOP:					// variable
@@ -235,7 +236,7 @@ const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) 
 				to_skip += 2; break; // nett stack effect 1-3 == -2
 			case I_QUATERNARY:
 				to_skip += 3; break; // nett stack effect 1-4 == -3
-			case I_CALL:
+			case I_CALL: case I_CLOSURE:
 				to_skip += instr->data; // arguments of call
 				break;
 			case I_MAKE_OBJECT:
@@ -299,13 +300,15 @@ String Script::instructionName(const Instruction* instr) const {
 		     + _(".")
 		     + constants[instr->data]->toString();
 	} else if (instr->instr == I_BINARY && instr->instr2 == I_MEMBER) {
-		throw _("??\?[...]");
+		return _("??\?[...]");
 	} else if (instr->instr == I_BINARY && instr->instr2 == I_ADD) {
 		return _("??? + ???");
 	} else if (instr->instr == I_NOP) {
 		return _("??\?(...)");
 	} else if (instr->instr == I_CALL) {
 		return instructionName(backtraceSkip(instr - 1, instr->data)) + _("(...)");
+	} else if (instr->instr == I_CLOSURE) {
+		return instructionName(backtraceSkip(instr - 1, instr->data)) + _("@(...)");
 	} else {
 		return _("??\?");
 	}

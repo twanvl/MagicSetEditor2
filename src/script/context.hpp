@@ -101,6 +101,8 @@ class Context {
 	void resetBindings(size_t scope);
 	/// Make an object with n elements, popping 2n values from the stack, and push it onto the stack
 	void makeObject(size_t n);
+	/// Make a closure with n arguments
+	void makeClosure(size_t n);
 };
 
 /// A class that creates a local scope

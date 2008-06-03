@@ -35,11 +35,12 @@ enum InstructionType
 ,	I_MAKE_OBJECT   = 8  ///< arg = int        : make a list/map with n elements, pops 2n values of the stack, n key/value pairs
 	// Functions
 ,	I_CALL			= 9  ///< arg = int, n*var : call the top item of the stack, with the given number of arguments (set with SET_VAR, but in the activation record of the call)
+,	I_CLOSURE       = 10 ///< arg = int, n*var : construct a call closure object with the given arguments
 	// Simple instructions
-,	I_UNARY			= 10 ///< arg = 1ary instr : pop 1 value,  apply a function, push the result
-,	I_BINARY		= 11 ///< arg = 2ary instr : pop 2 values, apply a function, push the result
-,	I_TERNARY		= 12 ///< arg = 3ary instr : pop 3 values, apply a function, push the result
-,	I_QUATERNARY	= 13 ///< arg = 4ary instr : pop 4 values, apply a function, push the result
+,	I_UNARY			= 11 ///< arg = 1ary instr : pop 1 value,  apply a function, push the result
+,	I_BINARY		= 12 ///< arg = 2ary instr : pop 2 values, apply a function, push the result
+,	I_TERNARY		= 13 ///< arg = 3ary instr : pop 3 values, apply a function, push the result
+,	I_QUATERNARY	= 14 ///< arg = 4ary instr : pop 4 values, apply a function, push the result
 };
 
 /// Types of unary instructions (taking one argument from the stack)
@@ -55,13 +56,14 @@ enum BinaryInstructionType
 ,	I_ITERATOR_R	///< Make an iterator for a range (two integers)
 ,	I_MEMBER		///< Member of an object
 // Arithmatic
-,	I_ADD			///< add     
+,	I_ADD			///< add
 ,	I_SUB			///< subtract
 ,	I_MUL			///< multiply
-,	I_DIV			///< divide  
+,	I_FDIV			///< floating point division
+,	I_DIV			///< integer division
 ,	I_MOD			///< modulus
 // Logical
-,	I_AND			///< logical and			
+,	I_AND			///< logical and
 ,	I_OR			///< logical or
 ,	I_XOR			///< logical xor
 // Comparison
