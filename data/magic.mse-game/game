@@ -328,8 +328,8 @@ init script:
 		 |  <param-cost><match>,		# keyword argument that is declared as cost
 		 ";
 	# truncates the name of legends
-	legend_filter := replace_rule(match:", [A-Z,a-z,0-9,' ]*", replace: "" )+
-		replace_rule(match:"the [A-Z,a-z,0-9,' ]*", replace: "" )
+	legend_filter := replace_rule(match:", [A-Z,a-z,Æ,0-9,' ]*", replace: "" )+
+		replace_rule(match:"the [A-Z,a-z,Æ,0-9,' ]*", replace: "" )
 	# the rule text filter
 	#  - adds mana symbols
 	#  - makes text in parentheses italic
