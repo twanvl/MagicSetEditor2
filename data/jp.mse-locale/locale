@@ -1,7 +1,7 @@
 ﻿mse version: 0.3.6
 installer group: translations/Japanese
 full name: 日本語 (Japanese)
-version: 2008-04-01
+version: 2008-06-04
 icon: jp.png
 
 ############################################################## Menu items
@@ -60,6 +60,13 @@ menu:
 	symbols:			&シンボル〔記号〕	Ctrl+M
 	reminder text:		&思い出させるもの文章	Ctrl+R
 	insert symbol:		挿&入物シンボル〔記号〕
+
+	graph:			&グラフ
+	pie:				&パイ	1
+	bar:				&バー	2
+	stack:				&積層バー	3
+	scatter:			&散布図	4
+	scatter pie:		&散乱-パイ		5
 	
 	window:			&プログラム・ウィンドウ〔窓〕
 	new window:			&新しいウィンドウ〔窓〕
@@ -95,13 +102,6 @@ menu:
 	symmetry:			対&称	F9
 	paint:				塗&料	F10
 	
-	# Updates window
-	apply changes:		変化を用いてください
-	cancel changes:		キャンセルは変わります
-	install package:	インストールパッケージ
-	upgrade package:	グレードアップパッケージ
-	remove package:		パッケージを取り除いてください
-
 ############################################################## Menu help texts
 help:
 	welcome:			魔法のセットされた編集者へようこそ
@@ -167,6 +167,13 @@ help:
 	italic:				選ばれたテキストを斜字体にします
 	symbols:			シンボル〔記号〕での選ばれたテキストを引きます
 	reminder text:		選ばれたキーワードのためのショー思い出させるもの文章
+
+	graph:
+	pie:				を円グラフ、スライスのサイズのカードの数を示します
+	bar:				バーグラフは、バーの高さをカードの数を示します
+	stack:					バーグラフを積み重ねバー
+	scatter:			散布図は、カードの大きさの数を示します
+	scatter pie:		各アイテムを散布図では、小さなパイグラフ
 	
 	window:
 	new window:			同じセットを編集するためにもう1つのウィンドウ〔窓〕を作ります
@@ -333,6 +340,12 @@ tooltip:
 	italic:				イタリック体
 	symbols:			シンボル〔記号〕
 	reminder text:		思い出させるもの文章
+
+	pie:				円グラフ
+	bar:				バーグラフ
+	stack:				積み重ね棒グラフ
+	scatter:			散布図
+	scatter pie:		散乱-パイプロット
 	
 	cards tab:			
 	set info tab:		セットされた情報
@@ -386,6 +399,7 @@ label:
 	mode:				モード
 	uses:				使います
 	reminder:			思い出させるもの文章
+	rules:				追加のルール
 	standard keyword:
 		これは標準%sのキーワードで、あなたはそれを編集できません。
 		もしあなたがキーワードのコピーを作れば、コピーは先例を取ります。
@@ -461,6 +475,20 @@ label:
 	# Symbol editor
 	sides:				側
 
+	# Packages window
+	package name:				パッケージ
+	package status:				地位
+	package action:				アクション
+	
+	package conflicts:		競合する変更
+	package modified:		ローカルの変更
+	package updates:		利用可能な更新プログラム
+	package installed:		インストール
+	package installable:	正しくインストール
+	install package:		インストール
+	upgrade package:		アップグレード
+	remove package:			取り外す
+
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
 	# Editor
@@ -478,6 +506,7 @@ button:
 	# Welcome
 	new set:			新しいセット
 	open set:			オープンセット
+	check updates:		空の更新プログラム
 	last opened set:	最後の始められたセット
 	
 	# Preferences
@@ -485,6 +514,7 @@ button:
 	browse:				&拾い読み...
 	high quality:		&高品質の翻訳〔表現/演奏〕
 	show lines:			フィールドの周りのショー&ライン〔回線〕
+	show editing hints:	詳細ボックスをオンにしヒントを編集する
 	zoom export:		輸&出する時、ズームと回転設定を使ってください
 	check now:			&今のチェック
 	always:							常に
@@ -515,6 +545,13 @@ button:
 	defaults:			&デフォルトにリセットされました
 	enabled:			可能にされます
 	whole word:			試合の全ての語だけ
+
+	# Packages window
+	keep package:			&は変更しないで
+	don't install package:	&はインストールしないで
+	install package:		&インストール
+	upgrade package:		&アップグレード
+	remove package:			&取り外す
 
 ############################################################## Titles in the GUI
 title:
@@ -556,13 +593,17 @@ title:
 	auto replaces:		オートマチックな取って代わること
 	
 	# Package Update Window
-	package list:		パッケージは更新します
-	package name:		パッケージ名前
-	package status:		現在の状態
-	new status:			新しいステータス
+	packages window:	パッケージマネージャ
+	installing updates:	更新プログラムのインストール
+	
+	cannot create file:	ファイルを作成することはできません。
 
 ############################################################## Action (undo/redo) names
 action:
+	# List boxes
+	add item:			追加する %s
+	remove item:		取り外す %s
+
 	# Text editor
 	typing:				タイピング
 	enter:				入れます
@@ -581,8 +622,6 @@ action:
 	rotate:				回転します %s
 	shear:				せん断 %s
 	scale:				サイズを変更します %s
-	add part:			加えます %s
-	remove parts:		削除 %s
 	duplicate:			写し %s
 	reorder parts:		再注文
 	change combine mode:変化連合体モード
@@ -623,13 +662,21 @@ error:
 	
 	# File related
 	file not found:				見つかっていないファイル： '%s' パッケージで '%s'
+	file not found package like:
+		ファイルが見つかりません '%s' パッケージの '%s'
+		しようとしている場合は、別のパッケージからファイルを開くには、使用する "/パッケージ/ファイル名"
 	file parse error:
 		ファイルをパースし誤り： '%s'
 		%s
 	package not found:			見つかっていないパッケージ： '%s'
 	package out of date:		パッケージ '%s' (バージョン %s) 時代遅れであることがそうである　バージョン　%s　が必要とされる。
+	package too new:			パッケージe '%s' (バージョン %s) バージョンと互換性がない %s, 要求される '%s'
 	unable to open output file:	蓄えながらの誤りは出力ファイルを開けることができないです
 	unable to store file:		蓄えながらの誤りはファイルを蓄えることができないです
+	dependency not given:
+		パッケージ '%s' ファイルを使用して、パッケージの '%s', しかし、依存関係が表示されないことです。
+		を解決するには、追加：
+		  に依存して： %s %s
 	
 	# Script stuff
 	has no member:				%s メンバーを持っていません '%s'
@@ -637,13 +684,21 @@ error:
 	has no member value:		紐　"%s"　メンバーを持っていない '%s'
 	can't convert value:		転向できない　"%s"　から　%s　に %s
 	unsupported format:			無効な紐フォーマット： '%s'
+	in function:
+		%s
+		  の関数 %s
+	in parameter:
+		パラメータ %s: %s
+	in keyword reminder:
+		%s
+		  キーワードでのテキストを思い出させる '%s'
 	
 	# Image stuff
 	coordinates for blending overlap:					オーバーラップを混ぜることのための座標
 	images used for blending must have the same size:	混ざることのために使われたイメージは同じサイズを持たなければなりません
 	
 	# Error from files
-	no game specified for the set:						セットのために指定されたゲームはありません
+	no game specified:									のゲームに指定された %s
 	no stylesheet specified for the set:				セットのために指定されたスタイルシートはありません
 	stylesheet and set refer to different game:
 		スタイルシート及びセットは同じゲームを参照しないで、これはスタイルシートファイルのエラー〔誤り〕です
@@ -665,11 +720,29 @@ error:
 	
 	# Stats panel
 	dimension not found:				統計学寸法はありません '%s'
+
+	# Package update window
+	can't download installer:
+			インストーラのパッケージをダウンロードできませんでした。 %s 〜から %s.
+		何もがインストールされています。
+
+	downloading updates:				更新プログラムのダウンロード (%d of %d)
+	installing updates:					パッケージのアップデート (%d of %d)
+	
+	remove packages:
+		これが削除さ %s パッケージを続行するようにしたいですか？
+	remove packages modified:
+		これが削除さ %s パッケージは、 %s それらをインストールした後が変更されています。
+		削除して元に戻すことはできません。
 	
 	# Package update window
-	no packages:						パッケージアップデートを設立しないでください。
-	checking updates:					アップデートを調べます。
+#	checking updates:					アップデートを調べます。
 
+	install packages successful:	%s パッケージが正常にインストールします。
+	remove packages successful:		%s パッケージが正常に削除されます。
+	change packages successful:		%s パッケージが正常に変更されました。
+
+	cannot create file:			ファイルを作成することはできません。 '%s', は、インストールを続けるですか？
 
 ############################################################## Types used in scripts / shape names
 type:
@@ -689,10 +762,14 @@ type:
 	game:			ゲーム
 	set:			セット
 	stylesheet:		スタイルシート
+	export template:輸出テンプレート
 	card:			カード
+	cards:			カード
 	field:			フィールド
 	style:			スタイル
 	value:			価値〔値/価格〕
+	keyword:		キーワード
+	keywords:		キーワード
 	
 	# Symbol editor shapes
 	shape:			形
@@ -714,18 +791,7 @@ type:
 	
 	point:			意味〔ポイント/点〕
 	points:			ポイント〔点〕
-	
-	# Package manager
-	installed:		設置されます
-	uninstalled:	アンインストールされます
-	upgradeable:	アップグレードされることができます
-	
-	install:		設置します
-	uninstall:		アンインストールします
-	upgrade:		グレードアップ
-	do nothing:		何もしないでください
-	new mse:		魔法のセットされた編集者は時代遅れです
-	
+		
 
 ############################################################## Magic
 game:
