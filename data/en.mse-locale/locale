@@ -798,8 +798,8 @@ type:
 	points:			points
 
 ############################################################## Magic
-game:
-	magic:
+package:
+	magic.mse-game:
 		# Card fields
 		name:		Name
 		cc:			CC
@@ -811,11 +811,8 @@ game:
 		# Set info
 		
 		# descriptions/help text
-stylesheet:
-	magic-new:
-		
-symbol font:
-	magic-mana-small:
+
+	magic-mana-*.mse-symbol-font:
 		# note: reminder/shortcut must start with a space, otherwise it is used as a shortcut
 		#       so typing T *anywhere* would insert a symbol (which would be bad)
 		menu item T:			&Tap symbol	 T
@@ -829,51 +826,7 @@ symbol font:
 		menu item X:			Variable mana &X	 X
 		menu item Y:			Variable mana &Y	 Y
 		menu item Z:			Variable mana &Z	 Z
-		menu item colorless:	&Colorless mana...
-		title colorless:		Colorless mana
-		message colorless:		Enter amount of colorless mana:
-		menu item half:				&Half mana
-		menu item |W:				&White	 |W
-		menu item |U:				Bl&ue	 |U
-		menu item |B:				&Black	 |B
-		menu item |R:				&Red	 |R
-		menu item |G:				&Green	 |G
-		menu item |S:				&Snow	 |S
-		menu item 1/2:				&Colorless	1/2
-		menu item hybrid:		H&ybrid mana (two color)
-		menu item W/U:				White/Blue mana	 W/U
-		menu item U/B:				Blue/Black mana	 U/B
-		menu item B/R:				Black/Red mana	 B/R
-		menu item R/G:				Red/Green mana	 R/G
-		menu item G/W:				Green/White mana	 G/W
-		menu item W/B:				White/Black mana	 W/B
-		menu item U/R:				Blue/Red mana	 U/R
-		menu item B/G:				Black/Green mana	 B/G
-		menu item R/W:				Red/White mana	 R/W
-		menu item G/U:				Green/Blue mana	 G/U
-		menu item hybrid 3:		H&ybrid mana (three color)
-		menu item W/U/B:			White/Blue/Black mana	 W/U/B
-		menu item U/B/R:			Blue/Black/Red mana	 U/B/R
-		menu item B/R/G:			Black/Red/Green mana	 B/R/G
-		menu item R/G/W:			Red/Green/White mana	 R/G/W
-		menu item G/W/U:			Green/White/Blue mana	 G/W/U
-		menu item W/B/R:			White/Black/Red mana	 W/B/R
-		menu item U/R/G:			Blue/Red/Green mana	 U/R/G
-		menu item B/G/W:			Black/Green/White mana	 B/G/W
-		menu item R/W/U:			Red/White/Blue mana	 R/W/U
-		menu item G/U/B:			Green/Blue/Black mana	 G/U/B
-	magic-mana-large:
-		# Exactly the same
-		menu item T:			&Tap symbol	 T
-		menu item W:			&White mana	 W
-		menu item U:			Bl&ue mana	 U
-		menu item B:			&Black mana	 B
-		menu item R:			&Red mana	 R
-		menu item G:			&Green mana	 G
-		menu item S:			&Snow mana	 S
-		menu item X:			Variable mana &X	 X
-		menu item Y:			Variable mana &Y	 Y
-		menu item Z:			Variable mana &Z	 Z
+		menu item I:			&Infinite mana	I
 		menu item colorless:	&Colorless mana...
 		title colorless:		Colorless mana
 		message colorless:		Enter amount of colorless mana:

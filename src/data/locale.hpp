@@ -40,12 +40,8 @@ class Locale : public Packaged {
   public:
 	/// Translations of UI strings in each category
 	SubLocale              translations[LOCALE_CAT_MAX];
-	/// Translations of Game specific texts, by game name
-	map<String,SubLocaleP> game_translations;
-	/// Translations of StyleSheet specific texts, by stylesheet name
-	map<String,SubLocaleP> stylesheet_translations;
-	/// Translations of SymbolFont specific texts, by symbol font name
-	map<String,SubLocaleP> symbol_font_translations;
+	/// Translations of Package specific texts, by relativeFilename
+	map<String,SubLocaleP> package_translations;
 	
 	/// Open a locale with the given name
 	static LocaleP byName(const String& name);

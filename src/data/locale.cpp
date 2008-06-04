@@ -14,11 +14,14 @@
 #include <util/io/package_manager.hpp>
 #include <script/to_value.hpp>
 #include <wx/wfstream.h>
+#include <wx/regex.h>
 
 #include <wx/stdpaths.h>
 #if defined(__WXMSW__)
 	#include <wx/mstream.h>
 #endif
+
+DECLARE_TYPEOF(map<String COMMA SubLocaleP>);
 
 // ----------------------------------------------------------------------------- : Locale class
 
@@ -42,13 +45,27 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(Locale) {
 	REFLECT_N("action",      translations[LOCALE_CAT_ACTION]);
 	REFLECT_N("error",       translations[LOCALE_CAT_ERROR]);
 	REFLECT_N("type",        translations[LOCALE_CAT_TYPE]);
-	REFLECT_N("game",        game_translations);
-	REFLECT_N("stylesheet",  stylesheet_translations);
-	REFLECT_N("symbol font", symbol_font_translations);
+	REFLECT_N("package",     package_translations);
 }
 
 IMPLEMENT_REFLECTION_NO_GET_MEMBER(SubLocale) {
 	REFLECT_NAMELESS(translations);
+}
+
+// ----------------------------------------------------------------------------- : Wildcards
+
+bool match_wildcard(const String& wildcard, const String& name) {
+	return wxRegEx(replace_all(replace_all(wildcard, _("."), _("\\.")), _("*"), _(".*"))).Matches(name);
+}
+
+SubLocaleP find_wildcard(map<String,SubLocaleP>& items, const String& name) {
+	FOR_EACH_CONST(i, items) {
+		if (i.second && match_wildcard(i.first, name)) return i.second;
+	}
+	return new_intrusive<SubLocale>(); // so we don't search again
+}
+SubLocaleP find_wildcard_and_set(map<String,SubLocaleP>& items, const String& name) {
+	return items[name] = find_wildcard(items, name);
 }
 
 // ----------------------------------------------------------------------------- : Translation
@@ -82,24 +99,23 @@ String tr(LocaleCategory cat, const String& key, DefaultLocaleFun def) {
 	return the_locale->translations[cat].tr(key,def);
 }
 
-#define IMPLEMENT_TR_TYPE(Type, type_translations)												\
-	String tr(const Type& t, const String& key, DefaultLocaleFun def) {							\
-		if (!the_locale) return def(key);														\
-		SubLocaleP loc = the_locale->type_translations[t.name()];								\
-		if (!loc)        return def(key);														\
-		return loc->tr(key, def);																\
-	}																							\
-	String tr(const Type& t, const String& subcat, const String& key, DefaultLocaleFun def) {	\
-		if (!the_locale) return def(key);														\
-		SubLocaleP loc = the_locale->type_translations[t.name()];								\
-		if (!loc)        return def(key);														\
-		return loc->tr(subcat, key, def);														\
+String tr(const Package& pkg, const String& key, DefaultLocaleFun def) {
+	if (!the_locale) return def(key);
+	SubLocaleP loc = the_locale->package_translations[pkg.relativeFilename()];
+	if (!loc) {
+		loc = find_wildcard_and_set(the_locale->package_translations, pkg.relativeFilename());
 	}
+	return loc->tr(key, def);
+}
 
-IMPLEMENT_TR_TYPE(Package,    game_translations) //%% TODO!
-IMPLEMENT_TR_TYPE(Game,       game_translations)
-IMPLEMENT_TR_TYPE(StyleSheet, stylesheet_translations)
-IMPLEMENT_TR_TYPE(SymbolFont, symbol_font_translations)
+String tr(const Package& pkg, const String& subcat, const String& key, DefaultLocaleFun def) {
+	if (!the_locale) return def(key);
+	SubLocaleP loc = the_locale->package_translations[pkg.relativeFilename()];
+	if (!loc) {
+		loc = find_wildcard_and_set(the_locale->package_translations, pkg.relativeFilename());
+	}
+	return loc->tr(subcat, key, def);
+}
 
 // ----------------------------------------------------------------------------- : Validation
 
