@@ -96,9 +96,9 @@ void KeywordList::updateUsageStatistics() {
 
 // ----------------------------------------------------------------------------- : Clipboard
 
-bool KeywordList::canCopy()  const { return !!selected_item; }
-bool KeywordList::canCut()   const { return canCopy() && !getKeyword()->fixed; }
-bool KeywordList::canPaste() const {
+bool KeywordList::canDelete() const { return !getKeyword()->fixed; }
+bool KeywordList::canCopy()   const { return !!selected_item; }
+bool KeywordList::canPaste()  const {
 	return wxTheClipboard->IsSupported(KeywordDataObject::format);
 }
 
@@ -127,14 +127,14 @@ bool KeywordList::doPaste() {
 	// add keyword to set
 	KeywordP keyword = data.getKeyword(set);
 	if (keyword) {
-		set->actions.add(new AddKeywordAction(ADD, *set, keyword));
+		set->actions.addAction(new AddKeywordAction(ADD, *set, keyword));
 		return true;
 	} else {
 		return false;
 	}
 }
 bool KeywordList::doDelete() {
-	set->actions.add(new AddKeywordAction(REMOVE, *set, getKeyword()));
+	set->actions.addAction(new AddKeywordAction(REMOVE, *set, getKeyword()));
 	return true;
 }
 

@@ -9,7 +9,6 @@
 #include <util/prec.hpp>
 #include <render/value/color.hpp>
 #include <render/card/viewer.hpp>
-#include <data/stylesheet.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ColorField::ChoiceP);
 
@@ -100,7 +99,7 @@ void ColorValueViewer::loadMask(const Rotation& rot) const {
 	if (alpha_mask && alpha_mask->size == wxSize(w,h)) return; // mask loaded and right size
 	// (re) load the mask
 	Image image;
-	InputStreamP image_file = viewer.stylesheet->openIn(style().mask_filename);
+	InputStreamP image_file = getStylePackage().openIn(style().mask_filename);
 	if (image.LoadFile(*image_file)) {
 		Image resampled(w,h);
 		resample(image, resampled);

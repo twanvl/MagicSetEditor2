@@ -96,6 +96,7 @@ String tr(LocaleCategory cat, const String& key, DefaultLocaleFun def) {
 		return loc->tr(subcat, key, def);														\
 	}
 
+IMPLEMENT_TR_TYPE(Package,    game_translations) //%% TODO!
 IMPLEMENT_TR_TYPE(Game,       game_translations)
 IMPLEMENT_TR_TYPE(StyleSheet, stylesheet_translations)
 IMPLEMENT_TR_TYPE(SymbolFont, symbol_font_translations)

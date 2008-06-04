@@ -15,6 +15,7 @@
 #include <data/field.hpp>
 
 class Set;
+class Package;
 class DataViewer;
 class Action;
 DECLARE_POINTER_TYPE(Style);
@@ -74,16 +75,23 @@ class ValueViewer : public StyleListener {
   protected:
 	ValueP valueP;		///< The value we are currently viewing
 	
+	/// Draws a border around the field
+	void drawFieldBorder(RotatedDC& dc);
+	
+	/// Redraw this viewer
+	void redraw();
+	
+  public:
 	/// Should this viewer render using a platform native look?
 	bool nativeLook() const;
 	/// Is this the currently selected viewer?
 	/** Usually only the editor allows selection of viewers */
 	bool isCurrent() const;
 	
-	/// Draws a border around the field
-	void drawFieldBorder(RotatedDC& dc);
-	
-	Set& getSet() const;
+	/// The package containing style stuff like images
+	Package& getStylePackage() const;
+	/// The local package for loading/saving files
+	Package& getLocalPackage() const;
 };
 
 // ----------------------------------------------------------------------------- : Utility

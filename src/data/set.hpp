@@ -149,7 +149,7 @@ class SetView : public ActionListener {
 	~SetView();
 	
 	/// Get the set that is currently being viewed
-	inline SetP getSet() { return set; }
+	//inline SetP getSet() const { return set; }
 	/// Change the set that is being viewed
 	void setSet(const SetP& set);
 	

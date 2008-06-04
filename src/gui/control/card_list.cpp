@@ -162,7 +162,7 @@ bool CardListBase::doPaste() {
 	ok = data.getCards(set, new_cards);
 	if (!ok) return false;
 	// add card to set
-	set->actions.add(new AddCardAction(ADD, *set, new_cards));
+	set->actions.addAction(new AddCardAction(ADD, *set, new_cards));
 	return true;
 }
 bool CardListBase::doDelete() {
@@ -176,7 +176,7 @@ bool CardListBase::doDelete() {
 	}
 	if (cards_to_delete.empty()) return false;
 	// delete cards
-	set->actions.add(new AddCardAction(REMOVE, *set, cards_to_delete));
+	set->actions.addAction(new AddCardAction(REMOVE, *set, cards_to_delete));
 	return true;
 }
 
@@ -345,7 +345,7 @@ void CardListBase::onDrag(wxMouseEvent& ev) {
 			findSelectedItemPos();
 			if (item != selected_item_pos) {
 				// move card in the set
-				set->actions.add(new ReorderCardsAction(*set, item, selected_item_pos));
+				set->actions.addAction(new ReorderCardsAction(*set, item, selected_item_pos));
 			}
 		}
 	}

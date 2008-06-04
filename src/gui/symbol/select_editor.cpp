@@ -173,22 +173,22 @@ void SymbolSelectEditor::onUpdateUI(wxUpdateUIEvent& ev) {
 void SymbolSelectEditor::onCommand(int id) {
 	if (id >= ID_SYMBOL_COMBINE && id < ID_SYMBOL_COMBINE_MAX) {
 		// change combine mode
-		getSymbol()->actions.add(new CombiningModeAction(
+		addAction(new CombiningModeAction(
 				control.selected_parts.get(),
 				static_cast<SymbolShapeCombine>(id - ID_SYMBOL_COMBINE)
 			));
 		control.Refresh(false);
 	} else if (id == ID_EDIT_DUPLICATE && !isEditing()) {
 		// duplicate selection, not when dragging
-		getSymbol()->actions.add(new DuplicateSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
+		addAction(new DuplicateSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
 		control.Refresh(false);
 	} else if (id == ID_EDIT_GROUP && !isEditing()) {
 		// group selection, not when dragging
-		getSymbol()->actions.add(new GroupSymbolPartsAction(*getSymbol(), control.selected_parts.get(), new_intrusive<SymbolGroup>()));
+		addAction(new GroupSymbolPartsAction(*getSymbol(), control.selected_parts.get(), new_intrusive<SymbolGroup>()));
 		control.Refresh(false);
 	} else if (id == ID_EDIT_UNGROUP && !isEditing()) {
 		// ungroup selection, not when dragging
-		getSymbol()->actions.add(new UngroupSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
+		addAction(new UngroupSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
 		control.Refresh(false);
 	}
 }
@@ -313,23 +313,23 @@ void SymbolSelectEditor::onMouseDrag  (const Vector2D& from, const Vector2D& to,
 				if (scaleX == 0 || scaleY == 0) {
 					// shear, center/fixed point on the opposite side
 					shearAction = new SymbolPartShearAction(control.selected_parts.get(), handlePos(-scaleX, -scaleY));
-					getSymbol()->actions.add(shearAction);
+					addAction(shearAction);
 				} else {
 					// rotate	
 					rotateAction = new SymbolPartRotateAction(control.selected_parts.get(), center);
-					getSymbol()->actions.add(rotateAction);
+					addAction(rotateAction);
 					startAngle = angleTo(to);
 				}
 			} else {
 				// we are on a handle; start scaling
 				scaleAction = new SymbolPartScaleAction(control.selected_parts.get(), scaleX, scaleY);
-				getSymbol()->actions.add(scaleAction);
+				addAction(scaleAction);
 			}
 		} else {
 			// move
 			click_mode = CLICK_MOVE;
 			moveAction = new SymbolPartMoveAction(control.selected_parts.get());
-			getSymbol()->actions.add(moveAction);
+			addAction(moveAction);
 		}
 	}
 	
@@ -399,7 +399,7 @@ void SymbolSelectEditor::onKeyChange (wxKeyEvent& ev) {
 void SymbolSelectEditor::onChar(wxKeyEvent& ev) {
 	if (ev.GetKeyCode() == WXK_DELETE) {
 		// delete selected parts
-		getSymbol()->actions.add(new RemoveSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
+		addAction(new RemoveSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
 		if (control.selected_parts.selected(highlightPart)) highlightPart = SymbolPartP(); // deleted it
 		control.selected_parts.clear();
 		resetActions();
@@ -416,7 +416,7 @@ void SymbolSelectEditor::onChar(wxKeyEvent& ev) {
 			ev.Skip();
 			return;
 		}
-		getSymbol()->actions.add(new SymbolPartMoveAction(control.selected_parts.get(), delta));
+		addAction(new SymbolPartMoveAction(control.selected_parts.get(), delta));
 	}
 }
 

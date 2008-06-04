@@ -67,9 +67,11 @@ class ActionStack {
 	~ActionStack();
 	
 	/// Add an action to the stack, and perform that action.
-	/// Tells all listeners about the action.
-	/// The ActionStack takes ownership of the action
-	void add(Action* action, bool allowMerge = true);
+	/** Tells all listeners about the action.
+	  * The ActionStack takes ownership of the action.
+	  * If allow_merge == true then we attempt to merge this action with previous ones
+	  */
+	void addAction(Action* action, bool allow_merge = true);
 	
 	/// Undoes the last action that was (re)done
 	/** @pre canUndo() */

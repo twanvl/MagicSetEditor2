@@ -7,6 +7,12 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
-//#include <gui/value/editor.hpp>
+#include <gui/value/editor.hpp>
+#include <data/action/value.hpp>
 
 // ----------------------------------------------------------------------------- : ValueEditor
+
+void ValueEditor::addAction(ValueAction* a) {
+	a->isOnCard(editor().getCard().get());
+	editor().addAction(a);
+}

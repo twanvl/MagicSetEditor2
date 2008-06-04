@@ -10,7 +10,6 @@
 #include <render/value/multiple_choice.hpp>
 #include <render/value/choice.hpp>
 #include <render/card/viewer.hpp>
-#include <data/stylesheet.hpp>
 #include <gui/util.hpp>
 
 DECLARE_TYPEOF_COLLECTION(String);
@@ -21,7 +20,7 @@ IMPLEMENT_VALUE_VIEWER(MultipleChoice);
 
 bool MultipleChoiceValueViewer::prepare(RotatedDC& dc) {
 	if (style().render_style & (RENDER_CHECKLIST | RENDER_LIST)) return false;
-	return prepare_choice_viewer(dc, viewer, style(), value().value());
+	return prepare_choice_viewer(dc, *this, style(), value().value());
 }
 
 void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
@@ -47,7 +46,7 @@ void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
 			drawChoice(dc, pos, choice);
 		}
 	} else {
-		draw_choice_viewer(dc, viewer, style(), value().value());
+		draw_choice_viewer(dc, *this, style(), value().value());
 	}
 }
 
@@ -62,7 +61,7 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 		map<String,ScriptableImage>::iterator it = style().choice_images.find(cannocial_name_form(choice));
 		if (it != style().choice_images.end() && it->second.isReady()) {
 			// TODO: caching
-			GeneratedImage::Options options(0,0, viewer.stylesheet.get(),&getSet());
+			GeneratedImage::Options options(0,0, &getStylePackage(), &getLocalPackage());
 			options.zoom = dc.getZoom();
 			options.angle = dc.trAngle(style().angle);
 			Image image = it->second.generate(options);
@@ -74,7 +73,7 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 	}
 	if (style().render_style & RENDER_TEXT) {
 		// draw text
-		String text = tr(*viewer.stylesheet, choice, capitalize_sentence);
+		String text = tr(getStylePackage(), choice, capitalize_sentence);
 		RealSize text_size = dc.GetTextExtent(text);
 		dc.DrawText(text, align_in_rect(ALIGN_MIDDLE_LEFT, text_size,
 		                                RealRect(pos + RealSize(size.width + 1, 0), RealSize(0,size.height))));

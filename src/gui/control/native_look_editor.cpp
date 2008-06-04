@@ -205,6 +205,12 @@ void SetInfoEditor::onChangeSet() {
 	setData(set->data);
 }
 
+Package& SetInfoEditor::getStylePackage() const {
+	return DataEditor::getStylePackage();
+	// TODO: Use the game
+	//return getGame();
+}
+
 // ----------------------------------------------------------------------------- : StylingEditor
 
 StylingEditor::StylingEditor(Window* parent, int id, long style)
@@ -232,7 +238,11 @@ ExportOptionsEditor::ExportOptionsEditor(Window* parent, int id, long style)
 {}
 
 void ExportOptionsEditor::showExport(const ExportTemplateP& export_template) {
+	this->export_template = export_template;
 	setStyles(set->stylesheet, export_template->option_style);
 	setData(settings.exportOptionsFor(*export_template));
 }
 
+Package& ExportOptionsEditor::getStylePackage() const {
+	return *export_template;
+}

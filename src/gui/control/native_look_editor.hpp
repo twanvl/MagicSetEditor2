@@ -58,6 +58,8 @@ class NativeLookEditor : public DataEditor {
 class SetInfoEditor : public NativeLookEditor {
   public:
 	SetInfoEditor(Window* parent, int id, long style = 0);
+	
+	virtual Package& getStylePackage() const;
   protected:
 	virtual void onChangeSet();
 };
@@ -73,7 +75,6 @@ class StylingEditor : public NativeLookEditor {
 	void showStylesheet(const StyleSheetP& stylesheet);
 	/// Show the styling for given card
 	void showCard(const CardP& card);
-	
   protected:
 	virtual void onChangeSet();
 };
@@ -87,6 +88,10 @@ class ExportOptionsEditor : public NativeLookEditor {
 	
 	/// Show the options for given export template
 	void showExport(const ExportTemplateP& export_template);
+	
+	virtual Package& getStylePackage() const;
+  private:
+	ExportTemplateP export_template;
 };
 
 // ----------------------------------------------------------------------------- : EOF

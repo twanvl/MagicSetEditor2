@@ -28,6 +28,10 @@ class SymbolEditorBase : public IntrusivePtrVirtualBase {
 	SymbolControl& control;
 	
 	inline SymbolP getSymbol() { return control.getSymbol(); }
+	
+	/// Perform an action
+	void addAction(Action* action, bool allow_merge = true);
+	
 	void SetStatusText(const String& text);
 	
   public:

@@ -15,9 +15,7 @@
 
 class SymbolControl;
 class SymbolPartList;
-class Card;
-DECLARE_POINTER_TYPE(SymbolValue);
-DECLARE_POINTER_TYPE(Set);
+DECLARE_POINTER_TYPE(ValueActionPerformer);
 
 // ----------------------------------------------------------------------------- : SymbolWindow
 
@@ -29,7 +27,8 @@ class SymbolWindow : public Frame {
 	/// Construct a SymbolWindow showing a symbol from a file
 	SymbolWindow(Window* parent, const String& filename);
 	/// Construct a SymbolWindow showing a symbol value in a set
-	SymbolWindow(Window* parent, const SetP& set, const Card* card, const SymbolValueP& value);
+	SymbolWindow(Window* parent, ValueActionPerformer* performer);
+	~SymbolWindow();
 	
   private:
 	// --------------------------------------------------- : Children
@@ -41,9 +40,7 @@ class SymbolWindow : public Frame {
 	SymbolPartList* parts;   ///< A list of parts in the symbol
 	
 	// when editing a symbol field
-	SymbolValueP value;
-	const Card* card;
-	SetP set;
+	ValueActionPerformer* performer;
 	
 	// --------------------------------------------------- : Event handling
 	DECLARE_EVENT_TABLE();

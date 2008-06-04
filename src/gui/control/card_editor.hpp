@@ -22,13 +22,16 @@ class DataEditor : public CardViewer {
   public:
 	DataEditor(Window* parent, int id, long style = 0);
 	
-	// --------------------------------------------------- : Utility for ValueViewers
+	// --------------------------------------------------- : Utility for ValueViewers/Editors
 	
 	virtual bool drawBorders() const;
 	virtual bool drawEditing() const;
 	virtual bool drawFocus() const;
 	virtual wxPen borderPen(bool active) const;
 	virtual ValueViewer* focusedViewer() const;
+	
+	virtual void addAction(Action* action);
+	inline SetP getSetForActions() { return set; }
 	
 	// --------------------------------------------------- : Selection
 	

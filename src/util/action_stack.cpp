@@ -26,7 +26,7 @@ ActionStack::~ActionStack() {
 	FOR_EACH(a, redo_actions) delete a;
 }
 
-void ActionStack::add(Action* action, bool allow_merge) {
+void ActionStack::addAction(Action* action, bool allow_merge) {
 	if (!action) return; // no action
 	action->perform(false); // TODO: delete action if perform throws
 	tellListeners(*action, false);

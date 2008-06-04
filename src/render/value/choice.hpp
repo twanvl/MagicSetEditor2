@@ -25,8 +25,8 @@ class ChoiceValueViewer : public ValueViewer {
 	virtual void onStyleChange(int);
 };
 
-bool prepare_choice_viewer(RotatedDC& dc, DataViewer& viewer, ChoiceStyle& style, const String& value);
-void draw_choice_viewer(RotatedDC& dc, DataViewer& viewer, ChoiceStyle& style, const String& value);
+bool prepare_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, const String& value);
+void draw_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, const String& value);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

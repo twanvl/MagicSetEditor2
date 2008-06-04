@@ -254,7 +254,7 @@ void SymbolPointEditor::onLeftDClick(const Vector2D& pos, wxMouseEvent& ev) {
 	if (hovering == SELECTED_NEW_POINT) {
 		// Add point
 		ControlPointAddAction* act = new ControlPointAddAction(part, hover_line_1_idx, hover_line_t);
-		getSymbol()->actions.add(act);
+		addAction(act);
 		// select the new point
 		selectPoint(act->getNewPoint(), false);
 		selection = SELECTED_POINTS;
@@ -262,7 +262,7 @@ void SymbolPointEditor::onLeftDClick(const Vector2D& pos, wxMouseEvent& ev) {
 		// Delete point
 		selected_points.clear();
 		selectPoint(hover_handle.point, false);
-		getSymbol()->actions.add(control_point_remove_action(part, selected_points));
+		addAction(control_point_remove_action(part, selected_points));
 		selected_points.clear();
 		selection = SELECTED_NONE;
 	}
@@ -288,7 +288,7 @@ void SymbolPointEditor::onMouseDrag(const Vector2D& from, const Vector2D& to, wx
 		if (controlPointMoveAction) controlPointMoveAction = 0;
 		if (!curveDragAction) {
 			curveDragAction = new CurveDragAction(selected_line1, selected_line2);
-			getSymbol()->actions.add(curveDragAction);
+			addAction(curveDragAction);
 		}
 		curveDragAction->move(delta, selected_line_t);
 		control.Refresh(false);
@@ -298,7 +298,7 @@ void SymbolPointEditor::onMouseDrag(const Vector2D& from, const Vector2D& to, wx
 		if (!controlPointMoveAction) {
 			// create action we can add this movement to
 			controlPointMoveAction = new ControlPointMoveAction(selected_points);
-			getSymbol()->actions.add(controlPointMoveAction);
+			addAction(controlPointMoveAction);
 		}
 		controlPointMoveAction->constrain = ev.ControlDown(); // ctrl constrains
 		controlPointMoveAction->snap      = snap(ev);
@@ -309,7 +309,7 @@ void SymbolPointEditor::onMouseDrag(const Vector2D& from, const Vector2D& to, wx
 		// Move the selected handle
 		if (!handleMoveAction) {
 			handleMoveAction = new HandleMoveAction(selected_handle);
-			getSymbol()->actions.add(handleMoveAction);
+			addAction(handleMoveAction);
 		}
 		handleMoveAction->constrain  = ev.ControlDown(); // ctrl constrains
 		handleMoveAction->snap = snap(ev);
@@ -368,14 +368,14 @@ void SymbolPointEditor::onChar(wxKeyEvent& ev) {
 		if (selection == SELECTED_POINTS || selection == SELECTED_LINE) {
 			// Move all selected points
 			controlPointMoveAction = new ControlPointMoveAction(selected_points);
-			getSymbol()->actions.add(controlPointMoveAction);
+			addAction(controlPointMoveAction);
 			controlPointMoveAction->move(delta);
 			new_point += delta;
 			control.Refresh(false);
 		} else if (selection == SELECTED_HANDLE) {
 			// Move the selected handle
 			handleMoveAction = new HandleMoveAction(selected_handle);
-			getSymbol()->actions.add(handleMoveAction);
+			addAction(handleMoveAction);
 			handleMoveAction->move(delta);
 			control.Refresh(false);
 		}
@@ -466,7 +466,7 @@ void SymbolPointEditor::resetActions() {
 
 void SymbolPointEditor::deleteSelection() {
 	if (!selected_points.empty()) {
-		getSymbol()->actions.add(control_point_remove_action(part, selected_points));
+		addAction(control_point_remove_action(part, selected_points));
 		selected_points.clear();
 		resetActions();
 		control.Refresh(false);
@@ -477,12 +477,12 @@ void SymbolPointEditor::onChangeSegment(SegmentMode mode) {
 	assert(selected_line1);
 	assert(selected_line2);
 	if (selected_line1->segment_after == mode) return;
-	getSymbol()->actions.add(new SegmentModeAction(selected_line1, selected_line2, mode));
+	addAction(new SegmentModeAction(selected_line1, selected_line2, mode));
 	control.Refresh(false);
 }
 
 void SymbolPointEditor::onChangeLock(LockMode mode) {
-	getSymbol()->actions.add(new LockModeAction(*selected_points.begin(), mode));
+	addAction(new LockModeAction(*selected_points.begin(), mode));
 	control.Refresh(false);
 }
 

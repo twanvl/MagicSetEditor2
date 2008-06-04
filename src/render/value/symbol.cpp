@@ -7,9 +7,9 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/io/package.hpp>
 #include <render/value/symbol.hpp>
 #include <render/symbol/filter.hpp>
-#include <data/set.hpp>
 #include <data/symbol.hpp>
 #include <gui/util.hpp> // draw_checker
 #include <util/error.hpp>
@@ -29,7 +29,7 @@ void SymbolValueViewer::draw(RotatedDC& dc) {
 	if (symbols.empty() && !value().filename.empty()) {
 		try {
 			// load symbol
-			SymbolP symbol = getSet().readFile<SymbolP>(value().filename);
+			SymbolP symbol = getLocalPackage().readFile<SymbolP>(value().filename);
 			// aspect ratio
 			double ar = symbol->aspectRatio();
 			ar = min(style().max_aspect_ratio, max(style().min_aspect_ratio, ar));

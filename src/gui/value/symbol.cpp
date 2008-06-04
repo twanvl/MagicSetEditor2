@@ -9,6 +9,7 @@
 #include <util/prec.hpp>
 #include <gui/value/symbol.hpp>
 #include <gui/symbol/window.hpp>
+#include <data/action/value.hpp>
 #include <gui/util.hpp>
 
 // ----------------------------------------------------------------------------- : SymbolValueEditor
@@ -93,8 +94,7 @@ bool SymbolValueEditor::onLeftUp(const RealPoint& pos, wxMouseEvent&) {
 		// edit
 		button_down = -2;
 		viewer.redraw(*this);
-		SymbolWindow* wnd = new SymbolWindow(nullptr, viewer.getSet(), card(), valueP());
-		wnd->Show();
+		editSymbol();
 		return true;
 	} else if (button_down == 1) {
 		// gallery
@@ -110,11 +110,20 @@ bool SymbolValueEditor::onLeftUp(const RealPoint& pos, wxMouseEvent&) {
 
 bool SymbolValueEditor::onLeftDClick(const RealPoint& pos, wxMouseEvent&) {
 	// Use SetWindow as parent? Maybe not, the symbol editor will stay open when mainwindow closes
-	SymbolWindow* wnd = new SymbolWindow(nullptr, viewer.getSet(), card(), valueP());
-	wnd->Show();
+	editSymbol();
 	return true;
 }
 
 void SymbolValueEditor::determineSize(bool) {
 	style().height = 50;
+}
+
+
+void SymbolValueEditor::editSymbol() {
+	SymbolWindow* wnd = new SymbolWindow(nullptr, getActionPerformer());
+	wnd->Show();
+}
+
+ValueActionPerformer* SymbolValueEditor::getActionPerformer() {
+	return new ValueActionPerformer(valueP(), editor().getCard().get(), editor().getSetForActions());
 }

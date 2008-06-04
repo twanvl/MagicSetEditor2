@@ -14,6 +14,8 @@
 #include <render/value/viewer.hpp>
 
 class IconMenu;
+class ValueAction;
+DECLARE_POINTER_TYPE(ValueActionPerformer);
 
 // ----------------------------------------------------------------------------- : ValueEditor
 
@@ -122,8 +124,13 @@ class ValueEditor {
 	/// The editor is shown or hidden
 	virtual void onShow(bool) {}
 	
-	/// Redraw this viewer
-	virtual void redraw() = 0;
+	// --------------------------------------------------- : Helpers
+  protected:
+	/// Retrieve the parent editor object
+	virtual DataEditor& editor() const = 0;
+	
+	/// Perform an action
+	void addAction(ValueAction* a);
 };
 
 // ----------------------------------------------------------------------------- : Utility
@@ -131,22 +138,14 @@ class ValueEditor {
 #define DECLARE_VALUE_EDITOR(Type)											\
 		Type##ValueEditor(DataEditor& parent, const Type##StyleP& style);	\
 		virtual ValueEditor* getEditor() { return this; }					\
-		virtual void redraw();												\
 	  private:																\
 		/** Retrieve the parent editor object */							\
 		inline DataEditor& editor() const {									\
 			return static_cast<DataEditor&>(viewer);						\
 		}																	\
-		/** Card this editor is on, or nullptr */							\
-		inline const Card* card() const { return viewer.getCard().get(); }	\
-		/** Perform an action */											\
-		void perform(Action* a) { getSet().actions.add(a); }				\
 	  public:
 
 #define IMPLEMENT_VALUE_EDITOR(Type)													\
-	void Type##ValueEditor::redraw() {													\
-		editor().redraw(*this);															\
-	}																					\
 	ValueViewerP Type##Style::makeEditor(DataEditor& parent, const StyleP& thisP) {		\
 		assert(thisP.get() == this);													\
 		return ValueViewerP(new Type##ValueEditor(parent, static_pointer_cast<Type##Style>(thisP)));	\

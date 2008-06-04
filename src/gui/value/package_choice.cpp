@@ -111,7 +111,7 @@ void PackageChoiceValueEditor::determineSize(bool) {
 }
 
 void PackageChoiceValueEditor::change(const String& c) {
-	perform(value_action(card(), valueP(), c));
+	addAction(value_action(valueP(), c));
 }
 
 void PackageChoiceValueEditor::initDropDown() {

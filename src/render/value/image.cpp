@@ -9,8 +9,6 @@
 #include <util/prec.hpp>
 #include <render/value/image.hpp>
 #include <render/card/viewer.hpp>
-#include <data/set.hpp>
-#include <data/stylesheet.hpp>
 #include <gui/util.hpp>
 
 DECLARE_TYPEOF_COLLECTION(wxPoint);
@@ -35,7 +33,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 		// load from file
 		if (!value().filename.empty()) {
 			try {
-				InputStreamP image_file = getSet().openIn(value().filename);
+				InputStreamP image_file = getLocalPackage().openIn(value().filename);
 				if (image.LoadFile(*image_file)) {
 					image.Rescale(w, h);
 				}
@@ -45,7 +43,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 		}
 		// nice placeholder
 		if (!image.Ok() && style().default_image.isReady()) {
-			image = style().default_image.generate(GeneratedImage::Options(w, h, viewer.stylesheet.get(), &getSet()));
+			image = style().default_image.generate(GeneratedImage::Options(w, h, &getStylePackage(), &getLocalPackage()));
 			is_default = true;
 			if (viewer.drawEditing()) {
 				bitmap = imagePlaceholder(dc, w, h, image, viewer.drawEditing());
@@ -127,7 +125,7 @@ void ImageValueViewer::loadMask(const Rotation& rot) const {
 	if (alpha_mask && alpha_mask->size == wxSize(w,h)) return; // mask loaded and right size
 	// (re) load the mask
 	Image image;
-	InputStreamP image_file = viewer.stylesheet->openIn(style().mask_filename);
+	InputStreamP image_file = getStylePackage().openIn(style().mask_filename);
 	if (image.LoadFile(*image_file)) {
 		alpha_mask = new_intrusive1<AlphaMask>(resample(image,w,h));
 	}

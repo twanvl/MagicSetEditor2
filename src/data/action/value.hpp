@@ -20,6 +20,7 @@
 
 class Card;
 class StyleSheet;
+DECLARE_POINTER_TYPE(Set);
 DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(Style);
 DECLARE_POINTER_TYPE(TextValue);
@@ -35,9 +36,12 @@ DECLARE_POINTER_TYPE(PackageChoiceValue);
 /// An Action the changes a Value
 class ValueAction : public Action {
   public:
-	inline ValueAction(const Card* card, const ValueP& value) : valueP(value), card(card) {}
+	inline ValueAction(const ValueP& value) : valueP(value), card(nullptr) {}
 	
 	virtual String getName(bool to_undo) const;
+	
+	/// We know that the value is on the given card, add that information
+	void isOnCard(Card* card);
 	
 	const ValueP valueP; ///< The modified value
 	const Card*  card;   ///< The card the value is on, or null if it is not a card value
@@ -46,19 +50,19 @@ class ValueAction : public Action {
 // ----------------------------------------------------------------------------- : Simple
 
 /// Action that updates a Value to a new value
-ValueAction* value_action(const Card* card, const ChoiceValueP&         value, const Defaultable<String>& new_value);
-ValueAction* value_action(const Card* card, const MultipleChoiceValueP& value, const Defaultable<String>& new_value, const String& last_change);
-ValueAction* value_action(const Card* card, const ColorValueP&          value, const Defaultable<Color>&  new_value);
-ValueAction* value_action(const Card* card, const ImageValueP&          value, const FileName&            new_value);
-ValueAction* value_action(const Card* card, const SymbolValueP&         value, const FileName&            new_value);
-ValueAction* value_action(const Card* card, const PackageChoiceValueP&  value, const String&              new_value);
+ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value);
+ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value, const String& last_change);
+ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value);
+ValueAction* value_action(const ImageValueP&          value, const FileName&            new_value);
+ValueAction* value_action(const SymbolValueP&         value, const FileName&            new_value);
+ValueAction* value_action(const PackageChoiceValueP&  value, const String&              new_value);
 
 // ----------------------------------------------------------------------------- : Text
 
 /// An action that changes a TextValue
 class TextValueAction : public ValueAction {
   public:
-	TextValueAction(const Card* card, const TextValueP& value, size_t start, size_t end, size_t new_end, const Defaultable<String>& new_value, const String& name);
+	TextValueAction(const TextValueP& value, size_t start, size_t end, size_t new_end, const Defaultable<String>& new_value, const String& name);
 	
 	virtual String getName(bool to_undo) const;
 	virtual void perform(bool to_undo);
@@ -77,18 +81,18 @@ class TextValueAction : public ValueAction {
 };
 
 /// Action for toggling some formating tag on or off in some range
-TextValueAction* toggle_format_action(const Card* card, const TextValueP& value, const String& tag, size_t start_i, size_t end_i, size_t start, size_t end, const String& action_name);
+TextValueAction* toggle_format_action(const TextValueP& value, const String& tag, size_t start_i, size_t end_i, size_t start, size_t end, const String& action_name);
 
 /// Typing in a TextValue, replace the selection [start...end) with replacement
 /** start and end are cursor positions, start_i and end_i are indices*/
-TextValueAction* typing_action(const Card* card, const TextValueP& value, size_t start_i, size_t end_i, size_t start, size_t end, const String& replacement, const String& action_name);
+TextValueAction* typing_action(const TextValueP& value, size_t start_i, size_t end_i, size_t start, size_t end, const String& replacement, const String& action_name);
 
 // ----------------------------------------------------------------------------- : Reminder text
 
 /// Toggle reminder text for a keyword on or off
 class TextToggleReminderAction : public ValueAction {
   public:
-	TextToggleReminderAction(const Card* card, const TextValueP& value, size_t pos);
+	TextToggleReminderAction(const TextValueP& value, size_t pos);
 	
 	virtual String getName(bool to_undo) const;
 	virtual void perform(bool to_undo);
@@ -148,6 +152,25 @@ class ScriptStyleEvent : public Action {
 	
 	const StyleSheet* stylesheet; ///< StyleSheet the style is for
 	const Style*      style;      ///< The modified style
+};
+
+
+// ----------------------------------------------------------------------------- : Action performer
+
+/// A loose object for performing ValueActions on a certain value.
+/** Used to reduce coupling */
+class ValueActionPerformer {
+  public:
+	ValueActionPerformer(const ValueP& value, Card* card, const SetP& set);
+	~ValueActionPerformer();
+	/// Perform an action. The performer takes ownerwhip of the action.
+	void addAction(ValueAction* action);
+	
+	const ValueP value; ///< The value
+	Package& getLocalPackage();
+  private:
+	Card* card; ///< Card the value is on (if any)
+	SetP  set;  ///< Set for the actions
 };
 
 // ----------------------------------------------------------------------------- : EOF

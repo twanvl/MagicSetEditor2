@@ -9,7 +9,6 @@
 #include <util/prec.hpp>
 #include <render/value/text.hpp>
 #include <render/card/viewer.hpp>
-#include <data/stylesheet.hpp>
 
 // ----------------------------------------------------------------------------- : TextValueViewer
 
@@ -19,7 +18,7 @@ bool TextValueViewer::prepare(RotatedDC& dc) {
 	if (!style().mask_filename.empty() && !style().mask.ok()) {
 		// load contour mask
 		Image image;
-		InputStreamP image_file = viewer.stylesheet->openIn(style().mask_filename);
+		InputStreamP image_file = getStylePackage().openIn(style().mask_filename);
 		if (image.LoadFile(*image_file)) {
 			style().mask.load(image);
 		}

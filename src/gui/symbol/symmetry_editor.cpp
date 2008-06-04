@@ -107,13 +107,13 @@ void SymbolSymmetryEditor::onCommand(int id) {
 	if (id >= ID_SYMMETRY && id < ID_SYMMETRY_MAX) {
 		SymbolSymmetryType kind = id == ID_SYMMETRY_ROTATION ? SYMMETRY_ROTATION : SYMMETRY_REFLECTION;
 		if (symmetry && symmetry->kind != kind) {
-			getSymbol()->actions.add(new SymmetryTypeAction(*symmetry, kind));
+			addAction(new SymmetryTypeAction(*symmetry, kind));
 			control.Refresh(false);
 		}
 		resetActions();
 	} else if (id == ID_COPIES) {
 		if (symmetry && symmetry->copies != copies->GetValue()) {
-			getSymbol()->actions.add(new SymmetryCopiesAction(*symmetry, copies->GetValue()));
+			addAction(new SymmetryCopiesAction(*symmetry, copies->GetValue()));
 			control.Refresh(false);
 		}
 		resetActions();
@@ -124,11 +124,11 @@ void SymbolSymmetryEditor::onCommand(int id) {
 		symmetry->center = Vector2D(0.5,0.5);
 		symmetry->handle = Vector2D(0.2,0);
 		symmetry->name   = symmetry->expectedName();
-		getSymbol()->actions.add(new GroupSymbolPartsAction(*getSymbol(), control.selected_parts.get(), symmetry));
+		addAction(new GroupSymbolPartsAction(*getSymbol(), control.selected_parts.get(), symmetry));
 		control.selected_parts.select(symmetry);
 		control.Refresh(false);
 	} else if (id == ID_REMOVE_SYMMETRY) {
-		getSymbol()->actions.add(new UngroupSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
+		addAction(new UngroupSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
 		symmetry = SymbolSymmetryP();
 		control.Refresh(false);
 	}
@@ -158,7 +158,7 @@ void SymbolSymmetryEditor::onMouseDrag  (const Vector2D& from, const Vector2D& t
 		symmetryMoveAction = new SymmetryMoveAction(*symmetry, selection == SELECTION_HANDLE);
 		symmetryMoveAction->constrain = ev.ControlDown();
 		symmetryMoveAction->snap      = ev.ShiftDown() != settings.symbol_grid_snap ? settings.symbol_grid_size : 0;
-		getSymbol()->actions.add(symmetryMoveAction);
+		addAction(symmetryMoveAction);
 	}
 	symmetryMoveAction->move(to - from);
 	control.Refresh(false);

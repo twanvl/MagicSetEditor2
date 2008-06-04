@@ -207,7 +207,7 @@ void CardsPanel::onCommand(int id) {
 			card_list->selectNext();
 			break;
 		case ID_CARD_ADD:
-			set->actions.add(new AddCardAction(*set));
+			set->actions.addAction(new AddCardAction(*set));
 			break;
 		case ID_CARD_REMOVE:
 			card_list->doDelete();

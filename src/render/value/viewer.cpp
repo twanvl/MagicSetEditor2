@@ -16,7 +16,8 @@ ValueViewer::ValueViewer(DataViewer& parent, const StyleP& style)
 	: StyleListener(style), viewer(parent)
 {}
 
-Set& ValueViewer::getSet() const { return *viewer.getSet(); }
+Package& ValueViewer::getStylePackage() const { return viewer.getStylePackage(); }
+Package& ValueViewer::getLocalPackage() const { return viewer.getLocalPackage(); }
 
 void ValueViewer::setValue(const ValueP& value) {
 	assert(value->fieldP == styleP->fieldP); // matching field
@@ -45,6 +46,10 @@ void ValueViewer::drawFieldBorder(RotatedDC& dc) {
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		dc.DrawRectangle(dc.getInternalRect().grow(dc.trInvS(1)));
 	}
+}
+
+void ValueViewer::redraw() {
+	viewer.redraw(*this);
 }
 
 bool ValueViewer::nativeLook() const {

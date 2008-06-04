@@ -174,9 +174,9 @@ void MultipleChoiceValueEditor::toggle(int id) {
 		if (i == id) toggled_choice = choice;
 	}
 	// store value
-	perform(value_action(card(), valueP(), new_value, toggled_choice));
+	addAction(value_action(valueP(), new_value, toggled_choice));
 }
 
 void MultipleChoiceValueEditor::toggleDefault() {
-	perform(value_action(card(), valueP(), Defaultable<String>(value().value(), !value().value.isDefault()), _("")));
+	addAction(value_action(valueP(), Defaultable<String>(value().value(), !value().value.isDefault()), _("")));
 }

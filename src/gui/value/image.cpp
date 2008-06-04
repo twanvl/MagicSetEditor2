@@ -11,7 +11,6 @@
 #include <gui/image_slice_window.hpp>
 #include <data/format/clipboard.hpp>
 #include <data/action/value.hpp>
-#include <data/stylesheet.hpp>
 #include <wx/clipbrd.h>
 
 // ----------------------------------------------------------------------------- : ImageValueEditor
@@ -34,7 +33,7 @@ void ImageValueEditor::sliceImage(const Image& image) {
 	AlphaMaskP mask;
 	if (!style().mask_filename().empty()) {
 		Image mask_image;
-		InputStreamP image_file = viewer.stylesheet->openIn(style().mask_filename);
+		InputStreamP image_file = getStylePackage().openIn(style().mask_filename);
 		if (mask_image.LoadFile(*image_file)) {
 			Image resampled(style().width, style().height);
 			resample(mask_image, resampled);
@@ -46,10 +45,10 @@ void ImageValueEditor::sliceImage(const Image& image) {
 	// clicked ok?
 	if (s.ShowModal() == wxID_OK) {
 		// store the image into the set
-		FileName new_image_file = getSet().newFileName(field().name,_("")); // a new unique name in the package
+		FileName new_image_file = getLocalPackage().newFileName(field().name,_("")); // a new unique name in the package
 		Image img = s.getImage();
-		img.SaveFile(getSet().nameOut(new_image_file), img.HasAlpha() ? wxBITMAP_TYPE_PNG : wxBITMAP_TYPE_JPEG);
-		perform(value_action(card(), valueP(), new_image_file));
+		img.SaveFile(getLocalPackage().nameOut(new_image_file), img.HasAlpha() ? wxBITMAP_TYPE_PNG : wxBITMAP_TYPE_JPEG);
+		addAction(value_action(valueP(), new_image_file));
 	}
 }
 
@@ -66,7 +65,7 @@ bool ImageValueEditor::canPaste() const {
 
 bool ImageValueEditor::doCopy() {
 	// load image
-	InputStreamP image_file = getSet().openIn(value().filename);
+	InputStreamP image_file = getLocalPackage().openIn(value().filename);
 	Image image;
 	if (!image.LoadFile(*image_file)) return false;
 	// set data
@@ -89,7 +88,7 @@ bool ImageValueEditor::doPaste() {
 }
 
 bool ImageValueEditor::doDelete() {
-	perform(value_action(card(), valueP(), FileName()));
+	addAction(value_action(valueP(), FileName()));
 	return true;
 }
 

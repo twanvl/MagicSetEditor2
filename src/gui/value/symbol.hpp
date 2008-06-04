@@ -13,6 +13,8 @@
 #include <gui/value/editor.hpp>
 #include <render/value/symbol.hpp>
 
+class ValueActionPerformer;
+
 // ----------------------------------------------------------------------------- : SymbolValueEditor
 
 /// An editor 'control' for editing SymbolValues
@@ -31,6 +33,10 @@ class SymbolValueEditor : public SymbolValueViewer, public ValueEditor {
 	void drawButton(RotatedDC& dc, int button, const String& text);
 	/// Is there a button at the given position? returns the button index, or -1 if there is no button
 	int findButton(const RealPoint& pos);
+	/// Show the symbol editor
+	void editSymbol();
+	/// Get an object to perform actions for us
+	ValueActionPerformer* getActionPerformer();
 	
 	// button, or -1 for mouse down, but not on button, or -2 for mouse not down
 	int button_down;

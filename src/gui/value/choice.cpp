@@ -11,7 +11,6 @@
 #include <gui/util.hpp>
 #include <gui/thumbnail_thread.hpp>
 #include <data/action/value.hpp>
-#include <data/stylesheet.hpp>
 #include <script/image.hpp>
 #include <wx/imaglist.h>
 
@@ -28,7 +27,6 @@ class ChoiceThumbnailRequest : public ThumbnailRequest {
 	bool isThreadSafe;
 	virtual bool threadSafe() const {return isThreadSafe;}
   private:
-	StyleSheetP stylesheet;
 	int id;
 	
 	inline ChoiceStyle& style()  { return *static_cast<ChoiceStyle*>(viewer().getStyle().get()); }
@@ -38,12 +36,11 @@ class ChoiceThumbnailRequest : public ThumbnailRequest {
 ChoiceThumbnailRequest::ChoiceThumbnailRequest(ValueViewer* viewer, int id, bool from_disk, bool thread_safe)
 	: ThumbnailRequest(
 		static_cast<void*>(viewer),
-		viewer->viewer.stylesheet->name() + _("/") + viewer->getField()->name + _("/") << id,
-		from_disk ? viewer->viewer.stylesheet->lastModified()
+		viewer->getStylePackage().name() + _("/") + viewer->getField()->name + _("/") << id,
+		from_disk ? viewer->getStylePackage().lastModified()
 		          : wxDateTime::Now()
 	)
 	, isThreadSafe(thread_safe)
-	, stylesheet(viewer->viewer.stylesheet)
 	, id(id)
 {}
 
@@ -52,7 +49,7 @@ Image ChoiceThumbnailRequest::generate() {
 	String name = cannocial_name_form(s.field().choices->choiceName(id));
 	ScriptableImage& img = s.choice_images[name];
 	return img.isReady()
-		? img.generate(GeneratedImage::Options(16,16, stylesheet.get(), viewer().viewer.getSet().get(), ASPECT_BORDER, true))
+		? img.generate(GeneratedImage::Options(16,16, &viewer().getStylePackage(), &viewer().getLocalPackage(), ASPECT_BORDER, true))
 		: wxImage();
 }
 
@@ -308,5 +305,5 @@ void ChoiceValueEditor::determineSize(bool) {
 }
 
 void ChoiceValueEditor::change(const Defaultable<String>& c) {
-	perform(value_action(card(), valueP(), c));
+	addAction(value_action(valueP(), c));
 }

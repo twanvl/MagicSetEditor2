@@ -12,23 +12,28 @@
 #include <gui/symbol/part_list.hpp>
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
-#include <data/set.hpp>
 #include <data/field/symbol.hpp>
 #include <data/format/image_to_symbol.hpp>
 #include <data/action/value.hpp>
+#include <data/set.hpp> // :(
 #include <util/window_id.hpp>
 #include <util/io/reader.hpp>
+#include <util/io/package.hpp>
 #include <util/error.hpp>
 #include <wx/filename.h>
 #include <wx/wfstream.h>
 
 // ----------------------------------------------------------------------------- : Constructor
 
-SymbolWindow::SymbolWindow(Window* parent) {
+SymbolWindow::SymbolWindow(Window* parent)
+	: performer(nullptr)
+{
 	init(parent, default_symbol());
 }
 
-SymbolWindow::SymbolWindow(Window* parent, const String& filename) {
+SymbolWindow::SymbolWindow(Window* parent, const String& filename)
+	: performer(nullptr)
+{
 	// open file
 	Reader reader(new_shared1<wxFileInputStream>(filename), nullptr, filename);
 	SymbolP symbol;
@@ -36,21 +41,26 @@ SymbolWindow::SymbolWindow(Window* parent, const String& filename) {
 	init(parent, symbol);
 }
 
-SymbolWindow::SymbolWindow(Window* parent, const SetP& set, const Card* card, const SymbolValueP& value)
-	: value(value), card(card), set(set)
+SymbolWindow::SymbolWindow(Window* parent, ValueActionPerformer* performer)
+	: performer(performer)
 {
 	// attempt to load symbol
 	SymbolP symbol;
+	SymbolValueP value = static_pointer_cast<SymbolValue>(performer->value);
 	if (!value->filename.empty()) {
 		try {
 			// load symbol
-			symbol = set->readFile<SymbolP>(value->filename);
+			Package& package = performer->getLocalPackage();
+			symbol = package.readFile<SymbolP>(value->filename);
 		} catch (const Error& e) {
 			handle_error(e);
 		}
 	}
 	if (!symbol) symbol = default_symbol();
 	init(parent, symbol);
+}
+SymbolWindow::~SymbolWindow() {
+	delete performer;
 }
 
 void SymbolWindow::init(Window* parent, SymbolP symbol) {
@@ -233,11 +243,13 @@ void SymbolWindow::onFileSaveAs(wxCommandEvent& ev) {
 }
 
 void SymbolWindow::onFileStore(wxCommandEvent& ev) {
-	if (value) {
-		FileName new_filename = set->newFileName(value->field().name,_(".mse-symbol")); // a new unique name in the package
-		Writer writer(set->openOut(new_filename));
+	if (performer) {
+		SymbolValueP value = static_pointer_cast<SymbolValue>(performer->value);
+		Package& package = performer->getLocalPackage();
+		FileName new_filename = package.newFileName(value->field().name,_(".mse-symbol")); // a new unique name in the package
+		Writer writer(package.openOut(new_filename));
 		writer.handle(control->getSymbol());
-		set->actions.add(value_action(card, value, new_filename));
+		performer->addAction(value_action(value, new_filename));
 	}
 }
 
@@ -273,7 +285,7 @@ void SymbolWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 	switch(ev.GetId()) {
 		// file menu
 		case ID_FILE_STORE: {
-			ev.Enable(value);
+			ev.Enable(performer);
 			break;
 		// undo/redo
 		} case ID_EDIT_UNDO: {

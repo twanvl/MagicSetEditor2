@@ -19,6 +19,7 @@
 #include <util/prec.hpp>
 #include <util/string.hpp>
 
+class Package;
 class Game;
 class StyleSheet;
 class SymbolFont;
@@ -46,6 +47,8 @@ String warn_and_identity(const String&);
 /// Translate 'key' in the category 'cat' using the current locale
 String tr(LocaleCategory cat, const String& key, DefaultLocaleFun def = warn_and_identity);
 
+/// Translate 'key' in the for a Package using the current locale
+String tr(const Package&, const String& key, DefaultLocaleFun def);
 /// Translate 'key' in the for a Game using the current locale
 String tr(const Game&, const String& key, DefaultLocaleFun def);
 /// Translate 'key' in the for a StyleSheet using the current locale

@@ -15,3 +15,7 @@
 void SymbolEditorBase::SetStatusText(const String& text) {
 	control.parent->SetStatusText(text);
 }
+
+void SymbolEditorBase::addAction(Action* action, bool allow_merge) {
+	getSymbol()->actions.addAction(action, allow_merge);
+}

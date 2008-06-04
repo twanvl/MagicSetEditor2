@@ -60,6 +60,10 @@ ValueViewer* DataEditor::focusedViewer() const {
 	return FindFocus() == this ? current_viewer : nullptr;
 }
 
+void DataEditor::addAction(Action* action) {
+	set->actions.addAction(action);
+}
+
 // ----------------------------------------------------------------------------- : Selection
 
 bool DataEditor::AcceptsFocus() const {

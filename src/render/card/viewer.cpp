@@ -110,6 +110,16 @@ Rotation DataViewer::getRotation() const {
 	return Rotation(ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(), 1.0, ROTATION_ATTACH_TOP_LEFT);
 }
 
+Package& DataViewer::getStylePackage() const {
+	return *stylesheet;
+}
+Package& DataViewer::getLocalPackage() const {
+	return *set;
+}
+Game& DataViewer::getGame() const {
+	return *set->game;
+}
+
 // ----------------------------------------------------------------------------- : Setting data
 
 void DataViewer::setCard(const CardP& card, bool refresh) {

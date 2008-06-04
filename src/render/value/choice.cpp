@@ -9,28 +9,27 @@
 #include <util/prec.hpp>
 #include <render/value/choice.hpp>
 #include <render/card/viewer.hpp>
-#include <data/stylesheet.hpp>
 
 // ----------------------------------------------------------------------------- : ChoiceValueViewer
 
 IMPLEMENT_VALUE_VIEWER(Choice);
 
-void get_options(Rotation& rot, DataViewer& viewer, const ChoiceStyle& style, GeneratedImage::Options& opts);
+void get_options(Rotation& rot, ValueViewer& viewer, const ChoiceStyle& style, GeneratedImage::Options& opts);
 
 bool ChoiceValueViewer::prepare(RotatedDC& dc) {
-	return prepare_choice_viewer(dc, viewer, style(), value().value());
+	return prepare_choice_viewer(dc, *this, style(), value().value());
 }
 void ChoiceValueViewer::draw(RotatedDC& dc) {
 	drawFieldBorder(dc);
 	if (style().render_style & RENDER_HIDDEN) return;
-	draw_choice_viewer(dc, viewer, style(), value().value());
+	draw_choice_viewer(dc, *this, style(), value().value());
 }
 
-bool prepare_choice_viewer(RotatedDC& dc, DataViewer& viewer, ChoiceStyle& style, const String& value) {
+bool prepare_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, const String& value) {
 	if (style.render_style & RENDER_IMAGE) {
 		style.initImage();
 		CachedScriptableImage& img = style.image;
-		Context& ctx = viewer.getContext();
+		Context& ctx = viewer.viewer.getContext();
 		ctx.setVariable(SCRIPT_VAR_input, to_script(value));
 		// generate to determine the size
 		if (img.update(ctx) && img.isReady()) {
@@ -39,7 +38,7 @@ bool prepare_choice_viewer(RotatedDC& dc, DataViewer& viewer, ChoiceStyle& style
 			// Generate image/bitmap (whichever is available)
 			// don't worry, we cache the image
 			ImageCombine combine = style.combine;
-			style.loadMask(*viewer.stylesheet);
+			style.loadMask(viewer.getStylePackage());
 			Bitmap bitmap; Image image;
 			RealSize size;
 			img.generateCached(img_options, &style.mask, &combine, &bitmap, &image, &size);
@@ -54,7 +53,7 @@ bool prepare_choice_viewer(RotatedDC& dc, DataViewer& viewer, ChoiceStyle& style
 	return false;
 }
 
-void draw_choice_viewer(RotatedDC& dc, DataViewer& viewer, ChoiceStyle& style, const String& value) {
+void draw_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, const String& value) {
 	if (value.empty()) return;
 	double margin = 0;
 	if (style.render_style & RENDER_IMAGE) {
@@ -65,7 +64,7 @@ void draw_choice_viewer(RotatedDC& dc, DataViewer& viewer, ChoiceStyle& style, c
 			get_options(dc, viewer, style, img_options);
 			// Generate image/bitmap
 			ImageCombine combine = style.combine;
-			style.loadMask(*viewer.stylesheet);
+			style.loadMask(viewer.getStylePackage());
 			Bitmap bitmap; Image image;
 			RealSize size;
 			img.generateCached(img_options, &style.mask, &combine, &bitmap, &image, &size);
@@ -85,16 +84,16 @@ void draw_choice_viewer(RotatedDC& dc, DataViewer& viewer, ChoiceStyle& style, c
 		}
 	}
 	if (style.render_style & RENDER_TEXT) {
-		String text = tr(*viewer.stylesheet, value, capitalize_sentence);
+		String text = tr(viewer.getStylePackage(), value, capitalize_sentence);
 		dc.SetFont(style.font, 1.0);
 		RealPoint pos = align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(0, dc.GetCharHeight()), dc.getInternalRect()) + RealSize(margin, 0);
 		dc.DrawTextWithShadow(text, style.font, pos);
 	}
 }
 
-void get_options(Rotation& rot, DataViewer& viewer, const ChoiceStyle& style, GeneratedImage::Options& opts) {
-	opts.package       = viewer.stylesheet.get();
-	opts.local_package = viewer.getSet().get();
+void get_options(Rotation& rot, ValueViewer& viewer, const ChoiceStyle& style, GeneratedImage::Options& opts) {
+	opts.package       = &viewer.getStylePackage();
+	opts.local_package = &viewer.getLocalPackage();
 	opts.angle         = rot.trAngle(0);
 	if (viewer.nativeLook()) {
 		opts.width = opts.height = 16;

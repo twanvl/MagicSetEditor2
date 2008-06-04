@@ -36,7 +36,6 @@ class ChoiceValueEditor : public ChoiceValueViewer, public ValueEditor {
   private:
 	DropDownListP drop_down;
 	friend class DropDownChoiceList;
-	friend class ChoiceThumbnailRequest;
 	/// Change the choice
 	void change(const Defaultable<String>& c);
 };

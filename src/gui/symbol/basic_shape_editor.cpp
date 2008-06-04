@@ -100,7 +100,7 @@ void SymbolBasicShapeEditor::onLeftDown   (const Vector2D& pos, wxMouseEvent& ev
 void SymbolBasicShapeEditor::onLeftUp     (const Vector2D& pos, wxMouseEvent& ev) {
 	if (drawing && shape) {
 		// Finalize the shape
-		getSymbol()->actions.add(new AddSymbolPartAction(*getSymbol(), shape));
+		addAction(new AddSymbolPartAction(*getSymbol(), shape));
 		// Select the part
 		control.selectPart(shape);
 		// no need to clean up, this editor is replaced

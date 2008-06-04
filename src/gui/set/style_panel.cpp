@@ -131,18 +131,18 @@ void StylePanel::onStyleSelect(wxCommandEvent&) {
 			// select no special style when selecting the same style as the set default
 			stylesheet = StyleSheetP();
 		}
-		set->actions.add(new ChangeCardStyleAction(card, stylesheet));
+		set->actions.addAction(new ChangeCardStyleAction(card, stylesheet));
 		Layout();
 	}
 }
 
 void StylePanel::onUseForAll(wxCommandEvent&) {
-	set->actions.add(new ChangeSetStyleAction(*set, card));
+	set->actions.addAction(new ChangeSetStyleAction(*set, card));
 	Layout();
 }
 
 void StylePanel::onUseCustom(wxCommandEvent&) {
-	set->actions.add(new ChangeCardHasStylingAction(*set, card));
+	set->actions.addAction(new ChangeCardHasStylingAction(*set, card));
 }
 
 BEGIN_EVENT_TABLE(StylePanel, wxPanel)

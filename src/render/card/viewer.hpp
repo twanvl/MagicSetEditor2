@@ -62,6 +62,13 @@ class DataViewer : public SetView {
 	/// Invalidate and redraw (the area of) a single value viewer
 	virtual void redraw(const ValueViewer&) {}
 	
+	/// The package containing style stuff like images
+	virtual Package& getStylePackage() const;
+	/// The local package for loading/saving files
+	Package& getLocalPackage() const;
+	/// Return the game to use for information
+	Game& getGame() const;
+	
 	// --------------------------------------------------- : Setting data
 	
 	/// Display a card in this viewer
@@ -100,7 +107,6 @@ class DataViewer : public SetView {
 	vector<ValueViewerP> viewers;	///< The viewers for the different values in the data
 	CardP card;						///< The card that is currently displayed, if any
 	bool drawing;					///< Are we currently drawing?
-  public:
 	mutable StyleSheetP stylesheet;	///< Stylesheet being used
 };
 
