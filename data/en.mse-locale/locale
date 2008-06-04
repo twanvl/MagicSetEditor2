@@ -75,6 +75,7 @@ menu:
 	style tab:			St&yle	F7
 	keywords tab:		&Keywords	F8
 	stats tab:			S&tatistics	F9
+	random pack tab:	&Random Packs
 	
 	help:			&Help
 	index:				&Index...	F1
@@ -182,6 +183,7 @@ help:
 	style tab:			Change the style of cards
 	keywords tab:		Define extra keywords for this set
 	stats tab:			Show statistics about the cards in the set
+	random pack tab:	Try how the set works out in practice by generating random booster packs.
 	
 	help:
 	index:				
@@ -273,6 +275,7 @@ tool:
 	style tab:			Style
 	keywords tab:		Keywords
 	stats tab:			Statistics
+	random pack tab:	Random
 	
 	# symbol editor
 	store symbol:		Store
@@ -317,6 +320,7 @@ tooltip:
 	style tab:			
 	keywords tab:		
 	stats tab:			
+	random pack tab:	Random packs
 	
 	new set:			New set
 	open set:			Open set

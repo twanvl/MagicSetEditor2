@@ -74,7 +74,6 @@ void TextCtrl::setValue(const FakeTextValueP& value) {
 }
 
 void TextCtrl::onChangeSet() {
-	wxLogDebug(_("TextCtrl::onChangeSet %p"),this);
 	DataEditor::onChangeSet();
 	// initialize
 	if (viewers.empty()) {

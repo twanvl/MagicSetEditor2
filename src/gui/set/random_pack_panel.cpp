@@ -19,11 +19,19 @@ RandomPackPanel::RandomPackPanel(Window* parent, int id)
 	// init controls
 	preview   = new CardViewer(this, wxID_ANY);
 	card_list = new FilteredCardList(this, wxID_ANY);
+	wxButton* generate = new wxButton(this, wxID_ANY, _BUTTON_("generate pack"));
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
 		s->Add(preview, 0, wxRIGHT,  2);
 		wxSizer* s2 = new wxBoxSizer(wxVERTICAL);
-			s2->Add(card_list, 1, wxEXPAND | wxTOP, 4);
+			wxSizer* s3 = new wxBoxSizer(wxHORIZONTAL);
+				wxSizer* s4 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack selection"));
+				s3->Add(s4,       1, wxEXPAND, 8);
+				wxSizer* s5 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack totals"));
+				s3->Add(s5,       1, wxEXPAND | wxLEFT, 8);
+				s3->Add(generate, 0, wxALIGN_BOTTOM | wxLEFT, 8);
+			s2->Add(s3, 0, wxEXPAND | wxALL, 4);
+			s2->Add(card_list, 1, wxEXPAND);
 		s->Add(s2,      1, wxEXPAND, 8);
 	s->SetSizeHints(this);
 	SetSizer(s);
