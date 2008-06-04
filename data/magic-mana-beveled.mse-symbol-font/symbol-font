@@ -181,21 +181,7 @@ symbol:
 	image: mana_s.png
 symbol:
 	image: mana_nw.png
-	code: ([XYZ0-9])+/W
-	regex: yes
-	draw text: 1
-	text margin left:   -.05
-	text margin right:  .2
-	text margin top:    -.14
-	text margin bottom: .35
-	text font:
-		name: MPlantin
-		size: .5
-		color: rgb(0,0,0)
-		max stretch: 0.5
-symbol:
-	image: mana_ng.png
-	code: ([XYZ0-9])+/G
+	code: ([XYZ0-9]+)/W
 	regex: yes
 	draw text: 1
 	text margin left:   -.05
@@ -209,7 +195,7 @@ symbol:
 		max stretch: 0.5
 symbol:
 	image: mana_nu.png
-	code: ([XYZ0-9])+/U
+	code: ([XYZ0-9]+)/U
 	regex: yes
 	draw text: 1
 	text margin left:   -.05
@@ -223,7 +209,7 @@ symbol:
 		max stretch: 0.5
 symbol:
 	image: mana_nb.png
-	code: ([XYZ0-9])+/B
+	code: ([XYZ0-9]+)/B
 	regex: yes
 	draw text: 1
 	text margin left:   -.05
@@ -237,7 +223,21 @@ symbol:
 		max stretch: 0.5
 symbol:
 	image: mana_nr.png
-	code: ([XYZ0-9])+/R
+	code: ([XYZ0-9]+)/R
+	regex: yes
+	draw text: 1
+	text margin left:   -.05
+	text margin right:  .2
+	text margin top:    -.14
+	text margin bottom: .35
+	text font:
+		name: MPlantin
+		size: .5
+		color: rgb(0,0,0)
+		max stretch: 0.5
+symbol:
+	image: mana_ng.png
+	code: ([XYZ0-9]+)/G
 	regex: yes
 	draw text: 1
 	text margin left:   -.05
