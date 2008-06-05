@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/rotation.hpp>
 #include <gfx/bezier.hpp>
 #include <gfx/polynomial.hpp>
 
@@ -93,20 +94,20 @@ void segment_subdivide(const ControlPoint& p0, const ControlPoint& p1, const Vec
 
 // ----------------------------------------------------------------------------- : Bounds
 
-void segment_bounds(const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max) {
+void segment_bounds(const Rotation& rot, const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max) {
 	assert(p1.segment_after == p2.segment_before);
 	if (p1.segment_after == SEGMENT_LINE) {
-		line_bounds  (p1.pos, p2.pos, min, max);
+		line_bounds  (rot, p1.pos, p2.pos, min, max);
 	} else {
-		bezier_bounds(p1,     p2,     min, max);
+		bezier_bounds(rot, p1,     p2,     min, max);
 	}
 }
 
-void bezier_bounds(const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max) {
+void bezier_bounds(const Rotation& rot, const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max) {
 	assert(p1.segment_after == SEGMENT_CURVE);
 	// First of all, the corners should be in the bounding box
-	point_bounds(p1.pos, min, max);
-	point_bounds(p2.pos, min, max);
+	point_bounds(rot, p1.pos, min, max);
+	point_bounds(rot, p2.pos, min, max);
 	// Solve the derivative of the bezier curve to find its extremes
 	// It's only a quadtratic equation :)
 	BezierCurve curve(p1,p2);
@@ -118,19 +119,20 @@ void bezier_bounds(const ControlPoint& p1, const ControlPoint& p2, Vector2D& min
 	for (UInt i = 0 ; i < count ; ++i) {
 		double t = roots[i];
 		if (t >=0 && t <= 1) {
-			point_bounds(curve.pointAt(t), min, max);
+			point_bounds(rot, curve.pointAt(t), min, max);
 		}
 	}
 }
 
-void line_bounds(const Vector2D& p1, const Vector2D& p2, Vector2D& min, Vector2D& max) {
-	point_bounds(p1, min, max);
-	point_bounds(p2, min, max);
+void line_bounds(const Rotation& rot, const Vector2D& p1, const Vector2D& p2, Vector2D& min, Vector2D& max) {
+	point_bounds(rot, p1, min, max);
+	point_bounds(rot, p2, min, max);
 }
 
-void point_bounds(const Vector2D& p, Vector2D& min, Vector2D& max) {
-	min = piecewise_min(min, p);
-	max = piecewise_max(max, p);
+void point_bounds(const Rotation& rot, const Vector2D& p, Vector2D& min, Vector2D& max) {
+	Vector2D pr = rot.tr(p);
+	min = piecewise_min(min, pr);
+	max = piecewise_max(max, pr);
 }
 
 // Is a point inside the bounds <min...max>?

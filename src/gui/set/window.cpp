@@ -404,6 +404,7 @@ void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 		case ID_EDIT_REPLACE   : ev.Enable(current_panel->canReplace());break;
 		// windows
 		case ID_WINDOW_KEYWORDS: ev.Enable(set->game->has_keywords);	break;
+		case ID_WINDOW_RANDOM_PACK: ev.Enable(!set->game->pack_types.empty());	break;
 		// help
 		case ID_HELP_INDEX     : ev.Enable(false);						break; // not implemented
 		// other

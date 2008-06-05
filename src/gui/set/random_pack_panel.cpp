@@ -30,7 +30,7 @@ RandomPackPanel::RandomPackPanel(Window* parent, int id)
 				wxSizer* s5 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack totals"));
 				s3->Add(s5,       1, wxEXPAND | wxLEFT, 8);
 				s3->Add(generate, 0, wxALIGN_BOTTOM | wxLEFT, 8);
-			s2->Add(s3, 0, wxEXPAND | wxALL, 4);
+			s2->Add(s3, 0, wxEXPAND | wxALL & ~wxTOP, 4);
 			s2->Add(card_list, 1, wxEXPAND);
 		s->Add(s2,      1, wxEXPAND, 8);
 	s->SetSizeHints(this);
@@ -58,6 +58,12 @@ void RandomPackPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 
 void RandomPackPanel::onCommand(int id) {
 	// ?
+}
+
+// ----------------------------------------------------------------------------- : Generating
+
+void RandomPackPanel::generate() {
+	//set->game->pack_types[0].generate()
 }
 
 // ----------------------------------------------------------------------------- : Clipboard

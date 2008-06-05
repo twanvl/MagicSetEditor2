@@ -7,6 +7,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/rotation.hpp>
 #include <data/symbol.hpp>
 #include <script/to_value.hpp>
 #include <gfx/bezier.hpp>
@@ -184,8 +185,9 @@ void SymbolShape::enforceConstraints() {
 void SymbolShape::calculateBounds() {
 	min_pos =  Vector2D::infinity();
 	max_pos = -Vector2D::infinity();
+	Rotation rot(0);
 	for (int i = 0 ; i < (int)points.size() ; ++i) {
-		segment_bounds(*getPoint(i), *getPoint(i + 1), min_pos, max_pos);
+		segment_bounds(rot, *getPoint(i), *getPoint(i + 1), min_pos, max_pos);
 	}
 }
 

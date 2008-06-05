@@ -39,6 +39,9 @@ class RandomPackPanel : public SetWindowPanel {
   private:
 	CardViewer*       preview;		///< Card preview
 	FilteredCardList* card_list;	///< The list of cards
+	
+	/// Generate the cards
+	void generate();
 };
 
 // ----------------------------------------------------------------------------- : EOF
