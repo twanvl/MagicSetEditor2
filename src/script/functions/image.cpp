@@ -112,9 +112,20 @@ SCRIPT_FUNCTION(drop_shadow) {
 
 SCRIPT_FUNCTION(symbol_variation) {
 	// find symbol
-	SCRIPT_PARAM(ValueP, symbol);
-	SymbolValueP value = dynamic_pointer_cast<SymbolValue>(symbol);
-	SCRIPT_OPTIONAL_PARAM(String, variation) {
+	SCRIPT_PARAM(ScriptValueP, symbol); // TODO: change to input?
+	ScriptObject<ValueP>* valueO = dynamic_cast<ScriptObject<ValueP>*>(symbol.get());
+	SymbolValue* value = valueO ? dynamic_cast<SymbolValue*>(valueO->getValue().get()) : nullptr;
+	String filename;
+	if (value) {
+		filename = value->filename;
+	} else if (valueO) {
+		throw ScriptError(_ERROR_2_("can't convert", valueO->typeName(), _TYPE_("symbol" )));
+	} else {
+		filename = from_script<String>(symbol);
+	}
+	// known variation?
+	SCRIPT_OPTIONAL_PARAM_(String, variation)
+	if (value && variation_) {
 		// find style
 		SCRIPT_PARAM(Set*, set);
 		SCRIPT_OPTIONAL_PARAM_(CardP, card);
@@ -124,7 +135,7 @@ SCRIPT_FUNCTION(symbol_variation) {
 		FOR_EACH(v, style->variations) {
 			if (v->name == variation) {
 				// found it
-				return new_intrusive3<SymbolToImage>(value->filename, value->last_update, v);
+				return new_intrusive4<SymbolToImage>(value, filename, value->last_update, v);
 			}
 		}
 		throw ScriptError(_("Variation of symbol not found ('") + variation + _("')"));
@@ -158,7 +169,7 @@ SCRIPT_FUNCTION(symbol_variation) {
 		} else {
 			throw ScriptError(_("Unknown fill type for symbol_variation: ") + fill_type);
 		}
-		return new_intrusive3<SymbolToImage>(value->filename, value->last_update, var);
+		return new_intrusive4<SymbolToImage>(value, filename, value ? value->last_update : Age(), var);
 	}
 }
 

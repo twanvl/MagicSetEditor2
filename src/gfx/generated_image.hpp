@@ -289,19 +289,20 @@ class BuiltInImage : public GeneratedImage {
 /// Use a symbol as an image
 class SymbolToImage : public GeneratedImage {
   public:
-	SymbolToImage(const String& filename, Age age, const SymbolVariationP& variation);
+	SymbolToImage(bool is_local, const String& filename, Age age, const SymbolVariationP& variation);
 	~SymbolToImage();
 	virtual Image generate(const Options& opt) const;
 	virtual bool operator == (const GeneratedImage& that) const;
-	virtual bool local() const { return true; }
+	virtual bool local() const { return is_local; }
 	
 	#ifdef __WXGTK__
 		virtual bool threadSafe() const { return false; }
 	#endif
   private:
 	SymbolToImage(const SymbolToImage&); // copy ctor
+	bool             is_local; ///< Use local package?
 	String           filename;
-	Age              age; ///< Age the symbol was last updated
+	Age              age;      ///< Age the symbol was last updated
 	SymbolVariationP variation;
 };
 

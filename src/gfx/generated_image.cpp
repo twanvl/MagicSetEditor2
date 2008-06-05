@@ -385,19 +385,20 @@ bool BuiltInImage::operator == (const GeneratedImage& that) const {
 
 // ----------------------------------------------------------------------------- : SymbolToImage
 
-SymbolToImage::SymbolToImage(const String& filename, Age age, const SymbolVariationP& variation)
-	: filename(filename), age(age), variation(variation)
+SymbolToImage::SymbolToImage(bool is_local, const String& filename, Age age, const SymbolVariationP& variation)
+	: is_local(is_local), filename(filename), age(age), variation(variation)
 {}
 SymbolToImage::~SymbolToImage() {}
 
 Image SymbolToImage::generate(const Options& opt) const {
 	// TODO : use opt.width and opt.height?
-	if (!opt.local_package) throw ScriptError(_("Can only load images in a context where an image is expected"));
+	Package* package = is_local ? opt.local_package : opt.package;
+	if (!package) throw ScriptError(_("Can only load images in a context where an image is expected"));
 	SymbolP the_symbol;
 	if (filename.empty()) {
 		the_symbol = default_symbol();
 	} else {
-		the_symbol = opt.local_package->readFile<SymbolP>(filename);
+		the_symbol = package->readFile<SymbolP>(filename);
 	}
 	int size = max(100, 3*max(opt.width,opt.height));
 	if (opt.width <= 1 || opt.height <= 1) {
@@ -410,7 +411,8 @@ Image SymbolToImage::generate(const Options& opt) const {
 }
 bool SymbolToImage::operator == (const GeneratedImage& that) const {
 	const SymbolToImage* that2 = dynamic_cast<const SymbolToImage*>(&that);
-	return that2 && filename  == that2->filename
+	return that2 && is_local  == that2->is_local
+	             && filename  == that2->filename
 	             && age       == that2->age
 	             && (variation == that2->variation ||
 	                 *variation == *that2->variation // custom variation
