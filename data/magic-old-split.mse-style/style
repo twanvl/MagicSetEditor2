@@ -6,7 +6,7 @@ installer group: magic/old style/split cards
 icon: card-sample.png
 position hint: 103
 
-version: 2008-06-02
+version: 2008-06-04
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -264,7 +264,7 @@ card style:
 		left:	287
 		top:	40
 		width:	200
-		height:	163
+		height:	162
 		z index: 1
 	############################# Card type
 	type:
