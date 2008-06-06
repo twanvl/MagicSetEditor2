@@ -219,10 +219,11 @@ OutputStreamP Package::openOut(const String& file) {
 
 String Package::nameOut(const String& file) {
 	assert(wxThread::IsMain()); // Writing should only be done from the main thread
-	FileInfos::iterator it = files.find(file);
+	String name = normalize_internal_filename(file);
+	FileInfos::iterator it = files.find(name);
 	if (it == files.end()) {
 		// new file
-		it = addFile(file);
+		it = addFile(name);
 	}
 	// return stream
 	if (it->second.wasWritten()) {
@@ -244,6 +245,7 @@ FileName Package::newFileName(const String& prefix, const String& suffix) {
 		name = prefix;
 		name << ++infix;
 		name += suffix;
+		name = normalize_internal_filename(name);
 		// check if a file with that name exists
 		FileInfos::iterator it = files.find(name);
 		if (it == files.end()) {
