@@ -169,7 +169,7 @@ SCRIPT_FUNCTION(symbol_variation) {
 		} else {
 			throw ScriptError(_("Unknown fill type for symbol_variation: ") + fill_type);
 		}
-		return new_intrusive4<SymbolToImage>(value, filename, value ? value->last_update : Age(), var);
+		return new_intrusive4<SymbolToImage>(value, filename, value ? value->last_update : Age(0), var);
 	}
 }
 
