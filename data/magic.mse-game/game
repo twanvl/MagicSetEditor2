@@ -23,7 +23,7 @@ init script:
 	# correctly sort a mana symbol (no guild mana)
 	mana_sort       := sort_rule(order: "XYZI[0123456789]S(WUBRG)")
 	# correctly sort guild mana
-	mana_sort_guild := sort_rule(order: "[XYZI01234567890SWUBRG/]") +
+	mana_sort_guild := sort_rule(order: "[XYZI01234567890SWUBRG/|]") +
 			replace_rule(
 				match: "./.|././.|./././.|.[|]",
 				in_context: "(^|[^/])<match>($|[^/])",
