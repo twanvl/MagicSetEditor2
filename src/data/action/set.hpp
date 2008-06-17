@@ -101,6 +101,7 @@ class ChangeSetStyleAction : public DisplayChangeAction {
 	Set&        set;			///< The affected set
 	CardP       card;			///< The card whos stylesheet is copied to the set
 	StyleSheetP stylesheet;		///< The old stylesheet of the set
+	vector<int> has_styling;    ///< The old has_styling values of all cards (vector<bool> is evil)
 };
 
 /// Changing the styling of a card to become custom/non-custom

@@ -41,7 +41,9 @@ class Card : public IntrusivePtrVirtualBase {
 	/** Optional; if not set use the card style from the set */
 	StyleSheetP stylesheet;
 	/// Alternative options to use for this card, for this card's stylesheet
-	/** Optional; if not set use the styling data from the set */
+	/** Optional; if not set use the styling data from the set.
+	 *  If stylesheet is set then contains data for the this->stylesheet, otherwise for set->stylesheet
+	 */
 	IndexMap<FieldP,ValueP> styling_data;
 	/// Is the styling_data set?
 	bool has_styling;

@@ -14,6 +14,8 @@
 #include <util/error.hpp>
 
 DECLARE_TYPEOF_COLLECTION(IndexMap<FieldP COMMA ValueP>);
+DECLARE_TYPEOF_COLLECTION(CardP);
+DECLARE_TYPEOF_COLLECTION(int);
 
 // ----------------------------------------------------------------------------- : Add card
 
@@ -95,12 +97,24 @@ String ChangeSetStyleAction::getName(bool to_undo) const {
 }
 void ChangeSetStyleAction::perform(bool to_undo) {
 	if (!to_undo) {
+		// backup has_styling
+		has_styling.clear();
+		FOR_EACH(card, set.cards) {
+			has_styling.push_back(card->has_styling);
+			if (!card->stylesheet) {
+				card->has_styling = false; // this card has custom style options for the default stylesheet
+			}
+		}
 		stylesheet       = set.stylesheet;
 		set.stylesheet   = card->stylesheet;
 		card->stylesheet = StyleSheetP();
 	} else {
 		card->stylesheet = set.stylesheet;
 		set.stylesheet   = stylesheet;
+		// restore has_styling
+		FOR_EACH_2(card, set.cards, has, has_styling) {
+			card->has_styling = has;
+		}
 	}
 }
 
