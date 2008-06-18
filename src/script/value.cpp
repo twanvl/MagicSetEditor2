@@ -398,16 +398,18 @@ ScriptValueP ScriptClosure::simplify() {
 }
 
 ScriptValueP ScriptClosure::eval(Context& ctx) const {
+	LocalScope scope(ctx);
 	applyBindings(ctx);
 	return fun->eval(ctx);
 }
 ScriptValueP ScriptClosure::dependencies(Context& ctx, const Dependency& dep) const {
+	LocalScope scope(ctx);
 	applyBindings(ctx);
 	return fun->dependencies(ctx, dep);
 }
 void ScriptClosure::applyBindings(Context& ctx) const {
 	FOR_EACH_CONST(b, bindings) {
-		if (ctx.getVariableScope(b.first) != 0) {
+		if (ctx.getVariableScope(b.first) != 1) {
 			ctx.setVariable(b.first, b.second);
 		}
 	}
