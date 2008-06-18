@@ -233,13 +233,14 @@ void CardsPrintout::drawCard(DC& dc, const CardP& card, int card_nr) {
 	// Draw using text buffer
 	//TextBufferDC bufferDC(w,h,true);
 	//RotatedDC rdc(bufferDC, rotation, RealRect(0,0,w,h), 1.0, QUALITY_SUB_PIXEL);
-	TextBufferDC bufferDC(w*4,h*4,false);
-	RotatedDC rdc(bufferDC, rotation, RealRect(0,0,w*4,h*4), 4.0, QUALITY_AA);
+	double zoom = IsPreview() ? 1 : 4;
+	TextBufferDC bufferDC(w*zoom,h*zoom,false);
+	RotatedDC rdc(bufferDC, rotation, RealRect(0,0,w*zoom,h*zoom), zoom, QUALITY_AA);
 	// render card to dc
 	viewer.setCard(card);
 	viewer.draw(rdc, *wxWHITE);
 	// render buffer to device
-	double px_per_mm = 4 * stylesheet.card_dpi / 25.4;
+	double px_per_mm = zoom * stylesheet.card_dpi / 25.4;
 	dc.SetUserScale(scale_x / px_per_mm, scale_y / px_per_mm);
 	dc.SetDeviceOrigin(int(scale_x * pos.x), int(scale_y * pos.y));
 	bufferDC.drawToDevice(dc, 0, 0); // adjust for scaling
