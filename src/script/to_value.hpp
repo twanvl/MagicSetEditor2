@@ -10,6 +10,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <script/value.hpp>
+#include <script/script.hpp>
 #include <util/reflect.hpp>
 #include <util/error.hpp>
 #include <util/io/get_member.hpp>
@@ -290,6 +291,36 @@ class ScriptObject : public ScriptValue {
 	}
 };
 
+// ----------------------------------------------------------------------------- : Default arguments / closure
+
+/// A wrapper around a function that gives default arguments
+class ScriptClosure : public ScriptValue {
+  public:
+	ScriptClosure(ScriptValueP fun) : fun(fun) {}
+	
+	virtual ScriptType type() const;
+	virtual String typeName() const;
+	virtual ScriptValueP eval(Context& ctx) const;
+	virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const;
+	
+	/// Add a binding
+	void addBinding(Variable v, const ScriptValueP& value);
+	/// Is there a binding for the given variable? If so, retrieve it
+	ScriptValueP getBinding(Variable v) const;
+	
+	/// Try to simplify this closure, returns a value if successful
+	ScriptValueP simplify();
+	
+	/// The wrapped function
+	ScriptValueP                          fun;
+	/// The default argument bindings
+	vector<pair<Variable,ScriptValueP> >  bindings;
+	
+  private:
+	/// Apply the bindings in a context
+	void applyBindings(Context& ctx) const;
+};
+
 // ----------------------------------------------------------------------------- : Creating
 
 /// Convert a value to a script value
@@ -328,6 +359,8 @@ template <> inline double       from_script<double>      (const ScriptValueP& va
 template <> inline bool         from_script<bool>        (const ScriptValueP& value) { return *value; }
 template <> inline Color        from_script<Color>       (const ScriptValueP& value) { return (AColor)*value; }
 template <> inline AColor       from_script<AColor>      (const ScriptValueP& value) { return *value; }
+
+void from_script(const ScriptValueP& value, wxRegEx& out);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

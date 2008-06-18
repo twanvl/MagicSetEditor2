@@ -374,7 +374,7 @@ Image BuiltInImage::generate(const Options& opt) const {
 	// TODO : use opt.width and opt.height?
 	Image img = load_resource_image(name);
 	if (!img.Ok()) {
-		throw ScriptError(_("There is no build in image '") + name + _("'"));
+		throw ScriptError(_("There is no built in image '") + name + _("'"));
 	}
 	return img;
 }

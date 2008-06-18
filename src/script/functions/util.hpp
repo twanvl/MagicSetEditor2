@@ -42,20 +42,27 @@
 		SCRIPT_FUNCTION_AUX(name, virtual ScriptValueP dependencies(Context&, const Dependency&) const;)
 
 #define SCRIPT_FUNCTION_DEPENDENCIES(name)								\
-		ScriptValueP ScriptBuildin_##name::dependencies(Context& ctx, const Dependency& dep) const
+		ScriptValueP ScriptBuiltIn_##name::dependencies(Context& ctx, const Dependency& dep) const
+
+/// Macro to declare a new script function with custom closure simplification
+#define SCRIPT_FUNCTION_WITH_SIMPLIFY(name)								\
+		SCRIPT_FUNCTION_AUX(name, virtual ScriptValueP simplifyClosure(ScriptClosure&) const;)
+
+#define SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(name)							\
+		ScriptValueP ScriptBuiltIn_##name::simplifyClosure(ScriptClosure& closure) const
 
 // helper for SCRIPT_FUNCTION and SCRIPT_FUNCTION_DEP
 #define SCRIPT_FUNCTION_AUX(name,dep)									\
-		class ScriptBuildin_##name : public ScriptValue {				\
+		class ScriptBuiltIn_##name : public ScriptValue {				\
 			dep															\
 			virtual  ScriptType type() const							\
 				{ return SCRIPT_FUNCTION; }								\
 			virtual String typeName() const								\
-				{ return _("build in function '") _(#name) _("'"); }	\
+				{ return _("built-in function '") _(#name) _("'"); }	\
 			virtual ScriptValueP eval(Context&) const;					\
 		};																\
-		ScriptValueP script_##name(new ScriptBuildin_##name);			\
-		ScriptValueP ScriptBuildin_##name::eval(Context& ctx) const
+		ScriptValueP script_##name(new ScriptBuiltIn_##name);			\
+		ScriptValueP ScriptBuiltIn_##name::eval(Context& ctx) const
 
 /// Return a value from a SCRIPT_FUNCTION
 #define SCRIPT_RETURN(value) return to_script(value)

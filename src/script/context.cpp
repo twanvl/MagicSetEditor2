@@ -12,8 +12,6 @@
 #include <util/error.hpp>
 #include <iostream>
 
-DECLARE_TYPEOF_COLLECTION(pair<Variable COMMA ScriptValueP>);
-
 // ----------------------------------------------------------------------------- : Context
 
 Context::Context()
@@ -290,41 +288,6 @@ class ScriptCompose : public ScriptValue {
 	ScriptValueP a,b;
 };
 
-// ----------------------------------------------------------------------------- : Closures
-
-/// A closure around a function
-class ScriptClosure : public ScriptValue {
-  public:
-	ScriptClosure(ScriptValueP fun) : fun(fun) {}
-	
-	/// Add a binding
-	void bind(Variable v, const ScriptValueP& value) {
-		bindings.push_back(make_pair(v,value));
-	}
-	/// Apply the bindings
-	void applyBindings(Context& ctx) const {
-		FOR_EACH_CONST(b, bindings) {
-			if (ctx.getVariableScope(b.first) != 0) {
-				ctx.setVariable(b.first, b.second);
-			}
-		}
-	}
-	
-	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
-	virtual String typeName() const { return _("function closure"); }
-	virtual ScriptValueP eval(Context& ctx) const {
-		applyBindings(ctx);
-		return fun->eval(ctx);
-	}
-	virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const {
-		applyBindings(ctx);
-		return fun->dependencies(ctx, dep);
-	}
-  private:
-	ScriptValueP                         fun;
-	vector<pair<Variable,ScriptValueP> > bindings;
-};
-
 // ----------------------------------------------------------------------------- : Simple instructions : binary
 
 // operator on ints
@@ -459,11 +422,14 @@ void Context::makeObject(size_t n) {
 void Context::makeClosure(size_t n, const Instruction*& instr) {
 	intrusive_ptr<ScriptClosure> closure(new ScriptClosure(stack[stack.size() - n - 1]));
 	for (size_t j = 0 ; j < n ; ++j) {
-		closure->bind((Variable)instr[n - j - 1].data, stack.back());
+		closure->addBinding((Variable)instr[n - j - 1].data, stack.back());
 		stack.pop_back();
 	}
 	// skip arguments
 	instr += n;
-	// set value
-	stack.back() = closure;
+	// set value, try to simplify
+	stack.back() = closure->simplify();
+	if (!stack.back()) {
+		stack.back() = closure;
+	}
 }

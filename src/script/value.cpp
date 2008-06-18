@@ -9,8 +9,11 @@
 #include <util/prec.hpp>
 #include <script/value.hpp>
 #include <script/to_value.hpp>
+#include <script/context.hpp>
 #include <util/error.hpp>
 #include <boost/pool/singleton_pool.hpp>
+
+DECLARE_TYPEOF_COLLECTION(pair<Variable COMMA ScriptValueP>);
 
 // ----------------------------------------------------------------------------- : ScriptValue
 // Base cases
@@ -28,6 +31,8 @@ CompareWhat  ScriptValue::compareAs(String& compare_str, void const*& compare_pt
 	compare_str = (String)(*this);
 	return COMPARE_AS_STRING;
 }
+
+ScriptValueP ScriptValue::simplifyClosure(ScriptClosure&) const { return ScriptValueP(); }
 
 ScriptValueP ScriptValue::dependencyMember(const String& name, const Dependency&) const { return dependency_dummy; }
 ScriptValueP ScriptValue::dependencies(Context&,               const Dependency&) const { return dependency_dummy; }
@@ -356,4 +361,51 @@ ScriptValueP ScriptConcatCollection::getMember(const String& name) const {
 }
 ScriptValueP ScriptConcatCollection::makeIterator(const ScriptValueP& thisP) const {
 	return new_intrusive2<ScriptConcatCollectionIterator>(a->makeIterator(a), b->makeIterator(b));
+}
+
+// ----------------------------------------------------------------------------- : Default arguments / closure
+
+ScriptType ScriptClosure::type() const {
+	return SCRIPT_FUNCTION;
+}
+String ScriptClosure::typeName() const {
+	return fun->typeName() + _(" closure");
+}
+
+void ScriptClosure::addBinding(Variable v, const ScriptValueP& value) {
+	bindings.push_back(make_pair(v,value));
+}
+ScriptValueP ScriptClosure::getBinding(Variable v) const {
+	FOR_EACH_CONST(b, bindings) {
+		if (b.first == v) return b.second;
+	}
+	return ScriptValueP();
+}
+
+ScriptValueP ScriptClosure::simplify() {
+	return fun->simplifyClosure(*this);
+}
+
+ScriptValueP ScriptClosure::eval(Context& ctx) const {
+	applyBindings(ctx);
+	return fun->eval(ctx);
+}
+ScriptValueP ScriptClosure::dependencies(Context& ctx, const Dependency& dep) const {
+	applyBindings(ctx);
+	return fun->dependencies(ctx, dep);
+}
+void ScriptClosure::applyBindings(Context& ctx) const {
+	FOR_EACH_CONST(b, bindings) {
+		if (ctx.getVariableScope(b.first) != 0) {
+			ctx.setVariable(b.first, b.second);
+		}
+	}
+}
+
+// ----------------------------------------------------------------------------- : Destructing
+
+void from_script(const ScriptValueP& value, wxRegEx& regex) {
+	if (!regex.Compile(*value, wxRE_ADVANCED)) {
+		throw ScriptError(_ERROR_2_("can't convert", value->typeName(), _TYPE_("regex")));
+	}
 }

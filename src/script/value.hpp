@@ -13,6 +13,7 @@
 #include <gfx/color.hpp>
 class Context;
 class Dependency;
+class ScriptClosure;
 
 // ----------------------------------------------------------------------------- : ScriptValue
 
@@ -80,6 +81,11 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	/// Mark the scripts that this function depends on
 	/** Return value is an abstract version of the return value of eval */
 	virtual ScriptValueP dependencies(Context&, const Dependency&) const;
+	/// Simplify/optimize a default argument closure of this function.
+	/** Should return a simplification of the closure or null to keep the closure.
+	 *  Alternatively, the closure may be modified in place.
+	 */
+	virtual ScriptValueP simplifyClosure(ScriptClosure&) const;
 	
 	/// Return an iterator for the current collection, an iterator is a value that has next()
 	/** thisP can be used to prevent destruction of the collection */

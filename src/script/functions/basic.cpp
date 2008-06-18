@@ -611,8 +611,17 @@ ScriptValueP match_rule(Context& ctx) {
 SCRIPT_FUNCTION(match_rule) {
 	return match_rule(ctx);
 }
-SCRIPT_FUNCTION(match) {
+SCRIPT_FUNCTION_WITH_SIMPLIFY(match) {
 	return match_rule(ctx)->eval(ctx);
+}
+SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(match) {
+	ScriptValueP match = closure.getBinding(SCRIPT_VAR_match);
+	if (match) {
+		intrusive_ptr<ScriptMatchRule> ret(new ScriptMatchRule);
+		from_script(match, ret->regex);
+		return ret;
+	}
+	return ScriptValueP();
 }
 
 // ----------------------------------------------------------------------------- : Rules : sort text

@@ -28,6 +28,7 @@
 #include <wx/wx.h>
 #include <wx/image.h>
 #include <wx/datetime.h>
+#include <wx/regex.h>
 
 // Std headers
 #include <vector>
