@@ -85,10 +85,10 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 	selector  = new ImageSliceSelector(this, ID_SELECTOR, slice);
 	preview   = new ImageSlicePreview (this, ID_PREVIEW,  slice, mask);
 	
-	String sizes[] = { _("&Original Size")
-	                 , _("Size to &Fit")
-	                 , _("F&orce to Fit")
-	                 , _("&Custom Size") };
+	String sizes[] = { _LABEL_("original size")
+	                 , _LABEL_("size to fit")
+	                 , _LABEL_("force to fit")
+	                 , _LABEL_("custom size") };
 	size      = new wxRadioBox(this, ID_SIZE, _LABEL_("size"), defPos, wxDefaultSize, 4, sizes, 1);
 	
 	left      = new wxSpinCtrl(this, ID_LEFT,   _(""), defPos, spinSize);
@@ -100,7 +100,7 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 	width ->SetRange(0,5000);
 	height->SetRange(0,5000);
 	
-	fix_aspect = new wxCheckBox(this, ID_FIX_ASPECT, _("Fix aspect ratio (width/height)"));
+	fix_aspect = new wxCheckBox(this, ID_FIX_ASPECT, _LABEL_("fix aspect ratio"));
 	zoom_x     = new wxSpinCtrl(this, ID_ZOOM_X,     _(""), defPos, spinSize);
 	zoom_y     = new wxSpinCtrl(this, ID_ZOOM_Y,     _(""), defPos, spinSize);
 	zoom       = new wxSpinCtrl(this, ID_ZOOM,       _(""), defPos, spinSize);
@@ -108,7 +108,7 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 	zoom_y->SetRange(1,10000);
 	zoom  ->SetRange(1,10000);
 	
-	sharpen        = new wxCheckBox(this, ID_SHARPEN, _("&Sharpen Filter"));
+	sharpen        = new wxCheckBox(this, ID_SHARPEN, _LABEL_("sharpen filter"));
 	sharpen_amount = new wxSlider(this, ID_SHARPEN_AMOUNT, 0, 0, 100);
 //	allowOutside= new CheckBox(&this, idSliceAllowOutside, _("Allow selection outside source"))
 //	bgColor       = new ColorSelector(&this, wxID_ANY)
@@ -133,13 +133,13 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 			s5->AddStretchSpacer(1);
 			wxSizer* s6 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("selection"));
 				wxSizer* s7 = new wxFlexGridSizer(0, 2, 4, 5);
-					s7->Add(new wxStaticText(this, wxID_ANY, _("&Left")),   0, wxALIGN_CENTER_VERTICAL);
+					s7->Add(new wxStaticText(this, wxID_ANY, _LABEL_("selection left")),   0, wxALIGN_CENTER_VERTICAL);
 					s7->Add(left,   0, wxEXPAND);
-					s7->Add(new wxStaticText(this, wxID_ANY, _("&Top")),    0, wxALIGN_CENTER_VERTICAL);
+					s7->Add(new wxStaticText(this, wxID_ANY, _LABEL_("selection top")),    0, wxALIGN_CENTER_VERTICAL);
 					s7->Add(top,    0, wxEXPAND);
-					s7->Add(new wxStaticText(this, wxID_ANY, _("&Width")),  0, wxALIGN_CENTER_VERTICAL);
+					s7->Add(new wxStaticText(this, wxID_ANY, _LABEL_("selection width")),  0, wxALIGN_CENTER_VERTICAL);
 					s7->Add(width,  0, wxEXPAND);
-					s7->Add(new wxStaticText(this, wxID_ANY, _("&Height")), 0, wxALIGN_CENTER_VERTICAL);
+					s7->Add(new wxStaticText(this, wxID_ANY, _LABEL_("selection height")), 0, wxALIGN_CENTER_VERTICAL);
 					s7->Add(height, 0, wxEXPAND);
 				s6->Add(s7, 1, wxEXPAND | wxALL, 4);
 			s5->Add(s6, 0, wxEXPAND | wxALL, 4);
@@ -147,17 +147,17 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 			wxSizer* s8 = zoom_sizer = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("zoom"));
 				s8->Add(fix_aspect, 0, wxEXPAND | wxALL & ~wxBOTTOM, 4);
 				wxSizer* s9 = zoom_fixed = new wxFlexGridSizer(0, 3, 4, 5);
-					s9->Add(new wxStaticText(this, wxID_ANY, _("&Zoom")),   0, wxALIGN_CENTER_VERTICAL);
+					s9->Add(new wxStaticText(this, wxID_ANY, _LABEL_("zoom amount")),   0, wxALIGN_CENTER_VERTICAL);
 					s9->Add(zoom, 0, wxEXPAND);
-					s9->Add(new wxStaticText(this, wxID_ANY, _("%")),       0, wxALIGN_CENTER_VERTICAL);
+					s9->Add(new wxStaticText(this, wxID_ANY, _LABEL_("zoom %")),        0, wxALIGN_CENTER_VERTICAL);
 				s8->Add(s9, 0, wxEXPAND | wxALL, 4);
 				wxSizer* sA = zoom_free = new wxFlexGridSizer(0, 3, 4, 5);
-					sA->Add(new wxStaticText(this, wxID_ANY, _("Zoom &X")), 0, wxALIGN_CENTER_VERTICAL);
+					sA->Add(new wxStaticText(this, wxID_ANY, _LABEL_("zoom amount x")), 0, wxALIGN_CENTER_VERTICAL);
 					sA->Add(zoom_x, 0, wxEXPAND);
-					sA->Add(new wxStaticText(this, wxID_ANY, _("%")),       0, wxALIGN_CENTER_VERTICAL);
-					sA->Add(new wxStaticText(this, wxID_ANY, _("Zoom &Y")), 0, wxALIGN_CENTER_VERTICAL);
+					sA->Add(new wxStaticText(this, wxID_ANY, _LABEL_("zoom %")),        0, wxALIGN_CENTER_VERTICAL);
+					sA->Add(new wxStaticText(this, wxID_ANY, _LABEL_("zoom amount y")), 0, wxALIGN_CENTER_VERTICAL);
 					sA->Add(zoom_y, 0, wxEXPAND);
-					sA->Add(new wxStaticText(this, wxID_ANY, _("%")),       0, wxALIGN_CENTER_VERTICAL);
+					sA->Add(new wxStaticText(this, wxID_ANY, _LABEL_("zoom %")),        0, wxALIGN_CENTER_VERTICAL);
 				s8->Add(sA, 0, wxEXPAND | wxALL, 4);
 			s5->Add(s8, 0, wxEXPAND | wxALL, 4);
 			s5->AddStretchSpacer(1);

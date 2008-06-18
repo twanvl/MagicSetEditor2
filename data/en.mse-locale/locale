@@ -411,6 +411,10 @@ label:
 	# Style tab
 	styling options:	Styling options
 	
+	# Random pack panel
+	pack selection:		Pack selection
+	pack totals:		Totals
+	
 	# Open dialogs
 	all files			All files
 	
@@ -468,9 +472,23 @@ label:
 	original:			Original:
 	result:				Result:
 	size:				Size
+	original size:			&Original Size
+	size to fit:			Size to &Fit
+	force to fit:			F&orce to Fit
+	custom size:			&Custom Size
 	selection:			Selection
+	selection left:			&Left
+	selection top:			&Top
+	selection width:		&Width
+	selection height:		&Height
 	zoom:				Zoom
+	fix aspect ratio:		Fix aspect ratio (width/height)
+	zoom amount:			Zoom
+	zoom amount x:			Zoom &X
+	zoom amount y:			Zoom &Y
+	zoom %:					%
 	filter:				Filter
+	sharpen filter:			&Sharpen filter
 	
 	# Auto replace
 	auto match:			Match
@@ -506,6 +524,9 @@ button:
 	# Keywords panel
 	insert parameter:	Insert Parameter...
 	refer parameter:	Use Parameter...
+	
+	# Random pack panel
+	generate pack:		&Generate Pack
 	
 	# Welcome
 	new set:			New set
@@ -772,6 +793,7 @@ type:
 	set:			set
 	stylesheet:		stylesheet
 	export template:export template
+	symbol:			symbol
 	card:			card
 	cards:			cards
 	field:			field
