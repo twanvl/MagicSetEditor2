@@ -251,7 +251,10 @@ ScriptValueP Context::makeClosure(const ScriptValueP& fun) {
 		if (variables[var].level < level) break;
 		closure->addBinding(var, variables[var].value);
 	}
-	return closure;
+	// can we simplify?
+	ScriptValueP better = closure->simplify();
+	if (better) return better;
+	else        return closure;
 }
 
 
@@ -392,8 +395,8 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 		case I_AND:		OPERATOR_I(&&);
 		case I_OR:		OPERATOR_I(||);
 		case I_XOR:		a = to_script((bool)*a != (bool)*b); break;
-		case I_EQ:		a = to_script( equal(*a,*b));  break;
-		case I_NEQ:		a = to_script(!equal(*a,*b));  break;
+		case I_EQ:		a = to_script( equal(a,b));  break;
+		case I_NEQ:		a = to_script(!equal(a,b));  break;
 		case I_LT:		OPERATOR_DI(<);
 		case I_GT:		OPERATOR_DI(>);
 		case I_LE:		OPERATOR_DI(<=);

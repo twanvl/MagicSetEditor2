@@ -215,7 +215,7 @@ int position_in_vector(const ScriptValueP& of, const ScriptValueP& in, const Scr
 		ScriptValueP it = in->makeIterator(in);
 		int i = 0;
 		while (ScriptValueP v = it->next()) {
-			if (equal(*of, *v)) return i;
+			if (equal(of, v)) return i;
 			i++;
 		}
 	}
@@ -384,17 +384,10 @@ SCRIPT_FUNCTION(keyword_usage) {
 // ----------------------------------------------------------------------------- : Rule form
 
 /// Turn a script function into a rule, a.k.a. a delayed closure
-class ScriptRule : public ScriptValue {
-  public:
-	inline ScriptRule(const ScriptValueP& fun) : fun(fun) {}
-	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
-	virtual String typeName() const { return fun->typeName() + _(" rule"); }
-	virtual ScriptValueP eval(Context& ctx) const {
-		return ctx.makeClosure(fun);
-	}
-  private:
-	ScriptValueP fun;
-};
+SCRIPT_FUNCTION(rule) {
+	SCRIPT_PARAM(ScriptValueP, input);
+	return new_intrusive1<ScriptRule>(input);
+}
 
 // ----------------------------------------------------------------------------- : Init
 

@@ -29,6 +29,7 @@ enum ScriptType
 ,	SCRIPT_FUNCTION
 ,	SCRIPT_OBJECT // Only ScriptObject
 ,	SCRIPT_COLLECTION
+,	SCRIPT_REGEX
 ,	SCRIPT_ITERATOR
 ,	SCRIPT_DUMMY
 ,	SCRIPT_ERROR
@@ -102,7 +103,7 @@ extern ScriptValueP script_false; ///< The preallocated false value
 extern ScriptValueP dependency_dummy; ///< Dummy value used during dependency analysis
 
 /// compare script values for equallity
-bool equal(const ScriptValue& a, const ScriptValue& b);
+bool equal(const ScriptValueP& a, const ScriptValueP& b);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

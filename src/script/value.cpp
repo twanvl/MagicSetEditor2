@@ -38,19 +38,30 @@ ScriptValueP ScriptValue::dependencyMember(const String& name, const Dependency&
 ScriptValueP ScriptValue::dependencies(Context&,               const Dependency&) const { return dependency_dummy; }
 
 /// compare script values for equallity
-bool equal(const ScriptValue& a, const ScriptValue& b) {
-	if (&a == &b) return true;
-	ScriptType at = a.type(), bt = b.type();
+bool equal(const ScriptValueP& a, const ScriptValueP& b) {
+	if (a == b) return true;
+	ScriptType at = a->type(), bt = b->type();
 	if (at == bt && at == SCRIPT_INT) {
-		return (int)a == (int)b;
+		return (int)*a == (int)*b;
 	} else if ((at == SCRIPT_INT || at == SCRIPT_DOUBLE) &&
 	           (bt == SCRIPT_INT || bt == SCRIPT_DOUBLE)) {
-		return (double)a == (double)b;
+		return (double)*a == (double)*b;
+	} else if (at == SCRIPT_COLLECTION && bt == SCRIPT_COLLECTION) {
+		// compare each element
+		if (a->itemCount() != b->itemCount()) return false;
+		ScriptValueP a_it = a->makeIterator(a);
+		ScriptValueP b_it = b->makeIterator(b);
+		while (true) {
+			ScriptValueP a_v = a_it->next();
+			ScriptValueP b_v = b_it->next();
+			if (!a_v || !b_v) return a_v == b_v;
+			if (!equal(a_v, b_v)) return false;
+		}
 	} else {
 		String      as,  bs;
 		const void* ap, *bp;
-		CompareWhat aw = a.compareAs(as, ap);
-		CompareWhat bw = b.compareAs(bs, bp);
+		CompareWhat aw = a->compareAs(as, ap);
+		CompareWhat bw = b->compareAs(bs, bp);
 		// compare pointers or strings
 		if (aw == COMPARE_AS_STRING || bw == COMPARE_AS_STRING) {
 			return as == bs;
@@ -402,10 +413,9 @@ void ScriptClosure::applyBindings(Context& ctx) const {
 	}
 }
 
-// ----------------------------------------------------------------------------- : Destructing
 
-void from_script(const ScriptValueP& value, wxRegEx& regex) {
-	if (!regex.Compile(*value, wxRE_ADVANCED)) {
-		throw ScriptError(_ERROR_2_("can't convert", value->typeName(), _TYPE_("regex")));
-	}
+ScriptType ScriptRule::type() const { return SCRIPT_FUNCTION; }
+String ScriptRule::typeName() const { return fun->typeName() + _(" rule"); }
+ScriptValueP ScriptRule::eval(Context& ctx) const {
+	return ctx.makeClosure(fun);
 }

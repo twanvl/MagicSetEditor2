@@ -321,6 +321,17 @@ class ScriptClosure : public ScriptValue {
 	void applyBindings(Context& ctx) const;
 };
 
+/// Turn a script function into a rule, a.k.a. a delayed closure
+class ScriptRule : public ScriptValue {
+  public:
+	inline ScriptRule(const ScriptValueP& fun) : fun(fun) {}
+	virtual ScriptType type() const;
+	virtual String typeName() const;
+	virtual ScriptValueP eval(Context& ctx) const;
+  private:
+	ScriptValueP fun;
+};
+
 // ----------------------------------------------------------------------------- : Creating
 
 /// Convert a value to a script value
@@ -359,8 +370,6 @@ template <> inline double       from_script<double>      (const ScriptValueP& va
 template <> inline bool         from_script<bool>        (const ScriptValueP& value) { return *value; }
 template <> inline Color        from_script<Color>       (const ScriptValueP& value) { return (AColor)*value; }
 template <> inline AColor       from_script<AColor>      (const ScriptValueP& value) { return *value; }
-
-void from_script(const ScriptValueP& value, wxRegEx& out);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif
