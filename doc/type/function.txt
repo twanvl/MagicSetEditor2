@@ -6,6 +6,8 @@ The [[script:index|scripting language]] allows you to define custom functions.
 --Syntax--
 A piece of code enclosed in curly braces defines a function.
 
+A function can be called using parentheses, for example @function(argument:value)@.
+
 --Composition--
 Functions can be composed using the @+@ operator, evaluating @a + b@ first evaluates @a@ and uses its result as @input@ for @b@:
 > example := to_upper + { "result == {input}" }

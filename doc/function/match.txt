@@ -21,7 +21,8 @@ When the match is performed many times the rule form is more efficient, because 
 > match("abc",  match:"$b+^") == false
 >
 > f := match_rule(match: "a+|b+")
-> f("xyz") == false
+> f("xyz")  == false
+> f("aabb") == true
 
 --See also--
 | [[fun:contains]]		Does a string contain another one?

@@ -1,0 +1,34 @@
+Default arguments
+
+It is possible to declare default arguments for functions using the @@@@ operator.
+> function := { "argument was: " + arg }@(arg:"default")
+If this function is called without the @arg@ argument, then the default value @"default"@ is used instead.
+For example:
+> function()                      == "argument was: default"
+> function(arg: "something else") == "argument was: something else"
+
+For determining whether the argument is set only explicit arguments count, not everything in scope, so
+> arg := "something else"
+> function()                      == "argument was: default"
+
+//Defaults are evaluated at the time the @@@@ operator is evaluated, so they can be used to simulate static scoping.
+
+--Rule functions--
+
+Some functions are available in ''rule form''.
+
+These rule form functions are functions that create a new [[type:function]] with some defaults filled in.
+That new function, the rule, applies some transformation to the input and returns the result.
+
+A rule is like a normal function with all parameters given, except for the @input@.
+
+Rules are often combined using the + operator, for example:
+> # First all "a"s are replaced, then all "b"s.
+> remove_as_and_bs := replace_rule(match: "a", replace: "") +
+>                     replace_rule(match: "b", replace: "")
+> 
+> text_with_as_and_bs := "bla bla bla"
+> text_without_as_and_bs := remove_as_and_bs(text_with_as_and_bs)
+
+
+<div style="text-align:right;">previous: <a href="functions">&larr; Functions</a> | next: <a href="control_structures">Control structures &rarr;</a></div>

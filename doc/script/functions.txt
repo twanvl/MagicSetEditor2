@@ -1,0 +1,32 @@
+Functions
+
+It is possible to define your own functions in MSE script.
+The syntax for this is very simple, code in curly braces defines a function:
+> { code goes here }
+
+To be able to refer to the function it is usually assigned to a variable:
+> function := { code goes here }
+
+Calling a function is done using parentheses:
+> { code }()
+> function()
+this has the effect of evaluating the code inside the curly braces.
+
+--Parameters--
+
+When calling a function, parameters can be specified inside the parentheses of the function call:
+> fun := { "xyz is {xyz}" }
+> fun(xyz: "a parameter")  ==  "xyz is a parameter"
+These assignments are ''only'' visible to the called function.
+> xyz := "outside"
+> fun(xyz: "a parameter")
+> # xyz is still "outside"
+
+The syntax for parameters is @name: value@.
+Multiple parameters are separated by commas.
+
+The special syntax @value@ (without a name) means that the variable @input@ is used:
+> fun := { input + var2 }
+> fun(var2: "yes", "no")  ==  "noyes"
+
+<div style="text-align:right;">previous: <a href="variables">&larr; Variables</a> | next: <a href="default_arguments">Default arguments &rarr;</a></div>

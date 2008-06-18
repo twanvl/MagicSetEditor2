@@ -2,7 +2,7 @@ Control structures
 
 MSE Script has two types of control structures.
 
---If-Then-Else--
+--Conditional statement (@if then else@)--
 
 To switch between two options use:
 
@@ -21,6 +21,12 @@ Note that if-then-else is an ''expression'', it can be used almost everywhere:
 > color := (if card.color == "red"   then "r") +
 >          (if card.color == "green" then "g")
 
+Multiple conditions can be checked by using @else if@:
+> if      card.color == "white"  then "W"
+> else if card.color == "red"    then "R"
+> else if card.color == "blue"   then "U"
+> else                                "something else"
+
 The @then@ and @else@ parts can also contain assignments and other control structures.
 > if card.color == "red" then
 >     filter := filter + "r"
@@ -36,25 +42,28 @@ To use multiple statements in the then or else branches you must use parentheses
 >     y := z
 > )
 
---For-Each--
+--Loop statement (@for each@)--
 
-To iterate over all elements in a [[type:list]] the @for each@ construct
+To iterate over all elements in a [[type:list]] the @for each@ construct can be used
 
 > for each variable in list do expression
 
 If list is a list of items, for example set.cards, the expression is evaluated for each item in that list.
 The variable becomes set to that each item in succession.
-The results of the expression are combined using the @+@ [[script:operators|operator]].
+The results of the expression are combined using the @+@ [[script:operators|operator]]:
+
+> for each x in ["a","b","c"] do x      ==  "abc"
+> for each x in ["a","b","c"] do [x+x]  ==  ["aa","bb","cc"]
 
 It is also possible to iterate over a range of values
 
 > for variable from begin to end do expression
 
-The expression is evaluated for each number from begin to end (including begin, not including end). The variable becomes set to that each number in succession. The results of the expression are combined using +.
+The expression is evaluated for each number from begin to end (including begin, not including end). The variable becomes set to that each number in succession. Again, the results of the expression are combined using +.
 
 --Summary--
 
 ! Syntax				Description
 | @if a then b else c@			If @a@ is @true@ evaluates to @b@, otherwise evaluates to @c@
-| @for each x in list do something@	Does something for each element in a list
-| @for x from 1 to 100 do something@	Does something for all numbers from 1 to 100
+| @for each x in list do something@	Does @something@ for each element in a list
+| @for x from 1 to 100 do something@	Does @something@ for all numbers from 1 to 100

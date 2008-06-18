@@ -1,23 +1,9 @@
-Variables and functions
+Variables
 
---Variables--
 MSE script has the notion of ''variables''.
 A variable is a name holding a value, assigned using the @:=@ operator:
 > variable := 1 + 1
 From now on (until another value is assigned) @variable@ evaluates to @2@ in the rest of the script.
-
---Functions--
-It is possible to define your own [[type:function]]s in MSE script.
-The syntax for this is very simple, code in curly braces defines a function:
-> { code goes here }
-
-To be able to refer to the function it is usually assigned to a variable:
-> function := { code goes here }
-
-Calling a function is done using parentheses:
-> { code }()
-> function()
-this has the effect of evaluating the code inside the curly braces.
 
 --Scope--
 
@@ -45,21 +31,7 @@ This means that assignments done in the calling function are visible in the call
 > one()  ==  "xyz is 1"
 > two()  ==  "xyz is two"
 
---Parameters--
-The scoping can be used to pass parameters to functions as shown above.
-To make this easier, parameters can be specified inside the parentheses of the function call:
-> fun(xyz: "a parameter")  ==  "xyz is a parameter"
-These assignments are ''only'' visible to the called function.
-> xyz := "outside"
-> fun(xyz: "a parameter")
-> # xyz is still "outside"
-
-The syntax for parameters is @name: value@.
-Multiple parameters are separated by commas.
-
-The special syntax @value@ (without a name) means the variable @input@ is used:
-> fun := { input + var2 }
-> fun(var2: "yes", "no")  ==  "noyes"
+This can be very useful for variables like @card@, which are used by many functions.
 
 --Overriding functions--
 Like custom functions, the [[fun:index|built in functions]] are also stored in variables.
@@ -74,17 +46,4 @@ This can be done by first making a copy, and calling that:
 > to_upper("xyz") == "upper case: XYZ"
 Note that @real_to_upper@ is called without extra parameters, the @input@ variable is still set from the outer call to the new @to_upper@ itself.
 
---Default arguments--
-It is possible to declare default arguments for functions using the @@@@ operator.
-> function := { "argument was: " + arg }@(arg:"default")
-If this function is called without the @arg@ argument, then the default value @default@ is used instead.
-For example:
-> function()                      == "argument was: default"
-> function(arg: "something else") == "argument was: something else"
-For determining whether the argument is set only explicit arguments count, not everything in scope, so
-> arg := "something else"
-> function()                      == "argument was: default"
-
-Defaults are evaluated at the time the @@@@ operator is evaluated, so they can be used to simulate static scoping.
-
-<div style="text-align:right;">next: <a href="control_structures">Control structures &rarr;</a></div>
+<div style="text-align:right;">previous: <a href="operators">&larr; Operators</a> | next: <a href="functions">Functions &rarr;</a></div>
