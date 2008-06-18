@@ -12,6 +12,38 @@
 #include <script/functions/util.hpp>
 #include <util/error.hpp>
 
+DECLARE_POINTER_TYPE(ScriptRegex);
+DECLARE_TYPEOF_COLLECTION(pair<Variable COMMA ScriptValueP>);
+
+// ----------------------------------------------------------------------------- : Regex type
+
+/// A regular expression for use in a script
+class ScriptRegex : public ScriptValue {
+  public:
+	virtual ScriptType type() const { return SCRIPT_REGEX; }
+	virtual String typeName() const { return _("regex"); }
+	
+	wxRegEx regex; ///< The regular expression
+};
+
+ScriptRegexP regex_from_script(const ScriptValueP& value) {
+	// is it a regex already?
+	ScriptRegexP regex = dynamic_pointer_cast<ScriptRegex>(value);
+	if (!regex) {
+		// compile string
+		regex = new_intrusive<ScriptRegex>();
+		if (!regex->regex.Compile(*value, wxRE_ADVANCED)) {
+			throw ScriptError(_("Error while compiling regular expression: '") + value->toString() + _("'"));
+		}
+		assert(regex->regex.IsValid());
+	}
+	return regex;
+}
+
+template <> inline ScriptRegexP from_script<ScriptRegexP>(const ScriptValueP& value) {
+	return regex_from_script(value);
+}
+
 // ----------------------------------------------------------------------------- : Rules : regex replace
 
 class ScriptReplaceRule : public ScriptValue {
@@ -143,6 +175,7 @@ ScriptValueP filter_rule(Context& ctx) {
 	SCRIPT_PARAM_DEFAULT_C(String, in_context, String());
 	
 	// cache
+	/*
 	const int CACHE_SIZE = 6;
 	struct CacheItem{
 		String match, in_context;
@@ -162,6 +195,9 @@ ScriptValueP filter_rule(Context& ctx) {
 	cache[cache_pos].rule = intrusive_ptr<ScriptFilterRule>(new ScriptFilterRule);
 	intrusive_ptr<ScriptFilterRule>& ret = cache[cache_pos].rule;
 	cache_pos = (cache_pos+1) % CACHE_SIZE;
+	/*/
+	intrusive_ptr<ScriptFilterRule> ret(new ScriptFilterRule); 
+	//*/
 	
 	// match
 	if (!ret->regex.Compile(match, wxRE_ADVANCED)) {
@@ -185,6 +221,7 @@ SCRIPT_FUNCTION(filter_text) {
 
 // ----------------------------------------------------------------------------- : Rules : regex break
 
+/*
 class ScriptBreakRule : public ScriptValue {
   public:
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
@@ -234,10 +271,42 @@ SCRIPT_FUNCTION(break_rule) {
 }
 SCRIPT_FUNCTION(break_text) {
 	return break_rule(ctx)->eval(ctx);
+}*/
+
+SCRIPT_FUNCTION_WITH_SIMPLIFY(break_text) {
+	SCRIPT_PARAM_C(String, input);
+	SCRIPT_PARAM_C(ScriptRegexP, match);
+	SCRIPT_OPTIONAL_PARAM_C_(ScriptRegexP, in_context);
+	intrusive_ptr<ScriptCustomCollection> ret(new ScriptCustomCollection);
+	// find all matches
+	while (match->regex.Matches(input)) {
+		// match, append to result
+		size_t start, len;
+		bool ok = match->regex.GetMatch(&start, &len, 0);
+		assert(ok);
+		String inside     = input.substr(start, len);  // the match
+		String next_input = input.substr(start + len); // everything after the match
+		if (!in_context || in_context->regex.Matches(input.substr(0,start) + _("<match>") + next_input)) {
+			// no context or context match
+			ret->value.push_back(to_script(inside));
+		}
+		input = next_input;
+	}
+	return ret;
+}
+SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(break_text) {
+	FOR_EACH(b, closure.bindings) {
+		if (b.first == SCRIPT_VAR_match || b.first == SCRIPT_VAR_in_context) {
+			b.second = regex_from_script(b.second); // pre-compile
+		}
+	}
+	return ScriptValueP();
 }
 
 // ----------------------------------------------------------------------------- : Rules : regex match
 
+
+/*
 class ScriptMatchRule : public ScriptValue {
   public:
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
@@ -276,6 +345,20 @@ SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(match) {
 	}
 	return ScriptValueP();
 }
+*/
+SCRIPT_FUNCTION_WITH_SIMPLIFY(match) {
+	SCRIPT_PARAM_C(String, input);
+	SCRIPT_PARAM_C(ScriptRegexP, match);
+	SCRIPT_RETURN(match->regex.Matches(input));
+}
+SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(match) {
+	FOR_EACH(b, closure.bindings) {
+		if (b.first == SCRIPT_VAR_match) {
+			b.second = regex_from_script(b.second); // pre-compile
+		}
+	}
+	return ScriptValueP();
+}
 
 // ----------------------------------------------------------------------------- : Init
 
@@ -283,9 +366,9 @@ void init_script_regex_functions(Context& ctx) {
 	ctx.setVariable(_("replace"),              script_replace);
 	ctx.setVariable(_("filter text"),          script_filter_text);
 	ctx.setVariable(_("break text"),           script_break_text);
-	ctx.setVariable(_("match"),                script_match);;
+	ctx.setVariable(_("match"),                script_match);
 	ctx.setVariable(_("replace rule"),         script_replace_rule);
 	ctx.setVariable(_("filter rule"),          script_filter_rule);
-	ctx.setVariable(_("break rule"),           script_break_rule);
-	ctx.setVariable(_("match rule"),           script_match_rule);
+	ctx.setVariable(_("break rule"),           new_intrusive1<ScriptRule>(script_break_text));
+	ctx.setVariable(_("match rule"),           new_intrusive1<ScriptRule>(script_match));
 }

@@ -2664,6 +2664,9 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath=".\script\functions\regex.cpp">
+				</File>
+				<File
 					RelativePath=".\script\functions\util.hpp">
 				</File>
 			</Filter>
