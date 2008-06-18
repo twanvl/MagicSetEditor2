@@ -26,9 +26,11 @@ In fact, @filter_text@ could be implemented as
 | @in_context@	[[type:regex]] (optional)	Context to match
 
 --Examples--
-> break_text(match: "a",    "banana")  ==  ["a","a","a"]
-> break_text(match: "na|.", "banana")  ==  ["b","a","na","na"]
-> break_text(match: "ap",   "banana")  ==  []
+> break_text(match: "a",     "banana")  ==  ["a","a","a"]
+> break_text(match: "na|.",  "banana")  ==  ["b","a","na","na"]
+> break_text(match: "ap",    "banana")  ==  []
+> break_text(match: "/",     "a/b/c")   ==  ["/","/"]
+> break_text(match: "[^/]+", "a/b/c")   ==  ["a","b","c"]
 >
 > f := break_rule(match: "xx+")
 > f("xyzxxxxyyzz") == ["xxxx"]
