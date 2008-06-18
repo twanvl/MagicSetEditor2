@@ -103,7 +103,6 @@ struct Instruction {
 		QuaternaryInstructionType	instr4 : 27;
 	};
 };
-static const unsigned int INVALID_ADDRESS = 0x03FFFFFF;
 
 // ----------------------------------------------------------------------------- : Variables
 
@@ -157,8 +156,8 @@ class Script : public ScriptValue {
 	virtual ScriptValueP eval(Context& ctx) const;
 	virtual ScriptValueP dependencies(Context& ctx, const Dependency&) const;
 	
-	/// Add an instruction with no data
-	void addInstruction(InstructionType t);
+	/// Add a jump instruction, later comeFrom should be called on the returned value
+	unsigned int addInstruction(InstructionType t);
 	/// Add an instruction with integer data
 	void addInstruction(InstructionType t, unsigned int d);
 	/// Add an instruction with constant data
@@ -169,7 +168,6 @@ class Script : public ScriptValue {
 	/// Update an instruction to point to the current position
 	/** The instruction at pos must be a jumping instruction, it is changed so the current position
 	 *  'comes from' pos (in addition to other control flow).
-	 *  The position must be a label just before the instruction to be updated.
 	 */
 	void comeFrom(unsigned int pos);
 	/// Get the current instruction position

@@ -86,10 +86,14 @@ ScriptValueP Script::eval(Context& ctx) const {
 ScriptValueP Script::dependencies(Context& ctx, const Dependency& dep) const {
 	return ctx.dependencies(dep, *this);
 }
-	
-void Script::addInstruction(InstructionType t) {
-	Instruction i = {t, {0}};
+
+static const unsigned int INVALID_ADDRESS = 0x03FFFFFF;
+
+unsigned int Script::addInstruction(InstructionType t) {
+	assert( t == I_JUMP || t == I_JUMP_IF_NOT || t == I_LOOP);
+	Instruction i = {t, {INVALID_ADDRESS}};
 	instructions.push_back(i);
+	return getLabel() - 1;
 }
 void Script::addInstruction(InstructionType t, unsigned int d) {
 	// Don't optimize ...I_PUSH_CONST x; I_MEMBER... to I_MEMBER_C
@@ -198,8 +202,7 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 	// arg
 	switch (i.instr) {
 		case I_PUSH_CONST: case I_MEMBER_C:							// const
-			ret += _("\t") + constants[i.data]->toString();
-			ret += _("\t(") + constants[i.data]->typeName() + _(")");
+			ret += _("\t") + constants[i.data]->typeName();
 			break;
 		case I_JUMP: case I_JUMP_IF_NOT: case I_LOOP: case I_MAKE_OBJECT: case I_CALL: case I_CLOSURE:	// int
 			ret += String::Format(_("\t%d"), i.data);

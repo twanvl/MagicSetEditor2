@@ -31,6 +31,12 @@ SCRIPT_FUNCTION(trace) {
 	SCRIPT_RETURN(input);
 }
 
+SCRIPT_FUNCTION(warning) {
+	SCRIPT_PARAM_C(String, input);
+	handle_warning(input, true);
+	return script_nil;
+}
+
 // ----------------------------------------------------------------------------- : String stuff
 
 // convert a string to upper case

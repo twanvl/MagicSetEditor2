@@ -1,0 +1,16 @@
+Function: assert
+
+--Usage--
+> assert(condition)
+
+Check that the condition is @true@. Shows a warning message if it is not.
+
+Note: @assert@ is a special built-in keyword, so that the error message can include the condition.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:boolean]]	Condition to check.
+
+--Examples--
+> assert(1 + 1 == 2) == nil  # nothing happens
+> assert(1 * 1 == 2) == nil  # An error message is shown

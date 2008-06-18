@@ -201,7 +201,14 @@ void Context::setVariable(const String& name, const ScriptValueP& value) {
 	setVariable(string_to_variable(name), value);
 }
 
+#ifdef _DEBUG
+	extern vector<String> variable_names;
+#endif
+
 void Context::setVariable(Variable name, const ScriptValueP& value) {
+	#ifdef _DEBUG
+		assert((size_t)name < variable_names.size());
+	#endif
 	VariableValue& var = variables[name];
 	if (var.level < level) {
 		// keep shadow copy

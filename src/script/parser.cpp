@@ -22,6 +22,8 @@ DECLARE_TYPEOF_COLLECTION(Variable);
 
 String read_utf8_line(wxInputStream& input, bool eat_bom = true, bool until_eof = false);
 
+extern ScriptValueP script_warning;
+
 // ----------------------------------------------------------------------------- : Tokenizing : class
 
 enum TokenType
@@ -74,6 +76,11 @@ class TokenIterator {
 	/** Only one token can be correctly put back, the put back token will read as a newline.
 	 */
 	void putBack();
+	
+	/// Get a section of source code
+	String getSourceCode(size_t start, size_t end);
+	/// Get the current line number
+	int getLineNumber();
 	
   private:
 	String input;
@@ -318,6 +325,15 @@ void TokenIterator::expected(const String& expected, const Token* opening) {
 }
 
 
+String TokenIterator::getSourceCode(size_t start, size_t end) {
+	start = min(start, input.size());
+	end   = min(end,   input.size());
+	return input.substr(start, end-start);
+}
+int TokenIterator::getLineNumber() {
+	return line_number(peek(0).pos, input);
+}
+
 // ----------------------------------------------------------------------------- : Parsing
 
 
@@ -450,24 +466,20 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 				script.addInstruction(I_PUSH_CONST, script_nil); // universal constant : nil
 			} else if (token == _("if")) {
 				// if AAA then BBB else CCC
-				unsigned int jmpElse, jmpEnd;
-				parseOper(input, script, PREC_AND);						// AAA
-				jmpElse = script.getLabel();							//		jmp_else:
-				script.addInstruction(I_JUMP_IF_NOT, INVALID_ADDRESS);	//		jnz lbl_else
-				expectToken(input, _("then"));							// then
-				parseOper(input, script, PREC_SET);						// BBB
-				jmpEnd = script.getLabel();								//		jmp_end:
-				script.addInstruction(I_JUMP, INVALID_ADDRESS);			//		jump lbl_end
-				script.comeFrom(jmpElse);								//		lbl_else:
-				if (input.peek() == _("else")) {						// else
+				parseOper(input, script, PREC_AND);							// AAA
+				unsigned jmpElse = script.addInstruction(I_JUMP_IF_NOT);	//		jnz lbl_else
+				expectToken(input, _("then"));								// then
+				parseOper(input, script, PREC_SET);							// BBB
+				unsigned jmpEnd = script.addInstruction(I_JUMP);			//		jump lbl_end
+				script.comeFrom(jmpElse);									//		lbl_else:
+				if (input.peek() == _("else")) {							//else
 					input.read();
-					parseOper(input, script, PREC_SET);					// CCC
+					parseOper(input, script, PREC_SET);						// CCC
 				} else {
 					script.addInstruction(I_PUSH_CONST, script_nil);
 				}
-				script.comeFrom(jmpEnd);								//		lbl_end:
+				script.comeFrom(jmpEnd);									//		lbl_end:
 			} else if (token == _("for")) {
-				unsigned int lblStart;
 				// the loop body should have a net stack effect of 0, but the entire expression of +1
 				// solution: add all results from the body, start with nil
 				if (input.peek() == _("each")) {
@@ -481,8 +493,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					parseOper(input, script, PREC_AND);					// BBB
 					script.addInstruction(I_UNARY, I_ITERATOR_C);		//		iterator_collection
 					script.addInstruction(I_PUSH_CONST, script_nil);	//		push nil
-					lblStart = script.getLabel();						//		lbl_start:
-					script.addInstruction(I_LOOP, INVALID_ADDRESS);		//		loop
+					unsigned lblStart = script.addInstruction(I_LOOP);	//		lbl_start: loop lbl_end
 					expectToken(input, _("do"));						// do
 					script.addInstruction(I_SET_VAR,
 										string_to_variable(name.value));//		set name
@@ -499,8 +510,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					parseOper(input, script, PREC_AND);					// CCC
 					script.addInstruction(I_BINARY, I_ITERATOR_R);		//		iterator_range
 					script.addInstruction(I_PUSH_CONST, script_nil);	//		push nil
-					lblStart = script.getLabel();						//		lbl_start:
-					script.addInstruction(I_LOOP, INVALID_ADDRESS);		//		loop
+					unsigned lblStart = script.addInstruction(I_LOOP);	//		lbl_start: loop lbl_end
 					expectToken(input, _("do"));						// do
 					script.addInstruction(I_SET_VAR,
 										string_to_variable(name.value));//		set name
@@ -542,6 +552,25 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 					script.addInstruction(I_BINARY, op);
 				}
 				expectToken(input, _(")"), &token);
+			} else if (token == _("assert")) {
+				// assert(condition)
+				expectToken(input, _("("));
+				size_t start = input.peek().pos;
+				int line = input.getLineNumber();
+				parseOper(input, script, PREC_ALL); // condition
+				size_t end = input.peek().pos;
+				String message = String::Format(_("Assertion failure on line %d: "), line) + input.getSourceCode(start,end);
+				expectToken(input, _(")"), &token);
+				// compile into:  if condition then nil else warning("condition")
+				unsigned jmpElse = script.addInstruction(I_JUMP_IF_NOT);	// jnz lbl_else
+				script.addInstruction(I_PUSH_CONST, script_nil);			// push nil
+				unsigned jmpEnd = script.addInstruction(I_JUMP);			// jump lbl_end
+				script.comeFrom(jmpElse);									// lbl_else:
+				script.addInstruction(I_PUSH_CONST, script_warning);		// push warning
+				script.addInstruction(I_PUSH_CONST, message);				// push "condition"
+				script.addInstruction(I_CALL, 1);							// call
+				script.addInstruction(I_NOP,  SCRIPT_VAR_input);			// (input:)
+				script.comeFrom(jmpEnd);									// lbl_end:
 			} else {
 				// variable
 				Variable var = string_to_variable(token.value);

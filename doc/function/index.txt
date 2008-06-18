@@ -87,3 +87,4 @@ These functions are built into the program, other [[type:function]]s can be defi
 	
 ! Other functions		<<<
 | [[fun:trace]]			Output a message for debugging purposes.
+| [[fun:assert]]		Check a condition for debugging purposes.
