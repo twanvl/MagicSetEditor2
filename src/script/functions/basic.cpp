@@ -93,7 +93,8 @@ SCRIPT_FUNCTION(contains) {
 	SCRIPT_RETURN(input.find(match) != String::npos);
 }
 
-SCRIPT_RULE_1_C(format, String, format) {
+SCRIPT_FUNCTION(format) {
+	SCRIPT_PARAM_C(String, format);
 	String fmt = _("%") + replace_all(format, _("%"), _(""));
 	// determine type expected by format string
 	if (format.find_first_of(_("DdIiOoXx")) != String::npos) {
@@ -162,13 +163,16 @@ String replace_tag_contents(String input, const String& tag, const ScriptValueP&
 }
 
 // Replace the contents of a specific tag
-SCRIPT_RULE_2_C(tag_contents,  String, tag,  ScriptValueP, contents) {
+SCRIPT_FUNCTION(tag_contents) {
 	SCRIPT_PARAM_C(String, input);
+	SCRIPT_PARAM_C(String, tag);
+	SCRIPT_PARAM_C(ScriptValueP, contents);
 	SCRIPT_RETURN(replace_tag_contents(input, tag, contents, ctx));
 }
 
-SCRIPT_RULE_1_C(tag_remove, String, tag) {
+SCRIPT_FUNCTION(remove_tag) {
 	SCRIPT_PARAM_C(String, input);
+	SCRIPT_PARAM_C(String, tag);
 	SCRIPT_RETURN(remove_tag(input, tag));
 }
 
@@ -633,52 +637,30 @@ SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(match) {
 
 // ----------------------------------------------------------------------------- : Rules : sort text
 
-// Sort using spec_sort
-class ScriptRule_sort_order: public ScriptValue {
-  public:
-	inline ScriptRule_sort_order(const String& order) : order(order) {}
-	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
-	virtual String typeName() const { return _("sort_rule"); }
-	virtual ScriptValueP eval(Context& ctx) const {
-		SCRIPT_PARAM_C(ScriptValueP, input);
-		if (input->type() == SCRIPT_COLLECTION) {
-			handle_warning(_("Sorting a collection as a string, this is probably not intended, if it is use 'collection+\"\"' to force conversion"), false);
-		}
-		SCRIPT_RETURN(spec_sort(order, input->toString()));
-	}
-  private:
-	String order;
-};
-// Sort a string alphabetically
-class ScriptRule_sort: public ScriptValue {
-  public:
-	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
-	virtual String typeName() const { return _("sort_rule"); }
-	virtual ScriptValueP eval(Context& ctx) const {
-		SCRIPT_PARAM_C(ScriptValueP, input);
-		if (input->type() == SCRIPT_COLLECTION) {
-			handle_warning(_("Sorting a collection as a string, this is probably not intended, if it is use 'collection+\"\"' to force conversion"), false);
-		}
-		String input_str = input->toString();
-		sort(input_str.begin(), input_str.end());
-		SCRIPT_RETURN(input_str);
-	}
-  private:
-	ScriptValueP order_by;
-};
-
-SCRIPT_FUNCTION(sort_rule) {
-	SCRIPT_OPTIONAL_PARAM_C(String, order) {
-		return new_intrusive1<ScriptRule_sort_order>(order);
-	}
-	return new_intrusive <ScriptRule_sort>();
-}
 SCRIPT_FUNCTION(sort_text) {
+	SCRIPT_PARAM_C(String, input);
 	SCRIPT_OPTIONAL_PARAM_C(String, order) {
-		return ScriptRule_sort_order(order).eval(ctx);
+		SCRIPT_RETURN(spec_sort(order, input));
+	} else {
+		sort(input.begin(), input.end());
+		SCRIPT_RETURN(input);
 	}
-	return ScriptRule_sort().eval(ctx);
 }
+
+// ----------------------------------------------------------------------------- : Rule form
+
+/// Turn a script function into a rule, a.k.a. a delayed closure
+class ScriptRule : public ScriptValue {
+  public:
+	inline ScriptRule(const ScriptValueP& fun) : fun(fun) {}
+	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
+	virtual String typeName() const { return fun->typeName() + _(" rule"); }
+	virtual ScriptValueP eval(Context& ctx) const {
+		return ctx.makeClosure(fun);
+	}
+  private:
+	ScriptValueP fun;
+};
 
 // ----------------------------------------------------------------------------- : Init
 
@@ -694,15 +676,15 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("substring"),            script_substring);
 	ctx.setVariable(_("contains"),             script_contains);
 	ctx.setVariable(_("format"),               script_format);
-	ctx.setVariable(_("format rule"),          script_format_rule);
+	ctx.setVariable(_("format rule"),          new_intrusive1<ScriptRule>(script_format));
 	ctx.setVariable(_("curly quotes"),         script_curly_quotes);
 	ctx.setVariable(_("regex escape"),         script_regex_escape);
 	// tagged string
 	ctx.setVariable(_("tag contents"),         script_tag_contents);
-	ctx.setVariable(_("remove tag"),           script_tag_remove);
+	ctx.setVariable(_("remove tag"),           script_remove_tag);
 	ctx.setVariable(_("remove tags"),          script_remove_tags);
-	ctx.setVariable(_("tag contents rule"),    script_tag_contents_rule);
-	ctx.setVariable(_("tag remove rule"),      script_tag_remove_rule);
+	ctx.setVariable(_("tag contents rule"),    new_intrusive1<ScriptRule>(script_tag_contents));
+	ctx.setVariable(_("tag remove rule"),      new_intrusive1<ScriptRule>(script_remove_tag));
 	// collection
 	ctx.setVariable(_("position"),             script_position_of);
 	ctx.setVariable(_("length"),               script_length);
@@ -711,7 +693,7 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("sort list"),            script_sort_list);
 	// keyword
 	ctx.setVariable(_("expand keywords"),      script_expand_keywords);
-	ctx.setVariable(_("expand keywords rule"), script_expand_keywords_rule);
+	ctx.setVariable(_("expand keywords rule"), new_intrusive1<ScriptRule>(script_expand_keywords));
 	ctx.setVariable(_("keyword usage"),        script_keyword_usage);
 	// advanced string rules/functions
 	ctx.setVariable(_("replace"),              script_replace);
@@ -723,5 +705,5 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("filter rule"),          script_filter_rule);
 	ctx.setVariable(_("break rule"),           script_break_rule);
 	ctx.setVariable(_("match rule"),           script_match_rule);
-	ctx.setVariable(_("sort rule"),            script_sort_rule);
+	ctx.setVariable(_("sort rule"),            new_intrusive1<ScriptRule>(script_sort_text));
 }

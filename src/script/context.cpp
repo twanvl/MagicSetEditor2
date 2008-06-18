@@ -241,6 +241,19 @@ int Context::getVariableScope(Variable var) {
 	else                      return -1;
 }
 
+ScriptValueP Context::makeClosure(const ScriptValueP& fun) {
+	intrusive_ptr<ScriptClosure> closure(new ScriptClosure(fun));
+	// we can find out which variables are in the last level by looking at shadowed
+	// these variables will be at the end of the list
+	for (size_t i = shadowed.size() - 1 ; i + 1 > 0 ; --i) {
+		Variable var = shadowed[i].variable;
+		assert(variables[var].value);
+		if (variables[var].level < level) break;
+		closure->addBinding(var, variables[var].value);
+	}
+	return closure;
+}
+
 
 size_t Context::openScope() {
 	level += 1;

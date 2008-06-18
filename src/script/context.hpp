@@ -70,6 +70,9 @@ class Context {
 	 */
 	int getVariableScope(Variable var);
 	
+	/// Make a closure of the function with the direct parameters of the current call
+	ScriptValueP makeClosure(const ScriptValueP& fun);
+	
   private:
 	
 	/// Open a new scope
