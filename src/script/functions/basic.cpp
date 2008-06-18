@@ -314,6 +314,7 @@ SCRIPT_FUNCTION(sort_list) {
 
 // ----------------------------------------------------------------------------- : Keywords
 
+
 SCRIPT_RULE_2_N_DEP(expand_keywords, ScriptValueP, _("default expand"), default_expand,
                                      ScriptValueP, _("combine"),        combine) {
 	SCRIPT_PARAM_C(String, input);
@@ -338,7 +339,7 @@ SCRIPT_RULE_2_DEPENDENCIES(expand_keywords) {
 	combine       ->dependencies(ctx, dep);
 	SCRIPT_PARAM_C(Set*, set);
 	set->game->dependent_scripts_keywords.add(dep); // this depends on the set's keywords
-	SCRIPT_RETURN(_(""));
+	return ctx.getVariable(SCRIPT_VAR_input);
 }
 
 SCRIPT_FUNCTION(keyword_usage) {

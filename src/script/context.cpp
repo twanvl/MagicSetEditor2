@@ -232,6 +232,10 @@ ScriptValueP Context::getVariable(Variable var) {
 	if (variables[var].value) return variables[var].value;
 	throw ScriptError(_("Variable not set: ") + variable_to_string(var));
 }
+ScriptValueP Context::getVariableInScopeOpt(Variable var) {
+	if (variables[var].level == level) return variables[var].value;
+	else                               return ScriptValueP();
+}
 int Context::getVariableScope(Variable var) {
 	if (variables[var].value) return level - variables[var].level;
 	else                      return -1;

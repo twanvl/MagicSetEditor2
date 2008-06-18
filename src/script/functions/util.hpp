@@ -175,19 +175,24 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
 	ScriptValueP ScriptRule_##funname::eval(Context& ctx) const
 
 /// Utility for defining a script rule with two parameters
-#define SCRIPT_RULE_2(funname, type1, name1, type2, name2)					\
+#define SCRIPT_RULE_2(funname, type1, name1, type2, name2)						\
         SCRIPT_RULE_2_N(funname, type1, _(#name1), name1, type2, _(#name2), name2)
 #define SCRIPT_RULE_2_C(funname, type1, name1, type2, name2)					\
         SCRIPT_RULE_2_N(funname, type1, SCRIPT_VAR_ ## name1, name1, type2, SCRIPT_VAR_ ## name2, name2)
 /// Utility for defining a script rule with two named parameters
-#define SCRIPT_RULE_2_N(funname, type1, str1, name1, type2, str2, name2)	\
-	SCRIPT_RULE_2_N_AUX(funname, type1, str1, name1, type2, str2, name2, ;)
+#define SCRIPT_RULE_2_N(funname, type1, str1, name1, type2, str2, name2)		\
+	SCRIPT_RULE_2_N_AUX(funname, type1, str1, name1, type2, str2, name2, ;, ;)
 /// Utility for defining a script rule with two named parameters, with dependencies
-#define SCRIPT_RULE_2_N_DEP(funname, type1, str1, name1, type2, str2, name2)\
-	SCRIPT_RULE_2_N_AUX(    funname, type1, str1, name1, type2, str2, name2,\
-		virtual ScriptValueP dependencies(Context&, const Dependency&) const;)
+#define SCRIPT_RULE_2_N_DEP(funname, type1, str1, name1, type2, str2, name2)	\
+	SCRIPT_RULE_2_N_AUX(    funname, type1, str1, name1, type2, str2, name2,	\
+		virtual ScriptValueP dependencies(Context&, const Dependency&) const;,	\
+	SCRIPT_FUNCTION_DEPENDENCIES(funname) {										\
+		SCRIPT_PARAM_N(type1, str1, name1);										\
+		SCRIPT_PARAM_N(type2, str2, name2);										\
+		return ScriptRule_##funname(name1, name2).dependencies(ctx, dep);		\
+	})
 
-#define SCRIPT_RULE_2_N_AUX(funname, type1, str1, name1, type2, str2, name2, dep) \
+#define SCRIPT_RULE_2_N_AUX(funname, type1, str1, name1, type2, str2, name2, dep, more) \
 	class ScriptRule_##funname: public ScriptValue {						\
 	  public:																\
 		inline ScriptRule_##funname(const type1& name1, const type2& name2)	\
@@ -205,11 +210,12 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
 		SCRIPT_PARAM_N(type2, str2, name2);									\
 		return new_intrusive2<ScriptRule_##funname>(name1, name2);			\
 	}																		\
-	SCRIPT_FUNCTION(funname) {												\
+	SCRIPT_FUNCTION_AUX(funname, dep) {										\
 		SCRIPT_PARAM_N(type1, str1, name1);									\
 		SCRIPT_PARAM_N(type2, str2, name2);									\
 		return ScriptRule_##funname(name1, name2).eval(ctx);				\
 	}																		\
+	more																	\
 	ScriptValueP ScriptRule_##funname::eval(Context& ctx) const
 
 #define SCRIPT_RULE_2_DEPENDENCIES(name)									\

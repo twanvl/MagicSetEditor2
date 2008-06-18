@@ -62,6 +62,8 @@ class Context {
 	ScriptValueP getVariable(Variable var);
 	/// Get the value of a variable, returns ScriptValue() if it is not set
 	inline ScriptValueP getVariableOpt(Variable var) { return variables[var].value; }
+	/// Get the value of a variable only if it was set in the current scope, returns ScriptValue() if it is not set
+	ScriptValueP getVariableInScopeOpt(Variable var);
 	/// In what scope was the variable set?
 	/** Returns 0 for the current scope and >0 for outer scopes.
 	 *  Returns -1 if the varible is not set
