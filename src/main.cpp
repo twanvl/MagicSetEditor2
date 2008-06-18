@@ -65,6 +65,21 @@ void write_stdout(const String& str) {
 	}
 }
 
+// ----------------------------------------------------------------------------- : Checks
+
+void nag_about_ascii_version() {
+	#if !defined(UNICODE) && defined(__WXMSW__)
+		// windows 2000/XP/Vista/... users shouldn't use the 9x version
+		OSVERSIONINFO info;
+		info.dwOSVersionInfoSize = sizeof(info);
+		GetVersionEx(&info);
+		if (info.dwMajorVersion >= 5) {
+			handle_warning(_("This build of Magic Set Editor is intended for Windows 95/98/ME systems.\n")
+			               _("It is recommended that you download the appropriate MSE version for your Windows version."));
+		}
+	#endif
+}
+
 // ----------------------------------------------------------------------------- : Initialization
 
 int MSE::OnRun() {
@@ -83,6 +98,7 @@ int MSE::OnRun() {
 		settings.read();
 		the_locale = Locale::byName(settings.locale);
 		check_updates();
+		nag_about_ascii_version();
 		
 		// interpret command line
 		if (argc > 1) {
