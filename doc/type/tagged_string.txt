@@ -48,7 +48,7 @@ This is written as the character with code 1 in files.
 
 --Related functions--
 The following script functions deal with tags:
-| [[fun:tag_contents|tag_contents / tag_contents_rule]]
-				Change the contents of a specific tag.
-| [[fun:remove_tag|remove_tag / tag_remove_rule]]
-				Remove a tag, keep the contents.
+| [[fun:tag_contents]]		Change the contents of a specific tag.
+| [[fun:remove_tag]]		Remove a tag, keep the contents.
+| [[fun:remove_tags]]		Remove all tags from tagged text.
+| [[fun:to_text]]		Remove all tags from tagged text, and convert it to a [[type:string]].

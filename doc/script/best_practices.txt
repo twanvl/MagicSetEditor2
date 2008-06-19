@@ -23,11 +23,14 @@ Instead define a function in the init script.
 >field:
 >	script: flubble_script()
 
---Use rule form--
-If a function is available in [[script:rule form]] use it where possible.
+--Use default arguments--
 
-Many rules can be chained together using the @+@ operator.
+Many functions can be chained together using the @+@ operator.
+For these functions [[script:default arguments]] can be given.
 Have a look at @text_filter@ in the magic game file for an example.
+
+Using default arguments is especially important for functions that work on [[type:regex|regular expressions]],
+since it allows MSE to compile the regular expressions just once instead of for every call.
 
 --Don't be afraid to nest--
 Don't be afraid to nest complex things like @if@ expressions inside other expressions.

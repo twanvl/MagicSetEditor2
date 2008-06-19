@@ -5,9 +5,9 @@ MSE uses a custom scripting language to add complicated behaviour to [[type:fiel
 --Topics--
 * [[script:introduction|Introduction to scripting]]
 * [[script:Operators]]
-* [[script:variables|Variables]]
-* [[script:functions|Functions]]
-* [[script:default_arguments|Default arguments]]
+* [[script:Variables]]
+* [[script:Functions]]
+* [[script:Default arguments]]
 * [[script:Control structures]]
 * [[script:Predefined variables]]
 * [[script:Best practices]]

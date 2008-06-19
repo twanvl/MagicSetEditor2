@@ -2,7 +2,6 @@ Function: expand_keywords
 
 --Usage--
 > expand_keywords(some_tagged_string, default_expand: {...}, combine: {...})
-> expand_keywords_rule(default_expand: {...}, combine: {...})(some_tagged_string)
 
 Find [[type:keyword]]s and generate their reminder text.
 
@@ -28,8 +27,6 @@ For example, in the case of magic:
 > )
 is used. This shows reminder text by default based on a [[type:set]] option, and it combined the keyword as @"keyword (reminder)"@.
 
-This function is available in [[script:rule form]].
-
 --Parameters--
 ! Parameter		Type				Description
 | @input@		[[type:tagged string]]		String to expand keywords in.
@@ -41,5 +38,5 @@ Assuming a keyword @"mse"@ exists with reminder text @"Magic Set Editor"@ exists
 > expand_keywords(default_expand: {true}, combine: { keyword + " = " + reminder },  "mse is cool")
 >    == "<kw-A>mse = Magic Set Editor is cool</kw-A>"
 >
-> f := expand_keywords_rule(default_expand: {true}, combine: { keyword+"="+reminder })
+> f := expand_keywords@(default_expand: {true}, combine: { keyword+"="+reminder })
 > f("mse is cool") == "<kw-A>mse = Magic Set Editor is cool</kw-A>"

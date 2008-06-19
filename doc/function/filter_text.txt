@@ -2,14 +2,15 @@ Function: filter_text
 
 --Usage--
 > filter_text(some_string, match: regular expression, in_context: regular expression)
-> filter_rule(match: ..., in_context: ...)(some_string)
 
 Filter text by only keeping the parts of the input that match the regular expression.
 
 If @in_context@ is given, the context must also match the string where the match is represented as <tt>&lt;match></tt>.
 
-This function is available in [[script:rule form]].
-When the @filter_text@ is used many times the rule form is more efficient, because the regular expression is only compiled once.
+When the @filter_text@ is used many times with the same @match@ or @in_context@ values it is more efficient to declare these as default arguments:
+> my_filter := filter_text@(match: "something")
+> my_filter("input") # called many times
+This way the regular expression is only compiled once.
 
 --Parameters--
 ! Parameter	Type			Description
@@ -22,11 +23,9 @@ When the @filter_text@ is used many times the rule form is more efficient, becau
 > filter_text(match: ".", in_context:"a<match>", "banana")  ==  "nn"
 > filter_text(match: "[xy]", "xyz")  ==  "xy"
 >
-> f := filter_rule(match: "xx+")
+> f := filter_text@(match: "xx+")
 > f("xyzxxyyzz") == "xx"
 
 --See also--
-| [[fun:break_text|break_text / break_rule]]
-				Break text into parts each matching a regular expression.
-| [[fun:replace|replace / replace_rule]]
-				Replace text matching a regular expression.
+| [[fun:break_text]]	Break text into parts each matching a regular expression.
+| [[fun:replace]]	Replace text matching a regular expression.

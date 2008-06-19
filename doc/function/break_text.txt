@@ -2,20 +2,21 @@ Function: break_text
 
 --Usage--
 > break_text(some_string, match: regular expression, in_context: regular expression)
-> break_rule(match: ..., in_context: ...)(some_string)
 
 Break text by only keeping the parts of the input that match the regular expression.
 The function returns a [[type:list]] of parts.
 
 If @in_context@ is given, the context must also match the string where the match is represented as <tt>&lt;match></tt>.
 
-This function is available in [[script:rule form]].
-When the @break_text@ is used many times the rule form is more efficient, because the regular expression is only compiled once.
+When the @break_text@ is used many times with the same @match@ or @in_context@ values it is more efficient to declare these as default arguments:
+> my_break := break_text@(match: "something")
+> my_break("input") # called many times
+This way the regular expression is only compiled once.
 
 --Filter vs. break--
 
 The function @filter_text@ is very similar to @break_text@, instead of returning a list it concatenates the items.
-So for example where @break_text@ would return @["a","b","c"]@, @filter_text@ would return @"abc"@.
+So for example where @break_text@ returns @["a","b","c"]@, @filter_text@ would return @"abc"@.
 In fact, @filter_text@ could be implemented as
 > filter_text := { for part in break_text() do part }
 
@@ -32,10 +33,9 @@ In fact, @filter_text@ could be implemented as
 > break_text(match: "/",     "a/b/c")   ==  ["/","/"]
 > break_text(match: "[^/]+", "a/b/c")   ==  ["a","b","c"]
 >
-> f := break_rule(match: "xx+")
+> f := break_text@(match: "xx+")
 > f("xyzxxxxyyzz") == ["xxxx"]
 
 --See also--
-| [[fun:filter_text|filter_text / filter_rule]]
-				Keep only the text matching a regular expression.
+| [[fun:filter_text]]		Keep only the text matching a regular expression.
 

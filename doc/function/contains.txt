@@ -15,5 +15,5 @@ Does one string contain another at any position?
 > contains("abcdefg", match:"abd")    == false
 
 --See also--
-| [[fun:match|match / match_rule]]	Does a string match a regular expression?
-| [[fun:chosen]]			Is the given choice selected in a multiple choice value?
+| [[fun:match]]		Does a string match a regular expression?
+| [[fun:chosen]]	Is the given choice selected in a multiple choice value?

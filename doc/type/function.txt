@@ -13,7 +13,7 @@ Functions can be composed using the @+@ operator, evaluating @a + b@ first evalu
 > example := to_upper + { "result == {input}" }
 > example("xyz") == "result == XYZ"
 
-Multiple functions can be changed together like this, especially using [[script:rule form]].
+Multiple functions can be changed together like this, this is especially convenient in combination with [[script:default arguments]].
 
 --Example--
 > example := { a + b }

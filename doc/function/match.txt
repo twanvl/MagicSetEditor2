@@ -2,12 +2,13 @@ Function: match
 
 --Usage--
 > match(some_string, match: regular expression)
-> match_rule(match:regular expression)(some_string)
 
 Does a string match the given [[type:regex|regular expression]]?
 
-This function is available in [[script:rule form]].
-When the match is performed many times the rule form is more efficient, because the regular expression is only compiled once.
+When the match is performed many times with the same regular expression it is more efficient to declare that as a default argument:
+> my_match := match@(match: "something")
+> my_match("input") # called many times
+This way the regular expression is only compiled once.
 
 --Parameters--
 ! Parameter	Type			Description
@@ -20,7 +21,7 @@ When the match is performed many times the rule form is more efficient, because 
 > match("abc",  match:"b+")   == true
 > match("abc",  match:"$b+^") == false
 >
-> f := match_rule(match: "a+|b+")
+> f := match@(match: "a+|b+")
 > f("xyz")  == false
 > f("aabb") == true
 

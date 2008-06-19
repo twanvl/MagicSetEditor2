@@ -2,13 +2,10 @@ Function: remove_tag
 
 --Usage--
 > remove_tag(tag: some_tag, some_string)
-> tag_remove_rule(tag: some_tag)(some_string)
 
 Remove a tag and its matching close tag from a [[type:tagged string]], but keep the contents.
 
 The tag can be a whole tag, @"<tag>"@, or a prefix @"<i"@. In the latter case all tags starting with @"<i"@ are removed.
-
-This function is available in [[script:rule form]].
 
 --Parameters--
 ! Parameter	Type			Description
@@ -19,10 +16,10 @@ This function is available in [[script:rule form]].
 > remove_tag(tag: "<b>", "<b>bold <i>text</i></b>")  ==  "bold <i>text</i>"
 > remove_tag(tag: "<b", "<b-auto>bold</b-auto> text")  ==  "bold text"
 >
-> f := tag_remove_rule(tag: "<i-auto>")
+> f := remove_tag@(tag: "<i-auto>")
 > f("text, <i-auto>reminder</i-auto> <i>italic</i>") == "text, reminder <i>italic</i>"
 
 --See also--
-| [[fun:tag_contents|tag_contents / tag_contents_rule]]
-				Change the contents of a specific tag.
-| [[fun:to_text]]		Remove all tags from tagged text.
+| [[fun:tag_contents]]		Change the contents of a specific tag.
+| [[fun:remove_tags]]		Remove all tags from tagged text.
+| [[fun:to_text]]		Remove all tags from tagged text, and convert it to a [[type:string]].

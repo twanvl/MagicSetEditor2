@@ -30,6 +30,7 @@ ScriptRegexP regex_from_script(const ScriptValueP& value) {
 	// is it a regex already?
 	ScriptRegexP regex = dynamic_pointer_cast<ScriptRegex>(value);
 	if (!regex) {
+		// TODO: introduce some kind of caching?
 		// compile string
 		regex = new_intrusive<ScriptRegex>();
 		if (!regex->regex.Compile(*value, wxRE_ADVANCED)) {
@@ -225,6 +226,7 @@ SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(replace) {
 
 // ----------------------------------------------------------------------------- : Rules : regex filter
 
+/*
 class ScriptFilterRule : public ScriptValue {
   public:
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
@@ -259,7 +261,7 @@ ScriptValueP filter_rule(Context& ctx) {
 	SCRIPT_PARAM_DEFAULT_C(String, in_context, String());
 	
 	// cache
-	//*
+	// *
 	const int CACHE_SIZE = 6;
 	struct CacheItem{
 		String match, in_context;
@@ -279,9 +281,9 @@ ScriptValueP filter_rule(Context& ctx) {
 	cache[cache_pos].rule = intrusive_ptr<ScriptFilterRule>(new ScriptFilterRule);
 	intrusive_ptr<ScriptFilterRule>& ret = cache[cache_pos].rule;
 	cache_pos = (cache_pos+1) % CACHE_SIZE;
-	/*/
+	/ * /
 	intrusive_ptr<ScriptFilterRule> ret(new ScriptFilterRule); 
-	//*/
+	//* /
 	
 	// match
 	if (!ret->regex.Compile(match, wxRE_ADVANCED)) {
@@ -301,6 +303,36 @@ SCRIPT_FUNCTION(filter_rule) {
 }
 SCRIPT_FUNCTION(filter_text) {
 	return filter_rule(ctx)->eval(ctx);
+}*/
+
+SCRIPT_FUNCTION_WITH_SIMPLIFY(filter_text) {
+	SCRIPT_PARAM_C(String, input);
+	SCRIPT_PARAM_C(ScriptRegexP, match);
+	SCRIPT_OPTIONAL_PARAM_C_(ScriptRegexP, in_context);
+	String ret;
+	// find all matches
+	while (match->regex.Matches(input)) {
+		// match, append to result
+		size_t start, len;
+		bool ok = match->regex.GetMatch(&start, &len, 0);
+		assert(ok);
+		String inside     = input.substr(start, len);  // the match
+		String next_input = input.substr(start + len); // everything after the match
+		if (!in_context || in_context->regex.Matches(input.substr(0,start) + _("<match>") + next_input)) {
+			// no context or context match
+			ret += inside;
+		}
+		input = next_input;
+	}
+	SCRIPT_RETURN(ret);
+}
+SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(filter_text) {
+	FOR_EACH(b, closure.bindings) {
+		if (b.first == SCRIPT_VAR_match || b.first == SCRIPT_VAR_in_context) {
+			b.second = regex_from_script(b.second); // pre-compile
+		}
+	}
+	return ScriptValueP();
 }
 
 // ----------------------------------------------------------------------------- : Rules : regex break
@@ -452,7 +484,7 @@ void init_script_regex_functions(Context& ctx) {
 	ctx.setVariable(_("break text"),           script_break_text);
 	ctx.setVariable(_("match"),                script_match);
 	ctx.setVariable(_("replace rule"),         new_intrusive1<ScriptRule>(script_replace));
-	ctx.setVariable(_("filter rule"),          script_filter_rule);
+	ctx.setVariable(_("filter rule"),          new_intrusive1<ScriptRule>(script_filter_text));
 	ctx.setVariable(_("break rule"),           new_intrusive1<ScriptRule>(script_break_text));
 	ctx.setVariable(_("match rule"),           new_intrusive1<ScriptRule>(script_match));
 }

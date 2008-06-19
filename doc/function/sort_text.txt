@@ -2,7 +2,6 @@ Function: sort_text
 
 --Usage--
 > sort_text(order: order specification, some_text)
-> sort_rule(order: order specification)(some_text)
 
 Sort a string or filter it by keeping specific characters.
 
@@ -45,8 +44,6 @@ behaves the same as
 > sort_text(order: "x")
 because the first @"x"@ already selects all xs from the input.
 
-This function is available in [[script:rule form]].
-
 --Parameters--
 ! Parameter	Type				Description
 | @input@	[[type:string]]			Text to sort
@@ -67,5 +64,5 @@ This function is available in [[script:rule form]].
 > sort_text(order: "pattern(./. cycle(wubrg))", "wgw/g")   ==  "g/w"
 > sort_text(order: "[1234567890]cycle(wubrg)",  "21wg")    ==  "21gw"
 >
-> f := sort_rule(order: "[1234567890]cycle(wubrg)")
+> f := sort_text@(order: "[1234567890]cycle(wubrg)")
 > f("21wg")  ==  "21gw"

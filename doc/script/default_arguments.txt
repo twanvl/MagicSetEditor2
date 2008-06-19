@@ -11,21 +11,24 @@ For determining whether the argument is set only explicit arguments count, not e
 > arg := "something else"
 > function()                      == "argument was: default"
 
-//Defaults are evaluated at the time the @@@@ operator is evaluated, so they can be used to simulate static scoping.
+Defaults are evaluated at the time the @@@@ operator is evaluated, they will not be overriden later
+> default  := "old default"
+> function := { "argument was: " + arg }@(arg: default)
+> default  := "new default"
+> function()                      == "argument was: old default"
 
 --Rule functions--
 
-Some functions are available in ''rule form''.
+In earlier versions of MSE some functions were available in a special ''rule form''.
+A call to for example @replace_rule(match:"abc",replace:"xyz")@ is equivalent to @replace@@(match:"abc",replace:"xyz")@ .
+For backwards compatability these functions are still available, but they should not be used for new templates.
 
-These rule form functions are functions that create a new [[type:function]] with some defaults filled in.
-That new function, the rule, applies some transformation to the input and returns the result.
-
+Programming in a ''rule style'' is still very useful.
 A rule is like a normal function with all parameters given, except for the @input@.
-
-Rules are often combined using the + operator, for example:
+These rules can then be combined using the @+@ operator, for example:
 > # First all "a"s are replaced, then all "b"s.
-> remove_as_and_bs := replace_rule(match: "a", replace: "") +
->                     replace_rule(match: "b", replace: "")
+> remove_as_and_bs := replace@(match: "a", replace: "") +
+>                     replace@(match: "b", replace: "")
 > 
 > text_with_as_and_bs := "bla bla bla"
 > text_without_as_and_bs := remove_as_and_bs(text_with_as_and_bs)

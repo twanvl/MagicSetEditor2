@@ -2,7 +2,6 @@ Function: replace
 
 --Usage--
 > replace(some_string, match: regular expression, replace: replacement, in_context: regular expression)
-> replace_rule(match: ..., replace: ..., in_context: ...)(some_string)
 
 Replace all matches of a regular expression with a replacement value.
 The replacement can either be a string or a function.
@@ -11,8 +10,10 @@ The replacement can either be a string or a function.
 
 Optionally a context can be given. The replacement is only performed if the string where the match is represented as <tt>&lt;match></tt> also matches the context.
 
-This function is available in [[script:rule form]].
-When the replacement is performed many times the rule form is more efficient, because the regular expression is only compiled once.
+When the @replace@ is used many times with the same @match@ or @in_context@ values it is more efficient to declare these as default arguments:
+> my_replace := replace@(match: "something", replace: "something else")
+> my_replace("input") # called many times
+This way the regular expression is compiled only once.
 
 --Parameters--
 ! Parameter	Type			Description
@@ -26,11 +27,11 @@ When the replacement is performed many times the rule form is more efficient, be
 > replace(match: "a", replace: "e", "banana")  ==  "benene"
 > replace(match: "a", replace: "e", in_context: "<match>n", "banana")  ==  "benena"
 > replace(match: "(a|b)x", replace: "[\\0,\\1]", "axabxc")  ==  "[ax,a]a[bx,b]c"
-> replace(match: "[ab]", replace: { to_upper(input) }, "banana")  ==  "BAnAnA"
+> replace(match: "[ab]", replace: to_upper, "banana")  ==  "BAnAnA"
+> replace(match: "([0-9])[*]([0-9])", replace: { _1 * _2 }, "2*2+3*3")  ==  "4+9"
 >
-> f := replace_rule(match: "xx+", replace: "A")
+> f := replace@(match: "xx+", replace: "A")
 > f("xyzxxyyzz") == "xyzAAyyzz"
 
 --See also--
-| [[fun:filter_text|filter_text / filter_rule]]
-				Keep only the text matching a regular expression.
+| [[fun:filter_text]]	Keep only the text matching a regular expression.

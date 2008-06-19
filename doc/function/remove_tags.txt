@@ -17,5 +17,4 @@ This function differs from [[fun:to_text]], that function also un-escapes &lt; c
 
 --See also--
 | [[fun:to_text]]		Remove all tags from tagged text, and convert it to a [[type:string]].
-| [[fun:remove_tag|remove_tag / tag_remove_rule]]
-				Remove a single tag type.
+| [[fun:remove_tag]]		Remove a single tag type.
