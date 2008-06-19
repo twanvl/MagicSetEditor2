@@ -46,6 +46,7 @@ template <> inline ScriptRegexP from_script<ScriptRegexP>(const ScriptValueP& va
 
 // ----------------------------------------------------------------------------- : Rules : regex replace
 
+/*
 class ScriptReplaceRule : public ScriptValue {
   public:
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
@@ -138,6 +139,89 @@ SCRIPT_FUNCTION(replace_rule) {
 SCRIPT_FUNCTION(replace) {
 	return replace_rule(ctx)->eval(ctx);
 }
+*/
+
+struct RegexReplacer {
+	ScriptRegexP match;					///< Regex to match
+	ScriptRegexP context;				///< Match only in a given context, optional
+	String       replacement_string;	///< Replacement
+	ScriptValueP replacement_function;	///< Replacement function instead of a simple string, optional
+	bool         recursive;				///< Recurse into the replacement
+	
+	String apply(Context& ctx, String& input, int level = 0) const {
+		// match first, then check context of match
+		String ret;
+		while (match->regex.Matches(input)) {
+			// for each match ...
+			size_t start, len;
+			bool ok = match->regex.GetMatch(&start, &len, 0);
+			assert(ok);
+			ret                 += input.substr(0, start);          // everything before the match position stays
+			String inside        = input.substr(start, len);        // inside the match
+			String next_input    = input.substr(start + len);       // next loop the input is after this match
+			if (!context || context->regex.Matches(ret + _("<match>") + next_input)) {
+				// the context matches -> perform replacement
+				if (replacement_function) {
+					// set match results in context
+					for (UInt m = 0 ; m < match->regex.GetMatchCount() ; ++m) {
+						match->regex.GetMatch(&start, &len, m);
+						String name  = m == 0 ? _("input") : String(_("_")) << m;
+						String value = input.substr(start, len);
+						ctx.setVariable(name, to_script(value));
+					}
+					// call
+					inside = replacement_function->eval(ctx)->toString();
+				} else {
+					match->regex.Replace(&inside, replacement_string, 1); // replace inside
+				}
+			}
+			if (recursive && level < 20) {
+				ret += apply(ctx, inside, level + 1);
+			} else {
+				ret += inside;
+			}
+			input = next_input;
+		}
+		ret += input;
+		return ret;
+	}
+};
+
+SCRIPT_FUNCTION_WITH_SIMPLIFY(replace) {
+	// construct replacer
+	RegexReplacer replacer;
+	replacer.match = from_script<ScriptRegexP>(ctx.getVariable(SCRIPT_VAR_match), SCRIPT_VAR_match);
+	if (ctx.getVariableOpt(SCRIPT_VAR_in_context)) {
+		replacer.context = from_script<ScriptRegexP>(ctx.getVariableOpt(SCRIPT_VAR_in_context), SCRIPT_VAR_in_context);
+	}
+	if (ctx.getVariableOpt(SCRIPT_VAR_recursive)) {
+		replacer.recursive = from_script<bool>(ctx.getVariableOpt(SCRIPT_VAR_recursive), SCRIPT_VAR_recursive);
+	} else {
+		replacer.recursive = false;
+	}
+	replacer.replacement_function = ctx.getVariable(SCRIPT_VAR_replace);
+	if (replacer.replacement_function->type() != SCRIPT_FUNCTION) {
+		replacer.replacement_string = replacer.replacement_function->toString();
+		replacer.replacement_function = ScriptValueP();
+	}
+	// run
+	SCRIPT_PARAM_C(String, input);
+	if (replacer.context || replacer.replacement_function || replacer.recursive) {
+		SCRIPT_RETURN(replacer.apply(ctx, input));
+	} else {
+		// simple replacing
+		replacer.match->regex.Replace(&input, replacer.replacement_string);
+		SCRIPT_RETURN(input);
+	}
+}
+SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(replace) {
+	FOR_EACH(b, closure.bindings) {
+		if (b.first == SCRIPT_VAR_match || b.first == SCRIPT_VAR_in_context) {
+			b.second = regex_from_script(b.second); // pre-compile
+		}
+	}
+	return ScriptValueP();
+}
 
 // ----------------------------------------------------------------------------- : Rules : regex filter
 
@@ -175,7 +259,7 @@ ScriptValueP filter_rule(Context& ctx) {
 	SCRIPT_PARAM_DEFAULT_C(String, in_context, String());
 	
 	// cache
-	/*
+	//*
 	const int CACHE_SIZE = 6;
 	struct CacheItem{
 		String match, in_context;
@@ -367,7 +451,7 @@ void init_script_regex_functions(Context& ctx) {
 	ctx.setVariable(_("filter text"),          script_filter_text);
 	ctx.setVariable(_("break text"),           script_break_text);
 	ctx.setVariable(_("match"),                script_match);
-	ctx.setVariable(_("replace rule"),         script_replace_rule);
+	ctx.setVariable(_("replace rule"),         new_intrusive1<ScriptRule>(script_replace));
 	ctx.setVariable(_("filter rule"),          script_filter_rule);
 	ctx.setVariable(_("break rule"),           new_intrusive1<ScriptRule>(script_break_text));
 	ctx.setVariable(_("match rule"),           new_intrusive1<ScriptRule>(script_match));

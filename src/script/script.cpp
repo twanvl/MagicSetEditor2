@@ -56,6 +56,7 @@ void init_script_variables() {
 	Var(match);
 	Var(replace);
 	VarN(in_context,_("in context"));
+	Var(recursive);
 	Var(order);
 	Var(filter);
 	Var(choice);
