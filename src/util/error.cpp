@@ -61,7 +61,7 @@ vector<String> previous_warnings;
 String pending_errors;
 String pending_warnings;
 DECLARE_TYPEOF_COLLECTION(String);
-wxCriticalSection crit_error_handling;
+wxMutex crit_error_handling;
 
 void show_pending_errors();
 void show_pending_warnings();
@@ -69,7 +69,7 @@ void show_pending_warnings();
 void handle_error(const String& e, bool allow_duplicate = true, bool now = true) {
 	{
 		// Thread safety
-		wxCriticalSectionLocker lock(crit_error_handling);
+		wxMutexLocker lock(crit_error_handling);
 		// Check duplicates
 		if (!allow_duplicate) {
 			FOR_EACH(pe, previous_errors) {
@@ -95,7 +95,7 @@ void handle_error(const Error& e, bool allow_duplicate, bool now) {
 void handle_warning(const String& w, bool now) {
 	{
 		// Check duplicates
-		wxCriticalSectionLocker lock(crit_error_handling);
+		wxMutexLocker lock(crit_error_handling);
 		// Check duplicates
 		FOR_EACH(pw, previous_warnings) {
 			if (w == pw) return;
@@ -119,17 +119,21 @@ void handle_pending_errors() {
 
 void show_pending_errors() {
 	assert(wxThread::IsMain());
-	wxCriticalSectionLocker lock(crit_error_handling);
+	if (crit_error_handling.TryLock() != wxMUTEX_NO_ERROR)
+		return;
 	if (!pending_errors.empty()) {
 		wxMessageBox(pending_errors, _("Error"), wxOK | wxICON_ERROR);
 		pending_errors.clear();
 	}
+	crit_error_handling.Unlock();
 }
 void show_pending_warnings() {
 	assert(wxThread::IsMain());
-	wxCriticalSectionLocker lock(crit_error_handling);
+	if (crit_error_handling.TryLock() != wxMUTEX_NO_ERROR)
+		return;
 	if (!pending_warnings.empty()) {
 		wxMessageBox(pending_warnings, _("Warning"), wxOK | wxICON_EXCLAMATION);
 		pending_warnings.clear();
 	}
+	crit_error_handling.Unlock();
 }

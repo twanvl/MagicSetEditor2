@@ -28,7 +28,7 @@ ScriptValueP ScriptValue::next()                                  { throw Intern
 ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
 int          ScriptValue::itemCount()                       const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
 CompareWhat  ScriptValue::compareAs(String& compare_str, void const*& compare_ptr) const {
-	compare_str = (String)(*this);
+	compare_str = toString();
 	return COMPARE_AS_STRING;
 }
 
