@@ -6,7 +6,7 @@ installer group: VS System/New style/Normal
 icon: card-sample.png
 position hint: 001
 
-version: 2008-05-25
+version: 2008-06-22
 depends on:
 	package: vs.mse-game
 	version: 2007-09-06
@@ -100,7 +100,7 @@ card style:
 		top : 20
 		width: 230
 		height: 30
-		alignment: middle center
+		alignment: middle center shrink-overflow
 		padding bottom: 0
 		z index: 4
 		font:
