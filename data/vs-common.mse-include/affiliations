@@ -3,18 +3,25 @@
 choice images:
 	Marvel A-C Avengers: /vs-standard-official.mse-symbol-font/avengers.png
 	Marvel A-C Brotherhood: /vs-standard-official.mse-symbol-font/brotherhood.png
+	Marvel A-C Crime Lords: /vs-standard-official.mse-symbol-font/crimelords.png
 	Marvel D-H Doom: /vs-standard-official.mse-symbol-font/doom.png
 	Marvel D-H Fantastic Four: /vs-standard-official.mse-symbol-font/F4.png
 	Marvel D-H Horsemen of Apocalypse: /vs-standard-official.mse-symbol-font/apocalypse.png
 	Marvel I-M Marvel Knights: /vs-standard-official.mse-symbol-font/marvelknights.png
+	Marvel N-S Negative Zone: /vs-standard-official.mse-symbol-font/negativezone.png
 	Marvel N-S Shi'ar: /vs-standard-official.mse-symbol-font/shiar.png
+	Marvel N-S Shield: /vs-standard-official.mse-symbol-font/shield.png
 	Marvel N-S Spider-Friends: /vs-standard-official.mse-symbol-font/spiderman.png
+	Marvel T-Z Thunderbolts: /vs-standard-official.mse-symbol-font/thunderbolts.png
+	Marvel T-Z Underworld: /vs-standard-official.mse-symbol-font/underworld.png
+	Marvel T-Z Warbound: /vs-standard-official.mse-symbol-font/warbound.png
 	Marvel T-Z X-Men: /vs-standard-official.mse-symbol-font/xmen.png
 	
 	DC D-H Gotham Knights: /vs-standard-official.mse-symbol-font/gothamknights.png
 	DC D-H Green Lantern: /vs-standard-official.mse-symbol-font/greenlantern.png
 	DC I-M JLA: /vs-standard-official.mse-symbol-font/jla.png
 	DC I-M JSA: /vs-standard-official.mse-symbol-font/jsa.png
+	DC N-S Speed Force: /vs-standard-official.mse-symbol-font/speedforce.png
 	DC T-Z Team Superman: /vs-standard-official.mse-symbol-font/superman.png
 	DC T-Z Teen Titans: /vs-standard-official.mse-symbol-font/titans.png
 	

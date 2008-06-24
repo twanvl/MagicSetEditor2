@@ -21,10 +21,15 @@ choice:
 		choice: Marvel Knights
 	choice:
 		name: N-S
+		choice: Negative Zone
 		choice: Shi'ar
+		choice: Shield
 		choice: Spider-Friends
 	choice:
 		name: T-Z
+		choice: Thunderbolts
+		choice: Underworld
+		choice: Warbound
 		choice: X-Men
 choice:
 	name: DC
@@ -36,6 +41,9 @@ choice:
 		name: I-M
 		choice: JLA
 		choice: JSA
+	choice:
+		name: N-S
+		choice: Speed Force
 	choice:
 		name: T-Z
 		choice: Team Superman
@@ -51,6 +59,8 @@ script:
 	if card.team=="BROOD" then "Marvel A-C Brood" else
 	if card.team=="Brotherhood" then "Marvel A-C Brotherhood" else
 	if card.team=="BROTHERHOOD" then "Marvel A-C Brotherhood" else
+	if card.team=="Crime Lords" then "Marvel A-C Crime Lords" else
+	if card.team=="CRIME LORDS" then "Marvel A-C Crime Lords" else
 	if card.team=="Doom" then "Marvel D-H Doom" else
 	if card.team=="DOOM" then "Marvel D-H Doom" else
 	if card.team=="Fantastic Four" then "Marvel D-H Fantastic Four" else
@@ -59,10 +69,20 @@ script:
 	if card.team=="HORSEMEN OF APOCALYPSE" then "Marvel D-H Horsemen of Apocalypse" else
 	if card.team=="Marvel Knights" then "Marvel I-M Marvel Knights" else
 	if card.team=="MARVEL KNIGHTS" then "Marvel I-M Marvel Knights" else
+	if card.team=="Negative Zone" then "Marvel N-S Negative Zone" else
+	if card.team=="NEGATIVE ZONE" then "Marvel N-S Negative Zone" else
 	if card.team=="Shi'ar" then "Marvel N-S Shi'ar" else
 	if card.team=="SHI'AR" then "Marvel N-S Shi'ar" else
+	if card.team=="Shield" then "Marvel N-S Shield" else
+	if card.team=="SHIELD" then "Marvel N-S Shield" else
 	if card.team=="Spider-Friends" then "Marvel N-S Spider-Friends" else
 	if card.team=="SPIDER-FRIENDS" then "Marvel N-S Spider-Friends" else
+	if card.team=="Thunderbolts" then "Marvel T-Z Thunderbolts" else
+	if card.team=="THUNDERBOLTS" then "Marvel T-Z Thunderbolts" else
+	if card.team=="Underworld" then "Marvel T-Z Underworld" else
+	if card.team=="UNDERWORLD" then "Marvel T-Z Underworld" else
+	if card.team=="Warbound" then "Marvel T-Z Warbound" else
+	if card.team=="WARBOUND" then "Marvel T-Z Warbound" else
 	if card.team=="X-Men" then "Marvel T-Z X-Men" else
 	if card.team=="X-MEN" then "Marvel T-Z X-Men" else
 	if card.team=="Gotham Knights" then "DC D-H Gotham Knights" else
@@ -71,6 +91,8 @@ script:
 	if card.team=="GREEN LANTERN" then "DC D-H Green Lantern" else
 	if card.team=="JLA" then "DC I-M JLA" else
 	if card.team=="JSA" then "DC I-M JSA" else
+	if card.team=="Speed Force" then "DC N-S Speed Force" else
+	if card.team=="SPEED FORCE" then "DC N-S Speed Force" else
 	if card.team=="Team Superman" then "DC T-Z Team Superman" else
 	if card.team=="TEAM SUPERMAN" then "DC T-Z Team Superman" else
 	if card.team=="Teen Titans" then "DC T-Z Teen Titans" else

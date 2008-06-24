@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.6
-version: 2008-05-19
+version: 2008-06-23
 short name: New (unofficial)
 position hint: 3
 installer group: VS System/Symbol Fonts/New
@@ -66,6 +66,9 @@ symbol:
 	code: Captain America
 	image: captainamerica.png
 symbol:
+	code: Crime Lords
+	image: crimelords.png
+symbol:
 	code: Marvel Defenders
 	image: defenders.png
 symbol:
@@ -120,6 +123,9 @@ symbol:
 	code: Masters of Evil
 	image: mastersofevil.png
 symbol:
+	code: Negative Zone
+	image: negativezone.png
+symbol:
 	code: Outsiders
 	image: outsiders.png
 symbol:
@@ -141,7 +147,7 @@ symbol:
 	code: Shi'ar
 	image: shiar.png
 symbol:
-	code: SHIELD
+	code: Shield
 	image: shield.png
 symbol:
 	code: Sinister Syndicate
@@ -149,6 +155,9 @@ symbol:
 symbol:
 	code: Skeleton Crew
 	image: skeletoncrew.png
+symbol:
+	code: Speed Force
+	image: speedforce.png
 symbol:
 	code: Spider-Friends
 	image: spiderman.png
@@ -176,6 +185,12 @@ symbol:
 symbol:
 	code: The Ultimates
 	image: ultimates.png
+symbol:
+	code: Underworld
+	image: underworld.png
+symbol:
+	code: Warbound
+	image: warbound.png
 symbol:
 	code: X-Men
 	image: xmen.png
@@ -243,9 +258,11 @@ insert symbol menu:
 		item: Brood
 		item: Brotherhood
 		item: Captain America
+		item: Crimelords
 		item: Doom
 		item: Excalibur
 		item: Fantastic Four
+		item: Femizons
 		item: The Hand
 		item: Hellfire Club
 		item: Heralds of Galactus
@@ -256,35 +273,38 @@ insert symbol menu:
 		item: Marvel Defenders
 		item: Marvel Knights
 		item: Masters of Evil
+		item: Negative Zone
 		item: New Warriors
 		item: Omega Flight
+		item: The Order
 		item: Outsiders
 		item: Serpent Society
 		item: Shi'ar
-		item: SHIELD
+		item: Shield
 		item: Sinister Syndicate
+		item: Skeleton Crew
 		item: Spider-Friends
 		item: Starjammers
 		item: Thor
 		item: Thunderbolts
 		item: The Ultimates
+		item: Underworld
+		item: Warbound
 		item: X-Men
 	item:
 		name: DC Teams
 		item: Anti-Matter
 		item: Arkham Inmates
 		item: Birds of Prey
-		item: Femizons
 		item: Gotham Knights
 		item: Green Lantern
 		item: JLA
 		item: JSA
 		item: Legionnaires
-		item: The Order
 		item: Outsiders
 		item: Secret Six
 		item: Shadowpact
-		item: Skeleton Crew
+		item: Speed Force
 		item: Team Superman
 		item: Teen Titans
 	item:

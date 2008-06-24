@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.6
-version: 2008-05-25
+version: 2008-06-23
 short name: New (official)
 position hint: 1
 installer group: VS System/Symbol Fonts/Official New
@@ -42,6 +42,9 @@ symbol:
 	code: Captain America
 	image: captainamerica.png
 symbol:
+	code: Crime Lords
+	image: crimelords.png
+symbol:
 	code: Marvel Defenders
 	image: defenders.png
 symbol:
@@ -78,6 +81,9 @@ symbol:
 	code: Masters of Evil
 	image: mastersofevil.png
 symbol:
+	code: Negative Zone
+	image: negativezone.png
+symbol:
 	code: Planet
 	image: planet.png
 symbol:
@@ -87,8 +93,14 @@ symbol:
 	code: Shi'ar
 	image: shiar.png
 symbol:
+	code: Shield
+	image: shield.png
+symbol:
 	code: Sinister Syndicate
 	image: sinistersyndicate.png
+symbol:
+	code: Speed Force
+	image: speedforce.png
 symbol:
 	code: Spider-Friends
 	image: spiderman.png
@@ -99,11 +111,17 @@ symbol:
 	code: Thule Society
 	image: thule.png
 symbol:
+	code: Thunderbolts
+	image: thunderbolts.png
+symbol:
 	code: Teen Titans
 	image: titans.png
 symbol:
-	code: The Ultimates
-	image: ultimates.png
+	code: Underworld
+	image: underworld.png
+symbol:
+	code: Warbound
+	image: warbound.png
 symbol:
 	code: X-Men
 	image: xmen.png
@@ -166,6 +184,7 @@ insert symbol menu:
 		item: Brood
 		item: Brotherhood
 		item: Captain America
+		item: Crime Lords
 		item: Doom
 		item: Excalibur
 		item: Fantastic Four
@@ -175,9 +194,14 @@ insert symbol menu:
 		item: Marvel Defenders
 		item: Marvel Knights
 		item: Masters of Evil
+		item: Negative Zone
+		item: Shi'ar
+		item: Shield
 		item: Sinister Syndicate
 		item: Spider-Friends
-		item: The Ultimates
+		item: Thunderbolts
+		item: Underworld
+		item: Warbound
 		item: X-Men
 	item:
 		name: DC Teams
@@ -186,6 +210,7 @@ insert symbol menu:
 		item: JLA
 		item: JSA
 		item: Shadowpact
+		item: Speed Force
 		item: Team Superman
 		item: Teen Titans
 	item:
