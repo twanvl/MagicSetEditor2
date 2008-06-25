@@ -285,7 +285,7 @@ void SymbolFont::drawSymbol(RotatedDC& dc, RealRect sym_rect, double font_size, 
 	dc.DrawBitmap(bmp, align_in_rect(align, dc.trInvS(RealSize(bmp.GetWidth(), bmp.GetHeight())), sym_rect));
 	
 	// 2. draw text
-	if (text.empty()) return;
+	if (text.empty() || !sym.text_font) return;
 	// subtract margins from size
 	sym_rect.x      += font_size * sym.text_margin_left;
 	sym_rect.y      += font_size * sym.text_margin_top;
@@ -319,7 +319,7 @@ void SymbolFont::drawSymbol(RotatedDC& dc, RealRect sym_rect, double font_size, 
 
 Image SymbolFont::getImage(double font_size, const DrawableSymbol& sym) {
 	if (!sym.symbol) return Image(1,1);
-	if (sym.draw_text.empty()) return sym.symbol->getImage(*this, font_size);
+	if (sym.draw_text.empty() || !sym.symbol->text_font) return sym.symbol->getImage(*this, font_size);
 	// with text
 	Bitmap bmp(sym.symbol->getImage(*this, font_size));
 	// memory dc to work with
