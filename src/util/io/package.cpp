@@ -310,7 +310,7 @@ void Package::loadZipStream() {
 	while (true) {
 		wxZipEntry* entry = zipStream->GetNextEntry();
 		if (!entry) break;
-		String name = normalize_internal_filename(entry->GetName());
+		String name = normalize_internal_filename(entry->GetName(wxPATH_UNIX));
 		files[name].zipEntry = entry;
 	}
 	zipStream->CloseEntry();
