@@ -181,8 +181,10 @@ bool KeywordReminderTextValue::checkScript(const ScriptP& script) {
 		Context& ctx = set.cards.empty() ? set.getContext() : set.getContext(set.cards.front());
 		LocalScope scope(ctx);
 		for (size_t i = 0 ; i < keyword.parameters.size() ; ++i) {
-			String param = String(_("param")) << (int)(i+1);
-			ctx.setVariable(param, to_script(param));
+			const KeywordParam& kwp = *keyword.parameters[i];
+			String param_name = String(_("param")) << (int)(i+1);
+			String param_value = _("<atom-kwpph>") + (kwp.placeholder.empty() ? kwp.name : kwp.placeholder) + _("</atom-kwpph>");
+			ctx.setVariable(param_name, new_intrusive4<KeywordParamValue>(kwp.name, _(""), _(""), param_value));
 		}
 		script->eval(ctx);
 		errors.clear();
