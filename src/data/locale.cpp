@@ -28,6 +28,7 @@ DECLARE_TYPEOF(map<String COMMA SubLocaleP>);
 LocaleP the_locale;
 
 String Locale::typeName() const { return _("locale"); }
+Version Locale::fileVersion() const { return file_version_locale; }
 
 LocaleP Locale::byName(const String& name) {
 	return package_manager.open<Locale>(name + _(".mse-locale"));

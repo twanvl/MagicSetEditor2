@@ -50,10 +50,19 @@ struct Version {
 extern const Version app_version;
 extern const Char* version_suffix;
 
-/// File version, usually the same as program version,
+/// Which version of MSE are the files we write out compatible with?
 /** When no files are changed the file version is not incremented
  */
-extern const Version file_version;
+extern const Version file_version_locale;
+extern const Version file_version_set;
+extern const Version file_version_game;
+extern const Version file_version_stylesheet;
+extern const Version file_version_symbol_font;
+extern const Version file_version_export_template;
+extern const Version file_version_installer;
+extern const Version file_version_symbol;
+extern const Version file_version_clipboard;
+extern const Version file_version_script;
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

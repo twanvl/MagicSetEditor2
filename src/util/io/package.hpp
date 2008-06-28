@@ -133,8 +133,8 @@ class Package : public IntrusivePtrVirtualBase {
 	}
 	
 	template <typename T>
-	void writeFile(const String& file, const T& obj) {
-		Writer writer(openOut(file));
+	void writeFile(const String& file, const T& obj, Version file_version) {
+		Writer writer(openOut(file), file_version);
 		writer.handle(obj);
 	}
 	
@@ -229,6 +229,8 @@ class Packaged : public Package {
 	virtual String typeName() const = 0;
 	/// Can be overloaded to do validation after loading
 	virtual void validate(Version file_app_version);
+	/// What file version should be used for writing files?
+	virtual Version fileVersion() const = 0;
 	
 	DECLARE_REFLECTION_VIRTUAL();
 	
@@ -244,6 +246,7 @@ class Packaged : public Package {
 class IncludePackage : public Packaged {
   protected:
 	String typeName() const;
+	Version fileVersion() const;
 	DECLARE_REFLECTION();
 };
 

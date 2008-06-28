@@ -35,6 +35,7 @@ class ExportTemplate : public Packaged {
 	
 	static String typeNameStatic();
 	virtual String typeName() const;
+	Version fileVersion() const;
 	virtual void validate(Version = app_version);
   private:
 	DECLARE_REFLECTION();

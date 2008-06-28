@@ -113,6 +113,7 @@ class Set : public Packaged {
 	void clearOrderCache();
 	
 	virtual String typeName() const;
+	Version fileVersion() const;
 	/// Validate that the set is correctly loaded
 	virtual void validate(Version = app_version);
 	

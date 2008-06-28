@@ -69,6 +69,7 @@ class Game : public Packaged {
 	
 	static String typeNameStatic();
 	virtual String typeName() const;
+	Version fileVersion() const;
 	
   protected:
 	virtual void validate(Version);

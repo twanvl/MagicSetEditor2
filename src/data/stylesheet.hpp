@@ -64,6 +64,7 @@ class StyleSheet : public Packaged {
 	
 	static String typeNameStatic();
 	virtual String typeName() const;
+	Version fileVersion() const;
 	/// Validate the stylesheet
 	virtual void validate(Version = app_version);
 	

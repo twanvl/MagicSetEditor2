@@ -70,6 +70,7 @@ class SymbolFont : public Packaged {
 	
 	static String typeNameStatic();
 	virtual String typeName() const;
+	Version fileVersion() const;
 	
 	/// Generate a 'insert symbol' menu.
 	/** This class owns the menu!

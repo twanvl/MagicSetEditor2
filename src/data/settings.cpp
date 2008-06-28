@@ -277,6 +277,6 @@ void Settings::read() {
 }
 
 void Settings::write() {
-	Writer writer(new_shared1<wxFileOutputStream>(settingsFile()));
+	Writer writer(new_shared1<wxFileOutputStream>(settingsFile()), app_version);
 	writer.handle(*this);
 }

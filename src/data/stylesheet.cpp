@@ -63,6 +63,7 @@ String StyleSheet::stylesheetName() const {
 
 String StyleSheet::typeNameStatic() { return _("style"); }
 String StyleSheet::typeName() const { return _("style"); }
+Version StyleSheet::fileVersion() const { return file_version_stylesheet; }
 
 void StyleSheet::validate(Version ver) {
 	Packaged::validate(ver);

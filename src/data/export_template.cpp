@@ -20,6 +20,7 @@ ExportTemplate::ExportTemplate()
 
 String ExportTemplate::typeNameStatic() { return _("export-template"); }
 String ExportTemplate::typeName() const { return _("export-template"); }
+Version ExportTemplate::fileVersion() const { return file_version_export_template; }
 
 void ExportTemplate::validate(Version) {
 	if (!game) {

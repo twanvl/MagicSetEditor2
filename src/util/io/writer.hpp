@@ -26,7 +26,7 @@ typedef shared_ptr<wxOutputStream> OutputStreamP;
 class Writer {
   public:
 	/// Construct a writer that writes to the given output stream
-	Writer(const OutputStreamP& output);
+	Writer(const OutputStreamP& output, Version file_app_version);
 	
 	/// Tell the reflection code we are not reading
 	inline bool reading()   const { return false; }
@@ -34,9 +34,6 @@ class Writer {
 	inline bool isComplex() const { return false; }
 	inline void addAlias(int, const Char*, const Char*) {}
 	inline void handleIgnore(int, const Char*) {}
-	
-	/// Write the application version
-	void handleAppVersion();
 	
 	// --------------------------------------------------- : Handling objects
 	/// Handle an object: write it under the given name

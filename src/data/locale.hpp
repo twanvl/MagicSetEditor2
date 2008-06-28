@@ -51,6 +51,7 @@ class Locale : public Packaged {
 	
   protected:
 	String typeName() const;
+	Version fileVersion() const;
 	DECLARE_REFLECTION();
 };
 

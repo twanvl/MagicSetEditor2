@@ -15,18 +15,15 @@
 
 // ----------------------------------------------------------------------------- : Writer
 
-Writer::Writer(const OutputStreamP& output)
+Writer::Writer(const OutputStreamP& output, Version file_app_version)
 	: indentation(0), just_opened(false)
 	, output(output), stream(*output)
 {
 	stream.WriteString(BYTE_ORDER_MARK);
-	handleAppVersion();
+	handle(_("mse_version"), file_app_version);
 }
 
 
-void Writer::handleAppVersion() {
-	handle(_("mse_version"), app_version);
-}
 
 void Writer::enterBlock(const Char* name) {
 	// indenting into a sub-block?

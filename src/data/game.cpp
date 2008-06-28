@@ -39,6 +39,7 @@ bool Game::isMagic() const {
 
 String Game::typeNameStatic() { return _("game"); }
 String Game::typeName() const { return _("game"); }
+Version Game::fileVersion() const { return file_version_game; }
 
 IMPLEMENT_REFLECTION(Game) {
 	REFLECT_BASE(Packaged);

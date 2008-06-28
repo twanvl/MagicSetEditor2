@@ -50,14 +50,18 @@ template <> void GetDefaultMember::handle(const Version& v) {
 // ----------------------------------------------------------------------------- : Versions
 
 // NOTE: Don't use leading zeroes, they mean octal
-const Version app_version  = 306; // 0.3.6
+const Version app_version  = 307; // 0.3.7
 #ifdef UNICODE
 const Char* version_suffix = _(" (beta)");
 #else
 const Char* version_suffix = _(" (beta, ascii build)");
 #endif
 
-/*  Changes:
+/// Which version of MSE are the files we write out compatible with?
+/*  The saved files will have these version numbers attached.
+ *  They should be updated whenever a change breaks backwards compatability.
+ *
+ *  Changes:
  *     0.2.0 : start of version numbering practice
  *     0.2.2 : _("include file")
  *     0.2.6 : fix in settings loading
@@ -70,4 +74,13 @@ const Char* version_suffix = _(" (beta, ascii build)");
  *     0.3.5 : word lists, symbol font 'as text'
  *     0.3.6 : free rotation, rotation behaviour changed. 
  */
-const Version file_version = 306; // 0.3.6
+const Version file_version_locale          = 307; // 0.3.7
+const Version file_version_set             = 306; // 0.3.6
+const Version file_version_game            = 307; // 0.3.7
+const Version file_version_stylesheet      = 307; // 0.3.7
+const Version file_version_symbol_font     = 306; // 0.3.6
+const Version file_version_export_template = 307; // 0.3.7
+const Version file_version_installer       = 307; // 0.3.7
+const Version file_version_symbol          = 305; // 0.3.5
+const Version file_version_clipboard       = 306; // 0.3.6
+const Version file_version_script          = 307; // 0.3.7

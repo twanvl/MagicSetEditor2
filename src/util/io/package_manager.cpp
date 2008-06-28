@@ -310,7 +310,7 @@ void PackageDirectory::loadDatabase() {
 }
 
 void PackageDirectory::saveDatabase() {
-	Writer writer(new_shared1<wxFileOutputStream>(databaseFile()));
+	Writer writer(new_shared1<wxFileOutputStream>(databaseFile()), app_version);
 	writer.handle(*this);
 }
 String PackageDirectory::databaseFile() {

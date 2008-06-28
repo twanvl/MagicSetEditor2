@@ -40,6 +40,7 @@ SymbolFont::~SymbolFont() {
 
 String SymbolFont::typeNameStatic() { return _("symbol-font"); }
 String SymbolFont::typeName() const { return _("symbol-font"); }
+Version SymbolFont::fileVersion() const { return file_version_symbol_font; }
 
 SymbolFontP SymbolFont::byName(const String& name) {
 	return package_manager.open<SymbolFont>(

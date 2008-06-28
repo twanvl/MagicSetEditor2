@@ -530,13 +530,13 @@ void Packaged::loadFully() {
 
 void Packaged::save() {
 	WITH_DYNAMIC_ARG(writing_package, this);
-	writeFile(typeName(), *this);
+	writeFile(typeName(), *this, fileVersion());
 	referenceFile(typeName());
 	Package::save();
 }
 void Packaged::saveAs(const String& package, bool remove_unused) {
 	WITH_DYNAMIC_ARG(writing_package, this);
-	writeFile(typeName(), *this);
+	writeFile(typeName(), *this, fileVersion());
 	referenceFile(typeName());
 	Package::saveAs(package, remove_unused);
 }
@@ -574,6 +574,7 @@ void Packaged::requireDependency(Packaged* package) {
 // ----------------------------------------------------------------------------- : IncludePackage
 
 String IncludePackage::typeName() const { return _("include"); }
+Version IncludePackage::fileVersion() const { return file_version_script; }
 
 IMPLEMENT_REFLECTION(IncludePackage) {
 	REFLECT_BASE(Packaged);

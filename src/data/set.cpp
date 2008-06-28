@@ -119,6 +119,7 @@ String Set::identification() const {
 
 
 String Set::typeName() const { return _("set"); }
+Version Set::fileVersion() const { return file_version_set; }
 
 // fix values for versions < 0.2.7
 void fix_value_207(const ValueP& value) {

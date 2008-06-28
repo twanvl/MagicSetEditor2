@@ -35,6 +35,7 @@ DECLARE_POINTER_TYPE(wxZipInputStream);
 // ----------------------------------------------------------------------------- : Installer
 
 String Installer::typeName() const { return _("installer"); }
+Version Installer::fileVersion() const { return file_version_installer; }
 
 IMPLEMENT_REFLECTION(Installer) {
 	REFLECT_BASE(Packaged);
