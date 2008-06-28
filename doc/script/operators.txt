@@ -15,9 +15,10 @@ MSE script supports most basic mathamatical operators:
 | @-a@		@-(3 + 2) == -5@	Negate a number (make it negative if positive and vice versa)
 
 ===The + operator===
-The @+@ operator has three functions
+The @+@ operator has four functions
 * It adds [[type:int]]s (also [[type:double]]s), @1+1 == 2@
 * It concatenates strings, @"1" + "1" == "11"@
+* It concatenates lists, @[1] + [1] == [1,1]@
 * It composes [[type:function]]s @(f + g) () == g( input: f() )@
 
 --Comparison--
