@@ -56,6 +56,7 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:combined_editor]]		Use one field to edit multiple others.
 | [[fun:primary_choice]]		Return the top level choice chosen from a choice field.
 | [[fun:chosen]]			Is the given choice selected in a multiple choice value?
+| [[fun:count_chosen]]			Count then number of choices selected in a multiple choice value.
 | [[fun:require_choice]]		Require that at least one of the given choices is selected.
 | [[fun:exclusive_choice]]		Require that at most one of the given choices is selected.
 | [[fun:require_exclusive_choice]]	Require that exactly one of the given choices is selected.

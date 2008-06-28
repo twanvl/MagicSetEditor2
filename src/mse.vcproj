@@ -3481,6 +3481,9 @@
 					RelativePath="..\doc\function\copy_file.txt">
 				</File>
 				<File
+					RelativePath="..\doc\function\count_chosen.txt">
+				</File>
+				<File
 					RelativePath="..\doc\function\crop.txt">
 				</File>
 				<File

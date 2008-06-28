@@ -41,6 +41,7 @@ enum InstructionType
 ,	I_BINARY		= 12 ///< arg = 2ary instr : pop 2 values, apply a function, push the result
 ,	I_TERNARY		= 13 ///< arg = 3ary instr : pop 3 values, apply a function, push the result
 ,	I_QUATERNARY	= 14 ///< arg = 4ary instr : pop 4 values, apply a function, push the result
+,	I_DUP			= 15 ///< arg = int        : duplicate the k-from-top element of the stack
 };
 
 /// Types of unary instructions (taking one argument from the stack)
@@ -117,6 +118,7 @@ enum Variable
 ,	SCRIPT_VAR_order
 ,	SCRIPT_VAR_filter
 ,	SCRIPT_VAR_choice
+,	SCRIPT_VAR_choices
 ,	SCRIPT_VAR_format
 ,	SCRIPT_VAR_tag
 ,	SCRIPT_VAR_contents
@@ -204,3 +206,4 @@ class Script : public ScriptValue {
 
 // ----------------------------------------------------------------------------- : EOF
 #endif
+ 

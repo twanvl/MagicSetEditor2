@@ -177,6 +177,11 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 					instrQuaternary(i.instr4, a, b, c, d);
 					break;
 				}
+				// Duplicate stack
+				case I_DUP: {
+					stack.push_back(stack.at(stack.size() - i.data - 1));
+					break;
+				}
 			}
 		}
 		

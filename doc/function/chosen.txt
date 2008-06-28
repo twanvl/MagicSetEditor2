@@ -15,3 +15,6 @@ Is the given choice selected in the [[type:value#multiple_choice|multiple choice
 > chosen(choice: "red",  "blue")       ==  false
 > chosen(choice: "red",  "red, blue")  ==  true
 > chosen(choice: "blue", "red, blue")  ==  true
+
+--See also--
+| [[fun:count_chosen]]		Count then number of choices selected in a multiple choice value.

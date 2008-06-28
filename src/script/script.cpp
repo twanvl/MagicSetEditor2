@@ -60,6 +60,7 @@ void init_script_variables() {
 	Var(order);
 	Var(filter);
 	Var(choice);
+	Var(choices);
 	Var(format);
 	Var(tag);
 	Var(contents);
@@ -199,13 +200,14 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 				case I_RGBA:		ret += _("rgba");		break;
 			}
 			break;
+		case I_DUP:			ret += _("dup");				break;
 	}
 	// arg
 	switch (i.instr) {
 		case I_PUSH_CONST: case I_MEMBER_C:							// const
 			ret += _("\t") + constants[i.data]->typeName();
 			break;
-		case I_JUMP: case I_JUMP_IF_NOT: case I_LOOP: case I_MAKE_OBJECT: case I_CALL: case I_CLOSURE:	// int
+		case I_JUMP: case I_JUMP_IF_NOT: case I_LOOP: case I_MAKE_OBJECT: case I_CALL: case I_CLOSURE: case I_DUP:	// int
 			ret += String::Format(_("\t%d"), i.data);
 			break;
 		case I_GET_VAR: case I_SET_VAR: case I_NOP:					// variable
@@ -232,7 +234,7 @@ const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) 
 		// skip an instruction
 		switch (instr->instr) {
 			case I_PUSH_CONST:
-			case I_GET_VAR:
+			case I_GET_VAR: case I_DUP:
 				to_skip -= 1; break; // nett stack effect +1
 			case I_BINARY:
 				to_skip += 1; break; // nett stack effect 1-2 == -1

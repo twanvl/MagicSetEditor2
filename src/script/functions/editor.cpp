@@ -203,19 +203,23 @@ SCRIPT_FUNCTION(primary_choice) {
 
 // ----------------------------------------------------------------------------- : Multiple choice values
 
+/// Iterate over a comma separated list
+bool next_choice(size_t& start, size_t& end, const String& input) {
+	if (start >= input.size()) return false;
+	// ingore whitespace
+	while (start < input.size() && input.GetChar(start) == _(' ')) ++start;
+	// find end
+	end = input.find_first_of(_(','), start);
+	if (end == String::npos) end = input.size();
+	return true;
+}
+
 /// Is the given choice active?
 bool chosen(const String& choice, const String& input) {
-	for (size_t pos = 0 ; pos < input.size() ; ) {
-		if (input.GetChar(pos) == _(' ')) {
-			++pos; // ingore whitespace
-		} else {
-			// does this choice match the one asked about?
-			size_t end = input.find_first_of(_(','), pos);
-			if (end == String::npos) end = input.size();
-			if (end - pos == choice.size() && is_substr(input, pos, choice)) {
-				return true;
-			}
-			pos = end + 1;
+	for (size_t start = 0, end = 0 ; next_choice(start,end,input) ; start = end+1 ) {
+		// does this choice match the one asked about?
+		if (end - start == choice.size() && is_substr(input, start, choice)) {
+			return true;
 		}
 	}
 	return false;
@@ -236,29 +240,22 @@ String filter_choices(const String& input, const vector<String>& choices, int mi
 	if (choices.empty()) return input; // do nothing, shouldn't happen, but better make sure
 	String ret;
 	int count = 0;
-	vector<bool> seen(choices.size()); // which choices have we seen?
-	for (size_t pos = 0 ; pos < input.size() ; ) {
-		if (input.GetChar(pos) == _(' ')) {
-			++pos; // ingore whitespace
-		} else {
-			// does this choice match the one asked about?
-			size_t end = input.find_first_of(_(','), pos);
-			if (end == String::npos) end = input.size();
-			// is this choice in choices
-			bool in_choices = false;
-			for (size_t i = 0 ; i < choices.size() ; ++i) {
-				if (!seen[i] && is_substr(input, pos, choices[i])) {
-					seen[i] = true; ++count;
-					in_choices = true;
-					break;
-				}
+	vector<bool> seen(choices.size()); // which choices have we seen in input?
+	// walk over the input
+	for (size_t start = 0, end = 0 ; next_choice(start,end,input) ; start = end +1) {
+		// is this choice in choices
+		bool in_choices = false;
+		for (size_t i = 0 ; i < choices.size() ; ++i) {
+			if (!seen[i] && is_substr(input, start, choices[i])) {
+				seen[i] = true; ++count;
+				in_choices = true;
+				break;
 			}
-			// is this choice unaffected?
-			if (!in_choices) {
-				if (!ret.empty()) ret += _(", ");
-				ret += input.substr(pos, end - pos);
-			}
-			pos = end + 1;
+		}
+		// is this choice unaffected?
+		if (!in_choices) {
+			if (!ret.empty()) ret += _(", ");
+			ret += input.substr(start, end - start);
 		}
 	}
 	// keep more choices
@@ -301,12 +298,23 @@ String filter_choices(const String& input, const vector<String>& choices, int mi
 }
 
 // read 'choice#' arguments
-void read_choices_param(Context& ctx, vector<String>& choices) {
-	for (int i = 0 ; ; ++i) {
-		String name = _("choice"); if (i > 0) name = name << i;
-		SCRIPT_OPTIONAL_PARAM_N(String, name, choice) {
-			choices.push_back(choice);
-		} else if (i > 0) break;
+void read_choices_param(Context& ctx, vector<String>& choices_out) {
+	SCRIPT_OPTIONAL_PARAM_C(String,choices) {
+		for (size_t start = 0, end = 0 ; next_choice(start,end,choices) ; start = end + 1) {
+			choices_out.push_back(choices.substr(start,end-start));
+		}
+	} else {
+		// old style: separate arguments
+		SCRIPT_OPTIONAL_PARAM_C(String,choice) {
+			choices_out.push_back(choice);
+		} else {
+			for (int i = 1 ; ; ++i) {
+				String name = _("choice");
+				SCRIPT_OPTIONAL_PARAM_N(String, name << i, choice) {
+					choices_out.push_back(choice);
+				} else break;
+			}
+		}
 	}
 }
 
@@ -345,6 +353,28 @@ SCRIPT_FUNCTION(remove_choice) {
 	SCRIPT_RETURN(filter_choices(input, choices, 0, 0, _("")));
 }
 
+// count how many choices are active
+SCRIPT_FUNCTION(count_chosen) {
+	SCRIPT_PARAM_C(String,input);
+	SCRIPT_OPTIONAL_PARAM_C(String,choices) {
+		// only count specific choices
+		int count = 0;
+		for (size_t start = 0, end = 0 ; next_choice(start,end,choices) ; start = end + 1) {
+			if (chosen(choices.substr(start,end-start),input)) ++count;
+		}
+		SCRIPT_RETURN(count);
+	} else {
+		// count all choices => count comma's + 1
+		if (input.empty()) {
+			SCRIPT_RETURN(0);
+		} else {
+			int count = 1;
+			FOR_EACH(c, input) if (c == _(',')) ++count;
+			SCRIPT_RETURN(count);
+		}
+	}
+}
+
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_editor_functions(Context& ctx) {
@@ -352,6 +382,7 @@ void init_script_editor_functions(Context& ctx) {
 	ctx.setVariable(_("combined editor"),          script_combined_editor);
 	ctx.setVariable(_("primary choice"),           script_primary_choice);
 	ctx.setVariable(_("chosen"),                   script_chosen);
+	ctx.setVariable(_("count chosen"),             script_count_chosen);
 	ctx.setVariable(_("require choice"),           script_require_choice);
 	ctx.setVariable(_("exclusive choice"),         script_exclusive_choice);
 	ctx.setVariable(_("require exclusive choice"), script_require_exclusive_choice);

@@ -325,6 +325,11 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					a = dependency_dummy;
 					break;
 				}
+				// Duplicate stack
+				case I_DUP: {
+					stack.push_back(stack.at(stack.size() - i.data - 1));
+					break;
+				}
 			}
 		}
 		

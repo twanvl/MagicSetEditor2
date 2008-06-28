@@ -1,0 +1,24 @@
+Function: count_chosen
+
+DOC_MSE_VERSION: since 0.3.7
+
+--Usage--
+> count_chosen(choices: some_string, some_multiple_choice_value)
+
+Coint the number of choices that are selected in a [[type:value#multiple_choice|multiple choice value]].
+
+If the @choices@ parameter is given then only choices from that list are counted.
+
+--Parameters--
+! Parameter	Type				Description
+| @input@	[[type:string]]			Multiple choice value to look in.
+| @choices@	optional [[type:string]]	A comma separated list of choices to look for.
+
+--Examples--
+> count_chosen("")                                 ==  0
+> count_chosen("red")                              ==  1
+> count_chosen("red, green")                       ==  2
+> count_chosen("red, green", choices: "red,blue")  ==  1
+
+--See also--
+| [[fun:chosen]]		Is a given choice selected in a multiple choice value?

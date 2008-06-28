@@ -52,6 +52,7 @@ $built_in_functions = array(
 	'combined_editor'	=>'',
 	'primary_choice'	=>'',
 	'chosen'		=>'',
+	'count_chosen'		=>'',
 	'require_choice'	=>'',
 	'exclusive_choice'	=>'',
 	'require_exclusive_choice'=>'',
