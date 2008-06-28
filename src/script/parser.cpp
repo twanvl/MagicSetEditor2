@@ -559,18 +559,44 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 				int line = input.getLineNumber();
 				parseOper(input, script, PREC_ALL); // condition
 				size_t end = input.peek().pos;
-				String message = String::Format(_("Assertion failure on line %d: "), line) + input.getSourceCode(start,end);
+				String message = String::Format(_("Assertion failure on line %d:\n   expected: "), line) + input.getSourceCode(start,end);
 				expectToken(input, _(")"), &token);
-				// compile into:  if condition then nil else warning("condition")
-				unsigned jmpElse = script.addInstruction(I_JUMP_IF_NOT);	// jnz lbl_else
-				script.addInstruction(I_PUSH_CONST, script_nil);			// push nil
-				unsigned jmpEnd = script.addInstruction(I_JUMP);			// jump lbl_end
-				script.comeFrom(jmpElse);									// lbl_else:
-				script.addInstruction(I_PUSH_CONST, script_warning);		// push warning
-				script.addInstruction(I_PUSH_CONST, message);				// push "condition"
-				script.addInstruction(I_CALL, 1);							// call
-				script.addInstruction(I_NOP,  SCRIPT_VAR_input);			// (input:)
-				script.comeFrom(jmpEnd);									// lbl_end:
+				if (script.getInstructions().back().instr == I_BINARY && script.getInstructions().back().instr2 == I_EQ) {
+					// compile "assert(x == y)" into "
+					message += _("\n   found: ");
+					script.getInstructions().pop_back();   // remove ==
+					script.addInstruction(I_DUP, 1);       // duplicate X
+					script.addInstruction(I_DUP, 1);       // duplicate Y
+					script.addInstruction(I_BINARY, I_EQ); //
+					unsigned jmpElse = script.addInstruction(I_JUMP_IF_NOT);	// jnz lbl_else
+					script.addInstruction(I_PUSH_CONST, script_nil);			// push nil
+					unsigned jmpEnd = script.addInstruction(I_JUMP);			// jump lbl_end
+					script.comeFrom(jmpElse);									// lbl_else:
+					script.addInstruction(I_PUSH_CONST, script_warning);		// push warning
+					script.addInstruction(I_PUSH_CONST, message);				//    push "condition"
+					script.addInstruction(I_DUP, 3);							//    duplicate X
+					script.addInstruction(I_BINARY, I_ADD);						//   add
+					script.addInstruction(I_PUSH_CONST, String(_(" != ")));		//   push " != "
+					script.addInstruction(I_BINARY, I_ADD);						//  add
+					script.addInstruction(I_DUP, 2);							//  duplicate Y
+					script.addInstruction(I_BINARY, I_ADD);						// add
+					script.addInstruction(I_CALL, 1);							// call
+					script.addInstruction(I_NOP,  SCRIPT_VAR_input);			// (input:)
+					script.comeFrom(jmpEnd);									// lbl_end:
+					script.addInstruction(I_BINARY, I_POP);						// pop Y_copy
+					script.addInstruction(I_BINARY, I_POP);						// pop X_copy
+				} else {
+					// compile into:  if condition then nil else warning("condition")
+					unsigned jmpElse = script.addInstruction(I_JUMP_IF_NOT);	// jnz lbl_else
+					script.addInstruction(I_PUSH_CONST, script_nil);			// push nil
+					unsigned jmpEnd = script.addInstruction(I_JUMP);			// jump lbl_end
+					script.comeFrom(jmpElse);									// lbl_else:
+					script.addInstruction(I_PUSH_CONST, script_warning);		// push warning
+					script.addInstruction(I_PUSH_CONST, message);				// push "condition"
+					script.addInstruction(I_CALL, 1);							// call
+					script.addInstruction(I_NOP,  SCRIPT_VAR_input);			// (input:)
+					script.comeFrom(jmpEnd);									// lbl_end:
+				}
 			} else {
 				// variable
 				Variable var = string_to_variable(token.value);
