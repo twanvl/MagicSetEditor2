@@ -266,11 +266,17 @@ class ScriptObject : public ScriptValue {
 	}
 	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const {
 		ScriptValueP it = make_iterator(*value);
-		return it ? it : ScriptValue::makeIterator(thisP);
+		if (it) return it;
+		ScriptValueP d = getDefault();
+		if (d) return d->makeIterator(d);
+		return ScriptValue::makeIterator(thisP);
 	}
 	virtual int itemCount() const {
 		int i = item_count(*value);
-		return i >= 0 ? i : ScriptValue::itemCount();
+		if (i >= 0) return i;
+		ScriptValueP d = getDefault();
+		if (d) return d->itemCount();
+		return ScriptValue::itemCount();
 	}
 	/// Objects can be compared by comparing pointers
 	virtual CompareWhat compareAs(String& compare_str, void const*& compare_ptr) const {
