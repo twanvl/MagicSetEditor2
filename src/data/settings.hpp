@@ -129,11 +129,12 @@ class Settings {
 	/// Add a file to the list of recent files
 	void addRecentFile(const String& filename);
 	
-	// --------------------------------------------------- : Set window size
+	// --------------------------------------------------- : Set window
 	bool set_window_maximized;
 	UInt set_window_width;
 	UInt set_window_height;
 	UInt card_notes_height;
+	bool open_sets_in_new_window;
 	
 	// --------------------------------------------------- : Symbol editor
 	UInt symbol_grid_size;

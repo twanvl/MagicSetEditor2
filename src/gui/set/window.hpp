@@ -66,6 +66,9 @@ class SetWindow : public wxFrame, public SetView {
 	/// Is this the only window that has this set?
 	bool isOnlyWithSet();
 	
+	/// Switch this window to the new set, or open another window for it (depending on the settings)
+	void switchSet(const SetP& new_set);
+	
 	// --------------------------------------------------- : Action related
   protected:
 	/// We want to respond to set changes

@@ -368,6 +368,16 @@ bool SetWindow::askSaveAndContinue() {
 	}
 }
 
+void SetWindow::switchSet(const SetP& new_set) {
+	if (new_set) {
+		if (settings.open_sets_in_new_window) {
+			(new SetWindow(nullptr, new_set))->Show();
+		} else {
+			setSet(new_set);
+		}
+	}
+}
+
 // ----------------------------------------------------------------------------- : Window events - update UI
 
 void SetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
@@ -439,18 +449,19 @@ void SetWindow::updateRecentSets() {
 
 
 void SetWindow::onFileNew(wxCommandEvent&) {
-	if (isOnlyWithSet() && !askSaveAndContinue()) return;
+	if (!settings.open_sets_in_new_window && isOnlyWithSet() && !askSaveAndContinue()) return;
 	// new set?
 	SetP new_set = new_set_window(this);
-	if (new_set) setSet(new_set);
+	switchSet(new_set);
 }
 
 void SetWindow::onFileOpen(wxCommandEvent&) {
-	if (isOnlyWithSet() && !askSaveAndContinue()) return;
+	if (!settings.open_sets_in_new_window && isOnlyWithSet() && !askSaveAndContinue()) return;
 	wxFileDialog dlg(this, _TITLE_("open set"), _(""), _(""), import_formats(), wxOPEN);
 	if (dlg.ShowModal() == wxID_OK) {
 		wxBusyCursor busy;
-		setSet(import_set(dlg.GetPath()));
+		SetP new_set = import_set(dlg.GetPath());
+		switchSet(new_set);
 	}
 }
 
@@ -579,7 +590,7 @@ void SetWindow::onFileReload(wxCommandEvent&) {
 
 void SetWindow::onFileRecent(wxCommandEvent& ev) {
 	wxBusyCursor busy;
-	setSet(import_set(settings.recent_sets.at(ev.GetId() - ID_FILE_RECENT)));
+	switchSet(import_set(settings.recent_sets.at(ev.GetId() - ID_FILE_RECENT)));
 }
 
 void SetWindow::onFileExit(wxCommandEvent&) {
