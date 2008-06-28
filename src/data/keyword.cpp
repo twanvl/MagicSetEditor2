@@ -649,6 +649,7 @@ KeywordParamValue::operator String() const {
 
 KeywordParamValue::operator int()    const { return *to_script(value); } // a bit of a hack
 KeywordParamValue::operator double() const { return *to_script(value); }
+KeywordParamValue::operator bool()   const { return *to_script(value); }
 KeywordParamValue::operator AColor() const { return *to_script(value); }
 int KeywordParamValue::itemCount()   const { return  to_script(value)->itemCount(); }
 

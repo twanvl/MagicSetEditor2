@@ -4,6 +4,12 @@
 
 global $built_in_functions;
 $built_in_functions = array(
+	// conversion
+	'to_string'		=>'',
+	'to_int'		=>'',
+	'to_real'		=>'',
+	'to_boolean'		=>'',
+	'to_color'		=>'',
 	// text
 	'to_upper'		=>'',
 	'to_lower'		=>'',

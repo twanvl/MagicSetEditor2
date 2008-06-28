@@ -29,6 +29,11 @@ template <> inline GeneratedImageP from_script<GeneratedImageP>(const ScriptValu
 	return image_from_script(value);
 }
 
+SCRIPT_FUNCTION(to_image) {
+	SCRIPT_PARAM_C(GeneratedImageP, input);
+	return input;
+}
+
 // ----------------------------------------------------------------------------- : Image functions
 
 SCRIPT_FUNCTION(linear_blend) {
@@ -181,6 +186,7 @@ SCRIPT_FUNCTION(built_in_image) {
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_image_functions(Context& ctx) {
+	ctx.setVariable(_("to image"),         script_to_image);
 	ctx.setVariable(_("linear blend"),     script_linear_blend);
 	ctx.setVariable(_("masked blend"),     script_masked_blend);
 	ctx.setVariable(_("combine blend"),    script_combine_blend);

@@ -2,6 +2,13 @@ Script functions by category
 
 These functions are built into the program, other [[type:function]]s can be defined using the scripting language.
 
+! Type conversion		<<<
+| [[fun:to_string]]		Convert any value to a [[type:string]]
+| [[fun:to_int]]		Convert any value to a [[type:int]]
+| [[fun:to_real]]		Convert any value to a [[type:double]]
+| [[fun:to_boolean]]		Convert any value to a [[type:boolean]]
+| [[fun:to_color]]		Convert any value to a [[type:color]]
+
 ! Text manipulation		<<<
 | [[fun:to_upper]]		Convert a string to upper case, @"aBc" -> "ABC"@.
 | [[fun:to_lower]]		Convert a string to lower case, @"aBc" -> "abc"@.

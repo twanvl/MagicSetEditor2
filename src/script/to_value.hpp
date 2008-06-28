@@ -60,6 +60,7 @@ class ScriptDelayedError : public ScriptValue {
 	virtual operator String() const;
 	virtual operator double() const;
 	virtual operator int()    const;
+	virtual operator bool()   const;
 	virtual operator AColor() const;
 	virtual int itemCount() const;
 	virtual CompareWhat compareAs(String&, void const*&) const;
@@ -243,6 +244,7 @@ class ScriptObject : public ScriptValue {
 	virtual operator String() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator String(); }
 	virtual operator double() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator double(); }
 	virtual operator int()    const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator int(); }
+	virtual operator bool()   const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator bool(); }
 	virtual operator AColor() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator AColor(); }
 	virtual ScriptValueP getMember(const String& name) const {
 		GetMember gm(name);

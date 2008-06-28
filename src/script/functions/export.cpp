@@ -419,4 +419,5 @@ void init_script_export_functions(Context& ctx) {
 	ctx.setVariable(_("copy file"),        script_copy_file);
 	ctx.setVariable(_("write text file"),  script_write_text_file);
 	ctx.setVariable(_("write image file"), script_write_image_file);
+	//ctx.setVariable(_("write set file"), script_write_set_file);//TODO
 }

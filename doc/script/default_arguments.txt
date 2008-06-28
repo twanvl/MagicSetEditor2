@@ -1,5 +1,7 @@
 Default arguments
 
+DOC_MSE_VERSION: since 0.3.7
+
 It is possible to declare default arguments for functions using the @@@@ operator.
 > function := { "argument was: " + arg }@(arg:"default")
 If this function is called without the @arg@ argument, then the default value @"default"@ is used instead.
@@ -18,6 +20,8 @@ Defaults are evaluated at the time the @@@@ operator is evaluated, they will not
 > function()                      == "argument was: old default"
 
 --Rule functions--
+
+DOC_MSE_VERSION: until 0.3.6
 
 In earlier versions of MSE some functions were available in a special ''rule form''.
 A call to for example @replace_rule(match:"abc",replace:"xyz")@ is equivalent to @replace@@(match:"abc",replace:"xyz")@ .

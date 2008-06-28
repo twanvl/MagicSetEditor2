@@ -10,4 +10,5 @@ In many cases negative numbers don't make sense, but the program never complains
 > 123 + 456 * -1
 
 --See also--
-* [[type:double]]
+| [[type:double]]		Number type that can contain fractional values.
+| [[fun:to_int]]		Convert a value to an integer number

@@ -12,4 +12,5 @@ Conversion from integer to real numbers happens automatically in scripting.
 > 123.1 + 456 * -1
 
 --See also--
-* [[type:int]]
+| [[type:int]]		Integer numbers
+| [[fun:to_real]]	Convert a value to a real number

@@ -63,7 +63,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 				}
 				// Conditional jump
 				case I_JUMP_IF_NOT: {
-					int condition = *stack.back();
+					bool condition = *stack.back();
 					stack.pop_back();
 					if (!condition) {
 						instr = &script.instructions[i.data];
@@ -322,6 +322,11 @@ class ScriptCompose : public ScriptValue {
 	a = to_script((int)*a  OP  (int)*b);						\
 	break
 
+// operator on bools
+#define OPERATOR_B(OP)											\
+	a = to_script((bool)*a  OP  (bool)*b);						\
+	break
+
 // operator on doubles or ints
 #define OPERATOR_DI(OP)											\
 	if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {			\
@@ -392,9 +397,9 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 				a = to_script((int)*a % (int)*b);
 			}
 			break;
-		case I_AND:		OPERATOR_I(&&);
-		case I_OR:		OPERATOR_I(||);
-		case I_XOR:		a = to_script((bool)*a != (bool)*b); break;
+		case I_AND:		OPERATOR_B(&&);
+		case I_OR:		OPERATOR_B(||);
+		case I_XOR:		OPERATOR_B(!=);
 		case I_EQ:		a = to_script( equal(a,b));  break;
 		case I_NEQ:		a = to_script(!equal(a,b));  break;
 		case I_LT:		OPERATOR_DI(<);

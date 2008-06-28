@@ -27,3 +27,6 @@ For example:
 | @rgba(0,0,0,0)@	transparent		<div style="border:1px solid black; width:30px;height:15px;text-align:center;">over</div>
 | @rgba(255,0,0,128)@	transparent red		<div style="border:1px solid black; background:rgb(255,128,128);color:rgb(128,0,0);width:30px;height:15px;text-align:center;">over</div>
 | @rgba(0,0,255,192)@	transparent blue	<div style="border:1px solid black; background:rgb(64,64,255);color:rgb(0,0,192);width:30px;height:15px;text-align:center;">over</div>
+
+--See also--
+| [[fun:to_color]]		Convert any value to a color

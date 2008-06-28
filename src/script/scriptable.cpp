@@ -23,7 +23,7 @@ DECLARE_TYPEOF_COLLECTION(ScriptParseError);
 void store(const ScriptValueP& val, String& var)              { var = val->toString(); }
 void store(const ScriptValueP& val, int&    var)              { var = *val; }
 void store(const ScriptValueP& val, double& var)              { var = *val; }
-void store(const ScriptValueP& val, bool&   var)              { var = static_cast<int>(*val); }
+void store(const ScriptValueP& val, bool&   var)              { var = *val; }
 void store(const ScriptValueP& val, Color&  var)              { var = (AColor)*val; }
 void store(const ScriptValueP& val, AColor& var)              { var = *val; }
 void store(const ScriptValueP& val, Defaultable<String>& var) { var.assign(*val); }

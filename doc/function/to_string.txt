@@ -1,0 +1,24 @@
+Function: to_string
+
+DOC_MSE_VERSION: since 0.3.7
+
+--Usage--
+> to_string(any value)
+
+Convert any value to a [[type:string]] representation.
+
+
+The @to_string@ function should not be confused with @to_text@,
+ the former converts things like number to string, while the latter removes tags from a [[type:tagged string]].
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	''any type''		Value to convert to a string
+| @format@	''optional''		Formating to apply.
+
+--Examples--
+> to_string(to_color("blue"))       == "rgb(0,0,255)"
+> to_string(10 + 20)                == "30"
+> to_string(10 + 20, format: ".3f") == "30.000"
+> to_string(10 + 20, format: "x")   == "1e" # hexadecimal notation
+

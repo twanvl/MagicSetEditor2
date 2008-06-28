@@ -22,3 +22,5 @@ The operators @or@, @and@ and @xor@ combine two booleans:
 | @true@	@false@		@true@		@false@		@true@
 | @true@	@true@		@true@		@true@		@false@
 
+--See also--
+| [[fun:to_boolean]]		Convert a value to a boolean

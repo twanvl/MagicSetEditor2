@@ -22,6 +22,7 @@ DECLARE_POINTER_TYPE(ScriptValue);
 enum ScriptType
 {	SCRIPT_NIL
 ,	SCRIPT_INT
+,	SCRIPT_BOOL
 ,	SCRIPT_DOUBLE
 ,	SCRIPT_STRING
 ,	SCRIPT_COLOR
@@ -62,7 +63,7 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	/// Convert this value to an integer
 	virtual operator int()    const;
 	/// Convert this value to a boolean
-	inline  operator bool()   const { return (int)*this; }
+	virtual operator bool()   const;
 	/// Convert this value to a color
 	virtual operator AColor() const;
 	

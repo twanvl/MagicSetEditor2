@@ -1,0 +1,24 @@
+Function: to_int
+
+DOC_MSE_VERSION: since 0.3.7
+
+--Usage--
+> to_int(any value)
+
+Convert any value to a [[type:int]].
+
+* Real numbers are rounded towards zero when converted to integer numbers.
+* The boolean value @true@ becomes @1@, while @false@ is converted to @0@.
+* For colors the grayscale value between @0@ and @255@ is returned.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	''any type''		Value to convert to an integer number
+
+--Examples--
+> to_int(1.5)  == "1"
+> to_int("15") == "15"
+> to_int(true) == 1
+
+--See also--
+| [[fun:to_real]]		Convert any value to a [[type:double]]

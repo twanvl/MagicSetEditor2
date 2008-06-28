@@ -161,6 +161,12 @@ function autoformat__handle(&$i, $prefix, $first, $fail_same = false) {
 		} elseif (preg_match("@^//@", $line)) {
 			// ignore
 		
+		// version information block
+		} elseif (preg_match("@^DOC_MSE_VERSION:@", $line)) {
+			$line = preg_replace("@^[A-Z_]+:\s*@",'',$line);
+			$text .= "<div class=\"version-note\">" . $line . "</div>\n";
+			$state = '';
+		
 		// Just text
 		} else if ($fail_same && $autoformat__lines[$i-1]{$len-1} != ' ' && $text != '') {
 			// consecutive * and # lines are different items

@@ -157,7 +157,7 @@ init script:
 	
 	# Number of colors in a card_color
 	card_color_color_count := {
-		chosen(choice:"white") + chosen(choice:"blue") + chosen(choice:"black") + chosen(choice:"red") + chosen(choice:"green") + chosen(choice:"artifact")
+		for each choice in ["white","blue","black","red","green","artifact"] do to_int(chosen())
 	}
 	# Clean up color field
 	card_color_filter := {
@@ -1883,7 +1883,18 @@ pack type:
 		name: Common
 		amount: 11
 		filter: card.rarity == "common"
-
+pack type:
+	name: Additional rare
+	card type:
+		name: Rare
+		amount: 1
+		filter: card.rarity == "rare"
+pack type:
+	name: Additional common
+	card type:
+		name: Rare
+		amount: 1
+		filter: card.rarity == "rare"
 
 
 

@@ -1,0 +1,20 @@
+Function: to_boolean
+
+DOC_MSE_VERSION: since 0.3.7
+
+--Usage--
+> to_boolean(any value)
+
+Convert any value to a [[type:boolean]] representation.
+
+Normally numbers are not converted to booleans automatically, with the to_boolean function @0@ is converted to @false@ while any other number is converted to @true@.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	''any type''		Value to convert to a boolean.
+
+--Examples--
+> to_boolean(true)   == true
+> to_boolean("true") == true
+> to_boolean(1)      == true
+> to_boolean(0)      == false

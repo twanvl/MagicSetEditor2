@@ -25,10 +25,17 @@ Sections between curly braces are interpreted as script code, that is concatenta
 > "ab{1 + 1}c" == "ab2c"
 This can be nested arbitrarily.
 
-The @+@ operator concatenates strings. Numbers and most other values are automatically converted to strings when needed.
+The @+@ operator concatenates strings. Numbers and most other values are automatically converted to strings when needed. This conversion can be forced with the [[fun:to_string]] function.
 
 Using the @[]@ or @.@ operator characters in a string can be selected. 0 is the first character:
 > "xyz"[0]  ==  "x"
 > "xyz".0   ==  "x"  # same thing
+> "xyz".1   ==  "y"
+> "xyz".2   ==  "z"
 It is an error to select characters outside the string
 > "xyz".10  # error
+
+--See also--
+| [[type:tagged string]]	A string containg tags.
+| [[fun:to_string]]		Convert any value to a [[type:string]]
+

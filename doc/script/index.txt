@@ -16,6 +16,7 @@ See also:
 * [[fun:index|Built in functions]]
 
 --Syntax index--
+| @#comment@		Comments ignored by the parser
 | @123@			[[type:int|A literal number]]
 | @"stuff"@		[[type:string|A literal string]]
 | @[a,b,c]@		[[type:list|A literal list]]

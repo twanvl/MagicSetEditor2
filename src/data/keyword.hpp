@@ -176,6 +176,7 @@ class KeywordParamValue : public ScriptValue {
 	virtual String typeName() const;
 	virtual operator String() const;
 	virtual operator int()    const;
+	virtual operator bool()   const;
 	virtual operator double() const;
 	virtual operator AColor() const;
 	virtual int itemCount()   const;

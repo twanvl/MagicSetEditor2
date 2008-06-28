@@ -1,0 +1,20 @@
+Function: to_real
+
+DOC_MSE_VERSION: since 0.3.7
+
+--Usage--
+> to_real(any value)
+
+Convert any value to a [[type:double]].
+
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	''any type''		Value to convert to a real number
+
+--Examples--
+> to_real(1)     == 1.0
+> to_real("1.5") == "1.5"
+
+--See also--
+| [[fun:to_int]]		Convert any value to a [[type:int]]

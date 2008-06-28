@@ -20,6 +20,7 @@ DECLARE_TYPEOF_COLLECTION(pair<Variable COMMA ScriptValueP>);
 
 ScriptValue::operator String()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("string" ))); }
 ScriptValue::operator int()                                 const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("integer" ))); }
+ScriptValue::operator bool()                                const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("boolean" ))); }
 ScriptValue::operator double()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("double"  ))); }
 ScriptValue::operator AColor()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("color"   ))); }
 ScriptValueP ScriptValue::eval(Context&)                    const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("function"))); }
@@ -43,6 +44,8 @@ bool equal(const ScriptValueP& a, const ScriptValueP& b) {
 	ScriptType at = a->type(), bt = b->type();
 	if (at == bt && at == SCRIPT_INT) {
 		return (int)*a == (int)*b;
+	} else if (at == bt && at == SCRIPT_BOOL) {
+		return (bool)*a == (bool)*b;
 	} else if ((at == SCRIPT_INT || at == SCRIPT_DOUBLE) &&
 	           (bt == SCRIPT_INT || bt == SCRIPT_DOUBLE)) {
 		return (double)*a == (double)*b;
@@ -81,6 +84,7 @@ String ScriptDelayedError::typeName() const            { throw error; }
 ScriptDelayedError::operator String() const            { throw error; }
 ScriptDelayedError::operator double() const            { throw error; }
 ScriptDelayedError::operator int()    const            { throw error; }
+ScriptDelayedError::operator bool()   const            { throw error; }
 ScriptDelayedError::operator AColor() const            { throw error; }
 int ScriptDelayedError::itemCount() const              { throw error; }
 CompareWhat ScriptDelayedError::compareAs(String&, void const*&) const { throw error; }
@@ -171,10 +175,11 @@ ScriptValueP to_script(int v) {
 class ScriptBool : public ScriptValue {
   public:
 	ScriptBool(bool v) : value(v) {}
-	virtual ScriptType type() const { return SCRIPT_INT; }
+	virtual ScriptType type() const { return SCRIPT_BOOL; }
 	virtual String typeName() const { return _TYPE_("boolean"); }
 	virtual operator String() const { return value ? _("true") : _("false"); }
-	virtual operator int()    const { return value; }
+	// bools don't autoconvert to int
+	virtual operator bool()   const { return value; }
   private:
 	bool value;
 };
@@ -227,12 +232,17 @@ class ScriptString : public ScriptValue {
 		long l;
 		if (value.ToLong(&l)) {
 			return l;
-		} else if (value == _("yes") || value == _("true")) {
+		} else {
+			throw ScriptError(_ERROR_3_("can't convert value", value, typeName(), _TYPE_("integer")));
+		}
+	}
+	virtual operator bool()   const {
+		if (value == _("yes") || value == _("true")) {
 			return true;
 		} else if (value == _("no") || value == _("false") || value.empty()) {
 			return false;
 		} else {
-			throw ScriptError(_ERROR_3_("can't convert value", value, typeName(), _TYPE_("integer")));
+			throw ScriptError(_ERROR_3_("can't convert value", value, typeName(), _TYPE_("boolean")));
 		}
 	}
 	virtual operator AColor() const {
@@ -270,7 +280,7 @@ class ScriptAColor : public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_COLOR; }
 	virtual String typeName() const { return _TYPE_("color"); }
 	virtual operator AColor() const { return value; }
-	virtual operator int()    const { return (value.Red() + value.Blue() + value.Green()) / 3; }
+	// colors don't auto convert to int, use to_int to force
 	virtual operator String() const {
 		return format_acolor(value);
 	}
@@ -296,6 +306,7 @@ class ScriptNil : public ScriptValue {
 	virtual operator String() const { return wxEmptyString; }
 	virtual operator double() const { return 0.0; }
 	virtual operator int()    const { return 0; }
+	virtual operator bool()   const { return false; }
 	virtual ScriptValueP eval(Context&) const { return script_nil; } // nil() == nil
 };
 

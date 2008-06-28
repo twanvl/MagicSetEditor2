@@ -37,6 +37,75 @@ SCRIPT_FUNCTION(warning) {
 	return script_nil;
 }
 
+// ----------------------------------------------------------------------------- : Conversion
+
+/// Format the input variable based on a printf like style specification
+String format_input(const String& format, Context& ctx) {
+	String fmt = _("%") + replace_all(format, _("%"), _(""));
+	// determine type expected by format string
+	if (format.find_first_of(_("DdIiOoXx")) != String::npos) {
+		SCRIPT_PARAM_C(int, input);
+		return String::Format(fmt, input);
+	} else if (format.find_first_of(_("EeFfGg")) != String::npos) {
+		SCRIPT_PARAM_C(double, input);
+		return String::Format(fmt, input);
+	} else if (format.find_first_of(_("Ss")) != String::npos) {
+		SCRIPT_PARAM_C(String, input);
+		return format_string(fmt, input);
+	} else {
+		throw ScriptError(_ERROR_1_("unsupported format", format));
+	}
+}
+
+SCRIPT_FUNCTION(to_string) {
+	ScriptValueP format = ctx.getVariable(SCRIPT_VAR_format);
+	if (format && format->type() == SCRIPT_STRING) {
+		// format specifier. Be careful, the built in function 'format' has the same name
+		SCRIPT_RETURN(format_input(*format, ctx));
+	} else {
+		// simple conversion
+		SCRIPT_PARAM_C(String, input);
+		SCRIPT_RETURN(input);
+	}
+}
+
+SCRIPT_FUNCTION(to_int) {
+	ScriptValueP input = ctx.getVariable(SCRIPT_VAR_input);
+	ScriptType t = input->type();
+	int result;
+	if (t == SCRIPT_BOOL) {
+		result = (bool)*input ? 1 : 0;
+	} else if (t == SCRIPT_COLOR) {
+		AColor c = (AColor)*input;
+		result = (c.Red() + c.Blue() + c.Green()) / 3;
+	} else {
+		result = (int)*input;
+	}
+	SCRIPT_RETURN(result);
+}
+
+SCRIPT_FUNCTION(to_real) {
+	SCRIPT_PARAM_C(double, input);
+	SCRIPT_RETURN(input);
+}
+
+SCRIPT_FUNCTION(to_boolean) {
+	ScriptValueP input = ctx.getVariable(SCRIPT_VAR_input);
+	ScriptType t = input->type();
+	bool result;
+	if (t == SCRIPT_INT) {
+		result = (int)*input != 0;
+	} else {
+		result = (bool)*input;
+	}
+	SCRIPT_RETURN(result);
+}
+
+SCRIPT_FUNCTION(to_color) {
+	SCRIPT_PARAM_C(AColor, input);
+	SCRIPT_RETURN(input);
+}
+
 // ----------------------------------------------------------------------------- : String stuff
 
 // convert a string to upper case
@@ -95,20 +164,7 @@ SCRIPT_FUNCTION(contains) {
 
 SCRIPT_FUNCTION(format) {
 	SCRIPT_PARAM_C(String, format);
-	String fmt = _("%") + replace_all(format, _("%"), _(""));
-	// determine type expected by format string
-	if (format.find_first_of(_("DdIiOoXx")) != String::npos) {
-		SCRIPT_PARAM_C(int, input);
-		SCRIPT_RETURN(String::Format(fmt, input));
-	} else if (format.find_first_of(_("EeFfGg")) != String::npos) {
-		SCRIPT_PARAM_C(double, input);
-		SCRIPT_RETURN(String::Format(fmt, input));
-	} else if (format.find_first_of(_("Ss")) != String::npos) {
-		SCRIPT_PARAM_C(String, input);
-		SCRIPT_RETURN(format_string(fmt, input));
-	} else {
-		throw ScriptError(_ERROR_1_("unsupported format", format));
-	}
+	SCRIPT_RETURN(format_input(format,ctx));
 }
 
 SCRIPT_FUNCTION(curly_quotes) {
@@ -394,6 +450,12 @@ SCRIPT_FUNCTION(rule) {
 void init_script_basic_functions(Context& ctx) {
 	// debugging
 	ctx.setVariable(_("trace"),                script_trace);
+	// conversion
+	ctx.setVariable(_("to string"),            script_to_string);
+	ctx.setVariable(_("to int"),               script_to_int);
+	ctx.setVariable(_("to real"),              script_to_real);
+	ctx.setVariable(_("to boolean"),           script_to_boolean);
+	ctx.setVariable(_("to color"),             script_to_color);
 	// string
 	ctx.setVariable(_("to upper"),             script_to_upper);
 	ctx.setVariable(_("to lower"),             script_to_lower);

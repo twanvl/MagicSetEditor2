@@ -78,6 +78,7 @@ class ScriptMissingVariable : public ScriptValue {
 	virtual operator String() const { return wxEmptyString; }
 	virtual operator double() const { return 0.0; }
 	virtual operator int()    const { return 0; }
+	virtual operator bool()   const { return false; }
 	virtual ScriptValueP eval(Context&) const { return script_nil; } // nil() == nil
   private:
 	String name; ///< Name of the variable

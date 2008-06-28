@@ -1,5 +1,7 @@
 Function: assert
 
+DOC_MSE_VERSION: since 0.3.7
+
 --Usage--
 > assert(condition)
 
@@ -12,5 +14,5 @@ Note: @assert@ is a special built-in keyword, so that the error message can incl
 | @input@	[[type:boolean]]	Condition to check.
 
 --Examples--
-> assert(1 + 1 == 2) == nil  # nothing happens
-> assert(1 * 1 == 2) == nil  # An error message is shown
+> assert(1 + 1 == 2)   # nothing happens
+> assert(1 * 1 == 2)   # An error message is shown
