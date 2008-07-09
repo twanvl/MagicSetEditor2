@@ -162,7 +162,17 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
 	tabBar->SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
 	
-	setSet(set);
+	try {
+		setSet(set);
+	} catch (...) {
+		// clean up!
+		// if we don't destroy the panel we could crash in ~CardsPanel, since it expected
+		// the insertSymbolMenu to be removed by destroyUI but not deleted.
+		current_panel->destroyUI(GetToolBar(), GetMenuBar());
+		delete find_dialog;
+		set_windows.erase(remove(set_windows.begin(), set_windows.end(), this));
+		throw;
+	}
 	current_panel->Layout();
 }
 
