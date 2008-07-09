@@ -6,9 +6,15 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:to_string]]		Convert any value to a [[type:string]]
 | [[fun:to_int]]		Convert any value to a [[type:int]]
 | [[fun:to_real]]		Convert any value to a [[type:double]]
+| [[fun:to_number]]		Convert any value to a number
 | [[fun:to_boolean]]		Convert any value to a [[type:boolean]]
 | [[fun:to_color]]		Convert any value to a [[type:color]]
-
+	
+! Numbers			<<<
+| [[fun:abs]]			Absolute value
+| [[fun:random_int]]		Generate a random [[type:int]].
+| [[fun:random_real]]		Generate a random [[type:double]].
+	
 ! Text manipulation		<<<
 | [[fun:to_upper]]		Convert a string to upper case, @"aBc" -> "ABC"@.
 | [[fun:to_lower]]		Convert a string to lower case, @"aBc" -> "abc"@.
@@ -37,6 +43,8 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:number_of_items]]	Return the number of items in a list.
 | [[fun:sort_list]]		Sort a list.
 | [[fun:filter_list]]		Filter a list, keeping only elements that match a predicate.
+| [[fun:random_shuffle]]	Randomly shuffle a list.
+| [[fun:random_select]]		Pick random elements from a list.
 	
 ! Keywords			<<<
 | [[fun:expand_keywords]]	Expand the keywords in a piece of text.

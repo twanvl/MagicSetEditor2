@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿mse version: 0.3.7
 short name: Magic
 full name: Magic the Gathering
 installer group: magic/game files
@@ -21,23 +21,23 @@ init script:
 	############################################################## Sorting mana symbols
 	
 	# correctly sort a mana symbol (no guild mana)
-	mana_sort       := sort_rule(order: "XYZI[0123456789]S(WUBRG)")
+	mana_sort       := sort_text@(order: "XYZI[0123456789]S(WUBRG)")
 	# correctly sort guild mana
-	mana_sort_guild := sort_rule(order: "[XYZI01234567890SWUBRG/|]") +
-			replace_rule(
+	mana_sort_guild := sort_text@(order: "[XYZI01234567890SWUBRG/|]") +
+			replace@(
 				match: "./.|././.|./././.|.[|]",
 				in_context: "(^|[^/])<match>($|[^/])",
 				replace: {sort_text(order:"in_place((WUBRG)")}
 			)
-	mana_has_guild := match_rule(match: "[/|]") # Is there guild or half mana in the input?
+	mana_has_guild := match@(match: "[/|]") # Is there guild or half mana in the input?
 	# A mana cost can contain both normal and guild mana
 	mana_filter := to_upper + {
 		if mana_has_guild() then mana_sort_guild()
 		else                     mana_sort()
 	}
 	# Like mana filter, only also allow tap symbols:
-	tap_filter := sort_rule(order: "<TQ>")
-	mana_filter_t := replace_rule(               # Remove [] used for forcing mana symbols
+	tap_filter := sort_text@(order: "<TQ>")
+	mana_filter_t := replace@(               # Remove [] used for forcing mana symbols
 				match: "[\\[\\]]",
 				replace: ""
 			) + { tap_filter() + mana_filter() }
@@ -59,8 +59,8 @@ init script:
 	color_names_4 := { color_name(colors.0) + ", " + color_name(colors.1) + ", " + color_name(colors.2) + ", " + color_name(colors.3) }
 	color_names_5 := { color_name(colors.0) + ", " + color_name(colors.1) + ", " + color_name(colors.2) + ", " + color_name(colors.3) + ", " + color_name(colors.4) }
 	# color based on mana cost, input = a mana cost
-	color_filter  := sort_rule(order: "<WUBRG>")
-	color_filterH := sort_rule(order: "</>")
+	color_filter  := sort_text@(order: "<WUBRG>")
+	color_filterH := sort_text@(order: "</>")
 	mana_to_color := {
 		count  := number_of_items(in: colors)
 		if hybrid == "" then
@@ -86,13 +86,13 @@ init script:
 	# color based on land text box, input = textbox contents
 	color_text_filter :=
 		# remove activation costs
-		replace_rule(
+		replace@(
 			match: "<sym[^>]*>[^<]+</sym[^>]*>"
 			in_context: "(?ix) (\\n|^)[^:]*<match>(,|:) | (pays?|additional|costs?)[ ]<match>",
 			replace: ""
 		) +
 		# keep only mana
-		filter_rule(match: "<sym[^>]*>([^<]+)") + color_filter;
+		filter_text@(match: "<sym[^>]*>([^<]+)") + color_filter;
 	# get the land frame for a "WUBRG"-style input.
 	land_multicolor := {
 		count  := number_of_items(in: colors)
@@ -137,12 +137,12 @@ init script:
 	}
 	
 	# The color of a card
-	is_creature    := match_rule(match: "(?i)Creature")
-	is_tribal      := match_rule(match: "(?i)Tribal")
-	is_artifact    := match_rule(match: "(?i)Artifact")
-	is_land        := match_rule(match: "(?i)Land")
-	is_enchantment := match_rule(match: "(?i)Enchantment")
-	is_spell       := match_rule(match: "(?i)Instant|Sorcery")
+	is_creature    := match@(match: "(?i)Creature")
+	is_tribal      := match@(match: "(?i)Tribal")
+	is_artifact    := match@(match: "(?i)Artifact")
+	is_land        := match@(match: "(?i)Land")
+	is_enchantment := match@(match: "(?i)Enchantment")
+	is_spell       := match@(match: "(?i)Instant|Sorcery")
 	card_color := {
 		# usually the color of mana
 		text_color := text_to_color(rules_text, land: is_land(type));
@@ -156,20 +156,18 @@ init script:
 	};
 	
 	# Number of colors in a card_color
-	card_color_color_count := {
-		for each choice in ["white","blue","black","red","green","artifact"] do to_int(chosen())
-	}
+	card_color_color_count := count_chosen@(choices: "white,blue,black,red,green,artifact")
 	# Clean up color field
 	card_color_filter := {
 		colors := card_color_color_count()
 		if colors > 2 then
 			input := remove_choice(choice: "overlay")
 		if colors > 1 then (
-			input := require_choice(choice1: "multicolor", choice2: "hybrid", choice3: "land", choice4: "artifact")
-			input := exclusive_choice(choice1: "multicolor", choice2: "hybrid")
-			input := require_exclusive_choice(choice1: "horizontal", choice2: "vertical", choice3: "radial", choice4: "overlay")
+			input := require_choice(choices: "multicolor, hybrid, land, artifact")
+			input := exclusive_choice(choices: "multicolor, hybrid")
+			input := require_exclusive_choice(choices: "horizontal, vertical, radial, overlay")
 		) else
-			input := remove_choice(choice1: "radial", choice2: "horizontal", choice3: "vertical", choice4: "overlay", choice5: "hybrid", choice6: "reversed")
+			input := remove_choice(choices: "radial, horizontal, vertical, overlay, hybrid, reversed")
 		if chosen(choice:"overlay") then
 			input := remove_choice(choice: "reversed")
 		input
@@ -192,7 +190,7 @@ init script:
 	}
 	# Process the name for sorting rules (specifically, remove "The", "A", and "And" at the beginning, and make lowercase)
 	sort_name :=
-		replace_rule (match: "^(The|An?) ", replace: "") +
+		replace@(match: "^(The|An?) ", replace: "") +
 		to_lower
 	
 	is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicolor" }
@@ -277,7 +275,7 @@ init script:
 	
 	# replaces — correctly
 	add := "" # default is nothing
-	separate_words := remove_tags + trim + replace_rule(match:" ", replace: {spacer})
+	separate_words := remove_tags + trim + replace@(match:" ", replace: {spacer})
 	for_mana_costs := format_cost := {
 		if input.separator_before == "—" and contains(input.param, match: " ") then (
 			if contains(input.param, match:",") then (
@@ -289,16 +287,16 @@ init script:
 		) else
 			"{add}<param-mana>{input.param}</param-mana>"
 	}
-	alternative_cost := replace_rule(match:"^[A-Z]", replace: { to_lower() })
-	combined_cost := replace_rule(match:", [A-Z]", replace: { to_lower() })+
-		replace_rule(match:",", replace:" and")+
-		replace_rule(match:"^[STQXYZIWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
-		replace_rule(match:"^[A-Z]", replace: { to_lower() })
-	long_dash := replace_rule(match:"-", replace:"—")
+	alternative_cost := replace@(match:"^[A-Z]", replace: { to_lower() })
+	combined_cost := replace@(match:", [A-Z]", replace: { to_lower() })+
+		replace@(match:",", replace:" and")+
+		replace@(match:"^[STQXYZIWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
+		replace@(match:"^[A-Z]", replace: { to_lower() })
+	long_dash := replace@(match:"-", replace:"—")
 	# Utilities for keywords
 	has_cc := { card.casting_cost != "" }
 	has_pt := { card.pt           != "" }
-	contains_target := match_rule(match:"(?i)([^a-z]|^)target([^a-z]|$)")
+	contains_target := match@(match:"(?i)([^a-z]|^)target([^a-z]|$)")
 	is_targeted := { contains_target(card.rule_text) }
 	
 	############################################################## The text box
@@ -328,73 +326,73 @@ init script:
 		 |  <param-cost><match>,		# keyword argument that is declared as cost
 		 ";
 	# truncates the name of legends
-	legend_filter := replace_rule(match:", [A-Z,a-z,Æ,0-9,' ]*", replace: "" )+
-		replace_rule(match:"the [A-Z,a-z,Æ,0-9,' ]*", replace: "" )
+	legend_filter := replace@(match:", [A-Z,a-z,Æ,0-9,' ]*", replace: "" )+
+		replace@(match:"the [A-Z,a-z,Æ,0-9,' ]*", replace: "" )
 	# the rule text filter
 	#  - adds mana symbols
 	#  - makes text in parentheses italic
 	text_filter :=
 		# step 1 : remove all automatic tags
-		tag_remove_rule(tag: "<sym-auto>") +
-		tag_remove_rule(tag: "<i-auto>")   +
+		remove_tag@(tag: "<sym-auto>") +
+		remove_tag@(tag: "<i-auto>")   +
 		# step 2 : reminder text for keywords
-		expand_keywords_rule(
+		expand_keywords@(
 			default_expand: { chosen(choice:mode, set.automatic_reminder_text) },
 			combine:        {
 				if mode == "pseudo" then "<i-auto>{keyword}</i-auto>"
 				else "{keyword}<atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
 			) +
 		# step 2b : move action keywords' reminder text to the end of the line
-		replace_rule(
+		replace@(
 			match: "(<atom-reminder-action>(?:(?!<kw-).)*</atom-reminder-action></kw[^>]*>)(((?!<atom-reminder| ?<kw-)[^\n(])+)",
 			replace: "\\2\\1"
 			) +
 		# step 2c : remove duplicate reminder text
-		replace_rule(
+		replace@(
 			match: "(<atom-reminder-[^>]*>[^)]+[)]</atom-reminder-[^>]*>)([^\n]+)\\1"
 			replace: "\\2\\1"
 			) +
 		# step 3a : expand shortcut words ~ and CARDNAME
-		replace_rule(
+		replace@(
 			match: "~|~THIS~|CARDNAME",
 			in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
 			replace: "<atom-cardname></atom-cardname>"
 			) +
 		# step 3b : expand shortcut words ` and shortened LEGENDNAME
-		replace_rule(
+		replace@(
 			match: "LEGENDNAME",
 			in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
 			replace: "<atom-legname></atom-legname>"
 			) +
 		# step 3c : fill in atom fields
-		tag_contents_rule(
+		tag_contents@(
 			tag: "<atom-cardname>",
 			contents: { if card_name=="" then "CARDNAME" else card_name }
 			) +
-		tag_contents_rule(
+		tag_contents@(
 			tag: "<atom-legname>",
 			contents: { if card_name=="" then "LEGENDNAME" else legend_filter(card_name) }
 			) +
 		# step 4 : explict non mana symbols
-		replace_rule(
+		replace@(
 			match: "\\][STQXYZIWUBRG0-9/|]+\\[",
 			replace: {"<nosym>" + mana_filter_t() + "</nosym>"} ) +
 		# step 5 : add mana & tap symbols
-		replace_rule(
+		replace@(
 			match: "[STQXYZIWUBRG0-9/|]+",
 			in_context: mana_context,
 			replace: {"<sym-auto>" + mana_filter_t() + "</sym-auto>"} ) +
 		# step 5b : add explict mana symbols
-		replace_rule(
+		replace@(
 			match: "\\[[STQXYZIWUBRG0-9/|]+\\]",
 			replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
 		# step 7 : italic reminder text
-		replace_rule(
+		replace@(
 		 	match: "[(]([^)\n]|[(][^)\n]*[)])*[)]?",
 			in_context: "(^|[[:space:]])<match>|<atom-keyword><match></",
 		 	replace: "<i-auto>&</i-auto>") +
 		# step 8 : automatic capitalization
-		replace_rule(
+		replace@(
 			match: "[a-z]",
 			in_context: "[(](<param-[a-z]*>)?<match>[^)]|[ ]*: <param-cost><match>|—<match>| — <match>",
 			replace: to_upper) +
@@ -406,27 +404,27 @@ init script:
 	#  - makes all text italic
 	flavor_text_filter :=
 		# step 1 : remove italic tags
-		tag_remove_rule(tag: "<i-flavor>")   +
+		remove_tag@(tag: "<i-flavor>")   +
 		# step 2 : surround by <i> tags
 		{ "<i-flavor>" + input + "</i-flavor>" } +
 		# curly quotes
 		curly_quotes
 		
 	# Move the cursor past the separator in the p/t and type boxes
-	type_over_pt   := replace_rule(match:"/$", replace:"")
-	type_over_type := replace_rule(match:" ?-$", replace:"")
+	type_over_pt   := replace@(match:"/$", replace:"")
+	type_over_type := replace@(match:" ?-$", replace:"")
 	
 	super_type_filter :=
-		tag_remove_rule(tag: "<word-list-") +
+		remove_tag@(tag: "<word-list-") +
 		type_over_type +
 		{ "<word-list-type>{input}</word-list-type>" }
 	
-	space_to_wltags := replace_rule(match:"( +|<soft> </soft>)",
-	                                replace:{"</word-list-{list_type}>{_1}<word-list-{list_type}>"})
+	space_to_wltags := replace@(match:"( +|<soft> </soft>)",
+	                            replace:{"</word-list-{list_type}>{_1}<word-list-{list_type}>"})
 	sub_type_filter :=
-		tag_remove_rule(tag: "<word-list-") +
-		replace_rule(match: " </soft>$", replace: "") + # remove trailing soft space
-		tag_remove_rule(tag: "<soft") +
+		remove_tag@(tag: "<word-list-") +
+		replace@(match: " </soft>$", replace: "") + # remove trailing soft space
+		remove_tag@(tag: "<soft") +
 		{ list_type := if      is_creature(type)    then "class"
 		               else if is_land(type)        then "land"
 		               else if is_artifact(type)    then "artifact"
@@ -449,9 +447,9 @@ init script:
 		}
 	
 	# all sub types, for word list
-	space_to_comma := replace_rule(match:" ", replace:",")
-	only_first     := replace_rule(match:" .*", replace:"")
-	only_next      := replace_rule(match:"^[^ ]* ?", replace:"")
+	space_to_comma := replace@(match:" ", replace:",")
+	only_first     := replace@(match:" .*", replace:"")
+	only_next      := replace@(match:"^[^ ]* ?", replace:"")
 	all_sub_types := {
 		for each card in set do
 			if contains(card.super_type) then "," + space_to_comma(to_text(card.sub_type))
@@ -472,7 +470,7 @@ init script:
 	
 	typesymbol_for :=
 		to_text +
-		replace_rule(match: "(Legendary|Basic|Snow|World| )", replace: "") +
+		replace@(match: "(Legendary|Basic|Snow|World| )", replace: "") +
 		{ if      input == "Creature"    then "creature"
 		  else if input == "Sorcery"     then "sorcery"
 		  else if input == "Instant"     then "instant"
@@ -490,22 +488,22 @@ init script:
 	############################################################## Statistics utilities
 	
 	# Converted mana cost
-	is_half_mana    := match_rule(match: "1/2|[|][WUBRGS]")
-	is_zero_slash   := match_rule(match: "^0/")
-	is_colored_mana := match_rule(match: "[WUBRG]")
-	only_numbers    := filter_rule(match: "^[0123456789]+")
-	cmc_split := break_rule(match: "(?ix) 1/2 | [|][WUBRG] | ([0-9]+(?!/2)|[WUBRGS])(/[WUBRGS])\{0,4} ")
-	cmc := to_text + { 0 +
+	is_half_mana    := match@(match: "1/2|[|][WUBRGS]")
+	is_zero_slash   := match@(match: "^0/")
+	is_colored_mana := match@(match: "[WUBRG]")
+	only_numbers    := filter_text@(match: "^[0123456789]+")
+	cmc_split := break_text@(match: "(?ix) 1/2 | [|][WUBRG] | ([0-9]+(?!/2)|[WUBRGS])(/[WUBRGS])\{0,4} ")
+	cmc := to_text + {
 		for each sym in cmc_split() do (
 			numbers := only_numbers(sym)
 			if is_half_mana(sym)       then 0.5
 			else if is_zero_slash(sym) then 1 # 0/C
-			else if numbers != ""      then 1 * numbers
+			else if numbers != ""      then to_int(numbers)
 			else                            1 # all other symbols are 1
 		)
 	}
 
-	colored_mana := to_text + { 0 +
+	colored_mana := to_text + {
 		for each sym in cmc_split() do (
 			numbers := only_numbers(sym)
 			if is_colored_mana(sym) then

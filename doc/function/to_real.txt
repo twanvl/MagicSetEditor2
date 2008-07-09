@@ -14,7 +14,8 @@ Convert any value to a [[type:double]].
 
 --Examples--
 > to_real(1)     == 1.0
-> to_real("1.5") == "1.5"
+> to_real("1.5") == 1.5
 
 --See also--
 | [[fun:to_int]]		Convert any value to a [[type:int]]
+| [[fun:to_number]]		Convert any value to a number

@@ -1,0 +1,25 @@
+Function: random_int
+
+DOC_MSE_VERSION: since 0.3.7
+
+--Usage--
+> random_int(begin: lower bound, end: upper bound)
+
+Returns a random [[type:int]] between @begin@ and @end@.
+By default @begin: 0@ is used.
+The random number @x@ will be in the range @begin <= x < end@.
+
+Since the result is random, calling the function twice will give a different answer.
+
+--Parameters--
+! Parameter	Type		Default		Description
+| @begin@	[[type:int]]	@0@		Lower end point of the range the number will be in.
+| @end@		[[type:int]]	''required''	Upper end point of the range the number will be in.
+
+--Examples--
+> random_int(end:10) == 2
+> random_int(end:10) == 5
+> random_int(begin:100, end:200) == 43
+
+--See also--
+| [[fun:random_real]]		Generate a random [[type:double]].

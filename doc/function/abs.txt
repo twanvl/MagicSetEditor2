@@ -1,0 +1,16 @@
+Function: abs
+
+DOC_MSE_VERSION: since 0.3.7
+
+--Usage--
+> abs(some_number)
+
+Returns the absolute value of a number.
+
+--Parameters--
+! Parameter	Type				Description
+| @input@	[[type:int]] or [[type:double]]	Number to determine the absolute value of
+
+--Examples--
+> abs(1.5) == 1.5
+> abs(-1)  == 1

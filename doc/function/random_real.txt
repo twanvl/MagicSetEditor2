@@ -1,0 +1,24 @@
+Function: random_real
+
+DOC_MSE_VERSION: since 0.3.7
+
+--Usage--
+> random_real(begin: lower bound, end: upper bound)
+
+Returns a random [[type:double]] between @begin@ and @end@.
+By default the range @0.0@ to @1.0@ is used.
+
+Since the result is random, calling the function twice will give a different answer.
+
+--Parameters--
+! Parameter	Type		Default		Description
+| @begin@	[[type:double]]	@0.0@		Lower end point of the range the number will be in.
+| @end@		[[type:double]]	@1.0@		Upper end point of the range the number will be in.
+
+--Examples--
+> random_real() == 0.1451651461
+> random_real() == 0.7521351365
+> random_real(begin:100, end:200) == 193.2914351341
+
+--See also--
+| [[fun:random_int]]		Generate a random [[type:int|integer number]].

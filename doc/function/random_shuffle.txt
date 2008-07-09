@@ -1,0 +1,21 @@
+Function: random_shuffle
+
+DOC_MSE_VERSION: since 0.3.7
+
+--Usage--
+> random_shuffle(some_list)
+
+Randomly shuffle a list, putting the elements in a different order.
+
+Since the result is random, calling the function twice will give a different answer.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:list]]		List to shuffle.
+
+--Examples--
+> random_shuffle([1,2,3,4]) == [4,1,2,3]
+> random_shuffle([1,2,3,4]) == [2,3,4,1]
+
+--See also--
+| [[fun:random_select]]		Pick random elements from a list.

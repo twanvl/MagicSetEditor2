@@ -34,6 +34,7 @@ See also:
 | @a / b@		[[script:operators|Floating point division]]
 | @a div b@		[[script:operators|Integer division]]
 | @a mod b@		[[script:operators|Remainder]]
+| @a ^ b@		[[script:operators|Exponentiation]]
 | @not a@		[[type:boolean|Boolean not]]
 | @a and b@		[[type:boolean|Boolean conjunction]]
 | @a or b@		[[type:boolean|Boolean disjunction]]

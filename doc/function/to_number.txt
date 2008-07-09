@@ -1,0 +1,25 @@
+Function: to_number
+
+DOC_MSE_VERSION: since 0.3.7
+
+--Usage--
+> to_number(any value)
+
+Convert any value to a number.
+If the number can be represented as an [[type:int|integer number]] that is done.
+Otherwise it is converted to a [[type:double]].
+
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	''any type''		Value to convert to a number
+
+--Examples--
+> to_number(1)     == 1
+> to_number(1.5)   == 1.5
+> to_number("1")   == 1
+> to_number("1.5") == 1.5
+
+--See also--
+| [[fun:to_int]]		Convert any value to a [[type:int]]
+| [[fun:to_real]]		Convert any value to a [[type:double]]

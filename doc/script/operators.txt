@@ -10,8 +10,11 @@ MSE script supports most basic mathamatical operators:
 | @a - b@	@3 - 2 == 1@		Substract two numbers
 | @a * b@	@3 * 2 == 6@		Multiply two numbers
 | @a / b@	@3 / 2   == 1.5@	Divide two numbers. Does not round, always produces a [[type:double]].
-| @a div b@	@3 div 2 == 1@		Divide two numbers. Rounds towards zero, producing an [[type:int]].<br/>
+| @a div b@	@3 div 2 == 1@		DOC_MSE_VERSION: since 0.3.7
+		 			Divide two numbers. Rounds towards zero, producing an [[type:int]].
 | @a mod b@	@3 mod 2 == 1@		Take the remainder after integer division (modulo)
+| @a ^ b@	@3 ^ 2 == 9@		DOC_MSE_VERSION: since 0.3.7
+		 			Exponentation, raise a to the power b.<br/> The numbers can be [[type:double]]s, so to calculate a square root use @2^0.5 == 1.41421356237@.
 | @-a@		@-(3 + 2) == -5@	Negate a number (make it negative if positive and vice versa)
 
 ===The + operator===
