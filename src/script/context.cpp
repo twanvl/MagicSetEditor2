@@ -403,10 +403,25 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 			}
 			break;
 		case I_POW:
-			if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {
-				a = to_script(pow((double)*a, (double)*b));
+			if (bt == SCRIPT_INT) {
+				int bi = *b;
+				if (at == SCRIPT_DOUBLE) {
+					double aa = *a;
+					if      (bi == 0) a = to_script(1);
+					else if (bi == 1) a = to_script(aa);
+					else if (bi == 2) a = to_script(aa * aa);
+					else if (bi == 3) a = to_script(aa * aa * aa);
+					else              a = to_script(pow(aa,bi));
+				} else {
+					int aa = *a;
+					if      (bi == 0) a = to_script(1);
+					else if (bi == 1) a = to_script(aa);
+					else if (bi == 2) a = to_script(aa * aa);
+					else if (bi == 3) a = to_script(aa * aa * aa);
+					else              a = to_script(pow(aa,bi));
+				}
 			} else {
-				a = to_script(pow((int)*a, (int)*b));
+				a = to_script(pow((double)*a, (double)*b));
 			}
 			break;
 		case I_AND:		OPERATOR_B(&&);
