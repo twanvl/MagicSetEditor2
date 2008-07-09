@@ -14,6 +14,7 @@
 
 class CardViewer;
 class FilteredCardList;
+DECLARE_POINTER_TYPE(PackType);
 
 // ----------------------------------------------------------------------------- : RandomPackPanel
 
@@ -39,6 +40,19 @@ class RandomPackPanel : public SetWindowPanel {
   private:
 	CardViewer*       preview;		///< Card preview
 	FilteredCardList* card_list;	///< The list of cards
+	wxFlexGridSizer*  packsSizer;
+	wxFlexGridSizer*  totalsSizer;
+	
+	struct PackItem {
+		PackTypeP     pack;
+		wxStaticText* label;
+		wxSpinCtrl*   value;
+	};
+	vector<PackItem> packs;
+	
+	struct TotalItem {
+	};
+	vector<TotalItem> totals;
 	
 	/// Generate the cards
 	void generate();

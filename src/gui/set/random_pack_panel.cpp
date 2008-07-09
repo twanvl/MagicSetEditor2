@@ -10,6 +10,11 @@
 #include <gui/set/random_pack_panel.hpp>
 #include <gui/control/card_viewer.hpp>
 #include <gui/control/filtered_card_list.hpp>
+#include <data/game.hpp>
+#include <data/pack.hpp>
+#include <wx/spinctrl.h>
+
+DECLARE_TYPEOF_COLLECTION(PackTypeP);
 
 // ----------------------------------------------------------------------------- : RandomPackPanel
 
@@ -26,9 +31,12 @@ RandomPackPanel::RandomPackPanel(Window* parent, int id)
 		wxSizer* s2 = new wxBoxSizer(wxVERTICAL);
 			wxSizer* s3 = new wxBoxSizer(wxHORIZONTAL);
 				wxSizer* s4 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack selection"));
-				s3->Add(s4,       1, wxEXPAND, 8);
+					packsSizer = new wxFlexGridSizer(0, 2, 4, 8);
+					packsSizer->AddGrowableCol(0);
+					s4->Add(packsSizer, 1, wxEXPAND | wxALL, 4);
+				s3->Add(s4, 1, wxEXPAND, 8);
 				wxSizer* s5 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack totals"));
-				s3->Add(s5,       1, wxEXPAND | wxLEFT, 8);
+				s3->Add(s5, 1, wxEXPAND | wxLEFT, 8);
 				s3->Add(generate, 0, wxALIGN_BOTTOM | wxLEFT, 8);
 			s2->Add(s3, 0, wxEXPAND | wxALL & ~wxTOP, 4);
 			s2->Add(card_list, 1, wxEXPAND);
@@ -40,6 +48,19 @@ RandomPackPanel::RandomPackPanel(Window* parent, int id)
 void RandomPackPanel::onChangeSet() {
 	preview  ->setSet(set);
 	card_list->setSet(set);
+	
+	// add pack controls
+	FOR_EACH(pack, set->game->pack_types) {
+		PackItem i;
+		i.pack  = pack;
+		i.label = new wxStaticText(this, wxID_ANY, pack->name);
+		i.value = new wxSpinCtrl(this, wxID_ANY, _("0"), wxDefaultPosition, wxSize(50,-1));
+		//i.value->SetSizeHints(0,0,50,100);
+		packsSizer->Add(i.label, 0, wxALIGN_CENTER_VERTICAL);
+		packsSizer->Add(i.value, 0, wxEXPAND | wxALIGN_CENTER);
+		packs.push_back(i);
+	}
+	Layout();
 }
 
 // ----------------------------------------------------------------------------- : UI
