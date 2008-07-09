@@ -40,8 +40,8 @@ It is also possible to compare values. All comparisons evaluate to either @true@
 		@"x" <= "y"@	Is a less than b or are they equal?
 | @a >= b@	@2 >= 1@<br/>
 		@"x" >= "x"@	Is a greater than b or are they equal?
-| @min(a,b)@	@min(1,2) == 1@	Returns the smallest of two values.
-| @max(a,b)@	@max(1,2) == 2@	Returns the largest of two values.
+| @min(a,b)@	@min(1,2) == 1@	Returns the smallest of two or more values.
+| @max(a,b)@	@max(1,2) == 2@	Returns the largest of two or more values.
 
 --Booleans--
 [[type:Boolean]]s (for example from comparisons) can be combined using:
@@ -67,6 +67,7 @@ The exact order of precedence is given in the following table,
 higher in the table means that this operator binds tighter to its arguments, @*@ binds tighter then @+@.
 | @a(...)@, @a.b@, @a[b]@	Function calls, property access, see below
 | @-a@, @not@ 			Unary operators
+| @^@ 				Exponentiation
 | @*@, @/@, @div@, @mod@	Multiplication and division
 | @+@, @-@ 			Addition and substraction
 | @==@, @!=@, @<@, @>@, @<=@, @>=@ 	Comparisons
