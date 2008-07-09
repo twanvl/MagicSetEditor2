@@ -58,6 +58,8 @@ void init_script_variables() {
 	VarN(in_context,_("in context"));
 	Var(recursive);
 	Var(order);
+	Var(begin);
+	Var(end);
 	Var(filter);
 	Var(choice);
 	Var(choices);

@@ -119,12 +119,11 @@ class ScriptCollection : public ScriptValue {
 	inline ScriptCollection(const Collection* v) : value(v) {}
 	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
 	virtual String typeName() const { return _TYPE_1_("collection of", type_name(*value->begin())); }
-	virtual ScriptValueP getMember(const String& name) const {
-		long index;
-		if (name.ToLong(&index) && index >= 0 && (size_t)index < value->size()) {
+	virtual ScriptValueP getIndex(int index) const {
+		if (index >= 0 && index < (int)value->size()) {
 			return to_script(value->at(index));
 		} else {
-			return ScriptValue::getMember(name);
+			return ScriptValue::getIndex(index);
 		}
 	}
 	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const {
@@ -196,6 +195,7 @@ class ScriptCustomCollection : public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
 	virtual String typeName() const { return _TYPE_("collection"); }
 	virtual ScriptValueP getMember(const String& name) const;
+	virtual ScriptValueP getIndex(int index) const;
 	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
 	virtual int itemCount() const { return (int)value.size(); }
 	/// Collections can be compared by comparing pointers
@@ -210,6 +210,8 @@ class ScriptCustomCollection : public ScriptValue {
 	map<String,ScriptValueP> key_value;
 };
 
+DECLARE_POINTER_TYPE(ScriptCustomCollection);
+
 // ----------------------------------------------------------------------------- : Collections : concatenation
 
 /// Script value containing the concatenation of two collections
@@ -219,6 +221,7 @@ class ScriptConcatCollection : public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
 	virtual String typeName() const { return _TYPE_("collection"); }
 	virtual ScriptValueP getMember(const String& name) const;
+	virtual ScriptValueP getIndex(int index) const;
 	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
 	virtual int itemCount() const { return a->itemCount() + b->itemCount(); }
 	/// Collections can be compared by comparing pointers
@@ -260,6 +263,7 @@ class ScriptObject : public ScriptValue {
 			}
 		}
 	}
+	virtual ScriptValueP getIndex(int index) const { ScriptValueP d = getDefault(); return d ? d->getIndex(index) : ScriptValue::getIndex(index); }
 	virtual ScriptValueP dependencyMember(const String& name, const Dependency& dep) const {
 		mark_dependency_member(*value, name, dep);
 		return getMember(name);

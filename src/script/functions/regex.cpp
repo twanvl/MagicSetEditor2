@@ -344,7 +344,7 @@ class ScriptBreakRule : public ScriptValue {
 	virtual String typeName() const { return _("break_rule"); }
 	virtual ScriptValueP eval(Context& ctx) const {
 		SCRIPT_PARAM_C(String, input);
-		intrusive_ptr<ScriptCustomCollection> ret(new ScriptCustomCollection);
+		ScriptCustomCollectionP ret(new ScriptCustomCollection);
 		while (regex.Matches(input)) {
 			// match, append to result
 			size_t start, len;
@@ -393,7 +393,7 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(break_text) {
 	SCRIPT_PARAM_C(String, input);
 	SCRIPT_PARAM_C(ScriptRegexP, match);
 	SCRIPT_OPTIONAL_PARAM_C_(ScriptRegexP, in_context);
-	intrusive_ptr<ScriptCustomCollection> ret(new ScriptCustomCollection);
+	ScriptCustomCollectionP ret(new ScriptCustomCollection);
 	// find all matches
 	while (match->regex.Matches(input)) {
 		// match, append to result

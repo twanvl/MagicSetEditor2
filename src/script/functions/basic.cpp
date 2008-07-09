@@ -89,6 +89,21 @@ SCRIPT_FUNCTION(to_real) {
 	SCRIPT_RETURN(input);
 }
 
+SCRIPT_FUNCTION(to_number) {
+	ScriptValueP input = ctx.getVariable(SCRIPT_VAR_input);
+	ScriptType t = input->type();
+	if (t == SCRIPT_BOOL) {
+		SCRIPT_RETURN((bool)*input ? 1 : 0);
+	} else if (t == SCRIPT_COLOR) {
+		AColor c = (AColor)*input;
+		SCRIPT_RETURN( (c.Red() + c.Blue() + c.Green()) / 3 );
+	} else if (t == SCRIPT_DOUBLE) {
+		SCRIPT_RETURN((double)*input);
+	} else {
+		SCRIPT_RETURN((int)*input);
+	}
+}
+
 SCRIPT_FUNCTION(to_boolean) {
 	ScriptValueP input = ctx.getVariable(SCRIPT_VAR_input);
 	ScriptType t = input->type();
@@ -104,6 +119,30 @@ SCRIPT_FUNCTION(to_boolean) {
 SCRIPT_FUNCTION(to_color) {
 	SCRIPT_PARAM_C(AColor, input);
 	SCRIPT_RETURN(input);
+}
+
+// ----------------------------------------------------------------------------- : Math
+
+SCRIPT_FUNCTION(abs) {
+	ScriptValueP input = ctx.getVariable(SCRIPT_VAR_input);
+	ScriptType t = input->type();
+	if (t == SCRIPT_DOUBLE) {
+		SCRIPT_RETURN(fabs((double)*input));
+	} else {
+		SCRIPT_RETURN(abs((int)*input));
+	}
+}
+
+SCRIPT_FUNCTION(random_real) {
+	SCRIPT_PARAM_DEFAULT_C(double, begin, 0.0);
+	SCRIPT_PARAM_DEFAULT_C(double, end,   1.0);
+	SCRIPT_RETURN( (double)rand() / RAND_MAX * (end - begin) + begin );
+}
+
+SCRIPT_FUNCTION(random_int) {
+	SCRIPT_PARAM_DEFAULT_C(int, begin, 0);
+	SCRIPT_PARAM_C(        int, end);
+	SCRIPT_RETURN( rand() % (end - begin) + begin );
 }
 
 // ----------------------------------------------------------------------------- : String stuff
@@ -142,8 +181,8 @@ SCRIPT_FUNCTION(trim) {
 // extract a substring
 SCRIPT_FUNCTION(substring) {
 	SCRIPT_PARAM_C(String, input);
-	SCRIPT_PARAM_DEFAULT(int, begin, 0);
-	SCRIPT_PARAM_DEFAULT(int, end,   INT_MAX);
+	SCRIPT_PARAM_DEFAULT_C(int, begin, 0);
+	SCRIPT_PARAM_DEFAULT_C(int, end,   INT_MAX);
 	if (begin < 0) begin = 0;
 	if (end   < 0) end   = 0;
 	if (begin >= end || (size_t)begin >= input.size()) {
@@ -302,7 +341,7 @@ ScriptValueP sort_script(Context& ctx, const ScriptValueP& list, ScriptValue& or
 		}
 		sort(values.begin(), values.end(), smart_less_first);
 		// return collection
-		intrusive_ptr<ScriptCustomCollection> ret(new ScriptCustomCollection());
+		ScriptCustomCollectionP ret(new ScriptCustomCollection());
 		FOR_EACH(v, values) {
 			ret->value.push_back(v.second);
 		}
@@ -365,7 +404,7 @@ SCRIPT_FUNCTION(filter_list) {
 	SCRIPT_PARAM_C(ScriptValueP, input);
 	SCRIPT_PARAM_C(ScriptValueP, filter);
 	// filter a collection
-	intrusive_ptr<ScriptCustomCollection> ret(new ScriptCustomCollection());
+	ScriptCustomCollectionP ret(new ScriptCustomCollection());
 	ScriptValueP it = input->makeIterator(input);
 	while (ScriptValueP v = it->next()) {
 		ctx.setVariable(SCRIPT_VAR_input, v);
@@ -381,6 +420,57 @@ SCRIPT_FUNCTION(sort_list) {
 	SCRIPT_PARAM_C(ScriptValueP, input);
 	SCRIPT_PARAM_N(ScriptValueP, _("order by"), order_by);
 	return sort_script(ctx, input, *order_by);
+}
+
+SCRIPT_FUNCTION(random_shuffle) {
+	SCRIPT_PARAM_C(ScriptValueP, input);
+	// convert to CustomCollection
+	ScriptCustomCollectionP ret(new ScriptCustomCollection());
+	ScriptValueP it = input->makeIterator(input);
+	while (ScriptValueP v = it->next()) {
+		ret->value.push_back(v);
+	}
+	// shuffle
+	random_shuffle(ret->value.begin(), ret->value.end());
+	return ret;
+}
+
+SCRIPT_FUNCTION(random_select) {
+	SCRIPT_PARAM_C(ScriptValueP, input);
+	SCRIPT_OPTIONAL_PARAM(int, count) {
+		// pick a single one
+		int itemCount = input->itemCount();
+		if (itemCount == 0) {
+			throw ScriptError(String::Format(_("Can not select a random item from an empty collection"), count));
+		}
+		return input->getIndex( rand() % itemCount );
+	} else {
+		// pick many
+		SCRIPT_PARAM_DEFAULT_C(bool, replace, false);
+		ScriptCustomCollectionP ret(new ScriptCustomCollection);
+		int itemCount = input->itemCount();
+		if (replace) {
+			if (itemCount == 0) {
+				throw ScriptError(String::Format(_("Can not select %d items from an empty collection"), count));
+			}
+			for (int i = 0 ; i < count ; ++i) {
+				ret->value.push_back( input->getIndex( rand() % itemCount ) );
+			}
+		} else {
+			if (count > itemCount) {
+				throw ScriptError(String::Format(_("Can not select %d items from a collection conaining only %d items"), count, input->itemCount()));
+			}
+			// transfer all to ret and shuffle
+			ScriptValueP it = input->makeIterator(input);
+			while (ScriptValueP v = it->next()) {
+				ret->value.push_back(v);
+			}
+			random_shuffle(ret->value.begin(), ret->value.end());
+			// keep only the first 'count'
+			ret->value.resize(count);
+		}
+		return ret;
+	}
 }
 
 // ----------------------------------------------------------------------------- : Keywords
@@ -454,8 +544,13 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("to string"),            script_to_string);
 	ctx.setVariable(_("to int"),               script_to_int);
 	ctx.setVariable(_("to real"),              script_to_real);
+	ctx.setVariable(_("to number"),            script_to_number);
 	ctx.setVariable(_("to boolean"),           script_to_boolean);
 	ctx.setVariable(_("to color"),             script_to_color);
+	// math
+	ctx.setVariable(_("abs"),                  script_abs);
+	ctx.setVariable(_("random_real"),          script_random_real);
+	ctx.setVariable(_("random_int"),           script_random_int);
 	// string
 	ctx.setVariable(_("to upper"),             script_to_upper);
 	ctx.setVariable(_("to lower"),             script_to_lower);
@@ -482,6 +577,8 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("number of items"),      script_number_of_items);
 	ctx.setVariable(_("filter list"),          script_filter_list);
 	ctx.setVariable(_("sort list"),            script_sort_list);
+	ctx.setVariable(_("random shuffle"),       script_random_shuffle);
+	ctx.setVariable(_("random select"),        script_random_select);
 	// keyword
 	ctx.setVariable(_("expand keywords"),      script_expand_keywords);
 	ctx.setVariable(_("expand keywords rule"), new_intrusive1<ScriptRule>(script_expand_keywords));

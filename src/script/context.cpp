@@ -402,6 +402,13 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 				a = to_script((int)*a % (int)*b);
 			}
 			break;
+		case I_POW:
+			if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {
+				a = to_script(pow((double)*a, (double)*b));
+			} else {
+				a = to_script(pow((int)*a, (int)*b));
+			}
+			break;
 		case I_AND:		OPERATOR_B(&&);
 		case I_OR:		OPERATOR_B(||);
 		case I_XOR:		OPERATOR_B(!=);
@@ -442,7 +449,7 @@ void instrQuaternary(QuaternaryInstructionType i, ScriptValueP& a, const ScriptV
 // ----------------------------------------------------------------------------- : Simple instructions : objects and closures
 
 void Context::makeObject(size_t n) {
-	intrusive_ptr<ScriptCustomCollection> ret(new ScriptCustomCollection());
+	ScriptCustomCollectionP ret(new ScriptCustomCollection());
 	size_t begin = stack.size() - 2 * n;
 	for (size_t i = 0 ; i < n ; ++i) {
 		const ScriptValueP& key = stack[begin + 2 * i];

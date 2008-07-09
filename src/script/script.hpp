@@ -63,6 +63,7 @@ enum BinaryInstructionType
 ,	I_FDIV			///< floating point division
 ,	I_DIV			///< integer division
 ,	I_MOD			///< modulus
+,	I_POW			///< power
 // Logical
 ,	I_AND			///< logical and
 ,	I_OR			///< logical or
@@ -116,6 +117,8 @@ enum Variable
 ,	SCRIPT_VAR_in_context
 ,	SCRIPT_VAR_recursive
 ,	SCRIPT_VAR_order
+,	SCRIPT_VAR_begin
+,	SCRIPT_VAR_end
 ,	SCRIPT_VAR_filter
 ,	SCRIPT_VAR_choice
 ,	SCRIPT_VAR_choices

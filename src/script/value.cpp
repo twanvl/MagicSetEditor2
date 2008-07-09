@@ -24,7 +24,6 @@ ScriptValue::operator bool()                                const { throw Script
 ScriptValue::operator double()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("double"  ))); }
 ScriptValue::operator AColor()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("color"   ))); }
 ScriptValueP ScriptValue::eval(Context&)                    const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("function"))); }
-ScriptValueP ScriptValue::getMember(const String& name)     const { return delayError(_ERROR_2_("has no member", typeName(), name));              }
 ScriptValueP ScriptValue::next()                                  { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
 ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
 int          ScriptValue::itemCount()                       const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
@@ -32,11 +31,27 @@ CompareWhat  ScriptValue::compareAs(String& compare_str, void const*& compare_pt
 	compare_str = toString();
 	return COMPARE_AS_STRING;
 }
+ScriptValueP ScriptValue::getMember(const String& name) const {
+	long index;
+	if (name.ToLong(&index)) {
+		return getIndex(index);
+	} else {
+		return delayError(_ERROR_2_("has no member", typeName(), name));
+	}
+}
+ScriptValueP ScriptValue::getIndex(int index) const {
+	return delayError(_ERROR_2_("has no member", typeName(), String()<<index));
+}
+
 
 ScriptValueP ScriptValue::simplifyClosure(ScriptClosure&) const { return ScriptValueP(); }
 
 ScriptValueP ScriptValue::dependencyMember(const String& name, const Dependency&) const { return dependency_dummy; }
 ScriptValueP ScriptValue::dependencies(Context&,               const Dependency&) const { return dependency_dummy; }
+
+bool approx_equal(double a, double b) {
+	return a == b || fabs(a - b) < 1e-14;
+}
 
 /// compare script values for equallity
 bool equal(const ScriptValueP& a, const ScriptValueP& b) {
@@ -48,7 +63,7 @@ bool equal(const ScriptValueP& a, const ScriptValueP& b) {
 		return (bool)*a == (bool)*b;
 	} else if ((at == SCRIPT_INT || at == SCRIPT_DOUBLE) &&
 	           (bt == SCRIPT_INT || bt == SCRIPT_DOUBLE)) {
-		return (double)*a == (double)*b;
+		return approx_equal( (double)*a, (double)*b);
 	} else if (at == SCRIPT_COLLECTION && bt == SCRIPT_COLLECTION) {
 		// compare each element
 		if (a->itemCount() != b->itemCount()) return false;
@@ -338,12 +353,14 @@ ScriptValueP ScriptCustomCollection::getMember(const String& name) const {
 	if (it != key_value.end()) {
 		return it->second;
 	} else {
-		long index;
-		if (name.ToLong(&index) && index >= 0 && (size_t)index < value.size()) {
-			return value.at(index);
-		} else {
-			return ScriptValue::getMember(name);
-		}
+		return ScriptValue::getMember(name);
+	}
+}
+ScriptValueP ScriptCustomCollection::getIndex(int index) const {
+	if (index >= 0 && (size_t)index < value.size()) {
+		return value.at(index);
+	} else {
+		return ScriptValue::getIndex(index);
 	}
 }
 ScriptValueP ScriptCustomCollection::makeIterator(const ScriptValueP& thisP) const {
@@ -379,6 +396,14 @@ ScriptValueP ScriptConcatCollection::getMember(const String& name) const {
 		return b->getMember(String() << (index - itemsInA));
 	} else {
 		return b->getMember(name);
+	}
+}
+ScriptValueP ScriptConcatCollection::getIndex(int index) const {
+	int itemsInA = a->itemCount();
+	if (index < itemsInA) { 
+		return a->getIndex(index);
+	} else {
+		return b->getIndex(index - itemsInA);
 	}
 }
 ScriptValueP ScriptConcatCollection::makeIterator(const ScriptValueP& thisP) const {

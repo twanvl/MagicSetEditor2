@@ -119,8 +119,7 @@ class TokenIterator {
 
 bool isAlpha_(Char c) { return isAlpha(c) || c==_('_'); }
 bool isAlnum_(Char c) { return isAlnum(c) || c==_('_'); }
-bool isOper  (Char c) { return c==_('+') || c==_('-') || c==_('*') || c==_('/') || c==_('!') || c==_('.') || c==_('@') ||
-                               c==_(':') || c==_('=') || c==_('<') || c==_('>') || c==_(';') || c==_(',');  }
+bool isOper  (Char c) { return wxStrchr(_("+-*/!.@%^&:=<>;,"),c) != nullptr; }
 bool isLparen(Char c) { return c==_('(') || c==_('[') || c==_('{'); }
 bool isRparen(Char c) { return c==_(')') || c==_(']') || c==_('}'); }
 bool isDigitOrDot(Char c) { return isDigit(c) || c==_('.'); }
@@ -347,6 +346,7 @@ enum Precedence
 ,	PREC_CMP		// == != < > <= >=
 ,	PREC_ADD		// + -
 ,	PREC_MUL		// * / mod
+,	PREC_POW		// ^		(right associative)
 ,	PREC_UNARY		// - not    (unary operators)
 ,	PREC_FUN		// [] () .  (function call, member)
 ,	PREC_STRING		// +{ }+    (smart string operators)
@@ -680,10 +680,11 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 		else if (minPrec <= PREC_CMP    && token==_(">="))    parseOper(input, script, PREC_ADD,   I_BINARY, I_GE);
 		else if (minPrec <= PREC_ADD    && token==_("+"))     parseOper(input, script, PREC_MUL,   I_BINARY, I_ADD);
 		else if (minPrec <= PREC_ADD    && token==_("-"))     parseOper(input, script, PREC_MUL,   I_BINARY, I_SUB);
-		else if (minPrec <= PREC_MUL    && token==_("*"))     parseOper(input, script, PREC_UNARY, I_BINARY, I_MUL);
-		else if (minPrec <= PREC_MUL    && token==_("/"))     parseOper(input, script, PREC_UNARY, I_BINARY, I_FDIV);
-		else if (minPrec <= PREC_MUL    && token==_("div"))   parseOper(input, script, PREC_UNARY, I_BINARY, I_DIV);
-		else if (minPrec <= PREC_MUL    && token==_("mod"))   parseOper(input, script, PREC_UNARY, I_BINARY, I_MOD);
+		else if (minPrec <= PREC_MUL    && token==_("*"))     parseOper(input, script, PREC_POW,   I_BINARY, I_MUL);
+		else if (minPrec <= PREC_MUL    && token==_("/"))     parseOper(input, script, PREC_POW,   I_BINARY, I_FDIV);
+		else if (minPrec <= PREC_MUL    && token==_("div"))   parseOper(input, script, PREC_POW,   I_BINARY, I_DIV);
+		else if (minPrec <= PREC_MUL    && token==_("mod"))   parseOper(input, script, PREC_POW,   I_BINARY, I_MOD);
+		else if (minPrec <= PREC_POW    && token==_("^"))     parseOper(input, script, PREC_POW,   I_BINARY, I_POW);
 		else if (minPrec <= PREC_FUN    && token==_(".")) { // get member by name
 			const Token& token = input.read();
 			if (token == TOK_NAME || token == TOK_INT || token == TOK_DOUBLE || token == TOK_STRING) {

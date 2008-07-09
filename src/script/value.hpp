@@ -96,6 +96,8 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	virtual ScriptValueP next();
 	/// Return the number of items in this value (assuming it is a collection)
 	virtual int itemCount() const;
+	/// Get a member at the given index
+	virtual ScriptValueP getIndex(int index) const;
 };
 
 extern ScriptValueP script_nil;   ///< The preallocated nil value
