@@ -72,21 +72,29 @@ SCRIPT_FUNCTION(to_string) {
 SCRIPT_FUNCTION(to_int) {
 	ScriptValueP input = ctx.getVariable(SCRIPT_VAR_input);
 	ScriptType t = input->type();
-	int result;
-	if (t == SCRIPT_BOOL) {
-		result = (bool)*input ? 1 : 0;
-	} else if (t == SCRIPT_COLOR) {
-		AColor c = (AColor)*input;
-		result = (c.Red() + c.Blue() + c.Green()) / 3;
-	} else {
-		result = (int)*input;
+	try {
+		int result;
+		if (t == SCRIPT_BOOL) {
+			result = (bool)*input ? 1 : 0;
+		} else if (t == SCRIPT_COLOR) {
+			AColor c = (AColor)*input;
+			result = (c.Red() + c.Blue() + c.Green()) / 3;
+		} else {
+			result = (int)*input;
+		}
+		SCRIPT_RETURN(result);
+	} catch (const ScriptError& e) {
+		return new_intrusive1<ScriptDelayedError>(e);
 	}
-	SCRIPT_RETURN(result);
 }
 
 SCRIPT_FUNCTION(to_real) {
-	SCRIPT_PARAM_C(double, input);
-	SCRIPT_RETURN(input);
+	try {
+		SCRIPT_PARAM_C(double, input);
+		SCRIPT_RETURN(input);
+	} catch (const ScriptError& e) {
+		return new_intrusive1<ScriptDelayedError>(e);
+	}
 }
 
 SCRIPT_FUNCTION(to_number) {
@@ -100,25 +108,41 @@ SCRIPT_FUNCTION(to_number) {
 	} else if (t == SCRIPT_DOUBLE) {
 		SCRIPT_RETURN((double)*input);
 	} else {
-		SCRIPT_RETURN((int)*input);
+		String s = input->toString();
+		long l; double d;
+		if (s.ToLong(&l)) {
+			SCRIPT_RETURN((int)l);
+		} else if (s.ToDouble(&d)) {
+			SCRIPT_RETURN((double)d);
+		} else {
+			return delayError(_ERROR_2_("can't convert", input->typeName(), _TYPE_("double")));
+		}
 	}
 }
 
 SCRIPT_FUNCTION(to_boolean) {
 	ScriptValueP input = ctx.getVariable(SCRIPT_VAR_input);
-	ScriptType t = input->type();
-	bool result;
-	if (t == SCRIPT_INT) {
-		result = (int)*input != 0;
-	} else {
-		result = (bool)*input;
+	try {
+		ScriptType t = input->type();
+		bool result;
+		if (t == SCRIPT_INT) {
+			result = (int)*input != 0;
+		} else {
+			result = (bool)*input;
+		}
+		SCRIPT_RETURN(result);
+	} catch (const ScriptError& e) {
+		return new_intrusive1<ScriptDelayedError>(e);
 	}
-	SCRIPT_RETURN(result);
 }
 
 SCRIPT_FUNCTION(to_color) {
-	SCRIPT_PARAM_C(AColor, input);
-	SCRIPT_RETURN(input);
+	try {
+		SCRIPT_PARAM_C(AColor, input);
+		SCRIPT_RETURN(input);
+	} catch (const ScriptError& e) {
+		return new_intrusive1<ScriptDelayedError>(e);
+	}
 }
 
 // ----------------------------------------------------------------------------- : Math

@@ -8,8 +8,13 @@ $built_in_functions = array(
 	'to_string'		=>'',
 	'to_int'		=>'',
 	'to_real'		=>'',
+	'to_number'		=>'',
 	'to_boolean'		=>'',
 	'to_color'		=>'',
+	// numbers
+	'abs'			=>'',
+	'random_int'		=>'',
+	'random_real'		=>'',
 	// text
 	'to_upper'		=>'',
 	'to_lower'		=>'',
@@ -36,6 +41,8 @@ $built_in_functions = array(
 	'number_of_items'	=>'',
 	'sort_list'		=>'',
 	'filter_list'		=>'',
+	'random_shuffle'	=>'',
+	'random_select'		=>'',
 	// keywords
 	'expand_keywords'	=>'',	'expand_keywords_rule'=>'expand_keywords',
 	'keyword_usage'		=>'',
@@ -159,7 +166,7 @@ function highlight_script($code) {
 			if ($matches[2] == '{') $string .= 's';
 		} else if (preg_match("@^\\#.*@",$code, $matches)) {
 			$ret .= "<span class='hl-comment'>" . $matches[0] . "</span>";
-		} else if (preg_match("@^([-+*/=!.\@]|&lt;|&gt;)+|^:=@",$code, $matches)) {
+		} else if (preg_match("@^([-+*/=!.\@^]|&lt;|&gt;)+|^:=@",$code, $matches)) {
 			$ret .= "<span class='hl-op'>" . $matches[0] . "</span>";
 		} else if (preg_match("@^([}]|[\\(\\)\\[\\]{,]+)@",$code, $matches)) {
 			$ret .= "<span class='hl-paren'>" . $matches[0] . "</span>";

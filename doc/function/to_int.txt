@@ -21,6 +21,10 @@ Convert any value to a [[type:int]].
 > to_int(true)  == 1
 > to_int(rgb(255,255,255)) == 255
 
+Use @or else@ to recover from errors:
+> to_number("not a number") or else 0  ==  0
+> to_number("123")          or else 0  ==  123
+
 --See also--
 | [[fun:to_real]]		Convert any value to a [[type:double]]
 | [[fun:to_number]]		Convert any value to a number

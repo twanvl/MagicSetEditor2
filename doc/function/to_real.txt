@@ -16,6 +16,10 @@ Convert any value to a [[type:double]].
 > to_real(1)     == 1.0
 > to_real("1.5") == 1.5
 
+Use @or else@ to recover from errors:
+> to_number("not a number") or else 0.0  ==  0.0
+> to_number("123")          or else 0.0  ==  123.0
+
 --See also--
 | [[fun:to_int]]		Convert any value to a [[type:int]]
 | [[fun:to_number]]		Convert any value to a number
