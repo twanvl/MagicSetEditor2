@@ -1831,68 +1831,66 @@ auto replace:
 
 ############################################################## Card packs
 
-pack type:
-	name: Starter pack
+pack item:
+	name: Common
+	filter: card.rarity == "common"
+pack item:
+	name: Uncommon
+	filter: card.rarity == "uncommon"
+pack item:
+	name: Rare
+	filter: card.rarity == "rare"
+pack item:
+	name: Basic Land
+	filter: card.type == "Plains"
+	filter: card.type == "Island"
+	filter: card.type == "Swamp"
+	filter: card.type == "Mountain"
+	filter: card.type == "Forest"
+	# TODO: support something like this:
+	#type: cyclic
+
 pack type:
 	name: Tournament pack
-	card type:
+	item:
 		name: Rare
 		amount: 3
-		filter: card.rarity == "rare"
-	card type:
+	item:
 		name: Uncommon
 		amount: 9
-		filter: card.rarity == "uncommon"
-	card type:
+	item:
 		name: Common
 		amount: 33
-		filter: card.rarity == "common"
-	card type:
-		name: Plains
-		amount: 6
-		filter: card.type == "Plains"
-	card type:
-		name: Island
-		amount: 6
-		filter: card.type == "Island"
-	card type:
-		name: Swamp
-		amount: 6
-		filter: card.type == "Swamp"
-	card type:
-		name: Mountain
-		amount: 6
-		filter: card.type == "Mountain"
-	card type:
-		name: Forest
-		amount: 6
-		filter: card.type == "Forest"
+	item:
+		name: Basic Land
+		amount: 30
 pack type:
 	name: Booster pack
-	card type:
+	item:
 		name: Rare
 		amount: 1
-		filter: card.rarity == "rare"
-	card type:
+	item:
 		name: Uncommon
 		amount: 3
-		filter: card.rarity == "uncommon"
-	card type:
+	item:
 		name: Common
 		amount: 11
-		filter: card.rarity == "common"
-pack type:
-	name: Additional rare
-	card type:
-		name: Rare
-		amount: 1
-		filter: card.rarity == "rare"
 pack type:
 	name: Additional common
-	card type:
+	item:
+		name: Common
+pack type:
+	name: Additional uncommon
+	item:
+		name: Uncommon
+pack type:
+	name: Additional rare
+	item:
 		name: Rare
-		amount: 1
-		filter: card.rarity == "rare"
+pack type:
+	name: Additional special
+	item:
+		name: Special
 
 
 

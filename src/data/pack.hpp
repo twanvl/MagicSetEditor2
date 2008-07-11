@@ -13,7 +13,7 @@
 #include <util/reflect.hpp>
 #include <script/scriptable.hpp>
 
-DECLARE_POINTER_TYPE(CardType);
+DECLARE_POINTER_TYPE(PackItemRef);
 DECLARE_POINTER_TYPE(Card);
 class Set;
 
@@ -24,25 +24,47 @@ class PackType : public IntrusivePtrBase<PackType> {
   public:
 	PackType();
 	
-	String            name;			///< Name of this pack
-	vector<CardTypeP> card_types;	///< Cards in this pack
-	Scriptable<bool>  enabled;		///< Is this pack enabled?
+	String               name;    ///< Name of this pack
+	Scriptable<bool>     enabled; ///< Is this pack enabled?
+	vector<PackItemRefP> items;   ///< Cards in this pack
 	
-	/// Generate a random pack of cards
-	void generate(Set& set, vector<CardP>& out);
+	/// Generate a random pack of cards, add them to out
+	void generate(Set& set, vector<CardP>& out) const;
 	
   private:
 	DECLARE_REFLECTION();
 };
 
-// ----------------------------------------------------------------------------- : CardType
+// ----------------------------------------------------------------------------- : PackItemRef
 
-/// A card type description for playtesting
-class CardType : public IntrusivePtrBase<CardType> {
+class PackItemRef : public IntrusivePtrBase<PackItemRef> {
   public:
+	PackItemRef();
+	
 	String          name;	///< Name of this type of cards
 	Scriptable<int> amount;	///< Number of cards of this type
+	
+	/// Update scripts, returns true if there is a change
+	bool update(Context& ctx);
+	
+	/// Generate random cards, add them to out
+	void generate(Set& set, vector<CardP>& out) const;
+	
+  private:
+	DECLARE_REFLECTION();
+};
+
+// ----------------------------------------------------------------------------- : PackItem
+
+/// A card type description for playtesting
+class PackItem : public IntrusivePtrBase<PackItem> {
+  public:
+	String          name;	///< Name of this type of cards
 	OptionalScript  filter;	///< Filter to select this type of cards
+	
+	/// Generate random cards, add them to out
+	void generate(Set& set, vector<CardP>& out) const;
+	
   private:
 	DECLARE_REFLECTION();
 };

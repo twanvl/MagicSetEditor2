@@ -18,13 +18,41 @@ PackType::PackType()
 IMPLEMENT_REFLECTION(PackType) {
 	REFLECT(name);
 	REFLECT(enabled);
-	REFLECT(card_types);
+	REFLECT(items);
 }
 
-// ----------------------------------------------------------------------------- : CardType
+void PackType::generate(Set& set, vector<CardP>& out) const {
+	//%FOR_EACH(card_type, card_types) {
+	//%	card_type->generate(set,out);
+	//%}
+}
 
-IMPLEMENT_REFLECTION(CardType) {
+// ----------------------------------------------------------------------------- : PackItemRef
+
+PackItemRef::PackItemRef()
+	: amount(1)
+{}
+
+IMPLEMENT_REFLECTION(PackItemRef) {
 	REFLECT(name);
 	REFLECT(amount);
+}
+
+bool PackItemRef::update(Context& ctx) {
+	return amount.update(ctx);
+}
+
+// ----------------------------------------------------------------------------- : PackItem
+
+IMPLEMENT_REFLECTION(PackItem) {
+	REFLECT(name);
 	REFLECT(filter);
+}
+
+void PackItem::generate(Set& set, vector<CardP>& out) const {
+	//%Context& ctx = set.getContext();
+	//%amount.update(ctx);
+	//%FOR_EACH(card_type, card_types) {
+	//%	card_type->generate(set,out);
+	//%}
 }
