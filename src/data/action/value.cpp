@@ -102,10 +102,17 @@ void TextValueAction::perform(bool to_undo) {
 
 bool TextValueAction::merge(const Action& action) {
 	TYPE_CASE(action, TextValueAction) {
-		if (&action.value() == &value() && action.name == name && action.selection_start == selection_end) {
-			// adjacent edits, keep old value of this, it is older
-			selection_end  = action.selection_end;
-			return true;
+		if (&action.value() == &value() && action.name == name) {
+			if (action.selection_start == selection_end) {
+				// adjacent edits, keep old value of this, it is older
+				selection_end = action.selection_end;
+				return true;
+			} else if (action.new_selection_end == selection_start && name == _ACTION_("backspace")) {
+				// adjacent backspaces
+				selection_start = action.selection_start;
+				selection_end   = action.selection_end;
+				return true;
+			}
 		}
 	}
 	return false;
