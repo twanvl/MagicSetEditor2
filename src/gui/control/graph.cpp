@@ -105,37 +105,6 @@ GraphData::GraphData(const GraphDataPre& d)
 				a->addGroup(c.first, c.second);
 			}
 			a->mean /= numeric_count;
-			/*
-			// TODO: start at something other than 0?
-			// TODO: support fractions?
-			a->mean = 0;
-			size_t left = counts.size();
-			int i = 0;
-			while (!counts.empty() && i < 100) {
-				String is = String() << i;
-				map<String,UInt>::const_iterator it = counts.find(is);
-				if (it == counts.end()) {
-					// not found, add a 0 bar
-					a->addGroup(is, 0);
-				} else {
-					a->addGroup(is, it->second);
-					a->mean  += i * it->second;
-					counts.erase(is);
-					left--;
-				}
-				i++;
-			}
-			UInt numeric_count = a->total;
-			a->mean /= a->total;
-			// drop empty tail
-			while (a->groups.size() > 1 && a->groups.back().size == 0) {
-				a->groups.pop_back();
-			}
-			// Also keep non-numeric entries
-			FOR_EACH(c, counts) {
-				a->addGroup(c.first, c.second);
-			}
-			*/
 		} else if (a->order) {
 			// specific group order
 			FOR_EACH_CONST(gn, *a->order) {
