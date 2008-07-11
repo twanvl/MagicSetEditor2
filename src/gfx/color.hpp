@@ -25,6 +25,11 @@ class AColor : public Color {
 	inline AColor()                                     :               alpha(0) {}
 	inline AColor(Byte r, Byte g, Byte b, Byte a = 255) : Color(r,g,b), alpha(a) {}
 	inline AColor(const Color& color,     Byte a = 255) : Color(color), alpha(a) {}
+	
+	inline bool operator == (const AColor& that) const {
+		return static_cast<const Color&>(*this) == static_cast<const Color&>(that) && alpha == that.alpha;
+	}
+	inline bool operator != (const AColor& that) const { return ! (*this == that); }
 };
 
 // ----------------------------------------------------------------------------- : Parsing
