@@ -22,13 +22,20 @@ DECLARE_TYPEOF_COLLECTION(vector<int>);
 DECLARE_TYPEOF_COLLECTION(String);
 DECLARE_TYPEOF_COLLECTION(UInt);
 DECLARE_TYPEOF_COLLECTION(pair<String COMMA String>);
-DECLARE_TYPEOF(map<String COMMA UInt>);
 
 template <typename T> inline T sgn(T v) { return v < 0 ? -1 : 1; }
 
 // ----------------------------------------------------------------------------- : Events
 
 DEFINE_EVENT_TYPE(EVENT_GRAPH_SELECT);
+
+// ----------------------------------------------------------------------------- : GraphAxis
+
+void GraphAxis::addGroup(const String& name, UInt size) {
+	groups.push_back(GraphGroup(name, size));
+	max = std::max(max, size);
+	total += size;
+}
 
 // ----------------------------------------------------------------------------- : GraphData
 
@@ -59,6 +66,11 @@ void GraphDataPre::splitList(size_t axis) {
 }
 
 
+struct SmartLess{
+	inline operator () (const String& a, const String& b) const { return smart_less(a,b); }
+};
+DECLARE_TYPEOF(map<String COMMA UInt COMMA SmartLess>);
+
 GraphData::GraphData(const GraphDataPre& d)
 	: axes(d.axes)
 {
@@ -67,11 +79,33 @@ GraphData::GraphData(const GraphDataPre& d)
 	// find groups on each axis
 	size_t i = 0;
 	FOR_EACH(a, axes) {
-		map<String,UInt> counts; // note: default constructor for UInt() does initialize to 0
+		map<String,UInt,SmartLess> counts; // note: default constructor for UInt() does initialize to 0
 		FOR_EACH_CONST(e, d.elements) {
 			counts[e->values[i]] += 1;
 		}
 		if (a->numeric) {
+			// Add all values, calculate mean of the numeric ones
+			UInt numeric_count = 0;
+			int prev = 0;
+			FOR_EACH(c, counts) {
+				// numeric?
+				double d;
+				if (c.first.ToDouble(&d)) {
+					// update mean
+					a->mean       += d * c.second;
+					numeric_count += c.second;
+					// add 0 bars before this value
+					int next = (int)floor(d);
+					for (int i = prev ; i < next ; i++) {
+						a->addGroup(String()<<i, 0);
+					}
+					prev = next + 1;
+				}
+				// add
+				a->addGroup(c.first, c.second);
+			}
+			a->mean /= numeric_count;
+			/*
 			// TODO: start at something other than 0?
 			// TODO: support fractions?
 			a->mean = 0;
@@ -82,17 +116,16 @@ GraphData::GraphData(const GraphDataPre& d)
 				map<String,UInt>::const_iterator it = counts.find(is);
 				if (it == counts.end()) {
 					// not found, add a 0 bar
-					a->groups.push_back(GraphGroup(is, 0));
+					a->addGroup(is, 0);
 				} else {
-					a->groups.push_back(GraphGroup(is, it->second));
-					a->max = max(a->max, it->second);
-					a->total += it->second;
+					a->addGroup(is, it->second);
 					a->mean  += i * it->second;
 					counts.erase(is);
 					left--;
 				}
 				i++;
 			}
+			UInt numeric_count = a->total;
 			a->mean /= a->total;
 			// drop empty tail
 			while (a->groups.size() > 1 && a->groups.back().size == 0) {
@@ -100,23 +133,17 @@ GraphData::GraphData(const GraphDataPre& d)
 			}
 			// Also keep non-numeric entries
 			FOR_EACH(c, counts) {
-				a->groups.push_back(GraphGroup(c.first, c.second));
-				a->max = max(a->max, c.second);
-				a->total += c.second;
+				a->addGroup(c.first, c.second);
 			}
+			*/
 		} else if (a->order) {
 			// specific group order
 			FOR_EACH_CONST(gn, *a->order) {
-				UInt count = counts[gn];
-				a->groups.push_back(GraphGroup(gn, count));
-				a->max = max(a->max, count);
-				a->total += count;
+				a->addGroup(gn, counts[gn]);
 			}
 		} else {
 			FOR_EACH(c, counts) {
-				a->groups.push_back(GraphGroup(c.first, c.second));
-				a->max = max(a->max, c.second);
-				a->total += c.second;
+				a->addGroup(c.first, c.second);
 			}
 		}
 		// colors

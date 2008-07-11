@@ -72,6 +72,9 @@ class GraphAxis : public IntrusivePtrBase<GraphAxis> {
 	double             mean;		///< Mean value, only for numeric axes
 	const map<String,Color>* colors;	///< Colors for each choice (optional)
 	const vector<String>*    order;		///< Order of the items (optional)
+	
+	/// Add a graph group
+	void addGroup(const String& name, UInt size);
 };
 
 /// A single data point of a graph
