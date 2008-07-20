@@ -5,7 +5,7 @@ installer group: Magic Vanguard/normal style
 icon: card-sample.png
 position hint: 01
 
-version: 2008-04-01
+version: 2008-06-30
 depends on:
 	package: vanguard.mse-game
 	version: 2007-12-29
@@ -19,8 +19,7 @@ depends on:
 card background: white
 card width: 375
 card height: 523
-#card dpi: 150
-card dpi: { 782 / 7 }
+card dpi: 111.7142857
 
 # Author: Wolfwood
 # Based on: magic-new
