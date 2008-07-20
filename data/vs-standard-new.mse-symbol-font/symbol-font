@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.6
-version: 2008-06-23
+version: 2008-07-05
 short name: New (unofficial)
 position hint: 3
 installer group: VS System/Symbol Fonts/New
@@ -66,7 +66,7 @@ symbol:
 	code: Captain America
 	image: captainamerica.png
 symbol:
-	code: Crime Lords
+	code: Crimelords
 	image: crimelords.png
 symbol:
 	code: Marvel Defenders
