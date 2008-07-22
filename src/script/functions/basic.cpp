@@ -33,7 +33,26 @@ SCRIPT_FUNCTION(trace) {
 
 SCRIPT_FUNCTION(warning) {
 	SCRIPT_PARAM_C(String, input);
-	handle_warning(input, true);
+	SCRIPT_PARAM_DEFAULT_C(bool, condition, true);
+	if (condition) {
+		handle_warning(input, true);
+	}
+	return script_nil;
+}
+SCRIPT_FUNCTION(warning_if_neq) {
+	SCRIPT_PARAM_C(String, input);
+	SCRIPT_PARAM_N(ScriptValueP, SCRIPT_VAR__1, v1);
+	SCRIPT_PARAM_N(ScriptValueP, SCRIPT_VAR__2, v2);
+	if (!equal(v1,v2)) {
+		String s1 = _("?"), s2 = _("?");
+		try {
+			s1 = v1->toCode();
+		} catch (...) {}
+		try {
+			s2 = v2->toCode();
+		} catch (...) {}
+		handle_warning(input + s1 + _(" != ") + s2, true);
+	}
 	return script_nil;
 }
 
@@ -59,13 +78,17 @@ String format_input(const String& format, Context& ctx) {
 
 SCRIPT_FUNCTION(to_string) {
 	ScriptValueP format = ctx.getVariable(SCRIPT_VAR_format);
-	if (format && format->type() == SCRIPT_STRING) {
-		// format specifier. Be careful, the built in function 'format' has the same name
-		SCRIPT_RETURN(format_input(*format, ctx));
-	} else {
-		// simple conversion
-		SCRIPT_PARAM_C(String, input);
-		SCRIPT_RETURN(input);
+	try {
+		if (format && format->type() == SCRIPT_STRING) {
+			// format specifier. Be careful, the built in function 'format' has the same name
+			SCRIPT_RETURN(format_input(*format, ctx));
+		} else {
+			// simple conversion
+			SCRIPT_PARAM_C(String, input);
+			SCRIPT_RETURN(input);
+		}
+	} catch (const ScriptError& e) {
+		return new_intrusive1<ScriptDelayedError>(e);
 	}
 }
 
@@ -143,6 +166,11 @@ SCRIPT_FUNCTION(to_color) {
 	} catch (const ScriptError& e) {
 		return new_intrusive1<ScriptDelayedError>(e);
 	}
+}
+
+SCRIPT_FUNCTION(to_code) {
+	SCRIPT_PARAM_C(ScriptValueP, input);
+	SCRIPT_RETURN(input->toCode());
 }
 
 // ----------------------------------------------------------------------------- : Math
@@ -344,14 +372,20 @@ int position_in_vector(const ScriptValueP& of, const ScriptValueP& in, const Scr
 inline bool smart_less_first(const pair<String,ScriptValueP>& a, const pair<String,ScriptValueP>& b) {
 	return smart_less(a.first, b.first);
 }
+inline bool smart_equal_first(const pair<String,ScriptValueP>& a, const pair<String,ScriptValueP>& b) {
+	return smart_equal(a.first, b.first);
+}
 
 // sort a script list
-ScriptValueP sort_script(Context& ctx, const ScriptValueP& list, ScriptValue& order_by) {
+ScriptValueP sort_script(Context& ctx, const ScriptValueP& list, ScriptValue& order_by, bool remove_duplicates) {
 	ScriptType list_t = list->type();
 	if (list_t == SCRIPT_STRING) {
 		// sort a string
 		String s = list->toString();
 		sort(s.begin(), s.end());
+		if (remove_duplicates) {
+			s.erase( unique(s.begin(), s.end()), s.end() );
+		}
 		SCRIPT_RETURN(s);
 	} else {
 		// are we sorting a set?
@@ -364,6 +398,10 @@ ScriptValueP sort_script(Context& ctx, const ScriptValueP& list, ScriptValue& or
 			values.push_back(make_pair(order_by.eval(ctx)->toString(), v));
 		}
 		sort(values.begin(), values.end(), smart_less_first);
+		// unique
+		if (remove_duplicates) {
+			values.erase( unique(values.begin(), values.end(), smart_equal_first), values.end() );
+		}
 		// return collection
 		ScriptCustomCollectionP ret(new ScriptCustomCollection());
 		FOR_EACH(v, values) {
@@ -442,9 +480,11 @@ SCRIPT_FUNCTION(filter_list) {
 
 SCRIPT_FUNCTION(sort_list) {
 	SCRIPT_PARAM_C(ScriptValueP, input);
-	SCRIPT_PARAM_N(ScriptValueP, _("order by"), order_by);
-	return sort_script(ctx, input, *order_by);
+	SCRIPT_PARAM_DEFAULT_N(ScriptValueP, _("order by"), order_by, script_nil);
+	SCRIPT_PARAM_DEFAULT_N(bool, _("remove duplicates"), remove_duplicates, false);
+	return sort_script(ctx, input, *order_by, remove_duplicates);
 }
+
 
 SCRIPT_FUNCTION(random_shuffle) {
 	SCRIPT_PARAM_C(ScriptValueP, input);
@@ -571,6 +611,7 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("to number"),            script_to_number);
 	ctx.setVariable(_("to boolean"),           script_to_boolean);
 	ctx.setVariable(_("to color"),             script_to_color);
+	ctx.setVariable(_("to code"),              script_to_code);
 	// math
 	ctx.setVariable(_("abs"),                  script_abs);
 	ctx.setVariable(_("random_real"),          script_random_real);

@@ -162,12 +162,18 @@ String remove_shortcut(const String&);
 
 // ----------------------------------------------------------------------------- : Comparing / finding
 
-/// Compare two strings, is the first less than the first?
+/// Compare two strings
 /** Uses a smart comparison algorithm that understands numbers. 
  *  The comparison is case insensitive.
  *  Doesn't handle leading zeros.
+ *
+ *  Returns -1 if a < b, 0 if they are equal, and 1 if a > b
  */
+int smart_compare(const String&, const String&);
+/// Compare two strings, is the first less than the first?
 bool smart_less(const String&, const String&);
+/// Compare two strings for equality
+bool smart_equal(const String&, const String&);
 
 /// Return whether str starts with start
 /** starts_with(a,b) == is_substr(a,0,b) */

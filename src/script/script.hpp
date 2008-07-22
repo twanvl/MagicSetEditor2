@@ -111,6 +111,8 @@ struct Instruction {
 // for faster lookup from code
 enum Variable
 {	SCRIPT_VAR_input
+,	SCRIPT_VAR__1
+,	SCRIPT_VAR__2
 ,	SCRIPT_VAR_in
 ,	SCRIPT_VAR_match
 ,	SCRIPT_VAR_replace
@@ -132,6 +134,7 @@ enum Variable
 ,	SCRIPT_VAR_card
 ,	SCRIPT_VAR_styling
 ,	SCRIPT_VAR_value
+,	SCRIPT_VAR_condition
 ,	SCRIPT_VAR_CUSTOM_FIRST // other variables start from here
 ,	SCRIPT_VAR_CUSTOM_LOTS = 0xFFFFFF // ensure that sizeof(Variable) is large enough
 };

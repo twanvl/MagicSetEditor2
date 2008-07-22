@@ -276,7 +276,7 @@ Char decompose_char2(Char c) {
 	}
 }
 
-bool smart_less(const String& sa, const String& sb) {
+int smart_compare(const String& sa, const String& sb) {
 	bool in_num = false; // are we inside a number?
 	bool lt = false;     // is sa less than sb?
 	bool eq = true;      // so far is everything equal?
@@ -295,12 +295,12 @@ bool smart_less(const String& sa, const String& sb) {
 			}
 		} else if (in_num && da) {
 			// comparing numbers, one is longer, therefore it is greater
-			return false;
+			return 1;
 		} else if (in_num && db) {
-			return true;
+			return -1;
 		} else if (in_num && !eq) {
 			// two numbers of the same length, but not equal
-			return lt;
+			return lt ? -1 : 1;
 		} else if (a != b) {
 			// not a number
 			eq = true; lt = false;
@@ -310,26 +310,26 @@ bool smart_less(const String& sa, const String& sb) {
 				// Decompose characters
 				Char la2 = decompose_char2(a), lb2 = decompose_char2(b);
 				// Compare
-				if (la < lb) return true;
-				if (la > lb) return false;
+				if (la < lb) return -1;
+				if (la > lb) return 1;
 				// Remaining from decomposition
 				if (la2 || lb2) {
 					if (la2) a = la2;
 					else {
-						if (++pa >= na) return false;
+						if (++pa >= na) return 1;
 						a = sa.GetChar(pa);
 					}
 					if (lb2) b = lb2;
 					else {
-						if (++pb >= nb) return true;
+						if (++pb >= nb) return -1;
 						b = sb.GetChar(pb);
 					}
 					goto next; // don't move to the next character in both strings
 				}
 			} else {
 				// control characters
-				if (a < b) return true;
-				else       return false;
+				if (a < b) return -1;
+				else       return 1;
 			}
 		}
 		in_num = da && db;
@@ -341,15 +341,22 @@ bool smart_less(const String& sa, const String& sb) {
 		if (na - pa < nb - pb) {
 			// number b continues?
 			Char b = sb.GetChar(pb);
-			if (isDigit(b) || eq) return true;  // b is longer
+			if (isDigit(b) || eq) return -1; // b is longer
 		} else if (na - pa > nb - pb) {
 			Char a = sa.GetChar(pa);
-			if (isDigit(a) || eq) return false; // a is longer
+			if (isDigit(a) || eq) return 1;  // a is longer
 		}
-		return lt; // compare numbers
+		return eq ? 0 : lt ? -1 : 1; // compare numbers
 	} else {
-		return na - pa < nb - pb; // outside number, shorter string comes first
+		return na - pa == nb - pb ? 0
+		     : na - pa <  nb - pb ? -1 : 1; // outside number, shorter string comes first
 	}
+}
+bool smart_less(const String& sa, const String& sb) {
+	return smart_compare(sa, sb) == -1;
+}
+bool smart_equal(const String& sa, const String& sb) {
+	return smart_compare(sa, sb) == 0;
 }
 
 bool starts_with(const String& str, const String& start) {

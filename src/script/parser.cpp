@@ -23,6 +23,7 @@ DECLARE_TYPEOF_COLLECTION(Variable);
 String read_utf8_line(wxInputStream& input, bool eat_bom = true, bool until_eof = false);
 
 extern ScriptValueP script_warning;
+extern ScriptValueP script_warning_if_neq;
 
 // ----------------------------------------------------------------------------- : Tokenizing : class
 
@@ -557,45 +558,30 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 				expectToken(input, _("("));
 				size_t start = input.peek().pos;
 				int line = input.getLineNumber();
+				size_t function_pos = script.getConstants().size();
+				script.addInstruction(I_PUSH_CONST, script_warning);
 				parseOper(input, script, PREC_ALL); // condition
 				size_t end = input.peek().pos;
 				String message = String::Format(_("Assertion failure on line %d:\n   expected: "), line) + input.getSourceCode(start,end);
 				expectToken(input, _(")"), &token);
 				if (script.getInstructions().back().instr == I_BINARY && script.getInstructions().back().instr2 == I_EQ) {
-					// compile "assert(x == y)" into "
+					// compile "assert(x == y)" into
+					//    warning_if_neq("condition", _1: x, _2: y)
 					message += _("\n   found: ");
-					script.getInstructions().pop_back();   // remove ==
-					script.addInstruction(I_DUP, 1);       // duplicate X
-					script.addInstruction(I_DUP, 1);       // duplicate Y
-					script.addInstruction(I_BINARY, I_EQ); //
-					unsigned jmpElse = script.addInstruction(I_JUMP_IF_NOT);	// jnz lbl_else
-					script.addInstruction(I_PUSH_CONST, script_nil);			// push nil
-					unsigned jmpEnd = script.addInstruction(I_JUMP);			// jump lbl_end
-					script.comeFrom(jmpElse);									// lbl_else:
-					script.addInstruction(I_PUSH_CONST, script_warning);		// push warning
-					script.addInstruction(I_PUSH_CONST, message);				//    push "condition"
-					script.addInstruction(I_DUP, 3);							//    duplicate X
-					script.addInstruction(I_BINARY, I_ADD);						//   add
-					script.addInstruction(I_PUSH_CONST, String(_(" != ")));		//   push " != "
-					script.addInstruction(I_BINARY, I_ADD);						//  add
-					script.addInstruction(I_DUP, 2);							//  duplicate Y
-					script.addInstruction(I_BINARY, I_ADD);						// add
-					script.addInstruction(I_CALL, 1);							// call
-					script.addInstruction(I_NOP,  SCRIPT_VAR_input);			// (input:)
-					script.comeFrom(jmpEnd);									// lbl_end:
-					script.addInstruction(I_BINARY, I_POP);						// pop Y_copy
-					script.addInstruction(I_BINARY, I_POP);						// pop X_copy
-				} else {
-					// compile into:  if condition then nil else warning("condition")
-					unsigned jmpElse = script.addInstruction(I_JUMP_IF_NOT);	// jnz lbl_else
-					script.addInstruction(I_PUSH_CONST, script_nil);			// push nil
-					unsigned jmpEnd = script.addInstruction(I_JUMP);			// jump lbl_end
-					script.comeFrom(jmpElse);									// lbl_else:
-					script.addInstruction(I_PUSH_CONST, script_warning);		// push warning
+					script.getConstants()[function_pos] = script_warning_if_neq;
+					script.getInstructions().pop_back();						// POP == instruction
 					script.addInstruction(I_PUSH_CONST, message);				// push "condition"
-					script.addInstruction(I_CALL, 1);							// call
+					script.addInstruction(I_CALL, 3);							// call
+					script.addInstruction(I_NOP,  SCRIPT_VAR__1);				// (_1:)
+					script.addInstruction(I_NOP,  SCRIPT_VAR__2);				// (_2:)
 					script.addInstruction(I_NOP,  SCRIPT_VAR_input);			// (input:)
-					script.comeFrom(jmpEnd);									// lbl_end:
+				} else {
+					// compile into:  warning("condition", condition: not condition)
+					script.addInstruction(I_UNARY, I_NOT);						// not
+					script.addInstruction(I_PUSH_CONST, message);				// push "condition"
+					script.addInstruction(I_CALL, 2);							// call
+					script.addInstruction(I_NOP,  SCRIPT_VAR_condition);		// (condition:)
+					script.addInstruction(I_NOP,  SCRIPT_VAR_input);			// (input:)
 				}
 			} else {
 				// variable

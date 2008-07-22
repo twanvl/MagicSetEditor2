@@ -27,8 +27,9 @@ ScriptValueP ScriptValue::eval(Context&)                    const { return delay
 ScriptValueP ScriptValue::next()                                  { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
 ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
 int          ScriptValue::itemCount()                       const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
+String       ScriptValue::toCode()                          const { return *this; }
 CompareWhat  ScriptValue::compareAs(String& compare_str, void const*& compare_ptr) const {
-	compare_str = toString();
+	compare_str = toCode();
 	return COMPARE_AS_STRING;
 }
 ScriptValueP ScriptValue::getMember(const String& name) const {
@@ -322,11 +323,35 @@ class ScriptNil : public ScriptValue {
 	virtual operator double() const { return 0.0; }
 	virtual operator int()    const { return 0; }
 	virtual operator bool()   const { return false; }
-	virtual ScriptValueP eval(Context&) const { return script_nil; } // nil() == nil
+	virtual ScriptValueP eval(Context& ctx) const {
+		// nil(input) == input
+		return ctx.getVariable(SCRIPT_VAR_input);
+	}
 };
 
 /// The preallocated nil value
 ScriptValueP script_nil(new ScriptNil);
+
+// ----------------------------------------------------------------------------- : Collection base
+
+String ScriptCollectionBase::toCode() const {
+	String ret = _("[");
+	bool first = true;
+	#ifdef USE_INTRUSIVE_PTR
+		// we can just turn this into a ScriptValueP
+		// TODO: remove thisP alltogether
+		ScriptValueP it = makeIterator(ScriptValueP(const_cast<ScriptValue*>((ScriptValue*)this)));
+	#else
+		#error "makeIterator needs a ScriptValueP :("
+	#endif
+	while (ScriptValueP v = it->next()) {
+		if (!first) ret += _(",");
+		first = false;
+		ret += v->toCode();
+	}
+	ret += _("]");
+	return ret;
+}
 
 // ----------------------------------------------------------------------------- : Custom collection
 

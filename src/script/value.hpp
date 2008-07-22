@@ -67,6 +67,9 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	/// Convert this value to a color
 	virtual operator AColor() const;
 	
+	/// Script code to generate this value
+	virtual String toCode() const;
+	
 	/// Explicit overload to convert to a string
 	/** This is sometimes necessary, because wxString has an int constructor,
 	 *  which confuses gcc. */

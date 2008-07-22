@@ -95,6 +95,12 @@ ScriptValueP rangeIterator(int start, int end);
 
 // ----------------------------------------------------------------------------- : Collections
 
+class ScriptCollectionBase : public ScriptValue {
+  public:
+	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
+	virtual String toCode() const;
+};
+
 // Iterator over a collection
 template <typename Collection>
 class ScriptCollectionIterator : public ScriptIterator {
@@ -114,10 +120,9 @@ class ScriptCollectionIterator : public ScriptIterator {
 
 /// Script value containing a collection
 template <typename Collection>
-class ScriptCollection : public ScriptValue {
+class ScriptCollection : public ScriptCollectionBase {
   public:
 	inline ScriptCollection(const Collection* v) : value(v) {}
-	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
 	virtual String typeName() const { return _TYPE_1_("collection of", type_name(*value->begin())); }
 	virtual ScriptValueP getIndex(int index) const {
 		if (index >= 0 && index < (int)value->size()) {
@@ -190,9 +195,8 @@ class ScriptMap : public ScriptValue {
 // ----------------------------------------------------------------------------- : Collections : from script
 
 /// Script value containing a custom collection, returned from script functions
-class ScriptCustomCollection : public ScriptValue {
+class ScriptCustomCollection : public ScriptCollectionBase {
   public:
-	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
 	virtual String typeName() const { return _TYPE_("collection"); }
 	virtual ScriptValueP getMember(const String& name) const;
 	virtual ScriptValueP getIndex(int index) const;

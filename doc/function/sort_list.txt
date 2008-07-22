@@ -10,9 +10,12 @@ Optionally order by some other property.
 ! Parameter	Type			Description
 | @input@	[[type:list]] or [[type:set]]	List to sort.
 | @order_by@	[[type:function]] (optional)	Function to order by, for example when @order_by: {input.name}@ orders items by their name property.
+| @remove_duplicates@	[[type:boolean]]	DOC_MSE_VERSION: since 0.3.7
+			 			If @true@, keep only one copy of duplicate elements.
 
 --Examples--
 > sort_list([5,2,3,1,4])          ==  [1,2,3,4,5]
 > sort_list(["aaa","cccc","bb"])  ==  ["aaa","bb","cccc"]
-> sort_list(["aaa","cccc","bb"], order_by: {number_of_items(in:input)})
+> sort_list(["aaa","cccc","bb"], order_by: length)
 >                                 ==  ["bb","aaa","cccc"]
+> sort_list([1,2,1,2,2,3], remove_duplicates:true)  ==  [1,2,3]

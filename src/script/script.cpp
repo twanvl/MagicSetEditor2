@@ -52,6 +52,8 @@ void init_script_variables() {
 	#define VarN(X,name) if (SCRIPT_VAR_##X != string_to_variable(name)) assert(false);
 	#define Var(X)       VarN(X,_(#X))
 	Var(input);
+	Var(_1);
+	Var(_2);
 	Var(in);
 	Var(match);
 	Var(replace);
@@ -73,6 +75,7 @@ void init_script_variables() {
 	Var(card);
 	Var(styling);
 	Var(value);
+	Var(condition);
 	assert(variables.size() == SCRIPT_VAR_CUSTOM_FIRST);
 }
 
