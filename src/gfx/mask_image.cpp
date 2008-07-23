@@ -45,6 +45,7 @@ bool AlphaMask::isTransparent(int x, int y) const {
 	return alpha[x + y * size.x] < 20;
 }
 
+/// Do the points form a (counter??)clockwise angle?
 bool convex(const wxPoint& p, const wxPoint& q, const wxPoint& r) {
 	return p.y*q.x - p.x*q.y - p.y*r.x + q.y*r.x + p.x*r.y - q.x*r.y > 0;
 }

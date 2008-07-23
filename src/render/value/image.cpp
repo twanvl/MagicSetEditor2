@@ -98,9 +98,8 @@ bool ImageValueViewer::containsPoint(const RealPoint& p) const {
 	if (!ValueViewer::containsPoint(p)) return false;
 	// check against mask
 	if (!style().mask_filename().empty()) {
-		loadMask(viewer.getRotation());
-		Rotation rot = viewer.getRotation();
-		return !alpha_mask || !alpha_mask->isTransparent((int)rot.trX(p.x), (int)rot.trY(p.y));
+		loadMask(getRotation());
+		return !alpha_mask || !alpha_mask->isTransparent((int)p.x, (int)p.y);
 	} else {
 		return true;
 	}

@@ -48,7 +48,7 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 			Image img(alpha_mask->size.x, alpha_mask->size.y);
 			fill_image(img, value().value());
 			alpha_mask->setAlpha(img);
-			dc.DrawImage(img, style().getPos());
+			dc.DrawImage(img, RealPoint(0,0));
 		} else {
 			// do we need clipping?
 			bool clip = style().left_width < style().width  && style().right_width  < style().width &&
@@ -74,16 +74,17 @@ bool ColorValueViewer::containsPoint(const RealPoint& p) const {
 	// distance to each side
 	double left = p.x, right  = style().width  - p.x - 1;
 	double top  = p.y, bottom = style().height - p.y - 1;
-	if (left < 0 || right < 0 || top < 0 || bottom < 0 ||                 // outside bounding box
-	    (left >= style().left_width && right  >= style().right_width &&   // outside horizontal border
-	     top  >= style().top_width  && bottom >= style().bottom_width)) { // outside vertical border
-		return false;
-	}
+	if (left < 0 || right < 0 || top < 0 || bottom < 0) return false;  // outside bounding box
 	// check against mask
-	if (!style().mask_filename().empty()) {
-		loadMask(viewer.getRotation());
-		return !alpha_mask || !alpha_mask->isTransparent((int)left, (int)top);
+	if (!style().mask_filename().empty()) loadMask(getRotation());
+	if (alpha_mask) {
+		return !alpha_mask->isTransparent((int)left, (int)top);
 	} else {
+		// check against border
+		if (left >= style().left_width && right  >= style().right_width &&  // outside horizontal border
+		    top  >= style().top_width  && bottom >= style().bottom_width) { // outside vertical border
+			return false;
+		}
 		return true;
 	}
 }
