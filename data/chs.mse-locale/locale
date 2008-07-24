@@ -1,7 +1,7 @@
 ﻿mse version: 0.3.6
 installer group: translations/Simplified Chinese
-full name: 中国 (Simplified Chinese)
-version: 2008-06-16
+full name: 简体中文 (Simplified Chinese)
+version: 2008-07-03
 icon: cn.png
 
 ############################################################## Menu items
@@ -558,11 +558,11 @@ button:
 	
 ############################################################## Titles in the GUI
 title:
-	magic set editor:	Magic Set Editor
-	%s - magic set editor:	%s - Magic Set Editor
+	magic set editor:	Magic Set Editor 中国由slimeking
+	%s - magic set editor:	%s - Magic Set Editor 中国由slimeking
 	untitled:		无标题卡牌
-	about:			关于 Magic Set Editor
-	symbol editor:		系列符号编辑器 简体中文
+	about:			关于 Magic Set Editor 中国由slimeking
+	symbol editor:		系列符号编辑器 简体中文 中国由slimeking
 	# dialogs
 	new set:		新建套牌
 	open set:		打开套牌
