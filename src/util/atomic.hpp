@@ -54,7 +54,7 @@
 	#define HAVE_FAST_ATOMIC
 	
 // ----------------------------------------------------------------------------- : AtomicInt : GCC
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) && defined(__i486)
 	
 	/// An integer which is equivalent to an AtomicInt, but which doesn't support attomic operations
 	typedef unsigned int AtomicIntEquiv;
@@ -70,7 +70,7 @@
 			return __sync_add_and_fetch(&v,1);
 		}
 		inline AtomicInt operator -- () {
-			return __sync_add_and_fetch(&v,(AtomicIntEquiv)-1);
+			return __sync_sub_and_fetch(&v,1);
 		}
 	  private:
 		AtomicIntEquiv v;

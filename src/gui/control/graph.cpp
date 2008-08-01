@@ -67,7 +67,7 @@ void GraphDataPre::splitList(size_t axis) {
 
 
 struct SmartLess{
-	inline operator () (const String& a, const String& b) const { return smart_less(a,b); }
+	inline bool operator () (const String& a, const String& b) const { return smart_less(a,b); }
 };
 DECLARE_TYPEOF(map<String COMMA UInt COMMA SmartLess>);
 

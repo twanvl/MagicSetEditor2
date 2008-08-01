@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <gui/set/panel.hpp>
+#include <wx/spinctrl.h>
 
 class CardViewer;
 class FilteredCardList;

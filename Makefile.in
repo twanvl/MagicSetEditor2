@@ -96,6 +96,7 @@ am_magicseteditor_OBJECTS = ./src/util/version.$(OBJEXT) \
 	./src/script/script_manager.$(OBJEXT) \
 	./src/script/functions/english.$(OBJEXT) \
 	./src/script/functions/basic.$(OBJEXT) \
+	./src/script/functions/regex.$(OBJEXT) \
 	./src/script/functions/editor.$(OBJEXT) \
 	./src/script/functions/image.$(OBJEXT) \
 	./src/script/functions/export.$(OBJEXT) \
@@ -156,6 +157,7 @@ am_magicseteditor_OBJECTS = ./src/util/version.$(OBJEXT) \
 	./src/gui/set/keywords_panel.$(OBJEXT) \
 	./src/gui/set/panel.$(OBJEXT) \
 	./src/gui/set/stats_panel.$(OBJEXT) \
+	./src/gui/set/random_pack_panel.$(OBJEXT) \
 	./src/gui/set/window.$(OBJEXT) \
 	./src/gui/thumbnail_thread.$(OBJEXT) \
 	./src/gui/welcome_window.$(OBJEXT) \
@@ -349,6 +351,7 @@ magicseteditor_SOURCES = ./src/util/version.cpp \
 	./src/script/scriptable.cpp ./src/script/script_manager.cpp \
 	./src/script/functions/english.cpp \
 	./src/script/functions/basic.cpp \
+	./src/script/functions/regex.cpp \
 	./src/script/functions/editor.cpp \
 	./src/script/functions/image.cpp \
 	./src/script/functions/export.cpp ./src/script/context.cpp \
@@ -389,7 +392,8 @@ magicseteditor_SOURCES = ./src/util/version.cpp \
 	./src/gui/set/cards_panel.cpp ./src/gui/set/style_panel.cpp \
 	./src/gui/set/set_info_panel.cpp \
 	./src/gui/set/keywords_panel.cpp ./src/gui/set/panel.cpp \
-	./src/gui/set/stats_panel.cpp ./src/gui/set/window.cpp \
+	./src/gui/set/stats_panel.cpp \
+	./src/gui/set/random_pack_panel.cpp ./src/gui/set/window.cpp \
 	./src/gui/thumbnail_thread.cpp ./src/gui/welcome_window.cpp \
 	./src/gui/value/multiple_choice.cpp ./src/gui/value/symbol.cpp \
 	./src/gui/value/color.cpp ./src/gui/value/package_choice.cpp \
@@ -654,6 +658,9 @@ src/script/functions/$(DEPDIR)/$(am__dirstamp):
 ./src/script/functions/basic.$(OBJEXT):  \
 	src/script/functions/$(am__dirstamp) \
 	src/script/functions/$(DEPDIR)/$(am__dirstamp)
+./src/script/functions/regex.$(OBJEXT):  \
+	src/script/functions/$(am__dirstamp) \
+	src/script/functions/$(DEPDIR)/$(am__dirstamp)
 ./src/script/functions/editor.$(OBJEXT):  \
 	src/script/functions/$(am__dirstamp) \
 	src/script/functions/$(DEPDIR)/$(am__dirstamp)
@@ -853,6 +860,9 @@ src/gui/set/$(DEPDIR)/$(am__dirstamp):
 	src/gui/set/$(DEPDIR)/$(am__dirstamp)
 ./src/gui/set/stats_panel.$(OBJEXT): src/gui/set/$(am__dirstamp) \
 	src/gui/set/$(DEPDIR)/$(am__dirstamp)
+./src/gui/set/random_pack_panel.$(OBJEXT):  \
+	src/gui/set/$(am__dirstamp) \
+	src/gui/set/$(DEPDIR)/$(am__dirstamp)
 ./src/gui/set/window.$(OBJEXT): src/gui/set/$(am__dirstamp) \
 	src/gui/set/$(DEPDIR)/$(am__dirstamp)
 ./src/gui/thumbnail_thread.$(OBJEXT): src/gui/$(am__dirstamp) \
@@ -1042,6 +1052,7 @@ mostlyclean-compile:
 	-rm -f ./src/gui/set/cards_panel.$(OBJEXT)
 	-rm -f ./src/gui/set/keywords_panel.$(OBJEXT)
 	-rm -f ./src/gui/set/panel.$(OBJEXT)
+	-rm -f ./src/gui/set/random_pack_panel.$(OBJEXT)
 	-rm -f ./src/gui/set/set_info_panel.$(OBJEXT)
 	-rm -f ./src/gui/set/stats_panel.$(OBJEXT)
 	-rm -f ./src/gui/set/style_panel.$(OBJEXT)
@@ -1093,6 +1104,7 @@ mostlyclean-compile:
 	-rm -f ./src/script/functions/english.$(OBJEXT)
 	-rm -f ./src/script/functions/export.$(OBJEXT)
 	-rm -f ./src/script/functions/image.$(OBJEXT)
+	-rm -f ./src/script/functions/regex.$(OBJEXT)
 	-rm -f ./src/script/image.$(OBJEXT)
 	-rm -f ./src/script/parser.$(OBJEXT)
 	-rm -f ./src/script/script.$(OBJEXT)
@@ -1206,6 +1218,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/set/$(DEPDIR)/cards_panel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/set/$(DEPDIR)/keywords_panel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/set/$(DEPDIR)/panel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./src/gui/set/$(DEPDIR)/random_pack_panel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/set/$(DEPDIR)/set_info_panel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/set/$(DEPDIR)/stats_panel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/set/$(DEPDIR)/style_panel.Po@am__quote@
@@ -1258,6 +1271,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/functions/$(DEPDIR)/english.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/functions/$(DEPDIR)/export.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/functions/$(DEPDIR)/image.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./src/script/functions/$(DEPDIR)/regex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/util/$(DEPDIR)/action_stack.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/util/$(DEPDIR)/age.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/util/$(DEPDIR)/alignment.Po@am__quote@
