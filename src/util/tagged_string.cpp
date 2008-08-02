@@ -567,3 +567,24 @@ String simplify_tagged_overlap(const String& str) {
 	}
 	return ret;
 }
+
+// ----------------------------------------------------------------------------- : Other utilities
+
+String curly_quotes(String str, bool curl) {
+	bool open = true, in_tag = false;
+	FOR_EACH(c, str) {
+		if (c == _('\'') || c == LEFT_SINGLE_QUOTE || c == RIGHT_SINGLE_QUOTE) {
+			c = curl ? (open ? LEFT_SINGLE_QUOTE : RIGHT_SINGLE_QUOTE) : _('\'');
+		} else if (c == _('\"') || c == LEFT_DOUBLE_QUOTE || c == RIGHT_DOUBLE_QUOTE) {
+			c = curl ? (open ? LEFT_DOUBLE_QUOTE : RIGHT_DOUBLE_QUOTE) : _('\"');
+		} else if (c == _('<')) {
+			in_tag = true;
+		} else if (c == _('>')) {
+			in_tag = false;
+		} else if (!in_tag) {
+			// Also allow double-nesting of quotes
+			open = isSpace(c) || c == _('(') || c == _('[');
+		}
+	}
+	return str;
+}

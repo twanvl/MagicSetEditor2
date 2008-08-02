@@ -198,5 +198,10 @@ String simplify_tagged_merge(const String& str, bool all = false);
  */
 String simplify_tagged_overlap(const String& str);
 
+// ----------------------------------------------------------------------------- : Other utilities
+
+/// Turn straight quotes into curly ones or vice-versa
+String curly_quotes(String str, bool curl);
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

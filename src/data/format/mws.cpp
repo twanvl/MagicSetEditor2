@@ -23,7 +23,8 @@ DECLARE_TYPEOF_COLLECTION(CardP);
 
 /// Convert a tagged string to MWS format: \t\t before each line beyond the first
 String untag_mws(const String& str) {
-	return replace_all(untag(str), _("\n"), _("\n\t\t") );
+	// TODO : em dashes?
+	return replace_all(untag(curly_quotes(str,false)), _("\n"), _("\n\t\t") );
 }
 //String untag_mws(const Defaultable<String>& str) {
 //	str.
@@ -36,6 +37,7 @@ String card_color_mws(const String& col) {
 	if (col == _("black"))     return _("B");
 	if (col == _("red"))       return _("R");
 	if (col == _("green"))     return _("G");
+	if (col == _("artifact"))  return _("Art");
 	if (col == _("colorless")) return _("Art");
 	if (col.find(_("land")) != String::npos) {
 		return _("Lnd"); // land

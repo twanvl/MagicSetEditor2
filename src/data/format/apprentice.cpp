@@ -358,7 +358,7 @@ void ApprDistro::writeD(wxTextOutputStream& tout, const String& name, int c, int
 
 /// Untag function for apprentice, replaces newlines with \r\n
 String untag_appr(const String& s) {
-	return replace_all(untag(s), _("\n"), _("\r\n"));
+	return replace_all(untag(curly_quotes(s,false)), _("\n"), _("\r\n"));
 }
 
 DECLARE_POINTER_TYPE(ApprCardRecord);
