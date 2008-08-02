@@ -187,8 +187,13 @@ bool CardListBase::compareItems(void* a, void* b) const {
 	FieldP sort_field = column_fields[sort_by_column];
 	ValueP va = reinterpret_cast<Card*>(a)->data[sort_field];
 	ValueP vb = reinterpret_cast<Card*>(b)->data[sort_field];
-	if (!va || !vb)  return va < vb; // got to do something, compare pointers
-	return smart_less(  va->getSortKey(), vb->getSortKey() );
+	if (!va || !vb) return va < vb; // got to do something, compare pointers
+	// compare sort keys
+	int cmp = smart_compare( va->getSortKey(), vb->getSortKey() );
+	if (cmp != 0) return cmp < 0;
+	// equal values, compare alternate sort key
+	// TODO: sort by a second column
+	return false;
 }
 
 void CardListBase::rebuild() {
@@ -265,6 +270,7 @@ void CardListBase::selectColumns() {
 	CardListColumnSelectDialog wnd(this, set->game);
 	if (wnd.ShowModal() == wxID_OK) {
 		// rebuild all card lists for this game
+		storeColumns();
 		FOR_EACH(card_list, card_lists) {
 			if (card_list->set && card_list->set->game == set->game) {
 				card_list->rebuild();
