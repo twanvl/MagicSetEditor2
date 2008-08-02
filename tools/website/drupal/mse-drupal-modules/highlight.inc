@@ -168,8 +168,10 @@ function highlight_script($code) {
 			$ret .= "<span class='hl-comment'>" . $matches[0] . "</span>";
 		} else if (preg_match("@^([-+*/=!.\@^]|&lt;|&gt;)+|^:=@",$code, $matches)) {
 			$ret .= "<span class='hl-op'>" . $matches[0] . "</span>";
-		} else if (preg_match("@^([}]|[\\(\\)\\[\\]{,]+)@",$code, $matches)) {
+		} else if (preg_match("@^([\\(\\)\\[\\],]+)@",$code, $matches)) {
 			$ret .= "<span class='hl-paren'>" . $matches[0] . "</span>";
+		} else if (preg_match("@^[{}]@",$code, $matches)) {
+			$ret .= "<span class='hl-fun-paren'>" . $matches[0] . "</span>";
 			if     ($matches[0] == '{') $string .= 'b';
 			elseif ($matches[0] == '}') $string = substr($string,0,-1);
 		} else if (preg_match("@^[a-zA-Z_][a-zA-Z0-9_]*:@",$code, $matches)) {
