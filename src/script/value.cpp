@@ -48,6 +48,9 @@ ScriptValueP ScriptValue::getIndex(int index) const {
 ScriptValueP ScriptValue::simplifyClosure(ScriptClosure&) const { return ScriptValueP(); }
 
 ScriptValueP ScriptValue::dependencyMember(const String& name, const Dependency&) const { return dependency_dummy; }
+ScriptValueP ScriptValue::dependencyName(const ScriptValue& container, const Dependency& dep) const {
+	return container.dependencyMember(toString(),dep);
+}
 ScriptValueP ScriptValue::dependencies(Context&,               const Dependency&) const { return dependency_dummy; }
 
 bool approx_equal(double a, double b) {

@@ -80,6 +80,9 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	/// Signal that a script depends on a member of this value
 	/** It is the abstract version of getMember*/
 	virtual ScriptValueP dependencyMember(const String& name, const Dependency&) const;
+	/// Signal that a script depends on a member of container, with the name of this
+	/** This function allows for a kind of visitor pattern over dependencyMember */
+	virtual ScriptValueP dependencyName(const ScriptValue& container, const Dependency&) const;
 	
 	/// Evaluate this value (if it is a function)
 	virtual ScriptValueP eval(Context&) const;

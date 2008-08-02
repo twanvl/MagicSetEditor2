@@ -20,6 +20,8 @@ DECLARE_TYPEOF_COLLECTION(Context::Binding);
 
 // ----------------------------------------------------------------------------- : Dummy values
 
+extern ScriptValueP dependency_dummy;
+
 // A dummy type used during dependency analysis,
 // it simply supresses all error messages.
 class DependencyDummy : public ScriptIterator {
@@ -27,6 +29,7 @@ class DependencyDummy : public ScriptIterator {
 	virtual ScriptType type() const { return SCRIPT_DUMMY; }
 	virtual String typeName() const { return _("dummy"); }
 	virtual ScriptValueP next() { return ScriptValueP(); }
+	virtual ScriptValueP dependencyName(const ScriptValue&, const Dependency&) const { return dependency_dummy; }
 };
 
 ScriptValueP dependency_dummy(new DependencyDummy);
@@ -54,6 +57,9 @@ class DependencyUnion : public ScriptValue {
 	}
 	virtual ScriptValueP dependencyMember(const String& name, const Dependency& dep) const {
 		return unified(a->dependencyMember(name,dep), b->dependencyMember(name,dep));
+	}
+	virtual ScriptValueP dependencyName(const ScriptValue& container, const Dependency& dep) const {
+		return unified(a->dependencyName(container,dep), b->dependencyName(container,dep));
 	}
   private:
 	ScriptValueP a, b;
@@ -297,8 +303,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 							a = rangeIterator(0,0); // values don't matter
 							break;
 						case I_MEMBER: {
-							String name = *b;
-							a = a->dependencyMember(name, dep); // dependency on member
+							a = b->dependencyName(*a, dep); // dependency on member
 							break;
 						} case I_ADD:
 							unify(a, b); // may be function composition

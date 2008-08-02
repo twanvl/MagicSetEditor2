@@ -129,9 +129,9 @@ void SetScriptManager::initDependencies(Context& ctx, StyleSheet& stylesheet) {
 	if (stylesheet.dependencies_initialized) return;
 	stylesheet.dependencies_initialized = true;
 	// find dependencies of extra card fields
-	/*FOR_EACH(f, stylesheet.extra_card_fields) {
+	FOR_EACH(f, stylesheet.extra_card_fields) {
 		f->initDependencies(ctx, Dependency(DEP_EXTRA_CARD_FIELD, f->index, &stylesheet));
-	}*/
+	}
 	// find dependencies of choice images and other style stuff
 	FOR_EACH(s, stylesheet.card_style) {
 		s->initDependencies(ctx, Dependency(DEP_STYLE, s->fieldP->index, &stylesheet));
@@ -229,7 +229,11 @@ void SetScriptManager::updateStyles(const CardP& card, bool only_content_depende
 		// update extra card fields
 		IndexMap<FieldP,ValueP>& extra_data = card->extraDataFor(stylesheet);
 		FOR_EACH(v, extra_data) {
-			v->update(ctx);
+			if (v->update(ctx)) {
+				// changed, send event
+				ScriptValueEvent change(card.get(), v.get());
+				set.actions.tellListeners(change, false);
+			}
 		}
 	}
 	// update all styles
@@ -379,8 +383,8 @@ void SetScriptManager::alsoUpdate(deque<ToUpdate>& to_update, const vector<Depen
 				ScriptStyleEvent change(stylesheet, style.get());
 				set.actions.tellListeners(change, false);
 				break;
-			/*} case DEP_EXTRA_CARD_FIELD: {
-				// Not needed, extra card fields are handled in updateStyles()
+			} case DEP_EXTRA_CARD_FIELD: {
+			/*	// Not needed, extra card fields are handled in updateStyles()
 				if (card) {
 					StyleSheet* stylesheet = reinterpret_cast<StyleSheet*>(d.data);
 					StyleSheet* stylesheet_card = &set.stylesheetFor(card);
@@ -388,8 +392,8 @@ void SetScriptManager::alsoUpdate(deque<ToUpdate>& to_update, const vector<Depen
 						ValueP value = card->extra_data.at(d.index);
 						to_update.push_back(ToUpdate(value.get(), card));
 					}
-				}
-				break;*/
+				}*/
+				break;
 			} case DEP_CARD_COPY_DEP: {
 				// propagate dependencies from another field
 				FieldP f = set.game->card_fields[d.index];

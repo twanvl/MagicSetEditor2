@@ -102,6 +102,13 @@ SCRIPT_FUNCTION(to_int) {
 		} else if (t == SCRIPT_COLOR) {
 			AColor c = (AColor)*input;
 			result = (c.Red() + c.Blue() + c.Green()) / 3;
+		} else if (t == SCRIPT_STRING) {
+			long l;
+			if (input->toString().ToLong(&l)) {
+				result = l;
+			} else {
+				return new_intrusive1<ScriptDelayedError>(_ERROR_3_("can't convert value", input->toString(), input->typeName(), _TYPE_("integer")));
+			}
 		} else {
 			result = (int)*input;
 		}

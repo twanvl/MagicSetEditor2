@@ -12,9 +12,12 @@
 #include <util/tagged_string.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
+#include <data/card.hpp>
+#include <data/stylesheet.hpp>
 #include <data/field/text.hpp>
 #include <data/field/choice.hpp>
 #include <data/field/multiple_choice.hpp>
+#include <data/action/value.hpp>
 
 DECLARE_TYPEOF_COLLECTION(FieldP);
 DECLARE_TYPEOF_COLLECTION(TextValue*);
@@ -81,8 +84,16 @@ SCRIPT_FUNCTION_WITH_DEP(combined_editor) {
 	FOR_EACH_2(v, values, nv, value_parts) {
 		//if (v->value() != nv.first && v->last_update < new_value_update) {
 		if (v->last_update < new_value_update) {
+			bool changed = v->value() != nv.first;
 			v->value.assign(nv.first);
-			v->update(ctx);
+			changed |= v->update(ctx);
+			v->last_update = new_value_update;
+			if (changed) { // notify of change
+				SCRIPT_OPTIONAL_PARAM_(CardP, card);
+				SCRIPT_PARAM(Set*, set);
+				ScriptValueEvent change(card.get(), v);
+				set->actions.tellListeners(change, false);
+			}
 		}
 		nv.first = v->value();
 		nv.second = index_to_untagged(nv.first, nv.first.size()) == 0;
@@ -153,6 +164,10 @@ SCRIPT_FUNCTION_DEPENDENCIES(combined_editor) {
 	FieldP target_field;
 	if      (dep.type == DEP_CARD_FIELD) target_field = game->card_fields[dep.index];
 	else if (dep.type == DEP_SET_FIELD)  target_field = game->set_fields[dep.index];
+	else if (dep.type == DEP_EXTRA_CARD_FIELD) {
+		SCRIPT_PARAM_C(StyleSheetP, stylesheet);
+		target_field = stylesheet->extra_card_fields[dep.index];
+	}
 	else                                 throw InternalError(_("Finding dependencies of combined error for non card/set field"));
 	// Add dependencies, from target_field on field#
 	// For card fields
