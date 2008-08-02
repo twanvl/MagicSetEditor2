@@ -40,7 +40,7 @@ class MSE : public wxApp {
 	 */
 	int OnRun();
 	/// On exit: write the settings to the config file
-	int  OnExit();
+	int OnExit();
 	/// On exception: display error message
 	bool OnExceptionInMainLoop();
 };
@@ -209,14 +209,7 @@ int MSE::OnRun() {
 		(new WelcomeWindow())->Show();
 		return wxApp::OnRun();
 		
-	} catch (const Error& e) {
-		handle_error(e, false);
-	} catch (const std::exception& e) {
-		// we don't throw std::exception ourselfs, so this is probably something serious
-		handle_error(InternalError(String(e.what(), IF_UNICODE(wxConvLocal, wxSTRING_MAXLEN) )), false);
-	} catch (...) {
-		handle_error(InternalError(_("An unexpected exception occurred!")), false);
-	}
+	} CATCH_ALL_ERRORS(true);
 	return EXIT_FAILURE;
 }
 
@@ -234,13 +227,6 @@ int MSE::OnExit() {
 bool MSE::OnExceptionInMainLoop() {
 	try {
 		throw;	// rethrow the exception, so we can examine it
-	} catch (const Error& e) {
-		handle_error(e, false);
-	} catch (const std::exception& e) {
-		// we don't throw std::exception ourselfs, so this is probably something serious
-		handle_error(InternalError(String(e.what(), IF_UNICODE(wxConvLocal, wxSTRING_MAXLEN) )), false);
-	} catch (...) {
-		handle_error(InternalError(_("An unexpected exception occurred!")), false);
-	}
+	} CATCH_ALL_ERRORS(true);
 	return true;
 }

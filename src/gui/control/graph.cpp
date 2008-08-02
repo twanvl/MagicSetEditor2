@@ -985,16 +985,18 @@ size_t GraphControl::getDimensionality() const {
 
 void GraphControl::onPaint(wxPaintEvent&) {
 	wxBufferedPaintDC dc(this);
-	wxSize cs = GetClientSize();
-	RotatedDC rdc(dc, 0, RealRect(RealPoint(0,0),cs), 1, QUALITY_LOW);
-	rdc.SetPen(*wxTRANSPARENT_PEN);
-	rdc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-	rdc.DrawRectangle(rdc.getInternalRect());
-	if (graph) {
-		for (int layer = LAYER_BOTTOM ; layer < LAYER_COUNT ; ++layer) {
-			graph->draw(rdc, current_item, (DrawLayer)layer);
+	try {
+		wxSize cs = GetClientSize();
+		RotatedDC rdc(dc, 0, RealRect(RealPoint(0,0),cs), 1, QUALITY_LOW);
+		rdc.SetPen(*wxTRANSPARENT_PEN);
+		rdc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+		rdc.DrawRectangle(rdc.getInternalRect());
+		if (graph) {
+			for (int layer = LAYER_BOTTOM ; layer < LAYER_COUNT ; ++layer) {
+				graph->draw(rdc, current_item, (DrawLayer)layer);
+			}
 		}
-	}
+	} CATCH_ALL_ERRORS(false); // don't show message boxes in onPaint!
 }
 
 void GraphControl::onSize(wxSizeEvent&) {

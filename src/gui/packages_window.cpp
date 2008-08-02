@@ -115,6 +115,7 @@ class PackageInfoPanel : public wxPanel {
 	DECLARE_EVENT_TABLE();
 	
 	void onPaint(wxPaintEvent&);
+	void draw(DC&);
 };
 
 PackageInfoPanel::PackageInfoPanel(Window* parent)
@@ -128,6 +129,11 @@ void PackageInfoPanel::setPackage(const InstallablePackageP& package) {
 
 void PackageInfoPanel::onPaint(wxPaintEvent&) {
 	wxBufferedPaintDC dc(this);
+	try {
+		draw(dc);
+	} CATCH_ALL_ERRORS(false); // don't show message boxes in onPaint!
+}
+void PackageInfoPanel::draw(DC& dc) {
 	wxSize cs = GetClientSize();
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));

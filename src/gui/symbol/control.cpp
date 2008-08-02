@@ -200,7 +200,9 @@ void SymbolControl::draw(DC& dc) {
 }
 void SymbolControl::onPaint(wxPaintEvent&) {
 	wxBufferedPaintDC dc(this);
-	draw(dc);
+	try {
+		draw(dc);
+	} CATCH_ALL_ERRORS(false); // don't show message boxes in onPaint!
 }
 
 // ----------------------------------------------------------------------------- : Events

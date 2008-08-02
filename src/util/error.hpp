@@ -123,5 +123,17 @@ void handle_warning(const String& w, bool now = true);
 /** Should be called repeatedly (e.g. in an onIdle event handler) */
 void handle_pending_errors();
 
+/// Catch all types of errors, and pass then to handle_error
+#define CATCH_ALL_ERRORS(handle_now)																\
+	catch (const Error& e) {																		\
+		handle_error(e, false, handle_now);															\
+	} catch (const std::exception& e) {																\
+		/* we don't throw std::exception ourselfs, so this is probably something serious */			\
+		String message(e.what(), IF_UNICODE(wxConvLocal, wxSTRING_MAXLEN) );						\
+		handle_error(InternalError(message), false, handle_now);									\
+	} catch (...) {																					\
+		handle_error(InternalError(_("An unexpected exception occurred!")), false, handle_now);		\
+	}
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

@@ -87,7 +87,9 @@ void CardViewer::onPaint(wxPaintEvent&) {
 	// draw
 	if (!up_to_date) {
 		up_to_date = true;
-		draw(dc);
+		try {
+			draw(dc);
+		} CATCH_ALL_ERRORS(false); // don't show message boxes in onPaint!
 	}
 }
 

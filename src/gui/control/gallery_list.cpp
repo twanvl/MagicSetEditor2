@@ -183,7 +183,9 @@ wxSize GalleryList::DoGetBestSize() const {
 
 void GalleryList::onPaint(wxPaintEvent&) {
 	wxBufferedPaintDC dc(this);
-	OnDraw(dc);
+	try {
+		OnDraw(dc);
+	} CATCH_ALL_ERRORS(false); // don't show message boxes in onPaint!
 }
 void GalleryList::OnDraw(DC& dc) {
 	wxSize cs = GetClientSize();
