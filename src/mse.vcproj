@@ -3816,6 +3816,10 @@
 				</File>
 			</Filter>
 		</Filter>
+		<Filter
+			Name="cli"
+			Filter="">
+		</Filter>
 		<File
 			RelativePath=".\code_template.cpp">
 			<FileConfiguration
