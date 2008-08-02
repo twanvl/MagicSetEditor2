@@ -22,7 +22,8 @@ class ExportCardImages {
 	void exportImages(const SetP& set, wxFileName& filename, const String& filename_template, FilenameConflicts conflicts);
 	virtual ~ExportCardImages() {}
   protected:
-	virtual bool exportCard(const CardP& card) const { return true; }
+	/// Should the given card be exported?
+	virtual bool includeCard(const CardP& card) const { return true; }
 };
 
 // ----------------------------------------------------------------------------- : ImagesExportWindow
@@ -37,7 +38,7 @@ class ImagesExportWindow : public CardSelectWindow, private ExportCardImages {
 	
 	void onOk(wxCommandEvent&);
 	
-	virtual bool exportCard(const CardP& card) const;
+	virtual bool includeCard(const CardP& card) const;
 	
 	wxTextCtrl* format;
 	wxChoice*   conflicts;

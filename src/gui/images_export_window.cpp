@@ -63,7 +63,7 @@ void ExportCardImages::exportImages(const SetP& set, wxFileName& fn, const Strin
 	// Export
 	std::set<String> used; // for CONFLICT_NUMBER_OVERWRITE
 	FOR_EACH(card, set->cards) {
-		if (exportCard(card)) {
+		if (includeCard(card)) {
 			// filename for this card
 			Context& ctx = set->getContext(card);
 			String filename = untag(ctx.eval(*filename_script)->toString());
@@ -121,7 +121,7 @@ void ImagesExportWindow::onOk(wxCommandEvent&) {
 	EndModal(wxID_OK);
 }
 
-bool ImagesExportWindow::exportCard(const CardP& card) const {
+bool ImagesExportWindow::includeCard(const CardP& card) const {
 	return isSelected(card);
 }
 
