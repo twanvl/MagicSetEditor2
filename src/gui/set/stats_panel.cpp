@@ -27,10 +27,8 @@ DECLARE_TYPEOF_COLLECTION(CardP);
 typedef pair<StatsDimensionP,String> pair_StatsDimensionP_String;
 DECLARE_TYPEOF_COLLECTION(pair_StatsDimensionP_String);
 
-// Pick the style here:
-#define USE_DIMENSION_LISTS 1
-
 // ----------------------------------------------------------------------------- : StatCategoryList
+#if !USE_DIMENSION_LISTS
 
 /// A list of fields of which the statistics can be shown
 class StatCategoryList : public GalleryList {
@@ -38,19 +36,19 @@ class StatCategoryList : public GalleryList {
 	StatCategoryList(Window* parent, int id)
 		: GalleryList(parent, id, wxVERTICAL)
 	{
-		item_size = wxSize(150, 23);
+		item_size = columns[0].size = wxSize(150, 23);
 	}
 	
 	void show(const GameP&);
 	
 	/// The selected category
 	inline StatsCategory& getSelection() {
-		return *categories.at(selection);
+		return *categories.at(columns[0].selection);
 	}
 	
   protected:
 	virtual size_t itemCount() const;
-	virtual void drawItem(DC& dc, int x, int y, size_t item, bool selected);
+	virtual void drawItem(DC& dc, int x, int y, size_t item);
 	
   private:
 	GameP game;
@@ -69,14 +67,14 @@ void StatCategoryList::show(const GameP& game) {
 	stable_sort(categories.begin(), categories.end(), ComparePositionHint());
 	update();
 	// select first item
-	selection = itemCount() > 0 ? 0 : NO_SELECTION;
+	columns[0].selection = itemCount() > 0 ? 0 : NO_SELECTION;
 }
 
 size_t StatCategoryList::itemCount() const {
 	return categories.size();
 }
 
-void StatCategoryList::drawItem(DC& dc, int x, int y, size_t item, bool selected) {
+void StatCategoryList::drawItem(DC& dc, int x, int y, size_t item) {
 	StatsCategory& cat = *categories.at(item);
 	// draw icon
 	if (!cat.icon_filename.empty() && !cat.icon.Ok()) {
@@ -101,28 +99,74 @@ void StatCategoryList::drawItem(DC& dc, int x, int y, size_t item, bool selected
 }
 
 // ----------------------------------------------------------------------------- : StatDimensionList
+#else
 
 /// A list of fields of which the statistics can be shown
 class StatDimensionList : public GalleryList {
   public:
-	StatDimensionList(Window* parent, int id, bool show_empty)
-		: GalleryList(parent, id, wxVERTICAL)
+	StatDimensionList(Window* parent, int id, bool show_empty, int dimension_count = 3)
+		: GalleryList(parent, id, wxVERTICAL, false)
 		, show_empty(show_empty)
+		, dimension_count(dimension_count)
+		, prefered_dimension_count(dimension_count)
 	{
-		item_size = wxSize(150, 23);
+		//item_size = wxSize(150, 23);
+		columns[0].size = wxSize(140,23);
+		if (dimension_count > 0) {
+			columns[0].selection  = NO_SELECTION;
+			columns[0].can_select = false;
+			active_column = 1;
+		}
+		// additional columns
+		Column col;
+		col.selection = show_empty ? NO_SELECTION : 0;
+		col.can_select = true;
+		col.offset.x = columns[0].size.x + SPACING;
+		col.size = wxSize(18,23);
+		for (int i = 0 ; i < dimension_count ; ++i) {
+			columns.push_back(col);
+			col.offset.x += col.size.x + SPACING;
+		}
+		// total
+		item_size = wxSize(col.offset.x - SPACING, 23);
 	}
 	
 	void show(const GameP&);
 	
 	/// The selected category
-	inline StatsDimensionP getSelection() {
-		if (show_empty && selection == 0) return StatsDimensionP();
-		return dimensions.at(selection - show_empty);
+	StatsDimensionP getSelection(size_t column=(size_t)-1) {
+		size_t sel = columns[column+1].selection - show_empty;
+		if (sel >= itemCount()) return StatsDimensionP();
+		else                    return dimensions.at(sel);
 	}
+	
+	/// The number of dimensions shown
+	const int dimension_count;
+	size_t prefered_dimension_count;
 	
   protected:
 	virtual size_t itemCount() const;
-	virtual void drawItem(DC& dc, int x, int y, size_t item, bool selected);
+	virtual void drawItem(DC& dc, int x, int y, size_t item);
+	
+	virtual double columnActivity(size_t col) const {
+		return col-1 >= prefered_dimension_count ? 0.2 : 0.7;
+	}
+	
+	virtual void onSelect(size_t item, size_t col, bool& changes) {
+		// swap selection with another column?
+		for (size_t j = 1 ; j < columns.size() ; ++j) {
+			if (j != col && columns[j].selection == item) {
+				columns[j].selection = columns[col].selection;
+				changes = true;
+				break;
+			}
+		}
+		// update prefered dimension count?
+		if (col > prefered_dimension_count) {
+			prefered_dimension_count = col;
+			changes = true;
+		}
+	}
 	
   private:
 	GameP game;
@@ -142,14 +186,21 @@ void StatDimensionList::show(const GameP& game) {
 	stable_sort(dimensions.begin(), dimensions.end(), ComparePositionHint2());
 	update();
 	// select first item
-	selection = itemCount() > 0 ? 0 : NO_SELECTION;
+	if (dimension_count > 0) {
+		for (int j = 0 ; j < dimension_count ; ++j) {
+			columns[j+1].selection = itemCount() > 0 ? 0 : NO_SELECTION;
+		}
+		prefered_dimension_count = 1;
+	} else {
+		columns[0].selection = itemCount() > 0 ? 0 : NO_SELECTION;
+	}
 }
 
 size_t StatDimensionList::itemCount() const {
 	return dimensions.size() + show_empty;
 }
 
-void StatDimensionList::drawItem(DC& dc, int x, int y, size_t item, bool selected) {
+void StatDimensionList::drawItem(DC& dc, int x, int y, size_t item) {
 	if (show_empty && item == 0) {
 		RealRect rect(RealPoint(x + 24, y), RealSize(item_size.x - 30, item_size.y));
 		String str = _("None");
@@ -182,8 +233,22 @@ void StatDimensionList::drawItem(DC& dc, int x, int y, size_t item, bool selecte
 	RealSize size = RealSize(w,h);
 	RealPoint pos = align_in_rect(ALIGN_MIDDLE_LEFT, size, rect);
 	dc.DrawText(str, (int)pos.x, (int)pos.y);
+	// draw selection icon
+	for (size_t j = 1 ; j <= prefered_dimension_count ; ++j) {
+		if (isSelected(item,j)) {
+			// TODO: different icons for different dimensions
+			/*
+			int cx = x + columns[j].offset.x + columns[j].size.x/2;
+			int cy = y + columns[j].offset.y + columns[j].size.y/2;
+			dc.SetPen(*wxTRANSPARENT_PEN);
+			dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
+			dc.DrawCircle(cx,cy,6);
+			*/
+		}
+	}
 }
 
+#endif
 // ----------------------------------------------------------------------------- : StatsPanel
 
 StatsPanel::StatsPanel(Window* parent, int id)
@@ -192,10 +257,12 @@ StatsPanel::StatsPanel(Window* parent, int id)
 {
 	// init controls
 	wxSplitterWindow* splitter;
-	#if USE_DIMENSION_LISTS
+	#if USE_SEPARATE_DIMENSION_LISTS
 		for (int i = 0 ; i < 3 ; ++i) {
 			dimensions[i] = new StatDimensionList(this, ID_FIELD_LIST, i > 0);
 		}
+	#elif USE_DIMENSION_LISTS
+		dimensions = new StatDimensionList(this, ID_FIELD_LIST, false, 3);
 	#else
 		categories = new StatCategoryList(this, ID_FIELD_LIST);
 	#endif
@@ -208,12 +275,14 @@ StatsPanel::StatsPanel(Window* parent, int id)
 	splitter->SplitHorizontally(graph, card_list, -170);
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
-	#if USE_DIMENSION_LISTS
+	#if USE_SEPARATE_DIMENSION_LISTS
 		wxSizer* s2 = new wxBoxSizer(wxVERTICAL);
 			s2->Add(dimensions[0], 1, wxBOTTOM, 2);
 			s2->Add(dimensions[1], 1, wxBOTTOM, 2);
 			s2->Add(dimensions[2], 1);
 		s->Add(s2, 0, wxEXPAND | wxRIGHT, 2);
+	#elif USE_DIMENSION_LISTS
+		s->Add(dimensions, 0, wxEXPAND | wxRIGHT, 2);
 	#else
 		s->Add(categories, 0, wxEXPAND | wxRIGHT, 2);
 	#endif
@@ -236,8 +305,10 @@ StatsPanel::~StatsPanel() {
 
 void StatsPanel::onChangeSet() {
 	card_list->setSet(set);
-	#if USE_DIMENSION_LISTS
+	#if USE_SEPARATE_DIMENSION_LISTS
 		for (int i = 0 ; i < 3 ; ++i) dimensions[i]->show(set->game);
+	#elif USE_DIMENSION_LISTS
+		dimensions->show(set->game);
 	#else
 		categories->show(set->game);
 	#endif
@@ -252,7 +323,7 @@ void StatsPanel::initUI   (wxToolBar* tb, wxMenuBar* mb) {
 	active = true;
 	if (!up_to_date) showCategory();
 	// Toolbar
-	#if USE_DIMENSION_LISTS
+	#if USE_DIMENSION_LISTS || USE_SEPARATE_DIMENSION_LISTS
 		tb->AddTool(ID_GRAPH_PIE,         _(""), load_resource_tool_image(_("graph_pie")),         wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("pie"),         _HELP_("pie"));
 		tb->AddTool(ID_GRAPH_BAR,         _(""), load_resource_tool_image(_("graph_bar")),         wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("bar"),         _HELP_("bar"));
 		tb->AddTool(ID_GRAPH_STACK,       _(""), load_resource_tool_image(_("graph_stack")),       wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("stack"),       _HELP_("stack"));
@@ -265,7 +336,7 @@ void StatsPanel::initUI   (wxToolBar* tb, wxMenuBar* mb) {
 }
 void StatsPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	active = false;
-	#if USE_DIMENSION_LISTS
+	#if USE_DIMENSION_LISTS || USE_SEPARATE_DIMENSION_LISTS
 		// Toolbar
 		tb->DeleteTool(ID_GRAPH_PIE);
 		tb->DeleteTool(ID_GRAPH_BAR);
@@ -282,7 +353,9 @@ void StatsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 		case ID_GRAPH_PIE: case ID_GRAPH_BAR: case ID_GRAPH_STACK: case ID_GRAPH_SCATTER: case ID_GRAPH_SCATTER_PIE: {
 			GraphType type = (GraphType)(ev.GetId() - ID_GRAPH_PIE);
 			ev.Check(graph->getLayout() == type);
-			ev.Enable(graph->getDimensionality() == dimensionality(type));
+			#if USE_SEPARATE_DIMENSION_LISTS
+				ev.Enable(graph->getDimensionality() == dimensionality(type));
+			#endif
 			break;
 		}
 	}
@@ -296,8 +369,7 @@ void StatsPanel::onCommand(int id) {
 		}
 		case ID_GRAPH_PIE: case ID_GRAPH_BAR: case ID_GRAPH_STACK: case ID_GRAPH_SCATTER: case ID_GRAPH_SCATTER_PIE: {
 			GraphType type = (GraphType)(id - ID_GRAPH_PIE);
-			graph->setLayout(type);
-			graph->Refresh(false);
+			showLayout(type);
 			break;
 		}
 	}
@@ -338,51 +410,25 @@ void StatsPanel::onChange() {
 	}
 }
 
-void StatsPanel::showCategory() {
+void StatsPanel::showCategory(const GraphType* prefer_layout) {
 	up_to_date = true;
-	// change graph data
-	#if USE_DIMENSION_LISTS
-		GraphDataPre d;
-		// create axes
+	// find dimensions and layout
+	#if USE_DIMENSION_LISTS || USE_SEPARATE_DIMENSION_LISTS
+		// dimensions
 		vector<StatsDimensionP> dims;
-		for (int i = 0 ; i < 3 ; ++i) {
-			StatsDimensionP dim = dimensions[i]->getSelection();
-			if (!dim) continue;
-			dims.push_back(dim);
-			d.axes.push_back(new_intrusive5<GraphAxis>(
-				dim->name,
-				dim->colors.empty() ? AUTO_COLOR_EVEN : AUTO_COLOR_NO,
-				dim->numeric,
-				&dim->colors,
-				dim->groups.empty() ? nullptr : &dim->groups
-				)
-			);
-		}
-		// find values
-		FOR_EACH(card, set->cards) {
-			Context& ctx = set->getContext(card);
-			GraphElementP e(new GraphElement);
-			bool show = true;
-			FOR_EACH(dim, dims) {
-				String value = untag(dim->script.invoke(ctx)->toString());
-				e->values.push_back(value);
-				if (value.empty() && !dim->show_empty) {
-					// don't show this element
-					show = false;
-					break;
-				}
+		#if USE_SEPARATE_DIMENSION_LISTS
+			for (int i = 0 ; i < 3 ; ++i) {
+				StatsDimensionP dim = dimensions[i]->getSelection();
+				if (dim) dims.push_back(dim);
 			}
-			if (show) {
-				d.elements.push_back(e);
+		#else // USE_DIMENSION_LISTS
+			for (size_t i = 0 ; i < dimensions->prefered_dimension_count ; ++i) {
+				StatsDimensionP dim = dimensions->getSelection(i);
+				if (dim) dims.push_back(dim);
 			}
-		}
-		// split lists
-		size_t dim_id = 0;
-		FOR_EACH(dim, dims) {
-			if (dim->split_list) d.splitList(dim_id);
-			++dim_id;
-		}
-		GraphType layout = graph->getLayout();
+		#endif
+		// layout
+		GraphType layout = prefer_layout ? *prefer_layout : graph->getLayout();
 		if (dimensionality(layout) != dims.size()) {
 			// we must switch to another layout
 			layout = dims.size() == 1 ? GRAPH_TYPE_BAR
@@ -390,87 +436,98 @@ void StatsPanel::showCategory() {
 			                              ? GRAPH_TYPE_SCATTER : GRAPH_TYPE_STACK)
 			       :                    GRAPH_TYPE_SCATTER_PIE;
 		}
-		graph->setLayout(layout, true);
-		graph->setData(d);
-		filterCards();
 	#else
-		if (categories->hasSelection()) {
-			StatsCategory& cat = categories->getSelection();
-			GraphDataPre d;
-			cat.find_dimensions(set->game->statistics_dimensions);
-			// create axes
-			FOR_EACH(dim, cat.dimensions) {
-				d.axes.push_back(new_intrusive5<GraphAxis>(
-					dim->name,
-					dim->colors.empty() ? AUTO_COLOR_EVEN : AUTO_COLOR_NO,
-					dim->numeric,
-					&dim->colors,
-					dim->groups.empty() ? nullptr : &dim->groups
-					)
-				);
+		if (!categories->hasSelection()) return
+		StatsCategory& cat = categories->getSelection();
+		// dimensions
+		cat.find_dimensions(set->game->statistics_dimensions);
+		vector<StatsDimensionP>& dims = cat.dimensions;
+		// layout
+		GraphType layout = cat.type;
+	#endif
+	// create axes
+	GraphDataPre d;
+	FOR_EACH(dim, dims) {
+		d.axes.push_back(new_intrusive5<GraphAxis>(
+			dim->name,
+			dim->colors.empty() ? AUTO_COLOR_EVEN : AUTO_COLOR_NO,
+			dim->numeric,
+			&dim->colors,
+			dim->groups.empty() ? nullptr : &dim->groups
+			)
+		);
+	}
+	// find values
+	FOR_EACH(card, set->cards) {
+		Context& ctx = set->getContext(card);
+		GraphElementP e(new GraphElement);
+		bool show = true;
+		FOR_EACH(dim, dims) {
+			String value = untag(dim->script.invoke(ctx)->toString());
+			e->values.push_back(value);
+			if (value.empty() && !dim->show_empty) {
+				// don't show this element
+				show = false;
+				break;
 			}
-			// find values
-			FOR_EACH(card, set->cards) {
-				Context& ctx = set->getContext(card);
-				GraphElementP e(new GraphElement);
-				bool show = true;
-				FOR_EACH(dim, cat.dimensions) {
-					String value = untag(dim->script.invoke(ctx)->toString());
-					e->values.push_back(value);
-					if (value.empty() && !dim->show_empty) {
-						// don't show this element
-						show = false;
-						break;
-					}
-				}
-				if (show) {
-					d.elements.push_back(e);
-				}
-			}
-			// split lists
-			size_t dim_id = 0;
-			FOR_EACH(dim, cat.dimensions) {
-				if (dim->split_list) d.splitList(dim_id);
-				++dim_id;
-			}
-			graph->setLayout(cat.type);
-			graph->setData(d);
-			filterCards();
+		}
+		if (show) {
+			d.elements.push_back(e);
+		}
+	}
+	// split lists
+	size_t dim_id = 0;
+	FOR_EACH(dim, dims) {
+		if (dim->split_list) d.splitList(dim_id);
+		++dim_id;
+	}
+	// update graph and card list
+	graph->setLayout(layout, true);
+	graph->setData(d);
+	filterCards();
+}
+void StatsPanel::showLayout(GraphType layout) {
+	#if USE_DIMENSION_LISTS && !USE_SEPARATE_DIMENSION_LISTS
+		// make sure we have the right number of data dimensions
+		if (dimensions->prefered_dimension_count != dimensionality(layout)) {
+			dimensions->prefered_dimension_count = dimensionality(layout);
+			showCategory(&layout); // full update
+			dimensions->RefreshSelection();
+			return;
 		}
 	#endif
+	graph->setLayout(layout);
+	graph->Refresh(false);
 }
 void StatsPanel::onGraphSelect(wxCommandEvent&) {
 	filterCards();
 }
 
 void StatsPanel::filterCards() {
-	#if USE_DIMENSION_LISTS
-		intrusive_ptr<StatsFilter> filter(new StatsFilter(*set));
-		int dims = 0;
+	#if USE_SEPARATE_DIMENSION_LISTS
+		vector<StatsDimensionP> dims;
 		for (int i = 0 ; i < 3 ; ++i) {
 			StatsDimensionP dim = dimensions[i]->getSelection();
-			if (!dim) continue;
-			++dims;
-			if (graph->hasSelection(i)) {
-				filter->values.push_back(make_pair(dim, graph->getSelection(i)));
-			}
+			if (dim) dims.push_back(dim);
 		}
-		if (dims == 0) return;
-		card_list->setFilter(filter);
+	#elif USE_DIMENSION_LISTS
+		vector<StatsDimensionP> dims;
+		for (size_t i = 0 ; i < dimensions->prefered_dimension_count ; ++i) {
+			StatsDimensionP dim = dimensions->getSelection(i);
+			if (dim) dims.push_back(dim);
+		}
 	#else
 		if (!categories->hasSelection()) return;
-		intrusive_ptr<StatsFilter> filter(new StatsFilter(*set));
-		StatsCategory& cat = categories->getSelection();
-		vector<pair<StatsDimensionP, String> > values;
-		int i = 0;
-		FOR_EACH(dim, cat.dimensions) {
-			if (graph->hasSelection(i)) {
-				filter->values.push_back(make_pair(dim, graph->getSelection(i)));
-			}
-			i++;
-		}
-		card_list->setFilter(filter);
+		const StatsCategory& cat = categories->getSelection();
+		const vector<StatsDimensionP>& dims = cat.dimensions;
 	#endif
+	intrusive_ptr<StatsFilter> filter(new StatsFilter(*set));
+	for (size_t i = 0 ; i < dims.size() ; ++i) {
+		if (graph->hasSelection(i)) {
+			filter->values.push_back(make_pair(dims[i], graph->getSelection(i)));
+		}
+	}
+	card_list->setFilter(filter);
 }
 
 BEGIN_EVENT_TABLE(StatsPanel, wxPanel)

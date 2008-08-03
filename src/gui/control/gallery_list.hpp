@@ -31,15 +31,24 @@ class GalleryList : public wxPanel {
   public:
 	GalleryList(Window* parent, int id, int direction = wxHORIZONTAL, bool always_focused = true);
 	
-	/// Select the given item
-	void select(size_t item, bool event = true);
+	/// Select the given column
+	void selectColumn(size_t column);
+	/// Select the given item in the given column (or in the active column)
+	void select(size_t item, size_t column = NO_SELECTION, bool event = true);
 	/// Is there an item selected?
-	inline bool hasSelection() const { return selection < itemCount(); }
+	inline bool hasSelection(size_t column = 0) const { return columns[column].selection < itemCount(); }
+	/// Is the given item selected?
+	inline bool isSelected(size_t item, size_t column = 0) const {
+		return column < columns.size() && columns[column].selection == item;
+	}
+	
+	/// Redraw only the selected items
+	void RefreshSelection();
 	
   protected:
 	static const size_t NO_SELECTION = (size_t)-1;
-	size_t selection;      ///< The selected item, or NO_SELECTION if there is no selection
-	wxSize item_size;      ///< The size of a single item
+	size_t active_column;  ///< The active column
+	wxSize item_size;      ///< The total size of a single item (over all columns)
 	int direction;	       ///< Direction of the list, can be wxHORIZONTAL or wxVERTICAL
 	bool always_focused;   ///< Always draw as if focused
 	
@@ -49,10 +58,24 @@ class GalleryList : public wxPanel {
 	/// Return how many items there are in the list
 	virtual size_t itemCount() const = 0;
 	/// Draw an item
-	virtual void drawItem(DC& dc, int x, int y, size_t item, bool selected) = 0;
+	virtual void drawItem(DC& dc, int x, int y, size_t item) = 0;
+	/// How 'salient' should the selection in the given column be?
+	virtual double columnActivity(size_t col) const { return 0.7; }
+	
+	/// Filter calls to select, or apply some extra operaions
+	virtual void onSelect(size_t item, size_t col, bool& changes) {}
 	
 	/// Return the desired size of control
 	virtual wxSize DoGetBestSize() const;
+	
+	/// Information on the columns
+	struct Column {
+		wxPoint offset;
+		wxSize  size;
+		bool    can_select;
+		size_t  selection;
+	};
+	vector<Column> columns;
 	
   private:
 	DECLARE_EVENT_TABLE();
@@ -97,6 +120,8 @@ class GalleryList : public wxPanel {
 		return direction == wxHORIZONTAL ? s.x : s.y;
 	}
 
+  public:
+	typedef Column Column_for_typeof;
   protected:
 	/// Send an event
 	void sendEvent(WXTYPE type);

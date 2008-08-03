@@ -11,12 +11,17 @@
 
 #include <util/prec.hpp>
 #include <gui/set/panel.hpp>
+#include <data/graph_type.hpp>
 
 class StatCategoryList;
 class StatDimensionList;
 class GraphControl;
 class FilteredCardList;
 class IconMenu;
+
+// Pick the style here:
+#define USE_DIMENSION_LISTS 1
+#define USE_SEPARATE_DIMENSION_LISTS 0
 
 // ----------------------------------------------------------------------------- : StatsPanel
 
@@ -44,8 +49,13 @@ class StatsPanel : public SetWindowPanel {
   private:
 	DECLARE_EVENT_TABLE();
 	
-	StatCategoryList* categories;
-	StatDimensionList* dimensions[3];
+	#if USE_SEPARATE_DIMENSION_LISTS
+		StatDimensionList* dimensions[3];
+	#elif USE_DIMENSION_LISTS
+		StatDimensionList* dimensions;
+	#else
+		StatCategoryList* categories;
+	#endif
 	GraphControl*     graph;
 	FilteredCardList* card_list;
 	IconMenu*         menuGraph;
@@ -55,7 +65,8 @@ class StatsPanel : public SetWindowPanel {
 	
 	void onChange();
 	void onGraphSelect(wxCommandEvent&);
-	void showCategory();
+	void showCategory(const GraphType* prefer_layout = nullptr);
+	void showLayout(GraphType);
 	void filterCards();
 };
 
