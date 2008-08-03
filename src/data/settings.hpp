@@ -124,7 +124,7 @@ class Settings {
 	
 	// --------------------------------------------------- : Recently opened sets
 	vector<String> recent_sets;
-	static const UInt max_recent_sets = 4; // store this many recent sets
+	static const UInt max_recent_sets = 9; // store this many recent sets
 	
 	/// Add a file to the list of recent files
 	void addRecentFile(const String& filename);
