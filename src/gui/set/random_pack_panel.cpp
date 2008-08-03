@@ -8,6 +8,7 @@
 
 #include <util/prec.hpp>
 #include <gui/set/random_pack_panel.hpp>
+#include <gui/set/window.hpp>
 #include <gui/control/card_viewer.hpp>
 #include <gui/control/filtered_card_list.hpp>
 #include <data/game.hpp>
@@ -16,6 +17,7 @@
 
 DECLARE_TYPEOF_COLLECTION(PackTypeP);
 DECLARE_TYPEOF_COLLECTION(CardP);
+DECLARE_TYPEOF_COLLECTION(RandomPackPanel::PackItem_for_typeof);
 
 // ----------------------------------------------------------------------------- : RandomCardList
 
@@ -73,6 +75,9 @@ RandomPackPanel::RandomPackPanel(Window* parent, int id)
 	wxRadioButton* seed_random = new wxRadioButton(this, wxID_ANY, _BUTTON_("random seed"));
 	wxRadioButton* seed_fixed  = new wxRadioButton(this, wxID_ANY, _BUTTON_("fixed seed"));
 	seed = new wxTextCtrl(this, wxID_ANY);
+	static_cast<SetWindow*>(parent)->setControlStatusText(seed_random, _HELP_("random seed"));
+	static_cast<SetWindow*>(parent)->setControlStatusText(seed_fixed,  _HELP_("fixed seed"));
+	static_cast<SetWindow*>(parent)->setControlStatusText(seed,        _HELP_("seed"));
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
 		s->Add(preview, 0, wxRIGHT,  2);
@@ -81,7 +86,7 @@ RandomPackPanel::RandomPackPanel(Window* parent, int id)
 				wxSizer* s4 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack selection"));
 					packsSizer = new wxFlexGridSizer(0, 2, 4, 8);
 					packsSizer->AddGrowableCol(0);
-					s4->AddSpacer(2);
+					//s4->AddSpacer(2);
 					s4->Add(packsSizer, 1, wxEXPAND | wxALL & ~wxTOP, 4);
 				s3->Add(s4, 1, wxEXPAND, 8);
 				wxSizer* s5 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack totals"));
@@ -94,8 +99,9 @@ RandomPackPanel::RandomPackPanel(Window* parent, int id)
 							s8->Add(seed, 1, wxLEFT, 20);
 						s7->Add(s8,          0, wxALL & ~wxTOP, 4);
 					s6->Add(s7,       0, 0, 8);
-					s6->AddStretchSpacer();
-					s6->Add(generate, 0, wxTOP | wxALIGN_RIGHT, 8);
+					//s6->AddStretchSpacer();
+					//s6->Add(generate, 0, wxTOP | wxALIGN_RIGHT, 8);
+					s6->Add(generate, 1, wxTOP | wxEXPAND, 8);
 				s3->Add(s6, 0, wxEXPAND | wxLEFT, 8);
 			s2->Add(s3, 0, wxEXPAND | wxALL & ~wxTOP, 4);
 			s2->Add(card_list, 1, wxEXPAND);
@@ -108,7 +114,15 @@ void RandomPackPanel::onChangeSet() {
 	preview  ->setSet(set);
 	card_list->setSet(set);
 	
-	// TODO: remove or reuse old pack controls if there are any.
+	// remove old pack controls
+	FOR_EACH(i, packs) {
+		packsSizer->Detach(i.label);
+		packsSizer->Detach(i.value);
+		delete i.label;
+		delete i.value;
+	}
+	packs.clear();
+	
 	// add pack controls
 	FOR_EACH(pack, set->game->pack_types) {
 		PackItem i;

@@ -245,6 +245,32 @@ void SetWindow::selectPanel(int id) {
 	current_panel->SetFocus();
 }
 
+// ----------------------------------------------------------------------------- : Status text for controls
+
+void SetWindow::setControlStatusText(wxWindow* control, const String& text) {
+	for (size_t i = 0 ; i < control_status_texts.size() ; ++i) {
+		if (control_status_texts[i].first == control) {
+			control_status_texts[i].second = text;
+			return;
+		}
+	}
+	control_status_texts.push_back(make_pair(control,text));
+	control->Connect(wxEVT_ENTER_WINDOW,(wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)onControlEnter,nullptr,this);
+	control->Connect(wxEVT_LEAVE_WINDOW,(wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)onControlLeave,nullptr,this);
+}
+void SetWindow::onControlEnter(wxMouseEvent& ev) {
+	for (size_t i = 0 ; i < control_status_texts.size() ; ++i) {
+		if (control_status_texts[i].first == ev.GetEventObject()) {
+			SetStatusText(control_status_texts[i].second);
+		}
+	}
+	ev.Skip();
+}
+void SetWindow::onControlLeave(wxMouseEvent& ev) {
+	SetStatusText(wxEmptyString);
+	ev.Skip();
+}
+
 // ----------------------------------------------------------------------------- : Window managment
 
 vector<SetWindow*> SetWindow::set_windows;

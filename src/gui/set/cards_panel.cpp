@@ -8,6 +8,7 @@
 
 #include <util/prec.hpp>
 #include <gui/set/cards_panel.hpp>
+#include <gui/set/window.hpp>
 #include <gui/control/image_card_list.hpp>
 #include <gui/control/card_editor.hpp>
 #include <gui/control/text_ctrl.hpp>
@@ -183,6 +184,7 @@ void CardsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 		case ID_COLLAPSE_NOTES: {
 			bool collapse = notes->GetSize().y > 0;
 			collapse_notes->loadBitmaps(collapse ? _("btn_collapse") : _("btn_expand"));
+			static_cast<SetWindow*>(GetParent())->setControlStatusText(collapse_notes, collapse ? _HELP_("collapse notes") : _HELP_("expand notes"));
 			break;
 		}
 		case ID_INSERT_SYMBOL: {

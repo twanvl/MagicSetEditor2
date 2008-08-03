@@ -190,6 +190,14 @@ help:
 	website:			
 	about:				
 	
+	# Cards panel
+	collapse notes:		Hide the card notes box
+	expand notes:		Show the card notes box
+	# Random pack panel
+	random seed:		Different packs will be generated each time.
+	fixed seed:			Using the same seed number gives the same 'random' packs.
+	seed:				Seed number for the random generator. Using the same seed number gives the same 'random' packs.
+	
 	# Preferences
 	app language:
 		Note: You must restart MSE for the changes to take effect.
@@ -414,6 +422,7 @@ label:
 	# Random pack panel
 	pack selection:		Pack selection
 	pack totals:		Totals
+	seed:				Seed
 	
 	# Open dialogs
 	all files			All files
@@ -527,6 +536,8 @@ button:
 	
 	# Random pack panel
 	generate pack:		&Generate Pack
+	random seed:		&Random Seed
+	fixed seed:			&Fixed Seed
 	
 	# Welcome
 	new set:			New set
@@ -741,7 +752,7 @@ error:
 		When you open it, some aspects of the file may be lost.
 		It is recommended that you upgrade to the latest version.
 		Visit http:://magicseteditor.sourceforge.net/
-	word list type not found:			The word list type %s was not found (from a <word-list> tag)
+	word list type not found:			The word list type "%s" was not found (from a <word-list> tag)
 	
 	# Update checking
 	checking updates failed:			Checking updates failed.

@@ -58,6 +58,8 @@ class RandomPackPanel : public SetWindowPanel {
 	
 	/// Generate the cards
 	void generate();
+  public:
+	typedef PackItem PackItem_for_typeof;
 };
 
 // ----------------------------------------------------------------------------- : EOF

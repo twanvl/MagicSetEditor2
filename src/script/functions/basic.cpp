@@ -104,8 +104,11 @@ SCRIPT_FUNCTION(to_int) {
 			result = (c.Red() + c.Blue() + c.Green()) / 3;
 		} else if (t == SCRIPT_STRING) {
 			long l;
-			if (input->toString().ToLong(&l)) {
+			String str = input->toString();
+			if (str.ToLong(&l)) {
 				result = l;
+			} else if (str.empty()) {
+				result = 0;
 			} else {
 				return new_intrusive1<ScriptDelayedError>(_ERROR_3_("can't convert value", input->toString(), input->typeName(), _TYPE_("integer")));
 			}
@@ -137,6 +140,8 @@ SCRIPT_FUNCTION(to_number) {
 		SCRIPT_RETURN( (c.Red() + c.Blue() + c.Green()) / 3 );
 	} else if (t == SCRIPT_DOUBLE) {
 		SCRIPT_RETURN((double)*input);
+	} else if (t == SCRIPT_NIL) {
+		SCRIPT_RETURN(0);
 	} else {
 		String s = input->toString();
 		long l; double d;
@@ -144,6 +149,8 @@ SCRIPT_FUNCTION(to_number) {
 			SCRIPT_RETURN((int)l);
 		} else if (s.ToDouble(&d)) {
 			SCRIPT_RETURN((double)d);
+		} else if (s.empty()) {
+			SCRIPT_RETURN(0);
 		} else {
 			return delayError(_ERROR_2_("can't convert", input->typeName(), _TYPE_("double")));
 		}

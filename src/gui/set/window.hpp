@@ -35,7 +35,7 @@ class SetWindow : public wxFrame, public SetView {
 	DECLARE_EVENT_TABLE();
 	
 	// --------------------------------------------------- : Data
-		
+	
 	// gui items
 	vector<SetWindowPanel*> panels;        ///< All panels on this window
 	SetWindowPanel*         current_panel;
@@ -62,12 +62,21 @@ class SetWindow : public wxFrame, public SetView {
 	
 	/// All opened set windows
 	static vector<SetWindow*> set_windows;
-		
+	
 	/// Is this the only window that has this set?
 	bool isOnlyWithSet();
 	
 	/// Switch this window to the new set, or open another window for it (depending on the settings)
 	void switchSet(const SetP& new_set);
+	
+	// --------------------------------------------------- : Status text for controls
+  public:
+	/// Set the status text of a control
+	void setControlStatusText(wxWindow* control, const String& text);
+  private:
+	vector<pair<wxWindow*,String> > control_status_texts;
+	void onControlEnter(wxMouseEvent&);
+	void onControlLeave(wxMouseEvent&);
 	
 	// --------------------------------------------------- : Action related
   protected:
