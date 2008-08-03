@@ -181,7 +181,7 @@ symbol:
 	image: mana_s.png
 symbol:
 	image: mana_nw.png
-	code: ([XYZ0-9]+)/W
+	code: ([XYZ0-9])/W
 	regex: yes
 	draw text: 1
 	text margin left:   -.05
@@ -195,7 +195,7 @@ symbol:
 		max stretch: 0.5
 symbol:
 	image: mana_nu.png
-	code: ([XYZ0-9]+)/U
+	code: ([XYZ0-9])/U
 	regex: yes
 	draw text: 1
 	text margin left:   -.05
@@ -209,7 +209,7 @@ symbol:
 		max stretch: 0.5
 symbol:
 	image: mana_nb.png
-	code: ([XYZ0-9]+)/B
+	code: ([XYZ0-9])/B
 	regex: yes
 	draw text: 1
 	text margin left:   -.05
@@ -223,7 +223,7 @@ symbol:
 		max stretch: 0.5
 symbol:
 	image: mana_nr.png
-	code: ([XYZ0-9]+)/R
+	code: ([XYZ0-9])/R
 	regex: yes
 	draw text: 1
 	text margin left:   -.05
@@ -237,7 +237,7 @@ symbol:
 		max stretch: 0.5
 symbol:
 	image: mana_ng.png
-	code: ([XYZ0-9]+)/G
+	code: ([XYZ0-9])/G
 	regex: yes
 	draw text: 1
 	text margin left:   -.05
@@ -263,7 +263,7 @@ symbol:
 	image: mana_infinite.png
 symbol:
 	image: mana_circle.png
-	code: [0-9]+(?!/2)|.
+	code: [0-9]+(?!/[WUBRGSTQ2])|.
 	regex: yes
 	draw text: 0
 	text font:

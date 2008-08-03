@@ -489,27 +489,25 @@ init script:
 	
 	# Converted mana cost
 	is_half_mana    := match@(match: "1/2|[|][WUBRGS]")
-	is_zero_slash   := match@(match: "^0/")
 	is_colored_mana := match@(match: "[WUBRG]")
 	only_numbers    := filter_text@(match: "^[0123456789]+")
-	cmc_split := break_text@(match: "(?ix) 1/2 | [|][WUBRG] | ([0-9]+(?!/2)|[WUBRGS])(/[WUBRGS])\{0,4} ")
-	cmc := to_text + {
+	cmc_split := break_text@(match: "(?ix) 1/2 | [|][WUBRG] | [0-9]+(?!/[WUBRGSTQ2]) | [WUBRGS0-9](/[WUBRGS])\{0,4} ")
+	cmc := {to_number(
 		for each sym in cmc_split() do (
 			numbers := only_numbers(sym)
-			if is_half_mana(sym)       then 0.5
-			else if is_zero_slash(sym) then 1 # 0/C
-			else if numbers != ""      then to_int(numbers)
-			else                            1 # all other symbols are 1
-		)
+			if is_half_mana(sym)  then 0.5
+			else if numbers != "" then max(1, to_int(numbers))
+			else                       1 # all other symbols are 1
+		))
 	}
 
-	colored_mana := to_text + {
+	colored_mana := {to_number(
 		for each sym in cmc_split() do (
 			numbers := only_numbers(sym)
 			if is_colored_mana(sym) then
 				if is_half_mana(sym) then 0.5 else 1
 			else 0
-		)
+		))
 	}
 	primary_card_color := {
 		artifact := chosen(choice:"artifact")
