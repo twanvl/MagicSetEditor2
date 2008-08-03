@@ -1296,6 +1296,12 @@ statistics dimension:
 	icon: stats/keywords.png
 
 statistics dimension:
+	name: style
+	position hint: 1001
+	script: stylesheet.short_name
+	icon: stats/stylesheet.png
+
+statistics dimension:
 	name: race
 	position hint: 32
 	icon: stats/creature_type.png
