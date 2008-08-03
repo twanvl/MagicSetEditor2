@@ -76,6 +76,8 @@ GameSettings::GameSettings()
 	, images_export_conflicts(CONFLICT_NUMBER_OVERWRITE)
 	, use_auto_replace(true)
 	, initialized(false)
+	, pack_seed_random(true)
+	, pack_seed(123456)
 {}
 
 void GameSettings::initDefaults(const Game& game) {
@@ -110,6 +112,9 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(GameSettings) {
 	REFLECT(images_export_conflicts);
 	REFLECT(use_auto_replace);
 	REFLECT(auto_replaces);
+	REFLECT(pack_amounts);
+	REFLECT(pack_seed_random);
+	REFLECT(pack_seed);
 }
 
 

@@ -23,6 +23,7 @@ DECLARE_POINTER_TYPE(PackType);
 class RandomPackPanel : public SetWindowPanel {
   public:
 	RandomPackPanel(Window* parent, int id);
+	~RandomPackPanel();
 	
 	// --------------------------------------------------- : UI
 	
@@ -44,6 +45,8 @@ class RandomPackPanel : public SetWindowPanel {
 	wxTextCtrl*       seed;			///< Seed value
 	wxFlexGridSizer*  packsSizer;
 	wxFlexGridSizer*  totalsSizer;
+	wxButton*         generate_button;
+	wxRadioButton*    seed_random, *seed_fixed;
 	
 	struct PackItem {
 		PackTypeP     pack;
@@ -55,9 +58,17 @@ class RandomPackPanel : public SetWindowPanel {
 	struct TotalItem {
 	};
 	vector<TotalItem> totals;
+	int total_packs;
 	
+	/// Update the total count of each card type
+	void updateTotals();
+	/// Get a seed value
+	int getSeed();
+	void setSeed(int seed);
 	/// Generate the cards
 	void generate();
+	/// Store the settings
+	void storeSettings();
   public:
 	typedef PackItem PackItem_for_typeof;
 };

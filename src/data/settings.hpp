@@ -82,6 +82,9 @@ class GameSettings : public IntrusivePtrBase<GameSettings> {
 	FilenameConflicts           images_export_conflicts;
 	bool                        use_auto_replace;
 	vector<AutoReplaceP>        auto_replaces;     ///< Things to autoreplace in textboxes
+	map<String, int>            pack_amounts;
+	bool                        pack_seed_random;
+	int                         pack_seed;
 	
 	DECLARE_REFLECTION();
   private:

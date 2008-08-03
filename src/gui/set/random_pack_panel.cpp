@@ -13,7 +13,10 @@
 #include <gui/control/filtered_card_list.hpp>
 #include <data/game.hpp>
 #include <data/pack.hpp>
+#include <data/settings.hpp>
+#include <util/window_id.hpp>
 #include <wx/spinctrl.h>
+#include <boost/random/mersenne_twister.hpp>
 
 DECLARE_TYPEOF_COLLECTION(PackTypeP);
 DECLARE_TYPEOF_COLLECTION(CardP);
@@ -71,9 +74,9 @@ RandomPackPanel::RandomPackPanel(Window* parent, int id)
 	// init controls
 	preview   = new CardViewer(this, wxID_ANY);
 	card_list = new FilteredCardList(this, wxID_ANY);
-	wxButton* generate = new wxButton(this, wxID_ANY, _BUTTON_("generate pack"));
-	wxRadioButton* seed_random = new wxRadioButton(this, wxID_ANY, _BUTTON_("random seed"));
-	wxRadioButton* seed_fixed  = new wxRadioButton(this, wxID_ANY, _BUTTON_("fixed seed"));
+	generate_button = new wxButton(this, ID_GENERATE_PACK, _BUTTON_("generate pack"));
+	seed_random = new wxRadioButton(this, ID_SEED_RANDOM, _BUTTON_("random seed"));
+	seed_fixed  = new wxRadioButton(this, ID_SEED_FIXED,  _BUTTON_("fixed seed"));
 	seed = new wxTextCtrl(this, wxID_ANY);
 	static_cast<SetWindow*>(parent)->setControlStatusText(seed_random, _HELP_("random seed"));
 	static_cast<SetWindow*>(parent)->setControlStatusText(seed_fixed,  _HELP_("fixed seed"));
@@ -100,8 +103,8 @@ RandomPackPanel::RandomPackPanel(Window* parent, int id)
 						s7->Add(s8,          0, wxALL & ~wxTOP, 4);
 					s6->Add(s7,       0, 0, 8);
 					//s6->AddStretchSpacer();
-					//s6->Add(generate, 0, wxTOP | wxALIGN_RIGHT, 8);
-					s6->Add(generate, 1, wxTOP | wxEXPAND, 8);
+					//s6->Add(generate_button, 0, wxTOP | wxALIGN_RIGHT, 8);
+					s6->Add(generate_button, 1, wxTOP | wxEXPAND, 8);
 				s3->Add(s6, 0, wxEXPAND | wxLEFT, 8);
 			s2->Add(s3, 0, wxEXPAND | wxALL & ~wxTOP, 4);
 			s2->Add(card_list, 1, wxEXPAND);
@@ -110,7 +113,12 @@ RandomPackPanel::RandomPackPanel(Window* parent, int id)
 	SetSizer(s);
 }
 
+RandomPackPanel::~RandomPackPanel() {
+	storeSettings();
+}
+
 void RandomPackPanel::onChangeSet() {
+	storeSettings();
 	preview  ->setSet(set);
 	card_list->setSet(set);
 	
@@ -128,36 +136,98 @@ void RandomPackPanel::onChangeSet() {
 		PackItem i;
 		i.pack  = pack;
 		i.label = new wxStaticText(this, wxID_ANY, pack->name);
-		i.value = new wxSpinCtrl(this, wxID_ANY, _("0"), wxDefaultPosition, wxSize(50,-1));
+		i.value = new wxSpinCtrl(this, ID_PACK_AMOUNT, _("0"), wxDefaultPosition, wxSize(50,-1));
 		packsSizer->Add(i.label, 0, wxALIGN_CENTER_VERTICAL);
 		packsSizer->Add(i.value, 0, wxEXPAND | wxALIGN_CENTER);
 		packs.push_back(i);
 	}
 	
 	Layout();
+	
+	// settings
+	GameSettings& gs = settings.gameSettingsFor(*set->game);
+	seed_random->SetValue(gs.pack_seed_random);
+	seed_fixed ->SetValue(!gs.pack_seed_random);
+	seed->Enable(!gs.pack_seed_random);
+	setSeed(gs.pack_seed);
+	FOR_EACH(i, packs) {
+		i.value->SetValue(gs.pack_amounts[i.pack->name]);
+	}
+	
+	updateTotals();
+}
+
+void RandomPackPanel::storeSettings() {
+	GameSettings& gs = settings.gameSettingsFor(*set->game);
+	gs.pack_seed_random = seed_random->GetValue();
+	FOR_EACH(i, packs) {
+		gs.pack_amounts[i.pack->name] = i.value->GetValue();
+	}
 }
 
 // ----------------------------------------------------------------------------- : UI
 
-void RandomPackPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
-	// ?
-}
+void RandomPackPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {}
 
-void RandomPackPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
-	// ?
-}
+void RandomPackPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {}
 
-void RandomPackPanel::onUpdateUI(wxUpdateUIEvent& ev) {
-	// ?
-}
+void RandomPackPanel::onUpdateUI(wxUpdateUIEvent& ev) {}
 
 void RandomPackPanel::onCommand(int id) {
-	// ?
+	switch (id) {
+		case ID_PACK_AMOUNT: {
+			updateTotals();
+			break;
+		}
+		case ID_GENERATE_PACK: {
+			generate();
+			break;
+		}
+		case ID_SEED_RANDOM: case ID_SEED_FIXED: {
+			seed->Enable(seed_fixed->GetValue());
+			break;
+		}
+	}
 }
 
 // ----------------------------------------------------------------------------- : Generating
 
+void RandomPackPanel::updateTotals() {
+	total_packs = 0;
+	FOR_EACH(i,packs) {
+		total_packs += i.value->GetValue();
+	}
+	// update UI
+	generate_button->Enable(total_packs > 0);
+}
+
+int RandomPackPanel::getSeed() {
+	// determine seed value
+	int seed = 0;
+	if (seed_random->GetValue()) {
+		// use the C rand() function to get a seed
+		seed = rand() % 1000 * 1000
+		     + clock() % 1000;
+	} else {
+		// convert *any* string to a number
+		String s = this->seed->GetValue();
+		FOR_EACH_CONST(c,s) {
+			seed *= 10;
+			seed += abs(c - '0') + 123456789*(abs(c - '0')/10);
+		}
+	}
+	setSeed(seed);
+	return seed;
+}
+void RandomPackPanel::setSeed(int seed) {
+	seed %= 1000000;
+	this->seed->SetValue(wxString::Format(_("%06d"),seed));
+	GameSettings& gs = settings.gameSettingsFor(*set->game);
+	gs.pack_seed = seed;
+}
+
 void RandomPackPanel::generate() {
+	boost::mt19937 random((unsigned)getSeed());
 	//set->game->pack_types[0].generate()
 }
 

@@ -190,6 +190,12 @@ enum ChildMenuID {
 	// Statistics panel
 ,	ID_FIELD_LIST			= 3031
 	
+	// Random pack panel
+,	ID_PACK_AMOUNT			= 3041
+,	ID_SEED_RANDOM
+,	ID_SEED_FIXED
+,	ID_GENERATE_PACK
+	
 	// SymbolFont (Format menu)
 ,	ID_INSERT_SYMBOL_MENU_MIN = 3301
 ,	ID_INSERT_SYMBOL_MENU_MAX = 3999
