@@ -3,6 +3,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mse", "mse.vcproj", "{A78D6
 	ProjectSection(ProjectDependencies) = postProject
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "win32-cli-wrapper", "win32-cli-wrapper.vcproj", "{BCAB273A-CEDE-440D-866D-21AAFEC60218}"
+	ProjectSection(ProjectDependencies) = postProject
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfiguration) = preSolution
 		Debug = Debug
@@ -28,6 +32,20 @@ Global
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Unicode.Build.0 = Release Unicode|Win32
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Unicode fast build.ActiveCfg = Release Unicode fast build|Win32
 		{A78D6E04-7637-4C7A-AC63-DAAC3C4DB81B}.Release Unicode fast build.Build.0 = Release Unicode fast build|Win32
+		{BCAB273A-CEDE-440D-866D-21AAFEC60218}.Debug.ActiveCfg = Debug|Win32
+		{BCAB273A-CEDE-440D-866D-21AAFEC60218}.Debug.Build.0 = Debug|Win32
+		{BCAB273A-CEDE-440D-866D-21AAFEC60218}.Debug Unicode.ActiveCfg = Debug|Win32
+		{BCAB273A-CEDE-440D-866D-21AAFEC60218}.Debug Unicode.Build.0 = Debug|Win32
+		{BCAB273A-CEDE-440D-866D-21AAFEC60218}.Debug Unicode NoInit.ActiveCfg = Debug|Win32
+		{BCAB273A-CEDE-440D-866D-21AAFEC60218}.Debug Unicode NoInit.Build.0 = Debug|Win32
+		{BCAB273A-CEDE-440D-866D-21AAFEC60218}.Release.ActiveCfg = Release|Win32
+		{BCAB273A-CEDE-440D-866D-21AAFEC60218}.Release.Build.0 = Release|Win32
+		{BCAB273A-CEDE-440D-866D-21AAFEC60218}.Release Profile Unicode.ActiveCfg = Release|Win32
+		{BCAB273A-CEDE-440D-866D-21AAFEC60218}.Release Profile Unicode.Build.0 = Release|Win32
+		{BCAB273A-CEDE-440D-866D-21AAFEC60218}.Release Unicode.ActiveCfg = Release|Win32
+		{BCAB273A-CEDE-440D-866D-21AAFEC60218}.Release Unicode.Build.0 = Release|Win32
+		{BCAB273A-CEDE-440D-866D-21AAFEC60218}.Release Unicode fast build.ActiveCfg = Release|Win32
+		{BCAB273A-CEDE-440D-866D-21AAFEC60218}.Release Unicode fast build.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 	EndGlobalSection
