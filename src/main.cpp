@@ -41,6 +41,8 @@ class MSE : public wxApp {
 	 *  Also, OnExit is always run.
 	 */
 	int OnRun();
+	/// Actually start the GUI mainloop
+	int runGUI();
 	/// On exit: write the settings to the config file
 	int OnExit();
 	/// On exception: display error message
@@ -108,7 +110,6 @@ int MSE::OnRun() {
 		package_manager.init();
 		settings.read();
 		the_locale = Locale::byName(settings.locale);
-		check_updates();
 		nag_about_ascii_version();
 		
 		// interpret command line
@@ -121,12 +122,12 @@ int MSE::OnRun() {
 					// Show the symbol editor
 					Window* wnd = new SymbolWindow(nullptr, argv[1]);
 					wnd->Show();
-					return wxApp::OnRun();
+					return runGUI();
 				} else if (f.GetExt() == _("mse-set") || f.GetExt() == _("mse") || f.GetExt() == _("set")) {
 					// Show the set window
 					Window* wnd = new SetWindow(nullptr, import_set(argv[1]));
 					wnd->Show();
-					return wxApp::OnRun();
+					return runGUI();
 				} else if (f.GetExt() == _("mse-installer")) {
 					// Installer; install it
 					InstallType type = settings.install_type;
@@ -143,7 +144,7 @@ int MSE::OnRun() {
 				} else if (arg == _("--symbol-editor")) {
 					Window* wnd = new SymbolWindow(nullptr);
 					wnd->Show();
-					return wxApp::OnRun();
+					return runGUI();
 				} else if (arg == _("--create-installer")) {
 					// create an installer
 					Installer inst;
@@ -174,7 +175,7 @@ int MSE::OnRun() {
 					cli << _("\n         \tLoad the set file in the MSE user interface.");
 					cli << _("\n\n  ") << PARAM << _("FILE") << FILE_EXT << _(".mse-symbol") << NORMAL;
 					cli << _("\n         \tLoad the symbol into the MSE symbol editor.");
-					cli << _("\n\n  ") << BRIGHT << _("FILE") << FILE_EXT << _(".mse-installer")
+					cli << _("\n\n  ") << PARAM << _("FILE") << FILE_EXT << _(".mse-installer")
 					                   << NORMAL << _(" [") << BRIGHT << _("--local") << NORMAL << _("]");
 					cli << _("\n         \tInstall the packages from the installer.");
 					cli << _("\n         \tIf the ") << BRIGHT << _("--local") << NORMAL << _(" flag is passed, install packages for this user only.");
@@ -236,10 +237,15 @@ int MSE::OnRun() {
 		
 		// no command line arguments, or error, show welcome window
 		(new WelcomeWindow())->Show();
-		return wxApp::OnRun();
+		return runGUI();
 		
 	} CATCH_ALL_ERRORS(true);
 	return EXIT_FAILURE;
+}
+
+int MSE::runGUI() {
+	check_updates();
+	return wxApp::OnRun();
 }
 
 // ----------------------------------------------------------------------------- : Exit
