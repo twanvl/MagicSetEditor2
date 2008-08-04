@@ -44,11 +44,14 @@ void GalleryList::selectColumn(size_t column) {
 
 void GalleryList::select(size_t item, size_t column, bool event) {
 	if (item >= itemCount()) return;
-	// select
-	bool changes = false;
+	// select column
+	size_t old_active_column = active_column;
 	selectColumn(column);
-	onSelect(item, active_column, changes);
 	Column& col = columns[active_column];
+	// filter?
+	bool changes = col.selection != item;
+	onSelect(item, old_active_column, changes);
+	// select
 	size_t old_sel = col.selection;
 	col.selection = item;
 	changes |= col.selection != old_sel;

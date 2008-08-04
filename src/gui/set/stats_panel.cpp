@@ -144,6 +144,12 @@ class StatDimensionList : public GalleryList {
 	const int dimension_count;
 	size_t prefered_dimension_count;
 	
+	void restrictDimensions(size_t dims) {
+		prefered_dimension_count = dims;
+		active_column = min(active_column, dims);
+		RefreshSelection();
+	}
+	
   protected:
 	virtual size_t itemCount() const;
 	virtual void drawItem(DC& dc, int x, int y, size_t item);
@@ -152,19 +158,32 @@ class StatDimensionList : public GalleryList {
 		return col-1 >= prefered_dimension_count ? 0.2 : 0.7;
 	}
 	
-	virtual void onSelect(size_t item, size_t col, bool& changes) {
+	virtual void onSelect(size_t item, size_t old_col, bool& changes) {
 		// swap selection with another column?
 		for (size_t j = 1 ; j < columns.size() ; ++j) {
-			if (j != col && columns[j].selection == item) {
-				columns[j].selection = columns[col].selection;
+			if (j != active_column && columns[j].selection == item && columns[active_column].selection != item) {
+				columns[j].selection = columns[active_column].selection;
 				changes = true;
 				break;
 			}
 		}
 		// update prefered dimension count?
-		if (col > prefered_dimension_count) {
-			prefered_dimension_count = col;
+		if (active_column > prefered_dimension_count) {
+			prefered_dimension_count = active_column;
 			changes = true;
+			RefreshSelection();
+		}
+		// decrease dimension count? (toggle last dimension)
+		if (!changes && old_col == active_column) {
+			if (active_column == prefered_dimension_count && prefered_dimension_count > 1) {
+				prefered_dimension_count -= 1;
+				selectColumn(prefered_dimension_count);
+				changes = true;
+			} else if (active_column != prefered_dimension_count) {
+				active_column = prefered_dimension_count = active_column;
+				RefreshSelection();
+				changes = true;
+			}
 		}
 	}
 	
@@ -490,9 +509,8 @@ void StatsPanel::showLayout(GraphType layout) {
 	#if USE_DIMENSION_LISTS && !USE_SEPARATE_DIMENSION_LISTS
 		// make sure we have the right number of data dimensions
 		if (dimensions->prefered_dimension_count != dimensionality(layout)) {
-			dimensions->prefered_dimension_count = dimensionality(layout);
+			dimensions->restrictDimensions(dimensionality(layout));
 			showCategory(&layout); // full update
-			dimensions->RefreshSelection();
 			return;
 		}
 	#endif
