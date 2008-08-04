@@ -69,6 +69,7 @@ void CLISetInterface::run() {
 	running = true;
 	while (running) {
 		if (!cli.canGetLine()) break;
+		handle_pending_errors();
 		// show prompt
 		if (!quiet) {
 			cli << GRAY << _("> ") << NORMAL;
@@ -153,7 +154,7 @@ void CLISetInterface::handleCommand(const String& command) {
 			vector<ScriptParseError> errors;
 			ScriptP script = parse(command,nullptr,false,errors);
 			if (!errors.empty()) {
-				FOR_EACH(error,errors) showError(error.what());
+				FOR_EACH(error,errors) cli.showError(error.what());
 				return;
 			}
 			// execute command
@@ -164,10 +165,6 @@ void CLISetInterface::handleCommand(const String& command) {
 			cli << result->toCode() << ENDL;
 		}
 	} catch (const Error& e) {
-		showError(e.what());
+		cli.showError(e.what());
 	}
-}
-
-void CLISetInterface::showError(const String& error) {
-	cli << RED << _("ERROR: ") << NORMAL << replace_all(error,_("\n"),_("\n       ")) << ENDL;
 }

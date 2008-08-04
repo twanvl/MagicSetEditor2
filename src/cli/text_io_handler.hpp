@@ -36,9 +36,15 @@ class TextIOHandler {
 	/// Flush output
 	void flush();
 	
+	/// Show an error message
+	void showError(const String& message);
+	/// Show a warning message
+	void showWarning(const String& message);
+	
   private:
 	bool have_console;
 	bool escapes;
+	FILE* stream;
 	String buffer; ///< Buffer when not writing to console
 };
 

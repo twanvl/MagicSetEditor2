@@ -8,6 +8,7 @@
 
 #include <util/prec.hpp>
 #include <util/error.hpp>
+#include <cli/text_io_handler.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ScriptParseError);
 
@@ -62,6 +63,7 @@ String pending_errors;
 String pending_warnings;
 DECLARE_TYPEOF_COLLECTION(String);
 wxMutex crit_error_handling;
+bool write_errors_to_cli = false;
 
 void show_pending_errors();
 void show_pending_warnings();
@@ -82,7 +84,7 @@ void handle_error(const String& e, bool allow_duplicate = true, bool now = true)
 		pending_errors += e;
 	}
 	// show messages
-	if (now && wxThread::IsMain()) {
+	if ((write_errors_to_cli || now) && wxThread::IsMain()) {
 		show_pending_warnings(); // warnings are older, show them first
 		show_pending_errors();
 	}
@@ -106,7 +108,7 @@ void handle_warning(const String& w, bool now) {
 		pending_warnings += w;
 	}
 	// show messages
-	if (now && wxThread::IsMain()) {
+	if ((write_errors_to_cli || now) && wxThread::IsMain()) {
 		show_pending_errors();
 		show_pending_warnings();
 	}
@@ -122,7 +124,11 @@ void show_pending_errors() {
 	if (crit_error_handling.TryLock() != wxMUTEX_NO_ERROR)
 		return;
 	if (!pending_errors.empty()) {
-		wxMessageBox(pending_errors, _("Error"), wxOK | wxICON_ERROR);
+		if (write_errors_to_cli) {
+			cli.showError(pending_errors);
+		} else {
+			wxMessageBox(pending_errors, _("Error"), wxOK | wxICON_ERROR);
+		}
 		pending_errors.clear();
 	}
 	crit_error_handling.Unlock();
@@ -132,7 +138,11 @@ void show_pending_warnings() {
 	if (crit_error_handling.TryLock() != wxMUTEX_NO_ERROR)
 		return;
 	if (!pending_warnings.empty()) {
-		wxMessageBox(pending_warnings, _("Warning"), wxOK | wxICON_EXCLAMATION);
+		if (write_errors_to_cli) {
+			cli.showWarning(pending_warnings);
+		} else {
+			wxMessageBox(pending_warnings, _("Warning"), wxOK | wxICON_EXCLAMATION);
+		}
 		pending_warnings.clear();
 	}
 	crit_error_handling.Unlock();

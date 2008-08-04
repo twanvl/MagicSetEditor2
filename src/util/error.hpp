@@ -110,6 +110,9 @@ class ScriptError : public Error {
 
 // ----------------------------------------------------------------------------- : Error handling
 
+/// Should errors be written to stdout?
+extern bool write_errors_to_cli;
+
 /// Handle an error by showing a message box
 /** If !allow_duplicate and the error is the same as the previous error, does nothing.
  *  If !now the error is handled by a later call to handle_pending_errors()

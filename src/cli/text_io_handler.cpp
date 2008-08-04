@@ -8,6 +8,7 @@
 
 #include <util/prec.hpp>
 #include <cli/text_io_handler.hpp>
+#include <util/error.hpp>
 
 // ----------------------------------------------------------------------------- : Text I/O handler
 
@@ -17,22 +18,29 @@ const Char* PARAM    = _("\x1B[33m");
 const Char* FILE_EXT = _("\x1B[0;1m");
 const Char* GRAY     = _("\x1B[1;30m");
 const Char* RED      = _("\x1B[1;31m");
+const Char* YELLOW   = _("\x1B[1;33m");
 const Char* ENDL     = _("\n");
 
 TextIOHandler cli;
 
+#ifdef __WXMSW__
+	bool StdHandleOk(DWORD std_handle) {
+		// GetStdHandle sometimes returns an invalid handle instead of INVALID_HANDLE_VALUE
+		// check with GetHandleInformation
+		HANDLE h = GetStdHandle(std_handle);
+		DWORD flags;
+		return GetHandleInformation(h,&flags);
+	}
+#endif
 
 void TextIOHandler::init() {
+	bool have_stderr;
 	#ifdef __WXMSW__
 		have_console = false;
 		escapes = false;
 		// Detect whether to use console output
-		// GetStdHandle sometimes returns an invalid handle instead of INVALID_HANDLE_VALUE
-		// check with GetHandleInformation
-		HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-		DWORD flags;
-		bool ok = GetHandleInformation(h,&flags);
-		if (ok) have_console = true;
+		have_console = StdHandleOk(STD_OUTPUT_HANDLE);
+		have_stderr  = StdHandleOk(STD_ERROR_HANDLE);
 		// Detect the --color flag, indicating we should allow escapes
 		if (have_console) {
 			for (int i = 1 ; i < wxTheApp->argc ; ++i) {
@@ -45,8 +53,14 @@ void TextIOHandler::init() {
 	#else
 		// always use console on *nix (?)
 		have_console = true;
-		escapes = true;
+		have_stderr = true;
+		escapes = true; // TODO: detect output redirection
 	#endif
+	stream = stdout;
+	// always write to stderr if possible
+	if (have_console) {
+		write_errors_to_cli = true;
+	}
 }
 
 bool TextIOHandler::haveConsole() const {
@@ -56,20 +70,10 @@ bool TextIOHandler::haveConsole() const {
 
 // ----------------------------------------------------------------------------- : Output
 
-void TextIOHandler::flush() {
-	if (have_console) {
-		fflush(stdout);
-	} else if (!buffer.empty()) {
-		// Show message box
-		wxMessageBox(buffer, _("Magic Set Editor"), wxOK | wxICON_INFORMATION);
-		buffer.clear();
-	}
-}
-
 TextIOHandler& TextIOHandler::operator << (const Char* str) {
 	if (escapes || str[0] != 27) {
 		if (have_console) {
-			IF_UNICODE(wprintf,printf)(str);
+			IF_UNICODE(fwprintf,fprintf)(stream,str);
 		} else {
 			buffer += str;
 		}
@@ -80,12 +84,22 @@ TextIOHandler& TextIOHandler::operator << (const Char* str) {
 TextIOHandler& TextIOHandler::operator << (const String& str) {
 	if (escapes || str.empty() || str.GetChar(0) != 27) {
 		if (have_console) {
-			IF_UNICODE(wprintf,printf)(str.c_str());
+			IF_UNICODE(fwprintf,fprintf)(stream,str.c_str());
 		} else {
 			buffer += str;
 		}
 	}
 	return *this;
+}
+
+void TextIOHandler::flush() {
+	if (have_console) {
+		fflush(stream);
+	} else if (!buffer.empty()) {
+		// Show message box
+		wxMessageBox(buffer, _("Magic Set Editor"), wxOK | wxICON_INFORMATION);
+		buffer.clear();
+	}
 }
 
 // ----------------------------------------------------------------------------- : Input
@@ -108,4 +122,20 @@ String TextIOHandler::getLine() {
 }
 bool TextIOHandler::canGetLine() {
 	return !feof(stdin);
+}
+
+// ----------------------------------------------------------------------------- : Errors
+
+void TextIOHandler::showError(const String& message) {
+	stream = stdout;
+	*this << RED << _("ERROR: ") << NORMAL << replace_all(message,_("\n"),_("\n       ")) << ENDL;
+	flush();
+	stream = stdout;
+}
+
+void TextIOHandler::showWarning(const String& message) {
+	stream = stdout;
+	*this << YELLOW << _("WARNING: ") << NORMAL << replace_all(message,_("\n"),_("\n         ")) << ENDL;
+	flush();
+	stream = stdout;
 }

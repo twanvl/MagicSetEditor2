@@ -32,7 +32,6 @@ class CLISetInterface : public SetView {
 	void showWelcome();
 	void showUsage();
 	void handleCommand(const String& command);
-	void showError(const String& error);
 	
 	/// our own context, when no set is loaded
 	Context& getContext();
