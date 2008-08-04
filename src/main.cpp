@@ -14,6 +14,8 @@
 #include <data/locale.hpp>
 #include <data/installer.hpp>
 #include <data/format/formats.hpp>
+#include <cli/cli_main.hpp>
+#include <cli/text_io_handler.hpp>
 #include <gui/welcome_window.hpp>
 #include <gui/update_checker.hpp>
 #include <gui/images_export_window.hpp>
@@ -102,6 +104,7 @@ int MSE::OnRun() {
 		wxFileSystem::AddHandler(new wxInternetFSHandler); // needed for update checker
 		init_script_variables();
 		init_file_formats();
+		cli.init();
 		package_manager.init();
 		settings.read();
 		the_locale = Locale::byName(settings.locale);
@@ -155,33 +158,51 @@ int MSE::OnRun() {
 					return EXIT_SUCCESS;
 				} else if (arg == _("--help") || arg == _("-?")) {
 					// command line help
-					write_stdout( String(_("Magic Set Editor\n\n"))
-					            + _("Usage: ") + argv[0] + _(" [OPTIONS]\n\n")
-					            + _("  no options\n")
-					            + _("         \tStart the MSE user interface showing the welcome window.\n\n")
-					            + _("  -? or --help\n")
-					            + _("         \tShows this help screen.\n\n")
-					            + _("  -v or --version\n")
-					            + _("         \tShow version information.\n\n")
-					            + _("  FILE.mse-set, FILE.set, FILE.mse\n")
-					            + _("         \tLoad the set file in the MSE user interface.\n\n")
-					            + _("  FILE.mse-symbol\n")
-					            + _("         \tLoad the symbol into the MSE symbol editor.\n\n")
-					            + _("  FILE.mse-installer [--local]\n")
-					            + _("         \tInstall the packages from the installer.\n")
-					            + _("         \tIf the --local flag is passed, install packages for this user only.\n\n")
-					            + _("  --symbol-editor\n")
-					            + _("         \tShow the symbol editor instead of the welcome window.\n\n")
-					            + _("  --create-installer [OUTFILE.mse-installer] [PACKAGE [PACKAGE ...]]\n")
-					            + _("         \tCreate an instaler, containing the listed packages.\n")
-					            + _("         \tIf no filename is specified, the name of the first package is used.\n\n")
-					            + _("  --export FILE [IMAGE]\n")
-					            + _("         \tExport the cards in a set to image files,\n")
-					            + _("         \tIMAGE is the same format as for 'export all card images'.\n") );
+					cli << _("Magic Set Editor\n\n");
+					cli << _("Usage: ") << BRIGHT << argv[0] << NORMAL << _(" [") << PARAM << _("OPTIONS") << NORMAL << _("]");
+					cli << _("\n\n  no options");
+					cli << _("\n         \tStart the MSE user interface showing the welcome window.");
+					cli << _("\n\n  ") << BRIGHT << _("-?") << NORMAL << _(", ")
+					                   << BRIGHT << _("--help") << NORMAL;
+					cli << _("\n         \tShows this help screen.");
+					cli << _("\n\n  ") << BRIGHT << _("-v") << NORMAL << _(", ")
+					                   << BRIGHT << _("--version") << NORMAL;
+					cli << _("\n         \tShow version information.");
+					cli << _("\n\n  ") << PARAM << _("FILE") << FILE_EXT << _(".mse-set") << NORMAL << _(", ")
+					                   << PARAM << _("FILE") << FILE_EXT << _(".set") << NORMAL << _(", ")
+					                   << PARAM << _("FILE") << FILE_EXT << _(".mse") << NORMAL;
+					cli << _("\n         \tLoad the set file in the MSE user interface.");
+					cli << _("\n\n  ") << PARAM << _("FILE") << FILE_EXT << _(".mse-symbol") << NORMAL;
+					cli << _("\n         \tLoad the symbol into the MSE symbol editor.");
+					cli << _("\n\n  ") << BRIGHT << _("FILE") << FILE_EXT << _(".mse-installer")
+					                   << NORMAL << _(" [") << BRIGHT << _("--local") << NORMAL << _("]");
+					cli << _("\n         \tInstall the packages from the installer.");
+					cli << _("\n         \tIf the ") << BRIGHT << _("--local") << NORMAL << _(" flag is passed, install packages for this user only.");
+					cli << _("\n\n  ") << BRIGHT << _("--symbol-editor") << NORMAL;
+					cli << _("\n         \tShow the symbol editor instead of the welcome window.");
+					cli << _("\n\n  ") << BRIGHT << _("--create-installer") << NORMAL << _(" [")
+					                   << PARAM << _("OUTFILE") << FILE_EXT << _(".mse-installer") << NORMAL << _("] [")
+					                   << PARAM << _("PACKAGE") << NORMAL << _(" [") << PARAM << _("PACKAGE") << NORMAL << _(" ...]]");
+					cli << _("\n         \tCreate an instaler, containing the listed packages.");
+					cli << _("\n         \tIf no output filename is specified, the name of the first package is used.");
+					cli << _("\n\n  ") << BRIGHT << _("--export") << NORMAL << PARAM << _(" FILE") << NORMAL << _(" [") << PARAM << _("IMAGE") << NORMAL << _("]");
+					cli << _("\n         \tExport the cards in a set to image files,");
+					cli << _("\n         \tIMAGE is the same format as for 'export all card images'.");
+					cli << _("\n\n  ") << BRIGHT << _("--cli") << NORMAL << _(" [")
+					                   << PARAM << _("FILE") << NORMAL << _("]");
+					cli << _("\n         \tStart the command line interface for performing commands on the set file.");
+					cli << ENDL;
+					cli.flush();
 					return EXIT_SUCCESS;
 				} else if (arg == _("--version") || arg == _("-v")) {
 					// dump version
-					write_stdout( _("Magic Set Editor\nVersion ") + app_version.toString() + version_suffix );
+					cli << _("Magic Set Editor\n");
+					cli << _("Version ") << app_version.toString() << version_suffix << ENDL;
+					cli.flush();
+					return EXIT_SUCCESS;
+				} else if (arg == _("--cli")) {
+					// command line interface
+					CLISetInterface cli_interface;
 					return EXIT_SUCCESS;
 				} else if (arg == _("--export")) {
 					if (argc <= 2) {

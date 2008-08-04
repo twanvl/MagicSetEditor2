@@ -41,6 +41,7 @@ struct Transfer {
 
 DWORD WINAPI TransferThread(Transfer*);
 BOOL WINAPI HandleCtrlEvent(DWORD type);
+void InitEscapeTranslation(HANDLE console);
 void PerformEscapeCode(HANDLE console, char command, int argc, int argv[]);
 
 /// The child process
@@ -59,7 +60,7 @@ int main(int argc, char** argv) {
 	// determine whether we need to wrap console i/o
 	bool need_redirection = false;
 	for (int i = 1 ; i < argc ; ++i) {
-		for (int j = 1 ; j < sizeof(redirect_flags)/sizeof(redirect_flags[0]) ; ++j) {
+		for (int j = 0 ; j < sizeof(redirect_flags)/sizeof(redirect_flags[0]) ; ++j) {
 			if (strcmp(argv[i],redirect_flags[j]) == 0) {
 				need_redirection = true;
 				goto break_2;
@@ -116,6 +117,7 @@ int main(int argc, char** argv) {
 		in_real  = GetStdHandle(STD_INPUT_HANDLE);
 		out_real = GetStdHandle(STD_OUTPUT_HANDLE);
 		err_real = GetStdHandle(STD_ERROR_HANDLE);
+		InitEscapeTranslation(out_real);
 		
 		// start threads
 		Transfer tranfer_in  = {in_real,  in_mine,  false};
@@ -148,9 +150,6 @@ int main(int argc, char** argv) {
 	// That's all folks!
 	return exit_code;
 }
-
-// ----------------------------------------------------------------------------- : Running
-
 
 // ----------------------------------------------------------------------------- : Terminating
 
@@ -189,10 +188,10 @@ void CopyFileBufferWithEscape(HANDLE output, char* buffer, DWORD size, bool hand
 	}
 	DWORD pos = 0;
 	while (pos < size) {
-		// find next escape code, "\27["
+		// find next escape code, "\x1B["
 		DWORD next_pos = pos;
 		while (next_pos < size &&
-			    (buffer[next_pos] != '\27' ||
+			    (buffer[next_pos] != '\x1B' ||
 			        (next_pos + 1 >= size || buffer[next_pos+1] != '['))) ++next_pos;
 		// copy part before next escape
 		CopyFileBuffer(output, buffer+pos, next_pos-pos);
@@ -235,6 +234,13 @@ DWORD WINAPI TransferThread(Transfer* transfer) {
 #define BACKGROUND_COLOR (BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE)
 
 WORD original_attributes;
+
+/// Initialization for escape translation
+void InitEscapeTranslation(HANDLE console) {
+	CONSOLE_SCREEN_BUFFER_INFO screen_buffer;
+	GetConsoleScreenBufferInfo(console, &screen_buffer);
+	original_attributes = screen_buffer.wAttributes;
+}
 
 /// Perform an escape code
 void PerformEscapeCode(HANDLE console, char command, int argc, int argv[]) {

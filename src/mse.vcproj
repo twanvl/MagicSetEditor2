@@ -3819,6 +3819,18 @@
 		<Filter
 			Name="cli"
 			Filter="">
+			<File
+				RelativePath=".\cli\cli_main.cpp">
+			</File>
+			<File
+				RelativePath=".\cli\cli_main.hpp">
+			</File>
+			<File
+				RelativePath=".\cli\text_io_handler.cpp">
+			</File>
+			<File
+				RelativePath=".\cli\text_io_handler.hpp">
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\code_template.cpp">
