@@ -191,9 +191,18 @@ int MSE::OnRun() {
 					cli << _("\n         \tIMAGE is the same format as for 'export all card images'.");
 					cli << _("\n\n  ") << BRIGHT << _("--cli") << NORMAL << _(" [")
 					                   << PARAM << _("FILE") << NORMAL << _("] [")
-					                   << BRIGHT << _("--quiet") << NORMAL << _("]");
+					                   << BRIGHT << _("--quiet") << NORMAL << _("] [")
+					                   << BRIGHT << _("--raw") << NORMAL << _("]");
 					cli << _("\n         \tStart the command line interface for performing commands on the set file.");
 					cli << _("\n         \tUse ") << BRIGHT << _("-q") << NORMAL << _(" or ") << BRIGHT << _("--quiet") << NORMAL << _(" to supress the startup banner and prompts.");
+					cli << _("\n         \tUse ") << BRIGHT << _("-raw") << NORMAL << _(" for raw output mode.");
+					cli << _("\n\nRaw output mode is intended for use by other programs:");
+					cli << _("\n    - The only output is only in response to commands.");
+					cli << _("\n    - For each command a single 'record' is written to the standard output.");
+					cli << _("\n    - The record consists of:");
+					cli << _("\n        - A line with an integer status code, 0 for ok, 1 for warnings, 2 for errors");
+					cli << _("\n        - A line containing an integer k, the number of lines to follow");
+					cli << _("\n        - k lines, each containing UTF-8 encoded string data.");
 					cli << ENDL;
 					cli.flush();
 					return EXIT_SUCCESS;
@@ -214,6 +223,9 @@ int MSE::OnRun() {
 							set = import_set(arg);
 						} else if (arg == _("-q") || arg == _("--quiet")) {
 							quiet = true;
+						} else if (arg == _("-r") || arg == _("--raw")) {
+							quiet = true;
+							cli.enableRaw();
 						}
 					}
 					CLISetInterface cli_interface(set,quiet);

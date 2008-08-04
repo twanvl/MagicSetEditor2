@@ -41,11 +41,19 @@ class TextIOHandler {
 	/// Show a warning message
 	void showWarning(const String& message);
 	
+	/// Enable raw mode
+	void enableRaw();
+	/// Output a single raw-mode record
+	/// Has no effect unless enableRaw() was called
+	void flushRaw();
+	
   private:
 	bool have_console;
 	bool escapes;
 	FILE* stream;
 	String buffer; ///< Buffer when not writing to console
+	bool raw_mode;
+	int raw_mode_status;
 };
 
 /// The global TextIOHandler object

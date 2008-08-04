@@ -65,11 +65,11 @@ void CLISetInterface::onChangeSet() {
 void CLISetInterface::run() {
 	// show welcome logo
 	if (!quiet) showWelcome();
+	handle_pending_errors();
 	// loop
 	running = true;
 	while (running) {
 		if (!cli.canGetLine()) break;
-		handle_pending_errors();
 		// show prompt
 		if (!quiet) {
 			cli << GRAY << _("> ") << NORMAL;
@@ -79,6 +79,7 @@ void CLISetInterface::run() {
 		String command = cli.getLine();
 		handleCommand(command);
 		cli.flush();
+		cli.flushRaw();
 	}
 }
 

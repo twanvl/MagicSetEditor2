@@ -56,7 +56,9 @@ void TextIOHandler::init() {
 		have_stderr = true;
 		escapes = true; // TODO: detect output redirection
 	#endif
+	// write to standard output
 	stream = stdout;
+	raw_mode = false;
 	// always write to stderr if possible
 	if (have_console) {
 		write_errors_to_cli = true;
@@ -71,8 +73,8 @@ bool TextIOHandler::haveConsole() const {
 // ----------------------------------------------------------------------------- : Output
 
 TextIOHandler& TextIOHandler::operator << (const Char* str) {
-	if (escapes || str[0] != 27) {
-		if (have_console) {
+	if ((escapes && !raw_mode) || str[0] != 27) {
+		if (have_console && !raw_mode) {
 			IF_UNICODE(fwprintf,fprintf)(stream,str);
 		} else {
 			buffer += str;
@@ -82,17 +84,11 @@ TextIOHandler& TextIOHandler::operator << (const Char* str) {
 }
 
 TextIOHandler& TextIOHandler::operator << (const String& str) {
-	if (escapes || str.empty() || str.GetChar(0) != 27) {
-		if (have_console) {
-			IF_UNICODE(fwprintf,fprintf)(stream,str.c_str());
-		} else {
-			buffer += str;
-		}
-	}
-	return *this;
+	return *this << str.c_str();
 }
 
 void TextIOHandler::flush() {
+	if (raw_mode) return;
 	if (have_console) {
 		fflush(stream);
 	} else if (!buffer.empty()) {
@@ -124,6 +120,38 @@ bool TextIOHandler::canGetLine() {
 	return !feof(stdin);
 }
 
+// ----------------------------------------------------------------------------- : Raw mode
+
+void TextIOHandler::enableRaw() {
+	raw_mode = true;
+	raw_mode_status = 0;
+}
+
+void TextIOHandler::flushRaw() {
+	if (!raw_mode) return;
+	// always end in a newline
+	if (!buffer.empty() && buffer.GetChar(buffer.size()-1) != _('\n')) {
+		buffer += _('\n');
+	}
+	// count newlines
+	int newline_count = 0;
+	FOR_EACH_CONST(c,buffer) if (c==_('\n')) newline_count++;
+	// write record
+	printf("%d\n%d\n", raw_mode_status, newline_count);
+	if (!buffer.empty()) {
+		#ifdef UNICODE
+			wxCharBuffer buf = buffer.mb_str(wxConvUTF8);
+			puts(buf);
+		#else
+			puts(buffer.c_str());
+		#endif
+	}
+	fflush(stdout);
+	// clear
+	buffer.clear();
+	raw_mode_status = 0;
+}
+
 // ----------------------------------------------------------------------------- : Errors
 
 void TextIOHandler::showError(const String& message) {
@@ -131,6 +159,7 @@ void TextIOHandler::showError(const String& message) {
 	*this << RED << _("ERROR: ") << NORMAL << replace_all(message,_("\n"),_("\n       ")) << ENDL;
 	flush();
 	stream = stdout;
+	if (raw_mode) raw_mode_status = max(raw_mode_status, 2);
 }
 
 void TextIOHandler::showWarning(const String& message) {
@@ -138,4 +167,5 @@ void TextIOHandler::showWarning(const String& message) {
 	*this << YELLOW << _("WARNING: ") << NORMAL << replace_all(message,_("\n"),_("\n         ")) << ENDL;
 	flush();
 	stream = stdout;
+	if (raw_mode) raw_mode_status = max(raw_mode_status, 1);
 }
