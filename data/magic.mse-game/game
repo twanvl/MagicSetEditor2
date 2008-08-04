@@ -1845,6 +1845,9 @@ pack item:
 	name: rare
 	filter: card.rarity == "rare"
 pack item:
+	name: special
+	filter: card.rarity == "special"
+pack item:
 	name: basic land
 	filter: card.type == "Plains"
 	filter: card.type == "Island"

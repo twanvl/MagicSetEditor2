@@ -15,6 +15,7 @@
 
 class CardViewer;
 class RandomCardList;
+class PackTotalsPanel;
 DECLARE_POINTER_TYPE(PackType);
 
 // ----------------------------------------------------------------------------- : RandomPackPanel
@@ -50,6 +51,7 @@ class RandomPackPanel : public SetWindowPanel {
 	wxFlexGridSizer*  totalsSizer;
 	wxButton*         generate_button;
 	wxRadioButton*    seed_random, *seed_fixed;
+	PackTotalsPanel*  totals;
 	
 	struct PackItem {
 		PackTypeP     pack;
@@ -58,9 +60,6 @@ class RandomPackPanel : public SetWindowPanel {
 	};
 	vector<PackItem> packs;
 	
-	struct TotalItem {
-	};
-	vector<TotalItem> totals;
 	int total_packs;
 	
 	/// Update the total count of each card type

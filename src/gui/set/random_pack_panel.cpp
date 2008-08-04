@@ -15,10 +15,13 @@
 #include <data/pack.hpp>
 #include <data/settings.hpp>
 #include <util/window_id.hpp>
-#include <wx/spinctrl.h>
 #include <boost/random/mersenne_twister.hpp>
+#include <wx/spinctrl.h>
+#include <wx/dcbuffer.h>
 
 DECLARE_TYPEOF_COLLECTION(PackTypeP);
+DECLARE_TYPEOF_COLLECTION(PackItemP);
+DECLARE_TYPEOF_COLLECTION(PackItemRefP);
 DECLARE_TYPEOF_COLLECTION(CardP);
 DECLARE_TYPEOF_COLLECTION(RandomPackPanel::PackItem_for_typeof);
 
@@ -68,6 +71,68 @@ void RandomCardList::getItems(vector<VoidP>& out) const {
 }
 
 
+// ----------------------------------------------------------------------------- : PackTotalsPanel
+
+class PackTotalsPanel : public wxPanel {
+  public:
+	PackTotalsPanel(Window* parent, int id) : wxPanel(parent,id) {}
+	void setGame(const GameP& game);
+	void clear();
+	void addPack(PackType& pack, int copies);
+	void addItemRef(PackItemRef& item, int copies);
+  private:
+	DECLARE_EVENT_TABLE();
+	GameP game;
+	void onPaint(wxPaintEvent&);
+	void draw(DC& dc);
+	map<String,int> amounts;
+};
+
+void PackTotalsPanel::onPaint(wxPaintEvent&) {
+	wxBufferedPaintDC dc(this);
+	draw(dc);
+}
+void PackTotalsPanel::draw(DC& dc) {
+	// clear background
+	dc.SetPen(*wxTRANSPARENT_PEN);
+	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+	wxSize size = dc.GetSize();
+	dc.DrawRectangle(0,0,size.x,size.y);
+	// draw table
+	dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
+	dc.SetFont(*wxNORMAL_FONT);
+	int y = 0;
+	FOR_EACH(item, game->pack_items) {
+		int w,h;
+		String name = capitalize(item->name);
+		String amount; amount << amounts[item->name];
+		dc.GetTextExtent(amount,&w,&h);
+		dc.DrawText(name,   0,        y);
+		dc.DrawText(amount, size.x-w, y);//align right
+		y += h + 10;
+	}
+}
+
+void PackTotalsPanel::setGame(const GameP& game) {
+	this->game = game;
+	clear();
+}
+void PackTotalsPanel::clear() {
+	amounts.clear();
+}
+void PackTotalsPanel::addPack(PackType& pack, int copies) {
+	FOR_EACH(item,pack.items) {
+		addItemRef(*item, copies * item->amount);
+	}
+}
+void PackTotalsPanel::addItemRef(PackItemRef& item, int copies) {
+	amounts[item.name] += copies;
+}
+
+BEGIN_EVENT_TABLE(PackTotalsPanel, wxPanel)
+	EVT_PAINT(PackTotalsPanel::onPaint)
+END_EVENT_TABLE()
+
 // ----------------------------------------------------------------------------- : RandomPackPanel
 
 RandomPackPanel::RandomPackPanel(Window* parent, int id)
@@ -80,6 +145,7 @@ RandomPackPanel::RandomPackPanel(Window* parent, int id)
 	seed_random = new wxRadioButton(this, ID_SEED_RANDOM, _BUTTON_("random seed"));
 	seed_fixed  = new wxRadioButton(this, ID_SEED_FIXED,  _BUTTON_("fixed seed"));
 	seed = new wxTextCtrl(this, wxID_ANY);
+	totals = new PackTotalsPanel(this, wxID_ANY);
 	static_cast<SetWindow*>(parent)->setControlStatusText(seed_random, _HELP_("random seed"));
 	static_cast<SetWindow*>(parent)->setControlStatusText(seed_fixed,  _HELP_("fixed seed"));
 	static_cast<SetWindow*>(parent)->setControlStatusText(seed,        _HELP_("seed"));
@@ -95,6 +161,7 @@ RandomPackPanel::RandomPackPanel(Window* parent, int id)
 					s4->Add(packsSizer, 1, wxEXPAND | wxALL & ~wxTOP, 4);
 				s3->Add(s4, 1, wxEXPAND, 8);
 				wxSizer* s5 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack totals"));
+				s5->Add(totals, 1, wxEXPAND | wxALL, 4);
 				s3->Add(s5, 1, wxEXPAND | wxLEFT, 8);
 				wxSizer* s6 = new wxBoxSizer(wxVERTICAL);
 					wxSizer* s7 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("seed"));
@@ -123,6 +190,7 @@ void RandomPackPanel::onChangeSet() {
 	storeSettings();
 	preview  ->setSet(set);
 	card_list->setSet(set);
+	totals   ->setGame(set->game);
 	
 	// remove old pack controls
 	FOR_EACH(i, packs) {
@@ -195,11 +263,15 @@ void RandomPackPanel::onCommand(int id) {
 // ----------------------------------------------------------------------------- : Generating
 
 void RandomPackPanel::updateTotals() {
+	totals->clear();
 	total_packs = 0;
 	FOR_EACH(i,packs) {
-		total_packs += i.value->GetValue();
+		int copies = i.value->GetValue();
+		total_packs += copies;
+		totals->addPack(*i.pack, copies);
 	}
 	// update UI
+	totals->Refresh(false);
 	generate_button->Enable(total_packs > 0);
 }
 
