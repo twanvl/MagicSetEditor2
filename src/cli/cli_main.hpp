@@ -10,19 +10,29 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <data/set.hpp>
 
 // ----------------------------------------------------------------------------- : Command line interface
 
-class CLISetInterface {
+class CLISetInterface : public SetView {
   public:
 	CLISetInterface();
+	~CLISetInterface();
+  protected:
+	void onAction(const Action&, bool) {}
   private:
-	bool quiet;
-	bool running;
+	bool quiet;    ///< Supress prompts and other non-vital stuff
+	bool running;  ///< Still running?
 	
 	void run();
 	void showWelcome();
+	void showUsage();
 	void handleCommand(const String& command);
+	void showError(const String& error);
+	
+	/// our own context, when no set is loaded
+	Context& getContext();
+	Context* our_context;
 };
 
 // ----------------------------------------------------------------------------- : EOF

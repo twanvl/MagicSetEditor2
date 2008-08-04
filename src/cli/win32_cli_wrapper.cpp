@@ -41,6 +41,7 @@ struct Transfer {
 
 DWORD WINAPI TransferThread(Transfer*);
 BOOL WINAPI HandleCtrlEvent(DWORD type);
+void CopyFileBuffer(HANDLE output, char* buffer, DWORD size);
 void InitEscapeTranslation(HANDLE console);
 void PerformEscapeCode(HANDLE console, char command, int argc, int argv[]);
 
@@ -158,12 +159,13 @@ BOOL WINAPI HandleCtrlEvent(DWORD type) {
 	DWORD exit_code = 1;
 	// try to exit child process cleanly
 	// TODO: don't exit child on Ctrl+C
-	/*CopyFileBuffer(TODO,":quit\n",6);
+	CopyFileBuffer(in_mine,":quit\n",6);
+	CopyFileBuffer(out_real,":quit\n",6);
 	if (WaitForSingleObject(child_process_info.hProcess,100) == WAIT_OBJECT_0) {
 		GetExitCodeProcess(child_process_info.hProcess, &exit_code);
-	} else {*/
+	} else {
 		TerminateProcess(child_process_info.hProcess,1);
-	//}
+	}
 	// exit this process
 	ExitProcess(exit_code);
 	return TRUE;
