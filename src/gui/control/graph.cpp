@@ -619,6 +619,7 @@ void GraphStats::setData(const GraphDataP& d) {
 	GraphAxis& axis = axis_data();
 	values.clear();
 	if (!axis.numeric) return;
+	if (axis.groups.empty()) return;
 	values.push_back(make_pair(_("max"),  axis.groups.back().name));
 	values.push_back(make_pair(_("mean"), String::Format(_("%.2f"), axis.mean)));
 }
