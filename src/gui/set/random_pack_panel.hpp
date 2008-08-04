@@ -14,7 +14,7 @@
 #include <wx/spinctrl.h>
 
 class CardViewer;
-class FilteredCardList;
+class RandomCardList;
 DECLARE_POINTER_TYPE(PackType);
 
 // ----------------------------------------------------------------------------- : RandomPackPanel
@@ -34,6 +34,9 @@ class RandomPackPanel : public SetWindowPanel {
 	virtual void onUpdateUI(wxUpdateUIEvent&);
 	virtual void onCommand(int id);
 	
+	// --------------------------------------------------- : Selection
+	virtual void selectCard(const CardP& card);
+	
 	// --------------------------------------------------- : Clipboard
 	
 	virtual bool canCopy()  const;
@@ -41,7 +44,7 @@ class RandomPackPanel : public SetWindowPanel {
 	
   private:
 	CardViewer*       preview;		///< Card preview
-	FilteredCardList* card_list;	///< The list of cards
+	RandomCardList*   card_list;	///< The list of cards
 	wxTextCtrl*       seed;			///< Seed value
 	wxFlexGridSizer*  packsSizer;
 	wxFlexGridSizer*  totalsSizer;

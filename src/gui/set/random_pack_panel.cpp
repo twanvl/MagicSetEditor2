@@ -32,7 +32,9 @@ class RandomCardList : public CardListBase {
 	/// Reset the list
 	void reset();
 	/// Add a pack of cards
-	void add(PackType& pack);
+	void add(PackItemCache& packs, boost::mt19937& gen, const PackType& pack);
+	
+	using CardListBase::rebuild;
 	
   protected:
 	virtual void getItems(vector<VoidP>& out) const;
@@ -49,8 +51,8 @@ RandomCardList::RandomCardList(Window* parent, int id, long style)
 void RandomCardList::reset() {
 	cards.clear();
 }
-void RandomCardList::add(PackType& pack) {
-	pack.generate(*set,cards);
+void RandomCardList::add(PackItemCache& packs, boost::mt19937& gen, const PackType& pack) {
+	pack.generate(packs,gen,cards);
 }
 
 void RandomCardList::onChangeSet() {
@@ -73,7 +75,7 @@ RandomPackPanel::RandomPackPanel(Window* parent, int id)
 {
 	// init controls
 	preview   = new CardViewer(this, wxID_ANY);
-	card_list = new FilteredCardList(this, wxID_ANY);
+	card_list = new RandomCardList(this, wxID_ANY);
 	generate_button = new wxButton(this, ID_GENERATE_PACK, _BUTTON_("generate pack"));
 	seed_random = new wxRadioButton(this, ID_SEED_RANDOM, _BUTTON_("random seed"));
 	seed_fixed  = new wxRadioButton(this, ID_SEED_FIXED,  _BUTTON_("fixed seed"));
@@ -135,7 +137,7 @@ void RandomPackPanel::onChangeSet() {
 	FOR_EACH(pack, set->game->pack_types) {
 		PackItem i;
 		i.pack  = pack;
-		i.label = new wxStaticText(this, wxID_ANY, pack->name);
+		i.label = new wxStaticText(this, wxID_ANY, capitalize_sentence(pack->name));
 		i.value = new wxSpinCtrl(this, ID_PACK_AMOUNT, _("0"), wxDefaultPosition, wxSize(50,-1));
 		packsSizer->Add(i.label, 0, wxALIGN_CENTER_VERTICAL);
 		packsSizer->Add(i.value, 0, wxEXPAND | wxALIGN_CENTER);
@@ -227,8 +229,23 @@ void RandomPackPanel::setSeed(int seed) {
 }
 
 void RandomPackPanel::generate() {
-	boost::mt19937 random((unsigned)getSeed());
-	//set->game->pack_types[0].generate()
+	boost::mt19937 gen((unsigned)getSeed());
+	PackItemCache pack_cache(*set);
+	// add packs to card list
+	card_list->reset();
+	FOR_EACH(item,packs) {
+		int copies = item.value->GetValue();
+		for (int i = 0 ; i < copies ; ++i) {
+			card_list->add(pack_cache, gen, *item.pack);
+		}
+	}
+	card_list->rebuild();
+}
+
+// ----------------------------------------------------------------------------- : Selection
+
+void RandomPackPanel::selectCard(const CardP& card) {
+	preview->setCard(card);
 }
 
 // ----------------------------------------------------------------------------- : Clipboard

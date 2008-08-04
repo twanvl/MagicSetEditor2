@@ -1836,16 +1836,16 @@ auto replace:
 ############################################################## Card packs
 
 pack item:
-	name: Common
+	name: common
 	filter: card.rarity == "common"
 pack item:
-	name: Uncommon
+	name: uncommon
 	filter: card.rarity == "uncommon"
 pack item:
-	name: Rare
+	name: rare
 	filter: card.rarity == "rare"
 pack item:
-	name: Basic Land
+	name: basic land
 	filter: card.type == "Plains"
 	filter: card.type == "Island"
 	filter: card.type == "Swamp"
@@ -1855,46 +1855,46 @@ pack item:
 	#type: cyclic
 
 pack type:
-	name: Tournament pack
+	name: tournament pack
 	item:
-		name: Rare
+		name: rare
 		amount: 3
 	item:
-		name: Uncommon
+		name: uncommon
 		amount: 9
 	item:
-		name: Common
+		name: common
 		amount: 33
 	item:
-		name: Basic Land
+		name: basic land
 		amount: 30
 pack type:
-	name: Booster pack
+	name: booster pack
 	item:
-		name: Rare
+		name: rare
 		amount: 1
 	item:
-		name: Uncommon
+		name: uncommon
 		amount: 3
 	item:
-		name: Common
+		name: common
 		amount: 11
 pack type:
-	name: Additional common
+	name: additional common
 	item:
-		name: Common
+		name: common
 pack type:
-	name: Additional uncommon
+	name: additional uncommon
 	item:
-		name: Uncommon
+		name: uncommon
 pack type:
-	name: Additional rare
+	name: additional rare
 	item:
-		name: Rare
+		name: rare
 pack type:
-	name: Additional special
+	name: additional special
 	item:
-		name: Special
+		name: special
 
 
 

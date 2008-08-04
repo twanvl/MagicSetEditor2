@@ -12,10 +12,12 @@
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
 #include <script/scriptable.hpp>
+#include <boost/random/mersenne_twister.hpp>
 
 DECLARE_POINTER_TYPE(PackItemRef);
 DECLARE_POINTER_TYPE(Card);
 class Set;
+class PackItemCache;
 
 // ----------------------------------------------------------------------------- : PackType
 
@@ -28,8 +30,11 @@ class PackType : public IntrusivePtrBase<PackType> {
 	Scriptable<bool>     enabled; ///< Is this pack enabled?
 	vector<PackItemRefP> items;   ///< Cards in this pack
 	
+	/// Update scripts, returns true if there is a change
+	bool update(Context& ctx);
+	
 	/// Generate a random pack of cards, add them to out
-	void generate(Set& set, vector<CardP>& out) const;
+	void generate(PackItemCache& packs, boost::mt19937& gen, vector<CardP>& out) const;
 	
   private:
 	DECLARE_REFLECTION();
@@ -37,18 +42,25 @@ class PackType : public IntrusivePtrBase<PackType> {
 
 // ----------------------------------------------------------------------------- : PackItemRef
 
+enum PackRefType
+{	PACK_REF_REPLACE
+,	PACK_REF_NO_REPLACE
+,	PACK_REF_CYCLIC
+};
+
 class PackItemRef : public IntrusivePtrBase<PackItemRef> {
   public:
 	PackItemRef();
 	
 	String          name;	///< Name of this type of cards
 	Scriptable<int> amount;	///< Number of cards of this type
+	PackRefType     type; 
 	
 	/// Update scripts, returns true if there is a change
 	bool update(Context& ctx);
 	
 	/// Generate random cards, add them to out
-	void generate(Set& set, vector<CardP>& out) const;
+	void generate(PackItemCache& packs, boost::mt19937& gen, vector<CardP>& out) const;
 	
   private:
 	DECLARE_REFLECTION();
@@ -59,14 +71,30 @@ class PackItemRef : public IntrusivePtrBase<PackItemRef> {
 /// A card type description for playtesting
 class PackItem : public IntrusivePtrBase<PackItem> {
   public:
-	String          name;	///< Name of this type of cards
-	OptionalScript  filter;	///< Filter to select this type of cards
+	String         name;	///< Name of this type of cards
+	OptionalScript filter;	///< Filter to select this type of cards
 	
-	/// Generate random cards, add them to out
+	/// Select *all* cards matching the filter
 	void generate(Set& set, vector<CardP>& out) const;
 	
   private:
 	DECLARE_REFLECTION();
+};
+
+// ----------------------------------------------------------------------------- : PackItemCache
+
+class PackItemCache {
+  public:
+	PackItemCache(Set& set);
+	
+	/// The cards for a given PackItem
+	vector<CardP>& cardsFor(const String& name);
+	
+  private:
+	Set& set;
+	/// Cards for each PackItem
+	typedef shared_ptr<vector<CardP> > Cards;
+	map<String,Cards> item_cards;
 };
 
 // ----------------------------------------------------------------------------- : EOF
