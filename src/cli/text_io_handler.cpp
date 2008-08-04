@@ -141,9 +141,9 @@ void TextIOHandler::flushRaw() {
 	if (!buffer.empty()) {
 		#ifdef UNICODE
 			wxCharBuffer buf = buffer.mb_str(wxConvUTF8);
-			puts(buf);
+			fputs(buf,stdout);
 		#else
-			puts(buffer.c_str());
+			fputs(buffer.c_str(),stdout);
 		#endif
 	}
 	fflush(stdout);

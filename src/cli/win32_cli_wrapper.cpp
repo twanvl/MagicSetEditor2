@@ -35,7 +35,7 @@
 
 /// How to transfer data from one handle to another
 struct Transfer {
-	HANDLE from, to;
+	HANDLE from, &to;
 	bool escapes;
 };
 
@@ -103,16 +103,10 @@ int main(int argc, char** argv) {
 		// Ctrl+C handler
 		SetConsoleCtrlHandler(HandleCtrlEvent, TRUE);
 		
-		// inheritable handles
-		SECURITY_ATTRIBUTES inherit;
-		inherit.nLength = sizeof(inherit);
-		inherit.bInheritHandle = true;
-		inherit.lpSecurityDescriptor = NULL;
-		
 		// create pipes
-		CreatePipe(&in_theirs, &in_mine,    &inherit, 0);
-		CreatePipe(&out_mine,  &out_theirs, &inherit, 0);
-		CreatePipe(&err_mine,  &err_theirs, &inherit, 0);
+		CreatePipe(&in_theirs, &in_mine,    NULL, 0);
+		CreatePipe(&out_mine,  &out_theirs, NULL, 0);
+		CreatePipe(&err_mine,  &err_theirs, NULL, 0);
 		
 		// the actual handles
 		in_real  = GetStdHandle(STD_INPUT_HANDLE);
@@ -128,10 +122,11 @@ int main(int argc, char** argv) {
 		CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)TransferThread,&tranfer_out,0,NULL);
 		CreateThread(NULL,0,(LPTHREAD_START_ROUTINE)TransferThread,&tranfer_err,0,NULL);
 		
-		// give handles to child process
-		child_startup_info.hStdInput  = in_theirs;
-		child_startup_info.hStdOutput = out_theirs;
-		child_startup_info.hStdError  = err_theirs;
+		// give (inheritable copies of) handles to child process
+		HANDLE me = GetCurrentProcess();
+		DuplicateHandle(me,in_theirs, me,&child_startup_info.hStdInput, 0,TRUE,DUPLICATE_CLOSE_SOURCE|DUPLICATE_SAME_ACCESS);
+		DuplicateHandle(me,out_theirs,me,&child_startup_info.hStdOutput,0,TRUE,DUPLICATE_CLOSE_SOURCE|DUPLICATE_SAME_ACCESS);
+		DuplicateHandle(me,err_theirs,me,&child_startup_info.hStdError, 0,TRUE,DUPLICATE_CLOSE_SOURCE|DUPLICATE_SAME_ACCESS);
 		child_startup_info.dwFlags = STARTF_USESTDHANDLES;
 	}
 	
@@ -159,9 +154,13 @@ BOOL WINAPI HandleCtrlEvent(DWORD type) {
 	DWORD exit_code = 1;
 	// try to exit child process cleanly
 	// TODO: don't exit child on Ctrl+C
-	CopyFileBuffer(in_mine,":quit\n",6);
-	CopyFileBuffer(out_real,":quit\n",6);
-	if (WaitForSingleObject(child_process_info.hProcess,100) == WAIT_OBJECT_0) {
+	bool wait = false;
+	if (in_mine != INVALID_HANDLE_VALUE) {
+		CopyFileBuffer(in_mine,":quit\n",6);
+		CopyFileBuffer(out_real,":quit\n",6);
+		wait = true;
+	}
+	if (wait && WaitForSingleObject(child_process_info.hProcess,100) == WAIT_OBJECT_0) {
 		GetExitCodeProcess(child_process_info.hProcess, &exit_code);
 	} else {
 		TerminateProcess(child_process_info.hProcess,1);
@@ -177,7 +176,7 @@ BOOL WINAPI HandleCtrlEvent(DWORD type) {
 void CopyFileBuffer(HANDLE output, char* buffer, DWORD size) {
 	DWORD pos = 0, bytes_written;
 	while (pos < size) {
-		WriteFile(output, buffer + pos, size - pos, &bytes_written, NULL);
+ 		WriteFile(output, buffer + pos, size - pos, &bytes_written, NULL);
 		pos += bytes_written;
 	}
 }
@@ -223,7 +222,13 @@ DWORD WINAPI TransferThread(Transfer* transfer) {
 		// read
 		char buffer[1024];
 		DWORD bytes_read;
-		ReadFile(transfer->from, buffer, sizeof(buffer), &bytes_read, NULL);
+		BOOL ok = ReadFile(transfer->from, buffer, sizeof(buffer), &bytes_read, NULL);
+		if (ok && bytes_read == 0) {
+			// end of file: close handle
+			CloseHandle(transfer->to);
+			transfer->to = INVALID_HANDLE_VALUE;
+			break;
+		}
 		// write
 		CopyFileBufferWithEscape(transfer->to, buffer, bytes_read, transfer->escapes);
 	}

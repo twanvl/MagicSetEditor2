@@ -69,7 +69,6 @@ void CLISetInterface::run() {
 	// loop
 	running = true;
 	while (running) {
-		if (!cli.canGetLine()) break;
 		// show prompt
 		if (!quiet) {
 			cli << GRAY << _("> ") << NORMAL;
@@ -77,6 +76,7 @@ void CLISetInterface::run() {
 		}
 		// read line from stdin
 		String command = cli.getLine();
+		if (command.empty() && !cli.canGetLine()) break;
 		handleCommand(command);
 		cli.flush();
 		cli.flushRaw();
