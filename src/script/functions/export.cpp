@@ -26,8 +26,8 @@ DECLARE_TYPEOF_COLLECTION(SymbolFont::DrawableSymbol);
 // ----------------------------------------------------------------------------- : Utility
 
 // Make sure we can export files to a data directory
-void guard_export_info(const String& fun) {
-	if (!export_info()) {
+void guard_export_info(const String& fun, bool need_template = false) {
+	if (!export_info() && (!need_template || export_info()->export_template)) {
 		throw ScriptError(_("Can only use ") + fun + _(" from export templates"));
 	} else if (export_info()->directory_relative.empty()) {
 		throw ScriptError(_("Can only use ") + fun + _(" when 'create directory' is set to true"));

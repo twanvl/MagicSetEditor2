@@ -11,15 +11,19 @@
 
 #include <util/prec.hpp>
 #include <data/set.hpp>
+#include <data/export_template.hpp>
 
 // ----------------------------------------------------------------------------- : Command line interface
 
 class CLISetInterface : public SetView {
   public:
-	CLISetInterface();
+	/// The set is optional
+	CLISetInterface(const SetP& set, bool quiet = false);
 	~CLISetInterface();
   protected:
-	void onAction(const Action&, bool) {}
+	virtual void onAction(const Action&, bool) {}
+	virtual void onChangeSet();
+	virtual void onBeforeChangeSet();
   private:
 	bool quiet;    ///< Supress prompts and other non-vital stuff
 	bool running;  ///< Still running?
@@ -33,6 +37,10 @@ class CLISetInterface : public SetView {
 	/// our own context, when no set is loaded
 	Context& getContext();
 	Context* our_context;
+	size_t scope;
+	
+	// export info, so we can write files
+	ExportInfo ei;
 };
 
 // ----------------------------------------------------------------------------- : EOF

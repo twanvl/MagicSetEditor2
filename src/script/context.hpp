@@ -73,7 +73,7 @@ class Context {
 	/// Make a closure of the function with the direct parameters of the current call
 	ScriptValueP makeClosure(const ScriptValueP& fun);
 	
-  private:
+  public:
 	
 	/// Open a new scope
 	/** returns the number of shadowed binding before that scope */

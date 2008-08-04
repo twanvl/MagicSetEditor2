@@ -40,6 +40,7 @@ Rotation UnzoomedDataViewer::getRotation() const {
 }
 
 Bitmap export_bitmap(const SetP& set, const CardP& card) {
+	if (!set) throw Error(_("no set"));
 	// create viewer
 	UnzoomedDataViewer viewer(!settings.stylesheetSettingsFor(set->stylesheetFor(card)).card_normal_export());
 	viewer.setSet(set);

@@ -18,13 +18,15 @@ DECLARE_TYPEOF_COLLECTION(ScriptParseError);
 
 // ----------------------------------------------------------------------------- : Command line interface
 
-CLISetInterface::CLISetInterface()
-	: quiet(false)
+CLISetInterface::CLISetInterface(const SetP& set, bool quiet)
+	: quiet(quiet)
 	, our_context(nullptr)
 {
 	if (!cli.haveConsole()) {
 		throw Error(_("Can not run command line interface without a console;\nstart MSE with \"mse.com --cli\""));
 	}
+	ei.directory_relative = ei.directory_absolute = wxGetCwd();
+	setSet(set);
 	run();
 }
 
@@ -33,12 +35,30 @@ CLISetInterface::~CLISetInterface() {
 }
 
 Context& CLISetInterface::getContext() {
-	if (!our_context) {
-		our_context = new Context();
-		init_script_functions(*our_context);
+	if (set) {
+		return set->getContext();
+	} else {
+		if (!our_context) {
+			our_context = new Context();
+			init_script_functions(*our_context);
+		}
+		return *our_context;
 	}
-	return *our_context;
 }
+
+void CLISetInterface::onBeforeChangeSet() {
+	if (set || our_context) {
+		Context& ctx = getContext();
+		ctx.closeScope(scope);
+	}
+}
+
+void CLISetInterface::onChangeSet() {
+	Context& ctx = getContext();
+	scope = ctx.openScope();
+	ei.set = set;
+}
+
 
 // ----------------------------------------------------------------------------- : Running
 
@@ -48,6 +68,7 @@ void CLISetInterface::run() {
 	// loop
 	running = true;
 	while (running) {
+		if (!cli.canGetLine()) break;
 		// show prompt
 		if (!quiet) {
 			cli << GRAY << _("> ") << NORMAL;
@@ -56,6 +77,7 @@ void CLISetInterface::run() {
 		// read line from stdin
 		String command = cli.getLine();
 		handleCommand(command);
+		cli.flush();
 	}
 }
 
@@ -75,6 +97,7 @@ void CLISetInterface::showUsage() {
 	cli << _("   :help               Show this help page.\n");
 	cli << _("   :load <setfile>     Load a different set file.\n");
 	cli << _("   :quit               Exit the MSE command line interface.\n");
+	cli << _("   :reset              Clear all local variable definitions.\n");
 	cli << _("   :! <command>        Perform a shell command.\n");
 	cli << _("\n Commands can be abreviated to their first letter if there is no ambiguity.\n\n");
 }
@@ -90,7 +113,7 @@ void CLISetInterface::handleCommand(const String& command) {
 			String arg    = space + 1 < command.size() ? command.substr(space+1) : wxEmptyString;
 			if (before == _(":q") || before == _(":quit")) {
 				if (!quiet) {
-					cli << _("Goodbye\n"); cli.flush();
+					cli << _("Goodbye\n");
 				}
 				running = false;
 			} else if (before == _(":?") || before == _(":h") || before == _(":help")) {
@@ -101,6 +124,10 @@ void CLISetInterface::handleCommand(const String& command) {
 				} else {
 					setSet(import_set(arg));
 				}
+			} else if (before == _(":r") || before == _(":reset")) {
+				Context& ctx = getContext();
+				ctx.closeScope(scope);
+				scope = ctx.openScope();
 			} else if (before == _(":!")) {
 				if (arg.empty()) {
 					cli << _("Give a shell command to execute.\n");
@@ -124,13 +151,14 @@ void CLISetInterface::handleCommand(const String& command) {
 		} else {
 			// parse command
 			vector<ScriptParseError> errors;
-			ScriptP script = parse(command,set.get(),false,errors);
+			ScriptP script = parse(command,nullptr,false,errors);
 			if (!errors.empty()) {
 				FOR_EACH(error,errors) showError(error.what());
 				return;
 			}
 			// execute command
-			Context& ctx = set ? set->getContext() : getContext();
+			WITH_DYNAMIC_ARG(export_info, &ei);
+			Context& ctx = getContext();
 			ScriptValueP result = ctx.eval(*script,false);
 			// show result
 			cli << result->toCode() << ENDL;
@@ -141,5 +169,5 @@ void CLISetInterface::handleCommand(const String& command) {
 }
 
 void CLISetInterface::showError(const String& error) {
-	cli << RED << _("ERROR: ") << NORMAL << replace_all(error,_("\n"),_("       ")) << ENDL;
+	cli << RED << _("ERROR: ") << NORMAL << replace_all(error,_("\n"),_("\n       ")) << ENDL;
 }

@@ -30,6 +30,8 @@ class TextIOHandler {
 	
 	/// Read a line from stdin
 	String getLine();
+	/// Can another line be got?
+	bool canGetLine();
 	
 	/// Flush output
 	void flush();

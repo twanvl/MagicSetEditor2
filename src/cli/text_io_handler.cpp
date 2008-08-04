@@ -54,6 +54,8 @@ bool TextIOHandler::haveConsole() const {
 }
 
 
+// ----------------------------------------------------------------------------- : Output
+
 void TextIOHandler::flush() {
 	if (have_console) {
 		fflush(stdout);
@@ -86,10 +88,12 @@ TextIOHandler& TextIOHandler::operator << (const String& str) {
 	return *this;
 }
 
+// ----------------------------------------------------------------------------- : Input
+
 String TextIOHandler::getLine() {
 	String result;
 	Char buffer[2048];
-	while (true) {
+	while (!feof(stdin)) {
 		if (!IF_UNICODE(fgetws,fgets)(buffer, 2048, stdin)) {
 			return result; // error
 		}
@@ -100,4 +104,8 @@ String TextIOHandler::getLine() {
 			return result;
 		}
 	}
+	return result;
+}
+bool TextIOHandler::canGetLine() {
+	return !feof(stdin);
 }

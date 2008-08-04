@@ -190,8 +190,10 @@ int MSE::OnRun() {
 					cli << _("\n         \tExport the cards in a set to image files,");
 					cli << _("\n         \tIMAGE is the same format as for 'export all card images'.");
 					cli << _("\n\n  ") << BRIGHT << _("--cli") << NORMAL << _(" [")
-					                   << PARAM << _("FILE") << NORMAL << _("]");
+					                   << PARAM << _("FILE") << NORMAL << _("] [")
+					                   << BRIGHT << _("--quiet") << NORMAL << _("]");
 					cli << _("\n         \tStart the command line interface for performing commands on the set file.");
+					cli << _("\n         \tUse ") << BRIGHT << _("-q") << NORMAL << _(" or ") << BRIGHT << _("--quiet") << NORMAL << _(" to supress the startup banner and prompts.");
 					cli << ENDL;
 					cli.flush();
 					return EXIT_SUCCESS;
@@ -203,7 +205,18 @@ int MSE::OnRun() {
 					return EXIT_SUCCESS;
 				} else if (arg == _("--cli")) {
 					// command line interface
-					CLISetInterface cli_interface;
+					SetP set;
+					bool quiet = false;
+					for (int i = 2 ; i < argc ; ++i) {
+						String arg = argv[i];
+						wxFileName f(argv[i]);
+						if (f.GetExt() == _("mse-set") || f.GetExt() == _("mse") || f.GetExt() == _("set")) {
+							set = import_set(arg);
+						} else if (arg == _("-q") || arg == _("--quiet")) {
+							quiet = true;
+						}
+					}
+					CLISetInterface cli_interface(set,quiet);
 					return EXIT_SUCCESS;
 				} else if (arg == _("--export")) {
 					if (argc <= 2) {
