@@ -1,7 +1,7 @@
-mse version: 0.3.6
-version: 2008-06-02
+mse version: 0.3.7
+version: 2008-08-05
 short name: normal (colorless)
-position hint: 21
+position hint: 11
 installer group: magic/Mana symbols/colorless normal style
 icon: mana_r.png
 # Symbol font in the normal, flat, style, used for text boxes and on old style cards

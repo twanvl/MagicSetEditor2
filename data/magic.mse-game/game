@@ -5,7 +5,7 @@ installer group: magic/game files
 icon: card-back.png
 position hint: 01
 
-version: 2008-06-02
+version: 2008-08-05
 depends on:
 	package: magic-blends.mse-include
 	version: 2007-09-23
@@ -182,7 +182,6 @@ init script:
 	# The code consists of 4 parts:
 	#   normal/token,  color,  shifted,   split
 	sort_index := {
-		(if contains(card.shape, match:"token")   then "T" else " ") + # Tokens come last
 		color_of_card() +
 		(if contains(card.shape, match:"shifted") then "S" else " ") + # planeshifted cards come after normal ones
 		(if contains(card.shape, match:"split")   then "S" else " ") + # split cards come after normal ones
@@ -250,13 +249,24 @@ init script:
 		)
 	}
 	
+	#rarity_sort := {
+	#	if set.sort_special_rarity == "with the rest" or card.rarity != "special" then " " else "S"
+	#}
 	rarity_sort := {
-		if set.sort_special_rarity == "with the rest" or card.rarity != "special" then " " else "S"
+		if card.shape == "token" then "T"
+		else if set.sort_special_rarity == "with the rest" or card.rarity != "special" then " "
+		else "S"
 	}
+	#set_filter := {
+	#	if set.sort_special_rarity != "separate numbering" then nil
+	#	else if card.rarity == "special"                   then { card.rarity == "special" }
+	#	else                                                    { card.rarity != "special" }
+	#}
 	set_filter := {
-		if set.sort_special_rarity != "separate numbering" then nil
-		else if card.rarity == "special"                   then { card.rarity == "special" }
-		else                                                    { card.rarity != "special" }
+		if card.shape == "token" then { card.shape == "token" }
+		else if set.sort_special_rarity != "separate numbering" then { card.shape != "token" and card.shape != "rulestip" }
+		else if card.rarity == "special"                   then { card.shape != "token" and card.shape != "rulestip" and card.rarity == "special" }
+		else                                                    { card.shape != "token" and card.shape != "rulestip" and card.rarity != "special" }
 	}
 	
 	card_number := {
@@ -327,7 +337,8 @@ init script:
 		 ";
 	# truncates the name of legends
 	legend_filter := replace@(match:", [A-Z,a-z,Æ,0-9,' ]*", replace: "" )+
-		replace@(match:"the [A-Z,a-z,Æ,0-9,' ]*", replace: "" )
+		replace@(match:" of [A-Z,a-z,Æ,0-9,' ]*", replace: "" )+
+		replace@(match:" the [A-Z,a-z,Æ,0-9,' ]*", replace: "" )
 	# the rule text filter
 	#  - adds mana symbols
 	#  - makes text in parentheses italic
@@ -692,6 +703,7 @@ card field:
 	choice: flip
 	choice: split
 	choice: shifted
+	choice: rulestip
 	script: card_shape() # determined by the style
 card field:
 	type: text
@@ -1568,6 +1580,7 @@ word list:
 			word: Nephilim
 			word: Nightmare
 			word: Nightstalker
+			word: Noggle
 		word:
 			name: O
 			word: Octopus
@@ -2507,3 +2520,13 @@ keyword:
 	match: Conspire
 	mode: expert
 	reminder: As you play this spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it{ if is_targeted() then " and you may choose a new target for the copy" }.
+keyword:
+	keyword: Retrace
+	match: Retrace
+	mode: expert
+	reminder: You may play this card from your graveyard by discarding a land card in addition to paying its other costs.
+keyword:
+	keyword: Chroma
+	match: Chroma
+	mode: pseudo
+	rules: Chroma — [effect] based on the number of [color] mana symbols [in graveyard, under your control, in cards you discard].
