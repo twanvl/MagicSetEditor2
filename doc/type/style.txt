@@ -142,6 +142,7 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 | ^^^		@top width@	^^^			^^^	^^^
 | ^^^		@bottom width@	^^^			^^^	^^^
 | ^^^		@mask@	[[type:scriptable]] [[type:filename]]	''none''	A mask to apply to the box, black areas in the mask become transparent.
+| ^^^		@combine@	[[type:combine]]		@"normal"@	How to combine the color with the background? Only applies when a mask is used.
 	
 !	<<<	<<<	<<<	<<<
 | @"image"@	@mask@		[[type:scriptable]] [[type:filename]]	''none''	A mask to apply to the image, black areas in the mask become transparent, similair to [[fun:set_mask]].

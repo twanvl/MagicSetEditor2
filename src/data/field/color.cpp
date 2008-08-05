@@ -52,6 +52,7 @@ ColorStyle::ColorStyle(const ColorFieldP& field)
 	, radius(0)
 	, left_width(100000), right_width (100000)
 	, top_width (100000), bottom_width(100000)
+	, combine(COMBINE_NORMAL)
 {}
 
 IMPLEMENT_REFLECTION(ColorStyle) {
@@ -62,6 +63,7 @@ IMPLEMENT_REFLECTION(ColorStyle) {
 	REFLECT(top_width);
 	REFLECT(bottom_width);
 	REFLECT_N("mask", mask_filename);
+	REFLECT(combine);
 }
 
 int ColorStyle::update(Context& ctx) {

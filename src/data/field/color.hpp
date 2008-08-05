@@ -62,6 +62,7 @@ class ColorStyle : public Style {
 	double             top_width;       ///< Width of the colored region on the top side
 	double             bottom_width;    ///< Width of the colored region on the bottom side
 	Scriptable<String> mask_filename;   ///< Filename of an additional mask over the images
+	Scriptable<ImageCombine> combine;   ///< How to combine image with the background
 	
 	virtual int update(Context&);
 };

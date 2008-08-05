@@ -48,7 +48,7 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 			Image img(alpha_mask->size.x, alpha_mask->size.y);
 			fill_image(img, value().value());
 			alpha_mask->setAlpha(img);
-			dc.DrawImage(img, RealPoint(0,0));
+			dc.DrawImage(img, RealPoint(0,0), style().combine);
 		} else {
 			// do we need clipping?
 			bool clip = style().left_width < style().width  && style().right_width  < style().width &&
