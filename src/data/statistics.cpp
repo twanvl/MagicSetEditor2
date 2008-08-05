@@ -23,6 +23,7 @@ StatsDimension::StatsDimension()
 	: automatic    (false)
 	, position_hint(0)
 	, numeric      (false)
+	, bin_size     (0)
 	, show_empty   (false)
 	, split_list   (false)
 {}
@@ -72,6 +73,7 @@ IMPLEMENT_REFLECTION_NO_GET_MEMBER(StatsDimension) {
 		REFLECT_N("icon", icon_filename);
 		REFLECT(script);
 		REFLECT(numeric);
+		REFLECT(bin_size);
 		REFLECT(show_empty);
 		REFLECT(split_list);
 		REFLECT(colors);

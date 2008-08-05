@@ -16,6 +16,7 @@
 DECLARE_TYPEOF_COLLECTION(GraphAxisP);
 DECLARE_TYPEOF_COLLECTION(GraphElementP);
 DECLARE_TYPEOF_COLLECTION(GraphGroup);
+DECLARE_TYPEOF_COLLECTION(GraphDataElement*);
 DECLARE_TYPEOF_COLLECTION(GraphP);
 DECLARE_TYPEOF_COLLECTION(int);
 DECLARE_TYPEOF_COLLECTION(vector<int>);
@@ -32,20 +33,22 @@ DEFINE_EVENT_TYPE(EVENT_GRAPH_SELECT);
 // ----------------------------------------------------------------------------- : GraphAxis
 
 void GraphAxis::addGroup(const String& name, UInt size) {
-	groups.push_back(GraphGroup(name, size));
-	max = std::max(max, size);
+	if (!groups.empty() && groups.back().name == name) {
+		groups.back().size += size;
+	} else {
+		groups.push_back(GraphGroup(name, size));
+	}
+	max = std::max(max, groups.back().size);
 	total += size;
 }
 
 // ----------------------------------------------------------------------------- : GraphData
 
-GraphElement::GraphElement(const String& v1) {
-	values.push_back(v1);
-}
-GraphElement::GraphElement(const String& v1, const String& v2) {
-	values.push_back(v1);
-	values.push_back(v2);
-}
+struct ComparingOriginalIndex {
+	inline bool operator () (const GraphElementP& a, const GraphElementP& b) {
+		return a->original_index < b->original_index;
+	}
+};
 
 void GraphDataPre::splitList(size_t axis) {
 	size_t count = elements.size(); // only the elements that were already there
@@ -63,6 +66,8 @@ void GraphDataPre::splitList(size_t axis) {
 			comma = v.find_first_of(_(','));
 		}
 	}
+	// re-sort by original_index
+	sort(elements.begin(), elements.end(), ComparingOriginalIndex());
 }
 
 
@@ -71,11 +76,25 @@ struct SmartLess{
 };
 DECLARE_TYPEOF(map<String COMMA UInt COMMA SmartLess>);
 
+String to_bin(double value, double bin_size) {
+	if (bin_size <= 0 || value == 0) {
+		return String() << (int)value;
+	} else {
+		int bin = ceil(value / bin_size);
+		return String::Format(_("%.0f%c%.0f"), (bin-1) * bin_size + 1, EN_DASH, bin * bin_size);
+	}
+}
+int bin_to_group(double value, double bin_size) {
+	if (bin_size <= 0 || value == 0) {
+		return 0;
+	} else {
+		return ceil(value / bin_size);
+	}
+}
+
 GraphData::GraphData(const GraphDataPre& d)
 	: axes(d.axes)
 {
-	// total size
-	size = (UInt)d.elements.size();
 	// find groups on each axis
 	size_t i = 0;
 	FOR_EACH(a, axes) {
@@ -92,19 +111,27 @@ GraphData::GraphData(const GraphDataPre& d)
 				double d;
 				if (c.first.ToDouble(&d)) {
 					// update mean
-					a->mean       += d * c.second;
+					a->mean_value += d * c.second;
+					a->max_value  = max(a->max_value, d);
 					numeric_count += c.second;
 					// add 0 bars before this value
 					int next = (int)floor(d);
 					for (int i = prev ; i < next ; i++) {
-						a->addGroup(String()<<i, 0);
+						a->addGroup(to_bin(i, a->bin_size), 0);
 					}
 					prev = next + 1;
+					// add
+					if (a->bin_size) {
+						a->addGroup(to_bin(d, a->bin_size), c.second);
+					} else {
+						a->addGroup(c.first, c.second);
+					}
+				} else {
+					// non-numeric, add anyway
+					a->addGroup(c.first, c.second);
 				}
-				// add
-				a->addGroup(c.first, c.second);
 			}
-			a->mean /= numeric_count;
+			a->mean_value /= numeric_count;
 		} else if (a->order) {
 			// specific group order
 			FOR_EACH_CONST(gn, *a->order) {
@@ -145,25 +172,40 @@ GraphData::GraphData(const GraphDataPre& d)
 		++i;
 	}
 	// count elements in each position
-	values.clear();
+	values.reserve(d.elements.size());
+	size_t de_size = sizeof(GraphDataElement) + sizeof(int) * (axes.size() - 1);
 	FOR_EACH_CONST(e, d.elements) {
+		// make the group_nrs large enough
+		GraphDataElement* de = reinterpret_cast<GraphDataElement*>(new char[de_size]);
+		de->original_index = e->original_index;
 		// find index j in elements
-		vector<int> group_nrs(axes.size(), -1);
 		int i = 0;
 		FOR_EACH(a, axes) {
 			String v = e->values[i];
-			int j = 0;
-			FOR_EACH(g, a->groups) {
-				if (v == g.name) {
-					group_nrs[i] = j;
-					break;
+			de->group_nrs[i] = -1;
+			double d;
+			if (a->numeric && a->bin_size > 0 && v.ToDouble(&d)) {
+				// calculate group that contains v
+				de->group_nrs[i] = bin_to_group(d, a->bin_size);
+			} else {
+				// find group that contains v
+				int j = 0;
+				FOR_EACH(g, a->groups) {
+					if (v == g.name) {
+						de->group_nrs[i] = j;
+						break;
+					}
+					++j;
 				}
-				++j;
 			}
 			++i;
 		}
-		values.push_back(group_nrs);
+		values.push_back(de);
 	}
+}
+
+GraphData::~GraphData() {
+	FOR_EACH_CONST(v,values) delete v;
 }
 
 void GraphData::crossAxis(size_t axis1, size_t axis2, vector<UInt>& out) const {
@@ -172,7 +214,7 @@ void GraphData::crossAxis(size_t axis1, size_t axis2, vector<UInt>& out) const {
 	out.clear();
 	out.resize(a1_size * a2_size, 0);
 	FOR_EACH_CONST(v, values) {
-		int v1 = v[axis1], v2 = v[axis2];
+		int v1 = v->group_nrs[axis1], v2 = v->group_nrs[axis2];
 		if (v1 >= 0 && v2 >= 0) {
 			out[a2_size * v1 + v2]++;
 		}
@@ -186,27 +228,44 @@ void GraphData::crossAxis(size_t axis1, size_t axis2, size_t axis3, vector<UInt>
 	out.clear();
 	out.resize(a1_size * a2_size * a3_size, 0);
 	FOR_EACH_CONST(v, values) {
-		int v1 = v[axis1], v2 = v[axis2], v3 = v[axis3];
+		int v1 = v->group_nrs[axis1], v2 = v->group_nrs[axis2], v3 = v->group_nrs[axis3];
 		if (v1 >= 0 && v2 >= 0 && v3 >= 0) {
 			out[a3_size * (a2_size * v1 + v2) + v3]++;
 		}
 	}
 }
 
+bool matches(const GraphDataElement* v, const vector<int>& match) {
+	for (size_t i = 0 ; i < match.size() ; ++i) {
+		if (v->group_nrs[i] == -1 || match[i] != -1 && v->group_nrs[i] != match[i]) {
+			return false;
+		}
+	}
+	return true;
+}
+
 UInt GraphData::count(const vector<int>& match) const {
 	if (match.size() != axes.size()) return 0;
 	UInt count = 0;
+	size_t prev_index = (size_t)-1;
 	FOR_EACH_CONST(v, values) {
-		bool matches = true;
-		for (size_t i = 0 ; i < match.size() ; ++i) {
-			if (v[i] == -1 || match[i] != -1 && v[i] != match[i]) {
-				matches = false;
-				break;
-			}
+		if (matches(v, match) && v->original_index != prev_index) {
+			prev_index = v->original_index; // don't count the same index twice
+			count += matches(v, match);
 		}
-		count += matches;
 	}
 	return count;
+}
+
+void GraphData::indices(const vector<int>& match, vector<size_t>& out) const {
+	if (match.size() != axes.size()) return;
+	size_t prev_index = (size_t)-1;
+	FOR_EACH_CONST(v, values) {
+		if (matches(v, match) && v->original_index != prev_index) {
+			prev_index = v->original_index; // don't select the same index twice
+			out.push_back(v->original_index);
+		}
+	}
 }
 
 // ----------------------------------------------------------------------------- : Graph1D
@@ -620,8 +679,8 @@ void GraphStats::setData(const GraphDataP& d) {
 	values.clear();
 	if (!axis.numeric) return;
 	if (axis.groups.empty()) return;
-	values.push_back(make_pair(_("max"),  axis.groups.back().name));
-	values.push_back(make_pair(_("mean"), String::Format(_("%.2f"), axis.mean)));
+	values.push_back(make_pair(_("max"),  String::Format(_("%.2f"), axis.max_value)));
+	values.push_back(make_pair(_("mean"), String::Format(_("%.2f"), axis.mean_value)));
 }
 
 RealSize GraphStats::determineSize(RotatedDC& dc) const {
@@ -978,6 +1037,10 @@ void GraphControl::setData(const GraphDataP& data) {
 	}
 	Refresh(false);
 }
+GraphDataP GraphControl::getData() const {
+	if (graph) return graph->getData();
+	else       return GraphDataP();
+}
 
 size_t GraphControl::getDimensionality() const {
 	if (graph) return graph->getData()->axes.size();
@@ -1066,6 +1129,9 @@ String GraphControl::getSelection(size_t axis) const {
 	int i = current_item[axis];
 	if (i == -1 || (size_t)i >= a.groups.size()) return wxEmptyString;
 	return a.groups[current_item[axis]].name;
+}
+vector<int> GraphControl::getSelectionIndices() const {
+	return current_item;
 }
 
 void GraphControl::onMotion(wxMouseEvent& ev) {

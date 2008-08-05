@@ -68,6 +68,8 @@ void writeUTF8(wxTextOutputStream& stream, const String& str);
 	#define RIGHT_SINGLE_QUOTE  _('\u2019')
 	#define  LEFT_DOUBLE_QUOTE  _('\u201C')
 	#define RIGHT_DOUBLE_QUOTE  _('\u201D')
+	#define EN_DASH             _('\u2013')
+	#define EM_DASH             _('\u2014')
 	#define CONNECTION_SPACE    _('\uEB00') // in private use area, untags to ' '
 #else
 	#define  LEFT_ANGLE_BRACKET _("<")
@@ -76,6 +78,8 @@ void writeUTF8(wxTextOutputStream& stream, const String& str);
 	#define RIGHT_SINGLE_QUOTE  _('\'')
 	#define  LEFT_DOUBLE_QUOTE  _('\"')
 	#define RIGHT_DOUBLE_QUOTE  _('\"')
+	#define EN_DASH             _('-') // 150?
+	#define EM_DASH             _('-') // 151?
 	#define CONNECTION_SPACE    _(' ') // too bad
 #endif
 

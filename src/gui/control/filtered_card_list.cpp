@@ -30,10 +30,14 @@ void FilteredCardList::onChangeSet() {
 
 void FilteredCardList::getItems(vector<VoidP>& out) const {
 	if (filter) {
-		FOR_EACH(c, set->cards) {
-			if (filter->keep(c)) {
-				out.push_back(c);
-			}
+		filter->getItems(set->cards,out);
+	}
+}
+
+void CardListFilter::getItems(const vector<CardP>& cards, vector<VoidP>& out) const {
+	FOR_EACH_CONST(c, cards) {
+		if (keep(c)) {
+			out.push_back(c);
 		}
 	}
 }

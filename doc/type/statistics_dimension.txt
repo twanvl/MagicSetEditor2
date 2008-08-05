@@ -18,6 +18,8 @@ Categories are also automatically generated from dimensions.
 | @icon@		[[type:filename]]	 		Filename of an icon for this dimension.
 | @script@		[[type:script]]		''required''	Script that generates a value for each card in the set.
 | @numeric@		[[type:boolean]]	@false@		Is the value always a number?
+| @bin size@		[[type:double]]		''none''	For numeric dimensions: group numbers together into bins this large.<br/>
+			 			 		For example with @bin size: 5@, values @1@ and @3@ both get put under @"1-5"@.
 | @show empty@		[[type:boolean]]	@false@		Should cards with the value @""@ be included?
 | @split list@		[[type:boolean]]	@false@		Indicates the value is a list of the form @"item1, item2"@. The card is put under both items.
 | @colors@		[[type:map]] of opaque [[type:color]]s	 	Colors to use for specific values

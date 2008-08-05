@@ -21,7 +21,9 @@ class CardListFilter : public IntrusivePtrVirtualBase {
   public:
 	virtual ~CardListFilter() {}
 	/// Should a card be shown in the list?
-	virtual bool keep(const CardP& card) = 0;
+	virtual bool keep(const CardP& card) const { return false; }
+	/// Select cards from a card list
+	virtual void getItems(const vector<CardP>& cards, vector<VoidP>& out) const;
 };
 
 // ----------------------------------------------------------------------------- : FilteredCardList

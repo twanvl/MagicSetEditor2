@@ -521,6 +521,8 @@ init script:
 		else if artifact                                  then "artifact"
 		else                                                   input
 	}
+	
+	word_count := break_text@(match:"[^[:space:]]+") + length
 
 # TODO : somewhere else?
 #card to conversion:
@@ -1300,6 +1302,14 @@ statistics dimension:
 	position hint: 1001
 	script: stylesheet.short_name
 	icon: stats/stylesheet.png
+
+statistics dimension:
+	name: text length (words)
+	position hint: 100
+	script: word_count(to_text(card.rule_text))
+	numeric: true
+	bin size: 5
+	icon: stats/text_length.png
 
 statistics dimension:
 	name: race

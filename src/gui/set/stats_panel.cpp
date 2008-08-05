@@ -23,6 +23,7 @@
 
 DECLARE_TYPEOF_COLLECTION(StatsDimensionP);
 DECLARE_TYPEOF_COLLECTION(String);
+DECLARE_TYPEOF_COLLECTION(size_t);
 DECLARE_TYPEOF_COLLECTION(CardP);
 typedef pair<StatsDimensionP,String> pair_StatsDimensionP_String;
 DECLARE_TYPEOF_COLLECTION(pair_StatsDimensionP_String);
@@ -80,6 +81,7 @@ void StatCategoryList::drawItem(DC& dc, int x, int y, size_t item) {
 	if (!cat.icon_filename.empty() && !cat.icon.Ok()) {
 		InputStreamP file = game->openIn(cat.icon_filename);
 		Image img(*file);
+		if (img.HasMask()) img.InitAlpha(); // we can't handle masks
 		if (img.Ok()) {
 			cat.icon = Bitmap(resample_preserve_aspect(img, 21, 21));
 		}
@@ -236,6 +238,7 @@ void StatDimensionList::drawItem(DC& dc, int x, int y, size_t item) {
 	if (!dim.icon_filename.empty() && !dim.icon.Ok()) {
 		InputStreamP file = game->openIn(dim.icon_filename);
 		Image img(*file);
+		if (img.HasMask()) img.InitAlpha(); // we can't handle masks
 		Image resampled(21, 21);
 		resample_preserve_aspect(img, resampled);
 		if (img.Ok()) dim.icon = Bitmap(resampled);
@@ -394,32 +397,7 @@ void StatsPanel::onCommand(int id) {
 	}
 }
 
-// ----------------------------------------------------------------------------- : Filtering card list
-
-bool chosen(const String& choice, const String& input);
-
-class StatsFilter : public CardListFilter {
-  public:
-	StatsFilter(Set& set)
-		: set(set)
-	{}
-	virtual bool keep(const CardP& card) {
-		Context& ctx = set.getContext(card);
-		FOR_EACH(v, values) {
-			StatsDimension& dim = *v.first;
-			String value = untag(dim.script.invoke(ctx)->toString());
-			if (dim.split_list) {
-				if (!chosen(v.second, value)) return false;
-			} else {
-				if (value != v.second) return false;
-			}
-		}
-		return true;
-	}
-	
-	vector<pair<StatsDimensionP, String> > values; ///< Values selected along each dimension
-	Set& set;
-};
+// ----------------------------------------------------------------------------- : Updating graph
 
 void StatsPanel::onChange() {
 	if (active) {
@@ -467,19 +445,20 @@ void StatsPanel::showCategory(const GraphType* prefer_layout) {
 	// create axes
 	GraphDataPre d;
 	FOR_EACH(dim, dims) {
-		d.axes.push_back(new_intrusive5<GraphAxis>(
+		d.axes.push_back(new_intrusive6<GraphAxis>(
 			dim->name,
 			dim->colors.empty() ? AUTO_COLOR_EVEN : AUTO_COLOR_NO,
 			dim->numeric,
+			dim->bin_size,
 			&dim->colors,
 			dim->groups.empty() ? nullptr : &dim->groups
 			)
 		);
 	}
-	// find values
-	FOR_EACH(card, set->cards) {
-		Context& ctx = set->getContext(card);
-		GraphElementP e(new GraphElement);
+	// find values for each card
+	for (size_t i = 0 ; i < set->cards.size() ; ++i) {
+		Context& ctx = set->getContext(set->cards[i]);
+		GraphElementP e(new GraphElement(i));
 		bool show = true;
 		FOR_EACH(dim, dims) {
 			String value = untag(dim->script.invoke(ctx)->toString());
@@ -517,36 +496,33 @@ void StatsPanel::showLayout(GraphType layout) {
 	graph->setLayout(layout);
 	graph->Refresh(false);
 }
+
 void StatsPanel::onGraphSelect(wxCommandEvent&) {
 	filterCards();
 }
 
-void StatsPanel::filterCards() {
-	#if USE_SEPARATE_DIMENSION_LISTS
-		vector<StatsDimensionP> dims;
-		for (int i = 0 ; i < 3 ; ++i) {
-			StatsDimensionP dim = dimensions[i]->getSelection();
-			if (dim) dims.push_back(dim);
-		}
-	#elif USE_DIMENSION_LISTS
-		vector<StatsDimensionP> dims;
-		for (size_t i = 0 ; i < dimensions->prefered_dimension_count ; ++i) {
-			StatsDimensionP dim = dimensions->getSelection(i);
-			if (dim) dims.push_back(dim);
-		}
-	#else
-		if (!categories->hasSelection()) return;
-		const StatsCategory& cat = categories->getSelection();
-		const vector<StatsDimensionP>& dims = cat.dimensions;
-	#endif
-	intrusive_ptr<StatsFilter> filter(new StatsFilter(*set));
-	for (size_t i = 0 ; i < dims.size() ; ++i) {
-		if (graph->hasSelection(i)) {
-			filter->values.push_back(make_pair(dims[i], graph->getSelection(i)));
+// ----------------------------------------------------------------------------- : Filtering card list
+
+class StatsFilter : public CardListFilter {
+  public:
+	StatsFilter(GraphData& data, const vector<int> match) {
+		data.indices(match, indices);
+	}
+	virtual void getItems(const vector<CardP>& cards, vector<VoidP>& out) const {
+		FOR_EACH_CONST(idx, indices) {
+			out.push_back(cards.at(idx));
 		}
 	}
+	
+	vector<size_t> indices; ///< Indices of cards to select
+};
+
+void StatsPanel::filterCards() {
+	intrusive_ptr<StatsFilter> filter(new StatsFilter(*graph->getData(), graph->getSelectionIndices()));
 	card_list->setFilter(filter);
 }
+
+// ----------------------------------------------------------------------------- : Events
 
 BEGIN_EVENT_TABLE(StatsPanel, wxPanel)
 	EVT_GRAPH_SELECT(wxID_ANY, StatsPanel::onGraphSelect)

@@ -35,6 +35,7 @@ class StatsDimension : public IntrusivePtrBase<StatsDimension> {
 	Bitmap            icon;				///< The loaded icon (optional of course)
 	OptionalScript    script;			///< Script that determines the value(s)
 	bool              numeric;			///< Are the values numeric? If so, they require special sorting
+	double            bin_size;			///< Bin adjecent numbers?
 	bool              show_empty;		///< Should "" be shown?
 	bool              split_list;		///< Split values into multiple ones separated by commas
 	map<String,Color> colors;			///< Colors for the categories

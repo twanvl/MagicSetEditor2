@@ -52,13 +52,13 @@ enum AutoColor
 /** The sum of groups.sum = sum of all elements in the data */
 class GraphAxis : public IntrusivePtrBase<GraphAxis> {
   public:
-	GraphAxis(const String& name, AutoColor auto_color = AUTO_COLOR_EVEN, bool numeric = false, const map<String,Color>* colors = nullptr, const vector<String>* order = nullptr)
+	GraphAxis(const String& name, AutoColor auto_color = AUTO_COLOR_EVEN, bool numeric = false, double bin_size = 0, const map<String,Color>* colors = nullptr, const vector<String>* order = nullptr)
 		: name(name)
 		, auto_color(auto_color)
-		, numeric(numeric)
+		, numeric(numeric), bin_size(bin_size)
 		, max(0)
 		, total(0)
-		, mean(0)
+		, mean_value(0), max_value(-numeric_limits<double>::infinity())
 		, colors(colors)
 		, order(order)
 	{}
@@ -67,9 +67,11 @@ class GraphAxis : public IntrusivePtrBase<GraphAxis> {
 	AutoColor          auto_color;	///< Automatically assign colors to the groups on this axis
 	vector<GraphGroup> groups;		///< Groups along this axis
 	bool               numeric;		///< Numeric axis?
+	double             bin_size;	///< Group numeric values into bins of this size
 	UInt               max;			///< Maximum size of the groups
 	UInt               total;		///< Sum of the size of all groups
-	double             mean;		///< Mean value, only for numeric axes
+	double             mean_value;		///< Mean value, only for numeric axes
+	double             max_value;		///< Maximal value, only for numeric axes
 	const map<String,Color>* colors;	///< Colors for each choice (optional)
 	const vector<String>*    order;		///< Order of the items (optional)
 	
@@ -80,11 +82,10 @@ class GraphAxis : public IntrusivePtrBase<GraphAxis> {
 /// A single data point of a graph
 class GraphElement : public IntrusivePtrBase<GraphElement> {
   public:
-	GraphElement() {}
-	GraphElement(const String& v1);
-	GraphElement(const String& v1, const String& v2);
+	GraphElement(size_t original_index) : original_index(original_index) {}
 	
-	vector<String> values; ///< Group name for each axis
+	size_t         original_index; ///< Corresponding index in the original input
+	vector<String> values;         ///< Group name for each axis
 };
 
 /// Data to be displayed in a graph, not processed yet
@@ -96,14 +97,21 @@ class GraphDataPre {
 	void splitList(size_t axis);
 };
 
+/// A single data point of a graph
+struct GraphDataElement {
+	size_t original_index;
+	int    group_nrs[1];   ///< Group number for each axis
+};
+
 /// Data to be displayed in a graph
 class GraphData : public IntrusivePtrBase<GraphData> {
   public:
 	GraphData(const GraphDataPre&);
+	~GraphData();
 	
-	vector<GraphAxisP>   axes;		///< The axes in the data
-	vector<vector<int> > values;	///< All elements, with the group number for each axis, or -1
-	UInt                 size;		///< Total number of elements
+	vector<GraphAxisP>        axes;		///< The axes in the data
+	vector<GraphDataElement*> values;	///< All elements, with the group number for each axis, or -1
+	UInt                      size;		///< Total number of elements
 	
 	/// Create a cross table for two axes
 	void crossAxis(size_t axis1, size_t axis2, vector<UInt>& out) const;
@@ -111,6 +119,8 @@ class GraphData : public IntrusivePtrBase<GraphData> {
 	void crossAxis(size_t axis1, size_t axis2, size_t axis3, vector<UInt>& out) const;
 	/// Count the number of elements with the given values, -1 is a wildcard
 	UInt count(const vector<int>& match) const;
+	/// Get the original_indices of elements matching the selection
+	void indices(const vector<int>& match, vector<size_t>& out) const;
 };
 
 
@@ -333,11 +343,15 @@ class GraphControl : public wxControl {
 	void setData(const GraphDataPre& data);
 	/// Update the data in the graph
 	void setData(const GraphDataP& data);
+	/// Retrieve the data in the graph
+	GraphDataP getData() const;
 	
 	/// Is there a selection on the given axis?
 	bool hasSelection(size_t axis) const;
 	/// Get the current item along the given axis
 	String getSelection(size_t axis) const;
+	/// Get the current item along each axis
+	vector<int> getSelectionIndices() const;
 	
 	/// Get the current layout
 	GraphType getLayout() const;
