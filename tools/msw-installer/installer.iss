@@ -30,6 +30,7 @@ OutputDir               = tools/msw-installer/
 WizardImageFile         = tools/msw-installer/WizModernImage.bmp
 WizardSmallImageFile    = tools/msw-installer/WizModernSmallImage.bmp
 SourceDir               = ../..
+PrivilegesRequired      = none
 
 ; Filename of the installer
 #define INSTALLER_DATE GetDateTimeString('yyyy-mm-dd','-',':')
