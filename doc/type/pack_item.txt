@@ -1,0 +1,21 @@
+Data type: card pack item
+
+DOC_MSE_VERSION: since 0.3.7
+
+--Overview--
+
+A type of card that can be included in [[type:pack type|card pack types]].
+
+The pack item describes how this type of card is selected from the set.
+
+--Properties--
+! Property	Type			Description
+| @name@	[[type:string]]		Name of this type of item.
+| @filter@	[[type:script]]		Condition that a card must satisfy to be selected.
+
+--Example--
+>pack item:
+>	name: rare
+>	filter: card.rarity == "rare"
+
+Rare cards are those with the rarity value of @"rare"@.

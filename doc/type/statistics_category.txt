@@ -1,5 +1,7 @@
 Data type: statistics category
 
+DOC_MSE_VERSION: not used since 0.3.6
+
 --Overview--
 
 A category in the statistics panel.

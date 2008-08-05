@@ -34,7 +34,12 @@ Such a package contains a [[file:format|data file]] called <tt>game</tt> that ha
 | @card fields@			[[type:list]] of [[type:field]]s	 		Fields for each card.
 | @card list color script@	[[type:script]]				from fields	Script that determines the color of an item in the card list. <br/>If not set uses the @card list colors@ property of the first card field that has it.
 | @statistics dimensions@	[[type:list]] of [[type:statistics dimension]]s		from fields	Dimensions for statistics, a dimension is rougly the same as an axis. <br/>By default all card fields with 'show statistics' set to true are used.
-| @statistics categories@	[[type:list]] of [[type:statistics category]]s		from dimensions	Choices shown on the statistics panel. <br/>By default all statistics dimensions are used.
+| @statistics categories@	[[type:list]] of [[type:statistics category]]s		from dimensions	DOC_MSE_VERSION: not used since 0.3.6
+				 					 		Choices shown on the statistics panel. <br/>By default all statistics dimensions are used.
+| @pack items@			[[type:list]] of [[type:pack item]]s	 		DOC_MSE_VERSION: since 0.3.7
+				 					 		The categories of items that can be in booster packs.<br/> For example "commons", "uncommons" and "rares" are pack items.
+| @pack types@			[[type:list]] of [[type:pack type]]s	 		DOC_MSE_VERSION: since 0.3.7
+				 					 		The types of card packs that will be listed on the random booster panel.
 | @has keywords@		[[type:boolean]]			@false@		Does this game use keywords? Should the keywords tab be available?
 | @keyword match script@	[[type:script]]				@;@		Script to apply to the @match@ property of keywords.
 | @keyword modes@		[[type:list]] of [[type:keyword mode]]s		 	Choices for the 'mode' property of keywords.

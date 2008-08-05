@@ -1,0 +1,30 @@
+Data type: card pack type
+
+DOC_MSE_VERSION: since 0.3.7
+
+--Overview--
+
+A type of card packs. For instance "booster" and "tournament pack" are card pack types.
+
+A pack type contains one or more [[type:pack item reference]]s, indicating what kinds and how many cards are in the pack.
+
+--Properties--
+! Property	Type					Default		Description
+| @name@	[[type:string]]				 		Name of this card pack type.
+| @enabled@	[[type:scriptable]] [[type:boolean]]	@true@		Is this pack type enabled, i.e. can the user select it?
+| @items@	[[type:list]] of [[type:pack item reference]]s	 	The items to include in this pack.
+
+--Example--
+>pack type:
+>	name: booster pack
+>	item:
+>		name: rare
+>		amount: 1
+>	item:
+>		name: uncommon
+>		amount: 3
+>	item:
+>		name: common
+>		amount: 11
+
+A Magic booster pack contains 1 rare, 3 uncommons and 11 commons.
