@@ -1,11 +1,11 @@
-﻿mse version: 0.3.6
+﻿mse version: 0.3.7
 short name: Vanguard
 full name: Magic Vanguard
 installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2008-06-02
+version: 2008-08-05
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -17,23 +17,23 @@ init script:
 	############################################################## Sorting mana symbols
 	
 	# correctly sort a mana symbol (no guild mana)
-	mana_sort       := sort_rule(order: "XYZI[0123456789]S(WUBRG)")
+	mana_sort       := sort_text@(order: "XYZI[0123456789]S(WUBRG)")
 	# correctly sort guild mana
-	mana_sort_guild := sort_rule(order: "[XYZI01234567890SWUBRG/]") +
-			replace_rule(
+	mana_sort_guild := sort_text@(order: "[XYZI01234567890SWUBRG/|]") +
+			replace@(
 				match: "./.|././.|./././.|.[|]",
 				in_context: "(^|[^/])<match>($|[^/])",
 				replace: {sort_text(order:"in_place((WUBRG)")}
 			)
-	mana_has_guild     := sort_rule(order: "</|>") # Is there guild or half mana in the input?
+	mana_has_guild := match@(match: "[/|]") # Is there guild or half mana in the input?
 	# A mana cost can contain both normal and guild mana
 	mana_filter := to_upper + {
-		if mana_has_guild()!="" then mana_sort_guild()
-		else                         mana_sort()
+		if mana_has_guild() then mana_sort_guild()
+		else                     mana_sort()
 	}
 	# Like mana filter, only also allow tap symbols:
-	tap_filter := sort_rule(order: "<TQ>")
-	mana_filter_t := replace_rule(               # Remove [] used for forcing mana symbols
+	tap_filter := sort_text@(order: "<TQ>")
+	mana_filter_t := replace@(               # Remove [] used for forcing mana symbols
 				match: "[\\[\\]]",
 				replace: ""
 			) + { tap_filter() + mana_filter() }
@@ -53,39 +53,37 @@ init script:
 		) else
 			"{add}<param-mana>{input.param}</param-mana>"
 	}
-	alternative_cost := replace_rule(match:"^[A-Z]", replace: { to_lower() })
-	combined_cost := replace_rule(match:", [A-Z]", replace: { to_lower() })+
-		replace_rule(match:",", replace:" and")+
-		replace_rule(match:"^[STQXYZIWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
-		replace_rule(match:"^[A-Z]", replace: { to_lower() })
-	long_dash := replace_rule(match:"-", replace:"—")
+	alternative_cost := replace@(match:"^[A-Z]", replace: { to_lower() })
+	combined_cost := replace@(match:", [A-Z]", replace: { to_lower() })+
+		replace@(match:",", replace:" and")+
+		replace@(match:"^[STQXYZIWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
+		replace@(match:"^[A-Z]", replace: { to_lower() })
+	long_dash := replace@(match:"-", replace:"—")
 	# Utilities for keywords
 	has_cc := { card.casting_cost != "" }
 	has_pt := { card.pt           != "" }
 	
 	# Converted mana cost
-	is_half_mana    := match_rule(match: "1/2|[|][WUBRGS]")
-	is_zero_slash   := match_rule(match: "^0/")
-	is_colored_mana := match_rule(match: "[WUBRG]")
-	only_numbers    := filter_rule(match: "^[0123456789]+")
-	cmc_split := break_rule(match: "(?ix) 1/2 | [|][WUBRG] | ([0-9]+(?!/2)|[WUBRGS])(/[WUBRGS])\{0,4} ")
-	cmc := to_text + { 0 +
+	is_half_mana    := match@(match: "1/2|[|][WUBRGS]")
+	is_colored_mana := match@(match: "[WUBRG]")
+	only_numbers    := filter_text@(match: "^[0123456789]+")
+	cmc_split := break_text@(match: "(?ix) 1/2 | [|][WUBRG] | [0-9]+(?!/[WUBRGSTQ2]) | [WUBRGS0-9](/[WUBRGS])\{0,4} ")
+	cmc := {to_number(
 		for each sym in cmc_split() do (
 			numbers := only_numbers(sym)
-			if is_half_mana(sym)       then 0.5
-			else if is_zero_slash(sym) then 1 # 0/C
-			else if numbers != ""      then 1 * numbers
-			else                            1 # all other symbols are 1
-		)
+			if is_half_mana(sym)  then 0.5
+			else if numbers != "" then max(1, to_int(numbers))
+			else                       1 # all other symbols are 1
+		))
 	}
-	
-	colored_mana := to_text + { 0 +
+
+	colored_mana := {to_number(
 		for each sym in cmc_split() do (
 			numbers := only_numbers(sym)
 			if is_colored_mana(sym) then
 				if is_half_mana(sym) then 0.5 else 1
 			else 0
-		)
+		))
 	}
 	
 	############################################################## The text box
@@ -118,59 +116,59 @@ init script:
 	#  - makes text in parentheses italic
 	text_filter := 
 		# step 1 : remove all automatic tags
-		tag_remove_rule(tag: "<sym-auto>") +
-		tag_remove_rule(tag: "<i-auto>")   +
+		remove_tag@(tag: "<sym-auto>") +
+		remove_tag@(tag: "<i-auto>")   +
 		# step 2 : reminder text for keywords
-		expand_keywords_rule(
+		expand_keywords@(
 			default_expand: { contains(match:mode, set.automatic_reminder_text) },
 			combine:        {
 				if mode == "pseudo" then "<i-auto>{keyword}</i-auto>"
 				else "{keyword}<atom-reminder><i> ({process_english_hints(reminder)})</i></atom-reminder>" }
 			) +
 		# step 2b : move inline keywords' reminder text to the end of the line
-		replace_rule(
+		replace@(
 			match: "(<atom-reminder-core>.*</atom-reminder-core></kw[^>]*>)([^\n(]+)",
 			replace: "\\2\\1"
 			) +
-		replace_rule(
+		replace@(
 			match: "(<atom-reminder-old>.*</atom-reminder-old></kw[^>]*>)([^\n(]+)",
 			replace: "\\2\\1"
 			) +
-		replace_rule(
+		replace@(
 			match: "(<atom-reminder-expert>.*</atom-reminder-expert></kw[^>]*>)([^\n(]+)",
 			replace: "\\2\\1"
 			) +
 		# step 3 : expand shortcut words ~ and CARDNAME
-		replace_rule(
+		replace@(
 			match: "~|~THIS~|CARDNAME",
 			in_context: "(^|[[:space:]]|\\()<match>",
 			replace: "<atom-cardname></atom-cardname>"
 			) +
 		# step 4 : fill in atom fields
-		tag_contents_rule(
+		tag_contents@(
 			tag: "<atom-cardname>",
 			contents: { if card.name=="" then "CARDNAME" else card.name }
 			) +
 		# step 4.5 : explict non mana symbols
-		replace_rule(
+		replace@(
 			match: "\\][STQXYZIWUBRG0-9/|]+\\[",
 			replace: {"<nosym>" + mana_filter_t() + "</nosym>"} ) +
 		# step 5 : add mana & tap symbols
-		replace_rule(
+		replace@(
 			match: "[STQXYZIWUBRG0-9/|]+",
 			in_context: mana_context,
 			replace: {"<sym-auto>" + mana_filter_t() + "</sym-auto>"} ) +
 		# step 5b : add explict mana symbols
-		replace_rule(
+		replace@(
 			match: "\\[[STQXYZIWUBRG0-9/|]+\\]",
 			replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
 		# step 7 : italic reminder text
-		replace_rule(
+		replace@(
 		 	match: "[(][^)\n]*[)]?",
 			in_context: "(^|[[:space:]])<match>|<atom-keyword><match></>",
 		 	replace: "<i-auto>&</i-auto>") +
 		# step 8 : automatic capitalization
-		replace_rule(
+		replace@(
 			match: "[a-z]",
 			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>|—<match>| — <match>",
 			replace: { to_upper() })
@@ -181,7 +179,7 @@ init script:
 	#  - makes all text italic
 	flavor_text_filter :=
 		# step 2 : remove italic tags
-		tag_remove_rule(tag: "<i-flavor>")   +
+		remove_tag@(tag: "<i-flavor>")   +
 		# step 3 : surround by <i> tags
 		{ "<i-flavor>" + input + "</i-flavor>" } +
 		# curly quotes
@@ -996,3 +994,13 @@ keyword:
 	match: conspire
 	mode: expert
 	reminder: As you play it, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose a new target for the copy.
+keyword:
+	keyword: Retrace
+	match: Retrace
+	mode: expert
+	reminder: You may play this card from your graveyard by discarding a land card in addition to paying its other costs.
+keyword:
+	keyword: Chroma
+	match: Chroma
+	mode: pseudo
+	rules: Chroma — [effect] based on the number of [color] mana symbols [in graveyard, under your control, in cards you discard].
