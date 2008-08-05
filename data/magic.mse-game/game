@@ -182,6 +182,7 @@ init script:
 	# The code consists of 4 parts:
 	#   normal/token,  color,  shifted,   split
 	sort_index := {
+		(if contains(card.shape, match:"token")   then "T" else " ") + # Tokens come last
 		color_of_card() +
 		(if contains(card.shape, match:"shifted") then "S" else " ") + # planeshifted cards come after normal ones
 		(if contains(card.shape, match:"split")   then "S" else " ") + # split cards come after normal ones
@@ -249,24 +250,13 @@ init script:
 		)
 	}
 	
-	#rarity_sort := {
-	#	if set.sort_special_rarity == "with the rest" or card.rarity != "special" then " " else "S"
-	#}
 	rarity_sort := {
-		if card.shape == "token" then "T"
-		else if set.sort_special_rarity == "with the rest" or card.rarity != "special" then " "
-		else "S"
+		if set.sort_special_rarity == "with the rest" or card.rarity != "special" then " " else "S"
 	}
-	#set_filter := {
-	#	if set.sort_special_rarity != "separate numbering" then nil
-	#	else if card.rarity == "special"                   then { card.rarity == "special" }
-	#	else                                                    { card.rarity != "special" }
-	#}
 	set_filter := {
-		if card.shape == "token" then { card.shape == "token" }
-		else if set.sort_special_rarity != "separate numbering" then { card.shape != "token" and card.shape != "rulestip" }
-		else if card.rarity == "special"                   then { card.shape != "token" and card.shape != "rulestip" and card.rarity == "special" }
-		else                                                    { card.shape != "token" and card.shape != "rulestip" and card.rarity != "special" }
+		if set.sort_special_rarity != "separate numbering" then nil
+		else if card.rarity == "special"                   then { card.rarity == "special" }
+		else                                                    { card.rarity != "special" }
 	}
 	
 	card_number := {
