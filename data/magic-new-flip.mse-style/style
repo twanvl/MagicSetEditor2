@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿mse version: 0.3.7
 game: magic
 short name: Flip Cards
 full name: Modern flip cards
@@ -6,10 +6,10 @@ installer group: magic/new style/flip cards
 icon: card-sample.png
 position hint: 002
 
-version: 2008-07-15
+version: 2008-08-05
 depends on:
 	package: magic.mse-game
-	version: 2007-12-29
+	version: 2008-06-02
 depends on:
 	package: magic-default-image.mse-include
 	version: 2007-09-23
@@ -68,14 +68,6 @@ set info style:
 			fill type: solid
 			fill color:   rgb(255,255,255)
 			border color: rgb(0,0,0)
-		variation:
-			name: mythic rare
-			border radius: 0.07
-			fill type: linear gradient
-			fill color 1:   rgb(255, 160, 40)
-			fill color 2:   rgb(202, 49, 35)
-			border color 1: rgb(0,  0,  0)
-			border color 2: rgb(0,  0,  0)
 ############################################################## Extra style options
 
 styling field:
