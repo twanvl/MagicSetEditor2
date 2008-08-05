@@ -102,7 +102,11 @@ class Context {
 	/// Number of scopes opened
 	unsigned int level;
 	/// Stack of values
-	vector<ScriptValueP> stack;	
+	vector<ScriptValueP> stack;
+	#ifdef _DEBUG
+		/// The opened scopes, for sanity checking
+		vector<size_t> scopes;
+	#endif
 	
 	// utility types for dependency analysis
 	struct Jump;

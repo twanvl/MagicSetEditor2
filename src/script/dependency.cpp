@@ -159,7 +159,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				}
 				// unify bindings
 				FOR_EACH(v, j->bindings) {
-					unify(variables[v.variable].value, v.value.value);
+					setVariable(v.variable, unified(variables[v.variable].value, v.value.value) );
 				}
 				delete j;
 			}
@@ -368,9 +368,8 @@ void Context::getBindings(size_t scope, vector<Binding>& bindings) {
 }
 
 void Context::resetBindings(size_t scope) {
-	// same as closeScope()
-	while (shadowed.size() > scope) {
-		variables[shadowed.back().variable] = shadowed.back().value;
-		shadowed.pop_back();
-	}
+	// close and re-open the scope
+	closeScope(scope);
+	size_t same_scope = openScope();
+	assert(scope == same_scope);
 }

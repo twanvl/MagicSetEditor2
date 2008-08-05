@@ -265,12 +265,22 @@ ScriptValueP Context::makeClosure(const ScriptValueP& fun) {
 
 size_t Context::openScope() {
 	level += 1;
+	#ifdef _DEBUG
+		scopes.push_back(shadowed.size());
+		assert(scopes.size() == level);
+	#endif
 	return shadowed.size();
 }
 void Context::closeScope(size_t scope) {
 	assert(level > 0);
 	assert(scope <= shadowed.size());
 	level -= 1;
+	#ifdef _DEBUG
+		assert(!scopes.empty());
+		assert(scopes.back() == scope);
+		scopes.pop_back();
+		assert(scopes.size() == level);
+	#endif
 	// restore shadowed variables
 	while (shadowed.size() > scope) {
 		variables[shadowed.back().variable] = shadowed.back().value;
