@@ -204,7 +204,7 @@ void TokenIterator::readToken() {
 		filename = include_file;
 		InputStreamP is = package_manager.openFileFromPackage(package, include_file);
 		input = read_utf8_line(*is, true, true);
-	} else if (isAlpha(c) || c == _('_')) {
+	} else if (isAlpha(c) || c == _('_') || (isDigit(c) && !buffer.empty() && buffer.back() == _("."))) {
 		// name
 		size_t start = pos - 1;
 		while (pos < input.size() && isAlnum_(input.GetChar(pos))) ++pos;
@@ -672,8 +672,11 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 		else if (minPrec <= PREC_MUL    && token==_("mod"))   parseOper(input, script, PREC_POW,   I_BINARY, I_MOD);
 		else if (minPrec <= PREC_POW    && token==_("^"))     parseOper(input, script, PREC_POW,   I_BINARY, I_POW);
 		else if (minPrec <= PREC_FUN    && token==_(".")) { // get member by name
+			input.peek(1); // peek ahead, so the next token can see the preceding "."
+			               // that forces the next token to always be a TOK_NAME instead of TOK_INT/TOK_DOUBLE
+			               // (this is a bit of a hack)
 			const Token& token = input.read();
-			if (token == TOK_NAME || token == TOK_INT || token == TOK_DOUBLE || token == TOK_STRING) {
+			if (token == TOK_NAME || token == TOK_STRING) {
 				script.addInstruction(I_MEMBER_C, token.value);
 			} else {
 				input.expected(_("name"));
