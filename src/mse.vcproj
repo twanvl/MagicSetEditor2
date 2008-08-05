@@ -3837,9 +3837,6 @@
 					RelativePath="..\doc\cli\cli.txt">
 				</File>
 				<File
-					RelativePath="..\doc\cli\flags.txt">
-				</File>
-				<File
 					RelativePath="..\doc\cli\index.txt">
 				</File>
 			</Filter>

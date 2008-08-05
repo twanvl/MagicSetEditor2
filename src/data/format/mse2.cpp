@@ -21,15 +21,15 @@ class MSE2FileFormat : public FileFormat {
 	virtual bool canImport()            { return true; }
 	virtual bool canExport(const Game&) { return true; }
 	virtual SetP importSet(const String& filename) {
-		settings.addRecentFile(filename);
 		SetP set(new Set);
 		set->open(filename);
+		settings.addRecentFile(filename);
 		return set;
 	}
 	virtual void exportSet(Set& set, const String& filename) {
-		settings.addRecentFile(filename);
 		set.saveAs(filename);
-		set.actions.setSavePoint();;
+		settings.addRecentFile(filename);
+		set.actions.setSavePoint();
 	}
 };
 
