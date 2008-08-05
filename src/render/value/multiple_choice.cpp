@@ -82,3 +82,8 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 	// next position
 	pos = move_in_direction(style().direction, pos, size, style().spacing);
 }
+
+void MultipleChoiceValueViewer::onStyleChange(int changes) {
+	if (changes & CHANGE_MASK) style().image.clearCache();
+	ValueViewer::onStyleChange(changes);
+}

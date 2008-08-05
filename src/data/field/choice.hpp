@@ -162,6 +162,7 @@ class ChoiceStyle : public Style {
 	
 	virtual int  update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;
+	virtual void checkContentDependencies(Context&, const Dependency&) const;
 	virtual void invalidate();
 };
 

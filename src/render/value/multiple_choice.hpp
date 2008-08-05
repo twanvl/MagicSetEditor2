@@ -22,6 +22,7 @@ class MultipleChoiceValueViewer : public ValueViewer {
 	
 	virtual bool prepare(RotatedDC& dc);
 	virtual void draw(RotatedDC& dc);
+	virtual void onStyleChange(int);
   protected:
 	double item_height; ///< Height of a single item, or 0 if non uniform
   private:

@@ -59,6 +59,12 @@ void draw_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, 
 	if (style.render_style & RENDER_IMAGE) {
 		// draw image
 		CachedScriptableImage& img = style.image;
+		if (style.content_dependent) {
+			// re run script
+			Context& ctx = viewer.viewer.getContext();
+			ctx.setVariable(SCRIPT_VAR_input, to_script(value));
+			img.update(ctx);
+		}
 		if (img.isReady()) {
 			GeneratedImage::Options img_options;
 			get_options(dc, viewer, style, img_options);

@@ -234,6 +234,13 @@ void ChoiceStyle::initDependencies(Context& ctx, const Dependency& dep) const {
 		ci.second.initDependencies(ctx, dep);
 	}
 }
+void ChoiceStyle::checkContentDependencies(Context& ctx, const Dependency& dep) const {
+	Style::checkContentDependencies(ctx, dep);
+	image.initDependencies(ctx, dep);
+	FOR_EACH_CONST(ci, choice_images) {
+		ci.second.initDependencies(ctx, dep);
+	}
+}
 void ChoiceStyle::invalidate() {
 	// TODO : this is also done in update(), once should be enough
 	// Update choice images and thumbnails
