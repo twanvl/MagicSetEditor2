@@ -3405,6 +3405,12 @@
 			<Filter
 				Name="about"
 				Filter="">
+				<File
+					RelativePath="..\doc\about\index.txt">
+				</File>
+				<File
+					RelativePath="..\doc\about\license.txt">
+				</File>
 			</Filter>
 			<Filter
 				Name="file"
@@ -3746,6 +3752,15 @@
 					RelativePath="..\doc\type\map.txt">
 				</File>
 				<File
+					RelativePath="..\doc\type\pack_item.txt">
+				</File>
+				<File
+					RelativePath="..\doc\type\pack_item_reference.txt">
+				</File>
+				<File
+					RelativePath="..\doc\type\pack_type.txt">
+				</File>
+				<File
 					RelativePath="..\doc\type\regex.txt">
 				</File>
 				<File
@@ -3813,6 +3828,19 @@
 				</File>
 				<File
 					RelativePath="..\doc\type\word_list_word.txt">
+				</File>
+			</Filter>
+			<Filter
+				Name="cli"
+				Filter="">
+				<File
+					RelativePath="..\doc\cli\cli.txt">
+				</File>
+				<File
+					RelativePath="..\doc\cli\flags.txt">
+				</File>
+				<File
+					RelativePath="..\doc\cli\index.txt">
 				</File>
 			</Filter>
 		</Filter>

@@ -1,0 +1,53 @@
+MSE Command line
+
+Magic set editor can be started from the command prompt by typing:
+
+]mse
+in Windows, or
+]magicseteditor
+on other platforms.
+
+The MSE program has several flags for choosing different behaviour.
+
+--Starting the GUI--
+
+]mse
+Invoking MSE with no arguments shows the welcome window.
+
+]]mse <em>my-set.mse-set</em>
+Invoking MSE with the filename of a [[type:set]] shows the main window with that set loaded.
+This command is automatically invoked when you double click on a set file in a file manager.
+
+]mse my-symbol.mse-symbol
+Invoking MSE with the filename of a [[type:symbol]] shows the symbol editor window with that symbol loaded.
+
+]mse --symbol-editor
+With the <tt>--symbol-editor</tt> flag the symbol editor is started with a blank symbol.
+
+--Information about MSE--
+
+]mse --version
+The <tt>--version</tt> flag (abbreviate as <tt>-v</tt>) writes the version number of MSE to the standard output,
+ or in a message box if MSE was not started from the command prompt.
+
+]mse --help
+The <tt>--help</tt> flag (abbreviate as <tt>-?</tt>) displays a list of available flags to the standard output,
+ or in a message box if MSE was not started from the command prompt.
+
+--Installers--
+
+]]mse <em>my-installer.mse-installer</em>
+Invoking MSE with the filename of an [[type:installer]] shows the package window, from where the packages in that installer can be installed.
+By passing the <tt>--local</tt> or <tt>--global</tt> flag you can change where the package will be installed.
+Global installation is for all users, local installation is for the current user only (see [[file:index|data directories]]).
+
+]mse --create-installer <em>output.mse-installer</em> <em>package1.mse-game</em> <em>package2.mse-game</em> ...
+Creates an installer package containing one or more packages from the mse [[file:index|data directory]].
+The installer will be written to <tt><em>output.mse-installer</em></tt>. This name can be ommitted, in which case the name of the forst package will be used (in this case <tt>package1.mse-installer</tt>).
+
+--Interactive cli interface--
+
+]mse --cli
+Starts the [[cli:cli|Interactive command line interface]].
+Optionally the filename of a set can be passed which will then be loaded.
+

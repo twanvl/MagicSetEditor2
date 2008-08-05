@@ -6,6 +6,9 @@ These documents describe the file formats and scirpting language used by the pro
 There is currently no information on how to ''use'' the program for making cards.
 
 --Topics--
+Using the program:
+* [[doc/cli|Invoking MSE from the command line]]
+Templates:
 * [[doc/tutorial|Templating tutorial]] (comming soon)
 * [[doc/file|File formats]]
 * [[doc/type|Data types used in the files]]

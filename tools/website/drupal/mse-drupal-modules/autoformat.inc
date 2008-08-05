@@ -145,11 +145,15 @@ function autoformat__handle(&$i, $prefix, $first, $fail_same = false) {
 			$state = '>';
 		} elseif ($line{0} == ']') {
 			// other code
-			if ($state == ']') $text = substr($text,0,-6);
+			if ($state == '>') $text = substr($text,0,-6);
 			else               $text .= '<pre>';
-			$text .= htmlspecialchars(substr($line, 1));
+			if (substr($line,0,2)==']]') { // unescaped
+				$text .= substr($line, 2);
+			} else {
+				$text .= htmlspecialchars(substr($line, 1));
+			}
 			$text .= "\n</pre>";
-			$state = ']';
+			$state = '>';
 		
 		// Html
 		} elseif (preg_match("@^</?(pre|ul|ol|li|div|blockquote|>)@", $line)) {
@@ -285,7 +289,7 @@ function autoformat__link_s($matches) {
 }
 
 function autoformat__url($url) {
-	if (preg_match("/^(type|fun|script|file):(.*)/i",$url,$matches)) {
+	if (preg_match("/^(type|fun|script|file|cli):(.*)/i",$url,$matches)) {
 		$part = $matches[1];
 		if ($part == 'fun') $part = 'function';
 		$sub = str_replace(' ','_',strtolower($matches[2]));
