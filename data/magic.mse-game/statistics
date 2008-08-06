@@ -81,7 +81,7 @@ statistics dimension:
 statistics dimension:
 	name: race
 	position hint: 32
-	icon: stats/creature_type.png
+	icon: stats/creature_race.png
 	description: Race of creatures and tribal cards
 	script:
 		if is_creature(card.super_type) or is_tribal(card.super_type) then
@@ -91,7 +91,7 @@ statistics dimension:
 statistics dimension:
 	name: creature class
 	position hint: 33
-	icon: stats/creature_type.png
+	icon: stats/creature_class.png
 	description: Class of creature cards
 	script:
 		if is_creature(card.super_type) then
