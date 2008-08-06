@@ -96,13 +96,21 @@ void DataViewer::updateStyles(bool only_content_dependent) {
 
 // ----------------------------------------------------------------------------- : Utility for ValueViewers
 
-bool   DataViewer::nativeLook()    const { return false; }
-bool   DataViewer::drawBorders()   const { return false; }
-bool   DataViewer::drawEditing()   const { return false; }
-bool   DataViewer::drawFocus()     const { return false; }
-wxPen  DataViewer::borderPen(bool) const { return wxPen(); }
-ValueViewer* DataViewer::focusedViewer() const { return nullptr; }
-Context& DataViewer::getContext()  const { return set->getContext(card); }
+bool DataViewer::nativeLook() const {
+	return false;
+}
+
+DrawWhat DataViewer::drawWhat(const ValueViewer*) const {
+	return (DrawWhat)(DRAW_NORMAL | nativeLook() * DRAW_NATIVELOOK);
+}
+
+bool DataViewer::viewerIsCurrent(const ValueViewer*) const {
+	return false;
+}
+
+Context& DataViewer::getContext()  const {
+	return set->getContext(card);
+}
 
 Rotation DataViewer::getRotation() const {
 	if (!stylesheet) stylesheet = set->stylesheet;

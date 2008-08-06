@@ -24,11 +24,8 @@ class DataEditor : public CardViewer {
 	
 	// --------------------------------------------------- : Utility for ValueViewers/Editors
 	
-	virtual bool drawBorders() const;
-	virtual bool drawEditing() const;
-	virtual bool drawFocus() const;
-	virtual wxPen borderPen(bool active) const;
-	virtual ValueViewer* focusedViewer() const;
+	virtual DrawWhat drawWhat(const ValueViewer*) const;
+	virtual bool viewerIsCurrent(const ValueViewer*) const;
 	
 	virtual void addAction(Action* action);
 	inline SetP getSetForActions() { return set; }

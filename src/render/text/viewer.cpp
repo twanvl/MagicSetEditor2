@@ -70,6 +70,8 @@ TextViewer::~TextViewer() {}
 
 void TextViewer::draw(RotatedDC& dc, const TextStyle& style, DrawWhat what) {
 	assert(!lines.empty());
+	// draw anything?
+	if (what == DRAW_NOTHING) return;
 	// separator lines?
 	// do this first, so pen is still set from drawing the field border
 	if (what & DRAW_BORDERS) {

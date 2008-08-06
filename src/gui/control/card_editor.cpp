@@ -39,26 +39,24 @@ ValueViewerP DataEditor::makeViewer(const StyleP& style) {
 
 // ----------------------------------------------------------------------------- : Utility for ValueViewers
 
-bool DataEditor::drawBorders() const {
-	return !nativeLook() &&
-	        settings.stylesheetSettingsFor(set->stylesheetFor(card)).card_borders();
-}
-bool DataEditor::drawEditing() const {
-	return nativeLook() ||
-	       settings.stylesheetSettingsFor(set->stylesheetFor(card)).card_draw_editing();
-}
-bool DataEditor::drawFocus() const {
-	return FindFocus() == this;
-}
-
-wxPen DataEditor::borderPen(bool active) const {
-	return active ? wxPen(Color(0,128,255),   1, wxSOLID)
-	              : wxPen(Color(128,128,128), 1, wxDOT);
+DrawWhat DataEditor::drawWhat(const ValueViewer* viewer) const {
+	int what = DRAW_NORMAL
+	         | DRAW_ACTIVE * viewerIsCurrent(viewer);
+	if (nativeLook()) {
+		what |= DRAW_BOXES | DRAW_EDITING | DRAW_NATIVELOOK;
+	} else {
+		StyleSheetSettings& ss = settings.stylesheetSettingsFor(set->stylesheetFor(card));
+		what |= DRAW_BORDERS * ss.card_borders()
+		     |  (DRAW_BOXES | DRAW_EDITING) * ss.card_draw_editing()
+		     |  DRAW_ERRORS;
+	}
+	return (DrawWhat)what;
 }
 
-ValueViewer* DataEditor::focusedViewer() const {
-	return FindFocus() == this ? current_viewer : nullptr;
+bool DataEditor::viewerIsCurrent(const ValueViewer* viewer) const {
+	return viewer == current_viewer && FindFocus() == this;
 }
+
 
 void DataEditor::addAction(Action* action) {
 	set->actions.addAction(action);

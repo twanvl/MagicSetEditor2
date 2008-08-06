@@ -23,7 +23,6 @@ class NativeLookEditor : public DataEditor {
 	
 	/// Uses a native look
 	virtual bool nativeLook()  const { return true; }
-	virtual bool drawBorders() const { return false; }
 	virtual Rotation getRotation() const;
 	
 	virtual void draw(DC& dc);

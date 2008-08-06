@@ -32,14 +32,10 @@ void TextValueViewer::draw(RotatedDC& dc) {
 		v.prepare(dc, value().value(), style(), viewer.getContext());
 		dc.setStretch(getStretch());
 	}
-	if (viewer.drawFocus() && isCurrent()) {
-		v.draw(dc, style(), DRAW_ACTIVE);
-	}
-	if (viewer.drawBorders()) dc.SetPen(viewer.borderPen(isCurrent()));
-	v.draw(dc, style(), (DrawWhat)(
-		  DRAW_NORMAL
-		| (viewer.drawBorders()              ? DRAW_BORDERS : 0)
-		));
+	DrawWhat what = viewer.drawWhat(this);
+	v.draw(dc, style(), (DrawWhat)(what & DRAW_ACTIVE));
+	setFieldBorderPen(dc);
+	v.draw(dc, style(), (DrawWhat)(what & ~DRAW_ACTIVE));
 }
 
 void TextValueViewer::onValueChange() {

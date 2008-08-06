@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/rotation.hpp>
 #include <data/set.hpp>
+#include <data/draw_what.hpp>
 
 DECLARE_POINTER_TYPE(Style);
 DECLARE_POINTER_TYPE(ValueViewer);
@@ -39,20 +40,11 @@ class DataViewer : public SetView {
 	/// Should the ValueViewers use a platform native look and feel?
 	/** false by default, can be overloaded */
 	virtual bool nativeLook() const;
-	/// Should field borders be drawn?
-	/** false by default, can be overloaded */
-	virtual bool drawBorders() const;
-	/// Should editing specific things be drawn?
-	/** false by default, can be overloaded */
-	virtual bool drawEditing() const;
-	/// Should focus only editing specific things be drawn?
-	/** false by default, can be overloaded */
-	virtual bool drawFocus() const;
-	/// Pens for drawing field borders (only called if drawBorders())
-	virtual wxPen borderPen(bool active) const;
-	/// The viewer that is currently focused, may be null
-	/** null by default, can be overloaded */
-	virtual ValueViewer* focusedViewer() const;
+	/// Which things should be drawn for the given viewer?
+	/** can be overloaded */
+	virtual DrawWhat drawWhat(const ValueViewer*) const;
+	/// Is the given viewer currently selected?
+	virtual bool viewerIsCurrent(const ValueViewer*) const;
 	/// Get a script context to use for scripts in the viewers
 	Context& getContext() const;
 	/// The rotation to use

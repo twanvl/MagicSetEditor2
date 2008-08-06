@@ -1854,6 +1854,9 @@
 				Name="aux"
 				Filter="">
 				<File
+					RelativePath=".\data\draw_what.hpp">
+				</File>
+				<File
 					RelativePath=".\data\export_template.cpp">
 				</File>
 				<File

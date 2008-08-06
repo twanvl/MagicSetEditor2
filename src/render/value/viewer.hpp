@@ -75,6 +75,8 @@ class ValueViewer : public StyleListener {
   protected:
 	ValueP valueP;		///< The value we are currently viewing
 	
+	/// Set the pen for drawing the border, returns true if a border needs to be drawn
+	bool setFieldBorderPen(RotatedDC& dc);
 	/// Draws a border around the field
 	void drawFieldBorder(RotatedDC& dc);
 	

@@ -1318,7 +1318,8 @@ void TextValueEditor::redrawWordListIndicators(bool toggling_dropdown) {
 
 void TextValueEditor::drawWordListIndicators(RotatedDC& dc, bool redrawing) {
 	if (word_lists.empty()) return;
-	bool current = isCurrent();
+	DrawWhat what = viewer.drawWhat(this);
+	bool current = what & DRAW_ACTIVE;
 	// Draw lines around fields
 	FOR_EACH(wl, word_lists) {
 		RealRect& r = wl->rect;
@@ -1345,7 +1346,7 @@ void TextValueEditor::drawWordListIndicators(RotatedDC& dc, bool redrawing) {
 		if (!redrawing) {
 			wl->behind = dc.GetBackground(RealRect(r.right(), r.top() - 1, 10, r.height + 3));
 		}
-		if (current || viewer.drawEditing()) {
+		if (what & (DRAW_ACTIVE | DRAW_BOXES)) {
 			// draw rectangle around value
 			dc.SetBrush(*wxTRANSPARENT_BRUSH);
 			dc.DrawRectangle(r.move(-1,-1,2,2));
@@ -1368,7 +1369,7 @@ void TextValueEditor::drawWordListIndicators(RotatedDC& dc, bool redrawing) {
 			small = (wl.get() != hovered_words);
 		}
 		if (small) {
-			if (viewer.drawEditing()) {
+			if (what & DRAW_BOXES) {
 				dc.DrawRectangle(RealRect(r.right(), r.top() - 1, 2, r.height + 2));
 			}
 		} else {

@@ -18,6 +18,7 @@ DECLARE_TYPEOF_COLLECTION(wxPoint);
 IMPLEMENT_VALUE_VIEWER(Image);
 
 void ImageValueViewer::draw(RotatedDC& dc) {
+	DrawWhat what = viewer.drawWhat(this);
 	// reset?
 	int w = max(0,(int)dc.trX(style().width)), h = max(0,(int)dc.trY(style().height));
 	int a = dc.trAngle(0); //% TODO : Add getAngle()?
@@ -45,8 +46,8 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 		if (!image.Ok() && style().default_image.isReady()) {
 			image = style().default_image.generate(GeneratedImage::Options(w, h, &getStylePackage(), &getLocalPackage()));
 			is_default = true;
-			if (viewer.drawEditing()) {
-				bitmap = imagePlaceholder(dc, w, h, image, viewer.drawEditing());
+			if (what & DRAW_EDITING) {
+				bitmap = imagePlaceholder(dc, w, h, image, what & DRAW_EDITING);
 				if (alpha_mask || a) {
 					image = bitmap.ConvertToImage(); // we need to convert back to an image
 				} else {
@@ -57,7 +58,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 		// checkerboard placeholder
 		if (!image.Ok() && !bitmap.Ok() && style().width > 40) {
 			// placeholder bitmap
-			bitmap = imagePlaceholder(dc, w, h, wxNullImage, viewer.drawEditing());
+			bitmap = imagePlaceholder(dc, w, h, wxNullImage, what & DRAW_EDITING);
 			if (alpha_mask || a) {
 				// we need to convert back to an image
 				image = bitmap.ConvertToImage();
@@ -83,8 +84,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 void ImageValueViewer::drawFieldBorder(RotatedDC& dc) {
 	if (!alpha_mask) {
 		ValueViewer::drawFieldBorder(dc);
-	} else if (viewer.drawBorders() && field().editable) {
-		dc.SetPen(viewer.borderPen(isCurrent()));
+	} else if (setFieldBorderPen(dc)) {
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		vector<wxPoint> points;
 		alpha_mask->convexHull(points);

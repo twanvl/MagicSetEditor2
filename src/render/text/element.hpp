@@ -13,6 +13,7 @@
 #include <util/rotation.hpp>
 #include <util/real_point.hpp>
 #include <data/font.hpp>
+#include <data/draw_what.hpp>
 
 DECLARE_POINTER_TYPE(TextElement);
 DECLARE_POINTER_TYPE(Font);
@@ -21,14 +22,6 @@ class Context;
 class SymbolFontRef;
 
 // ----------------------------------------------------------------------------- : TextElement
-
-/// What should be drawn?
-enum DrawWhat
-{	DRAW_NOTHING = 0x00
-,	DRAW_NORMAL  = 0x01 // draw normal things, like the text
-,	DRAW_BORDERS = 0x02 // draw editor stuff, such as borders/lines
-,	DRAW_ACTIVE  = 0x04 // draw active editor stuff, such as hidden separators and atom highlights
-};
 
 /// Information on a linebreak
 enum LineBreak

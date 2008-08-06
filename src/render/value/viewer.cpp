@@ -40,9 +40,19 @@ Rotation ValueViewer::getRotation() const {
 	return Rotation(getStyle()->angle, getStyle()->getExternalRect(), 1.0, getStretch());
 }
 
+bool ValueViewer::setFieldBorderPen(RotatedDC& dc) {
+	if (!getField()->editable) return false;
+	DrawWhat what = viewer.drawWhat(this);
+	if (!(what & DRAW_BORDERS)) return false;
+	dc.SetPen( (what & DRAW_ACTIVE)
+	               ? wxPen(Color(0,128,255),   1, wxSOLID)
+	               : wxPen(Color(128,128,128), 1, wxDOT)
+	         );
+	return true;
+}
+
 void ValueViewer::drawFieldBorder(RotatedDC& dc) {
-	if (viewer.drawBorders() && getField()->editable) {
-		dc.SetPen(viewer.borderPen(isCurrent()));
+	if (setFieldBorderPen(dc)) {
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		dc.DrawRectangle(dc.getInternalRect().grow(dc.trInvS(1)));
 	}
@@ -56,7 +66,7 @@ bool ValueViewer::nativeLook() const {
 	return viewer.nativeLook();
 }
 bool ValueViewer::isCurrent() const {
-	return viewer.focusedViewer() == this;
+	return viewer.viewerIsCurrent(this);
 }
 
 void ValueViewer::onStyleChange(int changes) {
