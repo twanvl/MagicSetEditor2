@@ -1,0 +1,160 @@
+﻿
+############################################################## Statistics dimensions
+
+statistics dimension:
+	name:   card color
+	position hint: 0
+	script: primary_card_color(card.card_color)
+	icon: stats/card_color.png
+	colors:
+		white		: rgb(255,237,202)
+		blue		: rgb(42,141,255)
+		black		: rgb(33,33,33)
+		red		: rgb(255,52,0)
+		green		: rgb(118,230,0)
+		colorless	: rgb(120,90,90)
+		artifact	: rgb(185,192,199)
+		multicolor	: rgb(255,188,14)
+		land		: rgb(109,62,39)
+		hybrid		: rgb(201,12,230)
+	group: white
+	group: blue
+	group: black
+	group: red
+	group: green
+	group: colorless
+	group: artifact
+	group: multicolor
+	group: land
+	group: hybrid
+
+statistics dimension:
+	position hint: 2
+	name:   converted mana cost
+	script: cmc(card.casting_cost)
+	numeric: true
+	icon: stats/casting_cost.png
+
+statistics dimension:
+	position hint: 3
+	name:   colored mana cost
+	script: colored_mana(card.casting_cost)
+	numeric: true
+	icon: stats/colored_casting_cost.png
+
+statistics dimension:
+	position hint: 50
+	name: power
+	script: card.power
+	numeric: true
+	icon: stats/power.png
+
+statistics dimension:
+	position hint: 51
+	name: toughness
+	script: card.toughness
+	numeric: true
+	icon: stats/toughness.png
+
+statistics dimension:
+	name: keywords
+	position hint: 1000
+	script: keyword_usage(unique:true)
+	show empty: false
+	split list: true
+	icon: stats/keywords.png
+
+statistics dimension:
+	name: style
+	position hint: 1001
+	script: stylesheet.short_name
+	icon: stats/stylesheet.png
+
+statistics dimension:
+	name: text length (words)
+	position hint: 100
+	script: word_count(to_text(card.rule_text))
+	numeric: true
+	bin size: 5
+	icon: stats/text_length.png
+
+statistics dimension:
+	name: race
+	position hint: 32
+	icon: stats/creature_type.png
+	description: Race of creatures and tribal cards
+	script:
+		if is_creature(card.super_type) or is_tribal(card.super_type) then
+			only_first(card.sub_type)
+	show empty: false
+
+statistics dimension:
+	name: creature class
+	position hint: 33
+	icon: stats/creature_type.png
+	description: Class of creature cards
+	script:
+		if is_creature(card.super_type) then
+			space_to_comma(trim(remove_tags(only_next(card.sub_type))))
+	show empty: false
+	split list: true
+
+############################################################## Statistics categories (OLD)
+
+statistics category:
+	name: color / rarity
+	position hint: 101
+	type: stack
+	icon: stats/color_rarity.png
+	dimension: card color
+	dimension: rarity
+
+statistics category:
+	name: power / toughness
+	position hint: 52
+	type: scatter pie
+	icon: stats/pt.png
+	dimension: power
+	dimension: toughness
+	dimension: rarity
+
+#statistics category:
+#	name: color / cost
+#	type: scatter
+#	dimension: card color
+#	dimension: converted mana cost
+
+statistics category:
+	name: color / cost
+	position hint: 4
+	type: scatter pie
+	icon: stats/color_cost.png
+	dimension: card color
+	dimension: converted mana cost
+	dimension: rarity
+
+statistics category:
+	name: color / colored cost
+	position hint: 5
+	icon: stats/color_colored_cost.png
+	type: scatter
+	dimension: card color
+	dimension: colored mana cost
+
+statistics category:
+	name: cost / colored cost
+	position hint: 6
+	icon: stats/cost_colored_cost.png
+	type: scatter pie
+	dimension: converted mana cost
+	dimension: colored mana cost
+	dimension: card color
+
+statistics category:
+	name: creature race / class
+	position hint: 34
+	icon: stats/creature_type.png
+	type: scatter pie
+	dimension: race
+	dimension: creature class
+	dimension: card color

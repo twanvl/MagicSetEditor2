@@ -1,0 +1,68 @@
+﻿
+############################################################## Card pack items
+
+pack item:
+	name: common
+	filter: card.rarity == "common"
+pack item:
+	name: uncommon
+	filter: card.rarity == "uncommon"
+pack item:
+	name: rare
+	filter: card.rarity == "rare"
+pack item:
+	name: special
+	filter: card.rarity == "special"
+pack item:
+	name: basic land
+	filter: card.type == "Plains"
+	filter: card.type == "Island"
+	filter: card.type == "Swamp"
+	filter: card.type == "Mountain"
+	filter: card.type == "Forest"
+	# TODO: support something like this:
+	#type: cyclic
+
+############################################################## Card packs
+
+pack type:
+	name: tournament pack
+	item:
+		name: rare
+		amount: 3
+	item:
+		name: uncommon
+		amount: 9
+	item:
+		name: common
+		amount: 33
+	item:
+		name: basic land
+		amount: 30
+pack type:
+	name: booster pack
+	item:
+		name: rare
+		amount: 1
+	item:
+		name: uncommon
+		amount: 3
+	item:
+		name: common
+		amount: 11
+pack type:
+	name: additional common
+	item:
+		name: common
+pack type:
+	name: additional uncommon
+	item:
+		name: uncommon
+pack type:
+	name: additional rare
+	item:
+		name: rare
+pack type:
+	name: additional special
+	item:
+		name: special

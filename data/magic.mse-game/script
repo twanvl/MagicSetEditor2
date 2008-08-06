@@ -1,0 +1,513 @@
+﻿
+############################################################## Sorting mana symbols
+
+# correctly sort a mana symbol (no guild mana)
+mana_sort       := sort_text@(order: "XYZI[0123456789]S(WUBRG)")
+# correctly sort guild mana
+mana_sort_guild := sort_text@(order: "[XYZI01234567890SWUBRG/|]") +
+		replace@(
+			match: "./.|././.|./././.|.[|]",
+			in_context: "(^|[^/])<match>($|[^/])",
+			replace: {sort_text(order:"in_place((WUBRG)")}
+		)
+mana_has_guild := match@(match: "[/|]") # Is there guild or half mana in the input?
+# A mana cost can contain both normal and guild mana
+mana_filter := to_upper + {
+	if mana_has_guild() then mana_sort_guild()
+	else                     mana_sort()
+}
+# Like mana filter, only also allow tap symbols:
+tap_filter := sort_text@(order: "<TQ>")
+mana_filter_t := replace@(               # Remove [] used for forcing mana symbols
+			match: "[\\[\\]]",
+			replace: ""
+		) + { tap_filter() + mana_filter() }
+
+
+############################################################## Determine card color
+
+# Names of colors
+color_name := {
+	if      input = "W" then "white"
+	else if input = "U" then "blue"
+	else if input = "B" then "black"
+	else if input = "R" then "red"
+	else if input = "G" then "green"
+	else                     ""
+}
+color_names_1 := { color_name(colors.0) }
+color_names_2 := { color_name(colors.0) + ", " + color_name(colors.1) }
+color_names_3 := { color_name(colors.0) + ", " + color_name(colors.1) + ", " + color_name(colors.2) }
+color_names_4 := { color_name(colors.0) + ", " + color_name(colors.1) + ", " + color_name(colors.2) + ", " + color_name(colors.3) }
+color_names_5 := { color_name(colors.0) + ", " + color_name(colors.1) + ", " + color_name(colors.2) + ", " + color_name(colors.3) + ", " + color_name(colors.4) }
+# color based on mana cost, input = a mana cost
+color_filter  := sort_text@(order: "<WUBRG>")
+color_filterH := sort_text@(order: "</>")
+mana_to_color := {
+	count  := number_of_items(in: colors)
+	if hybrid == "" then
+		# not a hybrid
+		if      count == 0 then  "colorless"
+		else if count == 1 then  color_names_1()
+		else if set.set_info.use_gradient_multicolor == "no"  then "multicolor" # stop here
+		else if count == 2 then  color_names_2() + ", multicolor"
+		else if set.set_info.use_gradient_multicolor != "yes" then "multicolor" # stop here
+		else if count == 3 then  color_names_3() + ", multicolor"
+		else if count == 4 then  color_names_4() + ", multicolor"
+		else if count == 5 then  color_names_5() + ", multicolor"
+		else                     "multicolor"
+	else
+		# hybrid
+		if count == 0 then "colorless"
+		else if count == 1 then color_names_1()
+		else if count == 2 then  color_names_2() + ", hybrid"
+		else if count == 3 then  color_names_3() + ", hybrid"
+		else                     "multicolor"
+}
+
+# color based on land text box, input = textbox contents
+color_text_filter :=
+	# remove activation costs
+	replace@(
+		match: "<sym[^>]*>[^<]+</sym[^>]*>"
+		in_context: "(?ix) (\\n|^)[^:]*<match>(,|:) | (pays?|additional|costs?)[ ]<match>",
+		replace: ""
+	) +
+	# keep only mana
+	filter_text@(match: "<sym[^>]*>([^<]+)") + color_filter;
+# get the land frame for a "WUBRG"-style input.
+land_multicolor := {
+	count  := number_of_items(in: colors)
+	if      count == 0 then "land"
+	else if count == 1 then color_names_1() + ", land"
+	else if count == 2 then color_names_2() + ", land"
+	else if count == 3 then color_names_3() + ", land"
+	else                    "land, multicolor"
+}
+land_to_color := {
+	# Based on watermark
+	if      watermark = "mana symbol white" then "white, land"
+	else if watermark = "mana symbol blue"  then "blue, land"
+	else if watermark = "mana symbol black" then "black, land"
+	else if watermark = "mana symbol red"   then "red, land"
+	else if watermark = "mana symbol green" then "green, land"
+	else land_multicolor(colors:color_text_filter(input: card.rule_text))
+};
+
+# Look for a CDA that defines colors
+text_to_color := {
+	# Note: running filter_text is quite slow, do a quick 'contains' check first
+	if contains(match: card_name) then (
+	  text := filter_text(match: regex_escape(card_name)+"(</[-a-z]+>)? is (colorless|all colors|((blue|white|green|red|black)((,|,? and) (blue|white|green|red|black))*))\\.")
+	  if text != "" then (
+	    if contains(text, match: "all colors") then (
+		colors := "WUBRG"
+		if land = "land" then land_multicolor()
+		else mana_to_color(hybrid: "")
+	    ) else (
+		colors := ""
+		if contains(text, match: "white") then colors := colors + "W"
+		if contains(text, match: "blue")  then colors := colors + "U"
+		if contains(text, match: "black") then colors := colors + "B"
+		if contains(text, match: "red")   then colors := colors + "R"
+		if contains(text, match: "green") then colors := colors + "G"
+		if land = "land" then land_multicolor()
+		else mana_to_color(hybrid: "")
+	    )
+	  )
+	)
+}
+
+# The color of a card
+is_creature    := match@(match: "(?i)Creature")
+is_tribal      := match@(match: "(?i)Tribal")
+is_artifact    := match@(match: "(?i)Artifact")
+is_land        := match@(match: "(?i)Land")
+is_enchantment := match@(match: "(?i)Enchantment")
+is_spell       := match@(match: "(?i)Instant|Sorcery")
+card_color := {
+	# usually the color of mana
+	text_color := text_to_color(rules_text, land: is_land(type));
+	if text_color == "" then (
+		mana_color := mana_to_color(colors: color_filter(casting_cost), hybrid: color_filterH(casting_cost))
+		if      mana_color == "colorless" and is_land    (type)  then land_to_color(watermark)
+		else if mana_color == "colorless" and is_artifact(type)  then "artifact"
+		else mana_color
+	)
+	else text_color
+};
+
+# Number of colors in a card_color
+card_color_color_count := count_chosen@(choices: "white,blue,black,red,green,artifact")
+# Clean up color field
+card_color_filter := {
+	colors := card_color_color_count()
+	if colors > 2 then
+		input := remove_choice(choice: "overlay")
+	if colors > 1 then (
+		input := require_choice(choices: "multicolor, hybrid, land, artifact")
+		input := exclusive_choice(choices: "multicolor, hybrid")
+		input := require_exclusive_choice(choices: "horizontal, vertical, radial, overlay")
+	) else
+		input := remove_choice(choices: "radial, horizontal, vertical, overlay, hybrid, reversed")
+	if chosen(choice:"overlay") then
+		input := remove_choice(choice: "reversed")
+	input
+}
+
+# needed by all style files anyway
+include file: /magic-blends.mse-include/new-blends
+
+
+############################################################## Card number
+
+# Index for sorting, white cards are first, so white->A, blue->B, .. ,
+# The code consists of 4 parts:
+#   normal/token,  color,  shifted,   split
+sort_index := {
+	(if contains(card.shape, match:"token")   then "T" else " ") + # Tokens come last
+	color_of_card() +
+	(if contains(card.shape, match:"shifted") then "S" else " ") + # planeshifted cards come after normal ones
+	(if contains(card.shape, match:"split")   then "S" else " ") + # split cards come after normal ones
+	":"
+}
+# Process the name for sorting rules (specifically, remove "The", "A", and "And" at the beginning, and make lowercase)
+sort_name :=
+	replace@(match: "^(The|An?) ", replace: "") +
+	to_lower
+
+is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicolor" }
+is_null_cost  := { input == "" or input == "0" }
+is_hybrid_cost := { contains(card.casting_cost, match: "W/") or contains(card.casting_cost, match: "U/") or contains(card.casting_cost, match: "B/") or contains(card.casting_cost, match: "R/") or contains(card.casting_cost, match: "G/") }
+basic_land_sort := {
+	if contains(card.name, match:"Plains")        then "LB"      # Plains
+	else if contains(card.name, match:"Island")   then "LC"      # Islands
+	else if contains(card.name, match:"Swamp")    then "LD"      # Swamps
+	else if contains(card.name, match:"Mountain") then "LE"      # Mountains
+	else if contains(card.name, match:"Forest")   then "LF"      # Forests
+	else                                               "LA"      # other basic lands
+}
+hybrid_cost_sort := {
+	colors := sort_text(casting_cost, order: "<WUBRG>")
+	if colors = "WU" then "GA"
+	else if colors = "WB" then "GB"
+	else if colors = "UB" then "GC"
+	else if colors = "UR" then "GD"
+	else if colors = "BR" then "GE"
+	else if colors = "BG" then "GF"
+	else if colors = "RG" then "GG"
+	else if colors = "WR" then "GH"
+	else if colors = "WG" then "GI"
+	else if colors = "UG" then "GJ"
+	else "GK"
+}
+color_of_card := {
+	card_color := card.card_color
+	casting_cost := card.casting_cost
+	if card.shape == "split" and
+	   card_color != card.card_color_2 then "H"              # Diff Color Splits
+	else if chosen(choice: "land", card_color) then (
+		if card.rarity != "basic land" then "K"              # Nonbasic Land
+		else basic_land_sort()
+	) else if is_null_cost(casting_cost) then (
+		if chosen(choice: "hybrid", card_color)    then "GK"  # Hybrids
+		else if is_multicolor(card_color)          then "F"  # Multicolor
+		else if chosen(choice:"white", card_color) then "A"  # White
+		else if chosen(choice:"blue", card_color)  then "B"  # Blue
+		else if chosen(choice:"black", card_color) then "C"  # Black
+		else if chosen(choice:"red", card_color)   then "D"  # Red
+		else if chosen(choice:"green", card_color) then "E"  # Green
+		else                                            "I"  # Colorless / Artifact
+	) else (
+		# use the casting cost
+		colors := sort_text(casting_cost, order: "<WUBRG>")
+		if      colors == ""  then "I"                       # Colorless / Artifact
+		else if colors == "W" then "A"                       # White
+		else if colors == "U" then "B"                       # Blue
+		else if colors == "B" then "C"                       # Black
+		else if colors == "R" then "D"                       # Red
+		else if colors == "G" then "E"                       # Green
+		else if is_hybrid_cost() then hybrid_cost_sort()  #Hybrid
+		else if contains(casting_cost, match:"/") and contains(card_color, match:"artifact") then "I" # Colorless/Artifact
+		else                       "F"                       # Multicolor
+	)
+}
+
+rarity_sort := {
+	if set.sort_special_rarity == "with the rest" or card.rarity != "special" then " " else "S"
+}
+set_filter := {
+	if set.sort_special_rarity != "separate numbering" then nil
+	else if card.rarity == "special"                   then { card.rarity == "special" }
+	else                                                    { card.rarity != "special" }
+}
+
+card_number := {
+	position (
+		of: card
+		in: set
+		order_by: { rarity_sort() + sort_index() + sort_name(card.name) }
+		filter:   set_filter()
+	) + 1
+}
+card_count := {
+	number_of_items(in: set, filter: set_filter())
+}
+
+
+############################################################## Utilities for keywords
+
+# replaces — correctly
+add := "" # default is nothing
+separate_words := remove_tags + trim + replace@(match:" ", replace: {spacer})
+for_mana_costs := format_cost := {
+	if input.separator_before == "—" and contains(input.param, match: " ") then (
+		if contains(input.param, match:",") then (
+			if match(match: "^[STQXYZIWUBRG0-9/|]+,", input.param) then
+				"{add}<param-cost>{combined_cost(input.param)}</param-cost>"
+			else "<param-cost>{combined_cost(input.param)}</param-cost>"
+		) else
+			"<param-cost>{alternative_cost(input.param)}</param-cost>"
+	) else
+		"{add}<param-mana>{input.param}</param-mana>"
+}
+alternative_cost := replace@(match:"^[A-Z]", replace: { to_lower() })
+combined_cost := replace@(match:", [A-Z]", replace: { to_lower() })+
+	replace@(match:",", replace:" and")+
+	replace@(match:"^[STQXYZIWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
+	replace@(match:"^[A-Z]", replace: { to_lower() })
+long_dash := replace@(match:"-", replace:"—")
+# Utilities for keywords
+has_cc := { card.casting_cost != "" }
+has_pt := { card.pt           != "" }
+contains_target := match@(match:"(?i)([^a-z]|^)target([^a-z]|$)")
+is_targeted := { contains_target(card.rule_text) }
+
+
+############################################################## The text box
+
+# Filters for the text box
+# context in which mana symbols are found
+mana_context :=
+	"(?ix)				# case insensitive, ignore whitespace
+	 (^|[[:space:]\"(“'])		# start of a word
+	 (  <match>:			# G: something
+	 |  <match>,			# G, tap: something
+	 |  <match>[ ]can[ ]be[ ]pay
+	 |  (pays?|additional|costs?|the	# pay X. creatures cost 1 less. pay an additional G.
+	    |adds?|pay(ed)?[ ](with|using)
+	    )
+	    ([ ]either)?			 # pay either X or Y
+	    ([ ]<sym[^>]*>[STQXYZIWUBRG0-9/|]+</sym[^>]*>,)* # pay X, Y or Z
+	    ([ ]<sym[^>]*>[STQXYZIWUBRG0-9/|]+</sym[^>]*>[ ](and|or|and/or))* # pay X or Y
+	    [ ]<match> 
+	    ([,.)]|$				# (end of word)
+	    |[ ][^ .,]*$			# still typing...
+	    |[ ]( or | and | in | less | more | to ) # or next word is ...
+	    )
+	    )
+	 |  <param-mana><match></param-mana>		# keyword argument that is declared as mana
+	 |  <param-cost>[ ]*<match></param-cost>		# keyword argument that is declared as cost
+	 |  <param-cost><match>,		# keyword argument that is declared as cost
+	 ";
+# truncates the name of legends
+legend_filter := replace@(match:", [A-Z,a-z,Æ,0-9,' ]*", replace: "" )+
+	replace@(match:" of [A-Z,a-z,Æ,0-9,' ]*", replace: "" )+
+	replace@(match:" the [A-Z,a-z,Æ,0-9,' ]*", replace: "" )
+# the rule text filter
+#  - adds mana symbols
+#  - makes text in parentheses italic
+text_filter :=
+	# step 1 : remove all automatic tags
+	remove_tag@(tag: "<sym-auto>") +
+	remove_tag@(tag: "<i-auto>")   +
+	# step 2 : reminder text for keywords
+	expand_keywords@(
+		default_expand: { chosen(choice:mode, set.automatic_reminder_text) },
+		combine:        {
+			if mode == "pseudo" then "<i-auto>{keyword}</i-auto>"
+			else "{keyword}<atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
+		) +
+	# step 2b : move action keywords' reminder text to the end of the line
+	replace@(
+		match: "(<atom-reminder-action>(?:(?!<kw-).)*</atom-reminder-action></kw[^>]*>)(((?!<atom-reminder| ?<kw-)[^\n(])+)",
+		replace: "\\2\\1"
+		) +
+	# step 2c : remove duplicate reminder text
+	replace@(
+		match: "(<atom-reminder-[^>]*>[^)]+[)]</atom-reminder-[^>]*>)([^\n]+)\\1"
+		replace: "\\2\\1"
+		) +
+	# step 3a : expand shortcut words ~ and CARDNAME
+	replace@(
+		match: "~|~THIS~|CARDNAME",
+		in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
+		replace: "<atom-cardname></atom-cardname>"
+		) +
+	# step 3b : expand shortcut words ` and shortened LEGENDNAME
+	replace@(
+		match: "LEGENDNAME",
+		in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
+		replace: "<atom-legname></atom-legname>"
+		) +
+	# step 3c : fill in atom fields
+	tag_contents@(
+		tag: "<atom-cardname>",
+		contents: { if card_name=="" then "CARDNAME" else card_name }
+		) +
+	tag_contents@(
+		tag: "<atom-legname>",
+		contents: { if card_name=="" then "LEGENDNAME" else legend_filter(card_name) }
+		) +
+	# step 4 : explict non mana symbols
+	replace@(
+		match: "\\][STQXYZIWUBRG0-9/|]+\\[",
+		replace: {"<nosym>" + mana_filter_t() + "</nosym>"} ) +
+	# step 5 : add mana & tap symbols
+	replace@(
+		match: "[STQXYZIWUBRG0-9/|]+",
+		in_context: mana_context,
+		replace: {"<sym-auto>" + mana_filter_t() + "</sym-auto>"} ) +
+	# step 5b : add explict mana symbols
+	replace@(
+		match: "\\[[STQXYZIWUBRG0-9/|]+\\]",
+		replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
+	# step 7 : italic reminder text
+	replace@(
+	 	match: "[(]([^)\n]|[(][^)\n]*[)])*[)]?",
+		in_context: "(^|[[:space:]])<match>|<atom-keyword><match></",
+	 	replace: "<i-auto>&</i-auto>") +
+	# step 8 : automatic capitalization
+	replace@(
+		match: "[a-z]",
+		in_context: "[(](<param-[a-z]*>)?<match>[^)]|[ ]*: <param-cost><match>|—<match>| — <match>",
+		replace: to_upper) +
+	curly_quotes
+
+
+############################################################## Other boxes
+
+# the flavor text filter
+#  - makes all text italic
+flavor_text_filter :=
+	# step 1 : remove italic tags
+	remove_tag@(tag: "<i-flavor>")   +
+	# step 2 : surround by <i> tags
+	{ "<i-flavor>" + input + "</i-flavor>" } +
+	# curly quotes
+	curly_quotes
+	
+# Move the cursor past the separator in the p/t and type boxes
+type_over_pt   := replace@(match:"/$", replace:"")
+type_over_type := replace@(match:" ?-$", replace:"")
+
+super_type_filter :=
+	remove_tag@(tag: "<word-list-") +
+	type_over_type +
+	{ "<word-list-type>{input}</word-list-type>" }
+
+space_to_wltags := replace@(match:"( +|<soft> </soft>)",
+                            replace:{"</word-list-{list_type}>{_1}<word-list-{list_type}>"})
+sub_type_filter :=
+	remove_tag@(tag: "<word-list-") +
+	replace@(match: " </soft>$", replace: "") + # remove trailing soft space
+	remove_tag@(tag: "<soft") +
+	{ list_type := if      is_creature(type)    then "class"
+	               else if is_land(type)        then "land"
+	               else if is_artifact(type)    then "artifact"
+	               else if is_enchantment(type) then "enchantment"
+	               else if is_spell(type)       then "spell"
+	  if is_creature(type) or is_tribal(type) then (
+	      first := "<word-list-race>{ only_first(input) }</word-list-race>"
+	      next  := only_next(input)
+	      if input == ""     then list_type := "" # only edit the race
+	      else if next == "" then first := first + "<soft> </soft>"
+	      else                    first := first + " "
+	      input := next
+	  ) else (
+	      first := ""
+	  )
+	  if list_type != "" then (
+	      if input != "" then input := input + "<soft> </soft>" # Add a new box at the end
+	      first + "<word-list-{list_type}>{ space_to_wltags(input) }</word-list-{list_type}>"
+	  ) else first + input
+	}
+
+# all sub types, for word list
+space_to_comma := replace@(match:" ", replace:",")
+only_first     := replace@(match:" .*", replace:"")
+only_next      := replace@(match:"^[^ ]* ?", replace:"")
+all_sub_types := {
+	for each card in set do
+		if contains(card.super_type) then "," + space_to_comma(to_text(card.sub_type))
+}
+all_races := {
+	for each card in set do
+		if is_creature(card.super_type) or is_tribal(card.super_type) then
+			"," + only_first(to_text(card.sub_type))
+}
+all_classes := {
+	for each card in set do
+		if contains(card.super_type, match:"Creature") then
+			"," + space_to_comma(only_next(to_text(card.sub_type)))
+}
+
+# Shape of cards, can be changed in style files
+card_shape := { "normal" }
+
+typesymbol_for :=
+	to_text +
+	replace@(match: "(Legendary|Basic|Snow|World| )", replace: "") +
+	{ if      input == "Creature"    then "creature"
+	  else if input == "Sorcery"     then "sorcery"
+	  else if input == "Instant"     then "instant"
+	  else if input == "Artifact"    then "artifact"
+	  else if input == "Enchantment" then "enchantment"
+	  else if input == "Land"        then "land"
+	  else if input == "Planeswalker" then "planeswalker"
+	  else                                "multitype"
+	}
+typesymbol_type := { typesymbol_for(card.super_type) }
+
+#Script to make magic-mana-future compatible w/ other templates
+colorless_color := { "c" }
+
+
+############################################################## Statistics utilities
+
+# Converted mana cost
+is_half_mana    := match@(match: "1/2|[|][WUBRGS]")
+is_colored_mana := match@(match: "[WUBRG]")
+only_numbers    := filter_text@(match: "^[0123456789]+")
+cmc_split := break_text@(match: "(?ix) 1/2 | [|][WUBRG] | [0-9]+(?!/[WUBRGSTQ2]) | [WUBRGS0-9](/[WUBRGS])\{0,4} ")
+cmc := {to_number(
+	for each sym in cmc_split() do (
+		numbers := only_numbers(sym)
+		if is_half_mana(sym)  then 0.5
+		else if numbers != "" then max(1, to_int(numbers))
+		else                       1 # all other symbols are 1
+	))
+}
+
+colored_mana := {to_number(
+	for each sym in cmc_split() do (
+		numbers := only_numbers(sym)
+		if is_colored_mana(sym) then
+			if is_half_mana(sym) then 0.5 else 1
+		else 0
+	))
+}
+
+primary_card_color := {
+	artifact := chosen(choice:"artifact")
+	land     := chosen(choice:"land")
+	multi    := chosen(choice:"multicolor")
+	hybrid   := chosen(choice:"hybrid")
+	if      land                                      then "land"
+	else if multi and input != "artifact, multicolor" then "multicolor"
+	else if hybrid                                    then "hybrid"
+	else if artifact                                  then "artifact"
+	else                                                   input
+}
+
+word_count := break_text@(match:"[^[:space:]]+") + length
