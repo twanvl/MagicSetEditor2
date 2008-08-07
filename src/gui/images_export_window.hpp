@@ -12,24 +12,11 @@
 #include <util/prec.hpp>
 #include <gui/card_select_window.hpp>
 #include <data/settings.hpp>
-class wxFileName;
-
-// ----------------------------------------------------------------------------- : ImagesExportWindow
-
-/// Export the cards in a set
-class ExportCardImages {
-  public:
-	void exportImages(const SetP& set, wxFileName& filename, const String& filename_template, FilenameConflicts conflicts);
-	virtual ~ExportCardImages() {}
-  protected:
-	/// Should the given card be exported?
-	virtual bool includeCard(const CardP& card) const { return true; }
-};
 
 // ----------------------------------------------------------------------------- : ImagesExportWindow
 
 /// A window for selecting a subset of the cards from a set to export to images
-class ImagesExportWindow : public CardSelectWindow, private ExportCardImages {
+class ImagesExportWindow : public CardSelectWindow {
   public:
 	ImagesExportWindow(Window* parent, const SetP& set);
 	
@@ -37,8 +24,6 @@ class ImagesExportWindow : public CardSelectWindow, private ExportCardImages {
 	DECLARE_EVENT_TABLE();
 	
 	void onOk(wxCommandEvent&);
-	
-	virtual bool includeCard(const CardP& card) const;
 	
 	wxTextCtrl* format;
 	wxChoice*   conflicts;

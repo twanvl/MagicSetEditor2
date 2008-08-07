@@ -57,50 +57,6 @@ ImagesExportWindow::ImagesExportWindow(Window* parent, const SetP& set)
 
 // ----------------------------------------------------------------------------- : Exporting the images
 
-void ExportCardImages::exportImages(const SetP& set, wxFileName& fn, const String& filename_template, FilenameConflicts conflicts) {
-	// Script
-	ScriptP filename_script = parse(filename_template, nullptr, true);
-	// Export
-	std::set<String> used; // for CONFLICT_NUMBER_OVERWRITE
-	FOR_EACH(card, set->cards) {
-		if (includeCard(card)) {
-			// filename for this card
-			Context& ctx = set->getContext(card);
-			String filename = untag(ctx.eval(*filename_script)->toString());
-			if (!filename) continue; // no filename -> no saving
-			// sanitize filename
-			fn.SetFullName(clean_filename(filename));
-			// does the file exist?
-			if (fn.FileExists()) {
-				// file exists, what to do?
-				switch (conflicts) {
-					case CONFLICT_KEEP_OLD:  goto next_card;
-					case CONFLICT_OVERWRITE: break;
-					case CONFLICT_NUMBER: {
-						int i = 0;
-						String ext = fn.GetExt();
-						do {
-							fn.SetExt(String() << ++i << _(".") << ext);
-						} while(fn.FileExists());
-					}
-					case CONFLICT_NUMBER_OVERWRITE: {
-						int i = 0;
-						String ext = fn.GetExt();
-						while(used.find(fn.GetFullPath()) != used.end()) {
-							fn.SetExt(String() << ++i << _(".") << ext);
-						}
-					}
-				}
-			}
-			// write image
-			filename = fn.GetFullPath();
-			used.insert(filename);
-			export_image(set, card, filename);
-		}
-		next_card:;
-	}
-}
-
 void ImagesExportWindow::onOk(wxCommandEvent&) {
 	// Update settings
 	GameSettings& gs = settings.gameSettingsFor(*set->game);
@@ -114,15 +70,15 @@ void ImagesExportWindow::onOk(wxCommandEvent&) {
 	String name = wxFileSelector(_TITLE_("export images"),_(""), _LABEL_("filename is ignored"),_(""),
 		                         _LABEL_("filename is ignored")+_("|*"), wxSAVE, this);
 	if (name.empty()) return;
-	wxFileName fn(name);
+	// Cards to export
+	vector<CardP> cards;
+	FOR_EACH(card, set->cards) {
+		if (isSelected(card)) cards.push_back(card);
+	}
 	// Export
-	exportImages(set, fn, gs.images_export_filename, gs.images_export_conflicts);
+	export_images(set, cards, name, gs.images_export_filename, gs.images_export_conflicts);
 	// Done
 	EndModal(wxID_OK);
-}
-
-bool ImagesExportWindow::includeCard(const CardP& card) const {
-	return isSelected(card);
 }
 
 

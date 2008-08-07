@@ -196,11 +196,6 @@ bool is_substr_i(const String& str, size_t pos, const String& cmp);
 /// Compare two strings for equality, b may contain '_' where a contains ' '
 bool cannocial_name_compare(const String& a, const Char* b);
 
-// ----------------------------------------------------------------------------- : Filenames
-
-/// Make sure a string is safe to use as a filename
-String clean_filename(const String& name);
-
 // ----------------------------------------------------------------------------- : Regular expressions
 
 /// Escape a single character for use in regular expressions

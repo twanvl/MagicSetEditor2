@@ -18,7 +18,6 @@
 #include <cli/text_io_handler.hpp>
 #include <gui/welcome_window.hpp>
 #include <gui/update_checker.hpp>
-#include <gui/images_export_window.hpp>
 #include <gui/packages_window.hpp>
 #include <gui/set/window.hpp>
 #include <gui/symbol/window.hpp>
@@ -220,10 +219,8 @@ int MSE::OnRun() {
 						path += _("/x");
 						out  = out.substr(pos + 1);
 					}
-					wxFileName fn(path);
 					// export
-					ExportCardImages exporter;
-					exporter.exportImages(set, fn, out, CONFLICT_NUMBER_OVERWRITE);
+					export_images(set, set->cards, path, out, CONFLICT_NUMBER_OVERWRITE);
 					return EXIT_SUCCESS;
 				} else {
 					handle_error(_("Invalid command line argument:\n") + String(argv[1]));

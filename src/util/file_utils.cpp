@@ -36,6 +36,51 @@ bool ignore_file(const String& name) {
 	return name == _("Thumbs.db"); // winXP explorer thumbnails
 }
 
+bool is_filename_char(Char c) {
+	return isAlnum(c) || c == _(' ') || c == _('_') || c == _('-') || c == _('.');
+}
+
+String clean_filename(const String& name) {
+	String clean;
+	FOR_EACH_CONST(c, name) {
+		if (is_filename_char(c)) {
+			clean += c;
+		}
+	}
+	if (clean.empty() || starts_with(clean, _("."))) {
+		clean = _("no-name") + clean;
+	}
+	return clean;
+}
+
+bool resolve_filename_conflicts(wxFileName& fn, FilenameConflicts conflicts, set<String>& used) {
+	switch (conflicts) {
+		case CONFLICT_KEEP_OLD:
+			return !fn.FileExists();
+		case CONFLICT_OVERWRITE:
+			return true;
+		case CONFLICT_NUMBER: {
+			int i = 0;
+			String ext = fn.GetExt();
+			while(fn.FileExists()) {
+				fn.SetExt(String() << ++i << _(".") << ext);
+			}
+			return true;
+		}
+		case CONFLICT_NUMBER_OVERWRITE: {
+			int i = 0;
+			String ext = fn.GetExt();
+			while(used.find(fn.GetFullPath()) != used.end()) {
+				fn.SetExt(String() << ++i << _(".") << ext);
+			}
+			return true;
+		}
+		default: {
+			throw InternalError(_("resolve_filename_conflicts: default case"));
+		}
+	}
+}
+
 // ----------------------------------------------------------------------------- : Directories
 
 bool create_parent_dirs(const String& file) {

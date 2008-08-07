@@ -10,6 +10,8 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <data/settings.hpp>
+class wxFileName;
 
 // ----------------------------------------------------------------------------- : File names
 
@@ -19,8 +21,16 @@ String normalize_filename(const String& filename);
 /// Normalize a filename as much as possible, for files in packages
 String normalize_internal_filename(const String& filename);
 
-/// Should a file with the given name be ignored?
+/// Should a file with the given name be ignored in packages?
+/** true for hidden OS and version control files */
 bool ignore_file(const String& name);
+
+/// Make sure a string is safe to use as a filename
+String clean_filename(const String& name);
+
+/// Change the filename fn if it already exists, in the way described by conflicts.
+/** Returns true if the filename should be used, false if failed. */
+bool resolve_filename_conflicts(wxFileName& fn, FilenameConflicts conflicts, set<String>& used);
 
 // ----------------------------------------------------------------------------- : Removing and renaming
 

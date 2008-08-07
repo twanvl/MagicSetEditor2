@@ -7,11 +7,16 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/tagged_string.hpp>
 #include <data/format/formats.hpp>
 #include <data/set.hpp>
+#include <data/card.hpp>
 #include <data/stylesheet.hpp>
 #include <data/settings.hpp>
 #include <render/card/viewer.hpp>
+#include <wx/filename.h>
+
+DECLARE_TYPEOF_COLLECTION(CardP);
 
 // ----------------------------------------------------------------------------- : Single card export
 
@@ -59,3 +64,30 @@ Bitmap export_bitmap(const SetP& set, const CardP& card) {
 }
 
 // ----------------------------------------------------------------------------- : Multiple card export
+
+
+void export_images(const SetP& set, vector<CardP>& cards,
+                   const String& path, const String& filename_template, FilenameConflicts conflicts)
+{
+	wxBusyCursor busy;
+	// Script
+	ScriptP filename_script = parse(filename_template, nullptr, true);
+	// Path
+	wxFileName fn(path);
+	// Export
+	std::set<String> used; // for CONFLICT_NUMBER_OVERWRITE
+	FOR_EACH_CONST(card, cards) {
+		// filename for this card
+		Context& ctx = set->getContext(card);
+		String filename = clean_filename(untag(ctx.eval(*filename_script)->toString()));
+		if (!filename) continue; // no filename -> no saving
+		// full path
+		fn.SetFullName(filename);
+		// does the file exist?
+		if (!resolve_filename_conflicts(fn, conflicts, used)) continue;
+		// write image
+		filename = fn.GetFullPath();
+		used.insert(filename);
+		export_image(set, card, filename);
+	}
+}

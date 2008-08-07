@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <util/error.hpp>
+#include <data/settings.hpp>
 
 class Game;
 DECLARE_POINTER_TYPE(Set);
@@ -84,6 +85,10 @@ FileFormatP mtg_editor_file_format();
 
 /// Export images for each card in a set to a list of files
 void export_images(Window* parent, const SetP& set);
+
+/// Export the image for each card in a list of cards
+void export_images(const SetP& set, vector<CardP>& cards,
+                   const String& path, const String& filename_template, FilenameConflicts conflicts);
 
 /// Export the image of a single card
 void export_image(const SetP& set, const CardP& card, const String& filename);
