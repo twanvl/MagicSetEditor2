@@ -311,9 +311,7 @@ mana_context :=
 	 |  <param-cost><match>,		# keyword argument that is declared as cost
 	 ";
 # truncates the name of legends
-legend_filter := replace@(match:", [A-Z,a-z,Æ,0-9,' ]*", replace: "" )+
-	replace@(match:" of [A-Z,a-z,Æ,0-9,' ]*", replace: "" )+
-	replace@(match:" the [A-Z,a-z,Æ,0-9,' ]*", replace: "" )
+legend_filter := replace@(match:"(, | of | the ).*", replace: "" )
 # the rule text filter
 #  - adds mana symbols
 #  - makes text in parentheses italic
@@ -323,7 +321,12 @@ text_filter :=
 	remove_tag@(tag: "<i-auto>")   +
 	# step 2 : reminder text for keywords
 	expand_keywords@(
-		default_expand: { chosen(choice:mode, set.automatic_reminder_text) },
+		condition: {
+			correct_case or (mode != "pseudo" and not used_placeholders)
+		}
+		default_expand: {
+			chosen(choice:if correct_case then mode else "lower case", set.automatic_reminder_text)
+		},
 		combine:        {
 			if mode == "pseudo" then "<i-auto>{keyword}</i-auto>"
 			else "{keyword}<atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }

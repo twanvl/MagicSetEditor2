@@ -155,7 +155,7 @@ class KeywordDatabase {
 	 *  @param case_sensitive case sensitive matching of keywords?
 	 *  @param ctx            context for evaluation of scripts
 	 */
-	String expand(const String& text, const ScriptValueP& expand_default, const ScriptValueP& combine_script, bool case_sensitive, Context& ctx) const;
+	String expand(const String& text, const ScriptValueP& match_condition, const ScriptValueP& expand_default, const ScriptValueP& combine_script, Context& ctx) const;
 	
   private:
 	KeywordTrie* root;	///< Data structure for finding keywords
@@ -167,7 +167,7 @@ class KeywordDatabase {
 	 *    - return true
 	 */
 	bool tryExpand(const Keyword& kw, size_t pos, String& tagged, String& untagged, String& out, char expand_type,
-	               const ScriptValueP& expand_default, const ScriptValueP& combine_script, bool case_sensitive, Context& ctx,
+	               const ScriptValueP& match_condition, const ScriptValueP& expand_default, const ScriptValueP& combine_script, Context& ctx,
 	               KeywordUsageStatistics* stat, Value* stat_key) const;
 };
 

@@ -50,6 +50,7 @@ set field:
 	choice: pseudo
 	choice: action
 	choice: custom
+	choice: lower case
 	initial: old, core, expert, pseudo, action, custom
 	# Convert from older mse versions
 	script:

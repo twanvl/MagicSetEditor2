@@ -539,10 +539,12 @@ SCRIPT_FUNCTION(random_select) {
 // ----------------------------------------------------------------------------- : Keywords
 
 
-SCRIPT_RULE_2_N_DEP(expand_keywords, ScriptValueP, _("default expand"), default_expand,
-                                     ScriptValueP, _("combine"),        combine) {
+SCRIPT_FUNCTION_WITH_DEP(expand_keywords) {
 	SCRIPT_PARAM_C(String, input);
 	SCRIPT_PARAM_C(Set*, set);
+	SCRIPT_PARAM_N(ScriptValueP, _("condition"),      match_condition);
+	SCRIPT_PARAM_N(ScriptValueP, _("default expand"), default_expand);
+	SCRIPT_PARAM_N(ScriptValueP, _("combine"),        combine);
 	KeywordDatabase& db = set->keyword_db;
 	if (db.empty()) {
 		db.prepare_parameters(set->game->keyword_parameter_types, set->keywords);
@@ -553,15 +555,19 @@ SCRIPT_RULE_2_N_DEP(expand_keywords, ScriptValueP, _("default expand"), default_
 	SCRIPT_OPTIONAL_PARAM_C_(CardP, card);
 	WITH_DYNAMIC_ARG(keyword_usage_statistics, card ? &card->keyword_usage : nullptr);
 	try {
-		SCRIPT_RETURN(db.expand(input, default_expand, combine, true, ctx));
+		SCRIPT_RETURN(db.expand(input, match_condition, default_expand, combine, ctx));
 	} catch (const Error& e) {
 		throw ScriptError(_ERROR_2_("in function", e.what(), _("expand_keywords")));
 	}
 }
-SCRIPT_RULE_2_DEPENDENCIES(expand_keywords) {
-	default_expand->dependencies(ctx, dep);
-	combine       ->dependencies(ctx, dep);
+SCRIPT_FUNCTION_DEPENDENCIES(expand_keywords) {
 	SCRIPT_PARAM_C(Set*, set);
+	SCRIPT_PARAM_N(ScriptValueP, _("condition"),      match_condition);
+	SCRIPT_PARAM_N(ScriptValueP, _("default expand"), default_expand);
+	SCRIPT_PARAM_N(ScriptValueP, _("combine"),        combine);
+	match_condition->dependencies(ctx,dep);
+	default_expand ->dependencies(ctx,dep);
+	combine        ->dependencies(ctx,dep);
 	set->game->dependent_scripts_keywords.add(dep); // this depends on the set's keywords
 	return ctx.getVariable(SCRIPT_VAR_input);
 }

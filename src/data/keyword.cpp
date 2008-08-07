@@ -21,6 +21,8 @@ DECLARE_POINTER_TYPE(KeywordParamValue);
 class Value;
 DECLARE_DYNAMIC_ARG(Value*, value_being_updated);
 
+#define USE_CASE_INSENSITIVE_KEYWORDS 1
+
 // ----------------------------------------------------------------------------- : Reflection
 
 KeywordParam::KeywordParam()
@@ -215,7 +217,12 @@ void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
 	}
 	regex += _("(") + regex_escape(text) + _(")");
 	regex = _("\\y") + regex + _("(?=$|[^a-zA-Z0-9\\(])"); // only match whole words
-	if (match_re.Compile(regex, wxRE_ADVANCED)) {
+	#if USE_CASE_INSENSITIVE_KEYWORDS
+		int flags = wxRE_ADVANCED | wxRE_ICASE; // case insensitive matching
+	#else
+		int flags = wxRE_ADVANCED
+	#endif
+	if (match_re.Compile(regex, flags)) {
 		// not valid if it matches "", that would make MSE hang
 		valid = !match_re.Matches(_(""));
 	} else {
@@ -262,6 +269,9 @@ KeywordTrie::~KeywordTrie() {
 }
 
 KeywordTrie* KeywordTrie::insert(Char c) {
+	#if USE_CASE_INSENSITIVE_KEYWORDS
+		c = toLower(c); // case insensitive matching
+	#endif
 	KeywordTrie*& child = children[c];
 	if (!child) child = new KeywordTrie;
 	return child;
@@ -391,9 +401,9 @@ void dump(int i, KeywordTrie* t) {
 #endif
 
 String KeywordDatabase::expand(const String& text,
+                               const ScriptValueP& match_condition,
                                const ScriptValueP& expand_default,
                                const ScriptValueP& combine_script,
-                               bool case_sensitive,
                                Context& ctx) const {
 	assert(combine_script);
 	
@@ -451,6 +461,9 @@ String KeywordDatabase::expand(const String& text,
 				}
 				continue;
 			} else {
+				#if USE_CASE_INSENSITIVE_KEYWORDS
+					c = toLower(c); // case insensitive matching
+				#endif
 				++i;
 			}
 			// find 'next' trie node set matching c
@@ -478,12 +491,10 @@ String KeywordDatabase::expand(const String& text,
 					if (used.insert(kw).second) {
 						// we have found a possible match, for a keyword which we have not seen before
 						if (tryExpand(*kw, i, tagged, untagged, result, expand_type,
-						              expand_default, combine_script, case_sensitive, ctx,
+						              match_condition, expand_default, combine_script, ctx,
 						              stat, stat_key))
 						{
 							// it matches
-							used.clear();
-							expand_type = _('a');
 							goto matched_keyword;
 						}
 					}
@@ -506,9 +517,9 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
                                 String& untagged,
                                 String& result,
                                 char expand_type,
+                                const ScriptValueP& match_condition,
                                 const ScriptValueP& expand_default,
                                 const ScriptValueP& combine_script,
-                                bool case_sensitive,
                                 Context& ctx,
                                 KeywordUsageStatistics* stat,
                                 Value* stat_key) const
@@ -522,9 +533,6 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 	size_t start = untagged_to_index(tagged, start_u, true),
 	       end   = untagged_to_index(tagged, start_u + len_u, true);
 	if (start == end) return false; // don't match empty keywords
-	
-	// copy text before keyword
-	result += remove_tag(tagged.substr(0, start), _("<kw-"));
 	
 	// a part of tagged has not been searched for <kw- tags
 	// this can happen when the trie incorrectly matches too early
@@ -542,35 +550,45 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 		}
 	}
 	
+	// To determine if the case matches exactly we compare plain text parts with the original match string
+	size_t pos_in_match_string = 0;
+	bool correct_case = true;
+	// also check if there are missing parameters
+	bool used_placeholders = false;
+	
+	
 	// Split the keyword, set parameters in context
+	// The even captures are parameter values, the odd ones are the plain text in between
 	String total; // the total keyword
 	size_t match_count = kw.match_re.GetMatchCount();
 	assert(match_count - 1 == 1 + 2 * kw.parameters.size());
+	size_t part_start = start;
 	for (size_t j = 1 ; j < match_count ; ++j) {
 		// we start counting at 1, so
 		// j = 1 mod 2 -> text
 		// j = 0 mod 2 -> parameter  #((j-1)/2) == (j/2-1)
-		size_t start_u, len_u;
-		kw.match_re.GetMatch(&start_u, &len_u, j);
-		// note: start_u can be (uint)-1 when len_u == 0
-		size_t part_end = len_u > 0 ? untagged_to_index(tagged, start_u + len_u, true) : start;
-		String part = tagged.substr(start, part_end - start);
+		size_t part_start_u, part_len_u;
+		kw.match_re.GetMatch(&part_start_u, &part_len_u, j);
+		// note: start_u can be (uint)-1 when part_len_u == 0
+		size_t part_end = part_len_u > 0 ? untagged_to_index(tagged, part_start_u + part_len_u, true) : part_start;
+		String part = tagged.substr(part_start, part_end - part_start);
 		// strip left over </kw tags
 		part = remove_tag(part,_("</kw-"));
+		
 		if ((j % 2) == 0) {
 			// parameter
 			KeywordParam& kwp = *kw.parameters[j/2-1];
-			String param = untagged.substr(start_u, len_u); // untagged version
+			String param = untagged.substr(part_start_u, part_len_u); // untagged version
 			// strip separator_before
 			String separator_before, separator_after;
 			if (kwp.separator_before_re.IsValid() && kwp.separator_before_re.Matches(param)) {
-				size_t s_start, s_len; // start should be 0
-				kwp.separator_before_re.GetMatch(&s_start, &s_len);
-				separator_before = param.substr(0, s_start + s_len);
-				param = param.substr(s_start + s_len);
+				size_t sep_start, sep_len; // start should be 0
+				kwp.separator_before_re.GetMatch(&sep_start, &sep_len);
+				separator_before = param.substr(0, sep_start + sep_len);
+				param = param.substr(sep_start + sep_len);
 				// strip from tagged version
-				size_t end_t = untagged_to_index(part, s_start + s_len, false);
-				part = get_tags(part, 0, end_t, true, true) + part.substr(end_t);
+				size_t sep_end_t = untagged_to_index(part, sep_start + sep_len, false);
+				part = get_tags(part, 0, sep_end_t, true, true) + part.substr(sep_end_t);
 				// transform?
 				if (kwp.separator_script) {
 					ctx.setVariable(_("input"), to_script(separator_before));
@@ -579,13 +597,13 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 			}
 			// strip separator_after
 			if (kwp.separator_after_re.IsValid() && kwp.separator_after_re.Matches(param)) {
-				size_t s_start, s_len; // start + len should be param.size()
-				kwp.separator_after_re.GetMatch(&s_start, &s_len);
-				separator_after = param.substr(s_start);
-				param = param.substr(0, s_start);
+				size_t sep_start, sep_len; // start + len should be param.size()
+				kwp.separator_after_re.GetMatch(&sep_start, &sep_len);
+				separator_after = param.substr(sep_start);
+				param = param.substr(0, sep_start);
 				// strip from tagged version
-				size_t start_t = untagged_to_index(part, s_start, false);
-				part = part.substr(0, start_t) + get_tags(part, start_t, part.size(), true, true);
+				size_t sep_start_t = untagged_to_index(part, sep_start, false);
+				part = part.substr(0, sep_start_t) + get_tags(part, sep_start_t, part.size(), true, true);
 				// transform?
 				if (kwp.separator_script) {
 					ctx.setVariable(_("input"), to_script(separator_after));
@@ -598,6 +616,7 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 			// process param
 			if (param.empty()) {
 				// placeholder
+				used_placeholders = true;
 				script_param->value = _("<atom-kwpph>") + (kwp.placeholder.empty() ? kwp.name : kwp.placeholder) + _("</atom-kwpph>");
 				script_part->value  = part + script_param->value; // keep tags
 			} else {
@@ -613,11 +632,39 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 			}
 			part  = separator_before + script_part->toString() + separator_after;
 			ctx.setVariable(String(_("param")) << (int)(j/2), script_param);
+			
+		} else if (correct_case) {
+			// Plain text, check if the case matches
+			for (size_t i = part_start_u ; i < part_start_u + part_len_u ; ++i, ++pos_in_match_string) {
+				if (pos_in_match_string > kw.match.size()) {
+					// outside match string, shouldn't happen, strings should be the same length
+					correct_case = false;
+					break;
+				}
+				Char actual_char = untagged.GetChar(i);
+				Char match_char  = kw.match.GetChar(pos_in_match_string);
+				if (actual_char != match_char) {
+					correct_case = false;
+					break;
+				}
+			}
+			// we should have arrived at a param tag, skip it
+			if (pos_in_match_string < kw.match.size() && is_substr(kw.match, pos_in_match_string, _("<atom-param"))) {
+				pos_in_match_string = match_close_tag_end(kw.match, pos_in_match_string);
+			}
 		}
+		
 		total += part;
-		start = part_end;
+		part_start = part_end;
 	}
 	ctx.setVariable(_("mode"), to_script(kw.mode));
+	ctx.setVariable(_("correct case"), to_script(correct_case));
+	ctx.setVariable(_("used placeholders"), to_script(used_placeholders));
+	
+	// Final check whether the keyword matches
+	if (match_condition && (bool)*match_condition->eval(ctx) == false) {
+		return false;
+	}
 	
 	// Show reminder text?
 	bool expand = expand_type == _('1');
@@ -626,6 +673,9 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 		expand = expand_default && (bool)*expand_default->eval(ctx);
 		expand_type = expand ? _('A') : _('a');
 	}
+	
+	// Copy text before keyword
+	result += remove_tag(tagged.substr(0, start), _("<kw-"));
 	
 	// Combine keyword & reminder with result
 	if (expand) {
