@@ -30,13 +30,35 @@ is used. This shows reminder text by default based on a [[type:set]] option, and
 --Parameters--
 ! Parameter		Type				Description
 | @input@		[[type:tagged string]]		String to expand keywords in.
+| @condition@		[[type:function]]		DOC_MSE_VERSION: since 0.3.7
+			 				When should a keyword be recognized at all?
 | @default_expand@	[[type:function]]		Should reminder text be shown by default?
 | @combine@		[[type:function]]		How to combine keywords with the reminder text?
 
+--Arguments--
+
+The @condition@, @default_expand@ and @combine@ functions will be called for each potential keyword match in the input.
+
+! Parameter			Type				Description
+| @param1@, @param2@, ...	[[type:tagged string]]*		The parameter values.
+| @mode@			[[type:string]]			The @mode@ of the keyword.
+| @used_placeholders@		[[type:boolean]]		DOC_MSE_VERSION: since 0.3.7
+				 				Is a placeholder used for any of the parameters?
+| @correct_case@		[[type:boolean]]		DOC_MSE_VERSION: since 0.3.7
+				 				Is the keyword matched exactly, with the same case?
+| @keyword@			[[type:tagged string]]		In @combine@ only: The full keyword text including parameters
+| @reminder@			[[type:string]]			In @combine@ only: The expanded reminder text.
+
+
 --Examples--
 Assuming a keyword @"mse"@ exists with reminder text @"Magic Set Editor"@ exists.
-> expand_keywords(default_expand: {true}, combine: { keyword + " = " + reminder },  "mse is cool")
->    == "<kw-A>mse = Magic Set Editor is cool</kw-A>"
+> expand_keywords(default_expand: {true}, combine: { keyword + " (= " + reminder + ")" },  "mse is cool")
+>    == "<kw-A>mse (= Magic Set Editor) is cool</kw-A>"
 >
-> f := expand_keywords@(default_expand: {true}, combine: { keyword+"="+reminder })
-> f("mse is cool") == "<kw-A>mse = Magic Set Editor is cool</kw-A>"
+> f := expand_keywords@(default_expand: {true}, combine: { keyword+" (= "+reminder+")" })
+> f("mse is cool") == "<kw-A>mse (= Magic Set Editor) is cool</kw-A>"
+
+DOC_MSE_VERSION: since 0.3.7
+Keyword matching is case insensitive, to get case sensitive matching use a @condition@ that check for the @correct case@:
+> expand_keywords(..., condition: { correct_case })
+In prior MSE versions matching was always case sensitive.
