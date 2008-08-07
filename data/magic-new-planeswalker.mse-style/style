@@ -60,8 +60,8 @@ init script:
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }	
 	
-	paintbrush_color:= {
-		if card.border_color < 96 then "white" else "black"
+	paintbrush_color := {
+		if to_int(card.border_color) < 96 then "white" else "black"
 	}
 	
 	# Loyalty cost arrows
@@ -112,7 +112,7 @@ styling field:
 	choice: always
 	choice: short text only
 	choice: never
-	initial: no
+	initial: never
 styling field:
 	type: boolean
 	name: inverted common symbol
@@ -130,6 +130,16 @@ styling style:
 			modern:     /magic-mana-large.mse-symbol-font/mana_t.png
 			old:        /magic-mana-large.mse-symbol-font/mana_t_old.png
 			diagonal T: /magic-mana-large.mse-symbol-font/mana_t_older.png
+	center text:
+		render style: both
+		choice images:
+			always:          /magic.mse-game/icons/center-all-text.png
+			short text only: /magic.mse-game/icons/center-short-text.png
+			never:           /magic.mse-game/icons/center-no-text.png
+	inverted common symbol:
+		choice images:
+			no:  { symbol_variation(symbol: set.symbol, variation: "common") }
+			yes: { symbol_variation(symbol: set.symbol, variation: "invertedcommon") }
 
 ############################################################## Card fields
 card style:

@@ -104,6 +104,11 @@ styling field:
 	choice: old
 	choice: diagonal T
 styling field:
+	type: package choice
+	name: text box mana symbols
+	match: magic-mana-*.mse-symbol-font
+	initial: magic-mana-small.mse-symbol-font
+styling field:
 	type: choice
 	name: center text
 	description: When to center text (short text only means only on one-line cards with no flavor text)
@@ -123,11 +128,6 @@ styling field:
 	initial: standard
 	choice: standard
 	choice: extended
-styling field:
-	type: package choice
-	name: text box mana symbols
-	match: magic-mana-*.mse-symbol-font
-	initial: magic-mana-small.mse-symbol-font
 styling style:
 	artifact style:
 		render style: both
