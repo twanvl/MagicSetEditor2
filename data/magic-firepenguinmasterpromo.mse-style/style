@@ -119,6 +119,11 @@ styling style:
 		choice images:
 			light: lgcard.jpg
 			dark:  gcard.jpg
+	land style:
+		render style: both
+		choice images:
+			normal: clcard.jpg
+			grey:   elcard.jpg
 	use guild mana symbols:
 		choice images:
 			yes: /magic-mana-small.mse-symbol-font/mana_guild_rg.png
@@ -129,6 +134,12 @@ styling style:
 			modern:     /magic-mana-small.mse-symbol-font/mana_t.png
 			old:        /magic-mana-small.mse-symbol-font/mana_t_old.png
 			diagonal T: /magic-mana-small.mse-symbol-font/mana_t_older.png
+	center text:
+		render style: both
+		choice images:
+			always:          /magic.mse-game/icons/center-all-text.png
+			short text only: /magic.mse-game/icons/center-short-text.png
+			never:           /magic.mse-game/icons/center-no-text.png
 
 ############################################################## Card fields
 card style:

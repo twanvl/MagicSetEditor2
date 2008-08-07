@@ -124,6 +124,21 @@ styling style:
 			modern:     /magic-mana-large.mse-symbol-font/mana_t.png
 			old:        /magic-mana-large.mse-symbol-font/mana_t_old.png
 			diagonal T: /magic-mana-large.mse-symbol-font/mana_t_older.png
+	center text:
+		render style: both
+		choice images:
+			always:          /magic.mse-game/icons/center-all-text.png
+			short text only: /magic.mse-game/icons/center-short-text.png
+			never:           /magic.mse-game/icons/center-no-text.png
+	inverted common symbol:
+		choice images:
+			no:  { symbol_variation(symbol: set.symbol, variation: "common") }
+			yes: { symbol_variation(symbol: set.symbol, variation: "invertedcommon") }
+	image size:
+		render style: both
+		choice images:
+			standard: /magic.mse-game/icons/small-image.png
+			extended: /magic.mse-game/icons/large-image.png
 
 ############################################################## Card fields
 card style:

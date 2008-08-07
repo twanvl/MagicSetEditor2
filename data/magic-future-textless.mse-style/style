@@ -121,6 +121,10 @@ styling style:
 		choice images:
 			yes: /magic-mana-future.mse-symbol-font/mana_guild_rg.png
 			no:  /magic-mana-future.mse-symbol-font/mana_rg.png
+	inverted common symbol:
+		choice images:
+			no:  { symbol_variation(symbol: set.symbol, variation: "common") }
+			yes: { symbol_variation(symbol: set.symbol, variation: "invertedcommon") }
 
 ############################################################## Card fields
 card style:
