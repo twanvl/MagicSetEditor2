@@ -322,6 +322,7 @@ IMPLEMENT_VALUE_EDITOR(Text)
 {
 	if (viewer.nativeLook() && field().multi_line) {
 		scrollbar = new TextValueEditorScrollBar(*this);
+		style->padding_right += scrollbar->GetSize().x;
 	}
 }
 
