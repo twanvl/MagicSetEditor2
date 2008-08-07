@@ -10,6 +10,7 @@
 #include <script/value.hpp>
 #include <script/to_value.hpp>
 #include <script/context.hpp>
+#include <gfx/generated_image.hpp>
 #include <util/error.hpp>
 #include <boost/pool/singleton_pool.hpp>
 
@@ -27,6 +28,7 @@ ScriptValueP ScriptValue::eval(Context&)                    const { return delay
 ScriptValueP ScriptValue::next()                                  { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
 ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
 int          ScriptValue::itemCount()                       const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
+GeneratedImageP ScriptValue::toImage(const ScriptValueP&)   const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("image"   ))); }
 String       ScriptValue::toCode()                          const { return *this; }
 CompareWhat  ScriptValue::compareAs(String& compare_str, void const*& compare_ptr) const {
 	compare_str = toCode();
@@ -271,6 +273,9 @@ class ScriptString : public ScriptValue {
 		}
 		return c;
 	}
+	virtual GeneratedImageP toImage(const ScriptValueP&) const {
+		return new_intrusive1<PackagedImage>(value);
+	}
 	virtual int itemCount() const { return (int)value.size(); }
 	virtual ScriptValueP getMember(const String& name) const {
 		// get member returns characters
@@ -326,6 +331,9 @@ class ScriptNil : public ScriptValue {
 	virtual operator double() const { return 0.0; }
 	virtual operator int()    const { return 0; }
 	virtual operator bool()   const { return false; }
+	virtual GeneratedImageP toImage(const ScriptValueP&) const {
+		return new_intrusive<BlankImage>();
+	}
 	virtual ScriptValueP eval(Context& ctx) const {
 		// nil(input) == input
 		return ctx.getVariable(SCRIPT_VAR_input);

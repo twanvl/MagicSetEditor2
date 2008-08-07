@@ -14,6 +14,7 @@
 class Context;
 class Dependency;
 class ScriptClosure;
+DECLARE_POINTER_TYPE(GeneratedImage);
 
 // ----------------------------------------------------------------------------- : ScriptValue
 
@@ -74,6 +75,8 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	/** This is sometimes necessary, because wxString has an int constructor,
 	 *  which confuses gcc. */
 	inline String toString() const { return *this; }
+	/// Convert this value to an image
+	virtual GeneratedImageP toImage(const ScriptValueP& thisP) const;
 	
 	/// Get a member variable from this value
 	virtual ScriptValueP getMember(const String& name) const;

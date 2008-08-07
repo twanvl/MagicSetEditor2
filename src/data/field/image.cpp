@@ -8,6 +8,7 @@
 
 #include <util/prec.hpp>
 #include <data/field/image.hpp>
+#include <gfx/generated_image.hpp>
 
 // ----------------------------------------------------------------------------- : ImageField
 
@@ -38,6 +39,16 @@ String ImageValue::toString() const {
 	return filename.empty() ? wxEmptyString : _("<image>");
 }
 
-IMPLEMENT_REFLECTION_NAMELESS(ImageValue) {
-	if (fieldP->save_value || tag.scripting() || tag.reading()) REFLECT_NAMELESS(filename);
+// custom reflection: convert to ScriptImageP for scripting
+
+void ImageValue::reflect(Reader& tag) {
+	tag.handle(filename);
+}
+void ImageValue::reflect(Writer& tag) {
+	if (fieldP->save_value) tag.handle(filename);
+}
+void ImageValue::reflect(GetMember& tag) {}
+void ImageValue::reflect(GetDefaultMember& tag) {
+	// convert to ScriptImageP for scripting
+	tag.handle( (ScriptValueP)new_intrusive2<ImageValueToImage>(filename, last_update) );
 }

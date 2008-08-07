@@ -19,25 +19,7 @@
 
 // convert any script value to a GeneratedImageP
 GeneratedImageP image_from_script(const ScriptValueP& value) {
-	ScriptType t = value->type();
-	if (t == SCRIPT_IMAGE) {
-		GeneratedImageP img = dynamic_pointer_cast<GeneratedImage>(value);
-		if (img) return img;
-	} else if (t == SCRIPT_STRING) {
-		return new_intrusive1<PackagedImage>(value->toString());
-	} else if (t == SCRIPT_NIL) {
-		return new_intrusive<BlankImage>();
-	} else if (t == SCRIPT_OBJECT) {
-		// maybe it's an image value?
-		intrusive_ptr<ScriptObject<ValueP> > v = dynamic_pointer_cast<ScriptObject<ValueP> >(value);
-		if (v) {
-			ImageValueP iv = dynamic_pointer_cast<ImageValue>(v->getValue());
-			if (iv) {
-				return new_intrusive2<ImageValueToImage>(iv->filename, iv->last_update);
-			}
-		}
-	}
-	throw ScriptError(_ERROR_2_("can't convert", value->typeName(), _TYPE_("image")));
+	return value->toImage(value);
 }
 
 // ----------------------------------------------------------------------------- : ScriptableImage

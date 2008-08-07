@@ -14,6 +14,7 @@
 #include <util/reflect.hpp>
 #include <util/error.hpp>
 #include <util/io/get_member.hpp>
+#include <gfx/generated_image.hpp> // we need the dtor of GeneratedImage
 
 // ----------------------------------------------------------------------------- : Overloadable templates
 
@@ -246,13 +247,16 @@ template <typename T>
 class ScriptObject : public ScriptValue {
   public:
 	inline ScriptObject(const T& v) : value(v) {}
-	virtual ScriptType type() const { return SCRIPT_OBJECT; }
+	virtual ScriptType type() const { ScriptValueP d = getDefault(); return d ? d->type() : SCRIPT_OBJECT; }
 	virtual String typeName() const { return type_name(*value); }
 	virtual operator String() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator String(); }
 	virtual operator double() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator double(); }
 	virtual operator int()    const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator int(); }
 	virtual operator bool()   const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator bool(); }
 	virtual operator AColor() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator AColor(); }
+	virtual GeneratedImageP toImage(const ScriptValueP& thisP) const {
+		ScriptValueP d = getDefault(); return d ? d->toImage(d) : ScriptValue::toImage(thisP);
+	}
 	virtual ScriptValueP getMember(const String& name) const {
 		GetMember gm(name);
 		gm.handle(*value);
