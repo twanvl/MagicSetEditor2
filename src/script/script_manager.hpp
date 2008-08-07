@@ -84,7 +84,7 @@ class SetScriptManager : public SetScriptContext, public ActionListener {
 	/** if the value changes any dependend values are updated as well */
 	void updateValue(Value& value, const CardP& card);
 	// Update all values with a specific dependency
-	void updateAllDependend(const vector<Dependency>& dependent_scripts);
+	void updateAllDependend(const vector<Dependency>& dependent_scripts, const CardP& card = CardP());
 	
 	// Something that needs to be updated
 	struct ToUpdate {

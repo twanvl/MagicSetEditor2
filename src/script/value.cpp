@@ -54,6 +54,7 @@ ScriptValueP ScriptValue::dependencyName(const ScriptValue& container, const Dep
 	return container.dependencyMember(toString(),dep);
 }
 ScriptValueP ScriptValue::dependencies(Context&,               const Dependency&) const { return dependency_dummy; }
+void ScriptValue::dependencyThis(const Dependency& dep) {}
 
 bool approx_equal(double a, double b) {
 	return a == b || fabs(a - b) < 1e-14;

@@ -77,5 +77,7 @@ inline String type_name(const StyleSheet&) {
 	return _TYPE_("stylesheet");
 }
 
+void mark_dependency_value(const StyleSheet& value, const Dependency& dep);
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

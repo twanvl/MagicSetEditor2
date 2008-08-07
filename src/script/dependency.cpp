@@ -269,6 +269,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					if (!value) {
 						value = new_intrusive1<ScriptMissingVariable>(variable_to_string((Variable)i.data)); // no errors here
 					}
+					value->dependencyThis(dep);
 					stack.push_back(value);
 					break;
 				}

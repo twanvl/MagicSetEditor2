@@ -134,7 +134,7 @@ void SetScriptManager::initDependencies(Context& ctx, StyleSheet& stylesheet) {
 	}
 	// find dependencies of choice images and other style stuff
 	FOR_EACH(s, stylesheet.card_style) {
-		s->initDependencies(ctx, Dependency(DEP_STYLE, s->fieldP->index, &stylesheet));
+		s->initDependencies(ctx, Dependency(DEP_CARD_STYLE, s->fieldP->index, &stylesheet));
 		// are there dependencies of this style on other style properties?
 		Dependency test(DEP_DUMMY, false);
 		s->checkContentDependencies(ctx, test);
@@ -217,6 +217,13 @@ void SetScriptManager::onAction(const Action& action, bool undone) {
 	}
 	TYPE_CASE_(action, ChangeKeywordModeAction) {
 		updateAllDependend(set.game->dependent_scripts_keywords);
+		return;
+	}
+	TYPE_CASE(action, ChangeCardStyleAction) {
+		updateAllDependend(set.game->dependent_scripts_stylesheet, action.card);
+	}
+	TYPE_CASE_(action, ChangeSetStyleAction) {
+		updateAllDependend(set.game->dependent_scripts_stylesheet);
 		return;
 	}
 }
@@ -310,14 +317,15 @@ void SetScriptManager::updateAll() {
 	#endif
 }
 
-void SetScriptManager::updateAllDependend(const vector<Dependency>& dependent_scripts) {
+void SetScriptManager::updateAllDependend(const vector<Dependency>& dependent_scripts, const CardP& card) {
 	deque<ToUpdate> to_update;
 	Age starting_age;
-	alsoUpdate(to_update, dependent_scripts, CardP());
+	alsoUpdate(to_update, dependent_scripts, card);
 	updateRecursive(to_update, starting_age);
 }
 
 void SetScriptManager::updateRecursive(deque<ToUpdate>& to_update, Age starting_age) {
+	if (to_update.empty()) return;
 	set.clearOrderCache(); // clear caches before evaluating a round of scripts
 	while (!to_update.empty()) {
 		updateToUpdate(to_update.front(), to_update, starting_age);
@@ -373,7 +381,7 @@ void SetScriptManager::alsoUpdate(deque<ToUpdate>& to_update, const vector<Depen
 					to_update.push_back(ToUpdate(value.get(), card));
 				}
 				break;
-			} case DEP_STYLE: {
+			} case DEP_CARD_STYLE: {
 				// a generated image has become invalid, there is not much we can do
 				// because the index is not exact enough, it only gives the field
 				StyleSheet* stylesheet = reinterpret_cast<StyleSheet*>(d.data);

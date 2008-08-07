@@ -88,6 +88,11 @@ StyleP StyleSheet::styleFor(const FieldP& field) {
 }
 
 
+void mark_dependency_value(const StyleSheet& stylesheet, const Dependency& dep) {
+	stylesheet.game->dependent_scripts_stylesheet.add(dep);
+}
+
+
 IMPLEMENT_REFLECTION(StyleSheet) {
 	// < 0.3.0 didn't use card_ prefix
 	REFLECT_ALIAS(300, "width",       "card width");

@@ -33,6 +33,10 @@ ScriptValueP make_iterator(const T& v) {
 template <typename T>
 void mark_dependency_member(const T& value, const String& name, const Dependency& dep) {}
 
+/// Mark a dependency on an object, can be overloaded
+template <typename T>
+void mark_dependency_value(const T& value, const Dependency& dep) {}
+
 /// Type name of an object, for error messages
 template <typename T> inline String type_name(const T&) {
 	return _TYPE_("object");
@@ -275,6 +279,9 @@ class ScriptObject : public ScriptValue {
 	virtual ScriptValueP dependencyMember(const String& name, const Dependency& dep) const {
 		mark_dependency_member(*value, name, dep);
 		return getMember(name);
+	}
+	virtual void dependencyThis(const Dependency& dep) {
+		mark_dependency_value(*value, dep);
 	}
 	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const {
 		ScriptValueP it = make_iterator(*value);
