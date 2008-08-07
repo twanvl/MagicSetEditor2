@@ -553,7 +553,7 @@ SCRIPT_RULE_2_N_DEP(expand_keywords, ScriptValueP, _("default expand"), default_
 	SCRIPT_OPTIONAL_PARAM_C_(CardP, card);
 	WITH_DYNAMIC_ARG(keyword_usage_statistics, card ? &card->keyword_usage : nullptr);
 	try {
-		SCRIPT_RETURN(db.expand(input, default_expand, combine, ctx));
+		SCRIPT_RETURN(db.expand(input, default_expand, combine, true, ctx));
 	} catch (const Error& e) {
 		throw ScriptError(_ERROR_2_("in function", e.what(), _("expand_keywords")));
 	}

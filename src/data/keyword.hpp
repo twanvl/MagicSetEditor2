@@ -152,12 +152,23 @@ class KeywordDatabase {
 	/// Expand/update all keywords in the given string.
 	/** @param expand_default script function indicating whether reminder text should be shown by default
 	 *  @param combine_script script function to combine keyword and reminder text in some way
+	 *  @param case_sensitive case sensitive matching of keywords?
 	 *  @param ctx            context for evaluation of scripts
 	 */
-	String expand(const String& text, const ScriptValueP& expand_default, const ScriptValueP& combine_script, Context& ctx) const;
+	String expand(const String& text, const ScriptValueP& expand_default, const ScriptValueP& combine_script, bool case_sensitive, Context& ctx) const;
 	
   private:
 	KeywordTrie* root;	///< Data structure for finding keywords
+	
+	/// (try to) expand a single keyword
+	/** If the keyword matches:
+	 *    - add the result to out
+	 *    - advance the tagged and untagged string by dropping a part from the front
+	 *    - return true
+	 */
+	bool tryExpand(const Keyword& kw, size_t pos, String& tagged, String& untagged, String& out, char expand_type,
+	               const ScriptValueP& expand_default, const ScriptValueP& combine_script, bool case_sensitive, Context& ctx,
+	               KeywordUsageStatistics* stat, Value* stat_key) const;
 };
 
 // ----------------------------------------------------------------------------- : Processing parameters

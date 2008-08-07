@@ -393,6 +393,7 @@ void dump(int i, KeywordTrie* t) {
 String KeywordDatabase::expand(const String& text,
                                const ScriptValueP& expand_default,
                                const ScriptValueP& combine_script,
+                               bool case_sensitive,
                                Context& ctx) const {
 	assert(combine_script);
 	
@@ -408,19 +409,19 @@ String KeywordDatabase::expand(const String& text,
 	}
 	
 	// Remove all old reminder texts
-	String s = remove_tag_contents(text, _("<atom-reminder"));
-	s = remove_tag_contents(s, _("<atom-keyword")); // OLD, TODO: REMOVEME
-	s = remove_tag_contents(s, _("<atom-kwpph>"));
-	s = remove_tag(s, _("<keyword-param"));
-	s = remove_tag(s, _("<param-"));
-	String untagged = untag_no_escape(s);
+	String tagged = remove_tag_contents(text, _("<atom-reminder"));
+	tagged = remove_tag_contents(tagged, _("<atom-keyword")); // OLD, TODO: REMOVEME
+	tagged = remove_tag_contents(tagged, _("<atom-kwpph>"));
+	tagged = remove_tag(tagged, _("<keyword-param"));
+	tagged = remove_tag(tagged, _("<param-"));
+	String untagged = untag_no_escape(tagged);
 	
-	if (!root) return s;
+	if (!root) return tagged;
 	
 	String result;
 	
 	// Find keywords
-	while (!s.empty()) {
+	while (!tagged.empty()) {
 		vector<KeywordTrie*> current; // current location(s) in the trie
 		vector<KeywordTrie*> next;    // location(s) after this step
 		set<const Keyword*>  used;    // keywords already investigated
@@ -433,20 +434,20 @@ String KeywordDatabase::expand(const String& text,
 		                        //  - 'a' = reminder text in default state, hidden
 		                        //  - 'A' = reminder text in default state, shown
 		
-		for (size_t i = 0 ; i < s.size() ;) {
-			Char c = s.GetChar(i);
+		for (size_t i = 0 ; i < tagged.size() ;) {
+			Char c = tagged.GetChar(i);
 			// tag?
 			if (c == _('<')) {
-				if (is_substr(s, i, _("<kw-")) && i + 4 < s.size()) {
-					expand_type = s.GetChar(i + 4); // <kw-?>
-					s = s.erase(i, skip_tag(s,i)-i); // remove the tag from the string
-				} else if (is_substr(s, i, _("</kw-"))) {
+				if (is_substr(tagged, i, _("<kw-")) && i + 4 < tagged.size()) {
+					expand_type = tagged.GetChar(i + 4); // <kw-?>
+					tagged = tagged.erase(i, skip_tag(tagged,i)-i); // remove the tag from the string
+				} else if (is_substr(tagged, i, _("</kw-"))) {
 					expand_type = 'a';
-					s = s.erase(i, skip_tag(s,i)-i); // remove the tag from the string
-				} else if (is_substr(s, i, _("<atom"))) {
-					i = match_close_tag_end(s, i); // skip <atom>s
+					tagged = tagged.erase(i, skip_tag(tagged,i)-i); // remove the tag from the string
+				} else if (is_substr(tagged, i, _("<atom"))) {
+					i = match_close_tag_end(tagged, i); // skip <atom>s
 				} else {
-					i = skip_tag(s, i);
+					i = skip_tag(tagged, i);
 				}
 				continue;
 			} else {
@@ -473,165 +474,188 @@ String KeywordDatabase::expand(const String& text,
 			FOR_EACH(n, current) {
 				FOR_EACH(f, n->finished) {
 					const Keyword* kw = f;
+					assert(kw->match_re.IsValid());
 					if (used.insert(kw).second) {
-						// we have found a possible match, which we have not seen before
-						assert(kw->match_re.IsValid());
-						
-						// try to match it against the *untagged* string
-						if (kw->match_re.Matches(untagged)) {
-							// Everything before the keyword
-							size_t start_u, len_u;
-							kw->match_re.GetMatch(&start_u, &len_u, 0);
-							size_t start = untagged_to_index(s, start_u, true),
-							       end   = untagged_to_index(s, start_u + len_u, true);
-							if (start == end) continue; // don't match empty keywords
-							// copy text before keyword
-							result += remove_tag(s.substr(0, start), _("<kw-"));
-							
-							// a part of s has not been searched for <kw- tags
-							// this can happen when the trie incorrectly matches too early
-							for (size_t j = i+1 ; j < start ;) {
-								Char c = s.GetChar(j);
-								if (c == _('<')) {
-									if (is_substr(s, j, _("<kw-")) && j + 4 < s.size()) {
-										expand_type = s.GetChar(j + 4); // <kw-?>
-									} else if (is_substr(s, j, _("</kw-"))) {
-										expand_type = 'a';
-									}
-									j = skip_tag(s, j);
-								} else {
-									++j;
-								}
-							}
-							
-							// Split the keyword, set parameters in context
-							String total; // the total keyword
-							size_t match_count = kw->match_re.GetMatchCount();
-							assert(match_count - 1 == 1 + 2 * kw->parameters.size());
-							for (size_t j = 1 ; j < match_count ; ++j) {
-								// we start counting at 1, so
-								// j = 1 mod 2 -> text
-								// j = 0 mod 2 -> parameter  #((j-1)/2) == (j/2-1)
-								size_t start_u, len_u;
-								kw->match_re.GetMatch(&start_u, &len_u, j);
-								// note: start_u can be (uint)-1 when len_u == 0
-								size_t part_end = len_u > 0 ? untagged_to_index(s, start_u + len_u, true) : start;
-								String part = s.substr(start, part_end - start);
-								// strip left over </kw tags
-								part = remove_tag(part,_("</kw-"));
-								if ((j % 2) == 0) {
-									// parameter
-									KeywordParam& kwp = *kw->parameters[j/2-1];
-									String param = untagged.substr(start_u, len_u); // untagged version
-									// strip separator_before
-									String separator_before, separator_after;
-									if (kwp.separator_before_re.IsValid() && kwp.separator_before_re.Matches(param)) {
-										size_t s_start, s_len; // start should be 0
-										kwp.separator_before_re.GetMatch(&s_start, &s_len);
-										separator_before = param.substr(0, s_start + s_len);
-										param = param.substr(s_start + s_len);
-										// strip from tagged version
-										size_t end_t = untagged_to_index(part, s_start + s_len, false);
-										part = get_tags(part, 0, end_t, true, true) + part.substr(end_t);
-										// transform?
-										if (kwp.separator_script) {
-											ctx.setVariable(_("input"), to_script(separator_before));
-											separator_before = kwp.separator_script.invoke(ctx)->toString();
-										}
-									}
-									// strip separator_after
-									if (kwp.separator_after_re.IsValid() && kwp.separator_after_re.Matches(param)) {
-										size_t s_start, s_len; // start + len should be param.size()
-										kwp.separator_after_re.GetMatch(&s_start, &s_len);
-										separator_after = param.substr(s_start);
-										param = param.substr(0, s_start);
-										// strip from tagged version
-										size_t start_t = untagged_to_index(part, s_start, false);
-										part = part.substr(0, start_t) + get_tags(part, start_t, part.size(), true, true);
-										// transform?
-										if (kwp.separator_script) {
-											ctx.setVariable(_("input"), to_script(separator_after));
-											separator_after = kwp.separator_script.invoke(ctx)->toString();
-										}
-									}
-									// to script
-									KeywordParamValueP script_param(new KeywordParamValue(kwp.name, separator_before, separator_after, param));
-									KeywordParamValueP script_part (new KeywordParamValue(kwp.name, separator_before, separator_after, part));
-									// process param
-									if (param.empty()) {
-										// placeholder
-										script_param->value = _("<atom-kwpph>") + (kwp.placeholder.empty() ? kwp.name : kwp.placeholder) + _("</atom-kwpph>");
-										script_part->value  = part + script_param->value; // keep tags
-									} else {
-										// apply parameter script
-										if (kwp.script) {
-											ctx.setVariable(_("input"), script_part);
-											script_part->value  = kwp.script.invoke(ctx)->toString();
-										}
-										if (kwp.reminder_script) {
-											ctx.setVariable(_("input"), script_param);
-											script_param->value = kwp.reminder_script.invoke(ctx)->toString();
-										}
-									}
-									part  = separator_before + script_part->toString() + separator_after;
-									ctx.setVariable(String(_("param")) << (int)(j/2), script_param);
-								}
-								total += part;
-								start = part_end;
-							}
-							ctx.setVariable(_("mode"), to_script(kw->mode));
-							
-							// Show reminder text?
-							bool expand = expand_type == _('1');
-							if (!expand && expand_type != _('0')) {
-								// default expand, determined by script
-								expand = expand_default && (bool)*expand_default->eval(ctx);
-								expand_type = expand ? _('A') : _('a');
-							}
-							
-							// Combine keyword & reminder with result
-							if (expand) {
-								String reminder;
-								try {
-									reminder = kw->reminder.invoke(ctx)->toString();
-								} catch (const Error& e) {
-									handle_error(_ERROR_2_("in keyword reminder", e.what(), kw->keyword), true, false);
-								}
-								ctx.setVariable(_("keyword"),  to_script(total));
-								ctx.setVariable(_("reminder"), to_script(reminder));
-								result +=  _("<kw-"); result += expand_type; result += _(">");
-								result += combine_script->eval(ctx)->toString();
-								result += _("</kw-"); result += expand_type; result += _(">");
-							} else {
-								result +=  _("<kw-"); result += expand_type; result += _(">");
-								result += total;
-								result += _("</kw-"); result += expand_type; result += _(">");
-							}
-							
-							// Add to usage statistics
-							if (stat && stat_key) {
-								stat->push_back(make_pair(stat_key, kw));
-							}
-							
-							// After keyword
-							s        = s.substr(end);
-							untagged = untagged.substr(start_u + len_u);
+						// we have found a possible match, for a keyword which we have not seen before
+						if (tryExpand(*kw, i, tagged, untagged, result, expand_type,
+						              expand_default, combine_script, case_sensitive, ctx,
+						              stat, stat_key))
+						{
+							// it matches
 							used.clear();
 							expand_type = _('a');
 							goto matched_keyword;
 						}
-						
 					}
 				}
 			}
 		}
 		// Remainder of the string
-		result += s; s.clear();
+		result += tagged;
+		tagged.clear();
 		
 		matched_keyword:;
 	}
 	
 	return result;
+}
+
+bool KeywordDatabase::tryExpand(const Keyword& kw,
+                                size_t expand_type_known_upto,
+                                String& tagged,
+                                String& untagged,
+                                String& result,
+                                char expand_type,
+                                const ScriptValueP& expand_default,
+                                const ScriptValueP& combine_script,
+                                bool case_sensitive,
+                                Context& ctx,
+                                KeywordUsageStatistics* stat,
+                                Value* stat_key) const
+{
+	// try to match regex against the *untagged* string
+	if (!kw.match_re.Matches(untagged)) return false;
+	
+	// Find match position
+	size_t start_u, len_u;
+	kw.match_re.GetMatch(&start_u, &len_u, 0);
+	size_t start = untagged_to_index(tagged, start_u, true),
+	       end   = untagged_to_index(tagged, start_u + len_u, true);
+	if (start == end) return false; // don't match empty keywords
+	
+	// copy text before keyword
+	result += remove_tag(tagged.substr(0, start), _("<kw-"));
+	
+	// a part of tagged has not been searched for <kw- tags
+	// this can happen when the trie incorrectly matches too early
+	for (size_t j = expand_type_known_upto+1 ; j < start ;) {
+		Char c = tagged.GetChar(j);
+		if (c == _('<')) {
+			if (is_substr(tagged, j, _("<kw-")) && j + 4 < tagged.size()) {
+				expand_type = tagged.GetChar(j + 4); // <kw-?>
+			} else if (is_substr(tagged, j, _("</kw-"))) {
+				expand_type = 'a';
+			}
+			j = skip_tag(tagged, j);
+		} else {
+			++j;
+		}
+	}
+	
+	// Split the keyword, set parameters in context
+	String total; // the total keyword
+	size_t match_count = kw.match_re.GetMatchCount();
+	assert(match_count - 1 == 1 + 2 * kw.parameters.size());
+	for (size_t j = 1 ; j < match_count ; ++j) {
+		// we start counting at 1, so
+		// j = 1 mod 2 -> text
+		// j = 0 mod 2 -> parameter  #((j-1)/2) == (j/2-1)
+		size_t start_u, len_u;
+		kw.match_re.GetMatch(&start_u, &len_u, j);
+		// note: start_u can be (uint)-1 when len_u == 0
+		size_t part_end = len_u > 0 ? untagged_to_index(tagged, start_u + len_u, true) : start;
+		String part = tagged.substr(start, part_end - start);
+		// strip left over </kw tags
+		part = remove_tag(part,_("</kw-"));
+		if ((j % 2) == 0) {
+			// parameter
+			KeywordParam& kwp = *kw.parameters[j/2-1];
+			String param = untagged.substr(start_u, len_u); // untagged version
+			// strip separator_before
+			String separator_before, separator_after;
+			if (kwp.separator_before_re.IsValid() && kwp.separator_before_re.Matches(param)) {
+				size_t s_start, s_len; // start should be 0
+				kwp.separator_before_re.GetMatch(&s_start, &s_len);
+				separator_before = param.substr(0, s_start + s_len);
+				param = param.substr(s_start + s_len);
+				// strip from tagged version
+				size_t end_t = untagged_to_index(part, s_start + s_len, false);
+				part = get_tags(part, 0, end_t, true, true) + part.substr(end_t);
+				// transform?
+				if (kwp.separator_script) {
+					ctx.setVariable(_("input"), to_script(separator_before));
+					separator_before = kwp.separator_script.invoke(ctx)->toString();
+				}
+			}
+			// strip separator_after
+			if (kwp.separator_after_re.IsValid() && kwp.separator_after_re.Matches(param)) {
+				size_t s_start, s_len; // start + len should be param.size()
+				kwp.separator_after_re.GetMatch(&s_start, &s_len);
+				separator_after = param.substr(s_start);
+				param = param.substr(0, s_start);
+				// strip from tagged version
+				size_t start_t = untagged_to_index(part, s_start, false);
+				part = part.substr(0, start_t) + get_tags(part, start_t, part.size(), true, true);
+				// transform?
+				if (kwp.separator_script) {
+					ctx.setVariable(_("input"), to_script(separator_after));
+					separator_after = kwp.separator_script.invoke(ctx)->toString();
+				}
+			}
+			// to script
+			KeywordParamValueP script_param(new KeywordParamValue(kwp.name, separator_before, separator_after, param));
+			KeywordParamValueP script_part (new KeywordParamValue(kwp.name, separator_before, separator_after, part));
+			// process param
+			if (param.empty()) {
+				// placeholder
+				script_param->value = _("<atom-kwpph>") + (kwp.placeholder.empty() ? kwp.name : kwp.placeholder) + _("</atom-kwpph>");
+				script_part->value  = part + script_param->value; // keep tags
+			} else {
+				// apply parameter script
+				if (kwp.script) {
+					ctx.setVariable(_("input"), script_part);
+					script_part->value  = kwp.script.invoke(ctx)->toString();
+				}
+				if (kwp.reminder_script) {
+					ctx.setVariable(_("input"), script_param);
+					script_param->value = kwp.reminder_script.invoke(ctx)->toString();
+				}
+			}
+			part  = separator_before + script_part->toString() + separator_after;
+			ctx.setVariable(String(_("param")) << (int)(j/2), script_param);
+		}
+		total += part;
+		start = part_end;
+	}
+	ctx.setVariable(_("mode"), to_script(kw.mode));
+	
+	// Show reminder text?
+	bool expand = expand_type == _('1');
+	if (!expand && expand_type != _('0')) {
+		// default expand, determined by script
+		expand = expand_default && (bool)*expand_default->eval(ctx);
+		expand_type = expand ? _('A') : _('a');
+	}
+	
+	// Combine keyword & reminder with result
+	if (expand) {
+		String reminder;
+		try {
+			reminder = kw.reminder.invoke(ctx)->toString();
+		} catch (const Error& e) {
+			handle_error(_ERROR_2_("in keyword reminder", e.what(), kw.keyword), true, false);
+		}
+		ctx.setVariable(_("keyword"),  to_script(total));
+		ctx.setVariable(_("reminder"), to_script(reminder));
+		result +=  _("<kw-"); result += expand_type; result += _(">");
+		result += combine_script->eval(ctx)->toString();
+		result += _("</kw-"); result += expand_type; result += _(">");
+	} else {
+		result +=  _("<kw-"); result += expand_type; result += _(">");
+		result += total;
+		result += _("</kw-"); result += expand_type; result += _(">");
+	}
+	
+	// Add to usage statistics
+	if (stat && stat_key) {
+		stat->push_back(make_pair(stat_key, &kw));
+	}
+	
+	// After keyword
+	tagged   = tagged.substr(end);
+	untagged = untagged.substr(start_u + len_u);
+	
+	return true;
 }
 
 // ----------------------------------------------------------------------------- : KeywordParamValue
