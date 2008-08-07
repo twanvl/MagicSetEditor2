@@ -234,12 +234,20 @@ color_of_card := {
 }
 
 rarity_sort := {
-	if set.sort_special_rarity == "with the rest" or card.rarity != "special" then " " else "S"
+	if card.shape == "token" then "T"
+	else if set.sort_special_rarity == "with the rest" or card.rarity != "special" then " "
+	else "S"
 }
 set_filter := {
-	if set.sort_special_rarity != "separate numbering" then nil
-	else if card.rarity == "special"                   then { card.rarity == "special" }
-	else                                                    { card.rarity != "special" }
+	# TODO: what about rulestips?
+	if card.shape == "token" then
+		{ card.shape == "token" }
+	else if set.sort_special_rarity != "separate numbering" then
+		{ card.shape != "token" and card.shape != "rulestip" }
+	else if card.rarity == "special" then
+		{ card.shape != "token" and card.shape != "rulestip" and card.rarity == "special" }
+	else
+		{ card.shape != "token" and card.shape != "rulestip" and card.rarity != "special" }
 }
 
 card_number := {
