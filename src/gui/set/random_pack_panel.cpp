@@ -316,9 +316,14 @@ void RandomPackPanel::generate() {
 
 // ----------------------------------------------------------------------------- : Selection
 
+CardP RandomPackPanel::selectedCard() const {
+	return card_list->getCard();
+}
+
 void RandomPackPanel::selectCard(const CardP& card) {
 	preview->setCard(card);
 }
+
 
 // ----------------------------------------------------------------------------- : Clipboard
 

@@ -36,6 +36,7 @@ class RandomPackPanel : public SetWindowPanel {
 	virtual void onCommand(int id);
 	
 	// --------------------------------------------------- : Selection
+	virtual CardP selectedCard() const;
 	virtual void selectCard(const CardP& card);
 	
 	// --------------------------------------------------- : Clipboard
