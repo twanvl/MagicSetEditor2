@@ -15,13 +15,7 @@ pack item:
 	filter: card.rarity == "special"
 pack item:
 	name: basic land
-	filter: card.type == "Plains"
-	filter: card.type == "Island"
-	filter: card.type == "Swamp"
-	filter: card.type == "Mountain"
-	filter: card.type == "Forest"
-	# TODO: support something like this:
-	#type: cyclic
+	filter: card.rarity == "basic land"
 
 ############################################################## Card packs
 
@@ -39,6 +33,7 @@ pack type:
 	item:
 		name: basic land
 		amount: 30
+		type: cyclic
 pack type:
 	name: booster pack
 	item:
