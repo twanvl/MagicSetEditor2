@@ -110,7 +110,7 @@ SCRIPT_FUNCTION(to_int) {
 			} else if (str.empty()) {
 				result = 0;
 			} else {
-				return new_intrusive1<ScriptDelayedError>(_ERROR_3_("can't convert value", input->toString(), input->typeName(), _TYPE_("integer")));
+				return delayError(_ERROR_3_("can't convert value", str, input->typeName(), _TYPE_("integer")));
 			}
 		} else {
 			result = (int)*input;
@@ -122,9 +122,26 @@ SCRIPT_FUNCTION(to_int) {
 }
 
 SCRIPT_FUNCTION(to_real) {
+	ScriptValueP input = ctx.getVariable(SCRIPT_VAR_input);
+	ScriptType t = input->type();
 	try {
-		SCRIPT_PARAM_C(double, input);
-		SCRIPT_RETURN(input);
+		double result;
+		if (t == SCRIPT_BOOL) {
+			result = (bool)*input ? 1.0 : 0.0;
+		} else if (t == SCRIPT_COLOR) {
+			AColor c = (AColor)*input;
+			result = (c.Red() + c.Blue() + c.Green()) / 3.0;
+		} else if (t == SCRIPT_STRING) {
+			String str = input->toString();
+			if (str.empty()) {
+				result = 0.0;
+			} else if (!str.ToDouble(&result)) {
+				return delayError(_ERROR_3_("can't convert value", str, input->typeName(), _TYPE_("double")));
+			}
+		} else {
+			result = (double)*input;
+		}
+		SCRIPT_RETURN(result);
 	} catch (const ScriptError& e) {
 		return new_intrusive1<ScriptDelayedError>(e);
 	}
@@ -133,27 +150,31 @@ SCRIPT_FUNCTION(to_real) {
 SCRIPT_FUNCTION(to_number) {
 	ScriptValueP input = ctx.getVariable(SCRIPT_VAR_input);
 	ScriptType t = input->type();
-	if (t == SCRIPT_BOOL) {
-		SCRIPT_RETURN((bool)*input ? 1 : 0);
-	} else if (t == SCRIPT_COLOR) {
-		AColor c = (AColor)*input;
-		SCRIPT_RETURN( (c.Red() + c.Blue() + c.Green()) / 3 );
-	} else if (t == SCRIPT_DOUBLE) {
-		SCRIPT_RETURN((double)*input);
-	} else if (t == SCRIPT_NIL) {
-		SCRIPT_RETURN(0);
-	} else {
-		String s = input->toString();
-		long l; double d;
-		if (s.ToLong(&l)) {
-			SCRIPT_RETURN((int)l);
-		} else if (s.ToDouble(&d)) {
-			SCRIPT_RETURN((double)d);
-		} else if (s.empty()) {
+	try {
+		if (t == SCRIPT_BOOL) {
+			SCRIPT_RETURN((bool)*input ? 1 : 0);
+		} else if (t == SCRIPT_COLOR) {
+			AColor c = (AColor)*input;
+			SCRIPT_RETURN( (c.Red() + c.Blue() + c.Green()) / 3 );
+		} else if (t == SCRIPT_DOUBLE) {
+			SCRIPT_RETURN((double)*input);
+		} else if (t == SCRIPT_NIL) {
 			SCRIPT_RETURN(0);
 		} else {
-			return delayError(_ERROR_2_("can't convert", input->typeName(), _TYPE_("double")));
+			String str = input->toString();
+			long l; double d;
+			if (str.ToLong(&l)) {
+				SCRIPT_RETURN((int)l);
+			} else if (str.ToDouble(&d)) {
+				SCRIPT_RETURN((double)d);
+			} else if (str.empty()) {
+				SCRIPT_RETURN(0);
+			} else {
+				return delayError(_ERROR_3_("can't convert value", str, input->typeName(), _TYPE_("double")));
+			}
 		}
+	} catch (const ScriptError& e) {
+		return new_intrusive1<ScriptDelayedError>(e);
 	}
 }
 

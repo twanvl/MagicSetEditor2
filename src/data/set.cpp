@@ -225,7 +225,7 @@ int Set::positionOfCard(const CardP& card, const ScriptValueP& order_by, const S
 			Context& ctx = getContext(c);
 			values.push_back(*order_by->eval(ctx));
 			if (filter) {
-				keep.push_back(*filter->eval(ctx));
+				keep.push_back((bool)*filter->eval(ctx));
 			}
 		}
 		// 3. initialize order cache
