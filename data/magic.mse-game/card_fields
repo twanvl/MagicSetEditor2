@@ -16,7 +16,9 @@ card field:
 	choice: split
 	choice: shifted
 	choice: rulestip
-	script: card_shape() # determined by the style
+	script:
+		stylesheet   # indicate that this value should be updated when the stylesheet changes
+		card_shape() # determined by the style
 card field:
 	type: text
 	name: full name
