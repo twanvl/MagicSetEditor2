@@ -51,32 +51,6 @@ class MSE : public wxApp {
 
 IMPLEMENT_APP(MSE)
 
-// ----------------------------------------------------------------------------- : GUI/Console
-
-/// Write a message to the console if it is available, and to a message box otherwise
-void write_stdout(const String& str) {
-	bool have_console = false;
-	#ifdef __WXMSW__
-		// somehow detect whether to use console output
-		// GetStdHandle sometimes returns an invalid handle instead of INVALID_HANDLE_VALUE
-		// check with GetHandleInformation
-		HANDLE h = GetStdHandle(STD_OUTPUT_HANDLE);
-		DWORD flags;
-		bool ok = GetHandleInformation(h,&flags);
-		if (ok) have_console = true;
-	#elif __WXGTK__
-		have_console = true; // always use console on *nix (?)
-	#endif
-	if (have_console) {
-		wxFileOutputStream file(wxFile::fd_stdout);
-		wxTextOutputStream t(file);
-		t.WriteString(str);
-	} else {
-		// no console, use a message box
-		wxMessageBox(str, _("Magic Set Editor"), wxOK | wxICON_INFORMATION);
-	}
-}
-
 // ----------------------------------------------------------------------------- : Checks
 
 void nag_about_ascii_version() {
