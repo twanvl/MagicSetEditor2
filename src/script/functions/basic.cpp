@@ -542,8 +542,8 @@ SCRIPT_FUNCTION(random_select) {
 SCRIPT_FUNCTION_WITH_DEP(expand_keywords) {
 	SCRIPT_PARAM_C(String, input);
 	SCRIPT_PARAM_C(Set*, set);
-	SCRIPT_PARAM_N(ScriptValueP, _("condition"),      match_condition);
-	SCRIPT_PARAM_N(ScriptValueP, _("default expand"), default_expand);
+	SCRIPT_OPTIONAL_PARAM_N_(ScriptValueP, _("condition"), match_condition);
+	SCRIPT_OPTIONAL_PARAM_N_(ScriptValueP, _("default expand"), default_expand);
 	SCRIPT_PARAM_N(ScriptValueP, _("combine"),        combine);
 	KeywordDatabase& db = set->keyword_db;
 	if (db.empty()) {
@@ -562,10 +562,10 @@ SCRIPT_FUNCTION_WITH_DEP(expand_keywords) {
 }
 SCRIPT_FUNCTION_DEPENDENCIES(expand_keywords) {
 	SCRIPT_PARAM_C(Set*, set);
-	SCRIPT_PARAM_N(ScriptValueP, _("condition"),      match_condition);
-	SCRIPT_PARAM_N(ScriptValueP, _("default expand"), default_expand);
+	SCRIPT_OPTIONAL_PARAM_N_(ScriptValueP, _("condition"), match_condition);
+	SCRIPT_OPTIONAL_PARAM_N_(ScriptValueP, _("default expand"), default_expand);
 	SCRIPT_PARAM_N(ScriptValueP, _("combine"),        combine);
-	match_condition->dependencies(ctx,dep);
+	if (match_condition) match_condition->dependencies(ctx,dep);
 	default_expand ->dependencies(ctx,dep);
 	combine        ->dependencies(ctx,dep);
 	set->game->dependent_scripts_keywords.add(dep); // this depends on the set's keywords

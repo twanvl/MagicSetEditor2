@@ -51,7 +51,7 @@ StatsDimension::StatsDimension(const Field& field)
 			groups.push_back(g->name);
 		}
 		// initialize script: primary_choice(card.{field_name})
-		Script& s = script.getScript();
+		Script& s = script.getMutableScript();
 		s.addInstruction(I_PUSH_CONST, script_primary_choice);
 		s.addInstruction(I_GET_VAR,    SCRIPT_VAR_card);
 		s.addInstruction(I_MEMBER_C,   field.name);
@@ -59,7 +59,7 @@ StatsDimension::StatsDimension(const Field& field)
 		s.addInstruction(I_NOP,        SCRIPT_VAR_input);
 	} else {
 		// initialize script, card.{field_name}
-		Script& s = script.getScript();
+		Script& s = script.getMutableScript();
 		s.addInstruction(I_GET_VAR,    SCRIPT_VAR_card);
 		s.addInstruction(I_MEMBER_C,   field.name);
 	}

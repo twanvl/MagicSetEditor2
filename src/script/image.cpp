@@ -77,7 +77,7 @@ bool ScriptableImage::update(Context& ctx) {
 	}
 }
 
-ScriptP ScriptableImage::getScriptP() {
+ScriptP ScriptableImage::getValidScriptP() {
 	if (script) return script.getScriptP();
 	// return value or a blank image
 	ScriptP s(new Script);

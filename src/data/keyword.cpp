@@ -670,7 +670,7 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 	bool expand = expand_type == _('1');
 	if (!expand && expand_type != _('0')) {
 		// default expand, determined by script
-		expand = expand_default && (bool)*expand_default->eval(ctx);
+		expand = expand_default ? (bool)*expand_default->eval(ctx) : true;
 		expand_type = expand ? _('A') : _('a');
 	}
 	

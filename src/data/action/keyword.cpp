@@ -53,7 +53,7 @@ void AddKeywordAction::perform(bool to_undo) {
 // ----------------------------------------------------------------------------- : Changing keywords
 
 KeywordReminderTextValue::KeywordReminderTextValue(Set& set, const TextFieldP& field, Keyword* keyword, bool editable)
-	: KeywordTextValue(field, keyword, &keyword->reminder.getUnparsed(), editable)
+	: KeywordTextValue(field, keyword, &keyword->reminder.getMutableUnparsed(), editable)
 	, set(set)
 	, keyword(*keyword)
 {}
@@ -72,8 +72,8 @@ void KeywordReminderTextValue::store() {
 		// parsed okay
 		if (checkScript(new_script)) {
 			// also runs okay, assign
-			keyword.reminder.getScriptP()  = new_script;
-			keyword.reminder.getUnparsed() = new_value;
+			keyword.reminder.setScriptP(new_script);
+			keyword.reminder.setUnparsed(new_value);
 		}
 	} else {
 		// parse errors, report

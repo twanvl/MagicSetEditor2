@@ -54,9 +54,9 @@ class ScriptableImage {
 	inline bool local() const { return value && value->local(); }
 	
 	/// Get access to the script, be careful
-	inline Script& getScript() { return script.getScript(); }
+	inline Script& getMutableScript() { return script.getMutableScript(); }
 	/// Get access to the script, always returns a valid script
-	ScriptP getScriptP();
+	ScriptP getValidScriptP();
 	
   protected:
 	OptionalScript  script;		///< The script, not really optional

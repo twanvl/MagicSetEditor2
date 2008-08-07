@@ -28,12 +28,12 @@ For example, in the case of magic:
 is used. This shows reminder text by default based on a [[type:set]] option, and it combined the keyword as @"keyword (reminder)"@.
 
 --Parameters--
-! Parameter		Type				Description
-| @input@		[[type:tagged string]]		String to expand keywords in.
-| @condition@		[[type:function]]		DOC_MSE_VERSION: since 0.3.7
-			 				When should a keyword be recognized at all?
-| @default_expand@	[[type:function]]		Should reminder text be shown by default?
-| @combine@		[[type:function]]		How to combine keywords with the reminder text?
+! Parameter		Type				Default		Description
+| @input@		[[type:tagged string]]		 		String to expand keywords in.
+| @condition@		[[type:function]]		@{true}@	DOC_MSE_VERSION: since 0.3.7
+			 				 		When should a keyword be recognized at all?
+| @default_expand@	[[type:function]]		@{true}@	Should reminder text be shown by default?
+| @combine@		[[type:function]]		 		How to combine keywords with the reminder text?
 
 --Arguments--
 
