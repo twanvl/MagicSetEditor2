@@ -42,7 +42,7 @@ class Reader {
 	/** Used for "include file" keys.
 	 *  package can be nullptr
 	 */
-	Reader(Packaged* package, const String& filename);
+	Reader(Packaged* package, const String& filename, bool ignore_invalid = false);
 	
 	~Reader() { showWarnings(); }
 	
@@ -182,7 +182,7 @@ class Reader {
 	template <typename T>
 	void unknownKey(T& v) {
 		if (key == _("include file")) {
-			Reader reader(package, value);
+			Reader reader(package, value, ignore_invalid);
 			reader.handle_greedy(v);
 			moveNext();
 		} else {

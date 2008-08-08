@@ -25,9 +25,9 @@ Reader::Reader(const InputStreamP& input, Packaged* package, const String& filen
 	handleAppVersion();
 }
 
-Reader::Reader(Packaged* pkg, const String& filename)
+Reader::Reader(Packaged* pkg, const String& filename, bool ignore_invalid)
 	: indent(0), expected_indent(0), state(OUTSIDE)
-	, ignore_invalid(false)
+	, ignore_invalid(ignore_invalid)
 	, filename(filename), package(pkg), line_number(0), previous_line_number(0)
 	, input(package_manager.openFileFromPackage(package, filename))
 {
