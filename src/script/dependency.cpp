@@ -67,10 +67,12 @@ class DependencyUnion : public ScriptValue {
 
 // Unify two values from different execution paths
 void unify(ScriptValueP& a, const ScriptValueP& b) {
+	assert(a && b);
 	if (a != b) a = new_intrusive2<DependencyUnion>(a,b);
 }
 // Unify two values from different execution paths
 ScriptValueP unified(const ScriptValueP& a, const ScriptValueP& b) {
+	assert(a && b);
 	if (a == b) return a;
 	else        return new_intrusive2<DependencyUnion>(a,b);
 }
@@ -159,7 +161,10 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				}
 				// unify bindings
 				FOR_EACH(v, j->bindings) {
-					setVariable(v.variable, unified(variables[v.variable].value, v.value.value) );
+					ScriptValueP old_value = variables[v.variable].value;
+					if (old_value) {
+						setVariable(v.variable, unified(old_value, v.value.value) );
+					}
 				}
 				delete j;
 			}
