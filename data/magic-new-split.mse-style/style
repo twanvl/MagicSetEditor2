@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿mse version: 0.3.7
 game: magic
 short name: Split Cards
 full name: Modern split cards
@@ -6,7 +6,7 @@ installer group: magic/new style/split cards
 icon: card-sample.png
 position hint: 003
 
-version: 2008-06-30
+version: 2008-08-07
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02

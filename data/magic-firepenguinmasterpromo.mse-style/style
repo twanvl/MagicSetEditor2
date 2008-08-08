@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿mse version: 0.3.7
 game: magic
 full name: FPM's Promo Magic
 short name: FPM Promo
@@ -6,7 +6,7 @@ installer group: magic/FirePenguinMaster/Promotional
 icon: card-sample.png
 position hint: 404
 
-version: 2008-05-19
+version: 2008-08-07
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29

@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿mse version: 0.3.7
 game: magic
 full name: Magic Old Split Cards
 short name: Old Splits
@@ -6,7 +6,7 @@ installer group: magic/old style/split cards
 icon: card-sample.png
 position hint: 103
 
-version: 2008-06-04
+version: 2008-08-07
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02

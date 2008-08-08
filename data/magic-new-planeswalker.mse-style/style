@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿mse version: 0.3.7
 game: magic
 short name: Walkers
 full name: Modern Planeswalkers
@@ -6,7 +6,7 @@ installer group: magic/new style/planeswalkers
 icon: card-sample.png
 position hint: 008
 
-version: 2008-06-02
+version: 2008-08-07
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02

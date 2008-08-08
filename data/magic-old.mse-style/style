@@ -4,7 +4,7 @@
 ############################################################## 
 ############################################################## 
 
-mse version: 0.3.6
+mse version: 0.3.7
 game: magic
 short name: Old style
 full name: Before 8th edition
@@ -12,7 +12,7 @@ installer group: magic/old style/normal cards
 icon: card-sample.png
 position hint: 101
 
-version: 2008-06-02
+version: 2008-08-07
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
