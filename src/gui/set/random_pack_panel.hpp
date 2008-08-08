@@ -28,6 +28,7 @@ class RandomPackPanel : public SetWindowPanel {
 	
 	// --------------------------------------------------- : UI
 	
+	virtual void onBeforeChangeSet();
 	virtual void onChangeSet();
 	
 	virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);

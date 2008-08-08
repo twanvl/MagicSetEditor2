@@ -186,8 +186,12 @@ RandomPackPanel::~RandomPackPanel() {
 	storeSettings();
 }
 
+void RandomPackPanel::onBeforeChangeSet() {
+	if (set) {
+		storeSettings();
+	}
+}
 void RandomPackPanel::onChangeSet() {
-	storeSettings();
 	preview  ->setSet(set);
 	card_list->setSet(set);
 	totals   ->setGame(set->game);
