@@ -106,7 +106,7 @@ int MSE::OnRun() {
 					InstallType type = settings.install_type;
 					if (argc > 2) {
 						String arg = argv[2];
-						if (starts_with(argv[2], _("--"))) {
+						if (starts_with(argv[2], _("--")) && arg != _("--color")) {
 							parse_enum(String(argv[2]).substr(2), type);
 						}
 					}
@@ -122,7 +122,9 @@ int MSE::OnRun() {
 					// create an installer
 					Installer inst;
 					for (int i = 2 ; i < argc ; ++i) {
-						inst.addPackage(argv[i]);
+						if (!starts_with(argv[i],_("--"))) {
+							inst.addPackage(argv[i]);
+						}
 					}
 					if (inst.prefered_filename.empty()) {
 						throw Error(_("Specify packages to include in installer"));
@@ -204,13 +206,15 @@ int MSE::OnRun() {
 					CLISetInterface cli_interface(set,quiet);
 					return EXIT_SUCCESS;
 				} else if (arg == _("--export")) {
-					if (argc <= 2) {
+					if (argc <= 2 || argc <= 3 && starts_with(argv[2],_("--"))) {
 						handle_error(Error(_("No input file specified for --export")));
 						return EXIT_FAILURE;
 					}
 					SetP set = import_set(argv[2]);
 					// path
-					String out = argc >= 3 ? argv[3] : settings.gameSettingsFor(*set->game).images_export_filename;
+					String out = argc >= 3 && !starts_with(argv[3],_("--"))
+					           ? argv[3]
+					           : settings.gameSettingsFor(*set->game).images_export_filename;
 					String path = _(".");
 					size_t pos = out.find_last_of(_("/\\"));
 					if (pos != String::npos) {
