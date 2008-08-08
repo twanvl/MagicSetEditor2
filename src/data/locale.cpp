@@ -25,6 +25,19 @@ DECLARE_TYPEOF(map<String COMMA SubLocaleP>);
 
 // ----------------------------------------------------------------------------- : Locale class
 
+// when reading, ignore "#_ADD" start of line pragmas
+
+typedef void (*ReaderPragmaHandler)(String&);
+DECLARE_DYNAMIC_ARG(ReaderPragmaHandler,reader_pragma_handler);
+
+void ignore_add_pragma(String& str) {
+	if      (starts_with(str,_("#_ADD "))) str = str.substr(6);
+	else if (starts_with(str,_("#_ADD")))  str = str.substr(5);
+	else if (starts_with(str,_("#_DEL")))  str.clear();
+}
+
+// ----------------------------------------------------------------------------- : Locale class
+
 LocaleP the_locale;
 
 String Locale::typeName() const { return _("locale"); }
@@ -36,6 +49,7 @@ LocaleP Locale::byName(const String& name) {
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(Locale) {
 	REFLECT_BASE(Packaged);
+	WITH_DYNAMIC_ARG(reader_pragma_handler, ignore_add_pragma);
 	REFLECT_N("menu",        translations[LOCALE_CAT_MENU]);
 	REFLECT_N("help",        translations[LOCALE_CAT_HELP]);
 	REFLECT_N("tool",        translations[LOCALE_CAT_TOOL]);

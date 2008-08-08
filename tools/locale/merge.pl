@@ -89,7 +89,10 @@ sub merge_locales {
 			if ($what eq 'a') {
 				# add
 				for(my $k=0 ; $k < $len ; $pos_out++, $pos1++, $k++) {
-					print "#_ADD", ($file1[$pos1] =~ /^\t/ ? '' : ' '), $file1[$pos1];
+					my $line = $file1[$pos1];
+					$line =~ s/^\xEF\xBB\xBF//; # eat BOM
+					$line = "#_ADD" . ($line =~ /^\t/ ? '' : ' ') . $line;
+					print $line;
 				}
 			} else {
 				# delete

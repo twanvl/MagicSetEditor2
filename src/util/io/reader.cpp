@@ -13,6 +13,10 @@
 #include <util/io/package_manager.hpp>
 #undef small
 
+typedef void (*ReaderPragmaHandler)(String&);
+DECLARE_DYNAMIC_ARG  (ReaderPragmaHandler,reader_pragma_handler);
+IMPLEMENT_DYNAMIC_ARG(ReaderPragmaHandler,reader_pragma_handler,nullptr);
+
 // ----------------------------------------------------------------------------- : Reader
 
 Reader::Reader(const InputStreamP& input, Packaged* package, const String& filename, bool ignore_invalid)
@@ -225,18 +229,20 @@ void Reader::readLine(bool in_string) {
 	} catch (const ParseError& e) {
 		throw ParseError(e.what() + String(_(" on line ")) << line_number);
 	}
+	// pragma handler
+	if (reader_pragma_handler()) reader_pragma_handler()(line);
 	// read indentation
 	indent = 0;
 	while ((UInt)indent < line.size() && line.GetChar(indent) == _('\t')) {
 		indent += 1;
 	}
 	// read key / value
-	size_t pos = line.find_first_of(_(':'), indent);
-	if (trim(line).empty() || line.GetChar(indent) == _('#')) {
+	if (line.find_first_not_of(_(" \t")) == String::npos || line.GetChar(indent) == _('#')) {
 		// empty line or comment
 		key.clear();
 		return;
 	}
+	size_t pos = line.find_first_of(_(':'), indent);
 	key = line.substr(indent, pos - indent);
 	if (!ignore_invalid && !in_string && starts_with(key, _(" "))) {
 		warning(_("key: '") + key + _("' starts with a space; only use TABs for indentation!"), 0, false);
