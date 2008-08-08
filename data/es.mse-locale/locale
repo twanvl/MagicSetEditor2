@@ -462,6 +462,8 @@ label:
 	columns:			Columnas:
 	
 	# Card select / images export
+#_ADD	select cards:			Cards to export
+#_ADD	selected card count:	%s cards will be exported.
 	select cards print:	Selecciona las cartas que quieres imprimir
 	filename format:	&Formato: 
 	filename conflicts:	&Soportar duplicado de nombres de archivos:
@@ -564,6 +566,10 @@ button:
 	hide:				&Ocultar
 	
 	# Card select
+#_ADD	export entire set:				Entire set
+#_ADD	export generated packs:			Generated packs
+#_ADD	export custom cards selection:	Custom selection
+#_ADD	select cards:		&Select Cards...
 	select all:			Seleccionar &todo
 	select none:		No seleccionar &ninguno
 	overwrite:			Sobreescribir archivos viejos

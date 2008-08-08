@@ -462,6 +462,8 @@ label:
 	columns:			Spalten:
 	
 	# Card select / images export
+#_ADD	select cards:			Cards to export
+#_ADD	selected card count:	%s cards will be exported.
 	select cards print:	Wähle die zu druckenden Karten aus
 	filename format:	&Format: 
 	filename conflicts:	&Doppelte Dateinamen:
@@ -564,6 +566,10 @@ button:
 	hide:				&Verstecken
 	
 	# Card select
+#_ADD	export entire set:				Entire set
+#_ADD	export generated packs:			Generated packs
+#_ADD	export custom cards selection:	Custom selection
+#_ADD	select cards:		&Select Cards...
 	select all:			&Alle auswählen
 	select none:		&Nichts auswählen
 	overwrite:			Überschreibe alte Dateinamen
@@ -579,7 +585,7 @@ button:
 	enabled:			Aktiviert
 	whole word:			Nur ganze Wörter akzeptieren
 	
-	# Update checker
+#_DEL	# Update checker
 	# Old style update checker  (NOTE: this will be removed in a feature version)
 	close:				&Beenden
 	

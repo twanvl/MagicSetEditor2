@@ -462,6 +462,8 @@ label:
 	columns:		栏目：
 	
 	# Card select / images export
+#_ADD	select cards:			Cards to export
+#_ADD	selected card count:	%s cards will be exported.
 	select cards print:	选择需要打印的卡牌
 	filename format:	格式: 
 	filename conflicts:	处理重复文件名:
@@ -564,6 +566,10 @@ button:
 	hide:			隐藏
 	
 	# Card select
+#_ADD	export entire set:				Entire set
+#_ADD	export generated packs:			Generated packs
+#_ADD	export custom cards selection:	Custom selection
+#_ADD	select cards:		&Select Cards...
 	select all:		全选
 	select none:		全不选
 	overwrite:		覆盖旧文件

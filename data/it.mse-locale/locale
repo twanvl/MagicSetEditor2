@@ -1,4 +1,5 @@
-﻿﻿mse version: 0.3.7
+﻿#_DEL ﻿mse version: 0.3.7
+#_ADD mse version: 0.3.7
 installer group: translations/Italiano
 full name: Italiano
 version: 2008-04-01
@@ -462,6 +463,8 @@ label:
 	columns:			Colonne:
 	
 	# Card select / images export
+#_ADD	select cards:			Cards to export
+#_ADD	selected card count:	%s cards will be exported.
 	select cards print:	Seleziona le carte che vuoi stampare
 	filename format:	&Formato: 
 	filename conflicts:	&Handle duplicating filenames:
@@ -564,6 +567,10 @@ button:
 	hide:				&Nascondi
 	
 	# Card select
+#_ADD	export entire set:				Entire set
+#_ADD	export generated packs:			Generated packs
+#_ADD	export custom cards selection:	Custom selection
+#_ADD	select cards:		&Select Cards...
 	select all:			Seleziona &Tutto
 	select none:		Annulla &Selezione
 	overwrite:			Sovrascrivi vecchi file
@@ -762,7 +769,8 @@ error:
 	# Stats panel
 	dimension not found:				There is no statistics dimension '%s'
 	
-	# Package update window  (TODO: Translate)
+#_DEL	# Package update window  (TODO: Translate)
+#_ADD	# Package update window
 #	checking updates:					Checking for updates.
 	can't download installer:
 		Unable to download installer for package %s from %s.
