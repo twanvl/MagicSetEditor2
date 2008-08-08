@@ -36,6 +36,18 @@ DECLARE_TYPEOF_COLLECTION(CardListBase*);
 DEFINE_EVENT_TYPE(EVENT_CARD_SELECT);
 DEFINE_EVENT_TYPE(EVENT_CARD_ACTIVATE);
 
+CardP CardSelectEvent::getCard() const {
+	return getTheCardList()->getCard();
+}
+
+void CardSelectEvent::getSelection(vector<CardP>& out) const {
+	getTheCardList()->getSelection(out);
+}
+
+CardListBase* CardSelectEvent::getTheCardList() const {
+	return static_cast<CardListBase*>(GetEventObject());
+}
+
 // ----------------------------------------------------------------------------- : CardListBase
 
 vector<CardListBase*> CardListBase::card_lists;
@@ -116,9 +128,19 @@ void CardListBase::getItems(vector<VoidP>& out) const {
 		out.push_back(c);
 	}
 }
-void CardListBase::sendEvent() {
-	CardSelectEvent ev(getCard());
+void CardListBase::sendEvent(int type) {
+	CardSelectEvent ev(type);
+	ev.SetEventObject(this);
 	ProcessEvent(ev);
+}
+
+void CardListBase::getSelection(vector<CardP>& out) const {
+	long count = GetItemCount();
+	for (long pos = 0 ; pos < count ; ++pos) {
+		if (const_cast<CardListBase*>(this)->IsSelected(pos)) {
+			out.push_back(getCard(pos));
+		}
+	}
 }
 
 // ----------------------------------------------------------------------------- : CardListBase : Clipboard
@@ -136,12 +158,7 @@ bool CardListBase::doCopy() {
 	if (!canCopy()) return false;
 	// cards to copy
 	vector<CardP> cards_to_copy;
-	long count = GetItemCount();
-	for (long pos = 0 ; pos < count ; ++pos) {
-		if (IsSelected(pos)) {
-			cards_to_copy.push_back(getCard(pos));
-		}
-	}
+	getSelection(cards_to_copy);
 	if (cards_to_copy.empty()) return false;
 	// put on clipboard
 	if (!wxTheClipboard->Open()) return false;
@@ -168,12 +185,7 @@ bool CardListBase::doPaste() {
 bool CardListBase::doDelete() {
 	// cards to delete
 	vector<CardP> cards_to_delete;
-	long count = GetItemCount();
-	for (long pos = 0 ; pos < count ; ++pos) {
-		if (IsSelected(pos)) {
-			cards_to_delete.push_back(getCard(pos));
-		}
-	}
+	getSelection(cards_to_delete);
 	if (cards_to_delete.empty()) return false;
 	// delete cards
 	set->actions.addAction(new AddCardAction(REMOVE, *set, cards_to_delete));
@@ -372,8 +384,7 @@ void CardListBase::onContextMenu(wxContextMenuEvent&) {
 
 void CardListBase::onItemActivate(wxListEvent& ev) {
 	selectItemPos(ev.GetIndex(), false);
-	CardSelectEvent event(getCard(), EVENT_CARD_ACTIVATE);
-	ProcessEvent(event);
+	sendEvent(EVENT_CARD_ACTIVATE);
 }
 
 // ----------------------------------------------------------------------------- : CardListBase : Event table

@@ -26,6 +26,11 @@ class SelectCardList : public CardListBase {
 	void selectNone();
 	/// Is the given card selected?
 	bool isSelected(const CardP& card) const;
+	/// Get a list of all selected cards
+	void getSelection(vector<CardP>& out) const;
+	/// Change which cards are selected
+	void setSelection(const vector<CardP>& cards);
+	
   protected:
 	virtual int  OnGetItemImage(long pos) const;
 	virtual void onChangeSet();

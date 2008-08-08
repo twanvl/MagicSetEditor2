@@ -39,6 +39,7 @@ class RandomPackPanel : public SetWindowPanel {
 	// --------------------------------------------------- : Selection
 	virtual CardP selectedCard() const;
 	virtual void selectCard(const CardP& card);
+	virtual void selectionChoices(ExportCardSelectionChoices& out);
 	
 	// --------------------------------------------------- : Clipboard
 	

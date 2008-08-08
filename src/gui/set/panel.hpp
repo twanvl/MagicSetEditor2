@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <data/set.hpp>
+#include <gui/card_select_window.hpp>
 
 class wxFindReplaceData;
 
@@ -69,6 +70,7 @@ class SetWindowPanel : public wxPanel, public SetView {
 	virtual CardP selectedCard() const;					///< Return the currently selected card, or CardP()
 	virtual void  selectCard(const CardP& card) {}		///< Switch the view to another card, can be null
 	virtual void  selectFirstCard() {}					///< Switch the view to the first card
+	virtual void  selectionChoices(ExportCardSelectionChoices& out) {} ///< Card subsets that can be exported from this panel
 };
 
 // ----------------------------------------------------------------------------- : EOF

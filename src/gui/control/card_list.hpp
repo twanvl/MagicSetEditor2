@@ -16,6 +16,7 @@
 
 DECLARE_POINTER_TYPE(ChoiceField);
 DECLARE_POINTER_TYPE(Field);
+class CardListBase;
 
 // ----------------------------------------------------------------------------- : Events
 
@@ -36,11 +37,16 @@ DECLARE_EVENT_TYPE(EVENT_CARD_ACTIVATE, <not used>)
 
 /// The event of selecting a card
 struct CardSelectEvent : public wxCommandEvent {
-	inline CardSelectEvent(const CardP& card, int type = EVENT_CARD_SELECT)
-		: wxCommandEvent(type), card(card)
+	inline CardSelectEvent(int type = EVENT_CARD_SELECT)
+		: wxCommandEvent(type)
 	{}
 	
-	CardP card; ///< The selected card
+	/// The selected card
+	CardP getCard() const;
+	/// All focused cards
+	void getSelection(vector<CardP>& out) const;
+  private:
+	CardListBase* getTheCardList() const;
 };
 
 // ----------------------------------------------------------------------------- : CardListBase
@@ -83,6 +89,8 @@ class CardListBase : public ItemList, public SetView {
   public:
 	/// Return the card at the given position in the sorted card list
 	inline CardP getCard(long pos) const { return static_pointer_cast<Card>(getItem(pos)); }
+	/// Get a list of all focused cards
+	void getSelection(vector<CardP>& out) const;
   protected:
 	/// Get a list of all cards
 	virtual void getItems(vector<VoidP>& out) const;
@@ -97,7 +105,8 @@ class CardListBase : public ItemList, public SetView {
 	virtual void sortBy(long column, bool ascending);
 	
 	/// Send an 'item selected' event for the currently selected item (selected_item)
-	virtual void sendEvent();
+	virtual void sendEvent() { sendEvent(EVENT_CARD_SELECT); }
+	void sendEvent(int type = EVENT_CARD_SELECT);
 	/// Compare cards
 	virtual bool compareItems(void* a, void* b) const;
 	

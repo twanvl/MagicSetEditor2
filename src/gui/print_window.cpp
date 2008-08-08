@@ -248,39 +248,45 @@ void CardsPrintout::drawCard(DC& dc, const CardP& card, int card_nr) {
 
 // ----------------------------------------------------------------------------- : PrintWindow
 
-void print_preview(Window* parent, const SetP& set) {
+const vector<CardP>* cards_to_print(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices) {
 	// Let the user choose cards
-	CardSelectWindow wnd(parent, set, _LABEL_("select cards print"), _TITLE_("select cards"));
+	//CardSelectWindow wnd(parent, set, _LABEL_("select cards print"), _TITLE_("select cards"));
+	ExportWindowBase wnd(set, choices);
+	wnd.wxDialog::Create(parent, wxID_ANY, _TITLE_("select cards"));
+	wxSizer* s = new wxBoxSizer(wxVERTICAL);
+		wxSizer* s2 = wnd.Create();
+		s->Add(s2, 1, wxEXPAND | wxALL, 8);
+		s->Add(wnd.CreateButtonSizer(wxOK | wxCANCEL) , 0, wxEXPAND | wxALL, 8);
+	s->SetSizeHints(&wnd);
+	wnd.SetSizer(s);
+	wnd.SetSize(300,-1);
+	// show window
 	if (wnd.ShowModal() != wxID_OK) {
-		return; // cancel
+		return nullptr; // cancel
 	}
-	vector<CardP> selected;
-	FOR_EACH(c, set->cards) {
-		if (wnd.isSelected(c)) selected.push_back(c);
-	}
+	return &wnd.getSelection();
+	
+}
+
+void print_preview(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices) {
+	const vector<CardP>* cards = cards_to_print(parent, set, choices);
+	if (!cards) return;
 	// Show the print preview
 	wxPreviewFrame* frame = new wxPreviewFrame(
 		new wxPrintPreview(
-			new CardsPrintout(set, selected),
-			new CardsPrintout(set, selected)
+			new CardsPrintout(set, *cards),
+			new CardsPrintout(set, *cards)
 		), parent, _TITLE_("print preview"));
 	frame->Initialize();
 	frame->Maximize(true);
 	frame->Show();
 }
 
-void print_set(Window* parent, const SetP& set) {
-	// Let the user choose cards
-	CardSelectWindow wnd(parent, set, _LABEL_("select cards print"), _TITLE_("select cards"));
-	if (wnd.ShowModal() != wxID_OK) {
-		return; // cancel
-	}
-	vector<CardP> selected;
-	FOR_EACH(c, set->cards) {
-		if (wnd.isSelected(c)) selected.push_back(c);
-	}
+void print_set(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices) {
+	const vector<CardP>* cards = cards_to_print(parent, set, choices);
+	if (!cards) return;
 	// Print the cards
 	wxPrinter p;
-	CardsPrintout pout(set, selected);
+	CardsPrintout pout(set, *cards);
 	p.Print(parent, &pout, true);
 }

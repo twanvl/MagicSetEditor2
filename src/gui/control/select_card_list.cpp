@@ -43,6 +43,18 @@ bool SelectCardList::isSelected(const CardP& card) const {
 	return selected.find(card) != selected.end();
 }
 
+void SelectCardList::getSelection(vector<CardP>& out) const {
+	FOR_EACH_CONST(card, set->cards) {
+		if (isSelected(card)) out.push_back(card);
+	}
+}
+
+void SelectCardList::setSelection(const vector<CardP>& cards) {
+	selected.clear();
+	copy(cards.begin(), cards.end(), inserter(selected, selected.begin()));
+}
+
+
 void SelectCardList::onChangeSet() {
 	CardListBase::onChangeSet();
 	// init selected list: select all

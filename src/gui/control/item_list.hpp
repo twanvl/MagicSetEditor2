@@ -21,6 +21,7 @@
  *  Terminology:
  *     selected item = a single item in the variable selected_item
  *     focused items = items that are drawn as selected in the control
+ *  TODO: This is reverse of normal
  */
 class ItemList : public wxListView {
   public:

@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
 #include <util/real_point.hpp>
+#include <gui/card_select_window.hpp>
 
 DECLARE_POINTER_TYPE(Set);
 class StyleSheet;
@@ -19,10 +20,10 @@ class StyleSheet;
 // ----------------------------------------------------------------------------- : Printing
 
 /// Show a print preview for the given set
-void print_preview(Window* parent, const SetP& set);
+void print_preview(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices);
 
 /// Print the given set
-void print_set(Window* parent, const SetP& set);
+void print_set(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices);
 
 // ----------------------------------------------------------------------------- : Layout
 

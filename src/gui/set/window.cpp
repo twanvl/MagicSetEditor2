@@ -329,16 +329,6 @@ void SetWindow::updateTitle() {
 	}
 }
 
-
-void SetWindow::onCardSelect(CardSelectEvent& ev) {
-	FOR_EACH(p, panels) {
-		p->selectCard(ev.card);
-	}
-}
-void SetWindow::onCardActivate(CardSelectEvent& ev) {
-	selectPanel(ID_WINDOW_CARDS);
-}
-
 void SetWindow::fixMinWindowSize() {
 	current_panel->SetMinSize(current_panel->GetSizer()->GetMinSize());
 	Layout();
@@ -358,6 +348,26 @@ void SetWindow::onSizeChange(wxCommandEvent&) {
 		p->Layout();
 	}
 	fixMinWindowSize();
+}
+
+
+// ----------------------------------------------------------------------------- : Cards
+
+void SetWindow::onCardSelect(CardSelectEvent& ev) {
+	FOR_EACH(p, panels) {
+		p->selectCard(ev.getCard());
+	}
+}
+void SetWindow::onCardActivate(CardSelectEvent& ev) {
+	selectPanel(ID_WINDOW_CARDS);
+}
+
+void SetWindow::selectionChoices(ExportCardSelectionChoices& out) {
+	out.push_back(new_intrusive1<ExportCardSelectionChoice>(*set)); // entire set
+	FOR_EACH(p, panels) {
+		p->selectionChoices(out);
+	}
+	out.push_back(new_intrusive<ExportCardSelectionChoice>()); // custom
 }
 
 // ----------------------------------------------------------------------------- : Window events - close
@@ -594,11 +604,15 @@ void SetWindow::onFileCheckUpdates(wxCommandEvent&) {
 }
 
 void SetWindow::onFilePrint(wxCommandEvent&) {
-	print_set(this, set);
+	ExportCardSelectionChoices choices;
+	selectionChoices(choices);
+	print_set(this, set, choices);
 }
 
 void SetWindow::onFilePrintPreview(wxCommandEvent&) {
-	print_preview(this, set);
+	ExportCardSelectionChoices choices;
+	selectionChoices(choices);
+	print_preview(this, set, choices);
 }
 
 void SetWindow::onFileReload(wxCommandEvent&) {

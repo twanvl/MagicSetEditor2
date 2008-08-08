@@ -72,9 +72,7 @@ void ImagesExportWindow::onOk(wxCommandEvent&) {
 	if (name.empty()) return;
 	// Cards to export
 	vector<CardP> cards;
-	FOR_EACH(card, set->cards) {
-		if (isSelected(card)) cards.push_back(card);
-	}
+	getSelection(cards);
 	// Export
 	export_images(set, cards, name, gs.images_export_filename, gs.images_export_conflicts);
 	// Done

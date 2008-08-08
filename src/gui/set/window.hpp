@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <data/set.hpp>
 #include <wx/fdrepdlg.h>
+#include <gui/card_select_window.hpp>
 
 class IconMenu;
 class SetWindowPanel;
@@ -86,15 +87,19 @@ class SetWindow : public wxFrame, public SetView {
 	virtual void onAction(const Action&, bool undone);
 	
   private:
-	/// A different card has been selected
-	void onCardSelect(CardSelectEvent&);
-	void onCardActivate(CardSelectEvent&);
-		
 	// minSize = mainSizer->getMinWindowSize(this)
 	// but wx made that private
 	void fixMinWindowSize();
 	/// Update the window title based on the set name
 	void updateTitle();
+	
+	// --------------------------------------------------- : Cards
+	
+	/// A different card has been selected
+	void onCardSelect(CardSelectEvent&);
+	void onCardActivate(CardSelectEvent&);
+	/// Card subsets that can be exported
+	void selectionChoices(ExportCardSelectionChoices& out);
 	
 	// --------------------------------------------------- : Window events - close
 	

@@ -39,6 +39,8 @@ class RandomCardList : public CardListBase {
 	
 	using CardListBase::rebuild;
 	
+	const vector<CardP>* getCardsPtr() const { return &cards; }
+	
   protected:
 	virtual void getItems(vector<VoidP>& out) const;
 	virtual void onChangeSet();
@@ -328,6 +330,12 @@ void RandomPackPanel::selectCard(const CardP& card) {
 	preview->setCard(card);
 }
 
+void RandomPackPanel::selectionChoices(ExportCardSelectionChoices& out) {
+	out.push_back(new_intrusive2<ExportCardSelectionChoice>(
+			_BUTTON_("export generated packs"),
+			card_list->getCardsPtr()
+		));
+}
 
 // ----------------------------------------------------------------------------- : Clipboard
 
