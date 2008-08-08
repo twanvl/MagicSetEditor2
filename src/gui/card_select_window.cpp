@@ -42,8 +42,9 @@ ExportCardSelectionChoice::ExportCardSelectionChoice(const String& label, const 
 // ----------------------------------------------------------------------------- : ExportWindowBase
 
 
-ExportWindowBase::ExportWindowBase(const SetP& set, const ExportCardSelectionChoices& cards_choices)
-	: set(set), cards_choices(cards_choices)
+ExportWindowBase::ExportWindowBase(Window* parent, const String& title, const SetP& set, const ExportCardSelectionChoices& cards_choices)
+	: wxDialog(parent, wxID_ANY, title)
+	, set(set), cards_choices(cards_choices)
 	, active_choice(0)
 	, select_cards(nullptr)
 {}
@@ -56,6 +57,7 @@ wxSizer* ExportWindowBase::Create() {
 	bool any_custom = false;
 	FOR_EACH(choice, cards_choices) {
 		wxRadioButton* btn = new wxRadioButton(this, ID_SELECTION_CHOICE + i, choice->label);
+		btn->SetValue(i == 0);
 		btn->Enable(!choice->the_cards->empty() || choice->type == EXPORT_SEL_CUSTOM);
 		s->Add(btn, 0, wxALL, 6);
 		s->AddSpacer(-4);

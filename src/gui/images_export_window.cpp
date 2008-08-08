@@ -21,8 +21,8 @@ DECLARE_TYPEOF_COLLECTION(CardP);
 
 // ----------------------------------------------------------------------------- : ImagesExportWindow
 
-ImagesExportWindow::ImagesExportWindow(Window* parent, const SetP& set)
-	: CardSelectWindow(parent, set, wxEmptyString, _TITLE_("select cards export"), false)
+ImagesExportWindow::ImagesExportWindow(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices)
+	: ExportWindowBase(parent, _TITLE_("select cards export"), set, choices)
 {
 	// init controls
 	GameSettings& gs = settings.gameSettingsFor(*set->game);
@@ -42,17 +42,12 @@ ImagesExportWindow::ImagesExportWindow(Window* parent, const SetP& set)
 			s2->Add(new wxStaticText(this, -1, _LABEL_("filename conflicts")), 0, wxALL, 4);
 			s2->Add(conflicts,                                                 0, wxEXPAND | wxALL & ~wxTOP, 4);
 		s->Add(s2, 0, wxEXPAND | wxALL, 8);
-		wxSizer* s3 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("cards to export"));
-			s3->Add(list, 1, wxEXPAND | wxALL, 4);
-			wxSizer* s4 = new wxBoxSizer(wxHORIZONTAL);
-				s4->Add(sel_all,  0, wxEXPAND | wxRIGHT, 4);
-				s4->Add(sel_none, 0, wxEXPAND,           4);
-			s3->Add(s4, 0, wxEXPAND | wxALL & ~wxTOP, 8);	
+		wxSizer* s3 = ExportWindowBase::Create();
 		s->Add(s3, 1, wxEXPAND | wxALL & ~wxTOP, 8);
 		s->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL & ~wxTOP, 8);
 	s->SetSizeHints(this);
 	SetSizer(s);
-	SetSize(500,500);
+	SetSize(500,-1);
 }
 
 // ----------------------------------------------------------------------------- : Exporting the images
@@ -70,16 +65,13 @@ void ImagesExportWindow::onOk(wxCommandEvent&) {
 	String name = wxFileSelector(_TITLE_("export images"),_(""), _LABEL_("filename is ignored"),_(""),
 		                         _LABEL_("filename is ignored")+_("|*"), wxSAVE, this);
 	if (name.empty()) return;
-	// Cards to export
-	vector<CardP> cards;
-	getSelection(cards);
 	// Export
-	export_images(set, cards, name, gs.images_export_filename, gs.images_export_conflicts);
+	export_images(set, getSelection(), name, gs.images_export_filename, gs.images_export_conflicts);
 	// Done
 	EndModal(wxID_OK);
 }
 
 
-BEGIN_EVENT_TABLE(ImagesExportWindow,CardSelectWindow)
+BEGIN_EVENT_TABLE(ImagesExportWindow,ExportWindowBase)
 	EVT_BUTTON       (wxID_OK,  ImagesExportWindow::onOk)
 END_EVENT_TABLE  ()

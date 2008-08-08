@@ -87,7 +87,7 @@ FileFormatP mtg_editor_file_format();
 void export_images(Window* parent, const SetP& set);
 
 /// Export the image for each card in a list of cards
-void export_images(const SetP& set, vector<CardP>& cards,
+void export_images(const SetP& set, const vector<CardP>& cards,
                    const String& path, const String& filename_template, FilenameConflicts conflicts);
 
 /// Export the image of a single card

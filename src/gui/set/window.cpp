@@ -580,7 +580,9 @@ void SetWindow::onFileExportImage(wxCommandEvent&) {
 }
 
 void SetWindow::onFileExportImages(wxCommandEvent&) {
-	ImagesExportWindow wnd(this, set);
+	ExportCardSelectionChoices choices;
+	selectionChoices(choices);
+	ImagesExportWindow wnd(this, set, choices);
 	wnd.ShowModal();
 }
 

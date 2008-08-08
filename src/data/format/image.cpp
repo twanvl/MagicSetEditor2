@@ -66,7 +66,7 @@ Bitmap export_bitmap(const SetP& set, const CardP& card) {
 // ----------------------------------------------------------------------------- : Multiple card export
 
 
-void export_images(const SetP& set, vector<CardP>& cards,
+void export_images(const SetP& set, const vector<CardP>& cards,
                    const String& path, const String& filename_template, FilenameConflicts conflicts)
 {
 	wxBusyCursor busy;

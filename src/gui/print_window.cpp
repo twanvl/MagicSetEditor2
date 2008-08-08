@@ -251,8 +251,7 @@ void CardsPrintout::drawCard(DC& dc, const CardP& card, int card_nr) {
 const vector<CardP>* cards_to_print(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices) {
 	// Let the user choose cards
 	//CardSelectWindow wnd(parent, set, _LABEL_("select cards print"), _TITLE_("select cards"));
-	ExportWindowBase wnd(set, choices);
-	wnd.wxDialog::Create(parent, wxID_ANY, _TITLE_("select cards"));
+	ExportWindowBase wnd(parent, _TITLE_("select cards"), set, choices);
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		wxSizer* s2 = wnd.Create();
 		s->Add(s2, 1, wxEXPAND | wxALL, 8);

@@ -16,9 +16,9 @@
 // ----------------------------------------------------------------------------- : ImagesExportWindow
 
 /// A window for selecting a subset of the cards from a set to export to images
-class ImagesExportWindow : public CardSelectWindow {
+class ImagesExportWindow : public ExportWindowBase {
   public:
-	ImagesExportWindow(Window* parent, const SetP& set);
+	ImagesExportWindow(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices);
 	
   private:
 	DECLARE_EVENT_TABLE();

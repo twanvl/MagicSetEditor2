@@ -42,7 +42,8 @@ typedef vector<ExportCardSelectionChoiceP> ExportCardSelectionChoices;
 /// Base class for export windows, deals with card selection
 class ExportWindowBase : public wxDialog {
   public:
-	ExportWindowBase(const SetP& set, const ExportCardSelectionChoices& cards_choices);
+	ExportWindowBase(Window* parent, const String& window_title,
+	                 const SetP& set, const ExportCardSelectionChoices& cards_choices);
 	/// Create the controls, return a sizer containing them
 	wxSizer* Create();
 	
