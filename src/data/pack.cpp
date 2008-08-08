@@ -54,7 +54,7 @@ IMPLEMENT_REFLECTION_ENUM(PackRefType) {
 
 PackItemRef::PackItemRef()
 	: amount(1)
-	, type(PACK_REF_REPLACE)
+	, type(PACK_REF_NO_REPLACE)
 {}
 
 IMPLEMENT_REFLECTION(PackItemRef) {

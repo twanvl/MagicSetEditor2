@@ -12,7 +12,7 @@ A reference to a [[type:pack item]].
 ! Property	Type				Default		Description
 | @name@	Name of a [[type:pack item]]	''required''	Name of the pack item to include in this pack.
 | @amount@	[[type:scriptable]] [[type:double]]	1	How many of those cards are in the pack?
-| @type@	@"replace"@, @"no replace"@ or @"cyclic"@	@"replace"@	How should the cards be selected? The options are: <ul><li>Random with replacement</li><li>Random without replacement</li><li>Cyclic, selecting each card in turn</li></ul>
+| @type@	@"replace"@, @"no replace"@ or @"cyclic"@	@"no replace"@	How should the cards be selected? The options are: <ul><li>Random with replacement</li><li>Random without replacement</li><li>Cyclic, selecting each card in turn</li></ul>
 
 --Example--
 >item:
