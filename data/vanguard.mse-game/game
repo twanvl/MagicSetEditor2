@@ -5,7 +5,7 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2008-08-05
+version: 2008-08-07
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -120,10 +120,15 @@ init script:
 		remove_tag@(tag: "<i-auto>")   +
 		# step 2 : reminder text for keywords
 		expand_keywords@(
-			default_expand: { contains(match:mode, set.automatic_reminder_text) },
+			condition: {
+				correct_case or (mode != "pseudo" and not used_placeholders)
+			}
+			default_expand: {
+				chosen(choice:if correct_case then mode else "lower case", set.automatic_reminder_text)
+			},
 			combine:        {
 				if mode == "pseudo" then "<i-auto>{keyword}</i-auto>"
-				else "{keyword}<atom-reminder><i> ({process_english_hints(reminder)})</i></atom-reminder>" }
+				else "{keyword}<atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
 			) +
 		# step 2b : move inline keywords' reminder text to the end of the line
 		replace@(
@@ -188,8 +193,9 @@ init script:
 	#Necessary to make magic-mana-future play nicely
 	colorless_color := { "c" }
 	
+	word_count := break_text@(match:"[^[:space:]]+") + length
+	
 ############################################################## Set fields
-
 set field:
 	type: info
 	name: Set Information
@@ -233,7 +239,7 @@ set field:
 	choice: expert
 	choice: pseudo
 	choice: custom
-	initial: old, core, expert, custom
+	initial: old, pseudo, custom
 	# Convert from older mse versions
 	script:
 		if value = "yes" then "old, core, expert, custom"
@@ -245,9 +251,7 @@ set field:
 	name: automatic card numbers
 	initial: no
 	description: Should card numbers be shown on the cards?
-
 ############################# Default style
-
 default set style:
 	title:
 		padding left: 2
@@ -256,9 +260,7 @@ default set style:
 	automatic reminder text:
 		render style: checklist
 		direction: vertical
-
 ############################################################## Card fields
-
 ############################# Background stuff
 card field:
 	type: color
@@ -364,6 +366,7 @@ card field:
 	name: illustrator
 	default: set.artist
 	description: The illustrator of the image
+	icon: stats/illustrator.png
 card field:
 	type: text
 	name: copyright
@@ -381,6 +384,26 @@ card field:
 		else
 			forward_editor(field: card.copyright)
 	description: The copyright and card number of the card
+############################################################### Extra Statistics
+statistics dimension:
+	name: keywords
+	position hint: 1000
+	script: keyword_usage(unique:true)
+	show empty: false
+	split list: true
+	icon: stats/keywords.png
+statistics dimension:
+	name: style
+	position hint: 1001
+	script: stylesheet.short_name
+	icon: stats/stylesheet.png
+statistics dimension:
+	name: text length (words)
+	position hint: 100
+	script: word_count(to_text(card.rule_text))
+	numeric: true
+	bin size: 5
+	icon: stats/text_length.png
 ############################################################## Auto replace
 # Do we need categories?
 #auto replace category: text box
@@ -414,7 +437,6 @@ auto replace:
 	replace: as an additional cost to play
 
 ############################################################## Keywords
-
 ############################# Keyword rules
 
 has keywords: true
@@ -523,7 +545,6 @@ keyword parameter type:
 
 ############################# All Magic keywords
 # By JrEye and Neko_Asakami, Updated by Pichoro and Buttock1234
-
 keyword:
 	keyword: Flying
 	match: flying
