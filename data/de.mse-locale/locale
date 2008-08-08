@@ -38,7 +38,7 @@ menu:
 	cards:			&Karten
 	previous card:		Vorherige	PgUp
 	next card:			Nächste	PgDn
-	add card:			Hinzufügen	Ctrl++
+	add card:			Hinzufügen	Ctrl+Enter
 	add cards:			Mehrere hinzufügen...
 	remove card:		Markierte Entfernen 	Del
 	orientation:		Ansicht
@@ -51,7 +51,7 @@ menu:
 	keywords:		&Fähigkeiten
 	previous keyword:	Vorherige	PgUp
 	next keyword:		Nächste	PgDn
-	add keyword:		Hinzufügen	Ctrl++
+	add keyword:		Hinzufügen	Ctrl+Enter
 	remove keyword:		Markierte Enfernen	Del
 	
 	format:			F&ormat
