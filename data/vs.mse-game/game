@@ -1,11 +1,11 @@
-﻿mse version: 0.3.6
+﻿mse version: 0.3.7
 full name: VS System
 short name: VS
 installer group: VS System/game files
 icon: card-back.png
 position hint: 3
 
-version: 2008-01-03
+version: 2008-08-07
 depends on:
 	package: vs-common.mse-include
 	version: 2008-01-03
@@ -62,8 +62,13 @@ init script:
 		tag_remove_rule(tag: "<i-auto>")   +
 		tag_remove_rule(tag: "<b-auto>")   +
 		# step 2 : reminder text for keywords
-		expand_keywords_rule(
-			default_expand: { contains(match:mode, set.automatic_reminder_text) },
+		expand_keywords@(
+			condition: {
+				correct_case
+			}
+			default_expand: {
+				chosen(choice:if correct_case then mode else "lower case", set.automatic_reminder_text)
+			},
 			combine:        { "<b-auto>{keyword}</b-auto><atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
 			) +
 		# step 3 : expand shortcut words ~ and CARDNAME
@@ -231,9 +236,10 @@ init script:
 				sort_index() + card.team + card.team_2_of_2 + card.team_2 + card.team_2_of_2_2 + card.name + card.version + " • " + card.team_affiliation
 			}) + 1
 	}
-		
+	
+	word_count := break_text@(match:"[^[:space:]]+") + length
+	
 ############################################################## Set fields
-
 set field:
 	type: text
 	name: title
@@ -291,10 +297,7 @@ set field:
 	type: boolean
 	name: automatic card numbers
 	description: Should card numbers be shown on the cards?
-
-
 ############################# Default style
-
 default set style:
 	logo:
 		font:
@@ -313,9 +316,7 @@ default set style:
 	automatic reminder text:
 		render style: checklist
 		direction: vertical
-
 ############################################################## Card fields
-
 ############################# Background stuff
 card field:
 	type: choice
@@ -346,7 +347,6 @@ card field:
 	choice: planet
 	default: card_type()
 	show statistics: false
-
 ############################# Name line
 card field:
 	type: text
@@ -358,6 +358,7 @@ card field:
 	name: sep
 	editable: false
 	script: if is_character() and card.identity=="" then "™" else if is_character() and card.identity!="" then "™ <sym>@</sym>" else ""
+	show statistics: false
 card field:
 	type: text
 	name: identity
@@ -391,7 +392,6 @@ card field:
 	card list alignment: right
 	card list width: 37
 	card list name: Cost
-
 ############################# Image
 card field:
 	type: image
@@ -420,7 +420,6 @@ card field:
 	choice: first edition
 	editable: false
 	show statistics: false
-
 ############################# Type Bar
 card field:
 	type: text
@@ -453,7 +452,6 @@ card field:
 	choice: type bar
 	editable: false
 	show statistics: false
-
 ############################# Version
 card field:
 	type: text
@@ -482,7 +480,6 @@ card field:
 	card list visible: true
 	card list column: 2
 	show statistics: false
-
 ############################# Card ID
 card field:
 	type: text
@@ -539,7 +536,7 @@ card field:
 	choice: rare
 	choice: promo
 	default: set.set_rarity
-
+	icon: stats/rarity.png
 ############################# Affiliation
 card field:
 	type: text
@@ -566,7 +563,6 @@ card field:
 			type_over1: " `"
 		)
 	description: The team of the card, use ` for a separator for dual cards
-
 card field:
 	type: text
 	name: team 2
@@ -591,7 +587,6 @@ card field:
 			type_over1: " `"
 		)
 	description: The second affiliation of the card (for dual cards)
-
 ############################# FlightRange
 card field:
 	type: multiple choice
@@ -603,7 +598,6 @@ card field:
 	default: symbol_default()
 	description: Symbols for this card (flight/range/ongoing), multiple symbols can be selected
 	show statistics: false
-
 ############################# Text box
 card field:
 	type: text
@@ -623,8 +617,6 @@ card field:
 	include file: /vs-common.mse-include/watermark-names
 	editable: false
 	description: The Watermark for this set.
-
-
 ############################# Atack / Defense
 card field:
 	type: text
@@ -637,7 +629,6 @@ card field:
 	card list width: 33
 	card list name: ATK
 	card list alignment: right
-
 card field:
 	type: text
 	name: defence
@@ -649,12 +640,12 @@ card field:
 	card list width: 33
 	card list name: DEF
 	card list alignment: right
-
 ############################# Copyright stuff
 card field:
 	type: text
 	name: illustrator
 	default: set.artist
+	icon: stats/illustrator.png
 card field:
 	type: text
 	name: copyright
@@ -662,9 +653,27 @@ card field:
 	default: set.copyright
 	multi line: true
 	show statistics: false
-
+############################################################# Extra Statistics
+statistics dimension:
+	name: keywords
+	position hint: 1000
+	script: keyword_usage(unique:true)
+	show empty: false
+	split list: true
+	icon: stats/keywords.png
+statistics dimension:
+	name: style
+	position hint: 1001
+	script: stylesheet.short_name
+	icon: stats/stylesheet.png
+statistics dimension:
+	name: text length (words)
+	position hint: 100
+	script: word_count(to_text(card.rule_text))
+	numeric: true
+	bin size: 5
+	icon: stats/text_length.png
 ############################################################## Auto replace
-
 # Do we need categories?
 #auto replace category: text box
 #auto replace category: copyright
@@ -696,7 +705,6 @@ auto replace:
 	match: ::
 	replace: •
 ############################################################## Keywords
-
 ############################# Keyword rules
 
 has keywords: true
@@ -725,9 +733,7 @@ keyword parameter type:
 		[^
 		(.,]+
 
-
 ############################# All VS System keywords
-
 keyword:
 	keyword: Concealed—Optional
 	match: Concealed—Optional
