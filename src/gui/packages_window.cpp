@@ -181,6 +181,7 @@ PackagesWindow::PackagesWindow(Window* parent, const InstallerP& installer)
 	init(parent, true);
 	// add installer
 	merge(installable_packages, new_intrusive1<DownloadableInstaller>(installer));
+	FOR_EACH(p, installable_packages) p->determineStatus();
 	// mark all packages in the installer for installation
 	FOR_EACH(ip, installable_packages) {
 		if (ip->can(PACKAGE_INSTALL)) {
@@ -279,6 +280,11 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 			to_remove++;
 			if ((ip->status & PACKAGE_MODIFIED) == PACKAGE_MODIFIED) with_modifications++;
 		}
+	}
+	// anything to do?
+	if (!to_change) {
+		ev.Skip();
+		return;
 	}
 	// Warn about removing
 	if (to_remove) {
