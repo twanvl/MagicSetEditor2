@@ -7,12 +7,12 @@ A reference to a [[type:symbol font]].
 In [[type:stylesheet]]s the symbol fonts are not included inline, instead they are referenced by their package name.
 
 --Properties--
-! Property		Type			Default			Description
+! Property		Type					Default			Description
 | @name@		[[type:scriptable]] Name of a [[type:symbol font]]
-			 			''required''		Name of the symbol font package to use (without the extension).
-| @size@		[[type:double]]		12			Size in points to render the symbols with.
-| @scale down to@	[[type:double]]		1			Minimum size in points to scale the size down to.
-| @alignment@		[[type:alignment]]	@"middle center"@	Alignment of symbols in a line of text.
+			 					''required''		Name of the symbol font package to use (without the extension).
+| @size@		[[type:scriptable]] [[type:double]]	12			Size in points to render the symbols with.
+| @scale down to@	[[type:double]]				1			Minimum size in points to scale the size down to.
+| @alignment@		[[type:scriptable]] [[type:alignment]]	@"middle center"@	Alignment of symbols in a line of text.
 
 --Example--
 >symbol font:

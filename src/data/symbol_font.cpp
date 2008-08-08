@@ -550,17 +550,22 @@ bool SymbolFontRef::valid() const {
 }
 
 bool SymbolFontRef::update(Context& ctx) {
+	bool changes = false;
 	if (name.update(ctx)) {
 		// font name changed, load another font
 		loadFont(ctx);
-		return true;
-	} else {
-		if (!font) loadFont(ctx);
-		return false;
+		changes = true;
+	} else if (!font) {
+		loadFont(ctx);
 	}
+	changes |= size.update(ctx);
+	changes |= alignment.update(ctx);
+	return changes;
 }
 void SymbolFontRef::initDependencies(Context& ctx, const Dependency& dep) const {
 	name.initDependencies(ctx, dep);
+	size.initDependencies(ctx, dep);
+	alignment.initDependencies(ctx, dep);
 }
 
 void SymbolFontRef::loadFont(Context& ctx) {

@@ -154,11 +154,11 @@ class SymbolFontRef {
 	/// Is a font loaded?
 	bool valid() const;
 		
-	Scriptable<String> name;			///< Font package name, can be changed with script
-	double             size;			///< Size of the font
-	double             scale_down_to;	///< Mimumum size of the font
-	Alignment          alignment;		///< Alignment of symbols in a line of text
-	SymbolFontP        font;			///< The font, if it is loaded
+	Scriptable<String>    name;				///< Font package name, can be changed with script
+	Scriptable<double>    size;				///< Size of the font
+	double                scale_down_to;	///< Mimumum size of the font
+	Scriptable<Alignment> alignment;		///< Alignment of symbols in a line of text
+	SymbolFontP           font;				///< The font, if it is loaded
 	
   private:
 	DECLARE_REFLECTION();
