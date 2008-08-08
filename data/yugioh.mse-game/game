@@ -1,10 +1,10 @@
-﻿mse version: 0.3.6
+﻿mse version: 0.3.7
 short name: Yu-Gi-Oh!
 installer group: Yugioh/Game Files
 icon: card-back.png
 position hint: 4
 
-version: 2008-05-19
+version: 2008-08-08
 
 ############################################################## Functions & filters
 ## Copied and Pasted from vs.mse-game, with a few modifications
@@ -433,3 +433,17 @@ word list:
 	word: Synchro
 	word: Toon
 	word: Union
+############################################################## Card pack items
+pack item:
+	name: card
+	filter: card.foils == "none"
+############################################################## Card packs
+pack type:
+	name: booster pack
+	item:
+		name: card
+		amount: 9
+pack type:
+	name: additional card
+	item:
+		name: card

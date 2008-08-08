@@ -5,7 +5,7 @@ installer group: VS System/game files
 icon: card-back.png
 position hint: 3
 
-version: 2008-08-07
+version: 2008-08-08
 depends on:
 	package: vs-common.mse-include
 	version: 2008-01-03
@@ -704,6 +704,30 @@ auto replace:
 auto replace:
 	match: ::
 	replace: •
+############################################################## Card pack items
+pack item:
+	name: common / uncommon
+	filter: card.rarity == "common" or card.rarity == "uncommon"
+pack item:
+	name: rare
+	filter: card.rarity == "rare"
+############################################################## Card packs
+pack type:
+	name: booster pack
+	item:
+		name: rare
+		amount: 1
+	item:
+		name: common / uncommon
+		amount: 13
+pack type:
+	name: additional common / uncommon
+	item:
+		name: common / uncommon
+pack type:
+	name: additional rare
+	item:
+		name: rare
 ############################################################## Keywords
 ############################# Keyword rules
 

@@ -5,7 +5,7 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2008-08-07
+version: 2008-08-08
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -435,7 +435,16 @@ auto replace:
 auto replace:
 	match: AAA
 	replace: as an additional cost to play
-
+############################################################## Card pack items
+pack item:
+	name: card
+	filter: card.name != ""
+############################################################## Card packs
+pack type:
+	name: booster pack
+	item:
+		name: card
+		amount: 1
 ############################################################## Keywords
 ############################# Keyword rules
 
