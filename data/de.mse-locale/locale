@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿﻿mse version: 0.3.7
 installer group: translations/Deutsch
 full name: Deutsch
 version: 2008-07-24
@@ -15,9 +15,9 @@ menu:
 	export html:			&HTML...
 	export image:			Kartenb&ild...
 	export images:			Alle Kartenbilder...
-	check updates:		Nach Updates schauen...
 	export apprentice:		&Apprentice...
 	export mws:				Magic &Workstation...
+	check updates:		Nach Updates schauen...
 	print preview:		Druckvorschau...
 	print:				&Drucken...	Ctrl+P
 	reload data:		Daten neuladen	Ctrl+F5
@@ -75,6 +75,7 @@ menu:
 	style tab:			Aussehen	F7
 	keywords tab:		Fähigkeiten	F8
 	stats tab:			S&tatistik	F9
+#_ADD	random pack tab:	&Random Packs
 	
 	help:			&Hilfe
 	index:				&Index...	F1
@@ -182,11 +183,20 @@ help:
 	style tab:			Ändere das Aussehen der Karten
 	keywords tab:		Füge Fähigkeiten für diese Edition hinzu
 	stats tab:			Zeigt eine Statistik über diese Edition an
+#_ADD	random pack tab:	Try how the set works out in practice by generating random booster packs.
 	
 	help:
 	index:				
 	website:			
 	about:				
+	
+	# Cards panel
+#_ADD	collapse notes:		Hide the card notes box
+#_ADD	expand notes:		Show the card notes box
+	# Random pack panel
+#_ADD	random seed:		Different packs will be generated each time.
+#_ADD	fixed seed:			Using the same seed number gives the same 'random' packs.
+#_ADD	seed:				Seed number for the random generator. Using the same seed number gives the same 'random' packs.
 	
 	# Preferences
 	app language:
@@ -273,6 +283,7 @@ tool:
 	style tab:			Aussehen
 	keywords tab:		Fähigkeiten
 	stats tab:			Statistik
+#_ADD	random pack tab:	Random
 	
 	# symbol editor
 	store symbol:		Übernehmen
@@ -317,6 +328,7 @@ tooltip:
 	style tab:			
 	keywords tab:		
 	stats tab:				
+#_ADD	random pack tab:	Random packs
 	
 	new set:			Neue Edition
 	open set:			Edition öffnen
@@ -407,6 +419,11 @@ label:
 	# Style tab
 	styling options:	Einstellungen zum Aussehen
 	
+	# Random pack panel
+#_ADD	pack selection:		Pack selection
+#_ADD	pack totals:		Totals
+#_ADD	seed:				Seed
+	
 	# Open dialogs
 	all files			Alle Dateien
 	
@@ -464,9 +481,23 @@ label:
 	original:			Original:
 	result:				Result:
 	size:				Größe
+#_ADD	original size:			&Original Size
+#_ADD	size to fit:			Size to &Fit
+#_ADD	force to fit:			F&orce to Fit
+#_ADD	custom size:			&Custom Size
 	selection:			Auswahl
+#_ADD	selection left:			&Left
+#_ADD	selection top:			&Top
+#_ADD	selection width:		&Width
+#_ADD	selection height:		&Height
 	zoom:				Zoom
+#_ADD	fix aspect ratio:		Fix aspect ratio (width/height)
+#_ADD	zoom amount:			Zoom
+#_ADD	zoom amount x:			Zoom &X
+#_ADD	zoom amount y:			Zoom &Y
+#_ADD	zoom %:					%
 	filter:				Filter
+#_ADD	sharpen filter:			&Sharpen filter
 	
 	# Auto replace
 	auto match:			Auswählen
@@ -502,6 +533,11 @@ button:
 	# Keywords panel
 	insert parameter:	Fähigkeit einfügen...
 	refer parameter:	Fähigkeit verwenden...
+	
+	# Random pack panel
+#_ADD	generate pack:		&Generate Pack
+#_ADD	random seed:		&Random Seed
+#_ADD	fixed seed:			&Fixed Seed
 	
 	# Welcome
 	new set:			Neue Edition
@@ -544,6 +580,7 @@ button:
 	whole word:			Nur ganze Wörter akzeptieren
 	
 	# Update checker
+	# Old style update checker  (NOTE: this will be removed in a feature version)
 	close:				&Beenden
 	
 	# Packages window
@@ -592,7 +629,6 @@ title:
 	export cancelled:		Export abgebrochen
 	export html:		Exportieren als HTML
 	save html:			Exportieren als HTML
-
 	# auto replace
 	auto replaces:		Automatisches Ersetzen
 	
@@ -674,9 +710,9 @@ error:
 		%s
 	package not found:			Package nicht gefunden: '%s'
 	package out of date:		Package '%s' (Version %s) ist nicht kompatibel, Version %s wird benötigt.
+	package too new:			Package '%s' (Version %s) ist nicht kompatibel mit Version %s, Version %s wird benötigt.
 	unable to open output file:	Fehler beim Speichern, kann Datei nicht öffnen
 	unable to store file:		Fehler beim Speichern, kann Datei nicht speichern
-	package too new:			Package '%s' (Version %s) ist nicht kompatibel mit Version %s, Version %s wird benötigt.
 	dependency not given:
 		Das Package '%s' verwendet Dateien vom Package '%s', aber es besitzt kein Abhängigkeitsverhältnis.
 		Bitte fügen Sie folgendes ein:
@@ -718,6 +754,7 @@ error:
 		Bitte laden Sie sich die neuste Version unter 
 		http:://magicseteditor.sourceforge.net/ herunter.
 	word list type not found:			%s ist nicht bei <Wortliste> gelistet
+#_ADD	pack item not found:				The pack item "%s" was not found (from a pack type)
 	
 	# Update checking
 	checking updates failed:			Update schlug fehl.
@@ -769,6 +806,7 @@ type:
 	set:			set
 	stylesheet:		stylesheet
 	export template:export template
+#_ADD	symbol:			symbol
 	card:			card
 	cards:			cards
 	field:			field
@@ -799,8 +837,8 @@ type:
 	points:			points
 
 ############################################################## Magic
-game:
-	magic:
+package:
+	magic.mse-game:
 		# Card fields
 		name:		Name
 		cc:			Manakosten
@@ -812,11 +850,8 @@ game:
 		# Set info
 		
 		# descriptions/help text
-stylesheet:
-	magic-new:
 		
-symbol font:
-	magic-mana-small:
+	magic-mana-*.mse-symbol-font:
 		# note: reminder/shortcut must start with a space, otherwise it is used as a shortcut
 		#       so typing T *anywhere* would insert a symbol (which would be bad)
 		menu item T:			&Tap Symbol	 T
@@ -830,51 +865,7 @@ symbol font:
 		menu item X:			Variables Mana &X	 X
 		menu item Y:			Variables Mana &Y	 Y
 		menu item Z:			Variables Mana &Z	 Z
-		menu item colorless:	&Farbloses Mana...
-		title colorless:		Farbloses Mana
-		message colorless:		Gib die Mana-Anzahl ein:
-		menu item half:				&Halbes Mana
-		menu item |W:				&Weiß	 |W
-		menu item |U:				Bla&u	 |U
-		menu item |B:				&Schwarz	 |B
-		menu item |R:				&Rot	 |R
-		menu item |G:				&Grün	 |G
-		menu item |S:				&Schnee	 |S
-		menu item 1/2:				&Farblos	1/2
-		menu item hybrid:		H&ybrid Mana (zweifarbig)
-		menu item W/U:				Weiß/Blau 	 W/U
-		menu item U/B:				Blau/Schwarz 	 U/B
-		menu item B/R:				Schwarz/Rot 	 B/R
-		menu item R/G:				Rot/Grün 	 R/G
-		menu item G/W:				Grün/Weiß 	 G/W
-		menu item W/B:				Weiß/Schwarz 	 W/B
-		menu item U/R:				Blau/Rot 	 U/R
-		menu item B/G:				Schwarz/Grün 	 B/G
-		menu item R/W:				Rot/Weiß 	 R/W
-		menu item G/U:				Grün/Blau 	 G/U
-		menu item hybrid 3:		H&ybrid Mana (dreifarbig)
-		menu item W/U/B:			Weiß/Blau/Schwarz 	 W/U/B
-		menu item U/B/R:			Blau/Schwarz/Rot 	 U/B/R
-		menu item B/R/G:			Schwarz/Rot/Grün 	 B/R/G
-		menu item R/G/W:			Rot/Grün/Weiß 	 R/G/W
-		menu item G/W/U:			Grün/Weiß/Blau 	 G/W/U
-		menu item W/B/R:			Weiß/Schwarz/Rot 	 W/B/R
-		menu item U/R/G:			Blau/Rot/Grün 	 U/R/G
-		menu item B/G/W:			Schwarz/Grün/Weiß 	 B/G/W
-		menu item R/W/U:			Rot/Weiß/Blau 	 R/W/U
-		menu item G/U/B:			Grün/Blau/Schwarz 	 G/U/B
-	magic-mana-large:
-		# Exactly the same
-		menu item T:			&Tap symbol	 T
-		menu item W:			&Weißes Mana	 W
-		menu item U:			Bl&aues Mana	 U
-		menu item B:			&Schwarzes Mana	 B
-		menu item R:			&Rotes Mana	 R
-		menu item G:			&Grünes Mana	 G
-		menu item S:			&Schnee Mana	 S
-		menu item X:			Variables Mana &X	 X
-		menu item Y:			Variables Mana &Y	 Y
-		menu item Z:			Variables Mana &Z	 Z
+#_ADD		menu item I:			&Infinite mana	I
 		menu item colorless:	&Farbloses Mana...
 		title colorless:		Farbloses Mana
 		message colorless:		Gib die Mana-Anzahl ein:

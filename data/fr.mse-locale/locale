@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿mse version: 0.3.7
 installer group: translations/Français
 full name: Français
 version: 2008-05-31
@@ -75,6 +75,7 @@ menu:
 	style tab:			St&yle	F7
 	keywords tab:		&Mot-clef	F8
 	stats tab:			S&tatistiques	F9
+#_ADD	random pack tab:	&Random Packs
 	
 	help:			&Aide
 	index:				&Index...	F1
@@ -182,11 +183,20 @@ help:
 	style tab:			Change the style of cards
 	keywords tab:		Define extra keywords for this set
 	stats tab:			Show statistics about the cards in the set
+#_ADD	random pack tab:	Try how the set works out in practice by generating random booster packs.
 	
 	help:
 	index:				
 	website:			
 	about:				
+	
+	# Cards panel
+#_ADD	collapse notes:		Hide the card notes box
+#_ADD	expand notes:		Show the card notes box
+	# Random pack panel
+#_ADD	random seed:		Different packs will be generated each time.
+#_ADD	fixed seed:			Using the same seed number gives the same 'random' packs.
+#_ADD	seed:				Seed number for the random generator. Using the same seed number gives the same 'random' packs.
 	
 	# Preferences
 	app language:
@@ -273,6 +283,7 @@ tool:
 	style tab:			Style
 	keywords tab:		Keywords
 	stats tab:			Statistics
+#_ADD	random pack tab:	Random
 	
 	# symbol editor
 	store symbol:		Store
@@ -317,6 +328,7 @@ tooltip:
 	style tab:			
 	keywords tab:		
 	stats tab:			
+#_ADD	random pack tab:	Random packs
 	
 	new set:			New set
 	open set:			Open set
@@ -407,6 +419,11 @@ label:
 	# Style tab
 	styling options:	Styling options
 	
+	# Random pack panel
+#_ADD	pack selection:		Pack selection
+#_ADD	pack totals:		Totals
+#_ADD	seed:				Seed
+	
 	# Open dialogs
 	all files			All files
 	
@@ -464,9 +481,23 @@ label:
 	original:			Original:
 	result:				Result:
 	size:				Size
+#_ADD	original size:			&Original Size
+#_ADD	size to fit:			Size to &Fit
+#_ADD	force to fit:			F&orce to Fit
+#_ADD	custom size:			&Custom Size
 	selection:			Selection
+#_ADD	selection left:			&Left
+#_ADD	selection top:			&Top
+#_ADD	selection width:		&Width
+#_ADD	selection height:		&Height
 	zoom:				Zoom
+#_ADD	fix aspect ratio:		Fix aspect ratio (width/height)
+#_ADD	zoom amount:			Zoom
+#_ADD	zoom amount x:			Zoom &X
+#_ADD	zoom amount y:			Zoom &Y
+#_ADD	zoom %:					%
 	filter:				Filter
+#_ADD	sharpen filter:			&Sharpen filter
 	
 	# Auto replace
 	auto match:			Match
@@ -502,6 +533,11 @@ button:
 	# Keywords panel
 	insert parameter:	Insert Parameter...
 	refer parameter:	Use Parameter...
+	
+	# Random pack panel
+#_ADD	generate pack:		&Generate Pack
+#_ADD	random seed:		&Random Seed
+#_ADD	fixed seed:			&Fixed Seed
 	
 	# Welcome
 	new set:			New set
@@ -717,6 +753,7 @@ error:
 		It is recommended that you upgrade to the latest version.
 		Visit http:://magicseteditor.sourceforge.net/
 	word list type not found:			The word list type %s was not found (from a <word-list> tag)
+#_ADD	pack item not found:				The pack item "%s" was not found (from a pack type)
 	
 	# Update checking
 	checking updates failed:			Checking updates failed.
@@ -768,6 +805,7 @@ type:
 	set:			set
 	stylesheet:		stylesheet
 	export template:export template
+#_ADD	symbol:			symbol
 	card:			card
 	cards:			cards
 	field:			field
@@ -798,8 +836,8 @@ type:
 	points:			points
 
 ############################################################## Magic
-game:
-	magic:
+package:
+	magic.mse-game:
 		# Card fields
 		name:		Nom
 		cc:			CC
@@ -811,11 +849,8 @@ game:
 		# Set info
 		
 		# descriptions/help text
-stylesheet:
-	magic-new:
 		
-symbol font:
-	magic-mana-small:
+	magic-mana-*.mse-symbol-font:
 		# note: reminder/shortcut must start with a space, otherwise it is used as a shortcut
 		#       so typing T *anywhere* would insert a symbol (which would be bad)
 		menu item T:			&Tap symbol	 T
@@ -829,51 +864,7 @@ symbol font:
 		menu item X:			Mana Variable &X	 X
 		menu item Y:			Mana Variable &Y	 Y
 		menu item Z:			Mana Variable &Z	 Z
-		menu item colorless:	&Colorless mana...
-		title colorless:		Mana Incolore
-		message colorless:		Entrez le montant de mana incolore:
-		menu item half:				&Demi mana
-		menu item |W:				&Blanc	 |W
-		menu item |U:				Bl&ue	 |U
-		menu item |B:				&Noir	 |B
-		menu item |R:				&Rouge	 |R
-		menu item |G:				&Vert	 |G
-		menu item |S:				&Neigeux	 |S
-		menu item 1/2:				&Sans Couleur	1/2
-		menu item hybrid:		Mana H&ybride (Deux couleurs)
-		menu item W/U:				mana Blanc/Bleu	 W/U
-		menu item U/B:				mana Bleu/Noir	 U/B
-		menu item B/R:				mana Noir/Rouge	 B/R
-		menu item R/G:				mana Rouge/Vert	 R/G
-		menu item G/W:				mana Vert/Blanc	 G/W
-		menu item W/B:				mana Blanc/Noir	 W/B
-		menu item U/R:				mana Bleu/Rouge	 U/R
-		menu item B/G:				mana Noir/Vert	 B/G
-		menu item R/W:				mana Rouge/Blanc	 R/W
-		menu item G/U:				mana Vert/Bleu	 G/U
-		menu item hybrid 3:		Mana H&ybride (trois couleurs)
-		menu item W/U/B:			mana Blanc/Bleu/Noir	 W/U/B
-		menu item U/B/R:			mana Bleu/Noir/Rouge	 U/B/R
-		menu item B/R/G:			mana Noir/Rouge/Vert	 B/R/G
-		menu item R/G/W:			mana Rouge/Vert/Blanc	 R/G/W
-		menu item G/W/U:			mana Vert/Blanc/Bleu	 G/W/U
-		menu item W/B/R:			mana Blanc/Noir/Rouge	 W/B/R
-		menu item U/R/G:			mana Bleu/Rouge/Vert	 U/R/G
-		menu item B/G/W:			mana Noir/Vert/Blanc	 B/G/W
-		menu item R/W/U:			mana Rouge/Blanc/Bleu	 R/W/U
-		menu item G/U/B:			mana Vert/Bleu/Noir	 G/U/B
-	magic-mana-large:
-		# Exactly the same
-		menu item T:			&Tap symbol	 T
-		menu item W:			Mana &Blanc	 W
-		menu item U:			Mana Bl&ue	 U
-		menu item B:			Mana &Noir	 B
-		menu item R:			mana &Rouge	 R
-		menu item G:			Mana &Vert	 G
-		menu item S:			Mana &neigeux	 S
-		menu item X:			Mana Variable &X	 X
-		menu item Y:			Mana Variable &Y	 Y
-		menu item Z:			Mana Variable &Z	 Z
+#_ADD		menu item I:			&Infinite mana	I
 		menu item colorless:	&Colorless mana...
 		title colorless:		Mana Incolore
 		message colorless:		Entrez le montant de mana incolore:

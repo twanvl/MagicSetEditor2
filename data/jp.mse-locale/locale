@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿﻿mse version: 0.3.7
 installer group: translations/Japanese
 full name: 日本語 (Japanese)
 version: 2008-06-25
@@ -75,6 +75,7 @@ menu:
 	style tab:			スタイル	F7
 	keywords tab:		&キーワード		F8
 	stats tab:			統計	F9
+#_ADD	random pack tab:	&Random Packs
 	
 	help:			&ヘルプ
 	index:				&索引...	F1
@@ -182,11 +183,20 @@ help:
 	style tab:			現在のカードのスタイルを変更します。
 	keywords tab:		現在のセットのためのキーワード能力を定義します。
 	stats tab:			現在のセットの統計を表示します。
+#_ADD	random pack tab:	Try how the set works out in practice by generating random booster packs.
 	
 	help:
 	index:				
 	website:			
 	about:				
+	
+	# Cards panel
+#_ADD	collapse notes:		Hide the card notes box
+#_ADD	expand notes:		Show the card notes box
+	# Random pack panel
+#_ADD	random seed:		Different packs will be generated each time.
+#_ADD	fixed seed:			Using the same seed number gives the same 'random' packs.
+#_ADD	seed:				Seed number for the random generator. Using the same seed number gives the same 'random' packs.
 	
 	# Preferences
 	app language:
@@ -273,6 +283,7 @@ tool:
 	style tab:			スタイル
 	keywords tab:		キーワード
 	stats tab:			統計値
+#_ADD	random pack tab:	Random
 	
 	# symbol editor
 	store symbol:		使います
@@ -317,6 +328,7 @@ tooltip:
 	style tab:			
 	keywords tab:		
 	stats tab:			
+#_ADD	random pack tab:	Random packs
 	
 	new set:			新規作成
 	open set:			開く
@@ -407,6 +419,11 @@ label:
 	# Style tab
 	styling options:	スタイル・オプション
 	
+	# Random pack panel
+#_ADD	pack selection:		Pack selection
+#_ADD	pack totals:		Totals
+#_ADD	seed:				Seed
+	
 	# Open dialogs
 	all files			全てのファイル
 	
@@ -464,9 +481,23 @@ label:
 	original:			オリジナル：
 	result:				結果：
 	size:				サイズ
+#_ADD	original size:			&Original Size
+#_ADD	size to fit:			Size to &Fit
+#_ADD	force to fit:			F&orce to Fit
+#_ADD	custom size:			&Custom Size
 	selection:			選択
+#_ADD	selection left:			&Left
+#_ADD	selection top:			&Top
+#_ADD	selection width:		&Width
+#_ADD	selection height:		&Height
 	zoom:				ズーム
+#_ADD	fix aspect ratio:		Fix aspect ratio (width/height)
+#_ADD	zoom amount:			Zoom
+#_ADD	zoom amount x:			Zoom &X
+#_ADD	zoom amount y:			Zoom &Y
+#_ADD	zoom %:					%
 	filter:				フィルター
+#_ADD	sharpen filter:			&Sharpen filter
 	
 	# Auto replace
 	auto match:			適合
@@ -503,6 +534,11 @@ button:
 	insert parameter:	パラメータの挿入...
 	refer parameter:	パラメータを使用する...
 	
+	# Random pack panel
+#_ADD	generate pack:		&Generate Pack
+#_ADD	random seed:		&Random Seed
+#_ADD	fixed seed:			&Fixed Seed
+	
 	# Welcome
 	new set:			新規作成
 	open set:			セットを開く
@@ -535,9 +571,6 @@ button:
 	number:				番号をファイル名に加える
 	number overwrite:	以前にエクスポートしたファイルに上書き、番号をファイル名に加える
 	
-	# Update checker
-	close:				&閉じる
-	
 	# Auto replace
 	use auto replace:	自動置換を使用する
 	add item:			&追加
@@ -546,12 +579,18 @@ button:
 	enabled:			可能なもの
 	whole word:			適合するものだけ
 
+	# Old style update checker  (NOTE: this will be removed in a feature version)
+	close:				&閉じる
+	
 	# Packages window
 	keep package:			&は変更しないで
 	don't install package:	&はインストールしないで
 	install package:		&インストール
 	upgrade package:		&アップグレード
 	remove package:			&取り外す
+#_ADD	install group:			&Install All
+#_ADD	upgrade group:			&Upgrade All
+#_ADD	remove group:			&Remove All
 
 ############################################################## Titles in the GUI
 title:
@@ -647,7 +686,6 @@ action:
 	change symmetry type:	変化対称タイプ
 	change symmetry copies:	数の反映
 	
-
 ############################################################## Error messages
 error:
 	# General
@@ -713,6 +751,7 @@ error:
 		あなたは最新のバージョンにアップグレードするように勧められます。
 		http::を訪問してください　/　magicseteditor.sourceforge.net　/
 	word list type not found:			リストタイプという語　%s　(<word-list>タグから)見つからなかった
+#_ADD	pack item not found:				The pack item "%s" was not found (from a pack type)
 	
 	# Update checking
 	checking updates failed:			アップデートが失敗したか調べます。
@@ -722,6 +761,7 @@ error:
 	dimension not found:				ディメンションはありません '%s'
 
 	# Package update window
+#	checking updates:					アップデートを調べます。
 	can't download installer:
 			インストーラのパッケージをダウンロードできませんでした。 %s 〜から %s.
 		何もがインストールされています。
@@ -734,10 +774,6 @@ error:
 	remove packages modified:
 		これが削除さ %s パッケージは、 %s それらをインストールした後が変更されています。
 		削除して元に戻すことはできません。
-	
-	# Package update window
-#	checking updates:					アップデートを調べます。
-
 	install packages successful:	%s パッケージが正常にインストールします。
 	remove packages successful:		%s パッケージが正常に削除されます。
 	change packages successful:		%s パッケージが正常に変更されました。
@@ -759,10 +795,13 @@ type:
 	nil:			何も
 	
 	# Object types
+#_ADD	package:		package
+#_ADD	locale:			translation
 	game:			ゲーム
 	set:			セット
 	stylesheet:		スタイルシート
 	export template:輸出テンプレート
+#_ADD	symbol:			symbol
 	card:			カード
 	cards:			カード
 	field:			フィールド
@@ -794,8 +833,8 @@ type:
 		
 
 ############################################################## Magic
-game:
-	magic:
+package:
+	magic.mse-game:
 		# Card fields
 		name:		名前
 		cc:			マナ・コスト
@@ -807,14 +846,12 @@ game:
 		# Set info
 		
 		# descriptions/help text
-stylesheet:
-	magic-new:
 		
-symbol font:
-	magic-mana-small:
+	magic-mana-*.mse-symbol-font:
 		# note: reminder/shortcut must start with a space, otherwise it is used as a shortcut
 		#       so typing T *anywhere* would insert a symbol (which would be bad)
 		menu item T:			タップ・シンボル(&T)	 T
+#_ADD		menu item Q:			&Untap symbol	 Q
 		menu item W:			白マナ(&W)	 W
 		menu item U:			青マナ(&U)	 U
 		menu item B:			黒マナ(&B)	 B
@@ -824,51 +861,7 @@ symbol font:
 		menu item X:			不特定マナ・シンボル(&X)	 X
 		menu item Y:			不特定マナ・シンボル(&Y)	 Y
 		menu item Z:			不特定マナ・シンボル(&Z)	 Z
-		menu item colorless:	無色マナ(&C)...
-		title colorless:		無色マナ(&C)
-		message colorless:		任意の数の無色マナ
-		menu item half:				半分のマナ・シンボル(&H)
-		menu item |W:				白マナ(&W)	 |W
-		menu item |U:				青マナ(&U)	 |U
-		menu item |B:				黒マナ(&B)	 |B
-		menu item |R:				赤マナ(&R)	 |R
-		menu item |G:				緑マナ(&G)	 |G
-		menu item |S:				氷雪マナ(&S)	 |S
-		menu item 1/2:				無色マナ(&C)	1/2
-		menu item hybrid:		2色の混成マナ・シンボル(&Y)
-		menu item W/U:				白/青 マナ	 W/U
-		menu item U/B:				青/黒 マナ	 U/B
-		menu item B/R:				黒/赤 マナ	 B/R
-		menu item R/G:				赤/緑 マナ	 R/G
-		menu item G/W:				緑/白 マナ	 G/W
-		menu item W/B:				白/黒 マナ	 W/B
-		menu item U/R:				青/赤 マナ	 U/R
-		menu item B/G:				黒/緑 マナ	 B/G
-		menu item R/W:				赤/白 マナ	 R/W
-		menu item G/U:				緑/青 マナ	 G/U
-		menu item hybrid 3:		3色の混成マナ・シンボル(&Y)
-		menu item W/U/B:			白/青/黒 マナ	 W/U/B
-		menu item U/B/R:			青/黒/赤 マナ	 U/B/R
-		menu item B/R/G:			黒/赤/緑 マナ	 B/R/G
-		menu item R/G/W:			赤/緑/白 マナ	 R/G/W
-		menu item G/W/U:			緑/白/青 マナ	 G/W/U
-		menu item W/B/R:			白/黒/赤 マナ	 W/B/R
-		menu item U/R/G:			青/赤/緑 マナ	 U/R/G
-		menu item B/G/W:			黒/緑/白 マナ	 B/G/W
-		menu item R/W/U:			赤/白/青 マナ	 R/W/U
-		menu item G/U/B:			緑/青/黒 マナ	 G/U/B
-	magic-mana-large:
-		# Exactly the same
-		menu item T:			タップ・シンボル(&T)	 T
-		menu item W:			白マナ(&W)	 W
-		menu item U:			青マナ(&U)	 U
-		menu item B:			黒マナ(&B)	 B
-		menu item R:			赤マナ(&R)	 R
-		menu item G:			緑マナ(&G)	 G
-		menu item S:			氷雪マナ(&S)	 S
-		menu item X:			不特定マナ・シンボル(&X)	 X
-		menu item Y:			不特定マナ・シンボル(&Y)	 Y
-		menu item Z:			不特定マナ・シンボル(&Z)	 Z
+#_ADD		menu item I:			&Infinite mana	I
 		menu item colorless:	無色マナ(&C)...
 		title colorless:		無色マナ(&C)
 		message colorless:		任意の数の無色マナ

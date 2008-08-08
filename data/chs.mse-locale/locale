@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿﻿mse version: 0.3.7
 installer group: translations/Simplified Chinese
 full name: 简体中文 (Simplified Chinese)
 version: 2008-07-03
@@ -75,6 +75,7 @@ menu:
 	style tab:		风格选择	F7
 	keywords tab:		关键词	F8
 	stats tab:		统计结果	F9
+#_ADD	random pack tab:	&Random Packs
 	
 	help:			帮助
 	index:			索引...	F1
@@ -182,11 +183,20 @@ help:
 	style tab:		改变卡牌样式
 	keywords tab:		定义本套牌额外的关键词
 	stats tab:		显示本套牌的统计情况
+#_ADD	random pack tab:	Try how the set works out in practice by generating random booster packs.
 	
 	help:		
 	index:			
 	website:			
 	about:				
+	
+	# Cards panel
+#_ADD	collapse notes:		Hide the card notes box
+#_ADD	expand notes:		Show the card notes box
+	# Random pack panel
+#_ADD	random seed:		Different packs will be generated each time.
+#_ADD	fixed seed:			Using the same seed number gives the same 'random' packs.
+#_ADD	seed:				Seed number for the random generator. Using the same seed number gives the same 'random' packs.
 	
 	# Preferences
 	app language:
@@ -273,6 +283,7 @@ tool:
 	style tab:		风格样式
 	keywords tab:		关键词
 	stats tab:		统计结果
+#_ADD	random pack tab:	Random
 	
 	# symbol editor
 	store symbol:		储存
@@ -317,6 +328,7 @@ tooltip:
 	style tab:		风格样式	
 	keywords tab:		关键词
 	stats tab:		统计结果
+#_ADD	random pack tab:	Random packs
 	
 	new set:		新建套牌
 	open set:		打开套牌
@@ -407,6 +419,11 @@ label:
 	# Style tab
 	styling options:	样式选项
 	
+	# Random pack panel
+#_ADD	pack selection:		Pack selection
+#_ADD	pack totals:		Totals
+#_ADD	seed:				Seed
+	
 	# Open dialogs
 	all files		全部文件
 	
@@ -464,9 +481,23 @@ label:
 	original:		原始:
 	result:			结果:
 	size:			大小
+#_ADD	original size:			&Original Size
+#_ADD	size to fit:			Size to &Fit
+#_ADD	force to fit:			F&orce to Fit
+#_ADD	custom size:			&Custom Size
 	selection:		选取
+#_ADD	selection left:			&Left
+#_ADD	selection top:			&Top
+#_ADD	selection width:		&Width
+#_ADD	selection height:		&Height
 	zoom:			缩放
+#_ADD	fix aspect ratio:		Fix aspect ratio (width/height)
+#_ADD	zoom amount:			Zoom
+#_ADD	zoom amount x:			Zoom &X
+#_ADD	zoom amount y:			Zoom &Y
+#_ADD	zoom %:					%
 	filter:			过滤
+#_ADD	sharpen filter:			&Sharpen filter
 	
 	# Auto replace
 	auto match:		匹配
@@ -502,6 +533,11 @@ button:
 	# Keywords panel
 	insert parameter:	插入参数...
 	refer parameter:	提交参数...
+	
+	# Random pack panel
+#_ADD	generate pack:		&Generate Pack
+#_ADD	random seed:		&Random Seed
+#_ADD	fixed seed:			&Fixed Seed
 	
 	# Welcome
 	new set:		新建套牌
@@ -717,6 +753,7 @@ error:
 		推荐你升级到最新版本
 		浏览官方网站 http:://magicseteditor.sourceforge.net/
 	word list type not found:	词语列表类型 %s 没有找到 （从<word-list> 标签中）
+#_ADD	pack item not found:				The pack item "%s" was not found (from a pack type)
 	
 	# Update checking
 	checking updates failed:	检查更新失败。
@@ -768,6 +805,7 @@ type:
 	set:			套牌
 	stylesheet:		样式表
 	export template:export  模板
+#_ADD	symbol:			symbol
 	card:			卡牌
 	cards:			多张卡牌
 	field:			区域
@@ -798,8 +836,8 @@ type:
 	points:			多个控制点
 
 ############################################################## Magic
-game:
-	magic:
+package:
+	magic.mse-game:
 		# Card fields
 		name:		名称
 		cc:		总费用
@@ -849,11 +887,7 @@ game:
 		left align artist:		画家左对齐
 		inverted common symbol:		反转普通系列符号
 		
-stylesheet:
-	magic-new:
-		
-symbol font:
-	magic-mana-small:
+	magic-mana-*.mse-symbol-font:
 		# note: reminder/shortcut must start with a space, otherwise it is used as a shortcut
 		#       so typing T *anywhere* would insert a symbol (which would be bad)
 		menu item T:		横置符号	 T
@@ -901,62 +935,4 @@ symbol font:
 		menu item B/G/W:	黑/绿/白 法术力	 B/G/W
 		menu item R/W/U:	红/白/蓝 法术力	 R/W/U
 		menu item G/U/B:	绿/蓝/黑 法术力	 G/U/B
-		menu item number hybrids:	数字混合法术力
-		menu item 2/W:	2/W
-		menu item 2/U:	2/U
-		menu item 2/B:	2/B
-		menu item 2/R:	2/R
-		menu item 2/G:	2/G
-	magic-mana-large:
-		# Exactly the same
-		menu item T:		横置符号	 T
-		menu item Q:		重置符号	 Q
-		menu item W:		白色法术力	 W
-		menu item U:		蓝色法术力	 U
-		menu item B:		黑色法术力	 B
-		menu item R:		红色法术力	 R
-		menu item G:		绿色法术力	 G
-		menu item S:		雪境法术力	 S
-		menu item X:		可变法术力 X	 X
-		menu item Y:		可变法术力 Y	 Y
-		menu item Z:		可变法术力 Z	 Z
-		menu item I:		无限法术力	 I
-		menu item colorless:	无色法术力...
-		title colorless:	无色法术力
-		message colorless:	输入无色法术力数量:
-		menu item half:		一半法术力
-		menu item |W:		白色法术力	 |W
-		menu item |U:		蓝色法术力	 |U
-		menu item |B:		黑色法术力	 |B
-		menu item |R:		红色法术力	 |R
-		menu item |G:		绿色法术力	 |G
-		menu item |S:		雪境法术力	 |S
-		menu item 1/2:		无色法术力	1/2
-		menu item hybrid:	混合法术力（双色）
-		menu item W/U:		白/蓝 法术力	 W/U
-		menu item U/B:		蓝/黑 法术力	 U/B
-		menu item B/R:		黑/红 法术力	 B/R
-		menu item R/G:		红/绿 法术力	 R/G
-		menu item G/W:		绿/白 法术力	 G/W
-		menu item W/B:		白/黑 法术力	 W/B
-		menu item U/R:		蓝/红 法术力	 U/R
-		menu item B/G:		黑/绿 法术力	 B/G
-		menu item R/W:		红/白 法术力	 R/W
-		menu item G/U:		绿/蓝 法术力	 G/U
-		menu item hybrid 3:	混合法术力（三色）
-		menu item W/U/B:	白/蓝/黑 法术力	 W/U/B
-		menu item U/B/R:	蓝/黑/红 法术力	 U/B/R
-		menu item B/R/G:	黑/红/绿 法术力	 B/R/G
-		menu item R/G/W:	红/绿/白 法术力	 R/G/W
-		menu item G/W/U:	绿/白/蓝 法术力	 G/W/U
-		menu item W/B/R:	白/黑/红 法术力	 W/B/R
-		menu item U/R/G:	蓝/红/绿 法术力	 U/R/G
-		menu item B/G/W:	黑/绿/白 法术力	 B/G/W
-		menu item R/W/U:	红/白/蓝 法术力	 R/W/U
-		menu item G/U/B:	绿/蓝/黑 法术力	 G/U/B
-		menu item number hybrids:	数字混合法术力
-		menu item 2/W:	2/W
-		menu item 2/U:	2/U
-		menu item 2/B:	2/B
-		menu item 2/R:	2/R
-		menu item 2/G:	2/G
+

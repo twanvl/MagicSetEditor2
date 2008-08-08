@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿﻿mse version: 0.3.7
 installer group: translations/Italiano
 full name: Italiano
 version: 2008-04-01
@@ -67,7 +67,7 @@ menu:
 	stack:				&Stacked Barre	3
 	scatter:			&Dispersione	4
 	scatter pie:		S&catter-Pie plot	5
-	# TODO: Translate ^^^^^
+#_DEL	# TODO: Translate ^^^^^
 	
 	window:			&Finestre
 	new window:			&Nuova Finestra
@@ -76,6 +76,7 @@ menu:
 	style tab:			St&ile	F7
 	keywords tab:		&Parole chiave	F8
 	stats tab:			S&tatistiche	F9
+#_ADD	random pack tab:	&Random Packs
 	
 	help:			&Aiuto
 	index:				&Indice...	F1
@@ -183,11 +184,20 @@ help:
 	style tab:			Cambia lo stile delle carte
 	keywords tab:		Definisci parole chiave aggiuntive per questo set
 	stats tab:			Mostra le statistiche delle carte del set
+#_ADD	random pack tab:	Try how the set works out in practice by generating random booster packs.
 	
 	help:
 	index:				
 	website:			
 	about:				
+	
+	# Cards panel
+#_ADD	collapse notes:		Hide the card notes box
+#_ADD	expand notes:		Show the card notes box
+	# Random pack panel
+#_ADD	random seed:		Different packs will be generated each time.
+#_ADD	fixed seed:			Using the same seed number gives the same 'random' packs.
+#_ADD	seed:				Seed number for the random generator. Using the same seed number gives the same 'random' packs.
 	
 	# Preferences
 	app language:
@@ -273,6 +283,7 @@ tool:
 	style tab:			Stile
 	keywords tab:		Keywords
 	stats tab:			Statistiche
+#_ADD	random pack tab:	Random
 	
 	# symbol editor
 	store symbol:		Usa
@@ -317,6 +328,7 @@ tooltip:
 	style tab:			
 	keywords tab:		
 	stats tab:			
+#_ADD	random pack tab:	Random packs
 	
 	new set:			Nuovo set
 	open set:			Apri set
@@ -407,6 +419,11 @@ label:
 	# Style tab
 	styling options:		Opzioni stile
 
+	# Random pack panel
+#_ADD	pack selection:		Pack selection
+#_ADD	pack totals:		Totals
+#_ADD	seed:				Seed
+	
 	# Open dialogs
 	all files			Tutti i file
 	
@@ -464,9 +481,23 @@ label:
 	original:			Originale:
 	result:				Risultato:
 	size:				Dimensioni
+#_ADD	original size:			&Original Size
+#_ADD	size to fit:			Size to &Fit
+#_ADD	force to fit:			F&orce to Fit
+#_ADD	custom size:			&Custom Size
 	selection:			Selezione
+#_ADD	selection left:			&Left
+#_ADD	selection top:			&Top
+#_ADD	selection width:		&Width
+#_ADD	selection height:		&Height
 	zoom:				Zoom
+#_ADD	fix aspect ratio:		Fix aspect ratio (width/height)
+#_ADD	zoom amount:			Zoom
+#_ADD	zoom amount x:			Zoom &X
+#_ADD	zoom amount y:			Zoom &Y
+#_ADD	zoom %:					%
 	filter:				Filtro
+#_ADD	sharpen filter:			&Sharpen filter
 	
 	# Auto replace
 	auto match:			Trova
@@ -502,6 +533,11 @@ button:
 	# Keywords panel
 	insert parameter:	Inserisci Parametro...
 	refer parameter:	Usa Parametro...
+	
+	# Random pack panel
+#_ADD	generate pack:		&Generate Pack
+#_ADD	random seed:		&Random Seed
+#_ADD	fixed seed:			&Fixed Seed
 	
 	# Welcome
 	new set:			Nuovo set
@@ -717,6 +753,7 @@ error:
 		Si raccomanda di aggiornare il programma alla versione più recente.
 		Visita http:://magicseteditor.sourceforge.net/
 	word list type not found:			The word list type %s was not found (from a <word-list> tag)
+#_ADD	pack item not found:				The pack item "%s" was not found (from a pack type)
 	
 	# Update checking
 	checking updates failed:			Controllo degli aggiornamenti fallito.
@@ -761,13 +798,15 @@ type:
 	image:			immagine
 	nil:			nullo
 	
-	# Object types ?power
+#_DEL	# Object types ?power
+#_ADD	# Object types
 	package:		pacchetto
 	locale:			traduzione
 	game:			gioco
 	set:			set
 	stylesheet:		stile
 	export template:modello di esportazione
+#_ADD	symbol:			symbol
 	card:			carta
 	cards:			carte
 	field:			campo
@@ -798,8 +837,8 @@ type:
 	points:			punti
 
 ############################################################## Magic
-game:
-	magic:
+package:
+	magic.mse-game:
 		# Card fields
 		name:		Nome
 		cc:		CC
@@ -821,7 +860,7 @@ game:
 		sort special rarity: Ordina rarità speciali
 		mark errors: Segna errori
 		use gradient multicolor: Usa gradienti per multicolori 
-
+ 
 		# Style
 		colored mana symbols: 	Simboli mana colorati
 		artifact style:		Stile artefatti
@@ -835,11 +874,8 @@ game:
 
 		
 		# descriptions/help text
-stylesheet:
-	magic-new:
 		
-symbol font:
-	magic-mana-small:
+	magic-mana-*.mse-symbol-font:
 		# note: reminder/shortcut must start with a space, otherwise it is used as a shortcut
 		#       so typing T *anywhere* would insert a symbol (which would be bad)
 		menu item T:			&Simbolo TAP	 T
@@ -853,51 +889,7 @@ symbol font:
 		menu item X:			Variable mana &X	 X
 		menu item Y:			Variable mana &Y	 Y
 		menu item Z:			Variable mana &Z	 Z
-		menu item colorless:	&Mana Incolore...
-		title colorless:		Mana Incolore
-		message colorless:		Inserisci quantità di mana incolore:
-		menu item half:				&Mezzo mana
-		menu item |W:				&Bianco	 |W
-		menu item |U:				Bl&u	 |U
-		menu item |B:				&Nero	 |B
-		menu item |R:				&Rosso	 |R
-		menu item |G:				&Verde	 |G
-		menu item |S:				&Neve	 |S
-		menu item 1/2:				&Incolore	1/2
-		menu item hybrid:		M&ana ibrido (due colori)
-		menu item W/U:			Mana Bianco/Blu	 W/U
-		menu item U/B:			Mana Blu/Nero	 U/B
-		menu item B/R:			Mana Nero/Rosso	 B/R
-		menu item R/G:			Mana Rosso/Verde	 R/G
-		menu item G/W:			Mana Verde/Bianco	 G/W
-		menu item W/B:			Mana Bianco/Nero	 W/B
-		menu item U/R:			Mana Blu/Rosso	 U/R
-		menu item B/G:			Mana Nero/Verde	 B/G
-		menu item R/W:			Mana Rosso/Bianco	 R/W
-		menu item G/U:			Mana Verde/Blu	 G/U
-		menu item hybrid 3:		Mana Ibrido (tre colori)
-		menu item W/U/B:			Mana Bianco/Blu/Nero	 W/U/B
-		menu item U/B/R:			Mana Blu/Nero/Rosso	 U/B/R
-		menu item B/R/G:			Mana Nero/Rosso/Verde	 B/R/G
-		menu item R/G/W:			Mana Rosso/Verde/Bianco	 R/G/W
-		menu item G/W/U:			Mana Verde/Bianco/Blu	 G/W/U
-		menu item W/B/R:			Mana Bianco/Nero/Rosso	 W/B/R
-		menu item U/R/G:			Mana Blu/Rosso/Verde	 U/R/G
-		menu item B/G/W:			Mana Nero/Verde/Bianco	 B/G/W
-		menu item R/W/U:			Mana Rosso/Bianco/Blu	 R/W/U
-		menu item G/U/B:			Mana Verde/Blu/Nero	 G/U/B
-	magic-mana-large:
-		# Exactly the same
-		menu item T:			&Simbolo TAP	 T
-		menu item W:			&Mana Bianco	 W
-		menu item U:			Ma&na Blu	 U
-		menu item B:			&Mana Nero	 B
-		menu item R:			&Mana Rosso	 R
-		menu item G:			&Mana Verde	 G
-		menu item S:			&Mana Neve	 S
-		menu item X:			Variable mana &X	 X
-		menu item Y:			Variable mana &Y	 Y
-		menu item Z:			Variable mana &Z	 Z
+#_ADD		menu item I:			&Infinite mana	I
 		menu item colorless:	&Mana Incolore...
 		title colorless:		Mana Incolore
 		message colorless:		Inserisci quantità di mana incolore:

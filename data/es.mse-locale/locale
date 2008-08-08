@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿﻿mse version: 0.3.7
 installer group: translations/Español
 full name: Español
 version: 2008-05-31
@@ -75,6 +75,7 @@ menu:
 	style tab:			St&yle	F7
 	keywords tab:		&Palabras clave	F8
 	stats tab:			E&stadísticas	F9
+#_ADD	random pack tab:	&Random Packs
 	
 	help:			&Ayuda
 	index:				&Índice...	F1
@@ -182,11 +183,20 @@ help:
 	style tab:			Cambia el estilo de las cartas
 	keywords tab:		Define palabras clave extra para este set
 	stats tab:			Muestra las estadísticas de las cartas en el set
+#_ADD	random pack tab:	Try how the set works out in practice by generating random booster packs.
 	
 	help:
 	index:				
 	website:			
 	about:				
+	
+	# Cards panel
+#_ADD	collapse notes:		Hide the card notes box
+#_ADD	expand notes:		Show the card notes box
+	# Random pack panel
+#_ADD	random seed:		Different packs will be generated each time.
+#_ADD	fixed seed:			Using the same seed number gives the same 'random' packs.
+#_ADD	seed:				Seed number for the random generator. Using the same seed number gives the same 'random' packs.
 	
 	# Preferences
 	app language:
@@ -273,6 +283,7 @@ tool:
 	style tab:			Estilo
 	keywords tab:		Palabras clave
 	stats tab:			Estadísticas
+#_ADD	random pack tab:	Random
 	
 	# symbol editor
 	store symbol:		Almacenar
@@ -317,6 +328,7 @@ tooltip:
 	style tab:			
 	keywords tab:		
 	stats tab:			
+#_ADD	random pack tab:	Random packs
 	
 	new set:			Nuevo set
 	open set:			Abrir set
@@ -407,6 +419,11 @@ label:
 	# Style tab
 	styling options:	Opciones de estilo
 	
+	# Random pack panel
+#_ADD	pack selection:		Pack selection
+#_ADD	pack totals:		Totals
+#_ADD	seed:				Seed
+	
 	# Open dialogs
 	all files			Todos los archivos
 	
@@ -464,9 +481,23 @@ label:
 	original:			Original:
 	result:				Resultado:
 	size:				Tamaño
+#_ADD	original size:			&Original Size
+#_ADD	size to fit:			Size to &Fit
+#_ADD	force to fit:			F&orce to Fit
+#_ADD	custom size:			&Custom Size
 	selection:			Selección
+#_ADD	selection left:			&Left
+#_ADD	selection top:			&Top
+#_ADD	selection width:		&Width
+#_ADD	selection height:		&Height
 	zoom:				Zoom
+#_ADD	fix aspect ratio:		Fix aspect ratio (width/height)
+#_ADD	zoom amount:			Zoom
+#_ADD	zoom amount x:			Zoom &X
+#_ADD	zoom amount y:			Zoom &Y
+#_ADD	zoom %:					%
 	filter:				Filtro
+#_ADD	sharpen filter:			&Sharpen filter
 	
 	# Auto replace
 	auto match:			Match
@@ -502,6 +533,11 @@ button:
 	# Keywords panel
 	insert parameter:	Insertar parámetro...
 	refer parameter:	Usar parámetro...
+	
+	# Random pack panel
+#_ADD	generate pack:		&Generate Pack
+#_ADD	random seed:		&Random Seed
+#_ADD	fixed seed:			&Fixed Seed
 	
 	# Welcome
 	new set:			Nuevo set
@@ -717,6 +753,7 @@ error:
 		It is recommended that you upgrade to the latest version.
 		Visit http:://magicseteditor.sourceforge.net/
 	word list type not found:			The word list type %s was not found (from a <word-list> tag)
+#_ADD	pack item not found:				The pack item "%s" was not found (from a pack type)
 	
 	# Update checking
 	checking updates failed:			Checking updates failed.
@@ -768,6 +805,7 @@ type:
 	set:			set
 	stylesheet:		estilo
 	export template:plantilla de exportación
+#_ADD	symbol:			symbol
 	card:			carta
 	cards:			cartas
 	field:			field
@@ -798,8 +836,8 @@ type:
 	points:			puntos
 
 ############################################################## Magic
-game:
-	magic:
+package:
+	magic.mse-game:
 		# Card fields
 		name:		Nombre
 		cc:			CC
@@ -811,11 +849,8 @@ game:
 		# Set info
 		
 		# descriptions/help text
-stylesheet:
-	magic-new:
 		
-symbol font:
-	magic-mana-small:
+	magic-mana-*.mse-symbol-font:
 		# note: reminder/shortcut must start with a space, otherwise it is used as a shortcut
 		#       so typing T *anywhere* would insert a symbol (which would be bad)
 		menu item T:			&Símbolo de girar	 T
@@ -829,51 +864,7 @@ symbol font:
 		menu item X:			Maná variable &X	 X
 		menu item Y:			Maná variable &Y	 Y
 		menu item Z:			Maná variable &Z	 Z
-		menu item colorless:	&Maná incoloro...
-		title colorless:		Maná incoloro
-		message colorless:		Introducir cantidad de maná incoloro:
-		menu item half:				&Medio maná
-		menu item |W:				&Blanco	 |W
-		menu item |U:				Az&ul	 |U
-		menu item |B:				&Negro	 |B
-		menu item |R:				&Rojo	 |R
-		menu item |G:				&Verde	 |G
-		menu item |S:				&Nevado	 |S
-		menu item 1/2:				&Incoloro	1/2
-		menu item hybrid:		Maná híbrido (dos colores)
-		menu item W/U:				Maná Blanco/Azul	 W/U
-		menu item U/B:				Maná Azul/Negro	 U/B
-		menu item B/R:				Maná Negro/Rojo	 B/R
-		menu item R/G:				Maná Rojo/Verde	 R/G
-		menu item G/W:				Maná Verde/Blanco	 G/W
-		menu item W/B:				Maná Blanco/Negro	 W/B
-		menu item U/R:				Maná Azul/Rojo	 U/R
-		menu item B/G:				Maná Negro/Verde	 B/G
-		menu item R/W:				Maná Rojo/Blanco	 R/W
-		menu item G/U:				Maná Verde/Azul	 G/U
-		menu item hybrid 3:		Maná híbrido (tres colores)
-		menu item W/U/B:			Maná Blanco/Azul/Negro	 W/U/B
-		menu item U/B/R:			Maná Azul/Negro/Rojo	 U/B/R
-		menu item B/R/G:			Maná Negro/Rojo/Verde	 B/R/G
-		menu item R/G/W:			Maná Rojo/Verde/Blanco	 R/G/W
-		menu item G/W/U:			Maná Verde/Blanco/Azul	 G/W/U
-		menu item W/B/R:			Maná Blanco/Negro/Rojo	 W/B/R
-		menu item U/R/G:			Maná Azul/Rojo/Verde	 U/R/G
-		menu item B/G/W:			Maná Negro/Verde/Blanco	 B/G/W
-		menu item R/W/U:			Maná Rojo/Blanco/Azul	 R/W/U
-		menu item G/U/B:			Maná Verde/Azul/Negro	 G/U/B
-	magic-mana-large:
-		# Exactly the same
-		menu item T:			&Símbolo de girar	 T
-		menu item W:			&Maná blanco	 W
-		menu item U:			Maná az&ul	 U
-		menu item B:			&Maná negro	 B
-		menu item R:			&Maná rojo	 R
-		menu item G:			&Maná verde	 G
-		menu item S:			&Maná nevado	 S
-		menu item X:			Maná variable &X	 X
-		menu item Y:			Maná variable &Y	 Y
-		menu item Z:			Maná variable &Z	 Z
+#_ADD		menu item I:			&Infinite mana	I
 		menu item colorless:	&Maná incoloro...
 		title colorless:		Maná incoloro
 		message colorless:		Introducir cantidad de maná incoloro:
