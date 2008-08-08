@@ -225,12 +225,18 @@ void Locale::validate(Version ver) {
 	errors += translations[LOCALE_CAT_TYPE   ].validate(_("type"),    v.sublocales[_("type")   ]);
 	// errors?
 	if (!errors.empty()) {
-		if (ver != app_version) {
+		if (ver != file_version_locale) {
 			errors = _("Errors in locale file ") + short_name + _(":") + errors;
 		} else {
 			errors = _("Errors in locale file ") + short_name +
 			         _("\nThis is probably because the locale was made for a different version of MSE.") + errors;
 		}
+	} else if (ver != file_version_locale) {
+			errors = _("Errors in locale file ") + short_name + _(":")
+			       + _("\n  Locale file out of date, expected: mse version: ") + file_version_locale.toString()
+			       + _("\n  found: ") + ver.toString();
+	}
+	if (!errors.empty()) {
 		handle_warning(errors);
 	}
 }
