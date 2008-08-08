@@ -15,6 +15,7 @@
 #include <gui/util.hpp>
 #include <data/game.hpp>
 #include <data/statistics.hpp>
+#include <data/action/value.hpp>
 #include <util/window_id.hpp>
 #include <util/alignment.hpp>
 #include <util/tagged_string.hpp>
@@ -337,8 +338,12 @@ void StatsPanel::onChangeSet() {
 	onChange();
 }
 
-void StatsPanel::onAction(const Action&, bool undone) {
-	onChange();
+void StatsPanel::onAction(const Action& action, bool undone) {
+	TYPE_CASE_(action, ScriptValueEvent) {
+		// ignore style only stuff
+	} else {
+		onChange();
+	}
 }
 
 void StatsPanel::initUI   (wxToolBar* tb, wxMenuBar* mb) {
