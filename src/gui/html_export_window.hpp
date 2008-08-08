@@ -10,6 +10,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <gui/card_select_window.hpp>
 
 class PackageList;
 class ExportOptionsEditor;
@@ -17,9 +18,9 @@ DECLARE_POINTER_TYPE(Set);
 
 // ----------------------------------------------------------------------------- : HtmlExportWindow
 
-class HtmlExportWindow : public wxDialog {
+class HtmlExportWindow : public ExportWindowBase {
   public:
-	HtmlExportWindow(Window* parent, const SetP& set);
+	HtmlExportWindow(Window* parent, const SetP& set, const ExportCardSelectionChoices& cards_choices);
 	
   private:
 	PackageList*         list;    ///< List of templates

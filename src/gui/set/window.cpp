@@ -587,7 +587,9 @@ void SetWindow::onFileExportImages(wxCommandEvent&) {
 }
 
 void SetWindow::onFileExportHTML(wxCommandEvent&) {
-	HtmlExportWindow wnd(this, set);
+	ExportCardSelectionChoices choices;
+	selectionChoices(choices);
+	HtmlExportWindow wnd(this, set, choices);
 	wnd.ShowModal();
 }
 

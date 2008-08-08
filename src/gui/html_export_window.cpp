@@ -12,6 +12,7 @@
 #include <gui/control/native_look_editor.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
+#include <data/card.hpp>
 #include <data/settings.hpp>
 #include <data/export_template.hpp>
 #include <util/window_id.hpp>
@@ -24,8 +25,8 @@ DECLARE_POINTER_TYPE(ExportTemplate);
 
 // ----------------------------------------------------------------------------- : HtmlExportWindow
 
-HtmlExportWindow::HtmlExportWindow(Window* parent, const SetP& set)
-	: wxDialog(parent,wxID_ANY,_TITLE_("export html"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxCLIP_CHILDREN)
+HtmlExportWindow::HtmlExportWindow(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices)
+	: ExportWindowBase(parent,_TITLE_("export html"), set, choices, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxCLIP_CHILDREN)
 	, set(set)
 {
 	// init controls
@@ -36,8 +37,11 @@ HtmlExportWindow::HtmlExportWindow(Window* parent, const SetP& set)
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		s->Add(new wxStaticText(this, wxID_ANY, _LABEL_("html template")), 0, wxALL, 4);
 		s->Add(list, 0, wxEXPAND | wxALL & ~wxTOP, 4);
-		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("html export options"));
-			s2->Add(options, 2, wxEXPAND, 0);
+		wxSizer* s2 = new wxBoxSizer(wxHORIZONTAL);
+			s2->Add(ExportWindowBase::Create(), 2, wxEXPAND);
+			wxSizer* s3 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("html export options"));
+				s3->Add(options, 2, wxEXPAND, 0);
+			s2->Add(s3, 7, wxEXPAND | wxLEFT, 8);
 		s->Add(s2, 1, wxEXPAND | wxALL, 4);
 		s->Add(CreateButtonSizer(wxOK | wxCANCEL) , 0, wxEXPAND | wxALL, 8);
 		s->SetSizeHints(this);
@@ -72,6 +76,7 @@ void HtmlExportWindow::onOk(wxCommandEvent&) {
 	// run export script
 	Context& ctx = set->getContext();
 	LocalScope scope(ctx);
+	ctx.setVariable(_("cards"),     to_script(&getSelection()));
 	ctx.setVariable(_("options"),   to_script(&settings.exportOptionsFor(*exp)));
 	ctx.setVariable(_("directory"), to_script(info.directory_relative));
 	ScriptValueP result = exp->script.invoke(ctx);
@@ -98,12 +103,12 @@ void HtmlExportWindow::onTemplateSelect(wxCommandEvent&) {
 void HtmlExportWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 	switch (ev.GetId()) {
 		case wxID_OK:
-			ev.Enable(list->hasSelection());
+			ev.Enable(list->hasSelection() && !getSelection().empty());
 			break;
 	}
 }
 
-BEGIN_EVENT_TABLE(HtmlExportWindow,wxDialog)
+BEGIN_EVENT_TABLE(HtmlExportWindow,ExportWindowBase)
 	EVT_GALLERY_SELECT (ID_EXPORT_LIST, HtmlExportWindow::onTemplateSelect)
 	EVT_BUTTON         (wxID_OK,        HtmlExportWindow::onOk)
 	EVT_UPDATE_UI      (wxID_ANY,       HtmlExportWindow::onUpdateUI)

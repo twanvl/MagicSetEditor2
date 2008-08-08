@@ -42,8 +42,8 @@ ExportCardSelectionChoice::ExportCardSelectionChoice(const String& label, const 
 // ----------------------------------------------------------------------------- : ExportWindowBase
 
 
-ExportWindowBase::ExportWindowBase(Window* parent, const String& title, const SetP& set, const ExportCardSelectionChoices& cards_choices)
-	: wxDialog(parent, wxID_ANY, title)
+ExportWindowBase::ExportWindowBase(Window* parent, const String& title, const SetP& set, const ExportCardSelectionChoices& cards_choices, long style)
+	: wxDialog(parent, wxID_ANY, title, wxDefaultPosition, wxDefaultSize, style)
 	, set(set), cards_choices(cards_choices)
 	, active_choice(0)
 	, select_cards(nullptr)

@@ -35,6 +35,7 @@ During the evaluation of the script the following variables are available:
 | @game@	The current game.
 | @style@	The current stylesheet.
 | @set@		The set being exported.
+| @cards@	The cards selected by the user.
 | @options@	The values of the @option fields@.
 | @directory@	Name of the directory created (if @create directory@ is set).
 
