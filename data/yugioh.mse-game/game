@@ -69,34 +69,37 @@ init script:
 		# step 2 : surround by <i> tags
 		{ "<i-flavor>" + input + "</i-flavor>" };
 	
+	type_over_list := replace_rule(match:" ?-$", replace:"")
+	
+	monster_type_filter :=
+		tag_remove_rule(tag: "<word-list-") +
+		type_over_list +
+		{ "<word-list-monster>{input}</word-list-monster>" }
+	
+	space_to_wltags := replace_rule(match:"( +|<soft> </soft>)",
+	                                replace:{"</word-list-{list_type}>{_1}<word-list-{list_type}>"})
+	
+	card_class_filter :=
+		tag_remove_rule(tag: "<word-list-") +
+		type_over_list +
+		{ "<word-list-card>{input}</word-list-card>" }
+	
 	# Determine type of card
 	card_type := {
-		if	card.type2	== "Effect<sym>]</sym>"				then "effect monster"
-		else if card.type2	== "Fusion<sym>]</sym>"				then "fusion monster"
-		else if card.type2	== "Fusion / Effect<sym>]</sym>"		then "fusion monster"
-		else if card.type2	== "Fusion/Effect<sym>]</sym>"			then "fusion monster"
-		else if card.type2	== "Ritual<sym>]</sym>"				then "ritual monster"
-		else if card.type2	== "Ritual / Effect<sym>]</sym>"		then "ritual monster"
-		else if card.type2	== "Ritual/Effect<sym>]</sym>"			then "ritual monster"
-		else if card.type1	== "<sym>[</sym>Legendary Dragon"		then "legendary dragon"
-		else if card.type1	== "<sym>[</sym>Divine-Beast"			then "obelisk"
-		else if card.attribute	== "spell"					then "spell card"
-		else if card.level	== "<sym>[</sym>Spell Card<sym>]</sym>"		then "spell card"
-		else if card.level	== "<sym>[</sym>Spell Card%<sym>]</sym>"	then "spell card"
-		else if card.level	== "<sym>[</sym>Spell Card!<sym>]</sym>"	then "spell card"
-		else if card.level	== "<sym>[</sym>Spell Card+<sym>]</sym>"	then "spell card"
-		else if card.level	== "<sym>[</sym>Spell Card&<sym>]</sym>"	then "spell card"
-		else if card.level	== "<sym>[</sym>Spell Card$<sym>]</sym>"	then "spell card"
-		else if card.level	== "<sym>[</sym>Spell Card#<sym>]</sym>"	then "spell card"
-		else if card.attribute	== "trap"					then "trap card"
-		else if card.level	== "<sym>[</sym>Trap Card<sym>]</sym>"		then "trap card"
-		else if card.level	== "<sym>[</sym>Trap Card%<sym>]</sym>"		then "trap card"
-		else if card.level	== "<sym>[</sym>Trap Card!<sym>]</sym>"		then "trap card"
-		else if card.level	== "<sym>[</sym>Trap Card+<sym>]</sym>"		then "trap card"
-		else if card.level	== "<sym>[</sym>Trap Card&<sym>]</sym>"		then "trap card"
-		else if card.level	== "<sym>[</sym>Trap Card$<sym>]</sym>"		then "trap card"
-		else if card.level	== "<sym>[</sym>Trap Card#<sym>]</sym>"		then "trap card"
-		else                                          				     "normal monster"
+		if	card.attribute	== "spell"								then "spell card"
+		else if	contains(card.level, match:"Spell Card")						then "spell card"
+		else if card.attribute	== "trap"								then "trap card"
+		else if	contains(card.level, match:"Trap Card")							then "trap card"
+		else if card.type1	== "<word-list-monster>Divine-Beast</word-list-monster>"		then "obelisk"
+		else if card.type1	== "<word-list-monster>Legendary Dragon</word-list-monster>"		then "legendary dragons"
+		else if	contains(card.type2, match:"Fusion")							then "fusion monster"
+		else if	contains(card.type2, match:"Ritual")							then "ritual monster"
+		else if	contains(card.type2, match:"Synchro")							then "synchro monster"
+		else if	contains(card.type2, match:"Effect")							then "effect monster"
+		else if	contains(card.type2, match:"Spirit")							then "effect monster"
+		else if	contains(card.type2, match:"Toon")							then "effect monster"
+		else if	contains(card.type2, match:"Union")							then "effect monster"
+		else                                         	 						     "normal monster"
 	}
 	# Default 'attribute' of card
 	attribute := {
@@ -107,6 +110,10 @@ init script:
 	
 	############### Type of card
 	
+	nm_ext_querry := {
+		if set.gods_have_effects == "no" then is_normal_monster_extended(value)
+		else is_normal_monster(value)
+	}
 	is_nmonster := {
 		card.card_type == "spell card" or
 	        card.card_type == "trap card"
@@ -123,12 +130,15 @@ init script:
 		card.card_type == "ra"		   or
 		card.card_type == "legendary dragons"
 	}
-	is_normal_monster := {
+	is_normal_monster_extended := {
 		card.card_type == "normal monster" or
 		card.card_type == "obelisk"        or
 		card.card_type == "slifer"	   or
 		card.card_type == "ra"		   or
 		card.card_type == "legendary dragons"
+	}
+	is_normal_monster := {
+		card.card_type == "normal monster"
 	}
 	is_spell_card := {
 		card.card_type == "spell card"	or
@@ -197,6 +207,11 @@ set field:
 	type: text
 	name: copyright
 	description: Copyright information. This will not appear on the card.
+set field:
+	type: boolean
+	name: gods have effects
+	description: Should god cards have effects?
+	initial: yes
 ############################# Default style
 default set style:
 	title:
@@ -281,14 +296,19 @@ card field:
 card field:
 	type: text
 	name: type1
-	script: a_and_d_filter(value)
-	default: "<sym>[</sym>"
+	script: monster_type_filter(value)
+	default: " "
+	editable: false
+card field:
+	type: text
+	name: separator
+	script: if nm_ext_querry(value) then "  " else " / "
+	show statistics: false
 	editable: false
 card field:
 	type: text
 	name: type2
-	script: a_and_d_filter(value)
-	default: "<sym>]</sym>"
+	script: card_class_filter(value)
 	editable: false
 card field:
 	type: text
@@ -297,10 +317,10 @@ card field:
 		# Either just monster, monster / type1
 		combined_editor(
 			field1: card.type1,
-			separator: " / ",
+			separator: card.separator,
 			field2: card.type2,
 			soft_before_empty: true,
-			hide_when_empty:   true,
+			hide_when_empty: true,
 			type_over1: " /",
 			type_over2: "/"
 		)
@@ -338,21 +358,14 @@ card field:
 	show statistics: false
 card field:
 	type: text
-	name: flavor
-	script: flavor_text_filter(value)
-	editable: false
-	show statistics: false
-card field:
-	type: text
 	name: rule text
 	multi line: true
-	save value: false
+	save value: true
 	show statistics: false
 	script:
-		if is_normal_monster(value) then
-			combined_editor(field1: card.rules, separator: "<line>\n</>", field2: card.flavor)
-		else 
-			forward_editor(field: card.rules)
+		if nm_ext_querry(value) then flavor_text_filter(value)
+		else text_filter(value)
+	default: card.rules
 ############################# Attack/Defense
 card field:
 	type: text
@@ -386,34 +399,37 @@ card field:
 	show statistics: false
 
 ############################################################## Word lists
-# Doesn't do anything yet
-#word list:
-#	name: type
-#	word: Dragon
-#	word: Spellcaster
-#	word: Zombie
-#	word: Warrior
-#	word: Beast-Warrior
-#	word: Beast
-#	word: Winged Beast
-#	word: Fiend
-#	word: Fiary
-#	word: Insect
-#	word: Dinosaur
-#	word: Reptile
-#	word: Fish
-#	word: Sea Serpent
-#	word: Machine
-#	word: Thunder
-#	word: Aqua
-#	word: Pyro
-#	word: Rock
-#	word: Plant
-#	word: Divine-Beast
-#	word: Toon
-#	word: Spirit
-#	word: Union
-#	word: Effect
-#	word: Fusion
-#	word: Ritual
-#	word: Divine
+
+word list:
+	name: monster
+	word: Aqua
+	word: Beast
+	word: Beast-Warrior
+	word: Dinosaur
+	word: Divine-Beast
+	word: Dragon
+	word: Fairy
+	word: Fiend
+	word: Fish
+	word: Insect
+	word: Legendary Dragon
+	word: Machine
+	word: Plant
+	word: Pyro
+	word: Reptile
+	word: Rock
+	word: Sea Serpent
+	word: Spellcaster
+	word: Thunder
+	word: Warrior
+	word: Winged Beast
+	word: Zombie
+word list:
+	name: card
+	word: Effect
+	word: Fusion
+	word: Ritual
+	word: Spirit
+	word: Synchro
+	word: Toon
+	word: Union

@@ -40,6 +40,18 @@ styling field:
 	choice: normal
 	choice: silver
 	choice: gold
+styling field:
+	type: boolean
+	name: corner stamp
+	description: Should there be a foil stamp in the lower right corner?
+	initial: yes
+styling field:
+	type: choice
+	name: rules alignment
+	description: Should the rules text be justified? WARNING: Justification is not perfect.
+	initial: not justified
+	choice: not justified
+	choice: justified
 styling style:
 	foil image:
 		render style: text
@@ -120,7 +132,7 @@ card style:
 		left: 40
 		top : 74
 		height: 28
-		width: 280
+		width: {if is_nmonster() then 275 else 280 }
 		z index: 2
 		alignment: middle right
 		font:
@@ -142,9 +154,9 @@ card style:
 		z index: 1
 	############################# Card type
 	monster type:
-		left: 35
+		left: 39
 		top : 401
-		width: 193
+		width: { card_style.monster_type.content_width + 6 }
 		height: 14
 		alignment: middle left
 		z index: 2
@@ -160,7 +172,7 @@ card style:
 		visible: script: if is_nmonster() then false else true
 	############################# Edition and Card ID
 	number:
-		left: 200
+		left: 203
 		top : 380
 		width: 115
 		height: 15
@@ -171,7 +183,7 @@ card style:
 			size: 8
 			color: rgb(0,0,0)
 	edition:
-		left: 44
+		left: 43
 		top: 380
 		width: 115
 		height: 15
@@ -182,7 +194,7 @@ card style:
 			color: rgb(0,0,0)
 	############################# Text box
 	rule text:
-		left: 34
+		left: 35
 		top :
 			script: if is_nmonster() then 397 else 412
 		width: 289
@@ -197,7 +209,7 @@ card style:
 			name: yugioh-text-replacements
 			alignment: middle center
 			size: 3.5
-		alignment: top left
+		alignment: { if styling.rules_alignment=="justified" then "top left justify" else "top left" }
 		z index: 3
 		padding left: 1
 		padding top: 2
@@ -210,7 +222,7 @@ card style:
 		line height line max: 1.1
 	############################# Attack/Defense
 	attack:
-		left: 202
+		left: 204
 		top: 475
 		width: 48
 		height: 18
@@ -228,7 +240,7 @@ card style:
 		visible: script: if is_nmonster() then false else true
 	defense:
 		z index: 4
-		left: 276
+		left: 278
 		top: 475
 		width: 48
 		height: 18
@@ -258,13 +270,111 @@ card style:
 			size: 7
 			color: rgb(0,0,0)
 	copyright:
-		left: 180
+		left: { if styling.corner_stamp=="no" then 202 else 180 }
 		top : 495
 		width: 145
 		height: 18
-		z index: 2
+		z index: 4
 		alignment: middle right
 		font:
 			name: Palatino Linotype
 			size: 7
 			color: rgb(0,0,0)
+############################################extra card field:
+extra card field:
+	type: choice
+	name: bar
+	choice: bar
+	editable: false
+extra card field:
+	type: choice
+	name: leftbracket
+	choice: lbracket
+	editable: false
+extra card field:
+	type: choice
+	name: rightbracket
+	choice: rbracket
+	editable: false
+extra card field:
+	type: text
+	name: atkoverlay
+	default: "ATK/"
+	editable: false
+extra card field:
+	type: text
+	name: defoverlay
+	default: "DEF/"
+	editable: false
+extra card field:
+	type: choice
+	name: corner foil
+	choice: 1st
+	choice: 2nd
+	editable: true
+extra card style:
+	bar:
+		left: 37
+		top : 474
+		height: 1
+		width: 288
+		z index: 4
+		render style: image list
+		choice images:
+			bar: bar.png
+		visible: script: if is_nmonster() then false else true
+	leftbracket:
+		left: { if is_nmonster() then (309 - card_style.level.content_width) else 35 }
+		top : { if is_nmonster() then 79 else 400 }
+		height: { if is_nmonster() then 17 else 14 }
+		width: { if is_nmonster() then 5 else 4 }
+		z index: 2
+		render style: image list
+		choice images:
+			lbracket: /yugioh-standard-levels.mse-symbol-font/leftbracket.png
+	rightbracket:
+		left: { if is_nmonster() then 315 else (card_style.monster_type.content_width + 40) }
+		top : { if is_nmonster() then 79 else 400 }
+		height: { if is_nmonster() then 17 else 14 }
+		width: { if is_nmonster() then 5 else 4 }
+		z index: 4
+		render style: image list
+		choice images:
+			rbracket: /yugioh-standard-levels.mse-symbol-font/rightbracket.png
+	atkoverlay:
+		left: 170
+		top: 475
+		width: 48
+		height: 18
+		z index: 1
+		alignment: right middle
+		font:
+			name: MatrixBoldSmallCaps
+			italic name: Matrix-Bold
+			size: 12
+			color: rgb(0,0,0)
+		visible: script: if is_nmonster() then false else true
+	defoverlay:
+		left: 244
+		top: 475
+		width: 48
+		height: 18
+		z index: 1
+		alignment: right middle
+		font:
+			name: MatrixBoldSmallCaps
+			italic name: Matrix-Bold
+			size: 12
+			color: rgb(0,0,0)
+		visible: script: if is_nmonster() then false else true
+	corner foil:
+		left: 332
+		top : 492
+		height: 20
+		width: 20
+		z index: 3
+		render style: image list
+		choice images:
+			1st: cornerfirst.png
+			2nd: cornerunlimited.png
+		visible: script: if styling.corner_stamp=="no" then false else true
