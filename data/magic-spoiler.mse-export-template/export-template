@@ -154,7 +154,7 @@ script:
 		}</ul>"
 	}
 	write_group := {
-		cards := filter_list(set.cards, filter:
+		cards := filter_list(cards, filter:
 				if code == "L"
 				then  { contains(color_of_card(card:input), match:"L") }
 				else  { color_of_card(card:input) == code }
@@ -217,7 +217,7 @@ script:
 	       write_group(title: "Non-basic lands",        code:"K") +
 	       write_group(title: "Basic lands",            code:"L")
 	    else
-	       write_cards(cards: set.cards)
+	       write_cards(cards: cards)
 	  }
 	  <script><!--
 	  init();
