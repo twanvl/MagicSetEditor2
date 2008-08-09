@@ -165,8 +165,6 @@ include file: /magic-blends.mse-include/new-blends
 # The code consists of 4 parts:
 #   normal/token,  color,  shifted,   split
 sort_index := {
-	(if contains(card.shape, match:"token")   then "T" else " ") + # Tokens come last
-	color_of_card() +
 	(if contains(card.shape, match:"shifted") then "S" else " ") + # planeshifted cards come after normal ones
 	(if contains(card.shape, match:"split")   then "S" else " ") + # split cards come after normal ones
 	":"
@@ -235,6 +233,7 @@ color_of_card := {
 
 rarity_sort := {
 	if card.shape == "token" then "T"
+	else if card.shape == "rulestip" then "U"
 	else if set.sort_special_rarity == "with the rest" or card.rarity != "special" then " "
 	else "S"
 }
@@ -242,6 +241,8 @@ set_filter := {
 	# TODO: what about rulestips?
 	if card.shape == "token" then
 		{ card.shape == "token" }
+	else if card.shape == "rulestip" then
+		{ card.shape == "rulestip" }
 	else if set.sort_special_rarity != "separate numbering" then
 		{ card.shape != "token" and card.shape != "rulestip" }
 	else if card.rarity == "special" then
