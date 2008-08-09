@@ -256,7 +256,7 @@ next_symbol:;
 
 SymbolInFont* SymbolFont::defaultSymbol() const {
 	FOR_EACH_CONST(sym, symbols) {
-		if (sym->code.empty() && sym->enabled) return sym.get();
+		if (sym->regex && sym->code_regex.Matches(_("0")) && sym->enabled) return sym.get();
 	}
 	return nullptr;
 }
