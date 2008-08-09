@@ -155,9 +155,9 @@ script:
 	}
 	write_group := {
 		cards := filter_list(cards, filter:
-				if code == "L"
-				then  { contains(color_of_card(card:input), match:"L") }
-				else  { color_of_card(card:input) == code }
+				{	# The first character of the color_of_card code must be equal to 'code'
+					substring(color_of_card(card:input), begin:0, end:1) == code
+				}
 		)
 		count := number_of_items(in:cards)
 		if count > 0 then
