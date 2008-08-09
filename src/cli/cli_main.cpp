@@ -102,7 +102,7 @@ void CLISetInterface::showUsage() {
 	cli << _("   :quit               Exit the MSE command line interface.\n");
 	cli << _("   :reset              Clear all local variable definitions.\n");
 	cli << _("   :pwd                Print the current working directory.\n");
-	cli << _("   :cd                 Change working directory.\n");
+	cli << _("   :cd                 Change the working directory.\n");
 	cli << _("   :! <command>        Perform a shell command.\n");
 	cli << _("\n Commands can be abreviated to their first letter if there is no ambiguity.\n\n");
 }

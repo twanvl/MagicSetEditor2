@@ -13,11 +13,13 @@ The CLI shows a prompt where commands can be entered, which are then executed by
 
 ! Command	Short version	Description
 | @:help@	@:?@		Show a help screen describing the available commands.
-| @:quit@	@:q@		Quit the interactive cli.
+| @:quit@	@:q@		Exit the MSE command line interface.
 | @:load@	@:l@		Load a set file. The current set will be unloaded.
 		 		For example:
 		 		]:load my-set.mse-set
 | @:reset@	@:r@		Clear all variable definitions.
+| @:cd@		@:c@		Change the working directory.
+| @:pwd@	@:p@		Print the current working directory.
 | @:!@		 		Perform a shell command. For example @:! dir@ shows a directory listing.
 | ''other''	 		Execute the command as a line of [[type:script]] code.
 		 		The script has access to the loaded set and all [[fun:index|built in functions]].
