@@ -44,8 +44,9 @@ class Installer : public Packaged {
 	void addPackage(Packaged& package);
 	
   protected:
-	String typeName() const;
-	Version fileVersion() const;
+	virtual String typeName() const;
+	virtual Version fileVersion() const;
+	virtual void validate(Version file_app_version);
 	DECLARE_REFLECTION();
 };
 

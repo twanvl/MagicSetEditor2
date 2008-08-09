@@ -42,6 +42,24 @@ IMPLEMENT_REFLECTION(Installer) {
 	REFLECT(packages);
 }
 
+void Installer::validate(Version file_app_version) {
+	Packaged::validate(file_app_version);
+	// load icons where possible
+	FOR_EACH(p,packages) {
+		if (!p->icon_url.empty() && !starts_with(p->icon_url,_("http:"))) {
+			// TODO: support absolute icon names
+			try{
+				String filename = p->name + _("/") + p->icon_url;
+				InputStreamP img = openIn(p->name + _("/") + p->icon_url);
+				p->icon.LoadFile(*img);
+			} catch (...) {
+				// ignore errors, it's just an image
+				p->icon_url.clear();
+			}
+		}
+	}
+}
+
 #if 0
 // ----------------------------------------------------------------------------- : Installing
 
@@ -191,7 +209,7 @@ PackageDescription::PackageDescription(const Packaged& package)
 	, version(package.version)
 	, short_name(package.short_name)
 	, full_name(package.full_name)
-	, icon_url(_(""))
+	, icon_url(package.icon_filename)
 	, installer_group(package.installer_group)
 	, position_hint(package.position_hint)
 	//, description(package.description)

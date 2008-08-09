@@ -158,6 +158,7 @@ class SeekAtStartInputStream : public wxFilterInputStream {
 	Byte buffer[1024];
 };
 
+/// Retrieve the icon for a package
 class PackageIconRequest : public ThumbnailRequest {
   public:
 	PackageIconRequest(PackageUpdateList* list, PackageUpdateList::TreeItem* ti)
