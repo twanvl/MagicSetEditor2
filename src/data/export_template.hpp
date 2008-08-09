@@ -45,12 +45,15 @@ class ExportTemplate : public Packaged {
 
 /// Information that can be used by export functions
 struct ExportInfo {
+	ExportInfo();
+	
 	SetP               set;                ///< The set that is being exported
 	ExportTemplateP    export_template;    ///< The export template used
 	String             directory_relative; ///< The directory for storing extra files (or "" if !export->create_directory)
 	                                       ///  This is just the directory name
 	String             directory_absolute; ///< The absolute path of the directory
 	map<String,wxSize> exported_images;	   ///< Images (from symbol font) already exported, and their size
+	bool               allow_writes_outside; ///< Can files outside the directory be written to?
 };
 
 DECLARE_DYNAMIC_ARG(ExportInfo*, export_info);

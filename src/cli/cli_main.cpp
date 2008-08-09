@@ -26,6 +26,7 @@ CLISetInterface::CLISetInterface(const SetP& set, bool quiet)
 		throw Error(_("Can not run command line interface without a console;\nstart MSE with \"mse.com --cli\""));
 	}
 	ei.directory_relative = ei.directory_absolute = wxGetCwd();
+	ei.allow_writes_outside = true;
 	setSet(set);
 	run();
 }
@@ -100,6 +101,8 @@ void CLISetInterface::showUsage() {
 	cli << _("   :load <setfile>     Load a different set file.\n");
 	cli << _("   :quit               Exit the MSE command line interface.\n");
 	cli << _("   :reset              Clear all local variable definitions.\n");
+	cli << _("   :pwd                Print the current working directory.\n");
+	cli << _("   :cd                 Change working directory.\n");
 	cli << _("   :! <command>        Perform a shell command.\n");
 	cli << _("\n Commands can be abreviated to their first letter if there is no ambiguity.\n\n");
 }
@@ -122,17 +125,30 @@ void CLISetInterface::handleCommand(const String& command) {
 				showUsage();
 			} else if (before == _(":l") || before == _(":load")) {
 				if (arg.empty()) {
-					cli << _("Give a filename to open.\n");
+					cli.showError(_("Give a filename to open."));
 				} else {
 					setSet(import_set(arg));
 				}
 			} else if (before == _(":r") || before == _(":reset")) {
 				Context& ctx = getContext();
+				ei.exported_images.clear();
 				ctx.closeScope(scope);
 				scope = ctx.openScope();
+			} else if (before == _(":c") || before == _(":cd")) {
+				if (arg.empty()) {
+					cli.showError(_("Give a new working directory."));
+				} else {
+					if (!wxSetWorkingDirectory(arg)) {
+						cli.showError(_("Can't change working directory to ")+arg);
+					} else {
+						ei.directory_relative = ei.directory_absolute = wxGetCwd();
+					}
+				}
+			} else if (before == _(":pwd") || before == _(":p")) {
+				cli << ei.directory_absolute << ENDL;
 			} else if (before == _(":!")) {
 				if (arg.empty()) {
-					cli << _("Give a shell command to execute.\n");
+					cli.showError(_("Give a shell command to execute."));
 				} else {
 					#ifdef __WXMSW__
 						_wsystem(arg.c_str());
@@ -144,7 +160,7 @@ void CLISetInterface::handleCommand(const String& command) {
 					#endif
 				}
 			} else {
-				cli << _("Unknown command, type :help for help.\n");
+				cli.showError(_("Unknown command, type :help for help."));
 			}
 		} else if (command == _("exit") || command == _("quit")) {
 			cli << _("Use :quit to quit\n");

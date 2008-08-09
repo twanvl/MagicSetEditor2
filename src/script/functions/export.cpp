@@ -34,6 +34,29 @@ void guard_export_info(const String& fun, bool need_template = false) {
 	}
 }
 
+/// Find an absolute filename for a relative filename from an export template,
+/// Returns the absolute filename, and may modify the relative name.
+String get_export_full_path(String& rel_name) {
+	ExportInfo& ei = *export_info();
+	// the absolute path
+	wxFileName fn(rel_name);
+	fn.Normalize(wxPATH_NORM_ALL, ei.directory_absolute);
+	if (!ei.allow_writes_outside) {
+		// check if path is okay
+		wxFileName fn2(_("x"));
+		fn2.SetPath(ei.directory_absolute);
+		fn2.Normalize(wxPATH_NORM_ALL, ei.directory_absolute);
+		String p1 = fn.GetFullPath();
+		String p2 = fn2.GetFullPath();
+		p2.resize(p2.size() - 1); // drop the x
+		if (p2.empty() || p1.size() < p2.size() || p1.substr(0,p2.size()-1) != p2.substr(0,p2.size()-1)) {
+			throw ScriptError(_("Not a relative filename: ") + rel_name);
+		}
+	}
+	rel_name = fn.GetFullName();
+	return fn.GetFullPath();
+}
+
 // ----------------------------------------------------------------------------- : HTML
 
 // An HTML tag
@@ -351,15 +374,16 @@ SCRIPT_FUNCTION(to_text) {
 SCRIPT_FUNCTION(copy_file) {
 	guard_export_info(_("copy_file"));
 	SCRIPT_PARAM_C(String, input); // file to copy
-	ExportInfo& ei = *export_info();
-	wxFileName fn(input);
-	fn.SetPath(ei.directory_absolute);
+	// output path
+	String out_name = input;
+	String out_path = get_export_full_path(out_name);
 	// copy
+	ExportInfo& ei = *export_info();
 	InputStreamP in = ei.export_template->openIn(input);
-	wxFileOutputStream out(fn.GetFullPath());
-	if (!out.Ok()) throw Error(_("Unable to open file '") + fn.GetFullPath() + _("' for output"));
+	wxFileOutputStream out(out_path);
+	if (!out.Ok()) throw Error(_("Unable to open file '") + out_path + _("' for output"));
 	out.Write(*in);
-	SCRIPT_RETURN(fn.GetFullName());
+	SCRIPT_RETURN(out_name);
 }
 
 // write a file to the destination directory
@@ -367,29 +391,26 @@ SCRIPT_FUNCTION(write_text_file) {
 	guard_export_info(_("write_text_file"));
 	SCRIPT_PARAM_C(String, input); // text to write
 	SCRIPT_PARAM(String, file); // file to write to
-	// filename
-	wxFileName fn;
-	fn.SetPath(export_info()->directory_absolute);
-	fn.SetFullName(file);
+	// output path
+	String out_path = get_export_full_path(file);
 	// write
-	wxFileOutputStream out(fn.GetFullPath());
-	if (!out.Ok()) throw Error(_("Unable to open file '") + fn.GetFullPath() + _("' for output"));
+	wxFileOutputStream out(out_path);
+	if (!out.Ok()) throw Error(_("Unable to open file '") + out_path + _("' for output"));
 	wxTextOutputStream tout(out);
 	tout.WriteString(BYTE_ORDER_MARK);
 	tout.WriteString(input);
-	SCRIPT_RETURN(fn.GetFullName());
+	SCRIPT_RETURN(file);
 }
 
 SCRIPT_FUNCTION(write_image_file) {
 	guard_export_info(_("write_image_file"));
-	ExportInfo& ei = *export_info();
-	// filename
+	// output path
 	SCRIPT_PARAM(String, file); // file to write to
-	wxFileName fn;
-	fn.SetPath(ei.directory_absolute);
-	fn.SetFullName(file);
-	if (ei.exported_images.find(fn.GetFullName()) != ei.exported_images.end()) {
-		SCRIPT_RETURN(fn.GetFullName()); // already written an image with this name
+	String out_path = get_export_full_path(file);
+	// duplicates?
+	ExportInfo& ei = *export_info();
+	if (ei.exported_images.find(file) != ei.exported_images.end()) {
+		SCRIPT_RETURN(file); // already written an image with this name
 	}
 	// get image
 	SCRIPT_PARAM_C(ScriptValueP, input);
@@ -405,9 +426,9 @@ SCRIPT_FUNCTION(write_image_file) {
 	}
 	if (!image.Ok()) throw Error(_("Unable to generate image for file ") + file);
 	// write
-	image.SaveFile(fn.GetFullPath());
-	ei.exported_images.insert(make_pair(fn.GetFullName(), wxSize(image.GetWidth(), image.GetHeight())));
-	SCRIPT_RETURN(fn.GetFullName());
+	image.SaveFile(out_path);
+	ei.exported_images.insert(make_pair(file, wxSize(image.GetWidth(), image.GetHeight())));
+	SCRIPT_RETURN(file);
 }
 
 // ----------------------------------------------------------------------------- : Init

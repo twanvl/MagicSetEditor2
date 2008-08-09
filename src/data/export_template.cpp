@@ -9,6 +9,7 @@
 #include <util/prec.hpp>
 #include <data/export_template.hpp>
 #include <data/game.hpp>
+#include <data/set.hpp>
 #include <data/field.hpp>
 
 // ----------------------------------------------------------------------------- : Export template, basics
@@ -45,3 +46,5 @@ IMPLEMENT_REFLECTION(ExportTemplate) {
 // ----------------------------------------------------------------------------- : ExportInfo
 
 IMPLEMENT_DYNAMIC_ARG(ExportInfo*, export_info, nullptr);
+
+ExportInfo::ExportInfo() : allow_writes_outside(false) {}
