@@ -137,7 +137,7 @@ script:
 		}</ul>"
 	}
 	write_group := {
-		cards := filter_list(set.cards, filter: { contains(match:sort_index(card:input), code) } )
+		cards := filter_list(cards, filter: { contains(match:sort_index(card:input), code) } )
 		count := number_of_items(in:cards)
 		if count > 0 then
 		   "<h2>{title} ({count} {if count == 1 then "card" else "cards"})</h2>" +
@@ -176,7 +176,7 @@ script:
 	       write_group(title: "Location",        code:"4") +
 	       write_group(title: "Plot Twist",      code:"5")
 	    else
-	       write_cards(cards: set.cards)
+	       write_cards(cards: cards)
 	  }
 	  <script><!--
 	  init();
