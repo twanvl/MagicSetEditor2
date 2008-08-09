@@ -31,31 +31,33 @@ CardsPanel::CardsPanel(Window* parent, int id)
 	: SetWindowPanel(parent, id)
 {
 	// init controls
-	wxPanel* notesP;
-	editor    = new CardEditor(this, ID_EDITOR);
-	splitter  = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	card_list = new ImageCardList(splitter, ID_CARD_LIST);
-	notesP    = new Panel(splitter, wxID_ANY);
-	notes     = new TextCtrl(notesP, ID_NOTES, true);
-	collapse_notes = new HoverButton(notesP, ID_COLLAPSE_NOTES, _("btn_collapse"), wxNullColour, false);
+	editor      = new CardEditor(this, ID_EDITOR);
+	splitter    = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
+	card_list   = new ImageCardList(splitter, ID_CARD_LIST);
+	nodes_panel = new Panel(splitter, wxID_ANY);
+	notes       = new TextCtrl(nodes_panel, ID_NOTES, true);
+	collapse_notes = new HoverButton(nodes_panel, ID_COLLAPSE_NOTES, _("btn_collapse"), wxNullColour, false);
 	collapse_notes->SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
 	filter    = nullptr;
 	editor->next_in_tab_order = card_list;
 	// init sizer for notes panel
 	wxSizer* sn = new wxBoxSizer(wxVERTICAL);
 		wxSizer* sc = new wxBoxSizer(wxHORIZONTAL);
-		sc->Add(new wxStaticText(notesP, wxID_ANY, _LABEL_("card notes")), 1, wxEXPAND);
+		sc->Add(new wxStaticText(nodes_panel, wxID_ANY, _LABEL_("card notes")), 1, wxEXPAND);
 		sc->Add(collapse_notes, 0, wxALIGN_CENTER | wxRIGHT, 2);
 	sn->Add(sc, 0, wxEXPAND, 2);
 	sn->Add(notes, 1, wxEXPAND | wxTOP, 2);
-	notesP->SetSizer(sn);
+	nodes_panel->SetSizer(sn);
 	// init splitter
 	splitter->SetMinimumPaneSize(15);
 	splitter->SetSashGravity(1.0);
-	splitter->SplitHorizontally(card_list, notesP, -40);
+	splitter->SplitHorizontally(card_list, nodes_panel, -40);
+	notes_below_editor = false;
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
-	s->Add(editor,   0, wxRIGHT, 2);
+		s_left = new wxBoxSizer(wxVERTICAL);
+		s_left->Add(editor);
+	s->Add(s_left,   0, wxEXPAND | wxRIGHT, 2);
 	s->Add(splitter, 1, wxEXPAND);
 	s->SetSizeHints(this);
 	SetSizer(s);
@@ -90,6 +92,33 @@ CardsPanel::CardsPanel(Window* parent, int id)
 		menuFormat->AppendSeparator();
 		insertSymbolMenu = new wxMenuItem(menuFormat, ID_INSERT_SYMBOL, _MENU_("insert symbol"));
 		menuFormat->Append(insertSymbolMenu);
+}
+
+void CardsPanel::updateNotesPosition() {
+	wxSize editor_size = editor->GetBestSize();
+	int room_below_editor = GetSize().y - editor_size.y;
+	bool should_be_below = room_below_editor > 100;
+	// move?
+	if (should_be_below && !notes_below_editor) {
+		notes_below_editor = true;
+		// move the notes_panel to below the editor, it gets this as its parent
+		splitter->Unsplit(nodes_panel);
+		nodes_panel->Reparent(this);
+		s_left->Add(nodes_panel, 1, wxEXPAND | wxTOP, 2);
+		collapse_notes->Hide();
+		nodes_panel->Show();
+	} else if (!should_be_below && notes_below_editor) {
+		notes_below_editor = false;
+		// move the notes_panel back to below the card list
+		s_left->Detach(nodes_panel);
+		nodes_panel->Reparent(splitter);
+		collapse_notes->Show();
+		splitter->SplitHorizontally(card_list, nodes_panel, -80);
+	}
+}
+bool CardsPanel::Layout() {
+	updateNotesPosition();
+	return SetWindowPanel::Layout();
 }
 
 CardsPanel::~CardsPanel() {
@@ -352,6 +381,7 @@ void CardsPanel::selectCard(const CardP& card) {
 	editor->setCard(card);
 	notes->setValue(card ? &card->notes : nullptr);
 	Layout();
+	updateNotesPosition();
 }
 
 void CardsPanel::selectFirstCard() {

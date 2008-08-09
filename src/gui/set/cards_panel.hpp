@@ -72,12 +72,21 @@ class CardsPanel : public SetWindowPanel {
 	
   private:
 	// --------------------------------------------------- : Controls
+	wxSizer*          s_left;
 	wxSplitterWindow* splitter;
 	DataEditor*       editor;
 	ImageCardList*    card_list;
+	Panel*            nodes_panel;
 	TextCtrl*         notes;
 	HoverButton*      collapse_notes;
 	wxTextCtrl*       filter;
+	bool              notes_below_editor;
+	
+	/// Move the notes panel below the editor or below the card list
+	void updateNotesPosition();
+	// before Layout, call updateNotesPosition.
+	// NOTE: docs say this function returns void, but the code says bool
+	virtual bool Layout();
 	
 	// --------------------------------------------------- : Menus & tools
 	IconMenu* menuCard, *menuFormat;

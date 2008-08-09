@@ -86,10 +86,11 @@ class SetWindow : public wxFrame, public SetView {
 	/// Actions that change the set
 	virtual void onAction(const Action&, bool undone);
 	
-  private:
+  public:
 	// minSize = mainSizer->getMinWindowSize(this)
 	// but wx made that private
 	void fixMinWindowSize();
+  private:
 	/// Update the window title based on the set name
 	void updateTitle();
 	
