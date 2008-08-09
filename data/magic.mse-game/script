@@ -162,9 +162,10 @@ include file: /magic-blends.mse-include/new-blends
 ############################################################## Card number
 
 # Index for sorting, white cards are first, so white->A, blue->B, .. ,
-# The code consists of 4 parts:
-#   normal/token,  color,  shifted,   split
+# The code consists of 3 parts:
+#   color,  shifted,   split
 sort_index := {
+	color_of_card() +
 	(if contains(card.shape, match:"shifted") then "S" else " ") + # planeshifted cards come after normal ones
 	(if contains(card.shape, match:"split")   then "S" else " ") + # split cards come after normal ones
 	":"
