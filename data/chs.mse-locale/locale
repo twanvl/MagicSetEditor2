@@ -423,6 +423,7 @@ label:
 #_ADD	pack selection:		Pack selection
 #_ADD	pack totals:		Totals
 #_ADD	seed:				Seed
+#_ADD	total cards:		Total
 	
 	# Open dialogs
 	all files		全部文件
@@ -468,7 +469,7 @@ label:
 	filename format:	格式: 
 	filename conflicts:	处理重复文件名:
 	export filenames:	文件名
-	cards to export:	导出卡牌
+#_DEL	cards to export:	导出卡牌
 	filename is ignored: 	（忽略文件名）
 	
 	# apprentice export

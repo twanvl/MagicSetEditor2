@@ -87,6 +87,7 @@ class PackTotalsPanel : public wxPanel {
 	GameP game;
 	void onPaint(wxPaintEvent&);
 	void draw(DC& dc);
+	void drawItem(DC& dc, int& y, const String& name, int value);
 	map<String,int> amounts;
 };
 
@@ -104,15 +105,30 @@ void PackTotalsPanel::draw(DC& dc) {
 	dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
 	dc.SetFont(*wxNORMAL_FONT);
 	int y = 0;
+	int total = 0;
 	FOR_EACH(item, game->pack_items) {
-		int w,h;
-		String name = capitalize(item->name);
-		String amount; amount << amounts[item->name];
-		dc.GetTextExtent(amount,&w,&h);
-		dc.DrawText(name,   0,        y);
-		dc.DrawText(amount, size.x-w, y);//align right
-		y += h + 10;
+		int value = amounts[item->name];
+		drawItem(dc, y, item->name, value);
+		total += value;
 	}
+	// draw total
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
+	dc.DrawLine(0, y-4, size.x, y-4);
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DHIGHLIGHT));
+	dc.DrawLine(0, y-3, size.x, y-3);
+	y += 6;
+	drawItem(dc, y, _LABEL_("total cards"), total);
+	
+}
+void PackTotalsPanel::drawItem(DC& dc, int& y,  const String& name, int value) {
+	wxSize size = dc.GetSize();
+	int w,h;
+	String cap_name = capitalize(name);
+	String amount; amount << value;
+	dc.GetTextExtent(amount,&w,&h);
+	dc.DrawText(cap_name, 0,        y);
+	dc.DrawText(amount,   size.x-w, y);//align right
+	y += h + 10;
 }
 
 void PackTotalsPanel::setGame(const GameP& game) {

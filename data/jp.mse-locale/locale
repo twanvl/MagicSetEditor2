@@ -423,6 +423,7 @@ label:
 #_ADD	pack selection:		Pack selection
 #_ADD	pack totals:		Totals
 #_ADD	seed:				Seed
+#_ADD	total cards:		Total
 	
 	# Open dialogs
 	all files			全てのファイル
@@ -468,7 +469,7 @@ label:
 	filename format:	&フォーマット： 
 	filename conflicts:	&取っ手を複写することのファイル名：
 	export filenames:	ファイル名
-	cards to export:	エクスポートするカード
+#_DEL	cards to export:	エクスポートするカード
 	filename is ignored: (ファイル名は無視されます)
 	
 	# apprentice export

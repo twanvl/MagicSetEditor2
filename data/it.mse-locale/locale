@@ -1,4 +1,4 @@
-﻿#_DEL ﻿mse version: 0.3.7
+﻿#_DEL #_DEL #_DEL ﻿mse version: 0.3.7
 #_ADD mse version: 0.3.7
 installer group: translations/Italiano
 full name: Italiano
@@ -424,6 +424,7 @@ label:
 #_ADD	pack selection:		Pack selection
 #_ADD	pack totals:		Totals
 #_ADD	seed:				Seed
+#_ADD	total cards:		Total
 	
 	# Open dialogs
 	all files			Tutti i file
@@ -469,7 +470,7 @@ label:
 	filename format:	&Formato: 
 	filename conflicts:	&Handle duplicating filenames:
 	export filenames:	Filenames
-	cards to export:	Carte da esportare
+#_DEL	cards to export:	Carte da esportare
 	filename is ignored: (il filename è ignorato)
 	
 	# apprentice export

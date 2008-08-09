@@ -423,6 +423,7 @@ label:
 #_ADD	pack selection:		Pack selection
 #_ADD	pack totals:		Totals
 #_ADD	seed:				Seed
+#_ADD	total cards:		Total
 	
 	# Open dialogs
 	all files			Alle Dateien
@@ -468,7 +469,7 @@ label:
 	filename format:	&Format: 
 	filename conflicts:	&Doppelte Dateinamen:
 	export filenames:	Dateinamen
-	cards to export:	Exportierte Karten
+#_DEL	cards to export:	Exportierte Karten
 	filename is ignored: (Dateiname wird ignoriert)
 	
 	# apprentice export

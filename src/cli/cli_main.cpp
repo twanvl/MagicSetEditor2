@@ -150,7 +150,7 @@ void CLISetInterface::handleCommand(const String& command) {
 				if (arg.empty()) {
 					cli.showError(_("Give a shell command to execute."));
 				} else {
-					#if UNICODE
+					#ifdef UNICODE
 						#ifdef __WXMSW__
 							_wsystem(arg.c_str()); // TODO: is this function available on other platforms?
 						#else

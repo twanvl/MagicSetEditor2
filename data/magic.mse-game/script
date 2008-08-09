@@ -199,6 +199,7 @@ hybrid_cost_sort := {
 	else if colors = "UG" then "GJ"
 	else "GK"
 }
+# A code for the color of the card
 color_of_card := {
 	card_color := card.card_color
 	casting_cost := card.casting_cost
