@@ -283,10 +283,14 @@ void SymbolFont::drawSymbol(RotatedDC& dc, RealRect sym_rect, double font_size, 
 	// find bitmap
 	Bitmap bmp = sym.getBitmap(*this, dc.trS(font_size));
 	// draw aligned in the rectangle
-	dc.DrawBitmap(bmp, align_in_rect(align, dc.trInvS(RealSize(bmp.GetWidth(), bmp.GetHeight())), sym_rect));
+	RealSize  bmp_size = dc.trInvS(RealSize(bmp));
+	RealPoint bmp_pos  = align_in_rect(align, bmp_size, sym_rect);
+	dc.DrawBitmap(bmp, bmp_pos);
 	
 	// 2. draw text
 	if (text.empty() || !sym.text_font) return;
+	// only use the bitmap rectangle
+	sym_rect = RealRect(bmp_pos, bmp_size);
 	// subtract margins from size
 	sym_rect.x      += font_size * sym.text_margin_left;
 	sym_rect.y      += font_size * sym.text_margin_top;

@@ -101,10 +101,10 @@ class SymbolFont : public Packaged {
 	/// Draws a single symbol inside the given rectangle
 	void drawSymbol  (RotatedDC& dc, RealRect sym_rect, double font_size, const Alignment& align, SymbolInFont& sym, const String& text);
 	
-	/// Size of a single symbol
+	/// Size of a single symbol, including spacing
 	RealSize symbolSize       (double font_size, const DrawableSymbol& sym);
   public:
-	/// The default size of symbols
+	/// The default size of symbols, including spacing
 	RealSize defaultSymbolSize(double font_size);
 	
 	DECLARE_REFLECTION();
