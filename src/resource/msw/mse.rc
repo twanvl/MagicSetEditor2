@@ -65,6 +65,7 @@ tool/window_set_info	IMAGE	"tool/window_set_info.png"
 tool/window_style		IMAGE	"tool/window_style.png"
 tool/window_keywords	IMAGE	"tool/window_keywords.png"
 tool/window_statistics	IMAGE	"tool/window_statistics.png"
+tool/window_random_pack	IMAGE	"tool/window_random_pack.png"
 
 tool/help				IMAGE	"tool/help.png"
 

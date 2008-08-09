@@ -44,7 +44,7 @@ void ItemList::selectNext() {
 	selectItemPos(selected_item_pos + 1, true, true);
 }
 void ItemList::selectFirst() {
-	assert(0 < (long)sorted_list.size());
+	if (sorted_list.empty()) return;
 	selectItemPos(0, true);
 }
 

@@ -113,10 +113,10 @@ void PackTotalsPanel::draw(DC& dc) {
 	}
 	// draw total
 	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
-	dc.DrawLine(0, y-4, size.x, y-4);
-	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DHIGHLIGHT));
 	dc.DrawLine(0, y-3, size.x, y-3);
-	y += 6;
+	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DHIGHLIGHT));
+	dc.DrawLine(0, y-2, size.x, y-2);
+	y += 7;
 	drawItem(dc, y, _LABEL_("total cards"), total);
 	
 }
@@ -334,6 +334,7 @@ void RandomPackPanel::generate() {
 		}
 	}
 	card_list->rebuild();
+	card_list->selectFirst();
 }
 
 // ----------------------------------------------------------------------------- : Selection
@@ -343,7 +344,12 @@ CardP RandomPackPanel::selectedCard() const {
 }
 
 void RandomPackPanel::selectCard(const CardP& card) {
-	preview->setCard(card);
+	// Don't change the card based on other panels
+	//preview->setCard(card);
+}
+void RandomPackPanel::onCardSelect(CardSelectEvent& ev) {
+	preview->setCard(ev.getCard());
+	ev.Skip(); // but do change other panels' selection
 }
 
 void RandomPackPanel::selectionChoices(ExportCardSelectionChoices& out) {
@@ -352,6 +358,12 @@ void RandomPackPanel::selectionChoices(ExportCardSelectionChoices& out) {
 			card_list->getCardsPtr()
 		));
 }
+
+
+BEGIN_EVENT_TABLE(RandomPackPanel, wxPanel)
+	EVT_CARD_SELECT(wxID_ANY, RandomPackPanel::onCardSelect)
+END_EVENT_TABLE  ()
+
 
 // ----------------------------------------------------------------------------- : Clipboard
 

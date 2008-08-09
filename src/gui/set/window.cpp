@@ -146,7 +146,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	addPanel(menuWindow, tabBar, new StylePanel     (this, wxID_ANY), 2, _("window_style"),      _("style tab"));
 	addPanel(menuWindow, tabBar, new KeywordsPanel  (this, wxID_ANY), 3, _("window_keywords"),   _("keywords tab"));
 	addPanel(menuWindow, tabBar, new StatsPanel     (this, wxID_ANY), 4, _("window_statistics"), _("stats tab"));
-	addPanel(menuWindow, tabBar, new RandomPackPanel(this, wxID_ANY), 5, _("window_cards"),      _("random pack tab")); // TODO: Get me an icon
+	addPanel(menuWindow, tabBar, new RandomPackPanel(this, wxID_ANY), 5, _("window_random_pack"),_("random pack tab"));
 	selectPanel(ID_WINDOW_CARDS); // select cards panel
 	
 	// loose ends

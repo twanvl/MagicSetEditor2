@@ -16,6 +16,7 @@
 class CardViewer;
 class RandomCardList;
 class PackTotalsPanel;
+struct CardSelectEvent;
 DECLARE_POINTER_TYPE(PackType);
 
 // ----------------------------------------------------------------------------- : RandomPackPanel
@@ -47,6 +48,8 @@ class RandomPackPanel : public SetWindowPanel {
 	virtual void doCopy();
 	
   private:
+	DECLARE_EVENT_TABLE();
+	
 	CardViewer*       preview;		///< Card preview
 	RandomCardList*   card_list;	///< The list of cards
 	wxTextCtrl*       seed;			///< Seed value
@@ -74,6 +77,8 @@ class RandomPackPanel : public SetWindowPanel {
 	void generate();
 	/// Store the settings
 	void storeSettings();
+	
+	void onCardSelect(CardSelectEvent& ev);
   public:
 	typedef PackItem PackItem_for_typeof;
 };
