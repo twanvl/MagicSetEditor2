@@ -202,7 +202,7 @@ card style:
 			script: if is_nmonster() then 92 else 62
 		font:
 			name: MatrixBook
-			size: 9
+			size: 8
 			scale down to: 4
 			color: rgb(0,0,0)
 		symbol font:
@@ -214,7 +214,7 @@ card style:
 		padding left: 1
 		padding top: 2
 		padding right: 0
-		padding bottom: 1
+		padding bottom: 0
 		line height hard: 1.0
 		line height line: 1.0
 		line height soft: 0.9
@@ -236,7 +236,7 @@ card style:
 		symbol font:
 			name: yugioh-text-replacements
 			alignment: middle center
-			size: 8
+			size: 6
 		visible: script: if is_nmonster() then false else true
 	defense:
 		z index: 4
@@ -254,20 +254,20 @@ card style:
 		symbol font:
 			name: yugioh-text-replacements
 			alignment: middle center
-			size: 8
+			size: 6
 		visible: script: if is_nmonster() then false else true
 	############################# Card sorting / numbering
 	############################# Copyright stuff
 	gamecode:
 		left: 16
-		top : 495
+		top : 494
 		width: 96
 		height: 18
 		alignment: middle left
 		z index: 2
 		font:
 			name: Palatino Linotype
-			size: 7
+			size: 8
 			color: rgb(0,0,0)
 	copyright:
 		left: { if styling.corner_stamp=="no" then 202 else 180 }

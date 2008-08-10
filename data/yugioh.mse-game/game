@@ -36,7 +36,7 @@ init script:
 			) +
 		# step 4 : symbols
 		replace_rule(
-			match: "[|@|*|]",
+			match: "[|@|*|?|]",
 			replace: "<sym-auto>&</sym-auto>" );
 	level_filter := 
 		# step 1 : remove all automatic tags
@@ -48,9 +48,13 @@ init script:
 	a_and_d_filter := 
 		# step 1 : remove all automatic tags
 		tag_remove_rule(tag: "<sym-auto>") +
-		# step 2 : symbols
+		# step 2 : infinity
 		replace_rule(
 			match: "@",
+			replace: "<sym-auto>&</sym-auto>" ) +
+		# step 3 : question mark
+		replace_rule(
+			match: "\\?",
 			replace: "<sym-auto>&</sym-auto>" );
 	copyright_filter :=
 		# step 1 : trademark symbol

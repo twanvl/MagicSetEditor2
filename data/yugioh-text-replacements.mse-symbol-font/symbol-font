@@ -17,6 +17,11 @@ symbol:
 symbol:
 	code: @
 	image: infinity.png
+	image font size: 25
+symbol:
+	code: ?
+	image: qmark.png
+	image font size: 32
 symbol:
 	code: *
 	image: dot.png
@@ -27,4 +32,5 @@ insert symbol menu:
 	item: [
 	item: ]
 	item: @
+	item: ?
 	item: *
