@@ -14,6 +14,7 @@
 #include <data/statistics.hpp>
 #include <data/pack.hpp>
 #include <data/word_list.hpp>
+#include <data/add_cards_script.hpp>
 #include <util/io/package_manager.hpp>
 #include <script/script.hpp>
 
@@ -61,6 +62,7 @@ IMPLEMENT_REFLECTION(Game) {
 	REFLECT(keyword_parameter_types);
 	REFLECT_NO_SCRIPT(keywords);
 	REFLECT_NO_SCRIPT(word_lists);
+	REFLECT_NO_SCRIPT(add_cards_scripts);
 	REFLECT_NO_SCRIPT(auto_replaces);
 }
 

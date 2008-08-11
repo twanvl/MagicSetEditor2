@@ -1854,6 +1854,12 @@
 				Name="aux"
 				Filter="">
 				<File
+					RelativePath=".\data\add_cards_script.cpp">
+				</File>
+				<File
+					RelativePath=".\data\add_cards_script.hpp">
+				</File>
+				<File
 					RelativePath=".\data\draw_what.hpp">
 				</File>
 				<File

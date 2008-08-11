@@ -26,6 +26,7 @@ DECLARE_POINTER_TYPE(KeywordParam);
 DECLARE_POINTER_TYPE(KeywordMode);
 DECLARE_POINTER_TYPE(Keyword);
 DECLARE_POINTER_TYPE(WordList);
+DECLARE_POINTER_TYPE(AddCardsScript);
 DECLARE_POINTER_TYPE(AutoReplace);
 
 // ----------------------------------------------------------------------------- : Game
@@ -48,6 +49,7 @@ class Game : public Packaged {
 	vector<PackItemP>       pack_items;				///< Types of cards in packs
 	vector<PackTypeP>       pack_types;				///< Types of random card packs to generate
 	vector<WordListP>       word_lists;				///< Word lists for editing with a drop down list
+	vector<AddCardsScriptP> add_cards_scripts;		///< Scripts for adding multiple cards to the set
 	vector<AutoReplaceP>	auto_replaces;			///< Things to autoreplace in textboxes
 	
 	bool                    has_keywords;           ///< Does this game use keywords?

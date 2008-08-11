@@ -90,7 +90,8 @@ class CardsPanel : public SetWindowPanel {
 	
 	// --------------------------------------------------- : Menus & tools
 	IconMenu* menuCard, *menuFormat;
-	wxMenuItem* insertSymbolMenu; // owned by menuFormat, but submenu owned by SymbolFont
+	wxMenuItem* insertSymbolMenu;    // owned by menuFormat, but submenu owned by SymbolFont
+	wxMenuItem* insertManyCardsMenu; // owned my menuCard, but submenu can be changed
 };
 
 // ----------------------------------------------------------------------------- : EOF

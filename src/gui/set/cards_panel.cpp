@@ -17,7 +17,9 @@
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
 #include <data/set.hpp>
+#include <data/game.hpp>
 #include <data/card.hpp>
+#include <data/add_cards_script.hpp>
 #include <data/action/set.hpp>
 #include <data/settings.hpp>
 #include <util/find_replace.hpp>
@@ -280,6 +282,10 @@ void CardsPanel::onCommand(int id) {
 			if (id >= ID_INSERT_SYMBOL_MENU_MIN && id <= ID_INSERT_SYMBOL_MENU_MAX) {
 				// pass on to editor
 				editor->onCommand(id);
+			} else if (id >= ID_ADD_CARDS_MENU_MIN && id <= ID_ADD_CARDS_MENU_MAX) {
+				// add multiple cards
+				AddCardsScriptP script = set->game->add_cards_scripts.at(id - ID_ADD_CARDS_MENU_MIN);
+				script->perform(*set);
 			}
 		}
 	}
