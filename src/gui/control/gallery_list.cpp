@@ -24,6 +24,7 @@ GalleryList::GalleryList(Window* parent, int id, int direction, bool always_focu
 	: wxPanel(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER | wxWANTS_CHARS | (direction == wxHORIZONTAL ? wxHSCROLL : wxVSCROLL) )
 	, active_subcolumn(0)
 	, direction(direction)
+	, column_count(1)
 	, always_focused(always_focused)
 	, visible_start(0)
 {
@@ -77,16 +78,30 @@ void GalleryList::update() {
 }
 
 size_t GalleryList::findItem(const wxMouseEvent& ev) const {
-	int x = visible_start + (direction == wxHORIZONTAL ? ev.GetX() : ev.GetY());
-	int w = mainSize(item_size) + SPACING;
-	return static_cast<size_t>( max(0, x - MARGIN) / w ); 
+	int x = ev.GetX();
+	int y = ev.GetY();
+	int w = item_size.x + SPACING;
+	int h = item_size.y + SPACING;
+	if (direction == wxHORIZONTAL) {
+		x += visible_start;
+		return (size_t)(max(0, x - MARGIN) / w) * column_count
+		     + (size_t)min(max(0, y - MARGIN) / h, (int)column_count-1);
+	} else {
+		y += visible_start;
+		return (size_t)(max(0, y - MARGIN) / h) * column_count
+		     + (size_t)min(max(0, x - MARGIN) / w, (int)column_count-1);
+	}
 }
 
 wxPoint GalleryList::itemPos(size_t item) const {
 	if (direction == wxHORIZONTAL) {
-		return wxPoint((int)item * (item_size.x + SPACING) + MARGIN + BORDER - visible_start, MARGIN + BORDER);
+		int x = (int)(item / column_count) * (item_size.x + SPACING);
+		int y = (int)(item % column_count) * (item_size.y + SPACING);
+		return wxPoint(x + MARGIN + BORDER - visible_start, y + MARGIN + BORDER);
 	} else {
-		return wxPoint(MARGIN + BORDER, (int)item * (item_size.y + SPACING) + MARGIN + BORDER - visible_start);
+		int x = (int)(item % column_count) * (item_size.x + SPACING);
+		int y = (int)(item / column_count) * (item_size.y + SPACING);
+		return wxPoint(x + MARGIN + BORDER, y + MARGIN + BORDER - visible_start);
 	}
 }
 
@@ -185,6 +200,8 @@ void GalleryList::onChar(wxKeyEvent& ev) {
 	switch (ev.GetKeyCode()) {
 		case WXK_LEFT:
 			if (direction == wxHORIZONTAL) {
+				select(col.selection - column_count);
+			} else if (column_count > 1) {
 				select(col.selection - 1);
 			} else {
 				selectSubColumn(active_subcolumn - 1);
@@ -192,6 +209,8 @@ void GalleryList::onChar(wxKeyEvent& ev) {
 			break;
 		case WXK_RIGHT:
 			if (direction == wxHORIZONTAL) {
+				select(col.selection + column_count);
+			} else if (column_count > 1) {
 				select(col.selection + 1);
 			} else {
 				selectSubColumn(active_subcolumn + 1);
@@ -199,6 +218,8 @@ void GalleryList::onChar(wxKeyEvent& ev) {
 			break;
 		case WXK_UP:
 			if (direction == wxVERTICAL) {
+				select(col.selection - column_count);
+			} else if (column_count > 1) {
 				select(col.selection - 1);
 			} else {
 				selectSubColumn(active_subcolumn - 1);
@@ -206,6 +227,8 @@ void GalleryList::onChar(wxKeyEvent& ev) {
 			break;
 		case WXK_DOWN:
 			if (direction == wxVERTICAL) {
+				select(col.selection + column_count);
+			} else if (column_count > 1) {
 				select(col.selection + 1);
 			} else {
 				selectSubColumn(active_subcolumn + 1);
@@ -220,7 +243,8 @@ void GalleryList::onChar(wxKeyEvent& ev) {
 			} break;
 		case WXK_RETURN: {
 			// same thing: press dialog box default button
-			wxButton* btn = wxDynamicCast(wxDynamicCast(GetParent(), wxTopLevelWindow)->GetDefaultItem(), wxButton);
+			wxTopLevelWindow* tlw = wxDynamicCast(GetParent(), wxTopLevelWindow);
+			wxButton* btn = tlw ? wxDynamicCast(tlw->GetDefaultItem(), wxButton) : nullptr;
 			if ( btn && btn->IsEnabled() ) {
 				// if we do have a default button, do press it
 				wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, btn->GetId());
@@ -235,7 +259,11 @@ wxSize GalleryList::DoGetBestSize() const {
 	wxSize ws = GetSize(), cs = GetClientSize();
 	const int w = item_size.x + 2*MARGIN + 2*BORDER;
 	const int h = item_size.y + 2*MARGIN + 2*BORDER;
-	return wxSize(w, h) + ws - cs;
+	if (direction == wxHORIZONTAL) {
+		return wxSize(w, h * (int)column_count) + ws - cs;
+	} else {
+		return wxSize(w * (int)column_count, h) + ws - cs;
+	}
 }
 
 void GalleryList::onPaint(wxPaintEvent&) {
@@ -248,8 +276,8 @@ void GalleryList::OnDraw(DC& dc) {
 	wxSize cs = GetClientSize();
 	size_t start, end; // items to draw
 	// number of visble items
-	start = (size_t) max(0, visible_start / (mainSize(item_size) + SPACING));
-	end   = (size_t) max(0, visibleEnd()  / (mainSize(item_size) + SPACING) + 1);
+	start = (size_t) max(0, visible_start / (mainSize(item_size) + SPACING))     * column_count;
+	end   = (size_t) max(0, visibleEnd()  / (mainSize(item_size) + SPACING) + 1) * column_count;
 	end = min(end, itemCount());
 	// clear background
 	dc.SetPen(*wxTRANSPARENT_PEN);

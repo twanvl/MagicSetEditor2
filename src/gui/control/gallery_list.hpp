@@ -50,6 +50,7 @@ class GalleryList : public wxPanel {
 	size_t active_subcolumn;  ///< The active subcolumn
 	wxSize item_size;         ///< The total size of a single item (over all columns)
 	int direction;	          ///< Direction of the list, can be wxHORIZONTAL or wxVERTICAL
+	size_t column_count;      ///< Number of major level columns (if vertical) or rows (if horizontal)
 	bool always_focused;      ///< Always draw as if focused
 	
 	/// Redraw the list after changing the selection or the number of items
@@ -110,10 +111,10 @@ class GalleryList : public wxPanel {
 	}
 	/// Pixel position of an item
 	inline int itemStart(size_t item) const {
-		return (int)item * (mainSize(item_size) + SPACING);
+		return (int)(item / column_count) * (mainSize(item_size) + SPACING);
 	}
 	inline int itemEnd(size_t item) const {
-		return (int)(item + 1) * (mainSize(item_size) + SPACING) + MARGIN;
+		return (int)(item / column_count + 1) * (mainSize(item_size) + SPACING) + MARGIN;
 	}
 	/// Main component of a size (i.e. in the direction of this list)
 	inline int mainSize(wxSize s) const {
