@@ -27,6 +27,8 @@ These contain several properties, similair to the file types. But they are part 
 | [[type:keyword param type]]	A type of parameters for keywords.
 | [[type:statistics dimension]]	A dimension for the statistics panel.
 | [[type:statistics category]]	A category for the statistics panel.
+| [[type:word list]]		A list of words that can be used for a drop down list in text fields.
+| [[type:add cards script]]	A script for convienently adding multiple cards to a set.
 | [[type:font]]			Description of a font.
 | [[type:symbol part]]		Part of a [[type:symbol]].
 | [[type:control point]]	A point on in a symbol part.

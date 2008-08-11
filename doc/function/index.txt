@@ -79,10 +79,13 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:set_combine]]		Change how the image should be combined with the background.
 | [[fun:saturate]]		Saturate/desaturate an image.
 | [[fun:enlarge]]		Enlarge an image by putting a border around it.
-| [[fun:crop]]		Crop an image, giving only a small subset of it.
+| [[fun:crop]]			Crop an image, giving only a small subset of it.
 | [[fun:drop_shadow]]		Add a drop shadow to an image.
 | [[fun:symbol_variation]]	Render a variation of a [[type:symbol]].
 | [[fun:built_in_image]]	Return an image built into the program.
+	
+! Cards				<<<
+| [[fun:new_card]]		Construct a new [[type:card]] object.
 	
 ! HTML export			<<<
 | [[fun:to_html]]		Convert [[type:tagged text]] to html.

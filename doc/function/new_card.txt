@@ -1,0 +1,25 @@
+Function: new_card
+
+--Usage--
+> new_card(map_of_field_names_to_values)
+
+Create a new [[type:card]] object not already in the set.
+
+The argument is a map of values to set, for example @new_card([name: "My Card"])@ creates a card with the name @"My Card"@, and all other fields at their default value.
+
+NOTE: you should use underscores instead of spaces in field names.
+
+--Parameters--
+! Parameter	Type							Description
+| @input@	[[type:map]] of field names to field values		Field values to set
+
+--Examples--
+> # Create a new card
+> my_card := new_card(
+>      [ name: "My Card"
+>>      , type: "Super cool"
+>>      , rule_text: "This card is <i>mine</i>!"
+>      ])
+> 
+> # Write an image of the card to a file
+> write_image_file(my_card, file: "my_card.jpg")

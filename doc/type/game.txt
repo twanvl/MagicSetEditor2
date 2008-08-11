@@ -46,6 +46,8 @@ Such a package contains a [[file:format|data file]] called <tt>game</tt> that ha
 | @keyword parameter types@	[[type:list]] of [[type:keyword param type]]s	 	Types of parameters available to keywords.
 | @keywords@			[[type:list]] of [[type:keyword]]s		 	Standard keywords for this game.
 | @word lists@			[[type:list]] of [[type:word list]]s	 		Word lists that can be used by text fields.
+| @add cards script@		[[type:list]] of [[type:add cards script]]s	 	DOC_MSE_VERSION: since 0.3.7
+				 						 	A list of scripts for convienently adding multiple cards to a set.
 
 --Examples--
 Look at the game files in the standard MSE distribution for examples.

@@ -1,0 +1,31 @@
+Data type: add cards script
+
+DOC_MSE_VERSION: since 0.3.7
+
+--Overview--
+
+A script to add multiple cards to the set at once.
+
+--Properties--
+! Property	Type					Default		Description
+| @name@	[[type:string]]				 		Name of this script; appears in the menu.
+| @description@	[[type:string]]				@""@		Description of this script; appears in the status bar.
+| @enabled@	[[type:scriptable]] [[type:boolean]]	@true@		Is this script enabled?
+| @script@	[[type:script]]				 		Script that produces the cards.<br>
+		 					 		This script should return a [[type:list]] of [[type:card]]s.
+		 					 		The [[fun:new_card]] function can be used to make new cards.
+
+--Example--
+>add cards script:
+>	name: &Basic Lands
+>	description: Adds 5 basic lands to the set.
+>	script:
+>		[ new_card([name: "Plains",   super_type: "Basic Land", sub_type: "Plains"])
+>		, new_card([name: "Island",   super_type: "Basic Land", sub_type: "Island"])
+>		, new_card([name: "Swamp",    super_type: "Basic Land", sub_type: "Swamp"])
+>		, new_card([name: "Mountain", super_type: "Basic Land", sub_type: "Mountain"])
+>		, new_card([name: "Forest",   super_type: "Basic Land", sub_type: "Forest"])
+>		]
+
+When invoked, this script will add the five basic lands to the set.
+

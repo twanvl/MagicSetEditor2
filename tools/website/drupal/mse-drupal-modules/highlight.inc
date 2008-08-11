@@ -76,6 +76,8 @@ $built_in_functions = array(
 	'drop_shadow'		=>'',
 	'symbol_variation'	=>'',
 	'built_in_image'	=>'',
+	// cards
+	'new_card'		=>'',
 	// html export
 	'to_html'		=>'',
 	'symbols_to_html'	=>'',
