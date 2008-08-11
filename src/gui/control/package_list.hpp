@@ -48,11 +48,15 @@ class PackageList : public GalleryList {
 	/// Select the package with the given name, if it is not found, selects nothing
 	void select(const String& name, bool send_event = true);
 	
+	/// Required width to show all items
+	int requiredWidth() const;
+	using GalleryList::column_count;
+	
   protected:
-	/// Return how many items there are in the list
-	virtual size_t itemCount() const;
 	/// Draw an item
 	virtual void drawItem(DC& dc, int x, int y, size_t item);
+	/// Return how many items there are in the list
+	virtual size_t itemCount() const;
 	
   private:
 	// The default icon to use

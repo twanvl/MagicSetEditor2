@@ -8,6 +8,7 @@
 
 #include <util/prec.hpp>
 #include <gui/set/style_panel.hpp>
+#include <gui/set/window.hpp>
 #include <gui/control/package_list.hpp>
 #include <gui/control/card_viewer.hpp>
 #include <gui/control/native_look_editor.hpp>
@@ -46,6 +47,23 @@ StylePanel::StylePanel(Window* parent, int id)
 		s->Add(s2,      1, wxEXPAND, 8);
 	s->SetSizeHints(this);
 	SetSizer(s);
+}
+void StylePanel::updateListSize() {
+	// how many columns fit?
+	size_t fit_columns = (size_t)((GetSize().y - 400) / 152);
+	// we only need enough columns to show all items
+	int x_room = GetSize().x - editor->GetBestSize().x - 6;
+	size_t need_columns = (size_t)ceil(list->requiredWidth() / (double)x_room);
+	size_t column_count = max(1u, min(fit_columns, need_columns));
+	// change count
+	if (column_count != list->column_count) {
+		list->column_count = column_count;
+		static_cast<SetWindow*>(GetParent())->fixMinWindowSize();
+	}
+}
+bool StylePanel::Layout() {
+	updateListSize();
+	return SetWindowPanel::Layout();
 }
 
 void StylePanel::onChangeSet() {

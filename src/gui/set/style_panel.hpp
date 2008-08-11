@@ -50,6 +50,10 @@ class StylePanel : public SetWindowPanel {
 	void onStyleSelect(wxCommandEvent&);
 	void onUseForAll(wxCommandEvent&);
 	void onUseCustom(wxCommandEvent&);
+	
+	/// Determine the best size for the list of stylesheets based on available space
+	void updateListSize();
+	virtual bool Layout();
 };
 
 // ----------------------------------------------------------------------------- : EOF

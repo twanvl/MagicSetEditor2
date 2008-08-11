@@ -100,3 +100,7 @@ void PackageList::select(const String& name, bool send_event) {
 	update();
 	return;
 }
+
+int PackageList::requiredWidth() const {
+	return (item_size.x + SPACING) * (int)itemCount();
+}
