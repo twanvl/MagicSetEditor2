@@ -301,7 +301,7 @@ symbol:
 	code: [0-9]+(?!/[WUBRGSTQ2])|.
 	regex: yes
 	draw text: 0
-	text margin left:   .26
+	text margin left:   .2
 	text margin right:  .2
 	text margin top:    -.14
 	text margin bottom: -.14
@@ -309,7 +309,7 @@ symbol:
 		name: MPlantin
 		size: 1
 		color: rgb(0,0,0)
-		max stretch: 0.5
+		max stretch: 0.57
 
 ##############################################################
 # Insert-symbol menu

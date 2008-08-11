@@ -291,8 +291,8 @@ symbol:
 	image: mana_infinite.png
 symbol:
 	image: mana_circle.png
-	text margin left:   .28
-	text margin right:  .20
+	text margin left:   .23
+	text margin right:  .21
 	text margin top:    -.15
 	text margin bottom: -.06
 	code: [0-9]+(?!/[WUBRGSTQ2])|.
@@ -302,7 +302,7 @@ symbol:
 		name: MPlantin
 		size: 1
 		color: rgb(0,0,0)
-		max stretch: 0.5
+		max stretch: 0.60
 
 ##############################################################
 # Insert-symbol menu

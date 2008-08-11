@@ -270,10 +270,10 @@ symbol:
 		name: MPlantin
 		size: 1
 		color: rgb(0,0,0)
-		max stretch: 0.5
-	text margin left:   .24
-	text margin right:  .24
-	text margin top:    -.16
+		max stretch: 0.55
+	text margin left:   .26
+	text margin right:  .26
+	text margin top:    -.12
 	text margin bottom: -.12
 
 ##############################################################
