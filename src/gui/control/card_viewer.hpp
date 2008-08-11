@@ -22,7 +22,7 @@ DECLARE_EVENT_TYPE(EVENT_SIZE_CHANGE, <not used>)
 // ----------------------------------------------------------------------------- : CardViewer
 
 /// A control to view a single card
-class CardViewer : public wxPanel, public DataViewer {
+class CardViewer : public wxControl, public DataViewer {
   public:
 	CardViewer(Window* parent, int id, long style = 0);
 	

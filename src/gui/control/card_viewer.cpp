@@ -20,7 +20,7 @@ DEFINE_EVENT_TYPE(EVENT_SIZE_CHANGE);
 // ----------------------------------------------------------------------------- : CardViewer
 
 CardViewer::CardViewer(Window* parent, int id, long style)
-	: wxPanel(parent, id, wxDefaultPosition, wxDefaultSize, style & wxNO_BORDER ? style : style | wxSUNKEN_BORDER)
+	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, style)
 	, up_to_date(false)
 {}
 
