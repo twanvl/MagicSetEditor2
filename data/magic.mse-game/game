@@ -21,6 +21,7 @@ include file: statistics
 include file: packs
 include file: keywords
 include file: word_lists
+include file: add_cards_scripts
 include file: auto_replace
 
 ############################################################## Other stuff
