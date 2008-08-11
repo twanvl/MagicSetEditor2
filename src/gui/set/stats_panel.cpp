@@ -38,14 +38,14 @@ class StatCategoryList : public GalleryList {
 	StatCategoryList(Window* parent, int id)
 		: GalleryList(parent, id, wxVERTICAL)
 	{
-		item_size = columns[0].size = wxSize(150, 23);
+		item_size = subcolumns[0].size = wxSize(150, 23);
 	}
 	
 	void show(const GameP&);
 	
 	/// The selected category
 	inline StatsCategory& getSelection() {
-		return *categories.at(columns[0].selection);
+		return *categories.at(subcolumns[0].selection);
 	}
 	
   protected:
@@ -69,7 +69,7 @@ void StatCategoryList::show(const GameP& game) {
 	stable_sort(categories.begin(), categories.end(), ComparePositionHint());
 	update();
 	// select first item
-	columns[0].selection = itemCount() > 0 ? 0 : NO_SELECTION;
+	subcolumns[0].selection = itemCount() > 0 ? 0 : NO_SELECTION;
 }
 
 size_t StatCategoryList::itemCount() const {
@@ -114,20 +114,20 @@ class StatDimensionList : public GalleryList {
 		, prefered_dimension_count(dimension_count)
 	{
 		//item_size = wxSize(150, 23);
-		columns[0].size = wxSize(140,23);
+		subcolumns[0].size = wxSize(140,23);
 		if (dimension_count > 0) {
-			columns[0].selection  = NO_SELECTION;
-			columns[0].can_select = false;
-			active_column = 1;
+			subcolumns[0].selection  = NO_SELECTION;
+			subcolumns[0].can_select = false;
+			active_subcolumn = 1;
 		}
 		// additional columns
-		Column col;
+		SubColumn col;
 		col.selection = show_empty ? NO_SELECTION : 0;
 		col.can_select = true;
-		col.offset.x = columns[0].size.x + SPACING;
+		col.offset.x = subcolumns[0].size.x + SPACING;
 		col.size = wxSize(18,23);
 		for (int i = 0 ; i < dimension_count ; ++i) {
-			columns.push_back(col);
+			subcolumns.push_back(col);
 			col.offset.x += col.size.x + SPACING;
 		}
 		// total
@@ -137,8 +137,8 @@ class StatDimensionList : public GalleryList {
 	void show(const GameP&);
 	
 	/// The selected category
-	StatsDimensionP getSelection(size_t column=(size_t)-1) {
-		size_t sel = columns[column+1].selection - show_empty;
+	StatsDimensionP getSelection(size_t subcol=(size_t)-1) {
+		size_t sel = subcolumns[subcol+1].selection - show_empty;
 		if (sel >= itemCount()) return StatsDimensionP();
 		else                    return dimensions.at(sel);
 	}
@@ -149,7 +149,7 @@ class StatDimensionList : public GalleryList {
 	
 	void restrictDimensions(size_t dims) {
 		prefered_dimension_count = dims;
-		active_column = min(active_column, dims);
+		active_subcolumn = min(active_subcolumn, dims);
 		RefreshSelection();
 	}
 	
@@ -157,33 +157,34 @@ class StatDimensionList : public GalleryList {
 	virtual size_t itemCount() const;
 	virtual void drawItem(DC& dc, int x, int y, size_t item);
 	
-	virtual double columnActivity(size_t col) const {
+	virtual double subcolumnActivity(size_t col) const {
 		return col-1 >= prefered_dimension_count ? 0.2 : 0.7;
 	}
 	
 	virtual void onSelect(size_t item, size_t old_col, bool& changes) {
-		// swap selection with another column?
-		for (size_t j = 1 ; j < columns.size() ; ++j) {
-			if (j != active_column && columns[j].selection == item && columns[active_column].selection != item) {
-				columns[j].selection = columns[active_column].selection;
+		// swap selection with another subcolumn?
+		for (size_t j = 1 ; j < subcolumns.size() ; ++j) {
+			if (j != active_subcolumn && subcolumns[j].selection == item &&
+			                             subcolumns[active_subcolumn].selection != item) {
+				subcolumns[j].selection = subcolumns[active_subcolumn].selection;
 				changes = true;
 				break;
 			}
 		}
 		// update prefered dimension count?
-		if (active_column > prefered_dimension_count) {
-			prefered_dimension_count = active_column;
+		if (active_subcolumn > prefered_dimension_count) {
+			prefered_dimension_count = active_subcolumn;
 			changes = true;
 			RefreshSelection();
 		}
 		// decrease dimension count? (toggle last dimension)
-		if (!changes && old_col == active_column) {
-			if (active_column == prefered_dimension_count && prefered_dimension_count > 1) {
+		if (!changes && old_col == active_subcolumn) {
+			if (active_subcolumn == prefered_dimension_count && prefered_dimension_count > 1) {
 				prefered_dimension_count -= 1;
-				selectColumn(prefered_dimension_count);
+				selectSubColumn(prefered_dimension_count);
 				changes = true;
-			} else if (active_column != prefered_dimension_count) {
-				active_column = prefered_dimension_count = active_column;
+			} else if (active_subcolumn != prefered_dimension_count) {
+				active_subcolumn = prefered_dimension_count = active_subcolumn;
 				RefreshSelection();
 				changes = true;
 			}
@@ -210,11 +211,11 @@ void StatDimensionList::show(const GameP& game) {
 	// select first item
 	if (dimension_count > 0) {
 		for (int j = 0 ; j < dimension_count ; ++j) {
-			columns[j+1].selection = itemCount() > 0 ? 0 : NO_SELECTION;
+			subcolumns[j+1].selection = itemCount() > 0 ? 0 : NO_SELECTION;
 		}
 		prefered_dimension_count = 1;
 	} else {
-		columns[0].selection = itemCount() > 0 ? 0 : NO_SELECTION;
+		subcolumns[0].selection = itemCount() > 0 ? 0 : NO_SELECTION;
 	}
 }
 

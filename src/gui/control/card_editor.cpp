@@ -325,8 +325,10 @@ void DataEditor::selectField(wxMouseEvent& ev, bool (ValueEditor::*event)(const 
 }
 void DataEditor::selectFieldNoEvents(const wxMouseEvent& ev) {
 	FOR_EACH_EDITOR_REVERSE { // find high z index fields first
+		int y;
 		if (v->getField()->editable && (v->containsPoint(mousePoint(ev,*v)) ||
-		    (nativeLook() && ev.GetY() >= v->getStyle()->top && ev.GetY() < v->getStyle()->bottom) )) {
+		        (nativeLook() && (y = ev.GetY() + GetScrollPos(wxVERTICAL)) >= v->getStyle()->top
+		                      && y < v->getStyle()->bottom) )) {
 			current_viewer = v.get();
 			current_editor = e;
 			return;

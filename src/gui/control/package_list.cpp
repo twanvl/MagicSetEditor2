@@ -18,7 +18,7 @@ DECLARE_TYPEOF_COLLECTION(PackagedP);
 PackageList::PackageList(Window* parent, int id, int direction, bool always_focused)
 	: GalleryList(parent, id, direction, always_focused)
 {
-	item_size = columns[0].size = wxSize(108, 150);
+	item_size = subcolumns[0].size = wxSize(108, 150);
 	SetThemeEnabled(true);
 }
 
@@ -88,7 +88,7 @@ void PackageList::clear() {
 void PackageList::select(const String& name, bool send_event) {
 	for (vector<PackageData>::const_iterator it = packages.begin() ; it != packages.end() ; ++it) {
 		if (it->package->name() == name) {
-			columns[0].selection = it - packages.begin();
+			subcolumns[0].selection = it - packages.begin();
 			update();
 			if (send_event) {
 				sendEvent(EVENT_GALLERY_SELECT);
@@ -96,7 +96,7 @@ void PackageList::select(const String& name, bool send_event) {
 			return;
 		}
 	}
-	columns[0].selection = NO_SELECTION;
+	subcolumns[0].selection = NO_SELECTION;
 	update();
 	return;
 }

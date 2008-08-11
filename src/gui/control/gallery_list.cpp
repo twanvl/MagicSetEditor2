@@ -11,7 +11,7 @@
 #include <gfx/gfx.hpp>
 #include <wx/dcbuffer.h>
 
-DECLARE_TYPEOF_COLLECTION(GalleryList::Column_for_typeof);
+DECLARE_TYPEOF_COLLECTION(GalleryList::SubColumn_for_typeof);
 
 // ----------------------------------------------------------------------------- : Events
 
@@ -22,35 +22,35 @@ DEFINE_EVENT_TYPE(EVENT_GALLERY_ACTIVATE);
 
 GalleryList::GalleryList(Window* parent, int id, int direction, bool always_focused)
 	: wxPanel(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER | wxWANTS_CHARS | (direction == wxHORIZONTAL ? wxHSCROLL : wxVSCROLL) )
-	, active_column(0)
+	, active_subcolumn(0)
 	, direction(direction)
 	, always_focused(always_focused)
 	, visible_start(0)
 {
-	Column col;
+	SubColumn col;
 	col.can_select = true;
 	col.selection  = NO_SELECTION;
-	columns.push_back(col);
+	subcolumns.push_back(col);
 }
 
-void GalleryList::selectColumn(size_t column) {
-	if (column >= columns.size()) return;
-	if (!columns[column].can_select) return;
-	if (active_column == column) return;
-	RefreshItem(columns[active_column].selection);
-	RefreshItem(columns[column       ].selection);
-	active_column = column;
+void GalleryList::selectSubColumn(size_t subcol) {
+	if (subcol >= subcolumns.size()) return;
+	if (!subcolumns[subcol].can_select) return;
+	if (active_subcolumn == subcol) return;
+	RefreshItem(subcolumns[active_subcolumn].selection);
+	RefreshItem(subcolumns[subcol          ].selection);
+	active_subcolumn = subcol;
 }
 
-void GalleryList::select(size_t item, size_t column, bool event) {
+void GalleryList::select(size_t item, size_t subcolumn, bool event) {
 	if (item >= itemCount()) return;
 	// select column
-	size_t old_active_column = active_column;
-	selectColumn(column);
-	Column& col = columns[active_column];
+	size_t old_active_subcolumn = active_subcolumn;
+	selectSubColumn(subcolumn);
+	SubColumn& col = subcolumns[active_subcolumn];
 	// filter?
 	bool changes = col.selection != item;
-	onSelect(item, old_active_column, changes);
+	onSelect(item, old_active_subcolumn, changes);
 	// select
 	size_t old_sel = col.selection;
 	col.selection = item;
@@ -71,7 +71,7 @@ void GalleryList::select(size_t item, size_t column, bool event) {
 }
 
 void GalleryList::update() {
-	select(columns[active_column].selection);
+	select(subcolumns[active_subcolumn].selection);
 	updateScrollbar();
 	Refresh(false);
 }
@@ -122,7 +122,7 @@ void GalleryList::RefreshItem(size_t item) {
 	RefreshRect(wxRect(itemPos(item),item_size).Inflate(BORDER,BORDER), false);
 }
 void GalleryList::RefreshSelection() {
-	FOR_EACH(col,columns) RefreshItem(col.selection);
+	FOR_EACH(col,subcolumns) RefreshItem(col.selection);
 }
 
 void GalleryList::onScroll(wxScrollWinEvent& ev) {
@@ -162,16 +162,16 @@ void GalleryList::onLeftDown(wxMouseEvent& ev) {
 		wxPoint pos = itemPos(item);
 		int x = ev.GetX() - pos.x;
 		int y = ev.GetY() - pos.y;
-		size_t column = active_column;
-		for (size_t j = 0 ; columns.size() ; ++j) {
-			Column& col = columns[j];
+		size_t subcolumn = active_subcolumn;
+		for (size_t j = 0 ; subcolumns.size() ; ++j) {
+			SubColumn& col = subcolumns[j];
 			if (x >= col.offset.x && y >= col.offset.y && x < col.size.x + col.offset.x && y < col.size.y + col.offset.y) {
 				// clicked on this column
-				column = j;
+				subcolumn = j;
 				break;
 			}
 		}
-		select(item, column);
+		select(item, subcolumn);
 	}
 	ev.Skip(); // focus
 }
@@ -181,34 +181,34 @@ void GalleryList::onLeftDClick(wxMouseEvent& ev) {
 }
 
 void GalleryList::onChar(wxKeyEvent& ev) {
-	Column& col = columns[active_column];
+	SubColumn& col = subcolumns[active_subcolumn];
 	switch (ev.GetKeyCode()) {
 		case WXK_LEFT:
 			if (direction == wxHORIZONTAL) {
 				select(col.selection - 1);
 			} else {
-				selectColumn(active_column - 1);
+				selectSubColumn(active_subcolumn - 1);
 			}
 			break;
 		case WXK_RIGHT:
 			if (direction == wxHORIZONTAL) {
 				select(col.selection + 1);
 			} else {
-				selectColumn(active_column + 1);
+				selectSubColumn(active_subcolumn + 1);
 			}
 			break;
 		case WXK_UP:
 			if (direction == wxVERTICAL) {
 				select(col.selection - 1);
 			} else {
-				selectColumn(active_column - 1);
+				selectSubColumn(active_subcolumn - 1);
 			}
 			break;
 		case WXK_DOWN:
 			if (direction == wxVERTICAL) {
 				select(col.selection + 1);
 			} else {
-				selectColumn(active_column + 1);
+				selectSubColumn(active_subcolumn + 1);
 			}
 			break;
 		case WXK_TAB: {
@@ -263,13 +263,13 @@ void GalleryList::OnDraw(DC& dc) {
 	for (size_t i = start ; i < end ; ++i) {
 		wxPoint pos = itemPos(i);
 		// draw selection rectangle
-		for (size_t j = 0 ; j < columns.size() ; ++j) {
-			const Column& col = columns[j];
+		for (size_t j = 0 ; j < subcolumns.size() ; ++j) {
+			const SubColumn& col = subcolumns[j];
 			bool selected = i == col.selection;
-			Color c = selected ? ( has_focus && j == active_column
+			Color c = selected ? ( has_focus && j == active_subcolumn
 			                            ? wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT)
 			                            : lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
-			                                   wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT), columnActivity(j))
+			                                   wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT), subcolumnActivity(j))
 			                     )
 			                   : unselected;
 			dc.SetPen(c);
