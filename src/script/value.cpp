@@ -25,7 +25,7 @@ ScriptValue::operator bool()                                const { throw Script
 ScriptValue::operator double()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("double"  ))); }
 ScriptValue::operator AColor()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("color"   ))); }
 ScriptValueP ScriptValue::eval(Context&)                    const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("function"))); }
-ScriptValueP ScriptValue::next()                                  { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
+ScriptValueP ScriptValue::next(ScriptValueP* key_out)             { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
 ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
 int          ScriptValue::itemCount()                       const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
 GeneratedImageP ScriptValue::toImage(const ScriptValueP&)   const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("image"   ))); }
@@ -129,8 +129,9 @@ class ScriptRangeIterator : public ScriptIterator {
 	// Construct a range iterator with the given bounds (inclusive)
 	ScriptRangeIterator(int start, int end)
 		: pos(start), end(end) {}
-	virtual ScriptValueP next() {
+	virtual ScriptValueP next(ScriptValueP* key_out) {
 		if (pos <= end) {
+			if (key_out) *key_out = to_script(pos);
 			return to_script(pos++);
 		} else {
 			return ScriptValueP();
@@ -359,6 +360,7 @@ String ScriptCollectionBase::toCode() const {
 	while (ScriptValueP v = it->next()) {
 		if (!first) ret += _(",");
 		first = false;
+		// todo: include keys
 		ret += v->toCode();
 	}
 	ret += _("]");
@@ -370,19 +372,23 @@ String ScriptCollectionBase::toCode() const {
 // Iterator over a custom collection
 class ScriptCustomCollectionIterator : public ScriptIterator {
   public:	
-	ScriptCustomCollectionIterator(const vector<ScriptValueP>* col, ScriptValueP colP)
-		: pos(0), col(col), colP(colP) {}
-	virtual ScriptValueP next() {
-		if (pos < col->size()) {
-			return col->at(pos++);
+	ScriptCustomCollectionIterator(ScriptCustomCollectionP col)
+		: col(col), pos(0), it(col->key_value.begin()) {}
+	virtual ScriptValueP next(ScriptValueP* key_out) {
+		if (pos < col->value.size()) {
+			if (key_out) *key_out = to_script((int)pos);
+			return col->value.at(pos++);
+		} else if (it != col->key_value.end()) {
+			if (key_out) *key_out = to_script(it->first);
+			return (it++)->second;
 		} else {
 			return ScriptValueP();
 		}
 	}
   private:
+	ScriptCustomCollectionP col;
 	size_t pos;
-	const vector<ScriptValueP>* col;
-	ScriptValueP colP; // for ownership of the collection
+	map<String,ScriptValueP>::const_iterator it;
 };
 
 ScriptValueP ScriptCustomCollection::getMember(const String& name) const {
@@ -401,7 +407,9 @@ ScriptValueP ScriptCustomCollection::getIndex(int index) const {
 	}
 }
 ScriptValueP ScriptCustomCollection::makeIterator(const ScriptValueP& thisP) const {
-	return new_intrusive2<ScriptCustomCollectionIterator>(&value, thisP);
+	return new_intrusive1<ScriptCustomCollectionIterator>(
+	           static_pointer_cast<ScriptCustomCollection>(thisP)
+	       );
 }
 
 // ----------------------------------------------------------------------------- : Concat collection
@@ -411,13 +419,14 @@ class ScriptConcatCollectionIterator : public ScriptIterator {
   public:	
 	ScriptConcatCollectionIterator(const ScriptValueP& itA, const ScriptValueP& itB)
 		: itA(itA), itB(itB) {}
-	virtual ScriptValueP next() {
+	virtual ScriptValueP next(ScriptValueP* key_out) {
 		if (itA) {
-			ScriptValueP v = itA->next();
+			ScriptValueP v = itA->next(key_out);
 			if (v) return v;
 			else   itA = ScriptValueP();
 		}
-		return itB->next();
+		// TODO: somehow fix up the keys
+		return itB->next(key_out);
 	}
   private:
 	ScriptValueP itA, itB;

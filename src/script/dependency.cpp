@@ -28,7 +28,7 @@ class DependencyDummy : public ScriptIterator {
   public:
 	virtual ScriptType type() const { return SCRIPT_DUMMY; }
 	virtual String typeName() const { return _("dummy"); }
-	virtual ScriptValueP next() { return ScriptValueP(); }
+	virtual ScriptValueP next(ScriptValueP*) { return ScriptValueP(); }
 	virtual ScriptValueP dependencyName(const ScriptValue&, const Dependency&) const { return dependency_dummy; }
 };
 

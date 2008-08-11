@@ -2574,6 +2574,9 @@
 					RelativePath=".\script\functions\basic.cpp">
 				</File>
 				<File
+					RelativePath=".\script\functions\construction.cpp">
+				</File>
+				<File
 					RelativePath=".\script\functions\editor.cpp">
 					<FileConfiguration
 						Name="Debug|Win32">

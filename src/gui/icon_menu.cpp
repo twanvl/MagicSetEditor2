@@ -45,14 +45,11 @@ Image generateDisabledImage(const Image& imgIn) {
 	return imgOut;
 }
 
+// ----------------------------------------------------------------------------- : set_menu_item_image
 
-// ----------------------------------------------------------------------------- : IconMenu
-
-void IconMenu::Append(int id, const String& resource, const String& text, const String& help, int style, wxMenu* submenu) {
-	// create menu, load icon
-	wxMenuItem* item = new wxMenuItem(this, id, text, help, style, submenu);
-	Bitmap bitmap = load_resource_tool_image(resource);
+void set_menu_item_image(wxMenuItem* item, const String& resource) {
 	// load bitmap
+	Bitmap bitmap = load_resource_tool_image(resource);
 	#ifdef __WXMSW__
 		// make greyed bitmap
 		bitmap = bitmap.GetSubBitmap(wxRect(0,0,16,16));
@@ -61,10 +58,19 @@ void IconMenu::Append(int id, const String& resource, const String& text, const 
 		item->SetDisabledBitmap(disabledImage);
 	#else
 		// Check items can't have bitmaps :(
-		if (item->GetKind() == wxITEM_NORMAL)
+		if (item->GetKind() == wxITEM_NORMAL) {
 			item->SetBitmap(bitmap);
+		}
 	#endif
-	// add menu
+}
+
+// ----------------------------------------------------------------------------- : IconMenu
+
+void IconMenu::Append(int id, const String& resource, const String& text, const String& help, int style, wxMenu* submenu) {
+	// create menu, load icon
+	wxMenuItem* item = new wxMenuItem(this, id, text, help, style, submenu);
+	set_menu_item_image(item, resource);
+	// add to menu
 	wxMenu::Append(item);
 }
 

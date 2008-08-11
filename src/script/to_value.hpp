@@ -92,13 +92,15 @@ struct ScriptIterator : public ScriptValue {
 	virtual CompareWhat compareAs(String&, void const*&) const; // { return COMPARE_NO; }
 	
 	/// Return the next item for this iterator, or ScriptValueP() if there is no such item
-	virtual ScriptValueP next() = 0;
+	virtual ScriptValueP next(ScriptValueP* key_out = nullptr) = 0;
 };
 
 // make an iterator over a range
 ScriptValueP rangeIterator(int start, int end);
 
 // ----------------------------------------------------------------------------- : Collections
+
+ScriptValueP to_script(int);
 
 class ScriptCollectionBase : public ScriptValue {
   public:
@@ -111,8 +113,9 @@ template <typename Collection>
 class ScriptCollectionIterator : public ScriptIterator {
   public:	
 	ScriptCollectionIterator(const Collection* col) : pos(0), col(col) {}
-	virtual ScriptValueP next() {
+	virtual ScriptValueP next(ScriptValueP* key_out) {
 		if (pos < col->size()) {
+			if (key_out) *key_out = to_script((int)pos);
 			return to_script(col->at(pos++));
 		} else {
 			return ScriptValueP();
@@ -213,7 +216,7 @@ class ScriptCustomCollection : public ScriptCollectionBase {
 		return COMPARE_AS_POINTER;
 	}
 	
-	/// The collection as a list (contains all values)
+	/// The collection as a list (contains only the values that don't have a key)
 	vector<ScriptValueP> value;
 	/// The collection as a map (contains only the values that have a key)
 	map<String,ScriptValueP> key_value;

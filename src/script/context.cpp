@@ -479,9 +479,10 @@ void Context::makeObject(size_t n) {
 	for (size_t i = 0 ; i < n ; ++i) {
 		const ScriptValueP& key = stack[begin + 2 * i];
 		const ScriptValueP& val = stack[begin + 2 * i + 1];
-		ret->value.push_back(val);
 		if (key != script_nil) { // valid key
 			ret->key_value[key->toString()] = val;
+		} else {
+			ret->value.push_back(val);
 		}
 	}
 	stack.resize(begin);

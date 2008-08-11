@@ -27,6 +27,8 @@
 #include <util/window_id.hpp>
 #include <wx/splitter.h>
 
+DECLARE_TYPEOF_COLLECTION(AddCardsScriptP);
+
 // ----------------------------------------------------------------------------- : CardsPanel
 
 CardsPanel::CardsPanel(Window* parent, int id)
@@ -70,7 +72,9 @@ CardsPanel::CardsPanel(Window* parent, int id)
 		menuCard->Append(ID_CARD_NEXT,								_MENU_("next card"),		_HELP_("next card"));
 		menuCard->AppendSeparator();
 		menuCard->Append(ID_CARD_ADD,		_("card_add"),			_MENU_("add card"),			_HELP_("add card"));
-		menuCard->Append(ID_CARD_ADD_MULT,	_("card_add_multiple"),	_MENU_("add cards"),		_HELP_("add cards"));
+		insertManyCardsMenu = new wxMenuItem(menuCard, ID_CARD_ADD_MULT, _MENU_("add cards"), _HELP_("add cards"));
+		set_menu_item_image(insertManyCardsMenu, _("card_add_multiple"));
+		((wxMenu*)menuCard)->Append(insertManyCardsMenu);
 																	// NOTE: space after "Del" prevents wx from making del an accellerator
 																	// otherwise we delete a card when delete is pressed inside the editor
 																	// Adding a space never hurts, please keep it just to be safe.
@@ -140,10 +144,23 @@ void CardsPanel::onChangeSet() {
 	editor->setSet(set);
 	notes->setSet(set);
 	card_list->setSet(set);
-/*	// resize editor
-	Sizer* s = sizer;
-	minSize = s->minSize;
-	layout();*/
+	
+	// change insertManyCardsMenu
+	delete insertManyCardsMenu->GetSubMenu();
+	if (!set->game->add_cards_scripts.empty()) {
+		// create menu for add_cards_scripts
+		int id = ID_ADD_CARDS_MENU_MIN;
+		IconMenu* cards_scripts_menu = new IconMenu;
+		FOR_EACH(cs, set->game->add_cards_scripts) {
+			cards_scripts_menu->Append(id++, cs->name, cs->description);
+		}
+		insertManyCardsMenu->SetSubMenu(cards_scripts_menu);
+	} else {
+		insertManyCardsMenu->SetSubMenu(nullptr);
+	}
+	// re-add the menu
+	menuCard->Remove(ID_CARD_ADD_MULT);
+	((wxMenu*)menuCard)->Insert(4,insertManyCardsMenu); // HACK: the position is hardcoded
 }
 
 // ----------------------------------------------------------------------------- : UI
@@ -200,7 +217,10 @@ void CardsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 			ev.Check(ss.card_angle() == a);
 			break;
 		}
-		case ID_CARD_ADD_MULT:   ev.Enable(false);							break; // not implemented
+		case ID_CARD_ADD_MULT: {
+			ev.Enable(insertManyCardsMenu->GetSubMenu() != nullptr);
+			break;
+		}
 		case ID_CARD_REMOVE:     ev.Enable(card_list->canDelete());			break;
 		case ID_FORMAT_BOLD: case ID_FORMAT_ITALIC: case ID_FORMAT_SYMBOL: case ID_FORMAT_REMINDER: {
 			if (focused_control(this) == ID_EDITOR) {

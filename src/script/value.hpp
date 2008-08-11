@@ -105,7 +105,8 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	/** thisP can be used to prevent destruction of the collection */
 	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
 	/// Return the next item for this iterator, or ScriptValueP() if there is no such item
-	virtual ScriptValueP next();
+	/** If key_out != 0, then it will recieve the key of the item */
+	virtual ScriptValueP next(ScriptValueP* key_out = nullptr);
 	/// Return the number of items in this value (assuming it is a collection)
 	virtual int itemCount() const;
 	/// Get a member at the given index

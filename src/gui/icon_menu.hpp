@@ -33,5 +33,7 @@ class IconMenu : public wxMenu {
 	void Insert(size_t pos, int id, const String& text, const String& help);
 };
 
+void set_menu_item_image(wxMenuItem* menuitem, const String& resource);
+
 // ----------------------------------------------------------------------------- : EOF
 #endif
