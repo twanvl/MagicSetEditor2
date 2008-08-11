@@ -509,7 +509,7 @@ pack type:
 	name: gold series
 	item:
 		name: gold
-		amount 3
+		amount: 3
 	item:
 		name: common
 		amount: 22

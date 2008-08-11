@@ -35,11 +35,6 @@ styling field:
 	initial: not justified
 	choice: not justified
 	choice: justified
-styling style:
-	foil image:
-		render style: text
-	foil name:
-		render style: text
 ############################################################## Card fields
 card style:
 	############################# Background stuff
