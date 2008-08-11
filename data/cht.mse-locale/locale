@@ -3,6 +3,7 @@ installer group: translations/Traditional Chinese
 full name: 繁體中文 (Traditional Chinese)
 version: 2008-08-10
 icon: cn.png
+
 ############################################################## Menu items
 menu:
 	file:			文件
@@ -74,6 +75,7 @@ menu:
 	style tab:		風格選擇	F7
 	keywords tab:		關鍵詞	F8
 	stats tab:		統計結果	F9
+#_ADD	random pack tab:	&Random Packs
 	
 	help:			幫助
 	index:			索引...	F1
@@ -181,11 +183,20 @@ help:
 	style tab:		改變卡牌樣式
 	keywords tab:		定義本套牌額外的關鍵詞
 	stats tab:		顯示本套牌的統計情況
+#_ADD	random pack tab:	Try how the set works out in practice by generating random booster packs.
 	
 	help:		
 	index:			
 	website:			
 	about:				
+	
+	# Cards panel
+#_ADD	collapse notes:		Hide the card notes box
+#_ADD	expand notes:		Show the card notes box
+	# Random pack panel
+#_ADD	random seed:		Different packs will be generated each time.
+#_ADD	fixed seed:			Using the same seed number gives the same 'random' packs.
+#_ADD	seed:				Seed number for the random generator. Using the same seed number gives the same 'random' packs.
 	
 	# Preferences
 	app language:
@@ -272,6 +283,7 @@ tool:
 	style tab:		風格樣式
 	keywords tab:		關鍵詞
 	stats tab:		統計結果
+#_ADD	random pack tab:	Random
 	
 	# symbol editor
 	store symbol:		儲存
@@ -316,6 +328,7 @@ tooltip:
 	style tab:		風格樣式	
 	keywords tab:		關鍵詞
 	stats tab:		統計結果
+#_ADD	random pack tab:	Random packs
 	
 	new set:		新建套牌
 	open set:		打開套牌
@@ -406,6 +419,12 @@ label:
 	# Style tab
 	styling options:	樣式選項
 	
+	# Random pack panel
+#_ADD	pack selection:		Pack selection
+#_ADD	pack totals:		Totals
+#_ADD	seed:				Seed
+#_ADD	total cards:		Total
+	
 	# Open dialogs
 	all files		全部文件
 	
@@ -444,11 +463,12 @@ label:
 	columns:		欄目：
 	
 	# Card select / images export
+	select cards:		導出卡牌
+#_ADD	selected card count:	%s cards will be exported.
 	select cards print:	選擇需要打印的卡牌
 	filename format:	格式: 
 	filename conflicts:	處理重復文件名:
 	export filenames:	文件名
-	cards to export:	導出卡牌
 	filename is ignored: 	（忽略文件名）
 	
 	# apprentice export
@@ -463,9 +483,23 @@ label:
 	original:		原始:
 	result:			結果:
 	size:			大小
+#_ADD	original size:			&Original Size
+#_ADD	size to fit:			Size to &Fit
+#_ADD	force to fit:			F&orce to Fit
+#_ADD	custom size:			&Custom Size
 	selection:		選取
+#_ADD	selection left:			&Left
+#_ADD	selection top:			&Top
+#_ADD	selection width:		&Width
+#_ADD	selection height:		&Height
 	zoom:			縮放
+#_ADD	fix aspect ratio:		Fix aspect ratio (width/height)
+#_ADD	zoom amount:			Zoom
+#_ADD	zoom amount x:			Zoom &X
+#_ADD	zoom amount y:			Zoom &Y
+#_ADD	zoom %:					%
 	filter:			過濾
+#_ADD	sharpen filter:			&Sharpen filter
 	
 	# Auto replace
 	auto match:		匹配
@@ -502,6 +536,11 @@ button:
 	insert parameter:	插入參數...
 	refer parameter:	提交參數...
 	
+	# Random pack panel
+#_ADD	generate pack:		&Generate Pack
+#_ADD	random seed:		&Random Seed
+#_ADD	fixed seed:			&Fixed Seed
+	
 	# Welcome
 	new set:		新建套牌
 	open set:		打開套牌
@@ -527,6 +566,10 @@ button:
 	hide:			隱藏
 	
 	# Card select
+#_ADD	export entire set:				Entire set
+#_ADD	export generated packs:			Generated packs
+#_ADD	export custom cards selection:	Custom selection
+#_ADD	select cards:		&Select Cards...
 	select all:		全選
 	select none:		全不選
 	overwrite:		覆蓋舊文件
@@ -716,6 +759,7 @@ error:
 		推荐你昇級到最新版本
 		瀏覽官方網站 http:://magicseteditor.sourceforge.net/
 	word list type not found:	詞語列表類型 %s 沒有找到 （從<word-list> 標簽中）
+#_ADD	pack item not found:				The pack item "%s" was not found (from a pack type)
 	
 	# Update checking
 	checking updates failed:	檢查更新失敗。
@@ -767,6 +811,7 @@ type:
 	set:			套牌
 	stylesheet:		樣式表
 	export template:export  模板
+#_ADD	symbol:			symbol
 	card:			卡牌
 	cards:			多張卡牌
 	field:			區域
@@ -797,8 +842,8 @@ type:
 	points:			多個控制點
 
 ############################################################## Magic
-game:
-	magic:
+package:
+	magic.mse-game:
 		# Card fields
 		name:		名稱
 		cc:		總費用
@@ -848,66 +893,9 @@ game:
 		left align artist:		畫家左對齊
 		inverted common symbol:		反轉普通系列符號
 		
-stylesheet:
-	magic-new:
-		
-symbol font:
-	magic-mana-small:
+	magic-mana-*.mse-symbol-font:
 		# note: reminder/shortcut must start with a space, otherwise it is used as a shortcut
 		#       so typing T *anywhere* would insert a symbol (which would be bad)
-		menu item T:		橫置符號	 T
-		menu item Q:		重置符號	 Q
-		menu item W:		白色法術力	 W
-		menu item U:		藍色法術力	 U
-		menu item B:		黑色法術力	 B
-		menu item R:		紅色法術力	 R
-		menu item G:		綠色法術力	 G
-		menu item S:		雪境法術力	 S
-		menu item X:		可變法術力 X	 X
-		menu item Y:		可變法術力 Y	 Y
-		menu item Z:		可變法術力 Z	 Z
-		menu item I:		無限法術力	 I
-		menu item colorless:	無色法術力...
-		title colorless:	無色法術力
-		message colorless:	輸入無色法術力數量:
-		menu item half:		一半法術力
-		menu item |W:		白色法術力	 |W
-		menu item |U:		藍色法術力	 |U
-		menu item |B:		黑色法術力	 |B
-		menu item |R:		紅色法術力	 |R
-		menu item |G:		綠色法術力	 |G
-		menu item |S:		雪境法術力	 |S
-		menu item 1/2:		無色法術力	1/2
-		menu item hybrid:	混合法術力（雙色）
-		menu item W/U:		白/藍 法術力	 W/U
-		menu item U/B:		藍/黑 法術力	 U/B
-		menu item B/R:		黑/紅 法術力	 B/R
-		menu item R/G:		紅/綠 法術力	 R/G
-		menu item G/W:		綠/白 法術力	 G/W
-		menu item W/B:		白/黑 法術力	 W/B
-		menu item U/R:		藍/紅 法術力	 U/R
-		menu item B/G:		黑/綠 法術力	 B/G
-		menu item R/W:		紅/白 法術力	 R/W
-		menu item G/U:		綠/藍 法術力	 G/U
-		menu item hybrid 3:	混合法術力（三色）
-		menu item W/U/B:	白/藍/黑 法術力	 W/U/B
-		menu item U/B/R:	藍/黑/紅 法術力	 U/B/R
-		menu item B/R/G:	黑/紅/綠 法術力	 B/R/G
-		menu item R/G/W:	紅/綠/白 法術力	 R/G/W
-		menu item G/W/U:	綠/白/藍 法術力	 G/W/U
-		menu item W/B/R:	白/黑/紅 法術力	 W/B/R
-		menu item U/R/G:	藍/紅/綠 法術力	 U/R/G
-		menu item B/G/W:	黑/綠/白 法術力	 B/G/W
-		menu item R/W/U:	紅/白/藍 法術力	 R/W/U
-		menu item G/U/B:	綠/藍/黑 法術力	 G/U/B
-		menu item number hybrids:	數字混合法術力
-		menu item 2/W:	2/W
-		menu item 2/U:	2/U
-		menu item 2/B:	2/B
-		menu item 2/R:	2/R
-		menu item 2/G:	2/G
-	magic-mana-large:
-		# Exactly the same
 		menu item T:		橫置符號	 T
 		menu item Q:		重置符號	 Q
 		menu item W:		白色法術力	 W
