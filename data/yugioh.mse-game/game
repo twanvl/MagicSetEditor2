@@ -102,6 +102,7 @@ init script:
 		else if	contains(card.type2, match:"Effect")							then "effect monster"
 		else if	contains(card.type2, match:"Spirit")							then "effect monster"
 		else if	contains(card.type2, match:"Toon")							then "effect monster"
+		else if	contains(card.type2, match:"Tuner")							then "effect monster"
 		else if	contains(card.type2, match:"Union")							then "effect monster"
 		else                                         	 						     "normal monster"
 	}
@@ -464,6 +465,7 @@ word list:
 	word: Spirit
 	word: Synchro
 	word: Toon
+	word: Tuner
 	word: Union
 ############################################################## Card pack items
 pack item:
@@ -472,6 +474,9 @@ pack item:
 pack item:
 	name: common
 	filter: card.rarity == "common"
+pack item:
+	name: gold
+	filter: card.rarity != "gold tech"
 pack item:
 	name: card
 	filter: card.number != ""
@@ -500,6 +505,14 @@ pack type:
 	item:
 		name: common
 		amount: 5
+pack type:
+	name: gold series
+	item:
+		name: gold
+		amount 3
+	item:
+		name: common
+		amount: 22
 pack type:
 	name: movie pack
 	item:
