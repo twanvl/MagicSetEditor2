@@ -65,7 +65,7 @@ void DataEditor::addAction(Action* action) {
 // ----------------------------------------------------------------------------- : Selection
 
 bool DataEditor::AcceptsFocus() const {
-	return wxControl::AcceptsFocus();
+	return wxWindow::AcceptsFocus();
 }
 
 void DataEditor::select(ValueViewer* v) {

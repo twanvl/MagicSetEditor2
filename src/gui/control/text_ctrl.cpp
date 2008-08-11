@@ -37,7 +37,7 @@ void TextCtrl::draw(DC& dc) {
 }
 
 bool TextCtrl::AcceptsFocus() const {
-	return wxControl::AcceptsFocus() && 
+	return wxWindow::AcceptsFocus() && 
 	       !viewers.empty() &&
 	       static_cast<FakeTextValue&>(*viewers.front()->getValue()).editable;
 }

@@ -72,8 +72,17 @@ void GalleryList::select(size_t item, size_t subcolumn, bool event) {
 }
 
 void GalleryList::update() {
-	select(subcolumns[active_subcolumn].selection);
-	updateScrollbar();
+	// ensure selection is visible
+	SubColumn col = subcolumns[active_subcolumn];
+	if (col.selection != NO_SELECTION) {
+		if (itemStart(col.selection) < visible_start) {
+			scrollTo(itemStart(col.selection), false);
+			updateScrollbar();
+		} else if (itemEnd(col.selection) > visibleEnd()) {
+			scrollTo(itemEnd(col.selection) + visible_start - visibleEnd(), false);
+			updateScrollbar();
+		}
+	}
 	Refresh(false);
 }
 
