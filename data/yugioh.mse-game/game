@@ -4,7 +4,7 @@ installer group: Yugioh/Game Files
 icon: card-back.png
 position hint: 4
 
-version: 2008-08-08
+version: 2008-08-10
 
 ############################################################## Functions & filters
 ## Copied and Pasted from vs.mse-game, with a few modifications
@@ -475,7 +475,6 @@ pack item:
 pack item:
 	name: card
 	filter: card.number != ""
-
 ############################################################## Card packs
 pack type:
 	name: booster pack
@@ -519,3 +518,11 @@ pack type:
 	item:
 		name: card
 		amount: 3
+pack type:
+	name: additional rare
+	item:
+		name: rare
+pack type:
+	name: additional common
+	item:
+		name: common

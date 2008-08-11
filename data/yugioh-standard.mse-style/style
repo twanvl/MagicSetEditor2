@@ -5,10 +5,10 @@ installer group: Yugioh/Standard
 icon: card-sample.png
 position hint: 01
 
-version: 2008-08-08
+version: 2008-08-10
 depends on:
 	package: yugioh.mse-game
-	version: 2008-05-14
+	version: 2008-08-10
 depends on:
 	package: yugioh-standard-levels.mse-symbol-font
 	version: 2007-09-23
