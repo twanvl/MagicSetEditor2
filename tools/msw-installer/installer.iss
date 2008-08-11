@@ -14,8 +14,8 @@
 
 [setup]
 AppName                 = Magic Set Editor 2
-AppVerName              = Magic Set Editor 2 - 0.3.6b beta
-AppCopyright            = Copyright © 2001-2007 Twan van Laarhoven
+AppVerName              = Magic Set Editor 2 - 0.3.7 beta
+AppCopyright            = Copyright © 2001-2008 Twan van Laarhoven
 DefaultDirName          = {pf}\Magic Set Editor 2
 DisableStartupPrompt    = 1
 DisableProgramGroupPage = 1
@@ -56,9 +56,12 @@ Name: "custom";     Description: "Custom installation"; Flags: iscustom
 Name: "prog";                      Description: "MSE Program Files";   Flags: fixed; Types: full custom magic vs yugioh
 Name: "prog/en";                   Description: "English translation"; Flags: fixed; Types: full custom magic vs yugioh
 #if INSTALL_ALL
-  Name: "prog/fr";                   Description: "French translation";                Types: full custom
-  Name: "prog/es";                   Description: "Spanish translation";               Types: full custom
-  Name: "prog/it";                   Description: "Italian translation";               Types: full custom
+  Name: "prog/de";                   Description: "German translation";                Types: full
+  Name: "prog/fr";                   Description: "French translation";                Types: full
+  Name: "prog/es";                   Description: "Spanish translation";               Types: full
+  Name: "prog/it";                   Description: "Italian translation";               Types: full
+  Name: "prog/cht";                  Description: "Chinese traditional translation";   Types: full
+  Name: "prog/chs";                  Description: "Chinese simplified translation";    Types: full
 #endif
 Name: "style";                     Description: "Templates";                         Types: full custom magic vs yugioh
 Name: "style/mtg";                 Description: "Magic the Gathering";               Types: full custom magic
@@ -111,13 +114,17 @@ Name: "style/yugioh";              Description: "Yu-Gi-Oh!";                    
 
 ; program
 Source: "build/Release Unicode/mse.exe";  DestDir: "{app}";                      Components: prog; Flags: replacesameversion
+Source: "build/Release Unicode/mse.com";  DestDir: "{app}";                      Components: prog; Flags: replacesameversion
 
 ; locales: en
 Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/";  Components: prog/en; Flags: recursesubdirs
 #if INSTALL_ALL
+  Source: "data/de.mse-locale/*";           DestDir: "{app}/data/de.mse-locale/";  Components: prog/de; Flags: recursesubdirs
   Source: "data/fr.mse-locale/*";           DestDir: "{app}/data/fr.mse-locale/";  Components: prog/fr; Flags: recursesubdirs
   Source: "data/it.mse-locale/*";           DestDir: "{app}/data/it.mse-locale/";  Components: prog/it; Flags: recursesubdirs
   Source: "data/es.mse-locale/*";           DestDir: "{app}/data/es.mse-locale/";  Components: prog/es; Flags: recursesubdirs
+  Source: "data/cht.mse-locale/*";          DestDir: "{app}/data/cht.mse-locale/"; Components: prog/cht; Flags: recursesubdirs
+  Source: "data/chs.mse-locale/*";          DestDir: "{app}/data/chs.mse-locale/"; Components: prog/chs; Flags: recursesubdirs
   ;Source: "data/jp.mse-locale/*";           DestDir: "{app}/data/jp.mse-locale/";  Components: prog/jp; Flags: recursesubdirs
 #endif
 
@@ -209,6 +216,7 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
 #emit Package(1, 'vs', 'alter',            'style',           'vs/alter')
 #emit Package(1, 'vs', 'new',              'style',           'vs/new')
 #emit Package(1, 'vs', 'standard-new',     'symbol-font',     'vs/new')
+#emit Package(1, 'vs', 'standard-official','symbol-font',     'vs/new')
 
 #emit Font   (0, 'BadhouseBoldNumbers.ttf', 'BadhouseBoldNumbers',    'vs')
 #emit Font   (0, 'eurosti.ttf',             'Eurostile',              'vs')
