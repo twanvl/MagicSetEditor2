@@ -24,23 +24,6 @@ card dpi: 152.6265
 ############################################################## Extra scripts
 ############################################################## Extra style
 styling field:
-	type: choice
-	name: foil image
-	description: What foil should be on the cards?
-	initial: none
-	choice: none
-	choice: holo image
-	choice: secret holo image
-	choice: parallel holo image
-styling field:
-	type: choice
-	name: foil name
-	description: What color foil should be used on the name?
-	initial: normal
-	choice: normal
-	choice: silver
-	choice: gold
-styling field:
 	type: boolean
 	name: corner stamp
 	description: Should there be a foil stamp in the lower right corner?
@@ -82,17 +65,21 @@ card style:
 			spell card: card-spell.jpg
 			trap card: card-trap.jpg
 	foils:
-		left: { if styling.foil_image=="parallel holo image" then 0 else 51}
-		top: { if styling.foil_image=="parallel holo image" then 0 else 114}
-		width: { if styling.foil_image=="parallel holo image" then 361 else 259}
-		height: { if styling.foil_image=="parallel holo image" then 523 else 259}
+		left: { if card.rarity=="parallel rare" then 0 else if card.rarity=="gold tech" then 0 else 51 }
+		top: { if card.rarity=="parallel rare" then 0 else if card.rarity=="gold tech" then 0 else 114 }
+		width: { if card.rarity=="parallel rare" then 361 else if card.rarity=="gold tech" then 361 else 259 }
+		height: { if card.rarity=="parallel rare" then 523 else if card.rarity=="gold tech" then 523 else 259 }
 		z index: 5
-		visible: { styling.foil_image!="none" }
 		render style: image
 		popup style: in place
 		image:
-			script:	if styling.foil_image=="parallel holo image" then "parallelfoil.png" else
-				if styling.foil_image=="secret holo image" then "secretfoil.png" else "superfoil.png"
+			script:	if card.rarity=="super rare" then "superfoil.png" else
+				if card.rarity=="ultra rare" then "superfoil.png" else
+				if card.rarity=="secret rare" then "secretfoil.png" else
+				if card.rarity=="ultimate rare" then "superfoil.png" else
+				if card.rarity=="parallel rare" then "parallelfoil.png" else
+				if card.rarity=="gold tech" then "goldfoil.png" else
+				if card.rarity=="promo" then "superfoil.png" else "blank2.png"
 	############################# Name line
 	name:
 		left: 34
@@ -106,8 +93,13 @@ card style:
 			name: MatrixRegularSmallCaps
 			size: 26
 			color:
-				script: if styling.foil_name=="silver" then rgb(230,230,230)
-				else if styling.foil_name=="gold" then rgb(216,199,53)
+				script: if card.rarity=="rare" then rgb(230,230,230)
+				else if card.rarity=="secret rare" then rgb(230,230,230)
+				else if card.rarity=="promo" then rgb(230,230,230)
+				else if card.rarity=="ultra rare" then rgb(216,199,53)
+				else if card.rarity=="ultimate rare" then rgb(60,0,0)
+				else if card.rarity=="parallel rare" then rgb(216,199,53)
+				else if card.rarity=="gold tech" then rgb(216,199,53)
 				else if is_nmonster() then rgb(255,255,255)
 				else rgb(0,0,0)
 	attribute:
@@ -269,6 +261,24 @@ card style:
 			name: Palatino Linotype
 			size: 8
 			color: rgb(0,0,0)
+	rarity:
+		left: 112
+		top: 494
+		width: 18
+		height: 18
+		z index: 2
+		render style: image
+		popup style: in place
+		choice images:
+			common: blank2.png
+			rare: blank2.png
+			super rare: blank2.png
+			ultra rare: blank2.png
+			secret rare: blank2.png
+			ultimate rare: blank2.png
+			parallel rare: blank2.png
+			gold tech: blank2.png
+			promo: blank2.png
 	copyright:
 		left: { if styling.corner_stamp=="no" then 202 else 180 }
 		top : 495

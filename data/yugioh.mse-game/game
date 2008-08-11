@@ -111,6 +111,17 @@ init script:
 		else if is_trap_card()  then "Trap"
 		else                         "none"
 	}
+	# Default foil for a card
+	foil := {
+		if	card.rarity == "super rare"	then "holo image"
+		else if card.rarity == "ultra rare"	then "holo image"
+		else if card.rarity == "secret rare"	then "secret holo image"
+		else if card.rarity == "ultimate rare"	then "holo image"
+		else if card.rarity == "parallel rare"	then "parallel holo image"
+		else if card.rarity == "gold tech"	then "gold tech holo image"
+		else if card.rarity == "promo"		then "secret holo image"
+		else					     "none"
+	}
 	
 	############### Type of card
 	
@@ -260,7 +271,9 @@ card field:
 	choice: none
 	choice: holo image
 	choice: secret holo image
-	choice: parallel holo card
+	choice: parallel holo image
+	choice: gold tech holo image
+	default: foil()
 ############################# Name line
 card field:
 	type: text
@@ -396,6 +409,21 @@ card field:
 	name: gamecode
 	show statistics: false
 card field:
+	type: choice
+	name: rarity
+	show statistics: true
+	choice: common
+	choice: rare
+	choice: super rare
+	choice: ultra rare
+	choice: secret rare
+	choice: ultimate rare
+	choice: parallel rare
+	choice: gold tech
+	choice: promo
+	card list visible: true
+	card list column: 7
+card field:
 	type: text
 	name: copyright
 	default: set.copyright
@@ -439,15 +467,55 @@ word list:
 	word: Union
 ############################################################## Card pack items
 pack item:
+	name: rare
+	filter: card.rarity != "common"
+pack item:
+	name: common
+	filter: card.rarity == "common"
+pack item:
 	name: card
-	filter: card.foils == "none"
+	filter: card.number != ""
+
 ############################################################## Card packs
 pack type:
 	name: booster pack
 	item:
-		name: card
-		amount: 9
+		name: rare
+		amount: 1
+	item:
+		name: common
+		amount: 8
 pack type:
-	name: additional card
+	name: champion pack
+	item:
+		name: rare
+		amount: 1
+	item:
+		name: common
+		amount: 2
+pack type:
+	name: duelist pack
+	item:
+		name: rare
+		amount: 1
+	item:
+		name: common
+		amount: 5
+pack type:
+	name: movie pack
+	item:
+		name: rare
+		amount: 3
+	item:
+		name: common
+		amount: 5
+pack type:
+	name: premium pack
+	item:
+		name: rare
+		amount: 5
+pack type:
+	name: tournament pack
 	item:
 		name: card
+		amount: 3
