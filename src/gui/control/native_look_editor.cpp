@@ -91,6 +91,7 @@ void NativeLookEditor::resizeViewers() {
 		if (e) e->determineSize();
 		y += s->height + vspace;
 	}
+	y = y - vspace + margin;
 	SetVirtualSize(w, (int)y);
 	SetScrollbar(wxVERTICAL, 0, h, (int)y);
 	if (y >= h) {
