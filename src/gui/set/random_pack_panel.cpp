@@ -108,7 +108,7 @@ void PackTotalsPanel::draw(DC& dc) {
 	int total = 0;
 	FOR_EACH(item, game->pack_items) {
 		int value = amounts[item->name];
-		drawItem(dc, y, item->name, value);
+		drawItem(dc, y, tr(*game, item->name, capitalize), value);
 		total += value;
 	}
 	// draw total
@@ -123,11 +123,10 @@ void PackTotalsPanel::draw(DC& dc) {
 void PackTotalsPanel::drawItem(DC& dc, int& y,  const String& name, int value) {
 	wxSize size = dc.GetSize();
 	int w,h;
-	String cap_name = capitalize(name);
 	String amount; amount << value;
 	dc.GetTextExtent(amount,&w,&h);
-	dc.DrawText(cap_name, 0,        y);
-	dc.DrawText(amount,   size.x-w, y);//align right
+	dc.DrawText(name,   0,        y);
+	dc.DrawText(amount, size.x-w, y);//align right
 	y += h + 10;
 }
 
