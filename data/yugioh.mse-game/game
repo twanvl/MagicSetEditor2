@@ -476,7 +476,7 @@ pack item:
 	filter: card.rarity == "common"
 pack item:
 	name: gold
-	filter: card.rarity != "gold tech"
+	filter: card.rarity == "gold tech"
 pack item:
 	name: card
 	filter: card.number != ""
