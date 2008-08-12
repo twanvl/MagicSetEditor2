@@ -425,6 +425,11 @@ card field:
 	card list visible: true
 	card list column: 7
 card field:
+	type: choice
+	name: corner foil
+	choice: stamp
+	editable: false
+card field:
 	type: text
 	name: copyright
 	default: set.copyright

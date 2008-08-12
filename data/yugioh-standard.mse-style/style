@@ -24,11 +24,6 @@ card dpi: 152.6265
 ############################################################## Extra scripts
 ############################################################## Extra style
 styling field:
-	type: boolean
-	name: corner stamp
-	description: Should there be a foil stamp in the lower right corner?
-	initial: yes
-styling field:
 	type: choice
 	name: rules alignment
 	description: Should the rules text be justified? WARNING: Justification is not perfect.
@@ -257,11 +252,11 @@ card style:
 			size: 8
 			color: rgb(0,0,0)
 	rarity:
-		left: 112
-		top: 494
-		width: 18
-		height: 18
-		z index: 2
+		left: 332
+		top : 492
+		height: 20
+		width: 20
+		z index: 3
 		render style: image
 		popup style: in place
 		choice images:
@@ -274,8 +269,18 @@ card style:
 			parallel rare: blank2.png
 			gold tech: blank2.png
 			promo: blank2.png
+	corner foil:
+		left: 332
+		top : 492
+		height: 20
+		width: 20
+		z index: 2
+		render style: image list
+		choice images:
+			stamp:
+				script: if card.edition!="" then "cornerfirst.png" else "cornerunlimited.png"
 	copyright:
-		left: { if styling.corner_stamp=="no" then 202 else 180 }
+		left: 180
 		top : 495
 		width: 145
 		height: 18
@@ -311,12 +316,6 @@ extra card field:
 	name: defoverlay
 	default: "DEF/"
 	editable: false
-extra card field:
-	type: choice
-	name: corner foil
-	choice: 1st
-	choice: 2nd
-	editable: true
 extra card style:
 	bar:
 		left: 37
@@ -372,14 +371,3 @@ extra card style:
 			size: 12
 			color: rgb(0,0,0)
 		visible: script: if is_nmonster() then false else true
-	corner foil:
-		left: 332
-		top : 492
-		height: 20
-		width: 20
-		z index: 3
-		render style: image list
-		choice images:
-			1st: cornerfirst.png
-			2nd: cornerunlimited.png
-		visible: script: if styling.corner_stamp=="no" then false else true
