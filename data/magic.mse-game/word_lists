@@ -28,7 +28,6 @@ word list:
 	word: Land
 	word: Planeswalker
 
-## TODO: Make the alphabetical sublists actually work.
 word list:
 	name: race
 	word:
@@ -333,8 +332,6 @@ word list:
 			word: Druid
 			word: Elder
 			word: Flagbearer
-			word: Hag
-			word: Hellion
 			word: Horror
 			word: Incarnation
 		word:
@@ -377,7 +374,9 @@ word list:
 	word:
 		name:
 		line below: true
+	word: Contraption
 	word: Equipment
+	word: Fortification
 
 word list:
 	name: land
@@ -389,6 +388,14 @@ word list:
 	word: Swamp
 	word: Mountain
 	word: Forest
+	line below: true
+	word: Desert
+	word: Lair
+	word: Locus
+	word: Mine
+	word: Power-Plant
+	word: Tower
+	word: Urza's
 
 word list:
 	name: enchantment
