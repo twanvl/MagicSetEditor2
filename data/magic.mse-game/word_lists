@@ -388,7 +388,6 @@ word list:
 	word: Swamp
 	word: Mountain
 	word: Forest
-	line below: true
 	word: Desert
 	word: Lair
 	word: Locus
