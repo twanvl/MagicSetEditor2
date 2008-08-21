@@ -3021,7 +3021,8 @@ else
 fi
 
 
-
+# Do not pass -O2, because that causes failures for now.
+CXXFLAGS=-g
 # Checks for libraries.
 # TODO: Check for boost
 

@@ -255,8 +255,8 @@ void SetWindow::setControlStatusText(wxWindow* control, const String& text) {
 		}
 	}
 	control_status_texts.push_back(make_pair(control,text));
-	control->Connect(wxEVT_ENTER_WINDOW,(wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)onControlEnter,nullptr,this);
-	control->Connect(wxEVT_LEAVE_WINDOW,(wxObjectEventFunction)(wxEventFunction)(wxMouseEventFunction)onControlLeave,nullptr,this);
+	control->Connect(wxEVT_ENTER_WINDOW,wxMouseEventHandler(SetWindow::onControlEnter),nullptr,this);
+	control->Connect(wxEVT_LEAVE_WINDOW,wxMouseEventHandler(SetWindow::onControlLeave),nullptr,this);
 }
 void SetWindow::onControlEnter(wxMouseEvent& ev) {
 	for (size_t i = 0 ; i < control_status_texts.size() ; ++i) {

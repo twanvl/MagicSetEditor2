@@ -51,7 +51,7 @@ IMPLEMENT_REFLECTION(PackageChoiceStyle) {
 
 String PackageChoiceValue::toString() const {
 	PackagedP pack = getPackage();
-	if (pack) return pack->short_name;
+	if (pack.get()) return pack->short_name;
 	else      return _("");
 }
 

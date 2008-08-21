@@ -9,14 +9,22 @@
 # If executed as any other user, it will fail.
 
 case $UID in
-	0)
-		INSTALL_DIR='/usr/local/share/magicseteditor/';
-		EXEC_SYMLINK='/usr/local/bin/magicseteditor';;
-	*)
-		echo "Unfortunately, our installer system currently does not support installation except as root.
-This is because the program currently requires a specific data directory.
-Our apologies." && exit;;
+    0)
+        INSTALL_DIR='/usr/local/share/magicseteditor/';
+        EXEC_SYMLINK='/usr/local/bin/magicseteditor';;
+    *)
+        echo
+"Unfortunately, our installer system currently does not support installation
+except as root. This is because the program currently requires a specific data
+directory. Our apologies." && exit;;
 esac
+
+if [ \"$MSE_INSTALL_DIR\" != "" ] then
+    INSTALL_DIR=$MSE_INSTALL_DIR
+fi
+if [ \"$MSE_EXEC_SYMLINK\" != "" ] then
+    INSTALL_DIR=$MSE_EXEC_SYMLINK
+fi
 
 echo "Magic Set Editor version $VERSION Installer Script.
 
@@ -28,10 +36,10 @@ Is this correct [y/N]? ";
 read -n 1 CONFIRM;
 
 case $CONFIRM in
-	[yY])
-		:;;
-	*)
-		exit;;
+    [yY])
+        :;;
+    *)
+        exit;;
 esac;
 
 echo "Installing...";

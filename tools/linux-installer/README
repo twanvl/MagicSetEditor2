@@ -1,10 +1,21 @@
-In order to use Magic Set Editor, you need to have libraries for wxGTK version 2.8. This can be acquired from the Ubuntu package libwxgtk2.8-0.
+In order to use Magic Set Editor, you need to have libraries for wxGTK version 2
+.8. This can be acquired from the Ubuntu package libwxgtk2.8-0.
 
-To install Magic Set Editor, please extract this tarball if you haven't already, and then run the install script as root.
-Unfortunately, Magic Set Editor currently requires that it be installed to /usr/local/share/magicseteditor.
-If, after Magic Set Editor is installed, it complains about being unable to find data in a certain path, then your system
-is slightly different, and should be installed to that directory, minus the "/data". This can be done by modifying the install script.
-After the install script is run and loading is confirmed, you may delete all the contents of this tarball if you wish.
+To install Magic Set Editor, please extract this tarball if you haven't already,
+and then run the install script as root. Unfortunately, Magic Set Editor
+currently requires that it be installed to /usr/local/share/magicseteditor. If,
+after Magic Set Editor is installed, it complains about being unable to find
+data in a certain path, then your system is slightly different, and should be
+installed to that directory, minus the "/data". This can be done by setting the
+MSE_INSTALL_DIR environment variable. After the install script is run and
+loading is confirmed, you may delete all the contents of this tarball if you
+wish.
 
-Magic Set Editor stores data only in the primary installation directory, a symlink to the executable at /usr/local/bin, and in ~/.magicseteditor. 
-If you need to uninstall, removing these directories should completely purge your system.
+Magic Set Editor stores data only in the primary installation directory, a
+symlink to the executable at /usr/local/bin, and in ~/.magicseteditor.
+If you need to uninstall, removing these directories should completely
+purge your system.
+
+The installation directory of MSE is specified by the MSE_INSTALL_DIR
+environment variable, and the destination of the executable symlink is set with
+MSE_EXEC_SYMLINK.
