@@ -98,6 +98,7 @@ am_magicseteditor_OBJECTS = ./src/util/version.$(OBJEXT) \
 	./src/script/script_manager.$(OBJEXT) \
 	./src/script/functions/english.$(OBJEXT) \
 	./src/script/functions/basic.$(OBJEXT) \
+	./src/script/functions/construction.$(OBJEXT) \
 	./src/script/functions/regex.$(OBJEXT) \
 	./src/script/functions/editor.$(OBJEXT) \
 	./src/script/functions/image.$(OBJEXT) \
@@ -106,6 +107,7 @@ am_magicseteditor_OBJECTS = ./src/util/version.$(OBJEXT) \
 	./src/script/dependency.$(OBJEXT) ./src/script/value.$(OBJEXT) \
 	./src/script/script.$(OBJEXT) ./src/script/parser.$(OBJEXT) \
 	./src/script/image.$(OBJEXT) ./src/data/statistics.$(OBJEXT) \
+	./src/data/add_cards_script.$(OBJEXT) \
 	./src/data/locale.$(OBJEXT) ./src/data/card.$(OBJEXT) \
 	./src/data/symbol.$(OBJEXT) ./src/data/game.$(OBJEXT) \
 	./src/data/font.$(OBJEXT) ./src/data/symbol_font.$(OBJEXT) \
@@ -356,6 +358,7 @@ magicseteditor_SOURCES = ./src/util/version.cpp \
 	./src/script/scriptable.cpp ./src/script/script_manager.cpp \
 	./src/script/functions/english.cpp \
 	./src/script/functions/basic.cpp \
+	./src/script/functions/construction.cpp \
 	./src/script/functions/regex.cpp \
 	./src/script/functions/editor.cpp \
 	./src/script/functions/image.cpp \
@@ -363,11 +366,12 @@ magicseteditor_SOURCES = ./src/util/version.cpp \
 	./src/script/dependency.cpp ./src/script/value.cpp \
 	./src/script/script.cpp ./src/script/parser.cpp \
 	./src/script/image.cpp ./src/data/statistics.cpp \
-	./src/data/locale.cpp ./src/data/card.cpp \
-	./src/data/symbol.cpp ./src/data/game.cpp ./src/data/font.cpp \
-	./src/data/symbol_font.cpp ./src/data/stylesheet.cpp \
-	./src/data/format/html.cpp ./src/data/format/mse1.cpp \
-	./src/data/format/mse2.cpp ./src/data/format/apprentice.cpp \
+	./src/data/add_cards_script.cpp ./src/data/locale.cpp \
+	./src/data/card.cpp ./src/data/symbol.cpp ./src/data/game.cpp \
+	./src/data/font.cpp ./src/data/symbol_font.cpp \
+	./src/data/stylesheet.cpp ./src/data/format/html.cpp \
+	./src/data/format/mse1.cpp ./src/data/format/mse2.cpp \
+	./src/data/format/apprentice.cpp \
 	./src/data/format/clipboard.cpp \
 	./src/data/format/image_to_symbol.cpp \
 	./src/data/format/mws.cpp ./src/data/format/image.cpp \
@@ -664,6 +668,9 @@ src/script/functions/$(DEPDIR)/$(am__dirstamp):
 ./src/script/functions/basic.$(OBJEXT):  \
 	src/script/functions/$(am__dirstamp) \
 	src/script/functions/$(DEPDIR)/$(am__dirstamp)
+./src/script/functions/construction.$(OBJEXT):  \
+	src/script/functions/$(am__dirstamp) \
+	src/script/functions/$(DEPDIR)/$(am__dirstamp)
 ./src/script/functions/regex.$(OBJEXT):  \
 	src/script/functions/$(am__dirstamp) \
 	src/script/functions/$(DEPDIR)/$(am__dirstamp)
@@ -695,6 +702,8 @@ src/data/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) ./src/data/$(DEPDIR)
 	@: > src/data/$(DEPDIR)/$(am__dirstamp)
 ./src/data/statistics.$(OBJEXT): src/data/$(am__dirstamp) \
+	src/data/$(DEPDIR)/$(am__dirstamp)
+./src/data/add_cards_script.$(OBJEXT): src/data/$(am__dirstamp) \
 	src/data/$(DEPDIR)/$(am__dirstamp)
 ./src/data/locale.$(OBJEXT): src/data/$(am__dirstamp) \
 	src/data/$(DEPDIR)/$(am__dirstamp)
@@ -996,6 +1005,7 @@ mostlyclean-compile:
 	-rm -f ./src/data/action/symbol.$(OBJEXT)
 	-rm -f ./src/data/action/symbol_part.$(OBJEXT)
 	-rm -f ./src/data/action/value.$(OBJEXT)
+	-rm -f ./src/data/add_cards_script.$(OBJEXT)
 	-rm -f ./src/data/card.$(OBJEXT)
 	-rm -f ./src/data/export_template.$(OBJEXT)
 	-rm -f ./src/data/field.$(OBJEXT)
@@ -1121,6 +1131,7 @@ mostlyclean-compile:
 	-rm -f ./src/script/context.$(OBJEXT)
 	-rm -f ./src/script/dependency.$(OBJEXT)
 	-rm -f ./src/script/functions/basic.$(OBJEXT)
+	-rm -f ./src/script/functions/construction.$(OBJEXT)
 	-rm -f ./src/script/functions/editor.$(OBJEXT)
 	-rm -f ./src/script/functions/english.$(OBJEXT)
 	-rm -f ./src/script/functions/export.$(OBJEXT)
@@ -1156,6 +1167,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./src/cli/$(DEPDIR)/cli_main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/cli/$(DEPDIR)/text_io_handler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/cli/$(DEPDIR)/win32_cli_wrapper.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./src/data/$(DEPDIR)/add_cards_script.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/data/$(DEPDIR)/card.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/data/$(DEPDIR)/export_template.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/data/$(DEPDIR)/field.Po@am__quote@
@@ -1291,6 +1303,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/$(DEPDIR)/scriptable.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/$(DEPDIR)/value.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/functions/$(DEPDIR)/basic.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./src/script/functions/$(DEPDIR)/construction.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/functions/$(DEPDIR)/editor.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/functions/$(DEPDIR)/english.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/functions/$(DEPDIR)/export.Po@am__quote@

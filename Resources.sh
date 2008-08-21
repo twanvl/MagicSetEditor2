@@ -1,8 +1,10 @@
 #! /bin/bash
 
-rm -r /usr/local/share/magicseteditor/resource
+BASEDIR=~/.magicseteditor/resource
 
-for DIR in /usr/local/share/magicseteditor /usr/local/share/magicseteditor/resource /usr/local/share/magicseteditor/resource/icon /usr/local/share/magicseteditor/resource/tool /usr/local/share/magicseteditor/resource/cursor
+rm -r $BASEDIR/resource
+
+for DIR in $BASEDIR $BASEDIR/icon $BASEDIR/tool $BASEDIR/cursor
 do
 if [ -d $DIR ]; then
 : ;
@@ -14,8 +16,8 @@ mkdir $DIR;
 fi
 done
 
-cp src/resource/common/* /usr/local/share/magicseteditor/resource;
-cp src/resource/msw/tool/* /usr/local/share/magicseteditor/resource/tool;
-cp src/resource/msw/icon/* /usr/local/share/magicseteditor/resource/icon;
-cp src/resource/msw/cursor/* /usr/local/share/magicseteditor/resource/cursor;
-cp src/resource/msw/other/* /usr/local/share/magicseteditor/resource;
+cp src/resource/common/* $BASEDIR;
+cp src/resource/msw/tool/* $BASEDIR/tool;
+cp src/resource/msw/icon/* $BASEDIR/icon;
+cp src/resource/msw/cursor/* $BASEDIR/cursor;
+cp src/resource/msw/other/* $BASEDIR;

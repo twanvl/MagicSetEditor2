@@ -6,17 +6,15 @@
 
 # This script installs Magic Set Editor onto your system.
 # If executed as root (including via sudo), it is installed to /usr/local/share/magicseteditor. (with an executable symlink in /usr/local/bin)
-# If executed as any other user, it will fail.
+# If executed as any other user, it will install to ~/.magicseteditor with a symlink in ~/bin.
 
 case $UID in
     0)
         INSTALL_DIR='/usr/local/share/magicseteditor/';
         EXEC_SYMLINK='/usr/local/bin/magicseteditor';;
     *)
-        echo
-"Unfortunately, our installer system currently does not support installation
-except as root. This is because the program currently requires a specific data
-directory. Our apologies." && exit;;
+        INSTALL_DIR=~'/.magicseteditor/';
+        EXEC_SYMLINK=~'/bin/magicseteditor';
 esac
 
 if [ \"$MSE_INSTALL_DIR\" != "" ] then

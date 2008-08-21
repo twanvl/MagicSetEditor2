@@ -353,7 +353,7 @@ String ScriptCollectionBase::toCode() const {
 	#ifdef USE_INTRUSIVE_PTR
 		// we can just turn this into a ScriptValueP
 		// TODO: remove thisP alltogether
-		ScriptValueP it = makeIterator(ScriptValueP(const_cast<ScriptValue*>((ScriptValue*)this)));
+		ScriptValueP it = makeIterator(ScriptValueP(const_cast<ScriptValue*>(static_cast<const ScriptValue*>(this))));
 	#else
 		#error "makeIterator needs a ScriptValueP :("
 	#endif

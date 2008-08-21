@@ -54,7 +54,7 @@
 	#define HAVE_FAST_ATOMIC
 	
 // ----------------------------------------------------------------------------- : AtomicInt : GCC
-#elif defined(__GNUC__) && defined(HAVE_GCC_ATOMIC_BUILTINS)
+#elif defined(__GNUC__) && !defined(HAVE_GCC_ATOMIC_BUILTINS)
 	
 	/// An integer which is equivalent to an AtomicInt, but which doesn't support attomic operations
 	typedef unsigned int AtomicIntEquiv;

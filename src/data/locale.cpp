@@ -210,8 +210,10 @@ InputStreamP load_resource_text(const String& name) {
 		int len = ::SizeofResource(wxGetInstance(), hResource);
 		return new_shared2<wxMemoryInputStream>(data, len);
 	#else
-		static String path = wxStandardPaths::Get().GetDataDir() + _("/resource/") + name;
-		return new_shared1<wxFileInputStream>(path);
+        static String path = wxStandardPaths::Get().GetDataDir() + _("/resource/");
+        static String local_path = wxStandardPaths::Get().GetUserDataDir() + _("/resource/");
+        if (wxFileExists(path + name)) return new_shared1<wxFileInputStream>(path + name);
+        else return new_shared1<wxFileInputStream>(local_path + name);
 	#endif
 }
 
