@@ -1,7 +1,7 @@
 ﻿mse version: 0.3.7
 installer group: translations/Français
 full name: Français
-version: 2008-05-31
+version: 2008-08-14
 icon: fr.png
 
 ############################################################## Menu items
@@ -75,7 +75,7 @@ menu:
 	style tab:			St&yle	F7
 	keywords tab:		&Mot-clef	F8
 	stats tab:			S&tatistiques	F9
-#_ADD	random pack tab:	&Random Packs
+	random pack tab:	&Paquet aléatoire
 	
 	help:			&Aide
 	index:				&Index...	F1
@@ -144,30 +144,30 @@ help:
 	preferences:		Changer la configuration de Magic Set Editor
 	
 	cards:
-	previous card:		Selects the previous card in the list
-	next card:			Selects the next card in the list
-	add card:			Add a new, blank, card to this set
-	add cards:			Add multiple cards to the set
-	remove card:		Delete the selected card from this set
-	orientation:		Orientation of the displayed card
-	rotate card:			Rotate the card display 90° clockwise
-	rotate 0:				Display the card with the right side up
-	rotate 270:				Display the card rotated clockwise
-	rotate 90:				Display the card rotated counter-clockwise (anti-clockwise for the British)
-	rotate 180:				Display the card up side down
-	card list columns:	Select what columns should be shown and in what order.
+	previous card:		Choisir la carte précédente dans la liste
+	next card:			Choisir la carte suivante dans la liste
+	add card:			Ajouter une nouvelle carte vierge au set
+	add cards:			Ajouter plusieurs cartes au set
+	remove card:		Effacer du set la carte sélectionnée 
+	orientation:		Orientation de la carte visualisée
+	rotate card:			Tourner la carte de 90° dans le sens des aiguilles d'une montre
+	rotate 0:				Afficher la carte dans son sens original
+	rotate 270:				Afficher la carte tournée dans le sens des aiguilles d'une montre
+	rotate 90:				Afficher la carte tournée dans le sens inverse des aiguilles d'une montre
+	rotate 180:				Afficher la carte à l'envers
+	card list columns:	Choisir quelles colonnes doivent être montrées et dans quel ordre.
 	
 	keywords:
-	previous keyword:	Selects the previous keyword in the list
-	next keyword:		Selects the next keyword in the list
-	add keyword:		Add a new keyword to this set
-	remove keyword:		Delete the selected keyword from this set
+	previous keyword:	Choisir le Mot-clé précédent dans la liste
+	next keyword:		Choisir le Mot-clé suivant dans la liste
+	add keyword:		Ajouter un nouveau Mot-clé au set
+	remove keyword:		Effacer du set le Mot-clé sélectionné
 	
 	format:
-	bold:				Makes the selected text bold
-	italic:				Makes the selected text italic
-	symbols:			Draws the selected text with symbols
-	reminder text:		Show reminder text for the selected keyword
+	bold:				Mettre le texte sélectionné en gras
+	italic:				Mettre le texte sélectionné en italique
+	symbols:			Mettre le texte selectionné en symboles
+	reminder text:		Afficher le texte de rappel pour le Mot-clé sélectionné
 	
 	graph:
 	pie:				Un graphique en secteurs, le rayon de la tranche indique le nombre de cartes
@@ -177,13 +177,13 @@ help:
 	scatter pie:		Un nuage de points où chaque point est un petit graphique en secteurs
 	
 	window:
-	new window:			Creates another window to edit the same set
-	cards tab:			Edit the cards in the set
-	set info tab:		Edit information about the set, its creator, etc.
-	style tab:			Change the style of cards
-	keywords tab:		Define extra keywords for this set
-	stats tab:			Show statistics about the cards in the set
-#_ADD	random pack tab:	Try how the set works out in practice by generating random booster packs.
+	new window:			Ouvrir une nouvelle fenêtre pour éditer le même set
+	cards tab:			Editer les cartes du set
+	set info tab:		Editer les informations du set, son créateur, etc...
+	style tab:			Changer le style de la carte
+	keywords tab:		Definir des Mot-clé supplémentaire pour le set
+	stats tab:			Voir les statistiques des cartes du set
+	random pack tab:	Voir comment le set se comporte en pratique en générant un booster au hasard.
 	
 	help:
 	index:				
@@ -191,12 +191,12 @@ help:
 	about:				
 	
 	# Cards panel
-#_ADD	collapse notes:		Hide the card notes box
-#_ADD	expand notes:		Show the card notes box
+	collapse notes:		Cacher les notes des cartes
+	expand notes:		Montrer les notes des cartes
 	# Random pack panel
-#_ADD	random seed:		Different packs will be generated each time.
-#_ADD	fixed seed:			Using the same seed number gives the same 'random' packs.
-#_ADD	seed:				Seed number for the random generator. Using the same seed number gives the same 'random' packs.
+	random seed:		Un paquet différent à chaque fois sera généré.
+	fixed seed:			Utiliser le même nombre donne le même paquet 'aléatoire'.
+	seed:				Nombre souche pour le générateur. Utiliser le même nombre donne le même paquet 'aléatoire'.
 	
 	# Preferences
 	app language:
@@ -217,141 +217,141 @@ help:
 	close symbol editor:Fermer l'éditeur de symbole
 	
 	duplicate:			Dupliquer la forme selectionnée
-	group:				Group the selected shapes together
-	ungroup:			Break up the selected group
+	group:				Grouper ensemble les formes sélectionnées
+	ungroup:			Dégrouper le groupe sélectionné
 	
-	grid:				Show gridlines
-	snap:				Snap shapes and points to gridlines
+	grid:				Montrer la grille
+	snap:				Coller les formes et les points à la grille
 	
 	tool:
-	select:				Select and move shapes
-	rotate:				Rotate and shear shapes
-	points:				Edit control points for a shape in the symbol
-	basic shapes:		Draw basic shapes, such as rectangles and circles
-	symmetry:			Add symmetries to the symbol
-	paint:				Paint on the shape using a paintbrush
+	select:				Choisir et bouger les formes
+	rotate:				Tourner et modifier les formes
+	points:				Editer les points de contrôle pour une forme du symbole
+	basic shapes:		Dessiner des formes simples, comme des rectangles ou des cercles
+	symmetry:			Ajouter une symétrie au symbole
+	paint:				Peindre sur la forme en utilisant un pinceau
 	
 	select editor:
-	merge:				Merges this shape with those below it
-	subtract:			Subtracts this shape from shapes below it, leaves only the area in that shape that is not in this shape
-	intersect:			Intersects this shape with shapes below it, leaves only the area in both shapes
-	difference:			Differs this shape from the shapes below it, leaves only the area not in any other shape
-	overlap:			Place this shape, and its border above shapes below it
-	border:				Draws this shape as a border
+	merge:				Fusionner cette formes à celles en dessous
+	subtract:			Enlever cette forme à celles en dessous, en laissant apparaitre que ce qui n'est pas dans cette forme
+	intersect:			Intersection de cette forme avec celles en dessous, ne laissant apparaitre que ce qui est dans les deux formes
+	difference:			Soustraire cette forme à celles en dessous, ne laissant apparaitre que les zonnes qui ne sont dans aucune autre forme
+	overlap:			Placer cette forme et son contour au dessus des autres formes
+	border:				Dessiner cette forme en tant que contour
 	
-	drag to shear:		Drag to shear selected %s
-	drag to rotate:		Drag to rotate selected %s, Ctrl constrains angle to multiples of 15 degrees
-	drag to resize:		Drag to resize selected %s, Ctrl constrains size
-	click to select shape:	Click to select shape, drag to move shape, double click to edit shape
+	drag to shear:		Glisser pour déformer la sélection %s
+	drag to rotate:		Glisser pour tourner la sélection %s, Ctrl restreind l'angle à un multiple de 15°
+	drag to resize:		Glisser pour redimensionner la sélection %s, Ctrl contraint la taille
+	click to select shape:	Cliquer pour sélectionner la forme, glisser pour la déplacer, double-cliquer pour l'éditer
 	
-	ellipse:			Draw circles and ellipses
-	rectangle:			Draw squares and rectangles
-	polygon:			Draw triangles, pentagons and other regular polygons
-	star:				Draw stars
-	sides:				The number of sides of the polygon or points of the star
-	drag to draw shape:	Drag to resize shape, Ctrl constrains shape, Shift centers shape
-	draw ellipse:		Click and drag to draw a ellipse, hold Ctrl for a circle
-	draw rectangle:		Click and drag to draw a rectangle, hold Ctrl for a square
-	draw polygon:		Click and drag to draw a polygon
-	draw star:			Click and drag to draw a star
+	ellipse:			Dessiner des cercles et des ellipses
+	rectangle:			Dessiner des carrés et des rectangles
+	polygon:			Dessiner des triangles, des pentagones et d'autres polygones réguliers
+	star:				Dessiner des étoiles
+	sides:				Nombre de côtés du polygone ou de branche de l'étoile
+	drag to draw shape:	Glisser pour redimensionner la forme, Ctrl contraint la forme, Shift centre la forme
+	draw ellipse:		Cliquer-glisser pour dessiner une ellipse, tenir Ctrl pour un cercle
+	draw rectangle:		Cliquer-glisser pour dessiner un rectangle, tenir Ctrl pour un carré
+	draw polygon:		Cliquer-glisser pour dessiner un polygone
+	draw star:			Cliquer-glisser pour dessiner une étoile
 	
-	line segment:		Makes the selected line segment straight
-	curve segment:		Makes the selected line segment curved
-	free point:			Allows the two control points of the point to be moved freely
-	smooth point:		Makes the selected point smooth by placing the two control points opposite each other
-	symmetric point:	Makes the selected point symetric
-	drag to move curve:	Drag to move curve
-	drag to move line:	Alt + drag to move curve;  double click to add a point on this line
-	drag to move point:	Click and drag to move control point;  double click to remove the point
+	line segment:		Rendre droit le segment sélectionné
+	curve segment:		Rendre incurvé le segment sélectionné
+	free point:			Permet de bouger librement les deux points de contrôle du point
+	smooth point:		Rend le point selectionné plus lisse en placant les deux points de contrôle opposés l'un à l'autre
+	symmetric point:	Rends les deux points de contrôle symétriques par le point sélectionné
+	drag to move curve:	Glisser pour incurver
+	drag to move line:	Alt + Glisser pour incurver;  double cliquer pour ajouter un point sur cette ligne
+	drag to move point:	Cliquer-glisser pour bouger le point de contrôle; double cliquer pour enlever le point
 	
-	rotation:			Rotational symmetry (wheel)
-	reflection:			Reflectional symmetry (mirror)
-	add symmetry:		Add symmetries to the symbol
-	remove symmetry:	Remove this symmetry
-	copies:				Number of reflections (including the original)
+	rotation:			Symétrie par rotation (roue)
+	reflection:			Symétrie par reflection (mirroir)
+	add symmetry:		Ajouter les symétries au symbole
+	remove symmetry:	Enlever cette symétrie
+	copies:				Nombre de réflexion (inclus l'original)
 	
 	# Card select
-	filename format:	(Use {card.name} for the name of the card  ;  The filetype is determined based on the extension)
+	filename format:	(Utilisez {card.name} pour le nom de la carte ;  Le type de fichier est déterminé, basé par l'extension)
 
 ############################################################## Toolbar
 tool:
-	undo:				Undo
-	redo:				Redo
+	undo:				Défaire
+	redo:				Refaire
 	
-	cards tab:			Cards
-	set info tab:		Set info
-	style tab:			Style
-	keywords tab:		Keywords
-	stats tab:			Statistics
-#_ADD	random pack tab:	Random
+	cards tab:			Cartes
+	set info tab:		Information du set
+	style tab:			Style de la carte
+	keywords tab:		Mots-clés
+	stats tab:			Statistiques
+	random pack tab:	Aléatoire
 	
 	# symbol editor
-	store symbol:		Store
+	store symbol:		Stocker
 	
-	grid:				Grid
-	snap:				Snap
+	grid:				Grille
+	snap:				Attacher
 	
-	select:				Select
-	rotate:				Rotate
+	select:				Selectionner
+	rotate:				Rotation
 	points:				Points
-	basic shapes:		Basic Shapes
-	symmetry:			Symmetry
-	paint:				Paint
+	basic shapes:		Forme basiques
+	symmetry:			Symétrie
+	paint:				Peinture
 	
-	merge:				Merge
-	subtract:			Subtract
-	intersect:			Intersect
-	difference:			Difference
-	overlap:			Overlap
-	border:				Border
+	merge:				Fusionner
+	subtract:			Enlever
+	intersect:			Intersection
+	difference:			Soustraire
+	overlap:			Remonter
+	border:				Contour
 	
 	ellipse:			Ellipse
 	rectangle:			Rectangle
-	polygon:			Polygon
-	star:				Star
+	polygon:			Polygone
+	star:				Etoile
 	
 	rotation:			Rotation
 	reflection:			Reflection
-	add symmetry:		Add
-	remove symmetry:	Remove
+	add symmetry:		Ajouter
+	remove symmetry:	Supprimer
 	
-	line segment:		Line
-	curve segment:		Curve
-	free point:			Free
-	smooth point:		Smooth
-	symmetric point:	Symmetric
+	line segment:		Ligne
+	curve segment:		Courbe
+	free point:			Libre
+	smooth point:		Lisse
+	symmetric point:	Symétrique
 	
 ############################################################## Toolbar help text
 tooltip:
-	cards tab:			
-	set info tab:		Set information
-	style tab:			
-	keywords tab:		
-	stats tab:			
-#_ADD	random pack tab:	Random packs
+	cards tab:			Cartes
+	set info tab:		Information du set
+	style tab:			Style de la carte
+	keywords tab:		Mots-clés
+	stats tab:			Statistiques
+	random pack tab:	Paquets aléatoires
 	
-	new set:			New set
-	open set:			Open set
-	save set:			Save set
-	export:				Export set
+	new set:			Nouveau set
+	open set:			Ouvrir un set
+	save set:			Sauver le set
+	export:				Exporter le set
 	
-	cut:				Cut
-	copy:				Copy
-	paste:				Paste
-	undo:				Undo%s
-	redo:				Redo%s
+	cut:				Couper
+	copy:				Copier
+	paste:				Coller
+	undo:				Défaire%s
+	redo:				Refaire%s
 	
-	add card:			Add card
-	remove card:		Remove selected card
-	rotate card:		Rotate card
+	add card:			Ajouter une carte
+	remove card:		Supprimer la carte sélectionnée
+	rotate card:		Tourner la carte
 	
-	add keyword:		Add keyword
-	remove keyword:		Remove selected keyword
+	add keyword:		Ajouter un Mot-clé
+	remove keyword:		Supprimer le Mot-clé sélectionné
 	
-	bold:				Bold
-	italic:				Italic
-	symbols:			Symbols
-	reminder text:		Reminder Text
+	bold:				Gras
+	italic:				Italique
+	symbols:			Symboles
+	reminder text:		Texte de rappel
 	
 	pie:				Pie Graphique
 	bar:				Diagramme à barres
@@ -359,155 +359,154 @@ tooltip:
 	scatter:			Scatter Plot
 	scatter pie:		Scatter Plot-Pie
 	
-	cards tab:			
-	set info tab:		Set Information
-	style tab:			Card Style
-	keywords tab:		
-	stats tab:			
+	cards tab:			Cartes
+	set info tab:		Information du set
+	style tab:			Style de la carte
+	keywords tab:		Mots-clés
+	stats tab:			Statistiques
 	
 	# symbol editor
-	store symbol:		Store symbol in set
+	store symbol:		Stocker le symbole dans le set
 	
-	grid:				Show grid
-	snap:				Snap to grid
+	grid:				Voir la grille
+	snap:				Attacher à la grille
 	
-	select:				Select (F5)
-	rotate:				Rotate (F6)
+	select:				Selection (F5)
+	rotate:				Rotation (F6)
 	points:				Points (F7)
-	basic shapes:		Basic Shapes (F8)
-	symmetry:			Symmetry (F9)
-	paint:				Paint on Shape (F10)
+	basic shapes:		Formes basiques (F8)
+	symmetry:			Symétrie (F9)
+	paint:				Peinture sur forme (F10)
 	
-	merge:				Merge with shapes below
-	subtract:			Subtract from shapes below
-	intersect:			Intersect with shapes below
-	difference:			Differ from shapes below
-	overlap:			Place above other shapes
-	border:				Draw as a border
+	merge:				Fusionner avec les formes dessous
+	subtract:			Enlever des formes dessous
+	intersect:			Intersection avec les formes dessous
+	difference:			Soustraire des formes dessous
+	overlap:			Remonter sur les autres formes
+	border:				Dessiner en tant que contour
 	
-	ellipse:			Circle / Ellipse
-	rectangle:			Square / Rectangle
-	polygon:			Polygon
-	star:				Star
+	ellipse:			Cercle / Ellipse
+	rectangle:			Carré / Rectangle
+	polygon:			Polygone
+	star:				Etoile
 	
-	rotation:			Rotational symmetry (wheel)
-	reflection:			Reflectional symmetry (mirror)
-	add symmetry:		Add symmetry to selected parts
-	remove symmetry:	Remove this symmetry
+	rotation:			Symétrie par rotation (roue)
+	reflection:			Symétrie par réflexion (mirroir)
+	add symmetry:		Ajouter une symétrie à la partie sélectionnée
+	remove symmetry:	Supprimer cette symétrie
 	
-	line segment:		To straigt line
-	curve segment:		To curve
-	free point:			Unlock point
-	smooth point:		Make point smooth
-	symmetric point:	Make point symmetric
+	line segment:		Rend droit
+	curve segment:		Incurver
+	free point:			Libère le point
+	smooth point:		Rend le point lisse
+	symmetric point:	Rend le point symetrique
 
 ############################################################## Labels in the GUI
 label:
 	# Cards tab
-	card notes:			Card notes:
+	card notes:			Notes de carte:
 	# Keywords tab
-	keyword:			Keyword
-	match:				Matches
+	keyword:			Mot-clé
+	match:				Correspondance
 	mode:				Mode
-	uses:				Uses
-	reminder:			Reminder text
+	uses:				Utilisation
+	reminder:			Texte de rappel
 	rules:				Règles supplémentaire
 	standard keyword:
-		This is a standard %s keyword, you can not edit it.
-		If you make a copy of the keyword your copy will take precedent.
+		C'est un mot-clé standard %s, Vous ne pouvez pas l'éditer.
+		Si vous faites une copie de ce mot-clé, la copie prendra le pas sur l'original.
 	
 	# Style tab
-	styling options:	Styling options
+	styling options:	Options de style
 	
 	# Random pack panel
-#_ADD	pack selection:		Pack selection
-#_ADD	pack totals:		Totals
-#_ADD	seed:				Seed
-#_ADD	total cards:		Total
+	pack selection:		Sélection de paquet
+	pack totals:		Totals
+	seed:				Source
+	total cards:		Total
 	
 	# Open dialogs
-	all files			All files
+	all files			Tous les fichier
 	
 	# Other set window dialogs
 	save changes:
-		The set '%s' has changed.
+		Le set '%s' a changé.
 		
-		Do you want to save the changes?
+		Voulez-vous sauver les changements?
 	
 	# New set window
-	game type:			&Game type:
-	style type:			&Card style:
+	game type:			&type de jeu:
+	style type:			&style de carte:
 	
 	stylesheet not found:
-		The set you are trying to open uses the stylesheet "%s".
-		This stylesheet is not found on your system, please select an alternative.
+		Le set que vous essayez d'ouvrir utilise  le stylesheet "%s".
+		Ce stylesheet n'a pas été trouvé sur votre ordinateur. Selectionnez une alternative.
 	
 	# Preferences
-	language:			Language
-	app language:		Language of the user interface:
-	card display:		Card Display
+	language:			Langue
+	app language:		Langue de l'interface utilisateur:
+	card display:		Affichage de carte
 	zoom:				&Zoom:
-	percent of normal:	% of normal size
-	external programs:	External programs
+	percent of normal:	% De la taille normale
+	external programs:	Programmes externes
 	apprentice:			&Apprentice:
-	apprentice exe:		Apprentice Executable
-	check at startup:	Check for new versions at startup
+	apprentice exe:		Executable Apprentice
+	check at startup:	Vérifier les mise à jour au démarrage
 	checking requires internet:
-		Checking for updates requires an internet connection.
-		When no internet connection is found upates are not checked.
+		Vous avez besoin d'une connexion internet pour vérifier les mise à jour.
+		Il n'y a aucune vérification si vous n'êtes pas connecté à internet.
 		
-		No information is collected when checking for updates.
+		Aucune information n'est collectée lors de la vérification des mise à jour.
 	
 	# Column select
-	select columns:		Select the columns you want to display
-	columns:			Columns:
+	select columns:		Sélectionnez les colonnes à afficher
+	columns:			Colonnes:
 	
 	# Card select / images export
-#_ADD	select cards:			Cards to export
-#_ADD	selected card count:	%s cards will be exported.
-	select cards print:	Select the cards you want to print
+	select cards:			Cartes à exporter
+	selected card count:	%s cartes seront exportées.
+	select cards print:	Selectionnez les cartes à imprimmer
 	filename format:	&Format: 
-	filename conflicts:	&Handle duplicating filenames:
-	export filenames:	Filenames
-#_DEL	cards to export:	Cards to export
-	filename is ignored: (filename is ignored)
+	filename conflicts:	&Gestion des doublons de fichiers:
+	export filenames:	Nom de fichier
+	filename is ignored: (Le nom du fichier est ignoré)
 	
 	# apprentice export
 	set code:			Set &Code:
-	apprentice export cancelled: Export to Apprentice is cancelled
+	apprentice export cancelled: Exportation vers Apprentice est annulé
 	
 	# Html export
-	html template:		Template:
-	html export options:Export options
+	html template:		Modèle:
+	html export options:	Options d'exportation
 	
 	# Image slicer
 	original:			Original:
-	result:				Result:
-	size:				Size
-#_ADD	original size:			&Original Size
-#_ADD	size to fit:			Size to &Fit
-#_ADD	force to fit:			F&orce to Fit
-#_ADD	custom size:			&Custom Size
+	result:				Resultat:
+	size:				Taille
+	original size:			Taille &originale
+	size to fit:			&Couper à la taille
+	force to fit:			F&orcer à la taille
+	custom size:			&Taille personnalisée
 	selection:			Selection
-#_ADD	selection left:			&Left
-#_ADD	selection top:			&Top
-#_ADD	selection width:		&Width
-#_ADD	selection height:		&Height
+	selection left:			&Gauche
+	selection top:			&Haut
+	selection width:		&Largeur
+	selection height:		Lo&ngueur
 	zoom:				Zoom
-#_ADD	fix aspect ratio:		Fix aspect ratio (width/height)
-#_ADD	zoom amount:			Zoom
-#_ADD	zoom amount x:			Zoom &X
-#_ADD	zoom amount y:			Zoom &Y
-#_ADD	zoom %:					%
-	filter:				Filter
-#_ADD	sharpen filter:			&Sharpen filter
+	fix aspect ratio:		Fixer le rapport (largeur/longueur)
+	zoom amount:			Zoom
+	zoom amount x:			Zoom &X
+	zoom amount y:			Zoom &Y
+	zoom %:					%
+	filter:				Filtre
+	sharpen filter:			Filtre de &netteté
 	
 	# Auto replace
-	auto match:			Match
-	auto replace:		Replace
+	auto match:			Concordance
+	auto replace:		Remplacer
 	
 	# Symbol editor
-	sides:				sides
+	sides:				faces
 	
 	# Packages window
 	package name:				Package
@@ -526,65 +525,65 @@ label:
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
 	# Editor
-	edit symbol:		Edit
-	symbol gallery:		Gallery
+	edit symbol:		Editer
+	symbol gallery:		Gallerie
 	
 	# Style panel
-	use for all cards:	Use for &all cards
-	use custom styling options: Options &specific to this card
+	use for all cards:	Utiliser pour toutes les c&artes
+	use custom styling options: Options &specifique à cette carte
 	
 	# Keywords panel
-	insert parameter:	Insert Parameter...
-	refer parameter:	Use Parameter...
+	insert parameter:	Inserer un parametre...
+	refer parameter:	Utilisee un parametre...
 	
 	# Random pack panel
-#_ADD	generate pack:		&Generate Pack
-#_ADD	random seed:		&Random Seed
-#_ADD	fixed seed:			&Fixed Seed
+	generate pack:		&Generer un paquet
+	random seed:		Source &aléatoire
+	fixed seed:			Source &fixe
 	
 	# Welcome
-	new set:			New set
-	open set:			Open set
-	check updates:		Check updates
-	last opened set:	Last opened set
+	new set:			Nouveau set
+	open set:			Ouvrir un set
+	check updates:		Vérifier les mise à jour
+	last opened set:	Dernier set :
 	
 	# Preferences
-	select:				&Select...
-	browse:				&Browse...
-	high quality:		&High quality rendering
-	show lines:			Show &lines around fields
-	show editing hints:	Show boxes and hints for &editing
-	zoom export:		Use zoom and rotation settings when e&xporting
-	check now:			Check &Now
-	always:							Always
-	if internet connection exists:	If internet connection exists
-	never:							Never
+	select:				&Selectionner...
+	browse:				&Naviguer...
+	high quality:		Rendu &haute qualité
+	show lines:			Voir les &lignes autour des champs
+	show editing hints:	Voir les étiquettes et les conseils pour l'&edition
+	zoom export:		Utiliser les paramètres de zoom et de rotation lors de l'e&xportation
+	check now:			&Verifier maintenant
+	always:							Toujours
+	if internet connection exists:	Si il y a une connexion internet
+	never:							Jamais
 	
 	# Column select
-	move up:			Move &Up
-	move down:			Move &Down
-	show:				&Show
-	hide:				&Hide
+	move up:			M&onter
+	move down:			&Descendre
+	show:				&Montrer
+	hide:				&Cacher
 	
 	# Card select
-#_ADD	export entire set:				Entire set
-#_ADD	export generated packs:			Generated packs
-#_ADD	export custom cards selection:	Custom selection
-#_ADD	select cards:		&Select Cards...
-	select all:			Select &All
-	select none:		Select &None
-	overwrite:			Overwrite old files
-	keep old:			Keep old files
-	number:				Add a number to the filename
-	number overwrite:	Add a number to the filename, overwrite previous exports
+	export entire set:				Set complet
+	export generated packs:			Paquets générés
+	export custom cards selection:	Sélection personalisée
+	select cards:		&Selection des cartes...
+	select all:			Selectionner &toutes
+	select none:		Selectionner &aucune
+	overwrite:			Ecraser les anciens fichiers
+	keep old:			Garder les anciens fichiers
+	number:				Ajouter un numéro au fichier
+	number overwrite:	Ajouter un numéro au fichier, écraser les exportations précédentes
 	
 	# Auto replace
-	use auto replace:	Use auto replace
-	add item:			&Add
-	remove item:		&Remove
-	defaults:			Reset to &Defaults
-	enabled:			Enabled
-	whole word:			Match whole word only
+	use auto replace:	Utiliser le remplacement automatique
+	add item:			&Ajouter
+	remove item:		&Supprimer
+	defaults:			Remettre par &Defaut
+	enabled:			Activé
+	whole word:			Mot entier seulement
 	
 	# Old style update checker  (NOTE: this will be removed in a feature version)
 	close:				&Fermer
@@ -607,219 +606,219 @@ title:
 	about:				A propos de Magic Set Editor
 	symbol editor:		Editeur de symbole
 	# dialogs
-	new set:			New Set
-	open set:			Open Set
-	save set:			Save Set As
-	save image:			Save Image
-	updates available:	Updates Available
-	save changes:		Save Changes?
-	select stylesheet:	Select Stylesheet
+	new set:			Nouveau set
+	open set:			Ouvrir un set
+	save set:			Sauver le set sous
+	save image:			Sauver image
+	updates available:	Mise à jour disponible
+	save changes:		Sauver les changements?
+	select stylesheet:	Choisir Stylesheet
 	#preferences
 	preferences:		Preferences
-	global:					Global
-	display:				Display
-	directories:			Directories
-	updates:				Updates
-	update check:			Update Check
-	locate apprentice:		Locate Apprentice
+	global:					Globales
+	display:				Affichage
+	directories:			Répertoires
+	updates:				Mises à jour
+	update check:			Mise à jour vérifié
+	locate apprentice:		Chemin pour Apprentice
 	# select
-	select columns:		Select Columns
-	select cards:		Select Cards
-	select cards export:Select Cards to Export
+	select columns:		Selectionner Colonnes
+	select cards:		Selectionner Cartes
+	select cards export:Selectionner Cartes à exporter
 	# slice
 	slice image:		Slice Image
 	# print
-	print preview:		Print Preview
+	print preview:		Imprimer preview
 	# export
-	export images:		Export Images
-	export cancelled:	Export Cancelled
-	export html:		Export to HTML
-	save html:			Export to HTML
+	export images:		Exporter images
+	export cancelled:	Export annulé
+	export html:		Exporter en HTML
+	save html:			Exporter en HTML
 	# auto replace
-	auto replaces:		Auto Replace
+	auto replaces:		Remplacement automatique
 	
 	# Package Update Window
 	packages window:	Package Manager
-	installing updates:	Installing updates
+	installing updates:	Installe les mises à jours
 	
-	cannot create file:	Cannot create file
+	cannot create file:	Ne peut pas créer le fichier
 
 ############################################################## Action (undo/redo) names
 action:
 	# List boxes
-	add item:			Add %s
-	remove item:		Remove %s
+	add item:			Ajouter %s
+	remove item:		Supprimer %s
 	
 	# Text editor
-	typing:				Typing
-	enter:				Enter
+	typing:				Ecrire
+	enter:				Entrer
 	soft line break:	Soft line break
-	insert symbol:		Insert symbol
-	backspace:			Backspace
-	delete:				Delete
-	cut:				Cut
-	paste:				Paste
-	auto replace:		Auto Replace
+	insert symbol:		Inserer un symbole
+	backspace:			Retour
+	delete:				Effacer
+	cut:				Couper
+	paste:				Coller
+	auto replace:		Remplacement auto
 	# Choice/color editors
-	change:				Change %s
+	change:				Changer %s
 	
 	# Symbol Actions
-	move:				Move %s
-	rotate:				Rotate %s
-	shear:				Shear %s
-	scale:				Resize %s
-	duplicate:			Duplicate %s
-	reorder parts:		Reorder
-	change combine mode:Change combine mode
-	change shape name:	Change shape name
-	group parts:		Group
-	ungroup parts:		Ungroup
+	move:				Bouger %s
+	rotate:				Tourner %s
+	shear:				Déformer %s
+	scale:				Taille %s
+	duplicate:			Dupliquer %s
+	reorder parts:		Reordonner
+	change combine mode:Changer mode de combinaison
+	change shape name:	Changer nom de forme
+	group parts:		Grouper
+	ungroup parts:		Dégrouper
 	
 	# Symbol Part Actions
-	convert to line:	Convert to line
-	convert to curve:	Convert to curve
-	lock point:			Lock point
-	move handle:		Move handle
-	move curve:			Move curve
-	add control point:	Add control point
-	delete point:		Delete point
-	delete points:		Delete points
+	convert to line:	Convertir en ligne
+	convert to curve:	Convertir en courbe
+	lock point:			Bloquer point
+	move handle:		Bouger l'ensemble
+	move curve:			Bouger la courbe
+	add control point:	Ajouter point de contrôle
+	delete point:		Supprimer le point
+	delete points:		Supprimer les points
 	
 	# Symmetry
-	add symmetry:			Add symmetry
-	#remove symmetry:		Remove symmetry
-	move symmetry center:	Move symmetry center
-	move symmetry handle:	Change symmetry orientation
-	change symmetry type:	Change symmetry type
-	change symmetry copies:	Number of reflections
+	add symmetry:			Ajouter symétrie
+	#remove symmetry:		Supprimer symétrie
+	move symmetry center:	Déplacer le centre de symétrie
+	move symmetry handle:	Déplacer l'orientation de symétrie
+	change symmetry type:	Changer le type de symétrie
+	change symmetry copies:	Nombre de réflexions
 
 ############################################################## Error messages
 error:
 	# General
 	internal error:
-		An internal error occured:
+		Une erreur interne s'est produite:
 		
 		%s
 		
-		Please save your work (use 'save as' to so you don't overwrite things)
-		and restart Magic Set Editor.
+		Veuillez sauver votre travail (utilisez 'sauver sous' pour éviter de perdre le travail précédent)
+		et redémarrer Magic Set Editor.
 		
-		You should leave a bug report on http://magicseteditor.sourceforge.net/
+		Vous devez laisser un rapport de bug (de préférence en anglais) à http://magicseteditor.sourceforge.net/
 	
 	# File related
-	file not found:					File not found: '%s' in package '%s'
+	file not found:					Fichier non trouvé: '%s' dans le package '%s'
 	file not found package like:
-		File not found: '%s' in package '%s'
-		If you are trying to open a file from another package, use "/package/filename"
+		Fichier non trouvé: '%s' dans le package '%s'
+		Si vous essaezd'ouvrir un fichier d'un autre package, utilisez "/package/fichier"
 	file parse error:
-		Error while parsing file: '%s'
+		Erreur lors de l'analyse du fichier: '%s'
 		%s
-	package not found:			Package not found: '%s'
-	package out of date:		The package '%s' (version %s) is out of date, version %s is required.
-	package too new:			The package '%s' (version %s) is not compatible with version %s, required by '%s'
-	unable to open output file:	Error while saving, unable to open output file
-	unable to store file:		Error while saving, unable to store file
+	package not found:			Package non trouvé: '%s'
+	package out of date:		Le package '%s' (version %s) est expiré, la version %s est requise.
+	package too new:			Le package '%s' (version %s) n'est pas compatible avec la version %s, requise par '%s'
+	unable to open output file:	Erreur lors de la sauvegarde, Impossible d'ouvrir le fichier de sortie
+	unable to store file:		Erreur lors de la sauvegarde, Impossible de stocker le fichier
 	dependency not given:
-		The package '%s' uses files from the package '%s', but it does not list a dependency.
-		To resolve this, add:
+		Le package '%s' utilise des fichiers du package '%s', mais il ne liste pas les dépendances.
+		Pour résoudre ça, ajoutez:
 		  depends on: %s %s
 	
 	# Script stuff
-	has no member:				%s has no member '%s'
-	can't convert:				Can't convert from %s to %s
-	has no member value:		String "%s" has no member '%s'
-	can't convert value:		Can't convert "%s" from %s to %s
-	unsupported format:			Invalid string format: '%s'
+	has no member:				%s n'a pas de membre '%s'
+	can't convert:				Ne peut pas convertir de %s à %s
+	has no member value:		Ligne "%s" n'a pas de membre '%s'
+	can't convert value:		Ne peut pas convertir "%s" de %s à %s
+	unsupported format:			Format de ligne invalide: '%s'
 	in function:
 		%s
-		  in function %s
+		  dans la fonction %s
 	in parameter:
-		Parameter %s: %s
+		parametre %s: %s
 	in keyword reminder:
 		%s
-		  in reminder text of keyword '%s'
+		  dans le texte de rappel du mot-clé '%s'
 	
 	# Image stuff
-	coordinates for blending overlap:					Coordinates for blending overlap
-	images used for blending must have the same size:	Images used for blending must have the same size
+	coordinates for blending overlap:					Coordination pour le mélange overlap
+	images used for blending must have the same size:	Images utilisées pour le mélange doivent avoir la même taille
 	
 	# Error from files
-	no game specified:									No game specified for the %s
-	no stylesheet specified for the set:				No stylesheet specified for the set
+	no game specified:									Pas le jeu spécifié pour le %s
+	no stylesheet specified for the set:				Pas de stylesheet spécifié pour le set
 	stylesheet and set refer to different game:
-		stylesheet and set don't refer to the same game, this is an error in the stylesheet file
-	unsupported field type:								Unsupported field type: '%s'
-	unsupported fill type:								Unsupported fill type: '%s'
-	unrecognized value:									Unrecognized value: '%s'
-	expected key:										Expected key: '%s'
-	aborting parsing:									Fatal errors encountered, aborting reading.
+		le stylesheet et le set ne se réferent pas au même jeu, c'est une erreur dans le fichier stylesheet
+	unsupported field type:								Champs type: '%s' non supporté
+	unsupported fill type:								Fichier type: '%s' non supporté
+	unrecognized value:									Ne reconnait pas la valeur: '%s'
+	expected key:										Clé attendue: '%s'
+	aborting parsing:									Erreur fatal rencontrée, annulation de lecture.
 	newer version:
 		%s
-		This file is made with a newer version of Magic Set Editor (%s)
-		When you open it, some aspects of the file may be lost.
-		It is recommended that you upgrade to the latest version.
-		Visit http:://magicseteditor.sourceforge.net/
-	word list type not found:			The word list type %s was not found (from a <word-list> tag)
-#_ADD	pack item not found:				The pack item "%s" was not found (from a pack type)
+		Ce fichier est fait avec une version plus récente de Magic Set Editor (%s)
+		Lors de l'ouverture, certains aspects ont pu être perdus.
+		Nous vous recommandons de mettre à jour votre programme.
+		Visitez http:://magicseteditor.sourceforge.net/
+	word list type not found:			La liste de mots de type %s n'a pas été trouvée (from a <word-list> tag)
+	pack item not found:				Le paquet item "%s" n'a pas été trouvé (from a pack type)
 	
-	# Update checking
-	checking updates failed:			Checking updates failed.
-	no updates:							There are no available updates.
+	# Update checking?
+	checking updates failed:			Impossible de vérifier les mise à jour.
+	no updates:							Il n'y a pas de mise à jour disponible.
 	
 	# Stats panel
-	dimension not found:				There is no statistics dimension '%s'
+	dimension not found:				Il n'y a pas de statistique de type '%s'
 	
 	# Package update window
-#	checking updates:					Checking for updates.
+	# checking updates:					Recherche de mise à jour.
 	can't download installer:
-		Unable to download installer for package %s from %s.
-		Nothing has been installed.
+		Impossible de télécharger l'installateur pour le package %s de %s.
+		Rien n'a été installé.
 	
-	downloading updates:				Downloading updates (%d of %d)
-	installing updates:					Updating packages (%d of %d)
+	downloading updates:				Téléchargement de mise à jour(%d de %d)
+	installing updates:					Mise à jour packages (%d de %d)
 	
 	remove packages:
-		This will remove %s packages, do you want to continue?
+		Cela va supprimer %s packages, voulez-vous continuer?
 	remove packages modified:
-		This will remove %s packages, %s of those have been modified after installing.
-		Removing them can not be undone.
+		Cela va supprimer %s packages, dont %s ont été modifiés après leur installation.
+		La suppresion ne pourra pas être annulée.
 		
-		Do you want to continue?
+		Voulez-vous continuer?
 	install packages successful:	%s paquets ont été installés avec succès.
 	remove packages successful:		%s paquets ont été supprimés avec succès.
 	change packages successful:		%s paquets ont été changé avec succès.
 	
-	cannot create file:		Can not create file '%s', continue installation?
+	cannot create file:		Ne peut pas créer le fichier '%s', continuer l'installation?
 
 ############################################################## Types used in scripts / shape names
 type:
-	function:		function
+	function:		fonction
 	collection:		collection
-	collection of:	collection of %ss
-	object:			object
-	double:			real number
-	integer:		integer number
-	string:			string
-	boolean:		boolean
-	color:			color
+	collection of:	collection de %ss
+	object:			objet
+	double:			nombre réel
+	integer:		nombre entier
+	string:			ligne
+	boolean:		boléen
+	color:			couleur
 	image:			image
-	nil:			nothing
+	nil:			rien
 	
 	# Object types
 	package:		package
-	locale:			translation
-	game:			game
+	locale:			traduction
+	game:			jeu
 	set:			set
 	stylesheet:		stylesheet
-	export template:export template
-#_ADD	symbol:			symbol
-	card:			card
-	cards:			cards
-	field:			field
+	export template:exporte modèle
+	symbol:			symbole
+	card:			carte
+	cards:			cartes
+	field:			champ
 	style:			style
-	value:			value
-	keyword:		keyword
-	keywords:		keywords
+	value:			valeur
+	keyword:		mot-clé
+	keywords:		mots-clés
 	
 	# Symbol editor shapes
 	shape:			forme
@@ -860,29 +859,29 @@ package:
 	magic-mana-*.mse-symbol-font:
 		# note: reminder/shortcut must start with a space, otherwise it is used as a shortcut
 		#       so typing T *anywhere* would insert a symbol (which would be bad)
-		menu item T:			&Tap symbol	 T
-		menu item Q:			&Untap symbol	 Q
-		menu item W:			Mana &Blanc	 W
-		menu item U:			Mana Bl&ue	 U
-		menu item B:			Mana &Noir	 B
-		menu item R:			mana &Rouge	 R
-		menu item G:			Mana &Vert	 G
-		menu item S:			Mana &neigeux	 S
+		menu item T:			Symbole d'engagement &T	 T
+		menu item Q:			Symbole de dégagement &Q	 Q
+		menu item W:			Mana &W Blanc	 W
+		menu item U:			Mana &U Bleu	 U
+		menu item B:			Mana &B Noir	 B
+		menu item R:			Mana &R Rouge	 R
+		menu item G:			Mana &G Vert	 G
+		menu item S:			Mana &S neigeux	 S
 		menu item X:			Mana Variable &X	 X
 		menu item Y:			Mana Variable &Y	 Y
 		menu item Z:			Mana Variable &Z	 Z
-#_ADD		menu item I:			&Infinite mana	I
-		menu item colorless:	&Colorless mana...
+		menu item I:			Mana Infini &I	 I
+		menu item colorless:	Mana In&colore...
 		title colorless:		Mana Incolore
 		message colorless:		Entrez le montant de mana incolore:
 		menu item half:				&Demi mana
-		menu item |W:				&Blanc	 |W
-		menu item |U:				Bl&ue	 |U
-		menu item |B:				&Noir	 |B
-		menu item |R:				&Rouge	 |R
-		menu item |G:				&Vert	 |G
-		menu item |S:				&Neigeux	 |S
-		menu item 1/2:				&Sans Couleur	1/2
+		menu item |W:				&W Blanc	 |W
+		menu item |U:				&U Bleu	 |U
+		menu item |B:				&B Noir	 |B
+		menu item |R:				&R Rouge	 |R
+		menu item |G:				&G Vert	 |G
+		menu item |S:				&S Neigeux	 |S
+		menu item 1/2:				Sans &Couleur	1/2
 		menu item hybrid:		Mana H&ybride (Deux couleurs)
 		menu item W/U:				mana Blanc/Bleu	 W/U
 		menu item U/B:				mana Bleu/Noir	 U/B
@@ -894,7 +893,7 @@ package:
 		menu item B/G:				mana Noir/Vert	 B/G
 		menu item R/W:				mana Rouge/Blanc	 R/W
 		menu item G/U:				mana Vert/Bleu	 G/U
-		menu item hybrid 3:		Mana H&ybride (trois couleurs)
+		menu item hybrid 3:		Mana H&ybride (Trois couleurs)
 		menu item W/U/B:			mana Blanc/Bleu/Noir	 W/U/B
 		menu item U/B/R:			mana Bleu/Noir/Rouge	 U/B/R
 		menu item B/R/G:			mana Noir/Rouge/Vert	 B/R/G
