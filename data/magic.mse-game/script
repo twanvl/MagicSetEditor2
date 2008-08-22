@@ -98,7 +98,7 @@ land_to_color := {
 text_to_color := {
 	# Note: running filter_text is quite slow, do a quick 'contains' check first
 	if contains(match: card_name) then (
-	  text := filter_text(match: regex_escape(card_name)+"(</[-a-z]+>)? is (colorless|all colors|((blue|white|green|red|black)((,|,? and) (blue|white|green|red|black))*))\\.")
+	  text := filter_text(match: "is (colorless|all colors|((blue|white|green|red|black)((,|,? and) (blue|white|green|red|black))*))", in_context: regex_escape(card_name)+"(</[-a-z]+>)? <match>\\.")
 	  if text != "" then (
 	    if contains(text, match: "all colors") then (
 		colors := "WUBRG"
