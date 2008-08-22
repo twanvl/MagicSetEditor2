@@ -1,7 +1,7 @@
 ﻿mse version: 0.3.7
 installer group: translations/Deutsch
 full name: Deutsch
-version: 2008-07-24
+version: 2008-08-22
 icon: de.png
 
 ############################################################## Menu items
@@ -12,15 +12,15 @@ menu:
 	save set:			&Speichern	Ctrl+S
 	save set as:		Speichern unter...	F12
 	export:				&Exportieren
-	export html:			&HTML...
-	export image:			Kartenb&ild...
-	export images:			Alle Kartenbilder...
-	export apprentice:		&Apprentice...
+	export html:			&HTML exportieren...
+	export image:			Bild exportieren...
+	export images:			Alle Bilder exportieren...
+	export apprentice:		&Karte exportieren...
 	export mws:				Magic &Workstation...
 	check updates:		Nach Updates schauen...
 	print preview:		Druckvorschau...
 	print:				&Drucken...	Ctrl+P
-	reload data:		Daten neuladen	Ctrl+F5
+	reload data:		Daten neu laden	Ctrl+F5
 	exit:				Beenden	Alt+F4
 
 	edit:			&Bearbeiten
@@ -36,9 +36,9 @@ menu:
 	preferences:		Einstellungen...
 	
 	cards:			&Karten
-	previous card:		Vorherige	PgUp
-	next card:			Nächste	PgDn
-	add card:			Hinzufügen	Ctrl+Enter
+	previous card:		Vorherige Karte	PgUp
+	next card:		Nächste Karte	PgDn
+	add card:		Karte Hinzufügen	Ctrl+Enter
 	add cards:			Mehrere hinzufügen...
 	remove card:		Markierte Entfernen 	Del
 	orientation:		Ansicht
@@ -75,7 +75,7 @@ menu:
 	style tab:			Aussehen	F7
 	keywords tab:		Fähigkeiten	F8
 	stats tab:			S&tatistik	F9
-#_ADD	random pack tab:	&Random Packs
+	random pack tab:		&Zufällige Packs
 	
 	help:			&Hilfe
 	index:				&Index...	F1
@@ -88,7 +88,7 @@ menu:
 	open symbol:		&Öffnen...	Ctrl+O
 	save symbol:		&Speichern	Ctrl+S
 	save symbol as:		Speichern unter...	F12
-	store symbol:		Übe&rnehmen	Ctrl+Enter
+	store symbol:		Übernehmen	Ctrl+Enter
 	close symbol editor:&Beenden	Alt+F4
 	
 	duplicate:			Verdoppeln	Ctrl+D
@@ -100,7 +100,7 @@ menu:
 	rotate:				&Drehen	F6
 	points:				&Punkte	F7
 	basic shapes:		&Objekte	F8
-	symmetry:			S&ymmetrie	F9
+	symmetry:			Symmetrie	F9
 	paint:				&Zeichnen	F10
 
 ############################################################## Menu help texts
@@ -108,13 +108,13 @@ help:
 	welcome:			Willkommen im Magic Set Editor
 	
 	file:
-	new set:			Erstellt eine neue Edition
+	new set:			Neue Edition erstellen
 	open set:			Bestehende Edition öffnen
-	last opened set:		Öffne '%s'
+	last opened set:		Zuletzt geöffnetes '%s'
 	save set:			Edition speichern
-	save set as:		Edition unter neuem Namen speichern
+	save set as:		Edition speichern als...
 	export:				Edition exporieren...
-	export html:			Exportieren der Edition als Website
+	export html:			Exportieren der Edition in html
 	export image:			Exportieren des gewählten Bildes
 	export images:			Exportieren aller Bilder
 	export apprentice:		Exportieren der Edition für Apprentice
@@ -138,7 +138,7 @@ help:
 	paste card:			Fügt den Karte der Zwischenablage ein
 	paste keyword:		Fügt die Fähigkeit der Zwischenablage ein
 	find:				Sucht den Text in einer Karte
-	find next:			zeigt das nächste Ergebnis an
+	find next:			Zeigt das nächste Ergebnis an
 	replace:			Ersetzt den karten Text
 	auto replace:		Ersetzt den text ohne Bestätigung
 	preferences:		Ändert die Einstellungen
@@ -180,10 +180,10 @@ help:
 	new window:			Erstellt ein neues Fenster mit der gleichen Edition
 	cards tab:			Bearbeite die Karten der Edition
 	set info tab:		Bearbeite die Informationen der Edition
-	style tab:			Ändere das Aussehen der Karten
+	style tab:			Ändere den Style der Karten
 	keywords tab:		Füge Fähigkeiten für diese Edition hinzu
 	stats tab:			Zeigt eine Statistik über diese Edition an
-#_ADD	random pack tab:	Try how the set works out in practice by generating random booster packs.
+	random pack tab:	Testet wie das Set funktionieren würde, indem es ufällige Booster Packs erstellt.
 	
 	help:
 	index:				
@@ -191,32 +191,32 @@ help:
 	about:				
 	
 	# Cards panel
-#_ADD	collapse notes:		Hide the card notes box
-#_ADD	expand notes:		Show the card notes box
+	collapse notes:		Versteckt die Karten-Notiz-Box
+	expand notes:		Teigt die Karten-Notiz-Box
 	# Random pack panel
-#_ADD	random seed:		Different packs will be generated each time.
-#_ADD	fixed seed:			Using the same seed number gives the same 'random' packs.
-#_ADD	seed:				Seed number for the random generator. Using the same seed number gives the same 'random' packs.
+	random seed:		Erstellt jedes mal andere Packs.
+	fixed seed:			Indem man dieselbe Nummer verwendet, bekommt man dieselben "zufälligen" Packs.
+	seed:				Nummer für den Zufallsgenerator. Indem man dieselbe Nummer verwendet, bekommt man dieselben "zufälligen" Packs.
 	
 	# Preferences
 	app language:
 		Bitte starten Sie MSE neu, damit die Änderungen wirksam werden.
 	zoom export:
-		(Wenn ausgeschaltet werden die
+		(Wenn ausgeschaltet, werden die
 		 Karten normal exportiert)
 	
 	# apprentice export
-	set code:			Der zweiteilige Code wird von Apprentice genutzt, um auf eine Edition zu verweisen.
+	set code:			Der zweiteilige Code wird vom Rohling genutzt, um auf eine Edition zu verweisen.
 	
 	# Symbol editor
 	new symbol:			Erstelle ein neues Symbol
-	open symbol:		Symbol öffnen
-	save symbol:		Symbol speichern
-	save symbol as:		Symbol speichern unter
-	store symbol:		Symbol übernehmen
+	open symbol:		Symbol Symbol öffnen
+	save symbol:		Symbol Symbol speichern
+	save symbol as:		Symbol Symbol speichern unter...
+	store symbol:		Symbol Symbol übernehmen
 	close symbol editor:Symbol-Editor beenden
 	
-	duplicate:			Verdoppelt das gewählte Objekt
+	duplicate:			Clont das gewählte Objekt
 	group:				Gruppiert die gewählten Elemente
 	ungroup:			Löst die Gruppierung auf
 	
@@ -224,7 +224,7 @@ help:
 	snap:				Punkte und Objekte am Gitternetz ausrichten
 	
 	tool:
-	select:				Wählt Objekte aus und bewegt diese
+	select:				Wählt Objekte aus und bewegt es
 	rotate:				Dreht Objekte
 	points:				Bearbeitet die Punkte des Objektes
 	basic shapes:		Zeichnet ein Objekt
@@ -280,10 +280,10 @@ tool:
 	
 	cards tab:			Karten
 	set info tab:		Editionsinformationen
-	style tab:			Aussehen
+	style tab:			Style
 	keywords tab:		Fähigkeiten
 	stats tab:			Statistik
-#_ADD	random pack tab:	Random
+	random pack tab:	Zufällige Packs
 	
 	# symbol editor
 	store symbol:		Übernehmen
@@ -323,12 +323,12 @@ tool:
 	
 ############################################################## Toolbar help text
 tooltip:
-	cards tab:			
+	cards tab:		Karten	
 	set info tab:		Editionsinformation
-	style tab:			
-	keywords tab:		
-	stats tab:				
-#_ADD	random pack tab:	Random packs
+	style tab:		Styles	
+	keywords tab:		Fähigkeiten
+	stats tab:		Statistiken		
+	random pack tab:	Zufällige Packs
 	
 	new set:			Neue Edition
 	open set:			Edition öffnen
@@ -351,7 +351,7 @@ tooltip:
 	bold:				Fett
 	italic:				Krusiv
 	symbols:			Symbole
-	reminder text:		Reminder Text
+	reminder text:		Text merken
 	
 	pie:				Kreisdiagramm
 	bar:				Balkendiagramm
@@ -359,11 +359,11 @@ tooltip:
 	scatter:			Blasendiagramm
 	scatter pie:		Gestreute Kreise
 	
-	cards tab:			
+	cards tab:			Karten
 	set info tab:		Editionsinformationen
-	style tab:			Kartenaussehen
-	keywords tab:		
-	stats tab:				
+	style tab:			Kartenstyle
+	keywords tab:		Fähigkeiten
+	stats tab:		Statistiken		
 	
 	# symbol editor
 	store symbol:		Symbol für diese Edition übernehmen
@@ -387,7 +387,7 @@ tooltip:
 	
 	ellipse:			Ellipse / Kreis
 	rectangle:			Rechteck / Quadrat
-	polygon:			n-Eck
+	polygon:			Mehr-Eck
 	star:				Stern
 
 	rotation:			Drehbare Symmetrieachse
@@ -420,10 +420,10 @@ label:
 	styling options:	Einstellungen zum Aussehen
 	
 	# Random pack panel
-#_ADD	pack selection:		Pack selection
-#_ADD	pack totals:		Totals
-#_ADD	seed:				Seed
-#_ADD	total cards:		Total
+	pack selection:		Pack wählen
+	pack totals:		Packs gesamt
+	seed:				Nummer
+	total cards:		Gesamtkarten
 	
 	# Open dialogs
 	all files			Alle Dateien
@@ -436,7 +436,7 @@ label:
 	
 	# New set window
 	game type:			&Spieltyp:
-	style type:			&Kartenaussehen:
+	style type:			&Style:
 	
 	stylesheet not found:
 		Die ausgewählte Edition benutzt das Stylesheet "%s" .
@@ -449,8 +449,8 @@ label:
 	zoom:				&Zoom:
 	percent of normal:	% der Normalgröße
 	external programs:	Externe Programme
-	apprentice:			&Apprentice:
-	apprentice exe:		Apprentice-Exe
+	apprentice:			&Rohling:
+	apprentice exe:		Rohling-Exe
 	check at startup:	Beim Start auf neue Version überprüfen
 	checking requires internet:
 		Das Überprüfen benötigt eine offene Internetverbindung.
@@ -463,44 +463,43 @@ label:
 	columns:			Spalten:
 	
 	# Card select / images export
-#_ADD	select cards:			Cards to export
-#_ADD	selected card count:	%s cards will be exported.
+	select cards:			Wähle Karten zum exportieren
+	selected card count:	%s Karten werden exportiert.
 	select cards print:	Wähle die zu druckenden Karten aus
 	filename format:	&Format: 
 	filename conflicts:	&Doppelte Dateinamen:
-	export filenames:	Dateinamen
-#_DEL	cards to export:	Exportierte Karten
+	export filenames:	Dateinamen exportieren
 	filename is ignored: (Dateiname wird ignoriert)
 	
 	# apprentice export
-	set code:			Editions&code:
-	apprentice export cancelled: Der Export wurde zu Apprentice wurde abgebrochen.
+	set code:			Editionscode:
+	apprentice export cancelled: Der Export zum Rohling wurde abgebrochen.
 	
 	# Html export
-	html template:		Template:
-	html export options:Exportoptionen
+	html template:		html-Template:
+	html export options:html-Exportoptionen
 	
 	# Image slicer
 	original:			Original:
-	result:				Result:
+	result:				Ergebnis:
 	size:				Größe
-#_ADD	original size:			&Original Size
-#_ADD	size to fit:			Size to &Fit
-#_ADD	force to fit:			F&orce to Fit
-#_ADD	custom size:			&Custom Size
+	original size:			&Originalgröße
+	size to fit:			Markierung anpassen
+	force to fit:			Bild anpassen
+	custom size:			&Definierte Größe
 	selection:			Auswahl
-#_ADD	selection left:			&Left
-#_ADD	selection top:			&Top
-#_ADD	selection width:		&Width
-#_ADD	selection height:		&Height
+	selection left:			&Links
+	selection top:			&Oben
+	selection width:		&Breite
+	selection height:		&Höhe
 	zoom:				Zoom
-#_ADD	fix aspect ratio:		Fix aspect ratio (width/height)
-#_ADD	zoom amount:			Zoom
-#_ADD	zoom amount x:			Zoom &X
-#_ADD	zoom amount y:			Zoom &Y
-#_ADD	zoom %:					%
+	fix aspect ratio:		Fix aspect ratio (width/height)
+	zoom amount:			Zoom
+	zoom amount x:			Zoom &X
+	zoom amount y:			Zoom &Y
+	zoom %:					%
 	filter:				Filter
-#_ADD	sharpen filter:			&Sharpen filter
+	sharpen filter:			&Schärfe-Filter
 	
 	# Auto replace
 	auto match:			Auswählen
@@ -538,9 +537,9 @@ button:
 	refer parameter:	Fähigkeit verwenden...
 	
 	# Random pack panel
-#_ADD	generate pack:		&Generate Pack
-#_ADD	random seed:		&Random Seed
-#_ADD	fixed seed:			&Fixed Seed
+	generate pack:		&Pack generieren
+	random seed:		&Zufällige Nummer
+	fixed seed:			&Eingestellte Nummer
 	
 	# Welcome
 	new set:			Neue Edition
@@ -567,10 +566,10 @@ button:
 	hide:				&Verstecken
 	
 	# Card select
-#_ADD	export entire set:				Entire set
-#_ADD	export generated packs:			Generated packs
-#_ADD	export custom cards selection:	Custom selection
-#_ADD	select cards:		&Select Cards...
+	export entire set:				Ganze Edition Exportieren
+	export generated packs:			Generierte Packs exportieren
+	export custom cards selection:	Benutzerdefinierter Karten-Export
+	select cards:		&Wähle Karten
 	select all:			&Alle auswählen
 	select none:		&Nichts auswählen
 	overwrite:			Überschreibe alte Dateinamen
@@ -586,7 +585,6 @@ button:
 	enabled:			Aktiviert
 	whole word:			Nur ganze Wörter akzeptieren
 	
-#_DEL	# Update checker
 	# Old style update checker  (NOTE: this will be removed in a feature version)
 	close:				&Beenden
 	
@@ -761,7 +759,7 @@ error:
 		Bitte laden Sie sich die neuste Version unter 
 		http:://magicseteditor.sourceforge.net/ herunter.
 	word list type not found:			%s ist nicht bei <Wortliste> gelistet
-#_ADD	pack item not found:				The pack item "%s" was not found (from a pack type)
+	pack item not found:				Der Pack-Gegenstand "%s" wurde nicht gefunden
 	
 	# Update checking
 	checking updates failed:			Update schlug fehl.
@@ -813,7 +811,7 @@ type:
 	set:			set
 	stylesheet:		stylesheet
 	export template:export template
-#_ADD	symbol:			symbol
+	symbol:			symbol
 	card:			card
 	cards:			cards
 	field:			field
@@ -872,7 +870,7 @@ package:
 		menu item X:			Variables Mana &X	 X
 		menu item Y:			Variables Mana &Y	 Y
 		menu item Z:			Variables Mana &Z	 Z
-#_ADD		menu item I:			&Infinite mana	I
+		menu item I:			&Unendliches Mana	I
 		menu item colorless:	&Farbloses Mana...
 		title colorless:		Farbloses Mana
 		message colorless:		Gib die Mana-Anzahl ein:
