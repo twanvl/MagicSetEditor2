@@ -868,6 +868,8 @@ void TextValueEditor::insert(const String& text, const String& action_name) {
 
 /// compare two cursor positions, determine how much the text matches before and after
 size_t match_cursor_position(size_t pos1, const String& text1, size_t pos2, const String& text2) {
+	pos1 = min(pos1, text1.size());
+	pos2 = min(pos2, text2.size());
 	size_t score = 0; // total score
 	// Match part before cursor
 	size_t before1, before2;
@@ -915,7 +917,7 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
 	}
 	// what we would expect if no scripts take place
 	String expected_value  = untag_for_cursor(action->newValue());
-	size_t expected_cursor = min(selection_start, selection_end) + untag(replacement).size();
+	size_t expected_cursor = min(selection_start, selection_end) + untag_for_cursor(replacement).size();
 	// perform the action
 	// NOTE: this calls our onAction, invalidating the text viewer and moving the selection around the new text
 	addAction(action);
