@@ -37,7 +37,8 @@ class FileFormat : public IntrusivePtrVirtualBase {
 		throw InternalError(_("Import not supported by this file format"));
 	}
 	/// Export using this filter
-	virtual void exportSet(Set& set, const String& filename) {
+	/** If is_copy, then the set should not be modified */
+	virtual void exportSet(Set& set, const String& filename, bool is_copy = false) {
 		throw InternalError(_("Export not supported by this file format"));
 	}
 };
@@ -71,9 +72,9 @@ String export_formats(const Game& game);
 SetP import_set(String name);
 
 /// Save a set under the specified name.
-/** filterType specifies what format to use for saving, used as index in the list of file formats
+/** format_index specifies what format to use for saving, used as index in the list of file formats
  */
-void export_set(Set& set, const String& filename, size_t format_type);
+void export_set(Set& set, const String& filename, size_t format_index, bool is_copy = false);
 
 // ----------------------------------------------------------------------------- : The formats
 

@@ -12,6 +12,11 @@ depends on: magic.mse-game 2008-05-18
 ########################################################################################
 
 option field:
+	type: boolean
+	name: include set file
+	description: Should a link to the MSE set file be included in the spoiler?
+	initial: no
+option field:
 	type: choice
 	name: grouping
 	description: How should cards be grouped?
@@ -203,6 +208,9 @@ script:
 	  <h1>{ to_html(set.title) }</h1>
 	  <div class='copyright'>{   to_html(set.copyright)   }</div>
 	  <div class='description'>{ to_html(set.description) }</div>
+	  { if options.include_set_file then
+	      "<div class='set-file'><a href='{ write_set_file(file:"set.mse-set") }'>Download set in MSE format</a></div>"
+	  }
 	  { if options.grouping == "group by color" then
 	       # Codes as by sort_index
 	       write_group(title: "White",                  code:"A") +

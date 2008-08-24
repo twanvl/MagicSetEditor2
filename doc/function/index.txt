@@ -96,6 +96,7 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:copy_file]]		Copy a file from the [[type:export template]] to the output directory.
 | [[fun:write_text_file]]	Write a text file to the output directory.
 | [[fun:write_image_file]]	Write an image file to the output directory.
+| [[fun:write_set_file]]	Write a MSE set file to the output directory.
 	
 ! Other functions		<<<
 | [[fun:trace]]			Output a message for debugging purposes.

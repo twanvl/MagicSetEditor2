@@ -87,6 +87,7 @@ $built_in_functions = array(
 	'copy_file'		=>'',
 	'write_text_file'	=>'',
 	'write_image_file'	=>'',
+	'write_set_file'	=>'',
 	// other
 	'trace'			=>'',
 	'assert'		=>'',

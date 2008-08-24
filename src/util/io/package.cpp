@@ -86,6 +86,18 @@ void Package::open(const String& n) {
 	}
 }
 
+void Package::reopen() {
+	if (wxDirExists(filename)) {
+		// make sure we have no zip open
+		delete zipStream;  zipStream  = nullptr;
+		delete fileStream; fileStream = nullptr;
+	} else {
+		// reopen only needed for zipfile
+		openZipfile();
+	}
+}
+
+
 void Package::save(bool remove_unused) {
 	assert(!needSaveAs());
 	saveAs(filename, remove_unused);
@@ -94,11 +106,21 @@ void Package::save(bool remove_unused) {
 void Package::saveAs(const String& name, bool remove_unused) {
 	// type of package
 	if (wxDirExists(name)) {
-		saveToDirectory(name, remove_unused);
+		saveToDirectory(name, remove_unused, false);
 	} else {
-		saveToZipfile  (name, remove_unused);
+		saveToZipfile  (name, remove_unused, false);
 	}
 	filename = name;
+	removeTempFiles(remove_unused);
+	reopen();
+}
+
+void Package::saveCopy(const String& name) {
+	saveToZipfile(name, true, true);
+	clearKeepFlag();
+}
+
+void Package::removeTempFiles(bool remove_unused) {
 	// cleanup : remove temp files, remove deleted files from the list
 	FileInfos::iterator it = files.begin();
 	while (it != files.end()) {
@@ -108,9 +130,9 @@ void Package::saveAs(const String& name, bool remove_unused) {
 		}
 		if (!it->second.keep && remove_unused) {
 			// also remove the record of deleted files
-			FileInfos::iterator toRemove = it;
+			FileInfos::iterator to_remove = it;
 			++it;
-			files.erase(toRemove);
+			files.erase(to_remove);
 		} else {
 			// free zip entry, we will reopen the file
 			it->second.keep = false;
@@ -120,13 +142,11 @@ void Package::saveAs(const String& name, bool remove_unused) {
 			++it;
 		}
 	}
-	// reopen only needed for zipfile
-	if (!wxDirExists(name)) {
-		openZipfile();
-	} else {
-		// make sure we have no zip open
-		delete zipStream;  zipStream  = nullptr;
-		delete fileStream; fileStream = nullptr;
+}
+
+void Package::clearKeepFlag() {
+	FOR_EACH(f, files) {
+		f.second.keep = false;
 	}
 }
 
@@ -356,7 +376,7 @@ void Package::openZipfile() {
 	loadZipStream();
 }
 
-void Package::saveToDirectory(const String& saveAs, bool remove_unused) {
+void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_copy) {
 	// write to a directory
 	FOR_EACH(f, files) {
 		if (!f.second.keep && remove_unused) {
@@ -366,7 +386,8 @@ void Package::saveToDirectory(const String& saveAs, bool remove_unused) {
 		} else if (f.second.wasWritten()) {
 			// move files that were updated
 			wxRemoveFile(saveAs+_("/")+f.first);
-			if (!wxRenameFile(f.second.tempName, saveAs+_("/")+f.first)) {
+			if (!(is_copy ? wxCopyFile  (f.second.tempName, saveAs+_("/")+f.first)
+			              : wxRenameFile(f.second.tempName, saveAs+_("/")+f.first))) {
 				throw PackageError(_ERROR_("unable to store file"));
 			}
 		} else if (filename != saveAs) {
@@ -380,7 +401,7 @@ void Package::saveToDirectory(const String& saveAs, bool remove_unused) {
 	}
 }
 
-void Package::saveToZipfile(const String& saveAs, bool remove_unused) {
+void Package::saveToZipfile(const String& saveAs, bool remove_unused, bool is_copy) {
 	// create a temporary zip file name
 	String tempFile = saveAs + _(".tmp");
 	wxRemoveFile(tempFile);
@@ -395,8 +416,9 @@ void Package::saveToZipfile(const String& saveAs, bool remove_unused) {
 		FOR_EACH(f, files) {
 			if (!f.second.keep && remove_unused) {
 				// to remove a file simply don't copy it
-			} else if (f.second.zipEntry && !f.second.wasWritten()) {
+			} else if (!is_copy && f.second.zipEntry && !f.second.wasWritten()) {
 				// old file, was also in zip, not changed
+				// can't do this when saving a copy, since it destroys the zip entry
 				zipStream->CloseEntry();
 				newZip->CopyEntry(f.second.zipEntry, *zipStream);
 				f.second.zipEntry = 0;
@@ -408,8 +430,10 @@ void Package::saveToZipfile(const String& saveAs, bool remove_unused) {
 			}
 		}
 		// close the old file
-		delete zipStream;  zipStream  = nullptr;
-		delete fileStream; fileStream = nullptr;
+		if (!is_copy) {
+			delete zipStream;  zipStream  = nullptr;
+			delete fileStream; fileStream = nullptr;
+		}
 	} catch (Error e) {
 		// when things go wrong delete the temp file
 		wxRemoveFile(tempFile);
@@ -539,6 +563,12 @@ void Packaged::saveAs(const String& package, bool remove_unused) {
 	writeFile(typeName(), *this, fileVersion());
 	referenceFile(typeName());
 	Package::saveAs(package, remove_unused);
+}
+void Packaged::saveCopy(const String& package) {
+	WITH_DYNAMIC_ARG(writing_package, this);
+	writeFile(typeName(), *this, fileVersion());
+	referenceFile(typeName());
+	Package::saveCopy(package);
 }
 
 void Packaged::validate(Version) {

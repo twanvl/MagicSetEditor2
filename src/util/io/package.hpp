@@ -83,6 +83,9 @@ class Package : public IntrusivePtrVirtualBase {
 	/// Saves the package under a different filename
 	void saveAs(const String& package, bool remove_unused = true);
 	
+	/// Saves the package under a different filename, but keep the old one open
+	void saveCopy(const String& package);
+	
 	
 	// --------------------------------------------------- : Managing the inside of the package
 	
@@ -175,8 +178,11 @@ class Package : public IntrusivePtrVirtualBase {
 	void openDirectory();
 	void openSubdir(const String&);
 	void openZipfile();
-	void saveToZipfile(const String&, bool);
-	void saveToDirectory(const String&, bool);
+	void reopen();
+	void removeTempFiles(bool remove_unused);
+	void clearKeepFlag();
+	void saveToZipfile(const String&,   bool remove_unused, bool is_copy);
+	void saveToDirectory(const String&, bool remove_unused, bool is_copy);
 	FileInfos::iterator addFile(const String& file);
 };
 
@@ -219,6 +225,7 @@ class Packaged : public Package {
 	void loadFully();
 	void save();
 	void saveAs(const String& package, bool remove_unused = true);
+	void saveCopy(const String& package);
 	
 	/// Check if this package lists a dependency on the given package
 	/** This is done to force people to fill in the dependencies */

@@ -431,6 +431,18 @@ SCRIPT_FUNCTION(write_image_file) {
 	SCRIPT_RETURN(file);
 }
 
+SCRIPT_FUNCTION(write_set_file) {
+	guard_export_info(_("write_set_file"));
+	// output path
+	SCRIPT_PARAM(String, file); // file to write to
+	String out_path = get_export_full_path(file);
+	// export
+	SCRIPT_PARAM_C(Set*, set);
+	set->saveCopy(out_path); // TODO: use export_set instead?
+	SCRIPT_RETURN(file);
+	
+}
+
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_export_functions(Context& ctx) {
@@ -440,5 +452,5 @@ void init_script_export_functions(Context& ctx) {
 	ctx.setVariable(_("copy file"),        script_copy_file);
 	ctx.setVariable(_("write text file"),  script_write_text_file);
 	ctx.setVariable(_("write image file"), script_write_image_file);
-	//ctx.setVariable(_("write set file"), script_write_set_file);//TODO
+	ctx.setVariable(_("write set file"),   script_write_set_file);
 }

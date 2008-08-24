@@ -48,12 +48,12 @@ String export_formats(const Game& game) {
 	return type_strings;
 }
 
-void export_set(Set& set, const String& filename, size_t format_type) {
-	FileFormatP format = file_formats.at(format_type);
+void export_set(Set& set, const String& filename, size_t format_index, bool is_copy) {
+	FileFormatP format = file_formats.at(format_index);
 	if (!format->canExport(*set.game)) {
 		throw InternalError(_("File format doesn't apply to set"));
 	}
-	format->exportSet(set, filename);
+	format->exportSet(set, filename, is_copy);
 }
 
 SetP import_set(String name) {

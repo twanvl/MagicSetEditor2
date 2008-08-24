@@ -1,9 +1,9 @@
-Function: write_text_file
+Function: write_set_file
 
 --Usage--
-> write_text_file(some_string, file: filename)
+> write_set_file(set:the_set, file: filename)
 
-Write a string to a file in the output directory.
+Write the current set to a file in the output directory.
 If a file with the given name already exists it is overwritten.
 
 Returns the name of the file written.
@@ -12,11 +12,12 @@ This function can only be used in an [[type:export template]], when <tt>create d
 
 --Parameters--
 ! Parameter	Type			Description
-| @input@	[[type:string]]		Text to write to the file.
+| @set@		[[type:set]]		Set to write to the file.
 | @file@	[[type:string]]		Name of the file to write to
 
 --Examples--
-> write_text_file(file:"index.html", lots_of_html_code) == "index.html" # index.html now contains the given text
+> write_set_file(file:"the-set.mse-set") == "the-set.mse-set" # the-set.mse-set now contains the set
 
 --See also--
 | [[fun:write_image_file]]	Write an image file to the output directory.
+| [[fun:write_text_file]]	Write a text file to the output directory.

@@ -18,7 +18,7 @@ This function can only be used in an [[type:export template]], when <tt>create d
 | @height@	[[type:int]]		Height in pixels to use for the image, by default the size of the image is used if available.
 
 --Examples--
-> write_image("image_out.png", linear_blend(...)) == "image_out.png" # image_out.png now contains the given image
+> write_image_file(file:"image_out.png", linear_blend(...)) == "image_out.png" # image_out.png now contains the given image
 
 --See also--
 | [[fun:write_text_file]]	Write a text file to the output directory.

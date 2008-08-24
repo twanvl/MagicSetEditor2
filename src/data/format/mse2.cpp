@@ -26,10 +26,14 @@ class MSE2FileFormat : public FileFormat {
 		settings.addRecentFile(filename);
 		return set;
 	}
-	virtual void exportSet(Set& set, const String& filename) {
-		set.saveAs(filename);
-		settings.addRecentFile(filename);
-		set.actions.setSavePoint();
+	virtual void exportSet(Set& set, const String& filename, bool is_copy) {
+		if (is_copy) {
+			set.saveCopy(filename);
+		} else {
+			set.saveAs(filename);
+			settings.addRecentFile(filename);
+			set.actions.setSavePoint();
+		}
 	}
 };
 
