@@ -1,5 +1,7 @@
 Function: write_set_file
 
+DOC_MSE_VERSION: since 0.3.8
+
 --Usage--
 > write_set_file(set:the_set, file: filename)
 
