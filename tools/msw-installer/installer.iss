@@ -200,12 +200,12 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
 #emit Font   (0, 'mplantin.ttf',    'MPlantin',                 'mtg')
 #emit Font   (0, 'mplantinit.ttf',  'MPlantin-Italic',          'mtg')
 
-#emit Package(1, 'vanguard', '',         'game',   'mtg/vanguard')
+#emit Package(1, 'vanguard', '',         'game',   'mtg/vanguard') + 'Flags: recursesubdirs'
 #emit Package(1, 'vanguard', 'standard', 'style',  'mtg/vanguard')
 
 ; ----------------------------- : VS System
 
-#emit Package(0, 'vs', '',                 'game',            'vs')
+#emit Package(0, 'vs', '',                 'game',            'vs') + 'Flags: recursesubdirs'
 #emit Package(0, 'vs', 'common',           'include',         'vs')
 #emit Package(0, 'vs', 'standard-arrow',   'symbol-font',     'vs')
 #emit Package(0, 'vs', 'spoiler',          'export-template', 'vs')
@@ -226,7 +226,7 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
 
 ; ----------------------------- : YuGiOh
 
-#emit Package(0, 'yugioh', '',                  'game',        'yugioh')
+#emit Package(0, 'yugioh', '',                  'game',        'yugioh') + 'Flags: recursesubdirs'
 #emit Package(0, 'yugioh', 'standard-levels',   'symbol-font', 'yugioh')
 #emit Package(0, 'yugioh', 'text-replacements', 'symbol-font', 'yugioh')
 #emit Package(0, 'yugioh', 'standard',          'style',       'yugioh')
