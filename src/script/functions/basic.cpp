@@ -232,6 +232,11 @@ SCRIPT_FUNCTION(random_int) {
 	SCRIPT_RETURN( rand() % (end - begin) + begin );
 }
 
+SCRIPT_FUNCTION(random_boolean) {
+	SCRIPT_PARAM_DEFAULT_C(double, input, 0.5);
+	SCRIPT_RETURN( rand() < RAND_MAX * input  );
+}
+
 // ----------------------------------------------------------------------------- : String stuff
 
 // convert a string to upper case
@@ -521,40 +526,43 @@ SCRIPT_FUNCTION(random_shuffle) {
 
 SCRIPT_FUNCTION(random_select) {
 	SCRIPT_PARAM_C(ScriptValueP, input);
-	SCRIPT_OPTIONAL_PARAM(int, count) {
-		// pick a single one
-		int itemCount = input->itemCount();
-		if (itemCount == 0) {
-			throw ScriptError(String::Format(_("Can not select a random item from an empty collection"), count));
-		}
-		return input->getIndex( rand() % itemCount );
-	} else {
-		// pick many
-		SCRIPT_PARAM_DEFAULT_C(bool, replace, false);
-		ScriptCustomCollectionP ret(new ScriptCustomCollection);
-		int itemCount = input->itemCount();
-		if (replace) {
-			if (itemCount == 0) {
-				throw ScriptError(String::Format(_("Can not select %d items from an empty collection"), count));
-			}
-			for (int i = 0 ; i < count ; ++i) {
-				ret->value.push_back( input->getIndex( rand() % itemCount ) );
-			}
-		} else {
-			if (count > itemCount) {
-				throw ScriptError(String::Format(_("Can not select %d items from a collection conaining only %d items"), count, input->itemCount()));
-			}
-			// transfer all to ret and shuffle
-			ScriptValueP it = input->makeIterator(input);
-			while (ScriptValueP v = it->next()) {
-				ret->value.push_back(v);
-			}
-			random_shuffle(ret->value.begin(), ret->value.end());
-			// keep only the first 'count'
-			ret->value.resize(count);
-		}
-		return ret;
+	// pick a single one
+	int itemCount = input->itemCount();
+	if (itemCount == 0) {
+		throw ScriptError(_("Can not select a random item from an empty collection"));
 	}
+	return input->getIndex( rand() % itemCount );
+}
+
+SCRIPT_FUNCTION(random_select_many) {
+	SCRIPT_PARAM_C(ScriptValueP, input);
+	SCRIPT_PARAM(int, count) ;
+	SCRIPT_OPTIONAL_PARAM_C_(ScriptValueP, replace);
+	bool with_replace = replace && replace->type() != SCRIPT_FUNCTION && (bool)*replace;
+	// pick many
+	ScriptCustomCollectionP ret(new ScriptCustomCollection);
+	int itemCount = input->itemCount();
+	if (with_replace) {
+		if (itemCount == 0) {
+			throw ScriptError(String::Format(_("Can not select %d items from an empty collection"), count));
+		}
+		for (int i = 0 ; i < count ; ++i) {
+			ret->value.push_back( input->getIndex( rand() % itemCount ) );
+		}
+	} else {
+		if (count > itemCount) {
+			throw ScriptError(String::Format(_("Can not select %d items from a collection conaining only %d items"), count, input->itemCount()));
+		}
+		// transfer all to ret and shuffle
+		ScriptValueP it = input->makeIterator(input);
+		while (ScriptValueP v = it->next()) {
+			ret->value.push_back(v);
+		}
+		random_shuffle(ret->value.begin(), ret->value.end());
+		// keep only the first 'count'
+		ret->value.resize(count);
+	}
+	return ret;
 }
 
 // ----------------------------------------------------------------------------- : Keywords
@@ -640,8 +648,9 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("to code"),              script_to_code);
 	// math
 	ctx.setVariable(_("abs"),                  script_abs);
-	ctx.setVariable(_("random_real"),          script_random_real);
-	ctx.setVariable(_("random_int"),           script_random_int);
+	ctx.setVariable(_("random real"),          script_random_real);
+	ctx.setVariable(_("random int"),           script_random_int);
+	ctx.setVariable(_("random boolean"),       script_random_boolean);
 	// string
 	ctx.setVariable(_("to upper"),             script_to_upper);
 	ctx.setVariable(_("to lower"),             script_to_lower);
@@ -670,6 +679,7 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("sort list"),            script_sort_list);
 	ctx.setVariable(_("random shuffle"),       script_random_shuffle);
 	ctx.setVariable(_("random select"),        script_random_select);
+	ctx.setVariable(_("random select many"),   script_random_select_many);
 	// keyword
 	ctx.setVariable(_("expand keywords"),      script_expand_keywords);
 	ctx.setVariable(_("expand keywords rule"), new_intrusive1<ScriptRule>(script_expand_keywords));

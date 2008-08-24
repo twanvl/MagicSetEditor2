@@ -18,4 +18,5 @@ Since the result is random, calling the function twice will give a different ans
 > random_shuffle([1,2,3,4]) == [2,3,4,1]
 
 --See also--
-| [[fun:random_select]]		Pick random elements from a list.
+| [[fun:random_select]]		Pick a single random element from a list.
+| [[fun:random_select_many]]	Pick multiple random elements from a list.

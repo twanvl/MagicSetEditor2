@@ -1,0 +1,29 @@
+Function: random_select_many
+
+DOC_MSE_VERSION: since 0.3.8
+
+--Usage--
+> random_select(some_list, count: some_number, replace: some_boolean)
+
+Randomly select a number of items from a list.
+
+By default @count@ ''different'' items are selected (selection without replacment).
+Setting the @replace@ parameter allows the same item to occur more than once in the result (selection with replacment).
+
+Since the result is random, calling the function twice will give a different answer.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:list]]		List to shuffle.
+| @count@	[[type:int]]		Number of items to select.
+| @replace@	[[type:boolean]]	Select with replacement?
+
+--Examples--
+> random_select_many([1,2,3,4], count:3) == [2,3,1]
+> random_select_many([1,2,3,4], count:3) == [3,1,4]
+> random_select_many([1,2,3,4], count:3, replace: true)  == [2,3,2]
+> random_select_many([1,2,3,4], count:3, replace: false) == [1,3,4]
+
+--See also--
+| [[fun:random_select]]		Pick a single random element from a list.
+| [[fun:random_shuffle]]	Randomly shuffle a list.

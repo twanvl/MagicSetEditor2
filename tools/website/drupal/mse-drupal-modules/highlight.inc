@@ -15,6 +15,7 @@ $built_in_functions = array(
 	'abs'			=>'',
 	'random_int'		=>'',
 	'random_real'		=>'',
+	'random_boolean'	=>'',
 	// text
 	'to_upper'		=>'',
 	'to_lower'		=>'',
@@ -43,6 +44,7 @@ $built_in_functions = array(
 	'filter_list'		=>'',
 	'random_shuffle'	=>'',
 	'random_select'		=>'',
+	'random_select_many'	=>'',
 	// keywords
 	'expand_keywords'	=>'',	'expand_keywords_rule'=>'expand_keywords',
 	'keyword_usage'		=>'',

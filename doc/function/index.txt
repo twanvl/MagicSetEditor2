@@ -14,6 +14,7 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:abs]]			Absolute value
 | [[fun:random_int]]		Generate a random [[type:int]].
 | [[fun:random_real]]		Generate a random [[type:double]].
+| [[fun:random_boolean]]	Generate a random [[type:boolean]].
 	
 ! Text manipulation		<<<
 | [[fun:to_upper]]		Convert a string to upper case, @"aBc" -> "ABC"@.
@@ -44,7 +45,8 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:sort_list]]		Sort a list.
 | [[fun:filter_list]]		Filter a list, keeping only elements that match a predicate.
 | [[fun:random_shuffle]]	Randomly shuffle a list.
-| [[fun:random_select]]		Pick random elements from a list.
+| [[fun:random_select]]		Pick a random element from a list.
+| [[fun:random_select_many]]	Pick multiple random elements from a list.
 	
 ! Keywords			<<<
 | [[fun:expand_keywords]]	Expand the keywords in a piece of text.

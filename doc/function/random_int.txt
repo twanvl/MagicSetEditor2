@@ -23,3 +23,4 @@ Since the result is random, calling the function twice will give a different ans
 
 --See also--
 | [[fun:random_real]]		Generate a random [[type:double]].
+| [[fun:random_boolean]]	Generate a random [[type:boolean]].

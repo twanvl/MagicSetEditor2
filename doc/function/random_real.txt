@@ -22,3 +22,4 @@ Since the result is random, calling the function twice will give a different ans
 
 --See also--
 | [[fun:random_int]]		Generate a random [[type:int|integer number]].
+| [[fun:random_boolean]]	Generate a random [[type:boolean]].
