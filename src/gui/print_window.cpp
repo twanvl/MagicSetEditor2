@@ -231,11 +231,9 @@ void CardsPrintout::drawCard(DC& dc, const CardP& card, int card_nr) {
 	int w = int(stylesheet.card_width), h = int(stylesheet.card_height); // in pixels
 	if (rotation == 90) swap(w,h);
 	// Draw using text buffer
-	//TextBufferDC bufferDC(w,h,true);
-	//RotatedDC rdc(bufferDC, rotation, RealRect(0,0,w,h), 1.0, QUALITY_SUB_PIXEL);
 	double zoom = IsPreview() ? 1 : 4;
 	TextBufferDC bufferDC(w*zoom,h*zoom,false);
-	RotatedDC rdc(bufferDC, rotation, RealRect(0,0,w*zoom,h*zoom), zoom, QUALITY_AA);
+	RotatedDC rdc(bufferDC, rotation, stylesheet.getCardRect(), zoom, QUALITY_AA, ROTATION_ATTACH_TOP_LEFT);
 	// render card to dc
 	viewer.setCard(card);
 	viewer.draw(rdc, *wxWHITE);
