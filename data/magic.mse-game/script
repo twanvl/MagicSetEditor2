@@ -495,7 +495,7 @@ is_colored_mana := match@(match: "[WUBRG]")
 only_numbers    := filter_text@(match: "^[0123456789]+")
 cmc_split := break_text@(match: "(?ix) 1/2 | [|][WUBRG] | [0-9]+(?!/[WUBRGSTQ2]) | [WUBRGS0-9](/[WUBRGS])\{0,4} ")
 cmc := {to_number(
-	for each sym in cmc_split() do (
+	for each sym in cmc_split(to_text()) do (
 		numbers := only_numbers(sym)
 		if is_half_mana(sym)  then 0.5
 		else if numbers != "" then to_int(numbers)
@@ -504,7 +504,7 @@ cmc := {to_number(
 }
 
 colored_mana := {to_number(
-	for each sym in cmc_split() do (
+	for each sym in cmc_split(to_text()) do (
 		numbers := only_numbers(sym)
 		if is_colored_mana(sym) then
 			if is_half_mana(sym) then 0.5 else 1
