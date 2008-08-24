@@ -498,7 +498,7 @@ cmc := {to_number(
 	for each sym in cmc_split() do (
 		numbers := only_numbers(sym)
 		if is_half_mana(sym)  then 0.5
-		else if numbers != "" then max(1, to_int(numbers))
+		else if numbers != "" then to_int(numbers)
 		else                       1 # all other symbols are 1
 	))
 }
