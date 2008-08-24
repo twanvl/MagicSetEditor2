@@ -121,6 +121,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 						// get function and call
 						stack.back() = stack.back()->eval(*this);
 					} catch (const Error& e) {
+						closeScope(scope);
 						// try to determine what named function was called
 						// the instructions for this look like:
 						//   I_GET_VAR   name of function
