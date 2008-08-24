@@ -38,12 +38,12 @@ keyword parameter type:
 		name: converted mana cost
 		description: Converts mana to number
 		# "0" left in so users can easily see how to edit script.
-		script: \{cmc({input}) + 0\}
+		script: \{cmc({input})\}
 	refer script:
 		name: colored mana cost
 		description: Converts mana to number of colored mana
 		# "0" left in so users can easily see how to edit script.
-		script: \{colored_mana({input}) + 0\}
+		script: \{colored_mana({input})\}
 
 # By pichoro and bunnierein
 keyword parameter type:
