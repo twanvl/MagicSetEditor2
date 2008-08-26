@@ -6,7 +6,7 @@ installer group: magic/old style/split cards
 icon: card-sample.png
 position hint: 103
 
-version: 2008-08-07
+version: 2008-08-26
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -21,11 +21,9 @@ card background: white
 card width: 523
 card height: 375
 card dpi: 150
-
 # Author: Buttock1234
 # Lots of copy/paste from magic-new.mse-style
 ############################################################## Extra scripts
-
 init script:
 	# Use the normal tap symbol
 	mana_t := {
@@ -155,6 +153,13 @@ styling field:
 	name: left align artist
 	description: Should the artist and copyright lines be left aligned, as seen in Tempest?
 	initial: no
+styling field:
+	type: choice
+	name: pt font
+	description: Should the font used for p/t be MPlantin or MPlantin-Bold?  MPlantin was used until Mirage.
+	initial: MPlantin-Bold
+	choice: MPlantin
+	choice: MPlantin-Bold
 styling style:
 	use guild mana symbols:
 		choice images:
@@ -176,7 +181,6 @@ styling style:
 		choice images:
 			no:  { symbol_variation(symbol: set.symbol, variation: "common") }
 			yes: { symbol_variation(symbol: set.symbol, variation: "rare") }
-
 ############################################################## Card fields
 card style:
 	############################# Background stuff
@@ -269,7 +273,6 @@ card style:
 		width:	200
 		height:	162
 		z index: 1
-
 	image 2:
 		left:	287
 		top:	40
@@ -461,9 +464,8 @@ card style:
 		height:	23
 		alignment: middle right
 		font:
-			name: Mplantin
+			name: { styling.pt_font }
 			size: 14
-			weight: bold
 			color: rgb(255,255,255)
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
@@ -477,9 +479,8 @@ card style:
 		height:	23
 		alignment: middle right
 		font:
-			name: Mplantin
+			name: { styling.pt_font }
 			size: 14
-			weight: bold
 			color: rgb(255,255,255)
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1

@@ -1,10 +1,4 @@
-﻿############################################################## 
-############################################################## 
-############################################################## Old Tokens
-############################################################## 
-############################################################## 
-
-mse version: 0.3.7
+﻿mse version: 0.3.7
 game: magic
 short name: Tokens
 full name: Old style
@@ -12,7 +6,7 @@ installer group: magic/old style/tokens
 icon: card-sample.png
 position hint: 107
 
-version: 2008-08-07
+version: 2008-08-26
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -27,10 +21,7 @@ card background: white
 card width: 375
 card height: 523
 card dpi: 150
-
 ############################################################## Extra scripts
-## COPY/PASTE from magic-old.mse-style/style
-
 init script:
 	# There is no land template
 	land_template := { "c{type}.jpg" }
@@ -104,9 +95,7 @@ set info style:
 			fill color 2:   rgb(95, 84, 40)
 			border color 1: rgb(255,255,255)
 			border color 2: rgb(255,255,255)
-
 ############################################################## Extra style options
-
 styling field:
 	type: boolean
 	name: use guild mana symbols
@@ -157,6 +146,13 @@ styling field:
 	name: left align artist
 	description: Should the artist and copyright lines be left aligned, as seen in Tempest?
 	initial: no
+styling field:
+	type: choice
+	name: pt font
+	description: Should the font used for p/t be MPlantin or MPlantin-Bold?  MPlantin was used until Mirage.
+	initial: MPlantin-Bold
+	choice: MPlantin
+	choice: MPlantin-Bold
 styling style:
 	use guild mana symbols:
 		choice images:
@@ -178,7 +174,6 @@ styling style:
 		choice images:
 			no:  { symbol_variation(symbol: set.symbol, variation: "common") }
 			yes: { symbol_variation(symbol: set.symbol, variation: "rare") }
-
 ############################################################## Card fields
 card style:
 	############################# Background stuff
@@ -202,7 +197,6 @@ card style:
 		render style: image
 		popup style: in place
 		image: { card_background() }
-
 	############################# Name line
 	name:
 		left: 40
@@ -219,7 +213,6 @@ card style:
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
 			shadow displacement y: 1
-
 	############################# Image
 	image:
 		left:	44
@@ -227,9 +220,7 @@ card style:
 		width:	286
 		height:	270
 		z index: 1
-
 	############################# Card type
-
 	type:
 		left: 58
 		top : 348
@@ -245,7 +236,6 @@ card style:
 			shadow displacement x: 1
 			shadow displacement y: 1
 			separator color: rgb(192,192,192)
-
 	rarity:
 		right: 320
 		top : 347
@@ -278,7 +268,6 @@ card style:
 					if styling.colored_rarities
 					then symbol_variation(symbol: set.symbol, variation: "special")
 					else symbol_variation(symbol: set.symbol, variation: "common")
-
 	############################# Text box
 	text:
 		left: 63
@@ -316,7 +305,6 @@ card style:
 		line height hard: 1.2
 		line height line: 1.5
 		line height soft: 0.9
-
 	############################# PT
 	pt:
 		z index: 4
@@ -326,18 +314,15 @@ card style:
 		height:	30
 		alignment: right top
 		font:
-			name: Mplantin
+			name: { styling.pt_font }
 			size: 18
-			weight: bold
 			color: rgb(255,255,255)
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 2
 			shadow displacement y: 2
 			separator color: rgb(255,50,50)
-
 	############################# Card sorting / numbering
 	############################# Copyright stuff
-
 	illustrator:
 		left: 57
 		top : 459
@@ -352,7 +337,6 @@ card style:
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
 			shadow displacement y: 1
-
 	copyright line:
 		left: 57
 		top : 472
