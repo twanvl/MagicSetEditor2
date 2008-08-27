@@ -5,7 +5,7 @@ DOC_MSE_VERSION: since 0.3.8
 --Usage--
 > random_boolean(probability)
 
-Returns a random [[type:bool]], either @true@ or @false.
+Returns a random [[type:bool]], either @true@ or @false@.
 The parameter is the probability of returning @true@, so @random_boolean(0.0)@ always returns @true@, @random_boolean(1.0)@ always returns @false@ and @random_boolean(0.5)@ simulates a fair coin toss.
 
 Since the result is random, calling the function twice will give a different answer.
