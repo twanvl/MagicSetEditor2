@@ -55,7 +55,24 @@ The results of the expression are combined using the @+@ [[script:operators|oper
 > for each x in ["a","b","c"] do x      ==  "abc"
 > for each x in ["a","b","c"] do [x+x]  ==  ["aa","bb","cc"]
 
-It is also possible to iterate over a range of values
+
+When iterating over a [[type:map]] the key is also available:
+
+>> for each key:variable in list do expression
+
+For example:
+
+> (for each k:v in [name:"Thing", rank:"High"] do
+>     "Its {k} is {v}. "
+> )  ==  "Its name is Thing. Its rank is High. "
+
+When iterating over a list, the key is the index in the list, starting with @0@:
+> (for each k:v in ["a","b","c"] do
+>     ["element {k} is {v}"]
+> )  ==  ["element 0 is a","element 1 is b","element 2 is c"]
+
+
+It is also possible to iterate over a range of values:
 
 > for variable from begin to end do expression
 
@@ -64,6 +81,7 @@ The expression is evaluated for each number from begin to end (including begin, 
 --Summary--
 
 ! Syntax				Description
-| @if a then b else c@			If @a@ is @true@ evaluates to @b@, otherwise evaluates to @c@
-| @for each x in list do something@	Does @something@ for each element in a list
-| @for x from 1 to 100 do something@	Does @something@ for all numbers from 1 to 100
+| @if a then b else c@			If @a@ is @true@ evaluates to @b@, otherwise evaluates to @c@.
+| @for each x in list do something@	Does @something@ for each element in a list, adding the results
+| @for each k:v in list do something@	Does @something@ for each element in a map using the key/index in the map.
+| @for x from 1 to 100 do something@	Does @something@ for all numbers from 1 to 100.

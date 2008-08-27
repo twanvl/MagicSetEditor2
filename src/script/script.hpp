@@ -32,16 +32,17 @@ enum InstructionType
 ,	I_MEMBER_C		= 6  ///< arg = const name : finds a member of the top of the stack replaces the top of the stack with the member
 ,	I_LOOP			= 7  ///< arg = address    : loop over the elements of an iterator, which is the *second* element of the stack (this allows for combing the results of multiple iterations)
 					     ///<                    at the end performs a jump and pops the iterator. note: The second element of the stack must be an iterator!
-,	I_MAKE_OBJECT   = 8  ///< arg = int        : make a list/map with n elements, pops 2n values of the stack, n key/value pairs
+,	I_LOOP_WITH_KEY	= 8  ///< arg = address    : loop, but also pushing the key
+,	I_MAKE_OBJECT   = 9  ///< arg = int        : make a list/map with n elements, pops 2n values of the stack, n key/value pairs
 	// Functions
-,	I_CALL			= 9  ///< arg = int, n*var : call the top item of the stack, with the given number of arguments (set with SET_VAR, but in the activation record of the call)
-,	I_CLOSURE       = 10 ///< arg = int, n*var : construct a call closure object with the given arguments
+,	I_CALL			= 10 ///< arg = int, n*var : call the top item of the stack, with the given number of arguments (set with SET_VAR, but in the activation record of the call)
+,	I_CLOSURE       = 11 ///< arg = int, n*var : construct a call closure object with the given arguments
 	// Simple instructions
-,	I_UNARY			= 11 ///< arg = 1ary instr : pop 1 value,  apply a function, push the result
-,	I_BINARY		= 12 ///< arg = 2ary instr : pop 2 values, apply a function, push the result
-,	I_TERNARY		= 13 ///< arg = 3ary instr : pop 3 values, apply a function, push the result
-,	I_QUATERNARY	= 14 ///< arg = 4ary instr : pop 4 values, apply a function, push the result
-,	I_DUP			= 15 ///< arg = int        : duplicate the k-from-top element of the stack
+,	I_UNARY			= 12 ///< arg = 1ary instr : pop 1 value,  apply a function, push the result
+,	I_BINARY		= 13 ///< arg = 2ary instr : pop 2 values, apply a function, push the result
+,	I_TERNARY		= 14 ///< arg = 3ary instr : pop 3 values, apply a function, push the result
+,	I_QUATERNARY	= 15 ///< arg = 4ary instr : pop 4 values, apply a function, push the result
+,	I_DUP			= 16 ///< arg = int        : duplicate the k-from-top element of the stack
 };
 
 /// Types of unary instructions (taking one argument from the stack)
@@ -96,13 +97,13 @@ enum QuaternaryInstructionType
  *  Then the instr? member gives the actual instruction to perform
  */
 struct Instruction {
-	InstructionType instr : 5;
+	InstructionType instr : 6;
 	union {
-		unsigned int				data   : 27;
-		UnaryInstructionType		instr1 : 27;
-		BinaryInstructionType		instr2 : 27;
-		TernaryInstructionType		instr3 : 27;
-		QuaternaryInstructionType	instr4 : 27;
+		unsigned int				data   : 26;
+		UnaryInstructionType		instr1 : 26;
+		BinaryInstructionType		instr2 : 26;
+		TernaryInstructionType		instr3 : 26;
+		QuaternaryInstructionType	instr4 : 26;
 	};
 };
 

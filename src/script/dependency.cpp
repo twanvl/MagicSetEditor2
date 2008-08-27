@@ -239,6 +239,21 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					}
 					break;
 				}
+				// Loop over a container, push next value or jump (almost as normal)
+				case I_LOOP_WITH_KEY: {
+					ScriptValueP& it = stack[stack.size() - 2]; // second element of stack
+					ScriptValueP key;
+					ScriptValueP val = it->next(&key);
+					if (val) {
+						it = dependency_dummy; // invalidate iterator, so we loop only once
+						stack.push_back(val);
+						stack.push_back(key);
+					} else {
+						stack.erase(stack.end() - 2); // remove iterator
+						instr = &script.instructions[i.data];
+					}
+					break;
+				}
 				// Make an object
 				case I_MAKE_OBJECT: {
 					makeObject(i.data);

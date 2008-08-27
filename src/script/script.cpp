@@ -97,7 +97,7 @@ ScriptValueP Script::dependencies(Context& ctx, const Dependency& dep) const {
 static const unsigned int INVALID_ADDRESS = 0x03FFFFFF;
 
 unsigned int Script::addInstruction(InstructionType t) {
-	assert( t == I_JUMP || t == I_JUMP_IF_NOT || t == I_LOOP);
+	assert( t == I_JUMP || t == I_JUMP_IF_NOT || t == I_LOOP || t == I_LOOP_WITH_KEY);
 	Instruction i = {t, {INVALID_ADDRESS}};
 	instructions.push_back(i);
 	return getLabel() - 1;
@@ -128,7 +128,8 @@ void Script::addInstruction(InstructionType t, const String& s) {
 void Script::comeFrom(unsigned int pos) {
 	assert( instructions.at(pos).instr == I_JUMP
 	     || instructions.at(pos).instr == I_JUMP_IF_NOT
-	     || instructions.at(pos).instr == I_LOOP);
+	     || instructions.at(pos).instr == I_LOOP
+	     || instructions.at(pos).instr == I_LOOP_WITH_KEY);
 	assert( instructions.at(pos).data == INVALID_ADDRESS );
 	instructions.at(pos).data = (unsigned int)instructions.size();
 }
@@ -163,6 +164,7 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 		case I_SET_VAR:		ret += _("set");		break;
 		case I_MEMBER_C:	ret += _("member_c");	break;
 		case I_LOOP:		ret += _("loop");		break;
+		case I_LOOP_WITH_KEY:ret += _("loop with key"); break;
 		case I_MAKE_OBJECT:	ret += _("make object");break;
 		case I_CALL:		ret += _("call");		break;
 		case I_CLOSURE:		ret += _("closure");	break;
@@ -212,7 +214,7 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 		case I_PUSH_CONST: case I_MEMBER_C:							// const
 			ret += _("\t") + constants[i.data]->typeName();
 			break;
-		case I_JUMP: case I_JUMP_IF_NOT: case I_LOOP: case I_MAKE_OBJECT: case I_CALL: case I_CLOSURE: case I_DUP:	// int
+		case I_JUMP: case I_JUMP_IF_NOT: case I_LOOP: case I_LOOP_WITH_KEY: case I_MAKE_OBJECT: case I_CALL: case I_CLOSURE: case I_DUP:	// int
 			ret += String::Format(_("\t%d"), i.data);
 			break;
 		case I_GET_VAR: case I_SET_VAR: case I_NOP:					// variable
@@ -255,7 +257,7 @@ const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) 
 				break;
 			case I_JUMP: {
 				if (instr->data > initial) {
-					// we were in an else branch all along, ignore this jump
+					// forward jump, so we were in an else branch all along, ignore this jump
 					return instr + 1;
 				}
 				// there will be a way not to take this jump
@@ -272,6 +274,11 @@ const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) 
 						//  5   I_JUMP        loop
 						//   end:
 						// we have not handled anything for this loop, current position is 2,
+						// we need to skip two things (iterator+accumulator) instead of one
+						to_skip += 1;
+						break;
+					} else if (instr->instr == I_LOOP_WITH_KEY && instr->data == after_jump) {
+						// same as above,
 						// we need to skip two things (iterator+accumulator) instead of one
 						to_skip += 1;
 						break;
@@ -293,7 +300,7 @@ const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) 
 				++instr; // compensate for the -- in the outer loop
 				break;
 			}
-			case I_JUMP_IF_NOT: case I_LOOP:
+			case I_JUMP_IF_NOT: case I_LOOP: case I_LOOP_WITH_KEY:
 				return nullptr; // give up
 			default:
 				break; // nett stack effect 0

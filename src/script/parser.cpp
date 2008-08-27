@@ -483,43 +483,57 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 			} else if (token == _("for")) {
 				// the loop body should have a net stack effect of 0, but the entire expression of +1
 				// solution: add all results from the body, start with nil
-				if (input.peek() == _("each")) {
-					// for each AAA in BBB do CCC
-					input.read();										// each
-					Token name = input.read();							// AAA
+				bool is_each = input.peek() == _("each");
+				if (is_each) {
+					// for each AAA(:BBB) in CCC do EEE
+					input.read();										// each?
+				} else {
+					// for AAA(:BBB) from CCC to DDD do EEE
+				}
+				// name
+				Token name = input.read();								// AAA
+				if (name != TOK_NAME) {
+					input.expected(_("name"));
+				}
+				Variable var = string_to_variable(name.value);
+				// key:value?
+				bool with_key = input.peek() == _(":");
+				Variable key = (Variable)-1;
+				if (with_key) {
+					input.read();										// :
+					name = input.read();								// BBB
 					if (name != TOK_NAME) {
 						input.expected(_("name"));
 					}
-					expectToken(input, _("in"));						// in
-					parseOper(input, script, PREC_AND);					// BBB
-					script.addInstruction(I_UNARY, I_ITERATOR_C);		//		iterator_collection
-					script.addInstruction(I_PUSH_CONST, script_nil);	//		push nil
-					unsigned lblStart = script.addInstruction(I_LOOP);	//		lbl_start: loop lbl_end
-					expectToken(input, _("do"));						// do
-					script.addInstruction(I_SET_VAR,
-										string_to_variable(name.value));//		set name
-					script.addInstruction(I_BINARY, I_POP);				//		 pop
-					parseOper(input, script, PREC_SET, I_BINARY, I_ADD);// CCC;	add
-					script.addInstruction(I_JUMP, lblStart);			//		jump lbl_start
-					script.comeFrom(lblStart);							//		lbl_end:
-				} else {
-					// for AAA from BBB to CCC do DDD
-					Token name = input.read();							// AAA
-					expectToken(input, _("from"));						// from
-					parseOper(input, script, PREC_AND);					// BBB
-					expectToken(input, _("to"));						// to
-					parseOper(input, script, PREC_AND);					// CCC
-					script.addInstruction(I_BINARY, I_ITERATOR_R);		//		iterator_range
-					script.addInstruction(I_PUSH_CONST, script_nil);	//		push nil
-					unsigned lblStart = script.addInstruction(I_LOOP);	//		lbl_start: loop lbl_end
-					expectToken(input, _("do"));						// do
-					script.addInstruction(I_SET_VAR,
-										string_to_variable(name.value));//		set name
-					script.addInstruction(I_BINARY, I_POP);				//		 pop
-					parseOper(input, script, PREC_SET, I_BINARY, I_ADD);// DDD;	add
-					script.addInstruction(I_JUMP, lblStart);			//		jump lbl_start
-					script.comeFrom(lblStart);							//		lbl_end:
+					key = string_to_variable(name.value);
+					swap(var,key);
 				}
+				// iterator
+				if (is_each) {
+					expectToken(input, _("in"));						// in
+					parseOper(input, script, PREC_AND);					// CCC
+					script.addInstruction(I_UNARY, I_ITERATOR_C);		//		iterator_collection
+				} else {
+					expectToken(input, _("from"));						// from
+					parseOper(input, script, PREC_AND);					// CCC
+					expectToken(input, _("to"));						// to
+					parseOper(input, script, PREC_AND);					// DDD
+					script.addInstruction(I_BINARY, I_ITERATOR_R);		//		iterator_range
+				}
+				script.addInstruction(I_PUSH_CONST, script_nil);		//		push nil
+				unsigned lblStart = script.addInstruction(with_key
+										? I_LOOP_WITH_KEY				//		lbl_start: loop_with_key lbl_end
+										: I_LOOP);						//		lbl_start: loop lbl_end
+				expectToken(input, _("do"));							// do
+				if (with_key) {
+					script.addInstruction(I_SET_VAR, key);				//		set key_name
+					script.addInstruction(I_BINARY, I_POP);				//		 pop
+				}
+				script.addInstruction(I_SET_VAR, var);					//		set name
+				script.addInstruction(I_BINARY, I_POP);					//		 pop
+				parseOper(input, script, PREC_SET, I_BINARY, I_ADD);	// EEE;	add
+				script.addInstruction(I_JUMP, lblStart);				//		jump lbl_start
+				script.comeFrom(lblStart);								//		lbl_end:
 			} else if (token == _("rgb")) {
 				// rgb(r, g, b)
 				expectToken(input, _("("));

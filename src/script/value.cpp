@@ -128,17 +128,17 @@ class ScriptRangeIterator : public ScriptIterator {
   public:
 	// Construct a range iterator with the given bounds (inclusive)
 	ScriptRangeIterator(int start, int end)
-		: pos(start), end(end) {}
+		: pos(start), start(start), end(end) {}
 	virtual ScriptValueP next(ScriptValueP* key_out) {
 		if (pos <= end) {
-			if (key_out) *key_out = to_script(pos);
+			if (key_out) *key_out = to_script(pos-start);
 			return to_script(pos++);
 		} else {
 			return ScriptValueP();
 		}
 	}
   private:
-	int pos, end;
+	int pos, start, end;
 };
 
 ScriptValueP rangeIterator(int start, int end) {
