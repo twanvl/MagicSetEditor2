@@ -1,4 +1,8 @@
 ﻿
+############################################################## Localization
+
+include file: language
+
 ############################################################## Sorting mana symbols
 
 # correctly sort a mana symbol (no guild mana)
@@ -413,39 +417,46 @@ flavor_text_filter :=
 	
 # Move the cursor past the separator in the p/t and type boxes
 type_over_pt   := replace@(match:"/$", replace:"")
-type_over_type := replace@(match:" ?-$", replace:"")
+type_over_type := replace@(match:" ?[-:]$", replace:"")
 
-super_type_filter :=
-	remove_tag@(tag: "<word-list-") +
-	type_over_type +
-	{ "<word-list-type>{input}</word-list-type>" }
+super_type_filter := {
+	input := remove_tag(tag: "<word-list-")
+	input := type_over_type()
+	tag := "word-list-type" # TODO: localize
+	"<{tag}>{input}</{tag}>"
+}
 
-space_to_wltags := replace@(match:"( +|<soft> </soft>)",
-                            replace:{"</word-list-{list_type}>{_1}<word-list-{list_type}>"})
-sub_type_filter :=
-	remove_tag@(tag: "<word-list-") +
-	replace@(match: " </soft>$", replace: "") + # remove trailing soft space
-	remove_tag@(tag: "<soft") +
-	{ list_type := if      is_creature(type)    then "class"
-	               else if is_land(type)        then "land"
-	               else if is_artifact(type)    then "artifact"
-	               else if is_enchantment(type) then "enchantment"
-	               else if is_spell(type)       then "spell"
-	  if is_creature(type) or is_tribal(type) then (
-	      first := "<word-list-race>{ only_first(input) }</word-list-race>"
-	      next  := only_next(input)
-	      if input == ""     then list_type := "" # only edit the race
-	      else if next == "" then first := first + "<soft> </soft>"
-	      else                    first := first + " "
-	      input := next
-	  ) else (
-	      first := ""
-	  )
-	  if list_type != "" then (
-	      if input != "" then input := input + "<soft> </soft>" # Add a new box at the end
-	      first + "<word-list-{list_type}>{ space_to_wltags(input) }</word-list-{list_type}>"
-	  ) else first + input
-	}
+break_subtypes := split_text@(match: " +|<atom-sep>[^<]*</atom-sep>", include_empty:false)
+sub_type_filter := {
+	input := remove_tag(tag: "<word-list-")
+	input := remove_tag(tag: "<soft")
+	lang  := language()
+	# What word list to use?
+	list_type_rest := if      lang.is_creature(type)    then "class"
+	                  else if lang.is_land(type)        then "land"
+	                  else if lang.is_artifact(type)    then "artifact"
+	                  else if lang.is_enchantment(type) then "enchantment"
+	                  else if lang.is_spell(type)       then "spell"
+	if list_type_rest != "" then (
+		if lang.is_creature(type) or lang.is_tribal(type) then (
+			list_type_first := "race"
+		) else (
+			list_type_first := list_type_rest
+		);
+		# wrap wordlist tag around each part
+		parts := break_subtypes()
+		(for each i:part in parts do
+			if i == 0 then
+				"<word-list-{list_type_first}>{part}</word-list-{list_type_first}>"
+			else
+				lang.subtype_separator + "<word-list-{list_type_rest}>{part}</word-list-{list_type_rest}>"
+		) +
+		(if length(parts) > 0 then
+			# Add a new box at the end
+			"<soft>{lang.subtype_separator}</soft><word-list-{list_type_rest}></word-list-{list_type_rest}>"
+		)
+	) else input # do nothing
+}
 
 # all sub types, for word list
 space_to_comma := replace@(match:" ", replace:",")

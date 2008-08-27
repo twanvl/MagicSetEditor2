@@ -169,7 +169,7 @@ card field:
 		# Either just supertype, or subtype - supertype
 		combined_editor(
 			field1: card.super_type,
-			separator: " — ",
+			separator: language().type_separator,
 			field2: card.sub_type,
 			soft_before_empty: true,
 			hide_when_empty:   true
@@ -275,7 +275,7 @@ card field:
 	script: 
 		combined_editor(
 			field1: card.power,
-			separator: "/",
+			separator: language().pt_separator,
 			field2: card.toughness,
 			soft_before_empty: true,
 			hide_when_empty:   true
@@ -424,7 +424,7 @@ card field:
 	script:
 		combined_editor(
 			field1: card.super_type_2,
-			separator: " — ",
+			separator: language().type_separator,
 			field2: card.sub_type_2,
 			soft_before_empty: true,
 			hide_when_empty:   true
@@ -495,7 +495,7 @@ card field:
 	script:
 		combined_editor(
 			field1: card.power_2,
-			separator: "/",
+			separator: language().pt_separator,
 			field2: card.toughness_2,
 			soft_before_empty: true,
 			hide_when_empty:   true

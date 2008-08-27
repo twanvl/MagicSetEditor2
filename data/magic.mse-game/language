@@ -1,0 +1,33 @@
+﻿
+
+# Language specific strings
+languages := [
+	English: [
+		code              : "en",
+		pt_separator      : "/",
+		type_separator    : " — ",
+		subtype_separator : " ",
+		is_creature       : match@(match: "(?i)Creature")
+		is_tribal         : match@(match: "(?i)Tribal")
+		is_artifact       : match@(match: "(?i)Artifact")
+		is_land           : match@(match: "(?i)Land")
+		is_enchantment    : match@(match: "(?i)Enchantment")
+		is_spell          : match@(match: "(?i)Instant|Sorcery")
+	],
+	
+	Français: [
+		code              : "fr",
+		pt_separator      : "/",
+		type_separator    : " : "
+		subtype_separator : "<atom-sep> et </atom-sep>",
+		is_creature       : match@(match: "(?i)Creature|Créature")
+		is_tribal         : match@(match: "(?i)Tribal")
+		is_artifact       : match@(match: "(?i)Artifact")
+		is_land           : match@(match: "(?i)Land")
+		is_enchantment    : match@(match: "(?i)Enchantment")
+		is_spell          : match@(match: "(?i)Instant|Sorcery")
+	]
+]
+
+# The selected language
+language := { languages[set.card_language] or else language.English }

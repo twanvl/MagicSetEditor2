@@ -71,6 +71,13 @@ set field:
 	choice: separate numbering
 	initial: after other cards
 set field:
+	type: choice
+	name: card language
+	description: Language for the cards
+	choice: English
+	choice: Français
+	initial: English
+set field:
 	type: boolean
 	name: mark errors
 	description: Marks errors on cards, for example wording and spelling errors, non unique card names, etc.
@@ -144,3 +151,8 @@ default set style:
 		choice images:
 			yes: script: built_in_image("bool_yes")
 			no:  script: built_in_image("bool_no")
+	card language:
+		render style: both
+		choice images:
+			English:  /magic.mse-game/icons/language-en.png
+			Français: /magic.mse-game/icons/language-fr.png
