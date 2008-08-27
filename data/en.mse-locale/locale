@@ -444,6 +444,7 @@ label:
 	
 	# Preferences
 	language:			Language
+	windows:			Open sets
 	app language:		Language of the user interface:
 	card display:		Card Display
 	zoom:				&Zoom:
@@ -548,6 +549,7 @@ button:
 	last opened set:	Last opened set
 	
 	# Preferences
+	open sets in new window:	Open all sets in a new &window
 	select:				&Select...
 	browse:				&Browse...
 	high quality:		&High quality rendering

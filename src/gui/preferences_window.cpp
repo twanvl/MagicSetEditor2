@@ -39,6 +39,7 @@ class GlobalPreferencesPage : public PreferencesPage {
 	
   private:
 	wxComboBox* language;
+	wxCheckBox* open_sets_in_new_window;
 };
 
 // Preferences page for card viewing related settings
@@ -137,6 +138,7 @@ GlobalPreferencesPage::GlobalPreferencesPage(Window* parent)
 {
 	// init controls
 	language = new wxComboBox(this, wxID_ANY, _(""), wxDefaultPosition, wxDefaultSize, 0, nullptr, wxCB_READONLY);
+	open_sets_in_new_window = new wxCheckBox(this, wxID_ANY, _BUTTON_("open sets in new window"));
 	// set values
 	vector<PackagedP> locales;
 	package_manager.findMatching(_("*.mse-locale"), locales);
@@ -149,23 +151,30 @@ GlobalPreferencesPage::GlobalPreferencesPage(Window* parent)
 		}
 		n++;
 	}
+	open_sets_in_new_window->SetValue(settings.open_sets_in_new_window);
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 	s->SetSizeHints(this);
 		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("language"));
 			s2->Add(new wxStaticText(this, wxID_ANY, _LABEL_("app language")), 0,            wxALL,          4);
 			s2->Add(language,                                                  0, wxEXPAND | wxALL & ~wxTOP, 4);
-			s2->Add(new wxStaticText(this, wxID_ANY, _HELP_( "app language")), 0,            wxALL & ~wxTOP, 4);
+			s2->Add(new wxStaticText(this, wxID_ANY, _HELP_( "app language")), 0,            wxALL,          4);
 		s->Add(s2, 0, wxALL | wxEXPAND, 8);
+		wxSizer* s3 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("windows"));
+			s3->Add(open_sets_in_new_window, 0, wxALL, 4);
+		s->Add(s3, 0, wxALL & ~wxTOP | wxEXPAND, 8);
 	SetSizer(s);
 }
 
 void GlobalPreferencesPage::store() {
+	// locale
 	int n = language->GetSelection();
 	if (n == wxNOT_FOUND) return;
 	Packaged* p = (Packaged*)language->GetClientData(n);
 	settings.locale = p->name();
 	// set the_locale?
+	// open_sets_in_new_window
+	settings.open_sets_in_new_window = open_sets_in_new_window->GetValue();
 }
 
 // ----------------------------------------------------------------------------- : Preferences page : display
