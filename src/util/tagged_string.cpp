@@ -307,9 +307,12 @@ void cursor_to_index_range(const String& str, size_t cursor, size_t& start, size
 			if (cur == cursor) start = i;
 		}
 	}
-	end = min(i, size);
-	if (cur < cursor) start = end = size;
-	if (end <= start) end = start + 1;
+	if (cur < cursor) {
+		start = end = size;
+	} else {
+		end = min(i, size);
+	}
+	end = max(end, start + 1); // always start < end, since there are always valid cursor positions
 }
 
 size_t cursor_to_index(const String& str, size_t cursor, Movement dir) {

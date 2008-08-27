@@ -124,7 +124,7 @@ SCRIPT_FUNCTION(symbol_variation) {
 	if (value) {
 		filename = value->filename;
 	} else if (valueO) {
-		throw ScriptError(_ERROR_2_("can't convert", valueO->typeName(), _TYPE_("symbol" )));
+		throw ScriptErrorConversion(valueO->typeName(), _TYPE_("symbol" ));
 	} else {
 		filename = from_script<String>(symbol);
 	}

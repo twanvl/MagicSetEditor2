@@ -79,8 +79,11 @@ class ScriptDelayedError : public ScriptValue {
 	ScriptError error; // the error message
 };
 
-inline ScriptValueP delayError(const String& m) {
+inline ScriptValueP delay_error(const String& m) {
 	return new_intrusive1<ScriptDelayedError>(ScriptError(m));
+}
+inline ScriptValueP delay_error(const ScriptError& error) {
+	return new_intrusive1<ScriptDelayedError>(error);
 }
 
 // ----------------------------------------------------------------------------- : Iterators
@@ -93,6 +96,7 @@ struct ScriptIterator : public ScriptValue {
 	
 	/// Return the next item for this iterator, or ScriptValueP() if there is no such item
 	virtual ScriptValueP next(ScriptValueP* key_out = nullptr) = 0;
+	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
 };
 
 // make an iterator over a range
@@ -161,7 +165,7 @@ ScriptValueP get_member(const map<String,V>& m, const String& name) {
 	if (it != m.end()) {
 		return to_script(it->second);
 	} else {
-		return delayError(_ERROR_2_("has no member", _TYPE_("collection"), name));
+		return delay_error(ScriptErrorNoMember(_TYPE_("collection"), name));
 	}
 }
 
@@ -171,7 +175,7 @@ ScriptValueP get_member(const IndexMap<K,V>& m, const String& name) {
 	if (it != m.end()) {
 		return to_script(*it);
 	} else {
-		return delayError(_ERROR_2_("has no member", _TYPE_("collection"), name));
+		return delay_error(ScriptErrorNoMember(_TYPE_("collection"), name));
 	}
 }
 
@@ -389,7 +393,7 @@ inline ScriptValueP to_script(const Defaultable<T>& v) { return to_script(v()); 
 template <typename T> inline T  from_script              (const ScriptValueP& value) {
 	ScriptObject<T>* o = dynamic_cast<ScriptObject<T>*>(value.get());
 	if (!o) {
-		throw ScriptError(_ERROR_2_("can't convert", value->typeName(), _TYPE_("object" )));
+		throw ScriptErrorConversion(value->typeName(), _TYPE_("object" ));
 	}
 	return o->getValue();
 }

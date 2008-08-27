@@ -108,6 +108,28 @@ class ScriptError : public Error {
 	inline ScriptError(const String& str) : Error(str) {}
 };
 
+/// "Variable not set"
+class ScriptErrorNoVariable : public ScriptError {
+  public:
+	inline ScriptErrorNoVariable(const String& var) : ScriptError(_("Variable not set: ") + var) {}
+};
+
+/// "Can't convert from A to B"
+class ScriptErrorConversion : public ScriptError {
+  public:
+	inline ScriptErrorConversion(const String& a, const String& b)
+		: ScriptError(_ERROR_2_("can't convert", a, b)) {}
+	inline ScriptErrorConversion(const String& value, const String& a, const String& b)
+		: ScriptError(_ERROR_3_("can't convert value", value, a, b)) {}
+};
+
+/// "A has no member B"
+class ScriptErrorNoMember : public ScriptError {
+  public:
+	inline ScriptErrorNoMember(const String& type, const String& member)
+		: ScriptError(_ERROR_2_("has no member", type, member)) {}
+};
+
 // ----------------------------------------------------------------------------- : Error handling
 
 /// Should errors be written to stdout?

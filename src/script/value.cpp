@@ -19,16 +19,16 @@ DECLARE_TYPEOF_COLLECTION(pair<Variable COMMA ScriptValueP>);
 // ----------------------------------------------------------------------------- : ScriptValue
 // Base cases
 
-ScriptValue::operator String()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("string" ))); }
-ScriptValue::operator int()                                 const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("integer" ))); }
-ScriptValue::operator bool()                                const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("boolean" ))); }
-ScriptValue::operator double()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("double"  ))); }
-ScriptValue::operator AColor()                              const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("color"   ))); }
-ScriptValueP ScriptValue::eval(Context&)                    const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("function"))); }
+ScriptValue::operator String()                              const { throw ScriptErrorConversion(typeName(), _TYPE_("string" )); }
+ScriptValue::operator int()                                 const { throw ScriptErrorConversion(typeName(), _TYPE_("integer" )); }
+ScriptValue::operator bool()                                const { throw ScriptErrorConversion(typeName(), _TYPE_("boolean" )); }
+ScriptValue::operator double()                              const { throw ScriptErrorConversion(typeName(), _TYPE_("double"  )); }
+ScriptValue::operator AColor()                              const { throw ScriptErrorConversion(typeName(), _TYPE_("color"   )); }
+ScriptValueP ScriptValue::eval(Context&)                    const { return delay_error(ScriptErrorConversion(typeName(), _TYPE_("function"))); }
 ScriptValueP ScriptValue::next(ScriptValueP* key_out)             { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
-ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const { return delayError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
-int          ScriptValue::itemCount()                       const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("collection"))); }
-GeneratedImageP ScriptValue::toImage(const ScriptValueP&)   const { throw ScriptError(_ERROR_2_("can't convert", typeName(), _TYPE_("image"   ))); }
+ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const { return delay_error(ScriptErrorConversion(typeName(), _TYPE_("collection"))); }
+int          ScriptValue::itemCount()                       const { throw ScriptErrorConversion(typeName(), _TYPE_("collection")); }
+GeneratedImageP ScriptValue::toImage(const ScriptValueP&)   const { throw ScriptErrorConversion(typeName(), _TYPE_("image"   )); }
 String       ScriptValue::toCode()                          const { return *this; }
 CompareWhat  ScriptValue::compareAs(String& compare_str, void const*& compare_ptr) const {
 	compare_str = toCode();
@@ -39,11 +39,11 @@ ScriptValueP ScriptValue::getMember(const String& name) const {
 	if (name.ToLong(&index)) {
 		return getIndex(index);
 	} else {
-		return delayError(_ERROR_2_("has no member", typeName(), name));
+		return delay_error(ScriptErrorNoMember(typeName(), name));
 	}
 }
 ScriptValueP ScriptValue::getIndex(int index) const {
-	return delayError(_ERROR_2_("has no member", typeName(), String()<<index));
+	return delay_error(ScriptErrorNoMember(typeName(), String()<<index));
 }
 
 
@@ -122,6 +122,7 @@ ScriptValueP ScriptDelayedError::makeIterator(const ScriptValueP& thisP) const  
 ScriptType ScriptIterator::type() const { return SCRIPT_ITERATOR; }
 String ScriptIterator::typeName() const { return _("iterator"); }
 CompareWhat ScriptIterator::compareAs(String&, void const*&) const { return COMPARE_NO; }
+ScriptValueP ScriptIterator::makeIterator(const ScriptValueP& thisP) const { return thisP; }
 
 // Iterator over a range of integers
 class ScriptRangeIterator : public ScriptIterator {
@@ -248,7 +249,7 @@ class ScriptString : public ScriptValue {
 		if (value.ToDouble(&d)) {
 			return d;
 		} else {
-			throw ScriptError(_ERROR_3_("can't convert value", value, typeName(), _TYPE_("double")));
+			throw ScriptErrorConversion(value, typeName(), _TYPE_("double"));
 		}
 	}
 	virtual operator int()    const {
@@ -256,7 +257,7 @@ class ScriptString : public ScriptValue {
 		if (value.ToLong(&l)) {
 			return l;
 		} else {
-			throw ScriptError(_ERROR_3_("can't convert value", value, typeName(), _TYPE_("integer")));
+			throw ScriptErrorConversion(value, typeName(), _TYPE_("integer"));
 		}
 	}
 	virtual operator bool()   const {
@@ -265,13 +266,13 @@ class ScriptString : public ScriptValue {
 		} else if (value == _("no") || value == _("false") || value.empty()) {
 			return false;
 		} else {
-			throw ScriptError(_ERROR_3_("can't convert value", value, typeName(), _TYPE_("boolean")));
+			throw ScriptErrorConversion(value, typeName(), _TYPE_("boolean"));
 		}
 	}
 	virtual operator AColor() const {
 		AColor c = parse_acolor(value);
 		if (!c.Ok()) {
-			throw ScriptError(_ERROR_3_("can't convert value", value, typeName(), _TYPE_("color")));
+			throw ScriptErrorConversion(value, typeName(), _TYPE_("color"));
 		}
 		return c;
 	}
@@ -285,7 +286,7 @@ class ScriptString : public ScriptValue {
 		if (name.ToLong(&index) && index >= 0 && (size_t)index < value.size()) {
 			return to_script(String(1,value[index]));
 		} else {
-			return delayError(_ERROR_2_("has no member value", value, name));
+			return delay_error(_ERROR_2_("has no member value", value, name));
 		}
 	}
   private:

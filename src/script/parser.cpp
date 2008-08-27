@@ -625,7 +625,7 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 void parseOper(TokenIterator& input, Script& script, Precedence minPrec, InstructionType closeWith, int closeWithData) {
 	size_t added = script.getInstructions().size(); // number of instructions added
 	parseExpr(input, script, minPrec); // first argument
-	added -= script.getInstructions().size();
+	added = script.getInstructions().size() - added;
 	// read any operators after an expression
 	// EBNF:                    expr = expr | expr oper expr
 	// without left recursion:  expr = expr (oper expr)*
@@ -649,7 +649,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			// We made a mistake, the part before the := should be a variable name,
 			// not an expression. Remove that instruction.
 			Instruction& instr = script.getInstructions().back();
-			if (added == 1 && instr.instr != I_GET_VAR) {
+			if (added != 1 || instr.instr != I_GET_VAR) {
 				input.add_error(_("Can only assign to variables"));
 			}
 			script.getInstructions().pop_back();
@@ -695,9 +695,9 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			} else {
 				input.expected(_("name"));
 			}
-		} else if (minPrec <= PREC_FUN && token==_("[")) { // get member by expr
+		} else if (minPrec <= PREC_FUN && token==_("[") && !token.newline) { // get member by expr
 			size_t before = script.getInstructions().size();
-			parseOper(input, script, PREC_ALL);
+			parseOper(input, script, PREC_SET);
 			if (script.getInstructions().size() == before + 1 && script.getInstructions().back().instr == I_PUSH_CONST) {
 				// optimize:
 				//   PUSH_CONST x
@@ -709,7 +709,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 				script.addInstruction(I_BINARY, I_MEMBER);
 			}
 			expectToken(input, _("]"), &token);
-		} else if (minPrec <= PREC_FUN && token==_("(")) {
+		} else if (minPrec <= PREC_FUN && token==_("(") && !token.newline) {
 			// function call, read arguments
 			vector<Variable> arguments;
 			parseCallArguments(input, script, arguments);

@@ -110,14 +110,14 @@ SCRIPT_FUNCTION(to_int) {
 			} else if (str.empty()) {
 				result = 0;
 			} else {
-				return delayError(_ERROR_3_("can't convert value", str, input->typeName(), _TYPE_("integer")));
+				return delay_error(ScriptErrorConversion(str, input->typeName(), _TYPE_("integer")));
 			}
 		} else {
 			result = (int)*input;
 		}
 		SCRIPT_RETURN(result);
 	} catch (const ScriptError& e) {
-		return new_intrusive1<ScriptDelayedError>(e);
+		return delay_error(e);
 	}
 }
 
@@ -136,14 +136,14 @@ SCRIPT_FUNCTION(to_real) {
 			if (str.empty()) {
 				result = 0.0;
 			} else if (!str.ToDouble(&result)) {
-				return delayError(_ERROR_3_("can't convert value", str, input->typeName(), _TYPE_("double")));
+				return delay_error(ScriptErrorConversion(str, input->typeName(), _TYPE_("double")));
 			}
 		} else {
 			result = (double)*input;
 		}
 		SCRIPT_RETURN(result);
 	} catch (const ScriptError& e) {
-		return new_intrusive1<ScriptDelayedError>(e);
+		return delay_error(e);
 	}
 }
 
@@ -170,11 +170,11 @@ SCRIPT_FUNCTION(to_number) {
 			} else if (str.empty()) {
 				SCRIPT_RETURN(0);
 			} else {
-				return delayError(_ERROR_3_("can't convert value", str, input->typeName(), _TYPE_("double")));
+				return delay_error(ScriptErrorConversion(str, input->typeName(), _TYPE_("double")));
 			}
 		}
 	} catch (const ScriptError& e) {
-		return new_intrusive1<ScriptDelayedError>(e);
+		return delay_error(e);
 	}
 }
 
@@ -190,7 +190,7 @@ SCRIPT_FUNCTION(to_boolean) {
 		}
 		SCRIPT_RETURN(result);
 	} catch (const ScriptError& e) {
-		return new_intrusive1<ScriptDelayedError>(e);
+		return delay_error(e);
 	}
 }
 
@@ -199,7 +199,7 @@ SCRIPT_FUNCTION(to_color) {
 		SCRIPT_PARAM_C(AColor, input);
 		SCRIPT_RETURN(input);
 	} catch (const ScriptError& e) {
-		return new_intrusive1<ScriptDelayedError>(e);
+		return delay_error(e);
 	}
 }
 

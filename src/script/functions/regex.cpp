@@ -192,6 +192,38 @@ SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(break_text) {
 	return ScriptValueP();
 }
 
+// ----------------------------------------------------------------------------- : Rules : regex split
+
+SCRIPT_FUNCTION_WITH_SIMPLIFY(split_text) {
+	SCRIPT_PARAM_C(String, input);
+	SCRIPT_PARAM_C(ScriptRegexP, match);
+	SCRIPT_PARAM_DEFAULT_N(bool, _("include empty"), include_empty, true);
+	ScriptCustomCollectionP ret(new ScriptCustomCollection);
+	// find all matches
+	while (match->regex.Matches(input)) {
+		// match, append to result
+		size_t start, len;
+		bool ok = match->regex.GetMatch(&start, &len, 0);
+		assert(ok);
+		if (include_empty || start > 0) {
+			ret->value.push_back(to_script(input.substr(0,start)));
+		}
+		input = input.substr(start + len); // everything after the match
+	}
+	if (include_empty || !input.empty()) {
+		ret->value.push_back(to_script(input));
+	}
+	return ret;
+}
+SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(split_text) {
+	FOR_EACH(b, closure.bindings) {
+		if (b.first == SCRIPT_VAR_match) {
+			b.second = regex_from_script(b.second); // pre-compile
+		}
+	}
+	return ScriptValueP();
+}
+
 // ----------------------------------------------------------------------------- : Rules : regex match
 
 SCRIPT_FUNCTION_WITH_SIMPLIFY(match) {
@@ -214,6 +246,7 @@ void init_script_regex_functions(Context& ctx) {
 	ctx.setVariable(_("replace"),              script_replace);
 	ctx.setVariable(_("filter text"),          script_filter_text);
 	ctx.setVariable(_("break text"),           script_break_text);
+	ctx.setVariable(_("split text"),           script_split_text);
 	ctx.setVariable(_("match"),                script_match);
 	ctx.setVariable(_("replace rule"),         new_intrusive1<ScriptRule>(script_replace));
 	ctx.setVariable(_("filter rule"),          new_intrusive1<ScriptRule>(script_filter_text));

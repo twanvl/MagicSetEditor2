@@ -74,7 +74,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 				// Get a variable
 				case I_GET_VAR: {
 					ScriptValueP value = variables[i.data].value;
-					if (!value) throw ScriptError(_("Variable not set: ") + variable_to_string((Variable)i.data));
+					if (!value) throw ScriptErrorNoVariable(variable_to_string((Variable)i.data));
 					stack.push_back(value);
 					break;
 				}
@@ -124,7 +124,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 				// Function call
 				case I_CALL: {
 					// new scope
-					size_t scope = openScope();
+					LocalScope local_scope(*this);
 					// prepare arguments
 					for (unsigned int j = 0 ; j < i.data ; ++j) {
 						setVariable((Variable)instr[i.data - j - 1].data, stack.back());
@@ -135,7 +135,6 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 						// get function and call
 						stack.back() = stack.back()->eval(*this);
 					} catch (const Error& e) {
-						closeScope(scope);
 						// try to determine what named function was called
 						// the instructions for this look like:
 						//   I_GET_VAR   name of function
@@ -152,8 +151,6 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 							throw e; // rethrow
 						}
 					}
-					// restore scope
-					closeScope(scope);
 					break;
 				}
 				
@@ -241,7 +238,7 @@ void Context::setVariable(Variable name, const ScriptValueP& value) {
 
 ScriptValueP Context::getVariable(const String& name) {
 	ScriptValueP value = variables[string_to_variable(name)].value;
-	if (!value) throw ScriptError(_("Variable not set: ") + name);
+	if (!value) throw ScriptErrorNoVariable(name);
 	return value;
 }
 
@@ -250,7 +247,7 @@ ScriptValueP Context::getVariableOpt(const String& name) {
 }
 ScriptValueP Context::getVariable(Variable var) {
 	if (variables[var].value) return variables[var].value;
-	throw ScriptError(_("Variable not set: ") + variable_to_string(var));
+	throw ScriptErrorNoVariable(variable_to_string(var));
 }
 ScriptValueP Context::getVariableInScopeOpt(Variable var) {
 	if (variables[var].level == level) return variables[var].value;
