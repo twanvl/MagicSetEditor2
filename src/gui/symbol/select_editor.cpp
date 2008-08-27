@@ -39,7 +39,7 @@ SymbolSelectEditor::SymbolSelectEditor(SymbolControl* control, bool rotate)
 	handleShearY = wxBitmap(rotate_image(shear,90));
 	handleCenter = wxBitmap(load_resource_image(_("handle_center")));
 	// Make sure all parts have updated bounds
-	getSymbol()->calculateBounds();
+	getSymbol()->updateBounds();
 	resetActions();
 }
 
@@ -87,7 +87,7 @@ void SymbolSelectEditor::drawHandles(DC& dc) {
 }
 
 void SymbolSelectEditor::drawHandle(DC& dc, int dx, int dy) {
-	wxPoint p = control.rotation.tr(handlePos(dx, dy));
+	wxPoint p = control.rotation.tr(bounds.corner(dx, dy));
 	p.x += 4 * dx;
 	p.y += 4 * dy;
 	if (rotate) {
@@ -312,7 +312,7 @@ void SymbolSelectEditor::onMouseDrag  (const Vector2D& from, const Vector2D& to,
 			if (rotate) {
 				if (scaleX == 0 || scaleY == 0) {
 					// shear, center/fixed point on the opposite side
-					shearAction = new SymbolPartShearAction(control.selected_parts.get(), handlePos(-scaleX, -scaleY));
+					shearAction = new SymbolPartShearAction(control.selected_parts.get(), bounds.corner(-scaleX, -scaleY));
 					addAction(shearAction);
 				} else {
 					// rotate	
@@ -360,7 +360,7 @@ void SymbolSelectEditor::onMouseDrag  (const Vector2D& from, const Vector2D& to,
 		// shear the selected parts
 		Vector2D delta = to-from;
 		delta = delta.mul(Vector2D(scaleY, scaleX));
-		delta = delta.div(maxV - minV);
+		delta = delta.div(bounds.max - bounds.min);
 //		shearAction->constrain = ev.ControlDown();
 		shearAction->snap      = snap(ev);
 		shearAction->move(delta);
@@ -426,15 +426,8 @@ bool SymbolSelectEditor::isEditing() {
 
 // ----------------------------------------------------------------------------- : Other
 
-Vector2D SymbolSelectEditor::handlePos(int dx, int dy) {
-	return Vector2D(
-		0.5 * (maxV.x + minV.x + dx * (maxV.x - minV.x)),
-		0.5 * (maxV.y + minV.y + dy * (maxV.y - minV.y))
-	);
-}
-
 bool SymbolSelectEditor::onHandle(const Vector2D& mpos, int dx, int dy) {
-	wxPoint p  = control.rotation.tr(handlePos(dx, dy));
+	wxPoint p  = control.rotation.tr(bounds.corner(dx, dy));
 	wxPoint mp = control.rotation.tr(mpos);
 	p.x = p.x + 4 * dx;
 	p.y = p.y + 4 * dy;
@@ -460,11 +453,9 @@ double SymbolSelectEditor::angleTo(const Vector2D& pos) {
 
 void SymbolSelectEditor::updateBoundingBox() {
 	// Find min and max coordinates
-	minV =  Vector2D::infinity();
-	maxV = -Vector2D::infinity();
+	bounds = Bounds();
 	FOR_EACH(p, control.selected_parts.get()) {
-		minV = piecewise_min(minV, p->min_pos);
-		maxV = piecewise_max(maxV, p->max_pos);
+		bounds.update(p->bounds);
 	}
 /*	// Find rotation center
 	center = Vector2D(0,0);
@@ -475,7 +466,7 @@ void SymbolSelectEditor::updateBoundingBox() {
 	}
 	center /= control.selected_parts.size();
 */
-	center = (minV + maxV) / 2;
+	center = bounds.corner(0,0);
 }
 
 void SymbolSelectEditor::resetActions() {

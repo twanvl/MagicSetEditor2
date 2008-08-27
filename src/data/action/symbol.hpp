@@ -48,14 +48,14 @@ class SymbolPartMoveAction : public SymbolPartsAction {
 	void move(const Vector2D& delta);
 	
   private:
-	Vector2D delta;				///< How much to move
-	Vector2D moved;				///< How much has been moved
-	Vector2D min_pos, max_pos;	///< Bounding box of the thing we are moving
+	Vector2D delta;		///< How much to move
+	Vector2D moved;		///< How much has been moved
+	Bounds   bounds;	///< Bounding box of the thing we are moving
 	
 	void movePart(SymbolPart& part); ///< Move a single part
   public:
-	bool constrain;				///< Constrain movement?
-	int snap;					///< Snap to grid?
+	bool constrain;		///< Constrain movement?
+	int snap;			///< Snap to grid?
 };
 
 // ----------------------------------------------------------------------------- : Rotating symbol parts

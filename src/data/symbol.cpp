@@ -94,11 +94,36 @@ Vector2D& ControlPoint::getOther(WhichHandle wh) {
 	}
 }
 
+// ----------------------------------------------------------------------------- : Bounds
+
+void Bounds::update(const Vector2D& p) {
+	min = piecewise_min(min, p);
+	max = piecewise_max(max, p);
+}
+void Bounds::update(const Bounds& b) {
+	min = piecewise_min(min, b.min);
+	max = piecewise_max(max, b.max);
+}
+
+bool Bounds::contains(const Vector2D& p) const {
+	return p.x >= min.x && p.y >= min.y &&
+	       p.x <= max.x && p.y <= max.y;
+}
+bool Bounds::contains(const Bounds& b) const {
+	return b.min.x >= min.x && b.min.y >= min.y &&
+	       b.max.x <= max.x && b.max.y <= max.y;
+}
+
+Vector2D Bounds::corner(int dx, int dy) const {
+	return Vector2D(
+		0.5 * (min.x + max.x + dx * (max.x - min.x)),
+		0.5 * (min.y + max.y + dy * (max.y - min.y)));
+}
+
 // ----------------------------------------------------------------------------- : SymbolPart
 
-void SymbolPart::calculateBounds() {
-	min_pos =  Vector2D::infinity();
-	max_pos = -Vector2D::infinity();
+void SymbolPart::updateBounds() {
+	calculateBounds(Vector2D(), Matrix2D(), true);
 }
 
 IMPLEMENT_REFLECTION(SymbolPart) {
@@ -133,6 +158,23 @@ IMPLEMENT_REFLECTION_ENUM(SymbolShapeCombine) {
 	VALUE_N("border",		SYMBOL_COMBINE_BORDER);
 }
 
+
+template<typename T> void fix(const T&,SymbolShape&) {}
+void fix(const Reader& reader, SymbolShape& shape) {
+	if (reader.file_app_version != Version()) return;
+	shape.updateBounds();
+	if (shape.bounds.max.x < 100 || shape.bounds.max.y < 100) return;
+	// this is a <= 0.1.2 symbol, points range [0...500] instead of [0...1]
+	// adjust it
+	FOR_EACH(p, shape.points) {
+		p->pos          /= 500.0;
+		p->delta_before /= 500.0;
+		p->delta_after  /= 500.0;
+	}
+	if (shape.name.empty()) shape.name = _("Shape");
+	shape.updateBounds();
+}
+
 IMPLEMENT_REFLECTION(SymbolShape) {
 	REFLECT_BASE(SymbolPart);
 	REFLECT(combine);
@@ -141,20 +183,10 @@ IMPLEMENT_REFLECTION(SymbolShape) {
 	REFLECT_IF_READING {
 		// enforce constraints
 		enforceConstraints();
-		calculateBounds();
-		if (max_pos.x > 100 && max_pos.y > 100) {
-			// this is a <= 0.1.2 symbol, points range [0...500] instead of [0...1]
-			// adjust it
-			FOR_EACH(p, points) {
-				p->pos          /= 500.0;
-				p->delta_before /= 500.0;
-				p->delta_after  /= 500.0;
-			}
-			if (name.empty()) name = _("Shape");
-			calculateBounds();
-		}
+		fix(tag,*this);
 	}
 }
+
 
 SymbolShape::SymbolShape()
 	: combine(SYMBOL_COMBINE_OVERLAP), rotation_center(.5, .5)
@@ -182,13 +214,13 @@ void SymbolShape::enforceConstraints() {
 	}
 }
 
-void SymbolShape::calculateBounds() {
-	min_pos =  Vector2D::infinity();
-	max_pos = -Vector2D::infinity();
-	Rotation rot(0);
+Bounds SymbolShape::calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity) {
+	Bounds bounds;
 	for (int i = 0 ; i < (int)points.size() ; ++i) {
-		segment_bounds(rot, *getPoint(i), *getPoint(i + 1), min_pos, max_pos);
+		bounds.update(segment_bounds(origin, m, *getPoint(i), *getPoint(i + 1)));
 	}
+	if (is_identity) this->bounds = bounds;
+	return bounds;
 }
 
 // ----------------------------------------------------------------------------- : SymbolSymmetry
@@ -220,6 +252,32 @@ String SymbolSymmetry::expectedName() const {
 	     + String::Format(_(" (%d)"), copies);
 }
 
+Bounds SymbolSymmetry::calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity) {
+	Bounds bounds;
+	// See SymbolViewer::draw
+	double b = 2 * handle.angle();
+	int copies = kind == SYMMETRY_REFLECTION ? this->copies & ~1 : this->copies;
+	FOR_EACH_CONST(p, parts) {
+		for (int i = 0 ; i < copies ; ++i) {
+			double a = i * 2 * M_PI / copies;
+			if (kind == SYMMETRY_ROTATION || i % 2 == 0) {
+				Matrix2D rot(cos(a),-sin(a), sin(a),cos(a));
+				bounds.update(
+					p->calculateBounds(origin + (center - center*rot) * m, rot * m, is_identity && i == 0)
+				);
+			} else {
+				Matrix2D rot(cos(a+b),sin(a+b), sin(a+b),-cos(a+b));
+				bounds.update(
+					p->calculateBounds(origin + (center - center*rot) * m, rot * m, is_identity && i == 0)
+				);
+			}
+		}
+	}
+	// done
+	if (is_identity) this->bounds = bounds;
+	return bounds;
+}
+
 IMPLEMENT_REFLECTION(SymbolSymmetry) {
 	REFLECT_BASE(SymbolPart);
 	REFLECT(kind);
@@ -227,7 +285,6 @@ IMPLEMENT_REFLECTION(SymbolSymmetry) {
 	REFLECT(center);
 	REFLECT(handle);
 	REFLECT(parts);
-	REFLECT_IF_READING calculateBoundsNonRec();
 }
 
 // ----------------------------------------------------------------------------- : SymbolGroup
@@ -257,30 +314,25 @@ bool SymbolGroup::isAncestor(const SymbolPart& that) const {
 	return false;
 }
 
-void SymbolGroup::calculateBounds() {
-	FOR_EACH(p, parts) p->calculateBounds();
-	calculateBoundsNonRec();
-}
-void SymbolGroup::calculateBoundsNonRec() {
-	min_pos =  Vector2D::infinity();
-	max_pos = -Vector2D::infinity();
+Bounds SymbolGroup::calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity) {
+	Bounds bounds;
 	FOR_EACH(p, parts) {
-		min_pos = piecewise_min(min_pos, p->min_pos);
-		max_pos = piecewise_max(max_pos, p->max_pos);
+		bounds.update(p->calculateBounds(origin, m, is_identity));
 	}
+	if (is_identity) this->bounds = bounds;
+	return bounds;
 }
 
 IMPLEMENT_REFLECTION(SymbolGroup) {
 	REFLECT_BASE(SymbolPart);
 	REFLECT(parts);
-	REFLECT_IF_READING calculateBoundsNonRec();
 }
 
 // ----------------------------------------------------------------------------- : Symbol
 
 IMPLEMENT_REFLECTION(Symbol) {
 	REFLECT(parts);
-	REFLECT_IF_READING calculateBoundsNonRec();
+	REFLECT_IF_READING updateBounds();
 }
 
 double Symbol::aspectRatio() const {
@@ -288,8 +340,8 @@ double Symbol::aspectRatio() const {
 	// In each direction take the lowest one
 	// This is at most 0.5 (if the symbol is just a line in the middle)
 	// Multiply by 2 (below) to give something in the range [0...1] i.e. [touches the edge...only in the middle]
-	double margin_x = min(0.4999, max(0., min(min_pos.x, 1-max_pos.x)));
-	double margin_y = min(0.4999, max(0., min(min_pos.y, 1-max_pos.y)));
+	double margin_x = min(0.4999, max(0., min(bounds.min.x, 1-bounds.max.x)));
+	double margin_y = min(0.4999, max(0., min(bounds.min.y, 1-bounds.max.y)));
 	// The difference between these two,
 	// e.g. if the vertical margin is more then the horizontal one, the symbol is 'flat'
 	double delta = 2 * (margin_y - margin_x);

@@ -32,14 +32,12 @@ SymbolPartsAction::SymbolPartsAction(const set<SymbolPartP>& parts)
 SymbolPartMoveAction::SymbolPartMoveAction(const set<SymbolPartP>& parts, const Vector2D& delta)
 	: SymbolPartsAction(parts)
 	, delta(delta), moved(-delta)
-	, min_pos(Vector2D::infinity()), max_pos(-Vector2D::infinity())
 	, constrain(false)
 	, snap(0)
 {
 	// Determine min/max_pos
 	FOR_EACH(p, parts) {
-		min_pos = piecewise_min(min_pos, p->min_pos);
-		max_pos = piecewise_max(max_pos, p->max_pos);
+		bounds.update(p->bounds);
 	}
 }
 
@@ -55,9 +53,9 @@ void SymbolPartMoveAction::perform(bool to_undo) {
 	moved = -moved;
 }
 void SymbolPartMoveAction::movePart(SymbolPart& part) {
+	part.bounds.min -= moved;
+	part.bounds.max -= moved;
 	if (SymbolShape* s = part.isSymbolShape()) {
-		s->min_pos -= moved;
-		s->max_pos -= moved;
 		FOR_EACH(pnt, s->points) {
 			pnt->pos -= moved;
 		}
@@ -68,14 +66,13 @@ void SymbolPartMoveAction::movePart(SymbolPart& part) {
 		FOR_EACH(p, g->parts) {
 			movePart(*p);
 		}
-		g->calculateBoundsNonRec();
 	}
 }
 
 void SymbolPartMoveAction::move(const Vector2D& deltaDelta) {
 	delta += deltaDelta;
 	// Determine actual delta, possibly constrained and snapped
-	Vector2D d = constrain_snap_vector_offset(min_pos, max_pos, delta, constrain, snap);
+	Vector2D d = constrain_snap_vector_offset(bounds.min, bounds.max, delta, constrain, snap);
 	Vector2D dd = d - moved; // move this much more
 	// Move each point by d
 	moved = -dd;
@@ -94,6 +91,7 @@ void SymbolPartMatrixAction::transform(const Matrix2D& m) {
 	// Transform each part
 	FOR_EACH(p, parts) {
 		transform(*p, m);
+		p->updateBounds();
 	}
 }
 void SymbolPartMatrixAction::transform(SymbolPart& part, const Matrix2D& m) {
@@ -103,8 +101,6 @@ void SymbolPartMatrixAction::transform(SymbolPart& part, const Matrix2D& m) {
 			pnt->delta_before = pnt->delta_before * m;
 			pnt->delta_after  = pnt->delta_after  * m;
 		}
-		// bounds change after transforming
-		s->calculateBounds();
 	} else if (SymbolSymmetry* s = part.isSymbolSymmetry()) {
 		s->center = (s->center - center) * m + center;
 		s->handle = s->handle * m;
@@ -113,7 +109,6 @@ void SymbolPartMatrixAction::transform(SymbolPart& part, const Matrix2D& m) {
 		FOR_EACH(p, g->parts) {
 			transform(*p, m);
 		}
-		g->calculateBoundsNonRec();
 	}
 }
 
@@ -205,15 +200,13 @@ SymbolPartScaleAction::SymbolPartScaleAction(const set<SymbolPartP>& parts, int 
 	, snap(0)
 {
 	// Find min and max coordinates
-	old_min = Vector2D( 1e6, 1e6);
-	Vector2D old_max  (-1e6,-1e6);
+	Bounds bounds;
 	FOR_EACH(p, parts) {
-		old_min = piecewise_min(old_min, p->min_pos);
-		old_max = piecewise_max(old_max, p->max_pos);
+		bounds.update(p->bounds);
 	}
 	// new == old
-	new_min  = new_real_min  = old_min;
-	new_size = new_real_size = old_size = old_max - old_min;
+	new_min  = new_real_min  = old_min  = bounds.min;
+	new_size = new_real_size = old_size = bounds.max - bounds.min;
 }
 
 String SymbolPartScaleAction::getName(bool to_undo) const {
@@ -266,14 +259,15 @@ void SymbolPartScaleAction::transformAll() {
 	}
 }
 void SymbolPartScaleAction::transformPart(SymbolPart& part) {
+	// update bounds
+	part.bounds.min = transform(part.bounds.min);
+	part.bounds.max = transform(part.bounds.max);
+	// make sure that max >= min
+	if (part.bounds.min.x > part.bounds.max.x) swap(part.bounds.min.x, part.bounds.max.x);
+	if (part.bounds.min.y > part.bounds.max.y) swap(part.bounds.min.y, part.bounds.max.y);
 	if (SymbolShape* s = part.isSymbolShape()) {
-		Vector2D scale = new_size.div(old_size);
-		s->min_pos = transform(s->min_pos);
-		s->max_pos = transform(s->max_pos);
-		// make sure that max >= min
-		if (s->min_pos.x > s->max_pos.x) swap(s->min_pos.x, s->max_pos.x);
-		if (s->min_pos.y > s->max_pos.y) swap(s->min_pos.y, s->max_pos.y);
 		// scale all points
+		Vector2D scale = new_size.div(old_size);
 		FOR_EACH(pnt, s->points) {
 			pnt->pos = transform(pnt->pos);
 			// also scale handles
@@ -288,7 +282,6 @@ void SymbolPartScaleAction::transformPart(SymbolPart& part) {
 		FOR_EACH(p, g->parts) {
 			transformPart(*p);
 		}
-		g->calculateBoundsNonRec();
 	}
 }
 
@@ -538,7 +531,7 @@ GroupSymbolPartsAction::GroupSymbolPartsAction(SymbolGroup& root, const set<Symb
 			old_part_list.push_back(p);
 		}
 	}
-	group->calculateBounds();
+	group->updateBounds();
 }
 String GroupSymbolPartsAction::getName(bool to_undo) const {
 	return group->isSymbolSymmetry() ? _ACTION_("add symmetry") : _ACTION_("group parts");

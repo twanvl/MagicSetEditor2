@@ -94,23 +94,28 @@ void segment_subdivide(const ControlPoint& p0, const ControlPoint& p1, const Vec
 
 // ----------------------------------------------------------------------------- : Bounds
 
-void segment_bounds(const Rotation& rot, const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max) {
+Bounds segment_bounds(const Vector2D& origin, const Matrix2D& m, const ControlPoint& p1, const ControlPoint& p2) {
 	assert(p1.segment_after == p2.segment_before);
 	if (p1.segment_after == SEGMENT_LINE) {
-		line_bounds  (rot, p1.pos, p2.pos, min, max);
+		return line_bounds  (origin, m, p1.pos, p2.pos);
 	} else {
-		bezier_bounds(rot, p1,     p2,     min, max);
+		return bezier_bounds(origin, m, p1,     p2);
 	}
 }
 
-void bezier_bounds(const Rotation& rot, const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max) {
+Bounds bezier_bounds(const Vector2D& origin, const Matrix2D& m, const ControlPoint& p1, const ControlPoint& p2) {
 	assert(p1.segment_after == SEGMENT_CURVE);
+	// Transform the control points
+	Vector2D r1 = origin + p1.pos * m;
+	Vector2D r2 = origin + (p1.pos + p1.delta_after)  * m;
+	Vector2D r3 = origin + (p2.pos + p2.delta_before) * m;
+	Vector2D r4 = origin + p2.pos * m;
 	// First of all, the corners should be in the bounding box
-	point_bounds(rot, p1.pos, min, max);
-	point_bounds(rot, p2.pos, min, max);
+	Bounds bounds(r1);
+	bounds.update(r4);
 	// Solve the derivative of the bezier curve to find its extremes
 	// It's only a quadtratic equation :)
-	BezierCurve curve(p1,p2);
+	BezierCurve curve(r1,r2,r3,r4);
 	double roots[4];
 	UInt count;
 	count  = solve_quadratic(3*curve.a.x, 2*curve.b.x, curve.c.x, roots);
@@ -119,35 +124,24 @@ void bezier_bounds(const Rotation& rot, const ControlPoint& p1, const ControlPoi
 	for (UInt i = 0 ; i < count ; ++i) {
 		double t = roots[i];
 		if (t >=0 && t <= 1) {
-			point_bounds(rot, curve.pointAt(t), min, max);
+			bounds.update(curve.pointAt(t));
 		}
 	}
+	return bounds;
 }
 
-void line_bounds(const Rotation& rot, const Vector2D& p1, const Vector2D& p2, Vector2D& min, Vector2D& max) {
-	point_bounds(rot, p1, min, max);
-	point_bounds(rot, p2, min, max);
+Bounds line_bounds(const Vector2D& origin, const Matrix2D& m, const Vector2D& p1, const Vector2D& p2) {
+	Bounds bounds(origin + p1 * m);
+	bounds.update(origin + p2 * m);
+	return bounds;
 }
-
-void point_bounds(const Rotation& rot, const Vector2D& p, Vector2D& min, Vector2D& max) {
-	Vector2D pr = rot.tr(p);
-	min = piecewise_min(min, pr);
-	max = piecewise_max(max, pr);
-}
-
-// Is a point inside the bounds <min...max>?
-bool point_in_bounds(const Vector2D& p, const Vector2D& min, const Vector2D& max) {
-	return p.x >= min.x && p.y >= min.y &&
-	       p.x <= max.x && p.y <= max.y;
-}
-
 
 // ----------------------------------------------------------------------------- : Point tests
 
 // Is a point inside a symbol shape?
 bool point_in_shape(const Vector2D& pos, const SymbolShape& shape) {
 	// Step 1. compare bounding box of the part
-	if (!point_in_bounds(pos, shape.min_pos, shape.max_pos)) return false;
+	if (!shape.bounds.contains(pos)) return false;
 	
 	// Step 2. trace ray outward, count intersections
 	int count = 0;

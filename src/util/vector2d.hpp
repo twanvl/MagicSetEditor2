@@ -96,6 +96,10 @@ class Vector2D {
 	inline Vector2D normalized() const {
 		return *this / length();
 	}
+	/// Angle between this vector and the x axis
+	inline double angle() const {
+		return atan2(y,x);
+	}
 	
 	inline operator wxPoint() const {
 		return wxPoint(to_int(x), to_int(y));
@@ -142,7 +146,7 @@ class Matrix2D {
   public:
 	Vector2D mx, my;
 	
-	inline Matrix2D() {}
+	inline Matrix2D() : mx(1,0), my(0,1) {}
 	inline Matrix2D(const Vector2D& mx, const Vector2D& my) : mx(mx),  my(my)  {}
 	inline Matrix2D(double a, double b, double c, double d) : mx(a,b), my(c,d) {}
 };
@@ -150,6 +154,10 @@ class Matrix2D {
 /// vector-matrix product
 inline Vector2D operator * (const Vector2D& a, const Matrix2D& m) {
 	return Vector2D(dot(a,m.mx), dot(a,m.my));
+}
+/// vector-matrix product
+inline Matrix2D operator * (const Matrix2D& a, const Matrix2D& m) {
+	return Matrix2D(a.mx * m, a.my * m);
 }
 
 

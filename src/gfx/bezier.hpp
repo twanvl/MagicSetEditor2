@@ -78,25 +78,19 @@ void segment_subdivide(const ControlPoint& p0, const ControlPoint& p1, const Vec
  *  min is only changed if the minimum is smaller then the current value in min,
  *  max only if the maximum is larger.
  */
-void segment_bounds(const Rotation& rot, const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max);
+Bounds segment_bounds(const Vector2D& origin, const Matrix2D& m, const ControlPoint& p1, const ControlPoint& p2);
 
 /// Find a bounding box that fits a curve between p1 and p2, stores the results in min and max.
 /** min is only changed if the minimum is smaller then the current value in min,
  *  max only if the maximum is larger
  */
-void bezier_bounds(const Rotation& rot, const ControlPoint& p1, const ControlPoint& p2, Vector2D& min, Vector2D& max);
+Bounds bezier_bounds(const Vector2D& origin, const Matrix2D& m, const ControlPoint& p1, const ControlPoint& p2);
 
 /// Find a bounding box that fits around p1 and p2, stores the result in min and max
 /** min is only changed if the minimum is smaller then the current value in min,
  *  max only if the maximum is larger
  */
-void line_bounds(const Rotation& rot, const Vector2D& p1, const Vector2D& p2, Vector2D& min, Vector2D& max);
-
-/// Find a bounding 'box' that fits around a single point
-/** min is only changed if the minimum is smaller then the current value in min,
- *  max only if the maximum is larger
- */
-void point_bounds(const Rotation& rot, const Vector2D& p, Vector2D& min, Vector2D& max);
+Bounds line_bounds(const Vector2D& origin, const Matrix2D& m, const Vector2D& p1, const Vector2D& p2);
 
 // ----------------------------------------------------------------------------- : Point tests
 

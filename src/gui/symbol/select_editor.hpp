@@ -71,7 +71,7 @@ class SymbolSelectEditor : public SymbolEditorBase {
 	SymbolPartRotateAction* rotateAction;
 	SymbolPartShearAction*  shearAction;
 	// Bounding box of selection
-	Vector2D minV, maxV;
+	Bounds bounds;
 	// Where is the rotation center?
 	Vector2D center;
 	// What kind of clicking/dragging are we doing
@@ -111,9 +111,6 @@ class SymbolSelectEditor : public SymbolEditorBase {
 	
 	/// Angle between center and pos
 	double angleTo(const Vector2D& pos);
-	
-	/// Return the position of a handle, dx,dy in <-1, 0, 1>
-	Vector2D handlePos(int dx, int dy);
 	
 	/// Update minV and maxV to be the bounding box of the selected_parts
 	/// Updates center to be the rotation center of the parts

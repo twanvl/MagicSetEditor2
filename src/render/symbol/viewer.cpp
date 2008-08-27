@@ -151,7 +151,7 @@ void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paint
 		}
 	} else if (const SymbolSymmetry* s = part.isSymbolSymmetry()) {
 		// Draw all parts, in reverse order (bottom to top), also draw rotated copies
-		double b = 2 * atan2(s->handle.y, s->handle.x);
+		double b = 2 * s->handle.angle();
 		Matrix2D old_m = multiply;
 		Vector2D old_o = origin;
 		int copies = s->kind == SYMMETRY_REFLECTION ? s->copies / 2 * 2 : s->copies;
@@ -177,8 +177,7 @@ void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paint
 					//      =  (p * rot - d * rot + d) * m + o
 					//      =  p * rot * m + (d - d * rot) * m + o
 					Matrix2D rot(cos(a),-sin(a), sin(a),cos(a));
-					multiply.mx = rot.mx * old_m;
-					multiply.my = rot.my * old_m;
+					multiply = rot * old_m;
 					origin = old_o + (s->center - s->center * rot) * old_m;
 				} else {
 					// reflection
@@ -192,8 +191,7 @@ void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paint
 					//  = [ cos(a+b)  sin(a+b) !
 					//    ! sin(a+b) -cos(a+b) ]
 					Matrix2D rot(cos(a+b),sin(a+b), sin(a+b),-cos(a+b));
-					multiply.mx = rot.mx * old_m;
-					multiply.my = rot.my * old_m;
+					multiply = rot * old_m;
 					origin = old_o + (s->center - s->center * rot) * old_m;
 				}
 				// draw rotated copy
@@ -366,7 +364,7 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolGroup& group, HighlightStyl
 	if (style == HIGHLIGHT_BORDER) {
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		dc.SetPen  (wxPen(Color(255,0,0), 2));
-		dc.DrawRectangle(rotation.trRectToBB(RealRect(group.min_pos, RealSize(group.max_pos - group.min_pos))));
+		dc.DrawRectangle(rotation.trRectToBB(RealRect(group.bounds)));
 	}
 	FOR_EACH_CONST(part, group.parts) {
 		highlightPart(dc, *part, (HighlightStyle)(style | HIGHLIGHT_LESS));

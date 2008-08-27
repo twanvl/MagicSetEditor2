@@ -13,6 +13,7 @@
 #include <util/reflect.hpp>
 #include <util/action_stack.hpp>
 #include <util/vector2d.hpp>
+#include <util/real_point.hpp>
 
 DECLARE_POINTER_TYPE(ControlPoint);
 DECLARE_POINTER_TYPE(SymbolPart);
@@ -105,6 +106,32 @@ class SelectedHandle {
 };
 
 
+// ----------------------------------------------------------------------------- : Bounds
+
+/// Bounding box of a symbol part
+class Bounds {
+  public:
+	inline Bounds() : min(Vector2D::infinity()), max(-Vector2D::infinity()) {}
+	inline explicit Bounds(const Vector2D& p) : min(p), max(p) {}
+	inline Bounds(const Vector2D& min, const Vector2D& max) : min(min), max(max) {}
+	
+	/// Combine with another bounding box
+	void update(const Bounds& b);
+	void update(const Vector2D& p);
+	
+	/// Does this box contain the given point?
+	bool contains(const Vector2D& p) const;
+	/// Does this box contain the given rectangle?
+	bool contains(const Bounds& b) const;
+	
+	/// Corner or center of this bounding box, dx,dy in <-1, 0, 1>
+	Vector2D corner(int dx, int dy) const;
+	
+	Vector2D min, max;
+	
+	inline operator RealRect () const { return RealRect(min, RealSize(max - min)); }
+};
+
 // ----------------------------------------------------------------------------- : SymbolPart
 
 /// A part of a symbol, not necesserly a shape
@@ -114,7 +141,7 @@ class SymbolPart : public IntrusivePtrVirtualBase {
 	String name;
 	/// Position and size of the part.
 	/** this is the smallest axis aligned bounding box that fits around the part */
-	Vector2D min_pos, max_pos;
+	Bounds bounds;
 	
 	/// Type of this part
 	virtual String typeName() const = 0;
@@ -137,8 +164,10 @@ class SymbolPart : public IntrusivePtrVirtualBase {
 	/** also true if this==that*/
 	virtual bool isAncestor(const SymbolPart& that) const { return this == &that; }
 	
-	/// Calculate the position and size of the part (min_pos and max_pos)
-	virtual void calculateBounds();
+	/// Calculate the position and size of the part (bounds)
+	virtual void updateBounds();
+	/// Calculate the position and size of the part using the given rotation matrix
+	virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity) = 0;
 	
 	DECLARE_REFLECTION_VIRTUAL();
 };
@@ -189,8 +218,8 @@ class SymbolShape : public SymbolPart {
 	/// Enforce lock constraints
 	void enforceConstraints();
 	
-	/// Calculate the position and size of the part
-	virtual void calculateBounds();
+	/// Calculate the position and size of the part using the given rotation matrix
+	virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
 	
 	DECLARE_REFLECTION();
 };
@@ -212,9 +241,7 @@ class SymbolGroup : public SymbolPart {
 	
 	virtual bool isAncestor(const SymbolPart& that) const;
 	
-	virtual void calculateBounds();
-	/// re-calculate the bounds, but not of the contained parts
-	void calculateBoundsNonRec();
+	virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
 	
 	DECLARE_REFLECTION();
 };
@@ -245,6 +272,7 @@ class SymbolSymmetry : public SymbolGroup {
 	virtual const SymbolSymmetry* isSymbolSymmetry() const { return this; }
 	
 	String expectedName() const;
+	virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
 	
 	DECLARE_REFLECTION();
 };
