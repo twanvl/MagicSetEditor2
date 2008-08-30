@@ -87,8 +87,8 @@ init script:
 			else if artifact and not hybrid         then "a"
 			else if colors == ""                    then "c"
 			else colors[
-				font_color_positions
-				[	if      chosen(choice:"horizontal") then "horizontal"
+				font_color_positions[
+					if      chosen(choice:"horizontal") then "horizontal"
 					else if chosen(choice:"vertical")   then "vertical"
 					else if chosen(choice:"overlay")    then "overlay"
 					else                                     "radial"
