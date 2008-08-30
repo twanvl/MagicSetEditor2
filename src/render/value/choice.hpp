@@ -23,10 +23,19 @@ class ChoiceValueViewer : public ValueViewer {
 	virtual bool prepare(RotatedDC& dc);
 	virtual void draw(RotatedDC& dc);
 	virtual void onStyleChange(int);
+	
+	virtual bool containsPoint(const RealPoint& p) const;
+	
+  private:
+	/// Draws a border around the field
+	void drawFieldBorder(RotatedDC& dc, const AlphaMask& alpha_mask);
+	/// Load the AlphaMask for this field
+	const AlphaMask& getMask(int w, int h) const;
 };
 
 bool prepare_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, const String& value);
 void draw_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, const String& value);
+const AlphaMask& get_mask(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, int w, int h);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

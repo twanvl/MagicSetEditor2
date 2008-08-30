@@ -29,17 +29,10 @@ bool ImageValueEditor::onLeftDClick(const RealPoint&, wxMouseEvent&) {
 
 void ImageValueEditor::sliceImage(const Image& image) {
 	if (!image.Ok()) return;
-	// mask?
-	AlphaMaskP mask;
-	if (!style().mask_filename().empty()) {
-		Image mask_image;
-		InputStreamP image_file = getStylePackage().openIn(style().mask_filename);
-		if (mask_image.LoadFile(*image_file)) {
-			Image resampled(style().width, style().height);
-			resample(mask_image, resampled);
-			mask = new_intrusive1<AlphaMask>(resampled);
-		}
-	}
+	// mask
+	GeneratedImage::Options options((int)style().width, (int)style().height, &viewer.getStylePackage(), &viewer.getLocalPackage());
+	AlphaMask mask;
+	style().mask.getNoCache(options,mask);
 	// slice
 	ImageSliceWindow s(wxGetTopLevelParent(&editor()), image, style().getSize(), mask);
 	// clicked ok?

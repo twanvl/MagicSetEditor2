@@ -25,11 +25,11 @@ class ColorValueViewer : public ValueViewer {
 	virtual void draw(RotatedDC& dc);
 	virtual bool containsPoint(const RealPoint& p) const;
 	
-	virtual void onStyleChange(int);
-	
   private:
-	mutable AlphaMaskP alpha_mask;
-	void loadMask(const Rotation& rot) const;
+	/// Draws a border around the field
+	void drawFieldBorder(RotatedDC& dc, const AlphaMask& alpha_mask);
+	/// Load the AlphaMask for this field
+	const AlphaMask& getMask(int w, int h) const;
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -277,7 +277,11 @@ class ScriptString : public ScriptValue {
 		return c;
 	}
 	virtual GeneratedImageP toImage(const ScriptValueP&) const {
-		return new_intrusive1<PackagedImage>(value);
+		if (value.empty()) {
+			return new_intrusive<BlankImage>();
+		} else {
+			return new_intrusive1<PackagedImage>(value);
+		}
 	}
 	virtual int itemCount() const { return (int)value.size(); }
 	virtual ScriptValueP getMember(const String& name) const {

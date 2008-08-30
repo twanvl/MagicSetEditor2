@@ -54,7 +54,7 @@ void ImageSlice::constrain(PreferedProperty prefer) {
 Image ImageSlice::getSlice() const {
 	if (selection.width == target_size.GetWidth() && selection.height == target_size.GetHeight() && selection.x == 0 && selection.y == 0) {
 		// exactly the right size
-		return source;
+		return source.GetSubImage(selection);
 	}
 	Image target(target_size.GetWidth(), target_size.GetHeight(), false);
 	if (sharpen && sharpen_amount > 0 && sharpen_amount <= 100) {
@@ -75,7 +75,7 @@ DEFINE_EVENT_TYPE(EVENT_SLICE_CHANGED);
 
 // ----------------------------------------------------------------------------- : ImageSliceWindow
 
-ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wxSize& target_size, const AlphaMaskP& mask)
+ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wxSize& target_size, const AlphaMask& mask)
 	: wxDialog(parent,wxID_ANY,_TITLE_("slice image"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxFULL_REPAINT_ON_RESIZE)
 	, slice(source, target_size)
 {
@@ -277,6 +277,7 @@ void ImageSliceWindow::updateControls() {
 		size->SetSelection(2); // force to fit
 	} else if (slice.selection.width  <= slice.source.GetWidth()  &&
 	           slice.selection.height <= slice.source.GetHeight() &&
+	           fabs(slice.zoomX() - slice.zoomY()) < 0.01 &&
 		        (  (slice.selection.x == 0 && slice.selection.width  == slice.source.GetWidth())
 		         ||(slice.selection.y == 0 && slice.selection.height == slice.source.GetHeight()))) {
 		size->SetSelection(1); // size to fit
@@ -334,7 +335,7 @@ END_EVENT_TABLE  ()
 
 // ----------------------------------------------------------------------------- : ImageSlicePreview
 
-ImageSlicePreview::ImageSlicePreview(Window* parent, int id, ImageSlice& slice, const AlphaMaskP& mask)
+ImageSlicePreview::ImageSlicePreview(Window* parent, int id, ImageSlice& slice, const AlphaMask& mask)
 	: wxControl(parent, id)
 	, slice(slice)
 	, mask(mask)
@@ -359,9 +360,8 @@ void ImageSlicePreview::onPaint(wxPaintEvent&) {
 void ImageSlicePreview::draw(DC& dc) {
 	if (!bitmap.Ok()) {
 		Image image = slice.getSlice();
-		if (mask && mask->hasSize(slice.target_size)) {
-			mask->setAlpha(image);
-		}
+		assert(image.GetWidth() == slice.target_size.GetWidth() && image.GetHeight() == slice.target_size.GetHeight());
+		mask.setAlpha(image);
 		if (image.HasAlpha()) {
 			// create bitmap
 			bitmap = Bitmap(image.GetWidth(), image.GetHeight());

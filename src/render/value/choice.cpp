@@ -10,6 +10,8 @@
 #include <render/value/choice.hpp>
 #include <render/card/viewer.hpp>
 
+DECLARE_TYPEOF_COLLECTION(wxPoint);
+
 // ----------------------------------------------------------------------------- : ChoiceValueViewer
 
 IMPLEMENT_VALUE_VIEWER(Choice);
@@ -20,10 +22,47 @@ bool ChoiceValueViewer::prepare(RotatedDC& dc) {
 	return prepare_choice_viewer(dc, *this, style(), value().value());
 }
 void ChoiceValueViewer::draw(RotatedDC& dc) {
-	drawFieldBorder(dc);
+	int w = max(0,(int)dc.trX(style().width)), h = max(0,(int)dc.trY(style().height));
+	const AlphaMask& alpha_mask = getMask(w,h);
+	drawFieldBorder(dc, alpha_mask);
 	if (style().render_style & RENDER_HIDDEN) return;
 	draw_choice_viewer(dc, *this, style(), value().value());
 }
+
+void ChoiceValueViewer::drawFieldBorder(RotatedDC& dc, const AlphaMask& alpha_mask) {
+	if (!alpha_mask.isLoaded()) {
+		ValueViewer::drawFieldBorder(dc);
+	} else if (setFieldBorderPen(dc)) {
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		vector<wxPoint> points;
+		alpha_mask.convexHull(points);
+		if (points.size() < 3) return;
+		FOR_EACH(p, points) p = dc.trPixelNoZoom(RealPoint(p.x,p.y));
+		dc.getDC().DrawPolygon((int)points.size(), &points[0]);
+	}
+}
+
+bool ChoiceValueViewer::containsPoint(const RealPoint& p) const {
+	// check against mask
+	return getMask(0,0).isOpaque(p, style().getSize());
+}
+
+void ChoiceValueViewer::onStyleChange(int changes) {
+	if (changes & CHANGE_MASK) style().image.clearCache();
+	ValueViewer::onStyleChange(changes);
+}
+
+const AlphaMask& ChoiceValueViewer::getMask(int w, int h) const {
+	GeneratedImage::Options opts;
+	opts.package       = &viewer.getStylePackage();
+	opts.local_package = &viewer.getLocalPackage();
+	opts.angle         = 0;
+	opts.width         = w;
+	opts.height        = h;
+	return style().mask.get(opts);
+}
+
+// ----------------------------------------------------------------------------- : Generic draw/prepare
 
 bool prepare_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, const String& value) {
 	if (style.render_style & RENDER_IMAGE) {
@@ -38,7 +77,6 @@ bool prepare_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& styl
 			// Generate image/bitmap (whichever is available)
 			// don't worry, we cache the image
 			ImageCombine combine = style.combine;
-			style.loadMask(viewer.getStylePackage());
 			Bitmap bitmap; Image image;
 			RealSize size;
 			img.generateCached(img_options, &style.mask, &combine, &bitmap, &image, &size);
@@ -70,7 +108,6 @@ void draw_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, 
 			get_options(dc, viewer, style, img_options);
 			// Generate image/bitmap
 			ImageCombine combine = style.combine;
-			style.loadMask(viewer.getStylePackage());
 			Bitmap bitmap; Image image;
 			RealSize size;
 			img.generateCached(img_options, &style.mask, &combine, &bitmap, &image, &size);
@@ -111,9 +148,4 @@ void get_options(Rotation& rot, ValueViewer& viewer, const ChoiceStyle& style, G
 		opts.height = (int) rot.trY(style.height);
 		opts.preserve_aspect = (style.alignment & ALIGN_STRETCH) ? ASPECT_STRETCH : ASPECT_FIT;
 	}
-}
-
-void ChoiceValueViewer::onStyleChange(int changes) {
-	if (changes & CHANGE_MASK) style().image.clearCache();
-	ValueViewer::onStyleChange(changes);
 }

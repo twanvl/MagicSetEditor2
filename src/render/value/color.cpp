@@ -11,6 +11,7 @@
 #include <render/card/viewer.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ColorField::ChoiceP);
+DECLARE_TYPEOF_COLLECTION(wxPoint);
 
 // ----------------------------------------------------------------------------- : ColorValueViewer
 
@@ -43,9 +44,10 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 		dc.DrawText(color_name, RealPoint(43, 3));
 	} else {
 		// is there a mask?
-		loadMask(dc);
-		if (alpha_mask) {
-			dc.DrawImage(alpha_mask->colorImage(value().value()), RealPoint(0,0), style().combine);
+		int w = max(0,(int)dc.trX(style().width)), h = max(0,(int)dc.trY(style().height));
+		const AlphaMask& alpha_mask = getMask(w,h);
+		if (alpha_mask.isLoaded()) {
+			dc.DrawImage(alpha_mask.colorImage(value().value()), RealPoint(0,0), style().combine);
 		} else {
 			// do we need clipping?
 			bool clip = style().left_width < style().width  && style().right_width  < style().width &&
@@ -64,43 +66,45 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 			dc.DrawRoundedRectangle(style().getInternalRect(), style().radius);
 			if (clip) dc.getDC().DestroyClippingRegion();
 		}
+		drawFieldBorder(dc, alpha_mask);
+	}
+}
+
+void ColorValueViewer::drawFieldBorder(RotatedDC& dc, const AlphaMask& alpha_mask) {
+	if (!alpha_mask.isLoaded()) {
+		ValueViewer::drawFieldBorder(dc);
+	} else if (setFieldBorderPen(dc)) {
+		dc.SetBrush(*wxTRANSPARENT_BRUSH);
+		vector<wxPoint> points;
+		alpha_mask.convexHull(points);
+		if (points.size() < 3) return;
+		FOR_EACH(p, points) p = dc.trPixelNoZoom(RealPoint(p.x,p.y));
+		dc.getDC().DrawPolygon((int)points.size(), &points[0]);
 	}
 }
 
 bool ColorValueViewer::containsPoint(const RealPoint& p) const {
-	// distance to each side
-	double left = p.x, right  = style().width  - p.x - 1;
-	double top  = p.y, bottom = style().height - p.y - 1;
-	if (left < 0 || right < 0 || top < 0 || bottom < 0) return false;  // outside bounding box
 	// check against mask
-	if (!style().mask_filename().empty()) loadMask(getRotation());
-	if (alpha_mask) {
-		return !alpha_mask->isTransparent((int)left, (int)top);
+	const AlphaMask& alpha_mask = getMask(0,0);
+	if (alpha_mask.isLoaded()) {
+		// check against mask
+		return alpha_mask.isOpaque(p, style().getSize());
 	} else {
+		double left = p.x, right  = style().width  - p.x - 1;
+		double top  = p.y, bottom = style().height - p.y - 1;
+		if (left < 0 || right < 0 || top < 0 || bottom < 0) return false;  // outside bounding box
 		// check against border
-		if (left >= style().left_width && right  >= style().right_width &&  // outside horizontal border
-		    top  >= style().top_width  && bottom >= style().bottom_width) { // outside vertical border
-			return false;
-		}
-		return true;
+		return left < style().left_width || right  < style().right_width   // inside horizontal border
+			|| top  < style().top_width  || bottom < style().bottom_width; // inside vertical border
 	}
 }
 
-void ColorValueViewer::onStyleChange(int changes) {
-	if (changes & CHANGE_MASK) alpha_mask = AlphaMaskP();
-	ValueViewer::onStyleChange(changes);
-}
-
-void ColorValueViewer::loadMask(const Rotation& rot) const {
-	if (style().mask_filename().empty()) return; // no mask
-	int w = (int) rot.trX(rot.getWidth()), h = (int) rot.trY(rot.getHeight());
-	if (alpha_mask && alpha_mask->hasSize(wxSize(w,h))) return; // mask loaded and right size
-	// (re) load the mask
-	Image image;
-	InputStreamP image_file = getStylePackage().openIn(style().mask_filename);
-	if (image.LoadFile(*image_file)) {
-		Image resampled(w,h);
-		resample(image, resampled);
-		alpha_mask = new_intrusive1<AlphaMask>(resampled);
-	}
+const AlphaMask& ColorValueViewer::getMask(int w, int h) const {
+	GeneratedImage::Options opts;
+	opts.package       = &viewer.getStylePackage();
+	opts.local_package = &viewer.getLocalPackage();
+	opts.angle         = 0;
+	opts.width         = w;
+	opts.height        = h;
+	return style().mask.get(opts);
 }

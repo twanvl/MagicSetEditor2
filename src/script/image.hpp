@@ -15,6 +15,8 @@
 #include <script/scriptable.hpp>
 #include <gfx/generated_image.hpp>
 
+class CachedScriptableMask;
+
 // ----------------------------------------------------------------------------- : ScriptableImage
 
 /// An image that can also be scripted
@@ -49,9 +51,10 @@ class ScriptableImage {
 	
 	/// Can this be safely generated from another thread?
 	inline bool threadSafe() const { return !value || value->threadSafe(); }
-	
 	/// Is this image specific to the set (the local_package)?
 	inline bool local() const { return value && value->local(); }
+	/// Is this image blank?
+	inline bool isBlank() const { return !value || value->isBlank(); }
 	
 	/// Get access to the script, be careful
 	inline Script& getMutableScript() { return script.getMutableScript(); }
@@ -89,7 +92,7 @@ class CachedScriptableImage : public ScriptableImage {
 	 *  Optionally, an alpha mask is applied to the image.
 	 */
 	void generateCached(const GeneratedImage::Options& img_options,
-	                    Image* mask,
+	                    CachedScriptableMask* mask,
 	                    ImageCombine* combine, wxBitmap* bitmap, wxImage* image, RealSize* size);
 	
 	/// Update the script, returns true if the value has changed
@@ -103,6 +106,30 @@ class CachedScriptableImage : public ScriptableImage {
 	Bitmap cached_b; ///< *or* the cached bitmap
 	RealSize cached_size; ///< The size of the image before rotating
 	int    cached_angle;
+};
+
+// ----------------------------------------------------------------------------- : CachedScriptableMask
+
+/// A version of ScriptableImage that caches an AlphaMask
+class CachedScriptableMask {
+  public:
+	
+	/// Update the script, returns true if the value has changed
+	bool update(Context& ctx);
+	
+	/// Get the alpha mask; with the given options
+	/** if img_options.width == 0 and the mask is already loaded, just returns it. */
+	const AlphaMask& get(const GeneratedImage::Options& img_options);
+	
+	/// Get a mask that is not cached
+	void getNoCache(const GeneratedImage::Options& img_options, AlphaMask& mask);
+	
+  private:
+	ScriptableImage script;
+	AlphaMask       mask;
+	friend class Reader;
+	friend class Writer;
+	friend class GetDefaultMember;
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -94,7 +94,7 @@ template <> void GetDefaultMember::handle(const ScriptableImage& s) {
 // ----------------------------------------------------------------------------- : CachedScriptableImage
 
 void CachedScriptableImage::generateCached(const GeneratedImage::Options& options,
-	                                       Image* mask,
+	                                       CachedScriptableMask* mask,
 	                                       ImageCombine* combine, wxBitmap* bitmap, wxImage* image, RealSize* size) {
 	// ready?
 	if (!isReady()) {
@@ -137,13 +137,24 @@ void CachedScriptableImage::generateCached(const GeneratedImage::Options& option
 			}
 		}
 	}
+	// hack: temporarily set angle to 0, do actual rotation after applying mask
+	int a = options.angle;
+	const_cast<GeneratedImage::Options&>(options).angle = 0;
 	// generate
 	cached_i = generate(options);
-	cached_angle = options.angle;
+	const_cast<GeneratedImage::Options&>(options).angle = cached_angle = a;
 	*size = cached_size = RealSize(options.width, options.height);
-	if (mask && mask->Ok()) {
+	if (mask) {
 		// apply mask
-		set_alpha(cached_i, *mask);
+		GeneratedImage::Options mask_opts(options);
+		mask_opts.width  = cached_i.GetWidth();
+		mask_opts.height = cached_i.GetHeight();
+		mask_opts.angle  = 0;
+		mask->get(mask_opts).setAlpha(cached_i);
+	}
+	if (options.angle != 0) {
+		// hack(pt2) do the actual rotation now
+		cached_i = rotate_image(cached_i, options.angle);
 	}
 	if (*combine <= COMBINE_NORMAL) {
 		*bitmap = cached_b = Bitmap(cached_i);
@@ -175,4 +186,46 @@ template <> void Writer::handle(const CachedScriptableImage& s) {
 }
 template <> void GetDefaultMember::handle(const CachedScriptableImage& s) {
 	handle((const ScriptableImage&)s);
+}
+
+
+// ----------------------------------------------------------------------------- : CachedScriptableMask
+
+
+bool CachedScriptableMask::update(Context& ctx) {
+	if (script.update(ctx)) {
+		mask.clear();
+		return true;
+	} else {
+		return false;
+	}
+}
+
+const AlphaMask& CachedScriptableMask::get(const GeneratedImage::Options& img_options) {
+	if (mask.isLoaded()) {
+		// already loaded?
+		if (img_options.width == 0 && img_options.height == 0) return mask;
+		if (mask.hasSize(wxSize(img_options.width,img_options.height))) return mask;
+	}
+	// load?
+	getNoCache(img_options,mask);
+	return mask;
+}
+void CachedScriptableMask::getNoCache(const GeneratedImage::Options& img_options, AlphaMask& other_mask) {
+	if (script.isBlank()) {
+		other_mask.clear();
+	} else {
+		Image image = script.generate(img_options);
+		other_mask.load(image);
+	}
+}
+
+template <> void Reader::handle(CachedScriptableMask& i) {
+	handle(i.script);
+}
+template <> void Writer::handle(const CachedScriptableMask& i) {
+	handle(i.script);
+}
+template <> void GetDefaultMember::handle(const CachedScriptableMask& i) {
+	handle(i.script);
 }

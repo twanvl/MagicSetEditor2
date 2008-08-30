@@ -214,11 +214,8 @@ void ChoiceStyle::initImage() {
 int ChoiceStyle::update(Context& ctx) {
 	// Don't update the choice images, leave that to invalidate()
 	int change = Style       ::update(ctx)
-	           | font         .update(ctx) * CHANGE_OTHER;
-	if (mask_filename.update(ctx)) {
-		change |= CHANGE_MASK;
-		mask = Image();
-	}
+	           | font         .update(ctx) * CHANGE_OTHER
+	           | mask         .update(ctx) * CHANGE_MASK;
 	if (!choice_images_initialized) {
 		// we only want to do this once because it is rather slow, other updates are handled by dependencies
 		choice_images_initialized = true;
@@ -255,13 +252,6 @@ void ChoiceStyle::invalidate() {
 	tellListeners(CHANGE_OTHER);
 }
 
-void ChoiceStyle::loadMask(Package& pkg) {
-	if (mask.Ok() || mask_filename().empty()) return;
-	// load file
-	InputStreamP image_file = pkg.openIn(mask_filename);
-	mask.LoadFile(*image_file);
-}
-
 IMPLEMENT_REFLECTION_ENUM(ChoicePopupStyle) {
 	VALUE_N("dropdown",	POPUP_DROPDOWN);
 	VALUE_N("menu",		POPUP_MENU);
@@ -293,7 +283,7 @@ IMPLEMENT_REFLECTION(ChoiceStyle) {
 	REFLECT_BASE(Style);
 	REFLECT(popup_style);
 	REFLECT(render_style);
-	REFLECT_N("mask",mask_filename);
+	REFLECT(mask);
 	REFLECT(combine);
 	REFLECT(alignment);
 	REFLECT(font);

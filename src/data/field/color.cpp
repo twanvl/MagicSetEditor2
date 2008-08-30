@@ -62,13 +62,13 @@ IMPLEMENT_REFLECTION(ColorStyle) {
 	REFLECT(right_width);
 	REFLECT(top_width);
 	REFLECT(bottom_width);
-	REFLECT_N("mask", mask_filename);
+	REFLECT(mask);
 	REFLECT(combine);
 }
 
 int ColorStyle::update(Context& ctx) {
-	return Style       ::update(ctx)
-	     | mask_filename.update(ctx) * CHANGE_MASK;
+	return Style::update(ctx)
+	     | mask.update(ctx) * CHANGE_MASK;
 }
 
 // ----------------------------------------------------------------------------- : ColorValue

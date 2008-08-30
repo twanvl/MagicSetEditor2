@@ -17,9 +17,13 @@ AlphaMask::AlphaMask(const Image& img) : alpha(nullptr), lefts(nullptr), rights(
 	load(img);
 }
 AlphaMask::~AlphaMask() {
-	delete[] alpha;
-	delete[] lefts;
-	delete[] rights;
+	clear();
+}
+
+void AlphaMask::clear() {
+	delete[] alpha;  alpha  = nullptr;
+	delete[] lefts;  lefts  = nullptr;
+	delete[] rights; rights = nullptr;
 }
 
 void AlphaMask::load(const Image& img) {
@@ -54,10 +58,14 @@ void AlphaMask::setAlpha(Bitmap& bmp) const {
 	bmp = Bitmap(img);
 }
 
-bool AlphaMask::isTransparent(int x, int y) const {
+bool AlphaMask::isOpaque(int x, int y) const {
 	if (x < 0 || y < 0 || x >= size.x || y >= size.y) return false;
 	if (!alpha) return true;
-	return alpha[x + y * size.x] < 20;
+	return alpha[x + y * size.x] >= 20;
+}
+bool AlphaMask::isOpaque(const RealPoint& p, const RealSize& resize) const {
+	return isOpaque((int)(p.x * size.x / resize.width)
+	               ,(int)(p.y * size.y / resize.height));
 }
 
 /// Do the points form a (counter??)clockwise angle?
@@ -72,6 +80,10 @@ void make_convex(vector<wxPoint>& points) {
 		points.erase(points.end() - 2);
 	}
 }
+void add_convex_point(vector<wxPoint>& points, int x, int y) {
+	points.push_back(wxPoint(x,y));
+	make_convex(points);
+}
 
 void AlphaMask::convexHull(vector<wxPoint>& points) const {
 	if (!alpha) throw InternalError(_("AlphaMask::convexHull"));
@@ -84,36 +96,31 @@ void AlphaMask::convexHull(vector<wxPoint>& points) const {
 				miny = min(miny,y);
 				maxy = y;
 				if (y == miny) {
-					points.push_back(wxPoint(x-1,y-1));
+					add_convex_point(points, x-1, y-1);
 				}
-				points.push_back(wxPoint(x-1,y));
-				make_convex(points);
+				add_convex_point(points, x-1, y);
 				lastx = x;
 				break;
 			}
 		}
 	}
 	if (maxy == -1) return; // No image
-	points.push_back(wxPoint(lastx-1,maxy+1));
-	make_convex(points);
+	add_convex_point(points, lastx-1, maxy+1);
 	// Right side, bottom to top
 	for (int y = maxy ; y >= miny ; --y) {
 		for (int x = size.x - 1 ; x >= 0 ; --x) {
 			if (alpha[x + y * size.x] >= 20) {
 				// opaque pixel
 				if (y == maxy) {
-					points.push_back(wxPoint(x+1,y+1));
-					make_convex(points);
+					add_convex_point(points, x+1, y+1);
 				}
-				points.push_back(wxPoint(x+1,y));
-				make_convex(points);
+				add_convex_point(points, x+1, y);
 				lastx = x;
 				break;
 			}
 		}
 	}
-	points.push_back(wxPoint(lastx+1,miny-1));
-	make_convex(points);
+	add_convex_point(points, lastx+1, miny-1);
 }
 
 Image AlphaMask::colorImage(const Color& color) const {
@@ -142,7 +149,7 @@ void AlphaMask::loadRowSizes() const {
 	}
 }
 
-double AlphaMask::rowLeft (double y, RealSize resize) const {
+double AlphaMask::rowLeft (double y, const RealSize& resize) const {
 	loadRowSizes();
 	if (!lefts || y < 0 || y >= resize.height) {
 		// no mask, or outside it
@@ -151,7 +158,7 @@ double AlphaMask::rowLeft (double y, RealSize resize) const {
 	return lefts[(int)(y * resize.height / size.y)] * resize.width / size.x;
 }
 
-double AlphaMask::rowRight(double y, RealSize resize) const {
+double AlphaMask::rowRight(double y, const RealSize& resize) const {
 	loadRowSizes();
 	if (!rights || y < 0 || y >= resize.height) {
 		// no mask, or outside it

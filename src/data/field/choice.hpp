@@ -143,20 +143,17 @@ class ChoiceStyle : public Style {
 	ChoicePopupStyle            popup_style;        ///< Style of popups/menus
 	ChoiceRenderStyle           render_style;       ///< Style of rendering
 	Font                        font;               ///< Font for drawing text (when RENDER_TEXT)
-	CachedScriptableImage       image;				///< Image to draw (when RENDER_IMAGE)
+	CachedScriptableImage       image;              ///< Image to draw (when RENDER_IMAGE)
 	map<String,ScriptableImage> choice_images;      ///< Images for the various choices (when RENDER_IMAGE)
 	bool                        choice_images_initialized;
-	Scriptable<String>          mask_filename;      ///< Filename of an additional mask over the images
+	CachedScriptableMask        mask;               ///< Mask image
 	ImageCombine                combine;            ///< Combining mode for drawing the images
 	Alignment                   alignment;          ///< Alignment of images
-	Image                       mask;               ///< The actual mask image
 	wxImageList*                thumbnails;         ///< Thumbnails for the choices
-	vector<ThumbnailStatus>     thumbnails_status;	///< Which thumbnails are up to date?
+	vector<ThumbnailStatus>     thumbnails_status;  ///< Which thumbnails are up to date?
 	// information from image rendering
 	double content_width, content_height;		///< Size of the rendered image/text
 	
-	/// Load the mask image, if it's not already done
-	void loadMask(Package& pkg);
 	/// Initialize image from choice_images
 	void initImage();
 	

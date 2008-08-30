@@ -13,6 +13,7 @@
 #include <util/defaultable.hpp>
 #include <data/field.hpp>
 #include <script/scriptable.hpp>
+#include <script/image.hpp>
 
 // ----------------------------------------------------------------------------- : ColorField
 
@@ -56,13 +57,13 @@ class ColorStyle : public Style {
 	ColorStyle(const ColorFieldP& field);
 	DECLARE_STYLE_TYPE(Color);
 	
-	double             radius;          ///< Radius of round corners
-	double             left_width;      ///< Width of the colored region on the left side
-	double             right_width;     ///< Width of the colored region on the right side
-	double             top_width;       ///< Width of the colored region on the top side
-	double             bottom_width;    ///< Width of the colored region on the bottom side
-	Scriptable<String> mask_filename;   ///< Filename of an additional mask over the images
-	ImageCombine       combine;         ///< How to combine image with the background
+	double               radius;          ///< Radius of round corners
+	double               left_width;      ///< Width of the colored region on the left side
+	double               right_width;     ///< Width of the colored region on the right side
+	double               top_width;       ///< Width of the colored region on the top side
+	double               bottom_width;    ///< Width of the colored region on the bottom side
+	CachedScriptableMask mask;            ///< Mask image
+	ImageCombine         combine;         ///< How to combine image with the background
 	
 	virtual int update(Context&);
 };

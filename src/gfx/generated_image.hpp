@@ -35,7 +35,7 @@ class GeneratedImage : public ScriptValue {
 		
 		mutable int    width, height;	///< Width to force the image to, or 0 to keep the width of the input
 										///< In that case, width and height will be later set to the actual size
-		double         zoom;            ///< Zoom factor to use, when witdth=height=0
+		double         zoom;            ///< Zoom factor to use, when width=height=0
 		int            angle;           ///< Angle to rotate image by afterwards
 		PreserveAspect preserve_aspect;
 		bool           saturate;
@@ -55,9 +55,10 @@ class GeneratedImage : public ScriptValue {
 	
 	/// Can this image be generated safely from another thread?
 	virtual bool threadSafe() const { return true; }
-	
 	/// Is this image specific to the set (the local_package)?
 	virtual bool local() const { return false; }
+	/// Is this image blank?
+	virtual bool isBlank() const { return false; }
 	
 	virtual ScriptType type() const;
 	virtual String typeName() const;
@@ -88,6 +89,7 @@ class BlankImage : public GeneratedImage {
   public:
 	virtual Image generate(const Options&) const;
 	virtual bool operator == (const GeneratedImage& that) const;
+	virtual bool isBlank() const { return true; }
 	
 	// Why is this not thread safe? What is GTK smoking?
 	#ifdef __WXGTK__

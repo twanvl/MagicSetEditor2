@@ -167,8 +167,9 @@ class AlphaMask : public IntrusivePtrBase<AlphaMask> {
 	/// Apply the alpha mask to a bitmap
 	void setAlpha(Bitmap& b) const;
 	
-	/// Is the given location fully transparent?
-	bool isTransparent(int x, int y) const;
+	/// Is the given location opaque (not fully transparent)? when the mask were stretched to size
+	bool isOpaque(const RealPoint& p, const RealSize& size) const;
+	bool isOpaque(int x, int y) const;
 	
 	/// Determine a convex hull polygon *around* the mask
 	void convexHull(vector<wxPoint>& points) const;
@@ -178,9 +179,9 @@ class AlphaMask : public IntrusivePtrBase<AlphaMask> {
 	
 	/// Returns the start of a row, when the mask were stretched to size
 	/** This is: the x coordinate of the first non-transparent pixel */
-	double rowLeft (double y, RealSize size) const;
+	double rowLeft (double y, const RealSize& size) const;
 	/// Returns the end of a row, when the mask were stretched to size
-	double rowRight(double y, RealSize size) const;
+	double rowRight(double y, const RealSize& size) const;
 	
 	/// Does this mask have the given size?
 	inline bool hasSize(const wxSize& compare_size) const { return size == compare_size; }

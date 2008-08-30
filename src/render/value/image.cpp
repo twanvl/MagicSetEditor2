@@ -22,6 +22,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 	// reset?
 	int w = max(0,(int)dc.trX(style().width)), h = max(0,(int)dc.trY(style().height));
 	int a = dc.trAngle(0); //% TODO : Add getAngle()?
+	const AlphaMask& alpha_mask = getMask(w,h);
 	if (bitmap.Ok() && (a != angle || size.width != w || size.height != h)) {
 		bitmap = Bitmap();
 	}
@@ -30,7 +31,6 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 		angle = a;
 		is_default = false;
 		Image image;
-		loadMask(dc);
 		// load from file
 		if (!value().filename.empty()) {
 			try {
@@ -48,7 +48,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 			is_default = true;
 			if (what & DRAW_EDITING) {
 				bitmap = imagePlaceholder(dc, w, h, image, what & DRAW_EDITING);
-				if (alpha_mask || a) {
+				if (alpha_mask.isLoaded() || a) {
 					image = bitmap.ConvertToImage(); // we need to convert back to an image
 				} else {
 					image = Image();
@@ -59,7 +59,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 		if (!image.Ok() && !bitmap.Ok() && style().width > 40) {
 			// placeholder bitmap
 			bitmap = imagePlaceholder(dc, w, h, wxNullImage, what & DRAW_EDITING);
-			if (alpha_mask || a) {
+			if (alpha_mask.isLoaded() || a) {
 				// we need to convert back to an image
 				image = bitmap.ConvertToImage();
 			}
@@ -67,27 +67,27 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 		// done
 		if (image.Ok()) {
 			// apply mask and rotate
-			if (alpha_mask) alpha_mask->setAlpha(image);
+			alpha_mask.setAlpha(image);
 			size = RealSize(image);
 			image = rotate_image(image, angle);
 			bitmap = Bitmap(image);
 		}
 	}
 	// border
-	drawFieldBorder(dc);
+	drawFieldBorder(dc, alpha_mask);
 	// draw image, if any
 	if (bitmap.Ok()) {
 		dc.DrawPreRotatedBitmap(bitmap, dc.getInternalRect());
 	}
 }
 
-void ImageValueViewer::drawFieldBorder(RotatedDC& dc) {
-	if (!alpha_mask) {
+void ImageValueViewer::drawFieldBorder(RotatedDC& dc, const AlphaMask& alpha_mask) {
+	if (!alpha_mask.isLoaded()) {
 		ValueViewer::drawFieldBorder(dc);
 	} else if (setFieldBorderPen(dc)) {
 		dc.SetBrush(*wxTRANSPARENT_BRUSH);
 		vector<wxPoint> points;
-		alpha_mask->convexHull(points);
+		alpha_mask.convexHull(points);
 		if (points.size() < 3) return;
 		FOR_EACH(p, points) p = dc.trPixelNoZoom(RealPoint(p.x,p.y));
 		dc.getDC().DrawPolygon((int)points.size(), &points[0]);
@@ -95,14 +95,8 @@ void ImageValueViewer::drawFieldBorder(RotatedDC& dc) {
 }
 
 bool ImageValueViewer::containsPoint(const RealPoint& p) const {
-	if (!ValueViewer::containsPoint(p)) return false;
 	// check against mask
-	if (!style().mask_filename().empty()) {
-		loadMask(getRotation());
-		return !alpha_mask || !alpha_mask->isTransparent((int)p.x, (int)p.y);
-	} else {
-		return true;
-	}
+	return getMask(0,0).isOpaque(p, style().getSize());
 }
 
 void ImageValueViewer::onValueChange() {
@@ -114,20 +108,17 @@ void ImageValueViewer::onStyleChange(int changes) {
 	    ((changes & CHANGE_DEFAULT) && is_default)) {
 		bitmap = Bitmap();
 	}
-	if (changes & CHANGE_MASK) alpha_mask = AlphaMaskP();
 	ValueViewer::onStyleChange(changes);
 }
 
-void ImageValueViewer::loadMask(const Rotation& rot) const {
-	if (style().mask_filename().empty()) return; // no mask
-	int w = (int) rot.trX(style().width), h = (int) rot.trY(style().height);
-	if (alpha_mask && alpha_mask->hasSize(wxSize(w,h))) return; // mask loaded and right size
-	// (re) load the mask
-	Image image;
-	InputStreamP image_file = getStylePackage().openIn(style().mask_filename);
-	if (image.LoadFile(*image_file)) {
-		alpha_mask = new_intrusive1<AlphaMask>(resample(image,w,h));
-	}
+const AlphaMask& ImageValueViewer::getMask(int w, int h) const {
+	GeneratedImage::Options opts;
+	opts.package       = &viewer.getStylePackage();
+	opts.local_package = &viewer.getLocalPackage();
+	opts.angle         = 0;
+	opts.width         = w;
+	opts.height        = h;
+	return style().mask.get(opts);
 }
 
 // is an image very light?

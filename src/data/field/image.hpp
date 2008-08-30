@@ -35,8 +35,8 @@ class ImageStyle : public Style {
 	inline ImageStyle(const ImageFieldP& field) : Style(field) {}
 	DECLARE_STYLE_TYPE(Image);
 	
-	Scriptable<String> mask_filename; ///< Filename for a mask image
-	ScriptableImage    default_image; ///< Placeholder
+	CachedScriptableMask mask;          ///< Mask image
+	ScriptableImage      default_image; ///< Placeholder
 	
 	virtual int update(Context&);
 };

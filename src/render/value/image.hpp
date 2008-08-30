@@ -34,15 +34,15 @@ class ImageValueViewer : public ValueViewer {
 	RealSize size; ///< Size of cached bitmap
 	int    angle;  ///< Angle of cached bitmap
 	int    is_default; ///< Is the default placeholder image used?
-	mutable AlphaMaskP alpha_mask;
-	
-	void loadMask(const Rotation& rot) const;
 	
 	/// Generate a placeholder image
 	static Bitmap imagePlaceholder(const Rotation& rot, UInt w, UInt h, const Image& background, bool editing);
 	
 	/// Draws a border around the field
-	void drawFieldBorder(RotatedDC& dc);
+	void drawFieldBorder(RotatedDC& dc, const AlphaMask& alpha_mask);
+	
+	/// Load the AlphaMask for this field
+	const AlphaMask& getMask(int w, int h) const;
 };
 
 // ----------------------------------------------------------------------------- : EOF
