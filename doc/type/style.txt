@@ -76,6 +76,7 @@ Here are some examples:
 | @bottom@		[[type:scriptable]] [[type:double]]	''Required''	Distance between bottom edge of the box and the ''top'' of the card in pixels.
 | @angle@		[[type:scriptable]] [[type:int]]	@0@		Rotation of this box, in degrees counter clockwise.
 | @visible@		[[type:scriptable]] [[type:boolean]]	@true@		Is this field visible at all?
+| @mask@		[[type:image|scriptable image]]		''none''	A mask to apply to the image, black areas in the mask become transparent, similar to [[fun:set_mask]].
 
 The rest of the properties depend on the type of [[type:field]] this style is for.
 ! Type		Property		Type			Default		Description
@@ -103,9 +104,11 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 | ^^^		@line height line max@	^^^			^^^		^^^
 | ^^^		@paragraph height@	[[type:double]]		''flexible''	The height of paragraphs. If specified, each paragraph is given this much space, and aligned inside that space as specified by @alignment@.<br/>
 		 			 			 		A paragraph break is any line break that is not soft (i.e. caused by word wrap or a @"<soft>"@ break).
-| ^^^		@mask@			[[type:filename]]	''none''	A mask that indicates where in the box text can be placed.<br/>
+| ^^^		@mask@			[[type:image|scriptable image]]	''none''	A mask that indicates where in the box text can be placed.<br/>
 		 			 			 		Text is never put in black areas of the box:<br/>
-		 			 			 		<img src="style-text-mask.png" alt=""/>
+		 			 			 		<img src="style-text-mask.png" alt=""/><br/>
+		 			 			 		The same mask image is also used to determine the size and shape of the box.
+		 			 			 		To include a certain pixel in the size/shape but not allow text to be placed there, it can be made dark gray (a value less than 128).
 | ^^^		@content width@		[[type:double]]		''automatic''	When read from a script, gives the width of the current content in this box.
 | ^^^		@content height@	[[type:double]]		''automatic''	When read from a script, gives the height of the current content in this box.
 | ^^^		@content lines@		[[type:int]]		''automatic''	When read from a script, gives the number of lines of the current content in this box.
@@ -141,12 +144,10 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 | ^^^		@right width@	^^^			^^^	^^^
 | ^^^		@top width@	^^^			^^^	^^^
 | ^^^		@bottom width@	^^^			^^^	^^^
-| ^^^		@mask@	[[type:scriptable]] [[type:filename]]	''none''	A mask to apply to the box, black areas in the mask become transparent.
 | ^^^		@combine@	[[type:combine]]		@"normal"@	How to combine the color with the background? Only applies when a mask is used.
 	
 !	<<<	<<<	<<<	<<<
-| @"image"@	@mask@		[[type:scriptable]] [[type:filename]]	''none''	A mask to apply to the image, black areas in the mask become transparent, similair to [[fun:set_mask]].
-| ^^^		@default@	[[type:image|scriptable image]]		''none''	A default image to use when the card has none.
+| @"image"@	@default@	[[type:image|scriptable image]]		''none''	A default image to use when the card has none.
 	
 !	<<<	<<<	<<<	<<<
 | @"symbol"@	@variations@	[[type:list]] of [[type:symbol variation]]s	 	Available variations of the symbol, a variation describes color and border size.

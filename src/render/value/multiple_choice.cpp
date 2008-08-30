@@ -25,9 +25,7 @@ bool MultipleChoiceValueViewer::prepare(RotatedDC& dc) {
 }
 
 void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
-	int w = max(0,(int)dc.trX(style().width)), h = max(0,(int)dc.trY(style().height));
-	const AlphaMask& alpha_mask = getMask(w,h);
-	drawFieldBorder(dc, alpha_mask);
+	drawFieldBorder(dc);
 	if (style().render_style & RENDER_HIDDEN) return;
 	RealPoint pos = align_in_rect(style().alignment, RealSize(0,0), style().getInternalRect());
 	// selected choices
@@ -86,35 +84,7 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 	pos = move_in_direction(style().direction, pos, size, style().spacing);
 }
 
-void MultipleChoiceValueViewer::drawFieldBorder(RotatedDC& dc, const AlphaMask& alpha_mask) {
-	if (!alpha_mask.isLoaded()) {
-		ValueViewer::drawFieldBorder(dc);
-	} else if (setFieldBorderPen(dc)) {
-		dc.SetBrush(*wxTRANSPARENT_BRUSH);
-		vector<wxPoint> points;
-		alpha_mask.convexHull(points);
-		if (points.size() < 3) return;
-		FOR_EACH(p, points) p = dc.trPixelNoZoom(RealPoint(p.x,p.y));
-		dc.getDC().DrawPolygon((int)points.size(), &points[0]);
-	}
-}
-
-bool MultipleChoiceValueViewer::containsPoint(const RealPoint& p) const {
-	// check against mask
-	return getMask(0,0).isOpaque(p, style().getSize());
-}
-
 void MultipleChoiceValueViewer::onStyleChange(int changes) {
 	if (changes & CHANGE_MASK) style().image.clearCache();
 	ValueViewer::onStyleChange(changes);
-}
-
-const AlphaMask& MultipleChoiceValueViewer::getMask(int w, int h) const {
-	GeneratedImage::Options opts;
-	opts.package       = &viewer.getStylePackage();
-	opts.local_package = &viewer.getLocalPackage();
-	opts.angle         = 0;
-	opts.width         = w;
-	opts.height        = h;
-	return style().mask.get(opts);
 }

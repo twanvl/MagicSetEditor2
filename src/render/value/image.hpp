@@ -23,9 +23,6 @@ class ImageValueViewer : public ValueViewer {
 	DECLARE_VALUE_VIEWER(Image) : ValueViewer(parent,style) {}
 	
 	virtual void draw(RotatedDC& dc);
-	
-	virtual bool containsPoint(const RealPoint& p) const;
-	
 	virtual void onValueChange();
 	virtual void onStyleChange(int);
 			
@@ -37,12 +34,6 @@ class ImageValueViewer : public ValueViewer {
 	
 	/// Generate a placeholder image
 	static Bitmap imagePlaceholder(const Rotation& rot, UInt w, UInt h, const Image& background, bool editing);
-	
-	/// Draws a border around the field
-	void drawFieldBorder(RotatedDC& dc, const AlphaMask& alpha_mask);
-	
-	/// Load the AlphaMask for this field
-	const AlphaMask& getMask(int w, int h) const;
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -661,10 +661,10 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 }
 
 double TextViewer::lineLeft(RotatedDC& dc, const TextStyle& style, double y) const {
-	return style.mask.rowLeft(y, dc.getInternalSize()) + style.padding_left;
+	return style.mask.getFromCache().rowLeft(y, dc.getInternalSize()) + style.padding_left;
 }
 double TextViewer::lineRight(RotatedDC& dc, const TextStyle& style, double y) const {
-	return style.mask.rowRight(y, dc.getInternalSize()) - style.padding_right;
+	return style.mask.getFromCache().rowRight(y, dc.getInternalSize()) - style.padding_right;
 }
 
 

@@ -211,7 +211,7 @@ const AlphaMask& CachedScriptableMask::get(const GeneratedImage::Options& img_op
 	getNoCache(img_options,mask);
 	return mask;
 }
-void CachedScriptableMask::getNoCache(const GeneratedImage::Options& img_options, AlphaMask& other_mask) {
+void CachedScriptableMask::getNoCache(const GeneratedImage::Options& img_options, AlphaMask& other_mask) const {
 	if (script.isBlank()) {
 		other_mask.clear();
 	} else {

@@ -15,14 +15,7 @@
 IMPLEMENT_VALUE_VIEWER(Text);
 
 bool TextValueViewer::prepare(RotatedDC& dc) {
-	if (!style().mask_filename.empty() && !style().mask.isLoaded()) {
-		// load contour mask
-		Image image;
-		InputStreamP image_file = getStylePackage().openIn(style().mask_filename);
-		if (image.LoadFile(*image_file)) {
-			style().mask.load(image);
-		}
-	}
+	getMask(dc); // ensure alpha/contour mask is loaded
 	return v.prepare(dc, value().value(), style(), viewer.getContext());
 }
 

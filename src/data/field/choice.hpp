@@ -146,7 +146,6 @@ class ChoiceStyle : public Style {
 	CachedScriptableImage       image;              ///< Image to draw (when RENDER_IMAGE)
 	map<String,ScriptableImage> choice_images;      ///< Images for the various choices (when RENDER_IMAGE)
 	bool                        choice_images_initialized;
-	CachedScriptableMask        mask;               ///< Mask image
 	ImageCombine                combine;            ///< Combining mode for drawing the images
 	Alignment                   alignment;          ///< Alignment of images
 	wxImageList*                thumbnails;         ///< Thumbnails for the choices

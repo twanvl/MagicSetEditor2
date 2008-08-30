@@ -213,9 +213,8 @@ void ChoiceStyle::initImage() {
 
 int ChoiceStyle::update(Context& ctx) {
 	// Don't update the choice images, leave that to invalidate()
-	int change = Style       ::update(ctx)
-	           | font         .update(ctx) * CHANGE_OTHER
-	           | mask         .update(ctx) * CHANGE_MASK;
+	int change = Style::update(ctx)
+	           | font  .update(ctx) * CHANGE_OTHER;
 	if (!choice_images_initialized) {
 		// we only want to do this once because it is rather slow, other updates are handled by dependencies
 		choice_images_initialized = true;
@@ -283,7 +282,6 @@ IMPLEMENT_REFLECTION(ChoiceStyle) {
 	REFLECT_BASE(Style);
 	REFLECT(popup_style);
 	REFLECT(render_style);
-	REFLECT(mask);
 	REFLECT(combine);
 	REFLECT(alignment);
 	REFLECT(font);

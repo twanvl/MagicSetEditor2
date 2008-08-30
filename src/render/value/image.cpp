@@ -74,29 +74,11 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 		}
 	}
 	// border
-	drawFieldBorder(dc, alpha_mask);
+	drawFieldBorder(dc);
 	// draw image, if any
 	if (bitmap.Ok()) {
 		dc.DrawPreRotatedBitmap(bitmap, dc.getInternalRect());
 	}
-}
-
-void ImageValueViewer::drawFieldBorder(RotatedDC& dc, const AlphaMask& alpha_mask) {
-	if (!alpha_mask.isLoaded()) {
-		ValueViewer::drawFieldBorder(dc);
-	} else if (setFieldBorderPen(dc)) {
-		dc.SetBrush(*wxTRANSPARENT_BRUSH);
-		vector<wxPoint> points;
-		alpha_mask.convexHull(points);
-		if (points.size() < 3) return;
-		FOR_EACH(p, points) p = dc.trPixelNoZoom(RealPoint(p.x,p.y));
-		dc.getDC().DrawPolygon((int)points.size(), &points[0]);
-	}
-}
-
-bool ImageValueViewer::containsPoint(const RealPoint& p) const {
-	// check against mask
-	return getMask(0,0).isOpaque(p, style().getSize());
 }
 
 void ImageValueViewer::onValueChange() {
@@ -109,16 +91,6 @@ void ImageValueViewer::onStyleChange(int changes) {
 		bitmap = Bitmap();
 	}
 	ValueViewer::onStyleChange(changes);
-}
-
-const AlphaMask& ImageValueViewer::getMask(int w, int h) const {
-	GeneratedImage::Options opts;
-	opts.package       = &viewer.getStylePackage();
-	opts.local_package = &viewer.getLocalPackage();
-	opts.angle         = 0;
-	opts.width         = w;
-	opts.height        = h;
-	return style().mask.get(opts);
 }
 
 // is an image very light?

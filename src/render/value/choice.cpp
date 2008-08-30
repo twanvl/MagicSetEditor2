@@ -22,44 +22,14 @@ bool ChoiceValueViewer::prepare(RotatedDC& dc) {
 	return prepare_choice_viewer(dc, *this, style(), value().value());
 }
 void ChoiceValueViewer::draw(RotatedDC& dc) {
-	int w = max(0,(int)dc.trX(style().width)), h = max(0,(int)dc.trY(style().height));
-	const AlphaMask& alpha_mask = getMask(w,h);
-	drawFieldBorder(dc, alpha_mask);
+	drawFieldBorder(dc);
 	if (style().render_style & RENDER_HIDDEN) return;
 	draw_choice_viewer(dc, *this, style(), value().value());
-}
-
-void ChoiceValueViewer::drawFieldBorder(RotatedDC& dc, const AlphaMask& alpha_mask) {
-	if (!alpha_mask.isLoaded()) {
-		ValueViewer::drawFieldBorder(dc);
-	} else if (setFieldBorderPen(dc)) {
-		dc.SetBrush(*wxTRANSPARENT_BRUSH);
-		vector<wxPoint> points;
-		alpha_mask.convexHull(points);
-		if (points.size() < 3) return;
-		FOR_EACH(p, points) p = dc.trPixelNoZoom(RealPoint(p.x,p.y));
-		dc.getDC().DrawPolygon((int)points.size(), &points[0]);
-	}
-}
-
-bool ChoiceValueViewer::containsPoint(const RealPoint& p) const {
-	// check against mask
-	return getMask(0,0).isOpaque(p, style().getSize());
 }
 
 void ChoiceValueViewer::onStyleChange(int changes) {
 	if (changes & CHANGE_MASK) style().image.clearCache();
 	ValueViewer::onStyleChange(changes);
-}
-
-const AlphaMask& ChoiceValueViewer::getMask(int w, int h) const {
-	GeneratedImage::Options opts;
-	opts.package       = &viewer.getStylePackage();
-	opts.local_package = &viewer.getLocalPackage();
-	opts.angle         = 0;
-	opts.width         = w;
-	opts.height        = h;
-	return style().mask.get(opts);
 }
 
 // ----------------------------------------------------------------------------- : Generic draw/prepare

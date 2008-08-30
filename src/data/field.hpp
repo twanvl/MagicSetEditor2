@@ -16,6 +16,7 @@
 #include <util/rotation.hpp>
 #include <script/scriptable.hpp>
 #include <script/dependency.hpp>
+#include <script/image.hpp>
 
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Style);
@@ -94,13 +95,16 @@ class Style : public IntrusivePtrVirtualBase {
 	Style(const FieldP&);
 	virtual ~Style();
 	
-	const FieldP       fieldP;			///< Field this style is for, should have the right type!
-	int                z_index;			///< Stacking of values of this field, higher = on top
-	Scriptable<double> left,  top;		///< Position of this field
-	Scriptable<double> width, height;	///< Position of this field
-	Scriptable<double> right, bottom;	///< Position of this field
-	Scriptable<int>    angle;			///< Rotation of the box
-	Scriptable<bool>   visible;			///< Is this field visible?
+	const FieldP       fieldP;          ///< Field this style is for, should have the right type!
+	
+	int                z_index;         ///< Stacking of values of this field, higher = on top
+	Scriptable<double> left,  top;      ///< Position of this field
+	Scriptable<double> width, height;   ///< Position of this field
+	Scriptable<double> right, bottom;   ///< Position of this field
+	Scriptable<int>    angle;           ///< Rotation of the box
+	Scriptable<bool>   visible;         ///< Is this field visible?
+	CachedScriptableMask mask;          ///< Mask image
+	
 	enum AutomaticSide {
 		AUTO_UNKNOWN = 0x00,
 		AUTO_LEFT    = 0x01, AUTO_WIDTH  = 0x02, AUTO_RIGHT  = 0x04, AUTO_LR = 0x08,
@@ -166,8 +170,9 @@ class Style : public IntrusivePtrVirtualBase {
 enum StyleChange
 {	CHANGE_NONE              = 0x00 // nothing changed
 ,	CHANGE_OTHER             = 0x01 // some other change (note: result of casting from bool)
-,	CHANGE_DEFAULT           = 0x02 // only the 'default' state is affected
-,	CHANGE_MASK              = 0x04 // a mask image changed, must be reloaded
+,	CHANGE_SIZE              = 0x02 // size/angle changed
+,	CHANGE_DEFAULT           = 0x04 // only the 'default' state is affected
+,	CHANGE_MASK              = 0x08 // a mask image changed, must be reloaded
 ,	CHANGE_ALREADY_PREPARED  = 0x80 // hint that the change was the result of a content property change, viewers are already prepared
 };
 

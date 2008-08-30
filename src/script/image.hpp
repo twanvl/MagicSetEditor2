@@ -117,12 +117,22 @@ class CachedScriptableMask {
 	/// Update the script, returns true if the value has changed
 	bool update(Context& ctx);
 	
+	inline void initDependencies(Context& ctx, const Dependency& dep) const {
+		script.initDependencies(ctx, dep);
+	}
+	
 	/// Get the alpha mask; with the given options
-	/** if img_options.width == 0 and the mask is already loaded, just returns it. */
+	/** if img_options.width == 0 and the mask is already loaded, just returns it.
+	 *  Returns a reference, so calling again might change earlier results.
+	 */
 	const AlphaMask& get(const GeneratedImage::Options& img_options);
 	
 	/// Get a mask that is not cached
-	void getNoCache(const GeneratedImage::Options& img_options, AlphaMask& mask);
+	void getNoCache(const GeneratedImage::Options& img_options, AlphaMask& mask) const;
+	
+	/// Get the mask directly from the cache, without updating
+	/** Should only be used after get() was called before, otherwise an old mask might be returned */
+	inline const AlphaMask& getFromCache() const { return mask; }
 	
   private:
 	ScriptableImage script;

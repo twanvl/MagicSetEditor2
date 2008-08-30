@@ -44,8 +44,7 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 		dc.DrawText(color_name, RealPoint(43, 3));
 	} else {
 		// is there a mask?
-		int w = max(0,(int)dc.trX(style().width)), h = max(0,(int)dc.trY(style().height));
-		const AlphaMask& alpha_mask = getMask(w,h);
+		const AlphaMask& alpha_mask = getMask(dc);
 		if (alpha_mask.isLoaded()) {
 			dc.DrawImage(alpha_mask.colorImage(value().value()), RealPoint(0,0), style().combine);
 		} else {
@@ -66,26 +65,13 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 			dc.DrawRoundedRectangle(style().getInternalRect(), style().radius);
 			if (clip) dc.getDC().DestroyClippingRegion();
 		}
-		drawFieldBorder(dc, alpha_mask);
-	}
-}
-
-void ColorValueViewer::drawFieldBorder(RotatedDC& dc, const AlphaMask& alpha_mask) {
-	if (!alpha_mask.isLoaded()) {
-		ValueViewer::drawFieldBorder(dc);
-	} else if (setFieldBorderPen(dc)) {
-		dc.SetBrush(*wxTRANSPARENT_BRUSH);
-		vector<wxPoint> points;
-		alpha_mask.convexHull(points);
-		if (points.size() < 3) return;
-		FOR_EACH(p, points) p = dc.trPixelNoZoom(RealPoint(p.x,p.y));
-		dc.getDC().DrawPolygon((int)points.size(), &points[0]);
+		drawFieldBorder(dc);
 	}
 }
 
 bool ColorValueViewer::containsPoint(const RealPoint& p) const {
 	// check against mask
-	const AlphaMask& alpha_mask = getMask(0,0);
+	const AlphaMask& alpha_mask = getMask();
 	if (alpha_mask.isLoaded()) {
 		// check against mask
 		return alpha_mask.isOpaque(p, style().getSize());
@@ -97,14 +83,4 @@ bool ColorValueViewer::containsPoint(const RealPoint& p) const {
 		return left < style().left_width || right  < style().right_width   // inside horizontal border
 			|| top  < style().top_width  || bottom < style().bottom_width; // inside vertical border
 	}
-}
-
-const AlphaMask& ColorValueViewer::getMask(int w, int h) const {
-	GeneratedImage::Options opts;
-	opts.package       = &viewer.getStylePackage();
-	opts.local_package = &viewer.getLocalPackage();
-	opts.angle         = 0;
-	opts.width         = w;
-	opts.height        = h;
-	return style().mask.get(opts);
 }

@@ -60,12 +60,21 @@ void AlphaMask::setAlpha(Bitmap& bmp) const {
 
 bool AlphaMask::isOpaque(int x, int y) const {
 	if (x < 0 || y < 0 || x >= size.x || y >= size.y) return false;
-	if (!alpha) return true;
-	return alpha[x + y * size.x] >= 20;
+	if (alpha) {
+		return alpha[x + y * size.x] >= 20;
+	} else {
+		return true;
+	}
 }
 bool AlphaMask::isOpaque(const RealPoint& p, const RealSize& resize) const {
-	return isOpaque((int)(p.x * size.x / resize.width)
-	               ,(int)(p.y * size.y / resize.height));
+	if (p.x < 0 || p.y < 0 || p.x >= resize.width || p.y >= resize.height) return false;
+	if (alpha) {
+		int x = (int)(p.x * size.x / resize.width);
+		int y = (int)(p.y * size.y / resize.height);
+		return alpha[x + y * size.x] >= 20;
+	} else {
+		return true;
+	}
 }
 
 /// Do the points form a (counter??)clockwise angle?
@@ -141,7 +150,7 @@ void AlphaMask::loadRowSizes() const {
 		lefts[y]  = size.x;
 		rights[y] = 0;
 		for (int x = 0 ; x < size.x ; ++x) {
-			if (alpha[y * size.x + x] > 64) { // white enough
+			if (alpha[y * size.x + x] >= 128) { // white enough
 				rights[y] = x;
 				if (x < lefts[y]) lefts[y] = x;
 			}
@@ -155,7 +164,7 @@ double AlphaMask::rowLeft (double y, const RealSize& resize) const {
 		// no mask, or outside it
 		return 0;
 	}
-	return lefts[(int)(y * resize.height / size.y)] * resize.width / size.x;
+	return lefts[(int)(y * size.y / resize.height)] * resize.width / size.x;
 }
 
 double AlphaMask::rowRight(double y, const RealSize& resize) const {
@@ -164,5 +173,5 @@ double AlphaMask::rowRight(double y, const RealSize& resize) const {
 		// no mask, or outside it
 		return resize.width;
 	}
-	return rights[(int)(y * resize.height / size.y)] * resize.width / size.x;
+	return rights[(int)(y * size.y / resize.height)] * resize.width / size.x;
 }

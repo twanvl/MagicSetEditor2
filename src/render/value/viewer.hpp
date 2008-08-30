@@ -83,6 +83,10 @@ class ValueViewer : public StyleListener {
 	/// Redraw this viewer
 	void redraw();
 	
+	/// Load the AlphaMask for this field, scaled but not rotated
+	const AlphaMask& getMask(int w = 0, int h = 0) const;
+	const AlphaMask& getMask(const Rotation& rot) const;
+	
   public:
 	/// Should this viewer render using a platform native look?
 	bool nativeLook() const;

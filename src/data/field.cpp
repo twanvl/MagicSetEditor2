@@ -118,6 +118,7 @@ IMPLEMENT_REFLECTION(Style) {
 	REFLECT(bottom);
 	REFLECT(angle);
 	REFLECT(visible);
+	REFLECT(mask);
 }
 
 void init_object(const FieldP& field, StyleP& style) {
@@ -135,15 +136,16 @@ inline bool is_setw(const Scriptable<double>& x) {
 }
 
 int Style::update(Context& ctx) {
-	bool changed =
-	       left   .update(ctx)
+	int changed =
+	     ( left   .update(ctx)
 	     | width  .update(ctx)
 	     | right  .update(ctx)
 	     | top    .update(ctx)
 	     | height .update(ctx)
 	     | bottom .update(ctx)
-	     | angle  .update(ctx)
-	     | visible.update(ctx);
+	     | angle  .update(ctx) ) * CHANGE_SIZE
+	     | visible.update(ctx)   * CHANGE_OTHER
+	     | mask   .update(ctx)   * CHANGE_MASK;
 	// determine automatic_side and attachment of rotation point
 	if (automatic_side == AUTO_UNKNOWN) {
 		if      (!is_set (right))  automatic_side = (AutomaticSide)(automatic_side | AUTO_RIGHT);
@@ -154,7 +156,7 @@ int Style::update(Context& ctx) {
 		else if (!is_setw(height)) automatic_side = (AutomaticSide)(automatic_side | AUTO_HEIGHT);
 		else if (!is_set (top))    automatic_side = (AutomaticSide)(automatic_side | AUTO_TOP);
 		else                       automatic_side = (AutomaticSide)(automatic_side | AUTO_TB);
-		changed = true;
+		changed |= CHANGE_SIZE;
 	}
 	if (!changed) return CHANGE_NONE;
 	// update the automatic_side
@@ -181,7 +183,7 @@ int Style::update(Context& ctx) {
 	if (width  < 0) width  = -width;
 	if (height < 0) height = -height;
 	// done
-	return CHANGE_OTHER;
+	return changed;
 }
 
 bool Style::isVisible() const {
@@ -214,6 +216,7 @@ void Style::checkContentDependencies(Context& ctx, const Dependency& dep) const 
 	right  .initDependencies(ctx,dep);
 	bottom .initDependencies(ctx,dep);
 	visible.initDependencies(ctx,dep);
+	mask   .initDependencies(ctx,dep);
 }
 
 void Style::markDependencyMember(const String& name, const Dependency& dep) const {
