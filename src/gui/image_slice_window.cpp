@@ -359,7 +359,7 @@ void ImageSlicePreview::onPaint(wxPaintEvent&) {
 void ImageSlicePreview::draw(DC& dc) {
 	if (!bitmap.Ok()) {
 		Image image = slice.getSlice();
-		if (mask && mask->size == slice.target_size) {
+		if (mask && mask->hasSize(slice.target_size)) {
 			mask->setAlpha(image);
 		}
 		if (image.HasAlpha()) {

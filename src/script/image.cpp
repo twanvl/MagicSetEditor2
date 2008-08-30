@@ -143,13 +143,7 @@ void CachedScriptableImage::generateCached(const GeneratedImage::Options& option
 	*size = cached_size = RealSize(options.width, options.height);
 	if (mask && mask->Ok()) {
 		// apply mask
-		if (mask->GetWidth() == cached_i.GetWidth() && mask->GetHeight() == cached_i.GetHeight()) {
-			set_alpha(cached_i, *mask);
-		} else {
-			Image mask_scaled(cached_i.GetWidth(),cached_i.GetHeight(), false);
-			resample(*mask,mask_scaled);
-			set_alpha(cached_i, mask_scaled);
-		}
+		set_alpha(cached_i, *mask);
 	}
 	if (*combine <= COMBINE_NORMAL) {
 		*bitmap = cached_b = Bitmap(cached_i);

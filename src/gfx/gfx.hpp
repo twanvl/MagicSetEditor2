@@ -153,8 +153,14 @@ void set_alpha(Image& img, double alpha);
  */
 class AlphaMask : public IntrusivePtrBase<AlphaMask> {
   public:
+	AlphaMask();
 	AlphaMask(const Image& mask);
 	~AlphaMask();
+	
+	/// Load an alpha mask
+	void load(const Image& image);
+	/// Unload the mask
+	void clear();
 	
 	/// Apply the alpha mask to an image
 	void setAlpha(Image& i) const;
@@ -167,36 +173,27 @@ class AlphaMask : public IntrusivePtrBase<AlphaMask> {
 	/// Determine a convex hull polygon *around* the mask
 	void convexHull(vector<wxPoint>& points) const;
 	
-	/// Size of the mask
-	wxSize size;
-  private:
-	Byte* alpha;
-};
-
-/// A contour mask stores the size and position of each line in the image
-/** It is created by treating black in the source image as transparent and white (red) as opaque
- *  The left is the first non-transparent pixel, the right is the last non-transparent pixel
- */
-class ContourMask {
-  public:
-	ContourMask();
-	~ContourMask();
-	
-	/// Load a contour mask
-	void load(const Image& image);
-	/// Unload the mask
-	void unload();
-	/// Is a mask loaded?
-	inline bool ok() const { return width > 0 && height > 0; }
+	/// Make an image of the given color using this mask
+	Image colorImage(const Color& color) const;
 	
 	/// Returns the start of a row, when the mask were stretched to size
+	/** This is: the x coordinate of the first non-transparent pixel */
 	double rowLeft (double y, RealSize size) const;
 	/// Returns the end of a row, when the mask were stretched to size
 	double rowRight(double y, RealSize size) const;
 	
+	/// Does this mask have the given size?
+	inline bool hasSize(const wxSize& compare_size) const { return size == compare_size; }
+	/// Is the mask loaded?
+	inline bool isLoaded() const { return alpha; }
+	
   private:
-	int width, height;
-	int *lefts, *rights;
+	wxSize size; ///< Size of the mask
+	Byte* alpha; ///< Data of alpha mask
+	mutable int *lefts, *rights; ///< Row sizes
+	
+	/// Compute lefts and rights from alpha
+	void loadRowSizes() const;
 };
 
 // ----------------------------------------------------------------------------- : EOF

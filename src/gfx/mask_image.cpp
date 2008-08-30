@@ -12,29 +12,43 @@
 
 // ----------------------------------------------------------------------------- : AlphaMask
 
-AlphaMask::AlphaMask(const Image& img)
-	: size(img.GetWidth(), img.GetHeight())
-{
+AlphaMask::AlphaMask()                 : alpha(nullptr), lefts(nullptr), rights(nullptr) {}
+AlphaMask::AlphaMask(const Image& img) : alpha(nullptr), lefts(nullptr), rights(nullptr) {
+	load(img);
+}
+AlphaMask::~AlphaMask() {
+	delete[] alpha;
+	delete[] lefts;
+	delete[] rights;
+}
+
+void AlphaMask::load(const Image& img) {
+	size_t old_n = alpha ? size.x * size.y : 0;
+	size.x = img.GetWidth();
+	size.y = img.GetHeight();
+	// Memory
+	size_t n = size.x * size.y;
+	if (n != old_n) {
+		delete[] alpha;
+		alpha = new Byte[n];
+	}
+	delete[] lefts;  lefts  = nullptr;
+	delete[] rights; rights = nullptr;
 	// Copy red chanel to alpha
-	size_t n = size.GetWidth() * size.GetHeight();
-	alpha = new Byte[n];
 	Byte* from = img.GetData(), *to = alpha;
 	for (size_t i = 0 ; i < n ; ++i) {
-		*to = *from;
-		from += 3;
-		to   += 1;
+		to[i] = from[3*i];
 	}
 }
 
-AlphaMask::~AlphaMask() {
-	delete[] alpha;
-}
 
 void AlphaMask::setAlpha(Image& img) const {
+	if (!alpha) return;
 	set_alpha(img, alpha, size);
 }
 
 void AlphaMask::setAlpha(Bitmap& bmp) const {
+	if (!alpha) return;
 	Image img = bmp.ConvertToImage();
 	setAlpha(img);
 	bmp = Bitmap(img);
@@ -42,6 +56,7 @@ void AlphaMask::setAlpha(Bitmap& bmp) const {
 
 bool AlphaMask::isTransparent(int x, int y) const {
 	if (x < 0 || y < 0 || x >= size.x || y >= size.y) return false;
+	if (!alpha) return true;
 	return alpha[x + y * size.x] < 20;
 }
 
@@ -59,7 +74,8 @@ void make_convex(vector<wxPoint>& points) {
 }
 
 void AlphaMask::convexHull(vector<wxPoint>& points) const {
-	// Left side
+	if (!alpha) throw InternalError(_("AlphaMask::convexHull"));
+	// Left side, top to bottom
 	int miny = size.y, maxy = -1, lastx = 0;
 	for (int y = 0 ; y < size.y ; ++y) {
 		for (int x = 0 ; x < size.x ; ++x) {
@@ -80,7 +96,7 @@ void AlphaMask::convexHull(vector<wxPoint>& points) const {
 	if (maxy == -1) return; // No image
 	points.push_back(wxPoint(lastx-1,maxy+1));
 	make_convex(points);
-	// Right side
+	// Right side, bottom to top
 	for (int y = maxy ; y >= miny ; --y) {
 		for (int x = size.x - 1 ; x >= 0 ; --x) {
 			if (alpha[x + y * size.x] >= 20) {
@@ -100,54 +116,46 @@ void AlphaMask::convexHull(vector<wxPoint>& points) const {
 	make_convex(points);
 }
 
-// ----------------------------------------------------------------------------- : ContourMask
-
-ContourMask::ContourMask()
-	: width(0), height(0), lefts(nullptr), rights(nullptr)
-{}
-ContourMask::~ContourMask() {
-	unload();
+Image AlphaMask::colorImage(const Color& color) const {
+	Image image(size.x, size.y);
+	fill_image(image, color);
+	setAlpha(image);
+	return image;
 }
 
-void ContourMask::load(const Image& image) {
-	unload();
-	width  = image.GetWidth();
-	height = image.GetHeight();
-	lefts  = new int[height];
-	rights = new int[height];
+// ----------------------------------------------------------------------------- : Contour Mask
+
+void AlphaMask::loadRowSizes() const {
+	if (lefts || !alpha) return;
+	lefts  = new int[size.y];
+	rights = new int[size.y];
 	// for each row: determine left and rightmost white pixel
-	Byte* data = image.GetData();
-	for (int y = 0 ; y < height ; ++y) {
-		lefts[y] = width; rights[y] = width;
-		for (int x = 0 ; x < width ; ++x) {
-			int v = data[0] + data[1] + data[2];
-			if (v > 50) { // white enough
+	for (int y = 0 ; y < size.y ; ++y) {
+		lefts[y]  = size.x;
+		rights[y] = 0;
+		for (int x = 0 ; x < size.x ; ++x) {
+			if (alpha[y * size.x + x] > 64) { // white enough
 				rights[y] = x;
 				if (x < lefts[y]) lefts[y] = x;
 			}
-			data += 3;
 		}
 	}
 }
 
-void ContourMask::unload() {
-	delete lefts;
-	delete rights;
-	lefts = rights = nullptr;
-	width = height = 0;
-}
-
-double ContourMask::rowLeft (double y, RealSize size) const {
-	if (!ok() || y < 0 || y >= size.height) {
+double AlphaMask::rowLeft (double y, RealSize resize) const {
+	loadRowSizes();
+	if (!lefts || y < 0 || y >= resize.height) {
 		// no mask, or outside it
 		return 0;
 	}
-	return lefts[(int)(y * size.height / height)] * size.width / width;
+	return lefts[(int)(y * resize.height / size.y)] * resize.width / size.x;
 }
-double ContourMask::rowRight(double y, RealSize size) const {
-	if (!ok() || y < 0 || y >= size.height) {
+
+double AlphaMask::rowRight(double y, RealSize resize) const {
+	loadRowSizes();
+	if (!rights || y < 0 || y >= resize.height) {
 		// no mask, or outside it
-		return size.width;
+		return resize.width;
 	}
-	return rights[(int)(y * size.height / height)] * size.width / width;
+	return rights[(int)(y * resize.height / size.y)] * resize.width / size.x;
 }

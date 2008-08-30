@@ -45,10 +45,7 @@ void ColorValueViewer::draw(RotatedDC& dc) {
 		// is there a mask?
 		loadMask(dc);
 		if (alpha_mask) {
-			Image img(alpha_mask->size.x, alpha_mask->size.y);
-			fill_image(img, value().value());
-			alpha_mask->setAlpha(img);
-			dc.DrawImage(img, RealPoint(0,0), style().combine);
+			dc.DrawImage(alpha_mask->colorImage(value().value()), RealPoint(0,0), style().combine);
 		} else {
 			// do we need clipping?
 			bool clip = style().left_width < style().width  && style().right_width  < style().width &&
@@ -97,7 +94,7 @@ void ColorValueViewer::onStyleChange(int changes) {
 void ColorValueViewer::loadMask(const Rotation& rot) const {
 	if (style().mask_filename().empty()) return; // no mask
 	int w = (int) rot.trX(rot.getWidth()), h = (int) rot.trY(rot.getHeight());
-	if (alpha_mask && alpha_mask->size == wxSize(w,h)) return; // mask loaded and right size
+	if (alpha_mask && alpha_mask->hasSize(wxSize(w,h))) return; // mask loaded and right size
 	// (re) load the mask
 	Image image;
 	InputStreamP image_file = getStylePackage().openIn(style().mask_filename);

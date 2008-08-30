@@ -77,11 +77,9 @@ void mask_blend(Image& img1, const Image& img2, const Image& mask) {
 // ----------------------------------------------------------------------------- : Alpha
 
 void set_alpha(Image& img, const Image& img_alpha) {
-	if (img.GetWidth() != img_alpha.GetWidth() || img.GetHeight() != img_alpha.GetHeight()) {
-		throw Error(_("Image must have same size as mask"));
-	}
+	Image img_alpha_resampled = resample(img_alpha, img.GetWidth(), img.GetHeight());
 	if (!img.HasAlpha()) img.InitAlpha();
-	Byte *im = img.GetAlpha(), *al = img_alpha.GetData();
+	Byte *im = img.GetAlpha(), *al = img_alpha_resampled.GetData();
 	size_t size = img.GetWidth() * img.GetHeight();
 	for (size_t i = 0 ; i < size ; ++i) {
 		im[i] = (im[i] * al[i*3]) / 255;

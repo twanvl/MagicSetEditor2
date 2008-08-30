@@ -68,7 +68,7 @@ class TextStyle : public Style {
 	double line_height_line_max;				///< Maximum line height
 	double paragraph_height;					///< Fixed height of paragraphs
 	String mask_filename;						///< Filename of the mask
-	ContourMask mask;							///< Mask to fit the text to (may be null)
+	AlphaMask mask;								///< Mask to fit the text to (may be null)
 	Direction direction;						///< In what direction is text layed out?
 	// information from text rendering
 	double content_width, content_height;		///< Size of the rendered text

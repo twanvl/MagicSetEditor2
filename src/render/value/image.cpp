@@ -121,7 +121,7 @@ void ImageValueViewer::onStyleChange(int changes) {
 void ImageValueViewer::loadMask(const Rotation& rot) const {
 	if (style().mask_filename().empty()) return; // no mask
 	int w = (int) rot.trX(style().width), h = (int) rot.trY(style().height);
-	if (alpha_mask && alpha_mask->size == wxSize(w,h)) return; // mask loaded and right size
+	if (alpha_mask && alpha_mask->hasSize(wxSize(w,h))) return; // mask loaded and right size
 	// (re) load the mask
 	Image image;
 	InputStreamP image_file = getStylePackage().openIn(style().mask_filename);
