@@ -146,7 +146,7 @@ class ScriptStyleEvent : public Action {
 	inline ScriptStyleEvent(const StyleSheet* stylesheet, const Style* style)
 		: stylesheet(stylesheet), style(style)
 	{}
-		
+	
 	virtual String getName(bool to_undo) const;
 	virtual void perform(bool to_undo);
 	

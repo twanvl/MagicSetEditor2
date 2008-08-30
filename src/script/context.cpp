@@ -440,7 +440,7 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 					else if (bi == 1) a = to_script(aa);
 					else if (bi == 2) a = to_script(aa * aa);
 					else if (bi == 3) a = to_script(aa * aa * aa);
-					else              a = to_script(pow(aa,bi));
+					else              a = to_script(pow((double)aa,bi));
 				}
 			} else {
 				a = to_script(pow((double)*a, (double)*b));
