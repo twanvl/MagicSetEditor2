@@ -286,21 +286,24 @@ InstallablePackage::InstallablePackage(const PackageDescriptionP& description, c
 	: description(description)
 	, installed(installed)
 	, status(PACKAGE_INSTALLED)
-	, action(PACKAGE_NOTHING)
+	, action(PACKAGE_ACT_NOTHING)
 {}
 InstallablePackage::InstallablePackage(const PackageDescriptionP& description , const DownloadableInstallerP& installer)
 	: description(description)
 	, installer(installer)
 	, status(PACKAGE_INSTALLABLE)
-	, action(PACKAGE_NOTHING)
+	, action(PACKAGE_ACT_NOTHING)
 {}
 
 void InstallablePackage::determineStatus() {
 	status = PACKAGE_NOT_INSTALLED;
 	if (installer) {
 		status = (PackageStatus)(status | PACKAGE_INSTALLER);
-		if (!installed || installed->version < description->version) {
+		if (!installed || installed->version <= description->version) {
 			status = (PackageStatus)(status | PACKAGE_INSTALLABLE);
+		}
+		if (!installed || installed->version < description->version) {
+			status = (PackageStatus)(status | PACKAGE_NOT_UP_TO_DATE);
 		}
 	}
 	if (installed) {
@@ -308,35 +311,38 @@ void InstallablePackage::determineStatus() {
 		if (!(installed->status & PackageVersion::STATUS_FIXED)) {
 			status = (PackageStatus)(status | PACKAGE_REMOVABLE);
 		}
+		#if USE_MODIFIED_CHECK
+		if (installed->status & PackageVersion::STATUS_MODIFIED) {
+			status = (PackageStatus)(status | PACKAGE_MODIFIED);
+		}
+		#endif
 	}
-	#if USE_MODIFIED_CHECK
-	if (installed && (installed->status & PackageVersion::STATUS_MODIFIED)) {
-		status = (PackageStatus)(status | PACKAGE_MODIFIED);
-	}
-	#endif
 }
 
 bool InstallablePackage::willBeInstalled() const {
-	return (action & PACKAGE_INSTALL) ||
-	       ((status & PACKAGE_INSTALLED) && !(action & PACKAGE_REMOVE));
+	return has(PACKAGE_ACT_INSTALL) ||
+	       (has(PACKAGE_INSTALLED) && !has(PACKAGE_ACT_REMOVE));
 }
 bool InstallablePackage::can(PackageAction act) const {
-	if (act & PACKAGE_INSTALL) return flag(status, PACKAGE_INSTALLABLE);
-	if (act & PACKAGE_REMOVE) {
+	if (act & PACKAGE_ACT_INSTALL) return flag(status, PACKAGE_INSTALLABLE);
+	if (act & PACKAGE_ACT_REMOVE) {
 		bool ok = flag(status, PACKAGE_REMOVABLE);
-		if (!(act & PACKAGE_GLOBAL) && installed && PackageVersion::STATUS_GLOBAL) {
+		if (!(act & PACKAGE_ACT_GLOBAL) && installed && PackageVersion::STATUS_GLOBAL) {
 			// package installed globally can't be removed locally
 			return false;
 		}
 		return ok;
 	}
-	if (act & PACKAGE_NOTHING) {
+	if (act & PACKAGE_ACT_NOTHING) {
 		return true;
 	}
 	else return false;
 }
 bool InstallablePackage::has(PackageAction act) const {
 	return (action & act) == act;
+}
+bool InstallablePackage::has(PackageStatus stat) const {
+	return (status & stat) == stat;
 }
 
 void InstallablePackage::merge(const InstallablePackage& p) {
@@ -456,11 +462,11 @@ void add_package_dependency(InstallablePackages& packages, Dep dep, PackageActio
 	if (!dep.package) return;
 	bool change = false;
 	if (dep.new_version) {
-		change = !(dep.package->action & PACKAGE_INSTALL);
-		dep.package->action = where | PACKAGE_INSTALL;
+		change = !(dep.package->action & PACKAGE_ACT_INSTALL);
+		dep.package->action = where | PACKAGE_ACT_INSTALL;
 		inc_if_nonzero(dep.package->automatic);
-	} else if (dep.package->action & PACKAGE_REMOVE) {
-		dep.package->action = where | PACKAGE_NOTHING;
+	} else if (dep.package->action & PACKAGE_ACT_REMOVE) {
+		dep.package->action = where | PACKAGE_ACT_NOTHING;
 		dep.package->automatic = 0;
 	}
 	if (change) {
@@ -469,10 +475,10 @@ void add_package_dependency(InstallablePackages& packages, Dep dep, PackageActio
 }
 void remove_package_dependency_need_not_install(InstallablePackages& packages, Dep dep, PackageAction where) {
 	if (!dep.package) return;
-	if (dep.new_version && (dep.package->action & PACKAGE_INSTALL) && dep.package->automatic) {
+	if (dep.new_version && (dep.package->action & PACKAGE_ACT_INSTALL) && dep.package->automatic) {
 		// we no longer need to install this package
 		if (--dep.package->automatic == 0) {
-			dep.package->action = where | PACKAGE_NOTHING;
+			dep.package->action = where | PACKAGE_ACT_NOTHING;
 			for_each_dependency(remove_package_dependency_need_not_install, packages, dep, where);
 		}
 	}
@@ -482,12 +488,12 @@ void remove_package_dependency(InstallablePackages& packages, Dep dep, PackageAc
 	if (!dep.package) return;
 	bool change = false;
 	if (dep.new_version) {
-		change = !(dep.package->action & PACKAGE_NOTHING);
-		dep.package->action = where | PACKAGE_NOTHING;
+		change = !dep.package->has(PACKAGE_ACT_NOTHING);
+		dep.package->action = where | PACKAGE_ACT_NOTHING;
 		dep.package->automatic = 0;
-	} else if (dep.package->status & PACKAGE_REMOVABLE) {
-		change = !(dep.package->action & PACKAGE_REMOVE);
-		dep.package->action = where | PACKAGE_REMOVE;
+	} else if (dep.package->has(PACKAGE_REMOVABLE)) {
+		change = !dep.package->has(PACKAGE_ACT_REMOVE);
+		dep.package->action = where | PACKAGE_ACT_REMOVE;
 		inc_if_nonzero(dep.package->automatic);
 	}
 	if (change) {
@@ -508,19 +514,19 @@ bool add_package_dependency(InstallablePackages& packages, const PackageDependen
 			// if !set then instead the dependency is no longer needed because we are not installing the package
 			if (!p->installed || p->installed->version < dep.version) {
 				bool change = false;
-				if (p->action & PACKAGE_INSTALL) {
+				if (p->action & PACKAGE_ACT_INSTALL) {
 					// this package is already scheduled for installation
 					if (p->automatic) {
 						// we are already automatically depending on this package
 						p->automatic += set ? +1 : -1;
 						if (p->automatic == 0) {
 							// no one needs this package anymore
-							p->action = PACKAGE_NOTHING;
+							p->action = PACKAGE_ACT_NOTHING;
 							change = true;
 						}
 					}
 				} else if (set) {
-					p->action = where | PACKAGE_INSTALL;
+					p->action = where | PACKAGE_ACT_INSTALL;
 					p->automatic = 1;
 					change = true;
 				}
@@ -542,17 +548,17 @@ void remove_package_dependency(InstallablePackages& packages, const PackageDescr
 		FOR_EACH(dep, p->description->dependencies) {
 			if (dep->package == ver.name) {
 				// we can no longer use package p
-				if (p->action & PACKAGE_REMOVE) {
+				if (p->action & PACKAGE_ACT_REMOVE) {
 					if (p->automatic) {
 						p->automatic += set ? +1 : -1;
 						if (p->automatic == 0) {
 							// no one needs this package anymore
-							p->action = PACKAGE_NOTHING;
+							p->action = PACKAGE_ACT_NOTHING;
 							remove_package_dependency(packages, *p->description, where, set);
 						}
 					}
 				} else if (set) {
-					p->action = where | PACKAGE_REMOVE;
+					p->action = where | PACKAGE_ACT_REMOVE;
 					p->automatic = 1;
 					remove_package_dependency(packages, *p->description, where, set);
 				}
@@ -563,21 +569,21 @@ void remove_package_dependency(InstallablePackages& packages, const PackageDescr
 }
 
 bool set_package_action_unsafe(InstallablePackages& packages, const InstallablePackageP& package, PackageAction action) {
-	PackageAction where = (PackageAction)(action & PACKAGE_WHERE);
-	if ((action & PACKAGE_INSTALL) || ((action & PACKAGE_NOTHING) && (package->status & PACKAGE_INSTALLED))) {
+	PackageAction where = (PackageAction)(action & PACKAGE_ACT_WHERE);
+	if ((action & PACKAGE_ACT_INSTALL) || ((action & PACKAGE_ACT_NOTHING) && package->has(PACKAGE_INSTALLED))) {
 		// need the package
 		package->automatic = 0;
 		package->action    = action;
 		// check dependencies
 		FOR_EACH(dep, package->description->dependencies) {
-			if (!add_package_dependency(packages, *dep, where, !(action & PACKAGE_NOTHING))) return false;
+			if (!add_package_dependency(packages, *dep, where, !(action & PACKAGE_ACT_NOTHING))) return false;
 		}
 		return true;
-	} else if ((action & PACKAGE_REMOVE) || ((action & PACKAGE_NOTHING) && !(package->status & PACKAGE_INSTALLED))) {
+	} else if ((action & PACKAGE_ACT_REMOVE) || ((action & PACKAGE_ACT_NOTHING) && !package->has(PACKAGE_INSTALLED))) {
 		package->automatic = 0;
 		package->action    = action;
 		// check dependencies
-		remove_package_dependency(packages, *package->description, where, !(action & PACKAGE_NOTHING));
+		remove_package_dependency(packages, *package->description, where, !(action & PACKAGE_ACT_NOTHING));
 		return true;
 	}
 	return false;

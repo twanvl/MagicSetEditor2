@@ -162,7 +162,7 @@ void PackageManager::findAllInstalledPackages(vector<InstallablePackageP>& packa
 }
 
 bool PackageManager::install(const InstallablePackage& package) {
-	bool install_local = package.action & PACKAGE_LOCAL;
+	bool install_local = package.has(PACKAGE_ACT_LOCAL);
 	return (install_local ? local : global).install(package);
 }
 
@@ -321,10 +321,10 @@ String PackageDirectory::databaseFile() {
 
 bool PackageDirectory::install(const InstallablePackage& package) {
 	String n = name(package.description->name);
-	if (package.action & PACKAGE_REMOVE) {
+	if (package.action & PACKAGE_ACT_REMOVE) {
 		if (!remove_file_or_dir(n)) return false;
 		removeFromDatabase(package.description->name);
-	} else if (package.action & PACKAGE_INSTALL) {
+	} else if (package.action & PACKAGE_ACT_INSTALL) {
 		if (!remove_file_or_dir(n + _(".new"))) return false;
 		bool ok = actual_install(package, n + _(".new"));
 		if (!ok) return false;

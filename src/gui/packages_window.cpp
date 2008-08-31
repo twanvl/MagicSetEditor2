@@ -14,6 +14,7 @@
 #include <util/window_id.hpp>
 #include <data/installer.hpp>
 #include <data/settings.hpp>
+#include <gfx/gfx.hpp>
 #include <wx/wfstream.h>
 #include <wx/html/htmlwin.h>
 #include <wx/dialup.h>
@@ -142,15 +143,48 @@ void PackageInfoPanel::draw(DC& dc) {
 	// draw package info
 	if (!package) return;
 	PackageDescription& d = *package->description;
-	int x = 5;
+	// some borders
+	//%int width = cs.x - 10, height = cs.y - 10;
+	int x = 5, y = 5;
+	// draw icon
 	if (d.icon.Ok()) {
-		int h = d.icon.GetHeight();
-		int y = max(0,20-h)/2 + 5;
-		dc.DrawBitmap(d.icon, x,y);
-		x += d.icon.GetWidth();
+		int max_size = 105;
+		Image icon = d.icon;
+		int icon_w = icon.GetWidth();
+		int icon_h = icon.GetHeight();
+		if (icon_w <= 20 && icon_h <= 20) {
+			// upsample
+			icon = resample_preserve_aspect(icon, 96, 96);
+			icon_w = icon.GetWidth();
+			icon_h = icon.GetHeight();
+		}
+		dc.DrawBitmap(icon, x+(max_size-icon_w)/2, y+(max_size-icon_h)/2);
+		x += max_size;
 	}
+	// package name
+	x += 7;
 	dc.SetFont(wxFont(16, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, _("Arial")));
-	dc.DrawText(d.full_name, x + 5, 3);
+	dc.DrawText(d.full_name, x, y);
+	y += dc.GetCharHeight() + 7;
+	
+	// version
+	dc.SetFont(*wxNORMAL_FONT);
+	int dy = dc.GetCharHeight() + 3;
+	dc.DrawText(_LABEL_("installed version"),   x, y);
+	dc.DrawText(_LABEL_("installable version"), x, y + 1*dy);
+	//dc.DrawText(_LABEL_("installer size"),      x, y + 2*dy);
+	//dc.DrawText(_LABEL_("installer status"),    x, y + 3*dy);
+	// text size?
+	int dx = 0, max_dx = 0;
+	dc.GetTextExtent(_LABEL_("installed version"),   &dx, nullptr); max_dx = max(max_dx, dx);
+	dc.GetTextExtent(_LABEL_("installable version"), &dx, nullptr); max_dx = max(max_dx, dx);
+	//dc.GetTextExtent(_LABEL_("installer size"),      &dx, nullptr); max_dx = max(max_dx, dx);
+	//dc.GetTextExtent(_LABEL_("installer status"),    &dx, nullptr); max_dx = max(max_dx, dx);
+	x += max_dx + 5;
+	dc.DrawText(package->installed ? package->installed->version.toString()   : _LABEL_("no version"), x, y);
+	dc.DrawText(package->installer ? package->description->version.toString() : _LABEL_("no version"), x, y + 1*dy);
+	//dc.DrawText(_("?"), x, y + 2*dy);
+	//dc.DrawText(_("?"), x, y + 3*dy);
 }
 
 wxSize PackageInfoPanel::DoGetBestSize() const {
@@ -184,8 +218,8 @@ PackagesWindow::PackagesWindow(Window* parent, const InstallerP& installer)
 	FOR_EACH(p, installable_packages) p->determineStatus();
 	// mark all packages in the installer for installation
 	FOR_EACH(ip, installable_packages) {
-		if (ip->can(PACKAGE_INSTALL)) {
-			set_package_action(installable_packages, ip, PACKAGE_INSTALL | where);
+		if (ip->can(PACKAGE_ACT_INSTALL)) {
+			set_package_action(installable_packages, ip, PACKAGE_ACT_INSTALL | where);
 		}
 	}
 	// update window
@@ -195,8 +229,8 @@ PackagesWindow::PackagesWindow(Window* parent, const InstallerP& installer)
 }
 
 void PackagesWindow::init(Window* parent, bool show_only_installable) {
-	where = is_install_local(settings.install_type) ? PACKAGE_LOCAL : PACKAGE_GLOBAL;
-	Create(parent, wxID_ANY, _TITLE_("packages window"), wxDefaultPosition, wxSize(640,480), wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER);
+	where = is_install_local(settings.install_type) ? PACKAGE_ACT_LOCAL : PACKAGE_ACT_GLOBAL;
+	Create(parent, wxID_ANY, _TITLE_("packages window"), wxDefaultPosition, wxSize(640,580), wxDEFAULT_DIALOG_STYLE | wxCLIP_CHILDREN | wxRESIZE_BORDER);
 	
 	// get packages
 	wxBusyCursor busy;
@@ -211,7 +245,6 @@ void PackagesWindow::init(Window* parent, bool show_only_installable) {
 	
 	wxToggleButton* keep_button    = new wxToggleButton(this, ID_KEEP,    _BUTTON_("keep package"));
 	wxToggleButton* install_button = new wxToggleButton(this, ID_INSTALL, _BUTTON_("install package"));
-	wxToggleButton* upgrade_button = new wxToggleButton(this, ID_UPGRADE, _BUTTON_("upgrade package"));
 	wxToggleButton* remove_button  = new wxToggleButton(this, ID_REMOVE,  _BUTTON_("remove package"));
 	/*
 	wxRadioButton* keep_button    = new wxRadioButton(this, ID_KEEP,    _BUTTON_("keep package"));
@@ -227,11 +260,9 @@ void PackagesWindow::init(Window* parent, bool show_only_installable) {
 		wxBoxSizer* h = new wxBoxSizer(wxHORIZONTAL);
 			h->Add(package_info, 1, wxRIGHT, 4);
 			wxBoxSizer* v2 = new wxBoxSizer(wxVERTICAL);
-				v2->Add(keep_button,    0, wxEXPAND | wxBOTTOM, 4);
-				v2->AddStretchSpacer();
 				v2->Add(install_button, 0, wxEXPAND | wxBOTTOM, 4);
 				v2->AddStretchSpacer();
-				v2->Add(upgrade_button, 0, wxEXPAND | wxBOTTOM, 4);
+				v2->Add(keep_button,    0, wxEXPAND | wxBOTTOM, 4);
 				v2->AddStretchSpacer();
 				v2->Add(remove_button,  0, wxEXPAND | wxBOTTOM, 0);
 			h->Add(v2);
@@ -254,10 +285,10 @@ void PackagesWindow::onPackageSelect(wxCommandEvent& ev) {
 
 void PackagesWindow::onActionChange(wxCommandEvent& ev) {
 	if (package) {
-		PackageAction act = ev.GetId() == ID_INSTALL ? PACKAGE_INSTALL
-		                  : ev.GetId() == ID_UPGRADE ? PACKAGE_INSTALL
-		                  : ev.GetId() == ID_REMOVE  ? PACKAGE_REMOVE
-		                  : PACKAGE_NOTHING;
+		PackageAction act = ev.GetId() == ID_INSTALL ? PACKAGE_ACT_INSTALL
+		                  : ev.GetId() == ID_UPGRADE ? PACKAGE_ACT_INSTALL
+		                  : ev.GetId() == ID_REMOVE  ? PACKAGE_ACT_REMOVE
+		                  : PACKAGE_ACT_NOTHING;
 		act = act | where;
 		// set action
 		set_package_action(installable_packages, package, act);
@@ -274,11 +305,11 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 	int to_remove   = 0;
 	int with_modifications = 0;
 	FOR_EACH(ip, installable_packages) {
-		if (!ip->has(PACKAGE_NOTHING)) ++to_change;
-		if ((ip->action & PACKAGE_INSTALL) && ip->installer && !ip->installer->installer) ++to_download;
-		if (ip->action & PACKAGE_REMOVE) {
+		if (!ip->has(PACKAGE_ACT_NOTHING)) ++to_change;
+		if (ip->has(PACKAGE_ACT_INSTALL) && ip->installer && !ip->installer->installer) ++to_download;
+		if (ip->has(PACKAGE_ACT_REMOVE)) {
 			to_remove++;
-			if ((ip->status & PACKAGE_MODIFIED) == PACKAGE_MODIFIED) with_modifications++;
+			if (ip->has(PACKAGE_MODIFIED)) with_modifications++;
 		}
 	}
 	// anything to do?
@@ -307,7 +338,7 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 	// Download installers
 	int package_pos = 0, step = 0;
 	FOR_EACH(ip, installable_packages) {
-		if ((ip->action & PACKAGE_INSTALL) && ip->installer && !ip->installer->installer) {
+		if (ip->has(PACKAGE_ACT_INSTALL) && ip->installer && !ip->installer->installer) {
 			if (!progress.Update(step++, String::Format(_ERROR_("downloading updates"), ++package_pos, to_download))) {
 				return; // aborted
 			}
@@ -330,14 +361,14 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 	package_pos = 0;
 	int success = 0, install = 0, remove = 0;
 	FOR_EACH(ip, installable_packages) {
-		if (ip->has(PACKAGE_NOTHING)) continue; // package unchanged
+		if (ip->has(PACKAGE_ACT_NOTHING)) continue; // package unchanged
 		if (!progress.Update(step++, String::Format(_ERROR_("installing updates"), ++package_pos, to_change))) {
 			// don't allow abort.
 		}
 		bool ok = package_manager.install(*ip);
 		if (ok) {
-			install += ip->has(PACKAGE_INSTALL) && !ip->installed;
-			remove  += ip->has(PACKAGE_REMOVE);
+			install += ip->has(PACKAGE_ACT_INSTALL) && !ip->installed;
+			remove  += ip->has(PACKAGE_ACT_REMOVE);
 			success += 1;
 		}
 	}
@@ -360,21 +391,20 @@ void PackagesWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 	wxToggleButton* w = (wxToggleButton*)ev.GetEventObject();
 	switch (ev.GetId()) {
 		case ID_KEEP:
-			w->SetValue(package && package->has(PACKAGE_NOTHING));
-			w->Enable  (package && package->can(PACKAGE_NOTHING | where));
+			w->SetValue(package && package->has(PACKAGE_ACT_NOTHING));
+			w->Enable  (package && package->can(PACKAGE_ACT_NOTHING | where));
 			w->SetLabel(package && package->installed ? _BUTTON_("keep package") : _BUTTON_("don't install package"));
 			break;
 		case ID_INSTALL:
-			w->SetValue(package && package->has(PACKAGE_INSTALL | where) && !package->installed);
-			w->Enable  (package && package->can(PACKAGE_INSTALL | where) && !package->installed);
-			break;
-		case ID_UPGRADE:
-			w->SetValue(package && package->has(PACKAGE_INSTALL | where) && package->installed);
-			w->Enable  (package && package->can(PACKAGE_INSTALL | where) && package->installed);
+			w->SetValue(package && package->has(PACKAGE_ACT_INSTALL | where));
+			w->Enable  (package && package->can(PACKAGE_ACT_INSTALL | where));
+			w->SetLabel( !package || !package->installed ? _BUTTON_("install package")
+			           :  package->has(PACKAGE_UPDATES)  ? _BUTTON_("upgrade package")
+			           :                                   _BUTTON_("reinstall package"));
 			break;
 		case ID_REMOVE:
-			w->SetValue(package && package->has(PACKAGE_REMOVE  | where));
-			w->Enable  (package && package->can(PACKAGE_REMOVE  | where));
+			w->SetValue(package && package->has(PACKAGE_ACT_REMOVE  | where));
+			w->Enable  (package && package->can(PACKAGE_ACT_REMOVE  | where));
 			//w->SetLabel(package && package->... ? _BUTTON_("remove group") : _BUTTON_("remove package"));
 			break;
 	}

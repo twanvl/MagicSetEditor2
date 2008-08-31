@@ -111,21 +111,22 @@ enum PackageStatus
 ,	PACKAGE_INSTALLED     = 0x0001
 ,	PACKAGE_REMOVABLE     = 0x0002
 ,	PACKAGE_INSTALLER     = 0x0010 ///< Package can be installed (there is an installer)
-,	PACKAGE_INSTALLABLE   = 0x0110 ///< Package can be installed (it makes sense to do so)
-,	PACKAGE_UPDATES       = 0x0111 ///< Remote updates available
+,	PACKAGE_INSTALLABLE   = 0x0110 ///< Package can be installed (and it makes sense to do so)
+,	PACKAGE_NOT_UP_TO_DATE= 0x0200 ///< The local installed version (if any) is not up to date
+,	PACKAGE_UPDATES       = 0x0311 ///< Remote updates available
 ,	PACKAGE_MODIFIED      = 0x1001 ///< Local changes made
-,	PACKAGE_MISSING_DEP   = 0x0200 ///< Missing a dependency for installation
+,	PACKAGE_MISSING_DEP   = 0x2000 ///< Missing a dependency for installation
 ,	PACKAGE_CONFLICTS     = PACKAGE_UPDATES | PACKAGE_MODIFIED
 };
 
 /// (un)install a package?
 enum PackageAction
-{	PACKAGE_NOTHING = 0x001  ///< Don't change anything
-,	PACKAGE_INSTALL = 0x002  ///< Install or upgrade the package
-,	PACKAGE_REMOVE  = 0x004  ///< Remove the package (if it was installed)
-,	PACKAGE_LOCAL   = 0x010  ///< In the local package directory
-,	PACKAGE_GLOBAL  = 0x020  ///< In the global package directory
-,	PACKAGE_WHERE   = PACKAGE_LOCAL | PACKAGE_GLOBAL
+{	PACKAGE_ACT_NOTHING = 0x001  ///< Don't change anything
+,	PACKAGE_ACT_INSTALL = 0x002  ///< Install or upgrade the package
+,	PACKAGE_ACT_REMOVE  = 0x004  ///< Remove the package (if it was installed)
+,	PACKAGE_ACT_LOCAL   = 0x010  ///< In the local package directory
+,	PACKAGE_ACT_GLOBAL  = 0x020  ///< In the global package directory
+,	PACKAGE_ACT_WHERE   = PACKAGE_ACT_LOCAL | PACKAGE_ACT_GLOBAL
 };
 // bit twidling
 inline PackageAction operator | (PackageAction a, PackageAction b) { return (PackageAction)((int)a | (int) b); }
@@ -159,6 +160,8 @@ class InstallablePackage : public IntrusivePtrVirtualBase {
 	bool can(PackageAction act) const;
 	/// Is the action currently selected?
 	bool has(PackageAction act) const;
+	/// Does the package have the given status bits all set?
+	bool has(PackageStatus stat) const;
 	
 	/// Merge two descriptions of installable packages
 	void merge(const InstallablePackage& p2);

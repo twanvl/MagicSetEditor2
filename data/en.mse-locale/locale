@@ -520,8 +520,15 @@ label:
 	package installed:		installed
 	package installable:	not installed
 	install package:		install
-	upgrade package:		upgrade
+	reinstall package:		reinstall
+	upgrade package:		update
 	remove package:			remove
+	
+	installed version:		Installed version:
+	installable version:	Latest version:
+	installer size:			Size:
+	installer status:		Status:
+	no version:				-
 
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
@@ -594,7 +601,8 @@ button:
 	keep package:			&Don't change
 	don't install package:	&Don't install
 	install package:		&Install
-	upgrade package:		&Upgrade
+	upgrade package:		&Update
+	reinstall package:		Re&install
 	remove package:			&Remove
 	install group:			&Install All
 	upgrade group:			&Upgrade All

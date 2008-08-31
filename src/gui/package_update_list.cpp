@@ -195,7 +195,7 @@ PackageUpdateList::PackageUpdateList(Window* parent, const InstallablePackages& 
 	, show_only_installable(show_only_installable)
 	, packages(packages)
 {
-	item_height = max(item_height,17);
+	item_height = max(item_height,19);
 	rebuild();
 }
 PackageUpdateList::~PackageUpdateList() {
@@ -238,48 +238,54 @@ void PackageUpdateList::initItems() {
 }
 
 void PackageUpdateList::drawItem(DC& dc, size_t index, size_t column, int x, int y, bool selected) const {
+	// offset for drawing
+	x += 1;  y += 3;
+	// the item
 	const TreeItem& ti = static_cast<const TreeItem&>(*items[index]);
 	Color color = wxSystemSettings::GetColour(selected ? wxSYS_COLOUR_HIGHLIGHTTEXT : wxSYS_COLOUR_WINDOWTEXT);
 	if (column == 0) {
 		// Name
 		const Bitmap& bmp = ti.highlight() ? ti.icon : ti.icon_grey;
-		if (bmp.Ok()) dc.DrawBitmap(bmp,x,y);
+		if (bmp.Ok()) dc.DrawBitmap(bmp, x-1,y-2);
 		dc.SetTextForeground(color);
-		dc.DrawText(capitalize_sentence(ti.label), x+18, y+2);
+		dc.DrawText(capitalize_sentence(ti.label), x+17, y);
 	} else if (column == 1 && ti.package) {
 		// Status
-		int stat = ti.package->status;
-		if ((stat & PACKAGE_CONFLICTS) == PACKAGE_CONFLICTS) {
+		InstallablePackage& package = *ti.package;
+		if (package.has(PACKAGE_CONFLICTS)) {
 			dc.SetTextForeground(lerp(color,Color(255,0,0),0.8));
-			dc.DrawText(_LABEL_("package conflicts"), x+1,y+2);
-		} else if ((stat & PACKAGE_MODIFIED) == PACKAGE_MODIFIED) {
+			dc.DrawText(_LABEL_("package conflicts"), x,y);
+		} else if (package.has(PACKAGE_MODIFIED)) {
 			dc.SetTextForeground(lerp(color,Color(255,255,0),0.5));
-			dc.DrawText(_LABEL_("package modified"), x+1,y+2);
-		} else if ((stat & PACKAGE_UPDATES) == PACKAGE_UPDATES) {
+			dc.DrawText(_LABEL_("package modified"), x,y);
+		} else if (package.has(PACKAGE_UPDATES)) {
 			dc.SetTextForeground(lerp(color,Color(0,0,255),0.5));
-			dc.DrawText(_LABEL_("package updates"), x+1,y+2);
-		} else if ((stat & PACKAGE_INSTALLED) == PACKAGE_INSTALLED) {
+			dc.DrawText(_LABEL_("package updates"), x,y);
+		} else if (package.has(PACKAGE_INSTALLED)) {
 			dc.SetTextForeground(color);
-			dc.DrawText(_LABEL_("package installed"), x+1,y+2);
-		} else if ((stat & PACKAGE_INSTALLABLE) == PACKAGE_INSTALLABLE) {
+			dc.DrawText(_LABEL_("package installed"), x,y);
+		} else if (package.has(PACKAGE_INSTALLABLE)) {
 			dc.SetTextForeground(lerp(color,Color(128,128,128),0.6));
 			dc.SetTextForeground(color);
-			dc.DrawText(_LABEL_("package installable"), x+1,y+2);
+			dc.DrawText(_LABEL_("package installable"), x,y);
 		}
 	} else if (column == 2 && ti.package) {
 		// Action
-		int act = ti.package->action;
-		if (act & PACKAGE_INSTALL) {
-			if (ti.package->status & PACKAGE_INSTALLED) {
-				dc.SetTextForeground(lerp(color,Color(0,0,255),0.5));
-				dc.DrawText(_LABEL_("upgrade package"), x+1,y+2);
+		InstallablePackage& package = *ti.package;
+		if (package.has(PACKAGE_ACT_INSTALL)) {
+			if (package.has(PACKAGE_UPDATES)) {
+				dc.SetTextForeground(lerp(color,Color(0,0,255),0.6));
+				dc.DrawText(_LABEL_("upgrade package"), x,y);
+			} else if (package.has(PACKAGE_INSTALLED)) {
+				dc.SetTextForeground(lerp(color,Color(0,0,255),0.2));
+				dc.DrawText(_LABEL_("reinstall package"), x,y);
 			} else {
-				dc.SetTextForeground(lerp(color,Color(0,255,0),0.5));
-				dc.DrawText(_LABEL_("install package"), x+1,y+2);
+				dc.SetTextForeground(lerp(color,Color(0,255,0),0.6));
+				dc.DrawText(_LABEL_("install package"), x,y);
 			}
-		} else if (act & PACKAGE_REMOVE) {
-			dc.SetTextForeground(lerp(color,Color(255,0,0),0.5));
-			dc.DrawText(_LABEL_("remove package"), x+1,y+2);
+		} else if (package.has(PACKAGE_ACT_REMOVE)) {
+			dc.SetTextForeground(lerp(color,Color(255,0,0),0.7));
+			dc.DrawText(_LABEL_("remove package"), x,y);
 		}
 	}
 }
@@ -294,9 +300,9 @@ String PackageUpdateList::columnText(size_t column) const {
 int PackageUpdateList::columnWidth(size_t column) const {
 	if (column == 0) {
 		wxSize cs = GetClientSize();
-		return cs.x - 300;
+		return cs.x - 240;
 	} else {
-		return 150;
+		return 120;
 	}
 }
 
