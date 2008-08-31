@@ -329,10 +329,26 @@ bool CardsPanel::wantsToHandle(const Action&, bool undone) const {
 
 bool CardsPanel::canCut()   const { CUT_COPY_PASTE(canCut,   return) }
 bool CardsPanel::canCopy()  const { CUT_COPY_PASTE(canCopy,  return) }
-bool CardsPanel::canPaste() const { CUT_COPY_PASTE(canPaste, return) }
 void CardsPanel::doCut()          { CUT_COPY_PASTE(doCut,    return (void)) }
 void CardsPanel::doCopy()         { CUT_COPY_PASTE(doCopy,   return (void)) }
-void CardsPanel::doPaste()        { CUT_COPY_PASTE(doPaste,  return (void)) }
+
+// always alow pasting cards, even if something else is selected
+bool CardsPanel::canPaste() const {
+	if (card_list->canPaste()) return true;
+	int id = focused_control(this);
+	if      (id == ID_EDITOR) return editor->canPaste();
+	else if (id == ID_NOTES)  return notes->canPaste();
+	else                      return false;
+}
+void CardsPanel::doPaste() {
+	if (card_list->canPaste()) {
+		card_list->doPaste();
+	} else {
+		int id = focused_control(this);
+		if      (id == ID_EDITOR) editor->doPaste();
+		else if (id == ID_NOTES)  notes->doPaste();
+	}
+}
 
 // ----------------------------------------------------------------------------- : Searching
 
