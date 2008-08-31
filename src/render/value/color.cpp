@@ -11,7 +11,6 @@
 #include <render/card/viewer.hpp>
 
 DECLARE_TYPEOF_COLLECTION(ColorField::ChoiceP);
-DECLARE_TYPEOF_COLLECTION(wxPoint);
 
 // ----------------------------------------------------------------------------- : ColorValueViewer
 

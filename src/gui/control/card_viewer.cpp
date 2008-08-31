@@ -37,7 +37,10 @@ wxSize CardViewer::DoGetBestSize() const {
 }
 
 void CardViewer::redraw(const ValueViewer& v) {
-	if (drawing) return;
+	// Don't refresh if we OR ANOTHER CardViewer is drawing
+	// drawing another viewer causes styles to be updated for its active card, which may be different,
+	// causing the two viewers to continously refresh.
+	if (drawing_card()) return;
 	up_to_date = false;
 	RefreshRect(getRotation().trRectToBB(v.boundingBox()), false);
 }
@@ -47,7 +50,7 @@ void CardViewer::onChange() {
 }
 
 void CardViewer::redraw() {
-	if (drawing) return;
+	if (drawing_card()) return;
 	up_to_date = false;
 	Refresh(false);
 }

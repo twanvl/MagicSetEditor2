@@ -10,8 +10,6 @@
 #include <render/value/choice.hpp>
 #include <render/card/viewer.hpp>
 
-DECLARE_TYPEOF_COLLECTION(wxPoint);
-
 // ----------------------------------------------------------------------------- : ChoiceValueViewer
 
 IMPLEMENT_VALUE_VIEWER(Choice);

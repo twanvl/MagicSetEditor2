@@ -20,6 +20,8 @@ class Context;
 
 // ----------------------------------------------------------------------------- : DataViewer
 
+DECLARE_DYNAMIC_ARG(bool, drawing_card);
+
 /// A viewer can generate an image of some values, usually a card.
 class DataViewer : public SetView {
   public:	
@@ -98,7 +100,6 @@ class DataViewer : public SetView {
 	
 	vector<ValueViewerP> viewers;	///< The viewers for the different values in the data
 	CardP card;						///< The card that is currently displayed, if any
-	bool drawing;					///< Are we currently drawing?
 	mutable StyleSheetP stylesheet;	///< Stylesheet being used
 };
 

@@ -13,7 +13,6 @@
 #include <gui/util.hpp>
 
 DECLARE_TYPEOF_COLLECTION(String);
-DECLARE_TYPEOF_COLLECTION(wxPoint);
 
 // ----------------------------------------------------------------------------- : MultipleChoiceValueViewer
 

@@ -23,10 +23,12 @@ DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA StyleP>);
 
 // ----------------------------------------------------------------------------- : DataViewer
 
-DataViewer::DataViewer() : drawing(false) {}
+DataViewer::DataViewer() {}
 DataViewer::~DataViewer() {}
 
 // ----------------------------------------------------------------------------- : Drawing
+
+IMPLEMENT_DYNAMIC_ARG(bool, drawing_card, false);
 
 void DataViewer::draw(DC& dc) {
 	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
@@ -36,7 +38,7 @@ void DataViewer::draw(DC& dc) {
 }
 void DataViewer::draw(RotatedDC& dc, const Color& background) {
 	if (!set) return; // no set specified, don't draw anything
-	drawing = true;
+	WITH_DYNAMIC_ARG(drawing_card, true);
 	// fill with background color
 	clearDC(dc.getDC(), background);
 	// update style scripts
@@ -69,7 +71,6 @@ void DataViewer::draw(RotatedDC& dc, const Color& background) {
 			}
 		}
 	}
-	drawing = false;
 }
 void DataViewer::drawViewer(RotatedDC& dc, ValueViewer& v) {
 	v.draw(dc);
