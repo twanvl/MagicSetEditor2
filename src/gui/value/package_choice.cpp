@@ -46,7 +46,7 @@ size_t DropDownPackageChoiceList::itemCount() const {
 	return editor.items.size() + (editor.field().required ? 0 : 1);
 }
 String DropDownPackageChoiceList::itemText(size_t item) const {
-	if (item == 0 && !editor.field().required) return _("");
+	if (item == 0 && !editor.field().required) return editor.field().empty_name;
 	else {
 		size_t i = item - !editor.field().required;
 		return editor.items[i].name;

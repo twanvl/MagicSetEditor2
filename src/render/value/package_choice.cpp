@@ -47,15 +47,24 @@ void PackageChoiceValueViewer::initItems() {
 void PackageChoiceValueViewer::draw(RotatedDC& dc) {
 	drawFieldBorder(dc);
 	// find item
-	FOR_EACH(i, items) {
-		if (i.package_name != value().package_name) continue;
-		// draw image
-		if (i.image.Ok()) {
-			dc.DrawBitmap(i.image, RealPoint(0,0));
+	String text = value().package_name;
+	Bitmap image;
+	if (value().package_name.empty()) {
+		text = field().empty_name;
+	} else {
+		FOR_EACH(i, items) {
+			if (i.package_name == value().package_name) {
+				text = i.name;
+				image = i.image;
+			}
 		}
-		// draw text
-		dc.SetFont(style().font, 1.0);
-		RealPoint pos = align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(0, dc.GetCharHeight()), dc.getInternalRect()) + RealSize(17., 0);
-		dc.DrawTextWithShadow(i.name, style().font, pos);
 	}
+	// draw image
+	if (image.Ok()) {
+		dc.DrawBitmap(image, RealPoint(0,0));
+	}
+	// draw text
+	dc.SetFont(style().font, 1.0);
+	RealPoint pos = align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(0, dc.GetCharHeight()), dc.getInternalRect()) + RealSize(17., 0);
+	dc.DrawTextWithShadow(text, style().font, pos);
 }

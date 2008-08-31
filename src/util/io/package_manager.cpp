@@ -41,6 +41,8 @@ void PackageManager::reset() {
 
 PackagedP PackageManager::openAny(const String& name_, bool just_header) {
 	String name = trim(name_);
+	if (starts_with(name,_("/"))) name = name.substr(1);
+	if (starts_with(name,_(":NO-WARN-DEP:"))) name = name.substr(13);
 	// Attempt to load local data first.
 	String filename;
 	if (wxFileName(name).IsRelative()) {
@@ -96,11 +98,12 @@ void PackageManager::findMatching(const String& pattern, vector<PackagedP>& out)
 InputStreamP PackageManager::openFileFromPackage(Packaged*& package, const String& name) {
 	if (!name.empty() && name.GetChar(0) == _('/')) {
 		// absolute name; break name
-		size_t pos = name.find_first_of(_("/\\"), 1);
-		if (pos != String::npos) {
+		size_t start = name.find_first_not_of(_("/\\"), 1); // allow "//package/name" from incorrect scripts
+		size_t pos   = name.find_first_of(_("/\\"), start);
+		if (start < pos && pos != String::npos) {
 			// open package
-			PackagedP p = openAny(name.substr(1, pos-1));
-			if (package) {
+			PackagedP p = openAny(name.substr(start, pos-start));
+			if (package && !is_substr(name,start,_(":NO-WARN-DEP:"))) {
 				package->requireDependency(p.get());
 			}
 			package = p.get();

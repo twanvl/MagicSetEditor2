@@ -25,6 +25,7 @@ IMPLEMENT_REFLECTION(PackageChoiceField) {
 	REFLECT(match);
 	REFLECT(initial);
 	REFLECT(required);
+	REFLECT(empty_name);
 }
 
 // ----------------------------------------------------------------------------- : PackageChoiceStyle
@@ -73,12 +74,14 @@ void PackageChoiceValue::reflect(Writer& tag) {
 	REFLECT_NAMELESS(package_name);
 }
 void PackageChoiceValue::reflect(GetDefaultMember& tag) {
-	if (!package_name.empty() && package_name != field().initial) {
-		// add a space to the name, to indicate the dependency doesn't have to be marked
-		// see also SymbolFontRef::loadFont
-		REFLECT_NAMELESS(_(" ") +  package_name);
-	} else {
+	if (package_name.empty()) {
 		REFLECT_NAMELESS(package_name);
+	} else if(package_name != field().initial) {
+		// add a space to the name, to indicate the dependency doesn't have to be marked
+		// see also PackageManager::openFileFromPackage and SymbolFontRef::loadFont
+		REFLECT_NAMELESS(_("/:NO-WARN-DEP:") + package_name);
+	} else {
+		REFLECT_NAMELESS(_("/") + package_name);
 	}
 }
 void PackageChoiceValue::reflect(GetMember& tag) {}

@@ -25,13 +25,14 @@ DECLARE_POINTER_TYPE(PackageChoiceValue);
 /// A field for PackageChoice values, it contains a list of choices for PackageChoices
 class PackageChoiceField : public Field {
   public:
-	PackageChoiceField() : required(true) {}
+	PackageChoiceField() : required(true), empty_name(_("none")) {}
 	DECLARE_FIELD_TYPE(PackageChoice);
 	
 	OptionalScript     script;			///< Script to apply to all values
 	String             match;			///< Package filenames to match
 	String             initial;			///< Initial value
 	bool               required;		///< Is selecting a package required?
+	String             empty_name;		///< Displayed name for the empty value (if !required)
 	
 	virtual void initDependencies(Context&, const Dependency&) const;
 };

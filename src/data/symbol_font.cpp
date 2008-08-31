@@ -577,7 +577,7 @@ void SymbolFontRef::loadFont(Context& ctx) {
 		font = SymbolFontP();
 	} else {
 		font = SymbolFont::byName(name);
-		if (name().GetChar(0) != _(' ')) {
+		if (starts_with(name(),_("/:NO-WARN-DEP:"))) {
 			// ensure the dependency on the font is present in the stylesheet this ref is in
 			// Getting this stylesheet from the context is a bit of a hack
 			// If the name starts with a ' ', no dependency is needed;
