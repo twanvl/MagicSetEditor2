@@ -19,3 +19,7 @@ SetWindowPanel::SetWindowPanel(Window* parent, int id, bool autoTabbing)
 CardP SetWindowPanel::selectedCard() const {
 	return CardP();
 }
+
+bool SetWindowPanel::isInitialized() const {
+	return !GetChildren().IsEmpty();
+}

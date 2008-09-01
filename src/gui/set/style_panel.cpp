@@ -23,11 +23,15 @@
 
 DECLARE_TYPEOF_COLLECTION(FieldP);
 
-// ----------------------------------------------------------------------------- : StylePanel
+// ----------------------------------------------------------------------------- : StylePanel : initialization
 
 StylePanel::StylePanel(Window* parent, int id)
 	: SetWindowPanel(parent, id)
 {
+	// delayed initialization by initControls()
+}
+
+void StylePanel::initControls() {
 	// init controls
 	preview       = new CardViewer   (this, wxID_ANY);
 	list          = new PackageList  (this, wxID_ANY);
@@ -48,7 +52,19 @@ StylePanel::StylePanel(Window* parent, int id)
 	s->SetSizeHints(this);
 	SetSizer(s);
 }
+
+void StylePanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
+	if (!isInitialized()) {
+		wxBusyCursor busy;
+		initControls();
+		CardP cur_card = card;
+		onChangeSet();
+		selectCard(cur_card);
+	}
+}
+
 void StylePanel::updateListSize() {
+	if (!isInitialized()) return;
 	// how many columns fit?
 	size_t fit_columns = (size_t)((GetSize().y - 400) / 152);
 	// we only need enough columns to show all items
@@ -66,7 +82,10 @@ bool StylePanel::Layout() {
 	return SetWindowPanel::Layout();
 }
 
+// ----------------------------------------------------------------------------- : StylePanel
+
 void StylePanel::onChangeSet() {
+	if (!isInitialized()) return;
 	list->showData<StyleSheet>(set->game->name() + _("-*"));
 	list->select(set->stylesheet->name(), false);
 	editor->setSet(set);
@@ -76,6 +95,7 @@ void StylePanel::onChangeSet() {
 }
 
 void StylePanel::onAction(const Action& action, bool undone) {
+	if (!isInitialized()) return;
 	TYPE_CASE_(action, ChangeSetStyleAction) {
 		list->select(set->stylesheetFor(card).name(), false);
 		editor->showCard(card);
@@ -113,6 +133,7 @@ void StylePanel::onAction(const Action& action, bool undone) {
 
 void StylePanel::selectCard(const CardP& card) {
 	this->card = card;
+	if (!isInitialized()) return;
 	preview->setCard(card);
 	editor->showStylesheet(set->stylesheetForP(card));
 	editor->showCard(card);
@@ -126,6 +147,7 @@ void StylePanel::selectCard(const CardP& card) {
 
 // determine what control to use for clipboard actions
 #define CUT_COPY_PASTE(op,return)					\
+	if (!isInitialized()) return false;				\
 	int id = focused_control(this);					\
 	if (id == ID_EDITOR) { return editor->op(); }	\
 	else                 { return false;          }

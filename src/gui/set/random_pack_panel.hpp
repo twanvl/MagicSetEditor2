@@ -68,6 +68,9 @@ class RandomPackPanel : public SetWindowPanel {
 	
 	int total_packs;
 	
+	/// Actual intialization of the controls
+	void initControls();
+	
 	/// Update the total count of each card type
 	void updateTotals();
 	/// Get a seed value

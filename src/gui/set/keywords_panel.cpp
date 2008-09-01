@@ -31,7 +31,12 @@ DECLARE_TYPEOF_COLLECTION(KeywordModeP);
 
 KeywordsPanel::KeywordsPanel(Window* parent, int id)
 	: SetWindowPanel(parent, id)
+	, menuKeyword(nullptr)
 {
+	// delayed initialization by initControls()
+}
+
+void KeywordsPanel::initControls() {
 	// init controls
 	splitter  = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
 	list      = new KeywordList(splitter, ID_KEYWORD_LIST);
@@ -118,6 +123,12 @@ KeywordsPanel::~KeywordsPanel() {
 
 
 void KeywordsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
+	// Controls
+	if (!isInitialized()) {
+		wxBusyCursor busy;
+		initControls();
+		onChangeSet();
+	}
 	// Toolbar
 	tb->AddTool(ID_KEYWORD_ADD,		_(""), load_resource_tool_image(_("keyword_add")),	wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("add keyword"),	_HELP_("add keyword"));
 	tb->AddTool(ID_KEYWORD_REMOVE,	_(""), load_resource_tool_image(_("keyword_del")),	wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("remove keyword"),_HELP_("remove keyword"));
@@ -138,6 +149,7 @@ void KeywordsPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 }
 
 void KeywordsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
+	if (!isInitialized()) return;
 	switch (ev.GetId()) {
 		case ID_KEYWORD_PREV:       ev.Enable(list->canSelectPrevious());	break;
 		case ID_KEYWORD_NEXT:       ev.Enable(list->canSelectNext());		break;
@@ -146,6 +158,7 @@ void KeywordsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 }
 
 void KeywordsPanel::onCommand(int id) {
+	if (!isInitialized()) return;
 	switch (id) {
 		case ID_KEYWORD_PREV:
 			list->selectPrevious();
@@ -230,6 +243,7 @@ String KeywordsPanel::runRefScript(int find_i) {
 
 // determine what control to use for clipboard actions
 #define CUT_COPY_PASTE(op,return,check)													\
+	if (!isInitialized()) return false;													\
 	int id = focused_control(this);														\
 	if      (id == ID_KEYWORD_LIST && keyword ->IsEnabled()) { return list    ->op(); }	\
 	else if (check)                                          { return false;          } \
@@ -249,6 +263,7 @@ void KeywordsPanel::doPaste()        { CUT_COPY_PASTE(doPaste,  return (void), !
 // ----------------------------------------------------------------------------- : Events
 
 void KeywordsPanel::onChangeSet() {
+	if (!isInitialized()) return;
 	list->setSet(set);
 	// warning label (depends on game name)
 	fixedL->SetLabel(_LABEL_1_("standard keyword", set->game->short_name));
@@ -280,6 +295,7 @@ void KeywordsPanel::onChangeSet() {
 }
 
 void KeywordsPanel::onAction(const Action& action, bool undone) {
+	if (!isInitialized()) return;
 	TYPE_CASE(action, ValueAction) {
 		if (!action.card) {
 			{

@@ -26,6 +26,10 @@ class StylePanel : public SetWindowPanel {
 	virtual void onChangeSet();
 	virtual void onAction(const Action&, bool undone);
 	
+	// --------------------------------------------------- : UI
+	
+	virtual void initUI(wxToolBar*, wxMenuBar*);
+	
 	// --------------------------------------------------- : Clipboard
 	virtual bool canCut() const;
 	virtual bool canCopy() const;
@@ -54,6 +58,9 @@ class StylePanel : public SetWindowPanel {
 	/// Determine the best size for the list of stylesheets based on available space
 	void updateListSize();
 	virtual bool Layout();
+	
+	/// Actual intialization of the controls
+	void initControls();
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -155,6 +155,10 @@ END_EVENT_TABLE()
 RandomPackPanel::RandomPackPanel(Window* parent, int id)
 	: SetWindowPanel(parent, id)
 {
+	// delayed initialization by initControls()
+}
+
+void RandomPackPanel::initControls() {
 	// init controls
 	preview   = new CardViewer(this, wxID_ANY);
 	card_list = new RandomCardList(this, wxID_ANY);
@@ -163,9 +167,9 @@ RandomPackPanel::RandomPackPanel(Window* parent, int id)
 	seed_fixed  = new wxRadioButton(this, ID_SEED_FIXED,  _BUTTON_("fixed seed"));
 	seed = new wxTextCtrl(this, wxID_ANY);
 	totals = new PackTotalsPanel(this, wxID_ANY);
-	static_cast<SetWindow*>(parent)->setControlStatusText(seed_random, _HELP_("random seed"));
-	static_cast<SetWindow*>(parent)->setControlStatusText(seed_fixed,  _HELP_("fixed seed"));
-	static_cast<SetWindow*>(parent)->setControlStatusText(seed,        _HELP_("seed"));
+	static_cast<SetWindow*>(GetParent())->setControlStatusText(seed_random, _HELP_("random seed"));
+	static_cast<SetWindow*>(GetParent())->setControlStatusText(seed_fixed,  _HELP_("fixed seed"));
+	static_cast<SetWindow*>(GetParent())->setControlStatusText(seed,        _HELP_("seed"));
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
 		s->Add(preview, 0, wxRIGHT,  2);
@@ -209,6 +213,7 @@ void RandomPackPanel::onBeforeChangeSet() {
 	}
 }
 void RandomPackPanel::onChangeSet() {
+	if (!isInitialized()) return;
 	preview  ->setSet(set);
 	card_list->setSet(set);
 	totals   ->setGame(set->game);
@@ -249,6 +254,7 @@ void RandomPackPanel::onChangeSet() {
 }
 
 void RandomPackPanel::storeSettings() {
+	if (!isInitialized()) return;
 	GameSettings& gs = settings.gameSettingsFor(*set->game);
 	gs.pack_seed_random = seed_random->GetValue();
 	FOR_EACH(i, packs) {
@@ -258,13 +264,21 @@ void RandomPackPanel::storeSettings() {
 
 // ----------------------------------------------------------------------------- : UI
 
-void RandomPackPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {}
+void RandomPackPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
+	// Init controls?
+	if (!isInitialized()) {
+		wxBusyCursor busy;
+		initControls();
+		onChangeSet();
+	}
+}
 
 void RandomPackPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {}
 
 void RandomPackPanel::onUpdateUI(wxUpdateUIEvent& ev) {}
 
 void RandomPackPanel::onCommand(int id) {
+	if (!isInitialized()) return;
 	switch (id) {
 		case ID_PACK_AMOUNT: {
 			updateTotals();
@@ -339,6 +353,7 @@ void RandomPackPanel::generate() {
 // ----------------------------------------------------------------------------- : Selection
 
 CardP RandomPackPanel::selectedCard() const {
+	if (!isInitialized()) return CardP();
 	return card_list->getCard();
 }
 
@@ -352,6 +367,7 @@ void RandomPackPanel::onCardSelect(CardSelectEvent& ev) {
 }
 
 void RandomPackPanel::selectionChoices(ExportCardSelectionChoices& out) {
+	if (!isInitialized()) return;
 	out.push_back(new_intrusive2<ExportCardSelectionChoice>(
 			_BUTTON_("export generated packs"),
 			card_list->getCardsPtr()
@@ -366,5 +382,5 @@ END_EVENT_TABLE  ()
 
 // ----------------------------------------------------------------------------- : Clipboard
 
-bool RandomPackPanel::canCopy()  const { return card_list->canCopy();  }
-void RandomPackPanel::doCopy()         {        card_list->doCopy();   }
+bool RandomPackPanel::canCopy()  const { return isInitialized() && card_list->canCopy();  }
+void RandomPackPanel::doCopy()         {        isInitialized() && card_list->doCopy();   }

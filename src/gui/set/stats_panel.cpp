@@ -277,8 +277,13 @@ void StatDimensionList::drawItem(DC& dc, int x, int y, size_t item) {
 
 StatsPanel::StatsPanel(Window* parent, int id)
 	: SetWindowPanel(parent, id)
+	, menuGraph(nullptr)
 	, up_to_date(true), active(false)
 {
+	// delayed initialization by initControls()
+}
+
+void StatsPanel::initControls() {
 	// init controls
 	wxSplitterWindow* splitter;
 	#if USE_SEPARATE_DIMENSION_LISTS
@@ -328,6 +333,7 @@ StatsPanel::~StatsPanel() {
 }
 
 void StatsPanel::onChangeSet() {
+	if (!isInitialized()) return;
 	card_list->setSet(set);
 	#if USE_SEPARATE_DIMENSION_LISTS
 		for (int i = 0 ; i < 3 ; ++i) dimensions[i]->show(set->game);
@@ -336,10 +342,12 @@ void StatsPanel::onChangeSet() {
 	#else
 		categories->show(set->game);
 	#endif
+	card = CardP();
 	onChange();
 }
 
 void StatsPanel::onAction(const Action& action, bool undone) {
+	if (!isInitialized()) return;
 	TYPE_CASE_(action, ScriptValueEvent) {
 		// ignore style only stuff
 	} else {
@@ -348,6 +356,15 @@ void StatsPanel::onAction(const Action& action, bool undone) {
 }
 
 void StatsPanel::initUI   (wxToolBar* tb, wxMenuBar* mb) {
+	// Controls
+	if (!isInitialized()) {
+		wxBusyCursor busy;
+		initControls();
+		CardP cur_card = card;
+		onChangeSet();
+		selectCard(cur_card);
+	}
+	// we are active
 	active = true;
 	if (!up_to_date) showCategory();
 	// Toolbar
@@ -377,6 +394,7 @@ void StatsPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 }
 
 void StatsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
+	if (!isInitialized()) return;
 	switch (ev.GetId()) {
 		case ID_GRAPH_PIE: case ID_GRAPH_BAR: case ID_GRAPH_STACK: case ID_GRAPH_SCATTER: case ID_GRAPH_SCATTER_PIE: {
 			GraphType type = (GraphType)(ev.GetId() - ID_GRAPH_PIE);
@@ -390,6 +408,7 @@ void StatsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 }
 
 void StatsPanel::onCommand(int id) {
+	if (!isInitialized()) return;
 	switch (id) {
 		case ID_FIELD_LIST: {
 			onChange();
@@ -537,9 +556,12 @@ END_EVENT_TABLE()
 // ----------------------------------------------------------------------------- : Selection
 
 CardP StatsPanel::selectedCard() const {
+	if (!isInitialized()) return CardP();
 	return card_list->getCard();
 }
 void StatsPanel::selectCard(const CardP& card) {
+	this->card = card;
+	if (!isInitialized()) return;
 	card_list->setCard(card);
 	
 }

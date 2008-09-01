@@ -50,6 +50,9 @@ class KeywordsPanel : public SetWindowPanel {
 	/// Find the code to insert based on the ref_scripts for the parameters of the current keyword
 	String runRefScript(int i);
 	
+	/// Actual intialization of the controls
+	void initControls();
+	
 	// --------------------------------------------------- : Controls
 	wxSplitterWindow* splitter;
 	wxPanel*          panel;

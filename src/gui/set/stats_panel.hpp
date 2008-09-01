@@ -60,8 +60,11 @@ class StatsPanel : public SetWindowPanel {
 	FilteredCardList* card_list;
 	IconMenu*         menuGraph;
 	
+	CardP card;      ///< Selected card
 	bool up_to_date; ///< Are the graph and card list up to date?
 	bool active;     ///< Is this panel selected?
+	
+	void initControls();
 	
 	void onChange();
 	void onGraphSelect(wxCommandEvent&);
