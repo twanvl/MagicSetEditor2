@@ -10,6 +10,8 @@ mana_sort       := sort_text@(order: "XYZI[0123456789]S(WUBRG)")
 # correctly sort guild mana
 mana_sort_guild := sort_text@(order: "[XYZI01234567890SWUBRG/|]") +
 		replace@(
+			# No lookbehind :(
+			#match: "(?<!/)(./.|././.|./././.|.[|])(?!/)",
 			match: "./.|././.|./././.|.[|]",
 			in_context: "(^|[^/])<match>($|[^/])",
 			replace: {sort_text(order:"in_place((WUBRG)")}
@@ -272,9 +274,12 @@ card_count := {
 
 ############################################################## Utilities for keywords
 
+# Replace spaces by a spacer
+separate_words := remove_tags + trim + replace@(match:" ", replace: {spacer})
+
 # replaces — correctly
 add := "" # default is nothing
-separate_words := remove_tags + trim + replace@(match:" ", replace: {spacer})
+# If the 'input' parameter is a mana costs, then adds 'add'
 for_mana_costs := format_cost := {
 	if input.separator_before == "—" and contains(input.param, match: " ") then (
 		if contains(input.param, match:",") then (
@@ -286,15 +291,19 @@ for_mana_costs := format_cost := {
 	) else
 		"{add}<param-mana>{input.param}</param-mana>"
 }
+# Convert first character to lower case
 alternative_cost := replace@(match:"^[A-Z]", replace: { to_lower() })
+# 
 combined_cost := replace@(match:", [A-Z]", replace: { to_lower() })+
 	replace@(match:",", replace:" and")+
 	replace@(match:"^[STQXYZIWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
 	replace@(match:"^[A-Z]", replace: { to_lower() })
 long_dash := replace@(match:"-", replace:"—")
+
 # Utilities for keywords
 has_cc := { card.casting_cost != "" }
 has_pt := { card.pt           != "" }
+
 contains_target := match@(match:"(?i)([^a-z]|^)target([^a-z]|$)")
 is_targeted := { contains_target(card.rule_text) }
 
@@ -322,8 +331,8 @@ mana_context :=
 	    )
 	    )
 	 |  <param-mana><match></param-mana>		# keyword argument that is declared as mana
-	 |  <param-cost>[ ]*<match></param-cost>		# keyword argument that is declared as cost
-	 |  <param-cost><match>,		# keyword argument that is declared as cost
+	 |  <param-cost>[ ]*<match></param-cost>	# keyword argument that is declared as cost
+	 |  <param-cost><match>,			# keyword argument that is declared as cost
 	 ";
 # truncates the name of legends
 legend_filter := replace@(match:"(, | of | the ).*", replace: "" )
@@ -383,7 +392,7 @@ text_filter :=
 		replace: {"<nosym>" + mana_filter_t() + "</nosym>"} ) +
 	# step 5 : add mana & tap symbols
 	replace@(
-		match: "[STQXYZIWUBRG0-9/|]+",
+		match: "\b[STQXYZIWUBRG0-9/|]+\b",
 		in_context: mana_context,
 		replace: {"<sym-auto>" + mana_filter_t() + "</sym-auto>"} ) +
 	# step 5b : add explict mana symbols
@@ -397,9 +406,10 @@ text_filter :=
 	 	replace: "<i-auto>&</i-auto>") +
 	# step 8 : automatic capitalization
 	replace@(
-		match: "[a-z]",
-		in_context: "[(](<param-[a-z]*>)?<match>[^)]|[ ]*: <param-cost><match>|—<match>| — <match>",
-		replace: to_upper) +
+		match: "([(](?:<param-[a-z]*>)?|[ ]*: <param-cost>|—| — )" # preceded by this
+		     + "([[:lower:]])" # match this
+		     + "(?![)])",      # not followed by this
+		replace: { _1 + to_upper(_2) }) +
 	curly_quotes
 
 
