@@ -32,6 +32,9 @@ class CLISetInterface : public SetView {
 	void showWelcome();
 	void showUsage();
 	void handleCommand(const String& command);
+	#if USE_SCRIPT_PROFILING
+		void showProfilingStats();
+	#endif
 	
 	/// our own context, when no set is loaded
 	Context& getContext();

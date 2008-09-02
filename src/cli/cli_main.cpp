@@ -161,6 +161,10 @@ void CLISetInterface::handleCommand(const String& command) {
 						system(arg.c_str());
 					#endif
 				}
+			#if USE_SCRIPT_PROFILING
+				} else if (before == _(":profile")) {
+					showProfilingStats();
+			#endif
 			} else {
 				cli.showError(_("Unknown command, type :help for help."));
 			}
@@ -187,3 +191,17 @@ void CLISetInterface::handleCommand(const String& command) {
 		cli.showError(e.what());
 	}
 }
+
+#if USE_SCRIPT_PROFILING
+	DECLARE_TYPEOF_COLLECTION(FunctionProfileItem);
+	void CLISetInterface::showProfilingStats() {
+		vector<FunctionProfileItem> stats;
+		get_profile(stats);
+		sort(stats.begin(), stats.end());
+		cli << GRAY << _("Time(s)   Avg (ms)  Calls   Function") << ENDL;
+		cli <<         _("========  ========  ======  ===============================") << NORMAL << ENDL;
+		FOR_EACH_REVERSE(s, stats) {
+			cli << String::Format(_("%8.5f  %8.5f  %6d  %s"), s.time, 1000 * s.time / s.calls, s.calls, s.name.c_str()) << ENDL;
+		}
+	}
+#endif

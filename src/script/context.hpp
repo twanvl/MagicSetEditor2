@@ -13,6 +13,8 @@
 
 class Dependency;
 
+#define USE_SCRIPT_PROFILING 1 // TODO: Disable before release!
+
 // ----------------------------------------------------------------------------- : VectorIntMap
 
 /// A map like data structure that stores the elements in a vector.
@@ -26,6 +28,8 @@ class VectorIntMap {
 		}
 		return values[key];
 	}
+	/// Get access to the vector
+	inline const vector<V>& get() const { return values; }
   private:
 	vector<V> values;
 };
@@ -120,6 +124,12 @@ class Context {
 	void makeObject(size_t n);
 	/// Make a closure with n arguments
 	void makeClosure(size_t n, const Instruction*& instr);
+	
+	/// Get a variable name givin its value, returns (Variable)-1 if not found (slow!)
+	Variable lookupVariableValue(const ScriptValueP& value);
+	#if USE_SCRIPT_PROFILING
+		friend class ScriptCompose;
+	#endif
 };
 
 /// A class that creates a local scope
@@ -131,6 +141,21 @@ class LocalScope {
 	Context& ctx;
 	size_t scope;
 };
+
+// ----------------------------------------------------------------------------- : Profiler
+
+#if USE_SCRIPT_PROFILING
+	struct FunctionProfileItem {
+		FunctionProfileItem() {}
+		FunctionProfileItem(const String& name, double time, int calls) : name(name), time(time), calls(calls) {}
+		inline bool operator < (const FunctionProfileItem& that) { return time < that.time; }
+		
+		String name;
+		double time;
+		int    calls;
+	};
+	void get_profile(vector<FunctionProfileItem>& out);
+#endif
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

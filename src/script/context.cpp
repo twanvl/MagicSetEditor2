@@ -18,6 +18,95 @@ Context::Context()
 	: level(0)
 {}
 
+// ----------------------------------------------------------------------------- : Profiler
+
+#if USE_SCRIPT_PROFILING
+
+	#ifndef UNICODE
+		#error "It looks like you are building the final release; disable USE_SCRIPT_PROFILING!"
+	#endif
+
+	#ifdef WIN32
+		typedef LONGLONG ProfileTime;
+		
+		ProfileTime timer_now() {
+			LARGE_INTEGER i;
+			QueryPerformanceCounter(&i);
+			return i.QuadPart;
+		}
+		ProfileTime timer_resolution() {
+			LARGE_INTEGER i;
+			QueryPerformanceFrequency(&i);
+			return i.QuadPart;
+		}
+	#else
+		#error "Can't use profiler"
+	#endif
+	
+	ProfileTime delta; ///< Time excluded
+	
+	class Timer {
+	  public:
+		Timer() {
+			start = timer_now() + delta;
+		}
+		ProfileTime time() {
+			ProfileTime end = timer_now() + delta;
+			ProfileTime diff = end - start;
+			start = end;
+			return diff;
+		}
+		void exclude_time() {
+			ProfileTime delta_delta = time();
+			delta -= delta_delta; // this time is not counted, even recursively
+			start -= delta_delta;
+		}
+	  private:
+		ProfileTime start;
+	};
+	
+	/// How much time was spent in each function?
+	struct FunctionProfile {
+		FunctionProfile() : time(0), calls(0) {}
+		ProfileTime time;
+		UInt        calls;
+	};
+	VectorIntMap<unsigned int, FunctionProfile> variable_timings;
+	
+	/// Profile a single function
+	struct Profiler {
+	  public:
+		inline Profiler(Timer& timer, Variable function)
+			: timer(timer), function(function)
+		{
+			timer.exclude_time();
+		}
+		inline ~Profiler() {
+			ProfileTime time = timer.time();
+			if ((int)function < 0) return;
+			// per function timing
+			FunctionProfile& funprof = variable_timings[function];
+			funprof.time  += time;
+			funprof.calls += 1;
+			timer.exclude_time();
+		}
+	  private:
+		Timer&   timer;
+		Variable function;
+	};
+	
+	/// Get profile time in seconds and function names
+	void get_profile(vector<FunctionProfileItem>& out) {
+		double resolution = timer_resolution();
+		const vector<FunctionProfile>& times = variable_timings.get();
+		for (size_t i = 0 ; i < times.size() ; ++i) {
+			if (times[i].calls == 0) continue;
+			out.push_back(FunctionProfileItem(variable_to_string((Variable)i), times[i].time / resolution, times[i].calls));
+		}
+	}
+	
+#endif
+
 // ----------------------------------------------------------------------------- : Evaluate
 
 // Perform a unary simple instruction, store the result in a (not in *a)
@@ -132,8 +221,21 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 					}
 					instr += i.data; // skip arguments
 					try {
+						#if USE_SCRIPT_PROFILING
+							Timer timer;
+							const Instruction* instr_bt = script.backtraceSkip(instr - i.data - 2, i.data);
+							Variable function = instr_bt && instr_bt->instr == I_GET_VAR
+							                  ? (Variable)instr_bt->data
+							                  : (Variable)-1;
+							Profiler prof(timer, function);
+						#endif
 						// get function and call
 						stack.back() = stack.back()->eval(*this);
+						// finish profiling
+						#if USE_SCRIPT_PROFILING
+							//profile_add(function, timer.time());
+							//%timer.exclude_time();
+						#endif
 					} catch (const Error& e) {
 						// try to determine what named function was called
 						// the instructions for this look like:
@@ -258,6 +360,20 @@ int Context::getVariableScope(Variable var) {
 	else                      return -1;
 }
 
+Variable Context::lookupVariableValue(const ScriptValueP& value) {
+	const vector<VariableValue>& vars = variables.get();
+	for (size_t i = 0 ; i < vars.size() ; ++i) {
+		if (vars[i].value == value) {
+			return (Variable)i;
+		}
+	}
+	if (ScriptClosure* closure = dynamic_cast<ScriptClosure*>(value.get())) {
+		// look up the base function
+		return lookupVariableValue(closure->fun);
+	}
+	return (Variable)-1;
+}
+
 ScriptValueP Context::makeClosure(const ScriptValueP& fun) {
 	intrusive_ptr<ScriptClosure> closure(new ScriptClosure(fun));
 	// we can find out which variables are in the last level by looking at shadowed
@@ -331,8 +447,24 @@ class ScriptCompose : public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
 	virtual String typeName() const { return _("function composition"); }
 	virtual ScriptValueP eval(Context& ctx) const {
-		ctx.setVariable(SCRIPT_VAR_input, a->eval(ctx));
-		return b->eval(ctx);
+		#if USE_SCRIPT_PROFILING
+			Timer timer;
+			{
+				// execute a
+				Variable fun = ctx.lookupVariableValue(a);
+				Profiler prof(timer,fun);
+				ctx.setVariable(SCRIPT_VAR_input, a->eval(ctx));
+			}
+			{
+				// execute b
+				Variable fun = ctx.lookupVariableValue(b);
+				Profiler prof(timer,fun);
+				return b->eval(ctx);
+			}
+		#else
+			ctx.setVariable(SCRIPT_VAR_input, a->eval(ctx));
+			return b->eval(ctx);
+		#endif
 	}
 	virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const {
 		ctx.setVariable(SCRIPT_VAR_input, a->dependencies(ctx, dep));
