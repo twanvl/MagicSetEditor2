@@ -20,6 +20,9 @@
 	#define USE_INTRUSIVE_PTR
 #endif
 
+// Use slightly less fancy template stuff, so msvc7.1 doesn't crash with an internal compiler error
+#define BOOST_SP_NO_SP_CONVERTIBLE
+
 #include <boost/shared_ptr.hpp>
 #ifdef USE_INTRUSIVE_PTR
 	#include <boost/intrusive_ptr.hpp>
