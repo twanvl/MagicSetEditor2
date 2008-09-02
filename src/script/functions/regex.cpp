@@ -15,7 +15,7 @@
 /* 2008-09-01:
  *     Script profiling shows that the boost library is significantly faster:
  *     When loading a large magic set (which calls ScriptManager::updateAll):
- *            function      Calls   wxRegex    boost
+ *            function      Calls   wxRegEx    boost
  *            ------------------------------------------------------------------
  *            replace        3791   0.38607    0.20857
  *            filter_text      11   0.32251    0.02446
@@ -43,8 +43,6 @@ class ScriptRegex : public ScriptValue {
 	
 	#if USE_BOOST_REGEX
 		
-		typedef boost::match_results<const Char*> Results;
-		
 		ScriptRegex(const String& code) {
 			// compile string
 			try {
@@ -56,55 +54,41 @@ class ScriptRegex : public ScriptValue {
 			}
 		}
 		
+		struct Results : public boost::match_results<const Char*> {
+			/// Get a sub match
+			inline String str(int sub = 0) const {
+				const_reference v = (*this)[sub];
+				return String(v.first, v.second);
+			}
+			/// Format a replacement string
+			inline String format(const String& format) const {
+				std::basic_string<Char> fmt(format.begin(),format.end());
+				String output;
+				boost::match_results<const Char*>::format(
+					insert_iterator<String>(output, output.end()), fmt, boost::format_sed);
+				return output;
+			}
+		};
+		
 		inline bool matches(const String& str) {
 			return regex_search(str.c_str(), regex);
 		}
-		inline bool matches(const String& str, Results& results) {
-			return regex_search(str.c_str(), results, regex);
-		}
-		inline size_t match_count(const Results& results) {
-			return results.size();
-		}
-		inline void get(const Results& results, size_t* start, size_t* length, int sub) {
-			*start  = results.position(sub);
-			*length = results.length(sub);
-		}
-		inline String replace(const Results& results, const String&, const String& format) {
-			std::basic_string<Char> fmt; format_string(format,fmt);
-			String output;
-			results.format(insert_iterator<String>(output, output.end()), fmt);
-			return output;
+		inline bool matches(Results& results, const Char* begin, const Char* end) {
+			return regex_search(begin, end, results, regex);
 		}
 		inline void replace_all(String* input, const String& format) {
-			std::basic_string<Char> fmt; format_string(format,fmt);
+			//std::basic_string<Char> fmt; format_string(format,fmt);
+			std::basic_string<Char> fmt(format.begin(),format.end());
 			String output;
 			regex_replace(insert_iterator<String>(output, output.end()),
-			              input->begin(), input->end(), regex, fmt);
+			              input->begin(), input->end(), regex, fmt, boost::format_sed);
 			*input = output;
 		}
 		
 	  private:
 		BoostRegex regex; ///< The regular expression
 		
-		// convert wx style format string to boost style
-		// i.e.  "&" -> "$&"
-		static void format_string(const String& format, std::basic_string<Char>& fmt) {
-			for (size_t i = 0 ; i < format.size() ; ++i) {
-				Char c = format.GetChar(i);
-				if (c == _('\\') && i + 1 < format.size()) {
-					fmt.append(format.begin()+i,format.begin()+i+2);
-					i++;
-				} else if (c == _('&')) {
-					fmt += _("$&");
-				} else {
-					fmt += c;
-				}
-			}
-		}
-		
 	#else
-		
-		struct Results{}; // dummy for compatability
 		
 		ScriptRegex(const String& code) {
 			// compile string
@@ -114,19 +98,44 @@ class ScriptRegex : public ScriptValue {
 			assert(regex.IsValid());
 		}
 		
-		inline bool matches(const String& str, Results=Results()) {
+		// Interface for compatability with boost::regex
+		struct Results {
+			typedef pair<const Char*,const Char*> value_type; // (begin,end)
+			typedef value_type const_reference;
+			/// Number of submatches (+1 for the total match)
+			inline size_t size() const { return regex->GetMatchCount(); }
+			/// Get a submatch
+			inline value_type operator [] (int sub) const {
+				size_t pos, length;
+				bool ok = regex->GetMatch(&pos, &length, sub);
+				assert(ok);
+				return make_pair(begin + pos, begin + pos + length);
+			}
+			/// Get a sub match
+			inline String str(int sub = 0) const {
+				const_reference v = (*this)[sub];
+				return String(v.first, v.second);
+			}
+			/// Format a replacement string
+			inline String format(const String& format) const {
+				const_reference v = (*this)[0];
+				String inside(v.first, v.second);
+				regex->ReplaceFirst(&inside, format);
+				return inside;
+			}
+		  private:
+			wxRegEx*    regex;
+			const Char* begin;
+			friend class ScriptRegex;
+		};
+		
+		inline bool matches(const String& str) {
 			return regex.Matches(str);
 		}
-		inline size_t match_count(Results) {
-			return regex.GetMatchCount();
-		}
-		inline void get(Results, size_t* start, size_t* length, int sub) {
-			bool ok = regex.GetMatch(start, length, sub);
-			assert(ok);
-		}
-		inline String replace(Results, String input, const String& format) {
-			regex.Replace(&input, format, 1);
-			return input;
+		inline bool matches(Results& results, const Char* begin, const Char* end) {
+			results.regex = &regex;
+			results.begin = begin;
+			return regex.Matches(begin, 0, end - begin);
 		}
 		inline void replace_all(String* input, const String& format) {
 			regex.Replace(input, format);
@@ -136,6 +145,26 @@ class ScriptRegex : public ScriptValue {
 		wxRegEx regex; ///< The regular expression
 		
 	#endif
+	
+  public:
+	/// Match only if in_context also matches
+	bool matches(Results& results, const String& str, const Char* begin, const ScriptRegexP& in_context) {
+		if (!in_context) {
+			return matches(results, begin, str.end());
+		} else {
+			while (matches(results, begin, str.end())) {
+				Results::const_reference match = results[0];
+				String context_str(str.begin(), match.first); // before
+				context_str += _("<match>");
+				context_str.append(match.second, str.end());
+				if (in_context->matches(context_str)) {
+					return true;
+				}
+				begin = match.second; // skip
+			}
+			return false;
+		}
+	}
 };
 
 ScriptRegexP regex_from_script(const ScriptValueP& value) {
@@ -161,41 +190,36 @@ struct RegexReplacer {
 	ScriptValueP replacement_function;	///< Replacement function instead of a simple string, optional
 	bool         recursive;				///< Recurse into the replacement
 	
-	String apply(Context& ctx, String& input, int level = 0) const {
-		// match first, then check context of match
+	String apply(Context& ctx, const String& input, int level = 0) const {
 		String ret;
+		const Char* start = input.begin();
 		ScriptRegex::Results results;
-		while (match->matches(input, results)) {
+		while (match->matches(results, input, start, context)) {
 			// for each match ...
-			size_t start, len;
-			match->get(results, &start, &len, 0);
-			ret                 += input.substr(0, start);          // everything before the match position stays
-			String inside        = input.substr(start, len);        // inside the match
-			String next_input    = input.substr(start + len);       // next loop the input is after this match
-			if (!context || context->matches(ret + _("<match>") + next_input)) {
-				// the context matches -> perform replacement
-				if (replacement_function) {
-					// set match results in context
-					for (UInt m = 0 ; m < match->match_count(results) ; ++m) {
-						match->get(results, &start, &len, m);
-						String name  = m == 0 ? _("input") : String(_("_")) << m;
-						String value = input.substr(start, len);
-						ctx.setVariable(name, to_script(value));
-					}
-					// call
-					inside = replacement_function->eval(ctx)->toString();
-				} else {
-					inside = match->replace(results, inside, replacement_string); // replace inside
+			ScriptRegex::Results::const_reference pos = results[0];
+			ret.append(start, pos.first); // everything before the match position stays
+			// determine replacement
+			String inside;
+			if (replacement_function) {
+				// set match results in context
+				for (UInt sub = 0 ; sub < results.size() ; ++sub) {
+					String name  = sub == 0 ? _("input") : String(_("_")) << sub;
+					ctx.setVariable(name, to_script(results.str(sub)));
 				}
+				// call
+				inside = replacement_function->eval(ctx)->toString();
+			} else {
+				inside = results.format(replacement_string);
 			}
+			// append replaced inside
 			if (recursive && level < 20) {
 				ret += apply(ctx, inside, level + 1);
 			} else {
 				ret += inside;
 			}
-			input = next_input;
+			start = pos.second;
 		}
-		ret += input;
+		ret.append(start, input.end());
 		return ret;
 	}
 };
@@ -244,18 +268,13 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(filter_text) {
 	SCRIPT_OPTIONAL_PARAM_C_(ScriptRegexP, in_context);
 	String ret;
 	// find all matches
+	const Char* start = input.begin();
 	ScriptRegex::Results results;
-	while (match->matches(input, results)) {
+	while (match->matches(results, input, start, in_context)) {
 		// match, append to result
-		size_t start, len;
-		match->get(results, &start, &len, 0);
-		String inside     = input.substr(start, len);  // the match
-		String next_input = input.substr(start + len); // everything after the match
-		if (!in_context || in_context->matches(input.substr(0,start) + _("<match>") + next_input)) {
-			// no context or context match
-			ret += inside;
-		}
-		input = next_input;
+		ScriptRegex::Results::const_reference pos = results[0];
+		ret.append(start, pos.second);  // the match
+		start = pos.second;
 	}
 	SCRIPT_RETURN(ret);
 }
@@ -276,18 +295,12 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(break_text) {
 	SCRIPT_OPTIONAL_PARAM_C_(ScriptRegexP, in_context);
 	ScriptCustomCollectionP ret(new ScriptCustomCollection);
 	// find all matches
+	const Char* start = input.begin();
 	ScriptRegex::Results results;
-	while (match->matches(input, results)) {
+	while (match->matches(results, input, start, in_context)) {
 		// match, append to result
-		size_t start, len;
-		match->get(results, &start, &len, 0);
-		String inside     = input.substr(start, len);  // the match
-		String next_input = input.substr(start + len); // everything after the match
-		if (!in_context || in_context->matches(input.substr(0,start) + _("<match>") + next_input)) {
-			// no context or context match
-			ret->value.push_back(to_script(inside));
-		}
-		input = next_input;
+		ret->value.push_back(to_script(results.str()));
+		start = results[0].second;
 	}
 	return ret;
 }
@@ -308,18 +321,18 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(split_text) {
 	SCRIPT_PARAM_DEFAULT_N(bool, _("include empty"), include_empty, true);
 	ScriptCustomCollectionP ret(new ScriptCustomCollection);
 	// find all matches
+	const Char* start = input.begin();
 	ScriptRegex::Results results;
-	while (match->matches(input, results)) {
-		// match, append to result
-		size_t start, len;
-		match->get(results, &start, &len, 0);
-		if (include_empty || start > 0) {
-			ret->value.push_back(to_script(input.substr(0,start)));
+	while (match->matches(results, start, input.end())) {
+		// match, append the part before it to the result
+		ScriptRegex::Results::const_reference pos = results[0];
+		if (include_empty || pos.first != start) {
+			ret->value.push_back(to_script( String(start,pos.first) ));
 		}
-		input = input.substr(start + len); // everything after the match
+		start = pos.second;
 	}
-	if (include_empty || !input.empty()) {
-		ret->value.push_back(to_script(input));
+	if (include_empty || start != input.end()) {
+		ret->value.push_back(to_script( String(start,input.end()) ));
 	}
 	return ret;
 }
