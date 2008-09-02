@@ -11,6 +11,25 @@
 #include <script/functions/util.hpp>
 #include <util/error.hpp>
 
+// Use boost::regex as opposed to wxRegex
+/* 2008-09-01:
+ *     Script profiling shows that the boost library is significantly faster:
+ *     When loading a large magic set (which calls ScriptManager::updateAll):
+ *            function      Calls   wxRegex    boost
+ *            ------------------------------------------------------------------
+ *            replace        3791   0.38607    0.20857
+ *            filter_text      11   0.32251    0.02446
+ *
+ *            (times are avarage over all calls, in ms)
+ */
+#define USE_BOOST_REGEX 1
+
+#if USE_BOOST_REGEX
+	#include <boost/regex.hpp>
+	#include <boost/regex/pattern_except.hpp>
+	typedef boost::basic_regex<Char> BoostRegex;
+#endif
+
 DECLARE_POINTER_TYPE(ScriptRegex);
 DECLARE_TYPEOF_COLLECTION(pair<Variable COMMA ScriptValueP>);
 
@@ -22,7 +41,101 @@ class ScriptRegex : public ScriptValue {
 	virtual ScriptType type() const { return SCRIPT_REGEX; }
 	virtual String typeName() const { return _("regex"); }
 	
-	wxRegEx regex; ///< The regular expression
+	#if USE_BOOST_REGEX
+		
+		typedef boost::match_results<const Char*> Results;
+		
+		ScriptRegex(const String& code) {
+			// compile string
+			try {
+				regex.assign(code.begin(),code.end());
+			} catch (const boost::regex_error& e) {
+				/// TODO: be more precise
+				throw ScriptError(String::Format(_("Error while compiling regular expression: '%s'\nAt position: %d\n%s"),
+				                    code.c_str(), e.position(), String(e.what(), IF_UNICODE(wxConvUTF8,String::npos))));
+			}
+		}
+		
+		inline bool matches(const String& str) {
+			return regex_search(str.c_str(), regex);
+		}
+		inline bool matches(const String& str, Results& results) {
+			return regex_search(str.c_str(), results, regex);
+		}
+		inline size_t match_count(const Results& results) {
+			return results.size();
+		}
+		inline void get(const Results& results, size_t* start, size_t* length, int sub) {
+			*start  = results.position(sub);
+			*length = results.length(sub);
+		}
+		inline String replace(const Results& results, const String&, const String& format) {
+			std::basic_string<Char> fmt; format_string(format,fmt);
+			String output;
+			results.format(insert_iterator<String>(output, output.end()), fmt);
+			return output;
+		}
+		inline void replace_all(String* input, const String& format) {
+			std::basic_string<Char> fmt; format_string(format,fmt);
+			String output;
+			regex_replace(insert_iterator<String>(output, output.end()),
+			              input->begin(), input->end(), regex, fmt);
+			*input = output;
+		}
+		
+	  private:
+		BoostRegex regex; ///< The regular expression
+		
+		// convert wx style format string to boost style
+		// i.e.  "&" -> "$&"
+		static void format_string(const String& format, std::basic_string<Char>& fmt) {
+			for (size_t i = 0 ; i < format.size() ; ++i) {
+				Char c = format.GetChar(i);
+				if (c == _('\\') && i + 1 < format.size()) {
+					fmt.append(format.begin()+i,format.begin()+i+2);
+					i++;
+				} else if (c == _('&')) {
+					fmt += _("$&");
+				} else {
+					fmt += c;
+				}
+			}
+		}
+		
+	#else
+		
+		struct Results{}; // dummy for compatability
+		
+		ScriptRegex(const String& code) {
+			// compile string
+			if (!regex.Compile(code, wxRE_ADVANCED)) {
+				throw ScriptError(_("Error while compiling regular expression: '") + code + _("'"));
+			}
+			assert(regex.IsValid());
+		}
+		
+		inline bool matches(const String& str, Results=Results()) {
+			return regex.Matches(str);
+		}
+		inline size_t match_count(Results) {
+			return regex.GetMatchCount();
+		}
+		inline void get(Results, size_t* start, size_t* length, int sub) {
+			bool ok = regex.GetMatch(start, length, sub);
+			assert(ok);
+		}
+		inline String replace(Results, String input, const String& format) {
+			regex.Replace(&input, format, 1);
+			return input;
+		}
+		inline void replace_all(String* input, const String& format) {
+			regex.Replace(input, format);
+		}
+		
+	  private:
+		wxRegEx regex; ///< The regular expression
+		
+	#endif
 };
 
 ScriptRegexP regex_from_script(const ScriptValueP& value) {
@@ -30,12 +143,7 @@ ScriptRegexP regex_from_script(const ScriptValueP& value) {
 	ScriptRegexP regex = dynamic_pointer_cast<ScriptRegex>(value);
 	if (!regex) {
 		// TODO: introduce some kind of caching?
-		// compile string
-		regex = new_intrusive<ScriptRegex>();
-		if (!regex->regex.Compile(*value, wxRE_ADVANCED)) {
-			throw ScriptError(_("Error while compiling regular expression: '") + value->toString() + _("'"));
-		}
-		assert(regex->regex.IsValid());
+		regex = new_intrusive1<ScriptRegex>(*value);
 	}
 	return regex;
 }
@@ -56,20 +164,20 @@ struct RegexReplacer {
 	String apply(Context& ctx, String& input, int level = 0) const {
 		// match first, then check context of match
 		String ret;
-		while (match->regex.Matches(input)) {
+		ScriptRegex::Results results;
+		while (match->matches(input, results)) {
 			// for each match ...
 			size_t start, len;
-			bool ok = match->regex.GetMatch(&start, &len, 0);
-			assert(ok);
+			match->get(results, &start, &len, 0);
 			ret                 += input.substr(0, start);          // everything before the match position stays
 			String inside        = input.substr(start, len);        // inside the match
 			String next_input    = input.substr(start + len);       // next loop the input is after this match
-			if (!context || context->regex.Matches(ret + _("<match>") + next_input)) {
+			if (!context || context->matches(ret + _("<match>") + next_input)) {
 				// the context matches -> perform replacement
 				if (replacement_function) {
 					// set match results in context
-					for (UInt m = 0 ; m < match->regex.GetMatchCount() ; ++m) {
-						match->regex.GetMatch(&start, &len, m);
+					for (UInt m = 0 ; m < match->match_count(results) ; ++m) {
+						match->get(results, &start, &len, m);
 						String name  = m == 0 ? _("input") : String(_("_")) << m;
 						String value = input.substr(start, len);
 						ctx.setVariable(name, to_script(value));
@@ -77,7 +185,7 @@ struct RegexReplacer {
 					// call
 					inside = replacement_function->eval(ctx)->toString();
 				} else {
-					match->regex.Replace(&inside, replacement_string, 1); // replace inside
+					inside = match->replace(results, inside, replacement_string); // replace inside
 				}
 			}
 			if (recursive && level < 20) {
@@ -115,7 +223,7 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(replace) {
 		SCRIPT_RETURN(replacer.apply(ctx, input));
 	} else {
 		// simple replacing
-		replacer.match->regex.Replace(&input, replacer.replacement_string);
+		replacer.match->replace_all(&input, replacer.replacement_string);
 		SCRIPT_RETURN(input);
 	}
 }
@@ -136,14 +244,14 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(filter_text) {
 	SCRIPT_OPTIONAL_PARAM_C_(ScriptRegexP, in_context);
 	String ret;
 	// find all matches
-	while (match->regex.Matches(input)) {
+	ScriptRegex::Results results;
+	while (match->matches(input, results)) {
 		// match, append to result
 		size_t start, len;
-		bool ok = match->regex.GetMatch(&start, &len, 0);
-		assert(ok);
+		match->get(results, &start, &len, 0);
 		String inside     = input.substr(start, len);  // the match
 		String next_input = input.substr(start + len); // everything after the match
-		if (!in_context || in_context->regex.Matches(input.substr(0,start) + _("<match>") + next_input)) {
+		if (!in_context || in_context->matches(input.substr(0,start) + _("<match>") + next_input)) {
 			// no context or context match
 			ret += inside;
 		}
@@ -168,14 +276,14 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(break_text) {
 	SCRIPT_OPTIONAL_PARAM_C_(ScriptRegexP, in_context);
 	ScriptCustomCollectionP ret(new ScriptCustomCollection);
 	// find all matches
-	while (match->regex.Matches(input)) {
+	ScriptRegex::Results results;
+	while (match->matches(input, results)) {
 		// match, append to result
 		size_t start, len;
-		bool ok = match->regex.GetMatch(&start, &len, 0);
-		assert(ok);
+		match->get(results, &start, &len, 0);
 		String inside     = input.substr(start, len);  // the match
 		String next_input = input.substr(start + len); // everything after the match
-		if (!in_context || in_context->regex.Matches(input.substr(0,start) + _("<match>") + next_input)) {
+		if (!in_context || in_context->matches(input.substr(0,start) + _("<match>") + next_input)) {
 			// no context or context match
 			ret->value.push_back(to_script(inside));
 		}
@@ -200,11 +308,11 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(split_text) {
 	SCRIPT_PARAM_DEFAULT_N(bool, _("include empty"), include_empty, true);
 	ScriptCustomCollectionP ret(new ScriptCustomCollection);
 	// find all matches
-	while (match->regex.Matches(input)) {
+	ScriptRegex::Results results;
+	while (match->matches(input, results)) {
 		// match, append to result
 		size_t start, len;
-		bool ok = match->regex.GetMatch(&start, &len, 0);
-		assert(ok);
+		match->get(results, &start, &len, 0);
 		if (include_empty || start > 0) {
 			ret->value.push_back(to_script(input.substr(0,start)));
 		}
@@ -229,7 +337,7 @@ SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(split_text) {
 SCRIPT_FUNCTION_WITH_SIMPLIFY(match) {
 	SCRIPT_PARAM_C(String, input);
 	SCRIPT_PARAM_C(ScriptRegexP, match);
-	SCRIPT_RETURN(match->regex.Matches(input));
+	SCRIPT_RETURN(match->matches(input));
 }
 SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(match) {
 	FOR_EACH(b, closure.bindings) {

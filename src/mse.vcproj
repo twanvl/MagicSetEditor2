@@ -175,12 +175,13 @@
 				WarningLevel="4"
 				WarnAsError="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="4"
+				DisableSpecificWarnings="4671;4673"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)ud.lib wxmsw$(WX_VERSION)ud_core.lib wxjpegd.lib wxpngd.lib wxtiffd.lib wxzlibd.lib wxregexud.lib wxbase$(WX_VERSION)ud_net.lib wxmsw$(WX_VERSION)ud_html.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)ud.lib wxmsw$(WX_VERSION)ud_core.lib wxjpegd.lib wxpngd.lib wxtiffd.lib wxzlibd.lib wxregexud.lib wxbase$(WX_VERSION)ud_net.lib wxmsw$(WX_VERSION)ud_html.lib libboost_regex-vc71-mt-gd-1_36.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libcd.lib,libcid.lib"
@@ -407,7 +408,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)u.lib wxmsw$(WX_VERSION)u_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregexu.lib wxbase$(WX_VERSION)u_net.lib wxmsw$(WX_VERSION)u_html.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)u.lib wxmsw$(WX_VERSION)u_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregexu.lib wxbase$(WX_VERSION)u_net.lib wxmsw$(WX_VERSION)u_html.lib libboost_regex-vc71-mt-s.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
