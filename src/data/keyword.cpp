@@ -126,18 +126,36 @@ String KeywordParam::make_separator_before() const {
 }*/
 void KeywordParam::compile() {
 	// compile separator_before
-	if (!separator_before_is.empty() && !separator_before_re.IsValid()) {
-		separator_before_re.Compile(_("^") + separator_before_is, wxRE_ADVANCED);
+	if (!separator_before_is.empty() && separator_before_re.empty()) {
+		separator_before_re.assign(_("^") + separator_before_is);
 		if (eat_separator) {
-			separator_before_eat.Compile(separator_before_is + _("$"), wxRE_ADVANCED);
+			separator_before_eat.assign(separator_before_is + _("$"));
 		}
 	}
 	// compile separator_after
-	if (!separator_after_is.empty() && !separator_after_re.IsValid()) {
-		separator_after_re.Compile(separator_after_is + _("$"), wxRE_ADVANCED);
+	if (!separator_after_is.empty() && separator_after_re.empty()) {
+		separator_after_re.assign(separator_after_is + _("$"));
 		if (eat_separator) {
-			separator_after_eat.Compile(_("^") + separator_after_is, wxRE_ADVANCED);
+			separator_after_eat.assign(_("^") + separator_after_is);
 		}
+	}
+}
+void KeywordParam::eat_separator_before(String& text) {
+	if (separator_before_eat.empty()) return;
+	Regex::Results result;
+	if (separator_before_eat.matches(result, text)) {
+		// keep only stuff before the separator
+		assert(result.position() + result.size() == text.size());
+		text.resize(result.position());
+	}
+}
+void KeywordParam::eat_separator_after(const String& text, size_t& i) {
+	if (separator_after_eat.empty()) return;
+	Regex::Results result;
+	if (separator_after_eat.matches(result, text.begin() + i, text.end())) {
+		// advance past the separator
+		assert(result.position() == 0);
+		i += result.length();
 	}
 }
 
@@ -161,12 +179,15 @@ size_t Keyword::findMode(const vector<KeywordModeP>& modes) const {
 // ----------------------------------------------------------------------------- : Regex stuff
 
 void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
-	if (!force && match_re.IsValid()) return;
+	if (!force && !match_re.empty()) return;
 	parameters.clear();
 	// Prepare regex
 	String regex;
 	String text; // normal, non-regex, text
 	vector<KeywordParamP>::const_iterator param = parameters.begin();
+	#if USE_CASE_INSENSITIVE_KEYWORDS
+		regex = _("(?i)"); // case insensitive matching
+	#endif
 	// Parse the 'match' string
 	for (size_t i = 0 ; i < match.size() ;) {
 		Char c = match.GetChar(i);
@@ -175,14 +196,14 @@ void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
 			size_t start = skip_tag(match, i), end = match_close_tag(match, i);
 			String type = match.substr(start, end-start);
 			// find parameter type 'type'
-			KeywordParamP p;
+			KeywordParamP param;
 			FOR_EACH_CONST(pt, param_types) {
 				if (pt->name == type) {
-					p = pt;
+					param = pt;
 					break;
 				}
 			}
-			if (!p) {
+			if (!param) {
 				// throwing an error can mean a set will not be loaded!
 				// instead, simply disable the keyword
 				//throw InternalError(_("Unknown keyword parameter type: ") + type);
@@ -190,45 +211,33 @@ void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
 				valid = false;
 				return;
 			}
-			parameters.push_back(p);
+			parameters.push_back(param);
 			// modify regex : match text before
-			p->compile();
-			if (p->separator_before_eat.IsValid() && p->separator_before_eat.Matches(text)) {
-				// remove the separator from the text to prevent duplicates
-				size_t start, len;
-				p->separator_before_eat.GetMatch(&start, &len);
-				text = text.substr(0, start);
-			}
+			param->compile();
+			// remove the separator from the text to prevent duplicates
+			param->eat_separator_before(text);
 			regex += _("(") + regex_escape(text) + _(")");
 			text.clear();
 			// modify regex : match parameter
-			regex += _("(") + make_non_capturing(p->match) + (p->optional ? _(")?") : _(")"));
+			regex += _("(") + make_non_capturing(param->match) + (param->optional ? _(")?") : _(")"));
 			i = skip_tag(match, end);
 			// eat separator_after?
-			if (p->separator_after_eat.IsValid() && p->separator_after_eat.Matches(match.substr(i))) {
-				size_t start, len;
-				p->separator_before_eat.GetMatch(&start, &len);
-				i += start + len;
-			}
+			param->eat_separator_after(match, i);
 		} else {
 			text += c;
 			i++;
 		}
 	}
 	regex += _("(") + regex_escape(text) + _(")");
-	regex = _("\\y") + regex + _("(?=$|[^a-zA-Z0-9\\(])"); // only match whole words
-	#if USE_CASE_INSENSITIVE_KEYWORDS
-		int flags = wxRE_ADVANCED | wxRE_ICASE; // case insensitive matching
+	#if USE_BOOST_REGEX
+		regex = _("\\<")
 	#else
-		int flags = wxRE_ADVANCED
+		regex = _("\\y")
 	#endif
-	if (match_re.Compile(regex, flags)) {
-		// not valid if it matches "", that would make MSE hang
-		valid = !match_re.Matches(_(""));
-	} else {
-		valid = false;
-		throw InternalError(_("Error creating match regex"));
-	}
+	      + regex + _("(?=$|[^a-zA-Z0-9\\(])"); // only match whole words
+	match_re.assign(regex);
+	// not valid if it matches "", that would make MSE hang
+	valid = !match_re.matches(_(""));
 }
 
 // ----------------------------------------------------------------------------- : KeywordTrie
@@ -332,19 +341,8 @@ void KeywordDatabase::add(const Keyword& kw) {
 			i = match_close_tag_end(kw.match, i);
 			// parameter, is there a separator we should eat?
 			if (param < kw.parameters.size()) {
-				wxRegEx& sep_before = kw.parameters[param]->separator_before_eat;
-				wxRegEx& sep_after  = kw.parameters[param]->separator_after_eat;
-				if (sep_before.IsValid() && sep_before.Matches(text)) {
-					// remove the separator from the text to prevent duplicates
-					size_t start, len;
-					sep_before.GetMatch(&start, &len);
-					text = text.substr(0, start);
-				}
-				if (sep_after.IsValid() && sep_after.Matches(kw.match.substr(i))) {
-					size_t start, len;
-					sep_after.GetMatch(&start, &len);
-					i += start + len;
-				}
+				kw.parameters[param]->eat_separator_before(text);
+				kw.parameters[param]->eat_separator_after(kw.match, i);
 			}
 			++param;
 			// match anything
@@ -487,7 +485,6 @@ String KeywordDatabase::expand(const String& text,
 			FOR_EACH(n, current) {
 				FOR_EACH(f, n->finished) {
 					const Keyword* kw = f;
-					assert(kw->match_re.IsValid());
 					if (used.insert(kw).second) {
 						// we have found a possible match, for a keyword which we have not seen before
 						if (tryExpand(*kw, i, tagged, untagged, result, expand_type,
@@ -525,11 +522,13 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
                                 Value* stat_key) const
 {
 	// try to match regex against the *untagged* string
-	if (!kw.match_re.Matches(untagged)) return false;
+	assert(!kw.match_re.empty());
+	Regex::Results match;
+	if (!kw.match_re.matches(match, untagged)) return false;
 	
 	// Find match position
-	size_t start_u, len_u;
-	kw.match_re.GetMatch(&start_u, &len_u, 0);
+	size_t start_u = match.position();
+	size_t len_u   = match.length();
 	size_t start = untagged_to_index(tagged, start_u, true),
 	       end   = untagged_to_index(tagged, start_u + len_u, true);
 	if (start == end) return false; // don't match empty keywords
@@ -560,34 +559,36 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 	// Split the keyword, set parameters in context
 	// The even captures are parameter values, the odd ones are the plain text in between
 	String total; // the total keyword
-	size_t match_count = kw.match_re.GetMatchCount();
-	assert(match_count - 1 == 1 + 2 * kw.parameters.size());
+	assert(match.size() - 1 == 1 + 2 * kw.parameters.size());
 	size_t part_start = start;
-	for (size_t j = 1 ; j < match_count ; ++j) {
-		// we start counting at 1, so
-		// j = 1 mod 2 -> text
-		// j = 0 mod 2 -> parameter  #((j-1)/2) == (j/2-1)
-		size_t part_start_u, part_len_u;
-		kw.match_re.GetMatch(&part_start_u, &part_len_u, j);
+	for (size_t submatch = 1 ; submatch < match.size() ; ++submatch) {
+		// the matched part
+		size_t part_start_u = match.position(submatch);
+		size_t part_len_u   = match.length((int)submatch);
+		size_t part_end_u   = part_start_u + part_len_u;
 		// note: start_u can be (uint)-1 when part_len_u == 0
-		size_t part_end = part_len_u > 0 ? untagged_to_index(tagged, part_start_u + part_len_u, true) : part_start;
-		String part = tagged.substr(part_start, part_end - part_start);
+		size_t part_end = part_len_u > 0 ? untagged_to_index(tagged, part_end_u, true) : part_start;
+		String part(tagged, part_start, part_end - part_start);
 		// strip left over </kw tags
 		part = remove_tag(part,_("</kw-"));
 		
-		if ((j % 2) == 0) {
+		// we start counting at 1, so
+		// submatch = 1 mod 2 -> text
+		// submatch = 0 mod 2 -> parameter
+		if ((submatch % 2) == 0) {
 			// parameter
-			KeywordParam& kwp = *kw.parameters[j/2-1];
+			KeywordParam& kwp = *kw.parameters[(submatch - 2) / 2];
 			String param = untagged.substr(part_start_u, part_len_u); // untagged version
 			// strip separator_before
 			String separator_before, separator_after;
-			if (kwp.separator_before_re.IsValid() && kwp.separator_before_re.Matches(param)) {
-				size_t sep_start, sep_len; // start should be 0
-				kwp.separator_before_re.GetMatch(&sep_start, &sep_len);
-				separator_before = param.substr(0, sep_start + sep_len);
-				param = param.substr(sep_start + sep_len);
+			Regex::Results sep_match;
+			if (!kwp.separator_before_re.empty() && kwp.separator_before_re.matches(sep_match, param)) {
+				size_t sep_end = sep_match.length();
+				assert(sep_match.position() == 0); // should only match at start of param
+				separator_before.assign(param, 0, sep_end);
+				param.erase(0, sep_end);
 				// strip from tagged version
-				size_t sep_end_t = untagged_to_index(part, sep_start + sep_len, false);
+				size_t sep_end_t = untagged_to_index(part, sep_end, false);
 				part = get_tags(part, 0, sep_end_t, true, true) + part.substr(sep_end_t);
 				// transform?
 				if (kwp.separator_script) {
@@ -596,11 +597,11 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 				}
 			}
 			// strip separator_after
-			if (kwp.separator_after_re.IsValid() && kwp.separator_after_re.Matches(param)) {
-				size_t sep_start, sep_len; // start + len should be param.size()
-				kwp.separator_after_re.GetMatch(&sep_start, &sep_len);
-				separator_after = param.substr(sep_start);
-				param = param.substr(0, sep_start);
+			if (!kwp.separator_after_re.empty() && kwp.separator_after_re.matches(sep_match, param)) {
+				size_t sep_start = sep_match.position();
+				assert(sep_match[0].second == param.end()); // should only match at end of param
+				separator_after.assign(param, sep_start);
+				param.resize(sep_start);
 				// strip from tagged version
 				size_t sep_start_t = untagged_to_index(part, sep_start, false);
 				part = part.substr(0, sep_start_t) + get_tags(part, sep_start_t, part.size(), true, true);
@@ -631,7 +632,7 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 				}
 			}
 			part  = separator_before + script_part->toString() + separator_after;
-			ctx.setVariable(String(_("param")) << (int)(j/2), script_param);
+			ctx.setVariable(String(_("param")) << (int)(submatch/2), script_param);
 			
 		} else if (correct_case) {
 			// Plain text, check if the case matches

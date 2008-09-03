@@ -9,26 +9,8 @@
 #include <util/prec.hpp>
 #include <script/functions/functions.hpp>
 #include <script/functions/util.hpp>
+#include <util/regex.hpp>
 #include <util/error.hpp>
-
-// Use boost::regex as opposed to wxRegex
-/* 2008-09-01:
- *     Script profiling shows that the boost library is significantly faster:
- *     When loading a large magic set (which calls ScriptManager::updateAll):
- *            function      Calls   wxRegEx    boost
- *            ------------------------------------------------------------------
- *            replace        3791   0.38607    0.20857
- *            filter_text      11   0.32251    0.02446
- *
- *            (times are avarage over all calls, in ms)
- */
-#define USE_BOOST_REGEX 1
-
-#if USE_BOOST_REGEX
-	#include <boost/regex.hpp>
-	#include <boost/regex/pattern_except.hpp>
-	typedef boost::basic_regex<Char> BoostRegex;
-#endif
 
 DECLARE_POINTER_TYPE(ScriptRegex);
 DECLARE_TYPEOF_COLLECTION(pair<Variable COMMA ScriptValueP>);
@@ -36,117 +18,15 @@ DECLARE_TYPEOF_COLLECTION(pair<Variable COMMA ScriptValueP>);
 // ----------------------------------------------------------------------------- : Regex type
 
 /// A regular expression for use in a script
-class ScriptRegex : public ScriptValue {
+class ScriptRegex : public ScriptValue, public Regex {
   public:
 	virtual ScriptType type() const { return SCRIPT_REGEX; }
 	virtual String typeName() const { return _("regex"); }
 	
-	#if USE_BOOST_REGEX
-		
-		ScriptRegex(const String& code) {
-			// compile string
-			try {
-				regex.assign(code.begin(),code.end());
-			} catch (const boost::regex_error& e) {
-				/// TODO: be more precise
-				throw ScriptError(String::Format(_("Error while compiling regular expression: '%s'\nAt position: %d\n%s"),
-				                    code.c_str(), e.position(), String(e.what(), IF_UNICODE(wxConvUTF8,String::npos))));
-			}
-		}
-		
-		struct Results : public boost::match_results<const Char*> {
-			/// Get a sub match
-			inline String str(int sub = 0) const {
-				const_reference v = (*this)[sub];
-				return String(v.first, v.second);
-			}
-			/// Format a replacement string
-			inline String format(const String& format) const {
-				std::basic_string<Char> fmt(format.begin(),format.end());
-				String output;
-				boost::match_results<const Char*>::format(
-					insert_iterator<String>(output, output.end()), fmt, boost::format_sed);
-				return output;
-			}
-		};
-		
-		inline bool matches(const String& str) {
-			return regex_search(str.c_str(), regex);
-		}
-		inline bool matches(Results& results, const Char* begin, const Char* end) {
-			return regex_search(begin, end, results, regex);
-		}
-		inline void replace_all(String* input, const String& format) {
-			//std::basic_string<Char> fmt; format_string(format,fmt);
-			std::basic_string<Char> fmt(format.begin(),format.end());
-			String output;
-			regex_replace(insert_iterator<String>(output, output.end()),
-			              input->begin(), input->end(), regex, fmt, boost::format_sed);
-			*input = output;
-		}
-		
-	  private:
-		BoostRegex regex; ///< The regular expression
-		
-	#else
-		
-		ScriptRegex(const String& code) {
-			// compile string
-			if (!regex.Compile(code, wxRE_ADVANCED)) {
-				throw ScriptError(_("Error while compiling regular expression: '") + code + _("'"));
-			}
-			assert(regex.IsValid());
-		}
-		
-		// Interface for compatability with boost::regex
-		struct Results {
-			typedef pair<const Char*,const Char*> value_type; // (begin,end)
-			typedef value_type const_reference;
-			/// Number of submatches (+1 for the total match)
-			inline size_t size() const { return regex->GetMatchCount(); }
-			/// Get a submatch
-			inline value_type operator [] (int sub) const {
-				size_t pos, length;
-				bool ok = regex->GetMatch(&pos, &length, sub);
-				assert(ok);
-				return make_pair(begin + pos, begin + pos + length);
-			}
-			/// Get a sub match
-			inline String str(int sub = 0) const {
-				const_reference v = (*this)[sub];
-				return String(v.first, v.second);
-			}
-			/// Format a replacement string
-			inline String format(const String& format) const {
-				const_reference v = (*this)[0];
-				String inside(v.first, v.second);
-				regex->ReplaceFirst(&inside, format);
-				return inside;
-			}
-		  private:
-			wxRegEx*    regex;
-			const Char* begin;
-			friend class ScriptRegex;
-		};
-		
-		inline bool matches(const String& str) {
-			return regex.Matches(str);
-		}
-		inline bool matches(Results& results, const Char* begin, const Char* end) {
-			results.regex = &regex;
-			results.begin = begin;
-			return regex.Matches(begin, 0, end - begin);
-		}
-		inline void replace_all(String* input, const String& format) {
-			regex.Replace(input, format);
-		}
-		
-	  private:
-		wxRegEx regex; ///< The regular expression
-		
-	#endif
+	ScriptRegex(const String& code) {
+		assign(code);
+	}
 	
-  public:
 	/// Match only if in_context also matches
 	bool matches(Results& results, const String& str, const Char* begin, const ScriptRegexP& in_context) {
 		if (!in_context) {
@@ -156,15 +36,16 @@ class ScriptRegex : public ScriptValue {
 				Results::const_reference match = results[0];
 				String context_str(str.begin(), match.first); // before
 				context_str += _("<match>");
-				context_str.append(match.second, str.end());
+				context_str.append(match.second, str.end()); // after
 				if (in_context->matches(context_str)) {
-					return true;
+					return true; // the context matches, done
 				}
 				begin = match.second; // skip
 			}
 			return false;
 		}
 	}
+	using Regex::matches;
 };
 
 ScriptRegexP regex_from_script(const ScriptValueP& value) {

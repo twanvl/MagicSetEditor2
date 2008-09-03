@@ -12,7 +12,7 @@
 #include <util/prec.hpp>
 #include <script/scriptable.hpp>
 #include <util/dynamic_arg.hpp>
-#include <wx/regex.h>
+#include <util/regex.hpp>
 
 DECLARE_POINTER_TYPE(KeywordParam);
 DECLARE_POINTER_TYPE(KeywordMode);
@@ -42,11 +42,11 @@ class KeywordParam : public IntrusivePtrBase<KeywordParam> {
 	bool           optional;			///< Can this parameter be left out (a placeholder is then used)
 	String         match;				///< Regular expression to match (including separators)
 	String         separator_before_is;	///< Regular expression of separator before the param
-	wxRegEx        separator_before_re;	///< Regular expression of separator before the param, compiled
-	wxRegEx        separator_before_eat;///< Regular expression of separator before the param, if eat_separator
+	Regex          separator_before_re;	///< Regular expression of separator before the param, compiled
+	Regex          separator_before_eat;///< Regular expression of separator before the param, if eat_separator
 	String         separator_after_is;	///< Regular expression of separator after the param
-	wxRegEx        separator_after_re;	///< Regular expression of separator after the param, compiled
-	wxRegEx        separator_after_eat;	///< Regular expression of separator after the param, if eat_separator
+	Regex          separator_after_re;	///< Regular expression of separator after the param, compiled
+	Regex          separator_after_eat;	///< Regular expression of separator after the param, if eat_separator
 	bool           eat_separator;		///< Remove the separator from the match string if it also appears there (prevent duplicates)
 	OptionalScript script;				///< Transformation of the value for showing as the parameter
 	OptionalScript reminder_script;		///< Transformation of the value for showing in the reminder text
@@ -60,6 +60,11 @@ class KeywordParam : public IntrusivePtrBase<KeywordParam> {
 	
 	/// Compile regexes for separators
 	void compile();
+	
+	/// Remove separator_before from the end of the text
+	void eat_separator_before(String& text);
+	/// Advance i past separator_before if it is at position i in the text 
+	void eat_separator_after(const String& text, size_t& i);
 	
 	DECLARE_REFLECTION();
 };
@@ -96,7 +101,7 @@ class Keyword : public IntrusivePtrVirtualBase {
 	 *  captures 1,3,... capture the plain text of the match string
 	 *  captures 2,4,... capture the separators and parameters
 	 */
-	wxRegEx               match_re;
+	Regex                 match_re;
 	bool                  fixed;		///< Is this keyword uneditable? (true for game keywods, false for set keywords)
 	bool                  valid;		///< Is this keyword okay (reminder text compiles & runs; match does not match "")
 	

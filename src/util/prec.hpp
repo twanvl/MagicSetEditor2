@@ -28,7 +28,7 @@
 #include <wx/wx.h>
 #include <wx/image.h>
 #include <wx/datetime.h>
-#include <wx/regex.h>
+#include <wx/regex.h> // TODO : remove, see regex.hpp
 
 // Std headers
 #include <vector>
@@ -78,6 +78,15 @@ class FileName : public wxString {
 #include "locale.hpp"
 #include "error.hpp"
 #include "reflect.hpp"
+#include "regex.hpp"
+
+#ifdef _MSC_VER
+//# pragma conform(forScope,on)    // in "for(int x=..);" x goes out of scope after the for
+// somehow forScope pragma doesn't work in precompiled headers, use this hack instead:
+#ifdef _DEBUG
+	#define for if(false);else for
+#endif
+#endif
 
 // ----------------------------------------------------------------------------- : EOF
 #endif
