@@ -12,6 +12,25 @@
 
 DECLARE_TYPEOF_COLLECTION(ScriptParseError);
 
+// ----------------------------------------------------------------------------- : Debug utilities
+
+#if defined(_MSC_VER) && defined(_DEBUG)
+	void msvc_assert(const char* msg, const char* expr, const char* file, unsigned line) {
+		if (IsDebuggerPresent()) {
+			char buffer[1024];
+			if (msg) {
+				sprintf(buffer, "Assertion failed: %s: %s, file %s, line %d\n", msg, expr, file, line);
+			} else {
+				sprintf(buffer, "Assertion failed: %s, file %s, line %d\n", expr, file, line);
+			}
+			OutputDebugStringA(buffer);
+			DebugBreak();
+		} else {
+			_assert(expr, file, line);
+		}
+	}
+#endif
+
 // ----------------------------------------------------------------------------- : Error types
 
 Error::Error(const String& message)

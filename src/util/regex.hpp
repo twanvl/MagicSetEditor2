@@ -54,6 +54,9 @@
 			}
 		};
 		
+		inline Regex() {}
+		inline Regex(const String& code) { assign(code); }
+		
 		void assign(const String& code);
 		inline bool matches(const String& str) const {
 			return regex_search(str.begin(), str.end(), regex);
@@ -125,6 +128,9 @@
 			const Char* begin;
 			friend class ScriptRegex;
 		};
+		
+		inline Regex() {}
+		inline Regex(const String& code) { assign(code); }
 		
 		void assign(const String& code);
 		inline bool matches(const String& str) const {

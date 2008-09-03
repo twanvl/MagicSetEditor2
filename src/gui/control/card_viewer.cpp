@@ -72,7 +72,9 @@ void CardViewer::onChangeSize() {
 void CardViewer::onPaint(wxPaintEvent&) {
 	#ifdef _DEBUG
 		// we don't want recursion
-		assert(!inOnPaint());
+		if (inOnPaint()) {
+			wxTrap();
+		}
 		WITH_DYNAMIC_ARG(inOnPaint, true);
 	#endif
 	wxSize cs = GetClientSize();
@@ -129,7 +131,9 @@ class CardViewer::OverdrawDC : private OverdrawDC_aux, public RotatedDC {
 shared_ptr<RotatedDC> CardViewer::overdrawDC() {
 	#ifdef _DEBUG
 		// don't call from onPaint
-		assert(!inOnPaint());
+		if (inOnPaint()) {
+			wxTrap();
+		}
 	#endif
 	return shared_ptr<RotatedDC>(new OverdrawDC(this));
 }

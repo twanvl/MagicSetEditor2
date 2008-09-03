@@ -80,12 +80,21 @@ class FileName : public wxString {
 #include "reflect.hpp"
 #include "regex.hpp"
 
+// ----------------------------------------------------------------------------- : Debugging fixes
+
 #ifdef _MSC_VER
-//# pragma conform(forScope,on)    // in "for(int x=..);" x goes out of scope after the for
-// somehow forScope pragma doesn't work in precompiled headers, use this hack instead:
-#ifdef _DEBUG
-	#define for if(false);else for
-#endif
+	//# pragma conform(forScope,on)    // in "for(int x=..);" x goes out of scope after the for
+	// somehow forScope pragma doesn't work in precompiled headers, use this hack instead:
+	#ifdef _DEBUG
+		#define for if(false);else for
+	#endif
+	
+	#ifdef _DEBUG
+		// Use OutputDebugString/DebugBreak for assertions if in debug mode
+		void msvc_assert(const char*, const char*, const char*, unsigned);
+		#undef assert
+		#define assert(exp) (void)( (exp) || (msvc_assert(nullptr, #exp, __FILE__, __LINE__), 0) )
+	#endif
 #endif
 
 // ----------------------------------------------------------------------------- : EOF
