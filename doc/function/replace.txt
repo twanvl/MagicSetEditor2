@@ -15,6 +15,9 @@ When the @replace@ is used many times with the same @match@ or @in_context@ valu
 > my_replace("input") # called many times
 This way the regular expression is compiled only once.
 
+Note: Avoid using @in_context@, since it is quite slow.
+Consider using lookahead and lookbehind assertions first if possible.
+
 --Parameters--
 ! Parameter	Type			Description
 | @input@	[[type:string]]		String to replace in.
