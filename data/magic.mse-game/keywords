@@ -620,3 +620,13 @@ keyword:
 	match: Chroma
 	mode: pseudo
 	rules: Chroma — [effect] based on the number of [color] mana symbols [in graveyard, under your control, in cards you discard].
+keyword:
+	keyword: Unearth
+	match: Unearth <atom-param>cost</atom-param>
+	mode: expert
+	reminder: When you pay the unearth cost, put this creature from your graveyard into play. It gains haste until end of turn. Remove this card from the game at end of turn or if it would leave play. Play this ability only at time you could play a sorcery.
+keyword:
+	keyword: Devour
+	match: Devour <atom-param>number</atom-param>
+	mode: expert
+	reminder: As this creature comes into play, sacrifice any number of creatures. Put {english_number_a(param1)} +1/+1 counter(s) on this creature for each creature sacrificed this way.
