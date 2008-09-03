@@ -100,6 +100,7 @@ struct TextElementsFromString {
 					// text element before this tag?
 					addText(te, text, text_start, pos, style, ctx);
 				}
+				// a (formatting) tag
 				size_t tag_start = pos;
 				pos = skip_tag(text, tag_start);
 				if      (is_substr(text, tag_start, _( "<b")))          bold        += 1;
@@ -177,18 +178,21 @@ struct TextElementsFromString {
 				} else {
 					// ignore other tags
 				}
+				// text starts again after the tag
 				text_start = pos;
 			} else {
+				// normal text
 				pos += 1;
 			}
 		}
 		if (text_start < end) {
+			// remaining text at the end
 			addText(te, text, text_start, end, style, ctx);
 		}
 	}
 	
   private:
-	/// Create a text element for a piece of text
+	/// Create a text element for a piece of text, text[start..end)
 	void addText(TextElements& te, const String& text, size_t start, size_t end, const TextStyle& style, Context& ctx) {
 		String content = untag(text.substr(start, end - start));
 		assert(content.size() == end-start);

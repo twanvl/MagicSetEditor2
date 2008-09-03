@@ -12,9 +12,9 @@
 #include <data/stylesheet.hpp>
 #include <data/symbol_font.hpp>
 #include <util/io/package_manager.hpp>
+#include <util/regex.hpp>
 #include <script/to_value.hpp>
 #include <wx/wfstream.h>
-#include <wx/regex.h>
 
 #include <wx/stdpaths.h>
 #if defined(__WXMSW__)
@@ -70,7 +70,7 @@ IMPLEMENT_REFLECTION_NO_GET_MEMBER(SubLocale) {
 // ----------------------------------------------------------------------------- : Wildcards
 
 bool match_wildcard(const String& wildcard, const String& name) {
-	return wxRegEx(replace_all(replace_all(wildcard, _("."), _("\\.")), _("*"), _(".*"))).Matches(name);
+	return Regex(replace_all(replace_all(wildcard, _("."), _("\\.")), _("*"), _(".*"))).matches(name);
 }
 
 SubLocaleP find_wildcard(map<String,SubLocaleP>& items, const String& name) {

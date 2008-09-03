@@ -88,7 +88,7 @@ class SymbolInFont : public IntrusivePtrBase<SymbolInFont> {
 	Scriptable<bool> enabled;		///< Is this symbol enabled?
 	bool             regex;			///< Should this symbol be matched by a regex?
 	int              draw_text;		///< The index of the captured regex expression to draw, or -1 to not draw text
-	wxRegEx          code_regex;	///< Regex for matching the symbol code
+	Regex            code_regex;	///< Regex for matching the symbol code
 	FontP            text_font;		///< Font to draw text in.
 	Alignment        text_alignment;
 	double           text_margin_left;
@@ -109,7 +109,6 @@ SymbolInFont::SymbolInFont()
 	: enabled(true)
 	, regex(false)
 	, draw_text(-1)
-	, code_regex()
 	, text_alignment(ALIGN_MIDDLE_CENTER)
 	, text_margin_left(0), text_margin_right(0)
 	, text_margin_top(0),  text_margin_bottom(0)
@@ -177,7 +176,7 @@ IMPLEMENT_REFLECTION(SymbolInFont) {
 	REFLECT(regex);
 	REFLECT_IF_READING
 		if (regex)
-			code_regex.Compile(code, wxRE_ADVANCED);
+			code_regex.assign(code);
 	REFLECT(draw_text);
 	REFLECT(text_font);
 	REFLECT(text_alignment);
@@ -198,28 +197,33 @@ void SymbolFont::split(const String& text, SplitSymbols& out) const {
 		// check symbol list
 		FOR_EACH_CONST(sym, symbols) {
 			if (!sym->code.empty() && sym->enabled) {
-				size_t start, len = 1;
-				if (sym->regex && sym->code_regex.IsValid() && sym->code_regex.Matches(text.substr(pos), wxRE_NOTBOL | wxRE_NOTEOL) &&
-						sym->code_regex.GetMatch(&start, &len) && start == 0 && len > 0) { //Matches the regex
-					if (sym->draw_text >= 0 && sym->draw_text < (int)sym->code_regex.GetMatchCount()) {
-						size_t draw_end;
-						sym->code_regex.GetMatch(&start, &draw_end, sym->draw_text);
-						out.push_back(DrawableSymbol(
-										text.substr(pos, len),
-										text.substr(pos + start, draw_end - start),
-										*sym));
-					} else {
-						out.push_back(DrawableSymbol(
-										text.substr(pos, len),
-										_(""),
-										*sym));
+				if (sym->regex) {
+					if (sym->code_regex.empty()) {
+						sym->code_regex.assign(sym->code);
 					}
-					pos += len;
-					goto next_symbol;
-				} else if (is_substr(text, pos, sym->code)) {
-					out.push_back(DrawableSymbol(sym->code, sym->draw_text >= 0 ? sym->code : _(""), *sym));
-					pos += sym->code.size();
-					goto next_symbol; // continue two levels
+					Regex::Results results;
+					if (sym->code_regex.matches(results,text.begin() + pos, text.end())
+							&& results.position() == 0 && results.length() > 0) { //Matches the regex
+						if (sym->draw_text >= 0 && sym->draw_text < (int)results.size()) {
+							out.push_back(DrawableSymbol(
+											results.str(),
+											results.str(sym->draw_text),
+											*sym));
+						} else {
+							out.push_back(DrawableSymbol(
+											results.str(),
+											_(""),
+											*sym));
+						}
+						pos += results.length();
+						goto next_symbol;
+					}
+				} else {
+					if (is_substr(text, pos, sym->code)) {
+						out.push_back(DrawableSymbol(sym->code, sym->draw_text >= 0 ? sym->code : _(""), *sym));
+						pos += sym->code.size();
+						goto next_symbol; // continue two levels
+					}
 				}
 			}
 		}
@@ -236,14 +240,18 @@ size_t SymbolFont::recognizePrefix(const String& text, size_t start) const {
 		// check symbol list
 		FOR_EACH_CONST(sym, symbols) {
 			if (!sym->code.empty() && sym->enabled) {
-				size_t start, len = 1;
-				if (sym->regex && sym->code_regex.IsValid() && sym->code_regex.Matches(text.substr(pos), wxRE_NOTBOL | wxRE_NOTEOL) &&
-						sym->code_regex.GetMatch(&start, &len) && start == 0 && len > 0) { //Matches the regex
-					pos += len;
-					goto next_symbol;
-				} else if (is_substr(text, pos, sym->code)) {
-					pos += sym->code.size();
-					goto next_symbol; // continue two levels
+				if (sym->regex) {
+					Regex::Results results;
+					if (!sym->code_regex.empty() && sym->code_regex.matches(results,text.begin() + pos, text.end())
+							&& results.position() == 0 && results.length() > 0) { //Matches the regex
+						pos += results.length();
+						goto next_symbol;
+					}
+				} else {
+					if (is_substr(text, pos, sym->code)) {
+						pos += sym->code.size();
+						goto next_symbol; // continue two levels
+					}
 				}
 			}
 		}
@@ -256,7 +264,7 @@ next_symbol:;
 
 SymbolInFont* SymbolFont::defaultSymbol() const {
 	FOR_EACH_CONST(sym, symbols) {
-		if (sym->regex && sym->code_regex.Matches(_("0")) && sym->enabled) return sym.get();
+		if (sym->enabled && sym->regex && sym->code_regex.matches(_("0"))) return sym.get();
 	}
 	return nullptr;
 }
