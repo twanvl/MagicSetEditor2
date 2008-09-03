@@ -11,6 +11,7 @@
 #include <cli/cli_main.hpp>
 #include <cli/text_io_handler.hpp>
 #include <script/functions/functions.hpp>
+#include <script/profiler.hpp>
 #include <data/format/formats.hpp>
 #include <wx/process.h>
 
@@ -163,7 +164,11 @@ void CLISetInterface::handleCommand(const String& command) {
 				}
 			#if USE_SCRIPT_PROFILING
 				} else if (before == _(":profile")) {
-					showProfilingStats();
+					if (arg == _("full")) {
+						showProfilingStats(profile_root);
+					} else {
+						showProfilingStats(profile_aggregated());
+					}
 			#endif
 			} else {
 				cli.showError(_("Unknown command, type :help for help."));
@@ -193,15 +198,21 @@ void CLISetInterface::handleCommand(const String& command) {
 }
 
 #if USE_SCRIPT_PROFILING
-	DECLARE_TYPEOF_COLLECTION(FunctionProfileItem);
-	void CLISetInterface::showProfilingStats() {
-		vector<FunctionProfileItem> stats;
-		get_profile(stats);
-		sort(stats.begin(), stats.end());
-		cli << GRAY << _("Time(s)   Avg (ms)  Calls   Function") << ENDL;
-		cli <<         _("========  ========  ======  ===============================") << NORMAL << ENDL;
-		FOR_EACH_REVERSE(s, stats) {
-			cli << String::Format(_("%8.5f  %8.5f  %6d  %s"), s.time, 1000 * s.time / s.calls, s.calls, s.name.c_str()) << ENDL;
+	DECLARE_TYPEOF_COLLECTION(FunctionProfileP);
+	void CLISetInterface::showProfilingStats(const FunctionProfile& item, int level) {
+		// show parent
+		if (level == 0) {
+			cli << GRAY << _("Time(s)   Avg (ms)  Calls   Function") << ENDL;
+			cli <<         _("========  ========  ======  ===============================") << NORMAL << ENDL;
+		} else {
+			for (int i = 1 ; i < level ; ++i) cli << _("  ");
+			cli << String::Format(_("%8.5f  %8.5f  %6d  %s"), item.time(), 1000 * item.avg_time(), item.calls, item.name.c_str()) << ENDL;
+		}
+		// show children
+		vector<FunctionProfileP> children;
+		item.get_children(children);
+		FOR_EACH_REVERSE(c, children) {
+			showProfilingStats(*c, level + 1);
 		}
 	}
 #endif

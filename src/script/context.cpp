@@ -9,6 +9,7 @@
 #include <util/prec.hpp>
 #include <script/context.hpp>
 #include <script/to_value.hpp>
+#include <script/profiler.hpp>
 #include <util/error.hpp>
 #include <iostream>
 
@@ -17,95 +18,6 @@
 Context::Context()
 	: level(0)
 {}
-
-// ----------------------------------------------------------------------------- : Profiler
-
-#if USE_SCRIPT_PROFILING
-
-	#ifndef UNICODE
-		#error "It looks like you are building the final release; disable USE_SCRIPT_PROFILING!"
-	#endif
-
-	#ifdef WIN32
-		typedef LONGLONG ProfileTime;
-		
-		ProfileTime timer_now() {
-			LARGE_INTEGER i;
-			QueryPerformanceCounter(&i);
-			return i.QuadPart;
-		}
-		ProfileTime timer_resolution() {
-			LARGE_INTEGER i;
-			QueryPerformanceFrequency(&i);
-			return i.QuadPart;
-		}
-	#else
-		#error "Can't use profiler"
-	#endif
-	
-	ProfileTime delta; ///< Time excluded
-	
-	class Timer {
-	  public:
-		Timer() {
-			start = timer_now() + delta;
-		}
-		ProfileTime time() {
-			ProfileTime end = timer_now() + delta;
-			ProfileTime diff = end - start;
-			start = end;
-			return diff;
-		}
-		void exclude_time() {
-			ProfileTime delta_delta = time();
-			delta -= delta_delta; // this time is not counted, even recursively
-			start -= delta_delta;
-		}
-	  private:
-		ProfileTime start;
-	};
-	
-	/// How much time was spent in each function?
-	struct FunctionProfile {
-		FunctionProfile() : time(0), calls(0) {}
-		ProfileTime time;
-		UInt        calls;
-	};
-	VectorIntMap<unsigned int, FunctionProfile> variable_timings;
-	
-	/// Profile a single function
-	struct Profiler {
-	  public:
-		inline Profiler(Timer& timer, Variable function)
-			: timer(timer), function(function)
-		{
-			timer.exclude_time();
-		}
-		inline ~Profiler() {
-			ProfileTime time = timer.time();
-			if ((int)function < 0) return;
-			// per function timing
-			FunctionProfile& funprof = variable_timings[function];
-			funprof.time  += time;
-			funprof.calls += 1;
-			timer.exclude_time();
-		}
-	  private:
-		Timer&   timer;
-		Variable function;
-	};
-	
-	/// Get profile time in seconds and function names
-	void get_profile(vector<FunctionProfileItem>& out) {
-		double resolution = timer_resolution();
-		const vector<FunctionProfile>& times = variable_timings.get();
-		for (size_t i = 0 ; i < times.size() ; ++i) {
-			if (times[i].calls == 0) continue;
-			out.push_back(FunctionProfileItem(variable_to_string((Variable)i), times[i].time / resolution, times[i].calls));
-		}
-	}
-	
-#endif
 
 // ----------------------------------------------------------------------------- : Evaluate
 

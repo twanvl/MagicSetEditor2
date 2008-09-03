@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <data/set.hpp>
 #include <data/export_template.hpp>
+#include <script/profiler.hpp>
 
 // ----------------------------------------------------------------------------- : Command line interface
 
@@ -33,7 +34,7 @@ class CLISetInterface : public SetView {
 	void showUsage();
 	void handleCommand(const String& command);
 	#if USE_SCRIPT_PROFILING
-		void showProfilingStats();
+		void showProfilingStats(const FunctionProfile& parent, int level = 0);
 	#endif
 	
 	/// our own context, when no set is loaded

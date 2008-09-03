@@ -10,6 +10,7 @@
 #include <script/script_manager.hpp>
 #include <script/to_value.hpp>
 #include <script/functions/functions.hpp>
+#include <script/profiler.hpp>
 #include <data/set.hpp>
 #include <data/stylesheet.hpp>
 #include <data/game.hpp>
@@ -294,6 +295,10 @@ void SetScriptManager::updateAll() {
 	Context& ctx = getContext(set.stylesheet);
 	FOR_EACH(v, set.data) {
 		try {
+			#if USE_SCRIPT_PROFILING
+				Timer t;
+				Profiler prof(t, v->fieldP.get(), _("update set.") + v->fieldP->name);
+			#endif
 			v->update(ctx);
 		} catch (const ScriptError& e) {
 			handle_error(ScriptError(e.what() + _("\n  while updating set value '") + v->fieldP->name + _("'")), false, true);
@@ -304,6 +309,10 @@ void SetScriptManager::updateAll() {
 		Context& ctx = getContext(card);
 		FOR_EACH(v, card->data) {
 			try {
+				#if USE_SCRIPT_PROFILING
+					Timer t;
+					Profiler prof(t, v->fieldP.get(), _("update card.") + v->fieldP->name);
+				#endif
 				v->update(ctx);
 			} catch (const ScriptError& e) {
 				handle_error(ScriptError(e.what() + _("\n  while updating card value '") + v->fieldP->name + _("'")), false, true);

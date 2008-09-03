@@ -2791,6 +2791,12 @@
 				<File
 					RelativePath=".\script\parser.hpp">
 				</File>
+				<File
+					RelativePath=".\script\profiler.cpp">
+				</File>
+				<File
+					RelativePath=".\script\profiler.hpp">
+				</File>
 			</Filter>
 			<Filter
 				Name="use"
