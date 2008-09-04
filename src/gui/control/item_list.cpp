@@ -147,26 +147,34 @@ struct ItemList::ItemComparer {
 	}
 };
 
-void ItemList::refreshList() {
-	Freeze();
+void ItemList::refreshList(bool refresh_current_only) {
 	// Get all items
-	sorted_list.clear();
+	vector<VoidP> old_sorted_list;
+	swap(sorted_list, old_sorted_list);
 	getItems(sorted_list);
-	long item_count = (long)sorted_list.size();
-	SetItemCount(item_count);
 	// Sort the list
 	if (sort_by_column >= 0) {
 		sort(sorted_list.begin(), sorted_list.end(), ItemComparer(*this));
 	}
+	// Has the entire list changed?
+	if (refresh_current_only && sorted_list == old_sorted_list) {
+		if (selected_item_pos > 0) RefreshItem(selected_item_pos);
+		return;
+	}
 	// refresh
-	if (item_count)
-		RefreshItems(0, item_count - 1);
-	if (item_count == 0) Refresh();
+	// Note: Freeze/Thaw makes flicker worse
+	long item_count = (long)sorted_list.size();
+	SetItemCount(item_count);
 	// (re)select current item
 	findSelectedItemPos();
 	focusNone();
 	focusSelectedItem(true);
-	Thaw();
+	// refresh items
+	if (item_count == 0) {
+		Refresh();
+	} else {
+		RefreshItems(0, item_count - 1);
+	}
 }
 
 void ItemList::sortBy(long column, bool ascending) {

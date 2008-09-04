@@ -287,7 +287,7 @@ void AutoReplaceWindow::updateItem() {
 	ar->replace    = replace->GetValue();
 	ar->enabled    = enabled->GetValue();
 	ar->whole_word = whole_word->GetValue();
-	list->refreshList();
+	list->refreshList(true);
 	in_event = false;
 }
 

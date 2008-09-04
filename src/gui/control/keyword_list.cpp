@@ -76,7 +76,7 @@ void KeywordList::onAction(const Action& action, bool undone) {
 			KeywordTextValue* value = dynamic_cast<KeywordTextValue*>(action.valueP.get());
 			if (value) {
 				// this is indeed an action on a keyword, refresh
-				refreshList();
+				refreshList(true);
 			}
 		}
 	}

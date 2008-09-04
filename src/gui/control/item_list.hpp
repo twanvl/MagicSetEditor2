@@ -71,7 +71,7 @@ class ItemList : public wxListView {
 	/// Sort by the given column
 	virtual void sortBy(long column, bool ascending);
 	/// Refresh the card list (resort, refresh and reselect current item)
-	void refreshList();
+	void refreshList(bool refresh_current_only = false);
 	/// Set the image of a column header (fixes wx bug)
 	void SetColumnImage(int col, int image);
 	

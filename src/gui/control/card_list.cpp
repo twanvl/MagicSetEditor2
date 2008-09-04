@@ -119,7 +119,7 @@ void CardListBase::onAction(const Action& action, bool undone) {
 		return;
 	}
 	TYPE_CASE(action, ValueAction) {
-		if (action.card) refreshList();
+		if (action.card) refreshList(true);
 	}
 }
 
