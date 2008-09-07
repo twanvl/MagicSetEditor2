@@ -59,7 +59,7 @@ PROGRAMS = $(bin_PROGRAMS)
 am__dirstamp = $(am__leading_dot)dirstamp
 am_magicseteditor_OBJECTS = ./src/util/version.$(OBJEXT) \
 	./src/util/alignment.$(OBJEXT) ./src/util/rotation.$(OBJEXT) \
-	./src/util/tagged_string.$(OBJEXT) \
+	./src/util/tagged_string.$(OBJEXT) ./src/util/regex.$(OBJEXT) \
 	./src/util/spec_sort.$(OBJEXT) \
 	./src/util/io/get_member.$(OBJEXT) \
 	./src/util/io/package_manager.$(OBJEXT) \
@@ -95,6 +95,7 @@ am_magicseteditor_OBJECTS = ./src/util/version.$(OBJEXT) \
 	./src/render/value/choice.$(OBJEXT) \
 	./src/render/value/image.$(OBJEXT) \
 	./src/script/scriptable.$(OBJEXT) \
+	./src/script/profiler.$(OBJEXT) \
 	./src/script/script_manager.$(OBJEXT) \
 	./src/script/functions/english.$(OBJEXT) \
 	./src/script/functions/basic.$(OBJEXT) \
@@ -232,6 +233,9 @@ AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
+BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
+BOOST_LDFLAGS = @BOOST_LDFLAGS@
+BOOST_REGEX_LIB = @BOOST_REGEX_LIB@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -327,35 +331,37 @@ top_srcdir = @top_srcdir@
 
 # This flag allows us to use subdirectories:
 AUTOMAKE_OPTIONS = subdir-objects
-AM_CXXFLAGS = @WX_CXXFLAGS@ -DUNICODE -I . -Wall
-AM_LDFLAGS = @WX_LIBS@
+AM_CXXFLAGS = @WX_CXXFLAGS@ $(BOOST_CXXFLAGS) -DUNICODE -I . -Wall
+AM_LDFLAGS = @WX_LIBS@ $(BOOST_LDFLAGS) $(BOOST_REGEX_LIB)
 
 # The script used to generate is MakeAM.sh 
 magicseteditor_SOURCES = ./src/util/version.cpp \
 	./src/util/alignment.cpp ./src/util/rotation.cpp \
-	./src/util/tagged_string.cpp ./src/util/spec_sort.cpp \
-	./src/util/io/get_member.cpp ./src/util/io/package_manager.cpp \
-	./src/util/io/writer.cpp ./src/util/io/reader.cpp \
-	./src/util/io/package.cpp ./src/util/action_stack.cpp \
-	./src/util/error.cpp ./src/util/age.cpp \
-	./src/util/file_utils.cpp ./src/util/string.cpp \
-	./src/gfx/color.cpp ./src/gfx/mask_image.cpp \
-	./src/gfx/rotate_image.cpp ./src/gfx/image_effects.cpp \
-	./src/gfx/resample_text.cpp ./src/gfx/combine_image.cpp \
-	./src/gfx/polynomial.cpp ./src/gfx/bezier.cpp \
-	./src/gfx/generated_image.cpp ./src/gfx/resample_image.cpp \
-	./src/gfx/blend_image.cpp ./src/main.cpp \
-	./src/render/card/viewer.cpp ./src/render/text/compound.cpp \
-	./src/render/text/symbol.cpp ./src/render/text/font.cpp \
-	./src/render/text/viewer.cpp ./src/render/text/element.cpp \
-	./src/render/symbol/filter.cpp ./src/render/symbol/viewer.cpp \
+	./src/util/tagged_string.cpp ./src/util/regex.cpp \
+	./src/util/spec_sort.cpp ./src/util/io/get_member.cpp \
+	./src/util/io/package_manager.cpp ./src/util/io/writer.cpp \
+	./src/util/io/reader.cpp ./src/util/io/package.cpp \
+	./src/util/action_stack.cpp ./src/util/error.cpp \
+	./src/util/age.cpp ./src/util/file_utils.cpp \
+	./src/util/string.cpp ./src/gfx/color.cpp \
+	./src/gfx/mask_image.cpp ./src/gfx/rotate_image.cpp \
+	./src/gfx/image_effects.cpp ./src/gfx/resample_text.cpp \
+	./src/gfx/combine_image.cpp ./src/gfx/polynomial.cpp \
+	./src/gfx/bezier.cpp ./src/gfx/generated_image.cpp \
+	./src/gfx/resample_image.cpp ./src/gfx/blend_image.cpp \
+	./src/main.cpp ./src/render/card/viewer.cpp \
+	./src/render/text/compound.cpp ./src/render/text/symbol.cpp \
+	./src/render/text/font.cpp ./src/render/text/viewer.cpp \
+	./src/render/text/element.cpp ./src/render/symbol/filter.cpp \
+	./src/render/symbol/viewer.cpp \
 	./src/render/value/multiple_choice.cpp \
 	./src/render/value/symbol.cpp ./src/render/value/color.cpp \
 	./src/render/value/package_choice.cpp \
 	./src/render/value/viewer.cpp ./src/render/value/text.cpp \
 	./src/render/value/information.cpp \
 	./src/render/value/choice.cpp ./src/render/value/image.cpp \
-	./src/script/scriptable.cpp ./src/script/script_manager.cpp \
+	./src/script/scriptable.cpp ./src/script/profiler.cpp \
+	./src/script/script_manager.cpp \
 	./src/script/functions/english.cpp \
 	./src/script/functions/basic.cpp \
 	./src/script/functions/construction.cpp \
@@ -519,6 +525,8 @@ src/util/$(DEPDIR)/$(am__dirstamp):
 	src/util/$(DEPDIR)/$(am__dirstamp)
 ./src/util/tagged_string.$(OBJEXT): src/util/$(am__dirstamp) \
 	src/util/$(DEPDIR)/$(am__dirstamp)
+./src/util/regex.$(OBJEXT): src/util/$(am__dirstamp) \
+	src/util/$(DEPDIR)/$(am__dirstamp)
 ./src/util/spec_sort.$(OBJEXT): src/util/$(am__dirstamp) \
 	src/util/$(DEPDIR)/$(am__dirstamp)
 src/util/io/$(am__dirstamp):
@@ -653,6 +661,8 @@ src/script/$(DEPDIR)/$(am__dirstamp):
 	@$(MKDIR_P) ./src/script/$(DEPDIR)
 	@: > src/script/$(DEPDIR)/$(am__dirstamp)
 ./src/script/scriptable.$(OBJEXT): src/script/$(am__dirstamp) \
+	src/script/$(DEPDIR)/$(am__dirstamp)
+./src/script/profiler.$(OBJEXT): src/script/$(am__dirstamp) \
 	src/script/$(DEPDIR)/$(am__dirstamp)
 ./src/script/script_manager.$(OBJEXT): src/script/$(am__dirstamp) \
 	src/script/$(DEPDIR)/$(am__dirstamp)
@@ -1139,6 +1149,7 @@ mostlyclean-compile:
 	-rm -f ./src/script/functions/regex.$(OBJEXT)
 	-rm -f ./src/script/image.$(OBJEXT)
 	-rm -f ./src/script/parser.$(OBJEXT)
+	-rm -f ./src/script/profiler.$(OBJEXT)
 	-rm -f ./src/script/script.$(OBJEXT)
 	-rm -f ./src/script/script_manager.$(OBJEXT)
 	-rm -f ./src/script/scriptable.$(OBJEXT)
@@ -1153,6 +1164,7 @@ mostlyclean-compile:
 	-rm -f ./src/util/io/package_manager.$(OBJEXT)
 	-rm -f ./src/util/io/reader.$(OBJEXT)
 	-rm -f ./src/util/io/writer.$(OBJEXT)
+	-rm -f ./src/util/regex.$(OBJEXT)
 	-rm -f ./src/util/rotation.$(OBJEXT)
 	-rm -f ./src/util/spec_sort.$(OBJEXT)
 	-rm -f ./src/util/string.$(OBJEXT)
@@ -1298,6 +1310,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/$(DEPDIR)/dependency.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/$(DEPDIR)/image.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/$(DEPDIR)/parser.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./src/script/$(DEPDIR)/profiler.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/$(DEPDIR)/script.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/$(DEPDIR)/script_manager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/script/$(DEPDIR)/scriptable.Po@am__quote@
@@ -1314,6 +1327,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./src/util/$(DEPDIR)/alignment.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/util/$(DEPDIR)/error.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/util/$(DEPDIR)/file_utils.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./src/util/$(DEPDIR)/regex.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/util/$(DEPDIR)/rotation.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/util/$(DEPDIR)/spec_sort.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/util/$(DEPDIR)/string.Po@am__quote@

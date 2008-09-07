@@ -35,7 +35,16 @@ DECLARE_POINTER_TYPE(FunctionProfile);
 		return i.QuadPart;
 	}
 #else
-	#error "No Timer implementation, can't use profiler"
+	// clock() has nanosecond resolution on Linux
+	// on any other platform, stil the best way.
+	typedef clock_t ProfileTime;
+	
+	inline ProfileTime timer_now() {
+		return clock();
+	}
+	inline ProfileTime timer_resolution() {
+		return CLOCKS_PER_SEC;
+	}
 #endif
 
 /// Simple execution timer

@@ -11,8 +11,8 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = magicseteditor
-AM_CXXFLAGS = @WX_CXXFLAGS@ -DUNICODE -I . -Wall
-AM_LDFLAGS  = @WX_LIBS@
+AM_CXXFLAGS = @WX_CXXFLAGS@ $(BOOST_CXXFLAGS) -DUNICODE -I . -Wall
+AM_LDFLAGS  = @WX_LIBS@ $(BOOST_LDFLAGS) $(BOOST_REGEX_LIB)
 
 magicseteditor_SOURCES = 
 
@@ -21,6 +21,7 @@ magicseteditor_SOURCES += ./src/util/version.cpp
 magicseteditor_SOURCES += ./src/util/alignment.cpp
 magicseteditor_SOURCES += ./src/util/rotation.cpp
 magicseteditor_SOURCES += ./src/util/tagged_string.cpp
+magicseteditor_SOURCES += ./src/util/regex.cpp
 magicseteditor_SOURCES += ./src/util/spec_sort.cpp
 magicseteditor_SOURCES += ./src/util/io/get_member.cpp
 magicseteditor_SOURCES += ./src/util/io/package_manager.cpp
@@ -62,6 +63,7 @@ magicseteditor_SOURCES += ./src/render/value/information.cpp
 magicseteditor_SOURCES += ./src/render/value/choice.cpp
 magicseteditor_SOURCES += ./src/render/value/image.cpp
 magicseteditor_SOURCES += ./src/script/scriptable.cpp
+magicseteditor_SOURCES += ./src/script/profiler.cpp
 magicseteditor_SOURCES += ./src/script/script_manager.cpp
 magicseteditor_SOURCES += ./src/script/functions/english.cpp
 magicseteditor_SOURCES += ./src/script/functions/basic.cpp

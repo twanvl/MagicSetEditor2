@@ -12,8 +12,8 @@ echo "
 AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = magicseteditor
-AM_CXXFLAGS = @WX_CXXFLAGS@ -DUNICODE -I . -Wall
-AM_LDFLAGS  = @WX_LIBS@
+AM_CXXFLAGS = @WX_CXXFLAGS@ \$(BOOST_CXXFLAGS) -DUNICODE -I . -Wall
+AM_LDFLAGS  = @WX_LIBS@ \$(BOOST_LDFLAGS) \$(BOOST_REGEX_LIB)
 
 magicseteditor_SOURCES = 
 

@@ -690,6 +690,15 @@ AMDEPBACKSLASH
 CXXDEPMODE
 am__fastdepCXX_TRUE
 am__fastdepCXX_FALSE
+BOOST_CPPFLAGS
+BOOST_LDFLAGS
+CC
+CFLAGS
+ac_ct_CC
+CCDEPMODE
+am__fastdepCC_TRUE
+am__fastdepCC_FALSE
+BOOST_REGEX_LIB
 WX_CONFIG_PATH
 WX_CPPFLAGS
 WX_CFLAGS
@@ -700,12 +709,6 @@ WX_LIBS
 WX_LIBS_STATIC
 WX_VERSION
 WX_RESCOMP
-CC
-CFLAGS
-ac_ct_CC
-CCDEPMODE
-am__fastdepCC_TRUE
-am__fastdepCC_FALSE
 CPP
 GREP
 EGREP
@@ -1305,6 +1308,12 @@ Optional Features:
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
+  --with-boost[=DIR]      use boost (default is yes) - it is possible to
+                          specify the root directory for boost (optional)
+  --with-boost-regex[=special-lib]
+                          use the Regex library from boost - it is possible to
+                          specify a certain library for the linker e.g.
+                          --with-boost-regex=boost_regex-gcc-mt-d-1_33_1
   --with-wxdir=PATH       Use uninstalled version of wxWidgets in PATH
   --with-wx-config=CONFIG wx-config script to use (optional)
   --with-wx-prefix=PREFIX Prefix where wxWidgets is installed (optional)
@@ -3024,297 +3033,281 @@ fi
 # Do not pass -O2, because that causes failures for now.
 CXXFLAGS=-g
 # Checks for libraries.
-# TODO: Check for boost
 
-# Check for wxWidgets
-
-
-# Check whether --with-wxdir was given.
-if test "${with_wxdir+set}" = set; then
-  withval=$with_wxdir;  wx_config_name="$withval/wx-config"
-                  wx_config_args="--inplace"
-fi
-
-
-# Check whether --with-wx-config was given.
-if test "${with_wx_config+set}" = set; then
-  withval=$with_wx_config; wx_config_name="$withval"
-fi
-
-
-# Check whether --with-wx-prefix was given.
-if test "${with_wx_prefix+set}" = set; then
-  withval=$with_wx_prefix; wx_config_prefix="$withval"
-else
-  wx_config_prefix=""
-fi
-
-
-# Check whether --with-wx-exec-prefix was given.
-if test "${with_wx_exec_prefix+set}" = set; then
-  withval=$with_wx_exec_prefix; wx_config_exec_prefix="$withval"
-else
-  wx_config_exec_prefix=""
-fi
+# Check for Boost
 
 
 
-    if test x${WX_CONFIG_NAME+set} != xset ; then
-     WX_CONFIG_NAME=wx-config
-  fi
-
-  if test "x$wx_config_name" != x ; then
-     WX_CONFIG_NAME="$wx_config_name"
-  fi
-
-    if test x$wx_config_exec_prefix != x ; then
-     wx_config_args="$wx_config_args --exec-prefix=$wx_config_exec_prefix"
-     WX_LOOKUP_PATH="$wx_config_exec_prefix/bin"
-  fi
-  if test x$wx_config_prefix != x ; then
-     wx_config_args="$wx_config_args --prefix=$wx_config_prefix"
-     WX_LOOKUP_PATH="$WX_LOOKUP_PATH:$wx_config_prefix/bin"
-  fi
-  if test "$cross_compiling" = "yes"; then
-     wx_config_args="$wx_config_args --host=$host_alias"
-  fi
-
-    if test -x "$WX_CONFIG_NAME" ; then
-     { echo "$as_me:$LINENO: checking for wx-config" >&5
-echo $ECHO_N "checking for wx-config... $ECHO_C" >&6; }
-     WX_CONFIG_PATH="$WX_CONFIG_NAME"
-     { echo "$as_me:$LINENO: result: $WX_CONFIG_PATH" >&5
-echo "${ECHO_T}$WX_CONFIG_PATH" >&6; }
-  else
-     # Extract the first word of "$WX_CONFIG_NAME", so it can be a program name with args.
-set dummy $WX_CONFIG_NAME; ac_word=$2
-{ echo "$as_me:$LINENO: checking for $ac_word" >&5
-echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
-if test "${ac_cv_path_WX_CONFIG_PATH+set}" = set; then
-  echo $ECHO_N "(cached) $ECHO_C" >&6
-else
-  case $WX_CONFIG_PATH in
-  [\\/]* | ?:[\\/]*)
-  ac_cv_path_WX_CONFIG_PATH="$WX_CONFIG_PATH" # Let the user override the test with a path.
-  ;;
-  *)
-  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
-as_dummy=""$WX_LOOKUP_PATH:$PATH""
-for as_dir in $as_dummy
-do
-  IFS=$as_save_IFS
-  test -z "$as_dir" && as_dir=.
-  for ac_exec_ext in '' $ac_executable_extensions; do
-  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
-    ac_cv_path_WX_CONFIG_PATH="$as_dir/$ac_word$ac_exec_ext"
-    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
-    break 2
-  fi
-done
-done
-IFS=$as_save_IFS
-
-  test -z "$ac_cv_path_WX_CONFIG_PATH" && ac_cv_path_WX_CONFIG_PATH="no"
-  ;;
-esac
-fi
-WX_CONFIG_PATH=$ac_cv_path_WX_CONFIG_PATH
-if test -n "$WX_CONFIG_PATH"; then
-  { echo "$as_me:$LINENO: result: $WX_CONFIG_PATH" >&5
-echo "${ECHO_T}$WX_CONFIG_PATH" >&6; }
-else
-  { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-fi
-
-
-  fi
-
-  if test "$WX_CONFIG_PATH" != "no" ; then
-    WX_VERSION=""
-
-    min_wx_version=2.8.0
-    if test -z "" ; then
-      { echo "$as_me:$LINENO: checking for wxWidgets version >= $min_wx_version" >&5
-echo $ECHO_N "checking for wxWidgets version >= $min_wx_version... $ECHO_C" >&6; }
+# Check whether --with-boost was given.
+if test "${with_boost+set}" = set; then
+  withval=$with_boost;
+    if test "$withval" = "no"; then
+		want_boost="no"
+    elif test "$withval" = "yes"; then
+        want_boost="yes"
+        ac_boost_path=""
     else
-      { echo "$as_me:$LINENO: checking for wxWidgets version >= $min_wx_version ()" >&5
-echo $ECHO_N "checking for wxWidgets version >= $min_wx_version ()... $ECHO_C" >&6; }
-    fi
+	    want_boost="yes"
+        ac_boost_path="$withval"
+	fi
 
-    WX_CONFIG_WITH_ARGS="$WX_CONFIG_PATH $wx_config_args  "
-
-    WX_VERSION=`$WX_CONFIG_WITH_ARGS --version 2>/dev/null`
-    wx_config_major_version=`echo $WX_VERSION | \
-           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
-    wx_config_minor_version=`echo $WX_VERSION | \
-           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\2/'`
-    wx_config_micro_version=`echo $WX_VERSION | \
-           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\3/'`
-
-    wx_requested_major_version=`echo $min_wx_version | \
-           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
-    wx_requested_minor_version=`echo $min_wx_version | \
-           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\2/'`
-    wx_requested_micro_version=`echo $min_wx_version | \
-           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\3/'`
+else
+  want_boost="yes"
+fi
 
 
-    wx_ver_ok=""
-    if test "x$WX_VERSION" != x ; then
-      if test $wx_config_major_version -gt $wx_requested_major_version; then
-        wx_ver_ok=yes
-      else
-        if test $wx_config_major_version -eq $wx_requested_major_version; then
-           if test $wx_config_minor_version -gt $wx_requested_minor_version; then
-              wx_ver_ok=yes
-           else
-              if test $wx_config_minor_version -eq $wx_requested_minor_version; then
-                 if test $wx_config_micro_version -ge $wx_requested_micro_version; then
-                    wx_ver_ok=yes
-                 fi
-              fi
-           fi
-        fi
-      fi
-    fi
+if test "x$want_boost" = "xyes"; then
+	boost_lib_version_req=1.36.0
+	boost_lib_version_req_shorten=`expr $boost_lib_version_req : '\([0-9]*\.[0-9]*\)'`
+	boost_lib_version_req_major=`expr $boost_lib_version_req : '\([0-9]*\)'`
+	boost_lib_version_req_minor=`expr $boost_lib_version_req : '[0-9]*\.\([0-9]*\)'`
+	boost_lib_version_req_sub_minor=`expr $boost_lib_version_req : '[0-9]*\.[0-9]*\.\([0-9]*\)'`
+	if test "x$boost_lib_version_req_sub_minor" = "x" ; then
+		boost_lib_version_req_sub_minor="0"
+    	fi
+	WANT_BOOST_VERSION=`expr $boost_lib_version_req_major \* 100000 \+  $boost_lib_version_req_minor \* 100 \+ $boost_lib_version_req_sub_minor`
+	{ echo "$as_me:$LINENO: checking for boostlib >= $boost_lib_version_req" >&5
+echo $ECHO_N "checking for boostlib >= $boost_lib_version_req... $ECHO_C" >&6; }
+	succeeded=no
 
+				if test "$ac_boost_path" != ""; then
+		BOOST_LDFLAGS="-L$ac_boost_path/lib"
+		BOOST_CPPFLAGS="-I$ac_boost_path/include"
+	else
+		for ac_boost_path_tmp in /usr /usr/local /opt ; do
+			if test -d "$ac_boost_path_tmp/include/boost" && test -r "$ac_boost_path_tmp/include/boost"; then
+				BOOST_LDFLAGS="-L$ac_boost_path_tmp/lib"
+				BOOST_CPPFLAGS="-I$ac_boost_path_tmp/include"
+				break;
+			fi
+		done
+	fi
 
-    if test -n "$wx_ver_ok"; then
+	CPPFLAGS_SAVED="$CPPFLAGS"
+	CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
+	export CPPFLAGS
 
-      { echo "$as_me:$LINENO: result: yes (version $WX_VERSION)" >&5
-echo "${ECHO_T}yes (version $WX_VERSION)" >&6; }
-      WX_LIBS=`$WX_CONFIG_WITH_ARGS --libs`
+	LDFLAGS_SAVED="$LDFLAGS"
+	LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
+	export LDFLAGS
 
-                              { echo "$as_me:$LINENO: checking for wxWidgets static library" >&5
-echo $ECHO_N "checking for wxWidgets static library... $ECHO_C" >&6; }
-      WX_LIBS_STATIC=`$WX_CONFIG_WITH_ARGS --static --libs 2>/dev/null`
-      if test "x$WX_LIBS_STATIC" = "x"; then
-        { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-      else
+	ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+     	cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+	#include <boost/version.hpp>
+
+int
+main ()
+{
+
+	#if BOOST_VERSION >= $WANT_BOOST_VERSION
+	// Everything is okay
+	#else
+	#  error Boost version is too old
+	#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+
         { echo "$as_me:$LINENO: result: yes" >&5
 echo "${ECHO_T}yes" >&6; }
-      fi
+	succeeded=yes
+	found_system=yes
 
-            wx_has_cppflags=""
-      if test $wx_config_major_version -gt 2; then
-        wx_has_cppflags=yes
-      else
-        if test $wx_config_major_version -eq 2; then
-           if test $wx_config_minor_version -gt 2; then
-              wx_has_cppflags=yes
-           else
-              if test $wx_config_minor_version -eq 2; then
-                 if test $wx_config_micro_version -ge 6; then
-                    wx_has_cppflags=yes
-                 fi
-              fi
-           fi
-        fi
-      fi
-
-            wx_has_rescomp=""
-      if test $wx_config_major_version -gt 2; then
-        wx_has_rescomp=yes
-      else
-        if test $wx_config_major_version -eq 2; then
-           if test $wx_config_minor_version -ge 7; then
-              wx_has_rescomp=yes
-           fi
-        fi
-      fi
-      if test "x$wx_has_rescomp" = x ; then
-                  WX_RESCOMP=
-      else
-         WX_RESCOMP=`$WX_CONFIG_WITH_ARGS --rescomp`
-      fi
-
-      if test "x$wx_has_cppflags" = x ; then
-                  WX_CFLAGS=`$WX_CONFIG_WITH_ARGS --cflags`
-         WX_CPPFLAGS=$WX_CFLAGS
-         WX_CXXFLAGS=$WX_CFLAGS
-
-         WX_CFLAGS_ONLY=$WX_CFLAGS
-         WX_CXXFLAGS_ONLY=$WX_CFLAGS
-      else
-                  WX_CPPFLAGS=`$WX_CONFIG_WITH_ARGS --cppflags`
-         WX_CXXFLAGS=`$WX_CONFIG_WITH_ARGS --cxxflags`
-         WX_CFLAGS=`$WX_CONFIG_WITH_ARGS --cflags`
-
-         WX_CFLAGS_ONLY=`echo $WX_CFLAGS | sed "s@^$WX_CPPFLAGS *@@"`
-         WX_CXXFLAGS_ONLY=`echo $WX_CXXFLAGS | sed "s@^$WX_CFLAGS *@@"`
-      fi
-
-      wxWin=1
-
-    else
-
-       if test "x$WX_VERSION" = x; then
-                    { echo "$as_me:$LINENO: result: no" >&5
-echo "${ECHO_T}no" >&6; }
-       else
-          { echo "$as_me:$LINENO: result: no (version $WX_VERSION is not new enough)" >&5
-echo "${ECHO_T}no (version $WX_VERSION is not new enough)" >&6; }
-       fi
-
-       WX_CFLAGS=""
-       WX_CPPFLAGS=""
-       WX_CXXFLAGS=""
-       WX_LIBS=""
-       WX_LIBS_STATIC=""
-       WX_RESCOMP=""
-       :
-
-    fi
-  else
-
-    WX_CFLAGS=""
-    WX_CPPFLAGS=""
-    WX_CXXFLAGS=""
-    WX_LIBS=""
-    WX_LIBS_STATIC=""
-    WX_RESCOMP=""
-
-    :
-
-  fi
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
 
 
 
-
-
-
-
-
-
-
-
-if test "$wxWin" != 1; then
-    { { echo "$as_me:$LINENO: error:
-       wxWindows must be installed on your system
-       but wx-config script couldn't be found.
-
-       Please check that wx-config is in path, the directory
-       where wxWindows libraries are installed (returned by
-       'wx-config --libs' command) is in LD_LIBRARY_PATH or
-        equivalent variable and wxWindows version is 2.6.0 or above.
-    " >&5
-echo "$as_me: error:
-       wxWindows must be installed on your system
-       but wx-config script couldn't be found.
-
-       Please check that wx-config is in path, the directory
-       where wxWindows libraries are installed (returned by
-       'wx-config --libs' command) is in LD_LIBRARY_PATH or
-        equivalent variable and wxWindows version is 2.6.0 or above.
-    " >&2;}
-   { (exit 1); exit 1; }; }
 fi
 
-# Checks for header files.
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+	ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
 
-# Checks for typedefs, structures, and compiler characteristics.
+
+
+
+			if test "x$succeeded" != "xyes"; then
+		_version=0
+		if test "$ac_boost_path" != ""; then
+               		BOOST_LDFLAGS="-L$ac_boost_path/lib"
+			if test -d "$ac_boost_path" && test -r "$ac_boost_path"; then
+				for i in `ls -d $ac_boost_path/include/boost-* 2>/dev/null`; do
+					_version_tmp=`echo $i | sed "s#$ac_boost_path##" | sed 's/\/include\/boost-//' | sed 's/_/./'`
+					V_CHECK=`expr $_version_tmp \> $_version`
+					if test "$V_CHECK" = "1" ; then
+						_version=$_version_tmp
+					fi
+					VERSION_UNDERSCORE=`echo $_version | sed 's/\./_/'`
+					BOOST_CPPFLAGS="-I$ac_boost_path/include/boost-$VERSION_UNDERSCORE"
+				done
+			fi
+		else
+			for ac_boost_path in /usr /usr/local /opt ; do
+				if test -d "$ac_boost_path" && test -r "$ac_boost_path"; then
+					for i in `ls -d $ac_boost_path/include/boost-* 2>/dev/null`; do
+						_version_tmp=`echo $i | sed "s#$ac_boost_path##" | sed 's/\/include\/boost-//' | sed 's/_/./'`
+						V_CHECK=`expr $_version_tmp \> $_version`
+						if test "$V_CHECK" = "1" ; then
+							_version=$_version_tmp
+	               					best_path=$ac_boost_path
+						fi
+					done
+				fi
+			done
+
+			VERSION_UNDERSCORE=`echo $_version | sed 's/\./_/'`
+			BOOST_CPPFLAGS="-I$best_path/include/boost-$VERSION_UNDERSCORE"
+			BOOST_LDFLAGS="-L$best_path/lib"
+
+	    		if test "x$BOOST_ROOT" != "x"; then
+				if test -d "$BOOST_ROOT" && test -r "$BOOST_ROOT" && test -d "$BOOST_ROOT/stage/lib" && test -r "$BOOST_ROOT/stage/lib"; then
+					version_dir=`expr //$BOOST_ROOT : '.*/\(.*\)'`
+					stage_version=`echo $version_dir | sed 's/boost_//' | sed 's/_/./g'`
+			        	stage_version_shorten=`expr $stage_version : '\([0-9]*\.[0-9]*\)'`
+					V_CHECK=`expr $stage_version_shorten \>\= $_version`
+				        if test "$V_CHECK" = "1" ; then
+						{ echo "$as_me:$LINENO: We will use a staged boost library from $BOOST_ROOT" >&5
+echo "$as_me: We will use a staged boost library from $BOOST_ROOT" >&6;}
+						BOOST_CPPFLAGS="-I$BOOST_ROOT"
+						BOOST_LDFLAGS="-L$BOOST_ROOT/stage/lib"
+					fi
+				fi
+	    		fi
+		fi
+
+		CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
+		export CPPFLAGS
+		LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
+		export LDFLAGS
+
+		ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+	     	cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+		#include <boost/version.hpp>
+
+int
+main ()
+{
+
+		#if BOOST_VERSION >= $WANT_BOOST_VERSION
+		// Everything is okay
+		#else
+		#  error Boost version is too old
+		#endif
+
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+
+        	{ echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
+		succeeded=yes
+		found_system=yes
+
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+
+
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+		ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+	fi
+
+	if test "$succeeded" != "yes" ; then
+		if test "$_version" = "0" ; then
+			{ { echo "$as_me:$LINENO: error: We could not detect the boost libraries (version $boost_lib_version_req_shorten or higher). If you have a staged boost library (still not installed) please specify \$BOOST_ROOT in your environment and do not give a PATH to --with-boost option.  If you are sure you have boost installed, then check your version number looking in <boost/version.hpp>. See http://randspringer.de/boost for more documentation." >&5
+echo "$as_me: error: We could not detect the boost libraries (version $boost_lib_version_req_shorten or higher). If you have a staged boost library (still not installed) please specify \$BOOST_ROOT in your environment and do not give a PATH to --with-boost option.  If you are sure you have boost installed, then check your version number looking in <boost/version.hpp>. See http://randspringer.de/boost for more documentation." >&2;}
+   { (exit 1); exit 1; }; }
+		else
+			{ echo "$as_me:$LINENO: Your boost libraries seems to old (version $_version)." >&5
+echo "$as_me: Your boost libraries seems to old (version $_version)." >&6;}
+		fi
+	else
+
+
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_BOOST
+_ACEOF
+
+	fi
+
+        CPPFLAGS="$CPPFLAGS_SAVED"
+       	LDFLAGS="$LDFLAGS_SAVED"
+fi
+
+
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4100,6 +4093,543 @@ fi
 
 
 
+
+
+# Check whether --with-boost-regex was given.
+if test "${with_boost_regex+set}" = set; then
+  withval=$with_boost_regex;
+        if test "$withval" = "no"; then
+			want_boost="no"
+        elif test "$withval" = "yes"; then
+            want_boost="yes"
+            ax_boost_user_regex_lib=""
+        else
+		    want_boost="yes"
+        	ax_boost_user_regex_lib="$withval"
+		fi
+
+else
+  want_boost="yes"
+
+fi
+
+
+	if test "x$want_boost" = "xyes"; then
+
+		CPPFLAGS_SAVED="$CPPFLAGS"
+		CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
+		export CPPFLAGS
+
+		LDFLAGS_SAVED="$LDFLAGS"
+		LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
+		export LDFLAGS
+
+        { echo "$as_me:$LINENO: checking whether the Boost::Regex library is available" >&5
+echo $ECHO_N "checking whether the Boost::Regex library is available... $ECHO_C" >&6; }
+if test "${ax_cv_boost_regex+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+			 cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+#include <boost/regex.hpp>
+
+int
+main ()
+{
+boost::regex r(); return 0;
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext
+if { (ac_try="$ac_compile"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_compile") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_cxx_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest.$ac_objext; then
+  ax_cv_boost_regex=yes
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	ax_cv_boost_regex=no
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+         ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+fi
+{ echo "$as_me:$LINENO: result: $ax_cv_boost_regex" >&5
+echo "${ECHO_T}$ax_cv_boost_regex" >&6; }
+		if test "x$ax_cv_boost_regex" = "xyes"; then
+
+cat >>confdefs.h <<\_ACEOF
+#define HAVE_BOOST_REGEX
+_ACEOF
+
+			BN=boost_regex
+            if test "x$ax_boost_user_regex_lib" = "x"; then
+				for ax_lib in $BN $BN-$CC $BN-$CC-mt $BN-$CC-mt-s $BN-$CC-s \
+                              lib$BN lib$BN-$CC lib$BN-$CC-mt lib$BN-$CC-mt-s lib$BN-$CC-s \
+                              $BN-mgw $BN-mgw $BN-mgw-mt $BN-mgw-mt-s $BN-mgw-s ; do
+				    as_ac_Lib=`echo "ac_cv_lib_$ax_lib''_main" | $as_tr_sh`
+{ echo "$as_me:$LINENO: checking for main in -l$ax_lib" >&5
+echo $ECHO_N "checking for main in -l$ax_lib... $ECHO_C" >&6; }
+if { as_var=$as_ac_Lib; eval "test \"\${$as_var+set}\" = set"; }; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-l$ax_lib  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  eval "$as_ac_Lib=yes"
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	eval "$as_ac_Lib=no"
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+ac_res=`eval echo '${'$as_ac_Lib'}'`
+	       { echo "$as_me:$LINENO: result: $ac_res" >&5
+echo "${ECHO_T}$ac_res" >&6; }
+if test `eval echo '${'$as_ac_Lib'}'` = yes; then
+  BOOST_REGEX_LIB="-l$ax_lib";  link_regex="yes"; break
+else
+  link_regex="no"
+fi
+
+  				done
+            else
+               for ax_lib in $ax_boost_user_regex_lib $BN-$ax_boost_user_regex_lib; do
+				      as_ac_Lib=`echo "ac_cv_lib_$ax_lib''_main" | $as_tr_sh`
+{ echo "$as_me:$LINENO: checking for main in -l$ax_lib" >&5
+echo $ECHO_N "checking for main in -l$ax_lib... $ECHO_C" >&6; }
+if { as_var=$as_ac_Lib; eval "test \"\${$as_var+set}\" = set"; }; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-l$ax_lib  $LIBS"
+cat >conftest.$ac_ext <<_ACEOF
+/* confdefs.h.  */
+_ACEOF
+cat confdefs.h >>conftest.$ac_ext
+cat >>conftest.$ac_ext <<_ACEOF
+/* end confdefs.h.  */
+
+
+int
+main ()
+{
+return main ();
+  ;
+  return 0;
+}
+_ACEOF
+rm -f conftest.$ac_objext conftest$ac_exeext
+if { (ac_try="$ac_link"
+case "(($ac_try" in
+  *\"* | *\`* | *\\*) ac_try_echo=\$ac_try;;
+  *) ac_try_echo=$ac_try;;
+esac
+eval "echo \"\$as_me:$LINENO: $ac_try_echo\"") >&5
+  (eval "$ac_link") 2>conftest.er1
+  ac_status=$?
+  grep -v '^ *+' conftest.er1 >conftest.err
+  rm -f conftest.er1
+  cat conftest.err >&5
+  echo "$as_me:$LINENO: \$? = $ac_status" >&5
+  (exit $ac_status); } && {
+	 test -z "$ac_c_werror_flag" ||
+	 test ! -s conftest.err
+       } && test -s conftest$ac_exeext &&
+       $as_test_x conftest$ac_exeext; then
+  eval "$as_ac_Lib=yes"
+else
+  echo "$as_me: failed program was:" >&5
+sed 's/^/| /' conftest.$ac_ext >&5
+
+	eval "$as_ac_Lib=no"
+fi
+
+rm -f core conftest.err conftest.$ac_objext conftest_ipa8_conftest.oo \
+      conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+ac_res=`eval echo '${'$as_ac_Lib'}'`
+	       { echo "$as_me:$LINENO: result: $ac_res" >&5
+echo "${ECHO_T}$ac_res" >&6; }
+if test `eval echo '${'$as_ac_Lib'}'` = yes; then
+  BOOST_REGEX_LIB="-l$ax_lib";  link_regex="yes"; break
+else
+  link_regex="no"
+fi
+
+               done
+            fi
+			if test "x$link_regex" = "xno"; then
+				{ { echo "$as_me:$LINENO: error: Could not link against $ax_lib !" >&5
+echo "$as_me: error: Could not link against $ax_lib !" >&2;}
+   { (exit 1); exit 1; }; }
+			fi
+		fi
+
+		CPPFLAGS="$CPPFLAGS_SAVED"
+    	LDFLAGS="$LDFLAGS_SAVED"
+	fi
+
+
+# Check for wxWidgets
+
+
+# Check whether --with-wxdir was given.
+if test "${with_wxdir+set}" = set; then
+  withval=$with_wxdir;  wx_config_name="$withval/wx-config"
+                  wx_config_args="--inplace"
+fi
+
+
+# Check whether --with-wx-config was given.
+if test "${with_wx_config+set}" = set; then
+  withval=$with_wx_config; wx_config_name="$withval"
+fi
+
+
+# Check whether --with-wx-prefix was given.
+if test "${with_wx_prefix+set}" = set; then
+  withval=$with_wx_prefix; wx_config_prefix="$withval"
+else
+  wx_config_prefix=""
+fi
+
+
+# Check whether --with-wx-exec-prefix was given.
+if test "${with_wx_exec_prefix+set}" = set; then
+  withval=$with_wx_exec_prefix; wx_config_exec_prefix="$withval"
+else
+  wx_config_exec_prefix=""
+fi
+
+
+
+    if test x${WX_CONFIG_NAME+set} != xset ; then
+     WX_CONFIG_NAME=wx-config
+  fi
+
+  if test "x$wx_config_name" != x ; then
+     WX_CONFIG_NAME="$wx_config_name"
+  fi
+
+    if test x$wx_config_exec_prefix != x ; then
+     wx_config_args="$wx_config_args --exec-prefix=$wx_config_exec_prefix"
+     WX_LOOKUP_PATH="$wx_config_exec_prefix/bin"
+  fi
+  if test x$wx_config_prefix != x ; then
+     wx_config_args="$wx_config_args --prefix=$wx_config_prefix"
+     WX_LOOKUP_PATH="$WX_LOOKUP_PATH:$wx_config_prefix/bin"
+  fi
+  if test "$cross_compiling" = "yes"; then
+     wx_config_args="$wx_config_args --host=$host_alias"
+  fi
+
+    if test -x "$WX_CONFIG_NAME" ; then
+     { echo "$as_me:$LINENO: checking for wx-config" >&5
+echo $ECHO_N "checking for wx-config... $ECHO_C" >&6; }
+     WX_CONFIG_PATH="$WX_CONFIG_NAME"
+     { echo "$as_me:$LINENO: result: $WX_CONFIG_PATH" >&5
+echo "${ECHO_T}$WX_CONFIG_PATH" >&6; }
+  else
+     # Extract the first word of "$WX_CONFIG_NAME", so it can be a program name with args.
+set dummy $WX_CONFIG_NAME; ac_word=$2
+{ echo "$as_me:$LINENO: checking for $ac_word" >&5
+echo $ECHO_N "checking for $ac_word... $ECHO_C" >&6; }
+if test "${ac_cv_path_WX_CONFIG_PATH+set}" = set; then
+  echo $ECHO_N "(cached) $ECHO_C" >&6
+else
+  case $WX_CONFIG_PATH in
+  [\\/]* | ?:[\\/]*)
+  ac_cv_path_WX_CONFIG_PATH="$WX_CONFIG_PATH" # Let the user override the test with a path.
+  ;;
+  *)
+  as_save_IFS=$IFS; IFS=$PATH_SEPARATOR
+as_dummy=""$WX_LOOKUP_PATH:$PATH""
+for as_dir in $as_dummy
+do
+  IFS=$as_save_IFS
+  test -z "$as_dir" && as_dir=.
+  for ac_exec_ext in '' $ac_executable_extensions; do
+  if { test -f "$as_dir/$ac_word$ac_exec_ext" && $as_test_x "$as_dir/$ac_word$ac_exec_ext"; }; then
+    ac_cv_path_WX_CONFIG_PATH="$as_dir/$ac_word$ac_exec_ext"
+    echo "$as_me:$LINENO: found $as_dir/$ac_word$ac_exec_ext" >&5
+    break 2
+  fi
+done
+done
+IFS=$as_save_IFS
+
+  test -z "$ac_cv_path_WX_CONFIG_PATH" && ac_cv_path_WX_CONFIG_PATH="no"
+  ;;
+esac
+fi
+WX_CONFIG_PATH=$ac_cv_path_WX_CONFIG_PATH
+if test -n "$WX_CONFIG_PATH"; then
+  { echo "$as_me:$LINENO: result: $WX_CONFIG_PATH" >&5
+echo "${ECHO_T}$WX_CONFIG_PATH" >&6; }
+else
+  { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+fi
+
+
+  fi
+
+  if test "$WX_CONFIG_PATH" != "no" ; then
+    WX_VERSION=""
+
+    min_wx_version=2.8.0
+    if test -z "" ; then
+      { echo "$as_me:$LINENO: checking for wxWidgets version >= $min_wx_version" >&5
+echo $ECHO_N "checking for wxWidgets version >= $min_wx_version... $ECHO_C" >&6; }
+    else
+      { echo "$as_me:$LINENO: checking for wxWidgets version >= $min_wx_version ()" >&5
+echo $ECHO_N "checking for wxWidgets version >= $min_wx_version ()... $ECHO_C" >&6; }
+    fi
+
+    WX_CONFIG_WITH_ARGS="$WX_CONFIG_PATH $wx_config_args  "
+
+    WX_VERSION=`$WX_CONFIG_WITH_ARGS --version 2>/dev/null`
+    wx_config_major_version=`echo $WX_VERSION | \
+           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
+    wx_config_minor_version=`echo $WX_VERSION | \
+           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\2/'`
+    wx_config_micro_version=`echo $WX_VERSION | \
+           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\3/'`
+
+    wx_requested_major_version=`echo $min_wx_version | \
+           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\1/'`
+    wx_requested_minor_version=`echo $min_wx_version | \
+           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\2/'`
+    wx_requested_micro_version=`echo $min_wx_version | \
+           sed 's/\([0-9]*\).\([0-9]*\).\([0-9]*\)/\3/'`
+
+
+    wx_ver_ok=""
+    if test "x$WX_VERSION" != x ; then
+      if test $wx_config_major_version -gt $wx_requested_major_version; then
+        wx_ver_ok=yes
+      else
+        if test $wx_config_major_version -eq $wx_requested_major_version; then
+           if test $wx_config_minor_version -gt $wx_requested_minor_version; then
+              wx_ver_ok=yes
+           else
+              if test $wx_config_minor_version -eq $wx_requested_minor_version; then
+                 if test $wx_config_micro_version -ge $wx_requested_micro_version; then
+                    wx_ver_ok=yes
+                 fi
+              fi
+           fi
+        fi
+      fi
+    fi
+
+
+    if test -n "$wx_ver_ok"; then
+
+      { echo "$as_me:$LINENO: result: yes (version $WX_VERSION)" >&5
+echo "${ECHO_T}yes (version $WX_VERSION)" >&6; }
+      WX_LIBS=`$WX_CONFIG_WITH_ARGS --libs`
+
+                              { echo "$as_me:$LINENO: checking for wxWidgets static library" >&5
+echo $ECHO_N "checking for wxWidgets static library... $ECHO_C" >&6; }
+      WX_LIBS_STATIC=`$WX_CONFIG_WITH_ARGS --static --libs 2>/dev/null`
+      if test "x$WX_LIBS_STATIC" = "x"; then
+        { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+      else
+        { echo "$as_me:$LINENO: result: yes" >&5
+echo "${ECHO_T}yes" >&6; }
+      fi
+
+            wx_has_cppflags=""
+      if test $wx_config_major_version -gt 2; then
+        wx_has_cppflags=yes
+      else
+        if test $wx_config_major_version -eq 2; then
+           if test $wx_config_minor_version -gt 2; then
+              wx_has_cppflags=yes
+           else
+              if test $wx_config_minor_version -eq 2; then
+                 if test $wx_config_micro_version -ge 6; then
+                    wx_has_cppflags=yes
+                 fi
+              fi
+           fi
+        fi
+      fi
+
+            wx_has_rescomp=""
+      if test $wx_config_major_version -gt 2; then
+        wx_has_rescomp=yes
+      else
+        if test $wx_config_major_version -eq 2; then
+           if test $wx_config_minor_version -ge 7; then
+              wx_has_rescomp=yes
+           fi
+        fi
+      fi
+      if test "x$wx_has_rescomp" = x ; then
+                  WX_RESCOMP=
+      else
+         WX_RESCOMP=`$WX_CONFIG_WITH_ARGS --rescomp`
+      fi
+
+      if test "x$wx_has_cppflags" = x ; then
+                  WX_CFLAGS=`$WX_CONFIG_WITH_ARGS --cflags`
+         WX_CPPFLAGS=$WX_CFLAGS
+         WX_CXXFLAGS=$WX_CFLAGS
+
+         WX_CFLAGS_ONLY=$WX_CFLAGS
+         WX_CXXFLAGS_ONLY=$WX_CFLAGS
+      else
+                  WX_CPPFLAGS=`$WX_CONFIG_WITH_ARGS --cppflags`
+         WX_CXXFLAGS=`$WX_CONFIG_WITH_ARGS --cxxflags`
+         WX_CFLAGS=`$WX_CONFIG_WITH_ARGS --cflags`
+
+         WX_CFLAGS_ONLY=`echo $WX_CFLAGS | sed "s@^$WX_CPPFLAGS *@@"`
+         WX_CXXFLAGS_ONLY=`echo $WX_CXXFLAGS | sed "s@^$WX_CFLAGS *@@"`
+      fi
+
+      wxWin=1
+
+    else
+
+       if test "x$WX_VERSION" = x; then
+                    { echo "$as_me:$LINENO: result: no" >&5
+echo "${ECHO_T}no" >&6; }
+       else
+          { echo "$as_me:$LINENO: result: no (version $WX_VERSION is not new enough)" >&5
+echo "${ECHO_T}no (version $WX_VERSION is not new enough)" >&6; }
+       fi
+
+       WX_CFLAGS=""
+       WX_CPPFLAGS=""
+       WX_CXXFLAGS=""
+       WX_LIBS=""
+       WX_LIBS_STATIC=""
+       WX_RESCOMP=""
+       :
+
+    fi
+  else
+
+    WX_CFLAGS=""
+    WX_CPPFLAGS=""
+    WX_CXXFLAGS=""
+    WX_LIBS=""
+    WX_LIBS_STATIC=""
+    WX_RESCOMP=""
+
+    :
+
+  fi
+
+
+
+
+
+
+
+
+
+
+
+if test "$wxWin" != 1; then
+    { { echo "$as_me:$LINENO: error:
+       wxWindows must be installed on your system
+       but wx-config script couldn't be found.
+
+       Please check that wx-config is in path, the directory
+       where wxWindows libraries are installed (returned by
+       'wx-config --libs' command) is in LD_LIBRARY_PATH or
+        equivalent variable and wxWindows version is 2.6.0 or above.
+    " >&5
+echo "$as_me: error:
+       wxWindows must be installed on your system
+       but wx-config script couldn't be found.
+
+       Please check that wx-config is in path, the directory
+       where wxWindows libraries are installed (returned by
+       'wx-config --libs' command) is in LD_LIBRARY_PATH or
+        equivalent variable and wxWindows version is 2.6.0 or above.
+    " >&2;}
+   { (exit 1); exit 1; }; }
+fi
+
+# Checks for header files.
+
+# Checks for typedefs, structures, and compiler characteristics.
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -6426,6 +6956,15 @@ AMDEPBACKSLASH!$AMDEPBACKSLASH$ac_delim
 CXXDEPMODE!$CXXDEPMODE$ac_delim
 am__fastdepCXX_TRUE!$am__fastdepCXX_TRUE$ac_delim
 am__fastdepCXX_FALSE!$am__fastdepCXX_FALSE$ac_delim
+BOOST_CPPFLAGS!$BOOST_CPPFLAGS$ac_delim
+BOOST_LDFLAGS!$BOOST_LDFLAGS$ac_delim
+CC!$CC$ac_delim
+CFLAGS!$CFLAGS$ac_delim
+ac_ct_CC!$ac_ct_CC$ac_delim
+CCDEPMODE!$CCDEPMODE$ac_delim
+am__fastdepCC_TRUE!$am__fastdepCC_TRUE$ac_delim
+am__fastdepCC_FALSE!$am__fastdepCC_FALSE$ac_delim
+BOOST_REGEX_LIB!$BOOST_REGEX_LIB$ac_delim
 WX_CONFIG_PATH!$WX_CONFIG_PATH$ac_delim
 WX_CPPFLAGS!$WX_CPPFLAGS$ac_delim
 WX_CFLAGS!$WX_CFLAGS$ac_delim
@@ -6436,20 +6975,12 @@ WX_LIBS!$WX_LIBS$ac_delim
 WX_LIBS_STATIC!$WX_LIBS_STATIC$ac_delim
 WX_VERSION!$WX_VERSION$ac_delim
 WX_RESCOMP!$WX_RESCOMP$ac_delim
-CC!$CC$ac_delim
-CFLAGS!$CFLAGS$ac_delim
-ac_ct_CC!$ac_ct_CC$ac_delim
-CCDEPMODE!$CCDEPMODE$ac_delim
-am__fastdepCC_TRUE!$am__fastdepCC_TRUE$ac_delim
-am__fastdepCC_FALSE!$am__fastdepCC_FALSE$ac_delim
 CPP!$CPP$ac_delim
 GREP!$GREP$ac_delim
 EGREP!$EGREP$ac_delim
-LIBOBJS!$LIBOBJS$ac_delim
-LTLIBOBJS!$LTLIBOBJS$ac_delim
 _ACEOF
 
-  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 96; then
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 97; then
     break
   elif $ac_last_try; then
     { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
@@ -6481,6 +7012,51 @@ N; s/^.*\n//; s/[,\\&]/\\&/g; s/@/@|#_!!_#|/g; b n
 ' >>$CONFIG_STATUS <conf$$subs.sed
 rm -f conf$$subs.sed
 cat >>$CONFIG_STATUS <<_ACEOF
+CEOF$ac_eof
+_ACEOF
+
+
+ac_delim='%!_!# '
+for ac_last_try in false false false false false :; do
+  cat >conf$$subs.sed <<_ACEOF
+LIBOBJS!$LIBOBJS$ac_delim
+LTLIBOBJS!$LTLIBOBJS$ac_delim
+_ACEOF
+
+  if test `sed -n "s/.*$ac_delim\$/X/p" conf$$subs.sed | grep -c X` = 2; then
+    break
+  elif $ac_last_try; then
+    { { echo "$as_me:$LINENO: error: could not make $CONFIG_STATUS" >&5
+echo "$as_me: error: could not make $CONFIG_STATUS" >&2;}
+   { (exit 1); exit 1; }; }
+  else
+    ac_delim="$ac_delim!$ac_delim _$ac_delim!! "
+  fi
+done
+
+ac_eof=`sed -n '/^CEOF[0-9]*$/s/CEOF/0/p' conf$$subs.sed`
+if test -n "$ac_eof"; then
+  ac_eof=`echo "$ac_eof" | sort -nru | sed 1q`
+  ac_eof=`expr $ac_eof + 1`
+fi
+
+cat >>$CONFIG_STATUS <<_ACEOF
+cat >"\$tmp/subs-2.sed" <<\CEOF$ac_eof
+/@[a-zA-Z_][a-zA-Z_0-9]*@/!b end
+_ACEOF
+sed '
+s/[,\\&]/\\&/g; s/@/@|#_!!_#|/g
+s/^/s,@/; s/!/@,|#_!!_#|/
+:n
+t n
+s/'"$ac_delim"'$/,g/; t
+s/$/\\/; p
+N; s/^.*\n//; s/[,\\&]/\\&/g; s/@/@|#_!!_#|/g; b n
+' >>$CONFIG_STATUS <conf$$subs.sed
+rm -f conf$$subs.sed
+cat >>$CONFIG_STATUS <<_ACEOF
+:end
+s/|#_!!_#|//g
 CEOF$ac_eof
 _ACEOF
 
@@ -6734,7 +7310,7 @@ s&@abs_top_builddir@&$ac_abs_top_builddir&;t t
 s&@INSTALL@&$ac_INSTALL&;t t
 s&@MKDIR_P@&$ac_MKDIR_P&;t t
 $ac_datarootdir_hack
-" $ac_file_inputs | sed -f "$tmp/subs-1.sed" | sed 's/|#_!!_#|//g' >$tmp/out
+" $ac_file_inputs | sed -f "$tmp/subs-1.sed" | sed -f "$tmp/subs-2.sed" >$tmp/out
 
 test -z "$ac_datarootdir_hack$ac_datarootdir_seen" &&
   { ac_out=`sed -n '/\${datarootdir}/p' "$tmp/out"`; test -n "$ac_out"; } &&

@@ -2,7 +2,7 @@
 
 BASEDIR=~/.magicseteditor/resource
 
-rm -r $BASEDIR/resource
+rm -rf $BASEDIR
 
 for DIR in $BASEDIR $BASEDIR/icon $BASEDIR/tool $BASEDIR/cursor
 do

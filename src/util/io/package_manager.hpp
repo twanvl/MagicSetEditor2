@@ -63,6 +63,8 @@ class PackageDirectory {
 	void init(bool local);
 	void init(const String& dir);
 	
+	bool valid() const { return !directory.empty(); }
+	
 	/// Name of a package in this directory
 	String name(const String& name) const;
 	/// Does a package with the given name exist?

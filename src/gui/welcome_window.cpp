@@ -47,8 +47,7 @@ WelcomeWindow::WelcomeWindow()
 	#endif
 	wxControl* open_last = nullptr;
 	if (!settings.recent_sets.empty()) {
-		wxFileName n(settings.recent_sets.front());
-		if (n.FileExists() || n.DirExists())
+		if (wxFileName::FileExists(settings.recent_sets.front()) || wxFileName::DirExists(settings.recent_sets.front()+_("/")))
 			#ifdef USE_HOVERBUTTON
 				open_last       = new HoverButtonExt(this, ID_FILE_RECENT, load_resource_image(_("welcome_last")), _BUTTON_("last opened set"), _HELP_1_("last opened set", n.GetName()));
 			#else
@@ -102,7 +101,12 @@ void WelcomeWindow::onNewSet(wxCommandEvent&) {
 void WelcomeWindow::onOpenLast(wxCommandEvent&) {
 	wxBusyCursor wait;
 	assert(!settings.recent_sets.empty());
-	close( open_package<Set>(settings.recent_sets.front()) );
+	try {
+		close( open_package<Set>(settings.recent_sets.front()) );
+	} catch (PackageNotFoundError& e) {
+		handle_error(_("Cannot find package ") + e.what() + _(" to open."));
+		settings.recent_sets.clear();
+	}
 }
 
 void WelcomeWindow::onCheckUpdates(wxCommandEvent&) {

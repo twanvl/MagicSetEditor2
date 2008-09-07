@@ -31,6 +31,10 @@ PackageManager package_manager;
 void PackageManager::init() {
 	local.init(true);
 	global.init(false);
+	if (!(local.valid() || global.valid()))
+		throw Error(_("The MSE data files can not be found, there should be a directory called 'data' with these files. ")
+								_("The expected place to find it in was either ") + wxStandardPaths::Get().GetDataDir() + _(" or ") +
+								wxStandardPaths::Get().GetUserDataDir());
 }
 void PackageManager::destroy() {
 	loaded_packages.clear();
@@ -186,15 +190,19 @@ void PackageDirectory::init(bool local) {
 			String d = dir;
 			dir = wxPathOnly(dir);
 			if (d == dir) {
-				// we are at the root -> 'data' not found anywhere in the path -> fatal error
-				throw Error(_("The global MSE data files can not be found, there should be a directory called 'data' with these files. The expected place to find it in was ") + wxStandardPaths::Get().GetDataDir());
+				// we are at the root -> 'data' not found anywhere in the path
+				dir = wxStandardPaths::Get().GetDataDir();
+				break;
 			}
 		}
 		init(dir + _("/data"));
 	}
 }
 void PackageDirectory::init(const String& dir) {
-	directory = dir;
+	if (wxDirExists(dir))
+		directory = dir;
+	else
+		directory.clear();
 }
 
 String PackageDirectory::name(const String& name) const {

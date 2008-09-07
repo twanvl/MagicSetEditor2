@@ -18,7 +18,10 @@ AC_PROG_CXX
 # Do not pass -O2, because that causes failures for now.
 CXXFLAGS=-g
 # Checks for libraries.
-# TODO: Check for boost
+
+# Check for Boost
+AX_BOOST_BASE([1.36.0])
+AX_BOOST_REGEX
 
 # Check for wxWidgets
 AM_OPTIONS_WXCONFIG

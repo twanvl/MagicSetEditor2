@@ -84,7 +84,7 @@ bool resolve_filename_conflicts(wxFileName& fn, FilenameConflicts conflicts, set
 // ----------------------------------------------------------------------------- : Directories
 
 bool create_parent_dirs(const String& file) {
-	for (size_t pos = file.find_first_of(_("\\/")) ;
+	for (size_t pos = file.find_first_of(_("\\/"), 1) ;
 	     pos != String::npos ;
 	     pos = file.find_first_of(_("\\/"),pos+1)) {
 		String part = file.substr(0,pos);

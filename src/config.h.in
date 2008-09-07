@@ -3,6 +3,9 @@
 /* Define to 1 if you have the `floor' function. */
 #undef HAVE_FLOOR
 
+/* Define if compiler provides atomic builtins */
+#undef HAVE_GCC_ATOMIC_BUILTINS
+
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
