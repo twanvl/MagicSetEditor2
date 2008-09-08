@@ -98,6 +98,23 @@ init script:
 			in_context: "(^|[[:space:]])<match>|<atom-keyword><match>",
 		 	replace: "<i-auto>&</i-auto>")
 	
+	############### List Scripts
+	type_over_list := replace_rule(match:" ?-$", replace:"")
+	
+	affiliation_1_filter :=
+		tag_remove_rule(tag: "<word-list-") +
+		type_over_list +
+		{ "<word-list-affiliation1>{input}</word-list-affiliation1>" }
+	
+	space_to_wltags := replace_rule(match:"( +|<soft> </soft>)",
+	                                replace:{"</word-list-{list_type}>{_1}<word-list-{list_type}>"})
+	
+	affiliation_2_filter :=
+		tag_remove_rule(tag: "<word-list-") +
+		type_over_list +
+		{ "<word-list-affiliation2>{input}</word-list-affiliation2>" }
+	
+	
 	############### Determine type of card
 	c_optional_character := filter_rule(match: "Concealed—Optional")
 	concealed_character := filter_rule(match: "Concealed")
@@ -541,12 +558,13 @@ card field:
 card field:
 	type: text
 	name: team
-	default: team()
+	script: affiliation_1_filter(value)
 	editable: false
 	show statistics: false
 card field:
 	type: text
 	name: team 2 of 2
+	script: affiliation_2_filter(value)
 	editable: false
 	show statistics: false
 card field:
@@ -704,6 +722,191 @@ auto replace:
 auto replace:
 	match: ::
 	replace: •
+############################################################## Word lists
+
+word list:
+	name: affiliation1
+	word:
+		name: DC
+		word:
+			name: A-E
+			word: Anti-Matter
+			word: Arkham Inmates
+			word: Birds of Prey
+			word: Checkmate
+			word: Crisis
+			word: Darkseid's Elite
+			word: Deathstroke
+			word: Doom Patrol
+			word: Emerald Enemies
+		word:
+			name: F-J
+			word: Fearsome Five
+			word: Future Foes
+			word: Gotham Knights
+			word: Green Lantern
+			word: Injustice Gang
+			word: JLA
+			word: JLI
+			word: JSA
+		word:
+			name: K-O
+			word: League of Assassins
+			word: Legionnaires
+			word: Manhunters
+			word: New Gods
+			word: Outsiders
+		word:
+			name: P-T
+			word: Rann
+			word: Revenge Squad
+			word: Secret Six
+			word: Shadowpact
+			word: Speed Force
+			word: Squadron Supreme
+			word: Team Superman
+			word: Teen Titans
+			word: Thanagar
+		word:
+			name: U-Z
+			word: Villains United
+	word:
+		name: Marvel
+		word:
+			name: A-E
+			word: Avengers
+			word: Crime Lords
+			word: Doom
+		word:
+			name: F-J
+			word: Fantastic Four
+			word: Heralds of Galactus
+			word: Heroes of Earth
+			word: Hellfire Club
+			word: Horsemen of Apocalypse
+			word: Inhumans
+		word:
+			name: K-O
+			word: Kang Council
+			word: Kree
+			word: Marvel Defenders
+			word: Marvel Knights
+			word: Masters of Evil
+			word: Morlocks
+			word: Negative Zone
+			word: Nextwave
+		word:
+			name: P-T
+			word: Sentinels
+			word: The Shi'ar
+			word: SHIELD
+			word: Sinister Syndicate
+			word: Skrull
+			word: Spider-Friends
+			word: Thunderbolts
+		word:
+			name: U-Z
+			word: Underworld
+			word: Villains of Earth
+			word: X-Men
+			word: X-Statix
+			word: Warbound
+			word: Wild Pack
+	word:
+		name: Other
+		word: B.P.R.D.
+		word: Thule Society
+word list:
+	name: affiliation2
+	word:
+		name: DC
+		word:
+			name: A-E
+			word: Anti-Matter
+			word: Arkham Inmates
+			word: Birds of Prey
+			word: Checkmate
+			word: Crisis
+			word: Darkseid's Elite
+			word: Deathstroke
+			word: Doom Patrol
+			word: Emerald Enemies
+		word:
+			name: F-J
+			word: Fearsome Five
+			word: Future Foes
+			word: Gotham Knights
+			word: Green Lantern
+			word: Injustice Gang
+			word: JLA
+			word: JLI
+			word: JSA
+		word:
+			name: K-O
+			word: League of Assassins
+			word: Legionnaires
+			word: Manhunters
+			word: New Gods
+			word: Outsiders
+		word:
+			name: P-T
+			word: Rann
+			word: Revenge Squad
+			word: Secret Six
+			word: Shadowpact
+			word: Speed Force
+			word: Squadron Supreme
+			word: Team Superman
+			word: Teen Titans
+			word: Thanagar
+		word:
+			name: U-Z
+			word: Villains United
+	word:
+		name: Marvel
+		word:
+			name: A-E
+			word: Avengers
+			word: Crime Lords
+			word: Doom
+		word:
+			name: F-J
+			word: Fantastic Four
+			word: Heralds of Galactus
+			word: Heroes of Earth
+			word: Hellfire Club
+			word: Horsemen of Apocalypse
+			word: Inhumans
+		word:
+			name: K-O
+			word: Kang Council
+			word: Kree
+			word: Marvel Defenders
+			word: Marvel Knights
+			word: Masters of Evil
+			word: Morlocks
+			word: Negative Zone
+			word: Nextwave
+		word:
+			name: P-T
+			word: Sentinels
+			word: The Shi'ar
+			word: Sinister Syndicate
+			word: Skrull
+			word: Spider-Friends
+			word: Thunderbolts
+		word:
+			name: U-Z
+			word: Underworld
+			word: Villains of Earth
+			word: X-Men
+			word: X-Statix
+			word: Warbound
+			word: Wild Pack
+	word:
+		name: Other
+		word: B.P.R.D.
+		word: Thule Society
 ############################################################## Card pack items
 pack item:
 	name: common / uncommon
