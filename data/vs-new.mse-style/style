@@ -36,7 +36,6 @@ init script:
 			if   styling.con_optional == "c-left" then "ccoccard2.png"
 			else                  		           "ccoccard.png"
 	}
-
 ############################################################## Set info fields
 ############################################################## Extra style
 styling field:
@@ -250,13 +249,12 @@ card style:
 	############################# Affiliation
 	team full:
 		left: { if card.card_type=="planet" then 20 else 19 }
-		top : { if card.card_type=="planet" then 441 else 329 }
+		top : { if card.card_type=="planet" then 441 else 327 }
 		height: 28
 		width: 338
 		font:
 			name: Gill Sans MT Condensed
-			size: 20
-			scale down to: 5
+			size: 12
 			color:
 				script:	if is_concealed()	then rgb(23,4,6)
 				else	if is_equipment()	then rgb(82,82,82)
@@ -471,18 +469,18 @@ extra card style:
 		visible: { styling.foils }
 	affiliation:
 		right: { 184 + card_style.team_full.content_width * -0.5 }
-		top : 330
-		height: 17
-		width: 28
+		top : 332
+		height: 16
+		width: 27
 		z index: 5
 		alignment: middle right
 		render style: image
 		include file: /vs-common.mse-include/affiliations
 	affiliation2:
 		right: { card_style.team_full.content_width * 0.5 + 217 }
-		top : 330
-		height: 17
-		width: 28
+		top : 332
+		height: 16
+		width: 27
 		z index: 5
 		alignment: middle left
 		render style: image
