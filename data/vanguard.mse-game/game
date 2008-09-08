@@ -5,7 +5,7 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2008-09-03
+version: 2008-09-08
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -1038,9 +1038,14 @@ keyword:
 	keyword: Unearth
 	match: Unearth <atom-param>cost</atom-param>
 	mode: expert
-	reminder: When you pay the unearth cost, put it into play from your graveyard. It gains haste until end of turn. Remove it from the game at end of turn or if it would leave play. Play this ability only at time you could play a sorcery.
+	reminder: {param1}: Return it from your graveyard to play. If it is a creature, it gains haste. Remove it from the game at end of turn or if it would leave play. Unearth only as a sorcery.
 keyword:
 	keyword: Devour
 	match: Devour <atom-param>number</atom-param>
 	mode: expert
-	reminder: As it comes into play, sacrifice any number of creatures. Put {english_number_a(param1)} +1/+1 counter(s) on it for each creature sacrificed this way.
+	reminder: As it comes into play, you may sacrifice any number of creatures. It comes into play with { if param1.value == 1 then "" else if param1.value == 2 then "twice " else english_number(param1) + " times " }that many +1/+1 counters on it.
+keyword:
+	keyword: Exalted
+	match: Exalted
+	mode: expert
+	reminder: Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.
