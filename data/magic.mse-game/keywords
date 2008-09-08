@@ -624,9 +624,14 @@ keyword:
 	keyword: Unearth
 	match: Unearth <atom-param>cost</atom-param>
 	mode: expert
-	reminder: When you pay the unearth cost, put this creature from your graveyard into play. It gains haste until end of turn. Remove this card from the game at end of turn or if it would leave play. Play this ability only at time you could play a sorcery.
+	reminder: {param1}: Return this card from your graveyard to play. {if has_pt() then "It gains haste. " else "" }Remove it from the game at end of turn or if it would leave play. Unearth only as a sorcery.
 keyword:
 	keyword: Devour
 	match: Devour <atom-param>number</atom-param>
 	mode: expert
-	reminder: As this creature comes into play, sacrifice any number of creatures. Put {english_number_a(param1)} +1/+1 counter(s) on this creature for each creature sacrificed this way.
+	reminder: As this creature comes into play, you may sacrifice any number of creatures. This creature comes into play with { if param1.value == 1 then "" else if param1.value == 2 then "twice " else english_number(param1) + " times " }that many +1/+1 counters on it.
+keyword:
+	keyword: Exalted
+	match: Exalted
+	mode: expert
+	reminder: Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.
