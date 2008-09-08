@@ -53,50 +53,50 @@ choice:
 	choice: B.P.R.D.
 	choice: Thule Society
 script:
-	if card.team=="Avengers" then "Marvel A-C Avengers" else
-	if card.team=="AVENGERS" then "Marvel A-C Avengers" else
-	if card.team=="Brood" then "Marvel A-C Brood" else
-	if card.team=="BROOD" then "Marvel A-C Brood" else
-	if card.team=="Brotherhood" then "Marvel A-C Brotherhood" else
-	if card.team=="BROTHERHOOD" then "Marvel A-C Brotherhood" else
-	if card.team=="Crime Lords" then "Marvel A-C Crime Lords" else
-	if card.team=="CRIME LORDS" then "Marvel A-C Crime Lords" else
-	if card.team=="Doom" then "Marvel D-H Doom" else
-	if card.team=="DOOM" then "Marvel D-H Doom" else
-	if card.team=="Fantastic Four" then "Marvel D-H Fantastic Four" else
-	if card.team=="FANTASTIC FOUR" then "Marvel D-H Fantastic Four" else
-	if card.team=="Horsemen of Apocalypse" then "Marvel D-H Horsemen of Apocalypse" else
-	if card.team=="HORSEMEN OF APOCALYPSE" then "Marvel D-H Horsemen of Apocalypse" else
-	if card.team=="Marvel Knights" then "Marvel I-M Marvel Knights" else
-	if card.team=="MARVEL KNIGHTS" then "Marvel I-M Marvel Knights" else
-	if card.team=="Negative Zone" then "Marvel N-S Negative Zone" else
-	if card.team=="NEGATIVE ZONE" then "Marvel N-S Negative Zone" else
-	if card.team=="Shi'ar" then "Marvel N-S Shi'ar" else
-	if card.team=="SHI'AR" then "Marvel N-S Shi'ar" else
-	if card.team=="Shield" then "Marvel N-S Shield" else
-	if card.team=="SHIELD" then "Marvel N-S Shield" else
-	if card.team=="Spider-Friends" then "Marvel N-S Spider-Friends" else
-	if card.team=="SPIDER-FRIENDS" then "Marvel N-S Spider-Friends" else
-	if card.team=="Thunderbolts" then "Marvel T-Z Thunderbolts" else
-	if card.team=="THUNDERBOLTS" then "Marvel T-Z Thunderbolts" else
-	if card.team=="Underworld" then "Marvel T-Z Underworld" else
-	if card.team=="UNDERWORLD" then "Marvel T-Z Underworld" else
-	if card.team=="Warbound" then "Marvel T-Z Warbound" else
-	if card.team=="WARBOUND" then "Marvel T-Z Warbound" else
-	if card.team=="X-Men" then "Marvel T-Z X-Men" else
-	if card.team=="X-MEN" then "Marvel T-Z X-Men" else
-	if card.team=="Gotham Knights" then "DC D-H Gotham Knights" else
-	if card.team=="GOTHAM KNIGHTS" then "DC D-H Gotham Knights" else
-	if card.team=="Green Lantern" then "DC D-H Green Lantern" else
-	if card.team=="GREEN LANTERN" then "DC D-H Green Lantern" else
-	if card.team=="JLA" then "DC I-M JLA" else
-	if card.team=="JSA" then "DC I-M JSA" else
-	if card.team=="Speed Force" then "DC N-S Speed Force" else
-	if card.team=="SPEED FORCE" then "DC N-S Speed Force" else
-	if card.team=="Team Superman" then "DC T-Z Team Superman" else
-	if card.team=="TEAM SUPERMAN" then "DC T-Z Team Superman" else
-	if card.team=="Teen Titans" then "DC T-Z Teen Titans" else
-	if card.team=="TEEN TITANS" then "DC T-Z Teen Titans" else
-	if card.team=="B.P.R.D." then "Other B.P.R.D" else
-	if card.team=="Thule Society" then "Other Thule Society" else
-	if card.team=="THULE SOCIETY" then "Other Thule Society"
+	if contains(card.team, match:"Avengers") then "Marvel A-C Avengers" else
+	if contains(card.team, match:"AVENGERS") then "Marvel A-C Avengers" else
+	if contains(card.team, match:"Brood") then "Marvel A-C Brood" else
+	if contains(card.team, match:"BROOD") then "Marvel A-C Brood" else
+	if contains(card.team, match:"Brotherhood") then "Marvel A-C Brotherhood" else
+	if contains(card.team, match:"BROTHERHOOD") then "Marvel A-C Brotherhood" else
+	if contains(card.team, match:"Crime Lords") then "Marvel A-C Crime Lords" else
+	if contains(card.team, match:"CRIME LORDS") then "Marvel A-C Crime Lords" else
+	if contains(card.team, match:"Doom") then "Marvel D-H Doom" else
+	if contains(card.team, match:"DOOM") then "Marvel D-H Doom" else
+	if contains(card.team, match:"Fantastic Four") then "Marvel D-H Fantastic Four" else
+	if contains(card.team, match:"FANTASTIC FOUR") then "Marvel D-H Fantastic Four" else
+	if contains(card.team, match:"Horsemen of Apocalypse") then "Marvel D-H Horsemen of Apocalypse" else
+	if contains(card.team, match:"HORSEMEN OF APOCALYPSE") then "Marvel D-H Horsemen of Apocalypse" else
+	if contains(card.team, match:"Marvel Knights") then "Marvel I-M Marvel Knights" else
+	if contains(card.team, match:"MARVEL KNIGHTS") then "Marvel I-M Marvel Knights" else
+	if contains(card.team, match:"Negative Zone") then "Marvel N-S Negative Zone" else
+	if contains(card.team, match:"NEGATIVE ZONE") then "Marvel N-S Negative Zone" else
+	if contains(card.team, match:"Shi'ar") then "Marvel N-S Shi'ar" else
+	if contains(card.team, match:"SHI'AR") then "Marvel N-S Shi'ar" else
+	if contains(card.team, match:"Shield") then "Marvel N-S Shield" else
+	if contains(card.team, match:"SHIELD") then "Marvel N-S Shield" else
+	if contains(card.team, match:"Spider-Friends") then "Marvel N-S Spider-Friends" else
+	if contains(card.team, match:"SPIDER-FRIENDS") then "Marvel N-S Spider-Friends" else
+	if contains(card.team, match:"Thunderbolts") then "Marvel T-Z Thunderbolts" else
+	if contains(card.team, match:"THUNDERBOLTS") then "Marvel T-Z Thunderbolts" else
+	if contains(card.team, match:"Underworld") then "Marvel T-Z Underworld" else
+	if contains(card.team, match:"UNDERWORLD") then "Marvel T-Z Underworld" else
+	if contains(card.team, match:"Warbound") then "Marvel T-Z Warbound" else
+	if contains(card.team, match:"WARBOUND") then "Marvel T-Z Warbound" else
+	if contains(card.team, match:"X-Men") then "Marvel T-Z X-Men" else
+	if contains(card.team, match:"X-MEN") then "Marvel T-Z X-Men" else
+	if contains(card.team, match:"Gotham Knights") then "DC D-H Gotham Knights" else
+	if contains(card.team, match:"GOTHAM KNIGHTS") then "DC D-H Gotham Knights" else
+	if contains(card.team, match:"Green Lantern") then "DC D-H Green Lantern" else
+	if contains(card.team, match:"GREEN LANTERN") then "DC D-H Green Lantern" else
+	if contains(card.team, match:"JLA") then "DC I-M JLA" else
+	if contains(card.team, match:"JSA") then "DC I-M JSA" else
+	if contains(card.team, match:"Speed Force") then "DC N-S Speed Force" else
+	if contains(card.team, match:"SPEED FORCE") then "DC N-S Speed Force" else
+	if contains(card.team, match:"Team Superman") then "DC T-Z Team Superman" else
+	if contains(card.team, match:"TEAM SUPERMAN") then "DC T-Z Team Superman" else
+	if contains(card.team, match:"Teen Titans") then "DC T-Z Teen Titans" else
+	if contains(card.team, match:"TEEN TITANS") then "DC T-Z Teen Titans" else
+	if contains(card.team, match:"B.P.R.D.") then "Other B.P.R.D" else
+	if contains(card.team, match:"Thule Society") then "Other Thule Society" else
+	if contains(card.team, match:"THULE SOCIETY") then "Other Thule Society"
