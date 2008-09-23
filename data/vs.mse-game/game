@@ -15,16 +15,15 @@ depends on:
 init script:
 	# Index for sorting, character/concealed, equipment, location then plot twist
 	sort_index := {
-		if	card.team=="Planet"		then "1"
-		else if card.team=="PLANET"		then "1"
-		else if card.team==""			then "3"
-		else if	card.team=="EQUIPMENT"		then "4"
-		else if	card.team=="Equipment"		then "4"
-		else if card.team=="LOCATION"		then "5"
-		else if card.team=="Location"		then "5"
-		else if card.team=="PLOT TWIST"		then "6"
-		else if card.team=="Plot Twist"		then "6"
-		else 					     "2"
+		if	contains(card.team, match: "EQUIPMENT")		then "2"
+		else if	contains(card.team, match: "Equipment")		then "2"
+		else if contains(card.team, match: "LOCATION")		then "3"
+		else if contains(card.team, match: "Location")		then "3"
+		else if contains(card.team, match: "PLOT TWIST")	then "4"
+		else if contains(card.team, match: "Plot Twist")	then "4"
+		else if contains(card.team, match: "Planet")		then "5"
+		else if contains(card.team, match: "PLANET")		then "5"
+		else 							     "1"
 	};
 	############################################################## Text Filters
 	
@@ -122,35 +121,21 @@ init script:
 	keyword_sort_location := filter_rule(match: "Terraform")
 	keyword_sort_plot_twist := filter_rule(match: "Ongoing:")
 	card_type := {
-		if      card.team == "Location"    				then "location"
-		else if card.team == "LOCATION"					then "location"
-		else if keyword_sort_location(card.rule_text) != ""     	then "location"
-		else if card.team == "Planet"					then "planet"
-		else if card.team == "PLANET"					then "planet"
-		else if card.team == "Equipment"   				then "equipment visible equipment"
-		else if card.team == "EQUIPMENT"				then "equipment visible equipment"
-		else if keyword_sort_equipment(card.rule_text) != ""    	then "equipment visible equipment"
-		else if card.team == "Plot Twist"  				then "plot twist"
-		else if card.team == "PLOT TWIST"				then "plot twist"
-		else if keyword_sort_plot_twist(card.rule_text) != ""   	then "plot twist"
-		else if card.symbols == "ongoing"		        	then "plot twist"
-		else if c_optional_character(card.rule_text) != ""		then c_optional_script()
-		else if concealed_character(card.rule_text) != ""      		then concealed_script()
-		else if card.team_2 != ""        				then "characters visible character dual"
-		else if card.team_2_of_2 != "" 	   				then "characters visible character dual (new)"
-		else								     "characters visible character"
-	}
-	# Default Concealed Optional Card Type
-	c_optional_script := {
-		if	card.team_2 != ""        			then "characters concealed-optional concealed-optional dual"
-		else if	card.team_2_of_2 != "" 	   			then "characters concealed-optional concealed-optional dual (new)"
-		else                                    		     "characters concealed-optional concealed-optional character"
-	}
-	# Default Concealed Card Type
-	concealed_script := {
-		if 	card.team_2 != ""        			then "characters hidden concealed dual"
-		else if card.team_2_of_2 != "" 	   			then "characters hidden concealed dual (new)"
-		else                                    		     "characters hidden concealed"
+		if      contains(card.team, match: "Location")		then "location"
+		else if contains(card.team, match: "LOCATION")		then "location"
+		else if keyword_sort_location(card.rule_text) != ""    	then "location"
+		else if contains(card.team, match: "Planet")		then "planet"
+		else if contains(card.team, match: "PLANET")		then "planet"
+		else if contains(card.team, match: "Equipment")		then "equipment visible equipment"
+		else if contains(card.team, match: "EQUIPMENT")		then "equipment visible equipment"
+		else if keyword_sort_equipment(card.rule_text) != ""   	then "equipment visible equipment"
+		else if contains(card.team, match: "Plot Twist")	then "plot twist"
+		else if contains(card.team, match: "PLOT TWIST")	then "plot twist"
+		else if keyword_sort_plot_twist(card.rule_text) != ""  	then "plot twist"
+		else if card.symbols == "ongoing"	        	then "plot twist"
+		else if c_optional_character(card.rule_text) != ""	then "characters concealed-optional concealed-optional character"
+		else if concealed_character(card.rule_text) != ""	then "characters hidden concealed"
+		else							     "characters visible character"
 	}
 	# Default symbols
 	symbol_default := {
@@ -169,7 +154,7 @@ init script:
 	}
 	
 	# Only pass numbers
-	only_numbers := filter_rule(match: "[0-9]")
+	only_numbers := filter_rule(match: "[0-9XYZ!?]")
 	
 	############### Type of card
 	
@@ -192,30 +177,10 @@ init script:
 	        card.card_type == "characters concealed-optional concealed-optional dual"
 	}
 	is_character := { contains(card.card_type, match: "characters")
-	#	card.card_type == "characters visible character" or
-	#        card.card_type == "characters visible character dual" or
-	#        card.card_type == "characters visible character dual (new)" or
-	#        card.card_type == "characters hidden concealed" or
-	#        card.card_type == "characters hidden concealed dual" or
-	#        card.card_type == "characters hidden concealed dual (new)" or
-	#        card.card_type == "characters concealed-optional concealed-optional character" or
-	#        card.card_type == "characters concealed-optional concealed-optional character dual" or
-	#        card.card_type == "characters concealed-optional concealed-optional character dual (new)"
 	}
-	is_concealed := {
-	        card.card_type == "characters hidden concealed" or
-	        card.card_type == "characters hidden concealed dual" or
-	        card.card_type == "characters hidden concealed dual (new)" or
-		card.card_type == "characters concealed-optional concealed-optional character" or
-	        card.card_type == "characters concealed-optional concealed-optional dual" or
-	        card.card_type == "characters concealed-optional concealed-optional dual (new)" or
-	        card.card_type == "concealed equipment" or
-	        card.card_type == "concealed-optional equipment"
+	is_concealed := { contains(card.card_type, match: "concealed")
 	}
-	is_equipment := {
-		card.card_type == "visible equipment" or
-		card.card_type == "concealed equipment" or
-	        card.card_type == "concealed-optional equipment"
+	is_equipment := { contains(card.card_type, match: "equipment")
 	}
 	is_location := {
 		card.card_type == "location"
@@ -313,7 +278,13 @@ set field:
 set field:
 	type: boolean
 	name: automatic card numbers
+	initial: yes
 	description: Should card numbers be shown on the cards?
+set field:
+	type: boolean
+	name: all caps affiliations
+	initial: no
+	description: Should the Affiliations be all caps like in the modern style?
 ############################# Default style
 default set style:
 	logo:
@@ -558,13 +529,13 @@ card field:
 card field:
 	type: text
 	name: team
-	script: affiliation_1_filter(value)
+	script: affiliation_1_filter(if set.all_caps_affiliations=="yes" then to_upper(value) else (value))
 	editable: false
 	show statistics: false
 card field:
 	type: text
 	name: team 2 of 2
-	script: affiliation_2_filter(value)
+	script: affiliation_2_filter(if set.all_caps_affiliations=="yes" then to_upper(value) else (value))
 	editable: false
 	show statistics: false
 card field:
@@ -722,6 +693,9 @@ auto replace:
 auto replace:
 	match: ::
 	replace: •
+auto replace:
+	match: @
+	replace: •
 ############################################################## Word lists
 
 word list:
@@ -816,6 +790,9 @@ word list:
 		name: Other
 		word: B.P.R.D.
 		word: Thule Society
+	word: Equipment
+	word: Location
+	word: Plot Twist
 word list:
 	name: affiliation2
 	word:
@@ -907,6 +884,9 @@ word list:
 		name: Other
 		word: B.P.R.D.
 		word: Thule Society
+	word: Equipment
+	word: Location
+	word: Plot Twist
 ############################################################## Card pack items
 pack item:
 	name: common / uncommon

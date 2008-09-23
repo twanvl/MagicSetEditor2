@@ -15,7 +15,7 @@ symbol:
 	code: >>>
 	image: arrow.png
 symbol:
-	code: @
+	code: •
 	image: diamond.png
 symbol:
 	code: <>

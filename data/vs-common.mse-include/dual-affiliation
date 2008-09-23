@@ -15,6 +15,7 @@ choice:
 		name: D-H
 		choice: Doom
 		choice: Fantastic Four
+		choice: Heralds of Galactus
 		choice: Horsemen of Apocalypse
 	choice:
 		name: I-M
@@ -65,6 +66,8 @@ script:
 	if contains(card.team_2_of_2, match: "DOOM") then "Marvel D-H Doom" else
 	if contains(card.team_2_of_2, match: "Fantastic Four") then "Marvel D-H Fantastic Four" else
 	if contains(card.team_2_of_2, match: "FANTASTIC FOUR") then "Marvel D-H Fantastic Four" else
+	if contains(card.team_2_of_2, match: "Heralds of Galactus") then "Marvel D-H Heralds of Galactus" else
+	if contains(card.team_2_of_2, match: "HERALDS OF GALACTUS") then "Marvel D-H Heralds of Galactus" else
 	if contains(card.team_2_of_2, match: "Horsemen of Apocalypse") then "Marvel D-H Horsemen of Apocalypse" else
 	if contains(card.team_2_of_2, match: "HORSEMEN OF APOCALYPSE") then "Marvel D-H Horsemen of Apocalypse" else
 	if contains(card.team_2_of_2, match: "Marvel Knights") then "Marvel I-M Marvel Knights" else
