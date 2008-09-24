@@ -5,10 +5,10 @@ installer group: VS System/game files
 icon: card-back.png
 position hint: 3
 
-version: 2008-08-08
+version: 2008-09-23
 depends on:
 	package: vs-common.mse-include
-	version: 2008-01-03
+	version: 2008-09-23
 
 ############################################################## Functions & filters
 # General functions

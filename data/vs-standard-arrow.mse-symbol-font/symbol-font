@@ -1,5 +1,5 @@
-﻿mse version: 0.3.6
-version: 2008-05-19
+﻿mse version: 0.3.7
+version: 2008-09-23
 short name: old
 position hint: 2
 installer group: VS System/Symbol Fonts/Arrow
@@ -16,10 +16,10 @@ symbol:
 	image: arrow.png
 symbol:
 	code: •
-	image: diamonda.png
+	image: diamond.png
 symbol:
 	code: <>
-	image: diamonda.png
+	image: diamond.png
 ##############################################################
 # Insert-symbol menu
 insert symbol menu:
