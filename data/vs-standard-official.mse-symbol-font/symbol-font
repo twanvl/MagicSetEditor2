@@ -24,35 +24,23 @@ symbol:
 	code: Activate
 	image: activate.png
 symbol:
-	code: Horsemen of Apocalypse
-	image: apocalypse.png
-symbol:
 	code: Avengers
 	image: avengers.png
 symbol:
 	code: B.P.R.D.
 	image: bprd.png
 symbol:
-	code: Brood
-	image: brood.png
-symbol:
 	code: Brotherhood
 	image: brotherhood.png
-symbol:
-	code: Captain America
-	image: captainamerica.png
 symbol:
 	code: Crime Lords
 	image: crimelords.png
 symbol:
-	code: Marvel Defenders
+	code: Defenders
 	image: defenders.png
 symbol:
 	code: Doom
 	image: doom.png
-symbol:
-	code: Excalibur
-	image: excalibur.png
 symbol:
 	code: Fantastic Four
 	image: f4.png
@@ -69,11 +57,20 @@ symbol:
 	code: Heralds of Galactus
 	image: heralds.png
 symbol:
+	code: Horsemen of Apocalypse
+	image: apocalypse.png
+symbol:
+	code: Invaders
+	image: invaders.png
+symbol:
 	code: JLA
 	image: jla.png
 symbol:
 	code: JSA
 	image: jsa.png
+symbol:
+	code: Kree
+	image: kree
 symbol:
 	code: Marvel Knights
 	image: marvelknights.png
@@ -98,6 +95,9 @@ symbol:
 symbol:
 	code: Sinister Syndicate
 	image: sinistersyndicate.png
+symbol:
+	code: Skrull
+	image: skrull.png
 symbol:
 	code: Speed Force
 	image: speedforce.png

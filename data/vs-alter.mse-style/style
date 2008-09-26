@@ -23,8 +23,15 @@ card height: 523
 card dpi: 150
 
 ############################################################## Extra scripts
+init script:
+	card_shape := { if styling.style_sorting then "alter ego" else "new" }
 ############################################################## Set info fields
 ############################################################## Extra style
+styling field:
+	type: boolean
+	name: style sorting
+	description: Should this style of card sort as separate from cards of other styles?
+	initial: no
 styling field:
 	type: package choice
 	name: text box symbols

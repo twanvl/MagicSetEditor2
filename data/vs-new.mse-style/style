@@ -36,6 +36,7 @@ init script:
 			if   styling.con_optional == "c-left" then "ccoccard2.png"
 			else                  		           "ccoccard.png"
 	}
+	card_shape := { "new" }
 ############################################################## Set info fields
 ############################################################## Extra style
 styling field:
@@ -377,59 +378,14 @@ card style:
 			name: Eurostile
 			size: 6
 			color: rgb(255,255,255)
-############################################################## Extra card fields
-extra card field:
-	type: choice
-	name: foil layer
-	choice: foil
-	editable: false
-extra card field:
-	type: choice
-	name: playarea
-	choice: none
-	choice: visible
-	choice: concealed
-	choice: both
-	initial: none
-	show statistics: false
-	save value: true
-extra card field:
-	type: choice
-	name: flightrange
-	choice: none
-	choice: flight
-	choice: range
-	choice: both
-	initial: none
-	show statistics: false
-	save value: true
-extra card field:
-	type: choice
-	name: ongoing
-	choice: none
-	choice: ongoing
-	initial: none
-	script: symbol_default()
-	description: Symbols for this card (ongoing)
-extra card field:
-	type: choice
-	name: affiliation
-	editable: false
-	initial: nones
-	include file: /vs-common.mse-include/watermark-names
-extra card field:
-	type: choice
-	name: affiliation2
-	editable: false
-	initial: none
-	include file: /vs-common.mse-include/dual-affiliation
-extra card style:
+	############################ For New style cards
 	playarea:
 		left: 320
 		top : 333
 		height: 15
 		width: 29
 		z index: 4
+		visible: { is_character() or is_equipment() }
 		render style: image list
 		choice images:
 			visible: visible.png
@@ -457,16 +413,6 @@ extra card style:
 		render style: image list
 		choice images:
 			ongoing: ongoing.png
-	foil layer:
-		left: 0
-		top : 0
-		width: { if styling.foils=="no" then 0 else 375 }
-		height: { if styling.foils=="no" then 0 else 523 }
-		z index: 8
-		render style: image
-		choice images:
-			foil: /vs-common.mse-include/foil.png
-		visible: { styling.foils }
 	affiliation:
 		right: { 184 + card_style.team_full.content_width * -0.5 }
 		top : 332
@@ -485,3 +431,20 @@ extra card style:
 		alignment: middle left
 		render style: image
 		include file: /vs-common.mse-include/affiliations
+############################################################## Extra card fields
+extra card field:
+	type: choice
+	name: foil layer
+	choice: foil
+	editable: false
+extra card style:
+	foil layer:
+		left: 0
+		top : 0
+		width: { if styling.foils=="no" then 0 else 375 }
+		height: { if styling.foils=="no" then 0 else 523 }
+		z index: 8
+		render style: image
+		choice images:
+			foil: /vs-common.mse-include/foil.png
+		visible: { styling.foils }
