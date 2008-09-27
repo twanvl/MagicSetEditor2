@@ -5,7 +5,7 @@ installer group: VS System/game files
 icon: card-back.png
 position hint: 3
 
-version: 2008-09-23
+version: 2008-09-26
 depends on:
 	package: vs-common.mse-include
 	version: 2008-09-23
@@ -61,23 +61,7 @@ init script:
 		# step 5a : add arrow/diamond/dot symbols
 		replace_rule(
 			match: "->|>>>|@|<>",
-			replace: "<sym-auto>&</sym-auto>" )+
-		# step 5b : longdash for keywords
-		replace_rule(
-			match: "--",
-			replace: "—")+
-		# step 5c : dot separator
-		replace_rule(
-			match: "`|::",
-			replace: "•")+
-		# step 5d : trademark symbol
-		replace_rule(
-			match: "TM",
-			replace: "™")+
-		# step 5e : copyright symbol
-		replace_rule(
-			match: "CR",
-			replace: "©");
+			replace: "<sym-auto>&</sym-auto>");
 	new_symbols :=
 		symbol_filter +
 		# step 5f: Majority of affiliation symbols
@@ -120,8 +104,7 @@ init script:
 			tag: "<atom-cardname>",
 			contents: { if card.name=="" then "CARDNAME" else card.name }
 			) +
-		# step 5 : symbols
-		if contains(card.shape, match: "old") then symbol_filter else new_symbols +
+		if contains(card.shape, match:"old") then new_symbols else symbol_filter
 		# step 7a : Bold keywords without reminder text
 		replace_rule(
 		 	match: "<kw[^>]*>[^<]+</kw-a>",
@@ -784,6 +767,9 @@ statistics dimension:
 #auto replace category: everywhere
 auto replace:
 	match: (C)
+	replace: ©
+auto replace:
+	match: CR
 	replace: ©
 auto replace:
 	match: AE

@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿mse version: 0.3.7
 game: vs
 full name: VS Insanity
 short name: Insanity
@@ -6,18 +6,15 @@ installer group: VS System/Insanity Style/Normal
 icon: card-sample.png
 position hint: 004
 
-version: 2008-05-19
+version: 2008-09-26
 depends on:
 	package: vs.mse-game
-	version: 2008-01-03
+	version: 2008-09-26
 depends on:
 	package: vs-common.mse-include
 	version: 2008-01-03
 depends on:
 	package: vs-standard-arrow.mse-symbol-font
-	version: 2008-01-03
-depends on:
-	package: vs-standard-official.mse-symbol-font
 	version: 2008-01-03
 
 card background: white

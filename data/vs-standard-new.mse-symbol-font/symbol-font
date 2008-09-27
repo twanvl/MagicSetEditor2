@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.7
-version: 2008-09-23
+version: 2008-09-26
 short name: New (unofficial)
 position hint: 3
 installer group: VS System/Symbol Fonts/New
@@ -42,9 +42,6 @@ symbol:
 	code: Quintesson
 	image: quintessons.png
 symbol:
-	code: Horsemen of Apocalypse
-	image: apocalypse.png
-symbol:
 	code: Arkham Inmates
 	image: arkhaminmates.png
 symbol:
@@ -69,7 +66,7 @@ symbol:
 	code: Crimelords
 	image: crimelords.png
 symbol:
-	code: Marvel Defenders
+	code: Defenders
 	image: defenders.png
 symbol:
 	code: Doom
@@ -99,11 +96,17 @@ symbol:
 	code: Heralds of Galactus
 	image: heralds.png
 symbol:
+	code: Horsemen of Apocalypse
+	image: apocalypse.png
+symbol:
 	code: Heroes for Hire
 	image: heroesforhire.png
 symbol:
 	code: Hydra
 	image: hydra.png
+symbol:
+	code: Invaders
+	image: invaders.png
 symbol:
 	code: JLA
 	image: jla.png
@@ -156,6 +159,9 @@ symbol:
 	code: Skeleton Crew
 	image: skeletoncrew.png
 symbol:
+	code: Skrull
+	image: skull.png
+symbol:
 	code: Speed Force
 	image: speedforce.png
 symbol:
@@ -194,6 +200,22 @@ symbol:
 symbol:
 	code: X-Men
 	image: xmen.png
+symbol:
+	code: Megacity One
+	image: megacityone.png
+	image font size: 115
+symbol:
+	code: Cursed Earth
+	image: cursedearth.png
+	image font size: 95
+symbol:
+	code: Brit-Cit
+	image: britcit.png
+	image font size: 95
+symbol:
+	code: Dark Judges
+	image: darkjudges.png
+	image font size: 95
 symbol:
 	code: 0
 	image: 0.png
@@ -311,6 +333,10 @@ insert symbol menu:
 		name: Other Teams
 		item: B.P.R.D.
 		item: Thule Society
+		item: Megacity One
+		item: Brit-Cit
+		item: Cursed Earth
+		item: Dark Judges
 		item: Autobot
 		item: Decepticon
 		item: Quintesson

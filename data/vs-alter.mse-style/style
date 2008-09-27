@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿mse version: 0.3.7
 game: vs
 full name: VS Alter Ego
 installer group: VS System/Alter Ego
@@ -6,10 +6,10 @@ short name: Alter Ego
 icon: card-sample.png
 position hint: 008
 
-version: 2008-01-03
+version: 2008-09-26
 depends on:
 	package: vs.mse-game
-	version: 2008-01-03
+	version: 2008-09-26
 depends on:
 	package: vs-common.mse-include
 	version: 2008-01-03

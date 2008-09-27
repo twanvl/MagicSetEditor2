@@ -1,4 +1,4 @@
-﻿mse version: 0.3.6
+﻿mse version: 0.3.7
 game: vs
 full name: New Style EM
 short name: New Style
@@ -6,10 +6,10 @@ installer group: VS System/New style/Normal
 icon: card-sample.png
 position hint: 001
 
-version: 2008-06-22
+version: 2008-09-26
 depends on:
 	package: vs.mse-game
-	version: 2007-09-06
+	version: 2008-09-26
 depends on:
 	package: vs-common.mse-include
 	version: 2007-09-06
@@ -269,7 +269,6 @@ card style:
 		padding top:    4
 		padding right:  4
 		padding bottom: 4
-	############################# FlightRange
 	############################# Text box
 	rule text:
 		left: { if card.card_type=="planet" then 72 else 20 }
@@ -353,7 +352,6 @@ card style:
 			shadow color: rgb(0,0,0)
 			shadow displacement x: -3
 			shadow displacement y: 0
-	############################# Card sorting / numbering
 	############################# Copyright stuff
 	illustrator:
 		left: 169
