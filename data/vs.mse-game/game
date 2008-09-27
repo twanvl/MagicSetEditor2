@@ -235,8 +235,15 @@ init script:
 	word_count := break_text@(match:"[^[:space:]]+") + length
 	
 	separator_type := {
-		if contains(card.shape, match:"old") then " <sym>@</sym> " else " • "
+		if contains(card.shape, match:"old") then (
+			if team2 != "<word-list-affiliation2></word-list-affiliation2>" then " <sym>@</sym> "
+			else " "
+		)
+		else " • "
 	}
+	#separator_type := {
+	#	if contains(card.shape, match:"old") then " <sym>@</sym> " else " • "
+	#}
 	
 	only_first := replace@(match:"card.team", replace:"")
 	
@@ -367,6 +374,7 @@ card field:
 	choice: planet
 	default: card_type()
 	show statistics: false
+	description: The frame of the card.
 ############################# Name line
 card field:
 	type: text
@@ -401,7 +409,7 @@ card field:
 	card list visible: true
 	card list column: 1
 	card list width: 200
-	description: The name of the card, use @ for a diamond
+	description: The name of the card, use @ for a diamond.
 card field:
 	type: text
 	name: cost
@@ -412,6 +420,7 @@ card field:
 	card list alignment: right
 	card list width: 37
 	card list name: Cost
+	description: The cost of the card.
 ############################# Image
 card field:
 	type: image
@@ -500,6 +509,7 @@ card field:
 	card list visible: true
 	card list column: 2
 	show statistics: false
+	description: The version of the card.
 ############################# Card ID
 card field:
 	type: text
@@ -557,11 +567,12 @@ card field:
 	choice: promo
 	default: set.set_rarity
 	icon: stats/rarity.png
+	description: The rarity of the card.
 ############################# Affiliation
 card field:
 	type: text
 	name: separator
-	script: separator_type(value)
+	script: separator_type(team2: card.team_2_of_2)
 	editable: false
 	show statistics: false
 card field:
@@ -589,6 +600,12 @@ card field:
 			hide_when_empty:   true
 		)
 	description: The team of the card, use ` for a separator for dual cards
+card field:
+	type: text
+	name: separator 2
+	script: separator_type(team2: card.team_2_of_2_2)
+	editable: false
+	show statistics: false
 card field:
 	type: text
 	name: team 2
@@ -644,6 +661,7 @@ card field:
 	name: flavor text
 	show statistics: false
 	multi line: true
+	description: Flavor text of the card.
 card field:
 	type: choice
 	name: watermark
@@ -662,6 +680,7 @@ card field:
 	card list width: 33
 	card list name: ATK
 	card list alignment: right
+	description: The attack of the card.
 card field:
 	type: text
 	name: defence
@@ -673,12 +692,14 @@ card field:
 	card list width: 33
 	card list name: DEF
 	card list alignment: right
+	description: The defence of the card.
 ############################# Copyright stuff
 card field:
 	type: text
 	name: illustrator
 	default: set.artist
 	icon: stats/illustrator.png
+	description: The artist for the card.
 card field:
 	type: text
 	name: copyright
@@ -686,7 +707,7 @@ card field:
 	default: set.copyright
 	multi line: true
 	show statistics: false
-
+	description: The copyright line of the card.
 ###############################################
 ########################### For New style cards
 card field:
@@ -721,6 +742,7 @@ card field:
 		else (value)
 	show statistics: false
 	save value: true
+	description: Flight and range icons for the card.
 card field:
 	type: choice
 	name: ongoing
@@ -728,18 +750,21 @@ card field:
 	choice: ongoing
 	initial: none
 	script: symbol_default()
+	description: Ongoing icons for the card.
 card field:
 	type: choice
 	name: affiliation
 	editable: false
 	initial: none
 	include file: /vs-common.mse-include/watermark-names
+	description: First affiliation icon for the card.
 card field:
 	type: choice
 	name: affiliation2
 	editable: false
 	initial: none
 	include file: /vs-common.mse-include/dual-affiliation
+	description: Second affiliation icon for the card.
 ############################################################# Extra Statistics
 statistics dimension:
 	name: keywords
