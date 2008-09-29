@@ -153,7 +153,7 @@ card style:
 	############################# Type Bar
 	type text full:
 		left:	72
-		top:	299
+		top:	297
 		width:	{ if is_dual() then 235 else 268 }
 		height: 20
 		font:
@@ -165,7 +165,7 @@ card style:
 		z index: 3
 	type bar:
 		left:	72
-		top:	299
+		top:	297
 		width:	{ if is_dual() then 235 else 268 }
 		height: 20
 		visible: { card.type_text != "" }
@@ -253,14 +253,13 @@ card style:
 		angle: 90
 		font:
 			name: Percolator Expert
-			size: 19
-			scale down to: 16
+			size: 16
 			color: rgb(245,230,197)
 		symbol font:
 			name: vs-standard-arrow
-			size: 18
+			size: 16
 			alignment: middle center
-		alignment: middle center
+		alignment: middle center shrink-overflow
 		z index: 4
 		padding left:   2
 		padding top:    2
@@ -274,15 +273,15 @@ card style:
 		angle: 270
 		font:
 			name: Percolator Expert
-			size: 19
+			size: 16
 			scale down to: 18
 			color: rgb(245,230,197)
 		symbol font:
 			name: vs-standard-arrow
-			size: 18
+			size: 16
 			alignment: middle center
 		visible: is_dual()
-		alignment: middle center
+		alignment: middle center shrink-overflow
 		z index: 4
 		padding left:   2
 		padding top:    2

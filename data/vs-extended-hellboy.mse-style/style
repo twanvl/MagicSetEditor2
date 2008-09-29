@@ -150,22 +150,22 @@ card style:
 		visible: { styling.edition }
 	############################# Type Bar
 	type text full:
-		left:	{ if is_new_dual() then 87 else 72 }
-		top:	395
+		left:	{ if is_new_dual() then 87 else 74 }
+		top:	401
 		width:	{ if is_new_dual() then 243 else 256 }
-		height: 20
+		height: 14
 		font:
 			name: Eurostile
-			size: 11
+			size: 9
 			color: rgb(0,0,0)
 		visible: { is_character() }
-		alignment: middle center
+		alignment: middle center shrink-overflow
 		z index: 3
 	type bar:
-		left:	{ if is_new_dual() then 87 else 72 }
-		top:	395
-		width:	{ if is_new_dual() then 243 else 256 }
-		height: 20
+		left:	{ if is_new_dual() then 87 else 74 }
+		top:	401
+		width:	{ if is_new_dual() then 240 else 252 }
+		height: 14
 		visible: { card.type_text != "" }
 		render style: image
 		choice images:
@@ -277,9 +277,9 @@ card style:
 		spacing: { if is_new_dual() then 35 else 20 }
 	############################# Text box
 	rule text:
-		left: { if is_new_dual() then 105 else 90 }
+		left: { if is_new_dual() then 105 else 95 }
 		top : 430
-		width: { if is_new_dual() then 250 else 265 }
+		width: { if is_new_dual() then 250 else 263 }
 		height: 50
 		mask: text-mask.png
 		font:
