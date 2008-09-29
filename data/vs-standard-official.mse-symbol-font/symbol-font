@@ -18,6 +18,9 @@ symbol:
 	code: •
 	image: diamond.png
 symbol:
+	code: @
+	image: diamond.png
+symbol:
 	code: <>
 	image: diamond.png
 symbol:
