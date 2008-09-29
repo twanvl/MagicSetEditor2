@@ -97,7 +97,7 @@ init script:
 			tag: "<atom-cardname>",
 			contents: { if card.name=="" then "CARDNAME" else card.name }
 			) +
-		if contains(card.shape, match:"old") then new_symbols else symbol_filter
+		if contains(card.shape, match:"old") then symbol_filter else new_symbols
 		# step 7a : Bold keywords without reminder text
 		replace_rule(
 		 	match: "<kw[^>]*>[^<]+</kw-a>",
