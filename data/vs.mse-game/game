@@ -5,7 +5,7 @@ installer group: VS System/game files
 icon: card-back.png
 position hint: 3
 
-version: 2008-09-26
+version: 2008-10-06
 depends on:
 	package: vs-common.mse-include
 	version: 2008-09-23
@@ -50,21 +50,21 @@ init script:
 	############################################################## Text Filters
 	
 	############### Symbol Filter
-	symbol_filter :=
-		# step 5a : add arrow/diamond/dot symbols
-		replace_rule(
-			match: "->|>>>|@|<>",
-			replace: "<sym-auto>&</sym-auto>");
-	new_symbols :=
-		symbol_filter +
-		# step 5a: Majority of affiliation symbols
-		replace_rule(
-			match: "Activate|Avengers|B.P.R.D.|Brotherhood|Crime Lords|Defenders|Doom|Fantastic Four|Gotham Knights|Green Lantern|Hellfire Club|Heralds of Galactus|Horsemen of Apocalypse|Invaders|JLA|JSA|Kree|Marvel Knights|Masters of Evil|Negative Zone|Planet|Shadowpact|Shi'ar|Sinister Syndicate|Skrull|Speed Force|Spider-Friends|Team Superman|Thule Society|Thunderbolts|Teen Titans|Underworld|Warbound|X-Men",
-			replace: "<sym-auto>&</sym-auto>") +
-		# step 5b: SHIELD Variations
-		replace_rule(
-			match: "S.H.I.E.L.D.|SHIELD|Shield",
-			replace: "<sym-auto>Shield</sym-auto>");
+	#X#symbol_filter :=
+	#X#	# step 5a : add arrow/diamond/dot symbols
+	#X#	replace_rule(
+	#X#		match: "->|>>>|@|<>",
+	#X#		replace: "<sym-auto>&</sym-auto>");
+	#X#new_symbols :=
+	#X#	symbol_filter +
+	#X#	# step 5a: Majority of affiliation symbols
+	#X#	replace_rule(
+	#X#		match: "Activate|Avengers|B.P.R.D.|Brotherhood|Crime Lords|Defenders|Doom|Fantastic Four|Gotham Knights|Green Lantern|Hellfire Club|Heralds of Galactus|Horsemen of Apocalypse|Invaders|JLA|JSA|Kree|Marvel Knights|Masters of Evil|Negative Zone|Planet|Shadowpact|Shi'ar|Sinister Syndicate|Skrull|Speed Force|Spider-Friends|Team Superman|Thule Society|Thunderbolts|Teen Titans|Underworld|Warbound|X-Men",
+	#X#		replace: "<sym-auto>&</sym-auto>") +
+	#X#	# step 5b: SHIELD Variations
+	#X#	replace_rule(
+	#X#		match: "S.H.I.E.L.D.|SHIELD|Shield",
+	#X#		replace: "<sym-auto>Shield</sym-auto>");
 	
 	############### Other Text Filters
 	card_shape := { "new" }
@@ -97,7 +97,11 @@ init script:
 			tag: "<atom-cardname>",
 			contents: { if card.name=="" then "CARDNAME" else card.name }
 			) +
-		if contains(card.shape, match:"old") then symbol_filter else new_symbols
+		# step 5a: add arrow/diamond/dot symbols
+		replace_rule(
+			match: "->|>>>|@|<>",
+			replace: "<sym-auto>&</sym-auto>") +
+		#X#if contains(card.shape, match:"old") then symbol_filter else new_symbols
 		# step 7a : Bold keywords without reminder text
 		replace_rule(
 		 	match: "<kw[^>]*>[^<]+</kw-a>",

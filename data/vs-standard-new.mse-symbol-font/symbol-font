@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.7
-version: 2008-09-26
+version: 2008-10-06
 short name: New (unofficial)
 position hint: 3
 installer group: VS System/Symbol Fonts/New
@@ -16,6 +16,9 @@ symbol:
 	image: arrow.png
 symbol:
 	code: •
+	image: diamond.png
+symbol:
+	code: @
 	image: diamond.png
 symbol:
 	code: <>
@@ -256,7 +259,7 @@ symbol:
 # Insert-symbol menu
 insert symbol menu:
 	item: ->
-	item: <>
+	item: •
 	item: Activate
 	item: Planet
 	item:

@@ -6,7 +6,7 @@ installer group: VS System/Standard style/Extended art
 icon: card-sample.png
 position hint: 005
 
-version: 2008-09-26
+version: 2008-09-29
 depends on:
 	package: vs.mse-game
 	version: 2008-09-26
