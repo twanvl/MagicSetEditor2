@@ -48,25 +48,6 @@ init script:
 	}
 	
 	############################################################## Text Filters
-	
-	############### Symbol Filter
-	#X#symbol_filter :=
-	#X#	# step 5a : add arrow/diamond/dot symbols
-	#X#	replace_rule(
-	#X#		match: "->|>>>|@|<>",
-	#X#		replace: "<sym-auto>&</sym-auto>");
-	#X#new_symbols :=
-	#X#	symbol_filter +
-	#X#	# step 5a: Majority of affiliation symbols
-	#X#	replace_rule(
-	#X#		match: "Activate|Avengers|B.P.R.D.|Brotherhood|Crime Lords|Defenders|Doom|Fantastic Four|Gotham Knights|Green Lantern|Hellfire Club|Heralds of Galactus|Horsemen of Apocalypse|Invaders|JLA|JSA|Kree|Marvel Knights|Masters of Evil|Negative Zone|Planet|Shadowpact|Shi'ar|Sinister Syndicate|Skrull|Speed Force|Spider-Friends|Team Superman|Thule Society|Thunderbolts|Teen Titans|Underworld|Warbound|X-Men",
-	#X#		replace: "<sym-auto>&</sym-auto>") +
-	#X#	# step 5b: SHIELD Variations
-	#X#	replace_rule(
-	#X#		match: "S.H.I.E.L.D.|SHIELD|Shield",
-	#X#		replace: "<sym-auto>Shield</sym-auto>");
-	
-	############### Other Text Filters
 	card_shape := { "new" }
 	#  - adds all symbols
 	#  - bolds keywords
@@ -193,7 +174,11 @@ init script:
 	}
 	is_character := { contains(card.card_type, match: "characters")
 	}
-	is_concealed := { contains(card.card_type, match: "concealed")
+	is_concealed_optional := { contains(card.card_type, match: "concealed-optional") or
+		contains(card.rule_text, match: "Concealed—Optional")
+	}
+	is_concealed := { contains(card.card_type, match: "hidden") or
+		contains(card.rule_text, match: "Concealed")
 	}
 	is_equipment := { contains(card.card_type, match: "equipment")
 	}
@@ -697,7 +682,6 @@ card field:
 card field:
 	type: text
 	name: copyright
-	script: symbol_filter(value)
 	default: set.copyright
 	multi line: true
 	show statistics: false
@@ -713,10 +697,8 @@ card field:
 	choice: both
 	initial: visible
 	script:
-		if is_character() and contains(card.rule_text, match: "Concealed—Optional") then "both"
-		else if contains(card.card_type, match: "hidden") then "concealed"
-		else if is_equipment() and contains(card.rule_text, match: "Concealed—Optional") then "both"
-		else if is_equipment() and contains(card.rule_text, match: "Concealed") then "concealed"
+		if is_concealed_optional() then "both"
+		else if is_concealed() then "concealed"
 		else "visible"
 	editable: false
 	show statistics: false
