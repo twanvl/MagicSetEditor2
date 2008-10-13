@@ -1,7 +1,7 @@
 Function: masked_blend
 
 --Usage--
-> linear_blend(light: image, dark: image, mask: image)
+> masked_blend(light: image, dark: image, mask: image)
 
 Blend two images together using a third as a mask.
 On pixels the mask is white the 'light' image is used, where the mask is black the 'dark' image is used.
