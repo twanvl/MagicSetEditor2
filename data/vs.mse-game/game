@@ -246,7 +246,13 @@ set field:
 	choice: Hellboy
 	choice: Other...
 	initial: none
+	save value: true
 	description: The logo for the company.
+set field:
+	type: image
+	name: custom logo
+	save value: true
+	description: This is where you load custom logos that will appear on all your cards.
 set field:
 	type: text
 	name: code
@@ -302,6 +308,9 @@ default set style:
 			DC-old: /vs-common.mse-include/dcold.png
 			Hellboy: /vs-common.mse-include/hellboy.png
 			Other...: /vs-common.mse-include/other.png
+	custom logo:
+		width: 30
+		height: 30
 	title:
 		padding left: 2
 		font:
@@ -417,11 +426,6 @@ card field:
 	show statistics: false
 	default: set.logo
 	editable: false
-	description: Double click to load a symbol for the card
-card field:
-	type: image
-	name: custom symbol
-	show statistics: false
 card field:
 	type: choice
 	name: edition
