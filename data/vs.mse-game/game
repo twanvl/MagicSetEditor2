@@ -628,6 +628,7 @@ card field:
 		if card.flightrange=="flight" then "flight" 
 		else if card.flightrange=="range" then "range" 
 		else if card.flightrange=="both" then "flight, range"
+		else if card.flightrange=="none" then ""
 		else (value)
 	description: Symbols for this card (flight/range/ongoing), multiple symbols can be selected
 	show statistics: false
@@ -715,11 +716,6 @@ card field:
 	choice: range
 	choice: both
 	initial: none
-	script: 
-		if card.symbols=="flight" then "flight" 
-		else if card.symbols=="range" then "range" 
-		else if card.symbols=="flight, range" then "both" 
-		else (value)
 	show statistics: false
 	save value: true
 	description: Flight and range icons for the card.
@@ -1028,11 +1024,20 @@ word list:
 			line below: true
 ############################################################## Card pack items
 pack item:
-	name: common / uncommon
-	filter: card.rarity == "common" or card.rarity == "uncommon"
-pack item:
 	name: rare
 	filter: card.rarity == "rare"
+pack item:
+	name: uncommon
+	filter: card.rarity == "uncommon"
+pack item:
+	name: common
+	filter: card.rarity == "common"
+pack item:
+	name: promo
+	filter: card.rarity == "promo"
+pack item:
+	name: random non-rare foil
+	filter: card.rarity == "common" or card.rarity == "uncommon"
 ############################################################## Card packs
 pack type:
 	name: booster pack
@@ -1040,16 +1045,34 @@ pack type:
 		name: rare
 		amount: 1
 	item:
-		name: common / uncommon
-		amount: 13
-pack type:
-	name: additional common / uncommon
+		name: uncommon
+		amount: 3
 	item:
-		name: common / uncommon
+		name: common
+		amount: 9
+	item:
+		name: random non-rare foil
+		amount: 1
+pack type:
+	name: additional promo
+	item:
+		name: promo
 pack type:
 	name: additional rare
 	item:
 		name: rare
+pack type:
+	name: additional uncommon
+	item:
+		name: uncommon
+pack type:
+	name: additional common
+	item:
+		name: common
+pack type:
+	name: additional random non-rare foil
+	item:
+		name: random foil
 ############################################################## Keywords
 ############################# Keyword rules
 
@@ -1058,12 +1081,12 @@ has keywords: true
 keyword match script: text_filter(value)
 
 keyword mode:
-	name: real
-	description: Actual keywords.
-keyword mode:
 	is default: true
 	name: custom
 	description: Custom keywords.
+keyword mode:
+	name: real
+	description: Actual keywords.
 
 keyword parameter type:
 	name: number

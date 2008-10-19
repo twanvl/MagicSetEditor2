@@ -116,15 +116,8 @@ card style:
 			DC-new:	/vs-common.mse-include/dcnew.png
 			DC-old:	/vs-common.mse-include/dcold.png
 			Hellboy: /vs-common.mse-include/hellboy.png
-			Other...: /vs-common.mse-include/blank.png
+			Other...: { set.custom_logo }
 		z index: 3
-	custom symbol:
-		left: 310
-		top: 31
-		height: 30
-		width: 30
-		visible: { card.card_symbol=="Other..." }
-		z index: 4
 	############################# Type Bar
 	############################# Version
 	############################# Card ID
