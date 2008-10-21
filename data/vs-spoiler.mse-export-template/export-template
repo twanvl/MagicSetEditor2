@@ -88,8 +88,8 @@ option style:
 			sans-serif:  /vs-spoiler.mse-export-template/sans-serif.png
 
 script:
-	symbol_font      := "vs-standard-arrow"
-	symbol_font_size := 12
+	symbol_font      := "vs-standard-new"
+	symbol_font_size := 8
 	write_card := {
 		if contains(options.images, match:"full card image") then
 			card_image_file := write_image_file(card,       file:"card{position(of:card,in:set)}.jpg")
@@ -113,19 +113,19 @@ script:
 		         "<span class='name'    ><a href='{card_image_file}'>{  to_html(card.full_name) }</a></span>"
 		      else
 		         "<span class='name'    >{  to_html(card.full_name) }</span>"
-		    }<span class='version'      >{  to_html(card.version_full  ) }</span>
+		    }<span class='version'      >{  to_html(to_upper(card.version_full)) }</span>
 		     {if card_image_file != "" and contains(options.images, match:"inline") then
 		         "<img src='{card_image_preview}' alt='' class='image'>"
 		     }
 		     <span class='cost'         >{  to_html(card.cost          ) }</span>
-		     <span class='team'         >{  to_html(card.team_full     ) }</span>
-		     <span class='team 2'       >{  to_html(card.team_2_full   ) }</span>
+		     <span class='team full'         >{  to_html(card.team_full     ) }</span>
+		     <span class='team 2 full'       >{  to_html(card.team_2_full   ) }</span>
 		     <span class='type'         >{  to_html(card.type_text_full) }</span>
-		     <span class='fro'          >{  to_html(card.symbols       ) }</span>
+		     <span class='fro'          >{  if contains(card.shape, match: "old") then to_html(to_upper(card.symbols)) else to_html(to_upper(card.flightrange)) }</span>
 		     <span class='rule-text'    >{  to_html(card.rule_text     ) }</span>
 		     <span class='flavor-text'  >{  to_html( remove_tag(tag: "<i-flavor>", card.flavor_text)  ) }</span>
 		     <span class='attack'       >{  to_html(card.attack) } / {  to_html(card.defence) }</span>
-		     <span class='rarity'       >{  to_html(card.rarity        ) }</span>
+		     <span class='rarity'       >{  to_html(to_upper(card.rarity)) }</span>
 		     <span class='illustrator'  >{  to_html(card.illustrator   ) }</span>
 		     <span class='card-number'  >{  to_html(card.number_line   ) }</span>
 		  </li>"
