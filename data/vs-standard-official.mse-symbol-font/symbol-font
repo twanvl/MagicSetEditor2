@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.7
-version: 2008-10-06
+version: 2008-10-23
 short name: New (official)
 position hint: 1
 installer group: VS System/Symbol Fonts/Official New
@@ -184,17 +184,14 @@ insert symbol menu:
 	item:
 		name: Marvel Teams
 		item: Avengers
-		item: Brood
 		item: Brotherhood
-		item: Captain America
 		item: Crime Lords
+		item: Defenders
 		item: Doom
-		item: Excalibur
 		item: Fantastic Four
 		item: Hellfire Club
 		item: Heralds of Galactus
 		item: Horsemen of Apocalypse
-		item: Marvel Defenders
 		item: Marvel Knights
 		item: Masters of Evil
 		item: Negative Zone

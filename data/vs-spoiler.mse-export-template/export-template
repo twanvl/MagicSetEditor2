@@ -1,16 +1,16 @@
 # Simple exporter for HTML files
-mse version: 0.3.6
+mse version: 0.3.7
 game:        vs
 short name:  Spoiler
 full name:   List of cards
 installer group: VS System/Export/Spoiler
 icon: preview.png
 create directory: true
-version: 2008-05-18
+version: 2008-10-19
 
 depends on:
 	package: vs.mse-game
-	version: 2008-01-03
+	version: 2008-10-19
 
 ######################################################################################
 

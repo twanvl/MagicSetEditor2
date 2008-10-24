@@ -6,10 +6,10 @@ installer group: VS System/Hellboy style/Extended Art
 icon: card-sample.png
 position hint: 006
 
-version: 2008-09-29
+version: 2008-10-19
 depends on:
 	package: vs.mse-game
-	version: 2008-09-26
+	version: 2008-10-19
 depends on:
 	package: vs-common.mse-include
 	version: 2008-01-03

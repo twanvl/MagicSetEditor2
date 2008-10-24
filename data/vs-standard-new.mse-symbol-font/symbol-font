@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.7
-version: 2008-10-06
+version: 2008-10-23
 short name: New (unofficial)
 position hint: 3
 installer group: VS System/Symbol Fonts/New
@@ -120,6 +120,9 @@ symbol:
 	code: Kree
 	image: kree.png
 symbol:
+	code: League of Assassins
+	image: assassin.png
+symbol:
 	code: Legionnaires
 	image: legion.png
 symbol:
@@ -132,6 +135,9 @@ symbol:
 	code: Negative Zone
 	image: negativezone.png
 symbol:
+	code: Newuniversal
+	image: newuniversal.png
+symbol:
 	code: Outsiders
 	image: outsiders.png
 symbol:
@@ -140,6 +146,12 @@ symbol:
 symbol:
 	code: New Warriors
 	image: newwarriors.png
+symbol:
+	code: Project Spitfire
+	image: projectspitfire.png
+symbol:
+	code: Secret Society
+	image: secretsociety.png
 symbol:
 	code: Secret Six
 	image: secretsix.png
@@ -284,6 +296,7 @@ insert symbol menu:
 		item: Brotherhood
 		item: Captain America
 		item: Crimelords
+		item: Defenders
 		item: Doom
 		item: Excalibur
 		item: Fantastic Four
@@ -295,14 +308,14 @@ insert symbol menu:
 		item: Horsemen of Apocalypse
 		item: Hydra
 		item: Kree
-		item: Marvel Defenders
 		item: Marvel Knights
 		item: Masters of Evil
 		item: Negative Zone
+		item: Newuniversal
 		item: New Warriors
 		item: Omega Flight
 		item: The Order
-		item: Outsiders
+		item: Project Spitfire
 		item: Serpent Society
 		item: Shi'ar
 		item: Shield
@@ -325,9 +338,11 @@ insert symbol menu:
 		item: Green Lantern
 		item: JLA
 		item: JSA
+		item: League of Assassins
 		item: Legionnaires
 		item: Outsiders
 		item: Secret Six
+		item: Secret Society
 		item: Shadowpact
 		item: Speed Force
 		item: Team Superman

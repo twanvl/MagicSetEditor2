@@ -5,7 +5,7 @@ installer group: VS System/game files
 icon: card-back.png
 position hint: 3
 
-version: 2008-10-06
+version: 2008-10-23
 depends on:
 	package: vs-common.mse-include
 	version: 2008-09-23
@@ -137,10 +137,17 @@ init script:
 		else							     "characters visible character"
 	}
 	# Default symbols
-	symbol_default := {
-		if	keyword_sort_plot_twist(card.rule_text) != ""   then "ongoing"
+	flightrange_detect := { if card.flightrange == "flight" then "flight"
+		else if card.flightrange == "range" then "range"
+		else if card.flightrange == "both" then "flight, range"
 		else ""
 	}
+	ongoing_detect := {
+		if	keyword_sort_plot_twist(card.rule_text) != ""   then "ongoing"
+		else ""
+	} 
+	symbol_default := { flightrange_detect() + (if flightrange_detect() != "" then ", " else " ") + ongoing_detect() }
+
 	# Default 'team' name of card
 	team := {
 		if      is_location()   then "Location"
@@ -624,12 +631,6 @@ card field:
 	choice: range
 	choice: ongoing
 	default: symbol_default()
-	script: 
-		if card.flightrange=="flight" then "flight" 
-		else if card.flightrange=="range" then "range" 
-		else if card.flightrange=="both" then "flight, range"
-		else if card.flightrange=="none" then ""
-		else (value)
 	description: Symbols for this card (flight/range/ongoing), multiple symbols can be selected
 	show statistics: false
 ############################# Text box
@@ -725,7 +726,7 @@ card field:
 	choice: none
 	choice: ongoing
 	initial: none
-	script: symbol_default()
+	script: ongoing_detect()
 	description: Ongoing icons for the card.
 card field:
 	type: choice
@@ -1072,7 +1073,7 @@ pack type:
 pack type:
 	name: additional random non-rare foil
 	item:
-		name: random foil
+		name: random non-rare foil
 ############################################################## Keywords
 ############################# Keyword rules
 
