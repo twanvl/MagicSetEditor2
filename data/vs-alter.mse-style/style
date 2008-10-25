@@ -6,10 +6,10 @@ short name: Alter Ego
 icon: card-sample.png
 position hint: 008
 
-version: 2008-10-19
+version: 2008-10-25
 depends on:
 	package: vs.mse-game
-	version: 2008-10-19
+	version: 2008-10-25
 depends on:
 	package: vs-common.mse-include
 	version: 2008-01-03

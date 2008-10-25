@@ -6,10 +6,10 @@ installer group: VS System/Standard style/Normal
 icon: card-sample.png
 position hint: 002
 
-version: 2008-10-19
+version: 2008-10-25
 depends on:
 	package: vs.mse-game
-	version: 2008-10-19
+	version: 2008-10-25
 depends on:
 	package: vs-common.mse-include
 	version: 2008-01-03
