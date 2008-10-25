@@ -78,9 +78,9 @@ init script:
 			tag: "<atom-cardname>",
 			contents: { if card.name=="" then "CARDNAME" else card.name }
 			) +
-		# step 5a: add arrow/diamond/dot symbols
+		# step 5a: add arrow & diamond symbols
 		replace_rule(
-			match: "->|>>>|@|<>",
+			match: "->|>>>|@|<>|•",
 			replace: "<sym-auto>&</sym-auto>") +
 		#X#if contains(card.shape, match:"old") then symbol_filter else new_symbols
 		# step 7a : Bold keywords without reminder text
@@ -222,6 +222,18 @@ init script:
 	only_numbers := filter_text@(match: "^[0123456789]+")
 
 	word_count := break_text@(match:"[^[:space:]]+") + length
+	
+	name_sep := {
+		if contains(set.logo, match: "Marvel") then (
+			if is_character() and card.identity=="" then "™"
+			else if is_character() and card.identity!="" then "™ <sym>•</sym> "
+			else if is_equipment() and card.identity!="" then " <sym>•</sym> "
+			else ""
+		)
+		else if is_character() and card.identity!="" then " <sym>•</sym> "
+		else if is_equipment() and card.identity!="" then " <sym>•</sym> "
+		else ""
+	}
 	
 	separator_type := {
 		if contains(card.shape, match:"old") then (
@@ -380,7 +392,7 @@ card field:
 	type: text
 	name: sep
 	editable: false
-	script: if is_character() and card.identity=="" then "™" else if is_character() and card.identity!="" then "™ <sym>@</sym> " else ""
+	script: name_sep()
 	show statistics: false
 card field:
 	type: text
@@ -397,7 +409,7 @@ card field:
 			soft_before_empty: false,
 			hide_when_empty:   false,
 			type_over1: "TM",
-			type_over2: "@"
+			type_over2: "<sym>@</sym>"
 		)
 	identifying: true
 	show statistics: false
@@ -798,7 +810,7 @@ auto replace:
 	replace: •
 auto replace:
 	match: @
-	replace: •
+	replace: <sym>@</sym>
 ############################################################## Word lists
 
 word list:
