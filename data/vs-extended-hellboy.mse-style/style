@@ -82,7 +82,7 @@ card style:
 		height: 24
 		alignment: bottom shrink-overflow
 		font:
-			name: Percolator Expert
+			name: Percolator Expert TM
 			size: 22
 			color: 
 				script:	if is_concealed()	then rgb(23,4,6)
@@ -173,7 +173,7 @@ card style:
 		alignment: top shrink-overflow
 		z index: 4
 		font:
-			name: Percolator Expert
+			name: Percolator Expert TM
 			size: 14
 			color: 
 				script:	if is_concealed()	then rgb(23,4,6)
@@ -243,7 +243,7 @@ card style:
 		width: 245
 		angle: 90
 		font:
-			name: Percolator Expert
+			name: Percolator Expert TM
 			size: 19
 			scale down to: 18
 			color: rgb(245,230,197)

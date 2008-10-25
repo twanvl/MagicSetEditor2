@@ -79,7 +79,7 @@ card style:
 		padding bottom: 0
 		z index: 4
 		font:
-			name: Percolator Expert
+			name: Percolator Expert TM
 			size: 22
 			color: rgb(255,213,128)
 		symbol font:

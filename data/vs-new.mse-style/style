@@ -66,7 +66,7 @@ init script:
 			) +
 		# step 5a: add arrow/diamond/dot symbols
 		replace_rule(
-			match: "->|>>>|@|<>",
+			match: "->|>>>|@|<>|•",
 			replace: "<sym-auto>&</sym-auto>") +
 		# step 5b: Majority of affiliation symbols
 		replace_rule(
@@ -158,7 +158,7 @@ card style:
 		padding bottom: 0
 		z index: 4
 		font:
-			name: Percolator Expert
+			name: Percolator Expert TM
 			size: 30
 			scale down to: 6
 			color: rgb(247,239,231)
@@ -237,7 +237,7 @@ card style:
 		alignment: middle center
 		z index: 4
 		font:
-			name: Percolator Expert
+			name: Percolator Expert TM
 			size: 16
 			scale down to: 8
 			color: rgb(247,239,231)
