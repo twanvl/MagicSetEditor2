@@ -4,7 +4,7 @@ installer group: Yugioh/Game Files
 icon: card-back.png
 position hint: 4
 
-version: 2008-08-10
+version: 2008-10-27
 
 ############################################################## Functions & filters
 ## Copied and Pasted from vs.mse-game, with a few modifications
@@ -43,7 +43,7 @@ init script:
 		tag_remove_rule(tag: "<sym-auto>") +
 		# step 2 : symbols
 		replace_rule(
-			match: "[|%|!|+|&|$|#|*|]",
+			match: "[|%|!|+|&|$|#|*|^|]",
 			replace: "<sym-auto>&</sym-auto>" );
 	a_and_d_filter := 
 		# step 1 : remove all automatic tags
@@ -98,6 +98,8 @@ init script:
 		else if card.type1	== "<word-list-monster>Legendary Dragon</word-list-monster>"		then "legendary dragons"
 		else if	contains(card.type2, match:"Fusion")							then "fusion monster"
 		else if	contains(card.type2, match:"Ritual")							then "ritual monster"
+		else if	contains(card.type2, match:"Dark Synchro")						then "dark synchro monster"
+		else if	contains(card.type2, match:"Dark Tuner")						then "effect monster"
 		else if	contains(card.type2, match:"Synchro")							then "synchro monster"
 		else if	contains(card.type2, match:"Effect")							then "effect monster"
 		else if	contains(card.type2, match:"Spirit")							then "effect monster"
@@ -138,6 +140,7 @@ init script:
 		card.card_type == "normal monster" or
 	        card.card_type == "effect monster" or
 	        card.card_type == "ritual monster" or
+		card.card_type == "dark synchro monster" or
 	        card.card_type == "synchro monster" or
 	        card.card_type == "fusion monster" or
 	        card.card_type == "token monster" or
@@ -178,11 +181,12 @@ init script:
 		else if chosen(choice:"obelisk", type) then "F"
 		else if chosen(choice:"fusion monster", type) then "G"
 		else if chosen(choice:"synchro monster", type) then "H"
-		else if chosen(choice:"token monster", type) then "I"
-		else if chosen(choice:"legendary dragons", type) then "J"
-		else if chosen(choice:"spell card", type) then "K"
-		else if chosen(choice:"trap card", type) then "L"
-		else "M"
+		else if chosen(choice:"dark synchro monster", type) then "I"
+		else if chosen(choice:"token monster", type) then "J"
+		else if chosen(choice:"legendary dragons", type) then "K"
+		else if chosen(choice:"spell card", type) then "L"
+		else if chosen(choice:"trap card", type) then "M"
+		else "N"
 	}
 	
 	pos_of_card := {
@@ -243,6 +247,7 @@ card field:
 	choice: effect monster
 	choice: ritual monster
 	choice: synchro monster
+	choice: dark synchro monster
 	choice: fusion monster
 	choice: token monster
 	choice: obelisk
@@ -256,7 +261,8 @@ card field:
 		normal monster:	   rgb(120,18,0)
 		effect monster:	   rgb(120,18,0)
 		ritual monster:	   rgb(26,26,26)
-		synchro monster:	   rgb(26,26,26)
+		synchro monster:   rgb(26,26,26)
+		dark synchro monster:   rgb(26,26,26)
 		fusion monster:	   rgb(26,26,26)
 		token monster:	   rgb(120,18,0)
 		obelisk:	   rgb(26,26,26)
@@ -454,6 +460,7 @@ word list:
 	word: Machine
 	word: Plant
 	word: Pyro
+	word: Psychic
 	word: Reptile
 	word: Rock
 	word: Sea Serpent
@@ -464,6 +471,8 @@ word list:
 	word: Zombie
 word list:
 	name: card
+	word: Dark Synchro
+	word: Dark Tuner
 	word: Effect
 	word: Fusion
 	word: Ritual

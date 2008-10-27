@@ -5,13 +5,13 @@ installer group: Yugioh/Standard
 icon: card-sample.png
 position hint: 01
 
-version: 2008-08-10
+version: 2008-10-27
 depends on:
 	package: yugioh.mse-game
-	version: 2008-08-10
+	version: 2008-10-27
 depends on:
 	package: yugioh-standard-levels.mse-symbol-font
-	version: 2007-09-23
+	version: 2007-10-27
 depends on:
 	package: yugioh-text-replacements.mse-symbol-font
 	version: 2008-01-04
@@ -46,6 +46,7 @@ card style:
 			effect monster: card-effect.jpg
 			ritual monster: card-ritual.jpg
 			synchro monster: card-synchro.jpg
+			dark synchro monster: card-dsynchro.jpg
 			fusion monster: card-fusion.jpg
 			token monster: card-token.jpg
 			obelisk: card-obelisk.jpg
@@ -116,7 +117,7 @@ card style:
 		height: 28
 		width: {if is_nmonster() then 275 else 280 }
 		z index: 2
-		alignment: middle right
+		alignment: { if card.card_type=="dark synchro monster" then "middle left" else "middle right" }
 		font:
 			name: MatrixBoldSmallCaps
 			italic name: Matrix

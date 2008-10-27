@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.6
-version: 2008-05-19
+version: 2008-10-27
 short name: Standard
 position hint: 001
 icon: star.png
@@ -38,6 +38,10 @@ symbol:
 	code: *
 	image: star.png
 	image font size: 20
+symbol:
+	code: ^
+	image: dstar.png
+	image font size: 20
 
 ##############################################################
 # Insert-symbol menu
@@ -51,3 +55,4 @@ insert symbol menu:
 	item: [
 	item: ]
 	item: *
+	item: ^
