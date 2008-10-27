@@ -6,10 +6,10 @@ installer group: VS System/Insanity Style/Normal
 icon: card-sample.png
 position hint: 004
 
-version: 2008-10-25
+version: 2008-10-26
 depends on:
 	package: vs.mse-game
-	version: 2008-10-25
+	version: 2008-10-26
 depends on:
 	package: vs-common.mse-include
 	version: 2008-01-03

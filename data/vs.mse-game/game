@@ -5,7 +5,7 @@ installer group: VS System/game files
 icon: card-back.png
 position hint: 3
 
-version: 2008-10-25
+version: 2008-10-26
 depends on:
 	package: vs-common.mse-include
 	version: 2008-09-23
@@ -15,15 +15,16 @@ depends on:
 init script:
 	############### Sorting
 	sort_index := {
-		if	contains(card.team, match: "EQUIPMENT")		then "2"
-		else if	contains(card.team, match: "Equipment")		then "2"
-		else if contains(card.team, match: "LOCATION")		then "3"
-		else if contains(card.team, match: "Location")		then "3"
-		else if contains(card.team, match: "PLOT TWIST")	then "4"
-		else if contains(card.team, match: "Plot Twist")	then "4"
-		else if contains(card.team, match: "Planet")		then "5"
-		else if contains(card.team, match: "PLANET")		then "5"
-		else 							     "1"
+		if	contains(card.team, match: "<word-list-affiliation1></word-list-affiliation1>")	then "2"
+		else if contains(card.team, match: "EQUIPMENT")						then "3"
+		else if	contains(card.team, match: "Equipment")						then "3"
+		else if contains(card.team, match: "LOCATION")						then "4"
+		else if contains(card.team, match: "Location")						then "4"
+		else if contains(card.team, match: "PLOT TWIST")					then "5"
+		else if contains(card.team, match: "Plot Twist")					then "5"
+		else if contains(card.team, match: "Planet")						then "6"
+		else if contains(card.team, match: "PLANET")						then "6"
+		else 											     "1"
 	}
 	extensive_sort := {
 			card.team + card.team_2_of_2 + card.team_2 + card.team_2_of_2_2 + card.name + card.version + " • " + card.team_affiliation
