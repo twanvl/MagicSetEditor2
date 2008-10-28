@@ -36,11 +36,12 @@ symbol:
 	image font size: 28
 symbol:
 	code: *
-	image: star.png
+	image: dstar.png
+	enabled: {card.card_type=="dark synchro monster"}
 	image font size: 20
 symbol:
-	code: ^
-	image: dstar.png
+	code: *
+	image: star.png
 	image font size: 20
 
 ##############################################################
@@ -55,4 +56,3 @@ insert symbol menu:
 	item: [
 	item: ]
 	item: *
-	item: ^
