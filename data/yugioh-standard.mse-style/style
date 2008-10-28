@@ -132,9 +132,9 @@ card style:
 	############################# Image
 	image:
 		left: 51
-		top: 114
-		width: 259
-		height: 259
+		top: 113
+		width: 260
+		height: 260
 		z index: 1
 	############################# Card type
 	monster type:
