@@ -91,6 +91,7 @@ card style:
 				else if card.rarity=="ultimate rare" then rgb(60,0,0)
 				else if card.rarity=="parallel rare" then rgb(216,199,53)
 				else if card.rarity=="gold tech" then rgb(216,199,53)
+				else if card.card_type=="dark synchro monster" then rgb(255,255,255)
 				else if is_nmonster() then rgb(255,255,255)
 				else rgb(0,0,0)
 	attribute:
@@ -164,7 +165,9 @@ card style:
 		font:
 			name: Palatino Linotype
 			size: 8
-			color: rgb(0,0,0)
+			color: 
+				script: if card.card_type=="dark synchro monster" then rgb(255,255,255)
+				else rgb(0,0,0)
 	edition:
 		left: 43
 		top: 380
@@ -174,7 +177,9 @@ card style:
 		font:
 			name: Palatino Linotype Bold
 			size: 8
-			color: rgb(0,0,0)
+			color: 
+				script: if card.card_type=="dark synchro monster" then rgb(255,255,255)
+				else rgb(0,0,0)
 	############################# Text box
 	rule text:
 		left: 35
@@ -251,7 +256,9 @@ card style:
 		font:
 			name: Palatino Linotype
 			size: 8
-			color: rgb(0,0,0)
+			color: 
+				script: if card.card_type=="dark synchro monster" then rgb(255,255,255)
+				else rgb(0,0,0)
 	rarity:
 		left: 332
 		top : 492
@@ -290,7 +297,9 @@ card style:
 		font:
 			name: Palatino Linotype
 			size: 7
-			color: rgb(0,0,0)
+			color: 
+				script: if card.card_type=="dark synchro monster" then rgb(255,255,255)
+				else rgb(0,0,0)
 ############################################extra card field:
 extra card field:
 	type: choice
