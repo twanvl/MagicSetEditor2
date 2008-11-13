@@ -4,7 +4,7 @@ installer group: Yugioh/Game Files
 icon: card-back.png
 position hint: 4
 
-version: 2008-10-27
+version: 2008-11-13
 
 ############################################################## Functions & filters
 ## Copied and Pasted from vs.mse-game, with a few modifications
@@ -553,3 +553,11 @@ pack type:
 	name: additional common
 	item:
 		name: common
+pack type:
+	name: additional gold
+	item:
+		name: gold
+pack type:
+	name: additional card
+	item:
+		name: card
