@@ -6,7 +6,7 @@ installer group: magic/new style/planeswalkers
 icon: card-sample.png
 position hint: 008
 
-version: 2008-08-07
+version: 2008-11-27
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -182,7 +182,7 @@ card style:
 			color: rgb(0,0,0)
 	casting cost:
 		right: 345
-		top : 25
+		top : 24
 		width: { max(30, card_style.casting_cost.content_width) + 5 }
 		height: 23
 		alignment: middle right

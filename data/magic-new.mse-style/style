@@ -6,7 +6,7 @@ icon: card-sample.png
 position hint: 001
 installer group: magic/new style/normal cards
 
-version: 2008-08-07
+version: 2008-11-27
 depends on: magic.mse-game                   2008-06-02
 depends on: magic-default-image.mse-include  2007-09-23
 depends on: magic-watermarks.mse-include     2007-09-23
@@ -209,7 +209,7 @@ card style:
 		top : 31
 		width: { max(30, card_style.casting_cost.content_width) + 5 }
 		height: 23
-		alignment: bottom right
+		alignment: middle right
 		font:
 			name: MPlantin
 			size: 15

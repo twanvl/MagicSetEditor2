@@ -6,7 +6,7 @@ installer group: magic/new style/textless
 icon: card-sample.png
 position hint: 005
 
-version: 2008-08-07
+version: 2008-11-27
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -64,7 +64,7 @@ styling field:
 	type: boolean
 	name: grey hybrid name
 	description: Use a grey background for the name and type line on hybrid cards. This is done on real cards.
-	initial: no
+	initial: yes
 styling field:
 	type: boolean
 	name: darker artifacts
