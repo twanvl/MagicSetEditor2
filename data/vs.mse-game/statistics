@@ -1,0 +1,21 @@
+﻿
+############################################################# Extra Statistics
+statistics dimension:
+	name: keywords
+	position hint: 1000
+	script: keyword_usage(unique:true)
+	show empty: false
+	split list: true
+	icon: stats/keywords.png
+statistics dimension:
+	name: style
+	position hint: 1001
+	script: stylesheet.short_name
+	icon: stats/stylesheet.png
+statistics dimension:
+	name: text length (words)
+	position hint: 100
+	script: word_count(to_text(card.rule_text))
+	numeric: true
+	bin size: 5
+	icon: stats/text_length.png

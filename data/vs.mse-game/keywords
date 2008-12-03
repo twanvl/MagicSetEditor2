@@ -1,0 +1,150 @@
+﻿############################################################## Keywords
+############################# Keyword rules
+
+has keywords: true
+
+keyword match script: text_filter(value)
+
+keyword mode:
+	is default: true
+	name: custom
+	description: Custom keywords.
+keyword mode:
+	name: real
+	description: Actual keywords.
+
+keyword parameter type:
+	name: number
+	match: [0-9XYZ?!]+
+keyword parameter type:
+	name: action
+	match: 
+		[^
+		(.,]+
+keyword parameter type:
+	name: name
+	match:
+		[^
+		(.,]+
+
+############################# All VS System keywords
+keyword:
+	keyword: Concealed—Optional
+	match: Concealed—Optional
+	mode: real
+	reminder: This card may come into play in the hidden area.
+keyword:
+	keyword: Concealed
+	match: Concealed 
+	mode: real
+	reminder: This card comes into play in the hidden area.
+keyword:
+	keyword: Loyalty—Reveal
+	match: Loyalty—Reveal
+	mode: real
+	reminder: If you don’t control a character that shares an affiliation with this character, then as an additional cost to recruit this character, reveal a character card from your hand or resource row that shares an affiliation with this character.
+keyword:
+	keyword: Loyalty
+	match: Loyalty 
+	mode: real
+	reminder: Recruit this character only if you control a character that shares at least one team affiliation with this character.
+keyword:
+	keyword: Evasion
+	match: Evasion
+	mode: real
+	reminder: Stun this character -> Recover this character at the start of the recovery phase this turn.
+keyword:
+	keyword: Invulnerability
+	match: Invulnerability
+	mode: real
+	reminder: Whenever this character becomes stunned, you do not take stun damage. Breakthrough is applied normally.
+keyword:
+	keyword: Cosmic—Surge:
+	match: Cosmic—Surge: <atom-param>action</atom-param>
+	mode: real
+	reminder: This character does not come into play with a cosmic counter. At the start of the recovery phase each turn, put a cosmic counter on this character.
+keyword:
+	keyword: Cosmic:
+	match: Cosmic: <atom-param>action</atom-param>
+	mode: real
+	reminder: This character comes into play with a cosmic counter on it. While this character has a cosmic counter on it, it has this ability in addition to any other text it has.
+keyword:
+	keyword: Cosmic
+	match: Cosmic
+	mode: real
+	reminder: This character comes into play with a cosmic counter on it.
+keyword:
+	keyword: Boost
+	match: Boost <atom-param>number</atom-param>
+	mode: real
+	reminder: As an additional cost to play this card, you may pay its boost cost. If you pay, this card has this this this ability in addition to any other text it has this turn.
+keyword:
+	keyword: Willpower
+	match: Willpower <atom-param>number</atom-param>
+	mode: real
+	reminder: This character has willpower equal to <param1>.
+keyword:
+	keyword: Leader:
+	match: Leader: <atom-param>action</atom-param>
+	mode: real
+	reminder: The designated characters are affected by this text.
+keyword:
+	keyword: Ally:
+	match: Ally: <atom-param>action</atom-param>
+	mode: real
+	reminder: This character's ally power is activated whenever a character becomes powered-up.
+keyword:
+	keyword: Unique
+	match: Unique
+	mode: real
+	reminder: You may only have one copy of this card in play at a time.
+keyword:
+	keyword: Ongoing:
+	match: Ongoing <atom-param>action</atom-param>
+	mode: real
+	reminder: As long as this card remains face-up in your resource row, this text is active.
+keyword:
+	keyword: Reservist
+	match: Reservist
+	mode: real
+	reminder: You may recruit this card from your resource row. If you do, you may put a card from your hand face down into your resource row.
+keyword:
+	keyword: Press
+	match: Press
+	mode: real
+	reminder: When you recruit this card, your next character costs 1 less to recruit this turn for each press card you recruited this turn, but no less than 1.
+keyword:
+	keyword: Terraform
+	match: Terraform
+	mode: real
+	reminder: Reveal this card -> You may return a face-down resource you control to its owner's hand. If you do, put this card face-down into your resource row. Use this power only if this card is in your hand and only during your recruit step.
+keyword:
+	keyword: Transferable
+	match: Transferable
+	mode: real
+	reminder: At the start of the formation step, you may transfer this card.
+keyword:
+	keyword: Vengeance:
+	match: Vengeance: <atom-param>action</atom-param>
+	mode: real
+	reminder: This ability is activated whenever this character is stunned.
+keyword:
+	keyword: Backup:
+	match: Backup: <atom-param>action</atom-param>
+	mode: real
+	reminder: This ability can only be used during the build phase.
+keyword:
+	keyword: Dual Loyalty
+	match: Dual Loyalty
+	mode: real
+	reminder: Recruit this card only if both its printed affiliations are among the affiliations of characters you control.
+keyword:
+	keyword: Substitute
+	match: Substitute
+	mode: real
+	reminder: Reveal this card -> You may remove from the game a ready character you control with cost greater than or equal to the cost of this card. If you do, put this card into play. Use only if this card is in your hand and only during your recruit step." 
+keyword:
+	keyword: Insanity:
+	match: Insanity: <atom-param>action</atom-param>
+	mode: real
+	reminder: You may not have more than one copy of this card in your deck.

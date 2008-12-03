@@ -1,0 +1,412 @@
+﻿
+############################################################## Card fields
+############################# Background stuff
+card field:
+	type: choice
+	name: shape
+	save value: false
+	show statistics: false
+	editable: false
+	choice: new
+	choice: old
+	choice: avatar
+	choice: alter ego
+	script:
+		stylesheet   # indicate that this value should be updated when the stylesheet changes
+		card_shape() # determined by the style
+card field:
+	type: choice
+	name: card type
+	choice: characters
+		choice: 
+			name: visible
+			choice: character
+			choice: character dual
+			choice: character dual (new)
+		choice:
+			name: hidden
+			choice: concealed
+			choice: concealed dual
+			choice: concealed dual (new)
+		choice:
+			name: concealed-optional
+			choice: concealed-optional character
+			choice: concealed-optional dual
+			choice: concealed-optional dual (new)
+	choice:
+		name: equipment
+		choice: visible equipment
+		choice: concealed equipment
+		choice: concealed-optional equipment
+	choice: location
+	choice: plot twist
+	choice: planet
+	default: card_type()
+	show statistics: false
+	description: The frame of the card.
+############################# Name line
+card field:
+	type: text
+	name: name
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: identity
+	editable: false
+card field:
+	type: text
+	name: full name
+	script: 
+		combined_editor(
+			field1: card.name,
+			separator: name_sep(),
+			field2: card.identity,
+			soft_before_empty: false,
+			hide_when_empty:   false,
+			type_over1: "TM",
+			type_over2: "<sym>@</sym>"
+		)
+	identifying: true
+	show statistics: false
+	card list visible: true
+	card list column: 1
+	card list width: 200
+	description: The name of the card, use @ for a diamond.
+card field:
+	type: text
+	name: cost
+	script: only_numbers(value)
+	icon: stats/cost.png
+	card list visible: true
+	card list column: 3
+	card list alignment: right
+	card list width: 37
+	card list name: Cost
+	description: The cost of the card.
+############################# Image
+card field:
+	type: image
+	name: image
+	show statistics: false
+card field:
+	type: choice
+	name: card symbol
+	choice: none
+	choice: Marvel
+	choice: DC-new
+	choice: DC-old
+	choice: Hellboy
+	choice: Other...
+	show statistics: false
+	default: set.logo
+	editable: false
+card field:
+	type: choice
+	name: edition
+	choice: first edition
+	editable: false
+	show statistics: false
+############################# Type Bar
+card field:
+	type: text
+	name: type text
+	script: to_upper(value)
+	editable: false
+card field:
+	type: text
+	name: sub type
+	script: to_upper(value)
+	editable: false
+card field:
+	type: text
+	name: type text full
+	script:
+		# Either just type_text, or type_text—sub_type 
+		combined_editor(
+			field1: card.type_text,
+			separator: " - ",
+			field2: card.sub_type,
+			soft_before_empty: true,
+			hide_when_empty:   true,
+			type_over1: " -",
+			type_over2: "-"
+		)
+	description: The type of the card
+card field:
+	type: choice
+	name: type bar
+	choice: type bar
+	editable: false
+	show statistics: false
+############################# Version
+card field:
+	type: text
+	name: version
+	script: to_lower(value)
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: team affiliation
+	script: to_lower(value)
+	editable: false
+card field:
+	type: text
+	name: version full
+	script:
+		# Either just version, or version • team_affiliation 
+		combined_editor(
+			field1: card.version,
+			separator: " • ",
+			field2: card.team_affiliation,
+			soft_before_empty: true,
+			hide_when_empty:   true,
+			type_over1: " `"
+			)
+	card list visible: true
+	card list column: 2
+	show statistics: false
+	description: The version of the card.
+############################# Card ID
+card field:
+	type: text
+	name: number
+	save value: false
+	script:
+		if pos_of_card()<=9 then "00" + pos_of_card(value) else
+		if pos_of_card()>=9 and pos_of_card()<=99 then "0" + pos_of_card(value) else
+		"" + pos_of_card(value)
+	card list visible: true
+	card list column: 6
+	card list width: 55
+	card list name: #
+	card list alignment: right
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: number text
+	script: to_upper(value)
+	default: set.code + "-" + card.number
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: number line
+	save value: false
+	show statistics: false
+	script:
+		if set.automatic_card_numbers then
+			combined_editor(field1: set.code, separator: "-", field2: card.number)
+		else
+			forward_editor(field: card.number_text)
+	description: Copyright of this card and cardnumber, the default value can be changed on the 'set info' tab
+card field:
+	type: text
+	name: promo outliner
+	save value: false
+	show statistics: false
+	editable: false
+	default: card.number_line
+card field:
+	type: text
+	name: promo outliner 2
+	save value: false
+	show statistics: false
+	editable: false
+	default: card.number_line
+card field:
+	type: choice
+	name: rarity
+	choice: common
+	choice: uncommon
+	choice: rare
+	choice: promo
+	default: set.set_rarity
+	icon: stats/rarity.png
+	description: The rarity of the card.
+############################# Affiliation
+card field:
+	type: text
+	name: separator
+	script: separator_type(team2: card.team_2_of_2)
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: team
+	script: affiliation_1_filter(if contains(card.shape, match: "old") then (value) else to_upper(value))
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: team 2 of 2
+	script: affiliation_2_filter(if contains(card.shape, match: "old") then (value) else to_upper(value))
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: team full
+	script:
+		# Either just team, or team • team 2 of 2 
+		combined_editor(
+			field1: card.team,
+			separator: card.separator,
+			field2: card.team_2_of_2,
+			soft_before_empty: true,
+			hide_when_empty:   true
+		)
+	description: The team of the card, use ` for a separator for dual cards
+card field:
+	type: text
+	name: separator 2
+	script: separator_type(team2: card.team_2_of_2_2)
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: team 2
+	script: affiliation_1_filter(if contains(card.shape, match: "old") then (value) else to_upper(value))
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: team 2 of 2 2
+	script: affiliation_2_filter(if contains(card.shape, match: "old") then (value) else to_upper(value))
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: team 2 full
+	script:
+		# Either just team, or team 2 • team 2 of 2 2
+		combined_editor(
+			field1: card.team_2,
+			separator: card.separator,
+			field2: card.team_2_of_2_2,
+			soft_before_empty: true,
+			hide_when_empty:   true,
+			type_over1: " `"
+		)
+	description: The second affiliation of the card (for dual cards)
+############################# FlightRange
+card field:
+	type: multiple choice
+	name: symbols
+	icon: stats/symbols.png
+	choice: flight
+	choice: range
+	choice: ongoing
+	default: symbol_default()
+	description: Symbols for this card (flight/range/ongoing), multiple symbols can be selected
+	show statistics: false
+############################# Text box
+card field:
+	type: text
+	name: rule text
+	show statistics: false
+	multi line: true
+	script: text_filter(value)
+	description: Rule text of the card, use @ for a diamond, -> for an arrow
+card field:
+	type: text
+	name: flavor text
+	show statistics: false
+	multi line: true
+	description: Flavor text of the card.
+card field:
+	type: choice
+	name: watermark
+	include file: /vs-common.mse-include/watermark-names
+	editable: false
+	description: The Watermark for this set.
+############################# Atack / Defense
+card field:
+	type: text
+	name: attack
+	script: only_numbers(value)
+	icon: stats/attack.png
+	save value: true
+	card list visible: true
+	card list column: 4
+	card list width: 33
+	card list name: ATK
+	card list alignment: right
+	description: The attack of the card.
+card field:
+	type: text
+	name: defence
+	script: only_numbers(value)
+	icon: stats/defence.png
+	save value: true
+	card list visible: true
+	card list column: 5
+	card list width: 33
+	card list name: DEF
+	card list alignment: right
+	description: The defence of the card.
+############################# Copyright stuff
+card field:
+	type: text
+	name: illustrator
+	default: set.artist
+	icon: stats/illustrator.png
+	description: The artist for the card.
+card field:
+	type: text
+	name: copyright
+	default: set.copyright
+	multi line: true
+	show statistics: false
+	description: The copyright line of the card.
+###############################################
+########################### For New style cards
+card field:
+	type: choice
+	name: playarea
+	choice: none
+	choice: visible
+	choice: concealed
+	choice: both
+	initial: visible
+	script:
+		if is_concealed_optional() then "both"
+		else if is_concealed() then "concealed"
+		else "visible"
+	editable: false
+	show statistics: false
+	save value: true
+card field:
+	type: choice
+	name: flightrange
+	choice: none
+	choice: flight
+	choice: range
+	choice: both
+	initial: none
+	show statistics: false
+	save value: true
+	description: Flight and range icons for the card.
+card field:
+	type: choice
+	name: ongoing
+	choice: none
+	choice: ongoing
+	initial: none
+	script: ongoing_detect()
+	description: Ongoing icons for the card.
+card field:
+	type: choice
+	name: affiliation
+	editable: false
+	initial: none
+	include file: /vs-common.mse-include/watermark-names
+	description: First affiliation icon for the card.
+card field:
+	type: choice
+	name: affiliation2
+	editable: false
+	initial: none
+	include file: /vs-common.mse-include/dual-affiliation
+	description: Second affiliation icon for the card.

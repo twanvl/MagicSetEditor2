@@ -1,0 +1,52 @@
+﻿
+############################################################## Card pack items
+pack item:
+	name: rare
+	filter: card.rarity == "rare"
+pack item:
+	name: uncommon
+	filter: card.rarity == "uncommon"
+pack item:
+	name: common
+	filter: card.rarity == "common"
+pack item:
+	name: promo
+	filter: card.rarity == "promo"
+pack item:
+	name: random non-rare foil
+	filter: card.rarity == "common" or card.rarity == "uncommon"
+############################################################## Card packs
+pack type:
+	name: booster pack
+	item:
+		name: rare
+		amount: 1
+	item:
+		name: uncommon
+		amount: 3
+	item:
+		name: common
+		amount: 9
+	item:
+		name: random non-rare foil
+		amount: 1
+pack type:
+	name: additional promo
+	item:
+		name: promo
+pack type:
+	name: additional rare
+	item:
+		name: rare
+pack type:
+	name: additional uncommon
+	item:
+		name: uncommon
+pack type:
+	name: additional common
+	item:
+		name: common
+pack type:
+	name: additional random non-rare foil
+	item:
+		name: random non-rare foil

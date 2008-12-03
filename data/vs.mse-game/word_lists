@@ -1,0 +1,235 @@
+﻿
+############################################################## Word lists
+
+word list:
+	name: affiliation1
+	word:
+		name: DC
+		word:
+			name: A-E
+			word: ANTI-MATTER
+			word: ARKHAM INMATES
+			word: BIRDS OF PREY
+			word: CHECKMATE
+			word: CRISIS
+			word: DARKSEID'S ELITE
+			word: DEATHSTROKE
+			word: DOOM PATROL
+			word: EMERALD ENEMIES
+		word:
+			name: F-J
+			word: FEARSOME FIVE
+			word: FUTURE FOES
+			word: GOTHAM KNIGHTS
+			word: GREEN LANTERN
+			word: INJUSTICE GANG
+			word: JLA
+			word: JLI
+			word: JSA
+		word:
+			name: K-O
+			word: LEAGUE OF ASSASSINS
+			word: LEGIONNAIRES
+			word: MANHUNTERS
+			word: NEW GODS
+			word: OUTSIDERS
+		word:
+			name: P-T
+			word: RANN
+			word: REVENGE SQUAD
+			word: SECRET SIX
+			word: SHADOWPACT
+			word: SPEED FORCE
+			word: SQUADRON SUPREME
+			word: TEAM SUPERMAN
+			word: TEEN TITANS
+			word: THANAGAR
+		word:
+			name: U-Z
+			word: VILLAINS UNITED
+	word:
+		name: Marvel
+		word:
+			name: A-E
+			word: ALPHA FLIGHT
+			word: ASGARDIANS
+			word: ATLANTIS
+			word: AVENGERS
+			word: CRIME LORDS
+			word: DEFENDERS
+			word: DOOM
+			word: EXILES
+		word:
+			name: F-J
+			word: FANTASTIC FOUR
+			word: HERALDS OF GALACTUS
+			word: HEROES OF EARTH
+			word: HELLFIRE CLUB
+			word: HORSEMEN OF APOCALYPSE
+			word: INFINITY WATCH
+			word: INHUMANS
+			word: INVADERS
+		word:
+			name: K-O
+			word: KANG COUNCIL
+			word: KREE
+			word: MARAUDERS
+			word: MARVEL DEFENDERS
+			word: MARVEL KNIGHTS
+			word: MASTERS OF EVIL
+			word: MORLOCKS
+			word: NEGATIVE ZONE
+			word: NEXTWAVE
+			word: NOVA CORPS
+		word:
+			name: P-T
+			word: PHALANX
+			word: RUNAWAYS
+			word: SENTINELS
+			word: THE SHI'AR
+			word: SHIELD
+			word: SINISTER SYNDICATE
+			word: SKRULL
+			word: SPIDER-FRIENDS
+			word: THUNDERBOLTS
+		word:
+			name: U-Z
+			word: UNDERWORLD
+			word: UNITED FRONT
+			word: VILLAINS OF EARTH
+			word: X-FACTOR
+			word: X-FORCE
+			word: X-MEN
+			word: X-STATIX
+			word: WARBOUND
+			word: WEAPON X
+			word: WILD PACK
+	word:
+		name: Other
+		word: B.P.R.D.
+		word: THULE SOCIETY
+	word: EQUIPMENT
+	word: LOCATION
+	word: PLOT TWIST
+	word: PLANET
+	word:
+		name: Your Affiliations
+		word:
+			script: all_affiliations()
+			line below: true
+word list:
+	name: affiliation2
+	word:
+		name: DC
+		word:
+			name: A-E
+			word: ANTI-MATTER
+			word: ARKHAM INMATES
+			word: BIRDS OF PREY
+			word: CHECKMATE
+			word: CRISIS
+			word: DARKSEID'S ELITE
+			word: DEATHSTROKE
+			word: DOOM PATROL
+			word: EMERALD ENEMIES
+		word:
+			name: F-J
+			word: FEARSOME FIVE
+			word: FUTURE FOES
+			word: GOTHAM KNIGHTS
+			word: GREEN LANTERN
+			word: INJUSTICE GANG
+			word: JLA
+			word: JLI
+			word: JSA
+		word:
+			name: K-O
+			word: LEAGUE OF ASSASSINS
+			word: LEGIONNAIRES
+			word: MANHUNTERS
+			word: NEW GODS
+			word: OUTSIDERS
+		word:
+			name: P-T
+			word: RANN
+			word: REVENGE SQUAD
+			word: SECRET SIX
+			word: SHADOWPACT
+			word: SPEED FORCE
+			word: SQUADRON SUPREME
+			word: TEAM SUPERMAN
+			word: TEEN TITANS
+			word: THANAGAR
+		word:
+			name: U-Z
+			word: VILLAINS UNITED
+	word:
+		name: Marvel
+		word:
+			name: A-E
+			word: ALPHA FLIGHT
+			word: ASGARDIANS
+			word: ATLANTIS
+			word: AVENGERS
+			word: CRIME LORDS
+			word: DEFENDERS
+			word: DOOM
+			word: EXILES
+		word:
+			name: F-J
+			word: FANTASTIC FOUR
+			word: HERALDS OF GALACTUS
+			word: HEROES OF EARTH
+			word: HELLFIRE CLUB
+			word: HORSEMEN OF APOCALYPSE
+			word: INFINITY WATCH
+			word: INHUMANS
+			word: INVADERS
+		word:
+			name: K-O
+			word: KANG COUNCIL
+			word: KREE
+			word: MARAUDERS
+			word: MARVEL DEFENDERS
+			word: MARVEL KNIGHTS
+			word: MASTERS OF EVIL
+			word: MORLOCKS
+			word: NEGATIVE ZONE
+			word: NEXTWAVE
+			word: NOVA CORPS
+		word:
+			name: P-T
+			word: PHALANX
+			word: RUNAWAYS
+			word: SENTINELS
+			word: THE SHI'AR
+			word: SHIELD
+			word: SINISTER SYNDICATE
+			word: SKRULL
+			word: SPIDER-FRIENDS
+			word: THUNDERBOLTS
+		word:
+			name: U-Z
+			word: UNDERWORLD
+			word: UNITED FRONT
+			word: VILLAINS OF EARTH
+			word: X-FACTOR
+			word: X-FORCE
+			word: X-MEN
+			word: X-STATIX
+			word: WARBOUND
+			word: WEAPON X
+			word: WILD PACK
+	word:
+		name: Other
+		word: B.P.R.D.
+		word: THULE SOCIETY
+	word: EQUIPMENT
+	word: LOCATION
+	word: PLOT TWIST
+	word: PLANET
+	word:
+		name: Your Affiliations
+		word:
+			script: all_affiliations()
+			line below: true

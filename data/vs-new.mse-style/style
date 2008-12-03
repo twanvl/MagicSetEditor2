@@ -207,21 +207,21 @@ card style:
 		z index: 3
 	############################# Type Bar
 	type text full:
-		left:	19
+		left:	22
 		top:	317
-		width:	{ if card.card_type=="planet" then 0 else 339 }
+		width:	{ if card.card_type=="planet" then 0 else 332 }
 		height: { if card.card_type=="planet" then 0 else 12 }
 		font:
 			name: BankGothic Md BT
 			size: 8
 			color: rgb(0,0,0)
-		visible: { is_character() }
-		alignment: middle center
+		visible: { is_character() or is_equipment() }
+		alignment: middle center shrink-overflow
 		z index: 3
 	type bar:
 		left:	19
 		top:	317
-		width:	{ if card.card_type=="planet" then 0 else 339 }
+		width:	{ if card.card_type=="planet" then 0 else 338 }
 		height: { if card.card_type=="planet" then 0 else 13 }
 		visible: { card.type_text != "" }
 		render style: image
@@ -234,7 +234,7 @@ card style:
 		top : 51
 		width: 230
 		height: 18
-		alignment: middle center
+		alignment: middle center shrink-overflow
 		z index: 4
 		font:
 			name: Percolator Expert TM
@@ -321,7 +321,7 @@ card style:
 		left: { if card.card_type=="planet" then 72 else 20 }
 		top : { if card.card_type=="planet" then 123 else 353 }
 		width: { if card.card_type=="planet" then 236 else 335 }
-		height: { if card.card_type=="planet" then 305 else if card.flavor_text!="" then 80 else 100 }
+		height: { if card.card_type=="planet" then 305 else if card.flavor_text!="" then 95 else 100 }
 		font:
 			name: Eurostile
 			italic name: EurostileObl-Normal
@@ -337,13 +337,13 @@ card style:
 		padding left:   3
 		padding top:    5
 		padding right:  2
-		padding bottom: 2
+		padding bottom: 6
 		line height hard: 1.4
 	flavor text:
 		left: 90
-		top : 435
+		top : 449
 		width: { if card.card_type=="planet" then 0 else 225 }
-		height: { if card.card_type=="planet" then 0 else 40 }
+		height: { if card.card_type=="planet" then 0 else 25 }
 		font:
 			name: EurostileObl-Normal
 			size: 10
@@ -353,7 +353,7 @@ card style:
 		z index: 3
 		visible: { card.card_type!="planet" }
 		padding left:   2
-		padding top:    2
+		padding top:    0
 		padding right:  2
 		padding bottom: 2
 		line height hard: 1
