@@ -14,7 +14,7 @@
 
 const Char* BRIGHT   = _("\x1B[1m");
 const Char* NORMAL   = _("\x1B[0m");
-const Char* PARAM    = _("\x1B[33m");
+const Char* PARAM    = _("\x1B[36m");
 const Char* FILE_EXT = _("\x1B[0;1m");
 const Char* GRAY     = _("\x1B[1;30m");
 const Char* RED      = _("\x1B[1;31m");

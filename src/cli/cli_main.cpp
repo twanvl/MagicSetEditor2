@@ -135,6 +135,15 @@ void CLISetInterface::handleCommand(const String& command) {
 				ei.exported_images.clear();
 				ctx.closeScope(scope);
 				scope = ctx.openScope();
+			} else if (before == _(":i") || before == _(":info")) {
+				if (set) {
+					cli << _("set:      ") << set->identification() << ENDL;
+					cli << _("filename: ") << set->absoluteFilename() << ENDL;
+					cli << _("relative: ") << set->relativeFilename() << ENDL;
+					cli << String::Format(_("#cards:   %d"), set->cards.size()) << ENDL;
+				} else {
+					cli << _("No set loaded") << ENDL;
+				}
 			} else if (before == _(":c") || before == _(":cd")) {
 				if (arg.empty()) {
 					cli.showError(_("Give a new working directory."));
