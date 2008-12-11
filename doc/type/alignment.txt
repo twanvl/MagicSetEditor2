@@ -1,14 +1,18 @@
 Enumeration: alignment
 
 Specifies how text and images are aligned in boxes.
-An alignment consists of a vertical and a horizontal component.
-Optionally there are some modifiers.
+An alignment consists of:
+* horizontal alignment
+* vertical alignment
+* (optional) how to fill the text box
+* (optional) when to fill the text box
 
 --Script syntax--
 In scripts, alignment is passed around as a string.
 
 --Possible values--
 The value is a combination of one or more flags, separated by spaces.
+These flags can appear in any order.
 ! Value			Description
 | @left@		Horizontally, align at the left
 | @center@		Horizontally, align in the middle
@@ -16,14 +20,16 @@ The value is a combination of one or more flags, separated by spaces.
 | @top@			Vertically, align at the top
 | @middle@		Vertically, align in the middle
 | @bottom@		Vertically, align at the bottom
-| @justify@		Move characters apart or together to exactly fill the width of the box.
-| @justify-words@	Move words apart or together to exactly fill the width of the box.
-| @justify-overflow@	If the text becomes to long, move characters closer together.
-| @stretch@		Stretch text, so it always fills the width of the box.<br/>
-			For images; stretch them, but preserve the aspect ratio.
-| @stretch-overflow@	Stretch (compress) the text when it becomes too long.
+| @justify@		Fill the box exactly, by moving words apart/together.
+| @justify-all@		Fill the box exactly, by moving individual characters apart/together.
+| @stretch@		Fill the box exactly, by stretching the text.<br/>
+			For images: stretch them, but preserve the aspect ratio.
+| @if-overflow@		Only apply @justify@, @justify-all@ and @stretch@ when the box is overfull.
+| @force@		Also justify text at the end of a line in a multiline text field.<br/>
+			Normally only lines ending in a soft line break are justified.
 
 --Examples--
 > alignment: top left
 > alignment: middle center
+> alignment: top left force justify if-overflow
 > alignment: { "middle" + " " + "left" }

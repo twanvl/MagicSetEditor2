@@ -49,7 +49,7 @@ struct TextViewer::Line {
 	RealRect selectionRectangle(const Rotation& rot, size_t start, size_t end);
 	
 	/// Align the contents of this line *horizontally* inside the given rectangle
-	void alignHorizontal(const vector<CharInfo>& chars, const RealRect& s);
+	void alignHorizontal(const vector<CharInfo>& chars, const TextStyle& style, const RealRect& s);
 };
 
 size_t TextViewer::Line::posToIndex(double x) const {
@@ -755,16 +755,17 @@ void TextViewer::alignParagraph(size_t start_line, size_t end_line, const vector
 		l.top += vdelta;
 		// amount to shift all characters horizontally
 		l.alignment = style.alignment; // TODO: set at another place
-		l.alignHorizontal(chars, s);
+		l.alignHorizontal(chars, style, s);
 	}
 	// TODO : work well with mask
 }
 
-void TextViewer::Line::alignHorizontal(const vector<CharInfo>& chars, const RealRect& s) {
+void TextViewer::Line::alignHorizontal(const vector<CharInfo>& chars, const TextStyle& style, const RealRect& s) {
 	double width = this->width();
-	if ((alignment & ALIGN_JUSTIFY) ||
-		(alignment & ALIGN_JUSTIFY_OVERFLOW && width > s.width)) {
-		// justify text
+	bool should_fill = (alignment & ALIGN_IF_OVERFLOW  ? width > s.width : true)
+	                && (alignment & ALIGN_IF_SOFTBREAK ? break_after == BREAK_SOFT || !style.field().multi_line : true);
+	if ((alignment & ALIGN_JUSTIFY_ALL) && should_fill) {
+		// justify text, by characters
 		justifying = true;
 		double hdelta = s.width - width;        // amount of space to distribute
 		int count = (int)(end_or_soft - start); // distribute it among this many characters
@@ -773,7 +774,7 @@ void TextViewer::Line::alignHorizontal(const vector<CharInfo>& chars, const Real
 		FOR_EACH(c, positions) {
 			c += s.x + hdelta * i++ / count;
 		}
-	} else if (alignment & ALIGN_JUSTIFY_WORDS) {
+	} else if ((alignment & ALIGN_JUSTIFY_WORDS) && should_fill) {
 		// justify text, by words
 		justifying = true;
 		double hdelta = s.width - width; // amount of space to distribute
@@ -787,7 +788,7 @@ void TextViewer::Line::alignHorizontal(const vector<CharInfo>& chars, const Real
 			c += s.x + hdelta * i / count;
 			if (j < end_or_soft && chars[j++].break_after == BREAK_SPACE) i++;
 		}
-	} else if (alignment & ALIGN_STRETCH_OVERFLOW && width >= s.width) {
+	} else if ((alignment & ALIGN_STRETCH) && should_fill) {
 		// stretching, don't center or align right
 		justifying = false;
 	} else {

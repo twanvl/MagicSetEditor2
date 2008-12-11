@@ -57,9 +57,9 @@ TextStyle::TextStyle(const TextFieldP& field)
 {}
 
 double TextStyle::getStretch() const {
-	if (content_width > 0 && ((alignment() & ALIGN_STRETCH) || (alignment() & ALIGN_STRETCH_OVERFLOW))) {
+	if (content_width > 0 && (alignment() & ALIGN_STRETCH)) {
 		double factor = (width - padding_left - padding_right) / content_width;
-		if (alignment() == ALIGN_STRETCH || factor < 1.0) {
+		if (!(alignment() & ALIGN_IF_OVERFLOW) || factor < 1.0) {
 			return factor;
 		}
 	}
