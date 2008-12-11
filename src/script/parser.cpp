@@ -96,7 +96,7 @@ class TokenIterator {
 		String input;
 		size_t pos;
 		String filename;
-		Package* package;
+		Packaged* package;
 	};
 	stack<MoreInput> more;		///< Read tokens from here when we are done with the current input
 	
@@ -175,6 +175,7 @@ void TokenIterator::readToken() {
 			input    = more.top().input;
 			pos      = more.top().pos;
 			filename = more.top().filename;
+			package  = more.top().package;
 			more.pop();
 		} else {
 			// EOF
@@ -205,7 +206,7 @@ void TokenIterator::readToken() {
 		InputStreamP is = package_manager.openFileFromPackage(package, include_file);
 		input = read_utf8_line(*is, true, true);
 	} else if (isAlpha(c) || c == _('_') || (isDigit(c) && !buffer.empty() && buffer.back() == _("."))) {
-		// name
+		// name, or a number after a . token, as in array.0
 		size_t start = pos - 1;
 		while (pos < input.size() && isAlnum_(input.GetChar(pos))) ++pos;
 		addToken(TOK_NAME, cannocial_name_form(input.substr(start, pos-start)), start); // convert name to cannocial form
