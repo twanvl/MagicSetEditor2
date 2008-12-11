@@ -47,12 +47,15 @@ WelcomeWindow::WelcomeWindow()
 	#endif
 	wxControl* open_last = nullptr;
 	if (!settings.recent_sets.empty()) {
-		if (wxFileName::FileExists(settings.recent_sets.front()) || wxFileName::DirExists(settings.recent_sets.front()+_("/")))
+		const String& filename = settings.recent_sets.front();
+		if (wxFileName::FileExists(filename) || wxFileName::DirExists(filename + _("/"))) {
 			#ifdef USE_HOVERBUTTON
+				wxFileName n(filename);
 				open_last       = new HoverButtonExt(this, ID_FILE_RECENT, load_resource_image(_("welcome_last")), _BUTTON_("last opened set"), _HELP_1_("last opened set", n.GetName()));
 			#else
 				open_last       = new wxButton(this, ID_FILE_RECENT, _BUTTON_("last opened set"));
 			#endif
+		}
 	}
 	
 	wxSizer* s1  = new wxBoxSizer(wxHORIZONTAL);
@@ -104,8 +107,9 @@ void WelcomeWindow::onOpenLast(wxCommandEvent&) {
 	try {
 		close( open_package<Set>(settings.recent_sets.front()) );
 	} catch (PackageNotFoundError& e) {
-		handle_error(_("Cannot find package ") + e.what() + _(" to open."));
-		settings.recent_sets.clear();
+		handle_error(_("Cannot find set ") + e.what() + _(" to open."));
+		// remove this package from the recent sets, so we don't get this error again
+		settings.recent_sets.erase(settings.recent_sets.begin());
 	}
 }
 
