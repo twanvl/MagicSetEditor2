@@ -124,7 +124,6 @@ class TextViewer {
   private:
 	// --------------------------------------------------- : More drawing
 	double scale;    ///< Scale when drawing
-	bool justifying; ///< Is text justified?
 	
 	// --------------------------------------------------- : Elements
 	TextElements elements; ///< The elements of the prepared text
