@@ -51,26 +51,27 @@ class TextStyle : public Style {
 	TextStyle(const TextFieldP&);
 	DECLARE_STYLE_TYPE(Text);
 	
-	Font font;									///< Font to use for the text
-	SymbolFontRef symbol_font;					///< Symbol font for symbols in the text
-	bool always_symbol;							///< Should everything be drawn as symbols?
-	bool allow_formating;						///< Is formating (bold/italic/..) allowed?
-	Scriptable<Alignment> alignment;			///< Alignment inside the box
-	double padding_left,   padding_left_min;	///< Padding
-	double padding_right,  padding_right_min;	///< Padding
-	double padding_top,    padding_top_min;		///< Padding
-	double padding_bottom, padding_bottom_min;	///< Padding
-	double line_height_soft;					///< Line height for soft linebreaks
-	double line_height_hard;					///< Line height for hard linebreaks
-	double line_height_line;					///< Line height for <line> tags
-	double line_height_soft_max;				///< Maximum line height
-	double line_height_hard_max;				///< Maximum line height
-	double line_height_line_max;				///< Maximum line height
-	double paragraph_height;					///< Fixed height of paragraphs
-	Direction direction;						///< In what direction is text layed out?
+	Font font;                                  ///< Font to use for the text
+	SymbolFontRef symbol_font;                  ///< Symbol font for symbols in the text
+	bool always_symbol;                         ///< Should everything be drawn as symbols?
+	bool allow_formating;                       ///< Is formating (bold/italic/..) allowed?
+	Scriptable<Alignment> alignment;            ///< Alignment inside the box
+	Scriptable<double>
+	    padding_left,   padding_left_min,       ///< Padding
+	    padding_right,  padding_right_min,      ///< Padding
+	    padding_top,    padding_top_min,        ///< Padding
+	    padding_bottom, padding_bottom_min,     ///< Padding
+	    line_height_soft,                       ///< Line height for soft linebreaks
+	    line_height_hard,                       ///< Line height for hard linebreaks
+	    line_height_line,                       ///< Line height for <line> tags
+	    line_height_soft_max,                   ///< Maximum line height
+	    line_height_hard_max,                   ///< Maximum line height
+	    line_height_line_max,                   ///< Maximum line height
+	    paragraph_height;                       ///< Fixed height of paragraphs
+	Direction direction;                        ///< In what direction is text layed out?
 	// information from text rendering
-	double content_width, content_height;		///< Size of the rendered text
-	int    content_lines;						///< Number of rendered lines
+	double content_width, content_height;       ///< Size of the rendered text
+	int    content_lines;                       ///< Number of rendered lines
 	
 	virtual int  update(Context&);
 	virtual void initDependencies(Context&, const Dependency&) const;
@@ -88,8 +89,8 @@ class TextValue : public Value {
 	inline TextValue(const TextFieldP& field) : Value(field), last_update(1) {}
 	DECLARE_VALUE_TYPE(Text, Defaultable<String>);
 	
-	ValueType value;				///< The text of this value
-	Age       last_update;			///< When was the text last changed?
+	ValueType value;                ///< The text of this value
+	Age       last_update;          ///< When was the text last changed?
 	
 	virtual bool update(Context&);
 };

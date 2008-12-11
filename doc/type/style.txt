@@ -87,19 +87,19 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 | ^^^		@allow formating@	[[type:boolean]]	@true@		Is custom formating (bold, italic) allowed?
 | ^^^		@alignment@		[[type:scriptable]] [[type:alignment]]	@top left@	Alignment of the text.
 | ^^^		@direction@		[[type:direction]]	@"left to right"@	Direction in which the text flows. If set to @"vertical"@ it is as if a line break is inserted after each character.
-| ^^^		@padding left@		[[type:double]]		@0@		Padding between the text and the border of the box, in pixels.
+| ^^^		@padding left@		[[type:scriptable]] [[type:double]]		@0@		Padding between the text and the border of the box, in pixels.
 | ^^^		@padding right@		^^^			^^^		^^^
 | ^^^		@padding top@		^^^			^^^		^^^
 | ^^^		@padding bottom@	^^^			^^^		^^^
-| ^^^		@padding left min@	[[type:double]]		&infin;		Minimal padding around the field.<br/> When the text is scalled down the padding is scalled as well, but it becomes no smaller than this.
+| ^^^		@padding left min@	[[type:scriptable]] [[type:double]]		&infin;		Minimal padding around the field.<br/> When the text is scalled down the padding is scalled as well, but it becomes no smaller than this.
 | ^^^		@padding right min@	^^^			^^^		^^^
 | ^^^		@padding top min@	^^^			^^^		^^^
 | ^^^		@padding bottom min@	^^^			^^^		^^^
-| ^^^		@line height soft@	[[type:double]]		@1@		Multiplier for the line height of 'soft' line breaks. These are breaks caused by wrapping around lines that are too long.<br/>
+| ^^^		@line height soft@	[[type:scriptable]] [[type:double]]		@1@		Multiplier for the line height of 'soft' line breaks. These are breaks caused by wrapping around lines that are too long.<br/>
 		 			 			 		A line height of @0@ means all lines are in the same position, @1@ is normal behaviour, @2@ skips a line, etc.
-| ^^^		@line height hard@	[[type:double]]		@1@		Multiplier for the line height of 'hard' line breaks. These are breaks caused by the enter key.
-| ^^^		@line height line@	[[type:double]]		@1@		Multiplier for the line height of 'soft' line breaks. These are breaks caused by @"<line>\n</line>"@ tags.
-| ^^^		@line height soft max@	[[type:double]]		''disabled''	When there is still vertical room in the text box, increase the line heights to at most these values to spread the text more evenly.
+| ^^^		@line height hard@	[[type:scriptable]] [[type:double]]		@1@		Multiplier for the line height of 'hard' line breaks. These are breaks caused by the enter key.
+| ^^^		@line height line@	[[type:scriptable]] [[type:double]]		@1@		Multiplier for the line height of 'soft' line breaks. These are breaks caused by @"<line>\n</line>"@ tags.
+| ^^^		@line height soft max@	[[type:scriptable]] [[type:double]]		''disabled''	When there is still vertical room in the text box, increase the line heights to at most these values to spread the text more evenly.
 | ^^^		@line height hard max@	^^^			^^^		^^^
 | ^^^		@line height line max@	^^^			^^^		^^^
 | ^^^		@paragraph height@	[[type:double]]		''flexible''	The height of paragraphs. If specified, each paragraph is given this much space, and aligned inside that space as specified by @alignment@.<br/>

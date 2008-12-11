@@ -70,7 +70,22 @@ int TextStyle::update(Context& ctx) {
 	return Style     ::update(ctx)
 	     | font       .update(ctx) * CHANGE_OTHER
 	     | symbol_font.update(ctx) * CHANGE_OTHER
-	     | alignment  .update(ctx) * CHANGE_OTHER;
+	     | alignment  .update(ctx) * CHANGE_OTHER
+	     | ( padding_left        .update(ctx)
+	       | padding_left_min    .update(ctx)
+	       | padding_right       .update(ctx)
+	       | padding_right_min   .update(ctx)
+	       | padding_top         .update(ctx)
+	       | padding_top_min     .update(ctx)
+	       | padding_bottom      .update(ctx)
+	       | padding_bottom_min  .update(ctx)
+	       | line_height_soft    .update(ctx)
+	       | line_height_hard    .update(ctx)
+	       | line_height_line    .update(ctx)
+	       | line_height_soft_max.update(ctx)
+	       | line_height_hard_max.update(ctx)
+	       | line_height_line_max.update(ctx)
+	       ) * CHANGE_OTHER;
 }
 void TextStyle::initDependencies(Context& ctx, const Dependency& dep) const {
 	Style     ::initDependencies(ctx, dep);
