@@ -16,6 +16,9 @@
 #include <util/error.hpp>
 #include <util/io/get_member.hpp>
 #include <gfx/generated_image.hpp> // we need the dtor of GeneratedImage
+#if USE_SCRIPT_PROFILING
+	#include <typeinfo>
+#endif
 
 // ----------------------------------------------------------------------------- : Overloadable templates
 
@@ -272,7 +275,7 @@ class ScriptObject : public ScriptValue {
 	virtual ScriptValueP getMember(const String& name) const {
 		#if USE_SCRIPT_PROFILING
 			Timer t;
-			Profiler prof(t, _("get member"));
+			Profiler prof(t, (void*)typeid(T).raw_name(), _("get member of ") + type_name(*value));
 		#endif
 		GetMember gm(name);
 		gm.handle(*value);
