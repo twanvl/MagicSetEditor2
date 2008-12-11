@@ -70,6 +70,8 @@ class FunctionProfile : public IntrusivePtrBase<FunctionProfile> {
 	String      name;
 	ProfileTime time_ticks;
 	UInt        calls;
+	/// for each id, called children
+	/** we (ab)use the fact that all pointers are even to store both pointers and ids */
 	map<size_t,FunctionProfileP> children;
 	
 	/// The children, sorted by time
@@ -90,8 +92,16 @@ const FunctionProfile& profile_aggregated(int level = 1);
 /// Profile a single function call
 class Profiler {
   public:
+	/// Log the fact that the function  function_name  is entered, ends when profiler goes out of scope.
+	/** Time between the construction of Timer and the construction of Profiler is excluded from ALL profiles.
+	 */
 	Profiler(Timer& timer, Variable function_name);
+	/// As above, but with a constant name
+	Profiler(Timer& timer, const Char* function_name);
+	/// As above, but using a function object instead of a name,
+	/** if we haven't seen the object before, it gets the given name. */
 	Profiler(Timer& timer, void* function_object, const String& function_name);
+	/// Log the fact that the function is left
 	~Profiler();
   private:
 	Timer&                  timer;

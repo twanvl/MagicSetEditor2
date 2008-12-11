@@ -11,6 +11,7 @@
 
 #include <script/value.hpp>
 #include <script/script.hpp>
+#include <script/profiler.hpp>
 #include <util/reflect.hpp>
 #include <util/error.hpp>
 #include <util/io/get_member.hpp>
@@ -269,6 +270,10 @@ class ScriptObject : public ScriptValue {
 		ScriptValueP d = getDefault(); return d ? d->toImage(d) : ScriptValue::toImage(thisP);
 	}
 	virtual ScriptValueP getMember(const String& name) const {
+		#if USE_SCRIPT_PROFILING
+			Timer t;
+			Profiler prof(t, _("get member"));
+		#endif
 		GetMember gm(name);
 		gm.handle(*value);
 		if (gm.result()) return gm.result();

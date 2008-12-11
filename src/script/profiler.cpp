@@ -105,6 +105,19 @@ Profiler::Profiler(Timer& timer, Variable function_name)
 }
 
 // Enter a function
+Profiler::Profiler(Timer& timer, const Char* function_name)
+	: timer(timer)
+	, parent(function) // push
+{
+	FunctionProfileP& fpp = parent->children[(size_t)function_name];
+	if (!fpp) {
+		fpp = new_intrusive1<FunctionProfile>(function_name);
+	}
+	function = fpp.get();
+	timer.exclude_time();
+}
+
+// Enter a function
 Profiler::Profiler(Timer& timer, void* function_object, const String& function_name)
 	: timer(timer)
 	, parent(function) // push
