@@ -18,6 +18,7 @@
 #include <util/tagged_string.hpp> // for 0.2.7 fix
 #include <util/order_cache.hpp>
 #include <script/script_manager.hpp>
+#include <script/profiler.hpp>
 #include <wx/sstream.h>
 
 DECLARE_TYPEOF_COLLECTION(CardP);
@@ -228,6 +229,10 @@ int Set::positionOfCard(const CardP& card, const ScriptValueP& order_by, const S
 				keep.push_back((bool)*filter->eval(ctx));
 			}
 		}
+		#if USE_SCRIPT_PROFILING
+			Timer t;
+			Profiler prof(t, order_by.get(), _("init order cache"));
+		#endif
 		// 3. initialize order cache
 		order = new_intrusive3<OrderCache<CardP> >(cards, values, filter ? &keep : nullptr);
 	}
