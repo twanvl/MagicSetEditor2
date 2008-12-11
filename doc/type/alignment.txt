@@ -1,5 +1,7 @@
 Enumeration: alignment
 
+DOC_MSE_VERSION: changed in 0.3.8
+
 Specifies how text and images are aligned in boxes.
 An alignment consists of:
 * horizontal alignment
