@@ -79,6 +79,7 @@ class TokenIterator {
 	void putBack();
 	
 	/// Get a section of source code
+	/** Known problems: does not work correctly when crossing an include-file border */
 	String getSourceCode(size_t start, size_t end);
 	/// Get the current line number
 	int getLineNumber();
@@ -661,7 +662,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			Token t = input.peek();
 			if (t == _("else")) {// or else
 				input.read(); // skip else
-				parseOper(input, script, PREC_CMP,   I_BINARY, I_OR_ELSE);
+				parseOper(input, script, PREC_ADD,   I_BINARY, I_OR_ELSE);
 			} else {
 				parseOper(input, script, PREC_CMP,   I_BINARY, I_OR);
 			}
