@@ -167,7 +167,9 @@ void CLISetInterface::handleCommand(const String& command) {
 					if (arg == _("full")) {
 						showProfilingStats(profile_root);
 					} else {
-						showProfilingStats(profile_aggregated());
+						long level = 1;
+						arg.ToLong(&level);
+						showProfilingStats(profile_aggregated(level));
 					}
 			#endif
 			} else {
