@@ -209,8 +209,9 @@ void SymbolWindow::onFileNew(wxCommandEvent& ev) {
 }
 
 void SymbolWindow::onFileOpen(wxCommandEvent& ev) {
-	String name = wxFileSelector(_("Open symbol"),_(""),_(""),_(""),_("Symbol files|*.mse-symbol;*.bmp|MSE2 symbol files (*.mse-symbol)|*.mse-symbol|Images/MSE1 symbol files|*.bmp;*.png;*.jpg;*.gif"),wxOPEN|wxFILE_MUST_EXIST, this);
+	String name = wxFileSelector(_("Open symbol"),settings.default_symbol_dir,_(""),_(""),_("Symbol files|*.mse-symbol;*.bmp|MSE2 symbol files (*.mse-symbol)|*.mse-symbol|Images/MSE1 symbol files|*.bmp;*.png;*.jpg;*.gif"),wxOPEN|wxFILE_MUST_EXIST, this);
 	if (!name.empty()) {
+		settings.default_symbol_dir = wxPathOnly(name);
 		wxFileName n(name);
 		String ext = n.GetExt();
 		SymbolP symbol;
@@ -235,8 +236,9 @@ void SymbolWindow::onFileSave(wxCommandEvent& ev) {
 }
 
 void SymbolWindow::onFileSaveAs(wxCommandEvent& ev) {
-	String name = wxFileSelector(_("Save symbol"),_(""),_(""),_(""),_("Symbol files (*.mse-symbol)|*.mse-symbol"),wxSAVE, this);
+	String name = wxFileSelector(_("Save symbol"),settings.default_set_dir,_(""),_(""),_("Symbol files (*.mse-symbol)|*.mse-symbol"),wxSAVE, this);
 	if (!name.empty()) {
+		settings.default_set_dir = wxPathOnly(name);
 		Writer writer(new_shared1<wxFileOutputStream>(name), file_version_symbol);
 		writer.handle(control->getSymbol());
 	}

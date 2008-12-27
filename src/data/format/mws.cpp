@@ -61,10 +61,11 @@ void export_mws(Window* parent, const SetP& set) {
 	}
 	
 	// Select filename
-	String name = wxFileSelector(_("Export to file"),_(""),_(""),_(""),
+	String name = wxFileSelector(_("Export to file"),settings.default_export_dir,_(""),_(""),
 		                         _("Text files (*.txt)|*.txt|All Files|*"),
 		                         wxSAVE | wxOVERWRITE_PROMPT, parent);
 	if (name.empty()) return;
+	settings.default_export_dir = wxPathOnly(name);
 	wxBusyCursor busy;
 	// Open file
 	wxFileOutputStream f(name);

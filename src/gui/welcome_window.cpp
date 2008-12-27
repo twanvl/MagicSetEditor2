@@ -90,8 +90,9 @@ void WelcomeWindow::draw(DC& dc) {
 }
 
 void WelcomeWindow::onOpenSet(wxCommandEvent&) {
-	wxFileDialog dlg(this, _TITLE_("open set"), wxEmptyString, wxEmptyString, import_formats(), wxOPEN);
+	wxFileDialog dlg(this, _TITLE_("open set"), settings.default_set_dir, wxEmptyString, import_formats(), wxOPEN);
 	if (dlg.ShowModal() == wxID_OK) {
+		settings.default_set_dir = dlg.GetDirectory();
 		wxBusyCursor wait;
 		close(import_set(dlg.GetPath()));
 	}

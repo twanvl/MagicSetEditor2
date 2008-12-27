@@ -390,8 +390,9 @@ bool SetWindow::askSaveAndContinue() {
 		try {
 			if (set->needSaveAs()) {
 				// need save as
-				wxFileDialog dlg(this, _TITLE_("save set"), _(""), set->short_name, export_formats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
+				wxFileDialog dlg(this, _TITLE_("save set"), settings.default_set_dir, set->short_name, export_formats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
 				if (dlg.ShowModal() == wxID_OK) {
+					settings.default_set_dir = dlg.GetDirectory();
 					export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
 					return true;
 				} else {
@@ -503,8 +504,9 @@ void SetWindow::onFileNew(wxCommandEvent&) {
 
 void SetWindow::onFileOpen(wxCommandEvent&) {
 	if (!settings.open_sets_in_new_window && isOnlyWithSet() && !askSaveAndContinue()) return;
-	wxFileDialog dlg(this, _TITLE_("open set"), _(""), _(""), import_formats(), wxOPEN);
+	wxFileDialog dlg(this, _TITLE_("open set"), settings.default_set_dir, _(""), import_formats(), wxOPEN);
 	if (dlg.ShowModal() == wxID_OK) {
+		settings.default_set_dir = dlg.GetDirectory();
 		wxBusyCursor busy;
 		SetP new_set = import_set(dlg.GetPath());
 		switchSet(new_set);
@@ -523,8 +525,9 @@ void SetWindow::onFileSave(wxCommandEvent& ev) {
 }
 
 void SetWindow::onFileSaveAs(wxCommandEvent&) {
-	wxFileDialog dlg(this, _TITLE_("save set"), _(""), set->short_name, export_formats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
+	wxFileDialog dlg(this, _TITLE_("save set"), settings.default_set_dir, set->short_name, export_formats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
 	if (dlg.ShowModal() == wxID_OK) {
+		settings.default_set_dir = dlg.GetDirectory();
 		export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
 		updateTitle(); // title may depend on filename
 	}
@@ -571,10 +574,11 @@ void SetWindow::onFileExportMenu(wxCommandEvent& ev) {
 void SetWindow::onFileExportImage(wxCommandEvent&) {
 	CardP card = current_panel->selectedCard();
 	if (!card)  return; // no card selected
-	String name = wxFileSelector(_TITLE_("save image"), _(""), card->identification(), _(""),
+	String name = wxFileSelector(_TITLE_("save image"), settings.default_export_dir, card->identification(), _(""),
 		                         _("JPEG images (*.jpg)|*.jpg|Windows bitmaps (*.bmp)|*.bmp|PNG images (*.png)|*.png|GIF images (*.gif)|*.gif|TIFF images (*.tif)|*.tif"),
 		                         wxSAVE | wxOVERWRITE_PROMPT, this);
 	if (!name.empty()) {
+		settings.default_export_dir = wxPathOnly(name);
 		export_image(set, card, name);
 	}
 }

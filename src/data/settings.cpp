@@ -233,6 +233,10 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(Settings) {
 	REFLECT_ALIAS(300, "default style settings", "default stylesheet settings");
 	REFLECT(locale);
 	REFLECT(recent_sets);
+	REFLECT(default_set_dir);
+	REFLECT(default_image_dir);
+	REFLECT(default_symbol_dir);
+	REFLECT(default_export_dir);
 	REFLECT(set_window_maximized);
 	REFLECT(set_window_width);
 	REFLECT(set_window_height);
