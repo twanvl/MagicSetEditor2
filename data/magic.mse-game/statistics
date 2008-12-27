@@ -79,6 +79,13 @@ statistics dimension:
 	icon: stats/text_length.png
 
 statistics dimension:
+	name: text length (lines)
+	position hint: 101
+	script: line_count(to_text(card.rule_text))
+	numeric: true
+	icon: stats/text_length.png
+
+statistics dimension:
 	name: race
 	position hint: 32
 	icon: stats/creature_race.png

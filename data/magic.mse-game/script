@@ -546,3 +546,4 @@ primary_card_color := {
 }
 
 word_count := break_text@(match:"[^[:space:]]+") + length
+line_count := split_text@(match:"\n+",include_empty:false) + length
