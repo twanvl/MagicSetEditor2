@@ -20,6 +20,10 @@ So for example where @break_text@ returns @["a","b","c"]@, @filter_text@ would r
 In fact, @filter_text@ could be implemented as
 > filter_text := { for part in break_text() do part }
 
+--Split vs. break--
+
+The function @split_text@ does the opposite of @break_text@, keeping the parts between the regular expression matches, instead of the matching text itself.
+
 --Parameters--
 ! Parameter	Type			Description
 | @input@	[[type:string]]		String to replace in.
@@ -38,4 +42,4 @@ In fact, @filter_text@ could be implemented as
 
 --See also--
 | [[fun:filter_text]]		Keep only the text matching a regular expression.
-
+| [[fun:split_text]]		Split text into parts separated by a regular expression.

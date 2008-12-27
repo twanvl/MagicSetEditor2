@@ -1,0 +1,41 @@
+Function: split_text
+
+DOC_MSE_VERSION: since 0.3.8
+
+--Usage--
+> split_text(some_string, match: regular expression, in_context: regular expression)
+
+Split text by keeping the parts between separators matching a regular expression.
+The function returns a [[type:list]] of parts.
+
+When the @split_text@ is used many times with the same @match@ or @in_context@ values it is more efficient to declare these as default arguments:
+> my_break := split_text@(match: ",")
+> my_break("a,b,c") # called many times
+This way the regular expression is only compiled once.
+
+--Split vs. break--
+
+The function @break_text@ does the opposite of @split_text@, keeping the parts mathing the regular expression, instead of the parts between it.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		String to replace in.
+| @match@	[[type:regex]]		Regular expression to match.
+| @include_empty@	[[type:boolean]] (default: @true@)	If set to @false@, remove all empty parts
+
+--Examples--
+> split_text(match: ",", "ab,cd,,ef")                       ==  ["ab","cd","","ef"]
+> split_text(match: ",", "ab,cd,,ef", include_empty:false)  ==  ["ab","cd","ef"]
+> split_text(match: "a", "banana")  ==  ["b","n","n",""]
+> break_text(match: "a", "banana")  ==  ["a","a","a"]
+
+--See also--
+| [[fun:break_text]]		Break text into parts each matching a regular expression.
+
+For working with comma separated lists, such as those from multiple choice fields, there are special functions:
+| [[fun:chosen]]			Is the given choice selected in a multiple choice value?
+| [[fun:count_chosen]]			Count then number of choices selected in a multiple choice value.
+| [[fun:require_choice]]		Require that at least one of the given choices is selected.
+| [[fun:exclusive_choice]]		Require that at most one of the given choices is selected.
+| [[fun:require_exclusive_choice]]	Require that exactly one of the given choices is selected.
+| [[fun:remove_choice]]			Remove the given choices from a multiple choice value.

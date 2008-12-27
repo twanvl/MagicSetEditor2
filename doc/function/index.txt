@@ -28,6 +28,7 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:replace]]		Replace text matching a regular expression.
 | [[fun:filter_text]]		Keep only the text matching a regular expression.
 | [[fun:break_text]]		Break text into parts each matching a regular expression.
+| [[fun:split_text]]		Split text into parts separated by a regular expression.
 | [[fun:sort_text]]		Sort the letters in a string using a custom order.
 | [[fun:contains]]		Does a string contain another one?
 | [[fun:match]]			Does a string match a regular expression?
