@@ -187,7 +187,7 @@ void GalleryList::onLeftDown(wxMouseEvent& ev) {
 		int x = ev.GetX() - pos.x;
 		int y = ev.GetY() - pos.y;
 		size_t subcolumn = active_subcolumn;
-		for (size_t j = 0 ; subcolumns.size() ; ++j) {
+		for (size_t j = 0 ; j < subcolumns.size() ; ++j) {
 			SubColumn& col = subcolumns[j];
 			if (x >= col.offset.x && y >= col.offset.y && x < col.size.x + col.offset.x && y < col.size.y + col.offset.y) {
 				// clicked on this column
