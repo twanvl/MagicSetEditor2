@@ -29,6 +29,12 @@
 
 DECLARE_TYPEOF_COLLECTION(AddCardsScriptP);
 
+#ifdef EVT_TOOL_DROPDOWN
+	// This is only available after patching wx or in version 2.10
+	// see http://trac.wxwidgets.org/ticket/8556
+	#define HAVE_TOOLBAR_DROPDOWN_MENU 1
+#endif
+
 // ----------------------------------------------------------------------------- : CardsPanel
 
 CardsPanel::CardsPanel(Window* parent, int id)
@@ -98,6 +104,8 @@ CardsPanel::CardsPanel(Window* parent, int id)
 		menuFormat->AppendSeparator();
 		insertSymbolMenu = new wxMenuItem(menuFormat, ID_INSERT_SYMBOL, _MENU_("insert symbol"));
 		menuFormat->Append(insertSymbolMenu);
+	
+	toolAddCard = nullptr;
 }
 
 void CardsPanel::updateNotesPosition() {
@@ -147,20 +155,35 @@ void CardsPanel::onChangeSet() {
 	
 	// change insertManyCardsMenu
 	delete insertManyCardsMenu->GetSubMenu();
-	if (!set->game->add_cards_scripts.empty()) {
-		// create menu for add_cards_scripts
-		int id = ID_ADD_CARDS_MENU_MIN;
-		IconMenu* cards_scripts_menu = new IconMenu;
-		FOR_EACH(cs, set->game->add_cards_scripts) {
-			cards_scripts_menu->Append(id++, cs->name, cs->description);
-		}
-		insertManyCardsMenu->SetSubMenu(cards_scripts_menu);
-	} else {
-		insertManyCardsMenu->SetSubMenu(nullptr);
-	}
+	insertManyCardsMenu->SetSubMenu(makeAddCardsSubmenu(false));
 	// re-add the menu
 	menuCard->Remove(ID_CARD_ADD_MULT);
 	((wxMenu*)menuCard)->Insert(4,insertManyCardsMenu); // HACK: the position is hardcoded
+	// also for the toolbar dropdown menu
+	#if HAVE_TOOLBAR_DROPDOWN_MENU
+		if (toolAddCard) {
+			toolAddCard->SetDropdownMenu(makeAddCardsSubmenu(true));
+		}
+	#endif
+}
+
+wxMenu* CardsPanel::makeAddCardsSubmenu(bool add_single_card_option) {
+	IconMenu* cards_scripts_menu = nullptr;
+	// default item?
+	if (add_single_card_option) {
+		cards_scripts_menu = new IconMenu;
+		cards_scripts_menu->Append(ID_CARD_ADD, _("card_add"), _MENU_("add card"), _HELP_("add card"));
+		cards_scripts_menu->AppendSeparator();
+	}
+	// create menu for add_cards_scripts
+	if (set && set->game && !set->game->add_cards_scripts.empty()) {
+		int id = ID_ADD_CARDS_MENU_MIN;
+		if (!cards_scripts_menu) cards_scripts_menu = new IconMenu;
+		FOR_EACH(cs, set->game->add_cards_scripts) {
+			cards_scripts_menu->Append(id++, cs->name, cs->description);
+		}
+	}
+	return cards_scripts_menu;
 }
 
 // ----------------------------------------------------------------------------- : UI
@@ -172,10 +195,25 @@ void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->AddTool(ID_FORMAT_SYMBOL,	_(""), load_resource_tool_image(_("symbol")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("symbols"),		_HELP_("symbols"));
 	tb->AddTool(ID_FORMAT_REMINDER,	_(""), load_resource_tool_image(_("reminder")),		wxNullBitmap, wxITEM_CHECK, _TOOLTIP_("reminder text"),	_HELP_("reminder text"));
 	tb->AddSeparator();
-	tb->AddTool(ID_CARD_ADD,		_(""), load_resource_tool_image(_("card_add")),		wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("add card"),		_HELP_("add card"));
+	#if HAVE_TOOLBAR_DROPDOWN_MENU
+		toolAddCard = tb->AddTool(ID_CARD_ADD,		_(""), load_resource_tool_image(_("card_add")),		wxNullBitmap, wxITEM_DROPDOWN,_TOOLTIP_("add card"),		_HELP_("add card"));
+		toolAddCard->SetDropdownMenu(makeAddCardsSubmenu(true));
+	#else
+		tb->AddTool(ID_CARD_ADD,		_(""), load_resource_tool_image(_("card_add")),		wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("add card"),		_HELP_("add card"));
+	#endif
 	tb->AddTool(ID_CARD_REMOVE,		_(""), load_resource_tool_image(_("card_del")),		wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("remove card"),	_HELP_("remove card"));
 	tb->AddSeparator();
-	tb->AddTool(ID_CARD_ROTATE,		_(""), load_resource_tool_image(_("card_rotate")),	wxNullBitmap,wxITEM_NORMAL, _TOOLTIP_("rotate card"),	_HELP_("rotate card"));
+	#if HAVE_TOOLBAR_DROPDOWN_MENU
+		wxToolBarToolBase* rot = tb->AddTool(ID_CARD_ROTATE,		_(""), load_resource_tool_image(_("card_rotate")),	wxNullBitmap, wxITEM_DROPDOWN, _TOOLTIP_("rotate card"),	_HELP_("rotate card"));
+		IconMenu* menuRotate = new IconMenu();
+			menuRotate->Append(ID_CARD_ROTATE_0,		_("card_rotate_0"),		_MENU_("rotate 0"),		_HELP_("rotate 0"),		wxITEM_CHECK);
+			menuRotate->Append(ID_CARD_ROTATE_270,		_("card_rotate_270"),	_MENU_("rotate 270"),	_HELP_("rotate 270"),	wxITEM_CHECK);
+			menuRotate->Append(ID_CARD_ROTATE_90,		_("card_rotate_90"),	_MENU_("rotate 90"),	_HELP_("rotate 90"),	wxITEM_CHECK);
+			menuRotate->Append(ID_CARD_ROTATE_180,		_("card_rotate_180"),	_MENU_("rotate 180"),	_HELP_("rotate 180"),	wxITEM_CHECK);
+		rot->SetDropdownMenu(menuRotate);
+	#else
+		tb->AddTool(ID_CARD_ROTATE,		_(""), load_resource_tool_image(_("card_rotate")),	wxNullBitmap,wxITEM_NORMAL, _TOOLTIP_("rotate card"),	_HELP_("rotate card"));
+	#endif
 //%	tb->AddSeparator();
 //%	if (!filter) filter = new wxTextCtrl(tb, wxID_ANY, _(""), wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
 //%	tb->AddControl(filter);
@@ -202,6 +240,7 @@ void CardsPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	// Menus
 	mb->Remove(3);
 	mb->Remove(2);
+	toolAddCard = nullptr;
 }
 
 void CardsPanel::onUpdateUI(wxUpdateUIEvent& ev) {

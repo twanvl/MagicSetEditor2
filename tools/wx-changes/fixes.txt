@@ -150,3 +150,9 @@ new:
             // Under MicroWindows we pass the HFONT as well
 
 // -----------------------------------------------------------------------------
+
+purpose: Add support for dropdown arrows in wxToolBar
+patch: apply http://trac.wxwidgets.org/ticket/8556
+       should be in 2.10 and HEAD already
+
+// -----------------------------------------------------------------------------
