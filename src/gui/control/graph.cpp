@@ -578,14 +578,16 @@ void ScatterGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer lay
 			int y = 0;
 			FOR_EACH_CONST(g2, axis2.groups) {
 				UInt value = values[i++];
-				Color color = lerp(fg, lerp(g1.color, g2.color, 0.5 - (axis1.auto_color == AUTO_COLOR_NO ? 0.35 : 0.0) + (axis2.auto_color == AUTO_COLOR_NO ? 0.35 : 0.0)), 0.5 + (axis1.auto_color == AUTO_COLOR_NO || axis2.auto_color == AUTO_COLOR_NO ? 0.5 : 0.0));
-				bool active = !(cur1 == -1 && cur2 == -1) && (x == cur1 || cur1 == -1) && (y == cur2 || cur2 == -1);
-				dc.SetPen(active ? fg : lerp(fg,color,0.5));
-				dc.SetBrush(color);
-				double radius = floor(scale(value) * step - 0.5) * 2 + 1; // always odd
-				double xx = rect.left() + (x+0.5) * size.width + 0.5;
-				double yy = rect.bottom() - (y+0.5) * size.height + 0.5;
-				dc.DrawEllipse(RealPoint(xx,yy),RealSize(radius,radius));
+				if (value > 0) {
+					Color color = lerp(fg, lerp(g1.color, g2.color, 0.5 - (axis1.auto_color == AUTO_COLOR_NO ? 0.35 : 0.0) + (axis2.auto_color == AUTO_COLOR_NO ? 0.35 : 0.0)), 0.5 + (axis1.auto_color == AUTO_COLOR_NO || axis2.auto_color == AUTO_COLOR_NO ? 0.5 : 0.0));
+					bool active = !(cur1 == -1 && cur2 == -1) && (x == cur1 || cur1 == -1) && (y == cur2 || cur2 == -1);
+					dc.SetPen(active ? fg : lerp(fg,color,0.5));
+					dc.SetBrush(color);
+					double radius = floor(scale(value) * step - 0.5) * 2 + 1; // always odd
+					double xx = rect.left() + (x+0.5) * size.width + 0.5;
+					double yy = rect.bottom() - (y+0.5) * size.height + 0.5;
+					dc.DrawEllipse(RealPoint(xx,yy),RealSize(radius,radius));
+				}
 				++y;
 			}
 			++x;
@@ -627,7 +629,7 @@ void ScatterGraph::setData(const GraphDataP& d) {
 	// find maximum (x)
 	size_t n1 = axis1_data().groups.size();
 	size_t n2 = axis2_data().groups.size();
-	double allow_overlap_x = axis1_data().numeric ? 0.85 : 1;
+	double allow_overlap_x = axis1_data().numeric ? 0.9 : 1; // it is okay if we get a bit of a blob on a numeric axis
 	max_value_x = 0;
 	for (size_t y = 0 ; y < n2 ; ++y) {
 		max_value_x = max(max_value_x, 2*scale(values[y])); // left border
@@ -638,7 +640,7 @@ void ScatterGraph::setData(const GraphDataP& d) {
 		max_value_x = max(max_value_x, 2*scale(values[(n1-1)*n2+y])); // right border
 	}
 	// find maximum (y)
-	double allow_overlap_y = axis2_data().numeric ? 0.85 : 1;
+	double allow_overlap_y = axis2_data().numeric ? 0.9 : 1;
 	max_value_y = 0;
 	for (size_t x = 0 ; x < n1 ; ++x) {
 		max_value_y = max(max_value_y, 2*scale(values[x*n2])); // top border
@@ -673,7 +675,6 @@ void ScatterPieGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer 
 		int cur1 = this->axis1 < current.size() ? current[this->axis1] : -1;
 		int cur2 = this->axis2 < current.size() ? current[this->axis2] : -1;
 		RealSize size(rect.width / axis1.groups.size(), rect.height / axis2.groups.size()); // size for a single cell
-		//%%double step = min(size.width, size.height) / scale(max_value) / 2.01;
 		double step = min(size.width / max_value_x, size.height / max_value_y) * 0.99;
 		// Draw pies
 		Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
