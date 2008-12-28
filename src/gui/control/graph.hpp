@@ -212,7 +212,9 @@ class ScatterGraph : public Graph2D {
 	virtual bool findItem(const RealPoint& pos, const RealRect& rect, bool tight, vector<int>& out) const;
 	virtual void setData(const GraphDataP& d);
   protected:
-	UInt max_value; ///< highest value
+	UInt max_value;
+	double max_value_x, max_value_y; ///< highest sum of two adjacent scaled values (radii)
+	static double scale(double x); ///< nonlinear scaling
 };
 
 /// A scatter plot with an extra dimension

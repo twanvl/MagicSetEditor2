@@ -539,6 +539,8 @@ int PieGraph::findItem(const RealPoint& pos, const RealRect& rect, bool tight) c
 
 // ----------------------------------------------------------------------------- : Scatter Plot
 
+inline double lerp(double a, double b, double t) { return a + t * (b-a); }
+
 void ScatterGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const {
 	if (!data || data->axes.size() <= max(axis1,axis2)) return;
 	// Rectangle for drawing
@@ -548,7 +550,8 @@ void ScatterGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer lay
 	int cur1 = this->axis1 < current.size() ? current[this->axis1] : -1;
 	int cur2 = this->axis2 < current.size() ? current[this->axis2] : -1;
 	RealSize size(rect.width / axis1.groups.size(), rect.height / axis2.groups.size()); // size for a single cell
-	double step = min(size.width, size.height) / sqrt((double)max_value) / 2.01;
+	// size increments:
+	double step = min(size.width / max_value_x, size.height / max_value_y) * 0.99;
 	// Draw
 	if (layer == LAYER_SELECTION) {
 		dc.SetPen(*wxTRANSPARENT_PEN);
@@ -557,7 +560,7 @@ void ScatterGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer lay
 			UInt value = values[cur1 * axis2.groups.size() + cur2];
 			if (value) {
 				dc.SetBrush(lerp(bg,lerp(axis1.groups[cur1].color, axis2.groups[cur2].color, 0.5),0.5));
-				dc.DrawCircle(RealPoint(rect.left() + cur1 * size.width, rect.bottom() - (cur2+1) * size.height) + size/2, sqrt((double)value) * step + 5);
+				dc.DrawCircle(RealPoint(rect.left() + cur1 * size.width, rect.bottom() - (cur2+1) * size.height) + size/2, scale(value) * step + 5);
 			}
 		} else if (cur1 >= 0) {
 			dc.SetBrush(lerp(bg,axis1.groups[cur1].color,0.3));
@@ -579,15 +582,21 @@ void ScatterGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer lay
 				bool active = !(cur1 == -1 && cur2 == -1) && (x == cur1 || cur1 == -1) && (y == cur2 || cur2 == -1);
 				dc.SetPen(active ? fg : lerp(fg,color,0.5));
 				dc.SetBrush(color);
-				double xx = rect.left()   + x     * size.width;
-				double yy = rect.bottom() - (y+1) * size.height;
-				dc.DrawCircle(RealPoint(xx,yy) + size/2, sqrt((double)value) * step);
+				double radius = floor(scale(value) * step - 0.5) * 2 + 1; // always odd
+				double xx = rect.left() + (x+0.5) * size.width + 0.5;
+				double yy = rect.bottom() - (y+0.5) * size.height + 0.5;
+				dc.DrawEllipse(RealPoint(xx,yy),RealSize(radius,radius));
 				++y;
 			}
 			++x;
 		}
 	}
 }
+
+double ScatterGraph::scale(double x) {
+	return pow(x, 0.75);
+}
+
 bool ScatterGraph::findItem(const RealPoint& pos, const RealRect& rect, bool tight, vector<int>& out) const {
 	if (!data || data->axes.size() <= max(axis1,axis2)) return false;
 	// clicked item
@@ -606,12 +615,38 @@ bool ScatterGraph::findItem(const RealPoint& pos, const RealRect& rect, bool tig
 	out.at(this->axis2) = row;
 	return true;
 }
+
 void ScatterGraph::setData(const GraphDataP& d) {
 	Graph2D::setData(d);
+	if (values.empty()) return;
 	// find maximum
 	max_value = 0;
 	FOR_EACH(v, values) {
-		max_value = max(max_value, v);
+		max_value = max(max_value,v);
+	}
+	// find maximum (x)
+	size_t n1 = axis1_data().groups.size();
+	size_t n2 = axis2_data().groups.size();
+	double allow_overlap_x = axis1_data().numeric ? 0.85 : 1;
+	max_value_x = 0;
+	for (size_t y = 0 ; y < n2 ; ++y) {
+		max_value_x = max(max_value_x, 2*scale(values[y])); // left border
+		for (size_t x = 0 ; x+1 < n1 ; ++x) {
+			double sum_dist = scale(values[x*n2+y]) + scale(values[(x+1)*n2+y]);
+			max_value_x = max(max_value_x, allow_overlap_x * sum_dist); // between two
+		}
+		max_value_x = max(max_value_x, 2*scale(values[(n1-1)*n2+y])); // right border
+	}
+	// find maximum (y)
+	double allow_overlap_y = axis2_data().numeric ? 0.85 : 1;
+	max_value_y = 0;
+	for (size_t x = 0 ; x < n1 ; ++x) {
+		max_value_y = max(max_value_y, 2*scale(values[x*n2])); // top border
+		for (size_t y = 0 ; y+1 < n2 ; ++y) {
+			double sum_dist = scale(values[x*n2+y]) + scale(values[x*n2+(y+1)]);
+			max_value_y = max(max_value_y, allow_overlap_y * sum_dist); // between two
+		}
+		max_value_y = max(max_value_y, 2*scale(values[x*n2+(n2-1)])); // bottom border
 	}
 }
 
@@ -638,7 +673,8 @@ void ScatterPieGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer 
 		int cur1 = this->axis1 < current.size() ? current[this->axis1] : -1;
 		int cur2 = this->axis2 < current.size() ? current[this->axis2] : -1;
 		RealSize size(rect.width / axis1.groups.size(), rect.height / axis2.groups.size()); // size for a single cell
-		double step = min(size.width, size.height) / sqrt((double)max_value) / 2.01;
+		//%%double step = min(size.width, size.height) / scale(max_value) / 2.01;
+		double step = min(size.width / max_value_x, size.height / max_value_y) * 0.99;
 		// Draw pies
 		Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 		dc.SetPen(fg);
@@ -646,7 +682,7 @@ void ScatterPieGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer 
 			for (size_t y = 0 ; y < axis2.groups.size() ; ++y) {
 				size_t i = x * axis2.groups.size() + y;
 				UInt value = values[i];
-				double radius = floor(sqrt((double)value) * step * 2);
+				double radius = floor(scale(value) * step - 0.5) * 2 + 1; // always odd
 				bool active = !(cur1 == -1 && cur2 == -1) && ((int)x == cur1 || cur1 == -1) && ((int)y == cur2 || cur2 == -1);
 				RealSize radius_s(radius,radius);
 				RealPoint center(rect.left() + (x+0.5) * size.width + 0.5, rect.bottom() - (y+0.5) * size.height + 0.5);

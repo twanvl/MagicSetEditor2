@@ -181,6 +181,7 @@ class RotatedDC : public Rotation {
 	void DrawRectangle(const RealRect& r);
 	void DrawRoundedRectangle(const RealRect& r, double radius);
 	void DrawCircle(const RealPoint& center, double radius);
+	void DrawEllipse(const RealPoint& center, const RealSize& size);
 	/// Draw an arc of an ellipse, angles are in radians
 	void DrawEllipticArc(const RealPoint& center, const RealSize& size, double start, double end);
 	/// Draw spokes of an ellipse

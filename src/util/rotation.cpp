@@ -293,6 +293,11 @@ void RotatedDC::DrawCircle(const RealPoint& center, double radius) {
 	dc.DrawCircle(p.x + 1, p.y + 1, int(trS(radius)));
 }
 
+void RotatedDC::DrawEllipse(const RealPoint& center, const RealSize& size) {
+	wxPoint c_ext = tr(center - size/2);
+	wxSize  s_ext = trSizeToBB(size);
+	dc.DrawEllipse(c_ext.x, c_ext.y, s_ext.x, s_ext.y);
+}
 void RotatedDC::DrawEllipticArc(const RealPoint& center, const RealSize& size, double start, double end) {
 	wxPoint c_ext = tr(center - size/2);
 	wxSize  s_ext = trSizeToBB(size);
