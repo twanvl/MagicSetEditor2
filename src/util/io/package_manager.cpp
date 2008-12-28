@@ -120,6 +120,12 @@ InputStreamP PackageManager::openFileFromPackage(Packaged*& package, const Strin
 	throw FileNotFoundError(name, _("No package name specified, use '/package/filename'"));
 }
 
+String PackageManager::getDictionaryDir(bool l) const {
+	String dir = (l ? local : global).getDirectory();
+	if (dir.empty()) return wxEmptyString;
+	else             return dir + _("/dictionaries/");
+}
+
 // ----------------------------------------------------------------------------- : PackageManager : on disk
 
 bool PackageManager::checkDependency(const PackageDependency& dep, bool report_errors) {

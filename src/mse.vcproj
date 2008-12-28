@@ -43,7 +43,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)d.lib wxmsw$(WX_VERSION)d_core.lib wxjpegd.lib wxpngd.lib wxtiffd.lib wxzlibd.lib wxregexd.lib wxbase$(WX_VERSION)d_net.lib wxmsw$(WX_VERSION)d_html.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)d.lib wxmsw$(WX_VERSION)d_core.lib wxjpegd.lib wxpngd.lib wxtiffd.lib wxzlibd.lib wxregexd.lib wxbase$(WX_VERSION)d_net.lib wxmsw$(WX_VERSION)d_html.lib libhunspelld.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libcd.lib,libcid.lib"
@@ -116,7 +116,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION).lib wxmsw$(WX_VERSION)_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregex.lib wxbase$(WX_VERSION)_net.lib wxmsw$(WX_VERSION)_html.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION).lib wxmsw$(WX_VERSION)_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregex.lib wxbase$(WX_VERSION)_net.lib wxmsw$(WX_VERSION)_html.lib libhunspell.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -187,7 +187,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)ud.lib wxmsw$(WX_VERSION)ud_core.lib wxjpegd.lib wxpngd.lib wxtiffd.lib wxzlibd.lib wxregexud.lib wxbase$(WX_VERSION)ud_net.lib wxmsw$(WX_VERSION)ud_html.lib libboost_regex-vc71-mt-gd-1_36.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)ud.lib wxmsw$(WX_VERSION)ud_core.lib wxjpegd.lib wxpngd.lib wxtiffd.lib wxzlibd.lib wxregexud.lib wxbase$(WX_VERSION)ud_net.lib wxmsw$(WX_VERSION)ud_html.lib libboost_regex-vc71-mt-gd-1_36.lib libhunspelld.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="2"
 				IgnoreDefaultLibraryNames="libcd.lib,libcid.lib"
@@ -263,7 +263,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)u.lib wxmsw$(WX_VERSION)u_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregexu.lib wxbase$(WX_VERSION)u_net.lib wxmsw$(WX_VERSION)u_html.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)u.lib wxmsw$(WX_VERSION)u_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregexu.lib wxbase$(WX_VERSION)u_net.lib wxmsw$(WX_VERSION)u_html.lib libhunspell.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -420,7 +420,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)u.lib wxmsw$(WX_VERSION)u_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregexu.lib wxbase$(WX_VERSION)u_net.lib wxmsw$(WX_VERSION)u_html.lib libboost_regex-vc71-mt-s.lib"
+				AdditionalDependencies="rpcrt4.lib wsock32.lib comctl32.lib wxbase$(WX_VERSION)u.lib wxmsw$(WX_VERSION)u_core.lib wxjpeg.lib wxpng.lib wxtiff.lib wxzlib.lib wxregexu.lib wxbase$(WX_VERSION)u_net.lib wxmsw$(WX_VERSION)u_html.lib libboost_regex-vc71-mt-s.lib libhunspell.lib"
 				OutputFile="$(OutDir)/mse.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
@@ -2305,6 +2305,12 @@
 					RelativePath=".\util\regex.hpp">
 				</File>
 				<File
+					RelativePath=".\util\spell_checker.cpp">
+				</File>
+				<File
+					RelativePath=".\util\spell_checker.hpp">
+				</File>
+				<File
 					RelativePath=".\util\vector2d.hpp">
 				</File>
 				<File
@@ -2740,6 +2746,9 @@
 				</File>
 				<File
 					RelativePath=".\script\functions\regex.cpp">
+				</File>
+				<File
+					RelativePath=".\script\functions\spelling.cpp">
 				</File>
 				<File
 					RelativePath=".\script\functions\util.hpp">
@@ -3936,6 +3945,13 @@
 			</File>
 			<File
 				RelativePath=".\cli\text_io_handler.hpp">
+			</File>
+		</Filter>
+		<Filter
+			Name="tests"
+			Filter="">
+			<File
+				RelativePath="..\data\magic-test.mse-style\script-language-tests">
 			</File>
 		</Filter>
 		<File

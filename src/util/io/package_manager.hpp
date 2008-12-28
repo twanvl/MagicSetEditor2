@@ -70,6 +70,9 @@ class PackageDirectory {
 	/// Does a package with the given name exist?
 	bool exists(const String& name) const;
 	
+	/// Get the package directory
+	inline String getDirectory() const { return directory; }
+	
 	/// Find all packages that match a filename pattern (using wxFindFirst)
 	String findFirstMatching(const String& pattern) const;
 	
@@ -160,6 +163,11 @@ class PackageManager {
 	
 	/// Install/uninstall a package, returns success
 	bool install(const InstallablePackage& package);
+	
+	// --------------------------------------------------- : Other package like things
+	
+	/// Get the directory for dictionary files
+	String getDictionaryDir(bool local) const;
 	
 	// --------------------------------------------------- : Packages on a server
 	

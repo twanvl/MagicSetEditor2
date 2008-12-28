@@ -27,6 +27,7 @@ Variable string_to_variable(const String& s) {
 	if (it == variables.end()) {
 		#ifdef _DEBUG
 			variable_names.push_back(s);
+			assert(s == cannocial_name_form(s)); // only use cannocial names
 		#endif
 		Variable v = (Variable)variables.size();
 		variables.insert(make_pair(s,v));
