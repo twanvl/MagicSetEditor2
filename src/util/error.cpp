@@ -9,6 +9,10 @@
 #include <util/prec.hpp>
 #include <util/error.hpp>
 #include <cli/text_io_handler.hpp>
+#include <cli/text_io_handler.hpp>
+#if wxUSE_STACKWALKER
+	#include <wx/stackwalk.h>
+#endif
 
 DECLARE_TYPEOF_COLLECTION(ScriptParseError);
 
@@ -41,6 +45,85 @@ Error::~Error() {}
 
 String Error::what() const {
 	return message;
+}
+
+
+
+// Stolen from wx/appbase.cpp
+// we can't just call it, because of static linkage
+#if wxUSE_STACKWALKER
+String get_stack_trace() {
+    wxString stackTrace;
+
+    class StackDumper : public wxStackWalker {
+      public:
+        StackDumper() {}
+
+        const wxString& GetStackTrace() const { return m_stackTrace; }
+
+      protected:
+        virtual void OnStackFrame(const wxStackFrame& frame) {
+            m_stackTrace << wxString::Format(_("[%02d] "), frame.GetLevel());
+
+            wxString name = frame.GetName();
+            if ( !name.empty() ) {
+                m_stackTrace << wxString::Format(_("%-40s"), name.c_str());
+            } else {
+                m_stackTrace << wxString::Format(
+                                    _("%p"),
+                                    (void*)frame.GetAddress()
+                                );
+            }
+
+            if ( frame.HasSourceLocation() ) {
+                m_stackTrace << _('\t')
+                             << frame.GetFileName()
+                             << _(':')
+                             << (unsigned int)frame.GetLine();
+            }
+
+            m_stackTrace << _('\n');
+        }
+
+      private:
+        wxString m_stackTrace;
+    };
+
+    StackDumper dump;
+    dump.Walk(2); // don't show InternalError() call itself
+    stackTrace = dump.GetStackTrace();
+
+    // don't show more than maxLines or we could get a dialog too tall to be
+    // shown on screen: 20 should be ok everywhere as even with 15 pixel high
+    // characters it is still only 300 pixels...
+    static const int maxLines = 20;
+    const int count = stackTrace.Freq(wxT('\n'));
+    for ( int i = 0; i < count - maxLines; i++ )
+        stackTrace = stackTrace.BeforeLast(wxT('\n'));
+
+    return stackTrace;
+}
+#else
+String get_stack_trace() {
+	return _(""); // not supported
+}
+#endif // wxUSE_STACKWALKER
+
+InternalError::InternalError(const String& str)
+	: Error(
+		_("An internal error occured:\n\n") +
+		str + _("\n")
+		_("Please save your work (use 'save as' to so you don't overwrite things)\n")
+		_("and restart Magic Set Editor.\n\n")
+		_("You should leave a bug report on http://magicseteditor.sourceforge.net/\n")
+		_("Press Ctrl+C to copy this message to the clipboard.")
+	)
+{
+	// add a stacktrace
+	const String stack_trace = get_stack_trace();
+	if (!stack_trace.empty()) {
+		message << _("\n\nCall stack:\n") << stack_trace;
+	}
 }
 
 // ----------------------------------------------------------------------------- : Parse errors

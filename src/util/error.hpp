@@ -27,7 +27,7 @@ class Error {
 	/// Return the error message
 	virtual String what() const; 
 	
-  private:
+  protected:
 	String message; ///< The error message
 };
 
@@ -35,9 +35,7 @@ class Error {
 /// Internal errors
 class InternalError : public Error {
   public:
-	inline InternalError(const String& str)
-		: Error(_ERROR_1_("internal error", str.c_str()))
-	{}
+	InternalError(const String& str);
 };
 
 // ----------------------------------------------------------------------------- : File errors
@@ -147,6 +145,9 @@ void handle_warning(const String& w, bool now = true);
 /// Handle errors and warnings that were not handled immediatly in handleError
 /** Should be called repeatedly (e.g. in an onIdle event handler) */
 void handle_pending_errors();
+
+/// Make a stack trace for use in InternalErrors
+String get_stack_trace();
 
 /// Catch all types of errors, and pass then to handle_error
 #define CATCH_ALL_ERRORS(handle_now)																\
