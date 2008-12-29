@@ -15,14 +15,34 @@
 
 // ----------------------------------------------------------------------------- : Functions
 
-void check_word(const String& input, String& out, size_t start, size_t end, SpellChecker& checker, bool must_be_empty) {
-	if (start >= end) return;
+bool spelled_correctly(const String& input, size_t start, size_t end, SpellChecker& checker) {
+	// untag
 	String word = untag(input.substr(start,end-start));
-	// TODO: handle keywords and cardname references
-	bool error = !word.empty() && (must_be_empty || !checker.spell_with_punctuation(word));
-	if (error) out += _("<error-spelling>");
+	if (word.empty()) return true;
+	// remove punctuation
+	size_t start_u = 0, end_u = String::npos;
+	trim_punctuation(word, start_u, end_u);
+	if (start_u >= end_u) {
+		// punctuation only, but not empty => error
+		return false;
+	}
+	// find the tagged text without punctuation
+	size_t start2 = untagged_to_index(input, start_u, true, start);
+	size_t end2   = untagged_to_index(input, end_u,   true, start);
+	if (in_tag(input,_("<sym"),start2,end2) != String::npos) {
+		// symbols are always spelled correctly
+		return true;
+	}
+	// run through spellchecker
+	return checker.spell(word.substr(start_u,end_u));
+}
+
+void check_word(const String& input, String& out, size_t start, size_t end, SpellChecker& checker) {
+	if (start >= end) return;
+	bool good = spelled_correctly(input, start, end, checker);
+	if (!good) out += _("<error-spelling>");
 	out.append(input, start, end-start);
-	if (error) out += _("</error-spelling>");
+	if (!good) out += _("</error-spelling>");
 }
 
 SCRIPT_FUNCTION(check_spelling) {
@@ -37,37 +57,32 @@ SCRIPT_FUNCTION(check_spelling) {
 	input = remove_tag(input, _("<error-spelling"));
 	// now walk over the words in the input, and mark misspellings
 	String result;
-	size_t word_start = 0, pos = 0;
-	bool must_be_empty = false; // must this word be empty?
+	size_t word_start = 0, word_end = 0, pos = 0;
 	while (pos < input.size()) {
 		Char c = input.GetChar(pos);
 		if (c == _('<')) {
-			if (is_substr(input,pos,_("<sym"))) {
-				// before symbols should be empty
-				check_word(input,result, word_start,pos, checker, true);
-				// don't spellcheck symbols
-				word_start = pos;
-				pos = min(input.size(), match_close_tag_end(input,pos));
-				result.append(input, word_start, pos-word_start);
-				word_start = pos;
-				must_be_empty = true; // need a space after symbols
+			if (word_start == pos) {
+				// prefer to place word start inside tags
+				pos = skip_tag(input,pos);
+				result.append(input, word_start, pos - word_start);
+				word_end = word_start = pos;
 			} else {
 				pos = skip_tag(input,pos);
 			}
-		} else if (isSpace(c)) {
+		} else if (isSpace(c) || c == EM_DASH || c == EN_DASH) {
 			// word boundary -> check word
-			check_word(input,result, word_start,pos, checker, must_be_empty);
+			check_word(input, result, word_start, word_end, checker);
+			// non-word characters
+			result.append(input, word_end, pos - word_end + 1);
 			// next
-			result += c;
-			pos++;
-			word_start = pos;
-			must_be_empty = false;
+			word_start = word_end = pos = pos + 1;
 		} else {
-			pos++;
+			word_end = pos = pos + 1;
 		}
 	}
 	// last word
-	check_word(input,result, word_start,input.size(), checker, must_be_empty);
+	check_word(input, result, word_start, word_end, checker);
+	result.append(input, word_end, String::npos);
 	// done
 	SCRIPT_RETURN(result);
 }

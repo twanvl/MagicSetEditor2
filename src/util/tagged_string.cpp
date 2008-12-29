@@ -378,8 +378,8 @@ String untag_for_cursor(const String& str) {
 
 // ----------------------------------------------------------------------------- : Untagged position
 
-size_t untagged_to_index(const String& str, size_t pos, bool inside) {
-	size_t i = 0, p = 0;
+size_t untagged_to_index(const String& str, size_t pos, bool inside, size_t start_index) {
+	size_t i = start_index, p = 0;
 	while (i < str.size()) {
 		Char c = str.GetChar(i);
 		if (c == _('<')) {

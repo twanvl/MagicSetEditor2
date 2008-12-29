@@ -8,6 +8,7 @@
 
 #include <util/prec.hpp>
 #include <util/spell_checker.hpp>
+#include <util/string.hpp>
 #include <util/io/package_manager.hpp>
 
 // ----------------------------------------------------------------------------- : Spell checker : construction
@@ -47,10 +48,33 @@ void SpellChecker::destroyAll() {
 
 bool SpellChecker::spell(const String& word) {
 	if (word.empty()) return true; // empty word is okay
+	// fix curly quotes, especially apstrophes
+	String fixed;
+	FOR_EACH_CONST(c,word) {
+		if (c == LEFT_SINGLE_QUOTE || c == RIGHT_SINGLE_QUOTE) {
+			fixed += _('\'');
+		} else if (c == LEFT_DOUBLE_QUOTE || c == RIGHT_DOUBLE_QUOTE) {
+			fixed += _('\"');
+		} else if (c == 0x00C6) {
+			// expand ligatures, TODO: put this in a better place
+			fixed += _("Ae");
+		} else if (c == 0x0132) {
+			fixed += _("IJ");
+		} else if (c == 0x0152) {
+			fixed += _("Oe");
+		} else if (c == 0xFB01) {
+			fixed += _("fi");
+		} else if (c == 0xFB02) {
+			fixed += _("fl");
+		} else {
+			fixed += c;
+		}
+	}
+	// convert encoding
 	#ifdef UNICODE
-		wxCharBuffer str = word.mb_str(encoding);
+		wxCharBuffer str = fixed.mb_str(encoding);
 	#else
-		wxCharBuffer str = word.mb_str(encoding);
+		wxCharBuffer str = fixed.mb_str(encoding);
 	#endif
 	if (*str == '\0') {
 		// If encoding fails we get an empty string, since the word was not empty this can never happen
@@ -60,12 +84,9 @@ bool SpellChecker::spell(const String& word) {
 	return Hunspell::spell(str);
 }
 
-const String word_start = String(_("[({\"\'")) + LEFT_SINGLE_QUOTE + LEFT_DOUBLE_QUOTE;
-const String word_end   = String(_("])}.,;:?!\"\'")) + RIGHT_SINGLE_QUOTE + RIGHT_DOUBLE_QUOTE;
-
 bool SpellChecker::spell_with_punctuation(const String& word) {
-	size_t first = word.find_first_not_of(word_start);
-	size_t last  = word.find_last_not_of(word_end);
-	if (first > last) return false; // just punctuation is incorrect
-	return spell(word.substr(first, last-first+1));
+	size_t start = 0, end = String::npos;
+	trim_punctuation(word, start, end);
+	if (start >= end) return true; // just punctuation is wrong
+	return spell(word.substr(start,end-start));
 }

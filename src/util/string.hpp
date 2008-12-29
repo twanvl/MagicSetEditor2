@@ -136,6 +136,9 @@ String last_word(const String&);
 /// Remove the last word from a string, leaves whitespace before that word
 String strip_last_word(const String&);
 
+/// Trim punctuation at the start/end of a word in the range [start..end)
+void trim_punctuation(const String&, size_t& start, size_t& end);
+
 // ----------------------------------------------------------------------------- : Caseing
 
 /// Make each word in a string start with an upper case character.

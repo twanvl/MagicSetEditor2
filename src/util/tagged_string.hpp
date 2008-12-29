@@ -128,8 +128,10 @@ String untag_for_cursor(const String& str);
 /// Find the tagged position corresponding to the given untagged position.
 /** An untagged position in str is a position in untag(str).
  *  @param inside if inside then it prefers to find positions inside tags (after open tags, before close tags)
+ *  @param start_index is the position to start at in the string,
+ *                     untagged_to_index(s,_,_,i) == untagged_to_index(s.substr(i),_,_)+i
  */
-size_t untagged_to_index(const String& str, size_t pos, bool inside);
+size_t untagged_to_index(const String& str, size_t pos, bool inside, size_t start_index = 0);
 
 /// Find the untagged position corresponding to the given tagged position.
 /** An untagged position in str is a position in untag(str).

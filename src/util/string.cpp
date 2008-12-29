@@ -122,6 +122,15 @@ String strip_last_word(const String& s) {
 	}
 }
 
+const String word_start = String(_("[({\"\'")) + LEFT_SINGLE_QUOTE + LEFT_DOUBLE_QUOTE;
+const String word_end   = String(_("])}.,;:?!\"\'")) + RIGHT_SINGLE_QUOTE + RIGHT_DOUBLE_QUOTE;
+
+void trim_punctuation(const String& str, size_t& start, size_t& end) {
+	start = str.find_first_not_of(word_start, start);
+	end   = str.find_last_not_of(word_end,    min(end,str.size()-1)) + 1;
+	if (start >= end) start = end;
+}
+
 // ----------------------------------------------------------------------------- : Caseing
 
 /// Quick check to see if the substring starting at the given iterator is equal to some given string
