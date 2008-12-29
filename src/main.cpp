@@ -8,6 +8,7 @@
 
 #include <util/prec.hpp>
 #include <util/io/package_manager.hpp>
+#include <util/spell_checker.hpp>
 #include <data/game.hpp>
 #include <data/set.hpp>
 #include <data/settings.hpp>
@@ -258,6 +259,7 @@ int MSE::OnExit() {
 	thumbnail_thread.abortAll();
 	settings.write();
 	package_manager.destroy();
+	SpellChecker::destroyAll();
 	return 0;
 }
 

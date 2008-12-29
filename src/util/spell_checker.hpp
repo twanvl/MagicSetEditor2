@@ -23,7 +23,7 @@ class SpellChecker : public Hunspell, public IntrusivePtrBase<SpellChecker> {
 	/** Note: This is not threadsafe yet */
 	static SpellChecker& get(const String& language);
 	/// Destroy all cached SpellChecker objects
-	static void destroy();
+	static void destroyAll();
 	
 	/// Check the spelling of a single word
 	bool spell(const String& word);

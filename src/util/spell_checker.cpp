@@ -39,7 +39,7 @@ SpellChecker::SpellChecker(const char* aff_path, const char* dic_path)
 	, encoding(String(get_dic_encoding(), IF_UNICODE(wxConvLibc, wxSTRING_MAXLEN)))
 {}
 
-void SpellChecker::destroy() {
+void SpellChecker::destroyAll() {
 	spellers.clear();
 }
 
