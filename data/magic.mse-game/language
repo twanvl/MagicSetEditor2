@@ -4,6 +4,7 @@
 languages := [
 	English: [
 		code              : "en",
+		spellcheck_code   : "en_US",
 		pt_separator      : "/",
 		type_separator    : " — ",
 		subtype_separator : " ",
@@ -17,6 +18,7 @@ languages := [
 	
 	Français: [
 		code              : "fr",
+		spellcheck_code   : "", # TODO: get dictionary
 		pt_separator      : "/",
 		type_separator    : " : "
 		subtype_separator : "<atom-sep> et </atom-sep>",

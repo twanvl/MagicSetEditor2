@@ -322,8 +322,8 @@ mana_context :=
 	    |adds?|pay(ed)?[ ](with|using)
 	    )
 	    ([ ]either)?			 # pay either X or Y
-	    ([ ]<sym[^>]*>[STQXYZIWUBRG0-9/|]+</sym[^>]*>,)* # pay X, Y or Z
-	    ([ ]<sym[^>]*>[STQXYZIWUBRG0-9/|]+</sym[^>]*>[ ](and|or|and/or))* # pay X or Y
+	    ([ ](<sym[^>]*>)?[STQXYZIWUBRG0-9/|]+(</sym[^>]*>)?,)* # pay X, Y or Z
+	    ([ ](<sym[^>]*>)?[STQXYZIWUBRG0-9/|]+(</sym[^>]*>)?[ ](and|or|and/or))* # pay X or Y
 	    [ ]<match> 
 	    ([,.)]|$				# (end of word)
 	    |[ ][^ .,]*$			# still typing...
@@ -343,6 +343,7 @@ text_filter :=
 	# step 1 : remove all automatic tags
 	remove_tag@(tag: "<sym-auto>") +
 	remove_tag@(tag: "<i-auto>")   +
+	remove_tag@(tag: "<error-spelling") +
 	# step 2 : reminder text for keywords
 	expand_keywords@(
 		condition: {
@@ -392,7 +393,7 @@ text_filter :=
 		replace: {"<nosym>" + mana_filter_t() + "</nosym>"} ) +
 	# step 5 : add mana & tap symbols
 	replace@(
-		match: "\b[STQXYZIWUBRG0-9/|]+\b",
+		match: "\\b[STQXYZIWUBRG0-9/|]+\\b",
 		in_context: mana_context,
 		replace: {"<sym-auto>" + mana_filter_t() + "</sym-auto>"} ) +
 	# step 5b : add explict mana symbols
@@ -410,7 +411,9 @@ text_filter :=
 		     + "([[:lower:]])" # match this
 		     + "(?![)])",      # not followed by this
 		replace: { _1 + to_upper(_2) }) +
-	curly_quotes
+	curly_quotes +
+	# step 9 : spellcheck
+	{ check_spelling(language:language().spellcheck_code) }
 
 
 ############################################################## Other boxes
@@ -423,7 +426,9 @@ flavor_text_filter :=
 	# step 2 : surround by <i> tags
 	{ "<i-flavor>" + input + "</i-flavor>" } +
 	# curly quotes
-	curly_quotes
+	curly_quotes +
+	# spellcheck
+	{ check_spelling(language:language().spellcheck_code) }
 	
 # Move the cursor past the separator in the p/t and type boxes
 type_over_pt   := replace@(match:"/$", replace:"")
