@@ -52,6 +52,14 @@ template <typename K, typename V> inline String type_name(const pair<K,V>& p) {
 	return type_name(p.second); // for maps
 }
 
+/// Script code for an object, or anything else we can show
+template <typename T> inline String to_code(const T& v) {
+	return format_string(_("<%s>"),type_name(v));
+}
+template <typename T> inline String to_code(const intrusive_ptr<T>& p) {
+	return type_name(*p.get());
+}
+
 // ----------------------------------------------------------------------------- : Errors
 
 /// A delayed error message.
@@ -113,6 +121,7 @@ ScriptValueP to_script(int);
 class ScriptCollectionBase : public ScriptValue {
   public:
 	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
+	virtual String typeName() const { return _TYPE_("collection"); }
 	virtual String toCode() const;
 };
 
@@ -213,7 +222,6 @@ class ScriptMap : public ScriptValue {
 /// Script value containing a custom collection, returned from script functions
 class ScriptCustomCollection : public ScriptCollectionBase {
   public:
-	virtual String typeName() const { return _TYPE_("collection"); }
 	virtual ScriptValueP getMember(const String& name) const;
 	virtual ScriptValueP getIndex(int index) const;
 	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
@@ -235,11 +243,9 @@ DECLARE_POINTER_TYPE(ScriptCustomCollection);
 // ----------------------------------------------------------------------------- : Collections : concatenation
 
 /// Script value containing the concatenation of two collections
-class ScriptConcatCollection : public ScriptValue {
+class ScriptConcatCollection : public ScriptCollectionBase {
   public:
 	inline ScriptConcatCollection(ScriptValueP a, ScriptValueP b) : a(a), b(b) {}
-	virtual ScriptType type() const { return SCRIPT_COLLECTION; }
-	virtual String typeName() const { return _TYPE_("collection"); }
 	virtual ScriptValueP getMember(const String& name) const;
 	virtual ScriptValueP getIndex(int index) const;
 	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
@@ -269,6 +275,7 @@ class ScriptObject : public ScriptValue {
 	virtual operator int()    const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator int(); }
 	virtual operator bool()   const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator bool(); }
 	virtual operator AColor() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator AColor(); }
+	virtual String toCode()   const { ScriptValueP d = getDefault(); return d ? d->toCode() : to_code(*value); }
 	virtual GeneratedImageP toImage(const ScriptValueP& thisP) const {
 		ScriptValueP d = getDefault(); return d ? d->toImage(d) : ScriptValue::toImage(thisP);
 	}
