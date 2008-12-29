@@ -46,11 +46,22 @@ void SpellChecker::destroyAll() {
 // ----------------------------------------------------------------------------- : Spell checker : use
 
 bool SpellChecker::spell(const String& word) {
-	return Hunspell::spell(word.mb_str(encoding));
+	if (word.empty()) return true; // empty word is okay
+	#ifdef UNICODE
+		wxCharBuffer str = word.mb_str(encoding);
+	#else
+		wxCharBuffer str = word.mb_str(encoding);
+	#endif
+	if (*str == '\0') {
+		// If encoding fails we get an empty string, since the word was not empty this can never happen
+		// words that can't be encoded are not in the dictionary, so they are wrong.
+		return false;
+	}
+	return Hunspell::spell(str);
 }
 
-const String word_start = String(_("[({\"\'"))     + LEFT_SINGLE_QUOTE  + LEFT_DOUBLE_QUOTE;
-const String word_end   = String(_("])}.,;:\"\'")) + RIGHT_SINGLE_QUOTE + RIGHT_DOUBLE_QUOTE;
+const String word_start = String(_("[({\"\'")) + LEFT_SINGLE_QUOTE + LEFT_DOUBLE_QUOTE;
+const String word_end   = String(_("])}.,;:?!\"\'")) + RIGHT_SINGLE_QUOTE + RIGHT_DOUBLE_QUOTE;
 
 bool SpellChecker::spell_with_punctuation(const String& word) {
 	size_t first = word.find_first_not_of(word_start);
