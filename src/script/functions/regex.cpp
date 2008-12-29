@@ -154,7 +154,7 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(filter_text) {
 	while (match->matches(results, input, start, in_context)) {
 		// match, append to result
 		ScriptRegex::Results::const_reference pos = results[0];
-		ret.append(start, pos.second);  // the match
+		ret.append(pos.first, pos.second);  // the match
 		start = pos.second;
 	}
 	SCRIPT_RETURN(ret);
