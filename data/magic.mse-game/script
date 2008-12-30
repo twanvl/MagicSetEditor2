@@ -334,8 +334,17 @@ mana_context :=
 	 |  <param-cost>[ ]*<match></param-cost>	# keyword argument that is declared as cost
 	 |  <param-cost><match>,			# keyword argument that is declared as cost
 	 ";
+
 # truncates the name of legends
 legend_filter := replace@(match:"(, | of | the ).*", replace: "" )
+
+# these are considered a correct 'word' for spellchecking in the text box:
+additional_text_words := match@(match:
+	"(?ix)^(?:                         # match whole word
+	  <atom-[^>]*>.*?</atom-[^>]*>     # cardnames and stuff
+	| [+-]?[0-9X]+ / [+-]?[0-9X]+      # '3/3', '+X/+X'
+	)$")
+
 # the rule text filter
 #  - adds mana symbols
 #  - makes text in parentheses italic
@@ -413,7 +422,11 @@ text_filter :=
 		replace: { _1 + to_upper(_2) }) +
 	curly_quotes +
 	# step 9 : spellcheck
-	{ check_spelling(language:language().spellcheck_code) }
+	{ check_spelling(
+		language: language().spellcheck_code,
+		extra_dictionary: "/magic.mse-game/magic-words",
+		extra_match: additional_text_words
+	)}
 
 
 ############################################################## Other boxes

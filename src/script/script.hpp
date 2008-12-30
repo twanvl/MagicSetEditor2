@@ -136,6 +136,7 @@ enum Variable
 ,	SCRIPT_VAR_styling
 ,	SCRIPT_VAR_value
 ,	SCRIPT_VAR_condition
+,	SCRIPT_VAR_language
 ,	SCRIPT_VAR_CUSTOM_FIRST // other variables start from here
 ,	SCRIPT_VAR_CUSTOM_LOTS = 0xFFFFFF // ensure that sizeof(Variable) is large enough
 };

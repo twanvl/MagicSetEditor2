@@ -22,6 +22,9 @@ class SpellChecker : public Hunspell, public IntrusivePtrBase<SpellChecker> {
 	/// Get a SpellChecker object for the given language.
 	/** Note: This is not threadsafe yet */
 	static SpellChecker& get(const String& language);
+	/// Get a SpellChecker object for the given language and filename
+	/** Note: This is not threadsafe yet */
+	static SpellChecker& get(const String& filename, const String& language);
 	/// Destroy all cached SpellChecker objects
 	static void destroyAll();
 	

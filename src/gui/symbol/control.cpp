@@ -193,6 +193,12 @@ void SymbolControl::draw(DC& dc) {
 		}
 		dc.SetLogicalFunction(wxCOPY);
 	}
+	// draw aspect ratio indicators
+	double ar = symbol->aspectRatio();
+	// TODO: limit aspect ratio
+	if (ar > 0) {
+	} else if (ar < 0) {
+	}
 	// draw editing overlay
 	if (editor) {
 		editor->draw(dc);

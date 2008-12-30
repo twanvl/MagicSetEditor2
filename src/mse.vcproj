@@ -3948,11 +3948,48 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="tests"
+			Name="template-stuff"
 			Filter="">
 			<File
 				RelativePath="..\data\magic-test.mse-style\script-language-tests">
 			</File>
+			<Filter
+				Name="magic"
+				Filter="">
+				<File
+					RelativePath="..\data\magic.mse-game\add_cards_scripts">
+				</File>
+				<File
+					RelativePath="..\data\magic.mse-game\auto_replace">
+				</File>
+				<File
+					RelativePath="..\data\magic.mse-game\card_fields">
+				</File>
+				<File
+					RelativePath="..\data\magic.mse-game\game">
+				</File>
+				<File
+					RelativePath="..\data\magic.mse-game\keywords">
+				</File>
+				<File
+					RelativePath="..\data\magic.mse-game\language">
+				</File>
+				<File
+					RelativePath="..\data\magic.mse-game\packs">
+				</File>
+				<File
+					RelativePath="..\data\magic.mse-game\script">
+				</File>
+				<File
+					RelativePath="..\data\magic.mse-game\set_fields">
+				</File>
+				<File
+					RelativePath="..\data\magic.mse-game\statistics">
+				</File>
+				<File
+					RelativePath="..\data\magic.mse-game\word_lists">
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\code_template.cpp">

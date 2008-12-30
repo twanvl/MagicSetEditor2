@@ -15,7 +15,7 @@
 
 // ----------------------------------------------------------------------------- : Functions
 
-bool spelled_correctly(const String& input, size_t start, size_t end, SpellChecker& checker) {
+inline bool spelled_correctly(const String& input, size_t start, size_t end, SpellChecker** checkers, const ScriptValueP& extra_test, Context& ctx) {
 	// untag
 	String word = untag(input.substr(start,end-start));
 	if (word.empty()) return true;
@@ -33,28 +33,48 @@ bool spelled_correctly(const String& input, size_t start, size_t end, SpellCheck
 		// symbols are always spelled correctly
 		return true;
 	}
-	// run through spellchecker
-	return checker.spell(word.substr(start_u,end_u));
+	// run through spellchecker(s)
+	word.erase(end_u,String::npos);
+	word.erase(0,start_u);
+	for (SpellChecker** c = checkers ; *c ; ++c) {
+		if ((*c)->spell(word)) {
+			return true;
+		}
+	}
+	// run through additional words regex
+	if (extra_test) {
+		ctx.setVariable(SCRIPT_VAR_input, to_script(input.substr(start2,end2-start2)));
+		if (*extra_test->eval(ctx)) {
+			return true;
+		}
+	}
+	return false;
 }
 
-void check_word(const String& input, String& out, size_t start, size_t end, SpellChecker& checker) {
+void check_word(const String& input, String& out, size_t start, size_t end, SpellChecker** checkers, const ScriptValueP& extra_test, Context& ctx) {
 	if (start >= end) return;
-	bool good = spelled_correctly(input, start, end, checker);
+	bool good = spelled_correctly(input, start, end, checkers, extra_test, ctx);
 	if (!good) out += _("<error-spelling>");
 	out.append(input, start, end-start);
 	if (!good) out += _("</error-spelling>");
 }
 
 SCRIPT_FUNCTION(check_spelling) {
-	SCRIPT_PARAM(String,language);
-	SCRIPT_PARAM(String,input);
-	if (language.empty()) {
-		// no language -> spelling checking
-		SCRIPT_RETURN(true);
-	}
-	SpellChecker& checker = SpellChecker::get(language);
+	SCRIPT_PARAM_C(String,language);
+	SCRIPT_PARAM_C(String,input);
+	SCRIPT_OPTIONAL_PARAM_N_(String,_("extra dictionary"),extra_dictionary);
+	SCRIPT_OPTIONAL_PARAM_N_(ScriptValueP,_("extra match"),extra_match);
 	// remove old spelling error tags
 	input = remove_tag(input, _("<error-spelling"));
+	// no language -> spelling checking
+	if (language.empty()) {
+		SCRIPT_RETURN(input);
+	}
+	SpellChecker* checkers[3] = {nullptr};
+	checkers[0] = &SpellChecker::get(language);
+	if (!extra_dictionary.empty()) {
+		checkers[1] = &SpellChecker::get(extra_dictionary,language);
+	}
 	// now walk over the words in the input, and mark misspellings
 	String result;
 	size_t word_start = 0, word_end = 0, pos = 0;
@@ -71,7 +91,7 @@ SCRIPT_FUNCTION(check_spelling) {
 			}
 		} else if (isSpace(c) || c == EM_DASH || c == EN_DASH) {
 			// word boundary -> check word
-			check_word(input, result, word_start, word_end, checker);
+			check_word(input, result, word_start, word_end, checkers, extra_match, ctx);
 			// non-word characters
 			result.append(input, word_end, pos - word_end + 1);
 			// next
@@ -81,15 +101,15 @@ SCRIPT_FUNCTION(check_spelling) {
 		}
 	}
 	// last word
-	check_word(input, result, word_start, word_end, checker);
+	check_word(input, result, word_start, word_end, checkers, extra_match, ctx);
 	result.append(input, word_end, String::npos);
 	// done
 	SCRIPT_RETURN(result);
 }
 
 SCRIPT_FUNCTION(check_spelling_word) {
-	SCRIPT_PARAM(String,language);
-	SCRIPT_PARAM(String,input);
+	SCRIPT_PARAM_C(String,language);
+	SCRIPT_PARAM_C(String,input);
 	if (language.empty()) {
 		// no language -> spelling checking
 		SCRIPT_RETURN(true);

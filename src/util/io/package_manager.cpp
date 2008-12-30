@@ -120,6 +120,27 @@ InputStreamP PackageManager::openFileFromPackage(Packaged*& package, const Strin
 	throw FileNotFoundError(name, _("No package name specified, use '/package/filename'"));
 }
 
+String PackageManager::openFilenameFromPackage(Packaged*& package, const String& name) {
+	if (!name.empty() && name.GetChar(0) == _('/')) {
+		// absolute name; break name
+		size_t start = name.find_first_not_of(_("/\\"), 1); // allow "//package/name" from incorrect scripts
+		size_t pos   = name.find_first_of(_("/\\"), start);
+		if (start < pos && pos != String::npos) {
+			// open package
+			PackagedP p = openAny(name.substr(start, pos-start));
+			if (package && !is_substr(name,start,_(":NO-WARN-DEP:"))) {
+				package->requireDependency(p.get());
+			}
+			package = p.get();
+			return p->absoluteFilename() + _("/") + name.substr(pos + 1);
+		}
+	} else if (package) {
+		// relative name
+		return package->absoluteFilename() + _("/") + name;
+	}
+	throw FileNotFoundError(name, _("No package name specified, use '/package/filename'"));
+}
+
 String PackageManager::getDictionaryDir(bool l) const {
 	String dir = (l ? local : global).getDirectory();
 	if (dir.empty()) return wxEmptyString;

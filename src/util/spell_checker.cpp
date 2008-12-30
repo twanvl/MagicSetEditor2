@@ -35,6 +35,31 @@ SpellChecker& SpellChecker::get(const String& language) {
 	return *speller;
 }
 
+SpellChecker& SpellChecker::get(const String& filename, const String& language) {
+	SpellCheckerP& speller = spellers[filename + _(".") + language];
+	if (!speller) {
+		Packaged* package = nullptr;
+		String prefix = package_manager.openFilenameFromPackage(package, filename) + _(".");
+		String local_dir  = package_manager.getDictionaryDir(true);
+		String global_dir = package_manager.getDictionaryDir(false);
+		String aff_path = language + _(".aff");
+		String dic_path = language + _(".dic");
+		if (wxFileExists(prefix + aff_path) && wxFileExists(prefix + dic_path)) {
+			speller = SpellCheckerP(new SpellChecker((prefix + aff_path).mb_str(),
+			                                         (prefix + dic_path).mb_str()));
+		} else if (wxFileExists(local_dir + aff_path) && wxFileExists(prefix + dic_path)) {
+			speller = SpellCheckerP(new SpellChecker((local_dir + aff_path).mb_str(),
+			                                         (prefix + dic_path).mb_str()));
+		} else if (wxFileExists(global_dir + aff_path) && wxFileExists(prefix + dic_path)) {
+			speller = SpellCheckerP(new SpellChecker((global_dir + aff_path).mb_str(),
+			                                         (prefix + dic_path).mb_str()));
+		} else {
+			throw Error(_("Dictionary '") + filename + _("' not found for language: ") + language);
+		}
+	}
+	return *speller;
+}
+
 SpellChecker::SpellChecker(const char* aff_path, const char* dic_path)
 	: Hunspell(aff_path,dic_path)
 	, encoding(String(get_dic_encoding(), IF_UNICODE(wxConvLibc, wxSTRING_MAXLEN)))

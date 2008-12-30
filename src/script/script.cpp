@@ -77,6 +77,7 @@ void init_script_variables() {
 	Var(styling);
 	Var(value);
 	Var(condition);
+	Var(language);
 	assert(variables.size() == SCRIPT_VAR_CUSTOM_FIRST);
 }
 

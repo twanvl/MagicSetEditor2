@@ -150,6 +150,12 @@ class PackageManager {
 	 */
 	InputStreamP openFileFromPackage(Packaged*& package, const String& name);
 	
+	/// Get a filename to open from a package
+	/** WARNING: this is a bit of a hack, since not all package types support names in this way.
+	 *  It is needed for third party libraries (i.e. hunspell) that load stuff from files.
+	 */
+	String openFilenameFromPackage(Packaged*& package, const String& name);
+	
 	// --------------------------------------------------- : Packages on disk
 	
 	/// Check if the given dependency is currently installed
