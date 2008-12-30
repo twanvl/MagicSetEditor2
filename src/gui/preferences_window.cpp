@@ -18,6 +18,9 @@
 
 DECLARE_TYPEOF_COLLECTION(PackagedP);
 
+// use a combo box for the zoom choices instead of a spin control
+#define USE_ZOOM_COMBOBOX 1
+
 // ----------------------------------------------------------------------------- : Preferences pages
 
 // A page from the preferences dialog
@@ -52,10 +55,19 @@ class DisplayPreferencesPage : public PreferencesPage {
 	DECLARE_EVENT_TABLE();
 	
 	wxCheckBox* high_quality, *borders, *draw_editing;
-	wxSpinCtrl* zoom;
+	#if USE_ZOOM_COMBOBOX
+		wxComboBox* zoom;
+		int zoom_int;
+	#else
+		wxSpinCtrl* zoom;
+	#endif
 	wxCheckBox* non_normal_export;
 	
 	void onSelectColumns(wxCommandEvent&);
+	#if USE_ZOOM_COMBOBOX
+		void onZoomChange(wxCommandEvent&);
+		void updateZoom();
+	#endif
 };
 
 // Preferences page for directories of programs
@@ -186,7 +198,11 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 	high_quality      = new wxCheckBox(this, wxID_ANY, _BUTTON_("high quality"));
 	borders           = new wxCheckBox(this, wxID_ANY, _BUTTON_("show lines"));
 	draw_editing      = new wxCheckBox(this, wxID_ANY, _BUTTON_("show editing hints"));
-	zoom              = new wxSpinCtrl(this, wxID_ANY);
+	#if USE_ZOOM_COMBOBOX
+		zoom              = new wxComboBox(this, ID_ZOOM);
+	#else
+		zoom              = new wxSpinCtrl(this, ID_ZOOM);
+	#endif
 	non_normal_export = new wxCheckBox(this, wxID_ANY, _BUTTON_("zoom export"));
 	//wxButton* columns = new wxButton(this, ID_SELECT_COLUMNS, _BUTTON_("select"));
 	// set values
@@ -194,8 +210,17 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 	borders->          SetValue( settings.default_stylesheet_settings.card_borders());
 	draw_editing->     SetValue( settings.default_stylesheet_settings.card_draw_editing());
 	non_normal_export->SetValue(!settings.default_stylesheet_settings.card_normal_export());
-	zoom->SetRange(1, 1000);
-	zoom->             SetValue(static_cast<int>(settings.default_stylesheet_settings.card_zoom() * 100));
+	#if USE_ZOOM_COMBOBOX
+		zoom_int = static_cast<int>(settings.default_stylesheet_settings.card_zoom() * 100);
+		zoom->SetValue(String::Format(_("%d%%"),zoom_int));
+		int choices[] = {50,66,75,100,120,150,200};
+		for (int i = 0 ; i < sizeof(choices)/sizeof(choices[0]) ; ++i) {
+			zoom->Append(String::Format(_("%d%%"),choices[i]));
+		}
+	#else
+		zoom->SetRange(1, 1000);
+		zoom->             SetValue(static_cast<int>(settings.default_stylesheet_settings.card_zoom() * 100));
+	#endif
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("card display"));
@@ -204,6 +229,7 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 			s2->Add(draw_editing, 0, wxEXPAND | wxALL, 4);
 			wxSizer* s3 = new wxBoxSizer(wxHORIZONTAL);
 				s3->Add(new wxStaticText(this, wxID_ANY, _LABEL_("zoom")),             0, wxALL & ~wxLEFT,  4);
+				s3->AddSpacer(2);
 				s3->Add(zoom);
 				s3->Add(new wxStaticText(this, wxID_ANY, _LABEL_("percent of normal")),1, wxALL & ~wxRIGHT, 4);
 			s2->Add(s3, 0, wxEXPAND | wxALL, 4);
@@ -226,7 +252,12 @@ void DisplayPreferencesPage::store() {
 	settings.default_stylesheet_settings.card_anti_alias    = high_quality->GetValue();
 	settings.default_stylesheet_settings.card_borders       = borders->GetValue();
 	settings.default_stylesheet_settings.card_draw_editing  = draw_editing->GetValue();
-	settings.default_stylesheet_settings.card_zoom          = zoom->GetValue() / 100.0;
+	#if USE_ZOOM_COMBOBOX
+		updateZoom();
+		settings.default_stylesheet_settings.card_zoom          = zoom_int / 100.0;
+	#else
+		settings.default_stylesheet_settings.card_zoom          = zoom->GetValue() / 100.0;
+	#endif
 	settings.default_stylesheet_settings.card_normal_export = !non_normal_export->GetValue();
 }
 
@@ -234,8 +265,26 @@ void DisplayPreferencesPage::onSelectColumns(wxCommandEvent&) {
 	// Impossible, set specific
 }
 
+#if USE_ZOOM_COMBOBOX
+	void DisplayPreferencesPage::onZoomChange(wxCommandEvent&) {
+		updateZoom();
+	}
+	void DisplayPreferencesPage::updateZoom() {
+		String s = zoom->GetValue();
+		int i = zoom_int;
+		if (wxSscanf(s.c_str(),_("%u"),&i)) {
+			zoom_int = min(max(i,1),1000);
+		}
+		zoom->SetValue(String::Format(_("%d%%"),(int)zoom_int));
+	}
+#endif
+
 BEGIN_EVENT_TABLE(DisplayPreferencesPage, wxPanel)
 	EVT_BUTTON       (ID_SELECT_COLUMNS, DisplayPreferencesPage::onSelectColumns)
+	#if USE_ZOOM_COMBOBOX
+		EVT_COMBOBOX     (ID_ZOOM, DisplayPreferencesPage::onZoomChange)
+		EVT_TEXT_ENTER   (ID_ZOOM, DisplayPreferencesPage::onZoomChange)
+	#endif
 END_EVENT_TABLE  ()
 
 
