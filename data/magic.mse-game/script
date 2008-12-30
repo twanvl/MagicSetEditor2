@@ -422,11 +422,14 @@ text_filter :=
 		replace: { _1 + to_upper(_2) }) +
 	curly_quotes +
 	# step 9 : spellcheck
-	{ check_spelling(
-		language: language().spellcheck_code,
-		extra_dictionary: "/magic.mse-game/magic-words",
-		extra_match: additional_text_words
-	)}
+	{ if set.mark_errors then 
+		check_spelling(
+			language: language().spellcheck_code,
+			extra_dictionary: "/magic.mse-game/magic-words",
+			extra_match: additional_text_words
+		)
+	  else input
+	}
 
 
 ############################################################## Other boxes
@@ -441,8 +444,11 @@ flavor_text_filter :=
 	# curly quotes
 	curly_quotes +
 	# spellcheck
-	{ check_spelling(language:language().spellcheck_code) }
-	
+	{ if set.mark_errors
+	  then check_spelling(language:language().spellcheck_code)
+	  else input
+	}
+
 # Move the cursor past the separator in the p/t and type boxes
 type_over_pt   := replace@(match:"/$", replace:"")
 type_over_type := replace@(match:" ?[-:]$", replace:"")
