@@ -77,12 +77,11 @@ void GalleryList::update() {
 	if (col.selection != NO_SELECTION) {
 		if (itemStart(col.selection) < visible_start) {
 			scrollTo(itemStart(col.selection), false);
-			updateScrollbar();
 		} else if (itemEnd(col.selection) > visibleEnd()) {
 			scrollTo(itemEnd(col.selection) + visible_start - visibleEnd(), false);
-			updateScrollbar();
 		}
 	}
+	updateScrollbar();
 	Refresh(false);
 }
 
