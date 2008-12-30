@@ -488,6 +488,8 @@ sub_type_filter := {
 		(if length(parts) > 0 then
 			# Add a new box at the end
 			"<soft>{lang.subtype_separator}</soft><word-list-{list_type_rest}></word-list-{list_type_rest}>"
+		 else
+			"<word-list-{list_type_first}></word-list-{list_type_first}>"
 		)
 	) else input # do nothing
 }
