@@ -29,6 +29,8 @@ class IconMenu : public wxMenu {
 	void Append(int id, const String& text, const String& help, wxMenu* submenu);
 	/// Append a menu item, without an image
 	void Append(wxMenuItem* item);
+	/// Insert a menu item, with an image (loaded from a resource)
+	void Insert(size_t pos, int id, const String& resource, const String& text, const String& help, int style = wxITEM_NORMAL, wxMenu* submenu = nullptr);
 	/// Insert a menu item, without an image
 	void Insert(size_t pos, int id, const String& text, const String& help);
 };

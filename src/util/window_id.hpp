@@ -120,8 +120,14 @@ enum ChildMenuID {
 ,	ID_FORMAT_REMINDER
 ,	ID_INSERT_SYMBOL
 
+	// Spelling errors
+,	ID_SPELLING_ADD_TO_DICT = 6301
+,	ID_SPELLING_NO_SUGGEST
+,	ID_SPELLING_SUGGEST
+,	ID_SPELLING_SUGGEST_MAX = 6399
+
 	// Graph menu
-,	ID_GRAPH_PIE			= 6301 // corresponds to GraphType
+,	ID_GRAPH_PIE			= 6401 // corresponds to GraphType
 ,	ID_GRAPH_BAR
 ,	ID_GRAPH_STACK
 ,	ID_GRAPH_SCATTER

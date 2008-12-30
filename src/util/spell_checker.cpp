@@ -71,8 +71,7 @@ void SpellChecker::destroyAll() {
 
 // ----------------------------------------------------------------------------- : Spell checker : use
 
-bool SpellChecker::spell(const String& word) {
-	if (word.empty()) return true; // empty word is okay
+bool SpellChecker::convert_encoding(const String& word, CharBuffer& out) {
 	// fix curly quotes, especially apstrophes
 	String fixed;
 	FOR_EACH_CONST(c,word) {
@@ -96,16 +95,20 @@ bool SpellChecker::spell(const String& word) {
 		}
 	}
 	// convert encoding
-	#ifdef UNICODE
-		wxCharBuffer str = fixed.mb_str(encoding);
-	#else
-		wxCharBuffer str = fixed.mb_str(encoding);
-	#endif
-	if (*str == '\0') {
+	out = fixed.mb_str(encoding);
+	if (*out == '\0') {
 		// If encoding fails we get an empty string, since the word was not empty this can never happen
 		// words that can't be encoded are not in the dictionary, so they are wrong.
 		return false;
+	} else {
+		return true;
 	}
+}
+
+bool SpellChecker::spell(const String& word) {
+	if (word.empty()) return true; // empty word is okay
+	CharBuffer str;
+	if (!convert_encoding(word,str)) return false;
 	return Hunspell::spell(str);
 }
 
@@ -114,4 +117,17 @@ bool SpellChecker::spell_with_punctuation(const String& word) {
 	trim_punctuation(word, start, end);
 	if (start >= end) return true; // just punctuation is wrong
 	return spell(word.substr(start,end-start));
+}
+
+void SpellChecker::suggest(const String& word, vector<String>& suggestions_out) {
+	CharBuffer str;
+	if (!convert_encoding(word,str)) return;
+	// call Hunspell
+	char** suggestions;
+	int num_suggestions = Hunspell::suggest(&suggestions, str);
+	// copy sugestions
+	for (int i = 0 ; i < num_suggestions ; ++i) {
+		suggestions_out.push_back(String(suggestions[i],encoding));
+	}
+	free(suggestions);
 }

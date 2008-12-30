@@ -17,6 +17,7 @@
 #include <data/action/value.hpp>
 #include <util/tagged_string.hpp>
 #include <util/find_replace.hpp>
+#include <util/spell_checker.hpp>
 #include <util/window_id.hpp>
 #include <wx/clipbrd.h>
 #include <wx/caret.h>
@@ -508,6 +509,43 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 	return true;
 }
 
+// ----------------------------------------------------------------------------- : Spellchecking
+
+String spellcheck_word_at(const String& str, size_t start, String& before, String& after) {
+	size_t end = min(match_close_tag(str,start), str.size());
+	String word = untag(str.substr(start,end-start));
+	size_t start_u = 0, end_u = String::npos;
+	trim_punctuation(word, start_u, end_u);
+	before = word.substr(0,start_u);
+	after  = word.substr(end_u,String::npos);
+	word.erase(end_u,String::npos);
+	word.erase(0,start_u);
+	return word;
+}
+
+void spellcheck_language_at(const String& str, size_t error_pos, SpellChecker** out) {
+	String tag  = tag_at(str,error_pos);
+	size_t pos  = min(tag.find_first_of(_(':')), tag.size()-1);
+	size_t pos2 = min(tag.find_first_of(_(':'),pos+1), tag.size()-1);
+	String language = tag.substr(pos+1,pos2-pos-1);
+	if (language.empty()) return;
+	out[0] = &SpellChecker::get(language);
+	String extra = tag.substr(pos2+1);
+	if (extra.empty()) return;
+	out[1] = &SpellChecker::get(extra,language);
+}
+
+void get_spelling_suggestions(const String& str, size_t error_pos, vector<String>& suggestions_out, String& before, String& after) {
+	String word = spellcheck_word_at(str, error_pos, before, after);
+	// find dictionaries
+	SpellChecker* checkers[3] = {nullptr};
+	spellcheck_language_at(str, error_pos, checkers);
+	// suggestions
+	for (size_t i = 0 ; checkers[i] ; ++i) {
+		checkers[i]->suggest(word, suggestions_out);
+	}
+}
+
 // ----------------------------------------------------------------------------- : Other events
 
 void TextValueEditor::onFocus() {
@@ -527,12 +565,35 @@ bool TextValueEditor::onContextMenu(IconMenu& m, wxContextMenuEvent& ev) {
 	// in a keword? => "reminder text" option
 	size_t kwpos = in_tag(value().value(), _("<kw-"), selection_start_i, selection_start_i);
 	if (kwpos != String::npos) {
-		m.AppendSeparator();
-		m.Append(ID_FORMAT_REMINDER,	_("reminder"),		_MENU_("reminder text"),	_HELP_("reminder text"),	wxITEM_CHECK);
+		m.InsertSeparator(0);
+		m.Insert(0,ID_FORMAT_REMINDER,	_("reminder"),		_MENU_("reminder text"),	_HELP_("reminder text"),	wxITEM_CHECK);
+	}
+	// in a spelling error? => show suggestions and "add to dictionary"
+	size_t error_pos = in_tag(value().value(), _("<error-spelling"), selection_start_i, selection_start_i);
+	if (error_pos != String::npos) {
+		// TODO: "add to dictionary"
+		//%m.InsertSeparator(0);
+		//%m.Insert(0,ID_SPELLING_ADD_TO_DICT, _MENU_("add to dictionary"),	_HELP_("add to dictionary"));
+		// suggestions
+		String before,after;
+		vector<String> suggestions;
+		get_spelling_suggestions(value().value(), error_pos, suggestions,before,after);
+		// add suggestions to menu
+		m.InsertSeparator(0);
+		if (suggestions.empty()) {
+			m.Insert(0,ID_SPELLING_NO_SUGGEST, _MENU_("no spelling suggestions"), _HELP_("no spelling suggestions"));
+		} else {
+			int i = 0;
+			FOR_EACH(s,suggestions) {
+				m.Insert(i, ID_SPELLING_SUGGEST + i, before+s+after, wxEmptyString);
+				i++;
+			}
+		}
 	}
 	// always show the menu
 	return true;
 }
+
 bool TextValueEditor::onCommand(int id) {
 	if (id >= ID_INSERT_SYMBOL_MENU_MIN && id <= ID_INSERT_SYMBOL_MENU_MAX) {
 		// Insert a symbol
@@ -544,9 +605,23 @@ bool TextValueEditor::onCommand(int id) {
 			replaceSelection(code, _ACTION_("insert symbol"));
 			return true;
 		}
+	} else if (id == ID_SPELLING_ADD_TO_DICT) {
+		// TODO
+	} else if (id >= ID_SPELLING_SUGGEST && id <= ID_SPELLING_SUGGEST_MAX) {
+		size_t error_pos = in_tag(value().value(), _("<error-spelling"), selection_start_i, selection_start_i);
+		if (error_pos == String::npos) throw InternalError(_("Unexpected spelling suggestion")); // wrong
+		String before,after;
+		vector<String> suggestions;
+		get_spelling_suggestions(value().value(), error_pos, suggestions,before,after);
+		selection_start_i = error_pos;
+		selection_end_i   = match_close_tag(value().value(), error_pos);
+		fixSelection(TYPE_INDEX);
+		replaceSelection(before + suggestions.at(id - ID_SPELLING_SUGGEST) + after, _ACTION_("correct"));
+		return true;
 	}
 	return false;
 }
+
 wxMenu* TextValueEditor::getMenu(int type) const {
 	if (type == ID_INSERT_SYMBOL && (style().always_symbol || style().allow_formating)
 	                             && style().symbol_font.valid()) {

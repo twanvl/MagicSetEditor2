@@ -14,6 +14,12 @@
 
 DECLARE_POINTER_TYPE(SpellChecker);
 
+#ifdef UNICODE
+	typedef wxCharBuffer CharBuffer;
+#else
+	typedef char* CharBuffer;
+#endif
+
 // ----------------------------------------------------------------------------- : Spell checker
 
 /// A spelling checker for a particular language
@@ -33,9 +39,13 @@ class SpellChecker : public Hunspell, public IntrusivePtrBase<SpellChecker> {
 	/// Check the spelling of a single word, ignore punctuation
 	bool spell_with_punctuation(const String& word);
 	
+	/// Give spelling suggestions
+	void suggest(const String& word, vector<String>& suggestions_out);
+	
   private:
 	/// Convert between String and dictionary encoding
 	wxCSConv encoding;
+	bool convert_encoding(const String& word, CharBuffer& out);
 	
 	SpellChecker(const char* aff_path, const char* dic_path);
 	static map<String,SpellCheckerP> spellers; //< Cached checkers for each language

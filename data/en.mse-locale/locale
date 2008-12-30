@@ -60,6 +60,8 @@ menu:
 	symbols:			&Symbols	Ctrl+M
 	reminder text:		&Reminder Text	Ctrl+R
 	insert symbol:		I&nsert Symbol
+	# spelling
+	no spelling suggestions:	(no suggestions)
 	
 	graph:			&Graph
 	pie:				&Pie	1
@@ -168,6 +170,8 @@ help:
 	italic:				Makes the selected text italic
 	symbols:			Draws the selected text with symbols
 	reminder text:		Show reminder text for the selected keyword
+	# spelling
+	no spelling suggestions:	There are no suggestions for correcting this error
 	
 	graph:
 	pie:				A pie graph, the size of the slice indicates the number of cards
@@ -669,6 +673,7 @@ action:
 	cut:				Cut
 	paste:				Paste
 	auto replace:		Auto Replace
+	correct:			Spelling Correction
 	# Choice/color editors
 	change:				Change %s
 	
@@ -704,17 +709,6 @@ action:
 
 ############################################################## Error messages
 error:
-	# General
-	internal error:
-		An internal error occured:
-		
-		%s
-		
-		Please save your work (use 'save as' to so you don't overwrite things)
-		and restart Magic Set Editor.
-		
-		You should leave a bug report on http://magicseteditor.sourceforge.net/
-	
 	# File related
 	file not found:					File not found: '%s' in package '%s'
 	file not found package like:
