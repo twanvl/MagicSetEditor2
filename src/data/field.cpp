@@ -132,7 +132,7 @@ inline bool is_set(const Scriptable<double>& x) {
 	return x.isScripted() || x < 100000;
 }
 inline bool is_setw(const Scriptable<double>& x) {
-	return x.isScripted() || fabs(x) > 0.001;
+	return x.isScripted() || fabs(x()) > 0.001;
 }
 
 int Style::update(Context& ctx) {
@@ -188,12 +188,12 @@ int Style::update(Context& ctx) {
 
 bool Style::isVisible() const {
 	return visible
-	    &&    (width)  > 0      
-	    && fabs(left)   < 100000
-	    && fabs(right)  < 100000
-	    &&    (height) > 0      
-	    && fabs(top)    < 100000
-	    && fabs(bottom) < 100000;
+	    &&     (width())  > 0      
+	    && fabs(left())   < 100000
+	    && fabs(right())  < 100000
+	    &&     (height()) > 0      
+	    && fabs(top())    < 100000
+	    && fabs(bottom()) < 100000;
 }
 bool Style::hasSize() const {
 	int h = is_setw(width)  + is_set(left) + is_set(right);
