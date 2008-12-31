@@ -139,6 +139,9 @@ String strip_last_word(const String&);
 /// Trim punctuation at the start/end of a word in the range [start..end)
 void trim_punctuation(const String&, size_t& start, size_t& end);
 
+bool is_word_start_punctuation(Char c);
+bool is_word_end_punctuation(Char c);
+
 // ----------------------------------------------------------------------------- : Caseing
 
 /// Make each word in a string start with an upper case character.

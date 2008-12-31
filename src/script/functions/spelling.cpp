@@ -19,23 +19,12 @@ inline size_t spelled_correctly(const String& input, size_t start, size_t end, S
 	// untag
 	String word = untag(input.substr(start,end-start));
 	if (word.empty()) return true;
-	// remove punctuation
-	size_t start_u = 0, end_u = String::npos;
-	trim_punctuation(word, start_u, end_u);
-	if (start_u >= end_u) {
-		// punctuation only, but not empty => error
-		return false;
-	}
-	// find the tagged text without punctuation
-	size_t start2 = untagged_to_index(input, start_u, true, start);
-	size_t end2   = untagged_to_index(input, end_u,   true, start);
-	if (in_tag(input,_("<sym"),start2,end2) != String::npos) {
+	// symbol?
+	if (in_tag(input,_("<sym"),start,end) != String::npos) {
 		// symbols are always spelled correctly
 		return true;
 	}
 	// run through spellchecker(s)
-	word.erase(end_u,String::npos);
-	word.erase(0,start_u);
 	for (size_t i = 0 ; checkers[i] ; ++i) {
 		if (checkers[i]->spell(word)) {
 			return true;
@@ -43,7 +32,13 @@ inline size_t spelled_correctly(const String& input, size_t start, size_t end, S
 	}
 	// run through additional words regex
 	if (extra_test) {
-		ctx.setVariable(SCRIPT_VAR_input, to_script(input.substr(start2,end2-start2)));
+		// try on untagged
+		ctx.setVariable(SCRIPT_VAR_input, to_script(word));
+		if (*extra_test->eval(ctx)) {
+			return true;
+		}
+		// try on tagged
+		ctx.setVariable(SCRIPT_VAR_input, to_script(input.substr(start,end-start)));
 		if (*extra_test->eval(ctx)) {
 			return true;
 		}
@@ -57,6 +52,38 @@ void check_word(const String& tag, const String& input, String& out, size_t star
 	if (!good) out += _("<") + tag;
 	out.append(input, start, end-start);
 	if (!good) out += _("</") + tag;
+}
+
+void check_word(const String& tag, const String& input, String& out, Char sep, size_t prev, size_t start, size_t end, size_t after, SpellChecker** checkers, const ScriptValueP& extra_test, Context& ctx) {
+	if (start == end) {
+		// word consisting of whitespace/punctuation only
+		if (untag(input.substr(prev,after-prev)).empty()) {
+			if (isSpace(sep) && (after == input.size() || isSpace(input.GetChar(after)))) {
+				// double space
+				out += _("<error-spelling>");
+				out.append(sep);
+				out.append(input, prev, after-end);
+				out += _("</error-spelling>");
+			} else {
+				if (sep) out.append(sep);
+				out.append(input, prev, after-prev);
+			}
+		} else {
+			// stand alone punctuation
+			if (sep) out.append(sep);
+			out += _("<error-spelling>");
+			out.append(input, prev, after-end);
+			out += _("</error-spelling>");
+		}
+	} else {
+		// before the word
+		if (sep) out.append(sep);
+		out.append(input, prev, start-prev);
+		// the word itself
+		check_word(tag, input, out, start, end, checkers, extra_test, ctx);
+		// after the word
+		out.append(input, end, after-end);
+	}
 }
 
 SCRIPT_FUNCTION(check_spelling) {
@@ -84,32 +111,37 @@ SCRIPT_FUNCTION(check_spelling) {
 	tag += _(">");
 	// now walk over the words in the input, and mark misspellings
 	String result;
-	size_t word_start = 0, word_end = 0, pos = 0;
+	Char sep = 0;
+	size_t prev_end = 0, word_start = 0, word_end = 0, pos = 0;
 	while (pos < input.size()) {
 		Char c = input.GetChar(pos);
 		if (c == _('<')) {
 			if (word_start == pos) {
-				// prefer to place word start inside tags
-				pos = skip_tag(input,pos);
-				result.append(input, word_start, pos - word_start);
-				word_end = word_start = pos;
+				// prefer to place word start inside tags, i.e. as late as possible
+				word_end = word_start = pos = skip_tag(input,pos);
 			} else {
 				pos = skip_tag(input,pos);
 			}
 		} else if (isSpace(c) || c == EM_DASH || c == EN_DASH) {
-			// word boundary -> check word
-			check_word(tag, input, result, word_start, word_end, checkers, extra_match, ctx);
-			// non-word characters
-			result.append(input, word_end, pos - word_end + 1);
+			// word boundary => check the word
+			check_word(tag, input, result, sep, prev_end, word_start, word_end, pos, checkers, extra_match, ctx);
 			// next
-			word_start = word_end = pos = pos + 1;
+			sep = c;
+			prev_end = word_start = word_end = pos = pos + 1;
 		} else {
-			word_end = pos = pos + 1;
+			pos++;
+			if (word_start == pos-1 && is_word_start_punctuation(c)) {
+				// skip punctuation at start of word
+				word_end = word_start = pos;
+			} else if (is_word_end_punctuation(c)) {
+				// skip punctuation at end of word
+			} else {
+				word_end = pos;
+			}
 		}
 	}
 	// last word
-	check_word(tag, input, result, word_start, word_end, checkers, extra_match, ctx);
-	result.append(input, word_end, String::npos);
+	check_word(tag, input, result, sep, prev_end, word_start, word_end, pos, checkers, extra_match, ctx);
 	// done
 	SCRIPT_RETURN(result);
 }

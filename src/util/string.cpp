@@ -122,13 +122,20 @@ String strip_last_word(const String& s) {
 	}
 }
 
-const String word_start = String(_("[({\"\'")) + LEFT_SINGLE_QUOTE + LEFT_DOUBLE_QUOTE;
-const String word_end   = String(_("])}.,;:?!\"\'")) + RIGHT_SINGLE_QUOTE + RIGHT_DOUBLE_QUOTE;
+const String word_start_chars = String(_("[({\"\'")) + LEFT_SINGLE_QUOTE + LEFT_DOUBLE_QUOTE;
+const String word_end_chars   = String(_("])}.,;:?!\"\'")) + RIGHT_SINGLE_QUOTE + RIGHT_DOUBLE_QUOTE;
 
 void trim_punctuation(const String& str, size_t& start, size_t& end) {
-	start = str.find_first_not_of(word_start, start);
-	end   = str.find_last_not_of(word_end,    min(end,str.size()-1)) + 1;
+	start = str.find_first_not_of(word_start_chars, start);
+	end   = str.find_last_not_of(word_end_chars,    min(end,str.size()-1)) + 1;
 	if (start >= end) start = end;
+}
+
+bool is_word_start_punctuation(Char c) {
+	return word_start_chars.find_first_of(c) != String::npos;
+}
+bool is_word_end_punctuation(Char c) {
+	return word_end_chars.find_first_of(c) != String::npos;
 }
 
 // ----------------------------------------------------------------------------- : Caseing

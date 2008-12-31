@@ -511,16 +511,9 @@ bool TextValueEditor::onChar(wxKeyEvent& ev) {
 
 // ----------------------------------------------------------------------------- : Spellchecking
 
-String spellcheck_word_at(const String& str, size_t start, String& before, String& after) {
+String spellcheck_word_at(const String& str, size_t start) {
 	size_t end = min(match_close_tag(str,start), str.size());
-	String word = untag(str.substr(start,end-start));
-	size_t start_u = 0, end_u = String::npos;
-	trim_punctuation(word, start_u, end_u);
-	before = word.substr(0,start_u);
-	after  = word.substr(end_u,String::npos);
-	word.erase(end_u,String::npos);
-	word.erase(0,start_u);
-	return word;
+	return untag(str.substr(start,end-start));
 }
 
 void spellcheck_language_at(const String& str, size_t error_pos, SpellChecker** out) {
@@ -535,8 +528,8 @@ void spellcheck_language_at(const String& str, size_t error_pos, SpellChecker** 
 	out[1] = &SpellChecker::get(extra,language);
 }
 
-void get_spelling_suggestions(const String& str, size_t error_pos, vector<String>& suggestions_out, String& before, String& after) {
-	String word = spellcheck_word_at(str, error_pos, before, after);
+void get_spelling_suggestions(const String& str, size_t error_pos, vector<String>& suggestions_out) {
+	String word = spellcheck_word_at(str, error_pos);
 	// find dictionaries
 	SpellChecker* checkers[3] = {nullptr};
 	spellcheck_language_at(str, error_pos, checkers);
@@ -575,9 +568,8 @@ bool TextValueEditor::onContextMenu(IconMenu& m, wxContextMenuEvent& ev) {
 		//%m.InsertSeparator(0);
 		//%m.Insert(0,ID_SPELLING_ADD_TO_DICT, _MENU_("add to dictionary"),	_HELP_("add to dictionary"));
 		// suggestions
-		String before,after;
 		vector<String> suggestions;
-		get_spelling_suggestions(value().value(), error_pos, suggestions,before,after);
+		get_spelling_suggestions(value().value(), error_pos, suggestions);
 		// add suggestions to menu
 		m.InsertSeparator(0);
 		if (suggestions.empty()) {
@@ -585,7 +577,7 @@ bool TextValueEditor::onContextMenu(IconMenu& m, wxContextMenuEvent& ev) {
 		} else {
 			int i = 0;
 			FOR_EACH(s,suggestions) {
-				m.Insert(i, ID_SPELLING_SUGGEST + i, before+s+after, wxEmptyString);
+				m.Insert(i, ID_SPELLING_SUGGEST + i, s, wxEmptyString);
 				i++;
 			}
 		}
@@ -610,13 +602,15 @@ bool TextValueEditor::onCommand(int id) {
 	} else if (id >= ID_SPELLING_SUGGEST && id <= ID_SPELLING_SUGGEST_MAX) {
 		size_t error_pos = in_tag(value().value(), _("<error-spelling"), selection_start_i, selection_start_i);
 		if (error_pos == String::npos) throw InternalError(_("Unexpected spelling suggestion")); // wrong
-		String before,after;
+		// find the suggestions to pick from
 		vector<String> suggestions;
-		get_spelling_suggestions(value().value(), error_pos, suggestions,before,after);
+		get_spelling_suggestions(value().value(), error_pos, suggestions);
+		// select the error
 		selection_start_i = error_pos;
 		selection_end_i   = match_close_tag(value().value(), error_pos);
 		fixSelection(TYPE_INDEX);
-		replaceSelection(before + suggestions.at(id - ID_SPELLING_SUGGEST) + after, _ACTION_("correct"));
+		// replace it
+		replaceSelection(suggestions.at(id - ID_SPELLING_SUGGEST), _ACTION_("correct"));
 		return true;
 	}
 	return false;
