@@ -98,6 +98,8 @@ $built_in_functions = array(
 function syntax_highlight($code) {
 	if (preg_match("@^(\s*#.*\n)*\s*[-a-zA-Z0-9 _/,]+:([^=]|$)@", $code)) {
 		return highlight_reader($code);
+	} else if (preg_match("@^&lt;[^&>]*?(&gt;|>)$@", $code)) {
+		return "<span class='hl-tag'>$code</span>";
 	} else {
 		return highlight_script($code);
 	}

@@ -2,12 +2,12 @@ Function: combined_editor
 
 --Usage--
 > forward_editor(field: some_text_value)
-> combined_editor(field1: some_text_value, field2: some_text_value, ..., separtor1: some_string, ...)
+> combined_editor(field1: some_text_value, field2: some_text_value, ..., separator1: some_string, ...)
 
 Use one text field to edit one or more others.
 
 This function must be used in the @script@ of a [[type:field#text|text field]].
-This field will then contain the combined values of the given fields, separated by the separtors in <tt>&lt;sep></tt> tags.
+This field will then contain the combined values of the given fields, separated by the separators in @<sep>@ tags.
 When the field changes the underlying values are updated and vice versa.
 
 Note: @forward_editor@ and @combined_editor@ are the same function.
@@ -20,10 +20,10 @@ Note: @forward_editor@ and @combined_editor@ are the same function.
 | @separator@	[[type:string]]			 	Separator between field 1 and 2
 | @separator1@	[[type:string]]			 	Multiple separators
 | @separator2@	[[type:string]]			 	Next separator, ''etc.''
-| @prefix@	[[type:string]]		''optional''	Prefix before the combined editor; like a separtor between the start and the first field.
-| @suffix@	[[type:string]]		''optional''	Suffix after the combined editor; like a separtor between the last field and the end.
+| @prefix@	[[type:string]]		''optional''	Prefix before the combined editor; like a separator between the start and the first field.
+| @suffix@	[[type:string]]		''optional''	Suffix after the combined editor; like a separator between the last field and the end.
 | @hide when empty@	[[type:boolean]]	@false@	Don't include separators if the entire value is empty.
-| @soft before empty@	[[type:boolean]]	@false@	Make separators 'soft' when the value folowing it is empty.
+| @soft before empty@	[[type:boolean]]	@false@	Make separators 'soft' when the value following it is empty.
 			 			 	Soft separators are hidden by default and shown grayed when the field is selected.
 
 --Examples--

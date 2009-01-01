@@ -4,7 +4,7 @@ Function: symbol_variation
 > symbol_variation(symbol: symbol_value, variation: name_of_variation)
 
 Render a [[type:symbol variation|variation]] of a symbol.
-The variation name refers to one of the varations declared in the [[type:style]] of the symbol field.
+The variation name refers to one of the variations declared in the [[type:style]] of the symbol field.
 
 > symbol_variation(symbol: symbol_value, border_radius: .., fill_type: .., ...)
 

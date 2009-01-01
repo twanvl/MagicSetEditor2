@@ -1,5 +1,7 @@
 Function: format
 
+DOC_MSE_VERSION: deprecated in 0.3.7, use to_string
+
 --Usage--
 > format(some_number, format: format_specification)
 
@@ -18,3 +20,6 @@ Format a number or other string as a string, [[http://www.cplusplus.com/referenc
 >
 > f := format@(format: "%03d")
 > f(1) == "001"
+
+--See also--
+| [[fun:to_string]]		Convert any value to a [[type:string]]

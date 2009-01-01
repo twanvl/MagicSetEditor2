@@ -19,7 +19,7 @@ A reference to a normal [[type:font]] for drawing text.
 | @shadow displacement x@	[[type:double]]			@0@		Relative position of the shadow in pixels.
 | @shadow displacement y@	[[type:double]]			@0@		^^^
 | @shadow blur@		[[type:double]]				@0@		How much should the shadow be blurred?
-| @separator color@	[[type:color]]				@rgba(0,0,0,128)@	Color for @"<sep-soft>"@ tags inserted by the [[fun:combined_editor]] function.
+| @separator color@	[[type:color]]				@rgba(0,0,0,128)@	Color for @<sep-soft>@ tags inserted by the [[fun:combined_editor]] function.
 
 --Example--
 >font:
