@@ -17,11 +17,11 @@ Otherwise the "W" is seen as a symbol and the program continues with rendering "
 
 --Font size--
 
-A symbol font is drawn using a specific point size, similair to normal fonts.
+A symbol font is drawn using a specific point size, similar to normal fonts.
 Usually the images that make up the font are given in a very high resolution, for example 200x200.
-This resulution could correspond to a point size of for instance 150pt.
+This resolution could correspond to a point size of for instance 150pt.
 
-When the symbol is drawn at for instance 12pt the image well then be scalled down to @200/150*12 == 16@ pixels.
+When the symbol is drawn at for instance 12pt the image well then be scaled down to @200/150*12 == 16@ pixels.
 
 Sizes like margin, padding and font size are given in 'pixels per point'. If for instance
 > text margin left: 0.1

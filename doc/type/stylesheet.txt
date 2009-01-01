@@ -29,7 +29,7 @@ such a package contains a data file called <tt>style</tt>.
 | @game@		Name of a [[type:game]]			''required''	Game this stylesheet is made for
 | @card width@		[[type:double]]				100		Width of cards in pixels
 | @card height@		[[type:double]]				100		Height of cards in pixels
-| @card dpi@		[[type:double]]				96		Resoltion of cards in dots-per-inch
+| @card dpi@		[[type:double]]				96		Resolution of cards in dots-per-inch
 | @card background@	[[type:color]]				white		Background color of cards
 | @init script@		[[type:script]]				@;@		Script to run when this stylesheet is loaded, after the game's init script.
 | @styling fields@	[[type:list] of [[type:field]]s		 		Fields for styling options, shown on the 'style' panel.

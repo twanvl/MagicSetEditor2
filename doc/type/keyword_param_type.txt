@@ -21,7 +21,7 @@ A type of parameter that can be used in a [[type:keyword]].
 | @reminder script@	[[type:script]]				 		Script to apply to parameters of this type before using them in the reminder text.
 | @example@		[[type:string]]				 		Example for in the keyword editor, currently not used.
 | @refer scripts@	[[type:list]] of [[type:keyword param reference script]]s
-			 					 		Scripts for inserting paramaters of this type into the reminder text.
+			 					 		Scripts for inserting parameters of this type into the reminder text.
 			 					 		To make this easy for the user, a menu of ways to use a parameter is provided.
 
 --Example--

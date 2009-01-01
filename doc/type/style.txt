@@ -21,7 +21,7 @@ For example:
 > width: 20
 Implies that @right@ is 30 pixels.
 
-Similairly:
+Similarly:
 > left: 10
 > right: 30
 Implies the @width@ is 20.
@@ -67,7 +67,7 @@ Here are some examples:
 
 --Properties--
 ! Property		Type					Default		Description
-| @z index@		[[type:int]]				@0@		Stacking of this box, fields with a heigher @z index@ are placed on top of those with a lower index.
+| @z index@		[[type:int]]				@0@		Stacking of this box, fields with a higher @z index@ are placed on top of those with a lower index.
 | @left@		[[type:scriptable]] [[type:double]]	''Required''	Distance between left edge of the box and the left of the card in pixels.
 | @width@		[[type:scriptable]] [[type:double]]	''Required''	Width of the box in pixels.
 | @right@		[[type:scriptable]] [[type:double]]	''Required''	Distance between right edge of the box and the ''left'' of the card in pixels.
@@ -91,7 +91,7 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 | ^^^		@padding right@		^^^			^^^		^^^
 | ^^^		@padding top@		^^^			^^^		^^^
 | ^^^		@padding bottom@	^^^			^^^		^^^
-| ^^^		@padding left min@	[[type:scriptable]] [[type:double]]		&infin;		Minimal padding around the field.<br/> When the text is scalled down the padding is scalled as well, but it becomes no smaller than this.
+| ^^^		@padding left min@	[[type:scriptable]] [[type:double]]		&infin;		Minimal padding around the field.<br/> When the text is scaled down the padding is scaled as well, but it becomes no smaller than this.
 | ^^^		@padding right min@	^^^			^^^		^^^
 | ^^^		@padding top min@	^^^			^^^		^^^
 | ^^^		@padding bottom min@	^^^			^^^		^^^
@@ -116,11 +116,11 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 !	<<<	<<<	<<<	<<<
 | @"choice"@,<br/>@"multiple choice"@,<br/>@"boolean"@
 		@popup style@	@"drop down"@ or @"in place"@		@"drop down"@	Where to place the drop down box for editing the value.<br/>
-		 		 					 		@"drop down"@ places the box below the field, similair to normal combo boxes.<br/>
+		 		 					 		@"drop down"@ places the box below the field, similar to normal combo boxes.<br/>
 		 		 					 		@"in place"@ places the box at the mouse coordinates.
 | ^^^		@render style@	[[type:choice render style]]		@"text"@	How should the field be rendered?
-| ^^^		@mask@		[[type:scriptable]] [[type:filename]]	''none''	A mask to apply to the image, black areas in the mask become transparent, similair to [[fun:set_mask]].
-| ^^^		@combine@	[[type:combine]]			@"normal"@	How to combine the image with the background? Can be overriden using the [[fun:set_combine]] function.
+| ^^^		@mask@		[[type:scriptable]] [[type:filename]]	''none''	A mask to apply to the image, black areas in the mask become transparent, similar to [[fun:set_mask]].
+| ^^^		@combine@	[[type:combine]]			@"normal"@	How to combine the image with the background? Can be overridden using the [[fun:set_combine]] function.
 | ^^^		@alignment@	[[type:alignment]]			@"stretch"@	Alignment of text and images in the box.
 | ^^^		@font@		[[type:font]]				 		Font to use for rendering text (depending on @render style@)
 | ^^^		@image@		[[type:image|scriptable image]]		 		Image to show (depending on @render style@).<br/>
@@ -131,7 +131,7 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 		 			 				 		This is only useful when the alignment is changed, otherwise it is always equal the box size itself.
 | ^^^		@content height@	[[type:double]]			''automatic''	When read from a script, gives the height of the current choice image in this box.
 | @"multiple choice"@
-		@direction@	[[type:direction]]		@"left to right"@	Direction the items are layed out in, only when @render style@ is @list@.
+		@direction@	[[type:direction]]		@"left to right"@	Direction the items are laid out in, only when @render style@ is @list@.
 | ^^^		@spacing@	[[type:double]]			@0@			Spacing between the items.
 	
 !	<<<	<<<	<<<	<<<
@@ -151,8 +151,8 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 	
 !	<<<	<<<	<<<	<<<
 | @"symbol"@	@variations@	[[type:list]] of [[type:symbol variation]]s	 	Available variations of the symbol, a variation describes color and border size.
-| ^^^		@min aspec ratio@	[[type:double]]		@1@		Bounds for the aspect ratio, @width/height@ symbols can take. This can be used to make non-squary symbols.
-| ^^^		@max aspec ratio@	[[type:double]]		@1@		^^^
+| ^^^		@min aspect ratio@	[[type:double]]		@1@		Bounds for the aspect ratio, @width/height@ symbols can take. This can be used to make non-square symbols.
+| ^^^		@max aspect ratio@	[[type:double]]		@1@		^^^
 	
 !	<<<	<<<	<<<	<<<
 | @"info"@	@font@			[[type:font]]		''Required'' 	Font to render the text.

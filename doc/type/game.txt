@@ -30,10 +30,10 @@ Such a package contains a [[file:format|data file]] called <tt>game</tt> that ha
 | @init script@			[[type:script]]				@;@		Script to run when this game is loaded,<br/> can set variables
 				 					 		to be used by other scripts in this game or stylesheets using it.
 | @set fields@			[[type:list]] of [[type:field]]s	 		Fields for the styling panel.
-| @default set style@		[[type:indexmap]] of [[type:style]]s	 		Default style for the set fields, can be overriden by the stylesheet.
+| @default set style@		[[type:indexmap]] of [[type:style]]s	 		Default style for the set fields, can be overridden by the stylesheet.
 | @card fields@			[[type:list]] of [[type:field]]s	 		Fields for each card.
 | @card list color script@	[[type:script]]				from fields	Script that determines the color of an item in the card list. <br/>If not set uses the @card list colors@ property of the first card field that has it.
-| @statistics dimensions@	[[type:list]] of [[type:statistics dimension]]s		from fields	Dimensions for statistics, a dimension is rougly the same as an axis. <br/>By default all card fields with 'show statistics' set to true are used.
+| @statistics dimensions@	[[type:list]] of [[type:statistics dimension]]s		from fields	Dimensions for statistics, a dimension is roughly the same as an axis. <br/>By default all card fields with 'show statistics' set to true are used.
 | @statistics categories@	[[type:list]] of [[type:statistics category]]s		from dimensions	DOC_MSE_VERSION: not used since 0.3.6
 				 					 		Choices shown on the statistics panel. <br/>By default all statistics dimensions are used.
 | @pack items@			[[type:list]] of [[type:pack item]]s	 		DOC_MSE_VERSION: since 0.3.7
@@ -47,7 +47,7 @@ Such a package contains a [[file:format|data file]] called <tt>game</tt> that ha
 | @keywords@			[[type:list]] of [[type:keyword]]s		 	Standard keywords for this game.
 | @word lists@			[[type:list]] of [[type:word list]]s	 		Word lists that can be used by text fields.
 | @add cards script@		[[type:list]] of [[type:add cards script]]s	 	DOC_MSE_VERSION: since 0.3.7
-				 						 	A list of scripts for convienently adding multiple cards to a set.
+				 						 	A list of scripts for conveniently adding multiple cards to a set.
 
 --Examples--
 Look at the game files in the standard MSE distribution for examples.

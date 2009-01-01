@@ -76,14 +76,14 @@ Additional properties are available, depending on the type of field:
 | @"multiple choice"@	 	<<<	<<<	<<<
 		'' Multiple choice fields have the same attributes as normal choice fields.''<br/>
 		To refer to a combination of values in the initial attribute use @choice1, choice2, choice3@.<br/>
-		These choices must apear in the same order as they do in the @choices@ property.
+		These choices must appear in the same order as they do in the @choices@ property.
 	
 | @"boolean"@	''A boolean field is a choice field with the choices @"yes"@ and @"no"@.''	<<<	<<<	<<<
 	
 | @"package choice"@
 		@script@	[[type:script]]		 	Script to apply to values of this field after each change.<br/>
 		 		 		 		If the script evaluates to a constant (i.e. doesn't use @value@) then values in this field can effectively not be edited.
-| ^^^		@match@		[[type:string]]	''required'' 	Filenames of the pakcages to match, can include wildcards @"*"@. For example @"magic-mana-*.mse-symbol-font"@.
+| ^^^		@match@		[[type:string]]	''required'' 	Filenames of the packages to match, can include wildcards @"*"@. For example @"magic-mana-*.mse-symbol-font"@.
 | ^^^		@initial@	[[type:string]]	''required'' 	Initial package for new values for this field.
 | ^^^		@reqired@	[[type:boolean]]	@true@ 	Must a package always be selected? Or is it allowed to select nothing?
 | ^^^		@empty name@	[[type:string]]	@"None"@	Name of the empty state. Applies only if @required: false@.

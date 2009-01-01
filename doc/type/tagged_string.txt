@@ -4,7 +4,7 @@ Data type: string with tags
 Strings in [[type:value|text values]] can contain markup tags.
 These tags affect the presentation and sometimes the behaviour of the text.
 
-A tag is something like @"<tag>some text</tag>"@, similair to HTML.
+A tag is something like @"<tag>some text</tag>"@, similar to HTML.
 Tags are closed by the same tag with a @/@ before it.
 
 To represent the character @"<"@ in a tagged string use @"\<"@ in script code.
@@ -16,7 +16,7 @@ This is written as the character with code 1 in files.
 | @"<i>"@		The text inside the tag is italic.
 | @"<sym>"@		The text inside the tag is rendered as symbols, if a [[prop:style:symbol font]] is set for the text box.
 | @"<color:???>"@	The text inside the tag is rendered with the given [[type:color]].
-| @"<size:???>"@	The text inside the tag is rendered with the given font size in points, for example @"<size:12>text</size>"@ makes the text 12 points. The text is scaled down proportianally when it does not fit in a text box and the @scale down to@ attribute allows it.
+| @"<size:???>"@	The text inside the tag is rendered with the given font size in points, for example @"<size:12>text</size>"@ makes the text 12 points. The text is scaled down proportionally when it does not fit in a text box and the @scale down to@ attribute allows it.
 | @"<line>"@		Line breaks inside this tag use the [[prop:style:line height line]], and they show a horizontal line.
 | @"<soft-line>"@	Line breaks inside this tag use the [[prop:style:soft line height]].
 | @"<atom>"@		An atomic piece of text. The cursor can never be inside it; it is selected as a whole.
@@ -41,7 +41,7 @@ This is written as the character with code 1 in files.
 | @"<prefix>"@		At the beginning of a string, indicates a part that can not be selected. This tag is automatically inserted by the [[fun:combined_editor]] function.
 | @"<suffix>"@		At the end of a string, indicates a part that can not be selected. This tag is automatically inserted by the [[fun:combined_editor]] function.
 | @"<sep-soft>"@	Like @"<sep>"@, only hidden. This is inserted by [[fun:combined_editor]]
-| @"<soft>"@		Text who's width is ignored for alignment, similair to @"<sep-soft>"@, but not a separator.
+| @"<soft>"@		Text who's width is ignored for alignment, similar to @"<sep-soft>"@, but not a separator.
 | @"<word-list-?>"@	Indicate that the text inside the tag should be selected from a [[type:word list]].
 			The <tt>?</tt> must be the name of a word list in the game.
 | any other tag		Other tags are ignored.

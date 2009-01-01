@@ -39,7 +39,7 @@ The records consists of:
 
 Strings are not further encoded or escaped.
 
-In this mode multi line strings can be transfered from MSE without much encoding/parsing hastle.
+In this mode multi line strings can be transfered from MSE without much encoding/parsing hassle.
 
 The behaviour of the raw mode is guaranteed not to change between versions of MSE (subject to bugs and changes in the scripting language),
 for the normal mode no such guarantee is made.

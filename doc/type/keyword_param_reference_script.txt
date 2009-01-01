@@ -2,7 +2,7 @@ Data type: keyword parameter reference script
 
 --Overview--
 
-A wat to use a [[type:keyword param type|keyword parameter]] in a [[type:keyword]]'s reminder text.
+A way to use a [[type:keyword param type|keyword parameter]] in a [[type:keyword]]'s reminder text.
 
 Usually the parameters are included as @"{param1}"@, etc.
 But in some cases for instance a function should be applied, @"{fun(param1)}"@.

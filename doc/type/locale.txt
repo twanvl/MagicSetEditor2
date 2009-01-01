@@ -23,7 +23,7 @@ There are usually no other files in the package.
 | @menu@		[[type:map]] of [[type:string]]s	 	Translations of menu items.<br/>
 			 					 	Menu items can contain shortcut keys (like Ctrl+C for copy) by using a ''single'' TAB between the text and the shortcut key.<br/>
 			 					 	Keys to use with Alt+Something (displayed underlined) can be specified &</br>
-			 					 	For exmaple
+			 					 	For example
 			 					 	>>>new set: &amp;New...&#9;Ctrl+N
 | @help@		[[type:map]] of [[type:string]]s	 	Translations of help texts for the status bar.
 | @tool@		[[type:map]] of [[type:string]]s	 	Translations of toolbar item texts.

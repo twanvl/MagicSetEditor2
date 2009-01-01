@@ -43,7 +43,7 @@ Global installation is for all users, local installation is for the current user
 
 ]mse --create-installer <em>output.mse-installer</em> <em>package1.mse-game</em> <em>package2.mse-game</em> ...
 Creates an installer package containing one or more packages from the mse [[file:index|data directory]].
-The installer will be written to <tt><em>output.mse-installer</em></tt>. This name can be ommitted, in which case the name of the forst package will be used (in this case <tt>package1.mse-installer</tt>).
+The installer will be written to <tt><em>output.mse-installer</em></tt>. This name can be omitted, in which case the name of the first package will be used (in this case <tt>package1.mse-installer</tt>).
 
 --Interactive cli interface--
 
