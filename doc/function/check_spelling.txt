@@ -1,0 +1,36 @@
+Function: check_spelling
+
+--Usage--
+> check_spelling(some_tagged_string,  language:language_code)
+
+Check the spelling of a piece of text, and mark errors with @<error-spelling>@ tags.
+
+--Dictionaries--
+The language code must correspond to a dictionary in the @dictionaries@ data directory (usually @%MSE_DIR%\data\dictionaries@).
+A dictionary consists of two files, @language.dic@ and @language.aff@.
+
+Magic Set Editor is compatible with Hunspell dictionaries, which are also used by Open Office and Firefox.
+These dictionaries can be found on [[http://wiki.services.openoffice.org/wiki/Dictionaries|the Open Office website]].
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:tagged string]]	String to check.
+| @language@	[[type:string]]		Language code.<br/>
+		 			The language code consists of an [[http://en.wikipedia.org/wiki/ISO_639|ISO language code]] and an [[http://en.wikipedia.org/wiki/ISO_3166-1|ISO country code]] separated by an underscore.
+| @extra_dictionary@	[[type:string]] (optional)
+			 		Name of an additional dictionary to use. This dictionary could be specific to the game file.
+			 		The name should be of the form @"my-game.mse-game/dictionary"@,
+			 		in which case MSE looks for the file @"my-game.mse-game/dictionary.en_US.dic"@ where @"en_US"@ is the language code.
+| @extra_match@	[[type:function]] (optional)
+		 			Function that returns @true@ for additional words that are spelled correctly.
+		 			This can be used for codes like @"+1/+1"@ on magic cards.
+
+--Examples--
+> check_spelling("Can I have an appple?", language:"en_US")
+>   == "Can I have an <error-spelling:en_US>appple</error-spelling:en_US>?"
+
+In the second example any text matching the [[type:regex]] @"x[a-z]*"@, i.e. any word beginning with the letter x, is not considered an error:
+> check_spelling("xyzzyx", language:"en_US")
+>   == "<error-spelling:en_US>xyzzyx</error-spelling:en_US>"
+> check_spelling("xyzzyx", language:"en_US", extra_match: match@(match:"x[a-z]*"))
+>   == "xyzzyx"

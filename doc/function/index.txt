@@ -23,8 +23,6 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:reverse]]		Reverse a string, @"aBc" -> "cBa"@.
 | [[fun:trim]]			Remove leading and trailing whitespace from a string, @" abc " -> "abc"@.
 | [[fun:substring]]		Extract a part of a string.
-| [[fun:format]]		Format a number as a string (printf).
-| [[fun:curly_quotes]]		Make quotes curly.
 | [[fun:replace]]		Replace text matching a regular expression.
 | [[fun:filter_text]]		Keep only the text matching a regular expression.
 | [[fun:break_text]]		Break text into parts each matching a regular expression.
@@ -33,6 +31,8 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:contains]]		Does a string contain another one?
 | [[fun:match]]			Does a string match a regular expression?
 | [[fun:regex_escape]]		Escape a string for use in a regular expression.
+| [[fun:curly_quotes]]		Make quotes curly.
+| [[fun:check_spelling]]	Check text for spelling errors.
 	
 ! [[type:tagged_string|Tags]]	<<<
 | [[fun:tag_contents]]		Change the contents of a specific tag.
