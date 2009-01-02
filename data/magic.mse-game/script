@@ -51,8 +51,19 @@ color_filter  := sort_text@(order: "<WUBRG>")
 color_filterH := sort_text@(order: "</>")
 mana_to_color := {
 	count  := number_of_items(in: colors)
-	if hybrid == "" then
-		# not a hybrid
+	if hybrid == "" and contains(type, match:"Artifact") then
+		# not a hybrid, but artifact
+		if      count == 0 then  "artifact"
+		else if count == 1 then  color_names_1() + ", artifact"
+		else if set.set_info.use_gradient_multicolor == "no"  then "artifact, multicolor" # stop here
+		else if count == 2 then  color_names_2() + ", artifact, multicolor"
+		else if set.set_info.use_gradient_multicolor != "yes" then "artifact, multicolor" # stop here
+		else if count == 3 then  color_names_3() + ", artifact, multicolor"
+		else if count == 4 then  color_names_4() + ", artifact, multicolor"
+		else if count == 5 then  color_names_5() + ", artifact, multicolor"
+		else                     "artifact, multicolor"
+	else if hybrid == "" then
+		# not a hybrid, not artifact
 		if      count == 0 then  "colorless"
 		else if count == 1 then  color_names_1()
 		else if set.set_info.use_gradient_multicolor == "no"  then "multicolor" # stop here
@@ -62,8 +73,15 @@ mana_to_color := {
 		else if count == 4 then  color_names_4() + ", multicolor"
 		else if count == 5 then  color_names_5() + ", multicolor"
 		else                     "multicolor"
+	else if contains(type, match:"Artifact") then
+		# hybrid, but artifact
+		if count == 0 then "artifact"
+		else if count == 1 then color_names_1() + ", artifact"
+		else if count == 2 then  color_names_2() + ", artifact"
+		else if count == 3 then  color_names_3() + ", artifact"
+		else                     "artifact, multicolor"
 	else
-		# hybrid
+		# hybrid, not artifact
 		if count == 0 then "colorless"
 		else if count == 1 then color_names_1()
 		else if count == 2 then  color_names_2() + ", hybrid"
@@ -87,7 +105,6 @@ land_multicolor := {
 	if      count == 0 then "land"
 	else if count == 1 then color_names_1() + ", land"
 	else if count == 2 then color_names_2() + ", land"
-	else if count == 3 then color_names_3() + ", land"
 	else                    "land, multicolor"
 }
 land_to_color := {

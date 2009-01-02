@@ -125,8 +125,8 @@ default set style:
 			name: mythic rare
 			border radius: 0.07
 			fill type: linear gradient
-			fill color 1:   rgb(255, 160, 40)
-			fill color 2:   rgb(202, 49, 35)
+			fill color 1:   rgb(245,148,31)
+			fill color 2:   rgb(186,45,38)
 			border color 1: rgb(0,  0,  0)
 			border color 2: rgb(0,  0,  0)
 		variation:

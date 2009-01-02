@@ -470,7 +470,7 @@ color_background := {
 		colors := colors + "m"
 		multi := false
 	)
-	if artifact and (multi or hybrid or colors == "") then (
+	if artifact and (hybrid or colors == "") then (
 		colors := colors + "a"
 		artifact := false
 	)
@@ -504,6 +504,16 @@ color_combination := {
 			mask:  "hybrid_blend_{type}.png",
 			dark:  base,
 			light:  land_template("m"),
+		)
+	else if multi and artifact then
+		masked_blend(
+			mask: "artifact_blend_{type}.png",
+			dark: template("a"),
+			light: masked_blend(
+				mask: "multicolor_blend_{type}.png",
+				dark: template("m"),
+				light: base
+			)
 		)
 	else if multi then 
 		masked_blend(
