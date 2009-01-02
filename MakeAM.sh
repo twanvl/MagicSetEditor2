@@ -13,9 +13,11 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = magicseteditor
 AM_CXXFLAGS = @WX_CXXFLAGS@ \$(BOOST_CXXFLAGS) -DUNICODE -I . -Wall
-AM_LDFLAGS  = @WX_LIBS@ \$(BOOST_LDFLAGS) \$(BOOST_REGEX_LIB)
+AM_LDFLAGS  = @WX_LIBS@ \$(BOOST_LDFLAGS)
 
-magicseteditor_SOURCES = 
+magicseteditor_LDADD = \$(BOOST_REGEX_LIB)
+
+magicseteditor_SOURCES =
 
 # The script used to generate is MakeAM.sh " > Makefile.am;
 

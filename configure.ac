@@ -18,10 +18,12 @@ AC_PROG_CXX
 # Do not pass -O2, because that causes failures for now.
 CXXFLAGS=-g
 # Checks for libraries.
+AC_CHECK_LIB([hunspell],[Hunspell_create])
 
 # Check for Boost
-AX_BOOST_BASE([1.36.0])
+AX_BOOST_BASE([1.37.0])
 AX_BOOST_REGEX
+BOOST_REGEX_LIB="-Wl,-Bstatic $BOOST_REGEX_LIB -Wl,-Bdynamic"
 
 # Check for wxWidgets
 AM_OPTIONS_WXCONFIG

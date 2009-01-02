@@ -10,7 +10,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
-#include "hunspell.hxx"
+#include "hunspell/hunspell.hxx"
 
 DECLARE_POINTER_TYPE(SpellChecker);
 
@@ -33,20 +33,20 @@ class SpellChecker : public Hunspell, public IntrusivePtrBase<SpellChecker> {
 	static SpellChecker& get(const String& filename, const String& language);
 	/// Destroy all cached SpellChecker objects
 	static void destroyAll();
-	
+
 	/// Check the spelling of a single word
 	bool spell(const String& word);
 	/// Check the spelling of a single word, ignore punctuation
 	bool spell_with_punctuation(const String& word);
-	
+
 	/// Give spelling suggestions
 	void suggest(const String& word, vector<String>& suggestions_out);
-	
+
   private:
 	/// Convert between String and dictionary encoding
 	wxCSConv encoding;
 	bool convert_encoding(const String& word, CharBuffer& out);
-	
+
 	SpellChecker(const char* aff_path, const char* dic_path);
 	static map<String,SpellCheckerP> spellers; //< Cached checkers for each language
 };

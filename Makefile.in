@@ -205,7 +205,8 @@ am_magicseteditor_OBJECTS = ./src/util/version.$(OBJEXT) \
 	./src/cli/text_io_handler.$(OBJEXT) \
 	./src/code_template.$(OBJEXT)
 magicseteditor_OBJECTS = $(am_magicseteditor_OBJECTS)
-magicseteditor_LDADD = $(LDADD)
+am__DEPENDENCIES_1 =
+magicseteditor_DEPENDENCIES = $(am__DEPENDENCIES_1)
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)/src
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -334,9 +335,10 @@ top_srcdir = @top_srcdir@
 # This flag allows us to use subdirectories:
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CXXFLAGS = @WX_CXXFLAGS@ $(BOOST_CXXFLAGS) -DUNICODE -I . -Wall
-AM_LDFLAGS = @WX_LIBS@ $(BOOST_LDFLAGS) $(BOOST_REGEX_LIB)
+AM_LDFLAGS = @WX_LIBS@ $(BOOST_LDFLAGS)
+magicseteditor_LDADD = $(BOOST_REGEX_LIB)
 
-# The script used to generate is MakeAM.sh 
+# The script used to generate is MakeAM.sh
 magicseteditor_SOURCES = ./src/util/version.cpp \
 	./src/util/alignment.cpp ./src/util/rotation.cpp \
 	./src/util/tagged_string.cpp ./src/util/spell_checker.cpp \

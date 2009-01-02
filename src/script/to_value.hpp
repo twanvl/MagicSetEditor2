@@ -69,9 +69,9 @@ template <typename T> inline String to_code(const intrusive_ptr<T>& p) {
 class ScriptDelayedError : public ScriptValue {
   public:
 	inline ScriptDelayedError(const ScriptError& error) : error(error) {}
-	
+
 	virtual ScriptType type() const;// { return SCRIPT_ERROR; }
-	
+
 	// all of these throw
 	virtual String typeName() const;
 	virtual operator String() const;
@@ -105,7 +105,7 @@ struct ScriptIterator : public ScriptValue {
 	virtual ScriptType type() const;// { return SCRIPT_ITERATOR; }
 	virtual String typeName() const;// { return "iterator"; }
 	virtual CompareWhat compareAs(String&, void const*&) const; // { return COMPARE_NO; }
-	
+
 	/// Return the next item for this iterator, or ScriptValueP() if there is no such item
 	virtual ScriptValueP next(ScriptValueP* key_out = nullptr) = 0;
 	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
@@ -128,7 +128,7 @@ class ScriptCollectionBase : public ScriptValue {
 // Iterator over a collection
 template <typename Collection>
 class ScriptCollectionIterator : public ScriptIterator {
-  public:	
+  public:
 	ScriptCollectionIterator(const Collection* col) : pos(0), col(col) {}
 	virtual ScriptValueP next(ScriptValueP* key_out) {
 		if (pos < col->size()) {
@@ -231,7 +231,7 @@ class ScriptCustomCollection : public ScriptCollectionBase {
 		compare_ptr = this;
 		return COMPARE_AS_POINTER;
 	}
-	
+
 	/// The collection as a list (contains only the values that don't have a key)
 	vector<ScriptValueP> value;
 	/// The collection as a map (contains only the values that have a key)
@@ -255,7 +255,7 @@ class ScriptConcatCollection : public ScriptCollectionBase {
 		compare_ptr = this;
 		return COMPARE_AS_POINTER;
 	}
-	
+
   private:
 	ScriptValueP a,b;
 	friend class ScriptConcatCollectionIterator;
@@ -282,7 +282,7 @@ class ScriptObject : public ScriptValue {
 	virtual ScriptValueP getMember(const String& name) const {
 		#if USE_SCRIPT_PROFILING
 			Timer t;
-			Profiler prof(t, (void*)typeid(T).raw_name(), _("get member of ") + type_name(*value));
+			Profiler prof(t, (void*)mangled_name(typeid(T)), _("get member of ") + type_name(*value));
 		#endif
 		GetMember gm(name);
 		gm.handle(*value);
@@ -346,25 +346,25 @@ class ScriptObject : public ScriptValue {
 class ScriptClosure : public ScriptValue {
   public:
 	ScriptClosure(ScriptValueP fun) : fun(fun) {}
-	
+
 	virtual ScriptType type() const;
 	virtual String typeName() const;
 	virtual ScriptValueP eval(Context& ctx) const;
 	virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const;
-	
+
 	/// Add a binding
 	void addBinding(Variable v, const ScriptValueP& value);
 	/// Is there a binding for the given variable? If so, retrieve it
 	ScriptValueP getBinding(Variable v) const;
-	
+
 	/// Try to simplify this closure, returns a value if successful
 	ScriptValueP simplify();
-	
+
 	/// The wrapped function
 	ScriptValueP                          fun;
 	/// The default argument bindings
 	vector<pair<Variable,ScriptValueP> >  bindings;
-	
+
   private:
 	/// Apply the bindings in a context
 	void applyBindings(Context& ctx) const;
