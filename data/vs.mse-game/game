@@ -1,11 +1,11 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 full name: VS System
 short name: VS
 installer group: VS System/game files
 icon: card-back.png
 position hint: 3
 
-version: 2008-10-26
+version: 2008-12-03
 depends on:
 	package: vs-common.mse-include
 	version: 2008-09-23

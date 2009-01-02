@@ -1,11 +1,11 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 short name: Vanguard
 full name: Magic Vanguard
 installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2008-09-08
+version: 2008-12-29
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -780,7 +780,7 @@ keyword:
 	keyword: Soulshift
 	match: soulshift <atom-param>number</atom-param>
 	mode: expert
-	reminder: When it is put into a graveyard from play, you may return target Spirit card with converted mana cost {param1} or less from you graveyard to your hand.
+	reminder: When it is put into a graveyard from play, you may return target Spirit card with converted mana cost {param1} or less from your graveyard to your hand.
 keyword:
 	keyword: Enchant
 	match: enchant <atom-param>name</atom-param>
@@ -1049,3 +1049,8 @@ keyword:
 	match: Exalted
 	mode: expert
 	reminder: Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.
+keyword:
+	keyword: Domain
+	match: Domain
+	mode: pseudo
+	rules: Domain — [effect] for each basic land type among lands you control.
