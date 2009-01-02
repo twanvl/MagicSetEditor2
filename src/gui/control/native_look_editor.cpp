@@ -145,7 +145,7 @@ void NativeLookEditor::onScroll(wxScrollWinEvent& ev) {
 			y = y - page;
 		} else if (ev.GetEventType() == wxEVT_SCROLLWIN_PAGEDOWN) {
 			y = y + page;
-		} else if (ev.GetEventType() == wxEVT_SCROLLWIN_THUMBTRACK || 
+		} else if (ev.GetEventType() == wxEVT_SCROLLWIN_THUMBTRACK ||
 		    ev.GetEventType() == wxEVT_SCROLLWIN_THUMBRELEASE) {
 			y = ev.GetPosition();
 		}
@@ -177,14 +177,15 @@ void NativeLookEditor::scrollTo(int direction, int pos) {
 		pos = max(0, min(bottom, pos));
 		if (pos != y) {
 			SetScrollPos(wxVERTICAL, pos);
+
 			// move child controls
 			FOR_EACH(v, viewers) {
 				ValueEditor* e = v->getEditor();
 				if (e) e->determineSize();
 			}
-			// redraw
-			onChange();
 		}
+		// redraw
+		onChange();
 	}
 }
 

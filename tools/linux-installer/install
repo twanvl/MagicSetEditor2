@@ -13,8 +13,8 @@ case $UID in
         INSTALL_DIR='/usr/local/share/magicseteditor/';
         EXEC_SYMLINK='/usr/local/bin/magicseteditor';;
     *)
-        INSTALL_DIR=~'/.magicseteditor/';
-        EXEC_SYMLINK=~'/bin/magicseteditor';
+        INSTALL_DIR='$HOME/.magicseteditor/';
+        EXEC_SYMLINK='$HOME/bin/magicseteditor';
 esac
 
 if [ \"$MSE_INSTALL_DIR\" != "" ] then

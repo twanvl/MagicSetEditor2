@@ -18,7 +18,7 @@ DECLARE_TYPEOF_COLLECTION(PackagedP);
 PackageList::PackageList(Window* parent, int id, int direction, bool always_focused)
 	: GalleryList(parent, id, direction, always_focused)
 {
-	item_size = subcolumns[0].size = wxSize(108, 150);
+	item_size = subcolumns[0].size = wxSize(125, 150);
 	SetThemeEnabled(true);
 }
 
@@ -27,6 +27,7 @@ size_t PackageList::itemCount() const {
 }
 
 void PackageList::drawItem(DC& dc, int x, int y, size_t item) {
+	dc.SetClippingRegion(x, y, item_size.x, item_size.y);
 	PackageData& d = packages.at(item);
 	RealRect rect(RealPoint(x,y),item_size);
 	RealPoint pos;
@@ -45,6 +46,7 @@ void PackageList::drawItem(DC& dc, int x, int y, size_t item) {
 	dc.GetTextExtent(d.package->full_name, &w, &h);
 	RealPoint text_pos = align_in_rect(ALIGN_CENTER, RealSize(w,h), rect);
 	dc.DrawText(d.package->full_name, (int)text_pos.x, (int)text_pos.y + 130);
+	dc.DestroyClippingRegion();
 }
 
 struct PackageList::ComparePackagePosHint {
