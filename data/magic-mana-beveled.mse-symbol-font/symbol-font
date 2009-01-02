@@ -1,5 +1,5 @@
 mse version: 0.3.7
-version: 2008-08-05
+version: 2008-08-13
 short name: beveled style (firepenguinmaster)
 installer group: magic/Mana symbols/beveled style (FirePenguinMaster)
 position hint: 101
@@ -250,14 +250,18 @@ symbol:
 		color: rgb(0,0,0)
 		max stretch: 0.5
 symbol:
-	code: X
-	image: mana_x.png
-symbol:
-	code: Y
-	image: mana_y.png
-symbol:
-	code: Z
-	image: mana_z.png
+	image: mana_circle.png
+	code: [XYZ]
+	regex: yes
+	draw text: 0
+	text font:
+		name: MPlantin
+		size: 1
+		color: rgb(0,0,0)
+	text margin left:   .32
+	text margin right:  .26
+	text margin top:    -.03
+	text margin bottom: .00
 symbol:
 	code: I
 	image: mana_infinite.png

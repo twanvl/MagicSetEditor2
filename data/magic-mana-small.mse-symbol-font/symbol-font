@@ -1,5 +1,5 @@
 mse version: 0.3.7
-version: 2008-08-05
+version: 2008-08-12
 short name: normal
 installer group: magic/Mana symbols/normal style
 position hint: 001
@@ -288,14 +288,18 @@ symbol:
 		max stretch: 0.5
 	image font size: 145
 symbol:
-	code: X
-	image: mana_x.png
-symbol:
-	code: Y
-	image: mana_y.png
-symbol:
-	code: Z
-	image: mana_z.png
+	image: mana_circle.png
+	code: [XYZ]
+	regex: yes
+	draw text: 0
+	text margin left:   .23
+	text margin right:  .23
+	text margin top:    -.11
+	text margin bottom: -.11
+	text font:
+		name: MPlantin
+		size: 1
+		color: rgb(0,0,0)
 symbol:
 	image: mana_circle.png
 	code: [0-9]+(?!/[WUBRGSTQ2])|.

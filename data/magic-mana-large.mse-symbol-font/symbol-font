@@ -1,5 +1,5 @@
 mse version: 0.3.7
-version: 2008-08-05
+version: 2008-08-13
 # Symbol font in the 'popup' style, used for casting costs on modern cards
 short name: popup style
 installer group: magic/Mana symbols/popup style
@@ -278,14 +278,18 @@ symbol:
 		max stretch: 0.5
 	image font size: 145
 symbol:
-	code: X
-	image: mana_x.png
-symbol:
-	code: Y
-	image: mana_y.png
-symbol:
-	code: Z
-	image: mana_z.png
+	image: mana_circle.png
+	code: [XYZ]
+	regex: yes
+	draw text: 0
+	text margin left:   .23
+	text margin right:  .21
+	text margin top:    -.10
+	text margin bottom: -.06
+	text font:
+		name: MPlantin
+		size: 1
+		color: rgb(0,0,0)
 symbol:
 	code: I
 	image: mana_infinite.png

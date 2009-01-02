@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.7
-version: 2008-08-05
+version: 2008-08-13
 # Symbol font in the 'futuristic' style, used for casting costs on futureshift cards
 short name: Future Sight style
 installer group: magic/Mana symbols/Future Sight style
@@ -187,6 +187,21 @@ symbol:
 symbol:
 	image: mana_circle_w.png
 	enabled: { colorless_color() == "w" }
+	code: [XYZ]
+	regex: yes
+	draw text: 0
+	text font:
+		name: MPlantin
+		weight: bold
+		size: 1
+		color: rgb(0,0,0)
+	text margin left:   .3
+	text margin right:  .3
+	text margin top:    0.1
+	text margin bottom: 0.1
+symbol:
+	image: mana_circle_w.png
+	enabled: { colorless_color() == "w" }
 	code: [0-9]+(?!/[WUBRGSTQ2])|.
 	regex: yes
 	draw text: 0
@@ -196,6 +211,21 @@ symbol:
 		size: 1
 		color: rgb(0,0,0)
 		max stretch: 0.5
+	text margin left:   .3
+	text margin right:  .3
+	text margin top:    0.1
+	text margin bottom: 0.1
+symbol:
+	image: mana_circle_u.png
+	enabled: { colorless_color() == "u" }
+	code: [XYZ]
+	regex: yes
+	draw text: 0
+	text font:
+		name: MPlantin
+		weight: bold
+		size: 1
+		color: rgb(0,0,0)
 	text margin left:   .3
 	text margin right:  .3
 	text margin top:    0.1
@@ -219,6 +249,21 @@ symbol:
 symbol:
 	image: mana_circle_b.png
 	enabled: { colorless_color() == "b" }
+	code: [XYZ]
+	regex: yes
+	draw text: 0
+	text font:
+		name: MPlantin
+		weight: bold
+		size: 1
+		color: rgb(0,0,0)
+	text margin left:   .3
+	text margin right:  .3
+	text margin top:    0.1
+	text margin bottom: 0.1
+symbol:
+	image: mana_circle_b.png
+	enabled: { colorless_color() == "b" }
 	code: [0-9]+(?!/[WUBRGSTQ2])|.
 	regex: yes
 	draw text: 0
@@ -228,6 +273,21 @@ symbol:
 		size: 1
 		color: rgb(0,0,0)
 		max stretch: 0.5
+	text margin left:   .3
+	text margin right:  .3
+	text margin top:    0.1
+	text margin bottom: 0.1
+symbol:
+	image: mana_circle_r.png
+	enabled: { colorless_color() == "r" }
+	code: [XYZ]
+	regex: yes
+	draw text: 0
+	text font:
+		name: MPlantin
+		weight: bold
+		size: 1
+		color: rgb(0,0,0)
 	text margin left:   .3
 	text margin right:  .3
 	text margin top:    0.1
@@ -251,6 +311,21 @@ symbol:
 symbol:
 	image: mana_circle_g.png
 	enabled: { colorless_color() == "g" }
+	code: [XYZ]
+	regex: yes
+	draw text: 0
+	text font:
+		name: MPlantin
+		weight: bold
+		size: 1
+		color: rgb(0,0,0)
+	text margin left:   .3
+	text margin right:  .3
+	text margin top:    0.1
+	text margin bottom: 0.1
+symbol:
+	image: mana_circle_g.png
+	enabled: { colorless_color() == "g" }
 	code: [0-9]+(?!/[WUBRGSTQ2])|.
 	regex: yes
 	draw text: 0
@@ -260,6 +335,20 @@ symbol:
 		size: 1
 		color: rgb(0,0,0)
 		max stretch: 0.5
+	text margin left:   .3
+	text margin right:  .3
+	text margin top:    0.1
+	text margin bottom: 0.1
+symbol:
+	image: mana_circle.png
+	code: [XYZ]
+	regex: yes
+	draw text: 0
+	text font:
+		name: MPlantin
+		weight: bold
+		size: 1
+		color: rgb(0,0,0)
 	text margin left:   .3
 	text margin right:  .3
 	text margin top:    0.1
