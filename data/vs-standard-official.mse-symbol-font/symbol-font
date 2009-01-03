@@ -1,5 +1,5 @@
-﻿mse version: 0.3.7
-version: 2008-10-23
+﻿mse version: 0.3.8
+version: 2009-01-02
 short name: New (official)
 position hint: 1
 installer group: VS System/Symbol Fonts/Official New
@@ -62,18 +62,18 @@ symbol:
 symbol:
 	code: Horsemen of Apocalypse
 	image: apocalypse.png
-symbol:
-	code: Invaders
-	image: invaders.png
+#symbol:
+#	code: Invaders
+#	image: invaders.png
 symbol:
 	code: JLA
 	image: jla.png
 symbol:
 	code: JSA
 	image: jsa.png
-symbol:
-	code: Kree
-	image: kree.png
+#symbol:
+#	code: Kree
+#	image: kree.png
 symbol:
 	code: Marvel Knights
 	image: marvelknights.png
@@ -98,9 +98,9 @@ symbol:
 symbol:
 	code: Sinister Syndicate
 	image: sinistersyndicate.png
-symbol:
-	code: Skrull
-	image: skrull.png
+#symbol:
+#	code: Skrull
+#	image: skrull.png
 symbol:
 	code: Speed Force
 	image: speedforce.png
