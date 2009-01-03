@@ -1,4 +1,4 @@
-﻿
+
 ############################################################## Localization
 
 include file: language
@@ -310,7 +310,7 @@ for_mana_costs := format_cost := {
 }
 # Convert first character to lower case
 alternative_cost := replace@(match:"^[A-Z]", replace: { to_lower() })
-# 
+#
 combined_cost := replace@(match:", [A-Z]", replace: { to_lower() })+
 	replace@(match:",", replace:" and")+
 	replace@(match:"^[STQXYZIWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
@@ -341,7 +341,7 @@ mana_context :=
 	    ([ ]either)?			 # pay either X or Y
 	    ([ ](<sym[^>]*>)?[STQXYZIWUBRG0-9/|]+(</sym[^>]*>)?,)* # pay X, Y or Z
 	    ([ ](<sym[^>]*>)?[STQXYZIWUBRG0-9/|]+(</sym[^>]*>)?[ ](and|or|and/or))* # pay X or Y
-	    [ ]<match> 
+	    [ ]<match>
 	    ([,.)]|$				# (end of word)
 	    |[ ][^ .,]*$			# still typing...
 	    |[ ]( or | and | in | less | more | to ) # or next word is ...
@@ -379,8 +379,8 @@ text_filter :=
 			chosen(choice:if correct_case then mode else "lower case", set.automatic_reminder_text)
 		},
 		combine:        {
-			if mode == "pseudo" then "<i-auto>{keyword}</i-auto>"
-			else "{keyword}<atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
+			if mode == "pseudo" then "<i-auto><nospellcheck>{keyword}</nospellcheck></i-auto>"
+			else "<nospellcheck>{keyword}</nospellcheck><atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
 		) +
 	# step 2b : move action keywords' reminder text to the end of the line
 	replace@(
@@ -400,18 +400,18 @@ text_filter :=
 		) +
 	# step 3b : expand shortcut words ` and shortened LEGENDNAME
 	replace@(
-		match: "LEGENDNAME",
+		match: "`|`THIS`|LEGENDNAME",
 		in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
 		replace: "<atom-legname></atom-legname>"
 		) +
 	# step 3c : fill in atom fields
 	tag_contents@(
 		tag: "<atom-cardname>",
-		contents: { if card_name=="" then "CARDNAME" else card_name }
+		contents: { "<nospellcheck>" + (if card_name=="" then "CARDNAME" else card_name) + "</nospellcheck>" }
 		) +
 	tag_contents@(
 		tag: "<atom-legname>",
-		contents: { if card_name=="" then "LEGENDNAME" else legend_filter(card_name) }
+		contents: { "<nospellcheck>" + (if card_name=="" then "LEGENDNAME" else legend_filter(card_name)) + "</nospellcheck>" }
 		) +
 	# step 4 : explict non mana symbols
 	replace@(
@@ -439,7 +439,7 @@ text_filter :=
 		replace: { _1 + to_upper(_2) }) +
 	curly_quotes +
 	# step 9 : spellcheck
-	{ if set.mark_errors then 
+	{ if set.mark_errors then
 		check_spelling(
 			language: language().spellcheck_code,
 			extra_dictionary: "/magic.mse-game/magic-words",

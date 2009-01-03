@@ -20,8 +20,10 @@ inline size_t spelled_correctly(const String& input, size_t start, size_t end, S
 	String word = untag(input.substr(start,end-start));
 	if (word.empty()) return true;
 	// symbol?
-	if (in_tag(input,_("<sym"),start,end) != String::npos) {
+	if (in_tag(input,_("<sym"),start,end) != String::npos ||
+		in_tag(input,_("<nospellcheck"),start,end) != String::npos) {
 		// symbols are always spelled correctly
+		// and <nospellcheck> tags should prevent spellcheck
 		return true;
 	}
 	// run through spellchecker(s)
