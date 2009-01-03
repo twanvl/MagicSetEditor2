@@ -1,4 +1,4 @@
-
+﻿
 ############################################################## Localization
 
 include file: language
@@ -400,7 +400,7 @@ text_filter :=
 		) +
 	# step 3b : expand shortcut words ` and shortened LEGENDNAME
 	replace@(
-		match: "`|`THIS`|LEGENDNAME",
+		match: "LEGENDNAME",
 		in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
 		replace: "<atom-legname></atom-legname>"
 		) +

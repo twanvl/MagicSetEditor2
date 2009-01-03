@@ -1,11 +1,11 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 short name: Magic
 full name: Magic the Gathering
 installer group: magic/game files
 icon: card-back.png
 position hint: 01
 
-version: 2008-12-29
+version: 2009-01-03
 depends on: magic-blends.mse-include 2007-09-23
 depends on: magic-watermarks.mse-include 2007-09-23
 
