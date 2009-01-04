@@ -394,7 +394,7 @@ text_filter :=
 		) +
 	# step 3a : expand shortcut word CARDNAME
 	replace@(
-		match: "CARDNAME",
+		match: "~|CARDNAME",
 		in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
 		replace: "<atom-cardname></atom-cardname>"
 		) +
