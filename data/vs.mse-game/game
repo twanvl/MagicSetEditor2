@@ -5,7 +5,7 @@ installer group: VS System/game files
 icon: card-back.png
 position hint: 3
 
-version: 2008-12-03
+version: 2009-01-04
 depends on:
 	package: vs-common.mse-include
 	version: 2008-09-23
