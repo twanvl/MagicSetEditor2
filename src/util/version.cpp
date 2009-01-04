@@ -72,7 +72,7 @@ const Char* version_suffix = _(" (beta, ascii build)");
  *     0.3.3 : keyword separator before/after
  *     0.3.4 : html export; choice rendering based on scripted 'image'
  *     0.3.5 : word lists, symbol font 'as text'
- *     0.3.6 : free rotation, rotation behaviour changed. 
+ *     0.3.6 : free rotation, rotation behaviour changed.
  *     0.3.7 : scripting language changes (@ operator, stricter type conversion).
  */
 const Version file_version_locale          = 307; // 0.3.7

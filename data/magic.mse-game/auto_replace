@@ -1,4 +1,4 @@
-﻿
+
 ############################################################## Auto replace
 
 # Do we need categories?
@@ -34,3 +34,9 @@ auto replace:
 auto replace:
 	match: @
 	replace: LEGENDNAME
+auto replace:
+	match: ~
+	replace: CARDNAME
+auto replace:
+	match: ~THIS~
+	replace: CARDNAME

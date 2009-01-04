@@ -392,13 +392,13 @@ text_filter :=
 		match: "(<atom-reminder-[^>]*>[^)]+[)]</atom-reminder-[^>]*>)([^\n]+)\\1"
 		replace: "\\2\\1"
 		) +
-	# step 3a : expand shortcut words ~ and CARDNAME
+	# step 3a : expand shortcut word CARDNAME
 	replace@(
-		match: "~|~THIS~|CARDNAME",
+		match: "CARDNAME",
 		in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
 		replace: "<atom-cardname></atom-cardname>"
 		) +
-	# step 3b : expand shortcut words ` and shortened LEGENDNAME
+	# step 3b : expand shortcut word LEGENDNAME
 	replace@(
 		match: "LEGENDNAME",
 		in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
