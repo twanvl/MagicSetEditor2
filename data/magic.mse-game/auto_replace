@@ -34,6 +34,3 @@ auto replace:
 auto replace:
 	match: @
 	replace: LEGENDNAME
-auto replace:
-	match: ~THIS~
-	replace: CARDNAME

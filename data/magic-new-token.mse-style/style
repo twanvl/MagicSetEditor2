@@ -6,7 +6,7 @@ installer group: magic/new style/tokens
 icon: card-sample.png
 position hint: 007
 
-version: 2009-01-02
+version: 2009-01-06
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -270,7 +270,7 @@ card style:
 		font:
 			name: MPlantin
 			italic name: MPlantin-Italic
-			size: 15
+			size: 14
 			scale down to: 10
 			color: rgb(0,0,0)
 		symbol font:

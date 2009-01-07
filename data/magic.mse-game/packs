@@ -9,7 +9,7 @@ pack item:
 	filter: card.rarity == "uncommon" and card.shape != "token" and card.shape != "rulestip"
 pack item:
 	name: rare
-	filter: card.rarity == "rare" and card.shape != "token" and card.shape != "rulestip"
+	filter: contains(card.rarity, match: "rare") and card.shape != "token" and card.shape != "rulestip"
 pack item:
 	name: special
 	filter: card.rarity == "special" and card.shape != "token" and card.shape != "rulestip"

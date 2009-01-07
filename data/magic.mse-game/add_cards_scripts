@@ -19,3 +19,19 @@ add cards script:
 #		#count := show_number_dialog("How many cards should be added?")
 #		count := 1
 #		for _ from 1 to count do [new_card()]
+
+add cards script:
+	name: &Horizontal Cycle
+	description: Add 1 card of each color to the set
+	script:
+		# TODO:
+		#rarity := show_text_dialog("What rarity should the cards be?")
+		[ new_card([card_color: "white"])
+		, new_card([card_color: "blue"])
+		, new_card([card_color: "black"])
+		, new_card([card_color: "red"])
+		, new_card([card_color: "green"])
+		]
+
+#TODO: Vertical Cycle
+
