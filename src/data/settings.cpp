@@ -81,7 +81,11 @@ GameSettings::GameSettings()
 {}
 
 void GameSettings::initDefaults(const Game& game) {
-	if (initialized) return;
+	// Defer initialization until the game is fully loaded.
+	// This prevents data that needs to be initialized from
+	// being accessed from the new set window, but removes
+	// the need to load the entire file, which takes too long.
+	if (initialized || !game.isFullyLoaded()) return;
 	initialized = true;
 	// init auto_replaces, copy from game file
 	FOR_EACH_CONST(ar, game.auto_replaces) {

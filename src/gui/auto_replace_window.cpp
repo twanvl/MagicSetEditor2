@@ -27,38 +27,38 @@ DEFINE_EVENT_TYPE(EVENT_ITEM_SELECT);
 class AutoReplaceList : public ItemList {
   public:
 	AutoReplaceList(Window* parent, int id, const Game& game);
-	
+
 	/// The items
 	vector<AutoReplaceP> items;
 	/// Settings we are edditing
 	const Game& game;
 	GameSettings& gs;
-	
+
 	/// The current item
 	inline AutoReplaceP getSelected() const { return static_pointer_cast<AutoReplace>(selected_item); }
-	
+
 	/// Add an item
 	void addItem(const AutoReplaceP& item);
 	/// Remove the selected item
 	void removeSelected();
-	
+
 	/// Reset the list to the default
 	void reset();
-	
+
 	using ItemList::refreshList;
-	
+
   protected:
 	/// Get all items
 	virtual void getItems(vector<VoidP>& out) const;
 	/// Return the AutoReplace at the given position in the sorted list
 	inline AutoReplaceP getAR(long pos) const { return static_pointer_cast<AutoReplace>(getItem(pos)); }
-	
+
 	/// Send an 'item selected' event for the currently selected item (selected_item)
 	virtual void sendEvent();
 	/// Compare items
 	virtual bool compareItems(void* a, void* b) const;
 	virtual bool mustSort() const { return true; }
-	
+
 	/// Get the text of an item in a specific column
 	/** Overrides a function from wxListCtrl */
 	virtual String OnGetItemText (long pos, long col) const;
@@ -67,7 +67,7 @@ class AutoReplaceList : public ItemList {
 	virtual int    OnGetItemImage(long pos) const;
 	/// Get the color for an item
 	virtual wxListItemAttr* OnGetItemAttr(long pos) const;
-	
+
 	mutable wxListItemAttr item_attr; // for OnGetItemAttr
 };
 
@@ -81,7 +81,7 @@ AutoReplaceList::AutoReplaceList(Window* parent, int id, const Game& game)
 		items.push_back(ar->clone());
 	}
 	// Add columns
-	InsertColumn(0, _LABEL_(""),             wxLIST_FORMAT_LEFT,    0); // dummy, prevent the image from taking up space
+	InsertColumn(0, _(""),                   wxLIST_FORMAT_LEFT,    0); // dummy, prevent the image from taking up space
 	InsertColumn(1, _LABEL_("auto match"),   wxLIST_FORMAT_LEFT,  100);
 	InsertColumn(2, _LABEL_("auto replace"), wxLIST_FORMAT_LEFT,  200);
 	// grey for disabled items
@@ -143,7 +143,7 @@ String AutoReplaceList::OnGetItemText (long pos, long col) const {
 	if (col == 0) return ar->match;
 	if (col == 1) return ar->match;
 	if (col == 2) return ar->replace;
-	throw InternalError(_("too mana columns"));
+	throw InternalError(_("too many columns"));
 }
 
 int AutoReplaceList::OnGetItemImage(long pos) const {

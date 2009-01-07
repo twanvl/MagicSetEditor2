@@ -23,15 +23,15 @@ DECLARE_POINTER_TYPE(AutoReplace);
 class WordListWord : public IntrusivePtrBase<WordListWord> {
   public:
 	WordListWord();
-	
+
 	String  name;         ///< Name of the list / the word
 	bool    line_below;   ///< Line below in the list?
 	bool    is_prefix;    ///< Is this a prefix before other words?
 	vector<WordListWordP> words; ///< Sublist
 	OptionalScript script;	///< Generate words using a script
-	
+
 	inline bool isGroup() const { return !words.empty(); }
-	
+
 	DECLARE_REFLECTION();
 };
 
@@ -47,15 +47,15 @@ class WordList : public WordListWord {
 class AutoReplace : public IntrusivePtrVirtualBase {
   public:
 	AutoReplace();
-	
+
 	bool   enabled;
 	bool   whole_word;
 	bool   custom; ///< Is this a custom auto replace?
 	String match;
 	String replace;
-	
+
 	inline AutoReplaceP clone() const { return new_intrusive1<AutoReplace>(*this); }
-	
+
 	DECLARE_REFLECTION();
 };
 

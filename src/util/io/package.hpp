@@ -38,7 +38,7 @@ DECLARE_DYNAMIC_ARG(Package*, clipboard_package);
  *
  *  Zip files are accessed using wxZip(Input|Output)Stream.
  *  The zip input stream appears to only allow one file at a time, since the stream itself maintains
- *  state about what file we are reading. 
+ *  state about what file we are reading.
  *  There are multiple solutions:
  *    1. (currently used) Open a new ZipInputStream for each file
  *    2. (may be faster) First read the file into a memory buffer,
@@ -49,11 +49,11 @@ DECLARE_DYNAMIC_ARG(Package*, clipboard_package);
 class Package : public IntrusivePtrVirtualBase {
   public:
 	// --------------------------------------------------- : Managing the outside of the package
-	
+
 	/// Creates a new package
 	Package();
 	virtual ~Package();
-	
+
 	/// Is a file opened?
 	bool isOpened() const;
 	/// Must the package be saved with saveAs()?
@@ -67,11 +67,11 @@ class Package : public IntrusivePtrVirtualBase {
 	const String& absoluteFilename() const;
 	/// The time this package was last modified
 	inline wxDateTime lastModified() const { return modified; }
-		
+
 	/// Open a package, should only be called when the package is constructed using the default constructor!
 	/// @pre open not called before [TODO]
 	void open(const String& package);
-	
+
 	/// Saves the package, by default saves as a zip file, unless
 	/// it was already a directory
 	/** If remove_unused=true all files that were in the file and
@@ -79,46 +79,46 @@ class Package : public IntrusivePtrVirtualBase {
 	 *  This is a form of garbage collection, to get rid of old picture files for example.
 	 */
 	void save(bool remove_unused = true);
-	
+
 	/// Saves the package under a different filename
 	void saveAs(const String& package, bool remove_unused = true);
-	
+
 	/// Saves the package under a different filename, but keep the old one open
 	void saveCopy(const String& package);
-	
-	
+
+
 	// --------------------------------------------------- : Managing the inside of the package
-	
+
 	/// Open an input stream for a file in the package.
 	InputStreamP openIn(const String& file);
-	
+
 	/// Open an output stream for a file in the package.
 	/// (changes are only committed with save())
 	OutputStreamP openOut(const String& file);
-	
+
 	/// Get a filename that can be written to to modfify a file in the package
 	/// (changes are only committed with save())
 	String nameOut(const String& file);
-	
+
 	/// Creates a new, unique, filename with the specified prefix and suffix
 	/// for example newFileName("image/",".jpg") -> "image/1.jpg"
 	/// Returns the name of a temporary file that can be written to.
 	FileName newFileName(const String& prefix, const String& suffix);
-	
+
 	/// Signal that a file is still used by this package.
 	/// Must be called for files not opened using openOut/nameOut
 	/// If they are to be kept in the package.
 	void referenceFile(const String& file);
-	
+
 	/// Get an 'absolute filename' for a file in the package.
 	/// This file can later be opened from anywhere (other process) using openAbsoluteFile()
 	String absoluteName(const String& file);
-	
+
 	/// Open a file given an absolute filename
 	static InputStreamP openAbsoluteFile(const String& name);
-	
+
 	// --------------------------------------------------- : Managing the inside of the package : Reader/writer
-	
+
 	template <typename T>
 	void readFile(const String& file, T& obj) {
 		Reader reader(openIn(file), dynamic_cast<Packaged*>(this), absoluteFilename() + _("/") + file);
@@ -134,16 +134,16 @@ class Package : public IntrusivePtrVirtualBase {
 		readFile(file, obj);
 		return obj;
 	}
-	
+
 	template <typename T>
 	void writeFile(const String& file, const T& obj, Version file_version) {
 		Writer writer(openOut(file), file_version);
 		writer.handle(obj);
 	}
-	
+
 	// --------------------------------------------------- : Private stuff
   private:
-	
+
 	/// Information about a file in the package
 	struct FileInfo {
 		FileInfo();
@@ -154,7 +154,7 @@ class Package : public IntrusivePtrVirtualBase {
 		/// Is this file changed, and therefore written to a temporary file?
 		inline bool wasWritten() const { return !tempName.empty(); }
 	};
-		
+
 	/// Filename of the package
 	String filename;
 	/// Last modified time
@@ -173,7 +173,7 @@ class Package : public IntrusivePtrVirtualBase {
 	wxFileInputStream* fileStream;
 	/// Filestream for reading zip files
 	wxZipInputStream*  zipStream;
-	
+
 	void loadZipStream();
 	void openDirectory();
 	void openSubdir(const String&);
@@ -193,7 +193,7 @@ class PackageDependency : public IntrusivePtrBase<PackageDependency> {
   public:
 	String  package;	///< Name of the package someone depends on
 	Version version;	///< Minimal required version of that package
-	
+
 	DECLARE_REFLECTION();
 };
 
@@ -204,7 +204,7 @@ class Packaged : public Package {
   public:
 	Packaged();
 	virtual ~Packaged() {}
-	
+
 	Version version;			///< Version number of this package
 	Version compatible_version;	///< Earliest version number this package is compatible with
 	String installer_group;		///< Group to place this package in in the installer
@@ -213,10 +213,10 @@ class Packaged : public Package {
 	String icon_filename;		///< Filename of icon to use in package lists
 	vector<PackageDependencyP> dependencies;	///< Dependencies of this package
 	int    position_hint;		///< A hint for the package list
-	
+
 	/// Get an input stream for the package icon, if there is any
 	InputStreamP openIconFile();
-	
+
 	/// Open a package, and read the data
 	/** if just_header is true, then the package is not fully parsed.
 	 */
@@ -226,11 +226,15 @@ class Packaged : public Package {
 	void save();
 	void saveAs(const String& package, bool remove_unused = true);
 	void saveCopy(const String& package);
-	
+
 	/// Check if this package lists a dependency on the given package
 	/** This is done to force people to fill in the dependencies */
 	void requireDependency(Packaged* package);
-	
+
+	inline bool isFullyLoaded () const {
+		return fully_loaded;
+	}
+
   protected:
 	/// filename of the data file, and extension of the package file
 	virtual String typeName() const = 0;
@@ -238,9 +242,9 @@ class Packaged : public Package {
 	virtual void validate(Version file_app_version);
 	/// What file version should be used for writing files?
 	virtual Version fileVersion() const = 0;
-	
+
 	DECLARE_REFLECTION_VIRTUAL();
-	
+
   private:
 	bool   fully_loaded;	///< Is the package fully loaded?
 	friend struct JustAsPackageProxy;
