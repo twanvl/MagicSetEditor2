@@ -573,7 +573,7 @@ String simplify_tagged_overlap(const String& str) {
 
 // ----------------------------------------------------------------------------- : Verification
 
-void check_tagged(const String& str) {
+void check_tagged(const String& str, bool check_balance) {
 	for (size_t i = 0 ; i < str.size() ; ) {
 		if (str.GetChar(i) == _('<')) {
 			size_t end = skip_tag(str,i);
@@ -586,14 +586,16 @@ void check_tagged(const String& str) {
 					handle_warning(_("Invalid character in tag"),false);
 				}
 			}
-			if (str.GetChar(i+1) == _('/')) {
-				// close tag, don't check
-			} else if (is_substr(str,i,_("<hint"))) {
-				// no close tag for <hint> tags
-			} else {
-				size_t close = match_close_tag(str,i);
-				if (close == String::npos) {
-					handle_warning(_("Invalid tagged string: missing close tag for <") + tag_at(str,i) + _(">"),false);
+			if (check_balance) {
+				if (str.GetChar(i+1) == _('/')) {
+					// close tag, don't check
+				} else if (is_substr(str,i,_("<hint"))) {
+					// no close tag for <hint> tags
+				} else {
+					size_t close = match_close_tag(str,i);
+					if (close == String::npos) {
+						handle_warning(_("Invalid tagged string: missing close tag for <") + tag_at(str,i) + _(">"),false);
+					}
 				}
 			}
 			i = end;

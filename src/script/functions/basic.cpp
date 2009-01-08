@@ -324,7 +324,7 @@ SCRIPT_FUNCTION(sort_text) {
 
 /// Replace the contents of a specific tag with the value of a script function
 String replace_tag_contents(String input, const String& tag, const ScriptValueP& contents, Context& ctx) {
-	assert_tagged(input);
+	assert_tagged(input, false);
 	String ret;
 	size_t start = 0, pos = input.find(tag);
 	while (pos != String::npos) {
@@ -345,7 +345,7 @@ String replace_tag_contents(String input, const String& tag, const ScriptValueP&
 		pos = input.find(tag, start);
 	}
 	ret.append(input, start, pos-start);
-	assert_tagged(ret);
+	assert_tagged(ret, false);
 	return ret;
 }
 
@@ -360,13 +360,13 @@ SCRIPT_FUNCTION(tag_contents) {
 SCRIPT_FUNCTION(remove_tag) {
 	SCRIPT_PARAM_C(String, input);
 	SCRIPT_PARAM_C(String, tag);
-	assert_tagged(input);
+	assert_tagged(input, false);
 	SCRIPT_RETURN(remove_tag(input, tag));
 }
 
 SCRIPT_FUNCTION(remove_tags) {
 	SCRIPT_PARAM_C(String, input);
-	assert_tagged(input);
+	assert_tagged(input, false);
 	SCRIPT_RETURN(untag_no_escape(input));
 }
 

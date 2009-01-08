@@ -183,11 +183,11 @@ String tagged_substr_replace(const String& input, size_t start, size_t end, cons
  *
  *  In case of an error, throws an exception.
  */
-void check_tagged(const String& str);
+void check_tagged(const String& str, bool check_balance = true);
 #ifdef _DEBUG
 	#define assert_tagged check_tagged
 #else
-	#define assert_tagged(_)
+	#define assert_tagged(_,_)
 #endif
 
 /// Simplify a tagged string
