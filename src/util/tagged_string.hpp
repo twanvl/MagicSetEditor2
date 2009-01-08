@@ -175,12 +175,20 @@ String tagged_substr_replace(const String& input, size_t start, size_t end, cons
 
 // ----------------------------------------------------------------------------- : Simplification
 
-/// Verify that a string is correctly tagged, if it is not, change it so it is
+/// Verify that a string is correctly tagged
 /** Ensures that:
  *   - All tags end, i.e. for each '<' there is a matching '>'
- *   - There are no tags containing '<'
+ *   - There are no tags containing '<' or whitespace
+ *   - For each open tag there is a matching close tag.
+ *
+ *  In case of an error, throws an exception.
  */
-String verify_tagged(const String& str);
+void check_tagged(const String& str);
+#ifdef _DEBUG
+	#define assert_tagged check_tagged
+#else
+	#define assert_tagged(_)
+#endif
 
 /// Simplify a tagged string
 /**   - merges adjecent open/close tags: "<tag></tag>" --> ""

@@ -571,6 +571,38 @@ String simplify_tagged_overlap(const String& str) {
 	return ret;
 }
 
+// ----------------------------------------------------------------------------- : Verification
+
+void check_tagged(const String& str) {
+	for (size_t i = 0 ; i < str.size() ; ) {
+		if (str.GetChar(i) == _('<')) {
+			size_t end = skip_tag(str,i);
+			if (end == String::npos) {
+				handle_warning(_("Invalid tagged string: missing '>'"),false);
+			}
+			for (size_t j = i + 1 ; j + 1 < end ; ++j) {
+				Char c = str.GetChar(j);
+				if (c == _(' ') || c == _('<')) {
+					handle_warning(_("Invalid character in tag"),false);
+				}
+			}
+			if (str.GetChar(i+1) == _('/')) {
+				// close tag, don't check
+			} else if (is_substr(str,i,_("<hint"))) {
+				// no close tag for <hint> tags
+			} else {
+				size_t close = match_close_tag(str,i);
+				if (close == String::npos) {
+					handle_warning(_("Invalid tagged string: missing close tag for <") + tag_at(str,i) + _(">"),false);
+				}
+			}
+			i = end;
+		} else {
+			++i;
+		}
+	}
+}
+
 // ----------------------------------------------------------------------------- : Other utilities
 
 String curly_quotes(String str, bool curl) {
