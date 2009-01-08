@@ -50,7 +50,7 @@ template <> void GetDefaultMember::handle(const Version& v) {
 // ----------------------------------------------------------------------------- : Versions
 
 // NOTE: Don't use leading zeroes, they mean octal
-const Version app_version  = 308; // 0.3.7
+const Version app_version  = 308; // 0.3.8
 #ifdef UNICODE
 const Char* version_suffix = _(" (beta)");
 #else
@@ -74,9 +74,12 @@ const Char* version_suffix = _(" (beta, ascii build)");
  *     0.3.5 : word lists, symbol font 'as text'
  *     0.3.6 : free rotation, rotation behaviour changed.
  *     0.3.7 : scripting language changes (@ operator, stricter type conversion).
- *     0.3.8 : spellcheck, alignment:justify behavior changed, more scriptable fields.
+ *     0.3.8 : - check_spelling function
+ *             - tag_contents function fixed
+ *             - alignment:justify behavior changed
+ *             - more scriptable fields.
  */
-const Version file_version_locale          = 307; // 0.3.7
+const Version file_version_locale          = 308; // 0.3.8
 const Version file_version_set             = 306; // 0.3.6
 const Version file_version_game            = 308; // 0.3.8
 const Version file_version_stylesheet      = 308; // 0.3.8
