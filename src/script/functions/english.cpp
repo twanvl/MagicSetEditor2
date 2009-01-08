@@ -310,6 +310,7 @@ String process_english_hints(const String& str) {
 
 SCRIPT_FUNCTION(process_english_hints) {
 	SCRIPT_PARAM_C(String, input);
+	assert_tagged(input);
 	SCRIPT_RETURN(process_english_hints(input));
 }
 

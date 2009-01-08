@@ -324,25 +324,29 @@ SCRIPT_FUNCTION(sort_text) {
 
 /// Replace the contents of a specific tag with the value of a script function
 String replace_tag_contents(String input, const String& tag, const ScriptValueP& contents, Context& ctx) {
+	assert_tagged(input);
 	String ret;
-	size_t pos = input.find(tag);
+	size_t start = 0, pos = input.find(tag);
 	while (pos != String::npos) {
 		// find end of tag and contents
-		size_t end = match_close_tag(input, pos);
+		size_t after     = skip_tag(input, pos);
+		size_t end       = match_close_tag(input, pos);
+		size_t after_end = skip_tag(input, end);
 		if (end == String::npos) break; // missing close tag
 		// prepare for call
-		String old_contents = input.substr(pos + tag.size(), end - (pos + tag.size()));
-		ctx.setVariable(_("contents"), to_script(old_contents));
+		String old_contents = input.substr(after, end - after);
+		ctx.setVariable(SCRIPT_VAR_input, to_script(old_contents));
 		// replace
-		ret += input.substr(0, pos); // before tag
-		ret += tag;
+		ret.append(input, start, after-start); // before and including tag
 		ret += contents->eval(ctx)->toString();// new contents (call)
-		ret += close_tag(tag);
+		ret.append(input, end, after_end-end); // close tag
 		// next
-		input = input.substr(skip_tag(input,end));
-		pos = input.find(tag);
+		start = after_end;
+		pos = input.find(tag, start);
 	}
-	return ret + input;
+	ret.append(input, start, pos-start);
+	assert_tagged(ret);
+	return ret;
 }
 
 // Replace the contents of a specific tag
@@ -356,11 +360,13 @@ SCRIPT_FUNCTION(tag_contents) {
 SCRIPT_FUNCTION(remove_tag) {
 	SCRIPT_PARAM_C(String, input);
 	SCRIPT_PARAM_C(String, tag);
+	assert_tagged(input);
 	SCRIPT_RETURN(remove_tag(input, tag));
 }
 
 SCRIPT_FUNCTION(remove_tags) {
 	SCRIPT_PARAM_C(String, input);
+	assert_tagged(input);
 	SCRIPT_RETURN(untag_no_escape(input));
 }
 

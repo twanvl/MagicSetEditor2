@@ -404,6 +404,7 @@ String KeywordDatabase::expand(const String& text,
                                const ScriptValueP& combine_script,
                                Context& ctx) const {
 	assert(combine_script);
+	assert_tagged(text);
 	
 	// Clean up usage statistics
 	KeywordUsageStatistics* stat = keyword_usage_statistics();
@@ -505,6 +506,7 @@ String KeywordDatabase::expand(const String& text,
 		matched_keyword:;
 	}
 	
+	assert_tagged(result);
 	return result;
 }
 

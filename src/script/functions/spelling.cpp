@@ -91,6 +91,7 @@ void check_word(const String& tag, const String& input, String& out, Char sep, s
 SCRIPT_FUNCTION(check_spelling) {
 	SCRIPT_PARAM_C(String,language);
 	SCRIPT_PARAM_C(String,input);
+	assert_tagged(input);
 	SCRIPT_OPTIONAL_PARAM_N_(String,_("extra dictionary"),extra_dictionary);
 	SCRIPT_OPTIONAL_PARAM_N_(ScriptValueP,_("extra match"),extra_match);
 	// remove old spelling error tags
