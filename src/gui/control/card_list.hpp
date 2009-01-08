@@ -125,7 +125,8 @@ class CardListBase : public ItemList, public SetView {
   private:
 	// display stuff
 	vector<FieldP> column_fields; ///< The field to use for each column (by column index)
-		
+	FieldP alternate_sort_field;  ///< Second field to sort by, if the column doesn't suffice
+	
 	mutable wxListItemAttr item_attr; // for OnGetItemAttr
 	
   public:

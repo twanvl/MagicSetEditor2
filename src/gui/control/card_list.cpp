@@ -199,12 +199,17 @@ bool CardListBase::compareItems(void* a, void* b) const {
 	FieldP sort_field = column_fields[sort_by_column];
 	ValueP va = reinterpret_cast<Card*>(a)->data[sort_field];
 	ValueP vb = reinterpret_cast<Card*>(b)->data[sort_field];
-	if (!va || !vb) return va < vb; // got to do something, compare pointers
+	assert(va && vb);
 	// compare sort keys
 	int cmp = smart_compare( va->getSortKey(), vb->getSortKey() );
 	if (cmp != 0) return cmp < 0;
 	// equal values, compare alternate sort key
-	// TODO: sort by a second column
+	if (alternate_sort_field) {
+		ValueP va = reinterpret_cast<Card*>(a)->data[alternate_sort_field];
+		ValueP vb = reinterpret_cast<Card*>(b)->data[alternate_sort_field];
+		int cmp = smart_compare( va->getSortKey(), vb->getSortKey() );
+		if (cmp != 0) return cmp < 0;
+	}
 	return false;
 }
 
@@ -250,6 +255,15 @@ void CardListBase::rebuild() {
 		}
 		++i;
 	}
+	// determine alternate sortImageFieldP ImageCardList::findImageField() {
+	alternate_sort_field = FieldP();
+	FOR_EACH(f, set->game->card_fields) {
+		if (f->identifying) {
+			alternate_sort_field = f;
+			break;
+		}
+	}
+	// refresh
 	refreshList();
 }
 
