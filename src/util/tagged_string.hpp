@@ -187,7 +187,7 @@ void check_tagged(const String& str, bool check_balance = true);
 #ifdef _DEBUG
 	#define assert_tagged check_tagged
 #else
-	#define assert_tagged(_,_)
+	inline void assert_tagged(const String& str, bool check_balance = true){}
 #endif
 
 /// Simplify a tagged string
