@@ -600,7 +600,7 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 			if (!kwp.separator_after_re.empty() && kwp.separator_after_re.matches(sep_match, param)) {
 				size_t sep_start = sep_match.position();
 				assert(sep_match[0].second == param.end()); // should only match at end of param
-				separator_after.assign(param, sep_start);
+				separator_after.assign(param, sep_start, String::npos);
 				param.resize(sep_start);
 				// strip from tagged version
 				size_t sep_start_t = untagged_to_index(part, sep_start, false);
