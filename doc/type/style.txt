@@ -76,7 +76,7 @@ Here are some examples:
 | @bottom@		[[type:scriptable]] [[type:double]]	''Required''	Distance between bottom edge of the box and the ''top'' of the card in pixels.
 | @angle@		[[type:scriptable]] [[type:int]]	@0@		Rotation of this box, in degrees counter clockwise.
 | @visible@		[[type:scriptable]] [[type:boolean]]	@true@		Is this field visible at all?
-| @mask@		[[type:image|scriptable image]]		''none''	A mask to apply to the image, black areas in the mask become transparent, similar to [[fun:set_mask]].
+| @mask@		[[type:image|scriptable image]]		''none''	A mask to apply to the box, black areas in the mask become transparent, similar to [[fun:set_mask]].
 
 The rest of the properties depend on the type of [[type:field]] this style is for.
 ! Type		Property		Type			Default		Description
@@ -119,7 +119,6 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 		 		 					 		@"drop down"@ places the box below the field, similar to normal combo boxes.<br/>
 		 		 					 		@"in place"@ places the box at the mouse coordinates.
 | ^^^		@render style@	[[type:choice render style]]		@"text"@	How should the field be rendered?
-| ^^^		@mask@		[[type:scriptable]] [[type:filename]]	''none''	A mask to apply to the image, black areas in the mask become transparent, similar to [[fun:set_mask]].
 | ^^^		@combine@	[[type:combine]]			@"normal"@	How to combine the image with the background? Can be overridden using the [[fun:set_combine]] function.
 | ^^^		@alignment@	[[type:alignment]]			@"stretch"@	Alignment of text and images in the box.
 | ^^^		@font@		[[type:font]]				 		Font to use for rendering text (depending on @render style@)
@@ -131,15 +130,15 @@ The rest of the properties depend on the type of [[type:field]] this style is fo
 		 			 				 		This is only useful when the alignment is changed, otherwise it is always equal the box size itself.
 | ^^^		@content height@	[[type:double]]			''automatic''	When read from a script, gives the height of the current choice image in this box.
 | @"multiple choice"@
-		@direction@	[[type:direction]]		@"left to right"@	Direction the items are laid out in, only when @render style@ is @list@.
-| ^^^		@spacing@	[[type:double]]			@0@			Spacing between the items.
+		@direction@	[[type:scriptable]] [[type:direction]]	@"left to right"@	Direction the items are laid out in, only when @render style@ is @list@.
+| ^^^		@spacing@	[[type:scriptable]] [[type:double]]	@0@			Spacing between the items.
 	
 !	<<<	<<<	<<<	<<<
 | @"package choice"@
 | ^^^		@font@		[[type:font]]				 		Font to use for rendering text.
 	
 !	<<<	<<<	<<<	<<<
-| @"color"@	@radius@	[[type:script]]		@0@	Radius of rounded corners for the box in pixels.
+| @"color"@	@radius@	[[type:double]]		@0@	Radius of rounded corners for the box in pixels.
 | ^^^		@left width@	[[type:double]]		&infin;	Draw only this many pixels from the side, creating a box with a hole in it, or a card border.
 | ^^^		@right width@	^^^			^^^	^^^
 | ^^^		@top width@	^^^			^^^	^^^
