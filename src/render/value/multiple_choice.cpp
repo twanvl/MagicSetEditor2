@@ -74,9 +74,10 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 	if (style().render_style & RENDER_TEXT) {
 		// draw text
 		String text = tr(getStylePackage(), choice, capitalize_sentence);
+		dc.SetFont(style().font,1);
 		RealSize text_size = dc.GetTextExtent(text);
-		dc.DrawText(text, align_in_rect(ALIGN_MIDDLE_LEFT, text_size,
-		                                RealRect(pos + RealSize(size.width + 1, 0), RealSize(0,size.height))));
+		RealPoint text_pos = align_in_rect(ALIGN_MIDDLE_LEFT, text_size, RealRect(pos.x + size.width + 1, pos.y, 0,size.height));
+		dc.DrawTextWithShadow(text, style().font, pos);
 		size = add_horizontal(size, text_size);
 	}
 	// next position

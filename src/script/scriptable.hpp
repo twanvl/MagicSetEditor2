@@ -33,6 +33,7 @@ void store(const ScriptValueP& val, AColor& var);
 void store(const ScriptValueP& val, Defaultable<String>& var);
 void store(const ScriptValueP& val, Defaultable<Color>&  var);
 void store(const ScriptValueP& val, Alignment& var);
+void store(const ScriptValueP& val, Direction& var);
 
 // ----------------------------------------------------------------------------- : OptionalScript
 

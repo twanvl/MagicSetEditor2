@@ -3950,9 +3950,6 @@
 		<Filter
 			Name="template-stuff"
 			Filter="">
-			<File
-				RelativePath="..\data\magic-test.mse-style\script-language-tests">
-			</File>
 			<Filter
 				Name="magic"
 				Filter="">
@@ -3988,6 +3985,16 @@
 				</File>
 				<File
 					RelativePath="..\data\magic.mse-game\word_lists">
+				</File>
+			</Filter>
+			<Filter
+				Name="test"
+				Filter="">
+				<File
+					RelativePath="..\data\magic-test.mse-style\script-language-tests">
+				</File>
+				<File
+					RelativePath="..\data\magic-test.mse-style\style">
 				</File>
 			</Filter>
 		</Filter>

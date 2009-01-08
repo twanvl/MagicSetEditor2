@@ -39,6 +39,12 @@ IMPLEMENT_REFLECTION(MultipleChoiceStyle) {
 	REFLECT(spacing);
 }
 
+int MultipleChoiceStyle::update(Context& ctx) {
+	return ChoiceStyle::update(ctx)
+	     | direction.update(ctx) * CHANGE_OTHER
+	     | spacing.update(ctx) * CHANGE_OTHER;
+}
+
 // ----------------------------------------------------------------------------- : MultipleChoiceValue
 
 IMPLEMENT_REFLECTION_NAMELESS(MultipleChoiceValue) {

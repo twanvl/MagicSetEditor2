@@ -36,8 +36,10 @@ class MultipleChoiceStyle : public ChoiceStyle {
 	MultipleChoiceStyle(const MultipleChoiceFieldP& field);
 	DECLARE_STYLE_TYPE(MultipleChoice);
 	
-	Direction direction;	///< In what direction are choices layed out?
-	double spacing;			///< Spacing between choices (images) in pixels
+	Scriptable<Direction> direction;	///< In what direction are choices layed out?
+	Scriptable<double> spacing;			///< Spacing between choices (images) in pixels
+	
+	virtual int  update(Context&);
 };
 
 // ----------------------------------------------------------------------------- : MultipleChoiceValue
