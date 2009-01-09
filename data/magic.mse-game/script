@@ -288,6 +288,10 @@ card_count := {
 	number_of_items(in: set, filter: set_filter())
 }
 
+# used by pack scripts
+is_token_card   := { card.shape == "token" or card.shape == "rulestip" }
+is_shifted_card := { contains(card.shape, match:"shifted") }
+
 
 ############################################################## Utilities for keywords
 
