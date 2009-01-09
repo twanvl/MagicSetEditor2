@@ -31,7 +31,7 @@ class Writer {
 	/// Tell the reflection code we are not reading
 	inline bool reading()   const { return false; }
 	inline bool scripting() const { return false; }
-	inline bool isComplex() const { return false; }
+	inline bool isComplex() const { return true; }
 	inline void addAlias(int, const Char*, const Char*) {}
 	inline void handleIgnore(int, const Char*) {}
 	

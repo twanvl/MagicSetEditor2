@@ -172,7 +172,7 @@ IMPLEMENT_REFLECTION_ENUM(PackSelectType) {
 	VALUE_N("replace",     SELECT_REPLACE);
 	VALUE_N("no replace",  SELECT_NO_REPLACE);
 	VALUE_N("cyclic",      SELECT_CYCLIC);
-	VALUE_N("one",         SELECT_PROPORTIONAL);
+	VALUE_N("proportional",SELECT_PROPORTIONAL);
 	VALUE_N("nonempty",    SELECT_NONEMPTY);
 	VALUE_N("first",       SELECT_FIRST);
 }
@@ -198,9 +198,13 @@ IMPLEMENT_REFLECTION(PackType) {
 }
 
 IMPLEMENT_REFLECTION(PackItem) {
-	REFLECT(name);
-	REFLECT(amount);
-	REFLECT(probability);
+	if (!tag.isComplex()) {
+		REFLECT_NAMELESS(name);
+	} else {
+		REFLECT(name);
+		REFLECT(amount);
+		REFLECT(probability);
+	}
 }
 
 
@@ -389,6 +393,7 @@ void PackInstance::generate(vector<CardP>* out) {
 		
 	} else if (pack_type.select == SELECT_CYCLIC) {
 		size_t total = cards.size() + pack_type.items.size();
+		if (total <= 0) total = 1; // prevent div by 0
 		size_t div = requested_copies / total;
 		size_t rem = requested_copies % total;
 		for (size_t i = 0 ; i < total ; ++i) {

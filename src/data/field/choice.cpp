@@ -143,8 +143,8 @@ IMPLEMENT_REFLECTION_ENUM(ChoiceChoiceType) {
 	VALUE_N("radio", CHOICE_TYPE_RADIO);
 }
 
-IMPLEMENT_REFLECTION_NO_GET_MEMBER(ChoiceField::Choice) {
-	if (isGroup() || line_below || enabled.isScripted() || (tag.reading() && tag.isComplex())) {
+IMPLEMENT_REFLECTION(ChoiceField::Choice) {
+	if (isGroup() || line_below || enabled.isScripted() || tag.isComplex()) {
 		// complex values are groups
 		REFLECT(name);
 		REFLECT_N("group_choice", default_name);
@@ -155,16 +155,6 @@ IMPLEMENT_REFLECTION_NO_GET_MEMBER(ChoiceField::Choice) {
 	} else {
 		REFLECT_NAMELESS(name);
 	}
-}
-
-template <> void GetDefaultMember::handle(const ChoiceField::Choice& c) {
-	if (!c.isGroup()) handle(c.name);
-}
-
-template <> void GetMember::handle(const ChoiceField::Choice& c) {
-	handle(_("name"),         c.name);
-	handle(_("group choice"), c.default_name);
-	handle(_("choices"),      c.choices);
 }
 
 // ----------------------------------------------------------------------------- : ChoiceStyle
