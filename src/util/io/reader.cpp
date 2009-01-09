@@ -11,6 +11,7 @@
 #include <util/vector2d.hpp>
 #include <util/error.hpp>
 #include <util/io/package_manager.hpp>
+#include <boost/logic/tribool.hpp>
 #undef small
 
 typedef void (*ReaderPragmaHandler)(String&);
@@ -363,6 +364,10 @@ template <> void Reader::handle(double& d) {
 	getValue().ToDouble(&d);
 }
 template <> void Reader::handle(bool& b) {
+	const String& v = getValue();
+	b = (v==_("true") || v==_("1") || v==_("yes"));
+}
+template <> void Reader::handle(tribool& b) {
 	const String& v = getValue();
 	b = (v==_("true") || v==_("1") || v==_("yes"));
 }

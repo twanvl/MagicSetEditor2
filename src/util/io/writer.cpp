@@ -12,6 +12,7 @@
 #include <util/error.hpp>
 #include <util/version.hpp>
 #include <util/io/package.hpp>
+#include <boost/logic/tribool.hpp>
 
 // ----------------------------------------------------------------------------- : Writer
 
@@ -103,6 +104,11 @@ template <> void Writer::handle(const double& value) {
 }
 template <> void Writer::handle(const bool& value) {
 	handle(value ? _("true") : _("false"));
+}
+template <> void Writer::handle(const tribool& value) {
+	if (!indeterminate(value)) {
+		handle(value ? _("true") : _("false"));
+	}
 }
 
 // ----------------------------------------------------------------------------- : Handling less basic util types

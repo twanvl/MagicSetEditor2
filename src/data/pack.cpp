@@ -187,8 +187,12 @@ IMPLEMENT_REFLECTION(PackType) {
 	REFLECT(items);
 	REFLECT_IF_READING {
 		if (select == SELECT_AUTO) {
-			if (filter) select = SELECT_NO_REPLACE;
+			if (filter)              select = SELECT_NO_REPLACE;
 			else if (!items.empty()) select = SELECT_ALL;
+		}
+		if (indeterminate(selectable)) {
+			if (filter)              selectable = false;
+			else if (!items.empty()) selectable = true;
 		}
 	}
 }
@@ -202,7 +206,7 @@ IMPLEMENT_REFLECTION(PackItem) {
 
 PackType::PackType()
 	: enabled(true)
-	, selectable(true)
+	, selectable(indeterminate)
 	, summary(true)
 	, select(SELECT_AUTO)
 {}

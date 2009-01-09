@@ -268,7 +268,7 @@ void RandomPackPanel::onChangeSet() {
 	
 	// add pack controls
 	FOR_EACH(pack, set->game->pack_types) {
-	  #if NEW_PACK_SYSTEM
+	  #if USE_NEW_PACK_SYSTEM
 		if (pack->selectable) {
 	  #endif
 			PackItem i;
@@ -278,7 +278,7 @@ void RandomPackPanel::onChangeSet() {
 			packsSizer->Add(i.label, 0, wxALIGN_CENTER_VERTICAL);
 			packsSizer->Add(i.value, 0, wxEXPAND | wxALIGN_CENTER);
 			packs.push_back(i);
-	  #if NEW_PACK_SYSTEM
+	  #if USE_NEW_PACK_SYSTEM
 		}
 	  #endif
 	}

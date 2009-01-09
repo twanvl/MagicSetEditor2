@@ -14,6 +14,7 @@
 #include <script/scriptable.hpp>
 #include <script/dependency.hpp>
 #include <util/dynamic_arg.hpp>
+#include <data/pack.hpp> // for USE_NEW_PACK_SYSTEM
 
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Style);
@@ -46,7 +47,9 @@ class Game : public Packaged {
 	OptionalScript          card_list_color_script;	///< Script that determines the color of items in the card list
 	vector<StatsDimensionP> statistics_dimensions;  ///< (Additional) statistics dimensions
 	vector<StatsCategoryP>  statistics_categories;  ///< (Additional) statistics categories
+  #if !USE_NEW_PACK_SYSTEM
 	vector<PackItemP>       pack_items;				///< Types of cards in packs
+  #endif
 	vector<PackTypeP>       pack_types;				///< Types of random card packs to generate
 	vector<WordListP>       word_lists;				///< Word lists for editing with a drop down list
 	vector<AddCardsScriptP> add_cards_scripts;		///< Scripts for adding multiple cards to the set

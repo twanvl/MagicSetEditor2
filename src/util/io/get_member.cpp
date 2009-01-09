@@ -11,6 +11,7 @@
 #include <util/vector2d.hpp>
 #include <script/script.hpp>
 #include <script/to_value.hpp>
+#include <boost/logic/tribool.hpp>
 
 // ---------------------------------------------------------------------------- : GetDefaultMember
 
@@ -21,6 +22,7 @@ template <> void GetDefaultMember::handle(const int&          v) { value = to_sc
 template <> void GetDefaultMember::handle(const unsigned int& v) { value = to_script((int)v); }
 template <> void GetDefaultMember::handle(const double&       v) { value = to_script(v); }
 template <> void GetDefaultMember::handle(const bool&         v) { value = to_script(v); }
+template <> void GetDefaultMember::handle(const tribool&      v) { value = to_script((bool)v); }
 template <> void GetDefaultMember::handle(const Vector2D&     v) { value = to_script(String::Format(_("(%.10lf,%.10lf)"), v.x, v.y)); }
 template <> void GetDefaultMember::handle(const Color&        v) { value = to_script(v); }
             void GetDefaultMember::handle(const ScriptValueP& v) { value = v; }

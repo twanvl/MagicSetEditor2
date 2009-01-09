@@ -13,6 +13,7 @@
 #include <util/reflect.hpp>
 #include <script/scriptable.hpp>
 #include <boost/random/mersenne_twister.hpp>
+#include <boost/logic/tribool.hpp>
 
 #define USE_NEW_PACK_SYSTEM 1
 
@@ -135,7 +136,7 @@ class PackType : public IntrusivePtrBase<PackType> {
 	
 	String            name;       ///< Name of this pack
 	Scriptable<bool>  enabled;    ///< Is this pack enabled?
-	bool              selectable; ///< Is this pack listed in the UI?
+	tribool           selectable; ///< Is this pack listed in the UI?
 	bool              summary;    ///< Should the total be listed for this type?
 	PackSelectType    select;     ///< What cards/items to select
 	OptionalScript    filter;     ///< Filter to select this type of cards
