@@ -16,6 +16,7 @@
 #include <data/field/image.hpp>
 #include <data/field/symbol.hpp>
 #include <data/field/package_choice.hpp>
+#include <data/card.hpp>
 #include <util/tagged_string.hpp>
 #include <data/set.hpp> // for ValueActionPerformer
 
@@ -25,8 +26,14 @@ String ValueAction::getName(bool to_undo) const {
 	return _ACTION_1_("change", valueP->fieldP->name);
 }
 
+void ValueAction::perform(bool to_undo) {
+	if (card) {
+		swap(const_cast<Card*>(card)->time_modified, old_time_modified);
+	}
+}
+
 void ValueAction::isOnCard(Card* card) {
-	const_cast<ValueAction*>(this)->card = card;
+	this->card = card;
 }
 
 // ----------------------------------------------------------------------------- : Simple
@@ -52,6 +59,7 @@ class SimpleValueAction : public ValueAction {
 	{}
 	
 	virtual void perform(bool to_undo) {
+		ValueAction::perform(to_undo);
 		swap_value(static_cast<T&>(*valueP), new_value);
 		valueP->onAction(*this, to_undo); // notify value
 	}
@@ -95,6 +103,7 @@ TextValueAction::TextValueAction(const TextValueP& value, size_t start, size_t e
 String TextValueAction::getName(bool to_undo) const { return name; }
 
 void TextValueAction::perform(bool to_undo) {
+	ValueAction::perform(to_undo);
 	swap_value(value(), new_value);
 	swap(selection_end, new_selection_end);
 	valueP->onAction(*this, to_undo); // notify value
@@ -197,6 +206,7 @@ String TextToggleReminderAction::getName(bool to_undo) const {
 }
 
 void TextToggleReminderAction::perform(bool to_undo) {
+	ValueAction::perform(to_undo);
 	TextValue& value = static_cast<TextValue&>(*valueP);
 	String& val = value.value.mutate();
 	assert(pos + 4 < val.size());

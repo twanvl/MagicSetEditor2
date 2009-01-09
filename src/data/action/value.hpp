@@ -36,15 +36,20 @@ DECLARE_POINTER_TYPE(PackageChoiceValue);
 /// An Action the changes a Value
 class ValueAction : public Action {
   public:
-	inline ValueAction(const ValueP& value) : valueP(value), card(nullptr) {}
+	inline ValueAction(const ValueP& value)
+		: valueP(value), card(nullptr), old_time_modified(wxDateTime::Now())
+	{}
 	
 	virtual String getName(bool to_undo) const;
+	virtual void perform(bool to_undo);
 	
 	/// We know that the value is on the given card, add that information
 	void isOnCard(Card* card);
 	
 	const ValueP valueP; ///< The modified value
 	const Card*  card;   ///< The card the value is on, or null if it is not a card value
+  private:
+	wxDateTime old_time_modified;
 };
 
 // ----------------------------------------------------------------------------- : Simple
