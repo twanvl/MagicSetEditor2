@@ -369,7 +369,9 @@ text_filter :=
 	# step 1 : remove all automatic tags
 	remove_tag@(tag: "<sym-auto>") +
 	remove_tag@(tag: "<i-auto>")   +
+	remove_tag@(tag: "<b-auto>")   +
 	remove_tag@(tag: "<error-spelling") +
+	remove_tag@(tag: "<nospellcheck") +
 	# step 2 : reminder text for keywords
 	expand_keywords@(
 		condition: {
@@ -378,9 +380,11 @@ text_filter :=
 		default_expand: {
 			chosen(choice:if correct_case then mode else "lower case", set.automatic_reminder_text)
 		},
-		combine:        {
-			if mode == "pseudo" then "<i-auto><nospellcheck>{keyword}</nospellcheck></i-auto>"
-			else "<nospellcheck>{keyword}</nospellcheck><atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
+		combine: {
+			keyword  := "<nospellcheck>{keyword}</nospellcheck>"
+			reminder := process_english_hints(reminder)
+			if mode == "pseudo" then "<i-auto>{keyword}</i-auto>"
+			else "{keyword}<atom-reminder-{mode}> ({reminder})</atom-reminder-{mode}>" }
 		) +
 	# step 2b : move action keywords' reminder text to the end of the line
 	replace@(
