@@ -27,7 +27,7 @@ size_t PackageList::itemCount() const {
 }
 
 void PackageList::drawItem(DC& dc, int x, int y, size_t item) {
-	dc.SetClippingRegion(x, y, item_size.x, item_size.y);
+	dc.SetClippingRegion(x+1, y+2, item_size.x-2, item_size.y-2);
 	PackageData& d = packages.at(item);
 	RealRect rect(RealPoint(x,y),item_size);
 	RealPoint pos;
@@ -40,12 +40,12 @@ void PackageList::drawItem(DC& dc, int x, int y, size_t item) {
 	dc.SetFont(wxFont(12,wxSWISS,wxNORMAL,wxBOLD,false,_("Arial")));
 	dc.GetTextExtent(capitalize(d.package->short_name), &w, &h);
 	pos = align_in_rect(ALIGN_CENTER, RealSize(w,h), rect);
-	dc.DrawText(capitalize(d.package->short_name), (int)pos.x, (int)pos.y + 110);
+	dc.DrawText(capitalize(d.package->short_name), max(x+1,(int)pos.x), (int)pos.y + 110);
 	// draw name
 	dc.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 	dc.GetTextExtent(d.package->full_name, &w, &h);
 	RealPoint text_pos = align_in_rect(ALIGN_CENTER, RealSize(w,h), rect);
-	dc.DrawText(d.package->full_name, (int)text_pos.x, (int)text_pos.y + 130);
+	dc.DrawText(d.package->full_name, max(x+1,(int)text_pos.x), (int)text_pos.y + 130);
 	dc.DestroyClippingRegion();
 }
 
