@@ -59,7 +59,12 @@ void Reader::handle(DelayedIndexMapsData<Key,Value>& d) {
 template <typename Key, typename Value>
 void Writer::handle(const DelayedIndexMapsData<Key,Value>& d) {
 	if (!d.unread_data.empty()) {
-		handle(d.unread_data); // TODO: how to handle filenames
+		if (d.unread_data == _("\n")) {
+			// this is not interesting, it is only used to make unread_data nonempty (see above)
+			// we don't need to write it
+		} else {
+			handle(d.unread_data); // TODO: how to handle filenames
+		}
 	} else {
 		handle(d.read_data);
 	}

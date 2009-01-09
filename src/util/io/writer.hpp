@@ -77,10 +77,8 @@ class Writer {
 	// --------------------------------------------------- : Data
 	/// Indentation of the current block
 	int indentation;
-	/// Did we just open a block (i.e. not written any lines of it)?
-	bool just_opened;
-	/// Last key opened
-	String opened_key;
+	/// Blocks opened to which nothing has been written
+	vector<const Char*> pending_opened;
 	
 	/// Output stream we are writing to
 	OutputStreamP output;
@@ -94,8 +92,8 @@ class Writer {
 	/// Leave the block we are in
 	void exitBlock();
 	
-	/// Write the opened_key and the required indentation
-	void writeKey();
+	/// Write the pending_opened with the required indentation
+	void writePending();
 	/// Output some taps to represent the indentation level
 	void writeIndentation();
 };

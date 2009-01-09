@@ -17,7 +17,7 @@
 // ----------------------------------------------------------------------------- : Writer
 
 Writer::Writer(const OutputStreamP& output, Version file_app_version)
-	: indentation(0), just_opened(false)
+	: indentation(0)
 	, output(output), stream(*output)
 {
 	stream.WriteString(BYTE_ORDER_MARK);
@@ -27,27 +27,35 @@ Writer::Writer(const OutputStreamP& output, Version file_app_version)
 
 
 void Writer::enterBlock(const Char* name) {
-	// indenting into a sub-block?
-	if (just_opened) {
-		writeKey();
-		stream.WriteString(_(":\n"));
-	}
 	// don't write the key yet
-	indentation += 1;
-	opened_key = cannocial_name_form(name);
-	just_opened = true;
+	pending_opened.push_back(name);
 }
 
 void Writer::exitBlock() {
-	assert(indentation > 0);
-	indentation -= 1;
-	just_opened = false;
+	if (pending_opened.empty()) {
+		assert(indentation > 0);
+		indentation -= 1;
+	} else {
+		// this block was apparently empty, ignore it
+		pending_opened.pop_back();
+	}
 }
 
-void Writer::writeKey() {
-	writeIndentation();
-	writeUTF8(stream, opened_key);
+void Writer::writePending() {
+	// In enterBlock we have delayed the actual writing of the keys until this point
+	// here we write all the pending keys, and increase indentation along the way.
+	for (size_t i = 0 ; i < pending_opened.size() ; ++i) {
+		if (i > 0) {
+			// before entering a sub-block, write a colon after the parent's name
+			stream.WriteString(_(":\n"));
+		}
+		indentation += 1;
+		writeIndentation();
+		writeUTF8(stream, cannocial_name_form(pending_opened[i]));
+	}
+	pending_opened.clear();
 }
+
 void Writer::writeIndentation() {
 	for(int i = 1 ; i < indentation ; ++i) {
 		stream.PutChar(_('\t'));
@@ -57,15 +65,14 @@ void Writer::writeIndentation() {
 // ----------------------------------------------------------------------------- : Handling basic types
 
 void Writer::handle(const String& value) {
-	if (!just_opened) {
+	if (pending_opened.empty()) {
 		throw InternalError(_("Can only write a value in a key that was just opened"));
 	}
+	writePending();
 	// write indentation and key
-	writeKey();
-	writeUTF8(stream, _(": "));
 	if (value.find_first_of(_('\n')) != String::npos || (!value.empty() && isSpace(value.GetChar(0)))) {
 		// multiline string, or contains leading whitespace
-		stream.PutChar(_('\n'));
+		stream.WriteString(_(":\n"));
 		indentation += 1;
 		// split lines, and write each line
 		size_t start = 0, end, size = value.size();
@@ -87,10 +94,10 @@ void Writer::handle(const String& value) {
 		}
 		indentation -= 1;
 	} else {
+		stream.WriteString(_(": "));
 		writeUTF8(stream, value);
 	}
 	stream.PutChar(_('\n'));
-	just_opened = false;
 }
 
 template <> void Writer::handle(const int& value) {
