@@ -201,6 +201,7 @@ enum ChildMenuID {
 ,	ID_SEED_RANDOM
 ,	ID_SEED_FIXED
 ,	ID_GENERATE_PACK
+,	ID_CUSTOM_PACK
 	
 	// SymbolFont (Format menu)
 ,	ID_INSERT_SYMBOL_MENU_MIN =  9001

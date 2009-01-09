@@ -190,6 +190,10 @@ IMPLEMENT_REFLECTION(PackType) {
 			if (filter)              select = SELECT_NO_REPLACE;
 			else if (!items.empty()) select = SELECT_ALL;
 		}
+		if (indeterminate(summary)) {
+			if (filter)              summary = true;
+			else if (!items.empty()) summary = false;
+		}
 		if (indeterminate(selectable)) {
 			if (filter)              selectable = false;
 			else if (!items.empty()) selectable = true;
@@ -211,12 +215,19 @@ IMPLEMENT_REFLECTION(PackItem) {
 PackType::PackType()
 	: enabled(true)
 	, selectable(indeterminate)
-	, summary(true)
+	, summary(indeterminate)
 	, select(SELECT_AUTO)
 {}
 
 PackItem::PackItem()
 	: amount(1)
+	, probability(1)
+{}
+
+PackItem::PackItem(const String& name, int amount)
+	: name(name)
+	, amount(amount)
+	, probability(1)
 {}
 
 
@@ -380,7 +391,7 @@ void PackInstance::generate(vector<CardP>* out) {
 	} else if (pack_type.select == SELECT_NO_REPLACE) {
 		card_copies += requested_copies;
 		// NOTE: there is no way to pick items without replacement
-		if (out) {
+		if (out && !cards.empty()) {
 			// to prevent us from being too predictable for small sets, periodically reshuffle
 			RandomRange<boost::mt19937> gen_range(parent.gen);
 			int max_per_batch = ((int)cards.size() + 1) / 2;
@@ -394,7 +405,7 @@ void PackInstance::generate(vector<CardP>* out) {
 		
 	} else if (pack_type.select == SELECT_CYCLIC) {
 		size_t total = cards.size() + pack_type.items.size();
-		if (total <= 0) total = 1; // prevent div by 0
+		if (total == 0) return; // prevent div by 0
 		size_t div = requested_copies / total;
 		size_t rem = requested_copies % total;
 		for (size_t i = 0 ; i < total ; ++i) {

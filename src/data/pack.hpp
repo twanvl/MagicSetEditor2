@@ -137,7 +137,7 @@ class PackType : public IntrusivePtrBase<PackType> {
 	String            name;       ///< Name of this pack
 	Scriptable<bool>  enabled;    ///< Is this pack enabled?
 	tribool           selectable; ///< Is this pack listed in the UI?
-	bool              summary;    ///< Should the total be listed for this type?
+	tribool           summary;    ///< Should the total be listed for this type?
 	PackSelectType    select;     ///< What cards/items to select
 	OptionalScript    filter;     ///< Filter to select this type of cards
 	vector<PackItemP> items;      ///< Subpacks in this pack
@@ -153,6 +153,7 @@ class PackType : public IntrusivePtrBase<PackType> {
 class PackItem : public IntrusivePtrBase<PackItem> {
   public:
 	PackItem();
+	PackItem(const String& name, int amount);
 	
 	String             name;         ///< Name of the pack to select cards from
 	Scriptable<int>    amount;       ///< Number of cards of this type

@@ -20,6 +20,19 @@ class PackTotalsPanel;
 struct CardSelectEvent;
 DECLARE_POINTER_TYPE(PackType);
 
+// ----------------------------------------------------------------------------- : Utility
+
+// for lists of spin controls
+struct PackAmountPicker {
+	PackTypeP     pack;
+	wxStaticText* label;
+	wxSpinCtrl*   value;
+	
+	PackAmountPicker() {}
+	PackAmountPicker(wxWindow* parent, wxFlexGridSizer* sizer, const PackTypeP& pack);
+	void destroy(wxFlexGridSizer* sizer);
+};
+
 // ----------------------------------------------------------------------------- : RandomPackPanel
 
 /// A SetWindowPanel for creating random booster packs
@@ -59,16 +72,11 @@ class RandomPackPanel : public SetWindowPanel {
 	wxButton*         generate_button;
 	wxRadioButton*    seed_random, *seed_fixed;
 	PackTotalsPanel*  totals;
-	
-	struct PackItem {
-		PackTypeP     pack;
-		wxStaticText* label;
-		wxSpinCtrl*   value;
-	};
-	vector<PackItem> packs;
+	vector<PackAmountPicker> pickers;
 	
 	#if USE_NEW_PACK_SYSTEM
 		PackGenerator generator;
+		int last_seed;
 	#endif
 	
 	/// Actual intialization of the controls
