@@ -78,14 +78,15 @@ const Char* version_suffix = _(" (beta, ascii build)");
  *             - tag_contents function fixed
  *             - alignment:justify behavior changed
  *             - more scriptable fields.
+ *             - store time created,modified for cards -> changes set and clipboard format
  */
 const Version file_version_locale          = 308; // 0.3.8
-const Version file_version_set             = 306; // 0.3.6
+const Version file_version_set             = 308; // 0.3.8
 const Version file_version_game            = 308; // 0.3.8
 const Version file_version_stylesheet      = 308; // 0.3.8
 const Version file_version_symbol_font     = 306; // 0.3.6
 const Version file_version_export_template = 307; // 0.3.7
 const Version file_version_installer       = 307; // 0.3.7
 const Version file_version_symbol          = 305; // 0.3.5
-const Version file_version_clipboard       = 306; // 0.3.6
+const Version file_version_clipboard       = 308; // 0.3.8
 const Version file_version_script          = 307; // 0.3.7

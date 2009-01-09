@@ -21,7 +21,10 @@ DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA ValueP>);
 // ----------------------------------------------------------------------------- : Card
 
 Card::Card()
-	: has_styling(false)
+	  // for files made before we saved these times, set the time to 'yesterday'
+	: time_created (wxDateTime::Now().Subtract(wxDateSpan::Day()).ResetTime())
+	, time_modified(wxDateTime::Now().Subtract(wxDateSpan::Day()).ResetTime())
+	, has_styling(false)
 {
 	if (!game_for_reading()) {
 		throw InternalError(_("game_for_reading not set"));
@@ -30,7 +33,9 @@ Card::Card()
 }
 
 Card::Card(const Game& game)
-	: has_styling(false)
+	: time_created (wxDateTime::Now())
+	, time_modified(wxDateTime::Now())
+	, has_styling(false)
 {
 	data.init(game.card_fields);
 }
@@ -73,6 +78,8 @@ IMPLEMENT_REFLECTION(Card) {
 		}
 	}
 	REFLECT(notes);
+	REFLECT_NO_SCRIPT(time_created);
+	REFLECT_NO_SCRIPT(time_modified);
 	REFLECT(extra_data); // don't allow scripts to depend on style specific data
 	REFLECT_NAMELESS(data);
 }

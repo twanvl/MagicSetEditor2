@@ -371,7 +371,14 @@ template <> void Reader::handle(tribool& b) {
 	const String& v = getValue();
 	b = (v==_("true") || v==_("1") || v==_("yes"));
 }
+
 // ----------------------------------------------------------------------------- : Handling less basic util types
+
+template <> void Reader::handle(wxDateTime& date) {
+	if (!date.ParseDateTime(getValue().c_str())) {
+		throw ParseError(_("Expected a date and time"));
+	}
+}
 
 template <> void Reader::handle(Vector2D& vec) {
 	if (!wxSscanf(getValue().c_str(), _("(%lf,%lf)"), &vec.x, &vec.y)) {

@@ -37,6 +37,8 @@ class Card : public IntrusivePtrVirtualBase {
 	IndexMap<FieldP, ValueP> data;
 	/// Notes for this card
 	String notes;
+	/// Time the card was created/last modified
+	wxDateTime time_created, time_modified;
 	/// Alternative style to use for this card
 	/** Optional; if not set use the card style from the set */
 	StyleSheetP stylesheet;
