@@ -860,7 +860,7 @@ void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			// Draw lines
 			if (draw_lines) {
 				for (int i = 0 ; i < count ; ++i) {
-					dc.SetPen(i == current ? fg : lerp(bg, fg, 0.3));
+					dc.SetPen(i == current ? fg : lerp(bg, fg, 0.2));
 					if (draw_lines == DRAW_LINES_BETWEEN) {
 						dc.DrawLine(RealPoint(rect.x + (i+1.0)*width, rect.top()), RealPoint(rect.x + (i+1.0)*width, rect.bottom()));
 					} else {
@@ -886,7 +886,7 @@ void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			// Draw lines
 			if (draw_lines) {
 				for (int i = 0 ; i < count ; ++i) {
-					dc.SetPen(i == current ? fg : lerp(bg, fg, 0.3));
+					dc.SetPen(i == current ? fg : lerp(bg, fg, 0.2));
 					if (draw_lines == DRAW_LINES_BETWEEN) {
 						dc.DrawLine(RealPoint(rect.left(),     rect.bottom() - (i+1.0)*height), RealPoint(rect.right(), rect.bottom() - (i+1.0)*height));
 					} else {
@@ -929,7 +929,7 @@ void GraphValueAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 	Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
 	Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 	// Draw backlines (horizontal) and value labels
-	dc.SetPen(lerp(bg, fg, 0.3));
+	dc.SetPen(lerp(bg, fg, 0.2));
 	int highlight = (highlight_value && current >= 0) ? (int)axis.groups[current].size : -1;
 	for (int i = 0 ; i <= (int)axis.max ; ++i) {
 		if (i % label_step == 0 || i == highlight) {
@@ -954,7 +954,7 @@ void GraphValueAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			// restore font/pen
 			if (i == highlight) {
 				dc.SetFont(*wxNORMAL_FONT);
-				dc.SetPen(lerp(bg, fg, 0.3));
+				dc.SetPen(lerp(bg, fg, 0.2));
 			}
 		}
 	}
