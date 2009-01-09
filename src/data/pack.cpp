@@ -370,7 +370,7 @@ void PackInstance::generate(vector<CardP>* out) {
 					}
 					// have we reached the item we were looking for?
 					if (r < 0) {
-						i.request_copy(requested_copies * item->amount);
+						i.request_copy(item->amount);
 						break;
 					}
 				}
