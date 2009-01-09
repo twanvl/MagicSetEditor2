@@ -64,7 +64,7 @@ void check_word(const String& tag, const String& input, String& out, Char sep, s
 				// double space
 				out += _("<error-spelling>");
 				out.append(sep);
-				out.append(input, prev, after-end);
+				out.append(input, prev, after-prev);
 				out += _("</error-spelling>");
 			} else {
 				if (sep) out.append(sep);
@@ -74,7 +74,7 @@ void check_word(const String& tag, const String& input, String& out, Char sep, s
 			// stand alone punctuation
 			if (sep) out.append(sep);
 			out += _("<error-spelling>");
-			out.append(input, prev, after-end);
+			out.append(input, prev, after-prev);
 			out += _("</error-spelling>");
 		}
 	} else {
@@ -115,6 +115,13 @@ SCRIPT_FUNCTION(check_spelling) {
 	// now walk over the words in the input, and mark misspellings
 	String result;
 	Char sep = 0;
+	// indices are used as follows (at the time of check_word call):
+	//   input:      "previous <tag>(<tag>word<tag>)<tag>next"
+	//                        ^^          ^   ^          ^
+	//                        ||          |   |          |
+	//                     sep |          |   word_end   pos
+	//                         prev_end   word_start
+	//
 	size_t prev_end = 0, word_start = 0, word_end = 0, pos = 0;
 	while (pos < input.size()) {
 		Char c = input.GetChar(pos);
@@ -146,6 +153,7 @@ SCRIPT_FUNCTION(check_spelling) {
 	// last word
 	check_word(tag, input, result, sep, prev_end, word_start, word_end, pos, checkers, extra_match, ctx);
 	// done
+	assert_tagged(result);
 	SCRIPT_RETURN(result);
 }
 
