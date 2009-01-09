@@ -300,11 +300,11 @@ void PackInstance::expect_copy(double copies) {
 		} else if (pack_type.select == SELECT_PROPORTIONAL) {
 			i.expect_copy(copies * item->amount * item->probability * i.count / total_probability);
 		} else if (pack_type.select == SELECT_NONEMPTY) {
-			if (i.count >= 0) {
+			if (i.count > 0) {
 				i.expect_copy(copies * item->amount * item->probability / total_probability);
 			}
 		} else if (pack_type.select == SELECT_FIRST) {
-			if (i.count >= 0 && cards.empty()) {
+			if (i.count > 0 && cards.empty()) {
 				i.expect_copy(copies * item->amount);
 				break;
 			}
@@ -328,6 +328,7 @@ struct RandomRange {
 
 void PackInstance::generate(vector<CardP>* out) {
 	card_copies = 0;
+	if (requested_copies == 0) return;
 	if (pack_type.select == SELECT_ALL) {
 		// add all cards
 		card_copies += requested_copies * cards.size();
@@ -417,7 +418,7 @@ void PackInstance::generate(vector<CardP>* out) {
 			// pick first nonempty item
 			FOR_EACH_CONST(item, pack_type.items) {
 				PackInstance& i = parent.get(item->name);
-				if (i.count >= 0) {
+				if (i.count > 0) {
 					i.request_copy(requested_copies * item->amount);
 					break;
 				}

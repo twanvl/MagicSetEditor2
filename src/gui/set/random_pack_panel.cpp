@@ -99,6 +99,7 @@ class PackTotalsPanel : public wxPanel {
 	void addPack(PackType& pack, int copies);
 	void addItemRef(PackItemRef& item, int copies);
    #endif
+	virtual wxSize DoGetBestSize() const;
   private:
 	DECLARE_EVENT_TABLE();
 	GameP game;
@@ -149,7 +150,6 @@ void PackTotalsPanel::draw(DC& dc) {
 	dc.DrawLine(0, y-2, size.x, y-2);
 	y += 7;
 	drawItem(dc, y, _LABEL_("total cards"), total);
-	
 }
 void PackTotalsPanel::drawItem(DC& dc, int& y,  const String& name, double value) {
 	wxSize size = dc.GetSize();
@@ -159,6 +159,27 @@ void PackTotalsPanel::drawItem(DC& dc, int& y,  const String& name, double value
 	dc.DrawText(name,   0,        y);
 	dc.DrawText(amount, size.x-w, y);//align right
 	y += h + 10;
+}
+
+wxSize PackTotalsPanel::DoGetBestSize() const {
+	// count lines
+	int lines = 0;
+  #if USE_NEW_PACK_SYSTEM
+	if (game && generator.set) {
+		FOR_EACH(pack, game->pack_types) {
+			PackInstance& i = generator.get(pack);
+			if (pack->summary && i.has_cards()) lines++;
+		}
+	}
+  #else
+	lines = game ? (int)game->pack_items.size() : 0;
+  #endif
+	// don't forget the total
+	lines++;
+	// size
+	int height = lines * (GetCharHeight() + 10) + 7 - 10;
+	wxSize ws = GetSize(), cs = GetClientSize();
+	return wxSize(0,height) + ws - cs;
 }
 
 void PackTotalsPanel::setGame(const GameP& game) {
