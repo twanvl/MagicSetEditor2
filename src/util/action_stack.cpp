@@ -18,6 +18,7 @@ DECLARE_TYPEOF_COLLECTION(ActionListener*);
 
 ActionStack::ActionStack()
 	: save_point(nullptr)
+	, last_was_add(false)
 {}
 
 ActionStack::~ActionStack() {
@@ -36,6 +37,7 @@ void ActionStack::addAction(Action* action, bool allow_merge) {
 	redo_actions.clear();
 	// try to merge?
 	if (allow_merge && !undo_actions.empty() &&
+	    last_was_add                         && // never merge with something that was redone once already
 	    undo_actions.back() != save_point    && // never merge with the save point
 	    undo_actions.back()->merge(*action) // merged with top undo action
 	    ) {
@@ -43,6 +45,7 @@ void ActionStack::addAction(Action* action, bool allow_merge) {
 	} else {
 		undo_actions.push_back(action);
 	}
+	last_was_add = true;
 }
 
 void ActionStack::undo() {
@@ -54,6 +57,7 @@ void ActionStack::undo() {
 	// move to redo stack
 	undo_actions.pop_back();
 	redo_actions.push_back(action);
+	last_was_add = false;
 }
 void ActionStack::redo() {
 	assert(canRedo());
@@ -64,6 +68,7 @@ void ActionStack::redo() {
 	// move to undo stack
 	redo_actions.pop_back();
 	undo_actions.push_back(action);
+	last_was_add = false;
 }
 
 bool ActionStack::canUndo() const {

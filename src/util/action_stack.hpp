@@ -114,6 +114,8 @@ class ActionStack {
 	vector<Action*> redo_actions;
 	/// Point at which the file was saved, corresponds to the top of the undo stack at that point
 	Action* save_point;
+	/// Was the last thing the user did addAction? (as opposed to undo/redo)
+	bool last_was_add;
 	/// Objects that are listening to actions
 	vector<ActionListener*> listeners;
 };
