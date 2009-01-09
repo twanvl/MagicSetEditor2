@@ -153,26 +153,27 @@ vector<CardP>& PackItemCache::cardsFor(const String& name) {
 }
 
 
+
+
 #else
 // =================================================================================================== NEW
 
 DECLARE_TYPEOF_COLLECTION(PackTypeP);
 DECLARE_TYPEOF_COLLECTION(PackItemP);
 DECLARE_TYPEOF_COLLECTION(CardP);
+DECLARE_TYPEOF_CONST(map<String COMMA PackInstanceP>);
 
 // ----------------------------------------------------------------------------- : PackType
 
-PackType::PackType()
-	: enabled(true)
-	, selectable(true)
-	, summary(true)
-	, select(SELECT_ALL)
-{}
 
-IMPLEMENT_REFLECTION_ENUM(OneMany) {
+IMPLEMENT_REFLECTION_ENUM(PackSelectType) {
+	VALUE_N("auto",        SELECT_AUTO);
 	VALUE_N("all",         SELECT_ALL);
-	VALUE_N("at most one", SELECT_ONE_OR_EMPTY);
-	VALUE_N("one",         SELECT_ONE);
+	VALUE_N("replace",     SELECT_REPLACE);
+	VALUE_N("no replace",  SELECT_NO_REPLACE);
+	VALUE_N("cyclic",      SELECT_CYCLIC);
+	VALUE_N("one",         SELECT_PROPORTIONAL);
+	VALUE_N("nonempty",    SELECT_NONEMPTY);
 	VALUE_N("first",       SELECT_FIRST);
 }
 
@@ -182,9 +183,34 @@ IMPLEMENT_REFLECTION(PackType) {
 	REFLECT(selectable);
 	REFLECT(summary);
 	REFLECT(select);
-	REFLECT(cards);
+	REFLECT(filter);
 	REFLECT(items);
+	REFLECT_IF_READING {
+		if (select == SELECT_AUTO) {
+			if (filter) select = SELECT_NO_REPLACE;
+			else if (!items.empty()) select = SELECT_ALL;
+		}
+	}
 }
+
+IMPLEMENT_REFLECTION(PackItem) {
+	REFLECT(name);
+	REFLECT(amount);
+	REFLECT(probability);
+}
+
+
+PackType::PackType()
+	: enabled(true)
+	, selectable(true)
+	, summary(true)
+	, select(SELECT_AUTO)
+{}
+
+PackItem::PackItem()
+	: amount(1)
+{}
+
 
 bool PackType::update(Context& ctx) {
 	bool change = enabled.update(ctx);
@@ -194,120 +220,95 @@ bool PackType::update(Context& ctx) {
 	return change;
 }
 
-// ----------------------------------------------------------------------------- : PackItem
-
-PackItem::PackItem()
-	: amount(1)
-	, type(PACK_REF_INHERIT)
-{}
-
-IMPLEMENT_REFLECTION_ENUM(PackSelectType) {
-	VALUE_N("inherit",    PACK_REF_INHERIT);
-	VALUE_N("replace",    PACK_REF_REPLACE);
-	VALUE_N("no replace", PACK_REF_NO_REPLACE);
-	VALUE_N("cyclic",     PACK_REF_CYCLIC);
-}
-
-IMPLEMENT_REFLECTION(PackItem) {
-	REFLECT(pack);
-	REFLECT(amount);
-	REFLECT(type);
-}
-
 bool PackItem::update(Context& ctx) {
-	return amount.update(ctx);
+	return amount.update(ctx)
+	     | probability.update(ctx);
 }
 
-// ----------------------------------------------------------------------------- : PackItemCache
 
-ScriptValueP PackItemCache::cardsFor(const ScriptValueP& generate) {
-	// lookup name
-	ScriptValueP& value = item_cards[generate];
-	if (!value) {
-		value = generate->eval(set.getContext());
+// ----------------------------------------------------------------------------- : PackInstance
+
+PackInstance::PackInstance(const PackType& pack_type, PackGenerator& parent)
+	: pack_type(pack_type)
+	, parent(parent)
+	, requested_copies(0)
+	, card_copies(0)
+	, expected_copies(0)
+{
+	// Filter cards
+	if (pack_type.filter) {
+		FOR_EACH(card, parent.set->cards) {
+			Context& ctx = parent.set->getContext(card);
+			bool keep = *pack_type.filter.invoke(ctx);
+			if (keep) {
+				cards.push_back(card);
+			}
+		}
 	}
-	return value;
-}
-
-const PackType& PackItemCache::pack(const String& name) {
-	// not used before, generate list and cache
-	FOR_EACH(pack, set.game->pack_types) {
-		if (pack->name == name) {
-			return *pack;
-		}
-	}
-	// not found
-	throw Error(_ERROR_1_("pack type not found", name));
-}
-
-// ----------------------------------------------------------------------------- : Counting expected cards
-
-double PackItemCounter::probabilityNonEmpty(const PackType& pack) {
-	// TODO: cache?
-	if (pack.cards) {
-		return cardsFor(pack.cards.getScriptP())->itemCount();
-	} else if (pack.select == SELECT_ONE_OR_EMPTY) {
-		// weighted avarage
-		double p = 0.0;
-		double total_weight = 0.0;
-		FOR_EACH_CONST(i,pack.items) {
-			p            += i->weight * probabilityNonEmpty(*i);
-			total_weight += i->weight;
-		}
-		return p / total_weight;
-	} else { // SELECT_ONE, SELECT_FIRST, SELECT_ALL
-		// disjunction
-		double p = 0.0;
-		FOR_EACH_CONST(i,pack.items) {
-			// either already non-empty, or all previous items were empty so pick this one
-			p += (1-p) * probabilityNonEmpty(*i);
-			if (p >= 1 - 1e-6) return 1.0;
-		}
-		return p;
-	}
-}
-double PackItemCounter::probabilityNonEmpty(const PackItem& item) {
-	return item.amount <= 0 ? 0 : probabilityNonEmpty(pack(item.pack));
-}
-
-void PackItemCounter::addCountRecursive(const PackType& pack, double copies) {
-	// add
-	counts[&pack] += copies * probabilityNonEmpty(pack);
-	// recurse
-	if (pack.cards) {
-		// done
-	} else if (pack.select == SELECT_FIRST) {
-		double p = 1;
-		FOR_EACH_CONST(i, pack.items) {
-			addCountRecursive(*i, p * copies);
-			p *= 1 - probabilityNonEmpty(*i);
-			if (p < 1e-6) return;
-		}
-	} else if (pack.select == SELECT_ONE_OR_EMPTY || pack.select == SELECT_ONE) {
-		double total_weight = 0.0;
-		FOR_EACH_CONST(i, pack.items) {
-			total_weight += i->weight * (pack.select == SELECT_ONE ? probabilityNonEmpty(*i) : 1.0);
-		}
-		FOR_EACH_CONST(i, pack.items) {
-			addCountRecursive(*i, copies * i->weight / total_weight);
-		}
-	} else if (pack.select == SELECT_ALL) {
-		FOR_EACH_CONST(i, pack.items) {
-			addCountRecursive(*i, copies);
+	// Count items
+	if (pack_type.select == SELECT_FIRST) {
+		// count = count of first nonempty thing
+		if (!cards.empty()) {
+			count = 1;
+		} else {
+			FOR_EACH_CONST(item, pack_type.items) {
+				count += parent.get(item->name).count;
+				if (count > 0) break;
+			}
 		}
 	} else {
-		throw InternalError(_("unknown OneMany value"));
+		count = cards.size();
+		FOR_EACH_CONST(item, pack_type.items) {
+			count += parent.get(item->name).count;
+		}
+	}
+	// Sum of probabilities
+	total_probability = cards.size();
+	FOR_EACH_CONST(item, pack_type.items) {
+		if (pack_type.select == SELECT_PROPORTIONAL) {
+			total_probability += item->probability * parent.get(item->name).count;
+		} else if (pack_type.select == SELECT_NONEMPTY) {
+			if (parent.get(item->name).count > 0) {
+				total_probability += item->probability;
+			}
+		} else {
+			total_probability += item->probability;
+		}
+	}
+	// Depth
+	depth = 0;
+	FOR_EACH_CONST(item, pack_type.items) {
+		depth = max(depth, 1 + parent.get(item->name).depth);
 	}
 }
 
-void PackItemCounter::addCountRecursive(const PackItem& item, double copies) {
-	addCountRecursive(pack(item.pack), item.amount * copies);
+void PackInstance::expect_copy(double copies) {
+	this->expected_copies += copies;
+	// propagate
+	FOR_EACH_CONST(item, pack_type.items) {
+		PackInstance& i = parent.get(item->name);
+		if (pack_type.select == SELECT_ALL) {
+			i.expect_copy(copies * item->amount);
+		} else if (pack_type.select == SELECT_PROPORTIONAL) {
+			i.expect_copy(copies * item->amount * item->probability * i.count / total_probability);
+		} else if (pack_type.select == SELECT_NONEMPTY) {
+			if (i.count >= 0) {
+				i.expect_copy(copies * item->amount * item->probability / total_probability);
+			}
+		} else if (pack_type.select == SELECT_FIRST) {
+			if (i.count >= 0 && cards.empty()) {
+				i.expect_copy(copies * item->amount);
+				break;
+			}
+		} else {
+			i.expect_copy(copies * item->amount * item->probability / total_probability);
+		}
+	}
 }
 
-
-// ----------------------------------------------------------------------------- : Generating
-
-DECLARE_TYPEOF(PackItemGenerator::OfTypeCount);
+void PackInstance::request_copy(size_t copies) {
+	requested_copies += copies;
+}
 
 /// Random generator with random numbers in a range
 template <typename Gen>
@@ -317,256 +318,161 @@ struct RandomRange {
 	Gen& gen;
 };
 
-bool PackItemGenerator::generateCount(const PackType& pack, int copies, PackSelectType type, OfTypeCount& out) {
-	if (copies <= 0) return false;
-	bool non_empty = false;
-	if (pack.cards) {
-		ScriptValueP the_cards = cardsFor(pack.cards.getScriptP());
-		non_empty = the_cards->itemCount() > 0;
-		if (non_empty) {
-			out[make_pair(the_cards,type)] += copies;
-		}
-	} else if (pack.select == SELECT_ALL) {
-		// just generate all
-		FOR_EACH_CONST(i, pack.items) {
-			non_empty |= generateCount(*i, 1, type, out);
-		}
-	} else {
-		// generate each copy separately
-		for (int j = 0 ; j < copies ; ++j) {
-			non_empty |= generateSingleCount(pack, type, out);
-		}
-	}
-	return non_empty;
-}
-
-bool PackItemGenerator::generateSingleCount(const PackType& pack, PackSelectType type, OfTypeCount& out) {
-	if (pack.select == SELECT_ONE_OR_EMPTY) {
-		// pick a random item by weight
-		double total_weight = 0.0;
-		FOR_EACH_CONST(i, pack.items) {
-			total_weight += i->weight;
-		}
-		double choice = gen() * total_weight / gen.max();
-		FOR_EACH_CONST(i, pack.items) {
-			if ((choice -= i->weight) <= 0) {
-				// pick this one
-				return generateCount(*i, 1, type, out);
+void PackInstance::generate(vector<CardP>* out) {
+	card_copies = 0;
+	if (pack_type.select == SELECT_ALL) {
+		// add all cards
+		card_copies += requested_copies * cards.size();
+		if (out) {
+			for (size_t i = 0 ; i < requested_copies ; ++i) {
+				out->insert(out->end(), cards.begin(), cards.end());
 			}
 		}
-	} else if (pack.select == SELECT_ONE) {
-		// pick a random item by weight that is not empty
-		UInt possible = 0; // bitmask
-		double total_weight = 0.0;
-		for (size_t i = 0 ; i < pack.items.size() ; ++i) {
-			total_weight += pack.items[i]->weight;
-			possible |= 1 << i;
+		// and all items
+		FOR_EACH_CONST(item, pack_type.items) {
+			PackInstance& i = parent.get(item->name);
+			i.request_copy(requested_copies * item->amount);
 		}
-		while (possible) {
-			// try to make a choice we have not made before
-			int choice = gen() * total_weight / gen.max();
-			for (size_t i = 0 ; i < pack.items.size() ; ++i) {
-				const PackItem& item = *pack.items[i];
-				if (!(possible & (1<<i))) continue; // already tried this item?
-				if ((choice -= item.weight) <= 0) {
-					bool non_empty = generateCount(item, 1, type, out);
-					if (non_empty) {
-						// found a non-empty choice, done
-						return true;
-					} else {
-						// try again, exclude this item
-						possible &= ~(1 << i);
-						total_weight -= item.weight;
+		
+	} else if (pack_type.select == SELECT_REPLACE
+	        || pack_type.select == SELECT_PROPORTIONAL
+	        || pack_type.select == SELECT_NONEMPTY) {
+		// multiple copies
+		for (size_t i = 0 ; i < requested_copies ; ++i) {
+			double r = rand() * total_probability;
+			if (r < cards.size()) {
+				// pick a card
+				card_copies++;
+				if (out) {
+					int i = (int)r;
+					out->push_back(cards[i]);
+				}
+			} else {
+				// pick an item
+				r -= cards.size();
+				FOR_EACH_CONST(item, pack_type.items) {
+					PackInstance& i = parent.get(item->name);
+					if (pack_type.select == SELECT_REPLACE) {
+						r -= item->probability;
+					} else if (pack_type.select == SELECT_PROPORTIONAL) {
+						r -= item->probability * i.count;
+					} else { // SELECT_NONEMPTY
+						if (i.count > 0) r -= item->probability;
+					}
+					// have we reached the item we were looking for?
+					if (r < 0) {
+						i.request_copy(requested_copies * item->amount);
 						break;
 					}
 				}
 			}
 		}
-	} else if (pack.select == SELECT_FIRST) {
-		// pick the first one that is not empty
-		FOR_EACH_CONST(i, pack.items) {
-			bool non_empty = generateCount(*i, 1, type, out);
-			if (non_empty) return true;
-		}
-	} else {
-		throw InternalError(_("unknown OneMany value"));
-	}
-	return false;
-}
-bool PackItemGenerator::generateCount(const PackItem& item, int copies, PackSelectType type, OfTypeCount& out) {
-	return generateCount(pack(item.pack), copies * item.amount, item.type == PACK_REF_INHERIT ? type : item.type, out);
-}
-
-void PackItemGenerator::generate(const PackType& pack) {
-	// first determine how many cards of each basic type we need
-	OfTypeCount counts;
-	generateCount(pack, 1, PACK_REF_NO_REPLACE, counts);
-	// now select these cards
-	FOR_EACH(c, counts) {
-		pickCards(c.first.first, c.first.second, c.second);
-	}
-}
-void PackItemGenerator::pickCards(const ScriptValueP& cards, PackSelectType type, int amount) {
-	// generate 'amount' cards and add them to out
-	int cards_size = cards->itemCount();
-	if (cards_size <= 0) return;
-	RandomRange<boost::mt19937> gen_range(gen);
-	if (type == PACK_REF_REPLACE) {
-		// amount random numbers
-		for (int i = 0 ; i < amount ; ++i) {
-			int index = gen_range(cards_size);
-			out.push_back(from_script<CardP>(cards->getIndex(index)));
-		}
-	} else if (type == PACK_REF_NO_REPLACE) {
-		// random shuffle
-		// to prevent us from being too predictable for small sets, periodically reshuffle
-		int max_per_batch = (cards_size + 1) / 2;
-		while (amount > 0) {
-			int to_add = min(amount, max_per_batch);
-			size_t old_out_size = out.size();
-			// add all to output temporarily
-			ScriptValueP it = cards->makeIterator(cards);
-			while (ScriptValueP card = it->next()) {
-				out.push_back(from_script<CardP>(card));
+		
+	} else if (pack_type.select == SELECT_NO_REPLACE) {
+		card_copies += requested_copies;
+		// NOTE: there is no way to pick items without replacement
+		if (out) {
+			// to prevent us from being too predictable for small sets, periodically reshuffle
+			RandomRange<boost::mt19937> gen_range(parent.gen);
+			int max_per_batch = ((int)cards.size() + 1) / 2;
+			int rem = (int)requested_copies;
+			while (rem > 0) {
+				random_shuffle(cards.begin(), cards.end(), gen_range);
+				out->insert(out->end(), cards.begin(), cards.begin() + min(rem, max_per_batch));
+				rem -= max_per_batch;
 			}
-			// shuffle and keep only the first to_add
-			random_shuffle(out.begin() + old_out_size, out.end(), gen_range);
-			out.resize(old_out_size + to_add);
-			amount -= to_add;
 		}
-	} else if (type == PACK_REF_CYCLIC) {
-		// multiple copies
-		int copies = amount / cards_size;
-		ScriptValueP it = cards->makeIterator(cards);
-		while (ScriptValueP card = it->next()) {
-			out.insert(out.end(), copies, from_script<CardP>(card));
-		}
-		amount -= copies * cards_size;
-		// if amount is not a multiple of the number of cards, pick the rest at random
-		for (int i = 0 ; i < amount ; ++i) {
-			int index = gen_range(cards_size);
-			out.push_back(from_script<CardP>(cards->getIndex(index)));
-		}
-	}
-}
-
-
-
-/*//%
-// ----------------------------------------------------------------------------- : PackItem
-
-void PackItemCounter::count(const String& name, double amount) {
-	map<PackItemRef*,double>::iterator it = sizes.find(name);
-	if (it != sizes.end()) return it->second;
-	
-	size *= amount * probability;
-	return sizes[&item] = size;
-}
-void PackItemCounter::count(const PackType& pack, int copies) {
-	double size = 0;
-	if (pack.select = ONE) {
-		double total_size;
-		FOR_EACH(item, pack.items) {
-			double item_size = size(item);
-			if (item->type == OTHER_IF_EMPTY) {
-				// is it empty?
-				total_size += item_size > 0 ? 1 : 0;
-				max_size   += 1;
-			} else if (item->type == WEIGHTED) {
-				total_size += item_size;
-				max_size   += item_size;
+		
+	} else if (pack_type.select == SELECT_CYCLIC) {
+		size_t total = cards.size() + pack_type.items.size();
+		size_t div = requested_copies / total;
+		size_t rem = requested_copies % total;
+		for (size_t i = 0 ; i < total ; ++i) {
+			// how many copies of this card/item do we need?
+			size_t copies = div + (i < rem ? 1 : 0);
+			if (i < cards.size()) {
+				card_copies += copies;
+				if (out) out->insert(out->end(), copies, cards[i]);
 			} else {
-				total_size += 1;
-				max_size   += 1;
+				const PackItemP& item = pack_type.items[i];
+				parent.get(item->name).request_copy(copies * item->amount);
 			}
 		}
-		size += total_size / max_size;
-		// count
-		FOR_EACH(item, pack.items) {
-			double item_size = size(item);
-			if (item_size > 0 && !item->cards) {
-				if (item->type == OTHER_IF_EMPTY) {
-					// is it empty?
-					total_size += item_size > 0 ? 1 : 0;
-					max_size   += 1;
-				} else if (item->type == WEIGHTED) {
-					total_size += item_size;
-					max_size   += item_size;
-				} else {
-					total_size += 1;
-					max_size   += 1;
+		
+	} else if (pack_type.select == SELECT_FIRST) {
+		if (!cards.empty()) {
+			// there is a card, pick it
+			card_copies += requested_copies;
+			if (out) out->push_back(cards.front());
+		} else {
+			// pick first nonempty item
+			FOR_EACH_CONST(item, pack_type.items) {
+				PackInstance& i = parent.get(item->name);
+				if (i.count >= 0) {
+					i.request_copy(requested_copies * item->amount);
+					break;
 				}
 			}
 		}
-	} else { // MANY
-		
 	}
-	amounts[pack.name] += amount;
+	requested_copies = 0;
 }
-double PackItemCounter::size(const String& name) {
-	map<PackItemRef*,double>::iterator it = sizes.find(name);
-	if (it != sizes.end()) return it->second;
-	double the_size = 0;
-	FOR_EACH() {
-		the_size += size(item);
-	}
-	return sizes[&item] = the_size;
+
+
+// ----------------------------------------------------------------------------- : PackGenerator
+
+void PackGenerator::reset(const SetP& set, int seed) {
+	this->set = set;
+	gen.seed((unsigned)seed);
+	max_depth = 0;
+	instances.clear();
 }
-double PackItemCounter::size(const PackItemRef& item) {
-	String the_name;
-	double the_size;
-	if (cards) {
-		the_size = cards.invokeOn(ctx)->itemCount() > 0 ? 1 : 0;
+
+PackInstance& PackGenerator::get(const String& name) {
+	PackInstanceP& instance = instances[name];
+	if (instance) {
+		return *instance;
 	} else {
-		the_size = size(name);
-		the_name = name;
-	}
-	if (the_size == 0 && !if_empty.empty())
-		the_name = if_empty;
-		the_size = size(if_empty);
-	}
-	if (!the_name.empty()) {
-		counts[the_name] += amount * probability;
-	}
-	return the_size * amount * probability;
-}
-
-
-void PackItemCounter::count(const PackType& pack, int copies, type) {
-	if (pack.cards) {
-		// 
-		cards =..
-		if (!cards.empty()) {
-			
-			return true;
-		} else {
-			return false;
+		FOR_EACH_CONST(type, set->game->pack_types) {
+			if (type->name == name) {
+				instance = PackInstanceP(new PackInstance(*type,*this));
+				max_depth = max(max_depth, instance->get_depth());
+				return *instance;
+			}
 		}
-	} else {
+		throw Error(_ERROR_1_("pack type not found",name));
 	}
 }
-
-// ----------------------------------------------------------------------------- : PackItem
-
-IMPLEMENT_REFLECTION(PackItem) {
-	REFLECT(name);
-	REFLECT(filter);
+PackInstance& PackGenerator::get(const PackTypeP& type) {
+	return get(type->name);
 }
 
-void PackItem::generate(Set& set, vector<CardP>& out) const {
-	FOR_EACH(card, set.cards) {
-		Context& ctx = set.getContext(card);
-		bool keep = *filter.invoke(ctx);
-		if (keep) {
-			out.push_back(card);
+void PackGenerator::generate(vector<CardP>& out) {
+	if (!set) return;
+	// We generate from depth max_depth to 0
+	// instances can refer to other instances of lower depth, and generate
+	// can change the number of copies of those lower depth instances
+	for (int depth = max_depth ; depth >= 0 ; --depth) {
+		// in game file order
+		FOR_EACH_CONST(type, set->game->pack_types) {
+			PackInstance& i = get(type);
+			if (i.get_depth() == depth) {
+				i.generate(&out);
+			}
 		}
 	}
 }
 
-// ----------------------------------------------------------------------------- : PackItemCache
-
-PackItemCache::PackItemCache(Set& set)
-	: set(set)
-{}*/
+void PackGenerator::update_card_counts() {
+	if (!set) return;
+	// update card_counts by using generate()
+	for (int depth = max_depth ; depth >= 0 ; --depth) {
+		FOR_EACH_CONST(i,instances) {
+			if (i.second->get_depth() == depth) {
+				i.second->generate(nullptr);
+			}
+		}
+	}
+}
 
 #endif

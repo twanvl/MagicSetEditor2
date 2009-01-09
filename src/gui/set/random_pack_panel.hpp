@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <gui/set/panel.hpp>
+#include <data/pack.hpp>
 #include <wx/spinctrl.h>
 
 class CardViewer;
@@ -66,7 +67,9 @@ class RandomPackPanel : public SetWindowPanel {
 	};
 	vector<PackItem> packs;
 	
-	int total_packs;
+	#if USE_NEW_PACK_SYSTEM
+		PackGenerator generator;
+	#endif
 	
 	/// Actual intialization of the controls
 	void initControls();

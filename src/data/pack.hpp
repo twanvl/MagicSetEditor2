@@ -14,7 +14,7 @@
 #include <script/scriptable.hpp>
 #include <boost/random/mersenne_twister.hpp>
 
-#define USE_NEW_PACK_SYSTEM 0
+#define USE_NEW_PACK_SYSTEM 1
 
 #if !USE_NEW_PACK_SYSTEM
 // =================================================================================================== OLD
@@ -103,20 +103,29 @@ class PackItemCache {
 };
 
 
+
+
 #else
 // =================================================================================================== NEW
 
+DECLARE_POINTER_TYPE(PackType);
 DECLARE_POINTER_TYPE(PackItem);
+DECLARE_POINTER_TYPE(PackInstance);
 DECLARE_POINTER_TYPE(Card);
-class Set;
+DECLARE_POINTER_TYPE(Set);
+class PackGenerator;
 
 // ----------------------------------------------------------------------------- : PackType
 
-enum OneMany
-{	SELECT_ONE_OR_EMPTY
-,	SELECT_ONE
-,	SELECT_FIRST
+enum PackSelectType
+{	SELECT_AUTO
 ,	SELECT_ALL
+,	SELECT_REPLACE
+,	SELECT_NO_REPLACE
+,	SELECT_CYCLIC
+,	SELECT_PROPORTIONAL
+,	SELECT_NONEMPTY
+,	SELECT_FIRST
 };
 
 /// A card pack description for playtesting
@@ -128,8 +137,7 @@ class PackType : public IntrusivePtrBase<PackType> {
 	Scriptable<bool>  enabled;    ///< Is this pack enabled?
 	bool              selectable; ///< Is this pack listed in the UI?
 	bool              summary;    ///< Should the total be listed for this type?
-	OneMany           select;     ///< Select one or many?
-	OptionalScript    cards;      ///< Script to select this type of cards (there are no items)
+	PackSelectType    select;     ///< What cards/items to select
 	OptionalScript    filter;     ///< Filter to select this type of cards
 	vector<PackItemP> items;      ///< Subpacks in this pack
 	
@@ -140,24 +148,14 @@ class PackType : public IntrusivePtrBase<PackType> {
 	DECLARE_REFLECTION();
 };
 
-// ----------------------------------------------------------------------------- : PackItem
-
-enum PackSelectType
-{	PACK_REF_INHERIT
-,	PACK_REF_REPLACE
-,	PACK_REF_NO_REPLACE
-,	PACK_REF_CYCLIC
-};
-
 /// An item in a PackType
 class PackItem : public IntrusivePtrBase<PackItem> {
   public:
 	PackItem();
 	
-	String             pack;    ///< Name of the pack to select cards from
-	Scriptable<int>    amount;  ///< Number of cards of this type
-	Scriptable<double> weight;  ///< Relative probability of picking this item
-	PackSelectType     type;
+	String             name;         ///< Name of the pack to select cards from
+	Scriptable<int>    amount;       ///< Number of cards of this type
+	Scriptable<double> probability;  ///< Relative probability of picking this item
 	
 	/// Update scripts, returns true if there is a change
 	bool update(Context& ctx);
@@ -166,86 +164,65 @@ class PackItem : public IntrusivePtrBase<PackItem> {
 	DECLARE_REFLECTION();
 };
 
+
 // ----------------------------------------------------------------------------- : Generating / counting
 
-// --------------------------------------------------- : PackItemCache
-
-class PackItemCache {
+// A PackType that is instantiated for a particular Set,
+// i.e. we now know the actual cards
+class PackInstance : public IntrusivePtrBase<PackInstance> {
   public:
-	PackItemCache(Set& set) : set(set) {}
+	PackInstance(const PackType& pack_type, PackGenerator& parent);
 	
-	/// Look up a pack type by name
-	const PackType& pack(const String& name);
+	/// Expect to pick this many copies from this pack, updates expected_copies
+	void expect_copy(double copies = 1);
+	/// Request some copies of this pack
+	void request_copy(size_t copies = 1);
 	
-  protected:
-	Set& set;
+	/// Generate cards if depth == at_depth
+	/** Some cards are (optionally) added to out and card_copies
+	  * And also the copies of referenced items might be incremented
+	  *
+	  * Resets the count of this instance to 0 */
+	void generate(vector<CardP>* out);
 	
-	/// The cards for a given PackItem
-	ScriptValueP cardsFor(const ScriptValueP& cards_script);	
+	inline int    get_depth()           const { return depth; }
+	inline bool   has_cards()           const { return !cards.empty(); }
+	inline size_t get_card_copies()     const { return card_copies; }
+	inline double get_expected_copies() const { return expected_copies; }
 	
   private:
-	/// Lookup PackTypes by name
-	//%% 
-	/// Cards for each PackType
-	map<ScriptValueP,ScriptValueP> item_cards;
+	const PackType& pack_type;
+	PackGenerator&  parent;
+	int             depth;             //< 0 = no items, otherwise 1+max depth of items refered to
+	vector<CardP>   cards;             //< All cards that pass the filter
+	size_t          count;             //< Total number of non-empty cards/items
+	double          total_probability; //< Sum of item and card probabilities
+	size_t          requested_copies;  //< The requested number of copies of this pack
+	size_t          card_copies;       //< The number of cards that were chosen to come from this pack
+	double          expected_copies;
 };
 
-// --------------------------------------------------- : Counting expected cards
-
-/// Class for determining the *expected* number of cards from each type
-class PackItemCounter : PackItemCache {
+class PackGenerator {
   public:
-	PackItemCounter(Set& set, map<const PackType*,double>& counts)
-		: PackItemCache(set), counts(counts)
-	{}
+	/// Reset the generator, possibly switching the set or reseeding
+	void reset(const SetP& set, int seed);
 	
-	/// Add a number of copies of the PackType to the counts, recurse into child items
-	void addCountRecursive(const PackType& pack, double copies);
-	void addCountRecursive(const PackItem& item, double copies);
+	/// Find the PackInstance for the PackType with the given name
+	PackInstance& get(const String& name);
+	PackInstance& get(const PackTypeP& type);
 	
-	/// The probability that the given pack is non-empty
-	double probabilityNonEmpty(const PackType& pack);
-	double probabilityNonEmpty(const PackItem& item);
+	/// Generate all cards, resets copies
+	void generate(vector<CardP>& out);
+	/// Update all card_copies counters, resets copies
+	void update_card_counts();
 	
-	/// The counts will be stored here
-	map<const PackType*,double>& counts;
-	
+	// only for PackInstance
+	SetP set;           ///< The set
+	boost::mt19937 gen; ///< Random generator
   private:
-	/// The probability that a pack type is empty (cache)
-	//%map<const PackItem*,double> probability_empty;
-};
-
-// --------------------------------------------------- : PackItemCounter
-
-/// Class for generating card packs
-class PackItemGenerator : PackItemCache {
-  public:
-	PackItemGenerator(Set& set, vector<CardP>& cards, boost::mt19937& gen)
-		: PackItemCache(set), out(cards), gen(gen)
-	{}
-	
-	/// Generate a pack, adding it to cards
-	void generate(const PackType& pack);
-	
-	/// Number of cards of a type
-	typedef map<pair<ScriptValueP,PackSelectType>,int> OfTypeCount;
-	
-	/// Determine what *types* of cards to pick (store in out)
-	/** Does NOT add cards yet.
-	 *  Returns true if non-empty.
-	 */
-	bool generateCount(const PackType& pack, int copies, PackSelectType type, OfTypeCount& out);
-	bool generateCount(const PackItem& item, int copies, PackSelectType type, OfTypeCount& out);
-	bool generateSingleCount(const PackType& pack, PackSelectType type, OfTypeCount& out);
-	
-	/// Pick cards from a list
-	void pickCards(const ScriptValueP& cards, PackSelectType type, int amount);
-	
-	/// The cards will be stored here
-	vector<CardP>& out;
-	
-	/// Random generator
-	boost::mt19937& gen;
+	/// Details for each PackType
+	map<String,PackInstanceP> instances;
+	int max_depth;
 };
 
 // ----------------------------------------------------------------------------- : EOF
