@@ -348,7 +348,7 @@ void PackInstance::generate(vector<CardP>* out) {
 	        || pack_type.select == SELECT_NONEMPTY) {
 		// multiple copies
 		for (size_t i = 0 ; i < requested_copies ; ++i) {
-			double r = rand() * total_probability;
+			double r = parent.gen() * total_probability / parent.gen.max();
 			if (r < cards.size()) {
 				// pick a card
 				card_copies++;
