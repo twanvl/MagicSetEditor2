@@ -198,6 +198,7 @@ enum ChildMenuID {
 	
 	// Random pack panel
 ,	ID_PACK_AMOUNT			= 8111
+,	ID_PACK_TYPE
 ,	ID_SEED_RANDOM
 ,	ID_SEED_FIXED
 ,	ID_GENERATE_PACK

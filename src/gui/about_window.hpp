@@ -28,10 +28,45 @@ class AboutWindow : public wxDialog {
 	void draw(DC& dc);
 };
 
+// ----------------------------------------------------------------------------- : Button with hover effect
+
+/// A button that changes images on mouseenter/leave
+class HoverButtonBase : public wxControl {
+  public:
+	HoverButtonBase(Window* parent, int id, bool accepts_focus = true);
+	
+	virtual bool AcceptsFocus() const;
+	
+	virtual void SetHelpText(const String& s) { help_text = s; }
+	
+  private:
+	DECLARE_EVENT_TABLE();
+	
+	const bool accepts_focus;
+	
+	void onMouseEnter(wxMouseEvent&);
+	void onMouseLeave(wxMouseEvent&);
+	void onFocus     (wxFocusEvent& ev);
+	void onKillFocus (wxFocusEvent& ev);
+	void onLeftUp    (wxMouseEvent&);
+	void onLeftDown  (wxMouseEvent&);
+	void onKeyDown   (wxKeyEvent&);
+	void onKeyUp     (wxKeyEvent&);
+	void onPaint     (wxPaintEvent&);
+	
+  protected:
+	bool hover, focus, mouse_down, key_down;
+	String help_text;
+	
+	virtual void draw(DC& dc) = 0;
+	virtual void refreshIfNeeded();
+	virtual void onClick();
+};
+
 // ----------------------------------------------------------------------------- : Button with image and hover effect
 
 /// A button that changes images on mouseenter/leave
-class HoverButton : public wxControl {
+class HoverButton : public HoverButtonBase {
   public:
 	/// Create a HoverButton, name is the resource name of the images to use
 	/** name+"_normal", name+"_hover", name+"_focus", name+"_down"
@@ -42,35 +77,19 @@ class HoverButton : public wxControl {
 	/// Load different bitmaps for this button
 	void loadBitmaps(const String& name);
 	
-	virtual bool AcceptsFocus() const;
-	
   private:
-	DECLARE_EVENT_TABLE();
-	
 	String bitmaps; ///< Name of the loaded bitmaps
 	Bitmap bg_normal, bg_hover, bg_focus, bg_down; ///< Bitmaps for the states of the button
-	bool hover, focus, mouse_down, key_down;
 	Color background;
-	const bool accepts_focus;
 	
-	void onMouseEnter(wxMouseEvent&);
-	void onMouseLeave(wxMouseEvent&);
-	void onFocus     (wxFocusEvent& ev);
-	void onKillFocus (wxFocusEvent& ev);
-	void onPaint     (wxPaintEvent&);
-	void onLeftUp    (wxMouseEvent&);
-	void onLeftDown  (wxMouseEvent&);
-	void onKeyDown   (wxKeyEvent&);
-	void onKeyUp     (wxKeyEvent&);
 	virtual wxSize DoGetBestSize() const;
 	
 	const Bitmap* last_drawn;
 	const Bitmap* toDraw() const;
-	void refreshIfNeeded();
-	
   protected:
-	virtual void draw(DC& dc);
 	int drawDelta() const;
+	virtual void refreshIfNeeded();
+	virtual void draw(DC& dc);
 };
 
 

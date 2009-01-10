@@ -8,9 +8,10 @@
 
 #include <util/prec.hpp>
 #include <gui/set/random_pack_panel.hpp>
-#include <gui/set/window.hpp>
 #include <gui/control/card_viewer.hpp>
 #include <gui/control/filtered_card_list.hpp>
+#include <gui/util.hpp>
+#include <gui/about_window.hpp> // HoverButtonBase
 #include <data/game.hpp>
 #include <data/pack.hpp>
 #include <data/settings.hpp>
@@ -210,15 +211,77 @@ BEGIN_EVENT_TABLE(PackTotalsPanel, wxPanel)
 	EVT_PAINT(PackTotalsPanel::onPaint)
 END_EVENT_TABLE()
 
+
+// ----------------------------------------------------------------------------- : SelectableLabel
+
+class SelectableLabel : public HoverButtonBase {
+  public:
+	SelectableLabel(wxWindow* parent, int id, const String& label, bool interactive = true)
+		: HoverButtonBase(parent, id, false)
+		, label(label)
+		, interactive(interactive)
+		, buddy(nullptr)
+	{}
+	void draw(DC& dc) {
+		Color bg = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+		Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT);
+		// clear background
+		dc.SetPen(*wxTRANSPARENT_PEN);
+		//dc.SetBrush(mouse_down ? wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT)
+		//                       : hover ? lerp(bg,fg,0.1) : bg);
+		//dc.SetTextForeground(mouse_down ? wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT) : fg);
+		dc.SetBrush(interactive && hover ? lerp(bg,fg,0.1) : bg);
+		dc.SetTextForeground(fg);
+		wxSize size = dc.GetSize();
+		dc.DrawRectangle(0,0,size.x,size.y);
+		// draw label
+		dc.SetFont(*wxNORMAL_FONT);
+		int w,h;
+		wxSize s = dc.GetSize();
+		dc.GetTextExtent(label,&w,&h);
+		dc.DrawText(interactive && hover ? label + _("...") : label, 2, (s.y-h)/2);
+	}
+	wxSize DoGetBestSize() const {
+		int w,h;
+		wxClientDC dc(const_cast<SelectableLabel*>(this));
+		dc.SetFont(*wxNORMAL_FONT);
+		dc.GetTextExtent(label,&w,&h);
+		return wxSize(w+6,h);
+	}
+	void setBuddy(wxWindow* buddy) {
+		this->buddy = buddy;
+	}
+	virtual void onClick() {
+		if (buddy) buddy->SetFocus();
+	}
+	void onDoubleClick(wxMouseEvent&) {
+		if (interactive) HoverButtonBase::onClick();
+	}
+  private:
+	String label;
+	bool interactive;
+	wxWindow* buddy;
+	DECLARE_EVENT_TABLE();
+};
+
+BEGIN_EVENT_TABLE(SelectableLabel, HoverButtonBase)
+	EVT_LEFT_DCLICK(SelectableLabel::onDoubleClick)
+END_EVENT_TABLE()
+
 // ----------------------------------------------------------------------------- : PackAmountPicker
 
-PackAmountPicker::PackAmountPicker(wxWindow* parent, wxFlexGridSizer* sizer, const PackTypeP& pack)
+PackAmountPicker::PackAmountPicker(wxWindow* parent, wxFlexGridSizer* sizer, const PackTypeP& pack, bool active)
 	: pack(pack)
-	, label(new wxStaticText(parent, wxID_ANY, capitalize_sentence(pack->name)))
+	, label(new SelectableLabel(parent, ID_PACK_TYPE, capitalize_sentence(pack->name), active))
 	, value(new wxSpinCtrl(parent, ID_PACK_AMOUNT, _("0"), wxDefaultPosition, wxSize(50,-1)))
 {
-	sizer->Add(label, 0, wxALIGN_CENTER_VERTICAL);
+	label->setBuddy(value);
+	sizer->Add(label, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL);
 	sizer->Add(value, 0, wxEXPAND | wxALIGN_CENTER);
+	if (active) {
+		label->SetHelpText(_("Double click to edit."));
+	}
+	set_help_text(value, _("The number of ") + pack->name + _("s to use."));
 }
 
 void PackAmountPicker::destroy(wxFlexGridSizer* sizer) {
@@ -265,9 +328,10 @@ CustomPackDialog::CustomPackDialog(Window* parent, const SetP& set, const PackTy
 		s->Add(s2, 0, wxEXPAND | wxALL, 8);
 		wxSizer* s3 = new wxBoxSizer(wxHORIZONTAL);
 			wxSizer* s4 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack selection"));
-				wxFlexGridSizer* packsSizer = new wxFlexGridSizer(0, 2, 4, 8);
+				s4->AddSpacer(2);
+				wxFlexGridSizer* packsSizer = new wxFlexGridSizer(0, 2, 4, 4);
 				packsSizer->AddGrowableCol(0);
-				s4->Add(packsSizer, 1, wxEXPAND | wxALL & ~wxTOP, 4);
+				s4->Add(packsSizer, 1, wxEXPAND | wxALL & ~wxTOP & ~wxLEFT, 4);
 			s3->Add(s4, 1, wxEXPAND, 8);
 			wxSizer* s5 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack totals"));
 				s5->Add(totals, 1, wxEXPAND | wxALL, 4);
@@ -277,7 +341,7 @@ CustomPackDialog::CustomPackDialog(Window* parent, const SetP& set, const PackTy
 	// add spin controls
 	FOR_EACH(pack, set->game->pack_types) {
 		if (pack->selectable) continue; // this pack is already selectable from the main UI
-		PackAmountPicker pick(this, packsSizer, pack);
+		PackAmountPicker pick(this, packsSizer, pack, false);
 		pickers.push_back(pick);
 		// set value if it is nonzero
 		if (edited_pack) {
@@ -358,19 +422,21 @@ void RandomPackPanel::initControls() {
   #else
 	totals = new PackTotalsPanel(this, wxID_ANY);
   #endif
-	static_cast<SetWindow*>(GetParent())->setControlStatusText(seed_random, _HELP_("random seed"));
-	static_cast<SetWindow*>(GetParent())->setControlStatusText(seed_fixed,  _HELP_("fixed seed"));
-	static_cast<SetWindow*>(GetParent())->setControlStatusText(seed,        _HELP_("seed"));
+	set_help_text(seed_random, _HELP_("random seed"));
+	set_help_text(seed_fixed,  _HELP_("fixed seed"));
+	set_help_text(seed,        _HELP_("seed"));
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxHORIZONTAL);
 		s->Add(preview, 0, wxRIGHT,  2);
 		wxSizer* s2 = new wxBoxSizer(wxVERTICAL);
 			wxSizer* s3 = new wxBoxSizer(wxHORIZONTAL);
-				wxSizer* s4 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack selection"));
-					packsSizer = new wxFlexGridSizer(0, 2, 4, 8);
-					packsSizer->AddGrowableCol(0);
-					//s4->AddSpacer(2);
-					s4->Add(packsSizer, 1, wxEXPAND | wxALL & ~wxTOP, 4);
+				wxSizer* s4 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("pack selection"));
+					wxSizer* s4b = new wxBoxSizer(wxHORIZONTAL);
+						packsSizer = new wxFlexGridSizer(0, 2, 4, 4);
+						packsSizer->AddGrowableCol(0);
+						s4b->Add(packsSizer, 1, wxEXPAND | wxALL & ~wxTOP & ~wxBOTTOM & ~wxLEFT, 4);
+					s4->Add(s4b, 1, wxEXPAND | wxLEFT, 2);
+					s4->Add(new wxButton(this, ID_CUSTOM_PACK, _BUTTON_("custom pack")), 0, wxEXPAND | wxALL & ~wxTOP, 4);
 				s3->Add(s4, 1, wxEXPAND, 8);
 				wxSizer* s5 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack totals"));
 					s5->Add(totals, 1, wxEXPAND | wxALL, 4);
@@ -386,7 +452,6 @@ void RandomPackPanel::initControls() {
 					//s6->AddStretchSpacer();
 					//s6->Add(generate_button, 0, wxTOP | wxALIGN_RIGHT, 8);
 					s6->Add(generate_button, 1, wxTOP | wxEXPAND, 8);
-					s6->Add(new wxButton(this, ID_CUSTOM_PACK, _BUTTON_("custom pack")), 1, wxTOP | wxEXPAND, 8);
 				s3->Add(s6, 0, wxEXPAND | wxLEFT, 8);
 			s2->Add(s3, 0, wxEXPAND | wxALL & ~wxTOP, 4);
 			s2->Add(card_list, 1, wxEXPAND);
@@ -489,7 +554,21 @@ void RandomPackPanel::onCommand(int id) {
 		}
 		case ID_CUSTOM_PACK: {
 			CustomPackDialog dlg(this, set, PackTypeP());
-			dlg.ShowModal();
+			if (dlg.ShowModal() == wxID_OK) {
+				// TODO: add pack
+			}
+			break;
+		}
+	}
+}
+void RandomPackPanel::onPackTypeClick(wxCommandEvent& ev) {
+	FOR_EACH(pick,pickers) {
+		if (pick.label == ev.GetEventObject()) {
+			// edit this pack type
+			CustomPackDialog dlg(this, set, pick.pack);
+			if (dlg.ShowModal() == wxID_OK) {
+				// TODO: update pack
+			}
 			break;
 		}
 	}
@@ -498,7 +577,9 @@ void RandomPackPanel::onCommand(int id) {
 // ----------------------------------------------------------------------------- : Generating
 
 void RandomPackPanel::updateTotals() {
-  #if !USE_NEW_PACK_SYSTEM
+  #if USE_NEW_PACK_SYSTEM
+	generator.gen.seed((unsigned)last_seed);
+  #else
 	totals->clear();
   #endif
 	int total_packs = 0;
@@ -595,6 +676,7 @@ void RandomPackPanel::selectionChoices(ExportCardSelectionChoices& out) {
 
 BEGIN_EVENT_TABLE(RandomPackPanel, wxPanel)
 	EVT_CARD_SELECT(wxID_ANY, RandomPackPanel::onCardSelect)
+	EVT_BUTTON     (ID_PACK_TYPE, RandomPackPanel::onPackTypeClick)
 END_EVENT_TABLE  ()
 
 

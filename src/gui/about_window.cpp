@@ -60,14 +60,101 @@ BEGIN_EVENT_TABLE(AboutWindow, wxDialog)
 END_EVENT_TABLE  ()
 
 
+// ----------------------------------------------------------------------------- : Button hover effect
+
+HoverButtonBase::HoverButtonBase(Window* parent, int id, bool accepts_focus)
+	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxNO_BORDER )
+	, hover(false), focus(false), mouse_down(false), key_down(false)
+	, accepts_focus(accepts_focus)
+{}
+
+void HoverButtonBase::onMouseEnter(wxMouseEvent&) {
+	hover = true;
+	refreshIfNeeded();
+	if (!help_text.empty()) set_status_text(this,help_text);
+}
+void HoverButtonBase::onMouseLeave(wxMouseEvent&) {
+	hover = false;
+	refreshIfNeeded();
+	if (!help_text.empty()) set_status_text(this,wxEmptyString);
+}
+void HoverButtonBase::onFocus(wxFocusEvent&) {
+	focus = true;
+	refreshIfNeeded();
+}
+void HoverButtonBase::onKillFocus(wxFocusEvent&) {
+	focus = false;
+	refreshIfNeeded();
+}
+void HoverButtonBase::onLeftDown(wxMouseEvent&) {
+	mouse_down = true;
+	SetFocus();
+	CaptureMouse();
+	refreshIfNeeded();
+}
+void HoverButtonBase::onLeftUp(wxMouseEvent&) {
+	if (HasCapture()) ReleaseMouse();
+	mouse_down = false;
+	refreshIfNeeded();
+	if (hover) {
+		onClick();
+	}
+}
+void HoverButtonBase::onKeyDown(wxKeyEvent& ev) {
+	int code = ev.GetKeyCode();
+	if (code == WXK_RETURN || code == WXK_SPACE) {
+		key_down = true;
+		refreshIfNeeded();
+	} else {
+		ev.Skip();
+	}
+}
+void HoverButtonBase::onKeyUp(wxKeyEvent& ev) {
+	int code = ev.GetKeyCode();
+	if (code == WXK_RETURN || code == WXK_SPACE) {
+		key_down = false;
+		refreshIfNeeded();
+		onClick();
+	}
+}
+
+void HoverButtonBase::onClick() {
+	wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
+	evt.SetEventObject(this);
+	ProcessEvent(evt);
+}
+
+bool HoverButtonBase::AcceptsFocus() const {
+	return wxControl::AcceptsFocus() && accepts_focus;
+}
+
+void HoverButtonBase::refreshIfNeeded() {
+	Refresh(false);
+}
+
+void HoverButtonBase::onPaint(wxPaintEvent&) {
+	wxPaintDC dc(this);
+	draw(dc);
+}
+
+BEGIN_EVENT_TABLE(HoverButtonBase, wxControl)
+	EVT_ENTER_WINDOW   (HoverButtonBase::onMouseEnter)
+	EVT_LEAVE_WINDOW   (HoverButtonBase::onMouseLeave)
+	EVT_PAINT          (HoverButtonBase::onPaint)
+	EVT_SET_FOCUS      (HoverButtonBase::onFocus)
+	EVT_KILL_FOCUS     (HoverButtonBase::onKillFocus)
+	EVT_LEFT_DOWN      (HoverButtonBase::onLeftDown)
+	EVT_LEFT_UP        (HoverButtonBase::onLeftUp)
+	EVT_KEY_DOWN       (HoverButtonBase::onKeyDown)
+	EVT_KEY_UP         (HoverButtonBase::onKeyUp)
+END_EVENT_TABLE  ()
+
 // ----------------------------------------------------------------------------- : Button with image and hover effect
 
 
 HoverButton::HoverButton(Window* parent, int id, const String& name, const Color& background, bool accepts_focus)
-	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxNO_BORDER )
-	, hover(false), focus(false), mouse_down(false), key_down(false)
+	: HoverButtonBase(parent, id, accepts_focus)
 	, background(background)
-	, accepts_focus(accepts_focus)
 	, last_drawn(nullptr)
 {
 	loadBitmaps(name);
@@ -84,62 +171,8 @@ void HoverButton::loadBitmaps(const String& name) {
 	Refresh(false);
 }
 
-void HoverButton::onMouseEnter(wxMouseEvent&) {
-	hover = true;
-	refreshIfNeeded();
-}
-void HoverButton::onMouseLeave(wxMouseEvent&) {
-	hover = false;
-	refreshIfNeeded();
-}
-void HoverButton::onFocus(wxFocusEvent&) {
-	focus = true;
-	refreshIfNeeded();
-}
-void HoverButton::onKillFocus(wxFocusEvent&) {
-	focus = false;
-	refreshIfNeeded();
-}
-void HoverButton::onLeftDown(wxMouseEvent&) {
-	mouse_down = true;
-	SetFocus();
-	CaptureMouse();
-	refreshIfNeeded();
-}
-void HoverButton::onLeftUp(wxMouseEvent&) {
-	if (HasCapture()) ReleaseMouse();
-	if (mouse_down && hover) {
-		mouse_down = false;
-		refreshIfNeeded();
-		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
-		ProcessEvent(evt);
-	}
-	mouse_down = false;
-}
-void HoverButton::onKeyDown(wxKeyEvent& ev) {
-	int code = ev.GetKeyCode();
-	if (code == WXK_RETURN || code == WXK_SPACE) {
-		key_down = true;
-		refreshIfNeeded();
-	} else {
-		ev.Skip();
-	}
-}
-void HoverButton::onKeyUp(wxKeyEvent& ev) {
-	int code = ev.GetKeyCode();
-	if (code == WXK_RETURN || code == WXK_SPACE) {
-		key_down = false;
-		refreshIfNeeded();
-		wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, GetId());
-		ProcessEvent(evt);
-	}
-}
-
 wxSize HoverButton::DoGetBestSize() const {
 	return wxSize(bg_normal.GetWidth(), bg_normal.GetHeight());
-}
-bool HoverButton::AcceptsFocus() const {
-	return wxControl::AcceptsFocus() && accepts_focus;
 }
 
 const Bitmap* HoverButton::toDraw() const {
@@ -152,10 +185,6 @@ void HoverButton::refreshIfNeeded() {
 	if (last_drawn != toDraw()) Refresh(false);
 }
 
-void HoverButton::onPaint(wxPaintEvent&) {
-	wxPaintDC dc(this);
-	draw(dc);
-}
 void HoverButton::draw(DC& dc) {
 	// clear background (for transparent button images)
 	wxSize ws = GetClientSize();
@@ -169,15 +198,3 @@ void HoverButton::draw(DC& dc) {
 int HoverButton::drawDelta() const {
 	return (mouse_down && hover) || key_down ? 2 : 0;
 }
-
-BEGIN_EVENT_TABLE(HoverButton, wxControl)
-	EVT_ENTER_WINDOW   (HoverButton::onMouseEnter)
-	EVT_LEAVE_WINDOW   (HoverButton::onMouseLeave)
-	EVT_PAINT          (HoverButton::onPaint)
-	EVT_SET_FOCUS      (HoverButton::onFocus)
-	EVT_KILL_FOCUS     (HoverButton::onKillFocus)
-	EVT_LEFT_DOWN      (HoverButton::onLeftDown)
-	EVT_LEFT_UP        (HoverButton::onLeftUp)
-	EVT_KEY_DOWN       (HoverButton::onKeyDown)
-	EVT_KEY_UP         (HoverButton::onKeyUp)
-END_EVENT_TABLE  ()

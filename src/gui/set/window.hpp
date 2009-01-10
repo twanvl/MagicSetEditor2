@@ -70,15 +70,6 @@ class SetWindow : public wxFrame, public SetView {
 	/// Switch this window to the new set, or open another window for it (depending on the settings)
 	void switchSet(const SetP& new_set);
 	
-	// --------------------------------------------------- : Status text for controls
-  public:
-	/// Set the status text of a control
-	void setControlStatusText(wxWindow* control, const String& text);
-  private:
-	vector<pair<wxWindow*,String> > control_status_texts;
-	void onControlEnter(wxMouseEvent&);
-	void onControlLeave(wxMouseEvent&);
-	
 	// --------------------------------------------------- : Action related
   protected:
 	/// We want to respond to set changes

@@ -17,6 +17,7 @@
 class CardViewer;
 class RandomCardList;
 class PackTotalsPanel;
+class SelectableLabel;
 struct CardSelectEvent;
 DECLARE_POINTER_TYPE(PackType);
 
@@ -24,12 +25,12 @@ DECLARE_POINTER_TYPE(PackType);
 
 // for lists of spin controls
 struct PackAmountPicker {
-	PackTypeP     pack;
-	wxStaticText* label;
-	wxSpinCtrl*   value;
+	PackTypeP        pack;
+	SelectableLabel* label;
+	wxSpinCtrl*      value;
 	
 	PackAmountPicker() {}
-	PackAmountPicker(wxWindow* parent, wxFlexGridSizer* sizer, const PackTypeP& pack);
+	PackAmountPicker(wxWindow* parent, wxFlexGridSizer* sizer, const PackTypeP& pack, bool active = true);
 	void destroy(wxFlexGridSizer* sizer);
 };
 
@@ -93,6 +94,7 @@ class RandomPackPanel : public SetWindowPanel {
 	void storeSettings();
 	
 	void onCardSelect(CardSelectEvent& ev);
+	void onPackTypeClick(wxCommandEvent& ev);
   public:
 	typedef PackItem PackItem_for_typeof;
 };
