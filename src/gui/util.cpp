@@ -45,12 +45,20 @@ void set_status_text(Window* wnd, const String& s) {
 }
 
 
+// ----------------------------------------------------------------------------- : set_help_text
+// The idea is as follows:
+//  - store the help text of a window in its ClientObject as a StoredStatusString
+//  - Connect event handlers that use set_status_text
+//  - The event handlers should be members of an EvtHandler somewhere,
+//     but it is wasteful to make an object. Instead use nullptr as a 'fake' EvtHandler.
+//     then the event handling functions will be called with this==nullptr
+
 struct StoredStatusString : public wxClientData {
 	String s;
 };
 
 // Don't use this!
-struct FakeWindowClass : public wxWindow {
+struct FakeEvtHandlerClass : public wxEvtHandler {
 	void onControlEnter(wxMouseEvent& ev) {
 		wxWindow* wnd = (wxWindow*)ev.GetEventObject();
 		if (wnd) {
@@ -73,8 +81,8 @@ void set_help_text(Window* wnd, const String& s) {
 		// first time
 		d = new StoredStatusString;
 		wnd->SetClientObject(d);
-		wnd->Connect(wxEVT_ENTER_WINDOW,wxMouseEventHandler(FakeWindowClass::onControlEnter),wnd,nullptr);
-		wnd->Connect(wxEVT_LEAVE_WINDOW,wxMouseEventHandler(FakeWindowClass::onControlLeave),wnd,nullptr);
+		wnd->Connect(wxEVT_ENTER_WINDOW,wxMouseEventHandler(FakeEvtHandlerClass::onControlEnter),nullptr,nullptr);
+		wnd->Connect(wxEVT_LEAVE_WINDOW,wxMouseEventHandler(FakeEvtHandlerClass::onControlLeave),nullptr,nullptr);
 	}
 	d->s = s;
 }
