@@ -55,7 +55,7 @@ IMPLEMENT_REFLECTION(Game) {
 	REFLECT_NO_SCRIPT(statistics_dimensions);
 	REFLECT_NO_SCRIPT(statistics_categories);
   #if USE_NEW_PACK_SYSTEM
-	REFLECT_ALIAS(307, "pack item", "pack type");
+	REFLECT_ALIAS(308, "pack item", "pack type");
   #else
 	REFLECT_NO_SCRIPT(pack_items);
   #endif

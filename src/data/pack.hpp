@@ -166,6 +166,9 @@ class PackItem : public IntrusivePtrBase<PackItem> {
 	DECLARE_REFLECTION();
 };
 
+inline String type_name(const PackType&) {
+	return _TYPE_("pack");
+}
 
 // ----------------------------------------------------------------------------- : Generating / counting
 

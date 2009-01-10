@@ -10,11 +10,13 @@
 #include <data/action/set.hpp>
 #include <data/set.hpp>
 #include <data/card.hpp>
+#include <data/pack.hpp>
 #include <data/stylesheet.hpp>
 #include <util/error.hpp>
 
 DECLARE_TYPEOF_COLLECTION(IndexMap<FieldP COMMA ValueP>);
 DECLARE_TYPEOF_COLLECTION(CardP);
+DECLARE_TYPEOF_COLLECTION(PackTypeP);
 DECLARE_TYPEOF_COLLECTION(int);
 
 // ----------------------------------------------------------------------------- : Add card
@@ -134,4 +136,33 @@ String ChangeCardHasStylingAction::getName(bool to_undo) const {
 void ChangeCardHasStylingAction::perform(bool to_undo) {
 	card->has_styling = !card->has_styling;
 	swap(card->styling_data, styling_data);
+}
+
+// ----------------------------------------------------------------------------- : Pack types
+
+AddPackAction::AddPackAction(AddingOrRemoving ar, Set& set, const PackTypeP& pack)
+	: PackTypesAction(set)
+	, action(ar, pack, set.pack_types)
+{}
+
+String AddPackAction::getName(bool to_undo) const {
+	return action.getName();
+}
+
+void AddPackAction::perform(bool to_undo) {
+	action.perform(set.pack_types, to_undo);
+}
+
+
+ChangePackAction::ChangePackAction(Set& set, size_t pos, const PackTypeP& pack)
+	: PackTypesAction(set)
+	, pos(pos), pack(pack)
+{}
+
+String ChangePackAction::getName(bool to_undo) const {
+	return _ACTION_1_("change",type_name(pack));
+}
+
+void ChangePackAction::perform(bool to_undo) {
+	swap(set.pack_types.at(pos), pack);
 }

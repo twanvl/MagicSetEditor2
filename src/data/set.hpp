@@ -25,6 +25,7 @@ DECLARE_POINTER_TYPE(Styling);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(Keyword);
+DECLARE_POINTER_TYPE(PackType);
 DECLARE_POINTER_TYPE(ScriptValue);
 class SetScriptManager;
 class SetScriptContext;
@@ -45,19 +46,21 @@ class Set : public Packaged {
 	/// Create a set using the given stylesheet, and its game
 	Set(const StyleSheetP& stylesheet);
 	~Set();
-  
-	GameP game;					///< The game this set uses
-	StyleSheetP stylesheet;		///< The default stylesheet
+
+	GameP                    game;              ///< The game this set uses
+	StyleSheetP              stylesheet;        ///< The default stylesheet
 	/// The values on the fields of the set
 	/** The indices should correspond to the set_fields in the Game */
 	IndexMap<FieldP, ValueP> data;
 	/// Extra values for specitic stylesheets, indexed by stylesheet name
 	DelayedIndexMaps<FieldP,ValueP> styling_data;
-	vector<CardP> cards;		///< The cards in the set
-	vector<KeywordP> keywords;	///< Additional keywords used in this set
-	String apprentice_code;		///< Code to use for apprentice (Magic only)
-	ActionStack actions;		///< Actions performed on this set and the cards in it
-	KeywordDatabase keyword_db;	///< Database for matching keywords, must be cleared when keywords change
+	vector<CardP>            cards;             ///< The cards in the set
+	vector<KeywordP>         keywords;          ///< Additional keywords used in this set
+	vector<PackTypeP>        pack_types;        ///< Additional/replacement pack types
+	String                   apprentice_code;   ///< Code to use for apprentice (Magic only)
+
+	ActionStack              actions;           ///< Actions performed on this set and the cards in it
+	KeywordDatabase          keyword_db;        ///< Database for matching keywords, must be cleared when keywords change
 	
 	/// A context for performing scripts
 	/** Should only be used from the main thread! */

@@ -201,6 +201,8 @@ help:
 	random seed:		Different packs will be generated each time.
 	fixed seed:			Using the same seed number gives the same 'random' packs.
 	seed:				Seed number for the random generator. Using the same seed number gives the same 'random' packs.
+	edit pack type:		Double click to edit pack type
+	number of packs:	The number of %ss to generate
 	
 	# Preferences
 	app language:
@@ -426,6 +428,7 @@ label:
 	# Random pack panel
 	pack selection:		Pack selection
 	pack totals:		Totals
+	pack name:			Pack name
 	seed:				Seed
 	total cards:		Total
 	
@@ -552,6 +555,7 @@ button:
 	generate pack:		&Generate Pack
 	random seed:		&Random Seed
 	fixed seed:			&Fixed Seed
+	add custom pack:	Add &Custom Pack...
 	
 	# Welcome
 	new set:			New set
@@ -641,6 +645,8 @@ title:
 	select cards export:Select Cards to Export
 	# slice
 	slice image:		Slice Image
+	# pack
+	custom pack:		Custom Pack Type
 	# print
 	print preview:		Print Preview
 	# export
@@ -824,6 +830,7 @@ type:
 	value:			value
 	keyword:		keyword
 	keywords:		keywords
+	pack:			pack type
 	
 	# Symbol editor shapes
 	shape:			shape

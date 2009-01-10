@@ -454,6 +454,13 @@ PackInstance& PackGenerator::get(const String& name) {
 	if (instance) {
 		return *instance;
 	} else {
+		FOR_EACH_CONST(type, set->pack_types) {
+			if (type->name == name) {
+				instance = PackInstanceP(new PackInstance(*type,*this));
+				max_depth = max(max_depth, instance->get_depth());
+				return *instance;
+			}
+		}
 		FOR_EACH_CONST(type, set->game->pack_types) {
 			if (type->name == name) {
 				instance = PackInstanceP(new PackInstance(*type,*this));
@@ -476,6 +483,13 @@ void PackGenerator::generate(vector<CardP>& out) {
 	for (int depth = max_depth ; depth >= 0 ; --depth) {
 		// in game file order
 		FOR_EACH_CONST(type, set->game->pack_types) {
+			PackInstance& i = get(type);
+			if (i.get_depth() == depth) {
+				i.generate(&out);
+			}
+		}
+		// ...and then set file order
+		FOR_EACH_CONST(type, set->pack_types) {
 			PackInstance& i = get(type);
 			if (i.get_depth() == depth) {
 				i.generate(&out);

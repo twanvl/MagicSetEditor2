@@ -30,7 +30,7 @@ struct PackAmountPicker {
 	wxSpinCtrl*      value;
 	
 	PackAmountPicker() {}
-	PackAmountPicker(wxWindow* parent, wxFlexGridSizer* sizer, const PackTypeP& pack, bool active = true);
+	PackAmountPicker(wxWindow* parent, wxFlexGridSizer* sizer, const PackTypeP& pack, bool interactive);
 	void destroy(wxFlexGridSizer* sizer);
 };
 
@@ -46,6 +46,7 @@ class RandomPackPanel : public SetWindowPanel {
 	
 	virtual void onBeforeChangeSet();
 	virtual void onChangeSet();
+	virtual void onAction(const Action&, bool undone);
 	
 	virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
 	virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);

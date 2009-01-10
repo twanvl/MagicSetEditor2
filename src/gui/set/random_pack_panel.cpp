@@ -12,6 +12,7 @@
 #include <gui/control/filtered_card_list.hpp>
 #include <gui/util.hpp>
 #include <gui/about_window.hpp> // HoverButtonBase
+#include <data/action/set.hpp>
 #include <data/game.hpp>
 #include <data/pack.hpp>
 #include <data/settings.hpp>
@@ -279,9 +280,9 @@ PackAmountPicker::PackAmountPicker(wxWindow* parent, wxFlexGridSizer* sizer, con
 	sizer->Add(label, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL);
 	sizer->Add(value, 0, wxEXPAND | wxALIGN_CENTER);
 	if (active) {
-		label->SetHelpText(_("Double click to edit."));
+		label->SetHelpText(_HELP_("edit pack type"));
 	}
-	set_help_text(value, _("The number of ") + pack->name + _("s to use."));
+	set_help_text(value, _HELP_1_("number of packs", pack->name));
 }
 
 void PackAmountPicker::destroy(wxFlexGridSizer* sizer) {
@@ -434,9 +435,9 @@ void RandomPackPanel::initControls() {
 					wxSizer* s4b = new wxBoxSizer(wxHORIZONTAL);
 						packsSizer = new wxFlexGridSizer(0, 2, 4, 4);
 						packsSizer->AddGrowableCol(0);
-						s4b->Add(packsSizer, 1, wxEXPAND | wxALL & ~wxTOP & ~wxBOTTOM & ~wxLEFT, 4);
+						s4b->Add(packsSizer, 1, wxEXPAND | wxALL & ~wxTOP & ~wxLEFT, 4);
 					s4->Add(s4b, 1, wxEXPAND | wxLEFT, 2);
-					s4->Add(new wxButton(this, ID_CUSTOM_PACK, _BUTTON_("custom pack")), 0, wxEXPAND | wxALL & ~wxTOP, 4);
+					s4->Add(new wxButton(this, ID_CUSTOM_PACK, _BUTTON_("add custom pack")), 0, wxEXPAND | wxALIGN_TOP | wxALL & ~wxTOP, 4);
 				s3->Add(s4, 1, wxEXPAND, 8);
 				wxSizer* s5 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack totals"));
 					s5->Add(totals, 1, wxEXPAND | wxALL, 4);
@@ -480,15 +481,22 @@ void RandomPackPanel::onChangeSet() {
 	pickers.clear();
 	
 	// add pack controls
+  #if USE_NEW_PACK_SYSTEM
 	FOR_EACH(pack, set->game->pack_types) {
-	  #if USE_NEW_PACK_SYSTEM
 		if (pack->selectable) {
-	  #endif
-			pickers.push_back(PackAmountPicker(this,packsSizer,pack));
-	  #if USE_NEW_PACK_SYSTEM
+			pickers.push_back(PackAmountPicker(this,packsSizer,pack,false));
 		}
-	  #endif
 	}
+	FOR_EACH(pack, set->pack_types) {
+		if (pack->selectable) {
+			pickers.push_back(PackAmountPicker(this,packsSizer,pack,true));
+		}
+	}
+  #else
+	FOR_EACH(pack, set->game->pack_types) {
+		pickers.push_back(PackAmountPicker(this,packsSizer,pack,false));
+	}
+  #endif
 	
 	Layout();
 	
@@ -506,6 +514,14 @@ void RandomPackPanel::onChangeSet() {
 	generator.reset(set,last_seed=getSeed());
   #endif
 	updateTotals();
+}
+
+void RandomPackPanel::onAction(const Action& action, bool undone) {
+	TYPE_CASE_(action, PackTypesAction) {
+		// rebuild the list
+		storeSettings();
+		onChangeSet();
+	}
 }
 
 void RandomPackPanel::storeSettings() {
@@ -555,19 +571,26 @@ void RandomPackPanel::onCommand(int id) {
 		case ID_CUSTOM_PACK: {
 			CustomPackDialog dlg(this, set, PackTypeP());
 			if (dlg.ShowModal() == wxID_OK) {
-				// TODO: add pack
+				set->actions.addAction( new AddPackAction(ADD,*set,dlg.get()) );
 			}
 			break;
 		}
 	}
 }
 void RandomPackPanel::onPackTypeClick(wxCommandEvent& ev) {
-	FOR_EACH(pick,pickers) {
+	for (size_t i = 0 ; i < pickers.size() ; ++i) {
+		const PackAmountPicker& pick = pickers[i];
 		if (pick.label == ev.GetEventObject()) {
 			// edit this pack type
 			CustomPackDialog dlg(this, set, pick.pack);
 			if (dlg.ShowModal() == wxID_OK) {
-				// TODO: update pack
+				if (dlg.get()) {
+					// delete pack
+					set->actions.addAction( new AddPackAction(REMOVE,*set,pick.pack) );
+				} else {
+					// update pack
+					set->actions.addAction( new ChangePackAction(*set,i,dlg.get()) );
+				}
 			}
 			break;
 		}

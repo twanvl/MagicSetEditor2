@@ -23,7 +23,9 @@ DECLARE_POINTER_TYPE(Card);
 DECLARE_POINTER_TYPE(StyleSheet);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
+DECLARE_POINTER_TYPE(PackType);
 DECLARE_TYPEOF_COLLECTION(GenericAddAction<CardP>::Step);
+DECLARE_TYPEOF_COLLECTION(GenericAddAction<PackTypeP>::Step);
 
 // ----------------------------------------------------------------------------- : Add card
 
@@ -117,6 +119,44 @@ class ChangeCardHasStylingAction : public DisplayChangeAction {
 	Set&                    set;          ///< The set to copy styling from
 	CardP                   card;         ///< The affected card
 	IndexMap<FieldP,ValueP> styling_data; ///< The old styling of the card
+};
+
+// ----------------------------------------------------------------------------- : Pack types
+
+/// An Action the changes the pack types of a set
+class PackTypesAction : public Action {
+  public:
+	inline PackTypesAction(Set& set) : set(set) {}
+	
+  protected:
+	Set& set; // the set owns this action, so the set will not be destroyed before this
+	          // therefore we don't need a smart pointer
+};
+
+/// Adding/removing a pack from a Set
+class AddPackAction : public PackTypesAction {
+  public:
+	/// Add a newly allocated card
+	AddPackAction(AddingOrRemoving, Set& set, const PackTypeP& pack);
+	
+	virtual String getName(bool to_undo) const;
+	virtual void   perform(bool to_undo);
+	
+	const GenericAddAction<PackTypeP> action;
+};
+
+/// Updating a pack in a Set
+class ChangePackAction : public PackTypesAction {
+  public:
+	/// Add a newly allocated card
+	ChangePackAction(Set& set, size_t pos, const PackTypeP& new_pack);
+	
+	virtual String getName(bool to_undo) const;
+	virtual void   perform(bool to_undo);
+	
+  private:
+	PackTypeP pack;
+	size_t    pos;
 };
 
 // ----------------------------------------------------------------------------- : EOF

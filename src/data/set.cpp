@@ -181,6 +181,7 @@ IMPLEMENT_REFLECTION(Set) {
 		}
 		REFLECT(cards);
 		REFLECT(keywords);
+		REFLECT(pack_types);
 	}
 	reflect_set_info_get_member(tag,data);
 	REFLECT(apprentice_code);
