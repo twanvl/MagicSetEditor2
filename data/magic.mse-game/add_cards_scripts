@@ -12,6 +12,19 @@ add cards script:
 		, new_card([name: "Forest",   super_type: "Basic Land", sub_type: "Forest",   rarity: "basic land", watermark: "mana symbol green"])
 		]
 
+add cards script:
+	name: &Basic Snow-Covered Lands
+	description: Adds 5 basic snow-covered lands to the set (Plains, Island, Swamp, Mountain, Forest)
+	script:
+		# TODO:
+		#show_yes_no_dialog("This set already contains basic snow-covered lands, do you want to add more?")
+		[ new_card([name: "Snow-Covered Plains",   super_type: "Basic Snow Land", sub_type: "Plains",   rarity: "common", watermark: "mana symbol white"])
+		, new_card([name: "Snow-Covered Island",   super_type: "Basic Snow Land", sub_type: "Island",   rarity: "common", watermark: "mana symbol blue"])
+		, new_card([name: "Snow-Covered Swamp",    super_type: "Basic Snow Land", sub_type: "Swamp",    rarity: "common", watermark: "mana symbol black"])
+		, new_card([name: "Snow-Covered Mountain", super_type: "Basic Snow Land", sub_type: "Mountain", rarity: "common", watermark: "mana symbol red"])
+		, new_card([name: "Snow-Covered Forest",   super_type: "Basic Snow Land", sub_type: "Forest",   rarity: "common", watermark: "mana symbol green"])
+		]
+
 #add cards script:
 #	name: &Many Empty Cards
 #	script:
@@ -33,5 +46,5 @@ add cards script:
 		, new_card([card_color: "green"])
 		]
 
-#TODO: Vertical Cycle
+#TODO: Vertical Cycle; needs text dialog for setting color
 

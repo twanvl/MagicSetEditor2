@@ -1,4 +1,4 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 game: magic
 short name: Future Splits
 full name: Futureshift Splits
@@ -6,7 +6,7 @@ installer group: magic/Future/Split cards
 icon: card-sample.png
 position hint: 053
 
-version: 2008-08-05
+version: 2009-01-09
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
