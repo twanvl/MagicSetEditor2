@@ -363,12 +363,13 @@ CustomPackDialog::CustomPackDialog(Window* parent, const SetP& set, const PackTy
 			}
 		}
 	}
-	s->SetSizeHints(this);
-	SetSizer(s);
 	// update totals
 	generator.reset(set,0);
 	totals->setGame(set->game);
 	updateTotals();
+	// set sizer
+	s->SetSizeHints(this);
+	SetSizer(s);
 }
 
 void CustomPackDialog::updateTotals() {
