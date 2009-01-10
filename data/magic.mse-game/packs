@@ -91,10 +91,10 @@ pack type:
 	select: proportional
 	item:
 		name: mythic rare
-		probability: 1
+		weight: 1
 	item:
 		name: rare
-		probability: 2
+		weight: 2
 
 pack type:
 	name: shifted uncommon or rare
@@ -102,10 +102,10 @@ pack type:
 	select: nonempty
 	item:
 		name: shifted uncommon
-		probability: 3
+		weight: 3
 	item:
 		name: shifted rare
-		probability: 1
+		weight: 1
 
 ############################################################## Common proportions of cards
 

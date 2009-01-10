@@ -207,7 +207,7 @@ IMPLEMENT_REFLECTION(PackItem) {
 	} else {
 		REFLECT(name);
 		REFLECT(amount);
-		REFLECT(probability);
+		REFLECT(weight);
 	}
 }
 
@@ -221,13 +221,13 @@ PackType::PackType()
 
 PackItem::PackItem()
 	: amount(1)
-	, probability(1)
+	, weight(1)
 {}
 
 PackItem::PackItem(const String& name, int amount)
 	: name(name)
 	, amount(amount)
-	, probability(1)
+	, weight(1)
 {}
 
 
@@ -241,7 +241,7 @@ bool PackType::update(Context& ctx) {
 
 bool PackItem::update(Context& ctx) {
 	return amount.update(ctx)
-	     | probability.update(ctx);
+	     | weight.update(ctx);
 }
 
 
@@ -281,17 +281,17 @@ PackInstance::PackInstance(const PackType& pack_type, PackGenerator& parent)
 			count += parent.get(item->name).count;
 		}
 	}
-	// Sum of probabilities
-	total_probability = cards.size();
+	// Sum of weights
+	total_weight = cards.size();
 	FOR_EACH_CONST(item, pack_type.items) {
 		if (pack_type.select == SELECT_PROPORTIONAL) {
-			total_probability += item->probability * parent.get(item->name).count;
+			total_weight += item->weight * parent.get(item->name).count;
 		} else if (pack_type.select == SELECT_NONEMPTY) {
 			if (parent.get(item->name).count > 0) {
-				total_probability += item->probability;
+				total_weight += item->weight;
 			}
 		} else {
-			total_probability += item->probability;
+			total_weight += item->weight;
 		}
 	}
 	// Depth
@@ -309,10 +309,10 @@ void PackInstance::expect_copy(double copies) {
 		if (pack_type.select == SELECT_ALL) {
 			i.expect_copy(copies * item->amount);
 		} else if (pack_type.select == SELECT_PROPORTIONAL) {
-			i.expect_copy(copies * item->amount * item->probability * i.count / total_probability);
+			i.expect_copy(copies * item->amount * item->weight * i.count / total_weight);
 		} else if (pack_type.select == SELECT_NONEMPTY) {
 			if (i.count > 0) {
-				i.expect_copy(copies * item->amount * item->probability / total_probability);
+				i.expect_copy(copies * item->amount * item->weight / total_weight);
 			}
 		} else if (pack_type.select == SELECT_FIRST) {
 			if (i.count > 0 && cards.empty()) {
@@ -320,7 +320,7 @@ void PackInstance::expect_copy(double copies) {
 				break;
 			}
 		} else {
-			i.expect_copy(copies * item->amount * item->probability / total_probability);
+			i.expect_copy(copies * item->amount * item->weight / total_weight);
 		}
 	}
 }
@@ -359,7 +359,7 @@ void PackInstance::generate(vector<CardP>* out) {
 	        || pack_type.select == SELECT_NONEMPTY) {
 		// multiple copies
 		for (size_t i = 0 ; i < requested_copies ; ++i) {
-			double r = parent.gen() * total_probability / parent.gen.max();
+			double r = parent.gen() * total_weight / parent.gen.max();
 			if (r < cards.size()) {
 				// pick a card
 				card_copies++;
@@ -373,11 +373,11 @@ void PackInstance::generate(vector<CardP>* out) {
 				FOR_EACH_CONST(item, pack_type.items) {
 					PackInstance& i = parent.get(item->name);
 					if (pack_type.select == SELECT_REPLACE) {
-						r -= item->probability;
+						r -= item->weight;
 					} else if (pack_type.select == SELECT_PROPORTIONAL) {
-						r -= item->probability * i.count;
+						r -= item->weight * i.count;
 					} else { // SELECT_NONEMPTY
-						if (i.count > 0) r -= item->probability;
+						if (i.count > 0) r -= item->weight;
 					}
 					// have we reached the item we were looking for?
 					if (r < 0) {
@@ -389,6 +389,9 @@ void PackInstance::generate(vector<CardP>* out) {
 		}
 		
 	} else if (pack_type.select == SELECT_NO_REPLACE) {
+		if (!pack_type.items.empty()) {
+			throw Error(_("'select:no replace' is not yet supported in combination with 'items', only with 'filter'."));
+		}
 		card_copies += requested_copies;
 		// NOTE: there is no way to pick items without replacement
 		if (out && !cards.empty()) {

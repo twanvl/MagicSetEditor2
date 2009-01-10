@@ -157,7 +157,7 @@ class PackItem : public IntrusivePtrBase<PackItem> {
 	
 	String             name;         ///< Name of the pack to select cards from
 	Scriptable<int>    amount;       ///< Number of cards of this type
-	Scriptable<double> probability;  ///< Relative probability of picking this item
+	Scriptable<double> weight;       ///< Relative probability of picking this item
 	
 	/// Update scripts, returns true if there is a change
 	bool update(Context& ctx);
@@ -201,7 +201,7 @@ class PackInstance : public IntrusivePtrBase<PackInstance> {
 	int             depth;             //< 0 = no items, otherwise 1+max depth of items refered to
 	vector<CardP>   cards;             //< All cards that pass the filter
 	size_t          count;             //< Total number of non-empty cards/items
-	double          total_probability; //< Sum of item and card probabilities
+	double          total_weight;      //< Sum of item and card weights
 	size_t          requested_copies;  //< The requested number of copies of this pack
 	size_t          card_copies;       //< The number of cards that were chosen to come from this pack
 	double          expected_copies;
