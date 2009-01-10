@@ -779,6 +779,11 @@ error:
 	# Stats panel
 	dimension not found:				There is no statistics dimension '%s'
 	
+	# Random packs
+	pack type duplicate name:
+		There is already a pack type named '%s'.
+		Please choose a different name.
+	
 	# Package update window
 #	checking updates:					Checking for updates.
 	can't download installer:

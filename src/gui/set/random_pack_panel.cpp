@@ -297,7 +297,7 @@ void PackAmountPicker::destroy(wxFlexGridSizer* sizer) {
 
 class CustomPackDialog : public wxDialog {
   public:
-	CustomPackDialog(Window* parent, const SetP& set, const PackTypeP& edited_pack);
+	CustomPackDialog(Window* parent, const SetP& set, const PackTypeP& edited_pack, bool can_remove);
 	PackTypeP get() const { return edited_pack; }
   private:
 	DECLARE_EVENT_TABLE();
@@ -314,16 +314,19 @@ class CustomPackDialog : public wxDialog {
 	void onAmountChange(wxSpinEvent&);
 	void onOk(wxCommandEvent&);
 	void onRemove(wxCommandEvent&);
+	bool isDuplicateName(const String& name);
 };
 
-CustomPackDialog::CustomPackDialog(Window* parent, const SetP& set, const PackTypeP& edited_pack)
+CustomPackDialog::CustomPackDialog(Window* parent, const SetP& set, const PackTypeP& edited_pack, bool can_remove)
 	: wxDialog(parent, wxID_ANY, _TITLE_("custom pack"), wxDefaultPosition, wxSize(500,500))
 	, set(set), edited_pack(edited_pack)
 {
 	// init ui
 	totals = new PackTotalsPanel(this, wxID_ANY, generator, true);
 	name   = new wxTextCtrl(this, wxID_ANY, edited_pack ? edited_pack->name : _("custom pack"));
-	wxButton* remove = new wxButton(this, ID_REMOVE_ITEM, _BUTTON_("remove item"));
+	wxButton* remove = 
+		can_remove ? new wxButton(this, ID_REMOVE_ITEM, _BUTTON_("remove item"))
+		           : nullptr;
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		wxSizer* s2 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack name"));
@@ -341,7 +344,9 @@ CustomPackDialog::CustomPackDialog(Window* parent, const SetP& set, const PackTy
 			s3->Add(s5, 1, wxEXPAND | wxLEFT, 8);
 		s->Add(s3, 0, wxEXPAND | wxALL & ~wxTOP, 8);
 		wxSizer* s6 = new wxBoxSizer(wxHORIZONTAL);
-			s6->Add(remove,                             0, wxALL & ~wxTOP & ~wxRIGHT, 8);
+			if (can_remove) {
+				s6->Add(remove,                         0, wxALL & ~wxTOP & ~wxRIGHT, 8);
+			}
 			s6->Add(CreateButtonSizer(wxOK | wxCANCEL), 1, wxALL & ~wxTOP, 8);
 		s->Add(s6, 0, wxEXPAND);
 	// add spin controls
@@ -393,7 +398,23 @@ void CustomPackDialog::storePack() {
 	}
 }
 
+bool CustomPackDialog::isDuplicateName(const String& name) {
+	FOR_EACH_CONST(pack, set->game->pack_types) {
+		if (pack->name == name) return true;
+	}
+	FOR_EACH_CONST(pack, set->pack_types) {
+		if (pack->name == name) return true;
+	}
+	return false;
+}
+
 void CustomPackDialog::onOk(wxCommandEvent&) {
+	// check for duplicates
+	if (isDuplicateName(name->GetValue())) {
+		wxMessageBox(_ERROR_1_("pack type duplicate name",name->GetValue()),_TITLE_("custom pack"),wxOK|wxICON_EXCLAMATION);
+		return;
+	}
+	// done
 	storePack();
 	EndModal(wxID_OK);
 }
@@ -579,7 +600,7 @@ void RandomPackPanel::onCommand(int id) {
 			break;
 		}
 		case ID_CUSTOM_PACK: {
-			CustomPackDialog dlg(this, set, PackTypeP());
+			CustomPackDialog dlg(this, set, PackTypeP(), false);
 			if (dlg.ShowModal() == wxID_OK) {
 				set->actions.addAction( new AddPackAction(ADD,*set,dlg.get()) );
 			}
@@ -591,7 +612,7 @@ void RandomPackPanel::onPackTypeClick(wxCommandEvent& ev) {
 	FOR_EACH(pick, pickers) {
 		if (pick.label == ev.GetEventObject()) {
 			// edit this pack type
-			CustomPackDialog dlg(this, set, pick.pack);
+			CustomPackDialog dlg(this, set, pick.pack, true);
 			if (dlg.ShowModal() == wxID_OK) {
 				if (dlg.get()) {
 					// update pack
