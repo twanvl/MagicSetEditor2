@@ -33,6 +33,53 @@ int focused_control(const Window* window) {
 	}
 }
 
+void set_status_text(Window* wnd, const String& s) {
+	while (wnd) {
+		wxFrame* f = dynamic_cast<wxFrame*>(wnd);
+		if (f) {
+			f->SetStatusText(s);
+			return;
+		}
+		wnd = wnd->GetParent();
+	}
+}
+
+
+struct StoredStatusString : public wxClientData {
+	String s;
+};
+
+// Don't use this!
+struct FakeWindowClass : public wxWindow {
+	void onControlEnter(wxMouseEvent& ev) {
+		wxWindow* wnd = (wxWindow*)ev.GetEventObject();
+		if (wnd) {
+			StoredStatusString* d = static_cast<StoredStatusString*>(wnd->GetClientObject());
+			set_status_text(wnd, d->s);
+		}
+		ev.Skip();
+	}
+	void onControlLeave(wxMouseEvent& ev) {
+		set_status_text((wxWindow*)ev.GetEventObject(), wxEmptyString);
+		ev.Skip();
+	}
+};
+
+void set_help_text(Window* wnd, const String& s) {
+	StoredStatusString* d = static_cast<StoredStatusString*>(wnd->GetClientObject());
+	if (d) {
+		// already called before
+	} else {
+		// first time
+		d = new StoredStatusString;
+		wnd->SetClientObject(d);
+		wnd->Connect(wxEVT_ENTER_WINDOW,wxMouseEventHandler(FakeWindowClass::onControlEnter),wnd,nullptr);
+		wnd->Connect(wxEVT_LEAVE_WINDOW,wxMouseEventHandler(FakeWindowClass::onControlLeave),wnd,nullptr);
+	}
+	d->s = s;
+}
+
+
 // ----------------------------------------------------------------------------- : DC related
 
 /// Fill a DC with a single color

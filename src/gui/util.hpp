@@ -23,6 +23,12 @@ class RealRect;
 /// Id of the control that has the focus in the given window, or -1 if no control has the focus
 int focused_control(const Window* window);
 
+/// (Try to) set the status text of a parent of window
+void set_status_text(Window* window, const String& text);
+
+/// Set the help text for a window, it will be shown in the status bar on mouse over
+void set_help_text(Window* window, const String& text);
+
 // ----------------------------------------------------------------------------- : DC related
 
 /// Fill a DC with a single color
