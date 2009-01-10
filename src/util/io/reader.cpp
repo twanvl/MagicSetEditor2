@@ -30,14 +30,18 @@ Reader::Reader(const InputStreamP& input, Packaged* package, const String& filen
 	handleAppVersion();
 }
 
-Reader::Reader(Packaged* pkg, const String& filename, bool ignore_invalid)
+Reader::Reader(Reader* parent, Packaged* pkg, const String& filename, bool ignore_invalid)
 	: indent(0), expected_indent(0), state(OUTSIDE)
 	, ignore_invalid(ignore_invalid)
 	, filename(filename), package(pkg), line_number(0), previous_line_number(0)
 	, input(package_manager.openFileFromPackage(package, filename))
 {
 	moveNext();
+	// in an included file, use the app version of the parent if we have none
 	handleAppVersion();
+	if (file_app_version == 0) {
+		file_app_version = parent->file_app_version;
+	}
 }
 
 void Reader::addAlias(Version end_version, const Char* a, const Char* b) {
@@ -53,7 +57,7 @@ void Reader::handleIgnore(int end_version, const Char* a) {
 }
 
 void Reader::handleAppVersion() {
-	if (enterBlock(_("mse_version"))) {
+ 	if (enterBlock(_("mse_version"))) {
 		handle(file_app_version);
 		if (app_version < file_app_version) {
 			handle_warning(_ERROR_2_("newer version", filename, file_app_version.toString()), false);

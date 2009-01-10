@@ -1,47 +1,47 @@
 ﻿
-############################################################## Card pack items
+############################################################## Card pack types
 
-pack item:
+pack type:
 	name: basic land
 	select: cyclic
 	filter: card.rarity == "basic land" and not is_token_card() # can be shifted
-pack item:
+pack type:
 	name: common
 	filter: card.rarity == "common" and not is_token_card() and not is_shifted_card()
-pack item:
+pack type:
 	name: uncommon
 	filter: card.rarity == "uncommon" and not is_token_card() and not is_shifted_card()
-pack item:
+pack type:
 	name: rare
 	filter: card.rarity == "rare" and not is_token_card() and not is_shifted_card()
-pack item:
+pack type:
 	name: mythic rare
 	filter: card.rarity == "mythic rare" and not is_token_card() and not is_shifted_card()
-pack item:
+pack type:
 	name: special
 	filter: card.rarity == "special" and not is_token_card() # can be shifted
 
-pack item:
+pack type:
 	name: shifted common
 	filter: card.rarity == "common" and not is_token_card() and is_shifted_card()
-pack item:
+pack type:
 	name: shifted uncommon
 	filter: card.rarity == "uncommon" and not is_token_card() and is_shifted_card()
-pack item:
+pack type:
 	name: shifted rare
 	filter:
 		( card.rarity == "rare" or
 		  card.rarity == "mythic rare" # We've got to put shifted mythic rares somewhere
 		) and not is_token_card() and is_shifted_card()
 
-pack item:
+pack type:
 	name: token / rulestip
 	filter: is_token_card()
 
 ############################################################## shifted/special if possible
 
 # shifted common if they exist, otherwise a normal common
-pack item:
+pack type:
 	name: shifted common or else common
 	selectable: false
 	select: first
@@ -49,7 +49,7 @@ pack item:
 	item: common
 
 # basic land if it exist, otherwise a common
-pack item:
+pack type:
 	name: basic land or else common
 	selectable: false
 	select: first
@@ -57,7 +57,7 @@ pack item:
 	item: common
 
 # special if it exist, otherwise a common
-pack item:
+pack type:
 	name: special or else common
 	selectable: false
 	select: first
@@ -65,7 +65,7 @@ pack item:
 	item: common
 
 # shifted uncommon/rare if they exist, otherwise a normal uncommon
-pack item:
+pack type:
 	name: shifted uncommon or rare or else uncommon
 	selectable: false
 	select: first
@@ -74,7 +74,7 @@ pack item:
 
 ############################################################## Randomized selections
 
-pack item:
+pack type:
 	name: mythic rare or rare
 	selectable: false
 	# In Shards of Alara there are 15 mythic rares and 53 rares.
@@ -96,7 +96,7 @@ pack item:
 		name: rare
 		probability: 2
 
-pack item:
+pack type:
 	name: shifted uncommon or rare
 	selectable: false
 	select: nonempty
@@ -110,7 +110,7 @@ pack item:
 ############################################################## Common proportions of cards
 
 # of the common slots, 3/10 will be shifted, 1/10 will be special
-pack item:
+pack type:
 	name: common sometimes shifted or special
 	selectable: false
 	# TODO: Perhaps use some kind of proportional system here as well?
@@ -127,7 +127,7 @@ pack item:
 	item: special or else common
 
 # of the uncommon slots, 1/3 will be shifted, 1/4 of that will be shifted rares instead
-pack item:
+pack type:
 	name: uncommon sometimes shifted
 	selectable: false
 	select: cyclic

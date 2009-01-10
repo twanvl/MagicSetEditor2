@@ -32,17 +32,17 @@ typedef shared_ptr<wxInputStream> InputStreamP;
  *  object that was just read.
  */
 class Reader {
+  private:
+	/// Construct a reader that reads a file in a package
+	/** Used for "include file" keys.
+	 *  package can be nullptr
+	 */
+	Reader(Reader* parent, Packaged* package, const String& filename, bool ignore_invalid = false);
   public:
 	/// Construct a reader that reads from the given input stream
 	/** filename is used only for error messages
 	 */
 	Reader(const InputStreamP& input, Packaged* package = nullptr, const String& filename = wxEmptyString, bool ignore_invalid = false);
-	
-	/// Construct a reader that reads a file in a package
-	/** Used for "include file" keys.
-	 *  package can be nullptr
-	 */
-	Reader(Packaged* package, const String& filename, bool ignore_invalid = false);
 	
 	~Reader() { showWarnings(); }
 	
@@ -182,7 +182,7 @@ class Reader {
 	template <typename T>
 	void unknownKey(T& v) {
 		if (key == _("include file")) {
-			Reader reader(package, value, ignore_invalid);
+			Reader reader(this, package, value, ignore_invalid);
 			reader.handle_greedy(v);
 			moveNext();
 		} else {
