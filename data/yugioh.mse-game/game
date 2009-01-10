@@ -1,10 +1,10 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 short name: Yu-Gi-Oh!
 installer group: Yugioh/Game Files
 icon: card-back.png
 position hint: 4
 
-version: 2008-11-13
+version: 2009-01-09
 
 ############################################################## Functions & filters
 ## Copied and Pasted from vs.mse-game, with a few modifications
@@ -482,16 +482,16 @@ word list:
 	word: Tuner
 	word: Union
 ############################################################## Card pack items
-pack item:
+pack type:
 	name: rare
 	filter: card.rarity != "common"
-pack item:
+pack type:
 	name: common
 	filter: card.rarity == "common"
-pack item:
+pack type:
 	name: gold
 	filter: card.rarity == "gold tech"
-pack item:
+pack type:
 	name: card
 	filter: card.number != ""
 ############################################################## Card packs
