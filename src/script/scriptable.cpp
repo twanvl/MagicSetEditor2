@@ -90,7 +90,9 @@ template <> void Reader::handle(OptionalScript& os) {
 }
 
 template <> void Writer::handle(const OptionalScript& os) {
-	handle(os.unparsed);
+	if (os.script) {
+		handle(os.unparsed);
+	}
 }
 
 template <> void GetDefaultMember::handle(const OptionalScript& os) {

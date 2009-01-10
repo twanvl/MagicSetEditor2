@@ -313,6 +313,7 @@ class CustomPackDialog : public wxDialog {
 	void storePack();
 	void onAmountChange(wxSpinEvent&);
 	void onOk(wxCommandEvent&);
+	void onRemove(wxCommandEvent&);
 };
 
 CustomPackDialog::CustomPackDialog(Window* parent, const SetP& set, const PackTypeP& edited_pack)
@@ -322,6 +323,7 @@ CustomPackDialog::CustomPackDialog(Window* parent, const SetP& set, const PackTy
 	// init ui
 	totals = new PackTotalsPanel(this, wxID_ANY, generator, true);
 	name   = new wxTextCtrl(this, wxID_ANY, edited_pack ? edited_pack->name : _("custom pack"));
+	wxButton* remove = new wxButton(this, ID_REMOVE_ITEM, _BUTTON_("remove item"));
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		wxSizer* s2 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack name"));
@@ -338,7 +340,10 @@ CustomPackDialog::CustomPackDialog(Window* parent, const SetP& set, const PackTy
 				s5->Add(totals, 1, wxEXPAND | wxALL, 4);
 			s3->Add(s5, 1, wxEXPAND | wxLEFT, 8);
 		s->Add(s3, 0, wxEXPAND | wxALL & ~wxTOP, 8);
-		s->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL & ~wxTOP, 8);
+		wxSizer* s6 = new wxBoxSizer(wxHORIZONTAL);
+			s6->Add(remove,                             0, wxALL & ~wxTOP & ~wxRIGHT, 8);
+			s6->Add(CreateButtonSizer(wxOK | wxCANCEL), 1, wxALL & ~wxTOP, 8);
+		s->Add(s6, 0, wxEXPAND);
 	// add spin controls
 	FOR_EACH(pack, set->game->pack_types) {
 		if (pack->selectable) continue; // this pack is already selectable from the main UI
@@ -392,12 +397,17 @@ void CustomPackDialog::onOk(wxCommandEvent&) {
 	storePack();
 	EndModal(wxID_OK);
 }
+void CustomPackDialog::onRemove(wxCommandEvent&) {
+	edited_pack = PackTypeP();
+	EndModal(wxID_OK);
+}
 void CustomPackDialog::onAmountChange(wxSpinEvent&) {
 	updateTotals();
 }
 
 BEGIN_EVENT_TABLE(CustomPackDialog, wxDialog)
 	EVT_BUTTON   (wxID_OK,        CustomPackDialog::onOk)
+	EVT_BUTTON   (ID_REMOVE_ITEM, CustomPackDialog::onRemove)
 	EVT_SPINCTRL (ID_PACK_AMOUNT, CustomPackDialog::onAmountChange)
 END_EVENT_TABLE()
 
@@ -578,18 +588,21 @@ void RandomPackPanel::onCommand(int id) {
 	}
 }
 void RandomPackPanel::onPackTypeClick(wxCommandEvent& ev) {
-	for (size_t i = 0 ; i < pickers.size() ; ++i) {
-		const PackAmountPicker& pick = pickers[i];
+	FOR_EACH(pick, pickers) {
 		if (pick.label == ev.GetEventObject()) {
 			// edit this pack type
 			CustomPackDialog dlg(this, set, pick.pack);
 			if (dlg.ShowModal() == wxID_OK) {
 				if (dlg.get()) {
+					// update pack
+					for (size_t i = 0 ; i < set->pack_types.size() ; ++i) {
+						if (set->pack_types[i] == pick.pack) {
+							set->actions.addAction( new ChangePackAction(*set,i,dlg.get()) );
+						}
+					}
+				} else {
 					// delete pack
 					set->actions.addAction( new AddPackAction(REMOVE,*set,pick.pack) );
-				} else {
-					// update pack
-					set->actions.addAction( new ChangePackAction(*set,i,dlg.get()) );
 				}
 			}
 			break;
