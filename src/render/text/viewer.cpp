@@ -679,7 +679,8 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 					-RealSize(style.padding_left+style.padding_right, style.padding_top + style.padding_bottom));
 	if (style.paragraph_height <= 0) {
 		// whole text box alignment
-		alignParagraph(0, lines.size(), chars, style, RealRect(RealPoint(0,style.padding_top),s));
+		double top = lines[0].top;
+		alignParagraph(0, lines.size(), chars, style, RealRect(RealPoint(0,top),s));
 	} else {
 		// per paragraph alignment
 		size_t start = 0;
