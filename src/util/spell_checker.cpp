@@ -128,6 +128,7 @@ void SpellChecker::suggest(const String& word, vector<String>& suggestions_out) 
 	// copy sugestions
 	for (int i = 0 ; i < num_suggestions ; ++i) {
 		suggestions_out.push_back(String(suggestions[i],encoding));
+		free(suggestions[i]);
 	}
 	free(suggestions);
 }
