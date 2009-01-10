@@ -51,7 +51,7 @@ class Reader {
 	/// Tell the reflection code we are not related to scripting
 	inline bool scripting() const { return false; }
 	/// Is the thing currently being read 'complex', i.e. does it have children
-	inline bool isComplex() const { return value.empty(); }
+	inline bool isComplex() const { return indent != expected_indent - 1 || value.empty(); }
 	/// Add a as an alias for b, all keys a will be replaced with b, only if file_app_version < end_version
 	void addAlias(Version end_version, const Char* a, const Char* b);
 	/// Ignore old keys
