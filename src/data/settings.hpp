@@ -43,7 +43,7 @@ enum InstallType
 ,	INSTALL_GLOBAL	// install to the global files
 };
 
-bool parse_enum(const String&, InstallType&);
+void parse_enum(const String&, InstallType&);
 bool is_install_local(InstallType type);
 
 /// How to handle filename conflicts

@@ -21,7 +21,7 @@
 
 DECLARE_TYPEOF_COLLECTION(SymbolVariationP);
 
-bool parse_enum(const String&, ImageCombine& out);
+void parse_enum(const String&, ImageCombine& out);
 
 // ----------------------------------------------------------------------------- : Utility
 
@@ -56,9 +56,7 @@ SCRIPT_FUNCTION(combine_blend) {
 	SCRIPT_PARAM(GeneratedImageP, image1);
 	SCRIPT_PARAM(GeneratedImageP, image2);
 	ImageCombine image_combine;
-	if (!parse_enum(combine, image_combine)) {
-		throw ScriptError(_("Not a valid combine mode: '") + combine + _("'"));
-	}
+	parse_enum(combine, image_combine);
 	return new_intrusive3<CombineBlendImage>(image1, image2, image_combine);
 }
 
@@ -78,9 +76,7 @@ SCRIPT_FUNCTION(set_combine) {
 	SCRIPT_PARAM(String, combine);
 	SCRIPT_PARAM_C(GeneratedImageP, input);
 	ImageCombine image_combine;
-	if (!parse_enum(combine, image_combine)) {
-		throw ScriptError(_("Not a valid combine mode: '") + combine + _("'"));
-	}
+	parse_enum(combine, image_combine);
 	return new_intrusive2<SetCombineImage>(input, image_combine);
 }
 

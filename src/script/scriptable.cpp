@@ -15,7 +15,7 @@
 #include <gfx/color.hpp>
 
 Alignment from_string(const String&);
-bool parse_enum(const String&,Direction&);
+void parse_enum(const String&,Direction&);
 
 DECLARE_TYPEOF_COLLECTION(ScriptParseError);
 

@@ -256,15 +256,12 @@ void Reader::handle(IndexMap<K,V>& m) {
 	template<> void Reader::handle<Enum>(Enum& enum_) {			\
 		EnumReader reader(getValue());							\
 		reflect_ ## Enum(enum_, reader);						\
-		if (!reader.isDone()) {									\
-			/* warning: unknown value */						\
-			warning(_ERROR_1_("unrecognized value", value));	\
-		}														\
+		reader.warnIfNotDone(this);								\
 	}															\
-	bool parse_enum(const String& value, Enum& out) {			\
+	void parse_enum(const String& value, Enum& out) {			\
 		EnumReader reader(value);								\
 		reflect_ ## Enum(out, reader);							\
-		return reader.isDone();									\
+		reader.errorIfNotDone();								\
 	}
 
 /// 'Tag' to be used when reflecting enumerations for Reader
@@ -287,6 +284,8 @@ class EnumReader {
 	}
 	
 	inline bool isDone() const { return done; }
+	void warnIfNotDone(Reader* errors_to);
+	void errorIfNotDone();
 	
   private:
 	String read;  ///< The string to match to a value name

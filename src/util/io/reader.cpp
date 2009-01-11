@@ -411,3 +411,17 @@ template <> void Reader::handle(FileName& f) {
 		handle(static_cast<String&>(f));
 	}
 }
+
+// ----------------------------------------------------------------------------- : EnumReader
+
+void EnumReader::warnIfNotDone(Reader* errors_to) {
+	if (!done) {
+		// warning: unknown value
+		errors_to->warning(_ERROR_1_("unrecognized value", read));
+	}
+}
+void EnumReader::errorIfNotDone() {
+	if (!done) {
+		throw ParseError(_ERROR_1_("unrecognized value", read));
+	}
+}
