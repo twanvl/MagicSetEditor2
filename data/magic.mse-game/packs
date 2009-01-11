@@ -3,7 +3,7 @@
 
 pack type:
 	name: basic land
-	select: cyclic
+	select: equal
 	filter: card.rarity == "basic land" and not is_token_card() # can be shifted
 pack type:
 	name: common
@@ -114,23 +114,22 @@ pack type:
 	name: common sometimes shifted or special
 	selectable: false
 	# TODO: Perhaps use some kind of proportional system here as well?
-	select: cyclic
-	item: common
-	item: common
-	item: shifted common or else common
-	item: common
-	item: common
-	item: shifted common or else common
-	item: common
-	item: common
-	item: shifted common or else common
-	item: special or else common
+	select: equal
+	item:
+		name: common
+		weight: 6
+	item:
+		name: shifted common or else common
+		weight: 3
+	item:
+		name: special or else common
+		weight: 1
 
 # of the uncommon slots, 1/3 will be shifted, 1/4 of that will be shifted rares instead
 pack type:
 	name: uncommon sometimes shifted
 	selectable: false
-	select: cyclic
+	select: equal
 	item: uncommon
 	item: uncommon
 	item: shifted uncommon or rare or else uncommon

@@ -373,7 +373,7 @@ CustomPackDialog::CustomPackDialog(Window* parent, const SetP& set, const PackTy
 }
 
 void CustomPackDialog::updateTotals() {
-	generator.gen.seed(0);
+	generator.reset(0);
 	int total_packs = 0;
 	FOR_EACH(pick,pickers) {
 		int copies = pick.value->GetValue();
@@ -636,7 +636,7 @@ void RandomPackPanel::onPackTypeClick(wxCommandEvent& ev) {
 
 void RandomPackPanel::updateTotals() {
   #if USE_NEW_PACK_SYSTEM
-	generator.gen.seed((unsigned)last_seed);
+	generator.reset(last_seed);
   #else
 	totals->clear();
   #endif

@@ -121,11 +121,13 @@ class PackGenerator;
 enum PackSelectType
 {	SELECT_AUTO
 ,	SELECT_ALL
-,	SELECT_REPLACE
 ,	SELECT_NO_REPLACE
-,	SELECT_CYCLIC
+,	SELECT_REPLACE
 ,	SELECT_PROPORTIONAL
 ,	SELECT_NONEMPTY
+,	SELECT_EQUAL
+,	SELECT_EQUAL_PROPORTIONAL
+,	SELECT_EQUAL_NONEMPTY
 ,	SELECT_FIRST
 };
 
@@ -200,17 +202,23 @@ class PackInstance : public IntrusivePtrBase<PackInstance> {
 	PackGenerator&  parent;
 	int             depth;             //< 0 = no items, otherwise 1+max depth of items refered to
 	vector<CardP>   cards;             //< All cards that pass the filter
-	size_t          count;             //< Total number of non-empty cards/items
 	double          total_weight;      //< Sum of item and card weights
 	size_t          requested_copies;  //< The requested number of copies of this pack
 	size_t          card_copies;       //< The number of cards that were chosen to come from this pack
 	double          expected_copies;
+	
+	/// Generate some copies of all cards and items
+	void generate_all(vector<CardP>* out, size_t copies);
+	/// Generate one card/item chosen at random (using the select type)
+	void generate_one_random(vector<CardP>* out);
 };
 
 class PackGenerator {
   public:
 	/// Reset the generator, possibly switching the set or reseeding
 	void reset(const SetP& set, int seed);
+	/// Reset the generator, but not the set
+	void reset(int seed);
 	
 	/// Find the PackInstance for the PackType with the given name
 	PackInstance& get(const String& name);

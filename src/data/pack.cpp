@@ -11,6 +11,7 @@
 #include <data/set.hpp>
 #include <data/game.hpp>
 #include <data/card.hpp>
+#include <queue>
 
 #if !USE_NEW_PACK_SYSTEM
 // =================================================================================================== OLD
@@ -167,14 +168,16 @@ DECLARE_TYPEOF_CONST(map<String COMMA PackInstanceP>);
 
 
 IMPLEMENT_REFLECTION_ENUM(PackSelectType) {
-	VALUE_N("auto",        SELECT_AUTO);
-	VALUE_N("all",         SELECT_ALL);
-	VALUE_N("replace",     SELECT_REPLACE);
-	VALUE_N("no replace",  SELECT_NO_REPLACE);
-	VALUE_N("cyclic",      SELECT_CYCLIC);
-	VALUE_N("proportional",SELECT_PROPORTIONAL);
-	VALUE_N("nonempty",    SELECT_NONEMPTY);
-	VALUE_N("first",       SELECT_FIRST);
+	VALUE_N("auto",               SELECT_AUTO);
+	VALUE_N("all",                SELECT_ALL);
+	VALUE_N("no replace",         SELECT_NO_REPLACE);
+	VALUE_N("replace",            SELECT_REPLACE);
+	VALUE_N("proportional",       SELECT_PROPORTIONAL);
+	VALUE_N("nonempty",           SELECT_NONEMPTY);
+	VALUE_N("equal",              SELECT_EQUAL);
+	VALUE_N("equal proportional", SELECT_EQUAL_PROPORTIONAL);
+	VALUE_N("equal nonempty",     SELECT_NONEMPTY);
+	VALUE_N("first",              SELECT_FIRST);
 }
 
 IMPLEMENT_REFLECTION(PackType) {
@@ -264,31 +267,23 @@ PackInstance::PackInstance(const PackType& pack_type, PackGenerator& parent)
 			}
 		}
 	}
-	// Count items
-	if (pack_type.select == SELECT_FIRST) {
-		// count = count of first nonempty thing
-		if (!cards.empty()) {
-			count = 1;
-		} else {
-			FOR_EACH_CONST(item, pack_type.items) {
-				count += parent.get(item->name).count;
-				if (count > 0) break;
-			}
-		}
-	} else {
-		count = cards.size();
-		FOR_EACH_CONST(item, pack_type.items) {
-			count += parent.get(item->name).count;
-		}
-	}
 	// Sum of weights
-	total_weight = cards.size();
+	if (pack_type.select == SELECT_FIRST) {
+		total_weight = cards.empty() ? 0 : 1;
+	} else {
+		total_weight = cards.size();
+	}
 	FOR_EACH_CONST(item, pack_type.items) {
-		if (pack_type.select == SELECT_PROPORTIONAL) {
-			total_weight += item->weight * parent.get(item->name).count;
-		} else if (pack_type.select == SELECT_NONEMPTY) {
-			if (parent.get(item->name).count > 0) {
+		if (pack_type.select == SELECT_PROPORTIONAL || pack_type.select == SELECT_EQUAL_PROPORTIONAL) {
+			total_weight += item->weight * parent.get(item->name).total_weight;
+		} else if (pack_type.select == SELECT_NONEMPTY || pack_type.select == SELECT_EQUAL_NONEMPTY) {
+			if (parent.get(item->name).total_weight > 0) {
 				total_weight += item->weight;
+			}
+		} else if (pack_type.select == SELECT_FIRST) {
+			if (total_weight <= 0) {
+				total_weight = item->weight;
+				break;
 			}
 		} else {
 			total_weight += item->weight;
@@ -308,14 +303,14 @@ void PackInstance::expect_copy(double copies) {
 		PackInstance& i = parent.get(item->name);
 		if (pack_type.select == SELECT_ALL) {
 			i.expect_copy(copies * item->amount);
-		} else if (pack_type.select == SELECT_PROPORTIONAL) {
-			i.expect_copy(copies * item->amount * item->weight * i.count / total_weight);
-		} else if (pack_type.select == SELECT_NONEMPTY) {
-			if (i.count > 0) {
+		} else if (pack_type.select == SELECT_PROPORTIONAL || pack_type.select == SELECT_EQUAL_PROPORTIONAL) {
+			i.expect_copy(copies * item->amount * item->weight * i.total_weight / total_weight);
+		} else if (pack_type.select == SELECT_NONEMPTY || pack_type.select == SELECT_EQUAL_NONEMPTY) {
+			if (i.total_weight > 0) {
 				i.expect_copy(copies * item->amount * item->weight / total_weight);
 			}
 		} else if (pack_type.select == SELECT_FIRST) {
-			if (i.count > 0 && cards.empty()) {
+			if (i.total_weight > 0 && cards.empty()) {
 				i.expect_copy(copies * item->amount);
 				break;
 			}
@@ -337,55 +332,57 @@ struct RandomRange {
 	Gen& gen;
 };
 
+struct WeightedItem {
+	double weight;
+	int count;
+	int tiebreaker;
+};
+
+struct CompareWeightedItems{
+	inline bool operator () (WeightedItem* a, WeightedItem* b) {
+		// compare   (a->count+1)/a->weight  <>  (b->count+1)/b->weight
+		// prefer the one where this is lower, return true if b is prefered
+		double delta = b->weight * (a->count + 1) - a->weight * (b->count + 1);
+		if (delta < 0) return false;
+		if (delta > 0) return true;
+		return b->tiebreaker < a->tiebreaker;
+	}
+};
+
+/// Distribute 'total' among the weighted items, higher weight items get chosen more often
+void weighted_equal_divide(vector<WeightedItem>& items, int total) {
+	assert(!items.empty());
+	if (items.size() == 1) {
+		items.front().count = total;
+	} else {
+		priority_queue<WeightedItem*,vector<WeightedItem*>,CompareWeightedItems> pq;
+		for (size_t i = 0 ; i < items.size() ; ++i) {
+			pq.push(&items[i]);
+		}
+		while (total > 0) {
+			// repeatedly pick the item that minimizes, after incrementing count:
+			//   max_wi  wi->count/wi->weight
+			WeightedItem* wi = pq.top();pq.pop();
+			wi->count++;
+			total--;
+			pq.push(wi);
+		}
+	}
+}
+
 void PackInstance::generate(vector<CardP>* out) {
 	card_copies = 0;
 	if (requested_copies == 0) return;
 	if (pack_type.select == SELECT_ALL) {
 		// add all cards
-		card_copies += requested_copies * cards.size();
-		if (out) {
-			for (size_t i = 0 ; i < requested_copies ; ++i) {
-				out->insert(out->end(), cards.begin(), cards.end());
-			}
-		}
-		// and all items
-		FOR_EACH_CONST(item, pack_type.items) {
-			PackInstance& i = parent.get(item->name);
-			i.request_copy(requested_copies * item->amount);
-		}
+		generate_all(out, requested_copies);
 		
 	} else if (pack_type.select == SELECT_REPLACE
 	        || pack_type.select == SELECT_PROPORTIONAL
 	        || pack_type.select == SELECT_NONEMPTY) {
 		// multiple copies
 		for (size_t i = 0 ; i < requested_copies ; ++i) {
-			double r = parent.gen() * total_weight / parent.gen.max();
-			if (r < cards.size()) {
-				// pick a card
-				card_copies++;
-				if (out) {
-					int i = (int)r;
-					out->push_back(cards[i]);
-				}
-			} else {
-				// pick an item
-				r -= cards.size();
-				FOR_EACH_CONST(item, pack_type.items) {
-					PackInstance& i = parent.get(item->name);
-					if (pack_type.select == SELECT_REPLACE) {
-						r -= item->weight;
-					} else if (pack_type.select == SELECT_PROPORTIONAL) {
-						r -= item->weight * i.count;
-					} else { // SELECT_NONEMPTY
-						if (i.count > 0) r -= item->weight;
-					}
-					// have we reached the item we were looking for?
-					if (r < 0) {
-						i.request_copy(item->amount);
-						break;
-					}
-				}
-			}
+			generate_one_random(out);
 		}
 		
 	} else if (pack_type.select == SELECT_NO_REPLACE) {
@@ -406,20 +403,53 @@ void PackInstance::generate(vector<CardP>* out) {
 			}
 		}
 		
-	} else if (pack_type.select == SELECT_CYCLIC) {
-		size_t total = cards.size() + pack_type.items.size();
-		if (total == 0) return; // prevent div by 0
-		size_t div = requested_copies / total;
-		size_t rem = requested_copies % total;
-		for (size_t i = 0 ; i < total ; ++i) {
-			// how many copies of this card/item do we need?
-			size_t copies = div + (i < rem ? 1 : 0);
-			if (i < cards.size()) {
-				card_copies += copies;
-				if (out) out->insert(out->end(), copies, cards[i]);
-			} else {
-				const PackItemP& item = pack_type.items[i];
-				parent.get(item->name).request_copy(copies * item->amount);
+	} else if (pack_type.select == SELECT_EQUAL
+	        || pack_type.select == SELECT_EQUAL_PROPORTIONAL
+	        || pack_type.select == SELECT_EQUAL_NONEMPTY) {
+		// equal selection instead of random
+		if (requested_copies == 1) {
+			// somewhat of a hack to keep things fair: just pick at random
+			// otherwise we would end up picking the lowest weight item
+			generate_one_random(out);
+		} else {
+			// 1. the weights of each item, and of the cards
+			vector<WeightedItem> weighted_items;
+			FOR_EACH_CONST(item, pack_type.items) {
+				WeightedItem wi = {0,0,parent.gen()};
+				if (pack_type.select == SELECT_EQUAL_PROPORTIONAL) {
+					wi.weight = item->weight * parent.get(item->name).total_weight;
+				} else if (pack_type.select == SELECT_EQUAL_NONEMPTY) {
+					wi.weight = parent.get(item->name).total_weight > 0 ? item->weight : 0;
+				} else {
+					wi.weight = item->weight;
+				}
+				weighted_items.push_back(wi);
+			}
+			WeightedItem wi = {cards.size(),0,parent.gen()};
+			weighted_items.push_back(wi);
+			// 2. divide the requested_copies among the cards and the items, taking the weights into account
+			weighted_equal_divide(weighted_items, (int)requested_copies);
+			// 3a. propagate to items
+			for (size_t j = 0 ; j < pack_type.items.size() ; ++j) {
+				const PackItem& item = *pack_type.items[j];
+				PackInstance& i = parent.get(item.name);
+				i.request_copy(item.amount * weighted_items[j].count);
+			}
+			// 3b. pick some cards
+			int new_card_copies = weighted_items.back().count;
+			card_copies += new_card_copies;
+			if (out && !cards.empty()) {
+				int div = new_card_copies / (int)cards.size();
+				int rem = new_card_copies % (int)cards.size();
+				// some copies of all cards
+				for (int i = 0 ; i < div ; ++i) {
+					out->insert(out->end(), cards.begin(), cards.end());
+				}
+				// pick the remainder at random
+				for (int i = 0 ; i < rem ; ++i) {
+					int nr = parent.gen() % cards.size();
+					out->push_back(cards.at(nr));
+				}
 			}
 		}
 		
@@ -427,12 +457,12 @@ void PackInstance::generate(vector<CardP>* out) {
 		if (!cards.empty()) {
 			// there is a card, pick it
 			card_copies += requested_copies;
-			if (out) out->push_back(cards.front());
+			if (out) out->insert(out->end(), requested_copies, cards.front());
 		} else {
 			// pick first nonempty item
 			FOR_EACH_CONST(item, pack_type.items) {
 				PackInstance& i = parent.get(item->name);
-				if (i.count > 0) {
+				if (i.total_weight > 0) {
 					i.request_copy(requested_copies * item->amount);
 					break;
 				}
@@ -442,6 +472,49 @@ void PackInstance::generate(vector<CardP>* out) {
 	requested_copies = 0;
 }
 
+void PackInstance::generate_all(vector<CardP>* out, size_t copies) {
+	card_copies += copies * cards.size();
+	if (out) {
+		for (size_t i = 0 ; i < copies ; ++i) {
+			out->insert(out->end(), cards.begin(), cards.end());
+		}
+	}
+	// and all items
+	FOR_EACH_CONST(item, pack_type.items) {
+		PackInstance& i = parent.get(item->name);
+		i.request_copy(copies * item->amount);
+	}
+}
+
+void PackInstance::generate_one_random(vector<CardP>* out) {
+	double r = parent.gen() * total_weight / parent.gen.max();
+	if (r < cards.size()) {
+		// pick a card
+		card_copies++;
+		if (out) {
+			int i = (int)r;
+			out->push_back(cards[i]);
+		}
+	} else {
+		// pick an item
+		r -= cards.size();
+		FOR_EACH_CONST(item, pack_type.items) {
+			PackInstance& i = parent.get(item->name);
+			if (pack_type.select == SELECT_PROPORTIONAL || pack_type.select == SELECT_EQUAL_PROPORTIONAL) {
+				r -= item->weight * i.total_weight;
+			} else if (pack_type.select == SELECT_NONEMPTY || pack_type.select == SELECT_EQUAL_NONEMPTY) {
+				if (i.total_weight > 0) r -= item->weight;
+			} else {
+				r -= item->weight;
+			}
+			// have we reached the item we were looking for?
+			if (r < 0) {
+				i.request_copy(item->amount);
+				break;
+			}
+		}
+	}
+}
 
 // ----------------------------------------------------------------------------- : PackGenerator
 
@@ -450,6 +523,9 @@ void PackGenerator::reset(const SetP& set, int seed) {
 	gen.seed((unsigned)seed);
 	max_depth = 0;
 	instances.clear();
+}
+void PackGenerator::reset(int seed) {
+	gen.seed((unsigned)seed);
 }
 
 PackInstance& PackGenerator::get(const String& name) {
