@@ -483,10 +483,15 @@ String KeywordDatabase::expand(const String& text,
 			next.resize(0);
 			closure(current);
 			// are we done?
-			FOR_EACH(n, current) {
-				FOR_EACH(f, n->finished) {
-					const Keyword* kw = f;
-					if (used.insert(kw).second) {
+			for (int set_or_game = 0 ; set_or_game <= 1 ; ++set_or_game) {
+				FOR_EACH(n, current) {
+					FOR_EACH(kw, n->finished) {
+						if (kw->fixed != (bool)set_or_game) {
+							continue; // first try set keywords, try game keywords in the second round
+						}
+						if (!used.insert(kw).second) {
+							continue; // already seen this keyword
+						}
 						// we have found a possible match, for a keyword which we have not seen before
 						if (tryExpand(*kw, i, tagged, untagged, result, expand_type,
 						              match_condition, expand_default, combine_script, ctx,
