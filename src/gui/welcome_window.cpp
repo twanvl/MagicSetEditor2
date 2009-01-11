@@ -87,6 +87,13 @@ void WelcomeWindow::draw(DC& dc) {
 	// draw logo
 	dc.DrawBitmap(logo,  (ws.GetWidth() -  logo.GetWidth()) / 2, 5);
 	dc.DrawBitmap(logo2,  ws.GetWidth() - logo2.GetWidth(),      ws.GetHeight() - logo2.GetHeight());
+	// draw version number
+	dc.SetFont(wxFont(8, wxSWISS, wxNORMAL, wxNORMAL, false, _("Arial")));
+	dc.SetTextForeground(Color(0,126,176));
+	int tw,th;
+	String version_string = _("version ") + app_version.toString() + version_suffix;
+	dc.GetTextExtent(version_string,&tw,&th);
+	dc.DrawText(version_string, 4, ws.GetHeight()-th-4);
 }
 
 void WelcomeWindow::onOpenSet(wxCommandEvent&) {
