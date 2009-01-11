@@ -16,9 +16,6 @@ template <> void Reader::handle(Color& col) {
 	if (!col.Ok()) col = *wxBLACK;
 }
 
-template <> void GetDefaultMember::handle(const AColor& col) {
-	handle((const Color&)col);
-}
 template <> void Reader::handle(AColor& col) {
 	col = parse_acolor(getValue());
 	if (!col.Ok()) col = AColor(0,0,0,0);

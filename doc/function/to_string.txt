@@ -15,12 +15,13 @@ The former converts things like number to string, while the latter removes tags 
 ! Parameter	Type			Description
 | @input@	''any type''		Value to convert to a string
 | @format@	''optional''		Formatting to apply.<br/>
-		 			This takes the same form as [[http://www.cplusplus.com/reference/clibrary/cstdio/printf.html|printf format specifiers]].
+		 			This takes the same form as [[http://www.cplusplus.com/reference/clibrary/cstdio/printf.html|printf format specifiers]].<br/>
+		 			When formating a date, the format string takes the same form as [[http://www.opengroup.org/onlinepubs/007908799/xsh/strftime.html|strftime format specifiers]].
 
 --Examples--
 > to_string(to_color("blue"))       == "rgb(0,0,255)"
 > to_string(10 + 20)                == "30"
 > to_string(10 + 20, format: ".3f") == "30.000"
 > to_string(10 + 20, format: "x")   == "1e" # hexadecimal notation
-> to_string("xy", format: "3s")    == " xy"
-
+> to_string("xy", format: "3s")     == " xy"
+> to_string(to_date("2008-12-31 23:59:59"), format:"%d/%m/%y") == "31/12/08"

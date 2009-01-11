@@ -1,0 +1,13 @@
+Primitive type: date and time
+
+DOC_MSE_VERSION: since 0.3.8
+
+A point in time, consisting of a date and a time.
+The file syntax uses [[http://en.wikipedia.org/wiki/ISO_8601|ISO 8601]] notation.
+
+--File syntax--
+> something: 2008-12-31 23:59:59
+
+--See also--
+| [[fun:to_date]]	Convert a value to a date
+| [[fun:to_string]]	Convert dates to strings

@@ -32,6 +32,7 @@ enum ScriptType
 ,	SCRIPT_OBJECT // Only ScriptObject
 ,	SCRIPT_COLLECTION
 ,	SCRIPT_REGEX
+,	SCRIPT_DATETIME
 ,	SCRIPT_ITERATOR
 ,	SCRIPT_DUMMY
 ,	SCRIPT_ERROR
@@ -67,6 +68,8 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	virtual operator bool()   const;
 	/// Convert this value to a color
 	virtual operator AColor() const;
+	/// Convert this value to a wxDateTime
+	virtual operator wxDateTime() const;
 	
 	/// Script code to generate this value
 	virtual String toCode() const;

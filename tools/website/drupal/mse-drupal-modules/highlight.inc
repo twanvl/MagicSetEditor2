@@ -11,6 +11,7 @@ $built_in_functions = array(
 	'to_number'		=>'',
 	'to_boolean'		=>'',
 	'to_color'		=>'',
+	'to_date'		=>'',
 	// numbers
 	'abs'			=>'',
 	'random_int'		=>'',
@@ -33,6 +34,7 @@ $built_in_functions = array(
 	'match'			=>'',	'match_rule'	=> 'match',
 	'trim'			=>'',
 	'regex_escape'		=>'',
+	'check_spelling'	=>'',
 	// tags
 	'tag_contents'		=>'',	'tag_contents_rule'=>'tag_contents',
 	'remove_tag'		=>'',	'tag_remove_rule'  =>'remove_tag',

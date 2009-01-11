@@ -66,3 +66,4 @@ These contain several properties, similair to the file types. But they are part 
 | [[type:double]]		Real numbers, @1, 0.5, 21.3@
 | [[type:version]]		Version numbers
 | [[type:color]]		Colors
+| [[type:date]]			Dates/times

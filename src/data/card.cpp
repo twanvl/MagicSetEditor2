@@ -78,8 +78,8 @@ IMPLEMENT_REFLECTION(Card) {
 		}
 	}
 	REFLECT(notes);
-	REFLECT_NO_SCRIPT(time_created);
-	REFLECT_NO_SCRIPT(time_modified);
+	REFLECT(time_created);
+	REFLECT(time_modified);
 	REFLECT(extra_data); // don't allow scripts to depend on style specific data
 	REFLECT_NAMELESS(data);
 }

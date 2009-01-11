@@ -390,6 +390,7 @@ inline ScriptValueP to_script(long          v) { return to_script((int) v); }
        ScriptValueP to_script(const String& v);
        ScriptValueP to_script(Color         v);
        ScriptValueP to_script(AColor        v);
+       ScriptValueP to_script(wxDateTime    v);
 inline ScriptValueP to_script(bool          v) { return v ? script_true : script_false; }
 template <typename T>
 inline ScriptValueP to_script(const vector<T>*     v) { return new_intrusive1<ScriptCollection<vector<T> > >(v); }
@@ -419,6 +420,7 @@ template <> inline double       from_script<double>      (const ScriptValueP& va
 template <> inline bool         from_script<bool>        (const ScriptValueP& value) { return *value; }
 template <> inline Color        from_script<Color>       (const ScriptValueP& value) { return (AColor)*value; }
 template <> inline AColor       from_script<AColor>      (const ScriptValueP& value) { return *value; }
+template <> inline wxDateTime   from_script<wxDateTime>  (const ScriptValueP& value) { return *value; }
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

@@ -818,6 +818,7 @@ type:
 	boolean:		boolean
 	color:			color
 	image:			image
+	date:			date
 	nil:			nothing
 	
 	# Object types

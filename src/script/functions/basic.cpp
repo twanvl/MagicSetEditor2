@@ -59,33 +59,36 @@ SCRIPT_FUNCTION(warning_if_neq) {
 // ----------------------------------------------------------------------------- : Conversion
 
 /// Format the input variable based on a printf like style specification
-String format_input(const String& format, Context& ctx) {
-	String fmt = _("%") + replace_all(format, _("%"), _(""));
-	// determine type expected by format string
-	if (format.find_first_of(_("DdIiOoXx")) != String::npos) {
-		SCRIPT_PARAM_C(int, input);
-		return String::Format(fmt, input);
-	} else if (format.find_first_of(_("EeFfGg")) != String::npos) {
-		SCRIPT_PARAM_C(double, input);
-		return String::Format(fmt, input);
-	} else if (format.find_first_of(_("Ss")) != String::npos) {
-		SCRIPT_PARAM_C(String, input);
-		return format_string(fmt, input);
+String format_input(const String& format, const ScriptValue& input) {
+	// determine type of input
+	ScriptType type = input.type();
+	if (type == SCRIPT_DATETIME) {
+		return static_cast<wxDateTime>(input).Format(format.c_str());
 	} else {
-		throw ScriptError(_ERROR_1_("unsupported format", format));
+		// determine type expected by format string
+		String fmt = _("%") + replace_all(format, _("%"), _(""));
+		if (format.find_first_of(_("DdIiOoXx")) != String::npos) {
+			return String::Format(fmt, (int)input);
+		} else if (format.find_first_of(_("EeFfGg")) != String::npos) {
+			return String::Format(fmt, (double)input);
+		} else if (format.find_first_of(_("Ss")) != String::npos) {
+			return format_string(fmt, input.toString());
+		} else {
+			throw ScriptError(_ERROR_1_("unsupported format", format));
+		}
 	}
 }
 
 SCRIPT_FUNCTION(to_string) {
+	SCRIPT_PARAM_C(ScriptValueP, input);
 	ScriptValueP format = ctx.getVariable(SCRIPT_VAR_format);
 	try {
 		if (format && format->type() == SCRIPT_STRING) {
 			// format specifier. Be careful, the built in function 'format' has the same name
-			SCRIPT_RETURN(format_input(*format, ctx));
+			SCRIPT_RETURN(format_input(*format, *input));
 		} else {
 			// simple conversion
-			SCRIPT_PARAM_C(String, input);
-			SCRIPT_RETURN(input);
+			SCRIPT_RETURN(input->toString());
 		}
 	} catch (const ScriptError& e) {
 		return new_intrusive1<ScriptDelayedError>(e);
@@ -203,6 +206,15 @@ SCRIPT_FUNCTION(to_color) {
 	}
 }
 
+SCRIPT_FUNCTION(to_date) {
+	try {
+		SCRIPT_PARAM_C(wxDateTime, input);
+		SCRIPT_RETURN(input);
+	} catch (const ScriptError& e) {
+		return delay_error(e);
+	}
+}
+
 SCRIPT_FUNCTION(to_code) {
 	SCRIPT_PARAM_C(ScriptValueP, input);
 	SCRIPT_RETURN(input->toCode());
@@ -295,7 +307,8 @@ SCRIPT_FUNCTION(contains) {
 
 SCRIPT_FUNCTION(format) {
 	SCRIPT_PARAM_C(String, format);
-	SCRIPT_RETURN(format_input(format,ctx));
+	SCRIPT_PARAM_C(ScriptValueP, input);
+	SCRIPT_RETURN(format_input(format,*input));
 }
 
 SCRIPT_FUNCTION(curly_quotes) {
@@ -651,6 +664,7 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("to number"),            script_to_number);
 	ctx.setVariable(_("to boolean"),           script_to_boolean);
 	ctx.setVariable(_("to color"),             script_to_color);
+	ctx.setVariable(_("to date"),              script_to_date);
 	ctx.setVariable(_("to code"),              script_to_code);
 	// math
 	ctx.setVariable(_("abs"),                  script_abs);

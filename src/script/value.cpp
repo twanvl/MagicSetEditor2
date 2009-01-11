@@ -24,6 +24,7 @@ ScriptValue::operator int()                                 const { throw Script
 ScriptValue::operator bool()                                const { throw ScriptErrorConversion(typeName(), _TYPE_("boolean" )); }
 ScriptValue::operator double()                              const { throw ScriptErrorConversion(typeName(), _TYPE_("double"  )); }
 ScriptValue::operator AColor()                              const { throw ScriptErrorConversion(typeName(), _TYPE_("color"   )); }
+ScriptValue::operator wxDateTime()                          const { throw ScriptErrorConversion(typeName(), _TYPE_("date"    )); }
 ScriptValueP ScriptValue::eval(Context&)                    const { return delay_error(ScriptErrorConversion(typeName(), _TYPE_("function"))); }
 ScriptValueP ScriptValue::next(ScriptValueP* key_out)             { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
 ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const { return delay_error(ScriptErrorConversion(typeName(), _TYPE_("collection"))); }
@@ -276,6 +277,13 @@ class ScriptString : public ScriptValue {
 		}
 		return c;
 	}
+	virtual operator wxDateTime() const {
+		wxDateTime date;
+		if (!date.ParseDateTime(value.c_str())) {
+			throw ScriptErrorConversion(value, typeName(), _TYPE_("date"));
+		}
+		return date;
+	}
 	virtual GeneratedImageP toImage(const ScriptValueP&) const {
 		if (value.empty()) {
 			return new_intrusive<BlankImage>();
@@ -324,6 +332,27 @@ ScriptValueP to_script(Color v) {
 }
 ScriptValueP to_script(AColor v) {
 	return new_intrusive1<ScriptAColor>(v);
+}
+
+
+// ----------------------------------------------------------------------------- : DateTime
+
+// wxDateTime values
+class ScriptDateTime : public ScriptValue {
+  public:
+	ScriptDateTime(const wxDateTime& v) : value(v) {}
+	virtual ScriptType type() const { return SCRIPT_DATETIME; }
+	virtual String typeName() const { return _TYPE_("date"); }
+	virtual operator wxDateTime() const { return value; }
+	virtual operator String() const {
+		return value.Format(_("%Y-%m-%d %H:%M:%S"));
+	}
+  private:
+	wxDateTime value;
+};
+
+ScriptValueP to_script(wxDateTime v) {
+	return new_intrusive1<ScriptDateTime>(v);
 }
 
 

@@ -1,0 +1,19 @@
+Function: to_date
+
+DOC_MSE_VERSION: since 0.3.8
+
+--Usage--
+> to_date(any value)
+
+Convert a string value to a [[type:date]].
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		Value to convert to a date.
+
+--Examples--
+> to_date("2008-12-31 23:59:59")
+> to_date("today midnight")
+
+--See also--
+| [[fun:to_string]]	Convert dates to strings
