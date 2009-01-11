@@ -10,6 +10,8 @@ A '''card''' in a [[type:set]].
 | @has styling@			[[type:boolean]]			false		This card has styling data different from the set's default.
 | @styling data@		[[type:indexmap]] of [[type:value]]s	false		Styling data, based on the [[type:stylesheet]]'s @style fields@.
 | @notes@			[[type:tagged string]]			@""@		Notes for this card.
+| @time created@		[[type:date]]				''now''		Time at which the card was created.
+| @time modified@		[[type:date]]				''now''		Time at which the card was last modified.
 | @extra data@			[[type:map]] of [[type:indexmap]]s of [[type:value]]s
 				 					 		Data for the 'extra card fields' of the stylesheet.<br/>
 				 					 		This is first indexed by stylesheet name, then by field name.
