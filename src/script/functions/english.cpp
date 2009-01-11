@@ -253,7 +253,20 @@ String process_english_hints(const String& str) {
 			size_t after = skip_tag(str, i);
 			if (after != String::npos) {
 				Char c = str.GetChar(after);
-				if (is_vowel(c) && ret.size() >= 2) {
+				if (singplur == 1 && is_substr(str, after, _("a</param-"))) {
+					// a -> an, where the a originates from english_number_a(1)
+					size_t after_end = skip_tag(str,after+1);
+					if (after_end == String::npos) {
+						throw Error(_("Incomplete </param> tag"));
+					}
+					if (after_end != String::npos && after_end + 1 < str.size()
+					&& isSpace(str.GetChar(after_end)) && is_vowel(str.GetChar(after_end+1))) {
+						ret.append(str,i,after-i);
+						ret += _("an");
+						i = after + 1;
+						continue;
+					}
+				} else if (is_vowel(c) && ret.size() >= 2) {
 					// a -> an?
 					// is there "a" before this?
 					String last = ret.substr(ret.size() - 2);
@@ -262,13 +275,13 @@ String process_english_hints(const String& str) {
 						ret.insert(ret.size() - 1, _('n'));
 					}
 				} else if (is_substr(str, after, _("</param-")) && ret.size() >= 1 &&
-				           ret.GetChar(ret.size() - 1) == _(' ')) {
+							ret.GetChar(ret.size() - 1) == _(' ')) {
 					// empty param, drop space before it
 					ret.resize(ret.size() - 1);
 				}
 			}
-			ret += c;
-			++i;
+			ret.append(str,i,min(after,str.size())-i);
+			i = after;
 		} else if (is_substr(str, i, _("<singular>"))) {
 			// singular -> keep, plural -> drop
 			size_t start = skip_tag(str, i);
@@ -300,6 +313,10 @@ String process_english_hints(const String& str) {
 				++i;
 			}
 			singplur = 0;
+		} else if (c == _('<')) {
+			size_t after = skip_tag(str, i);
+			ret.append(str,i,min(after,str.size())-i);
+			i = after;
 		} else {
 			ret += c;
 			++i;
