@@ -1,22 +1,77 @@
 Data type: card pack type
 
-DOC_MSE_VERSION: since 0.3.7
+DOC_MSE_VERSION: since 0.3.8
 
 --Overview--
 
 A type of card packs. For instance "booster" and "tournament pack" are card pack types.
 
-A pack type contains one or more [[type:pack item reference]]s, indicating what kinds and how many cards are in the pack.
+A pack type contains either:
+* a filter for selecting the desired kind of cards from the set.
+* one or more [[type:pack item]]s, indicating what kinds and how many cards are in the pack.
+* a combination of the above.
 
 --Properties--
 ! Property	Type					Default		Description
 | @name@	[[type:string]]				 		Name of this card pack type.
+		 					 		Other pack types can refer to this name.
+| @select@	see below				see below	How are instances of this pack generated?
 | @enabled@	[[type:scriptable]] [[type:boolean]]	@true@		Is this pack type enabled, i.e. can the user select it?
-| @items@	[[type:list]] of [[type:pack item reference]]s	 	The items to include in this pack.
+| @selectable@	[[type:boolean]]			@true@		Is this pack selectable from the list of packs in the user interface?
+| @summary@	[[type:boolean]]			@true@		Is a summary of the total number of cards shown in the second panel in the user interface?<br/>
+		 					 		Note: this only applies to pack types that have the @filter@ property set.
+| @filter@	[[type:script]]				''optional''	Condition that a card must satisfy to be included in this pack type.
+| @items@	[[type:list]] of [[type:pack item]]s	 		The items to include in this pack.
 
---Example--
+--Selection--
+
+The @select@ property specifies how instances of this pack are generated.
+When the user selects that he wants 3 copies of pack X, then MSE will generate three ''instances'' of that pack.
+How that happens depends on the @select@ property:
+
+! @select@		Description
+| @all@			Each instance of this pack type contains all of the filtered cards and @items@.<br/>
+			In general, @select: all@ is used for the selectable pack types, while other @select@ types are used for the rest of the packs.<br/>
+			This is the default for pack types with @items@.
+| @replace@		Each instance of this pack type contains a single card or @item@, chosen at random with replacement.
+			The probability of picking an item is proportional to its @weight@, all filtered cards have weight 1.
+| @no replace@		Each instance of this pack type contains a single card or @item@, chosen at random without replacement.
+			This means that the same card or item will not be chosen twice (if the set is large enough).<br/>
+			This is the default for pack types with a @filter@.
+| @proportional@	Each instance of this pack type contains a single filtered card or @item@, chosen with probability proportional to the number of choices for the card/item.
+			The choice is made with replacement.
+| @nonempty@		Each instance of this pack type contains a single filtered card or @item@,
+			but items that contain no cards will be ignored.
+			The choice is made with replacement.
+| @equal@		Instead of choosing cards and items at random, they are chosen to make their numbers as equal as possible.
+| @equal proportional@	A combination of @equal@ and @proportional@.
+| @equal nonempty@	A combination of @equal@ and @nonempty@.
+| @first@		If there are any cards, the first is always chosen, otherwise the first ''nonempty'' item is used.<br/>
+			@select: first@ can be used to make a kind of if statement: "If there are any X cards then use those, otherwise use Y cards".
+
+--Examples--
+>pack item:
+>	name: rare
+>	select: no replace # this is optional, 'no replace' is the default
+>	filter: card.rarity == "rare"
+
+Rare cards are those with the rarity value of @"rare"@.
+The cards are chosen without replacement, so in a single pack the same rare will not occur twice.
+
+>pack item:
+>	name: basic land
+>	select: equal
+>	filter: card.rarity == "basic land"
+
+Basic land cards are selected in equal amounts:
+Say a set contains two basic lands: "Good Land" and "Bad Land".
+Then if 6 basic lands are selected, there will always be exactly 3 "Good Lands" and 3 "Bad Lands".
+If an odd number of basic lands are selected then the amounts will be as close as possible to being equal.
+
+
 >pack type:
 >	name: booster pack
+>	select: all # this is optional, 'all' is the default
 >	item:
 >		name: rare
 >		amount: 1
@@ -28,3 +83,27 @@ A pack type contains one or more [[type:pack item reference]]s, indicating what 
 >		amount: 11
 
 A Magic booster pack contains 1 rare, 3 uncommons and 11 commons.
+
+>pack type:
+>	name: special or else common
+>	select: first
+>	item: special
+>	item: common
+
+If there are any special cards in the set, then "special or else common" will be a special card, otherwise it will be a common.
+
+>pack type:
+>	name: rare or mythic rare
+>	select: proportional
+>	item:
+>		name: rare
+>		weight: 2
+>	item:
+>		name: mythic rare
+>		weight: 1
+
+In Magic, individual "mythic rares" are twice as rare as normal rare cards.
+Since there are also less mythic rares, this does not mean that each booster pack has a 33% percent chance of containing a mythic rare.
+Instead the probability of a mythic rare is
+@number_of_mythics / (number_of_rares * 2 + number_of_mythics)@.
+So, for example if there are 20 rares in a set and only 5 mythic rares, then one in 9 "rare or mythic rare" cards will be a mythic rare.

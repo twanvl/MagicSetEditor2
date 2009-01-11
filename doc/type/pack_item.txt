@@ -1,21 +1,25 @@
 Data type: card pack item
 
-DOC_MSE_VERSION: since 0.3.7
+DOC_MSE_VERSION: since 0.3.8
 
 --Overview--
 
-A type of card that can be included in [[type:pack type|card pack types]].
-
-The pack item describes how this type of card is selected from the set.
+A reference to another [[type:pack type]], from which one or more cards are chosen.
 
 --Properties--
-! Property	Type			Description
-| @name@	[[type:string]]		Name of this type of item.
-| @filter@	[[type:script]]		Condition that a card must satisfy to be selected.
+! Property	Type				Default		Description
+| @name@	Name of a [[type:pack item]]	''required''	Name of the pack item to include in this pack.
+| @amount@	[[type:scriptable]] [[type:int]]	1	How many of those cards are in the pack?
+| @weight@	[[type:scriptable]] [[type:double]]	1	How 'important' is this item?
+		 					 	Items with a higher weight will be chosen more often.
+		 					 	Cards from @filter@ will have a weight of 1.
 
---Example--
->pack item:
->	name: rare
->	filter: card.rarity == "rare"
+--Examples--
+>item:
+>	name: common
+>	amount: 11
 
-Rare cards are those with the rarity value of @"rare"@.
+Include 11 commons in this [[type:pack type|pack]].
+
+>item: common
+Short form. Include a single common in this pack.

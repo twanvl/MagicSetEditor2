@@ -36,8 +36,6 @@ Such a package contains a [[file:format|data file]] called <tt>game</tt> that ha
 | @statistics dimensions@	[[type:list]] of [[type:statistics dimension]]s		from fields	Dimensions for statistics, a dimension is roughly the same as an axis. <br/>By default all card fields with 'show statistics' set to true are used.
 | @statistics categories@	[[type:list]] of [[type:statistics category]]s		from dimensions	DOC_MSE_VERSION: not used since 0.3.6
 				 					 		Choices shown on the statistics panel. <br/>By default all statistics dimensions are used.
-| @pack items@			[[type:list]] of [[type:pack item]]s	 		DOC_MSE_VERSION: since 0.3.7
-				 					 		The categories of items that can be in booster packs.<br/> For example "commons", "uncommons" and "rares" are pack items.
 | @pack types@			[[type:list]] of [[type:pack type]]s	 		DOC_MSE_VERSION: since 0.3.7
 				 					 		The types of card packs that will be listed on the random booster panel.
 | @has keywords@		[[type:boolean]]			@false@		Does this game use keywords? Should the keywords tab be available?

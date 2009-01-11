@@ -20,16 +20,18 @@ such a package contains a data file called <tt>set</tt>.
 			 			 		Packages this package depends on.
 	
 | '''Specific to sets'''		<<<	<<<	<<<
-| game		Name of a [[type:game]]			''required''	The game this set is made for.
-| stylesheet	Name of a [[type:stylesheet]]		''required''	The default style for drawing cards in this set.<br/>
+| @game@	Name of a [[type:game]]			''required''	The game this set is made for.
+| @stylesheet@	Name of a [[type:stylesheet]]		''required''	The default style for drawing cards in this set.<br/>
 		 					 		This is without the game name or extension, so @"new"@ refers to the package @"gamename-new.mse-style"@.
-| set info	[[type:indexmap]] of [[type:value]]s	 	The data for the [[prop:game:set fields]] defined in the game.
-| styling	[[type:map]] of [[type:indexmap]]s of [[type:value]]s
+| @set info@	[[type:indexmap]] of [[type:value]]s	 	The data for the [[prop:game:set fields]] defined in the game.
+| @styling@	[[type:map]] of [[type:indexmap]]s of [[type:value]]s
 		 	 				Data for the 'extra fields' of the stylesheet.<br/>
 		 	 				This is first indexed by stylesheet name, then by field name.<br/>
 		 	 				Data is given not only for the set's stylesheet but also for those of cards.
-| cards		[[type:list] of [[type:card]]s		 	The cards in the set.
-| keywords	[[type:list] of [[type:keyword]]s	 	The custom keywords in the set.
+| @cards@	[[type:list] of [[type:card]]s		 	The cards in the set.
+| @keywords@	[[type:list] of [[type:keyword]]s	 	The custom keywords in the set.
+| @pack types@	[[type:list]] of [[type:pack type]]s	 	DOC_MSE_VERSION: since 0.3.8
+		 					 	The custom card pack types in the set.
 
 --Example--
 
