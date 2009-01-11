@@ -5,7 +5,7 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2009-01-09
+version: 2009-01-10
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -612,7 +612,7 @@ keyword:
 keyword:
 	keyword: Flanking
 	match: flanking
-	mode: old
+	mode: expert
 	reminder: Whenever a creature without flanking blocks the creature, the blocking creature gets -1/-1 until end of turn.
 keyword:
 	keyword: Shadow
@@ -654,11 +654,6 @@ keyword:
 	match: fading <atom-param>number</atom-param>
 	mode: expert
 	reminder: It comes into play with {english_number_a(param1)} fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can’t, sacrifice it.
-keyword:
-	keyword: Kicker
-	match: kicker <atom-param>mana</atom-param> and/or <atom-param>mana</atom-param>
-	mode: expert
-	reminder: You may pay an additional {param1} and/or {param2} as you play the card.
 keyword:
 	keyword: Kicker
 	match: kicker <atom-param>cost</atom-param>

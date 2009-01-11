@@ -6,7 +6,7 @@ installer group: magic/Future/Split cards
 icon: card-sample.png
 position hint: 053
 
-version: 2009-01-09
+version: 2009-01-10
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -296,9 +296,9 @@ card style:
 						else rgb(0,0,0)
 					) else font_color(card.card_color_2)
 	casting cost:
-		left: 18
-		top: 18
-		height: 200
+		left: 9
+		top: 33
+		height: 174
 		width: 52
 		alignment: top left
 		direction: vertical
@@ -312,9 +312,9 @@ card style:
 		padding top: 0
 		mask: costmask.png
 	casting cost 2:
-		left: 269
-		top: 18
-		height: 200
+		left: 260
+		top: 33
+		height: 174
 		width: 52
 		alignment: top left
 		direction: vertical

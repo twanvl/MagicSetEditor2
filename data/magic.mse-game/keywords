@@ -190,7 +190,7 @@ keyword:
 keyword:
 	keyword: Flanking
 	match: Flanking
-	mode: old
+	mode: expert
 	reminder: Whenever a creature without flanking blocks this creature, the blocking creature gets -1/-1 until end of turn.
 keyword:
 	keyword: Shadow
@@ -232,11 +232,6 @@ keyword:
 	match: Fading <atom-param>number</atom-param>
 	mode: expert
 	reminder: This comes into play with {english_number_a(param1)} fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can’t, sacrifice it.
-keyword:
-	keyword: Kicker
-	match: Kicker <atom-param>mana</atom-param> and/or <atom-param>mana</atom-param>
-	mode: expert
-	reminder: You may pay an additional {param1} and/or {param2} as you play this spell.
 keyword:
 	keyword: Kicker
 	match: Kicker <atom-param>cost</atom-param>

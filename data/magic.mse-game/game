@@ -5,7 +5,7 @@ installer group: magic/game files
 icon: card-back.png
 position hint: 01
 
-version: 2009-01-03
+version: 2009-01-10
 depends on: magic-blends.mse-include 2007-09-23
 depends on: magic-watermarks.mse-include 2007-09-23
 
