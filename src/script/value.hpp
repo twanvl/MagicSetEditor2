@@ -49,7 +49,7 @@ enum CompareWhat
 class ScriptValue : public IntrusivePtrBaseWithDelete {
   public:
 	virtual ~ScriptValue() {}
-	
+
 	/// Information on the type of this value
 	virtual ScriptType type() const = 0;
 	/// Name of the type of value
@@ -57,7 +57,7 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	/// How to compare this object?
 	/** Returns 1 if the pointer should be used, 0 otherwise */
 	virtual CompareWhat compareAs(String& compare_str, void const*& compare_ptr) const;
-	
+
 	/// Convert this value to a string
 	virtual operator String() const;
 	/// Convert this value to a double
@@ -70,20 +70,23 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	virtual operator AColor() const;
 	/// Convert this value to a wxDateTime
 	virtual operator wxDateTime() const;
-	
+
 	/// Script code to generate this value
 	virtual String toCode() const;
-	
+
 	/// Explicit overload to convert to a string
 	/** This is sometimes necessary, because wxString has an int constructor,
 	 *  which confuses gcc. */
 	inline String toString() const { return *this; }
+	/// Explicit overload to convert to a wxDateTime
+	/** Overload resolution is sometimes confused by other conversions */
+	inline wxDateTime toDateTime() const { return *this; }
 	/// Convert this value to an image
 	virtual GeneratedImageP toImage(const ScriptValueP& thisP) const;
-	
+
 	/// Get a member variable from this value
 	virtual ScriptValueP getMember(const String& name) const;
-	
+
 	/// Signal that a script depends on this value itself
 	virtual void dependencyThis(const Dependency& dep);
 	/// Signal that a script depends on a member of this value
@@ -92,7 +95,7 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	/// Signal that a script depends on a member of container, with the name of this
 	/** This function allows for a kind of visitor pattern over dependencyMember */
 	virtual ScriptValueP dependencyName(const ScriptValue& container, const Dependency&) const;
-	
+
 	/// Evaluate this value (if it is a function)
 	virtual ScriptValueP eval(Context&) const;
 	/// Mark the scripts that this function depends on
@@ -103,7 +106,7 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	 *  Alternatively, the closure may be modified in place.
 	 */
 	virtual ScriptValueP simplifyClosure(ScriptClosure&) const;
-	
+
 	/// Return an iterator for the current collection, an iterator is a value that has next()
 	/** thisP can be used to prevent destruction of the collection */
 	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;

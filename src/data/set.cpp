@@ -17,6 +17,7 @@
 #include <data/field/information.hpp>
 #include <util/tagged_string.hpp> // for 0.2.7 fix
 #include <util/order_cache.hpp>
+#include <util/delayed_index_maps.hpp>
 #include <script/script_manager.hpp>
 #include <script/profiler.hpp>
 #include <wx/sstream.h>
@@ -145,7 +146,7 @@ void Set::validate(Version file_app_version) {
 	if (stylesheet->game != game) {
 		throw Error(_ERROR_("stylesheet and set refer to different game"));
 	}
-	
+
 	// This is our chance to fix version incompatabilities
 	if (file_app_version < 207) {
 		// Since 0.2.7 we use </tag> style close tags, in older versions it was </>

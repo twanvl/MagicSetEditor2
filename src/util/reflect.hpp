@@ -149,6 +149,17 @@
 /// Reflect a variable under the given name
 #define REFLECT_NO_SCRIPT_N(name, var)  tag.handleNoScript(_(name), var)
 
+/// Explicitly instantiate reflection; this is occasionally required.
+#define INSTANTIATE_REFLECTION(Class)								\
+			template void Class::reflect_impl<Reader> (Reader&);	\
+			template void Class::reflect_impl<Writer> (Writer&);	\
+			template void Class::reflect_impl<GetMember> (GetMember&);
+
+#define INSTANTIATE_REFLECTION_NAMELESS(Class)						\
+			template void Class::reflect_impl<Reader> (Reader&);	\
+			template void Class::reflect_impl<Writer> (Writer&);	\
+			template void Class::reflect_impl<GetDefaultMember> (GetDefaultMember&);
+
 // ----------------------------------------------------------------------------- : Reflecting enums
 
 /// Implement the refelection of a enumeration type Enum

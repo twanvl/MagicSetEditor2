@@ -9,6 +9,7 @@
 #include <util/prec.hpp>
 #include <data/field/choice.hpp>
 #include <util/io/package.hpp>
+#include <util/defaultable.hpp>
 #include <wx/imaglist.h>
 
 DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
@@ -303,3 +304,5 @@ bool ChoiceValue::update(Context& ctx) {
 IMPLEMENT_REFLECTION_NAMELESS(ChoiceValue) {
 	if (fieldP->save_value || tag.scripting() || tag.reading()) REFLECT_NAMELESS(value);
 }
+
+INSTANTIATE_REFLECTION_NAMELESS(ChoiceValue)

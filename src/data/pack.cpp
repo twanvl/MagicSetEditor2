@@ -376,7 +376,7 @@ void PackInstance::generate(vector<CardP>* out) {
 	if (pack_type.select == SELECT_ALL) {
 		// add all cards
 		generate_all(out, requested_copies);
-		
+
 	} else if (pack_type.select == SELECT_REPLACE
 	        || pack_type.select == SELECT_PROPORTIONAL
 	        || pack_type.select == SELECT_NONEMPTY) {
@@ -384,7 +384,7 @@ void PackInstance::generate(vector<CardP>* out) {
 		for (size_t i = 0 ; i < requested_copies ; ++i) {
 			generate_one_random(out);
 		}
-		
+
 	} else if (pack_type.select == SELECT_NO_REPLACE) {
 		if (!pack_type.items.empty()) {
 			throw Error(_("'select:no replace' is not yet supported in combination with 'items', only with 'filter'."));
@@ -402,7 +402,7 @@ void PackInstance::generate(vector<CardP>* out) {
 				rem -= max_per_batch;
 			}
 		}
-		
+
 	} else if (pack_type.select == SELECT_EQUAL
 	        || pack_type.select == SELECT_EQUAL_PROPORTIONAL
 	        || pack_type.select == SELECT_EQUAL_NONEMPTY) {
@@ -419,7 +419,7 @@ void PackInstance::generate(vector<CardP>* out) {
 				if (pack_type.select == SELECT_EQUAL_PROPORTIONAL) {
 					wi.weight = item->weight * parent.get(item->name).total_weight;
 				} else if (pack_type.select == SELECT_EQUAL_NONEMPTY) {
-					wi.weight = parent.get(item->name).total_weight > 0 ? item->weight : 0;
+					wi.weight = parent.get(item->name).total_weight > 0 ? static_cast<int>(item->weight) : 0;
 				} else {
 					wi.weight = item->weight;
 				}
@@ -452,7 +452,7 @@ void PackInstance::generate(vector<CardP>* out) {
 				}
 			}
 		}
-		
+
 	} else if (pack_type.select == SELECT_FIRST) {
 		if (!cards.empty()) {
 			// there is a card, pick it
