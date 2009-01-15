@@ -1,4 +1,4 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 installer group: translations/Japanese
 full name: 日本語 (Japanese)
 version: 2008-06-25
@@ -60,6 +60,8 @@ menu:
 	symbols:			&記号	Ctrl+M
 	reminder text:		&注釈文	Ctrl+R
 	insert symbol:		記号の挿入
+#_ADD	# spelling
+#_ADD	no spelling suggestions:	(no suggestions)
 
 	graph:			&グラフ
 	pie:				&パイ	1
@@ -168,6 +170,8 @@ help:
 	italic:				選択したテキストを斜体(イタリック体)にします。
 	symbols:			選択したテキストをマナ・シンボルなどのシンボルにします。
 	reminder text:		選ばれたキーワード能力のための注釈文を表示させます。
+#_ADD	# spelling
+#_ADD	no spelling suggestions:	There are no suggestions for correcting this error
 
 	graph:
 	pie:				を円グラフ、スライスのサイズのカードの数を示します
@@ -197,6 +201,8 @@ help:
 #_ADD	random seed:		Different packs will be generated each time.
 #_ADD	fixed seed:			Using the same seed number gives the same 'random' packs.
 #_ADD	seed:				Seed number for the random generator. Using the same seed number gives the same 'random' packs.
+#_ADD	edit pack type:		Double click to edit pack type
+#_ADD	number of packs:	The number of %ss to generate
 	
 	# Preferences
 	app language:
@@ -422,6 +428,7 @@ label:
 	# Random pack panel
 #_ADD	pack selection:		Pack selection
 #_ADD	pack totals:		Totals
+#_ADD	pack name:			Pack name
 #_ADD	seed:				Seed
 #_ADD	total cards:		Total
 	
@@ -444,6 +451,7 @@ label:
 	
 	# Preferences
 	language:			言語
+#_ADD	windows:			Open sets
 	app language:		ユーザー・インタフェースの言語：
 	card display:		カード表示
 	zoom:				&ズーム：
@@ -520,9 +528,16 @@ label:
 	package installed:		インストール
 	package installable:	正しくインストール
 	install package:		インストール
+#_ADD	reinstall package:		reinstall
 	upgrade package:		アップグレード
 	remove package:			取り外す
 
+#_ADD	installed version:		Installed version:
+#_ADD	installable version:	Latest version:
+#_ADD	installer size:			Size:
+#_ADD	installer status:		Status:
+#_ADD	no version:				-
+#_ADD 
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
 	# Editor
@@ -541,6 +556,7 @@ button:
 #_ADD	generate pack:		&Generate Pack
 #_ADD	random seed:		&Random Seed
 #_ADD	fixed seed:			&Fixed Seed
+#_ADD	add custom pack:	Add &Custom Pack...
 	
 	# Welcome
 	new set:			新規作成
@@ -549,6 +565,7 @@ button:
 	last opened set:	直前のセット
 	
 	# Preferences
+#_ADD	open sets in new window:	Open all sets in a new &window
 	select:				&選択...
 	browse:				&参照...
 	high quality:		&高品質の画像
@@ -594,6 +611,7 @@ button:
 	don't install package:	&はインストールしないで
 	install package:		&インストール
 	upgrade package:		&アップグレード
+#_ADD	reinstall package:		Re&install
 	remove package:			&取り外す
 #_ADD	install group:			&Install All
 #_ADD	upgrade group:			&Upgrade All
@@ -628,6 +646,8 @@ title:
 	select cards export:選択したカードのエクスポート
 	# slice
 	slice image:		画像編集
+#_ADD	# pack
+#_ADD	custom pack:		Custom Pack Type
 	# print
 	print preview:		印刷プレビュー
 	# export
@@ -660,6 +680,7 @@ action:
 	cut:				カット
 	paste:				ペースト
 	auto replace:		オートマチックな取って代わること
+#_ADD	correct:			Spelling Correction
 	# Choice/color editors
 	change:				変化 %s
 	
@@ -695,8 +716,8 @@ action:
 	
 ############################################################## Error messages
 error:
-	# General
-	internal error:
+#_DEL	# General
+#_DEL	internal error:
 		内部のエラーが生じました：
 		
 		%s　
@@ -704,7 +725,7 @@ error:
 		あなたの仕事をセーブしてください　(　使う　'　セーブ　として　'　に　それで　あなたが事を上書きしない　)　そして　再出発の魔法のセット編集者。
 		
 		あなたはhttp://magicseteditor.sourceforge.net/の報告をバグに残すべきです
-	
+#_DEL	
 	# File related
 	file not found:				見つかっていないファイル： '%s' パッケージで '%s'
 	file not found package like:
@@ -759,6 +780,7 @@ error:
 		http::を訪問してください　/　magicseteditor.sourceforge.net　/
 	word list type not found:			リストタイプという語　%s　(<word-list>タグから)見つからなかった
 #_ADD	pack item not found:				The pack item "%s" was not found (from a pack type)
+#_ADD	pack type not found:				The pack type "%s" was not found (from a pack type)
 	
 	# Update checking
 	checking updates failed:			アップデートが失敗したか調べます。
@@ -767,6 +789,11 @@ error:
 	# Stats panel
 	dimension not found:				ディメンションはありません '%s'
 
+#_ADD	# Random packs
+#_ADD	pack type duplicate name:
+		There is already a pack type named '%s'.
+		Please choose a different name.
+#_ADD	
 	# Package update window
 #	checking updates:					アップデートを調べます。
 	can't download installer:
@@ -799,6 +826,7 @@ type:
 	boolean:		ブールです
 	color:			色
 	image:			イメージ
+#_ADD	date:			date
 	nil:			何も
 	
 	# Object types
@@ -816,6 +844,7 @@ type:
 	value:			値
 	keyword:		キーワード
 	keywords:		キーワード
+#_ADD	pack:			pack type
 	
 	# Symbol editor shapes
 	shape:			形

@@ -1,4 +1,4 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 installer group: translations/Italiano
 full name: Italiano
 version: 2008-08-31
@@ -60,6 +60,8 @@ menu:
 	symbols:			&Simboli	Ctrl+M
 	reminder text:		&Promemoria	Ctrl+R
 	insert symbol:		I&nserisci Simbolo
+#_ADD	# spelling
+#_ADD	no spelling suggestions:	(no suggestions)
 	
 	graph:			&Grafico
 	pie:				&Torta	1
@@ -168,6 +170,8 @@ help:
 	italic:				Applica il corsivo al testo selezionato
 	symbols:			Trasforma il testo selezionato in simboli
 	reminder text:		Mostra promemoria per la parola chiave selezionata
+#_ADD	# spelling
+#_ADD	no spelling suggestions:	There are no suggestions for correcting this error
 	
 	graph:
 	pie:				Un grafico a torta, la dimensione della fetta indica il numero di carte.
@@ -197,6 +201,8 @@ help:
 	random seed:		Ogni volta saranno generate buste diverse.
 	fixed seed:			Usando lo stesso seme si ottengono le stesse buste 'casuali'.
 	seed:				Numero del seme per il generatore casuale. Usando lo stesso seme si ottengono le stesse buste 'casuali'.
+#_ADD	edit pack type:		Double click to edit pack type
+#_ADD	number of packs:	The number of %ss to generate
 	
 	# Preferences
 	app language:
@@ -421,6 +427,7 @@ label:
 	# Random pack panel
 	pack selection:		Selezione Buste
 	pack totals:		Totale
+#_ADD	pack name:			Pack name
 	seed:				Seme
 	total cards:		Totale
 	
@@ -443,6 +450,7 @@ label:
 	
 	# Preferences
 	language:			Lingua
+#_ADD	windows:			Open sets
 	app language:		Lingua dell'interfaccia:
 	card display:		Visualizza Carta
 	zoom:				&Zoom:
@@ -518,9 +526,16 @@ label:
 	package installed:		installato
 	package installable:	non installato
 	install package:		installare
+#_ADD	reinstall package:		reinstall
 	upgrade package:		aggiornamento
 	remove package:			rimuovere
 
+#_ADD	installed version:		Installed version:
+#_ADD	installable version:	Latest version:
+#_ADD	installer size:			Size:
+#_ADD	installer status:		Status:
+#_ADD	no version:				-
+#_ADD 
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
 	# Editor
@@ -539,6 +554,7 @@ button:
 	generate pack:		&Genera Busta
 	random seed:		&Seme casuale
 	fixed seed:			&Seme impostato
+#_ADD	add custom pack:	Add &Custom Pack...
 	
 	# Welcome
 	new set:			Nuovo set
@@ -547,6 +563,7 @@ button:
 	last opened set:	Ultimo aperto
 	
 	# Preferences
+#_ADD	open sets in new window:	Open all sets in a new &window
 	select:				&Seleziona...
 	browse:				&Sfoglia...
 	high quality:		&Rendering ad alta qualità
@@ -592,6 +609,7 @@ button:
 	don't install package:	&Non installare
 	install package:		&Installa
 	upgrade package:		&Upgrade
+#_ADD	reinstall package:		Re&install
 	remove package:			&Rimuovi
 	install group:			&Installa Tutto
 	upgrade group:			&Upgrade Tutto
@@ -626,6 +644,8 @@ title:
 	select cards export:	Seleziona carte da esportare
 	# slice
 	slice image:		Ritaglia figura
+#_ADD	# pack
+#_ADD	custom pack:		Custom Pack Type
 	# print
 	print preview:		Anteprima di stampa
 	# export
@@ -658,6 +678,7 @@ action:
 	cut:				Taglia
 	paste:				Incolla
 	auto replace:		Rimpiazza automaticamente
+#_ADD	correct:			Spelling Correction
 	# Choice/color editors
 	change:				Cambia %s
 	
@@ -693,8 +714,8 @@ action:
 
 ############################################################## Error messages
 error:
-	# General
-	internal error:
+#_DEL	# General
+#_DEL	internal error:
 		Si è verificato un errore interno:
 		
 		%s
@@ -703,7 +724,7 @@ error:
 		e riavvia Magic Set Editor.
 		
 		Dovresti segnalare l'errore su http://magicseteditor.sourceforge.net/
-	
+#_DEL	
 	# File related
 	file not found:				File non trovato: '%s' nel pacchetto '%s'
 	file not found package like:
@@ -759,6 +780,7 @@ error:
 		Visita http:://magicseteditor.sourceforge.net/
 	word list type not found:			The word list type %s was not found (from a <word-list> tag)
 	pack item not found:				Oggetto "%s" non trovato (da un pacchetto)
+#_ADD	pack type not found:				The pack type "%s" was not found (from a pack type)
 	
 	# Update checking
 	checking updates failed:			Controllo degli aggiornamenti fallito.
@@ -767,6 +789,11 @@ error:
 	# Stats panel
 	dimension not found:				There is no statistics dimension '%s'
 	
+#_ADD	# Random packs
+#_ADD	pack type duplicate name:
+		There is already a pack type named '%s'.
+		Please choose a different name.
+#_ADD	
 	# Package update window
 #	checking updates:					Controllo gli aggiornamenti.
 	can't download installer:
@@ -801,6 +828,7 @@ type:
 	boolean:		booleano
 	color:			colore
 	image:			immagine
+#_ADD	date:			date
 	nil:			nullo
 	
 	# Object types
@@ -818,6 +846,7 @@ type:
 	value:			valore
 	keyword:		parola chiave
 	keywords:		parole chiave
+#_ADD	pack:			pack type
 	
 	# Symbol editor shapes
 	shape:			forma

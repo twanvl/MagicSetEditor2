@@ -1,4 +1,4 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 installer group: translations/Deutsch
 full name: Deutsch
 version: 2008-08-22
@@ -60,6 +60,8 @@ menu:
 	symbols:			&Symbole	Ctrl+M
 	reminder text:		&Reminder Text	Ctrl+R
 	insert symbol:		Sy&mbol einfügen
+#_ADD	# spelling
+#_ADD	no spelling suggestions:	(no suggestions)
 	
 	graph:			&Diagramm
 	pie:				&Kreis	1
@@ -168,6 +170,8 @@ help:
 	italic:				Formatiert den Text Kursiv
 	symbols:			Formatiert den Text als Symbol
 	reminder text:		Zeige den Reminder-Text für die gewählte Fähigkeit an
+#_ADD	# spelling
+#_ADD	no spelling suggestions:	There are no suggestions for correcting this error
 	
 	graph:
 	pie:				Ein Kreisdiagramm, die Größe der Kreise zeigt die Anzahl der Karten an
@@ -197,6 +201,8 @@ help:
 	random seed:		Erstellt jedes mal andere Packs.
 	fixed seed:			Indem man dieselbe Nummer verwendet, bekommt man dieselben "zufälligen" Packs.
 	seed:				Nummer für den Zufallsgenerator. Indem man dieselbe Nummer verwendet, bekommt man dieselben "zufälligen" Packs.
+#_ADD	edit pack type:		Double click to edit pack type
+#_ADD	number of packs:	The number of %ss to generate
 	
 	# Preferences
 	app language:
@@ -422,6 +428,7 @@ label:
 	# Random pack panel
 	pack selection:		Pack wählen
 	pack totals:		Packs gesamt
+#_ADD	pack name:			Pack name
 	seed:				Nummer
 	total cards:		Gesamtkarten
 	
@@ -444,6 +451,7 @@ label:
 	
 	# Preferences
 	language:			Sprache
+#_ADD	windows:			Open sets
 	app language:		Sprache der Benutzeroberfläche:
 	card display:		Kartenaussehen
 	zoom:				&Zoom:
@@ -519,9 +527,16 @@ label:
 	package installed:		Installiert
 	package installable:	Nicht installiert
 	install package:		Installieren
+#_ADD	reinstall package:		reinstall
 	upgrade package:		Upgraden
 	remove package:			Entfernen
 
+#_ADD	installed version:		Installed version:
+#_ADD	installable version:	Latest version:
+#_ADD	installer size:			Size:
+#_ADD	installer status:		Status:
+#_ADD	no version:				-
+#_ADD 
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
 	# Editor
@@ -540,6 +555,7 @@ button:
 	generate pack:		&Pack generieren
 	random seed:		&Zufällige Nummer
 	fixed seed:			&Eingestellte Nummer
+#_ADD	add custom pack:	Add &Custom Pack...
 	
 	# Welcome
 	new set:			Neue Edition
@@ -548,6 +564,7 @@ button:
 	last opened set:	Zuletzt geöffnet:
 	
 	# Preferences
+#_ADD	open sets in new window:	Open all sets in a new &window
 	select:				&OK...
 	browse:				&Durchsuchen...
 	high quality:		&High-quality-Rendern
@@ -593,6 +610,7 @@ button:
 	don't install package:	&Nicht installieren
 	install package:		&Installieren
 	upgrade package:		&Upgraden
+#_ADD	reinstall package:		Re&install
 	remove package:			&Entfernen
 	install group:			&Installiere alle
 	upgrade group:			&Upgrade alle
@@ -627,6 +645,8 @@ title:
 	select cards export:Wählen die Export-Karten
 	# slice
 	slice image:		Bildeinstellungen
+#_ADD	# pack
+#_ADD	custom pack:		Custom Pack Type
 	# print
 	print preview:		Druckvorschau
 	# export
@@ -659,6 +679,7 @@ action:
 	cut:				Ausschneiden
 	paste:				Einfügen
 	auto replace:		Automatisches Ersetzen
+#_ADD	correct:			Spelling Correction
 	# Choice/color editors
 	change:				Ändere %s
 	
@@ -694,8 +715,8 @@ action:
 
 ############################################################## Error messages
 error:
-	# General
-	internal error:
+#_DEL	# General
+#_DEL	internal error:
 		Ein Fehler trat auf:
 		
 		%s
@@ -704,7 +725,7 @@ error:
 		so werden keine Daten überschrieben) und starten Sie MSE neu.
 		
 		Bitte hinterlassen Sie eine Bugreport unter http://magicseteditor.sourceforge.net/
-	
+#_DEL	
 	# File related
 	file not found:					Datei nicht gefunden: '%s' im Package '%s'
 	file not found package like:
@@ -760,6 +781,7 @@ error:
 		http:://magicseteditor.sourceforge.net/ herunter.
 	word list type not found:			%s ist nicht bei <Wortliste> gelistet
 	pack item not found:				Der Pack-Gegenstand "%s" wurde nicht gefunden
+#_ADD	pack type not found:				The pack type "%s" was not found (from a pack type)
 	
 	# Update checking
 	checking updates failed:			Update schlug fehl.
@@ -768,6 +790,11 @@ error:
 	# Stats panel
 	dimension not found:				Keine Statistikdimension '%s'
 	
+#_ADD	# Random packs
+#_ADD	pack type duplicate name:
+		There is already a pack type named '%s'.
+		Please choose a different name.
+#_ADD	
 	# Package update window
 #	checking updates:					Suche nach Updates.
 	can't download installer:
@@ -802,6 +829,7 @@ type:
 	boolean:		boolean
 	color:			color
 	image:			image
+#_ADD	date:			date
 	nil:			nothing
 	
 	# Object types
@@ -819,6 +847,7 @@ type:
 	value:			value
 	keyword:		keyword
 	keywords:		keywords
+#_ADD	pack:			pack type
 	
 	# Symbol editor shapes
 	shape:			shape

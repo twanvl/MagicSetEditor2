@@ -1,4 +1,4 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 installer group: translations/Traditional Chinese
 full name: 繁體中文 (Traditional Chinese)
 version: 2008-08-10
@@ -60,6 +60,8 @@ menu:
 	symbols:		符號	Ctrl+M
 	reminder text:		提示文本	Ctrl+R
 	insert symbol:		插入符號
+#_ADD	# spelling
+#_ADD	no spelling suggestions:	(no suggestions)
 	
 	graph:			圖像
 	pie:			餅形圖	1
@@ -168,6 +170,8 @@ help:
 	italic:			將所選文字設為斜體
 	symbols:		將所選文字改成符號
 	reminder text:		對選擇的關鍵詞顯示提示文本
+#_ADD	# spelling
+#_ADD	no spelling suggestions:	There are no suggestions for correcting this error
 	
 	graph:
 	pie:			餅狀圖，每一份的大小取決與卡牌數量
@@ -197,6 +201,8 @@ help:
 #_ADD	random seed:		Different packs will be generated each time.
 #_ADD	fixed seed:			Using the same seed number gives the same 'random' packs.
 #_ADD	seed:				Seed number for the random generator. Using the same seed number gives the same 'random' packs.
+#_ADD	edit pack type:		Double click to edit pack type
+#_ADD	number of packs:	The number of %ss to generate
 	
 	# Preferences
 	app language:
@@ -422,6 +428,7 @@ label:
 	# Random pack panel
 #_ADD	pack selection:		Pack selection
 #_ADD	pack totals:		Totals
+#_ADD	pack name:			Pack name
 #_ADD	seed:				Seed
 #_ADD	total cards:		Total
 	
@@ -444,6 +451,7 @@ label:
 	
 	# Preferences
 	language:		語言
+#_ADD	windows:			Open sets
 	app language:		程序界面語言:
 	card display:		卡牌顯示
 	zoom:			縮放:
@@ -519,9 +527,16 @@ label:
 	package installed:	已安裝
 	package installable:	未安裝
 	install package:	安裝
+#_ADD	reinstall package:		reinstall
 	upgrade package:	昇級
 	remove package:		移除
 
+#_ADD	installed version:		Installed version:
+#_ADD	installable version:	Latest version:
+#_ADD	installer size:			Size:
+#_ADD	installer status:		Status:
+#_ADD	no version:				-
+#_ADD 
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
 	# Editor
@@ -540,6 +555,7 @@ button:
 #_ADD	generate pack:		&Generate Pack
 #_ADD	random seed:		&Random Seed
 #_ADD	fixed seed:			&Fixed Seed
+#_ADD	add custom pack:	Add &Custom Pack...
 	
 	# Welcome
 	new set:		新建套牌
@@ -548,6 +564,7 @@ button:
 	last opened set:	上一次打開的套牌
 	
 	# Preferences
+#_ADD	open sets in new window:	Open all sets in a new &window
 	select:			選擇...
 	browse:			瀏覽...
 	high quality:		高質量渲染效果
@@ -593,6 +610,7 @@ button:
 	don't install package:	不安裝
 	install package:	安裝
 	upgrade package:	昇級
+#_ADD	reinstall package:		Re&install
 	remove package:		移除
 	install group:		全部安裝
 	upgrade group:		全部昇級
@@ -627,6 +645,8 @@ title:
 	select cards export:    導出選中的卡牌
 	# slice
 	slice image:		圖片切片
+#_ADD	# pack
+#_ADD	custom pack:		Custom Pack Type
 	# print
 	print preview:		打印預覽
 	# export
@@ -659,6 +679,7 @@ action:
 	cut:			剪切
 	paste:			貼上
 	auto replace:		自動替換
+#_ADD	correct:			Spelling Correction
 	# Choice/color editors
 	change:			修改 %s
 	
@@ -694,8 +715,8 @@ action:
 
 ############################################################## Error messages
 error:
-	# General
-	internal error:
+#_DEL	# General
+#_DEL	internal error:
 		發生一個致命錯誤：
 		
 		%s
@@ -704,7 +725,7 @@ error:
 		並且重新啟動 Magic Set Editor.
 		
 		你應該到 http://magicseteditor.sourceforge.net/ 匯報這個BUG 
-	
+#_DEL	
 	# File related
 	file not found:		沒有找到文件： '%s' 在 '%s' 文件包中
 	file not found package like:
@@ -760,6 +781,7 @@ error:
 		瀏覽官方網站 http:://magicseteditor.sourceforge.net/
 	word list type not found:	詞語列表類型 %s 沒有找到 （從<word-list> 標簽中）
 #_ADD	pack item not found:				The pack item "%s" was not found (from a pack type)
+#_ADD	pack type not found:				The pack type "%s" was not found (from a pack type)
 	
 	# Update checking
 	checking updates failed:	檢查更新失敗。
@@ -768,6 +790,11 @@ error:
 	# Stats panel
 	dimension not found:		沒有統計資料 '%s'
 	
+#_ADD	# Random packs
+#_ADD	pack type duplicate name:
+		There is already a pack type named '%s'.
+		Please choose a different name.
+#_ADD	
 	# Package update window
 #	checking updates:		檢查更新
 	can't download installer:
@@ -802,6 +829,7 @@ type:
 	boolean:		邏輯型
 	color:			顏色
 	image:			圖像
+#_ADD	date:			date
 	nil:			什麼都不做
 	
 	# Object types
@@ -819,6 +847,7 @@ type:
 	value:			值
 	keyword:		關鍵詞
 	keywords:		關鍵詞
+#_ADD	pack:			pack type
 	
 	# Symbol editor shapes
 	shape:			圖形
