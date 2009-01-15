@@ -686,23 +686,18 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 	result += remove_tag(tagged.substr(0, start), _("<kw-"));
 	
 	// Combine keyword & reminder with result
-	if (expand) {
-		String reminder;
-		try {
-			reminder = kw.reminder.invoke(ctx)->toString();
-		} catch (const Error& e) {
-			handle_error(_ERROR_2_("in keyword reminder", e.what(), kw.keyword), true, false);
-		}
-		ctx.setVariable(_("keyword"),  to_script(total));
-		ctx.setVariable(_("reminder"), to_script(reminder));
-		result +=  _("<kw-"); result += expand_type; result += _(">");
-		result += combine_script->eval(ctx)->toString();
-		result += _("</kw-"); result += expand_type; result += _(">");
-	} else {
-		result +=  _("<kw-"); result += expand_type; result += _(">");
-		result += total;
-		result += _("</kw-"); result += expand_type; result += _(">");
+	String reminder;
+	try {
+		reminder = kw.reminder.invoke(ctx)->toString();
+	} catch (const Error& e) {
+		handle_error(_ERROR_2_("in keyword reminder", e.what(), kw.keyword), true, false);
 	}
+	ctx.setVariable(_("keyword"),  to_script(total));
+	ctx.setVariable(_("reminder"), to_script(reminder));
+	ctx.setVariable(_("expand"),   to_script(expand));
+	result +=  _("<kw-"); result += expand_type; result += _(">");
+	result += combine_script->eval(ctx)->toString();
+	result += _("</kw-"); result += expand_type; result += _(">");
 	
 	// Add to usage statistics
 	if (stat && stat_key) {
