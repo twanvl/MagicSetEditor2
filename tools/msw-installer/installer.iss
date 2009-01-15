@@ -128,6 +128,11 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
   ;Source: "data/jp.mse-locale/*";           DestDir: "{app}/data/jp.mse-locale/";  Components: prog/jp; Flags: recursesubdirs
 #endif
 
+; dictionaries: en
+Source: "data/dictionaries/en_US.dic";      DestDir: "{app}/data/dictionaries/";  Components: prog/en
+Source: "data/dictionaries/en_US.aff";      DestDir: "{app}/data/dictionaries/";  Components: prog/en
+
+
 ; ------------------------------------------------------------------------- : Style packages
 
 ; ----------------------------- : Utilities
@@ -137,7 +142,8 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
           INSTALL_ALL || !large_only ? \
             'Source:        "data/' + base + (name == '' ? '' : '-'+name) + '.mse-' + type + '/*"; ' + \
             'DestDir: "{app}/data/' + base + (name == '' ? '' : '-'+name) + '.mse-' + type + '/";  ' + \
-            'Components: style/' + component + ';' \
+            'Components: style/' + component + ';' + \
+            'Flags: recursesubdirs' \
           : ''
 
 ; Declare a font that must be installed
@@ -160,7 +166,7 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
 
 ; ----------------------------- : Magic
 
-#emit Package(0, 'magic', '',                'game',            'mtg') + 'Flags: recursesubdirs'
+#emit Package(0, 'magic', '',                'game',            'mtg')
 #emit Package(0, 'magic', 'blends',          'include',         'mtg')
 #emit Package(0, 'magic', 'default-image',   'include',         'mtg')
 #emit Package(0, 'magic', 'watermarks',      'include',         'mtg')
@@ -200,12 +206,12 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
 #emit Font   (0, 'mplantin.ttf',    'MPlantin',                 'mtg')
 #emit Font   (0, 'mplantinit.ttf',  'MPlantin-Italic',          'mtg')
 
-#emit Package(1, 'vanguard', '',         'game',   'mtg/vanguard') + 'Flags: recursesubdirs'
+#emit Package(1, 'vanguard', '',         'game',   'mtg/vanguard')
 #emit Package(1, 'vanguard', 'standard', 'style',  'mtg/vanguard')
 
 ; ----------------------------- : VS System
 
-#emit Package(0, 'vs', '',                 'game',            'vs') + 'Flags: recursesubdirs'
+#emit Package(0, 'vs', '',                 'game',            'vs')
 #emit Package(0, 'vs', 'common',           'include',         'vs')
 #emit Package(0, 'vs', 'standard-arrow',   'symbol-font',     'vs')
 #emit Package(0, 'vs', 'standard-official','symbol-font',     'vs')
@@ -221,12 +227,12 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
 #emit Font   (0, 'BadhouseBoldNumbers.ttf', 'BadhouseBoldNumbers',    'vs')
 #emit Font   (0, 'eurosti.ttf',             'Eurostile',              'vs')
 #emit Font   (0, 'eurostile.oblique.ttf',   'EurostileObl-Normal',    'vs')
-#emit Font   (0, 'percexptm.ttf',           'Percolator Expert',      'vs')
+#emit Font   (0, 'percexptm.ttf',           'Percolator Expert TM',   'vs')
 #emit Font   (1, 'GILC____.TTF',            'Gill Sans MT Condensed', 'vs/new')
 
 ; ----------------------------- : YuGiOh
 
-#emit Package(0, 'yugioh', '',                  'game',        'yugioh') + 'Flags: recursesubdirs'
+#emit Package(0, 'yugioh', '',                  'game',        'yugioh')
 #emit Package(0, 'yugioh', 'standard-levels',   'symbol-font', 'yugioh')
 #emit Package(0, 'yugioh', 'text-replacements', 'symbol-font', 'yugioh')
 #emit Package(0, 'yugioh', 'standard',          'style',       'yugioh')
