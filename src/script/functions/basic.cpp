@@ -63,7 +63,7 @@ String format_input(const String& format, const ScriptValue& input) {
 	// determine type of input
 	ScriptType type = input.type();
 	if (type == SCRIPT_DATETIME) {
-		input.toDateTime().Format(format.c_str());
+		return input.toDateTime().Format(format.c_str());
 	} else {
 		// determine type expected by format string
 		String fmt = _("%") + replace_all(format, _("%"), _(""));
