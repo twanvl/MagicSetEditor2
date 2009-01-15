@@ -1,6 +1,6 @@
 ;//+----------------------------------------------------------------------------+
 ;//| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-;//| Copyright:    (C) 2001 - 2007 Twan van Laarhoven                           |
+;//| Copyright:    (C) 2001 - 2008 Twan van Laarhoven and "coppro"              |
 ;//| License:      GNU General Public License 2 or later (see file COPYING)     |
 ;//+----------------------------------------------------------------------------+
 
@@ -14,8 +14,8 @@
 
 [setup]
 AppName                 = Magic Set Editor 2
-AppVerName              = Magic Set Editor 2 - 0.3.7 beta
-AppCopyright            = Copyright © 2001-2008 Twan van Laarhoven
+AppVerName              = Magic Set Editor 2 - 0.3.8 beta
+AppCopyright            = Copyright © 2001-2009 Twan van Laarhoven and "coppro"
 DefaultDirName          = {pf}\Magic Set Editor 2
 DisableStartupPrompt    = 1
 DisableProgramGroupPage = 1
@@ -208,6 +208,7 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
 #emit Package(0, 'vs', '',                 'game',            'vs') + 'Flags: recursesubdirs'
 #emit Package(0, 'vs', 'common',           'include',         'vs')
 #emit Package(0, 'vs', 'standard-arrow',   'symbol-font',     'vs')
+#emit Package(0, 'vs', 'standard-official','symbol-font',     'vs')
 #emit Package(0, 'vs', 'spoiler',          'export-template', 'vs')
 #emit Package(0, 'vs', 'standard',         'style',           'vs/std')
 #emit Package(1, 'vs', 'extended-art',     'style',           'vs/ext')
@@ -216,12 +217,11 @@ Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/"; 
 #emit Package(1, 'vs', 'alter',            'style',           'vs/alter')
 #emit Package(1, 'vs', 'new',              'style',           'vs/new')
 #emit Package(1, 'vs', 'standard-new',     'symbol-font',     'vs/new')
-#emit Package(1, 'vs', 'standard-official','symbol-font',     'vs/new')
 
 #emit Font   (0, 'BadhouseBoldNumbers.ttf', 'BadhouseBoldNumbers',    'vs')
 #emit Font   (0, 'eurosti.ttf',             'Eurostile',              'vs')
 #emit Font   (0, 'eurostile.oblique.ttf',   'EurostileObl-Normal',    'vs')
-#emit Font   (0, 'percexp.ttf',             'Percolator Expert',      'vs')
+#emit Font   (0, 'percexptm.ttf',           'Percolator Expert',      'vs')
 #emit Font   (1, 'GILC____.TTF',            'Gill Sans MT Condensed', 'vs/new')
 
 ; ----------------------------- : YuGiOh
