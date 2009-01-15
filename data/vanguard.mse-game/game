@@ -126,9 +126,11 @@ init script:
 			default_expand: {
 				chosen(choice:if correct_case then mode else "lower case", set.automatic_reminder_text)
 			},
-			combine:        {
+			combine: {
+				keyword  := "<nospellcheck>{keyword}</nospellcheck>"
+				reminder := process_english_hints(reminder)
 				if mode == "pseudo" then "<i-auto>{keyword}</i-auto>"
-				else "{keyword}<atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
+				else keyword + if expand then "<atom-reminder-{mode}> ({reminder})</atom-reminder-{mode}>" }
 			) +
 		# step 2b : move inline keywords' reminder text to the end of the line
 		replace@(

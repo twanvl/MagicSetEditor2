@@ -42,8 +42,15 @@ init script:
 			default_expand: {
 				chosen(choice:if correct_case then mode else "lower case", set.automatic_reminder_text)
 			},
-			combine:        { "<b-auto>{keyword}</b-auto><atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
-			) +
+			combine: {
+				# un-bold parameters
+				keyword := tag_contents(keyword, tag:"<param",
+				              contents: {"</b-auto>{input}<b-auto>"})
+				reminder := process_english_hints(reminder)
+				# the combined result
+				"<b-auto>{keyword}</b-auto>"
+				 + if expand then "<atom-reminder-{mode}> ({reminder})</atom-reminder-{mode}>"
+			}) +
 		# step 3 : Expand shortcut words ~ and CARDNAME
 		replace_rule(
 			match: "~|~THIS~|CARDNAME",
