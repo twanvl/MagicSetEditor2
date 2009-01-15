@@ -15,8 +15,6 @@ AM_INIT_AUTOMAKE([-Wall foreign])
 
 # Checks for programs.
 AC_PROG_CXX
-# Do not pass -O2, because that causes failures for now.
-CXXFLAGS=-g
 # Checks for libraries.
 AC_CHECK_LIB([hunspell],[Hunspell_create])
 

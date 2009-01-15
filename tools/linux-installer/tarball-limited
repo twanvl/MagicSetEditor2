@@ -1,0 +1,43 @@
+#!/bin/bash
+# Magic Set Editor installer tarball generator.
+
+rm -rf magicseteditor
+mkdir magicseteditor
+mkdir magicseteditor/program
+mkdir magicseteditor/program/data
+
+PACKAGES="magic.mse-game
+magic-blends.mse-include
+magic-default-image.mse-include
+magic-watermarks.mse-include
+magic-future-common.mse-include
+magic-spoiler.mse-export-template
+magic-mana-small.mse-symbol-font
+magic-mana-large.mse-symbol-font
+magic-new.mse-style
+magic-new-flip.mse-style
+magic-new-split.mse-style
+magic-textless.mse-style
+magic-old.mse-style
+magic-old-split.mse-style
+vs.mse-game
+vs-common.mse-include
+vs-standard-arrow.mse-symbol-font
+vs-standard-official.mse-symbol-font
+vs-spoiler.mse-export-template
+vs-standard.mse-style
+yugioh.mse-game
+yugioh-standard-levels.mse-symbol-font
+yugioh-text-replacements.mse-symbol-font
+yugioh-standard.mse-style";
+
+for PACKAGE in $PACKAGES;
+  do cp -rP ../../data/$PACKAGE magicseteditor/program/data;
+done;
+
+cp -rP ~/.magicseteditor/resource ../../magicseteditor magicseteditor/program;
+cp install README magicseteditor;
+
+tar -cf magicseteditor-limited.tar.gz --owner root --exclude=.* --exclude=*~ --exclude=.svn magicseteditor;
+
+rm -rf magicseteditor;
