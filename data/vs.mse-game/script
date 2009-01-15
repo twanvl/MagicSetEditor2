@@ -45,7 +45,12 @@
 			default_expand: {
 				chosen(choice:if correct_case then mode else "lower case", set.automatic_reminder_text)
 			},
-			combine:        { "<b-auto>{keyword}</b-auto><atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
+			combine:        { 
+				# un-bold parameters
+				keyword := tag_contents@(keyword, tag:"<param",
+					contents: {"</b-auto>{input}<b-auto>"})
+				# the combined result
+				"<b-auto>{keyword}</b-auto><atom-reminder-{mode}> ({process_english_hints(reminder)})</atom-reminder-{mode}>" }
 			) +
 		# step 3 : Expand shortcut words ~ and CARDNAME
 		replace_rule(
@@ -64,13 +69,13 @@
 			replace: "<sym-auto>&</sym-auto>") +
 		# step 7: keyword parameters should not be bolded
 		# step 7a: put </b> before each <param>
-		replace@(
-			match: "<param[^>]*>",
-			replace: "</b-auto>&") +
+		#replace@(
+		#	match: "<param[^>]*>",
+		#	replace: "</b-auto>&") +
 		# step 7b: put <b> after each </param>
-		replace@(
-			match: "</param[^>]*>",
-			replace: "&<b-auto>") +
+		#replace@(
+		#	match: "</param[^>]*>",
+		#	replace: "&<b-auto>") +
 		# step 8 : Italic reminder text
 		replace_rule(
 			match: "[(][^)\n]*[)]?",
