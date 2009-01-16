@@ -1,12 +1,11 @@
-version: 0.3.7
+version: 0.3.8
 description:
-	<font size="+2"><b>Version 0.3.7 is out</b></font>
+	<font size="+2"><b>Version 0.3.8 is out</b></font>
 	<hr>
 	New in this release:
 	<ul>
-	 <li>Random booster pack generator.</li>
-	 <li>A command line interface for connecting MSE with other programs.</li>
-	 <li>Lots of scripting language improvements.</li>
+	 <li>A spelling checker.</li>
+	 <li>Improved random booster pack generator.</li>
 	 <li>Many other minor improvements and bug fixes.</li>
 	</ul>
-	<a href="http://magicseteditor.sourceforge.net/download">Get version 0.3.7 from the MSE download page</a>.
+	<a href="http://magicseteditor.sourceforge.net/download">Get version 0.3.8 from the MSE download page</a>.
