@@ -1,12 +1,12 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 game: magic
 short name: Future
 full name: Futureshift
 installer group: magic/Future/Normal cards
 icon: card-sample.png
-position hint: 050
+position hint: 051
 
-version: 2008-08-07
+version: 2009-01-18
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
