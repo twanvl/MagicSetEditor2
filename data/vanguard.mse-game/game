@@ -5,7 +5,7 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2009-01-11
+version: 2009-01-15
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -118,6 +118,7 @@ init script:
 		# step 1 : remove all automatic tags
 		remove_tag@(tag: "<sym-auto>") +
 		remove_tag@(tag: "<i-auto>")   +
+		remove_tag@(tag: "<nospellcheck") +
 		# step 2 : reminder text for keywords
 		expand_keywords@(
 			condition: {

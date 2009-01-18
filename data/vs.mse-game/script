@@ -37,6 +37,7 @@
 		tag_remove_rule(tag: "<sym-auto>") +
 		tag_remove_rule(tag: "<i-auto>")   +
 		tag_remove_rule(tag: "<b-auto>")   +
+		remove_tag@(tag: "<nospellcheck") +
 		# step 2 : Reminder text for keywords
 		expand_keywords@(
 			condition: {

@@ -1,4 +1,4 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 game: vs
 full name: New Style EM
 short name: New Style
@@ -6,7 +6,7 @@ installer group: VS System/New style/Normal
 icon: card-sample.png
 position hint: 001
 
-version: 2008-10-26
+version: 2009-01-18
 depends on:
 	package: vs.mse-game
 	version: 2008-10-26
@@ -43,6 +43,7 @@ init script:
 		tag_remove_rule(tag: "<sym-auto>") +
 		tag_remove_rule(tag: "<i-auto>")   +
 		tag_remove_rule(tag: "<b-auto>")   +
+		remove_tag@(tag: "<nospellcheck") +
 		# step 2 : Reminder text for keywords
 		expand_keywords@(
 			condition: {
