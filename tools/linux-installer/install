@@ -15,14 +15,7 @@ case $UID in
     *)
         INSTALL_DIR='$HOME/.magicseteditor/';
         EXEC_SYMLINK='$HOME/bin/magicseteditor';
-esac
-
-if [ \"$MSE_INSTALL_DIR\" != "" ] then
-    INSTALL_DIR=$MSE_INSTALL_DIR
-fi
-if [ \"$MSE_EXEC_SYMLINK\" != "" ] then
-    INSTALL_DIR=$MSE_EXEC_SYMLINK
-fi
+esac;
 
 echo "Magic Set Editor version $VERSION Installer Script.
 

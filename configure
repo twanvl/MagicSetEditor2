@@ -3030,8 +3030,6 @@ else
 fi
 
 
-# Do not pass -O2, because that causes failures for now.
-CXXFLAGS=-g
 # Checks for libraries.
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'

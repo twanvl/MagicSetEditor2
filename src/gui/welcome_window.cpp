@@ -30,10 +30,10 @@ WelcomeWindow::WelcomeWindow()
 	, logo2(load_resource_image(_("two_beta")))
 {
 	SetIcon(load_resource_icon(_("app")));
-	
+
 	// init controls
 	#ifdef USE_HOVERBUTTON
-		wxControl* new_set   = new HoverButtonExt(this, ID_FILE_NEW,           load_resource_image(_("welcome_new")),     _BUTTON_("new set"),       _HELP_("new set"));	
+		wxControl* new_set   = new HoverButtonExt(this, ID_FILE_NEW,           load_resource_image(_("welcome_new")),     _BUTTON_("new set"),       _HELP_("new set"));
 		wxControl* open_set  = new HoverButtonExt(this, ID_FILE_OPEN,          load_resource_image(_("welcome_open")),    _BUTTON_("open set"),      _HELP_("open set"));
 		#if !USE_OLD_STYLE_UPDATE_CHECKER
 		wxControl* updates   = new HoverButtonExt(this, ID_FILE_CHECK_UPDATES, load_resource_image(_("welcome_updates")), _BUTTON_("check updates"), _HELP_("check updates"));
@@ -57,7 +57,7 @@ WelcomeWindow::WelcomeWindow()
 			#endif
 		}
 	}
-	
+
 	wxSizer* s1  = new wxBoxSizer(wxHORIZONTAL);
 	s1->AddSpacer(25);
 		wxSizer* s2  = new wxBoxSizer(wxVERTICAL);
@@ -97,11 +97,11 @@ void WelcomeWindow::draw(DC& dc) {
 }
 
 void WelcomeWindow::onOpenSet(wxCommandEvent&) {
-	wxFileDialog dlg(this, _TITLE_("open set"), settings.default_set_dir, wxEmptyString, import_formats(), wxOPEN);
-	if (dlg.ShowModal() == wxID_OK) {
-		settings.default_set_dir = dlg.GetDirectory();
+	wxFileDialog* dlg = new wxFileDialog(this, _TITLE_("open set"), settings.default_set_dir, wxEmptyString, import_formats(), wxOPEN);
+	if (dlg->ShowModal() == wxID_OK) {
+		settings.default_set_dir = dlg->GetDirectory();
 		wxBusyCursor wait;
-		close(import_set(dlg.GetPath()));
+		close(import_set(dlg->GetPath()));
 	}
 }
 
