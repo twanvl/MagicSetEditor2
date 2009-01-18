@@ -715,7 +715,6 @@ action:
 
 ############################################################## Error messages
 error:
-	# File related
 	file not found:					Fichier non trouvé: '%s' dans le package '%s'
 	file not found package like:
 		Fichier non trouvé: '%s' dans le package '%s'
@@ -785,7 +784,7 @@ error:
 		Please choose a different name.
 	
 	# Package update window
-#_ADD #	checking updates:					Checking for updates.
+#	checking updates:					Recherche de mise à jour.
 	can't download installer:
 		Impossible de télécharger l'installateur pour le package %s de %s.
 		Rien n'a été installé.
