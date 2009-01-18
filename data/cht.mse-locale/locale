@@ -1,7 +1,7 @@
 ﻿mse version: 0.3.8
 installer group: translations/Traditional Chinese
 full name: 繁體中文 (Traditional Chinese)
-version: 2008-08-10
+version: 2009-01-15
 icon: cn.png
 
 ############################################################## Menu items
@@ -715,17 +715,6 @@ action:
 
 ############################################################## Error messages
 error:
-#_DEL	# General
-#_DEL	internal error:
-		發生一個致命錯誤：
-		
-		%s
-		
-		請保存你的作品（如果不想被覆蓋，請使用“另存為”）
-		並且重新啟動 Magic Set Editor.
-		
-		你應該到 http://magicseteditor.sourceforge.net/ 匯報這個BUG 
-#_DEL	
 	# File related
 	file not found:		沒有找到文件： '%s' 在 '%s' 文件包中
 	file not found package like:

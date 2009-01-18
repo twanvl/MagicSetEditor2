@@ -1,7 +1,7 @@
 ﻿mse version: 0.3.8
 installer group: translations/Español
 full name: Español
-version: 2008-05-31
+version: 2009-01-15
 icon: es.png
 
 ############################################################## Menu items
@@ -477,7 +477,6 @@ label:
 	filename format:	&Formato: 
 	filename conflicts:	&Soportar duplicado de nombres de archivos:
 	export filenames:	Nombres de archivo
-#_DEL	cards to export:	Cartas a exportar
 	filename is ignored: (filename is ignored)
 	
 	# apprentice export
@@ -716,17 +715,6 @@ action:
 
 ############################################################## Error messages
 error:
-#_DEL	# General
-#_DEL	internal error:
-		Ha ocurrido un error interno:
-		
-		%s
-		
-		Por favor guarda tu trabajo (usa 'guardar como' para no sobreescribir)
-		y reinicia Magic Set Editor.
-		
-		Deberías dejar un informe de errores en http://magicseteditor.sourceforge.net/
-#_DEL	
 	# File related   TODO: TRANSLATE
 	file not found:				Archivo no encontrado: '%s' in package '%s'
 	file not found package like:

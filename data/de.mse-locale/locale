@@ -1,7 +1,7 @@
 ﻿mse version: 0.3.8
 installer group: translations/Deutsch
 full name: Deutsch
-version: 2008-08-22
+version: 2009-01-15
 icon: de.png
 
 ############################################################## Menu items
@@ -715,17 +715,6 @@ action:
 
 ############################################################## Error messages
 error:
-#_DEL	# General
-#_DEL	internal error:
-		Ein Fehler trat auf:
-		
-		%s
-		
-		Bitte speichern Sie Ihre Arbeit (Z.B. unter 'Speichern unter', 
-		so werden keine Daten überschrieben) und starten Sie MSE neu.
-		
-		Bitte hinterlassen Sie eine Bugreport unter http://magicseteditor.sourceforge.net/
-#_DEL	
 	# File related
 	file not found:					Datei nicht gefunden: '%s' im Package '%s'
 	file not found package like:

@@ -1,7 +1,7 @@
 ﻿mse version: 0.3.8
 installer group: translations/Français
 full name: Français
-version: 2008-08-14
+version: 2009-01-18
 icon: fr.png
 
 ############################################################## Menu items
@@ -60,7 +60,7 @@ menu:
 	symbols:			&Symboles	Ctrl+M
 	reminder text:		&Texte de rappel	Ctrl+R
 	insert symbol:		I&nserer Symbole
-#_ADD	# spelling
+	# spelling
 #_ADD	no spelling suggestions:	(no suggestions)
 	
 	graph:			&Diagramme
@@ -119,9 +119,9 @@ help:
 	export html:			Exporter le set dans une page web
 	export image:			Exporter la carte selectionnée dans un fichier image
 	export images:			Exporter l'image de toute les cartes
-	export apprentice:		Export the set so it can be played with in Apprentice
-	export mws:				Export the set so it can be played with in Magic Workstation
-	check updates:		Open the update window to download new packages, such as games, styles, and locales.
+	export apprentice:		Exporter le set pour être utilisé avec Apprentice
+	export mws:				Exporter le set pour être utilisé avec Magic Workstation
+	check updates:		Ouvrir une fenêtre de mise à jour pour télécharger les nouveaux packages (jeux, styles, localisations)
 	print preview:		voir les cartes telles qu'elles vont etre imprimées
 	print:				Imprimer les cartes de ce set
 	reload data:		Recharger tout les fichiers template ainsi que le set
@@ -170,7 +170,7 @@ help:
 	italic:				Mettre le texte sélectionné en italique
 	symbols:			Mettre le texte selectionné en symboles
 	reminder text:		Afficher le texte de rappel pour le Mot-clé sélectionné
-#_ADD	# spelling
+	# spelling
 #_ADD	no spelling suggestions:	There are no suggestions for correcting this error
 	
 	graph:
@@ -206,10 +206,10 @@ help:
 	
 	# Preferences
 	app language:
-		Note: You must restart MSE for the changes to take effect.
+		Note: Vous devez redémarrer MSE pour que le changement prenne effet.
 	zoom export:
-		(When off, the cards are exported
-		 and copied at 100% size and normal rotation)
+		(Quand l'option est décochée, les cartes sont exportées 
+		 et copiées à 100% de leur taille et dans leur rotation normale.)
 	
 	# apprentice export
 	set code:			Un set code est un code alpha à 2 caractere utilisé par le logiciel pour referencer le set
@@ -359,11 +359,11 @@ tooltip:
 	symbols:			Symboles
 	reminder text:		Texte de rappel
 	
-	pie:				Pie Graphique
+	pie:				Circulaire
 	bar:				Diagramme à barres
 	stack:				Graphique à barres empilées
-	scatter:			Scatter Plot
-	scatter pie:		Scatter Plot-Pie
+	scatter:			Nuage de points
+	scatter pie:		Nuage de cercles
 	
 	cards tab:			Cartes
 	set info tab:		Information du set
@@ -536,7 +536,7 @@ label:
 #_ADD	installer size:			Size:
 #_ADD	installer status:		Status:
 #_ADD	no version:				-
-#_ADD 
+ 
 ############################################################## Buttons/checkboxes/choices in the GUI
 button:
 	# Editor
@@ -644,8 +644,8 @@ title:
 	select cards:		Selectionner Cartes
 	select cards export:Selectionner Cartes à exporter
 	# slice
-	slice image:		Slice Image
-#_ADD	# pack
+	slice image:		Découper l'image
+	# pack
 #_ADD	custom pack:		Custom Pack Type
 	# print
 	print preview:		Imprimer preview
@@ -672,7 +672,7 @@ action:
 	# Text editor
 	typing:				Ecrire
 	enter:				Entrer
-	soft line break:	Soft line break
+	soft line break:	Ligne de séparation
 	insert symbol:		Inserer un symbole
 	backspace:			Retour
 	delete:				Effacer
@@ -715,22 +715,11 @@ action:
 
 ############################################################## Error messages
 error:
-#_DEL	# General
-#_DEL	internal error:
-		Une erreur interne s'est produite:
-		
-		%s
-		
-		Veuillez sauver votre travail (utilisez 'sauver sous' pour éviter de perdre le travail précédent)
-		et redémarrer Magic Set Editor.
-		
-		Vous devez laisser un rapport de bug (de préférence en anglais) à http://magicseteditor.sourceforge.net/
-#_DEL	
 	# File related
 	file not found:					Fichier non trouvé: '%s' dans le package '%s'
 	file not found package like:
 		Fichier non trouvé: '%s' dans le package '%s'
-		Si vous essaezd'ouvrir un fichier d'un autre package, utilisez "/package/fichier"
+		Si vous essayez d'ouvrir un fichier d'un autre package, utilisez "/package/fichier"
 	file parse error:
 		Erreur lors de l'analyse du fichier: '%s'
 		%s
@@ -783,21 +772,19 @@ error:
 	pack item not found:				Le paquet item "%s" n'a pas été trouvé (from a pack type)
 #_ADD	pack type not found:				The pack type "%s" was not found (from a pack type)
 	
-#_DEL	# Update checking?
-#_ADD	# Update checking
+	# Update checking
 	checking updates failed:			Impossible de vérifier les mise à jour.
 	no updates:							Il n'y a pas de mise à jour disponible.
 	
 	# Stats panel
 	dimension not found:				Il n'y a pas de statistique de type '%s'
 	
-#_ADD	# Random packs
+	# Random packs
 #_ADD	pack type duplicate name:
 		There is already a pack type named '%s'.
 		Please choose a different name.
-#_ADD	
+	
 	# Package update window
-#_DEL	# checking updates:					Recherche de mise à jour.
 #_ADD #	checking updates:					Checking for updates.
 	can't download installer:
 		Impossible de télécharger l'installateur pour le package %s de %s.

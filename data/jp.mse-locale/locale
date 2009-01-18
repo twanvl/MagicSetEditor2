@@ -1,7 +1,7 @@
 ﻿mse version: 0.3.8
 installer group: translations/Japanese
 full name: 日本語 (Japanese)
-version: 2008-06-25
+version: 2009-01-15
 icon: jp.png
 
 ############################################################## Menu items
@@ -477,7 +477,6 @@ label:
 	filename format:	&フォーマット： 
 	filename conflicts:	&取っ手を複写することのファイル名：
 	export filenames:	ファイル名
-#_DEL	cards to export:	エクスポートするカード
 	filename is ignored: (ファイル名は無視されます)
 	
 	# apprentice export
@@ -716,16 +715,6 @@ action:
 	
 ############################################################## Error messages
 error:
-#_DEL	# General
-#_DEL	internal error:
-		内部のエラーが生じました：
-		
-		%s　
-		
-		あなたの仕事をセーブしてください　(　使う　'　セーブ　として　'　に　それで　あなたが事を上書きしない　)　そして　再出発の魔法のセット編集者。
-		
-		あなたはhttp://magicseteditor.sourceforge.net/の報告をバグに残すべきです
-#_DEL	
 	# File related
 	file not found:				見つかっていないファイル： '%s' パッケージで '%s'
 	file not found package like:
