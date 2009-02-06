@@ -123,21 +123,23 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(GameSettings) {
 
 
 StyleSheetSettings::StyleSheetSettings()
-	: card_zoom         (1.0,  true)
-	, card_angle        (0,    true)
-	, card_anti_alias   (true, true)
-	, card_borders      (true, true)
-	, card_draw_editing (true, true)
-	, card_normal_export(true, true)
+	: card_zoom              (1.0,  true)
+	, card_angle             (0,    true)
+	, card_anti_alias        (true, true)
+	, card_borders           (true, true)
+	, card_draw_editing      (true, true)
+	, card_normal_export     (true, true)
+	, card_spellcheck_enabled(true, true)
 {}
 
 void StyleSheetSettings::useDefault(const StyleSheetSettings& ss) {
-	if (card_zoom         .isDefault()) card_zoom         .assignDefault(ss.card_zoom);
-	if (card_angle        .isDefault()) card_angle        .assignDefault(ss.card_angle);
-	if (card_anti_alias   .isDefault()) card_anti_alias   .assignDefault(ss.card_anti_alias);
-	if (card_borders      .isDefault()) card_borders      .assignDefault(ss.card_borders);
-	if (card_draw_editing .isDefault()) card_draw_editing .assignDefault(ss.card_draw_editing);
-	if (card_normal_export.isDefault()) card_normal_export.assignDefault(ss.card_normal_export);
+	if (card_zoom              .isDefault()) card_zoom              .assignDefault(ss.card_zoom);
+	if (card_angle             .isDefault()) card_angle             .assignDefault(ss.card_angle);
+	if (card_anti_alias        .isDefault()) card_anti_alias        .assignDefault(ss.card_anti_alias);
+	if (card_borders           .isDefault()) card_borders           .assignDefault(ss.card_borders);
+	if (card_draw_editing      .isDefault()) card_draw_editing      .assignDefault(ss.card_draw_editing);
+	if (card_normal_export     .isDefault()) card_normal_export     .assignDefault(ss.card_normal_export);
+	if (card_spellcheck_enabled.isDefault()) card_spellcheck_enabled.assignDefault(ss.card_spellcheck_enabled);
 }
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(StyleSheetSettings) {
@@ -147,6 +149,7 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(StyleSheetSettings) {
 	REFLECT(card_borders);
 	REFLECT(card_draw_editing);
 	REFLECT(card_normal_export);
+	REFLECT(card_spellcheck_enabled);
 }
 
 // ----------------------------------------------------------------------------- : Settings

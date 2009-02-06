@@ -84,6 +84,7 @@ button:
 	select all:	0
 	select cards:	0
 	select none:	0
+	spellcheck enabled:	0
 	show:	0
 	show editing hints:	0
 	show lines:	0

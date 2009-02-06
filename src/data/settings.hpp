@@ -103,6 +103,7 @@ class StyleSheetSettings : public IntrusivePtrBase<StyleSheetSettings> {
 	Defaultable<bool>   card_borders;
 	Defaultable<bool>   card_draw_editing;
 	Defaultable<bool>   card_normal_export;
+	Defaultable<bool>   card_spellcheck_enabled;
 	
 	/// Where the settings are the default, use the value from ss
 	void useDefault(const StyleSheetSettings& ss);

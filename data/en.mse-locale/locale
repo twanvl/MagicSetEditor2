@@ -1,4 +1,4 @@
-﻿mse version: 0.3.8
+mse version: 0.3.8
 installer group: translations/English
 full name: English
 version: 2008-08-08
@@ -571,6 +571,7 @@ button:
 	show lines:			Show &lines around fields
 	show editing hints:	Show boxes and hints for &editing
 	zoom export:		Use zoom and rotation settings when e&xporting
+	spellcheck enabled:	Show &spelling errors on cards
 	check now:			Check &Now
 	always:							Always
 	if internet connection exists:	If internet connection exists

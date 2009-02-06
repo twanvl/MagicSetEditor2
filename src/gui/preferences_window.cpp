@@ -54,7 +54,7 @@ class DisplayPreferencesPage : public PreferencesPage {
   private:
 	DECLARE_EVENT_TABLE();
 	
-	wxCheckBox* high_quality, *borders, *draw_editing;
+	wxCheckBox* high_quality, *borders, *draw_editing, *spellcheck_enabled;
 	#if USE_ZOOM_COMBOBOX
 		wxComboBox* zoom;
 		int zoom_int;
@@ -195,9 +195,10 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 	: PreferencesPage(parent)
 {
 	// init controls
-	high_quality      = new wxCheckBox(this, wxID_ANY, _BUTTON_("high quality"));
-	borders           = new wxCheckBox(this, wxID_ANY, _BUTTON_("show lines"));
-	draw_editing      = new wxCheckBox(this, wxID_ANY, _BUTTON_("show editing hints"));
+	high_quality       = new wxCheckBox(this, wxID_ANY, _BUTTON_("high quality"));
+	borders            = new wxCheckBox(this, wxID_ANY, _BUTTON_("show lines"));
+	draw_editing       = new wxCheckBox(this, wxID_ANY, _BUTTON_("show editing hints"));
+	spellcheck_enabled = new wxCheckBox(this, wxID_ANY, _BUTTON_("spellcheck enabled"));
 	#if USE_ZOOM_COMBOBOX
 		zoom              = new wxComboBox(this, ID_ZOOM);
 	#else
@@ -206,10 +207,11 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 	non_normal_export = new wxCheckBox(this, wxID_ANY, _BUTTON_("zoom export"));
 	//wxButton* columns = new wxButton(this, ID_SELECT_COLUMNS, _BUTTON_("select"));
 	// set values
-	high_quality->     SetValue( settings.default_stylesheet_settings.card_anti_alias());
-	borders->          SetValue( settings.default_stylesheet_settings.card_borders());
-	draw_editing->     SetValue( settings.default_stylesheet_settings.card_draw_editing());
-	non_normal_export->SetValue(!settings.default_stylesheet_settings.card_normal_export());
+	high_quality->      SetValue( settings.default_stylesheet_settings.card_anti_alias());
+	borders->           SetValue( settings.default_stylesheet_settings.card_borders());
+	draw_editing->      SetValue( settings.default_stylesheet_settings.card_draw_editing());
+	spellcheck_enabled->SetValue( settings.default_stylesheet_settings.card_spellcheck_enabled());
+	non_normal_export-> SetValue(!settings.default_stylesheet_settings.card_normal_export());
 	#if USE_ZOOM_COMBOBOX
 		zoom_int = static_cast<int>(settings.default_stylesheet_settings.card_zoom() * 100);
 		zoom->SetValue(String::Format(_("%d%%"),zoom_int));
@@ -224,9 +226,10 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("card display"));
-			s2->Add(high_quality, 0, wxEXPAND | wxALL, 4);
-			s2->Add(borders,      0, wxEXPAND | wxALL, 4);
-			s2->Add(draw_editing, 0, wxEXPAND | wxALL, 4);
+			s2->Add(high_quality,       0, wxEXPAND | wxALL, 4);
+			s2->Add(borders,            0, wxEXPAND | wxALL, 4);
+			s2->Add(draw_editing,       0, wxEXPAND | wxALL, 4);
+			s2->Add(spellcheck_enabled, 0, wxEXPAND | wxALL, 4);
 			wxSizer* s3 = new wxBoxSizer(wxHORIZONTAL);
 				s3->Add(new wxStaticText(this, wxID_ANY, _LABEL_("zoom")),             0, wxALL & ~wxLEFT,  4);
 				s3->AddSpacer(2);
@@ -249,9 +252,10 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 }
 
 void DisplayPreferencesPage::store() {
-	settings.default_stylesheet_settings.card_anti_alias    = high_quality->GetValue();
-	settings.default_stylesheet_settings.card_borders       = borders->GetValue();
-	settings.default_stylesheet_settings.card_draw_editing  = draw_editing->GetValue();
+	settings.default_stylesheet_settings.card_anti_alias         = high_quality->GetValue();
+	settings.default_stylesheet_settings.card_borders            = borders->GetValue();
+	settings.default_stylesheet_settings.card_draw_editing       = draw_editing->GetValue();
+	settings.default_stylesheet_settings.card_spellcheck_enabled = spellcheck_enabled->GetValue();
 	#if USE_ZOOM_COMBOBOX
 		updateZoom();
 		settings.default_stylesheet_settings.card_zoom          = zoom_int / 100.0;

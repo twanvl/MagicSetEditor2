@@ -12,6 +12,7 @@
 #include <script/functions/util.hpp>
 #include <util/spell_checker.hpp>
 #include <util/tagged_string.hpp>
+#include <data/stylesheet.hpp>
 
 // ----------------------------------------------------------------------------- : Functions
 
@@ -89,9 +90,12 @@ void check_word(const String& tag, const String& input, String& out, Char sep, s
 }
 
 SCRIPT_FUNCTION(check_spelling) {
+	SCRIPT_PARAM_C(StyleSheetP,stylesheet);
 	SCRIPT_PARAM_C(String,language);
 	SCRIPT_PARAM_C(String,input);
 	assert_tagged(input);
+	if (!settings.stylesheetSettingsFor(*stylesheet).card_spellcheck_enabled)
+		SCRIPT_RETURN(input);
 	SCRIPT_OPTIONAL_PARAM_N_(String,_("extra dictionary"),extra_dictionary);
 	SCRIPT_OPTIONAL_PARAM_N_(ScriptValueP,_("extra match"),extra_match);
 	// remove old spelling error tags
