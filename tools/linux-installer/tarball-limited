@@ -38,6 +38,6 @@ done;
 cp -rP ~/.magicseteditor/resource ../../magicseteditor magicseteditor/program;
 cp install README magicseteditor;
 
-tar -cf magicseteditor-limited.tar.gz --owner root --exclude=.* --exclude=*~ --exclude=.svn magicseteditor;
+tar -cfz magicseteditor-limited.tar.gz --owner root --exclude=.* --exclude=*~ --exclude=.svn magicseteditor;
 
 rm -rf magicseteditor;
