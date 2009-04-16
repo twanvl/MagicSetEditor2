@@ -5,7 +5,7 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2009-01-15
+version: 2009-04-08
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -1024,9 +1024,9 @@ keyword:
 	reminder: As you play it, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose a new target for the copy.
 keyword:
 	keyword: Retrace
-	match: Retrace
+	match: retrace
 	mode: expert
-	reminder: You may play this card from your graveyard by discarding a land card in addition to paying its other costs.
+	reminder: You may play it from your graveyard by discarding a land card in addition to paying its other costs.
 keyword:
 	keyword: Chroma
 	match: Chroma
@@ -1034,17 +1034,17 @@ keyword:
 	rules: Chroma — [effect] based on the number of [color] mana symbols [in graveyard, under your control, in cards you discard].
 keyword:
 	keyword: Unearth
-	match: Unearth <atom-param>cost</atom-param>
+	match: unearth <atom-param>cost</atom-param>
 	mode: expert
 	reminder: {param1}: Return it from your graveyard to play. If it is a creature, it gains haste. Remove it from the game at end of turn or if it would leave play. Unearth only as a sorcery.
 keyword:
 	keyword: Devour
-	match: Devour <atom-param>number</atom-param>
+	match: devour <atom-param>number</atom-param>
 	mode: expert
 	reminder: As it comes into play, you may sacrifice any number of creatures. It comes into play with { if param1.value == 1 then "" else if param1.value == 2 then "twice " else english_number(param1) + " times " }that many +1/+1 counters on it.
 keyword:
 	keyword: Exalted
-	match: Exalted
+	match: exalted
 	mode: expert
 	reminder: Whenever a creature you control attacks alone, that creature gets +1/+1 until end of turn.
 keyword:
@@ -1052,3 +1052,8 @@ keyword:
 	match: Domain
 	mode: pseudo
 	rules: Domain — [effect] for each basic land type among lands you control.
+keyword:
+	keyword: Cascade
+	match: cascade
+	mode: expert
+	reminder: When you play it, remove the top card of your library from the game until you remove a nonland card that costs less. You may play that card without paying its mana cost. Put the removed cards on the bottom of your library at random.
