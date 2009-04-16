@@ -1,5 +1,5 @@
-﻿mse version: 0.3.5
-version: 2007-10-13
+﻿mse version: 0.3.8
+version: 2009-03-25
 
 image font size: 46
 horizontal space: 1.2
@@ -175,9 +175,14 @@ symbol:
 	code: z
 	image: z.png
 symbol:
-	code: 
+	code: [ ]
+	regex: yes
+	draw text: 0
+	text font:
+		name: MPlantin
+		size: 1
+		color: rgba(0,0,0,0)
 	image: space.png
-
 
 ##############################################################
 # Insert-symbol menu
@@ -219,3 +224,4 @@ insert symbol menu:
 		item: '
 		item: ,
 		item: -
+		item:  
