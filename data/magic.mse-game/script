@@ -53,7 +53,7 @@ mana_to_color := {
 	count  := number_of_items(in: colors)
 	if hybrid == "" and contains(type, match:"Artifact") then
 		# not a hybrid, but artifact
-		if      count == 0 then  "artifact"
+		if      count == 0 then  "colorless"
 		else if count == 1 then  color_names_1() + ", artifact"
 		else if set.set_info.use_gradient_multicolor == "no"  then "artifact, multicolor" # stop here
 		else if count == 2 then  color_names_2() + ", artifact, multicolor"
@@ -78,14 +78,12 @@ mana_to_color := {
 		if count == 0 then "artifact"
 		else if count == 1 then color_names_1() + ", artifact"
 		else if count == 2 then  color_names_2() + ", artifact"
-		else if count == 3 then  color_names_3() + ", artifact"
 		else                     "artifact, multicolor"
 	else
 		# hybrid, not artifact
 		if count == 0 then "colorless"
 		else if count == 1 then color_names_1()
 		else if count == 2 then  color_names_2() + ", hybrid"
-		else if count == 3 then  color_names_3() + ", hybrid"
 		else                     "multicolor"
 }
 
@@ -209,19 +207,34 @@ basic_land_sort := {
 	else if contains(card.name, match:"Forest")   then "LF"      # Forests
 	else                                               "LA"      # other basic lands
 }
-hybrid_cost_sort := {
+hybrid_color_pair_sort := {
 	colors := sort_text(casting_cost, order: "<WUBRG>")
 	if colors = "WU" then "GA"
-	else if colors = "WB" then "GB"
-	else if colors = "UB" then "GC"
-	else if colors = "UR" then "GD"
-	else if colors = "BR" then "GE"
-	else if colors = "BG" then "GF"
-	else if colors = "RG" then "GG"
-	else if colors = "WR" then "GH"
-	else if colors = "WG" then "GI"
-	else if colors = "UG" then "GJ"
+	else if colors = "UB" then "GB"
+	else if colors = "BR" then "GC"
+	else if colors = "RG" then "GD"
+	else if colors = "GW" then "GE"
+	else if colors = "WB" then "GF"
+	else if colors = "UR" then "GG"
+	else if colors = "BG" then "GH"
+	else if colors = "RW" then "GI"
+	else if colors = "GU" then "GJ"
 	else "GK"
+}
+multi_color_pair_sort := {
+	colors := sort_text(casting_cost, order: "<WUBRG>")
+	if colors = "WU" then "FA"
+	else if colors = "UB" then "FB"
+	else if colors = "BR" then "FC"
+	else if colors = "RG" then "FD"
+	else if colors = "GW" then "FE"
+	else if colors = "WB" then "FF"
+	else if colors = "UR" then "FG"
+	else if colors = "BG" then "FH"
+	else if colors = "RW" then "FI"
+	else if colors = "GU" then "FJ"
+	else if contains(card.casting_cost, match:"/") then "FL"
+	else "FK"
 }
 # A code for the color of the card
 color_of_card := {
@@ -250,9 +263,9 @@ color_of_card := {
 		else if colors == "B" then "C"                       # Black
 		else if colors == "R" then "D"                       # Red
 		else if colors == "G" then "E"                       # Green
-		else if is_hybrid_cost() then hybrid_cost_sort()  #Hybrid
+		else if is_hybrid_cost() then hybrid_color_pair_sort()  #Hybrid (by pairs)
 		else if contains(casting_cost, match:"/") and contains(card_color, match:"artifact") then "I" # Colorless/Artifact
-		else                       "F"                       # Multicolor
+		else                       multi_color_pair_sort()   # Multicolor (by pairs)
 	)
 }
 

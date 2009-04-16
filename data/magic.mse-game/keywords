@@ -635,3 +635,8 @@ keyword:
 	match: Domain
 	mode: pseudo
 	rules: Domain — [effect] for each basic land type among lands you control.
+keyword:
+	keyword: Cascade
+	match: Cascade
+	mode: expert
+	reminder: When you play this spell, remove the top card of your library from the game until you remove a nonland card that costs less. You may play that card without paying its mana cost. Put the removed cards on the bottom of your library at random.

@@ -521,6 +521,16 @@ color_combination := {
 			dark:  template("m"),
 			light: base,
 		)
+	else if artifact and color_count > 1 and mask_hybrid_with_land() then 
+		masked_blend(
+			mask:  "artifact_blend_{type}.png",
+			dark:  template("a"),
+			light: masked_blend(
+				mask: "multicolor_blend_{type}.png",
+				dark: template("c"),
+				light: base
+			)
+		)
 	else if artifact then 
 		masked_blend(
 			mask:  "artifact_blend_{type}.png",
