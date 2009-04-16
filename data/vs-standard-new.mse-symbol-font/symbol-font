@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.8
-version: 2009-01-02
+version: 2009-02-16
 short name: New (unofficial)
 position hint: 3
 installer group: VS System/Symbol Fonts/New
@@ -34,7 +34,8 @@ symbol:
 	image: alphaflight.png
 symbol:
 	code: Anti-Matter
-	image: antimatter.png
+	image: anti-matter.png
+	image font size: 150
 symbol:
 	code: Autobot
 	image: autobots.png
@@ -53,6 +54,14 @@ symbol:
 symbol:
 	code: Birds of Prey
 	image: birdsofprey.png
+symbol:
+	code: Black Lantern
+	image: blacklantern.png
+	image font size: 90
+symbol:
+	code: Blue Lantern
+	image: bluelantern.png
+	image font size: 160
 symbol:
 	code: B.P.R.D.
 	image: bprd.png
@@ -74,6 +83,10 @@ symbol:
 symbol:
 	code: Doom
 	image: doom.png
+symbol:
+	code: Emerald Enemies
+	image: emeraldenemies.png
+	image font size: 165
 symbol:
 	code: Excalibur
 	image: excalibur.png
@@ -107,6 +120,10 @@ symbol:
 symbol:
 	code: Hydra
 	image: hydra.png
+symbol:
+	code: Indigo Lantern
+	image: indigolantern.png
+	image font size: 240
 #symbol:
 #	code: Invaders
 #	image: invaders.png
@@ -144,11 +161,22 @@ symbol:
 	code: Omega Flight
 	image: omegaflight.png
 symbol:
+	code: Orange Lantern
+	image: orangelantern.png
+	image font size: 260
+symbol:
 	code: New Warriors
 	image: newwarriors.png
 symbol:
 	code: Project Spitfire
 	image: projectspitfire.png
+symbol:
+	code: Red Lantern
+	image: redlantern.png
+	image font size: 320
+symbol:
+	code: Revenge Squad
+	image: revengesquad.png
 symbol:
 	code: Secret Society
 	image: secretsociety.png
@@ -185,6 +213,10 @@ symbol:
 symbol:
 	code: Starjammers
 	image: starjammers.png
+symbol:
+	code: Star Sapphires
+	image: starsapphires.png
+	image font size: 230
 symbol:
 	code: Team Superman
 	image: superman.png
@@ -334,17 +366,25 @@ insert symbol menu:
 		item: Anti-Matter
 		item: Arkham Inmates
 		item: Birds of Prey
+		item: Black Lantern
+		item: Blue Lantern
+		item: Emerald Enemies
 		item: Gotham Knights
 		item: Green Lantern
+		item: Indigo Lantern
 		item: JLA
 		item: JSA
 		item: League of Assassins
 		item: Legionnaires
+		item: Orange Lantern
 		item: Outsiders
+		item: Red Lantern
+		item: Revenge Squad
 		item: Secret Six
 		item: Secret Society
 		item: Shadowpact
 		item: Speed Force
+		item: Star Sapphires
 		item: Team Superman
 		item: Teen Titans
 	item:

@@ -1,6 +1,10 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 full name: VS System, textbox watermarks
-version: 2008-09-23
+version: 2009-02-04
+
+depends on:
+	package: vs-standard-official.mse-symbol-font
+	version: 2009-02-04
 
 # This file doesn't do anything, other files in this directory can be included
 # in game/style files:

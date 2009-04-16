@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.8
-version: 2009-01-02
+version: 2009-02-04
 short name: New (official)
 position hint: 1
 installer group: VS System/Symbol Fonts/Official New
@@ -26,6 +26,10 @@ symbol:
 symbol:
 	code: Activate
 	image: activate.png
+symbol:
+	code: Anti-Matter
+	image: anti-matter.png
+	image font size: 80
 symbol:
 	code: Avengers
 	image: avengers.png
@@ -205,6 +209,7 @@ insert symbol menu:
 		item: X-Men
 	item:
 		name: DC Teams
+		item: Anti-Matter
 		item: Gotham Knights
 		item: Green Lantern
 		item: JLA
