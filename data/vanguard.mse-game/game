@@ -5,7 +5,7 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2009-04-08
+version: 2009-04-22
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -749,7 +749,7 @@ keyword:
 	keyword: Sunburst
 	match: sunburst
 	mode: expert
-	reminder: It comes into play with a +1/+1 counter on it for each color of mana used to pay its cost. If it isn't a creature, use charge counters instead.
+	reminder: It comes into play with a +1/+1 counter on it for each color of mana spent to play it. If it isn't a creature, use charge counters instead.
 keyword:
 	keyword: Art rampage
 	match: art rampage <atom-param>number</atom-param>

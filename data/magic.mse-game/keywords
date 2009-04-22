@@ -325,7 +325,7 @@ keyword:
 	keyword: Sunburst
 	match: Sunburst
 	mode: expert
-	reminder: This comes into play with a {if has_pt() then "+1/+1" else "charge"} counter on it for each color of mana used to pay its cost.
+	reminder: This comes into play with a {if has_pt() then "+1/+1" else "charge"} counter on it for each color of mana spent to play it.
 keyword:
 	keyword: Art rampage
 	match: Art rampage <atom-param>number</atom-param>
