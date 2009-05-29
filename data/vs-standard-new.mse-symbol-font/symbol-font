@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.8
-version: 2009-02-16
+version: 2009-05-08
 short name: New (unofficial)
 position hint: 3
 installer group: VS System/Symbol Fonts/New
@@ -48,6 +48,9 @@ symbol:
 symbol:
 	code: Arkham Inmates
 	image: arkhaminmates.png
+symbol:
+	code: Asgardians
+	image: asgardians.png
 symbol:
 	code: Avengers
 	image: avengers.png
@@ -124,12 +127,15 @@ symbol:
 	code: Indigo Lantern
 	image: indigolantern.png
 	image font size: 240
-#symbol:
-#	code: Invaders
-#	image: invaders.png
+symbol:
+	code: Inhumans
+	image: inhumans.png
 symbol:
 	code: JLA
 	image: jla.png
+symbol:
+	code: JLI
+	image: jli.png
 symbol:
 	code: JSA
 	image: jsa.png
@@ -201,9 +207,10 @@ symbol:
 symbol:
 	code: Skeleton Crew
 	image: skeletoncrew.png
-#symbol:
-#	code: Skrull
-#	image: skull.png
+symbol:
+	code: Skrull
+	image: skrull.png
+	image font size: 185
 symbol:
 	code: Speed Force
 	image: speedforce.png
@@ -244,6 +251,15 @@ symbol:
 symbol:
 	code: Warbound
 	image: warbound.png
+symbol:
+	code: Weapon X
+	image: weaponx.png
+symbol:
+	code: X-Factor
+	image: xfactor.png
+symbol:
+	code: X-Force
+	image: xforce.png
 symbol:
 	code: X-Men
 	image: xmen.png
@@ -323,6 +339,7 @@ insert symbol menu:
 		name: Marvel Teams
 		item: AIM
 		item: Alpha Flight
+		item: Asgardians
 		item: Avengers
 		item: Brood
 		item: Brotherhood
@@ -339,6 +356,7 @@ insert symbol menu:
 		item: Heroes for Hire
 		item: Horsemen of Apocalypse
 		item: Hydra
+		item: Inhumans
 		item: Kree
 		item: Marvel Knights
 		item: Masters of Evil
@@ -351,6 +369,7 @@ insert symbol menu:
 		item: Serpent Society
 		item: Shi'ar
 		item: Shield
+		item: Skrull
 		item: Sinister Syndicate
 		item: Skeleton Crew
 		item: Spider-Friends
@@ -360,6 +379,9 @@ insert symbol menu:
 		item: The Ultimates
 		item: Underworld
 		item: Warbound
+		item: Weapon X
+		item: X-Factor
+		item: X-Force
 		item: X-Men
 	item:
 		name: DC Teams
@@ -373,6 +395,7 @@ insert symbol menu:
 		item: Green Lantern
 		item: Indigo Lantern
 		item: JLA
+		item: JLI
 		item: JSA
 		item: League of Assassins
 		item: Legionnaires
