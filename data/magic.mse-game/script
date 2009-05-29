@@ -452,9 +452,9 @@ text_filter :=
 	 	match: "[(]([^)\n]|[(][^)\n]*[)])*[)]?",
 		in_context: "(^|[[:space:]])<match>|<atom-keyword><match></",
 	 	replace: "<i-auto>&</i-auto>") +
-	# step 8 : automatic capitalization
+	# step 8 : automatic capitalization, but not after "("
 	replace@(
-		match: "([(](?:<param-[a-z]*>)?|[ ]*: <param-cost>|—| — )" # preceded by this
+		match: "([ ]*: |—| — )" # preceded by this
 		     + "([[:lower:]])" # match this
 		     + "(?![)])",      # not followed by this
 		replace: { _1 + to_upper(_2) }) +

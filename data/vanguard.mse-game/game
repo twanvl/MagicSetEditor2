@@ -5,13 +5,11 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2009-04-22
+version: 2009-05-28
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
-
 ############################################################## Functions & filters
-
 # General functions
 init script:
 	############################################################## Sorting mana symbols
@@ -148,14 +146,14 @@ init script:
 			) +
 		# step 3 : expand shortcut words ~ and CARDNAME
 		replace@(
-			match: "~|~THIS~|CARDNAME",
+			match: "~|CARDNAME",
 			in_context: "(^|[[:space:]]|\\()<match>",
 			replace: "<atom-cardname></atom-cardname>"
 			) +
 		# step 4 : fill in atom fields
 		tag_contents@(
 			tag: "<atom-cardname>",
-			contents: { if card.name=="" then "CARDNAME" else card.name }
+			contents: { if card.name=="" then "CARDNAME" else card.type + " - " + card.name }
 			) +
 		# step 4.5 : explict non mana symbols
 		replace@(
@@ -175,10 +173,10 @@ init script:
 		 	match: "[(][^)\n]*[)]?",
 			in_context: "(^|[[:space:]])<match>|<atom-keyword><match></>",
 		 	replace: "<i-auto>&</i-auto>") +
-		# step 8 : automatic capitalization
+		# step 8 : automatic capitalization, but not after "("
 		replace@(
 			match: "[a-z]",
-			in_context: "[(](<param-[a-z]*>)?<match>|[ ]*: <param-cost><match>|—<match>| — <match>",
+			in_context: "[ ]*: <match>|—<match>| — <match>",
 			replace: { to_upper() })
 		curly_quotes
 	
