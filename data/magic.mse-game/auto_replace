@@ -27,10 +27,10 @@ auto replace:
 		 — 
 auto replace:
 	match: CIP
-	replace: comes into play
+	replace: comes onto the battlefield
 auto replace:
 	match: AAA
-	replace: as an additional cost to play
+	replace: as an additional cost to cast
 auto replace:
 	match: @
 	replace: LEGENDNAME

@@ -191,9 +191,15 @@ sort_index := {
 	(if contains(card.shape, match:"split")   then "S" else " ") + # split cards come after normal ones
 	":"
 }
-# Process the name for sorting rules (specifically, remove "The", "A", and "And" at the beginning, and make lowercase)
+# Process the name for sorting rules
 sort_name :=
+	# Remove "The", "A", and "And" at the beginning
 	replace@(match: "^(The|An?) ", replace: "") +
+	# Remove commas and apostrophes
+	replace@(match: "(,|')", replace: "") +
+	# Remove bold and italic tags
+	replace@(match: "(<b>|<i>|</b>|</i>)", replace: "") +
+	# Make lowercase
 	to_lower
 
 is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicolor" }
