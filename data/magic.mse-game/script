@@ -196,7 +196,7 @@ sort_name :=
 	# Remove "The", "A", and "And" at the beginning
 	replace@(match: "^(The|An?) ", replace: "") +
 	# Remove commas and apostrophes
-	replace@(match: "(,|')", replace: "") +
+	replace@(match: "(,|'|’)", replace: "") +
 	# Remove bold and italic tags
 	replace@(match: "(<b>|<i>|</b>|</i>)", replace: "") +
 	# Make lowercase

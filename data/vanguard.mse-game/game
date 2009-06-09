@@ -146,7 +146,7 @@ init script:
 			) +
 		# step 3 : expand shortcut words ~ and CARDNAME
 		replace@(
-			match: "~|CARDNAME",
+			match: "CARDNAME",
 			in_context: "(^|[[:space:]]|\\()<match>",
 			replace: "<atom-cardname></atom-cardname>"
 			) +
@@ -196,7 +196,7 @@ init script:
 		# Remove "The", "A", and "And" at the beginning
 		replace@(match: "^(The|An?) ", replace: "") +
 		# Remove commas and apostrophes
-		replace@(match: "(,|')", replace: "") +
+		replace@(match: "(,|'|’)", replace: "") +
 		# Remove bold and italic tags
 		replace@(match: "(<b>|<i>|</b>|</i>)", replace: "") +
 		# Make lowercase
@@ -447,6 +447,12 @@ auto replace:
 auto replace:
 	match: AAA
 	replace: as an additional cost to cast
+auto replace:
+	match: ~
+	replace: CARDNAME
+auto replace:
+	match: '
+	replace: ’
 ############################################################## Card pack items
 pack type:
 	name: card

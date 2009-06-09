@@ -37,3 +37,6 @@ auto replace:
 auto replace:
 	match: ~
 	replace: CARDNAME
+auto replace:
+	match: '
+	replace: ’
