@@ -27,7 +27,7 @@ auto replace:
 		 — 
 auto replace:
 	match: CIP
-	replace: comes onto the battlefield
+	replace: enters the battlefield
 auto replace:
 	match: AAA
 	replace: as an additional cost to cast

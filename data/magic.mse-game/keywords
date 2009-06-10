@@ -146,7 +146,8 @@ keyword:
 	keyword: Trample
 	match: Trample
 	mode: core
-	reminder: If this creature would deal enough combat damage to its blockers to destroy them, you may have it deal the rest of its damage to defending player.
+	reminder: If this creature would deal enough damage to its blockers to destroy them, you may have it deal the rest of its damage to defending player or planeswalker.
+# TODO
 keyword:
 	keyword: Banding
 	match: Banding
@@ -186,7 +187,7 @@ keyword:
 	keyword: Phasing
 	match: Phasing
 	mode: old
-	reminder: At the beginning of your untap step, put this and any cards and/or counters attached to it in the phased-out zone. If this is already in the phased-out zone, return it and any cards and/or counters attached to it to the battlefield. This ability does not cause comes-onto-battlefield or leaves-battlefield abilities to trigger.
+	reminder: At the beginning of your untap step, put this and any cards and/or counters attached to it in the phased-out zone. If this is already in the phased-out zone, return it and any cards and/or counters attached to it to the battlefield. This ability does not cause enter-the-battlefield or exit-the-battlefield abilities to trigger.
 keyword:
 	keyword: Flanking
 	match: Flanking
@@ -231,7 +232,7 @@ keyword:
 	keyword: Fading
 	match: Fading <atom-param>number</atom-param>
 	mode: expert
-	reminder: This comes onto the battlefield with {english_number_a(param1)} fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can’t, sacrifice it.
+	reminder: This enters the battlefield with {english_number_a(param1)} fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can’t, sacrifice it.
 keyword:
 	keyword: Kicker
 	match: Kicker <atom-param>cost</atom-param>
@@ -241,7 +242,7 @@ keyword:
 	keyword: Flashback
 	match: Flashback <atom-param>cost</atom-param>
 	mode: expert
-	reminder: You may cast this card from your graveyard for its flashback cost. Then remove it from the game.
+	reminder: You may cast this card from your graveyard for its flashback cost. Then exile it.
 keyword:
 	keyword: Threshold
 	match: Threshold
@@ -266,7 +267,7 @@ keyword:
 	keyword: Amplify
 	match: Amplify <atom-param>number</atom-param>
 	mode: expert
-	reminder: As this card comes onto the battlefield, put {english_number_a(param1)} +1/+1 counter(s) on it for each {separate_words(spacer: " and/or ", card.sub_type)} card you reveal in your hand.
+	reminder: As this card enters the battlefield, put {english_number_a(param1)} +1/+1 counter(s) on it for each {separate_words(spacer: " and/or ", card.sub_type)} card you reveal in your hand.
 keyword:
 	keyword: Double strike
 	match: Double strike
@@ -306,12 +307,12 @@ keyword:
 	keyword: Imprint
 	match: Imprint — <atom-param>action</atom-param>
 	mode: expert
-	reminder: The removed card is imprinted on this artifact.
+	reminder: The exiled card is imprinted on this artifact.
 keyword:
 	keyword: Modular
 	match: Modular <atom-param>number</atom-param>
 	mode: expert
-	reminder: This comes onto the battlefield with {english_number_a(param1)} +1/+1 counter(s) on it. When it’s put into a graveyard, you may put its +1/+1 counters on target artifact creature.
+	reminder: This enters the battlefield with {english_number_a(param1)} +1/+1 counter(s) on it. When it’s put into a graveyard, you may put its +1/+1 counters on target artifact creature.
 keyword:
 	keyword: Scry
 	match: Scry <atom-param>number</atom-param>
@@ -325,7 +326,7 @@ keyword:
 	keyword: Sunburst
 	match: Sunburst
 	mode: expert
-	reminder: This comes onto the battlefield with a {if has_pt() then "+1/+1" else "charge"} counter on it for each color of mana spent to cast it.
+	reminder: This enters the battlefield with a {if has_pt() then "+1/+1" else "charge"} counter on it for each color of mana spent to cast it.
 keyword:
 	keyword: Art rampage
 	match: Art rampage <atom-param>number</atom-param>
@@ -335,7 +336,7 @@ keyword:
 	keyword: Super haste
 	match: Super haste
 	mode: expert
-	reminder: This may attack the turn before you cast it. (You may put this card onto the battlefield from your hand, tapped and attacking, during your declare attackers step. If you do, you lose the game at the end of your next turn unless you pay this card's mana cost during that turn.)
+	reminder: This may attack the turn before you cast it. (You may have this card enter the battlefield from your hand, tapped and attacking, during your declare attackers step. If you do, you lose the game at the end of your next turn unless you pay this card's mana cost during that turn.)
 keyword:
 	keyword: Gotcha
 	match: Gotcha
@@ -360,7 +361,7 @@ keyword:
 	keyword: Enchant
 	match: Enchant <atom-param>name</atom-param>
 	mode: core
-	reminder: Target a {param1} as you cast this. This card comes onto the battlefield attached to that {param1}.
+	reminder: Target a {param1} as you cast this. This card enters the battlefield attached to that {param1}.
 keyword:
 	keyword: Vigilance
 	match: Vigilance
@@ -375,12 +376,12 @@ keyword:
 	keyword: Offering
 	match: <atom-param>prefix</atom-param> offering
 	mode: expert
-	reminder: You may cast this card any time you could play an instant by sacrificing a {param1} and paying the difference in mana costs between this and the sacrificed {param1}. Mana cost includes color.
+	reminder: You may cast this card any time you could cast an instant by sacrificing a {param1} and paying the difference in mana costs between this and the sacrificed {param1}. Mana cost includes color.
 keyword:
 	keyword: Ninjutsu
 	match: Ninjutsu <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.
+	reminder: {param1}, Return an unblocked attacker you control to hand: This card enters the battlefield from your hand tapped and attacking.
 keyword:
 	keyword: Epic
 	match: Epic
@@ -405,7 +406,7 @@ keyword:
 	keyword: Transmute
 	match: Transmute <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Play only as a sorcery.
+	reminder: {param1}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Activate only as a sorcery.
 keyword:
 	keyword: Dredge
 	match: Dredge <atom-param>number</atom-param>
@@ -420,12 +421,12 @@ keyword:
 	keyword: Haunt
 	match: Haunt
 	mode: expert
-	reminder: When this { if contains(card.type,match:"Instant") or contains(card.type,match:"Sorcery") then "spell card is put into a graveyard after resolving," else "card is put into a graveyard from the battlefield," } remove it from the game haunting target creature.
+	reminder: When this { if contains(card.type,match:"Instant") or contains(card.type,match:"Sorcery") then "spell card is put into a graveyard after resolving," else "card is put into a graveyard from the battlefield," } exile it haunting target creature.
 keyword:
 	keyword: Bloodthirst
 	match: Bloodthirst <atom-param>number</atom-param>
 	mode: expert
-	reminder: If an opponent was dealt damage this turn, this {if has_pt() then "creature" else "permanent"} comes onto the battlefield with {english_number_a(param1)} +1/+1 counter(s) on it.
+	reminder: If an opponent was dealt damage this turn, this {if has_pt() then "creature" else "permanent"} enters the battlefield with {english_number_a(param1)} +1/+1 counter(s) on it.
 keyword:
 	keyword: Replicate
 	match: Replicate <atom-param>cost</atom-param>
@@ -435,12 +436,12 @@ keyword:
 	keyword: Graft
 	match: Graft <atom-param>number</atom-param>
 	mode: expert
-	reminder: {if has_pt() then "This creature" else "This permanent"} comes onto the battlefield with {english_number_a(param1)} +1/+1 counter(s) on it. Whenever {if has_pt() then "another" else "a"} creature comes onto the battlefield, you may move a +1/+1 counter from {if has_pt() then "this creature" else "this permanent"} onto it.
+	reminder: {if has_pt() then "This creature" else "This permanent"} enters the battlefield with {english_number_a(param1)} +1/+1 counter(s) on it. Whenever {if has_pt() then "another" else "a"} creature enters the battlefield, you may move a +1/+1 counter from {if has_pt() then "this creature" else "this permanent"} onto it.
 keyword:
 	keyword: Forecast
 	match: Forecast — <atom-param>action</atom-param>, Reveal <atom-param>name</atom-param> from your hand: <atom-param>action</atom-param>
 	mode: expert
-	reminder: Play this ability only during your upkeep and only once each turn.
+	reminder: Activate this ability only during your upkeep and only once each turn.
 keyword:
 	keyword: Hellbent
 	match: Hellbent
@@ -450,7 +451,7 @@ keyword:
 	keyword: Recover
 	match: Recover <atom-param>cost</atom-param>
 	mode: expert
-	reminder: When a creature is put into your graveyard from the battlefield, you may {for_mana_costs(add:"pay ",param1)}. If you do, return this card from your graveyard to your hand. Otherwise, remove this card from the game.
+	reminder: When a creature is put into your graveyard from the battlefield, you may {for_mana_costs(add:"pay ",param1)}. If you do, return this card from your graveyard to your hand. Otherwise, exile this card.
 keyword:
 	keyword: Ripple
 	match: Ripple <atom-param>number</atom-param>
@@ -465,22 +466,22 @@ keyword:
 	keyword: Split second
 	match: Split second
 	mode: expert
-	reminder: As long as this spell is on the stack, players can't cast spells or play activated abilities that aren't mana abilities.
+	reminder: As long as this spell is on the stack, players can't cast spells or activate activated abilities that aren't mana abilities.
 keyword:
 	keyword: Suspend
 	match: Suspend <atom-param>number</atom-param>—<atom-param>cost</atom-param>
 	mode: expert
-	reminder: Rather than cast this card from your hand,{if has_cc() then " you may" else ""} {for_mana_costs(add:"pay ", param2)} and remove it from the game with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, cast it without paying its mana cost.{if has_pt() then " It has haste." }
+	reminder: Rather than cast this card from your hand,{if has_cc() then " you may" else ""} {for_mana_costs(add:"pay ", param2)} and exile it with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter. When the last is removed, cast it without paying its mana cost.{if has_pt() then " It has haste." }
 keyword:
 	keyword: Vanishing
 	match: Vanishing <atom-param>number</atom-param>
 	mode: expert
-	reminder: This permanent comes onto the battlefield with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it.
+	reminder: This permanent enters the battlefield with {english_number_a(param1)} time counter(s) on it. At the beginning of your upkeep, remove a time counter from it. When the last is removed, sacrifice it.
 keyword:
 	keyword: Deathtouch
 	match: Deathtouch
 	mode: core
-	reminder: Whenever this creature deals damage to a creature, destroy that creature.
+	reminder: Creatures dealt damage by this creature are destroyed. You can divide this creature's combat damage among any of the creatures blocking or blocked by it.
 keyword:
 	keyword: Reach
 	match: Reach
@@ -495,7 +496,7 @@ keyword:
 	keyword: Lifelink
 	match: Lifelink
 	mode: core
-	reminder: Whenever this creature deals damage, you gain that much life.
+	reminder: Damage dealt by this creature also causes you to gain that much life.
 keyword:
 	keyword: Absorb
 	match: Absorb <atom-param>number</atom-param>
@@ -514,7 +515,7 @@ keyword:
 	keyword: Transfigure
 	match: Transfigure <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}, Sacrifice this creature: Search your library for a creature card with the same converted mana cost as this creature and put that card onto the battlefield. Then shuffle your library. Play only as a sorcery.
+	reminder: {param1}, Sacrifice this creature: Search your library for a creature card with the same converted mana cost as this creature and have that card enter the battlefield. Then shuffle your library. Activate only as a sorcery.
 keyword:
 	keyword: Aura swap
 	match: Aura swap <atom-param>cost</atom-param>
@@ -529,7 +530,7 @@ keyword:
 	keyword: Delve
 	match: Delve
 	mode: expert
-	reminder: You may remove any number of cards in your graveyard from the game as you cast this spell. It costs <sym>1</sym> less to cast for each card removed this way.
+	reminder: You may exile any number of cards in your graveyard as you cast this spell. It costs <sym>1</sym> less to cast for each card exiled this way.
 keyword:
 	keyword: Poisonous
 	match: Poisonous <atom-param>number</atom-param>
@@ -544,7 +545,7 @@ keyword:
 	keyword: Fortify
 	match: Fortify <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}: Attach to target land you control. Fortify only as a sorcery. This card comes onto the battlefield unattached and stays on the battlefield if the land leaves the battlefield.
+	reminder: {param1}: Attach to target land you control. Fortify only as a sorcery. This card enters the battlefield unattached and stays in the battlefield if the land exits the battlefield.
 keyword:
 	keyword: Grandeur
 	match: Grandeur
@@ -554,12 +555,12 @@ keyword:
 	keyword: Evoke
 	match: Evoke <atom-param>cost</atom-param>
 	mode: expert
-	reminder: You may cast this spell for its evoke cost. If you do, it's sacrificed when it comes onto the battlefield.
+	reminder: You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters the battlefield.
 keyword:
 	keyword: Champion
 	match: Champion<atom-param>a</atom-param><atom-param>name</atom-param>
 	mode: expert
-	reminder: When this comes onto the battlefield, sacrifice it unless you remove another{param2} you control from the game. When this leaves the battlefield, that card returns to the battlefield.
+	reminder: When this enters the battlefield, sacrifice it unless you exile another{param2} you control. When this exits the battlefield, that card re-enters the battlefield.
 keyword:
 	keyword: Clash
 	match: Clash
@@ -574,7 +575,7 @@ keyword:
 	keyword: Hideaway
 	match: Hideaway
 	mode: expert
-	reminder: This land comes onto the battlefield tapped. When it does, look at the top four cards of your library, remove one from the game face down, then put the rest on the bottom of your library.
+	reminder: This land enters the battlefield tapped. When it does, look at the top four cards of your library, exile one face down, then put the rest on the bottom of your library.
 keyword:
 	keyword: Prowl
 	match: Prowl <atom-param>cost</atom-param>
@@ -594,7 +595,7 @@ keyword:
 	keyword: Persist
 	match: Persist
 	mode: expert
-	reminder: When this creature is put into a graveyard from the battlefield, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.
+	reminder: When this creature is put into a graveyard from the battlefield, if it had no -1/-1 counters on it, it re-enters the battlefield under its owner's control with a -1/-1 counter on it.
 keyword:
 	keyword: Wither
 	match: Wither
@@ -619,12 +620,12 @@ keyword:
 	keyword: Unearth
 	match: Unearth <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}: Return this card from your graveyard to the battlefield. {if has_pt() then "It gains haste. " else "" }Remove it from the game at end of turn or if it would leave the battlefield. Unearth only as a sorcery.
+	reminder: {param1}: Return this card from your graveyard to the battlefield. {if has_pt() then "It gains haste. " else "" }Exile it at the beginning of the end step or if it would exit the battlefield. Unearth only as a sorcery.
 keyword:
 	keyword: Devour
 	match: Devour <atom-param>number</atom-param>
 	mode: expert
-	reminder: As this creature comes onto the battlefield, you may sacrifice any number of creatures. This creature comes onto the battlefield with { if param1.value == 1 then "" else if param1.value == 2 then "twice " else english_number(param1) + " times " }that many +1/+1 counters on it.
+	reminder: As this creature enters the battlefield, you may sacrifice any number of creatures. This creature enters the battlefield with { if param1.value == 1 then "" else if param1.value == 2 then "twice " else english_number(param1) + " times " }that many +1/+1 counters on it.
 keyword:
 	keyword: Exalted
 	match: Exalted
@@ -639,4 +640,4 @@ keyword:
 	keyword: Cascade
 	match: Cascade
 	mode: expert
-	reminder: When you cast this spell, remove the top card of your library from the game until you remove a nonland card that costs less. You may cast that card without paying its mana cost. Put the removed cards on the bottom of your library at random.
+	reminder: When you cast this spell, exile the top card of your library until you exile a nonland card that costs less. You may cast that card without paying its mana cost. Put the exiled cards on the bottom of your library at random.
