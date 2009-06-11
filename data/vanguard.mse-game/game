@@ -991,7 +991,7 @@ keyword:
 	keyword: Champion
 	match: champion<atom-param>a</atom-param><atom-param>name</atom-param>
 	mode: expert
-	reminder: When it enters the battlefield, sacrifice it unless you exile another {param2} you control. When it exits the battlefield, that card re-enters the battlefield.
+	reminder: When it enters the battlefield, sacrifice it unless you exile another {param2} you control. When it exits the battlefield, return that card to the battlefield.
 keyword:
 	keyword: Clash
 	match: clash
@@ -1025,7 +1025,7 @@ keyword:
 	keyword: Persist
 	match: persist
 	mode: expert
-	reminder: When it is put into a graveyard from the battlefield, if it had no -1/-1 counters on it, it re-enters the battlefield under its owner's control with a -1/-1 counter on it.
+	reminder: When it is put into a graveyard from the battlefield, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.
 keyword:
 	keyword: Wither
 	match: wither
