@@ -245,6 +245,12 @@ String Package::nameOut(const String& file) {
 		// new file
 		it = addFile(name);
 	}
+	// New files should automatically be kept
+	// NOTE: coppro discovered that this didn't match comments in
+	// package.hpp. He could be wrong about this. Please change this
+	// back and add a call to referenceFile in Set::reflect_cards if
+	// this is wrong.
+	it->second.keep = true;
 	// return stream
 	if (it->second.wasWritten()) {
 		return it->second.tempName;

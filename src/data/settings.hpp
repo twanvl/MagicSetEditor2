@@ -145,6 +145,9 @@ class Settings {
 	UInt set_window_height;
 	UInt card_notes_height;
 	bool open_sets_in_new_window;
+
+	// --------------------------------------------------- : Set saving
+	bool save_cards_separately;
 	
 	// --------------------------------------------------- : Symbol editor
 	UInt symbol_grid_size;

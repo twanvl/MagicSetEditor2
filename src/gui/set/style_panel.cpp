@@ -70,7 +70,7 @@ void StylePanel::updateListSize() {
 	// we only need enough columns to show all items
 	int x_room = GetSize().x - editor->GetBestSize().x - 6;
 	size_t need_columns = (size_t)ceil(list->requiredWidth() / (double)x_room);
-	size_t column_count = max(1ul, min(fit_columns, need_columns));
+	size_t column_count = max((size_t)1, min(fit_columns, need_columns));
 	// change count
 	if (column_count != list->column_count) {
 		list->column_count = column_count;

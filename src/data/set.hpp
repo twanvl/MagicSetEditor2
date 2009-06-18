@@ -122,6 +122,8 @@ class Set : public Packaged {
 	
   private:
 	DECLARE_REFLECTION();
+	template <typename Tag>
+	void reflect_cards (Tag& tag);
 	
 	/// Object for managing and executing scripts
 	scoped_ptr<SetScriptManager> script_manager;

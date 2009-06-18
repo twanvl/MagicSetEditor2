@@ -249,6 +249,7 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(Settings) {
 	REFLECT(set_window_height);
 	REFLECT(card_notes_height);
 	REFLECT(open_sets_in_new_window);
+	REFLECT(save_cards_separately);
 	REFLECT(symbol_grid_size);
 	REFLECT(symbol_grid);
 	REFLECT(symbol_grid_snap);

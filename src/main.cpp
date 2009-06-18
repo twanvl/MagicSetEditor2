@@ -93,9 +93,9 @@ int MSE::OnRun() {
 		// interpret command line
 		if (argc > 1) {
 			try {
-				// Command line argument, find its extension
 				String arg = argv[1];
-				wxFileName f(argv[1]);
+				// Find the extension
+				wxFileName f(arg.Mid(0,arg.find_last_not_of(_("\\/"))+1));
 				if (f.GetExt() == _("mse-symbol")) {
 					// Show the symbol editor
 					Window* wnd = new SymbolWindow(nullptr, argv[1]);

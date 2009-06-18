@@ -180,12 +180,48 @@ IMPLEMENT_REFLECTION(Set) {
 		if (stylesheet) {
 			REFLECT_N("styling", styling_data);
 		}
-		REFLECT(cards);
+		// Experimental: save each card to a different file
+		reflect_cards(tag);
 		REFLECT(keywords);
 		REFLECT(pack_types);
 	}
 	reflect_set_info_get_member(tag,data);
 	REFLECT(apprentice_code);
+}
+
+// TODO: this function sucks
+bool isnt_filename_safe (Char c) {
+  return !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'z') ||
+          (c >= _('0') && c <= _('9')) || c == _(' '));
+}
+
+// TODO: make this a more generic function to be used elsewhere
+template <typename Tag>
+void Set::reflect_cards (Tag& tag) {
+	REFLECT(cards);
+}
+
+template <>
+void Set::reflect_cards<Writer> (Writer& tag) {
+	if (settings.save_cards_separately) {
+		set<String> used;
+		FOR_EACH(card, cards) {
+			String filename = normalize_internal_filename(clean_filename(card->identification()));
+			String full_name = filename;
+			int i = 0;
+
+			while (used.find(full_name) != used.end()) {
+				full_name = filename << _(".") << ++i;
+			}
+			used.insert(full_name);
+
+			Writer writer(openOut(full_name), app_version);
+			writer.handle(_("card"), card);
+			REFLECT_N("include file", full_name);
+		}
+	} else {
+		REFLECT(cards);
+	}
 }
 
 // ----------------------------------------------------------------------------- : Script utilities
