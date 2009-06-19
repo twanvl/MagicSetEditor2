@@ -1,6 +1,6 @@
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-//| Copyright:    (C) 2001 - 2008 Twan van Laarhoven and "coppro"              |
+//| Copyright:    (C) 2001 - 2009 Twan van Laarhoven and Sean Hunt             |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
@@ -17,13 +17,16 @@
 class MSE2FileFormat : public FileFormat {
   public:
 	virtual String extension()          { return _("mse-set"); }
+	virtual String matches()            { return _("*.mse-set;set"); }
 	virtual String name()               { return _("Magic Set Editor sets (*.mse-set)"); }
 	virtual bool canImport()            { return true; }
 	virtual bool canExport(const Game&) { return true; }
 	virtual SetP importSet(const String& filename) {
+		wxString set_name = filename;
+		filename.EndsWith(_("/set"), &set_name);
 		SetP set(new Set);
-		set->open(filename);
-		settings.addRecentFile(filename);
+		set->open(set_name);
+		settings.addRecentFile(set_name);
 		return set;
 	}
 	virtual void exportSet(Set& set, const String& filename, bool is_copy) {

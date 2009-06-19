@@ -1,6 +1,6 @@
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-//| Copyright:    (C) 2001 - 2008 Twan van Laarhoven and "coppro"              |
+//| Copyright:    (C) 2001 - 2009 Twan van Laarhoven and Sean Hunt             |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
@@ -101,7 +101,11 @@ void WelcomeWindow::onOpenSet(wxCommandEvent&) {
 	if (dlg->ShowModal() == wxID_OK) {
 		settings.default_set_dir = dlg->GetDirectory();
 		wxBusyCursor wait;
-		close(import_set(dlg->GetPath()));
+		try {
+			close(import_set(dlg->GetPath()));
+		} catch (Error& e) {
+			handle_error(_("Error loading set: ") + e.what());
+		}
 	}
 }
 

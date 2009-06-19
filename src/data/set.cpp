@@ -1,6 +1,6 @@
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-//| Copyright:    (C) 2001 - 2008 Twan van Laarhoven and "coppro"              |
+//| Copyright:    (C) 2001 - 2009 Twan van Laarhoven and Sean Hunt             |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
@@ -203,7 +203,8 @@ void Set::reflect_cards (Tag& tag) {
 
 template <>
 void Set::reflect_cards<Writer> (Writer& tag) {
-	if (settings.save_cards_separately) {
+	// TODO: disable for zipfiles
+	if (true) {
 		set<String> used;
 		FOR_EACH(card, cards) {
 			String filename = normalize_internal_filename(clean_filename(card->identification()));
@@ -215,8 +216,12 @@ void Set::reflect_cards<Writer> (Writer& tag) {
 			}
 			used.insert(full_name);
 
+			// writeFile won't quite work because we'd need
+			// include file: card: filename
+			// to do that
 			Writer writer(openOut(full_name), app_version);
 			writer.handle(_("card"), card);
+			referenceFile(full_name);
 			REFLECT_N("include file", full_name);
 		}
 	} else {

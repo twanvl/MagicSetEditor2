@@ -1,6 +1,6 @@
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-//| Copyright:    (C) 2001 - 2008 Twan van Laarhoven and "coppro"              |
+//| Copyright:    (C) 2001 - 2009 Twan van Laarhoven and Sean Hunt             |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
@@ -26,6 +26,10 @@ class FileFormat : public IntrusivePtrVirtualBase {
 	virtual ~FileFormat() {}
 	/// File extension used by this file format
 	virtual String extension() = 0;
+	/// What to match against
+	virtual String matches() {
+		return _("*.") + extension();
+	}
 	/// Name of the filter
 	virtual String name() = 0;
 	/// Can it be used for importing sets?

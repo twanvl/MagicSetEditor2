@@ -1,6 +1,6 @@
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-//| Copyright:    (C) 2001 - 2008 Twan van Laarhoven and "coppro"              |
+//| Copyright:    (C) 2001 - 2009 Twan van Laarhoven and Sean Hunt             |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
@@ -145,9 +145,6 @@ class Settings {
 	UInt set_window_height;
 	UInt card_notes_height;
 	bool open_sets_in_new_window;
-
-	// --------------------------------------------------- : Set saving
-	bool save_cards_separately;
 	
 	// --------------------------------------------------- : Symbol editor
 	UInt symbol_grid_size;

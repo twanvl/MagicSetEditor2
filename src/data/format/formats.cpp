@@ -1,6 +1,6 @@
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-//| Copyright:    (C) 2001 - 2008 Twan van Laarhoven and "coppro"              |
+//| Copyright:    (C) 2001 - 2009 Twan van Laarhoven and Sean Hunt             |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
@@ -30,8 +30,8 @@ String import_formats() {
 	FOR_EACH(f, file_formats) {
 		if (f->canImport()) {
 			if (!all_extensions.empty()) all_extensions += _(";");
-			all_extensions += _("*.") + f->extension();
-			type_strings   += _("|") + f->name() + _("|*.") + f->extension();
+			all_extensions += f->matches();
+			type_strings   += _("|") + f->name() + _("|") + f->matches();
 		}
 	}
 	return _("Set files|") + all_extensions + type_strings + _("|All files (*.*)|*");
@@ -42,7 +42,7 @@ String export_formats(const Game& game) {
 	FOR_EACH(f, file_formats) {
 		if (f->canExport(game)) {
 			if (!type_strings.empty()) type_strings += _("|");
-			type_strings += f->name() + _("|*.") + f->extension();
+			type_strings += f->name() + _("|") + f->matches();
 		}
 	}
 	return type_strings;

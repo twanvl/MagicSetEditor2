@@ -1,6 +1,6 @@
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-//| Copyright:    (C) 2001 - 2008 Twan van Laarhoven and "coppro"              |
+//| Copyright:    (C) 2001 - 2009 Twan van Laarhoven and Sean Hunt             |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
@@ -245,12 +245,7 @@ String Package::nameOut(const String& file) {
 		// new file
 		it = addFile(name);
 	}
-	// New files should automatically be kept
-	// NOTE: coppro discovered that this didn't match comments in
-	// package.hpp. He could be wrong about this. Please change this
-	// back and add a call to referenceFile in Set::reflect_cards if
-	// this is wrong.
-	it->second.keep = true;
+
 	// return stream
 	if (it->second.wasWritten()) {
 		return it->second.tempName;

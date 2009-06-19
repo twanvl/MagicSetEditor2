@@ -1,6 +1,6 @@
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-//| Copyright:    (C) 2001 - 2008 Twan van Laarhoven and "coppro"              |
+//| Copyright:    (C) 2001 - 2009 Twan van Laarhoven and Sean Hunt             |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
@@ -119,7 +119,7 @@ class Set : public Packaged {
 	Version fileVersion() const;
 	/// Validate that the set is correctly loaded
 	virtual void validate(Version = app_version);
-	
+
   private:
 	DECLARE_REFLECTION();
 	template <typename Tag>
