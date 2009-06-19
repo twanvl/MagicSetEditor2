@@ -189,12 +189,6 @@ IMPLEMENT_REFLECTION(Set) {
 	REFLECT(apprentice_code);
 }
 
-// TODO: this function sucks
-bool isnt_filename_safe (Char c) {
-  return !((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'z') ||
-          (c >= _('0') && c <= _('9')) || c == _(' '));
-}
-
 // TODO: make this a more generic function to be used elsewhere
 template <typename Tag>
 void Set::reflect_cards (Tag& tag) {
