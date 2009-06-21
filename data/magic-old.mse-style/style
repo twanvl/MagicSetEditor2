@@ -1,4 +1,4 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 game: magic
 short name: Old style
 full name: Before 8th edition
@@ -6,7 +6,7 @@ installer group: magic/old style/normal cards
 icon: card-sample.png
 position hint: 101
 
-version: 2008-08-26
+version: 2009-06-20
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -14,13 +14,9 @@ depends on:
 	package: magic-watermarks.mse-include
 	version: 2007-12-29
 depends on:
-	package: magic-mana-large.mse-symbol-font
-	version: 2007-09-23
-depends on:
 	package: magic-mana-small.mse-symbol-font
 	version: 2007-09-23
 
-card background: white
 card width: 375
 card height: 523
 card dpi: 150
@@ -172,9 +168,9 @@ styling style:
 	tap symbol:
 		render style: both
 		choice images:
-			modern:     /magic-mana-large.mse-symbol-font/mana_t.png
-			old:        /magic-mana-large.mse-symbol-font/mana_t_old.png
-			diagonal T: /magic-mana-large.mse-symbol-font/mana_t_older.png
+			modern:     /magic-mana-small.mse-symbol-font/mana_t.png
+			old:        /magic-mana-small.mse-symbol-font/mana_t_old.png
+			diagonal T: /magic-mana-small.mse-symbol-font/mana_t_older.png
 	center text:
 		render style: both
 		choice images:
