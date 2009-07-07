@@ -6,7 +6,7 @@ installer group: magic/old style/split cards
 icon: card-sample.png
 position hint: 103
 
-version: 2009-06-20
+version: 2009-07-06
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -21,7 +21,6 @@ card width: 523
 card height: 375
 card dpi: 150
 # Author: Buttock1234
-# Lots of copy/paste from magic-new.mse-style
 ############################################################## Extra scripts
 init script:
 	# Use the normal tap symbol
@@ -153,6 +152,12 @@ styling field:
 	description: Should the artist and copyright lines be left aligned, as seen in Tempest?
 	initial: no
 styling field:
+	type: package choice
+	name: overlay
+	description: Should there be an overlay applied, such as foil?
+	match: magic-overlay-*.mse-include
+	required: false
+styling field:
 	type: choice
 	name: pt font
 	description: Should the font used for p/t be MPlantin or MPlantin-Bold?  MPlantin was used until Mirage.
@@ -189,13 +194,13 @@ card style:
 		width:	523
 		height:	375
 		radius: 18
-		z index: -2
+		z index: -1
 	card color:
 		left:	18
 		top:	18
 		width:	236
 		height:	338
-		z index: -1
+		z index: 0
 		render style: image
 		popup style: in place
 		image: { card_background() }
@@ -204,7 +209,7 @@ card style:
 		top:	18
 		width:	236
 		height:	338
-		z index: -1
+		z index: 0
 		render style: image
 		popup style: in place
 		image: { card_background() }
@@ -314,7 +319,7 @@ card style:
 		top : 207
 		width: 26
 		height: 13
-		z index: 1
+		z index: 2
 		alignment: middle right
 		render style: image
 		choice images:
@@ -346,7 +351,7 @@ card style:
 		top : 207
 		width: 26
 		height: 13
-		z index: 1
+		z index: 2
 		alignment: middle right
 		render style: image
 		choice images:
@@ -456,7 +461,7 @@ card style:
 		include file: /magic-watermarks.mse-include/watermarks-old
 	############################# PT
 	pt:
-		z index: 4
+		z index: 1
 		left:	208
 		top:	331
 		width:	37
@@ -471,7 +476,7 @@ card style:
 			shadow displacement y: 1
 			separator color: rgb(200,0,0)
 	pt 2:
-		z index: 4
+		z index: 1
 		left:	460
 		top:	331
 		width:	37
@@ -536,3 +541,20 @@ card style:
 			name: MPlantin
 			size: 6
 			color: { font_color(card.card_color_2) }
+############################################################## Extra card fields
+extra card field:
+	type: choice
+	name: foil layer
+	choice: foil
+	save value: false
+	editable: false
+extra card style:
+	foil layer:
+		right: 523
+		bottom: 0
+		width: 375
+		height: 523
+		z index: 3
+		angle: 90
+		render style: image
+		image: {if styling.overlay == "" then nil else styling.overlay + "/overlay.png"}

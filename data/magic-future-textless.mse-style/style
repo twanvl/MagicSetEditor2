@@ -6,7 +6,7 @@ installer group: magic/Future/Textless cards
 icon: card-sample.png
 position hint: 055
 
-version: 2009-01-10
+version: 2009-07-06
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -17,15 +17,12 @@ depends on:
 	package: magic-mana-future.mse-symbol-font
 	version: 2007-09-23
 
-card background: white
 card width: 375
 card height: 523
 card dpi: 150
-
 #By: Pichoro
 #Images by Spiderboy4, Buttock1234, and Artfreakwiu
 ############################################################## Extra scripts
-
 init script:
 	# Should hybrids have a grey name?
 	mask_hybrid_with_land := { styling.grey_hybrid_name }
@@ -90,7 +87,6 @@ set info style:
 			fill type: solid
 			fill color:   rgb(255,255,255)
 			border color: rgb(0,0,0)
-
 ############################################################## Extra style options
 styling field:
 	type: boolean
@@ -115,7 +111,12 @@ styling field:
 	name: inverted common symbol
 	description: Should the common rarity symbol be inverted, like in Coldsnap?
 	initial: no
-
+styling field:
+	type: package choice
+	name: overlay
+	description: Should there be an overlay applied, such as foil?
+	match: magic-overlay-*.mse-include
+	required: false
 styling style:
 	use guild mana symbols:
 		choice images:
@@ -125,7 +126,6 @@ styling style:
 		choice images:
 			no:  { symbol_variation(symbol: set.symbol, variation: "common") }
 			yes: { symbol_variation(symbol: set.symbol, variation: "invertedcommon") }
-
 ############################################################## Card fields
 card style:
 	############################# Background stuff
@@ -140,17 +140,16 @@ card style:
 		top width:    17
 		bottom width: 18
 		mask: bordermask.png
-		z index: 2
+		z index: 4
 	card color:
 		left:	0
 		top:	0
 		width:	375
 		height:	523
-		z index: -2
+		z index: 0
 		render style: image
 		popup style: in place
 		image: { card_background() }
-
 	############################# Name line
 	name:
 		left: { if card.card_symbol=="none" then 73 else 88 }
@@ -205,7 +204,7 @@ card style:
 		top : 35
 		height: 20
 		width: 14
-		z index: 2
+		z index: 1
 		render style: image
 		choice images:
 			tombstone: tombstone.png
@@ -214,7 +213,7 @@ card style:
 		top: 25
 		width: 21
 		height: 20
-		z index: 2
+		z index: 1
 		render style: image
 		choice images:
 			artifact: { "/magic-future-common.mse-include/artifact_" + typesymbol_color(value) + ".png" }
@@ -225,16 +224,14 @@ card style:
 			multitype: { "/magic-future-common.mse-include/multitype_" + typesymbol_color(value) + ".png" }
 			sorcery: { "/magic-future-common.mse-include/sorcery_" + typesymbol_color(value) + ".png" }
 			planeswalker: { "/magic-future-common.mse-include/planeswalker_" + typesymbol_color(value) + ".png" }
-
 	############################# Image
 	image:
 		left: 37
 		top: 46
 		width: 322
 		height: 418
-		z index: 0
+		z index: 1
 		mask: mask_image.png
-
 	############################# Card type
 	type:
 		left: 49
@@ -291,10 +288,9 @@ card style:
 			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
 			mythic rare:       script: symbol_variation(symbol: set.symbol, variation: "mythic rare")
 			special:    script: symbol_variation(symbol: set.symbol, variation: "special")
-
 	############################# PT
 	pt:
-		z index: 4
+		z index: 2
 		left:	287
 		top:	467
 		width:	60
@@ -326,13 +322,12 @@ card style:
 			separator color: rgb(200,0,0)
 	############################# Card sorting / numbering
 	############################# Copyright stuff
-
 	illustrator:
 		right: { if card.pt != "" then 281 else 341 }
 		top : 478
 		left: 30
 		height: 16
-		z index: 2
+		z index: 1
 		alignment: middle right
 		font:
 			name: Matrix
@@ -344,13 +339,12 @@ card style:
 					contains(card.card_color, match:"multicolor") or
 					contains(card.card_color, match:"white") then rgb(0,0,0)
 					else rgb(255,255,255)
-
 	copyright line:
 		left: 30
 		top : 491
 		right: { if card.pt != "" then 281 else 341 }
 		height: 12
-		z index: 2
+		z index: 1
 		alignment: bottom right
 		font:
 			name: MPlantin
@@ -362,7 +356,6 @@ card style:
 					contains(card.card_color, match:"multicolor") or
 					contains(card.card_color, match:"white") then rgb(0,0,0)
 					else rgb(255,255,255)
-
 ############################################################## Extra card fields
 extra card field:
 	type: choice
@@ -371,11 +364,16 @@ extra card field:
 	editable: false
 extra card field:
 	type: choice
+	name: foil layer
+	choice: foil
+	save value: false
+	editable: false
+extra card field:
+	type: choice
 	name: paintbrush
 	script: paintbrush_font(value)
 	editable: false
-	choice: black
-	choice: white
+	save value: false
 extra card style:
 	pt box:
 		right: 357
@@ -392,8 +390,16 @@ extra card style:
 		top : 479
 		width: 40
 		height: 15
-		z index: 2
+		z index: 1
 		render style: image
 		choice images:
 			black: /magic-future-common.mse-include/paintbrush_black.png
 			white: /magic-future-common.mse-include/paintbrush_white.png
+	foil layer:
+		left: 0
+		top : 0
+		width: 375
+		height: 523
+		z index: 3
+		render style: image
+		image: {if styling.overlay == "" then nil else styling.overlay + "/overlay.png"}

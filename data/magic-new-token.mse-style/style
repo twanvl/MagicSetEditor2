@@ -6,7 +6,7 @@ installer group: magic/new style/tokens
 icon: card-sample.png
 position hint: 007
 
-version: 2009-06-17
+version: 2009-07-06
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -26,9 +26,8 @@ depends on:
 card width: 375
 card height: 523
 card dpi: 150
-
+# By Pichoro
 ############################################################## Extra scripts
-
 init script:
 	# Should hybrids have a grey name?
 	mask_hybrid_with_land := { styling.grey_hybrid_typeline }
@@ -45,7 +44,7 @@ init script:
 	
 	land_template := { "c{type}.jpg" }
 	colored_lands := false
-		
+	
 	# Use the normal tap symbol
 	mana_t := {
 		if      styling.tap_symbol == "old"        then "old"
@@ -75,9 +74,7 @@ set info style:
 			fill type: solid
 			fill color:   rgb(255,255,255)
 			border color: rgb(0,0,0)
-
 ############################################################## Extra style
-
 styling field:
 	type: boolean
 	name: grey hybrid typeline
@@ -118,6 +115,12 @@ styling field:
 	name: inverted common symbol
 	description: Should the common rarity symbol be inverted, like in Coldsnap?
 	initial: no
+styling field:
+	type: package choice
+	name: overlay
+	description: Should there be an overlay applied, such as foil?
+	match: magic-overlay-*.mse-include
+	required: false
 styling style:
 	use guild mana symbols:
 		choice images:
@@ -144,36 +147,34 @@ styling style:
 		choice images:
 			no:  { symbol_variation(symbol: set.symbol, variation: "common") }
 			yes: { symbol_variation(symbol: set.symbol, variation: "invertedcommon") }
-
 ############################################################## Card fields
 card style:
 	############################# Background stuff
 	border color:
 		left: 0
 		top : 0
-		width:	375
-		height:	523
+		width: 375
+		height: 523
 		radius: 18
 		left width:   17
 		right width:  17
 		top width:    17
 		bottom width: 18
-		z index: -1
+		z index: 4
 	card color:
-		left:	0
-		top:	0
-		width:	375
-		height:	523
-		z index: -2
+		left: 0
+		top: 0
+		width: 375
+		height: 523
+		z index: 0
 		render style: image
 		popup style: in place
 		image: { color_background(type:"card" + text_shape(), base_hybrid:card_hybrid) }
-
 	###################C######### Name line
 	name:
 		left:
 			{ if card_style.name.content_width > 269 then 50
-			   else card_style.name.content_width * -0.5 + 184.5 }
+			else card_style.name.content_width * -0.5 + 184.5 }
 		top: 23
 		width:
 			{ if card_style.name.content_width > 269 then 275
@@ -182,34 +183,30 @@ card style:
 		alignment: bottom center justify-all
 		padding bottom: -2
 		padding top: 2
-		z index: 3
+		z index: 2
 		symbol font:
 			name: magic-embossedletters
 			size: 22
 			alignment: bottom center
 		always symbol: true
-
 	############################# Image
 	image:
-		left:	30
+		left: 30
 		top: { if text_shape() == 2 or text_shape() == 1 then 58 else 59 }
-		width:	315
+		width: 315
 		height:
 			{ if      text_shape() == "0" then 366
 			  else if text_shape() == "1" then 349
 			  else                             288 }
 		mask: { "imagemask{text_shape()}.png" }
 		z index: 1
-
-
 	################H############ Card type
-
 	type:
 		left: 35
 		top:
-			{ if      text_shape() == "0" then 432
-			  else if text_shape() == "1" then 414
-			  else                             353 }
+			{if      text_shape() == "0" then 432
+			 else if text_shape() == "1" then 414
+			 else 353}
 		width: { 308 - max(22,card_style.rarity.content_width) }
 		height: 20
 		alignment: top shrink-overflow
@@ -222,7 +219,6 @@ card style:
 			size: 15
 			color: rgb(0,0,0)
 			separator color: rgb(128,128,128)
-
 	rarity:
 		right: 342
 		top:
@@ -231,7 +227,7 @@ card style:
 			  else                             353 }
 		width: 44
 		height: 22
-		z index: 1
+		z index: 2
 		alignment: middle right
 		render style: image
 		choice images:
@@ -248,7 +244,6 @@ card style:
 			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
 			mythic rare:       script: symbol_variation(symbol: set.symbol, variation: "mythic rare")
 			special:    script: symbol_variation(symbol: set.symbol, variation: "special")
-
 	############################# Text box
 	text:
 		left: 31
@@ -283,7 +278,7 @@ card style:
 				   styling.center_text == "always"
 				then "middle center shrink-overflow"
 				else "middle left shrink-overflow"
-		z index: 2
+		z index: 1
 		padding left:   6
 		padding top:    2
 		padding right:  4
@@ -291,10 +286,9 @@ card style:
 		line height hard: 1.2
 		line height line: 1.5
 		line height soft: 0.9
-
 	############################# PT
 	pt:
-		z index: 4
+		z index: 2
 		left:
 			{ if text_shape() == "2" then 288
 			  else                        284 }
@@ -310,70 +304,65 @@ card style:
 			weight: bold
 			color: rgb(0,0,0)
 			separator color: rgb(200,0,0)
-
 	############################# Copyright stuff
-
 	illustrator:
 		left: 58
 		top : 479
 		width: 215
 		height: 16
-		z index: 2
+		z index: 1
 		font:
 			name: Matrix
 			size: 11
 			weight: bold
 			color: { font_color(card.card_color) }
-
 	copyright line:
 		left: 30
 		top : 493
 		width: 247
 		height: 12
-		z index: 2
+		z index: 1
 		font:
 			name: MPlantin
 			size: 6.5
 			color: { font_color(card.card_color) }
-
 ############################################################## Extra card fields
-
 extra card field:
 	type: choice
 	name: pt box
 	script: card.card_color
 	editable: false
 	save value: false
-	show statistics: false
+extra card field:
+	type: choice
+	name: foil layer
+	choice: foil
+	save value: false
+	editable: false
 extra card field:
 	type: choice
 	name: name box
 	choice: black
 	editable: false
 	save value: false
-	show statistics: false
 extra card field:
 	type: choice
 	name: name box left
 	choice: black
 	editable: false
 	save value: false
-	show statistics: false
 extra card field:
 	type: choice
 	name: name box right
 	choice: black
 	editable: false
 	save value: false
-	show statistics: false
 extra card field:
 	type: choice
 	name: paintbrush
 	script: paintbrush_color(card.card_color)
 	editable: false
-	choice: black
-	choice: white
-
+	save value: false
 extra card style:
 	pt box:
 		left:
@@ -388,7 +377,20 @@ extra card style:
 		visible: { card.pt != "" }
 		render style: image
 		image: { color_background(type:"pt" + text_shape(), base_hybrid:pt_hybrid) }
+	foil layer:
+		left: 0
+		top : 0
+		width: 375
+		height: 523
+		z index: 3
 
+
+
+
+
+
+		render style: image
+		image: {if styling.overlay == "" then nil else styling.overlay + "/overlay.png"}
 	name box:
 		left:
 			{ if card_style.name.content_width > 275 then 50
@@ -398,7 +400,7 @@ extra card style:
 			{ if card_style.name.content_width > 275 then 275
 			   else card_style.name.content_width + 3}
 		height: 35
-		z index: 2
+		z index: 1
 		visible: { card.name != "" }
 		render style: image
 		image: name-mid.png
@@ -409,7 +411,7 @@ extra card style:
 		top: 26
 		width: 15
 		height: 35
-		z index: 2
+		z index: 1
 		render style: image
 		image: name-left.png
 	name box right:
@@ -419,7 +421,7 @@ extra card style:
 		top: 26
 		width: 14
 		height: 35
-		z index: 2
+		z index: 1
 		render style: image
 		image: name-right.png
 	paintbrush:
@@ -427,8 +429,9 @@ extra card style:
 		top : 481
 		width: 30
 		height: 11
-		z index: 2
+		z index: 1
 		render style: image
 		choice images:
 			black: /magic-future-common.mse-include/paintbrush_black.png
 			white: /magic-future-common.mse-include/paintbrush_white.png
+

@@ -1,4 +1,4 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 game: magic
 full name: FPM's Promo Magic
 short name: FPM Promo
@@ -6,7 +6,7 @@ installer group: magic/FirePenguinMaster/Promotional
 icon: card-sample.png
 position hint: 404
 
-version: 2008-08-07
+version: 2009-07-06
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -23,13 +23,11 @@ depends on:
 	package: magic-mana-small.mse-symbol-font
 	version: 2007-09-23
 
-card background: white
 card width: 375
 card height: 523
 card dpi: 150
-
+#Template by Pichoro
 ############################################################## Extra scripts
-
 init script:
 	green_template := {
 		if input == "g" then (
@@ -112,7 +110,12 @@ styling field:
 	choice: short text only
 	choice: never
 	initial: never
-
+styling field:
+	type: package choice
+	name: overlay
+	description: Should there be an overlay applied, such as foil?
+	match: magic-overlay-*.mse-include
+	required: false
 styling style:
 	green style:
 		render style: both
@@ -140,7 +143,6 @@ styling style:
 			always:          /magic.mse-game/icons/center-all-text.png
 			short text only: /magic.mse-game/icons/center-short-text.png
 			never:           /magic.mse-game/icons/center-no-text.png
-
 ############################################################## Card fields
 card style:
 	############################# Background stuff
@@ -154,17 +156,16 @@ card style:
 		right width:  18
 		top width:    18
 		bottom width: 18
-		z index: 4
+		z index: 5
 	card color:
 		left:	0
 		top:	0
 		width:	375
 		height:	523
-		z index: -2
+		z index: 0
 		render style: image
 		popup style: in place
 		image: { card_background() }
-
 	############################# Name line
 	name:
 		left: 45
@@ -195,16 +196,16 @@ card style:
 			alignment: bottom right
 		always symbol: true
 		padding top:    0
-		z index: 2
+		z index: 1
 	card symbol:
 		left: 30
 		top : 27
 		height: 20
 		width: 14
+		z index: 1
 		render style: image
 		choice images:
 			tombstone: tombstone.png
-
 	############################# Image
 	image:
 		left:	49
@@ -213,23 +214,20 @@ card style:
 		height:	439
 		mask:	imagemask.png
 		z index: 1
-
 	############################# Card type
-
 	type:
 		left: 120
 		top : 312
 		width: 220
 		height: 20
 		alignment: top shrink-overflow
-		z index: 1
+		z index: 2
 		padding top: 2
 		font:
 			name: Matrix
 			size: 10
 			color: { styling.font_color }
 			separator color: rgb(128,128,128)
-
 	############################# Text box
 	text:
 		left: 61
@@ -254,7 +252,7 @@ card style:
 				   styling.center_text == "always"
 				then "middle center"
 				else "middle left"
-		z index: 2
+		z index: 3
 		padding left:   6
 		padding top:    2
 		padding right:  4
@@ -267,14 +265,13 @@ card style:
 		top : 340
 		width: 138
 		height: 156
-		z index: 1
+		z index: 2
 		render style: image
 		alignment: middle center
 		include file: /magic-watermarks.mse-include/watermarks
-
 	############################# PT
 	power:
-		z index: 4
+		z index: 2
 		left:	24
 		top:	361
 		width:	19
@@ -288,9 +285,8 @@ card style:
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
 			shadow displacement y: 1
-
 	toughness:
-		z index: 4
+		z index: 2
 		left:	25
 		top:	418
 		width:	19
@@ -304,52 +300,54 @@ card style:
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
 			shadow displacement y: 1
-
 	############################# Copyright stuff
-
 	illustrator:
 		right: 350
 		top : 293
 		width: { max(20, card_style.illustrator.content_width) + 5 }
 		height: 16
-		z index: 1
+		z index: 2
 		alignment: middle right
 		font:
 			name: MPlantin-Italic
 			size: 8
 			color: { styling.font_color }
-
 	copyright line:
 		left: 65
 		top : 492
 		width: 285
 		height: 12
-		z index: 1
+		z index: 2
 		alignment: bottom right
 		font:
 			name: MPlantin
 			size: 7
 			color: { styling.font_color }
-
-
 ############################################################## Extra card fields
-
 extra card field:
 	type: choice
 	name: pt symbols
 	script: "shieldsword"
+	editable: false
+	save value: false
+extra card field:
+	type: choice
+	name: foil layer
+	choice: foil
+	save value: false
 	editable: false
 extra card field:
 	type: choice
 	name: black paintbrush
 	editable: false
 	choice: black
+	save value: false
 extra card field:
 	type: choice
 	name: white paintbrush
 	editable: false
 	choice: white
-
+	save value: false
 extra card style:
 	pt symbols:
 		left:	25
@@ -366,7 +364,7 @@ extra card style:
 		top : 294
 		width: 40
 		height: 15
-		z index: 1
+		z index: 2
 		render style: image
 		visible: { styling.font_color == "black" }
 		choice images:
@@ -376,8 +374,17 @@ extra card style:
 		top : 294
 		width: 40
 		height: 15
-		z index: 1
+		z index: 2
 		render style: image
 		visible: { styling.font_color == "white" }
 		choice images:
 			white: /magic-future-common.mse-include/paintbrush_white.png
+	foil layer:
+		left: 0
+		top : 0
+		width: 375
+		height: 523
+		z index: 4
+		render style: image
+		image: {if styling.overlay == "" then nil else styling.overlay + "/overlay.png"}
+

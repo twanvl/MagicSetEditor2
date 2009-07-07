@@ -1,4 +1,4 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 game: magic
 full name: FPM's Split Magic
 short name: FPM Split
@@ -6,7 +6,7 @@ installer group: magic/FirePenguinMaster/Split cards
 icon: card-sample.png
 position hint: 403
 
-version: 2008-08-07
+version: 2009-07-06
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -23,19 +23,11 @@ depends on:
 	package: magic-mana-small.mse-symbol-font
 	version: 2007-09-23
 
-card background: white
 card width: 523
 card height: 375
 card dpi: 150
-
-# Made by the forum members of the MSE2 Forums.
-# Special thanks to Artfreakwiu who did the start and the bulk of the work,
-# RoatheEternal for testing and graphics,
-# BunnieRein (for finally making the casting cost work),
-# FirePenguinMaster for making the frames to begin with,
-# and Twanvl for making MSE2 to begin with.
+#Template by Pichoro
 ############################################################## Extra scripts
-
 init script:
 	green_template := {
 		if input == "g" then (
@@ -116,7 +108,12 @@ styling field:
 	choice: short text only
 	choice: never
 	initial: never
-
+styling field:
+	type: package choice
+	name: overlay
+	description: Should there be an overlay applied, such as foil?
+	match: magic-overlay-*.mse-include
+	required: false
 styling style:
 	green style:
 		render style: both
@@ -144,7 +141,6 @@ styling style:
 			always:          /magic.mse-game/icons/center-all-text.png
 			short text only: /magic.mse-game/icons/center-short-text.png
 			never:           /magic.mse-game/icons/center-no-text.png
-
 ############################################################## Card fields
 card style:
 	############################# Background stuff
@@ -154,13 +150,13 @@ card style:
 		width:	523
 		height:	375
 		radius: 18
-		z index: -3
+		z index: -1
 	card color:
 		left:	18
 		top:	18
 		width:	235.49
 		height:	338
-		z index: -2
+		z index: 0
 		render style: image
 		popup style: in place
 		image: { card_background() }
@@ -169,11 +165,10 @@ card style:
 		top:	18
 		width:	235.49
 		height:	338
-		z index: -2
+		z index: 0
 		render style: image
 		popup style: in place
 		image: { card_background() }
-
 	############################# Name line
 	name:
 		left: 37.39
@@ -219,7 +214,7 @@ card style:
 			alignment: bottom right
 		always symbol: true
 		padding top:    0
-		z index: 2
+		z index: 1
 	casting cost 2:
 		left: 272.16
 		top : 45
@@ -234,14 +229,14 @@ card style:
 			alignment: bottom right
 		always symbol: true
 		padding top:    0
-		z index: 2
+		z index: 1
 	card symbol:
 		left: 22.78
 		top : 22
 		height: 13.85
 		width: 9.7
 		render style: image
-		z index: 2
+		z index: 1
 		choice images:
 			tombstone: tombstone.png
 	card symbol 2:
@@ -250,10 +245,9 @@ card style:
 		height: 13.85
 		width: 9.7
 		render style: image
-		z index: 2
+		z index: 1
 		choice images:
 			tombstone: tombstone.png
-
 	############################# Image
 	image:
 		left:	39.25
@@ -269,7 +263,6 @@ card style:
 		height:	154.45
 		mask:	imagemask.png
 		z index: 1
-
 	############################# Card type
 	type:
 		left: 90.11
@@ -329,7 +322,6 @@ card style:
 			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
 			mythic rare:       script: symbol_variation(symbol: set.symbol, variation: "mythic rare")
 			special:	    script: symbol_variation(symbol: set.symbol, variation: "special")
-
 	############################# Text box
 	text:
 		left: 49.25
@@ -411,10 +403,9 @@ card style:
 		render style: image
 		alignment: middle center
 		include file: /magic-watermarks.mse-include/watermarks
-
 	############################# PT
 	power:
-		z index: 4
+		z index: 2
 		left:	22.62
 		top:	256
 		width:	13.16
@@ -429,7 +420,7 @@ card style:
 			shadow displacement x: 1
 			shadow displacement y: 1
 	power 2:
-		z index: 4
+		z index: 2
 		left:	276.11
 		top:	256
 		width:	13.16
@@ -444,7 +435,7 @@ card style:
 			shadow displacement x: 1
 			shadow displacement y: 1
 	toughness:
-		z index: 4
+		z index: 2
 		left:	22.62
 		top:	293
 		width:	13.16
@@ -459,7 +450,7 @@ card style:
 			shadow displacement x: 1
 			shadow displacement y: 1
 	toughness 2:
-		z index: 4
+		z index: 2
 		left:	276.11
 		top:	293
 		width:	13.16
@@ -473,7 +464,6 @@ card style:
 			shadow color: rgb(0,0,0)
 			shadow displacement x: 1
 			shadow displacement y: 1
-		
 	############################# Copyright stuff
 	illustrator:
 		right: 246.41
@@ -519,34 +509,37 @@ card style:
 			name: MPlantin
 			size: 4.85
 			color: { font_color(card.card_color_2) }
-
 ############################################################## Extra card fields
-
 extra card field:
 	type: choice
 	name: pt symbols
 	script: "shieldsword"
 	editable: false
+	save value: false
+extra card field:
+	type: choice
+	name: foil layer
+	choice: foil
+	save value: false
+	editable: false
 extra card field:
 	type: choice
 	name: pt symbols 2
 	script: "shieldsword"
+	save value: false
 	editable: false
 extra card field:
 	type: choice
 	name: paintbrush
 	script: paintbrush_color(card.card_color)
 	editable: false
-	choice: black
-	choice: white
+	save value: false
 extra card field:
 	type: choice
 	name: paintbrush 2
 	script: paintbrush_color(card.card_color_2)
 	editable: false
-	choice: black
-	choice: white
-
+	save value: false
 extra card style:
 	pt symbols:
 		left:	23.32
@@ -588,3 +581,13 @@ extra card style:
 		choice images:
 			black: /magic-future-common.mse-include/paintbrush_black.png
 			white: /magic-future-common.mse-include/paintbrush_white.png
+	foil layer:
+		right: 523
+		bottom: 0
+		width: 375
+		height: 523
+		z index: 3
+		angle: 90
+		render style: image
+		image: {if styling.overlay == "" then nil else styling.overlay + "/overlay.png"}
+

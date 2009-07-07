@@ -6,7 +6,7 @@ installer group: magic/Future/Split cards
 icon: card-sample.png
 position hint: 053
 
-version: 2009-01-10
+version: 2009-07-06
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -17,24 +17,18 @@ depends on:
 	package: magic-future-common.mse-include
 	version: 2008-05-21
 depends on:
-	package: magic-mana-large.mse-symbol-font
-	version: 2007-09-23
-depends on:
 	package: magic-mana-small.mse-symbol-font
 	version: 2007-09-23
 depends on:
 	package: magic-mana-future.mse-symbol-font
 	version: 2007-09-23
 
-card background: white
 card width: 523
 card height: 375
 card dpi: 150
-
 #By: Pichoro
 #Images by Spiderboy4, Buttock1234, and Artfreakwiu
 ############################################################## Extra scripts
-
 init script:
 	mask_hybrid_with_land := { styling.grey_hybrid_name }
 	
@@ -138,7 +132,6 @@ set info style:
 			fill type: solid
 			fill color:   rgb(255,255,255)
 			border color: rgb(0,0,0)
-
 ############################################################## Extra style options
 styling field:
 	type: boolean
@@ -180,11 +173,16 @@ styling field:
 	choice: never
 	initial: never
 styling field:
+	type: package choice
+	name: overlay
+	description: Should there be an overlay applied, such as foil?
+	match: magic-overlay-*.mse-include
+	required: false
+styling field:
 	type: boolean
 	name: inverted common symbol
 	description: Should the common rarity symbol be inverted, like in Coldsnap?
 	initial: no
-
 styling style:
 	use guild mana symbols:
 		choice images:
@@ -193,10 +191,9 @@ styling style:
 	tap symbol:
 		render style: both
 		choice images:
-			modern:     /magic-mana-large.mse-symbol-font/mana_t.png
-			old:        /magic-mana-large.mse-symbol-font/mana_t_old.png
-			diagonal T: /magic-mana-large.mse-symbol-font/mana_t_older.png
-
+			modern:     /magic-mana-small.mse-symbol-font/mana_t.png
+			old:        /magic-mana-small.mse-symbol-font/mana_t_old.png
+			diagonal T: /magic-mana-small.mse-symbol-font/mana_t_older.png
 ############################################################## Card fields
 card style:
 	############################# Background stuff
@@ -211,13 +208,13 @@ card style:
 		top width:    12
 		bottom width: 12
 		mask: bordermask.png
-		z index: 2
+		z index: 8
 	card color:
 		left:	18
 		top:	18
 		width:	236
 		height:	338
-		z index: -2
+		z index: 0
 		render style: image
 		popup style: in place
 		image: { card_background() }
@@ -226,7 +223,7 @@ card style:
 		top:	18
 		width:	236
 		height:	338
-		z index: -2
+		z index: 0
 		render style: image
 		popup style: in place
 		image: { card_background() }
@@ -238,7 +235,7 @@ card style:
 		height: 26
 		alignment: middle shrink-overflow
 		padding bottom: 0
-		z index: 4
+		z index: 5
 		font:
 			name: Matrix
 			size: 14
@@ -270,7 +267,7 @@ card style:
 		height: 26
 		alignment: middle shrink-overflow
 		padding bottom: 0
-		z index: 4
+		z index: 5
 		font:
 			name: Matrix
 			size: 14
@@ -308,7 +305,7 @@ card style:
 			scale down to: 16
 			alignment: bottom right
 		always symbol: true
-		z index: 3
+		z index: 5
 		padding top: 0
 		mask: costmask.png
 	casting cost 2:
@@ -324,7 +321,7 @@ card style:
 			scale down to: 16
 			alignment: bottom right
 		always symbol: true
-		z index: 3
+		z index: 5
 		padding top: 0
 		mask: costmask.png
 	card symbol:
@@ -332,7 +329,7 @@ card style:
 		top : 28
 		height: 16
 		width: 12
-		z index: 4
+		z index: 5
 		render style: image
 		choice images:
 			tombstone: tombstone.png
@@ -341,7 +338,7 @@ card style:
 		top : 28
 		height: 16
 		width: 12
-		z index: 4
+		z index: 5
 		render style: image
 		choice images:
 			tombstone: tombstone.png
@@ -350,7 +347,7 @@ card style:
 		top: 22
 		width: 15
 		height: 14
-		z index: 4
+		z index: 5
 		render style: image
 		choice images:
 			artifact: { "/magic-future-common.mse-include/artifact_" + typesymbol_color(frame: card.card_color) + ".png" }
@@ -361,21 +358,20 @@ card style:
 			multitype: { "/magic-future-common.mse-include/multitype_" + typesymbol_color(frame: card.card_color) + ".png" }
 			sorcery: { "/magic-future-common.mse-include/sorcery_" + typesymbol_color(frame: card.card_color) + ".png" }
 			planeswalker: { "/magic-future-common.mse-include/planeswalker_" + typesymbol_color(frame: card.card_color) + ".png" }
-
 	############################# Image
 	image:
 		left: 27
 		top: 36
 		width: 228
 		height: 214
-		z index: 0
+		z index: 1
 		mask: mask_image.png
 	image 2:
 		left: 278
 		top: 36
 		width: 228
 		height: 214
-		z index: 0
+		z index: 1
 		mask: mask_image.png
 	############################# Card type
 	type:
@@ -384,7 +380,7 @@ card style:
 		width: { 215 - max(21,card_style.rarity.content_width) }
 		height: 20
 		alignment: middle shrink-overflow
-		z index: 3
+		z index: 5
 		padding top: 2
 		font:
 			name: Matrix
@@ -417,7 +413,7 @@ card style:
 		width: { 215 - max(21,card_style.rarity_2.content_width) }
 		height: 20
 		alignment: middle shrink-overflow
-		z index: 3
+		z index: 5
 		padding top: 2
 		font:
 			name: Matrix
@@ -449,7 +445,7 @@ card style:
 		top : 213
 		width: 14
 		height: 14
-		z index: 3
+		z index: 5
 		alignment: middle right
 		render style: image
 		choice images:
@@ -471,7 +467,7 @@ card style:
 		top : 213
 		width: 14
 		height: 14
-		z index: 3
+		z index: 5
 		alignment: middle right
 		render style: image
 		choice images:
@@ -516,7 +512,7 @@ card style:
 				   styling.center_text == "always"
 				then "middle center"
 				else "middle left"
-		z index: 3
+		z index: 5
 		padding left:   6
 		padding top:    2
 		padding right:  4
@@ -551,7 +547,7 @@ card style:
 				   styling.center_text == "always"
 				then "middle center"
 				else "middle left"
-		z index: 3
+		z index: 5
 		padding left:   6
 		padding top:    2
 		padding right:  4
@@ -564,7 +560,7 @@ card style:
 		top : 229
 		width: 92
 		height: 100
-		z index: 2
+		z index: 4
 		render style: image
 		alignment: middle center
 		include file: /magic-watermarks.mse-include/watermarks
@@ -573,13 +569,13 @@ card style:
 		top : 229
 		width: 92
 		height: 100
-		z index: 2
+		z index: 4
 		render style: image
 		alignment: middle center
 		include file: /magic-watermarks.mse-include/watermarks
 	############################# PT
 	pt:
-		z index: 4
+		z index: 6
 		left:	196
 		top:	324
 		width:	60
@@ -610,7 +606,7 @@ card style:
 					else font_color(card.card_color)
 			separator color: rgb(200,0,0)
 	pt 2:
-		z index: 4
+		z index: 6
 		left:	447
 		top:	325
 		width:	60
@@ -642,13 +638,12 @@ card style:
 			separator color: rgb(200,0,0)
 	############################# Card sorting / numbering
 	############################# Copyright stuff
-
 	illustrator:
 		right: { if card.pt != "" then 195 else 242 }
 		top : 332
 		left: 30
 		height: 16
-		z index: 2
+		z index: 1
 		alignment: middle right
 		font:
 			name: Matrix
@@ -665,7 +660,7 @@ card style:
 		top : 332
 		left: 281
 		height: 16
-		z index: 2
+		z index: 1
 		alignment: middle right
 		font:
 			name: Matrix
@@ -682,7 +677,7 @@ card style:
 		top : 340
 		right: { if card.pt != "" then 195 else 242 }
 		height: 12
-		z index: 2
+		z index: 1
 		alignment: bottom right
 		font:
 			name: MPlantin
@@ -699,7 +694,7 @@ card style:
 		top : 340
 		right: { if card.pt_2 != "" then 446 else 493 }
 		height: 12
-		z index: 2
+		z index: 1
 		alignment: bottom right
 		font:
 			name: MPlantin
@@ -744,6 +739,12 @@ extra card field:
 	save value: false
 extra card field:
 	type: choice
+	name: foil layer
+	choice: foil
+	save value: false
+	editable: false
+extra card field:
+	type: choice
 	name: pt box 2
 	script: card.card_color_2
 	editable: false
@@ -753,15 +754,13 @@ extra card field:
 	name: paintbrush
 	script: paintbrush_color(value)
 	editable: false
-	choice: black
-	choice: white
+	save value: false
 extra card field:
 	type: choice
 	name: paintbrush 2
 	script: paintbrush_color_2(value)
 	editable: false
-	choice: black
-	choice: white
+	save value: false
 extra card field:
 	type: choice
 	name: type symbol 2
@@ -782,7 +781,7 @@ extra card style:
 		render style: image
 		popup style: in place
 		image: { card_textbox() }
-		z index: 1
+		z index: 2
 	textbox 2:
 		left: 273
 		top: 227
@@ -791,7 +790,7 @@ extra card style:
 		render style: image
 		popup style: in place
 		image: { card_textbox() }
-		z index: 1
+		z index: 2
 	typeline:
 		left: 18
 		top: 18
@@ -800,7 +799,7 @@ extra card style:
 		render style: image
 		popup style: in place
 		image: { card_typeline() }
-		z index: 2
+		z index: 3
 	typeline 2:
 		left: 269
 		top: 18
@@ -809,13 +808,13 @@ extra card style:
 		render style: image
 		popup style: in place
 		image: { card_typeline() }
-		z index: 2
+		z index: 3
 	pt box:
 		left: 203
 		top: 316
 		width: 50
 		height: 38
-		z index: 3
+		z index: 4
 		visible: { card.pt != "" }
 		render style: image
 		image: { card_ptbox() }
@@ -824,7 +823,7 @@ extra card style:
 		top: 316
 		width: 50
 		height: 38
-		z index: 3
+		z index: 4
 		visible: { card.pt_2 != "" }
 		render style: image
 		image: { card_ptbox() }
@@ -833,18 +832,27 @@ extra card style:
 		top : 334
 		width: 25
 		height: 12
-		z index: 2
+		z index: 1
 		render style: image
 		visible: { card.illustrator != "" }
 		choice images:
 			black: /magic-future-common.mse-include/paintbrush_black.png
 			white: /magic-future-common.mse-include/paintbrush_white.png
+	foil layer:
+		right: 523
+		bottom: 0
+		width: 375
+		height: 523
+		z index: 7
+		angle: 90
+		render style: image
+		image: {if styling.overlay == "" then nil else styling.overlay + "/overlay.png"}
 	paintbrush 2
 		right: { ( if card.pt_2 != "" then 446 else 492 ) - card_style.illustrator_2.content_width }
 		top : 334
 		width: 25
 		height: 12
-		z index: 2
+		z index: 1
 		render style: image
 		visible: { card.illustrator_2 != "" }
 		choice images:
@@ -855,7 +863,7 @@ extra card style:
 		top: 22
 		width: 15
 		height: 14
-		z index: 4
+		z index: 5
 		render style: image
 		choice images:
 			artifact: { "/magic-future-common.mse-include/artifact_" + typesymbol_color(frame: card.card_color_2) + ".png" }
@@ -866,3 +874,4 @@ extra card style:
 			multitype: { "/magic-future-common.mse-include/multitype_" + typesymbol_color(frame: card.card_color_2) + ".png" }
 			sorcery: { "/magic-future-common.mse-include/sorcery_" + typesymbol_color(frame: card.card_color_2) + ".png" }
 			planeswalker: { "/magic-future-common.mse-include/planeswalker_" + typesymbol_color(frame: card.card_color_2) + ".png" }
+

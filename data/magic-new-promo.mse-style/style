@@ -1,4 +1,4 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 game: magic
 short name: Promotional
 full name: Large image
@@ -6,7 +6,7 @@ installer group: magic/new style/promotional
 icon: card-sample.png
 position hint: 004
 
-version: 2008-11-27
+version: 2009-07-06
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29
@@ -23,13 +23,10 @@ depends on:
 	package: magic-mana-small.mse-symbol-font
 	version: 2007-09-23
 
-card background: white
 card width: 375
 card height: 523
 card dpi: 150
-
 ############################################################## Extra scripts
-
 init script:
 	# Load scripts for image box
 	include file: /magic-default-image.mse-include/scripts
@@ -62,7 +59,6 @@ init script:
 	guild_mana := { styling.use_guild_mana_symbols }
 
 ############################################################## Extra style options
-
 styling field:
 	type: boolean
 	name: darker artifacts
@@ -106,7 +102,12 @@ styling field:
 	choice: short text only
 	choice: never
 	initial: never
-
+styling field:
+	type: package choice
+	name: overlay
+	description: Should there be an overlay applied, such as foil?
+	match: magic-overlay-*.mse-include
+	required: false
 styling style:
 	darker artifacts:
 		choice images:
@@ -132,7 +133,6 @@ styling style:
 			always:          /magic.mse-game/icons/center-all-text.png
 			short text only: /magic.mse-game/icons/center-short-text.png
 			never:           /magic.mse-game/icons/center-no-text.png
-
 ############################################################## Card fields
 card style:
 	############################# Background stuff
@@ -146,20 +146,19 @@ card style:
 		right width:  17
 		top width:    17
 		bottom width: 18
-		z index: -1
+		z index: 5
 	card color:
 		left:	0
 		top:	0
 		width:	375
 		height:	523
-		z index: -2
+		z index: 0
 		render style: image
 		popup style: in place
 		image: { card_background() }
-
 	############################# Name line
 	name:
-		left:  { if card.card_symbol=="none" then 32 else 51 }
+		left: { if card.card_symbol=="none" then 32 else 51 }
 		top : 30
 		right:  { 341 - card_style.casting_cost.content_width }
 		height: 23
@@ -189,10 +188,10 @@ card style:
 		top : 31
 		height: 20
 		width: 14
+		z index: 1
 		render style: image
 		choice images:
 			tombstone: tombstone.png
-
 	############################# Image
 	image:
 		left:	32
@@ -201,16 +200,14 @@ card style:
 		height:	408
 		z index: 1
 		default: {default_image(card.card_color)}
-
 	############################# Card type
-
 	type:
 		left: 33
 		top : 309
 		width: 306
 		height: 18
 		alignment: top shrink-overflow
-		z index: 1
+		z index: 2
 		font:
 			name: Matrix
 			size: 16
@@ -219,7 +216,6 @@ card style:
 			shadow displacement x: 1
 			shadow displacement y: 1
 			separator color: rgb(128,128,128)
-
 	############################# Text box
 	text:
 		left: 31
@@ -247,7 +243,7 @@ card style:
 				   styling.center_text == "always"
 				then "middle center shrink-overflow"
 				else "middle left shrink-overflow"
-		z index: 2
+		z index: 3
 		padding left:   4
 		padding top:    2
 		padding right:  4
@@ -257,20 +253,18 @@ card style:
 		line height soft: 0.9
 		line height hard max: 1.3
 		line height line max: 1.6
-
 	watermark:
 		left: 117
 		top : 321
 		width: 138
 		height: 156
-		z index: 1
+		z index: 2
 		render style: image
 		alignment: middle center
 		include file: /magic-watermarks.mse-include/watermarks
-
 	############################# PT
 	pt:
-		z index: 4
+		z index: 3
 		left:	284
 		top:	466
 		width:	60
@@ -282,10 +276,8 @@ card style:
 			weight: bold
 			color: rgb(0,0,0)
 			separator color: rgb(200,0,0)
-
 	############################# Card sorting / numbering
 	############################# Copyright stuff
-
 	illustrator:
 		left: 56
 		top : 477
@@ -296,7 +288,6 @@ card style:
 			name: Matrix
 			size: 10
 			color: { font_color(card.card_color) }
-
 	copyright line:
 		left: 26
 		top : 493
@@ -307,23 +298,36 @@ card style:
 			name: MPlantin
 			size: 6.5
 			color: { font_color(card.card_color) }
-
 ############################################################## Extra card fields
-
 extra card field:
 	type: choice
 	name: pt box
 	script: card.card_color
 	editable: false
-
+	save value: false
+extra card field:
+	type: choice
+	name: foil layer
+	choice: foil
+	save value: false
+	editable: false
 extra card style:
 	pt box:
 		left:	271
 		top:	461
 		width:	81
 		height:	42
-		z index: 1
+		z index: 2
 		visible: { card.pt != "" }
 		render style: image
 		mask: mask_pt.png
 		image: { card_ptbox() }
+	foil layer:
+		left: 0
+		top : 0
+		width: 375
+		height: 523
+		z index: 4
+		render style: image
+		image: {if styling.overlay == "" then nil else styling.overlay + "/overlay.png"}
+

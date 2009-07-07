@@ -1,4 +1,4 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 game: magic
 short name: Flip Cards
 full name: Modern flip cards
@@ -6,7 +6,7 @@ installer group: magic/new style/flip cards
 icon: card-sample.png
 position hint: 002
 
-version: 2008-11-27
+version: 2009-07-06
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -23,17 +23,13 @@ depends on:
 	package: magic-mana-small.mse-symbol-font
 	version: 2007-09-23
 
-card background: white
 card width: 375
 card height: 523
 card dpi: 150
-
 # Author: Wolfwood
 # Non-creature extension: Guinea Pig and Neko Asakami
-# Lots of copy/paste from magic-new.mse-style
-
+# Lots of Improvements by Pichor
 ############################################################## Extra scripts
-
 init script:
 	# Load scripts for image box
 	include file: /magic-default-image.mse-include/scripts
@@ -61,6 +57,7 @@ init script:
 	}
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
+	card_shape := {"flip"}
 
 ############################################################## Set info fields
 set info style:
@@ -72,7 +69,6 @@ set info style:
 			fill color:   rgb(255,255,255)
 			border color: rgb(0,0,0)
 ############################################################## Extra style options
-
 styling field:
 	type: boolean
 	name: grey hybrid name
@@ -112,7 +108,12 @@ styling field:
 	name: inverted common symbol
 	description: Should the common rarity symbol be inverted, like in Coldsnap?
 	initial: no
-
+styling field:
+	type: package choice
+	name: overlay
+	description: Should there be an overlay applied, such as foil?
+	match: magic-overlay-*.mse-include
+	required: false
 styling style:
 	use guild mana symbols:
 		choice images:
@@ -134,7 +135,6 @@ styling style:
 		choice images:
 			no:  { symbol_variation(symbol: set.symbol, variation: "common") }
 			yes: { symbol_variation(symbol: set.symbol, variation: "invertedcommon") }
-
 ############################################################## Card fields
 card style:
 	############################# Background stuff
@@ -148,17 +148,16 @@ card style:
 		right width:  17
 		top width:    17
 		bottom width: 18
-		z index: -1
+		z index: 4
 	card color:
 		left:	0
 		top:	0
 		width:	375
 		height:	523
-		z index: -2
+		z index: 0
 		render style: image
 		popup style: in place
 		image: { card_background() }
-
 	############################# Name line
 	name:
 		left:  {if card.card_symbol=="none" then 32  else 51}
@@ -173,7 +172,6 @@ card style:
 			size: 17
 			weight: bold
 			color: rgb(0,0,0)
-
 	name 2:
 		left: 343
 		bottom: 454
@@ -188,7 +186,6 @@ card style:
 			size: 17
 			weight: bold
 			color: rgb(0,0,0)
-
 	casting cost:
 		right: 343
 		top : 31
@@ -216,27 +213,24 @@ card style:
 		always symbol: true
 		z index: 2
 		padding top: 0
-
 	card symbol:
 		left: {if card.card_symbol=="none" then 20 else 32}
 		top : 31
 		height: 20
 		width: 14
+		z index: 1
 		render style: image
 		choice images:
 			tombstone: tombstone.png
-
 	############################# Image
 	image:
 		left:	32
 		top:	162
 		width:	311
 		height:	182
-		z index: 10
+		z index: 1
 		default: {default_image(card.card_color)}
-
 	############################# Card type
-
 	type:
 		left: 33
 		top : 134
@@ -249,7 +243,6 @@ card style:
 			size: 14
 			color: rgb(0,0,0)
 			separator color: rgb(128,128,128)
-
 	type 2:
 		right: { if card.pt_2 != "" then 86 else 34 }
 		bottom: 353
@@ -263,7 +256,6 @@ card style:
 			size: 14
 			color: rgb(0,0,0)
 			separator color: rgb(128,128,128)
-
 	rarity:
 		left: 309
 		top : 482
@@ -286,7 +278,6 @@ card style:
 			rare:       script: symbol_variation(symbol: set.symbol, variation: "rare")
 			mythic rare:       script: symbol_variation(symbol: set.symbol, variation: "mythic rare")
 			special:    script: symbol_variation(symbol: set.symbol, variation: "special")
-
 	############################# Text box
 	text:
 		left: 33
@@ -319,7 +310,6 @@ card style:
 		line height hard: 1.2
 		line height line: 1.5
 		line height soft: 0.9
-
 	text 2:
 		right: 32
 		bottom: 380
@@ -371,10 +361,9 @@ card style:
 		render style: image
 		alignment: middle center
 		include file: /magic-watermarks.mse-include/watermarks
-
 	############################# PT
 	pt:
-		z index: 4
+		z index: 2
 		left:	290
 		top:	130
 		width:	60
@@ -386,9 +375,8 @@ card style:
 			weight: bold
 			color: rgb(0,0,0)
 			separator color: rgb(200,0,0)
-
 	pt 2:
-		z index: 4
+		z index: 2
 		right:	24
 		bottom:	349
 		width:	60
@@ -401,10 +389,8 @@ card style:
 			weight: bold
 			color: rgb(0,0,0)
 			separator color: rgb(200,0,0)
-
 	############################# Card sorting / numbering
 	############################# Copyright stuff
-
 	illustrator:
 		left: 58
 		top : 479
@@ -415,7 +401,6 @@ card style:
 			name: Matrix
 			size: 10
 			color: { font_color(card.card_color) }
-
 	copyright line:
 		left: 26
 		top : 493
@@ -426,20 +411,25 @@ card style:
 			name: MPlantin
 			size: 6.5
 			color: { font_color(card.card_color) }
-
 ############################################################## Extra card fields
-
 extra card field:
 	type: choice
 	name: pt box
 	script: card.card_color
 	editable: false
+	save value: false
 extra card field:
 	type: choice
 	name: pt box 2
 	script: card.card_color
+	save value: false
 	editable: false
-
+extra card field:
+	type: choice
+	name: foil layer
+	choice: foil
+	save value: false
+	editable: false
 extra card style:
 	pt box:
 		left:	285
@@ -451,14 +441,26 @@ extra card style:
 		render style: image
 		mask: mask_pt.png
 		image: { flip_ptbox() }
-
 	pt box 2:
 		left:	18
 		top:	342
 		width:	70
 		height:	38
-		z index: 2
+		z index: 1
 		visible: { card.pt_2 != "" }
 		render style: image
 		mask: mask_pt2.png
 		image: { flip_ptbox2() }
+		image: { card_ptbox() }
+	foil layer:
+		left: 0
+		top : 0
+		width: 375
+		height: 523
+		z index: 3
+
+
+
+		render style: image
+		image: {if styling.overlay == "" then nil else styling.overlay + "/overlay.png"}
+
