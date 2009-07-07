@@ -6,7 +6,7 @@ installer group: magic/new style/tokens
 icon: card-sample.png
 position hint: 007
 
-version: 2009-07-06
+version: 2009-07-07
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -383,12 +383,6 @@ extra card style:
 		width: 375
 		height: 523
 		z index: 3
-
-
-
-
-
-
 		render style: image
 		image: {if styling.overlay == "" then nil else styling.overlay + "/overlay.png"}
 	name box:
@@ -434,4 +428,3 @@ extra card style:
 		choice images:
 			black: /magic-future-common.mse-include/paintbrush_black.png
 			white: /magic-future-common.mse-include/paintbrush_white.png
-
