@@ -461,7 +461,7 @@ card style:
 		include file: /magic-watermarks.mse-include/watermarks-old
 	############################# PT
 	pt:
-		z index: 1
+		z index: 2
 		left:	208
 		top:	331
 		width:	37
@@ -476,7 +476,7 @@ card style:
 			shadow displacement y: 1
 			separator color: rgb(200,0,0)
 	pt 2:
-		z index: 1
+		z index: 2
 		left:	460
 		top:	331
 		width:	37

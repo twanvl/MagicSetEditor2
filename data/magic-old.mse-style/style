@@ -346,7 +346,7 @@ card style:
 		include file: /magic-watermarks.mse-include/watermarks-old
 	############################# PT
 	pt:
-		z index: 1
+		z index: 2
 		left: 295
 		top: 470
 		width: 47
