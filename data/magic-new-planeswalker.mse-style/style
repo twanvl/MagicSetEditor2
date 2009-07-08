@@ -6,7 +6,7 @@ installer group: magic/new style/planeswalkers
 icon: card-sample.png
 position hint: 008
 
-version: 2009-07-07
+version: 2009-07-08
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -284,7 +284,7 @@ card style:
 		include file: /magic-watermarks.mse-include/watermarks
 	############################# Loyalty
 	loyalty:
-		z index: 3
+		z index: 7
 		left:	326
 		top:	467
 		width:	13.16
@@ -296,7 +296,7 @@ card style:
 			weight: bold
 			color: rgb(255,255,255)
 	loyalty cost 1:
-		z index: 3
+		z index: 7
 		left:	32
 		top:	342
 		width:	13.16
@@ -308,7 +308,7 @@ card style:
 			weight: bold
 			color: rgb(255,255,255)
 	loyalty cost 2:
-		z index: 3
+		z index: 7
 		left:	32
 		top:	390
 		width:	13.16
@@ -320,7 +320,7 @@ card style:
 			weight: bold
 			color: rgb(255,255,255)
 	loyalty cost 3:
-		z index: 3
+		z index: 7
 		left:	32
 		top:	436
 		width:	13.16
@@ -427,7 +427,7 @@ extra card style:
 		top: 465
 		width: 60
 		height: 38
-		z index: 2
+		z index: 6
 		render style: image
 		visible: { card.loyalty !="" }
 		choice images:
@@ -445,7 +445,7 @@ extra card style:
 		top: 340
 		width: 42
 		height: 40
-		z index: 2
+		z index: 6
 		render style: image
 		visible: { card.loyalty_cost_1 !="" }
 		choice images:
@@ -457,7 +457,7 @@ extra card style:
 		top: 388
 		width: 42
 		height: 40
-		z index: 2
+		z index: 6
 		render style: image
 		visible: { card.loyalty_cost_2 !="" }
 		choice images:
@@ -469,7 +469,7 @@ extra card style:
 		top: 434
 		width: 42
 		height: 40
-		z index: 2
+		z index: 6
 		render style: image
 		visible: { card.loyalty_cost_3 !="" }
 		choice images:
@@ -481,7 +481,7 @@ extra card style:
 		top: 354
 		width: 5
 		height: 10
-		z index: 2
+		z index: 6
 		font:
 			name: MPlantin
 			size: 15
@@ -494,7 +494,7 @@ extra card style:
 		top: 402
 		width: 5
 		height: 10
-		z index: 2
+		z index: 6
 		font:
 			name: MPlantin
 			size: 15
@@ -507,7 +507,7 @@ extra card style:
 		top: 448
 		width: 5
 		height: 10
-		z index: 2
+		z index: 6
 		font:
 			name: MPlantin
 			size: 15
