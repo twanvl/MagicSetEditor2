@@ -261,7 +261,7 @@ keyword:
 keyword:
 	keyword: Fear
 	match: Fear
-	mode: core
+	mode: old
 	reminder: This creature can’t be blocked except by artifact creatures and/or black creatures.
 keyword:
 	keyword: Amplify
@@ -641,3 +641,8 @@ keyword:
 	match: Cascade
 	mode: expert
 	reminder: When you cast this spell, exile the top card of your library until you exile a nonland card that costs less. You may cast that card without paying its mana cost. Put the exiled cards on the bottom of your library at random.
+keyword:
+	keyword: Intimidate
+	match: Intimidate
+	mode: core
+	reminder: This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.

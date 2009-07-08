@@ -5,7 +5,7 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2009-06-10
+version: 2009-07-08
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -698,7 +698,7 @@ keyword:
 keyword:
 	keyword: Fear
 	match: fear
-	mode: core
+	mode: old
 	reminder: It can’t be blocked except by artifact creatures and/or black creatures.
 keyword:
 	keyword: Amplify
@@ -1071,3 +1071,8 @@ keyword:
 	match: cascade
 	mode: expert
 	reminder: When you cast it, exile the top card of your library until you remove a nonland card that costs less. You may cast that card without paying its mana cost. Put the exiled cards on the bottom of your library at random.
+keyword:
+	keyword: Intimidate
+	match: Intimidate
+	mode: core
+	reminder: This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.
