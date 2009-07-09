@@ -6,7 +6,7 @@ installer group: magic/old style/textless cards
 icon: card-sample.png
 position hint: 105
 
-version: 2009-07-07
+version: 2009-07-09
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -63,12 +63,6 @@ init script:
 					else if styling.type_of_gradient_artifact == "trim only" then "multicolor_blend_{type}2.png"
 					else "multicolor_blend_{type}.png" ),
 				dark:  template("a"),
-				light: base,
-			)
-		else if color_count > 1 and mask_hybrid_with_land() then
-			masked_blend(
-				mask:  "hybrid_blend_{type}.png",
-				dark:  land_template("c"),
 				light: base,
 			)
 		else base
