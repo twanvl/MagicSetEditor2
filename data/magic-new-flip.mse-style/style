@@ -6,7 +6,7 @@ installer group: magic/new style/flip cards
 icon: card-sample.png
 position hint: 002
 
-version: 2009-07-07
+version: 2009-07-09
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -451,7 +451,6 @@ extra card style:
 		render style: image
 		mask: mask_pt2.png
 		image: { flip_ptbox2() }
-		image: { card_ptbox() }
 	foil layer:
 		left: 0
 		top : 0
