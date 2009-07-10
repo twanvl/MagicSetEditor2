@@ -5,7 +5,7 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2009-07-08
+version: 2009-07-10
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -590,7 +590,7 @@ keyword:
 	keyword: Banding
 	match: banding
 	mode: old
-	reminder: Any number of attacking creatures with banding, and up to one without, can form a band. Blocking a creature in the band blocks all of them. You assign combat damage for any creature blocking or blocked by this creature.
+	reminder: Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.
 keyword:
 	keyword: Landwalk
 	match: <atom-param>prefix</atom-param>walk
@@ -610,7 +610,7 @@ keyword:
 	keyword: Bands with other
 	match: bands with other <atom-param>name</atom-param>
 	mode: old
-	reminder: Any number of attacking creatures with banding or bands with other {param1} can form a band. Blocking a creature in the band blocks all of them. You assign combat damage for any creature blocking or blocked by this creature and another creature with bands with other {param1}.
+	reminder: Any {param1} can attack in a band as long as at least one has "bands with other {param1}." Bands are blocked as a group. If at least two {param1} you control, one of which has "bands with other {param1}," are blocking or being blocked by the same creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.
 keyword:
 	keyword: Rampage
 	match: rampage <atom-param>number</atom-param>
@@ -625,7 +625,7 @@ keyword:
 	keyword: Phasing
 	match: phasing
 	mode: old
-	reminder: At the beginning of your upkeep, put it and any cards and/or counters attached to it in the phased-out zone. If it is already in the phased-out zone, return it and any cards or counters attached to it to the battlefield. This ability does not cause enters-the-battlefield or exits-the-battlefield abilities to trigger.
+	reminder: It phases in or out before you untap during each of your untap steps. While it's phased out, it's treated as though it doesn't exist.
 keyword:
 	keyword: Flanking
 	match: flanking
@@ -670,7 +670,7 @@ keyword:
 	keyword: Fading
 	match: fading <atom-param>number</atom-param>
 	mode: expert
-	reminder: It enters the battlefield with {english_number_a(param1)} fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can’t, sacrifice it.
+	reminder: It enters the battlefield with {english_number_a(param1)} fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can't, sacrifice it.
 keyword:
 	keyword: Kicker
 	match: kicker <atom-param>cost</atom-param>
@@ -685,6 +685,7 @@ keyword:
 	keyword: Threshold
 	match: Threshold
 	mode: pseudo
+	rules: Threshold — [effect] as long as seven or more cards are in your graveyard.
 keyword:
 	keyword: Madness
 	match: madness <atom-param>cost</atom-param>
@@ -742,9 +743,9 @@ keyword:
 	reminder: {param1}: Attach to target creature you control. Equip only as a sorcery.
 keyword:
 	keyword: Imprint
-	match: imprint — <atom-param>action</atom-param>
-	mode: expert
-	reminder: The exiled card is imprinted on it.
+	match: Imprint
+	mode: pseudo
+	rules: Imprint — When it enters the battlefield, you may exile a [something] from [somewhere].
 keyword:
 	keyword: Modular
 	match: modular <atom-param>number</atom-param>
@@ -778,6 +779,7 @@ keyword:
 	keyword: Gotcha
 	match: Gotcha
 	mode: pseudo
+	rules: Gotcha — Whenever an opponent [does something], you may say "Gotcha!". If you do, return [something] from your graveyard to your hand.
 keyword:
 	keyword: Splice
 	match: splice onto <atom-param>name</atom-param> <atom-param>cost</atom-param>
@@ -827,10 +829,12 @@ keyword:
 	keyword: Channel
 	match: Channel
 	mode: pseudo
+	rules: Channel — [cost], Discard a card: [effect].
 keyword:
 	keyword: Sweep
 	match: Sweep
 	mode: pseudo
+	rules: Sweep — Return any number of [basic land type] you control to their owner's hand. [effect based on number of lands returned].
 keyword:
 	keyword: Convoke
 	match: convoke
@@ -850,6 +854,7 @@ keyword:
 	keyword: Radiance
 	match: Radiance
 	mode: pseudo
+	rules: Radiance — [effect to target permanent or spell and all cards of same card type that share a color with it].
 keyword:
 	keyword: Haunt
 	match: haunt
@@ -879,6 +884,7 @@ keyword:
 	keyword: Hellbent
 	match: Hellbent
 	mode: pseudo
+	rules: Hellbent — [effect] if you have no cards in hand.
 keyword:
 	keyword: Recover
 	match: recover <atom-param>cost</atom-param>
@@ -982,6 +988,7 @@ keyword:
 	keyword: Grandeur
 	match: Grandeur
 	mode: pseudo
+	rules: Grandeur — Discard another card named [something]: [effect].
 keyword:
 	keyword: Evoke
 	match: evoke <atom-param>cost</atom-param>
@@ -1021,6 +1028,7 @@ keyword:
 	keyword: Kinship
 	match: Kinship
 	mode: pseudo
+	rules: Kinship — At the beginning of your upkeep, you may look at the top card of your library. If that card shares a creature type with it, you may reveal it. If you do, [effect].
 keyword:
 	keyword: Persist
 	match: persist
@@ -1073,6 +1081,6 @@ keyword:
 	reminder: When you cast it, exile the top card of your library until you remove a nonland card that costs less. You may cast that card without paying its mana cost. Put the exiled cards on the bottom of your library at random.
 keyword:
 	keyword: Intimidate
-	match: Intimidate
+	match: intimidate
 	mode: core
 	reminder: This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.

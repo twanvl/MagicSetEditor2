@@ -147,12 +147,15 @@ keyword:
 	match: Trample
 	mode: core
 	reminder: If this creature would deal enough damage to its blockers to destroy them, you may have it deal the rest of its damage to defending player or planeswalker.
-# TODO
 keyword:
 	keyword: Banding
 	match: Banding
 	mode: old
+<<<<<<< .mine
+	reminder: Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.
+=======
 	reminder: Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking
+>>>>>>> .r1399
 keyword:
 	keyword: Landwalk
 	match: <atom-param>prefix</atom-param>walk
@@ -172,7 +175,7 @@ keyword:
 	keyword: Bands with other
 	match: Bands with other <atom-param>name</atom-param>
 	mode: old
-	reminder: Any number of attacking creatures with banding or bands with other {param1} can form a band. Blocking a creature in the band blocks all of them. You assign combat damage for any creature blocking or blocked by this creature and another creature with bands with other {param1}.
+	reminder: Any {param1} can attack in a band as long as at least one has "bands with other {param1}." Bands are blocked as a group. If at least two {param1} you control, one of which has "bands with other {param1}," are blocking or being blocked by the same creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.
 keyword:
 	keyword: Rampage
 	match: Rampage <atom-param>number</atom-param>
@@ -232,7 +235,7 @@ keyword:
 	keyword: Fading
 	match: Fading <atom-param>number</atom-param>
 	mode: expert
-	reminder: This enters the battlefield with {english_number_a(param1)} fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can’t, sacrifice it.
+	reminder: This {if has_pt() then "creature" else "permanent"} enters the battlefield with {english_number_a(param1)} fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can't, sacrifice it.
 keyword:
 	keyword: Kicker
 	match: Kicker <atom-param>cost</atom-param>
@@ -305,9 +308,9 @@ keyword:
 	reminder: {param1}: Attach to target creature you control. Equip only as a sorcery.
 keyword:
 	keyword: Imprint
-	match: Imprint — <atom-param>action</atom-param>
-	mode: expert
-	reminder: The exiled card is imprinted on this artifact.
+	match: Imprint
+	mode: pseudo
+	rules: When ~ enters the battlefield, you may exile a [something] from [somewhere].
 keyword:
 	keyword: Modular
 	match: Modular <atom-param>number</atom-param>
