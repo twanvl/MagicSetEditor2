@@ -1,10 +1,10 @@
-﻿
+
 
 # Language specific strings
 languages := [
 	English: [
 		code              : "en",
-		spellcheck_code   : "en_US",
+		spellcheck_code   : "en_us",
 		pt_separator      : "/",
 		type_separator    : " — ",
 		subtype_separator : " ",
