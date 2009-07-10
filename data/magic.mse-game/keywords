@@ -152,7 +152,7 @@ keyword:
 	keyword: Banding
 	match: Banding
 	mode: old
-	reminder: Any number of attacking creatures with banding, and up to one without, can form a band. Blocking a creature in the band blocks all of them. You assign combat damage for any creature blocking or blocked by this creature.
+	reminder: Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking
 keyword:
 	keyword: Landwalk
 	match: <atom-param>prefix</atom-param>walk
@@ -187,7 +187,7 @@ keyword:
 	keyword: Phasing
 	match: Phasing
 	mode: old
-	reminder: At the beginning of your untap step, put this and any cards and/or counters attached to it in the phased-out zone. If this is already in the phased-out zone, return it and any cards and/or counters attached to it to the battlefield. This ability does not cause enter-the-battlefield or exit-the-battlefield abilities to trigger.
+	reminder: This phases in or out before you untap during each of your untap steps. While it's phased out, it's treated as though it doesn't exist.
 keyword:
 	keyword: Flanking
 	match: Flanking
@@ -227,7 +227,7 @@ keyword:
 	keyword: Horsemanship
 	match: Horsemanship
 	mode: old
-	reminder: This creature can’t be blocked except by creatures with horsemanship.
+	reminder: This creature can't be blocked except by creatures with horsemanship.
 keyword:
 	keyword: Fading
 	match: Fading <atom-param>number</atom-param>
