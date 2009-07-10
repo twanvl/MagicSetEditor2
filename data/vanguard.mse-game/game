@@ -610,7 +610,7 @@ keyword:
 	keyword: Bands with other
 	match: bands with other <atom-param>name</atom-param>
 	mode: old
-	reminder: Any {param1} can attack in a band as long as at least one has "bands with other {param1}." Bands are blocked as a group. If at least two {param1} you control, one of which has "bands with other {param1}," are blocking or being blocked by the same creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.
+	reminder: Any {param1} can attack in a band as long as at least one has “bands with other {param1}.” Bands are blocked as a group. If at least two {param1} you control, one of which has “bands with other {param1},” are blocking or being blocked by the same creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.
 keyword:
 	keyword: Rampage
 	match: rampage <atom-param>number</atom-param>
@@ -779,7 +779,7 @@ keyword:
 	keyword: Gotcha
 	match: Gotcha
 	mode: pseudo
-	rules: Gotcha — Whenever an opponent [does something], you may say "Gotcha!". If you do, return [something] from your graveyard to your hand.
+	rules: Gotcha — Whenever an opponent [does something], you may say “Gotcha!”. If you do, return [something] from your graveyard to your hand.
 keyword:
 	keyword: Splice
 	match: splice onto <atom-param>name</atom-param> <atom-param>cost</atom-param>
