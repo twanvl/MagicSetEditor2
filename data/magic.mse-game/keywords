@@ -151,7 +151,7 @@ keyword:
 	keyword: Banding
 	match: Banding
 	mode: old
-	reminder: Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.
+	reminder: Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature’s combat damage, not its controller, among any of the creatures it’s being blocked by or is blocking.
 keyword:
 	keyword: Landwalk
 	match: <atom-param>prefix</atom-param>walk
@@ -166,12 +166,12 @@ keyword:
 	keyword: Regeneration
 	match: Regenerate
 	mode: action
-	reminder: The next time {if has_pt() then "this creature" else "this"} would be destroyed this turn, it isn't.{if has_pt() then " Instead tap it, remove all damage from it, and remove it from combat." else " Instead tap it."}
+	reminder: The next time {if has_pt() then "this creature" else "this"} would be destroyed this turn, it isn’t.{if has_pt() then " Instead tap it, remove all damage from it, and remove it from combat." else " Instead tap it."}
 keyword:
 	keyword: Bands with other
 	match: Bands with other <atom-param>name</atom-param>
 	mode: old
-	reminder: Any {param1} can attack in a band as long as at least one has “bands with other {param1}.” Bands are blocked as a group. If at least two {param1} you control, one of which has “bands with other {param1},” are blocking or being blocked by the same creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.
+	reminder: Any {param1} can attack in a band as long as at least one has “bands with other {param1}.” Bands are blocked as a group. If at least two {param1} you control, one of which has “bands with other {param1},” are blocking or being blocked by the same creature, you divide that creature’s combat damage, not its controller, among any of the creatures it’s being blocked by or is blocking.
 keyword:
 	keyword: Rampage
 	match: Rampage <atom-param>number</atom-param>
@@ -186,7 +186,7 @@ keyword:
 	keyword: Phasing
 	match: Phasing
 	mode: old
-	reminder: This phases in or out before you untap during each of your untap steps. While it's phased out, it's treated as though it doesn't exist.
+	reminder: This phases in or out before you untap during each of your untap steps. While it’s phased out, it’s treated as though it doesn’t exist.
 keyword:
 	keyword: Flanking
 	match: Flanking
@@ -226,12 +226,12 @@ keyword:
 	keyword: Horsemanship
 	match: Horsemanship
 	mode: old
-	reminder: This creature can't be blocked except by creatures with horsemanship.
+	reminder: This creature can’t be blocked except by creatures with horsemanship.
 keyword:
 	keyword: Fading
 	match: Fading <atom-param>number</atom-param>
 	mode: expert
-	reminder: This {if has_pt() then "creature" else "permanent"} enters the battlefield with {english_number_a(param1)} fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can't, sacrifice it.
+	reminder: This {if has_pt() then "creature" else "permanent"} enters the battlefield with {english_number_a(param1)} fade counter(s) on it. At the beginning of your upkeep, remove a fade counter from it. If you can’t, sacrifice it.
 keyword:
 	keyword: Kicker
 	match: Kicker <atom-param>cost</atom-param>
@@ -330,12 +330,12 @@ keyword:
 	keyword: Art rampage
 	match: Art rampage <atom-param>number</atom-param>
 	mode: expert
-	reminder: Whenever this becomes blocked by a creature, it gets +{param1}/+{param1} for each creature in the blocker's art beyond the first.
+	reminder: Whenever this becomes blocked by a creature, it gets +{param1}/+{param1} for each creature in the blocker’s art beyond the first.
 keyword:
 	keyword: Super haste
 	match: Super haste
 	mode: expert
-	reminder: This may attack the turn before you cast it. (You may have this card enter the battlefield from your hand, tapped and attacking, during your declare attackers step. If you do, you lose the game at the end of your next turn unless you pay this card's mana cost during that turn.)
+	reminder: This may attack the turn before you cast it. (You may have this card enter the battlefield from your hand, tapped and attacking, during your declare attackers step. If you do, you lose the game at the end of your next turn unless you pay this card’s mana cost during that turn.)
 keyword:
 	keyword: Gotcha
 	match: Gotcha
@@ -395,7 +395,7 @@ keyword:
 	keyword: Sweep
 	match: Sweep
 	mode: pseudo
-	rules: Sweep — Return any number of [basic land type] you control to their owner's hand. [effect based on number of lands returned].
+	rules: Sweep — Return any number of [basic land type] you control to their owner’s hand. [effect based on number of lands returned].
 keyword:
 	keyword: Convoke
 	match: Convoke
@@ -465,7 +465,7 @@ keyword:
 	keyword: Split second
 	match: Split second
 	mode: expert
-	reminder: As long as this spell is on the stack, players can't cast spells or activate activated abilities that aren't mana abilities.
+	reminder: As long as this spell is on the stack, players can’t cast spells or activate activated abilities that aren’t mana abilities.
 keyword:
 	keyword: Suspend
 	match: Suspend <atom-param>number</atom-param>—<atom-param>cost</atom-param>
@@ -480,7 +480,7 @@ keyword:
 	keyword: Deathtouch
 	match: Deathtouch
 	mode: core
-	reminder: Creatures dealt damage by this creature are destroyed. You can divide this creature's combat damage among any of the creatures blocking or blocked by it.
+	reminder: Creatures dealt damage by this creature are destroyed. You can divide this creature’s combat damage among any of the creatures blocking or blocked by it.
 keyword:
 	keyword: Reach
 	match: Reach
@@ -507,8 +507,8 @@ keyword:
 	mode: action
 	reminder:
 		Look at the top {
-		 if param1.value==1 then "card of an opponent's library, then you may put it on the bottom of that player's library."
-		 else "{english_number(param1)} cards of an opponent's library, then put any number of them on the bottom of that player's library and the rest on top in any order."
+		 if param1.value==1 then "card of an opponent’s library, then you may put it on the bottom of that player’s library."
+		 else "{english_number(param1)} cards of an opponent’s library, then put any number of them on the bottom of that player’s library and the rest on top in any order."
 		}
 keyword:
 	keyword: Transfigure
@@ -524,7 +524,7 @@ keyword:
 	keyword: Frenzy
 	match: Frenzy <atom-param>number</atom-param>
 	mode: expert
-	reminder: Whenever this creature attacks and isn't blocked, it gets +{param1}/+0 until end of turn.
+	reminder: Whenever this creature attacks and isn’t blocked, it gets +{param1}/+0 until end of turn.
 keyword:
 	keyword: Delve
 	match: Delve
@@ -539,7 +539,7 @@ keyword:
 	keyword: Shroud
 	match: Shroud
 	mode: core
-	reminder: This permanent can't be the target of spells or abilities.
+	reminder: This permanent can’t be the target of spells or abilities.
 keyword:
 	keyword: Fortify
 	match: Fortify <atom-param>cost</atom-param>
@@ -554,7 +554,7 @@ keyword:
 	keyword: Evoke
 	match: Evoke <atom-param>cost</atom-param>
 	mode: expert
-	reminder: You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters the battlefield.
+	reminder: You may cast this spell for its evoke cost. If you do, it’s sacrificed when it enters the battlefield.
 keyword:
 	keyword: Champion
 	match: Champion<atom-param>a</atom-param><atom-param>name</atom-param>
@@ -594,7 +594,7 @@ keyword:
 	keyword: Persist
 	match: Persist
 	mode: expert
-	reminder: When this creature is put into a graveyard from the battlefield, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.
+	reminder: When this creature is put into a graveyard from the battlefield, if it had no -1/-1 counters on it, return it to the battlefield under its owner’s control with a -1/-1 counter on it.
 keyword:
 	keyword: Wither
 	match: Wither
@@ -644,4 +644,4 @@ keyword:
 	keyword: Intimidate
 	match: Intimidate
 	mode: core
-	reminder: This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.
+	reminder: This creature can’t be blocked except by artifact creatures and/or creatures that share a color with it.
