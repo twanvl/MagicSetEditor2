@@ -5,7 +5,7 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2009-07-11
+version: 2009-07-12
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -904,7 +904,7 @@ keyword:
 	keyword: Split second
 	match: split second
 	mode: expert
-	reminder: As long as it is on the stack, players can’t cast spells or activated abilities that aren’t mana abilities.
+	reminder: As long as it is on the stack, players can’t cast spells or activate abilities that aren’t mana abilities.
 keyword:
 	keyword: Suspend
 	match: suspend <atom-param>number</atom-param>—<atom-param>cost</atom-param>
