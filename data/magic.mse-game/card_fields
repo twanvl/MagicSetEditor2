@@ -255,6 +255,18 @@ card field:
 	name: loyalty cost 3
 	show statistics: false
 	description: The loyalty cost for the third ability of a planeswalker
+card field:
+	type: text
+	name: loyalty cost 4
+	show statistics: false
+	description: The loyalty cost for the fourth ability of a planeswalker
+	default: {if card.power == "" then card.power_2 else card.power} #For back compatibility with past templates.  Take out a couple versions after 0.3.8
+card field:
+	type: text
+	name: loyalty cost 5
+	show statistics: false
+	description: The loyalty cost for the fifth ability of a planeswalker
+	default: {card.toughness_2} #For back compatibility with past templates.  Take out a couple versions after 0.3.8
 ############################# PT
 card field:
 	type: text
@@ -476,6 +488,12 @@ card field:
 	icon: stats/watermark.png
 	show statistics: false
 	description: A watermark for below the textbox, this can be a big mana symbol used on basic lands, a special symbol, or a guild symbol
+card field:
+	type: text
+	name: loyalty 2
+	icon: stats/toughness.png
+	show statistics: false
+	description: The initial loyalty of a planeswalker
 card field:
 	type: text
 	name: power 2
