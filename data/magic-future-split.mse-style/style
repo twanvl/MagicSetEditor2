@@ -6,7 +6,7 @@ installer group: magic/Future/Split cards
 icon: card-sample.png
 position hint: 053
 
-version: 2009-07-07
+version: 2009-07-22
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -137,7 +137,7 @@ styling field:
 	type: boolean
 	name: shifted sorting
 	description: Should this style of card sort as a shifted card (after other cards of that color)?
-	initial: yes
+	initial: no
 styling field:
 	type: boolean
 	name: grey hybrid name
@@ -208,7 +208,7 @@ card style:
 		top width:    12
 		bottom width: 12
 		mask: bordermask.png
-		z index: 8
+		z index: 7
 	card color:
 		left:	18
 		top:	18
@@ -235,7 +235,7 @@ card style:
 		height: 26
 		alignment: middle shrink-overflow
 		padding bottom: 0
-		z index: 5
+		z index: 4
 		font:
 			name: Matrix
 			size: 14
@@ -267,7 +267,7 @@ card style:
 		height: 26
 		alignment: middle shrink-overflow
 		padding bottom: 0
-		z index: 5
+		z index: 4
 		font:
 			name: Matrix
 			size: 14
@@ -305,7 +305,7 @@ card style:
 			scale down to: 16
 			alignment: bottom right
 		always symbol: true
-		z index: 5
+		z index: 4
 		padding top: 0
 		mask: costmask.png
 	casting cost 2:
@@ -321,7 +321,7 @@ card style:
 			scale down to: 16
 			alignment: bottom right
 		always symbol: true
-		z index: 5
+		z index: 4
 		padding top: 0
 		mask: costmask.png
 	card symbol:
@@ -329,7 +329,7 @@ card style:
 		top : 28
 		height: 16
 		width: 12
-		z index: 5
+		z index: 4
 		render style: image
 		choice images:
 			tombstone: tombstone.png
@@ -338,7 +338,7 @@ card style:
 		top : 28
 		height: 16
 		width: 12
-		z index: 5
+		z index: 4
 		render style: image
 		choice images:
 			tombstone: tombstone.png
@@ -347,7 +347,7 @@ card style:
 		top: 22
 		width: 15
 		height: 14
-		z index: 5
+		z index: 1
 		render style: image
 		choice images:
 			artifact: { "/magic-future-common.mse-include/artifact_" + typesymbol_color(frame: card.card_color) + ".png" }
@@ -380,7 +380,7 @@ card style:
 		width: { 215 - max(21,card_style.rarity.content_width) }
 		height: 20
 		alignment: middle shrink-overflow
-		z index: 5
+		z index: 4
 		padding top: 2
 		font:
 			name: Matrix
@@ -413,7 +413,7 @@ card style:
 		width: { 215 - max(21,card_style.rarity_2.content_width) }
 		height: 20
 		alignment: middle shrink-overflow
-		z index: 5
+		z index: 4
 		padding top: 2
 		font:
 			name: Matrix
@@ -445,7 +445,7 @@ card style:
 		top : 213
 		width: 14
 		height: 14
-		z index: 5
+		z index: 4
 		alignment: middle right
 		render style: image
 		choice images:
@@ -467,7 +467,7 @@ card style:
 		top : 213
 		width: 14
 		height: 14
-		z index: 5
+		z index: 4
 		alignment: middle right
 		render style: image
 		choice images:
@@ -512,7 +512,7 @@ card style:
 				   styling.center_text == "always"
 				then "middle center"
 				else "middle left"
-		z index: 5
+		z index: 4
 		padding left:   6
 		padding top:    2
 		padding right:  4
@@ -547,7 +547,7 @@ card style:
 				   styling.center_text == "always"
 				then "middle center"
 				else "middle left"
-		z index: 5
+		z index: 4
 		padding left:   6
 		padding top:    2
 		padding right:  4
@@ -560,7 +560,7 @@ card style:
 		top : 229
 		width: 92
 		height: 100
-		z index: 4
+		z index: 3
 		render style: image
 		alignment: middle center
 		include file: /magic-watermarks.mse-include/watermarks
@@ -569,13 +569,13 @@ card style:
 		top : 229
 		width: 92
 		height: 100
-		z index: 4
+		z index: 3
 		render style: image
 		alignment: middle center
 		include file: /magic-watermarks.mse-include/watermarks
 	############################# PT
 	pt:
-		z index: 6
+		z index: 5
 		left:	196
 		top:	324
 		width:	60
@@ -606,7 +606,7 @@ card style:
 					else font_color(card.card_color)
 			separator color: rgb(200,0,0)
 	pt 2:
-		z index: 6
+		z index: 5
 		left:	447
 		top:	325
 		width:	60
@@ -771,7 +771,9 @@ extra card field:
 	choice: instant
 	choice: land
 	choice: multitype
+	choice: planeswalker
 	choice: sorcery
+	choice: none
 extra card style:
 	textbox:
 		left: 22
@@ -843,7 +845,7 @@ extra card style:
 		bottom: 0
 		width: 375
 		height: 523
-		z index: 7
+		z index: 6
 		angle: 90
 		render style: image
 		image: {if styling.overlay == "" then nil else styling.overlay + "/overlay.png"}
@@ -863,7 +865,7 @@ extra card style:
 		top: 22
 		width: 15
 		height: 14
-		z index: 5
+		z index: 1
 		render style: image
 		choice images:
 			artifact: { "/magic-future-common.mse-include/artifact_" + typesymbol_color(frame: card.card_color_2) + ".png" }
@@ -872,5 +874,5 @@ extra card style:
 			instant: { "/magic-future-common.mse-include/instant_" + typesymbol_color(frame: card.card_color_2) + ".png" }
 			land: { "/magic-future-common.mse-include/land_" + typesymbol_color(frame: card.card_color_2) + ".png" }
 			multitype: { "/magic-future-common.mse-include/multitype_" + typesymbol_color(frame: card.card_color_2) + ".png" }
-			sorcery: { "/magic-future-common.mse-include/sorcery_" + typesymbol_color(frame: card.card_color_2) + ".png" }
 			planeswalker: { "/magic-future-common.mse-include/planeswalker_" + typesymbol_color(frame: card.card_color_2) + ".png" }
+			sorcery: { "/magic-future-common.mse-include/sorcery_" + typesymbol_color(frame: card.card_color_2) + ".png" }

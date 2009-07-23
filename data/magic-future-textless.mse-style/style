@@ -6,7 +6,7 @@ installer group: magic/Future/Textless cards
 icon: card-sample.png
 position hint: 055
 
-version: 2009-07-06
+version: 2009-07-22
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -92,7 +92,7 @@ styling field:
 	type: boolean
 	name: shifted sorting
 	description: Should this style of card sort as a shifted card (after other cards of that color)?
-	initial: yes
+	initial: no
 styling field:
 	type: boolean
 	name: grey hybrid name
