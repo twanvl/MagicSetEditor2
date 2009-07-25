@@ -227,7 +227,7 @@
 		else if is_character() and card.identity!="" then " <sym>•</sym> "
 		else if is_equipment() and card.identity=="" then " "
 		else if is_equipment() and card.identity!="" then " <sym>•</sym> "
-		else ""
+		else " "
 	}
 	
 	separator_type := {
