@@ -1,4 +1,4 @@
-﻿mse version: 0.3.8
+mse version: 0.3.8
 version: 2009-05-08
 short name: New (unofficial)
 position hint: 3
@@ -310,8 +310,8 @@ symbol:
 	code: 9
 	image: 9.png
 symbol:
-	code: X
-	image: X.png
+	code: x
+	image: x.png
 symbol:
 	code: Planet
 	image: planet.png
