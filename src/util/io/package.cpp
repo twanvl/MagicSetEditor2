@@ -244,6 +244,7 @@ String Package::nameOut(const String& file) {
 	if (it == files.end()) {
 		// new file
 		it = addFile(name);
+		it->second.created = true;
 	}
 
 	// return stream
@@ -271,7 +272,8 @@ FileName Package::newFileName(const String& prefix, const String& suffix) {
 		FileInfos::iterator it = files.find(name);
 		if (it == files.end()) {
 			// name doesn't exist yet
-			addFile(name);
+			it = addFile(name);
+			it->second.created = true;
 			return name;
 		}
 	}
@@ -320,7 +322,7 @@ InputStreamP Package::openAbsoluteFile(const String& name) {
 // ----------------------------------------------------------------------------- : Package : private
 
 Package::FileInfo::FileInfo()
-	: keep(false), zipEntry(nullptr)
+	: keep(false), created(false), zipEntry(nullptr)
 {}
 
 Package::FileInfo::~FileInfo() {
@@ -379,11 +381,12 @@ void Package::openZipfile() {
 
 void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_copy) {
 	// write to a directory
+	VCSP vcs = getVCS();
 	FOR_EACH(f, files) {
 		if (!f.second.keep && remove_unused) {
 			// remove files that are not to be kept
 			// ignore failure (new file that is not kept)
-			wxRemoveFile(saveAs+_("/")+f.first);
+			vcs->removeFile(saveAs+_("/")+f.first);
 		} else if (f.second.wasWritten()) {
 			// move files that were updated
 			wxRemoveFile(saveAs+_("/")+f.first);
@@ -391,11 +394,16 @@ void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_
 			              : wxRenameFile(f.second.tempName, saveAs+_("/")+f.first))) {
 				throw PackageError(_ERROR_("unable to store file"));
 			}
+			if (f.second.created) {
+				vcs->addFile(saveAs+_("/")+f.first);
+				f.second.created = false;
+			}
 		} else if (filename != saveAs) {
 			// save as, copy old filess
 			if (!wxCopyFile(filename+_("/")+f.first, saveAs+_("/")+f.first)) {
 				throw PackageError(_ERROR_("unable to store file"));
 			}
+			vcs->addFile(saveAs+_("/")+f.first);
 		} else {
 			// old file, just keep it
 		}
@@ -462,7 +470,7 @@ DateTime Package::modificationTime(const pair<String, FileInfo>& fi) const {
 	} else if (wxFileExists(filename+_("/")+fi.first)) {
 		return wxFileName(filename+_("/")+fi.first).GetModificationTime();
 	} else {
-		return DateTime();
+		return DateTime((wxLongLong)0ul);
 	}
 }
 
@@ -505,6 +513,7 @@ IMPLEMENT_REFLECTION(Packaged) {
 Packaged::Packaged()
 	: position_hint(100000)
 	, fully_loaded(true)
+	, vcs(nullptr)
 {}
 
 InputStreamP Packaged::openIconFile() {

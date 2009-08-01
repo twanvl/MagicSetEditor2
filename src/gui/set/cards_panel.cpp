@@ -276,6 +276,9 @@ void CardsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 			collapse_notes->SetHelpText(collapse ? _HELP_("collapse notes") : _HELP_("expand notes"));
 			break;
 		}
+#if 0 //ifdef __WXGTK__ //crashes on GTK
+		case ID_INSERT_SYMBOL: ev.Enable(false); break;
+#else
 		case ID_INSERT_SYMBOL: {
 			wxMenu* menu = editor->getMenu(ID_INSERT_SYMBOL);
 			ev.Enable(menu);
@@ -285,17 +288,21 @@ void CardsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 				insertSymbolMenu->SetSubMenu(menu);
 				menuFormat->Append(insertSymbolMenu);
 			}
+			break;
 		}
+#endif
 	}
 }
 
 void CardsPanel::onCommand(int id) {
 	switch (id) {
 		case ID_CARD_PREV:
-			card_list->selectPrevious();
+			// Note: Forwarded events may cause this to occur even at the top.
+			if (card_list->canSelectPrevious()) card_list->selectPrevious();
 			break;
 		case ID_CARD_NEXT:
-			card_list->selectNext();
+			// Note: Forwarded events may cause this to occur even at the bottom.
+			if (card_list->canSelectNext()) card_list->selectNext();
 			break;
 		case ID_CARD_ADD:
 			set->actions.addAction(new AddCardAction(*set));

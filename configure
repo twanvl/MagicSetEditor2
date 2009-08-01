@@ -2368,6 +2368,9 @@ am__tar='${AMTAR} chof - "$$tardir"'; am__untar='${AMTAR} xf -'
 
 
 # Checks for programs.
+if test -n "${CXXFLAGS}"; then
+  user_set_cxxflags=yes
+fi
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -3159,6 +3162,10 @@ else
   am__fastdepCXX_FALSE=
 fi
 
+
+if test X$user_set_cxxflags != Xyes; then
+  CXXFLAGS="-g -O0"
+fi
 
 # Checks for libraries.
 ac_ext=c
@@ -4790,15 +4797,15 @@ fi
     WX_VERSION=""
 
     min_wx_version=2.8.0
-    if test -z "" ; then
+    if test -z "--debug" ; then
       { $as_echo "$as_me:$LINENO: checking for wxWidgets version >= $min_wx_version" >&5
 $as_echo_n "checking for wxWidgets version >= $min_wx_version... " >&6; }
     else
-      { $as_echo "$as_me:$LINENO: checking for wxWidgets version >= $min_wx_version ()" >&5
-$as_echo_n "checking for wxWidgets version >= $min_wx_version ()... " >&6; }
+      { $as_echo "$as_me:$LINENO: checking for wxWidgets version >= $min_wx_version (--debug)" >&5
+$as_echo_n "checking for wxWidgets version >= $min_wx_version (--debug)... " >&6; }
     fi
 
-    WX_CONFIG_WITH_ARGS="$WX_CONFIG_PATH $wx_config_args  "
+    WX_CONFIG_WITH_ARGS="$WX_CONFIG_PATH $wx_config_args --debug "
 
     WX_VERSION=`$WX_CONFIG_WITH_ARGS --version 2>/dev/null`
     wx_config_major_version=`echo $WX_VERSION | \
@@ -8090,3 +8097,8 @@ if test -n "$ac_unrecognized_opts" && test "$enable_option_checking" != no; then
 $as_echo "$as_me: WARNING: unrecognized options: $ac_unrecognized_opts" >&2;}
 fi
 
+
+echo "*******************************************************************************
+*DON'T YOU DARE SHIP THIS VERSION BECAUSE DEBUGGING IS ENABLED PLEASE DISABLE *
+*IT FIRST BY REMOVING --debug FROM WX AND REMOVING LIBSTDCXX -D FROM MakeAM.sh*
+*******************************************************************************"

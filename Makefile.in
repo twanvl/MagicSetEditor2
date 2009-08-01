@@ -64,6 +64,7 @@ am_magicseteditor_OBJECTS = ./src/util/version.$(OBJEXT) \
 	./src/util/spec_sort.$(OBJEXT) \
 	./src/util/io/get_member.$(OBJEXT) \
 	./src/util/io/package_manager.$(OBJEXT) \
+	./src/util/io/subversion.$(OBJEXT) \
 	./src/util/io/writer.$(OBJEXT) ./src/util/io/reader.$(OBJEXT) \
 	./src/util/io/package.$(OBJEXT) \
 	./src/util/action_stack.$(OBJEXT) ./src/util/error.$(OBJEXT) \
@@ -335,7 +336,7 @@ top_srcdir = @top_srcdir@
 
 # This flag allows us to use subdirectories:
 AUTOMAKE_OPTIONS = subdir-objects
-AM_CXXFLAGS = @WX_CXXFLAGS@ $(BOOST_CXXFLAGS) -DUNICODE -I . -Wall
+AM_CXXFLAGS = @WX_CXXFLAGS@ $(BOOST_CXXFLAGS) -DUNICODE -I . -Wall -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC
 AM_LDFLAGS = @WX_LIBS@ $(BOOST_LDFLAGS)
 magicseteditor_LDADD = $(BOOST_REGEX_LIB)
 
@@ -345,20 +346,21 @@ magicseteditor_SOURCES = ./src/util/version.cpp \
 	./src/util/tagged_string.cpp ./src/util/spell_checker.cpp \
 	./src/util/regex.cpp ./src/util/spec_sort.cpp \
 	./src/util/io/get_member.cpp ./src/util/io/package_manager.cpp \
-	./src/util/io/writer.cpp ./src/util/io/reader.cpp \
-	./src/util/io/package.cpp ./src/util/action_stack.cpp \
-	./src/util/error.cpp ./src/util/age.cpp \
-	./src/util/file_utils.cpp ./src/util/string.cpp \
-	./src/gfx/color.cpp ./src/gfx/mask_image.cpp \
-	./src/gfx/rotate_image.cpp ./src/gfx/image_effects.cpp \
-	./src/gfx/resample_text.cpp ./src/gfx/combine_image.cpp \
-	./src/gfx/polynomial.cpp ./src/gfx/bezier.cpp \
-	./src/gfx/generated_image.cpp ./src/gfx/resample_image.cpp \
-	./src/gfx/blend_image.cpp ./src/main.cpp \
-	./src/render/card/viewer.cpp ./src/render/text/compound.cpp \
-	./src/render/text/symbol.cpp ./src/render/text/font.cpp \
-	./src/render/text/viewer.cpp ./src/render/text/element.cpp \
-	./src/render/symbol/filter.cpp ./src/render/symbol/viewer.cpp \
+	./src/util/io/subversion.cpp ./src/util/io/writer.cpp \
+	./src/util/io/reader.cpp ./src/util/io/package.cpp \
+	./src/util/action_stack.cpp ./src/util/error.cpp \
+	./src/util/age.cpp ./src/util/file_utils.cpp \
+	./src/util/string.cpp ./src/gfx/color.cpp \
+	./src/gfx/mask_image.cpp ./src/gfx/rotate_image.cpp \
+	./src/gfx/image_effects.cpp ./src/gfx/resample_text.cpp \
+	./src/gfx/combine_image.cpp ./src/gfx/polynomial.cpp \
+	./src/gfx/bezier.cpp ./src/gfx/generated_image.cpp \
+	./src/gfx/resample_image.cpp ./src/gfx/blend_image.cpp \
+	./src/main.cpp ./src/render/card/viewer.cpp \
+	./src/render/text/compound.cpp ./src/render/text/symbol.cpp \
+	./src/render/text/font.cpp ./src/render/text/viewer.cpp \
+	./src/render/text/element.cpp ./src/render/symbol/filter.cpp \
+	./src/render/symbol/viewer.cpp \
 	./src/render/value/multiple_choice.cpp \
 	./src/render/value/symbol.cpp ./src/render/value/color.cpp \
 	./src/render/value/package_choice.cpp \
@@ -546,6 +548,8 @@ src/util/io/$(DEPDIR)/$(am__dirstamp):
 ./src/util/io/get_member.$(OBJEXT): src/util/io/$(am__dirstamp) \
 	src/util/io/$(DEPDIR)/$(am__dirstamp)
 ./src/util/io/package_manager.$(OBJEXT): src/util/io/$(am__dirstamp) \
+	src/util/io/$(DEPDIR)/$(am__dirstamp)
+./src/util/io/subversion.$(OBJEXT): src/util/io/$(am__dirstamp) \
 	src/util/io/$(DEPDIR)/$(am__dirstamp)
 ./src/util/io/writer.$(OBJEXT): src/util/io/$(am__dirstamp) \
 	src/util/io/$(DEPDIR)/$(am__dirstamp)
@@ -1175,6 +1179,7 @@ mostlyclean-compile:
 	-rm -f ./src/util/io/package.$(OBJEXT)
 	-rm -f ./src/util/io/package_manager.$(OBJEXT)
 	-rm -f ./src/util/io/reader.$(OBJEXT)
+	-rm -f ./src/util/io/subversion.$(OBJEXT)
 	-rm -f ./src/util/io/writer.$(OBJEXT)
 	-rm -f ./src/util/regex.$(OBJEXT)
 	-rm -f ./src/util/rotation.$(OBJEXT)
@@ -1352,6 +1357,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./src/util/io/$(DEPDIR)/package.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/util/io/$(DEPDIR)/package_manager.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/util/io/$(DEPDIR)/reader.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./src/util/io/$(DEPDIR)/subversion.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/util/io/$(DEPDIR)/writer.Po@am__quote@
 
 .cpp.o:

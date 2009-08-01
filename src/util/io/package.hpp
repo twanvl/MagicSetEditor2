@@ -13,6 +13,7 @@
 #include <util/dynamic_arg.hpp>
 #include <util/error.hpp>
 #include <util/file_utils.hpp>
+#include <util/io/vcs.hpp>
 
 class Package;
 class wxFileInputStream;
@@ -141,6 +142,10 @@ class Package : public IntrusivePtrVirtualBase {
 		writer.handle(obj);
 	}
 
+  protected:
+	// TODO: I dislike this very much. There ought to be a better way.
+	virtual VCSP getVCS() { return new_intrusive<VCS>(); }
+
 	// --------------------------------------------------- : Private stuff
   private:
 
@@ -149,6 +154,7 @@ class Package : public IntrusivePtrVirtualBase {
 		FileInfo();
 		~FileInfo();
 		bool keep;               ///< Should this file be kept in the package? (as opposed to deleting it)
+		bool created;            ///< Was this file just created (e.g. should the VCS add it?)
 		String tempName;         ///< Name of the temporary file where new contents of this file are placed
 		wxZipEntry* zipEntry;    ///< Entry in the zip file for this file
 		/// Is this file changed, and therefore written to a temporary file?
@@ -213,6 +219,7 @@ class Packaged : public Package {
 	String icon_filename;		///< Filename of icon to use in package lists
 	vector<PackageDependencyP> dependencies;	///< Dependencies of this package
 	int    position_hint;		///< A hint for the package list
+	VCSP   vcs;                     ///< The version control system to use
 
 	/// Get an input stream for the package icon, if there is any
 	InputStreamP openIconFile();
@@ -236,6 +243,10 @@ class Packaged : public Package {
 	}
 
   protected:
+	virtual VCSP getVCS() {
+		return vcs;
+	}
+
 	/// filename of the data file, and extension of the package file
 	virtual String typeName() const = 0;
 	/// Can be overloaded to do validation after loading

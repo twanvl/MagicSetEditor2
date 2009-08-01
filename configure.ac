@@ -1,6 +1,6 @@
 #+----------------------------------------------------------------------------+
 #| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-#| Copyright:    (C) 2001 - 2007 Twan van Laarhoven                           |
+#| Copyright:    (C) 2001 - 2007 Twan van Laarhoven and Sean "coppro" Hunt    |
 #| License:      GNU General Public License 2 or later (see file COPYING)     |
 #+----------------------------------------------------------------------------+
 
@@ -14,7 +14,14 @@ AC_CONFIG_HEADER([src/config.h])
 AM_INIT_AUTOMAKE([-Wall foreign])
 
 # Checks for programs.
+if test -n "${CXXFLAGS}"; then
+  user_set_cxxflags=yes
+fi
 AC_PROG_CXX
+if test X$user_set_cxxflags != Xyes; then
+  CXXFLAGS="-g -O0"
+fi
+
 # Checks for libraries.
 AC_CHECK_LIB([hunspell],[Hunspell_create])
 
@@ -25,7 +32,7 @@ BOOST_REGEX_LIB="-Wl,-Bstatic $BOOST_REGEX_LIB -Wl,-Bdynamic"
 
 # Check for wxWidgets
 AM_OPTIONS_WXCONFIG
-AM_PATH_WXCONFIG(2.8.0,wxWin=1)
+AM_PATH_WXCONFIG(2.8.0,wxWin=1,,,[--debug])
 if test "$wxWin" != 1; then
     AC_MSG_ERROR([
        wxWindows must be installed on your system
@@ -95,3 +102,8 @@ fi
 AC_OUTPUT([
 	Makefile
 ])
+
+echo "*******************************************************************************
+*DON'T YOU DARE SHIP THIS VERSION BECAUSE DEBUGGING IS ENABLED PLEASE DISABLE *
+*IT FIRST BY REMOVING --debug FROM WX AND REMOVING LIBSTDCXX -D FROM MakeAM.sh*
+*******************************************************************************"

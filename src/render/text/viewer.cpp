@@ -26,7 +26,8 @@ struct TextViewer::Line {
 	bool           justifying;  ///< Is the text justified? Only true when *really* justifying.
 	
 	Line()
-		: start(0), end_or_soft(0), top(0), line_height(0), break_after(BREAK_NO)
+		: start(0), end_or_soft(0), top(0), line_height(0)
+		, break_after(BREAK_NO), justifying(false)
 	{}
 	
 	/// The position (just beyond) the bottom of this line

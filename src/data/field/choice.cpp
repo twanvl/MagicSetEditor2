@@ -168,6 +168,7 @@ ChoiceStyle::ChoiceStyle(const ChoiceFieldP& field)
 	, combine(COMBINE_NORMAL)
 	, alignment(ALIGN_STRETCH)
 	, thumbnails(nullptr)
+	, content_width(0.0), content_height(0.0)
 {}
 
 ChoiceStyle::~ChoiceStyle() {
