@@ -1,16 +1,21 @@
 In order to use Magic Set Editor, you need to have libraries for wxGTK version
 2.8. This can be acquired from the Ubuntu/Debian package libwxgtk2.8-0. If you
 are using another distribution, you can probably find the library in a package
-somewhere.
+somewhere. You also need Hunspell, which is in Ubuntu/Debian libhunspell-1.2-0.
+
+Due to wxWidgets sucking, there is a fair chance that this will not work out of
+the box on non-Ubuntu systems. If this is the case, please download the source
+package and compile it yourself.
 
 To install Magic Set Editor, please extract this tarball if you haven't already,
 and then run the install script. If run as root, it will install MSE to
-/usr/share/local/magicseteditor, if not, to ~/.magicseteditor.
+/usr/local/share/magicseteditor, if not, to ~/.magicseteditor. Fonts will be
+installed to /usr/local/share/fonts or to ~/.fonts.
 
 MSE will also place a symlink in either /usr/local/bin or ~/bin. They can be
 removed without affecting the install, and removing the installation directory
 will completely purge the system of MSE, except that some users' configuration
 files will still remain in ~/.magicseteditor for each user.
 
-Fonts are not included with MSE currently, you will have to seek those out
-yourself.
+You can override the installation, font, or symlink targets with the environment
+variables MSE_INSTALL_DIR, MSE_FONTS_DIR, and MSE_EXEC_SYMLINK respectively.

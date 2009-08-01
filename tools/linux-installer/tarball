@@ -3,9 +3,12 @@
 
 mkdir magicseteditor
 mkdir magicseteditor/program
+mkdir magicseteditor/fonts
 
 cp -rP ../../data ~/.magicseteditor/resource ../../magicseteditor magicseteditor/program;
 cp install README magicseteditor;
+cp limited-fonts/* magicseteditor/fonts;
+cp all-fonts/* magicseteditor/fonts;
 
 tar -cfz magicseteditor.tar.gz --owner root --exclude=.* --exclude=*~ --exclude=.svn magicseteditor;
 

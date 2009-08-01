@@ -5,7 +5,9 @@ rm -rf magicseteditor
 mkdir magicseteditor
 mkdir magicseteditor/program
 mkdir magicseteditor/program/data
+mkdir magicseteditor/fonts
 
+#TODO: parse the msw-installer to determine this.
 PACKAGES="magic.mse-game
 magic-blends.mse-include
 magic-default-image.mse-include
@@ -37,6 +39,7 @@ done;
 
 cp -rP ~/.magicseteditor/resource ../../magicseteditor magicseteditor/program;
 cp install README magicseteditor;
+cp limited-fonts/* magicseteditor/fonts;
 
 tar -cfz magicseteditor-limited.tar.gz --owner root --exclude=.* --exclude=*~ --exclude=.svn magicseteditor;
 
