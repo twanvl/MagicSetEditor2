@@ -173,6 +173,8 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 			
 			// Analyze the current instruction
 			Instruction i = *instr++;
+			// If a scope is created, destroy it at end of block.
+			scoped_ptr<LocalScope> scope;
 			switch (i.instr) {
 				case I_NOP: break;
 				// Push a constant (as normal)
@@ -261,9 +263,8 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				}
 				
 				// Function call (as normal)
-				case I_CALL: {
-					// new scope
-					size_t scope = openScope();
+				case I_CALL: scope.reset(new LocalScope(*this)); //new scope
+				case I_TAILCALL: {
 					// prepare arguments
 					for (unsigned int j = 0 ; j < i.data ; ++j) {
 						setVariable((Variable)instr[i.data - j - 1].data, stack.back());
@@ -272,8 +273,6 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					instr += i.data; // skip arguments, there had better not be any jumps into the argument list
 					// get function and call
 					stack.back() = stack.back()->dependencies(*this, dep);
-					// restore scope
-					closeScope(scope);
 					break;
 				}
 				
