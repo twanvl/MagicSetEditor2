@@ -43,6 +43,8 @@ enum InstructionType
 ,	I_TERNARY		= 14 ///< arg = 3ary instr : pop 3 values, apply a function, push the result
 ,	I_QUATERNARY	= 15 ///< arg = 4ary instr : pop 4 values, apply a function, push the result
 ,	I_DUP			= 16 ///< arg = int        : duplicate the k-from-top element of the stack
+,	I_POP			= 17 ///< arg = *          : pop the top value off the stack.
+,	I_TAILCALL		= 18 ///< arg = int, n*var : perform a tail call - like I_CALL, except faster
 };
 
 /// Types of unary instructions (taking one argument from the stack)
@@ -54,8 +56,7 @@ enum UnaryInstructionType
 
 /// Types of binary instructions (taking two arguments from the stack)
 enum BinaryInstructionType
-{	I_POP			///< Pop the top value of the stack
-,	I_ITERATOR_R	///< Make an iterator for a range (two integers)
+{	I_ITERATOR_R	///< Make an iterator for a range (two integers)
 ,	I_MEMBER		///< Member of an object
 // Arithmatic
 ,	I_ADD			///< add

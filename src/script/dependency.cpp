@@ -169,7 +169,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				delete j;
 			}
 			
-			if (instr >= &*script.instructions.end()) break; // end of script
+			if (instr >= &script.instructions[0] + script.instructions.size()) break; // end of script
 			
 			// Analyze the current instruction
 			Instruction i = *instr++;
@@ -182,11 +182,11 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				}
 				// Jump
 				case I_JUMP: {
-					if (&script.instructions[i.data] >= instr) {
+					if ( &script.instructions[0] + i.data >= instr) {
 						// forward jump
 						// create jump record
 						Jump* jump = new Jump;
-						jump->target = &script.instructions[i.data];
+						jump->target = &script.instructions[0] + i.data;
 						jump->stack_top.assign(stack.begin() + stack_size, stack.end());
 						getBindings(scope, jump->bindings);
 						jumps.push(jump);
@@ -313,10 +313,6 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				}
 				// Simple instruction: binary
 				case I_BINARY: {
-					if (i.instr2 == I_POP) {
-						stack.pop_back();
-						continue;
-					}
 					ScriptValueP  b = stack.back(); stack.pop_back();
 					ScriptValueP& a = stack.back();
 					switch (i.instr2) {
@@ -355,6 +351,10 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 				case I_DUP: {
 					stack.push_back(stack.at(stack.size() - i.data - 1));
 					break;
+				}
+				// Pop value off stack
+				case I_POP: {
+					stack.pop_back();
 				}
 			}
 		}

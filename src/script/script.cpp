@@ -99,7 +99,11 @@ ScriptValueP Script::dependencies(Context& ctx, const Dependency& dep) const {
 static const unsigned int INVALID_ADDRESS = 0x03FFFFFF;
 
 unsigned int Script::addInstruction(InstructionType t) {
-	assert( t == I_JUMP || t == I_JUMP_IF_NOT || t == I_LOOP || t == I_LOOP_WITH_KEY);
+	assert( t == I_JUMP
+	     || t == I_JUMP_IF_NOT
+	     || t == I_LOOP
+	     || t == I_LOOP_WITH_KEY
+	     || t == I_POP);
 	Instruction i = {t, {INVALID_ADDRESS}};
 	instructions.push_back(i);
 	return getLabel() - 1;
@@ -179,7 +183,6 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 			break;
 		case I_BINARY:		ret += _("binary\t");
 			switch (i.instr2) {
-				case I_POP:			ret += _("pop");		break;
 				case I_ITERATOR_R:	ret += _("iterator_r");	break;
 				case I_MEMBER:		ret += _("member");		break;
 				case I_ADD:			ret += _("+");			break;
@@ -210,6 +213,8 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 			}
 			break;
 		case I_DUP:			ret += _("dup");				break;
+		case I_POP:			ret += _("pop");				break;
+		case I_TAILCALL:	ret += _("tailcall");			break;
 	}
 	// arg
 	switch (i.instr) {

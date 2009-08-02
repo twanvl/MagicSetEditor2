@@ -44,12 +44,15 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 	try {
 		// Instruction pointer
 		const Instruction* instr = &script.instructions[0];
-		const Instruction* end   = &*script.instructions.end();
+		const Instruction* end   = instr + script.instructions.size();
 		
 		// Loop until we are done
 		while (instr < end) {
 			// Evaluate the current instruction
 			Instruction i = *instr++;
+			// If a scope is created, destroy it at end of block.
+			scoped_ptr<LocalScope> scope;
+
 			switch (i.instr) {
 				case I_NOP: break;
 				// Push a constant
@@ -59,7 +62,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 				}
 				// Jump
 				case I_JUMP: {
-					instr = &script.instructions[i.data];
+					instr = &script.instructions[0] + i.data;
 					break;
 				}
 				// Conditional jump
@@ -67,7 +70,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 					bool condition = *stack.back();
 					stack.pop_back();
 					if (!condition) {
-						instr = &script.instructions[i.data];
+						instr = &script.instructions[0] + i.data;
 					}
 					break;
 				}
@@ -98,7 +101,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 						stack.push_back(val);
 					} else {
 						stack.erase(stack.end() - 2); // remove iterator
-						instr = &script.instructions[i.data];
+						instr = &script.instructions[0] + i.data;
 					}
 					break;
 				}
@@ -112,7 +115,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 						stack.push_back(key);
 					} else {
 						stack.erase(stack.end() - 2); // remove iterator
-						instr = &script.instructions[i.data];
+						instr = &script.instructions[0] + i.data;
 					}
 					break;
 				}
@@ -123,9 +126,8 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 				}
 				
 				// Function call
-				case I_CALL: {
-					// new scope
-					LocalScope local_scope(*this);
+				case I_CALL: scope.reset(new LocalScope(*this)); //new scope
+				case I_TAILCALL: {
 					// prepare arguments
 					for (unsigned int j = 0 ; j < i.data ; ++j) {
 						setVariable((Variable)instr[i.data - j - 1].data, stack.back());
@@ -203,6 +205,12 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 					instrQuaternary(i.instr4, a, b, c, d);
 					break;
 				}
+				// Pop off stack
+				case I_POP: {
+					stack.pop_back();
+					break;
+				}
+
 				// Duplicate stack
 				case I_DUP: {
 					stack.push_back(stack.at(stack.size() - i.data - 1));
@@ -419,9 +427,6 @@ class ScriptCompose : public ScriptValue {
 
 void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP& b) {
 	switch (i) {
-		case I_POP:
-			// a = a;
-			break;
 		case I_MEMBER:
 			a = a->getMember(*b);
 			break;

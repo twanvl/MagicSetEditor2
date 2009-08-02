@@ -534,10 +534,10 @@ void parseExpr(TokenIterator& input, Script& script, Precedence minPrec) {
 				expectToken(input, _("do"));							// do
 				if (with_key) {
 					script.addInstruction(I_SET_VAR, key);				//		set key_name
-					script.addInstruction(I_BINARY, I_POP);				//		 pop
+					script.addInstruction(I_POP);						//		 pop
 				}
 				script.addInstruction(I_SET_VAR, var);					//		set name
-				script.addInstruction(I_BINARY, I_POP);					//		 pop
+				script.addInstruction(I_POP);							//		 pop
 				parseOper(input, script, PREC_SET, I_BINARY, I_ADD);	// EEE;	add
 				script.addInstruction(I_JUMP, lblStart);				//		jump lbl_start
 				script.comeFrom(lblStart);								//		lbl_end:
@@ -650,7 +650,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 				// allow ; at end of expression without errors
 				break;
 			}
-			script.addInstruction(I_BINARY, I_POP); // discard result of first expression
+			script.addInstruction(I_POP); // discard result of first expression
 			parseOper(input, script, PREC_SET);
 		} else if (minPrec <= PREC_SET && token==_(":=")) {
 			// We made a mistake, the part before the := should be a variable name,
@@ -761,7 +761,7 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			// newline functions as ;
 			// only if we don't match another token!
 			input.putBack();
-			script.addInstruction(I_BINARY, I_POP);
+			script.addInstruction(I_POP);
 			parseOper(input, script, PREC_SET);
 		} else {
 			input.putBack();
