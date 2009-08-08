@@ -5,7 +5,7 @@ installer group: Yugioh/game files
 icon: card-back.png
 position hint: 4
 
-version: 2009-08-08
+version: 2009-08-09
 
 ############################################################## The script
 
@@ -17,5 +17,6 @@ include file: card_fields
 include file: set_fields
 include file: packs
 include file: word_lists
+include file: auto_replace
 
 ############################################################## Other stuff

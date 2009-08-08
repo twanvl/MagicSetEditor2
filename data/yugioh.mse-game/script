@@ -13,7 +13,7 @@
 		tag_remove_rule(tag: "<sym-auto>") +
 		# step 2 : expand shortcut words ~ and CARDNAME
 		replace_rule(
-			match: "~|~THIS~|CARDNAME",
+			match: "CARDNAME",
 			in_context: "(^|[[:space:]]|\\()<match>", # TODO: Allow any punctuation before
 			replace: "<atom-cardname></atom-cardname>"
 			) +
@@ -44,15 +44,6 @@
 		replace_rule(
 			match: "\\?",
 			replace: "<sym-auto>&</sym-auto>" );
-	copyright_filter :=
-		# step 1 : trademark symbol
-		replace_rule(
-			match: "TM",
-			replace: "™") +
-		# step 2 : copyright symbol
-		replace_rule(
-			match: "CR|\\(C\\)",
-			replace: "©")
 	
 	# the flavor text filter
 	flavor_text_filter :=
@@ -61,7 +52,7 @@
 		# step 2 : surround by <i> tags
 		{ "<i-flavor>" + input + "</i-flavor>" };
 	
-	type_over_list := replace_rule(match:" ?-$", replace:"")
+	type_over_list := replace_rule(match:" ?/", replace:"")
 	
 	monster_type_filter :=
 		tag_remove_rule(tag: "<word-list-") +
@@ -82,19 +73,19 @@
 		else if	contains(card.level, match:"Spell Card")						then "spell card"
 		else if card.attribute	== "trap"								then "trap card"
 		else if	contains(card.level, match:"Trap Card")							then "trap card"
-		else if card.type1	== "<word-list-monster>Divine-Beast</word-list-monster>"		then "obelisk"
-		else if card.type1	== "<word-list-monster>Legendary Dragon</word-list-monster>"		then "legendary dragons"
-		else if	contains(card.type2, match:"Fusion")							then "fusion monster"
-		else if	contains(card.type2, match:"Ritual")							then "ritual monster"
-		else if	contains(card.type2, match:"Dark Synchro")						then "dark synchro monster"
-		else if	contains(card.type2, match:"Dark Tuner")						then "effect monster"
-		else if	contains(card.type2, match:"Synchro")							then "synchro monster"
-		else if	contains(card.type2, match:"Effect")							then "effect monster"
-		else if	contains(card.type2, match:"Spirit")							then "effect monster"
-		else if	contains(card.type2, match:"Toon")							then "effect monster"
-		else if	contains(card.type2, match:"Tuner")							then "effect monster"
-		else if	contains(card.type2, match:"Union")							then "effect monster"
-		else                                         	 						     "normal monster"
+		else if card.type_1	== "<word-list-monster>Divine-Beast</word-list-monster>"		then "obelisk"
+		else if card.type_1	== "<word-list-monster>Legendary Dragon</word-list-monster>"		then "legendary dragons"
+		else if	contains(card.monster_type, match:"Fusion")						then "fusion monster"
+		else if	contains(card.monster_type, match:"Ritual")						then "ritual monster"
+		else if	contains(card.monster_type, match:"Dark Synchro")					then "dark synchro monster"
+		else if	contains(card.monster_type, match:"Dark Tuner")						then "effect monster"
+		else if	contains(card.monster_type, match:"Synchro")						then "synchro monster"
+		else if	contains(card.monster_type, match:"Effect")						then "effect monster"
+		else if	contains(card.monster_type, match:"Spirit")						then "effect monster"
+		else if	contains(card.monster_type, match:"Toon")						then "effect monster"
+		else if	contains(card.monster_type, match:"Tuner")						then "effect monster"
+		else if	contains(card.monster_type, match:"Union")						then "effect monster"
+		else                                         	 							"normal monster"
 	}
 	# Default 'attribute' of card
 	attribute := {

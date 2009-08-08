@@ -78,39 +78,60 @@ card field:
 	name: image
 	show statistics: false
 ############################# Card type
+# Keep type1, type2, and separator fields for backwards compatibility until two or three versions after 0.3.8.
 card field:
 	type: text
 	name: type1
 	script: monster_type_filter(value)
-	default: " "
+	default: "   "
 	editable: false
-card field:
-	type: text
-	name: separator
-	script: " / "
 	show statistics: false
-	editable: false
 card field:
 	type: text
 	name: type2
 	script: card_class_filter(value)
 	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: separator
+	script: " / "
+	editable: false
+	save value: false
+	show statistics: false
+# These are the new type fields.
+card field:
+	type: text
+	name: type 1
+	script: monster_type_filter(value)
+	default: card.type1 # Remove when card.type1 is removed.
+card field:
+	type: text
+	name: type 2
+	script: card_class_filter(value)
+	default: split_text(match:" / ", card.type2).0 # Remove when card.type2 is removed.
+card field:
+	type: text
+	name: type 3
+	script: card_class_filter(value)
+	default: if contains(card.type2, match:" / ") then split_text(match:" / ", card.type2).1 else "" # Remove when card.type2 is removed.
 card field:
 	type: text
 	name: monster type
 	script:
 		# Either just monster, monster / type1
 		combined_editor(
-			field1: card.type1,
-			separator: card.separator,
-			field2: card.type2,
+			field1: card.type_1,
+			separator1: " / ",
+			field2: card.type_2,
+			separator2: " / ",
+			field3: card.type_3,
 			soft_before_empty: true,
-			hide_when_empty: true,
-			type_over1: " /",
-			type_over2: "/"
+			hide_when_empty: true
 		)
 	card list visible: true
 	card list column: 3
+	show statistics: false
 ############################# Edition and Card ID
 card field:
 	type: text
@@ -200,5 +221,4 @@ card field:
 	type: text
 	name: copyright
 	default: set.copyright
-	script: copyright_filter(value)
 	show statistics: false

@@ -1,0 +1,16 @@
+﻿
+############################################################## Auto replace
+
+auto replace:
+	match: (C)
+	replace: ©
+auto replace:
+	match: CR
+	replace: ©
+auto replace:
+	match: TM
+	replace: ™
+	whole word: false
+auto replace:
+	match: ~
+	replace: CARDNAME
