@@ -1,0 +1,81 @@
+﻿
+############################################################## Card pack items
+pack type:
+	name: rare
+	filter: card.rarity != "common"
+pack type:
+	name: common
+	filter: card.rarity == "common"
+pack type:
+	name: gold
+	filter: card.rarity == "gold tech"
+pack type:
+	name: card
+	filter: card.number != ""
+############################################################## Card packs
+pack type:
+	name: booster pack
+	item:
+		name: rare
+		amount: 1
+	item:
+		name: common
+		amount: 8
+pack type:
+	name: champion pack
+	item:
+		name: rare
+		amount: 1
+	item:
+		name: common
+		amount: 2
+pack type:
+	name: duelist pack
+	item:
+		name: rare
+		amount: 1
+	item:
+		name: common
+		amount: 5
+pack type:
+	name: gold series
+	item:
+		name: gold
+		amount: 3
+	item:
+		name: common
+		amount: 22
+pack type:
+	name: movie pack
+	item:
+		name: rare
+		amount: 3
+	item:
+		name: common
+		amount: 5
+pack type:
+	name: premium pack
+	item:
+		name: rare
+		amount: 5
+pack type:
+	name: tournament pack
+	item:
+		name: card
+		amount: 3
+pack type:
+	name: additional rare
+	item:
+		name: rare
+pack type:
+	name: additional common
+	item:
+		name: common
+pack type:
+	name: additional gold
+	item:
+		name: gold
+pack type:
+	name: additional card
+	item:
+		name: card

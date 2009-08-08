@@ -1,0 +1,204 @@
+﻿
+############################################################## Card fields
+############################# Background stuff
+card field:
+	type: choice
+	name: card type
+	choice: normal monster
+	choice: effect monster
+	choice: ritual monster
+	choice: synchro monster
+	choice: dark synchro monster
+	choice: fusion monster
+	choice: token monster
+	choice: obelisk
+	choice: slifer
+	choice: ra
+	choice: legendary dragons
+	choice: spell card
+	choice: trap card
+	default: card_type()
+	choice colors cardlist:
+		normal monster:	   rgb(120,18,0)
+		effect monster:	   rgb(120,18,0)
+		ritual monster:	   rgb(26,26,26)
+		synchro monster:   rgb(26,26,26)
+		dark synchro monster:   rgb(26,26,26)
+		fusion monster:	   rgb(26,26,26)
+		token monster:	   rgb(120,18,0)
+		obelisk:	   rgb(26,26,26)
+		slifer:		   rgb(26,26,26)
+		ra:		   rgb(26,26,26)
+		legendary dragons: rgb(26,26,26)
+		spell card:	   rgb(80,80,80)
+		trap card:	   rgb(30,110,0)
+card field:
+	type: choice
+	name: foils
+	editable: false
+	choice: none
+	choice: holo image
+	choice: secret holo image
+	choice: parallel holo image
+	choice: gold tech holo image
+	default: foil()
+############################# Name line
+card field:
+	type: text
+	name: name
+	identifying: true
+	show statistics: false
+	card list visible: true
+	card list column: 1
+card field:
+	type: choice
+	name: attribute
+	choice: none
+	choice: earth
+	choice: water
+	choice: fire
+	choice: wind
+	choice: light
+	choice: dark
+	choice: divine
+	choice: spell
+	choice: trap
+	default: attribute()
+	card list visible: true
+	card list column: 2
+card field:
+	type: text
+	name: level
+	description: `=] * = star, % = continuous, ! = counter, + = equipment, & = field, $ = quickplay, # = ritual
+	script: level_filter(value)
+
+############################# Image
+card field:
+	type: image
+	name: image
+	show statistics: false
+############################# Card type
+card field:
+	type: text
+	name: type1
+	script: monster_type_filter(value)
+	default: " "
+	editable: false
+card field:
+	type: text
+	name: separator
+	script: " / "
+	show statistics: false
+	editable: false
+card field:
+	type: text
+	name: type2
+	script: card_class_filter(value)
+	editable: false
+card field:
+	type: text
+	name: monster type
+	script:
+		# Either just monster, monster / type1
+		combined_editor(
+			field1: card.type1,
+			separator: card.separator,
+			field2: card.type2,
+			soft_before_empty: true,
+			hide_when_empty: true,
+			type_over1: " /",
+			type_over2: "/"
+		)
+	card list visible: true
+	card list column: 3
+############################# Edition and Card ID
+card field:
+	type: text
+	name: number
+	script:
+		set.code
+		+ "-" +
+		set.language +
+		if pos_of_card()<=9 then "00" + pos_of_card(value) else
+		if pos_of_card()>=9 and pos_of_card()<=99 then "0" + pos_of_card(value) else
+		"" + pos_of_card(value)
+	card list visible: true
+	card list column: 6
+	card list width: 55
+	card list name: #
+	editable: false
+	save value: false
+	show statistics: false
+card field:
+	type: text
+	name: edition
+	default: set.edition
+	show statistics: false
+############################# Text box
+card field:
+	type: text
+	name: rules
+	script: text_filter(value)
+	editable: false
+	show statistics: false
+card field:
+	type: text
+	name: rule text
+	multi line: true
+	save value: true
+	show statistics: false
+	script:
+		if nm_ext_querry(value) then flavor_text_filter(value)
+		else text_filter(value)
+	default: card.rules
+############################# Attack/Defense
+card field:
+	type: text
+	name: attack
+	save value: true
+	script: a_and_d_filter(value)
+	card list visible: true
+	card list column: 4
+	card list width: 33
+	card list name: ATK
+card field:
+	type: text
+	name: defense
+	save value: true
+	script: a_and_d_filter(value)
+	card list visible: true
+	card list column: 5
+	card list width: 33
+	card list name: DEF
+
+############################# Copyright stuff
+card field:
+	type: text
+	name: gamecode
+	show statistics: false
+card field:
+	type: choice
+	name: rarity
+	show statistics: true
+	choice: common
+	choice: rare
+	choice: super rare
+	choice: ultra rare
+	choice: secret rare
+	choice: ultimate rare
+	choice: parallel rare
+	choice: gold tech
+	choice: promo
+	card list visible: true
+	card list column: 7
+card field:
+	type: choice
+	name: corner foil
+	choice: stamp
+	editable: false
+card field:
+	type: text
+	name: copyright
+	default: set.copyright
+	script: copyright_filter(value)
+	show statistics: false

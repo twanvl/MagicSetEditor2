@@ -1,0 +1,41 @@
+﻿
+############################################################## Set fields
+set field:
+	type: info
+	name: Set Information
+set field:
+	type: text
+	name: title
+	description: This information will not appear on the card.
+set field:
+	type: text
+	name: code
+	description: Recommended only 3 Capital digits. Will appear before card number. ex: LOB-XX101
+set field:
+	type: text
+	name: language
+	description: Recommended 2 - 3 Captital digits. Will appear before the card number, after the code. ex: XXX-EN101
+set field:
+	type: text
+	name: description
+	multi line: true
+	description: This information will not appear on the card.
+set field:
+	type: text
+	name: edition
+	description: Editting this will set 1 edition for all the cards and will appear in the edition bar below the picture. ex-> LIMITED EDITION
+set field:
+	type: text
+	name: copyright
+	description: Copyright information. This will not appear on the card.
+set field:
+	type: boolean
+	name: gods have effects
+	description: Should god cards have effects?
+	initial: yes
+############################# Default style
+default set style:
+	title:
+		padding left: 2
+		font:
+			size: 16

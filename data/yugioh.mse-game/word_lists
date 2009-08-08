@@ -1,0 +1,41 @@
+﻿
+############################################################## Word lists
+
+word list:
+	name: monster
+	word: Aqua
+	word: Beast
+	word: Beast-Warrior
+	word: Dinosaur
+	word: Divine-Beast
+	word: Dragon
+	word: Fairy
+	word: Fiend
+	word: Fish
+	word: Insect
+	word: Legendary Dragon
+	word: Machine
+	word: Plant
+	word: Pyro
+	word: Psychic
+	word: Reptile
+	word: Rock
+	word: Sea Serpent
+	word: Spellcaster
+	word: Thunder
+	word: Warrior
+	word: Winged Beast
+	word: Zombie
+word list:
+	name: card
+	word: Dark Synchro
+	word: Dark Tuner
+	word: Effect
+	word: Fusion
+	word: Gemini
+	word: Ritual
+	word: Spirit
+	word: Synchro
+	word: Toon
+	word: Tuner
+	word: Union

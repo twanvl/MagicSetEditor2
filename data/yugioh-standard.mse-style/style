@@ -1,14 +1,14 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 game: yugioh
 short name: Standard
 installer group: Yugioh/Standard
 icon: card-sample.png
 position hint: 01
 
-version: 2008-10-27
+version: 2009-08-08
 depends on:
 	package: yugioh.mse-game
-	version: 2008-10-27
+	version: 2009-08-08
 depends on:
 	package: yugioh-standard-levels.mse-symbol-font
 	version: 2007-10-27
@@ -16,7 +16,6 @@ depends on:
 	package: yugioh-text-replacements.mse-symbol-font
 	version: 2008-01-04
 
-card background: white
 card width: 361
 card height: 523
 card dpi: 152.6265
@@ -27,9 +26,19 @@ styling field:
 	type: choice
 	name: rules alignment
 	description: Should the rules text be justified? WARNING: Justification is not perfect.
-	initial: not justified
+	initial: justified
 	choice: not justified
 	choice: justified
+styling field:
+	type: boolean
+	name: image frame
+	description: Choosing "no" will omit the image frame like on Anniversary Edition cards.
+	initial: yes
+styling field:
+	type: boolean
+	name: bold effect text
+	description: Should effect text be bold as seen on some cards such as those from The Dark Emperor?
+	initial: no
 ############################################################## Card fields
 card style:
 	############################# Background stuff
@@ -56,10 +65,10 @@ card style:
 			spell card: card-spell.jpg
 			trap card: card-trap.jpg
 	foils:
-		left: { if card.rarity=="parallel rare" then 0 else if card.rarity=="gold tech" then 0 else 51 }
-		top: { if card.rarity=="parallel rare" then 0 else if card.rarity=="gold tech" then 0 else 114 }
-		width: { if card.rarity=="parallel rare" then 361 else if card.rarity=="gold tech" then 361 else 259 }
-		height: { if card.rarity=="parallel rare" then 523 else if card.rarity=="gold tech" then 523 else 259 }
+		left: { if card.rarity=="parallel rare" then 0 else if card.rarity=="gold tech" then 0 else if styling.image_frame=="no" then 45 else 51 }
+		top: { if card.rarity=="parallel rare" then 0 else if card.rarity=="gold tech" then 0 else if styling.image_frame=="no" then 106 else 114 }
+		width: { if card.rarity=="parallel rare" then 361 else if card.rarity=="gold tech" then 361 else if styling.image_frame=="no" then 272 else 259 }
+		height: { if card.rarity=="parallel rare" then 523 else if card.rarity=="gold tech" then 523 else if styling.image_frame=="no" then 273 else 259 }
 		z index: 5
 		render style: image
 		popup style: in place
@@ -131,10 +140,10 @@ card style:
 			size: 7.5
 	############################# Image
 	image:
-		left: 51
-		top: 113
-		width: 260
-		height: 260
+		left: { if styling.image_frame=="no" then 45 else 51 }
+		top: { if styling.image_frame=="no" then 106 else 113 }
+		width: { if styling.image_frame=="no" then 272 else 260 }
+		height: { if styling.image_frame=="no" then 273 else 260 }
 		z index: 1
 	############################# Card type
 	monster type:
@@ -175,8 +184,8 @@ card style:
 		height: 15
 		z index: 2
 		font:
-			name: Palatino Linotype Bold
-			size: 8
+			name: { if card.edition=="DUEL TERMINAL" then "BankGothic Md BT" else "Palatino Linotype Bold" }
+			size: { if card.edition=="DUEL TERMINAL" then "10" else "8" }
 			color: 
 				script: if card.card_type=="dark synchro monster" then rgb(255,255,255)
 				else rgb(0,0,0)
@@ -189,8 +198,8 @@ card style:
 		height:
 			script: if is_nmonster() then 92 else 62
 		font:
-			name: MatrixBook
-			size: 8
+			name: { if styling.bold_effect_text=="yes" then "Matrix-Bold" else "MatrixBook" }
+			size: { if styling.bold_effect_text=="yes" then "9" else "8" }
 			scale down to: 4
 			color: rgb(0,0,0)
 		symbol font:
