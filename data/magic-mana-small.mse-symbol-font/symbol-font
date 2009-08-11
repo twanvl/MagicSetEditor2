@@ -1,5 +1,5 @@
-﻿mse version: 0.3.7
-version: 2008-08-12
+﻿mse version: 0.3.8
+version: 2009-08-10
 short name: normal
 installer group: magic/Mana symbols/normal style
 position hint: 001
@@ -37,6 +37,10 @@ symbol:
 symbol:
 	code: Q
 	image: mana_q.png
+symbol:
+	code: C
+	image: mana_chaos.png
+	image font size: 168.75
 symbol:
 	code: B/G/W
 	image: mana_bgw.png
@@ -320,6 +324,7 @@ symbol:
 insert symbol menu:
 	item: T
 	item: Q
+	item: C
 	item:
 		type: line
 	item: X

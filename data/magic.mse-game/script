@@ -23,7 +23,7 @@ mana_filter := to_upper + {
 	else                     mana_sort()
 }
 # Like mana filter, only also allow tap symbols:
-tap_filter := sort_text@(order: "<TQ>")
+tap_filter := sort_text@(order: "<CTQ>")
 mana_filter_t := replace@(               # Remove [] used for forcing mana symbols
 			match: "[\\[\\]]",
 			replace: ""
@@ -53,7 +53,7 @@ mana_to_color := {
 	count  := number_of_items(in: colors)
 	if hybrid == "" and contains(type, match:"Artifact") then
 		# not a hybrid, but artifact
-		if      count == 0 then  "colorless"
+		if      count == 0 then  "artifact"
 		else if count == 1 then  color_names_1() + ", artifact"
 		else if set.set_info.use_gradient_multicolor == "no"  then "artifact, multicolor" # stop here
 		else if count == 2 then  color_names_2() + ", artifact, multicolor"
@@ -323,7 +323,7 @@ add := "" # default is nothing
 for_mana_costs := format_cost := {
 	if input.separator_before == "—" and contains(input.param, match: " ") then (
 		if contains(input.param, match:",") then (
-			if match(match: "^[STQXYZIWUBRG0-9/|]+,", input.param) then
+			if match(match: "^[SCTQXYZIWUBRG0-9/|]+,", input.param) then
 				"{add}<param-cost>{combined_cost(input.param)}</param-cost>"
 			else "<param-cost>{combined_cost(input.param)}</param-cost>"
 		) else
@@ -336,7 +336,7 @@ alternative_cost := replace@(match:"^[A-Z]", replace: { to_lower() })
 #
 combined_cost := replace@(match:", [A-Z]", replace: { to_lower() })+
 	replace@(match:",", replace:" and")+
-	replace@(match:"^[STQXYZIWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
+	replace@(match:"^[SCTQXYZIWUBRG0-9/|]", in_context: "(^|[[:space:]])<match>", replace: "<sym-auto>&</sym-auto>")+
 	replace@(match:"^[A-Z]", replace: { to_lower() })
 long_dash := replace@(match:"-", replace:"—")
 
@@ -362,8 +362,8 @@ mana_context :=
 	    |adds?|pay(ed)?[ ](with|using)
 	    )
 	    ([ ]either)?			 # pay either X or Y
-	    ([ ](<sym[^>]*>)?[STQXYZIWUBRG0-9/|]+(</sym[^>]*>)?,)* # pay X, Y or Z
-	    ([ ](<sym[^>]*>)?[STQXYZIWUBRG0-9/|]+(</sym[^>]*>)?[ ](and|or|and/or))* # pay X or Y
+	    ([ ](<sym[^>]*>)?[SCTQXYZIWUBRG0-9/|]+(</sym[^>]*>)?,)* # pay X, Y or Z
+	    ([ ](<sym[^>]*>)?[SCTQXYZIWUBRG0-9/|]+(</sym[^>]*>)?[ ](and|or|and/or))* # pay X or Y
 	    [ ]<match>
 	    ([,.)]|$				# (end of word)
 	    |[ ][^ .,]*$			# still typing...
@@ -442,18 +442,34 @@ text_filter :=
 		) +
 	# step 4 : explict non mana symbols
 	replace@(
-		match: "\\][STQXYZIWUBRG0-9/|]+\\[",
+		match: "\\][SCTQXYZIWUBRG0-9/|]+\\[",
 		replace: {"<nosym>" + mana_filter_t() + "</nosym>"} ) +
 	# step 5 : add mana & tap symbols
 	replace@(
-		match: "\\b[STQXYZIWUBRG0-9/|]+\\b",
+		match: "\\b[SCTQXYZIWUBRG0-9/|]+\\b",
 		in_context: mana_context,
 		replace: {"<sym-auto>" + mana_filter_t() + "</sym-auto>"} ) +
 	# step 5b : add explict mana symbols
 	replace@(
-		match: "\\[[STQXYZIWUBRG0-9/|]+\\]",
+		match: "\\[[SCTQXYZIWUBRG0-9/|]+\\]",
 		replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
-	# step 7 : italic reminder text
+	# step 6a : curly double quotes
+	replace@(
+		match: "[[.quotation-mark.]]|“",
+		in_context: "[“][A-Za-z,.!?+$<>:;-— 0-9\\\\]*<match>",
+		replace: "”" )+
+	replace@(
+		match: "[[.quotation-mark.]]",
+		replace: "“" )+
+	# step 6b : curly single quotes
+	replace@(
+		match: "' |‘ ",
+		in_context: "[‘][A-Za-z,.!?+$<>:;-— 0-9\\\\]*<match>",
+		replace: "’ " )+
+	replace@(
+		match: " '",
+		replace: " ‘" )+
+	# step 7 : ???
 	replace@(
 	 	match: "[(]([^)\n]|[(][^)\n]*[)])*[)]?",
 		in_context: "(^|[[:space:]])<match>|<atom-keyword><match></",
@@ -464,7 +480,7 @@ text_filter :=
 		     + "([[:lower:]])" # match this
 		     + "(?![)])",      # not followed by this
 		replace: { _1 + to_upper(_2) }) +
-	curly_quotes +
+	#curly_quotes +
 	# step 9 : spellcheck
 	{ if set.mark_errors then
 		check_spelling(
@@ -584,7 +600,7 @@ colorless_color := { "c" }
 is_half_mana    := match@(match: "1/2|[|][WUBRGS]")
 is_colored_mana := match@(match: "[WUBRG]")
 only_numbers    := filter_text@(match: "^[0123456789]+")
-cmc_split := break_text@(match: "(?ix) 1/2 | [|][WUBRG] | [0-9]+(?!/[WUBRGSTQ2]) | [WUBRGS0-9](/[WUBRGS])\{0,4} ")
+cmc_split := break_text@(match: "(?ix) 1/2 | [|][WUBRG] | [0-9]+(?!/[WUBRGSCTQ2]) | [WUBRGS0-9](/[WUBRGS])\{0,4} ")
 cmc := {to_number(
 	for each sym in cmc_split(to_text()) do (
 		numbers := only_numbers(sym)

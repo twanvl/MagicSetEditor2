@@ -29,7 +29,7 @@ keyword mode:
 
 keyword parameter type:
 	name: mana
-	match: [STQXYZI0-9WUBRG/|]+
+	match: [SCTQXYZI0-9WUBRG/|]+
 	refer script:
 		name: normal
 		description: No changes made
@@ -48,7 +48,7 @@ keyword parameter type:
 # By pichoro and bunnierein
 keyword parameter type:
 	name: cost
-	match: [ ][STQXYZI0-9WUBRG/|]*|[-—][^(\n]*
+	match: [ ][SCTQXYZI0-9WUBRG/|]*|[-—][^(\n]*
 	separator before is: [ —-]
 	separator after is: [.]
 	optional: false

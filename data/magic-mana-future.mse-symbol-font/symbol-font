@@ -1,5 +1,5 @@
-﻿mse version: 0.3.7
-version: 2008-08-13
+﻿mse version: 0.3.8
+version: 2009-08-11
 # Symbol font in the 'futuristic' style, used for casting costs on futureshift cards
 short name: Future Sight style
 installer group: magic/Mana symbols/Future Sight style
@@ -15,20 +15,8 @@ symbol:
 	code: Q
 	image: mana_q.png
 symbol:
-	code: 2/W
-	image: mana_2w.png
-symbol:
-	code: 2/U
-	image: mana_2u.png
-symbol:
-	code: 2/B
-	image: mana_2b.png
-symbol:
-	code: 2/R
-	image: mana_2r.png
-symbol:
-	code: 2/G
-	image: mana_2g.png
+	code: C
+	image: mana_chaos.png
 symbol:
 	code: W/U
 	image: mana_guild_wu.png
@@ -102,23 +90,23 @@ symbol:
 symbol:
 	code: 1/2
 	enabled: { colorless_color() == "w" }
-	image: mana_1_half_w.png
+	image: {masked_blend(light: "mana_1_half.png", dark: "mana_circle_w.png", mask:"mana_circle_mask.png")}
 symbol:
 	code: 1/2
 	enabled: { colorless_color() == "u" }
-	image: mana_1_half_u.png
+	image: {masked_blend(light: "mana_1_half.png", dark: "mana_circle_u.png", mask:"mana_circle_mask.png")}
 symbol:
 	code: 1/2
 	enabled: { colorless_color() == "b" }
-	image: mana_1_half_b.png
+	image: {masked_blend(light: "mana_1_half.png", dark: "mana_circle_b.png", mask:"mana_circle_mask.png")}
 symbol:
 	code: 1/2
 	enabled: { colorless_color() == "r" }
-	image: mana_1_half_r.png
+	image: {masked_blend(light: "mana_1_half.png", dark: "mana_circle_r.png", mask:"mana_circle_mask.png")}
 symbol:
 	code: 1/2
 	enabled: { colorless_color() == "g" }
-	image: mana_1_half_g.png
+	image: {masked_blend(light: "mana_1_half.png", dark: "mana_circle_g.png", mask:"mana_circle_mask.png")}
 symbol:
 	code: 1/2
 	image: mana_1_half.png
@@ -164,26 +152,96 @@ symbol:
 symbol:
 	code: I
 	enabled: { colorless_color() == "w" }
-	image: mana_infinite_w.png
+	image: {masked_blend(light: "mana_infinite.png", dark: "mana_circle_w.png", mask:"mana_circle_mask.png")}
 symbol:
 	code: I
 	enabled: { colorless_color() == "u" }
-	image: mana_infinite_u.png
+	image: {masked_blend(light: "mana_infinite.png", dark: "mana_circle_u.png", mask:"mana_circle_mask.png")}
 symbol:
 	code: I
 	enabled: { colorless_color() == "b" }
-	image: mana_infinite_b.png
+	image: {masked_blend(light: "mana_infinite.png", dark: "mana_circle_b.png", mask:"mana_circle_mask.png")}
 symbol:
 	code: I
 	enabled: { colorless_color() == "r" }
-	image: mana_infinite_r.png
+	image: {masked_blend(light: "mana_infinite.png", dark: "mana_circle_r.png", mask:"mana_circle_mask.png")}
 symbol:
 	code: I
 	enabled: { colorless_color() == "g" }
-	image: mana_infinite_g.png
+	image: {masked_blend(light: "mana_infinite.png", dark: "mana_circle_g.png", mask:"mana_circle_mask.png")}
 symbol:
 	code: I
 	image: mana_infinite.png
+symbol:
+	image: mana_nw.png
+	code: ([XYZ0-9])/W
+	regex: yes
+	draw text: 1
+	text margin left:   -.0
+	text margin right:  .44
+	text margin top:    -.0
+	text margin bottom: .445
+	text font:
+		name: MPlantin
+		size: .53
+		color: rgb(0,0,0)
+		max stretch: 0.5
+symbol:
+	image: mana_nu.png
+	code: ([XYZ0-9])/U
+	regex: yes
+	draw text: 1
+	text margin left:   -.0
+	text margin right:  .44
+	text margin top:    -.0
+	text margin bottom: .445
+	text font:
+		name: MPlantin
+		size: .53
+		color: rgb(0,0,0)
+		max stretch: 0.5
+symbol:
+	image: mana_nb.png
+	code: ([XYZ0-9])/B
+	regex: yes
+	draw text: 1
+	text margin left:   -.0
+	text margin right:  .44
+	text margin top:    -.0
+	text margin bottom: .445
+	text font:
+		name: MPlantin
+		size: .53
+		color: rgb(0,0,0)
+		max stretch: 0.5
+symbol:
+	image: mana_nr.png
+	code: ([XYZ0-9])/R
+	regex: yes
+	draw text: 1
+	text margin left:   -.0
+	text margin right:  .44
+	text margin top:    -.0
+	text margin bottom: .445
+	text font:
+		name: MPlantin
+		size: .53
+		color: rgb(0,0,0)
+		max stretch: 0.5
+symbol:
+	image: mana_ng.png
+	code: ([XYZ0-9])/G
+	regex: yes
+	draw text: 1
+	text margin left:   -.0
+	text margin right:  .44
+	text margin top:    -.0
+	text margin bottom: .445
+	text font:
+		name: MPlantin
+		size: .53
+		color: rgb(0,0,0)
+		max stretch: 0.5
 symbol:
 	image: mana_circle_w.png
 	enabled: { colorless_color() == "w" }
@@ -374,6 +432,7 @@ symbol:
 insert symbol menu:
 	item: T
 	item: Q
+	item: C
 	item: X
 	item: Y
 	item: Z
