@@ -152,7 +152,6 @@ card field:
 	name: super type
 	icon: stats/card_type.png
 	position hint: 30
-	editable: false
 	script: super_type_filter(value)
 card field:
 	type: text
@@ -160,7 +159,6 @@ card field:
 	icon: stats/creature_type.png
 	position hint: 31
 	script: sub_type_filter(value, type:card.super_type)
-	editable: false
 card field:
 	type: text
 	name: type
@@ -420,14 +418,12 @@ card field:
 	type: text
 	name: super type 2
 	icon: stats/creature_type.png
-	editable: false
 	show statistics: false
 	script: super_type_filter(value)
 card field:
 	type: text
 	name: sub type 2
 	icon: stats/creature_type.png
-	editable: false
 	show statistics: false
 	script: sub_type_filter(value, type:card.super_type_2)
 card field:
