@@ -5,7 +5,7 @@ installer group: Magic Planechase/normal style
 icon: card-sample.png
 position hint: 01
 
-version: 2009-08-11
+version: 2009-08-12
 depends on:
 	package: planechase.mse-game
 	version: 2009-08-11
@@ -32,6 +32,15 @@ init script:
 	# Use guild mana symbols?
 	guild_mana := { styling.use_guild_mana_symbols }
 
+############################################################## Set info fields
+set info style:
+	symbol:
+		variation:
+			name: invertedcommon
+			border radius: 0.10
+			fill type: solid
+			fill color:   rgb(255,255,255)
+			border color: rgb(0,0,0)
 ############################################################## Extra style options
 styling field:
 	type: boolean
