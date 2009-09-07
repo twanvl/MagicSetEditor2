@@ -18,8 +18,17 @@ if test -n "${CXXFLAGS}"; then
   user_set_cxxflags=yes
 fi
 AC_PROG_CXX
+AC_ARG_ENABLE(debug, [--enable-debug  Enable debug build (requires debug
+ versions of wxWidgets and libstdc++.], [DEBUG=1])
+if test "x${DEBUG}" = x1; then
+  DEFAULT_CXXFLAGS="-ggdb3 -O0 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
+  WXCONFIG_FLAGS="--debug"
+else
+  DEFAULT_CXXFLAGS="-O2"
+  WXCONFIG_FLAGS=""
+fi
 if test X$user_set_cxxflags != Xyes; then
-  CXXFLAGS="-g -O0"
+  CXXFLAGS=${DEFAULT_CXXFLAGS}
 fi
 
 # Checks for libraries.
@@ -32,16 +41,18 @@ BOOST_REGEX_LIB="-Wl,-Bstatic $BOOST_REGEX_LIB -Wl,-Bdynamic"
 
 # Check for wxWidgets
 AM_OPTIONS_WXCONFIG
-AM_PATH_WXCONFIG(2.8.0,wxWin=1,,,[--debug])
-if test "$wxWin" != 1; then
+AM_PATH_WXCONFIG([2.8.0],[HAVE_WX=1],,,${WX_CONFIG_FLAGS})
+if test "${HAVE_WX}" != 1; then
     AC_MSG_ERROR([
        wxWindows must be installed on your system
-       but wx-config script couldn't be found.
+       but could not be configured.
 
        Please check that wx-config is in path, the directory
        where wxWindows libraries are installed (returned by
        'wx-config --libs' command) is in LD_LIBRARY_PATH or
-        equivalent variable and wxWindows version is 2.6.0 or above.
+       equivalent variable and wxWindows version is 2.6.0 or
+       above. If --enable-debug was passed, please ensure
+       debugging libraries are installed.
     ])
 fi
 
@@ -95,15 +106,10 @@ int main()
     return 0;
 }], [ap_cv_atomic_builtins=yes], [ap_cv_atomic_builtins=no], [ap_cv_atomic_builtins=no])])
 
-if test "$ap_cv_atomic_builtins" = "yes"; then
+if test "x$ap_cv_atomic_builtins" = "xyes"; then
     AC_DEFINE(HAVE_GCC_ATOMIC_BUILTINS, 1, [Define if compiler provides atomic builtins])
 fi
 
 AC_OUTPUT([
 	Makefile
 ])
-
-echo "*******************************************************************************
-*DON'T YOU DARE SHIP THIS VERSION BECAUSE DEBUGGING IS ENABLED PLEASE DISABLE *
-*IT FIRST BY REMOVING --debug FROM WX AND REMOVING LIBSTDCXX -D FROM MakeAM.sh*
-*******************************************************************************"
