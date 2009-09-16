@@ -193,7 +193,7 @@ class SetCombineImage : public SimpleFilterImage {
 /// Saturate/desaturate an image
 class SaturateImage : public SimpleFilterImage {
   public:
-	inline SaturateImage(const GeneratedImageP& image, double alpha)
+	inline SaturateImage(const GeneratedImageP& image, double amount)
 		: SimpleFilterImage(image), amount(amount)
 	{}
 	virtual Image generate(const Options& opt) const;

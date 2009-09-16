@@ -11,7 +11,7 @@ AC_CONFIG_SRCDIR([src/main.cpp])
 # TODO: Actually use the config header
 AC_CONFIG_HEADER([src/config.h])
 
-AM_INIT_AUTOMAKE([-Wall foreign])
+AM_INIT_AUTOMAKE([foreign])
 
 # Checks for programs.
 if test -n "${CXXFLAGS}"; then
@@ -55,6 +55,10 @@ if test "${HAVE_WX}" != 1; then
        debugging libraries are installed.
     ])
 fi
+
+# Check for precompiled headers
+# TODO: Deal with braindead GCC and actually check
+AM_CONDITIONAL(GLIBCPP_BUILD_PCH, test "x$CXX" = "xg++")
 
 # Checks for header files.
 

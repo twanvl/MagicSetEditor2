@@ -20,7 +20,7 @@ void Regex::assign(const String& code) {
 	} catch (const boost::regex_error& e) {
 		/// TODO: be more precise
 		throw ScriptError(String::Format(_("Error while compiling regular expression: '%s'\nAt position: %d\n%s"),
-		                  code.c_str(), e.position(), String(e.what(), IF_UNICODE(wxConvUTF8,String::npos))));
+		                  code.c_str(), e.position(), String(e.what(), IF_UNICODE(wxConvUTF8,String::npos)).c_str()));
 	}
 }
 

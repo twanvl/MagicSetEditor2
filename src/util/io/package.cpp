@@ -513,7 +513,6 @@ IMPLEMENT_REFLECTION(Packaged) {
 Packaged::Packaged()
 	: position_hint(100000)
 	, fully_loaded(true)
-	, vcs(nullptr)
 {}
 
 InputStreamP Packaged::openIconFile() {

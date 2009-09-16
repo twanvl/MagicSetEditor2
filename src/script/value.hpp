@@ -97,7 +97,9 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	virtual ScriptValueP dependencyName(const ScriptValue& container, const Dependency&) const;
 
 	/// Evaluate this value (if it is a function)
-	virtual ScriptValueP eval(Context&) const;
+	ScriptValueP eval(Context& ctx, bool openScope = true) const {
+		return do_eval(ctx, openScope);
+	}
 	/// Mark the scripts that this function depends on
 	/** Return value is an abstract version of the return value of eval */
 	virtual ScriptValueP dependencies(Context&, const Dependency&) const;
@@ -117,6 +119,9 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
 	virtual int itemCount() const;
 	/// Get a member at the given index
 	virtual ScriptValueP getIndex(int index) const;
+
+  protected:
+	virtual ScriptValueP do_eval(Context& ctx, bool openScope) const;
 };
 
 extern ScriptValueP script_nil;   ///< The preallocated nil value

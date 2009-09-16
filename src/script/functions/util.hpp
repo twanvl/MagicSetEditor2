@@ -59,10 +59,10 @@
 				{ return SCRIPT_FUNCTION; }								\
 			virtual String typeName() const								\
 				{ return _("built-in function '") _(#name) _("'"); }	\
-			virtual ScriptValueP eval(Context&) const;					\
+			virtual ScriptValueP do_eval(Context&, bool) const;			\
 		};																\
 		ScriptValueP script_##name(new ScriptBuiltIn_##name);			\
-		ScriptValueP ScriptBuiltIn_##name::eval(Context& ctx) const
+		ScriptValueP ScriptBuiltIn_##name::do_eval(Context& ctx, bool) const
 
 /// Return a value from a SCRIPT_FUNCTION
 #define SCRIPT_RETURN(value) return to_script(value)
@@ -160,7 +160,8 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
 		inline ScriptRule_##funname(const type1& name1) : name1(name1) {}	\
 		virtual ScriptType type() const { return SCRIPT_FUNCTION; }			\
 		virtual String typeName() const { return _(#funname)_("_rule"); }	\
-		virtual ScriptValueP eval(Context& ctx) const;						\
+	  protected:															\
+		virtual ScriptValueP do_eval(Context& ctx, bool) const;				\
 	  private:																\
 		type1 name1;														\
 	};																		\
@@ -172,7 +173,7 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
 		SCRIPT_PARAM_N(type1, str1, name1);									\
 		return ScriptRule_##funname(name1).eval(ctx);						\
 	}																		\
-	ScriptValueP ScriptRule_##funname::eval(Context& ctx) const
+	ScriptValueP ScriptRule_##funname::do_eval(Context& ctx, bool) const
 
 /// Utility for defining a script rule with two parameters
 #define SCRIPT_RULE_2(funname, type1, name1, type2, name2)						\
@@ -199,8 +200,9 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
 			: name1(name1), name2(name2) {}									\
 		virtual ScriptType type() const { return SCRIPT_FUNCTION; }			\
 		virtual String typeName() const { return _(#funname)_("_rule"); }	\
-		virtual ScriptValueP eval(Context& ctx) const;						\
 		dep																	\
+	  protected:															\
+		virtual ScriptValueP do_eval(Context& ctx, bool) const;				\
 	  private:																\
 		type1 name1;														\
 		type2 name2;														\
@@ -216,7 +218,7 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
 		return ScriptRule_##funname(name1, name2).eval(ctx);				\
 	}																		\
 	more																	\
-	ScriptValueP ScriptRule_##funname::eval(Context& ctx) const
+	ScriptValueP ScriptRule_##funname::do_eval(Context& ctx, bool) const
 
 #define SCRIPT_RULE_2_DEPENDENCIES(name)									\
 	ScriptValueP ScriptRule_##name::dependencies(Context& ctx, const Dependency& dep) const

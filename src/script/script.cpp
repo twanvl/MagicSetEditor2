@@ -89,8 +89,8 @@ ScriptType Script::type() const {
 String Script::typeName() const {
 	return _("function");
 }
-ScriptValueP Script::eval(Context& ctx) const {
-	return ctx.eval(*this);
+ScriptValueP Script::do_eval(Context& ctx, bool openScope) const {
+	return ctx.eval(*this, openScope);
 }
 ScriptValueP Script::dependencies(Context& ctx, const Dependency& dep) const {
 	return ctx.dependencies(dep, *this);
@@ -239,11 +239,12 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) const {
 	unsigned int initial = instr - &instructions[0];
 	for (;instr >= &instructions[0] && 
-	       (to_skip   || // we have something to skip
+	       (to_skip   || (// we have something to skip
 	        instr >= &instructions[1] && (
 	              (instr-1)->instr == I_JUMP // always look inside a jump
 	           || (instr-1)->instr == I_NOP  // and skip nops
 	           )
+	         )
 	       ) ; --instr) {
 		// skip an instruction
 		switch (instr->instr) {
@@ -317,7 +318,7 @@ const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) 
 }
 
 String Script::instructionName(const Instruction* instr) const {
-	if (instr < &instructions[0] || instr >= &instructions[instructions.size()]) return _("??\?");
+	if (instr < &instructions[0] || instr >= &instructions[0] + instructions.size()) return _("??\?");
 	if (instr->instr == I_GET_VAR) {
 		return variable_to_string((Variable)instr->data);
 	} else if (instr->instr == I_MEMBER_C) {

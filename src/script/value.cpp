@@ -25,7 +25,7 @@ ScriptValue::operator bool()                                const { throw Script
 ScriptValue::operator double()                              const { throw ScriptErrorConversion(typeName(), _TYPE_("double"  )); }
 ScriptValue::operator AColor()                              const { throw ScriptErrorConversion(typeName(), _TYPE_("color"   )); }
 ScriptValue::operator wxDateTime()                          const { throw ScriptErrorConversion(typeName(), _TYPE_("date"    )); }
-ScriptValueP ScriptValue::eval(Context&)                    const { return delay_error(ScriptErrorConversion(typeName(), _TYPE_("function"))); }
+ScriptValueP ScriptValue::do_eval(Context&, bool)           const { return delay_error(ScriptErrorConversion(typeName(), _TYPE_("function"))); }
 ScriptValueP ScriptValue::next(ScriptValueP* key_out)             { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
 ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const { return delay_error(ScriptErrorConversion(typeName(), _TYPE_("collection"))); }
 int          ScriptValue::itemCount()                       const { throw ScriptErrorConversion(typeName(), _TYPE_("collection")); }
@@ -113,7 +113,7 @@ int ScriptDelayedError::itemCount() const              { throw error; }
 CompareWhat ScriptDelayedError::compareAs(String&, void const*&) const { throw error; }
 ScriptValueP ScriptDelayedError::getMember(const String&) const                           { return new_intrusive1<ScriptDelayedError>(error); }
 ScriptValueP ScriptDelayedError::dependencyMember(const String&, const Dependency&) const { return new_intrusive1<ScriptDelayedError>(error); }
-ScriptValueP ScriptDelayedError::eval(Context&) const                                     { return new_intrusive1<ScriptDelayedError>(error); }
+ScriptValueP ScriptDelayedError::do_eval(Context&, bool) const                            { return new_intrusive1<ScriptDelayedError>(error); }
 ScriptValueP ScriptDelayedError::dependencies(Context&, const Dependency&) const          { return new_intrusive1<ScriptDelayedError>(error); }
 ScriptValueP ScriptDelayedError::makeIterator(const ScriptValueP& thisP) const            { return thisP; }
 
@@ -370,7 +370,9 @@ class ScriptNil : public ScriptValue {
 	virtual GeneratedImageP toImage(const ScriptValueP&) const {
 		return new_intrusive<BlankImage>();
 	}
-	virtual ScriptValueP eval(Context& ctx) const {
+
+  protected:
+	virtual ScriptValueP do_eval(Context& ctx, bool) const {
 		// nil(input) == input
 		return ctx.getVariable(SCRIPT_VAR_input);
 	}
@@ -513,10 +515,10 @@ ScriptValueP ScriptClosure::simplify() {
 	return fun->simplifyClosure(*this);
 }
 
-ScriptValueP ScriptClosure::eval(Context& ctx) const {
-	LocalScope scope(ctx);
+ScriptValueP ScriptClosure::do_eval(Context& ctx, bool openScope) const {
+	scoped_ptr<LocalScope> scope(openScope ? new LocalScope(ctx) : nullptr);
 	applyBindings(ctx);
-	return fun->eval(ctx);
+	return fun->eval(ctx, openScope);
 }
 ScriptValueP ScriptClosure::dependencies(Context& ctx, const Dependency& dep) const {
 	LocalScope scope(ctx);
@@ -534,6 +536,6 @@ void ScriptClosure::applyBindings(Context& ctx) const {
 
 ScriptType ScriptRule::type() const { return SCRIPT_FUNCTION; }
 String ScriptRule::typeName() const { return fun->typeName() + _(" rule"); }
-ScriptValueP ScriptRule::eval(Context& ctx) const {
+ScriptValueP ScriptRule::do_eval(Context& ctx, bool openScope) const {
 	return ctx.makeClosure(fun);
 }

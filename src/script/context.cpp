@@ -51,7 +51,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 			// Evaluate the current instruction
 			Instruction i = *instr++;
 			// If a scope is created, destroy it at end of block.
-			scoped_ptr<LocalScope> scope;
+			scoped_ptr<LocalScope> new_scope;
 
 			switch (i.instr) {
 				case I_NOP: break;
@@ -126,7 +126,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 				}
 				
 				// Function call
-				case I_CALL: scope.reset(new LocalScope(*this)); //new scope
+				case I_CALL: new_scope.reset(new LocalScope(*this)); //new scope
 				case I_TAILCALL: {
 					// prepare arguments
 					for (unsigned int j = 0 ; j < i.data ; ++j) {
@@ -144,7 +144,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 							Profiler prof(timer, function);
 						#endif
 						// get function and call
-						stack.back() = stack.back()->eval(*this);
+						stack.back() = stack.back()->eval(*this, false);
 						// finish profiling
 						#if USE_SCRIPT_PROFILING
 							//profile_add(function, timer.time());
@@ -366,7 +366,14 @@ class ScriptCompose : public ScriptValue {
 	
 	virtual ScriptType type() const { return SCRIPT_FUNCTION; }
 	virtual String typeName() const { return _("function composition"); }
-	virtual ScriptValueP eval(Context& ctx) const {
+
+	virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const {
+		ctx.setVariable(SCRIPT_VAR_input, a->dependencies(ctx, dep));
+		return b->dependencies(ctx, dep);
+	}
+
+  protected:
+	virtual ScriptValueP do_eval(Context& ctx, bool openScope) const {
 		#if USE_SCRIPT_PROFILING
 			Timer timer;
 			{
@@ -382,14 +389,13 @@ class ScriptCompose : public ScriptValue {
 				return b->eval(ctx);
 			}
 		#else
+			// Always open a scope for a; variables it makes need to be
+			// cleared for b's call.
 			ctx.setVariable(SCRIPT_VAR_input, a->eval(ctx));
-			return b->eval(ctx);
+			return b->eval(ctx, openScope);
 		#endif
 	}
-	virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const {
-		ctx.setVariable(SCRIPT_VAR_input, a->dependencies(ctx, dep));
-		return b->dependencies(ctx, dep);
-	}
+
   private:
 	ScriptValueP a,b;
 };

@@ -598,6 +598,8 @@ LIBOBJS
 EGREP
 GREP
 CPP
+GLIBCPP_BUILD_PCH_FALSE
+GLIBCPP_BUILD_PCH_TRUE
 WX_RESCOMP
 WX_VERSION
 WX_LIBS_STATIC
@@ -4910,6 +4912,17 @@ if test "${HAVE_WX}" != 1; then
     " "$LINENO" 5
 fi
 
+# Check for precompiled headers
+# TODO: Deal with braindead GCC and actually check
+ if test "x$CXX" = "xg++"; then
+  GLIBCPP_BUILD_PCH_TRUE=
+  GLIBCPP_BUILD_PCH_FALSE='#'
+else
+  GLIBCPP_BUILD_PCH_TRUE='#'
+  GLIBCPP_BUILD_PCH_FALSE=
+fi
+
+
 # Checks for header files.
 
 # Checks for typedefs, structures, and compiler characteristics.
@@ -5811,6 +5824,10 @@ Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 if test -z "${am__fastdepCC_TRUE}" && test -z "${am__fastdepCC_FALSE}"; then
   as_fn_error "conditional \"am__fastdepCC\" was never defined.
+Usually this means the macro was only invoked conditionally." "$LINENO" 5
+fi
+if test -z "${GLIBCPP_BUILD_PCH_TRUE}" && test -z "${GLIBCPP_BUILD_PCH_FALSE}"; then
+  as_fn_error "conditional \"GLIBCPP_BUILD_PCH\" was never defined.
 Usually this means the macro was only invoked conditionally." "$LINENO" 5
 fi
 

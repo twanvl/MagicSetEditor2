@@ -29,11 +29,13 @@ DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA ValueP>);
 
 Set::Set()
 	: script_manager(new SetScriptManager(*this))
+	, vcs (new_intrusive<VCS>())
 {}
 
 Set::Set(const GameP& game)
 	: game(game)
 	, script_manager(new SetScriptManager(*this))
+	, vcs (new_intrusive<VCS>())
 {
 	data.init(game->set_fields);
 }
@@ -42,6 +44,7 @@ Set::Set(const StyleSheetP& stylesheet)
 	: game(stylesheet->game)
 	, stylesheet(stylesheet)
 	, script_manager(new SetScriptManager(*this))
+	, vcs (new_intrusive<VCS>())
 {
 	data.init(game->set_fields);
 }
@@ -186,6 +189,7 @@ IMPLEMENT_REFLECTION(Set) {
 		REFLECT(pack_types);
 	}
 	reflect_set_info_get_member(tag,data);
+	REFLECT_NO_SCRIPT_N("version control", vcs);
 	REFLECT(apprentice_code);
 }
 
@@ -206,7 +210,7 @@ void Set::reflect_cards<Writer> (Writer& tag) {
 			int i = 0;
 
 			while (used.find(full_name) != used.end()) {
-				full_name = filename << _(".") << ++i;
+				full_name = String(filename) << _(".") << ++i;
 			}
 			used.insert(full_name);
 

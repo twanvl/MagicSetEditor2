@@ -13,7 +13,7 @@
 #include <util/dynamic_arg.hpp>
 #include <util/error.hpp>
 #include <util/file_utils.hpp>
-#include <util/io/vcs.hpp>
+#include <util/vcs.hpp>
 
 class Package;
 class wxFileInputStream;
@@ -143,7 +143,7 @@ class Package : public IntrusivePtrVirtualBase {
 	}
 
   protected:
-	// TODO: I dislike this very much. There ought to be a better way.
+	// TODO: I dislike putting this here very much. There ought to be a better way.
 	virtual VCSP getVCS() { return new_intrusive<VCS>(); }
 
 	// --------------------------------------------------- : Private stuff
@@ -219,7 +219,6 @@ class Packaged : public Package {
 	String icon_filename;		///< Filename of icon to use in package lists
 	vector<PackageDependencyP> dependencies;	///< Dependencies of this package
 	int    position_hint;		///< A hint for the package list
-	VCSP   vcs;                     ///< The version control system to use
 
 	/// Get an input stream for the package icon, if there is any
 	InputStreamP openIconFile();
@@ -243,10 +242,6 @@ class Packaged : public Package {
 	}
 
   protected:
-	virtual VCSP getVCS() {
-		return vcs;
-	}
-
 	/// filename of the data file, and extension of the package file
 	virtual String typeName() const = 0;
 	/// Can be overloaded to do validation after loading

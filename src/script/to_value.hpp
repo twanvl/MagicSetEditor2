@@ -84,9 +84,12 @@ class ScriptDelayedError : public ScriptValue {
 	// these can propagate the error
 	virtual ScriptValueP getMember(const String& name) const;
 	virtual ScriptValueP dependencyMember(const String& name, const Dependency&) const;
-	virtual ScriptValueP eval(Context&) const;
 	virtual ScriptValueP dependencies(Context&, const Dependency&) const;
 	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
+
+  protected:
+	virtual ScriptValueP do_eval(Context&, bool openScope) const;
+
   private:
 	ScriptError error; // the error message
 };
@@ -349,7 +352,6 @@ class ScriptClosure : public ScriptValue {
 
 	virtual ScriptType type() const;
 	virtual String typeName() const;
-	virtual ScriptValueP eval(Context& ctx) const;
 	virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const;
 
 	/// Add a binding
@@ -365,6 +367,9 @@ class ScriptClosure : public ScriptValue {
 	/// The default argument bindings
 	vector<pair<Variable,ScriptValueP> >  bindings;
 
+  protected:
+	virtual ScriptValueP do_eval(Context& ctx, bool openScope) const;
+
   private:
 	/// Apply the bindings in a context
 	void applyBindings(Context& ctx) const;
@@ -376,7 +381,10 @@ class ScriptRule : public ScriptValue {
 	inline ScriptRule(const ScriptValueP& fun) : fun(fun) {}
 	virtual ScriptType type() const;
 	virtual String typeName() const;
-	virtual ScriptValueP eval(Context& ctx) const;
+
+  protected:
+	virtual ScriptValueP do_eval(Context& ctx, bool openScope) const;
+
   private:
 	ScriptValueP fun;
 };

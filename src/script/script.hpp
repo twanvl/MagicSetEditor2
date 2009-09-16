@@ -165,7 +165,6 @@ class Script : public ScriptValue {
 	
 	virtual ScriptType type() const;
 	virtual String typeName() const;
-	virtual ScriptValueP eval(Context& ctx) const;
 	virtual ScriptValueP dependencies(Context& ctx, const Dependency&) const;
 	
 	/// Add a jump instruction, later comeFrom should be called on the returned value
@@ -194,7 +193,10 @@ class Script : public ScriptValue {
 	String dumpScript() const;
 	/// Output an instruction in a human readable format
 	String dumpInstr(unsigned int pos, Instruction i) const;
-	
+
+  protected:
+	virtual ScriptValueP do_eval(Context& ctx, bool openScope) const;
+
   private:
 	/// Data of the instructions that make up this script
 	vector<Instruction>  instructions;

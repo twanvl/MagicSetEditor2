@@ -61,6 +61,7 @@ class Set : public Packaged {
 
 	ActionStack              actions;           ///< Actions performed on this set and the cards in it
 	KeywordDatabase          keyword_db;        ///< Database for matching keywords, must be cleared when keywords change
+	VCSP                     vcs;               ///< The version control system to use
 	
 	/// A context for performing scripts
 	/** Should only be used from the main thread! */
@@ -119,6 +120,11 @@ class Set : public Packaged {
 	Version fileVersion() const;
 	/// Validate that the set is correctly loaded
 	virtual void validate(Version = app_version);
+	
+  protected:
+	virtual VCSP getVCS() {
+		return vcs;
+	}
 
   private:
 	DECLARE_REFLECTION();

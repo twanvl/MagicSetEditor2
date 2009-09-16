@@ -12,11 +12,13 @@ case $UID in
     0)
         INSTALL_DIR='/usr/local/share/magicseteditor/';
         EXEC_SYMLINK='/usr/local/bin/magicseteditor';
-        FONTS_DIR='/usr/local/share/fonts/';;
+        FONTS_DIR='/usr/local/share/fonts/';
+        CHMOD='chmod +x';;
     *)
         INSTALL_DIR='$HOME/.magicseteditor/';
         EXEC_SYMLINK='$HOME/bin/magicseteditor';
-	FONTS_DIR='$HOME/.fonts/';;
+        FONTS_DIR='$HOME/.fonts/';
+        CHMOD='chmod u+x';;
 esac
 
 if [ "$MSE_INSTALL_DIR" != "" ]; then
@@ -49,5 +51,6 @@ echo "Installing...";
 
 mkdir "$INSTALL_DIR";
 cp -r program/* "$INSTALL_DIR";
+$CHMOD "$INSTALL_DIR/magicseteditor";
 cp fonts/* "$FONTS_DIR";
 ln -s "$INSTALL_DIR/magicseteditor" "$EXEC_SYMLINK"
