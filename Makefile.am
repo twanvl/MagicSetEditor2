@@ -17,7 +17,7 @@ AM_LDFLAGS  = @WX_LIBS@ $(BOOST_LDFLAGS)
 .hpp.gch:
 	target=`echo $@ | sed "s|.gch$$|.hpp|"`;\
 	depbase=`echo $$target | sed "s|[^/]*\$$|$(DEPDIR)/&|;s|\\.hpp\$$||"`;\
-	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpch -c $$target &&\
+	$(CXXCOMPILE) -MT $@ -MD -MP -MF $$depbase.Tpch -x c++-header -c $$target &&\
 	$(am__mv) $$depbase.Tpch $$depbase.Pch
 	touch $@
 .gch.o:
