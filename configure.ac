@@ -21,11 +21,11 @@ AC_PROG_CXX
 AC_ARG_ENABLE(debug, [--enable-debug  Enable debug build (requires debug
  versions of wxWidgets and libstdc++.], [DEBUG=1])
 if test "x${DEBUG}" = x1; then
-  DEFAULT_CXXFLAGS="-ggdb3 -O0 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
-  WXCONFIG_FLAGS="--debug"
+  DEFAULT_CXXFLAGS="-ggdb -O0 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
+  WXCONFIG_FLAGS="--debug --unicode=no"
 else
   DEFAULT_CXXFLAGS="-O2"
-  WXCONFIG_FLAGS=""
+  WXCONFIG_FLAGS="--unicode=no"
 fi
 if test X$user_set_cxxflags != Xyes; then
   CXXFLAGS=${DEFAULT_CXXFLAGS}
@@ -56,9 +56,13 @@ if test "${HAVE_WX}" != 1; then
     ])
 fi
 
+AC_ARG_ENABLE(pch, [--enable-pch  Enable precompiled headers (Requires
+ GCC of sufficiently high version). Speeds up compile times
+ significantly... if it works.], [PCH=1], [PCH=1])
+
 # Check for precompiled headers
 # TODO: Deal with braindead GCC and actually check
-AM_CONDITIONAL(GLIBCPP_BUILD_PCH, test "x$CXX" = "xg++")
+AM_CONDITIONAL(GLIBCPP_BUILD_PCH, test "x$PCH" = "x1" -a "x$CXX" = "xg++")
 
 # Checks for header files.
 
