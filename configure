@@ -708,6 +708,7 @@ with_wxdir
 with_wx_config
 with_wx_prefix
 with_wx_exec_prefix
+enable_pch
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1340,6 +1341,9 @@ Optional Features:
   --enable-dependency-tracking   do not reject slow dependency extractors
 --enable-debug  Enable debug build (requires debug
  versions of wxWidgets and libstdc++.
+--enable-pch  Enable precompiled headers (Requires
+ GCC of sufficiently high version). Speeds up compile times
+ significantly... if it works.
 
 Optional Packages:
   --with-PACKAGE[=ARG]    use PACKAGE [ARG=yes]
@@ -3440,11 +3444,11 @@ if test "${enable_debug+set}" = set; then :
 fi
 
 if test "x${DEBUG}" = x1; then
-  DEFAULT_CXXFLAGS="-ggdb3 -O0 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
-  WXCONFIG_FLAGS="--debug"
+  DEFAULT_CXXFLAGS="-ggdb -O0 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
+  WXCONFIG_FLAGS="--debug --unicode=no"
 else
   DEFAULT_CXXFLAGS="-O2"
-  WXCONFIG_FLAGS=""
+  WXCONFIG_FLAGS="--unicode=no"
 fi
 if test X$user_set_cxxflags != Xyes; then
   CXXFLAGS=${DEFAULT_CXXFLAGS}
@@ -4912,9 +4916,17 @@ if test "${HAVE_WX}" != 1; then
     " "$LINENO" 5
 fi
 
+# Check whether --enable-pch was given.
+if test "${enable_pch+set}" = set; then :
+  enableval=$enable_pch; PCH=1
+else
+  PCH=0
+fi
+
+
 # Check for precompiled headers
 # TODO: Deal with braindead GCC and actually check
- if test "x$CXX" = "xg++"; then
+ if test "x$PCH" = "x1" -a "x$CXX" = "xg++"; then
   GLIBCPP_BUILD_PCH_TRUE=
   GLIBCPP_BUILD_PCH_FALSE='#'
 else

@@ -12,7 +12,7 @@ echo '
 AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = magicseteditor
-AM_CXXFLAGS = @WX_CXXFLAGS@ $(BOOST_CXXFLAGS) -DUNICODE -I . -Wall
+AM_CXXFLAGS = @WX_CXXFLAGS@ $(BOOST_CXXFLAGS) -I. -Wall
 AM_LDFLAGS  = @WX_LIBS@ $(BOOST_LDFLAGS)
 
 .hpp.gch:

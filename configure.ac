@@ -58,7 +58,7 @@ fi
 
 AC_ARG_ENABLE(pch, [--enable-pch  Enable precompiled headers (Requires
  GCC of sufficiently high version). Speeds up compile times
- significantly... if it works.], [PCH=1], [PCH=1])
+ significantly... if it works.], [PCH=1], [PCH=0])
 
 # Check for precompiled headers
 # TODO: Deal with braindead GCC and actually check
