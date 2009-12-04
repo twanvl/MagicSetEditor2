@@ -46,7 +46,7 @@ ChoiceThumbnailRequest::ChoiceThumbnailRequest(ValueViewer* viewer, int id, bool
 
 Image ChoiceThumbnailRequest::generate() {
 	ChoiceStyle& s = style();
-	String name = cannocial_name_form(s.field().choices->choiceName(id));
+	String name = canonical_name_form(s.field().choices->choiceName(id));
 	ScriptableImage& img = s.choice_images[name];
 	return img.isReady()
 		? img.generate(GeneratedImage::Options(16,16, &viewer().getStylePackage(), &viewer().getLocalPackage(), ASPECT_BORDER, true))
@@ -181,7 +181,7 @@ void DropDownChoiceListBase::generateThumbnailImages() {
 	if (style().choice_images.empty() && style().image.isScripted()) {
 		for (int i = 0 ; i < end ; ++i) {
 			try {
-				String name = cannocial_name_form(field().choices->choiceName(i));
+				String name = canonical_name_form(field().choices->choiceName(i));
 				ctx.setVariable(_("input"), to_script(name));
 				GeneratedImageP img = image_from_script(style().image.getValidScriptP()->eval(ctx));
 				style().choice_images.insert(make_pair(name, ScriptableImage(img)));
@@ -197,7 +197,7 @@ void DropDownChoiceListBase::generateThumbnailImages() {
 		if (i >= image_count || status != THUMB_OK) {
 			// update image
 			ChoiceStyle& s = style();
-			String name = cannocial_name_form(s.field().choices->choiceName(i));
+			String name = canonical_name_form(s.field().choices->choiceName(i));
 			ScriptableImage& img = s.choice_images[name];
 			if (!img.update(ctx) && status == THUMB_CHANGED) {
 				status = THUMB_OK; // no need to rebuild

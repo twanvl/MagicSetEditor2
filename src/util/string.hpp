@@ -152,12 +152,12 @@ String capitalize(const String&);
 /** for use in dialogs */
 String capitalize_sentence(const String&);
 
-/// Convert a field name to cannocial form
+/// Convert a field name to canonical form
 /** - lower case and ' ' instead of '_'.
  *  - non alphanumeric characters are droped
  *  - "camalCase" is converted to words "camel case" (TODO)
  */
-String cannocial_name_form(const String&);
+String canonical_name_form(const String&);
 
 /// Returns the singular form of a string
 /** Used for reflection, for example "vector<T> apples" is written with keys

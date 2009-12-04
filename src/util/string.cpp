@@ -178,7 +178,7 @@ String capitalize_sentence(const String& s) {
 	return ret;
 }
 
-String cannocial_name_form(const String& str) {
+String canonical_name_form(const String& str) {
 	String ret;
 	ret.reserve(str.size());
 	bool leading = true;

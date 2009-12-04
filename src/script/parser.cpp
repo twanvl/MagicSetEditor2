@@ -210,7 +210,7 @@ void TokenIterator::readToken() {
 		// name, or a number after a . token, as in array.0
 		size_t start = pos - 1;
 		while (pos < input.size() && isAlnum_(input.GetChar(pos))) ++pos;
-		addToken(TOK_NAME, cannocial_name_form(input.substr(start, pos-start)), start); // convert name to cannocial form
+		addToken(TOK_NAME, canonical_name_form(input.substr(start, pos-start)), start); // convert name to cannocial form
 	} else if (isDigit(c)) {
 		// number
 		size_t start = pos - 1;

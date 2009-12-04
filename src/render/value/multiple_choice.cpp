@@ -58,7 +58,7 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 		size = add_horizontal(size, RealSize(14,16));
 	}
 	if (style().render_style & RENDER_IMAGE) {
-		map<String,ScriptableImage>::iterator it = style().choice_images.find(cannocial_name_form(choice));
+		map<String,ScriptableImage>::iterator it = style().choice_images.find(canonical_name_form(choice));
 		if (it != style().choice_images.end() && it->second.isReady()) {
 			// TODO: caching
 			GeneratedImage::Options options(0,0, &getStylePackage(), &getLocalPackage());

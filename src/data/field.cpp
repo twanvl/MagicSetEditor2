@@ -50,7 +50,7 @@ IMPLEMENT_REFLECTION(Field) {
 		REFLECT(type);
 	}
 	REFLECT(name);
-	REFLECT_IF_READING name = cannocial_name_form(name);
+	REFLECT_IF_READING name = canonical_name_form(name);
 	REFLECT(description);
 	REFLECT_N("icon", icon_filename);
 	REFLECT(editable);
