@@ -3440,16 +3440,17 @@ fi
 
 # Check whether --enable-debug was given.
 if test "${enable_debug+set}" = set; then :
-  enableval=$enable_debug; DEBUG=1
+  enableval=$enable_debug;
 fi
 
-if test "x${DEBUG}" = x1; then
+if test "x${enable_debug}" = "xyes"; then
   DEFAULT_CXXFLAGS="-ggdb -O0 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
-  WXCONFIG_FLAGS="--debug --unicode=no"
+  WXCONFIG_FLAGS="--debug"
 else
   DEFAULT_CXXFLAGS="-O2"
-  WXCONFIG_FLAGS="--unicode=no"
+  WXCONFIG_FLAGS=""
 fi
+
 if test X$user_set_cxxflags != Xyes; then
   CXXFLAGS=${DEFAULT_CXXFLAGS}
 fi
@@ -4746,15 +4747,15 @@ fi
     WX_VERSION=""
 
     min_wx_version=2.8.0
-    if test -z "${WX_CONFIG_FLAGS}" ; then
+    if test -z "${WXCONFIG_FLAGS}" ; then
       { $as_echo "$as_me:${as_lineno-$LINENO}: checking for wxWidgets version >= $min_wx_version" >&5
 $as_echo_n "checking for wxWidgets version >= $min_wx_version... " >&6; }
     else
-      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for wxWidgets version >= $min_wx_version (${WX_CONFIG_FLAGS})" >&5
-$as_echo_n "checking for wxWidgets version >= $min_wx_version (${WX_CONFIG_FLAGS})... " >&6; }
+      { $as_echo "$as_me:${as_lineno-$LINENO}: checking for wxWidgets version >= $min_wx_version (${WXCONFIG_FLAGS})" >&5
+$as_echo_n "checking for wxWidgets version >= $min_wx_version (${WXCONFIG_FLAGS})... " >&6; }
     fi
 
-    WX_CONFIG_WITH_ARGS="$WX_CONFIG_PATH $wx_config_args ${WX_CONFIG_FLAGS} "
+    WX_CONFIG_WITH_ARGS="$WX_CONFIG_PATH $wx_config_args ${WXCONFIG_FLAGS} "
 
     WX_VERSION=`$WX_CONFIG_WITH_ARGS --version 2>/dev/null`
     wx_config_major_version=`echo $WX_VERSION | \
@@ -4876,7 +4877,7 @@ $as_echo "no (version $WX_VERSION is not new enough)" >&6; }
        WX_LIBS=""
        WX_LIBS_STATIC=""
        WX_RESCOMP=""
-       :
+       HAVE_WX=0
 
     fi
   else
@@ -4888,7 +4889,7 @@ $as_echo "no (version $WX_VERSION is not new enough)" >&6; }
     WX_LIBS_STATIC=""
     WX_RESCOMP=""
 
-    :
+    HAVE_WX=0
 
   fi
 
@@ -4918,15 +4919,13 @@ fi
 
 # Check whether --enable-pch was given.
 if test "${enable_pch+set}" = set; then :
-  enableval=$enable_pch; PCH=1
-else
-  PCH=0
+  enableval=$enable_pch;
 fi
 
 
 # Check for precompiled headers
 # TODO: Deal with braindead GCC and actually check
- if test "x$PCH" = "x1" -a "x$CXX" = "xg++"; then
+ if test "x$enable_pch" = "xyes" -a "x$CXX" = "xg++"; then
   GLIBCPP_BUILD_PCH_TRUE=
   GLIBCPP_BUILD_PCH_FALSE='#'
 else
