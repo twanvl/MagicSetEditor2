@@ -42,6 +42,7 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 bin_PROGRAMS = magicseteditor$(EXEEXT)
 @GLIBCPP_BUILD_PCH_TRUE@am__append_1 = ./src/util/prec.gch
+@GLIBCPP_BUILD_PCH_TRUE@am__append_2 = -fpch-deps
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(top_srcdir)/configure \
@@ -471,7 +472,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 AM_CXXFLAGS = @WX_CXXFLAGS@ $(BOOST_CXXFLAGS) -I. -Wall
 AM_LDFLAGS = @WX_LIBS@ $(BOOST_LDFLAGS)
 magicseteditor_LDADD = $(BOOST_REGEX_LIB)
-magicseteditor_CXXFLAGS = -fpch-deps $(AM_CXXFLAGS)
+magicseteditor_CXXFLAGS = $(AM_CXXFLAGS) $(am__append_2)
 
 # The script used to generate is MakeAM.sh
 magicseteditor_SOURCES = $(am__append_1) ./src/code_template.cpp \

@@ -4637,7 +4637,6 @@ fi
     	LDFLAGS="$LDFLAGS_SAVED"
 	fi
 
-BOOST_REGEX_LIB="-Wl,-Bstatic $BOOST_REGEX_LIB -Wl,-Bdynamic"
 
 # Check for wxWidgets
 

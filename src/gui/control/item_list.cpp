@@ -154,7 +154,7 @@ void ItemList::refreshList(bool refresh_current_only) {
 	getItems(sorted_list);
 	// Sort the list
 	if (sort_by_column >= 0) {
-		sort(sorted_list.begin(), sorted_list.end(), ItemComparer(*this));
+		stable_sort(sorted_list.begin(), sorted_list.end(), ItemComparer(*this));
 	}
 	// Has the entire list changed?
 	if (refresh_current_only && sorted_list == old_sorted_list) {

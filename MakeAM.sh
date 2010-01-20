@@ -25,7 +25,7 @@ AM_LDFLAGS  = @WX_LIBS@ $(BOOST_LDFLAGS)
 	gcc -x c - -c -o $@ <<<""
 
 magicseteditor_LDADD = $(BOOST_REGEX_LIB)
-magicseteditor_CXXFLAGS = -fpch-deps $(AM_CXXFLAGS)
+magicseteditor_CXXFLAGS = $(AM_CXXFLAGS)
 magicseteditor_SOURCES = 
 
 if GLIBCPP_BUILD_PCH
@@ -34,6 +34,7 @@ clean-local:
 	rm -f ./src/util/prec.gch
 include ./src/util/$(DEPDIR)/prec.Pch
 magicseteditor_SOURCES += ./src/util/prec.gch
+magicseteditor_CXXFLAGS += -fpch-deps
 endif
 
 # The script used to generate is MakeAM.sh' > Makefile.am;
