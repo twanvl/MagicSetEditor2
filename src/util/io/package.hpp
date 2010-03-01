@@ -1,6 +1,6 @@
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-//| Copyright:    (C) 2001 - 2009 Twan van Laarhoven and Sean Hunt             |
+//| Copyright:    (C) 2001 - 2010 Twan van Laarhoven and Sean Hunt             |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
@@ -197,8 +197,9 @@ class Package : public IntrusivePtrVirtualBase {
 /// Dependencies of a package
 class PackageDependency : public IntrusivePtrBase<PackageDependency> {
   public:
-	String  package;	///< Name of the package someone depends on
-	Version version;	///< Minimal required version of that package
+	String  package;         ///< Name of the package someone depends on
+	vector<String> suggests; ///< Packages suggested to fulfill this dependency
+	Version version;         ///< Minimal required version of that package
 
 	DECLARE_REFLECTION();
 };

@@ -1,6 +1,6 @@
 //+----------------------------------------------------------------------------+
 //| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-//| Copyright:    (C) 2001 - 2009 Twan van Laarhoven and Sean Hunt             |
+//| Copyright:    (C) 2001 - 2010 Twan van Laarhoven and Sean Hunt             |
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
@@ -487,6 +487,7 @@ template <> void Reader::handle(PackageDependency& dep) {
 		}
 	} else {
 		handle(_("package"), dep.package);
+		handle(_("suggests"), dep.suggests);
 		handle(_("version"), dep.version);
 	}
 }
