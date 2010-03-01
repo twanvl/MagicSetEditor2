@@ -15,9 +15,9 @@ case $UID in
         FONTS_DIR='/usr/local/share/fonts/';
         CHMOD='chmod +x';;
     *)
-        INSTALL_DIR='$HOME/.magicseteditor/';
-        EXEC_SYMLINK='$HOME/bin/magicseteditor';
-        FONTS_DIR='$HOME/.fonts/';
+        INSTALL_DIR="$HOME/.magicseteditor/";
+        EXEC_SYMLINK="$HOME/bin/magicseteditor";
+        FONTS_DIR="$HOME/.fonts/";
         CHMOD='chmod u+x';;
 esac
 
