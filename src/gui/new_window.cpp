@@ -37,9 +37,9 @@ NewSetWindow::NewSetWindow(Window* parent)
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		s->Add(game_text,       0, wxALL,                     4);
-		s->Add(game_list,       0, wxEXPAND | wxALL & ~wxTOP, 4);
+		s->Add(game_list,       0, wxEXPAND | (wxALL & ~wxTOP), 4);
 		s->Add(stylesheet_text, 0, wxALL,                     4);
-		s->Add(stylesheet_list, 0, wxEXPAND | wxALL & ~wxTOP, 4);
+		s->Add(stylesheet_list, 0, wxEXPAND | (wxALL & ~wxTOP), 4);
 		s->Add(CreateButtonSizer(wxOK | wxCANCEL) , 0, wxEXPAND | wxALL, 8);
 		s->SetSizeHints(this);
 	SetSizer(s);
@@ -147,7 +147,7 @@ SelectStyleSheetWindow::SelectStyleSheetWindow(Window* parent, const Game& game,
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		s->Add(description,     0, wxALL,                     4);
 		s->Add(stylesheet_text, 0, wxALL,                     4);
-		s->Add(stylesheet_list, 0, wxEXPAND | wxALL & ~wxTOP, 4);
+		s->Add(stylesheet_list, 0, wxEXPAND | (wxALL & ~wxTOP), 4);
 		s->Add(CreateButtonSizer(wxOK | wxCANCEL) , 0, wxEXPAND | wxALL, 8);
 		s->SetSizeHints(this);
 	SetSizer(s);

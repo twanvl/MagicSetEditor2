@@ -75,9 +75,9 @@ GameSettings::GameSettings()
 	, images_export_filename(_("{card.name}.jpg"))
 	, images_export_conflicts(CONFLICT_NUMBER_OVERWRITE)
 	, use_auto_replace(true)
-	, initialized(false)
 	, pack_seed_random(true)
 	, pack_seed(123456)
+	, initialized(false)
 {}
 
 void GameSettings::initDefaults(const Game& game) {

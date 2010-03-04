@@ -28,14 +28,14 @@ DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA ValueP>);
 // ----------------------------------------------------------------------------- : Set
 
 Set::Set()
-	: script_manager(new SetScriptManager(*this))
-	, vcs (new_intrusive<VCS>())
+	: vcs (new_intrusive<VCS>())
+	, script_manager(new SetScriptManager(*this))
 {}
 
 Set::Set(const GameP& game)
 	: game(game)
-	, script_manager(new SetScriptManager(*this))
 	, vcs (new_intrusive<VCS>())
+	, script_manager(new SetScriptManager(*this))
 {
 	data.init(game->set_fields);
 }
@@ -43,8 +43,8 @@ Set::Set(const GameP& game)
 Set::Set(const StyleSheetP& stylesheet)
 	: game(stylesheet->game)
 	, stylesheet(stylesheet)
-	, script_manager(new SetScriptManager(*this))
 	, vcs (new_intrusive<VCS>())
+	, script_manager(new SetScriptManager(*this))
 {
 	data.init(game->set_fields);
 }
@@ -201,8 +201,11 @@ void Set::reflect_cards (Tag& tag) {
 
 template <>
 void Set::reflect_cards<Writer> (Writer& tag) {
-	// TODO: disable for zipfiles
-	if (true) {
+	// When writing to a directory, we write each card in a separate file.
+	// We don't do this in zipfiles because it leads to bloat.
+	if (isZipfile()) {
+		REFLECT(cards);
+	} else {
 		set<String> used;
 		FOR_EACH(card, cards) {
 			String filename = normalize_internal_filename(clean_filename(card->identification()));
@@ -222,8 +225,6 @@ void Set::reflect_cards<Writer> (Writer& tag) {
 			referenceFile(full_name);
 			REFLECT_N("include file", full_name);
 		}
-	} else {
-		REFLECT(cards);
 	}
 }
 

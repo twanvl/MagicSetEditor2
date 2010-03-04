@@ -190,7 +190,7 @@ void show_update_dialog(Window* parent) {
 	// layout
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 	s->Add(html, 1, wxEXPAND | wxALL, 8);
-	s->Add(close, 0, wxALIGN_RIGHT | wxALL & ~wxTOP, 8);
+	s->Add(close, 0, wxALIGN_RIGHT | (wxALL & ~wxTOP), 8);
 	dlg->SetSizer(s);
 	dlg->SetSize(400,400);
 	dlg->Show();

@@ -30,8 +30,8 @@ ExportCardSelectionChoice::ExportCardSelectionChoice(const Set& set)
 ExportCardSelectionChoice::ExportCardSelectionChoice(const String& label, const vector<CardP>& cards)
 	: label(label)
 	, type(EXPORT_SEL_SUBSET)
-	, own_cards(cards)
 	, the_cards(&own_cards)
+	, own_cards(cards)
 {}
 ExportCardSelectionChoice::ExportCardSelectionChoice(const String& label, const vector<CardP>* cards)
 	: label(label)
@@ -142,7 +142,7 @@ CardSelectWindow::CardSelectWindow(Window* parent, const SetP& set, const String
 				s2->Add(sel_all,  0, wxEXPAND | wxRIGHT, 8);
 				s2->Add(sel_none, 0, wxEXPAND | wxRIGHT, 8);
 				s2->Add(CreateButtonSizer(wxOK | wxCANCEL), 1, wxEXPAND, 8);
-			s->Add(s2, 0, wxEXPAND | wxALL & ~wxTOP, 8);
+			s->Add(s2, 0, wxEXPAND | (wxALL & ~wxTOP), 8);
 		s->SetSizeHints(this);
 		SetSizer(s);
 		SetSize(600,500);

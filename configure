@@ -3444,7 +3444,7 @@ if test "${enable_debug+set}" = set; then :
 fi
 
 if test "x${enable_debug}" = "xyes"; then
-  DEFAULT_CXXFLAGS="-ggdb -O0 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
+  DEFAULT_CXXFLAGS="-ggdb -O0"
   WXCONFIG_FLAGS="--debug"
 else
   DEFAULT_CXXFLAGS="-O2"

@@ -34,7 +34,7 @@ CardListColumnSelectDialog::CardListColumnSelectDialog(Window* parent, const Gam
 				s3->Add(new wxButton(this, ID_MOVE_DOWN, _BUTTON_("move down")), 0, wxEXPAND | wxTOP, 2);
 				s3->Add(new wxButton(this, ID_SHOW,      _BUTTON_("show")),      0, wxEXPAND | wxTOP, 2);
 				s3->Add(new wxButton(this, ID_HIDE,      _BUTTON_("hide")),      0, wxEXPAND | wxTOP, 2);
-			s2->Add(s3,   0, wxEXPAND | wxALL & ~wxTOP,  4);
+			s2->Add(s3,   0, wxEXPAND | (wxALL & ~wxTOP),  4);
 		s->Add(s2                                                                           , 1, wxEXPAND | wxALL, 4);
 		s->Add(CreateButtonSizer(wxOK | wxCANCEL)                                           , 0, wxEXPAND | wxALL, 8);
 	s->SetSizeHints(this);

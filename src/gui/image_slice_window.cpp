@@ -145,7 +145,7 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 			s5->Add(s6, 0, wxEXPAND | wxALL, 4);
 			s5->AddStretchSpacer(1);
 			wxSizer* s8 = zoom_sizer = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("zoom"));
-				s8->Add(fix_aspect, 0, wxEXPAND | wxALL & ~wxBOTTOM, 4);
+				s8->Add(fix_aspect, 0, wxEXPAND | (wxALL & ~wxBOTTOM), 4);
 				wxSizer* s9 = zoom_fixed = new wxFlexGridSizer(0, 3, 4, 5);
 					s9->Add(new wxStaticText(this, wxID_ANY, _LABEL_("zoom amount")),   0, wxALIGN_CENTER_VERTICAL);
 					s9->Add(zoom, 0, wxEXPAND);
@@ -162,7 +162,7 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 			s5->Add(s8, 0, wxEXPAND | wxALL, 4);
 			s5->AddStretchSpacer(1);
 			wxSizer* sB = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("filter"));
-				sB->Add(sharpen,        0, wxEXPAND | wxALL & ~wxBOTTOM, 4);
+				sB->Add(sharpen,        0, wxEXPAND | (wxALL & ~wxBOTTOM), 4);
 				sB->Add(sharpen_amount, 0, wxEXPAND | wxALL, 4);
 			s5->Add(sB, 0, wxEXPAND | wxALL, 4);
 			s5->AddStretchSpacer(1);

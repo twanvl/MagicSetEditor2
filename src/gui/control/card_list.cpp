@@ -103,7 +103,7 @@ void CardListBase::onAction(const Action& action, bool undone) {
 	}
 	TYPE_CASE(action, ReorderCardsAction) {
 		if (sort_by_column >= 0) return; // nothing changes for us
-                if ((long)action.card_id1 < 0 || (long)action.card_id2 >= sorted_list.size()) return;
+                if ((long)action.card_id1 < 0 || (long)action.card_id2 >= (long)sorted_list.size()) return;
 		if ((long)action.card_id1 == selected_item_pos || (long)action.card_id2 == selected_item_pos) {
 			// Selected card has moved; also move in the sorted card list
 			swap(sorted_list[action.card_id1], sorted_list[action.card_id2]);

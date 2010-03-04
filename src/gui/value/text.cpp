@@ -111,7 +111,7 @@ struct DropDownWordListItem {
 	DropDownListP submenu;
 	
 	inline bool active() const { return flags & FLAG_ACTIVE; }
-	inline void setActive(bool a) { flags = flags & ~FLAG_ACTIVE | a * FLAG_ACTIVE; }
+	inline void setActive(bool a) { flags = (flags & ~FLAG_ACTIVE) | a * FLAG_ACTIVE; }
 };
 
 class DropDownWordList : public DropDownList {

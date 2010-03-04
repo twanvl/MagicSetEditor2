@@ -36,7 +36,7 @@ HtmlExportWindow::HtmlExportWindow(Window* parent, const SetP& set, const Export
 	// init sizers
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		s->Add(new wxStaticText(this, wxID_ANY, _LABEL_("html template")), 0, wxALL, 4);
-		s->Add(list, 0, wxEXPAND | wxALL & ~wxTOP, 4);
+		s->Add(list, 0, wxEXPAND | (wxALL & ~wxTOP), 4);
 		wxSizer* s2 = new wxBoxSizer(wxHORIZONTAL);
 			s2->Add(ExportWindowBase::Create(), 2, wxEXPAND);
 			wxSizer* s3 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("html export options"));

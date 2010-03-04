@@ -192,8 +192,8 @@ class PackageIconRequest : public ThumbnailRequest {
 
 PackageUpdateList::PackageUpdateList(Window* parent, const InstallablePackages& packages, bool show_only_installable, int id)
 	: TreeList(parent, id)
-	, show_only_installable(show_only_installable)
 	, packages(packages)
+	, show_only_installable(show_only_installable)
 {
 	item_height = max(item_height,19);
 	rebuild();

@@ -156,7 +156,7 @@ void AddPackAction::perform(bool to_undo) {
 
 ChangePackAction::ChangePackAction(Set& set, size_t pos, const PackTypeP& pack)
 	: PackTypesAction(set)
-	, pos(pos), pack(pack)
+	, pack(pack), pos(pos)
 {}
 
 String ChangePackAction::getName(bool to_undo) const {

@@ -109,9 +109,9 @@ class StatDimensionList : public GalleryList {
   public:
 	StatDimensionList(Window* parent, int id, bool show_empty, int dimension_count = 3)
 		: GalleryList(parent, id, wxVERTICAL, false)
-		, show_empty(show_empty)
 		, dimension_count(dimension_count)
 		, prefered_dimension_count(dimension_count)
+		, show_empty(show_empty)
 	{
 		//item_size = wxSize(150, 23);
 		subcolumns[0].size = wxSize(140,23);

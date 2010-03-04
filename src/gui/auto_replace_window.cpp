@@ -178,12 +178,12 @@ AutoReplaceWindow::AutoReplaceWindow(Window* parent, const Game& game)
 		// enabled?
 		s->Add(use_auto_replace, 0, wxALL & ~wxBOTTOM, 8);
 		// list
-		s->Add(list, 1, wxEXPAND | wxALL & ~wxBOTTOM, 8);
+		s->Add(list, 1, wxEXPAND | (wxALL & ~wxBOTTOM), 8);
 		s->AddSpacer(4);
 		wxSizer* s2 = new wxBoxSizer(wxHORIZONTAL);
 			s2->Add(add, 0, wxRIGHT, 4);
 			s2->Add(remove);
-		s->Add(s2, 0, wxALIGN_RIGHT | wxALL & ~wxTOP & ~wxBOTTOM, 8);
+		s->Add(s2, 0, wxALIGN_RIGHT | (wxALL & ~wxTOP & ~wxBOTTOM), 8);
 		// values
 		wxFlexGridSizer* s3 = new wxFlexGridSizer(2);
 			s3->AddGrowableCol(1);
@@ -191,7 +191,7 @@ AutoReplaceWindow::AutoReplaceWindow(Window* parent, const Game& game)
 			s3->Add(match,   1, wxEXPAND | wxBOTTOM, 2);
 			s3->Add(replaceL, 0, wxALIGN_CENTER_VERTICAL | wxRIGHT, 4);
 			s3->Add(replace, 1, wxEXPAND | wxBOTTOM, 2);
-		s->Add(s3, 0, wxEXPAND | wxALL & ~wxBOTTOM, 8);
+		s->Add(s3, 0, wxEXPAND | (wxALL & ~wxBOTTOM), 8);
 		s->AddSpacer(2);
 		s->Add(whole_word, 0, wxALL & ~wxBOTTOM & ~wxTOP, 8);
 		s->AddSpacer(4);

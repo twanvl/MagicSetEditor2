@@ -337,12 +337,12 @@ CustomPackDialog::CustomPackDialog(Window* parent, const SetP& set, const PackTy
 				s4->AddSpacer(2);
 				wxFlexGridSizer* packsSizer = new wxFlexGridSizer(0, 2, 4, 4);
 				packsSizer->AddGrowableCol(0);
-				s4->Add(packsSizer, 1, wxEXPAND | wxALL & ~wxTOP & ~wxLEFT, 4);
+				s4->Add(packsSizer, 1, wxEXPAND | (wxALL & ~wxTOP & ~wxLEFT), 4);
 			s3->Add(s4, 1, wxEXPAND, 8);
 			wxSizer* s5 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack totals"));
 				s5->Add(totals, 1, wxEXPAND | wxALL, 4);
 			s3->Add(s5, 1, wxEXPAND | wxLEFT, 8);
-		s->Add(s3, 0, wxEXPAND | wxALL & ~wxTOP, 8);
+		s->Add(s3, 0, wxEXPAND | (wxALL & ~wxTOP), 8);
 		wxSizer* s6 = new wxBoxSizer(wxHORIZONTAL);
 			if (can_remove) {
 				s6->Add(remove,                         0, wxALL & ~wxTOP & ~wxRIGHT, 8);
@@ -467,9 +467,9 @@ void RandomPackPanel::initControls() {
 					wxSizer* s4b = new wxBoxSizer(wxHORIZONTAL);
 						packsSizer = new wxFlexGridSizer(0, 2, 4, 4);
 						packsSizer->AddGrowableCol(0);
-						s4b->Add(packsSizer, 1, wxEXPAND | wxALL & ~wxTOP & ~wxLEFT, 4);
+						s4b->Add(packsSizer, 1, wxEXPAND | (wxALL & ~wxTOP & ~wxLEFT), 4);
 					s4->Add(s4b, 1, wxEXPAND | wxLEFT, 2);
-					s4->Add(new wxButton(this, ID_CUSTOM_PACK, _BUTTON_("add custom pack")), 0, wxEXPAND | wxALIGN_TOP | wxALL & ~wxTOP, 4);
+					s4->Add(new wxButton(this, ID_CUSTOM_PACK, _BUTTON_("add custom pack")), 0, wxEXPAND | wxALIGN_TOP | (wxALL & ~wxTOP), 4);
 				s3->Add(s4, 1, wxEXPAND, 8);
 				wxSizer* s5 = new wxStaticBoxSizer(wxHORIZONTAL, this, _LABEL_("pack totals"));
 					s5->Add(totals, 1, wxEXPAND | wxALL, 4);
@@ -486,7 +486,7 @@ void RandomPackPanel::initControls() {
 					//s6->Add(generate_button, 0, wxTOP | wxALIGN_RIGHT, 8);
 					s6->Add(generate_button, 1, wxTOP | wxEXPAND, 8);
 				s3->Add(s6, 0, wxEXPAND | wxLEFT, 8);
-			s2->Add(s3, 0, wxEXPAND | wxALL & ~wxTOP, 4);
+			s2->Add(s3, 0, wxEXPAND | (wxALL & ~wxTOP), 4);
 			s2->Add(card_list, 1, wxEXPAND);
 		s->Add(s2,      1, wxEXPAND, 8);
 	s->SetSizeHints(this);

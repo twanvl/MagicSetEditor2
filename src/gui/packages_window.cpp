@@ -255,7 +255,7 @@ void PackagesWindow::init(Window* parent, bool show_only_installable) {
 	
 	// Init sizer
 	wxBoxSizer* v = new wxBoxSizer(wxVERTICAL);
-		v->Add(package_list, 1, wxEXPAND | wxALL & ~wxBOTTOM, 8);
+		v->Add(package_list, 1, wxEXPAND | (wxALL & ~wxBOTTOM), 8);
 		v->AddSpacer(4);
 		wxBoxSizer* h = new wxBoxSizer(wxHORIZONTAL);
 			h->Add(package_info, 1, wxRIGHT, 4);
@@ -266,8 +266,8 @@ void PackagesWindow::init(Window* parent, bool show_only_installable) {
 				v2->AddStretchSpacer();
 				v2->Add(remove_button,  0, wxEXPAND | wxBOTTOM, 0);
 			h->Add(v2);
-		v->Add(h, 0, wxEXPAND | wxALL & ~wxTOP, 8);
-		v->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL & ~wxTOP, 8);
+		v->Add(h, 0, wxEXPAND | (wxALL & ~wxTOP), 8);
+		v->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | (wxALL & ~wxTOP), 8);
 	SetSizer(v);
 	
 	wxUpdateUIEvent::SetMode(wxUPDATE_UI_PROCESS_SPECIFIED);

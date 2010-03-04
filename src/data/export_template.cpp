@@ -15,8 +15,8 @@
 // ----------------------------------------------------------------------------- : Export template, basics
 
 ExportTemplate::ExportTemplate()
-	: create_directory(false)
-	, file_type(_("HTML files (*.html)|*.html"))
+	: file_type(_("HTML files (*.html)|*.html"))
+	, create_directory(false)
 {}
 
 String ExportTemplate::typeNameStatic() { return _("export-template"); }

@@ -37,14 +37,14 @@ ImagesExportWindow::ImagesExportWindow(Window* parent, const SetP& set, const Ex
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("export filenames"));
 			s2->Add(new wxStaticText(this, -1, _LABEL_("filename format")),    0, wxALL, 4);
-			s2->Add(format,                                                    0, wxEXPAND | wxALL & ~wxTOP, 4);
+			s2->Add(format,                                                    0, wxEXPAND | (wxALL & ~wxTOP), 4);
 			s2->Add(new wxStaticText(this, -1, _HELP_("filename format")),     0, wxALL & ~wxTOP, 4);
 			s2->Add(new wxStaticText(this, -1, _LABEL_("filename conflicts")), 0, wxALL, 4);
-			s2->Add(conflicts,                                                 0, wxEXPAND | wxALL & ~wxTOP, 4);
+			s2->Add(conflicts,                                                 0, wxEXPAND | (wxALL & ~wxTOP), 4);
 		s->Add(s2, 0, wxEXPAND | wxALL, 8);
 		wxSizer* s3 = ExportWindowBase::Create();
-		s->Add(s3, 1, wxEXPAND | wxALL & ~wxTOP, 8);
-		s->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL & ~wxTOP, 8);
+		s->Add(s3, 1, wxEXPAND | (wxALL & ~wxTOP), 8);
+		s->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | (wxALL & ~wxTOP), 8);
 	s->SetSizeHints(this);
 	SetSizer(s);
 	SetSize(500,-1);

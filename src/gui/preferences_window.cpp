@@ -116,9 +116,9 @@ PreferencesWindow::PreferencesWindow(Window* parent)
 	
 	// init sizer
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
-	s->Add(nb,                                 1, wxEXPAND | wxALL & ~wxBOTTOM, 8);
+	s->Add(nb,                                 1, wxEXPAND | (wxALL & ~wxBOTTOM), 8);
 	s->AddSpacer(4);
-	s->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL & ~wxTOP,    8);
+	s->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | (wxALL & ~wxTOP),    8);
 	s->SetSizeHints(this);
 	SetSizer(s);
 }
@@ -168,13 +168,13 @@ GlobalPreferencesPage::GlobalPreferencesPage(Window* parent)
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 	s->SetSizeHints(this);
 		wxSizer* s2 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("language"));
-			s2->Add(new wxStaticText(this, wxID_ANY, _LABEL_("app language")), 0,            wxALL,          4);
-			s2->Add(language,                                                  0, wxEXPAND | wxALL & ~wxTOP, 4);
-			s2->Add(new wxStaticText(this, wxID_ANY, _HELP_( "app language")), 0,            wxALL,          4);
-		s->Add(s2, 0, wxALL | wxEXPAND, 8);
+			s2->Add(new wxStaticText(this, wxID_ANY, _LABEL_("app language")), 0,             wxALL,          4);
+			s2->Add(language,                                                  0, wxEXPAND | (wxALL & ~wxTOP), 4);
+			s2->Add(new wxStaticText(this, wxID_ANY, _HELP_( "app language")), 0,             wxALL,          4);
+		s->Add(s2, 0, wxEXPAND | wxALL, 8);
 		wxSizer* s3 = new wxStaticBoxSizer(wxVERTICAL, this, _LABEL_("windows"));
 			s3->Add(open_sets_in_new_window, 0, wxALL, 4);
-		s->Add(s3, 0, wxALL & ~wxTOP | wxEXPAND, 8);
+		s->Add(s3, 0, wxEXPAND | (wxALL & ~wxTOP), 8);
 	SetSizer(s);
 }
 
@@ -216,7 +216,7 @@ DisplayPreferencesPage::DisplayPreferencesPage(Window* parent)
 		zoom_int = static_cast<int>(settings.default_stylesheet_settings.card_zoom() * 100);
 		zoom->SetValue(String::Format(_("%d%%"),zoom_int));
 		int choices[] = {50,66,75,100,120,150,200};
-		for (int i = 0 ; i < sizeof(choices)/sizeof(choices[0]) ; ++i) {
+		for (unsigned int i = 0 ; i < sizeof(choices)/sizeof(choices[0]) ; ++i) {
 			zoom->Append(String::Format(_("%d%%"),choices[i]));
 		}
 	#else
@@ -309,7 +309,7 @@ DirsPreferencesPage::DirsPreferencesPage(Window* parent)
 			wxSizer* s3 = new wxBoxSizer(wxHORIZONTAL);
 				s3->Add(apprentice, 1, wxEXPAND | wxRIGHT, 4);
 				s3->Add(ab,         0, wxEXPAND);
-			s2->Add(s3, 0, wxEXPAND | wxALL & ~wxTOP, 4);
+			s2->Add(s3, 0, wxEXPAND | (wxALL & ~wxTOP), 4);
 		s->Add(s2, 0, wxEXPAND | wxALL, 8);
 	s->SetSizeHints(this);
 	SetSizer(s);

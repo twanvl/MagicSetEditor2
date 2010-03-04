@@ -515,6 +515,8 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 		case I_OR_ELSE:
 			if (at == SCRIPT_ERROR) a = b;
 			break;
+		case I_ITERATOR_R: case I_MEMBER:
+			throw InternalError(_("ITERATOR_R/MEMBER instruction fell through!"));
 	}}
 }
 

@@ -64,8 +64,8 @@ END_EVENT_TABLE  ()
 
 HoverButtonBase::HoverButtonBase(Window* parent, int id, bool accepts_focus)
 	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxNO_BORDER )
-	, hover(false), focus(false), mouse_down(false), key_down(false)
 	, accepts_focus(accepts_focus)
+	, hover(false), focus(false), mouse_down(false), key_down(false)
 {}
 
 void HoverButtonBase::onMouseEnter(wxMouseEvent&) {

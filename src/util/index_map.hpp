@@ -33,12 +33,12 @@
 template <typename Key, typename Value>
 class IndexMap : private vector<Value> {
   public:
+	using typename vector<Value>::iterator;
+	using typename vector<Value>::const_iterator;
+	using typename vector<Value>::reference;
+	using typename vector<Value>::const_reference;
 	using vector<Value>::empty;
 	using vector<Value>::size;
-	using vector<Value>::iterator;
-	using vector<Value>::const_iterator;
-	using vector<Value>::reference;
-	using vector<Value>::const_reference;
 	using vector<Value>::begin;
 	using vector<Value>::end;
 	using vector<Value>::clear;

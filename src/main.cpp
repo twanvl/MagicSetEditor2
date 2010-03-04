@@ -211,7 +211,7 @@ int MSE::OnRun() {
 					CLISetInterface cli_interface(set,quiet);
 					return EXIT_SUCCESS;
 				} else if (arg == _("--export")) {
-					if (argc <= 2 || argc <= 3 && starts_with(argv[2],_("--"))) {
+					if (argc <= 2 || (argc <= 3 && starts_with(argv[2],_("--")))) {
 						handle_error(Error(_("No input file specified for --export")));
 						return EXIT_FAILURE;
 					}

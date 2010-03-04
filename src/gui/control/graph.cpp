@@ -237,7 +237,7 @@ void GraphData::crossAxis(size_t axis1, size_t axis2, size_t axis3, vector<UInt>
 
 bool matches(const GraphDataElement* v, const vector<int>& match) {
 	for (size_t i = 0 ; i < match.size() ; ++i) {
-		if (v->group_nrs[i] == -1 || match[i] != -1 && v->group_nrs[i] != match[i]) {
+		if (v->group_nrs[i] == -1 || (match[i] != -1 && v->group_nrs[i] != match[i])) {
 			return false;
 		}
 	}

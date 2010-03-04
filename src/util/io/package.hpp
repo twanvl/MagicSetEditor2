@@ -121,14 +121,8 @@ class Package : public IntrusivePtrVirtualBase {
 	// --------------------------------------------------- : Managing the inside of the package : Reader/writer
 
 	template <typename T>
-	void readFile(const String& file, T& obj) {
-		Reader reader(openIn(file), dynamic_cast<Packaged*>(this), absoluteFilename() + _("/") + file);
-		try {
-			reader.handle_greedy(obj);
-		} catch (const ParseError& err) {
-			throw FileParseError(err.what(), absoluteFilename() + _("/") + file); // more detailed message
-		}
-	}
+	void readFile(const String& file, T& obj);
+
 	template <typename T>
 	T readFile(const String& file) {
 		T obj;
@@ -145,6 +139,9 @@ class Package : public IntrusivePtrVirtualBase {
   protected:
 	// TODO: I dislike putting this here very much. There ought to be a better way.
 	virtual VCSP getVCS() { return new_intrusive<VCS>(); }
+
+	/// true if this is a zip file, false if a directory (updated on open/save)
+	bool isZipfile() { return zipfile; }
 
 	// --------------------------------------------------- : Private stuff
   private:
@@ -165,6 +162,10 @@ class Package : public IntrusivePtrVirtualBase {
 	String filename;
 	/// Last modified time
 	DateTime modified;
+
+	/// Zipfile flag
+	bool zipfile;
+	
   public:
 	/// Information on files in the package
 	/** Note: must be public for DECLARE_TYPEOF to work */
@@ -276,6 +277,20 @@ intrusive_ptr<T> open_package(const String& filename) {
 	intrusive_ptr<T> package(new T);
 	package->open(filename);
 	return package;
+}
+
+// ----------------------------------------------------------------------------- : readFile definition
+
+// This is here because it uses dynamic_cast and must be to a complete type.
+template <typename T>
+inline void Package::readFile(const String& file, T& obj)
+{
+	Reader reader(openIn(file), dynamic_cast<Packaged*>(this), absoluteFilename() + _("/") + file);
+	try {
+		reader.handle_greedy(obj);
+	} catch (const ParseError& err) {
+		throw FileParseError(err.what(), absoluteFilename() + _("/") + file); // more detailed message
+	}
 }
 
 // ----------------------------------------------------------------------------- : EOF

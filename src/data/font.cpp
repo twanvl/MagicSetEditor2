@@ -34,7 +34,7 @@ bool Font::update(Context& ctx) {
 	     | underline   .update(ctx)
 	     | color       .update(ctx)
 	     | shadow_color.update(ctx);
-	flags = flags & (~FONT_BOLD & ~FONT_ITALIC)
+	flags = (flags & ~FONT_BOLD & ~FONT_ITALIC)
 	      | (weight() == _("bold")   ? FONT_BOLD   : FONT_NORMAL)
 	      | (style()  == _("italic") ? FONT_ITALIC : FONT_NORMAL);
 	return changes;

@@ -340,6 +340,7 @@ void Package::loadZipStream() {
 }
 
 void Package::openDirectory() {
+	zipfile = false;
 	openSubdir(wxEmptyString);
 }
 
@@ -367,6 +368,7 @@ void Package::openSubdir(const String& name) {
 }
 
 void Package::openZipfile() {
+	zipfile = true;
 	// close old streams
 	delete fileStream; fileStream = nullptr;
 	delete zipStream;  zipStream  = nullptr;
@@ -380,6 +382,7 @@ void Package::openZipfile() {
 }
 
 void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_copy) {
+	zipfile = false;
 	// write to a directory
 	VCSP vcs = getVCS();
 	FOR_EACH(f, files) {
@@ -411,6 +414,7 @@ void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_
 }
 
 void Package::saveToZipfile(const String& saveAs, bool remove_unused, bool is_copy) {
+	zipfile = true;
 	// create a temporary zip file name
 	String tempFile = saveAs + _(".tmp");
 	wxRemoveFile(tempFile);

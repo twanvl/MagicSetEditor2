@@ -21,7 +21,7 @@ AC_PROG_CXX
 AC_ARG_ENABLE(debug, [--enable-debug  Enable debug build (requires debug
  versions of wxWidgets and libstdc++.])
 if test "x${enable_debug}" = "xyes"; then
-  DEFAULT_CXXFLAGS="-ggdb -O0 -D_GLIBCXX_DEBUG -D_GLIBCXX_DEBUG_PEDANTIC"
+  DEFAULT_CXXFLAGS="-ggdb -O0"
   WXCONFIG_FLAGS="--debug"
 else
   DEFAULT_CXXFLAGS="-O2"

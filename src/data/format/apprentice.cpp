@@ -641,14 +641,14 @@ ApprenticeExportWindow::ApprenticeExportWindow(Window* parent, const SetP& set)
 		wxSizer* s2 = new wxBoxSizer(wxHORIZONTAL);
 			s2->Add(apprentice, 1, wxEXPAND | wxRIGHT, 4);
 			s2->Add(browse,     0, wxEXPAND);
-		s->Add(s2, 0, wxEXPAND | wxALL & ~wxTOP, 4);
+		s->Add(s2, 0, wxEXPAND | (wxALL & ~wxTOP), 4);
 		s->AddSpacer(8);
 		// Set code
 		s->Add(new wxStaticText(this, -1, _LABEL_("set code")), 0, wxALL, 4);
 		s->Add(set_code, 0, wxEXPAND | wxLEFT | wxRIGHT, 4);
 		s->Add(new wxStaticText(this, -1, _HELP_( "set code")), 0, wxALL, 4);
 		s->AddSpacer(4);
-		s->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL & ~wxTOP,    8);
+		s->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | (wxALL & ~wxTOP),    8);
 	s->SetSizeHints(this);
 	SetSizer(s);
 }

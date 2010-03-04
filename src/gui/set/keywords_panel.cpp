@@ -58,7 +58,7 @@ void KeywordsPanel::initControls() {
 		s0->Add(fixedI, 0, wxALIGN_CENTER | wxRIGHT, 10);
 		s0->Add(fixedL, 0, wxALIGN_CENTER_VERTICAL);
 	fixed->Add(new wxStaticLine(panel), 0, wxEXPAND | wxBOTTOM, 8);
-	fixed->Add(s0, 0, wxALL & ~wxTOP | wxALIGN_CENTER, 8);
+	fixed->Add(s0, 0, (wxALL & ~wxTOP) | wxALIGN_CENTER, 8);
 	fixed->Add(new wxStaticLine(panel), 0, wxEXPAND | wxBOTTOM, 8);
 	// init sizer for panel
 	sp = new wxBoxSizer(wxVERTICAL);
