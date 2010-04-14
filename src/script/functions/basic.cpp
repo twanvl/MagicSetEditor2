@@ -266,7 +266,7 @@ SCRIPT_FUNCTION(to_lower) {
 // convert a string to title case
 SCRIPT_FUNCTION(to_title) {
 	SCRIPT_PARAM_C(String, input);
-	SCRIPT_RETURN(capitalize(input));
+	SCRIPT_RETURN(capitalize(input.Lower()));
 }
 
 // reverse a string
