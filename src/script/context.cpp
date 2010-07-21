@@ -126,7 +126,8 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 				}
 				
 				// Function call
-				case I_CALL: new_scope.reset(new LocalScope(*this)); //new scope
+				case I_CALL:
+					new_scope.reset(new LocalScope(*this)); //new scope
 				case I_TAILCALL: {
 					// prepare arguments
 					for (unsigned int j = 0 ; j < i.data ; ++j) {

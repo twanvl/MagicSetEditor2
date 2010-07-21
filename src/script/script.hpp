@@ -17,7 +17,8 @@ DECLARE_POINTER_TYPE(Script);
 // ----------------------------------------------------------------------------- : Instructions
 
 /// A type of instruction to be performed in a script
-/** The reason for the negative values is that the compiler (at least MSVC) considers the bitfield signed
+/** The instruction type should fit in 6 bits.
+ *  Some stupid compilers use signed integers for bitfields, so values should be < 32
  */
 enum InstructionType
 	// Basic
@@ -37,14 +38,14 @@ enum InstructionType
 	// Functions
 ,	I_CALL			= 10 ///< arg = int, n*var : call the top item of the stack, with the given number of arguments (set with SET_VAR, but in the activation record of the call)
 ,	I_CLOSURE       = 11 ///< arg = int, n*var : construct a call closure object with the given arguments
+,	I_TAILCALL		= 12 ///< arg = int, n*var : perform a tail call - like I_CALL, except faster
 	// Simple instructions
-,	I_UNARY			= 12 ///< arg = 1ary instr : pop 1 value,  apply a function, push the result
-,	I_BINARY		= 13 ///< arg = 2ary instr : pop 2 values, apply a function, push the result
-,	I_TERNARY		= 14 ///< arg = 3ary instr : pop 3 values, apply a function, push the result
-,	I_QUATERNARY	= 15 ///< arg = 4ary instr : pop 4 values, apply a function, push the result
-,	I_DUP			= 16 ///< arg = int        : duplicate the k-from-top element of the stack
-,	I_POP			= 17 ///< arg = *          : pop the top value off the stack.
-,	I_TAILCALL		= 18 ///< arg = int, n*var : perform a tail call - like I_CALL, except faster
+,	I_UNARY			= 13 ///< arg = 1ary instr : pop 1 value,  apply a function, push the result
+,	I_BINARY		= 14 ///< arg = 2ary instr : pop 2 values, apply a function, push the result
+,	I_TERNARY		= 15 ///< arg = 3ary instr : pop 3 values, apply a function, push the result
+,	I_QUATERNARY	= 16 ///< arg = 4ary instr : pop 4 values, apply a function, push the result
+,	I_DUP			= 17 ///< arg = int        : duplicate the k-from-top element of the stack
+,	I_POP			= 18 ///< arg = *          : pop the top value off the stack.
 };
 
 /// Types of unary instructions (taking one argument from the stack)
