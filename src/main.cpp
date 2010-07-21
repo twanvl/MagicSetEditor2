@@ -46,7 +46,7 @@ class MSE : public wxApp {
 	/// On exit: write the settings to the config file
 	int OnExit();
 	/// On exception: display error message
-	bool OnExceptionInMainLoop();
+	void HandleEvent(wxEvtHandler *handler, wxEventFunction func, wxEvent& event) const;
 	/// Fancier assert
 	#if defined(_MSC_VER) && defined(_DEBUG)
 		void OnAssert(const wxChar *file, int line, const wxChar *cond, const wxChar *msg);
@@ -265,11 +265,10 @@ int MSE::OnExit() {
 
 // ----------------------------------------------------------------------------- : Exception handling
 
-bool MSE::OnExceptionInMainLoop() {
+void MSE::HandleEvent(wxEvtHandler *handler, wxEventFunction func, wxEvent& event) const {
 	try {
-		throw;	// rethrow the exception, so we can examine it
+		wxApp::HandleEvent(handler, func, event);
 	} CATCH_ALL_ERRORS(true);
-	return true;
 }
 
 #if defined(_MSC_VER) && defined(_DEBUG)
