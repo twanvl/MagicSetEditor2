@@ -4007,6 +4007,9 @@
 				Name="test"
 				Filter="">
 				<File
+					RelativePath="..\data\magic-test.mse-style\magic-script-tests">
+				</File>
+				<File
 					RelativePath="..\data\magic-test.mse-style\script-language-tests">
 				</File>
 				<File
