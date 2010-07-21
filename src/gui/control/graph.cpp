@@ -284,12 +284,24 @@ bool Graph1D::findItem(const RealPoint& pos, const RealRect& rect, bool tight, v
 	}
 }
 
+void Graph1D::setData(const GraphDataP& d) {
+	if (d->axes.size() <= axis) {
+		Graph::setData(GraphDataP()); // invalid
+	} else {
+		Graph::setData(d);
+	}
+	
+}
+
 // ----------------------------------------------------------------------------- : Graph2D
 
 void Graph2D::setData(const GraphDataP& d) {
-	Graph::setData(d);
-	if (data->axes.size() <= max(axis1,axis2)) return;
-	d->crossAxis(axis1,axis2,values);
+	if (d->axes.size() <= max(axis1,axis2)) {
+		Graph::setData(GraphDataP()); // invalid
+	} else {
+		Graph::setData(d);
+		d->crossAxis(axis1,axis2,values);
+	}
 }
 
 // ----------------------------------------------------------------------------- : Bar Graph
@@ -620,6 +632,7 @@ bool ScatterGraph::findItem(const RealPoint& pos, const RealRect& rect, bool tig
 
 void ScatterGraph::setData(const GraphDataP& d) {
 	Graph2D::setData(d);
+	if (!data) return;
 	if (values.empty()) return;
 	// find maximum
 	max_value = 0;
@@ -656,13 +669,17 @@ void ScatterGraph::setData(const GraphDataP& d) {
 
 void ScatterGraphPlus::setData(const GraphDataP& d) {
 	ScatterGraph::setData(d);
-	if (data->axes.size() <= max(max(axis1,axis2),axis3)) return;
-	d->crossAxis(axis1,axis2,axis3,values3D);
+	if (!data || data->axes.size() <= max(max(axis1,axis2),axis3)) {
+		data = GraphDataP(); // invalid
+		return;
+	}
+	data->crossAxis(axis1,axis2,axis3,values3D);
 }
 
 // ----------------------------------------------------------------------------- : Scatter Pie graph
 
 void ScatterPieGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const {
+	if (!data) return;
 	if (data->axes.size() <= max(max(axis1,axis2),axis3)) return;
 	if (layer == LAYER_SELECTION) {
 		ScatterGraph::draw(dc, current, layer);
@@ -711,6 +728,7 @@ void ScatterPieGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer 
 
 void GraphStats::setData(const GraphDataP& d) {
 	Graph1D::setData(d);
+	if (!data) return;
 	// update values
 	GraphAxis& axis = axis_data();
 	values.clear();
@@ -822,6 +840,7 @@ int GraphLegend::findItem(const RealPoint& pos, const RealRect& rect, bool tight
 // ----------------------------------------------------------------------------- : Graph label axis
 
 void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
+	if (!data) return;
 	RealRect rect = dc.getInternalRect();
 	GraphAxis& axis = axis_data();
 	int count = int(axis.groups.size());
@@ -901,6 +920,7 @@ void GraphLabelAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 	}
 }
 int GraphLabelAxis::findItem(const RealPoint& pos, const RealRect& rect, bool tight) const {
+	if (!data) return -1;
 	GraphAxis& axis = axis_data();
 	int col;
 	if (direction == HORIZONTAL) {

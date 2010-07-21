@@ -160,6 +160,7 @@ class Graph1D : public Graph {
 	inline Graph1D(size_t axis) : axis(axis) {}
 	virtual void draw(RotatedDC& dc, const vector<int>& current, DrawLayer layer) const;
 	virtual bool findItem(const RealPoint& pos, const RealRect& rect, bool tight, vector<int>& out) const;
+	virtual void setData(const GraphDataP& d);
   protected:
 	size_t axis;
 	/// Find an item, return the position along the axis, or -1 if not found
