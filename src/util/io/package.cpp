@@ -556,11 +556,11 @@ void Packaged::open(const String& package, bool just_header) {
 }
 void Packaged::loadFully() {
 	if (fully_loaded) return;
-	fully_loaded = true;
 	Reader reader(openIn(typeName()), this, absoluteFilename() + _("/") + typeName());
 	try {
 		reader.handle_greedy(*this);
 		validate(reader.file_app_version);
+		fully_loaded = true; // only after loading and validating succeeded, be careful with recursion!
 	} catch (const ParseError& err) {
 		throw FileParseError(err.what(), absoluteFilename() + _("/") + typeName()); // more detailed message
 	}
