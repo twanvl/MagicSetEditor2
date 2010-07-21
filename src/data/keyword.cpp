@@ -537,7 +537,7 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 	size_t start_u = match.position();
 	size_t len_u   = match.length();
 	size_t start = untagged_to_index(tagged, start_u, true),
-	       end   = untagged_to_index(tagged, start_u + len_u, true);
+	       end   = untagged_to_index(tagged, start_u + len_u, false);
 	if (start == end) return false; // don't match empty keywords
 	
 	// a part of tagged has not been searched for <kw- tags
@@ -574,7 +574,7 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 		size_t part_len_u   = match.length((int)submatch);
 		size_t part_end_u   = part_start_u + part_len_u;
 		// note: start_u can be (uint)-1 when part_len_u == 0
-		size_t part_end = part_len_u > 0 ? untagged_to_index(tagged, part_end_u, true) : part_start;
+		size_t part_end = part_len_u > 0 ? untagged_to_index(tagged, part_end_u, false) : part_start;
 		String part(tagged, part_start, part_end - part_start);
 		// strip left over </kw tags
 		part = remove_tag(part,_("</kw-"));
