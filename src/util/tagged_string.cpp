@@ -607,6 +607,10 @@ void check_tagged(const String& str, bool check_balance) {
 
 // ----------------------------------------------------------------------------- : Other utilities
 
+bool is_space_like(Char c) {
+	return isSpace(c) || c == _('(') || c == _('[') || c == _('{') || c == EN_DASH || c == EM_DASH;
+}
+
 String curly_quotes(String str, bool curl) {
 	bool open = true, in_tag = false;
 	FOR_EACH(c, str) {
@@ -620,7 +624,7 @@ String curly_quotes(String str, bool curl) {
 			in_tag = false;
 		} else if (!in_tag) {
 			// Also allow double-nesting of quotes
-			open = isSpace(c) || c == _('(') || c == _('[');
+			open = is_space_like(c);
 		}
 	}
 	return str;

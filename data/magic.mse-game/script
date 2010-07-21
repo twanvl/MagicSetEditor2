@@ -453,22 +453,8 @@ text_filter :=
 	replace@(
 		match: "\\[[SCTQXYZIWUBRG0-9/|]+\\]",
 		replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
-	# step 6a : curly double quotes
-	replace@(
-		match: "[[.quotation-mark.]]|“",
-		in_context: "[“][A-Za-z,.!?+$<>:;-— 0-9\\\\]*<match>",
-		replace: "”" )+
-	replace@(
-		match: "[[.quotation-mark.]]",
-		replace: "“" )+
-	# step 6b : curly single quotes
-	replace@(
-		match: "' |‘ ",
-		in_context: "[‘][A-Za-z,.!?+$<>:;-— 0-9\\\\]*<match>",
-		replace: "’ " )+
-	replace@(
-		match: " '",
-		replace: " ‘" )+
+	# step 6 : curly quotes
+	curly_quotes +
 	# step 7 : ???
 	replace@(
 	 	match: "[(]([^)\n]|[(][^)\n]*[)])*[)]?",
@@ -480,7 +466,6 @@ text_filter :=
 		     + "([[:lower:]])" # match this
 		     + "(?![)])",      # not followed by this
 		replace: { _1 + to_upper(_2) }) +
-	#curly_quotes +
 	# step 9 : spellcheck
 	{ if set.mark_errors then
 		check_spelling(
