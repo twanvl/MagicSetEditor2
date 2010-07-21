@@ -208,7 +208,9 @@ void Set::reflect_cards<Writer> (Writer& tag) {
 	} else {
 		set<String> used;
 		FOR_EACH(card, cards) {
-			String filename = normalize_internal_filename(clean_filename(card->identification()));
+			// pick a unique filename for this card
+			// can't use Package::newFileName, because then we get conflicts with the previous save of the same card
+			String filename = _("card ") + normalize_internal_filename(clean_filename(card->identification()));
 			String full_name = filename;
 			int i = 0;
 

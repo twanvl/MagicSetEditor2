@@ -42,10 +42,17 @@ bool is_filename_char(Char c) {
 
 String clean_filename(const String& name) {
 	String clean;
+	// allow only valid characters, and remove leading whitespace
+	bool start = true;
 	FOR_EACH_CONST(c, name) {
-		if (is_filename_char(c)) {
+		if (is_filename_char(c) && !(start && c == _(' '))) {
+			start = false;
 			clean += c;
 		}
+	}
+	// remove trailing whitespace
+	while (!clean.empty() && clean[clean.size()-1] == _(' ')) {
+		clean.resize(clean.size()-1);
 	}
 	if (clean.empty() || starts_with(clean, _("."))) {
 		clean = _("no-name") + clean;
