@@ -13,6 +13,8 @@
 // ----------------------------------------------------------------------------- : ValueEditor
 
 void ValueEditor::addAction(ValueAction* a) {
-	a->isOnCard(editor().getCard().get());
-	editor().addAction(a);
+	if (a) {
+		a->isOnCard(editor().getCard().get());
+		editor().addAction(a);
+	}
 }

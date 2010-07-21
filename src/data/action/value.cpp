@@ -149,7 +149,7 @@ TextValueAction* toggle_format_action(const TextValueP& value, const String& tag
 		new_value += _("</") + tag + _(">");
 		new_value += str.substr(end_i);
 	} else {
-		// we are inside this tag, _('remove') it
+		// we are inside this tag, 'remove' it
 		new_value =  str.substr(0, start_i);
 		new_value += _("</") + tag + _(">");
 		new_value += str.substr(start_i, end_i - start_i);
