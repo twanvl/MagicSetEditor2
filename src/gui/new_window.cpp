@@ -97,7 +97,6 @@ void NewSetWindow::done() {
 		EndModal(wxID_OK);
 	} catch (const Error& e) {
 		handle_error(e);
-		EndModal(wxID_CANCEL);
 	}
 }
 
