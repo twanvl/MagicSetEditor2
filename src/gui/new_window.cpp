@@ -90,6 +90,7 @@ void NewSetWindow::OnOK(wxCommandEvent&) {
 
 void NewSetWindow::done() {
 	try {
+		if (!stylesheet_list->hasSelection()) return;
 		StyleSheetP stylesheet = stylesheet_list->getSelection<StyleSheet>();
 		set = intrusive(new Set(stylesheet));
 		set->validate();

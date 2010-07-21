@@ -37,6 +37,11 @@ class GalleryList : public wxPanel {
 	void select(size_t item, size_t subcol = NO_SELECTION, bool event = true);
 	/// Is there an item selected?
 	inline bool hasSelection(size_t subcol = 0) const { return subcolumns[subcol].selection < itemCount(); }
+	/// Get the id of the selected item, throws if there is no selection
+	inline size_t getSelectionId(size_t subcol = 0) const {
+		if (!hasSelection(subcol)) throw Error(_("No selection"));
+		return subcolumns[subcol].selection;
+	}
 	/// Is the given item selected?
 	inline bool isSelected(size_t item, size_t subcol = 0) const {
 		return subcol < subcolumns.size() && subcolumns[subcol].selection == item;
