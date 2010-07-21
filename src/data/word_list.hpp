@@ -54,7 +54,7 @@ class AutoReplace : public IntrusivePtrVirtualBase {
 	String match;
 	String replace;
 
-	inline AutoReplaceP clone() const { return new_intrusive1<AutoReplace>(*this); }
+	inline AutoReplaceP clone() const { return intrusive(new AutoReplace(*this)); }
 
 	DECLARE_REFLECTION();
 };

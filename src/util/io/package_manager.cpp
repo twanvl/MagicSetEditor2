@@ -65,12 +65,12 @@ PackagedP PackageManager::openAny(const String& name_, bool just_header) {
 	if (!p) {
 		// load with the right type, based on extension
 		wxFileName fn(filename);
-		if      (fn.GetExt() == _("mse-game"))            p = new_intrusive<Game>();
-		else if (fn.GetExt() == _("mse-style"))           p = new_intrusive<StyleSheet>();
-		else if (fn.GetExt() == _("mse-locale"))          p = new_intrusive<Locale>();
-		else if (fn.GetExt() == _("mse-include"))         p = new_intrusive<IncludePackage>();
-		else if (fn.GetExt() == _("mse-symbol-font"))     p = new_intrusive<SymbolFont>();
-		else if (fn.GetExt() == _("mse-export-template")) p = new_intrusive<ExportTemplate>();
+		if      (fn.GetExt() == _("mse-game"))            p = intrusive(new Game);
+		else if (fn.GetExt() == _("mse-style"))           p = intrusive(new StyleSheet);
+		else if (fn.GetExt() == _("mse-locale"))          p = intrusive(new Locale);
+		else if (fn.GetExt() == _("mse-include"))         p = intrusive(new IncludePackage);
+		else if (fn.GetExt() == _("mse-symbol-font"))     p = intrusive(new SymbolFont);
+		else if (fn.GetExt() == _("mse-export-template")) p = intrusive(new ExportTemplate);
 		else {
 			throw PackageError(_("Unrecognized package type: '") + fn.GetExt() + _("'\nwhile trying to open: ") + name);
 		}
@@ -273,7 +273,7 @@ void PackageDirectory::installedPackages(vector<InstallablePackageP>& packages_o
 				PackageVersionP ver(new PackageVersion(
 					is_local ? PackageVersion::STATUS_LOCAL : PackageVersion::STATUS_GLOBAL));
 				ver->check_status(*pack);
-				packages_out.push_back(new_intrusive2<InstallablePackage>(new_intrusive1<PackageDescription>(*pack), ver));
+				packages_out.push_back(intrusive(new InstallablePackage(intrusive(new PackageDescription(*pack)), ver)));
 			} catch (const Error&) {}
 			++it2;
 		} else if ((*it1)->name < *it2) {
@@ -285,7 +285,7 @@ void PackageDirectory::installedPackages(vector<InstallablePackageP>& packages_o
 			try {
 				PackagedP pack = package_manager.openAny(*it2, true);
 				(*it1)->check_status(*pack);
-				packages_out.push_back(new_intrusive2<InstallablePackage>(new_intrusive1<PackageDescription>(*pack), *it1));
+				packages_out.push_back(intrusive(new InstallablePackage(intrusive(new PackageDescription(*pack)), *it1)));
 			} catch (const Error&) { db_changed = true; }
 			++it1, ++it2;
 		}
@@ -339,7 +339,7 @@ void PackageDirectory::loadDatabase() {
 	String filename = databaseFile();
 	if (wxFileExists(filename)) {
 		// packages file not existing is not an error
-		shared_ptr<wxFileInputStream> file = new_shared1<wxFileInputStream>(filename);
+		shared_ptr<wxFileInputStream> file = shared(new wxFileInputStream(filename));
 		if (!file->Ok()) return; // failure is not an error
 		Reader reader(file, nullptr, filename);
 		reader.handle_greedy(*this);
@@ -348,7 +348,7 @@ void PackageDirectory::loadDatabase() {
 }
 
 void PackageDirectory::saveDatabase() {
-	Writer writer(new_shared1<wxFileOutputStream>(databaseFile()), app_version);
+	Writer writer(shared(new wxFileOutputStream(databaseFile())), app_version);
 	writer.handle(*this);
 }
 String PackageDirectory::databaseFile() {

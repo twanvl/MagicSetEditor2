@@ -91,7 +91,7 @@ void NewSetWindow::OnOK(wxCommandEvent&) {
 void NewSetWindow::done() {
 	try {
 		StyleSheetP stylesheet = stylesheet_list->getSelection<StyleSheet>();
-		set = new_intrusive1<Set>(stylesheet);
+		set = intrusive(new Set(stylesheet));
 		set->validate();
 		EndModal(wxID_OK);
 	} catch (const Error& e) {

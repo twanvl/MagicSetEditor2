@@ -227,7 +227,7 @@ void PackageUpdateList::initItems() {
 			ti.setIcon(load_resource_image(_("installer_package")));
 			if (!p->description->icon_url.empty()) {
 				// download icon
-				thumbnail_thread.request(new_intrusive2<PackageIconRequest>(this,&ti));
+				thumbnail_thread.request(intrusive(new PackageIconRequest(this,&ti)));
 			}
 		} else if (ti.position_type == TreeItem::TYPE_LOCALE) { // locale folder
 			ti.setIcon(load_resource_image(_("installer_locales")));

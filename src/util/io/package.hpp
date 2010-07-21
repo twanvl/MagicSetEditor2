@@ -138,7 +138,7 @@ class Package : public IntrusivePtrVirtualBase {
 
   protected:
 	// TODO: I dislike putting this here very much. There ought to be a better way.
-	virtual VCSP getVCS() { return new_intrusive<VCS>(); }
+	virtual VCSP getVCS() { return intrusive(new VCS()); }
 
 	/// true if this is a zip file, false if a directory (updated on open/save)
 	bool isZipfile() { return zipfile; }

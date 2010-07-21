@@ -32,7 +32,7 @@ HtmlExportWindow::HtmlExportWindow(Window* parent, const SetP& set, const Export
 	// init controls
 	list    = new PackageList(this, ID_EXPORT_LIST);
 	options = new ExportOptionsEditor(this, wxID_ANY, wxNO_BORDER);
-	options->setSet(new_intrusive1<Set>(set->stylesheet)); // dummy set
+	options->setSet(intrusive(new Set(set->stylesheet))); // dummy set
 	// init sizers
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 		s->Add(new wxStaticText(this, wxID_ANY, _LABEL_("html template")), 0, wxALL, 4);

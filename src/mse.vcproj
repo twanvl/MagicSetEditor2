@@ -2415,6 +2415,22 @@
 					</File>
 				</Filter>
 			</Filter>
+			<Filter
+				Name="vcs"
+				Filter="">
+				<File
+					RelativePath=".\util\vcs\subversion.cpp">
+				</File>
+				<File
+					RelativePath=".\util\vcs\subversion.hpp">
+				</File>
+				<File
+					RelativePath=".\util\vcs.cpp">
+				</File>
+				<File
+					RelativePath=".\util\vcs.hpp">
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="gfx"

@@ -187,10 +187,10 @@ SymbolShapeP read_symbol_shape(const ImageData& data) {
 		}
 		
 		// add to shape and place a mark
-		shape->points.push_back(new_intrusive2<ControlPoint>(
+		shape->points.push_back(intrusive(new ControlPoint(
 				double(x) / data.width,
 				double(y) / data.height
-			));
+			)));
 		if (x > old_x) data(old_x, y) |= MARKED; // mark when moving right -> only mark the top of the shape
 		last_move = (x + y) - (old_x + old_y);
 		old_x = x;

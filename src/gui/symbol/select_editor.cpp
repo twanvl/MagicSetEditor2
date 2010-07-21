@@ -184,7 +184,7 @@ void SymbolSelectEditor::onCommand(int id) {
 		control.Refresh(false);
 	} else if (id == ID_EDIT_GROUP && !isEditing()) {
 		// group selection, not when dragging
-		addAction(new GroupSymbolPartsAction(*getSymbol(), control.selected_parts.get(), new_intrusive<SymbolGroup>()));
+		addAction(new GroupSymbolPartsAction(*getSymbol(), control.selected_parts.get(), intrusive(new SymbolGroup())));
 		control.Refresh(false);
 	} else if (id == ID_EDIT_UNGROUP && !isEditing()) {
 		// ungroup selection, not when dragging

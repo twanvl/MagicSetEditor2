@@ -74,15 +74,15 @@ intrusive_ptr<Field> read_new<Field>(Reader& reader) {
 	// there must be a type specified
 	String type;
 	reader.handle(_("type"), type);
-	if      (type == _("text"))				return new_intrusive<TextField>();
-	else if (type == _("choice"))			return new_intrusive<ChoiceField>();
-	else if (type == _("multiple choice"))	return new_intrusive<MultipleChoiceField>();
-	else if (type == _("boolean"))			return new_intrusive<BooleanField>();
-	else if (type == _("image"))			return new_intrusive<ImageField>();
-	else if (type == _("symbol"))			return new_intrusive<SymbolField>();
-	else if (type == _("color"))			return new_intrusive<ColorField>();
-	else if (type == _("info"))				return new_intrusive<InfoField>();
-	else if (type == _("package choice"))	return new_intrusive<PackageChoiceField>();
+	if      (type == _("text"))				return intrusive(new TextField());
+	else if (type == _("choice"))			return intrusive(new ChoiceField());
+	else if (type == _("multiple choice"))	return intrusive(new MultipleChoiceField());
+	else if (type == _("boolean"))			return intrusive(new BooleanField());
+	else if (type == _("image"))			return intrusive(new ImageField());
+	else if (type == _("symbol"))			return intrusive(new SymbolField());
+	else if (type == _("color"))			return intrusive(new ColorField());
+	else if (type == _("info"))				return intrusive(new InfoField());
+	else if (type == _("package choice"))	return intrusive(new PackageChoiceField());
 	else if (type.empty()) {
 		reader.warning(_ERROR_1_("expected key", _("type")));
 		throw ParseError(_ERROR_("aborting parsing"));

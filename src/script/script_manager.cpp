@@ -56,7 +56,7 @@ Context& SetScriptContext::getContext(const StyleSheetP& stylesheet) {
 		//  NOTE: do not use a smart pointer for the pointer to the set, because the set owns this
 		//        which would lead to a reference cycle.
 		init_script_functions(*ctx);
-		ctx->setVariable(SCRIPT_VAR_set,        new_intrusive1<ScriptObject<Set*> >(&set));
+		ctx->setVariable(SCRIPT_VAR_set,        intrusive(new ScriptObject<Set*>(&set)));
 		ctx->setVariable(SCRIPT_VAR_game,       to_script(set.game));
 		ctx->setVariable(SCRIPT_VAR_stylesheet, to_script(stylesheet));
 		ctx->setVariable(SCRIPT_VAR_card_style, to_script(&stylesheet->card_style));

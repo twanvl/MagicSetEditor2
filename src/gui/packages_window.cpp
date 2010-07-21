@@ -214,7 +214,7 @@ PackagesWindow::PackagesWindow(Window* parent, const InstallerP& installer)
 {
 	init(parent, true);
 	// add installer
-	merge(installable_packages, new_intrusive1<DownloadableInstaller>(installer));
+	merge(installable_packages, intrusive(new DownloadableInstaller(installer)));
 	FOR_EACH(p, installable_packages) p->determineStatus();
 	// mark all packages in the installer for installation
 	FOR_EACH(ip, installable_packages) {
@@ -353,7 +353,7 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
 			os.Write(*is);
 			os.Close();
 			// open installer
-			ip->installer->installer = new_intrusive<Installer>();
+			ip->installer->installer = intrusive(new Installer());
 			ip->installer->installer->open(ip->installer->installer_file);
 		}
 	}

@@ -80,7 +80,7 @@ template <> void Reader::handle(ScriptableImage& s) {
 		s.script.parse(*this, true);
 	} else {
 		// a filename
-		s.value = new_intrusive1<PackagedImage>(s.script.unparsed);
+		s.value = intrusive(new PackagedImage(s.script.unparsed));
 	}
 }
 template <> void Writer::handle(const ScriptableImage& s) {

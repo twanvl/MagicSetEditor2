@@ -77,7 +77,7 @@ void Game::validate(Version v) {
 		vector<StatsDimensionP> dims;
 		FOR_EACH(f, card_fields) {
 			if (f->show_statistics) {
-				dims.push_back(new_intrusive1<StatsDimension>(*f));
+				dims.push_back(intrusive(new StatsDimension(*f)));
 			}
 		}
 		statistics_dimensions.insert(statistics_dimensions.begin(), dims.begin(), dims.end()); // push front
@@ -86,7 +86,7 @@ void Game::validate(Version v) {
 	{
 		vector<StatsCategoryP> cats;
 		FOR_EACH(dim, statistics_dimensions) {
-			cats.push_back(new_intrusive1<StatsCategory>(dim));
+			cats.push_back(intrusive(new StatsCategory(dim)));
 		}
 		statistics_categories.insert(statistics_categories.begin(), cats.begin(), cats.end()); // push front
 	}

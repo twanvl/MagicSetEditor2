@@ -200,7 +200,7 @@ class Reader {
  */
 template <typename T>
 intrusive_ptr<T> read_new(Reader& reader) {
-	return new_intrusive<T>();
+	return intrusive(new T());
 }
 
 /// Update the 'index' member of a value for use by IndexMap

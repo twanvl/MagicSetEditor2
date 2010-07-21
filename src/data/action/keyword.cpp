@@ -21,7 +21,7 @@ DECLARE_TYPEOF_COLLECTION(KeywordModeP);
 
 AddKeywordAction::AddKeywordAction(Set& set)
 	: KeywordListAction(set)
-	, action(ADD, new_intrusive<Keyword>(), set.keywords)
+	, action(ADD, intrusive(new Keyword()), set.keywords)
 {
 	Keyword& keyword = *action.steps.front().item;
 	// find default mode
@@ -184,7 +184,7 @@ bool KeywordReminderTextValue::checkScript(const ScriptP& script) {
 			const KeywordParam& kwp = *keyword.parameters[i];
 			String param_name = String(_("param")) << (int)(i+1);
 			String param_value = _("<atom-kwpph>") + (kwp.placeholder.empty() ? kwp.name : kwp.placeholder) + _("</atom-kwpph>");
-			ctx.setVariable(param_name, new_intrusive4<KeywordParamValue>(kwp.name, _(""), _(""), param_value));
+			ctx.setVariable(param_name, intrusive(new KeywordParamValue(kwp.name, _(""), _(""), param_value)));
 		}
 		script->eval(ctx);
 		errors.clear();

@@ -61,7 +61,7 @@ void profile_aggregate(FunctionProfile& parent, int level, int max_level, size_t
 	// add to item at idx
 	FunctionProfileP& fpp = parent.children[idx];
 	if (!fpp) {
-		fpp = new_intrusive1<FunctionProfile>(p.name);
+		fpp = intrusive(new FunctionProfile(p.name));
 	}
 	fpp->time_ticks += p.time_ticks;
 	fpp->calls      += p.calls;
@@ -97,7 +97,7 @@ Profiler::Profiler(Timer& timer, Variable function_name)
 	if ((int)function_name >= 0) {
 		FunctionProfileP& fpp = parent->children[(size_t)function_name << 1 | 1];
 		if (!fpp) {
-			fpp = new_intrusive1<FunctionProfile>(variable_to_string(function_name));
+			fpp = intrusive(new FunctionProfile(variable_to_string(function_name)));
 		}
 		function = fpp.get();
 	}
@@ -111,7 +111,7 @@ Profiler::Profiler(Timer& timer, const Char* function_name)
 {
 	FunctionProfileP& fpp = parent->children[(size_t)function_name];
 	if (!fpp) {
-		fpp = new_intrusive1<FunctionProfile>(function_name);
+		fpp = intrusive(new FunctionProfile(function_name));
 	}
 	function = fpp.get();
 	timer.exclude_time();
@@ -124,7 +124,7 @@ Profiler::Profiler(Timer& timer, void* function_object, const String& function_n
 {
 	FunctionProfileP& fpp = parent->children[(size_t)function_object];
 	if (!fpp) {
-		fpp = new_intrusive1<FunctionProfile>(function_name);
+		fpp = intrusive(new FunctionProfile(function_name));
 	}
 	function = fpp.get();
 	timer.exclude_time();

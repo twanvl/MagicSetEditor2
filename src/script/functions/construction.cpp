@@ -22,7 +22,7 @@
 
 SCRIPT_FUNCTION(new_card) {
 	SCRIPT_PARAM(GameP, game);
-	CardP new_card = new_intrusive1<Card>(*game);
+	CardP new_card = intrusive(new Card(*game));
 	// set field values
 	SCRIPT_PARAM(ScriptValueP, input);
 	ScriptValueP it = input->makeIterator(input);

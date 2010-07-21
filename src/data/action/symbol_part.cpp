@@ -398,7 +398,7 @@ ControlPointRemoveAction::ControlPointRemoveAction(const SymbolShapeP& shape, co
 	FOR_EACH(point, shape->points) {
 		if (to_delete.find(point) != to_delete.end()) {
 			// remove this point
-			removals.push_back(new_intrusive2<SinglePointRemoveAction>(shape, index));
+			removals.push_back(intrusive(new SinglePointRemoveAction(shape, index)));
 		}
 		++index;
 	}
@@ -422,7 +422,7 @@ void ControlPointRemoveAction::perform(bool to_undo) {
 Action* control_point_remove_action(const SymbolShapeP& shape, const set<ControlPointP>& to_delete) {
 	if (shape->points.size() - to_delete.size() < 2) {
 		// TODO : remove part?
-		//new_intrusive<ControlPointRemoveAllAction>(part);
+		//intrusive(new ControlPointRemoveAllAction(part));
 		return 0; // no action
 	} else {
 		return new ControlPointRemoveAction(shape, to_delete);

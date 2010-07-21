@@ -35,7 +35,7 @@ SymbolWindow::SymbolWindow(Window* parent, const String& filename)
 	: performer(nullptr)
 {
 	// open file
-	Reader reader(new_shared1<wxFileInputStream>(filename), nullptr, filename);
+	Reader reader(shared(new wxFileInputStream(filename)), nullptr, filename);
 	SymbolP symbol;
 	reader.handle_greedy(symbol);
 	init(parent, symbol);
@@ -216,7 +216,7 @@ void SymbolWindow::onFileOpen(wxCommandEvent& ev) {
 		String ext = n.GetExt();
 		SymbolP symbol;
 		if (ext.Lower() == _("mse-symbol")) {
-			Reader reader(new_shared1<wxFileInputStream>(name), nullptr, name);
+			Reader reader(shared(new wxFileInputStream(name)), nullptr, name);
 			reader.handle_greedy(symbol);
 		} else {
 			wxBusyCursor busy;
@@ -239,7 +239,7 @@ void SymbolWindow::onFileSaveAs(wxCommandEvent& ev) {
 	String name = wxFileSelector(_("Save symbol"),settings.default_set_dir,_(""),_(""),_("Symbol files (*.mse-symbol)|*.mse-symbol"),wxSAVE, this);
 	if (!name.empty()) {
 		settings.default_set_dir = wxPathOnly(name);
-		Writer writer(new_shared1<wxFileOutputStream>(name), file_version_symbol);
+		Writer writer(shared(new wxFileOutputStream(name)), file_version_symbol);
 		writer.handle(control->getSymbol());
 	}
 }

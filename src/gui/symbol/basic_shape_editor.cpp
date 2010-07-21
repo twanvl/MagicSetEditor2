@@ -186,7 +186,7 @@ void SymbolBasicShapeEditor::makeShape(Vector2D a, Vector2D b, bool constrained,
 
 // TODO : Move out of this class
 void SymbolBasicShapeEditor::makeCenteredShape(const Vector2D& c, Vector2D r, bool constrained) {
-	shape = new_intrusive<SymbolShape>();
+	shape = intrusive(new SymbolShape);
 	// What shape to make?
 	switch (mode) {
 		case ID_SHAPE_CIRCLE: {
@@ -199,10 +199,10 @@ void SymbolBasicShapeEditor::makeCenteredShape(const Vector2D& c, Vector2D r, bo
 			// a circle has 4 control points, the first is: (x+r, y) db(0, kr) da(0, -kr)
 			// kr is a magic constant
 			const double kr = 0.5522847498f; // = 4/3 * (sqrt(2) - 1)
-			shape->points.push_back(new_intrusive7<ControlPoint>(c.x + r.x, c.y,  0, kr  * r.y,  0, -kr * r.y,  LOCK_SIZE));
-			shape->points.push_back(new_intrusive7<ControlPoint>(c.x, c.y - r.y,  kr  * r.x, 0,  -kr * r.x, 0,  LOCK_SIZE));
-			shape->points.push_back(new_intrusive7<ControlPoint>(c.x - r.x, c.y,  0, -kr * r.y,  0, kr  * r.y,  LOCK_SIZE));
-			shape->points.push_back(new_intrusive7<ControlPoint>(c.x, c.y + r.y,  -kr * r.x, 0,  kr  * r.x, 0,  LOCK_SIZE));
+			shape->points.push_back(intrusive(new ControlPoint(c.x + r.x, c.y,  0, kr  * r.y,  0, -kr * r.y,  LOCK_SIZE)));
+			shape->points.push_back(intrusive(new ControlPoint(c.x, c.y - r.y,  kr  * r.x, 0,  -kr * r.x, 0,  LOCK_SIZE)));
+			shape->points.push_back(intrusive(new ControlPoint(c.x - r.x, c.y,  0, -kr * r.y,  0, kr  * r.y,  LOCK_SIZE)));
+			shape->points.push_back(intrusive(new ControlPoint(c.x, c.y + r.y,  -kr * r.x, 0,  kr  * r.x, 0,  LOCK_SIZE)));
 			break;
 		} case ID_SHAPE_RECTANGLE: {
 			// A rectangle / square
@@ -212,10 +212,10 @@ void SymbolBasicShapeEditor::makeCenteredShape(const Vector2D& c, Vector2D r, bo
 				shape->name = capitalize(_TYPE_("rectangle"));
 			}
 			// a rectangle just has four corners
-			shape->points.push_back(new_intrusive2<ControlPoint>(c.x - r.x, c.y - r.y));
-			shape->points.push_back(new_intrusive2<ControlPoint>(c.x + r.x, c.y - r.y));
-			shape->points.push_back(new_intrusive2<ControlPoint>(c.x + r.x, c.y + r.y));
-			shape->points.push_back(new_intrusive2<ControlPoint>(c.x - r.x, c.y + r.y));
+			shape->points.push_back(intrusive(new ControlPoint(c.x - r.x, c.y - r.y)));
+			shape->points.push_back(intrusive(new ControlPoint(c.x + r.x, c.y - r.y)));
+			shape->points.push_back(intrusive(new ControlPoint(c.x + r.x, c.y + r.y)));
+			shape->points.push_back(intrusive(new ControlPoint(c.x - r.x, c.y + r.y)));
 			break;
 		} default: {
 			// A polygon or star
@@ -258,10 +258,10 @@ void SymbolBasicShapeEditor::makeCenteredShape(const Vector2D& c, Vector2D r, bo
 				// we can generate points
 				for(int i = 0 ; i < n ; ++i) {
 					double theta = alpha * i;
-					shape->points.push_back(new_intrusive2<ControlPoint>(
+					shape->points.push_back(intrusive(new ControlPoint(
 							c.x + ra * r.x * sin(theta),
 							y   - ra * r.y * cos(theta)
-						));
+						)));
 				}
 			} else {
 				// a star is made using a smaller, inverted polygon at the inside
@@ -280,16 +280,16 @@ void SymbolBasicShapeEditor::makeCenteredShape(const Vector2D& c, Vector2D r, bo
 				for(int i = 0 ; i < n ; ++i) {
 					double theta = alpha * i;
 					// from a
-					shape->points.push_back(new_intrusive2<ControlPoint>(
+					shape->points.push_back(intrusive(new ControlPoint(
 							c.x + ra * r.x * sin(theta),
 							y   - ra * r.y * cos(theta)
-						));
+						)));
 					// from b
 					theta = alpha * (i + 0.5);
-					shape->points.push_back(new_intrusive2<ControlPoint>(
+					shape->points.push_back(intrusive(new ControlPoint(
 							c.x + rb * r.x * sin(theta),
 							y   - rb * r.y * cos(theta)
-						));
+						)));
 				}
 			}
 			break;

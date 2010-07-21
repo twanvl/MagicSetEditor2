@@ -326,9 +326,9 @@ void KeywordsPanel::onKeywordSelect(KeywordSelectEvent& ev) {
 	if (ev.keyword) {
 		Keyword& kw = *ev.keyword;
 		sp->Show(fixed, kw.fixed);
-		keyword ->setValue(new_intrusive5<KeywordTextValue>        (keyword->getFieldP(),  &kw, &kw.keyword, !kw.fixed, true));
-		match   ->setValue(new_intrusive4<KeywordTextValue>        (match->getFieldP(),    &kw, &kw.match,   !kw.fixed));
-		rules   ->setValue(new_intrusive4<KeywordTextValue>        (rules->getFieldP(),    &kw, &kw.rules,   !kw.fixed));
+		keyword ->setValue(intrusive(new KeywordTextValue(keyword->getFieldP(),  &kw, &kw.keyword, !kw.fixed, true)));
+		match   ->setValue(intrusive(new KeywordTextValue(match->getFieldP(),    &kw, &kw.match,   !kw.fixed)));
+		rules   ->setValue(intrusive(new KeywordTextValue(rules->getFieldP(),    &kw, &kw.rules,   !kw.fixed)));
 		intrusive_ptr<KeywordReminderTextValue> reminder_value(new KeywordReminderTextValue(*set, reminder->getFieldP(), &kw, !kw.fixed));
 		reminder->setValue(reminder_value);
 		errors->SetLabel(reminder_value->errors);

@@ -78,7 +78,7 @@ void OptionalScript::initDependencies(Context& ctx, const Dependency& dep) const
 }
 
 Script& OptionalScript::getMutableScript() {
-	if (!script) script = new_intrusive<Script>();
+	if (!script) script = intrusive(new Script());
 	return *script;
 }
 

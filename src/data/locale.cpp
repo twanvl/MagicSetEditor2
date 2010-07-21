@@ -77,7 +77,7 @@ SubLocaleP find_wildcard(map<String,SubLocaleP>& items, const String& name) {
 	FOR_EACH_CONST(i, items) {
 		if (i.second && match_wildcard(i.first, name)) return i.second;
 	}
-	return new_intrusive<SubLocale>(); // so we don't search again
+	return intrusive(new SubLocale()); // so we don't search again
 }
 SubLocaleP find_wildcard_and_set(map<String,SubLocaleP>& items, const String& name) {
 	return items[name] = find_wildcard(items, name);
@@ -208,12 +208,12 @@ InputStreamP load_resource_text(const String& name) {
 		char* data = (char *)::LockResource(hData);
 		if ( !data ) throw InternalError(String::Format(_("Resource cannot be locked: %s"), name));
 		int len = ::SizeofResource(wxGetInstance(), hResource);
-		return new_shared2<wxMemoryInputStream>(data, len);
+		return shared(new wxMemoryInputStream(data, len));
 	#else
         static String path = wxStandardPaths::Get().GetDataDir() + _("/resource/");
         static String local_path = wxStandardPaths::Get().GetUserDataDir() + _("/resource/");
-        if (wxFileExists(path + name)) return new_shared1<wxFileInputStream>(path + name);
-        else return new_shared1<wxFileInputStream>(local_path + name);
+        if (wxFileExists(path + name)) return shared(new wxFileInputStream(path + name));
+        else return shared(new wxFileInputStream(local_path + name));
 	#endif
 }
 

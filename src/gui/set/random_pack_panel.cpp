@@ -387,14 +387,14 @@ void CustomPackDialog::updateTotals() {
 }
 
 void CustomPackDialog::storePack() {
-	edited_pack = new_intrusive<PackType>();
+	edited_pack = intrusive(new PackType());
 	edited_pack->selectable = true;
 	edited_pack->select = SELECT_ALL;
 	edited_pack->name = name->GetValue();
 	FOR_EACH(pick,pickers) {
 		int copies = pick.value->GetValue();
 		if (copies > 0) {
-			edited_pack->items.push_back(new_intrusive2<PackItem>(pick.pack->name, copies));
+			edited_pack->items.push_back(intrusive(new PackItem(pick.pack->name, copies)));
 		}
 	}
 }
@@ -725,10 +725,10 @@ void RandomPackPanel::onCardSelect(CardSelectEvent& ev) {
 
 void RandomPackPanel::selectionChoices(ExportCardSelectionChoices& out) {
 	if (!isInitialized()) return;
-	out.push_back(new_intrusive2<ExportCardSelectionChoice>(
+	out.push_back(intrusive(new ExportCardSelectionChoice(
 			_BUTTON_("export generated packs"),
 			card_list->getCardsPtr()
-		));
+		)));
 }
 
 

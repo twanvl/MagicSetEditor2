@@ -39,23 +39,23 @@ void SymbolControl::switchEditor(const SymbolEditorBaseP& e) {
 
 void SymbolControl::onChangeSymbol() {
 	selected_parts.setSymbol(symbol);
-	switchEditor(new_intrusive2<SymbolSelectEditor>(this, false));
+	switchEditor(intrusive(new SymbolSelectEditor(this, false)));
 	Refresh(false);
 }
 
 void SymbolControl::onModeChange(wxCommandEvent& ev) {
 	switch (ev.GetId()) {
 		case ID_MODE_SELECT:
-			switchEditor(new_intrusive2<SymbolSelectEditor>(this, false));
+			switchEditor(intrusive(new SymbolSelectEditor(this, false)));
 			break;
 		case ID_MODE_ROTATE:
-			switchEditor(new_intrusive2<SymbolSelectEditor>(this, true));
+			switchEditor(intrusive(new SymbolSelectEditor(this, true)));
 			break;
 		case ID_MODE_POINTS:
 			if (selected_parts.size() == 1) {
 				selected_shape = selected_parts.getAShape();
 				if (selected_shape) {
-					switchEditor(new_intrusive2<SymbolPointEditor>(this, selected_shape));
+					switchEditor(intrusive(new SymbolPointEditor(this, selected_shape)));
 				}
 			}
 			break;
@@ -64,10 +64,10 @@ void SymbolControl::onModeChange(wxCommandEvent& ev) {
 				selected_parts.clear();
 				signalSelectionChange();
 			}
-			switchEditor(new_intrusive1<SymbolBasicShapeEditor>(this));
+			switchEditor(intrusive(new SymbolBasicShapeEditor(this)));
 			break;
 		case ID_MODE_SYMMETRY:
-			switchEditor(new_intrusive2<SymbolSymmetryEditor>(this, selected_parts.getASymmetry()));
+			switchEditor(intrusive(new SymbolSymmetryEditor(this, selected_parts.getASymmetry())));
 			break;
 	}
 }
@@ -110,7 +110,7 @@ void SymbolControl::onUpdateSelection() {
 				}
 				// begin editing another part
 				selected_shape = shape;
-				editor = new_intrusive2<SymbolPointEditor>(this, selected_shape);
+				editor = intrusive(new SymbolPointEditor(this, selected_shape));
 				Refresh(false);
 			}
 			break;
@@ -147,17 +147,17 @@ void SymbolControl::onUpdateSelection() {
 
 void SymbolControl::selectPart(const SymbolPartP& part) {
 	selected_parts.select(part);
-	switchEditor(new_intrusive2<SymbolSelectEditor>(this, false));
+	switchEditor(intrusive(new SymbolSelectEditor(this, false)));
 	signalSelectionChange();
 }
 
 void SymbolControl::activatePart(const SymbolPartP& part) {
 	if (part->isSymbolShape()) {
 		selected_parts.select(part);
-		switchEditor(new_intrusive2<SymbolPointEditor>(this, static_pointer_cast<SymbolShape>(part)));
+		switchEditor(intrusive(new SymbolPointEditor(this, static_pointer_cast<SymbolShape>(part))));
 	} else if (part->isSymbolSymmetry()) {
 		selected_parts.select(part);
-		switchEditor(new_intrusive2<SymbolSymmetryEditor>(this, static_pointer_cast<SymbolSymmetry>(part)));
+		switchEditor(intrusive(new SymbolSymmetryEditor(this, static_pointer_cast<SymbolSymmetry>(part))));
 	}
 }
 

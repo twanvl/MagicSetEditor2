@@ -41,14 +41,14 @@ SCRIPT_FUNCTION(linear_blend) {
 	SCRIPT_PARAM(GeneratedImageP, image2);
 	SCRIPT_PARAM(double, x1); SCRIPT_PARAM(double, y1);
 	SCRIPT_PARAM(double, x2); SCRIPT_PARAM(double, y2);
-	return new_intrusive6<LinearBlendImage>(image1, image2, x1,y1, x2,y2);
+	return intrusive(new LinearBlendImage(image1, image2, x1,y1, x2,y2));
 }
 
 SCRIPT_FUNCTION(masked_blend) {
 	SCRIPT_PARAM(GeneratedImageP, light);
 	SCRIPT_PARAM(GeneratedImageP, dark);
 	SCRIPT_PARAM(GeneratedImageP, mask);
-	return new_intrusive3<MaskedBlendImage>(light, dark, mask);
+	return intrusive(new MaskedBlendImage(light, dark, mask));
 }
 
 SCRIPT_FUNCTION(combine_blend) {
@@ -57,19 +57,19 @@ SCRIPT_FUNCTION(combine_blend) {
 	SCRIPT_PARAM(GeneratedImageP, image2);
 	ImageCombine image_combine;
 	parse_enum(combine, image_combine);
-	return new_intrusive3<CombineBlendImage>(image1, image2, image_combine);
+	return intrusive(new CombineBlendImage(image1, image2, image_combine));
 }
 
 SCRIPT_FUNCTION(set_mask) {
 	SCRIPT_PARAM(GeneratedImageP, image);
 	SCRIPT_PARAM(GeneratedImageP, mask);
-	return new_intrusive2<SetMaskImage>(image, mask);
+	return intrusive(new SetMaskImage(image, mask));
 }
 
 SCRIPT_FUNCTION(set_alpha) {
 	SCRIPT_PARAM_C(GeneratedImageP, input);
 	SCRIPT_PARAM(double, alpha);
-	return new_intrusive2<SetAlphaImage>(input, alpha);
+	return intrusive(new SetAlphaImage(input, alpha));
 }
 
 SCRIPT_FUNCTION(set_combine) {
@@ -77,19 +77,19 @@ SCRIPT_FUNCTION(set_combine) {
 	SCRIPT_PARAM_C(GeneratedImageP, input);
 	ImageCombine image_combine;
 	parse_enum(combine, image_combine);
-	return new_intrusive2<SetCombineImage>(input, image_combine);
+	return intrusive(new SetCombineImage(input, image_combine));
 }
 
 SCRIPT_FUNCTION(saturate) {
 	SCRIPT_PARAM_C(GeneratedImageP, input);
 	SCRIPT_PARAM(double, amount);
-	return new_intrusive2<SaturateImage>(input, amount);
+	return intrusive(new SaturateImage(input, amount));
 }
 
 SCRIPT_FUNCTION(enlarge) {
 	SCRIPT_PARAM_C(GeneratedImageP, input);
 	SCRIPT_PARAM_N(double, _("border size"), border_size);
-	return new_intrusive2<EnlargeImage>(input, border_size);
+	return intrusive(new EnlargeImage(input, border_size));
 }
 
 SCRIPT_FUNCTION(crop) {
@@ -98,7 +98,7 @@ SCRIPT_FUNCTION(crop) {
 	SCRIPT_PARAM_N(int, _("height"),      height);
 	SCRIPT_PARAM_N(double, _("offset x"), offset_x);
 	SCRIPT_PARAM_N(double, _("offset y"), offset_y);
-	return new_intrusive5<CropImage>(input, width, height, offset_x, offset_y);
+	return intrusive(new CropImage(input, width, height, offset_x, offset_y));
 }
 
 SCRIPT_FUNCTION(drop_shadow) {
@@ -108,7 +108,7 @@ SCRIPT_FUNCTION(drop_shadow) {
 	SCRIPT_OPTIONAL_PARAM_N_(double, _("alpha"),       alpha);
 	SCRIPT_OPTIONAL_PARAM_N_(double, _("blur radius"), blur_radius);
 	SCRIPT_OPTIONAL_PARAM_N_(Color,  _("color"),       color);
-	return new_intrusive6<DropShadowImage>(input, offset_x, offset_y, alpha, blur_radius, color);
+	return intrusive(new DropShadowImage(input, offset_x, offset_y, alpha, blur_radius, color));
 }
 
 SCRIPT_FUNCTION(symbol_variation) {
@@ -136,7 +136,7 @@ SCRIPT_FUNCTION(symbol_variation) {
 		FOR_EACH(v, style->variations) {
 			if (v->name == variation) {
 				// found it
-				return new_intrusive4<SymbolToImage>(value, filename, value->last_update, v);
+				return intrusive(new SymbolToImage(value, filename, value->last_update, v));
 			}
 		}
 		throw ScriptError(_("Variation of symbol not found ('") + variation + _("')"));
@@ -149,7 +149,7 @@ SCRIPT_FUNCTION(symbol_variation) {
 		if (fill_type == _("solid") || fill_type.empty()) {
 			SCRIPT_PARAM_N(Color, _("fill color"),   fill_color);
 			SCRIPT_PARAM_N(Color, _("border color"), border_color);
-			var->filter = new_intrusive2<SolidFillSymbolFilter>(fill_color, border_color);
+			var->filter = intrusive(new SolidFillSymbolFilter(fill_color, border_color));
 		} else if (fill_type == _("linear gradient")) {
 			SCRIPT_PARAM_N(Color, _("fill color 1"),   fill_color_1);
 			SCRIPT_PARAM_N(Color, _("border color 1"), border_color_1);
@@ -159,24 +159,24 @@ SCRIPT_FUNCTION(symbol_variation) {
 			SCRIPT_PARAM_N(double, _("center y"), center_y);
 			SCRIPT_PARAM_N(double, _("end x"), end_x);
 			SCRIPT_PARAM_N(double, _("end y"), end_y);
-			var->filter = new_intrusive8<LinearGradientSymbolFilter>(fill_color_1, border_color_1, fill_color_2, border_color_2
-			                                                        ,center_x, center_y, end_x, end_y);
+			var->filter = intrusive(new LinearGradientSymbolFilter(fill_color_1, border_color_1, fill_color_2, border_color_2
+			                                                      ,center_x, center_y, end_x, end_y));
 		} else if (fill_type == _("radial gradient")) {
 			SCRIPT_PARAM_N(Color, _("fill color 1"),   fill_color_1);
 			SCRIPT_PARAM_N(Color, _("border color 1"), border_color_1);
 			SCRIPT_PARAM_N(Color, _("fill color 2"),   fill_color_2);
 			SCRIPT_PARAM_N(Color, _("border color 2"), border_color_2);
-			var->filter = new_intrusive4<RadialGradientSymbolFilter>(fill_color_1, border_color_1, fill_color_2, border_color_2);
+			var->filter = intrusive(new RadialGradientSymbolFilter(fill_color_1, border_color_1, fill_color_2, border_color_2));
 		} else {
 			throw ScriptError(_("Unknown fill type for symbol_variation: ") + fill_type);
 		}
-		return new_intrusive4<SymbolToImage>(value, filename, value ? value->last_update : Age(0), var);
+		return intrusive(new SymbolToImage(value, filename, value ? value->last_update : Age(0), var));
 	}
 }
 
 SCRIPT_FUNCTION(built_in_image) {
 	SCRIPT_PARAM_C(String, input);
-	return new_intrusive1<BuiltInImage>(input);
+	return intrusive(new BuiltInImage(input));
 }
 
 // ----------------------------------------------------------------------------- : Init

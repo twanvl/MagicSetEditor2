@@ -118,7 +118,7 @@ void SymbolSymmetryEditor::onCommand(int id) {
 		}
 		resetActions();
 	} else if (id == ID_ADD_SYMMETRY) {
-		symmetry = new_intrusive<SymbolSymmetry>();
+		symmetry = intrusive(new SymbolSymmetry());
 		symmetry->kind   = SYMMETRY_ROTATION;
 		symmetry->copies = 2;
 		symmetry->center = Vector2D(0.5,0.5);

@@ -95,10 +95,10 @@ class ScriptDelayedError : public ScriptValue {
 };
 
 inline ScriptValueP delay_error(const String& m) {
-	return new_intrusive1<ScriptDelayedError>(ScriptError(m));
+	return intrusive(new ScriptDelayedError(ScriptError(m)));
 }
 inline ScriptValueP delay_error(const ScriptError& error) {
-	return new_intrusive1<ScriptDelayedError>(error);
+	return intrusive(new ScriptDelayedError(error));
 }
 
 // ----------------------------------------------------------------------------- : Iterators
@@ -160,7 +160,7 @@ class ScriptCollection : public ScriptCollectionBase {
 		}
 	}
 	virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const {
-		return new_intrusive1<ScriptCollectionIterator<Collection> >(value);
+		return intrusive(new ScriptCollectionIterator<Collection>(value));
 	}
 	virtual int itemCount() const { return (int)value->size(); }
 	/// Collections can be compared by comparing pointers
@@ -401,13 +401,13 @@ inline ScriptValueP to_script(long          v) { return to_script((int) v); }
        ScriptValueP to_script(wxDateTime    v);
 inline ScriptValueP to_script(bool          v) { return v ? script_true : script_false; }
 template <typename T>
-inline ScriptValueP to_script(const vector<T>*     v) { return new_intrusive1<ScriptCollection<vector<T> > >(v); }
+inline ScriptValueP to_script(const vector<T>*     v) { return intrusive(new ScriptCollection<vector<T> >(v)); }
 template <typename K, typename V>
-inline ScriptValueP to_script(const map<K,V>*      v) { return new_intrusive1<ScriptMap<map<K,V> > >(v); }
+inline ScriptValueP to_script(const map<K,V>*      v) { return intrusive(new ScriptMap<map<K,V> >(v)); }
 template <typename K, typename V>
-inline ScriptValueP to_script(const IndexMap<K,V>* v) { return new_intrusive1<ScriptMap<IndexMap<K,V> > >(v); }
+inline ScriptValueP to_script(const IndexMap<K,V>* v) { return intrusive(new ScriptMap<IndexMap<K,V> >(v)); }
 template <typename T>
-inline ScriptValueP to_script(const intrusive_ptr<T>& v) { return new_intrusive1<ScriptObject<intrusive_ptr<T> > >(v); }
+inline ScriptValueP to_script(const intrusive_ptr<T>& v) { return intrusive(new ScriptObject<intrusive_ptr<T> >(v)); }
 template <typename T>
 inline ScriptValueP to_script(const Defaultable<T>& v) { return to_script(v()); }
 

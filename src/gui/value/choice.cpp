@@ -203,9 +203,9 @@ void DropDownChoiceListBase::generateThumbnailImages() {
 				status = THUMB_OK; // no need to rebuild
 			} else if (img.isReady()) {
 				// request this thumbnail
-				thumbnail_thread.request( new_intrusive4<ChoiceThumbnailRequest>(
+				thumbnail_thread.request( intrusive(new ChoiceThumbnailRequest(
 						&cve, i, status == THUMB_NOT_MADE && !img.local(), img.threadSafe()
-					));
+					)));
 			}
 		}
 	}

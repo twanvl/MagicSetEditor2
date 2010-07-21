@@ -78,7 +78,7 @@ void TextBufferDC::DoDrawText(const String& str, int x, int y) {
 	if (buffer_text) {
 		double usx,usy;
 		GetUserScale(&usx, &usy);
-		text.push_back( new_intrusive7<TextDraw>(GetFont(), GetTextForeground(), usx, usy, x, y, str) );
+		text.push_back( intrusive(new TextDraw(GetFont(), GetTextForeground(), usx, usy, x, y, str)) );
 	} else {
 		wxMemoryDC::DoDrawText(str,x,y);
 	}
@@ -87,7 +87,7 @@ void TextBufferDC::DoDrawRotatedText(const String& str, int x, int y, double ang
 	if (buffer_text) {
 		double usx,usy;
 		GetUserScale(&usx, &usy);
-		text.push_back( new_intrusive8<TextDraw>(GetFont(), GetTextForeground(), usx, usy, x, y, str, angle) );
+		text.push_back( intrusive(new TextDraw(GetFont(), GetTextForeground(), usx, usy, x, y, str, angle)) );
 	} else {
 		wxMemoryDC::DoDrawRotatedText(str,x,y,angle);
 	}
@@ -183,7 +183,7 @@ void CardsPrintout::OnPreparePrinting() {
 	int pw_mm, ph_mm;
 	GetPageSizeMM(&pw_mm, &ph_mm);
 	if (!layout) {
-		layout = new_intrusive2<PageLayout>(*set->stylesheet, RealSize(pw_mm, ph_mm));
+		layout = intrusive(new PageLayout(*set->stylesheet, RealSize(pw_mm, ph_mm)));
 	}
 }
 

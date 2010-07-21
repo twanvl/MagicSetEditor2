@@ -48,5 +48,5 @@ void ImageValue::reflect(Writer& tag) {
 void ImageValue::reflect(GetMember& tag) {}
 void ImageValue::reflect(GetDefaultMember& tag) {
 	// convert to ScriptImageP for scripting
-	tag.handle( (ScriptValueP)new_intrusive2<ImageValueToImage>(filename, last_update) );
+	tag.handle( (ScriptValueP)intrusive(new ImageValueToImage(filename, last_update)) );
 }

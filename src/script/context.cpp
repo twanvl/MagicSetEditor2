@@ -449,9 +449,9 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 			} else if (bt == SCRIPT_NIL) {
 				// a = a;
 			} else if (at == SCRIPT_FUNCTION && bt == SCRIPT_FUNCTION) {
-				a = new_intrusive2<ScriptCompose>(a, b);
+				a = intrusive(new ScriptCompose(a, b));
 			} else if (at == SCRIPT_COLLECTION && bt == SCRIPT_COLLECTION) {
-				a = new_intrusive2<ScriptConcatCollection>(a, b);
+				a = intrusive(new ScriptConcatCollection(a, b));
 			} else if (at == SCRIPT_INT    && bt == SCRIPT_INT) {
 				a = to_script((int)*a        +  (int)*b);
 			} else if ((at == SCRIPT_INT || at == SCRIPT_DOUBLE) &&

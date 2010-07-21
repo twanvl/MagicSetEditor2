@@ -198,7 +198,7 @@ struct TextElementsFromString {
 		assert(content.size() == end-start);
 		// use symbol font?
 		if (symbol > 0 && style.symbol_font.valid()) {
-			te.elements.push_back(new_intrusive5<SymbolTextElement>(content, start, end, style.symbol_font, &ctx));
+			te.elements.push_back(intrusive(new SymbolTextElement(content, start, end, style.symbol_font, &ctx)));
 		} else {
 			// text, possibly mixed with symbols
 			DrawWhat what = soft > 0 ? DRAW_ACTIVE : DRAW_NORMAL;
@@ -221,9 +221,9 @@ struct TextElementsFromString {
 						if (text_pos < pos) {
 							// text before it?
 							if (!font) font = makeFont(style);
-							te.elements.push_back(new_intrusive6<FontTextElement>(content.substr(text_pos, pos-text_pos), start+text_pos, start+pos, font, what, line_break));
+							te.elements.push_back(intrusive(new FontTextElement(content.substr(text_pos, pos-text_pos), start+text_pos, start+pos, font, what, line_break)));
 						}
-						te.elements.push_back(new_intrusive5<SymbolTextElement>(content.substr(pos,n), start+pos, start+pos+n, style.symbol_font, &ctx));
+						te.elements.push_back(intrusive(new SymbolTextElement(content.substr(pos,n), start+pos, start+pos+n, style.symbol_font, &ctx)));
 						text_pos = pos += n;
 					} else {
 						++pos;
@@ -231,10 +231,10 @@ struct TextElementsFromString {
 				}
 				if (text_pos < pos) {
 					if (!font) font = makeFont(style);
-					te.elements.push_back(new_intrusive6<FontTextElement>(content.substr(text_pos), start+text_pos, end, font, what, line_break));
+					te.elements.push_back(intrusive(new FontTextElement(content.substr(text_pos), start+text_pos, end, font, what, line_break)));
 				}
 			} else {
-				te.elements.push_back(new_intrusive6<FontTextElement>(content, start, end, makeFont(style), what, line_break));
+				te.elements.push_back(intrusive(new FontTextElement(content, start, end, makeFont(style), what, line_break)));
 			}
 		}
 	}

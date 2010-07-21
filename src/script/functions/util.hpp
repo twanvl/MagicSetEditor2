@@ -167,7 +167,7 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
 	};																		\
 	SCRIPT_FUNCTION(funname##_rule) {										\
 		SCRIPT_PARAM_N(type1, str1, name1);									\
-		return new_intrusive1<ScriptRule_##funname>(name1);					\
+		return intrusive(new ScriptRule_##funname(name1));					\
 	}																		\
 	SCRIPT_FUNCTION(funname) {												\
 		SCRIPT_PARAM_N(type1, str1, name1);									\
@@ -210,7 +210,7 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
 	SCRIPT_FUNCTION(funname##_rule) {										\
 		SCRIPT_PARAM_N(type1, str1, name1);									\
 		SCRIPT_PARAM_N(type2, str2, name2);									\
-		return new_intrusive2<ScriptRule_##funname>(name1, name2);			\
+		return intrusive(new ScriptRule_##funname(name1, name2));			\
 	}																		\
 	SCRIPT_FUNCTION_AUX(funname, dep) {										\
 		SCRIPT_PARAM_N(type1, str1, name1);									\

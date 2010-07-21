@@ -17,8 +17,8 @@ VCSP read_new<VCS>(Reader& reader) {
 	// there must be a type specified
 	String type;
 	reader.handle(_("type"), type);
-	if      (type == _("none"))				return new_intrusive<VCS>();
-	else if (type == _("subversion"))		return new_intrusive<SubversionVCS>();
+	if      (type == _("none"))				return intrusive(new VCS);
+	else if (type == _("subversion"))		return intrusive(new SubversionVCS);
 	else if (type.empty()) {
 		reader.warning(_ERROR_1_("expected key", _("version control system")));
 		throw ParseError(_ERROR_("aborting parsing"));

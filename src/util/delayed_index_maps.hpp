@@ -21,11 +21,11 @@ template <typename Key, typename Value>
 IndexMap<Key,Value>& DelayedIndexMaps<Key,Value>::get(const String& name, const vector<Key>& init_with) {
 	intrusive_ptr<DelayedIndexMapsData<Key,Value> >& item = data[name];
 	if (!item) { // no item, make a new one
-		item = new_intrusive<DelayedIndexMapsData<Key,Value> >();
+		item = intrusive(new DelayedIndexMapsData<Key,Value>);
 		item->read_data.init(init_with);
 	} else if (!item->unread_data.empty()) { // not read, read now
 		item->read_data.init(init_with);
-		Reader reader(new_shared1<wxStringInputStream>(item->unread_data), nullptr, _("delayed data for ") + name);
+		Reader reader(shared(new wxStringInputStream(item->unread_data)), nullptr, _("delayed data for ") + name);
 		reader.handle_greedy(item->read_data);
 		item->unread_data.clear();
 	}

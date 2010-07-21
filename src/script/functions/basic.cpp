@@ -91,7 +91,7 @@ SCRIPT_FUNCTION(to_string) {
 			SCRIPT_RETURN(input->toString());
 		}
 	} catch (const ScriptError& e) {
-		return new_intrusive1<ScriptDelayedError>(e);
+		return intrusive(new ScriptDelayedError(e));
 	}
 }
 
@@ -649,7 +649,7 @@ SCRIPT_FUNCTION(keyword_usage) {
 /// Turn a script function into a rule, a.k.a. a delayed closure
 SCRIPT_FUNCTION(rule) {
 	SCRIPT_PARAM(ScriptValueP, input);
-	return new_intrusive1<ScriptRule>(input);
+	return intrusive(new ScriptRule(input));
 }
 
 // ----------------------------------------------------------------------------- : Init
@@ -680,17 +680,17 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("substring"),            script_substring);
 	ctx.setVariable(_("contains"),             script_contains);
 	ctx.setVariable(_("format"),               script_format);
-	ctx.setVariable(_("format rule"),          new_intrusive1<ScriptRule>(script_format));
+	ctx.setVariable(_("format rule"),          intrusive(new ScriptRule(script_format)));
 	ctx.setVariable(_("curly quotes"),         script_curly_quotes);
 	ctx.setVariable(_("regex escape"),         script_regex_escape);
 	ctx.setVariable(_("sort text"),            script_sort_text);
-	ctx.setVariable(_("sort rule"),            new_intrusive1<ScriptRule>(script_sort_text));
+	ctx.setVariable(_("sort rule"),            intrusive(new ScriptRule(script_sort_text)));
 	// tagged string
 	ctx.setVariable(_("tag contents"),         script_tag_contents);
 	ctx.setVariable(_("remove tag"),           script_remove_tag);
 	ctx.setVariable(_("remove tags"),          script_remove_tags);
-	ctx.setVariable(_("tag contents rule"),    new_intrusive1<ScriptRule>(script_tag_contents));
-	ctx.setVariable(_("tag remove rule"),      new_intrusive1<ScriptRule>(script_remove_tag));
+	ctx.setVariable(_("tag contents rule"),    intrusive(new ScriptRule(script_tag_contents)));
+	ctx.setVariable(_("tag remove rule"),      intrusive(new ScriptRule(script_remove_tag)));
 	// collection
 	ctx.setVariable(_("position"),             script_position_of);
 	ctx.setVariable(_("length"),               script_length);
@@ -702,6 +702,6 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("random select many"),   script_random_select_many);
 	// keyword
 	ctx.setVariable(_("expand keywords"),      script_expand_keywords);
-	ctx.setVariable(_("expand keywords rule"), new_intrusive1<ScriptRule>(script_expand_keywords));
+	ctx.setVariable(_("expand keywords rule"), intrusive(new ScriptRule(script_expand_keywords)));
 	ctx.setVariable(_("keyword usage"),        script_keyword_usage);
 }
