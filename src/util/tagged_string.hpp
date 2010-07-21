@@ -73,8 +73,13 @@ size_t last_start_tag_before(const String& str, const String& tag, size_t start)
 /// Is the given range entirely contained in a given tagged block?
 /** If so: return the start position of that tag, otherwise returns String::npos
  *  A tagged block is everything between <tag>...</tag>
+ *  Note: this function looks for a positive number of tags, so in for example
+ *          <tag><tag></tag>x</tag>
+ *        the x is in_tag
  */
 size_t in_tag(const String& str, const String& tag, size_t start, size_t end);
+/// Boolean returning version of the above
+bool is_in_tag(const String& str, const String& tag, size_t start, size_t end);
 
 /// Return the tag at the given position (without the <>)
 String tag_at(const String& str, size_t pos);

@@ -809,7 +809,7 @@ bool TextValueEditor::canFormat(int type) const {
 			return !style().always_symbol && style().allow_formating && style().symbol_font.valid();
 		case ID_FORMAT_REMINDER:
 			return !style().always_symbol && style().allow_formating &&
-			       in_tag(value().value(), _("<kw"), selection_start_i, selection_start_i) != String::npos;
+			       is_in_tag(value().value(), _("<kw"), selection_start_i, selection_start_i);
 		default:
 			return false;
 	}
@@ -818,11 +818,11 @@ bool TextValueEditor::canFormat(int type) const {
 bool TextValueEditor::hasFormat(int type) const {
 	switch (type) {
 		case ID_FORMAT_BOLD:
-			return in_tag(value().value(), _("<b"),   selection_start_i, selection_end_i) != String::npos;
+			return is_in_tag(value().value(), _("<b"),   selection_start_i, selection_end_i);
 		case ID_FORMAT_ITALIC:
-			return in_tag(value().value(), _("<i"),   selection_start_i, selection_end_i) != String::npos;
+			return is_in_tag(value().value(), _("<i"),   selection_start_i, selection_end_i);
 		case ID_FORMAT_SYMBOL:
-			return in_tag(value().value(), _("<sym"), selection_start_i, selection_end_i) != String::npos;
+			return is_in_tag(value().value(), _("<sym"), selection_start_i, selection_end_i);
 		case ID_FORMAT_REMINDER: {
 			const String& v = value().value();
 			size_t tag = in_tag(v, _("<kw"),  selection_start_i, selection_start_i);

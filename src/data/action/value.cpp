@@ -140,8 +140,7 @@ TextValueAction* toggle_format_action(const TextValueP& value, const String& tag
 	String new_value;
 	const String& str = value->value();
 	// Are we inside the tag we are toggling?
-	size_t tagpos = in_tag(str, _("<") + tag, start_i, end_i);
-	if (tagpos == String::npos) {
+	if (!is_in_tag(str, _("<") + tag, start_i, end_i)) {
 		// we are not inside this tag, add it
 		new_value =  str.substr(0, start_i);
 		new_value += _("<") + tag + _(">");

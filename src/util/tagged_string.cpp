@@ -148,12 +148,32 @@ size_t last_start_tag_before(const String& str, const String& tag, size_t start)
 }
 
 size_t in_tag(const String& str, const String& tag, size_t start, size_t end) {
-	if (start > end) swap(start, end);
-	size_t pos  = last_start_tag_before(str, tag, start);
-	if (pos == String::npos) return String::npos; // no tag found before start
-	size_t posE = match_close_tag(str, pos);
-	if (posE < end) return String::npos; // the tag ends before end
-	return pos;
+	size_t last_start = String::npos;
+	size_t size = str.size();
+	int taglevel = 0;
+	end = min(end,size);
+	for (size_t pos = 0 ; pos < end ; ) {
+		Char c = str.GetChar(pos);
+		if (c == _('<')) {
+			if (is_substr(str, pos + 1, tag.c_str()+1)) {
+				if (pos < start) last_start = pos;
+				++taglevel;
+			} else if (pos + 2 < size && str.GetChar(pos+1) == _('/') && is_substr(str, pos + 2, tag.c_str()+1)) {
+				--taglevel; // close tag
+			}
+			pos = skip_tag(str,pos);
+		} else {
+			pos++;
+		}
+		if (pos >= start && taglevel < 1) {
+			// not inside tag anymore
+			return String::npos;
+		}
+	}
+	return taglevel < 1 ? String::npos : last_start;
+}
+bool is_in_tag(const String& str, const String& tag, size_t start, size_t end) {
+	return in_tag(str,tag,start,end) != String::npos;
 }
 
 
