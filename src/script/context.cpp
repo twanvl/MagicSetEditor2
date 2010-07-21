@@ -144,7 +144,8 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 							                  : (Variable)-1;
 							Profiler prof(timer, function);
 						#endif
-						// get function and call
+						// get function and call.
+						// there is no need to open a new scope for this function, since we already did so for the arguments
 						stack.back() = stack.back()->eval(*this, false);
 						// finish profiling
 						#if USE_SCRIPT_PROFILING
@@ -387,7 +388,7 @@ class ScriptCompose : public ScriptValue {
 				// execute b
 				Variable fun = ctx.lookupVariableValue(b);
 				Profiler prof(timer,fun);
-				return b->eval(ctx);
+				return b->eval(ctx, openScope);
 			}
 		#else
 			// Always open a scope for a; variables it makes need to be

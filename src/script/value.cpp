@@ -527,7 +527,8 @@ ScriptValueP ScriptClosure::dependencies(Context& ctx, const Dependency& dep) co
 }
 void ScriptClosure::applyBindings(Context& ctx) const {
 	FOR_EACH_CONST(b, bindings) {
-		if (ctx.getVariableScope(b.first) != 1) {
+		if (ctx.getVariableScope(b.first) != 0) {
+			// variables passed as arguments (i.e. in scope 0) override these default bindings
 			ctx.setVariable(b.first, b.second);
 		}
 	}
