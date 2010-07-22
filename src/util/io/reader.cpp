@@ -356,24 +356,39 @@ template <> void Reader::handle(String& s) {
 }
 template <> void Reader::handle(int& i) {
 	long l = 0;
-	getValue().ToLong(&l);
+	if (!getValue().ToLong(&l)) {
+		warning(_("Expected integer instead of '") + previous_value + _("'"));
+	}
 	i = l;
 }
 template <> void Reader::handle(unsigned int& i) {
 	long l = 0;
-	getValue().ToLong(&l);
+	if (!getValue().ToLong(&l)) {
+		warning(_("Expected non-negative integer instead of '") + previous_value + _("'"));
+	} else if (l < 0) {
+		warning(wxString::Format(_("Expected non-negative integer instead of %d"),(int)l));
+	}
 	i = abs(l); // abs, because it will seem strange if -1 comes out as MAX_INT
 }
 template <> void Reader::handle(double& d) {
-	getValue().ToDouble(&d);
+	if (!getValue().ToDouble(&d)) {
+		warning(_("Expected floating point number instead of '") + previous_value + _("'"));
+	}
 }
 template <> void Reader::handle(bool& b) {
 	const String& v = getValue();
-	b = (v==_("true") || v==_("1") || v==_("yes"));
+	if (v==_("true") || v==_("1") || v==_("yes")) {
+		b = true;
+	} else if (v==_("false") || v==_("0") || v==_("no")) {
+		b = false;
+	} else {
+		warning(_("Expected boolean ('true' or 'false') instead of '") + v + _("'"));
+	}
 }
-template <> void Reader::handle(tribool& b) {
-	const String& v = getValue();
-	b = (v==_("true") || v==_("1") || v==_("yes"));
+template <> void Reader::handle(tribool& tb) {
+	bool b;
+	handle(b);
+	tb = b;
 }
 
 // ----------------------------------------------------------------------------- : Handling less basic util types
