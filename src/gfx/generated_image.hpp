@@ -199,41 +199,34 @@ class SaturateImage : public SimpleFilterImage {
 	virtual Image generate(const Options& opt) const;
 	virtual bool operator == (const GeneratedImage& that) const;
   private:
-	GeneratedImageP image;
 	double amount;
 };
 
 // ----------------------------------------------------------------------------- : EnlargeImage
 
 /// Enlarge an image by adding a border around it
-class EnlargeImage : public GeneratedImage {
+class EnlargeImage : public SimpleFilterImage {
   public:
 	inline EnlargeImage(const GeneratedImageP& image, double border_size)
-		: image(image), border_size(fabs(border_size))
+		: SimpleFilterImage(image), border_size(fabs(border_size))
 	{}
 	virtual Image generate(const Options& opt) const;
-	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-	virtual bool local() const { return image->local(); }
   private:
-	GeneratedImageP image;
 	double border_size;
 };
 
 // ----------------------------------------------------------------------------- : CropImage
 
 /// Crop an image at a certain point, to a certain size
-class CropImage : public GeneratedImage {
+class CropImage : public SimpleFilterImage {
   public:
 	inline CropImage(const GeneratedImageP& image, double width, double height, double offset_x, double offset_y)
-		: image(image), width(width), height(height), offset_x(offset_x), offset_y(offset_y)
+		: SimpleFilterImage(image), width(width), height(height), offset_x(offset_x), offset_y(offset_y)
 	{}
 	virtual Image generate(const Options& opt) const;
-	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-	virtual bool local() const { return image->local(); }
   private:
-	GeneratedImageP image;
 	double width, height;
 	double offset_x, offset_y;
 };
@@ -241,18 +234,15 @@ class CropImage : public GeneratedImage {
 // ----------------------------------------------------------------------------- : DropShadowImage
 
 /// Add a drop shadow to an image
-class DropShadowImage : public GeneratedImage {
+class DropShadowImage : public SimpleFilterImage {
   public:
 	inline DropShadowImage(const GeneratedImageP& image, double offset_x, double offset_y, double shadow_alpha, double shadow_blur_radius, Color shadow_color)
-		: image(image), offset_x(offset_x), offset_y(offset_y)
+		: SimpleFilterImage(image), offset_x(offset_x), offset_y(offset_y)
 		, shadow_alpha(shadow_alpha), shadow_blur_radius(shadow_blur_radius), shadow_color(shadow_color)
 	{}
 	virtual Image generate(const Options& opt) const;
-	virtual ImageCombine combine() const;
 	virtual bool operator == (const GeneratedImage& that) const;
-	virtual bool local() const { return image->local(); }
   private:
-	GeneratedImageP image;
 	double offset_x, offset_y;
 	double shadow_alpha;
 	double shadow_blur_radius;

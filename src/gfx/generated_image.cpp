@@ -228,9 +228,6 @@ Image EnlargeImage::generate(const Options& opt) const {
 	// done
 	return larger;
 }
-ImageCombine EnlargeImage::combine() const {
-	return image->combine();
-}
 bool EnlargeImage::operator == (const GeneratedImage& that) const {
 	const EnlargeImage* that2 = dynamic_cast<const EnlargeImage*>(&that);
 	return that2 && *image      == *that2->image
@@ -241,9 +238,6 @@ bool EnlargeImage::operator == (const GeneratedImage& that) const {
 
 Image CropImage::generate(const Options& opt) const {
 	return image->generate(opt).Size(wxSize((int)width, (int)height), wxPoint(-(int)offset_x, -(int)offset_y));
-}
-ImageCombine CropImage::combine() const {
-	return image->combine();
 }
 bool CropImage::operator == (const GeneratedImage& that) const {
 	const CropImage* that2 = dynamic_cast<const CropImage*>(&that);
@@ -339,9 +333,6 @@ Image DropShadowImage::generate(const Options& opt) const {
 	// cleanup
 	delete[] shadow;
 	return img;
-}
-ImageCombine DropShadowImage::combine() const {
-	return image->combine();
 }
 bool DropShadowImage::operator == (const GeneratedImage& that) const {
 	const DropShadowImage* that2 = dynamic_cast<const DropShadowImage*>(&that);

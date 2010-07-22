@@ -13,13 +13,32 @@
 // ----------------------------------------------------------------------------- : Saturation
 
 void saturate(Image& image, double amount) {
-	if (amount == 0) return; // nothing to do
 	Byte* pix = image.GetData();
 	Byte* end = pix + image.GetWidth() * image.GetHeight() * 3;
-	if (amount > 0) {
-		amount = min(amount,0.99);
-		int factor = int(256 * amount);
-		int div    = 768 - 3 * factor;
+	// the formula for saturation is
+	//   rgb' = (rgb - amount * avg) / (1 - amount)
+	// if amount >= 1 then this is some kind of inversion
+	// if amount >  0 then use formula directly
+	// if amount <  0 then de-saturate instead:
+	//   rgb = rgb' + -amount*avg - -amount*rgb'
+	//       = rgb' * (1 - -amount) + -amount*avg
+	// if amount < -1 then we are left with just the average
+	int factor = int(256 * amount);
+	if (factor == 0) {
+		return; // nothing to do
+	} else if (factor == 256) {
+		// super crazy saturation: division by zero
+		// if we take infty to be 255, then it is a >avg test
+		while (pix != end) {
+			int r = pix[0], g = pix[1], b = pix[2];
+			pix[0] = r+r > g+b ? 255 : 0;
+			pix[1] = g+g > b+r ? 255 : 0;
+			pix[2] = b+b > r+g ? 255 : 0;
+			pix += 3;
+		}
+	} else if (factor > 0) {
+		int div = 768 - 3 * factor;
+		assert(div > 0);
 		while (pix != end) {
 			int r = pix[0], g = pix[1], b = pix[2];
 			int avg = factor*(r+g+b);
@@ -28,14 +47,8 @@ void saturate(Image& image, double amount) {
 			pix[2] = col((768*b - avg) / div);
 			pix += 3;
 		}
-	} else if (amount < -0.99) {
-		while (pix != end) {
-			int r = pix[0], g = pix[1], b = pix[2];
-			pix[0] = pix[1] = pix[2] = (r+g+b)/3;
-			pix += 3;
-		}
 	} else {
-		int factor1 = int(256 * -amount);
+		int factor1 = -factor;
 		int factor2 = 768 - 3*factor1;
 		while (pix != end) {
 			int r = pix[0], g = pix[1], b = pix[2];
