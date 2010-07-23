@@ -101,6 +101,8 @@ static const unsigned int INVALID_ADDRESS = 0x03FFFFFF;
 unsigned int Script::addInstruction(InstructionType t) {
 	assert( t == I_JUMP
 	     || t == I_JUMP_IF_NOT
+	     || t == I_JUMP_SC_AND
+	     || t == I_JUMP_SC_OR
 	     || t == I_LOOP
 	     || t == I_LOOP_WITH_KEY
 	     || t == I_POP);
@@ -134,6 +136,8 @@ void Script::addInstruction(InstructionType t, const String& s) {
 void Script::comeFrom(unsigned int pos) {
 	assert( instructions.at(pos).instr == I_JUMP
 	     || instructions.at(pos).instr == I_JUMP_IF_NOT
+	     || instructions.at(pos).instr == I_JUMP_SC_AND
+	     || instructions.at(pos).instr == I_JUMP_SC_OR
 	     || instructions.at(pos).instr == I_LOOP
 	     || instructions.at(pos).instr == I_LOOP_WITH_KEY);
 	assert( instructions.at(pos).data == INVALID_ADDRESS );
@@ -166,6 +170,8 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 		case I_PUSH_CONST:	ret += _("push");		break;
 		case I_JUMP:		ret += _("jump");		break;
 		case I_JUMP_IF_NOT:	ret += _("jnz");		break;
+		case I_JUMP_SC_AND:	ret += _("jump sc and");break;
+		case I_JUMP_SC_OR:	ret += _("jump sc or");	break;
 		case I_GET_VAR:		ret += _("get");		break;
 		case I_SET_VAR:		ret += _("set");		break;
 		case I_MEMBER_C:	ret += _("member_c");	break;
@@ -221,7 +227,10 @@ String Script::dumpInstr(unsigned int pos, Instruction i) const {
 		case I_PUSH_CONST: case I_MEMBER_C:							// const
 			ret += _("\t") + constants[i.data]->typeName();
 			break;
-		case I_JUMP: case I_JUMP_IF_NOT: case I_LOOP: case I_LOOP_WITH_KEY: case I_MAKE_OBJECT: case I_CALL: case I_CLOSURE: case I_DUP:	// int
+		case I_JUMP: case I_JUMP_IF_NOT: case I_JUMP_SC_AND: case I_JUMP_SC_OR:
+		case I_LOOP: case I_LOOP_WITH_KEY:
+		case I_MAKE_OBJECT:
+		case I_CALL: case I_CLOSURE: case I_DUP:	// int
 			ret += String::Format(_("\t%d"), i.data);
 			break;
 		case I_GET_VAR: case I_SET_VAR: case I_NOP:					// variable
@@ -310,6 +319,9 @@ const Instruction* Script::backtraceSkip(const Instruction* instr, int to_skip) 
 			}
 			case I_JUMP_IF_NOT: case I_LOOP: case I_LOOP_WITH_KEY:
 				return nullptr; // give up
+			case I_JUMP_SC_AND: case I_JUMP_SC_OR:
+				// assume the fallthrough case, in which case we compared and poped the top of the stack
+				to_skip += 1; break;
 			default:
 				break; // nett stack effect 0
 		}

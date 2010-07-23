@@ -74,6 +74,25 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
 					}
 					break;
 				}
+				// Short-circuiting and/or = conditional jump without pop
+				case I_JUMP_SC_AND: {
+					bool condition = *stack.back();
+					if (!condition) {
+						instr = &script.instructions[0] + i.data;
+					} else {
+						stack.pop_back();
+					}
+					break;
+				}
+				case I_JUMP_SC_OR: {
+					bool condition = *stack.back();
+					if (condition) {
+						instr = &script.instructions[0] + i.data;
+					} else {
+						stack.pop_back();
+					}
+					break;
+				}
 				
 				// Get a variable
 				case I_GET_VAR: {

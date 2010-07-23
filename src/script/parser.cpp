@@ -663,15 +663,29 @@ void parseOper(TokenIterator& input, Script& script, Precedence minPrec, Instruc
 			parseOper(input, script, PREC_SET,  I_SET_VAR, instr.data);
 		}
 		else if (minPrec <= PREC_AND    && token==_("orelse"))parseOper(input, script, PREC_ADD,   I_BINARY, I_OR_ELSE);
-		else if (minPrec <= PREC_AND    && token==_("and"))   parseOper(input, script, PREC_CMP,   I_BINARY, I_AND);
+		else if (minPrec <= PREC_AND    && token==_("and")) {
+			// short-circuiting and:
+			//   "XXX and YYY"
+			// becomes
+			//   XXX
+			//   I_JUMP_SC_AND after     # if top==false then goto after else pop
+			//   YYY
+			//   after:
+			unsigned jmpSC = script.addInstruction(I_JUMP_SC_AND);
+			parseOper(input, script, PREC_CMP);
+			script.comeFrom(jmpSC);
+		}
 		else if (minPrec <= PREC_AND    && token==_("or" )) {
 			Token t = input.peek();
 			if (t == _("else")) {// or else
 				input.read(); // skip else
 				// TODO: deprecate "or else" in favor of "orelse"
-				parseOper(input, script, PREC_ADD,   I_BINARY, I_OR_ELSE);
+				parseOper(input, script, PREC_ADD, I_BINARY, I_OR_ELSE);
 			} else {
-				parseOper(input, script, PREC_CMP,   I_BINARY, I_OR);
+				// short-circuiting or
+				unsigned jmpSC = script.addInstruction(I_JUMP_SC_OR);
+				parseOper(input, script, PREC_CMP);
+				script.comeFrom(jmpSC);
 			}
 		}
 		else if (minPrec <= PREC_AND    && token==_("xor"))   parseOper(input, script, PREC_CMP,   I_BINARY, I_XOR);

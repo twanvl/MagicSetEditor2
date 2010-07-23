@@ -207,8 +207,10 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					break;
 				}
 				// Conditional jump
-				case I_JUMP_IF_NOT: {
-					stack.pop_back(); // condition
+				case I_JUMP_IF_NOT: case I_JUMP_SC_AND: case I_JUMP_SC_OR: {
+					if (i.instr == I_JUMP_IF_NOT) {
+						stack.pop_back(); // pop condition
+					}
 					// create jump record
 					Jump* jump = new Jump;
 					jump->target = &script.instructions[i.data];
@@ -217,6 +219,9 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					getBindings(scope, jump->bindings);
 					jumps.push(jump);
 					// just fall through for the case that the condition holds
+					if (i.instr != I_JUMP_IF_NOT) {
+						stack.pop_back(); // pop condition afterwards, so it is not poped when jump is taken
+					}
 					break;
 				}
 				
@@ -231,9 +236,11 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					ScriptValueP& it = stack[stack.size() - 2]; // second element of stack
 					ScriptValueP val = it->next();
 					if (val) {
+						// we have not been through the body
 						it = dependency_dummy; // invalidate iterator, so we loop only once
 						stack.push_back(val);
 					} else {
+						// we have been through the body once already
 						stack.erase(stack.end() - 2); // remove iterator
 						instr = &script.instructions[i.data];
 					}

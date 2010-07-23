@@ -26,6 +26,8 @@ enum InstructionType
 ,	I_PUSH_CONST	= 1  ///< arg = const val  : push a constant onto the stack
 ,	I_JUMP			= 2  ///< arg = address    : move the instruction pointer to the given position
 ,	I_JUMP_IF_NOT	= 3  ///< arg = address    : move the instruction pointer if the top of the stack is false
+,	I_JUMP_SC_AND	= 19 ///< arg = address    : (short-circuiting and) jump and don't pop if the top of the stack is false
+,	I_JUMP_SC_OR	= 20 ///< arg = address    : (short-circuiting or)  jump and don't pop if the top of the stack is true
 	// Variables
 ,	I_GET_VAR		= 4  ///< arg = var        : find a variable, push its value onto the stack, it is an error if the variable is not found
 ,	I_SET_VAR		= 5  ///< arg = var        : assign the top value from the stack to a variable (doesn't pop)

@@ -56,6 +56,11 @@ In a table:
 | @true@	@false@		@true@		@false@		@true@
 | @true@	@true@		@true@		@true@		@false@
 
+The @and@ and @or@ operators use [[http://en.wikipedia.org/wiki/Short-circuit_evaluation|short-circuit evaluation]], which means that the second argument is only evaluated if the first argument does not suffice to determine the value of the expression.
+For example
+> true or card.field_that_does_not_exist
+evaluates to @true@ instead of giving an error.
+
 --Grouping and order--
 
 Operators are ordered as usual, so
