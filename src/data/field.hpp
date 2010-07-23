@@ -226,7 +226,8 @@ class Value : public IntrusivePtrVirtualBase {
 	virtual void onAction(Action& a, bool undone) {}
 	/// Is this value the same as some other value (for the same field&card)
 	/** Has behaviour other than == for FakeTextValue.
-	 *  In that case, afterwards this becomes equal to that if they use the same underlying object.
+	 *  In that case returns true if this and that editing the same undelying value.
+	 *  If so, this value is updated to reflect the (possibly changed) underlying value.
 	 */
 	virtual bool equals(const Value* that);
 
