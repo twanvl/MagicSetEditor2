@@ -96,8 +96,13 @@ void draw_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, 
 	}
 	if (style.render_style & RENDER_TEXT) {
 		String text = tr(viewer.getStylePackage(), value, capitalize_sentence);
+		Alignment text_align = style.alignment;
+		if (style.render_style & RENDER_IMAGE) {
+			text_align = ALIGN_MIDDLE_LEFT; // can't align both text and image in the same way
+		}
 		dc.SetFont(style.font, 1.0);
-		RealPoint pos = align_in_rect(ALIGN_MIDDLE_LEFT, RealSize(0, dc.GetCharHeight()), dc.getInternalRect()) + RealSize(margin, 0);
+		RealSize size = dc.GetTextExtent(text);
+		RealPoint pos = align_in_rect(text_align, size, dc.getInternalRect()) + RealSize(margin, 0);
 		dc.DrawTextWithShadow(text, style.font, pos);
 	}
 }
