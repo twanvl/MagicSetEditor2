@@ -429,14 +429,20 @@ template <> void Reader::handle(FileName& f) {
 
 // ----------------------------------------------------------------------------- : EnumReader
 
+String EnumReader::notDoneErrorMessage() const {
+	if (!first) throw InternalError(_("No first value in EnumReader"));
+	return _ERROR_2_("unrecognized value", read, first);
+}
+
 void EnumReader::warnIfNotDone(Reader* errors_to) {
 	if (!done) {
 		// warning: unknown value
-		errors_to->warning(_ERROR_1_("unrecognized value", read));
+		errors_to->warning(notDoneErrorMessage());
 	}
 }
+
 void EnumReader::errorIfNotDone() {
 	if (!done) {
-		throw ParseError(_ERROR_1_("unrecognized value", read));
+		throw ParseError(notDoneErrorMessage());
 	}
 }

@@ -268,18 +268,19 @@ void Reader::handle(IndexMap<K,V>& m) {
 class EnumReader {
   public:
 	inline EnumReader(String read)
-		: read(read), first(true), done(false) {}
+		: read(read), first(nullptr), done(false) {}
 	
 	/// Handle a possible value for the enum, if the name matches the name in the input
 	template <typename Enum>
 	inline void handle(const Char* name, Enum value, Enum& enum_) {
-		if (!done && read == name) {
-			done  = true;
-			first = false;
-			enum_ = value;
-		} else if (first) {
-			first = false;
-			enum_ = value;
+		if (!done) {
+			if (read == name) {
+				done  = true;
+				enum_ = value;
+			} else if (!first) {
+				first = name;
+				enum_ = value;
+			}
 		}
 	}
 	
@@ -288,9 +289,11 @@ class EnumReader {
 	void errorIfNotDone();
 	
   private:
-	String read;  ///< The string to match to a value name
-	bool   first; ///< Has the first (default) value been matched?
-	bool   done;  ///< Was anything matched?
+	String      read;  ///< The string to match to a value name
+	Char const* first; ///< Has the first (default) value been handled? If so, what is its name.
+	bool        done;  ///< Was anything matched?
+	
+	String notDoneErrorMessage() const;
 };
 
 // ----------------------------------------------------------------------------- : EOF
