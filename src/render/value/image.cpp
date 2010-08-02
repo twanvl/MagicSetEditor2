@@ -109,10 +109,11 @@ Bitmap ImageValueViewer::imagePlaceholder(const Rotation& rot, UInt w, UInt h, c
 	RealRect rect(0,0,w,h);
 	RotatedDC dc(mdc, 0, rect, 1.0, QUALITY_AA);
 	// Draw (checker) background
+	if (!background.Ok() || background.HasAlpha()) {
+		draw_checker(dc, rect);
+	}
 	if (background.Ok()) {
 		dc.DrawImage(background, RealPoint(0,0));
-	} else {
-		draw_checker(dc, rect);
 	}
 	// Draw text
 	if (editing) {
