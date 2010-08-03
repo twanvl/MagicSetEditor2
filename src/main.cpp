@@ -26,6 +26,7 @@
 #include <wx/fs_inet.h>
 #include <wx/wfstream.h>
 #include <wx/txtstrm.h>
+#include <wx/socket.h>
 
 // ----------------------------------------------------------------------------- : Main function/class
 
@@ -82,6 +83,7 @@ int MSE::OnRun() {
 		#endif
 		wxInitAllImageHandlers();
 		wxFileSystem::AddHandler(new wxInternetFSHandler); // needed for update checker
+		wxSocketBase::Initialize();
 		init_script_variables();
 		init_file_formats();
 		cli.init();

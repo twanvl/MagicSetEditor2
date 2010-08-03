@@ -142,7 +142,6 @@ void check_updates() {
 }
 
 void check_updates_now(bool async) {
-	wxSocketBase::Initialize();
 	if (async) {
 		CheckUpdateThread* thread = new CheckUpdateThread;
 		thread->Create();
