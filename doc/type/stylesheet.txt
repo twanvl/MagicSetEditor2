@@ -32,11 +32,11 @@ such a package contains a data file called <tt>style</tt>.
 | @card dpi@		[[type:double]]				96		Resolution of cards in dots-per-inch
 | @card background@	[[type:color]]				white		Background color of cards
 | @init script@		[[type:script]]				@;@		Script to run when this stylesheet is loaded, after the game's init script.
-| @styling fields@	[[type:list] of [[type:field]]s		 		Fields for styling options, shown on the 'style' panel.
-| @styling style@	[[type:indexmap] of [[type:style]]s	 		Styles for the styling fields.
-| @set info style@	[[type:indexmap] of [[type:style]]s	game.default_set_style	Styling for the 'set info' panel
-| @card style@		[[type:indexmap] of [[type:style]]s	 		Styles for the card fields defined in the game
-| @extra card fields@	[[type:list] of [[type:field]]s		 		Additional fields to add to each card.<br/>
+| @styling fields@	[[type:list]] of [[type:field]]s	 		Fields for styling options, shown on the 'style' panel.
+| @styling style@	[[type:indexmap]] of [[type:style]]s	 		Styles for the styling fields.
+| @set info style@	[[type:indexmap]] of [[type:style]]s	game.default_set_style	Styling for the 'set info' panel
+| @card style@		[[type:indexmap]] of [[type:style]]s	 		Styles for the card fields defined in the game
+| @extra card fields@	[[type:list]] of [[type:field]]s	 		Additional fields to add to each card.<br/>
 			 					 		These fields are intended for things like lines and boxes, whose value is determined automatically.
 | @extra card style@	[[type:indexmap] of [[type:style]]s	 		Styling for the extra card fields
 
