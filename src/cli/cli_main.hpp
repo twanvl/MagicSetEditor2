@@ -44,6 +44,7 @@ class CLISetInterface : public SetView {
 	
 	// export info, so we can write files
 	ExportInfo ei;
+	void setExportInfoCwd();
 };
 
 // ----------------------------------------------------------------------------- : EOF

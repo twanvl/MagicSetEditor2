@@ -418,7 +418,7 @@ SCRIPT_FUNCTION(write_image_file) {
 	SCRIPT_OPTIONAL_PARAM_(int, height);
 	ScriptObject<CardP>* card = dynamic_cast<ScriptObject<CardP>*>(input.get()); // is it a card?
 	Image image;
-	GeneratedImage::Options options(width, height, ei.export_template.get(),ei.set.get());
+	GeneratedImage::Options options(width, height, ei.export_template.get(), ei.set.get());
 	if (card) {
 		image = conform_image(export_bitmap(ei.set, card->getValue()).ConvertToImage(), options);
 	} else {

@@ -18,6 +18,7 @@ DECLARE_POINTER_TYPE(Set);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Style);
 DECLARE_POINTER_TYPE(ExportTemplate);
+DECLARE_POINTER_TYPE(Package);
 
 // ----------------------------------------------------------------------------- : ExportTemplate
 
@@ -48,7 +49,8 @@ struct ExportInfo {
 	ExportInfo();
 	
 	SetP               set;                ///< The set that is being exported
-	ExportTemplateP    export_template;    ///< The export template used
+	PackageP           export_template;    ///< The export template used
+	                                       ///  When using the CLI, this can be a fake package to allow reading from the cwd
 	String             directory_relative; ///< The directory for storing extra files (or "" if !export->create_directory)
 	                                       ///  This is just the directory name
 	String             directory_absolute; ///< The absolute path of the directory

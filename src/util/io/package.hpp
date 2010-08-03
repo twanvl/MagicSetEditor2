@@ -69,15 +69,24 @@ class Package : public IntrusivePtrVirtualBase {
 	/// The time this package was last modified
 	inline wxDateTime lastModified() const { return modified; }
 
-	/// Open a package, should only be called when the package is constructed using the default constructor!
-	/// @pre open not called before [TODO]
-	void open(const String& package);
+	/// Open a package
+	/**
+	 * Should only be called when the package is constructed using the default constructor!
+	 * 
+	 * If 'fast' is set, then for directories a full directory listing is not performed.
+	 * This means that the file_infos will not be fully initialized.
+	 * 
+	 * @pre open not called before [TODO]
+	 */
+	void open(const String& package, bool fast = false);
 
-	/// Saves the package, by default saves as a zip file, unless
-	/// it was already a directory
-	/** If remove_unused=true all files that were in the file and
+	/// Saves the package
+	/** 
+	 * By default saves as a zip file, unless it was already a directory.
+	 * 
+	 * If remove_unused=true all files that were in the file and
 	 *  are not touched with referenceFile will be deleted from the new archive!
-	 *  This is a form of garbage collection, to get rid of old picture files for example.
+	 * This is a form of garbage collection, to get rid of old picture files for example.
 	 */
 	void save(bool remove_unused = true);
 
@@ -140,8 +149,8 @@ class Package : public IntrusivePtrVirtualBase {
 	// TODO: I dislike putting this here very much. There ought to be a better way.
 	virtual VCSP getVCS() { return intrusive(new VCS()); }
 
-	/// true if this is a zip file, false if a directory (updated on open/save)
-	bool isZipfile() { return zipfile; }
+	/// true if this is a zip file, false if a directory
+	bool isZipfile() const { return !wxDirExists(filename); }
 
 	// --------------------------------------------------- : Private stuff
   private:
@@ -163,9 +172,6 @@ class Package : public IntrusivePtrVirtualBase {
 	/// Last modified time
 	DateTime modified;
 
-	/// Zipfile flag
-	bool zipfile;
-	
   public:
 	/// Information on files in the package
 	/** Note: must be public for DECLARE_TYPEOF to work */
@@ -182,7 +188,7 @@ class Package : public IntrusivePtrVirtualBase {
 	wxZipInputStream*  zipStream;
 
 	void loadZipStream();
-	void openDirectory();
+	void openDirectory(bool fast = false);
 	void openSubdir(const String&);
 	void openZipfile();
 	void reopen();

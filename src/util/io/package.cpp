@@ -66,7 +66,7 @@ const String& Package::absoluteFilename() const {
 	return filename;
 }
 
-void Package::open(const String& n) {
+void Package::open(const String& n, bool fast) {
 	assert(!isOpened()); // not already opened
 	// get absolute path
 	wxFileName fn(n);
@@ -78,7 +78,7 @@ void Package::open(const String& n) {
 	}
 	// type of package
 	if (wxDirExists(filename)) {
-		openDirectory();
+		openDirectory(fast);
 	} else if (wxFileExists(filename)) {
 		openZipfile();
 	} else {
@@ -207,16 +207,15 @@ InputStreamP Package::openIn(const String& file) {
 		if (filename.find(_(".mse-")) != String::npos) {
 			throw PackageError(_ERROR_2_("file not found package like", file, filename));
 		}
-		throw FileNotFoundError(file, filename);
 	}
 	InputStreamP stream;
-	if (it->second.wasWritten()) {
+	if (it != files.end() && it->second.wasWritten()) {
 		// written to this file, open the temp file
 		stream = shared(new BufferedFileInputStream(it->second.tempName));
 	} else if (wxFileExists(filename+_("/")+file)) {
 		// a file in directory package
 		stream = shared(new BufferedFileInputStream(filename+_("/")+file));
-	} else if (wxFileExists(filename) && it->second.zipEntry) {
+	} else if (wxFileExists(filename) && it != files.end() && it->second.zipEntry) {
 		// a file in a zip archive
 		// somebody in wx thought seeking was no longer needed, it now only works with the 'compatability constructor'
 		stream = shared(new wxZipInputStream(filename, it->second.zipEntry->GetInternalName()));
@@ -339,9 +338,8 @@ void Package::loadZipStream() {
 	zipStream->CloseEntry();
 }
 
-void Package::openDirectory() {
-	zipfile = false;
-	openSubdir(wxEmptyString);
+void Package::openDirectory(bool fast) {
+	if (!fast) openSubdir(wxEmptyString);
 }
 
 void Package::openSubdir(const String& name) {
@@ -368,7 +366,6 @@ void Package::openSubdir(const String& name) {
 }
 
 void Package::openZipfile() {
-	zipfile = true;
 	// close old streams
 	delete fileStream; fileStream = nullptr;
 	delete zipStream;  zipStream  = nullptr;
@@ -382,7 +379,6 @@ void Package::openZipfile() {
 }
 
 void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_copy) {
-	zipfile = false;
 	// write to a directory
 	VCSP vcs = getVCS();
 	FOR_EACH(f, files) {
@@ -414,7 +410,6 @@ void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_
 }
 
 void Package::saveToZipfile(const String& saveAs, bool remove_unused, bool is_copy) {
-	zipfile = true;
 	// create a temporary zip file name
 	String tempFile = saveAs + _(".tmp");
 	wxRemoveFile(tempFile);

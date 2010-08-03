@@ -26,8 +26,8 @@ CLISetInterface::CLISetInterface(const SetP& set, bool quiet)
 	if (!cli.haveConsole()) {
 		throw Error(_("Can not run command line interface without a console;\nstart MSE with \"mse.com --cli\""));
 	}
-	ei.directory_relative = ei.directory_absolute = wxGetCwd();
 	ei.allow_writes_outside = true;
+	setExportInfoCwd();
 	setSet(set);
 	run();
 }
@@ -59,6 +59,14 @@ void CLISetInterface::onChangeSet() {
 	Context& ctx = getContext();
 	scope = ctx.openScope();
 	ei.set = set;
+}
+
+void CLISetInterface::setExportInfoCwd() {
+	// write to the current directory
+	ei.directory_relative = ei.directory_absolute = wxGetCwd();
+	// read from the current directory
+	ei.export_template = intrusive(new Package());
+	ei.export_template->open(ei.directory_absolute, true);
 }
 
 
@@ -151,7 +159,7 @@ void CLISetInterface::handleCommand(const String& command) {
 					if (!wxSetWorkingDirectory(arg)) {
 						cli.showError(_("Can't change working directory to ")+arg);
 					} else {
-						ei.directory_relative = ei.directory_absolute = wxGetCwd();
+						setExportInfoCwd();
 					}
 				}
 			} else if (before == _(":pwd") || before == _(":p")) {
