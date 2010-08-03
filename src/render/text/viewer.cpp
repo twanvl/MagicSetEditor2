@@ -554,10 +554,13 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 		positions_word.push_back(word_size.width);
 		if (!c.soft) word_end_or_soft = i + 1;
 		// Did the word become too long?
-		if (style.field().multi_line && !break_now) {
+		if (!break_now) {
 			double max_width = lineRight(dc, style, line.top);
 			if (line_size.width + word_size.width > max_width) {
-				if (word_start == line.start) {
+				if (!style.field().multi_line) {
+					// single line word does not fit
+					return false;
+				} else if (word_start == line.start) {
 					// single word on this line; the word is too long
 					if (stop_if_too_long) {
 						return false; // just give up
