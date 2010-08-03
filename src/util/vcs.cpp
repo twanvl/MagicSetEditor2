@@ -23,7 +23,7 @@ VCSP read_new<VCS>(Reader& reader) {
 		reader.warning(_ERROR_1_("expected key", _("version control system")));
 		throw ParseError(_ERROR_("aborting parsing"));
 	} else {
-		reader.warning(_ERROR_1_("unsupported version control type", type));
+		reader.warning(format_string(_("Unsupported version control type: '%s'"), type));
 		throw ParseError(_ERROR_("aborting parsing"));
 	}
 }
