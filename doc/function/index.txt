@@ -9,6 +9,7 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:to_number]]		Convert any value to a number
 | [[fun:to_boolean]]		Convert any value to a [[type:boolean]]
 | [[fun:to_color]]		Convert any value to a [[type:color]]
+| [[fun:to_image]]		Convert any value to an [[type:image]]
 | [[fun:to_date]]		Convert any value to a [[type:date]]
 	
 ! Numbers			<<<

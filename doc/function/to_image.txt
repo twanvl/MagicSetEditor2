@@ -1,0 +1,17 @@
+Function: to_image
+
+DOC_MSE_VERSION: since 0.3.8
+
+--Usage--
+> to_image(any value)
+
+Convert any value to a [[type:image]].
+
+A string is interpreted as a [[type:filename]].
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	''any type''		Value to convert to an image
+
+--Examples--
+>>> to_image("image1.png")  ==  <img src="image1.png" alt='"image1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
