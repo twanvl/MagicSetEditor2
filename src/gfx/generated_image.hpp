@@ -214,6 +214,20 @@ class InvertImage : public SimpleFilterImage {
 	virtual bool operator == (const GeneratedImage& that) const;
 };
 
+// ----------------------------------------------------------------------------- : RecolorImage
+
+/// Recolor an image
+class RecolorImage : public SimpleFilterImage {
+  public:
+	inline RecolorImage(const GeneratedImageP& image, Color color)
+		: SimpleFilterImage(image), color(color)
+	{}
+	virtual Image generate(const Options& opt) const;
+	virtual bool operator == (const GeneratedImage& that) const;
+  private:
+	Color color;
+};
+
 // ----------------------------------------------------------------------------- : FlipImage
 
 /// Flip an image horizontally

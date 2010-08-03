@@ -70,3 +70,43 @@ void invert(Image& img) {
 		data[i] = 255 - data[i];
 	}
 }
+
+// ----------------------------------------------------------------------------- : Coloring symbol images
+
+RGB recolor(RGB x, RGB cr, RGB cg, RGB cb, RGB cw) {
+	int lo = min(x.r,min(x.g,x.b));
+	// amount of each
+	int nr = x.r - lo;
+	int ng = x.g - lo;
+	int nb = x.b - lo;
+	int nw = lo;
+	// We should have that nr+ng+bw+nw < 255,
+	//  otherwise the input is not a mixture of red/green/blue/white.
+	// Just to be sure, divide by the sum instead of 255
+	int total = max(255, nr+ng+nb+nw);
+	
+	return RGB(
+			static_cast<Byte>( (nr * cr.r + ng * cg.r + nb * cb.r + nw * cw.r) / total ),
+			static_cast<Byte>( (nr * cr.g + ng * cg.g + nb * cb.g + nw * cw.g) / total ),
+			static_cast<Byte>( (nr * cr.b + ng * cg.b + nb * cb.b + nw * cw.b) / total )
+		);
+}
+
+void recolor(Image& img, RGB cr, RGB cg, RGB cb, RGB cw) {
+	RGB* data = (RGB*)img.GetData();
+	int n = img.GetWidth() * img.GetHeight();
+	for (int i = 0 ; i < n ; ++i) {
+		data[i] = recolor(data[i], cr, cg, cb, cw);
+	}
+}
+
+Byte to_grayscale(RGB x) {
+	return (Byte)((6969 * x.r + 23434 * x.g + 2365 * x.b) / 32768); // from libpng
+}
+
+void recolor(Image& img, RGB cr) {
+	RGB black(0,0,0), white(255,255,255);
+	bool dark = to_grayscale(cr) < 100;
+	recolor(img, cr, dark ? black : white, dark ? white : black, white);
+}
+

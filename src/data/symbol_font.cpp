@@ -159,7 +159,10 @@ RealSize SymbolInFont::size(Package& pkg, double size) {
 }
 
 void SymbolInFont::update(Context& ctx) {
-	image.update(ctx);
+	if (image.update(ctx)) {
+		// image has changed, cache is no longer valid
+		bitmaps.clear();
+	}
 	enabled.update(ctx);
 	if (text_font)
 		text_font->update(ctx);

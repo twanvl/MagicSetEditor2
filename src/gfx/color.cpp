@@ -107,19 +107,16 @@ Color saturate(const Color& c, double amount) {
 }
 
 
-void fill_image(Image& image, const Color& color) {
-	Byte* pos = image.GetData();
-	Byte* end = pos + image.GetWidth() * image.GetHeight() * 3;
-	Byte r = color.Red(), g = color.Green(), b = color.Blue();
-	if (r == g && r == b) {
+void fill_image(Image& image, RGB x) {
+	RGB* pos = (RGB*)image.GetData();
+	RGB* end = pos + image.GetWidth() * image.GetHeight();
+	if (x.r == x.g && x.r == x.b) {
 		// optimization: use memset
-		memset(pos, r, end-pos);
+		memset(pos, x.r, (end-pos) * sizeof(*pos));
 	} else {
 		// fill the image
 		while (pos != end) {
-			*pos++ = r;
-			*pos++ = g;
-			*pos++ = b;
+			*pos++ = x;
 		}
 	}
 }

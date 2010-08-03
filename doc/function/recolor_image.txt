@@ -1,0 +1,26 @@
+Function: recolor_image
+
+--Usage--
+> recolor_image(input: image, color: color)
+
+Re-color an image:
+ * Red is replaced by the color
+ * Green is replaced by black or white, of the same lightness as the color.
+   So if the color is light, green will be replaced by white.
+ * Blue is replaced by black or white, of the opposite lightness.
+ * White stays white, black stays black
+
+This function is mostly intended to make symbols in a symbol font wich can match the text color.
+
+
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:image]]		Image to recolor.
+| @color@	[[type:color]]		Color by which to replace red.
+
+--Examples--
+> recolor_image("symbol1.png", color: rgb(180,0,0))      ==  [[Image]]
+>>> recolor_image(<img src="symbol1.png" alt='"symbol1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, color: rgb(180,0,0)) == <img src="symbol1_red.png" alt='"symbol1_red.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
+> recolor_image("symbol1.png", color: rgb(100,255,0))  ==  [[Image]]
+>>> recolor_image(<img src="symbol1.png" alt='"symbol1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, color: rgb(100,255,0)) == <img src="symbol1_green.png" alt='"symbol1_green.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />

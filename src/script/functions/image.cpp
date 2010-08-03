@@ -91,6 +91,12 @@ SCRIPT_FUNCTION(invert_image) {
 	return intrusive(new InvertImage(input));
 }
 
+SCRIPT_FUNCTION(recolor_image) {
+	SCRIPT_PARAM_C(GeneratedImageP, input);
+	SCRIPT_PARAM(Color, color);
+	return intrusive(new RecolorImage(input,color));
+}
+
 SCRIPT_FUNCTION(enlarge) {
 	SCRIPT_PARAM_C(GeneratedImageP, input);
 	SCRIPT_PARAM_N(double, _("border size"), border_size);
@@ -212,6 +218,7 @@ void init_script_image_functions(Context& ctx) {
 	ctx.setVariable(_("set combine"),      script_set_combine);
 	ctx.setVariable(_("saturate"),         script_saturate);
 	ctx.setVariable(_("invert image"),     script_invert_image);
+	ctx.setVariable(_("recolor image"),    script_recolor_image);
 	ctx.setVariable(_("enlarge"),          script_enlarge);
 	ctx.setVariable(_("crop"),             script_crop);
 	ctx.setVariable(_("flip horizontal"),  script_flip_horizontal);

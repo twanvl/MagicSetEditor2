@@ -36,6 +36,8 @@
 #include <set>
 using namespace std;
 
+#undef RGB
+
 // ----------------------------------------------------------------------------- : Wx Aliasses
 
 // Remove some of the wxUglyness

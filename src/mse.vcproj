@@ -3632,6 +3632,9 @@
 					RelativePath="..\doc\function\index.txt">
 				</File>
 				<File
+					RelativePath="..\doc\function\invert_image.txt">
+				</File>
+				<File
 					RelativePath="..\doc\function\keyword_usage.txt">
 				</File>
 				<File
@@ -3657,6 +3660,9 @@
 				</File>
 				<File
 					RelativePath="..\doc\function\process_english_hints.txt">
+				</File>
+				<File
+					RelativePath="..\doc\function\recolor_image.txt">
 				</File>
 				<File
 					RelativePath="..\doc\function\regex_escape.txt">

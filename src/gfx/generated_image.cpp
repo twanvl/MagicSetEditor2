@@ -208,6 +208,19 @@ bool InvertImage::operator == (const GeneratedImage& that) const {
 	return that2 && *image == *that2->image;
 }
 
+// ----------------------------------------------------------------------------- : RecolorImage
+
+Image RecolorImage::generate(const Options& opt) const {
+	Image img = image->generate(opt);
+	recolor(img, color);
+	return img;
+}
+bool RecolorImage::operator == (const GeneratedImage& that) const {
+	const RecolorImage* that2 = dynamic_cast<const RecolorImage*>(&that);
+	return that2 && *image == *that2->image
+	             && color == that2->color;
+}
+
 // ----------------------------------------------------------------------------- : FlipImage
 
 Image FlipImageHorizontal::generate(const Options& opt) const {
