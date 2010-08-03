@@ -1,5 +1,7 @@
 Function: invert_image
 
+DOC_MSE_VERSION: since 0.3.9
+
 --Usage--
 > invert_image(input: image)
 

@@ -1,7 +1,10 @@
 Function: recolor_image
 
+DOC_MSE_VERSION: since 0.3.9
+
 --Usage--
 > recolor_image(input: image, color: color)
+> recolor_image(input: image, red: color, green: color, blue: color, white: color)
 
 Re-color an image:
  * Red is replaced by the color
@@ -13,14 +16,26 @@ Re-color an image:
 This function is mostly intended to make symbols in a symbol font wich can match the text color.
 
 
-
 --Parameters--
 ! Parameter	Type			Description
 | @input@	[[type:image]]		Image to recolor.
 | @color@	[[type:color]]		Color by which to replace red.
 
+Or
+! Parameter	Type			Description
+| @input@	[[type:image]]		Image to recolor.
+| @red@		[[type:color]]		Color by which to replace red.
+| @green@	[[type:color]]		Color by which to replace green.
+| @blue@	[[type:color]]		Color by which to replace blue.
+| @white@	[[type:color]]		Color by which to replace white.
+
+
 --Examples--
-> recolor_image("symbol1.png", color: rgb(180,0,0))  ==  [[Image]]
+> recolor_image("symbol1.png", color: rgb(180,0,0)) == [[Image]]
 >>> recolor_image(<img src="symbol1.png" alt='"symbol1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, color: rgb(180,0,0)) == <img src="symbol1_red.png" alt='"symbol1_red.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
-> recolor_image("symbol1.png", color: rgb(100,255,0))  ==  [[Image]]
+> recolor_image("symbol1.png", color: rgb(100,255,0)) == [[Image]]
 >>> recolor_image(<img src="symbol1.png" alt='"symbol1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, color: rgb(100,255,0)) == <img src="symbol1_green.png" alt='"symbol1_green.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
+
+Custom choices for green, blue and white are also possible:
+>>> recolor_image(<img src="symbol1.png" alt='"symbol1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, red:rgb(0,170,0), green:rgb(200,0,255), blue:rgb(128,0,0), white:rgb(220,255,0))
+>>>    ==  <img src="symbol1_recolor_custom.png" alt='"symbol1_recolor_custom.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />

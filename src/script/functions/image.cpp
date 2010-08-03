@@ -93,8 +93,15 @@ SCRIPT_FUNCTION(invert_image) {
 
 SCRIPT_FUNCTION(recolor_image) {
 	SCRIPT_PARAM_C(GeneratedImageP, input);
-	SCRIPT_PARAM(Color, color);
-	return intrusive(new RecolorImage(input,color));
+	SCRIPT_OPTIONAL_PARAM(Color, red) {
+		SCRIPT_PARAM(Color, green);
+		SCRIPT_PARAM(Color, blue);
+		SCRIPT_PARAM_DEFAULT(Color, white, *wxWHITE);
+		return intrusive(new RecolorImage2(input,red,green,blue,white));
+	} else {
+		SCRIPT_PARAM(Color, color);
+		return intrusive(new RecolorImage(input,color));
+	}
 }
 
 SCRIPT_FUNCTION(enlarge) {

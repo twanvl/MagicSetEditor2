@@ -227,6 +227,17 @@ class RecolorImage : public SimpleFilterImage {
   private:
 	Color color;
 };
+/// Recolor an image, with custom colors
+class RecolorImage2 : public SimpleFilterImage {
+  public:
+	inline RecolorImage2(const GeneratedImageP& image, Color red, Color green, Color blue, Color white)
+		: SimpleFilterImage(image), red(red), green(green), blue(blue), white(white)
+	{}
+	virtual Image generate(const Options& opt) const;
+	virtual bool operator == (const GeneratedImage& that) const;
+  private:
+	Color red,green,blue,white;
+};
 
 // ----------------------------------------------------------------------------- : FlipImage
 

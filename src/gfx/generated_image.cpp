@@ -221,6 +221,20 @@ bool RecolorImage::operator == (const GeneratedImage& that) const {
 	             && color == that2->color;
 }
 
+Image RecolorImage2::generate(const Options& opt) const {
+	Image img = image->generate(opt);
+	recolor(img, red,green,blue,white);
+	return img;
+}
+bool RecolorImage2::operator == (const GeneratedImage& that) const {
+	const RecolorImage2* that2 = dynamic_cast<const RecolorImage2*>(&that);
+	return that2 && *image == *that2->image
+	             && red == that2->red
+	             && green == that2->green
+	             && blue == that2->blue
+	             && white == that2->white;
+}
+
 // ----------------------------------------------------------------------------- : FlipImage
 
 Image FlipImageHorizontal::generate(const Options& opt) const {

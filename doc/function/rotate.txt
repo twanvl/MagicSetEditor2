@@ -1,4 +1,6 @@
-Function: flip_vertical
+Function: rotate
+
+DOC_MSE_VERSION: since 0.3.9
 
 --Usage--
 > rotate(input: image, angle: some_number)
