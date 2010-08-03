@@ -83,24 +83,58 @@ struct Rotate270 {
 
 // ----------------------------------------------------------------------------- : Interface
 
-Image rotate_image(const Image& image, int angle) {
-	switch (angle % 360) {
-		case 0:   return image;
-		case 90:  return rotate_image_impl<Rotate90> (image);
-		case 180: return rotate_image_impl<Rotate180>(image);
-		case 270: return rotate_image_impl<Rotate270>(image);
-		default:
-			if (!image.HasAlpha()) const_cast<Image&>(image).InitAlpha();
-			return image.Rotate(angle * M_PI / 180, wxPoint(0,0));
+double almost_equal(double x, double y) {
+	return fabs(x-y) < 1e-6;
+}
+
+Image rotate_image(const Image& image, double angle) {
+	double a = fmod(angle, 360);
+	if (almost_equal(a,  0)) return image;
+	if (almost_equal(a, 90)) return rotate_image_impl<Rotate90> (image);
+	if (almost_equal(a,180)) return rotate_image_impl<Rotate180>(image);
+	if (almost_equal(a,270)) return rotate_image_impl<Rotate270>(image);
+	else {
+		if (!image.HasAlpha()) const_cast<Image&>(image).InitAlpha();
+		return image.Rotate(angle * M_PI / 180, wxPoint(0,0));
 	}
 }
 
-/*Bitmap rotate_bitmap(const Bitmap& bitmap, int angle) {
-	switch (angle % 360) {
-		case 90:  
-		case 180: 
-		case 270: 
-		default:  return bitmap;
+
+// ----------------------------------------------------------------------------- : Flipping images
+
+// reverse a list of n chunks of size 'step'
+void do_flip(Byte const* in, Byte* out, int step, int n) {
+	for (int i = 0, j = n-1 ; i < n ; ++i, --j) {
+		memcpy(&out[i*step], &in[j*step], step);
 	}
 }
-*/
+void do_flip(Byte const* in, Byte* out, int step1, int n1, int n2) {
+	int step2 = step1 * n1;
+	for (int i = 0 ; i < n2 ; ++i) {
+		do_flip(in,out,step1,n1);
+		in  += step2;
+		out += step2;
+	}
+}
+
+Image flip_image_horizontal(Image const& img) {
+	int w = img.GetWidth(), h= img.GetHeight();
+	Image out(w,h,false);
+	do_flip(img.GetData(), out.GetData(), 3, w, h);
+	if (img.HasAlpha()) {
+		out.InitAlpha();
+		do_flip(img.GetAlpha(), out.GetAlpha(), 1, w, h);
+	}
+	return out;
+}
+
+Image flip_image_vertical(Image const& img) {
+	int w = img.GetWidth(), h= img.GetHeight();
+	Image out(w,h,false);
+	do_flip(img.GetData(), out.GetData(), 3 * w, h);
+	if (img.HasAlpha()) {
+		out.InitAlpha();
+		do_flip(img.GetAlpha(), out.GetAlpha(), 1 * w, h);
+	}
+	return out;
+}

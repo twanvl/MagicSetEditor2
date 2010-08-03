@@ -1,0 +1,18 @@
+Function: flip_vertical
+
+--Usage--
+> flip_vertical(input: image)
+
+Flip an image vertically.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:image]]		Image to flip.
+
+--Examples--
+> flip_vertical("image_logo.png")  ==  [[Image]]
+>>> flip_vertical(<img src="image_logo.png" alt='"image_logo.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />) == <img src="image_logo_vflip.png" alt='"image_logo_vflip.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
+
+--See also--
+| [[fun:flip_horizontal]]	Flip an image horizontally
+| [[fun:rotate]]		Rotate an image

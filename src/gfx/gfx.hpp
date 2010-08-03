@@ -74,8 +74,12 @@ inline double rad_to_deg(double rad) { return  rad * (180.0 / M_PI); }
 inline double deg_to_rad(double deg) { return  deg * (M_PI / 180.0); }
 
 /// Rotates an image counter clockwise
-/// angle must be a multiple of 90, i.e. {0,90,180,270}
-Image rotate_image(const Image& image, int angle);
+Image rotate_image(const Image& image, double angle);
+
+/// Flip an image horizontally
+Image flip_image_horizontal(const Image& image);
+/// Flip an image vertically
+Image flip_image_vertical(const Image& image);
 
 // ----------------------------------------------------------------------------- : Blending
 
@@ -97,6 +101,9 @@ void mask_blend(Image& img1, const Image& img2, const Image& mask);
 
 /// Saturate an image
 void saturate(Image& image, double amount);
+
+/// Invert the colors in an image
+void invert(Image& img);
 
 // ----------------------------------------------------------------------------- : Combining
 

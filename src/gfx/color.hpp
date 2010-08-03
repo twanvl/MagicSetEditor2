@@ -60,8 +60,30 @@ Color hsl2rgb(double h, double s, double l);
 /// A darker version of a color
 Color darken(const Color& c);
 
+/// A black or white color, that contrasts with c
+Color contrasting_color(const Color& c);
+
 /// A saturated version of a color
 Color saturate(const Color& c, double amount);
+
+/// Recolor:
+/**
+ * Maps
+ *   black -> black
+ *   red   -> cr
+ *   green -> cg
+ *   blue  -> cb
+ *   white -> cw
+ *
+ * Allows for interpolation between the colors, so for example
+ *   rgb(128,128,128) -> 0.5*cw
+ *   rgb(128,128,0)   -> 0.5*cr + 0.5*cg
+ *   rgb(128,0,0)     -> 0.5*cr
+ */
+Color recolor(Color const& c,  Color const& cr, Color const& cg, Color const& cb, Color const& cw);
+Image recolor(Image const& im, Color const& cr, Color const& cg, Color const& cb, Color const& cw);
+/// Like recolor: map green to similar black/white and blue to complementary white/black
+Image recolor(Image const& im, Color const& cr);
 
 /// Fills an image with the specified color
 void fill_image(Image& image, const Color& color);

@@ -60,3 +60,13 @@ void saturate(Image& image, double amount) {
 		}
 	}
 }
+
+// ----------------------------------------------------------------------------- : Color inversion
+
+void invert(Image& img) {
+	Byte* data = img.GetData();
+	int n = 3 * img.GetWidth() * img.GetHeight();
+	for (int i = 0 ; i < n ; ++i) {
+		data[i] = 255 - data[i];
+	}
+}

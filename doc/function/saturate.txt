@@ -19,3 +19,5 @@ To desaturate use an amount between @0@ (no desaturation) and @-1@ (convert to g
 >>> saturate(<img src="image5.png" alt='"image5.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, amount:  0.5) == <img src="image_saturate1.png" alt='"image_saturate1.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
 > saturate("image5.png", amount: -0.5)  ==  [[Image]]
 >>> saturate(<img src="image5.png" alt='"image5.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, amount: -0.5) == <img src="image_saturate2.png" alt='"image_saturate2.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
+> saturate("image_logo.png", amount: -1)  ==  [[Image]]
+>>> saturate(<img src="image_logo.png" alt='"image_logo.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />, amount: -1) == <img src="image_logo_desaturate.png" alt='"image_logo_desaturate.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />

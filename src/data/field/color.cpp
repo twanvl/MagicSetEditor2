@@ -41,8 +41,13 @@ IMPLEMENT_REFLECTION(ColorField) {
 // ----------------------------------------------------------------------------- : ColorField::Choice
 
 IMPLEMENT_REFLECTION(ColorField::Choice) {
-	REFLECT(name);
-	REFLECT(color);
+	if (tag.reading() && !tag.isComplex()) {
+		REFLECT_NAMELESS(name);
+		color = parse_color(name);
+	} else {
+		REFLECT(name);
+		REFLECT(color);
+	}
 }
 
 // ----------------------------------------------------------------------------- : ColorStyle

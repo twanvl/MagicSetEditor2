@@ -86,6 +86,11 @@ SCRIPT_FUNCTION(saturate) {
 	return intrusive(new SaturateImage(input, amount));
 }
 
+SCRIPT_FUNCTION(invert_image) {
+	SCRIPT_PARAM_C(GeneratedImageP, input);
+	return intrusive(new InvertImage(input));
+}
+
 SCRIPT_FUNCTION(enlarge) {
 	SCRIPT_PARAM_C(GeneratedImageP, input);
 	SCRIPT_PARAM_N(double, _("border size"), border_size);
@@ -99,6 +104,22 @@ SCRIPT_FUNCTION(crop) {
 	SCRIPT_PARAM_N(double, _("offset x"), offset_x);
 	SCRIPT_PARAM_N(double, _("offset y"), offset_y);
 	return intrusive(new CropImage(input, width, height, offset_x, offset_y));
+}
+
+SCRIPT_FUNCTION(flip_horizontal) {
+	SCRIPT_PARAM_C(GeneratedImageP, input);
+	return intrusive(new FlipImageHorizontal(input));
+}
+
+SCRIPT_FUNCTION(flip_vertical) {
+	SCRIPT_PARAM_C(GeneratedImageP, input);
+	return intrusive(new FlipImageVertical(input));
+}
+
+SCRIPT_FUNCTION(rotate) {
+	SCRIPT_PARAM_C(GeneratedImageP, input);
+	SCRIPT_PARAM_N(double, _("angle"), angle);
+	return intrusive(new RotateImage(input,angle));
 }
 
 SCRIPT_FUNCTION(drop_shadow) {
@@ -190,8 +211,12 @@ void init_script_image_functions(Context& ctx) {
 	ctx.setVariable(_("set alpha"),        script_set_alpha);
 	ctx.setVariable(_("set combine"),      script_set_combine);
 	ctx.setVariable(_("saturate"),         script_saturate);
+	ctx.setVariable(_("invert image"),     script_invert_image);
 	ctx.setVariable(_("enlarge"),          script_enlarge);
 	ctx.setVariable(_("crop"),             script_crop);
+	ctx.setVariable(_("flip horizontal"),  script_flip_horizontal);
+	ctx.setVariable(_("flip vertical"),    script_flip_vertical);
+	ctx.setVariable(_("rotate"),           script_rotate);
 	ctx.setVariable(_("drop shadow"),      script_drop_shadow);
 	ctx.setVariable(_("symbol variation"), script_symbol_variation);
 	ctx.setVariable(_("built in image"),   script_built_in_image);

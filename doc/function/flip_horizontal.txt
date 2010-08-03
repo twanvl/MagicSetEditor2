@@ -1,0 +1,18 @@
+Function: flip_horizontal
+
+--Usage--
+> flip_horizontal(input: image)
+
+Flip an image horizontally.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:image]]		Image to flip.
+
+--Examples--
+> flip_horizontal("image_logo.png")  ==  [[Image]]
+>>> flip_horizontal(<img src="image_logo.png" alt='"image_logo.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />) == <img src="image_logo_hflip.png" alt='"image_logo_hflip.png"' style="border:1px solid black;vertical-align:middle;margin:1px;" />
+
+--See also--
+| [[fun:flip_vertical]]		Flip an image vertically
+| [[fun:rotate]]		Rotate an image

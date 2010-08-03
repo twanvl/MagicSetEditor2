@@ -202,6 +202,52 @@ class SaturateImage : public SimpleFilterImage {
 	double amount;
 };
 
+// ----------------------------------------------------------------------------- : InvertImage
+
+/// Invert an image
+class InvertImage : public SimpleFilterImage {
+  public:
+	inline InvertImage(const GeneratedImageP& image)
+		: SimpleFilterImage(image)
+	{}
+	virtual Image generate(const Options& opt) const;
+	virtual bool operator == (const GeneratedImage& that) const;
+};
+
+// ----------------------------------------------------------------------------- : FlipImage
+
+/// Flip an image horizontally
+class FlipImageHorizontal : public SimpleFilterImage {
+  public:
+	inline FlipImageHorizontal(const GeneratedImageP& image)
+		: SimpleFilterImage(image)
+	{}
+	virtual Image generate(const Options& opt) const;
+	virtual bool operator == (const GeneratedImage& that) const;
+};
+
+/// Flip an image vertically
+class FlipImageVertical : public SimpleFilterImage {
+  public:
+	inline FlipImageVertical(const GeneratedImageP& image)
+		: SimpleFilterImage(image)
+	{}
+	virtual Image generate(const Options& opt) const;
+	virtual bool operator == (const GeneratedImage& that) const;
+};
+
+/// Rotate an image
+class RotateImage : public SimpleFilterImage {
+  public:
+	inline RotateImage(const GeneratedImageP& image, double angle)
+		: SimpleFilterImage(image), angle(angle)
+	{}
+	virtual Image generate(const Options& opt) const;
+	virtual bool operator == (const GeneratedImage& that) const;
+  private:
+	double angle;
+};
+
 // ----------------------------------------------------------------------------- : EnlargeImage
 
 /// Enlarge an image by adding a border around it

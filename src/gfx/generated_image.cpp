@@ -196,6 +196,48 @@ bool SaturateImage::operator == (const GeneratedImage& that) const {
 	             && amount == that2->amount;
 }
 
+// ----------------------------------------------------------------------------- : InvertImage
+
+Image InvertImage::generate(const Options& opt) const {
+	Image img = image->generate(opt);
+	invert(img);
+	return img;
+}
+bool InvertImage::operator == (const GeneratedImage& that) const {
+	const InvertImage* that2 = dynamic_cast<const InvertImage*>(&that);
+	return that2 && *image == *that2->image;
+}
+
+// ----------------------------------------------------------------------------- : FlipImage
+
+Image FlipImageHorizontal::generate(const Options& opt) const {
+	Image img = image->generate(opt);
+	return flip_image_horizontal(img);
+}
+bool FlipImageHorizontal::operator == (const GeneratedImage& that) const {
+	const FlipImageHorizontal* that2 = dynamic_cast<const FlipImageHorizontal*>(&that);
+	return that2 && *image == *that2->image;
+}
+
+Image FlipImageVertical::generate(const Options& opt) const {
+	Image img = image->generate(opt);
+	return flip_image_vertical(img);
+}
+bool FlipImageVertical::operator == (const GeneratedImage& that) const {
+	const FlipImageVertical* that2 = dynamic_cast<const FlipImageVertical*>(&that);
+	return that2 && *image == *that2->image;
+}
+
+Image RotateImage::generate(const Options& opt) const {
+	Image img = image->generate(opt);
+	return rotate_image(img,angle);
+}
+bool RotateImage::operator == (const GeneratedImage& that) const {
+	const RotateImage* that2 = dynamic_cast<const RotateImage*>(&that);
+	return that2 && *image == *that2->image
+	             && angle == that2->angle;
+}
+
 // ----------------------------------------------------------------------------- : EnlargeImage
 
 Image EnlargeImage::generate(const Options& opt) const {

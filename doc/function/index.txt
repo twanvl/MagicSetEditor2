@@ -83,8 +83,12 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:set_alpha]]		Change the transparency of an image.
 | [[fun:set_combine]]		Change how the image should be combined with the background.
 | [[fun:saturate]]		Saturate/desaturate an image.
+| [[fun:invert]]		Invert the colors of an image.
 | [[fun:enlarge]]		Enlarge an image by putting a border around it.
 | [[fun:crop]]			Crop an image, giving only a small subset of it.
+| [[fun:flip_horizontal]]	Flip an image horizontally.
+| [[fun:flip_vertical]]		Flip an image vertically.
+| [[fun:rotate]]		Rotate an image.
 | [[fun:drop_shadow]]		Add a drop shadow to an image.
 | [[fun:symbol_variation]]	Render a variation of a [[type:symbol]].
 | [[fun:built_in_image]]	Return an image built into the program.
