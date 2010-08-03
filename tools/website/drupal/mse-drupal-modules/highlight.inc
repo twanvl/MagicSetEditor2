@@ -11,6 +11,7 @@ $built_in_functions = array(
 	'to_number'		=>'',
 	'to_boolean'		=>'',
 	'to_color'		=>'',
+	'to_image'		=>'',
 	'to_date'		=>'',
 	// numbers
 	'abs'			=>'',
@@ -76,8 +77,14 @@ $built_in_functions = array(
 	'set_mask'		=>'',
 	'set_alpha'		=>'',
 	'set_combine'		=>'',
+	'saturate'		=>'',
+	'invert_image'		=>'',
+	'recolor_image'		=>'',
 	'enlarge'		=>'',
 	'crop'			=>'',
+	'flip_horizontal'	=>'',
+	'flip_vertical'		=>'',
+	'rotate'		=>'',
 	'drop_shadow'		=>'',
 	'symbol_variation'	=>'',
 	'built_in_image'	=>'',
@@ -157,6 +164,12 @@ function highlight_script($code) {
 	while(strlen($code)) {
 		if (preg_match("@^<[^>]+>@",$code, $matches)) {
 			$ret .= $matches[0]; // plain tag
+		} else if (preg_match("@^(rgb)[(]([0-9]+),([0-9]+),([0-9]+)[)]@",$code, $matches)) {
+			$ret .= "<span class='hl-rgb'><span class='popup' style='background:" . $matches[0] . "'></span>"
+			      . "<span class='hl-kw'>rgb</span>("
+			      . "<span class='hl-num'>" . $matches[2] . "</span>,"
+			      . "<span class='hl-num'>" . $matches[3] . "</span>,"
+			      . "<span class='hl-num'>" . $matches[4] . "</span>)</span>";
 		} else if (preg_match("@^(if|then|else|for( each)?|in(?= )|do|div|mod|and|or|xor|not|rgb|rgba|from|to|min|max)\b(?!:)@",$code, $matches)) {
 			$ret .= "<span class='hl-kw'>" . $matches[0] . "</span>";
 		} else if (preg_match("@^(include file:)(.*)@",$code, $matches)) {
