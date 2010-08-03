@@ -98,6 +98,8 @@ class Rotation {
 	
 	/// Translate a point back to internal coordinates
 	RealPoint trInv(const RealPoint& p) const;
+	/// Translate a size back to internal coordinates
+	RealSize  trInv(const RealSize& p) const;
 	
   protected:
 	int angle;				///< The angle of rotation in degrees (counterclockwise)

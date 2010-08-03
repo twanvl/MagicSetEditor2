@@ -110,7 +110,7 @@ void draw_choice_viewer(RotatedDC& dc, ValueViewer& viewer, ChoiceStyle& style, 
 void get_options(Rotation& rot, ValueViewer& viewer, const ChoiceStyle& style, GeneratedImage::Options& opts) {
 	opts.package       = &viewer.getStylePackage();
 	opts.local_package = &viewer.getLocalPackage();
-	opts.angle         = rot.trAngle(0);
+	opts.angle         = rot.getAngle();
 	if (viewer.nativeLook()) {
 		opts.width = opts.height = 16;
 		opts.preserve_aspect = ASPECT_BORDER;

@@ -72,6 +72,7 @@ RealSize Rotation::trSize(const RealSize& size) const {
 	return RealSize(c * x + s * y, s * x + c * y);
 }
 */
+
 RealSize Rotation::trSizeToBB(const RealSize& size) const {
 	if (straight()) {
 		if (sideways()) {
@@ -85,6 +86,7 @@ RealSize Rotation::trSizeToBB(const RealSize& size) const {
 		return RealSize(fabs(c * x) + fabs(s * y), fabs(s * x) + fabs(c * y));
 	}
 }
+
 RealRect Rotation::trRectToBB(const RealRect& r) const {
 	if (straight()) {
 		RealSize s = trSizeToBB(r.size());
@@ -117,6 +119,8 @@ RealRect Rotation::trRectToBB(const RealRect& r) const {
 		return result;
 	}
 }
+
+
 RealRect Rotation::trRectStraight(const RealRect& r) const {
 	assert(angle == 0);
 	return RealRect(r.position() + origin, r.size());
@@ -138,6 +142,11 @@ RealPoint Rotation::trInv(const RealPoint& p) const {
 	double x = p.x - origin.x, y = p.y - origin.y;
 	return RealPoint((c * x - s * y) / zoomX,
 	                 (s * x + c * y) / zoomY);
+}
+RealSize Rotation::trInv(const RealSize& x) const {
+	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	return RealSize((c * x.width - s * x.height) / zoomX,
+	                (s * x.width + c * x.height) / zoomY);
 }
 
 RealPoint Rotation::boundingBoxCorner(const RealSize& size) const {
