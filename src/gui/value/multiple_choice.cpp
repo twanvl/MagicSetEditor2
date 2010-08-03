@@ -113,6 +113,9 @@ void MultipleChoiceValueEditor::determineSize(bool force_fit) {
 bool MultipleChoiceValueEditor::onLeftDown(const RealPoint& pos, wxMouseEvent& ev) {
 	// find item under cursor
 	if (style().render_style & RENDER_CHECKLIST) {
+		// TODO: determine actual item height
+		if (item_height == 0) item_height = 16;
+		
 		int id = (int)(pos.y / item_height);
 		int end = field().choices->lastId();
 		if (id >= 0 && id < end) {

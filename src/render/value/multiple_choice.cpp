@@ -52,8 +52,8 @@ void MultipleChoiceValueViewer::draw(RotatedDC& dc) {
 
 void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const String& choice, bool active) {
 	RealSize size; size.height = item_height;
-	if (nativeLook() && (style().render_style & RENDER_CHECKLIST)) {
-		wxRect rect = dc.trRectStraight(RealRect(pos + RealSize(1,1), RealSize(12,12)));
+	if (style().render_style & RENDER_CHECKLIST) {
+		wxRect rect = dc.trRectToBB(RealRect(pos + RealSize(1,1), RealSize(12,12)));
 		draw_checkbox(nullptr, dc.getDC(), rect, active); // TODO
 		size = add_horizontal(size, RealSize(14,16));
 	}
@@ -63,12 +63,12 @@ void MultipleChoiceValueViewer::drawChoice(RotatedDC& dc, RealPoint& pos, const 
 			// TODO: caching
 			GeneratedImage::Options options(0,0, &getStylePackage(), &getLocalPackage());
 			options.zoom = dc.getZoom();
-			options.angle = dc.trAngle(style().angle);
+			options.angle = dc.getAngle();
 			Image image = it->second.generate(options);
 			ImageCombine combine = it->second.combine();
 			// TODO : alignment?
 			dc.DrawPreRotatedImage(image, RealRect(pos.x + size.width, pos.y, options.width, options.height), combine == COMBINE_DEFAULT ? style().combine : combine);
-			size.width += options.width;
+			size = add_horizontal(size, dc.trInvS(RealSize(options.width,options.height)));
 		}
 	}
 	if (style().render_style & RENDER_TEXT) {
