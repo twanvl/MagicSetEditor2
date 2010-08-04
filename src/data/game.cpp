@@ -98,6 +98,7 @@ void Game::validate(Version v) {
 		pack->selectable = true;
 		pack->summary = true;
 		pack->filter = OptionalScript(_("true"));
+		pack->select = SELECT_NO_REPLACE;
 		pack_types.push_back(pack);
 	}
 }
