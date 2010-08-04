@@ -90,6 +90,16 @@ void Game::validate(Version v) {
 		}
 		statistics_categories.insert(statistics_categories.begin(), cats.begin(), cats.end()); // push front
 	}
+	// automatic pack if there are none
+	if (pack_types.empty()) {
+		PackTypeP pack(new PackType);
+		pack->name = _("Any card");
+		pack->enabled = true;
+		pack->selectable = true;
+		pack->summary = true;
+		pack->filter = OptionalScript(_("true"));
+		pack_types.push_back(pack);
+	}
 }
 
 void Game::initCardListColorScript() {
