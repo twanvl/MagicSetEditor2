@@ -76,10 +76,8 @@ class RandomPackPanel : public SetWindowPanel {
 	PackTotalsPanel*  totals;
 	vector<PackAmountPicker> pickers;
 	
-	#if USE_NEW_PACK_SYSTEM
-		PackGenerator generator;
-		int last_seed;
-	#endif
+	PackGenerator generator;
+	int last_seed;
 	
 	/// Actual intialization of the controls
 	void initControls();

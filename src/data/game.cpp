@@ -54,11 +54,7 @@ IMPLEMENT_REFLECTION(Game) {
 	REFLECT_NO_SCRIPT(card_list_color_script);
 	REFLECT_NO_SCRIPT(statistics_dimensions);
 	REFLECT_NO_SCRIPT(statistics_categories);
-  #if USE_NEW_PACK_SYSTEM
 	REFLECT_ALIAS(308, "pack item", "pack type");
-  #else
-	REFLECT_NO_SCRIPT(pack_items);
-  #endif
 	REFLECT_NO_SCRIPT(pack_types);
 	REFLECT_NO_SCRIPT(keyword_match_script);
 	REFLECT(has_keywords);

@@ -23,9 +23,6 @@
 
 DECLARE_TYPEOF_COLLECTION(PackTypeP);
 DECLARE_TYPEOF_COLLECTION(PackItemP);
-#if !USE_NEW_PACK_SYSTEM
-	DECLARE_TYPEOF_COLLECTION(PackItemRefP);
-#endif
 DECLARE_TYPEOF_COLLECTION(CardP);
 DECLARE_TYPEOF_COLLECTION(PackAmountPicker);
 
@@ -38,25 +35,15 @@ class RandomCardList : public CardListBase {
 	
 	/// Reset the list
 	void reset();
-  #if !USE_NEW_PACK_SYSTEM
-	/// Add a pack of cards
-	void add(PackItemCache& packs, boost::mt19937& gen, const PackType& pack);
-  #endif
 	
 	using CardListBase::rebuild;
 	
 	const vector<CardP>* getCardsPtr() const { return &cards; }
+	vector<CardP> cards;
 	
   protected:
 	virtual void getItems(vector<VoidP>& out) const;
 	virtual void onChangeSet();
-	
-#if USE_NEW_PACK_SYSTEM
-  public:
-#else
-  private:
-#endif
-	vector<CardP> cards;
 };
 
 RandomCardList::RandomCardList(Window* parent, int id, long style)
@@ -66,12 +53,6 @@ RandomCardList::RandomCardList(Window* parent, int id, long style)
 void RandomCardList::reset() {
 	cards.clear();
 }
-
-#if !USE_NEW_PACK_SYSTEM
-	void RandomCardList::add(PackItemCache& packs, boost::mt19937& gen, const PackType& pack) {
-		pack.generate(packs,gen,cards);
-	}
-#endif
 
 void RandomCardList::onChangeSet() {
 	reset();
@@ -90,18 +71,9 @@ void RandomCardList::getItems(vector<VoidP>& out) const {
 
 class PackTotalsPanel : public wxPanel {
   public:
-   #if USE_NEW_PACK_SYSTEM
 	PackTotalsPanel(Window* parent, int id, PackGenerator& generator, bool show_all = false)
 		: wxPanel(parent,id), generator(generator), show_all(show_all) {}
-   #else
-	PackTotalsPanel(Window* parent, int id) : wxPanel(parent,id) {}
-   #endif
 	void setGame(const GameP& game);
-   #if !USE_NEW_PACK_SYSTEM
-	void clear();
-	void addPack(PackType& pack, int copies);
-	void addItemRef(PackItemRef& item, int copies);
-   #endif
 	virtual wxSize DoGetBestSize() const;
   private:
 	DECLARE_EVENT_TABLE();
@@ -109,12 +81,8 @@ class PackTotalsPanel : public wxPanel {
 	void onPaint(wxPaintEvent&);
 	void draw(DC& dc);
 	void drawItem(DC& dc, int& y, const String& name, double value);
-  #if USE_NEW_PACK_SYSTEM
 	PackGenerator& generator;
 	bool show_all;
-  #else
-	map<String,int> amounts;
-  #endif
 };
 
 void PackTotalsPanel::onPaint(wxPaintEvent&) {
@@ -132,7 +100,6 @@ void PackTotalsPanel::draw(DC& dc) {
 	dc.SetFont(*wxNORMAL_FONT);
 	int y = 0;
 	int total = 0;
-  #if USE_NEW_PACK_SYSTEM
 	FOR_EACH(pack, game->pack_types) {
 		PackInstance& i = generator.get(pack);
 		if (pack->summary && (show_all || i.has_cards())) {
@@ -140,13 +107,6 @@ void PackTotalsPanel::draw(DC& dc) {
 			total += (int)i.get_card_copies();
 		}
 	}
-  #else
-	FOR_EACH(item, game->pack_items) {
-		int value = amounts[item->name];
-		drawItem(dc, y, tr(*game, item->name, capitalize), value);
-		total += value;
-	}
-  #endif
 	// draw total
 	dc.SetPen(wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW));
 	dc.DrawLine(0, y-3, size.x, y-3);
@@ -168,8 +128,7 @@ void PackTotalsPanel::drawItem(DC& dc, int& y,  const String& name, double value
 wxSize PackTotalsPanel::DoGetBestSize() const {
 	// count lines
 	int lines = 0;
-  #if USE_NEW_PACK_SYSTEM
-	if (game && generator.set) {
+  	if (game && generator.set) {
 		FOR_EACH(pack, game->pack_types) {
 			PackInstance& i = generator.get(pack);
 			if (pack->summary && (show_all || i.has_cards())) {
@@ -177,9 +136,6 @@ wxSize PackTotalsPanel::DoGetBestSize() const {
 			}
 		}
 	}
-  #else
-	lines = game ? (int)game->pack_items.size() : 0;
-  #endif
 	// don't forget the total
 	lines++;
 	// size
@@ -190,23 +146,7 @@ wxSize PackTotalsPanel::DoGetBestSize() const {
 
 void PackTotalsPanel::setGame(const GameP& game) {
 	this->game = game;
-  #if !USE_NEW_PACK_SYSTEM
-	clear();
-  #endif
 }
-#if !USE_NEW_PACK_SYSTEM
-	void PackTotalsPanel::clear() {
-		amounts.clear();
-	}
-	void PackTotalsPanel::addPack(PackType& pack, int copies) {
-		FOR_EACH(item,pack.items) {
-			addItemRef(*item, copies * item->amount);
-		}
-	}
-	void PackTotalsPanel::addItemRef(PackItemRef& item, int copies) {
-		amounts[item.name] += copies;
-	}
-#endif
 
 BEGIN_EVENT_TABLE(PackTotalsPanel, wxPanel)
 	EVT_PAINT(PackTotalsPanel::onPaint)
@@ -293,7 +233,6 @@ void PackAmountPicker::destroy(wxFlexGridSizer* sizer) {
 }
 
 // ----------------------------------------------------------------------------- : CustomPackDialog
-#if USE_NEW_PACK_SYSTEM
 
 class CustomPackDialog : public wxDialog {
   public:
@@ -433,7 +372,6 @@ BEGIN_EVENT_TABLE(CustomPackDialog, wxDialog)
 	EVT_SPINCTRL (ID_PACK_AMOUNT, CustomPackDialog::onAmountChange)
 END_EVENT_TABLE()
 
-#endif
 // ----------------------------------------------------------------------------- : RandomPackPanel
 
 RandomPackPanel::RandomPackPanel(Window* parent, int id)
@@ -450,11 +388,7 @@ void RandomPackPanel::initControls() {
 	seed_random = new wxRadioButton(this, ID_SEED_RANDOM, _BUTTON_("random seed"));
 	seed_fixed  = new wxRadioButton(this, ID_SEED_FIXED,  _BUTTON_("fixed seed"));
 	seed = new wxTextCtrl(this, wxID_ANY);
-  #if USE_NEW_PACK_SYSTEM
 	totals = new PackTotalsPanel(this, wxID_ANY, generator);
-  #else
-	totals = new PackTotalsPanel(this, wxID_ANY);
-  #endif
 	set_help_text(seed_random, _HELP_("random seed"));
 	set_help_text(seed_fixed,  _HELP_("fixed seed"));
 	set_help_text(seed,        _HELP_("seed"));
@@ -513,7 +447,6 @@ void RandomPackPanel::onChangeSet() {
 	pickers.clear();
 	
 	// add pack controls
-  #if USE_NEW_PACK_SYSTEM
 	FOR_EACH(pack, set->game->pack_types) {
 		if (pack->selectable) {
 			pickers.push_back(PackAmountPicker(this,packsSizer,pack,false));
@@ -524,11 +457,6 @@ void RandomPackPanel::onChangeSet() {
 			pickers.push_back(PackAmountPicker(this,packsSizer,pack,true));
 		}
 	}
-  #else
-	FOR_EACH(pack, set->game->pack_types) {
-		pickers.push_back(PackAmountPicker(this,packsSizer,pack,false));
-	}
-  #endif
 	
 	Layout();
 	
@@ -542,9 +470,7 @@ void RandomPackPanel::onChangeSet() {
 		pick.value->SetValue(gs.pack_amounts[pick.pack->name]);
 	}
 	
-  #if USE_NEW_PACK_SYSTEM
 	generator.reset(set,last_seed=getSeed());
-  #endif
 	updateTotals();
 }
 
@@ -575,10 +501,8 @@ void RandomPackPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 		onChangeSet();
 	}
 	// this is a good moment to update, because the set has likely changed
-  #if USE_NEW_PACK_SYSTEM
 	generator.reset(set,last_seed);
 	updateTotals();
-  #endif
 }
 
 void RandomPackPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {}
@@ -635,24 +559,14 @@ void RandomPackPanel::onPackTypeClick(wxCommandEvent& ev) {
 // ----------------------------------------------------------------------------- : Generating
 
 void RandomPackPanel::updateTotals() {
-  #if USE_NEW_PACK_SYSTEM
 	generator.reset(last_seed);
-  #else
-	totals->clear();
-  #endif
 	int total_packs = 0;
 	FOR_EACH(pick,pickers) {
 		int copies = pick.value->GetValue();
 		total_packs += copies;
-	  #if USE_NEW_PACK_SYSTEM
 		generator.get(pick.pack).request_copy(copies);
-	  #else
-		totals->addPack(*pick.pack, copies);
-	  #endif
 	}
-  #if USE_NEW_PACK_SYSTEM
 	generator.update_card_counts();
-  #endif
 	// update UI
 	totals->Refresh(false);
 	generate_button->Enable(total_packs > 0);
@@ -684,23 +598,14 @@ void RandomPackPanel::setSeed(int seed) {
 }
 
 void RandomPackPanel::generate() {
-  #if USE_NEW_PACK_SYSTEM
 	generator.reset(set,last_seed=getSeed());
-  #else
-	boost::mt19937 gen((unsigned)getSeed());
-	PackItemCache pack_cache(*set);
-  #endif
 	// add packs to card list
 	card_list->reset();
 	FOR_EACH(pick,pickers) {
 		int copies = pick.value->GetValue();
 		for (int i = 0 ; i < copies ; ++i) {
-		  #if USE_NEW_PACK_SYSTEM
 			generator.get(pick.pack).request_copy();
 			generator.generate(card_list->cards);
-		  #else
-			card_list->add(pack_cache, gen, *pick.pack);
-		  #endif
 		}
 	}
 	card_list->rebuild();

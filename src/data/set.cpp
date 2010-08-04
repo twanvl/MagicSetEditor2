@@ -12,6 +12,7 @@
 #include <data/stylesheet.hpp>
 #include <data/card.hpp>
 #include <data/keyword.hpp>
+#include <data/pack.hpp>
 #include <data/field.hpp>
 #include <data/field/text.hpp>    // for 0.2.7 fix
 #include <data/field/information.hpp>
