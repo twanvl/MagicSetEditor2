@@ -57,9 +57,23 @@ String Card::identification() const {
 
 bool Card::contains(String const& query) const {
 	FOR_EACH_CONST(v, data) {
-		if (v->toString().find(query) != String::npos) return true;
+		if (find_i(v->toString(),query) != String::npos) return true;
 	}
 	return false;
+}
+bool Card::contains_words(String const& query) const {
+	// iterate over the words
+	for (size_t i = 0 ; i < query.size() ; ) {
+		size_t end = query.find_first_of(_(" "),i);
+		if (end == i) {
+			i++;
+		} else {
+			end = min(end,query.size());
+			if (!contains(query.substr(i,end-i))) return false;
+			i = end;
+		}
+	}
+	return true;
 }
 
 IndexMap<FieldP, ValueP>& Card::extraDataFor(const StyleSheet& stylesheet) {

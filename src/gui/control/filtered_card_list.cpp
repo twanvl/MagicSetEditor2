@@ -45,6 +45,6 @@ void CardListFilter::getItems(const vector<CardP>& cards, vector<VoidP>& out) co
 }
 
 bool QueryCardListFilter::keep(const CardP& card) const {
-	return card->contains(query);
+	return card->contains_words(query);
 }
 

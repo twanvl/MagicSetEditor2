@@ -63,6 +63,8 @@ class Card : public IntrusivePtrVirtualBase {
 	String identification() const;
 	/// Does any field contains the given query string?
 	bool contains(String const& query) const;
+	/// Does this card contain each of the words in the query string?
+	bool contains_words(String const& query) const;
 	
 	/// Find a value in the data by name and type
 	template <typename T> T& value(const String& name) {

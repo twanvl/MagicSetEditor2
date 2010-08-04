@@ -413,6 +413,14 @@ bool cannocial_name_compare(const String& as, const Char* b) {
 	}
 }
 
+size_t find_i(const String& heystack, const String& needle) {
+	if (needle.empty()) return 0;
+	for (size_t i = 0 ; i + needle.size() <= heystack.size() ; ++i) {
+		if (is_substr_i(heystack, i, needle)) return true;
+	}
+	return String::npos;
+}
+
 // ----------------------------------------------------------------------------- : Regular expressions
 
 /// Escape a single character for use in regular expressions
