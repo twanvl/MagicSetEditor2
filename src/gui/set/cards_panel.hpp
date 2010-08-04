@@ -13,12 +13,13 @@
 #include <gui/set/panel.hpp>
 
 class wxSplitterWindow;
-class ImageCardList;
+class FilteredImageCardList;
 class DataEditor;
 class TextCtrl;
 class IconMenu;
 class HoverButton;
 class FindInfo;
+class FilterCtrl;
 
 // ----------------------------------------------------------------------------- : CardsPanel
 
@@ -75,11 +76,11 @@ class CardsPanel : public SetWindowPanel {
 	wxSizer*          s_left;
 	wxSplitterWindow* splitter;
 	DataEditor*       editor;
-	ImageCardList*    card_list;
+	FilteredImageCardList* card_list;
 	Panel*            nodes_panel;
 	TextCtrl*         notes;
 	HoverButton*      collapse_notes;
-	wxTextCtrl*       filter;
+	FilterCtrl*       filter;
 	bool              notes_below_editor;
 	
 	/// Move the notes panel below the editor or below the card list

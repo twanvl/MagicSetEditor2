@@ -11,6 +11,7 @@
 
 #include <util/prec.hpp>
 #include <gui/control/card_list.hpp>
+#include <gui/control/filtered_card_list.hpp>
 
 DECLARE_POINTER_TYPE(ImageField);
 
@@ -37,6 +38,24 @@ class ImageCardList : public CardListBase {
 	ImageFieldP findImageField();
 	
 	friend class CardThumbnailRequest;
+};
+
+// ----------------------------------------------------------------------------- : FilteredImageCardList
+
+class FilteredImageCardList : public ImageCardList {
+  public:
+	FilteredImageCardList(Window* parent, int id, long additional_style = 0);
+	
+	/// Change the filter to use, if null then don't use a filter
+	void setFilter(const CardListFilterP& filter);
+	
+  protected:
+	/// Get only the subset of the cards
+	virtual void getItems(vector<VoidP>& out) const;
+	virtual void onChangeSet();
+	
+  private:	
+	CardListFilterP filter;	///< Filter with which this.cards is made
 };
 
 // ----------------------------------------------------------------------------- : EOF

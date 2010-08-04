@@ -11,7 +11,7 @@
 #include <gui/control/image_card_list.hpp>
 #include <gui/control/card_editor.hpp>
 #include <gui/control/text_ctrl.hpp>
-#include <gui/about_window.hpp>
+#include <gui/about_window.hpp> // for HoverButton
 #include <gui/update_checker.hpp>
 #include <gui/icon_menu.hpp>
 #include <gui/util.hpp>
@@ -34,6 +34,142 @@ DECLARE_TYPEOF_COLLECTION(AddCardsScriptP);
 	#define HAVE_TOOLBAR_DROPDOWN_MENU 1
 #endif
 
+// ----------------------------------------------------------------------------- : FilterControl
+
+/// Text control that forwards focus events to the parent
+class TextCtrlWithFocus : public wxTextCtrl {
+  public:
+	DECLARE_EVENT_TABLE();
+	void forwardEvent(wxFocusEvent&);
+};
+
+/// A search/filter textbox
+class FilterCtrl : public wxControl {
+  public:
+	FilterCtrl(wxWindow* parent, int id);
+	/// Set the filter text
+	void setFilter(const String& filter, bool event = false);
+	void clearFilter()       { setFilter(String()); }
+	bool hasFilter() const   { return !value.empty(); }
+	String const& getFilter() const { return value; }
+	
+	//bool AcceptsFocus() const { return false; }
+  private:
+	DECLARE_EVENT_TABLE();
+	bool changing;
+	wxString value;
+	TextCtrlWithFocus*  filter_ctrl;
+	HoverButton* clear_button;
+	
+	void update();
+	bool hasFocus();
+	void onChange();
+	void onChange(wxCommandEvent&);
+	void onClear(wxCommandEvent&);
+	void onSize(wxSizeEvent&);
+	void onSize();
+  public:
+	void onSetFocus(wxFocusEvent&);
+	void onKillFocus(wxFocusEvent&);
+};
+
+FilterCtrl::FilterCtrl(wxWindow* parent, int id)
+	: wxControl(parent, id, wxDefaultPosition, wxSize(160,41), wxSTATIC_BORDER)
+	, changing(false)
+{
+	wxColour bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+	SetBackgroundColour(bg);
+	SetCursor(wxCURSOR_IBEAM);
+	filter_ctrl = new TextCtrlWithFocus();
+	filter_ctrl->Create(this, wxID_ANY, _(""), wxDefaultPosition, wxSize(130,-1), wxNO_BORDER);
+	clear_button = new HoverButton(this, wxID_ANY, _("btn_clear_filter"), bg, false);
+	clear_button->SetCursor(*wxSTANDARD_CURSOR);
+	onSize();
+	update();
+}
+
+void FilterCtrl::setFilter(const String& new_value, bool event) {
+	if (this->value == new_value) return;
+	// update ui
+	this->value = new_value;
+	update();
+	// send event
+	if (event) {
+		wxCommandEvent ev(wxEVT_COMMAND_TEXT_UPDATED, GetId());
+		GetParent()->ProcessEvent(ev);
+	}
+}
+
+void FilterCtrl::update() {
+	changing = true;
+	if (!value.empty() || hasFocus()) {
+		filter_ctrl->SetValue(value);
+		wxColour fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+		filter_ctrl->SetDefaultStyle(wxTextAttr(fg));
+		filter_ctrl->SetForegroundColour(fg);
+	} else {
+		filter_ctrl->SetValue(_LABEL_("search cards"));
+		wxColour fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+		wxColour bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
+		filter_ctrl->SetDefaultStyle(wxTextAttr(lerp(fg,bg,0.5)));
+		filter_ctrl->SetForegroundColour(lerp(fg,bg,0.5));
+	}
+	clear_button->Show(!value.empty());
+	changing = false;
+}
+
+void FilterCtrl::onChange(wxCommandEvent&) {
+	if (!changing) {
+		setFilter(filter_ctrl->GetValue(),true);
+	}
+}
+
+void FilterCtrl::onClear(wxCommandEvent&) {
+	setFilter(String(),true);
+}
+
+void FilterCtrl::onSize(wxSizeEvent&) {
+	onSize();
+}
+void FilterCtrl::onSize() {
+	wxSize s = GetClientSize();
+	wxSize fs = filter_ctrl->GetBestSize();
+	wxSize cs = clear_button->GetBestSize();
+	int margin = 2;
+	filter_ctrl ->SetSize(margin, max(margin,(s.y-fs.y)/2), s.x - cs.x - 3*margin, fs.y);
+	clear_button->SetSize(s.x - cs.x - margin, (s.y-cs.y)/2, cs.x, cs.y);
+}
+
+void FilterCtrl::onSetFocus(wxFocusEvent&) {
+	filter_ctrl->SetFocus();
+	update();
+}
+void FilterCtrl::onKillFocus(wxFocusEvent&) {
+	update();
+}
+
+bool FilterCtrl::hasFocus() {
+	wxWindow* focus = wxWindow::FindFocus();
+	return focus == this || focus == filter_ctrl || focus == clear_button;
+}
+
+BEGIN_EVENT_TABLE(FilterCtrl, wxControl)
+	EVT_BUTTON    (wxID_ANY, FilterCtrl::onClear)
+	EVT_TEXT      (wxID_ANY, FilterCtrl::onChange)
+	EVT_SIZE      (FilterCtrl::onSize)
+	EVT_SET_FOCUS (FilterCtrl::onSetFocus)
+	EVT_KILL_FOCUS(FilterCtrl::onKillFocus)
+END_EVENT_TABLE()
+
+void TextCtrlWithFocus::forwardEvent(wxFocusEvent& ev) {
+	GetParent()->ProcessEvent(ev);
+}
+
+BEGIN_EVENT_TABLE(TextCtrlWithFocus, wxTextCtrl)
+	EVT_SET_FOCUS (TextCtrlWithFocus::forwardEvent)
+	EVT_KILL_FOCUS(TextCtrlWithFocus::forwardEvent)
+END_EVENT_TABLE()
+
 // ----------------------------------------------------------------------------- : CardsPanel
 
 CardsPanel::CardsPanel(Window* parent, int id)
@@ -42,7 +178,7 @@ CardsPanel::CardsPanel(Window* parent, int id)
 	// init controls
 	editor      = new CardEditor(this, ID_EDITOR);
 	splitter    = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	card_list   = new ImageCardList(splitter, ID_CARD_LIST);
+	card_list   = new FilteredImageCardList(splitter, ID_CARD_LIST);
 	nodes_panel = new Panel(splitter, wxID_ANY);
 	notes       = new TextCtrl(nodes_panel, ID_NOTES, true);
 	collapse_notes = new HoverButton(nodes_panel, ID_COLLAPSE_NOTES, _("btn_collapse"), wxNullColour, false);
@@ -213,9 +349,10 @@ void CardsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	#else
 		tb->AddTool(ID_CARD_ROTATE,		_(""), load_resource_tool_image(_("card_rotate")),	wxNullBitmap,wxITEM_NORMAL, _TOOLTIP_("rotate card"),	_HELP_("rotate card"));
 	#endif
-//%	tb->AddSeparator();
-//%	if (!filter) filter = new wxTextCtrl(tb, wxID_ANY, _(""), wxDefaultPosition, wxDefaultSize, wxSTATIC_BORDER);
-//%	tb->AddControl(filter);
+	// Filter/search textbox
+	tb->AddSeparator();
+	if (!filter) filter = new FilterCtrl(tb, ID_CARD_FILTER);
+	tb->AddControl(filter);
 	tb->Realize();
 	// Menus
 	mb->Insert(2, menuCard,   _MENU_("cards"));
@@ -231,11 +368,11 @@ void CardsPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	tb->DeleteTool(ID_CARD_ADD);
 	tb->DeleteTool(ID_CARD_REMOVE);
 	tb->DeleteTool(ID_CARD_ROTATE);
-//%	tb->DeleteTool(filter->GetId()); filter = nullptr;
+	tb->DeleteTool(filter->GetId()); filter = nullptr;
 	// HACK: hardcoded size of rest of toolbar
 	tb->DeleteToolByPos(12); // delete separator
 	tb->DeleteToolByPos(12); // delete separator
-//%	tb->DeleteToolByPos(12); // delete separator
+	tb->DeleteToolByPos(12); // delete separator
 	// Menus
 	mb->Remove(3);
 	mb->Remove(2);
@@ -340,6 +477,15 @@ void CardsPanel::onCommand(int id) {
 			} else {
 				splitter->SetSashPosition(-150);
 				notes->SetFocus();
+			}
+			break;
+		}
+		case ID_CARD_FILTER: {
+			// card filter has changed, update the card list
+			if (filter->hasFilter()) {
+				card_list->setFilter(intrusive(new QueryCardListFilter(filter->getFilter())));
+			} else {
+				card_list->setFilter(CardListFilterP());
 			}
 			break;
 		}

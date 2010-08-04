@@ -13,8 +13,8 @@ DECLARE_TYPEOF_COLLECTION(CardP);
 
 // ----------------------------------------------------------------------------- : FilteredCardList
 
-FilteredCardList::FilteredCardList(Window* parent, int id, long style)
-	: CardListBase(parent, id, style)
+FilteredCardList::FilteredCardList(Window* parent, int id, long additional_style)
+	: CardListBase(parent, id, additional_style)
 {}
 
 void FilteredCardList::setFilter(const CardListFilterP& filter) {
@@ -34,6 +34,8 @@ void FilteredCardList::getItems(vector<VoidP>& out) const {
 	}
 }
 
+// ----------------------------------------------------------------------------- : CardListFilter
+
 void CardListFilter::getItems(const vector<CardP>& cards, vector<VoidP>& out) const {
 	FOR_EACH_CONST(c, cards) {
 		if (keep(c)) {
@@ -41,3 +43,8 @@ void CardListFilter::getItems(const vector<CardP>& cards, vector<VoidP>& out) co
 		}
 	}
 }
+
+bool QueryCardListFilter::keep(const CardP& card) const {
+	return card->contains(query);
+}
+

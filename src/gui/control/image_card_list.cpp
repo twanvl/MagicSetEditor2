@@ -114,3 +114,28 @@ void ImageCardList::onIdle(wxIdleEvent&) {
 BEGIN_EVENT_TABLE(ImageCardList, CardListBase)
 	EVT_IDLE	   (ImageCardList::onIdle)
 END_EVENT_TABLE  ()
+
+// ----------------------------------------------------------------------------- : FilteredImageCardList
+
+FilteredImageCardList::FilteredImageCardList(Window* parent, int id, long additional_style)
+	: ImageCardList(parent, id, additional_style)
+{}
+
+void FilteredImageCardList::setFilter(const CardListFilterP& filter) {
+	this->filter = filter;
+	rebuild();
+}
+
+void FilteredImageCardList::onChangeSet() {
+	// clear filter before changing set, the filter might not make sense for a different set
+	filter = CardListFilterP();
+	CardListBase::onChangeSet();
+}
+
+void FilteredImageCardList::getItems(vector<VoidP>& out) const {
+	if (filter) {
+		filter->getItems(set->cards,out);
+	} else {
+		ImageCardList::getItems(out);
+	}
+}

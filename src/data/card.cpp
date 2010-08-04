@@ -55,6 +55,13 @@ String Card::identification() const {
 	}
 }
 
+bool Card::contains(String const& query) const {
+	FOR_EACH_CONST(v, data) {
+		if (v->toString().find(query) != String::npos) return true;
+	}
+	return false;
+}
+
 IndexMap<FieldP, ValueP>& Card::extraDataFor(const StyleSheet& stylesheet) {
 	return extra_data.get(stylesheet.name(), stylesheet.extra_card_fields);
 }

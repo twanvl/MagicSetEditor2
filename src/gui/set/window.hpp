@@ -165,6 +165,7 @@ class SetWindow : public wxFrame, public SetView {
 	void onIdle                (wxIdleEvent&);
 	
 	void onSizeChange          (wxCommandEvent&);
+	void onEraseBackground     (wxEraseEvent&) {} // reduce flicker
 };
 
 // ----------------------------------------------------------------------------- : EOF

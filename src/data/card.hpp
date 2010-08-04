@@ -61,6 +61,8 @@ class Card : public IntrusivePtrVirtualBase {
 	/// Get the identification of this card, an identification is something like a name, title, etc.
 	/** May return "" */
 	String identification() const;
+	/// Does any field contains the given query string?
+	bool contains(String const& query) const;
 	
 	/// Find a value in the data by name and type
 	template <typename T> T& value(const String& name) {

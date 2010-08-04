@@ -26,12 +26,21 @@ class CardListFilter : public IntrusivePtrVirtualBase {
 	virtual void getItems(const vector<CardP>& cards, vector<VoidP>& out) const;
 };
 
+/// A filter function that searches for cards containing a string
+class QueryCardListFilter : public CardListFilter {
+  public:
+	QueryCardListFilter(String const& query) : query(query) {}
+	virtual bool keep(const CardP& card) const;
+  private:
+	String query;
+};
+
 // ----------------------------------------------------------------------------- : FilteredCardList
 
 /// A card list that lists a subset of the cards in the set
 class FilteredCardList : public CardListBase {
   public:
-	FilteredCardList(Window* parent, int id, long style = 0);
+	FilteredCardList(Window* parent, int id, long additional_style = 0);
 	
 	/// Change the filter to use
 	void setFilter(const CardListFilterP& filter);
