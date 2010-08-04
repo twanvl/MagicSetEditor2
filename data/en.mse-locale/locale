@@ -760,7 +760,7 @@ error:
 		stylesheet and set don't refer to the same game, this is an error in the stylesheet file
 	unsupported field type:								Unsupported field type: '%s'
 	unsupported fill type:								Unsupported fill type: '%s'
-	unrecognized value:									Unrecognized value: '%s'
+	unrecognized value:									Unrecognized value: '%s', defaulting to %s
 	expected key:										Expected key: '%s'
 	aborting parsing:									Fatal errors encountered, aborting reading.
 	newer version:
