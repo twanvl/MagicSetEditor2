@@ -56,7 +56,7 @@ class DropDownHider : public wxEvtHandler {
 // ----------------------------------------------------------------------------- : DropDownList : Show/Hide
 
 DropDownList::DropDownList(Window* parent, bool is_submenu, ValueViewer* viewer)
-	: wxPopupWindow(parent)
+	: wxPopupWindow(parent, wxSIMPLE_BORDER)
 	, text_offset(1)
 	, item_size(100,1)
 	, icon_size(0,0)
@@ -106,10 +106,14 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
 	int line_count = 0;
 	for (size_t i = 0 ; i < count ; ++i) if (lineBelow(i)) line_count += 1;
 	// size
+	RealSize border_size(2,2); // GetClientSize() - GetSize(), assume 1px borders
 	RealSize size(
 		item_size.width + marginW * 2,
 		item_size.height * count + marginH * 2 + line_count
 	);
+	RealSize virtual_size = size;
+	SetVirtualSize(virtual_size);
+	// placement
 	int parent_height = 0;
 	if (!in_place && viewer) {
 		// Position the drop down list below the editor control (based on the style)
@@ -128,10 +132,23 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
 		parent_height = -(int)item_size.height - 1;
 	}
 	pos = GetParent()->ClientToScreen(pos);
+	// is there enough room for all items, or do we need a scrollbar?
+	int room_below = wxGetDisplaySize().y - border_size.height - pos.y - parent_height - 50;
+	int max_height = max(200, room_below);
+	if (size.height > max_height) {
+		size.height = max_height;
+		size.width += wxSystemSettings::GetMetric(wxSYS_VSCROLL_ARROW_X); // width of scrollbar
+		SetScrollbar(wxVERTICAL, 0, size.height, virtual_size.height, false);
+	} else {
+		SetScrollbar(wxVERTICAL,0,0,0,false);
+	}
 	// move & resize
-	item_size.width = size.width - marginW * 2;
-	SetSize(size);
+	item_size.width = virtual_size.width - marginW * 2;
+	SetSize(add_diagonal(size, border_size));
 	Position(pos, wxSize(0, parent_height));
+	// visible item
+	visible_start = 0;
+	ensureSelectedItemVisible();
 	// set event handler
 	if (hider) {
 		assert(hider2);
@@ -217,12 +234,40 @@ bool DropDownList::showSubMenu(size_t item, int y) {
 	return true;
 }
 
+bool DropDownList::selectItem(size_t item) {
+	if ((int)item >= 0 && item < itemCount()) {
+		selected_item = item;
+		ensureSelectedItemVisible();
+		Refresh(false);
+		return true;
+	} else {
+		return false;
+	}
+}
+
+void DropDownList::ensureSelectedItemVisible() {
+	if (selected_item == NO_SELECTION) return;
+	// ensure that this item is visible
+	int item_top = itemPosition(selected_item);
+	wxSize cs = GetClientSize();
+	if (item_top < marginH) {
+		scrollTo(item_top + visible_start);
+	} else if (item_top + item_size.height - 1 > cs.y - marginH) {
+		scrollTo(item_top + visible_start + item_size.height - 1 - (cs.y - marginH));
+	}
+}
+void DropDownList::scrollTo(int pos) {
+	visible_start = max(0, min(GetVirtualSize().y - GetSize().y, pos));
+	SetScrollPos(wxVERTICAL, visible_start);
+	Refresh(false);
+}
+
 int DropDownList::itemPosition(size_t item) const {
-	int y = marginH;
+	int y = marginH - visible_start;
 	size_t count = itemCount();
 	for (size_t i = 0 ; i < count ; ++i) {
 		if (i == item) return y;
-		y += (int)item_size.height + lineBelow(item);
+		y += (int)item_size.height + lineBelow(i);
 	}
 	// not found
 	assert(false);
@@ -251,14 +296,14 @@ void DropDownList::onPaint(wxPaintEvent&) {
 
 void DropDownList::draw(DC& dc) {
 	// Size
-	wxSize cs = GetClientSize();
+	wxSize cs = dc.GetSize();
 	// Draw background & frame
-	dc.SetPen  (wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWFRAME));
+	dc.SetPen  (*wxTRANSPARENT_PEN);
 	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-	dc.DrawRectangle(0, 0, cs.GetWidth(), cs.GetHeight());
+	dc.DrawRectangle(0, 0, cs.x, cs.y);
 	dc.SetFont(*wxNORMAL_FONT);
 	// Draw items
-	int y = marginH;
+	int y = marginH - visible_start;
 	size_t count = itemCount();
 	for (size_t i = 0 ; i < count ; ++i) {
 		drawItem(dc, y, i);
@@ -267,6 +312,7 @@ void DropDownList::draw(DC& dc) {
 }
 
 void DropDownList::drawItem(DC& dc, int y, size_t item) {
+	if (y + item_size.height <= 0 || y >= dc.GetSize().y) return; // not visible
 	// draw background
 	dc.SetPen(*wxTRANSPARENT_PEN);
 	if (item == selected_item) {
@@ -328,21 +374,21 @@ void DropDownList::onLeftUp(wxMouseEvent&) {
 void DropDownList::onMotion(wxMouseEvent& ev) {
 	// size
 	wxSize cs = GetClientSize();
-	// find selected item
+	// inside?
 	if (ev.GetX() < marginW || ev.GetX() + marginW >= cs.GetWidth() || ev.GetY() < marginH || ev.GetY() + marginH >= cs.GetHeight()) {
 		ev.Skip();
 		return;
 	}
-	int startY = marginH;
+	// find selected item
+	int startY = marginH - visible_start;
 	size_t count = itemCount();
 	for (size_t i = 0 ; i < count ; ++i) {
 		int endY = startY + (int)item_size.height;
 		if (ev.GetY() >= startY && ev.GetY() < endY) {
-			selected_item = i;
 			if (itemEnabled(i)) {
 				showSubMenu(i, startY);
 			}
-			Refresh(false);
+			selectItem(i);
 			return;
 		}
 		startY = endY + lineBelow(i);
@@ -358,6 +404,29 @@ void DropDownList::onMouseLeave(wxMouseEvent& ev) {
 			ev.Skip();
 			return;
 		}
+	}
+}
+
+void DropDownList::onMouseWheel(wxMouseEvent& ev) {
+	scrollTo(visible_start - item_size.height * ev.GetWheelRotation() / ev.GetWheelDelta());
+}
+
+void DropDownList::onScroll(wxScrollWinEvent& ev) {
+	wxEventType type = ev.GetEventType();
+	if (type == wxEVT_SCROLLWIN_TOP) {
+		scrollTo(0);
+	} else if (type == wxEVT_SCROLLWIN_BOTTOM) {
+		scrollTo(INT_MAX);
+	} else if (type == wxEVT_SCROLLWIN_LINEUP) {
+		scrollTo(visible_start - item_size.height);
+	} else if (type == wxEVT_SCROLLWIN_LINEDOWN) {
+		scrollTo(visible_start + item_size.height);
+	} else if (type == wxEVT_SCROLLWIN_PAGEUP) {
+		scrollTo(visible_start - (GetClientSize().y - item_size.height));
+	} else if (type == wxEVT_SCROLLWIN_PAGEDOWN) {
+		scrollTo(visible_start + (GetClientSize().y - item_size.height));
+	} else {
+		scrollTo(ev.GetPosition());
 	}
 }
 
@@ -379,19 +448,9 @@ bool DropDownList::onCharInParent(wxKeyEvent& ev) {
 		} else {
 			switch (k) {
 				case WXK_UP:
-					if (selected_item > 0) {
-						selected_item -= 1;
-						Refresh(false);
-						return true;
-					}
-					break;
+					return selectItem(selected_item - 1);
 				case WXK_DOWN:
-					if (selected_item + 1 < itemCount()) {
-						selected_item += 1;
-						Refresh(false);
-						return true;
-					}
-					break;
+					return selectItem(selected_item + 1);
 				case WXK_RETURN:
 					if (!showSubMenu() && (selected_item == NO_SELECTION || itemEnabled(selected_item))) {
 						hide(true, false); // don't veto; always close
@@ -408,6 +467,8 @@ bool DropDownList::onCharInParent(wxKeyEvent& ev) {
 				case WXK_LEFT:
 					if (parent_menu) hide(false);
 					break;
+				case WXK_RIGHT:
+					return showSubMenu();
 				default:
 					// match first character of an item, start searching just after the current selection
 					size_t si = selected_item != NO_SELECTION ? selected_item + 1 : 0;
@@ -424,7 +485,7 @@ bool DropDownList::onCharInParent(wxKeyEvent& ev) {
 							// first character matches
 							selected_item = index;
 							showSubMenu();
-							Refresh(false);
+							selectItem(index);
 							return true;
 						}
 					}
@@ -448,4 +509,6 @@ BEGIN_EVENT_TABLE(DropDownList,wxPopupWindow)
 	EVT_LEFT_UP      (DropDownList::onLeftUp)
 	EVT_MOTION       (DropDownList::onMotion)
 	EVT_LEAVE_WINDOW (DropDownList::onMouseLeave)
+	EVT_MOUSEWHEEL   (DropDownList::onMouseWheel)
+	EVT_SCROLLWIN    (DropDownList::onScroll)
 END_EVENT_TABLE  ()

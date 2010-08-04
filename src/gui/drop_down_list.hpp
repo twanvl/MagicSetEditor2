@@ -78,8 +78,8 @@ class DropDownList : public wxPopupWindow {
 	
 	// --------------------------------------------------- : Layout
 	
-	static const int marginW = 1;
-	static const int marginH = 1;
+	static const int marginW = 0;
+	static const int marginH = 0;
 	
 	// may be changed by derived class
 	int text_offset;	///< Vertical distance between top of item and text
@@ -89,14 +89,15 @@ class DropDownList : public wxPopupWindow {
   private:
 	// --------------------------------------------------- : Data
 	
-	size_t        selected_item;	///< The item that is selected, or NO_SELECTION
-	bool          mouse_down;		///< Is the mouse pressed?
-	DropDownList* open_sub_menu;	///< The sub menu that is currently shown, if any
-	DropDownList* parent_menu;		///< The parent menu, only applies to sub menus
-	ValueViewer*  viewer;			///< The parent viewer object (optional)
-	DropDownHider* hider, *hider2;	///< Class to hide this window when we lose focus
-	bool          close_on_mouse_out; ///< Was the list kept open after selecting a choice, if so, be eager to close it
-		
+	size_t         selected_item;      ///< The item that is selected, or NO_SELECTION
+	bool           mouse_down;         ///< Is the mouse pressed?
+	DropDownList*  open_sub_menu;      ///< The sub menu that is currently shown, if any
+	DropDownList*  parent_menu;        ///< The parent menu, only applies to sub menus
+	ValueViewer*   viewer;             ///< The parent viewer object (optional)
+	DropDownHider* hider, *hider2;     ///< Class to hide this window when we lose focus
+	bool           close_on_mouse_out; ///< Was the list kept open after selecting a choice, if so, be eager to close it
+	int            visible_start;      ///< First visible pixel
+	
 	// --------------------------------------------------- : Events
 	DECLARE_EVENT_TABLE();
 	
@@ -105,16 +106,21 @@ class DropDownList : public wxPopupWindow {
 	void onLeftUp  (wxMouseEvent&);
 	void onMotion(wxMouseEvent&);
 	void onMouseLeave(wxMouseEvent&);
+	void onMouseWheel(wxMouseEvent& ev);
+	void onScroll(wxScrollWinEvent&);
 	
 	// --------------------------------------------------- : Privates
 	
-	/// Return the y coordinate of an item
+	/// Return the y coordinate of an item (in scrolled coordinates)
 	int itemPosition(size_t item) const;
 	
 	void realHide();
 	void hideSubMenu();
 	bool showSubMenu();
 	bool showSubMenu(size_t item, int y);
+	bool selectItem(size_t item);
+	void ensureSelectedItemVisible();
+	void scrollTo(int pos);
 	
 	void draw(DC& dc);
 	void drawItem(DC& dc, int y, size_t item);

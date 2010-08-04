@@ -149,8 +149,8 @@ void GalleryList::RefreshSelection() {
 }
 
 void GalleryList::onScroll(wxScrollWinEvent& ev) {
-    wxEventType type = ev.GetEventType();
-    if (type == wxEVT_SCROLLWIN_TOP) {
+	wxEventType type = ev.GetEventType();
+	if (type == wxEVT_SCROLLWIN_TOP) {
 		scrollTo(0);
 	} else if (type == wxEVT_SCROLLWIN_BOTTOM) {
 		scrollTo(INT_MAX);
@@ -164,7 +164,7 @@ void GalleryList::onScroll(wxScrollWinEvent& ev) {
 		scrollTo(visibleEnd() - mainSize(item_size));
 	} else {
 		scrollTo(ev.GetPosition());
-    }
+	}
 }
 
 void GalleryList::onSize(wxSizeEvent& ev) {
