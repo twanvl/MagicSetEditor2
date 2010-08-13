@@ -5,7 +5,7 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2009-08-10
+version: 2010-06-11
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -174,7 +174,7 @@ init script:
 		replace@(
 			match: "[a-z]",
 			in_context: "[ ]*: <match>|—<match>| — <match>",
-			replace: { to_upper() })
+			replace: { to_upper() })+
 		curly_quotes
 	
 	############################################################## Other boxes
@@ -203,6 +203,7 @@ init script:
 	colorless_color := { "c" }
 	
 	word_count := break_text@(match:"[^[:space:]]+") + length
+	line_count := split_text@(match:"\n+",include_empty:false) + length
 	
 ############################################################## Set fields
 set field:
@@ -318,6 +319,7 @@ card field:
 	card list visible: true
 	card list column: 2
 	description: The type of the card
+	icon: stats/card_type.png
 ############################# Text box
 card field:
 	type: text
@@ -341,6 +343,7 @@ card field:
 	card list column: 3
 	card list width: 50
 	card list name: hand
+	show statistics: false
 	description: The starting and maximum hand size modifier
 card field:
 	type: text
@@ -349,6 +352,7 @@ card field:
 	card list column: 4
 	card list width: 50
 	card list name: life
+	show statistics: false
 	description: The starting life total modifier
 ############################# Card sorting / numbering
 card field:
@@ -395,6 +399,27 @@ card field:
 	description: The copyright and card number of the card
 ############################################################### Extra Statistics
 statistics dimension:
+	name: hand size modifier
+	script: card.handmod
+	icon: stats/number.png
+statistics dimension:
+	name: life total modifier
+	script: card.lifemod
+	icon: stats/number.png
+statistics dimension:
+	name: text length (words)
+	position hint: 100
+	script: word_count(to_text(card.rule_text))
+	numeric: true
+	bin size: 5
+	icon: stats/text_length.png
+statistics dimension:
+	name: text length (lines)
+	position hint: 101
+	script: line_count(to_text(card.rule_text))
+	numeric: true
+	icon: stats/text_length.png
+statistics dimension:
 	name: keywords
 	position hint: 1000
 	script: keyword_usage(unique:true)
@@ -406,13 +431,6 @@ statistics dimension:
 	position hint: 1001
 	script: stylesheet.short_name
 	icon: stats/stylesheet.png
-statistics dimension:
-	name: text length (words)
-	position hint: 100
-	script: word_count(to_text(card.rule_text))
-	numeric: true
-	bin size: 5
-	icon: stats/text_length.png
 ############################################################## Auto replace
 # Do we need categories?
 #auto replace category: text box
@@ -565,7 +583,7 @@ keyword parameter type:
 	example: Forest
 keyword parameter type:
 	name: a
-	match: [ ]*|[ an?]*
+	match: [an?]*
 ############################# All Magic keywords
 # By JrEye and Neko_Asakami, Updated by Pichoro and Buttock1234
 keyword:
@@ -816,7 +834,7 @@ keyword:
 	keyword: Ninjutsu
 	match: ninjutsu <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}, Return an unblocked attacker you control to hand: That card enters the battlefield from your hand tapped and attacking.
+	reminder: {param1}, Return an unblocked attacker you control to hand: Put it onto the battlefield from your hand tapped and attacking.
 keyword:
 	keyword: Epic
 	match: epic
@@ -841,7 +859,7 @@ keyword:
 	keyword: Transmute
 	match: transmute <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}, Discard it: Search your library for a card with the same converted mana cost as the discarded card, reveal it, and put it into your hand. Then shuffle your library. Activate only as a sorcery.
+	reminder: {param1}, Discard it: Search your library for a card with the same converted mana cost as the discarded card, reveal it, and put it into your hand. Then shuffle your library. Transmute only as a sorcery.
 keyword:
 	keyword: Dredge
 	match: dredge <atom-param>number</atom-param>
@@ -916,7 +934,7 @@ keyword:
 	keyword: Deathtouch
 	match: deathtouch
 	mode: expert
-	reminder: Creatures dealt damage by it are destroyed. You can divide its combat damage among any of the creatures blocking or blocked by it.
+	reminder: Any amount of damage it deals to a creature is enough to destroy it.
 keyword:
 	keyword: Reach
 	match: reach
@@ -950,7 +968,7 @@ keyword:
 	keyword: Transfigure
 	match: transfigure <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}, Sacrifice it: Search your library for a creature card with the same converted mana cost as the sacrificed card and have that card enter the battlefield. Then shuffle your library. Activate only as a sorcery.
+	reminder: {param1}, Sacrifice it: Search your library for a creature card with the same converted mana cost as the sacrificed card and put that card onto the battlefield. Then shuffle your library. Transfigure only as a sorcery.
 keyword:
 	keyword: Aura swap
 	match: aura swap <atom-param>cost</atom-param>
@@ -980,7 +998,7 @@ keyword:
 	keyword: Fortify
 	match: fortify <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}: Attach to target land you control. Fortify only as a sorcery. It enters the battlefield unattached and stays in the battlefield if the land exits the battlefield.
+	reminder: {param1}: Attach to target land you control. Fortify only as a sorcery. It enters the battlefield unattached and stays on the battlefield if the land leaves.
 keyword:
 	keyword: Grandeur
 	match: Grandeur
@@ -993,9 +1011,9 @@ keyword:
 	reminder: You may cast it for its evoke cost. If you do, it’s sacrificed when it enters the battlefield.
 keyword:
 	keyword: Champion
-	match: champion<atom-param>a</atom-param><atom-param>name</atom-param>
+	match: champion <atom-param>a</atom-param> <atom-param>name</atom-param>
 	mode: expert
-	reminder: When it enters the battlefield, sacrifice it unless you exile another {param2} you control. When it exits the battlefield, return that card to the battlefield.
+	reminder: When it enters the battlefield, sacrifice it unless you exile another {param2} you control. When it leaves the battlefield, return that card to the battlefield.
 keyword:
 	keyword: Clash
 	match: clash
@@ -1055,7 +1073,7 @@ keyword:
 	keyword: Unearth
 	match: unearth <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}: Return it from your graveyard to the battlefield. If it is a creature, it gains haste. Exile it at the beginning of the end step or if it would exit the battlefield. Unearth only as a sorcery.
+	reminder: {param1}: Return it from your graveyard to the battlefield. If it is a creature, it gains haste. Exile it at the beginning of the end step or if it would leave the battlefield. Unearth only as a sorcery.
 keyword:
 	keyword: Devour
 	match: devour <atom-param>number</atom-param>
@@ -1081,3 +1099,33 @@ keyword:
 	match: intimidate
 	mode: core
 	reminder: It can’t be blocked except by artifact creatures and/or creatures that share a color with it.
+keyword:
+	keyword: Landfall
+	match: Landfall
+	mode: pseudo
+	rules: Landfall — Whenever a land enters the battlefield under your control, [effect].
+keyword:
+	keyword: Multikicker
+	match: multikicker <atom-param>cost</atom-param>
+	mode: expert
+	reminder: You may {for_mana_costs(add:"pay an additional ", param1)} any number of times as you cast it.
+keyword:
+	keyword: Annihilator
+	match: annihilator <atom-param>number</atom-param>
+	mode: expert
+	reminder: Whenever it attacks, defending player sacrifices {english_number_a(param1)} permanent(s).
+keyword:
+	keyword: Rebound
+	match: rebound
+	mode: expert
+	reminder: If you cast it from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast it from exile without paying its mana cost.
+keyword:
+	keyword: Totem armor
+	match: totem armor
+	mode: expert
+	reminder: If enchanted creature would be destroyed, instead remove all damage from the creature and destroy it.
+keyword:
+	keyword: Level up
+	match: level up <atom-param>cost</atom-param>
+	mode: expert
+	reminder: {param1}: Put a level counter on it. Level up only as a sorcery.

@@ -1,31 +1,24 @@
-﻿mse version: 0.3.6
+﻿mse version: 0.3.8
 game: vanguard
 short name: Standard
 installer group: Magic Vanguard/normal style
 icon: card-sample.png
 position hint: 01
 
-version: 2008-06-30
+version: 2010-03-22
 depends on:
 	package: vanguard.mse-game
 	version: 2007-12-29
 depends on:
 	package: magic-mana-small.mse-symbol-font
 	version: 2007-09-23
-depends on:
-	package: magic-mana-large.mse-symbol-font
-	version: 2007-09-23
 
-card background: white
 card width: 375
 card height: 523
 card dpi: 111.7142857
-
 # Author: Wolfwood
 # Based on: magic-new
-
 ############################################################## Extra scripts
-
 init script:
 	# Use the normal tap symbol
 	mana_t := {
@@ -37,7 +30,6 @@ init script:
 	guild_mana := { styling.use_guild_mana_symbols }
 
 ############################################################## Extra style options
-
 styling field:
 	type: boolean
 	name: use guild mana symbols
@@ -69,10 +61,9 @@ styling style:
 	tap symbol:
 		render style: both
 		choice images:
-			modern:     /magic-mana-large.mse-symbol-font/mana_t.png
-			old:        /magic-mana-large.mse-symbol-font/mana_t_old.png
-			diagonal T: /magic-mana-large.mse-symbol-font/mana_t_older.png
-
+			modern:     /magic-mana-small.mse-symbol-font/mana_t.png
+			old:        /magic-mana-small.mse-symbol-font/mana_t_old.png
+			diagonal T: /magic-mana-small.mse-symbol-font/mana_t_older.png
 ############################################################## Card fields
 card style:
 	############################# Background stuff
@@ -96,7 +87,6 @@ card style:
 		render style: image
 		choice images:
 			normal: card.jpg
-
 	############################# Name line
 	name:
 		left: 74
@@ -111,7 +101,6 @@ card style:
 			size: 17
 			weight: bold
 			color: rgb(0,0,0)
-
 	############################# Image
 	image:
 		left:	46
@@ -119,9 +108,7 @@ card style:
 		width:	281
 		height:	248
 		z index: 1
-
 	############################# Card type
-
 	type:
 		left: 53
 		top : 306
@@ -133,7 +120,6 @@ card style:
 			name: Matrix
 			size: 13.5
 			color: rgb(0,0,0)
-
 	############################# Text box
 	rule text:
 		left:
@@ -166,7 +152,6 @@ card style:
 		padding bottom: 2
 		line height hard: 1.2
 		line height line: 1.5
-	
 	flavor text:
 		left: 76
 		top : 393
@@ -186,7 +171,6 @@ card style:
 		padding top:    2
 		padding right:  2
 		padding bottom: 2
-	
 	############################# Life/Hand mod
 	lifemod:
 		z index: 4
@@ -199,7 +183,6 @@ card style:
 			name: Mplantin
 			size: 12
 			color: rgb(0,0,0)
-	
 	handmod:
 		z index: 4
 		left:	43
@@ -211,10 +194,8 @@ card style:
 			name: Mplantin
 			size: 12
 			color: rgb(0,0,0)
-	
 	############################# Card sorting / numbering
 	############################# Copyright stuff
-	
 	illustrator:
 		left: 40
 		top : 466
@@ -226,7 +207,6 @@ card style:
 			name: Matrix
 			size: 10
 			color: rgb(0,0,0)
-	
 	copyright line:
 		left: 40
 		top : 476
@@ -238,9 +218,7 @@ card style:
 			name: MPlantin
 			size: 6
 			color: rgb(0,0,0)
-
 ############################################################## Extra card fields
-
 extra card field:
 	type: choice
 	name: orb
@@ -252,7 +230,6 @@ extra card field:
 	choice: green
 	choice: artifact
 	choice: multicolor
-
 extra card style:
 	orb:
 		left:	179
@@ -262,10 +239,10 @@ extra card style:
 		z index: 2
 		render style: image
 		choice images:
-			white:		cost_w.png
-			blue:		cost_u.png
-			black:		cost_b.png
-			red:		cost_r.png
-			green:		cost_g.png
-			artifact:		cost_a.png
-			multicolor:	cost_m.png
+			white: cost_w.png
+			blue: cost_u.png
+			black: cost_b.png
+			red: cost_r.png
+			green: cost_g.png
+			artifact: cost_a.png
+			multicolor: cost_m.png
