@@ -1,5 +1,5 @@
 ﻿mse version: 0.3.8
-version: 2009-02-04
+version: 2010-05-16
 short name: New (official)
 position hint: 1
 installer group: VS System/Symbol Fonts/Official New
@@ -26,6 +26,10 @@ symbol:
 symbol:
 	code: Activate
 	image: activate.png
+	image font size: 176
+symbol:
+	code: Alpha Flight
+	image: alphaflight.png
 symbol:
 	code: Anti-Matter
 	image: anti-matter.png
@@ -66,18 +70,16 @@ symbol:
 symbol:
 	code: Horsemen of Apocalypse
 	image: apocalypse.png
-#symbol:
-#	code: Invaders
-#	image: invaders.png
 symbol:
 	code: JLA
 	image: jla.png
 symbol:
 	code: JSA
 	image: jsa.png
-#symbol:
-#	code: Kree
-#	image: kree.png
+symbol:
+	code: Kree
+	image: kree.png
+	image font size: 117
 symbol:
 	code: Marvel Knights
 	image: marvelknights.png
@@ -102,9 +104,10 @@ symbol:
 symbol:
 	code: Sinister Syndicate
 	image: sinistersyndicate.png
-#symbol:
-#	code: Skrull
-#	image: skrull.png
+symbol:
+	code: Skrull
+	image: skrull.png
+	image font size: 147
 symbol:
 	code: Speed Force
 	image: speedforce.png
@@ -163,6 +166,24 @@ symbol:
 	code: 9
 	image: 9.png
 symbol:
+	code: 10
+	image: 10.png
+symbol:
+	code: 11
+	image: 11.png
+symbol:
+	code: 12
+	image: 12.png
+symbol:
+	code: 13
+	image: 13.png
+symbol:
+	code: 14
+	image: 14.png
+symbol:
+	code: 15
+	image: 15.png
+symbol:
 	code: X
 	image: X.png
 ##############################################################
@@ -184,9 +205,16 @@ insert symbol menu:
 		item: 7
 		item: 8
 		item: 9
+		item: 10
+		item: 11
+		item: 12
+		item: 13
+		item: 14
+		item: 15
 		item: X
 	item:
 		name: Marvel Teams
+		item: Alpha Flight
 		item: Avengers
 		item: Brotherhood
 		item: Crime Lords
@@ -196,11 +224,13 @@ insert symbol menu:
 		item: Hellfire Club
 		item: Heralds of Galactus
 		item: Horsemen of Apocalypse
+		item: Kree
 		item: Marvel Knights
 		item: Masters of Evil
 		item: Negative Zone
 		item: Shi'ar
 		item: Shield
+		item: Skrull
 		item: Sinister Syndicate
 		item: Spider-Friends
 		item: Thunderbolts
