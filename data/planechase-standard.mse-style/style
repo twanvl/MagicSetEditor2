@@ -1,24 +1,24 @@
 ﻿mse version: 0.3.8
 game: planechase
 short name: Standard
-installer group: Magic Planechase/normal style
+installer group: Magic Planes/normal style
 icon: card-sample.png
 position hint: 01
 
-version: 2009-08-12
+version: 2010-05-18
 depends on:
 	package: planechase.mse-game
 	version: 2009-08-11
 depends on:
 	package: magic-mana-small.mse-symbol-font
-	version: 2007-09-23
+	version: 2009-08-10
 depends on:
 	package: magic-future-common.mse-include
 	version: 2007-09-23
 
-card width: 523
-card height: 375
-card dpi: 111.7142857
+card width: 800
+card height: 559
+card dpi: 168.7055172
 #By Pichoro
 #Images by Art_Freak
 ############################################################## Extra scripts
@@ -84,44 +84,44 @@ styling style:
 card style:
 	############################# Name line
 	name:
-		left: 84
-		top : 20
-		width: 354
-		height: 23
+		left: 128
+		top: 30
+		width: 541
+		height: 34
 		alignment: bottom center shrink-overflow
 		padding bottom: 0
 		z index: 2
 		font:
 			name: Matrix
-			size: 17
+			size: 26
 			weight: bold
-			color: rgb(0,0,0)
+			color: black
 	############################# Image
 	image:
-		left:	16
-		top:	15
-		width:	492
-		height:	343
+		left: 24
+		top: 22
+		width: 753
+		height:	511
 		z index: 1
 		mask: image_mask.png
 	############################# Card type
 	type:
-		left: 114
-		top : 243
-		width: 294
-		height: 23
+		left: 174
+		top: 362
+		width: 450
+		height: 34
 		alignment: bottom center shrink-overflow
 		padding bottom: 0
 		z index: 2
 		font:
 			name: Matrix
-			size: 13.5
+			size: 20
 			color: black
 	rarity:
-		right: 408
-		top : 253
-		width: 28
-		height: 14
+		right: 624
+		top: 377
+		width: 43
+		height: 21
 		z index: 2
 		render style: image
 		alignment: middle right
@@ -139,27 +139,27 @@ card style:
 	############################# Card sorting / numbering
 	############################# Copyright stuff
 	illustrator:
-		left: 168
-		top : 351
-		width: 214
-		height: 13
+		left: 257
+		top: 523
+		width: 327
+		height: 19
 		z index: 2
 		alignment: middle center
 		font:
 			name: Matrix
-			size: 8
+			size: 12
 			weight: bold
 			color: white
 	copyright line:
-		left: 154
-		top : 361
-		width: 214
-		height: 13
+		left: 236
+		top: 538
+		width: 327
+		height: 19
 		z index: 2
 		alignment: middle center
 		font:
 			name: MPlantin
-			size: 6
+			size: 9
 			color: white
 ############################################################## Extra card fields
 extra card field:
@@ -190,47 +190,47 @@ extra card field:
 	description: The rules and flavor text for the card; use up and down arrows to switch
 extra card style:
 	background:
-		left:	0
-		top:	0
-		width:	523
-		height:	375
+		left: 0
+		top: 0
+		width: 800
+		height: 559
 		z index: 0
 		render style: image
 		choice images:
 			frame: card.png
 	chaos symbol:
-		left: 62
-		top: 318
-		width: 25
-		height: 22
+		left: 95
+		top: 474
+		width: 38
+		height: 33
 		z index: 2
 		render style: image
 		choice images:
 			chaos: /magic-mana-small.mse-symbol-font/mana_chaos.png
 	paintbrush:
-		left: { 245 - card_style.illustrator.content_width * 0.5 }
-		top : 352
-		width: 30
-		height: 12
+		left: { 375 - card_style.illustrator.content_width * 0.5 }
+		top: 525
+		width: 46
+		height: 18
 		z index: 6
 		render style: image
 		choice images:
 			white: /magic-future-common.mse-include/paintbrush_white.png
 	text:
-		left: 61
-		width: 402
-		top: 270
-		height: 78
-		paragraph height: 39
+		left: 93
+		width: 615
+		top: 402
+		height: 116
+		paragraph height: 58
 		font:
 			name: MPlantin
 			italic name: MPlantin-Italic
-			size: 10.5
-			scale down to: 0.5
+			size: 16
+			scale down to: 1
 			color: black
 		symbol font:
 			name: { styling.text_box_mana_symbols }
-			size: 10.5
+			size: 16
 		alignment: middle left
 		z index: 2
 		line height hard: 1.1
