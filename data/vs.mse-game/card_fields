@@ -42,7 +42,6 @@ card field:
 	choice: plot twist
 	choice: planet
 	default: card_type()
-	show statistics: false
 	description: The frame of the card.
 ############################# Name line
 card field:

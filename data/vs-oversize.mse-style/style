@@ -6,7 +6,7 @@ installer group: VS System/Oversize Avatar
 icon: card-sample.png
 position hint: 007
 
-version: 2009-01-18
+version: 2010-08-13
 depends on:
 	package: vs.mse-game
 	version: 2008-10-26
@@ -20,11 +20,9 @@ depends on:
 	package: vs-standard-official.mse-symbol-font
 	version: 2008-01-03
 
-card background: white
 card width: 375
 card height: 523
 card dpi: 75
-
 ############################################################## Extra scripts
 init script:
 	card_shape := { if styling.style_sorting then "avatar" else "new" }
@@ -54,7 +52,7 @@ init script:
 			}) +
 		# step 3 : Expand shortcut words ~ and CARDNAME
 		replace_rule(
-			match: "~|~THIS~|CARDNAME",
+			match: "CARDNAME",
 			in_context: "(^|[[:space:]])<match>",
 			replace: "<atom-cardname>&</atom-cardname>"
 			) +
@@ -69,7 +67,7 @@ init script:
 			replace: "<sym-auto>&</sym-auto>") +
 		# step 5b: Majority of affiliation symbols
 		replace_rule(
-			match: "Activate|Avengers|B.P.R.D.|Brotherhood|Crime Lords|Defenders|Doom|Fantastic Four|Gotham Knights|Green Lantern|Hellfire Club|Heralds of Galactus|Horsemen of Apocalypse|Invaders|JLA|JSA|Kree|Marvel Knights|Masters of Evil|Negative Zone|Planet|Shadowpact|Shi'ar|Sinister Syndicate|Skrull|Speed Force|Spider-Friends|Team Superman|Thule Society|Thunderbolts|Teen Titans|Underworld|Warbound|X-Men",
+			match: "Activate|Alpha Flight|Avengers|B.P.R.D.|Brotherhood|Crime Lords|Defenders|Doom|Fantastic Four|Gotham Knights|Green Lantern|Hellfire Club|Heralds of Galactus|Horsemen of Apocalypse|Invaders|JLA|JSA|Kree|Marvel Knights|Masters of Evil|Negative Zone|Planet|Shadowpact|Shi'ar|Sinister Syndicate|Skrull|Speed Force|Spider-Friends|Team Superman|Thule Society|Thunderbolts|Teen Titans|Underworld|Warbound|X-Men",
 			replace: "<sym-auto>&</sym-auto>") +
 		# step 5c: SHIELD Variations
 		replace_rule(
@@ -118,22 +116,7 @@ card style:
 		z index: -2
 		render style: image
 		popup style: in place
-		choice images:
-			characters visible character:					card.png
-			characters visible character dual:				card.png
-			characters visible character dual (new):			card.png
-			characters hidden concealed:					card.png
-			characters hidden concealed dual:				card.png
-			characters hidden concealed dual (new):				card.png
-			characters concealed-optional concealed-optional character:	card.png
-			characters concealed-optional concealed-optional dual:		card.png
-			characters concealed-optional concealed-optional dual (new):	card.png
-			equipment visible equipment:					card.png
-			equipment concealed equipment:					card.png
-			equipment concealed-optional equipment:				card.png
-			location:							card.png
-			plot twist:							card.png
-			planet:								card.png
+		image: card.png
 	############################# Name line
 	full name:
 		left: 80

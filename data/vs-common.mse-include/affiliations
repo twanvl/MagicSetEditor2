@@ -1,6 +1,7 @@
 # Affiliation images
 
 choice images:
+	Marvel A-C Alpha Flight: /vs-standard-official.mse-symbol-font/alphaflight.png
 	Marvel A-C Avengers: /vs-standard-official.mse-symbol-font/avengers.png
 	Marvel A-C Brotherhood: /vs-standard-official.mse-symbol-font/brotherhood.png
 	Marvel A-C Crime Lords: /vs-standard-official.mse-symbol-font/crimelords.png
@@ -16,6 +17,7 @@ choice images:
 	Marvel N-S Shi'ar: /vs-standard-official.mse-symbol-font/shiar.png
 	Marvel N-S Shield: /vs-standard-official.mse-symbol-font/shield.png
 	Marvel N-S Sinister Syndicate: /vs-standard-official.mse-symbol-font/sinistersyndicate.png
+	Marvel N-S Skrull: /vs-standard-official.mse-symbol-font/skrull.png
 	Marvel N-S Spider-Friends: /vs-standard-official.mse-symbol-font/spiderman.png
 	Marvel T-Z Thunderbolts: /vs-standard-official.mse-symbol-font/thunderbolts.png
 	Marvel T-Z Underworld: /vs-standard-official.mse-symbol-font/underworld.png

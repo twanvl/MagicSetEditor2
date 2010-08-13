@@ -36,3 +36,6 @@ auto replace:
 auto replace:
 	match: @
 	replace: <sym>@</sym>
+auto replace:
+	match: ~
+	replace: CARDNAME

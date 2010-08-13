@@ -8,6 +8,7 @@ choice:
 	name: Marvel
 	choice:
 		name: A-C
+		choice: Alpha Flight
 		choice: Avengers
 		choice: Brotherhood
 		choice: Crime Lords
@@ -28,6 +29,7 @@ choice:
 		choice: Shi'ar
 		choice: Shield
 		choice: Sinister Syndicate
+		choice: Skrull
 		choice: Spider-Friends
 	choice:
 		name: T-Z
@@ -61,6 +63,8 @@ choice:
 	choice: B.P.R.D.
 	choice: Thule Society
 script:
+	if contains(card.team, match:"Alpha Flight") then "Marvel A-C Alpha Flight" else
+	if contains(card.team, match:"ALPHA FLIGHT") then "Marvel A-C Alpha Flight" else
 	if contains(card.team, match:"Avengers") then "Marvel A-C Avengers" else
 	if contains(card.team, match:"AVENGERS") then "Marvel A-C Avengers" else
 	if contains(card.team, match:"Brood") then "Marvel A-C Brood" else
@@ -95,6 +99,8 @@ script:
 	if contains(card.team, match:"SHIELD") then "Marvel N-S Shield" else
 	if contains(card.team, match:"Sinister Syndicate") then "Marvel N-S Sinister Syndicate" else
 	if contains(card.team, match:"SINISTER SYNDICATE") then "Marvel N-S Sinister Syndicate" else
+	if contains(card.team, match:"Skrull") then "Marvel N-S Skrull" else
+	if contains(card.team, match:"SKRULL") then "Marvel N-S Skrull" else
 	if contains(card.team, match:"Spider-Friends") then "Marvel N-S Spider-Friends" else
 	if contains(card.team, match:"SPIDER-FRIENDS") then "Marvel N-S Spider-Friends" else
 	if contains(card.team, match:"Thunderbolts") then "Marvel T-Z Thunderbolts" else

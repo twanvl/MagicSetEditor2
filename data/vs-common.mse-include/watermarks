@@ -1,6 +1,7 @@
 # Watermark images
 
 choice images:
+	Marvel A-C Alpha Flight: script: set_combine(combine:"shadow", set_alpha(alpha: 0.2, input:"/vs-standard-official.mse-symbol-font/alphaflight.png"))
 	Marvel A-C Avengers: script: set_combine(combine:"shadow", set_alpha(alpha: 0.2, input:"/vs-standard-official.mse-symbol-font/avengers.png"))
 	Marvel A-C Brotherhood: script: set_combine(combine:"shadow", set_alpha(alpha: 0.2, input:"/vs-standard-official.mse-symbol-font/brotherhood.png"))
 	Marvel A-C Crime Lords: script: set_combine(combine:"shadow", set_alpha(alpha: 0.2, input:"/vs-standard-official.mse-symbol-font/crimelords.png"))
@@ -16,6 +17,7 @@ choice images:
 	Marvel N-S Shi'ar: script: set_combine(combine:"shadow", set_alpha(alpha: 0.2, input:"/vs-standard-official.mse-symbol-font/shiar.png"))
 	Marvel N-S Shield: script: set_combine(combine:"shadow", set_alpha(alpha: 0.2, input:"/vs-standard-official.mse-symbol-font/shield.png"))
 	Marvel N-S Sinister Syndicate: script: set_combine(combine:"shadow", set_alpha(alpha: 0.2, input:"/vs-standard-official.mse-symbol-font/sinistersyndicate.png"))
+	Marvel N-S Skrull: script: set_combine(combine:"shadow", set_alpha(alpha: 0.2, input:"/vs-standard-official.mse-symbol-font/skrull.png"))
 	Marvel N-S Spider-Friends: script: set_combine(combine:"shadow", set_alpha(alpha: 0.2, input:"/vs-standard-official.mse-symbol-font/spiderman.png"))
 	Marvel T-Z Thunderbolts: script: set_combine(combine:"shadow", set_alpha(alpha: 0.2, input:"/vs-standard-official.mse-symbol-font/thunderbolts.png"))
 	Marvel T-Z Underworld: script: set_combine(combine:"shadow", set_alpha(alpha: 0.2, input:"/vs-standard-official.mse-symbol-font/underworld.png"))

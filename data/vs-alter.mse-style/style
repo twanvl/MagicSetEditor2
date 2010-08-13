@@ -1,4 +1,4 @@
-﻿mse version: 0.3.7
+﻿mse version: 0.3.8
 game: vs
 full name: VS Alter Ego
 installer group: VS System/Alter Ego
@@ -6,7 +6,7 @@ short name: Alter Ego
 icon: card-sample.png
 position hint: 008
 
-version: 2008-10-26
+version: 2010-08-13
 depends on:
 	package: vs.mse-game
 	version: 2008-10-26
@@ -17,11 +17,9 @@ depends on:
 	package: vs-standard-arrow.mse-symbol-font
 	version: 2008-01-03
 
-card background: white
 card width: 375
 card height: 523
 card dpi: 150
-
 ############################################################## Extra scripts
 init script:
 	card_shape := { if styling.style_sorting then "alter ego" else "new" }
@@ -53,22 +51,7 @@ card style:
 		z index: -2
 		render style: image
 		popup style: in place
-		choice images:
-			characters visible character:					card.jpg
-			characters visible character dual:				card.jpg
-			characters visible character dual (new):			card.jpg
-			characters hidden concealed:					card.jpg
-			characters hidden concealed dual:				card.jpg
-			characters hidden concealed dual (new):				card.jpg
-			characters concealed-optional concealed-optional character:	card.jpg
-			characters concealed-optional concealed-optional dual:		card.jpg
-			characters concealed-optional concealed-optional dual (new):	card.jpg
-			equipment visible equipment:					card.jpg
-			equipment concealed equipment:					card.jpg
-			equipment concealed-optional equipment:				card.jpg
-			location:							card.jpg
-			plot twist:							card.jpg
-			planet:								card.jpg
+		image: card.jpg
 	############################# Name line
 	full name:
 		left: 80

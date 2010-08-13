@@ -6,22 +6,20 @@ installer group: VS System/New style/Normal
 icon: card-sample.png
 position hint: 001
 
-version: 2009-01-18
+version: 2010-07-30
 depends on:
 	package: vs.mse-game
 	version: 2008-10-26
 depends on:
 	package: vs-common.mse-include
-	version: 2007-09-06
+	version: 2008-01-03
 depends on:
 	package: vs-standard-official.mse-symbol-font
 	version: 2008-01-03
 
-card background: white
 card width: 375
 card height: 523
 card dpi: 150
-
 ############################################################## Extra scripts
 init script:
 	con_opt_template_1 := {
@@ -63,7 +61,7 @@ init script:
 			}) +
 		# step 3 : Expand shortcut words ~ and CARDNAME
 		replace_rule(
-			match: "~|~THIS~|CARDNAME",
+			match: "CARDNAME",
 			in_context: "(^|[[:space:]])<match>",
 			replace: "<atom-cardname>&</atom-cardname>"
 			) +
@@ -78,7 +76,7 @@ init script:
 			replace: "<sym-auto>&</sym-auto>") +
 		# step 5b: Majority of affiliation symbols
 		replace_rule(
-			match: "Activate|Avengers|B.P.R.D.|Brotherhood|Crime Lords|Defenders|Doom|Fantastic Four|Gotham Knights|Green Lantern|Hellfire Club|Heralds of Galactus|Horsemen of Apocalypse|Invaders|JLA|JSA|Kree|Marvel Knights|Masters of Evil|Negative Zone|Planet|Shadowpact|Shi'ar|Sinister Syndicate|Skrull|Speed Force|Spider-Friends|Team Superman|Thule Society|Thunderbolts|Teen Titans|Underworld|Warbound|X-Men",
+			match: "Activate|Alpha Flight|Avengers|B.P.R.D.|Brotherhood|Crime Lords|Defenders|Doom|Fantastic Four|Gotham Knights|Green Lantern|Hellfire Club|Heralds of Galactus|Horsemen of Apocalypse|Invaders|JLA|JSA|Kree|Marvel Knights|Masters of Evil|Negative Zone|Planet|Shadowpact|Shi'ar|Sinister Syndicate|Skrull|Speed Force|Spider-Friends|Team Superman|Thule Society|Thunderbolts|Teen Titans|Underworld|Warbound|X-Men",
 			replace: "<sym-auto>&</sym-auto>") +
 		# step 5c: SHIELD Variations
 		replace_rule(
