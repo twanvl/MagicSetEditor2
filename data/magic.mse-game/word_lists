@@ -35,21 +35,16 @@ word list:
 		line below: true
 	word: Angel
 	word: Beast
-	word: Bird
 	word: Construct
 	word: Demon
 	word: Dragon
-	word: Drake
-	word: Elemental
 	word: Elf
 	word: Faerie
 	word: Giant
 	word: Goblin
 	word: Golem
 	word: Human
-	word: Illusion
 	word: Merfolk
-	word: Treefolk
 	word: Zombie
 	word:
 		name: All Races
@@ -106,6 +101,7 @@ word list:
 			name: E
 			word: Efreet
 			word: Egg
+			word: Eldrazi
 			word: Elemental
 			word: Elephant
 			word: Elf
@@ -229,6 +225,7 @@ word list:
 				word: Shade
 				word: Shapeshifter
 				word: Sheep
+				word: Siren
 				word: Skeleton
 				word: Slith
 				word: Sliver
@@ -248,6 +245,7 @@ word list:
 				word: Squid
 				word: Squirrel
 				word: Starfish
+				word: Surrakar
 		word:
 			name: T
 			word: Tetravite
@@ -291,17 +289,11 @@ word list:
 	word:
 		script: all_classes()
 		line below: true
-	word: Advisor
-	word: Archer
-	word: Artificer
-	word: Assassin
 	word: Beast
 	word: Cleric
 	word: Druid
 	word: Knight
-	word: Mutant
 	word: Rogue
-	word: Scout
 	word: Shaman
 	word: Soldier
 	word: Warrior
@@ -312,6 +304,7 @@ word list:
 		word:
 			name: A-C
 			word: Advisor
+			word: Ally
 			word: Archer
 			word: Archon
 			word: Artificer
@@ -361,6 +354,7 @@ word list:
 			word: Skeleton
 			word: Soldier
 			word: Spellshaper
+			word: Spirit
 			word: Survivor
 		word:
 			name: T-Z
@@ -373,7 +367,7 @@ word list:
 word list:
 	name: artifact
 	word:
-		name:
+		script: all_sub_types(match: "Artifact")
 		line below: true
 	word: Contraption
 	word: Equipment
@@ -400,7 +394,7 @@ word list:
 word list:
 	name: enchantment
 	word:
-		name:
+		script: all_sub_types(match: "Enchantment")
 		line below: true
 	word: Aura
 	word: Shrine
@@ -408,6 +402,26 @@ word list:
 word list:
 	name: spell
 	word:
-		name:
+		script: all_sub_types(match: "Instant") + "," + all_sub_types(match: "Sorcery")
 		line below: true
 	word: Arcane
+	word: Trap
+
+word list:
+	name: planeswalker
+	word:
+		script: all_sub_types(match: "Planeswalker")
+		line below: true
+	word: Ajani
+	word: Bolas
+	word: Chandra
+	word: Elspeth
+	word: Garruk
+	word: Gideon
+	word: Jace
+	word: Koth
+	word: Liliana
+	word: Nissa
+	word: Sarkhan
+	word: Sorin
+	word: Tezzeret

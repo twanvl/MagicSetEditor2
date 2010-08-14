@@ -137,6 +137,12 @@ default set style:
 			fill color 2:   rgb(58,7,80)
 			border color 1: rgb(255,255,255)
 			border color 2: rgb(255,255,255)
+		variation:
+			name: watermark
+			border radius: 0.10
+			fill type: solid
+			fill color:   rgb(255,255,255)
+			border color: rgba(0,0,0,0)
 	automatic reminder text:
 		render style: checklist
 		direction: vertical

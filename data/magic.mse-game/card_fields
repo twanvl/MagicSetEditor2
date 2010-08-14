@@ -1,5 +1,4 @@
-﻿
-############################################################## Card fields
+﻿############################################################## Card fields
 
 ############################# Automatic fields
 
@@ -17,6 +16,7 @@ card field:
 	choice: planeswalker
 	choice: shifted
 	choice: rulestip
+	choice: leveler
 	script:
 		stylesheet   # indicate that this value should be updated when the stylesheet changes
 		card_shape() # determined by the style
@@ -32,7 +32,6 @@ card field:
 	card list width: 150
 	description: The name of the card
 	script: if contains(card.shape, match:"split") then card.name + " // " + card.name_2 else card.name
-
 ############################# Background stuff
 card field:
 	type: color
@@ -90,7 +89,7 @@ card field:
 		name: reversed
 		enabled: { card_color_color_count(card.card_color) >= 2 and not chosen(choice:"overlay",card.card_color) }
 	script: card_color_filter(value)
-	default: card_color(casting_cost: card.casting_cost, rules_text: card.rule_text, type: card.super_type, watermark: card.watermark, card_name: card.name)
+	default: card_color(casting_cost: card.casting_cost, rules_text: card.rule_text, type: card.super_type, watermark: card.watermark, card_name: card.name, default: "colorless")
 	show statistics: false
 	description: The frame of the card, used to indicate card color.
 
@@ -153,6 +152,7 @@ card field:
 	icon: stats/card_type.png
 	position hint: 30
 	script: super_type_filter(value)
+	show statistics: false
 card field:
 	type: text
 	name: sub type
@@ -265,6 +265,17 @@ card field:
 	show statistics: false
 	description: The loyalty cost for the fifth ability of a planeswalker
 	default: card.toughness_2 #For back compatibility with past templates.  Take out a couple versions after 0.3.8
+############################# Levels
+card field:
+	type: text
+	name: level 1
+	description: The first level of a creature
+	show statistics: false
+card field:
+	type: text
+	name: level 2
+	description: The second level of a creature
+	show statistics: false
 ############################# PT
 card field:
 	type: text
@@ -382,7 +393,7 @@ card field:
 		name: reversed
 		enabled: { card_color_color_count(card.card_color) >= 2 and not chosen(choice:"overlay",card.card_color_2) }
 	script: card_color_filter(value)
-	default: card_color(casting_cost: card.casting_cost_2, type: card.super_type_2, rules_text: card.rule_text_2, watermark: card.watermark_2, card_name: card.name_2)
+	default: card_color(casting_cost: card.casting_cost_2, type: card.super_type_2, rules_text: card.rule_text_2, watermark: card.watermark_2, card_name: card.name_2, default: card.card_color)
 	show statistics: false
 	description: The frame of a card
 card field:
@@ -464,6 +475,13 @@ card field:
 	description: The rules text of the card
 card field:
 	type: text
+	name: rule text 3
+	script: text_filter(input: value, card_name: card.name)
+	show statistics: false
+	multi line: true
+	description: The rules text of the card
+card field:
+	type: text
 	name: flavor text 2
 	script: flavor_text_filter(value)
 	multi line: true
@@ -517,6 +535,35 @@ card field:
 		)
 	card list width: 50
 	card list name: P/T2
+	show statistics: false
+	description: Power/Toughness of a creature
+card field:
+	type: text
+	name: power 3
+	icon: stats/power.png
+	show statistics: false
+	script: type_over_pt(value)
+	description: The power of a creature
+card field:
+	type: text
+	name: toughness 3
+	icon: stats/toughness.png
+	show statistics: false
+	description: The toughness of a creature
+card field:
+	type: text
+	name: pt 3
+	save value: false
+	script:
+		combined_editor(
+			field1: card.power_3,
+			separator: language().pt_separator,
+			field2: card.toughness_3,
+			soft_before_empty: true,
+			hide_when_empty:   true
+		)
+	card list width: 50
+	card list name: P/T3
 	show statistics: false
 	description: Power/Toughness of a creature
 card field:

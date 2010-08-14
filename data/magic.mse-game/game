@@ -5,8 +5,8 @@ installer group: magic/game files
 icon: card-back.png
 position hint: 01
 
-version: 2009-08-10
-depends on: magic-blends.mse-include 2007-09-23
+version: 2010-06-11
+depends on: magic-blends.mse-include 2010-04-07
 depends on: magic-watermarks.mse-include 2007-09-23
 
 ############################################################## The script
@@ -14,6 +14,8 @@ depends on: magic-watermarks.mse-include 2007-09-23
 init script: include file: script
 
 ############################################################## Lots of lists
+
+################## There be dragons here. -Liosan ##########################
 
 include file: card_fields
 include file: set_fields

@@ -14,6 +14,7 @@ languages := [
 		is_land           : match@(match: "(?i)Land")
 		is_enchantment    : match@(match: "(?i)Enchantment")
 		is_spell          : match@(match: "(?i)Instant|Sorcery")
+		is_planeswalker   : match@(match: "(?i)Planeswalker")
 	],
 	
 	Français: [
@@ -28,6 +29,7 @@ languages := [
 		is_land           : match@(match: "(?i)Land")
 		is_enchantment    : match@(match: "(?i)Enchantment")
 		is_spell          : match@(match: "(?i)Instant|Sorcery")
+		is_planeswalker   : match@(match: "(?i)Planeswalker")
 	]
 ]
 

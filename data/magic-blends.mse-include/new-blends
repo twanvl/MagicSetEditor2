@@ -404,6 +404,128 @@ flip_pt_hybrid2 := [
 	overlay: overlay_hybrid
 ]
 
+
+########################################################################
+# P/T boxes for leveler cards
+########################################################################
+
+leveler_pt_hybrid := [
+	radial: [
+		0: { template("c")       }
+		1: { template(colors[0]) }
+		2: { template(colors[1]) }
+		3: { linear_blend(
+			image1: template(colors[1])
+			image2: template(colors[2])
+			x1: 0, y1: 0
+			x2: 0, y2: 1
+		   )}
+		4: { template(colors[2]) }
+		5: { template(colors[2]) }
+		6: { template(colors[2]) }
+		7: { template(colors[4]) }
+	]
+	horizontal: horizontal_pt_hybrid
+	vertical: [
+		1: { template(colors[0]) }
+		2: { template(colors[1]) }
+		3: { linear_blend(
+			image1: template(colors[1])
+			image2: template(colors[2])
+			x1: 0, y1: 0
+			x2: 0, y2: 1
+		   )}
+		4: { template(colors[2]) }
+		5: { template(colors[3]) }
+		6: { linear_blend(
+			image1: template(colors[3])
+			image2: template(colors[4])
+			x1: 0, y1: 0
+			x2: 0, y2: 0.25
+		   )}
+		7: { template(colors[5]) }
+	]
+	overlay: overlay_hybrid
+]
+
+leveler_pt_hybrid2 := [
+	radial: [
+		0: { template("c")       }
+		1: { template(colors[0]) }
+		2: { template(colors[1]) }
+		3: { template(colors[2]) }
+		4: { template(colors[2]) }
+		5: { template(colors[2]) }
+		6: { template(colors[2]) }
+		7: { template(colors[4]) }
+	]
+	horizontal: horizontal_pt_hybrid
+	vertical: [
+		1: { template(colors[0]) }
+		2: { template(colors[1]) }
+		3: { template(colors[2]) }
+		4: { linear_blend(
+			image1: template(colors[2])
+			image2: template(colors[3])
+			x1: 0, y1: 0
+			x2: 0, y2: 1
+		   )}
+		5: { linear_blend(
+			image1: template(colors[3])
+			image2: template(colors[4])
+			x1: 0, y1: 0
+			x2: 0, y2: 0.75
+		   )}
+		6: { template(colors[4]) }
+		7: { template(colors[5]) }
+	]
+	overlay: overlay_hybrid
+]
+
+leveler_pt_hybrid3 := [
+	radial: [
+		0: { template("c")       }
+		1: { template(colors[0]) }
+		2: { template(colors[1]) }
+		3: { template(colors[2]) }
+		4: { template(colors[2]) }
+		5: { linear_blend(
+			image1: template(colors[2])
+			image2: template(colors[3])
+			x1: 0, y1: 0
+			x2: 0, y2: 1
+		   )}
+		6: { linear_blend(
+			image1: template(colors[2])
+			image2: template(colors[3])
+			x1: 0, y1: 0
+			x2: 0, y2: 1
+		   )}
+		7: { template(colors[4]) }
+	]
+	horizontal: horizontal_pt_hybrid
+	vertical: [
+		1: { template(colors[0]) }
+		2: { template(colors[1]) }
+		3: { template(colors[2]) }
+		4: { template(colors[3]) }
+		5: { linear_blend(
+			image1: template(colors[3])
+			image2: template(colors[4])
+			x1: 0, y1: 0
+			x2: 0, y2: 0.5
+		   )}
+		6: { linear_blend(
+			image1: template(colors[4])
+			image2: template(colors[5])
+			x1: 0, y1: 0
+			x2: 0, y2: 0.5
+		   )}
+		7: { template(colors[5]) }
+	]
+	overlay: overlay_hybrid
+]
+
 ########################################################################
 # Textbox and typeline for FPM templates and Futureshifts
 ########################################################################
@@ -554,8 +676,20 @@ card_background := { color_background(type:"card",     base_hybrid:card_hybrid) 
 card_ptbox      := { color_background(type:"pt",       base_hybrid:pt_hybrid) }
 flip_ptbox      := { color_background(type:"pt",       base_hybrid:flip_pt_hybrid) }
 flip_ptbox2     := { color_background(type:"pt2",      base_hybrid:flip_pt_hybrid2) }
+leveler_ptbox   := { color_background(type:"pt",       base_hybrid:leveler_pt_hybrid) }
+leveler_ptbox2  := { color_background(type:"pt",       base_hybrid:leveler_pt_hybrid2) }
+leveler_ptbox3  := { color_background(type:"pt",       base_hybrid:leveler_pt_hybrid3) }
 card_textbox    := { color_background(type:"textbox",  base_hybrid:textbox_hybrid) }
 card_typeline   := { color_background(type:"typeline", base_hybrid:typeline_hybrid) }
+
+flip_background := {
+	linear_blend(
+		image1: card_background(top)
+		image2: card_background(bottom)
+		x1: 0,  y1: 0.4
+		x2: 0,  y2: 0.6
+	)
+}
 
 ########################################################################
 # Font colors

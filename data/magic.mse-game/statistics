@@ -43,47 +43,36 @@ statistics dimension:
 	icon: stats/colored_casting_cost.png
 
 statistics dimension:
-	position hint: 50
-	name: power
-	script: card.power
-	numeric: true
-	icon: stats/power.png
+	name: supertype
+	position hint: 27
+	icon: stats/card_type.png
+	description: The card's supertype, not including types
+	script: remove_type(card.super_type)
 
 statistics dimension:
-	position hint: 51
-	name: toughness
-	script: card.toughness
-	numeric: true
-	icon: stats/toughness.png
+	name: type
+	position hint: 28
+	icon: stats/card_type.png
+	description: The card's type, not including supertypes
+	script: remove_supertype(card.super_type)
 
 statistics dimension:
-	name: keywords
-	position hint: 1000
-	script: keyword_usage(unique:true)
-	show empty: false
-	split list: true
-	icon: stats/keywords.png
+	name: combined type
+	position hint: 29
+	icon: stats/card_type.png
+	description: The traditional supertype statistic, with no filtering
+	script: card.super_type
 
 statistics dimension:
-	name: style
-	position hint: 1001
-	script: stylesheet.short_name
-	icon: stats/stylesheet.png
-
-statistics dimension:
-	name: text length (words)
-	position hint: 100
-	script: word_count(to_text(card.rule_text))
-	numeric: true
-	bin size: 5
-	icon: stats/text_length.png
-
-statistics dimension:
-	name: text length (lines)
-	position hint: 101
-	script: line_count(to_text(card.rule_text))
-	numeric: true
-	icon: stats/text_length.png
+	name: perm/non-perm
+	position hint: 30
+	icon: stats/card_type.png
+	description: Is the card a creature, non-creature permanent, or nonpermanent?
+	script:
+		if is_creature(card.super_type) then "creature"
+		else if is_spell(card.super_type) then "nonpermanent"
+		else if is_artifact(card.super_type) or is_enchantment(card.super_type) or is_land(card.super_type) or contains(card.super_type, match:"Planeswalker") then "permanent"
+		else "unknown"
 
 statistics dimension:
 	name: race
@@ -105,6 +94,49 @@ statistics dimension:
 			space_to_comma(trim(remove_tags(only_next(card.sub_type))))
 	show empty: false
 	split list: true
+
+statistics dimension:
+	position hint: 50
+	name: power
+	script: card.power
+	numeric: true
+	icon: stats/power.png
+
+statistics dimension:
+	position hint: 51
+	name: toughness
+	script: card.toughness
+	numeric: true
+	icon: stats/toughness.png
+
+statistics dimension:
+	name: text length (words)
+	position hint: 100
+	script: word_count(to_text(card.rule_text))
+	numeric: true
+	bin size: 5
+	icon: stats/text_length.png
+
+statistics dimension:
+	name: text length (lines)
+	position hint: 101
+	script: line_count(to_text(card.rule_text))
+	numeric: true
+	icon: stats/text_length.png
+
+statistics dimension:
+	name: keywords
+	position hint: 1000
+	script: keyword_usage(unique:true)
+	show empty: false
+	split list: true
+	icon: stats/keywords.png
+
+statistics dimension:
+	name: style
+	position hint: 1001
+	script: stylesheet.short_name
+	icon: stats/stylesheet.png
 
 ############################################################## Statistics categories (OLD)
 

@@ -127,7 +127,7 @@ keyword parameter type:
 
 keyword parameter type:
 	name: a
-	match: [ ]*|[ ][an?]*
+	match: [an?]*
 
 ############################# All Magic keywords
 # By JrEye and Neko_Asakami, Updated by Pichoro and Buttock1234
@@ -266,7 +266,7 @@ keyword:
 	keyword: Amplify
 	match: Amplify <atom-param>number</atom-param>
 	mode: expert
-	reminder: As this card enters the battlefield, put {english_number_a(param1)} +1/+1 counter(s) on it for each {separate_words(spacer: " and/or ", card.sub_type)} card you reveal in your hand.
+	reminder: As this creature enters the battlefield, put {english_number_a(param1)} +1/+1 counter(s) on it for each {separate_words(spacer: " and/or ", card.sub_type)} card you reveal in your hand.
 keyword:
 	keyword: Double strike
 	match: Double strike
@@ -380,7 +380,7 @@ keyword:
 	keyword: Ninjutsu
 	match: Ninjutsu <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}, Return an unblocked attacker you control to hand: This card enters the battlefield from your hand tapped and attacking.
+	reminder: {param1}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.
 keyword:
 	keyword: Epic
 	match: Epic
@@ -405,7 +405,7 @@ keyword:
 	keyword: Transmute
 	match: Transmute <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Activate only as a sorcery.
+	reminder: {param1}, Discard this card: Search your library for a card with the same converted mana cost as this card, reveal it, and put it into your hand. Then shuffle your library. Transmute only as a sorcery.
 keyword:
 	keyword: Dredge
 	match: Dredge <atom-param>number</atom-param>
@@ -480,7 +480,7 @@ keyword:
 	keyword: Deathtouch
 	match: Deathtouch
 	mode: core
-	reminder: Creatures dealt damage by this creature are destroyed. You can divide this creature’s combat damage among any of the creatures blocking or blocked by it.
+	reminder: Any amount of damage this deals to a creature is enough to destroy it.
 keyword:
 	keyword: Reach
 	match: Reach
@@ -506,7 +506,7 @@ keyword:
 	match: Fateseal <atom-param>number</atom-param>
 	mode: action
 	reminder:
-		Look at the top {
+		To fateseal {param1}, look at the top {
 		 if param1.value==1 then "card of an opponent’s library, then you may put it on the bottom of that player’s library."
 		 else "{english_number(param1)} cards of an opponent’s library, then put any number of them on the bottom of that player’s library and the rest on top in any order."
 		}
@@ -514,7 +514,7 @@ keyword:
 	keyword: Transfigure
 	match: Transfigure <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}, Sacrifice this creature: Search your library for a creature card with the same converted mana cost as this creature and have that card enter the battlefield. Then shuffle your library. Activate only as a sorcery.
+	reminder: {param1}, Sacrifice this creature: Search your library for a creature card with the same converted mana cost as this creature and put that card onto the battlefield. Then shuffle your library. Transfigure only as a sorcery.
 keyword:
 	keyword: Aura swap
 	match: Aura swap <atom-param>cost</atom-param>
@@ -544,7 +544,7 @@ keyword:
 	keyword: Fortify
 	match: Fortify <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}: Attach to target land you control. Fortify only as a sorcery. This card enters the battlefield unattached and stays in the battlefield if the land exits the battlefield.
+	reminder: {param1}: Attach to target land you control. Fortify only as a sorcery. This card enters the battlefield unattached and stays on the battlefield if the land leaves.
 keyword:
 	keyword: Grandeur
 	match: Grandeur
@@ -557,9 +557,9 @@ keyword:
 	reminder: You may cast this spell for its evoke cost. If you do, it’s sacrificed when it enters the battlefield.
 keyword:
 	keyword: Champion
-	match: Champion<atom-param>a</atom-param><atom-param>name</atom-param>
+	match: Champion <atom-param>a</atom-param> <atom-param>name</atom-param>
 	mode: expert
-	reminder: When this enters the battlefield, sacrifice it unless you exile another{param2} you control. When this exits the battlefield, return that card to the battlefield.
+	reminder: When this enters the battlefield, sacrifice it unless you exile another {param2} you control. When this leaves the battlefield, return that card to the battlefield.
 keyword:
 	keyword: Clash
 	match: Clash
@@ -619,7 +619,7 @@ keyword:
 	keyword: Unearth
 	match: Unearth <atom-param>cost</atom-param>
 	mode: expert
-	reminder: {param1}: Return this card from your graveyard to the battlefield. {if has_pt() then "It gains haste. " else "" }Exile it at the beginning of the end step or if it would exit the battlefield. Unearth only as a sorcery.
+	reminder: {param1}: Return this card from your graveyard to the battlefield. {if has_pt() then "It gains haste. " else "" }Exile it at the beginning of the end step or if it would leave the battlefield. Unearth only as a sorcery.
 keyword:
 	keyword: Devour
 	match: Devour <atom-param>number</atom-param>
@@ -645,3 +645,33 @@ keyword:
 	match: Intimidate
 	mode: core
 	reminder: This creature can’t be blocked except by artifact creatures and/or creatures that share a color with it.
+keyword:
+	keyword: Landfall
+	match: Landfall
+	mode: pseudo
+	rules: Landfall — Whenever a land enters the battlefield under your control, [effect].
+keyword:
+	keyword: Multikicker
+	match: Multikicker <atom-param>cost</atom-param>
+	mode: expert
+	reminder: You may {for_mana_costs(add:"pay an additional ", param1)} any number of times as you cast this spell.
+keyword:
+	keyword: Annihilator
+	match: Annihilator <atom-param>number</atom-param>
+	mode: expert
+	reminder: Whenever this creature attacks, defending player sacrifices {english_number_a(param1)} permanent(s).
+keyword:
+	keyword: Rebound
+	match: Rebound
+	mode: expert
+	reminder: If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.
+keyword:
+	keyword: Totem armor
+	match: Totem armor
+	mode: expert
+	reminder: If enchanted creature would be destroyed, instead remove all damage from it and destroy this Aura.
+keyword:
+	keyword: Level up
+	match: Level up <atom-param>cost</atom-param>
+	mode: expert
+	reminder: {param1}: Put a level counter on this. Level up only as a sorcery.

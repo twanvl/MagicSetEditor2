@@ -1,5 +1,4 @@
-﻿
-############################################################## Localization
+﻿############################################################## Localization
 
 include file: language
 
@@ -153,6 +152,7 @@ card_color := {
 		mana_color := mana_to_color(colors: color_filter(casting_cost), hybrid: color_filterH(casting_cost))
 		if      mana_color == "colorless" and is_land    (type)  then land_to_color(watermark)
 		else if mana_color == "colorless" and is_artifact(type)  then "artifact"
+		else if mana_color == "colorless" and contains(card.shape, match:"flip") then default
 		else mana_color
 	)
 	else text_color
@@ -206,72 +206,75 @@ is_multicolor := { chosen(choice: "multicolor") and input != "artifact, multicol
 is_null_cost  := { input == "" or input == "0" }
 is_hybrid_cost := { contains(card.casting_cost, match: "W/") or contains(card.casting_cost, match: "U/") or contains(card.casting_cost, match: "B/") or contains(card.casting_cost, match: "R/") or contains(card.casting_cost, match: "G/") }
 basic_land_sort := {
-	if contains(card.name, match:"Plains")        then "LB"      # Plains
-	else if contains(card.name, match:"Island")   then "LC"      # Islands
-	else if contains(card.name, match:"Swamp")    then "LD"      # Swamps
-	else if contains(card.name, match:"Mountain") then "LE"      # Mountains
-	else if contains(card.name, match:"Forest")   then "LF"      # Forests
-	else                                               "LA"      # other basic lands
+	if contains(card.name, match:"Plains")        then "MB"      # Plains
+	else if contains(card.name, match:"Island")   then "MC"      # Islands
+	else if contains(card.name, match:"Swamp")    then "MD"      # Swamps
+	else if contains(card.name, match:"Mountain") then "ME"      # Mountains
+	else if contains(card.name, match:"Forest")   then "MF"      # Forests
+	else                                               "MA"      # other basic lands
 }
 hybrid_color_pair_sort := {
+	colors := sort_text(casting_cost, order: "<WUBRG>")
+	if colors = "WU" then "HA"
+	else if colors = "UB" then "HB"
+	else if colors = "BR" then "HC"
+	else if colors = "RG" then "HD"
+	else if colors = "WG" then "HE"
+	else if colors = "WB" then "HF"
+	else if colors = "UR" then "HG"
+	else if colors = "BG" then "HH"
+	else if colors = "WR" then "HI"
+	else if colors = "UG" then "HJ"
+	else "HK"
+}
+multi_color_pair_sort := {
 	colors := sort_text(casting_cost, order: "<WUBRG>")
 	if colors = "WU" then "GA"
 	else if colors = "UB" then "GB"
 	else if colors = "BR" then "GC"
 	else if colors = "RG" then "GD"
-	else if colors = "GW" then "GE"
+	else if colors = "WG" then "GE"
 	else if colors = "WB" then "GF"
 	else if colors = "UR" then "GG"
 	else if colors = "BG" then "GH"
-	else if colors = "RW" then "GI"
-	else if colors = "GU" then "GJ"
+	else if colors = "WR" then "GI"
+	else if colors = "UG" then "GJ"
+	else if contains(card.casting_cost, match:"/") then "GL"
 	else "GK"
-}
-multi_color_pair_sort := {
-	colors := sort_text(casting_cost, order: "<WUBRG>")
-	if colors = "WU" then "FA"
-	else if colors = "UB" then "FB"
-	else if colors = "BR" then "FC"
-	else if colors = "RG" then "FD"
-	else if colors = "GW" then "FE"
-	else if colors = "WB" then "FF"
-	else if colors = "UR" then "FG"
-	else if colors = "BG" then "FH"
-	else if colors = "RW" then "FI"
-	else if colors = "GU" then "FJ"
-	else if contains(card.casting_cost, match:"/") then "FL"
-	else "FK"
 }
 # A code for the color of the card
 color_of_card := {
 	card_color := card.card_color
 	casting_cost := card.casting_cost
+	type := card.super_type
 	if card.shape == "split" and
-	   card_color != card.card_color_2 then "H"              # Diff Color Splits
-	else if chosen(choice: "land", card_color) then (
-		if card.rarity != "basic land" then "K"              # Nonbasic Land
-		else basic_land_sort()
-	) else if is_null_cost(casting_cost) then (
-		if chosen(choice: "hybrid", card_color)    then "GK"  # Hybrids
-		else if is_multicolor(card_color)          then "F"  # Multicolor
-		else if chosen(choice:"white", card_color) then "A"  # White
-		else if chosen(choice:"blue", card_color)  then "B"  # Blue
-		else if chosen(choice:"black", card_color) then "C"  # Black
-		else if chosen(choice:"red", card_color)   then "D"  # Red
-		else if chosen(choice:"green", card_color) then "E"  # Green
-		else                                            "I"  # Colorless / Artifact
+	   card_color != card.card_color_2 then "I"                              # Diff Color Splits
+	else if chosen(choice: "land", card_color) then (                   # Lands
+		if card.rarity != "basic land" then "L"                          # Nonbasic Land
+		else basic_land_sort()                                           # Basic Land
+	) else if is_null_cost(casting_cost) then (                         # Non-Land Cards with no or zero costs.
+		if chosen(choice: "colorless", card_color) then "A"              # Clear Colorless
+		else if chosen(choice: "hybrid", card_color)    then "HK"        # Hybrids
+		else if is_multicolor(card_color)          then "GK"             # Multicolor
+		else if chosen(choice:"white", card_color) then "B"              # White
+		else if chosen(choice:"blue", card_color)  then "C"              # Blue
+		else if chosen(choice:"black", card_color) then "D"              # Black
+		else if chosen(choice:"red", card_color)   then "E"              # Red
+		else if chosen(choice:"green", card_color) then "F"              # Green
+		else                                            "J"              # Artifact
 	) else (
-		# use the casting cost
+		                                                            # Cards with costs.
 		colors := sort_text(casting_cost, order: "<WUBRG>")
-		if      colors == ""  then "I"                       # Colorless / Artifact
-		else if colors == "W" then "A"                       # White
-		else if colors == "U" then "B"                       # Blue
-		else if colors == "B" then "C"                       # Black
-		else if colors == "R" then "D"                       # Red
-		else if colors == "G" then "E"                       # Green
-		else if is_hybrid_cost() then hybrid_color_pair_sort()  #Hybrid (by pairs)
-		else if contains(casting_cost, match:"/") and contains(card_color, match:"artifact") then "I" # Colorless/Artifact
-		else                       multi_color_pair_sort()   # Multicolor (by pairs)
+		if colors == "" and contains(type, match:"Artifact") then "J"    # Artifact
+		else if colors == ""  then "A"                                   # Clear Colorless
+		else if colors == "W" then "B"                                   # White
+		else if colors == "U" then "C"                                   # Blue
+		else if colors == "B" then "D"                                   # Black
+		else if colors == "R" then "E"                                   # Red
+		else if colors == "G" then "F"                                   # Green
+		else if is_hybrid_cost() then hybrid_color_pair_sort()           # Hybrid (by pairs)
+		else if contains(casting_cost, match:"/") and contains(type, match:"Artifact") then "I" # Hybrid Artifacts
+		else                       multi_color_pair_sort()               # Multicolor (by pairs)
 	)
 }
 
@@ -455,7 +458,7 @@ text_filter :=
 		replace: {"<sym>" + mana_filter_t() + "</sym>"} ) +
 	# step 6 : curly quotes
 	curly_quotes +
-	# step 7 : ???
+	# step 7 : italicize text in parenthesis
 	replace@(
 	 	match: "[(]([^)\n]|[(][^)\n]*[)])*[)]?",
 		in_context: "(^|[[:space:]])<match>|<atom-keyword><match></",
@@ -516,6 +519,7 @@ sub_type_filter := {
 	                  else if lang.is_artifact(type)    then "artifact"
 	                  else if lang.is_enchantment(type) then "enchantment"
 	                  else if lang.is_spell(type)       then "spell"
+	                  else if lang.is_planeswalker(type)       then "planeswalker"
 	if list_type_rest != "" then (
 		if lang.is_creature(type) or lang.is_tribal(type) then (
 			list_type_first := "race"
@@ -618,3 +622,11 @@ primary_card_color := {
 
 word_count := break_text@(match:"[^[:space:]]+") + length
 line_count := split_text@(match:"\n+",include_empty:false) + length
+
+#Remove supertypes or types to look at parts of the super_type field by themselves.
+remove_supertype := replace@(match: "(Legendary|Basic|Snow|World|Tribal|Token)", replace: "")+
+	replace@(match: "^[ ]", replace: "")+
+	replace@(match: "[ ]$", replace: "")
+remove_type := replace@(match: "(Artifact|Creature|Enchantment|Instant|Land|Planeswalker|Sorcery)", replace: "")+
+	replace@(match: "^[ ]", replace: "")+
+	replace@(match: "[ ]$", replace: "")
