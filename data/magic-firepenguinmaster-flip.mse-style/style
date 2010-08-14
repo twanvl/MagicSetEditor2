@@ -4,12 +4,12 @@ full name: FPM's Flip Magic
 short name: FPM Flip
 installer group: magic/FirePenguinMaster/Flip cards
 icon: card-sample.png
-position hint: 402
+position hint: 802
 
-version: 2009-07-07
+version: 2010-04-07
 depends on:
 	package: magic.mse-game
-	version: 2008-06-02
+	version: 2010-04-07
 depends on:
 	package: magic-future-common.mse-include
 	version: 2007-09-23
@@ -122,14 +122,21 @@ card style:
 		bottom width: 18
 		z index: 4
 	card color:
-		left:	0
-		top:	0
-		width:	375
-		height:	523
+		left: 0
+		top: 0
+		width: 375
+		height: 262
 		z index: 0
-		render style: image
+		render style: hidden
 		popup style: in place
-		image: { card_background() }
+	card color 2:
+		left: 0
+		top: 261
+		width: 375
+		height: 262
+		z index: 0
+		render style: hidden
+		popup style: in place
 	############################# Name line
 	name:
 		left: 45
@@ -420,7 +427,7 @@ card style:
 		font:
 			name: MPlantin-Italic
 			size: 8
-			color: { font_color(card.card_color) }
+			color: { font_color(card.card_color_2) }
 	copyright line:
 		left: 65
 		top : 493
@@ -431,8 +438,14 @@ card style:
 		font:
 			name: MPlantin
 			size: 7
-			color: { font_color(card.card_color) }
+			color: { font_color(card.card_color_2) }
 ############################################################## Extra card fields
+extra card field:
+	type: choice
+	name: frame
+	script: card.card_color + ":" + card.card_color_2
+	editable: false
+	save value: false
 extra card field:
 	type: choice
 	name: pt symbols
@@ -454,10 +467,18 @@ extra card field:
 extra card field:
 	type: choice
 	name: paintbrush
-	script: paintbrush_color(card.card_color)
+	script: paintbrush_color(card.card_color_2)
 	editable: false
 	save value: false
 extra card style:
+	frame:
+		left: 0
+		top: 0
+		width: 375
+		height: 523
+		z index: 0
+		render style: image
+		image: {flip_background(top: card.card_color, bottom: card.card_color_2)}
 	pt symbols:
 		left:	24
 		top:	340
