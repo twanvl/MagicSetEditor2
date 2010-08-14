@@ -4,9 +4,9 @@ full name: FPM's Split Magic
 short name: FPM Split
 installer group: magic/FirePenguinMaster/Split cards
 icon: card-sample.png
-position hint: 403
+position hint: 803
 
-version: 2009-07-07
+version: 2010-03-26
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29

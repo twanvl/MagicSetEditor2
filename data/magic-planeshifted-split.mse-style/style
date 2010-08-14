@@ -4,9 +4,9 @@ short name: Planeshifted Splits
 full name: Planeshifted Split Cards
 installer group: magic/Planeshifted/Split Cards
 icon: card-sample.png
-position hint: 013
+position hint: 203
 
-version: 2009-07-07
+version: 2010-03-26
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02

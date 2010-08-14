@@ -4,9 +4,9 @@ full name: FPM's Promo Magic
 short name: FPM Promo
 installer group: magic/FirePenguinMaster/Promotional
 icon: card-sample.png
-position hint: 404
+position hint: 804
 
-version: 2009-07-07
+version: 2010-03-26
 depends on:
 	package: magic.mse-game
 	version: 2007-12-29

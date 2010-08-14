@@ -4,9 +4,9 @@ full name: FPM's Normal Magic
 short name: FPM Normal
 installer group: magic/FirePenguinMaster/Normal cards
 icon: card-sample.png
-position hint: 401
+position hint: 801
 
-version: 2009-07-07
+version: 2010-03-26
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02

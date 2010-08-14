@@ -4,9 +4,9 @@ full name: Extended Art
 short name: Extended Art
 installer group: magic/new style/extended art
 icon: card-sample.png
-position hint: 006
+position hint: 702
 
-version: 2009-07-06
+version: 2010-03-26
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02

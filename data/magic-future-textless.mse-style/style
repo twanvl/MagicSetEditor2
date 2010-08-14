@@ -4,9 +4,9 @@ short name: Future Textless
 full name: Futureshift Textless
 installer group: magic/Future/Textless cards
 icon: card-sample.png
-position hint: 055
+position hint: 305
 
-version: 2009-07-22
+version: 2010-03-26
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02

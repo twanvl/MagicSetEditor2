@@ -4,9 +4,9 @@ full name: FPM's Token Magic
 short name: FPM Token
 installer group: magic/FirePenguinMaster/Tokens
 icon: card-sample.png
-position hint: 407
+position hint: 807
 
-version: 2009-07-07
+version: 2010-03-26
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02

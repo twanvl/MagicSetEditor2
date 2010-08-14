@@ -4,9 +4,9 @@ short name: Future
 full name: Futureshift
 installer group: magic/Future/Normal cards
 icon: card-sample.png
-position hint: 051
+position hint: 301
 
-version: 2009-07-23
+version: 2010-03-26
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02

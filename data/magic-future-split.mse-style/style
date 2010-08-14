@@ -4,9 +4,9 @@ short name: Future Splits
 full name: Futureshift Splits
 installer group: magic/Future/Split cards
 icon: card-sample.png
-position hint: 053
+position hint: 303
 
-version: 2009-07-22
+version: 2010-03-26
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
