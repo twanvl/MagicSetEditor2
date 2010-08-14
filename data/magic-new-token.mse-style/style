@@ -6,7 +6,7 @@ installer group: magic/new style/tokens
 icon: card-sample.png
 position hint: 007
 
-version: 2009-07-20
+version: 2010-07-25
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -39,8 +39,10 @@ init script:
 		else "2" # large textbox
 	}
 	
-	land_template := { "c{type}.jpg" }
-	colored_lands := false
+	template_suffix := [card0: "card0.jpg", card1: "card1.jpg", card2: "card2.jpg", pt: "pt.png"]
+	land_note := [card0: "l", card1: "l", card2: "l", pt: ""]
+	template      := { input + template_suffix[type] }
+	land_template := { (if input == "a" then "c" else input) + land_note[type] + template_suffix[type] }
 	
 	# Use the normal tap symbol
 	mana_t := {
@@ -53,7 +55,7 @@ init script:
 	guild_mana := { styling.use_guild_mana_symbols }
 	
 	# We have no land template
-	font_colors_white := { input == "b" }
+	font_colors_white := { input == "b" or input == "l" }
 	
 	# AE replacement shouldn't happen in the title, or else MSE compresses the symbol
 	name_filter := { input }
@@ -366,14 +368,14 @@ extra card style:
 			{ if text_shape() == "2" then 275
 			  else                        271 }
 		top:
-			{ if text_shape() == "2" then 463
+			{ if text_shape() == "2" then 466
 			  else                        461 }
 		width:	81
 		height:	42
 		z index: 1
 		visible: { card.pt != "" }
 		render style: image
-		image: { color_background(type:"pt" + text_shape(), base_hybrid:pt_hybrid) }
+		image: { card_ptbox() }
 	foil layer:
 		left: 0
 		top : 0
