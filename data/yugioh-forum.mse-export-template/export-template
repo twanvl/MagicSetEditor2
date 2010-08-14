@@ -1,0 +1,66 @@
+﻿mse version: 0.3.8
+short name: Forum
+full name: Spoiler Exporter
+position hint: 002
+icon: icon.png
+version: 2009-12-18
+installer group: Yugioh/Export/forum
+
+depends on:
+	package: yugioh.mse-game
+	version: 2007-09-23
+
+game: yugioh
+file type: *.txt|*.txt|*.*|*.*
+
+# By Innuendo and Pichoro
+# Based on code by Idle Muse, Seeonee
+
+script:
+	# filter out everything but stars from the level line
+	level_star_filter := replace@(match:"<sym-auto>", replace:"")+
+		replace@(match:"</sym-auto>", replace:"")+
+		replace@(match:"!", replace:"")+
+		replace@(match:"[+]", replace:"")+
+		replace@(match:"&", replace:"")+
+		replace@(match:"$", replace:"")+
+		replace@(match:"#", replace:"")+
+		replace@(match:" ", replace:"")+
+		replace@(match:"[0-9]", replace:"")+
+		replace@(match:"[a-z]", replace:"")+
+		replace@(match:"[A-Z]", replace:"")
+	# counts stars by breaking them into a list and seeing how long the list is
+	level_count := {
+		if not is_monster() then level_star_filter(card.level)
+		else number_of_items(in: level_star_filter(card.level))
+	}
+	# Checks for each of the sub types
+	nonmonster_level_filter := { if contains(input, match:"%") then "Continuous"
+		+if contains(input, match:"!") then "Counter"
+		+if contains(input, match:"+") then "Equipment"
+		+if contains(input, match:"&") then "Field"
+		+if contains(input, match:"$") then "Quick-Play"
+		+if contains(input, match:"#") then "Ritual"
+	}
+	# remove spaces from things
+	no_spaces := replace@(match:" ", replace:"")
+	write_monster := {
+		"\n\n"+card.number+" "+card.name
+		+"\n"+no_spaces(card.monster_type)
+			+" | "+to_title(card.attribute)
+			+" | Level "+level_count()
+			+" | "+card.attack
+			+" ATK | "+card.defense
+		+" DEF\n"+card.rule_text
+		+(if card.rarity != "common" then "\n"+to_title(card.rarity))
+		}
+	write_nonmonster := {
+		"\n\n"+card.number+" "+card.name
+		+"\n"+nonmonster_level_filter(card.level)+(if nonmonster_level_filter(card.level)=="" then "Normal")
+			+" "+to_title(card.card_type)+"\n"
+		+card.rule_text
+		+(if card.rarity != "common" then "\n"+to_title(card.rarity))
+		}
+	write_card := { if is_monster() then write_monster() else write_nonmonster() }
+	write_cards := to_text(for each card in sort_list(cards, order_by: {card.number}) do write_card())
+	to_string(set.title+"\n"+set.description+write_cards)
