@@ -4,9 +4,9 @@ full name: FPM Planeswalkers
 short name: FPM 'Walkers
 installer group: magic/FirePenguinMaster/Planeswalker cards
 icon: card-sample.png
-position hint: 408
+position hint: 808
 
-version: 2009-07-07
+version: 2010-03-26
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02

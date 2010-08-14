@@ -6,7 +6,7 @@ installer group: magic/new style/planeswalkers
 icon: card-sample.png
 position hint: 008
 
-version: 2009-07-08
+version: 2009-12-18
 depends on:
 	package: magic.mse-game
 	version: 2008-06-02
@@ -61,7 +61,7 @@ init script:
 	}
 	
 	card_shape := {"planeswalker"}
-
+	
 ############################################################## Set info fields
 set info style:
 	symbol:
