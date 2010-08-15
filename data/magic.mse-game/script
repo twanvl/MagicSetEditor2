@@ -625,8 +625,8 @@ line_count := split_text@(match:"\n+",include_empty:false) + length
 
 #Remove supertypes or types to look at parts of the super_type field by themselves.
 remove_supertype := replace@(match: "(Legendary|Basic|Snow|World|Tribal|Token)", replace: "")+
-	replace@(match: "^[ ]", replace: "")+
-	replace@(match: "[ ]$", replace: "")
+	replace@(match: "[ ]+", in_context: "^<match>", replace: "")+
+	replace@(match: "[ ]+", in_context: "<match>$", replace: "")
 remove_type := replace@(match: "(Artifact|Creature|Enchantment|Instant|Land|Planeswalker|Sorcery)", replace: "")+
-	replace@(match: "^[ ]", replace: "")+
-	replace@(match: "[ ]$", replace: "")
+	replace@(match: "[ ]+", in_context: "^<match>", replace: "")+
+	replace@(match: "[ ]+", in_context: "<match>$", replace: "")

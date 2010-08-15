@@ -47,14 +47,14 @@ statistics dimension:
 	position hint: 27
 	icon: stats/card_type.png
 	description: The card's supertype, not including types
-	script: remove_type(card.super_type)
+	script: remove_type(to_text(card.super_type))
 
 statistics dimension:
 	name: type
 	position hint: 28
 	icon: stats/card_type.png
 	description: The card's type, not including supertypes
-	script: remove_supertype(card.super_type)
+	script: remove_supertype(to_text(card.super_type))
 
 statistics dimension:
 	name: combined type
