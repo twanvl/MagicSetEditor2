@@ -5,7 +5,7 @@ installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2010-06-11
+version: 2010-08-19
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -1129,3 +1129,8 @@ keyword:
 	match: level up <atom-param>cost</atom-param>
 	mode: expert
 	reminder: {param1}: Put a level counter on it. Level up only as a sorcery.
+keyword:
+	keyword: Infect
+	match: infect
+	mode: expert
+	reminder: This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.

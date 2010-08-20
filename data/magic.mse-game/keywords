@@ -675,3 +675,8 @@ keyword:
 	match: Level up <atom-param>cost</atom-param>
 	mode: expert
 	reminder: {param1}: Put a level counter on this. Level up only as a sorcery.
+keyword:
+	keyword: Infect
+	match: Infect
+	mode: expert
+	reminder: This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.
