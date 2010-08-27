@@ -5,7 +5,7 @@ installer group: Magic Planes/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2010-08-19
+version: 2010-08-27
 
 #By Pichoro
 ############################################################## Functions & filters
@@ -1274,3 +1274,8 @@ keyword:
 	match: infect
 	mode: expert
 	reminder: This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.
+keyword:
+	keyword: Proliferate
+	match: proliferate
+	mode: expert
+	reminder: You may choose any number of permanents and/or players with counters on them, then give each another counter of a kind already there.
