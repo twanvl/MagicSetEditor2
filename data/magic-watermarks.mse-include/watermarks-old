@@ -25,6 +25,9 @@ choice images:
 	guild symbol The Boros Legion (R/W):      	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_boros.png")
 	guild symbol The Simic Combine (G/U):         	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_simic.png")
 	
+	faction symbol mirrodin:         	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_mirrodin.png")
+	faction symbol phyrexia:         	script: set_combine(combine:"shadow", input:"/magic-watermarks.mse-include/watermark_phyrexia.png")
+	
 	colored xander hybrid mana B/R:			/magic-watermarks.mse-include/watermark_brmana_colored.png
 	colored xander hybrid mana U/B:			/magic-watermarks.mse-include/watermark_ubmana_colored.png
 	colored xander hybrid mana B/G:			/magic-watermarks.mse-include/watermark_bgmana_colored.png

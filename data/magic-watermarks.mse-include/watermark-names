@@ -32,6 +32,10 @@ choice:
 	choice: The Boros Legion (R/W)
 	choice: The Simic Combine (G/U)
 choice:
+	name: faction symbol
+	choice: mirrodin
+	choice: phyrexia
+choice:
 	name: colored xander hybrid mana
 	choice: B/R
 	choice: U/B
