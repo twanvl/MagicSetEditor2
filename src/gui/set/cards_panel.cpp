@@ -63,10 +63,11 @@ class FilterCtrl : public wxControl {
 	
 	void update();
 	bool hasFocus();
+        // wxWidgets appears to have developed an overload allergy
 	void onChange();
-	void onChange(wxCommandEvent&);
+	void onChangeEvent(wxCommandEvent&);
 	void onClear(wxCommandEvent&);
-	void onSize(wxSizeEvent&);
+	void onSizeEvent(wxSizeEvent&);
 	void onSize();
   public:
 	void onSetFocus(wxFocusEvent&);
@@ -118,7 +119,7 @@ void FilterCtrl::update() {
 	changing = false;
 }
 
-void FilterCtrl::onChange(wxCommandEvent&) {
+void FilterCtrl::onChangeEvent(wxCommandEvent&) {
 	if (!changing) {
 		setFilter(filter_ctrl->GetValue(),true);
 	}
@@ -128,7 +129,7 @@ void FilterCtrl::onClear(wxCommandEvent&) {
 	setFilter(String(),true);
 }
 
-void FilterCtrl::onSize(wxSizeEvent&) {
+void FilterCtrl::onSizeEvent(wxSizeEvent&) {
 	onSize();
 }
 void FilterCtrl::onSize() {
@@ -155,8 +156,8 @@ bool FilterCtrl::hasFocus() {
 
 BEGIN_EVENT_TABLE(FilterCtrl, wxControl)
 	EVT_BUTTON    (wxID_ANY, FilterCtrl::onClear)
-	EVT_TEXT      (wxID_ANY, FilterCtrl::onChange)
-	EVT_SIZE      (FilterCtrl::onSize)
+	EVT_TEXT      (wxID_ANY, FilterCtrl::onChangeEvent)
+	EVT_SIZE      (FilterCtrl::onSizeEvent)
 	EVT_SET_FOCUS (FilterCtrl::onSetFocus)
 	EVT_KILL_FOCUS(FilterCtrl::onKillFocus)
 END_EVENT_TABLE()
