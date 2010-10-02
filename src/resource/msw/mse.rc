@@ -216,8 +216,8 @@ FILETYPE VFT_APP
   }
 }
 
-#if !defined(__WIN64__)
+#if !defined(_MSC_VER) || _MSC_VER < 1400
 #if !defined(wxUSE_NO_MANIFEST) || (wxUSE_NO_MANIFEST == 0)
-1 24 "wx/msw/wx.manifest"
+//1 24 "wx/msw/wx.manifest"
 #endif
 #endif
