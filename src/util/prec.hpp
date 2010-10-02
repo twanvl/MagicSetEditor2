@@ -93,9 +93,9 @@ class FileName : public wxString {
 	
 	#ifdef _DEBUG
 		// Use OutputDebugString/DebugBreak for assertions if in debug mode
-		void msvc_assert(const char*, const char*, const char*, unsigned);
+		void msvc_assert(const wchar_t*, const wchar_t*, const wchar_t*, unsigned);
 		#undef assert
-		#define assert(exp) (void)( (exp) || (msvc_assert(nullptr, #exp, __FILE__, __LINE__), 0) )
+		#define assert(exp) (void)( (exp) || (msvc_assert(nullptr, _CRT_WIDE(#exp), _CRT_WIDE(__FILE__), __LINE__), 0) )
 	#endif
 #endif
 
