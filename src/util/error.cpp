@@ -19,18 +19,18 @@ DECLARE_TYPEOF_COLLECTION(ScriptParseError);
 // ----------------------------------------------------------------------------- : Debug utilities
 
 #if defined(_MSC_VER) && defined(_DEBUG)
-	void msvc_assert(const char* msg, const char* expr, const char* file, unsigned line) {
+	void msvc_assert(const wchar_t* msg, const wchar_t* expr, const wchar_t* file, unsigned line) {
 		if (IsDebuggerPresent()) {
-			char buffer[1024];
+			wchar_t buffer[1024];
 			if (msg) {
-				sprintf(buffer, "Assertion failed: %s: %s, file %s, line %d\n", msg, expr, file, line);
+				wsprintf(buffer, L"Assertion failed: %s: %s, file %s, line %d\n", msg, expr, file, line);
 			} else {
-				sprintf(buffer, "Assertion failed: %s, file %s, line %d\n", expr, file, line);
+				wsprintf(buffer, L"Assertion failed: %s, file %s, line %d\n", expr, file, line);
 			}
-			OutputDebugStringA(buffer);
+			OutputDebugStringW(buffer);
 			DebugBreak();
 		} else {
-			_assert(expr, file, line);
+			_wassert(expr, file, line);
 		}
 	}
 #endif
