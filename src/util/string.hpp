@@ -62,15 +62,15 @@ void writeUTF8(wxTextOutputStream& stream, const String& str);
 
 /// Some constants we like to use
 #ifdef UNICODE
-	#define  LEFT_ANGLE_BRACKET _("\u2039")
-	#define RIGHT_ANGLE_BRACKET _("\u203A")
-	#define  LEFT_SINGLE_QUOTE  _('\u2018')
-	#define RIGHT_SINGLE_QUOTE  _('\u2019')
-	#define  LEFT_DOUBLE_QUOTE  _('\u201C')
-	#define RIGHT_DOUBLE_QUOTE  _('\u201D')
-	#define EN_DASH             _('\u2013')
-	#define EM_DASH             _('\u2014')
-	#define CONNECTION_SPACE    _('\uEB00') // in private use area, untags to ' '
+	#define  LEFT_ANGLE_BRACKET _("\x2039")
+	#define RIGHT_ANGLE_BRACKET _("\x203A")
+	#define  LEFT_SINGLE_QUOTE  _('\x2018')
+	#define RIGHT_SINGLE_QUOTE  _('\x2019')
+	#define  LEFT_DOUBLE_QUOTE  _('\x201C')
+	#define RIGHT_DOUBLE_QUOTE  _('\x201D')
+	#define EN_DASH             _('\x2013')
+	#define EM_DASH             _('\x2014')
+	#define CONNECTION_SPACE    _('\xEB00') // in private use area, untags to ' '
 #else
 	#define  LEFT_ANGLE_BRACKET _("<")
 	#define RIGHT_ANGLE_BRACKET _(">")
