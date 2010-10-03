@@ -349,12 +349,11 @@ void Package::openSubdir(const String& name) {
 	String f; // filename
 	for(bool ok = d.GetFirst(&f, wxEmptyString, wxDIR_FILES | wxDIR_HIDDEN) ; ok ; ok = d.GetNext(&f)) {
 		if (ignore_file(f)) continue;
-		// add file
+		// add file to list of known files
 		addFile(name + f);
 		// get modified time
-		wxFileName fn(filename + _("/") + name + f);
-		wxDateTime mod;
-		if (fn.GetTimes(0, &mod, 0) && mod > modified) modified = mod;
+		wxDateTime file_time = file_modified_time(filename + _("/") + name + f);
+		modified = max(modified,file_time);
 	}
 	// find subdirs
 	for(bool ok = d.GetFirst(&f, wxEmptyString, wxDIR_DIRS | wxDIR_HIDDEN) ; ok ; ok = d.GetNext(&f)) {

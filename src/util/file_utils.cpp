@@ -10,6 +10,8 @@
 #include <util/file_utils.hpp>
 #include <wx/filename.h>
 #include <wx/dir.h>
+#include <errno.h>
+#include <sys/stat.h>
 
 DECLARE_TYPEOF_COLLECTION(String);
 
@@ -86,6 +88,21 @@ bool resolve_filename_conflicts(wxFileName& fn, FilenameConflicts conflicts, set
 			throw InternalError(_("resolve_filename_conflicts: default case"));
 		}
 	}
+}
+
+// ----------------------------------------------------------------------------- : File info
+
+time_t file_modified_time(const String& path) {
+	// Note: wxFileName also provides a function for this, but that is very slow.
+	struct stat statbuf;
+	if (stat(path.mb_str(), &statbuf) != 0) {
+		if (errno == ENOENT) {
+			return 0;
+		} else {
+			throw InternalError(_("could not stat ") + path);
+		}
+	}
+	return statbuf.st_mtime;
 }
 
 // ----------------------------------------------------------------------------- : Directories

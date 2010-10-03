@@ -32,6 +32,11 @@ String clean_filename(const String& name);
 /** Returns true if the filename should be used, false if failed. */
 bool resolve_filename_conflicts(wxFileName& fn, FilenameConflicts conflicts, set<String>& used);
 
+// ----------------------------------------------------------------------------- : File info
+
+/// Get the last modified time of a file
+time_t file_modified_time(const String& name);
+
 // ----------------------------------------------------------------------------- : Removing and renaming
 
 /// Ensure that the parent directories of the given filename exist
