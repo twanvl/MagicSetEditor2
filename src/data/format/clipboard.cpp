@@ -20,6 +20,7 @@
 
 // ----------------------------------------------------------------------------- : Clipboard serialization
 
+/// Serialize an object to a string, clipboard_package will be set to the given package.
 template <typename T>
 String serialize_for_clipboard(Package& package, T& object) {
 	shared_ptr<wxStringOutputStream> stream( new wxStringOutputStream );
