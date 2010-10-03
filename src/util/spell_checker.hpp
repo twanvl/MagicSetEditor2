@@ -10,6 +10,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#undef near
 #include "hunspell/hunspell.hxx"
 
 DECLARE_POINTER_TYPE(SpellChecker);
