@@ -275,15 +275,14 @@ void MSE::HandleEvent(wxEvtHandler *handler, wxEventFunction func, wxEvent& even
 
 #if defined(_MSC_VER) && defined(_DEBUG)
 	// Print assert failures to debug output
-	void msvc_assert(const char*, const char*, const char*, unsigned);
 	void MSE::OnAssert(const wxChar *file, int line, const wxChar *cond, const wxChar *msg) {
 		#ifdef UNICODE
-			char file_[1024]; wcstombs(file_,file,1023);
-			char cond_[1024]; wcstombs(cond_,cond,1023);
-			char msg_ [1024]; wcstombs(msg_, msg, 1023);
-			msvc_assert(msg_, cond_, file_, line);
-		#else
 			msvc_assert(msg, cond, file, line);
+		#else
+			wchar_t file_[1024]; mbstowcs(file_,file,1023);
+			wchar_t cond_[1024]; mbstowcs(cond_,cond,1023);
+			wchar_t msg_ [1024]; mbstowcs(msg_, msg, 1023);
+			msvc_assert(msg_, cond_, file_, line);
 		#endif
 	}
 #endif
