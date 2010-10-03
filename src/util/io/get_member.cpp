@@ -12,6 +12,7 @@
 #include <script/script.hpp>
 #include <script/to_value.hpp>
 #include <boost/logic/tribool.hpp>
+using boost::tribool;
 
 // ---------------------------------------------------------------------------- : GetDefaultMember
 

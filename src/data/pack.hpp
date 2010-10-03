@@ -14,6 +14,7 @@
 #include <script/scriptable.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/logic/tribool.hpp>
+using boost::tribool;
 
 DECLARE_POINTER_TYPE(PackType);
 DECLARE_POINTER_TYPE(PackItem);

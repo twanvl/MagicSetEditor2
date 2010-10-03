@@ -12,6 +12,7 @@
 #include <data/game.hpp>
 #include <data/card.hpp>
 #include <queue>
+using boost::indeterminate;
 
 DECLARE_TYPEOF_COLLECTION(PackTypeP);
 DECLARE_TYPEOF_COLLECTION(PackItemP);

@@ -13,6 +13,7 @@
 #include <util/version.hpp>
 #include <util/io/package.hpp>
 #include <boost/logic/tribool.hpp>
+using boost::tribool;
 
 // ----------------------------------------------------------------------------- : Writer
 
