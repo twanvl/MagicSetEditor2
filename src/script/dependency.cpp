@@ -213,7 +213,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
 					}
 					// create jump record
 					Jump* jump = new Jump;
-					jump->target = &script.instructions[i.data];
+					jump->target = &script.instructions[0] + i.data; // note: operator[] triggers assertion (in msvc>=9) failure if i.data==instructions.size()
 					assert(jump->target >= instr); // jumps must be forward
 					jump->stack_top.assign(stack.begin() + stack_size, stack.end());
 					getBindings(scope, jump->bindings);
