@@ -78,6 +78,7 @@ class ImageSliceWindow : public wxDialog {
 	wxSizer*             zoom_sizer, *zoom_fixed, *zoom_free;
 	wxCheckBox*          sharpen;
 	wxSlider*            sharpen_amount;
+	bool                 initialized; // is the gui initialized?
 	
 	// --------------------------------------------------- : Events
 	DECLARE_EVENT_TABLE();

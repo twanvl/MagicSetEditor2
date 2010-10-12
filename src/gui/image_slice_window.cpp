@@ -78,6 +78,7 @@ DEFINE_EVENT_TYPE(EVENT_SLICE_CHANGED);
 ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wxSize& target_size, const AlphaMask& mask)
 	: wxDialog(parent,wxID_ANY,_TITLE_("slice image"), wxDefaultPosition, wxDefaultSize, wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER | wxFULL_REPAINT_ON_RESIZE)
 	, slice(source, target_size)
+	, initialized(false)
 {
 	// init controls
 	const wxPoint defPos = wxDefaultPosition;
@@ -170,6 +171,8 @@ ImageSliceWindow::ImageSliceWindow(Window* parent, const Image& source, const wx
 		s->Add(CreateButtonSizer(wxOK | wxCANCEL), 0, wxEXPAND | wxALL, 8);
 	s->SetSizeHints(this);
 	SetSizer(s);
+	// Only now do we allow events to be processed.
+	initialized = true;
 	updateControls();
 }
 
@@ -184,6 +187,7 @@ Image ImageSliceWindow::getImage() const {
 // ----------------------------------------------------------------------------- : ImageSliceWindow : Controls
 
 void ImageSliceWindow::onChangeSize(wxCommandEvent&) {
+	if (!initialized) return;
 	int sel = size->GetSelection();
 	if (sel == 0) {
 		// original size
@@ -209,46 +213,56 @@ void ImageSliceWindow::onChangeSize(wxCommandEvent&) {
 }
 
 void ImageSliceWindow::onChangeLeft(wxCommandEvent&) {
+	if (!initialized) return;
 	slice.selection.x = left->GetValue();
 	onUpdateFromControl();
 }
 void ImageSliceWindow::onChangeTop(wxCommandEvent&) {
+	if (!initialized) return;
 	slice.selection.y = top->GetValue();
 	onUpdateFromControl();
 }
 void ImageSliceWindow::onChangeWidth(wxCommandEvent&) {
+	if (!initialized) return;
 	slice.selection.width = width->GetValue();
 	onUpdateFromControl(PREFER_WIDTH);
 }
 void ImageSliceWindow::onChangeHeight(wxCommandEvent&) {
+	if (!initialized) return;
 	slice.selection.height = height->GetValue();
 	onUpdateFromControl(PREFER_HEIGHT);
 }
 
 void ImageSliceWindow::onChangeFixAspect(wxCommandEvent&) {
+	if (!initialized) return;
 	slice.aspect_fixed = fix_aspect->GetValue();
 	onUpdateFromControl();
 }
 
 void ImageSliceWindow::onChangeZoom(wxSpinEvent&) {
+	if (!initialized) return;
 	slice.zoomX(zoom->GetValue() / 100.0);
 	slice.zoomY(zoom->GetValue() / 100.0);
 	onUpdateFromControl();
 }
 void ImageSliceWindow::onChangeZoomX(wxSpinEvent&) {
+	if (!initialized) return;
 	slice.zoomX(zoom_x->GetValue() / 100.0);
 	onUpdateFromControl();
 }
 void ImageSliceWindow::onChangeZoomY(wxSpinEvent&) {
+	if (!initialized) return;
 	slice.zoomY(zoom_y->GetValue() / 100.0);
 	onUpdateFromControl();
 }
 
 void ImageSliceWindow::onChangeSharpen(wxCommandEvent&) {
+	if (!initialized) return;
 	slice.sharpen = sharpen->GetValue();
 	onUpdateFromControl();
 }
 void ImageSliceWindow::onChangeSharpenAmount(wxScrollEvent&) {
+	if (!initialized) return;
 	slice.sharpen_amount = sharpen_amount->GetValue();
 	onUpdateFromControl();
 }
