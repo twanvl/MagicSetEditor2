@@ -14,13 +14,12 @@
 #include <wx/popupwin.h> // undocumented: wxPopupWindow
 
 class ValueViewer;
-class DropDownHider;
 
 // ----------------------------------------------------------------------------- : DropDownList
 
 /// A popup/drop down window displaying a list of items
 /** This class is an abstract base for various drop down lists */
-class DropDownList : public wxPopupWindow {
+class DropDownList : public wxPopupTransientWindow {
   public:
 	~DropDownList();
 	/// Create a drop down list, possibly a sub menu
@@ -94,7 +93,6 @@ class DropDownList : public wxPopupWindow {
 	DropDownList*  open_sub_menu;      ///< The sub menu that is currently shown, if any
 	DropDownList*  parent_menu;        ///< The parent menu, only applies to sub menus
 	ValueViewer*   viewer;             ///< The parent viewer object (optional)
-	DropDownHider* hider, *hider2;     ///< Class to hide this window when we lose focus
 	bool           close_on_mouse_out; ///< Was the list kept open after selecting a choice, if so, be eager to close it
 	int            visible_start;      ///< First visible pixel
 	
