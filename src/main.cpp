@@ -48,6 +48,8 @@ class MSE : public wxApp {
 	int OnExit();
 	/// On exception: display error message
 	void HandleEvent(wxEvtHandler *handler, wxEventFunction func, wxEvent& event) const;
+	/// Hack around some wxWidget idiocies
+	int FilterEvent(wxEvent& ev);
 	/// Fancier assert
 	#if defined(_MSC_VER) && defined(_DEBUG)
 		void OnAssert(const wxChar *file, int line, const wxChar *cond, const wxChar *msg);
@@ -286,3 +288,13 @@ void MSE::HandleEvent(wxEvtHandler *handler, wxEventFunction func, wxEvent& even
 		#endif
 	}
 #endif
+
+// ----------------------------------------------------------------------------- : Events
+
+int MSE::FilterEvent(wxEvent& ev) {
+	if (ev.GetEventType() == wxEVT_MOUSE_CAPTURE_LOST) {
+		return 1;
+	} else {
+		return -1;
+	}
+}

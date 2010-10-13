@@ -55,6 +55,12 @@ typedef wxDateTime DateTime;
 
 typedef wxOutputStream OutputStream;
 
+// ----------------------------------------------------------------------------- : Compatability fixes
+
+#if wxVERSION_NUMBER < 2805
+	#define wxBORDER_THEME wxSUNKEN_BORDER
+#endif
+
 // ----------------------------------------------------------------------------- : Other aliasses
 
 typedef unsigned char Byte;

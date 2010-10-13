@@ -53,7 +53,7 @@ void FunctionProfile::get_children(vector<FunctionProfileP>& out) const {
 	sort(out.begin(), out.end(), compare_time);
 }
 
-
+// note: not thread safe
 FunctionProfile profile_aggr(_("everywhere"));
 
 void profile_aggregate(FunctionProfile& parent, int level, int max_level, const FunctionProfile& p);
@@ -135,6 +135,7 @@ Profiler::~Profiler() {
 	ProfileTime time = timer.time();
 	if (function == parent) return; // don't count
 	function->time_ticks += time;
+	function->time_ticks_max = max(function->time_ticks_max,time);
 	function->calls      += 1;
 	function = parent; // pop
 }

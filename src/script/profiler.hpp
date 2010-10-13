@@ -75,11 +75,15 @@ class Timer {
 /// How much time was spent in a function?
 class FunctionProfile : public IntrusivePtrBase<FunctionProfile> {
   public:
-	FunctionProfile(const String& name) : name(name), time_ticks(0), calls(0) {}
+	FunctionProfile(const String& name)
+		: name(name), time_ticks(0), time_ticks_max(0), calls(0)
+	{}
 
 	String      name;
 	ProfileTime time_ticks;
-	UInt        calls;
+	ProfileTime time_ticks_max;
+	int         calls;
+	
 	/// for each id, called children
 	/** we (ab)use the fact that all pointers are even to store both pointers and ids */
 	map<size_t,FunctionProfileP> children;
@@ -88,13 +92,15 @@ class FunctionProfile : public IntrusivePtrBase<FunctionProfile> {
 	void get_children(vector<FunctionProfileP>& out) const;
 
 	/// Time in seconds
-	inline double time() const { return time_ticks / (double)timer_resolution(); }
-	inline double avg_time() const { return time() / calls; }
+	inline double total_time() const { return time_ticks / (double)timer_resolution(); }
+	inline double avg_time() const { return total_time() / calls; }
+	inline double max_time() const { return time_ticks_max / (double)timer_resolution(); }
 };
 
 /// The root profile
 extern FunctionProfile profile_root;
 
+/// Return a simplified profile, where all things beyond a cerrain level are agragated
 const FunctionProfile& profile_aggregated(int level = 1);
 
 // ----------------------------------------------------------------------------- : Profiler
@@ -119,6 +125,20 @@ class Profiler {
 	FunctionProfile*        parent;
 };
 
+// Profile the current function (all following code in the current block) under the given name
+#define PROFILER(name) \
+	Timer profile_timer; \
+	Profiler profiler(profile_timer, name)
+#define PROFILER2(name1,name2) \
+	Timer profile_timer; \
+	Profiler profiler(profile_timer, name1,name2)
+
+#else // USE_SCRIPT_PROFILING
+
+#define PROFILER(a)
+#define PROFILER2(a,b)
+
+#endif // USE_SCRIPT_PROFILING
+
 // ----------------------------------------------------------------------------- : EOF
-#endif
 #endif

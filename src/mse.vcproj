@@ -1075,6 +1075,10 @@
 					>
 				</File>
 				<File
+					RelativePath=".\gui\profiler_window.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\gui\thumbnail_thread.cpp"
 					>
 				</File>

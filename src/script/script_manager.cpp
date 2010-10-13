@@ -295,10 +295,7 @@ void SetScriptManager::updateAll() {
 	Context& ctx = getContext(set.stylesheet);
 	FOR_EACH(v, set.data) {
 		try {
-			#if USE_SCRIPT_PROFILING
-				Timer t;
-				Profiler prof(t, v->fieldP.get(), _("update set.") + v->fieldP->name);
-			#endif
+			PROFILER2( v->fieldP.get(), _("update set.") + v->fieldP->name );
 			v->update(ctx);
 		} catch (const ScriptError& e) {
 			handle_error(ScriptError(e.what() + _("\n  while updating set value '") + v->fieldP->name + _("'")), false, true);
