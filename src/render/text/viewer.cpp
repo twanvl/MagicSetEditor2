@@ -350,6 +350,7 @@ void TextViewer::prepareElements(const String& text, const TextStyle& style, Con
 void TextViewer::prepareLines(RotatedDC& dc, const String& text, TextStyle& style, Context& ctx) {
 	vector<CharInfo> chars;
 	prepareLinesTryScales(dc, text, style, chars);
+	assert(!lines.empty());
 	
 	// store information about the content/layout, allow this to change alignment
 	style.content_width  = 0;
@@ -559,7 +560,7 @@ bool TextViewer::prepareLinesScale(RotatedDC& dc, const vector<CharInfo>& chars,
 			if (line_size.width + word_size.width > max_width) {
 				if (!style.field().multi_line) {
 					// single line word does not fit
-					return false;
+					if (stop_if_too_long) return false;
 				} else if (word_start == line.start) {
 					// single word on this line; the word is too long
 					if (stop_if_too_long) {
@@ -683,6 +684,7 @@ void TextViewer::alignLines(RotatedDC& dc, const vector<CharInfo>& chars, const 
 					-RealSize(style.padding_left+style.padding_right, style.padding_top + style.padding_bottom));
 	if (style.paragraph_height <= 0) {
 		// whole text box alignment
+		assert(!lines.empty());
 		double top = lines[0].top;
 		alignParagraph(0, lines.size(), chars, style, RealRect(RealPoint(0,top),s));
 	} else {
