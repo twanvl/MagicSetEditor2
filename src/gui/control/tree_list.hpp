@@ -17,7 +17,7 @@
 /// A combination of a TreeCtrl and a ListCtrl. A tree with multiple columns.
 class TreeList : public wxPanel {
   public:
-	TreeList(Window* parent, int id, long style = wxSUNKEN_BORDER);
+	TreeList(Window* parent, int id, long style = wxBORDER_THEME);
 	
 	/// Expand/collapse an item
 	void expand(size_t item, bool expand = true);
