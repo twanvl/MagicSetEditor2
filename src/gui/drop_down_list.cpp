@@ -109,14 +109,15 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
 	visible_start = 0;
 	ensureSelectedItemVisible();
 	// show
+	if (GetParent()->HasCapture()) {
+		// release capture on parent
+		// do this before showing the popup, because that might change who has the capture
+		GetParent()->ReleaseMouse();
+	}
 	if (selected_item == NO_SELECTION && itemCount() > 0) selected_item = 0; // select first item by default
 	mouse_down = false;
 	close_on_mouse_out = false;
 	Popup();
-	if (isRoot() && GetParent()->HasCapture()) {
-		// release capture on parent
-		GetParent()->ReleaseMouse();
-	}
 	// fix drop down arrow
 	redrawArrowOnParent();
 }
