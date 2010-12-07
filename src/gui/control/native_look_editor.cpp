@@ -36,18 +36,14 @@ void NativeLookEditor::drawViewer(RotatedDC& dc, ValueViewer& v) {
 	if (!shouldDraw(v)) return;
 	ValueEditor* e = v.getEditor();
 	if (!e || e->drawLabel()) {
-		// draw background
+		// draw control border and box
 		Style& s = *v.getStyle();
-		dc.SetPen(*wxTRANSPARENT_PEN);
-		dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
-		dc.DrawRectangle(s.getInternalRect().grow(1));
+		draw_control_box(this, dc.getDC(), dc.trRectStraight(s.getInternalRect().grow(1)), current_editor == e, e != nullptr);
 		// draw label
 		dc.SetFont(*wxNORMAL_FONT);
 		// TODO : tr using stylesheet or using game?
 		dc.DrawText(tr(getStylePackage(), s.fieldP->name, capitalize_sentence),
 					RealPoint(margin_left - s.left, 1));
-		// draw 3D border
-		draw_control_border(this, dc.getDC(), dc.trRectStraight(s.getInternalRect().grow(1)));
 	}
 	// draw viewer
 	v.draw(dc);

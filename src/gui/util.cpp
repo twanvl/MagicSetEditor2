@@ -194,6 +194,18 @@ wxBitmap load_resource_tool_image(const String& name) {
 	#endif
 }
 
+
+#if defined(_UNICODE) && defined(_MSC_VER) && _MSC_VER >= 1400
+// manifest to use new-style controls in Windows Vista / Windows 7
+#if defined _M_IX86
+#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='x86' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#elif defined _M_X64
+#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='amd64' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#else
+#pragma comment(linker,"/manifestdependency:\"type='win32' name='Microsoft.Windows.Common-Controls' version='6.0.0.0' processorArchitecture='*' publicKeyToken='6595b64144ccf1df' language='*'\"")
+#endif
+#endif
+
 // ----------------------------------------------------------------------------- : Platform look
 
 // Draw a basic 3D border
@@ -212,7 +224,7 @@ void draw3DBorder(DC& dc, int x1, int y1, int x2, int y2) {
 	dc.DrawLine(x2+1, y1-1, x2+1, y2+2);
 }
 
-void draw_control_border(Window* win, DC& dc, const wxRect& rect) {
+void draw_control_box(Window* win, DC& dc, const wxRect& rect, bool focused, bool enabled) {
 	#if wxUSE_UXTHEME && defined(__WXMSW__)
 		RECT r;
 		wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
@@ -227,19 +239,28 @@ void draw_control_border(Window* win, DC& dc, const wxRect& rect) {
 					(HTHEME)hTheme,
 					(HDC)dc.GetHDC(),
 					EP_EDITTEXT,
-					ETS_NORMAL,
+					!enabled ? ETS_DISABLED : focused ? ETS_NORMAL : ETS_NORMAL,
 					&r,
 					NULL
 				);
 				return;
 			}
 		}
+	#endif
+	// otherwise, draw a standard border
+	// clear the background
+	dc.SetPen(*wxTRANSPARENT_PEN);
+	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
+	dc.DrawRectangle(rect);
+	// draw the border
+	#if defined(__WXMSW__)
 		r.left   = rect.x - 2;
 		r.top    = rect.y - 2;
 		r.right  = rect.x + rect.width  + 2;
 		r.bottom = rect.y + rect.height + 2;
 		DrawEdge((HDC)dc.GetHDC(), &r, EDGE_SUNKEN, BF_RECT);
 	#else
+		// draw a 3D border
 		draw3DBorder(dc, rect.x - 1, rect.y - 1, rect.x + rect.width, rect.y + rect.height);
 	#endif
 }

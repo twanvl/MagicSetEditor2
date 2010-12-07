@@ -56,9 +56,9 @@ wxBitmap load_resource_tool_image(const String& name);
 
 // ----------------------------------------------------------------------------- : Platform look
 
-/// Draws a border for a control *around* a rect
+/// Draws a box for a control *around* a rect
 /** Based on wxRendererXP::DrawComboBoxDropButton */
-void draw_control_border(Window* win, DC& dc, const wxRect& rect);
+void draw_control_box(Window* win, DC& dc, const wxRect& rect, bool focused, bool enabled = true);
 
 /// Draws an arrow for a menu item indicating it has a sub menu
 void draw_menu_arrow(Window* win, DC& dc, const wxRect& rect, bool active);

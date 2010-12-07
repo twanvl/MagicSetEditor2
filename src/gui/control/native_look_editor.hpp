@@ -19,7 +19,7 @@ DECLARE_POINTER_TYPE(ExportTemplate);
 /// A data editor with a platform native look
 class NativeLookEditor : public DataEditor {
   public:
-	NativeLookEditor(Window* parent, int id, long style = 0);
+	NativeLookEditor(Window* parent, int id, long style = wxBORDER_THEME);
 	
 	/// Uses a native look
 	virtual bool nativeLook()  const { return true; }
