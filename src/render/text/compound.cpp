@@ -50,7 +50,7 @@ void ErrorTextElement::draw(RotatedDC& dc, double scale, const RealRect& rect, c
 		}
 		if (pos.x < rect.right()) {
 			// final piece
-			dc.DrawLine(pos - dy, pos + dx / 2);
+			dc.DrawLine(pos - dy, pos + dx * 0.5);
 		}
 	}
 	// Draw the contents
