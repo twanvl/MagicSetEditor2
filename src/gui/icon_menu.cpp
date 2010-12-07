@@ -66,22 +66,16 @@ void set_menu_item_image(wxMenuItem* item, const String& resource) {
 
 // ----------------------------------------------------------------------------- : IconMenu
 
-void IconMenu::Append(int id, const String& resource, const String& text, const String& help, int style, wxMenu* submenu) {
+void IconMenu::Append(int id, const String& resource, const String& text, const String& help, wxItemKind kind, wxMenu* submenu) {
 	// create menu, load icon
-	wxMenuItem* item = new wxMenuItem(this, id, text, help, style, submenu);
+	wxMenuItem* item = new wxMenuItem(this, id, text, help, kind, submenu);
 	set_menu_item_image(item, resource);
 	// add to menu
 	wxMenu::Append(item);
 }
 
-void IconMenu::Append(int id, const String& text, const String& help) {
-	wxMenuItem* item = new wxMenuItem (this, id, text, help);
-	item->SetBitmap(wxNullBitmap);
-	wxMenu::Append(item);
-}
-
-void IconMenu::Append(int id, const String& text, const String& help, wxMenu* submenu) {
-	wxMenuItem* item = new wxMenuItem (this, id, text, help, wxITEM_NORMAL, submenu);
+void IconMenu::Append(int id, const String& text, const String& help, wxItemKind kind, wxMenu* submenu) {
+	wxMenuItem* item = new wxMenuItem (this, id, text, help, kind, submenu);
 	item->SetBitmap(wxNullBitmap);
 	wxMenu::Append(item);
 }
@@ -91,16 +85,16 @@ void IconMenu::Append(wxMenuItem* item) {
 	wxMenu::Append(item);
 }
 
-void IconMenu::Insert(size_t pos, int id, const String& resource, const String& text, const String& help, int style, wxMenu* submenu) {
+void IconMenu::Insert(size_t pos, int id, const String& resource, const String& text, const String& help, wxItemKind kind, wxMenu* submenu) {
 	// create menu, load icon
-	wxMenuItem* item = new wxMenuItem(this, id, text, help, style, submenu);
+	wxMenuItem* item = new wxMenuItem(this, id, text, help, kind, submenu);
 	set_menu_item_image(item, resource);
 	// add to menu
 	wxMenu::Insert(pos,item);
 }
 
-void IconMenu::Insert(size_t pos, int id, const String& text, const String& help) {
-	wxMenuItem* item = new wxMenuItem (this, id, text, help);
+void IconMenu::Insert(size_t pos, int id, const String& text, const String& help, wxItemKind kind, wxMenu* submenu) {
+	wxMenuItem* item = new wxMenuItem (this, id, text, help, kind, submenu);
 	item->SetBitmap(wxNullBitmap);
 	wxMenu::Insert(pos, item);
 }
