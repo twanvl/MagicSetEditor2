@@ -288,7 +288,7 @@ KeywordTrie* KeywordTrie::insert(Char c) {
 KeywordTrie* KeywordTrie::insert(const String& match) {
 	KeywordTrie* cur = this;
 	FOR_EACH_CONST(c, match) {
-		cur = cur->insert(c);
+		cur = cur->insert(static_cast<Char>(c));
 	}
 	return cur;
 }
