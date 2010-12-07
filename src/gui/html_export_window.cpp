@@ -55,7 +55,7 @@ HtmlExportWindow::HtmlExportWindow(Window* parent, const SetP& set, const Export
 void HtmlExportWindow::onOk(wxCommandEvent&) {
 	ExportTemplateP exp = list->getSelection<ExportTemplate>();
 	// get filename
-	String name = wxFileSelector(_TITLE_("save html"),settings.default_export_dir,_(""),_(""),exp->file_type, wxSAVE | wxOVERWRITE_PROMPT);
+	String name = wxFileSelector(_TITLE_("save html"),settings.default_export_dir,_(""),_(""),exp->file_type, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 	if (name.empty()) return;
 	settings.default_export_dir = wxPathOnly(name);
 	wxBusyCursor wait;
