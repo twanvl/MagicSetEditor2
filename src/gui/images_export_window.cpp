@@ -63,7 +63,7 @@ void ImagesExportWindow::onOk(wxCommandEvent&) {
 	else               gs.images_export_conflicts = CONFLICT_NUMBER_OVERWRITE;
 	// Select filename
 	String name = wxFileSelector(_TITLE_("export images"), settings.default_export_dir, _LABEL_("filename is ignored"),_(""),
-		                         _LABEL_("filename is ignored")+_("|*"), wxSAVE, this);
+		                         _LABEL_("filename is ignored")+_("|*"), wxFD_SAVE, this);
 	if (name.empty()) return;
 	settings.default_export_dir = wxPathOnly(name);
 	// Export
