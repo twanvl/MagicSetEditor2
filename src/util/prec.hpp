@@ -60,6 +60,10 @@ typedef wxOutputStream OutputStream;
 #if wxVERSION_NUMBER < 2805
 	#define wxBORDER_THEME wxSUNKEN_BORDER
 #endif
+#if wxVERSION_NUMBER < 2900
+	// wx >= 2.9 requires the use of HandleWindowEvent on windows, instead of ProcessEvent
+	#define HandleWindowEvent ProcessEvent
+#endif
 
 // ----------------------------------------------------------------------------- : Other aliasses
 
