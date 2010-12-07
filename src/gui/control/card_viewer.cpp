@@ -88,7 +88,7 @@ void CardViewer::onPaint(wxPaintEvent&) {
 //	dc.SetDeviceOrigin(-dx, -dy);
 	wxRegion clip = GetUpdateRegion();
 //	clip.Offset(dx, dy);
-	dc.SetClippingRegion(clip);
+	dc.SetDeviceClippingRegion(clip);
 	// draw
 	if (!up_to_date) {
 		up_to_date = true;
@@ -150,4 +150,5 @@ Rotation CardViewer::getRotation() const {
 
 BEGIN_EVENT_TABLE(CardViewer, wxControl)
 	EVT_PAINT      (CardViewer::onPaint)
+	EVT_ERASE_BACKGROUND(CardViewer::onEraseBackground)
 END_EVENT_TABLE  ()

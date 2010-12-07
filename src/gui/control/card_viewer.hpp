@@ -24,7 +24,7 @@ DECLARE_EVENT_TYPE(EVENT_SIZE_CHANGE, <not used>)
 /// A control to view a single card
 class CardViewer : public wxControl, public DataViewer {
   public:
-	CardViewer(Window* parent, int id, long style = 0);
+	CardViewer(Window* parent, int id, long style = wxBORDER_THEME);
 	
 	/// Get a dc to draw on the card outside onPaint	
 	/** May NOT be called while in onPaint/draw */
@@ -55,6 +55,7 @@ class CardViewer : public wxControl, public DataViewer {
   private:
 	DECLARE_EVENT_TABLE();
 	
+	void onEraseBackground(wxEraseEvent&) {}
 	void onPaint(wxPaintEvent&);
 	
 	Bitmap buffer;     ///< Off-screen buffer we draw to
