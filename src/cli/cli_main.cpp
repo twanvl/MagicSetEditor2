@@ -225,7 +225,7 @@ void CLISetInterface::handleCommand(const String& command) {
 			cli <<         _("========  ========  ======  ===============================") << NORMAL << ENDL;
 		} else {
 			for (int i = 1 ; i < level ; ++i) cli << _("  ");
-			cli << String::Format(_("%8.5f  %8.5f  %6d  %s"), item.time(), 1000 * item.avg_time(), item.calls, item.name.c_str()) << ENDL;
+			cli << String::Format(_("%8.5f  %8.5f  %6d  %s"), item.total_time(), 1000 * item.avg_time(), item.calls, item.name.c_str()) << ENDL;
 		}
 		// show children
 		vector<FunctionProfileP> children;
