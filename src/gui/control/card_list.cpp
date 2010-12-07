@@ -360,7 +360,7 @@ void CardListBase::onChar(wxKeyEvent& ev) {
 		// we need this because tabs are not handled on the cards panel
 		wxNavigationKeyEvent nev;
 		nev.SetDirection(!ev.ShiftDown());
-		GetParent()->ProcessEvent(nev);
+		GetParent()->HandleWindowEvent(nev);
 	} else {
 		ev.Skip();
 	}
