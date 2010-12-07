@@ -10,6 +10,7 @@
 #include <gui/control/package_list.hpp>
 #include <util/io/package_manager.hpp>
 #include <util/alignment.hpp>
+#include <script/profiler.hpp>
 
 DECLARE_TYPEOF_COLLECTION(PackagedP);
 
@@ -64,9 +65,13 @@ void PackageList::showData(const String& pattern) {
 	packages.clear();
 	// find matching packages
 	vector<PackagedP> matching;
-	package_manager.findMatching(pattern, matching);
+	{
+		PROFILER(_("find matching packages"));
+		package_manager.findMatching(pattern, matching);
+	}
 	FOR_EACH(p, matching) {
 		// open image
+		PROFILER(_("load package image"));
 		InputStreamP stream = p->openIconFile();
 		Image img;
 		Bitmap bmp;
