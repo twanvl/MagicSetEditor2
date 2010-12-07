@@ -38,7 +38,7 @@
 	 */
 	class Regex {
 	  public:
-		struct Results : public boost::match_results<const Char*> {
+		struct Results : public boost::match_results<String::const_iterator> {
 			/// Get a sub match
 			inline String str(int sub = 0) const {
 				const_reference v = (*this)[sub];
@@ -48,7 +48,7 @@
 			inline String format(const String& format) const {
 				std::basic_string<Char> fmt(format.begin(),format.end());
 				String output;
-				boost::match_results<const Char*>::format(
+				boost::match_results<String::const_iterator>::format(
 					insert_iterator<String>(output, output.end()), fmt, boost::format_sed);
 				return output;
 			}
@@ -62,9 +62,9 @@
 			return regex_search(str.begin(), str.end(), regex);
 		}
 		inline bool matches(Results& results, const String& str) const {
-			return regex_search(str.begin(), str.end(), results, regex);
+			return matches(results, str.begin(), str.end());
 		}
-		inline bool matches(Results& results, const Char* begin, const Char* end) const {
+		inline bool matches(Results& results, const String::const_iterator& begin, const String::const_iterator& end) const {
 			return regex_search(begin, end, results, regex);
 		}
 		void replace_all(String* input, const String& format);
