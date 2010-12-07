@@ -61,6 +61,9 @@ class Vector2D {
 	inline Vector2D operator * (double r) const {
 		return Vector2D(x * r, y * r);
 	}
+	inline Vector2D operator * (int r) const {
+		return Vector2D(x * r, y * r);
+	}
 	/// Multiply with a scalar
 	inline void     operator *= (double r) {
 		x *= r;  y *= r;
