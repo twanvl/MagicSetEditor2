@@ -138,10 +138,10 @@ void Reader::moveNext() {
  */
 template <typename T> class LocalVector {
   public:
-	LocalVector() : size(0), alloced(SMALL_SIZE), buffer(small) {}
+	LocalVector() : the_size(0), alloced(SMALL_SIZE), buffer(small) {}
 	~LocalVector() { if (buffer != small) free(buffer); }
 	void push_back(T t) {
-		if (size >= alloced) {
+		if (the_size >= alloced) {
 			// double buffer size
 			if (buffer != small) {
 				buffer = (T*)realloc(buffer, sizeof(T) * alloced * 2);
@@ -151,12 +151,13 @@ template <typename T> class LocalVector {
 			}
 			alloced *= 2;
 		}
-		buffer[size++] = t;
+		buffer[the_size++] = t;
 	}
-	const T* get() { return buffer; }
+	inline const T* get() const { return buffer; }
+	inline size_t size() const { return the_size; }
   private:
 	static const int SMALL_SIZE = 1024;
-	size_t size, alloced;
+	size_t the_size, alloced;
 	T* buffer;
 	T small[SMALL_SIZE];
 };
@@ -190,14 +191,20 @@ String read_utf8_line(wxInputStream& input, bool eat_bom, bool until_eof) {
 	} else if (size == 0) {
 		return _("");
 	}
-	String result;
 	#ifdef UNICODE
-		// NOTE: wx doc is wrong, parameter to GetWritableChar is numer of characters, not bytes
-		Char* result_buf = result.GetWriteBuf(size + 1);
-		wxConvUTF8.MB2WC(result_buf, buffer.get(), size + 1);
-		result.UngetWriteBuf(size);
-		return eat_bom ? decodeUTF8BOM(result) : result;
+		#if wxVERSION_NUMBER >= 2900
+			String result = wxString::FromUTF8(buffer.get(), buffer.size());
+			return eat_bom ? decodeUTF8BOM(result) : result;
+		#else
+			// NOTE: wx doc is wrong, parameter to GetWritableChar is numer of characters, not bytes
+			String result;
+			Char* result_buf = result.GetWriteBuf(size + 1);
+			wxConvUTF8.MB2WC(result_buf, buffer.get(), size + 1);
+			result.UngetWriteBuf(size);
+			return eat_bom ? decodeUTF8BOM(result) : result;
+		#endif
 	#else
+		String result;
 		// first to wchar, then back to local
 		vector<wchar_t> buf2; buf2.resize(size+1);
 		wxConvUTF8.MB2WC(&buf2[0], buffer.get(), size + 1);
