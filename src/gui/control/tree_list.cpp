@@ -251,7 +251,7 @@ void TreeList::onChar(wxKeyEvent& ev) {
 			// we need this because of wxWANTS_CHARS
 			wxNavigationKeyEvent nev;
 			nev.SetDirection(!ev.ShiftDown());
-			GetParent()->ProcessEvent(nev);
+			GetParent()->HandleWindowEvent(nev);
 			break;
 		}
 	}
