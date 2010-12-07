@@ -50,6 +50,7 @@ class HoverButtonBase : public wxControl {
 	void onKillFocus (wxFocusEvent& ev);
 	void onLeftUp    (wxMouseEvent&);
 	void onLeftDown  (wxMouseEvent&);
+	void onLoseCapture(wxMouseCaptureLostEvent&);
 	void onKeyDown   (wxKeyEvent&);
 	void onKeyUp     (wxKeyEvent&);
 	void onPaint     (wxPaintEvent&);

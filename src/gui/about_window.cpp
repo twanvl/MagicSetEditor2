@@ -100,6 +100,10 @@ void HoverButtonBase::onLeftUp(wxMouseEvent&) {
 		onClick();
 	}
 }
+void HoverButtonBase::onLoseCapture(wxMouseCaptureLostEvent&) {
+	// We already test for wrong release with HasCapture()
+	// but stupid wxWidget people decided to throw assertion failures
+}
 void HoverButtonBase::onKeyDown(wxKeyEvent& ev) {
 	int code = ev.GetKeyCode();
 	if (code == WXK_RETURN || code == WXK_SPACE) {
@@ -147,6 +151,7 @@ BEGIN_EVENT_TABLE(HoverButtonBase, wxControl)
 	EVT_LEFT_UP        (HoverButtonBase::onLeftUp)
 	EVT_KEY_DOWN       (HoverButtonBase::onKeyDown)
 	EVT_KEY_UP         (HoverButtonBase::onKeyUp)
+	EVT_MOUSE_CAPTURE_LOST(HoverButtonBase::onLoseCapture)
 END_EVENT_TABLE  ()
 
 // ----------------------------------------------------------------------------- : Button with image and hover effect
