@@ -29,7 +29,7 @@ DECLARE_POINTER_TYPE(FakeTextValue);
  */
 class TextCtrl : public DataEditor {
   public:
-	TextCtrl(Window* parent, int id, bool multi_line, long style = 0);
+	TextCtrl(Window* parent, int id, bool multi_line, long style = wxBORDER_THEME);
 	~TextCtrl();
 	
 	/// Set the value that is being edited
