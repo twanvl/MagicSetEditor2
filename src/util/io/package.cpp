@@ -11,6 +11,7 @@
 #include <util/io/package_manager.hpp>
 #include <util/error.hpp>
 #include <script/to_value.hpp> // for reflection
+#include <script/profiler.hpp> // for PROFILER
 #include <wx/wfstream.h>
 #include <wx/zipstrm.h>
 #include <wx/dir.h>
@@ -68,6 +69,7 @@ const String& Package::absoluteFilename() const {
 
 void Package::open(const String& n, bool fast) {
 	assert(!isOpened()); // not already opened
+	PROFILER(_("open package"));
 	// get absolute path
 	wxFileName fn(n);
 	fn.Normalize();
@@ -534,6 +536,7 @@ template <> void Reader::handle(JustAsPackageProxy& object) {
 void Packaged::open(const String& package, bool just_header) {
 	Package::open(package);
 	fully_loaded = false;
+	PROFILER(just_header ? _("open package header") : _("open package fully"));
 	if (just_header) {
 		// Read just the header (the part common to all Packageds)
 		Reader reader(openIn(typeName()), this, absoluteFilename() + _("/") + typeName(), true);
