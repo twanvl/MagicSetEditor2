@@ -656,7 +656,7 @@ ApprenticeExportWindow::ApprenticeExportWindow(Window* parent, const SetP& set)
 void ApprenticeExportWindow::onApprenticeBrowse(wxCommandEvent& ev) {
 	// browse for appr.exe
 	// same as in DirsPreferencesPage
-	wxFileDialog dlg(this, _TITLE_("locate apprentice"), apprentice->GetValue(), _(""), _LABEL_("apprentice exe") + _("|appr.exe"), wxOPEN);
+	wxFileDialog dlg(this, _TITLE_("locate apprentice"), apprentice->GetValue(), _(""), _LABEL_("apprentice exe") + _("|appr.exe"), wxFD_OPEN);
 	if (dlg.ShowModal() == wxID_OK) {
 		wxFileName fn(dlg.GetPath());
 		apprentice->SetValue(fn.GetPath());
