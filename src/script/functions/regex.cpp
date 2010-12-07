@@ -28,7 +28,7 @@ class ScriptRegex : public ScriptValue, public Regex {
 	}
 	
 	/// Match only if in_context also matches
-	bool matches(Results& results, const String& str, const Char* begin, const ScriptRegexP& in_context) {
+	bool matches(Results& results, const String& str, String::const_iterator begin, const ScriptRegexP& in_context) {
 		if (!in_context) {
 			return matches(results, begin, str.end());
 		} else {
@@ -73,7 +73,7 @@ struct RegexReplacer {
 	
 	String apply(Context& ctx, const String& input, int level = 0) const {
 		String ret;
-		const Char* start = input.begin();
+		String::const_iterator start = input.begin();
 		ScriptRegex::Results results;
 		while (match->matches(results, input, start, context)) {
 			// for each match ...
@@ -149,7 +149,7 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(filter_text) {
 	SCRIPT_OPTIONAL_PARAM_C_(ScriptRegexP, in_context);
 	String ret;
 	// find all matches
-	const Char* start = input.begin();
+	String::const_iterator start = input.begin();
 	ScriptRegex::Results results;
 	while (match->matches(results, input, start, in_context)) {
 		// match, append to result
@@ -176,7 +176,7 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(break_text) {
 	SCRIPT_OPTIONAL_PARAM_C_(ScriptRegexP, in_context);
 	ScriptCustomCollectionP ret(new ScriptCustomCollection);
 	// find all matches
-	const Char* start = input.begin();
+	String::const_iterator start = input.begin();
 	ScriptRegex::Results results;
 	while (match->matches(results, input, start, in_context)) {
 		// match, append to result
@@ -202,7 +202,7 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(split_text) {
 	SCRIPT_PARAM_DEFAULT_N(bool, _("include empty"), include_empty, true);
 	ScriptCustomCollectionP ret(new ScriptCustomCollection);
 	// find all matches
-	const Char* start = input.begin();
+	String::const_iterator start = input.begin();
 	ScriptRegex::Results results;
 	while (match->matches(results, start, input.end())) {
 		// match, append the part before it to the result
