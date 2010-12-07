@@ -419,11 +419,17 @@ void ImageSlicePreview::onMotion(wxMouseEvent& ev) {
 	}
 }
 
+void ImageSlicePreview::onLoseCapture(wxMouseCaptureLostEvent&) {
+	// We already test for wrong release with HasCapture()
+	// but stupid wxwidget people decided to throw assertion failures
+}
+
 BEGIN_EVENT_TABLE(ImageSlicePreview, wxControl)
 	EVT_PAINT        (ImageSlicePreview::onPaint)
 	EVT_LEFT_DOWN    (ImageSlicePreview::onLeftDown)
 	EVT_LEFT_UP      (ImageSlicePreview::onLeftUp)
 	EVT_MOTION       (ImageSlicePreview::onMotion)
+	EVT_MOUSE_CAPTURE_LOST(ImageSlicePreview::onLoseCapture)
 END_EVENT_TABLE  ()
 
 
@@ -471,7 +477,7 @@ void ImageSliceSelector::draw(DC& dc) {
 	{
 		wxRegion r(0,0,s.x,s.y);
 		r.Subtract(wxRect(border,border, s.x-2*border, s.y-2*border));
-		dc.SetClippingRegion(r);
+		dc.SetDeviceClippingRegion(r);
 		dc.SetPen(*wxTRANSPARENT_PEN);
 		dc.SetBrush(Color(191,191,191));
 		dc.SetLogicalFunction(wxAND);
@@ -646,6 +652,11 @@ void ImageSliceSelector::onMotion(wxMouseEvent& ev) {
 	}
 }
 
+void ImageSliceSelector::onLoseCapture(wxMouseCaptureLostEvent&) {
+	// We already test for wrong release with HasCapture()
+	// but stupid wxwidget people decided to throw assertion failures
+}
+
 // ----------------------------------------------------------------------------- : ImageSliceSelector : handles
 
 bool ImageSliceSelector::onHandle(const wxMouseEvent& ev, int dx, int dy) const {
@@ -683,4 +694,5 @@ BEGIN_EVENT_TABLE(ImageSliceSelector, wxControl)
 	EVT_LEFT_UP      (ImageSliceSelector::onLeftUp)
 	EVT_MOTION       (ImageSliceSelector::onMotion)
 	EVT_SIZE         (ImageSliceSelector::onSize)
+	EVT_MOUSE_CAPTURE_LOST(ImageSliceSelector::onLoseCapture)
 END_EVENT_TABLE  ()

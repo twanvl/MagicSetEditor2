@@ -139,6 +139,7 @@ class ImageSlicePreview : public wxControl {
 	void onLeftDown(wxMouseEvent&);
 	void onLeftUp  (wxMouseEvent&);
 	void onMotion  (wxMouseEvent&);
+	void onLoseCapture(wxMouseCaptureLostEvent&);
 	
 	void onPaint(wxPaintEvent&);
 	void draw(DC& dc);
@@ -172,6 +173,7 @@ class ImageSliceSelector : public wxControl {
 	void onLeftDown(wxMouseEvent&);
 	void onLeftUp  (wxMouseEvent&);
 	void onMotion  (wxMouseEvent&);
+	void onLoseCapture(wxMouseCaptureLostEvent&);
 	
 	void onPaint(wxPaintEvent&);
 	void onSize(wxSizeEvent&);
