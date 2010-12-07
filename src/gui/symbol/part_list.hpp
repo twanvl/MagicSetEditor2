@@ -72,6 +72,7 @@ class SymbolPartList : public wxScrolledWindow, public SymbolView {
 	void onLeftDClick(wxMouseEvent& ev);
 	void onLeftUp    (wxMouseEvent& ev);
 	void onMotion    (wxMouseEvent& ev);
+	void onLoseCapture(wxMouseCaptureLostEvent&);
 	void onChar(wxKeyEvent& ev);
 	void onPaint(wxPaintEvent&);
 	void onSize(wxSizeEvent&);

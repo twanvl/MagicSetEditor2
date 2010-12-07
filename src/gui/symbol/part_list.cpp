@@ -29,7 +29,7 @@ DEFINE_EVENT_TYPE(EVENT_PART_ACTIVATE);
 
 
 SymbolPartList::SymbolPartList(Window* parent, int id, SymbolPartsSelection& selection, SymbolP symbol)
-	: wxScrolledWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER | wxVSCROLL)
+	: wxScrolledWindow(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME | wxVSCROLL)
 	, selection(selection)
 	, state_icons(9,8)
 {
@@ -217,6 +217,10 @@ void SymbolPartList::onMotion(wxMouseEvent& ev) {
 			Refresh(false);
 		}
 	}
+}
+void SymbolPartList::onLoseCapture(wxMouseCaptureLostEvent&) {
+	// We already test for wrong release with HasCapture()
+	// but stupid wxwidget people decided to throw assertion failures
 }
 
 void SymbolPartList::onLeftDClick(wxMouseEvent& ev) {
@@ -551,4 +555,5 @@ BEGIN_EVENT_TABLE(SymbolPartList, wxScrolledWindow)
 	EVT_CHAR           (SymbolPartList::onChar)
 	EVT_PAINT          (SymbolPartList::onPaint)
 	EVT_SIZE           (SymbolPartList::onSize)
+	EVT_MOUSE_CAPTURE_LOST(SymbolPartList::onLoseCapture)
 END_EVENT_TABLE  ()
