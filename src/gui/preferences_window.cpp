@@ -321,7 +321,7 @@ void DirsPreferencesPage::store() {
 
 void DirsPreferencesPage::onApprenticeBrowse(wxCommandEvent&) {
 	// browse for appr.exe
-	wxFileDialog dlg(this, _TITLE_("locate apprentice"), apprentice->GetValue(), _(""), _LABEL_("apprentice exe") + _("|appr.exe"), wxOPEN);
+	wxFileDialog dlg(this, _TITLE_("locate apprentice"), apprentice->GetValue(), _(""), _LABEL_("apprentice exe") + _("|appr.exe"), wxFD_OPEN);
 	if (dlg.ShowModal() == wxID_OK) {
 		wxFileName fn(dlg.GetPath());
 		apprentice->SetValue(fn.GetPath());
