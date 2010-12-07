@@ -384,6 +384,7 @@ void PackGenerator::reset(int seed) {
 }
 
 PackInstance& PackGenerator::get(const String& name) {
+	assert(set);
 	PackInstanceP& instance = instances[name];
 	if (instance) {
 		return *instance;
