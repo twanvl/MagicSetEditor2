@@ -182,7 +182,7 @@ void show_update_dialog(Window* parent) {
 	// Show update dialog
 	wxDialog* dlg = new wxDialog(parent, wxID_ANY, _TITLE_("updates available"), wxDefaultPosition);
 	// controls
-	wxHtmlWindow* html = new HtmlWindowToBrowser(dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO | wxSUNKEN_BORDER);
+	wxHtmlWindow* html = new HtmlWindowToBrowser(dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxHW_SCROLLBAR_AUTO | wxBORDER_THEME);
 	html->SetPage(update_version_data->description);
 	wxButton* close = new wxButton(dlg, wxID_OK, _BUTTON_("close"));
 	close->SetDefault();
