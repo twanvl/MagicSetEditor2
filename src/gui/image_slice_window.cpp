@@ -430,6 +430,7 @@ BEGIN_EVENT_TABLE(ImageSlicePreview, wxControl)
 	EVT_LEFT_UP      (ImageSlicePreview::onLeftUp)
 	EVT_MOTION       (ImageSlicePreview::onMotion)
 	EVT_MOUSE_CAPTURE_LOST(ImageSlicePreview::onLoseCapture)
+	EVT_ERASE_BACKGROUND(ImageSlicePreview::onEraseBackground)
 END_EVENT_TABLE  ()
 
 
@@ -695,4 +696,5 @@ BEGIN_EVENT_TABLE(ImageSliceSelector, wxControl)
 	EVT_MOTION       (ImageSliceSelector::onMotion)
 	EVT_SIZE         (ImageSliceSelector::onSize)
 	EVT_MOUSE_CAPTURE_LOST(ImageSliceSelector::onLoseCapture)
+	EVT_ERASE_BACKGROUND(ImageSliceSelector::onEraseBackground)
 END_EVENT_TABLE  ()
