@@ -70,6 +70,9 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 		menuFile->Append(wxID_ANY,			_("export"),	_MENU_("export"),					_HELP_("export"), wxITEM_NORMAL, menuExport);
 		menuFile->AppendSeparator();
 		menuFile->Append(ID_FILE_CHECK_UPDATES,	_MENU_("check updates"),	_HELP_("check updates"));
+		#if USE_SCRIPT_PROFILING
+		menuFile->Append(ID_FILE_PROFILER,		_MENU_("show profiler"),	_HELP_("show profiler"));
+		#endif
 //		menuFile->Append(ID_FILE_INSPECT,					_("Inspect Internal Data..."),	_("Shows a the data in the set using a tree structure"));
 //		menuFile->AppendSeparator();
 		menuFile->Append(ID_FILE_RELOAD,					_MENU_("reload data"),		_HELP_("reload data"));
@@ -117,7 +120,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	SetStatusText(_HELP_("welcome"));
 	
 	// tool bar
-	wxToolBar* tb = CreateToolBar(wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL);
+	wxToolBar* tb = CreateToolBar(wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL | wxTB_NODIVIDER);
 	tb->SetToolBitmapSize(wxSize(18,18));
 	tb->AddTool(ID_FILE_NEW,	_(""),	load_resource_tool_image(_("new")),		wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("new set"),	_HELP_("new set"));
 	tb->AddTool(ID_FILE_OPEN,	_(""),	load_resource_tool_image(_("open")),	wxNullBitmap, wxITEM_NORMAL, _TOOLTIP_("open set"),	_HELP_("open set"));
@@ -364,7 +367,7 @@ bool SetWindow::askSaveAndContinue() {
 		try {
 			if (set->needSaveAs()) {
 				// need save as
-				wxFileDialog dlg(this, _TITLE_("save set"), settings.default_set_dir, set->short_name, export_formats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
+				wxFileDialog dlg(this, _TITLE_("save set"), settings.default_set_dir, set->short_name, export_formats(*set->game), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 				if (dlg.ShowModal() == wxID_OK) {
 					settings.default_set_dir = dlg.GetDirectory();
 					export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
@@ -478,7 +481,7 @@ void SetWindow::onFileNew(wxCommandEvent&) {
 
 void SetWindow::onFileOpen(wxCommandEvent&) {
 	if (!settings.open_sets_in_new_window && isOnlyWithSet() && !askSaveAndContinue()) return;
-	wxFileDialog dlg(this, _TITLE_("open set"), settings.default_set_dir, _(""), import_formats(), wxOPEN);
+	wxFileDialog dlg(this, _TITLE_("open set"), settings.default_set_dir, _(""), import_formats(), wxFD_OPEN);
 	if (dlg.ShowModal() == wxID_OK) {
 		settings.default_set_dir = dlg.GetDirectory();
 		wxBusyCursor busy;
@@ -499,7 +502,7 @@ void SetWindow::onFileSave(wxCommandEvent& ev) {
 }
 
 void SetWindow::onFileSaveAs(wxCommandEvent&) {
-	wxFileDialog dlg(this, _TITLE_("save set"), settings.default_set_dir, set->short_name, export_formats(*set->game), wxSAVE | wxOVERWRITE_PROMPT);
+	wxFileDialog dlg(this, _TITLE_("save set"), settings.default_set_dir, set->short_name, export_formats(*set->game), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 	if (dlg.ShowModal() == wxID_OK) {
 		settings.default_set_dir = dlg.GetDirectory();
 		export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
@@ -550,7 +553,7 @@ void SetWindow::onFileExportImage(wxCommandEvent&) {
 	if (!card)  return; // no card selected
 	String name = wxFileSelector(_TITLE_("save image"), settings.default_export_dir, clean_filename(card->identification()), _(""),
 		                         _("JPEG images (*.jpg)|*.jpg|Windows bitmaps (*.bmp)|*.bmp|PNG images (*.png)|*.png|TIFF images (*.tif)|*.tif"),
-		                         wxSAVE | wxOVERWRITE_PROMPT, this);
+		                         wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
 	if (!name.empty()) {
 		settings.default_export_dir = wxPathOnly(name);
 		export_image(set, card, name);
@@ -583,6 +586,11 @@ void SetWindow::onFileCheckUpdates(wxCommandEvent&) {
 	if (!askSaveAndContinue()) return;
 	(new PackagesWindow(this))->Show();
 	//Destroy();
+}
+
+void show_profiler_window(wxWindow* parent);
+void SetWindow::onFileProfiler(wxCommandEvent&) {
+	show_profiler_window(this);
 }
 
 void SetWindow::onFilePrint(wxCommandEvent&) {
@@ -744,6 +752,7 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
 	EVT_MENU			(ID_FILE_EXPORT_APPR,	SetWindow::onFileExportApprentice)
 	EVT_MENU			(ID_FILE_EXPORT_MWS,	SetWindow::onFileExportMWS)
 	EVT_MENU			(ID_FILE_CHECK_UPDATES,	SetWindow::onFileCheckUpdates)
+	EVT_MENU			(ID_FILE_PROFILER,		SetWindow::onFileProfiler)
 //	EVT_MENU			(ID_FILE_INSPECT,		SetWindow::onFileInspect)
 	EVT_MENU			(ID_FILE_PRINT,			SetWindow::onFilePrint)
 	EVT_MENU			(ID_FILE_PRINT_PREVIEW,	SetWindow::onFilePrintPreview)
