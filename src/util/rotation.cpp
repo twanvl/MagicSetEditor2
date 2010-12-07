@@ -332,7 +332,7 @@ void RotatedDC::DrawEllipticSpoke(const RealPoint& center, const RealSize& size,
 void RotatedDC::SetPen(const wxPen& pen)              { dc.SetPen(pen); }
 void RotatedDC::SetBrush(const wxBrush& brush)        { dc.SetBrush(brush); }
 void RotatedDC::SetTextForeground(const Color& color) { dc.SetTextForeground(color); }
-void RotatedDC::SetLogicalFunction(int function)      { dc.SetLogicalFunction(function); }
+void RotatedDC::SetLogicalFunction(wxRasterOperationMode function)      { dc.SetLogicalFunction(function); }
 
 void RotatedDC::SetFont(const wxFont& font) {
 	if (quality == QUALITY_LOW && zoomX == 1 && zoomY == 1) {
@@ -391,7 +391,7 @@ double RotatedDC::GetCharHeight() const {
 }
 
 void RotatedDC::SetClippingRegion(const RealRect& rect) {
-	dc.SetClippingRegion(trRectToRegion(rect));
+	dc.SetDeviceClippingRegion(trRectToRegion(rect));
 }
 void RotatedDC::DestroyClippingRegion() {
 	dc.DestroyClippingRegion();

@@ -155,6 +155,11 @@ enum RenderQuality {
 	QUALITY_AA,			///< Our own anti aliassing
 };
 
+#if wxVERSION_NUMBER < 2900
+	// argument type to SetLogicalFunction
+	typedef int wxRasterOperationMode;
+#endif
+
 /// A DC with rotation applied
 /** All draw** functions take internal coordinates.
  */
@@ -198,7 +203,7 @@ class RotatedDC : public Rotation {
 	void SetPen(const wxPen&);
 	void SetBrush(const wxBrush&);
 	void SetTextForeground(const Color&);
-	void SetLogicalFunction(int function);
+	void SetLogicalFunction(wxRasterOperationMode function);
 	
 	void SetFont(const wxFont& font);
 	/// Set the font, scales for zoom and high_quality
