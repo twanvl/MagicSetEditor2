@@ -20,7 +20,7 @@ class FindInfo;
 /// An editor for data values (usually a card)
 class DataEditor : public CardViewer {
   public:
-	DataEditor(Window* parent, int id, long style = 0);
+	DataEditor(Window* parent, int id, long style = wxBORDER_THEME);
 	
 	// --------------------------------------------------- : Utility for ValueViewers/Editors
 	
@@ -108,6 +108,7 @@ class DataEditor : public CardViewer {
 	void onMotion    (wxMouseEvent&);
 	void onMouseWheel(wxMouseEvent&);
 	void onMouseLeave(wxMouseEvent&);
+	void onLoseCapture(wxMouseCaptureLostEvent&);
 	
 	void onChar      (wxKeyEvent&);
 	

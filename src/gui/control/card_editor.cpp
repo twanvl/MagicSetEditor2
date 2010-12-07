@@ -342,6 +342,11 @@ RealPoint DataEditor::mousePoint(const wxMouseEvent& ev, const ValueViewer& view
 	return rot.trInv(RealPoint(ev.GetX(), ev.GetY()));
 }
 
+void DataEditor::onLoseCapture(wxMouseCaptureLostEvent&) {
+	// We already test for wrong release with HasCapture()
+	// but stupid wxwidget people decided to throw assertion failures
+}
+
 // ----------------------------------------------------------------------------- : Keyboard events
 
 void DataEditor::onChar(wxKeyEvent& ev) {
@@ -351,14 +356,14 @@ void DataEditor::onChar(wxKeyEvent& ev) {
 			if (selectNext()) return;
 			// send a navigation event to our parent, to select another control
 			wxNavigationKeyEvent evt;
-			GetParent()->ProcessEvent(evt);
+			GetParent()->HandleWindowEvent(evt);
 		} else {
 			// try to select the previos editor
 			if (selectPrevious()) return;
 			// send a navigation event to our parent, to select another control
 			wxNavigationKeyEvent evt;
 			evt.SetDirection(false);
-			GetParent()->ProcessEvent(evt);
+			GetParent()->HandleWindowEvent(evt);
 		}
 	} else if (current_editor) {
 		current_editor->onChar(ev);
@@ -427,4 +432,5 @@ BEGIN_EVENT_TABLE(DataEditor, CardViewer)
 	EVT_CHAR           (DataEditor::onChar)
 	EVT_SET_FOCUS      (DataEditor::onFocus)
 	EVT_KILL_FOCUS     (DataEditor::onLoseFocus)
+	EVT_MOUSE_CAPTURE_LOST(DataEditor::onLoseCapture)
 END_EVENT_TABLE  ()
