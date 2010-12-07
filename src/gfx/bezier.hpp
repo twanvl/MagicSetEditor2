@@ -41,7 +41,7 @@ class BezierCurve {
 	
 	/// Return the tangent on this curve at time t in [0...1)
 	inline Vector2D tangentAt(double t) const {
-		return c + ((b * 2) + (a * 3) * t) * t;
+		return c + ((b * 2.) + (a * 3.) * t) * t;
 	}
 };
 
