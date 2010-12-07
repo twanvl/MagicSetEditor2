@@ -92,6 +92,7 @@ class GalleryList : public wxPanel {
 	void onChar(wxKeyEvent& ev);
 	void onFocus(wxFocusEvent&);
 	void onPaint(wxPaintEvent&);
+	void onEraseBackground(wxEraseEvent&) {}
 	void onSize(wxSizeEvent&);
 	void onScroll(wxScrollWinEvent&);
 	void OnDraw(DC& dc);
@@ -133,7 +134,7 @@ class GalleryList : public wxPanel {
 	void sendEvent(WXTYPE type);
 
 	static const int MARGIN = 1; // margin between items (excluding border)
-	static const int BORDER = 1; // border aroung items
+	static const int BORDER = 0; // border around items
 	static const int SPACING = MARGIN + 2*BORDER; // distance between items
 };
 

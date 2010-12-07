@@ -21,7 +21,7 @@ DEFINE_EVENT_TYPE(EVENT_GALLERY_ACTIVATE);
 // ----------------------------------------------------------------------------- : GalleryList
 
 GalleryList::GalleryList(Window* parent, int id, int direction, bool always_focused)
-	: wxPanel(parent, id, wxDefaultPosition, wxDefaultSize, wxSUNKEN_BORDER | wxWANTS_CHARS | (direction == wxHORIZONTAL ? wxHSCROLL : wxVSCROLL) )
+	: wxPanel(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME | wxWANTS_CHARS | (direction == wxHORIZONTAL ? wxHSCROLL : wxVSCROLL) )
 	, active_subcolumn(0)
 	, direction(direction)
 	, column_count(1)
@@ -247,7 +247,7 @@ void GalleryList::onChar(wxKeyEvent& ev) {
 			// we need this because tabs of wxWANTS_CHARS
 			wxNavigationKeyEvent nev;
 			nev.SetDirection(!ev.ShiftDown());
-			GetParent()->ProcessEvent(nev);
+			GetParent()->HandleWindowEvent(nev);
 			} break;
 		case WXK_RETURN: {
 			// same thing: press dialog box default button
@@ -256,7 +256,7 @@ void GalleryList::onChar(wxKeyEvent& ev) {
 			if ( btn && btn->IsEnabled() ) {
 				// if we do have a default button, do press it
 				wxCommandEvent evt(wxEVT_COMMAND_BUTTON_CLICKED, btn->GetId());
-				btn->ProcessEvent(evt);
+				btn->HandleWindowEvent(evt);
 			}
 			}break;
 			
@@ -309,7 +309,7 @@ void GalleryList::OnDraw(DC& dc) {
 			                     )
 			                   : unselected;
 			dc.SetPen(c);
-			dc.SetBrush(saturate(lerp(background, c, 0.3), selected ? 0.5 : 0));
+			dc.SetBrush(lerp(background, c, 0.3));
 			dc.DrawRectangle(pos.x + col.offset.x - BORDER, pos.y + col.offset.y - BORDER,
 			                 col.size.x + 2*BORDER, col.size.y + 2*BORDER);
 		}
@@ -339,4 +339,5 @@ BEGIN_EVENT_TABLE(GalleryList, wxPanel)
 	EVT_PAINT          (GalleryList::onPaint)
 	EVT_SIZE           (GalleryList::onSize)
 	EVT_SCROLLWIN      (GalleryList::onScroll)
+	EVT_ERASE_BACKGROUND(GalleryList::onEraseBackground)
 END_EVENT_TABLE  ()
