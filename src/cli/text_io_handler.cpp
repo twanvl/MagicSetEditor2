@@ -84,7 +84,7 @@ TextIOHandler& TextIOHandler::operator << (const Char* str) {
 }
 
 TextIOHandler& TextIOHandler::operator << (const String& str) {
-	return *this << str.c_str();
+	return *this << static_cast<const Char*>(str.c_str());
 }
 
 void TextIOHandler::flush() {
