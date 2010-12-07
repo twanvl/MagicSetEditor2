@@ -60,6 +60,9 @@ wxBitmap load_resource_tool_image(const String& name);
 /** Based on wxRendererXP::DrawComboBoxDropButton */
 void draw_control_box(Window* win, DC& dc, const wxRect& rect, bool focused, bool enabled = true);
 
+/// Draw a (possibly themed) button
+void draw_button(Window* win, DC& dc, const wxRect& rect, bool focused, bool down, bool enabled);
+
 /// Draws an arrow for a menu item indicating it has a sub menu
 void draw_menu_arrow(Window* win, DC& dc, const wxRect& rect, bool active);
 

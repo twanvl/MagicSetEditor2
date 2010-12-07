@@ -43,15 +43,7 @@ void SymbolValueEditor::drawButton(RotatedDC& dc, int button, const String& text
 	double x = style().width - width - (width + 1) * button;
 	double y = 0;
 	// draw button
-	dc.SetPen(*wxTRANSPARENT_PEN);
-	dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
-	dc.DrawRectangle(RealRect(x, y, width, height));
-	dc.SetPen(wxSystemSettings::GetColour(down ? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_BTNHIGHLIGHT));
-	dc.DrawLine(RealPoint(x,y),RealPoint(x+width,y));
-	dc.DrawLine(RealPoint(x,y),RealPoint(x,y+height));
-	dc.SetPen(wxSystemSettings::GetColour(down ? wxSYS_COLOUR_BTNHIGHLIGHT : wxSYS_COLOUR_BTNSHADOW));
-	dc.DrawLine(RealPoint(x+width-1,y),RealPoint(x+width-1,y+height));
-	dc.DrawLine(RealPoint(x,y+height-1),RealPoint(x+width,y+height-1));
+	draw_button(&editor(), dc.getDC(), dc.trRectToBB(RealRect(x,y,width,height)), false, down, true);
 	// draw text
 	RealSize text_size = dc.GetTextExtent(text);
 	dc.DrawText(text, align_in_rect((Alignment)(ALIGN_BOTTOM | ALIGN_CENTER), text_size, RealRect(x, y, width,height*0.9)));

@@ -265,6 +265,23 @@ void draw_control_box(Window* win, DC& dc, const wxRect& rect, bool focused, boo
 	#endif
 }
 
+void draw_button(Window* win, DC& dc, const wxRect& rect, bool focused, bool down, bool enabled) {
+	#if 1
+		wxRendererNative& rn = wxRendererNative::GetDefault();
+		rn.DrawPushButton(win, dc, rect, (focused ? wxCONTROL_FOCUSED : 0) | (down ? wxCONTROL_PRESSED : 0) | (enabled ? 0 : wxCONTROL_DISABLED));
+	#else
+		dc.SetPen(*wxTRANSPARENT_PEN);
+		dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
+		dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
+		dc.SetPen(wxSystemSettings::GetColour(down ? wxSYS_COLOUR_BTNSHADOW : wxSYS_COLOUR_BTNHIGHLIGHT));
+		dc.DrawLine(rect.x,rect.y,rect.x+rect.width,rect.y);
+		dc.DrawLine(rect.x,rect.y,rect.x,rect.y+rect.height);
+		dc.SetPen(wxSystemSettings::GetColour(down ? wxSYS_COLOUR_BTNHIGHLIGHT : wxSYS_COLOUR_BTNSHADOW));
+		dc.DrawLine(rect.x+rect.width-1,rect.y,rect.x+rect.width-1,rect.y+rect.height);
+		dc.DrawLine(rect.x,rect.y+rect.height-1,rect.x+rect.width,rect.y+rect.height-1);
+	#endif
+}
+
 // portable, based on wxRendererGeneric::DrawComboBoxDropButton
 void draw_menu_arrow(Window* win, DC& dc, const wxRect& rect, bool active) {
 	wxPoint pt[] =
