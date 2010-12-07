@@ -97,7 +97,7 @@ void FilterCtrl::setFilter(const String& new_value, bool event) {
 	// send event
 	if (event) {
 		wxCommandEvent ev(wxEVT_COMMAND_TEXT_UPDATED, GetId());
-		GetParent()->ProcessEvent(ev);
+		GetParent()->HandleWindowEvent(ev);
 	}
 }
 
@@ -163,7 +163,7 @@ BEGIN_EVENT_TABLE(FilterCtrl, wxControl)
 END_EVENT_TABLE()
 
 void TextCtrlWithFocus::forwardEvent(wxFocusEvent& ev) {
-	GetParent()->ProcessEvent(ev);
+	GetParent()->HandleWindowEvent(ev);
 }
 
 BEGIN_EVENT_TABLE(TextCtrlWithFocus, wxTextCtrl)
