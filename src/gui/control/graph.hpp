@@ -372,6 +372,7 @@ class GraphControl : public wxControl {
 	DECLARE_EVENT_TABLE();
 	
 	void onPaint(wxPaintEvent&);
+	void onEraseBackground(wxEraseEvent&) {}
 	void onSize (wxSizeEvent&);
 	void onMouseDown(wxMouseEvent& ev);
 	void onMotion(wxMouseEvent& ev);

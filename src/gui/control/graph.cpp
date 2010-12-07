@@ -486,7 +486,7 @@ void PieGraph::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 	double size = min(rect.width, rect.height);
 	RealSize pie_size(size, size);
 	RealSize pie_size_large(size+20, size+20);
-	RealPoint pie_pos = rect.position() + rect.size() / 2;
+	RealPoint pie_pos = rect.position() + rect.size() * 0.5;
 	//RealPoint pos = align_in_rect(ALIGN_MIDDLE_CENTER, RealSize(size,size), rect);
 	// draw items
 	if (layer == LAYER_VALUES) {
@@ -572,7 +572,7 @@ void ScatterGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer lay
 			UInt value = values[cur1 * axis2.groups.size() + cur2];
 			if (value) {
 				dc.SetBrush(lerp(bg,lerp(axis1.groups[cur1].color, axis2.groups[cur2].color, 0.5),0.5));
-				dc.DrawCircle(RealPoint(rect.left() + cur1 * size.width, rect.bottom() - (cur2+1) * size.height) + size/2, scale(value) * step + 5);
+				dc.DrawCircle(RealPoint(rect.left() + cur1 * size.width, rect.bottom() - (cur2+1) * size.height) + size*0.5, scale(value) * step + 5);
 			}
 		} else if (cur1 >= 0) {
 			dc.SetBrush(lerp(bg,axis1.groups[cur1].color,0.3));
@@ -1029,7 +1029,7 @@ void GraphContainer::add(const GraphP& graph) {
 // ----------------------------------------------------------------------------- : GraphControl
 
 GraphControl::GraphControl(Window* parent, int id)
-	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS)
+	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxWANTS_CHARS | wxBORDER_THEME)
 	, layout(GRAPH_TYPE_BAR)
 {}
 
@@ -1166,7 +1166,7 @@ void GraphControl::onChar(wxKeyEvent& ev) {
 			// we need this because of wxWANTS_CHARS
 			wxNavigationKeyEvent nev;
 			nev.SetDirection(!ev.ShiftDown());
-			GetParent()->ProcessEvent(nev);
+			GetParent()->HandleWindowEvent(nev);
 			} break;
 	}
 }
@@ -1225,4 +1225,5 @@ BEGIN_EVENT_TABLE(GraphControl, wxControl)
 	EVT_LEFT_DOWN	(GraphControl::onMouseDown)
 	EVT_MOTION		(GraphControl::onMotion)
 	EVT_CHAR		(GraphControl::onChar)
+	EVT_ERASE_BACKGROUND(GraphControl::onEraseBackground)
 END_EVENT_TABLE  ()
