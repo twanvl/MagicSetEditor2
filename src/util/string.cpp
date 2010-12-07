@@ -141,7 +141,7 @@ bool is_word_end_punctuation(Char c) {
 // ----------------------------------------------------------------------------- : Caseing
 
 /// Quick check to see if the substring starting at the given iterator is equal to some given string
-bool is_substr(const String& s, String::iterator it, const Char* cmp) {
+bool is_substr(const String& s, String::const_iterator it, const Char* cmp) {
 	while (it != s.end() && *cmp != 0) {
 		if (*it++ != *cmp++) return false;
 	}
@@ -156,7 +156,9 @@ String capitalize(const String& s) {
 			after_space = true;
 		} else if (after_space) {
 			after_space = false;
-			if (it != s.begin() &&
+			// See http://trac.wxwidgets.org/ticket/12594
+			//if (it != s.begin() &&
+			if (s.begin() != it &&
 			    (is_substr(result,it,_("is ")) || is_substr(result,it,_("the ")) ||
 			     is_substr(result,it,_("in ")) || is_substr(result,it,_("of "))  ||
 			     is_substr(result,it,_("to ")) || is_substr(result,it,_("at "))  ||
@@ -390,7 +392,7 @@ bool is_substr(const String& str, size_t pos, const Char* cmp) {
 	return *cmp == _('\0');
 }
 bool is_substr(const String& str, size_t pos, const String& cmp) {
-	return is_substr(str, pos, cmp.c_str());
+	return str.size() >= cmp.size() + pos && str.compare(pos, cmp.size(), cmp) == 0;
 }
 
 
@@ -401,7 +403,7 @@ bool is_substr_i(const String& str, size_t pos, const Char* cmp) {
 	return *cmp == _('\0');
 }
 bool is_substr_i(const String& str, size_t pos, const String& cmp) {
-	return is_substr_i(str, pos, cmp.c_str());
+	return is_substr_i(str, pos, static_cast<const Char*>(cmp.c_str()));
 }
 
 bool cannocial_name_compare(const String& as, const Char* b) {
@@ -437,7 +439,7 @@ String regex_escape(Char c) {
 /// Escape a string for use in regular expressions
 String regex_escape(const String& s) {
 	String ret;
-	FOR_EACH_CONST(c,s) ret += regex_escape(c);
+	FOR_EACH_CONST(c,s) ret += regex_escape(static_cast<char>(c));
 	return ret;
 }
 
