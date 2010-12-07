@@ -350,7 +350,7 @@ END_EVENT_TABLE  ()
 // ----------------------------------------------------------------------------- : ImageSlicePreview
 
 ImageSlicePreview::ImageSlicePreview(Window* parent, int id, ImageSlice& slice, const AlphaMask& mask)
-	: wxControl(parent, id)
+	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME)
 	, slice(slice)
 	, mask(mask)
 	, mouse_down(false)
@@ -439,7 +439,7 @@ END_EVENT_TABLE  ()
 // ----------------------------------------------------------------------------- : ImageSliceSelector
 
 ImageSliceSelector::ImageSliceSelector(Window* parent, int id, ImageSlice& slice)
-	: wxControl(parent, id)
+	: wxControl(parent, id, wxDefaultPosition, wxDefaultSize, wxBORDER_THEME)
 	, slice(slice)
 	, mouse_down(false)
 {}
