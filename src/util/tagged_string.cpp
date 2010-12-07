@@ -155,10 +155,10 @@ size_t in_tag(const String& str, const String& tag, size_t start, size_t end) {
 	for (size_t pos = 0 ; pos < end ; ) {
 		Char c = str.GetChar(pos);
 		if (c == _('<')) {
-			if (is_substr(str, pos + 1, tag.c_str()+1)) {
+			if (is_substr(str, pos + 1, static_cast<const Char*>(tag.c_str())+1)) {
 				if (pos < start) last_start = pos;
 				++taglevel;
-			} else if (pos + 2 < size && str.GetChar(pos+1) == _('/') && is_substr(str, pos + 2, tag.c_str()+1)) {
+			} else if (pos + 2 < size && str.GetChar(pos+1) == _('/') && is_substr(str, pos + 2, static_cast<const Char*>(tag.c_str())+1)) {
 				--taglevel; // close tag
 			}
 			pos = skip_tag(str,pos);
