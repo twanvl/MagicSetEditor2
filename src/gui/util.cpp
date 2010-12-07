@@ -338,3 +338,29 @@ void draw_radiobox(Window* win, DC& dc, const wxRect& rect, bool checked, bool e
 		}
 	#endif
 }
+
+void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool selected, bool focused, bool hot) {
+	#if wxUSE_UXTHEME && defined(__WXMSW__)
+		wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
+		if (themeEngine && themeEngine->IsAppThemed()) {
+			wxUxThemeHandle hTheme(win, L"LISTVIEW");
+			RECT r;
+			r.left = rect.x;
+			r.top = rect.y;
+			r.right = rect.x + rect.width;
+			r.bottom = rect.y + rect.height;
+			if (hTheme) {
+				wxUxThemeEngine::Get()->SetWindowTheme((HWND)win->GetHWND(), L"Explorer", NULL);
+				wxUxThemeEngine::Get()->DrawThemeBackground(
+					(HTHEME)hTheme,
+					(HDC)dc.GetHDC(),
+					LVP_LISTITEM,
+					hot&&selected ? LISS_HOTSELECTED : hot ? LISS_HOT :selected&&focused ? LISS_SELECTED : selected ? LISS_SELECTEDNOTFOCUS : LISS_NORMAL,
+					&r,
+					NULL
+				);
+				return;
+			}
+		}
+	#endif
+}

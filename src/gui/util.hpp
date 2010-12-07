@@ -75,5 +75,8 @@ void draw_checkbox(Window* win, DC& dc, const wxRect& rect, bool checked, bool e
 /// Draws a radio button
 void draw_radiobox(Window* win, DC& dc, const wxRect& rect, bool checked, bool enabled = true);
 
+/// Draws a (fancy) selection rectangle
+void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool selected = true, bool focused = true, bool hot = false);
+
 // ----------------------------------------------------------------------------- : EOF
 #endif
