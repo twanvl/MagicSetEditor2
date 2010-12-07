@@ -180,7 +180,7 @@ void SymbolBasicShapeEditor::makeShape(Vector2D a, Vector2D b, bool constrained,
 	if (centered) {
 		makeCenteredShape(a, size, constrained);
 	} else {
-		makeCenteredShape(a + size / 2, size / 2, constrained);
+		makeCenteredShape(a + size * 0.5, size * 0.5, constrained);
 	}
 }
 
