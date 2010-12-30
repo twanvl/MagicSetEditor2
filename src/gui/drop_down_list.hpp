@@ -45,7 +45,7 @@ class DropDownList : public wxPopupTransientWindow {
 	/// Prepare for showing the list
 	virtual void onShow() {}
 	/// Do something after hiding the list
-	virtual void onHide() {}
+	virtual void OnDismiss();
 	
 	inline bool isRoot() { return parent_menu == nullptr; }
 	

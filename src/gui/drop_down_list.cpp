@@ -70,8 +70,6 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
 		item_size.width + marginW * 2,
 		item_size.height * count + marginH * 2 + line_count
 	);
-	RealSize virtual_size = size;
-	SetVirtualSize(virtual_size);
 	// placement
 	int parent_height = 0;
 	if (!in_place && viewer) {
@@ -91,6 +89,10 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
 		parent_height = -(int)item_size.height - 1;
 	}
 	pos = GetParent()->ClientToScreen(pos);
+	// virtual size = item size
+	RealSize virtual_size = size;
+	SetVirtualSize(virtual_size);
+	item_size.width = virtual_size.width - marginW * 2;
 	// is there enough room for all items, or do we need a scrollbar?
 	int room_below = wxGetDisplaySize().y - border_size.height - pos.y - parent_height - 50;
 	int max_height = max(200, room_below);
@@ -102,7 +104,6 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
 		SetScrollbar(wxVERTICAL,0,0,0,false);
 	}
 	// move & resize
-	item_size.width = virtual_size.width - marginW * 2;
 	SetSize(add_diagonal(size, border_size));
 	Position(pos, wxSize(0, parent_height));
 	// visible item
@@ -143,9 +144,10 @@ void DropDownList::hide(bool event, bool allow_veto) {
 }
 
 void DropDownList::realHide() {
-	if (!IsShown()) return;
-	Dismiss();
-	onHide();
+	if (IsShown()) Dismiss();
+}
+
+void DropDownList::OnDismiss() {
 	hideSubMenu();
 	if (parent_menu) {
 		parent_menu->open_sub_menu = nullptr;
