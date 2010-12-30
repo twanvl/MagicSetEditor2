@@ -466,6 +466,7 @@ void RandomPackPanel::onChangeSet() {
 	seed_fixed ->SetValue(!gs.pack_seed_random);
 	seed->Enable(!gs.pack_seed_random);
 	setSeed(gs.pack_seed);
+	generator.set = SetP(); // prevent spurious events
 	FOR_EACH(pick, pickers) {
 		pick.value->SetValue(gs.pack_amounts[pick.pack->name]);
 	}
@@ -559,6 +560,7 @@ void RandomPackPanel::onPackTypeClick(wxCommandEvent& ev) {
 // ----------------------------------------------------------------------------- : Generating
 
 void RandomPackPanel::updateTotals() {
+	if (!generator.set) return; // not initialized
 	generator.reset(last_seed);
 	int total_packs = 0;
 	FOR_EACH(pick,pickers) {
