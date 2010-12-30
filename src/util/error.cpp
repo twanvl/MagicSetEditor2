@@ -18,7 +18,7 @@ DECLARE_TYPEOF_COLLECTION(ScriptParseError);
 
 // ----------------------------------------------------------------------------- : Debug utilities
 
-#if defined(_MSC_VER) && defined(_DEBUG)
+#if defined(_MSC_VER) && defined(_DEBUG) && defined(_CRT_WIDE)
 	void msvc_assert(const wchar_t* msg, const wchar_t* expr, const wchar_t* file, unsigned line) {
 		if (IsDebuggerPresent()) {
 			wchar_t buffer[1024];

@@ -38,7 +38,8 @@
 				WarningLevel="4"
 				WarnAsError="TRUE"
 				Detect64BitPortabilityProblems="TRUE"
-				DebugInformationFormat="4"/>
+				DebugInformationFormat="4"
+				DisableSpecificWarnings="4671;4673"/>
 			<Tool
 				Name="VCCustomBuildTool"/>
 			<Tool
@@ -1033,6 +1034,9 @@
 				</File>
 				<File
 					RelativePath=".\gui\print_window.hpp">
+				</File>
+				<File
+					RelativePath=".\gui\profiler_window.cpp">
 				</File>
 				<File
 					RelativePath=".\gui\thumbnail_thread.cpp">

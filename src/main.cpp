@@ -51,7 +51,7 @@ class MSE : public wxApp {
 	/// Hack around some wxWidget idiocies
 	int FilterEvent(wxEvent& ev);
 	/// Fancier assert
-	#if defined(_MSC_VER) && defined(_DEBUG)
+	#if defined(_MSC_VER) && defined(_DEBUG) && defined(_CRT_WIDE)
 		void OnAssert(const wxChar *file, int line, const wxChar *cond, const wxChar *msg);
 	#endif
 };
@@ -275,7 +275,7 @@ void MSE::HandleEvent(wxEvtHandler *handler, wxEventFunction func, wxEvent& even
 	} CATCH_ALL_ERRORS(true);
 }
 
-#if defined(_MSC_VER) && defined(_DEBUG)
+#if defined(_MSC_VER) && defined(_DEBUG) && defined(_CRT_WIDE)
 	// Print assert failures to debug output
 	void MSE::OnAssert(const wxChar *file, int line, const wxChar *cond, const wxChar *msg) {
 		#ifdef UNICODE

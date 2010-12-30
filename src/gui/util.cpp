@@ -266,7 +266,7 @@ void draw_control_box(Window* win, DC& dc, const wxRect& rect, bool focused, boo
 }
 
 void draw_button(Window* win, DC& dc, const wxRect& rect, bool focused, bool down, bool enabled) {
-	#if 1
+	#if wxVERSION >= 2700
 		wxRendererNative& rn = wxRendererNative::GetDefault();
 		rn.DrawPushButton(win, dc, rect, (focused ? wxCONTROL_FOCUSED : 0) | (down ? wxCONTROL_PRESSED : 0) | (enabled ? 0 : wxCONTROL_DISABLED));
 	#else
@@ -341,6 +341,13 @@ void draw_radiobox(Window* win, DC& dc, const wxRect& rect, bool checked, bool e
 
 void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool selected, bool focused, bool hot) {
 	#if wxUSE_UXTHEME && defined(__WXMSW__)
+		#if WINVER <= 0x0500
+			#define LISS_NORMAL LIS_NORMAL
+			#define LISS_SELECTED LIS_SELECTED
+			#define LISS_SELECTEDNOTFOCUS LIS_SELECTEDNOTFOCUS
+			#define LISS_HOT LISS_NORMAL
+			#define LISS_HOTSELECTED LISS_SELECTED
+		#endif
 		wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
 		if (themeEngine && themeEngine->IsAppThemed()) {
 			wxUxThemeHandle hTheme(win, L"LISTVIEW");
