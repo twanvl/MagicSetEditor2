@@ -152,6 +152,7 @@ BEGIN_EVENT_TABLE(HoverButtonBase, wxControl)
 	EVT_KEY_DOWN       (HoverButtonBase::onKeyDown)
 	EVT_KEY_UP         (HoverButtonBase::onKeyUp)
 	EVT_MOUSE_CAPTURE_LOST(HoverButtonBase::onLoseCapture)
+	EVT_ERASE_BACKGROUND(HoverButtonBase::onEraseBackground)
 END_EVENT_TABLE  ()
 
 // ----------------------------------------------------------------------------- : Button with image and hover effect

@@ -41,6 +41,7 @@ class WelcomeWindow : public Frame {
 	void onNewSet      (wxCommandEvent&);
 	void onOpenLast    (wxCommandEvent&);
 	void onCheckUpdates(wxCommandEvent&);
+	void onEraseBackground(wxEraseEvent&) {}
 //	void onIdle    (wxIdleEvent& ev);
 	
 	/// Close the welcome window, and show the given set

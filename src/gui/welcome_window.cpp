@@ -144,6 +144,7 @@ BEGIN_EVENT_TABLE(WelcomeWindow, wxFrame)
 	EVT_BUTTON         (ID_FILE_RECENT,        WelcomeWindow::onOpenLast)
 	EVT_BUTTON         (ID_FILE_CHECK_UPDATES, WelcomeWindow::onCheckUpdates)
 	EVT_PAINT          (                       WelcomeWindow::onPaint)
+	EVT_ERASE_BACKGROUND(WelcomeWindow::onEraseBackground)
 //	EVT_IDLE           (                       WelcomeWindow::onIdle)
 END_EVENT_TABLE  ()
 

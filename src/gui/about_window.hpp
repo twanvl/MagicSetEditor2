@@ -54,6 +54,7 @@ class HoverButtonBase : public wxControl {
 	void onKeyDown   (wxKeyEvent&);
 	void onKeyUp     (wxKeyEvent&);
 	void onPaint     (wxPaintEvent&);
+	void onEraseBackground(wxEraseEvent&) {}
 	
   protected:
 	bool hover, focus, mouse_down, key_down;
