@@ -144,7 +144,7 @@ void DropDownList::hide(bool event, bool allow_veto) {
 
 void DropDownList::realHide() {
 	if (!IsShown()) return;
-	Window::Hide();
+	Dismiss();
 	onHide();
 	hideSubMenu();
 	if (parent_menu) {
