@@ -386,8 +386,12 @@ void DropDownList::onScroll(wxScrollWinEvent& ev) {
 // ----------------------------------------------------------------------------- : DropDownList : Parent events
 
 bool DropDownList::onMouseInParent(wxMouseEvent& ev, bool open_in_place) {
-	if (IsShown()) hide(false);
-	else           show(open_in_place, wxPoint(ev.GetX(), ev.GetY()));
+	if (IsShown()) {
+		hide(false);
+	} else {
+		show(open_in_place, wxPoint(ev.GetX(), ev.GetY()));
+		ev.Skip(false); // Don't set the focus to the parent afterwards
+	}
 	return true;
 }
 
@@ -453,6 +457,12 @@ bool DropDownList::onCharInParent(wxKeyEvent& ev) {
 	return false;
 }
 
+void DropDownList::onKeyDown(wxKeyEvent& ev) {
+	// If we don't handle this event, then wxPopupTransientWindow desides to dismiss itself
+	// we can't wait for onChar
+	onCharInParent(ev);
+}
+
 // ----------------------------------------------------------------------------- : DropDownList : Event table
 
 // Note: some DropDownList events get sent to the parent which in turn should send them to the DropDownList
@@ -464,4 +474,5 @@ BEGIN_EVENT_TABLE(DropDownList,wxPopupWindow)
 	EVT_LEAVE_WINDOW (DropDownList::onMouseLeave)
 	EVT_MOUSEWHEEL   (DropDownList::onMouseWheel)
 	EVT_SCROLLWIN    (DropDownList::onScroll)
+	EVT_KEY_DOWN     (DropDownList::onKeyDown)
 END_EVENT_TABLE  ()

@@ -106,6 +106,7 @@ class DropDownList : public wxPopupTransientWindow {
 	void onMouseLeave(wxMouseEvent&);
 	void onMouseWheel(wxMouseEvent& ev);
 	void onScroll(wxScrollWinEvent&);
+	void onKeyDown(wxKeyEvent&);
 	
 	// --------------------------------------------------- : Privates
 	
