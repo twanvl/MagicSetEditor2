@@ -14,12 +14,13 @@
 #include <wx/popupwin.h> // undocumented: wxPopupWindow
 
 class ValueViewer;
+class DropDownHider;
 
 // ----------------------------------------------------------------------------- : DropDownList
 
 /// A popup/drop down window displaying a list of items
 /** This class is an abstract base for various drop down lists */
-class DropDownList : public wxPopupTransientWindow {
+class DropDownList : public wxPopupWindow {
   public:
 	~DropDownList();
 	/// Create a drop down list, possibly a sub menu
@@ -45,7 +46,7 @@ class DropDownList : public wxPopupTransientWindow {
 	/// Prepare for showing the list
 	virtual void onShow() {}
 	/// Do something after hiding the list
-	virtual void OnDismiss();
+	virtual void onHide() {}
 	
 	inline bool isRoot() { return parent_menu == nullptr; }
 	
@@ -93,6 +94,7 @@ class DropDownList : public wxPopupTransientWindow {
 	DropDownList*  open_sub_menu;      ///< The sub menu that is currently shown, if any
 	DropDownList*  parent_menu;        ///< The parent menu, only applies to sub menus
 	ValueViewer*   viewer;             ///< The parent viewer object (optional)
+	DropDownHider* hider, *hider2;     ///< Class to hide this window when we lose focus
 	bool           close_on_mouse_out; ///< Was the list kept open after selecting a choice, if so, be eager to close it
 	int            visible_start;      ///< First visible pixel
 	
@@ -101,12 +103,11 @@ class DropDownList : public wxPopupTransientWindow {
 	
 	void onPaint(wxPaintEvent&);
 	void onLeftDown(wxMouseEvent&);
-	void onLeftUp  (wxMouseEvent&);
+	void onLeftUp(wxMouseEvent&);
 	void onMotion(wxMouseEvent&);
 	void onMouseLeave(wxMouseEvent&);
 	void onMouseWheel(wxMouseEvent& ev);
 	void onScroll(wxScrollWinEvent&);
-	void onKeyDown(wxKeyEvent&);
 	
 	// --------------------------------------------------- : Privates
 	

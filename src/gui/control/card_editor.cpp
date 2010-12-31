@@ -213,7 +213,6 @@ void DataEditor::insert(const String& text, const String& action_name) {
 
 void DataEditor::onLeftDown(wxMouseEvent& ev) {
 	ev.Skip(); // for focus
-	SetFocus(); // set focus now, otherwise this happens after the editor handles the event, which dismisses transient popup dialogs
 	CaptureMouse();
 	// change selection?
 	selectField(ev, &ValueEditor::onLeftDown);

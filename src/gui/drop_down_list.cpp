@@ -16,10 +16,47 @@
 #include <gfx/gfx.hpp>
 #include <wx/dcbuffer.h>
 
+// ----------------------------------------------------------------------------- : DropDownHider
+
+// Class that intercepts all events not directed to a DropDownList, and closes the list
+class DropDownHider : public wxEvtHandler {
+  public:
+	DropDownHider(DropDownList& list) : list(list) {}
+	
+  private:
+	DropDownList& list;
+	
+	virtual bool ProcessEvent(wxEvent& ev) {
+		int t = ev.GetEventType();
+		if ( t == wxEVT_LEFT_DOWN      || t == wxEVT_RIGHT_DOWN
+		  || t == wxEVT_MOVE           || t == wxEVT_SIZE
+		  || t == wxEVT_MENU_HIGHLIGHT || t == wxEVT_MENU_OPEN    || t == wxEVT_MENU_OPEN
+		  || t == wxEVT_ACTIVATE       || t == wxEVT_CLOSE_WINDOW || t == wxEVT_KILL_FOCUS
+		  || t == wxEVT_COMMAND_TOOL_CLICKED)
+		{
+			// close the list, and pass on the event
+			// don't just use ev.Skip(), because this event handler will be removed by hiding,
+			// so there will be no next handler to skip to
+			wxEvtHandler* nh = GetNextHandler();
+			if (nh) nh->ProcessEvent(ev);
+			list.hide(false);
+			return false;
+		} else {
+//			if (t !=10093 && t !=10098 && t !=10097 && t !=10099 && t !=10004 && t !=10062
+//			 && t !=10025 && t !=10035 && t !=10034 && t !=10036 && t !=10042 && t !=10119)
+//			{
+//				t=t;//DEBUG
+//			}
+			return wxEvtHandler::ProcessEvent(ev);
+		}
+	}
+};
+
+
 // ----------------------------------------------------------------------------- : DropDownList : Show/Hide
 
 DropDownList::DropDownList(Window* parent, bool is_submenu, ValueViewer* viewer)
-	: wxPopupTransientWindow(parent, wxSIMPLE_BORDER)//wxPopupWindow(parent, wxSIMPLE_BORDER)
+	: wxPopupWindow(parent, wxSIMPLE_BORDER)
 	, text_offset(1)
 	, item_size(100,1)
 	, icon_size(0,0)
@@ -28,6 +65,8 @@ DropDownList::DropDownList(Window* parent, bool is_submenu, ValueViewer* viewer)
 	, open_sub_menu(nullptr)
 	, parent_menu(nullptr)
 	, viewer(viewer)
+	, hider (is_submenu ? nullptr : new DropDownHider(*this))
+	, hider2(is_submenu ? nullptr : new DropDownHider(*this))
 	, close_on_mouse_out(false)
 {
 	if (is_submenu) {
@@ -43,6 +82,8 @@ DropDownList::DropDownList(Window* parent, bool is_submenu, ValueViewer* viewer)
 
 DropDownList::~DropDownList() {
 	realHide(); // restore event handler before deleting it
+	delete hider;
+	delete hider2;
 }
 
 void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
@@ -109,16 +150,21 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
 	// visible item
 	visible_start = 0;
 	ensureSelectedItemVisible();
-	// show
-	if (GetParent()->HasCapture()) {
-		// release capture on parent
-		// do this before showing the popup, because that might change who has the capture
-		GetParent()->ReleaseMouse();
+	// set event handler
+	if (hider) {
+		assert(hider2);
+		wxGetTopLevelParent(GetParent())->PushEventHandler(hider);
+		GetParent()                     ->PushEventHandler(hider2);
 	}
+	// show
 	if (selected_item == NO_SELECTION && itemCount() > 0) selected_item = 0; // select first item by default
 	mouse_down = false;
 	close_on_mouse_out = false;
-	Popup();
+	Window::Show();
+	if (isRoot() && GetParent()->HasCapture()) {
+		// release capture on parent
+		GetParent()->ReleaseMouse();
+	}
 	// fix drop down arrow
 	redrawArrowOnParent();
 }
@@ -144,15 +190,17 @@ void DropDownList::hide(bool event, bool allow_veto) {
 }
 
 void DropDownList::realHide() {
-	if (IsShown()) Dismiss();
-}
-
-void DropDownList::OnDismiss() {
+	if (!IsShown()) return;
+	Window::Hide();
+	onHide();
 	hideSubMenu();
 	if (parent_menu) {
 		parent_menu->open_sub_menu = nullptr;
 	} else {
 		redrawArrowOnParent();
+		// disconnect event handler
+		GetParent()                     ->RemoveEventHandler(hider2);
+		wxGetTopLevelParent(GetParent())->RemoveEventHandler(hider);
 	}
 }
 
@@ -386,12 +434,8 @@ void DropDownList::onScroll(wxScrollWinEvent& ev) {
 // ----------------------------------------------------------------------------- : DropDownList : Parent events
 
 bool DropDownList::onMouseInParent(wxMouseEvent& ev, bool open_in_place) {
-	if (IsShown()) {
-		hide(false);
-	} else {
-		show(open_in_place, wxPoint(ev.GetX(), ev.GetY()));
-		ev.Skip(false); // Don't set the focus to the parent afterwards
-	}
+	if (IsShown()) hide(false);
+	else           show(open_in_place, wxPoint(ev.GetX(), ev.GetY()));
 	return true;
 }
 
@@ -457,12 +501,6 @@ bool DropDownList::onCharInParent(wxKeyEvent& ev) {
 	return false;
 }
 
-void DropDownList::onKeyDown(wxKeyEvent& ev) {
-	// If we don't handle this event, then wxPopupTransientWindow desides to dismiss itself
-	// we can't wait for onChar
-	onCharInParent(ev);
-}
-
 // ----------------------------------------------------------------------------- : DropDownList : Event table
 
 // Note: some DropDownList events get sent to the parent which in turn should send them to the DropDownList
@@ -474,5 +512,4 @@ BEGIN_EVENT_TABLE(DropDownList,wxPopupWindow)
 	EVT_LEAVE_WINDOW (DropDownList::onMouseLeave)
 	EVT_MOUSEWHEEL   (DropDownList::onMouseWheel)
 	EVT_SCROLLWIN    (DropDownList::onScroll)
-	EVT_KEY_DOWN     (DropDownList::onKeyDown)
 END_EVENT_TABLE  ()
