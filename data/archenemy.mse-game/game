@@ -5,7 +5,7 @@ installer group: Magic Archenemy/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2010-08-27
+version: 2011-01-02
 
 # By Pichoro
 ############################################################## Functions & filters
@@ -1215,3 +1215,13 @@ keyword:
 	match: proliferate
 	mode: expert
 	reminder: You may choose any number of permanents and/or players with counters on them, then give each another counter of a kind already there.
+keyword:
+	keyword: Metalcraft
+	match: Metalcraft
+	mode: pseudo
+	rules: Metalcraft — As long as you control three or more artifacts, [effect].
+keyword:
+	keyword: Battlecry
+	match: battlecry
+	mode: expert
+	reminder: Whenever it attacks, each other attacking creature gets +1/+0 until end of turn.

@@ -685,3 +685,13 @@ keyword:
 	match: Proliferate
 	mode: action
 	reminder: You may choose any number of permanents and/or players with counters on them, then give each another counter of a kind already there.
+keyword:
+	keyword: Metalcraft
+	match: Metalcraft
+	mode: pseudo
+	rules: Metalcraft — As long as you control three or more artifacts, [effect].
+keyword:
+	keyword: Battlecry
+	match: Battlecry
+	mode: expert
+	reminder: Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.
