@@ -17,6 +17,7 @@ card field:
 	choice: shifted
 	choice: rulestip
 	choice: leveler
+	choice: counter
 	script:
 		stylesheet   # indicate that this value should be updated when the stylesheet changes
 		card_shape() # determined by the style

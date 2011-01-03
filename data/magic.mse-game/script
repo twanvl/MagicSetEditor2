@@ -281,6 +281,7 @@ color_of_card := {
 rarity_sort := {
 	if card.shape == "token" then "T"
 	else if card.shape == "rulestip" then "U"
+	else if card.shape == "counter" then "C"
 	else if set.sort_special_rarity == "with the rest" or card.rarity != "special" then " "
 	else "S"
 }
@@ -290,12 +291,14 @@ set_filter := {
 		{ card.shape == "token" }
 	else if card.shape == "rulestip" then
 		{ card.shape == "rulestip" }
+	else if card.shape == "counter" then
+		{ card.shape == "counter" }
 	else if set.sort_special_rarity != "separate numbering" then
-		{ card.shape != "token" and card.shape != "rulestip" }
+		{ card.shape != "token" and card.shape != "rulestip" and card.shape != "counter" }
 	else if card.rarity == "special" then
-		{ card.shape != "token" and card.shape != "rulestip" and card.rarity == "special" }
+		{ card.shape != "token" and card.shape != "rulestip"  and card.shape != "counter" and card.rarity == "special" }
 	else
-		{ card.shape != "token" and card.shape != "rulestip" and card.rarity != "special" }
+		{ card.shape != "token" and card.shape != "rulestip"  and card.shape != "counter" and card.rarity != "special" }
 }
 
 card_number := {
@@ -311,7 +314,7 @@ card_count := {
 }
 
 # used by pack scripts
-is_token_card   := { card.shape == "token" or card.shape == "rulestip" }
+is_token_card   := { card.shape == "token" or card.shape == "rulestip" or card.shape == "counter" }
 is_shifted_card := { contains(card.shape, match:"shifted") }
 
 
