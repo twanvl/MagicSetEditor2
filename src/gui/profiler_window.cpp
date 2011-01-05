@@ -10,6 +10,8 @@
 #include <script/profiler.hpp>
 #include <wx/dcbuffer.h>
 
+#if USE_SCRIPT_PROFILING
+
 DECLARE_TYPEOF_COLLECTION(FunctionProfileP);
 
 // -----------------------------------------------------------------------------
@@ -177,3 +179,5 @@ void show_profiler_window(wxWindow* parent) {
 	dlg->SetSizer(sizer);
 	dlg->Show();
 }
+
+#endif
