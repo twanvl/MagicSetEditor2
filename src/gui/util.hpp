@@ -78,5 +78,8 @@ void draw_radiobox(Window* win, DC& dc, const wxRect& rect, bool checked, bool e
 /// Draws a (fancy) selection rectangle
 void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool selected = true, bool focused = true, bool hot = false);
 
+/// Enable fancy themed selection rectangle on windows
+void enable_themed_selection_rectangle(Window* win);
+
 // ----------------------------------------------------------------------------- : EOF
 #endif

@@ -8,6 +8,7 @@
 
 #include <util/prec.hpp>
 #include <gui/control/gallery_list.hpp>
+#include <gui/util.hpp>
 #include <gfx/gfx.hpp>
 #include <wx/dcbuffer.h>
 
@@ -32,6 +33,7 @@ GalleryList::GalleryList(Window* parent, int id, int direction, bool always_focu
 	col.can_select = true;
 	col.selection  = NO_SELECTION;
 	subcolumns.push_back(col);
+	enable_themed_selection_rectangle(this);
 }
 
 void GalleryList::selectSubColumn(size_t subcol) {
@@ -302,7 +304,15 @@ void GalleryList::OnDraw(DC& dc) {
 		for (size_t j = 0 ; j < subcolumns.size() ; ++j) {
 			const SubColumn& col = subcolumns[j];
 			bool selected = i == col.selection;
-			Color c = selected ? ( has_focus && j == active_subcolumn
+			bool focused  = has_focus && j == active_subcolumn;
+			wxRect rect(pos.x + col.offset.x - BORDER, pos.y + col.offset.y - BORDER,
+			            col.size.x + 2*BORDER, col.size.y + 2*BORDER);
+			#if 1
+				if (selected) {
+					draw_selection_rectangle(this,dc,rect, selected,focused);
+				}
+			#else
+			Color c = selected ? ( focused
 			                            ? wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT)
 			                            : lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
 			                                   wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT), subcolumnActivity(j))
@@ -310,8 +320,8 @@ void GalleryList::OnDraw(DC& dc) {
 			                   : unselected;
 			dc.SetPen(c);
 			dc.SetBrush(lerp(background, c, 0.3));
-			dc.DrawRectangle(pos.x + col.offset.x - BORDER, pos.y + col.offset.y - BORDER,
-			                 col.size.x + 2*BORDER, col.size.y + 2*BORDER);
+			dc.DrawRectangle(rect.x, rect.y, rect.width, rect.height);
+			#endif
 		}
 		// draw item
 		drawItem(dc, pos.x, pos.y, i);

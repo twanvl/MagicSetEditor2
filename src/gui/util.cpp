@@ -357,8 +357,8 @@ void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool sele
 			r.right = rect.x + rect.width;
 			r.bottom = rect.y + rect.height;
 			if (hTheme) {
-				//wxUxThemeEngine::Get()->SetWindowTheme((HWND)win->GetHWND(), L"Explorer", NULL);
-				wxUxThemeEngine::Get()->DrawThemeBackground(
+				//themeEngine->SetWindowTheme((HWND)win->GetHWND(), L"Explorer", NULL);
+				themeEngine->DrawThemeBackground(
 					(HTHEME)hTheme,
 					(HDC)dc.GetHDC(),
 					LVP_LISTITEM,
@@ -370,4 +370,11 @@ void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool sele
 			}
 		}
 	#endif
+}
+
+void enable_themed_selection_rectangle(Window* win) {
+	wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
+	if (themeEngine && themeEngine->IsAppThemed()) {
+		themeEngine->SetWindowTheme((HWND)win->GetHWND(), L"Explorer", NULL);
+	}
 }
