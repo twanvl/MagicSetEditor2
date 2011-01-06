@@ -21,6 +21,7 @@ menu:
 	print preview:		Print Pre&view...
 	print:				&Print...	Ctrl+P
 	reload data:		Reload Data	Ctrl+F5
+	show profiler:		Show Profiler	Ctrl+F6
 	exit:				E&xit	Alt+F4
 	
 	edit:			&Edit
@@ -125,6 +126,7 @@ help:
 	print preview:		Shows cards as they will be printed
 	print:				Print cards from this set
 	reload data:		Reload all template files (game and style) as well as the set.
+	show profiler:		Show the profiler window, with timings of (script) functions. Used for optimization.
 	exit:				Quits Magic Set Editor; prompts to save the set
 	
 	edit:
