@@ -136,7 +136,7 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
 	item_size.width = virtual_size.width - marginW * 2;
 	// is there enough room for all items, or do we need a scrollbar?
 	int room_below = wxGetDisplaySize().y - border_size.height - pos.y - parent_height - 50;
-	int max_height = max(200, room_below);
+	int max_height = max(300, room_below);
 	if (size.height > max_height) {
 		size.height = max_height;
 		size.width += wxSystemSettings::GetMetric(wxSYS_VSCROLL_ARROW_X); // width of scrollbar
@@ -160,7 +160,7 @@ void DropDownList::show(bool in_place, wxPoint pos, RealRect* rect) {
 	if (selected_item == NO_SELECTION && itemCount() > 0) selected_item = 0; // select first item by default
 	mouse_down = false;
 	close_on_mouse_out = false;
-	Window::Show();
+	wxPopupWindow::Show();
 	if (isRoot() && GetParent()->HasCapture()) {
 		// release capture on parent
 		GetParent()->ReleaseMouse();
