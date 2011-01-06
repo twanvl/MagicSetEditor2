@@ -108,7 +108,7 @@ struct DropDownWordListItem {
 	WordListWordP word;
 	String        name;
 	int           flags;
-	DropDownListP submenu;
+	DropDownWordListP submenu;
 	
 	inline bool active() const { return flags & FLAG_ACTIVE; }
 	inline void setActive(bool a) { flags = (flags & ~FLAG_ACTIVE) | a * FLAG_ACTIVE; }
@@ -238,7 +238,11 @@ void DropDownWordList::drawIcon(DC& dc, int x, int y, size_t item, bool selected
 
 DropDownList* DropDownWordList::submenu(size_t item) const {
 	DropDownWordListItem& i = items[item];
-	if (i.submenu) return i.submenu.get();
+	if (i.submenu) {
+		// make sure the members of the submenu are still up to date (in particular the pos, see #13)
+		i.submenu->pos = pos;
+		return i.submenu.get();
+	}
 	if (i.flags & FLAG_SUBMENU) {
 		// create submenu?
 		if (!i.submenu) {
