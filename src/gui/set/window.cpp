@@ -588,10 +588,12 @@ void SetWindow::onFileCheckUpdates(wxCommandEvent&) {
 	//Destroy();
 }
 
-void show_profiler_window(wxWindow* parent);
-void SetWindow::onFileProfiler(wxCommandEvent&) {
-	show_profiler_window(this);
-}
+#if USE_SCRIPT_PROFILING
+	void show_profiler_window(wxWindow* parent);
+	void SetWindow::onFileProfiler(wxCommandEvent&) {
+		show_profiler_window(this);
+	}
+#endif
 
 void SetWindow::onFilePrint(wxCommandEvent&) {
 	ExportCardSelectionChoices choices;
@@ -752,7 +754,9 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
 	EVT_MENU			(ID_FILE_EXPORT_APPR,	SetWindow::onFileExportApprentice)
 	EVT_MENU			(ID_FILE_EXPORT_MWS,	SetWindow::onFileExportMWS)
 	EVT_MENU			(ID_FILE_CHECK_UPDATES,	SetWindow::onFileCheckUpdates)
+#if USE_SCRIPT_PROFILING
 	EVT_MENU			(ID_FILE_PROFILER,		SetWindow::onFileProfiler)
+#endif
 //	EVT_MENU			(ID_FILE_INSPECT,		SetWindow::onFileInspect)
 	EVT_MENU			(ID_FILE_PRINT,			SetWindow::onFilePrint)
 	EVT_MENU			(ID_FILE_PRINT_PREVIEW,	SetWindow::onFilePrintPreview)
