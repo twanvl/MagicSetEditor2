@@ -55,7 +55,8 @@ Name: "custom";     Description: "Custom installation"; Flags: iscustom
 ; to the user that the program files are installed no matter what.
 Name: "prog";                      Description: "MSE Program Files";   Flags: fixed; Types: full custom magic vs yugioh
 Name: "prog/en";                   Description: "English translation"; Flags: fixed; Types: full custom magic vs yugioh
-#if INSTALL_ALL
+#if INSTALL_ALL && 0
+  ; there are no good translations
   Name: "prog/de";                   Description: "German translation";                Types: full
   Name: "prog/fr";                   Description: "French translation";                Types: full
   Name: "prog/es";                   Description: "Spanish translation";               Types: full
@@ -121,7 +122,7 @@ Source: "build/Release Unicode/mse.com";  DestDir: "{app}";                     
 
 ; locales: en
 Source: "data/en.mse-locale/*";           DestDir: "{app}/data/en.mse-locale/";  Components: prog/en; Flags: recursesubdirs
-#if INSTALL_ALL
+#if INSTALL_ALL && 0
   Source: "data/de.mse-locale/*";           DestDir: "{app}/data/de.mse-locale/";  Components: prog/de; Flags: recursesubdirs
   Source: "data/fr.mse-locale/*";           DestDir: "{app}/data/fr.mse-locale/";  Components: prog/fr; Flags: recursesubdirs
   Source: "data/it.mse-locale/*";           DestDir: "{app}/data/it.mse-locale/";  Components: prog/it; Flags: recursesubdirs
@@ -175,7 +176,7 @@ Source: "data/dictionaries/en_US.aff";      DestDir: "{app}/data/dictionaries/";
 #emit Package(0, 'magic', 'watermarks',      'include',         'mtg')
 #emit Package(0, 'magic', 'future-common',   'include',         'mtg')
 #emit Package(0, 'magic', 'spoiler',         'export-template', 'mtg')
-#emit Package(0, 'magic', 'forum ',          'export-template', 'mtg')
+#emit Package(0, 'magic', 'forum',           'export-template', 'mtg')
 #emit Package(0, 'magic', 'mana-small',      'symbol-font',     'mtg')
 #emit Package(0, 'magic', 'mana-large',      'symbol-font',     'mtg')
 #emit Package(1, 'magic', 'mana-beveled',    'symbol-font',     'mtg/fpm')
