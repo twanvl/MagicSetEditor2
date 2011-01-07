@@ -78,6 +78,7 @@ Name: "style/mtg/new/textless";    Description: "Textless cards";               
   Name: "style/mtg/new/token";       Description: "Tokens";                            Types: full custom magic
   Name: "style/mtg/new/planeshift";  Description: "Planeshifted";                      Types: full custom magic
   Name: "style/mtg/new/walker";      Description: "Planeswalkers";                     Types: full custom magic
+  Name: "style/mtg/new/leveler";     Description: "Levelers";                          Types: full custom magic
 #endif
 Name: "style/mtg/old";             Description: "Old style, before 8th edition";     Types: full custom magic
 Name: "style/mtg/old/base";        Description: "Normal cards";                      Types: full custom magic
@@ -92,7 +93,9 @@ Name: "style/mtg/old/split";       Description: "Split cards";                  
   Name: "style/mtg/fpm/token";       Description: "Tokens";                            Types: full custom magic
   Name: "style/mtg/future";          Description: "Future sight";                      Types: full custom magic
   Name: "style/mtg/future/base";     Description: "Normal cards";                      Types: full custom magic
+  Name: "style/mtg/future/split";    Description: "Split cards";                       Types: full custom magic
   Name: "style/mtg/future/textless"; Description: "Textless cards";                    Types: full custom magic
+  Name: "style/mtg/counter";         Description: "Counters";                          Types: full custom magic
   Name: "style/mtg/vanguard";        Description: "Vanguard";                          Types: full custom magic
 #endif
 Name: "style/vs";                  Description: "VS System";                         Types: full custom vs
@@ -172,6 +175,7 @@ Source: "data/dictionaries/en_US.aff";      DestDir: "{app}/data/dictionaries/";
 #emit Package(0, 'magic', 'watermarks',      'include',         'mtg')
 #emit Package(0, 'magic', 'future-common',   'include',         'mtg')
 #emit Package(0, 'magic', 'spoiler',         'export-template', 'mtg')
+#emit Package(0, 'magic', 'forum ',          'export-template', 'mtg')
 #emit Package(0, 'magic', 'mana-small',      'symbol-font',     'mtg')
 #emit Package(0, 'magic', 'mana-large',      'symbol-font',     'mtg')
 #emit Package(1, 'magic', 'mana-beveled',    'symbol-font',     'mtg/fpm')
@@ -186,6 +190,7 @@ Source: "data/dictionaries/en_US.aff";      DestDir: "{app}/data/dictionaries/";
 #emit Package(1, 'magic', 'embossedletters', 'symbol-font',     'mtg/new/token')
 #emit Package(1, 'magic', 'planeshifted',    'style',           'mtg/new/planeshift')
 #emit Package(1, 'magic', 'new-planeswalker','style',           'mtg/new/walker')
+#emit Package(1, 'magic', 'new-leveler',     'style',           'mtg/new/leveler')
 #emit Package(0, 'magic', 'old',             'style',           'mtg/old/base')
 ;#emit Package(0, 'magic', 'old-flip',        'style',           'mtg/old/flip')
 #emit Package(0, 'magic', 'old-split',       'style',           'mtg/old/split')
@@ -197,7 +202,9 @@ Source: "data/dictionaries/en_US.aff";      DestDir: "{app}/data/dictionaries/";
 #emit Package(1, 'magic', fpm+'promo',       'style',           'mtg/fpm/promo')
 #emit Package(1, 'magic', fpm+'tokens',      'style',           'mtg/fpm/token')
 #emit Package(1, 'magic', 'future',          'style',           'mtg/future/base')
+#emit Package(1, 'magic', 'future-split',    'style',           'mtg/future/split')
 #emit Package(1, 'magic', 'future-textless', 'style',           'mtg/future/textless')
+#emit Package(1, 'magic', 'counter',         'style',           'mtg/counter')
 
 #emit Font   (0, 'ModMatrix.ttf',   'ModMatrix',                'mtg')
 #emit Font   (0, 'matrixb.ttf',     'Matrix',                   'mtg style/yugioh')
