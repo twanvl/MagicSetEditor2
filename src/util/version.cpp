@@ -50,7 +50,7 @@ template <> void GetDefaultMember::handle(const Version& v) {
 // ----------------------------------------------------------------------------- : Versions
 
 // NOTE: Don't use leading zeroes, they mean octal
-const Version app_version  = 308; // 0.3.8
+const Version app_version  = 309; // 0.3.9
 #ifdef UNICODE
 const Char* version_suffix = _(" (beta)");
 #else
@@ -79,8 +79,9 @@ const Char* version_suffix = _(" (beta, ascii build)");
  *             - alignment:justify behavior changed
  *             - more scriptable fields.
  *             - store time created,modified for cards -> changes set and clipboard format
+ *     0.3.9 : bugfix release mostly, a few new script functions
  */
-const Version file_version_locale          = 308; // 0.3.8
+const Version file_version_locale          = 309; // 0.3.9
 const Version file_version_set             = 308; // 0.3.8
 const Version file_version_game            = 308; // 0.3.8
 const Version file_version_stylesheet      = 308; // 0.3.8
