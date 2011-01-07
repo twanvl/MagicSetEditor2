@@ -40,7 +40,8 @@ DECLARE_TYPEOF_COLLECTION(AddCardsScriptP);
 class TextCtrlWithFocus : public wxTextCtrl {
   public:
 	DECLARE_EVENT_TABLE();
-	void forwardEvent(wxFocusEvent&);
+	void forwardFocusEvent(wxFocusEvent&);
+	void forwardKeyEvent(wxKeyEvent&);
 };
 
 /// A search/filter textbox
@@ -49,7 +50,7 @@ class FilterCtrl : public wxControl {
 	FilterCtrl(wxWindow* parent, int id);
 	/// Set the filter text
 	void setFilter(const String& filter, bool event = false);
-	void clearFilter()       { setFilter(String()); }
+	void clearFilter(bool event = false) { setFilter(String(),event); }
 	bool hasFilter() const   { return !value.empty(); }
 	String const& getFilter() const { return value; }
 	
@@ -68,6 +69,7 @@ class FilterCtrl : public wxControl {
 	void onChangeEvent(wxCommandEvent&);
 	void onClear(wxCommandEvent&);
 	void onSizeEvent(wxSizeEvent&);
+	void onChar(wxKeyEvent&);
 	void onSize();
   public:
 	void onSetFocus(wxFocusEvent&);
@@ -124,9 +126,17 @@ void FilterCtrl::onChangeEvent(wxCommandEvent&) {
 		setFilter(filter_ctrl->GetValue(),true);
 	}
 }
+void FilterCtrl::onChar(wxKeyEvent& ev) {
+	if (ev.GetKeyCode() == WXK_ESCAPE) {
+		// escape clears the filter box
+		clearFilter(true);
+	} else {
+		ev.Skip();
+	}
+}
 
 void FilterCtrl::onClear(wxCommandEvent&) {
-	setFilter(String(),true);
+	clearFilter(true);
 }
 
 void FilterCtrl::onSizeEvent(wxSizeEvent&) {
@@ -160,15 +170,20 @@ BEGIN_EVENT_TABLE(FilterCtrl, wxControl)
 	EVT_SIZE      (FilterCtrl::onSizeEvent)
 	EVT_SET_FOCUS (FilterCtrl::onSetFocus)
 	EVT_KILL_FOCUS(FilterCtrl::onKillFocus)
+	EVT_CHAR      (FilterCtrl::onChar)
 END_EVENT_TABLE()
 
-void TextCtrlWithFocus::forwardEvent(wxFocusEvent& ev) {
+void TextCtrlWithFocus::forwardFocusEvent(wxFocusEvent& ev) {
+	GetParent()->HandleWindowEvent(ev);
+}
+void TextCtrlWithFocus::forwardKeyEvent(wxKeyEvent& ev) {
 	GetParent()->HandleWindowEvent(ev);
 }
 
 BEGIN_EVENT_TABLE(TextCtrlWithFocus, wxTextCtrl)
-	EVT_SET_FOCUS (TextCtrlWithFocus::forwardEvent)
-	EVT_KILL_FOCUS(TextCtrlWithFocus::forwardEvent)
+	EVT_SET_FOCUS (TextCtrlWithFocus::forwardFocusEvent)
+	EVT_KILL_FOCUS(TextCtrlWithFocus::forwardFocusEvent)
+	EVT_CHAR      (TextCtrlWithFocus::forwardKeyEvent)
 END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------- : CardsPanel
