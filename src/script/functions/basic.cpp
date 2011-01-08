@@ -249,6 +249,53 @@ SCRIPT_FUNCTION(random_boolean) {
 	SCRIPT_RETURN( rand() < RAND_MAX * input  );
 }
 
+
+SCRIPT_FUNCTION(sin) {
+	SCRIPT_PARAM_C(double, input);
+	SCRIPT_RETURN(sin(input));
+}
+SCRIPT_FUNCTION(cos) {
+	SCRIPT_PARAM_C(double, input);
+	SCRIPT_RETURN(cos(input));
+}
+SCRIPT_FUNCTION(tan) {
+	SCRIPT_PARAM_C(double, input);
+	SCRIPT_RETURN(tan(input));
+}
+SCRIPT_FUNCTION(sin_deg) {
+	SCRIPT_PARAM_C(double, input);
+	SCRIPT_RETURN(sin(deg_to_rad(input)));
+}
+SCRIPT_FUNCTION(cos_deg) {
+	SCRIPT_PARAM_C(double, input);
+	SCRIPT_RETURN(cos(deg_to_rad(input)));
+}
+SCRIPT_FUNCTION(tan_deg) {
+	SCRIPT_PARAM_C(double, input);
+	SCRIPT_RETURN(tan(deg_to_rad(input)));
+}
+SCRIPT_FUNCTION(exp) {
+	SCRIPT_PARAM_C(double, input);
+	SCRIPT_RETURN(exp(input));
+}
+SCRIPT_FUNCTION(log) {
+	SCRIPT_PARAM_C(double, input);
+	SCRIPT_RETURN(log(input));
+}
+SCRIPT_FUNCTION(log10) {
+	SCRIPT_PARAM_C(double, input);
+	SCRIPT_RETURN(log(input) / log(10.0));
+}
+SCRIPT_FUNCTION(sqrt) {
+	SCRIPT_PARAM_C(double, input);
+	SCRIPT_RETURN(sqrt(input));
+}
+SCRIPT_FUNCTION(pow) {
+	SCRIPT_PARAM_C(double, input);
+	SCRIPT_PARAM(double, exponent);
+	SCRIPT_RETURN(pow(input,exponent));
+}
+
 // ----------------------------------------------------------------------------- : String stuff
 
 // convert a string to upper case
@@ -671,6 +718,17 @@ void init_script_basic_functions(Context& ctx) {
 	ctx.setVariable(_("random real"),          script_random_real);
 	ctx.setVariable(_("random int"),           script_random_int);
 	ctx.setVariable(_("random boolean"),       script_random_boolean);
+	ctx.setVariable(_("sin"),                  script_sin);
+	ctx.setVariable(_("cos"),                  script_cos);
+	ctx.setVariable(_("tan"),                  script_tan);
+	ctx.setVariable(_("sin deg"),              script_sin_deg);
+	ctx.setVariable(_("cos deg"),              script_cos_deg);
+	ctx.setVariable(_("tan deg"),              script_tan_deg);
+	ctx.setVariable(_("exp"),                  script_exp);
+	ctx.setVariable(_("log"),                  script_log);
+	ctx.setVariable(_("log10"),                script_log10);
+	ctx.setVariable(_("sqrt"),                 script_sqrt);
+	ctx.setVariable(_("pow"),                  script_pow);
 	// string
 	ctx.setVariable(_("to upper"),             script_to_upper);
 	ctx.setVariable(_("to lower"),             script_to_lower);
