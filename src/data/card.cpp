@@ -59,6 +59,7 @@ bool Card::contains(String const& query) const {
 	FOR_EACH_CONST(v, data) {
 		if (find_i(v->toString(),query) != String::npos) return true;
 	}
+	if (find_i(notes,query) != String::npos) return true;
 	return false;
 }
 bool Card::contains_words(String const& query) const {
