@@ -86,7 +86,7 @@ Name: "style/mtg/old/base";        Description: "Normal cards";                 
 Name: "style/mtg/old/split";       Description: "Split cards";                       Types: full custom magic
 #if INSTALL_ALL
   Name: "style/mtg/old/token";       Description: "Tokens";                            Types: full custom magic
-  Name: "style/mtg/fpm";             Description: "Fire Pinguin Master (FPM)";         Types: full custom magic
+  Name: "style/mtg/fpm";             Description: "Fire Penguin Master (FPM)";         Types: full custom magic
   Name: "style/mtg/fpm/base";        Description: "Normal cards";                      Types: full custom magic
   Name: "style/mtg/fpm/flip";        Description: "Flip cards";                        Types: full custom magic
   Name: "style/mtg/fpm/split";       Description: "Split cards";                       Types: full custom magic
