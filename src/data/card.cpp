@@ -55,6 +55,41 @@ String Card::identification() const {
 	}
 }
 
+/// Does the given object match the quick search query?
+template <typename T>
+bool match_quicksearch_query(String const& query, T const& object) {
+	bool need_match = true;
+	// iterate over the components of the query
+	for (size_t i = 0 ; i < query.size() ; ) {
+		if (query.GetChar(i) == _(' ')) {
+			// skip spaces
+			i++;
+		} else if (query.GetChar(i) == _('-')) {
+			// negate the next query, i.e. match only if it is not on the card
+			need_match = !need_match;
+			i++;
+		} else {
+			size_t end, next;
+			if (query.GetChar(i) == _('"')) {
+				// quoted string, match exactly
+				i++;
+				end =query.find_first_of(_('"'),i);
+				next = min(end,query.size()) + 1;
+			} else {
+				// single word
+				next = end = query.find_first_of(_(' '),i);
+			}
+			bool match = object.contains(query.substr(i,end-i));
+			if (match != need_match) {
+				return false;
+			}
+			need_match = true; // next word is no longer negated
+			i = next;
+		}
+	}
+	return true;
+}
+
 bool Card::contains(String const& query) const {
 	FOR_EACH_CONST(v, data) {
 		if (find_i(v->toString(),query) != String::npos) return true;
@@ -63,18 +98,7 @@ bool Card::contains(String const& query) const {
 	return false;
 }
 bool Card::contains_words(String const& query) const {
-	// iterate over the words
-	for (size_t i = 0 ; i < query.size() ; ) {
-		size_t end = query.find_first_of(_(" "),i);
-		if (end == i) {
-			i++;
-		} else {
-			end = min(end,query.size());
-			if (!contains(query.substr(i,end-i))) return false;
-			i = end;
-		}
-	}
-	return true;
+	return match_quicksearch_query(query,*this);
 }
 
 IndexMap<FieldP, ValueP>& Card::extraDataFor(const StyleSheet& stylesheet) {
