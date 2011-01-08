@@ -1195,6 +1195,7 @@ bool is_word_end(const String& s, size_t pos) {
 
 // is find.findString() at postion pos of s
 bool TextValueEditor::matchSubstr(const String& s, size_t pos, FindInfo& find) {
+	if (pos >= s.size()) return false;
 	if (find.wholeWord()) {
 		if (!is_word_end(s, pos - 1) || !is_word_end(s, pos + find.findString().size())) return false;
 	}
@@ -1236,7 +1237,7 @@ bool TextValueEditor::search(FindInfo& find, bool from_start) {
 		size_t start = 0;
 		int end      = (int)(find.searchSelection() ? selection_max : selection_min) - (int)find.findString().size();
 		if (end < 0) return false;
-		for (size_t i = end ; i >= start ; --i) {
+		for (size_t i = end ; (int)i >= (int)start ; --i) {
 			if (matchSubstr(v, i, find)) return true;
 		}
 	}
