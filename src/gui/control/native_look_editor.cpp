@@ -41,6 +41,7 @@ void NativeLookEditor::drawViewer(RotatedDC& dc, ValueViewer& v) {
 		draw_control_box(this, dc.getDC(), dc.trRectStraight(s.getInternalRect().grow(1)), current_editor == e, e != nullptr);
 		// draw label
 		dc.SetFont(*wxNORMAL_FONT);
+		dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));
 		// TODO : tr using stylesheet or using game?
 		dc.DrawText(tr(getStylePackage(), s.fieldP->name, capitalize_sentence),
 					RealPoint(margin_left - s.left, 1));
