@@ -29,8 +29,8 @@ class ImageValueViewer : public ValueViewer {
   private:
 	Bitmap bitmap; ///< Cached bitmap
 	RealSize size; ///< Size of cached bitmap
-	int    angle;  ///< Angle of cached bitmap
-	int    is_default; ///< Is the default placeholder image used?
+	Radians angle;  ///< Angle of cached bitmap
+	bool    is_default; ///< Is the default placeholder image used?
 	
 	/// Generate a placeholder image
 	static Bitmap imagePlaceholder(const Rotation& rot, UInt w, UInt h, const Image& background, bool editing);

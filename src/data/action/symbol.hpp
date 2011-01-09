@@ -85,13 +85,13 @@ class SymbolPartRotateAction : public SymbolPartMatrixAction {
 	virtual void   perform(bool to_undo);
 	
 	/// Update this action to rotate to a different angle
-	void rotateTo(double newAngle);
+	void rotateTo(Radians newAngle);
 	
 	/// Update this action to rotate by a deltaAngle
-	void rotateBy(double deltaAngle);
+	void rotateBy(Radians deltaAngle);
 	
   private:
-	double angle;				///< How much to rotate?
+	Radians angle;				///< How much to rotate?
   public:
 	bool constrain;				///< Constrain movement?
 };

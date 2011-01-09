@@ -19,7 +19,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 	DrawWhat what = viewer.drawWhat(this);
 	// reset?
 	int w = max(0,(int)dc.trX(style().width)), h = max(0,(int)dc.trY(style().height));
-	int a = dc.trAngle(0); //% TODO : Add getAngle()?
+	Radians a = dc.getAngle();
 	const AlphaMask& alpha_mask = getMask(w,h);
 	if (bitmap.Ok() && (a != angle || size.width != w || size.height != h)) {
 		bitmap = Bitmap();
@@ -46,7 +46,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 			is_default = true;
 			if (what & DRAW_EDITING) {
 				bitmap = imagePlaceholder(dc, w, h, image, what & DRAW_EDITING);
-				if (alpha_mask.isLoaded() || a) {
+				if (alpha_mask.isLoaded() || !is_rad0(a)) {
 					image = bitmap.ConvertToImage(); // we need to convert back to an image
 				} else {
 					image = Image();
@@ -57,7 +57,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 		if (!image.Ok() && !bitmap.Ok() && style().width > 40) {
 			// placeholder bitmap
 			bitmap = imagePlaceholder(dc, w, h, wxNullImage, what & DRAW_EDITING);
-			if (alpha_mask.isLoaded() || a) {
+			if (alpha_mask.isLoaded() || !is_rad0(a)) {
 				// we need to convert back to an image
 				image = bitmap.ConvertToImage();
 			}

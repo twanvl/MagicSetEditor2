@@ -255,7 +255,7 @@ String SymbolSymmetry::expectedName() const {
 Bounds SymbolSymmetry::calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity) {
 	Bounds bounds;
 	// See SymbolViewer::draw
-	double b = 2 * handle.angle();
+	Radians b = 2 * handle.angle();
 	int copies = kind == SYMMETRY_REFLECTION ? this->copies & ~1 : this->copies;
 	FOR_EACH_CONST(p, parts) {
 		for (int i = 0 ; i < copies ; ++i) {

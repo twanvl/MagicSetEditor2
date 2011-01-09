@@ -31,12 +31,12 @@ SymbolSelectEditor::SymbolSelectEditor(SymbolControl* control, bool rotate)
 	// Load resource images
 	Image rot = load_resource_image(_("handle_rotate"));
 	handleRotateTL = wxBitmap(rot);
-	handleRotateTR = wxBitmap(rotate_image(rot,90));
-	handleRotateBR = wxBitmap(rotate_image(rot,180));
-	handleRotateBL = wxBitmap(rotate_image(rot,270));
+	handleRotateTR = wxBitmap(rotate_image(rot,rad90));
+	handleRotateBR = wxBitmap(rotate_image(rot,rad180));
+	handleRotateBL = wxBitmap(rotate_image(rot,rad270));
 	Image shear = load_resource_image(_("handle_shear_x"));
 	handleShearX = wxBitmap(shear);
-	handleShearY = wxBitmap(rotate_image(shear,90));
+	handleShearY = wxBitmap(rotate_image(shear,rad90));
 	handleCenter = wxBitmap(load_resource_image(_("handle_center")));
 	// Make sure all parts have updated bounds
 	getSymbol()->updateBounds();
@@ -353,7 +353,7 @@ void SymbolSelectEditor::onMouseDrag  (const Vector2D& from, const Vector2D& to,
 		scaleAction->move(dMin,	dMax);
 	} else if (rotateAction) {
 		// rotate the selected parts
-		double angle = angleTo(to);
+		Radians angle = angleTo(to);
 		rotateAction->constrain	= ev.ControlDown();
 		rotateAction->rotateTo(startAngle - angle);
 	} else if (shearAction) {

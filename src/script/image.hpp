@@ -105,7 +105,7 @@ class CachedScriptableImage : public ScriptableImage {
 	Image  cached_i; ///< The cached image
 	Bitmap cached_b; ///< *or* the cached bitmap
 	RealSize cached_size; ///< The size of the image before rotating
-	int    cached_angle;
+	Radians cached_angle;
 };
 
 // ----------------------------------------------------------------------------- : CachedScriptableMask

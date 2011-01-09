@@ -12,6 +12,7 @@
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
 #include <util/defaultable.hpp>
+#include <util/angle.hpp>
 
 class Game;
 class StyleSheet;
@@ -98,7 +99,7 @@ class StyleSheetSettings : public IntrusivePtrBase<StyleSheetSettings> {
 	
 	// Rendering/display settings
 	Defaultable<double> card_zoom;
-	Defaultable<int>    card_angle;
+	Defaultable<Degrees> card_angle;
 	Defaultable<bool>   card_anti_alias;
 	Defaultable<bool>   card_borders;
 	Defaultable<bool>   card_draw_editing;

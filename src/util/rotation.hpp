@@ -33,7 +33,7 @@ class Rotation {
 	/** with the given rectangle of external coordinates and a given rotation angle and zoom factor.
 	 *  if is_internal then the rect gives the internal coordinates, its origin should be (0,0)
 	 */
-	Rotation(int angle, const RealRect& rect = RealRect(0,0,0,0), double zoom = 1.0, double strectch = 1.0, RotationFlags flags = ROTATION_NORMAL);
+	Rotation(Radians angle = 0, const RealRect& rect = RealRect(0,0,0,0), double zoom = 1.0, double strectch = 1.0, RotationFlags flags = ROTATION_NORMAL);
 	
 	/// Change the zoom factor
 	inline void setZoom(double z) { zoomX = zoomY = z; }
@@ -44,7 +44,7 @@ class Rotation {
 	/// Stretch factor
 	inline double getStretch() const { return zoomX / zoomY; }
 	/// Get the angle
-	inline int getAngle() const { return angle; }
+	inline Radians getAngle() const { return angle; }
 	/// Change the origin
 	inline void setOrigin(const RealPoint& o) { origin = o; }
 	
@@ -67,7 +67,7 @@ class Rotation {
 	inline RealSize trS(const RealSize& s) const { return RealSize(s.width * zoomX, s.height * zoomY); }
 	
 	/// Translate an angle
-	inline int trAngle(int a) { return (angle + a) % 360; }
+	inline Radians trAngle(Radians a) { return constrain_radians(angle + a); }
 	
 	/// Translate a single point
 	RealPoint tr(const RealPoint& p) const;
@@ -81,12 +81,9 @@ class Rotation {
 	RealSize trSize(const RealSize& s) const;
 	/// Translate a single size, returns the bounding box size (non-negative)
 	RealSize trSizeToBB(const RealSize& s) const;
-	/// Translate a rectangle, returns the bounding box
-	/* //%%the size of the result may be negative*/
+	/// Translate a rectangle, returns the bounding box, the size will be non-negative
 	RealRect trRectToBB(const RealRect& r) const;
-	/// Translate a rectangle, can only be used when not rotating
-	RealRect trRectStraight(const RealRect& r) const;
-	/// Translate a rectangle into a region (supports rotation
+	/// Translate a rectangle into a region (supports rotation)
 	wxRegion trRectToRegion(const RealRect& rect) const;
 	
 	/// Translate a size or length back to internal 'coordinates'
@@ -102,23 +99,13 @@ class Rotation {
 	RealSize  trInv(const RealSize& p) const;
 	
   protected:
-	int angle;				///< The angle of rotation in degrees (counterclockwise)
+	Radians angle;			///< The angle of rotation in radians (counterclockwise)
 	RealSize size;			///< Size of the rectangle, in internal coordinates
 	RealPoint origin;		///< tr(0,0)
 	double zoomX;			///< Zoom factor, zoom = 2.0 means that 1 internal = 2 external
 	double zoomY;
 	
 	friend class Rotater;
-	
-	/// Is the x axis 'reversed' (after turning sideways)?
-	inline bool revX()     const { return  angle >= 180; }
-	/// Is the y axis 'reversed' (after turning sideways)?
-	inline bool revY()     const { return  angle == 90 || angle == 180; }
-	/// Is the rotation 'simple', i.e. a multiple of 90 degrees?
-	inline bool straight() const { return  ::straight(angle); }
-	/// Is the rotation sideways (90 or 270 degrees)?
-	//  Note: angle & 2 == 0 for angle in {0, 180} and != 0 for angle in {90, 270)
-	inline bool sideways() const { return (angle & 2) != 0; }
 	
 	/// Determine the top-left corner of the bounding box around the rotated box s (in external coordinates)
 	RealPoint boundingBoxCorner(const RealSize& s) const;
@@ -165,7 +152,7 @@ enum RenderQuality {
  */
 class RotatedDC : public Rotation {
   public:
-	RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, RenderQuality quality, RotationFlags flags = ROTATION_NORMAL);
+	RotatedDC(DC& dc, Radians angle, const RealRect& rect, double zoom, RenderQuality quality, RotationFlags flags = ROTATION_NORMAL);
 	RotatedDC(DC& dc, const Rotation& rotation, RenderQuality quality);
 	
 	// --------------------------------------------------- : Drawing
@@ -190,9 +177,9 @@ class RotatedDC : public Rotation {
 	void DrawCircle(const RealPoint& center, double radius);
 	void DrawEllipse(const RealPoint& center, const RealSize& size);
 	/// Draw an arc of an ellipse, angles are in radians
-	void DrawEllipticArc(const RealPoint& center, const RealSize& size, double start, double end);
+	void DrawEllipticArc(const RealPoint& center, const RealSize& size, Radians start, Radians end);
 	/// Draw spokes of an ellipse
-	void DrawEllipticSpoke(const RealPoint& center, const RealSize& size, double start);
+	void DrawEllipticSpoke(const RealPoint& center, const RealSize& size, Radians start);
 	
 	// Fill the dc with the color of the current brush
 	void Fill();

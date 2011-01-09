@@ -36,7 +36,7 @@ class GeneratedImage : public ScriptValue {
 		mutable int    width, height;	///< Width to force the image to, or 0 to keep the width of the input
 										///< In that case, width and height will be later set to the actual size
 		double         zoom;            ///< Zoom factor to use, when width=height=0
-		int            angle;           ///< Angle to rotate image by afterwards
+		Radians        angle;           ///< Angle to rotate image by afterwards
 		PreserveAspect preserve_aspect;
 		bool           saturate;
 		Package* package;       ///< Package to load images from
@@ -264,13 +264,13 @@ class FlipImageVertical : public SimpleFilterImage {
 /// Rotate an image
 class RotateImage : public SimpleFilterImage {
   public:
-	inline RotateImage(const GeneratedImageP& image, double angle)
+	inline RotateImage(const GeneratedImageP& image, Radians angle)
 		: SimpleFilterImage(image), angle(angle)
 	{}
 	virtual Image generate(const Options& opt) const;
 	virtual bool operator == (const GeneratedImage& that) const;
   private:
-	double angle;
+	Radians angle;
 };
 
 // ----------------------------------------------------------------------------- : EnlargeImage

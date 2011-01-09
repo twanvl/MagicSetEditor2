@@ -131,8 +131,8 @@ SCRIPT_FUNCTION(flip_vertical) {
 
 SCRIPT_FUNCTION(rotate) {
 	SCRIPT_PARAM_C(GeneratedImageP, input);
-	SCRIPT_PARAM_N(double, _("angle"), angle);
-	return intrusive(new RotateImage(input,angle));
+	SCRIPT_PARAM_N(Degrees, _("angle"), angle);
+	return intrusive(new RotateImage(input,deg_to_rad(angle)));
 }
 
 SCRIPT_FUNCTION(drop_shadow) {

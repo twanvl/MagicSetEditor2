@@ -165,7 +165,7 @@ void blur_image_alpha(Image& img) {
 
 // Draw text by first drawing it using a larger font and then downsampling it
 // optionally rotated by an angle
-void draw_resampled_text(DC& dc, const RealPoint& pos, const RealRect& rect, double stretch, int angle, AColor color, const String& text, int blur_radius, int repeat) {
+void draw_resampled_text(DC& dc, const RealPoint& pos, const RealRect& rect, double stretch, Radians angle, AColor color, const String& text, int blur_radius, int repeat) {
 	// transparent text can be ignored
 	if (color.alpha == 0) return;
 	// enlarge slightly; some fonts are larger then the GetTextExtent tells us (especially italic fonts)
@@ -183,11 +183,11 @@ void draw_resampled_text(DC& dc, const RealPoint& pos, const RealRect& rect, dou
 	// now draw the text
 	mdc.SetFont(dc.GetFont());
 	mdc.SetTextForeground(*wxWHITE);
-	mdc.DrawRotatedText(text, xsub, ysub, angle);
+	mdc.DrawRotatedText(text, xsub, ysub, rad_to_deg(angle));
 	// get image
 	mdc.SelectObject(wxNullBitmap);
 	// step 2. sample down
-	double ca = fabs(cos(deg_to_rad(angle))), sa = fabs(sin(deg_to_rad(angle)));
+	double ca = fabs(cos(angle)), sa = fabs(sin(angle));
 	w += int(w * (stretch - 1) * ca); // GCC makes annoying conversion warnings if *= is used here.
 	h += int(h * (stretch - 1) * sa);
 	Image img_small(w, h, false);

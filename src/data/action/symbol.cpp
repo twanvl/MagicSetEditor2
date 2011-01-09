@@ -129,8 +129,8 @@ void SymbolPartRotateAction::perform(bool to_undo) {
 	angle = -angle;
 }
 
-void SymbolPartRotateAction::rotateTo(double newAngle) {
-	double oldAngle = angle;
+void SymbolPartRotateAction::rotateTo(Radians newAngle) {
+	Radians oldAngle = angle;
 	angle = newAngle;
 	// constrain?
 	if (constrain) {
@@ -141,7 +141,7 @@ void SymbolPartRotateAction::rotateTo(double newAngle) {
 	if (oldAngle != angle) rotateBy(angle - oldAngle);
 }
 
-void SymbolPartRotateAction::rotateBy(double deltaAngle) {
+void SymbolPartRotateAction::rotateBy(Radians deltaAngle) {
 	// Rotation 'matrix'
 	transform(
 		Matrix2D(cos(deltaAngle), -sin(deltaAngle)

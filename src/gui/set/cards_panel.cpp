@@ -14,6 +14,7 @@
 #include <gui/about_window.hpp> // for HoverButton
 #include <gui/update_checker.hpp>
 #include <gui/icon_menu.hpp>
+#include <gui/drop_down_list.hpp>
 #include <gui/util.hpp>
 #include <data/set.hpp>
 #include <data/game.hpp>
@@ -33,6 +34,25 @@ DECLARE_TYPEOF_COLLECTION(AddCardsScriptP);
 	// see http://trac.wxwidgets.org/ticket/8556
 	#define HAVE_TOOLBAR_DROPDOWN_MENU 1
 #endif
+
+// ----------------------------------------------------------------------------- : DropDownMRUList
+
+/// A drop down list of recent choices, for autocomplete
+class DropDownMRUList : public DropDownList {
+  public:
+	DropDownMRUList(Window* parent, vector<String> const& choices)
+		: DropDownList(parent)
+		, choices(choices)
+	{}
+	
+	vector<String> choices;
+	
+  protected:
+	virtual size_t selection() const { return NO_SELECTION; }
+	virtual size_t itemCount() const { return choices.size(); }
+	virtual String itemText(size_t item) const { return choices.at(item); }
+	virtual void select(size_t item);
+};
 
 // ----------------------------------------------------------------------------- : FilterControl
 
@@ -467,7 +487,7 @@ void CardsPanel::onCommand(int id) {
 		case ID_CARD_ROTATE_0: case ID_CARD_ROTATE_90: case ID_CARD_ROTATE_180: case ID_CARD_ROTATE_270: {
 			StyleSheetSettings& ss = settings.stylesheetSettingsFor(set->stylesheetFor(card_list->getCard()));
 			ss.card_angle.assign(
-				  id == ID_CARD_ROTATE     ? (ss.card_angle() + 90) % 360
+				  id == ID_CARD_ROTATE     ? sane_fmod(ss.card_angle() + 90, 360)
 				: id == ID_CARD_ROTATE_0   ? 0
 				: id == ID_CARD_ROTATE_90  ? 90
 				: id == ID_CARD_ROTATE_180 ? 180

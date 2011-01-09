@@ -459,8 +459,8 @@ void SymmetryMoveAction::move(const Vector2D& deltaDelta) {
 		symmetry.handle = snap_vector(symmetry.center + original + delta, snap) - symmetry.center;
 		if (constrain) {
 			// constrain to multiples of 2pi/24 i.e. 24 stops
-			double angle = atan2(symmetry.handle.y, symmetry.handle.x);
-			double mult = (2 * M_PI) / 24;
+			Radians angle = atan2(symmetry.handle.y, symmetry.handle.x);
+			Radians mult = (2 * M_PI) / 24;
 			angle = floor(angle / mult + 0.5) * mult;
 			symmetry.handle = Vector2D(cos(angle), sin(angle)) * symmetry.handle.length();
 		}

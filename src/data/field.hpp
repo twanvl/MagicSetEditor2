@@ -101,7 +101,7 @@ class Style : public IntrusivePtrVirtualBase {
 	Scriptable<double> left,  top;      ///< Position of this field
 	Scriptable<double> width, height;   ///< Position of this field
 	Scriptable<double> right, bottom;   ///< Position of this field
-	Scriptable<int>    angle;           ///< Rotation of the box
+	Scriptable<Degrees> angle;          ///< Rotation of the box
 	Scriptable<bool>   visible;         ///< Is this field visible?
 	CachedScriptableMask mask;          ///< Mask image
 	

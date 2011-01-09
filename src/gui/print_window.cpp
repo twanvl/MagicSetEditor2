@@ -39,7 +39,7 @@ class TextBufferDC : public wxMemoryDC {
 	TextBufferDC(int width, int height, bool buffer_text);
 	
 	virtual void DoDrawText(const String& str, int x, int y);
-	virtual void DoDrawRotatedText(const String& str, int x, int y, double angle);
+	virtual void DoDrawRotatedText(const String& str, int x, int y, Radians angle);
 	
 	/// Copy the contents of the DC to a target device, this DC becomes invalid
 	void drawToDevice(DC& dc, int x = 0, int y = 0);
@@ -51,10 +51,10 @@ class TextBufferDC : public wxMemoryDC {
 		Color  color;
 		int x, y;
 		String text;
-		double angle;
+		Radians angle;
 		double user_scale_x, user_scale_y;
 		
-		TextDraw(wxFont font, Color color, double user_scale_x, double user_scale_y, int x, int y, String text, double angle = 0)
+		TextDraw(wxFont font, Color color, double user_scale_x, double user_scale_y, int x, int y, String text, Radians angle = 0)
 			: font(font), color(color), x(x), y(y), text(text), angle(angle), user_scale_x(user_scale_x), user_scale_y(user_scale_y)
 		{}
 	};
@@ -83,13 +83,13 @@ void TextBufferDC::DoDrawText(const String& str, int x, int y) {
 		wxMemoryDC::DoDrawText(str,x,y);
 	}
 }
-void TextBufferDC::DoDrawRotatedText(const String& str, int x, int y, double angle) {
+void TextBufferDC::DoDrawRotatedText(const String& str, int x, int y, Radians angle) {
 	if (buffer_text) {
 		double usx,usy;
 		GetUserScale(&usx, &usy);
 		text.push_back( intrusive(new TextDraw(GetFont(), GetTextForeground(), usx, usy, x, y, str, angle)) );
 	} else {
-		wxMemoryDC::DoDrawRotatedText(str,x,y,angle);
+		wxMemoryDC::DoDrawRotatedText(str,x,y,rad_to_deg(angle));
 	}
 }
 
@@ -104,8 +104,8 @@ void TextBufferDC::drawToDevice(DC& dc, int x, int y) {
 		dc.SetUserScale(usx * t->user_scale_x, usx * t->user_scale_y);
 		dc.SetFont          (t->font);
 		dc.SetTextForeground(t->color);
-		if (t->angle) {
-			dc.DrawRotatedText(t->text, t->x + x, t->y + y, t->angle);
+		if (!is_rad0(t->angle)) {
+			dc.DrawRotatedText(t->text, t->x + x, t->y + y, rad_to_deg(t->angle));
 		} else {
 			dc.DrawText(t->text, t->x + x, t->y + y);
 		}

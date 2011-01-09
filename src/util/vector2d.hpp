@@ -10,6 +10,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/angle.hpp>
 #include <limits>
 
 // ----------------------------------------------------------------------------- : Rounding
@@ -100,7 +101,7 @@ class Vector2D {
 		return *this / length();
 	}
 	/// Angle between this vector and the x axis
-	inline double angle() const {
+	inline Radians angle() const {
 		return atan2(y,x);
 	}
 	

@@ -297,7 +297,7 @@ void ChoiceValueEditor::onLoseFocus() {
 void ChoiceValueEditor::draw(RotatedDC& dc) {
 	ChoiceValueViewer::draw(dc);
 	if (nativeLook()) {
-		draw_drop_down_arrow(&editor(), dc.getDC(), dc.trRectStraight(style().getInternalRect().grow(1)), drop_down->IsShown());
+		draw_drop_down_arrow(&editor(), dc.getDC(), dc.trRectToBB(style().getInternalRect().grow(1)), drop_down->IsShown());
 	}
 }
 void ChoiceValueEditor::determineSize(bool) {

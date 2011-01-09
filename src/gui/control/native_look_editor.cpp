@@ -38,7 +38,7 @@ void NativeLookEditor::drawViewer(RotatedDC& dc, ValueViewer& v) {
 	if (!e || e->drawLabel()) {
 		// draw control border and box
 		Style& s = *v.getStyle();
-		draw_control_box(this, dc.getDC(), dc.trRectStraight(s.getInternalRect().grow(1)), current_editor == e, e != nullptr);
+		draw_control_box(this, dc.getDC(), dc.trRectToBB(s.getInternalRect().grow(1)), current_editor == e, e != nullptr);
 		// draw label
 		dc.SetFont(*wxNORMAL_FONT);
 		dc.SetTextForeground(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT));

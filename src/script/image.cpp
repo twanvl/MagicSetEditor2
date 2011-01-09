@@ -125,11 +125,13 @@ void CachedScriptableImage::generateCached(const GeneratedImage::Options& option
 		}
 	} else {
 		// image
-		if (cached_i.Ok() && (options.angle - cached_angle + 360) % 90 == 0) {
+		Radians relative_rotation = options.angle + rad360 - cached_angle;
+		if (cached_i.Ok() && is_straight(relative_rotation)) {
+			// we need only an {0,90,180,270} degree rotation compared to the cached one, this doesn't reduce image quality
 			if ((w_ok && h_ok) || (options.preserve_aspect == ASPECT_FIT && (w_ok || h_ok))) { // only one dimension has to fit when fitting
 				if (options.angle != cached_angle) {
 					// rotate cached image
-					cached_i = rotate_image(cached_i, options.angle - cached_angle + 360);
+					cached_i = rotate_image(cached_i, relative_rotation);
 					cached_angle = options.angle;
 				}
 				*image = cached_i;
@@ -137,8 +139,8 @@ void CachedScriptableImage::generateCached(const GeneratedImage::Options& option
 			}
 		}
 	}
-	// hack: temporarily set angle to 0, do actual rotation after applying mask
-	int a = options.angle;
+	// hack(part1): temporarily set angle to 0, do actual rotation after applying mask
+	Radians a = options.angle;
 	const_cast<GeneratedImage::Options&>(options).angle = 0;
 	// generate
 	cached_i = generate(options);
@@ -153,7 +155,7 @@ void CachedScriptableImage::generateCached(const GeneratedImage::Options& option
 		mask->get(mask_opts).setAlpha(cached_i);
 	}
 	if (options.angle != 0) {
-		// hack(pt2) do the actual rotation now
+		// hack(part2) do the actual rotation now
 		cached_i = rotate_image(cached_i, options.angle);
 	}
 	if (*combine <= COMBINE_NORMAL) {

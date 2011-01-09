@@ -151,7 +151,7 @@ void SymbolViewer::combineSymbolPart(DC& dc, const SymbolPart& part, bool& paint
 		}
 	} else if (const SymbolSymmetry* s = part.isSymbolSymmetry()) {
 		// Draw all parts, in reverse order (bottom to top), also draw rotated copies
-		double b = 2 * s->handle.angle();
+		Radians b = 2 * s->handle.angle();
 		Matrix2D old_m = multiply;
 		Vector2D old_o = origin;
 		int copies = s->kind == SYMMETRY_REFLECTION ? s->copies / 2 * 2 : s->copies;
@@ -345,11 +345,11 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolSymmetry& sym, HighlightSty
 	// center
 	RealPoint center = rotation.tr(sym.center);
 	// draw 'spokes'
-	double angle = atan2(sym.handle.y, sym.handle.x);
+	Radians angle = atan2(sym.handle.y, sym.handle.x);
 	dc.SetPen(wxPen(color, sym.kind == SYMMETRY_ROTATION ? 1 : 3));
 	int copies = sym.kind == SYMMETRY_REFLECTION ? sym.copies / 2 * 2 : sym.copies;
 	for (int i = 0; i < copies ; ++i) {
-		double a = angle + (i + 0.5) * 2 * M_PI / copies;
+		Radians a = angle + (i + 0.5) * 2 * M_PI / copies;
 		Vector2D dir(cos(a), sin(a));
 		Vector2D dir2 = rotation.tr(sym.center + 2 * dir);
 		dc.DrawLine(int(center.x), int(center.y), int(dir2.x), int(dir2.y));

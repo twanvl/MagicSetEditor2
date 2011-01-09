@@ -13,13 +13,8 @@
 
 // ----------------------------------------------------------------------------- : Rotation
 
-// constrain an angle to [0..360)
-int constrain_angle(int angle) {
-	return (angle + 3600) % 360;
-}
-
-Rotation::Rotation(int angle, const RealRect& rect, double zoom, double stretch, RotationFlags flags)
-	: angle(constrain_angle(angle))
+Rotation::Rotation(Radians angle, const RealRect& rect, double zoom, double stretch, RotationFlags flags)
+	: angle(constrain_radians(angle))
 	, size(rect.size())
 	, origin(rect.position())
 	, zoomX(zoom * stretch)
@@ -30,8 +25,7 @@ Rotation::Rotation(int angle, const RealRect& rect, double zoom, double stretch,
 	}
 	// set origin
 	if (flags & ROTATION_ATTACH_TOP_LEFT) {
-		if (revX()) origin.x += zoom * (sideways() ? size.height : size.width);
-		if (revY()) origin.y += zoom * (sideways() ? size.width : size.height);
+		origin -= boundingBoxCorner(size);
 	}
 }
 
@@ -42,59 +36,58 @@ void Rotation::setStretch(double s) {
 
 
 RealPoint Rotation::tr(const RealPoint& p) const {
-	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	double s = sin(angle), c = cos(angle);
 	double x = p.x * zoomX, y = p.y * zoomY;
 	return RealPoint(c * x + s * y + origin.x,
 	                -s * x + c * y + origin.y);
 }
 RealPoint Rotation::trPixel(const RealPoint& p) const {
-	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	double s = sin(angle), c = cos(angle);
 	double x = p.x * zoomX + 0.5, y = p.y * zoomY + 0.5;
 	return RealPoint(c * x + s * y + origin.x - 0.5,
 	                -s * x + c * y + origin.y - 0.5);
 }
 RealPoint Rotation::trNoZoom(const RealPoint& p) const {
-	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	double s = sin(angle), c = cos(angle);
 	double x = p.x, y = p.y;
 	return RealPoint(c * x + s * y + origin.x,
 	                -s * x + c * y + origin.y);
 }
 RealPoint Rotation::trPixelNoZoom(const RealPoint& p) const {
-	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	double s = sin(angle), c = cos(angle);
 	double x = p.x + 0.5, y = p.y + 0.5;
 	return RealPoint(c * x + s * y + origin.x - 0.5,
 	                -s * x + c * y + origin.y - 0.5);
 }
-/*
-RealSize Rotation::trSize(const RealSize& size) const {
-	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
-	double x = size.width * zoomX, y = size.height * zoomY;
-	return RealSize(c * x + s * y, s * x + c * y);
-}
-*/
 
 RealSize Rotation::trSizeToBB(const RealSize& size) const {
-	if (straight()) {
-		if (sideways()) {
+	if (is_straight(angle)) {
+		if (is_sideways(angle)) {
 			return RealSize(size.height * zoomY, size.width * zoomX);
 		} else {
 			return RealSize(size.width * zoomX, size.height * zoomY);
 		}
 	} else {
-		double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+		double s = sin(angle), c = cos(angle);
 		double x = size.width * zoomX, y = size.height * zoomY;
 		return RealSize(fabs(c * x) + fabs(s * y), fabs(s * x) + fabs(c * y));
 	}
 }
 
 RealRect Rotation::trRectToBB(const RealRect& r) const {
-	if (straight()) {
-		RealSize s = trSizeToBB(r.size());
-		return RealRect(tr(r.position()) - RealSize(revX()?s.width:0, revY()?s.height:0), s);
+	double x = r.x     * zoomX, y = r.y      * zoomY;
+	double w = r.width * zoomX, h = r.height * zoomY;
+	const bool special_case_optimization = false;
+	if (special_case_optimization && is_rad0(angle)) {
+		return RealRect(origin.x + x, origin.y + y, w, h);
+	} else if (special_case_optimization && is_rad180(angle)) {
+		return RealRect(origin.x - x - w, origin.y - y - h, w, h);
+	} else if (special_case_optimization && is_rad90(angle)) {
+		return RealRect(origin.x + y, origin.y - x - w, h, w);
+	} else if (special_case_optimization && is_rad270(angle)) {
+		return RealRect(origin.x - y - h, origin.y + x, h, w);
 	} else {
-		double a = deg_to_rad(angle), s = sin(a), c = cos(a);
-		double x = r.x     * zoomX, y = r.y      * zoomY;
-		double w = r.width * zoomX, h = r.height * zoomY;
+		double s = sin(angle), c = cos(angle);
 		RealRect result(c * x + s * y + origin.x,
 		               -s * x + c * y + origin.y,
 		               0,0);
@@ -120,13 +113,8 @@ RealRect Rotation::trRectToBB(const RealRect& r) const {
 	}
 }
 
-
-RealRect Rotation::trRectStraight(const RealRect& r) const {
-	assert(angle == 0);
-	return RealRect(r.position() + origin, r.size());
-}
 wxRegion Rotation::trRectToRegion(const RealRect& r) const {
-	if (straight()) {
+	if (is_straight(angle)) {
 		return trRectToBB(r).toRect();
 	} else {
 		wxPoint points[4] = {trPixel(RealPoint(r.left(),  r.top()   ))
@@ -138,13 +126,13 @@ wxRegion Rotation::trRectToRegion(const RealRect& r) const {
 }
 
 RealPoint Rotation::trInv(const RealPoint& p) const {
-	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	double s = sin(angle), c = cos(angle);
 	double x = p.x - origin.x, y = p.y - origin.y;
 	return RealPoint((c * x - s * y) / zoomX,
 	                 (s * x + c * y) / zoomY);
 }
 RealSize Rotation::trInv(const RealSize& x) const {
-	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	double s = sin(angle), c = cos(angle);
 	return RealSize((c * x.width - s * x.height) / zoomX,
 	                (s * x.width + c * x.height) / zoomY);
 }
@@ -153,26 +141,13 @@ RealPoint Rotation::boundingBoxCorner(const RealSize& size) const {
 	// This function is a bit tricky,
 	// I derived it by drawing the four cases.
 	// Two succeeding cases must agree where they overlap (0,90,180,270 degrees)
-	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
+	double s = sin(angle), c = cos(angle);
 	double w = size.width * zoomX, h = size.height * zoomY;
-	if (angle <= 90)  return RealPoint(0,            -w * s);
-	if (angle <= 180) return RealPoint(w * c,         h * c - w * s);
-	if (angle <= 270) return RealPoint(w * c + h * s, h * c);
-	else              return RealPoint(h * s,         0);
+	if (angle <= rad90)  return RealPoint(0,            -w * s);
+	if (angle <= rad180) return RealPoint(w * c,         h * c - w * s);
+	if (angle <= rad270) return RealPoint(w * c + h * s, h * c);
+	else                 return RealPoint(h * s,         0);
 }
-/*
-RealPoint Rotation::boundingBoxCorner(const RealSize& size) const {
-	//if(true)return RealPoint(0,0);
-	// This function is a bit tricky,
-	// I derived it by drawing the four cases.
-	// Two succeeding cases must agree where they overlap (0,90,180,270 degrees)
-	double a = deg_to_rad(angle), s = sin(a), c = cos(a);
-	if (angle <= 90)  return RealPoint(           + size.width  * s * s,             - size.width  * s * c);
-	if (angle <= 180) return RealPoint(size.width - size.height * s * c,               size.height * c * c);
-	if (angle <= 270) return RealPoint(size.width - size.width  * s * s, size.height + size.width  * s * c);
-	else              return RealPoint(             size.height * s * c, size.height - size.height * c * c);
-}
-*/
 
 // ----------------------------------------------------------------------------- : Rotater
 
@@ -183,7 +158,7 @@ Rotater::Rotater(Rotation& rot, const Rotation& by)
 	// apply rotation
 	rot.origin = rot.tr(by.origin);
 	rot.size   = by.size;
-	rot.angle  = constrain_angle(rot.angle + by.angle);
+	rot.angle  = constrain_radians(rot.angle + by.angle);
 	// zooming is not really correct if rot.zoomX != rot.zoomY
 	rot.zoomX *= by.zoomX;
 	rot.zoomY *= by.zoomY;
@@ -195,7 +170,7 @@ Rotater::~Rotater() {
 
 // ----------------------------------------------------------------------------- : RotatedDC
 
-RotatedDC::RotatedDC(DC& dc, int angle, const RealRect& rect, double zoom, RenderQuality quality, RotationFlags flags)
+RotatedDC::RotatedDC(DC& dc, Radians angle, const RealRect& rect, double zoom, RenderQuality quality, RotationFlags flags)
 	: Rotation(angle, rect, zoom, 1.0, flags)
 	, dc(dc), quality(quality)
 {}
@@ -234,12 +209,12 @@ void RotatedDC::DrawText  (const String& text, const RealPoint& pos, AColor colo
 		dc.GetUserScale(&usx, &usy);
 		dc.SetUserScale(usx/text_scaling, usy/text_scaling);
 		dc.SetTextForeground(color);
-		dc.DrawRotatedText(text, (int) p_ext.x, (int) p_ext.y, angle);
+		dc.DrawRotatedText(text, (int) p_ext.x, (int) p_ext.y, rad_to_deg(angle));
 		dc.SetUserScale(usx, usy);
 	} else {
 		RealPoint p_ext = tr(pos);
 		dc.SetTextForeground(color);
-		dc.DrawRotatedText(text, (int) p_ext.x, (int) p_ext.y, angle);
+		dc.DrawRotatedText(text, (int) p_ext.x, (int) p_ext.y, rad_to_deg(angle));
 	}
 }
 
@@ -249,7 +224,7 @@ void RotatedDC::DrawTextWithShadow(const String& text, const Font& font, const R
 }
 
 void RotatedDC::DrawBitmap(const Bitmap& bitmap, const RealPoint& pos) {
-	if (angle == 0) {
+	if (is_rad0(angle)) {
 		RealPoint p_ext = tr(pos);
 		dc.DrawBitmap(bitmap, to_int(p_ext.x), to_int(p_ext.y), true);
 	} else {
@@ -275,7 +250,7 @@ void RotatedDC::DrawLine  (const RealPoint& p1,  const RealPoint& p2) {
 }
 
 void RotatedDC::DrawRectangle(const RealRect& r) {
-	if (straight()) {
+	if (is_straight(angle)) {
 		wxRect r_ext = trRectToBB(r);
 		dc.DrawRectangle(r_ext.x, r_ext.y, r_ext.width, r_ext.height);
 	} else {
@@ -288,7 +263,7 @@ void RotatedDC::DrawRectangle(const RealRect& r) {
 }
 
 void RotatedDC::DrawRoundedRectangle(const RealRect& r, double radius) {
-	if (straight()) {
+	if (is_straight(angle)) {
 		wxRect r_ext = trRectToBB(r);
 		dc.DrawRoundedRectangle(r_ext.x, r_ext.y, r_ext.width, r_ext.height, trS(radius));
 	} else {
@@ -307,16 +282,16 @@ void RotatedDC::DrawEllipse(const RealPoint& center, const RealSize& size) {
 	wxSize  s_ext = trSizeToBB(size);
 	dc.DrawEllipse(c_ext.x, c_ext.y, s_ext.x, s_ext.y);
 }
-void RotatedDC::DrawEllipticArc(const RealPoint& center, const RealSize& size, double start, double end) {
+void RotatedDC::DrawEllipticArc(const RealPoint& center, const RealSize& size, Radians start, Radians end) {
 	wxPoint c_ext = tr(center - size/2);
 	wxSize  s_ext = trSizeToBB(size);
-	dc.DrawEllipticArc(c_ext.x, c_ext.y, s_ext.x, s_ext.y, rad_to_deg(start) + angle, rad_to_deg(end) + angle);
+	dc.DrawEllipticArc(c_ext.x, c_ext.y, s_ext.x, s_ext.y, rad_to_deg(start + angle), rad_to_deg(end + angle));
 }
-void RotatedDC::DrawEllipticSpoke(const RealPoint& center, const RealSize& size, double angle) {
+void RotatedDC::DrawEllipticSpoke(const RealPoint& center, const RealSize& size, Radians angle) {
 	wxPoint c_ext = tr(center - size/2);
 	wxSize  s_ext = trSizeToBB(size);
-	double rot_angle = angle + deg_to_rad(this->angle);
-	double sin_angle = sin(rot_angle), cos_angle = cos(rot_angle);
+	Radians rot_angle = angle + this->angle;
+	Radians sin_angle = sin(rot_angle), cos_angle = cos(rot_angle);
 	// position of center and of point on the boundary can vary because of rounding errors,
 	// this code matches DrawEllipticArc (at least on windows xp).
 	dc.DrawLine(

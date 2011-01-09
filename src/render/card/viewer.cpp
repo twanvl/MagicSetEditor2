@@ -116,7 +116,7 @@ Context& DataViewer::getContext()  const {
 Rotation DataViewer::getRotation() const {
 	if (!stylesheet) stylesheet = set->stylesheet;
 	StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
-	return Rotation(ss.card_angle(), stylesheet->getCardRect(), ss.card_zoom(), 1.0, ROTATION_ATTACH_TOP_LEFT);
+	return Rotation(deg_to_rad(ss.card_angle()), stylesheet->getCardRect(), ss.card_zoom(), 1.0, ROTATION_ATTACH_TOP_LEFT);
 }
 
 Package& DataViewer::getStylePackage() const {

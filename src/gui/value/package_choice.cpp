@@ -103,7 +103,7 @@ void PackageChoiceValueEditor::onLoseFocus() {
 void PackageChoiceValueEditor::draw(RotatedDC& dc) {
 	PackageChoiceValueViewer::draw(dc);
 	if (nativeLook()) {
-		draw_drop_down_arrow(&editor(), dc.getDC(), dc.trRectStraight(style().getInternalRect().grow(1)), drop_down && drop_down->IsShown());
+		draw_drop_down_arrow(&editor(), dc.getDC(), dc.trRectToBB(style().getInternalRect().grow(1)), drop_down && drop_down->IsShown());
 	}
 }
 void PackageChoiceValueEditor::determineSize(bool) {

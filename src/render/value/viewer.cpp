@@ -36,7 +36,7 @@ RealRect ValueViewer::boundingBox() const {
 }
 
 Rotation ValueViewer::getRotation() const {
-	return Rotation(getStyle()->angle, getStyle()->getExternalRect(), 1.0, getStretch());
+	return Rotation(deg_to_rad(getStyle()->angle), getStyle()->getExternalRect(), 1.0, getStretch());
 }
 
 bool ValueViewer::setFieldBorderPen(RotatedDC& dc) {

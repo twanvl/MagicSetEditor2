@@ -258,16 +258,18 @@ void StatDimensionList::drawItem(DC& dc, int x, int y, size_t item) {
 	RealPoint pos = align_in_rect(ALIGN_MIDDLE_LEFT, size, rect);
 	dc.DrawText(str, (int)pos.x, (int)pos.y);
 	// draw selection icon
-	for (size_t j = 1 ; j <= prefered_dimension_count ; ++j) {
+	for (size_t j = 1 ; j <= dimensions.size() ; ++j) {
+		bool prefered = j <= prefered_dimension_count;
 		if (isSelected(item,j)) {
 			// TODO: different icons for different dimensions
 			/*
-			int cx = x + columns[j].offset.x + columns[j].size.x/2;
-			int cy = y + columns[j].offset.y + columns[j].size.y/2;
-			dc.SetPen(*wxTRANSPARENT_PEN);
-			dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
-			dc.DrawCircle(cx,cy,6);
 			*/
+			int cx = x + subcolumns[j].offset.x + subcolumns[j].size.x/2;
+			int cy = y + subcolumns[j].offset.y + subcolumns[j].size.y/2;
+			dc.SetPen(*wxTRANSPARENT_PEN);
+			dc.SetBrush(prefered ? wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT)
+			                     : lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT),wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),0.5));
+			dc.DrawCircle(cx,cy,6);
 		}
 	}
 }

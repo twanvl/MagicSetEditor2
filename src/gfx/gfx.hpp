@@ -16,6 +16,7 @@
 
 #include <util/prec.hpp>
 #include <util/real_point.hpp>
+#include <util/angle.hpp>
 #include <gfx/color.hpp>
 
 // ----------------------------------------------------------------------------- : Resampling
@@ -52,29 +53,15 @@ void sharp_resample_and_clip(const Image& img_in, Image& img_out, wxRect rect, i
  *  rect    = rectangle to draw in (a rectangle somewhere around pos)
  *  stretch = amount to stretch in the direction of the text after drawing
  */
-void draw_resampled_text(DC& dc, const RealPoint& pos, const RealRect& rect, double stretch, int angle, AColor color, const String& text, int blur_radius = 0, int repeat = 1);
+void draw_resampled_text(DC& dc, const RealPoint& pos, const RealRect& rect, double stretch, Radians angle, AColor color, const String& text, int blur_radius = 0, int repeat = 1);
 
 // scaling factor to use when drawing resampled text
 extern const int text_scaling;
 
 // ----------------------------------------------------------------------------- : Image rotation
 
-/// Is an angle a {0,90,180,270}?
-inline bool straight(int angle) { return angle % 90 == 0; }
-
-/// Is an angle sideways (90 or 270 degrees)?
-inline bool sideways(int angle) {
-	int a = (angle + 3600) % 180;
-	return (a > 45 && a < 135);
-}
-
-/// Convert radians to degrees
-inline double rad_to_deg(double rad) { return  rad * (180.0 / M_PI); }
-/// Convert degrees to radians
-inline double deg_to_rad(double deg) { return  deg * (M_PI / 180.0); }
-
 /// Rotates an image counter clockwise
-Image rotate_image(const Image& image, double angle);
+Image rotate_image(const Image& image, Radians angle);
 
 /// Flip an image horizontally
 Image flip_image_horizontal(const Image& image);

@@ -2552,6 +2552,10 @@
 					Name="aux"
 					>
 					<File
+						RelativePath=".\util\angle.hpp"
+						>
+					</File>
+					<File
 						RelativePath=".\util\atomic.hpp"
 						>
 					</File>

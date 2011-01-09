@@ -88,7 +88,7 @@ class DropDownChoiceListBase : public DropDownList {
 
 // ----------------------------------------------------------------------------- : DropDownChoiceList
 
-/// A drop down list of color choices
+/// A drop down list of choices
 class DropDownChoiceList : public DropDownChoiceListBase {
   public:
 	DropDownChoiceList(Window* parent, bool is_submenu, ValueViewer& cve, ChoiceField::ChoiceP group);

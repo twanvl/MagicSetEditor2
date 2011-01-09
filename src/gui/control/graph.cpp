@@ -493,7 +493,7 @@ void PieGraph::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 		Color fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 		dc.SetPen(fg);
 		// draw pies
-		double angle = M_PI/2;
+		Radians angle = M_PI/2;
 		int i = 0;
 		FOR_EACH_CONST(g, axis.groups) {
 			// draw pie
@@ -501,7 +501,7 @@ void PieGraph::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 			if (g.size > 0) {
 				bool active = i == current;
 				dc.SetPen(active ? fg : lerp(fg,g.color,0.5));
-				double end_angle = angle - 2 * M_PI * (double)g.size / axis.total;
+				Radians end_angle = angle - 2 * M_PI * (double)g.size / axis.total;
 				dc.DrawEllipticArc(pie_pos, active ? pie_size_large : pie_size, end_angle, angle);
 				angle = end_angle;
 			}
@@ -510,7 +510,7 @@ void PieGraph::draw(RotatedDC& dc, int current, DrawLayer layer) const {
 		// draw spokes
 		if (axis.groups.size() > 1) {
 			int i = 0;
-			double angle = M_PI/2;
+			Radians angle = M_PI/2;
 			FOR_EACH_CONST(g, axis.groups) {
 				if (true) {
 					int i2 = (i - 1 + (int)axis.groups.size()) % (int)axis.groups.size();
@@ -539,7 +539,7 @@ int PieGraph::findItem(const RealPoint& pos, const RealRect& screen_rect, bool t
 	double pos_angle = atan2(-delta.y, delta.x) - M_PI/2; // in range [-pi..pi]
 	if (pos_angle < 0) pos_angle += 2 * M_PI;
 	// find angle
-	double angle = 2 * M_PI;
+	Radians angle = 2 * M_PI;
 	int i = 0;
 	FOR_EACH_CONST(g, axis.groups) {
 		angle -= 2 * M_PI * (double)g.size / axis.total;
@@ -705,14 +705,14 @@ void ScatterPieGraph::draw(RotatedDC& dc, const vector<int>& current, DrawLayer 
 				RealSize radius_s(radius,radius);
 				RealPoint center(screen_rect.left() + (x+0.5) * size.width + 0.5, screen_rect.bottom() - (y+0.5) * size.height + 0.5);
 				// draw pie slices
-				double angle = 0;
+				Radians angle = 0;
 				size_t j = 0;
 				FOR_EACH(g, axis3.groups) {
 					UInt val = values3D[i * axis3.groups.size() + j++];
 					if (val > 0) {
 						dc.SetBrush(g.color);
 						dc.SetPen(active ? fg : lerp(fg,g.color,0.5));
-						double end_angle = angle + 2 * M_PI * (double)val / value;
+						Radians end_angle = angle + 2 * M_PI * (double)val / value;
 						dc.DrawEllipticArc(center, radius_s, angle, end_angle);
 						angle = end_angle;
 					}

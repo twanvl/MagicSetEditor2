@@ -717,8 +717,8 @@ wxCursor TextValueEditor::cursor(const RealPoint& pos) const {
 			hovered_words = p.get();
 			const_cast<TextValueEditor*>(this)->redrawWordListIndicators();
 		}
-		int angle = viewer.getRotation().getAngle() + style().angle;
-		if (sideways(angle)) { // 90 or 270 degrees
+		Radians angle = viewer.getRotation().getAngle() + deg_to_rad(style().angle);
+		if (is_sideways(angle)) { // 90 or 270 degrees
 			if (!rotated_ibeam.Ok()) {
 				rotated_ibeam = wxCursor(load_resource_cursor(_("rot_text")));
 			}
@@ -1248,7 +1248,7 @@ bool TextValueEditor::search(FindInfo& find, bool from_start) {
 
 void TextValueEditor::determineSize(bool force_fit) {
 	if (!nativeLook()) return;
-	style().angle = 0; // no rotation in nativeLook
+	style().angle = 0; // force no rotation in nativeLook
 	if (scrollbar) {
 		// muliline, determine scrollbar size
 		Rotation rot = viewer.getRotation();

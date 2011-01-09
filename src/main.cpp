@@ -292,9 +292,10 @@ void MSE::HandleEvent(wxEvtHandler *handler, wxEventFunction func, wxEvent& even
 // ----------------------------------------------------------------------------- : Events
 
 int MSE::FilterEvent(wxEvent& ev) {
-	if (ev.GetEventType() == wxEVT_MOUSE_CAPTURE_LOST) {
+	/*if (ev.GetEventType() == wxEVT_MOUSE_CAPTURE_LOST) {
 		return 1;
 	} else {
 		return -1;
-	}
+	}*/
+	return -1;
 }

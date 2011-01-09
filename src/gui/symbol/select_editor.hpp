@@ -84,7 +84,7 @@ class SymbolSelectEditor : public SymbolEditorBase {
 		CLICK_TOGGLE,	// same selection, not moved -> switch to rotate mode
 	} click_mode;
 	// At what angle is the handle we started draging for rotation
-	double startAngle;
+	Radians startAngle;
 	// what side are we dragging/rotating on?
 	int scaleX, scaleY;
 	// have we dragged?
@@ -110,7 +110,7 @@ class SymbolSelectEditor : public SymbolEditorBase {
 	bool onAnyHandle(const Vector2D& mpos, int* dxOut, int* dyOut);
 	
 	/// Angle between center and pos
-	double angleTo(const Vector2D& pos);
+	Radians angleTo(const Vector2D& pos);
 	
 	/// Update minV and maxV to be the bounding box of the selected_parts
 	/// Updates center to be the rotation center of the parts

@@ -46,7 +46,7 @@ Image rotate_image_impl(Image img) {
 // ----------------------------------------------------------------------------- : Rotations
 
 // Function object to handle rotation
-struct Rotate90 {
+struct Rotate90deg {
 	/// Init a rotated image, where the source is w * h pixels
 	inline static void init(Image& img, UInt w, UInt h) {
 		img.Create(h, w, false);
@@ -59,7 +59,7 @@ struct Rotate90 {
 	}
 };
 
-struct Rotate180 {
+struct Rotate180deg {
 	inline static void init(Image& img, UInt w, UInt h) {
 		img.Create(w, h, false);
 	}
@@ -70,7 +70,7 @@ struct Rotate180 {
 	}
 };
 
-struct Rotate270 {
+struct Rotate270deg {
 	inline static void init(Image& img, UInt w, UInt h) {
 		img.Create(h, w, false);
 	}
@@ -83,19 +83,15 @@ struct Rotate270 {
 
 // ----------------------------------------------------------------------------- : Interface
 
-double almost_equal(double x, double y) {
-	return fabs(x-y) < 1e-6;
-}
-
-Image rotate_image(const Image& image, double angle) {
-	double a = fmod(angle, 360);
-	if (almost_equal(a,  0)) return image;
-	if (almost_equal(a, 90)) return rotate_image_impl<Rotate90> (image);
-	if (almost_equal(a,180)) return rotate_image_impl<Rotate180>(image);
-	if (almost_equal(a,270)) return rotate_image_impl<Rotate270>(image);
+Image rotate_image(const Image& image, Radians angle) {
+	double a = constrain_radians(angle);
+	if (is_rad0(a))   return image;
+	if (is_rad90(a))  return rotate_image_impl<Rotate90deg> (image);
+	if (is_rad180(a)) return rotate_image_impl<Rotate180deg>(image);
+	if (is_rad270(a)) return rotate_image_impl<Rotate270deg>(image);
 	else {
 		if (!image.HasAlpha()) const_cast<Image&>(image).InitAlpha();
-		return image.Rotate(angle * M_PI / 180, wxPoint(0,0));
+		return image.Rotate(angle, wxPoint(0,0));
 	}
 }
 
