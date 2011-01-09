@@ -436,12 +436,14 @@ String KeywordDatabase::expand(const String& text,
 		set<const Keyword*>  used;    // keywords already investigated
 		current.push_back(root);
 		closure(current);
-		char expand_type = 'a'; // is the keyword expanded? From <kw-?> tag
-		                        // Possible values are:
-		                        //  - '0' = reminder text explicitly hidden
-		                        //  - '1' = reminder text explicitly shown
-		                        //  - 'a' = reminder text in default state, hidden
-		                        //  - 'A' = reminder text in default state, shown
+		// is the keyword expanded? From <kw-?> tag
+		// Possible values are:
+		//  - '0' = reminder text explicitly hidden
+		//  - '1' = reminder text explicitly shown
+		//  - 'a' = reminder text in default state, hidden
+		//  - 'A' = reminder text in default state, shown
+		const char default_expand_type = 'a';
+		char expand_type = default_expand_type;
 		
 		for (size_t i = 0 ; i < tagged.size() ;) {
 			Char c = tagged.GetChar(i);
@@ -451,7 +453,7 @@ String KeywordDatabase::expand(const String& text,
 					expand_type = tagged.GetChar(i + 4); // <kw-?>
 					tagged = tagged.erase(i, skip_tag(tagged,i)-i); // remove the tag from the string
 				} else if (is_substr(tagged, i, _("</kw-"))) {
-					expand_type = 'a';
+					expand_type = default_expand_type;
 					tagged = tagged.erase(i, skip_tag(tagged,i)-i); // remove the tag from the string
 				} else if (is_substr(tagged, i, _("<atom"))) {
 					i = match_close_tag_end(tagged, i); // skip <atom>s
