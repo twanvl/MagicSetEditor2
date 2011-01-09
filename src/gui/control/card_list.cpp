@@ -57,6 +57,7 @@ CardListBase::CardListBase(Window* parent, int id, long additional_style)
 {
 	// add to the list of card lists
 	card_lists.push_back(this);
+	//enable_themed_selection_rectangle(this); // while this looks fancy, it is buggy
 }
 
 CardListBase::~CardListBase() {
