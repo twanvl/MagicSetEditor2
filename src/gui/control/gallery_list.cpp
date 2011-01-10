@@ -307,7 +307,7 @@ void GalleryList::OnDraw(DC& dc) {
 			bool focused  = has_focus && j == active_subcolumn;
 			wxRect rect(pos.x + col.offset.x - BORDER, pos.y + col.offset.y - BORDER,
 			            col.size.x + 2*BORDER, col.size.y + 2*BORDER);
-			#if 1
+			#if 0
 				if (selected) {
 					draw_selection_rectangle(this,dc,rect, selected,focused);
 				}
