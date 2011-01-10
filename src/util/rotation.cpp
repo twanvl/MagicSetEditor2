@@ -75,9 +75,9 @@ RealSize Rotation::trSizeToBB(const RealSize& size) const {
 }
 
 RealRect Rotation::trRectToBB(const RealRect& r) const {
+	const bool special_case_optimization = false;
 	double x = r.x     * zoomX, y = r.y      * zoomY;
 	double w = r.width * zoomX, h = r.height * zoomY;
-	const bool special_case_optimization = false;
 	if (special_case_optimization && is_rad0(angle)) {
 		return RealRect(origin.x + x, origin.y + y, w, h);
 	} else if (special_case_optimization && is_rad180(angle)) {

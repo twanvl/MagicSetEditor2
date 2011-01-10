@@ -61,8 +61,8 @@
 		inline bool matches(const String& str) const {
 			return regex_search(str.begin(), str.end(), regex);
 		}
-		inline bool matches(Results& results, const String& str) const {
-			return matches(results, str.begin(), str.end());
+		inline bool matches(Results& results, const String& str, size_t start = 0) const {
+			return matches(results, str.begin() + start, str.end());
 		}
 		inline bool matches(Results& results, const String::const_iterator& begin, const String::const_iterator& end) const {
 			return regex_search(begin, end, results, regex);
