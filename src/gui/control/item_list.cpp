@@ -201,13 +201,27 @@ void ItemList::sortBy(long column, bool ascending) {
 }
 
 void ItemList::SetColumnImage(int col, int image) {
+	#if defined(__WXMSW__) && defined(HDF_SORTUP)
+		if ( wxApp::GetComCtl32Version() >= 470 ) {
+			// use built in sort indicator
+			HWND header = ListView_GetHeader(GetHwnd());
+			HDITEM header_item = {0};
+			header_item.mask = HDI_FORMAT;
+			Header_GetItem(header, col, &header_item);
+			header_item.fmt  &= ~(HDF_SORTUP | HDF_SORTDOWN);
+			if (image == 0) header_item.fmt |= HDF_SORTUP;
+			if (image == 1) header_item.fmt |= HDF_SORTDOWN;
+			Header_SetItem(header, col, &header_item);
+			return;
+		}
+	#endif
 	// The wx version of this function is broken,
 	// setting the wxLIST_MASK_IMAGE also sets the FORMAT flag, so we lose alignment info
 	wxListItem item;
 	item.SetMask(wxLIST_MASK_IMAGE | wxLIST_MASK_FORMAT);
 	GetColumn(col, item);
-    item.SetImage(image);
-    SetColumn(col, item);
+	item.SetImage(image);
+	SetColumn(col, item);
 }
 
 // ----------------------------------------------------------------------------- : ItemList : Window events
