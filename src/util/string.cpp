@@ -439,7 +439,7 @@ String regex_escape(Char c) {
 /// Escape a string for use in regular expressions
 String regex_escape(const String& s) {
 	String ret;
-	FOR_EACH_CONST(c,s) ret += regex_escape(static_cast<char>(c));
+	FOR_EACH_CONST(c,s) ret += regex_escape(static_cast<Char>(c));
 	return ret;
 }
 
