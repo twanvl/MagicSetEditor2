@@ -23,6 +23,13 @@ ItemList::ItemList(Window* parent, int id, long additional_style, bool multi_sel
 	il->Add(load_resource_image(_("sort_asc")),  Color(255,0,255));
 	il->Add(load_resource_image(_("sort_desc")), Color(255,0,255));
 	AssignImageList(il, wxIMAGE_LIST_SMALL);
+	// Theming things wx fails to do for us
+	#if defined(__WXMSW__) && defined(LVS_EX_DOUBLEBUFFER)
+		// Fancy theming (on windows)
+		enable_themed_selection_rectangle(this);
+		// Use double buffering
+		ListView_SetExtendedListViewStyle(GetHwnd(), ListView_GetExtendedListViewStyle(GetHwnd()) | LVS_EX_DOUBLEBUFFER);
+	#endif
 }
 
 // ----------------------------------------------------------------------------- : ItemList : Selection

@@ -10,7 +10,6 @@
 #include <gui/control/card_list.hpp>
 #include <gui/control/card_list_column_select.hpp>
 #include <gui/icon_menu.hpp>
-#include <gui/util.hpp>
 #include <data/game.hpp>
 #include <data/field.hpp>
 #include <data/field/choice.hpp>
@@ -57,7 +56,6 @@ CardListBase::CardListBase(Window* parent, int id, long additional_style)
 {
 	// add to the list of card lists
 	card_lists.push_back(this);
-	//enable_themed_selection_rectangle(this); // while this looks fancy, it is buggy
 }
 
 CardListBase::~CardListBase() {
@@ -368,6 +366,7 @@ void CardListBase::onChar(wxKeyEvent& ev) {
 }
 
 void CardListBase::onDrag(wxMouseEvent& ev) {
+	ev.Skip();
 	if (!allowModify()) return;
 	if (ev.Dragging() && selected_item && sort_by_column < 0) {
 		// reorder card list
@@ -381,6 +380,7 @@ void CardListBase::onDrag(wxMouseEvent& ev) {
 				// move card in the set
 				set->actions.addAction(new ReorderCardsAction(*set, item, selected_item_pos));
 			}
+			ev.Skip(false);
 		}
 	}
 }
