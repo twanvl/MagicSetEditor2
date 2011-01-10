@@ -340,7 +340,7 @@ void draw_radiobox(Window* win, DC& dc, const wxRect& rect, bool checked, bool e
 }
 
 void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool selected, bool focused, bool hot) {
-	#if wxUSE_UXTHEME && defined(__WXMSW__) && 1
+	#if wxUSE_UXTHEME && defined(__WXMSW__)
 		#if !defined(NTDDI_LONGHORN) || NTDDI_VERSION < NTDDI_LONGHORN
 			#define LISS_NORMAL LIS_NORMAL
 			#define LISS_SELECTED LIS_SELECTED
@@ -373,8 +373,10 @@ void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool sele
 }
 
 void enable_themed_selection_rectangle(Window* win) {
-	wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
-	if (themeEngine && themeEngine->IsAppThemed()) {
-		themeEngine->SetWindowTheme((HWND)win->GetHWND(), L"Explorer", NULL);
-	}
+	#if wxUSE_UXTHEME && defined(__WXMSW__)
+		wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
+		if (themeEngine && themeEngine->IsAppThemed()) {
+			themeEngine->SetWindowTheme((HWND)win->GetHWND(), L"Explorer", NULL);
+		}
+	#endif
 }
