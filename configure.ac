@@ -6,7 +6,7 @@
 
 # Process this file with autoconf to produce a configure script.
 
-AC_INIT(magicseteditor, 0.3.7b, twanvl@users.sourceforge.net)
+AC_INIT(magicseteditor, 0.3.9, twanvl@users.sourceforge.net)
 AC_CONFIG_SRCDIR([src/main.cpp])
 # TODO: Actually use the config header
 AC_CONFIG_HEADER([src/config.h])
