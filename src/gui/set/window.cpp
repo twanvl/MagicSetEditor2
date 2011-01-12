@@ -358,10 +358,52 @@ void SetWindow::onClose(wxCloseEvent& ev) {
 	}
 }
 
+
+int ask_save_changes_impl(wxWindow* parent, String const& message, String const& title) {
+	#if defined(__WXMSW__) && defined(UNICODE)
+		// Do we have the TaskDialogIndirect function?
+		HMODULE h = ::LoadLibrary(L"comctl32.dll");
+		if (!h) return 0;
+		typedef HRESULT (WINAPI *type_TaskDialogIndirect)(const TASKDIALOGCONFIG *pTaskConfig, int *pnButton, int *pnRadioButton, BOOL *pfVerificationFlagChecked);
+		type_TaskDialogIndirect func_TaskDialogIndirect = !h ? nullptr : (type_TaskDialogIndirect)::GetProcAddress(h, "TaskDialogIndirect" );
+		if (!func_TaskDialogIndirect) return 0;
+		
+		int nButtonPressed                  = 0;
+		TASKDIALOGCONFIG config             = {0};
+		const TASKDIALOG_BUTTON buttons[]   = { { IDYES, L"&Save" }, { IDNO, L"Do&n't Save" } };
+		config.cbSize                       = sizeof(config);
+		config.dwCommonButtons              = TDCBF_CANCEL_BUTTON;
+		config.pszWindowTitle               = title.c_str();
+		config.pszMainInstruction           = message.c_str();
+		config.pButtons                     = buttons;
+		config.cButtons                     = ARRAYSIZE(buttons);
+		config.hwndParent                   = (HWND)(parent->GetHWND()); // without this the dialog is not modal
+		
+		func_TaskDialogIndirect(&config, &nButtonPressed, NULL, NULL);
+		
+		FreeLibrary(h);
+		
+		switch (nButtonPressed) {
+			case IDYES: return wxYES;
+			case IDNO:  return wxNO;
+			default:    return wxCANCEL;
+		}
+	#else
+		return 0;
+	#endif
+}
+// Fancy save dialog
+int ask_save_changes(wxWindow* parent, String const& message, String const& title) {
+	int result = ask_save_changes_impl(parent, message,title);
+	if (result) return result;
+	// Use a normal message box
+	return wxMessageBox(message, title, wxYES_NO | wxCANCEL | wxICON_EXCLAMATION, parent);
+}
+
+
 bool SetWindow::askSaveAndContinue() {
 	if (set->actions.atSavePoint()) return true;
-	// todo : if more then one window has the set selected it's ok to proceed
-	int save = wxMessageBox(_LABEL_1_("save changes", set->short_name), _TITLE_("save changes"), wxYES_NO | wxCANCEL | wxICON_EXCLAMATION);
+	int save = ask_save_changes(this, _LABEL_1_("save changes", set->short_name), _TITLE_("save changes"));
 	if (save == wxYES) {
 		// save the set
 		try {
