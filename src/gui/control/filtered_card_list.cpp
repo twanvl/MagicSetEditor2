@@ -33,18 +33,3 @@ void FilteredCardList::getItems(vector<VoidP>& out) const {
 		filter->getItems(set->cards,out);
 	}
 }
-
-// ----------------------------------------------------------------------------- : CardListFilter
-
-void CardListFilter::getItems(const vector<CardP>& cards, vector<VoidP>& out) const {
-	FOR_EACH_CONST(c, cards) {
-		if (keep(c)) {
-			out.push_back(c);
-		}
-	}
-}
-
-bool QueryCardListFilter::keep(const CardP& card) const {
-	return card->contains_words(query);
-}
-

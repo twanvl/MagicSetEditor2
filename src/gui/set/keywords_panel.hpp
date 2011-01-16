@@ -11,12 +11,14 @@
 
 #include <util/prec.hpp>
 #include <gui/set/panel.hpp>
+#include <gui/control/filter_ctrl.hpp>
 
 class wxSplitterWindow;
 class KeywordList;
 class TextCtrl;
 class IconMenu;
 struct KeywordSelectEvent;
+class FilterCtrl;
 
 // ----------------------------------------------------------------------------- : KeywordsPanel
 
@@ -69,6 +71,7 @@ class KeywordsPanel : public SetWindowPanel {
 	wxChoice*         mode;
 	wxButton*         add_param;
 	wxButton*         ref_param;
+	FilterCtrl*       filter;
 	
 	// --------------------------------------------------- : Events
 	void onKeywordSelect(KeywordSelectEvent& ev);

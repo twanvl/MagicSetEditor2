@@ -80,6 +80,14 @@ void read_compat(Reader& tag, Keyword* k) {
 	}
 }
 
+bool Keyword::contains(String const& query) const {
+	if (find_i(keyword,query) != String::npos) return true;
+	if (find_i(rules,query) != String::npos) return true;
+	if (find_i(match,query) != String::npos) return true;
+	if (find_i(reminder.get(),query) != String::npos) return true;
+	return false;
+}
+
 IMPLEMENT_REFLECTION(Keyword) {
 	REFLECT(keyword);
 	read_compat(tag, this);

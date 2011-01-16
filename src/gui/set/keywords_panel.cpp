@@ -49,6 +49,7 @@ void KeywordsPanel::initControls() {
 	ref_param = new wxButton(panel, ID_KEYWORD_REF_PARAM, _BUTTON_("refer parameter"));
 	rules     = new TextCtrl(panel, ID_RULES,    true);
 	errors    = new wxStaticText(panel, wxID_ANY, _(""));
+	filter    = nullptr;
 	errors->SetForegroundColour(*wxRED);
 	// warning about fixed keywords
 	fixedL    = new wxStaticText(panel, wxID_ANY, _(""));
@@ -132,6 +133,10 @@ void KeywordsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	// Toolbar
 	tb->AddTool(ID_KEYWORD_ADD,		_(""), load_resource_tool_image(_("keyword_add")),	wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("add keyword"),	_HELP_("add keyword"));
 	tb->AddTool(ID_KEYWORD_REMOVE,	_(""), load_resource_tool_image(_("keyword_del")),	wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("remove keyword"),_HELP_("remove keyword"));
+	// Filter/search textbox
+	tb->AddSeparator();
+	if (!filter) filter = new FilterCtrl(tb, ID_KEYWORD_FILTER, _LABEL_("search keywords"));
+	tb->AddControl(filter);
 	tb->Realize();
 	// Menus
 	mb->Insert(2, menuKeyword,   _MENU_("keywords"));
@@ -141,6 +146,9 @@ void KeywordsPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	// Toolbar
 	tb->DeleteTool(ID_KEYWORD_ADD);
 	tb->DeleteTool(ID_KEYWORD_REMOVE);
+	tb->DeleteTool(filter->GetId()); filter = nullptr;
+	// HACK: hardcoded size of rest of toolbar
+	tb->DeleteToolByPos(12); // delete separator
 	// Menus
 	mb->Remove(2);
 	
@@ -201,6 +209,11 @@ void KeywordsPanel::onCommand(int id) {
 				}
 			}
 			ref_param->PopupMenu(&ref_menu, 0, ref_param->GetSize().y);
+			break;
+		}
+		case ID_KEYWORD_FILTER: {
+			// keyword filter has changed, update the list
+			list->setFilter(filter->getFilter<Keyword>());
 			break;
 		}
 		default:

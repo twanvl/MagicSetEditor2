@@ -116,6 +116,9 @@ class Keyword : public IntrusivePtrVirtualBase {
 	 */
 	void prepare(const vector<KeywordParamP>& param_types, bool force = false);
 	
+	/// Does the keyword contain the given query word?
+	bool contains(String const& word) const;
+	
 	DECLARE_REFLECTION();
 };
 

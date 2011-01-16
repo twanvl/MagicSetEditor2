@@ -56,6 +56,11 @@ void KeywordList::onChangeSet() {
 	refreshList();
 }
 
+void KeywordList::setFilter(const KeywordListFilterP& filter) {
+	this->filter = filter;
+	refreshList();
+}
+
 void KeywordList::onAction(const Action& action, bool undone) {
 	TYPE_CASE(action, AddKeywordAction) {
 		if (action.action.adding != undone) {
@@ -151,11 +156,15 @@ String match_string(const Keyword& a) {
 void KeywordList::getItems(vector<VoidP>& out) const {
 	FOR_EACH(k, set->keywords) {
 		k->fixed = false;
-		out.push_back(k);
+		if (!filter || filter->keep(*k)) {
+			out.push_back(k);
+		}
 	}
 	FOR_EACH(k, set->game->keywords) {
 		k->fixed = true;
-		out.push_back(k);
+		if (!filter || filter->keep(*k)) {
+			out.push_back(k);
+		}
 	}
 }
 void KeywordList::sendEvent() {

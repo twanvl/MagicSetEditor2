@@ -530,7 +530,7 @@ void StatsPanel::onGraphSelect(wxCommandEvent&) {
 
 // ----------------------------------------------------------------------------- : Filtering card list
 
-class StatsFilter : public CardListFilter {
+class StatsFilter : public Filter<Card> {
   public:
 	StatsFilter(GraphData& data, const vector<int> match) {
 		data.indices(match, indices);

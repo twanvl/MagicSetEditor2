@@ -12,7 +12,10 @@
 #include <util/prec.hpp>
 #include <gui/control/item_list.hpp>
 #include <data/keyword.hpp>
+#include <data/filter.hpp>
 #include <data/set.hpp>
+
+typedef intrusive_ptr<Filter<Keyword> > KeywordListFilterP;
 
 // ----------------------------------------------------------------------------- : Events
 
@@ -51,6 +54,9 @@ class KeywordList : public ItemList, public SetView {
 	inline KeywordP getKeyword() const             { return static_pointer_cast<Keyword>(selected_item); }
 	inline void     setKeyword(const KeywordP& kw) { selectItem(kw, true, false); }
 	
+	/// Change the filter to use, can be null
+	void setFilter(const KeywordListFilterP& filter);
+	
 	// --------------------------------------------------- : Clipboard
 	
 	bool canDelete() const;
@@ -87,6 +93,7 @@ class KeywordList : public ItemList, public SetView {
 	void storeColumns();
 	
 	mutable wxListItemAttr item_attr; // for OnGetItemAttr
+	KeywordListFilterP filter; ///< Which keywords to show?
 	
 	/// How often is a keyword used in the set?
 	int usage(const Keyword&) const;

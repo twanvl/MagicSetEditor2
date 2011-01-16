@@ -413,9 +413,10 @@ tooltip:
 label:
 	# Cards tab
 	card notes:			Card notes:
-	search cards:		Search for cards
+	search cards:		Search for cards...
 	
 	# Keywords tab
+	search keywords:	Search for keywords...
 	keyword:			Keyword
 	match:				Matches
 	mode:				Mode

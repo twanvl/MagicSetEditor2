@@ -11,29 +11,9 @@
 
 #include <util/prec.hpp>
 #include <gui/control/card_list.hpp>
+#include <data/filter.hpp>
 
-DECLARE_POINTER_TYPE(CardListFilter);
-
-// ----------------------------------------------------------------------------- : CardListFilter
-
-/// A filter function to determine which items are shown in a card list
-class CardListFilter : public IntrusivePtrVirtualBase {
-  public:
-	virtual ~CardListFilter() {}
-	/// Should a card be shown in the list?
-	virtual bool keep(const CardP& card) const { return false; }
-	/// Select cards from a card list
-	virtual void getItems(const vector<CardP>& cards, vector<VoidP>& out) const;
-};
-
-/// A filter function that searches for cards containing a string
-class QueryCardListFilter : public CardListFilter {
-  public:
-	QueryCardListFilter(String const& query) : query(query) {}
-	virtual bool keep(const CardP& card) const;
-  private:
-	String query;
-};
+typedef intrusive_ptr<Filter<Card> > CardListFilterP;
 
 // ----------------------------------------------------------------------------- : FilteredCardList
 
