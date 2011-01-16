@@ -43,7 +43,7 @@ DrawWhat DataEditor::drawWhat(const ValueViewer* viewer) const {
 	int what = DRAW_NORMAL
 	         | DRAW_ACTIVE * viewerIsCurrent(viewer);
 	if (nativeLook()) {
-		what |= DRAW_BOXES | DRAW_EDITING | DRAW_NATIVELOOK;
+		what |= DRAW_BOXES | DRAW_EDITING | DRAW_NATIVELOOK | DRAW_ERRORS;
 	} else {
 		StyleSheetSettings& ss = settings.stylesheetSettingsFor(set->stylesheetFor(card));
 		what |= DRAW_BORDERS * ss.card_borders()
