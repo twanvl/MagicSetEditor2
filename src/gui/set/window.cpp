@@ -360,7 +360,7 @@ void SetWindow::onClose(wxCloseEvent& ev) {
 
 
 int ask_save_changes_impl(wxWindow* parent, String const& message, String const& title) {
-	#if defined(__WXMSW__) && defined(UNICODE)
+	#if defined(__WXMSW__) && defined(UNICODE) && defined(TD_WARNING_ICON) // the last one is a hack to test for precense of TASKDIALOG stuff
 		// Do we have the TaskDialogIndirect function?
 		HMODULE h = ::LoadLibrary(L"comctl32.dll");
 		if (!h) return 0;
