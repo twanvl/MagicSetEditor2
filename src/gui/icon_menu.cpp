@@ -48,7 +48,6 @@ Image generateDisabledImage(const Image& imgIn) {
 // ----------------------------------------------------------------------------- : set_menu_item_image
 
 void set_menu_item_image(wxMenuItem* item, const String& resource) {
-if(item->GetId() != wxID_NEW)return;//@@@
 	// load bitmap
 	Bitmap bitmap = load_resource_tool_image(resource);
 	#if defined(__WXMSW__)
