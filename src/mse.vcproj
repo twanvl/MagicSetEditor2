@@ -1027,6 +1027,14 @@
 					>
 				</File>
 				<File
+					RelativePath=".\gui\control\filter_ctrl.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\gui\control\filter_ctrl.hpp"
+					>
+				</File>
+				<File
 					RelativePath=".\gui\html_export_window.cpp"
 					>
 				</File>
@@ -1974,6 +1982,10 @@
 				</File>
 				<File
 					RelativePath=".\data\export_template.hpp"
+					>
+				</File>
+				<File
+					RelativePath=".\data\filter.hpp"
 					>
 				</File>
 				<File
