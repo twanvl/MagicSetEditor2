@@ -26,7 +26,7 @@ class Filter : public IntrusivePtrVirtualBase {
 	}
 	/// Select objects from a list
 	virtual void getItems(vector<TP> const& in, vector<VoidP>& out) const {
-		for (vector<TP>::const_iterator it = in.begin() ; it != in.end() ; ++it) {
+		for (typename vector<TP>::const_iterator it = in.begin() ; it != in.end() ; ++it) {
 			if (keep(**it)) {
 				out.push_back(*it);
 			}
