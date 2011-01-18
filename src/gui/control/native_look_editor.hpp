@@ -56,7 +56,7 @@ class NativeLookEditor : public DataEditor {
 /// Editor for set.data
 class SetInfoEditor : public NativeLookEditor {
   public:
-	SetInfoEditor(Window* parent, int id, long style = 0);
+	SetInfoEditor(Window* parent, int id, long style = wxBORDER_THEME);
 	
 	virtual Package& getStylePackage() const;
   protected:
@@ -68,7 +68,7 @@ class SetInfoEditor : public NativeLookEditor {
 /// Editor for styling data
 class StylingEditor : public NativeLookEditor {
   public:
-	StylingEditor(Window* parent, int id, long style = 0);
+	StylingEditor(Window* parent, int id, long style = wxBORDER_THEME);
 	
 	/// Show the styling for given stylesheet in the editor
 	void showStylesheet(const StyleSheetP& stylesheet);
@@ -83,7 +83,7 @@ class StylingEditor : public NativeLookEditor {
 /// Editor for export options
 class ExportOptionsEditor : public NativeLookEditor {
   public:
-	ExportOptionsEditor(Window* parent, int id, long style = 0);
+	ExportOptionsEditor(Window* parent, int id, long style = wxBORDER_THEME);
 	
 	/// Show the options for given export template
 	void showExport(const ExportTemplateP& export_template);
