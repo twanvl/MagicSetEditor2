@@ -93,6 +93,7 @@ magicseteditor_SOURCES += ./src/gui/control/item_list.cpp
 magicseteditor_SOURCES += ./src/gui/control/text_ctrl.cpp
 magicseteditor_SOURCES += ./src/gui/control/card_editor.cpp
 magicseteditor_SOURCES += ./src/gui/control/filtered_card_list.cpp
+magicseteditor_SOURCES += ./src/gui/control/filter_ctrl.cpp
 magicseteditor_SOURCES += ./src/gui/control/package_list.cpp
 magicseteditor_SOURCES += ./src/gui/control/tree_list.cpp
 magicseteditor_SOURCES += ./src/gui/control/card_list_column_select.cpp

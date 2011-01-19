@@ -99,6 +99,7 @@ am__magicseteditor_SOURCES_DIST = ./src/util/prec.gch ./src/main.cpp \
 	./src/gui/control/text_ctrl.cpp \
 	./src/gui/control/card_editor.cpp \
 	./src/gui/control/filtered_card_list.cpp \
+	./src/gui/control/filter_ctrl.cpp \
 	./src/gui/control/package_list.cpp \
 	./src/gui/control/tree_list.cpp \
 	./src/gui/control/card_list_column_select.cpp \
@@ -219,6 +220,7 @@ am_magicseteditor_OBJECTS = $(am__objects_1) \
 	./src/gui/control/magicseteditor-text_ctrl.$(OBJEXT) \
 	./src/gui/control/magicseteditor-card_editor.$(OBJEXT) \
 	./src/gui/control/magicseteditor-filtered_card_list.$(OBJEXT) \
+	./src/gui/control/magicseteditor-filter_ctrl.$(OBJEXT) \
 	./src/gui/control/magicseteditor-package_list.$(OBJEXT) \
 	./src/gui/control/magicseteditor-tree_list.$(OBJEXT) \
 	./src/gui/control/magicseteditor-card_list_column_select.$(OBJEXT) \
@@ -512,6 +514,7 @@ magicseteditor_SOURCES = $(am__append_1) ./src/main.cpp \
 	./src/gui/control/text_ctrl.cpp \
 	./src/gui/control/card_editor.cpp \
 	./src/gui/control/filtered_card_list.cpp \
+	./src/gui/control/filter_ctrl.cpp \
 	./src/gui/control/package_list.cpp \
 	./src/gui/control/tree_list.cpp \
 	./src/gui/control/card_list_column_select.cpp \
@@ -869,6 +872,9 @@ src/gui/control/$(DEPDIR)/$(am__dirstamp):
 	src/gui/control/$(am__dirstamp) \
 	src/gui/control/$(DEPDIR)/$(am__dirstamp)
 ./src/gui/control/magicseteditor-filtered_card_list.$(OBJEXT):  \
+	src/gui/control/$(am__dirstamp) \
+	src/gui/control/$(DEPDIR)/$(am__dirstamp)
+./src/gui/control/magicseteditor-filter_ctrl.$(OBJEXT):  \
 	src/gui/control/$(am__dirstamp) \
 	src/gui/control/$(DEPDIR)/$(am__dirstamp)
 ./src/gui/control/magicseteditor-package_list.$(OBJEXT):  \
@@ -1301,6 +1307,7 @@ mostlyclean-compile:
 	-rm -f ./src/gui/control/magicseteditor-card_list.$(OBJEXT)
 	-rm -f ./src/gui/control/magicseteditor-card_list_column_select.$(OBJEXT)
 	-rm -f ./src/gui/control/magicseteditor-card_viewer.$(OBJEXT)
+	-rm -f ./src/gui/control/magicseteditor-filter_ctrl.$(OBJEXT)
 	-rm -f ./src/gui/control/magicseteditor-filtered_card_list.$(OBJEXT)
 	-rm -f ./src/gui/control/magicseteditor-gallery_list.$(OBJEXT)
 	-rm -f ./src/gui/control/magicseteditor-graph.$(OBJEXT)
@@ -1495,6 +1502,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/control/$(DEPDIR)/magicseteditor-card_list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/control/$(DEPDIR)/magicseteditor-card_list_column_select.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/control/$(DEPDIR)/magicseteditor-card_viewer.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./src/gui/control/$(DEPDIR)/magicseteditor-filter_ctrl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/control/$(DEPDIR)/magicseteditor-filtered_card_list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/control/$(DEPDIR)/magicseteditor-gallery_list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/control/$(DEPDIR)/magicseteditor-graph.Po@am__quote@
@@ -2385,6 +2393,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/gui/control/filtered_card_list.cpp' object='./src/gui/control/magicseteditor-filtered_card_list.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/gui/control/magicseteditor-filtered_card_list.obj `if test -f './src/gui/control/filtered_card_list.cpp'; then $(CYGPATH_W) './src/gui/control/filtered_card_list.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/gui/control/filtered_card_list.cpp'; fi`
+
+./src/gui/control/magicseteditor-filter_ctrl.o: ./src/gui/control/filter_ctrl.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/gui/control/magicseteditor-filter_ctrl.o -MD -MP -MF ./src/gui/control/$(DEPDIR)/magicseteditor-filter_ctrl.Tpo -c -o ./src/gui/control/magicseteditor-filter_ctrl.o `test -f './src/gui/control/filter_ctrl.cpp' || echo '$(srcdir)/'`./src/gui/control/filter_ctrl.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) ./src/gui/control/$(DEPDIR)/magicseteditor-filter_ctrl.Tpo ./src/gui/control/$(DEPDIR)/magicseteditor-filter_ctrl.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/gui/control/filter_ctrl.cpp' object='./src/gui/control/magicseteditor-filter_ctrl.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/gui/control/magicseteditor-filter_ctrl.o `test -f './src/gui/control/filter_ctrl.cpp' || echo '$(srcdir)/'`./src/gui/control/filter_ctrl.cpp
+
+./src/gui/control/magicseteditor-filter_ctrl.obj: ./src/gui/control/filter_ctrl.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/gui/control/magicseteditor-filter_ctrl.obj -MD -MP -MF ./src/gui/control/$(DEPDIR)/magicseteditor-filter_ctrl.Tpo -c -o ./src/gui/control/magicseteditor-filter_ctrl.obj `if test -f './src/gui/control/filter_ctrl.cpp'; then $(CYGPATH_W) './src/gui/control/filter_ctrl.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/gui/control/filter_ctrl.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) ./src/gui/control/$(DEPDIR)/magicseteditor-filter_ctrl.Tpo ./src/gui/control/$(DEPDIR)/magicseteditor-filter_ctrl.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/gui/control/filter_ctrl.cpp' object='./src/gui/control/magicseteditor-filter_ctrl.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/gui/control/magicseteditor-filter_ctrl.obj `if test -f './src/gui/control/filter_ctrl.cpp'; then $(CYGPATH_W) './src/gui/control/filter_ctrl.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/gui/control/filter_ctrl.cpp'; fi`
 
 ./src/gui/control/magicseteditor-package_list.o: ./src/gui/control/package_list.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/gui/control/magicseteditor-package_list.o -MD -MP -MF ./src/gui/control/$(DEPDIR)/magicseteditor-package_list.Tpo -c -o ./src/gui/control/magicseteditor-package_list.o `test -f './src/gui/control/package_list.cpp' || echo '$(srcdir)/'`./src/gui/control/package_list.cpp
