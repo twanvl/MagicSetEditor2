@@ -348,7 +348,7 @@ long_dash := replace@(match:"-", replace:"—")
 
 # Utilities for keywords
 has_cc := { card.casting_cost != "" }
-has_pt := { card.pt           != "" }
+has_pt := { card.power != "" or card.toughness != "" }
 
 contains_target := match@(match:"(?i)([^a-z]|^)target([^a-z]|$)")
 is_targeted := { contains_target(card.rule_text) }
