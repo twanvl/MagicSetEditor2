@@ -143,6 +143,12 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 	s->Add(tabBar, 0, wxEXPAND | wxBOTTOM, 3);
 	SetSizer(s);
+	#if defined(__WXMSW__) && defined(TBSTYLE_EX_DOUBLEBUFFER)
+		// Use double buffering
+		HWND hWND = (HWND)tabBar->GetHWND();
+		int style = ::SendMessage(hWND, TB_GETEXTENDEDSTYLE, 0, 0);
+		::SendMessage(hWND, TB_SETEXTENDEDSTYLE, style | LVS_EX_DOUBLEBUFFER, 0);
+	#endif
 	
 	// panels
 	addPanel(menuWindow, tabBar, new CardsPanel     (this, wxID_ANY), 0, _("window_cards"),      _("cards tab"));
@@ -255,6 +261,8 @@ void SetWindow::setPanelIcon(SetWindowPanel* panel, wxBitmap const& icon) {
 		if (panels[i] == panel) {
 			wxToolBar* tabBar = (wxToolBar*)FindWindow(ID_TAB_BAR);
 			tabBar->SetToolNormalBitmap(ID_WINDOW_MIN+i, icon);
+			// TODO: this could be done better, wx requires a full new Realize of the toolbar, but on win32 a single message would do
+			// if only we could set up the imagelist correctly.
 			return;
 		}
 	}

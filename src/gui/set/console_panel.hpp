@@ -61,7 +61,7 @@ class ConsolePanel : public SetWindowPanel {
 	MessageType new_errors_since_last_view;
 	int blinker_state;
 	wxTimer blinker_timer;
-	static const int MAX_BLINKS = 5;
+	static const int MAX_BLINKS = 6;
 	static const int BLINK_TIME = 1000;
 	
 	void stop_blinker();

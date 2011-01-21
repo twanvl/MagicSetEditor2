@@ -420,8 +420,10 @@ void ConsolePanel::doPaste()        {        entry->doPaste();  }
 void ConsolePanel::start_blinker() {
 	if (new_errors_since_last_view) {
 		blinker_state = 0;
-		blinker_timer.Start(BLINK_TIME);
 		update_blinker();
+		if (blinker_state < MAX_BLINKS) {
+			blinker_timer.Start(BLINK_TIME);
+		}
 	}
 }
 void ConsolePanel::stop_blinker() {
@@ -432,7 +434,7 @@ void ConsolePanel::stop_blinker() {
 }
 void ConsolePanel::onTimer(wxTimerEvent&) {
 	blinker_state++;
-	if (blinker_state > MAX_BLINKS) {
+	if (blinker_state >= MAX_BLINKS) {
 		blinker_timer.Stop();
 	}
 	update_blinker();
