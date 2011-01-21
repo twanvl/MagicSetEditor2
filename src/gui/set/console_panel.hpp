@@ -55,6 +55,19 @@ class ConsolePanel : public SetWindowPanel {
 	
 	void get_pending_errors();
 	void exec(String const& code);
+	
+	// notification of new messages
+	bool is_active_window;
+	MessageType new_errors_since_last_view;
+	int blinker_state;
+	wxTimer blinker_timer;
+	static const int MAX_BLINKS = 5;
+	static const int BLINK_TIME = 1000;
+	
+	void stop_blinker();
+	void start_blinker();
+	void update_blinker();
+	void onTimer(wxTimerEvent&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

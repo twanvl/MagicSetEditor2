@@ -8,6 +8,7 @@
 
 #include <util/prec.hpp>
 #include <gui/set/console_panel.hpp>
+#include <gui/set/window.hpp>
 #include <gui/control/text_ctrl.hpp>
 #include <gui/util.hpp>
 #include <util/window_id.hpp>
@@ -268,6 +269,9 @@ END_EVENT_TABLE()
 
 ConsolePanel::ConsolePanel(Window* parent, int id)
 	: SetWindowPanel(parent, id)
+	, is_active_window(false)
+	, blinker_state(0)
+	, blinker_timer(this)
 {
 	// init controls
 	splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -301,11 +305,18 @@ void ConsolePanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
 	// Menus
 	// focus on entry
 	entry->SetFocus();
+	
+	// stop blinker
+	is_active_window = true;
+	stop_blinker();
 }
 
 void ConsolePanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 	// Toolbar
 	// Menus
+	
+	// we are no longer active, allow blinker
+	is_active_window = false;
 }
 
 void ConsolePanel::onUpdateUI(wxUpdateUIEvent& ev) {
@@ -334,9 +345,12 @@ void ConsolePanel::get_pending_errors() {
 	String msg;
 	while (get_queued_message(type,msg)) {
 		messages->add_message(type,msg);
+		// If this panel doesn't have the focus, then highlight it somehow
+		if (!is_active_window) {
+			new_errors_since_last_view = max(new_errors_since_last_view,type);
+			start_blinker();
+		}
 	}
-	// If this panel doesn't have the focus, then highlight it somehow
-	
 }
 
 void ConsolePanel::exec(String const& command) {
@@ -388,6 +402,7 @@ void ConsolePanel::exec(String const& command) {
 BEGIN_EVENT_TABLE(ConsolePanel, wxPanel)
 	EVT_TEXT_ENTER(wxID_ANY,ConsolePanel::onEnter)
 	EVT_IDLE(ConsolePanel::onIdle)
+	EVT_TIMER(wxID_ANY,ConsolePanel::onTimer)
 END_EVENT_TABLE  ()
 
 // ----------------------------------------------------------------------------- : Clipboard
@@ -399,3 +414,38 @@ void ConsolePanel::doCut()          {        entry->doCut();    }
 void ConsolePanel::doCopy()         {        entry->doCopy();   }
 void ConsolePanel::doPaste()        {        entry->doPaste();  }
 */
+
+// ----------------------------------------------------------------------------- : Annoying blinking icon thing
+
+void ConsolePanel::start_blinker() {
+	if (new_errors_since_last_view) {
+		blinker_state = 0;
+		blinker_timer.Start(BLINK_TIME);
+		update_blinker();
+	}
+}
+void ConsolePanel::stop_blinker() {
+	blinker_state = 0;
+	new_errors_since_last_view = static_cast<MessageType>(0);
+	blinker_timer.Stop();
+	update_blinker();
+}
+void ConsolePanel::onTimer(wxTimerEvent&) {
+	blinker_state++;
+	if (blinker_state > MAX_BLINKS) {
+		blinker_timer.Stop();
+	}
+	update_blinker();
+}
+void ConsolePanel::update_blinker() {
+	SetWindow* parent = static_cast<SetWindow*>(GetParent());
+	if (blinker_state % 2 == 1 || !new_errors_since_last_view) {
+		parent->setPanelIcon(this, load_resource_image(_("tool/window_console")));
+	} else if (new_errors_since_last_view == MESSAGE_INFO) {
+		parent->setPanelIcon(this, load_resource_image(_("message_information")));
+	} else if (new_errors_since_last_view == MESSAGE_WARNING) {
+		parent->setPanelIcon(this, load_resource_image(_("message_warning")));
+	} else {
+		parent->setPanelIcon(this, load_resource_image(_("message_error")));
+	}
+}

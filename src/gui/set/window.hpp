@@ -30,6 +30,9 @@ class SetWindow : public wxFrame, public SetView {
 	SetWindow(Window* parent, const SetP& set);
 	~SetWindow();
 	
+	/// Set the icon of one of the panels
+	void setPanelIcon(SetWindowPanel* panel, wxBitmap const& icon);
+	
 	// --------------------------------------------------- : Set actions
 	
   private:

@@ -250,6 +250,16 @@ void SetWindow::selectPanel(int id) {
 	current_panel->SetFocus();
 }
 
+void SetWindow::setPanelIcon(SetWindowPanel* panel, wxBitmap const& icon) {
+	for (size_t i = 0 ; i < panels.size() ; ++i) {
+		if (panels[i] == panel) {
+			wxToolBar* tabBar = (wxToolBar*)FindWindow(ID_TAB_BAR);
+			tabBar->SetToolNormalBitmap(ID_WINDOW_MIN+i, icon);
+			return;
+		}
+	}
+}
+
 // ----------------------------------------------------------------------------- : Window managment
 
 vector<SetWindow*> SetWindow::set_windows;
