@@ -53,7 +53,7 @@ CardsPanel::CardsPanel(Window* parent, int id)
 	// init sizer for notes panel
 	wxSizer* sn = new wxBoxSizer(wxVERTICAL);
 		wxSizer* sc = new wxBoxSizer(wxHORIZONTAL);
-		sc->Add(new wxStaticText(nodes_panel, wxID_ANY, _LABEL_("card notes")), 1, wxEXPAND);
+		sc->Add(new wxStaticText(nodes_panel, wxID_ANY, _LABEL_("card notes")), 1, wxEXPAND | wxLEFT, 2);
 		sc->Add(collapse_notes, 0, wxALIGN_CENTER | wxRIGHT, 2);
 	sn->Add(sc, 0, wxEXPAND, 2);
 	sn->Add(notes, 1, wxEXPAND | wxTOP, 2);
