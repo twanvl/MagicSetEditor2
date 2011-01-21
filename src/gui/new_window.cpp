@@ -61,7 +61,7 @@ NewSetWindow::NewSetWindow(Window* parent)
 void NewSetWindow::onGameSelect(wxCommandEvent&) {
 	wxBusyCursor wait;
 	GameP game = game_list->getSelection<Game>(false);
-	handle_pending_errors();
+	//handle_pending_errors(); // errors are ignored until set window is shown
 	settings.default_game = game->name();
 	stylesheet_list->showData<StyleSheet>(game->name() + _("-*"));
 	stylesheet_list->select(settings.gameSettingsFor(*game).default_stylesheet);
@@ -76,7 +76,7 @@ void NewSetWindow::onStyleSheetSelect(wxCommandEvent&) {
 	// store this as default selection
 	GameP       game       = game_list      ->getSelection<Game>(false);
 	StyleSheetP stylesheet = stylesheet_list->getSelection<StyleSheet>(false);
-	handle_pending_errors();
+	//handle_pending_errors(); // errors are ignored until set window is shown
 	settings.gameSettingsFor(*game).default_stylesheet = stylesheet->name();
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }
@@ -113,7 +113,7 @@ void NewSetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 
 void NewSetWindow::onIdle(wxIdleEvent& ev) {
 	// Stuff that must be done in the main thread
-	handle_pending_errors();
+	//handle_pending_errors(); // errors are ignored until set window is shown
 }
 
 BEGIN_EVENT_TABLE(NewSetWindow, wxDialog)
@@ -162,7 +162,7 @@ SelectStyleSheetWindow::SelectStyleSheetWindow(Window* parent, const Game& game,
 }
 
 void SelectStyleSheetWindow::onStyleSheetSelect(wxCommandEvent&) {
-	handle_pending_errors();
+	//handle_pending_errors(); // errors are ignored until set window is shown
 	UpdateWindowUI(wxUPDATE_UI_RECURSE);
 }
 void SelectStyleSheetWindow::onStyleSheetActivate(wxCommandEvent&) {
@@ -193,7 +193,7 @@ void SelectStyleSheetWindow::onUpdateUI(wxUpdateUIEvent& ev) {
 
 void SelectStyleSheetWindow::onIdle(wxIdleEvent& ev) {
 	// Stuff that must be done in the main thread
-	handle_pending_errors();
+	//handle_pending_errors(); // errors are ignored until set window is shown
 }
 
 BEGIN_EVENT_TABLE(SelectStyleSheetWindow, wxDialog)

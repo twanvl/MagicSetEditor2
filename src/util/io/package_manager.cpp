@@ -153,20 +153,20 @@ bool PackageManager::checkDependency(const PackageDependency& dep, bool report_e
 	// mse package?
 	if (dep.package == mse_package) {
 		if (app_version < dep.version) {
-			handle_warning(_ERROR_3_("package out of date", _("Magic Set Editor"), app_version.toString(), dep.version.toString()),false);
+			queue_message(MESSAGE_WARNING, _ERROR_3_("package out of date", _("Magic Set Editor"), app_version.toString(), dep.version.toString()));
 		}
 		return true;
 	}
 	// does the package exist?
 	if (!local.exists(dep.package) && !global.exists(dep.package)) {
 		if (report_errors)
-			handle_warning(_ERROR_1_("package not found", dep.package),false);
+			queue_message(MESSAGE_WARNING, _ERROR_1_("package not found", dep.package));
 		return false;
 	}
 	PackagedP package = openAny(dep.package, true);
 	if (package->version < dep.version) {
 		if (report_errors)
-			handle_warning(_ERROR_3_("package out of date", dep.package, package->version.toString(), dep.version.toString()),false);
+			queue_message(MESSAGE_WARNING, _ERROR_3_("package out of date", dep.package, package->version.toString(), dep.version.toString()));
 		return false;
 	}
 	return true;
@@ -378,7 +378,7 @@ bool PackageDirectory::install(const InstallablePackage& package) {
 bool PackageDirectory::actual_install(const InstallablePackage& package, const String& install_dir) {
 	String name = package.description->name;
 	if (!package.installer->installer) {
-		handle_warning(_("Installer not found for package: ") + name);
+		queue_message(MESSAGE_ERROR, _("Installer not found for package: ") + name);
 		return false;
 	}
 	Installer& installer = *package.installer->installer;

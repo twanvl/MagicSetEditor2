@@ -13,6 +13,7 @@
 #if wxUSE_STACKWALKER
 	#include <wx/stackwalk.h>
 #endif
+#include <queue>
 
 DECLARE_TYPEOF_COLLECTION(ScriptParseError);
 
@@ -158,94 +159,45 @@ ScriptParseErrors::ScriptParseErrors(const vector<ScriptParseError>& errors)
 
 // ----------------------------------------------------------------------------- : Error handling
 
-// Errors for which a message box was already shown
-vector<String> previous_errors;
-vector<String> previous_warnings;
-String pending_errors;
-String pending_warnings;
-DECLARE_TYPEOF_COLLECTION(String);
+// messages can be posted from other threads, this mutex protects the message list
 wxMutex crit_error_handling;
+typedef pair<MessageType,String> Message;
+deque<Message> message_queue;
+bool show_message_box_for_fatal_errors = true;
 bool write_errors_to_cli = false;
 
-void show_pending_errors();
-void show_pending_warnings();
-
-void handle_error(const String& e, bool allow_duplicate = true, bool now = true) {
-	{
-		// Thread safety
-		wxMutexLocker lock(crit_error_handling);
-		// Check duplicates
-		if (!allow_duplicate) {
-			FOR_EACH(pe, previous_errors) {
-				if (e == pe) return;
-			}
-			previous_errors.push_back(e);
-		}
-		// Only show errors in the main thread
-		if (!pending_errors.empty()) pending_errors += _("\n\n");
-		pending_errors += e;
+void queue_message(MessageType type, String const& msg) {
+	if (write_errors_to_cli && wxThread::IsMain()) {
+		cli.show_message(type,msg);
+		return; // TODO: is this the right thing to do?
 	}
-	// show messages
-	if ((write_errors_to_cli || now) && wxThread::IsMain()) {
-		show_pending_warnings(); // warnings are older, show them first
-		show_pending_errors();
+	if (show_message_box_for_fatal_errors && type == MESSAGE_FATAL_ERROR && wxThread::IsMain()) {
+		// bring this to the user's attention right now!
+		wxMessageBox(msg, _("Error"), wxOK | wxICON_ERROR);
 	}
+	// Thread safety
+	wxMutexLocker lock(crit_error_handling);
+	// Only show errors in the main thread
+	message_queue.push_back(make_pair(type,msg));
 }
 
-void handle_error(const Error& e, bool allow_duplicate, bool now) {
-	handle_error(e.what(), allow_duplicate, now);
+void handle_error(const Error& e) {
+	queue_message(e.is_fatal() ? MESSAGE_FATAL_ERROR : MESSAGE_ERROR, e.what());
 }
 
-void handle_warning(const String& w, bool now) {
-	{
-		// Check duplicates
-		wxMutexLocker lock(crit_error_handling);
-		// Check duplicates
-		FOR_EACH(pw, previous_warnings) {
-			if (w == pw) return;
-		}
-		previous_warnings.push_back(w);
-		// Only show errors in the main thread
-		if (!pending_warnings.empty()) pending_warnings += _("\n\n");
-		pending_warnings += w;
-	}
-	// show messages
-	if ((write_errors_to_cli || now) && wxThread::IsMain()) {
-		show_pending_errors();
-		show_pending_warnings();
-	}
+bool have_queued_message() {
+	wxMutexLocker lock(crit_error_handling);
+	return !message_queue.empty();
 }
 
-void handle_pending_errors() {
-	show_pending_errors();
-	show_pending_warnings();
-}
-
-void show_pending_errors() {
-	assert(wxThread::IsMain());
-	if (crit_error_handling.TryLock() != wxMUTEX_NO_ERROR)
-		return;
-	if (!pending_errors.empty()) {
-		if (write_errors_to_cli) {
-			cli.showError(pending_errors);
-		} else {
-			wxMessageBox(pending_errors, _("Error"), wxOK | wxICON_ERROR);
-		}
-		pending_errors.clear();
+bool get_queued_message(MessageType& type, String& msg) {
+	wxMutexLocker lock(crit_error_handling);
+	if (message_queue.empty()) {
+		return false;
+	} else {
+		type = message_queue.back().first;
+		msg  = message_queue.back().second;
+		message_queue.pop_back();
+		return true;
 	}
-	crit_error_handling.Unlock();
-}
-void show_pending_warnings() {
-	assert(wxThread::IsMain());
-	if (crit_error_handling.TryLock() != wxMUTEX_NO_ERROR)
-		return;
-	if (!pending_warnings.empty()) {
-		if (write_errors_to_cli) {
-			cli.showWarning(pending_warnings);
-		} else {
-			wxMessageBox(pending_warnings, _("Warning"), wxOK | wxICON_EXCLAMATION);
-		}
-		pending_warnings.clear();
-	}
-	crit_error_handling.Unlock();
 }

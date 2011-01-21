@@ -86,7 +86,7 @@ SubLocaleP find_wildcard_and_set(map<String,SubLocaleP>& items, const String& na
 // ----------------------------------------------------------------------------- : Translation
 
 String warn_and_identity(const String& key) {
-	handle_warning(_("Missing key in locale: ") + key, false);
+	queue_message(MESSAGE_WARNING, _("Missing key in locale: ") + key);
 	return key;
 }
 
@@ -253,7 +253,7 @@ void Locale::validate(Version ver) {
 			       + _("\n  found: ") + ver.toString();
 	}
 	if (!errors.empty()) {
-		handle_warning(errors);
+		queue_message(MESSAGE_WARNING, errors);
 	}
 }
 

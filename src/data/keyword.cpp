@@ -215,7 +215,7 @@ void Keyword::prepare(const vector<KeywordParamP>& param_types, bool force) {
 				// throwing an error can mean a set will not be loaded!
 				// instead, simply disable the keyword
 				//throw InternalError(_("Unknown keyword parameter type: ") + type);
-				handle_error(_("Unknown keyword parameter type: ") + type, true, false);
+				handle_error(_("Unknown keyword parameter type: ") + type);
 				valid = false;
 				return;
 			}
@@ -700,7 +700,7 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 	try {
 		reminder = kw.reminder.invoke(ctx)->toString();
 	} catch (const Error& e) {
-		handle_error(_ERROR_2_("in keyword reminder", e.what(), kw.keyword), true, false);
+		handle_error(_ERROR_2_("in keyword reminder", e.what(), kw.keyword));
 	}
 	ctx.setVariable(_("keyword"),  to_script(total));
 	ctx.setVariable(_("reminder"), to_script(reminder));

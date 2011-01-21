@@ -207,6 +207,9 @@ enum ChildMenuID {
 ,	ID_GENERATE_PACK
 ,	ID_CUSTOM_PACK
 	
+	// Console panel
+,	ID_EVALUATE
+	
 	// SymbolFont (Format menu)
 ,	ID_INSERT_SYMBOL_MENU_MIN =  9001
 ,	ID_INSERT_SYMBOL_MENU_MAX = 10000

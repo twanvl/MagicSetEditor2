@@ -50,7 +50,7 @@ void SubversionVCS::removeFile(const wxFileName& filename)
 {
 	String name = filename.GetFullPath();
 	const Char* name_c[] = {_("svn"), _("rm"), name.c_str(), nullptr};
-	handle_warning(String(name_c[0]) + name_c[1] + name_c[2]);
+	queue_message(MESSAGE_WARNING, String(name_c[0]) + name_c[1] + name_c[2]);
 	// TODO: do we really need to remove the file before calling "svn remove"?
 	VCS::removeFile(filename);
 	if (!run_svn(name_c)) {

@@ -61,7 +61,7 @@ void Reader::handleAppVersion() {
  	if (enterBlock(_("mse_version"))) {
 		handle(file_app_version);
 		if (app_version < file_app_version) {
-			handle_warning(_ERROR_2_("newer version", filename, file_app_version.toString()), false);
+			queue_message(MESSAGE_WARNING, _ERROR_2_("newer version", filename, file_app_version.toString()));
 		}
 		exitBlock();
 	}
@@ -75,7 +75,7 @@ void Reader::warning(const String& msg, int line_number_delta, bool warn_on_prev
 
 void Reader::showWarnings() {
 	if (!warnings.empty()) {
-		handle_warning(_("Warnings while reading file:\n") + filename + _("\n") + warnings, false);
+		queue_message(MESSAGE_WARNING, _("Warnings while reading file:\n") + filename + _("\n") + warnings);
 		warnings.clear();
 	}
 }

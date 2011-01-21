@@ -23,10 +23,10 @@ DECLARE_TYPEOF_COLLECTION(pair<String COMMA ScriptValueP>);
 
 SCRIPT_FUNCTION(trace) {
 	SCRIPT_PARAM_C(String, input);
-	#ifdef _DEBUG
+	#if defined(_DEBUG) && 0
 		wxLogDebug(_("Trace:\t") + input);
 	#else
-		handle_warning(_("Trace:\t") + input, false);
+		queue_message(MESSAGE_INFO, _("Trace: ") + input);
 	#endif
 	SCRIPT_RETURN(input);
 }
@@ -35,7 +35,7 @@ SCRIPT_FUNCTION(warning) {
 	SCRIPT_PARAM_C(String, input);
 	SCRIPT_PARAM_DEFAULT_C(bool, condition, true);
 	if (condition) {
-		handle_warning(input, true);
+		queue_message(MESSAGE_WARNING, input);
 	}
 	return script_nil;
 }
@@ -51,7 +51,7 @@ SCRIPT_FUNCTION(warning_if_neq) {
 		try {
 			s2 = v2->toCode();
 		} catch (...) {}
-		handle_warning(input + s1 + _(" != ") + s2, true);
+		queue_message(MESSAGE_WARNING, input + s1 + _(" != ") + s2);
 	}
 	return script_nil;
 }

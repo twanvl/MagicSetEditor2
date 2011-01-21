@@ -36,10 +36,8 @@ class TextIOHandler {
 	/// Flush output
 	void flush();
 	
-	/// Show an error message
-	void showError(const String& message);
-	/// Show a warning message
-	void showWarning(const String& message);
+	/// Show an error or warning message
+	void show_message(MessageType type, String const& message);
 	
 	/// Enable raw mode
 	void enableRaw();

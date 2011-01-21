@@ -26,6 +26,8 @@ class Error {
 	
 	/// Return the error message
 	virtual String what() const; 
+	/// Is the message (potentially) fatal?
+	virtual bool is_fatal() const { return false; }
 	
   protected:
 	String message; ///< The error message
@@ -36,6 +38,8 @@ class Error {
 class InternalError : public Error {
   public:
 	InternalError(const String& str);
+	// not all internal errors are fatal, but we had still better warn the user about them.
+	virtual bool is_fatal() const { return true; }
 };
 
 // ----------------------------------------------------------------------------- : File errors
@@ -128,37 +132,62 @@ class ScriptErrorNoMember : public ScriptError {
 		: ScriptError(_ERROR_2_("has no member", type, member)) {}
 };
 
-// ----------------------------------------------------------------------------- : Error handling
+// ----------------------------------------------------------------------------- : Bounds checking
 
-/// Should errors be written to stdout?
+template <typename T>
+T& at(vector<T>& x, size_t pos) {
+	if (pos < x.size()) {
+		return x[pos];
+	} else {
+		throw InternalError(_("vector<T> index out of bounds: %d > %d, where T = ") + typeid(x).name());
+	}
+}
+
+// ----------------------------------------------------------------------------- : Error/message handling
+
+/// Should a popup be shown for internal errors?
+extern bool show_message_box_for_fatal_errors;
 extern bool write_errors_to_cli;
 
-/// Handle an error by showing a message box
-/** If !allow_duplicate and the error is the same as the previous error, does nothing.
- *  If !now the error is handled by a later call to handle_pending_errors()
+/// Types/levels of (error)messages
+enum MessageType
+{	MESSAGE_INPUT
+,	MESSAGE_OUTPUT
+,	MESSAGE_INFO
+,	MESSAGE_WARNING
+,	MESSAGE_ERROR
+,	MESSAGE_FATAL_ERROR
+
+,	MESSAGE_TYPE_MAX
+};
+
+/// Queue an (error) message, it can later be retrieved with get_queued_message
+/** If the message is a MESSAGE_FATAL_ERROR, and show_message_box_for_fatal_errors==true, then a popup is shown
  */
-void handle_error(const Error& e, bool allow_duplicate = true, bool now = true);
+void queue_message(MessageType type, String const& msg);
+/// Handle an error by queuing a message
+void handle_error(const Error& e);
 
-/// Handle a warning by showing a message box
-void handle_warning(const String& w, bool now = true);
+/// Are there any queued messages?
+bool have_queued_message();
 
-/// Handle errors and warnings that were not handled immediatly in handleError
-/** Should be called repeatedly (e.g. in an onIdle event handler) */
-void handle_pending_errors();
+/// Get the first queued message, or return false
+bool get_queued_message(MessageType& type, String& msg);
+
 
 /// Make a stack trace for use in InternalErrors
 String get_stack_trace();
 
 /// Catch all types of errors, and pass then to handle_error
-#define CATCH_ALL_ERRORS(handle_now)																\
-	catch (const Error& e) {																		\
-		handle_error(e, false, handle_now);															\
-	} catch (const std::exception& e) {																\
-		/* we don't throw std::exception ourselfs, so this is probably something serious */			\
-		String message(e.what(), IF_UNICODE(wxConvLocal, wxSTRING_MAXLEN) );						\
-		handle_error(InternalError(message), false, handle_now);									\
-	} catch (...) {																					\
-		handle_error(InternalError(_("An unexpected exception occurred!")), false, handle_now);		\
+#define CATCH_ALL_ERRORS(handle_now) \
+	catch (const Error& e) { \
+		handle_error(e); \
+	} catch (const std::exception& e) { \
+		/* we don't throw std::exception ourselfs, so this is probably something serious */ \
+		String message(e.what(), IF_UNICODE(wxConvLocal, wxSTRING_MAXLEN) ); \
+		handle_error(InternalError(message)); \
+	} catch (...) { \
+		handle_error(InternalError(_("An unexpected exception occurred!"))); \
 	}
 
 // ----------------------------------------------------------------------------- : EOF

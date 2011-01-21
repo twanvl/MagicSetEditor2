@@ -53,7 +53,7 @@ menu:
 	previous keyword:	Select &Previous Keyword	PgUp
 	next keyword:		Select &Next Keyword	PgDn
 	add keyword:		&Add Keyword	Ctrl+Enter
-	remove keyword:		&Remove Select Keyword	Del
+	remove keyword:		&Remove Select Keyword	 Del
 	
 	format:			F&ormat
 	bold:				&Bold	Ctrl+B
@@ -79,6 +79,7 @@ menu:
 	keywords tab:		&Keywords	F8
 	stats tab:			S&tatistics	F9
 	random pack tab:	&Random Packs
+	console tab:		&Console	Ctrl+F9
 	
 	help:			&Help
 	index:				&Index...	F1
@@ -190,6 +191,7 @@ help:
 	keywords tab:		Define extra keywords for this set
 	stats tab:			Show statistics about the cards in the set
 	random pack tab:	Try how the set works out in practice by generating random booster packs.
+	console tab:		Shows error messages and allows executing script commands.
 	
 	help:
 	index:				
@@ -205,6 +207,8 @@ help:
 	seed:				Seed number for the random generator. Using the same seed number gives the same 'random' packs.
 	edit pack type:		Double click to edit pack type
 	number of packs:	The number of %ss to generate
+	# Console panel
+	evaluate:			Evaluate the entered script command
 	
 	# Preferences
 	app language:
@@ -292,6 +296,7 @@ tool:
 	keywords tab:		Keywords
 	stats tab:			Statistics
 	random pack tab:	Random
+	console tab:		Console
 	
 	# symbol editor
 	store symbol:		Store
@@ -337,6 +342,7 @@ tooltip:
 	keywords tab:		
 	stats tab:			
 	random pack tab:	Random packs
+	console tab:		
 	
 	new set:			New set
 	open set:			Open set
@@ -561,6 +567,9 @@ button:
 	random seed:		&Random Seed
 	fixed seed:			&Fixed Seed
 	add custom pack:	Add &Custom Pack...
+	
+	# Console panel
+	evaluate:			&Evaluate
 	
 	# Welcome
 	new set:			New set

@@ -60,7 +60,7 @@ FontP Font::make(int add_flags, AColor* other_color, double* other_size) const {
 		f->color = Color(128,0,0);
 	}
 	if (add_flags & FONT_CODE_KW) {
-		f->color = Color(158,0,0);
+		f->color = Color(158,100,0);
 		f->flags |= FONT_BOLD;
 	}
 	if (add_flags & FONT_SOFT) {

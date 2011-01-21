@@ -75,7 +75,7 @@ void CLISetInterface::setExportInfoCwd() {
 void CLISetInterface::run() {
 	// show welcome logo
 	if (!quiet) showWelcome();
-	handle_pending_errors();
+	print_pending_errors();
 	// loop
 	running = true;
 	while (running) {
@@ -88,6 +88,7 @@ void CLISetInterface::run() {
 		String command = cli.getLine();
 		if (command.empty() && !cli.canGetLine()) break;
 		handleCommand(command);
+		print_pending_errors();
 		cli.flush();
 		cli.flushRaw();
 	}
@@ -134,7 +135,7 @@ void CLISetInterface::handleCommand(const String& command) {
 				showUsage();
 			} else if (before == _(":l") || before == _(":load")) {
 				if (arg.empty()) {
-					cli.showError(_("Give a filename to open."));
+					cli.show_message(MESSAGE_ERROR,_("Give a filename to open."));
 				} else {
 					setSet(import_set(arg));
 				}
@@ -154,10 +155,10 @@ void CLISetInterface::handleCommand(const String& command) {
 				}
 			} else if (before == _(":c") || before == _(":cd")) {
 				if (arg.empty()) {
-					cli.showError(_("Give a new working directory."));
+					cli.show_message(MESSAGE_ERROR,_("Give a new working directory."));
 				} else {
 					if (!wxSetWorkingDirectory(arg)) {
-						cli.showError(_("Can't change working directory to ")+arg);
+						cli.show_message(MESSAGE_ERROR,_("Can't change working directory to ")+arg);
 					} else {
 						setExportInfoCwd();
 					}
@@ -166,7 +167,7 @@ void CLISetInterface::handleCommand(const String& command) {
 				cli << ei.directory_absolute << ENDL;
 			} else if (before == _(":!")) {
 				if (arg.empty()) {
-					cli.showError(_("Give a shell command to execute."));
+					cli.show_message(MESSAGE_ERROR,_("Give a shell command to execute."));
 				} else {
 					#ifdef UNICODE
 						#ifdef __WXMSW__
@@ -190,7 +191,7 @@ void CLISetInterface::handleCommand(const String& command) {
 					}
 			#endif
 			} else {
-				cli.showError(_("Unknown command, type :help for help."));
+				cli.show_message(MESSAGE_ERROR,_("Unknown command, type :help for help."));
 			}
 		} else if (command == _("exit") || command == _("quit")) {
 			cli << _("Use :quit to quit\n");
@@ -201,7 +202,7 @@ void CLISetInterface::handleCommand(const String& command) {
 			vector<ScriptParseError> errors;
 			ScriptP script = parse(command,nullptr,false,errors);
 			if (!errors.empty()) {
-				FOR_EACH(error,errors) cli.showError(error.what());
+				FOR_EACH(error,errors) cli.show_message(MESSAGE_ERROR,error.what());
 				return;
 			}
 			// execute command
@@ -212,7 +213,7 @@ void CLISetInterface::handleCommand(const String& command) {
 			cli << result->toCode() << ENDL;
 		}
 	} catch (const Error& e) {
-		cli.showError(e.what());
+		cli.show_message(MESSAGE_ERROR,e.what());
 	}
 }
 
@@ -235,3 +236,11 @@ void CLISetInterface::handleCommand(const String& command) {
 		}
 	}
 #endif
+
+void CLISetInterface::print_pending_errors() {
+	MessageType type;
+	String msg;
+	while (get_queued_message(type,msg)) {
+		cli.show_message(type,msg);
+	}
+}

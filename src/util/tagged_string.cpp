@@ -598,12 +598,12 @@ void check_tagged(const String& str, bool check_balance) {
 		if (str.GetChar(i) == _('<')) {
 			size_t end = skip_tag(str,i);
 			if (end == String::npos) {
-				handle_warning(_("Invalid tagged string: missing '>'"),false);
+				queue_message(MESSAGE_WARNING, _("Invalid tagged string: missing '>'"));
 			}
 			for (size_t j = i + 1 ; j + 1 < end ; ++j) {
 				Char c = str.GetChar(j);
 				if (c == _(' ') || c == _('<')) {
-					handle_warning(_("Invalid character in tag"),false);
+					queue_message(MESSAGE_WARNING, _("Invalid character in tag"));
 				}
 			}
 			if (check_balance) {
@@ -614,7 +614,7 @@ void check_tagged(const String& str, bool check_balance) {
 				} else {
 					size_t close = match_close_tag(str,i);
 					if (close == String::npos) {
-						handle_warning(_("Invalid tagged string: missing close tag for <") + tag_at(str,i) + _(">"),false);
+						queue_message(MESSAGE_WARNING, _("Invalid tagged string: missing close tag for <") + tag_at(str,i) + _(">"));
 					}
 				}
 			}

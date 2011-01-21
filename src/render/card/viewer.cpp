@@ -53,7 +53,7 @@ void DataViewer::draw(RotatedDC& dc, const Color& background) {
 					changed_content_properties = true;
 				}
 			} catch (const Error& e) {
-				handle_error(e, false, false);
+				handle_error(e);
 			}
 		}
 	}
@@ -67,7 +67,7 @@ void DataViewer::draw(RotatedDC& dc, const Color& background) {
 			try {
 				drawViewer(dc, *v);
 			} catch (const Error& e) {
-				handle_error(e, false, false);
+				handle_error(e);
 			}
 		}
 	}
@@ -91,7 +91,7 @@ void DataViewer::updateStyles(bool only_content_dependent) {
 			}
 		}
 	} catch (const Error& e) {
-		handle_error(e, false, false);
+		handle_error(e);
 	}
 }
 

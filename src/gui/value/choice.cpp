@@ -186,7 +186,7 @@ void DropDownChoiceListBase::generateThumbnailImages() {
 				GeneratedImageP img = image_from_script(style().image.getValidScriptP()->eval(ctx));
 				style().choice_images.insert(make_pair(name, ScriptableImage(img)));
 			} catch (const Error& e) {
-				handle_error(Error(e.what() + _("\n  while generating choice images for drop down list")),true,false);
+				handle_error(Error(e.what() + _("\n  while generating choice images for drop down list")));
 			}
 		}
 	}

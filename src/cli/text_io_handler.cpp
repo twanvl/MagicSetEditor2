@@ -35,7 +35,7 @@ TextIOHandler cli;
 
 void TextIOHandler::init() {
 	bool have_stderr;
-	#ifdef __WXMSW__
+	#if defined(__WXMSW__)
 		have_console = false;
 		escapes = false;
 		// Detect whether to use console output
@@ -51,9 +51,20 @@ void TextIOHandler::init() {
 			}
 		}
 	#else
-		// always use console on *nix (?)
-		have_console = true;
-		have_stderr = true;
+		// TODO: detect console on linux?
+		have_console = false;
+		have_stderr = false;
+		// Use console mode if one of the cli flags is passed
+		static const Char* redirect_flags[] = {_("-?"),_("--help"),_("-v"),_("--version"),_("--cli"),_("-c"),_("--export"),_("--create-installer")};
+		for (int i = 1 ; i < wxTheApp->argc ; ++i) {
+			for (int j = 0 ; j < sizeof(redirect_flags)/sizeof(redirect_flags[0]) ; ++j) {
+				if (String(wxTheApp->argv[i]) == redirect_flags[j]) {
+					have_console = true;
+					have_stderr = true;
+					break;
+				}
+			}
+		}
 		escapes = true; // TODO: detect output redirection
 	#endif
 	// write to standard output
@@ -154,18 +165,14 @@ void TextIOHandler::flushRaw() {
 
 // ----------------------------------------------------------------------------- : Errors
 
-void TextIOHandler::showError(const String& message) {
+void TextIOHandler::show_message(MessageType type, String const& message) {
 	stream = stdout;
-	*this << RED << _("ERROR: ") << NORMAL << replace_all(message,_("\n"),_("\n       ")) << ENDL;
+	if (type == MESSAGE_WARNING) {
+		*this << YELLOW << _("WARNING: ") << NORMAL << replace_all(message,_("\n"),_("\n         ")) << ENDL;
+	} else {
+		*this << RED << _("ERROR: ") << NORMAL << replace_all(message,_("\n"),_("\n       ")) << ENDL;
+	}
 	flush();
 	stream = stdout;
-	if (raw_mode) raw_mode_status = max(raw_mode_status, 2);
-}
-
-void TextIOHandler::showWarning(const String& message) {
-	stream = stdout;
-	*this << YELLOW << _("WARNING: ") << NORMAL << replace_all(message,_("\n"),_("\n         ")) << ENDL;
-	flush();
-	stream = stdout;
-	if (raw_mode) raw_mode_status = max(raw_mode_status, 1);
+	if (raw_mode) raw_mode_status = max(raw_mode_status, type == MESSAGE_WARNING ? 1 : 2);
 }

@@ -67,7 +67,7 @@ Context& SetScriptContext::getContext(const StyleSheetP& stylesheet) {
 			set.game  ->init_script.invoke(*ctx, false);
 			stylesheet->init_script.invoke(*ctx, false);
 		} catch (const Error& e) {
-			handle_error(e, false, false);
+			handle_error(e);
 		}
 		onInit(stylesheet, ctx);
 		return *ctx;
@@ -108,7 +108,7 @@ void SetScriptManager::onInit(const StyleSheetP& stylesheet, Context* ctx) {
 		initDependencies(*ctx, *set.game);
 		initDependencies(*ctx, *stylesheet);
 	} catch (const Error& e) {
-		handle_error(e, false, false);
+		handle_error(e);
 	}
 }
 
@@ -258,7 +258,7 @@ void SetScriptManager::updateStyles(Context& ctx, const IndexMap<FieldP,StyleP>&
 			}
 		} catch (const ScriptError& e) {
 			// NOTE: don't handle errors now, we are likely in an onPaint handler
-			handle_error(ScriptError(e.what() + _("\n  while updating styles for '") + s->fieldP->name + _("'")), false, false);
+			handle_error(ScriptError(e.what() + _("\n  while updating styles for '") + s->fieldP->name + _("'")));
 		}
 	}
 }
@@ -298,7 +298,7 @@ void SetScriptManager::updateAll() {
 			PROFILER2( v->fieldP.get(), _("update set.") + v->fieldP->name );
 			v->update(ctx);
 		} catch (const ScriptError& e) {
-			handle_error(ScriptError(e.what() + _("\n  while updating set value '") + v->fieldP->name + _("'")), false, true);
+			handle_error(ScriptError(e.what() + _("\n  while updating set value '") + v->fieldP->name + _("'")));
 		}
 	}
 	// update card data of all cards
@@ -312,7 +312,7 @@ void SetScriptManager::updateAll() {
 				#endif
 				v->update(ctx);
 			} catch (const ScriptError& e) {
-				handle_error(ScriptError(e.what() + _("\n  while updating card value '") + v->fieldP->name + _("'")), false, true);
+				handle_error(ScriptError(e.what() + _("\n  while updating card value '") + v->fieldP->name + _("'")));
 			}
 		}
 	}
@@ -347,7 +347,7 @@ void SetScriptManager::updateToUpdate(const ToUpdate& u, deque<ToUpdate>& to_upd
 	try {
 		changes = u.value->update(ctx);
 	} catch (const ScriptError& e) {
-		handle_error(ScriptError(e.what() + _("\n  while updating value '") + u.value->fieldP->name + _("'")), false, true);
+		handle_error(ScriptError(e.what() + _("\n  while updating value '") + u.value->fieldP->name + _("'")));
 	}
 	if (changes) {
 		// changed, send event

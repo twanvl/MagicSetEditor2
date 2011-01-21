@@ -600,16 +600,16 @@ void Packaged::requireDependency(Packaged* package) {
 	FOR_EACH(dep, dependencies) {
 		if (dep->package == n) {
 			if (package->version < dep->version) {
-				handle_warning(_ERROR_3_("package out of date", n, package->version.toString(), dep->version.toString()), false);
+				queue_message(MESSAGE_WARNING,_ERROR_3_("package out of date", n, package->version.toString(), dep->version.toString()));
 			} else if (package->compatible_version > dep->version) {
-				handle_warning(_ERROR_4_("package too new",     n, package->version.toString(), dep->version.toString(), relativeFilename()), false);
+				queue_message(MESSAGE_WARNING,_ERROR_4_("package too new",     n, package->version.toString(), dep->version.toString(), relativeFilename()));
 			} else {
 				return; // ok
 			}
 		}
 	}
 	// dependency not found
-	handle_warning(_ERROR_4_("dependency not given", name(), package->relativeFilename(), package->relativeFilename(), package->version.toString()), false);
+	queue_message(MESSAGE_WARNING,_ERROR_4_("dependency not given", name(), package->relativeFilename(), package->relativeFilename(), package->version.toString()));
 }
 
 // ----------------------------------------------------------------------------- : IncludePackage

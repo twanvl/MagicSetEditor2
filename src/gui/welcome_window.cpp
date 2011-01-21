@@ -27,7 +27,9 @@
 WelcomeWindow::WelcomeWindow()
 	: Frame(nullptr, wxID_ANY, _TITLE_("magic set editor"), wxDefaultPosition, wxSize(520,380), wxDEFAULT_DIALOG_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN )
 	, logo (load_resource_image(_("about")))
+	#if USE_BETA_LOGO
 	, logo2(load_resource_image(_("two_beta")))
+	#endif
 {
 	SetIcon(load_resource_icon(_("app")));
 
@@ -86,7 +88,9 @@ void WelcomeWindow::draw(DC& dc) {
 	dc.DrawRectangle(0, 0, ws.GetWidth(), ws.GetHeight());
 	// draw logo
 	dc.DrawBitmap(logo,  (ws.GetWidth() -  logo.GetWidth()) / 2, 5);
-	dc.DrawBitmap(logo2,  ws.GetWidth() - logo2.GetWidth(),      ws.GetHeight() - logo2.GetHeight());
+	#if USE_BETA_LOGO
+		dc.DrawBitmap(logo2,  ws.GetWidth() - logo2.GetWidth(),      ws.GetHeight() - logo2.GetHeight());
+	#endif
 	// draw version number
 	dc.SetFont(wxFont(8, wxSWISS, wxNORMAL, wxNORMAL, false, _("Arial")));
 	dc.SetTextForeground(Color(0,126,176));

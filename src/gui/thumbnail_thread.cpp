@@ -77,7 +77,7 @@ wxThread::ExitCode ThumbnailThreadWorker::Entry() {
 		try {
 			img = current->generate();
 		} catch (const Error& e) {
-			handle_error(e, false, false);
+			handle_error(e);
 		} catch (...) {
 		}
 		// store in cache
@@ -150,7 +150,7 @@ void ThumbnailThread::request(const ThumbnailRequestP& request) {
 		try {
 			img = request->generate();
 		} catch (const Error& e) {
-			handle_error(e, false, false);
+			handle_error(e);
 		} catch (...) {
 		}
 		// store in cache

@@ -66,6 +66,7 @@ tool/window_style		IMAGE	"tool/window_style.png"
 tool/window_keywords	IMAGE	"tool/window_keywords.png"
 tool/window_statistics	IMAGE	"tool/window_statistics.png"
 tool/window_random_pack	IMAGE	"tool/window_random_pack.png"
+tool/window_console		IMAGE	"tool/window_console.png"
 
 tool/help				IMAGE	"tool/help.png"
 
@@ -185,6 +186,11 @@ installer_package		IMAGE	"../common/installer_package.png"
 installer_locales		IMAGE	"../common/installer_locales.png"
 installer_program		IMAGE	"../common/installer_program.png"
 //installer_font		IMAGE	"../common/installer_font.png"
+
+message_input			IMAGE	"../common/message_input.png"
+message_information		IMAGE	"../common/message_information.png"
+message_warning			IMAGE	"../common/message_warning.png"
+message_error			IMAGE	"../common/message_error.png"
 
 // -------------------------------------------------------- : WX
 

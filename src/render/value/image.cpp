@@ -36,9 +36,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
 				if (image.LoadFile(*image_file)) {
 					image.Rescale(w, h);
 				}
-			} catch (Error e) {
-				handle_error(e, false, false); // don't handle now, we are in onPaint
-			}
+			} CATCH_ALL_ERRORS(false);
 		}
 		// nice placeholder
 		if (!image.Ok() && style().default_image.isReady()) {
