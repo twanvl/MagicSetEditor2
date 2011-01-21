@@ -139,7 +139,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
 	tb->Realize();
 	
 	// tab bar, sizer
-	wxToolBar* tabBar = new wxToolBar(this, ID_TAB_BAR, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL | wxTB_HORZ_TEXT);
+	wxToolBar* tabBar = new wxToolBar(this, ID_TAB_BAR, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL | wxTB_HORZ_TEXT | wxTB_NOALIGN);
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
 	s->Add(tabBar, 0, wxEXPAND | wxBOTTOM, 3);
 	SetSizer(s);
@@ -256,11 +256,28 @@ void SetWindow::selectPanel(int id) {
 	current_panel->SetFocus();
 }
 
+void toolbar_SetToolNormalBitmap(wxToolBar* toolbar, int id, wxBitmap const& bitmap) {
+	#if wxVERSION_NUMBER < 2800
+		// copied from wx2.8.11, tbar95.cpp
+		wxToolBarToolBase* tool = wx_static_cast(wxToolBarToolBase*, toolbar->FindById(id));
+		if (tool) {
+			tool->SetNormalBitmap(bitmap);
+			toolbar->Realize();
+		}
+	#else
+		toolbar->SetToolNormalBitmap(id, bitmap);
+	#endif
+}
+
 void SetWindow::setPanelIcon(SetWindowPanel* panel, wxBitmap const& icon) {
 	for (size_t i = 0 ; i < panels.size() ; ++i) {
 		if (panels[i] == panel) {
 			wxToolBar* tabBar = (wxToolBar*)FindWindow(ID_TAB_BAR);
-			tabBar->SetToolNormalBitmap(ID_WINDOW_MIN+i, icon);
+			toolbar_SetToolNormalBitmap(tabBar, ID_WINDOW_MIN+(int)i, icon);
+			#if wxVERSION_NUMBER < 2800
+				// This is needed at least in wx2.6, other versions seem not to need it, but maybe they do
+				Layout();
+			#endif
 			// TODO: this could be done better, wx requires a full new Realize of the toolbar, but on win32 a single message would do
 			// if only we could set up the imagelist correctly.
 			return;
