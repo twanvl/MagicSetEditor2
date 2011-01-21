@@ -577,6 +577,12 @@
 					RelativePath=".\gui\set\cards_panel.hpp">
 				</File>
 				<File
+					RelativePath=".\gui\set\console_panel.cpp">
+				</File>
+				<File
+					RelativePath=".\gui\set\console_panel.hpp">
+				</File>
+				<File
 					RelativePath=".\gui\set\keywords_panel.cpp">
 				</File>
 				<File

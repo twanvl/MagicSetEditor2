@@ -99,7 +99,7 @@ class MessageCtrl : public wxScrolledWindow {
 		Refresh(false);
 	}
 	
-	int find_point(int y) {
+	size_t find_point(int y) {
 		// TODO: could do a binary search here
 		for (size_t i = 0 ; i < messages.size() ; ++i) {
 			if (y >= messages[i]->top && y < messages[i]->bottom()) return i;

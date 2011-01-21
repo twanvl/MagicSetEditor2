@@ -74,7 +74,7 @@ typedef wxOutputStream OutputStream;
 	typedef wxEvent wxMouseCaptureLostEvent;
 	#define EVT_MOUSE_CAPTURE_LOST(handler) // ignore
 	#define wxEVT_MOUSE_CAPTURE_LOST 12345678 // not an actual event type
-	#define wxAutoBufferedPaintDCBase wxBufferedPaintDC
+	#define wxAutoBufferedPaintDC wxBufferedPaintDC
 #endif
 
 // ----------------------------------------------------------------------------- : Other aliasses
