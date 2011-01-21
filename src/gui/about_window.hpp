@@ -20,9 +20,12 @@ class AboutWindow : public wxDialog {
 	
   private:
 	DECLARE_EVENT_TABLE();
-
-	// graphics
-	Bitmap logo, logo2;
+	
+	// MSE logos
+	Bitmap logo;
+	#if USE_BETA_LOGO
+		Bitmap logo2;
+	#endif
 	
 	void onPaint(wxPaintEvent&);
 	void draw(DC& dc);

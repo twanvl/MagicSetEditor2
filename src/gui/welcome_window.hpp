@@ -32,7 +32,10 @@ class WelcomeWindow : public Frame {
 	DECLARE_EVENT_TABLE();
 	
 	// MSE logos
-	Bitmap logo, logo2;
+	Bitmap logo;
+	#if USE_BETA_LOGO
+	Bitmap logo2;
+	#endif
 		
 	void onPaint(wxPaintEvent&);
 	void draw(DC& dc);
