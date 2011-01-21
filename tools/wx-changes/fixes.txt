@@ -156,3 +156,18 @@ patch: apply http://trac.wxwidgets.org/ticket/8556
        should be in 2.10 and HEAD already
 
 // -----------------------------------------------------------------------------
+
+purpose: Allow different size toolbar buttons
+patch: see http://stackoverflow.com/questions/868637/wxtoolbar-with-dynamically-sized-buttons
+file: src/msw/tbar95.cpp
+line: 989 (wx2.8.11)
+old:
+                bitmapId++;
+                break;
+new:
+                // @@@ See http://stackoverflow.com/questions/868637/wxtoolbar-with-dynamically-sized-buttons
+                button.fsStyle |= TBSTYLE_AUTOSIZE;
+                bitmapId++;
+                break;
+
+// -----------------------------------------------------------------------------
