@@ -1,0 +1,192 @@
+==============================================================================
+== Magic Set Editor changelog, for the details see `svn log`
+==============================================================================
+
+------------------------------------------------------------------------------
+-- trunk: new items added as changes are made
+------------------------------------------------------------------------------
+
+------------------------------------------------------------------------------
+-- 2.0.0
+------------------------------------------------------------------------------
+
+Program:
+ * Added operators ("" and -) to quick search
+ * Added quick search for keywords (#58)
+ * Added "Console" panel
+ * Error message handling moved to console
+ * fixed #56: The quick search bar doesn't look in card.notes.
+ * fixed #59: Keywords with special characters don't work.
+ * fixed: Selection in package lists (new set window and style tab) is not highlighted.
+
+Templates:
+ * no changes
+
+Other:
+ * Actually started maintaining changelog, older entries are reconstructed.
+
+------------------------------------------------------------------------------
+-- 0.3.9, 2011-01-07
+------------------------------------------------------------------------------
+
+Program:
+ * Added quick search box for filtering the card list
+ * Win32: themed selection rectangles in GallaryList (broken)
+ * Win32: themed selection rectangles in Card/KeywordList
+ * bug fixes: #18,#19, #16,#24,#25,28, #13,#14,#51
+
+Templates:
+ * Magic: new keywords and various minor updates
+
+Other:
+ * This is the first new release in nearly two years
+
+------------------------------------------------------------------------------
+-- 0.3.8, 2009-01-15
+------------------------------------------------------------------------------
+
+New in this release:
+ * A spelling checker.
+ * Improved random booster pack generator.
+ * A bit of support for different languages in templates.
+ * Improvements in text alignment.
+ * Many other small improvements.
+ * And of course lots of bug fixes.
+
+------------------------------------------------------------------------------
+-- 0.3.7b, 2008-08-11
+------------------------------------------------------------------------------
+
+ * This release fixes some semi-critical bugs in 0.3.7b.
+
+------------------------------------------------------------------------------
+-- 0.3.7, 2008-08-11
+------------------------------------------------------------------------------
+
+New in this release:
+ * A random booster pack generator.
+ * A command line interface for connecting MSE with other programs.
+ * Many other minor improvements.
+ * And of course lots of bug fixes.
+
+------------------------------------------------------------------------------
+-- 0.3.6b, 2008-06-02
+------------------------------------------------------------------------------
+
+ * This release fixes some critical bugs in 0.3.6.
+
+------------------------------------------------------------------------------
+-- 0.3.6, 2008-06-01
+------------------------------------------------------------------------------
+
+New in this release:
+ * 2/R mana symbols and , the reverse tap symbol.
+ * Customizable set statistics.
+ * Improved printing quality.
+ * User friendly system for installing templates.
+ * Support for arbitrarily rotated text in templates.
+ * Support for changing font size and color in templates.
+ * Many, many bug fixes and minor improvements.
+
+------------------------------------------------------------------------------
+-- 0.3.5b, 2007-09-21
+------------------------------------------------------------------------------
+
+ * This release fixes some critical bugs in 0.3.5.
+
+------------------------------------------------------------------------------
+-- 0.3.5, 2007-09-20
+------------------------------------------------------------------------------
+
+New in this release:
+ * Future sight templates.
+ * Planeswalker template.
+ * HTML export for VS-System.
+ * New style VS-System templates.
+ * Many, many bug fixes and minor improvements.
+
+------------------------------------------------------------------------------
+-- 0.3.4, 2007-07-05
+------------------------------------------------------------------------------
+
+New in this release:
+ * Export to HTML.
+ * New color combination dialog for magic.
+ * Modern style magic tokens.
+ * VS-System hellboy templates.
+ * and of course lots of minor improvements and bugfixes.
+
+------------------------------------------------------------------------------
+-- 0.3.3, 2007-05-14
+------------------------------------------------------------------------------
+
+ * The crashes are finally fixed.
+ * All keyword problems are fixed.
+ * Two dimensional statistics (e.g. color vs. rarity)
+
+------------------------------------------------------------------------------
+-- 0.3.2, 2007-05-11
+------------------------------------------------------------------------------
+
+ * The templates have recieved a large update.
+ * The large bugs from the previous version are fixed.
+
+------------------------------------------------------------------------------
+-- 0.3.1, 2007-04-21
+------------------------------------------------------------------------------
+
+ * The most important new thing are the keywords. You can now make keywords with multiple parameters.
+
+------------------------------------------------------------------------------
+-- 0.3.0(NQMSE), 2006-12-25
+------------------------------------------------------------------------------
+
+Version 0.3.0, prerelease.
+ * no keywords
+ * no printing
+ * no export
+ * no search/replace
+ * no help
+ * no windows 9x build
+ * lots of new bugs
+
+------------------------------------------------------------------------------
+-- 0.2.7, 2006-08-04
+------------------------------------------------------------------------------
+
+New features:
+ * Buttons for making text bold/italic
+ * Good looking guild watermarks
+ * Yu-Gi-Oh templates (by artfreakwiu)
+
+Bug fixes / template tweaks:
+ * Correct snow mana symbol
+ * Fixed crash when creating new set
+ * Settings of styles are finally saved correctly
+ * The latest VS System templates
+
+------------------------------------------------------------------------------
+-- 0.2.6, 2006-07-18
+------------------------------------------------------------------------------
+
+Bug fixes:
+ * Duplicate text in keyword reminder text
+ * Reminder text of Scry
+ * Not remembering zoom, and border display settings
+ * Crash when deleting cards
+ * Drawing glitches under windows 9x
+ * Support for symbols with transparency
+
+------------------------------------------------------------------------------
+-- 0.2.5, 2006-06-25
+------------------------------------------------------------------------------
+
+New features:
+ * Improved high quality rendering
+ * Improved statistics/graphs
+ * Smart keywords, numbers are written with words, for example Graft 2 (This creature comes into play with two +1/+1 counters on it...). To use this with your own keywords all you need to do is say "counter(s)".
+
+Bug fixes:
+ * Card sizes are now changed correctly when using different styles
+ * The infamous 'n' keyword bug
+ * Probably more Some template tweaks

@@ -1,9 +1,13 @@
-version: 0.3.9
+version: 2.0.0
 description:
-	<font size="+2"><b>Version 0.3.9 is finally out</b></font>
+	<font size="+2"><b>Magic Set Editor version 2.0.0</b></font>
 	<hr>
-	New in this release:
+	In this release:
 	<ul>
-	 <li>Many small improvements and bug fixes.</li>
+	<li>The program is stable, it is no longer in beta.
+	<li>Added operators ("" and -) to quick search
+	<li>Added quick search for keywords
+	<li>Added a "Console" panel for error messages and code evaluation.
+	<li>Fixed several bugs
 	</ul>
-	<a href="http://magicseteditor.sourceforge.net/download">Get version 0.3.8 from the MSE download page</a>.
+	<a href="http://magicseteditor.sourceforge.net/download">Get version 2.0.0 from the MSE download page</a>.
