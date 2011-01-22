@@ -15,6 +15,7 @@
 #include <data/stylesheet.hpp>
 #include <wx/splitter.h>
 #include <wx/dcbuffer.h>
+#include <wx/clipbrd.h>
 
 DECLARE_POINTER_TYPE(ConsoleMessage);
 DECLARE_TYPEOF_COLLECTION(ScriptParseError);
@@ -77,6 +78,27 @@ class MessageCtrl : public wxScrolledWindow {
 		add_message(intrusive(new ConsoleMessage(type,text)));
 	}
 	
+	bool have_selection() const {
+		return selection < messages.size();
+	}
+	
+	bool canCopy() const {
+		return have_selection();
+	}
+	bool doCopy() {
+		if (selection >= messages.size()) return false;
+		ConsoleMessage const& msg = *messages[selection];
+		if (!wxTheClipboard->Open()) return false;
+		bool ok = false;
+		if (msg.bitmap.Ok()) {
+			ok = wxTheClipboard->SetData(new wxBitmapDataObject(msg.bitmap));
+		} else {
+			ok = wxTheClipboard->SetData(new wxTextDataObject(msg.text));
+		}
+		wxTheClipboard->Close();
+		return ok;
+	}
+	
   private:
 	DECLARE_EVENT_TABLE();
 	
@@ -97,6 +119,7 @@ class MessageCtrl : public wxScrolledWindow {
 			ensure_visible(*messages[selection]);
 		}
 		Refresh(false);
+		ev.Skip(); // for focus
 	}
 	
 	size_t find_point(int y) {
@@ -275,7 +298,7 @@ ConsolePanel::ConsolePanel(Window* parent, int id)
 {
 	// init controls
 	splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
-	messages = new MessageCtrl(splitter, wxID_ANY);
+	messages = new MessageCtrl(splitter, ID_MESSAGE_LIST);
 	entry_panel = new Panel(splitter, wxID_ANY);
 	entry = new wxTextCtrl(entry_panel, wxID_ANY, _(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
 	wxButton* evaluate = new wxButton(entry_panel, ID_EVALUATE, _BUTTON_("evaluate"));
@@ -388,7 +411,7 @@ void ConsolePanel::exec(String const& command) {
 			AColor color = (AColor)*result;
 			wxImage image(30,20);
 			fill_image(image,color);
-			set_alpha(image, color.alpha);
+			set_alpha(image, color.alpha / 255.0);
 			message->bitmap = wxBitmap(image);
 		} else {
 			message->text = result->toCode();
@@ -406,14 +429,17 @@ BEGIN_EVENT_TABLE(ConsolePanel, wxPanel)
 END_EVENT_TABLE  ()
 
 // ----------------------------------------------------------------------------- : Clipboard
-/*
-bool ConsolePanel::canCut()   const { return entry->canCut();   }
-bool ConsolePanel::canCopy()  const { return entry->canCopy();  }
-bool ConsolePanel::canPaste() const { return entry->canPaste(); }
-void ConsolePanel::doCut()          {        entry->doCut();    }
-void ConsolePanel::doCopy()         {        entry->doCopy();   }
-void ConsolePanel::doPaste()        {        entry->doPaste();  }
-*/
+
+// determine what control to use for clipboard actions
+#define CUT_COPY_PASTE(op,return)									\
+	int id = focused_control(this);									\
+	if   (id == ID_MESSAGE_LIST) { return messages->op(); }			\
+	else                         { return false; }
+
+bool ConsolePanel::canCut()   const { return false; }
+bool ConsolePanel::canCopy()  const { CUT_COPY_PASTE(canCopy,  return) }
+//void ConsolePanel::doCut()          { CUT_COPY_PASTE(doCut,    return (void)) }
+void ConsolePanel::doCopy()         { CUT_COPY_PASTE(doCopy,   return (void)) }
 
 // ----------------------------------------------------------------------------- : Annoying blinking icon thing
 

@@ -244,6 +244,7 @@ enum ControlID {
 ,	ID_MATCH
 ,	ID_REMINDER
 ,	ID_RULES
+,	ID_MESSAGE_LIST
 	// Card list column select
 ,	ID_MOVE_UP
 ,	ID_MOVE_DOWN

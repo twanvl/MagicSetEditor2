@@ -33,14 +33,9 @@ class ConsolePanel : public SetWindowPanel {
 	
 	// --------------------------------------------------- : Clipboard
 	
-	/*
 	virtual bool canCut()   const;
 	virtual bool canCopy()  const;
-	virtual bool canPaste() const;
-	virtual void doCut();
 	virtual void doCopy();
-	virtual void doPaste();
-	*/
 	
   protected:
 	virtual void onChangeSet();
