@@ -67,8 +67,9 @@ void nag_about_ascii_version() {
 		info.dwOSVersionInfoSize = sizeof(info);
 		GetVersionEx(&info);
 		if (info.dwMajorVersion >= 5) {
-			handle_warning(_("This build of Magic Set Editor is intended for Windows 95/98/ME systems.\n")
-			               _("It is recommended that you download the appropriate MSE version for your Windows version."));
+			queue_message(MESSAGE_WARNING,
+				_("This build of Magic Set Editor is intended for Windows 95/98/ME systems.\n")
+				_("It is recommended that you download the appropriate MSE version for your Windows version."));
 		}
 	#endif
 }
