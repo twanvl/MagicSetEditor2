@@ -50,11 +50,11 @@ template <> void GetDefaultMember::handle(const Version& v) {
 // ----------------------------------------------------------------------------- : Versions
 
 // NOTE: Don't use leading zeroes, they mean octal
-const Version app_version  = 309; // 0.3.9
+const Version app_version  = 20000; // 2.0.0
 #ifdef UNICODE
-const Char* version_suffix = _(" (beta)");
+const Char* version_suffix = _("");
 #else
-const Char* version_suffix = _(" (beta, ascii build)");
+const Char* version_suffix = _(" (ascii build)");
 #endif
 
 /// Which version of MSE are the files we write out compatible with?
@@ -80,14 +80,15 @@ const Char* version_suffix = _(" (beta, ascii build)");
  *             - more scriptable fields.
  *             - store time created,modified for cards -> changes set and clipboard format
  *     0.3.9 : bugfix release mostly, a few new script functions
+ *     2.0.0 : bugfix release mostly, added error console
  */
-const Version file_version_locale          = 309; // 0.3.9
-const Version file_version_set             = 308; // 0.3.8
-const Version file_version_game            = 308; // 0.3.8
-const Version file_version_stylesheet      = 308; // 0.3.8
-const Version file_version_symbol_font     = 306; // 0.3.6
-const Version file_version_export_template = 307; // 0.3.7
-const Version file_version_installer       = 307; // 0.3.7
-const Version file_version_symbol          = 305; // 0.3.5
-const Version file_version_clipboard       = 308; // 0.3.8
-const Version file_version_script          = 307; // 0.3.7
+const Version file_version_locale          = 20000; // 2.0.0
+const Version file_version_set             =   308; // 0.3.8
+const Version file_version_game            =   308; // 0.3.8
+const Version file_version_stylesheet      =   308; // 0.3.8
+const Version file_version_symbol_font     =   306; // 0.3.6
+const Version file_version_export_template =   307; // 0.3.7
+const Version file_version_installer       =   307; // 0.3.7
+const Version file_version_symbol          =   305; // 0.3.5
+const Version file_version_clipboard       =   308; // 0.3.8
+const Version file_version_script          =   307; // 0.3.7

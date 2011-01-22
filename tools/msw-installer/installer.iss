@@ -1,6 +1,6 @@
 ;//+----------------------------------------------------------------------------+
 ;//| Description:  Magic Set Editor - Program to make Magic (tm) cards          |
-;//| Copyright:    (C) 2001 - 2008 Twan van Laarhoven and "coppro"              |
+;//| Copyright:    (C) 2001 - 2011 Twan van Laarhoven and "coppro"              |
 ;//| License:      GNU General Public License 2 or later (see file COPYING)     |
 ;//+----------------------------------------------------------------------------+
 
@@ -14,7 +14,7 @@
 
 [setup]
 AppName                 = Magic Set Editor 2
-AppVerName              = Magic Set Editor 2 - 0.3.9 beta
+AppVerName              = Magic Set Editor 2.0.0
 AppCopyright            = Copyright © 2001-2011 Twan van Laarhoven and "coppro"
 DefaultDirName          = {pf}\Magic Set Editor 2
 DisableStartupPrompt    = 1
@@ -24,7 +24,6 @@ ChangesAssociations     = 1
 WizardImageBackColor    = $FFF7F0
 BackColor               = $FFF7F0
 BackColor2              = $FFF7F0
-InfoBeforeFile          = tools/msw-installer/beta-readme.rtf
 ;LicenseFile             = COPYING
 OutputDir               = tools/msw-installer/
 WizardImageFile         = tools/msw-installer/WizModernImage.bmp
@@ -35,7 +34,7 @@ PrivilegesRequired      = none
 ; Filename of the installer
 #define INSTALLER_DATE GetDateTimeString('yyyy-mm-dd','-',':')
 #if INSTALL_ALL
-  #define INSTALLER_SUFFIX ''
+  #define INSTALLER_SUFFIX '-full'
 #else
   #define INSTALLER_SUFFIX '-reduced'
 #endif
