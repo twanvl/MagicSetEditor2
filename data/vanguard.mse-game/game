@@ -1,11 +1,11 @@
-﻿mse version: 0.3.8
+﻿mse version: 0.3.9
 short name: Vanguard
 full name: Magic Vanguard
 installer group: Magic Vanguard/game files
 icon: card-sample.png
 position hint: 02
 
-version: 2011-01-02
+version: 2011-01-10
 
 # Author : Wolfwood
 # Most stuff is copy/pasted from magic.mse-game
@@ -1149,3 +1149,8 @@ keyword:
 	match: battlecry
 	mode: expert
 	reminder: Whenever it attacks, each other attacking creature gets +1/+0 until end of turn.
+keyword:
+	keyword: Living weapon
+	match: living weapon
+	mode: expert
+	reminder: When it enters the battlefield, put a 0/0 black Germ creature token onto the battlefield, then attach it to the creature.

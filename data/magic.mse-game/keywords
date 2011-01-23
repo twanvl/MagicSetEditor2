@@ -695,3 +695,8 @@ keyword:
 	match: Battlecry
 	mode: expert
 	reminder: Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.
+keyword:
+	keyword: Living weapon
+	match: Living weapon
+	mode: expert
+	reminder: When this Equipment enters the battlefield, put a 0/0 black Germ creature token onto the battlefield, then attach this to it.
