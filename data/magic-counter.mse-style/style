@@ -6,7 +6,7 @@ icon: card-sample.png
 position hint: 963
 installer group: magic/counter cards
 
-version: 2011-01-08
+version: 2011-01-23
 depends on:
 	package: magic.mse-game
 	version: 2010-10-09
@@ -77,6 +77,11 @@ styling field:
 	description: Should there be an overlay applied, such as foil?
 	match: magic-overlay-*.mse-include
 	required: false
+styling field:
+	type: boolean
+	name: colored frame
+	description: Do you want to be able to change the color of the frame?
+	initial: no
 styling style:
 	use guild mana symbols:
 		choice images:
@@ -206,6 +211,10 @@ extra card field:
 		if card.illustrator != "" then forward_editor(prefix: "Illus. by ", field: card.illustrator)
 		else forward_editor(prefix: "", field: card.illustrator)
 	description: The illustrator of the card.
+extra card field:
+	type: color
+	name: frame color
+	save value: true
 extra card style:
 	foil layer:
 		left: 0
@@ -240,3 +249,10 @@ extra card style:
 			shadow displacement x: 0
 			shadow displacement y: 0
 			shadow blur: 2
+	frame color:
+		left: 0
+		top: 0
+		width: { if styling.colored_frame=="yes" then 375 else 0 }
+		height: { if styling.colored_frame=="yes" then 523 else 0 }
+		z index: 1
+		mask: frame_mask.png
