@@ -116,6 +116,7 @@ magicseteditor_SOURCES += ./src/gui/set/window.cpp
 magicseteditor_SOURCES += ./src/gui/set/stats_panel.cpp
 magicseteditor_SOURCES += ./src/gui/set/cards_panel.cpp
 magicseteditor_SOURCES += ./src/gui/set/style_panel.cpp
+magicseteditor_SOURCES += ./src/gui/set/console_panel.cpp
 magicseteditor_SOURCES += ./src/gui/set/set_info_panel.cpp
 magicseteditor_SOURCES += ./src/gui/html_export_window.cpp
 magicseteditor_SOURCES += ./src/gui/new_window.cpp

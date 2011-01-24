@@ -112,7 +112,8 @@ am__magicseteditor_SOURCES_DIST = ./src/util/prec.gch ./src/main.cpp \
 	./src/gui/set/keywords_panel.cpp ./src/gui/set/panel.cpp \
 	./src/gui/set/random_pack_panel.cpp ./src/gui/set/window.cpp \
 	./src/gui/set/stats_panel.cpp ./src/gui/set/cards_panel.cpp \
-	./src/gui/set/style_panel.cpp ./src/gui/set/set_info_panel.cpp \
+	./src/gui/set/style_panel.cpp ./src/gui/set/console_panel.cpp \
+	./src/gui/set/set_info_panel.cpp \
 	./src/gui/html_export_window.cpp ./src/gui/new_window.cpp \
 	./src/gui/thumbnail_thread.cpp ./src/gui/util.cpp \
 	./src/gui/welcome_window.cpp ./src/gui/auto_replace_window.cpp \
@@ -243,6 +244,7 @@ am_magicseteditor_OBJECTS = $(am__objects_1) \
 	./src/gui/set/magicseteditor-stats_panel.$(OBJEXT) \
 	./src/gui/set/magicseteditor-cards_panel.$(OBJEXT) \
 	./src/gui/set/magicseteditor-style_panel.$(OBJEXT) \
+	./src/gui/set/magicseteditor-console_panel.$(OBJEXT) \
 	./src/gui/set/magicseteditor-set_info_panel.$(OBJEXT) \
 	./src/gui/magicseteditor-html_export_window.$(OBJEXT) \
 	./src/gui/magicseteditor-new_window.$(OBJEXT) \
@@ -527,7 +529,8 @@ magicseteditor_SOURCES = $(am__append_1) ./src/main.cpp \
 	./src/gui/set/keywords_panel.cpp ./src/gui/set/panel.cpp \
 	./src/gui/set/random_pack_panel.cpp ./src/gui/set/window.cpp \
 	./src/gui/set/stats_panel.cpp ./src/gui/set/cards_panel.cpp \
-	./src/gui/set/style_panel.cpp ./src/gui/set/set_info_panel.cpp \
+	./src/gui/set/style_panel.cpp ./src/gui/set/console_panel.cpp \
+	./src/gui/set/set_info_panel.cpp \
 	./src/gui/html_export_window.cpp ./src/gui/new_window.cpp \
 	./src/gui/thumbnail_thread.cpp ./src/gui/util.cpp \
 	./src/gui/welcome_window.cpp ./src/gui/auto_replace_window.cpp \
@@ -952,6 +955,9 @@ src/gui/set/$(DEPDIR)/$(am__dirstamp):
 ./src/gui/set/magicseteditor-style_panel.$(OBJEXT):  \
 	src/gui/set/$(am__dirstamp) \
 	src/gui/set/$(DEPDIR)/$(am__dirstamp)
+./src/gui/set/magicseteditor-console_panel.$(OBJEXT):  \
+	src/gui/set/$(am__dirstamp) \
+	src/gui/set/$(DEPDIR)/$(am__dirstamp)
 ./src/gui/set/magicseteditor-set_info_panel.$(OBJEXT):  \
 	src/gui/set/$(am__dirstamp) \
 	src/gui/set/$(DEPDIR)/$(am__dirstamp)
@@ -1338,6 +1344,7 @@ mostlyclean-compile:
 	-rm -f ./src/gui/magicseteditor-util.$(OBJEXT)
 	-rm -f ./src/gui/magicseteditor-welcome_window.$(OBJEXT)
 	-rm -f ./src/gui/set/magicseteditor-cards_panel.$(OBJEXT)
+	-rm -f ./src/gui/set/magicseteditor-console_panel.$(OBJEXT)
 	-rm -f ./src/gui/set/magicseteditor-keywords_panel.$(OBJEXT)
 	-rm -f ./src/gui/set/magicseteditor-panel.$(OBJEXT)
 	-rm -f ./src/gui/set/magicseteditor-random_pack_panel.$(OBJEXT)
@@ -1515,6 +1522,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/control/$(DEPDIR)/magicseteditor-text_ctrl.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/control/$(DEPDIR)/magicseteditor-tree_list.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/set/$(DEPDIR)/magicseteditor-cards_panel.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./src/gui/set/$(DEPDIR)/magicseteditor-console_panel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/set/$(DEPDIR)/magicseteditor-keywords_panel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/set/$(DEPDIR)/magicseteditor-panel.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/gui/set/$(DEPDIR)/magicseteditor-random_pack_panel.Po@am__quote@
@@ -2715,6 +2723,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/gui/set/style_panel.cpp' object='./src/gui/set/magicseteditor-style_panel.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/gui/set/magicseteditor-style_panel.obj `if test -f './src/gui/set/style_panel.cpp'; then $(CYGPATH_W) './src/gui/set/style_panel.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/gui/set/style_panel.cpp'; fi`
+
+./src/gui/set/magicseteditor-console_panel.o: ./src/gui/set/console_panel.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/gui/set/magicseteditor-console_panel.o -MD -MP -MF ./src/gui/set/$(DEPDIR)/magicseteditor-console_panel.Tpo -c -o ./src/gui/set/magicseteditor-console_panel.o `test -f './src/gui/set/console_panel.cpp' || echo '$(srcdir)/'`./src/gui/set/console_panel.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) ./src/gui/set/$(DEPDIR)/magicseteditor-console_panel.Tpo ./src/gui/set/$(DEPDIR)/magicseteditor-console_panel.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/gui/set/console_panel.cpp' object='./src/gui/set/magicseteditor-console_panel.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/gui/set/magicseteditor-console_panel.o `test -f './src/gui/set/console_panel.cpp' || echo '$(srcdir)/'`./src/gui/set/console_panel.cpp
+
+./src/gui/set/magicseteditor-console_panel.obj: ./src/gui/set/console_panel.cpp
+@am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/gui/set/magicseteditor-console_panel.obj -MD -MP -MF ./src/gui/set/$(DEPDIR)/magicseteditor-console_panel.Tpo -c -o ./src/gui/set/magicseteditor-console_panel.obj `if test -f './src/gui/set/console_panel.cpp'; then $(CYGPATH_W) './src/gui/set/console_panel.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/gui/set/console_panel.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(am__mv) ./src/gui/set/$(DEPDIR)/magicseteditor-console_panel.Tpo ./src/gui/set/$(DEPDIR)/magicseteditor-console_panel.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='./src/gui/set/console_panel.cpp' object='./src/gui/set/magicseteditor-console_panel.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/gui/set/magicseteditor-console_panel.obj `if test -f './src/gui/set/console_panel.cpp'; then $(CYGPATH_W) './src/gui/set/console_panel.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/gui/set/console_panel.cpp'; fi`
 
 ./src/gui/set/magicseteditor-set_info_panel.o: ./src/gui/set/set_info_panel.cpp
 @am__fastdepCXX_TRUE@	$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/gui/set/magicseteditor-set_info_panel.o -MD -MP -MF ./src/gui/set/$(DEPDIR)/magicseteditor-set_info_panel.Tpo -c -o ./src/gui/set/magicseteditor-set_info_panel.o `test -f './src/gui/set/set_info_panel.cpp' || echo '$(srcdir)/'`./src/gui/set/set_info_panel.cpp

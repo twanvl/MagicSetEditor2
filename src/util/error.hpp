@@ -132,17 +132,6 @@ class ScriptErrorNoMember : public ScriptError {
 		: ScriptError(_ERROR_2_("has no member", type, member)) {}
 };
 
-// ----------------------------------------------------------------------------- : Bounds checking
-
-template <typename T>
-T& at(vector<T>& x, size_t pos) {
-	if (pos < x.size()) {
-		return x[pos];
-	} else {
-		throw InternalError(_("vector<T> index out of bounds: %d > %d, where T = ") + typeid(x).name());
-	}
-}
-
 // ----------------------------------------------------------------------------- : Error/message handling
 
 /// Should a popup be shown for internal errors?
