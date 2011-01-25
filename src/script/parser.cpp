@@ -288,9 +288,21 @@ void TokenIterator::readStringToken() {
 			}
 			c = input.GetChar(pos++);
 			if      (c == _('n')) str += _('\n');
+			else if (c == _('r')) str += _('\r');
+			else if (c == _('t')) str += _('\t');
+			else if (c == _('&')); // escape for nothing
 			else if (c == _('<')) str += _('\1'); // escape for <
-			else if (c == _('\\') || c == _('"') || c == _('{') || c == _('}')) {
-				str += c;       // \ or { or "
+			else if (c == _('\\') || c == _('"') || c == _('\'') || c == _('{') || c == _('}')) {
+				str += c; // \ or { or " or ', don't warn about these, since they look escape-worthy
+			} else if (c >= _('0') && c <= _('9')) {
+				// numeric escape
+				int i = 0;
+				while (c >= _('0') && c <= _('9')) {
+					i = i * 10 + static_cast<int>(c - _('0'));
+					c = input.GetChar(pos++);
+				}
+				pos--;
+				str += static_cast<Char>(i); // ignore
 			} else {
 				add_error(String::Format(_("Invalid string escape sequence: \"\\%c\""),c));
 				str += _('\\') + c; // ignore
