@@ -295,6 +295,8 @@ ConsolePanel::ConsolePanel(Window* parent, int id)
 	, is_active_window(false)
 	, blinker_state(0)
 	, blinker_timer(this)
+	, messages(nullptr)
+	, entry(nullptr)
 {
 	// init controls
 	splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
@@ -363,6 +365,8 @@ void ConsolePanel::onIdle(wxIdleEvent&) {
 }
 
 void ConsolePanel::get_pending_errors() {
+	// The panel might not be initialized yet, in particular, construction of controls might fail, which results in a popup dialog with an event loop
+	if (!messages) return;
 	// add pending messages
 	MessageType type;
 	String msg;
