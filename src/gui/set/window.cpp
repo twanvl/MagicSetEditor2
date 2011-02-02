@@ -813,6 +813,11 @@ void SetWindow::onChildMenu(wxCommandEvent& ev) {
 	current_panel->onCommand(ev.GetId());
 }
 
+void SetWindow::onMenuOpen(wxMenuEvent& ev) {
+	wxFrame::OnMenuOpen(ev);
+	current_panel->onMenuOpen(ev);
+}
+
 void SetWindow::onIdle(wxIdleEvent& ev) {
 	// Stuff that must be done in the main thread
 	show_update_dialog(this);
@@ -856,6 +861,7 @@ BEGIN_EVENT_TABLE(SetWindow, wxFrame)
 	EVT_MENU			(ID_HELP_INDEX,			SetWindow::onHelpIndex)
 	EVT_MENU			(ID_HELP_WEBSITE,		SetWindow::onHelpWebsite)
 	EVT_MENU			(ID_HELP_ABOUT,			SetWindow::onHelpAbout)
+	EVT_MENU_OPEN		(						SetWindow::onMenuOpen)
 	EVT_TOOL_RANGE		(ID_CHILD_MIN, ID_CHILD_MAX,   SetWindow::onChildMenu)
 	EVT_COMMAND_RANGE	(ID_CHILD_MIN, ID_CHILD_MAX, wxEVT_COMMAND_BUTTON_CLICKED, SetWindow::onChildMenu)
 	EVT_COMMAND_RANGE	(ID_CHILD_MIN, ID_CHILD_MAX, wxEVT_COMMAND_SPINCTRL_UPDATED, SetWindow::onChildMenu)

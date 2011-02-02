@@ -44,6 +44,9 @@ class SetWindowPanel : public wxPanel, public SetView {
 	/// Respond to one of those extra menu/tool items
 	virtual void onCommand(int id) {}
 	
+	/// Called before a menu is opened in the parent window
+	virtual void onMenuOpen(wxMenuEvent&) {}
+	
 	// --------------------------------------------------- : Actions/Events
 	
 	/// Should return true if this panel wants to get focus to show an action

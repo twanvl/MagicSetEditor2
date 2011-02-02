@@ -37,6 +37,7 @@ class CardsPanel : public SetWindowPanel {
 	virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
 	virtual void onUpdateUI(wxUpdateUIEvent&);
 	virtual void onCommand(int id);
+	virtual void onMenuOpen(wxMenuEvent&);
 	
 	// --------------------------------------------------- : Actions
 	
