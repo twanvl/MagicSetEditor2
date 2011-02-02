@@ -152,6 +152,13 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(StyleSheetSettings) {
 	REFLECT(card_spellcheck_enabled);
 }
 
+// ----------------------------------------------------------------------------- : Printing
+
+IMPLEMENT_REFLECTION_ENUM(PageLayoutType) {
+	VALUE_N("no space",    LAYOUT_NO_SPACE);
+	VALUE_N("equal space", LAYOUT_EQUAL_SPACE);
+}
+
 // ----------------------------------------------------------------------------- : Settings
 
 Settings settings;
@@ -166,6 +173,7 @@ Settings::Settings()
 	, symbol_grid_size     (30)
 	, symbol_grid          (true)
 	, symbol_grid_snap     (false)
+	, print_layout         (LAYOUT_NO_SPACE)
 	#if USE_OLD_STYLE_UPDATE_CHECKER
 	, updates_url          (_("http://magicseteditor.sourceforge.net/updates"))
 	#endif
@@ -253,6 +261,7 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(Settings) {
 	REFLECT(symbol_grid);
 	REFLECT(symbol_grid_snap);
 	REFLECT(default_game);
+	REFLECT(print_layout);
 	REFLECT(apprentice_location);
 	#if USE_OLD_STYLE_UPDATE_CHECKER
 		REFLECT(updates_url);

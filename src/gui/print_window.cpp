@@ -19,100 +19,6 @@
 DECLARE_TYPEOF_COLLECTION(CardP);
 DECLARE_POINTER_TYPE(PageLayout);
 
-// ----------------------------------------------------------------------------- : Buffering DC
-
-/// MemoryDC that buffers calls to write text
-/** The printer device doesn't support alpha channels (at least not in wxMSW)
- *  This would result in black backgrounds where symbols should be transparent
- *  Our solution is:
- *   1. Write all bitmaps to a buffer DC, initially white
- *   2. When drawing with alpha: blend with the buffer
- *   3. When drawing text: buffer the call
- *   4. Draw the buffer image to the device
- *   5. Replay the buffered text draw calls
- *  To simplify things this class itself is a fullblown DC, only text calls are buffered for later
- *  Actually buffering text separatly would not be necessary at all, but if we don't the text will be
- *  printed in a low resolution.
- */
-class TextBufferDC : public wxMemoryDC {
-  public:
-	TextBufferDC(int width, int height, bool buffer_text);
-	
-	virtual void DoDrawText(const String& str, int x, int y);
-	virtual void DoDrawRotatedText(const String& str, int x, int y, Radians angle);
-	
-	/// Copy the contents of the DC to a target device, this DC becomes invalid
-	void drawToDevice(DC& dc, int x = 0, int y = 0);
-	
-  private:
-	// A call to DrawText
-	struct TextDraw : public IntrusivePtrBase<TextDraw> {
-		wxFont font;
-		Color  color;
-		int x, y;
-		String text;
-		Radians angle;
-		double user_scale_x, user_scale_y;
-		
-		TextDraw(wxFont font, Color color, double user_scale_x, double user_scale_y, int x, int y, String text, Radians angle = 0)
-			: font(font), color(color), x(x), y(y), text(text), angle(angle), user_scale_x(user_scale_x), user_scale_y(user_scale_y)
-		{}
-	};
-  public:
-	typedef intrusive_ptr<TextDraw> TextDrawP;
-  private:
-	vector<TextDrawP> text;
-	Bitmap buffer;
-	bool buffer_text; ///< buffering text?
-};
-
-TextBufferDC::TextBufferDC(int width, int height, bool buffer_text)
-	: buffer(width, height, 32)
-	, buffer_text(buffer_text)
-{
-	SelectObject(buffer);
-	// initialize to white
-	clearDC(*this,*wxWHITE_BRUSH);
-}
-void TextBufferDC::DoDrawText(const String& str, int x, int y) {
-	if (buffer_text) {
-		double usx,usy;
-		GetUserScale(&usx, &usy);
-		text.push_back( intrusive(new TextDraw(GetFont(), GetTextForeground(), usx, usy, x, y, str)) );
-	} else {
-		wxMemoryDC::DoDrawText(str,x,y);
-	}
-}
-void TextBufferDC::DoDrawRotatedText(const String& str, int x, int y, Radians angle) {
-	if (buffer_text) {
-		double usx,usy;
-		GetUserScale(&usx, &usy);
-		text.push_back( intrusive(new TextDraw(GetFont(), GetTextForeground(), usx, usy, x, y, str, angle)) );
-	} else {
-		wxMemoryDC::DoDrawRotatedText(str,x,y,rad_to_deg(angle));
-	}
-}
-
-DECLARE_TYPEOF_COLLECTION(TextBufferDC::TextDrawP);
-
-void TextBufferDC::drawToDevice(DC& dc, int x, int y) {
-	SelectObject(wxNullBitmap);
-	dc.DrawBitmap(buffer, x, y);
-	FOR_EACH(t, text) {
-		double usx,usy;
-		dc.GetUserScale(&usx, &usy);
-		dc.SetUserScale(usx * t->user_scale_x, usx * t->user_scale_y);
-		dc.SetFont          (t->font);
-		dc.SetTextForeground(t->color);
-		if (!is_rad0(t->angle)) {
-			dc.DrawRotatedText(t->text, t->x + x, t->y + y, rad_to_deg(t->angle));
-		} else {
-			dc.DrawText(t->text, t->x + x, t->y + y);
-		}
-		dc.SetUserScale(usx, usy);
-	}
-}
-
 // ----------------------------------------------------------------------------- : Layout
 
 PageLayout::PageLayout()
@@ -120,18 +26,27 @@ PageLayout::PageLayout()
 	, rows(0), cols(0), card_landscape(false)
 {}
 
-PageLayout::PageLayout(const StyleSheet& stylesheet, const RealSize& page_size)
-	: page_size(page_size)
-	, margin_left(0), margin_right(0), margin_top(0), margin_bottom(0)
-{
+void PageLayout::init(const StyleSheet& stylesheet, PageLayoutType type, const RealSize& page_size) {
+	this->page_size = page_size;
+	margin_left = margin_right = margin_top = margin_bottom = 0;
 	card_size.width  = stylesheet.card_width  * 25.4 / stylesheet.card_dpi;
 	card_size.height = stylesheet.card_height * 25.4 / stylesheet.card_dpi;
 	card_landscape = card_size.width > card_size.height;
 	cols = int(floor(page_size.width  / card_size.width));
 	rows = int(floor(page_size.height / card_size.height));
-	// distribute whitespace evenly
-	margin_left = margin_right  = card_spacing.width  = (page_size.width  - (cols * card_size.width )) / (cols + 1);
-	margin_top  = margin_bottom = card_spacing.height = (page_size.height - (rows * card_size.height)) / (rows + 1);
+	// spacing
+	double hspace = (page_size.width  - (cols * card_size.width ));
+	double vspace = (page_size.height - (rows * card_size.height));
+	if (type == LAYOUT_NO_SPACE) {
+		// no space between cards
+		card_spacing.width = card_spacing.height = 0;
+		margin_left = margin_right  = hspace / 2;
+		margin_top = vspace * 1./3; margin_bottom = vspace * 2./3; // most printers have more margin at the bottom
+	} else {
+		// distribute whitespace evenly
+		margin_left = margin_right  = card_spacing.width  = hspace / (cols + 1);
+		margin_top  = margin_bottom = card_spacing.height = vspace / (rows + 1);
+	}
 }
 
 // ----------------------------------------------------------------------------- : Printout
@@ -139,7 +54,7 @@ PageLayout::PageLayout(const StyleSheet& stylesheet, const RealSize& page_size)
 /// A printout object specifying how to print a specified set of cards
 class CardsPrintout : public wxPrintout {
   public:
-	CardsPrintout(const SetP& set, const vector<CardP>& cards);
+	CardsPrintout(PrintJobP const& job);
 	/// Number of pages, and something else I don't understand...
 	virtual void GetPageInfo(int* pageMin, int* pageMax, int* pageFrom, int* pageTo);
 	/// Again, 'number of pages', strange wx interface
@@ -150,24 +65,22 @@ class CardsPrintout : public wxPrintout {
 	virtual bool OnPrintPage(int page);
 	
   private:
-	PageLayoutP layout;
-	SetP set;
-	vector<CardP> cards; ///< Cards to print
+	PrintJobP job; ///< Cards to print
 	DataViewer viewer;
 	double scale_x, scale_y; // priter pixel per mm
 	
-	inline int pageCount() {
-		return ((int)cards.size() + layout->cardsPerPage() - 1) / layout->cardsPerPage();
+	int pageCount() {
+		return job->num_pages();
 	}
 	
 	/// Draw a card, that is card_nr on this page, find the postion by asking the layout
 	void drawCard(DC& dc, const CardP& card, int card_nr);
 };
 
-CardsPrintout::CardsPrintout(const SetP& set, const vector<CardP>& cards)
-	: set(set), cards(cards)
+CardsPrintout::CardsPrintout(PrintJobP const& job)
+	: job(job)
 {
-	viewer.setSet(set);
+	viewer.setSet(job->set);
 }
 
 void CardsPrintout::GetPageInfo(int* page_min, int* page_max, int* page_from, int* page_to) {
@@ -180,10 +93,10 @@ bool CardsPrintout::HasPage(int page) {
 }
 
 void CardsPrintout::OnPreparePrinting() {
-	int pw_mm, ph_mm;
-	GetPageSizeMM(&pw_mm, &ph_mm);
-	if (!layout) {
-		layout = intrusive(new PageLayout(*set->stylesheet, RealSize(pw_mm, ph_mm)));
+	if (job->layout.empty()) {
+		int pw_mm, ph_mm;
+		GetPageSizeMM(&pw_mm, &ph_mm);
+		job->layout.init(*job->set->stylesheet, job->layout_type, RealSize(pw_mm, ph_mm));
 	}
 }
 
@@ -198,24 +111,24 @@ bool CardsPrintout::OnPrintPage(int page) {
 	scale_x = (double)pw_px / pw_mm;
 	scale_y = (double)ph_px / ph_mm;
 	// print the cards that belong on this page
-	int start = (page - 1) * layout->cardsPerPage();
-	int end   = min((int)cards.size(), start + layout->cardsPerPage());
+	int start = (page - 1) * job->layout.cards_per_page();
+	int end   = min((int)job->cards.size(), start + job->layout.cards_per_page());
 	for (int i = start ; i < end ; ++i) {
-		drawCard(dc, cards[i], i - start);
+		drawCard(dc, job->cards.at(i), i - start);
 	}
 	return true;
 }
 
 void CardsPrintout::drawCard(DC& dc, const CardP& card, int card_nr) {
 	// determine position
-	int col = card_nr % layout->cols;
-	int row = card_nr / layout->cols;
-	RealPoint pos( layout->margin_left + (layout->card_size.width  + layout->card_spacing.width)  * col
-	             , layout->margin_top  + (layout->card_size.height + layout->card_spacing.height) * row);
+	int col = card_nr % job->layout.cols;
+	int row = card_nr / job->layout.cols;
+	RealPoint pos( job->layout.margin_left + (job->layout.card_size.width  + job->layout.card_spacing.width)  * col
+	             , job->layout.margin_top  + (job->layout.card_size.height + job->layout.card_spacing.height) * row);
 	// determine rotation
-	const StyleSheet& stylesheet = set->stylesheetFor(card);
+	const StyleSheet& stylesheet = job->set->stylesheetFor(card);
 	int rotation = 0;
-	if ((stylesheet.card_width > stylesheet.card_height) != layout->card_landscape) {
+	if ((stylesheet.card_width > stylesheet.card_height) != job->layout.card_landscape) {
 		rotation = 90 - rotation;
 	}
 	/*
@@ -223,8 +136,8 @@ void CardsPrintout::drawCard(DC& dc, const CardP& card, int card_nr) {
 	RealSize card_size( stylesheet.card_width  * 25.4 / stylesheet.card_dpi
 	                  , stylesheet.card_height * 25.4 / stylesheet.card_dpi);
 	if (rotation == 90) swap(card_size.width, card_size.height);
-	// adjust card size, to center card in the available space (from layout->card_size)?
-	// TODO
+	// adjust card size, to center card in the available space (from job->layout.card_size)?
+	// TODO: deal with different sized cards in general
 	*/
 	
 	// create buffers
@@ -232,7 +145,9 @@ void CardsPrintout::drawCard(DC& dc, const CardP& card, int card_nr) {
 	if (rotation == 90) swap(w,h);
 	// Draw using text buffer
 	double zoom = IsPreview() ? 1 : 4;
-	TextBufferDC bufferDC(w*zoom,h*zoom,false);
+	wxBitmap buffer(w*zoom,h*zoom,32);
+	wxMemoryDC bufferDC(buffer);
+	clearDC(bufferDC,*wxWHITE_BRUSH);
 	RotatedDC rdc(bufferDC, rotation, stylesheet.getCardRect(), zoom, QUALITY_AA, ROTATION_ATTACH_TOP_LEFT);
 	// render card to dc
 	viewer.setCard(card);
@@ -241,49 +156,67 @@ void CardsPrintout::drawCard(DC& dc, const CardP& card, int card_nr) {
 	double px_per_mm = zoom * stylesheet.card_dpi / 25.4;
 	dc.SetUserScale(scale_x / px_per_mm, scale_y / px_per_mm);
 	dc.SetDeviceOrigin(int(scale_x * pos.x), int(scale_y * pos.y));
-	bufferDC.drawToDevice(dc, 0, 0); // adjust for scaling
+	bufferDC.SelectObject(wxNullBitmap);
+	dc.DrawBitmap(buffer, 0, 0);
 }
 
 // ----------------------------------------------------------------------------- : PrintWindow
 
-const vector<CardP>* cards_to_print(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices) {
+PrintJobP make_print_job(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices) {
 	// Let the user choose cards
-	//CardSelectWindow wnd(parent, set, _LABEL_("select cards print"), _TITLE_("select cards"));
+	// controls
 	ExportWindowBase wnd(parent, _TITLE_("select cards"), set, choices);
+	wxCheckBox* space = new wxCheckBox(&wnd, wxID_ANY, L"Put space between cards");
+	space->SetValue(settings.print_layout);
+	// layout
 	wxSizer* s = new wxBoxSizer(wxVERTICAL);
-		wxSizer* s2 = wnd.Create();
-		s->Add(s2, 1, wxEXPAND | wxALL, 8);
+		wxSizer* s2 = new wxBoxSizer(wxHORIZONTAL);
+			wxSizer* s3 = wnd.Create();
+			s2->Add(s3, 1, wxEXPAND | wxALL, 8);
+			wxSizer* s4 = new wxStaticBoxSizer(wxVERTICAL, &wnd, L"Settings");
+				s4->Add(space, 1, wxALL | wxALIGN_TOP, 8);
+			s2->Add(s4, 1, wxEXPAND | wxALL & ~wxLEFT, 8);
+		s->Add(s2, 1, wxEXPAND);
 		s->Add(wnd.CreateButtonSizer(wxOK | wxCANCEL) , 0, wxEXPAND | wxALL, 8);
 	s->SetSizeHints(&wnd);
 	wnd.SetSizer(s);
-	wnd.SetSize(300,-1);
+	wnd.SetMinSize(wxSize(300,-1));
 	// show window
 	if (wnd.ShowModal() != wxID_OK) {
-		return nullptr; // cancel
+		return PrintJobP(); // cancel
+	} else {
+		// make print job
+		PrintJobP job = intrusive(new PrintJob(set));
+		job->layout_type = settings.print_layout = space->GetValue() ? LAYOUT_EQUAL_SPACE : LAYOUT_NO_SPACE;
+		job->cards = wnd.getSelection();
+		return job;
 	}
-	return &wnd.getSelection();
-	
 }
 
-void print_preview(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices) {
-	const vector<CardP>* cards = cards_to_print(parent, set, choices);
-	if (!cards) return;
+void print_preview(Window* parent, const PrintJobP& job) {
+	if (!job) return;
 	// Show the print preview
 	wxPreviewFrame* frame = new wxPreviewFrame(
 		new wxPrintPreview(
-			new CardsPrintout(set, *cards),
-			new CardsPrintout(set, *cards)
+			new CardsPrintout(job),
+			new CardsPrintout(job)
 		), parent, _TITLE_("print preview"));
 	frame->Initialize();
 	frame->Maximize(true);
 	frame->Show();
 }
 
-void print_set(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices) {
-	const vector<CardP>* cards = cards_to_print(parent, set, choices);
-	if (!cards) return;
+void print_set(Window* parent, const PrintJobP& job) {
+	if (!job) return;
 	// Print the cards
 	wxPrinter p;
-	CardsPrintout pout(set, *cards);
+	CardsPrintout pout(job);
 	p.Print(parent, &pout, true);
+}
+
+void print_preview(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices) {
+	print_preview(parent, make_print_job(parent, set, choices));
+}
+void print_set(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices) {
+	print_set(parent, make_print_job(parent, set, choices));
 }

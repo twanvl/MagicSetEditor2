@@ -112,6 +112,14 @@ class StyleSheetSettings : public IntrusivePtrBase<StyleSheetSettings> {
 	DECLARE_REFLECTION();
 };
 
+// ----------------------------------------------------------------------------- : Printing settings
+
+enum PageLayoutType
+{	LAYOUT_NO_SPACE
+,	LAYOUT_EQUAL_SPACE
+//,	LAYOUT_CUSTOM
+};
+
 // ----------------------------------------------------------------------------- : Settings
 
 /// Class that holds MSE settings.
@@ -177,6 +185,10 @@ class Settings {
 	
 	/// Get the options for an export template
 	IndexMap<FieldP,ValueP>& exportOptionsFor(const ExportTemplate& export_template);
+	
+	// --------------------------------------------------- : Printing
+	
+	PageLayoutType print_layout;
 	
 	// --------------------------------------------------- : Special game stuff
 	String apprentice_location;
