@@ -135,6 +135,9 @@ bool CardsPanel::Layout() {
 	return SetWindowPanel::Layout();
 }
 
+/*void removeInsertSymbolMenu() {
+		menuFormat->Append(ID_INSERT_SYMBOL,	_(""),				 _MENU_("insert symbol"));
+}*/// TODO
 CardsPanel::~CardsPanel() {
 //	settings.card_notes_height = splitter->GetSashPosition();
 	// we don't own the submenu
@@ -284,17 +287,6 @@ void CardsPanel::onUpdateUI(wxUpdateUIEvent& ev) {
 		case ID_INSERT_SYMBOL: {
 			wxMenu* menu = editor->getMenu(ID_INSERT_SYMBOL);
 			ev.Enable(menu);
-			/*
-			if (insertSymbolMenu->GetSubMenu() != menu  ||  (menu && menu->GetParent() != menuFormat)) {
-				// re-add the menu
-				fprintf(stderr,"insert1 %p %p\n", menuFormat,insertSymbolMenu);fflush(stderr);
-				menuFormat->Remove(ID_INSERT_SYMBOL);
-				fprintf(stderr,"insert2\n");fflush(stderr);
-				insertSymbolMenu->SetSubMenu(menu);
-				fprintf(stderr,"insert3\n");fflush(stderr);
-				menuFormat->Append(insertSymbolMenu);
-				fprintf(stderr,"insert4\n");fflush(stderr);
-			}*/
 			break;
 		}
 #endif

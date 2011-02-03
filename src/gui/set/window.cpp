@@ -814,8 +814,8 @@ void SetWindow::onChildMenu(wxCommandEvent& ev) {
 }
 
 void SetWindow::onMenuOpen(wxMenuEvent& ev) {
-	wxFrame::OnMenuOpen(ev);
 	current_panel->onMenuOpen(ev);
+	wxFrame::OnMenuOpen(ev);
 }
 
 void SetWindow::onIdle(wxIdleEvent& ev) {
