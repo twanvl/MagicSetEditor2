@@ -146,7 +146,8 @@ void CardsPrintout::drawCard(DC& dc, const CardP& card, int card_nr) {
 	// Draw using text buffer
 	double zoom = IsPreview() ? 1 : 4;
 	wxBitmap buffer(w*zoom,h*zoom,32);
-	wxMemoryDC bufferDC(buffer);
+	wxMemoryDC bufferDC;
+	bufferDC.SelectObject(buffer);
 	clearDC(bufferDC,*wxWHITE_BRUSH);
 	RotatedDC rdc(bufferDC, rotation, stylesheet.getCardRect(), zoom, QUALITY_AA, ROTATION_ATTACH_TOP_LEFT);
 	// render card to dc
