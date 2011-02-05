@@ -52,11 +52,10 @@ void AboutWindow::draw(DC& dc) {
 	// draw version info
 	dc.SetFont(wxFont(9, wxSWISS, wxNORMAL, wxNORMAL, false, _("Arial")));
 	dc.DrawText(_("Version: ") + app_version.toString() + version_suffix, 34, 110);
-	dc.DrawText(_("This is a development version!"), 34, 130);
-	dc.DrawText(_("   it probably contains lots bugs,"), 34, 147);
-	dc.DrawText(_("   it misses some very important features,"), 34, 164);
-	dc.DrawText(_("   don't use it for anything important"), 34, 181);
-	dc.DrawText(_("Copyright \xA9 2007 Twan van Laarhoven"), 34, 214);
+	dc.DrawText(_("Copyright \xA9 2001-2011"), 34, 130);
+	dc.DrawText(_("   Twan van Laarhoven,"), 34, 147);
+	dc.DrawText(_("   Sean Hunt,"), 34, 164);
+	dc.DrawText(_("   and the other MSE developers"), 34, 181);
 }
 
 BEGIN_EVENT_TABLE(AboutWindow, wxDialog)
