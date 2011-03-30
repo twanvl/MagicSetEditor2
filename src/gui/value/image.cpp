@@ -41,7 +41,7 @@ void ImageValueEditor::sliceImage(const Image& image) {
 		// store the image into the set
 		FileName new_image_file = getLocalPackage().newFileName(field().name,_("")); // a new unique name in the package
 		Image img = s.getImage();
-		img.SaveFile(getLocalPackage().nameOut(new_image_file), img.HasAlpha() ? wxBITMAP_TYPE_PNG : wxBITMAP_TYPE_JPEG);
+		img.SaveFile(getLocalPackage().nameOut(new_image_file), wxBITMAP_TYPE_PNG); // always use PNG images, see #69. Disk space is cheap anyway.
 		addAction(value_action(valueP(), new_image_file));
 	}
 }
