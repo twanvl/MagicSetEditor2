@@ -39,5 +39,5 @@ endif
 
 # The script used to generate is MakeAM.sh' > Makefile.am;
 
-find . -name *.cpp | sed "s/\./magicseteditor_SOURCES += ./" >> Makefile.am;
+find . -name *.cpp | grep -v "win32_cli_wrapper\.cpp$" | sed "s/\./magicseteditor_SOURCES += ./" >> Makefile.am;
 

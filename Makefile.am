@@ -39,7 +39,6 @@ endif
 # The script used to generate is MakeAM.sh
 magicseteditor_SOURCES += ./src/cli/cli_main.cpp
 magicseteditor_SOURCES += ./src/cli/text_io_handler.cpp
-magicseteditor_SOURCES += ./src/cli/win32_cli_wrapper.cpp
 magicseteditor_SOURCES += ./src/data/action/keyword.cpp
 magicseteditor_SOURCES += ./src/data/action/set.cpp
 magicseteditor_SOURCES += ./src/data/action/symbol.cpp

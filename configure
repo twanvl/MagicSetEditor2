@@ -3044,9 +3044,6 @@ fi
 
 
 # Checks for programs.
-if test -n "${CXXFLAGS}"; then
-  user_set_cxxflags=yes
-fi
 ac_ext=cpp
 ac_cpp='$CXXCPP $CPPFLAGS'
 ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -3757,11 +3754,9 @@ else
   DEFAULT_CXXFLAGS="-O2"
   WXCONFIG_FLAGS=""
 fi
-DEFAULT_CXXFLAGS="$DEFAULT_CXXFLAGS -std=gnu++98"
 
-if test X$user_set_cxxflags != Xyes; then
-  CXXFLAGS=${DEFAULT_CXXFLAGS}
-fi
+CXXFLAGS="${CXXFLAGS} ${DEFAULT_CXXFLAGS} -std=gnu++98"
+LDFLAGS="${LDFLAGS}"
 
 # Checks for libraries.
 ac_ext=c

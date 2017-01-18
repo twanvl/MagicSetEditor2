@@ -117,12 +117,11 @@ am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__magicseteditor_SOURCES_DIST = ./src/util/prec.gch \
 	./src/cli/cli_main.cpp ./src/cli/text_io_handler.cpp \
-	./src/cli/win32_cli_wrapper.cpp ./src/data/action/keyword.cpp \
-	./src/data/action/set.cpp ./src/data/action/symbol.cpp \
-	./src/data/action/symbol_part.cpp ./src/data/action/value.cpp \
-	./src/data/field/boolean.cpp ./src/data/field/choice.cpp \
-	./src/data/field/color.cpp ./src/data/field/image.cpp \
-	./src/data/field/information.cpp \
+	./src/data/action/keyword.cpp ./src/data/action/set.cpp \
+	./src/data/action/symbol.cpp ./src/data/action/symbol_part.cpp \
+	./src/data/action/value.cpp ./src/data/field/boolean.cpp \
+	./src/data/field/choice.cpp ./src/data/field/color.cpp \
+	./src/data/field/image.cpp ./src/data/field/information.cpp \
 	./src/data/field/multiple_choice.cpp \
 	./src/data/field/package_choice.cpp \
 	./src/data/field/symbol.cpp ./src/data/field/text.cpp \
@@ -225,7 +224,6 @@ am__dirstamp = $(am__leading_dot)dirstamp
 am_magicseteditor_OBJECTS = $(am__objects_1) \
 	./src/cli/magicseteditor-cli_main.$(OBJEXT) \
 	./src/cli/magicseteditor-text_io_handler.$(OBJEXT) \
-	./src/cli/magicseteditor-win32_cli_wrapper.$(OBJEXT) \
 	./src/data/action/magicseteditor-keyword.$(OBJEXT) \
 	./src/data/action/magicseteditor-set.$(OBJEXT) \
 	./src/data/action/magicseteditor-symbol.$(OBJEXT) \
@@ -608,12 +606,12 @@ magicseteditor_CXXFLAGS = $(AM_CXXFLAGS) $(am__append_2)
 
 # The script used to generate is MakeAM.sh
 magicseteditor_SOURCES = $(am__append_1) ./src/cli/cli_main.cpp \
-	./src/cli/text_io_handler.cpp ./src/cli/win32_cli_wrapper.cpp \
-	./src/data/action/keyword.cpp ./src/data/action/set.cpp \
-	./src/data/action/symbol.cpp ./src/data/action/symbol_part.cpp \
-	./src/data/action/value.cpp ./src/data/field/boolean.cpp \
-	./src/data/field/choice.cpp ./src/data/field/color.cpp \
-	./src/data/field/image.cpp ./src/data/field/information.cpp \
+	./src/cli/text_io_handler.cpp ./src/data/action/keyword.cpp \
+	./src/data/action/set.cpp ./src/data/action/symbol.cpp \
+	./src/data/action/symbol_part.cpp ./src/data/action/value.cpp \
+	./src/data/field/boolean.cpp ./src/data/field/choice.cpp \
+	./src/data/field/color.cpp ./src/data/field/image.cpp \
+	./src/data/field/information.cpp \
 	./src/data/field/multiple_choice.cpp \
 	./src/data/field/package_choice.cpp \
 	./src/data/field/symbol.cpp ./src/data/field/text.cpp \
@@ -822,8 +820,6 @@ src/cli/$(DEPDIR)/$(am__dirstamp):
 ./src/cli/magicseteditor-cli_main.$(OBJEXT): src/cli/$(am__dirstamp) \
 	src/cli/$(DEPDIR)/$(am__dirstamp)
 ./src/cli/magicseteditor-text_io_handler.$(OBJEXT):  \
-	src/cli/$(am__dirstamp) src/cli/$(DEPDIR)/$(am__dirstamp)
-./src/cli/magicseteditor-win32_cli_wrapper.$(OBJEXT):  \
 	src/cli/$(am__dirstamp) src/cli/$(DEPDIR)/$(am__dirstamp)
 src/data/action/$(am__dirstamp):
 	@$(MKDIR_P) ./src/data/action
@@ -1418,7 +1414,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./src/$(DEPDIR)/magicseteditor-main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/cli/$(DEPDIR)/magicseteditor-cli_main.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/cli/$(DEPDIR)/magicseteditor-text_io_handler.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./src/cli/$(DEPDIR)/magicseteditor-win32_cli_wrapper.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/data/$(DEPDIR)/magicseteditor-add_cards_script.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/data/$(DEPDIR)/magicseteditor-card.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./src/data/$(DEPDIR)/magicseteditor-export_template.Po@am__quote@
@@ -1629,20 +1624,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='./src/cli/text_io_handler.cpp' object='./src/cli/magicseteditor-text_io_handler.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/cli/magicseteditor-text_io_handler.obj `if test -f './src/cli/text_io_handler.cpp'; then $(CYGPATH_W) './src/cli/text_io_handler.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/cli/text_io_handler.cpp'; fi`
-
-./src/cli/magicseteditor-win32_cli_wrapper.o: ./src/cli/win32_cli_wrapper.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/cli/magicseteditor-win32_cli_wrapper.o -MD -MP -MF ./src/cli/$(DEPDIR)/magicseteditor-win32_cli_wrapper.Tpo -c -o ./src/cli/magicseteditor-win32_cli_wrapper.o `test -f './src/cli/win32_cli_wrapper.cpp' || echo '$(srcdir)/'`./src/cli/win32_cli_wrapper.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ./src/cli/$(DEPDIR)/magicseteditor-win32_cli_wrapper.Tpo ./src/cli/$(DEPDIR)/magicseteditor-win32_cli_wrapper.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='./src/cli/win32_cli_wrapper.cpp' object='./src/cli/magicseteditor-win32_cli_wrapper.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/cli/magicseteditor-win32_cli_wrapper.o `test -f './src/cli/win32_cli_wrapper.cpp' || echo '$(srcdir)/'`./src/cli/win32_cli_wrapper.cpp
-
-./src/cli/magicseteditor-win32_cli_wrapper.obj: ./src/cli/win32_cli_wrapper.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/cli/magicseteditor-win32_cli_wrapper.obj -MD -MP -MF ./src/cli/$(DEPDIR)/magicseteditor-win32_cli_wrapper.Tpo -c -o ./src/cli/magicseteditor-win32_cli_wrapper.obj `if test -f './src/cli/win32_cli_wrapper.cpp'; then $(CYGPATH_W) './src/cli/win32_cli_wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/cli/win32_cli_wrapper.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ./src/cli/$(DEPDIR)/magicseteditor-win32_cli_wrapper.Tpo ./src/cli/$(DEPDIR)/magicseteditor-win32_cli_wrapper.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='./src/cli/win32_cli_wrapper.cpp' object='./src/cli/magicseteditor-win32_cli_wrapper.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/cli/magicseteditor-win32_cli_wrapper.obj `if test -f './src/cli/win32_cli_wrapper.cpp'; then $(CYGPATH_W) './src/cli/win32_cli_wrapper.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/cli/win32_cli_wrapper.cpp'; fi`
 
 ./src/data/action/magicseteditor-keyword.o: ./src/data/action/keyword.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/data/action/magicseteditor-keyword.o -MD -MP -MF ./src/data/action/$(DEPDIR)/magicseteditor-keyword.Tpo -c -o ./src/data/action/magicseteditor-keyword.o `test -f './src/data/action/keyword.cpp' || echo '$(srcdir)/'`./src/data/action/keyword.cpp

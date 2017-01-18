@@ -16,9 +16,6 @@ AC_CONFIG_HEADER([src/config.h])
 AM_INIT_AUTOMAKE([foreign])
 
 # Checks for programs.
-if test -n "${CXXFLAGS}"; then
-  user_set_cxxflags=yes
-fi
 AC_PROG_CXX
 AC_ARG_ENABLE(debug, [--enable-debug  Enable debug build (requires debug
  versions of wxWidgets and libstdc++.])
@@ -29,11 +26,9 @@ else
   DEFAULT_CXXFLAGS="-O2"
   WXCONFIG_FLAGS=""
 fi
-DEFAULT_CXXFLAGS="$DEFAULT_CXXFLAGS -std=gnu++98"
 
-if test X$user_set_cxxflags != Xyes; then
-  CXXFLAGS=${DEFAULT_CXXFLAGS}
-fi
+CXXFLAGS="${CXXFLAGS} ${DEFAULT_CXXFLAGS} -std=gnu++98"
+LDFLAGS="${LDFLAGS}"
 
 # Checks for libraries.
 AC_CHECK_LIB([hunspell],[Hunspell_create])
