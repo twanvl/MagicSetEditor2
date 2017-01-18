@@ -67,7 +67,7 @@ class IndexMap : private vector<Value> {
 		this->reserve(values.size());
 		for(size_t index = size() ; index < values.size() ; ++index) {
 			const Value& value = values[index];
-			push_back(value ? value->clone() : value);
+			vector<Value>::push_back(value ? value->clone() : value);
 		}
 	}
 	/// Change this map by adding an additional key and value
