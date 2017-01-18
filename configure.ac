@@ -21,17 +21,31 @@ AC_ARG_ENABLE(debug, [--enable-debug  Enable debug build (requires debug
  versions of wxWidgets and libstdc++.])
 if test "x${enable_debug}" = "xyes"; then
   DEFAULT_CXXFLAGS="-ggdb -O0"
+  DEFAULT_LDFLAGS=""
   WXCONFIG_FLAGS="--debug"
 else
   DEFAULT_CXXFLAGS="-O2"
+  DEFAULT_LDFLAGS=""
   WXCONFIG_FLAGS=""
 fi
 
-CXXFLAGS="${CXXFLAGS} ${DEFAULT_CXXFLAGS} -std=gnu++98 -DBOOST_USE_WINDOWS_H"
-LDFLAGS="${LDFLAGS}"
+case "${host_os}" in
+  linux*)
+    build_linux=yes;
+    ;;
+  cygwin*|mingw*)
+    build_windows=yes
+    ;;
+esac
 
-# Checks for libraries.
-AC_CHECK_LIB([hunspell],[Hunspell_create])
+
+if test -n "${CXXFLAGS}"; then
+  user_set_cxxflags=yes
+fi
+CXXFLAGS="${CXXFLAGS} ${DEFAULT_CXXFLAGS} -std=gnu++98 -DBOOST_USE_WINDOWS_H"
+LDFLAGS="${LDFLAGS} ${DEFAULT_LDFLAGS}"
+
+AC_SUBST(LDADD)
 
 # Check for Boost
 AX_BOOST_BASE([1.37.0])
@@ -42,17 +56,17 @@ AX_BOOST_SYSTEM
 AM_OPTIONS_WXCONFIG
 AM_PATH_WXCONFIG([2.8.0],[HAVE_WX=1],[HAVE_WX=0],,${WXCONFIG_FLAGS})
 if test "${HAVE_WX}" != 1; then
-    AC_MSG_ERROR([
-       wxWindows must be installed on your system
-       but could not be configured.
+  AC_MSG_ERROR([
+    wxWindows must be installed on your system
+    but could not be configured.
 
-       Please check that wx-config is in path, the directory
-       where wxWindows libraries are installed (returned by
-       'wx-config --libs' command) is in LD_LIBRARY_PATH or
-       equivalent variable and wxWindows version is 2.6.0 or
-       above. If --enable-debug was passed, please ensure
-       debugging libraries are installed.
-    ])
+    Please check that wx-config is in path, the directory
+    where wxWindows libraries are installed (returned by
+    'wx-config --libs' command) is in LD_LIBRARY_PATH or
+    equivalent variable and wxWindows version is 2.6.0 or
+    above. If --enable-debug was passed, please ensure
+    debugging libraries are installed.
+  ])
 fi
 
 AC_ARG_ENABLE(pch, [--enable-pch  Enable precompiled headers (Requires
@@ -76,5 +90,5 @@ AC_FUNC_SELECT_ARGTYPES
 AC_CHECK_FUNCS([floor memset pow select sqrt])
 
 AC_OUTPUT([
-	Makefile
+  Makefile
 ])

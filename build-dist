@@ -1,0 +1,42 @@
+#!/bin/bash
+
+clean=0
+
+build_win32() {
+  ./configure --enable-pch --target=i686-w64-mingw32 --with-wx-config=/usr/i686-w64-mingw32/lib/wx/config/i686-w64-mingw32-msw-unicode-release-static-2.8 \
+    --with-boost=/usr/i686-w64-mingw32/  CXX="i686-w64-mingw32-g++" LDFLAGS="-static" LDADD="-lgdiplus -llzma"
+  if [ $clean = 1 ]; then
+    make clean
+  fi
+  make -j4
+  strip magicseteditor.exe
+  i686-w64-mingw32-g++ -static -s -o magicseteditor.com src/cli/win32_cli_wrapper.cpp
+}
+build_linux() {
+  ./configure --target=i686- --with-wx-config=wx-config-2.8
+  if [ $clean = 1 ]; then
+    make clean
+  fi
+  make -j4
+  strip magicseteditor
+}
+build_dist() {
+  upx -9 magicseteditor magicseteditor.com magicseteditor.exe
+}
+
+rm magicseteditor magicseteditor.*
+
+case $1 in
+  win32)
+    build_win32
+    ;;
+  linux)
+    build_linux
+    ;;
+  dist)
+    clean=1
+    build_win32
+    build_linux
+    build_dist
+    ;;
+esac

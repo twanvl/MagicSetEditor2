@@ -158,8 +158,9 @@ BOOL WINAPI HandleCtrlEvent(DWORD type) {
   // TODO: don't exit child on Ctrl+C
   bool wait = false;
   if (in_mine != INVALID_HANDLE_VALUE) {
-    CopyFileBuffer(in_mine,":quit\n",6);
-    CopyFileBuffer(out_real,":quit\n",6);
+    char str[16] = ":quit\n";
+    CopyFileBuffer(in_mine,str,6);
+    CopyFileBuffer(out_real,str,6);
     wait = true;
   }
   if (wait && WaitForSingleObject(child_process_info.hProcess,100) == WAIT_OBJECT_0) {

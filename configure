@@ -643,14 +643,15 @@ WX_CPPFLAGS
 WX_CONFIG_PATH
 BOOST_SYSTEM_LIB
 BOOST_REGEX_LIB
-BOOST_LDFLAGS
-BOOST_CPPFLAGS
 am__fastdepCC_FALSE
 am__fastdepCC_TRUE
 CCDEPMODE
 ac_ct_CC
 CFLAGS
 CC
+BOOST_LDFLAGS
+BOOST_CPPFLAGS
+LDADD
 am__fastdepCXX_FALSE
 am__fastdepCXX_TRUE
 CXXDEPMODE
@@ -3749,16 +3750,322 @@ fi
 
 if test "x${enable_debug}" = "xyes"; then
   DEFAULT_CXXFLAGS="-ggdb -O0"
+  DEFAULT_LDFLAGS=""
   WXCONFIG_FLAGS="--debug"
 else
   DEFAULT_CXXFLAGS="-O2"
+  DEFAULT_LDFLAGS=""
   WXCONFIG_FLAGS=""
 fi
 
-CXXFLAGS="${CXXFLAGS} ${DEFAULT_CXXFLAGS} -std=gnu++98 -DBOOST_USE_WINDOWS_H"
-LDFLAGS="${LDFLAGS}"
+case "${host_os}" in
+  linux*)
+    build_linux=yes;
+    ;;
+  cygwin*|mingw*)
+    build_windows=yes
+    ;;
+esac
 
-# Checks for libraries.
+
+if test -n "${CXXFLAGS}"; then
+  user_set_cxxflags=yes
+fi
+CXXFLAGS="${CXXFLAGS} ${DEFAULT_CXXFLAGS} -std=gnu++98 -DBOOST_USE_WINDOWS_H"
+LDFLAGS="${LDFLAGS} ${DEFAULT_LDFLAGS}"
+
+
+
+# Check for Boost
+
+
+
+# Check whether --with-boost was given.
+if test "${with_boost+set}" = set; then :
+  withval=$with_boost;
+    if test "$withval" = "no"; then
+        want_boost="no"
+    elif test "$withval" = "yes"; then
+        want_boost="yes"
+        ac_boost_path=""
+    else
+        want_boost="yes"
+        ac_boost_path="$withval"
+    fi
+
+else
+  want_boost="yes"
+fi
+
+
+
+
+# Check whether --with-boost-libdir was given.
+if test "${with_boost_libdir+set}" = set; then :
+  withval=$with_boost_libdir;
+        if test -d "$withval"
+        then
+                ac_boost_lib_path="$withval"
+        else
+                as_fn_error $? "--with-boost-libdir expected directory name" "$LINENO" 5
+        fi
+
+else
+  ac_boost_lib_path=""
+
+fi
+
+
+if test "x$want_boost" = "xyes"; then
+    boost_lib_version_req=1.37.0
+    boost_lib_version_req_shorten=`expr $boost_lib_version_req : '\([0-9]*\.[0-9]*\)'`
+    boost_lib_version_req_major=`expr $boost_lib_version_req : '\([0-9]*\)'`
+    boost_lib_version_req_minor=`expr $boost_lib_version_req : '[0-9]*\.\([0-9]*\)'`
+    boost_lib_version_req_sub_minor=`expr $boost_lib_version_req : '[0-9]*\.[0-9]*\.\([0-9]*\)'`
+    if test "x$boost_lib_version_req_sub_minor" = "x" ; then
+        boost_lib_version_req_sub_minor="0"
+        fi
+    WANT_BOOST_VERSION=`expr $boost_lib_version_req_major \* 100000 \+  $boost_lib_version_req_minor \* 100 \+ $boost_lib_version_req_sub_minor`
+    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for boostlib >= $boost_lib_version_req" >&5
+$as_echo_n "checking for boostlib >= $boost_lib_version_req... " >&6; }
+    succeeded=no
+
+                        libsubdirs="lib"
+    ax_arch=`uname -m`
+    case $ax_arch in
+      x86_64)
+        libsubdirs="lib64 libx32 lib lib64"
+        ;;
+      ppc64|s390x|sparc64|aarch64|ppc64le)
+        libsubdirs="lib64 lib lib64"
+        ;;
+    esac
+
+
+    libsubdirs="lib/${host_cpu}-${host_os} $libsubdirs"
+
+    case ${host_cpu} in
+      i?86)
+        libsubdirs="lib/i386-${host_os} $libsubdirs"
+        ;;
+    esac
+
+                if test "$ac_boost_path" != ""; then
+        BOOST_CPPFLAGS="-I$ac_boost_path/include"
+        for ac_boost_path_tmp in $libsubdirs; do
+                if test -d "$ac_boost_path"/"$ac_boost_path_tmp" ; then
+                        BOOST_LDFLAGS="-L$ac_boost_path/$ac_boost_path_tmp"
+                        break
+                fi
+        done
+    elif test "$cross_compiling" != yes; then
+        for ac_boost_path_tmp in /usr /usr/local /opt /opt/local ; do
+            if test -d "$ac_boost_path_tmp/include/boost" && test -r "$ac_boost_path_tmp/include/boost"; then
+                for libsubdir in $libsubdirs ; do
+                    if ls "$ac_boost_path_tmp/$libsubdir/libboost_"* >/dev/null 2>&1 ; then break; fi
+                done
+                BOOST_LDFLAGS="-L$ac_boost_path_tmp/$libsubdir"
+                BOOST_CPPFLAGS="-I$ac_boost_path_tmp/include"
+                break;
+            fi
+        done
+    fi
+
+            if test "$ac_boost_lib_path" != ""; then
+       BOOST_LDFLAGS="-L$ac_boost_lib_path"
+    fi
+
+    CPPFLAGS_SAVED="$CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
+    export CPPFLAGS
+
+    LDFLAGS_SAVED="$LDFLAGS"
+    LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
+    export LDFLAGS
+
+
+    ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+    #include <boost/version.hpp>
+
+int
+main ()
+{
+
+    #if BOOST_VERSION >= $WANT_BOOST_VERSION
+    // Everything is okay
+    #else
+    #  error Boost version is too old
+    #endif
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+
+        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+    succeeded=yes
+    found_system=yes
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+    ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+
+
+
+            if test "x$succeeded" != "xyes"; then
+        CPPFLAGS="$CPPFLAGS_SAVED"
+        LDFLAGS="$LDFLAGS_SAVED"
+        BOOST_CPPFLAGS=
+        BOOST_LDFLAGS=
+        _version=0
+        if test "$ac_boost_path" != ""; then
+            if test -d "$ac_boost_path" && test -r "$ac_boost_path"; then
+                for i in `ls -d $ac_boost_path/include/boost-* 2>/dev/null`; do
+                    _version_tmp=`echo $i | sed "s#$ac_boost_path##" | sed 's/\/include\/boost-//' | sed 's/_/./'`
+                    V_CHECK=`expr $_version_tmp \> $_version`
+                    if test "$V_CHECK" = "1" ; then
+                        _version=$_version_tmp
+                    fi
+                    VERSION_UNDERSCORE=`echo $_version | sed 's/\./_/'`
+                    BOOST_CPPFLAGS="-I$ac_boost_path/include/boost-$VERSION_UNDERSCORE"
+                done
+                                if test -z "$BOOST_CPPFLAGS"; then
+                    if test -d "$ac_boost_path/boost" && test -r "$ac_boost_path/boost"; then
+                        BOOST_CPPFLAGS="-I$ac_boost_path"
+                    fi
+                fi
+            fi
+        else
+            if test "$cross_compiling" != yes; then
+                for ac_boost_path in /usr /usr/local /opt /opt/local ; do
+                    if test -d "$ac_boost_path" && test -r "$ac_boost_path"; then
+                        for i in `ls -d $ac_boost_path/include/boost-* 2>/dev/null`; do
+                            _version_tmp=`echo $i | sed "s#$ac_boost_path##" | sed 's/\/include\/boost-//' | sed 's/_/./'`
+                            V_CHECK=`expr $_version_tmp \> $_version`
+                            if test "$V_CHECK" = "1" ; then
+                                _version=$_version_tmp
+                                best_path=$ac_boost_path
+                            fi
+                        done
+                    fi
+                done
+
+                VERSION_UNDERSCORE=`echo $_version | sed 's/\./_/'`
+                BOOST_CPPFLAGS="-I$best_path/include/boost-$VERSION_UNDERSCORE"
+                if test "$ac_boost_lib_path" = ""; then
+                    for libsubdir in $libsubdirs ; do
+                        if ls "$best_path/$libsubdir/libboost_"* >/dev/null 2>&1 ; then break; fi
+                    done
+                    BOOST_LDFLAGS="-L$best_path/$libsubdir"
+                fi
+            fi
+
+            if test "x$BOOST_ROOT" != "x"; then
+                for libsubdir in $libsubdirs ; do
+                    if ls "$BOOST_ROOT/stage/$libsubdir/libboost_"* >/dev/null 2>&1 ; then break; fi
+                done
+                if test -d "$BOOST_ROOT" && test -r "$BOOST_ROOT" && test -d "$BOOST_ROOT/stage/$libsubdir" && test -r "$BOOST_ROOT/stage/$libsubdir"; then
+                    version_dir=`expr //$BOOST_ROOT : '.*/\(.*\)'`
+                    stage_version=`echo $version_dir | sed 's/boost_//' | sed 's/_/./g'`
+                        stage_version_shorten=`expr $stage_version : '\([0-9]*\.[0-9]*\)'`
+                    V_CHECK=`expr $stage_version_shorten \>\= $_version`
+                    if test "$V_CHECK" = "1" -a "$ac_boost_lib_path" = "" ; then
+                        { $as_echo "$as_me:${as_lineno-$LINENO}: We will use a staged boost library from $BOOST_ROOT" >&5
+$as_echo "$as_me: We will use a staged boost library from $BOOST_ROOT" >&6;}
+                        BOOST_CPPFLAGS="-I$BOOST_ROOT"
+                        BOOST_LDFLAGS="-L$BOOST_ROOT/stage/$libsubdir"
+                    fi
+                fi
+            fi
+        fi
+
+        CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
+        export CPPFLAGS
+        LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
+        export LDFLAGS
+
+        ac_ext=cpp
+ac_cpp='$CXXCPP $CPPFLAGS'
+ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
+
+            cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+        #include <boost/version.hpp>
+
+int
+main ()
+{
+
+        #if BOOST_VERSION >= $WANT_BOOST_VERSION
+        // Everything is okay
+        #else
+        #  error Boost version is too old
+        #endif
+
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_cxx_try_compile "$LINENO"; then :
+
+            { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+$as_echo "yes" >&6; }
+        succeeded=yes
+        found_system=yes
+
+fi
+rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
+        ac_ext=c
+ac_cpp='$CPP $CPPFLAGS'
+ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
+ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
+ac_compiler_gnu=$ac_cv_c_compiler_gnu
+
+    fi
+
+    if test "$succeeded" != "yes" ; then
+        if test "$_version" = "0" ; then
+            { $as_echo "$as_me:${as_lineno-$LINENO}: We could not detect the boost libraries (version $boost_lib_version_req_shorten or higher). If you have a staged boost library (still not installed) please specify \$BOOST_ROOT in your environment and do not give a PATH to --with-boost option.  If you are sure you have boost installed, then check your version number looking in <boost/version.hpp>. See http://randspringer.de/boost for more documentation." >&5
+$as_echo "$as_me: We could not detect the boost libraries (version $boost_lib_version_req_shorten or higher). If you have a staged boost library (still not installed) please specify \$BOOST_ROOT in your environment and do not give a PATH to --with-boost option.  If you are sure you have boost installed, then check your version number looking in <boost/version.hpp>. See http://randspringer.de/boost for more documentation." >&6;}
+        else
+            { $as_echo "$as_me:${as_lineno-$LINENO}: Your boost libraries seems to old (version $_version)." >&5
+$as_echo "$as_me: Your boost libraries seems to old (version $_version)." >&6;}
+        fi
+        # execute ACTION-IF-NOT-FOUND (if present):
+        :
+    else
+
+
+
+$as_echo "#define HAVE_BOOST /**/" >>confdefs.h
+
+        # execute ACTION-IF-FOUND (if present):
+        :
+    fi
+
+    CPPFLAGS="$CPPFLAGS_SAVED"
+    LDFLAGS="$LDFLAGS_SAVED"
+fi
+
+
 ac_ext=c
 ac_cpp='$CPP $CPPFLAGS'
 ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
@@ -4484,342 +4791,6 @@ else
   am__fastdepCC_FALSE=
 fi
 
-
-
-{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for Hunspell_create in -lhunspell" >&5
-$as_echo_n "checking for Hunspell_create in -lhunspell... " >&6; }
-if ${ac_cv_lib_hunspell_Hunspell_create+:} false; then :
-  $as_echo_n "(cached) " >&6
-else
-  ac_check_lib_save_LIBS=$LIBS
-LIBS="-lhunspell  $LIBS"
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-/* Override any GCC internal prototype to avoid an error.
-   Use char because int might match the return type of a GCC
-   builtin and then its argument prototype would still apply.  */
-#ifdef __cplusplus
-extern "C"
-#endif
-char Hunspell_create ();
-int
-main ()
-{
-return Hunspell_create ();
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_link "$LINENO"; then :
-  ac_cv_lib_hunspell_Hunspell_create=yes
-else
-  ac_cv_lib_hunspell_Hunspell_create=no
-fi
-rm -f core conftest.err conftest.$ac_objext \
-    conftest$ac_exeext conftest.$ac_ext
-LIBS=$ac_check_lib_save_LIBS
-fi
-{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_hunspell_Hunspell_create" >&5
-$as_echo "$ac_cv_lib_hunspell_Hunspell_create" >&6; }
-if test "x$ac_cv_lib_hunspell_Hunspell_create" = xyes; then :
-  cat >>confdefs.h <<_ACEOF
-#define HAVE_LIBHUNSPELL 1
-_ACEOF
-
-  LIBS="-lhunspell $LIBS"
-
-fi
-
-
-# Check for Boost
-
-
-
-# Check whether --with-boost was given.
-if test "${with_boost+set}" = set; then :
-  withval=$with_boost;
-    if test "$withval" = "no"; then
-        want_boost="no"
-    elif test "$withval" = "yes"; then
-        want_boost="yes"
-        ac_boost_path=""
-    else
-        want_boost="yes"
-        ac_boost_path="$withval"
-    fi
-
-else
-  want_boost="yes"
-fi
-
-
-
-
-# Check whether --with-boost-libdir was given.
-if test "${with_boost_libdir+set}" = set; then :
-  withval=$with_boost_libdir;
-        if test -d "$withval"
-        then
-                ac_boost_lib_path="$withval"
-        else
-                as_fn_error $? "--with-boost-libdir expected directory name" "$LINENO" 5
-        fi
-
-else
-  ac_boost_lib_path=""
-
-fi
-
-
-if test "x$want_boost" = "xyes"; then
-    boost_lib_version_req=1.37.0
-    boost_lib_version_req_shorten=`expr $boost_lib_version_req : '\([0-9]*\.[0-9]*\)'`
-    boost_lib_version_req_major=`expr $boost_lib_version_req : '\([0-9]*\)'`
-    boost_lib_version_req_minor=`expr $boost_lib_version_req : '[0-9]*\.\([0-9]*\)'`
-    boost_lib_version_req_sub_minor=`expr $boost_lib_version_req : '[0-9]*\.[0-9]*\.\([0-9]*\)'`
-    if test "x$boost_lib_version_req_sub_minor" = "x" ; then
-        boost_lib_version_req_sub_minor="0"
-        fi
-    WANT_BOOST_VERSION=`expr $boost_lib_version_req_major \* 100000 \+  $boost_lib_version_req_minor \* 100 \+ $boost_lib_version_req_sub_minor`
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for boostlib >= $boost_lib_version_req" >&5
-$as_echo_n "checking for boostlib >= $boost_lib_version_req... " >&6; }
-    succeeded=no
-
-                        libsubdirs="lib"
-    ax_arch=`uname -m`
-    case $ax_arch in
-      x86_64)
-        libsubdirs="lib64 libx32 lib lib64"
-        ;;
-      ppc64|s390x|sparc64|aarch64|ppc64le)
-        libsubdirs="lib64 lib lib64"
-        ;;
-    esac
-
-
-    libsubdirs="lib/${host_cpu}-${host_os} $libsubdirs"
-
-    case ${host_cpu} in
-      i?86)
-        libsubdirs="lib/i386-${host_os} $libsubdirs"
-        ;;
-    esac
-
-                if test "$ac_boost_path" != ""; then
-        BOOST_CPPFLAGS="-I$ac_boost_path/include"
-        for ac_boost_path_tmp in $libsubdirs; do
-                if test -d "$ac_boost_path"/"$ac_boost_path_tmp" ; then
-                        BOOST_LDFLAGS="-L$ac_boost_path/$ac_boost_path_tmp"
-                        break
-                fi
-        done
-    elif test "$cross_compiling" != yes; then
-        for ac_boost_path_tmp in /usr /usr/local /opt /opt/local ; do
-            if test -d "$ac_boost_path_tmp/include/boost" && test -r "$ac_boost_path_tmp/include/boost"; then
-                for libsubdir in $libsubdirs ; do
-                    if ls "$ac_boost_path_tmp/$libsubdir/libboost_"* >/dev/null 2>&1 ; then break; fi
-                done
-                BOOST_LDFLAGS="-L$ac_boost_path_tmp/$libsubdir"
-                BOOST_CPPFLAGS="-I$ac_boost_path_tmp/include"
-                break;
-            fi
-        done
-    fi
-
-            if test "$ac_boost_lib_path" != ""; then
-       BOOST_LDFLAGS="-L$ac_boost_lib_path"
-    fi
-
-    CPPFLAGS_SAVED="$CPPFLAGS"
-    CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
-    export CPPFLAGS
-
-    LDFLAGS_SAVED="$LDFLAGS"
-    LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
-    export LDFLAGS
-
-
-    ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-        cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-    #include <boost/version.hpp>
-
-int
-main ()
-{
-
-    #if BOOST_VERSION >= $WANT_BOOST_VERSION
-    // Everything is okay
-    #else
-    #  error Boost version is too old
-    #endif
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_compile "$LINENO"; then :
-
-        { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-    succeeded=yes
-    found_system=yes
-
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-    ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-
-
-
-            if test "x$succeeded" != "xyes"; then
-        CPPFLAGS="$CPPFLAGS_SAVED"
-        LDFLAGS="$LDFLAGS_SAVED"
-        BOOST_CPPFLAGS=
-        BOOST_LDFLAGS=
-        _version=0
-        if test "$ac_boost_path" != ""; then
-            if test -d "$ac_boost_path" && test -r "$ac_boost_path"; then
-                for i in `ls -d $ac_boost_path/include/boost-* 2>/dev/null`; do
-                    _version_tmp=`echo $i | sed "s#$ac_boost_path##" | sed 's/\/include\/boost-//' | sed 's/_/./'`
-                    V_CHECK=`expr $_version_tmp \> $_version`
-                    if test "$V_CHECK" = "1" ; then
-                        _version=$_version_tmp
-                    fi
-                    VERSION_UNDERSCORE=`echo $_version | sed 's/\./_/'`
-                    BOOST_CPPFLAGS="-I$ac_boost_path/include/boost-$VERSION_UNDERSCORE"
-                done
-                                if test -z "$BOOST_CPPFLAGS"; then
-                    if test -d "$ac_boost_path/boost" && test -r "$ac_boost_path/boost"; then
-                        BOOST_CPPFLAGS="-I$ac_boost_path"
-                    fi
-                fi
-            fi
-        else
-            if test "$cross_compiling" != yes; then
-                for ac_boost_path in /usr /usr/local /opt /opt/local ; do
-                    if test -d "$ac_boost_path" && test -r "$ac_boost_path"; then
-                        for i in `ls -d $ac_boost_path/include/boost-* 2>/dev/null`; do
-                            _version_tmp=`echo $i | sed "s#$ac_boost_path##" | sed 's/\/include\/boost-//' | sed 's/_/./'`
-                            V_CHECK=`expr $_version_tmp \> $_version`
-                            if test "$V_CHECK" = "1" ; then
-                                _version=$_version_tmp
-                                best_path=$ac_boost_path
-                            fi
-                        done
-                    fi
-                done
-
-                VERSION_UNDERSCORE=`echo $_version | sed 's/\./_/'`
-                BOOST_CPPFLAGS="-I$best_path/include/boost-$VERSION_UNDERSCORE"
-                if test "$ac_boost_lib_path" = ""; then
-                    for libsubdir in $libsubdirs ; do
-                        if ls "$best_path/$libsubdir/libboost_"* >/dev/null 2>&1 ; then break; fi
-                    done
-                    BOOST_LDFLAGS="-L$best_path/$libsubdir"
-                fi
-            fi
-
-            if test "x$BOOST_ROOT" != "x"; then
-                for libsubdir in $libsubdirs ; do
-                    if ls "$BOOST_ROOT/stage/$libsubdir/libboost_"* >/dev/null 2>&1 ; then break; fi
-                done
-                if test -d "$BOOST_ROOT" && test -r "$BOOST_ROOT" && test -d "$BOOST_ROOT/stage/$libsubdir" && test -r "$BOOST_ROOT/stage/$libsubdir"; then
-                    version_dir=`expr //$BOOST_ROOT : '.*/\(.*\)'`
-                    stage_version=`echo $version_dir | sed 's/boost_//' | sed 's/_/./g'`
-                        stage_version_shorten=`expr $stage_version : '\([0-9]*\.[0-9]*\)'`
-                    V_CHECK=`expr $stage_version_shorten \>\= $_version`
-                    if test "$V_CHECK" = "1" -a "$ac_boost_lib_path" = "" ; then
-                        { $as_echo "$as_me:${as_lineno-$LINENO}: We will use a staged boost library from $BOOST_ROOT" >&5
-$as_echo "$as_me: We will use a staged boost library from $BOOST_ROOT" >&6;}
-                        BOOST_CPPFLAGS="-I$BOOST_ROOT"
-                        BOOST_LDFLAGS="-L$BOOST_ROOT/stage/$libsubdir"
-                    fi
-                fi
-            fi
-        fi
-
-        CPPFLAGS="$CPPFLAGS $BOOST_CPPFLAGS"
-        export CPPFLAGS
-        LDFLAGS="$LDFLAGS $BOOST_LDFLAGS"
-        export LDFLAGS
-
-        ac_ext=cpp
-ac_cpp='$CXXCPP $CPPFLAGS'
-ac_compile='$CXX -c $CXXFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CXX -o conftest$ac_exeext $CXXFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_cxx_compiler_gnu
-
-            cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-        #include <boost/version.hpp>
-
-int
-main ()
-{
-
-        #if BOOST_VERSION >= $WANT_BOOST_VERSION
-        // Everything is okay
-        #else
-        #  error Boost version is too old
-        #endif
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_cxx_try_compile "$LINENO"; then :
-
-            { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-$as_echo "yes" >&6; }
-        succeeded=yes
-        found_system=yes
-
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-        ac_ext=c
-ac_cpp='$CPP $CPPFLAGS'
-ac_compile='$CC -c $CFLAGS $CPPFLAGS conftest.$ac_ext >&5'
-ac_link='$CC -o conftest$ac_exeext $CFLAGS $CPPFLAGS $LDFLAGS conftest.$ac_ext $LIBS >&5'
-ac_compiler_gnu=$ac_cv_c_compiler_gnu
-
-    fi
-
-    if test "$succeeded" != "yes" ; then
-        if test "$_version" = "0" ; then
-            { $as_echo "$as_me:${as_lineno-$LINENO}: We could not detect the boost libraries (version $boost_lib_version_req_shorten or higher). If you have a staged boost library (still not installed) please specify \$BOOST_ROOT in your environment and do not give a PATH to --with-boost option.  If you are sure you have boost installed, then check your version number looking in <boost/version.hpp>. See http://randspringer.de/boost for more documentation." >&5
-$as_echo "$as_me: We could not detect the boost libraries (version $boost_lib_version_req_shorten or higher). If you have a staged boost library (still not installed) please specify \$BOOST_ROOT in your environment and do not give a PATH to --with-boost option.  If you are sure you have boost installed, then check your version number looking in <boost/version.hpp>. See http://randspringer.de/boost for more documentation." >&6;}
-        else
-            { $as_echo "$as_me:${as_lineno-$LINENO}: Your boost libraries seems to old (version $_version)." >&5
-$as_echo "$as_me: Your boost libraries seems to old (version $_version)." >&6;}
-        fi
-        # execute ACTION-IF-NOT-FOUND (if present):
-        :
-    else
-
-
-
-$as_echo "#define HAVE_BOOST /**/" >>confdefs.h
-
-        # execute ACTION-IF-FOUND (if present):
-        :
-    fi
-
-    CPPFLAGS="$CPPFLAGS_SAVED"
-    LDFLAGS="$LDFLAGS_SAVED"
-fi
 
 
 
@@ -5557,17 +5528,17 @@ $as_echo "no (version $WX_VERSION is not new enough)" >&6; }
 
 
 if test "${HAVE_WX}" != 1; then
-    as_fn_error $? "
-       wxWindows must be installed on your system
-       but could not be configured.
+  as_fn_error $? "
+    wxWindows must be installed on your system
+    but could not be configured.
 
-       Please check that wx-config is in path, the directory
-       where wxWindows libraries are installed (returned by
-       'wx-config --libs' command) is in LD_LIBRARY_PATH or
-       equivalent variable and wxWindows version is 2.6.0 or
-       above. If --enable-debug was passed, please ensure
-       debugging libraries are installed.
-    " "$LINENO" 5
+    Please check that wx-config is in path, the directory
+    where wxWindows libraries are installed (returned by
+    'wx-config --libs' command) is in LD_LIBRARY_PATH or
+    equivalent variable and wxWindows version is 2.6.0 or
+    above. If --enable-debug was passed, please ensure
+    debugging libraries are installed.
+  " "$LINENO" 5
 fi
 
 # Check whether --enable-pch was given.
