@@ -19,22 +19,22 @@ class SelectCardList;
 // ----------------------------------------------------------------------------- : ExportWindowBase
 
 enum ExportCardSelectionType
-{	EXPORT_SEL_ENTIRE_SET
-,	EXPORT_SEL_SUBSET
-,	EXPORT_SEL_CUSTOM
+{  EXPORT_SEL_ENTIRE_SET
+,  EXPORT_SEL_SUBSET
+,  EXPORT_SEL_CUSTOM
 };
 
 class ExportCardSelectionChoice : public IntrusivePtrBase<ExportCardSelectionChoice> {
   public:
-	ExportCardSelectionChoice();
-	ExportCardSelectionChoice(const Set& set);
-	ExportCardSelectionChoice(const String& label, const vector<CardP>& cards);
-	ExportCardSelectionChoice(const String& label, const vector<CardP>* cards);
-	
-	const String                  label;
-	const ExportCardSelectionType type;
-	const vector<CardP>*          the_cards; ///< The cards
-	vector<CardP>                 own_cards; ///< Maybe we own the cards, in that case the_cards = &own_cards
+  ExportCardSelectionChoice();
+  ExportCardSelectionChoice(const Set& set);
+  ExportCardSelectionChoice(const String& label, const vector<CardP>& cards);
+  ExportCardSelectionChoice(const String& label, const vector<CardP>* cards);
+  
+  const String                  label;
+  const ExportCardSelectionType type;
+  const vector<CardP>*          the_cards; ///< The cards
+  vector<CardP>                 own_cards; ///< Maybe we own the cards, in that case the_cards = &own_cards
 };
 
 typedef vector<ExportCardSelectionChoiceP> ExportCardSelectionChoices;
@@ -42,29 +42,29 @@ typedef vector<ExportCardSelectionChoiceP> ExportCardSelectionChoices;
 /// Base class for export windows, deals with card selection
 class ExportWindowBase : public wxDialog {
   public:
-	ExportWindowBase(Window* parent, const String& window_title,
-	                 const SetP& set, const ExportCardSelectionChoices& cards_choices, long style = wxDEFAULT_DIALOG_STYLE);
-	/// Create the controls, return a sizer containing them
-	wxSizer* Create();
-	
-	/// Get the selected cards
-	const vector<CardP>& getSelection() const { return *cards; }
-	
+  ExportWindowBase(Window* parent, const String& window_title,
+                   const SetP& set, const ExportCardSelectionChoices& cards_choices, long style = wxDEFAULT_DIALOG_STYLE);
+  /// Create the controls, return a sizer containing them
+  wxSizer* Create();
+  
+  /// Get the selected cards
+  const vector<CardP>& getSelection() const { return *cards; }
+  
   protected:
-	DECLARE_EVENT_TABLE();
-	
-	SetP                 set;     ///< Set to export
-	const vector<CardP>* cards;   ///< Cards to export
-	
+  DECLARE_EVENT_TABLE();
+  
+  SetP                 set;     ///< Set to export
+  const vector<CardP>* cards;   ///< Cards to export
+  
   private:
-	ExportCardSelectionChoices cards_choices; ///< Ways to select cards
-	size_t active_choice;
-	wxStaticText* card_count;
-	wxButton*     select_cards;
-	
-	void onChangeSelectionChoice(wxCommandEvent&);
-	void onSelectCards(wxCommandEvent&);
-	void update();
+  ExportCardSelectionChoices cards_choices; ///< Ways to select cards
+  size_t active_choice;
+  wxStaticText* card_count;
+  wxButton*     select_cards;
+  
+  void onChangeSelectionChoice(wxCommandEvent&);
+  void onSelectCards(wxCommandEvent&);
+  void update();
 };
 
 // ----------------------------------------------------------------------------- : CardSelectWindow
@@ -74,24 +74,24 @@ class ExportWindowBase : public wxDialog {
  */
 class CardSelectWindow : public wxDialog {
   public:
-	CardSelectWindow(Window* parent, const SetP& set, const String& label, const String& title, bool sizer=true);
-	
-	/// Is the given card selected?
-	bool isSelected(const CardP& card) const;
-	/// Get a list of all selected cards
-	void getSelection(vector<CardP>& out) const;
-	/// Change which cards are selected
-	void setSelection(const vector<CardP>& cards);
-	
+  CardSelectWindow(Window* parent, const SetP& set, const String& label, const String& title, bool sizer=true);
+  
+  /// Is the given card selected?
+  bool isSelected(const CardP& card) const;
+  /// Get a list of all selected cards
+  void getSelection(vector<CardP>& out) const;
+  /// Change which cards are selected
+  void setSelection(const vector<CardP>& cards);
+  
   protected:
-	DECLARE_EVENT_TABLE();
-	
-	SelectCardList* list;
-	SetP            set;
-	wxButton*       sel_all, *sel_none;
-	
-	void onSelectAll (wxCommandEvent&);
-	void onSelectNone(wxCommandEvent&);
+  DECLARE_EVENT_TABLE();
+  
+  SelectCardList* list;
+  SetP            set;
+  wxButton*       sel_all, *sel_none;
+  
+  void onSelectAll (wxCommandEvent&);
+  void onSelectNone(wxCommandEvent&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

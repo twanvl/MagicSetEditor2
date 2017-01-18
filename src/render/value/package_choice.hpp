@@ -18,20 +18,20 @@
 /// Viewer that displays a package choice value
 class PackageChoiceValueViewer : public ValueViewer {
   public:
-	DECLARE_VALUE_VIEWER(PackageChoice) : ValueViewer(parent,style) { initItems(); }
-	
-	virtual void draw(RotatedDC& dc);
-	
-	struct Item{
-		String package_name;
-		String name;
-		Bitmap image;
-	};
+  DECLARE_VALUE_VIEWER(PackageChoice) : ValueViewer(parent,style) { initItems(); }
+  
+  virtual void draw(RotatedDC& dc);
+  
+  struct Item{
+    String package_name;
+    String name;
+    Bitmap image;
+  };
   protected:
-	vector<Item> items;
+  vector<Item> items;
   private:
-	void initItems();
-	struct ComparePackagePosHint;
+  void initItems();
+  struct ComparePackagePosHint;
 };
 
 // ----------------------------------------------------------------------------- : EOF

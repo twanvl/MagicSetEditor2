@@ -24,32 +24,32 @@ SetP new_set_window(Window* parent);
 /// "Create a new set" dialog. First select game, then matching style.
 class NewSetWindow : public wxDialog {
   public:
-	/// The newly created set, if any
-	SetP set;
-	
-	NewSetWindow(Window* parent);
-	
-	// --------------------------------------------------- : data
+  /// The newly created set, if any
+  SetP set;
+  
+  NewSetWindow(Window* parent);
+  
+  // --------------------------------------------------- : data
   private:
-	DECLARE_EVENT_TABLE();
+  DECLARE_EVENT_TABLE();
 
-	// gui items
-	PackageList*  game_list, *stylesheet_list;
-		
-	// --------------------------------------------------- : events
-	
-	void onGameSelect  (wxCommandEvent&);
-	
-	void onStyleSheetSelect  (wxCommandEvent&);
-	void onStyleSheetActivate(wxCommandEvent&);
-		
-	virtual void OnOK(wxCommandEvent&);
-	
-	void onUpdateUI(wxUpdateUIEvent&);
-	void onIdle(wxIdleEvent&);
-	
-	// we are done, close the window
-	void done();
+  // gui items
+  PackageList*  game_list, *stylesheet_list;
+    
+  // --------------------------------------------------- : events
+  
+  void onGameSelect  (wxCommandEvent&);
+  
+  void onStyleSheetSelect  (wxCommandEvent&);
+  void onStyleSheetActivate(wxCommandEvent&);
+    
+  virtual void OnOK(wxCommandEvent&);
+  
+  void onUpdateUI(wxUpdateUIEvent&);
+  void onIdle(wxIdleEvent&);
+  
+  // we are done, close the window
+  void done();
 };
 
 // ----------------------------------------------------------------------------- : SelectStyleSheetWindow
@@ -61,32 +61,32 @@ StyleSheetP select_stylesheet(const Game& game, const String& failed_name);
 /// "Create a new set" dialog. First select game, then matching style.
 class SelectStyleSheetWindow : public wxDialog {
   public:
-	/// The selected stylesheet, if any
-	StyleSheetP stylesheet;
-	
-	SelectStyleSheetWindow(Window* parent, const Game& game, const String& failed_name);
-	
-	// --------------------------------------------------- : data
+  /// The selected stylesheet, if any
+  StyleSheetP stylesheet;
+  
+  SelectStyleSheetWindow(Window* parent, const Game& game, const String& failed_name);
+  
+  // --------------------------------------------------- : data
   private:
-	DECLARE_EVENT_TABLE();
-	
-	const Game& game;
-	
-	// gui items
-	PackageList*  stylesheet_list;
-		
-	// --------------------------------------------------- : events
-	
-	void onStyleSheetSelect  (wxCommandEvent&);
-	void onStyleSheetActivate(wxCommandEvent&);
-		
-	virtual void OnOK(wxCommandEvent&);
-	
-	void onUpdateUI(wxUpdateUIEvent&);
-	void onIdle(wxIdleEvent&);
-	
-	// we are done, close the window
-	void done();
+  DECLARE_EVENT_TABLE();
+  
+  const Game& game;
+  
+  // gui items
+  PackageList*  stylesheet_list;
+    
+  // --------------------------------------------------- : events
+  
+  void onStyleSheetSelect  (wxCommandEvent&);
+  void onStyleSheetActivate(wxCommandEvent&);
+    
+  virtual void OnOK(wxCommandEvent&);
+  
+  void onUpdateUI(wxUpdateUIEvent&);
+  void onIdle(wxIdleEvent&);
+  
+  // we are done, close the window
+  void done();
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -31,9 +31,9 @@ void resample_and_clip(const Image& img_in, Image& img_out, wxRect rect);
 
 /// How to preserve the aspect ratio of an image when rescaling
 enum PreserveAspect
-{	ASPECT_STRETCH		///< don't preserve
-,	ASPECT_BORDER		///< put borders around the image to make it the right shape
-,	ASPECT_FIT			///< generate a smaller image if needed
+{  ASPECT_STRETCH    ///< don't preserve
+,  ASPECT_BORDER    ///< put borders around the image to make it the right shape
+,  ASPECT_FIT      ///< generate a smaller image if needed
 };
 
 /// Resample an image, but preserve the aspect ratio by adding a transparent border around the output if needed.
@@ -96,32 +96,32 @@ void invert(Image& img);
 
 /// Ways in which images can be combined, similair to what Photoshop supports
 enum ImageCombine
-{	COMBINE_DEFAULT	// normal combine, but with a low priority, i.e. "apply default instead of add" == "add"
-	                // it is not representable in scripting/files, so should only be used internally
-,	COMBINE_NORMAL
-,	COMBINE_ADD
-,	COMBINE_SUBTRACT
-,	COMBINE_STAMP
-,	COMBINE_DIFFERENCE
-,	COMBINE_NEGATION
-,	COMBINE_MULTIPLY
-,	COMBINE_DARKEN
-,	COMBINE_LIGHTEN
-,	COMBINE_COLOR_DODGE
-,	COMBINE_COLOR_BURN
-,	COMBINE_SCREEN
-,	COMBINE_OVERLAY
-,	COMBINE_HARD_LIGHT
-,	COMBINE_SOFT_LIGHT
-,	COMBINE_REFLECT
-,	COMBINE_GLOW
-,	COMBINE_FREEZE
-,	COMBINE_HEAT
-,	COMBINE_AND
-,	COMBINE_OR
-,	COMBINE_XOR
-,	COMBINE_SHADOW
-,	COMBINE_SYMMETRIC_OVERLAY
+{  COMBINE_DEFAULT  // normal combine, but with a low priority, i.e. "apply default instead of add" == "add"
+                  // it is not representable in scripting/files, so should only be used internally
+,  COMBINE_NORMAL
+,  COMBINE_ADD
+,  COMBINE_SUBTRACT
+,  COMBINE_STAMP
+,  COMBINE_DIFFERENCE
+,  COMBINE_NEGATION
+,  COMBINE_MULTIPLY
+,  COMBINE_DARKEN
+,  COMBINE_LIGHTEN
+,  COMBINE_COLOR_DODGE
+,  COMBINE_COLOR_BURN
+,  COMBINE_SCREEN
+,  COMBINE_OVERLAY
+,  COMBINE_HARD_LIGHT
+,  COMBINE_SOFT_LIGHT
+,  COMBINE_REFLECT
+,  COMBINE_GLOW
+,  COMBINE_FREEZE
+,  COMBINE_HEAT
+,  COMBINE_AND
+,  COMBINE_OR
+,  COMBINE_XOR
+,  COMBINE_SHADOW
+,  COMBINE_SYMMETRIC_OVERLAY
 };
 
 /// Combine image b onto image a using some combining function.
@@ -147,48 +147,48 @@ void set_alpha(Image& img, double alpha);
  */
 class AlphaMask : public IntrusivePtrBase<AlphaMask> {
   public:
-	AlphaMask();
-	AlphaMask(const Image& mask);
-	~AlphaMask();
-	
-	/// Load an alpha mask
-	void load(const Image& image);
-	/// Unload the mask
-	void clear();
-	
-	/// Apply the alpha mask to an image
-	void setAlpha(Image& i) const;
-	/// Apply the alpha mask to a bitmap
-	void setAlpha(Bitmap& b) const;
-	
-	/// Is the given location opaque (not fully transparent)? when the mask were stretched to size
-	bool isOpaque(const RealPoint& p, const RealSize& size) const;
-	bool isOpaque(int x, int y) const;
-	
-	/// Determine a convex hull polygon *around* the mask
-	void convexHull(vector<wxPoint>& points) const;
-	
-	/// Make an image of the given color using this mask
-	Image colorImage(const Color& color) const;
-	
-	/// Returns the start of a row, when the mask were stretched to size
-	/** This is: the x coordinate of the first non-transparent pixel */
-	double rowLeft (double y, const RealSize& size) const;
-	/// Returns the end of a row, when the mask were stretched to size
-	double rowRight(double y, const RealSize& size) const;
-	
-	/// Does this mask have the given size?
-	inline bool hasSize(const wxSize& compare_size) const { return size == compare_size; }
-	/// Is the mask loaded?
-	inline bool isLoaded() const { return alpha; }
-	
+  AlphaMask();
+  AlphaMask(const Image& mask);
+  ~AlphaMask();
+  
+  /// Load an alpha mask
+  void load(const Image& image);
+  /// Unload the mask
+  void clear();
+  
+  /// Apply the alpha mask to an image
+  void setAlpha(Image& i) const;
+  /// Apply the alpha mask to a bitmap
+  void setAlpha(Bitmap& b) const;
+  
+  /// Is the given location opaque (not fully transparent)? when the mask were stretched to size
+  bool isOpaque(const RealPoint& p, const RealSize& size) const;
+  bool isOpaque(int x, int y) const;
+  
+  /// Determine a convex hull polygon *around* the mask
+  void convexHull(vector<wxPoint>& points) const;
+  
+  /// Make an image of the given color using this mask
+  Image colorImage(const Color& color) const;
+  
+  /// Returns the start of a row, when the mask were stretched to size
+  /** This is: the x coordinate of the first non-transparent pixel */
+  double rowLeft (double y, const RealSize& size) const;
+  /// Returns the end of a row, when the mask were stretched to size
+  double rowRight(double y, const RealSize& size) const;
+  
+  /// Does this mask have the given size?
+  inline bool hasSize(const wxSize& compare_size) const { return size == compare_size; }
+  /// Is the mask loaded?
+  inline bool isLoaded() const { return alpha; }
+  
   private:
-	wxSize size; ///< Size of the mask
-	Byte* alpha; ///< Data of alpha mask
-	mutable int *lefts, *rights; ///< Row sizes
-	
-	/// Compute lefts and rights from alpha
-	void loadRowSizes() const;
+  wxSize size; ///< Size of the mask
+  Byte* alpha; ///< Data of alpha mask
+  mutable int *lefts, *rights; ///< Row sizes
+  
+  /// Compute lefts and rights from alpha
+  void loadRowSizes() const;
 };
 
 // ----------------------------------------------------------------------------- : EOF

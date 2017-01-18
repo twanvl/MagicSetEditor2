@@ -32,9 +32,9 @@ DECLARE_TYPEOF_NO_REV(String); // iterating over characters in a string
 
 /// u if UNICODE is defined, a otherwise
 #ifdef UNICODE
-#	define IF_UNICODE(u,a) u
+#  define IF_UNICODE(u,a) u
 #else
-#	define IF_UNICODE(u,a) a
+#  define IF_UNICODE(u,a) a
 #endif
 
 #undef _
@@ -43,7 +43,7 @@ DECLARE_TYPEOF_NO_REV(String); // iterating over characters in a string
 
 /// The character type used
 typedef IF_UNICODE(wchar_t, char) Char;
-	
+  
 /// Decode a UTF8 string
 /** In non-unicode builds the input is considered to be an incorrectly encoded utf8 string.
  *  In unicode builds it is a normal string, utf8 already decoded.
@@ -62,25 +62,25 @@ void writeUTF8(wxTextOutputStream& stream, const String& str);
 
 /// Some constants we like to use
 #ifdef UNICODE
-	#define  LEFT_ANGLE_BRACKET _("\x2039")
-	#define RIGHT_ANGLE_BRACKET _("\x203A")
-	#define  LEFT_SINGLE_QUOTE  _('\x2018')
-	#define RIGHT_SINGLE_QUOTE  _('\x2019')
-	#define  LEFT_DOUBLE_QUOTE  _('\x201C')
-	#define RIGHT_DOUBLE_QUOTE  _('\x201D')
-	#define EN_DASH             _('\x2013')
-	#define EM_DASH             _('\x2014')
-	#define CONNECTION_SPACE    _('\xEB00') // in private use area, untags to ' '
+  #define  LEFT_ANGLE_BRACKET _("\x2039")
+  #define RIGHT_ANGLE_BRACKET _("\x203A")
+  #define  LEFT_SINGLE_QUOTE  _('\x2018')
+  #define RIGHT_SINGLE_QUOTE  _('\x2019')
+  #define  LEFT_DOUBLE_QUOTE  _('\x201C')
+  #define RIGHT_DOUBLE_QUOTE  _('\x201D')
+  #define EN_DASH             _('\x2013')
+  #define EM_DASH             _('\x2014')
+  #define CONNECTION_SPACE    _('\xEB00') // in private use area, untags to ' '
 #else
-	#define  LEFT_ANGLE_BRACKET _("<")
-	#define RIGHT_ANGLE_BRACKET _(">")
-	#define  LEFT_SINGLE_QUOTE  _('\'')
-	#define RIGHT_SINGLE_QUOTE  _('\'')
-	#define  LEFT_DOUBLE_QUOTE  _('\"')
-	#define RIGHT_DOUBLE_QUOTE  _('\"')
-	#define EN_DASH             _('-') // 150?
-	#define EM_DASH             _('-') // 151?
-	#define CONNECTION_SPACE    _(' ') // too bad
+  #define  LEFT_ANGLE_BRACKET _("<")
+  #define RIGHT_ANGLE_BRACKET _(">")
+  #define  LEFT_SINGLE_QUOTE  _('\'')
+  #define RIGHT_SINGLE_QUOTE  _('\'')
+  #define  LEFT_DOUBLE_QUOTE  _('\"')
+  #define RIGHT_DOUBLE_QUOTE  _('\"')
+  #define EN_DASH             _('-') // 150?
+  #define EM_DASH             _('-') // 151?
+  #define CONNECTION_SPACE    _(' ') // too bad
 #endif
 
 // ----------------------------------------------------------------------------- : Char functions
@@ -94,24 +94,24 @@ inline bool isLower(Char c) { return IF_UNICODE( iswlower(c) , islower((unsigned
 inline bool isPunct(Char c) { return IF_UNICODE( iswpunct(c) , ispunct((unsigned char)c) ); }
 // Character conversions
 #ifdef _MSC_VER
-	#define CHAR_FUNCTIONS_ARE_SLOW
+  #define CHAR_FUNCTIONS_ARE_SLOW
 #endif
 #ifdef CHAR_FUNCTIONS_ARE_SLOW
-	// These functions are slow as hell on msvc.
-	// If also in other compilers, they can also use these routines.
-	Char toLower(Char c);
-	Char toUpper(Char c);
-	inline bool isSpace(Char c) {
-		if (c <= 128) {
-			return (c >= 0x09 && c <= 0x0D) || c == 0x20;
-		} else {
-			return IF_UNICODE( iswspace(c) , isspace((unsigned char)c) ) || c == CONNECTION_SPACE;
-		}
-	}
+  // These functions are slow as hell on msvc.
+  // If also in other compilers, they can also use these routines.
+  Char toLower(Char c);
+  Char toUpper(Char c);
+  inline bool isSpace(Char c) {
+    if (c <= 128) {
+      return (c >= 0x09 && c <= 0x0D) || c == 0x20;
+    } else {
+      return IF_UNICODE( iswspace(c) , isspace((unsigned char)c) ) || c == CONNECTION_SPACE;
+    }
+  }
 #else
-	inline Char toLower(Char c) { return IF_UNICODE( towlower(c) , tolower(c) ); }
-	inline Char toUpper(Char c) { return IF_UNICODE( towupper(c) , toupper(c) ); }
-	inline bool isSpace(Char c) { return IF_UNICODE( iswspace(c) , isspace((unsigned char)c) ) || c == CONNECTION_SPACE; }
+  inline Char toLower(Char c) { return IF_UNICODE( towlower(c) , tolower(c) ); }
+  inline Char toUpper(Char c) { return IF_UNICODE( towupper(c) , toupper(c) ); }
+  inline bool isSpace(Char c) { return IF_UNICODE( iswspace(c) , isspace((unsigned char)c) ) || c == CONNECTION_SPACE; }
 #endif
 
 // ----------------------------------------------------------------------------- : String utilities

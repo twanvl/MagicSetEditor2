@@ -18,9 +18,9 @@
 /// Viewer that displays a text value
 class InfoValueViewer : public ValueViewer {
   public:
-	DECLARE_VALUE_VIEWER(Info) : ValueViewer(parent,style) {}
-	
-	virtual void draw(RotatedDC& dc);
+  DECLARE_VALUE_VIEWER(Info) : ValueViewer(parent,style) {}
+  
+  virtual void draw(RotatedDC& dc);
 };
 
 

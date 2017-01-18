@@ -23,28 +23,28 @@ DECLARE_POINTER_TYPE(FileFormat);
 /// A filter for a specific file format
 class FileFormat : public IntrusivePtrVirtualBase {
   public:
-	virtual ~FileFormat() {}
-	/// File extension used by this file format
-	virtual String extension() = 0;
-	/// What to match against
-	virtual String matches() {
-		return _("*.") + extension();
-	}
-	/// Name of the filter
-	virtual String name() = 0;
-	/// Can it be used for importing sets?
-	virtual bool canImport() = 0;
-	/// Can it be used for exporting sets for a particular game?
-	virtual bool canExport(const Game&) = 0;
-	/// Import using this filter
-	virtual SetP importSet(const String& filename) {
-		throw InternalError(_("Import not supported by this file format"));
-	}
-	/// Export using this filter
-	/** If is_copy, then the set should not be modified */
-	virtual void exportSet(Set& set, const String& filename, bool is_copy = false) {
-		throw InternalError(_("Export not supported by this file format"));
-	}
+  virtual ~FileFormat() {}
+  /// File extension used by this file format
+  virtual String extension() = 0;
+  /// What to match against
+  virtual String matches() {
+    return _("*.") + extension();
+  }
+  /// Name of the filter
+  virtual String name() = 0;
+  /// Can it be used for importing sets?
+  virtual bool canImport() = 0;
+  /// Can it be used for exporting sets for a particular game?
+  virtual bool canExport(const Game&) = 0;
+  /// Import using this filter
+  virtual SetP importSet(const String& filename) {
+    throw InternalError(_("Import not supported by this file format"));
+  }
+  /// Export using this filter
+  /** If is_copy, then the set should not be modified */
+  virtual void exportSet(Set& set, const String& filename, bool is_copy = false) {
+    throw InternalError(_("Export not supported by this file format"));
+  }
 };
 
 // ----------------------------------------------------------------------------- : Formats

@@ -21,17 +21,17 @@ typedef intrusive_ptr<Filter<Keyword> > KeywordListFilterP;
 
 DECLARE_LOCAL_EVENT_TYPE(EVENT_KEYWORD_SELECT, <not used>)
 /// Handle KeywordSelectEvents
-#define EVT_KEYWORD_SELECT(id, handler)										\
-	DECLARE_EVENT_TABLE_ENTRY(EVENT_KEYWORD_SELECT, id, -1,					\
-	 (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction)		\
-	 (void (wxEvtHandler::*)(KeywordSelectEvent&)) (&handler), (wxObject*) NULL),
+#define EVT_KEYWORD_SELECT(id, handler)                    \
+  DECLARE_EVENT_TABLE_ENTRY(EVENT_KEYWORD_SELECT, id, -1,          \
+   (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction)    \
+   (void (wxEvtHandler::*)(KeywordSelectEvent&)) (&handler), (wxObject*) NULL),
 
 /// The event of selecting a keyword
 struct KeywordSelectEvent : public wxCommandEvent {
-	KeywordP keyword; ///< The selected keyword
-	inline KeywordSelectEvent(const KeywordP& keyword)
-		: wxCommandEvent(EVENT_KEYWORD_SELECT), keyword(keyword)
-	{}
+  KeywordP keyword; ///< The selected keyword
+  inline KeywordSelectEvent(const KeywordP& keyword)
+    : wxCommandEvent(EVENT_KEYWORD_SELECT), keyword(keyword)
+  {}
 };
 
 // ----------------------------------------------------------------------------- : KeywordList
@@ -39,70 +39,70 @@ struct KeywordSelectEvent : public wxCommandEvent {
 /// A control that lists the keywords in a set and its game
 class KeywordList : public ItemList, public SetView {
   public:
-	KeywordList(Window* parent, int id, long additional_style = 0);
-	~KeywordList();
-	
-	// --------------------------------------------------- : Set stuff
-	
-	virtual void onBeforeChangeSet();
-	virtual void onChangeSet();
-	virtual void onAction(const Action&, bool);
-	void updateUsageStatistics();
-	
-	// --------------------------------------------------- : Selection
-	
-	inline KeywordP getKeyword() const             { return static_pointer_cast<Keyword>(selected_item); }
-	inline void     setKeyword(const KeywordP& kw) { selectItem(kw, true, false); }
-	
-	/// Change the filter to use, can be null
-	void setFilter(const KeywordListFilterP& filter);
-	
-	// --------------------------------------------------- : Clipboard
-	
-	bool canDelete() const;
-	bool canCopy()   const;
-	bool canPaste()  const;
-	// Try to perform a clipboard operation, return success
-	bool doCut();
-	bool doCopy();
-	bool doPaste();
-	bool doDelete();
-	
-	// --------------------------------------------------- : The keywords
+  KeywordList(Window* parent, int id, long additional_style = 0);
+  ~KeywordList();
+  
+  // --------------------------------------------------- : Set stuff
+  
+  virtual void onBeforeChangeSet();
+  virtual void onChangeSet();
+  virtual void onAction(const Action&, bool);
+  void updateUsageStatistics();
+  
+  // --------------------------------------------------- : Selection
+  
+  inline KeywordP getKeyword() const             { return static_pointer_cast<Keyword>(selected_item); }
+  inline void     setKeyword(const KeywordP& kw) { selectItem(kw, true, false); }
+  
+  /// Change the filter to use, can be null
+  void setFilter(const KeywordListFilterP& filter);
+  
+  // --------------------------------------------------- : Clipboard
+  
+  bool canDelete() const;
+  bool canCopy()   const;
+  bool canPaste()  const;
+  // Try to perform a clipboard operation, return success
+  bool doCut();
+  bool doCopy();
+  bool doPaste();
+  bool doDelete();
+  
+  // --------------------------------------------------- : The keywords
   protected:
-	/// Get a list of all keywords
-	virtual void getItems(vector<VoidP>& out) const;
-	/// Return the keyword at the given position in the sorted keyword list
-	inline KeywordP getKeyword(long pos) const { return static_pointer_cast<Keyword>(getItem(pos)); }
-	
-	/// Send an 'item selected' event for the currently selected item (selected_item)
-	virtual void sendEvent();
-	/// Compare keywords
-	virtual bool compareItems(void* a, void* b) const;
-	
-	/// Get the text of an item in a specific column
-	/** Overrides a function from wxListCtrl */
-	virtual String OnGetItemText (long pos, long col) const;
-	/// Get the image of an item, by default no image is used
-	/** Overrides a function from wxListCtrl */
-	virtual int    OnGetItemImage(long pos) const;
-	/// Get the color for an item
-	virtual wxListItemAttr* OnGetItemAttr(long pos) const;
-	
+  /// Get a list of all keywords
+  virtual void getItems(vector<VoidP>& out) const;
+  /// Return the keyword at the given position in the sorted keyword list
+  inline KeywordP getKeyword(long pos) const { return static_pointer_cast<Keyword>(getItem(pos)); }
+  
+  /// Send an 'item selected' event for the currently selected item (selected_item)
+  virtual void sendEvent();
+  /// Compare keywords
+  virtual bool compareItems(void* a, void* b) const;
+  
+  /// Get the text of an item in a specific column
+  /** Overrides a function from wxListCtrl */
+  virtual String OnGetItemText (long pos, long col) const;
+  /// Get the image of an item, by default no image is used
+  /** Overrides a function from wxListCtrl */
+  virtual int    OnGetItemImage(long pos) const;
+  /// Get the color for an item
+  virtual wxListItemAttr* OnGetItemAttr(long pos) const;
+  
   private:
-	void storeColumns();
-	
-	mutable wxListItemAttr item_attr; // for OnGetItemAttr
-	KeywordListFilterP filter; ///< Which keywords to show?
-	
-	/// How often is a keyword used in the set?
-	int usage(const Keyword&) const;
-	map<const Keyword*,int> usage_statistics;
-	
-	// --------------------------------------------------- : Window events
-	DECLARE_EVENT_TABLE();
-	
-	void onContextMenu     (wxContextMenuEvent&);
+  void storeColumns();
+  
+  mutable wxListItemAttr item_attr; // for OnGetItemAttr
+  KeywordListFilterP filter; ///< Which keywords to show?
+  
+  /// How often is a keyword used in the set?
+  int usage(const Keyword&) const;
+  map<const Keyword*,int> usage_statistics;
+  
+  // --------------------------------------------------- : Window events
+  DECLARE_EVENT_TABLE();
+  
+  void onContextMenu     (wxContextMenuEvent&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

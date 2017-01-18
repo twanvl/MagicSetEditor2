@@ -18,10 +18,10 @@
 /// An editor 'control' for editing InfoValues
 class InfoValueEditor : public InfoValueViewer, public ValueEditor {
   public:
-	DECLARE_VALUE_EDITOR(Info);
-	
-	virtual void determineSize(bool);
-	virtual bool drawLabel() const { return false; }
+  DECLARE_VALUE_EDITOR(Info);
+  
+  virtual void determineSize(bool);
+  virtual bool drawLabel() const { return false; }
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -19,54 +19,54 @@ class wxSpinCtrl;
 /// Editor for drawing basic shapes such as rectangles and polygons
 class SymbolBasicShapeEditor : public SymbolEditorBase {
   public:
-	SymbolBasicShapeEditor(SymbolControl* control);
-	
-	// --------------------------------------------------- : Drawing
-	
-	virtual void draw(DC& dc);
-	
-	// --------------------------------------------------- : UI
-	
-	virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
-	virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
-	virtual void onUpdateUI(wxUpdateUIEvent&);
-	virtual void onCommand(int id);
-	virtual int modeToolId();
-	
-	// --------------------------------------------------- : Mouse events
-	
-	virtual void onLeftDown   (const Vector2D& pos, wxMouseEvent& ev);
-	virtual void onLeftUp     (const Vector2D& pos, wxMouseEvent& ev);
-	virtual void onMouseDrag  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev);
-	
-	// --------------------------------------------------- : Other events
-	
-	virtual void onKeyChange(wxKeyEvent& ev);
-	
-	virtual bool isEditing();
-	
-	// --------------------------------------------------- : Data
+  SymbolBasicShapeEditor(SymbolControl* control);
+  
+  // --------------------------------------------------- : Drawing
+  
+  virtual void draw(DC& dc);
+  
+  // --------------------------------------------------- : UI
+  
+  virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
+  virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
+  virtual void onUpdateUI(wxUpdateUIEvent&);
+  virtual void onCommand(int id);
+  virtual int modeToolId();
+  
+  // --------------------------------------------------- : Mouse events
+  
+  virtual void onLeftDown   (const Vector2D& pos, wxMouseEvent& ev);
+  virtual void onLeftUp     (const Vector2D& pos, wxMouseEvent& ev);
+  virtual void onMouseDrag  (const Vector2D& from, const Vector2D& to, wxMouseEvent& ev);
+  
+  // --------------------------------------------------- : Other events
+  
+  virtual void onKeyChange(wxKeyEvent& ev);
+  
+  virtual bool isEditing();
+  
+  // --------------------------------------------------- : Data
   private:
-	int mode;
-	SymbolShapeP shape;
-	Vector2D start;
-	Vector2D end;
-	bool drawing;
-	// controls
-	wxSpinCtrl*   sides;
-	wxStaticText* sidesL;
-	
-	/// Cancel the drawing
-	void stopActions();
-	
-	/// Make the shape
-	/**  when centered: a = center, b-a = radius
-	 *   otherwise:     a = top left, b = bottom right
-	 */
-	void makeShape(Vector2D a, Vector2D b, bool constrained, bool snap, bool centered);
-	
-	/// Make the shape, centered in c, with radius r
-	void makeCenteredShape(const Vector2D& c, Vector2D r, bool constrained);
+  int mode;
+  SymbolShapeP shape;
+  Vector2D start;
+  Vector2D end;
+  bool drawing;
+  // controls
+  wxSpinCtrl*   sides;
+  wxStaticText* sidesL;
+  
+  /// Cancel the drawing
+  void stopActions();
+  
+  /// Make the shape
+  /**  when centered: a = center, b-a = radius
+   *   otherwise:     a = top left, b = bottom right
+   */
+  void makeShape(Vector2D a, Vector2D b, bool constrained, bool snap, bool centered);
+  
+  /// Make the shape, centered in c, with radius r
+  void makeCenteredShape(const Vector2D& c, Vector2D r, bool constrained);
 };
 
 // ----------------------------------------------------------------------------- : EOF

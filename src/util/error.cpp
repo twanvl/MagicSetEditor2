@@ -11,7 +11,7 @@
 #include <cli/text_io_handler.hpp>
 #include <cli/text_io_handler.hpp>
 #if wxUSE_STACKWALKER
-	#include <wx/stackwalk.h>
+  #include <wx/stackwalk.h>
 #endif
 #include <queue>
 
@@ -20,32 +20,32 @@ DECLARE_TYPEOF_COLLECTION(ScriptParseError);
 // ----------------------------------------------------------------------------- : Debug utilities
 
 #if defined(_MSC_VER) && defined(_DEBUG) && defined(_CRT_WIDE)
-	void msvc_assert(const wchar_t* msg, const wchar_t* expr, const wchar_t* file, unsigned line) {
-		if (IsDebuggerPresent()) {
-			wchar_t buffer[1024];
-			if (msg) {
-				wsprintf(buffer, L"Assertion failed: %s: %s, file %s, line %d\n", msg, expr, file, line);
-			} else {
-				wsprintf(buffer, L"Assertion failed: %s, file %s, line %d\n", expr, file, line);
-			}
-			OutputDebugStringW(buffer);
-			DebugBreak();
-		} else {
-			_wassert(expr, file, line);
-		}
-	}
+  void msvc_assert(const wchar_t* msg, const wchar_t* expr, const wchar_t* file, unsigned line) {
+    if (IsDebuggerPresent()) {
+      wchar_t buffer[1024];
+      if (msg) {
+        wsprintf(buffer, L"Assertion failed: %s: %s, file %s, line %d\n", msg, expr, file, line);
+      } else {
+        wsprintf(buffer, L"Assertion failed: %s, file %s, line %d\n", expr, file, line);
+      }
+      OutputDebugStringW(buffer);
+      DebugBreak();
+    } else {
+      _wassert(expr, file, line);
+    }
+  }
 #endif
 
 // ----------------------------------------------------------------------------- : Error types
 
 Error::Error(const String& message)
-	: message(message)
+  : message(message)
 {}
 
 Error::~Error() {}
 
 String Error::what() const {
-	return message;
+  return message;
 }
 
 
@@ -106,55 +106,55 @@ String get_stack_trace() {
 }
 #else
 String get_stack_trace() {
-	return _(""); // not supported
+  return _(""); // not supported
 }
 #endif // wxUSE_STACKWALKER
 
 InternalError::InternalError(const String& str)
-	: Error(
-		_("An internal error occured:\n\n") +
-		str + _("\n")
-		_("Please save your work (use 'save as' to so you don't overwrite things)\n")
-		_("and restart Magic Set Editor.\n\n")
-		_("You should leave a bug report on http://magicseteditor.sourceforge.net/\n")
-		_("Press Ctrl+C to copy this message to the clipboard.")
-	)
+  : Error(
+    _("An internal error occured:\n\n") +
+    str + _("\n")
+    _("Please save your work (use 'save as' to so you don't overwrite things)\n")
+    _("and restart Magic Set Editor.\n\n")
+    _("You should leave a bug report on http://magicseteditor.sourceforge.net/\n")
+    _("Press Ctrl+C to copy this message to the clipboard.")
+  )
 {
-	// add a stacktrace
-	const String stack_trace = get_stack_trace();
-	if (!stack_trace.empty()) {
-		message << _("\n\nCall stack:\n") << stack_trace;
-	}
+  // add a stacktrace
+  const String stack_trace = get_stack_trace();
+  if (!stack_trace.empty()) {
+    message << _("\n\nCall stack:\n") << stack_trace;
+  }
 }
 
 // ----------------------------------------------------------------------------- : Parse errors
 
 ScriptParseError::ScriptParseError(size_t pos, int line, const String& filename, const String& error)
-	: ParseError(error)
-	, start(pos), end(pos), line(line), filename(filename)
+  : ParseError(error)
+  , start(pos), end(pos), line(line), filename(filename)
 {}
 ScriptParseError::ScriptParseError(size_t pos, int line, const String& filename, const String& exp, const String& found)
-	: ParseError(_("Expected '") + exp + _("' instead of '") + found + _("'"))
-	, start(pos), end(pos + found.size()), line(line), filename(filename)
+  : ParseError(_("Expected '") + exp + _("' instead of '") + found + _("'"))
+  , start(pos), end(pos + found.size()), line(line), filename(filename)
 {}
 ScriptParseError::ScriptParseError(size_t pos1, size_t pos2, int line, const String& filename, const String& open, const String& close, const String& found)
-	: ParseError(_("Expected closing '") + close + _("' for this '") + open + _("' instead of '") + found + _("'"))
-	, start(pos1), end(pos2 + found.size()), line(line), filename(filename)
+  : ParseError(_("Expected closing '") + close + _("' for this '") + open + _("' instead of '") + found + _("'"))
+  , start(pos1), end(pos2 + found.size()), line(line), filename(filename)
 {}
 String ScriptParseError::what() const {
-	return String(_("(")) << (int)start << _("): ") << Error::what();
+  return String(_("(")) << (int)start << _("): ") << Error::what();
 }
 
 String concat(const vector<ScriptParseError>& errors) {
-	String total;
-	FOR_EACH_CONST(e, errors) {
-		if (!total.empty()) total += _("\n");
-		total += e.what();
-	}
-	return total;
+  String total;
+  FOR_EACH_CONST(e, errors) {
+    if (!total.empty()) total += _("\n");
+    total += e.what();
+  }
+  return total;
 }
 ScriptParseErrors::ScriptParseErrors(const vector<ScriptParseError>& errors)
-	: ParseError(concat(errors))
+  : ParseError(concat(errors))
 {}
 
 // ----------------------------------------------------------------------------- : Error handling
@@ -167,37 +167,37 @@ bool show_message_box_for_fatal_errors = true;
 bool write_errors_to_cli = false;
 
 void queue_message(MessageType type, String const& msg) {
-	if (write_errors_to_cli && wxThread::IsMain()) {
-		cli.show_message(type,msg);
-		return; // TODO: is this the right thing to do?
-	}
-	if (show_message_box_for_fatal_errors && type == MESSAGE_FATAL_ERROR && wxThread::IsMain()) {
-		// bring this to the user's attention right now!
-		wxMessageBox(msg, _("Error"), wxOK | wxICON_ERROR);
-	}
-	// Thread safety
-	wxMutexLocker lock(crit_error_handling);
-	// Only show errors in the main thread
-	message_queue.push_back(make_pair(type,msg));
+  if (write_errors_to_cli && wxThread::IsMain()) {
+    cli.show_message(type,msg);
+    return; // TODO: is this the right thing to do?
+  }
+  if (show_message_box_for_fatal_errors && type == MESSAGE_FATAL_ERROR && wxThread::IsMain()) {
+    // bring this to the user's attention right now!
+    wxMessageBox(msg, _("Error"), wxOK | wxICON_ERROR);
+  }
+  // Thread safety
+  wxMutexLocker lock(crit_error_handling);
+  // Only show errors in the main thread
+  message_queue.push_back(make_pair(type,msg));
 }
 
 void handle_error(const Error& e) {
-	queue_message(e.is_fatal() ? MESSAGE_FATAL_ERROR : MESSAGE_ERROR, e.what());
+  queue_message(e.is_fatal() ? MESSAGE_FATAL_ERROR : MESSAGE_ERROR, e.what());
 }
 
 bool have_queued_message() {
-	wxMutexLocker lock(crit_error_handling);
-	return !message_queue.empty();
+  wxMutexLocker lock(crit_error_handling);
+  return !message_queue.empty();
 }
 
 bool get_queued_message(MessageType& type, String& msg) {
-	wxMutexLocker lock(crit_error_handling);
-	if (message_queue.empty()) {
-		return false;
-	} else {
-		type = message_queue.back().first;
-		msg  = message_queue.back().second;
-		message_queue.pop_back();
-		return true;
-	}
+  wxMutexLocker lock(crit_error_handling);
+  if (message_queue.empty()) {
+    return false;
+  } else {
+    type = message_queue.back().first;
+    msg  = message_queue.back().second;
+    message_queue.pop_back();
+    return true;
+  }
 }

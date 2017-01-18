@@ -20,28 +20,28 @@ DECLARE_POINTER_TYPE(TextValue);
 /// Information for search/replace
 class FindInfo {
   public:
-	FindInfo(wxFindReplaceData& what) : what(what) {}
-	virtual ~FindInfo() {}
-	
-	/// Handle that a match was found.
-	/** Returns true if we are done and searching should be ended. */
-	virtual bool handle(const CardP& card, const TextValueP& value, size_t pos, bool was_selection) = 0;
-	/// Should the found text be selected?
-	virtual bool select() const { return true; }
-	/// Should the current selection also be searched?
-	virtual bool searchSelection() const { return false; }
-	
-	/// Searching forward?
-	inline bool forward()       const { return what.GetFlags() & wxFR_DOWN; }
-	/// Match whole words?
-	inline bool wholeWord()     const { return what.GetFlags() & wxFR_WHOLEWORD; }
-	/// Case sensitive?
-	inline bool caseSensitive() const { return what.GetFlags() & wxFR_MATCHCASE; }
-	/// String to look for
-	inline const String& findString() const { return what.GetFindString(); }
-	
+  FindInfo(wxFindReplaceData& what) : what(what) {}
+  virtual ~FindInfo() {}
+  
+  /// Handle that a match was found.
+  /** Returns true if we are done and searching should be ended. */
+  virtual bool handle(const CardP& card, const TextValueP& value, size_t pos, bool was_selection) = 0;
+  /// Should the found text be selected?
+  virtual bool select() const { return true; }
+  /// Should the current selection also be searched?
+  virtual bool searchSelection() const { return false; }
+  
+  /// Searching forward?
+  inline bool forward()       const { return what.GetFlags() & wxFR_DOWN; }
+  /// Match whole words?
+  inline bool wholeWord()     const { return what.GetFlags() & wxFR_WHOLEWORD; }
+  /// Case sensitive?
+  inline bool caseSensitive() const { return what.GetFlags() & wxFR_MATCHCASE; }
+  /// String to look for
+  inline const String& findString() const { return what.GetFindString(); }
+  
   protected:
-	wxFindReplaceData& what; ///< What to search for, the direction to search in
+  wxFindReplaceData& what; ///< What to search for, the direction to search in
 };
 
 // ----------------------------------------------------------------------------- : EOF

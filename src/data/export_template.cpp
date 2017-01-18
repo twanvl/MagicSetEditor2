@@ -15,8 +15,8 @@
 // ----------------------------------------------------------------------------- : Export template, basics
 
 ExportTemplate::ExportTemplate()
-	: file_type(_("HTML files (*.html)|*.html"))
-	, create_directory(false)
+  : file_type(_("HTML files (*.html)|*.html"))
+  , create_directory(false)
 {}
 
 String ExportTemplate::typeNameStatic() { return _("export-template"); }
@@ -24,23 +24,23 @@ String ExportTemplate::typeName() const { return _("export-template"); }
 Version ExportTemplate::fileVersion() const { return file_version_export_template; }
 
 void ExportTemplate::validate(Version) {
-	if (!game) {
-		throw Error(_ERROR_1_("no game specified",_TYPE_("export template")));
-	}
-	// an export template depends on the game it is made for
-	requireDependency(game.get());
+  if (!game) {
+    throw Error(_ERROR_1_("no game specified",_TYPE_("export template")));
+  }
+  // an export template depends on the game it is made for
+  requireDependency(game.get());
 }
 
 
 IMPLEMENT_REFLECTION(ExportTemplate) {
-	REFLECT_BASE(Packaged);
-	REFLECT(game);
-	REFLECT(file_type);
-	REFLECT(create_directory);
-	REFLECT(option_fields);
-	REFLECT_IF_READING option_style.init(option_fields);
-	REFLECT(option_style);
-	REFLECT(script);
+  REFLECT_BASE(Packaged);
+  REFLECT(game);
+  REFLECT(file_type);
+  REFLECT(create_directory);
+  REFLECT(option_fields);
+  REFLECT_IF_READING option_style.init(option_fields);
+  REFLECT(option_style);
+  REFLECT(script);
 }
 
 // ----------------------------------------------------------------------------- : ExportInfo

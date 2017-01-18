@@ -20,17 +20,17 @@ DECLARE_POINTER_TYPE(Card);
 /// A script to add one or more cards to a set
 class AddCardsScript : public IntrusivePtrBase<AddCardsScript> {
   public:
-	String           name;
-	String           description;
-	Scriptable<bool> enabled;
-	OptionalScript   script;
-	
-	/// Perform the script; return the cards (if any)
-	void perform(Set& set, vector<CardP>& out);
-	/// Perform the script; add cards to the set
-	void perform(Set& set);
-	
-	DECLARE_REFLECTION();
+  String           name;
+  String           description;
+  Scriptable<bool> enabled;
+  OptionalScript   script;
+  
+  /// Perform the script; return the cards (if any)
+  void perform(Set& set, vector<CardP>& out);
+  /// Perform the script; add cards to the set
+  void perform(Set& set);
+  
+  DECLARE_REFLECTION();
 };
 
 

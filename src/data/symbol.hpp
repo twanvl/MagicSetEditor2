@@ -28,52 +28,52 @@ DECLARE_POINTER_TYPE(Symbol);
 /** Specificly: the relation between delta_before and delta_after
  */
 enum LockMode
-{	LOCK_FREE		///< no locking
-,	LOCK_DIR		///< delta_before = x * delta_after
-,	LOCK_SIZE		///< delta_before = -delta_after
+{  LOCK_FREE    ///< no locking
+,  LOCK_DIR    ///< delta_before = x * delta_after
+,  LOCK_SIZE    ///< delta_before = -delta_after
 };
 
 /// Is the segment between two ControlPoints a line or a curve?
 enum SegmentMode
-{	SEGMENT_LINE
-,	SEGMENT_CURVE
+{  SEGMENT_LINE
+,  SEGMENT_CURVE
 };
 
 /// To refer to a specific handle of a control point
 enum WhichHandle
-{	HANDLE_NONE = 0	///< point is not selected
-,	HANDLE_MAIN
-,	HANDLE_BEFORE
-,	HANDLE_AFTER
+{  HANDLE_NONE = 0  ///< point is not selected
+,  HANDLE_MAIN
+,  HANDLE_BEFORE
+,  HANDLE_AFTER
 };
 
 /// A control point (corner) of a SymbolShape (polygon/bezier-gon)
 class ControlPoint : public IntrusivePtrBase<ControlPoint> {
   public:
-	Vector2D pos;			///< position of the control point itself
-	Vector2D delta_before;	///< delta to bezier control point, for curve before point
-	Vector2D delta_after;	///< delta to bezier control point, for curve after point
-	SegmentMode segment_before, segment_after;
-	LockMode lock;
-	
-	/// Default constructor
-	ControlPoint();
-	/// Constructor for straight lines, takes only the position
-	ControlPoint(double x, double y);
-	/// Constructor for curves lines, takes postions, delta_before, delta_after and lock mode
-	ControlPoint(double x, double y, double xb, double yb, double xa, double ya, LockMode lock = LOCK_FREE);
-	
-	/// Must be called after delta_before/delta_after has changed, enforces lock constraints
-	void onUpdateHandle(WhichHandle wh);
-	/// Must be called after lock has changed, enforces lock constraints
-	void onUpdateLock();
+  Vector2D pos;      ///< position of the control point itself
+  Vector2D delta_before;  ///< delta to bezier control point, for curve before point
+  Vector2D delta_after;  ///< delta to bezier control point, for curve after point
+  SegmentMode segment_before, segment_after;
+  LockMode lock;
+  
+  /// Default constructor
+  ControlPoint();
+  /// Constructor for straight lines, takes only the position
+  ControlPoint(double x, double y);
+  /// Constructor for curves lines, takes postions, delta_before, delta_after and lock mode
+  ControlPoint(double x, double y, double xb, double yb, double xa, double ya, LockMode lock = LOCK_FREE);
+  
+  /// Must be called after delta_before/delta_after has changed, enforces lock constraints
+  void onUpdateHandle(WhichHandle wh);
+  /// Must be called after lock has changed, enforces lock constraints
+  void onUpdateLock();
 
-	/// Get a handle of this control point
-	Vector2D& getHandle(WhichHandle wh);
-	/// Get a handle of this control point that is oposite wh
-	Vector2D& getOther(WhichHandle wh);
-	
-	DECLARE_REFLECTION();
+  /// Get a handle of this control point
+  Vector2D& getHandle(WhichHandle wh);
+  /// Get a handle of this control point that is oposite wh
+  Vector2D& getOther(WhichHandle wh);
+  
+  DECLARE_REFLECTION();
 };
 
 
@@ -82,27 +82,27 @@ class ControlPoint : public IntrusivePtrBase<ControlPoint> {
 /// A specific handle of a ControlPoint
 class SelectedHandle {
   public:
-	ControlPointP point;  ///< the selected point
-	WhichHandle   handle; ///< the selected handle of the point
-	
-	// SelectedHandle
-	SelectedHandle()                                                      : handle(HANDLE_NONE) {}
-	SelectedHandle(const WhichHandle&   handle)                           : handle(handle) { assert (handle == HANDLE_NONE); }
-	SelectedHandle(const ControlPointP& point, const WhichHandle& handle) : point(point), handle(handle) {}
-	
-	inline Vector2D& getHandle() const { return  point->getHandle(handle); }
-	inline Vector2D& getOther()  const { return  point->getOther (handle); }
-	inline void onUpdateHandle() const { return  point->onUpdateHandle(handle); }
-	
-	/*
-	bool operator == (const ControlPointP pnt) const;
-	
-	bool SelectedHandle::operator == (const ControlPointP pnt) const { return  point == pnt; }
-	bool operator == (const WhichHandle& wh) const;
-	bool SelectedHandle::operator == (const WhichHandle& wh) const          { return  handle == wh; }
-	bool operator ! () const;
-	bool SelectedHandle::operator ! () const                         { return  handle == handleNone; }
-	*/	
+  ControlPointP point;  ///< the selected point
+  WhichHandle   handle; ///< the selected handle of the point
+  
+  // SelectedHandle
+  SelectedHandle()                                                      : handle(HANDLE_NONE) {}
+  SelectedHandle(const WhichHandle&   handle)                           : handle(handle) { assert (handle == HANDLE_NONE); }
+  SelectedHandle(const ControlPointP& point, const WhichHandle& handle) : point(point), handle(handle) {}
+  
+  inline Vector2D& getHandle() const { return  point->getHandle(handle); }
+  inline Vector2D& getOther()  const { return  point->getOther (handle); }
+  inline void onUpdateHandle() const { return  point->onUpdateHandle(handle); }
+  
+  /*
+  bool operator == (const ControlPointP pnt) const;
+  
+  bool SelectedHandle::operator == (const ControlPointP pnt) const { return  point == pnt; }
+  bool operator == (const WhichHandle& wh) const;
+  bool SelectedHandle::operator == (const WhichHandle& wh) const          { return  handle == wh; }
+  bool operator ! () const;
+  bool SelectedHandle::operator ! () const                         { return  handle == handleNone; }
+  */  
 };
 
 
@@ -111,25 +111,25 @@ class SelectedHandle {
 /// Bounding box of a symbol part
 class Bounds {
   public:
-	inline Bounds() : min(Vector2D::infinity()), max(-Vector2D::infinity()) {}
-	inline explicit Bounds(const Vector2D& p) : min(p), max(p) {}
-	inline Bounds(const Vector2D& min, const Vector2D& max) : min(min), max(max) {}
-	
-	/// Combine with another bounding box
-	void update(const Bounds& b);
-	void update(const Vector2D& p);
-	
-	/// Does this box contain the given point?
-	bool contains(const Vector2D& p) const;
-	/// Does this box contain the given rectangle?
-	bool contains(const Bounds& b) const;
-	
-	/// Corner or center of this bounding box, dx,dy in <-1, 0, 1>
-	Vector2D corner(int dx, int dy) const;
-	
-	Vector2D min, max;
-	
-	inline operator RealRect () const { return RealRect(min, RealSize(max - min)); }
+  inline Bounds() : min(Vector2D::infinity()), max(-Vector2D::infinity()) {}
+  inline explicit Bounds(const Vector2D& p) : min(p), max(p) {}
+  inline Bounds(const Vector2D& min, const Vector2D& max) : min(min), max(max) {}
+  
+  /// Combine with another bounding box
+  void update(const Bounds& b);
+  void update(const Vector2D& p);
+  
+  /// Does this box contain the given point?
+  bool contains(const Vector2D& p) const;
+  /// Does this box contain the given rectangle?
+  bool contains(const Bounds& b) const;
+  
+  /// Corner or center of this bounding box, dx,dy in <-1, 0, 1>
+  Vector2D corner(int dx, int dy) const;
+  
+  Vector2D min, max;
+  
+  inline operator RealRect () const { return RealRect(min, RealSize(max - min)); }
 };
 
 // ----------------------------------------------------------------------------- : SymbolPart
@@ -137,39 +137,39 @@ class Bounds {
 /// A part of a symbol, not necesserly a shape
 class SymbolPart : public IntrusivePtrVirtualBase {
   public:
-	/// Name/label for this part
-	String name;
-	/// Position and size of the part.
-	/** this is the smallest axis aligned bounding box that fits around the part */
-	Bounds bounds;
-	
-	/// Type of this part
-	virtual String typeName() const = 0;
-	/// Create a clone of this symbol part
-	virtual SymbolPartP clone() const = 0;
-	/// Icon for this part
-	virtual int icon() const = 0;
-	
-	/// Convert to SymbolShape?
-	virtual       SymbolShape*    isSymbolShape()          { return nullptr; }
-	virtual const SymbolShape*    isSymbolShape()    const { return nullptr; }
-	/// Convert to SymbolSymmetry?
-	virtual       SymbolSymmetry* isSymbolSymmetry()       { return nullptr; }
-	virtual const SymbolSymmetry* isSymbolSymmetry() const { return nullptr; }
-	/// Convert to SymbolGroup?
-	virtual       SymbolGroup*    isSymbolGroup()          { return nullptr; }
-	virtual const SymbolGroup*    isSymbolGroup()    const { return nullptr; }
-	
-	/// Does this part contain another?
-	/** also true if this==that*/
-	virtual bool isAncestor(const SymbolPart& that) const { return this == &that; }
-	
-	/// Calculate the position and size of the part (bounds)
-	virtual void updateBounds();
-	/// Calculate the position and size of the part using the given rotation matrix
-	virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity) = 0;
-	
-	DECLARE_REFLECTION_VIRTUAL();
+  /// Name/label for this part
+  String name;
+  /// Position and size of the part.
+  /** this is the smallest axis aligned bounding box that fits around the part */
+  Bounds bounds;
+  
+  /// Type of this part
+  virtual String typeName() const = 0;
+  /// Create a clone of this symbol part
+  virtual SymbolPartP clone() const = 0;
+  /// Icon for this part
+  virtual int icon() const = 0;
+  
+  /// Convert to SymbolShape?
+  virtual       SymbolShape*    isSymbolShape()          { return nullptr; }
+  virtual const SymbolShape*    isSymbolShape()    const { return nullptr; }
+  /// Convert to SymbolSymmetry?
+  virtual       SymbolSymmetry* isSymbolSymmetry()       { return nullptr; }
+  virtual const SymbolSymmetry* isSymbolSymmetry() const { return nullptr; }
+  /// Convert to SymbolGroup?
+  virtual       SymbolGroup*    isSymbolGroup()          { return nullptr; }
+  virtual const SymbolGroup*    isSymbolGroup()    const { return nullptr; }
+  
+  /// Does this part contain another?
+  /** also true if this==that*/
+  virtual bool isAncestor(const SymbolPart& that) const { return this == &that; }
+  
+  /// Calculate the position and size of the part (bounds)
+  virtual void updateBounds();
+  /// Calculate the position and size of the part using the given rotation matrix
+  virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity) = 0;
+  
+  DECLARE_REFLECTION_VIRTUAL();
 };
 
 template <> SymbolPartP read_new<SymbolPart>(Reader& reader);
@@ -178,50 +178,50 @@ template <> SymbolPartP read_new<SymbolPart>(Reader& reader);
 
 /// How are symbol parts combined with parts below it?
 enum SymbolShapeCombine
-{	SYMBOL_COMBINE_MERGE
-,	SYMBOL_COMBINE_SUBTRACT
-,	SYMBOL_COMBINE_INTERSECTION
-,	SYMBOL_COMBINE_DIFFERENCE
-,	SYMBOL_COMBINE_OVERLAP
-,	SYMBOL_COMBINE_BORDER
+{  SYMBOL_COMBINE_MERGE
+,  SYMBOL_COMBINE_SUBTRACT
+,  SYMBOL_COMBINE_INTERSECTION
+,  SYMBOL_COMBINE_DIFFERENCE
+,  SYMBOL_COMBINE_OVERLAP
+,  SYMBOL_COMBINE_BORDER
 };
 
 /// A sane mod function, always returns a result in the range [0..size)
 inline size_t mod(int a, size_t size) {
-	int m = a % (int)size;
-	return m >= 0 ? m : m + size;
+  int m = a % (int)size;
+  return m >= 0 ? m : m + size;
 }
 
 /// A single shape (polygon/bezier-gon) in a Symbol
 class SymbolShape : public SymbolPart {
   public:
-	/// The points of this polygon
-	vector<ControlPointP> points;
-	/// How is this part combined with parts below it?
-	SymbolShapeCombine combine;
-	// Center of rotation, relative to the part, when the part is scaled to [0..1]
-	Vector2D rotation_center;
-	
-	SymbolShape();
-	
-	virtual String typeName() const;
-	virtual SymbolPartP clone() const;
-	virtual int icon() const { return combine; }
-	virtual       SymbolShape* isSymbolShape()       { return this; }
-	virtual const SymbolShape* isSymbolShape() const { return this; }
-	
-	/// Get a control point, wraps around
-	inline ControlPointP getPoint(int id) const {
-		return points[mod(id, points.size())];
-	}
-	
-	/// Enforce lock constraints
-	void enforceConstraints();
-	
-	/// Calculate the position and size of the part using the given rotation matrix
-	virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
-	
-	DECLARE_REFLECTION();
+  /// The points of this polygon
+  vector<ControlPointP> points;
+  /// How is this part combined with parts below it?
+  SymbolShapeCombine combine;
+  // Center of rotation, relative to the part, when the part is scaled to [0..1]
+  Vector2D rotation_center;
+  
+  SymbolShape();
+  
+  virtual String typeName() const;
+  virtual SymbolPartP clone() const;
+  virtual int icon() const { return combine; }
+  virtual       SymbolShape* isSymbolShape()       { return this; }
+  virtual const SymbolShape* isSymbolShape() const { return this; }
+  
+  /// Get a control point, wraps around
+  inline ControlPointP getPoint(int id) const {
+    return points[mod(id, points.size())];
+  }
+  
+  /// Enforce lock constraints
+  void enforceConstraints();
+  
+  /// Calculate the position and size of the part using the given rotation matrix
+  virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
+  
+  DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : SymbolGroup
@@ -229,52 +229,52 @@ class SymbolShape : public SymbolPart {
 /// A group of symbol parts
 class SymbolGroup : public SymbolPart {
   public:
-	vector<SymbolPartP> parts;	///< The parts in this group, first item is on top
-	
-	SymbolGroup();
-	
-	virtual String typeName() const;
-	virtual SymbolPartP clone() const;
-	virtual int icon() const { return SYMBOL_COMBINE_BORDER + 3; }
-	virtual       SymbolGroup* isSymbolGroup()       { return this; }
-	virtual const SymbolGroup* isSymbolGroup() const { return this; }
-	
-	virtual bool isAncestor(const SymbolPart& that) const;
-	
-	virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
-	
-	DECLARE_REFLECTION();
+  vector<SymbolPartP> parts;  ///< The parts in this group, first item is on top
+  
+  SymbolGroup();
+  
+  virtual String typeName() const;
+  virtual SymbolPartP clone() const;
+  virtual int icon() const { return SYMBOL_COMBINE_BORDER + 3; }
+  virtual       SymbolGroup* isSymbolGroup()       { return this; }
+  virtual const SymbolGroup* isSymbolGroup() const { return this; }
+  
+  virtual bool isAncestor(const SymbolPart& that) const;
+  
+  virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
+  
+  DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : SymbolSymmetry
 
 enum SymbolSymmetryType
-{	SYMMETRY_ROTATION
-,	SYMMETRY_REFLECTION
+{  SYMMETRY_ROTATION
+,  SYMMETRY_REFLECTION
 };
 
 /// A mirror, reflecting the part of the symbol in the group
 /** Can handle rotation symmetry with any number of reflections */
 class SymbolSymmetry : public SymbolGroup {
   public:
-	SymbolSymmetryType kind;	///< What kind of symmetry
-	int                copies;	///< How many times is the orignal reflected (including the original itself)
-	bool               clip;	///< Clip the orignal so it doesn't intersect the mirror(s)
-	Vector2D           center;	///< Center point of the mirror
-	Vector2D           handle;	///< A handle pointing in the direction of the original, relative to the center
-	
-	SymbolSymmetry();
-	
-	virtual String typeName() const;
-	virtual SymbolPartP clone() const;
-	virtual int icon() const { return kind + SYMBOL_COMBINE_BORDER + 1; }
-	virtual       SymbolSymmetry* isSymbolSymmetry()       { return this; }
-	virtual const SymbolSymmetry* isSymbolSymmetry() const { return this; }
-	
-	String expectedName() const;
-	virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
-	
-	DECLARE_REFLECTION();
+  SymbolSymmetryType kind;  ///< What kind of symmetry
+  int                copies;  ///< How many times is the orignal reflected (including the original itself)
+  bool               clip;  ///< Clip the orignal so it doesn't intersect the mirror(s)
+  Vector2D           center;  ///< Center point of the mirror
+  Vector2D           handle;  ///< A handle pointing in the direction of the original, relative to the center
+  
+  SymbolSymmetry();
+  
+  virtual String typeName() const;
+  virtual SymbolPartP clone() const;
+  virtual int icon() const { return kind + SYMBOL_COMBINE_BORDER + 1; }
+  virtual       SymbolSymmetry* isSymbolSymmetry()       { return this; }
+  virtual const SymbolSymmetry* isSymbolSymmetry() const { return this; }
+  
+  String expectedName() const;
+  virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
+  
+  DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : Symbol
@@ -282,13 +282,13 @@ class SymbolSymmetry : public SymbolGroup {
 /// An editable symbol, consists of any number of SymbolParts
 class Symbol : public SymbolGroup {
   public:
-	/// Actions performed on this symbol and the parts in it
-	ActionStack actions;
-	
-	/// Determine the aspect ratio best suited for this symbol
-	double aspectRatio() const;
-	
-	DECLARE_REFLECTION();
+  /// Actions performed on this symbol and the parts in it
+  ActionStack actions;
+  
+  /// Determine the aspect ratio best suited for this symbol
+  double aspectRatio() const;
+  
+  DECLARE_REFLECTION();
 };
 
 /// A default symbol: a square
@@ -301,20 +301,20 @@ SymbolP default_symbol();
  */
 class SymbolView : public ActionListener {
   public:
-	SymbolView();
-	~SymbolView();
+  SymbolView();
+  ~SymbolView();
   
-	/// Get the symbol that is currently being viewed
-	inline SymbolP getSymbol() { return symbol; }
-	/// Change the symbol that is being viewed
-	void   setSymbol(const SymbolP& symbol);
-	
+  /// Get the symbol that is currently being viewed
+  inline SymbolP getSymbol() { return symbol; }
+  /// Change the symbol that is being viewed
+  void   setSymbol(const SymbolP& symbol);
+  
   protected:
-	/// The symbol that is currently being viewed, should not be modified directly!
-	SymbolP symbol;
-	
-	/// Called when another symbol is being viewn (using setSymbol)
-	virtual void onChangeSymbol() {}
+  /// The symbol that is currently being viewed, should not be modified directly!
+  SymbolP symbol;
+  
+  /// Called when another symbol is being viewn (using setSymbol)
+  virtual void onChangeSymbol() {}
 };
 
 

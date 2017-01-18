@@ -20,18 +20,18 @@ DECLARE_POINTER_TYPE(Set);
 
 class HtmlExportWindow : public ExportWindowBase {
   public:
-	HtmlExportWindow(Window* parent, const SetP& set, const ExportCardSelectionChoices& cards_choices);
-	
+  HtmlExportWindow(Window* parent, const SetP& set, const ExportCardSelectionChoices& cards_choices);
+  
   private:
-	PackageList*         list;    ///< List of templates
-	ExportOptionsEditor* options; ///< Editor for template options
-	SetP                 set;     ///< Set to export
-	
-	DECLARE_EVENT_TABLE();
-	
-	void onOk(wxCommandEvent&);
-	void onTemplateSelect(wxCommandEvent&);
-	void onUpdateUI(wxUpdateUIEvent& ev);
+  PackageList*         list;    ///< List of templates
+  ExportOptionsEditor* options; ///< Editor for template options
+  SetP                 set;     ///< Set to export
+  
+  DECLARE_EVENT_TABLE();
+  
+  void onOk(wxCommandEvent&);
+  void onTemplateSelect(wxCommandEvent&);
+  void onUpdateUI(wxUpdateUIEvent& ev);
 };
 
 // ----------------------------------------------------------------------------- : EOF

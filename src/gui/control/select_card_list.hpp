@@ -18,31 +18,31 @@
 /// A card list with check boxes
 class SelectCardList : public CardListBase {
   public:
-	SelectCardList(Window* parent, int id, long additional_style = 0);
-	~SelectCardList();
-	/// Select all cards
-	void selectAll();
-	/// Deselect all cards
-	void selectNone();
-	/// Is the given card selected?
-	bool isSelected(const CardP& card) const;
-	/// Get a list of all selected cards
-	void getSelection(vector<CardP>& out) const;
-	/// Change which cards are selected
-	void setSelection(const vector<CardP>& cards);
-	
+  SelectCardList(Window* parent, int id, long additional_style = 0);
+  ~SelectCardList();
+  /// Select all cards
+  void selectAll();
+  /// Deselect all cards
+  void selectNone();
+  /// Is the given card selected?
+  bool isSelected(const CardP& card) const;
+  /// Get a list of all selected cards
+  void getSelection(vector<CardP>& out) const;
+  /// Change which cards are selected
+  void setSelection(const vector<CardP>& cards);
+  
   protected:
-	virtual int  OnGetItemImage(long pos) const;
-	virtual void onChangeSet();
+  virtual int  OnGetItemImage(long pos) const;
+  virtual void onChangeSet();
   private:
-	DECLARE_EVENT_TABLE();
-	
-	std::set<CardP> selected; ///< which cards are selected?
-	
-	void toggle(const CardP& card);
-	
-	void onKeyDown(wxKeyEvent&);
-	void onLeftDown(wxMouseEvent&);
+  DECLARE_EVENT_TABLE();
+  
+  std::set<CardP> selected; ///< which cards are selected?
+  
+  void toggle(const CardP& card);
+  
+  void onKeyDown(wxKeyEvent&);
+  void onLeftDown(wxMouseEvent&);
 };
 
 

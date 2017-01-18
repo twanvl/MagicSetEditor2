@@ -21,11 +21,11 @@ DECLARE_POINTER_TYPE(MultipleChoiceValue);
 /// A ChoiceField where multiple choices can be selected simultaniously
 class MultipleChoiceField : public ChoiceField {
   public:
-	MultipleChoiceField();
-	DECLARE_FIELD_TYPE(MultipleChoiceField);
-	
-	UInt minimum_selection, maximum_selection; ///< How many choices can be selected simultaniously?
-	String empty_choice; ///< Name to use when nothing is selected
+  MultipleChoiceField();
+  DECLARE_FIELD_TYPE(MultipleChoiceField);
+  
+  UInt minimum_selection, maximum_selection; ///< How many choices can be selected simultaniously?
+  String empty_choice; ///< Name to use when nothing is selected
 };
 
 // ----------------------------------------------------------------------------- : MultipleChoiceStyle
@@ -33,13 +33,13 @@ class MultipleChoiceField : public ChoiceField {
 /// The Style for a MultipleChoiceField
 class MultipleChoiceStyle : public ChoiceStyle {
   public:
-	MultipleChoiceStyle(const MultipleChoiceFieldP& field);
-	DECLARE_STYLE_TYPE(MultipleChoice);
-	
-	Scriptable<Direction> direction;	///< In what direction are choices layed out?
-	Scriptable<double> spacing;			///< Spacing between choices (images) in pixels
-	
-	virtual int  update(Context&);
+  MultipleChoiceStyle(const MultipleChoiceFieldP& field);
+  DECLARE_STYLE_TYPE(MultipleChoice);
+  
+  Scriptable<Direction> direction;  ///< In what direction are choices layed out?
+  Scriptable<double> spacing;      ///< Spacing between choices (images) in pixels
+  
+  virtual int  update(Context&);
 };
 
 // ----------------------------------------------------------------------------- : MultipleChoiceValue
@@ -50,28 +50,28 @@ class MultipleChoiceStyle : public ChoiceStyle {
  */
 class MultipleChoiceValue : public ChoiceValue {
   public:
-	inline MultipleChoiceValue(const MultipleChoiceFieldP& field) : ChoiceValue(field, false) {}
-	DECLARE_HAS_FIELD(MultipleChoice);
-	virtual ValueP clone() const;
-	
-	String last_change; ///< Which of the choices was selected/deselected last?
-	
-	// for SimpleValueAction
-	struct ValueType {
-		ChoiceValue::ValueType value;
-		String                 last_change;
-	};
-	
-	/// Splits the value, stores the selected choices in the out parameter
-	void get(vector<String>& out) const;
-	
-	virtual bool update(Context&);
-	
+  inline MultipleChoiceValue(const MultipleChoiceFieldP& field) : ChoiceValue(field, false) {}
+  DECLARE_HAS_FIELD(MultipleChoice);
+  virtual ValueP clone() const;
+  
+  String last_change; ///< Which of the choices was selected/deselected last?
+  
+  // for SimpleValueAction
+  struct ValueType {
+    ChoiceValue::ValueType value;
+    String                 last_change;
+  };
+  
+  /// Splits the value, stores the selected choices in the out parameter
+  void get(vector<String>& out) const;
+  
+  virtual bool update(Context&);
+  
   private:
-	DECLARE_REFLECTION();
-	
-	/// Put the value in normal form (all choices ordered, empty_name
-	void normalForm();
+  DECLARE_REFLECTION();
+  
+  /// Put the value in normal form (all choices ordered, empty_name
+  void normalForm();
 };
 
 // ----------------------------------------------------------------------------- : Utilities

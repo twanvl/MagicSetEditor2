@@ -30,19 +30,19 @@ void Reader::handle(VCSP& pointer);
 class VCS : public IntrusivePtrVirtualBase
 {
   public:
-	/// Add a file - it's assumed to already have been created
-	virtual void addFile (const wxFileName& filename) {
-	}
-	/// Rename a file (currently unused)
-	virtual void moveFile (const wxFileName& source, const wxFileName& destination) {
-		wxRenameFile(source.GetFullName(), destination.GetFullName());
-	}
-	/// Delete a file right off the disk
-	virtual void removeFile (const wxFileName& filename) {
-		wxRemoveFile(filename.GetFullName());
-	}
-	
-	DECLARE_REFLECTION_VIRTUAL();
+  /// Add a file - it's assumed to already have been created
+  virtual void addFile (const wxFileName& filename) {
+  }
+  /// Rename a file (currently unused)
+  virtual void moveFile (const wxFileName& source, const wxFileName& destination) {
+    wxRenameFile(source.GetFullName(), destination.GetFullName());
+  }
+  /// Delete a file right off the disk
+  virtual void removeFile (const wxFileName& filename) {
+    wxRemoveFile(filename.GetFullName());
+  }
+  
+  DECLARE_REFLECTION_VIRTUAL();
 };
 
 // ----------------------------------------------------------------------------- : EOF

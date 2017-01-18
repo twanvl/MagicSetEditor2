@@ -98,11 +98,11 @@ String anti_tag(const String& tag);
 
 /// Directions of cursor movement
 enum Movement
-{	MOVE_LEFT      = -2	///< Always move the cursor to the left
-,	MOVE_LEFT_OPT  = -1	///< Move the cursor to the left, but a position inside a tag is the same as that before
-,	MOVE_MID       =  0	///< Move in whichever direction the distance to move is shorter (TODO: define shorter)
-,	MOVE_RIGHT_OPT =  1	///< Move the cursor to the left, but a position inside a tag is the same as that after
-,	MOVE_RIGHT     =  2	///< Always move the cursor to the right
+{  MOVE_LEFT      = -2  ///< Always move the cursor to the left
+,  MOVE_LEFT_OPT  = -1  ///< Move the cursor to the left, but a position inside a tag is the same as that before
+,  MOVE_MID       =  0  ///< Move in whichever direction the distance to move is shorter (TODO: define shorter)
+,  MOVE_RIGHT_OPT =  1  ///< Move the cursor to the left, but a position inside a tag is the same as that after
+,  MOVE_RIGHT     =  2  ///< Always move the cursor to the right
 };
 
 /// Find the cursor position corresponding to the given character index.
@@ -190,9 +190,9 @@ String tagged_substr_replace(const String& input, size_t start, size_t end, cons
  */
 void check_tagged(const String& str, bool check_balance = true);
 #ifdef _DEBUG
-	#define assert_tagged check_tagged
+  #define assert_tagged check_tagged
 #else
-	inline void assert_tagged(const String& str, bool check_balance = true){}
+  inline void assert_tagged(const String& str, bool check_balance = true){}
 #endif
 
 /// Simplify a tagged string

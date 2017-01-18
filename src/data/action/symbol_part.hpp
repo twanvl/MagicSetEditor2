@@ -45,21 +45,21 @@ Vector2D constrain_snap_vector_offset(const Vector2D& off1, const Vector2D& off2
 /// Moving a control point in a symbol
 class ControlPointMoveAction : public Action {
   public:
-	ControlPointMoveAction(const set<ControlPointP>& points);
-	
-	virtual String getName(bool to_undo) const;
-	virtual void   perform(bool to_undo);
-	
-	/// Update this action to move some more
-	void move(const Vector2D& delta);
-	
+  ControlPointMoveAction(const set<ControlPointP>& points);
+  
+  virtual String getName(bool to_undo) const;
+  virtual void   perform(bool to_undo);
+  
+  /// Update this action to move some more
+  void move(const Vector2D& delta);
+  
   private:
-	set<ControlPointP> points;  ///< Points to move
-	vector<Vector2D> oldValues; ///< Their old positions
-	Vector2D delta;				///< Amount we moved
+  set<ControlPointP> points;  ///< Points to move
+  vector<Vector2D> oldValues; ///< Their old positions
+  Vector2D delta;        ///< Amount we moved
   public:
-	bool constrain;				///< Constrain movement?
-	int snap;					///< Snap to grid?
+  bool constrain;        ///< Constrain movement?
+  int snap;          ///< Snap to grid?
 };
 
 // ----------------------------------------------------------------------------- : Move handle
@@ -67,22 +67,22 @@ class ControlPointMoveAction : public Action {
 /// Moving a handle(before/after) of a control point in a symbol
 class HandleMoveAction : public Action {
   public:
-	HandleMoveAction(const SelectedHandle& handle);
-	
-	virtual String getName(bool to_undo) const;
-	virtual void   perform(bool to_undo);
-	
-	/// Update this action to move some more
-	void move(const Vector2D& delta);
-	
+  HandleMoveAction(const SelectedHandle& handle);
+  
+  virtual String getName(bool to_undo) const;
+  virtual void   perform(bool to_undo);
+  
+  /// Update this action to move some more
+  void move(const Vector2D& delta);
+  
   private:
-	SelectedHandle handle;		///< The handle to move
-	Vector2D old_handle;		///< Old value of this handle
-	Vector2D old_other;			///< Old value of other handle, needed for contraints
-	Vector2D delta;				///< Amount we moved
+  SelectedHandle handle;    ///< The handle to move
+  Vector2D old_handle;    ///< Old value of this handle
+  Vector2D old_other;      ///< Old value of other handle, needed for contraints
+  Vector2D delta;        ///< Amount we moved
   public:
-	bool constrain;				///< Constrain movement?
-	int snap;					///< Snap to grid?
+  bool constrain;        ///< Constrain movement?
+  int snap;          ///< Snap to grid?
 };
 
 // ----------------------------------------------------------------------------- : Segment mode
@@ -90,29 +90,29 @@ class HandleMoveAction : public Action {
 /// Utility class to update a control point
 class ControlPointUpdate {
   public:
-	ControlPointUpdate(const ControlPointP& pnt);
-	
-	/// Perform or undo an update on this control point
-	void perform();
-	
-	/// Other value that is swapped with the current one.
-	/// Should be changed to make perform have an effect
-	ControlPoint other;
-	/// The point that is to be changed, should not be updated before perform()
-	ControlPointP point;
+  ControlPointUpdate(const ControlPointP& pnt);
+  
+  /// Perform or undo an update on this control point
+  void perform();
+  
+  /// Other value that is swapped with the current one.
+  /// Should be changed to make perform have an effect
+  ControlPoint other;
+  /// The point that is to be changed, should not be updated before perform()
+  ControlPointP point;
 };
 
 
 /// Changing a line to a curve and vice versa
 class SegmentModeAction : public Action {
   public:
-	SegmentModeAction(const ControlPointP& p1, const ControlPointP& p2, SegmentMode mode);
-	
-	virtual String getName(bool to_undo) const;
-	virtual void   perform(bool to_undo);
-	
+  SegmentModeAction(const ControlPointP& p1, const ControlPointP& p2, SegmentMode mode);
+  
+  virtual String getName(bool to_undo) const;
+  virtual void   perform(bool to_undo);
+  
   protected:
-	ControlPointUpdate point1, point2;
+  ControlPointUpdate point1, point2;
 };
 
 // ----------------------------------------------------------------------------- : Locking mode
@@ -120,13 +120,13 @@ class SegmentModeAction : public Action {
 /// Locking a control point
 class LockModeAction : public Action {
   public:
-	LockModeAction(const ControlPointP& p, LockMode mode);
-	
-	virtual String getName(bool to_undo) const;
-	virtual void   perform(bool to_undo);
-	
+  LockModeAction(const ControlPointP& p, LockMode mode);
+  
+  virtual String getName(bool to_undo) const;
+  virtual void   perform(bool to_undo);
+  
   private:
-	ControlPointUpdate point;	///< The affected point
+  ControlPointUpdate point;  ///< The affected point
 };
 
 // ----------------------------------------------------------------------------- : Move curve
@@ -136,13 +136,13 @@ class LockModeAction : public Action {
  */
 class CurveDragAction : public SegmentModeAction {
   public:
-	CurveDragAction(const ControlPointP& point1, const ControlPointP& point2);
-	
-	virtual String getName(bool to_undo) const;
-	virtual void   perform(bool to_undo);
-		
-	// Move the curve by this much, it is grabbed at time t
-	void move(const Vector2D& delta, double t);
+  CurveDragAction(const ControlPointP& point1, const ControlPointP& point2);
+  
+  virtual String getName(bool to_undo) const;
+  virtual void   perform(bool to_undo);
+    
+  // Move the curve by this much, it is grabbed at time t
+  void move(const Vector2D& delta, double t);
 };
 
 // ----------------------------------------------------------------------------- : Add control point
@@ -150,19 +150,19 @@ class CurveDragAction : public SegmentModeAction {
 /// Insert a new point in a symbol shape
 class ControlPointAddAction : public Action {
   public:
-	/// Insert a new point in shape, after position insertAfter_, at the time t on the segment
-	ControlPointAddAction(const SymbolShapeP& shape, UInt insert_after, double t);
-	
-	virtual String getName(bool to_undo) const;
-	virtual void   perform(bool to_undo);
-	
-	inline ControlPointP getNewPoint() const { return new_point; }
-	
+  /// Insert a new point in shape, after position insertAfter_, at the time t on the segment
+  ControlPointAddAction(const SymbolShapeP& shape, UInt insert_after, double t);
+  
+  virtual String getName(bool to_undo) const;
+  virtual void   perform(bool to_undo);
+  
+  inline ControlPointP getNewPoint() const { return new_point; }
+  
   private:
-	SymbolShapeP  shape;				///< SymbolShape we are in
-	ControlPointP new_point;			///< The point to insert
-	UInt          insert_after;			///< Insert after index .. in the array
-	ControlPointUpdate point1, point2;	///< Update the points around the new point
+  SymbolShapeP  shape;        ///< SymbolShape we are in
+  ControlPointP new_point;      ///< The point to insert
+  UInt          insert_after;      ///< Insert after index .. in the array
+  ControlPointUpdate point1, point2;  ///< Update the points around the new point
 };
 
 // ----------------------------------------------------------------------------- : Remove control point
@@ -179,22 +179,22 @@ Action* control_point_remove_action(const SymbolShapeP& shape, const set<Control
 /// Moving the handle or the center of a symbol symmetry
 class SymmetryMoveAction : public Action {
   public:
-	SymmetryMoveAction(SymbolSymmetry& symmetry, bool is_handle);
-	
-	virtual String getName(bool to_undo) const;
-	virtual void   perform(bool to_undo);
-	
-	/// Update this action to move some more
-	void move(const Vector2D& delta);
-	
+  SymmetryMoveAction(SymbolSymmetry& symmetry, bool is_handle);
+  
+  virtual String getName(bool to_undo) const;
+  virtual void   perform(bool to_undo);
+  
+  /// Update this action to move some more
+  void move(const Vector2D& delta);
+  
   private:
-	SymbolSymmetry& symmetry; ///< Affected part
-	bool is_handle;			///< Move the handle or the center?
-	Vector2D delta;			///< Amount we moved
-	Vector2D original;		///< Original value
+  SymbolSymmetry& symmetry; ///< Affected part
+  bool is_handle;      ///< Move the handle or the center?
+  Vector2D delta;      ///< Amount we moved
+  Vector2D original;    ///< Original value
   public:
-	bool constrain;			///< Constrain movement?
-	int snap;				///< Snap to grid?
+  bool constrain;      ///< Constrain movement?
+  int snap;        ///< Snap to grid?
 };
 
 // ----------------------------------------------------------------------------- : Change symmetry kind
@@ -202,15 +202,15 @@ class SymmetryMoveAction : public Action {
 /// Change the type of symmetry
 class SymmetryTypeAction : public Action {
   public:
-	SymmetryTypeAction(SymbolSymmetry& symmetry, SymbolSymmetryType type);
-	
-	virtual String getName(bool to_undo) const;
-	virtual void   perform(bool to_undo);
+  SymmetryTypeAction(SymbolSymmetry& symmetry, SymbolSymmetryType type);
+  
+  virtual String getName(bool to_undo) const;
+  virtual void   perform(bool to_undo);
   private:
-	SymbolSymmetry&    symmetry;
-	SymbolSymmetryType type;
-	String             old_name;
-	int                copies; /// may be changed to make it a multiple of two
+  SymbolSymmetry&    symmetry;
+  SymbolSymmetryType type;
+  String             old_name;
+  int                copies; /// may be changed to make it a multiple of two
 };
 
 // ----------------------------------------------------------------------------- : Change symmetry copies
@@ -218,14 +218,14 @@ class SymmetryTypeAction : public Action {
 /// Change the number of copies of a symmetry
 class SymmetryCopiesAction : public Action {
   public:
-	SymmetryCopiesAction(SymbolSymmetry& symmetry, int copies);
-	
-	virtual String getName(bool to_undo) const;
-	virtual void   perform(bool to_undo);
+  SymmetryCopiesAction(SymbolSymmetry& symmetry, int copies);
+  
+  virtual String getName(bool to_undo) const;
+  virtual void   perform(bool to_undo);
   private:
-	SymbolSymmetry& symmetry;
-	int             copies;
-	String          old_name;
+  SymbolSymmetry& symmetry;
+  int             copies;
+  String          old_name;
 };
 
 // ----------------------------------------------------------------------------- : EOF

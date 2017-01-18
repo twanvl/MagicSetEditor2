@@ -24,24 +24,24 @@ DECLARE_POINTER_TYPE(StatsCategory);
 /** Dimensions can be generated automatically based on card fields */
 class StatsDimension : public IntrusivePtrBase<StatsDimension> {
   public:
-	StatsDimension();
-	StatsDimension(const Field&);
-	
-	const bool        automatic;		///< Based on a card field?
-	String            name;				///< Name of this dimension
-	String            description;		///< Description, used in status bar
-	int               position_hint;	///< Hint for the ordering
-	String            icon_filename;	///< Icon for lists
-	Bitmap            icon;				///< The loaded icon (optional of course)
-	OptionalScript    script;			///< Script that determines the value(s)
-	bool              numeric;			///< Are the values numeric? If so, they require special sorting
-	double            bin_size;			///< Bin adjecent numbers?
-	bool              show_empty;		///< Should "" be shown?
-	bool              split_list;		///< Split values into multiple ones separated by commas
-	map<String,Color> colors;			///< Colors for the categories
-	vector<String>    groups;			///< Order of the items
-	
-	DECLARE_REFLECTION();
+  StatsDimension();
+  StatsDimension(const Field&);
+  
+  const bool        automatic;    ///< Based on a card field?
+  String            name;        ///< Name of this dimension
+  String            description;    ///< Description, used in status bar
+  int               position_hint;  ///< Hint for the ordering
+  String            icon_filename;  ///< Icon for lists
+  Bitmap            icon;        ///< The loaded icon (optional of course)
+  OptionalScript    script;      ///< Script that determines the value(s)
+  bool              numeric;      ///< Are the values numeric? If so, they require special sorting
+  double            bin_size;      ///< Bin adjecent numbers?
+  bool              show_empty;    ///< Should "" be shown?
+  bool              split_list;    ///< Split values into multiple ones separated by commas
+  map<String,Color> colors;      ///< Colors for the categories
+  vector<String>    groups;      ///< Order of the items
+  
+  DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : Statistics category
@@ -50,23 +50,23 @@ class StatsDimension : public IntrusivePtrBase<StatsDimension> {
 /** Can be generated automatically based on a dimension */
 class StatsCategory : public IntrusivePtrBase<StatsCategory> {
   public:
-	StatsCategory();
-	StatsCategory(const StatsDimensionP&);
-	
-	const bool              automatic;		///< Automatically generated?
-	String                  name;			///< Name/label
-	String                  description;	///< Description, used in status bar
-	int                     position_hint;	///< Hint for the ordering
-	String                  icon_filename;	///< Icon for lists
-	Bitmap                  icon;			///< The loaded icon (optional of course)
-	vector<String>          dimension_names;///< Names of the dimensions to use
-	vector<StatsDimensionP> dimensions;		///< Actual dimensions
-	GraphType               type;			///< Type of graph to use
-	
-	/// Initialize dimensions from dimension_names
-	void find_dimensions(const vector<StatsDimensionP>& available);
-	
-	DECLARE_REFLECTION();
+  StatsCategory();
+  StatsCategory(const StatsDimensionP&);
+  
+  const bool              automatic;    ///< Automatically generated?
+  String                  name;      ///< Name/label
+  String                  description;  ///< Description, used in status bar
+  int                     position_hint;  ///< Hint for the ordering
+  String                  icon_filename;  ///< Icon for lists
+  Bitmap                  icon;      ///< The loaded icon (optional of course)
+  vector<String>          dimension_names;///< Names of the dimensions to use
+  vector<StatsDimensionP> dimensions;    ///< Actual dimensions
+  GraphType               type;      ///< Type of graph to use
+  
+  /// Initialize dimensions from dimension_names
+  void find_dimensions(const vector<StatsDimensionP>& available);
+  
+  DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : EOF

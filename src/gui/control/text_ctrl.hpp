@@ -29,45 +29,45 @@ DECLARE_POINTER_TYPE(FakeTextValue);
  */
 class TextCtrl : public DataEditor {
   public:
-	TextCtrl(Window* parent, int id, bool multi_line, long style = wxBORDER_THEME);
-	~TextCtrl();
-	
-	/// Set the value that is being edited
-	/** value can be a nullptr*/
-	void setValue(String* value, bool untagged = false);
-	/// Set the value that is being edited
-	void setValue(const FakeTextValueP& value);
-	
-	/// Update the size, for example after changing the style
-	void updateSize();
-	
-	/// Get access to the field used by the control
-	TextField& getField();
-	/// Get access to the field used by the control
-	TextFieldP getFieldP();
-	/// Get access to the style used by the control
-	TextStyle& getStyle();
-	
-	/// Uses a native look
-	virtual bool nativeLook()  const { return true; }
-	virtual Rotation getRotation() const;
-	
-	virtual void draw(DC& dc);
-	
-	virtual bool AcceptsFocus() const;
-	
-	virtual void onChangeSet();
-	
+  TextCtrl(Window* parent, int id, bool multi_line, long style = wxBORDER_THEME);
+  ~TextCtrl();
+  
+  /// Set the value that is being edited
+  /** value can be a nullptr*/
+  void setValue(String* value, bool untagged = false);
+  /// Set the value that is being edited
+  void setValue(const FakeTextValueP& value);
+  
+  /// Update the size, for example after changing the style
+  void updateSize();
+  
+  /// Get access to the field used by the control
+  TextField& getField();
+  /// Get access to the field used by the control
+  TextFieldP getFieldP();
+  /// Get access to the style used by the control
+  TextStyle& getStyle();
+  
+  /// Uses a native look
+  virtual bool nativeLook()  const { return true; }
+  virtual Rotation getRotation() const;
+  
+  virtual void draw(DC& dc);
+  
+  virtual bool AcceptsFocus() const;
+  
+  virtual void onChangeSet();
+  
   protected:
-	virtual void onInit();
-	virtual wxSize DoGetBestSize() const;
-	
+  virtual void onInit();
+  virtual wxSize DoGetBestSize() const;
+  
   private:
-	bool multi_line; ///< Multi line text control?
-	
-	DECLARE_EVENT_TABLE();
-	
-	void onSize(wxSizeEvent&);
+  bool multi_line; ///< Multi line text control?
+  
+  DECLARE_EVENT_TABLE();
+  
+  void onSize(wxSizeEvent&);
 };
 
 

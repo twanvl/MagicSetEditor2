@@ -23,8 +23,8 @@ DECLARE_POINTER_TYPE(ImageValue);
 /// A field for image values
 class ImageField : public Field {
   public:
-	// no extra data
-	DECLARE_FIELD_TYPE(Image);
+  // no extra data
+  DECLARE_FIELD_TYPE(Image);
 };
 
 // ----------------------------------------------------------------------------- : ImageStyle
@@ -32,12 +32,12 @@ class ImageField : public Field {
 /// The Style for a ImageField
 class ImageStyle : public Style {
   public:
-	inline ImageStyle(const ImageFieldP& field) : Style(field) {}
-	DECLARE_STYLE_TYPE(Image);
-	
-	ScriptableImage default_image; ///< Placeholder
-	
-	virtual int update(Context&);
+  inline ImageStyle(const ImageFieldP& field) : Style(field) {}
+  DECLARE_STYLE_TYPE(Image);
+  
+  ScriptableImage default_image; ///< Placeholder
+  
+  virtual int update(Context&);
 };
 
 // ----------------------------------------------------------------------------- : ImageValue
@@ -45,11 +45,11 @@ class ImageStyle : public Style {
 /// The Value in a ImageField, i.e. an image
 class ImageValue : public Value {
   public:
-	inline ImageValue(const ImageFieldP& field) : Value(field) {}
-	DECLARE_VALUE_TYPE(Image, FileName);
-	
-	ValueType filename;    ///< Filename of the image (in the current package), or ""
-	Age       last_update; ///< When was the image last changed?
+  inline ImageValue(const ImageFieldP& field) : Value(field) {}
+  DECLARE_VALUE_TYPE(Image, FileName);
+  
+  ValueType filename;    ///< Filename of the image (in the current package), or ""
+  Age       last_update; ///< When was the image last changed?
 };
 
 // ----------------------------------------------------------------------------- : EOF

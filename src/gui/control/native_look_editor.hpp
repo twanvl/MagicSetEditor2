@@ -19,35 +19,35 @@ DECLARE_POINTER_TYPE(ExportTemplate);
 /// A data editor with a platform native look
 class NativeLookEditor : public DataEditor {
   public:
-	NativeLookEditor(Window* parent, int id, long style = wxBORDER_THEME);
-	
-	/// Uses a native look
-	virtual bool nativeLook()  const { return true; }
-	virtual Rotation getRotation() const;
-	
-	virtual void draw(DC& dc);
-	virtual void drawViewer(RotatedDC& dc, ValueViewer& v);
-	
+  NativeLookEditor(Window* parent, int id, long style = wxBORDER_THEME);
+  
+  /// Uses a native look
+  virtual bool nativeLook()  const { return true; }
+  virtual Rotation getRotation() const;
+  
+  virtual void draw(DC& dc);
+  virtual void drawViewer(RotatedDC& dc, ValueViewer& v);
+  
   protected:
-	// Best size doesn't really matter, as long as it is not too small
-	virtual wxSize DoGetBestSize() const;
-	virtual void onInit();
-	
+  // Best size doesn't really matter, as long as it is not too small
+  virtual wxSize DoGetBestSize() const;
+  virtual void onInit();
+  
   private:
-	static const int margin      = 6;
-	static const int margin_left = 4;
-	static const int vspace      = 10;
-	static const int label_margin = 10;
-	int              label_width;
-	
-	DECLARE_EVENT_TABLE();
-	
-	void onSize(wxSizeEvent&);
-	void onScroll(wxScrollWinEvent&);
-	void onMouseWheel(wxMouseEvent&);
-	void scrollTo(int direction, int pos);
-	/// Resize the viewers so they match with this control
-	void resizeViewers();
+  static const int margin      = 6;
+  static const int margin_left = 4;
+  static const int vspace      = 10;
+  static const int label_margin = 10;
+  int              label_width;
+  
+  DECLARE_EVENT_TABLE();
+  
+  void onSize(wxSizeEvent&);
+  void onScroll(wxScrollWinEvent&);
+  void onMouseWheel(wxMouseEvent&);
+  void scrollTo(int direction, int pos);
+  /// Resize the viewers so they match with this control
+  void resizeViewers();
 };
 
 
@@ -56,11 +56,11 @@ class NativeLookEditor : public DataEditor {
 /// Editor for set.data
 class SetInfoEditor : public NativeLookEditor {
   public:
-	SetInfoEditor(Window* parent, int id, long style = wxBORDER_THEME);
-	
-	virtual Package& getStylePackage() const;
+  SetInfoEditor(Window* parent, int id, long style = wxBORDER_THEME);
+  
+  virtual Package& getStylePackage() const;
   protected:
-	virtual void onChangeSet();
+  virtual void onChangeSet();
 };
 
 // ----------------------------------------------------------------------------- : StylingEditor
@@ -68,14 +68,14 @@ class SetInfoEditor : public NativeLookEditor {
 /// Editor for styling data
 class StylingEditor : public NativeLookEditor {
   public:
-	StylingEditor(Window* parent, int id, long style = wxBORDER_THEME);
-	
-	/// Show the styling for given stylesheet in the editor
-	void showStylesheet(const StyleSheetP& stylesheet);
-	/// Show the styling for given card
-	void showCard(const CardP& card);
+  StylingEditor(Window* parent, int id, long style = wxBORDER_THEME);
+  
+  /// Show the styling for given stylesheet in the editor
+  void showStylesheet(const StyleSheetP& stylesheet);
+  /// Show the styling for given card
+  void showCard(const CardP& card);
   protected:
-	virtual void onChangeSet();
+  virtual void onChangeSet();
 };
 
 // ----------------------------------------------------------------------------- : ExportOptionsEditor
@@ -83,14 +83,14 @@ class StylingEditor : public NativeLookEditor {
 /// Editor for export options
 class ExportOptionsEditor : public NativeLookEditor {
   public:
-	ExportOptionsEditor(Window* parent, int id, long style = wxBORDER_THEME);
-	
-	/// Show the options for given export template
-	void showExport(const ExportTemplateP& export_template);
-	
-	virtual Package& getStylePackage() const;
+  ExportOptionsEditor(Window* parent, int id, long style = wxBORDER_THEME);
+  
+  /// Show the options for given export template
+  void showExport(const ExportTemplateP& export_template);
+  
+  virtual Package& getStylePackage() const;
   private:
-	ExportTemplateP export_template;
+  ExportTemplateP export_template;
 };
 
 // ----------------------------------------------------------------------------- : EOF

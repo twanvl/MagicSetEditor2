@@ -21,41 +21,41 @@ DECLARE_POINTER_TYPE(ImageField);
 /** This card list also allows the list to be modified */
 class ImageCardList : public CardListBase {
   public:
-	~ImageCardList();
-	ImageCardList(Window* parent, int id, long additional_style = 0);
+  ~ImageCardList();
+  ImageCardList(Window* parent, int id, long additional_style = 0);
   protected:
-	virtual int  OnGetItemImage(long pos) const;
-	virtual void onRebuild();
-	virtual void onBeforeChangeSet();
-	virtual bool allowModify() const { return true; }
+  virtual int  OnGetItemImage(long pos) const;
+  virtual void onRebuild();
+  virtual void onBeforeChangeSet();
+  virtual bool allowModify() const { return true; }
   private:
-	DECLARE_EVENT_TABLE();
-	void onIdle(wxIdleEvent&);
-	
-	ImageFieldP image_field;			///< Field to use for card images
-	mutable map<String,int> thumbnails;	///< image thumbnails, based on image_field
-	
-	ImageFieldP findImageField();
-	
-	friend class CardThumbnailRequest;
+  DECLARE_EVENT_TABLE();
+  void onIdle(wxIdleEvent&);
+  
+  ImageFieldP image_field;      ///< Field to use for card images
+  mutable map<String,int> thumbnails;  ///< image thumbnails, based on image_field
+  
+  ImageFieldP findImageField();
+  
+  friend class CardThumbnailRequest;
 };
 
 // ----------------------------------------------------------------------------- : FilteredImageCardList
 
 class FilteredImageCardList : public ImageCardList {
   public:
-	FilteredImageCardList(Window* parent, int id, long additional_style = 0);
-	
-	/// Change the filter to use, if null then don't use a filter
-	void setFilter(const CardListFilterP& filter);
-	
+  FilteredImageCardList(Window* parent, int id, long additional_style = 0);
+  
+  /// Change the filter to use, if null then don't use a filter
+  void setFilter(const CardListFilterP& filter);
+  
   protected:
-	/// Get only the subset of the cards
-	virtual void getItems(vector<VoidP>& out) const;
-	virtual void onChangeSet();
-	
-  private:	
-	CardListFilterP filter;	///< Filter with which this.cards is made
+  /// Get only the subset of the cards
+  virtual void getItems(vector<VoidP>& out) const;
+  virtual void onChangeSet();
+  
+  private:  
+  CardListFilterP filter;  ///< Filter with which this.cards is made
 };
 
 // ----------------------------------------------------------------------------- : EOF

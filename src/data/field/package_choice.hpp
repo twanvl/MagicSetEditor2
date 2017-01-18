@@ -25,16 +25,16 @@ DECLARE_POINTER_TYPE(PackageChoiceValue);
 /// A field for PackageChoice values, it contains a list of choices for PackageChoices
 class PackageChoiceField : public Field {
   public:
-	PackageChoiceField() : required(true), empty_name(_("none")) {}
-	DECLARE_FIELD_TYPE(PackageChoice);
-	
-	OptionalScript     script;			///< Script to apply to all values
-	String             match;			///< Package filenames to match
-	String             initial;			///< Initial value
-	bool               required;		///< Is selecting a package required?
-	String             empty_name;		///< Displayed name for the empty value (if !required)
-	
-	virtual void initDependencies(Context&, const Dependency&) const;
+  PackageChoiceField() : required(true), empty_name(_("none")) {}
+  DECLARE_FIELD_TYPE(PackageChoice);
+  
+  OptionalScript     script;      ///< Script to apply to all values
+  String             match;      ///< Package filenames to match
+  String             initial;      ///< Initial value
+  bool               required;    ///< Is selecting a package required?
+  String             empty_name;    ///< Displayed name for the empty value (if !required)
+  
+  virtual void initDependencies(Context&, const Dependency&) const;
 };
 
 // ----------------------------------------------------------------------------- : PackageChoiceStyle
@@ -42,12 +42,12 @@ class PackageChoiceField : public Field {
 /// The Style for a PackageChoiceField
 class PackageChoiceStyle : public Style {
   public:
-	PackageChoiceStyle(const PackageChoiceFieldP& field);
-	DECLARE_STYLE_TYPE(PackageChoice);
-	
-	Font font;	///< Font to use for the text
-	
-	virtual int update(Context&);
+  PackageChoiceStyle(const PackageChoiceFieldP& field);
+  DECLARE_STYLE_TYPE(PackageChoice);
+  
+  Font font;  ///< Font to use for the text
+  
+  virtual int update(Context&);
 };
 
 // ----------------------------------------------------------------------------- : PackageChoiceValue
@@ -55,15 +55,15 @@ class PackageChoiceStyle : public Style {
 /// The Value in a PackageChoiceField
 class PackageChoiceValue : public Value {
   public:
-	PackageChoiceValue(const PackageChoiceFieldP& field) : Value(field), package_name(field->initial) {}
-	DECLARE_VALUE_TYPE(PackageChoice, String);
-	
-	ValueType package_name;	///< The selected package
-	
-	/// Get the package (if it is set)
-	PackagedP getPackage() const;
-	
-	virtual bool update(Context&);
+  PackageChoiceValue(const PackageChoiceFieldP& field) : Value(field), package_name(field->initial) {}
+  DECLARE_VALUE_TYPE(PackageChoice, String);
+  
+  ValueType package_name;  ///< The selected package
+  
+  /// Get the package (if it is set)
+  PackagedP getPackage() const;
+  
+  virtual bool update(Context&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

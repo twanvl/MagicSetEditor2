@@ -19,27 +19,27 @@
 /// An editor 'control' for editing MultipleChoiceValues
 class MultipleChoiceValueEditor : public MultipleChoiceValueViewer, public ValueEditor {
   public:
-	DECLARE_VALUE_EDITOR(MultipleChoice);
-	~MultipleChoiceValueEditor();
-	
-	virtual void onValueChange();
-	
-	virtual void determineSize(bool force_fit);
-	
-	virtual bool onLeftDown   (const RealPoint& pos, wxMouseEvent& ev);
-	virtual bool onChar(wxKeyEvent& ev);
-	virtual void onLoseFocus();
-	
+  DECLARE_VALUE_EDITOR(MultipleChoice);
+  ~MultipleChoiceValueEditor();
+  
+  virtual void onValueChange();
+  
+  virtual void determineSize(bool force_fit);
+  
+  virtual bool onLeftDown   (const RealPoint& pos, wxMouseEvent& ev);
+  virtual bool onChar(wxKeyEvent& ev);
+  virtual void onLoseFocus();
+  
   private:
-	DropDownListP drop_down;
-	vector<int> active;      ///< Which choices are active? (note: vector<bool> is evil)
-	friend class DropDownMultipleChoiceList;
-	/// Initialize the drop down list
-	DropDownList& initDropDown();
-	/// Toggle a choice or on or off
-	void toggle(int id);
-	/// Toggle defaultness or on or off
-	void toggleDefault();
+  DropDownListP drop_down;
+  vector<int> active;      ///< Which choices are active? (note: vector<bool> is evil)
+  friend class DropDownMultipleChoiceList;
+  /// Initialize the drop down list
+  DropDownList& initDropDown();
+  /// Toggle a choice or on or off
+  void toggle(int id);
+  /// Toggle defaultness or on or off
+  void toggleDefault();
 };
 
 // ----------------------------------------------------------------------------- : EOF

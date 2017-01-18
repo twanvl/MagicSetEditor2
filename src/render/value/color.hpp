@@ -20,10 +20,10 @@ DECLARE_POINTER_TYPE(AlphaMask);
 /// Viewer that displays a color value
 class ColorValueViewer : public ValueViewer {
   public:
-	DECLARE_VALUE_VIEWER(Color) : ValueViewer(parent,style) {}
-	
-	virtual void draw(RotatedDC& dc);
-	virtual bool containsPoint(const RealPoint& p) const;
+  DECLARE_VALUE_VIEWER(Color) : ValueViewer(parent,style) {}
+  
+  virtual void draw(RotatedDC& dc);
+  virtual bool containsPoint(const RealPoint& p) const;
 };
 
 // ----------------------------------------------------------------------------- : EOF

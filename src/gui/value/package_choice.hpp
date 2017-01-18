@@ -20,21 +20,21 @@ DECLARE_SHARED_POINTER_TYPE(DropDownList);
 /// An editor 'control' for editing PackageChoiceValues
 class PackageChoiceValueEditor : public PackageChoiceValueViewer, public ValueEditor {
   public:
-	DECLARE_VALUE_EDITOR(PackageChoice);
-	
-	virtual void draw(RotatedDC& dc);
-	virtual void determineSize(bool force_fit);
-	virtual bool onLeftDown   (const RealPoint& pos, wxMouseEvent& ev);
-	virtual bool onChar(wxKeyEvent& ev);
-	virtual void onLoseFocus();
-	
+  DECLARE_VALUE_EDITOR(PackageChoice);
+  
+  virtual void draw(RotatedDC& dc);
+  virtual void determineSize(bool force_fit);
+  virtual bool onLeftDown   (const RealPoint& pos, wxMouseEvent& ev);
+  virtual bool onChar(wxKeyEvent& ev);
+  virtual void onLoseFocus();
+  
   private:
-	DropDownListP drop_down;
-	friend class DropDownPackageChoiceList;
-	/// Change the choice
-	void change(const String& c);
-	/// Initialize the drop down list
-	void initDropDown();
+  DropDownListP drop_down;
+  friend class DropDownPackageChoiceList;
+  /// Change the choice
+  void change(const String& c);
+  /// Initialize the drop down list
+  void initDropDown();
 };
 
 

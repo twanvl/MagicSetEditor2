@@ -16,37 +16,37 @@
 // ----------------------------------------------------------------------------- : AddCardsScript
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(AddCardsScript) {
-	REFLECT(name);
-	REFLECT(description);
-	REFLECT(enabled);
-	REFLECT(script);
+  REFLECT(name);
+  REFLECT(description);
+  REFLECT(enabled);
+  REFLECT(script);
 }
 
 
 void AddCardsScript::perform(Set& set, vector<CardP>& out) {
-	// Perform script
-	Context& ctx = set.getContext();
-	ScriptValueP result = script.invoke(ctx);
-	// Add cards to out
-	ScriptValueP it = result->makeIterator(result);
-	while (ScriptValueP item = it->next()) {
-		CardP card = from_script<CardP>(item);
-		// is this a new card?
-		if (contains(set.cards,card) || contains(out,card)) {
-			// make copy
-			card = intrusive(new Card(*card));
-		}
-		out.push_back(card);
-	}
+  // Perform script
+  Context& ctx = set.getContext();
+  ScriptValueP result = script.invoke(ctx);
+  // Add cards to out
+  ScriptValueP it = result->makeIterator(result);
+  while (ScriptValueP item = it->next()) {
+    CardP card = from_script<CardP>(item);
+    // is this a new card?
+    if (contains(set.cards,card) || contains(out,card)) {
+      // make copy
+      card = intrusive(new Card(*card));
+    }
+    out.push_back(card);
+  }
 }
 
 void AddCardsScript::perform(Set& set) {
-	// Perform script
-	vector<CardP> cards;
-	perform(set,cards);
-	// Add to set
-	if (!cards.empty()) {
-		// TODO: change the name of the action somehow
-		set.actions.addAction(new AddCardAction(ADD, set, cards));
-	}
+  // Perform script
+  vector<CardP> cards;
+  perform(set,cards);
+  // Add to set
+  if (!cards.empty()) {
+    // TODO: change the name of the action somehow
+    set.actions.addAction(new AddCardAction(ADD, set, cards));
+  }
 }

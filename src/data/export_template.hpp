@@ -25,37 +25,37 @@ DECLARE_POINTER_TYPE(Package);
 /// A template for exporting sets to HTML or text format
 class ExportTemplate : public Packaged {
   public:
-	ExportTemplate();
-	
-	GameP                   game;				///< Game this template is for
-	String                  file_type;			///< Type of the created file, in "name|*.ext" format
-	bool                    create_directory;	///< The export creates a directory for additional data files
-	vector<FieldP>          option_fields;		///< Options for exporting
-	IndexMap<FieldP,StyleP> option_style;		///< Style of the options
-	OptionalScript          script;				///< Export script, for multi file templates and initialization
-	
-	static String typeNameStatic();
-	virtual String typeName() const;
-	Version fileVersion() const;
-	virtual void validate(Version = app_version);
+  ExportTemplate();
+  
+  GameP                   game;        ///< Game this template is for
+  String                  file_type;      ///< Type of the created file, in "name|*.ext" format
+  bool                    create_directory;  ///< The export creates a directory for additional data files
+  vector<FieldP>          option_fields;    ///< Options for exporting
+  IndexMap<FieldP,StyleP> option_style;    ///< Style of the options
+  OptionalScript          script;        ///< Export script, for multi file templates and initialization
+  
+  static String typeNameStatic();
+  virtual String typeName() const;
+  Version fileVersion() const;
+  virtual void validate(Version = app_version);
   private:
-	DECLARE_REFLECTION();
+  DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : ExportInfo
 
 /// Information that can be used by export functions
 struct ExportInfo {
-	ExportInfo();
-	
-	SetP               set;                ///< The set that is being exported
-	PackageP           export_template;    ///< The export template used
-	                                       ///  When using the CLI, this can be a fake package to allow reading from the cwd
-	String             directory_relative; ///< The directory for storing extra files (or "" if !export->create_directory)
-	                                       ///  This is just the directory name
-	String             directory_absolute; ///< The absolute path of the directory
-	map<String,wxSize> exported_images;	   ///< Images (from symbol font) already exported, and their size
-	bool               allow_writes_outside; ///< Can files outside the directory be written to?
+  ExportInfo();
+  
+  SetP               set;                ///< The set that is being exported
+  PackageP           export_template;    ///< The export template used
+                                         ///  When using the CLI, this can be a fake package to allow reading from the cwd
+  String             directory_relative; ///< The directory for storing extra files (or "" if !export->create_directory)
+                                         ///  This is just the directory name
+  String             directory_absolute; ///< The absolute path of the directory
+  map<String,wxSize> exported_images;     ///< Images (from symbol font) already exported, and their size
+  bool               allow_writes_outside; ///< Can files outside the directory be written to?
 };
 
 DECLARE_DYNAMIC_ARG(ExportInfo*, export_info);

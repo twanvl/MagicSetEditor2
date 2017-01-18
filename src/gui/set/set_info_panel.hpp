@@ -18,29 +18,29 @@ class SetInfoEditor;
 
 class SetInfoPanel : public SetWindowPanel {
   public:
-	SetInfoPanel(Window* parent, int id);
-	
-	// --------------------------------------------------- : UI
-	
-	virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
-	virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
-	virtual void onUpdateUI(wxUpdateUIEvent&);
-	virtual void onCommand(int id);
-	
-	// --------------------------------------------------- : Clipboard
-	
-	virtual bool canCut()   const;
-	virtual bool canCopy()  const;
-	virtual bool canPaste() const;
-	virtual void doCut();
-	virtual void doCopy();
-	virtual void doPaste();
-	
+  SetInfoPanel(Window* parent, int id);
+  
+  // --------------------------------------------------- : UI
+  
+  virtual void initUI   (wxToolBar* tb, wxMenuBar* mb);
+  virtual void destroyUI(wxToolBar* tb, wxMenuBar* mb);
+  virtual void onUpdateUI(wxUpdateUIEvent&);
+  virtual void onCommand(int id);
+  
+  // --------------------------------------------------- : Clipboard
+  
+  virtual bool canCut()   const;
+  virtual bool canCopy()  const;
+  virtual bool canPaste() const;
+  virtual void doCut();
+  virtual void doCopy();
+  virtual void doPaste();
+  
   protected:
-	virtual void onChangeSet();
-	
+  virtual void onChangeSet();
+  
   private:
-	SetInfoEditor* editor;
+  SetInfoEditor* editor;
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -24,50 +24,50 @@ DECLARE_POINTER_TYPE(FunctionProfile);
 // ----------------------------------------------------------------------------- : Timer
 
 #ifdef _MSC_VER
-	typedef LONGLONG ProfileTime;
+  typedef LONGLONG ProfileTime;
 
-	inline ProfileTime timer_now() {
-		LARGE_INTEGER i;
-		QueryPerformanceCounter(&i);
-		return i.QuadPart;
-	}
-	inline ProfileTime timer_resolution() {
-		LARGE_INTEGER i;
-		QueryPerformanceFrequency(&i);
-		return i.QuadPart;
-	}
+  inline ProfileTime timer_now() {
+    LARGE_INTEGER i;
+    QueryPerformanceCounter(&i);
+    return i.QuadPart;
+  }
+  inline ProfileTime timer_resolution() {
+    LARGE_INTEGER i;
+    QueryPerformanceFrequency(&i);
+    return i.QuadPart;
+  }
 
-	inline const char * mangled_name(const type_info& t) {
-		return t.raw_name();
-	}
+  inline const char * mangled_name(const type_info& t) {
+    return t.raw_name();
+  }
 #else
-	// clock() has nanosecond resolution on Linux
-	// on any other platform, stil the best way.
-	typedef clock_t ProfileTime;
+  // clock() has nanosecond resolution on Linux
+  // on any other platform, stil the best way.
+  typedef clock_t ProfileTime;
 
-	inline ProfileTime timer_now() {
-		return clock();
-	}
-	inline ProfileTime timer_resolution() {
-		return CLOCKS_PER_SEC;
-	}
+  inline ProfileTime timer_now() {
+    return clock();
+  }
+  inline ProfileTime timer_resolution() {
+    return CLOCKS_PER_SEC;
+  }
 
-	inline const char * mangled_name(const type_info& t) {
-		return t.name();
-	}
+  inline const char * mangled_name(const type_info& t) {
+    return t.name();
+  }
 #endif
 
 /// Simple execution timer
 class Timer {
   public:
-	Timer();
-	/// The time the timer has been running, resets the timer
-	inline ProfileTime time();
-	/// Exclude the time since the last reset from ALL running timers
-	inline void exclude_time();
+  Timer();
+  /// The time the timer has been running, resets the timer
+  inline ProfileTime time();
+  /// Exclude the time since the last reset from ALL running timers
+  inline void exclude_time();
   private:
-	ProfileTime start;
-	static ProfileTime delta; ///< Time excluded
+  ProfileTime start;
+  static ProfileTime delta; ///< Time excluded
 };
 
 // ----------------------------------------------------------------------------- : FunctionProfile
@@ -75,26 +75,26 @@ class Timer {
 /// How much time was spent in a function?
 class FunctionProfile : public IntrusivePtrBase<FunctionProfile> {
   public:
-	FunctionProfile(const String& name)
-		: name(name), time_ticks(0), time_ticks_max(0), calls(0)
-	{}
+  FunctionProfile(const String& name)
+    : name(name), time_ticks(0), time_ticks_max(0), calls(0)
+  {}
 
-	String      name;
-	ProfileTime time_ticks;
-	ProfileTime time_ticks_max;
-	int         calls;
-	
-	/// for each id, called children
-	/** we (ab)use the fact that all pointers are even to store both pointers and ids */
-	map<size_t,FunctionProfileP> children;
+  String      name;
+  ProfileTime time_ticks;
+  ProfileTime time_ticks_max;
+  int         calls;
+  
+  /// for each id, called children
+  /** we (ab)use the fact that all pointers are even to store both pointers and ids */
+  map<size_t,FunctionProfileP> children;
 
-	/// The children, sorted by time
-	void get_children(vector<FunctionProfileP>& out) const;
+  /// The children, sorted by time
+  void get_children(vector<FunctionProfileP>& out) const;
 
-	/// Time in seconds
-	inline double total_time() const { return time_ticks / (double)timer_resolution(); }
-	inline double avg_time() const { return total_time() / calls; }
-	inline double max_time() const { return time_ticks_max / (double)timer_resolution(); }
+  /// Time in seconds
+  inline double total_time() const { return time_ticks / (double)timer_resolution(); }
+  inline double avg_time() const { return total_time() / calls; }
+  inline double max_time() const { return time_ticks_max / (double)timer_resolution(); }
 };
 
 /// The root profile
@@ -108,30 +108,30 @@ const FunctionProfile& profile_aggregated(int level = 1);
 /// Profile a single function call
 class Profiler {
   public:
-	/// Log the fact that the function  function_name  is entered, ends when profiler goes out of scope.
-	/** Time between the construction of Timer and the construction of Profiler is excluded from ALL profiles.
-	 */
-	Profiler(Timer& timer, Variable function_name);
-	/// As above, but with a constant name
-	Profiler(Timer& timer, const Char* function_name);
-	/// As above, but using a function object instead of a name,
-	/** if we haven't seen the object before, it gets the given name. */
-	Profiler(Timer& timer, void* function_object, const String& function_name);
-	/// Log the fact that the function is left
-	~Profiler();
+  /// Log the fact that the function  function_name  is entered, ends when profiler goes out of scope.
+  /** Time between the construction of Timer and the construction of Profiler is excluded from ALL profiles.
+   */
+  Profiler(Timer& timer, Variable function_name);
+  /// As above, but with a constant name
+  Profiler(Timer& timer, const Char* function_name);
+  /// As above, but using a function object instead of a name,
+  /** if we haven't seen the object before, it gets the given name. */
+  Profiler(Timer& timer, void* function_object, const String& function_name);
+  /// Log the fact that the function is left
+  ~Profiler();
   private:
-	Timer&                  timer;
-	static FunctionProfile* function; ///< function we are in
-	FunctionProfile*        parent;
+  Timer&                  timer;
+  static FunctionProfile* function; ///< function we are in
+  FunctionProfile*        parent;
 };
 
 // Profile the current function (all following code in the current block) under the given name
 #define PROFILER(name) \
-	Timer profile_timer; \
-	Profiler profiler(profile_timer, name)
+  Timer profile_timer; \
+  Profiler profiler(profile_timer, name)
 #define PROFILER2(name1,name2) \
-	Timer profile_timer; \
-	Profiler profiler(profile_timer, name1,name2)
+  Timer profile_timer; \
+  Profiler profiler(profile_timer, name1,name2)
 
 #else // USE_SCRIPT_PROFILING
 

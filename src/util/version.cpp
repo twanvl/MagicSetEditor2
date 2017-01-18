@@ -15,36 +15,36 @@
 UInt Version::toNumber() const { return version; }
 
 String Version::toString() const {
-	if (version > 20000000) {
-		// major > 2000, the version is a date, use ISO notation
-		return String::Format(_("%04d-%02d-%02d"),
-					(version / 10000)      ,
-					(version / 100)   % 100,
-					(version / 1)     % 100);
-	} else {
-		return String::Format(_("%d.%d.%d"),
-					(version / 10000)      ,
-					(version / 100)   % 100,
-					(version / 1)     % 100);
-	}
+  if (version > 20000000) {
+    // major > 2000, the version is a date, use ISO notation
+    return String::Format(_("%04d-%02d-%02d"),
+          (version / 10000)      ,
+          (version / 100)   % 100,
+          (version / 1)     % 100);
+  } else {
+    return String::Format(_("%d.%d.%d"),
+          (version / 10000)      ,
+          (version / 100)   % 100,
+          (version / 1)     % 100);
+  }
 }
 
 Version Version::fromString(const String& version) {
-	UInt major = 0, minor = 0, build = 0;
-	if (wxSscanf(version, _("%u.%u.%u"), &major, &minor, &build)<=1)  // a.b.c style
-	    wxSscanf(version, _("%u-%u-%u"), &major, &minor, &build);  // date style
-	return Version(major * 10000 + minor * 100 + build);
+  UInt major = 0, minor = 0, build = 0;
+  if (wxSscanf(version, _("%u.%u.%u"), &major, &minor, &build)<=1)  // a.b.c style
+      wxSscanf(version, _("%u-%u-%u"), &major, &minor, &build);  // date style
+  return Version(major * 10000 + minor * 100 + build);
 }
 
 
 template <> void Reader::handle(Version& v) {
-	v = Version::fromString(getValue());
+  v = Version::fromString(getValue());
 }
 template <> void Writer::handle(const Version& v) {
-	handle(v.toString());
+  handle(v.toString());
 }
 template <> void GetDefaultMember::handle(const Version& v) {
-	handle(v.toNumber());
+  handle(v.toNumber());
 }
 
 // ----------------------------------------------------------------------------- : Versions

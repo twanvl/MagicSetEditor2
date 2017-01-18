@@ -36,101 +36,101 @@ void store(const ScriptValueP& val, Direction& var)           { parse_enum(val->
 // ----------------------------------------------------------------------------- : OptionalScript
 
 OptionalScript::OptionalScript(const String& script_)
-	: script(::parse(script_))
-	, unparsed(script_)
+  : script(::parse(script_))
+  , unparsed(script_)
 {}
 
 OptionalScript::~OptionalScript() {}
 
 ScriptValueP OptionalScript::invoke(Context& ctx, bool open_scope) const {
-	if (script) {
-		return ctx.eval(*script, open_scope);
-	} else {
-		return script_nil;
-	}
+  if (script) {
+    return ctx.eval(*script, open_scope);
+  } else {
+    return script_nil;
+  }
 }
 
 void OptionalScript::parse(Reader& reader, bool string_mode) {
-	vector<ScriptParseError> errors;
-	script = ::parse(unparsed, reader.getPackage(), string_mode, errors);
-	// show parse errors as warnings
-	String include_warnings;
-	for (size_t i = 0 ; i < errors.size() ; ++i) {
-		const ScriptParseError& e = errors[i];
-		if (!e.filename.empty()) {
-			// error in an include file
-			include_warnings += String::Format(_("\n  On line %d:\t  "), e.line) + e.ParseError::what();
-			if (i + 1 >= errors.size() || errors[i+1].filename != e.filename) {
-				reader.warning(_("In include file '") + e.filename + _("'") + include_warnings);
-				include_warnings.clear();
-			}
-		} else {
-			// use ParseError::what because we don't want e.start in the error message
-			reader.warning(e.ParseError::what(), e.line - 1);
-		}
-	}
+  vector<ScriptParseError> errors;
+  script = ::parse(unparsed, reader.getPackage(), string_mode, errors);
+  // show parse errors as warnings
+  String include_warnings;
+  for (size_t i = 0 ; i < errors.size() ; ++i) {
+    const ScriptParseError& e = errors[i];
+    if (!e.filename.empty()) {
+      // error in an include file
+      include_warnings += String::Format(_("\n  On line %d:\t  "), e.line) + e.ParseError::what();
+      if (i + 1 >= errors.size() || errors[i+1].filename != e.filename) {
+        reader.warning(_("In include file '") + e.filename + _("'") + include_warnings);
+        include_warnings.clear();
+      }
+    } else {
+      // use ParseError::what because we don't want e.start in the error message
+      reader.warning(e.ParseError::what(), e.line - 1);
+    }
+  }
 }
 
 void OptionalScript::initDependencies(Context& ctx, const Dependency& dep) const {
-	if (script) {
-		ctx.dependencies(dep, *script);
-	}
+  if (script) {
+    ctx.dependencies(dep, *script);
+  }
 }
 
 Script& OptionalScript::getMutableScript() {
-	if (!script) script = intrusive(new Script());
-	return *script;
+  if (!script) script = intrusive(new Script());
+  return *script;
 }
 
 // custom reflection, different for each type
 
 template <> void Reader::handle(OptionalScript& os) {
-	handle(os.unparsed);
-	os.parse(*this);
+  handle(os.unparsed);
+  os.parse(*this);
 }
 
 template <> void Writer::handle(const OptionalScript& os) {
-	if (os.script) {
-		handle(os.unparsed);
-	}
+  if (os.script) {
+    handle(os.unparsed);
+  }
 }
 
 template <> void GetDefaultMember::handle(const OptionalScript& os) {
-	// reflect as the script itself
-	if (os.script) {
-		handle(os.script);
-	} else {
-		handle(script_nil);
-	}
+  // reflect as the script itself
+  if (os.script) {
+    handle(os.script);
+  } else {
+    handle(script_nil);
+  }
 }
 
 // ----------------------------------------------------------------------------- : StringScript
 
 const String& StringScript::get() const {
-	return unparsed;
+  return unparsed;
 }
 
 void StringScript::set(const String& s) {
-	unparsed = s;
-	script = ::parse(unparsed, nullptr, true);
+  unparsed = s;
+  script = ::parse(unparsed, nullptr, true);
 }
 
 template <> void Reader::handle(StringScript& os) {
-	handle(os.unparsed);
-	os.parse(*this, true);
+  handle(os.unparsed);
+  os.parse(*this, true);
 }
 
 // same as OptionalScript
 
 template <> void Writer::handle(const StringScript& os) {
-	handle(os.unparsed);
+  handle(os.unparsed);
 }
 
 template <> void GetDefaultMember::handle(const StringScript& os) {
-	// reflect as the script itself
-	if (os.script) {
-		handle(os.script);
-	} else {
-		handle(script_nil);
-	}
+  // reflect as the script itself
+  if (os.script) {
+    handle(os.script);
+  } else {
+    handle(script_nil);
+  }
 }

@@ -24,11 +24,11 @@
 // ----------------------------------------------------------------------------- : GCC
 
 #ifdef __GNUC__
-	
-	/// Absolute value of integers
-	template <typename T>
-	inline T abs(T a) { return a < 0 ? -a : a; }
-	
+  
+  /// Absolute value of integers
+  template <typename T>
+  inline T abs(T a) { return a < 0 ? -a : a; }
+  
 #endif
 
 // ----------------------------------------------------------------------------- : EOF

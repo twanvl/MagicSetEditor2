@@ -26,12 +26,12 @@ DECLARE_POINTER_TYPE(InfoValue);
  */
 class InfoField : public Field {
   public:
-	InfoField() { editable = false; }
-	DECLARE_FIELD_TYPE(Text);
-	
-	OptionalScript script;			///< Script to apply to all values
-	
-	virtual void initDependencies(Context&, const Dependency&) const;
+  InfoField() { editable = false; }
+  DECLARE_FIELD_TYPE(Text);
+  
+  OptionalScript script;      ///< Script to apply to all values
+  
+  virtual void initDependencies(Context&, const Dependency&) const;
 };
 
 // ----------------------------------------------------------------------------- : InfoStyle
@@ -39,17 +39,17 @@ class InfoField : public Field {
 /// The Style for a InfoField
 class InfoStyle : public Style {
   public:
-	InfoStyle(const InfoFieldP&);
-	DECLARE_STYLE_TYPE(Info);
-	
-	Font font;									///< Font to use for the text
-	Alignment alignment;						///< Alignment inside the box
-	double padding_left, padding_right;			///< Padding
-	double padding_top, padding_bottom;
-	Color background_color;
-	
-	virtual int  update(Context&);
-	virtual void initDependencies(Context&, const Dependency&) const;
+  InfoStyle(const InfoFieldP&);
+  DECLARE_STYLE_TYPE(Info);
+  
+  Font font;                  ///< Font to use for the text
+  Alignment alignment;            ///< Alignment inside the box
+  double padding_left, padding_right;      ///< Padding
+  double padding_top, padding_bottom;
+  Color background_color;
+  
+  virtual int  update(Context&);
+  virtual void initDependencies(Context&, const Dependency&) const;
 };
 
 // ----------------------------------------------------------------------------- : InfoValue
@@ -57,12 +57,12 @@ class InfoStyle : public Style {
 /// The Value in a InfoField
 class InfoValue : public Value {
   public:
-	inline InfoValue(const InfoFieldP& field) : Value(field) {}
-	DECLARE_VALUE_TYPE(Info, String);
-	
-	ValueType value;
-	
-	virtual bool update(Context&);
+  inline InfoValue(const InfoFieldP& field) : Value(field) {}
+  DECLARE_VALUE_TYPE(Info, String);
+  
+  ValueType value;
+  
+  virtual bool update(Context&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -18,69 +18,69 @@
 template <typename T>
 class OrderCache : public IntrusivePtrBase<OrderCache<T> > {
   public:
-	/// Initialize the order cache, ordering the keys by their string values from the other vector
-	/** Optionally filter the list using a vector of booleans of items to keep (note: vector<bool> is evil)
-	 *  @pre keys.size() == values.size()
-	 */
-	OrderCache(const vector<T>& keys, const vector<String>& values, vector<int>* keep = nullptr);
-	
-	/// Find the position of the given key in the cache, returns -1 if not found
-	int find(const T& key) const;
-	
+  /// Initialize the order cache, ordering the keys by their string values from the other vector
+  /** Optionally filter the list using a vector of booleans of items to keep (note: vector<bool> is evil)
+   *  @pre keys.size() == values.size()
+   */
+  OrderCache(const vector<T>& keys, const vector<String>& values, vector<int>* keep = nullptr);
+  
+  /// Find the position of the given key in the cache, returns -1 if not found
+  int find(const T& key) const;
+  
   private:
-	struct CompareKeys;
-	struct CompareValues;
-	typedef pair<void*,int> KV;
-	vector<KV> positions;
+  struct CompareKeys;
+  struct CompareValues;
+  typedef pair<void*,int> KV;
+  vector<KV> positions;
 };
 
 // ----------------------------------------------------------------------------- : Implementation
 
 template <typename T>
 struct OrderCache<T>::CompareKeys {
-	inline bool operator () (const KV& a, void*     b) { return a.first < b; }
-	inline bool operator () (const KV& a, const KV& b) { return a.first < b.first; }
-	inline bool operator () (void*     a, const KV& b) { return a       < b.first; }
+  inline bool operator () (const KV& a, void*     b) { return a.first < b; }
+  inline bool operator () (const KV& a, const KV& b) { return a.first < b.first; }
+  inline bool operator () (void*     a, const KV& b) { return a       < b.first; }
 };
 
 template <typename T>
 struct OrderCache<T>::CompareValues {
-	const vector<String>& values;
-	CompareValues(const vector<String>& values) : values(values) {}
-	
-	inline bool operator () (const KV& a, const KV& b) {
-		return smart_less(values[a.second], values[b.second]);
-	}
+  const vector<String>& values;
+  CompareValues(const vector<String>& values) : values(values) {}
+  
+  inline bool operator () (const KV& a, const KV& b) {
+    return smart_less(values[a.second], values[b.second]);
+  }
 };
 
 template <typename T>
 OrderCache<T>::OrderCache(const vector<T>& keys, const vector<String>& values, vector<int>* keep) {
-	assert(keys.size() == values.size());
-	assert(!keep || keep->size() == keys.size());
-	// initialize positions, use pos to point back to the values vector
-	positions.reserve(keys.size());
-	int i = 0;
-	for (typename vector<T>::const_iterator it = keys.begin() ; it != keys.end() ; ++it, ++i) {
-		if (!keep || (*keep)[i]) {
-			positions.push_back(KV(&**it, i));
-		}
-	}
-	// sort the KVs by the values
-	sort(positions.begin(), positions.end(), CompareValues(values));
-	// update positions, to point to sorted list
-	i = 0;
-	for (typename vector<KV>::iterator it = positions.begin() ; it != positions.end() ; ++it, ++i) {
-		it->second = i;
-	}
-	// sort the KVs by the keys
-	sort(positions.begin(), positions.end(), CompareKeys());
+  assert(keys.size() == values.size());
+  assert(!keep || keep->size() == keys.size());
+  // initialize positions, use pos to point back to the values vector
+  positions.reserve(keys.size());
+  int i = 0;
+  for (typename vector<T>::const_iterator it = keys.begin() ; it != keys.end() ; ++it, ++i) {
+    if (!keep || (*keep)[i]) {
+      positions.push_back(KV(&**it, i));
+    }
+  }
+  // sort the KVs by the values
+  sort(positions.begin(), positions.end(), CompareValues(values));
+  // update positions, to point to sorted list
+  i = 0;
+  for (typename vector<KV>::iterator it = positions.begin() ; it != positions.end() ; ++it, ++i) {
+    it->second = i;
+  }
+  // sort the KVs by the keys
+  sort(positions.begin(), positions.end(), CompareKeys());
 }
 
 template <typename T>
 int OrderCache<T>::find(const T& key) const {
-	vector<KV>::const_iterator it = lower_bound(positions.begin(), positions.end(), &*key, CompareKeys());
-	if (it == positions.end() || it->first != &*key) return -1;
-	return it->second;
+  vector<KV>::const_iterator it = lower_bound(positions.begin(), positions.end(), &*key, CompareKeys());
+  if (it == positions.end() || it->first != &*key) return -1;
+  return it->second;
 }
 
 // ----------------------------------------------------------------------------- : EOF

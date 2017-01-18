@@ -36,20 +36,20 @@ DECLARE_POINTER_TYPE(PackageChoiceValue);
 /// An Action the changes a Value
 class ValueAction : public Action {
   public:
-	inline ValueAction(const ValueP& value)
-		: valueP(value), card(nullptr), old_time_modified(wxDateTime::Now())
-	{}
-	
-	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
-	
-	/// We know that the value is on the given card, add that information
-	void isOnCard(Card* card);
-	
-	const ValueP valueP; ///< The modified value
-	const Card*  card;   ///< The card the value is on, or null if it is not a card value
+  inline ValueAction(const ValueP& value)
+    : valueP(value), card(nullptr), old_time_modified(wxDateTime::Now())
+  {}
+  
+  virtual String getName(bool to_undo) const;
+  virtual void perform(bool to_undo);
+  
+  /// We know that the value is on the given card, add that information
+  void isOnCard(Card* card);
+  
+  const ValueP valueP; ///< The modified value
+  const Card*  card;   ///< The card the value is on, or null if it is not a card value
   private:
-	wxDateTime old_time_modified;
+  wxDateTime old_time_modified;
 };
 
 // ----------------------------------------------------------------------------- : Simple
@@ -67,22 +67,22 @@ ValueAction* value_action(const PackageChoiceValueP&  value, const String&      
 /// An action that changes a TextValue
 class TextValueAction : public ValueAction {
   public:
-	TextValueAction(const TextValueP& value, size_t start, size_t end, size_t new_end, const Defaultable<String>& new_value, const String& name);
-	
-	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
-	virtual bool merge(const Action& action);
-	
-	inline const String& newValue() const { return new_value(); }
-	
-	/// The modified selection
-	size_t selection_start, selection_end;
+  TextValueAction(const TextValueP& value, size_t start, size_t end, size_t new_end, const Defaultable<String>& new_value, const String& name);
+  
+  virtual String getName(bool to_undo) const;
+  virtual void perform(bool to_undo);
+  virtual bool merge(const Action& action);
+  
+  inline const String& newValue() const { return new_value(); }
+  
+  /// The modified selection
+  size_t selection_start, selection_end;
   private:
-	inline TextValue& value() const;
-	
-	size_t new_selection_end;
-	Defaultable<String> new_value;
-	String name;
+  inline TextValue& value() const;
+  
+  size_t new_selection_end;
+  Defaultable<String> new_value;
+  String name;
 };
 
 /// Action for toggling some formating tag on or off in some range
@@ -97,15 +97,15 @@ TextValueAction* typing_action(const TextValueP& value, size_t start_i, size_t e
 /// Toggle reminder text for a keyword on or off
 class TextToggleReminderAction : public ValueAction {
   public:
-	TextToggleReminderAction(const TextValueP& value, size_t pos);
-	
-	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
-	
-  private:	
-	size_t pos;  ///< Position of "<kw-"
-	bool enable; ///< Should the reminder text be turned on or off?
-	Char old;    ///< Old value of the <kw- tag
+  TextToggleReminderAction(const TextValueP& value, size_t pos);
+  
+  virtual String getName(bool to_undo) const;
+  virtual void perform(bool to_undo);
+  
+  private:  
+  size_t pos;  ///< Position of "<kw-"
+  bool enable; ///< Should the reminder text be turned on or off?
+  Char old;    ///< Old value of the <kw- tag
 };
 
 // ----------------------------------------------------------------------------- : Replace all
@@ -113,22 +113,22 @@ class TextToggleReminderAction : public ValueAction {
 /// A TextValueAction without the start and end stuff
 class SimpleTextValueAction : public ValueAction {
   public:
-	SimpleTextValueAction(const Card* card, const TextValueP& value, const Defaultable<String>& new_value);
-	virtual void perform(bool to_undo);
-	bool merge(const SimpleTextValueAction& action);
+  SimpleTextValueAction(const Card* card, const TextValueP& value, const Defaultable<String>& new_value);
+  virtual void perform(bool to_undo);
+  bool merge(const SimpleTextValueAction& action);
   private:
-	Defaultable<String> new_value;
+  Defaultable<String> new_value;
 };
 
 /// An action from "Replace All"; just a bunch of value actions performed in sequence
 class ReplaceAllAction : public Action {
   public:
-	~ReplaceAllAction();
-	
-	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
-	
-	vector<SimpleTextValueAction> actions;
+  ~ReplaceAllAction();
+  
+  virtual String getName(bool to_undo) const;
+  virtual void perform(bool to_undo);
+  
+  vector<SimpleTextValueAction> actions;
 };
 
 // ----------------------------------------------------------------------------- : Event
@@ -136,27 +136,27 @@ class ReplaceAllAction : public Action {
 /// Notification that a script caused a value to change
 class ScriptValueEvent : public Action {
   public:
-	inline ScriptValueEvent(const Card* card, const Value* value) : card(card), value(value) {}
-		
-	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
-	
-	const Card* card;   ///< Card the value is on
-	const Value* value; ///< The modified value
+  inline ScriptValueEvent(const Card* card, const Value* value) : card(card), value(value) {}
+    
+  virtual String getName(bool to_undo) const;
+  virtual void perform(bool to_undo);
+  
+  const Card* card;   ///< Card the value is on
+  const Value* value; ///< The modified value
 };
 
 /// Notification that a script caused a style to change
 class ScriptStyleEvent : public Action {
   public:
-	inline ScriptStyleEvent(const StyleSheet* stylesheet, const Style* style)
-		: stylesheet(stylesheet), style(style)
-	{}
-	
-	virtual String getName(bool to_undo) const;
-	virtual void perform(bool to_undo);
-	
-	const StyleSheet* stylesheet; ///< StyleSheet the style is for
-	const Style*      style;      ///< The modified style
+  inline ScriptStyleEvent(const StyleSheet* stylesheet, const Style* style)
+    : stylesheet(stylesheet), style(style)
+  {}
+  
+  virtual String getName(bool to_undo) const;
+  virtual void perform(bool to_undo);
+  
+  const StyleSheet* stylesheet; ///< StyleSheet the style is for
+  const Style*      style;      ///< The modified style
 };
 
 
@@ -166,16 +166,16 @@ class ScriptStyleEvent : public Action {
 /** Used to reduce coupling */
 class ValueActionPerformer {
   public:
-	ValueActionPerformer(const ValueP& value, Card* card, const SetP& set);
-	~ValueActionPerformer();
-	/// Perform an action. The performer takes ownerwhip of the action.
-	void addAction(ValueAction* action);
-	
-	const ValueP value; ///< The value
-	Package& getLocalPackage();
+  ValueActionPerformer(const ValueP& value, Card* card, const SetP& set);
+  ~ValueActionPerformer();
+  /// Perform an action. The performer takes ownerwhip of the action.
+  void addAction(ValueAction* action);
+  
+  const ValueP value; ///< The value
+  Package& getLocalPackage();
   private:
-	Card* card; ///< Card the value is on (if any)
-	SetP  set;  ///< Set for the actions
+  Card* card; ///< Card the value is on (if any)
+  SetP  set;  ///< Set for the actions
 };
 
 // ----------------------------------------------------------------------------- : EOF

@@ -21,10 +21,10 @@ DECLARE_POINTER_TYPE(BooleanValue);
 /// A field whos value is either true or false
 class BooleanField : public ChoiceField {
   public:
-	BooleanField();
-	DECLARE_FIELD_TYPE(Boolean);
-	
-	// no extra data
+  BooleanField();
+  DECLARE_FIELD_TYPE(Boolean);
+  
+  // no extra data
 };
 
 // ----------------------------------------------------------------------------- : BooleanStyle
@@ -32,14 +32,14 @@ class BooleanField : public ChoiceField {
 /// The Style for a BooleanField
 class BooleanStyle : public ChoiceStyle {
   public:
-	BooleanStyle(const ChoiceFieldP& field);
-	DECLARE_HAS_FIELD(Boolean); // not DECLARE_STYLE_TYPE, because we use a normal ChoiceValueViewer/Editor
-	virtual StyleP clone() const;
-	
-	// no extra data
-	
+  BooleanStyle(const ChoiceFieldP& field);
+  DECLARE_HAS_FIELD(Boolean); // not DECLARE_STYLE_TYPE, because we use a normal ChoiceValueViewer/Editor
+  virtual StyleP clone() const;
+  
+  // no extra data
+  
   private:
-	DECLARE_REFLECTION();
+  DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : BooleanValue
@@ -47,14 +47,14 @@ class BooleanStyle : public ChoiceStyle {
 /// The Value in a BooleanField
 class BooleanValue : public ChoiceValue {
   public:
-	inline BooleanValue(const ChoiceFieldP& field) : ChoiceValue(field) {}
-	DECLARE_HAS_FIELD(Boolean);
-	virtual ValueP clone() const;
-	
-	// no extra data
-	
+  inline BooleanValue(const ChoiceFieldP& field) : ChoiceValue(field) {}
+  DECLARE_HAS_FIELD(Boolean);
+  virtual ValueP clone() const;
+  
+  // no extra data
+  
   private:
-	DECLARE_REFLECTION();
+  DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : EOF

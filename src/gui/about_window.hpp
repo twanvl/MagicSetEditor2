@@ -16,19 +16,19 @@
 /// Nice about dialog
 class AboutWindow : public wxDialog {
   public:
-	AboutWindow(Window* parent);
-	
+  AboutWindow(Window* parent);
+  
   private:
-	DECLARE_EVENT_TABLE();
-	
-	// MSE logos
-	Bitmap logo;
-	#if USE_BETA_LOGO
-		Bitmap logo2;
-	#endif
-	
-	void onPaint(wxPaintEvent&);
-	void draw(DC& dc);
+  DECLARE_EVENT_TABLE();
+  
+  // MSE logos
+  Bitmap logo;
+  #if USE_BETA_LOGO
+    Bitmap logo2;
+  #endif
+  
+  void onPaint(wxPaintEvent&);
+  void draw(DC& dc);
 };
 
 // ----------------------------------------------------------------------------- : Button with hover effect
@@ -36,36 +36,36 @@ class AboutWindow : public wxDialog {
 /// A button that changes images on mouseenter/leave
 class HoverButtonBase : public wxControl {
   public:
-	HoverButtonBase(Window* parent, int id, bool accepts_focus = true);
-	
-	virtual bool AcceptsFocus() const;
-	
-	virtual void SetHelpText(const String& s) { help_text = s; }
-	
+  HoverButtonBase(Window* parent, int id, bool accepts_focus = true);
+  
+  virtual bool AcceptsFocus() const;
+  
+  virtual void SetHelpText(const String& s) { help_text = s; }
+  
   private:
-	DECLARE_EVENT_TABLE();
-	
-	const bool accepts_focus;
-	
-	void onMouseEnter(wxMouseEvent&);
-	void onMouseLeave(wxMouseEvent&);
-	void onFocus     (wxFocusEvent& ev);
-	void onKillFocus (wxFocusEvent& ev);
-	void onLeftUp    (wxMouseEvent&);
-	void onLeftDown  (wxMouseEvent&);
-	void onLoseCapture(wxMouseCaptureLostEvent&);
-	void onKeyDown   (wxKeyEvent&);
-	void onKeyUp     (wxKeyEvent&);
-	void onPaint     (wxPaintEvent&);
-	void onEraseBackground(wxEraseEvent&) {}
-	
+  DECLARE_EVENT_TABLE();
+  
+  const bool accepts_focus;
+  
+  void onMouseEnter(wxMouseEvent&);
+  void onMouseLeave(wxMouseEvent&);
+  void onFocus     (wxFocusEvent& ev);
+  void onKillFocus (wxFocusEvent& ev);
+  void onLeftUp    (wxMouseEvent&);
+  void onLeftDown  (wxMouseEvent&);
+  void onLoseCapture(wxMouseCaptureLostEvent&);
+  void onKeyDown   (wxKeyEvent&);
+  void onKeyUp     (wxKeyEvent&);
+  void onPaint     (wxPaintEvent&);
+  void onEraseBackground(wxEraseEvent&) {}
+  
   protected:
-	bool hover, focus, mouse_down, key_down;
-	String help_text;
-	
-	virtual void draw(DC& dc) = 0;
-	virtual void refreshIfNeeded();
-	virtual void onClick();
+  bool hover, focus, mouse_down, key_down;
+  String help_text;
+  
+  virtual void draw(DC& dc) = 0;
+  virtual void refreshIfNeeded();
+  virtual void onClick();
 };
 
 // ----------------------------------------------------------------------------- : Button with image and hover effect
@@ -73,28 +73,28 @@ class HoverButtonBase : public wxControl {
 /// A button that changes images on mouseenter/leave
 class HoverButton : public HoverButtonBase {
   public:
-	/// Create a HoverButton, name is the resource name of the images to use
-	/** name+"_normal", name+"_hover", name+"_focus", name+"_down"
-	 *  are the resource names of the images used.
-	 */
-	HoverButton(Window* parent, int id, const String& name, const Color& background = Color(240,247,255), bool accepts_focus = true);
-	
-	/// Load different bitmaps for this button
-	void loadBitmaps(const String& name);
-	
+  /// Create a HoverButton, name is the resource name of the images to use
+  /** name+"_normal", name+"_hover", name+"_focus", name+"_down"
+   *  are the resource names of the images used.
+   */
+  HoverButton(Window* parent, int id, const String& name, const Color& background = Color(240,247,255), bool accepts_focus = true);
+  
+  /// Load different bitmaps for this button
+  void loadBitmaps(const String& name);
+  
   private:
-	String bitmaps; ///< Name of the loaded bitmaps
-	Bitmap bg_normal, bg_hover, bg_focus, bg_down; ///< Bitmaps for the states of the button
-	Color background;
-	
-	virtual wxSize DoGetBestSize() const;
-	
-	const Bitmap* last_drawn;
-	const Bitmap* toDraw() const;
+  String bitmaps; ///< Name of the loaded bitmaps
+  Bitmap bg_normal, bg_hover, bg_focus, bg_down; ///< Bitmaps for the states of the button
+  Color background;
+  
+  virtual wxSize DoGetBestSize() const;
+  
+  const Bitmap* last_drawn;
+  const Bitmap* toDraw() const;
   protected:
-	int drawDelta() const;
-	virtual void refreshIfNeeded();
-	virtual void draw(DC& dc);
+  int drawDelta() const;
+  virtual void refreshIfNeeded();
+  virtual void draw(DC& dc);
 };
 
 

@@ -21,16 +21,16 @@
  */
 class IconMenu : public wxMenu {
   public:
-	/// Append a menu item, with an image (loaded from a resource)
-	void Append(int id, const String& resource, const String& text, const String& help, wxItemKind kind = wxITEM_NORMAL, wxMenu* submenu = nullptr);
-	/// Append a menu item, without an image
-	void Append(int id, const String& text, const String& help, wxItemKind kind = wxITEM_NORMAL, wxMenu* submenu = nullptr);
-	/// Append a menu item, without an image
-	void Append(wxMenuItem* item);
-	/// Insert a menu item, with an image (loaded from a resource)
-	void Insert(size_t pos, int id, const String& resource, const String& text, const String& help, wxItemKind kind = wxITEM_NORMAL, wxMenu* submenu = nullptr);
-	/// Insert a menu item, without an image
-	void Insert(size_t pos, int id, const String& text, const String& help, wxItemKind kind = wxITEM_NORMAL, wxMenu* submenu = nullptr);
+  /// Append a menu item, with an image (loaded from a resource)
+  void Append(int id, const String& resource, const String& text, const String& help, wxItemKind kind = wxITEM_NORMAL, wxMenu* submenu = nullptr);
+  /// Append a menu item, without an image
+  void Append(int id, const String& text, const String& help, wxItemKind kind = wxITEM_NORMAL, wxMenu* submenu = nullptr);
+  /// Append a menu item, without an image
+  void Append(wxMenuItem* item);
+  /// Insert a menu item, with an image (loaded from a resource)
+  void Insert(size_t pos, int id, const String& resource, const String& text, const String& help, wxItemKind kind = wxITEM_NORMAL, wxMenu* submenu = nullptr);
+  /// Insert a menu item, without an image
+  void Insert(size_t pos, int id, const String& text, const String& help, wxItemKind kind = wxITEM_NORMAL, wxMenu* submenu = nullptr);
 };
 
 void set_menu_item_image(wxMenuItem* menuitem, const String& resource);

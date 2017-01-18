@@ -22,23 +22,23 @@ DECLARE_POINTER_TYPE(AutoReplace);
 /// A word in a WordList
 class WordListWord : public IntrusivePtrBase<WordListWord> {
   public:
-	WordListWord();
+  WordListWord();
 
-	String  name;         ///< Name of the list / the word
-	bool    line_below;   ///< Line below in the list?
-	bool    is_prefix;    ///< Is this a prefix before other words?
-	vector<WordListWordP> words; ///< Sublist
-	OptionalScript script;	///< Generate words using a script
+  String  name;         ///< Name of the list / the word
+  bool    line_below;   ///< Line below in the list?
+  bool    is_prefix;    ///< Is this a prefix before other words?
+  vector<WordListWordP> words; ///< Sublist
+  OptionalScript script;  ///< Generate words using a script
 
-	inline bool isGroup() const { return !words.empty(); }
+  inline bool isGroup() const { return !words.empty(); }
 
-	DECLARE_REFLECTION();
+  DECLARE_REFLECTION();
 };
 
 /// A list of words for a drop down box
 class WordList : public WordListWord {
   public:
-	DECLARE_REFLECTION();
+  DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : Auto replace words
@@ -46,17 +46,17 @@ class WordList : public WordListWord {
 /// Autoreplace specific shortcut words
 class AutoReplace : public IntrusivePtrVirtualBase {
   public:
-	AutoReplace();
+  AutoReplace();
 
-	bool   enabled;
-	bool   whole_word;
-	bool   custom; ///< Is this a custom auto replace?
-	String match;
-	String replace;
+  bool   enabled;
+  bool   whole_word;
+  bool   custom; ///< Is this a custom auto replace?
+  String match;
+  String replace;
 
-	inline AutoReplaceP clone() const { return intrusive(new AutoReplace(*this)); }
+  inline AutoReplaceP clone() const { return intrusive(new AutoReplace(*this)); }
 
-	DECLARE_REFLECTION();
+  DECLARE_REFLECTION();
 };
 
 // ----------------------------------------------------------------------------- : EOF

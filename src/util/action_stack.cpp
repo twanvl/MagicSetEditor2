@@ -17,107 +17,107 @@ DECLARE_TYPEOF_COLLECTION(Action*);
 DECLARE_TYPEOF_COLLECTION(ActionListener*);
 
 ActionStack::ActionStack()
-	: save_point(nullptr)
-	, last_was_add(false)
+  : save_point(nullptr)
+  , last_was_add(false)
 {}
 
 ActionStack::~ActionStack() {
-	// we own the actions, delete them
-	FOR_EACH(a, undo_actions) delete a;
-	FOR_EACH(a, redo_actions) delete a;
+  // we own the actions, delete them
+  FOR_EACH(a, undo_actions) delete a;
+  FOR_EACH(a, redo_actions) delete a;
 }
 
 void ActionStack::addAction(Action* action, bool allow_merge) {
-	if (!action) return; // no action
-	action->perform(false); // TODO: delete action if perform throws
-	tellListeners(*action, false);
-	// clear redo list
-	if (!redo_actions.empty()) allow_merge = false; // don't merge after undo
-	FOR_EACH(a, redo_actions) delete a;
-	redo_actions.clear();
-	// try to merge?
-	if (allow_merge && !undo_actions.empty() &&
-	    last_was_add                         && // never merge with something that was redone once already
-	    undo_actions.back() != save_point    && // never merge with the save point
-	    undo_actions.back()->merge(*action) // merged with top undo action
-	    ) {
-		delete action;
-	} else {
-		undo_actions.push_back(action);
-	}
-	last_was_add = true;
+  if (!action) return; // no action
+  action->perform(false); // TODO: delete action if perform throws
+  tellListeners(*action, false);
+  // clear redo list
+  if (!redo_actions.empty()) allow_merge = false; // don't merge after undo
+  FOR_EACH(a, redo_actions) delete a;
+  redo_actions.clear();
+  // try to merge?
+  if (allow_merge && !undo_actions.empty() &&
+      last_was_add                         && // never merge with something that was redone once already
+      undo_actions.back() != save_point    && // never merge with the save point
+      undo_actions.back()->merge(*action) // merged with top undo action
+      ) {
+    delete action;
+  } else {
+    undo_actions.push_back(action);
+  }
+  last_was_add = true;
 }
 
 void ActionStack::undo() {
-	assert(canUndo());
-	if (!canUndo()) return;
-	Action* action = undo_actions.back();
-	action->perform(true);
-	tellListeners(*action, true);
-	// move to redo stack
-	undo_actions.pop_back();
-	redo_actions.push_back(action);
-	last_was_add = false;
+  assert(canUndo());
+  if (!canUndo()) return;
+  Action* action = undo_actions.back();
+  action->perform(true);
+  tellListeners(*action, true);
+  // move to redo stack
+  undo_actions.pop_back();
+  redo_actions.push_back(action);
+  last_was_add = false;
 }
 void ActionStack::redo() {
-	assert(canRedo());
-	if (!canRedo()) return;
-	Action* action = redo_actions.back();
-	action->perform(false);
-	tellListeners(*action, false);
-	// move to undo stack
-	redo_actions.pop_back();
-	undo_actions.push_back(action);
-	last_was_add = false;
+  assert(canRedo());
+  if (!canRedo()) return;
+  Action* action = redo_actions.back();
+  action->perform(false);
+  tellListeners(*action, false);
+  // move to undo stack
+  redo_actions.pop_back();
+  undo_actions.push_back(action);
+  last_was_add = false;
 }
 
 bool ActionStack::canUndo() const {
-	return !undo_actions.empty();
+  return !undo_actions.empty();
 }
 bool ActionStack::canRedo() const {
-	return !redo_actions.empty();
+  return !redo_actions.empty();
 }
 
 String ActionStack::undoName() const {
-	if (canUndo()) {
-		return _(" ") + capitalize(undo_actions.back()->getName(true));
-	} else {
-		return wxEmptyString;
-	}
+  if (canUndo()) {
+    return _(" ") + capitalize(undo_actions.back()->getName(true));
+  } else {
+    return wxEmptyString;
+  }
 }
 String ActionStack::redoName() const {
-	if (canRedo()) {
-		return _(" ") + capitalize(redo_actions.back()->getName(false));
-	} else {
-		return wxEmptyString;
-	}
+  if (canRedo()) {
+    return _(" ") + capitalize(redo_actions.back()->getName(false));
+  } else {
+    return wxEmptyString;
+  }
 }
 
 bool ActionStack::atSavePoint() const {
-	return (undo_actions.empty() && save_point == nullptr)
-	    || (undo_actions.back() == save_point);
+  return (undo_actions.empty() && save_point == nullptr)
+      || (undo_actions.back() == save_point);
 }
 void ActionStack::setSavePoint() {
-	if (undo_actions.empty()) {
-		save_point = nullptr;
-	} else {
-		save_point = undo_actions.back();
-	}
+  if (undo_actions.empty()) {
+    save_point = nullptr;
+  } else {
+    save_point = undo_actions.back();
+  }
 }
 
 void ActionStack::addListener(ActionListener* listener) {
-	listeners.push_back(listener);
+  listeners.push_back(listener);
 }
 void ActionStack::removeListener(ActionListener* listener) {
-	listeners.erase(
-		std::remove(
-			listeners.begin(),
-			listeners.end(),
-			listener
-			),
-		listeners.end()
-		);
+  listeners.erase(
+    std::remove(
+      listeners.begin(),
+      listeners.end(),
+      listener
+      ),
+    listeners.end()
+    );
 }
 void ActionStack::tellListeners(const Action& action, bool undone) {
-	FOR_EACH(l, listeners) l->onAction(action, undone);
+  FOR_EACH(l, listeners) l->onAction(action, undone);
 }

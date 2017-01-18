@@ -27,39 +27,39 @@ DECLARE_POINTER_TYPE(Field);
  */
 class CardListColumnSelectDialog : public wxDialog {
   public:
-	CardListColumnSelectDialog(Window* parent, const GameP& game);
-	
+  CardListColumnSelectDialog(Window* parent, const GameP& game);
+  
   private:
-	DECLARE_EVENT_TABLE();
-	
-	// gui items
-	wxCheckListBox* list;
-	// other info
-	GameP game;									///< The game we are changing
-	public: struct ColumnSettingsF {
-		ColumnSettingsF(const FieldP& field, const ColumnSettings& settings)
-			: field(field)
-			, settings(settings)
-		{}
-		FieldP         field;
-		ColumnSettings settings;
-	};
-	private: vector<ColumnSettingsF> columns;	///< Settings of the fields, in order
-	
-	// initialize columns
-	void initColumns();
-	// intialize the list box
-	void initList();
-	// refresh list item i
-	void refreshItem(int i);
-	
-	void onSelect  (wxCommandEvent&);
-	void onCheck   (wxCommandEvent&);
-	void onMove    (wxCommandEvent&);
-	void onShowHide(wxCommandEvent&);
-	void onOk      (wxCommandEvent&);
-	void onUpdateUI(wxUpdateUIEvent&);
-	
+  DECLARE_EVENT_TABLE();
+  
+  // gui items
+  wxCheckListBox* list;
+  // other info
+  GameP game;                  ///< The game we are changing
+  public: struct ColumnSettingsF {
+    ColumnSettingsF(const FieldP& field, const ColumnSettings& settings)
+      : field(field)
+      , settings(settings)
+    {}
+    FieldP         field;
+    ColumnSettings settings;
+  };
+  private: vector<ColumnSettingsF> columns;  ///< Settings of the fields, in order
+  
+  // initialize columns
+  void initColumns();
+  // intialize the list box
+  void initList();
+  // refresh list item i
+  void refreshItem(int i);
+  
+  void onSelect  (wxCommandEvent&);
+  void onCheck   (wxCommandEvent&);
+  void onMove    (wxCommandEvent&);
+  void onShowHide(wxCommandEvent&);
+  void onOk      (wxCommandEvent&);
+  void onUpdateUI(wxUpdateUIEvent&);
+  
 };
 
 // ----------------------------------------------------------------------------- : EOF

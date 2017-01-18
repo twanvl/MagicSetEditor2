@@ -25,24 +25,24 @@ class Rotation;
 /// A bezier curve for evaluation
 class BezierCurve {
   public:
-	/// coefficients of the equation (x,y) = at^3 + bt^2 + ct + d
-	Vector2D a, b, c, d;
-	
-	/// Construct a bezier curve evaluator given the 4 handles
-	BezierCurve(const Vector2D& p0, const Vector2D& p1, const Vector2D& p2, const Vector2D& p3);
-	
-	/// Construct a bezier curve evaluator given two ControlPoints at the ends
-	BezierCurve(const ControlPoint& p0, const ControlPoint& p3);
-	
-	/// Return the point on this curve at time t in [0...1)
-	inline Vector2D pointAt(double t) const {
-		return d + (c + (b + a * t) * t) * t;
-	}
-	
-	/// Return the tangent on this curve at time t in [0...1)
-	inline Vector2D tangentAt(double t) const {
-		return c + ((b * 2.) + (a * 3.) * t) * t;
-	}
+  /// coefficients of the equation (x,y) = at^3 + bt^2 + ct + d
+  Vector2D a, b, c, d;
+  
+  /// Construct a bezier curve evaluator given the 4 handles
+  BezierCurve(const Vector2D& p0, const Vector2D& p1, const Vector2D& p2, const Vector2D& p3);
+  
+  /// Construct a bezier curve evaluator given two ControlPoints at the ends
+  BezierCurve(const ControlPoint& p0, const ControlPoint& p3);
+  
+  /// Return the point on this curve at time t in [0...1)
+  inline Vector2D pointAt(double t) const {
+    return d + (c + (b + a * t) * t) * t;
+  }
+  
+  /// Return the tangent on this curve at time t in [0...1)
+  inline Vector2D tangentAt(double t) const {
+    return c + ((b * 2.) + (a * 3.) * t) * t;
+  }
 };
 
 /// Subdivide a curve from a to b, store the result in a control point

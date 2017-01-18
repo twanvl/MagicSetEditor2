@@ -22,26 +22,26 @@
 /// A version number
 struct Version {
   public:
-	Version()             : version(0)       {}
-	Version(UInt version) : version(version) {}
-	
-	inline bool operator == (Version v) const { return version == v.version; }
-	inline bool operator != (Version v) const { return version != v.version; }
-	inline bool operator <  (Version v) const { return version <  v.version; }
-	inline bool operator <= (Version v) const { return version <= v.version; }
-	inline bool operator >  (Version v) const { return version >  v.version; }
-	inline bool operator >= (Version v) const { return version >= v.version; }
-	
-	/// Convert a version number to a string
-	String toString() const;
-	/// Get the version number as an integer number
-	UInt   toNumber() const;
-	
-	/// Convert a string to a version number
-	static Version fromString(const String& version);
-	
+  Version()             : version(0)       {}
+  Version(UInt version) : version(version) {}
+  
+  inline bool operator == (Version v) const { return version == v.version; }
+  inline bool operator != (Version v) const { return version != v.version; }
+  inline bool operator <  (Version v) const { return version <  v.version; }
+  inline bool operator <= (Version v) const { return version <= v.version; }
+  inline bool operator >  (Version v) const { return version >  v.version; }
+  inline bool operator >= (Version v) const { return version >= v.version; }
+  
+  /// Convert a version number to a string
+  String toString() const;
+  /// Get the version number as an integer number
+  UInt   toNumber() const;
+  
+  /// Convert a string to a version number
+  static Version fromString(const String& version);
+  
   private:
-	UInt version; ///< Version number encoded as aabbcc, where a=major, b=minor, c=revision
+  UInt version; ///< Version number encoded as aabbcc, where a=major, b=minor, c=revision
 };
 
 // ----------------------------------------------------------------------------- : Versions

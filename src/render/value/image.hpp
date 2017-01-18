@@ -20,20 +20,20 @@ DECLARE_POINTER_TYPE(AlphaMask);
 /// Viewer that displays an image value
 class ImageValueViewer : public ValueViewer {
   public:
-	DECLARE_VALUE_VIEWER(Image) : ValueViewer(parent,style) {}
-	
-	virtual void draw(RotatedDC& dc);
-	virtual void onValueChange();
-	virtual void onStyleChange(int);
-			
+  DECLARE_VALUE_VIEWER(Image) : ValueViewer(parent,style) {}
+  
+  virtual void draw(RotatedDC& dc);
+  virtual void onValueChange();
+  virtual void onStyleChange(int);
+      
   private:
-	Bitmap bitmap; ///< Cached bitmap
-	RealSize size; ///< Size of cached bitmap
-	Radians angle;  ///< Angle of cached bitmap
-	bool    is_default; ///< Is the default placeholder image used?
-	
-	/// Generate a placeholder image
-	static Bitmap imagePlaceholder(const Rotation& rot, UInt w, UInt h, const Image& background, bool editing);
+  Bitmap bitmap; ///< Cached bitmap
+  RealSize size; ///< Size of cached bitmap
+  Radians angle;  ///< Angle of cached bitmap
+  bool    is_default; ///< Is the default placeholder image used?
+  
+  /// Generate a placeholder image
+  static Bitmap imagePlaceholder(const Rotation& rot, UInt w, UInt h, const Image& background, bool editing);
 };
 
 // ----------------------------------------------------------------------------- : EOF

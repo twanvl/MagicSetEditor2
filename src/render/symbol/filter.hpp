@@ -29,9 +29,9 @@ Image render_symbol(const SymbolP& symbol, const SymbolFilter& filter, double bo
 
 /// Is a point inside a symbol?
 enum SymbolSet
-{	SYMBOL_INSIDE
-,	SYMBOL_BORDER
-,	SYMBOL_OUTSIDE
+{  SYMBOL_INSIDE
+,  SYMBOL_BORDER
+,  SYMBOL_OUTSIDE
 };
 
 // ----------------------------------------------------------------------------- : SymbolFilter
@@ -39,16 +39,16 @@ enum SymbolSet
 /// Base class for symbol filters
 class SymbolFilter : public IntrusivePtrVirtualBase {
   public:
-	virtual ~SymbolFilter() {}
-	/// What color should the symbol have at location (x, y)?
-	/** x,y are in the range [0...1) */
-	virtual AColor color(double x, double y, SymbolSet point) const = 0;
-	/// Name of this fill type
-	virtual String fillType() const = 0;
-	/// Comparision
-	virtual bool operator == (const SymbolFilter& that) const = 0;
-	
-	DECLARE_REFLECTION_VIRTUAL();
+  virtual ~SymbolFilter() {}
+  /// What color should the symbol have at location (x, y)?
+  /** x,y are in the range [0...1) */
+  virtual AColor color(double x, double y, SymbolSet point) const = 0;
+  /// Name of this fill type
+  virtual String fillType() const = 0;
+  /// Comparision
+  virtual bool operator == (const SymbolFilter& that) const = 0;
+  
+  DECLARE_REFLECTION_VIRTUAL();
 };
 
 template <>
@@ -59,71 +59,71 @@ intrusive_ptr<SymbolFilter> read_new<SymbolFilter>(Reader& reader);
 /// Symbol filter that returns solid colors
 class SolidFillSymbolFilter : public SymbolFilter {
   public:
-	inline SolidFillSymbolFilter() {}
-	inline SolidFillSymbolFilter(const AColor& fill_color, const AColor& border_color)
-		: fill_color(fill_color), border_color(border_color)
-	{}
-	virtual AColor color(double x, double y, SymbolSet point) const;
-	virtual String fillType() const;
-	virtual bool operator == (const SymbolFilter& that) const;
+  inline SolidFillSymbolFilter() {}
+  inline SolidFillSymbolFilter(const AColor& fill_color, const AColor& border_color)
+    : fill_color(fill_color), border_color(border_color)
+  {}
+  virtual AColor color(double x, double y, SymbolSet point) const;
+  virtual String fillType() const;
+  virtual bool operator == (const SymbolFilter& that) const;
   private:
-	AColor fill_color, border_color;
-	DECLARE_REFLECTION();
+  AColor fill_color, border_color;
+  DECLARE_REFLECTION();
 };
 
 /// Symbol filter that returns some gradient
 class GradientSymbolFilter : public SymbolFilter {
   public:
-	inline GradientSymbolFilter() {}
-	inline GradientSymbolFilter(const Color& fill_color_1, const Color& border_color_1, const Color& fill_color_2, const Color& border_color_2)
-		: fill_color_1(fill_color_1), border_color_1(border_color_1)
-		, fill_color_2(fill_color_2), border_color_2(border_color_2)
-	{}
+  inline GradientSymbolFilter() {}
+  inline GradientSymbolFilter(const Color& fill_color_1, const Color& border_color_1, const Color& fill_color_2, const Color& border_color_2)
+    : fill_color_1(fill_color_1), border_color_1(border_color_1)
+    , fill_color_2(fill_color_2), border_color_2(border_color_2)
+  {}
   protected:
-	Color fill_color_1, border_color_1;
-	Color fill_color_2, border_color_2;
-	template <typename T>
-	AColor color(double x, double y, SymbolSet point, const T* t) const;
-	bool equal(const GradientSymbolFilter& that) const;
-	
-	DECLARE_REFLECTION();
+  Color fill_color_1, border_color_1;
+  Color fill_color_2, border_color_2;
+  template <typename T>
+  AColor color(double x, double y, SymbolSet point, const T* t) const;
+  bool equal(const GradientSymbolFilter& that) const;
+  
+  DECLARE_REFLECTION();
 };
 
 /// Symbol filter that returns a linear gradient
 class LinearGradientSymbolFilter : public GradientSymbolFilter {
   public:
-	LinearGradientSymbolFilter();
-	LinearGradientSymbolFilter(const Color& fill_color_1, const Color& border_color_1, const Color& fill_color_2, const Color& border_color_2
-	                          ,double center_x, double center_y, double end_x, double end_y);
-	
-	virtual AColor color(double x, double y, SymbolSet point) const;
-	virtual String fillType() const;
-	virtual bool operator == (const SymbolFilter& that) const;
-	
-	/// return time on the gradient, used by GradientSymbolFilter::color
-	inline double t(double x, double y) const;
-	
+  LinearGradientSymbolFilter();
+  LinearGradientSymbolFilter(const Color& fill_color_1, const Color& border_color_1, const Color& fill_color_2, const Color& border_color_2
+                            ,double center_x, double center_y, double end_x, double end_y);
+  
+  virtual AColor color(double x, double y, SymbolSet point) const;
+  virtual String fillType() const;
+  virtual bool operator == (const SymbolFilter& that) const;
+  
+  /// return time on the gradient, used by GradientSymbolFilter::color
+  inline double t(double x, double y) const;
+  
   private:
-	double center_x, center_y;
-	double end_x,    end_y;
-	mutable double len;
-	DECLARE_REFLECTION();
+  double center_x, center_y;
+  double end_x,    end_y;
+  mutable double len;
+  DECLARE_REFLECTION();
 };
 
 /// Symbol filter that returns a radial gradient
 class RadialGradientSymbolFilter : public GradientSymbolFilter {
   public:
-	inline RadialGradientSymbolFilter() {}
-	inline RadialGradientSymbolFilter(const Color& fill_color_1, const Color& border_color_1, const Color& fill_color_2, const Color& border_color_2)
-		: GradientSymbolFilter(fill_color_1, border_color_1, fill_color_2, border_color_2)
-	{}
-	
-	virtual AColor color(double x, double y, SymbolSet point) const;
-	virtual String fillType() const;
-	virtual bool operator == (const SymbolFilter& that) const;
-	
-	/// return time on the gradient, used by GradientSymbolFilter::color
-	inline double t(double x, double y) const;
+  inline RadialGradientSymbolFilter() {}
+  inline RadialGradientSymbolFilter(const Color& fill_color_1, const Color& border_color_1, const Color& fill_color_2, const Color& border_color_2)
+    : GradientSymbolFilter(fill_color_1, border_color_1, fill_color_2, border_color_2)
+  {}
+  
+  virtual AColor color(double x, double y, SymbolSet point) const;
+  virtual String fillType() const;
+  virtual bool operator == (const SymbolFilter& that) const;
+  
+  /// return time on the gradient, used by GradientSymbolFilter::color
+  inline double t(double x, double y) const;
 };
 
 // ----------------------------------------------------------------------------- : EOF

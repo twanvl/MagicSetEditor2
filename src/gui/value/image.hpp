@@ -18,23 +18,23 @@
 /// An editor 'control' for editing ImageValues
 class ImageValueEditor : public ImageValueViewer, public ValueEditor {
   public:
-	DECLARE_VALUE_EDITOR(Image);
-	
-	virtual bool onLeftDClick(const RealPoint&, wxMouseEvent&);
-	
-	// --------------------------------------------------- : Clipboard
-	
-	virtual bool canCopy()  const;
-	virtual bool canPaste() const;
-	virtual bool doCopy();
-	virtual bool doPaste();
-	virtual bool doDelete();
-	
-	virtual bool onChar(wxKeyEvent&);
-	
+  DECLARE_VALUE_EDITOR(Image);
+  
+  virtual bool onLeftDClick(const RealPoint&, wxMouseEvent&);
+  
+  // --------------------------------------------------- : Clipboard
+  
+  virtual bool canCopy()  const;
+  virtual bool canPaste() const;
+  virtual bool doCopy();
+  virtual bool doPaste();
+  virtual bool doDelete();
+  
+  virtual bool onChar(wxKeyEvent&);
+  
   private:
-	// Open the image slice window showing the give image
-	void sliceImage(const Image&);
+  // Open the image slice window showing the give image
+  void sliceImage(const Image&);
 };
 
 // ----------------------------------------------------------------------------- : EOF

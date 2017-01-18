@@ -33,98 +33,98 @@
 template <typename Key, typename Value>
 class IndexMap : private vector<Value> {
   public:
-	using typename vector<Value>::iterator;
-	using typename vector<Value>::const_iterator;
-	using typename vector<Value>::reference;
-	using typename vector<Value>::const_reference;
-	using vector<Value>::empty;
-	using vector<Value>::size;
-	using vector<Value>::begin;
-	using vector<Value>::end;
-	using vector<Value>::clear;
-	using vector<Value>::at; // for using numeric indices directly
-	
-	/// Initialize this map with default values given a list of keys
-	/** has no effect if already initialized with the given keys */
-	bool init(const vector<Key>& keys) {
-		if (!this->empty() && (keys.empty() || get_key(this->front()) != keys.front())) {
-			// switch to different keys
-			clear();
-		}
-		if (this->size() == keys.size()) return false;
-		this->reserve(keys.size());
-		for(typename vector<Key>::const_iterator it = keys.begin() ; it != keys.end() ; ++it) {
-			const Key& key = *it;
-			assert(key);
-			if (key->index >= this->size()) this->resize(key->index + 1);
-			init_object(key, (*this)[key->index]);
-		}
-		return true;
-	}
-	/// Initialize this map with cloned values from another list
-	void cloneFrom(const IndexMap<Key,Value>& values) {
-		if (this->size() == values.size()) return;
-		this->reserve(values.size());
-		for(size_t index = size() ; index < values.size() ; ++index) {
-			const Value& value = values[index];
-			vector<Value>::push_back(value ? value->clone() : value);
-		}
-	}
-	/// Change this map by adding an additional key and value
-	void add(const Key& key, const Value& value) {
-		assert(get_key(value) == key);
-		if (key->index >= this->size()) this->resize(key->index + 1);
-		(*this)[key->index] = value;
-	}
-	
-	/// Retrieve a value given its key
-	inline Value operator [] (const Key& key) {
-		assert(key);
-		assert(this->size() > key->index);
-		return at(key->index);
-	}
-	/// Retrieve a value given its key, if it matches
-	inline Value tryGet (const Key& key) {
-		assert(key);
-		if (this->size() <= key->index) return Value();
-		Value v = at(key->index);
-		if (get_key(v) != key) return Value();
-		return v;
-	}
-	
-	/// Is a value contained in this index map?
-	inline bool contains(const Value& value) const {
-		assert(value);
-		size_t index = get_key(value)->index;
-		return index < this->size() && (*this)[index] == value;
-	}
-	
-	/// Is a key in the domain of this index map?
-	inline bool containsKey(const Key& key) const {
-		assert(key);
-		return key->index < this->size() && get_key((*this)[key->index]) == key;
-	}
-	
-	/// Find a value given the key name, return an iterator
-	template <typename Name>
-	typename vector<Value>::const_iterator find(const Name& key) const {
-		for(typename vector<Value>::const_iterator it = begin() ; it != end() ; ++it) {
-			if (get_key_name(*it) == key) return it;
-		}
-		return end();
-	}
-	
-	inline void swap(IndexMap& b) {
-		vector<Value>::swap(b);
-	}
-	
+  using typename vector<Value>::iterator;
+  using typename vector<Value>::const_iterator;
+  using typename vector<Value>::reference;
+  using typename vector<Value>::const_reference;
+  using vector<Value>::empty;
+  using vector<Value>::size;
+  using vector<Value>::begin;
+  using vector<Value>::end;
+  using vector<Value>::clear;
+  using vector<Value>::at; // for using numeric indices directly
+  
+  /// Initialize this map with default values given a list of keys
+  /** has no effect if already initialized with the given keys */
+  bool init(const vector<Key>& keys) {
+    if (!this->empty() && (keys.empty() || get_key(this->front()) != keys.front())) {
+      // switch to different keys
+      clear();
+    }
+    if (this->size() == keys.size()) return false;
+    this->reserve(keys.size());
+    for(typename vector<Key>::const_iterator it = keys.begin() ; it != keys.end() ; ++it) {
+      const Key& key = *it;
+      assert(key);
+      if (key->index >= this->size()) this->resize(key->index + 1);
+      init_object(key, (*this)[key->index]);
+    }
+    return true;
+  }
+  /// Initialize this map with cloned values from another list
+  void cloneFrom(const IndexMap<Key,Value>& values) {
+    if (this->size() == values.size()) return;
+    this->reserve(values.size());
+    for(size_t index = size() ; index < values.size() ; ++index) {
+      const Value& value = values[index];
+      vector<Value>::push_back(value ? value->clone() : value);
+    }
+  }
+  /// Change this map by adding an additional key and value
+  void add(const Key& key, const Value& value) {
+    assert(get_key(value) == key);
+    if (key->index >= this->size()) this->resize(key->index + 1);
+    (*this)[key->index] = value;
+  }
+  
+  /// Retrieve a value given its key
+  inline Value operator [] (const Key& key) {
+    assert(key);
+    assert(this->size() > key->index);
+    return at(key->index);
+  }
+  /// Retrieve a value given its key, if it matches
+  inline Value tryGet (const Key& key) {
+    assert(key);
+    if (this->size() <= key->index) return Value();
+    Value v = at(key->index);
+    if (get_key(v) != key) return Value();
+    return v;
+  }
+  
+  /// Is a value contained in this index map?
+  inline bool contains(const Value& value) const {
+    assert(value);
+    size_t index = get_key(value)->index;
+    return index < this->size() && (*this)[index] == value;
+  }
+  
+  /// Is a key in the domain of this index map?
+  inline bool containsKey(const Key& key) const {
+    assert(key);
+    return key->index < this->size() && get_key((*this)[key->index]) == key;
+  }
+  
+  /// Find a value given the key name, return an iterator
+  template <typename Name>
+  typename vector<Value>::const_iterator find(const Name& key) const {
+    for(typename vector<Value>::const_iterator it = begin() ; it != end() ; ++it) {
+      if (get_key_name(*it) == key) return it;
+    }
+    return end();
+  }
+  
+  inline void swap(IndexMap& b) {
+    vector<Value>::swap(b);
+  }
+  
   private:
-	using vector<Value>::operator [];
+  using vector<Value>::operator [];
 };
 
 template <typename Key, typename Value>
 inline void swap(IndexMap<Key,Value>& a, IndexMap<Key,Value>& b) {
-	a.swap(b);
+  a.swap(b);
 }
 
 
@@ -135,8 +135,8 @@ inline void swap(IndexMap<Key,Value>& a, IndexMap<Key,Value>& b) {
  */
 template <typename Key, typename Value>
 struct DelayedIndexMapsData : public IntrusivePtrBase<DelayedIndexMapsData<Key, Value> > {
-	String              unread_data;
-	IndexMap<Key,Value> read_data;
+  String              unread_data;
+  IndexMap<Key,Value> read_data;
 };
 
 /// A map<String,IndexMap> where the reading of the index map depends on the name.
@@ -146,16 +146,16 @@ struct DelayedIndexMapsData : public IntrusivePtrBase<DelayedIndexMapsData<Key, 
 template <typename Key, typename Value>
 class DelayedIndexMaps {
   public:
-	/// Get the data for a specific name. Initialize the map with init_with (if it is not alread initialized)
-	IndexMap<Key,Value>& get(const String& name, const vector<Key>& init_with);
-	/// Clear the delayed index map
-	void clear();
+  /// Get the data for a specific name. Initialize the map with init_with (if it is not alread initialized)
+  IndexMap<Key,Value>& get(const String& name, const vector<Key>& init_with);
+  /// Clear the delayed index map
+  void clear();
   private:
-	map<String, intrusive_ptr<DelayedIndexMapsData<Key,Value> > > data;
-	friend class Reader;
-	friend class Writer;
-	friend class GetDefaultMember;
-	friend class GetMember;
+  map<String, intrusive_ptr<DelayedIndexMapsData<Key,Value> > > data;
+  friend class Reader;
+  friend class Writer;
+  friend class GetDefaultMember;
+  friend class GetMember;
 };
 
 

@@ -19,17 +19,17 @@
 /// Viewer that displays a text value
 class TextValueViewer : public ValueViewer {
   public:
-	DECLARE_VALUE_VIEWER(Text) : ValueViewer(parent,style) {}
-	
-	virtual bool prepare(RotatedDC& dc);
-	virtual void draw(RotatedDC& dc);
-	virtual void onValueChange();
-	virtual void onStyleChange(int);
-	virtual void onAction(const Action&, bool undone);
-	virtual double getStretch() const;
-	
+  DECLARE_VALUE_VIEWER(Text) : ValueViewer(parent,style) {}
+  
+  virtual bool prepare(RotatedDC& dc);
+  virtual void draw(RotatedDC& dc);
+  virtual void onValueChange();
+  virtual void onStyleChange(int);
+  virtual void onAction(const Action&, bool undone);
+  virtual double getStretch() const;
+  
   protected:
-	TextViewer v;
+  TextViewer v;
 };
 
 

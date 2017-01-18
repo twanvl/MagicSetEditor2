@@ -19,35 +19,35 @@
 /** Age is counted using a global variable */
 class Age {
   public:
-	/// Construct a new age value
-	Age() {
-		update();
-	}
-	/// Create a special age
-	/** 0: dummy value, used for other purposes
-	 *  1: before 'beginning of time', the age conceptually just before program start
-	 *  2..: normal ages
-	 */
-	Age(AtomicIntEquiv age) : age(age) {}
-	
-	/// Update the age to become the newest one
-	inline void update() {
-		age = ++new_age;
-	}
-	
-	/// Compare two ages, smaller means earlier
-	inline bool operator < (Age a) const { return age < a.age; }
-	/// Compare two ages
-	inline bool operator == (Age a) const { return age == a.age; }
-	
-	/// A number corresponding to the age
-	inline AtomicIntEquiv get() const { return age; }
-	
+  /// Construct a new age value
+  Age() {
+    update();
+  }
+  /// Create a special age
+  /** 0: dummy value, used for other purposes
+   *  1: before 'beginning of time', the age conceptually just before program start
+   *  2..: normal ages
+   */
+  Age(AtomicIntEquiv age) : age(age) {}
+  
+  /// Update the age to become the newest one
+  inline void update() {
+    age = ++new_age;
+  }
+  
+  /// Compare two ages, smaller means earlier
+  inline bool operator < (Age a) const { return age < a.age; }
+  /// Compare two ages
+  inline bool operator == (Age a) const { return age == a.age; }
+  
+  /// A number corresponding to the age
+  inline AtomicIntEquiv get() const { return age; }
+  
   private:
-	/// This age
-	AtomicIntEquiv age;
-	/// Global age counter, value of the last age created
-	static AtomicInt new_age;
+  /// This age
+  AtomicIntEquiv age;
+  /// Global age counter, value of the last age created
+  static AtomicInt new_age;
 };
 
 

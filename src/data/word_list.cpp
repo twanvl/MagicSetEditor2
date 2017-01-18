@@ -12,40 +12,40 @@
 // ----------------------------------------------------------------------------- : WordList
 
 WordListWord::WordListWord()
-	: line_below(false)
-	, is_prefix(false)
+  : line_below(false)
+  , is_prefix(false)
 {}
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(WordListWord) {
-	if (line_below || is_prefix || isGroup() || script || (tag.reading() && tag.isComplex())) {
-		// complex value
-		REFLECT(name);
-		REFLECT(line_below);
-		REFLECT(is_prefix);
-		REFLECT(words);
-		REFLECT(script);
-	} else {
-		REFLECT_NAMELESS(name);
-	}
+  if (line_below || is_prefix || isGroup() || script || (tag.reading() && tag.isComplex())) {
+    // complex value
+    REFLECT(name);
+    REFLECT(line_below);
+    REFLECT(is_prefix);
+    REFLECT(words);
+    REFLECT(script);
+  } else {
+    REFLECT_NAMELESS(name);
+  }
 }
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(WordList) {
-	REFLECT(name);
-	REFLECT(words);
+  REFLECT(name);
+  REFLECT(words);
 }
 
 
 // ----------------------------------------------------------------------------- : Auto replace words
 
 AutoReplace::AutoReplace()
-	: enabled(true)
-	, whole_word(true)
-	, custom(true)
+  : enabled(true)
+  , whole_word(true)
+  , custom(true)
 {}
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(AutoReplace) {
-	REFLECT(enabled);
-	REFLECT(whole_word);
-	REFLECT(match);
-	REFLECT(replace);
+  REFLECT(enabled);
+  REFLECT(whole_word);
+  REFLECT(match);
+  REFLECT(replace);
 }
