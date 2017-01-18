@@ -98,12 +98,10 @@ wxFont Font::toWxFont(double scale) const {
 		font = wxFont(size_i, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, weight_i, underline(), italic_name());
 	} else {
     String familyName = name();
-
     if(familyName.EndsWith(BOLD_STRING)) {
       familyName = familyName.Left(familyName.length() - BOLD_STRING.length());
       weight_i = wxFONTWEIGHT_BOLD;
     }
-
 		font = wxFont(size_i, wxFONTFAMILY_DEFAULT, style_i, weight_i, underline(), familyName);
 	}
 	// fix size
