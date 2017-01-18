@@ -96,7 +96,7 @@ bool SpellChecker::convert_encoding(const String& word, CharBuffer& out) {
 	}
 	// convert encoding
 	out = fixed.mb_str(encoding);
-	if (*out == '\0') {
+	if (!out || *out == '\0') {
 		// If encoding fails we get an empty string, since the word was not empty this can never happen
 		// words that can't be encoded are not in the dictionary, so they are wrong.
 		return false;
