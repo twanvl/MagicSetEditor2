@@ -17,8 +17,8 @@ class SymbolPartsSelection;
 
 // ----------------------------------------------------------------------------- : Events
 
-DECLARE_EVENT_TYPE(EVENT_PART_SELECT,   <not used>)
-DECLARE_EVENT_TYPE(EVENT_PART_ACTIVATE, <not used>)
+DECLARE_LOCAL_EVENT_TYPE(EVENT_PART_SELECT,   <not used>)
+DECLARE_LOCAL_EVENT_TYPE(EVENT_PART_ACTIVATE, <not used>)
 
 /// Handle EVENT_PART_SELECT events
 #define EVT_PART_SELECT(  id, handler) EVT_COMMAND(id, EVENT_PART_SELECT,   handler)

@@ -22,7 +22,7 @@ DECLARE_POINTER_TYPE(Graph);
 // ----------------------------------------------------------------------------- : Events
 
 /// Event that indicates the a subset is selected/deselected in a graph
-DECLARE_EVENT_TYPE(EVENT_GRAPH_SELECT, <not used>)
+DECLARE_LOCAL_EVENT_TYPE(EVENT_GRAPH_SELECT, <not used>)
 /// Handle EVENT_GRAPH_SELECT events
 #define EVT_GRAPH_SELECT(id, handler) EVT_COMMAND(id, EVENT_GRAPH_SELECT, handler)
 

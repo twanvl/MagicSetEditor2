@@ -19,7 +19,7 @@ typedef intrusive_ptr<Filter<Keyword> > KeywordListFilterP;
 
 // ----------------------------------------------------------------------------- : Events
 
-DECLARE_EVENT_TYPE(EVENT_KEYWORD_SELECT, <not used>)
+DECLARE_LOCAL_EVENT_TYPE(EVENT_KEYWORD_SELECT, <not used>)
 /// Handle KeywordSelectEvents
 #define EVT_KEYWORD_SELECT(id, handler)										\
 	DECLARE_EVENT_TABLE_ENTRY(EVENT_KEYWORD_SELECT, id, -1,					\

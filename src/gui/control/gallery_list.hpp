@@ -14,8 +14,8 @@
 
 // ----------------------------------------------------------------------------- : Events
 
-DECLARE_EVENT_TYPE(EVENT_GALLERY_SELECT,   <not used>)
-DECLARE_EVENT_TYPE(EVENT_GALLERY_ACTIVATE, <not used>)
+DECLARE_LOCAL_EVENT_TYPE(EVENT_GALLERY_SELECT,   <not used>)
+DECLARE_LOCAL_EVENT_TYPE(EVENT_GALLERY_ACTIVATE, <not used>)
 
 /// Handle EVENT_GALLERY_SELECT events
 #define EVT_GALLERY_SELECT(  id, handler) EVT_COMMAND(id, EVENT_GALLERY_SELECT,   handler)

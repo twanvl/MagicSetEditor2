@@ -20,8 +20,8 @@ class CardListBase;
 
 // ----------------------------------------------------------------------------- : Events
 
-DECLARE_EVENT_TYPE(EVENT_CARD_SELECT,   <not used>)
-DECLARE_EVENT_TYPE(EVENT_CARD_ACTIVATE, <not used>)
+DECLARE_LOCAL_EVENT_TYPE(EVENT_CARD_SELECT,   <not used>)
+DECLARE_LOCAL_EVENT_TYPE(EVENT_CARD_ACTIVATE, <not used>)
 
 /// Handle EVENT_CARD_SELECT events
 #define EVT_CARD_SELECT(id, handler)										\

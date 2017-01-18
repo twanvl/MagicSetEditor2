@@ -15,7 +15,7 @@
 // ----------------------------------------------------------------------------- : Events
 
 /// Event that indicates the size of a CardViewer has changed
-DECLARE_EVENT_TYPE(EVENT_SIZE_CHANGE, <not used>)
+DECLARE_LOCAL_EVENT_TYPE(EVENT_SIZE_CHANGE, <not used>)
 /// Handle EVENT_SIZE_CHANGE events
 #define EVT_SIZE_CHANGE(id, handler) EVT_COMMAND(id, EVENT_SIZE_CHANGE, handler)
 
