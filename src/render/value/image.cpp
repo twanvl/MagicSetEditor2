@@ -33,7 +33,7 @@ void ImageValueViewer::draw(RotatedDC& dc) {
     if (!value().filename.empty()) {
       try {
         InputStreamP image_file = getLocalPackage().openIn(value().filename);
-        if (image.LoadFile(*image_file)) {
+        if (image_load_file(image, *image_file)) {
           image.Rescale(w, h);
         }
       } CATCH_ALL_ERRORS(false);

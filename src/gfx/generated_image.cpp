@@ -419,7 +419,7 @@ Image PackagedImage::generate(const Options& opt) const {
   if (!opt.package) throw ScriptError(_("Can only load images in a context where an image is expected"));
   InputStreamP file = opt.package->openIn(filename);
   Image img;
-  if (img.LoadFile(*file)) {
+  if (image_load_file(img, *file)) {
     if (img.HasMask()) img.InitAlpha(); // we can't handle masks
     return img;
   } else {
@@ -495,7 +495,7 @@ Image ImageValueToImage::generate(const Options& opt) const {
   Image image;
   if (!filename.empty()) {
     InputStreamP image_file = opt.local_package->openIn(filename);
-    image.LoadFile(*image_file);
+    image_load_file(image, *image_file);
   }
   if (!image.Ok()) {
     image = Image(max(1,opt.width), max(1,opt.height));

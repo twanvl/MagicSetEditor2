@@ -11,6 +11,7 @@
 #include <util/io/package_manager.hpp>
 #include <util/alignment.hpp>
 #include <script/profiler.hpp>
+#include <gui/util.hpp>
 
 DECLARE_TYPEOF_COLLECTION(PackagedP);
 
@@ -75,7 +76,7 @@ void PackageList::showData(const String& pattern) {
     InputStreamP stream = p->openIconFile();
     Image img;
     Bitmap bmp;
-    if (stream && img.LoadFile(*stream)) {
+    if (stream && image_load_file(img, *stream)) {
       bmp = Bitmap(img);
     }
     // add to list

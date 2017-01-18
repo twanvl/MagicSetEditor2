@@ -14,6 +14,7 @@
 #include <data/card.hpp>
 #include <gfx/gfx.hpp>
 #include <wx/imaglist.h>
+#include <gui/util.hpp>
 
 DECLARE_TYPEOF_COLLECTION(FieldP);
 
@@ -62,7 +63,7 @@ class CardThumbnailRequest : public ThumbnailRequest {
     try {
       ImageCardList* parent = (ImageCardList*)owner;
       Image image;
-      if (image.LoadFile(*parent->set->openIn(filename))) {
+      if (image_load_file(image, *parent->set->openIn(filename))) {
         // two step anti aliased resampling
         image.Rescale(36, 28); // step 1: no anti aliassing
         return resample(image, 18, 14); // step 2: with anti aliassing

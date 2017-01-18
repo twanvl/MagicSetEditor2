@@ -9,6 +9,7 @@
 #include <util/prec.hpp>
 #include <render/value/package_choice.hpp>
 #include <util/io/package_manager.hpp>
+#include <gui/util.hpp>
 
 DECLARE_TYPEOF_COLLECTION(PackagedP);
 DECLARE_TYPEOF_COLLECTION(PackageChoiceValueViewer::Item);
@@ -37,7 +38,7 @@ void PackageChoiceValueViewer::initItems() {
     i.name = capitalize_sentence(p->short_name);
     Image image;
     InputStreamP stream = p->openIconFile();
-    if (stream && image.LoadFile(*stream)) {
+    if (stream && image_load_file(image, *stream)) {
       i.image = Bitmap(resample(image, 16,16));
     }
     items.push_back(i);

@@ -126,6 +126,19 @@ void draw_checker(RotatedDC& dc, const RealRect& rect) {
   }
 }
 
+
+// ----------------------------------------------------------------------------- : Image related
+
+bool image_load_file(Image& image, wxInputStream &stream) {
+  wxLogNull noLog;
+  return image.LoadFile(stream);
+}
+
+bool image_load_file(Image& image, const wxString &name) {
+  wxLogNull noLog;
+  return image.LoadFile(name);
+}
+
 // ----------------------------------------------------------------------------- : Resource related
 
 Image load_resource_image(const String& name) {
@@ -144,22 +157,24 @@ Image load_resource_image(const String& name) {
     
     int len = ::SizeofResource(wxGetInstance(), hResource);
     wxMemoryInputStream stream(data, len);
+
+    wxLogNull noLog;
     return wxImage(stream);
   #elif defined(__GNUC__)
     static String path = wxStandardPaths::Get().GetDataDir() + _("/resource/");
     String file = path + name;
     wxImage resource;
-    if (wxFileExists(file + _(".png"))) resource.LoadFile(file + _(".png"));
-    else if (wxFileExists(file + _(".bmp"))) resource.LoadFile(file + _(".bmp"));
-    else if (wxFileExists(file + _(".ico"))) resource.LoadFile(file + _(".ico"));
-    else if (wxFileExists(file + _(".cur"))) resource.LoadFile(file + _(".cur"));
+    if (wxFileExists(file + _(".png"))) image_load_file(resource, file + _(".png"));
+    else if (wxFileExists(file + _(".bmp"))) image_load_file(resource, file + _(".bmp"));
+    else if (wxFileExists(file + _(".ico"))) image_load_file(resource, file + _(".ico"));
+    else if (wxFileExists(file + _(".cur"))) image_load_file(resource, file + _(".cur"));
     if (resource.Ok()) return resource;
         static String local_path = wxStandardPaths::Get().GetUserDataDir() + _("/resource/");
         file = local_path + name;
-        if (wxFileExists(file + _(".png"))) resource.LoadFile(file + _(".png"));
-        else if (wxFileExists(file + _(".bmp"))) resource.LoadFile(file + _(".bmp"));
-        else if (wxFileExists(file + _(".ico"))) resource.LoadFile(file + _(".ico"));
-        else if (wxFileExists(file + _(".cur"))) resource.LoadFile(file + _(".cur"));
+        if (wxFileExists(file + _(".png"))) image_load_file(resource, file + _(".png"));
+        else if (wxFileExists(file + _(".bmp"))) image_load_file(resource, file + _(".bmp"));
+        else if (wxFileExists(file + _(".ico"))) image_load_file(resource, file + _(".ico"));
+        else if (wxFileExists(file + _(".cur"))) image_load_file(resource, file + _(".cur"));
         if (!resource.Ok()) handle_error(InternalError(String(_("Cannot find resource file at ")) + path + name + _(" or ") + file));
     return resource;
   #else
@@ -169,6 +184,7 @@ Image load_resource_image(const String& name) {
 
 wxCursor load_resource_cursor(const String& name) {
   #if defined(__WXMSW__) && !defined(__GNUC__)
+    wxLogNull noLog;
     return wxCursor(_("cursor/") + name, wxBITMAP_TYPE_CUR_RESOURCE);
   #else
     return wxCursor(load_resource_image(_("cursor/") + name));
@@ -176,6 +192,7 @@ wxCursor load_resource_cursor(const String& name) {
 }
 
 wxIcon load_resource_icon(const String& name) {
+  wxLogNull noLog;
   #if defined(__WXMSW__) && !defined(__GNUC__)
     return wxIcon(_("icon/") + name);
   #else

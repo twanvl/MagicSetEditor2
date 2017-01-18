@@ -40,6 +40,14 @@ void clearDC_black(DC& dc);
 /// Draw a checkerboard pattern
 void draw_checker(RotatedDC& dc, const RealRect&);
 
+// ----------------------------------------------------------------------------- : Image related
+
+/// Proxy around Image.LoadFile that suppresses errors. 
+bool image_load_file(Image& image, wxInputStream &stream);
+
+/// Proxy around Image.LoadFile that suppresses errors. 
+bool image_load_file(Image& image, const wxString &name);
+
 // ----------------------------------------------------------------------------- : Resource related
 
 /// Load an image from a resource

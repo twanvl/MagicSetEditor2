@@ -12,6 +12,7 @@
 #include <data/format/clipboard.hpp>
 #include <data/action/value.hpp>
 #include <wx/clipbrd.h>
+#include <gui/util.hpp>
 
 // ----------------------------------------------------------------------------- : ImageValueEditor
 
@@ -23,7 +24,12 @@ bool ImageValueEditor::onLeftDClick(const RealPoint&, wxMouseEvent&) {
                                  wxOPEN, wxGetTopLevelParent(&editor()));
   if (!filename.empty()) {
     settings.default_image_dir = wxPathOnly(filename);
-    sliceImage(wxImage(filename));
+    wxImage image;
+    {
+      wxLogNull noLog;
+      image = wxImage(filename);
+    }
+    sliceImage(image);
   }
   return true;
 }
@@ -61,7 +67,7 @@ bool ImageValueEditor::doCopy() {
   // load image
   InputStreamP image_file = getLocalPackage().openIn(value().filename);
   Image image;
-  if (!image.LoadFile(*image_file)) return false;
+  if (!image_load_file(image, *image_file)) return false;
   // set data
   if (!wxTheClipboard->Open()) return false;
   bool ok = wxTheClipboard->SetData(new wxBitmapDataObject(image));

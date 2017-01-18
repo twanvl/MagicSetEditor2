@@ -51,7 +51,7 @@ void Installer::validate(Version file_app_version) {
       try{
         String filename = p->name + _("/") + p->icon_url;
         InputStreamP img = openIn(p->name + _("/") + p->icon_url);
-        p->icon.LoadFile(*img);
+        image_load_file(p->icon, *img);
       } catch (...) {
         // ignore errors, it's just an image
         p->icon_url.clear();
@@ -236,7 +236,7 @@ PackageDescription::PackageDescription(const Packaged& package)
   }
   // icon
   InputStreamP file = const_cast<Packaged&>(package).openIconFile();
-  if (file) icon.LoadFile(*file);
+  if (file) image_load_file(icon, *file);
 }
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(PackageDescription) {
