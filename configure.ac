@@ -10,8 +10,6 @@ AC_INIT(magicseteditor, 0.3.9, twanvl@users.sourceforge.net)
 AC_CANONICAL_SYSTEM
 
 AC_CONFIG_SRCDIR([src/main.cpp])
-# TODO: Actually use the config header
-AC_CONFIG_HEADER([src/config.h])
 
 AM_INIT_AUTOMAKE([foreign])
 
@@ -38,10 +36,6 @@ case "${host_os}" in
     ;;
 esac
 
-
-if test -n "${CXXFLAGS}"; then
-  user_set_cxxflags=yes
-fi
 CXXFLAGS="${CXXFLAGS} ${DEFAULT_CXXFLAGS} -std=gnu++98 -DBOOST_USE_WINDOWS_H"
 LDFLAGS="${LDFLAGS} ${DEFAULT_LDFLAGS}"
 
@@ -76,18 +70,6 @@ AC_ARG_ENABLE(pch, [--enable-pch  Enable precompiled headers (Requires
 # Check for precompiled headers
 # TODO: Deal with braindead GCC and actually check
 AM_CONDITIONAL(GLIBCPP_BUILD_PCH, test "x$enable_pch" = "xyes" -a "x$CXX" = "xg++")
-
-# Checks for header files.
-
-# Checks for typedefs, structures, and compiler characteristics.
-AC_TYPE_SIZE_T
-AC_STRUCT_TM
-
-# Checks for library functions.
-AC_HEADER_STDC
-AC_FUNC_MALLOC
-AC_FUNC_SELECT_ARGTYPES
-AC_CHECK_FUNCS([floor memset pow select sqrt])
 
 AC_OUTPUT([
   Makefile
