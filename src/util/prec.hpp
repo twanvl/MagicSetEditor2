@@ -31,6 +31,11 @@
 #include <wx/datetime.h>
 #include <wx/regex.h> // TODO : remove, see regex.hpp
 
+#if defined(__WXMSW__) && defined(__GNUC__)
+  // MSW uses the RGB define, fix it before it's undefined 
+  #include <wx/msw/private.h>
+#endif
+
 // Std headers
 #include <vector>
 #include <map>

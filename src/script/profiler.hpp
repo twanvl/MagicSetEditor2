@@ -23,7 +23,7 @@ DECLARE_POINTER_TYPE(FunctionProfile);
 
 // ----------------------------------------------------------------------------- : Timer
 
-#ifdef WIN32
+#ifdef _MSC_VER
 	typedef LONGLONG ProfileTime;
 
 	inline ProfileTime timer_now() {

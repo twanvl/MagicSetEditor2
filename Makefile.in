@@ -176,14 +176,14 @@ am__magicseteditor_SOURCES_DIST = ./src/util/prec.gch \
 	./src/gui/symbol/symmetry_editor.cpp \
 	./src/gui/symbol/window.cpp ./src/gui/value/choice.cpp \
 	./src/gui/value/color.cpp ./src/gui/value/editor.cpp \
-	./src/gui/value/image.cpp ./src/gui/value/information.cpp \
+	./src/gui/value/information.cpp \
 	./src/gui/value/multiple_choice.cpp \
 	./src/gui/value/package_choice.cpp ./src/gui/value/symbol.cpp \
-	./src/gui/value/text.cpp ./src/gui/print_window.cpp \
-	./src/gui/profiler_window.cpp ./src/gui/thumbnail_thread.cpp \
-	./src/gui/update_checker.cpp ./src/gui/util.cpp \
-	./src/gui/welcome_window.cpp ./src/gui/about_window.cpp \
-	./src/gui/auto_replace_window.cpp \
+	./src/gui/value/text.cpp ./src/gui/value/image.cpp \
+	./src/gui/print_window.cpp ./src/gui/profiler_window.cpp \
+	./src/gui/thumbnail_thread.cpp ./src/gui/update_checker.cpp \
+	./src/gui/util.cpp ./src/gui/welcome_window.cpp \
+	./src/gui/about_window.cpp ./src/gui/auto_replace_window.cpp \
 	./src/gui/card_select_window.cpp ./src/gui/drop_down_list.cpp \
 	./src/gui/html_export_window.cpp ./src/gui/icon_menu.cpp \
 	./src/gui/image_slice_window.cpp \
@@ -318,12 +318,12 @@ am_magicseteditor_OBJECTS = $(am__objects_1) \
 	./src/gui/value/magicseteditor-choice.$(OBJEXT) \
 	./src/gui/value/magicseteditor-color.$(OBJEXT) \
 	./src/gui/value/magicseteditor-editor.$(OBJEXT) \
-	./src/gui/value/magicseteditor-image.$(OBJEXT) \
 	./src/gui/value/magicseteditor-information.$(OBJEXT) \
 	./src/gui/value/magicseteditor-multiple_choice.$(OBJEXT) \
 	./src/gui/value/magicseteditor-package_choice.$(OBJEXT) \
 	./src/gui/value/magicseteditor-symbol.$(OBJEXT) \
 	./src/gui/value/magicseteditor-text.$(OBJEXT) \
+	./src/gui/value/magicseteditor-image.$(OBJEXT) \
 	./src/gui/magicseteditor-print_window.$(OBJEXT) \
 	./src/gui/magicseteditor-profiler_window.$(OBJEXT) \
 	./src/gui/magicseteditor-thumbnail_thread.$(OBJEXT) \
@@ -665,14 +665,14 @@ magicseteditor_SOURCES = $(am__append_1) ./src/cli/cli_main.cpp \
 	./src/gui/symbol/symmetry_editor.cpp \
 	./src/gui/symbol/window.cpp ./src/gui/value/choice.cpp \
 	./src/gui/value/color.cpp ./src/gui/value/editor.cpp \
-	./src/gui/value/image.cpp ./src/gui/value/information.cpp \
+	./src/gui/value/information.cpp \
 	./src/gui/value/multiple_choice.cpp \
 	./src/gui/value/package_choice.cpp ./src/gui/value/symbol.cpp \
-	./src/gui/value/text.cpp ./src/gui/print_window.cpp \
-	./src/gui/profiler_window.cpp ./src/gui/thumbnail_thread.cpp \
-	./src/gui/update_checker.cpp ./src/gui/util.cpp \
-	./src/gui/welcome_window.cpp ./src/gui/about_window.cpp \
-	./src/gui/auto_replace_window.cpp \
+	./src/gui/value/text.cpp ./src/gui/value/image.cpp \
+	./src/gui/print_window.cpp ./src/gui/profiler_window.cpp \
+	./src/gui/thumbnail_thread.cpp ./src/gui/update_checker.cpp \
+	./src/gui/util.cpp ./src/gui/welcome_window.cpp \
+	./src/gui/about_window.cpp ./src/gui/auto_replace_window.cpp \
 	./src/gui/card_select_window.cpp ./src/gui/drop_down_list.cpp \
 	./src/gui/html_export_window.cpp ./src/gui/icon_menu.cpp \
 	./src/gui/image_slice_window.cpp \
@@ -1128,9 +1128,6 @@ src/gui/value/$(DEPDIR)/$(am__dirstamp):
 ./src/gui/value/magicseteditor-editor.$(OBJEXT):  \
 	src/gui/value/$(am__dirstamp) \
 	src/gui/value/$(DEPDIR)/$(am__dirstamp)
-./src/gui/value/magicseteditor-image.$(OBJEXT):  \
-	src/gui/value/$(am__dirstamp) \
-	src/gui/value/$(DEPDIR)/$(am__dirstamp)
 ./src/gui/value/magicseteditor-information.$(OBJEXT):  \
 	src/gui/value/$(am__dirstamp) \
 	src/gui/value/$(DEPDIR)/$(am__dirstamp)
@@ -1144,6 +1141,9 @@ src/gui/value/$(DEPDIR)/$(am__dirstamp):
 	src/gui/value/$(am__dirstamp) \
 	src/gui/value/$(DEPDIR)/$(am__dirstamp)
 ./src/gui/value/magicseteditor-text.$(OBJEXT):  \
+	src/gui/value/$(am__dirstamp) \
+	src/gui/value/$(DEPDIR)/$(am__dirstamp)
+./src/gui/value/magicseteditor-image.$(OBJEXT):  \
 	src/gui/value/$(am__dirstamp) \
 	src/gui/value/$(DEPDIR)/$(am__dirstamp)
 ./src/gui/magicseteditor-print_window.$(OBJEXT):  \
@@ -2930,20 +2930,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/gui/value/magicseteditor-editor.obj `if test -f './src/gui/value/editor.cpp'; then $(CYGPATH_W) './src/gui/value/editor.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/gui/value/editor.cpp'; fi`
 
-./src/gui/value/magicseteditor-image.o: ./src/gui/value/image.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/gui/value/magicseteditor-image.o -MD -MP -MF ./src/gui/value/$(DEPDIR)/magicseteditor-image.Tpo -c -o ./src/gui/value/magicseteditor-image.o `test -f './src/gui/value/image.cpp' || echo '$(srcdir)/'`./src/gui/value/image.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ./src/gui/value/$(DEPDIR)/magicseteditor-image.Tpo ./src/gui/value/$(DEPDIR)/magicseteditor-image.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='./src/gui/value/image.cpp' object='./src/gui/value/magicseteditor-image.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/gui/value/magicseteditor-image.o `test -f './src/gui/value/image.cpp' || echo '$(srcdir)/'`./src/gui/value/image.cpp
-
-./src/gui/value/magicseteditor-image.obj: ./src/gui/value/image.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/gui/value/magicseteditor-image.obj -MD -MP -MF ./src/gui/value/$(DEPDIR)/magicseteditor-image.Tpo -c -o ./src/gui/value/magicseteditor-image.obj `if test -f './src/gui/value/image.cpp'; then $(CYGPATH_W) './src/gui/value/image.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/gui/value/image.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ./src/gui/value/$(DEPDIR)/magicseteditor-image.Tpo ./src/gui/value/$(DEPDIR)/magicseteditor-image.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='./src/gui/value/image.cpp' object='./src/gui/value/magicseteditor-image.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/gui/value/magicseteditor-image.obj `if test -f './src/gui/value/image.cpp'; then $(CYGPATH_W) './src/gui/value/image.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/gui/value/image.cpp'; fi`
-
 ./src/gui/value/magicseteditor-information.o: ./src/gui/value/information.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/gui/value/magicseteditor-information.o -MD -MP -MF ./src/gui/value/$(DEPDIR)/magicseteditor-information.Tpo -c -o ./src/gui/value/magicseteditor-information.o `test -f './src/gui/value/information.cpp' || echo '$(srcdir)/'`./src/gui/value/information.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ./src/gui/value/$(DEPDIR)/magicseteditor-information.Tpo ./src/gui/value/$(DEPDIR)/magicseteditor-information.Po
@@ -3013,6 +2999,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='./src/gui/value/text.cpp' object='./src/gui/value/magicseteditor-text.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/gui/value/magicseteditor-text.obj `if test -f './src/gui/value/text.cpp'; then $(CYGPATH_W) './src/gui/value/text.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/gui/value/text.cpp'; fi`
+
+./src/gui/value/magicseteditor-image.o: ./src/gui/value/image.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/gui/value/magicseteditor-image.o -MD -MP -MF ./src/gui/value/$(DEPDIR)/magicseteditor-image.Tpo -c -o ./src/gui/value/magicseteditor-image.o `test -f './src/gui/value/image.cpp' || echo '$(srcdir)/'`./src/gui/value/image.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ./src/gui/value/$(DEPDIR)/magicseteditor-image.Tpo ./src/gui/value/$(DEPDIR)/magicseteditor-image.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='./src/gui/value/image.cpp' object='./src/gui/value/magicseteditor-image.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/gui/value/magicseteditor-image.o `test -f './src/gui/value/image.cpp' || echo '$(srcdir)/'`./src/gui/value/image.cpp
+
+./src/gui/value/magicseteditor-image.obj: ./src/gui/value/image.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/gui/value/magicseteditor-image.obj -MD -MP -MF ./src/gui/value/$(DEPDIR)/magicseteditor-image.Tpo -c -o ./src/gui/value/magicseteditor-image.obj `if test -f './src/gui/value/image.cpp'; then $(CYGPATH_W) './src/gui/value/image.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/gui/value/image.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ./src/gui/value/$(DEPDIR)/magicseteditor-image.Tpo ./src/gui/value/$(DEPDIR)/magicseteditor-image.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='./src/gui/value/image.cpp' object='./src/gui/value/magicseteditor-image.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/gui/value/magicseteditor-image.obj `if test -f './src/gui/value/image.cpp'; then $(CYGPATH_W) './src/gui/value/image.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/gui/value/image.cpp'; fi`
 
 ./src/gui/magicseteditor-print_window.o: ./src/gui/print_window.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/gui/magicseteditor-print_window.o -MD -MP -MF ./src/gui/$(DEPDIR)/magicseteditor-print_window.Tpo -c -o ./src/gui/magicseteditor-print_window.o `test -f './src/gui/print_window.cpp' || echo '$(srcdir)/'`./src/gui/print_window.cpp

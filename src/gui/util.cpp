@@ -129,7 +129,7 @@ void draw_checker(RotatedDC& dc, const RealRect& rect) {
 // ----------------------------------------------------------------------------- : Resource related
 
 Image load_resource_image(const String& name) {
-	#if defined(__WXMSW__)
+	#if defined(__WXMSW__) && !defined(__GNUC__)
 		// Load resource
 		// based on wxLoadUserResource
 		// The image can be in an IMAGE resource, in any file format
@@ -145,7 +145,7 @@ Image load_resource_image(const String& name) {
 		int len = ::SizeofResource(wxGetInstance(), hResource);
 		wxMemoryInputStream stream(data, len);
 		return wxImage(stream);
-	#elif defined(__linux__)
+	#elif defined(__GNUC__)
 		static String path = wxStandardPaths::Get().GetDataDir() + _("/resource/");
 		String file = path + name;
 		wxImage resource;
@@ -168,7 +168,7 @@ Image load_resource_image(const String& name) {
 }
 
 wxCursor load_resource_cursor(const String& name) {
-	#if defined(__WXMSW__)
+	#if defined(__WXMSW__) && !defined(__GNUC__)
 		return wxCursor(_("cursor/") + name, wxBITMAP_TYPE_CUR_RESOURCE);
 	#else
 		return wxCursor(load_resource_image(_("cursor/") + name));
@@ -176,7 +176,7 @@ wxCursor load_resource_cursor(const String& name) {
 }
 
 wxIcon load_resource_icon(const String& name) {
-	#if defined(__WXMSW__)
+	#if defined(__WXMSW__) && !defined(__GNUC__)
 		return wxIcon(_("icon/") + name);
 	#else
 		static String path = wxStandardPaths::Get().GetDataDir() + _("/resource/icon/");
@@ -187,7 +187,7 @@ wxIcon load_resource_icon(const String& name) {
 }
 
 wxBitmap load_resource_tool_image(const String& name) {
-	#if defined(__WXMSW__)
+	#if defined(__WXMSW__) && !defined(__GNUC__)
 		return load_resource_image(_("tool/") + name);
 	#else
 		return load_resource_image(_("tool/") + name);

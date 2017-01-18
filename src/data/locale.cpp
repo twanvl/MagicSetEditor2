@@ -200,7 +200,7 @@ int string_format_args(const String& str) {
  */
 InputStreamP load_resource_text(const String& name);
 InputStreamP load_resource_text(const String& name) {
-	#if defined(__WXMSW__)
+	#if defined(__WXMSW__) && !defined(__GNUC__)
 		HRSRC hResource = ::FindResource(wxGetInstance(), name, _("TEXT"));
 		if ( hResource == 0 ) throw InternalError(String::Format(_("Resource not found: %s"), name));
 		HGLOBAL hData = ::LoadResource(wxGetInstance(), hResource);
