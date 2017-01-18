@@ -595,7 +595,7 @@ top_srcdir = @top_srcdir@
 # This flag allows us to use subdirectories:
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CXXFLAGS = @WX_CXXFLAGS@ $(BOOST_CXXFLAGS) -I. -Wall
-AM_LDFLAGS = $(BOOST_LDFLAGS)
+AM_LDFLAGS = $(BOOST_LDFLAGS) -lboost_system
 magicseteditor_LDADD = @WX_LIBS@ $(BOOST_REGEX_LIB)
 magicseteditor_CXXFLAGS = $(AM_CXXFLAGS) $(am__append_2)
 

@@ -13,7 +13,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = magicseteditor
 AM_CXXFLAGS = @WX_CXXFLAGS@ $(BOOST_CXXFLAGS) -I. -Wall
-AM_LDFLAGS  = $(BOOST_LDFLAGS)
+AM_LDFLAGS  = $(BOOST_LDFLAGS) -lboost_system
 
 .hpp.gch:
 	target=`echo $@ | sed "s|.gch$$|.hpp|"`;\
