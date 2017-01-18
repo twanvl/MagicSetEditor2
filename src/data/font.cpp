@@ -76,12 +76,14 @@ FontP Font::make(int add_flags, AColor* other_color, double* other_size) const {
 	return f;
 }
 
+static const String BOLD_STRING   = _(" Bold");
 wxFont Font::toWxFont(double scale) const {
 	int size_i = to_int(scale * size);
 	int weight_i = flags & FONT_BOLD   ? wxFONTWEIGHT_BOLD  : wxFONTWEIGHT_NORMAL;
 	int style_i  = flags & FONT_ITALIC ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL;
 	// make font
 	wxFont font;
+
 	if (flags & FONT_CODE) {
 		if (size_i < 2) {
 			return wxFont(wxNORMAL_FONT->GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, weight_i, underline(), _("Courier New"));
@@ -95,7 +97,14 @@ wxFont Font::toWxFont(double scale) const {
 	} else if (flags & FONT_ITALIC && !italic_name().empty()) {
 		font = wxFont(size_i, wxFONTFAMILY_DEFAULT, wxFONTSTYLE_NORMAL, weight_i, underline(), italic_name());
 	} else {
-		font = wxFont(size_i, wxFONTFAMILY_DEFAULT, style_i, weight_i, underline(), name());
+    String familyName = name();
+
+    if(familyName.EndsWith(BOLD_STRING)) {
+      familyName = familyName.Left(familyName.length() - BOLD_STRING.length());
+      weight_i = wxFONTWEIGHT_BOLD;
+    }
+
+		font = wxFont(size_i, wxFONTFAMILY_DEFAULT, style_i, weight_i, underline(), familyName);
 	}
 	// fix size
 	#ifdef __WXMSW__
