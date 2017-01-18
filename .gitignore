@@ -10,7 +10,6 @@ autom4te.cache
 aclocal.m4
 Makefile
 core
-magicseteditor
 stamp-h1
 config.h
 doxygen
@@ -20,6 +19,8 @@ packages
 
 /data
 /*.dll
+/magicseteditor
+/magicseteditor.*
 
 /old
 /test-files
