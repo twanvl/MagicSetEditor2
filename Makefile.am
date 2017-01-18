@@ -11,7 +11,7 @@
 AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = magicseteditor
-AM_CXXFLAGS = @WX_CXXFLAGS@ $(BOOST_CXXFLAGS) -I. -Wall
+AM_CXXFLAGS = @WX_CXXFLAGS@ $(BOOST_CXXFLAGS) -I. -Wall -Wno-unused-local-typedefs
 AM_LDFLAGS  = $(BOOST_LDFLAGS)
 
 .hpp.gch:
