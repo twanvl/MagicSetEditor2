@@ -17,7 +17,7 @@ AM_INIT_AUTOMAKE([foreign])
 if test -n "${CXXFLAGS}"; then
   user_set_cxxflags=yes
 fi
-AC_PROG_CXX
+AC_PROG_CXX([clang++ g++])
 AC_ARG_ENABLE(debug, [--enable-debug  Enable debug build (requires debug
  versions of wxWidgets and libstdc++.])
 if test "x${enable_debug}" = "xyes"; then
