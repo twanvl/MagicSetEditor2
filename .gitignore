@@ -19,7 +19,6 @@ docwarnings.log
 packages
 
 /data
-/resource
 /*.dll
 
 /old
