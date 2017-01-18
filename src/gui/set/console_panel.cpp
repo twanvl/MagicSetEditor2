@@ -243,14 +243,14 @@ class MessageCtrl : public wxScrolledWindow {
 	
 	// --------------------------------------------------- : Layout
 	
-	static const int LIST_SPACING        = 1;
-	static const int ICON_PADDING        = 3;
-	static const int TEXT_PADDING_LEFT   = ICON_PADDING + 16 + 4;
-	static const int TEXT_PADDING_RIGHT  = 4;
-	static const int TEXT_PADDING_TOP    = 4;
-	static const int TEXT_PADDING_BOTTOM = 2;
-	static const int TEXT_LINE_SPACING   = 1;
-	static const int MIN_ITEM_HEIGHT     = 16 + 2*ICON_PADDING;
+	const int LIST_SPACING        = 1;
+	const int ICON_PADDING        = 3;
+	const int TEXT_PADDING_LEFT   = ICON_PADDING + 16 + 4;
+	const int TEXT_PADDING_RIGHT  = 4;
+	const int TEXT_PADDING_TOP    = 4;
+	const int TEXT_PADDING_BOTTOM = 2;
+	const int TEXT_LINE_SPACING   = 1;
+	const int MIN_ITEM_HEIGHT     = 16 + 2*ICON_PADDING;
 	
 	/// Layout all messages, starting from number start
 	/// layout = determine their height
