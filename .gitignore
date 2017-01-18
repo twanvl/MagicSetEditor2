@@ -18,6 +18,10 @@ warnings.log
 docwarnings.log
 packages
 
+/data
+/resource
+/*.dll
+
 /old
 /test-files
 

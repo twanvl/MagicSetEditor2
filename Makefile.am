@@ -12,7 +12,7 @@ AUTOMAKE_OPTIONS = subdir-objects
 
 bin_PROGRAMS = magicseteditor
 AM_CXXFLAGS = @WX_CXXFLAGS@ $(BOOST_CXXFLAGS) -I. -Wall
-AM_LDFLAGS  = $(BOOST_LDFLAGS) -lboost_system
+AM_LDFLAGS  = $(BOOST_LDFLAGS)
 
 .hpp.gch:
 	target=`echo $@ | sed "s|.gch$$|.hpp|"`;\
@@ -23,7 +23,7 @@ AM_LDFLAGS  = $(BOOST_LDFLAGS) -lboost_system
 .gch.o:
 	gcc -x c - -c -o $@ <<<""
 
-magicseteditor_LDADD = @WX_LIBS@ $(BOOST_REGEX_LIB)
+magicseteditor_LDADD = @WX_LIBS@ $(BOOST_REGEX_LIB) $(BOOST_SYSTEM_LIB)
 magicseteditor_CXXFLAGS = $(AM_CXXFLAGS)
 magicseteditor_SOURCES = 
 
@@ -187,6 +187,7 @@ magicseteditor_SOURCES += ./src/script/script.cpp
 magicseteditor_SOURCES += ./src/script/script_manager.cpp
 magicseteditor_SOURCES += ./src/script/scriptable.cpp
 magicseteditor_SOURCES += ./src/script/value.cpp
+magicseteditor_SOURCES += ./src/util/spell_checker.cpp
 magicseteditor_SOURCES += ./src/util/io/get_member.cpp
 magicseteditor_SOURCES += ./src/util/io/package.cpp
 magicseteditor_SOURCES += ./src/util/io/package_manager.cpp
@@ -194,7 +195,6 @@ magicseteditor_SOURCES += ./src/util/io/reader.cpp
 magicseteditor_SOURCES += ./src/util/io/writer.cpp
 magicseteditor_SOURCES += ./src/util/vcs/subversion.cpp
 magicseteditor_SOURCES += ./src/util/spec_sort.cpp
-magicseteditor_SOURCES += ./src/util/spell_checker.cpp
 magicseteditor_SOURCES += ./src/util/string.cpp
 magicseteditor_SOURCES += ./src/util/tagged_string.cpp
 magicseteditor_SOURCES += ./src/util/vcs.cpp

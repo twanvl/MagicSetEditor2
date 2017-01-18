@@ -210,10 +210,10 @@ am__magicseteditor_SOURCES_DIST = ./src/util/prec.gch \
 	./src/script/parser.cpp ./src/script/profiler.cpp \
 	./src/script/script.cpp ./src/script/script_manager.cpp \
 	./src/script/scriptable.cpp ./src/script/value.cpp \
-	./src/util/io/get_member.cpp ./src/util/io/package.cpp \
-	./src/util/io/package_manager.cpp ./src/util/io/reader.cpp \
-	./src/util/io/writer.cpp ./src/util/vcs/subversion.cpp \
-	./src/util/spec_sort.cpp ./src/util/spell_checker.cpp \
+	./src/util/spell_checker.cpp ./src/util/io/get_member.cpp \
+	./src/util/io/package.cpp ./src/util/io/package_manager.cpp \
+	./src/util/io/reader.cpp ./src/util/io/writer.cpp \
+	./src/util/vcs/subversion.cpp ./src/util/spec_sort.cpp \
 	./src/util/string.cpp ./src/util/tagged_string.cpp \
 	./src/util/vcs.cpp ./src/util/version.cpp \
 	./src/util/action_stack.cpp ./src/util/age.cpp \
@@ -373,6 +373,7 @@ am_magicseteditor_OBJECTS = $(am__objects_1) \
 	./src/script/magicseteditor-script_manager.$(OBJEXT) \
 	./src/script/magicseteditor-scriptable.$(OBJEXT) \
 	./src/script/magicseteditor-value.$(OBJEXT) \
+	./src/util/magicseteditor-spell_checker.$(OBJEXT) \
 	./src/util/io/magicseteditor-get_member.$(OBJEXT) \
 	./src/util/io/magicseteditor-package.$(OBJEXT) \
 	./src/util/io/magicseteditor-package_manager.$(OBJEXT) \
@@ -380,7 +381,6 @@ am_magicseteditor_OBJECTS = $(am__objects_1) \
 	./src/util/io/magicseteditor-writer.$(OBJEXT) \
 	./src/util/vcs/magicseteditor-subversion.$(OBJEXT) \
 	./src/util/magicseteditor-spec_sort.$(OBJEXT) \
-	./src/util/magicseteditor-spell_checker.$(OBJEXT) \
 	./src/util/magicseteditor-string.$(OBJEXT) \
 	./src/util/magicseteditor-tagged_string.$(OBJEXT) \
 	./src/util/magicseteditor-vcs.$(OBJEXT) \
@@ -396,7 +396,8 @@ am_magicseteditor_OBJECTS = $(am__objects_1) \
 	./src/magicseteditor-main.$(OBJEXT)
 magicseteditor_OBJECTS = $(am_magicseteditor_OBJECTS)
 am__DEPENDENCIES_1 =
-magicseteditor_DEPENDENCIES = $(am__DEPENDENCIES_1)
+magicseteditor_DEPENDENCIES = $(am__DEPENDENCIES_1) \
+	$(am__DEPENDENCIES_1)
 magicseteditor_LINK = $(CXXLD) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) \
 	$(AM_LDFLAGS) $(LDFLAGS) -o $@
 AM_V_P = $(am__v_P_@AM_V@)
@@ -490,6 +491,7 @@ AWK = @AWK@
 BOOST_CPPFLAGS = @BOOST_CPPFLAGS@
 BOOST_LDFLAGS = @BOOST_LDFLAGS@
 BOOST_REGEX_LIB = @BOOST_REGEX_LIB@
+BOOST_SYSTEM_LIB = @BOOST_SYSTEM_LIB@
 CC = @CC@
 CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
@@ -600,8 +602,8 @@ top_srcdir = @top_srcdir@
 # This flag allows us to use subdirectories:
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CXXFLAGS = @WX_CXXFLAGS@ $(BOOST_CXXFLAGS) -I. -Wall
-AM_LDFLAGS = $(BOOST_LDFLAGS) -lboost_system
-magicseteditor_LDADD = @WX_LIBS@ $(BOOST_REGEX_LIB)
+AM_LDFLAGS = $(BOOST_LDFLAGS)
+magicseteditor_LDADD = @WX_LIBS@ $(BOOST_REGEX_LIB) $(BOOST_SYSTEM_LIB)
 magicseteditor_CXXFLAGS = $(AM_CXXFLAGS) $(am__append_2)
 
 # The script used to generate is MakeAM.sh
@@ -699,10 +701,10 @@ magicseteditor_SOURCES = $(am__append_1) ./src/cli/cli_main.cpp \
 	./src/script/parser.cpp ./src/script/profiler.cpp \
 	./src/script/script.cpp ./src/script/script_manager.cpp \
 	./src/script/scriptable.cpp ./src/script/value.cpp \
-	./src/util/io/get_member.cpp ./src/util/io/package.cpp \
-	./src/util/io/package_manager.cpp ./src/util/io/reader.cpp \
-	./src/util/io/writer.cpp ./src/util/vcs/subversion.cpp \
-	./src/util/spec_sort.cpp ./src/util/spell_checker.cpp \
+	./src/util/spell_checker.cpp ./src/util/io/get_member.cpp \
+	./src/util/io/package.cpp ./src/util/io/package_manager.cpp \
+	./src/util/io/reader.cpp ./src/util/io/writer.cpp \
+	./src/util/vcs/subversion.cpp ./src/util/spec_sort.cpp \
 	./src/util/string.cpp ./src/util/tagged_string.cpp \
 	./src/util/vcs.cpp ./src/util/version.cpp \
 	./src/util/action_stack.cpp ./src/util/age.cpp \
@@ -1314,6 +1316,8 @@ src/script/$(DEPDIR)/$(am__dirstamp):
 ./src/script/magicseteditor-value.$(OBJEXT):  \
 	src/script/$(am__dirstamp) \
 	src/script/$(DEPDIR)/$(am__dirstamp)
+./src/util/magicseteditor-spell_checker.$(OBJEXT):  \
+	src/util/$(am__dirstamp) src/util/$(DEPDIR)/$(am__dirstamp)
 src/util/io/$(am__dirstamp):
 	@$(MKDIR_P) ./src/util/io
 	@: > src/util/io/$(am__dirstamp)
@@ -1345,8 +1349,6 @@ src/util/vcs/$(DEPDIR)/$(am__dirstamp):
 	src/util/vcs/$(am__dirstamp) \
 	src/util/vcs/$(DEPDIR)/$(am__dirstamp)
 ./src/util/magicseteditor-spec_sort.$(OBJEXT):  \
-	src/util/$(am__dirstamp) src/util/$(DEPDIR)/$(am__dirstamp)
-./src/util/magicseteditor-spell_checker.$(OBJEXT):  \
 	src/util/$(am__dirstamp) src/util/$(DEPDIR)/$(am__dirstamp)
 ./src/util/magicseteditor-string.$(OBJEXT): src/util/$(am__dirstamp) \
 	src/util/$(DEPDIR)/$(am__dirstamp)
@@ -3700,6 +3702,20 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/script/magicseteditor-value.obj `if test -f './src/script/value.cpp'; then $(CYGPATH_W) './src/script/value.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/script/value.cpp'; fi`
 
+./src/util/magicseteditor-spell_checker.o: ./src/util/spell_checker.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/util/magicseteditor-spell_checker.o -MD -MP -MF ./src/util/$(DEPDIR)/magicseteditor-spell_checker.Tpo -c -o ./src/util/magicseteditor-spell_checker.o `test -f './src/util/spell_checker.cpp' || echo '$(srcdir)/'`./src/util/spell_checker.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ./src/util/$(DEPDIR)/magicseteditor-spell_checker.Tpo ./src/util/$(DEPDIR)/magicseteditor-spell_checker.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='./src/util/spell_checker.cpp' object='./src/util/magicseteditor-spell_checker.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/util/magicseteditor-spell_checker.o `test -f './src/util/spell_checker.cpp' || echo '$(srcdir)/'`./src/util/spell_checker.cpp
+
+./src/util/magicseteditor-spell_checker.obj: ./src/util/spell_checker.cpp
+@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/util/magicseteditor-spell_checker.obj -MD -MP -MF ./src/util/$(DEPDIR)/magicseteditor-spell_checker.Tpo -c -o ./src/util/magicseteditor-spell_checker.obj `if test -f './src/util/spell_checker.cpp'; then $(CYGPATH_W) './src/util/spell_checker.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/util/spell_checker.cpp'; fi`
+@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ./src/util/$(DEPDIR)/magicseteditor-spell_checker.Tpo ./src/util/$(DEPDIR)/magicseteditor-spell_checker.Po
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='./src/util/spell_checker.cpp' object='./src/util/magicseteditor-spell_checker.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/util/magicseteditor-spell_checker.obj `if test -f './src/util/spell_checker.cpp'; then $(CYGPATH_W) './src/util/spell_checker.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/util/spell_checker.cpp'; fi`
+
 ./src/util/io/magicseteditor-get_member.o: ./src/util/io/get_member.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/util/io/magicseteditor-get_member.o -MD -MP -MF ./src/util/io/$(DEPDIR)/magicseteditor-get_member.Tpo -c -o ./src/util/io/magicseteditor-get_member.o `test -f './src/util/io/get_member.cpp' || echo '$(srcdir)/'`./src/util/io/get_member.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ./src/util/io/$(DEPDIR)/magicseteditor-get_member.Tpo ./src/util/io/$(DEPDIR)/magicseteditor-get_member.Po
@@ -3797,20 +3813,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='./src/util/spec_sort.cpp' object='./src/util/magicseteditor-spec_sort.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/util/magicseteditor-spec_sort.obj `if test -f './src/util/spec_sort.cpp'; then $(CYGPATH_W) './src/util/spec_sort.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/util/spec_sort.cpp'; fi`
-
-./src/util/magicseteditor-spell_checker.o: ./src/util/spell_checker.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/util/magicseteditor-spell_checker.o -MD -MP -MF ./src/util/$(DEPDIR)/magicseteditor-spell_checker.Tpo -c -o ./src/util/magicseteditor-spell_checker.o `test -f './src/util/spell_checker.cpp' || echo '$(srcdir)/'`./src/util/spell_checker.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ./src/util/$(DEPDIR)/magicseteditor-spell_checker.Tpo ./src/util/$(DEPDIR)/magicseteditor-spell_checker.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='./src/util/spell_checker.cpp' object='./src/util/magicseteditor-spell_checker.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/util/magicseteditor-spell_checker.o `test -f './src/util/spell_checker.cpp' || echo '$(srcdir)/'`./src/util/spell_checker.cpp
-
-./src/util/magicseteditor-spell_checker.obj: ./src/util/spell_checker.cpp
-@am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/util/magicseteditor-spell_checker.obj -MD -MP -MF ./src/util/$(DEPDIR)/magicseteditor-spell_checker.Tpo -c -o ./src/util/magicseteditor-spell_checker.obj `if test -f './src/util/spell_checker.cpp'; then $(CYGPATH_W) './src/util/spell_checker.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/util/spell_checker.cpp'; fi`
-@am__fastdepCXX_TRUE@	$(AM_V_at)$(am__mv) ./src/util/$(DEPDIR)/magicseteditor-spell_checker.Tpo ./src/util/$(DEPDIR)/magicseteditor-spell_checker.Po
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	$(AM_V_CXX)source='./src/util/spell_checker.cpp' object='./src/util/magicseteditor-spell_checker.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCXX_FALSE@	$(AM_V_CXX@am__nodep@)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -c -o ./src/util/magicseteditor-spell_checker.obj `if test -f './src/util/spell_checker.cpp'; then $(CYGPATH_W) './src/util/spell_checker.cpp'; else $(CYGPATH_W) '$(srcdir)/./src/util/spell_checker.cpp'; fi`
 
 ./src/util/magicseteditor-string.o: ./src/util/string.cpp
 @am__fastdepCXX_TRUE@	$(AM_V_CXX)$(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(magicseteditor_CXXFLAGS) $(CXXFLAGS) -MT ./src/util/magicseteditor-string.o -MD -MP -MF ./src/util/$(DEPDIR)/magicseteditor-string.Tpo -c -o ./src/util/magicseteditor-string.o `test -f './src/util/string.cpp' || echo '$(srcdir)/'`./src/util/string.cpp

@@ -29,6 +29,7 @@ else
   DEFAULT_CXXFLAGS="-O2"
   WXCONFIG_FLAGS=""
 fi
+DEFAULT_CXXFLAGS="$DEFAULT_CXXFLAGS -std=gnu++98"
 
 if test X$user_set_cxxflags != Xyes; then
   CXXFLAGS=${DEFAULT_CXXFLAGS}
@@ -40,6 +41,7 @@ AC_CHECK_LIB([hunspell],[Hunspell_create])
 # Check for Boost
 AX_BOOST_BASE([1.37.0])
 AX_BOOST_REGEX
+AX_BOOST_SYSTEM
 
 # Check for wxWidgets
 AM_OPTIONS_WXCONFIG
