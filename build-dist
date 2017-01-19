@@ -7,14 +7,16 @@ build_win32() {
   rm data resource
   ln -s ../data ../resource .
 
+  i686-w64-mingw32-windres resource/win32_res.rc win32_res.o
+
   ../configure --enable-pch --target=i686-w64-mingw32 --with-wx-config=/usr/i686-w64-mingw32/lib/wx/config/i686-w64-mingw32-msw-unicode-release-static-2.8 \
-    --with-boost=/usr/i686-w64-mingw32/  CXX="i686-w64-mingw32-g++" LDFLAGS="-static" LDADD="-lgdiplus -llzma"
+    --with-boost=/usr/i686-w64-mingw32/  CXX="i686-w64-mingw32-g++" LDFLAGS="-static" LDADD="-lgdiplus -llzma win32_res.o"
   if [ $clean = 1 ]; then
     make clean
   fi
   make -j4
   strip magicseteditor.exe
-  i686-w64-mingw32-g++ -static -s -o magicseteditor.com ../src/cli/win32_cli_wrapper.cpp
+  i686-w64-mingw32-g++ -static -s -o magicseteditor.com ../src/cli/win32_cli_wrapper.cpp win32_res.o
 
   popd
 }
