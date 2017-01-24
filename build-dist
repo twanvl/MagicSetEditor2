@@ -15,8 +15,7 @@ build_win32() {
     make clean
   fi
   make -j4
-  strip magicseteditor.exe
-  i686-w64-mingw32-g++ -static -s -o magicseteditor.com ../src/cli/win32_cli_wrapper.cpp win32_res.o
+  i686-w64-mingw32-g++ -static -o magicseteditor.com ../src/cli/win32_cli_wrapper.cpp win32_res.o
 
   popd
 }
@@ -28,7 +27,6 @@ build_linux() {
     make clean
   fi
   make -j4
-  strip magicseteditor
 
   popd
 }
