@@ -72,7 +72,7 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(ColumnSettings) {
 
 GameSettings::GameSettings()
   : sort_cards_ascending(true)
-  , images_export_filename(_("{card.name}.jpg"))
+  , images_export_filename(_("{card.name}.png"))
   , images_export_conflicts(CONFLICT_NUMBER_OVERWRITE)
   , use_auto_replace(true)
   , pack_seed_random(true)

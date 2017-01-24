@@ -631,7 +631,7 @@ void SetWindow::onFileExportImage(wxCommandEvent&) {
   CardP card = current_panel->selectedCard();
   if (!card)  return; // no card selected
   String name = wxFileSelector(_TITLE_("save image"), settings.default_export_dir, clean_filename(card->identification()), _(""),
-                             _("JPEG images (*.jpg)|*.jpg|Windows bitmaps (*.bmp)|*.bmp|PNG images (*.png)|*.png|TIFF images (*.tif)|*.tif"),
+                             _("PNG images (*.png)|*.png|JPEG images (*.jpg)|*.jpg|Windows bitmaps (*.bmp)|*.bmp|TIFF images (*.tif)|*.tif"),
                              wxFD_SAVE | wxFD_OVERWRITE_PROMPT, this);
   if (!name.empty()) {
     settings.default_export_dir = wxPathOnly(name);
