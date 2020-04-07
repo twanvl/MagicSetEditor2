@@ -24,7 +24,7 @@ void SymbolValueEditor::draw(RotatedDC& dc) {
   SymbolValueViewer::draw(dc);
   // draw helper text if there are no symbols
   if (symbols.empty()) {
-    dc.SetFont(wxFont(10,wxSWISS,wxNORMAL,wxNORMAL));
+    dc.SetFont(wxFont(10,wxFONTFAMILY_SWISS,wxFONTSTYLE_NORMAL,wxFONTWEIGHT_NORMAL));
     dc.SetTextForeground(*wxBLACK);
     RealSize text_size = dc.GetTextExtent(_("double click to edit symbol"));
     dc.DrawText(_("double click to edit symbol"), align_in_rect(ALIGN_MIDDLE_CENTER, text_size, style().getInternalRect()));

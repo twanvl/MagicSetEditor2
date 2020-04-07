@@ -28,7 +28,7 @@ void AddCardsScript::perform(Set& set, vector<CardP>& out) {
   Context& ctx = set.getContext();
   ScriptValueP result = script.invoke(ctx);
   // Add cards to out
-  ScriptValueP it = result->makeIterator(result);
+  ScriptValueP it = result->makeIterator();
   while (ScriptValueP item = it->next()) {
     CardP card = from_script<CardP>(item);
     // is this a new card?

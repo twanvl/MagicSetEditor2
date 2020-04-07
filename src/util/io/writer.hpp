@@ -103,8 +103,9 @@ class Writer {
 template <typename T>
 void Writer::handle(const Char* name, const vector<T>& vec) {
   String vectorKey = singular_form(name);
+  const Char* vectorKeyC = IF_UNICODE(vectorKey.wc_str(), vectorKey.c_str());
   for (typename vector<T>::const_iterator it = vec.begin() ; it != vec.end() ; ++it) {
-    handle(vectorKey, *it);
+    handle(vectorKeyC, *it);
   }
 }
 

@@ -33,7 +33,7 @@ class ScriptableImage {
   /// Is there a scripted image set?
   inline bool isScripted() const { return script; }
   /// Is there an image generator available?
-  inline bool isReady()    const { return value; }
+  inline bool isReady()    const { return (bool)value; }
   /// Is there an image set?
   inline bool isSet()      const { return script || value; }
   

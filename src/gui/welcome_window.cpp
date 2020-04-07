@@ -92,7 +92,7 @@ void WelcomeWindow::draw(DC& dc) {
     dc.DrawBitmap(logo2,  ws.GetWidth() - logo2.GetWidth(),      ws.GetHeight() - logo2.GetHeight());
   #endif
   // draw version number
-  dc.SetFont(wxFont(8, wxSWISS, wxNORMAL, wxNORMAL, false, _("Arial")));
+  dc.SetFont(wxFont(8, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, _("Arial")));
   dc.SetTextForeground(Color(0,126,176));
   int tw,th;
   String version_string = _("version ") + app_version.toString() + version_suffix;
@@ -159,8 +159,8 @@ HoverButtonExt::HoverButtonExt(Window* parent, int id, const wxImage& icon, cons
   : HoverButton(parent, id, _("btn"))
   , icon(icon)
   , label(label), sub_label(sub_label)
-  , font_large(14, wxSWISS, wxNORMAL, wxNORMAL, false, _("Arial"))
-  , font_small(8,  wxSWISS, wxNORMAL, wxNORMAL, false, _("Arial"))
+  , font_large(14, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, _("Arial"))
+  , font_small(8,  wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, _("Arial"))
 {}
 
 void HoverButtonExt::draw(DC& dc) {

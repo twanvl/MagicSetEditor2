@@ -147,7 +147,7 @@ class Package : public IntrusivePtrVirtualBase {
 
   protected:
   // TODO: I dislike putting this here very much. There ought to be a better way.
-  virtual VCSP getVCS() { return intrusive(new VCS()); }
+  virtual VCSP getVCS() { return make_shared<VCS>(); }
 
   /// true if this is a zip file, false if a directory
   bool isZipfile() const { return !wxDirExists(filename); }

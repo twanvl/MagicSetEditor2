@@ -75,8 +75,8 @@ bool equal(const ScriptValueP& a, const ScriptValueP& b) {
   } else if (at == SCRIPT_COLLECTION && bt == SCRIPT_COLLECTION) {
     // compare each element
     if (a->itemCount() != b->itemCount()) return false;
-    ScriptValueP a_it = a->makeIterator(a);
-    ScriptValueP b_it = b->makeIterator(b);
+    ScriptValueP a_it = a->makeIterator();
+    ScriptValueP b_it = b->makeIterator();
     while (true) {
       ScriptValueP a_v = a_it->next();
       ScriptValueP b_v = b_it->next();
@@ -115,7 +115,7 @@ ScriptValueP ScriptDelayedError::getMember(const String&) const                 
 ScriptValueP ScriptDelayedError::dependencyMember(const String&, const Dependency&) const { return intrusive(new ScriptDelayedError(error)); }
 ScriptValueP ScriptDelayedError::do_eval(Context&, bool) const                            { return intrusive(new ScriptDelayedError(error)); }
 ScriptValueP ScriptDelayedError::dependencies(Context&, const Dependency&) const          { return intrusive(new ScriptDelayedError(error)); }
-ScriptValueP ScriptDelayedError::makeIterator(const ScriptValueP& thisP) const            { return thisP; }
+ScriptValueP ScriptDelayedError::makeIterator(const ScriptValueP& thisP) const            { return thisP ? thisP : intrusive(new ScriptDelayedError(error)); }
 
 
 // ----------------------------------------------------------------------------- : Iterators
@@ -279,7 +279,8 @@ class ScriptString : public ScriptValue {
   }
   virtual operator wxDateTime() const {
     wxDateTime date;
-    if (!date.ParseDateTime(value.c_str())) {
+    String::const_iterator end;
+    if (!date.ParseDateTime(value,&end) || end != value.end()) {
       throw ScriptErrorConversion(value, typeName(), _TYPE_("date"));
     }
     return date;
@@ -386,13 +387,7 @@ ScriptValueP script_nil(new ScriptNil);
 String ScriptCollectionBase::toCode() const {
   String ret = _("[");
   bool first = true;
-  #ifdef USE_INTRUSIVE_PTR
-    // we can just turn this into a ScriptValueP
-    // TODO: remove thisP alltogether
-    ScriptValueP it = makeIterator(ScriptValueP(const_cast<ScriptValue*>(static_cast<const ScriptValue*>(this))));
-  #else
-    #error "makeIterator needs a ScriptValueP :("
-  #endif
+  ScriptValueP it = makeIterator();
   while (ScriptValueP v = it->next()) {
     if (!first) ret += _(",");
     first = false;
@@ -407,9 +402,9 @@ String ScriptCollectionBase::toCode() const {
 
 // Iterator over a custom collection
 class ScriptCustomCollectionIterator : public ScriptIterator {
-  public:  
-  ScriptCustomCollectionIterator(ScriptCustomCollectionP col)
-    : col(col), pos(0), it(col->key_value.begin()) {}
+public:  
+  ScriptCustomCollectionIterator(ScriptCustomCollection const* col, ScriptValueP const& col_owned)
+    : col(col), col_owned(col_owned), pos(0), it(col->key_value.begin()) {}
   virtual ScriptValueP next(ScriptValueP* key_out) {
     if (pos < col->value.size()) {
       if (key_out) *key_out = to_script((int)pos);
@@ -421,8 +416,9 @@ class ScriptCustomCollectionIterator : public ScriptIterator {
       return ScriptValueP();
     }
   }
-  private:
-  ScriptCustomCollectionP col;
+private:
+  ScriptCustomCollection const* col;
+  ScriptValueP col_owned; // own the collection so it doesn't get deleted
   size_t pos;
   map<String,ScriptValueP>::const_iterator it;
 };
@@ -443,9 +439,7 @@ ScriptValueP ScriptCustomCollection::getIndex(int index) const {
   }
 }
 ScriptValueP ScriptCustomCollection::makeIterator(const ScriptValueP& thisP) const {
-  return intrusive(new ScriptCustomCollectionIterator(
-             static_pointer_cast<ScriptCustomCollection>(thisP)
-         ));
+  return intrusive(new ScriptCustomCollectionIterator(this, thisP));
 }
 
 // ----------------------------------------------------------------------------- : Concat collection

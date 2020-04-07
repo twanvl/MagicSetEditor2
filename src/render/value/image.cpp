@@ -117,7 +117,7 @@ Bitmap ImageValueViewer::imagePlaceholder(const Rotation& rot, UInt w, UInt h, c
   if (editing) {
     // only when in editor mode
     for (UInt size = 12 ; size > 2 ; --size) {
-      dc.SetFont(wxFont(size, wxSWISS, wxNORMAL, wxNORMAL));
+      dc.SetFont(wxFont(size, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL));
       RealSize rs = dc.GetTextExtent(_("double click to load image"));
       if (rs.width <= w - 10 && rs.height < h - 10) {
         // text fits

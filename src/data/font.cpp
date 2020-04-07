@@ -79,8 +79,8 @@ FontP Font::make(int add_flags, AColor* other_color, double* other_size) const {
 static const String BOLD_STRING   = _(" Bold");
 wxFont Font::toWxFont(double scale) const {
   int size_i = to_int(scale * size);
-  int weight_i = flags & FONT_BOLD   ? wxFONTWEIGHT_BOLD  : wxFONTWEIGHT_NORMAL;
-  int style_i  = flags & FONT_ITALIC ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL;
+  wxFontWeight weight_i = flags & FONT_BOLD   ? wxFONTWEIGHT_BOLD  : wxFONTWEIGHT_NORMAL;
+  wxFontStyle style_i  = flags & FONT_ITALIC ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL;
   // make font
   wxFont font;
 

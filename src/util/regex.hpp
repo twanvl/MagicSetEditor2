@@ -32,6 +32,24 @@
 // ----------------------------------------------------------------------------- : Boost implementation
 
 #if USE_BOOST_REGEX
+  // needed for boost::regex
+  inline std::size_t hash_value(wxUniChar const& x) {
+    boost::hash<int> hasher;
+    return hasher(static_cast<int>(x));
+  }
+  /*
+  // fix: boost regex doesn't like that wxUniChar can't be constructed from an int
+  namespace boost {
+    namespace BOOST_REGEX_DETAIL_NS {
+      inline bool can_start(wxUniChar c, const unsigned char* map, unsigned char mask) {
+        return can_start(c.GetValue(), map, mask);
+      }
+      inline bool can_start(wxUniCharRef c, const unsigned char* map, unsigned char mask) {
+        return can_start(c.GetValue(), map, mask);
+      }
+    }
+  }*/
+
   /// Our own regular expression wrapper
   /** Suppors both boost::regex and wxRegEx.
    *  Has an interface like boost::regex, but compatible with wxStrings.
@@ -59,7 +77,7 @@
     
     void assign(const String& code);
     inline bool matches(const String& str) const {
-      return regex_search(str.begin(), str.end(), regex);
+      return regex_search(toStdString(str), regex);
     }
     inline bool matches(Results& results, const String& str, size_t start = 0) const {
       return matches(results, str.begin() + start, str.end());

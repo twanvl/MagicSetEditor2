@@ -209,7 +209,7 @@ template <typename T> void update_index(T&, size_t index) {}
 template <typename T>
 void Reader::handle(const Char* name, vector<T>& vector) {
   String vectorKey = singular_form(name);
-  while (enterBlock(vectorKey)) {
+  while (enterBlock(vectorKey.c_str())) {
     vector.resize(vector.size() + 1);
     handle_greedy(vector.back());
     update_index(vector.back(), vector.size() - 1); // update index for IndexMap

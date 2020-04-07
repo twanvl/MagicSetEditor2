@@ -25,7 +25,7 @@ SCRIPT_FUNCTION(new_card) {
   CardP new_card = intrusive(new Card(*game));
   // set field values
   SCRIPT_PARAM(ScriptValueP, input);
-  ScriptValueP it = input->makeIterator(input);
+  ScriptValueP it = input->makeIterator();
   ScriptValueP key;
   while (ScriptValueP v = it->next(&key)) {
     assert(key);

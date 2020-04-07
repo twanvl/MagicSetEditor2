@@ -19,6 +19,7 @@
 #include <data/card.hpp>
 #include <util/tagged_string.hpp>
 #include <data/set.hpp> // for ValueActionPerformer
+#include <wx/imaglist.h>
 
 // ----------------------------------------------------------------------------- : ValueAction
 
@@ -210,8 +211,9 @@ void TextToggleReminderAction::perform(bool to_undo) {
   String& val = value.value.mutate();
   assert(pos + 4 < val.size());
   size_t end = match_close_tag(val, pos);
-  Char& c = val[pos + 4];
-  swap(c, old);
+  wxUniChar c = old;
+  old = val[pos + 4];
+  val[pos + 4] = c;
   if (end != String::npos && end + 5 < val.size()) {
     val[end + 5] = c; // </kw-c>
   }

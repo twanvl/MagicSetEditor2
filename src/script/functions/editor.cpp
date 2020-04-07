@@ -384,7 +384,7 @@ SCRIPT_FUNCTION(count_chosen) {
       SCRIPT_RETURN(0);
     } else {
       int count = 1;
-      FOR_EACH(c, input) if (c == _(',')) ++count;
+      FOR_EACH_CONST(c, input) if (c == _(',')) ++count;
       SCRIPT_RETURN(count);
     }
   }

@@ -359,7 +359,7 @@ void Context::closeScope(size_t scope) {
 
 // ----------------------------------------------------------------------------- : Simple instructions : unary
 
-void instrUnary  (UnaryInstructionType   i, ScriptValueP& a) {
+void instrUnary(UnaryInstructionType i, ScriptValueP& a) {
   switch (i) {
     case I_ITERATOR_C:
       a = a->makeIterator(a);

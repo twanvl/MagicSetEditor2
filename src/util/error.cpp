@@ -185,6 +185,10 @@ void handle_error(const Error& e) {
   queue_message(e.is_fatal() ? MESSAGE_FATAL_ERROR : MESSAGE_ERROR, e.what());
 }
 
+void handle_error_now(const Error& e) {
+  queue_message(MESSAGE_FATAL_ERROR, e.what());
+}
+
 bool have_queued_message() {
   wxMutexLocker lock(crit_error_handling);
   return !message_queue.empty();

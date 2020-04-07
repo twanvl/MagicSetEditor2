@@ -108,10 +108,12 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
    *  Alternatively, the closure may be modified in place.
    */
   virtual ScriptValueP simplifyClosure(ScriptClosure&) const;
-
+  
   /// Return an iterator for the current collection, an iterator is a value that has next()
-  /** thisP can be used to prevent destruction of the collection */
-  virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
+  /** thisP is a shared_ptr for this collection, needed for the iterator to take ownership of it.
+    * It can be null if the iterator always lives shorter than the collection.
+    */
+  virtual ScriptValueP makeIterator(const ScriptValueP& thisP = ScriptValueP()) const;
   /// Return the next item for this iterator, or ScriptValueP() if there is no such item
   /** If key_out != 0, then it will recieve the key of the item */
   virtual ScriptValueP next(ScriptValueP* key_out = nullptr);

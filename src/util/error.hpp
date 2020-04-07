@@ -156,6 +156,8 @@ enum MessageType
 void queue_message(MessageType type, String const& msg);
 /// Handle an error by queuing a message
 void handle_error(const Error& e);
+/// Handle an error by showing a message box
+void handle_error_now(const Error& e);
 
 /// Are there any queued messages?
 bool have_queued_message();
@@ -170,7 +172,7 @@ String get_stack_trace();
 /// Catch all types of errors, and pass then to handle_error
 #define CATCH_ALL_ERRORS(handle_now) \
   catch (const Error& e) { \
-    handle_error(e); \
+    if (handle_now) handle_error_now(e); else handle_error(e); \
   } catch (const std::exception& e) { \
     /* we don't throw std::exception ourselfs, so this is probably something serious */ \
     String message(e.what(), IF_UNICODE(wxConvLocal, wxSTRING_MAXLEN) ); \

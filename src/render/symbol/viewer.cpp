@@ -274,7 +274,7 @@ void SymbolViewer::drawSymbolShape(const SymbolShape& shape, DC* border, DC* int
       border->SetPen(*wxTRANSPARENT_PEN);
       border->SetBrush(Color(0, (directB ? 128 : 0), 0));
 
-      int func = border->GetLogicalFunction();
+      wxRasterOperationMode func = border->GetLogicalFunction();
       border->SetLogicalFunction(wxCOPY);
       border->DrawPolygon((int)points.size(), &points[0]);
       border->SetLogicalFunction(func);
@@ -317,7 +317,7 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolShape& shape, HighlightStyl
     dc.DrawPolygon((int)points.size(), &points[0]);
   } else if (style == HIGHLIGHT_BORDER_DOT) {
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.SetPen  (wxPen(Color(255,0,0), 1, wxDOT));
+    dc.SetPen  (wxPen(Color(255,0,0), 1, wxPENSTYLE_DOT));
     dc.DrawPolygon((int)points.size(), &points[0]);
   } else {
     dc.SetLogicalFunction(wxOR);
@@ -351,7 +351,7 @@ void SymbolViewer::highlightPart(DC& dc, const SymbolSymmetry& sym, HighlightSty
   for (int i = 0; i < copies ; ++i) {
     Radians a = angle + (i + 0.5) * 2 * M_PI / copies;
     Vector2D dir(cos(a), sin(a));
-    Vector2D dir2 = rotation.tr(sym.center + 2 * dir);
+    Vector2D dir2 = rotation.tr(sym.center + 2.0 * dir);
     dc.DrawLine(int(center.x), int(center.y), int(dir2.x), int(dir2.y));
   }
   // draw center

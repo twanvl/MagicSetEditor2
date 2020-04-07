@@ -19,6 +19,7 @@
 #  pragma warning (disable: 4355) // 'this' : used in base member initializer list
 #  pragma warning (disable: 4800) // 'int' : forcing value to bool 'true' or 'false' (performance warning)
 #  pragma warning (disable: 4675) // resolved overload was found by argument-dependent lookup (occurs in some boost header)
+#  define _CRT_NO_VA_START_VALIDATION // fix "va_start argument must not have reference type and must not be parenthesized"
 #endif
 
 // ----------------------------------------------------------------------------- : Includes
@@ -31,7 +32,7 @@
 #include <wx/datetime.h>
 #include <wx/regex.h> // TODO : remove, see regex.hpp
 
-#if defined(__WXMSW__) && defined(__GNUC__)
+#if defined(__WXMSW__)
   // MSW uses the RGB define, fix it before it's undefined 
   #include <wx/msw/private.h>
 #endif
@@ -86,9 +87,6 @@ typedef wxOutputStream OutputStream;
 
 typedef unsigned char Byte;
 typedef unsigned int  UInt;
-
-/// Null pointer
-#define nullptr 0
 
 /// A string standing for a filename, has different behaviour when reading/writing
 class FileName : public wxString {

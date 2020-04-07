@@ -146,7 +146,7 @@ wxPen SymbolPointEditor::handlePen(WhichPen p, LockMode lock) {
   switch(p) {
     case PEN_NORMAL: return wxPen(col);
     case PEN_HOVER:  return wxPen(col, 2);
-    case PEN_LINE:   return wxPen(col, 1, wxDOT);
+    case PEN_LINE:   return wxPen(col, 1, wxPENSTYLE_DOT);
     default:         throw InternalError(_("SymbolPointEditor::handlePen"));
   }
 }

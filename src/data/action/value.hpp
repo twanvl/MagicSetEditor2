@@ -105,7 +105,7 @@ class TextToggleReminderAction : public ValueAction {
   private:  
   size_t pos;  ///< Position of "<kw-"
   bool enable; ///< Should the reminder text be turned on or off?
-  Char old;    ///< Old value of the <kw- tag
+  wxUniChar old; ///< Old value of the <kw- tag
 };
 
 // ----------------------------------------------------------------------------- : Replace all

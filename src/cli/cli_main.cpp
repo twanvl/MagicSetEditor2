@@ -125,7 +125,7 @@ void CLISetInterface::handleCommand(const String& command) {
       // :something
       size_t space = min(command.find_first_of(_(' ')), command.size());
       String before = command.substr(0,space);
-      String arg    = space + 1 < command.size() ? command.substr(space+1) : wxEmptyString;
+      String arg    = space + 1 < command.size() ? command.substr(space+1) : String();
       if (before == _(":q") || before == _(":quit")) {
         if (!quiet) {
           cli << _("Goodbye\n");

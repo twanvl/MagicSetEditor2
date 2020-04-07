@@ -956,7 +956,7 @@ void GraphValueAxis::draw(RotatedDC& dc, int current, DrawLayer layer) const {
       // highlight?
       if (i == highlight) {
         wxFont font(*wxNORMAL_FONT);
-        font.SetWeight(wxBOLD);
+        font.SetWeight(wxFONTWEIGHT_BOLD);
         dc.SetFont(font);
         dc.SetPen(fg);
       }

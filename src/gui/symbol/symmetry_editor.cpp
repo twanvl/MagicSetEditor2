@@ -37,7 +37,7 @@ void SymbolSymmetryEditor::draw(DC& dc) {
     Vector2D handle = control.rotation.tr(symmetry->center + symmetry->handle);
     if (symmetry->kind == SYMMETRY_REFLECTION) {
       // draw line to handle
-      dc.SetPen(wxPen(color,1,wxDOT));
+      dc.SetPen(wxPen(color,1,wxPENSTYLE_DOT));
       dc.DrawLine(int(center.x), int(center.y), int(handle.x), int(handle.y));
       // draw handle
       dc.SetPen(*wxBLACK_PEN);
@@ -87,17 +87,17 @@ void SymbolSymmetryEditor::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
 
 void SymbolSymmetryEditor::onUpdateUI(wxUpdateUIEvent& ev) {
   if (ev.GetId() >= ID_SYMMETRY && ev.GetId() < ID_SYMMETRY_MAX) {
-    ev.Enable(symmetry);
+    ev.Enable((bool)symmetry);
     ev.Check(symmetry && symmetry->kind == ev.GetId() - ID_SYMMETRY);
   } else if (ev.GetId() == ID_COPIES) {
-    ev.Enable(symmetry);
+    ev.Enable((bool)symmetry);
     if (symmetry) {
       copies->SetValue(symmetry->copies);
     }
   } else if (ev.GetId() == ID_ADD_SYMMETRY) {
     ev.Enable(true);
   } else if (ev.GetId() == ID_REMOVE_SYMMETRY) {
-    ev.Enable(symmetry);
+    ev.Enable((bool)symmetry);
   } else {
     ev.Enable(false); // we don't know about this item
   }

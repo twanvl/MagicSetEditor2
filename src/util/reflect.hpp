@@ -23,32 +23,32 @@
 /// Declare that a class supports reflection
 /** Reflection allows the member variables of a class to be inspected at runtime.
  */
-#define DECLARE_REFLECTION()                      \
-          protected:                          \
-      template<class Tag> void reflect_impl(Tag& tag);      \
-      friend class Reader;                    \
-      friend class Writer;                    \
-      friend class GetDefaultMember;                \
-      friend class GetMember;                    \
-      void reflect(Reader& reader);                \
-      void reflect(Writer& writer);                \
-      void reflect(GetDefaultMember& gdm);            \
-      void reflect(GetMember& gm)
+#define DECLARE_REFLECTION() \
+  protected: \
+    template<class Tag> void reflect_impl(Tag& tag); \
+    friend class Reader; \
+    friend class Writer; \
+    friend class GetDefaultMember; \
+    friend class GetMember; \
+    void reflect(Reader& reader); \
+    void reflect(Writer& writer); \
+    void reflect(GetDefaultMember& gdm); \
+    void reflect(GetMember& gm)
 
 /// Declare that a class supports reflection, which can be overridden in derived classes
-#define DECLARE_REFLECTION_VIRTUAL()                  \
-          protected:                          \
-      template<class Tag> void reflect_impl(Tag& tag);      \
-      friend class Reader;                    \
-      friend class Writer;                    \
-      friend class GetDefaultMember;                \
-      friend class GetMember;                    \
-      /* extra level of indirection between Tag::handle      \
-       * and reflect_impl, to allow for virtual */        \
-      virtual void reflect(Reader& reader);            \
-      virtual void reflect(Writer& writer);            \
-      virtual void reflect(GetDefaultMember& gdm);        \
-      virtual void reflect(GetMember& gm)
+#define DECLARE_REFLECTION_VIRTUAL() \
+  protected: \
+    template<class Tag> void reflect_impl(Tag& tag); \
+    friend class Reader; \
+    friend class Writer; \
+    friend class GetDefaultMember; \
+    friend class GetMember; \
+    /* extra level of indirection between Tag::handle \
+      * and reflect_impl, to allow for virtual */ \
+    virtual void reflect(Reader& reader); \
+    virtual void reflect(Writer& writer); \
+    virtual void reflect(GetDefaultMember& gdm); \
+    virtual void reflect(GetMember& gm)
 
 // ----------------------------------------------------------------------------- : Implementing reflection
 
@@ -67,40 +67,40 @@
  *     }
  *    @endcode
  */
-#define IMPLEMENT_REFLECTION(Cls)                    \
-      REFLECT_OBJECT_READER(Cls)                  \
-      REFLECT_OBJECT_WRITER(Cls)                  \
-      REFLECT_OBJECT_GET_DEFAULT_MEMBER_NOT(Cls)          \
-      REFLECT_OBJECT_GET_MEMBER(Cls)                \
-      template <class Tag>                    \
-      void Cls::reflect_impl(Tag& tag)
+#define IMPLEMENT_REFLECTION(Cls) \
+  REFLECT_OBJECT_READER(Cls) \
+  REFLECT_OBJECT_WRITER(Cls) \
+  REFLECT_OBJECT_GET_DEFAULT_MEMBER_NOT(Cls) \
+  REFLECT_OBJECT_GET_MEMBER(Cls) \
+  template <class Tag> \
+  void Cls::reflect_impl(Tag& tag)
 
 /// Implement the refelection of a class type Cls that only uses REFLECT_NAMELESS
-#define IMPLEMENT_REFLECTION_NAMELESS(Cls)                \
-      REFLECT_OBJECT_READER(Cls)                  \
-      REFLECT_OBJECT_WRITER(Cls)                  \
-      REFLECT_OBJECT_GET_DEFAULT_MEMBER(Cls)            \
-      REFLECT_OBJECT_GET_MEMBER_NOT(Cls)              \
-      template <class Tag>                    \
-      void Cls::reflect_impl(Tag& tag)
+#define IMPLEMENT_REFLECTION_NAMELESS(Cls) \
+  REFLECT_OBJECT_READER(Cls) \
+  REFLECT_OBJECT_WRITER(Cls) \
+  REFLECT_OBJECT_GET_DEFAULT_MEMBER(Cls) \
+  REFLECT_OBJECT_GET_MEMBER_NOT(Cls) \
+  template <class Tag> \
+  void Cls::reflect_impl(Tag& tag)
 
 /// Implement the refelection of a class type Cls, but only for Reader and Writer,
 /** There is custom code for GetMember and GetDefaultMember */
-#define IMPLEMENT_REFLECTION_NO_GET_MEMBER(Cls)              \
-      REFLECT_OBJECT_READER(Cls)                  \
-      REFLECT_OBJECT_WRITER(Cls)                  \
-      template <class Tag>                    \
-      void Cls::reflect_impl(Tag& tag)
+#define IMPLEMENT_REFLECTION_NO_GET_MEMBER(Cls) \
+  REFLECT_OBJECT_READER(Cls) \
+  REFLECT_OBJECT_WRITER(Cls) \
+  template <class Tag> \
+  void Cls::reflect_impl(Tag& tag)
 
 /// Implement the refelection of a class type Cls, but only for Reader and Writer
 /** There is no code for GetMember and GetDefaultMember */
-#define IMPLEMENT_REFLECTION_NO_SCRIPT(Cls)                \
-      REFLECT_OBJECT_READER(Cls)                  \
-      REFLECT_OBJECT_WRITER(Cls)                  \
-      REFLECT_OBJECT_GET_DEFAULT_MEMBER_NOT(Cls)          \
-      REFLECT_OBJECT_GET_MEMBER_NOT(Cls)              \
-      template <class Tag>                    \
-      void Cls::reflect_impl(Tag& tag)
+#define IMPLEMENT_REFLECTION_NO_SCRIPT(Cls) \
+  REFLECT_OBJECT_READER(Cls) \
+  REFLECT_OBJECT_WRITER(Cls) \
+  REFLECT_OBJECT_GET_DEFAULT_MEMBER_NOT(Cls) \
+  REFLECT_OBJECT_GET_MEMBER_NOT(Cls) \
+  template <class Tag> \
+  void Cls::reflect_impl(Tag& tag)
 
 /// Reflect a variable
 #define REFLECT(var)          tag.handle(_(#var), var)
@@ -150,15 +150,15 @@
 #define REFLECT_NO_SCRIPT_N(name, var)  tag.handleNoScript(_(name), var)
 
 /// Explicitly instantiate reflection; this is occasionally required.
-#define INSTANTIATE_REFLECTION(Class)                \
-      template void Class::reflect_impl<Reader> (Reader&);  \
-      template void Class::reflect_impl<Writer> (Writer&);  \
-      template void Class::reflect_impl<GetMember> (GetMember&);
+#define INSTANTIATE_REFLECTION(Class) \
+  template void Class::reflect_impl<Reader> (Reader&); \
+  template void Class::reflect_impl<Writer> (Writer&); \
+  template void Class::reflect_impl<GetMember> (GetMember&);
 
-#define INSTANTIATE_REFLECTION_NAMELESS(Class)            \
-      template void Class::reflect_impl<Reader> (Reader&);  \
-      template void Class::reflect_impl<Writer> (Writer&);  \
-      template void Class::reflect_impl<GetDefaultMember> (GetDefaultMember&);
+#define INSTANTIATE_REFLECTION_NAMELESS(Class) \
+  template void Class::reflect_impl<Reader> (Reader&); \
+  template void Class::reflect_impl<Writer> (Writer&); \
+  template void Class::reflect_impl<GetDefaultMember> (GetDefaultMember&);
 
 // ----------------------------------------------------------------------------- : Reflecting enums
 
@@ -178,20 +178,20 @@
  *   - Writer::handle(const Enum&)
  *   - GetDefaultMember::handle(const Enum&)
  */
-#define IMPLEMENT_REFLECTION_ENUM(Enum)                  \
-      template <class Tag>                    \
-      void reflect_ ## Enum (Enum& enum_, Tag& tag);        \
-      REFLECT_ENUM_READER(Enum)                  \
-      REFLECT_ENUM_WRITER(Enum)                  \
-      REFLECT_ENUM_GET_MEMBER(Enum)                \
-      template <class Tag>                    \
-      void reflect_ ## Enum (Enum& enum_, Tag& tag)
+#define IMPLEMENT_REFLECTION_ENUM(Enum) \
+  template <class Tag> \
+  void reflect_ ## Enum (Enum& enum_, Tag& tag); \
+  REFLECT_ENUM_READER(Enum) \
+  REFLECT_ENUM_WRITER(Enum) \
+  REFLECT_ENUM_GET_MEMBER(Enum) \
+  template <class Tag> \
+  void reflect_ ## Enum (Enum& enum_, Tag& tag)
 
 /// Declare a possible value of an enum
-#define VALUE(val)      tag.handle(_(#val), val, enum_)
+#define VALUE(val) tag.handle(_(#val), val, enum_)
 
 /// Declare a possible value of an enum under the given name
-#define VALUE_N(name, val)  tag.handle(_(name), val, enum_)
+#define VALUE_N(name, val) tag.handle(_(name), val, enum_)
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

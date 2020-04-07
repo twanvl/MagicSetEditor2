@@ -17,6 +17,7 @@
 #include <script/scriptable.hpp>
 #include <script/image.hpp>
 #include <wx/image.h>
+class wxImageList;
 
 // ----------------------------------------------------------------------------- : ChoiceField
 

@@ -41,7 +41,7 @@ ScriptValueP unified(const ScriptValueP& a, const ScriptValueP& b);
  * So it has the dependency characteristics of both.
  */
 class DependencyUnion : public ScriptValue {
-  public:
+public:
   DependencyUnion(const ScriptValueP& a, const ScriptValueP& b)
     : a(a), b(b)
   {}
@@ -53,7 +53,7 @@ class DependencyUnion : public ScriptValue {
     return unified( a->dependencies(ctx,dep), b->dependencies(ctx,dep));
   }
   virtual ScriptValueP makeIterator(ScriptValueP thisP) const {
-    return unified(a->makeIterator(thisP), b->makeIterator(thisP));
+    return unified(a->makeIterator(a), b->makeIterator(b));
   }
   virtual ScriptValueP dependencyMember(const String& name, const Dependency& dep) const {
     return unified(a->dependencyMember(name,dep), b->dependencyMember(name,dep));
@@ -61,7 +61,7 @@ class DependencyUnion : public ScriptValue {
   virtual ScriptValueP dependencyName(const ScriptValue& container, const Dependency& dep) const {
     return unified(a->dependencyName(container,dep), b->dependencyName(container,dep));
   }
-  private:
+private:
   ScriptValueP a, b;
 };
 
@@ -96,8 +96,8 @@ class ScriptMissingVariable : public ScriptValue {
 
 // Utility class: a jump that has been postponed
 struct Context::Jump {
-  const Instruction*   target;    ///< Target of the jump
-  vector<ScriptValueP> stack_top;    ///< The top part of the stack, everything local to the current call
+  const Instruction*   target;      ///< Target of the jump
+  vector<ScriptValueP> stack_top;   ///< The top part of the stack, everything local to the current call
   vector<Binding>      bindings;    ///< The bindings made up to this point in the current scope
 };
 // an ordering on jumps by their target, lowest target = highest priority

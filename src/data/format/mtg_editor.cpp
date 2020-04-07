@@ -220,7 +220,7 @@ String MtgEditorFileFormat::filter1(const String& str) {
     after  = str.substr(pos + 1);
   }
   // filter
-  FOR_EACH(c, after) {
+  FOR_EACH_CONST(c, after) {
     if (isAlnum(c)) ret += c;
     else            ret += _('_');
   }

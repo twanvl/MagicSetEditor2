@@ -28,6 +28,14 @@ typedef wxString String;
 
 DECLARE_TYPEOF_NO_REV(String); // iterating over characters in a string
 
+inline wxStdString const& toStdString(String const& s) {
+  #if wxUSE_UNICODE_WCHAR
+    return s.ToStdWstring();
+  #else
+    return s.ToStdString();
+  #endif
+}
+
 // ----------------------------------------------------------------------------- : Unicode
 
 /// u if UNICODE is defined, a otherwise
@@ -42,8 +50,8 @@ DECLARE_TYPEOF_NO_REV(String); // iterating over characters in a string
 #define _(S) IF_UNICODE(BOOST_PP_CAT(L,S), S)
 
 /// The character type used
-typedef IF_UNICODE(wchar_t, char) Char;
-  
+typedef wxChar Char;
+
 /// Decode a UTF8 string
 /** In non-unicode builds the input is considered to be an incorrectly encoded utf8 string.
  *  In unicode builds it is a normal string, utf8 already decoded.
@@ -55,7 +63,7 @@ String decodeUTF8BOM(const String& s);
 /** In non-unicode builds it is UTF8 encoded \xFEFF.
  *  In unicode builds it is a normal \xFEFF.
  */
-const Char BYTE_ORDER_MARK[] = IF_UNICODE(L"\xFEFF", "\xEF\xBB\xBF");
+const Char BYTE_ORDER_MARK[] = L"\xFEFF";
 
 /// Writes a string to an output stream, encoded as UTF8
 void writeUTF8(wxTextOutputStream& stream, const String& str);

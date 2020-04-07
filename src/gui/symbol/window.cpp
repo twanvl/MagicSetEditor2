@@ -22,6 +22,7 @@
 #include <util/error.hpp>
 #include <wx/filename.h>
 #include <wx/wfstream.h>
+#include <wx/spinctrl.h>
 
 // ----------------------------------------------------------------------------- : Constructor
 
@@ -209,7 +210,7 @@ void SymbolWindow::onFileNew(wxCommandEvent& ev) {
 }
 
 void SymbolWindow::onFileOpen(wxCommandEvent& ev) {
-  String name = wxFileSelector(_("Open symbol"),settings.default_symbol_dir,_(""),_(""),_("Symbol files|*.mse-symbol;*.bmp|MSE2 symbol files (*.mse-symbol)|*.mse-symbol|Images/MSE1 symbol files|*.bmp;*.png;*.jpg;*.gif"),wxOPEN|wxFILE_MUST_EXIST, this);
+  String name = wxFileSelector(_("Open symbol"),settings.default_symbol_dir,_(""),_(""),_("Symbol files|*.mse-symbol;*.bmp|MSE2 symbol files (*.mse-symbol)|*.mse-symbol|Images/MSE1 symbol files|*.bmp;*.png;*.jpg;*.gif"),wxFD_OPEN|wxFD_FILE_MUST_EXIST, this);
   if (!name.empty()) {
     settings.default_symbol_dir = wxPathOnly(name);
     wxFileName n(name);
@@ -236,7 +237,7 @@ void SymbolWindow::onFileSave(wxCommandEvent& ev) {
 }
 
 void SymbolWindow::onFileSaveAs(wxCommandEvent& ev) {
-  String name = wxFileSelector(_("Save symbol"),settings.default_set_dir,_(""),_(""),_("Symbol files (*.mse-symbol)|*.mse-symbol"),wxSAVE, this);
+  String name = wxFileSelector(_("Save symbol"),settings.default_set_dir,_(""),_(""),_("Symbol files (*.mse-symbol)|*.mse-symbol"),wxFD_SAVE, this);
   if (!name.empty()) {
     settings.default_set_dir = wxPathOnly(name);
     Writer writer(shared(new wxFileOutputStream(name)), file_version_symbol);
@@ -345,7 +346,7 @@ BEGIN_EVENT_TABLE(SymbolWindow, wxFrame)
   EVT_TOOL_RANGE  (ID_MODE_MIN,  ID_MODE_MAX,    SymbolWindow::onModeChange)
   EVT_TOOL_RANGE  (ID_CHILD_MIN, ID_CHILD_MAX,  SymbolWindow::onExtraTool)
   EVT_UPDATE_UI  (wxID_ANY,            SymbolWindow::onUpdateUI)
-  EVT_COMMAND_RANGE(ID_CHILD_MIN, ID_CHILD_MAX, wxEVT_COMMAND_SPINCTRL_UPDATED, SymbolWindow::onExtraTool)
+  EVT_COMMAND_RANGE(ID_CHILD_MIN, ID_CHILD_MAX, wxEVT_SPINCTRL, SymbolWindow::onExtraTool)
 
   EVT_PART_SELECT   (ID_PART_LIST, SymbolWindow::onSelectFromList)
   EVT_PART_ACTIVATE (ID_PART_LIST, SymbolWindow::onActivateFromList)

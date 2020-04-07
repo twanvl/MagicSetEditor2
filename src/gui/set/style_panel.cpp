@@ -125,7 +125,7 @@ void StylePanel::onAction(const Action& action, bool undone) {
     }
   }
   use_for_all->Enable(card && card->stylesheet);
-  use_custom_options->Enable(card);
+  use_custom_options->Enable((bool)card);
   use_custom_options->SetValue(card ? card->has_styling : false);
 }
 
@@ -139,7 +139,7 @@ void StylePanel::selectCard(const CardP& card) {
   editor->showCard(card);
   list->select(set->stylesheetFor(card).name(), false);
   use_for_all->Enable(card && card->stylesheet);
-  use_custom_options->Enable(card);
+  use_custom_options->Enable((bool)card);
   use_custom_options->SetValue(card ? card->has_styling : false);
 }
 

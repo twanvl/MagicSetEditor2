@@ -57,7 +57,7 @@ void SymbolSelectEditor::draw(DC& dc) {
   if (click_mode == CLICK_RECT) {
     // draw selection rectangle
     dc.SetBrush(*wxTRANSPARENT_BRUSH);
-    dc.SetPen(wxPen(*wxCYAN,1,wxDOT));
+    dc.SetPen(wxPen(*wxCYAN,1,wxPENSTYLE_DOT));
     //% TODO: use RotatedDC?
     RealRect rect = control.rotation.trRectToBB(RealRect(selection_rect_a, RealSize(selection_rect_b - selection_rect_a)));
     dc.DrawRectangle(rect);

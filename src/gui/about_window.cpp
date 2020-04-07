@@ -50,7 +50,7 @@ void AboutWindow::draw(DC& dc) {
   dc.SetTextBackground(Color(114,197,224));
   dc.SetTextForeground(Color(0,0,0));
   // draw version info
-  dc.SetFont(wxFont(9, wxSWISS, wxNORMAL, wxNORMAL, false, _("Arial")));
+  dc.SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, _("Arial")));
   dc.DrawText(_("Version: ") + app_version.toString() + version_suffix, 34, 110);
   dc.DrawText(_("Copyright \xA9 2001-2011"), 34, 130);
   dc.DrawText(_("   Twan van Laarhoven,"), 34, 147);

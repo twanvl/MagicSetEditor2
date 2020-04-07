@@ -15,7 +15,11 @@
 
 #if wxUSE_UXTHEME && defined(__WXMSW__)
   #include <wx/msw/uxtheme.h>
-  #include <tmschema.h>
+  #if defined(HAVE_VSSYM32)
+    #include <vssym32.h>
+  #else
+    #include <tmschema.h>
+  #endif
   #include <shlobj.h>
   #include <wx/mstream.h>
 #endif
@@ -146,7 +150,7 @@ Image load_resource_image(const String& name) {
     // Load resource
     // based on wxLoadUserResource
     // The image can be in an IMAGE resource, in any file format
-    HRSRC hResource = ::FindResource(wxGetInstance(), name, _("IMAGE"));
+    HRSRC hResource = ::FindResource(wxGetInstance(), name.wc_str(), _("IMAGE"));
     if ( hResource == 0 ) throw InternalError(String::Format(_("Resource not found: %s"), name));
     
     HGLOBAL hData = ::LoadResource(wxGetInstance(), hResource);
@@ -242,7 +246,7 @@ void draw3DBorder(DC& dc, int x1, int y1, int x2, int y2) {
 }
 
 void draw_control_box(Window* win, DC& dc, const wxRect& rect, bool focused, bool enabled) {
-  #if wxUSE_UXTHEME && defined(__WXMSW__)
+  #if wxUSE_UXTHEME && defined(__WXMSW__) && TODO_FIX_THEME_ENGINE
     RECT r;
     wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
     if (themeEngine && themeEngine->IsAppThemed()) {
@@ -270,7 +274,7 @@ void draw_control_box(Window* win, DC& dc, const wxRect& rect, bool focused, boo
   dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
   dc.DrawRectangle(rect);
   // draw the border
-  #if defined(__WXMSW__)
+  #if defined(__WXMSW__) && TODO_FIX_THEME_ENGINE
     r.left   = rect.x - 2;
     r.top    = rect.y - 2;
     r.right  = rect.x + rect.width  + 2;
@@ -283,7 +287,7 @@ void draw_control_box(Window* win, DC& dc, const wxRect& rect, bool focused, boo
 }
 
 void draw_button(Window* win, DC& dc, const wxRect& rect, bool focused, bool down, bool enabled) {
-  #if wxVERSION >= 2700
+  #if wxVERSION_NUMBER >= 2700
     wxRendererNative& rn = wxRendererNative::GetDefault();
     rn.DrawPushButton(win, dc, rect, (focused ? wxCONTROL_FOCUSED : 0) | (down ? wxCONTROL_PRESSED : 0) | (enabled ? 0 : wxCONTROL_DISABLED));
   #else
@@ -317,7 +321,7 @@ void draw_drop_down_arrow(Window* win, DC& dc, const wxRect& rect, bool active) 
   if (w == -1) {
     w = wxSystemSettings::GetMetric(wxSYS_VSCROLL_X); // Try just the scrollbar, then.
   }
-  rn.DrawComboBoxDropButton(win, dc, 
+  rn.DrawComboBoxDropButton(win, dc,
     wxRect(rect.x + rect.width - w, rect.y, w, rect.height)
     , active ? wxCONTROL_PRESSED : 0);
 }
@@ -336,7 +340,7 @@ void draw_checkbox(Window* win, DC& dc, const wxRect& rect, bool checked, bool e
 }
 
 void draw_radiobox(Window* win, DC& dc, const wxRect& rect, bool checked, bool enabled) {
-  #if wxUSE_UXTHEME && defined(__WXMSW__)
+  #if wxUSE_UXTHEME && defined(__WXMSW__) && TODO_FIX_THEME_ENGINE
     // TODO: Windows version?
   #endif
   // portable version
@@ -357,7 +361,7 @@ void draw_radiobox(Window* win, DC& dc, const wxRect& rect, bool checked, bool e
 }
 
 void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool selected, bool focused, bool hot) {
-  #if wxUSE_UXTHEME && defined(__WXMSW__)
+  #if wxUSE_UXTHEME && defined(__WXMSW__) && TODO_FIX_THEME_ENGINE
     #if !defined(NTDDI_LONGHORN) || NTDDI_VERSION < NTDDI_LONGHORN
       #define LISS_NORMAL LIS_NORMAL
       #define LISS_SELECTED LIS_SELECTED
@@ -390,7 +394,7 @@ void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool sele
 }
 
 void enable_themed_selection_rectangle(Window* win) {
-  #if wxUSE_UXTHEME && defined(__WXMSW__)
+  #if wxUSE_UXTHEME && defined(__WXMSW__) && TODO_FIX_THEME_ENGINE
     wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
     if (themeEngine && themeEngine->IsAppThemed()) {
       themeEngine->SetWindowTheme((HWND)win->GetHWND(), L"Explorer", NULL);
