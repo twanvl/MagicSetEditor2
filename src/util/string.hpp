@@ -52,21 +52,17 @@ inline wxStdString const& toStdString(String const& s) {
 /// The character type used
 typedef wxChar Char;
 
-/// Decode a UTF8 string
-/** In non-unicode builds the input is considered to be an incorrectly encoded utf8 string.
- *  In unicode builds it is a normal string, utf8 already decoded.
- *  Also removes a byte-order-mark from the start of the string if it is pressent
- */
-String decodeUTF8BOM(const String& s);
-
-/// UTF8 Byte order mark for writing at the start of files
+/// UTF-8 Byte order mark for writing at the start of files
 /** In non-unicode builds it is UTF8 encoded \xFEFF.
  *  In unicode builds it is a normal \xFEFF.
  */
-const Char BYTE_ORDER_MARK[] = L"\xFEFF";
+const wchar_t BYTE_ORDER_MARK[] = L"\xFEFF";
 
 /// Writes a string to an output stream, encoded as UTF8
 void writeUTF8(wxTextOutputStream& stream, const String& str);
+
+/// Remove a UTF-8 Byte order mark from an input stream
+bool eat_utf8_bom(wxInputStream& input);
 
 /// Some constants we like to use
 #ifdef UNICODE

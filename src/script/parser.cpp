@@ -20,7 +20,7 @@ DECLARE_TYPEOF_COLLECTION(Variable);
 #define TokenType TokenType_ // some stupid windows header uses our name
 #endif
 
-String read_utf8_line(wxInputStream& input, bool eat_bom = true, bool until_eof = false);
+String read_utf8_line(wxInputStream& input, bool until_eof = false);
 
 extern ScriptValueP script_warning;
 extern ScriptValueP script_warning_if_neq;
@@ -205,7 +205,8 @@ void TokenIterator::readToken() {
     pos = 0;
     filename = include_file;
     InputStreamP is = package_manager.openFileFromPackage(package, include_file);
-    input = read_utf8_line(*is, true, true);
+    eat_utf8_bom(*is);
+    input = read_utf8_line(*is, true);
   } else if (isAlpha(c) || c == _('_') || (isDigit(c) && !buffer.empty() && buffer.back() == _("."))) {
     // name, or a number after a . token, as in array.0
     size_t start = pos - 1;

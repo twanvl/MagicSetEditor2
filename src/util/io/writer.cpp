@@ -19,7 +19,8 @@ using boost::tribool;
 
 Writer::Writer(const OutputStreamP& output, Version file_app_version)
   : indentation(0)
-  , output(output), stream(*output)
+  , output(output)
+  , stream(*output, wxEOL_UNIX, wxMBConvUTF8())
 {
   stream.WriteString(BYTE_ORDER_MARK);
   handle(_("mse_version"), file_app_version);

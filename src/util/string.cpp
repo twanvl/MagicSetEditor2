@@ -13,25 +13,6 @@
 
 // ----------------------------------------------------------------------------- : Unicode
 
-String decodeUTF8BOM(const String& s) {
-  #ifdef UNICODE
-    if (!s.empty() && s.GetChar(0) == L'\xFEFF') {
-      // skip byte-order-mark
-      return s.substr(1);
-    } else {
-      return s;
-    }
-  #else
-    wxWCharBuffer buf = s.wc_str(wxConvUTF8);
-    if (buf && buf[size_t(0)] == L'\xFEFF') {
-      // skip byte-order-mark
-      return String(buf + 1, *wxConvCurrent);
-    } else {
-      return String(buf,     *wxConvCurrent);
-    }
-  #endif
-}
-
 void writeUTF8(wxTextOutputStream& stream, const String& str) {
   #ifdef UNICODE
     stream.WriteString(str);

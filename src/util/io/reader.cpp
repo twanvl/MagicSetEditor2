@@ -27,6 +27,8 @@ Reader::Reader(const InputStreamP& input, Packaged* package, const String& filen
   , filename(filename), package(package), line_number(0), previous_line_number(0)
   , input(input)
 {
+  assert(input);
+  eat_utf8_bom(*input);
   moveNext();
   handleAppVersion();
 }
@@ -37,6 +39,8 @@ Reader::Reader(Reader* parent, Packaged* pkg, const String& filename, bool ignor
   , filename(filename), package(pkg), line_number(0), previous_line_number(0)
   , input(package_manager.openFileFromPackage(package, filename))
 {
+  assert(input);
+  eat_utf8_bom(*input);
   moveNext();
   // in an included file, use the app version of the parent if we have none
   handleAppVersion();
@@ -162,83 +166,56 @@ template <typename T> class LocalVector {
   T small[SMALL_SIZE];
 };
 
+/// Eat a utf-8 byte order mark from the begining of a stream
+bool eat_utf8_bom(wxInputStream& input) {
+  int c;
+  if ((c = input.GetC()) == 0xEF) {
+    if ((c = input.GetC()) == 0xBB) {
+      if ((c = input.GetC()) == 0xBF) {
+        return true;
+      } else if (c != EOF) input.Ungetch(c);
+    } else if (c != EOF) input.Ungetch(c);
+  } else if (c != EOF) input.Ungetch(c);
+  return false;
+}
+
 /// Read an UTF-8 encoded line from an input stream
 /** As opposed to wx functions, this one actually reports errors
  */
-String read_utf8_line(wxInputStream& input, bool eat_bom = true, bool until_eof = false);
-String read_utf8_line(wxInputStream& input, bool eat_bom, bool until_eof) {
+String read_utf8_line(wxInputStream& input, bool until_eof = false);
+String read_utf8_line(wxInputStream& input, bool until_eof) {
   LocalVector<char> buffer;
-  while (!input.Eof()) {
-    Byte c = input.GetC(); if (input.LastRead() <= 0) break;
+  while (true) {
+    int c = input.GetC();
+    if (c == EOF) break;
     if (!until_eof) {
       if (c == '\n') break;
       if (c == '\r') {
-        if (input.Eof()) break;
-        c = input.GetC(); if (input.LastRead() <= 0) break;
-        if (c != '\n') {
+        c = input.GetC();
+        if (c != '\n' && c != EOF) {
           input.Ungetch(c); // \r but not \r\n
         }
         break; 
       }
     }
-    buffer.push_back(c);
+    buffer.push_back((Byte)c);
   }
   // convert to string
-  buffer.push_back('\0');
-  size_t size = wxConvUTF8.MB2WC(nullptr, buffer.get(), 0);
+  // TODO: Doing this in one step should be faster
+  size_t size = wxConvUTF8.ToWChar(nullptr, 0, buffer.get(), buffer.size());
   if (size == size_t(-1)) {
     throw ParseError(_("Invalid UTF-8 sequence"));
   } else if (size == 0) {
     return _("");
   }
-  #ifdef UNICODE
-    #if wxVERSION_NUMBER >= 2900
-      String result = wxString::FromUTF8(buffer.get(), buffer.size());
-      return eat_bom ? decodeUTF8BOM(result) : result;
-    #else
-      // NOTE: wx doc is wrong, parameter to GetWritableChar is numer of characters, not bytes
-      String result;
-      Char* result_buf = result.GetWriteBuf(size + 1);
-      wxConvUTF8.MB2WC(result_buf, buffer.get(), size + 1);
-      result.UngetWriteBuf(size);
-      return eat_bom ? decodeUTF8BOM(result) : result;
-    #endif
-  #else
-    String result;
-    // first to wchar, then back to local
-    vector<wchar_t> buf2; buf2.resize(size+1);
-    wxConvUTF8.MB2WC(&buf2[0], buffer.get(), size + 1);
-    // eat BOM?
-    if (eat_bom && buf2[0]==0xFEFF ) {
-      buf2.erase(buf2.begin()); // remove BOM
-    }
-    // convert
-    #ifdef __WXMSW__
-      // size includes null terminator
-      size = ::WideCharToMultiByte(CP_ACP, 0, &buf2[0], -1, nullptr, 0, nullptr, nullptr);
-      Char* result_buf = result.GetWriteBuf(size);
-      ::WideCharToMultiByte(CP_ACP, 0, &buf2[0], -1, result_buf, (int)size, nullptr, nullptr);
-      result.UngetWriteBuf(size - 1);
-    #else
-      for (size_t i = 0 ; i < size ; ++i) {
-        wchar_t wc = buf2[i];
-        if (wc < 0xFF) {
-          result += (Char)wc;
-        } else {
-          // not valid in Latin1
-          result += '?';
-        }
-      }
-    #endif
-    return result;
-  #endif
+  return wxString::FromUTF8(buffer.get(), buffer.size());
 }
 
 void Reader::readLine(bool in_string) {
   line_number += 1;
   // We have to do our own line reading, because wxTextInputStream is insane
   try {
-    line = read_utf8_line(*input, line_number == 1);
+    line = read_utf8_line(*input);
   } catch (const ParseError& e) {
     throw ParseError(e.what() + String(_(" on line ")) << line_number);
   }
