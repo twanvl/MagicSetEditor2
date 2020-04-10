@@ -338,11 +338,12 @@ void cursor_to_index_range(const String& str, size_t cursor, size_t& start, size
 size_t cursor_to_index(const String& str, size_t cursor, Movement dir) {
   size_t start, end;
   cursor_to_index_range(str, cursor, start, end);
+  assert(end <= str.size()+1);
   if (dir == MOVE_MID) {
     // find the middle between start and end
     // if the string in between contains a pair "<tag></tag>" or "</tag><tag>" returns the middle
     // otherwise returns start
-    for (size_t i = start ; i < end ; ) {
+    for (size_t i = start ; i < end && i < str.size() ; ) {
       if (str.GetChar(i) == _('<')) {
         String tag1 = tag_at(str, i);
         i = skip_tag(str, i);
