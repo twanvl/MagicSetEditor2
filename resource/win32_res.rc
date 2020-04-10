@@ -8,10 +8,191 @@
 
 // -------------------------------------------------------- : Icons
 
-icon/app            ICON  "icon/app.ico" // has to come first in alphabet!!
-icon/installer      ICON  "icon/installer.ico"
-icon/set            ICON  "icon/set.ico"
-icon/symbol         ICON  "icon/symbol.ico"
+icon/app ICON "icon/app.ico" // has to come first in alphabet!!
+icon/installer ICON "icon/installer.ico"
+icon/set ICON "icon/set.ico"
+icon/symbol ICON "icon/symbol.ico"
+
+// -------------------------------------------------------- : Toolbar
+
+cursor/rot_text CURSOR "cursor/rot_text.cur"
+
+tool/new IMAGE "tool/new.png"
+tool/open IMAGE "tool/open.png"
+tool/save IMAGE "tool/save.png"
+tool/export IMAGE "tool/export.png"
+tool/export_html IMAGE "tool/export_html.png"
+tool/export_image IMAGE "tool/export_image.png"
+tool/export_images IMAGE "tool/export_images.png"
+tool/export_mws IMAGE "tool/export_mws.png"
+tool/export_apprentice IMAGE "tool/export_apprentice.png"
+tool/print IMAGE "tool/print.png"
+tool/print_preview IMAGE "tool/print_preview.png"
+
+tool/undu IMAGE "tool/undo.png"
+tool/redo IMAGE "tool/redo.png"
+tool/cut IMAGE "tool/cut.png"
+tool/copy IMAGE "tool/copy.png"
+tool/paste IMAGE "tool/paste.png"
+tool/find IMAGE "tool/find.png"
+
+tool/bold IMAGE "tool/bold.png"
+tool/italic IMAGE "tool/italic.png"
+tool/symbol IMAGE "tool/symbol.png"
+tool/reminder IMAGE "tool/reminder.png"
+tool/no_auto IMAGE "tool/no_auto.png"
+
+tool/card_add IMAGE "tool/card_add.png"
+tool/card_add_multiple IMAGE "tool/card_add_multiple.png"
+tool/card_del IMAGE "tool/card_del.png"
+tool/card_rotate IMAGE "tool/card_rotate.png"
+tool/card_rotate_0 IMAGE "tool/card_rotate_0.png"
+tool/card_rotate_90 IMAGE "tool/card_rotate_90.png"
+tool/card_rotate_180 IMAGE "tool/card_rotate_180.png"
+tool/card_rotate_270 IMAGE "tool/card_rotate_270.png"
+
+tool/keyword_add IMAGE "tool/keyword_add.png"
+tool/keyword_del IMAGE "tool/keyword_del.png"
+
+tool/graph_pie IMAGE "tool/graph_pie.png"
+tool/graph_bar IMAGE "tool/graph_bar.png"
+tool/graph_stack IMAGE "tool/graph_stack.png"
+tool/graph_scatter IMAGE "tool/graph_scatter.png"
+tool/graph_scatter_pie IMAGE "tool/graph_scatter_pie.png"
+
+tool/window_cards IMAGE "tool/window_cards.png"
+tool/window_set_info IMAGE "tool/window_set_info.png"
+tool/window_style IMAGE "tool/window_style.png"
+tool/window_keywords IMAGE "tool/window_keywords.png"
+tool/window_statistics IMAGE "tool/window_statistics.png"
+tool/window_random_pack IMAGE "tool/window_random_pack.png"
+tool/window_console IMAGE "tool/window_console.png"
+
+tool/help IMAGE "tool/help.png"
+
+// -------------------------------------------------------- : Symbol editor
+
+cursor/point CURSOR "cursor/point.cur"
+cursor/point_add CURSOR "cursor/point_add.cur"
+cursor/point_move CURSOR "cursor/point_move.cur"
+cursor/curve CURSOR "cursor/curve.cur"
+cursor/rotate CURSOR "cursor/rotate.cur"
+cursor/shear_x CURSOR "cursor/shear_x.cur"
+cursor/shear_y CURSOR "cursor/shear_y.cur"
+
+tool/line IMAGE "tool/line.png"
+tool/curve IMAGE "tool/curve.png"
+tool/lock_free IMAGE "tool/lock_free.png"
+tool/lock_dir IMAGE "tool/lock_dir.png"
+tool/lock_size IMAGE "tool/lock_size.png"
+
+tool/circle IMAGE "tool/circle.png"
+tool/rectangle IMAGE "tool/rectangle.png"
+tool/triangle IMAGE "tool/triangle.png"
+tool/star IMAGE "tool/star.png"
+
+tool/mode_select IMAGE "tool/mode_select.png"
+tool/mode_rotate IMAGE "tool/mode_rotate.png"
+tool/mode_curve IMAGE "tool/mode_curve.png"
+tool/mode_paint IMAGE "tool/mode_paint.png"
+tool/mode_symmetry IMAGE "tool/mode_symmetry.png"
+tool/apply IMAGE "tool/apply.png"
+tool/duplicate IMAGE "tool/duplicate.png"
+tool/grid IMAGE "tool/grid.png"
+tool/grid_snap IMAGE "tool/grid_snap.png"
+tool/group IMAGE "tool/group.png"
+tool/ungroup IMAGE "tool/ungroup.png"
+
+tool/symmetry_add IMAGE "tool/symmetry_add.png"
+tool/symmetry_remove IMAGE "tool/symmetry_remove.png"
+
+combine_or IMAGE "combine_or.png"
+combine_sub IMAGE "combine_sub.png"
+combine_sub_dark IMAGE "combine_sub_dark.png"
+combine_and IMAGE "combine_and.png"
+combine_and_dark IMAGE "combine_and_dark.png"
+combine_xor IMAGE "combine_xor.png"
+combine_over IMAGE "combine_over.png"
+combine_border IMAGE "combine_border.png"
+symmetry_rotation IMAGE "symmetry_rotation.png"
+symmetry_reflection IMAGE "symmetry_reflection.png"
+symbol_group IMAGE "symbol_group.png"
+
+icon_combine_merge IMAGE "icon_combine_merge.png"
+icon_combine_subtract IMAGE "icon_combine_subtract.png"
+icon_combine_intersection IMAGE "icon_combine_intersection.png"
+icon_combine_difference IMAGE "icon_combine_difference.png"
+icon_combine_overlap IMAGE "icon_combine_overlap.png"
+icon_combine_border IMAGE "icon_combine_border.png"
+icon_symmetry_rotation IMAGE "icon_symmetry_rotation.png"
+icon_symmetry_reflection IMAGE "icon_symmetry_reflection.png"
+icon_symbol_group IMAGE "icon_symbol_group.png"
+
+handle_rotate IMAGE "handle_rotate.png"
+handle_shear_x IMAGE "handle_shear_x.png"
+handle_center IMAGE "handle_center.png"
+
+// -------------------------------------------------------- : Other
+
+sort_asc IMAGE "sort_asc.png"
+sort_desc IMAGE "sort_desc.png"
+plus IMAGE "plus.png"
+minus IMAGE "minus.png"
+selected IMAGE "selected_yes.png"
+deselected IMAGE "selected_no.png"
+
+bool_yes IMAGE "bool_yes.png"
+bool_no IMAGE "bool_no.png"
+
+about IMAGE "about.png"
+two_beta IMAGE "two_beta.png"
+btn_normal IMAGE "btn_normal.png"
+btn_hover IMAGE "btn_hover.png"
+btn_focus IMAGE "btn_focus.png"
+btn_down IMAGE "btn_down.png"
+btn_ok_normal IMAGE "btn_ok_normal.png"
+btn_ok_hover IMAGE "btn_ok_hover.png"
+btn_ok_focus IMAGE "btn_ok_focus.png"
+btn_ok_down IMAGE "btn_ok_down.png"
+btn_collapse_normal IMAGE "btn_collapse_normal.png"
+btn_collapse_hover IMAGE "btn_collapse_hover.png"
+btn_collapse_focus IMAGE "btn_collapse_focus.png"
+btn_collapse_down IMAGE "btn_collapse_down.png"
+btn_expand_normal IMAGE "btn_expand_normal.png"
+btn_expand_hover IMAGE "btn_expand_hover.png"
+btn_expand_focus IMAGE "btn_expand_focus.png"
+btn_expand_down IMAGE "btn_expand_down.png"
+btn_clear_filter_normal IMAGE "btn_clear_filter_normal.png"
+btn_clear_filter_hover IMAGE "btn_clear_filter_hover.png"
+btn_clear_filter_focus IMAGE "btn_clear_filter_focus.png"
+btn_clear_filter_down IMAGE "btn_clear_filter_down.png"
+
+welcome_new IMAGE "welcome_new.png"
+welcome_open IMAGE "welcome_open.png"
+welcome_last IMAGE "welcome_last.png"
+welcome_updates IMAGE "welcome_updates.png"
+
+edit_symbol IMAGE "edit_symbol.png"
+
+installer_group IMAGE "installer_group.png"
+installer_package IMAGE "installer_package.png"
+installer_locales IMAGE "installer_locales.png"
+installer_program IMAGE "installer_program.png"
+//installer_font IMAGE "common/installer_font.png"
+
+message_input IMAGE "message_input.png"
+message_information IMAGE "message_information.png"
+message_warning IMAGE "message_warning.png"
+message_error IMAGE "message_error.png"
+
+// -------------------------------------------------------- : WX
+
+//wxBITMAP_STD_COLOURS BITMAP "wx/msw/colours.bmp"
+//WXCURSOR_HAND CURSOR DISCARDABLE "wx/msw/hand.cur"
+
+// -------------------------------------------------------- : Other
+
+expected_locale_keys TEXT "expected_locale_keys"
 
 // -------------------------------------------------------- : Version info
 
@@ -24,13 +205,12 @@ FILETYPE VFT_APP
   {
     BLOCK "040904E4"
     {
-      VALUE "FileVersion",      "2.0.0"
-      VALUE "License",        "GNU General Public License 2 or later; This is free software, and you are welcome to redistribute it under certain conditions; See the help file for details"
-      VALUE "FileDescription",    "Magic Set Editor"
-      VALUE "InternalName",      "magicseteditor"
-      VALUE "LegalCopyright",    "\xA9 2001-2011 Twan van Laarhoven and 'coppro'"
-      VALUE "ProductName",      "Magic Set Editor"
+      VALUE "FileVersion",     "2.0.0"
+      VALUE "License",         "GNU General Public License 2 or later; This is free software, and you are welcome to redistribute it under certain conditions; See the help file for details"
+      VALUE "FileDescription", "Magic Set Editor"
+      VALUE "InternalName",    "magicseteditor"
+      VALUE "LegalCopyright",  "(c) The Magic Set Editor development team"
+      VALUE "ProductName",     "Magic Set Editor"
     }
   }
 }
-

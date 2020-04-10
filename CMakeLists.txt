@@ -29,6 +29,16 @@ file(GLOB_RECURSE sources src/*.cpp)
 target_sources(magicseteditor PRIVATE ${sources})
 target_precompile_headers(magicseteditor PRIVATE src/util/prec.hpp)
 
+set(locale_keys_file "${PROJECT_SOURCE_DIR}/resource/expected_locale_keys")
+add_custom_command(
+  COMMAND perl "${PROJECT_SOURCE_DIR}/tools/locale/locale.pl" "${PROJECT_SOURCE_DIR}/src" ${locale_keys_file}
+  OUTPUT ${locale_keys_file}
+  DEPENDS ${sources}
+)
+add_custom_target(generate_expected_locale_keys DEPENDS ${locale_keys_file})
+add_dependencies(magicseteditor generate_expected_locale_keys)
+target_sources(magicseteditor PRIVATE resource/win32_res.rc)
+
 # warnings
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
   # Update if necessary
