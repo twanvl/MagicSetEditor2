@@ -134,7 +134,7 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
   
   // Lay out
   wxSizer* es = new wxBoxSizer(wxVERTICAL);
-  es->Add(em, 1, wxEXPAND | wxBOTTOM | wxALIGN_CENTER, 5);
+  es->Add(em, 1, wxEXPAND | wxBOTTOM, 5);
   emp->SetSizer(es);
   
   // Controls
@@ -187,7 +187,7 @@ void SymbolWindow::init(Window* parent, SymbolP symbol) {
     em->Realize();
     
     es = new wxBoxSizer(wxVERTICAL);
-    es->Add(em, 1, wxEXPAND | wxBOTTOM | wxALIGN_CENTER, 5);
+    es->Add(em, 1, wxEXPAND | wxBOTTOM, 5);
     emp->SetSizer(es);
     
     // Prevent clipping of the bottom tool
