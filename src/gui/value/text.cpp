@@ -1011,6 +1011,7 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
     size_t best_cursor = expected_cursor;
     if (real_value.size() < expected_value.size()
       && expected_cursor < expected_value.size()
+      && start < real_value.size()
       && expected_value.GetChar(expected_cursor) == UNTAG_SEP
       && real_value.GetChar(start)               == UNTAG_SEP
       && real_value.size() - end_min == start) {
