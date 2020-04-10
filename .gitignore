@@ -8,4 +8,7 @@
 /build_*
 /build
 /out
+/enc_temp_folder
+/resource/RC*
 
+/resource/expected_locale_keys
