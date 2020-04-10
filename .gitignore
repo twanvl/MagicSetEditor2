@@ -1,6 +1,11 @@
 /autom4te.cache
 /aclocal.m4
 
+.vs
+.vscode
+
 /data
 /build_*
+/build
+/out
 
