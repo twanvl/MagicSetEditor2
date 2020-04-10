@@ -347,7 +347,7 @@ size_t cursor_to_index(const String& str, size_t cursor, Movement dir) {
       if (str.GetChar(i) == _('<')) {
         String tag1 = tag_at(str, i);
         i = skip_tag(str, i);
-        if (str.GetChar(i) == _('<')) {
+        if (i < str.size() && str.GetChar(i) == _('<')) {
           String tag2 = tag_at(str, i);
           if (_("<") + tag2 + _(">") == anti_tag(tag1)) {
             return i;
