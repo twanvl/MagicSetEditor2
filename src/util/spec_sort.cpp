@@ -120,7 +120,7 @@ void cycle_sort(const String& spec, String& input, String& ret) {
   // count occurences of each char in spec
   FOR_EACH_CONST(s, spec) {
     UInt c = 0;
-    FOR_EACH(i, input) {
+    for(wxUniCharRef i : input) {
       if (s == i) {
         i = REMOVED; // remove
         c++;
@@ -159,7 +159,7 @@ void cycle_sort(const String& spec, String& input, String& ret) {
 /// Sort a string, keeping the characters in the original order
 /** Removed used characters from input! */
 void mixed_sort(const String& spec, String& input, String& ret) {
-  FOR_EACH(c, input) {
+  for (wxUniCharRef c : input) {
     if (spec.find(c) != String::npos) {
       ret += c;
       c = REMOVED;
@@ -223,7 +223,7 @@ void in_place_sort(const String& spec, String& input, String& ret) {
   spec_sort(spec, input, result);
   // restore into the same order as in 'input'
   size_t pos_r = 0;
-  FOR_EACH(c, input) {
+  FOR_EACH_CONST(c, input) {
     if (c == REMOVED) {
       if (pos_r < result.size()) {
         ret += result.GetChar(pos_r++);
@@ -241,7 +241,7 @@ String spec_sort(const String& spec, String& input, String& ret) {
   SpecIterator it(spec);
   while(it.nextUntil(0)) {
     if (it.escaped) {          // single character, escaped
-      FOR_EACH(d, input) {
+      for (wxUniCharRef d : input) {
         if (d == it.value) {
           ret += d;
           d = REMOVED;
