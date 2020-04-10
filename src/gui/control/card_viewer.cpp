@@ -56,6 +56,7 @@ void CardViewer::redraw() {
 }
 
 void CardViewer::onChangeSize() {
+  InvalidateBestSize();
   wxSize ws = GetSize(), cs = GetClientSize();
   wxSize desired_cs = (wxSize)getRotation().getExternalSize() + ws - cs;
   if (desired_cs != cs) {
@@ -78,6 +79,9 @@ void CardViewer::onPaint(wxPaintEvent&) {
     WITH_DYNAMIC_ARG(inOnPaint, true);
   #endif
   wxSize cs = GetClientSize();
+  if (cs.GetWidth() == 0 || cs.GetHeight() == 0) {
+    return; // empty bitmaps are not allowed because some idiots think that 0 is not a number
+  }
   if (!buffer.Ok() || buffer.GetWidth() != cs.GetWidth() || buffer.GetHeight() != cs.GetHeight()) {
     buffer = Bitmap(cs.GetWidth(), cs.GetHeight());
     up_to_date = false;
