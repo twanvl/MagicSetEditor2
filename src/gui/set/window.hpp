@@ -25,7 +25,7 @@ struct CardSelectEvent;
 /** This window consists of several panels, only one panel is visible at a time.
  */
 class SetWindow : public wxFrame, public SetView {
-  public:
+public:
   /// Construct a SetWindow
   SetWindow(Window* parent, const SetP& set);
   ~SetWindow();
@@ -35,7 +35,7 @@ class SetWindow : public wxFrame, public SetView {
   
   // --------------------------------------------------- : Set actions
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   // --------------------------------------------------- : Data
@@ -43,7 +43,7 @@ class SetWindow : public wxFrame, public SetView {
   // gui items
   vector<SetWindowPanel*> panels;        ///< All panels on this window
   SetWindowPanel*         current_panel;
-  IconMenu*               menuExport;
+  IconMenu*               export_menu = nullptr;
   
   /// Number of items in the recent sets list
   size_t number_of_recentSets;
@@ -51,7 +51,7 @@ class SetWindow : public wxFrame, public SetView {
   // data for find/replace
   wxDialog* find_dialog;
   wxFindReplaceData find_data;
-    
+  
   // --------------------------------------------------- : Panel managment
   
   /// Add a panel to the window, as well as to the menu and tab bar
@@ -80,11 +80,11 @@ class SetWindow : public wxFrame, public SetView {
   /// Actions that change the set
   virtual void onAction(const Action&, bool undone);
   
-  public:
+public:
   // minSize = mainSizer->getMinWindowSize(this)
   // but wx made that private
   void fixMinWindowSize();
-  private:
+private:
   /// Update the window title based on the set name
   void updateTitle();
   
@@ -114,6 +114,8 @@ class SetWindow : public wxFrame, public SetView {
   UInt number_of_recent_sets;
   void updateRecentSets();
   
+  IconMenu* makeExportMenu();
+
   // --------------------------------------------------- : Window events - menu - file
   void onFileNew             (wxCommandEvent&);
   void onFileOpen            (wxCommandEvent&);
