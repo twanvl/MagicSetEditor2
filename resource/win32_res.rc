@@ -29,7 +29,7 @@ tool/export_apprentice IMAGE "tool/export_apprentice.png"
 tool/print IMAGE "tool/print.png"
 tool/print_preview IMAGE "tool/print_preview.png"
 
-tool/undu IMAGE "tool/undo.png"
+tool/undo IMAGE "tool/undo.png"
 tool/redo IMAGE "tool/redo.png"
 tool/cut IMAGE "tool/cut.png"
 tool/copy IMAGE "tool/copy.png"
