@@ -218,7 +218,7 @@ PackAmountPicker::PackAmountPicker(wxWindow* parent, wxFlexGridSizer* sizer, con
 {
   label->setBuddy(value);
   sizer->Add(label, 1, wxEXPAND | wxALIGN_CENTER_VERTICAL);
-  sizer->Add(value, 0, wxEXPAND | wxALIGN_CENTER);
+  sizer->Add(value, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL);
   if (active) {
     label->SetHelpText(_HELP_("edit pack type"));
   }
