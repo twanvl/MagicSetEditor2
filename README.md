@@ -1,0 +1,69 @@
+# Magic Set Editor 2
+
+Magic Set Editor, or MSE for short, is a program with which you can design your own cards for popular trading card games. MSE can then generate images of those cards that you can print or upload to the internet. Magic Set Editor also has a statistics window that will give useful information about your set, like the average mana cost, number of rares, etc. When you have finished your set, you can export it to an HTML file to use on the Internet, or to Apprentice or CCG Lackey so you can play with your cards online.
+
+More information on https://magicseteditor.boards.net/
+
+## Dependencies
+
+The code depends on
+ * wxWidgets >= 3.0
+ * boost
+ * hunspell
+
+## Building on windows with Visual Studio
+
+On windows, the program can be compiled with Visual Studio (recommended) or with mingw-gcc.
+
+ * Download and install [Visual Studio Community edition](https://visualstudio.microsoft.com/vs/community/)
+ * Download and install [vcpkg](https://github.com/microsoft/vcpkg)
+ * Download and install perl (For example [Strawberry perl](http://strawberryperl.com/) or using [MSYS2](https://www.msys2.org/))
+ * Use vcpkg to install wxwidgets, boost, hunspell
+````
+vcpkg install wxwidgets
+vcpkg install boost-smart-ptr
+vcpkg install boost-regex
+vcpkg install hunspell
+vcpkg integrate install
+````
+ * Then just use "Open Folder" from inside visual studio to open the Magic Set Editor source code root folder.
+
+Notes:
+ * You may need to work around [this bug](https://github.com/microsoft/vcpkg/issues/4756) by replacing `$VCPATH\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.16\Modules\FindwxWidgets.cmake` with the file from  https://github.com/CaeruleusAqua/vcpkg-wx-find
+ * vcpkg by default installs 32 bit versions of libraries, use `vcpkg install PACKAGENAME:x64-windows`
+
+## Building on windows with GCC (MSYS2)
+
+ * Download and install [msys2](https://www.msys2.org/)
+ * Install a recent version of the gcc compiler, cmake, and wxWidgets libraries:
+````
+pacman -S mingw32/mingw-w64-i686-perl
+pacman -S mingw32/mingw-w64-i686-gcc
+pacman -S mingw32/mingw-w64-i686-wxWidgets
+pacman -S mingw32/mingw-w64-i686-boost
+pacman -S mingw32/mingw-w64-i686-hunspell
+pacman -S cmake
+````
+   Use `mingw64/mingw-w64-x86_64-...` instead of for the 64bit build
+ * Build
+````
+cmake -G "MSYS Makefiles" -H. -Bbuild
+cmake --build build
+````
+
+## Building on linux
+
+Install the dependencies, for example on a debian based system
+````
+sudo apt install g++
+sudo apt install libboost-dev libwxgtk3.0-gtk3-dev libhunspell-dev
+````
+Then use cmake to build
+````
+cmake build
+cmake --build build
+````
+
+## Building on Mac
+
+It should be possible to use wxWidgets on mac as well, but this is untested so far.
