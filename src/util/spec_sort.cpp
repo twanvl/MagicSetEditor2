@@ -10,7 +10,7 @@
 #include <util/spec_sort.hpp>
 #include <util/error.hpp>
 
-const Char REMOVED     = _('\2');
+const Char REMOVED     = _('\0');
 const Char PLACEHOLDER = _('\3');
 
 String spec_sort(const String& spec, String& input, String& ret);
@@ -24,14 +24,14 @@ class SpecIterator {
     : spec(spec), pos(pos)
   {}
   
-  Char value;        ///< Current character
-  bool escaped;      ///< Was the current character escaped?
-  bool preceded_by_space;  ///< Was there a ' ' before this character?
+  wxUniChar value; ///< Current character
+  bool escaped; ///< Was the current character escaped?
+  bool preceded_by_space; ///< Was there a ' ' before this character?
   
   /// Move to the next item in the specification.
   /** returns false if we are at the end or encounter close.
    */
-  bool nextUntil(Char close, bool skip_space = true) {
+  bool nextUntil(wxUniChar close, bool skip_space = true) {
     if (pos >= spec.size()) {
       value = 0;
       if (close == 0) {
@@ -112,34 +112,43 @@ class SpecIterator {
 
 // ----------------------------------------------------------------------------- : Sort functions
 
+//using Bag = vector<wxUniChar>;
+using Bag = String;
+
+size_t count_and_remove(wxUniChar c, Bag& input) {
+  size_t count = 0;
+  size_t j=0;
+  for (size_t i=0 ; i < input.size() ; ++i) {
+    if (input[i] == c) {
+      count++;
+    } else {
+      input[j++] = input[i];
+    }
+  }
+  input.resize(j);
+  return count;
+}
+
 /// Sort a string using a specification using the shortest cycle method, see spec_sort
 /** Removed used characters from input! */
-void cycle_sort(const String& spec, String& input, String& ret) {
-  size_t size = spec.size();
-  vector<UInt> counts;
-  // count occurences of each char in spec
-  FOR_EACH_CONST(s, spec) {
-    UInt c = 0;
-    for(wxUniCharRef i : input) {
-      if (s == i) {
-        i = REMOVED; // remove
-        c++;
-      }
-    }
-    counts.push_back(c);
+void cycle_sort(const String& spec, Bag& input, Bag& ret) {
+  // count occurences of each item in spec
+  vector<size_t> counts;
+  for(auto s : spec) {
+    counts.push_back(count_and_remove(s, input));
   }
   // determine best start point
   size_t best_start = 0;
-  UInt   best_start_score = 0xffffffff;
-  for (size_t start = 0 ; start < size ; ++start) {
+  size_t best_start_score = 0xffffffff;
+  for (size_t start = 0 ; start < spec.size() ; ++start) {
     // score of a start position, can be considered as:
     //  - count saturated to binary
     //  - rotated left by start
     //  - interpreted as a binary number, but without trailing 0s
-    UInt score = 0, mul = 1;
-    for (size_t i = 0 ; i < size ; ++i) {
+    size_t score = 0, mul = 1;
+    for (size_t i = 0 ; i < spec.size() ; ++i) {
       mul *= 2;
-      if (counts[(start + i) % size]) {
+      if (counts[(start + i) % spec.size()]) {
         score = score * mul + 1;
         mul = 1;
       }
@@ -149,72 +158,94 @@ void cycle_sort(const String& spec, String& input, String& ret) {
       best_start       = start;
     }
   }
-  // return string
-  for (size_t i = 0 ; i < size ; ++i) {
-    size_t pos = (best_start + i) % size;
+  // add to return string
+  for (size_t i = 0 ; i < spec.size() ; ++i) {
+    size_t pos = (best_start + i) % spec.size();
     ret.append(counts[pos], spec[pos]);
   }
 }
 
 /// Sort a string, keeping the characters in the original order
 /** Removed used characters from input! */
-void mixed_sort(const String& spec, String& input, String& ret) {
+void mixed_sort(const String& spec, Bag& input, Bag& ret) {
+  size_t j = 0;
   for (wxUniCharRef c : input) {
     if (spec.find(c) != String::npos) {
       ret += c;
-      c = REMOVED;
+    } else {
+      input[j++] = c;
     }
   }
+  input.resize(j);
 }
 
 /// Sort a string, find a compound item
 /** Removed used characters from input! */
-void compound_sort(const String& spec, String& input, String& ret) {
-  size_t pos = input.find(spec);
-  while (pos != String::npos) {
-    ret += spec;
-    for (size_t j = 0 ; j < spec.size() ; ++j) input.SetChar(pos + j, REMOVED);
-    pos = input.find(spec, pos + 1);
+void compound_sort(const String& spec, Bag& input, Bag& ret) {
+  size_t j=0;
+  for (size_t i=0 ; i < input.size() ; ++i) {
+    // match?
+    if (i+spec.size() <= input.size() && std::equal(spec.begin(), spec.end(), input.begin()+i)) {
+      i += spec.size() - 1;
+      //std::copy(spec.begin(), spec.end(), back_inserter(ret));
+      ret += spec;
+    } else {
+      input[j++] = input[i];
+    }
   }
+  input.resize(j);
 }
 
 /// Sort things matching a pattern
-void pattern_sort(const String& pattern, const String& spec, String& input, String& ret) {
+void pattern_sort(const String& pattern, const String& spec, Bag& input, Bag& ret) {
   if (pattern.size() > input.size()) return;
   size_t end = input.size() - pattern.size() + 1;
-  for (size_t pos = 0 ; pos < end ; ++pos) {
-    // does the pattern match here?
-    String placeholders;
-    bool match = true;
-    for (size_t j = 0 ; j < pattern.size() ; ++j) {
-      Char c = input.GetChar(pos + j);
-      Char p = pattern.GetChar(j);
-      if (c == REMOVED)  { match = false; break; }
-      else if (p == PLACEHOLDER) {
-        placeholders += c;
-      } else if (c != p) { match = false; break; }
+  size_t pos_new = 0;
+  //for (size_t pos = 0 ; pos < end ; ++pos) {
+  for (size_t pos = 0; pos < end; ++pos) {
+    if (pos + pattern.size() > input.size()) {
+      goto no_match;
     }
-    // do we have a match?
-    if (match) {
+    {
+      // does the pattern match here?
+      String placeholders;
+      for (size_t j = 0; j < pattern.size(); ++j) {
+        wxUniChar c = input[pos + j];
+        wxUniChar p = pattern[j];
+        if (c == REMOVED) {
+          goto no_match;
+        }
+        else if (p == PLACEHOLDER) {
+          placeholders += c;
+        }
+        else if (c != p) {
+          goto no_match;
+        }
+      }
+      // we have a match
       // sort placeholders
       String new_placeholders = spec_sort(spec, placeholders);
       if (new_placeholders.size() == placeholders.size()) {
         // add to output, erase from input
         size_t ph = 0;
-        for (size_t j = 0 ; j < pattern.size() ; ++j) {
-          Char p = pattern.GetChar(j);
+        for (size_t j = 0; j < pattern.size(); ++j) {
+          wxUniChar p = pattern[j];
           if (p == PLACEHOLDER) {
-            ret += new_placeholders.GetChar(ph++);
-          } else {
+            ret += new_placeholders[ph++];
+          }
+          else {
             ret += p;
           }
-          input.SetChar(pos + j, REMOVED);
         }
-        // erase from input
+        // skip over matched pattern
         pos += pattern.size() - 1;
+        continue;
       }
     }
+  no_match:
+    input[pos_new++] = input[pos];
   }
+  input.resize(pos_new);
 }
 
 /// Sort things in place, keep the rest of the input
@@ -240,18 +271,14 @@ void in_place_sort(const String& spec, String& input, String& ret) {
 String spec_sort(const String& spec, String& input, String& ret) {
   SpecIterator it(spec);
   while(it.nextUntil(0)) {
-    if (it.escaped) {          // single character, escaped
-      for (wxUniCharRef d : input) {
-        if (d == it.value) {
-          ret += d;
-          d = REMOVED;
-        }
-      }
-    } else if (it.value == _('<')) {    // keep only a single copy
+    if (it.escaped) { // single character, escaped
+      size_t count = count_and_remove(it.value, input);
+      ret.append(count, it.value);
+    } else if (it.value == _('<')) { // keep only a single copy
       while (it.nextUntil(_('>'))) {
         size_t pos = input.find_first_of(it.value);
         if (pos != String::npos) {
-          input.SetChar(pos, REMOVED);
+          input.erase(pos, 1);
           ret += it.value; // input contains it.value
         }
       }
@@ -259,7 +286,7 @@ String spec_sort(const String& spec, String& input, String& ret) {
       while (it.nextUntil(_(')'))) {
         size_t pos = input.find_first_of(it.value);
         if (pos != String::npos) {
-          input.SetChar(pos, REMOVED);
+          input.erase(pos, 1);
           ret += it.value; // input contains it.value
         }
       }
@@ -282,9 +309,10 @@ String spec_sort(const String& spec, String& input, String& ret) {
       // read pattern
       while (it.nextUntil(_(' '), false)) {
         if (it.value == _('.') && !it.escaped) {
-          it.value = PLACEHOLDER;
+          pattern += PLACEHOLDER;
+        } else {
+          pattern += it.value;
         }
-        pattern += it.value;
       }
       // read spec to apply to pattern
       String sub_spec = it.readRawParam(_(')'));
@@ -297,41 +325,35 @@ String spec_sort(const String& spec, String& input, String& ret) {
       in_place_sort(sub_spec, input, ret);
     
     } else if (it.keyword(_("any()"))) { // remaining input
-      FOR_EACH(d, input) {
+      FOR_EACH_CONST(d, input) {
         if (d != REMOVED) {
           ret += d;
-          d = REMOVED;
         }
       }
+      input.clear();
     
     } else if (it.keyword(_("reverse_order("))) { // reverse order of preference
-      size_t old_ret_size = ret.size();
+      vector<String> parts;
       while (it.value != _(')')) {
-        size_t before_ret_size = ret.size();
         String sub_spec = it.readRawParam(_(')'),_(' '));
-        spec_sort(sub_spec, input, ret);
-        // reverse this item
-        reverse(ret.begin() + before_ret_size, ret.end());
+        String part;
+        spec_sort(sub_spec, input, part);
+        parts.push_back(part);
       }
-      // re-reverse all items
-      reverse(ret.begin() + old_ret_size, ret.end());
+      // add parts in reverse order
+      reverse(parts.begin(), parts.end());
+      for (auto const& part : parts) {
+        ret += part;
+      }
     
     } else if (it.keyword(_("ordered("))) { // in spec order
       while (it.nextUntil(_(')'))) {
-        FOR_EACH(d, input) {
-          if (d == it.value) {
-            ret += d;
-            d = REMOVED;
-          }
-        }
+        size_t count = count_and_remove(it.value, input);
+        ret.append(count, it.value);
       }
-    } else {          // single char
-      FOR_EACH(d, input) {
-        if (d == it.value) {
-          ret += d;
-          d = REMOVED;
-        }
-      }
+    } else { // single char
+      size_t count = count_and_remove(it.value, input);
+      ret.append(count, it.value);
     }
   }
   return ret;
