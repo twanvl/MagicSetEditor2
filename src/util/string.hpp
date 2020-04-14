@@ -132,6 +132,9 @@ String substr_replace(const String& input, size_t start, size_t end, const Strin
 /// Replace all occurences of one needle with replacement
 String replace_all(const String& heystack, const String& needle, const String& replacement);
 
+/// Reverses a string, Note: std::reverse doesn't work with wxString
+String reverse_string(String const& input);
+
 // ----------------------------------------------------------------------------- : Words
 
 /// Returns the last word in a string

@@ -316,14 +316,6 @@ SCRIPT_FUNCTION(to_title) {
   SCRIPT_RETURN(capitalize(input.Lower()));
 }
 
-String reverse_string(String const& input) {
-  // Note: std::reverse doesn't work because of unicode encoding stuff
-  String reversed;
-  for (auto it = input.rbegin(); it != input.rend(); ++it) {
-    reversed += *it;
-  }
-  return reversed;
-}
 // reverse a string
 SCRIPT_FUNCTION(reverse) {
   SCRIPT_PARAM_C(String, input);

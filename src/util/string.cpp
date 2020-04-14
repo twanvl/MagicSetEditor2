@@ -79,6 +79,15 @@ String replace_all(const String& heystack, const String& needle, const String& r
   return ret;
 }
 
+String reverse_string(String const& input) {
+  // Note: std::reverse doesn't work because of unicode encoding stuff
+  String reversed;
+  for (auto it = input.rbegin(); it != input.rend(); ++it) {
+    reversed += *it;
+  }
+  return reversed;
+}
+
 // ----------------------------------------------------------------------------- : Words
 
 String last_word(const String& s) {
