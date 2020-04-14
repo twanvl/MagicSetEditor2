@@ -30,7 +30,7 @@ vcpkg integrate install
 
 Notes:
  * You may need to work around [this bug](https://github.com/microsoft/vcpkg/issues/4756) by replacing `$VCPATH\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.16\Modules\FindwxWidgets.cmake` with the file from  https://github.com/CaeruleusAqua/vcpkg-wx-find
- * vcpkg by default installs 32 bit versions of libraries, use `vcpkg install PACKAGENAME:x64-windows`
+ * vcpkg by default installs 32 bit versions of libraries, use `vcpkg install PACKAGENAME:x64-windows` if you want to enable a 64 bit build.
 
 ## Building on windows with GCC (MSYS2)
 
