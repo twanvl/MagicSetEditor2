@@ -28,6 +28,7 @@ Reader::Reader(const InputStreamP& input, Packaged* package, const String& filen
   , input(input)
 {
   assert(input);
+  assert(input->IsOk());
   eat_utf8_bom(*input);
   moveNext();
   handleAppVersion();
@@ -403,7 +404,7 @@ template <> void Reader::handle(FileName& f) {
         InputStreamP  in     = Package::openAbsoluteFile(str);
         out->Write(*in); // copy
         f.assign(packaged_name);
-      } catch (Error) {
+      } catch (Error const&) {
         // ignore errors
       }
     } else {
