@@ -57,7 +57,7 @@ void TextIOHandler::init() {
     // Use console mode if one of the cli flags is passed
     static const Char* redirect_flags[] = {_("-?"),_("--help"),_("-v"),_("--version"),_("--cli"),_("-c"),_("--export"),_("--create-installer")};
     for (int i = 1 ; i < wxTheApp->argc ; ++i) {
-      for (int j = 0 ; j < sizeof(redirect_flags)/sizeof(redirect_flags[0]) ; ++j) {
+      for (size_t j = 0 ; j < sizeof(redirect_flags)/sizeof(redirect_flags[0]) ; ++j) {
         if (String(wxTheApp->argv[i]) == redirect_flags[j]) {
           have_console = true;
           have_stderr = true;

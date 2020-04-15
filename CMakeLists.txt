@@ -48,7 +48,6 @@ target_sources(magicseteditor PRIVATE resource/win32_res.rc)
 
 if(WIN32)
   add_executable(magicseteditor-cli)
-  #set_target_properties(magicseteditor-cli PROPERTIES OUTPUT_NAME "magicseteditor.com")
   target_sources(magicseteditor-cli PRIVATE src/cli/win32_cli_wrapper.cpp)
   add_custom_command(TARGET magicseteditor-cli POST_BUILD COMMAND
     ${CMAKE_COMMAND} -E copy "${PROJECT_BINARY_DIR}/magicseteditor-cli.exe" "${PROJECT_BINARY_DIR}/magicseteditor.com"
@@ -59,7 +58,7 @@ endif()
 # warnings
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
   # Update if necessary
-  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-comment")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-comment")
 endif()
 
 # visual studio debugger

@@ -51,7 +51,7 @@ NewSetWindow::NewSetWindow(Window* parent)
   game_list->showData<Game>();
   try {
     game_list->select(settings.default_game);
-  } catch (FileNotFoundError e) {
+  } catch (FileNotFoundError const& e) {
     handle_error(e);
   }
   game_list->SetFocus();
