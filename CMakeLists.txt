@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-project(magicseteditor VERSION 2.2.0)
+project(magicseteditor)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -20,14 +20,19 @@ include(${wxWidgets_USE_FILE})
 include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${HUNSPELL_INCLUDE_DIRS})
 
+# Magic Set Editor executable
+
 add_executable(magicseteditor WIN32)
 target_link_libraries(${PROJECT_NAME} ${wxWidgets_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} ${Boost_LIBRARIES})
 target_link_libraries(${PROJECT_NAME} ${HUNSPELL_LIBRARIES})
 
 file(GLOB_RECURSE sources src/*.cpp)
+list(FILTER sources EXCLUDE REGEX win32_cli_wrapper.cpp)
 target_sources(magicseteditor PRIVATE ${sources})
 target_precompile_headers(magicseteditor PRIVATE src/util/prec.hpp)
+
+# resource file
 
 set(locale_keys_file "${PROJECT_SOURCE_DIR}/resource/expected_locale_keys")
 add_custom_command(
@@ -38,6 +43,18 @@ add_custom_command(
 add_custom_target(generate_expected_locale_keys DEPENDS ${locale_keys_file})
 add_dependencies(magicseteditor generate_expected_locale_keys)
 target_sources(magicseteditor PRIVATE resource/win32_res.rc)
+
+# magicseteditor.com: wrapper to enable command line executable on windows
+
+if(WIN32)
+  add_executable(magicseteditor-cli)
+  #set_target_properties(magicseteditor-cli PROPERTIES OUTPUT_NAME "magicseteditor.com")
+  target_sources(magicseteditor-cli PRIVATE src/cli/win32_cli_wrapper.cpp)
+  add_custom_command(TARGET magicseteditor-cli POST_BUILD COMMAND
+    ${CMAKE_COMMAND} -E copy "${PROJECT_BINARY_DIR}/magicseteditor-cli.exe" "${PROJECT_BINARY_DIR}/magicseteditor.com"
+  )
+endif()
+
 
 # warnings
 if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_COMPILER_IS_GNUCXX)
