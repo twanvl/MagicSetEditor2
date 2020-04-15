@@ -634,7 +634,7 @@ bool is_space_like(Char c) {
 
 String curly_quotes(String str, bool curl) {
   bool open = true, in_tag = false;
-  FOR_EACH(c, str) {
+  for (wxUniCharRef c : str) {
     if (c == _('\'') || c == LEFT_SINGLE_QUOTE || c == RIGHT_SINGLE_QUOTE) {
       c = curl ? (open ? LEFT_SINGLE_QUOTE : RIGHT_SINGLE_QUOTE) : _('\'');
     } else if (c == _('\"') || c == LEFT_DOUBLE_QUOTE || c == RIGHT_DOUBLE_QUOTE) {

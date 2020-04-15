@@ -174,7 +174,7 @@ String canonical_name_form(const String& str) {
   bool leading = true;
   FOR_EACH_CONST(c, str) {
     if ((c == _('_') || c == _(' '))) {
-      ret += leading ? c : _(' ');
+      ret += leading ? c : wxUniChar(' ');
     } else {
       ret += c;
       leading = false;
@@ -367,10 +367,7 @@ bool smart_equal(const String& sa, const String& sb) {
 
 bool starts_with(const String& str, const String& start) {
   if (str.size() < start.size()) return false;
-  FOR_EACH_2_CONST(a, str, b, start) {
-    if (a != b) return false;
-  }
-  return true;
+  return equal(start.begin(), start.end(), str.begin());
 }
 
 bool is_substr(const String& str, size_t pos, const Char* cmp) {
