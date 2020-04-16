@@ -15,10 +15,14 @@
 
 /// Nice about dialog
 class AboutWindow : public wxDialog {
-  public:
+public:
   AboutWindow(Window* parent);
+
+  // Note: for some stupid reason, wxWindow::Layout makes the child of a window with a single child the same size as the whole window,
+  // we do not want that.
+  bool Layout() override;
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
   // MSE logos

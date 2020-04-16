@@ -27,6 +27,10 @@ AboutWindow::AboutWindow(Window* parent)
   ok_button->Move(ws.GetWidth() - bs.GetWidth(),  ws.GetHeight() - bs.GetHeight()); // align bottom right
 }
 
+bool AboutWindow::Layout() {
+  return false;
+}
+
 void AboutWindow::onPaint(wxPaintEvent& ev) {
   wxBufferedPaintDC dc(this);
   draw(dc);
