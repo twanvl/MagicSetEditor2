@@ -146,7 +146,8 @@ Rotation CardViewer::getRotation() const {
   // Same as DataViewer::getRotation, only taking into account scrolling
   if (!stylesheet) stylesheet = set->stylesheet;
   StyleSheetSettings& ss = settings.stylesheetSettingsFor(*stylesheet);
-  int dx = GetScrollPos(wxHORIZONTAL), dy = GetScrollPos(wxVERTICAL);
+  int dx = CanScroll(wxHORIZONTAL) ? GetScrollPos(wxHORIZONTAL) : 0;
+  int dy = CanScroll(wxVERTICAL) ? GetScrollPos(wxVERTICAL) : 0;
   return Rotation(deg_to_rad(ss.card_angle()), stylesheet->getCardRect().move(-dx,-dy,0,0), ss.card_zoom(), 1.0, ROTATION_ATTACH_TOP_LEFT);
 }
 

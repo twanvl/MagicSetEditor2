@@ -24,7 +24,8 @@ NativeLookEditor::NativeLookEditor(Window* parent, int id, long style)
 {}
 
 Rotation NativeLookEditor::getRotation() const {
-  int dx = GetScrollPos(wxHORIZONTAL), dy = GetScrollPos(wxVERTICAL);
+  int dx = CanScroll(wxHORIZONTAL) ? GetScrollPos(wxHORIZONTAL) : 0;
+  int dy = CanScroll(wxVERTICAL) ? GetScrollPos(wxVERTICAL) : 0;
   return Rotation(0, RealRect(RealPoint(-dx,-dy),GetClientSize()));
 }
 
@@ -90,7 +91,9 @@ void NativeLookEditor::resizeViewers() {
   }
   y = y - vspace + margin;
   SetVirtualSize(w, (int)y);
-  SetScrollbar(wxVERTICAL, 0, h, (int)y);
+  if (CanScroll(wxVERTICAL)) {
+    SetScrollbar(wxVERTICAL, 0, h, (int)y);
+  }
   if (y >= h) {
     // Doesn't fit vertically, add scrollbar and resize
     /*
