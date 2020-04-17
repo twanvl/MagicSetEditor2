@@ -119,8 +119,17 @@ class TokenIterator {
 
 // ----------------------------------------------------------------------------- : Characters
 
+bool isUnicodeAlpha(Char c) {
+  #if wxMSW
+    return false;
+  #else
+    // libc's iswalpha doesn't work on non-ascii characters. For the parser let's just say that anything >=128 is alphabetic
+    return c >= 128;
+  #endif
+}
+
 bool isAlpha_(Char c) { return isAlpha(c) || c==_('_'); }
-bool isAlnum_(Char c) { return isAlnum(c) || c==_('_'); }
+bool isAlnum_(Char c) { return isAlnum(c) || c==_('_') || isUnicodeAlpha(c); }
 bool isOper  (Char c) { return wxStrchr(_("+-*/!.@%^&:=<>;,"),c) != nullptr; }
 bool isLparen(Char c) { return c==_('(') || c==_('[') || c==_('{'); }
 bool isRparen(Char c) { return c==_(')') || c==_(']') || c==_('}'); }
@@ -207,7 +216,7 @@ void TokenIterator::readToken() {
     InputStreamP is = package_manager.openFileFromPackage(package, include_file);
     eat_utf8_bom(*is);
     input = read_utf8_line(*is, true);
-  } else if (isAlpha(c) || c == _('_') || (isDigit(c) && !buffer.empty() && buffer.back() == _("."))) {
+  } else if (isAlpha(c) || isUnicodeAlpha(c) || c == _('_') || (isDigit(c) && !buffer.empty() && buffer.back() == _("."))) {
     // name, or a number after a . token, as in array.0
     size_t start = pos - 1;
     while (pos < input.size() && isAlnum_(input.GetChar(pos))) ++pos;
