@@ -336,7 +336,7 @@ SCRIPT_FUNCTION(substring) {
   if (begin < 0) begin = 0;
   if (end   < 0) end   = 0;
   if (begin >= end || (size_t)begin >= input.size()) {
-    SCRIPT_RETURN(wxEmptyString);
+    SCRIPT_RETURN(String());
   } else if ((size_t)end >= input.size()) {
     SCRIPT_RETURN(input.substr(begin));
   } else {
