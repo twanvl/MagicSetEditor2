@@ -55,7 +55,7 @@ Set::~Set() {}
 
 Context& Set::getContext() {
   assert(wxThread::IsMain());
-  return script_manager->getContext(stylesheet);
+  return script_manager->getContext(CardP());
 }
 Context& Set::getContext(const CardP& card) {
   assert(wxThread::IsMain());
@@ -73,7 +73,7 @@ Context& Set::getContextForThumbnails() {
   if (!thumbnail_script_context) {
     thumbnail_script_context.reset(new SetScriptContext(*this));
   }
-  return thumbnail_script_context->getContext(stylesheet);
+  return thumbnail_script_context->getContext(CardP());
 }
 Context& Set::getContextForThumbnails(const CardP& card) {
   assert(!wxThread::IsMain());

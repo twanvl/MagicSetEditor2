@@ -80,7 +80,7 @@ Context& SetScriptContext::getContext(const CardP& card) {
     ctx.setVariable(SCRIPT_VAR_card,    to_script(card));
     ctx.setVariable(SCRIPT_VAR_styling, to_script(&set.stylingDataFor(card)));
   } else {
-    ctx.setVariable(SCRIPT_VAR_card,    script_nil);
+    ctx.setVariable(SCRIPT_VAR_card,    ScriptValueP());
     ctx.setVariable(SCRIPT_VAR_styling, to_script(&set.stylingDataFor(*stylesheet)));
   }
   return ctx;
