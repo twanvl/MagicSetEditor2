@@ -225,12 +225,14 @@ class ScriptMap : public ScriptValue {
 /// Script value containing a custom collection, returned from script functions
 class ScriptCustomCollection : public ScriptCollectionBase {
   public:
-  virtual ScriptValueP getMember(const String& name) const;
-  virtual ScriptValueP getIndex(int index) const;
-  virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
-  virtual int itemCount() const { return (int)value.size(); }
+  ScriptValueP getMember(const String& name) const override;
+  ScriptValueP getIndex(int index) const override;
+  ScriptValueP makeIterator(const ScriptValueP& thisP) const override;
+  int itemCount() const override {
+    return (int)(value.size() + key_value.size());
+  }
   /// Collections can be compared by comparing pointers
-  virtual CompareWhat compareAs(String&, void const*& compare_ptr) const {
+  CompareWhat compareAs(String&, void const*& compare_ptr) const override {
     compare_ptr = this;
     return COMPARE_AS_POINTER;
   }
