@@ -220,6 +220,11 @@ SCRIPT_FUNCTION(to_code) {
   SCRIPT_RETURN(input->toCode());
 }
 
+SCRIPT_FUNCTION(type_name) {
+  SCRIPT_PARAM_C(ScriptValueP, input);
+  SCRIPT_RETURN(input->typeName());
+}
+
 // ----------------------------------------------------------------------------- : Math
 
 SCRIPT_FUNCTION(abs) {
@@ -718,6 +723,7 @@ void init_script_basic_functions(Context& ctx) {
   ctx.setVariable(_("to color"),             script_to_color);
   ctx.setVariable(_("to date"),              script_to_date);
   ctx.setVariable(_("to code"),              script_to_code);
+  ctx.setVariable(_("type name"),            script_type_name);
   // math
   ctx.setVariable(_("abs"),                  script_abs);
   ctx.setVariable(_("random real"),          script_random_real);

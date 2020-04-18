@@ -1,0 +1,17 @@
+Function: type_name
+
+DOC_MSE_VERSION: since 2.0.2
+
+--Usage--
+> type_name(any_value)
+
+Return the type of the given value as a string.
+Note that type names are localized, so they should not be compared to a fixed string.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	''any type''		Value to determine the type of.
+
+--Examples--
+> type_name("hello") == "string"
+> type_name(1)       == "integer number"

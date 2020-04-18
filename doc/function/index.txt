@@ -11,6 +11,7 @@ These functions are built into the program, other [[type:function]]s can be defi
 | [[fun:to_color]]		Convert any value to a [[type:color]]
 | [[fun:to_image]]		Convert any value to an [[type:image]]
 | [[fun:to_date]]		Convert any value to a [[type:date]]
+| [[fun:type_name]]		Get the type of a value
 	
 ! Numbers			<<<
 | [[fun:abs]]			Absolute value
