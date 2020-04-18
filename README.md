@@ -17,7 +17,6 @@ On windows, the program can be compiled with Visual Studio (recommended) or with
 
  * Download and install [Visual Studio Community edition](https://visualstudio.microsoft.com/vs/community/)
  * Download and install [vcpkg](https://github.com/microsoft/vcpkg)
- * Download and install perl (For example [Strawberry perl](http://strawberryperl.com/) or using [MSYS2](https://www.msys2.org/))
  * Use vcpkg to install wxwidgets, boost, hunspell
 ````
 vcpkg install wxwidgets
@@ -31,13 +30,16 @@ vcpkg integrate install
 Notes:
  * You may need to work around [this bug](https://github.com/microsoft/vcpkg/issues/4756) by replacing `$VCPATH\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.16\Modules\FindwxWidgets.cmake` with the file from  https://github.com/CaeruleusAqua/vcpkg-wx-find
  * vcpkg by default installs 32 bit versions of libraries, use `vcpkg install PACKAGENAME:x64-windows` if you want to enable a 64 bit build.
+ 
+For running tests you will also need to
+ * Download and install perl (For example [Strawberry perl](http://strawberryperl.com/) or using [MSYS2](https://www.msys2.org/))
+The tests can be run from inside visual studio
 
 ## Building on windows with GCC (MSYS2)
 
  * Download and install [msys2](https://www.msys2.org/)
  * Install a recent version of the gcc compiler, cmake, and wxWidgets libraries:
 ````
-pacman -S mingw32/mingw-w64-i686-perl
 pacman -S mingw32/mingw-w64-i686-gcc
 pacman -S mingw32/mingw-w64-i686-wxWidgets
 pacman -S mingw32/mingw-w64-i686-boost
@@ -47,7 +49,7 @@ pacman -S cmake
    Use `mingw64/mingw-w64-x86_64-...` instead of for the 64bit build
  * Build
 ````
-cmake -G "MSYS Makefiles" -H. -Bbuild
+cmake -G "MSYS Makefiles" -H. -Bbuild -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ````
 
@@ -60,9 +62,10 @@ sudo apt install libboost-dev libwxgtk3.0-gtk3-dev libhunspell-dev
 ````
 Then use cmake to build
 ````
-cmake build
+cmake build -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ````
+Use `CMAKE_BUILD_TYPE=Debug` for a debug build
 
 ## Building on Mac
 

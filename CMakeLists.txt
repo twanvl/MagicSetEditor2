@@ -34,14 +34,6 @@ target_precompile_headers(magicseteditor PRIVATE src/util/prec.hpp)
 
 # resource file
 
-set(locale_keys_file "${PROJECT_SOURCE_DIR}/resource/expected_locale_keys")
-add_custom_command(
-  COMMAND perl "${PROJECT_SOURCE_DIR}/tools/locale/locale.pl" "${PROJECT_SOURCE_DIR}/src" ${locale_keys_file}
-  OUTPUT ${locale_keys_file}
-  DEPENDS ${sources}
-)
-add_custom_target(generate_expected_locale_keys DEPENDS ${locale_keys_file})
-add_dependencies(magicseteditor generate_expected_locale_keys)
 target_sources(magicseteditor PRIVATE resource/win32_res.rc)
 
 # magicseteditor.com: wrapper to enable command line executable on windows
@@ -63,3 +55,6 @@ endif()
 
 # visual studio debugger
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT magicseteditor)
+
+# Test suite
+include(test/tests.cmake)
