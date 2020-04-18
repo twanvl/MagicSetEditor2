@@ -19,7 +19,7 @@ class TextCtrl;
 // ----------------------------------------------------------------------------- : ConsolePanel
 
 class ConsolePanel : public SetWindowPanel {
-  public:
+public:
   ConsolePanel(Window* parent, int id);
   
   // --------------------------------------------------- : UI
@@ -37,12 +37,15 @@ class ConsolePanel : public SetWindowPanel {
   virtual bool canCopy()  const;
   virtual void doCopy();
   
-  protected:
-  virtual void onChangeSet();
+protected:
+  void onChangeSet() override;
+  void selectCard(const CardP& card) override;
   
-  private:
+private:
   DECLARE_EVENT_TABLE();
   
+  CardP card;
+
   wxSplitterWindow* splitter;
   MessageCtrl* messages;
   wxPanel* entry_panel;

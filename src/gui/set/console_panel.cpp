@@ -321,7 +321,11 @@ ConsolePanel::ConsolePanel(Window* parent, int id)
 }
 
 void ConsolePanel::onChangeSet() {
-  // TODO
+  card = CardP();
+}
+
+void ConsolePanel::selectCard(const CardP& card) {
+  this->card = card;
 }
 
 // ----------------------------------------------------------------------------- : UI
@@ -397,7 +401,7 @@ void ConsolePanel::exec(String const& command) {
     }
     // execute command
     //WITH_DYNAMIC_ARG(export_info, &ei); // TODO: allow image export
-    Context& ctx = set->getContext();
+    Context& ctx = set->getContext(card);
     ScriptValueP result = ctx.eval(*script,false);
     get_pending_errors();
     // show result
