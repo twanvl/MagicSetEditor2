@@ -41,7 +41,7 @@ class TextCtrlWithFocus : public wxTextCtrl {
 };
 
 FilterCtrl::FilterCtrl(wxWindow* parent, int id, String const& placeholder)
-  : wxControl(parent, id, wxDefaultPosition, wxSize(160,41), wxSTATIC_BORDER)
+  : wxControl(parent, id, wxDefaultPosition, wxSize(160,-1), wxSTATIC_BORDER)
   , changing(false)
   , placeholder(placeholder)
 {
