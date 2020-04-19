@@ -11,7 +11,10 @@ add_test(
 )
 
 # Scripting language tests
-# TODO
+add_test(
+  NAME script-functions
+  COMMAND magicseteditor ${test_dir}/script/script-functions.mse-script
+)
 
 # Rendering tests
 # TODO

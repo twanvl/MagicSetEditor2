@@ -1,0 +1,239 @@
+﻿#!/usr/bin/magicseteditor --cli
+
+# Test the scripting language itself, and built in functions
+
+# Testing: does assert work?
+assert( true )
+#assert( false )
+
+# Testing: equality
+#assert( set == set )
+#assert( set.cards[0] != set.cards[1] )
+
+# Test: default arguments with @
+f  := { to_upper(input) }
+g  := f@(to_upper:to_upper)
+h  := f@(to_upper:to_lower)
+h2 := {h()}
+assert( f("aBc")                     == "ABC")
+assert( f("aBc", to_upper:to_lower)  == "abc")
+assert( g("aBc")                     == "ABC")
+assert( g("aBc", to_upper:to_lower)  == "abc")
+assert( h("aBc")                     == "abc")
+assert( h("aBc", to_upper:to_upper)  == "ABC")
+assert( h("aBc", to_lower:to_lower)  == "abc")
+assert( h("aBc", to_lower:to_upper)  == "abc")
+assert( h2("aBc", to_upper:to_upper) == "abc") # DIFFERENT!
+assert( h2("aBc", to_lower:to_lower) == "abc")
+assert( h2("aBc", to_lower:to_upper) == "abc")
+
+# from doc
+function := { "argument was: " + arg }@(arg:"default")
+assert( function()                      == "argument was: default")
+assert( function(arg: "something else") == "argument was: something else")
+assert( function()                      == "argument was: default")
+
+f := { "uppercase of {input} is {to_upper()}" }@(to_upper:to_upper)
+assert( f("aBc") == "uppercase of aBc is ABC")
+
+# Recursion?
+fib := { if input <= 1 then 1 else fib(input - 1) + fib(input - 2) }
+assert( fib(6)  ==  13)
+
+{ 3^3^3 }
+
+# Tokenizer
+assert([[1]].0.0 == 1)
+
+# operators
+assert( 3^3    == 27 )
+assert( 3.0^3.0== 27 )
+assert( 3^3^3  == 3^(3^3) )
+assert( 3^3^3  != (3^3)^3 )
+assert( 1.5^2  == 2.25 )
+assert( 2^0.5 > 1.4142135 and 2^0.5 < 1.4142136 )
+
+assert( 3 / 2        == 1.5 )
+assert( 3 div 2      == 1   )
+assert( 123   mod 5  == 3   )
+assert( 123.4 mod 5  == 3.4 )
+
+# Short-circuiting and/or
+assert( (false and false) == false )
+assert( (false and true)  == false )
+assert( (true  and false) == false )
+assert( (true  and  true) == true  )
+assert( (true  and "second") == "second" )
+assert( ("no"  and "second") == "no" )
+assert( (false and wrong_variable) == false )
+
+assert( (false or false) == false )
+assert( (false or true)  == true )
+assert( (true  or false) == true )
+assert( (true  or  true) == true  )
+assert( (false or "second") == "second" )
+assert( ("yes" or "second") == "yes" )
+assert( (true  or wrong_variable) == true )
+
+# loops
+assert( (for x   from 1 to 6 do x)           == 21 )
+assert( (for x   from 1 to 6 do [x])         == [1,2,3,4,5,6] )
+assert( (for k:v from 2 to 5 do "{k}:{v} ")  == "0:2 1:3 2:4 3:5 " )
+assert( (for each x   in [4,5,6]  do " {x} ")     == " 4  5  6 " )
+assert( (for each x   in [4,5,6]  do " {x} ")     == " 4  5  6 " )
+assert( (for each k:v in [green:"good",red:"bad"] do "{k}={v};") == "green=good;red=bad;" )
+
+# abs
+assert( abs(1)      == 1)
+assert( abs(-0.123) == 0.123)
+assert( abs(4.56)   == 4.56)
+
+# length
+assert( length([]) == 0)
+assert( length([1]) == 1)
+assert( length([1,2]) == 2)
+assert( length([a:1,b:2]) == 2)
+assert( length("") == 0)
+assert( length("1") == 1)
+assert( length("12") == 2)
+
+# match
+f := match_rule(match: "a+|b+")
+assert(f("xyz")             == false)
+assert(f("aabb")            == true)
+f := match@(match: "a+|b+")
+assert(f("xyz")             == false)
+assert(f("aabb")            == true)
+assert(f("ss",match:"ss")   == true)
+assert(f("aabb",match:"ss") == false)
+
+# sort_text
+assert( sort_text("cba")            == "abc" )
+assert( sort_text("cba", order:"b") == "b" )
+assert( sort_rule(order:"b")("cbz") == "b" )
+
+# break_text
+assert( break_text("a,b,c", match:"[^,]+") == ["a","b","c"] )
+assert( break_rule(match:"[^,]+")("a,b,c") == ["a","b","c"] )
+
+# split text
+assert( split_text("a,b,c",   match:",") == ["a","b","c"] )
+assert( split_text("a,b,,c,", match:",") == ["a","b","","c",""] )
+assert( split_text("",        match:",") == [""] )
+assert( split_text("a,b,,c,", match:",", include_empty:false) == ["a","b","c"] )
+assert( split_text("",        match:",", include_empty:false) == [] )
+
+# filter text
+assert( filter_text(match: "a", "banana")  ==  "aaa")
+assert( filter_text(match: ".", in_context:"a<match>", "banana")  ==  "nn")
+assert( filter_text(match: "[xy]", "xyz")  ==  "xy")
+
+# replace
+assert( replace(match: "[ab]", replace: to_upper, "banana")  ==  "BAnAnA" )
+assert( replace(match: "([0-9])[*]([0-9])", replace: { _1 * _2 }, "2*2+3*3")  ==  "4+9" )
+assert( replace(match: " ", replace: "[&|&]", "a b c d") == "a[ | ]b[ | ]c[ | ]d" )
+assert( replace(match: " ", replace: "x", "a b c d", in_context: "b<match>") == "a bxc d" )
+assert( replace(match: " ", replace: "x", "a b c d", in_context: "<match>c") == "a bxc d" )
+assert( replace(match: " ", replace: "x", "a b c d", in_context: "<match>[cd]") == "a bxcxd" )
+
+# sort_list
+assert( sort_list([5,2,3,1,4])          ==  [1,2,3,4,5] )
+assert( sort_list(["aaa","cccc","bb"])  ==  ["aaa","bb","cccc"] )
+assert( sort_list(["aaa","cccc","bb"], order_by: length) ==  ["bb","aaa","cccc"] )
+assert( sort_list([1,2,1,2,2,3], remove_duplicates:true)  ==  [1,2,3] )
+
+# Conversion
+assert( to_string(to_color("blue")) == "rgb(0,0,255)" )
+assert( to_string(10 + 20) == "30" )
+assert( to_string(10 + 20, format: ".3f") == "30.000" )
+assert( to_string(10 + 20, format: "x")   == "1e" )
+assert( to_boolean(true)   == true )
+assert( to_boolean("true") == true )
+assert( to_boolean(1)      == true )
+assert( to_boolean(0)      == false )
+assert( to_int(1.5)  == 1 )
+assert( to_int("15") == 15 )
+assert( to_int(true) == 1 )
+assert( to_int("")   == 0 )
+assert( to_int(rgb(255,255,255)) == 255 )
+assert( to_int("bla") or else "FAIL" == "FAIL" )
+assert( to_color("red") == rgb(255,0,0) )
+assert( to_real("bla") or else "FAIL" == "FAIL" )
+assert( to_number(1)     == 1 )
+assert( to_number(1.5)   == 1.5 )
+assert( to_number(1.5)   != 1 )
+assert( to_number("1")   == 1 )
+assert( to_number("1.5") == 1.5 )
+assert( (to_number("bla") or else "FAIL") == "FAIL" )
+
+# nil
+assert(to_string(nil)=="")
+assert(to_code(nil)=="nil")
+assert(to_color(nil)==rgba(0,0,0,0))
+assert(to_int(nil)==0)
+assert(to_boolean(nil)==false)
+# conversion doesn't happen automatically when comparing for equality
+assert(nil != "")
+assert(nil != rgba(0,0,0,0))
+assert(nil != false)
+assert(nil != 0)
+
+# to_code
+assert(to_code("abc") == "\"abc\"")
+assert(to_code("\\\<\n\r\t") == "\"\\\\\\<\\n\\r\\t\"")
+assert(to_code(1) == "1")
+assert(to_code([1,2,3]) == "[1,2,3]")
+assert(to_code([x:"y"]) == "[x:\"y\"]")
+
+# count_chosen
+assert( count_chosen("")                                 ==  0 )
+assert( count_chosen("red")                              ==  1 )
+assert( count_chosen("red, green")                       ==  2 )
+assert( count_chosen("red, green", choices: "red,blue")  ==  1 )
+
+# require choice
+assert( require_choice(choices: "red",       "red")          ==  "red" )
+assert( require_choice(choices: "red",       "blue")         ==  "blue, red" )
+assert( require_choice(choices: "red",       "red, blue")    ==  "blue, red" )
+assert( require_choice(choices: "red,green", "red, blue")    ==  "blue, red" )
+assert( require_choice(choices: "red,green", "red, green")   ==  "red, green" )
+assert( require_choice(choices: "red,green", "green, blue")  ==  "blue, green" )
+assert( require_choice(choices: "red,green", "black, blue")  ==  "black, blue, red" )
+assert( require_choice(choices: "red,green", "black, blue")  ==  "black, blue, red" )
+
+# Random functions
+assert( random_select([123]) == 123 )
+assert( random_select([123,123,123]) == 123 )
+assert( random_select_many([123,123,123], count:1) == [123] )
+assert( random_select_many([123,123,123], count:3) == [123,123,123] )
+assert( sort_list(random_select_many([123,456,789], count:3)) == [123,456,789] )
+assert( sort_list(random_shuffle([123,456,789])) == [123,456,789] )
+assert( random_int(begin:123, end:124) == 123 )
+assert( random_boolean(0.0) == false )
+assert( random_boolean(1.0) == true )
+
+# Tag functions
+assert(tag_contents(tag: "<up>", contents: to_upper, "this <up>is text</up>")
+         ==  "this <up>IS TEXT</up>"
+      )
+assert(tag_contents(tag: "<atom-name", contents: { card_name }, "<atom-name-auto></atom-name-auto> loses 1 life", card_name: "Pink Elephant")
+         ==  "<atom-name-auto>Pink Elephant</atom-name-auto> loses 1 life"
+      )
+
+# Spell checker
+assert( check_spelling_word(language:"en_US", "something") == true )
+assert( check_spelling_word(language:"en_US", "somethjng") == false )
+
+# Curly quotes
+assert( curly_quotes("\"this: is a string\", —\"q\"") == "“this: is a string”, —“q”" )
+assert( curly_quotes("'this: is a string', —'q'") == "‘this: is a string’, —‘q’" )
+assert( curly_quotes("''\"nest\"''") == "‘‘“nest”’’" )
+
+# File IO
+#write_text_file(file: "textfile1.out.txt", "this is a test\nUnicode: ☺");
+
+# Include files (This doesn't work!)
+#include file: test-builtin-included.mse-script
+#assert(i_have_been_included == 1);
+
+1
