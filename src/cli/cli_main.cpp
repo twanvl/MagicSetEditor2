@@ -14,12 +14,15 @@
 #include <script/profiler.hpp>
 #include <data/format/formats.hpp>
 #include <wx/process.h>
+#include <wx/wfstream.h>
 
 DECLARE_TYPEOF_COLLECTION(ScriptParseError);
 
+String read_utf8_line(wxInputStream& input, bool until_eof = false);
+
 // ----------------------------------------------------------------------------- : Command line interface
 
-CLISetInterface::CLISetInterface(const SetP& set, bool quiet)
+CLISetInterface::CLISetInterface(const SetP& set, bool quiet, bool run)
   : quiet(quiet)
   , our_context(nullptr)
 {
@@ -29,11 +32,7 @@ CLISetInterface::CLISetInterface(const SetP& set, bool quiet)
   ei.allow_writes_outside = true;
   setExportInfoCwd();
   setSet(set);
-  run();
-}
-
-CLISetInterface::~CLISetInterface() {
-  delete our_context;
+  if (run) this->run();
 }
 
 Context& CLISetInterface::getContext() {
@@ -41,8 +40,9 @@ Context& CLISetInterface::getContext() {
     return set->getContext();
   } else {
     if (!our_context) {
-      our_context = new Context();
+      our_context = make_unique<Context>();
       init_script_functions(*our_context);
+      scope = our_context->openScope();
     }
     return *our_context;
   }
@@ -71,6 +71,30 @@ void CLISetInterface::setExportInfoCwd() {
 
 
 // ----------------------------------------------------------------------------- : Running
+
+String read_file(String const& filename) {
+  wxFileInputStream stream(filename);
+  if (!stream.IsOk()) throw FileNotFoundError(_("<unknown>"), filename);
+  eat_utf8_bom(stream);
+  return read_utf8_line(stream, true);
+}
+
+bool run_script_file(String const& filename) {
+  String contents = read_file(filename);
+  // parse
+  vector<ScriptParseError> errors;
+  ScriptP script = parse(contents, nullptr, false, errors);
+  if (!errors.empty()) {
+    FOR_EACH(error, errors) cli.show_message(MESSAGE_ERROR, error.what());
+    return false;
+  }
+  // run
+  Context ctx;
+  init_script_functions(ctx);
+  ScriptValueP result = ctx.eval(*script, false);
+  // ignore result
+  return true;
+}
 
 void CLISetInterface::run() {
   // show welcome logo

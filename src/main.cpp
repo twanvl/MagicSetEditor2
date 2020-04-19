@@ -103,12 +103,12 @@ int MSE::OnRun() {
         wxFileName f(arg.Mid(0,arg.find_last_not_of(_("\\/"))+1));
         if (f.GetExt() == _("mse-symbol")) {
           // Show the symbol editor
-          Window* wnd = new SymbolWindow(nullptr, argv[1]);
+          Window* wnd = new SymbolWindow(nullptr, arg);
           wnd->Show();
           return runGUI();
         } else if (f.GetExt() == _("mse-set") || f.GetExt() == _("mse") || f.GetExt() == _("set")) {
           // Show the set window
-          Window* wnd = new SetWindow(nullptr, import_set(argv[1]));
+          Window* wnd = new SetWindow(nullptr, import_set(arg));
           wnd->Show();
           return runGUI();
         } else if (f.GetExt() == _("mse-installer")) {
@@ -123,6 +123,11 @@ int MSE::OnRun() {
           InstallerP installer = open_package<Installer>(argv[1]);
           PackagesWindow wnd(nullptr, installer);
           wnd.ShowModal();
+          return EXIT_SUCCESS;
+        } else if (f.GetExt() == _("mse-script")) {
+          // Run a script file
+          if (!run_script_file(arg)) return EXIT_FAILURE;
+          if (cli.shown_errors()) return EXIT_FAILURE;
           return EXIT_SUCCESS;
         } else if (arg == _("--symbol-editor")) {
           Window* wnd = new SymbolWindow(nullptr);

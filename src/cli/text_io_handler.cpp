@@ -172,7 +172,12 @@ void TextIOHandler::show_message(MessageType type, String const& message) {
   } else {
     *this << RED << _("ERROR: ") << NORMAL << replace_all(message,_("\n"),_("\n       ")) << ENDL;
   }
+  encountered_errors = true;
   flush();
   stream = stdout;
   if (raw_mode) raw_mode_status = max(raw_mode_status, type == MESSAGE_WARNING ? 1 : 2);
+}
+
+bool TextIOHandler::shown_errors() const {
+  return encountered_errors;
 }

@@ -17,15 +17,14 @@
 // ----------------------------------------------------------------------------- : Command line interface
 
 class CLISetInterface : public SetView {
-  public:
+public:
   /// The set is optional
-  CLISetInterface(const SetP& set, bool quiet = false);
-  ~CLISetInterface();
-  protected:
+  CLISetInterface(const SetP& set, bool quiet = false, bool run = true);
+protected:
   virtual void onAction(const Action&, bool) {}
   virtual void onChangeSet();
   virtual void onBeforeChangeSet();
-  private:
+private:
   bool quiet;    ///< Supress prompts and other non-vital stuff
   bool running;  ///< Still running?
   
@@ -40,13 +39,15 @@ class CLISetInterface : public SetView {
   
   /// our own context, when no set is loaded
   Context& getContext();
-  Context* our_context;
+  unique_ptr<Context> our_context;
   size_t scope;
   
   // export info, so we can write files
   ExportInfo ei;
   void setExportInfoCwd();
 };
+
+bool run_script_file(String const& filename);
 
 // ----------------------------------------------------------------------------- : EOF
 #endif

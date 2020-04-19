@@ -92,6 +92,7 @@ int main(int argc, char** argv) {
   } else {
     // not a .com file, error message
     fprintf(stderr, "This executable should be named <something>.com\n");
+    return EXIT_FAILURE;
   }
   
   // win32 structures for child program

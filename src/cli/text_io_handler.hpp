@@ -18,7 +18,7 @@ extern const Char *BRIGHT, *NORMAL, *PARAM, *FILE_EXT, *GRAY, *RED, *ENDL;
 
 /// Command line input / output handler
 class TextIOHandler {
-  public:
+public:
   void init();
   
   /// Do we have a console to read/write from/to?
@@ -38,6 +38,7 @@ class TextIOHandler {
   
   /// Show an error or warning message
   void show_message(MessageType type, String const& message);
+  bool shown_errors() const;
   
   /// Enable raw mode
   void enableRaw();
@@ -45,13 +46,14 @@ class TextIOHandler {
   /// Has no effect unless enableRaw() was called
   void flushRaw();
   
-  private:
+private:
   bool have_console;
   bool escapes;
   FILE* stream;
   String buffer; ///< Buffer when not writing to console
   bool raw_mode;
   int raw_mode_status;
+  bool encountered_errors = false;
 };
 
 /// The global TextIOHandler object
