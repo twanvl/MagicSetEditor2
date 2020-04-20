@@ -59,7 +59,7 @@ bool need_redirection;
 
 // ----------------------------------------------------------------------------- : Main function
 
-const char* redirect_flags[] = {"-?","--help","-v","--version","--cli","-c","--export","--create-installer"};
+const char* redirect_flags[] = {"-?","--help","-v","--version","--cli","-c","--export","--export-images","--create-installer"};
 
 int main(int argc, char** argv) {
   // determine whether we need to wrap console i/o

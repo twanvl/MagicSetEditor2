@@ -28,6 +28,8 @@
 #include <wx/txtstrm.h>
 #include <wx/socket.h>
 
+ScriptValueP export_set(SetP const& set, vector<CardP> const& cards, ExportTemplateP const& exp, String const& outname);
+
 // ----------------------------------------------------------------------------- : Main function/class
 
 /// The application class for MSE.
@@ -181,7 +183,10 @@ int MSE::OnRun() {
                              << PARAM << _("PACKAGE") << NORMAL << _(" [") << PARAM << _("PACKAGE") << NORMAL << _(" ...]]");
           cli << _("\n         \tCreate an instaler, containing the listed packages.");
           cli << _("\n         \tIf no output filename is specified, the name of the first package is used.");
-          cli << _("\n\n  ") << BRIGHT << _("--export") << NORMAL << PARAM << _(" FILE") << NORMAL << _(" [") << PARAM << _("IMAGE") << NORMAL << _("]");
+          cli << _("\n\n  ") << BRIGHT << _("--export") << NORMAL << PARAM << _(" TEMPLATE SETFILE ") << NORMAL << _(" [") << PARAM << _("OUTFILE") << NORMAL << _("]");
+          cli << _("\n         \tExport a set using an export template.");
+          cli << _("\n         \tIf no output filename is specified, the result is written to stdout.");
+          cli << _("\n\n  ") << BRIGHT << _("--export-images") << NORMAL << PARAM << _(" FILE") << NORMAL << _(" [") << PARAM << _("IMAGE") << NORMAL << _("]");
           cli << _("\n         \tExport the cards in a set to image files,");
           cli << _("\n         \tIMAGE is the same format as for 'export all card images'.");
           cli << _("\n\n  ") << BRIGHT << _("--cli") << NORMAL << _(" [")
@@ -225,7 +230,7 @@ int MSE::OnRun() {
           }
           CLISetInterface cli_interface(set,quiet);
           return EXIT_SUCCESS;
-        } else if (arg == _("--export")) {
+        } else if (arg == _("--export-images")) {
           if (args.size() < 2) {
             handle_error(Error(_("No input file specified for --export")));
             return EXIT_FAILURE;
@@ -245,6 +250,21 @@ int MSE::OnRun() {
           }
           // export
           export_images(set, set->cards, path, out, CONFLICT_NUMBER_OVERWRITE);
+          return EXIT_SUCCESS;
+        } else if (args[0] == _("--export")) {
+          if (args.size() < 2) {
+            throw Error(_("No export template specified for --export"));
+          } else if (args.size() < 3) {
+            throw Error(_("No input set file specified for --export"));
+          }
+          String export_template = args[1];
+          ExportTemplateP exp = package_manager.open<ExportTemplate>(export_template);
+          SetP set = import_set(args[2]);
+          String out = args.size() >= 4 ? args[3] : _("");
+          ScriptValueP result = export_set(set, set->cards, exp, out);
+          if (out.empty()) {
+            cli << result->toString();
+          }
           return EXIT_SUCCESS;
         } else {
           handle_error(_("Invalid command line argument:\n") + arg);

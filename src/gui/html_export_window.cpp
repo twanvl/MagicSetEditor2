@@ -52,12 +52,7 @@ HtmlExportWindow::HtmlExportWindow(Window* parent, const SetP& set, const Export
   list->select(settings.gameSettingsFor(*set->game).default_export);
 }
 
-void HtmlExportWindow::onOk(wxCommandEvent&) {
-  ExportTemplateP exp = list->getSelection<ExportTemplate>();
-  // get filename
-  String name = wxFileSelector(_TITLE_("save html"),settings.default_export_dir,_(""),_(""),exp->file_type, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-  if (name.empty()) return;
-  settings.default_export_dir = wxPathOnly(name);
+ScriptValueP export_set(SetP const& set, vector<CardP> const& cards, ExportTemplateP const& exp, String const& outname) {
   wxBusyCursor wait;
   // export info for script
   ExportInfo info;
@@ -66,7 +61,8 @@ void HtmlExportWindow::onOk(wxCommandEvent&) {
   WITH_DYNAMIC_ARG(export_info, &info);
   // create directory?
   if (exp->create_directory) {
-    wxFileName fn(name);
+    if (outname.empty()) throw Error(_("No output filename specified for export"));
+    wxFileName fn(outname);
     info.directory_relative = fn.GetName() + _("-files");
     fn.SetFullName(info.directory_relative);
     info.directory_absolute = fn.GetFullPath();
@@ -77,17 +73,29 @@ void HtmlExportWindow::onOk(wxCommandEvent&) {
   // run export script
   Context& ctx = set->getContext();
   LocalScope scope(ctx);
-  ctx.setVariable(_("cards"),     to_script(&getSelection()));
-  ctx.setVariable(_("options"),   to_script(&settings.exportOptionsFor(*exp)));
+  ctx.setVariable(_("cards"), to_script(&cards));
+  ctx.setVariable(_("options"), to_script(&settings.exportOptionsFor(*exp)));
   ctx.setVariable(_("directory"), to_script(info.directory_relative));
   ScriptValueP result = exp->script.invoke(ctx);
   // Save to file
-  wxFileOutputStream file(name);
-  { // TODO: write as image?
+  if (!outname.empty()) {
+    // TODO: write as image?
     // write as string
+    wxFileOutputStream file(outname);
     wxTextOutputStream stream(file);
-    stream.WriteString(*result);
+    stream.WriteString(result->toString());
   }
+  return result;
+}
+
+void HtmlExportWindow::onOk(wxCommandEvent&) {
+  ExportTemplateP exp = list->getSelection<ExportTemplate>();
+  // get filename
+  String name = wxFileSelector(_TITLE_("save html"),settings.default_export_dir,_(""),_(""),exp->file_type, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+  if (name.empty()) return;
+  settings.default_export_dir = wxPathOnly(name);
+  // export
+  export_set(set, getSelection(), exp, name);
   // Done
   EndModal(wxID_OK);
 }
