@@ -136,7 +136,7 @@ SetWindow::SetWindow(Window* parent, const SetP& set)
   // tab bar, sizer
   wxToolBar* tabBar = new wxToolBar(this, ID_TAB_BAR, wxDefaultPosition, wxDefaultSize, wxTB_FLAT | wxNO_BORDER | wxTB_HORIZONTAL | wxTB_HORZ_TEXT | wxTB_NOALIGN);
   wxSizer* s = new wxBoxSizer(wxVERTICAL);
-  s->Add(tabBar, 0, wxEXPAND | wxBOTTOM, 3);
+  s->Add(tabBar, 0, wxEXPAND | wxBOTTOM, 0);
   SetSizer(s);
   #if defined(__WXMSW__) && defined(TBSTYLE_EX_DOUBLEBUFFER)
     // Use double buffering
