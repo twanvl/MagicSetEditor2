@@ -361,18 +361,22 @@ ScriptValueP to_script(wxDateTime v) {
 
 // the nil object
 class ScriptNil : public ScriptValue {
-  public:
-  virtual ScriptType type() const { return SCRIPT_NIL; }
-  virtual String typeName() const { return _TYPE_("nil"); }
-  virtual operator String() const { return wxEmptyString; }
-  virtual operator double() const { return 0.0; }
-  virtual operator int()    const { return 0; }
-  virtual operator bool()   const { return false; }
-  virtual GeneratedImageP toImage(const ScriptValueP&) const {
+public:
+  ScriptType type() const override { return SCRIPT_NIL; }
+  String typeName() const override { return _TYPE_("nil"); }
+  operator String() const override { return String(); }
+  operator double() const override { return 0.0; }
+  operator int()    const override { return 0; }
+  operator bool()   const override { return false; }
+  operator AColor() const override { return AColor(); }
+  GeneratedImageP toImage(const ScriptValueP&) const {
     return intrusive(new BlankImage());
   }
+  String toCode() const override {
+    return "nil";
+  }
 
-  protected:
+protected:
   virtual ScriptValueP do_eval(Context& ctx, bool) const {
     // nil(input) == input
     return ctx.getVariable(SCRIPT_VAR_input);
