@@ -44,7 +44,6 @@ String get_export_full_path(String& rel_name) {
   if (!ei.allow_writes_outside) {
     // check if path is okay
     wxFileName fn2(_("x"));
-    fn2.SetPath(ei.directory_absolute);
     fn2.Normalize(wxPATH_NORM_ALL, ei.directory_absolute);
     String p1 = fn.GetFullPath();
     String p2 = fn2.GetFullPath();
@@ -53,7 +52,7 @@ String get_export_full_path(String& rel_name) {
       throw ScriptError(_("Not a relative filename: ") + rel_name);
     }
   }
-  rel_name = fn.GetFullName();
+  rel_name = fn.GetFullName(); // TODO: does this work correctly with subdirectories in target dir?
   return fn.GetFullPath();
 }
 
