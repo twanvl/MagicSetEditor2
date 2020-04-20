@@ -39,14 +39,29 @@ Rotation ValueViewer::getRotation() const {
   return Rotation(deg_to_rad(getStyle()->angle), getStyle()->getExternalRect(), 1.0, getStretch());
 }
 
+#if defined(__WXMSW__)
+  // on windows, wxDOT is not actually dotted, so use a custom style to achieve that
+  static wxDash dashes_dotted[] = { 0,2 };
+  wxPen dotted_pen(wxColour const& color) {
+    wxPen pen(color, 1, wxUSER_DASH);
+    pen.SetDashes(2, dashes_dotted);
+    return pen;
+  }
+#else
+  wxPen dotted_pen(wxColour const& color) {
+    return wxPen(color, 1, wxPENSTYLE_DOT);
+  }
+#endif
+
 bool ValueViewer::setFieldBorderPen(RotatedDC& dc) {
   if (!getField()->editable) return false;
   DrawWhat what = viewer.drawWhat(this);
   if (!(what & DRAW_BORDERS)) return false;
-  dc.SetPen( (what & DRAW_ACTIVE)
-                 ? wxPen(Color(0,128,255),   1, wxPENSTYLE_SOLID)
-                 : wxPen(Color(128,128,128), 1, wxPENSTYLE_DOT)
-           );
+  if (what & DRAW_ACTIVE) {
+    dc.SetPen(wxPen(Color(0, 128, 255), 1, wxPENSTYLE_SOLID));
+  } else {
+    dc.SetPen(dotted_pen(Color(128, 128, 128)));
+  }
   return true;
 }
 
