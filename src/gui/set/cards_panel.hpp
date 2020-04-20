@@ -82,6 +82,7 @@ class CardsPanel : public SetWindowPanel {
   TextCtrl*         notes;
   HoverButton*      collapse_notes;
   FilterCtrl*       filter;
+  String            filter_value; // value of filter, need separate variable because the control is destroyed
   bool              notes_below_editor;
   
   /// Move the notes panel below the editor or below the card list

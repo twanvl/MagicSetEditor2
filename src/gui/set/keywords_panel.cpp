@@ -135,7 +135,9 @@ void KeywordsPanel::initUI(wxToolBar* tb, wxMenuBar* mb) {
   tb->AddTool(ID_KEYWORD_REMOVE,  _(""), load_resource_tool_image(_("keyword_del")),  wxNullBitmap, wxITEM_NORMAL,_TOOLTIP_("remove keyword"),_HELP_("remove keyword"));
   // Filter/search textbox
   tb->AddSeparator();
-  if (!filter) filter = new FilterCtrl(tb, ID_KEYWORD_FILTER, _LABEL_("search keywords"));
+  assert(!filter);
+  filter = new FilterCtrl(tb, ID_KEYWORD_FILTER, _LABEL_("search keywords"));
+  filter->setFilter(filter_value);
   tb->AddControl(filter);
   tb->Realize();
   // Menus
@@ -146,7 +148,10 @@ void KeywordsPanel::destroyUI(wxToolBar* tb, wxMenuBar* mb) {
   // Toolbar
   tb->DeleteTool(ID_KEYWORD_ADD);
   tb->DeleteTool(ID_KEYWORD_REMOVE);
-  tb->DeleteTool(filter->GetId()); filter = nullptr;
+  // remember value of filter control
+  filter_value = filter->getFilterString();
+  tb->DeleteTool(filter->GetId());
+  filter = nullptr;
   // HACK: hardcoded size of rest of toolbar
   tb->DeleteToolByPos(12); // delete separator
   // Menus

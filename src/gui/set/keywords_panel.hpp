@@ -72,6 +72,7 @@ class KeywordsPanel : public SetWindowPanel {
   wxButton*         add_param;
   wxButton*         ref_param;
   FilterCtrl*       filter;
+  String            filter_value;
   
   // --------------------------------------------------- : Events
   void onKeywordSelect(KeywordSelectEvent& ev);
