@@ -45,6 +45,7 @@ DWORD WINAPI TransferThread(Transfer*);
 BOOL WINAPI HandleCtrlEvent(DWORD type);
 void CopyFileBuffer(HANDLE output, char* buffer, DWORD size);
 void InitEscapeTranslation(HANDLE console);
+void FinishEscapeTranslation(HANDLE console);
 void PerformEscapeCode(HANDLE console, char command, int argc, int argv[]);
 
 /// The child process
@@ -54,6 +55,7 @@ PROCESS_INFORMATION child_process_info;
 HANDLE in_mine,  in_theirs,  in_real;
 HANDLE out_mine, out_theirs, out_real;
 HANDLE err_mine, err_theirs, err_real;
+bool need_redirection;
 
 // ----------------------------------------------------------------------------- : Main function
 
@@ -61,7 +63,7 @@ const char* redirect_flags[] = {"-?","--help","-v","--version","--cli","-c","--e
 
 int main(int argc, char** argv) {
   // determine whether we need to wrap console i/o
-  bool need_redirection = false;
+  need_redirection = false;
   for (int i = 1 ; i < argc ; ++i) {
     for (int j = 0 ; j < sizeof(redirect_flags)/sizeof(redirect_flags[0]) ; ++j) {
       if (strcmp(argv[i],redirect_flags[j]) == 0) {
@@ -116,6 +118,7 @@ int main(int argc, char** argv) {
     out_real = GetStdHandle(STD_OUTPUT_HANDLE);
     err_real = GetStdHandle(STD_ERROR_HANDLE);
     InitEscapeTranslation(out_real);
+    InitEscapeTranslation(err_real);
     
     // start threads
     Transfer tranfer_in  = {in_real,  in_mine,  false};
@@ -135,6 +138,7 @@ int main(int argc, char** argv) {
   
   // start the child program
   if (!CreateProcess(app_path,command_line,NULL,NULL,TRUE,0,NULL,NULL,&child_startup_info,&child_process_info)) {
+    fprintf(stderr, "Unable to start child process.\n");
     ExitProcess(1);
   }
   
@@ -147,6 +151,10 @@ int main(int argc, char** argv) {
   }
   
   // That's all folks!
+  if (need_redirection) {
+    FinishEscapeTranslation(out_real);
+    FinishEscapeTranslation(err_real);
+  }
   return exit_code;
 }
 
@@ -251,6 +259,12 @@ void InitEscapeTranslation(HANDLE console) {
   CONSOLE_SCREEN_BUFFER_INFO screen_buffer;
   GetConsoleScreenBufferInfo(console, &screen_buffer);
   original_attributes = screen_buffer.wAttributes;
+}
+
+// Cleanup for escape translation: put things back to normal
+void FinishEscapeTranslation(HANDLE console) {
+  CONSOLE_SCREEN_BUFFER_INFO screen_buffer;
+  SetConsoleTextAttribute(console, original_attributes);
 }
 
 /// Perform an escape code
