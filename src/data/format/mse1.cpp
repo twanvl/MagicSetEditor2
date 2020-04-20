@@ -51,7 +51,7 @@ SetP MSE1FileFormat::importSet(const String& filename) {
   // file version check
   String format = file.ReadLine();
   if (format.substr(0,8) != _("MTG Set8")) {
-    throw ParseError(_("Expected MSE format version 8\nTo convert files made with older versions of Magic Set Editor:\n  1. Download the latest version 1 from http:;//magicsetedtitor.sourceforge.net\n  2. Open the set, then save the set\n  3. Try to open them again in this program."));
+    throw ParseError(_("Expected MSE format version 8\nTo convert files made with older versions of Magic Set Editor:\n  1. Download the latest version 1 from http:://magicsetedtitor.sourceforge.net\n  2. Open the set, then save the set\n  3. Try to open them again in this program."));
   }
   // read general info
   set->value<TextValue>(_("title"))    .value = file.ReadLine();
