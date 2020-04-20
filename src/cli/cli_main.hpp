@@ -35,7 +35,6 @@ private:
   #if USE_SCRIPT_PROFILING
     void showProfilingStats(const FunctionProfile& parent, int level = 0);
   #endif
-  void print_pending_errors();
   
   /// our own context, when no set is loaded
   Context& getContext();

@@ -152,9 +152,9 @@ void TextIOHandler::flushRaw() {
   if (!buffer.empty()) {
     #ifdef UNICODE
       wxCharBuffer buf = buffer.mb_str(wxConvUTF8);
-      fputs(buf,stdout);
+      fputs(buf,stream);
     #else
-      fputs(buffer.c_str(),stdout);
+      fputs(buffer.c_str(), stream);
     #endif
   }
   fflush(stdout);
@@ -176,6 +176,20 @@ void TextIOHandler::show_message(MessageType type, String const& message) {
   flush();
   stream = stdout;
   if (raw_mode) raw_mode_status = max(raw_mode_status, type == MESSAGE_WARNING ? 1 : 2);
+}
+
+void TextIOHandler::print_pending_errors() {
+  MessageType type;
+  String msg;
+  while (get_queued_message(type, msg)) {
+    if (haveConsole()) {
+      show_message(type, msg);
+      flush();
+    } else {
+      // no console, use a messagebox instead
+      wxMessageBox(msg, wxMessageBoxCaptionStr, type == MESSAGE_INFO ? wxICON_INFORMATION : type == MESSAGE_WARNING ? wxICON_WARNING : wxICON_ERROR);
+    }
+  }
 }
 
 bool TextIOHandler::shown_errors() const {

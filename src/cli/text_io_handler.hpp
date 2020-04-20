@@ -38,6 +38,7 @@ public:
   
   /// Show an error or warning message
   void show_message(MessageType type, String const& message);
+  void print_pending_errors();
   bool shown_errors() const;
   
   /// Enable raw mode
@@ -49,7 +50,7 @@ public:
 private:
   bool have_console;
   bool escapes;
-  FILE* stream;
+  FILE* stream; ///< Output stream
   String buffer; ///< Buffer when not writing to console
   bool raw_mode;
   int raw_mode_status;

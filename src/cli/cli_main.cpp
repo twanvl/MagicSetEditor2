@@ -99,7 +99,7 @@ bool run_script_file(String const& filename) {
 void CLISetInterface::run() {
   // show welcome logo
   if (!quiet) showWelcome();
-  print_pending_errors();
+  cli.print_pending_errors();
   // loop
   running = true;
   while (running) {
@@ -112,7 +112,7 @@ void CLISetInterface::run() {
     String command = cli.getLine();
     if (command.empty() && !cli.canGetLine()) break;
     handleCommand(command);
-    print_pending_errors();
+    cli.print_pending_errors();
     cli.flush();
     cli.flushRaw();
   }
@@ -260,11 +260,3 @@ void CLISetInterface::handleCommand(const String& command) {
     }
   }
 #endif
-
-void CLISetInterface::print_pending_errors() {
-  MessageType type;
-  String msg;
-  while (get_queued_message(type,msg)) {
-    cli.show_message(type,msg);
-  }
-}
