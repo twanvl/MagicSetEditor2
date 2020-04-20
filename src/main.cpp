@@ -96,11 +96,17 @@ int MSE::OnRun() {
     nag_about_ascii_version();
     
     // interpret command line
-    if (argc > 1) {
-      try {
-        String arg = argv[1];
+    {
+      // ingnore the --color argument, it is handled by cli.init()
+      vector<String> args;
+      for (int i = 1; i < argc; ++i) {
+        args.push_back(argv[i]);
+        if (args.back() == _("--color")) args.pop_back();
+      }
+      if (!args.empty()) {
+        const String& arg = args[0];
         // Find the extension
-        wxFileName f(arg.Mid(0,arg.find_last_not_of(_("\\/"))+1));
+        wxFileName f(arg.Mid(0,arg.find_last_not_of(_("\\/")) + 1));
         if (f.GetExt() == _("mse-symbol")) {
           // Show the symbol editor
           Window* wnd = new SymbolWindow(nullptr, arg);
@@ -114,10 +120,9 @@ int MSE::OnRun() {
         } else if (f.GetExt() == _("mse-installer")) {
           // Installer; install it
           InstallType type = settings.install_type;
-          if (argc > 2) {
-            String arg = argv[2];
-            if (starts_with(argv[2], _("--")) && arg != _("--color")) {
-              parse_enum(String(argv[2]).substr(2), type);
+          if (args.size() > 1) {
+            if (starts_with(args[1], _("--"))) {
+              parse_enum(String(args[1]).substr(2), type);
             }
           }
           InstallerP installer = open_package<Installer>(argv[1]);
@@ -136,9 +141,9 @@ int MSE::OnRun() {
         } else if (arg == _("--create-installer")) {
           // create an installer
           Installer inst;
-          for (int i = 2 ; i < argc ; ++i) {
-            if (!starts_with(argv[i],_("--"))) {
-              inst.addPackage(argv[i]);
+          FOR_EACH(arg, args) {
+            if (!starts_with(arg, _("--"))) {
+              inst.addPackage(arg);
             }
           }
           if (inst.prefered_filename.empty()) {
@@ -196,7 +201,7 @@ int MSE::OnRun() {
           cli << ENDL;
           cli.flush();
           return EXIT_SUCCESS;
-        } else if (arg == _("--version") || arg == _("-v")) {
+        } else if (arg == _("--version") || arg == _("-v") || arg == _("-V")) {
           // dump version
           cli << _("Magic Set Editor\n");
           cli << _("Version ") << app_version.toString() << version_suffix << ENDL;
@@ -206,9 +211,9 @@ int MSE::OnRun() {
           // command line interface
           SetP set;
           bool quiet = false;
-          for (int i = 2 ; i < argc ; ++i) {
-            String arg = argv[i];
-            wxFileName f(argv[i]);
+          for (size_t i = 1; i < args.size(); ++i) {
+            String const& arg = args[i];
+            wxFileName f(arg);
             if (f.GetExt() == _("mse-set") || f.GetExt() == _("mse") || f.GetExt() == _("set")) {
               set = import_set(arg);
             } else if (arg == _("-q") || arg == _("--quiet")) {
@@ -221,32 +226,29 @@ int MSE::OnRun() {
           CLISetInterface cli_interface(set,quiet);
           return EXIT_SUCCESS;
         } else if (arg == _("--export")) {
-          if (argc <= 2 || (argc <= 3 && starts_with(argv[2],_("--")))) {
+          if (args.size() < 2) {
             handle_error(Error(_("No input file specified for --export")));
             return EXIT_FAILURE;
           }
-          SetP set = import_set(argv[2]);
+          SetP set = import_set(args[1]);
           // path
-          String out = argc >= 3 && !starts_with(argv[3],_("--"))
-                     ? argv[3]
-                     : settings.gameSettingsFor(*set->game).images_export_filename;
+          String out = args.size() >= 3 && !starts_with(args[2], _("--"))
+            ? args[2]
+            : settings.gameSettingsFor(*set->game).images_export_filename;
           String path = _(".");
           size_t pos = out.find_last_of(_("/\\"));
           if (pos != String::npos) {
             path = out.substr(0, pos);
             if (!wxDirExists(path)) wxMkdir(path);
             path += _("/x");
-            out  = out.substr(pos + 1);
+            out = out.substr(pos + 1);
           }
           // export
           export_images(set, set->cards, path, out, CONFLICT_NUMBER_OVERWRITE);
           return EXIT_SUCCESS;
         } else {
-          handle_error(_("Invalid command line argument:\n") + String(argv[1]));
+          handle_error(_("Invalid command line argument:\n") + arg);
         }
-      } catch (const Error& e) {
-        handle_error(e);
-        return EXIT_FAILURE;
       }
     }
     
@@ -255,6 +257,7 @@ int MSE::OnRun() {
     return runGUI();
     
   } CATCH_ALL_ERRORS(true);
+  cli.print_pending_errors();
   return EXIT_FAILURE;
 }
 
