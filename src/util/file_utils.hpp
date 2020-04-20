@@ -25,6 +25,13 @@ String normalize_internal_filename(const String& filename);
 /** true for hidden OS and version control files */
 bool ignore_file(const String& name);
 
+/// Add an extension to a filename if it is not already present
+/**  add_extension("test",".txt") == "test.txt"
+ *   add_extension("test.txt",".txt") == "test.txt"
+ *   add_extension("test.xyz",".txt") == "test.xyz.txt"
+ */
+String add_extension(const String& filename, String const& extension);
+
 /// Make sure a string is safe to use as a filename
 String clean_filename(const String& name);
 

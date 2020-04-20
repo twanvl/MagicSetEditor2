@@ -258,7 +258,7 @@ int MSE::OnRun() {
             throw Error(_("No input set file specified for --export"));
           }
           String export_template = args[1];
-          ExportTemplateP exp = package_manager.open<ExportTemplate>(export_template);
+          ExportTemplateP exp = ExportTemplate::byName(export_template);
           SetP set = import_set(args[2]);
           String out = args.size() >= 4 ? args[3] : _("");
           ScriptValueP result = export_set(set, set->cards, exp, out);

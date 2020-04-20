@@ -11,6 +11,7 @@
 #include <data/game.hpp>
 #include <data/set.hpp>
 #include <data/field.hpp>
+#include <util/io/package_manager.hpp>
 
 // ----------------------------------------------------------------------------- : Export template, basics
 
@@ -18,6 +19,10 @@ ExportTemplate::ExportTemplate()
   : file_type(_("HTML files (*.html)|*.html"))
   , create_directory(false)
 {}
+
+ExportTemplateP ExportTemplate::byName(const String& name) {
+  return package_manager.open<ExportTemplate>(add_extension(name, _(".mse-export-template")));
+}
 
 String ExportTemplate::typeNameStatic() { return _("export-template"); }
 String ExportTemplate::typeName() const { return _("export-template"); }

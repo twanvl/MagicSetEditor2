@@ -38,6 +38,14 @@ bool ignore_file(const String& name) {
   return name == _("Thumbs.db"); // winXP explorer thumbnails
 }
 
+String add_extension(const String& filename, String const& extension) {
+  if (extension.size() <= filename.size() && is_substr(filename, filename.size() - extension.size(), extension)) {
+    return filename;
+  } else {
+    return filename + extension;
+  }
+}
+
 bool is_filename_char(Char c) {
   return isAlnum(c) || c == _(' ') || c == _('_') || c == _('-') || c == _('.');
 }

@@ -24,7 +24,7 @@ DECLARE_POINTER_TYPE(Package);
 
 /// A template for exporting sets to HTML or text format
 class ExportTemplate : public Packaged {
-  public:
+public:
   ExportTemplate();
   
   GameP                   game;        ///< Game this template is for
@@ -38,7 +38,9 @@ class ExportTemplate : public Packaged {
   virtual String typeName() const;
   Version fileVersion() const;
   virtual void validate(Version = app_version);
-  private:
+  /// Loads the export template with a particular name
+  static ExportTemplateP byName(const String & name);
+private:
   DECLARE_REFLECTION();
 };
 
