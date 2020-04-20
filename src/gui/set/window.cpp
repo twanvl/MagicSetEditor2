@@ -452,7 +452,7 @@ bool SetWindow::askSaveAndContinue() {
     try {
       if (set->needSaveAs()) {
         // need save as
-        wxFileDialog dlg(this, _TITLE_("save set"), settings.default_set_dir, set->short_name, export_formats(*set->game), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+        wxFileDialog dlg(this, _TITLE_("save set"), settings.default_set_dir, clean_filename(set->short_name), export_formats(*set->game), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
         if (dlg.ShowModal() == wxID_OK) {
           settings.default_set_dir = dlg.GetDirectory();
           export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
@@ -587,7 +587,7 @@ void SetWindow::onFileSave(wxCommandEvent& ev) {
 }
 
 void SetWindow::onFileSaveAs(wxCommandEvent&) {
-  wxFileDialog dlg(this, _TITLE_("save set"), settings.default_set_dir, set->short_name, export_formats(*set->game), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+  wxFileDialog dlg(this, _TITLE_("save set"), settings.default_set_dir, clean_filename(set->short_name), export_formats(*set->game), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
   if (dlg.ShowModal() == wxID_OK) {
     settings.default_set_dir = dlg.GetDirectory();
     export_set(*set, dlg.GetPath(), dlg.GetFilterIndex());
