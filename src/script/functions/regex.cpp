@@ -128,8 +128,7 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(replace) {
     SCRIPT_RETURN(replacer.apply(ctx, input));
   } else {
     // simple replacing
-    replacer.match->replace_all(&input, replacer.replacement_string);
-    SCRIPT_RETURN(input);
+    SCRIPT_RETURN(replacer.match->replace_all(input, replacer.replacement_string));
   }
 }
 SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(replace) {

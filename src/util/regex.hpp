@@ -85,7 +85,7 @@
     inline bool matches(Results& results, const String::const_iterator& begin, const String::const_iterator& end) const {
       return regex_search(begin, end, results, regex);
     }
-    void replace_all(String* input, const String& format);
+    String replace_all(const String& input, const String& format) const;
     
     inline bool empty() const {
       return regex.empty();

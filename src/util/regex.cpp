@@ -24,10 +24,8 @@ void Regex::assign(const String& code) {
   }
 }
 
-void Regex::replace_all(String* input, const String& format) {
-  wxStdString std_string = toStdString(*input);
-  regex_replace(std_string, regex, toStdString(format), boost::format_sed);
-  *input = std_string;
+String Regex::replace_all(const String& input, const String& format) const {
+  return regex_replace(toStdString(input), regex, toStdString(format), boost::format_sed);
 }
 
 #else // USE_BOOST_REGEX
