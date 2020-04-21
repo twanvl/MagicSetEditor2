@@ -43,7 +43,7 @@ Rotation ValueViewer::getRotation() const {
   // on windows, wxDOT is not actually dotted, so use a custom style to achieve that
   static wxDash dashes_dotted[] = { 0,2 };
   wxPen dotted_pen(wxColour const& color) {
-    wxPen pen(color, 1, wxUSER_DASH);
+    wxPen pen(color, 1, wxPENSTYLE_USER_DASH);
     pen.SetDashes(2, dashes_dotted);
     return pen;
   }
