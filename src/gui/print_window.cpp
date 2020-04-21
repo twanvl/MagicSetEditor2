@@ -127,22 +127,22 @@ void CardsPrintout::drawCard(DC& dc, const CardP& card, int card_nr) {
                , job->layout.margin_top  + (job->layout.card_size.height + job->layout.card_spacing.height) * row);
   // determine rotation
   const StyleSheet& stylesheet = job->set->stylesheetFor(card);
-  int rotation = 0;
+  Radians rotation = 0;
   if ((stylesheet.card_width > stylesheet.card_height) != job->layout.card_landscape) {
-    rotation = 90 - rotation;
+    rotation = rad90;
   }
   /*
   // size of this particular card (in mm)
   RealSize card_size( stylesheet.card_width  * 25.4 / stylesheet.card_dpi
                     , stylesheet.card_height * 25.4 / stylesheet.card_dpi);
-  if (rotation == 90) swap(card_size.width, card_size.height);
+  if (is_rad90(rotation)) swap(card_size.width, card_size.height);
   // adjust card size, to center card in the available space (from job->layout.card_size)?
   // TODO: deal with different sized cards in general
   */
   
   // create buffers
   int w = int(stylesheet.card_width), h = int(stylesheet.card_height); // in pixels
-  if (rotation == 90) swap(w,h);
+  if (is_rad90(rotation)) swap(w,h);
   // Draw using text buffer
   double zoom = IsPreview() ? 1 : 4;
   wxBitmap buffer(w*zoom,h*zoom,32);
