@@ -391,7 +391,7 @@ bool is_substr_i(const String& str, size_t pos, const String& cmp) {
   return is_substr_i(str, pos, static_cast<const Char*>(cmp.c_str()));
 }
 
-bool cannocial_name_compare(const String& as, const Char* b) {
+bool canonical_name_compare(const String& as, const Char* b) {
   const Char* a = as.c_str();
   while (true) {
     if (*a != *b && !(*a == _(' ') && *b == _('_'))) return false;

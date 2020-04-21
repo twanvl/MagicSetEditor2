@@ -210,7 +210,7 @@ bool is_substr_i(const String& str, size_t pos, const String& cmp);
 size_t find_i(const String& heystack, const String& needle);
 
 /// Compare two strings for equality, b may contain '_' where a contains ' '
-bool cannocial_name_compare(const String& a, const Char* b);
+bool canonical_name_compare(const String& a, const Char* b);
 
 // ----------------------------------------------------------------------------- : Regular expressions
 
