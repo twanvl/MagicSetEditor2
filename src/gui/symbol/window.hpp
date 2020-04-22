@@ -20,7 +20,7 @@ DECLARE_POINTER_TYPE(ValueActionPerformer);
 // ----------------------------------------------------------------------------- : SymbolWindow
 
 /// The window for editing symbols
-class SymbolWindow : public Frame {
+class SymbolWindow : public wxFrame {
   public:
   /// Construct a SymbolWindow
   SymbolWindow(Window* parent);

@@ -40,7 +40,7 @@ void KeywordsPanel::initControls() {
   // init controls
   splitter  = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
   list      = new KeywordList(splitter, ID_KEYWORD_LIST);
-  panel     = new Panel(splitter, wxID_ANY);
+  panel     = new wxPanel(splitter, wxID_ANY);
   keyword   = new TextCtrl(panel, ID_KEYWORD,  false);
   mode      = new wxChoice(panel, ID_KEYWORD_MODE, wxDefaultPosition, wxDefaultSize, 0, nullptr);
   match     = new TextCtrl(panel, ID_MATCH,    false);

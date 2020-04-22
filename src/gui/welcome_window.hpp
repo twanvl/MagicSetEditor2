@@ -24,7 +24,7 @@ DECLARE_POINTER_TYPE(Set);
  *  in the future also:
  *    - new game, new style?
  */
-class WelcomeWindow : public Frame {
+class WelcomeWindow : public wxFrame {
   public:
   WelcomeWindow();
   

@@ -49,9 +49,7 @@ using namespace std;
 
 // Remove some of the wxUglyness
 
-typedef wxPanel  Panel;
 typedef wxWindow Window;
-typedef wxFrame  Frame;
 
 typedef wxBitmap Bitmap;
 typedef wxImage  Image;

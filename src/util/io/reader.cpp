@@ -96,7 +96,7 @@ bool Reader::enterAnyBlock() {
 bool Reader::enterBlock(const Char* name) {
   if (state == ENTERED) moveNext(); // on the key of the parent block, first move inside it
   if (indent != expected_indent) return false; // not enough indentation
-  if (canonical_name_compare(key, name)) {
+  if (key == name) {
     state = ENTERED;
     expected_indent += 1; // the indent inside the block must be at least this much
     return true;

@@ -301,7 +301,7 @@ ConsolePanel::ConsolePanel(Window* parent, int id)
   // init controls
   splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
   messages = new MessageCtrl(splitter, ID_MESSAGE_LIST);
-  entry_panel = new Panel(splitter, wxID_ANY);
+  entry_panel = new wxPanel(splitter, wxID_ANY);
   entry = new wxTextCtrl(entry_panel, wxID_ANY, _(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
   wxButton* evaluate = new wxButton(entry_panel, ID_EVALUATE, _BUTTON_("evaluate"));
   // init sizer for entry_panel

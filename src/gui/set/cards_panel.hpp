@@ -78,7 +78,7 @@ class CardsPanel : public SetWindowPanel {
   wxSplitterWindow* splitter;
   DataEditor*       editor;
   FilteredImageCardList* card_list;
-  Panel*            nodes_panel;
+  wxPanel*          nodes_panel;
   TextCtrl*         notes;
   HoverButton*      collapse_notes;
   FilterCtrl*       filter;
