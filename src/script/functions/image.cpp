@@ -106,16 +106,16 @@ SCRIPT_FUNCTION(recolor_image) {
 
 SCRIPT_FUNCTION(enlarge) {
   SCRIPT_PARAM_C(GeneratedImageP, input);
-  SCRIPT_PARAM_N(double, _("border size"), border_size);
+  SCRIPT_PARAM(double, border_size);
   return intrusive(new EnlargeImage(input, border_size));
 }
 
 SCRIPT_FUNCTION(crop) {
   SCRIPT_PARAM_C(GeneratedImageP, input);
-  SCRIPT_PARAM_N(int, _("width"),       width);
-  SCRIPT_PARAM_N(int, _("height"),      height);
-  SCRIPT_PARAM_N(double, _("offset x"), offset_x);
-  SCRIPT_PARAM_N(double, _("offset y"), offset_y);
+  SCRIPT_PARAM(int, width);
+  SCRIPT_PARAM(int, height);
+  SCRIPT_PARAM(double, offset_x);
+  SCRIPT_PARAM(double, offset_y);
   return intrusive(new CropImage(input, width, height, offset_x, offset_y));
 }
 
@@ -131,17 +131,17 @@ SCRIPT_FUNCTION(flip_vertical) {
 
 SCRIPT_FUNCTION(rotate) {
   SCRIPT_PARAM_C(GeneratedImageP, input);
-  SCRIPT_PARAM_N(Degrees, _("angle"), angle);
+  SCRIPT_PARAM(Degrees, angle);
   return intrusive(new RotateImage(input,deg_to_rad(angle)));
 }
 
 SCRIPT_FUNCTION(drop_shadow) {
   SCRIPT_PARAM_C(GeneratedImageP, input);
-  SCRIPT_OPTIONAL_PARAM_N_(double, _("offset x"),    offset_x);
-  SCRIPT_OPTIONAL_PARAM_N_(double, _("offset y"),    offset_y);
-  SCRIPT_OPTIONAL_PARAM_N_(double, _("alpha"),       alpha);
-  SCRIPT_OPTIONAL_PARAM_N_(double, _("blur radius"), blur_radius);
-  SCRIPT_OPTIONAL_PARAM_N_(Color,  _("color"),       color);
+  SCRIPT_OPTIONAL_PARAM_(double, offset_x);
+  SCRIPT_OPTIONAL_PARAM_(double, offset_y);
+  SCRIPT_OPTIONAL_PARAM_(double, alpha);
+  SCRIPT_OPTIONAL_PARAM_(double, blur_radius);
+  SCRIPT_OPTIONAL_PARAM_(Color,  color);
   return intrusive(new DropShadowImage(input, offset_x, offset_y, alpha, blur_radius, color));
 }
 
@@ -176,30 +176,30 @@ SCRIPT_FUNCTION(symbol_variation) {
     throw ScriptError(_("Variation of symbol not found ('") + variation + _("')"));
   } else {
     // custom variation
-    SCRIPT_PARAM_N(double, _("border radius"), border_radius);
-    SCRIPT_OPTIONAL_PARAM_N_(String, _("fill type"), fill_type);
+    SCRIPT_PARAM(double, border_radius);
+    SCRIPT_OPTIONAL_PARAM_(String, fill_type);
     SymbolVariationP var(new SymbolVariation);
     var->border_radius = border_radius;
     if (fill_type == _("solid") || fill_type.empty()) {
-      SCRIPT_PARAM_N(Color, _("fill color"),   fill_color);
-      SCRIPT_PARAM_N(Color, _("border color"), border_color);
+      SCRIPT_PARAM(Color, fill_color);
+      SCRIPT_PARAM(Color, border_color);
       var->filter = intrusive(new SolidFillSymbolFilter(fill_color, border_color));
     } else if (fill_type == _("linear gradient")) {
-      SCRIPT_PARAM_N(Color, _("fill color 1"),   fill_color_1);
-      SCRIPT_PARAM_N(Color, _("border color 1"), border_color_1);
-      SCRIPT_PARAM_N(Color, _("fill color 2"),   fill_color_2);
-      SCRIPT_PARAM_N(Color, _("border color 2"), border_color_2);
-      SCRIPT_PARAM_N(double, _("center x"), center_x);
-      SCRIPT_PARAM_N(double, _("center y"), center_y);
-      SCRIPT_PARAM_N(double, _("end x"), end_x);
-      SCRIPT_PARAM_N(double, _("end y"), end_y);
+      SCRIPT_PARAM(Color, fill_color_1);
+      SCRIPT_PARAM(Color, border_color_1);
+      SCRIPT_PARAM(Color, fill_color_2);
+      SCRIPT_PARAM(Color, border_color_2);
+      SCRIPT_PARAM(double, center_x);
+      SCRIPT_PARAM(double, center_y);
+      SCRIPT_PARAM(double, end_x);
+      SCRIPT_PARAM(double, end_y);
       var->filter = intrusive(new LinearGradientSymbolFilter(fill_color_1, border_color_1, fill_color_2, border_color_2
                                                             ,center_x, center_y, end_x, end_y));
     } else if (fill_type == _("radial gradient")) {
-      SCRIPT_PARAM_N(Color, _("fill color 1"),   fill_color_1);
-      SCRIPT_PARAM_N(Color, _("border color 1"), border_color_1);
-      SCRIPT_PARAM_N(Color, _("fill color 2"),   fill_color_2);
-      SCRIPT_PARAM_N(Color, _("border color 2"), border_color_2);
+      SCRIPT_PARAM(Color, fill_color_1);
+      SCRIPT_PARAM(Color, border_color_1);
+      SCRIPT_PARAM(Color, fill_color_2);
+      SCRIPT_PARAM(Color, border_color_2);
       var->filter = intrusive(new RadialGradientSymbolFilter(fill_color_1, border_color_1, fill_color_2, border_color_2));
     } else {
       throw ScriptError(_("Unknown fill type for symbol_variation: ") + fill_type);
@@ -216,22 +216,22 @@ SCRIPT_FUNCTION(built_in_image) {
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_image_functions(Context& ctx) {
-  ctx.setVariable(_("to image"),         script_to_image);
-  ctx.setVariable(_("linear blend"),     script_linear_blend);
-  ctx.setVariable(_("masked blend"),     script_masked_blend);
-  ctx.setVariable(_("combine blend"),    script_combine_blend);
-  ctx.setVariable(_("set mask"),         script_set_mask);
-  ctx.setVariable(_("set alpha"),        script_set_alpha);
-  ctx.setVariable(_("set combine"),      script_set_combine);
+  ctx.setVariable(_("to_image"),         script_to_image);
+  ctx.setVariable(_("linear_blend"),     script_linear_blend);
+  ctx.setVariable(_("masked_blend"),     script_masked_blend);
+  ctx.setVariable(_("combine_blend"),    script_combine_blend);
+  ctx.setVariable(_("set_mask"),         script_set_mask);
+  ctx.setVariable(_("set_alpha"),        script_set_alpha);
+  ctx.setVariable(_("set_combine"),      script_set_combine);
   ctx.setVariable(_("saturate"),         script_saturate);
-  ctx.setVariable(_("invert image"),     script_invert_image);
-  ctx.setVariable(_("recolor image"),    script_recolor_image);
+  ctx.setVariable(_("invert_image"),     script_invert_image);
+  ctx.setVariable(_("recolor_image"),    script_recolor_image);
   ctx.setVariable(_("enlarge"),          script_enlarge);
   ctx.setVariable(_("crop"),             script_crop);
-  ctx.setVariable(_("flip horizontal"),  script_flip_horizontal);
-  ctx.setVariable(_("flip vertical"),    script_flip_vertical);
+  ctx.setVariable(_("flip_horizontal"),  script_flip_horizontal);
+  ctx.setVariable(_("flip_vertical"),    script_flip_vertical);
   ctx.setVariable(_("rotate"),           script_rotate);
-  ctx.setVariable(_("drop shadow"),      script_drop_shadow);
-  ctx.setVariable(_("symbol variation"), script_symbol_variation);
-  ctx.setVariable(_("built in image"),   script_built_in_image);
+  ctx.setVariable(_("drop_shadow"),      script_drop_shadow);
+  ctx.setVariable(_("symbol_variation"), script_symbol_variation);
+  ctx.setVariable(_("built_in_image"),   script_built_in_image);
 }

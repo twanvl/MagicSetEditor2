@@ -96,8 +96,8 @@ SCRIPT_FUNCTION(check_spelling) {
   assert_tagged(input);
   if (!settings.stylesheetSettingsFor(*stylesheet).card_spellcheck_enabled)
     SCRIPT_RETURN(input);
-  SCRIPT_OPTIONAL_PARAM_N_(String,_("extra dictionary"),extra_dictionary);
-  SCRIPT_OPTIONAL_PARAM_N_(ScriptValueP,_("extra match"),extra_match);
+  SCRIPT_OPTIONAL_PARAM_(String, extra_dictionary);
+  SCRIPT_OPTIONAL_PARAM_(ScriptValueP, extra_match);
   // remove old spelling error tags
   input = remove_tag(input, _("<error-spelling"));
   // no language -> spelling checking
@@ -176,6 +176,6 @@ SCRIPT_FUNCTION(check_spelling_word) {
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_spelling_functions(Context& ctx) {
-  ctx.setVariable(_("check spelling"),       script_check_spelling);
-  ctx.setVariable(_("check spelling word"),  script_check_spelling_word);
+  ctx.setVariable(_("check_spelling"),       script_check_spelling);
+  ctx.setVariable(_("check_spelling_word"),  script_check_spelling_word);
 }

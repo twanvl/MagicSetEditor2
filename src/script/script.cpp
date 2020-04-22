@@ -58,7 +58,7 @@ void init_script_variables() {
   Var(in);
   Var(match);
   Var(replace);
-  VarN(in_context,_("in context"));
+  Var(in_context);
   Var(recursive);
   Var(order);
   Var(begin);
@@ -72,7 +72,7 @@ void init_script_variables() {
   Var(set);
   Var(game);
   Var(stylesheet);
-  VarN(card_style,_("card style"));
+  Var(card_style);
   Var(card);
   Var(styling);
   Var(value);

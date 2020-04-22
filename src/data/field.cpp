@@ -51,6 +51,7 @@ IMPLEMENT_REFLECTION(Field) {
   }
   REFLECT(name);
   REFLECT_IF_READING name = canonical_name_form(name);
+  REFLECT(caption);
   REFLECT(description);
   REFLECT_N("icon", icon_filename);
   REFLECT(editable);
@@ -64,9 +65,10 @@ IMPLEMENT_REFLECTION(Field) {
   REFLECT(card_list_allow);
   REFLECT(card_list_name);
   REFLECT(sort_script);
-  REFLECT_IF_READING if(card_list_name.empty()) card_list_name = name;
   REFLECT_N("card_list_alignment", card_list_align);
   REFLECT(tab_index);
+  REFLECT_IF_READING if(caption.empty()) caption = name_to_caption(name);
+  REFLECT_IF_READING if(card_list_name.empty()) card_list_name = capitalize(caption);
 }
 
 template <>

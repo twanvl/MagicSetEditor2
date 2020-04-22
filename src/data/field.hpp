@@ -44,8 +44,9 @@ class Field : public IntrusivePtrVirtualBase {
   
   size_t    index;            ///< Used by IndexMap
   String    name;             ///< Name of the field, for refering to it from scripts and files
+  String    caption;          ///< Caption for NativeLookEditor
   String    description;      ///< Description, used in status bar
-  String    icon_filename;  ///< Filename for an icon (for list of fields)
+  String    icon_filename;    ///< Filename for an icon (for list of fields)
   bool      editable;         ///< Can values of this field be edited?
   bool      save_value;       ///< Should values of this field be written to files? Can be false for script generated fields.
   bool      show_statistics;  ///< Should this field appear as a group by choice in the statistics panel?

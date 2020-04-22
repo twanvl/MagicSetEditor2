@@ -53,7 +53,7 @@ IMPLEMENT_REFLECTION_NAMELESS(MultipleChoiceValue) {
 
 bool MultipleChoiceValue::update(Context& ctx) {
   String old_value = value();
-  ctx.setVariable(_("last change"), to_script(last_change));
+  ctx.setVariable(_("last_change"), to_script(last_change));
   ChoiceValue::update(ctx);
   normalForm();
   return value() != old_value;

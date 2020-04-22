@@ -63,7 +63,7 @@ String InfoValue::toString() const {
   return value;
 }
 bool InfoValue::update(Context& ctx) {
-  if (value.empty()) value = field().name;
+  if (value.empty()) value = field().caption;
   bool change = field().script.invokeOn(ctx, value);
   Value::update(ctx);
   return change;

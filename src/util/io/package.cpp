@@ -495,7 +495,7 @@ IMPLEMENT_REFLECTION(Packaged) {
   REFLECT(installer_group);
   REFLECT(version);
   REFLECT(compatible_version);
-  REFLECT_NO_SCRIPT_N("depends ons", dependencies); // hack for singular_form
+  REFLECT_NO_SCRIPT_N("depends_ons", dependencies); // hack for singular_form
 }
 
 Packaged::Packaged()

@@ -76,7 +76,7 @@ class GameSettings : public IntrusivePtrBase<GameSettings> {
   
   String                      default_stylesheet;
   String                      default_export;
-  map<String, ColumnSettings> columns;
+  map<String, ColumnSettings> cardlist_columns;
   String                      sort_cards_by;
   bool                        sort_cards_ascending;
   String                      images_export_filename;

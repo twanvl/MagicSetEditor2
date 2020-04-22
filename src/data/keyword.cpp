@@ -675,8 +675,8 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
     part_start = part_end;
   }
   ctx.setVariable(_("mode"), to_script(kw.mode));
-  ctx.setVariable(_("correct case"), to_script(correct_case));
-  ctx.setVariable(_("used placeholders"), to_script(used_placeholders));
+  ctx.setVariable(_("correct_case"), to_script(correct_case));
+  ctx.setVariable(_("used_placeholders"), to_script(used_placeholders));
   
   // Final check whether the keyword matches
   if (match_condition && (bool)*match_condition->eval(ctx) == false) {

@@ -105,7 +105,7 @@ struct RegexReplacer {
   }
 };
 
-SCRIPT_FUNCTION_WITH_SIMPLIFY(replace) {
+SCRIPT_FUNCTION_WITH_SIMPLIFY(replace_text) {
   // construct replacer
   RegexReplacer replacer;
   replacer.match = from_script<ScriptRegexP>(ctx.getVariable(SCRIPT_VAR_match), SCRIPT_VAR_match);
@@ -131,7 +131,7 @@ SCRIPT_FUNCTION_WITH_SIMPLIFY(replace) {
     SCRIPT_RETURN(replacer.match->replace_all(input, replacer.replacement_string));
   }
 }
-SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(replace) {
+SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(replace_text) {
   FOR_EACH(b, closure.bindings) {
     if (b.first == SCRIPT_VAR_match || b.first == SCRIPT_VAR_in_context) {
       b.second = regex_from_script(b.second); // pre-compile
@@ -198,7 +198,7 @@ SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(break_text) {
 SCRIPT_FUNCTION_WITH_SIMPLIFY(split_text) {
   SCRIPT_PARAM_C(String, input);
   SCRIPT_PARAM_C(ScriptRegexP, match);
-  SCRIPT_PARAM_DEFAULT_N(bool, _("include empty"), include_empty, true);
+  SCRIPT_PARAM_DEFAULT(bool, include_empty, true);
   ScriptCustomCollectionP ret(new ScriptCustomCollection);
   // find all matches
   String::const_iterator start = input.begin();
@@ -227,12 +227,12 @@ SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(split_text) {
 
 // ----------------------------------------------------------------------------- : Rules : regex match
 
-SCRIPT_FUNCTION_WITH_SIMPLIFY(match) {
+SCRIPT_FUNCTION_WITH_SIMPLIFY(match_text) {
   SCRIPT_PARAM_C(String, input);
   SCRIPT_PARAM_C(ScriptRegexP, match);
   SCRIPT_RETURN(match->matches(input));
 }
-SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(match) {
+SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(match_text) {
   FOR_EACH(b, closure.bindings) {
     if (b.first == SCRIPT_VAR_match) {
       b.second = regex_from_script(b.second); // pre-compile
@@ -244,13 +244,15 @@ SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(match) {
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_regex_functions(Context& ctx) {
-  ctx.setVariable(_("replace"),              script_replace);
-  ctx.setVariable(_("filter text"),          script_filter_text);
-  ctx.setVariable(_("break text"),           script_break_text);
-  ctx.setVariable(_("split text"),           script_split_text);
-  ctx.setVariable(_("match"),                script_match);
-  ctx.setVariable(_("replace rule"),         intrusive(new ScriptRule(script_replace)));
-  ctx.setVariable(_("filter rule"),          intrusive(new ScriptRule(script_filter_text)));
-  ctx.setVariable(_("break rule"),           intrusive(new ScriptRule(script_break_text)));
-  ctx.setVariable(_("match rule"),           intrusive(new ScriptRule(script_match)));
+  ctx.setVariable(_("replace_text"),         script_replace_text);
+  ctx.setVariable(_("replace"),              script_replace_text); // old name
+  ctx.setVariable(_("filter_text"),          script_filter_text);
+  ctx.setVariable(_("break_text"),           script_break_text);
+  ctx.setVariable(_("split_text"),           script_split_text);
+  ctx.setVariable(_("match_text"),           script_match_text);
+  ctx.setVariable(_("match"),                script_match_text); // old name
+  ctx.setVariable(_("replace_rule"),         intrusive(new ScriptRule(script_replace_text)));
+  ctx.setVariable(_("filter_rule"),          intrusive(new ScriptRule(script_filter_text)));
+  ctx.setVariable(_("break_rule"),           intrusive(new ScriptRule(script_break_text)));
+  ctx.setVariable(_("match_rule"),           intrusive(new ScriptRule(script_match_text)));
 }

@@ -89,9 +89,12 @@ String warn_and_identity(const String& key) {
   queue_message(MESSAGE_WARNING, _("Missing key in locale: ") + key);
   return key;
 }
+String identity(const String& key) {
+  return key;
+}
 
 String SubLocale::tr(const String& key, DefaultLocaleFun def) {
-  map<String,String>::const_iterator it = translations.find(key);
+  map<String,String>::const_iterator it = translations.find(canonical_name_form(key));
   if (it == translations.end()) {
     return def(key);
   } else {
@@ -99,7 +102,7 @@ String SubLocale::tr(const String& key, DefaultLocaleFun def) {
   }
 }
 String SubLocale::tr(const String& subcat, const String& key, DefaultLocaleFun def) {
-  map<String,String>::const_iterator it = translations.find(subcat + _(" ") + key);
+  map<String,String>::const_iterator it = translations.find(subcat + _("_") + canonical_name_form(key));
   if (it == translations.end()) {
     return def(key);
   } else {

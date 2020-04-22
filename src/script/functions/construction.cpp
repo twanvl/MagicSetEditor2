@@ -55,5 +55,5 @@ SCRIPT_FUNCTION(new_card) {
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_construction_functions(Context& ctx) {
-  ctx.setVariable(_("new card"), script_new_card);
+  ctx.setVariable(_("new_card"), script_new_card);
 }

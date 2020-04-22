@@ -160,11 +160,14 @@ String capitalize(const String&);
 String capitalize_sentence(const String&);
 
 /// Convert a field name to canonical form
-/** - lower case and ' ' instead of '_'.
- *  - non alphanumeric characters are droped
- *  - "camalCase" is converted to words "camel case" (TODO)
+/** - converts ' ' to '_'
  */
 String canonical_name_form(const String&);
+/// Undo canonical_name_form: replace '_' by ' '
+String uncanonical_name_form(const String&);
+
+/// Convert a field name to a string that can be shown to the user
+String name_to_caption(const String&);
 
 /// Returns the singular form of a string
 /** Used for reflection, for example "vector<T> apples" is written with keys
@@ -209,7 +212,10 @@ bool is_substr_i(const String& str, size_t pos, const String& cmp);
 /// Case insensitive string search, returns String::npos if not found
 size_t find_i(const String& heystack, const String& needle);
 
-/// Compare two strings for equality, b may contain '_' where a contains ' '
+/// Compare two strings for equality, a may contain '_' where b contains ' '
+/** canoncial_name_compare(a,b) == (cannocial_name_form(a) == b)
+ *  b should already be in cannonical name form
+ */
 bool canonical_name_compare(const String& a, const Char* b);
 
 // ----------------------------------------------------------------------------- : Regular expressions

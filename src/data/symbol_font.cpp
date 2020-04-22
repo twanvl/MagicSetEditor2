@@ -51,11 +51,11 @@ SymbolFontP SymbolFont::byName(const String& name) {
 IMPLEMENT_REFLECTION(SymbolFont) {
   REFLECT_BASE(Packaged);
 
-  REFLECT_ALIAS(300, "text align", "text alignment");
+  REFLECT_ALIAS(300, "text_align", "text_alignment");
   
-  REFLECT_N("image font size",  img_size);
-  REFLECT_N("horizontal space", spacing.width);
-  REFLECT_N("vertical space",   spacing.height);
+  REFLECT_N("image_font_size",  img_size);
+  REFLECT_N("horizontal_space", spacing.width);
+  REFLECT_N("vertical_space",   spacing.height);
   WITH_DYNAMIC_ARG(symbol_font_for_reading, this);
     REFLECT(symbols);
   REFLECT(scale_text);
@@ -189,7 +189,7 @@ IMPLEMENT_REFLECTION(SymbolInFont) {
   REFLECT(text_margin_bottom);
   REFLECT(image);
   REFLECT(enabled);
-  REFLECT_N("image font size", img_size);
+  REFLECT_N("image_font_size", img_size);
 }
 
 // ----------------------------------------------------------------------------- : SymbolFont : splitting

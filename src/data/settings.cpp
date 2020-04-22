@@ -109,7 +109,7 @@ void GameSettings::initDefaults(const Game& game) {
 IMPLEMENT_REFLECTION_NO_SCRIPT(GameSettings) {
   REFLECT(default_stylesheet);
   REFLECT(default_export);
-  REFLECT_N("cardlist columns",     columns);
+  REFLECT(cardlist_columns);
   REFLECT(sort_cards_by);
   REFLECT(sort_cards_ascending);
   REFLECT(images_export_filename);
@@ -211,7 +211,7 @@ ColumnSettings& Settings::columnSettingsFor(const Game& game, const Field& field
   // Get game info
   GameSettings& gs = gameSettingsFor(game);
   // Get column info
-  ColumnSettings& cs = gs.columns[field.name];
+  ColumnSettings& cs = gs.cardlist_columns[field.name];
   if (cs.position == COLUMN_NOT_INITIALIZED) {
     // column info not set, initialize based on the game
     cs.visible  = field.card_list_visible;
@@ -244,8 +244,8 @@ String Settings::settingsFile() {
 }
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(Settings) {
-  REFLECT_ALIAS(300,         "style settings",         "stylesheet settings");
-  REFLECT_ALIAS(300, "default style settings", "default stylesheet settings");
+  REFLECT_ALIAS(300,         "style_settings",         "stylesheet_settings");
+  REFLECT_ALIAS(300, "default_style_settings", "default_stylesheet_settings");
   REFLECT(locale);
   REFLECT(recent_sets);
   REFLECT(default_set_dir);
@@ -266,7 +266,7 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(Settings) {
   #if USE_OLD_STYLE_UPDATE_CHECKER
     REFLECT(updates_url);
   #else
-    REFLECT_IGNORE(306,"updates url");
+    REFLECT_IGNORE(306,"updates_url");
   #endif
   REFLECT(package_versions_url);
   REFLECT(installer_list_url);

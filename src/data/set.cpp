@@ -171,7 +171,7 @@ void Set::validate(Version file_app_version) {
 
 IMPLEMENT_REFLECTION(Set) {
   REFLECT_ALIAS(300, "style",          "stylesheet"); // < 0.3.0 used style instead of stylesheet
-  REFLECT_ALIAS(300, "extra set info", "styling");
+  REFLECT_ALIAS(300, "extra_set_info", "styling");
   REFLECT(game);
   if (game) {
     REFLECT_IF_READING {
@@ -190,7 +190,7 @@ IMPLEMENT_REFLECTION(Set) {
     REFLECT(pack_types);
   }
   reflect_set_info_get_member(tag,data);
-  REFLECT_NO_SCRIPT_N("version control", vcs);
+  REFLECT_NO_SCRIPT_N("version_control", vcs);
   REFLECT(apprentice_code);
 }
 
@@ -226,7 +226,7 @@ void Set::reflect_cards<Writer> (Writer& tag) {
       Writer writer(openOut(full_name), app_version);
       writer.handle(_("card"), card);
       referenceFile(full_name);
-      REFLECT_N("include file", full_name);
+      REFLECT_N("include_file", full_name);
     }
   }
 }

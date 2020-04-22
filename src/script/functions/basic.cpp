@@ -516,7 +516,7 @@ ScriptValueP sort_script(Context& ctx, const ScriptValueP& list, ScriptValue& or
 SCRIPT_FUNCTION_WITH_DEP(position_of) {
   ScriptValueP of       = ctx.getVariable(_("of"));
   ScriptValueP in       = ctx.getVariable(_("in"));
-  ScriptValueP order_by = ctx.getVariableOpt(_("order by"));
+  ScriptValueP order_by = ctx.getVariableOpt(_("order_by"));
   ScriptValueP filter   = ctx.getVariableOpt(_("filter"));
   if (filter == script_nil) filter = ScriptValueP();
   SCRIPT_RETURN(position_in_vector(of, in, order_by, filter));
@@ -524,7 +524,7 @@ SCRIPT_FUNCTION_WITH_DEP(position_of) {
 SCRIPT_FUNCTION_DEPENDENCIES(position_of) {
   ScriptValueP of       = ctx.getVariable(_("of"));
   ScriptValueP in       = ctx.getVariable(_("in"));
-  ScriptValueP order_by = ctx.getVariableOpt(_("order by"));
+  ScriptValueP order_by = ctx.getVariableOpt(_("order_by"));
   ScriptValueP filter   = ctx.getVariableOpt(_("filter"));
   ScriptObject<Set*>*  s = dynamic_cast<ScriptObject<Set*>* >(in.get());
   ScriptObject<CardP>* c = dynamic_cast<ScriptObject<CardP>*>(of.get());
@@ -581,8 +581,8 @@ SCRIPT_FUNCTION(filter_list) {
 
 SCRIPT_FUNCTION(sort_list) {
   SCRIPT_PARAM_C(ScriptValueP, input);
-  SCRIPT_PARAM_DEFAULT_N(ScriptValueP, _("order by"), order_by, script_nil);
-  SCRIPT_PARAM_DEFAULT_N(bool, _("remove duplicates"), remove_duplicates, false);
+  SCRIPT_PARAM_DEFAULT(ScriptValueP, order_by, script_nil);
+  SCRIPT_PARAM_DEFAULT(bool, remove_duplicates, false);
   return sort_script(ctx, input, *order_by, remove_duplicates);
 }
 
@@ -648,8 +648,8 @@ SCRIPT_FUNCTION_WITH_DEP(expand_keywords) {
   SCRIPT_PARAM_C(String, input);
   SCRIPT_PARAM_C(Set*, set);
   SCRIPT_OPTIONAL_PARAM_N_(ScriptValueP, _("condition"), match_condition);
-  SCRIPT_OPTIONAL_PARAM_N_(ScriptValueP, _("default expand"), default_expand);
-  SCRIPT_PARAM_N(ScriptValueP, _("combine"),        combine);
+  SCRIPT_OPTIONAL_PARAM_(ScriptValueP, default_expand);
+  SCRIPT_PARAM(ScriptValueP, combine);
   KeywordDatabase& db = set->keyword_db;
   if (db.empty()) {
     db.prepare_parameters(set->game->keyword_parameter_types, set->keywords);
@@ -668,8 +668,8 @@ SCRIPT_FUNCTION_WITH_DEP(expand_keywords) {
 SCRIPT_FUNCTION_DEPENDENCIES(expand_keywords) {
   SCRIPT_PARAM_C(Set*, set);
   SCRIPT_OPTIONAL_PARAM_N_(ScriptValueP, _("condition"), match_condition);
-  SCRIPT_OPTIONAL_PARAM_N_(ScriptValueP, _("default expand"), default_expand);
-  SCRIPT_PARAM_N(ScriptValueP, _("combine"),        combine);
+  SCRIPT_OPTIONAL_PARAM_(ScriptValueP, default_expand);
+  SCRIPT_PARAM(ScriptValueP, combine);
   if (match_condition) match_condition->dependencies(ctx,dep);
   default_expand ->dependencies(ctx,dep);
   combine        ->dependencies(ctx,dep);
@@ -715,62 +715,62 @@ void init_script_basic_functions(Context& ctx) {
   // debugging
   ctx.setVariable(_("trace"),                script_trace);
   // conversion
-  ctx.setVariable(_("to string"),            script_to_string);
-  ctx.setVariable(_("to int"),               script_to_int);
-  ctx.setVariable(_("to real"),              script_to_real);
-  ctx.setVariable(_("to number"),            script_to_number);
-  ctx.setVariable(_("to boolean"),           script_to_boolean);
-  ctx.setVariable(_("to color"),             script_to_color);
-  ctx.setVariable(_("to date"),              script_to_date);
-  ctx.setVariable(_("to code"),              script_to_code);
-  ctx.setVariable(_("type name"),            script_type_name);
+  ctx.setVariable(_("to_string"),            script_to_string);
+  ctx.setVariable(_("to_int"),               script_to_int);
+  ctx.setVariable(_("to_real"),              script_to_real);
+  ctx.setVariable(_("to_number"),            script_to_number);
+  ctx.setVariable(_("to_boolean"),           script_to_boolean);
+  ctx.setVariable(_("to_color"),             script_to_color);
+  ctx.setVariable(_("to_date"),              script_to_date);
+  ctx.setVariable(_("to_code"),              script_to_code);
+  ctx.setVariable(_("type_name"),            script_type_name);
   // math
   ctx.setVariable(_("abs"),                  script_abs);
-  ctx.setVariable(_("random real"),          script_random_real);
-  ctx.setVariable(_("random int"),           script_random_int);
-  ctx.setVariable(_("random boolean"),       script_random_boolean);
+  ctx.setVariable(_("random_real"),          script_random_real);
+  ctx.setVariable(_("random_int"),           script_random_int);
+  ctx.setVariable(_("random_boolean"),       script_random_boolean);
   ctx.setVariable(_("sin"),                  script_sin);
   ctx.setVariable(_("cos"),                  script_cos);
   ctx.setVariable(_("tan"),                  script_tan);
-  ctx.setVariable(_("sin deg"),              script_sin_deg);
-  ctx.setVariable(_("cos deg"),              script_cos_deg);
-  ctx.setVariable(_("tan deg"),              script_tan_deg);
+  ctx.setVariable(_("sin_deg"),              script_sin_deg);
+  ctx.setVariable(_("cos_deg"),              script_cos_deg);
+  ctx.setVariable(_("tan_deg"),              script_tan_deg);
   ctx.setVariable(_("exp"),                  script_exp);
   ctx.setVariable(_("log"),                  script_log);
   ctx.setVariable(_("log10"),                script_log10);
   ctx.setVariable(_("sqrt"),                 script_sqrt);
   ctx.setVariable(_("pow"),                  script_pow);
   // string
-  ctx.setVariable(_("to upper"),             script_to_upper);
-  ctx.setVariable(_("to lower"),             script_to_lower);
-  ctx.setVariable(_("to title"),             script_to_title);
+  ctx.setVariable(_("to_upper"),             script_to_upper);
+  ctx.setVariable(_("to_lower"),             script_to_lower);
+  ctx.setVariable(_("to_title"),             script_to_title);
   ctx.setVariable(_("reverse"),              script_reverse);
   ctx.setVariable(_("trim"),                 script_trim);
   ctx.setVariable(_("substring"),            script_substring);
   ctx.setVariable(_("contains"),             script_contains);
   ctx.setVariable(_("format"),               script_format);
-  ctx.setVariable(_("format rule"),          intrusive(new ScriptRule(script_format)));
-  ctx.setVariable(_("curly quotes"),         script_curly_quotes);
-  ctx.setVariable(_("regex escape"),         script_regex_escape);
-  ctx.setVariable(_("sort text"),            script_sort_text);
-  ctx.setVariable(_("sort rule"),            intrusive(new ScriptRule(script_sort_text)));
+  ctx.setVariable(_("format_rule"),          intrusive(new ScriptRule(script_format)));
+  ctx.setVariable(_("curly_quotes"),         script_curly_quotes);
+  ctx.setVariable(_("regex_escape"),         script_regex_escape);
+  ctx.setVariable(_("sort_text"),            script_sort_text);
+  ctx.setVariable(_("sort_rule"),            intrusive(new ScriptRule(script_sort_text)));
   // tagged string
-  ctx.setVariable(_("tag contents"),         script_tag_contents);
-  ctx.setVariable(_("remove tag"),           script_remove_tag);
-  ctx.setVariable(_("remove tags"),          script_remove_tags);
-  ctx.setVariable(_("tag contents rule"),    intrusive(new ScriptRule(script_tag_contents)));
-  ctx.setVariable(_("tag remove rule"),      intrusive(new ScriptRule(script_remove_tag)));
+  ctx.setVariable(_("tag_contents"),         script_tag_contents);
+  ctx.setVariable(_("remove_tag"),           script_remove_tag);
+  ctx.setVariable(_("remove_tags"),          script_remove_tags);
+  ctx.setVariable(_("tag_contents_rule"),    intrusive(new ScriptRule(script_tag_contents)));
+  ctx.setVariable(_("tag_remove_rule"),      intrusive(new ScriptRule(script_remove_tag)));
   // collection
   ctx.setVariable(_("position"),             script_position_of);
   ctx.setVariable(_("length"),               script_length);
-  ctx.setVariable(_("number of items"),      script_number_of_items);
-  ctx.setVariable(_("filter list"),          script_filter_list);
-  ctx.setVariable(_("sort list"),            script_sort_list);
-  ctx.setVariable(_("random shuffle"),       script_random_shuffle);
-  ctx.setVariable(_("random select"),        script_random_select);
-  ctx.setVariable(_("random select many"),   script_random_select_many);
+  ctx.setVariable(_("number_of_items"),      script_number_of_items); // deprecated
+  ctx.setVariable(_("filter_list"),          script_filter_list);
+  ctx.setVariable(_("sort_list"),            script_sort_list);
+  ctx.setVariable(_("random_shuffle"),       script_random_shuffle);
+  ctx.setVariable(_("random_select"),        script_random_select);
+  ctx.setVariable(_("random_select_many"),   script_random_select_many);
   // keyword
-  ctx.setVariable(_("expand keywords"),      script_expand_keywords);
-  ctx.setVariable(_("expand keywords rule"), intrusive(new ScriptRule(script_expand_keywords)));
-  ctx.setVariable(_("keyword usage"),        script_keyword_usage);
+  ctx.setVariable(_("expand_keywords"),      script_expand_keywords);
+  ctx.setVariable(_("expand_keywords_rule"), intrusive(new ScriptRule(script_expand_keywords)));
+  ctx.setVariable(_("keyword_usage"),        script_keyword_usage);
 }

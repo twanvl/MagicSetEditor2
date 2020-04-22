@@ -181,7 +181,7 @@ class Reader {
   /** Maybe the key is "include file" */
   template <typename T>
   void unknownKey(T& v) {
-    if (key == _("include file")) {
+    if (key == _("include_file")) {
       Reader reader(this, package, value, ignore_invalid);
       reader.handle_greedy(v);
       moveNext();

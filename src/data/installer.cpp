@@ -248,7 +248,7 @@ IMPLEMENT_REFLECTION_NO_SCRIPT(PackageDescription) {
   REFLECT(installer_group);
   REFLECT(position_hint);
   REFLECT(description);
-  REFLECT_N("depends ons", dependencies);
+  REFLECT_N("depends_ons", dependencies);
 }
 
 void PackageDescription::merge(const PackageDescription& p2) {

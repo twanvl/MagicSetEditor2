@@ -70,7 +70,7 @@ template <>
 intrusive_ptr<SymbolFilter> read_new<SymbolFilter>(Reader& reader) {
   // there must be a fill type specified
   String fill_type;
-  reader.handle(_("fill type"), fill_type);
+  reader.handle(_("fill_type"), fill_type);
   if      (fill_type == _("solid"))      return intrusive(new SolidFillSymbolFilter);
   else if (fill_type == _("linear gradient"))  return intrusive(new LinearGradientSymbolFilter);
   else if (fill_type == _("radial gradient"))  return intrusive(new RadialGradientSymbolFilter);

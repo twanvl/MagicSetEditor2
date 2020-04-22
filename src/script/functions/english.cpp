@@ -334,11 +334,11 @@ SCRIPT_FUNCTION(process_english_hints) {
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_english_functions(Context& ctx) {
-  ctx.setVariable(_("english number"),          script_english_number);
-  ctx.setVariable(_("english number a"),        script_english_number_a);
-  ctx.setVariable(_("english number multiple"), script_english_number_multiple);
-  ctx.setVariable(_("english number ordinal"),  script_english_number_ordinal);
-  ctx.setVariable(_("english singular"),        script_english_singular);
-  ctx.setVariable(_("english plural"),          script_english_plural);
-  ctx.setVariable(_("process english hints"),   script_process_english_hints);
+  ctx.setVariable(_("english_number"),          script_english_number);
+  ctx.setVariable(_("english_number_a"),        script_english_number_a);
+  ctx.setVariable(_("english_number_multiple"), script_english_number_multiple);
+  ctx.setVariable(_("english_number_ordinal"),  script_english_number_ordinal);
+  ctx.setVariable(_("english_singular"),        script_english_singular);
+  ctx.setVariable(_("english_plural"),          script_english_plural);
+  ctx.setVariable(_("process_english_hints"),   script_process_english_hints);
 }

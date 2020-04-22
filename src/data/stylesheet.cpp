@@ -95,14 +95,14 @@ void mark_dependency_value(const StyleSheet& stylesheet, const Dependency& dep) 
 
 IMPLEMENT_REFLECTION(StyleSheet) {
   // < 0.3.0 didn't use card_ prefix
-  REFLECT_ALIAS(300, "width",       "card width");
-  REFLECT_ALIAS(300, "height",      "card height");
-  REFLECT_ALIAS(300, "dpi",         "card dpi");
-  REFLECT_ALIAS(300, "background",  "card background");
-  REFLECT_ALIAS(300, "info style",  "set info style");
+  REFLECT_ALIAS(300, "width",       "card_width");
+  REFLECT_ALIAS(300, "height",      "card_height");
+  REFLECT_ALIAS(300, "dpi",         "card_dpi");
+  REFLECT_ALIAS(300, "background",  "card_background");
+  REFLECT_ALIAS(300, "info_style",  "set_info_style");
   REFLECT_ALIAS(300, "align",       "alignment");
-  REFLECT_ALIAS(300, "extra field", "styling field");
-  REFLECT_ALIAS(300, "extra style", "styling style");
+  REFLECT_ALIAS(300, "extra_field", "styling_field");
+  REFLECT_ALIAS(300, "extra_style", "styling_style");
   
   REFLECT(game);
   REFLECT_BASE(Packaged);

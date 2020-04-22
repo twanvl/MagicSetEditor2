@@ -99,8 +99,8 @@ SCRIPT_FUNCTION_WITH_DEP(combined_editor) {
     nv.second = index_to_untagged(nv.first, nv.first.size()) == 0;
   }
   // options
-  SCRIPT_PARAM_DEFAULT_N(bool, _("hide when empty"),   hide_when_empty,   false);
-  SCRIPT_PARAM_DEFAULT_N(bool, _("soft before empty"), soft_before_empty, false);
+  SCRIPT_PARAM_DEFAULT(bool, hide_when_empty,   false);
+  SCRIPT_PARAM_DEFAULT(bool, soft_before_empty, false);
   // recombine the parts
   String new_value = value_parts.front().first;
   bool   new_value_empty = value_parts.front().second;
@@ -336,7 +336,7 @@ void read_choices_param(Context& ctx, vector<String>& choices_out) {
 // add the given choice if it is not already active
 SCRIPT_FUNCTION(require_choice) {
   SCRIPT_PARAM_C(String,input);
-  SCRIPT_OPTIONAL_PARAM_N_(String,_("last change"),last_change);
+  SCRIPT_OPTIONAL_PARAM_(String, last_change);
   vector<String> choices;
   read_choices_param(ctx, choices);
   SCRIPT_RETURN(filter_choices(input, choices, 1, (int)choices.size(), last_change));
@@ -345,7 +345,7 @@ SCRIPT_FUNCTION(require_choice) {
 // make sure at most one of the choices is active
 SCRIPT_FUNCTION(exclusive_choice) {
   SCRIPT_PARAM_C(String,input);
-  SCRIPT_OPTIONAL_PARAM_N_(String,_("last change"),last_change);
+  SCRIPT_OPTIONAL_PARAM_(String, last_change);
   vector<String> choices;
   read_choices_param(ctx, choices);
   SCRIPT_RETURN(filter_choices(input, choices, 0, 1, last_change));
@@ -354,7 +354,7 @@ SCRIPT_FUNCTION(exclusive_choice) {
 // make sure exactly one of the choices is active
 SCRIPT_FUNCTION(require_exclusive_choice) {
   SCRIPT_PARAM_C(String,input);
-  SCRIPT_OPTIONAL_PARAM_N_(String,_("last change"),last_change);
+  SCRIPT_OPTIONAL_PARAM_(String, last_change);
   vector<String> choices;
   read_choices_param(ctx, choices);
   SCRIPT_RETURN(filter_choices(input, choices, 1, 1, last_change));
@@ -393,13 +393,13 @@ SCRIPT_FUNCTION(count_chosen) {
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_editor_functions(Context& ctx) {
-  ctx.setVariable(_("forward editor"),           script_combined_editor); // compatability
-  ctx.setVariable(_("combined editor"),          script_combined_editor);
-  ctx.setVariable(_("primary choice"),           script_primary_choice);
+  ctx.setVariable(_("forward_editor"),           script_combined_editor); // compatability
+  ctx.setVariable(_("combined_editor"),          script_combined_editor);
+  ctx.setVariable(_("primary_choice"),           script_primary_choice);
   ctx.setVariable(_("chosen"),                   script_chosen);
-  ctx.setVariable(_("count chosen"),             script_count_chosen);
-  ctx.setVariable(_("require choice"),           script_require_choice);
-  ctx.setVariable(_("exclusive choice"),         script_exclusive_choice);
-  ctx.setVariable(_("require exclusive choice"), script_require_exclusive_choice);
-  ctx.setVariable(_("remove choice"),            script_remove_choice);
+  ctx.setVariable(_("count_chosen"),             script_count_chosen);
+  ctx.setVariable(_("require_choice"),           script_require_choice);
+  ctx.setVariable(_("exclusive_choice"),         script_exclusive_choice);
+  ctx.setVariable(_("require_exclusive_choice"), script_require_exclusive_choice);
+  ctx.setVariable(_("remove_choice"),            script_remove_choice);
 }

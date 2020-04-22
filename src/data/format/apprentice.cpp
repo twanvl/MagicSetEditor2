@@ -423,12 +423,12 @@ class ApprCardRecord : public IntrusivePtrBase<ApprCardRecord> {
 ApprCardRecord::ApprCardRecord(const Card& card, const String& sets_) {
   name   = untag_appr(card.value<TextValue>(_("name")).value);
   sets   = sets_ + _("-") + card_rarity_code(card.value<ChoiceValue>(_("rarity")).value);
-  cc     = untag_appr(card.value<TextValue>(_("casting cost")).value);
-  type   = untag_appr(card.value<TextValue>(_("super type")).value);
-  String subType = untag(card.value<TextValue>(_("sub type")).value);
+  cc     = untag_appr(card.value<TextValue>(_("casting_cost")).value);
+  type   = untag_appr(card.value<TextValue>(_("super_type")).value);
+  String subType = untag(card.value<TextValue>(_("sub_type")).value);
   if (!subType.empty())  type += _(" - ") + subType;
-  text   = untag_appr(card.value<TextValue>(_("rule text")).value);
-  flavor = untag_appr(card.value<TextValue>(_("flavor text")).value);
+  text   = untag_appr(card.value<TextValue>(_("rule_text")).value);
+  flavor = untag_appr(card.value<TextValue>(_("flavor_text")).value);
   pt     = untag_appr(card.value<TextValue>(_("pt")).value);
 }
 

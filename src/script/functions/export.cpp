@@ -278,11 +278,11 @@ SCRIPT_FUNCTION(to_html) {
   SCRIPT_PARAM_C(String, input);
   // symbol font?
   SymbolFontP symbol_font;
-  SCRIPT_OPTIONAL_PARAM_N(String, _("symbol font"), font_name) {
+  SCRIPT_OPTIONAL_PARAM_N(String, _("symbol_font"), font_name) {
     symbol_font = SymbolFont::byName(font_name);
     symbol_font->update(ctx);
   }
-  SCRIPT_OPTIONAL_PARAM_N_(double, _("symbol font size"), symbol_font_size);
+  SCRIPT_OPTIONAL_PARAM_(double, symbol_font_size);
   if (symbol_font_size <= 0) symbol_font_size = 12; // a default
   SCRIPT_RETURN(to_html(input, symbol_font, symbol_font_size));
 }
@@ -290,8 +290,8 @@ SCRIPT_FUNCTION(to_html) {
 // convert a symbol string to html
 SCRIPT_FUNCTION(symbols_to_html) {
   SCRIPT_PARAM_C(String, input);
-  SCRIPT_PARAM_N(String, _("symbol font"), font_name);
-  SCRIPT_OPTIONAL_PARAM_N_(double, _("symbol font size"), symbol_font_size);
+  SCRIPT_PARAM_N(String, _("symbol_font"), font_name);
+  SCRIPT_OPTIONAL_PARAM_(double, symbol_font_size);
   SymbolFontP symbol_font = SymbolFont::byName(font_name);
   symbol_font->update(ctx);
   if (symbol_font_size <= 0) symbol_font_size = 12; // a default
@@ -451,12 +451,12 @@ SCRIPT_FUNCTION(sanitize) {
 // ----------------------------------------------------------------------------- : Init
 
 void init_script_export_functions(Context& ctx) {
-  ctx.setVariable(_("to html"),          script_to_html);
-  ctx.setVariable(_("symbols to html"),  script_symbols_to_html);
-  ctx.setVariable(_("to text"),          script_to_text);
-  ctx.setVariable(_("copy file"),        script_copy_file);
-  ctx.setVariable(_("write text file"),  script_write_text_file);
-  ctx.setVariable(_("write image file"), script_write_image_file);
-  ctx.setVariable(_("write set file"),   script_write_set_file);
+  ctx.setVariable(_("to_html"),          script_to_html);
+  ctx.setVariable(_("symbols_to_html"),  script_symbols_to_html);
+  ctx.setVariable(_("to_text"),          script_to_text);
+  ctx.setVariable(_("copy_file"),        script_copy_file);
+  ctx.setVariable(_("write_text_file"),  script_write_text_file);
+  ctx.setVariable(_("write_image_file"), script_write_image_file);
+  ctx.setVariable(_("write_set_file"),   script_write_set_file);
   ctx.setVariable(_("sanitize"),         script_sanitize);
 }
