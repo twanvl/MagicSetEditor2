@@ -56,6 +56,15 @@ SCRIPT_FUNCTION(warning_if_neq) {
   return script_nil;
 }
 
+SCRIPT_FUNCTION(error) {
+  SCRIPT_PARAM_C(String, input);
+  SCRIPT_PARAM_DEFAULT_C(bool, condition, true);
+  if (condition) {
+    queue_message(MESSAGE_ERROR, input);
+  }
+  return script_nil;
+}
+
 // ----------------------------------------------------------------------------- : Conversion
 
 /// Format the input variable based on a printf like style specification
@@ -714,6 +723,8 @@ SCRIPT_FUNCTION(rule) {
 void init_script_basic_functions(Context& ctx) {
   // debugging
   ctx.setVariable(_("trace"),                script_trace);
+  ctx.setVariable(_("warning"),              script_warning);
+  ctx.setVariable(_("error"),                script_error);
   // conversion
   ctx.setVariable(_("to_string"),            script_to_string);
   ctx.setVariable(_("to_int"),               script_to_int);

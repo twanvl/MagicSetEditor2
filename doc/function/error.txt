@@ -1,0 +1,21 @@
+Function: error
+
+DOC_MSE_VERSION: since 2.0.1
+
+--Usage--
+> error(some_string)
+
+Output an error message.
+
+--Parameters--
+! Parameter	Type			Description
+| @input@	[[type:string]]		Message
+| @condition@	[[type:boolean]]	(optional) Only show the message if this condition holds.
+
+--Examples--
+> error("message")   # the message is shown in the console panel
+> error("message", condition: false)  # shows no message
+
+--See also--
+| [[fun:assert]]		Check that the condition is @true@. Shows a warning message if it is not.
+| [[fun:warning]]		Output a warning message.
