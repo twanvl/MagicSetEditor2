@@ -355,7 +355,7 @@ String to_bbcode(const String& str_in) {
 // convert a tagged string to BBCode
 SCRIPT_FUNCTION(to_bbcode) {
   SCRIPT_PARAM_C(String, input);
-  throw "TODO";
+  throw InternalError(_("TODO: to_bbcode"));
 //  SCRIPT_RETURN(to_bbcode(input, symbol_font));
 }
 
