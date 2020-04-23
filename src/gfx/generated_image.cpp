@@ -435,11 +435,11 @@ bool PackagedImage::operator == (const GeneratedImage& that) const {
 
 Image BuiltInImage::generate(const Options& opt) const {
   // TODO : use opt.width and opt.height?
-  Image img = load_resource_image(name);
-  if (!img.Ok()) {
-    throw ScriptError(_("There is no built in image '") + name + _("'"));
-  }
-  return img;
+  try {
+    Image img = load_resource_image(name);
+    if (img.Ok()) return img;
+  } catch (...) {}
+  throw ScriptError(_("There is no built in image '") + name + _("'"));
 }
 bool BuiltInImage::operator == (const GeneratedImage& that) const {
   const BuiltInImage* that2 = dynamic_cast<const BuiltInImage*>(&that);
