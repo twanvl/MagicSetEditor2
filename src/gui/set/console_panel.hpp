@@ -14,7 +14,7 @@
 
 class wxSplitterWindow;
 class MessageCtrl;
-class TextCtrl;
+class HistoryTextCtrl;
 
 // ----------------------------------------------------------------------------- : ConsolePanel
 
@@ -49,7 +49,7 @@ private:
   wxSplitterWindow* splitter;
   MessageCtrl* messages;
   wxPanel* entry_panel;
-  wxTextCtrl* entry;
+  HistoryTextCtrl* entry;
   
   void get_pending_errors();
   void exec(String const& code);

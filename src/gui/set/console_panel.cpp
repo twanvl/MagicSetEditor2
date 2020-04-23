@@ -38,8 +38,8 @@ class ConsoleMessage : public IntrusivePtrBase<ConsoleMessage> {
   int height;
   int bottom() const { return top+height; }
   
-  ConsoleMessage(MessageType type, String const& text = _(""))
-    : type(type), text(text), line_number(-1), joined_to_previous(false), top(-1), height(-1)
+  ConsoleMessage(MessageType type, String const& text = _(""), bool joined_to_previous = false)
+    : type(type), text(text), line_number(-1), joined_to_previous(joined_to_previous), top(-1), height(-1)
   {}
 };
 
@@ -70,12 +70,14 @@ class MessageCtrl : public wxScrolledWindow {
   void add_message(ConsoleMessageP const& msg) {
     messages.push_back(msg);
     layout_all(messages.size() - 1);
+    // clear selection
+    selection = messages.size();
     // refresh
     ensure_visible(*messages.back());
     Refresh(false);
   }
-  void add_message(MessageType type, String const& text) {
-    add_message(intrusive(new ConsoleMessage(type,text)));
+  void add_message(MessageType type, String const& text, bool joined_to_previous = false) {
+    add_message(intrusive(new ConsoleMessage(type,text,joined_to_previous)));
   }
   
   bool have_selection() const {
@@ -112,14 +114,41 @@ class MessageCtrl : public wxScrolledWindow {
   
   // --------------------------------------------------- : Events
   
-  void onLeftDown(wxMouseEvent& ev) {
-    int ystart; GetViewStart(nullptr,&ystart);
-    selection = find_point(ystart + ev.GetY());
+  void select(size_t sel) {
+    selection = sel;
     if (selection < messages.size()) {
       ensure_visible(*messages[selection]);
     }
     Refresh(false);
+  }
+  
+  void onLeftDown(wxMouseEvent& ev) {
+    int ystart; GetViewStart(nullptr,&ystart);
+    select( find_point(ystart + ev.GetY()) );
     ev.Skip(); // for focus
+  }
+  
+  void onChar(wxKeyEvent& ev) {
+    switch (ev.GetKeyCode()) {
+      case WXK_UP:
+        if (selection < messages.size() && selection > 0) select(selection - 1);
+        break;
+      case WXK_DOWN:
+        if (selection < messages.size() && selection + 1 < messages.size()) select(selection + 1);
+        break;
+      case WXK_HOME:
+        if (!messages.empty()) select(0);
+        break;
+      case WXK_END:
+        if (!messages.empty()) select(messages.size() - 1);
+        break;
+      default:
+        ev.Skip();
+    }
+  }
+  
+  void onFocus(wxFocusEvent&) {
+    if (selection < messages.size()) Refresh(false);
   }
   
   size_t find_point(int y) {
@@ -165,8 +194,13 @@ class MessageCtrl : public wxScrolledWindow {
     wxColour color = colors[msg.type];
     wxColour bg, fg;
     if (selection < messages.size() && messages[selection].get() == &msg) {
-      bg = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-      fg = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+      if (FindFocus() == this) {
+        bg = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
+        fg = wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
+      } else {
+        bg = lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW), wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT), 0.1);
+        fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
+      }
     } else {
       bg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
       fg = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
@@ -243,14 +277,14 @@ class MessageCtrl : public wxScrolledWindow {
   
   // --------------------------------------------------- : Layout
   
-  const int LIST_SPACING        = 1;
-  const int ICON_PADDING        = 3;
-  const int TEXT_PADDING_LEFT   = ICON_PADDING + 16 + 4;
-  const int TEXT_PADDING_RIGHT  = 4;
-  const int TEXT_PADDING_TOP    = 4;
-  const int TEXT_PADDING_BOTTOM = 2;
-  const int TEXT_LINE_SPACING   = 1;
-  const int MIN_ITEM_HEIGHT     = 16 + 2*ICON_PADDING;
+  static const int LIST_SPACING        = 1;
+  static const int ICON_PADDING        = 3;
+  static const int TEXT_PADDING_LEFT   = ICON_PADDING + 16 + 4;
+  static const int TEXT_PADDING_RIGHT  = 4;
+  static const int TEXT_PADDING_TOP    = 4;
+  static const int TEXT_PADDING_BOTTOM = 2;
+  static const int TEXT_LINE_SPACING   = 1;
+  static const int MIN_ITEM_HEIGHT     = 16 + 2*ICON_PADDING;
   
   /// Layout all messages, starting from number start
   /// layout = determine their height
@@ -286,6 +320,69 @@ class MessageCtrl : public wxScrolledWindow {
 BEGIN_EVENT_TABLE(MessageCtrl,wxScrolledWindow)
   EVT_PAINT(MessageCtrl::onPaint)
   EVT_LEFT_DOWN(MessageCtrl::onLeftDown)
+  EVT_CHAR(MessageCtrl::onChar)
+  EVT_SET_FOCUS(MessageCtrl::onFocus)
+  EVT_KILL_FOCUS(MessageCtrl::onFocus)
+END_EVENT_TABLE()
+
+// ----------------------------------------------------------------------------- : TextCtrl with history
+
+class HistoryTextCtrl : public wxTextCtrl {
+  public:
+  HistoryTextCtrl(wxWindow* parent, wxWindowID id)
+    : wxTextCtrl(parent, id, _(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER)
+    , history_pos(0)
+  {}
+  
+  String get_command_and_clear() {
+    String command = GetValue();
+    history.push_back(command);
+    history_pos = (int)history.size();
+    SetValue(_(""));
+    return command;
+  }
+  
+  private:
+  DECLARE_EVENT_TABLE();
+  vector<String> history; // TODO: save command history to settings?
+  int history_pos; // position when browsing through history
+  
+  void onChar(wxKeyEvent& ev) {
+    switch (ev.GetKeyCode()) {
+      case WXK_UP:
+        browse_history(-1);
+        break;
+      case WXK_DOWN:
+        browse_history(+1);
+        break;
+      default:
+        ev.Skip();
+    }
+  }
+  
+  // browse history for strings that share the part before the cursor with the current value in the control
+  bool browse_history(int dir) {
+    int caret = GetInsertionPoint();
+    String to_match = GetValue().substr(0, caret);
+    while (history_pos+dir >= 0 && history_pos+dir < (int)history.size()) {
+      history_pos += dir;
+      if (starts_with(history[history_pos],to_match)) {
+        SetValue(history[history_pos]);
+        SetInsertionPoint(caret);
+        return true;
+      }
+    }
+    if (dir > 0) {
+      // there is a blank string at the end of the history
+      SetValue(to_match);
+      SetInsertionPoint(caret);
+    }
+    return false;
+  }
+};
+
+BEGIN_EVENT_TABLE(HistoryTextCtrl,wxTextCtrl)
+  EVT_CHAR(HistoryTextCtrl::onChar)
 END_EVENT_TABLE()
 
 // ----------------------------------------------------------------------------- : ConsolePanel
@@ -302,7 +399,7 @@ ConsolePanel::ConsolePanel(Window* parent, int id)
   splitter = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTAB_TRAVERSAL);
   messages = new MessageCtrl(splitter, ID_MESSAGE_LIST);
   entry_panel = new wxPanel(splitter, wxID_ANY);
-  entry = new wxTextCtrl(entry_panel, wxID_ANY, _(""), wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+  entry = new HistoryTextCtrl(entry_panel, wxID_ANY);
   wxButton* evaluate = new wxButton(entry_panel, ID_EVALUATE, _BUTTON_("evaluate"));
   // init sizer for entry_panel
   wxSizer* se = new wxBoxSizer(wxHORIZONTAL);
@@ -359,8 +456,7 @@ void ConsolePanel::onEnter(wxCommandEvent& ev) {
 }
 void ConsolePanel::onCommand(int id) {
   if (id == ID_EVALUATE) {
-    exec(entry->GetValue());
-    entry->SetValue(_(""));
+    exec(entry->get_command_and_clear());
   }
 }
 
@@ -392,13 +488,11 @@ void ConsolePanel::exec(String const& command) {
     // parse command
     vector<ScriptParseError> errors;
     ScriptP script = parse(command,nullptr,false,errors);
-    if (!errors.empty()) {
-      FOR_EACH(error,errors) {
-        // TODO: also squiglify the input?
-        messages->add_message(MESSAGE_ERROR,error.what());
-      }
-      return;
+    FOR_EACH(error,errors) {
+      // TODO: also squiglify the input?
+      messages->add_message(script ? MESSAGE_WARNING : MESSAGE_ERROR,error.what(), true);
     }
+    if (!script) return;
     // execute command
     //WITH_DYNAMIC_ARG(export_info, &ei); // TODO: allow image export
     Context& ctx = set->getContext(card);
@@ -426,7 +520,7 @@ void ConsolePanel::exec(String const& command) {
     }
     messages->add_message(message);
   } catch (ScriptError const& e) {
-    messages->add_message(MESSAGE_ERROR, e.what());
+    messages->add_message(MESSAGE_ERROR, e.what(), true);
   }
 }
 
