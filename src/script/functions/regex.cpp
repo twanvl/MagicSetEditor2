@@ -53,7 +53,7 @@ ScriptRegexP regex_from_script(const ScriptValueP& value) {
   ScriptRegexP regex = dynamic_pointer_cast<ScriptRegex>(value);
   if (!regex) {
     // TODO: introduce some kind of caching?
-    regex = intrusive(new ScriptRegex(*value));
+    regex = make_intrusive<ScriptRegex>(*value);
   }
   return regex;
 }
@@ -251,8 +251,8 @@ void init_script_regex_functions(Context& ctx) {
   ctx.setVariable(_("split_text"),           script_split_text);
   ctx.setVariable(_("match_text"),           script_match_text);
   ctx.setVariable(_("match"),                script_match_text); // old name
-  ctx.setVariable(_("replace_rule"),         intrusive(new ScriptRule(script_replace_text)));
-  ctx.setVariable(_("filter_rule"),          intrusive(new ScriptRule(script_filter_text)));
-  ctx.setVariable(_("break_rule"),           intrusive(new ScriptRule(script_break_text)));
-  ctx.setVariable(_("match_rule"),           intrusive(new ScriptRule(script_match_text)));
+  ctx.setVariable(_("replace_rule"),         make_intrusive<ScriptRule>(script_replace_text));
+  ctx.setVariable(_("filter_rule"),          make_intrusive<ScriptRule>(script_filter_text));
+  ctx.setVariable(_("break_rule"),           make_intrusive<ScriptRule>(script_break_text));
+  ctx.setVariable(_("match_rule"),           make_intrusive<ScriptRule>(script_match_text));
 }

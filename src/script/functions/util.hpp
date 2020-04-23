@@ -154,25 +154,25 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
 #define SCRIPT_RULE_1_C(funname, type1, name1)                \
         SCRIPT_RULE_1_N(funname, type1, SCRIPT_VAR_ ## name1, name1)
 /// Utility for defining a script rule with a single named parameter
-#define SCRIPT_RULE_1_N(funname, type1, str1, name1)            \
-  class ScriptRule_##funname: public ScriptValue {            \
-    public:                                \
-    inline ScriptRule_##funname(const type1& name1) : name1(name1) {}  \
-    virtual ScriptType type() const { return SCRIPT_FUNCTION; }      \
-    virtual String typeName() const { return _(#funname)_("_rule"); }  \
-    protected:                              \
-    virtual ScriptValueP do_eval(Context& ctx, bool) const;        \
-    private:                                \
-    type1 name1;                            \
-  };                                    \
-  SCRIPT_FUNCTION(funname##_rule) {                    \
-    SCRIPT_PARAM_N(type1, str1, name1);                  \
-    return intrusive(new ScriptRule_##funname(name1));          \
-  }                                    \
-  SCRIPT_FUNCTION(funname) {                        \
-    SCRIPT_PARAM_N(type1, str1, name1);                  \
-    return ScriptRule_##funname(name1).eval(ctx);            \
-  }                                    \
+#define SCRIPT_RULE_1_N(funname, type1, str1, name1) \
+  class ScriptRule_##funname: public ScriptValue { \
+  public: \
+    inline ScriptRule_##funname(const type1& name1) : name1(name1) {} \
+    virtual ScriptType type() const { return SCRIPT_FUNCTION; } \
+    virtual String typeName() const { return _(#funname)_("_rule"); } \
+  protected: \
+    virtual ScriptValueP do_eval(Context& ctx, bool) const; \
+  private: \
+    type1 name1; \
+  }; \
+  SCRIPT_FUNCTION(funname##_rule) { \
+    SCRIPT_PARAM_N(type1, str1, name1) \
+    return make_intrusive<ScriptRule_##funname>(name1); \
+  } \
+  SCRIPT_FUNCTION(funname) { \
+    SCRIPT_PARAM_N(type1, str1, name1); \
+    return ScriptRule_##funname(name1).eval(ctx); \
+  } \
   ScriptValueP ScriptRule_##funname::do_eval(Context& ctx, bool) const
 
 /// Utility for defining a script rule with two parameters
@@ -194,30 +194,30 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
   })
 
 #define SCRIPT_RULE_2_N_AUX(funname, type1, str1, name1, type2, str2, name2, dep, more) \
-  class ScriptRule_##funname: public ScriptValue {            \
-    public:                                \
-    inline ScriptRule_##funname(const type1& name1, const type2& name2)  \
-      : name1(name1), name2(name2) {}                  \
-    virtual ScriptType type() const { return SCRIPT_FUNCTION; }      \
-    virtual String typeName() const { return _(#funname)_("_rule"); }  \
-    dep                                  \
-    protected:                              \
-    virtual ScriptValueP do_eval(Context& ctx, bool) const;        \
-    private:                                \
-    type1 name1;                            \
-    type2 name2;                            \
-  };                                    \
-  SCRIPT_FUNCTION(funname##_rule) {                    \
-    SCRIPT_PARAM_N(type1, str1, name1);                  \
-    SCRIPT_PARAM_N(type2, str2, name2);                  \
-    return intrusive(new ScriptRule_##funname(name1, name2));      \
-  }                                    \
-  SCRIPT_FUNCTION_AUX(funname, dep) {                    \
-    SCRIPT_PARAM_N(type1, str1, name1);                  \
-    SCRIPT_PARAM_N(type2, str2, name2);                  \
-    return ScriptRule_##funname(name1, name2).eval(ctx);        \
-  }                                    \
-  more                                  \
+  class ScriptRule_##funname: public ScriptValue { \
+  public: \
+    inline ScriptRule_##funname(const type1& name1, const type2& name2) \
+      : name1(name1), name2(name2) {} \
+    virtual ScriptType type() const { return SCRIPT_FUNCTION; } \
+    virtual String typeName() const { return _(#funname)_("_rule"); } \
+    dep \
+  protected: \
+    virtual ScriptValueP do_eval(Context& ctx, bool) const; \
+  private: \
+    type1 name1; \
+    type2 name2; \
+  }; \
+  SCRIPT_FUNCTION(funname##_rule) { \
+    SCRIPT_PARAM_N(type1, str1, name1); \
+    SCRIPT_PARAM_N(type2, str2, name2); \
+    return make_intrusive<ScriptRule_##funname>(name1, name2); \
+  } \
+  SCRIPT_FUNCTION_AUX(funname, dep) { \
+    SCRIPT_PARAM_N(type1, str1, name1); \
+    SCRIPT_PARAM_N(type2, str2, name2); \
+    return ScriptRule_##funname(name1, name2).eval(ctx); \
+  } \
+  more \
   ScriptValueP ScriptRule_##funname::do_eval(Context& ctx, bool) const
 
 #define SCRIPT_RULE_2_DEPENDENCIES(name)                  \

@@ -139,9 +139,9 @@ SymbolPartP read_new<SymbolPart>(Reader& reader) {
   // there must be a type specified
   String type;
   reader.handle(_("type"), type);
-  if      (type == _("shape") || type.empty())  return intrusive(new SymbolShape);
-  else if (type == _("symmetry"))          return intrusive(new SymbolSymmetry);
-  else if (type == _("group"))          return intrusive(new SymbolGroup);
+  if      (type == _("shape") || type.empty()) return make_intrusive<SymbolShape>();
+  else if (type == _("symmetry")) return make_intrusive<SymbolSymmetry>();
+  else if (type == _("group")) return make_intrusive<SymbolGroup>();
   else {
     throw ParseError(_("Unsupported symbol part type: '") + type + _("'"));
   }
@@ -200,7 +200,7 @@ SymbolPartP SymbolShape::clone() const {
   SymbolShapeP part(new SymbolShape(*this));
   // also clone the control points
   FOR_EACH(p, part->points) {
-    p = intrusive(new ControlPoint(*p));
+    p = make_intrusive<ControlPoint>(*p);
   }
   return part;
 }
@@ -357,18 +357,18 @@ double Symbol::aspectRatio() const {
 
 // A default symbol part, a square, moved by d
 SymbolShapeP default_symbol_part(double d) {
-  SymbolShapeP part = intrusive(new SymbolShape);
-  part->points.push_back(intrusive(new ControlPoint(d + .2, d + .2)));
-  part->points.push_back(intrusive(new ControlPoint(d + .2, d + .8)));
-  part->points.push_back(intrusive(new ControlPoint(d + .8, d + .8)));
-  part->points.push_back(intrusive(new ControlPoint(d + .8, d + .2)));
+  SymbolShapeP part = make_intrusive<SymbolShape>();
+  part->points.push_back(make_intrusive<ControlPoint>(d + .2, d + .2));
+  part->points.push_back(make_intrusive<ControlPoint>(d + .2, d + .8));
+  part->points.push_back(make_intrusive<ControlPoint>(d + .8, d + .8));
+  part->points.push_back(make_intrusive<ControlPoint>(d + .8, d + .2));
   part->name = _("Square");
   return part;
 }
 
 // A default symbol, a square
 SymbolP default_symbol() {
-  SymbolP symbol = intrusive(new Symbol);
+  auto symbol = make_intrusive<Symbol>();
   symbol->parts.push_back(default_symbol_part(0));
   return symbol;
 }

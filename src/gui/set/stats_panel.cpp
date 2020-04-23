@@ -472,7 +472,7 @@ void StatsPanel::showCategory(const GraphType* prefer_layout) {
   // create axes
   GraphDataPre d;
   FOR_EACH(dim, dims) {
-    d.axes.push_back(intrusive(new GraphAxis(
+    d.axes.push_back(make_intrusive<GraphAxis>(
       dim->name,
       dim->colors.empty() ? AUTO_COLOR_EVEN : AUTO_COLOR_NO,
       dim->numeric,
@@ -480,7 +480,7 @@ void StatsPanel::showCategory(const GraphType* prefer_layout) {
       &dim->colors,
       dim->groups.empty() ? nullptr : &dim->groups
       )
-    ));
+    );
   }
   // find values for each card
   for (size_t i = 0 ; i < set->cards.size() ; ++i) {

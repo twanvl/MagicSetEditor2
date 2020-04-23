@@ -1039,39 +1039,39 @@ void GraphControl::setLayout(GraphType type, bool force) {
   switch (type) {
     case GRAPH_TYPE_BAR: {
       intrusive_ptr<GraphContainer> combined(new GraphContainer());
-      combined->add(intrusive(new GraphValueAxis(0, true)));
-      combined->add(intrusive(new GraphLabelAxis(0, HORIZONTAL)));
-      combined->add(intrusive(new BarGraph(0)));
-      combined->add(intrusive(new GraphStats(0, ALIGN_TOP_RIGHT)));
-      graph = intrusive(new GraphWithMargins(combined, 23,8,7,20));
+      combined->add(make_intrusive<GraphValueAxis>(0, true));
+      combined->add(make_intrusive<GraphLabelAxis>(0, HORIZONTAL));
+      combined->add(make_intrusive<BarGraph>(0));
+      combined->add(make_intrusive<GraphStats>(0, ALIGN_TOP_RIGHT));
+      graph = make_intrusive<GraphWithMargins>(combined, 23,8,7,20);
       break;
     } case GRAPH_TYPE_PIE: {
       intrusive_ptr<GraphContainer> combined(new GraphContainer());
-      combined->add(intrusive(new GraphWithMargins(intrusive(new PieGraph(0)), 0,0,120,0)));
-      combined->add(intrusive(new GraphLegend(0, ALIGN_TOP_RIGHT, false)));
-      graph = intrusive(new GraphWithMargins(combined, 20,20,20,20));
+      combined->add(make_intrusive<GraphWithMargins>(make_intrusive<PieGraph>(0), 0,0,120,0));
+      combined->add(make_intrusive<GraphLegend>(0, ALIGN_TOP_RIGHT, false));
+      graph = make_intrusive<GraphWithMargins>(combined, 20,20,20,20);
       break;
     } case GRAPH_TYPE_STACK: {
       intrusive_ptr<GraphContainer> combined(new GraphContainer());
-      combined->add(intrusive(new GraphValueAxis(0, false)));
-      combined->add(intrusive(new GraphLabelAxis(0, HORIZONTAL)));
-      combined->add(intrusive(new BarGraph2D(0,1)));
-      combined->add(intrusive(new GraphLegend(1, ALIGN_TOP_RIGHT, true)));
-      graph = intrusive(new GraphWithMargins(combined, 23,8,7,20));
+      combined->add(make_intrusive<GraphValueAxis>(0, false));
+      combined->add(make_intrusive<GraphLabelAxis>(0, HORIZONTAL));
+      combined->add(make_intrusive<BarGraph2D>(0,1));
+      combined->add(make_intrusive<GraphLegend>(1, ALIGN_TOP_RIGHT, true));
+      graph = make_intrusive<GraphWithMargins>(combined, 23,8,7,20);
       break;
     } case GRAPH_TYPE_SCATTER: {
       intrusive_ptr<GraphContainer> combined(new GraphContainer());
-      combined->add(intrusive(new GraphLabelAxis(0, HORIZONTAL, false, DRAW_LINES_MID)));
-      combined->add(intrusive(new GraphLabelAxis(1, VERTICAL,   false, DRAW_LINES_MID)));
-      combined->add(intrusive(new ScatterGraph(0,1)));
-      graph = intrusive(new GraphWithMargins(combined, 80,8,7,20));
+      combined->add(make_intrusive<GraphLabelAxis>(0, HORIZONTAL, false, DRAW_LINES_MID));
+      combined->add(make_intrusive<GraphLabelAxis>(1, VERTICAL,   false, DRAW_LINES_MID));
+      combined->add(make_intrusive<ScatterGraph>(0,1));
+      graph = make_intrusive<GraphWithMargins>(combined, 80,8,7,20);
       break;
     } case GRAPH_TYPE_SCATTER_PIE: {
       intrusive_ptr<GraphContainer> combined(new GraphContainer());
-      combined->add(intrusive(new GraphLabelAxis(0, HORIZONTAL, false, DRAW_LINES_MID)));
-      combined->add(intrusive(new GraphLabelAxis(1, VERTICAL,   false, DRAW_LINES_MID)));
-      combined->add(intrusive(new ScatterPieGraph(0,1,2)));
-      graph = intrusive(new GraphWithMargins(combined, 80,8,7,20));
+      combined->add(make_intrusive<GraphLabelAxis>(0, HORIZONTAL, false, DRAW_LINES_MID));
+      combined->add(make_intrusive<GraphLabelAxis>(1, VERTICAL,   false, DRAW_LINES_MID));
+      combined->add(make_intrusive<ScatterPieGraph>(0,1,2));
+      graph = make_intrusive<GraphWithMargins>(combined, 80,8,7,20);
       break;
     } default:
       graph = GraphP();
@@ -1085,7 +1085,7 @@ GraphType GraphControl::getLayout() const {
 }
 
 void GraphControl::setData(const GraphDataPre& data) {
-  setData(intrusive(new GraphData(data)));
+  setData(make_intrusive<GraphData>(data));
 }
 void GraphControl::setData(const GraphDataP& data) {
   if (graph) {

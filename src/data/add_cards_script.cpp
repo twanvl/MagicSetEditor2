@@ -34,7 +34,7 @@ void AddCardsScript::perform(Set& set, vector<CardP>& out) {
     // is this a new card?
     if (contains(set.cards,card) || contains(out,card)) {
       // make copy
-      card = intrusive(new Card(*card));
+      card = make_intrusive<Card>(*card);
     }
     out.push_back(card);
   }

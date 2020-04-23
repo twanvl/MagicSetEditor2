@@ -538,7 +538,7 @@ void ApprCardDatabase::doRead(wxInputStream& in) {
       progress_target->onProgress(0.4f * float(i) / cards.size(),
                                   String(_("reading card ")) << i << _(" of ") << (int)cards.size());
     }
-    card = intrusive(new ApprCardRecord());
+    card = make_intrusive<ApprCardRecord>();
     card->readHead(data);
     head_pos = in.TellI();
     in.SeekI(card->data_pos);
@@ -753,7 +753,7 @@ bool ApprenticeExportWindow::exportSet() {
   cardlist.removeSet(set->apprentice_code);
   // add cards from set
   FOR_EACH(card, set->cards) {
-    ApprCardRecordP rec = intrusive(new ApprCardRecord(*card, set->apprentice_code));
+    ApprCardRecordP rec = make_intrusive<ApprCardRecord>(*card, set->apprentice_code);
     cardlist.cards.push_back(rec);
   }
   cardlist.write();

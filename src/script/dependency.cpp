@@ -68,13 +68,13 @@ private:
 // Unify two values from different execution paths
 void unify(ScriptValueP& a, const ScriptValueP& b) {
   assert(a && b);
-  if (a != b) a = intrusive(new DependencyUnion(a,b));
+  if (a != b) a = make_intrusive<DependencyUnion>(a,b);
 }
 // Unify two values from different execution paths
 ScriptValueP unified(const ScriptValueP& a, const ScriptValueP& b) {
   assert(a && b);
   if (a == b) return a;
-  else        return intrusive(new DependencyUnion(a,b));
+  else        return make_intrusive<DependencyUnion>(a,b);
 }
 
 /// Behaves like script_nil, but with a name
@@ -293,7 +293,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
         case I_GET_VAR: {
           ScriptValueP value = variables[i.data].value;
           if (!value) {
-            value = intrusive(new ScriptMissingVariable(variable_to_string((Variable)i.data))); // no errors here
+            value = make_intrusive<ScriptMissingVariable>(variable_to_string((Variable)i.data)); // no errors here
           }
           value->dependencyThis(dep);
           stack.push_back(value);

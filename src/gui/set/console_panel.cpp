@@ -77,7 +77,7 @@ class MessageCtrl : public wxScrolledWindow {
     Refresh(false);
   }
   void add_message(MessageType type, String const& text, bool joined_to_previous = false) {
-    add_message(intrusive(new ConsoleMessage(type,text,joined_to_previous)));
+    add_message(make_intrusive<ConsoleMessage>(type,text,joined_to_previous));
   }
   
   bool have_selection() const {
@@ -499,7 +499,7 @@ void ConsolePanel::exec(String const& command) {
     ScriptValueP result = ctx.eval(*script,false);
     get_pending_errors();
     // show result
-    ConsoleMessageP message = intrusive(new ConsoleMessage(MESSAGE_OUTPUT));
+    ConsoleMessageP message = make_intrusive<ConsoleMessage>(MESSAGE_OUTPUT);
     message->joined_to_previous = true;
     message->value = result;
     // type of result

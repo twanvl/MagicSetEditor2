@@ -111,11 +111,11 @@ ScriptDelayedError::operator bool()   const            { throw error; }
 ScriptDelayedError::operator Color()  const            { throw error; }
 int ScriptDelayedError::itemCount() const              { throw error; }
 CompareWhat ScriptDelayedError::compareAs(String&, void const*&) const { throw error; }
-ScriptValueP ScriptDelayedError::getMember(const String&) const                           { return intrusive(new ScriptDelayedError(error)); }
-ScriptValueP ScriptDelayedError::dependencyMember(const String&, const Dependency&) const { return intrusive(new ScriptDelayedError(error)); }
-ScriptValueP ScriptDelayedError::do_eval(Context&, bool) const                            { return intrusive(new ScriptDelayedError(error)); }
-ScriptValueP ScriptDelayedError::dependencies(Context&, const Dependency&) const          { return intrusive(new ScriptDelayedError(error)); }
-ScriptValueP ScriptDelayedError::makeIterator(const ScriptValueP& thisP) const            { return thisP ? thisP : intrusive(new ScriptDelayedError(error)); }
+ScriptValueP ScriptDelayedError::getMember(const String&) const                           { return make_intrusive<ScriptDelayedError>(error); }
+ScriptValueP ScriptDelayedError::dependencyMember(const String&, const Dependency&) const { return make_intrusive<ScriptDelayedError>(error); }
+ScriptValueP ScriptDelayedError::do_eval(Context&, bool) const                            { return make_intrusive<ScriptDelayedError>(error); }
+ScriptValueP ScriptDelayedError::dependencies(Context&, const Dependency&) const          { return make_intrusive<ScriptDelayedError>(error); }
+ScriptValueP ScriptDelayedError::makeIterator(const ScriptValueP& thisP) const            { return thisP ? thisP : make_intrusive<ScriptDelayedError>(error); }
 
 
 // ----------------------------------------------------------------------------- : Iterators
@@ -144,7 +144,7 @@ class ScriptRangeIterator : public ScriptIterator {
 };
 
 ScriptValueP rangeIterator(int start, int end) {
-  return intrusive(new ScriptRangeIterator(start, end));
+  return make_intrusive<ScriptRangeIterator>(start, end);
 }
 
 // ----------------------------------------------------------------------------- : Integers
@@ -190,7 +190,7 @@ ScriptValueP to_script(int v) {
         destroy_value); // deallocation function
   #endif
 #else
-  return intrusive(new ScriptInt(v));
+  return make_intrusive<ScriptInt>(v);
 #endif
 }
 
@@ -233,7 +233,7 @@ class ScriptDouble : public ScriptValue {
 };
 
 ScriptValueP to_script(double v) {
-  return intrusive(new ScriptDouble(v));
+  return make_intrusive<ScriptDouble>(v);
 }
 
 // ----------------------------------------------------------------------------- : String type
@@ -287,9 +287,9 @@ class ScriptString : public ScriptValue {
   }
   virtual GeneratedImageP toImage(const ScriptValueP&) const {
     if (value.empty()) {
-      return intrusive(new BlankImage());
+      return make_intrusive<BlankImage>();
     } else {
-      return intrusive(new PackagedImage(value));
+      return make_intrusive<PackagedImage>(value);
     }
   }
   virtual int itemCount() const { return (int)value.size(); }
@@ -307,7 +307,7 @@ class ScriptString : public ScriptValue {
 };
 
 ScriptValueP to_script(const String& v) {
-  return intrusive(new ScriptString(v));
+  return make_intrusive<ScriptString>(v);
 }
 
 
@@ -329,7 +329,7 @@ private:
 };
 
 ScriptValueP to_script(Color v) {
-  return intrusive(new ScriptColor(v));
+  return make_intrusive<ScriptColor>(v);
 }
 
 
@@ -350,7 +350,7 @@ class ScriptDateTime : public ScriptValue {
 };
 
 ScriptValueP to_script(wxDateTime v) {
-  return intrusive(new ScriptDateTime(v));
+  return make_intrusive<ScriptDateTime>(v);
 }
 
 
@@ -367,7 +367,7 @@ public:
   operator bool()   const override { return false; }
   operator Color()  const override { return wxTransparentColour; }
   GeneratedImageP toImage(const ScriptValueP&) const {
-    return intrusive(new BlankImage());
+    return make_intrusive<BlankImage>();
   }
   String toCode() const override {
     return "nil";
@@ -440,7 +440,7 @@ ScriptValueP ScriptCustomCollection::getIndex(int index) const {
   }
 }
 ScriptValueP ScriptCustomCollection::makeIterator(const ScriptValueP& thisP) const {
-  return intrusive(new ScriptCustomCollectionIterator(this, thisP));
+  return make_intrusive<ScriptCustomCollectionIterator>(this, thisP);
 }
 
 // ----------------------------------------------------------------------------- : Concat collection
@@ -484,7 +484,7 @@ ScriptValueP ScriptConcatCollection::getIndex(int index) const {
   }
 }
 ScriptValueP ScriptConcatCollection::makeIterator(const ScriptValueP& thisP) const {
-  return intrusive(new ScriptConcatCollectionIterator(a->makeIterator(a), b->makeIterator(b)));
+  return make_intrusive<ScriptConcatCollectionIterator>(a->makeIterator(a), b->makeIterator(b));
 }
 
 // ----------------------------------------------------------------------------- : Default arguments / closure

@@ -31,7 +31,7 @@ class FilterCtrl : public wxControl {
   template <typename T>
   intrusive_ptr<Filter<T> > getFilter() const {
     if (hasFilter()) {
-      return intrusive(new QuickFilter<T>(getFilterString()));
+      return make_intrusive<QuickFilter<T>>(getFilterString());
     } else {
       return intrusive_ptr<Filter<T> >();
     }

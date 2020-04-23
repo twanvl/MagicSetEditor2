@@ -65,7 +65,7 @@ void CLISetInterface::setExportInfoCwd() {
   // write to the current directory
   ei.directory_relative = ei.directory_absolute = wxGetCwd();
   // read from the current directory
-  ei.export_template = intrusive(new Package());
+  ei.export_template = make_intrusive<Package>();
   ei.export_template->open(ei.directory_absolute, true);
 }
 

@@ -29,13 +29,13 @@ DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA ValueP>);
 // ----------------------------------------------------------------------------- : Set
 
 Set::Set()
-  : vcs (intrusive(new VCS()))
+  : vcs (make_intrusive<VCS>())
   , script_manager(new SetScriptManager(*this))
 {}
 
 Set::Set(const GameP& game)
   : game(game)
-  , vcs (intrusive(new VCS()))
+  , vcs (make_intrusive<VCS>())
   , script_manager(new SetScriptManager(*this))
 {
   data.init(game->set_fields);
@@ -44,7 +44,7 @@ Set::Set(const GameP& game)
 Set::Set(const StyleSheetP& stylesheet)
   : game(stylesheet->game)
   , stylesheet(stylesheet)
-  , vcs (intrusive(new VCS()))
+  , vcs (make_intrusive<VCS>())
   , script_manager(new SetScriptManager(*this))
 {
   data.init(game->set_fields);
@@ -164,7 +164,7 @@ void Set::validate(Version file_app_version) {
     }
 */  }
   // we want at least one card
-  if (cards.empty()) cards.push_back(intrusive(new Card(*game)));
+  if (cards.empty()) cards.push_back(make_intrusive<Card>(*game));
   // update scripts
   script_manager->updateAll();
 }
@@ -234,7 +234,7 @@ void Set::reflect_cards<Writer> (Writer& tag) {
 // ----------------------------------------------------------------------------- : Script utilities
 
 ScriptValueP make_iterator(const Set& set) {
-  return intrusive(new ScriptCollectionIterator<vector<CardP> >(&set.cards));
+  return make_intrusive<ScriptCollectionIterator<vector<CardP>>>(&set.cards);
 }
 
 void mark_dependency_member(const Set& set, const String& name, const Dependency& dep) {
@@ -279,7 +279,7 @@ int Set::positionOfCard(const CardP& card, const ScriptValueP& order_by, const S
       Profiler prof(t, order_by.get(), _("init order cache"));
     #endif
     // 3. initialize order cache
-    order = intrusive(new OrderCache<CardP>(cards, values, filter ? &keep : nullptr));
+    order = make_intrusive<OrderCache<CardP>>(cards, values, filter ? &keep : nullptr);
   }
   return order->find(card);
 }

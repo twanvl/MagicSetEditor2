@@ -33,29 +33,18 @@ template <typename T> using scoped_ptr = unique_ptr<T>;
   class Type; \
   typedef shared_ptr<Type> Type##P;
 
-// ----------------------------------------------------------------------------- : Creating
-
-/// Wrap a newly allocated pointer in an shared_ptr
-/** Usage:
-  *    return shared(new T(stuff)));
-  */
-template <typename T>
-//[[deprecated("use make_shared")]]
-inline shared_ptr<T> shared(T* ptr) {
-  return shared_ptr<T>(ptr);
-}
-template <typename T>
-//[[deprecated("use make_shared")]]
-inline shared_ptr<T> intrusive(T* ptr) {
-  return shared_ptr<T>(ptr);
-}
-
 // ----------------------------------------------------------------------------- : Intrusive pointers
 
 #define DECLARE_POINTER_TYPE DECLARE_SHARED_POINTER_TYPE
-#define intrusive_ptr shared_ptr
 
 template <typename T> class IntrusivePtrBase {};
+template <typename T> using intrusive_ptr = shared_ptr<T>;
+
+/// Allocate an object of type T and store it in a new intrusive_ptr, similar to std::make_shared
+template <typename T, class... Args>
+inline intrusive_ptr<T> make_intrusive(Args&&... args) {
+  return std::make_shared<T>(std::forward<Args>(args)...);
+}
 
 /// IntrusivePtrBase with a virtual destructor
 class IntrusivePtrVirtualBase : public IntrusivePtrBase<IntrusivePtrVirtualBase> {

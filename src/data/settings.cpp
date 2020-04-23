@@ -203,7 +203,7 @@ void Settings::addRecentFile(const String& filename) {
 
 GameSettings& Settings::gameSettingsFor(const Game& game) {
   GameSettingsP& gs = game_settings[game.name()];
-  if (!gs) gs = intrusive(new GameSettings);
+  if (!gs) gs = make_intrusive<GameSettings>();
   gs->initDefaults(game);
   return *gs;
 }
@@ -222,7 +222,7 @@ ColumnSettings& Settings::columnSettingsFor(const Game& game, const Field& field
 }
 StyleSheetSettings& Settings::stylesheetSettingsFor(const StyleSheet& stylesheet) {
   StyleSheetSettingsP& ss = stylesheet_settings[stylesheet.name()];
-  if (!ss) ss = intrusive(new StyleSheetSettings);
+  if (!ss) ss = make_intrusive<StyleSheetSettings>();
   ss->useDefault(default_stylesheet_settings); // update default settings
   return *ss;
 }
@@ -295,7 +295,7 @@ void Settings::read() {
   String filename = settingsFile();
   if (wxFileExists(filename)) {
     // settings file not existing is not an error
-    shared_ptr<wxFileInputStream> file = shared(new wxFileInputStream(filename));
+    shared_ptr<wxFileInputStream> file = make_shared<wxFileInputStream>(filename);
     if (!file->Ok()) return; // failure is not an error
     Reader reader(file, nullptr, filename);
     reader.handle_greedy(*this);
@@ -303,6 +303,6 @@ void Settings::read() {
 }
 
 void Settings::write() {
-  Writer writer(shared(new wxFileOutputStream(settingsFile())), app_version);
+  Writer writer(make_shared<wxFileOutputStream>(settingsFile()), app_version);
   writer.handle(*this);
 }

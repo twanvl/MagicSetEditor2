@@ -105,12 +105,12 @@ void Installer::install(bool local, bool check_dependencies) {
     }
     PackagedP pack;
     wxString fn(wxFileName(p).GetExt());
-    if      (fn == _("mse-game"))            pack = intrusive(new Game());
-    else if (fn == _("mse-style"))           pack = intrusive(new StyleSheet());
-    else if (fn == _("mse-locale"))          pack = intrusive(new Locale());
-    else if (fn == _("mse-include"))         pack = intrusive(new IncludePackage());
-    else if (fn == _("mse-symbol-font"))     pack = intrusive(new SymbolFont());
-    else if (fn == _("mse-export-template")) pack = intrusive(new ExportTemplate());
+    if      (fn == _("mse-game"))            pack = make_intrusive<Game>();
+    else if (fn == _("mse-style"))           pack = make_intrusive<StyleSheet>();
+    else if (fn == _("mse-locale"))          pack = make_intrusive<Locale>();
+    else if (fn == _("mse-include"))         pack = make_intrusive<IncludePackage>();
+    else if (fn == _("mse-symbol-font"))     pack = make_intrusive<SymbolFont>();
+    else if (fn == _("mse-export-template")) pack = make_intrusive<ExportTemplate>();
     else {
       throw PackageError(_("Unrecognized package type: '") + fn + _("'\nwhile trying to install: ") + p);
     }
@@ -186,7 +186,7 @@ void Installer::addPackage(Packaged& package) {
       return; // already added
     }
   }
-  packages.push_back(intrusive(new PackageDescription(package)));
+  packages.push_back(make_intrusive<PackageDescription>(package));
   // use this as a filename?
   if (prefered_filename.empty()) {
     prefered_filename = package.name() + _(".mse-installer");
@@ -387,7 +387,7 @@ void merge(InstallablePackages& list1, const InstallablePackages& list2) {
 void merge(InstallablePackages& installed, const DownloadableInstallerP& installer) {
   InstallablePackages ips;
   FOR_EACH(p, installer->packages) {
-    ips.push_back(intrusive(new InstallablePackage(p,installer)));
+    ips.push_back(make_intrusive<InstallablePackage>(p,installer));
   }
   sort(ips);
   merge(installed, ips);
@@ -625,5 +625,5 @@ InstallablePackageP mse_installable_package() {
   mse_description->position_hint = -100;
   mse_description->icon          = load_resource_image(_("installer_program"));
   //mse_description->description   = _LABEL_("magic set editor package");
-  return intrusive(new InstallablePackage(mse_description, mse_version));
+  return make_intrusive<InstallablePackage>(mse_description, mse_version);
 }

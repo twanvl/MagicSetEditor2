@@ -16,7 +16,6 @@
 class Game;
 DECLARE_POINTER_TYPE(Set);
 DECLARE_POINTER_TYPE(Card);
-DECLARE_POINTER_TYPE(FileFormat);
 
 // ----------------------------------------------------------------------------- : FileFormat
 
@@ -46,6 +45,8 @@ class FileFormat : public IntrusivePtrVirtualBase {
     throw InternalError(_("Export not supported by this file format"));
   }
 };
+
+using FileFormatP = unique_ptr<FileFormat>;
 
 // ----------------------------------------------------------------------------- : Formats
 

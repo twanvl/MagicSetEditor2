@@ -12,8 +12,8 @@
 // ----------------------------------------------------------------------------- : BooleanField
 
 BooleanField::BooleanField() {
-  choices->choices.push_back(intrusive(new Choice(_("yes"))));
-  choices->choices.push_back(intrusive(new Choice(_("no"))));
+  choices->choices.push_back(make_intrusive<Choice>(_("yes")));
+  choices->choices.push_back(make_intrusive<Choice>(_("no")));
   choices->initIds();
 }
 
@@ -32,10 +32,8 @@ BooleanStyle::BooleanStyle(const ChoiceFieldP& field)
   : ChoiceStyle(field)
 {
   render_style = RENDER_BOTH;
-  //choice_images[_("yes")] = ScriptableImage(_("buildin_image(\"bool_yes\")"));
-  //choice_images[_("no")]  = ScriptableImage(_("buildin_image(\"bool_no\")"));
-  choice_images[_("yes")] = ScriptableImage(intrusive(new BuiltInImage(_("bool_yes"))));
-  choice_images[_("no")]  = ScriptableImage(intrusive(new BuiltInImage(_("bool_no"))));
+  choice_images[_("yes")] = ScriptableImage(make_intrusive<BuiltInImage>(_("bool_yes")));
+  choice_images[_("no")]  = ScriptableImage(make_intrusive<BuiltInImage>(_("bool_no")));
 }
 
 IMPLEMENT_REFLECTION(BooleanStyle) {

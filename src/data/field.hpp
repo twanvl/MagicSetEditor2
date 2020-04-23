@@ -265,23 +265,23 @@ inline String type_name(const Value&) {
   virtual String typeName() const
 
 // implement newStyle and newValue
-#define IMPLEMENT_FIELD_TYPE(Type, NAME)                        \
-  StyleP Type ## Field::newStyle(const FieldP& thisP) const {              \
-    assert(thisP.get() == this);                          \
-    return intrusive(new Type ## Style(static_pointer_cast<Type ## Field>(thisP)));  \
-  }                                          \
-  ValueP Type ## Field::newValue(const FieldP& thisP) const {              \
-    assert(thisP.get() == this);                          \
-    return intrusive(new Type ## Value(static_pointer_cast<Type ## Field>(thisP)));  \
-  }                                          \
-  StyleP Type ## Style::clone() const {                        \
-    return intrusive(new Type ## Style(*this));                    \
-  }                                          \
-  ValueP Type ## Value::clone() const {                        \
-    return intrusive(new Type ## Value(*this));                    \
-  }                                          \
-  String Type ## Field::typeName() const {                      \
-    return _(NAME);                                  \
+#define IMPLEMENT_FIELD_TYPE(Type, NAME) \
+  StyleP Type ## Field::newStyle(const FieldP& thisP) const { \
+    assert(thisP.get() == this); \
+    return make_intrusive<Type ## Style>(static_pointer_cast<Type ## Field>(thisP)); \
+  } \
+  ValueP Type ## Field::newValue(const FieldP& thisP) const { \
+    assert(thisP.get() == this); \
+    return make_intrusive<Type ## Value>(static_pointer_cast<Type ## Field>(thisP)); \
+  } \
+  StyleP Type ## Style::clone() const { \
+    return make_intrusive<Type ## Style>(*this); \
+  } \
+  ValueP Type ## Value::clone() const { \
+    return make_intrusive<Type ## Value>(*this); \
+  } \
+  String Type ## Field::typeName() const { \
+    return _(NAME); \
   }
 
 #define DECLARE_STYLE_TYPE(Type)                            \

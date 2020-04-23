@@ -71,9 +71,9 @@ intrusive_ptr<SymbolFilter> read_new<SymbolFilter>(Reader& reader) {
   // there must be a fill type specified
   String fill_type;
   reader.handle(_("fill_type"), fill_type);
-  if      (fill_type == _("solid"))      return intrusive(new SolidFillSymbolFilter);
-  else if (fill_type == _("linear gradient"))  return intrusive(new LinearGradientSymbolFilter);
-  else if (fill_type == _("radial gradient"))  return intrusive(new RadialGradientSymbolFilter);
+  if      (fill_type == _("solid"))           return make_intrusive<SolidFillSymbolFilter>();
+  else if (fill_type == _("linear gradient")) return make_intrusive<LinearGradientSymbolFilter>();
+  else if (fill_type == _("radial gradient")) return make_intrusive<RadialGradientSymbolFilter>();
   else if (fill_type.empty()) {
     reader.warning(_ERROR_1_("expected key", _("fill type")));
     throw ParseError(_ERROR_("aborting parsing"));

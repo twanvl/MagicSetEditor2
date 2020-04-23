@@ -45,5 +45,5 @@ class MSE2FileFormat : public FileFormat {
 };
 
 FileFormatP mse2_file_format() {
-  return intrusive(new MSE2FileFormat());
+  return make_unique<MSE2FileFormat>();
 }

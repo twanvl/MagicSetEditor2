@@ -1367,7 +1367,7 @@ void TextValueEditor::findWordLists() {
       throw Error(_ERROR_1_("word list type not found", name));
     }
     // add to word_lists
-    word_lists.push_back(intrusive(new WordListPos(pos, end, word_list)));
+    word_lists.push_back(make_intrusive<WordListPos>(pos, end, word_list));
     // next
     pos = str.find(_("<word-list-"), end);
   }

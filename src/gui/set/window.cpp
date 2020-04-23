@@ -309,7 +309,7 @@ void SetWindow::onChangeSet() {
   updateTitle();
   // make sure there is always at least one card
   // some things need this
-  if (set->cards.empty()) set->cards.push_back(intrusive(new Card(*set->game)));
+  if (set->cards.empty()) set->cards.push_back(make_intrusive<Card>(*set->game));
   // all panels view the same set
   FOR_EACH(p, panels) {
     p->setSet(set);
@@ -383,11 +383,11 @@ void SetWindow::onCardActivate(CardSelectEvent& ev) {
 }
 
 void SetWindow::selectionChoices(ExportCardSelectionChoices& out) {
-  out.push_back(intrusive(new ExportCardSelectionChoice(*set))); // entire set
+  out.push_back(make_intrusive<ExportCardSelectionChoice>(*set)); // entire set
   FOR_EACH(p, panels) {
     p->selectionChoices(out);
   }
-  out.push_back(intrusive(new ExportCardSelectionChoice())); // custom
+  out.push_back(make_intrusive<ExportCardSelectionChoice>()); // custom
 }
 
 // ----------------------------------------------------------------------------- : Window events - close

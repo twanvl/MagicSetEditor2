@@ -64,7 +64,7 @@ void TextCtrl::updateSize() {
 }
 
 void TextCtrl::setValue(String* value, bool untagged) {
-  setValue(intrusive(new FakeTextValue(getFieldP(), value, true, untagged)));
+  setValue(make_intrusive<FakeTextValue>(getFieldP(), value, true, untagged));
 }
 void TextCtrl::setValue(const FakeTextValueP& value) {
   value->retrieve();

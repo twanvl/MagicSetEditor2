@@ -187,7 +187,7 @@ PrintJobP make_print_job(Window* parent, const SetP& set, const ExportCardSelect
     return PrintJobP(); // cancel
   } else {
     // make print job
-    PrintJobP job = intrusive(new PrintJob(set));
+    PrintJobP job = make_intrusive<PrintJob>(set);
     job->layout_type = settings.print_layout = space->GetValue() ? LAYOUT_EQUAL_SPACE : LAYOUT_NO_SPACE;
     job->cards = wnd.getSelection();
     return job;

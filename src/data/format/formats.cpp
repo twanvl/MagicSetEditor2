@@ -10,9 +10,6 @@
 #include <data/format/formats.hpp>
 #include <data/set.hpp>
 
-DECLARE_POINTER_TYPE(FileFormat);
-DECLARE_TYPEOF_COLLECTION(FileFormatP);
-
 // ----------------------------------------------------------------------------- : Formats
 
 // All supported file formats
@@ -49,11 +46,11 @@ String export_formats(const Game& game) {
 }
 
 void export_set(Set& set, const String& filename, size_t format_index, bool is_copy) {
-  FileFormatP format = file_formats.at(format_index);
-  if (!format->canExport(*set.game)) {
+  FileFormat& format = *file_formats.at(format_index);
+  if (!format.canExport(*set.game)) {
     throw InternalError(_("File format doesn't apply to set"));
   }
-  format->exportSet(set, filename, is_copy);
+  format.exportSet(set, filename, is_copy);
 }
 
 SetP import_set(String name) {

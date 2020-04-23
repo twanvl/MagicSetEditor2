@@ -30,7 +30,7 @@ class MSE1FileFormat : public FileFormat {
 };
 
 FileFormatP mse1_file_format() {
-  return intrusive(new MSE1FileFormat());
+  return make_unique<MSE1FileFormat>();
 }
 
 // ----------------------------------------------------------------------------- : Importing

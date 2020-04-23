@@ -231,7 +231,7 @@ void AutoReplaceWindow::onRemove(wxCommandEvent&) {
   list->removeSelected();
 }
 void AutoReplaceWindow::onAdd(wxCommandEvent&) {
-  list->addItem(intrusive(new AutoReplace()));
+  list->addItem(make_intrusive<AutoReplace>());
 }
 void AutoReplaceWindow::onDefault(wxCommandEvent&) {
   use_auto_replace->SetValue(true);

@@ -92,7 +92,7 @@ void NewSetWindow::done() {
   try {
     if (!stylesheet_list->hasSelection()) return;
     StyleSheetP stylesheet = stylesheet_list->getSelection<StyleSheet>();
-    set = intrusive(new Set(stylesheet));
+    set = make_intrusive<Set>(stylesheet);
     set->validate();
     EndModal(wxID_OK);
   } catch (const Error& e) {

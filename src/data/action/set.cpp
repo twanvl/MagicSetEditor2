@@ -23,7 +23,7 @@ DECLARE_TYPEOF_COLLECTION(int);
 
 AddCardAction::AddCardAction(Set& set)
   : CardListAction(set)
-  , action(ADD, intrusive(new Card(*set.game)), set.cards)
+  , action(ADD, make_intrusive<Card>(*set.game), set.cards)
 {}
 
 AddCardAction::AddCardAction(AddingOrRemoving ar, Set& set, const CardP& card)

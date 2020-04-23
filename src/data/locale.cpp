@@ -77,7 +77,7 @@ SubLocaleP find_wildcard(map<String,SubLocaleP>& items, const String& name) {
   FOR_EACH_CONST(i, items) {
     if (i.second && match_wildcard(i.first, name)) return i.second;
   }
-  return intrusive(new SubLocale()); // so we don't search again
+  return make_intrusive<SubLocale>(); // so we don't search again
 }
 SubLocaleP find_wildcard_and_set(map<String,SubLocaleP>& items, const String& name) {
   return items[name] = find_wildcard(items, name);
