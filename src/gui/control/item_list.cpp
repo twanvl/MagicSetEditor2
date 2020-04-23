@@ -165,7 +165,7 @@ void ItemList::refreshList(bool refresh_current_only) {
   }
   // Has the entire list changed?
   if (refresh_current_only && sorted_list == old_sorted_list) {
-    if (selected_item_pos > 0) RefreshItem(selected_item_pos);
+    if (selected_item_pos >= 0) RefreshItem(selected_item_pos);
     return;
   }
   // refresh
