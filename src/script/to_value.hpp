@@ -78,7 +78,7 @@ class ScriptDelayedError : public ScriptValue {
   virtual operator double() const;
   virtual operator int()    const;
   virtual operator bool()   const;
-  virtual operator AColor() const;
+  virtual operator Color()  const;
   virtual int itemCount() const;
   virtual CompareWhat compareAs(String&, void const*&) const;
   // these can propagate the error
@@ -279,7 +279,7 @@ class ScriptObject : public ScriptValue {
   virtual operator double() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator double(); }
   virtual operator int()    const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator int(); }
   virtual operator bool()   const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator bool(); }
-  virtual operator AColor() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator AColor(); }
+  virtual operator Color()  const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator Color(); }
   virtual String toCode()   const { ScriptValueP d = getDefault(); return d ? d->toCode() : to_code(*value); }
   virtual GeneratedImageP toImage(const ScriptValueP& thisP) const {
     ScriptValueP d = getDefault(); return d ? d->toImage(d) : ScriptValue::toImage(thisP);
@@ -399,7 +399,6 @@ inline ScriptValueP to_script(long          v) { return to_script((int) v); }
        ScriptValueP to_script(double        v);
        ScriptValueP to_script(const String& v);
        ScriptValueP to_script(Color         v);
-       ScriptValueP to_script(AColor        v);
        ScriptValueP to_script(wxDateTime    v);
 inline ScriptValueP to_script(bool          v) { return v ? script_true : script_false; }
 template <typename T>
@@ -428,8 +427,7 @@ template <> inline String       from_script<String>      (const ScriptValueP& va
 template <> inline int          from_script<int>         (const ScriptValueP& value) { return *value; }
 template <> inline double       from_script<double>      (const ScriptValueP& value) { return *value; }
 template <> inline bool         from_script<bool>        (const ScriptValueP& value) { return *value; }
-template <> inline Color        from_script<Color>       (const ScriptValueP& value) { return (AColor)*value; }
-template <> inline AColor       from_script<AColor>      (const ScriptValueP& value) { return *value; }
+template <> inline Color        from_script<Color>       (const ScriptValueP& value) { return *value; }
 template <> inline wxDateTime   from_script<wxDateTime>  (const ScriptValueP& value) { return *value; }
 
 // ----------------------------------------------------------------------------- : EOF

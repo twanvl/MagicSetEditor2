@@ -197,7 +197,7 @@ class KeywordParamValue : public ScriptValue {
   virtual operator int()    const;
   virtual operator bool()   const;
   virtual operator double() const;
-  virtual operator AColor() const;
+  virtual operator Color()  const;
   virtual int itemCount()   const;
   virtual ScriptValueP getMember(const String& name) const;
 };

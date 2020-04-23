@@ -23,7 +23,7 @@ ScriptValue::operator String()                              const { throw Script
 ScriptValue::operator int()                                 const { throw ScriptErrorConversion(typeName(), _TYPE_("integer" )); }
 ScriptValue::operator bool()                                const { throw ScriptErrorConversion(typeName(), _TYPE_("boolean" )); }
 ScriptValue::operator double()                              const { throw ScriptErrorConversion(typeName(), _TYPE_("double"  )); }
-ScriptValue::operator AColor()                              const { throw ScriptErrorConversion(typeName(), _TYPE_("color"   )); }
+ScriptValue::operator Color()                               const { throw ScriptErrorConversion(typeName(), _TYPE_("color"   )); }
 ScriptValue::operator wxDateTime()                          const { throw ScriptErrorConversion(typeName(), _TYPE_("date"    )); }
 ScriptValueP ScriptValue::do_eval(Context&, bool)           const { return delay_error(ScriptErrorConversion(typeName(), _TYPE_("function"))); }
 ScriptValueP ScriptValue::next(ScriptValueP* key_out)             { throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator")); }
@@ -108,7 +108,7 @@ ScriptDelayedError::operator String() const            { throw error; }
 ScriptDelayedError::operator double() const            { throw error; }
 ScriptDelayedError::operator int()    const            { throw error; }
 ScriptDelayedError::operator bool()   const            { throw error; }
-ScriptDelayedError::operator AColor() const            { throw error; }
+ScriptDelayedError::operator Color()  const            { throw error; }
 int ScriptDelayedError::itemCount() const              { throw error; }
 CompareWhat ScriptDelayedError::compareAs(String&, void const*&) const { throw error; }
 ScriptValueP ScriptDelayedError::getMember(const String&) const                           { return intrusive(new ScriptDelayedError(error)); }
@@ -270,8 +270,8 @@ class ScriptString : public ScriptValue {
       throw ScriptErrorConversion(value, typeName(), _TYPE_("boolean"));
     }
   }
-  virtual operator AColor() const {
-    AColor c = parse_acolor(value);
+  virtual operator Color() const {
+    Color c = parse_color(value);
     if (!c.Ok()) {
       throw ScriptErrorConversion(value, typeName(), _TYPE_("color"));
     }
@@ -313,26 +313,23 @@ ScriptValueP to_script(const String& v) {
 
 // ----------------------------------------------------------------------------- : Color
 
-// AColor values
-class ScriptAColor : public ScriptValue {
-  public:
-  ScriptAColor(const AColor& v) : value(v) {}
+// Color values
+class ScriptColor : public ScriptValue {
+public:
+  ScriptColor(const Color& v) : value(v) {}
   virtual ScriptType type() const { return SCRIPT_COLOR; }
   virtual String typeName() const { return _TYPE_("color"); }
-  virtual operator AColor() const { return value; }
+  virtual operator Color() const { return value; }
   // colors don't auto convert to int, use to_int to force
   virtual operator String() const {
-    return format_acolor(value);
+    return format_color(value);
   }
-  private:
-  AColor value;
+private:
+  Color value;
 };
 
 ScriptValueP to_script(Color v) {
-  return intrusive(new ScriptAColor(v));
-}
-ScriptValueP to_script(AColor v) {
-  return intrusive(new ScriptAColor(v));
+  return intrusive(new ScriptColor(v));
 }
 
 
@@ -368,7 +365,7 @@ public:
   operator double() const override { return 0.0; }
   operator int()    const override { return 0; }
   operator bool()   const override { return false; }
-  operator AColor() const override { return AColor(); }
+  operator Color()  const override { return wxTransparentColour; }
   GeneratedImageP toImage(const ScriptValueP&) const {
     return intrusive(new BlankImage());
   }

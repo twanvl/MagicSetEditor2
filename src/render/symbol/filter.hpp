@@ -42,7 +42,7 @@ class SymbolFilter : public IntrusivePtrVirtualBase {
   virtual ~SymbolFilter() {}
   /// What color should the symbol have at location (x, y)?
   /** x,y are in the range [0...1) */
-  virtual AColor color(double x, double y, SymbolSet point) const = 0;
+  virtual Color color(double x, double y, SymbolSet point) const = 0;
   /// Name of this fill type
   virtual String fillType() const = 0;
   /// Comparision
@@ -60,14 +60,14 @@ intrusive_ptr<SymbolFilter> read_new<SymbolFilter>(Reader& reader);
 class SolidFillSymbolFilter : public SymbolFilter {
   public:
   inline SolidFillSymbolFilter() {}
-  inline SolidFillSymbolFilter(const AColor& fill_color, const AColor& border_color)
+  inline SolidFillSymbolFilter(const Color& fill_color, const Color& border_color)
     : fill_color(fill_color), border_color(border_color)
   {}
-  virtual AColor color(double x, double y, SymbolSet point) const;
+  virtual Color color(double x, double y, SymbolSet point) const;
   virtual String fillType() const;
   virtual bool operator == (const SymbolFilter& that) const;
   private:
-  AColor fill_color, border_color;
+  Color fill_color, border_color;
   DECLARE_REFLECTION();
 };
 
@@ -83,7 +83,7 @@ class GradientSymbolFilter : public SymbolFilter {
   Color fill_color_1, border_color_1;
   Color fill_color_2, border_color_2;
   template <typename T>
-  AColor color(double x, double y, SymbolSet point, const T* t) const;
+  Color color(double x, double y, SymbolSet point, const T* t) const;
   bool equal(const GradientSymbolFilter& that) const;
   
   DECLARE_REFLECTION();
@@ -96,7 +96,7 @@ class LinearGradientSymbolFilter : public GradientSymbolFilter {
   LinearGradientSymbolFilter(const Color& fill_color_1, const Color& border_color_1, const Color& fill_color_2, const Color& border_color_2
                             ,double center_x, double center_y, double end_x, double end_y);
   
-  virtual AColor color(double x, double y, SymbolSet point) const;
+  virtual Color color(double x, double y, SymbolSet point) const;
   virtual String fillType() const;
   virtual bool operator == (const SymbolFilter& that) const;
   
@@ -118,7 +118,7 @@ class RadialGradientSymbolFilter : public GradientSymbolFilter {
     : GradientSymbolFilter(fill_color_1, border_color_1, fill_color_2, border_color_2)
   {}
   
-  virtual AColor color(double x, double y, SymbolSet point) const;
+  virtual Color color(double x, double y, SymbolSet point) const;
   virtual String fillType() const;
   virtual bool operator == (const SymbolFilter& that) const;
   

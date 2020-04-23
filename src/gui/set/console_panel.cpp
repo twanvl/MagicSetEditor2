@@ -510,10 +510,10 @@ void ConsolePanel::exec(String const& command) {
       message->bitmap = wxBitmap(image);
     } else if (type == SCRIPT_COLOR) {
       message->text = result->toCode();
-      AColor color = (AColor)*result;
+      Color color = (Color)*result;
       wxImage image(30,20);
       fill_image(image,color);
-      set_alpha(image, color.alpha / 255.0);
+      set_alpha(image, color.Alpha() / 255.0);
       message->bitmap = wxBitmap(image);
     } else {
       message->text = result->toCode();

@@ -13,47 +13,34 @@
 
 template <> void Reader::handle(Color& col) {
   col = parse_color(getValue());
-  if (!col.Ok()) col = *wxBLACK;
+  if (!col.Ok()) col = Color(0,0,0,0);
 }
 
-template <> void Reader::handle(AColor& col) {
-  col = parse_acolor(getValue());
-  if (!col.Ok()) col = AColor(0,0,0,0);
-}
-template <> void Writer::handle(const AColor& col) {
-  handle(format_acolor(col));
+template <> void Writer::handle(const Color& col) {
+  handle(format_color(col));
 }
 
 
 Color parse_color(const String& v) {
-  UInt r,g,b;
-  if (wxSscanf(v.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
-    return Color(r, g, b);
-  } else {
-    return Color(v);
-  }
-}
-
-AColor parse_acolor(const String& v) {
   UInt r,g,b,a;
   if (wxSscanf(v.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
-    return AColor(r, g, b);
+    return Color(r, g, b);
   } else if (wxSscanf(v.c_str(),_("rgba(%u,%u,%u,%u)"),&r,&g,&b,&a)) {
-    return AColor(r, g, b, a);
+    return Color(r, g, b, a);
   } else if (v == _("transparent")) {
-    return AColor(0,0,0,0);
+    return Color(0,0,0,0);
   } else {
     return Color(v);
   }
 }
 
-String format_acolor(AColor col) {
-  if (col.alpha == 255) {
+String format_color(Color col) {
+  if (col.Alpha() == 255) {
     return String::Format(_("rgb(%u,%u,%u)"), col.Red(), col.Green(), col.Blue());
-  } else if (col.alpha == 0) {
+  } else if (col.Alpha() == 0) {
     return _("transparent");
   } else {
-    return String::Format(_("rgba(%u,%u,%u,%u)"), col.Red(), col.Green(), col.Blue(), col.alpha);
+    return String::Format(_("rgba(%u,%u,%u,%u)"), col.Red(), col.Green(), col.Blue(), col.Alpha());
   }
 }
 
@@ -62,7 +49,8 @@ String format_acolor(AColor col) {
 Color lerp(const Color& a, const Color& b, double t) {
   return Color(static_cast<int>( a.Red()   + (b.Red()   - a.Red()  ) * t ),
                static_cast<int>( a.Green() + (b.Green() - a.Green()) * t ),
-               static_cast<int>( a.Blue()  + (b.Blue()  - a.Blue() ) * t ));
+               static_cast<int>( a.Blue()  + (b.Blue()  - a.Blue() ) * t ),
+               static_cast<int>( a.Alpha() + (b.Alpha() - a.Alpha()) * t ));
 }
 
 

@@ -34,12 +34,12 @@ void filter_symbol(Image& symbol, const SymbolFilter& filter) {
       } else {
         SymbolSet point = data[1] ? (data[0] ? SYMBOL_BORDER : SYMBOL_OUTSIDE) : SYMBOL_INSIDE;
         // Call filter
-        AColor result = filter.color((double)x / width, (double)y / height, point);
+        Color result = filter.color((double)x / width, (double)y / height, point);
         // Store color
         data[0]  = result.Red();
         data[1]  = result.Green();
         data[2]  = result.Blue();
-        alpha[0] = result.alpha;
+        alpha[0] = result.Alpha();
       }
       // next
       data  += 3;
@@ -87,10 +87,10 @@ intrusive_ptr<SymbolFilter> read_new<SymbolFilter>(Reader& reader) {
 
 String SolidFillSymbolFilter::fillType() const { return _("solid"); }
 
-AColor SolidFillSymbolFilter::color(double x, double y, SymbolSet point) const {
+Color SolidFillSymbolFilter::color(double x, double y, SymbolSet point) const {
   if      (point == SYMBOL_INSIDE) return fill_color;
   else if (point == SYMBOL_BORDER) return border_color;
-  else                             return AColor(0,0,0,0);
+  else                             return Color(0,0,0,0);
 }
 
 bool SolidFillSymbolFilter::operator == (const SymbolFilter& that) const {
@@ -108,10 +108,10 @@ IMPLEMENT_REFLECTION(SolidFillSymbolFilter) {
 // ----------------------------------------------------------------------------- : GradientSymbolFilter
 
 template <typename T>
-AColor GradientSymbolFilter::color(double x, double y, SymbolSet point, const T* t) const {
+Color GradientSymbolFilter::color(double x, double y, SymbolSet point, const T* t) const {
   if      (point == SYMBOL_INSIDE) return lerp(fill_color_1,   fill_color_2,   t->t(x,y));
   else if (point == SYMBOL_BORDER) return lerp(border_color_1, border_color_2, t->t(x,y));
-  else                             return AColor(0,0,0,0);
+  else                             return Color(0,0,0,0);
 }
 
 bool GradientSymbolFilter::equal(const GradientSymbolFilter& that) const {
@@ -149,7 +149,7 @@ LinearGradientSymbolFilter::LinearGradientSymbolFilter
   , end_x(end_x), end_y(end_y)
 {}
 
-AColor LinearGradientSymbolFilter::color(double x, double y, SymbolSet point) const {
+Color LinearGradientSymbolFilter::color(double x, double y, SymbolSet point) const {
   len = sqr(end_x - center_x) + sqr(end_y - center_y);
   if (len == 0) len = 1; // prevent div by 0
   return GradientSymbolFilter::color(x,y,point,this);
@@ -177,7 +177,7 @@ IMPLEMENT_REFLECTION(LinearGradientSymbolFilter) {
 
 String RadialGradientSymbolFilter::fillType() const { return _("radial gradient"); }
 
-AColor RadialGradientSymbolFilter::color(double x, double y, SymbolSet point) const {
+Color RadialGradientSymbolFilter::color(double x, double y, SymbolSet point) const {
   return GradientSymbolFilter::color(x,y,point,this);
 }
 

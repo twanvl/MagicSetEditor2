@@ -112,7 +112,7 @@ SCRIPT_FUNCTION(to_int) {
     if (t == SCRIPT_BOOL) {
       result = (bool)*input ? 1 : 0;
     } else if (t == SCRIPT_COLOR) {
-      AColor c = (AColor)*input;
+      Color c = (Color)*input;
       result = (c.Red() + c.Blue() + c.Green()) / 3;
     } else if (t == SCRIPT_STRING) {
       long l;
@@ -141,7 +141,7 @@ SCRIPT_FUNCTION(to_real) {
     if (t == SCRIPT_BOOL) {
       result = (bool)*input ? 1.0 : 0.0;
     } else if (t == SCRIPT_COLOR) {
-      AColor c = (AColor)*input;
+      Color c = (Color)*input;
       result = (c.Red() + c.Blue() + c.Green()) / 3.0;
     } else if (t == SCRIPT_STRING) {
       String str = input->toString();
@@ -166,7 +166,7 @@ SCRIPT_FUNCTION(to_number) {
     if (t == SCRIPT_BOOL) {
       SCRIPT_RETURN((bool)*input ? 1 : 0);
     } else if (t == SCRIPT_COLOR) {
-      AColor c = (AColor)*input;
+      Color c = (Color)*input;
       SCRIPT_RETURN( (c.Red() + c.Blue() + c.Green()) / 3 );
     } else if (t == SCRIPT_DOUBLE) {
       SCRIPT_RETURN((double)*input);
@@ -208,7 +208,7 @@ SCRIPT_FUNCTION(to_boolean) {
 
 SCRIPT_FUNCTION(to_color) {
   try {
-    SCRIPT_PARAM_C(AColor, input);
+    SCRIPT_PARAM_C(Color, input);
     SCRIPT_RETURN(input);
   } catch (const ScriptError& e) {
     return delay_error(e);

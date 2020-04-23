@@ -165,9 +165,9 @@ void blur_image_alpha(Image& img) {
 
 // Draw text by first drawing it using a larger font and then downsampling it
 // optionally rotated by an angle
-void draw_resampled_text(DC& dc, const RealPoint& pos, const RealRect& rect, double stretch, Radians angle, AColor color, const String& text, int blur_radius, int repeat) {
+void draw_resampled_text(DC& dc, const RealPoint& pos, const RealRect& rect, double stretch, Radians angle, Color color, const String& text, int blur_radius, int repeat) {
   // transparent text can be ignored
-  if (color.alpha == 0) return;
+  if (color.Alpha() == 0) return;
   // enlarge slightly; some fonts are larger then the GetTextExtent tells us (especially italic fonts)
   int w = static_cast<int>(rect.width) + 3 + 2 * blur_radius, h = static_cast<int>(rect.height) + 1 + 2 * blur_radius;
   // determine sub-pixel position
@@ -194,8 +194,8 @@ void draw_resampled_text(DC& dc, const RealPoint& pos, const RealRect& rect, dou
   fill_image(img_small, color);
   downsample_to_alpha(buffer, img_small);
   // multiply alpha
-  if (color.alpha != 255) {
-    set_alpha(img_small, color.alpha / 255.);
+  if (color.Alpha() != 255) {
+    set_alpha(img_small, color.Alpha() / 255.);
   }
   // blur
   for (int i = 0 ; i < blur_radius ; ++i) {

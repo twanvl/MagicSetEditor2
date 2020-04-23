@@ -556,7 +556,7 @@ void instrTernary(TernaryInstructionType i, ScriptValueP& a, const ScriptValueP&
 void instrQuaternary(QuaternaryInstructionType i, ScriptValueP& a, const ScriptValueP& b, const ScriptValueP& c, const ScriptValueP& d) {
   switch (i) {
     case I_RGBA:
-      a = to_script(AColor((int)*a, (int)*b, (int)*c, (int)*d));
+      a = to_script(Color((int)*a, (int)*b, (int)*c, (int)*d));
       break;
   }
 }

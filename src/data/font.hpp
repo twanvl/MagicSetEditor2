@@ -34,19 +34,19 @@ enum FontFlags
 /** Contains additional information about scaling, color and shadow */
 class Font : public IntrusivePtrBase<Font> {
   public:
-  Scriptable<String> name;        ///< Name of the font
-  Scriptable<String> italic_name;      ///< Font name for italic text (optional)
-  Scriptable<double> size;        ///< Size of the font
-  Scriptable<String> weight, style;    ///< Weight and style of the font (bold/italic)
-  Scriptable<bool>   underline;      ///< Underlined?
-  double             scale_down_to;    ///< Smallest size to scale down to
-  double             max_stretch;      ///< How much should the font be stretched before scaling down?
-  Scriptable<AColor> color;        ///< Color to use
-  Scriptable<AColor> shadow_color;    ///< Color for shadow
+  Scriptable<String> name;                 ///< Name of the font
+  Scriptable<String> italic_name;          ///< Font name for italic text (optional)
+  Scriptable<double> size;                 ///< Size of the font
+  Scriptable<String> weight, style;        ///< Weight and style of the font (bold/italic)
+  Scriptable<bool>   underline;            ///< Underlined?
+  double             scale_down_to;        ///< Smallest size to scale down to
+  double             max_stretch;          ///< How much should the font be stretched before scaling down?
+  Scriptable<Color>  color;                ///< Color to use
+  Scriptable<Color>  shadow_color;         ///< Color for shadow
   RealSize           shadow_displacement;  ///< Position of the shadow
-  double             shadow_blur;      ///< Blur radius of the shadow
-  AColor             separator_color;    ///< Color for <sep> text
-  int                flags;        ///< FontFlags for this font
+  double             shadow_blur;          ///< Blur radius of the shadow
+  Color              separator_color;      ///< Color for <sep> text
+  int                flags;                ///< FontFlags for this font
   
   Font();
   
@@ -61,7 +61,7 @@ class Font : public IntrusivePtrBase<Font> {
   }
   
   /// Add style to a font, and optionally change the color and size
-  FontP make(int add_flags, AColor* other_color, double* other_size) const;
+  FontP make(int add_flags, Color* other_color, double* other_size) const;
   
   /// Convert this font to a wxFont
   wxFont toWxFont(double scale) const;

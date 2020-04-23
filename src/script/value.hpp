@@ -67,7 +67,7 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
   /// Convert this value to a boolean
   virtual operator bool()   const;
   /// Convert this value to a color
-  virtual operator AColor() const;
+  virtual operator Color() const;
   /// Convert this value to a wxDateTime
   virtual operator wxDateTime() const;
 

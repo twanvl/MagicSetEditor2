@@ -130,9 +130,6 @@ template <> void Writer::handle(const wxDateTime& date) {
 template <> void Writer::handle(const Vector2D& vec) {
   handle(String::Format(_("(%.10lf,%.10lf)"), vec.x, vec.y));
 }
-template <> void Writer::handle(const Color& col) {
-  handle(String::Format(_("rgb(%u,%u,%u)"), col.Red(), col.Green(), col.Blue()));
-}
 
 template <> void Writer::handle(const FileName& value) {
   if (clipboard_package() && !value.empty()) {

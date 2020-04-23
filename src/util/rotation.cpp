@@ -186,9 +186,9 @@ void RotatedDC::DrawText  (const String& text, const RealPoint& pos, int blur_ra
   DrawText(text, pos, dc.GetTextForeground(), blur_radius, boldness, stretch_);
 }
 
-void RotatedDC::DrawText  (const String& text, const RealPoint& pos, AColor color, int blur_radius, int boldness, double stretch_) {
+void RotatedDC::DrawText  (const String& text, const RealPoint& pos, Color color, int blur_radius, int boldness, double stretch_) {
   if (text.empty()) return;
-  if (color.alpha == 0) return;
+  if (color.Alpha() == 0) return;
   if (quality >= QUALITY_AA) {
     RealRect r(pos, GetTextExtent(text));
     RealRect r_ext = trRectToBB(r);

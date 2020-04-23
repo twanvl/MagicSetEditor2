@@ -25,11 +25,9 @@ void store(const ScriptValueP& val, String& var)              { var = val->toStr
 void store(const ScriptValueP& val, int&    var)              { var = *val; }
 void store(const ScriptValueP& val, double& var)              { var = *val; }
 void store(const ScriptValueP& val, bool&   var)              { var = *val; }
-void store(const ScriptValueP& val, Color&  var)              { var = (AColor)*val; }
-void store(const ScriptValueP& val, AColor& var)              { var = *val; }
+void store(const ScriptValueP& val, Color&  var)              { var = *val; }
 void store(const ScriptValueP& val, Defaultable<String>& var) { var.assign(*val); }
-void store(const ScriptValueP& val, Defaultable<Color>&  var) { var.assign((AColor)*val); }
-void store(const ScriptValueP& val, Defaultable<AColor>& var) { var.assign(*val); }
+void store(const ScriptValueP& val, Defaultable<Color>&  var) { var.assign(*val); }
 void store(const ScriptValueP& val, Alignment& var)           { var = from_string(val->toString()); }
 void store(const ScriptValueP& val, Direction& var)           { parse_enum(val->toString(),var); }
 

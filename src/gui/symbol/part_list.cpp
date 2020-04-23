@@ -517,7 +517,7 @@ const Image& SymbolPartList::itemPreview(int i, const SymbolPartP& part) {
 }
 const Image& SymbolPartList::symbolPreview() {
   if (!symbol_preview.up_to_date) {
-    SolidFillSymbolFilter filter(AColor(0,0,0,40), AColor(255,255,255,40));
+    SolidFillSymbolFilter filter(Color(0,0,0,40), Color(255,255,255,40));
     Image img = render_symbol(symbol, filter, 0.06, ITEM_HEIGHT * 4);
     resample(img, symbol_preview.image);
     symbol_preview.up_to_date = true;
