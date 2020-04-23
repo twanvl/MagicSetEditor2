@@ -65,17 +65,17 @@ void KeywordsPanel::initControls() {
   sp = new wxBoxSizer(wxVERTICAL);
     sp->Add(fixed, 0, wxEXPAND); sp->Show(fixed,false);
     wxSizer* s1 = new wxBoxSizer(wxVERTICAL);
-      s1->Add(new wxStaticText(panel, wxID_ANY, _LABEL_("keyword")+_(":")), 0);
+      s1->Add(new wxStaticText(panel, wxID_ANY, _LABEL_("keyword")+_(":")), 0, wxTOP, 2);
       s1->Add(keyword, 0, wxEXPAND | wxTOP, 2);
       s1->Add(new wxStaticText(panel, wxID_ANY, _LABEL_("mode")+_(":")), 0, wxTOP, 2);
       s1->Add(mode, 0, wxEXPAND | wxTOP, 2);
-    sp->Add(s1, 0, wxEXPAND | wxLEFT, 2);
+    sp->Add(s1, 0, wxEXPAND | wxRIGHT, 4);
     sp->Add(new wxStaticLine(panel), 0, wxEXPAND | wxTOP | wxBOTTOM, 8);
     wxSizer* s2 = new wxBoxSizer(wxVERTICAL);
       s2->Add(new wxStaticText(panel, wxID_ANY, _LABEL_("match")+_(":")), 0);
       s2->Add(match, 0, wxEXPAND | wxTOP, 2);
       s2->Add(add_param, 0, wxALIGN_LEFT | wxTOP, 2);
-    sp->Add(s2, 0, wxEXPAND | wxLEFT, 2);
+    sp->Add(s2, 0, wxEXPAND | wxRIGHT, 4);
     sp->Add(new wxStaticLine(panel), 0, wxEXPAND | wxTOP | wxBOTTOM, 8);
     wxSizer* s3 = new wxBoxSizer(wxVERTICAL);
       s3->Add(new wxStaticText(panel, wxID_ANY, _LABEL_("reminder")+_(":")), 0);
@@ -83,12 +83,12 @@ void KeywordsPanel::initControls() {
       s3->Add(ref_param, 0, wxALIGN_LEFT | wxTOP, 2);
       s3->Add(errors,   0, wxEXPAND | wxTOP, 4);
       //s3->Add(new wxStaticText(panel, wxID_ANY, _("Example:")), 0, wxTOP, 6);
-    sp->Add(s3, 1, wxEXPAND | wxLEFT, 2);
+    sp->Add(s3, 1, wxEXPAND | wxRIGHT, 4);
     sp->Add(new wxStaticLine(panel), 0, wxEXPAND | wxTOP | wxBOTTOM, 8);
     wxSizer* s4 = new wxBoxSizer(wxVERTICAL);
       s4->Add(new wxStaticText(panel, wxID_ANY, _LABEL_("rules")+_(":")), 0);
       s4->Add(rules, 1, wxEXPAND | wxTOP, 2);
-    sp->Add(s4, 1, wxEXPAND | wxLEFT, 2);
+    sp->Add(s4, 1, wxEXPAND | wxRIGHT, 4);
   panel->SetSizer(sp);
   // init splitter
   splitter->SetMinimumPaneSize(100);
