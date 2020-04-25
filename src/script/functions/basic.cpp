@@ -16,6 +16,7 @@
 #include <data/set.hpp>
 #include <data/card.hpp>
 #include <data/game.hpp>
+#include <random>
 
 DECLARE_TYPEOF_COLLECTION(pair<String COMMA ScriptValueP>);
 
@@ -595,6 +596,12 @@ SCRIPT_FUNCTION(sort_list) {
   return sort_script(ctx, input, *order_by, remove_duplicates);
 }
 
+template <typename It>
+void shuffle(It begin, It end) {
+  std::random_device rng;
+  std::mt19937 urng(rng());
+  std::shuffle(begin, end, urng);
+}
 
 SCRIPT_FUNCTION(random_shuffle) {
   SCRIPT_PARAM_C(ScriptValueP, input);
@@ -605,7 +612,7 @@ SCRIPT_FUNCTION(random_shuffle) {
     ret->value.push_back(v);
   }
   // shuffle
-  random_shuffle(ret->value.begin(), ret->value.end());
+  shuffle(ret->value.begin(), ret->value.end());
   return ret;
 }
 
@@ -643,7 +650,7 @@ SCRIPT_FUNCTION(random_select_many) {
     while (ScriptValueP v = it->next()) {
       ret->value.push_back(v);
     }
-    random_shuffle(ret->value.begin(), ret->value.end());
+    shuffle(ret->value.begin(), ret->value.end());
     // keep only the first 'count'
     ret->value.resize(count);
   }

@@ -179,14 +179,6 @@ void PackInstance::request_copy(size_t copies) {
   requested_copies += copies;
 }
 
-/// Random generator with random numbers in a range
-template <typename Gen>
-struct RandomRange {
-  RandomRange(Gen& gen) : gen(gen) {}
-  unsigned operator () (unsigned max) { return gen() % max; }
-  Gen& gen;
-};
-
 struct WeightedItem {
   double weight;
   int count;
@@ -248,11 +240,10 @@ void PackInstance::generate(vector<CardP>* out) {
     // NOTE: there is no way to pick items without replacement
     if (out && !cards.empty()) {
       // to prevent us from being too predictable for small sets, periodically reshuffle
-      RandomRange<boost::mt19937> gen_range(parent.gen);
       int max_per_batch = ((int)cards.size() + 1) / 2;
       int rem = (int)requested_copies;
       while (rem > 0) {
-        random_shuffle(cards.begin(), cards.end(), gen_range);
+        shuffle(cards.begin(), cards.end(), parent.gen);
         out->insert(out->end(), cards.begin(), cards.begin() + min(rem, max_per_batch));
         rem -= max_per_batch;
       }
