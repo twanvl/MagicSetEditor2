@@ -135,22 +135,22 @@ class ValueEditor {
 
 // ----------------------------------------------------------------------------- : Utility
 
-#define DECLARE_VALUE_EDITOR(Type)                      \
-    Type##ValueEditor(DataEditor& parent, const Type##StyleP& style);  \
-    virtual ValueEditor* getEditor() { return this; }          \
-    private:                                \
-    /** Retrieve the parent editor object */              \
-    inline DataEditor& editor() const {                  \
-      return static_cast<DataEditor&>(viewer);            \
-    }                                  \
+#define DECLARE_VALUE_EDITOR(Type) \
+    Type##ValueEditor(DataEditor& parent, const Type##StyleP& style); \
+    virtual ValueEditor* getEditor() { return this; } \
+    private: \
+    /** Retrieve the parent editor object */ \
+    inline DataEditor& editor() const { \
+      return static_cast<DataEditor&>(viewer); \
+    } \
     public:
 
-#define IMPLEMENT_VALUE_EDITOR(Type)                          \
-  ValueViewerP Type##Style::makeEditor(DataEditor& parent, const StyleP& thisP) {    \
-    assert(thisP.get() == this);                          \
-    return ValueViewerP(new Type##ValueEditor(parent, static_pointer_cast<Type##Style>(thisP)));  \
-  }                                          \
-  Type##ValueEditor::Type##ValueEditor(DataEditor& parent, const Type##StyleP& style)  \
+#define IMPLEMENT_VALUE_EDITOR(Type) \
+  ValueViewerP Type##Style::makeEditor(DataEditor& parent, const StyleP& thisP) { \
+    assert(thisP.get() == this); \
+    return ValueViewerP(new Type##ValueEditor(parent, static_pointer_cast<Type##Style>(thisP))); \
+  } \
+  Type##ValueEditor::Type##ValueEditor(DataEditor& parent, const Type##StyleP& style) \
     : Type##ValueViewer(parent, style)
 
 // ----------------------------------------------------------------------------- : EOF

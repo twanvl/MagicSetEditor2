@@ -129,21 +129,21 @@ void Writer::handle(const IndexMap<K,V>& m) {
 // ----------------------------------------------------------------------------- : Reflection
 
 /// Implement reflection as used by Writer
-#define REFLECT_OBJECT_WRITER(Cls)                \
-  template<> void Writer::handle<Cls>(const Cls& object) {  \
-    const_cast<Cls&>(object).reflect(*this);        \
-  }                              \
-  void Cls::reflect(Writer& writer) {              \
-    reflect_impl(writer);                  \
+#define REFLECT_OBJECT_WRITER(Cls) \
+  template<> void Writer::handle<Cls>(const Cls& object) { \
+    const_cast<Cls&>(object).reflect(*this); \
+  } \
+  void Cls::reflect(Writer& writer) { \
+    reflect_impl(writer); \
   }
 
 // ----------------------------------------------------------------------------- : Reflection for enumerations
 
 /// Implement enum reflection as used by Writer
-#define REFLECT_ENUM_WRITER(Enum)                \
-  template<> void Writer::handle<Enum>(const Enum& enum_) {  \
-    EnumWriter writer(*this);                \
-    reflect_ ## Enum(const_cast<Enum&>(enum_), writer);    \
+#define REFLECT_ENUM_WRITER(Enum) \
+  template<> void Writer::handle<Enum>(const Enum& enum_) { \
+    EnumWriter writer(*this); \
+    reflect_ ## Enum(const_cast<Enum&>(enum_), writer); \
   }
 
 /// 'Tag' to be used when reflecting enumerations for Writer

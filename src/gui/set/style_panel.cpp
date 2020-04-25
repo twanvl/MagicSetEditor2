@@ -146,11 +146,11 @@ void StylePanel::selectCard(const CardP& card) {
 // ----------------------------------------------------------------------------- : Clipboard
 
 // determine what control to use for clipboard actions
-#define CUT_COPY_PASTE(op,return)          \
-  if (!isInitialized()) return false;        \
-  int id = focused_control(this);          \
-  if (id == ID_EDITOR) { return editor->op(); }  \
-  else                 { return false;          }
+#define CUT_COPY_PASTE(op,return) \
+  if (!isInitialized()) return false; \
+  int id = focused_control(this); \
+  if (id == ID_EDITOR) { return editor->op(); } \
+  else                 { return false; }
 
 bool StylePanel::canCopy()  const { CUT_COPY_PASTE(canCopy,  return) }
 bool StylePanel::canCut()   const { CUT_COPY_PASTE(canCut,   return) }

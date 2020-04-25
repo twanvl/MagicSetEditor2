@@ -24,15 +24,15 @@ DECLARE_LOCAL_EVENT_TYPE(EVENT_CARD_SELECT,   <not used>)
 DECLARE_LOCAL_EVENT_TYPE(EVENT_CARD_ACTIVATE, <not used>)
 
 /// Handle EVENT_CARD_SELECT events
-#define EVT_CARD_SELECT(id, handler)                    \
-  DECLARE_EVENT_TABLE_ENTRY(EVENT_CARD_SELECT, id, -1,          \
-   (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction)    \
+#define EVT_CARD_SELECT(id, handler) \
+  DECLARE_EVENT_TABLE_ENTRY(EVENT_CARD_SELECT, id, -1, \
+   (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
    (void (wxEvtHandler::*)(CardSelectEvent&)) (&handler), (wxObject*) NULL),
 
 /// Handle EVENT_CARD_ACTIVATE events
-#define EVT_CARD_ACTIVATE(id, handler)                    \
-  DECLARE_EVENT_TABLE_ENTRY(EVENT_CARD_ACTIVATE, id, -1,          \
-   (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction)    \
+#define EVT_CARD_ACTIVATE(id, handler) \
+  DECLARE_EVENT_TABLE_ENTRY(EVENT_CARD_ACTIVATE, id, -1, \
+   (wxObjectEventFunction) (wxEventFunction) (wxCommandEventFunction) \
    (void (wxEvtHandler::*)(CardSelectEvent&)) (&handler), (wxObject*) NULL),
 
 /// The event of selecting a card

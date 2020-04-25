@@ -121,25 +121,25 @@ class GetMember : private GetDefaultMember {
 #define REFLECT_OBJECT_GET_DEFAULT_MEMBER_NOT(Cls)  REFLECT_WRITE_NO(Cls,GetDefaultMember)
 #define REFLECT_OBJECT_GET_MEMBER_NOT(Cls)      REFLECT_WRITE_NO(Cls,GetMember)
 
-#define REFLECT_WRITE_YES(Cls, Tag)                    \
-  template<> void Tag::handle<Cls>(const Cls& object) {        \
-    const_cast<Cls&>(object).reflect(*this);            \
-  }                                  \
-  void Cls::reflect(Tag& tag) {                    \
-    reflect_impl(tag);                        \
+#define REFLECT_WRITE_YES(Cls, Tag) \
+  template<> void Tag::handle<Cls>(const Cls& object) { \
+    const_cast<Cls&>(object).reflect(*this); \
+  } \
+  void Cls::reflect(Tag& tag) { \
+    reflect_impl(tag); \
   }
 
-#define REFLECT_WRITE_NO(Cls, Tag)                    \
-  template<> void Tag::handle<Cls>(const Cls& object) {}        \
+#define REFLECT_WRITE_NO(Cls, Tag) \
+  template<> void Tag::handle<Cls>(const Cls& object) {} \
   void Cls::reflect(Tag& tag) {}
 
 // ----------------------------------------------------------------------------- : Reflection for enumerations
 
 /// Implement enum reflection as used by GetMember
-#define REFLECT_ENUM_GET_MEMBER(Enum)                  \
-  template<> void GetDefaultMember::handle<Enum>(const Enum& enum_) {  \
-    EnumGetMember egm(*this);                    \
-    reflect_ ## Enum(const_cast<Enum&>(enum_), egm);        \
+#define REFLECT_ENUM_GET_MEMBER(Enum) \
+  template<> void GetDefaultMember::handle<Enum>(const Enum& enum_) { \
+    EnumGetMember egm(*this); \
+    reflect_ ## Enum(const_cast<Enum&>(enum_), egm); \
   }
 
 /// 'Tag' to be used when reflecting enumerations for GetMember

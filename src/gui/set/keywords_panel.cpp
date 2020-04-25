@@ -260,15 +260,15 @@ String KeywordsPanel::runRefScript(int find_i) {
 // ----------------------------------------------------------------------------- : Clipboard
 
 // determine what control to use for clipboard actions
-#define CUT_COPY_PASTE(op,return,check)                          \
-  if (!isInitialized()) return false;                          \
-  int id = focused_control(this);                            \
-  if      (id == ID_KEYWORD_LIST && keyword ->IsEnabled()) { return list    ->op(); }  \
+#define CUT_COPY_PASTE(op,return,check) \
+  if (!isInitialized()) return false; \
+  int id = focused_control(this); \
+  if      (id == ID_KEYWORD_LIST && keyword ->IsEnabled()) { return list    ->op(); } \
   else if (check)                                          { return false;          } \
-  else if (id == ID_KEYWORD      && keyword ->IsEnabled()) { return keyword ->op(); }  \
-  else if (id == ID_MATCH        && match   ->IsEnabled()) { return match   ->op(); }  \
-  else if (id == ID_REMINDER     && reminder->IsEnabled()) { return reminder->op(); }  \
-  else if (id == ID_RULES        && rules   ->IsEnabled()) { return rules   ->op(); }  \
+  else if (id == ID_KEYWORD      && keyword ->IsEnabled()) { return keyword ->op(); } \
+  else if (id == ID_MATCH        && match   ->IsEnabled()) { return match   ->op(); } \
+  else if (id == ID_REMINDER     && reminder->IsEnabled()) { return reminder->op(); } \
+  else if (id == ID_RULES        && rules   ->IsEnabled()) { return rules   ->op(); } \
   else                                                     { return false;          }
 
 bool KeywordsPanel::canCopy()  const { CUT_COPY_PASTE(canCopy,  return,        false) }

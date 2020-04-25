@@ -50,40 +50,40 @@ template <ImageCombine combine> struct Combine {
 };
 
 // Give a combining function for enum value 'combine'
-#define COMBINE_FUN(combine,fun)  \
+#define COMBINE_FUN(combine,fun) \
   template <> int Combine<combine>::f(int a, int b) { return fun; }
 
 // Based on
 //  http://www.pegtop.net/delphi/articles/blendmodes/
 
-COMBINE_FUN(COMBINE_NORMAL,    b                          )
-COMBINE_FUN(COMBINE_ADD,    top(a + b)                      )
-COMBINE_FUN(COMBINE_SUBTRACT,  bot(a - b)                      )
-COMBINE_FUN(COMBINE_STAMP,    col(a - 2 * b + 256)                )
-COMBINE_FUN(COMBINE_DIFFERENCE,  abs(a - b)                      )
-COMBINE_FUN(COMBINE_NEGATION,  255 - abs(255 - a - b)                )
-COMBINE_FUN(COMBINE_MULTIPLY,  (a * b) / 255                    )
-COMBINE_FUN(COMBINE_DARKEN,    min(a, b)                      )
-COMBINE_FUN(COMBINE_LIGHTEN,  max(a, b)                      )
-COMBINE_FUN(COMBINE_COLOR_DODGE,b == 255 ? 255 : top(a * 255 / (255 - b))      )
-COMBINE_FUN(COMBINE_COLOR_BURN,  b == 0   ? 0   : bot(255 - (255-a) * 255 / b)    )
-COMBINE_FUN(COMBINE_SCREEN,    255 - (((255 - a) * (255 - b)) / 255)        )
+COMBINE_FUN(COMBINE_NORMAL,      b)
+COMBINE_FUN(COMBINE_ADD,         top(a + b))
+COMBINE_FUN(COMBINE_SUBTRACT,    bot(a - b))
+COMBINE_FUN(COMBINE_STAMP,       col(a - 2 * b + 256))
+COMBINE_FUN(COMBINE_DIFFERENCE,  abs(a - b))
+COMBINE_FUN(COMBINE_NEGATION,    255 - abs(255 - a - b))
+COMBINE_FUN(COMBINE_MULTIPLY,    (a * b) / 255)
+COMBINE_FUN(COMBINE_DARKEN,      min(a, b))
+COMBINE_FUN(COMBINE_LIGHTEN,     max(a, b))
+COMBINE_FUN(COMBINE_COLOR_DODGE, b == 255 ? 255 : top(a * 255 / (255 - b)))
+COMBINE_FUN(COMBINE_COLOR_BURN,  b == 0   ? 0   : bot(255 - (255-a) * 255 / b))
+COMBINE_FUN(COMBINE_SCREEN,      255 - (((255 - a) * (255 - b)) / 255))
 COMBINE_FUN(COMBINE_OVERLAY,  a < 128
                   ? (a * b) >> 7
-                  : 255 - (((255 - a) * (255 - b)) >> 7)      )
+                  : 255 - (((255 - a) * (255 - b)) >> 7))
 COMBINE_FUN(COMBINE_HARD_LIGHT,  b < 128
                   ? (a * b) >> 7
-                  : 255 - (((255 - a) * (255 - b)) >> 7)      )
+                  : 255 - (((255 - a) * (255 - b)) >> 7))
 COMBINE_FUN(COMBINE_SOFT_LIGHT,  b)
-COMBINE_FUN(COMBINE_REFLECT,  b == 255 ? 255 : top(a * a / (255 - b))        )
-COMBINE_FUN(COMBINE_GLOW,    a == 255 ? 255 : top(b * b / (255 - a))        )
-COMBINE_FUN(COMBINE_FREEZE,    b == 0 ? 0 : bot(255 - (255 - a) * (255 - a) / b)  )
-COMBINE_FUN(COMBINE_HEAT,    a == 0 ? 0 : bot(255 - (255 - b) * (255 - b) / a)  )
-COMBINE_FUN(COMBINE_AND,    a & b                        )
-COMBINE_FUN(COMBINE_OR,      a | b                        )
-COMBINE_FUN(COMBINE_XOR,    a ^ b                        )
-COMBINE_FUN(COMBINE_SHADOW,    (b * a * a) / (255 * 255)              )
-COMBINE_FUN(COMBINE_SYMMETRIC_OVERLAY,  (Combine<COMBINE_OVERLAY>::f(a,b) + Combine<COMBINE_OVERLAY>::f(b,a)) / 2 )
+COMBINE_FUN(COMBINE_REFLECT,     b == 255 ? 255 : top(a * a / (255 - b)))
+COMBINE_FUN(COMBINE_GLOW,        a == 255 ? 255 : top(b * b / (255 - a)))
+COMBINE_FUN(COMBINE_FREEZE,      b == 0 ? 0 : bot(255 - (255 - a) * (255 - a) / b))
+COMBINE_FUN(COMBINE_HEAT,        a == 0 ? 0 : bot(255 - (255 - b) * (255 - b) / a))
+COMBINE_FUN(COMBINE_AND,         a & b)
+COMBINE_FUN(COMBINE_OR,          a | b)
+COMBINE_FUN(COMBINE_XOR,         a ^ b)
+COMBINE_FUN(COMBINE_SHADOW,      (b * a * a) / (255 * 255))
+COMBINE_FUN(COMBINE_SYMMETRIC_OVERLAY, (Combine<COMBINE_OVERLAY>::f(a,b) + Combine<COMBINE_OVERLAY>::f(b,a)) / 2 )
 
 // ----------------------------------------------------------------------------- : Combining
 

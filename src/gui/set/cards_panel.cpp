@@ -390,11 +390,11 @@ bool CardsPanel::wantsToHandle(const Action&, bool undone) const {
 // ----------------------------------------------------------------------------- : Clipboard
 
 // determine what control to use for clipboard actions
-#define CUT_COPY_PASTE(op,return)                  \
-  int id = focused_control(this);                  \
-  if      (id == ID_EDITOR)    { return editor->op();    }    \
-  else if (id == ID_CARD_LIST) { return card_list->op(); }    \
-  else if (id == ID_NOTES)     { return notes->op();     }    \
+#define CUT_COPY_PASTE(op,return) \
+  int id = focused_control(this); \
+  if      (id == ID_EDITOR)    { return editor->op();    } \
+  else if (id == ID_CARD_LIST) { return card_list->op(); } \
+  else if (id == ID_NOTES)     { return notes->op();     } \
   else                         { return false;           }
 
 bool CardsPanel::canCut()   const { CUT_COPY_PASTE(canCut,   return) }

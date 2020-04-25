@@ -258,10 +258,10 @@ inline String type_name(const Value&) {
 
 // ----------------------------------------------------------------------------- : Utilities
 
-#define DECLARE_FIELD_TYPE(Type)                            \
-  DECLARE_REFLECTION(); public:                            \
-  virtual ValueP newValue(const FieldP& thisP) const;                  \
-  virtual StyleP newStyle(const FieldP& thisP) const;                  \
+#define DECLARE_FIELD_TYPE(Type) \
+  DECLARE_REFLECTION(); public: \
+  virtual ValueP newValue(const FieldP& thisP) const; \
+  virtual StyleP newStyle(const FieldP& thisP) const; \
   virtual String typeName() const
 
 // implement newStyle and newValue
@@ -291,17 +291,17 @@ inline String type_name(const Value&) {
   virtual ValueViewerP makeViewer(DataViewer& parent, const StyleP& thisP); \
   virtual ValueViewerP makeEditor(DataEditor& parent, const StyleP& thisP)
 
-#define DECLARE_VALUE_TYPE(Type,ValueType_)                        \
-  DECLARE_REFLECTION(); public:                            \
-  DECLARE_HAS_FIELD(Type)                                \
-  virtual ValueP clone() const;                            \
-  virtual String toString() const;                          \
+#define DECLARE_VALUE_TYPE(Type,ValueType_) \
+  DECLARE_REFLECTION(); public: \
+  DECLARE_HAS_FIELD(Type) \
+  virtual ValueP clone() const; \
+  virtual String toString() const; \
   typedef ValueType_ ValueType
 
 // implement field() which returns a field with the right (derived) type
-#define DECLARE_HAS_FIELD(Type)                              \
-  inline Type ## Field& field() const {                        \
-    return *static_cast<Type ## Field*>(fieldP.get());                \
+#define DECLARE_HAS_FIELD(Type) \
+  inline Type ## Field& field() const { \
+    return *static_cast<Type ## Field*>(fieldP.get()); \
   }
 
 void mark_dependency_member(const IndexMap<FieldP,ValueP>& value, const String& name, const Dependency& dep);

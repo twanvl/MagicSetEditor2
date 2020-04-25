@@ -123,7 +123,7 @@ class ActionStack {
 /// Tests if variable has the type Type.
 /** Uses dynamic cast, so Type must have a virtual function.
  */
-#define TYPE_CASE_(variable, Type)                  \
+#define TYPE_CASE_(variable, Type) \
     if (dynamic_cast<const Type*>(&variable))
 
 /// Tests if variable has the type Type. 
@@ -131,12 +131,12 @@ class ActionStack {
  *  
  *  Uses dynamic cast, so Type must have a virtual function.
  */
-#define TYPE_CASE(variable, Type)                  \
-    pair<const Type*,bool> Type##variable            \
-      (dynamic_cast<const Type*>(&variable), true);      \
-    if (Type##variable.first)                  \
-      for (const Type& variable = *Type##variable.first ;    \
-         Type##variable.second ;              \
+#define TYPE_CASE(variable, Type) \
+    pair<const Type*,bool> Type##variable \
+      (dynamic_cast<const Type*>(&variable), true); \
+    if (Type##variable.first) \
+      for (const Type& variable = *Type##variable.first ; \
+         Type##variable.second ; \
          Type##variable.second = false)
 
 

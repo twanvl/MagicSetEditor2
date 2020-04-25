@@ -424,31 +424,31 @@ class ScriptCompose : public ScriptValue {
 // ----------------------------------------------------------------------------- : Simple instructions : binary
 
 // operator on ints
-#define OPERATOR_I(OP)                      \
-  a = to_script((int)*a  OP  (int)*b);            \
+#define OPERATOR_I(OP) \
+  a = to_script((int)*a  OP  (int)*b); \
   break
 
 // operator on bools
-#define OPERATOR_B(OP)                      \
-  a = to_script((bool)*a  OP  (bool)*b);            \
+#define OPERATOR_B(OP) \
+  a = to_script((bool)*a  OP  (bool)*b); \
   break
 
 // operator on doubles or ints
-#define OPERATOR_DI(OP)                      \
-  if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {      \
-    a = to_script((double)*a  OP  (double)*b);        \
-  } else {                          \
-    a = to_script((int)*a     OP  (int)*b);          \
-  }                              \
+#define OPERATOR_DI(OP) \
+  if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) { \
+    a = to_script((double)*a  OP  (double)*b); \
+  } else { \
+    a = to_script((int)*a     OP  (int)*b); \
+  } \
   break
 
 // operator on doubles or ints, defined as a function
-#define OPERATOR_FUN_DI(OP)                    \
-  if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {      \
-    a = to_script(OP((double)*a,  (double)*b));        \
-  } else {                          \
-    a = to_script(OP((int)*a,     (int)*b));        \
-  }                              \
+#define OPERATOR_FUN_DI(OP) \
+  if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) { \
+    a = to_script(OP((double)*a,  (double)*b)); \
+  } else { \
+    a = to_script(OP((int)*a,     (int)*b)); \
+  } \
   break
 
 

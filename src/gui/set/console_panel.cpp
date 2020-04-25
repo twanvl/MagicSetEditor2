@@ -533,9 +533,9 @@ END_EVENT_TABLE  ()
 // ----------------------------------------------------------------------------- : Clipboard
 
 // determine what control to use for clipboard actions
-#define CUT_COPY_PASTE(op,return)                  \
-  int id = focused_control(this);                  \
-  if   (id == ID_MESSAGE_LIST) { return messages->op(); }      \
+#define CUT_COPY_PASTE(op,return) \
+  int id = focused_control(this); \
+  if   (id == ID_MESSAGE_LIST) { return messages->op(); } \
   else                         { return false; }
 
 bool ConsolePanel::canCut()   const { return false; }

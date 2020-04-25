@@ -244,27 +244,27 @@ void Reader::handle(IndexMap<K,V>& m) {
 // ----------------------------------------------------------------------------- : Reflection
 
 /// Implement reflection as used by Reader
-#define REFLECT_OBJECT_READER(Cls)                \
-  template<> void Reader::handle<Cls>(Cls& object) {      \
-    object.reflect(*this);                  \
-  }                              \
-  void Cls::reflect(Reader& reader) {              \
-    reflect_impl(reader);                  \
+#define REFLECT_OBJECT_READER(Cls) \
+  template<> void Reader::handle<Cls>(Cls& object) { \
+    object.reflect(*this); \
+  } \
+  void Cls::reflect(Reader& reader) { \
+    reflect_impl(reader); \
   }
 
 // ----------------------------------------------------------------------------- : Reflection for enumerations
 
 /// Implement enum reflection as used by Reader
-#define REFLECT_ENUM_READER(Enum)                \
-  template<> void Reader::handle<Enum>(Enum& enum_) {      \
-    EnumReader reader(getValue());              \
-    reflect_ ## Enum(enum_, reader);            \
-    reader.warnIfNotDone(this);                \
-  }                              \
-  void parse_enum(const String& value, Enum& out) {      \
-    EnumReader reader(value);                \
-    reflect_ ## Enum(out, reader);              \
-    reader.errorIfNotDone();                \
+#define REFLECT_ENUM_READER(Enum) \
+  template<> void Reader::handle<Enum>(Enum& enum_) { \
+    EnumReader reader(getValue()); \
+    reflect_ ## Enum(enum_, reader); \
+    reader.warnIfNotDone(this); \
+  } \
+  void parse_enum(const String& value, Enum& out) { \
+    EnumReader reader(value); \
+    reflect_ ## Enum(out, reader); \
+    reader.errorIfNotDone(); \
   }
 
 /// 'Tag' to be used when reflecting enumerations for Reader
