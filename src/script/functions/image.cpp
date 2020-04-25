@@ -230,6 +230,7 @@ void init_script_image_functions(Context& ctx) {
   ctx.setVariable(_("flip_horizontal"),  script_flip_horizontal);
   ctx.setVariable(_("flip_vertical"),    script_flip_vertical);
   ctx.setVariable(_("rotate"),           script_rotate);
+  ctx.setVariable(_("rotate_image"),     script_rotate);
   ctx.setVariable(_("drop_shadow"),      script_drop_shadow);
   ctx.setVariable(_("symbol_variation"), script_symbol_variation);
   ctx.setVariable(_("built_in_image"),   script_built_in_image);
