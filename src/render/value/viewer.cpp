@@ -59,6 +59,8 @@ bool ValueViewer::setFieldBorderPen(RotatedDC& dc) {
   if (!(what & DRAW_BORDERS)) return false;
   if (what & DRAW_ACTIVE) {
     dc.SetPen(wxPen(Color(0, 128, 255), 1, wxPENSTYLE_SOLID));
+  } else if (what & DRAW_HOVER) {
+    dc.SetPen(dotted_pen(Color(0, 128, 255)));
   } else {
     dc.SetPen(dotted_pen(Color(128, 128, 128)));
   }

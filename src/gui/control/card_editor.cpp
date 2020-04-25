@@ -41,7 +41,8 @@ ValueViewerP DataEditor::makeViewer(const StyleP& style) {
 
 DrawWhat DataEditor::drawWhat(const ValueViewer* viewer) const {
   int what = DRAW_NORMAL
-           | DRAW_ACTIVE * viewerIsCurrent(viewer);
+           | DRAW_ACTIVE * viewerIsCurrent(viewer)
+           | DRAW_HOVER * (viewer == hovered_viewer);
   if (nativeLook()) {
     what |= DRAW_BOXES | DRAW_EDITING | DRAW_NATIVELOOK | DRAW_ERRORS;
   } else {
@@ -256,20 +257,23 @@ void DataEditor::onMotion(wxMouseEvent& ev) {
   }
   if (!HasCapture()) {
     // find editor under mouse
-    ValueViewer* new_hovered_viewer = nullptr;
+    ValueViewer* old_hovered_viewer = hovered_viewer;
     FOR_EACH_REVERSE(v,viewers) { // find high z index fields first
       RealPoint pos = mousePoint(ev, *v);
       if (v->containsPoint(pos) && v->getField()->editable) {
-        new_hovered_viewer = v.get();
+        hovered_viewer = v.get();
         break;
       }
     }
-    if (hovered_viewer && hovered_viewer != new_hovered_viewer) {
-      ValueEditor* e = hovered_viewer->getEditor();
+    if (old_hovered_viewer && hovered_viewer != old_hovered_viewer) {
+      ValueEditor* e = old_hovered_viewer->getEditor();
       RealPoint pos = mousePoint(ev, *hovered_viewer);
       if (e) e->onMouseLeave(pos, ev);
+      redraw(*old_hovered_viewer);
     }
-    hovered_viewer = new_hovered_viewer;
+    if (hovered_viewer && hovered_viewer != old_hovered_viewer) {
+      redraw(*hovered_viewer);
+    }
     // change cursor and set status text
     wxFrame* frame = dynamic_cast<wxFrame*>( wxGetTopLevelParent(this) );
     if (hovered_viewer) {
@@ -293,6 +297,7 @@ void DataEditor::onMouseLeave(wxMouseEvent& ev) {
   if (hovered_viewer) {
     ValueEditor* e = hovered_viewer->getEditor();
     if (e) e->onMouseLeave(mousePoint(ev,*hovered_viewer), ev);
+    if (hovered_viewer) redraw(*hovered_viewer);
     hovered_viewer = nullptr;
   }
   // clear status text

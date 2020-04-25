@@ -22,7 +22,8 @@ enum DrawWhat
 ,  DRAW_EDITING    = 0x40  // draw other editor stuff, can be disabled.
 ,  DRAW_ERRORS     = 0x80  // draw error indicators, can't be disabled
 ,  DRAW_ACTIVE     = 0x100 // draw active editor stuff, such as hidden separators and atom highlights
-,  DRAW_NATIVELOOK = 0x200 // use a native look
+,  DRAW_HOVER      = 0x200 // draw mouse over stuff, such as a highlighted border
+,  DRAW_NATIVELOOK = 0x400 // use a native look
 };
 
 // ----------------------------------------------------------------------------- : EOF
