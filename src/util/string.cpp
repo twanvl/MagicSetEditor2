@@ -198,9 +198,9 @@ String name_to_caption(const String& str) {
   String ret;
   ret.reserve(str.size());
   bool leading = true, first = true;
-  FOR_EACH_CONST(c, str) {
+  for (wxUniChar c : str) {
     if ((c == _('_') || c == _(' '))) {
-      ret += leading ? c : _(' ');
+      ret += leading ? c : wxUniChar(_(' '));
     } else if (first) {
       // capitalize_sentence
       ret += toUpper(c);

@@ -277,14 +277,14 @@ class MessageCtrl : public wxScrolledWindow {
   
   // --------------------------------------------------- : Layout
   
-  static const int LIST_SPACING        = 1;
-  static const int ICON_PADDING        = 3;
-  static const int TEXT_PADDING_LEFT   = ICON_PADDING + 16 + 4;
-  static const int TEXT_PADDING_RIGHT  = 4;
-  static const int TEXT_PADDING_TOP    = 4;
-  static const int TEXT_PADDING_BOTTOM = 2;
-  static const int TEXT_LINE_SPACING   = 1;
-  static const int MIN_ITEM_HEIGHT     = 16 + 2*ICON_PADDING;
+  static constexpr int LIST_SPACING        = 1;
+  static constexpr int ICON_PADDING        = 3;
+  static constexpr int TEXT_PADDING_LEFT   = ICON_PADDING + 16 + 4;
+  static constexpr int TEXT_PADDING_RIGHT  = 4;
+  static constexpr int TEXT_PADDING_TOP    = 4;
+  static constexpr int TEXT_PADDING_BOTTOM = 2;
+  static constexpr int TEXT_LINE_SPACING   = 1;
+  static constexpr int MIN_ITEM_HEIGHT     = 16 + 2*ICON_PADDING;
   
   /// Layout all messages, starting from number start
   /// layout = determine their height
@@ -510,7 +510,7 @@ void ConsolePanel::exec(String const& command) {
       message->bitmap = wxBitmap(image);
     } else if (type == SCRIPT_COLOR) {
       message->text = result->toCode();
-      Color color = (Color)*result;
+      Color color = result->operator Color();
       wxImage image(30,20);
       fill_image(image,color);
       set_alpha(image, color.Alpha() / 255.0);

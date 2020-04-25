@@ -112,7 +112,7 @@ SCRIPT_FUNCTION(to_int) {
     if (t == SCRIPT_BOOL) {
       result = (bool)*input ? 1 : 0;
     } else if (t == SCRIPT_COLOR) {
-      Color c = (Color)*input;
+      Color c = input->operator Color();
       result = (c.Red() + c.Blue() + c.Green()) / 3;
     } else if (t == SCRIPT_STRING) {
       long l;
@@ -141,7 +141,7 @@ SCRIPT_FUNCTION(to_real) {
     if (t == SCRIPT_BOOL) {
       result = (bool)*input ? 1.0 : 0.0;
     } else if (t == SCRIPT_COLOR) {
-      Color c = (Color)*input;
+      Color c = input->operator Color();
       result = (c.Red() + c.Blue() + c.Green()) / 3.0;
     } else if (t == SCRIPT_STRING) {
       String str = input->toString();
@@ -166,7 +166,7 @@ SCRIPT_FUNCTION(to_number) {
     if (t == SCRIPT_BOOL) {
       SCRIPT_RETURN((bool)*input ? 1 : 0);
     } else if (t == SCRIPT_COLOR) {
-      Color c = (Color)*input;
+      Color c = input->operator Color();
       SCRIPT_RETURN( (c.Red() + c.Blue() + c.Green()) / 3 );
     } else if (t == SCRIPT_DOUBLE) {
       SCRIPT_RETURN((double)*input);
