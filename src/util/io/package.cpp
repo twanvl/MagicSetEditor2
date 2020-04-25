@@ -15,7 +15,6 @@
 #include <wx/wfstream.h>
 #include <wx/zipstrm.h>
 #include <wx/dir.h>
-#include <boost/scoped_ptr.hpp>
 
 DECLARE_TYPEOF(Package::FileInfos);
 DECLARE_TYPEOF_COLLECTION(PackageDependencyP);
@@ -401,9 +400,9 @@ void Package::saveToZipfile(const String& saveAs, bool remove_unused, bool is_co
   wxRemoveFile(tempFile);
   // open zip file
   try {
-    scoped_ptr<wxFileOutputStream> newFile(new wxFileOutputStream(tempFile));
+    unique_ptr<wxFileOutputStream> newFile(new wxFileOutputStream(tempFile));
     if (!newFile->IsOk()) throw PackageError(_ERROR_("unable to open output file"));
-    scoped_ptr<wxZipOutputStream>  newZip(new wxZipOutputStream(*newFile));
+    unique_ptr<wxZipOutputStream>  newZip(new wxZipOutputStream(*newFile));
     if (!newZip->IsOk())  throw PackageError(_ERROR_("unable to open output file"));
     // copy everything to a new zip file, unless it's updated or removed
     if (zipStream) newZip->CopyArchiveMetaData(*zipStream);

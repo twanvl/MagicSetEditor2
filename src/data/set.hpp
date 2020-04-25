@@ -15,7 +15,6 @@
 #include <util/io/package.hpp>
 #include <data/field.hpp> // for Set::value
 #include <data/keyword.hpp>
-#include <boost/scoped_ptr.hpp>
 
 DECLARE_POINTER_TYPE(Card);
 DECLARE_POINTER_TYPE(Set);
@@ -132,9 +131,9 @@ class Set : public Packaged {
   void reflect_cards (Tag& tag);
   
   /// Object for managing and executing scripts
-  scoped_ptr<SetScriptManager> script_manager;
+  unique_ptr<SetScriptManager> script_manager;
   /// Object for executing scripts from the thumbnail thread
-  scoped_ptr<SetScriptContext> thumbnail_script_context;
+  unique_ptr<SetScriptContext> thumbnail_script_context;
   /// Cache of cards ordered by some criterion
   map<pair<ScriptValueP,ScriptValueP>,OrderCacheP> order_cache;
   map<ScriptValueP,int>                            filter_cache;

@@ -51,7 +51,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
       // Evaluate the current instruction
       Instruction i = *instr++;
       // If a scope is created, destroy it at end of block.
-      scoped_ptr<LocalScope> new_scope;
+      unique_ptr<LocalScope> new_scope;
 
       switch (i.instr) {
         case I_NOP: break;

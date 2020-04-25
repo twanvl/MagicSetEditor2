@@ -23,9 +23,6 @@ using std::dynamic_pointer_cast;
 using std::make_shared;
 using std::make_unique;
 
-// TODO: remove scoped_ptr
-template <typename T> using scoped_ptr = unique_ptr<T>;
-
 // ----------------------------------------------------------------------------- : Declaring
 
 /// Declares the type TypeP as a shared_ptr<Type>

@@ -511,7 +511,7 @@ ScriptValueP ScriptClosure::simplify() {
 }
 
 ScriptValueP ScriptClosure::do_eval(Context& ctx, bool openScope) const {
-  scoped_ptr<LocalScope> scope(openScope ? new LocalScope(ctx) : nullptr);
+  unique_ptr<LocalScope> scope = openScope ? make_unique<LocalScope>(ctx) : nullptr;
   applyBindings(ctx);
   return fun->eval(ctx, openScope);
 }
