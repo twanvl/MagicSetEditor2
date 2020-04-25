@@ -12,9 +12,6 @@
 #include <util/window_id.hpp>
 #include <wx/statline.h>
 
-DECLARE_TYPEOF_COLLECTION(CardP);
-DECLARE_TYPEOF_COLLECTION(ExportCardSelectionChoiceP);
-
 // ----------------------------------------------------------------------------- : ExportCardSelectionChoice
 
 ExportCardSelectionChoice::ExportCardSelectionChoice()

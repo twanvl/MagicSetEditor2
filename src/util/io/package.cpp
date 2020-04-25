@@ -16,9 +16,6 @@
 #include <wx/zipstrm.h>
 #include <wx/dir.h>
 
-DECLARE_TYPEOF(Package::FileInfos);
-DECLARE_TYPEOF_COLLECTION(PackageDependencyP);
-
 // ----------------------------------------------------------------------------- : Package : outside
 
 IMPLEMENT_DYNAMIC_ARG(Package*, writing_package,   nullptr);

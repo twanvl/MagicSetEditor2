@@ -15,8 +15,6 @@
 #endif
 #include <queue>
 
-DECLARE_TYPEOF_COLLECTION(ScriptParseError);
-
 // ----------------------------------------------------------------------------- : Debug utilities
 
 #if defined(_MSC_VER) && defined(_DEBUG) && defined(_CRT_WIDE)

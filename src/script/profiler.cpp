@@ -16,8 +16,6 @@
   #error "It looks like you are building the final release; disable USE_SCRIPT_PROFILING!"
 #endif
 
-DECLARE_TYPEOF(map<size_t COMMA FunctionProfileP>);
-
 // ----------------------------------------------------------------------------- : Timer
 
 Timer::Timer() {

@@ -17,8 +17,6 @@
 #include <util/tagged_string.hpp>
 #include <wx/wfstream.h>
 
-DECLARE_TYPEOF_COLLECTION(CardP);
-
 // ----------------------------------------------------------------------------- : Utilities
 
 /// Convert a tagged string to MWS format: \t\t before each line beyond the first

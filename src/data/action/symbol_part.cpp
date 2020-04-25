@@ -10,9 +10,6 @@
 #include <data/action/symbol_part.hpp>
 #include <gfx/bezier.hpp>
 
-DECLARE_TYPEOF_COLLECTION(Vector2D);
-DECLARE_TYPEOF_COLLECTION(ControlPointP);
-
 // ----------------------------------------------------------------------------- : Utility
 
 inline double sgn(double v) { return  v > 0 ? 1 : -1; }
@@ -384,7 +381,6 @@ void SinglePointRemoveAction::perform(bool to_undo) {
 }
 
 DECLARE_POINTER_TYPE(SinglePointRemoveAction);
-DECLARE_TYPEOF_COLLECTION(SinglePointRemoveActionP);
 
 
 // Remove a set of points from a symbol shape.

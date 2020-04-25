@@ -18,8 +18,6 @@
 #include <data/game.hpp>
 #include <random>
 
-DECLARE_TYPEOF_COLLECTION(pair<String COMMA ScriptValueP>);
-
 // ----------------------------------------------------------------------------- : Debugging
 
 SCRIPT_FUNCTION(trace) {

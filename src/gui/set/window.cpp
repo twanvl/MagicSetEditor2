@@ -40,10 +40,6 @@
 #include <data/action/value.hpp>
 #include <data/action/set.hpp>
 
-DECLARE_TYPEOF_COLLECTION(SetWindowPanel*);
-DECLARE_TYPEOF_COLLECTION(SetWindow*);
-DECLARE_TYPEOF_COLLECTION(String);
-
 // ----------------------------------------------------------------------------- : Constructor
 
 SetWindow::SetWindow(Window* parent, const SetP& set)

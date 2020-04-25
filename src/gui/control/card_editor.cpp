@@ -17,9 +17,6 @@
 #include <util/window_id.hpp>
 #include <wx/caret.h>
 
-DECLARE_TYPEOF_COLLECTION(ValueViewerP);
-DECLARE_TYPEOF_COLLECTION(ValueViewer*);
-
 // ----------------------------------------------------------------------------- : DataEditor
 
 DataEditor::DataEditor(Window* parent, int id, long style)

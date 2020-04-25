@@ -16,8 +16,6 @@
 #include <wx/imaglist.h>
 #include <gui/util.hpp>
 
-DECLARE_TYPEOF_COLLECTION(FieldP);
-
 // ----------------------------------------------------------------------------- : ImageCardList
 
 ImageCardList::ImageCardList(Window* parent, int id, long additional_style)

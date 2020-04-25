@@ -14,8 +14,6 @@
 #include <script/image.hpp>
 #include <wx/imaglist.h>
 
-DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
-
 // ----------------------------------------------------------------------------- : ChoiceThumbnailRequest
 
 class ChoiceThumbnailRequest : public ThumbnailRequest {

@@ -11,9 +11,6 @@
 #include <util/io/package_manager.hpp>
 #include <gui/util.hpp>
 
-DECLARE_TYPEOF_COLLECTION(PackagedP);
-DECLARE_TYPEOF_COLLECTION(PackageChoiceValueViewer::Item);
-
 // ----------------------------------------------------------------------------- : PackageChoiceValueViewer
 
 IMPLEMENT_VALUE_VIEWER(PackageChoice);

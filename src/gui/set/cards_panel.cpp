@@ -27,8 +27,6 @@
 #include <util/window_id.hpp>
 #include <wx/splitter.h>
 
-DECLARE_TYPEOF_COLLECTION(AddCardsScriptP);
-
 #ifdef EVT_TOOL_DROPDOWN
   // This is only available after patching wx or in version 2.10
   // see http://trac.wxwidgets.org/ticket/8556

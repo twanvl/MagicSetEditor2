@@ -17,8 +17,6 @@
 Alignment from_string(const String&);
 void parse_enum(const String&,Direction&);
 
-DECLARE_TYPEOF_COLLECTION(ScriptParseError);
-
 // ----------------------------------------------------------------------------- : Store
 
 void store(const ScriptValueP& val, String& var)              { var = val->toString(); }

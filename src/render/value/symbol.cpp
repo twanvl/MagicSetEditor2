@@ -14,8 +14,6 @@
 #include <gui/util.hpp> // draw_checker
 #include <util/error.hpp>
 
-DECLARE_TYPEOF_COLLECTION(SymbolVariationP);
-
 // ----------------------------------------------------------------------------- : SymbolValueViewer
 
 IMPLEMENT_VALUE_VIEWER(Symbol);

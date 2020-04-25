@@ -12,8 +12,6 @@
 #include <wx/renderer.h>
 #include <wx/dcbuffer.h>
 
-DECLARE_TYPEOF_COLLECTION(TreeList::ItemP);
-
 // ----------------------------------------------------------------------------- : TreeList : item managment
 
 void TreeList::rebuild(bool full) {

@@ -23,9 +23,6 @@
 #include <script/profiler.hpp>
 #include <wx/sstream.h>
 
-DECLARE_TYPEOF_COLLECTION(CardP);
-DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA ValueP>);
-
 // ----------------------------------------------------------------------------- : Set
 
 Set::Set()

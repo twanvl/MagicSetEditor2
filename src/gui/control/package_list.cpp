@@ -13,8 +13,6 @@
 #include <script/profiler.hpp>
 #include <gui/util.hpp>
 
-DECLARE_TYPEOF_COLLECTION(PackagedP);
-
 // ----------------------------------------------------------------------------- : PackageList
 
 PackageList::PackageList(Window* parent, int id, int direction, bool always_focused)

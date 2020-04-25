@@ -175,7 +175,6 @@ class Package : public IntrusivePtrVirtualBase {
 
   public:
   /// Information on files in the package
-  /** Note: must be public for DECLARE_TYPEOF to work */
   typedef map<String, FileInfo> FileInfos;
   inline const FileInfos& getFileInfos() const { return files; }
   /// When was a file last modified?

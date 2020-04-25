@@ -18,8 +18,6 @@
 #include <util/tagged_string.hpp>
 #include <wx/wfstream.h>
 
-DECLARE_TYPEOF_COLLECTION(CardP);
-
 // ----------------------------------------------------------------------------- : MtgEditorFileFormat
 
 /// The file format of Mtg Editor files

@@ -20,7 +20,6 @@
 #include <wx/url.h>
 
 DECLARE_POINTER_TYPE(VersionData);
-DECLARE_TYPEOF_COLLECTION(PackageDependencyP);
 
 // ----------------------------------------------------------------------------- : Update data
 

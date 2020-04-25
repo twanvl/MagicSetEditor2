@@ -18,12 +18,6 @@
 
 // ----------------------------------------------------------------------------- : Typeof magic
 
-// GCC has a buildin typeof function, so it doesn't need (as much) hacks
-#define DECLARE_TYPEOF(T)
-#define DECLARE_TYPEOF_NO_REV(T)
-#define DECLARE_TYPEOF_CONST(T)
-#define DECLARE_TYPEOF_COLLECTION(T)
-
 #define TYPEOF(Value)      decltype(Value)
 #define TYPEOF_IT(Value)   decltype((Value).begin())
 #define TYPEOF_CIT(Value)  decltype((Value).begin())
@@ -31,14 +25,6 @@
 #define TYPEOF_CRIT(Value) decltype((Value).rbegin())
 #define TYPEOF_REF(Value)  decltype(*(Value).begin())&
 #define TYPEOF_CREF(Value) decltype(*(Value).begin())&
-
-/// Use for template classes
-/** i.e.
- *    DECLARE_TYPEOF(pair<a COMMA b>);
- *  instead of
- *    DECLARE_TYPEOF(pair<a,b>);
- */
-#define COMMA ,
 
 // ----------------------------------------------------------------------------- : Looping macros with iterators
 

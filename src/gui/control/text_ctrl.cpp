@@ -13,8 +13,6 @@
 #include <data/field/text.hpp>
 #include <data/action/value.hpp>
 
-DECLARE_TYPEOF_COLLECTION(ValueViewerP);
-
 // ----------------------------------------------------------------------------- : TextCtrl
 
 TextCtrl::TextCtrl(Window* parent, int id, bool multi_line, long style)

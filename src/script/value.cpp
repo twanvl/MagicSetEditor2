@@ -14,8 +14,6 @@
 #include <util/error.hpp>
 #include <boost/pool/singleton_pool.hpp>
 
-DECLARE_TYPEOF_COLLECTION(pair<Variable COMMA ScriptValueP>);
-
 // ----------------------------------------------------------------------------- : ScriptValue
 // Base cases
 

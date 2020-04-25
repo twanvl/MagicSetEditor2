@@ -14,11 +14,6 @@
 #include <queue>
 using boost::indeterminate;
 
-DECLARE_TYPEOF_COLLECTION(PackTypeP);
-DECLARE_TYPEOF_COLLECTION(PackItemP);
-DECLARE_TYPEOF_COLLECTION(CardP);
-DECLARE_TYPEOF_CONST(map<String COMMA PackInstanceP>);
-
 // ----------------------------------------------------------------------------- : PackType
 
 

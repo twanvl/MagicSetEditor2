@@ -18,8 +18,6 @@
 #include <wx/clipbrd.h>
 
 DECLARE_POINTER_TYPE(ConsoleMessage);
-DECLARE_TYPEOF_COLLECTION(ScriptParseError);
-DECLARE_TYPEOF_COLLECTION(ConsoleMessageP);
 
 // ----------------------------------------------------------------------------- : MessageControl
 

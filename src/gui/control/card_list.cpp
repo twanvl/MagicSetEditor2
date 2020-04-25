@@ -23,12 +23,7 @@
 #include <util/window_id.hpp>
 #include <wx/clipbrd.h>
 
-DECLARE_TYPEOF_COLLECTION(CardP);
-DECLARE_TYPEOF_COLLECTION(FieldP);
 DECLARE_POINTER_TYPE(ChoiceValue);
-DECLARE_TYPEOF(map<int COMMA FieldP>);
-DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA StyleP>);
-DECLARE_TYPEOF_COLLECTION(CardListBase*);
 
 // ----------------------------------------------------------------------------- : Events
 

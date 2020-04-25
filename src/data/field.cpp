@@ -19,8 +19,6 @@
 #include <data/field/package_choice.hpp>
 #include <util/error.hpp>
 
-DECLARE_TYPEOF_COLLECTION(StyleListener*);
-
 // ----------------------------------------------------------------------------- : Field
 
 Field::Field()

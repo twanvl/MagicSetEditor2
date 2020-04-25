@@ -11,12 +11,6 @@
 #include <data/action/symbol_part.hpp>
 #include <util/error.hpp>
 
-DECLARE_TYPEOF_COLLECTION(pair<SymbolShapeP COMMA SymbolShapeCombine>);
-DECLARE_TYPEOF_COLLECTION(pair<SymbolPartP  COMMA size_t            >);
-DECLARE_TYPEOF_COLLECTION(RemoveSymbolPartsAction::Removal);
-DECLARE_TYPEOF_COLLECTION(SymbolPartP);
-DECLARE_TYPEOF_COLLECTION(ControlPointP);
-
 // ----------------------------------------------------------------------------- : Utility
 
 String action_name_for(const set<SymbolPartP>& parts, const String& action) {

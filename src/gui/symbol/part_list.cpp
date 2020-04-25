@@ -18,8 +18,6 @@
 #include <wx/dcbuffer.h>
 #include <wx/caret.h>
 
-DECLARE_TYPEOF_COLLECTION(SymbolPartP);
-
 // ----------------------------------------------------------------------------- : Events
 
 DEFINE_EVENT_TYPE(EVENT_PART_SELECT);

@@ -13,17 +13,6 @@
 #include <wx/dcbuffer.h>
 #include <wx/tooltip.h>
 
-DECLARE_TYPEOF_COLLECTION(GraphAxisP);
-DECLARE_TYPEOF_COLLECTION(GraphElementP);
-DECLARE_TYPEOF_COLLECTION(GraphGroup);
-DECLARE_TYPEOF_COLLECTION(GraphDataElement*);
-DECLARE_TYPEOF_COLLECTION(GraphP);
-DECLARE_TYPEOF_COLLECTION(int);
-DECLARE_TYPEOF_COLLECTION(vector<int>);
-DECLARE_TYPEOF_COLLECTION(String);
-DECLARE_TYPEOF_COLLECTION(UInt);
-DECLARE_TYPEOF_COLLECTION(pair<String COMMA String>);
-
 template <typename T> inline T sgn(T v) { return v < 0 ? -1 : 1; }
 
 // ----------------------------------------------------------------------------- : Events
@@ -74,7 +63,6 @@ void GraphDataPre::splitList(size_t axis) {
 struct SmartLess{
   inline bool operator () (const String& a, const String& b) const { return smart_less(a,b); }
 };
-DECLARE_TYPEOF(map<String COMMA UInt COMMA SmartLess>);
 
 String to_bin(double value, double bin_size) {
   if (bin_size <= 0 || value == 0) {

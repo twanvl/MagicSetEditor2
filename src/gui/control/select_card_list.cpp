@@ -12,8 +12,6 @@
 #include <data/card.hpp>
 #include <wx/imaglist.h>
 
-DECLARE_TYPEOF_COLLECTION(CardP);
-
 // ----------------------------------------------------------------------------- : SelectCardList
 
 SelectCardList::SelectCardList(Window* parent, int id, long additional_style)

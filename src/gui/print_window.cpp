@@ -16,7 +16,6 @@
 #include <render/card/viewer.hpp>
 #include <wx/print.h>
 
-DECLARE_TYPEOF_COLLECTION(CardP);
 DECLARE_POINTER_TYPE(PageLayout);
 
 // ----------------------------------------------------------------------------- : Layout

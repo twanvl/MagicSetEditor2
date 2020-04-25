@@ -23,10 +23,6 @@
 #include <wx/statline.h>
 #include <wx/artprov.h>
 
-DECLARE_TYPEOF_COLLECTION(ParamReferenceTypeP);
-DECLARE_TYPEOF_COLLECTION(KeywordParamP);
-DECLARE_TYPEOF_COLLECTION(KeywordModeP);
-
 // ----------------------------------------------------------------------------- : KeywordsPanel
 
 KeywordsPanel::KeywordsPanel(Window* parent, int id)

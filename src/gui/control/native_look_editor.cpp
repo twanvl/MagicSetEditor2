@@ -14,9 +14,6 @@
 #include <data/export_template.hpp>
 #include <data/settings.hpp>
 
-DECLARE_TYPEOF_COLLECTION(ValueViewerP);
-DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA StyleP>);
-
 // ----------------------------------------------------------------------------- : NativeLookEditor
 
 NativeLookEditor::NativeLookEditor(Window* parent, int id, long style)

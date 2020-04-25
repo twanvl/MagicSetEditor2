@@ -19,12 +19,6 @@
 #include <data/field/multiple_choice.hpp>
 #include <data/action/value.hpp>
 
-DECLARE_TYPEOF_COLLECTION(FieldP);
-DECLARE_TYPEOF_COLLECTION(TextValue*);
-DECLARE_TYPEOF_COLLECTION(String);
-DECLARE_TYPEOF_COLLECTION(pair<String COMMA bool>);
-DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
-
 // ----------------------------------------------------------------------------- : Combined editor
 
 // Combining multiple (text) values into a single one

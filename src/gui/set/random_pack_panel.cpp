@@ -20,11 +20,6 @@
 #include <wx/spinctrl.h>
 #include <wx/dcbuffer.h>
 
-DECLARE_TYPEOF_COLLECTION(PackTypeP);
-DECLARE_TYPEOF_COLLECTION(PackItemP);
-DECLARE_TYPEOF_COLLECTION(CardP);
-DECLARE_TYPEOF_COLLECTION(PackAmountPicker);
-
 // ----------------------------------------------------------------------------- : RandomCardList
 
 /// A card list that contains the 

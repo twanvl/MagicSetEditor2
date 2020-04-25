@@ -12,9 +12,6 @@
 #include <util/defaultable.hpp>
 #include <wx/imaglist.h>
 
-DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
-DECLARE_TYPEOF(map<String COMMA ScriptableImage>);
-
 // ----------------------------------------------------------------------------- : ChoiceField
 
 ChoiceField::ChoiceField()

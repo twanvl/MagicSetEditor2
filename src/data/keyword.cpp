@@ -11,12 +11,6 @@
 #include <util/tagged_string.hpp>
 
 class KeywordTrie;
-DECLARE_TYPEOF(map<Char COMMA KeywordTrie*>);
-DECLARE_TYPEOF_COLLECTION(KeywordTrie*);
-DECLARE_TYPEOF_COLLECTION(KeywordP);
-DECLARE_TYPEOF_COLLECTION(KeywordModeP);
-DECLARE_TYPEOF_COLLECTION(KeywordParamP);
-DECLARE_TYPEOF_COLLECTION(const Keyword*);
 DECLARE_POINTER_TYPE(KeywordParamValue);
 class Value;
 DECLARE_DYNAMIC_ARG(Value*, value_being_updated);

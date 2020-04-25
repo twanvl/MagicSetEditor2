@@ -12,9 +12,6 @@
 #include <util/error.hpp>
 #include <queue>
 
-DECLARE_TYPEOF_COLLECTION(ScriptValueP);
-DECLARE_TYPEOF_COLLECTION(Context::Binding);
-
 // NOTE: dependency.cpp has nothing to do with dependency.hpp, the latter defines the dependency
 // type, which is used here as an abstract type. The header for this source file is context.hpp
 

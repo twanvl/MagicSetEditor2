@@ -26,8 +26,6 @@ class wxTextOutputStream;
 /// The string type used throughout MSE
 typedef wxString String;
 
-DECLARE_TYPEOF_NO_REV(String); // iterating over characters in a string
-
 inline wxStdString const& toStdString(String const& s) {
   #if wxUSE_UNICODE_WCHAR
     return s.ToStdWstring();

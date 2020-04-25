@@ -22,7 +22,6 @@
 
 class Set;
 DECLARE_POINTER_TYPE(Keyword);
-DECLARE_TYPEOF_COLLECTION(GenericAddAction<KeywordP>::Step);
 
 // ----------------------------------------------------------------------------- : Add Keyword
 

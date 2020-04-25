@@ -10,9 +10,6 @@
 #include <render/text/viewer.hpp>
 #include <algorithm>
 
-DECLARE_TYPEOF_COLLECTION(TextViewer::Line);
-DECLARE_TYPEOF_COLLECTION(double);
-
 // ----------------------------------------------------------------------------- : Line
 
 struct TextViewer::Line {

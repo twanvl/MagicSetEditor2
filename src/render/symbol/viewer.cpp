@@ -11,8 +11,6 @@
 #include <util/error.hpp> // clearDC_black
 #include <gui/util.hpp> // clearDC_black
 
-DECLARE_TYPEOF_COLLECTION(SymbolPartP);
-
 // ----------------------------------------------------------------------------- : Simple rendering
 
 Image render_symbol(const SymbolP& symbol, double border_radius, int width, int height, bool editing_hints, bool allow_smaller) {

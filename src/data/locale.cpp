@@ -21,8 +21,6 @@
   #include <wx/mstream.h>
 #endif
 
-DECLARE_TYPEOF(map<String COMMA SubLocaleP>);
-
 // ----------------------------------------------------------------------------- : Locale class
 
 // when reading, ignore "#_ADD" start of line pragmas

@@ -25,10 +25,6 @@
 
 DECLARE_POINTER_TYPE(Installer);
 
-DECLARE_TYPEOF_COLLECTION(PackageDependencyP);
-DECLARE_TYPEOF_COLLECTION(InstallablePackageP);
-DECLARE_TYPEOF_COLLECTION(DownloadableInstallerP);
-
 // ----------------------------------------------------------------------------- : TODO: MOVE
 
 /*

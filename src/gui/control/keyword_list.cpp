@@ -21,9 +21,6 @@
 #include <gfx/color.hpp>
 #include <wx/clipbrd.h>
 
-DECLARE_TYPEOF_COLLECTION(KeywordP);
-DECLARE_TYPEOF_COLLECTION(CardP);
-
 // ----------------------------------------------------------------------------- : Events
 
 DEFINE_EVENT_TYPE(EVENT_KEYWORD_SELECT);

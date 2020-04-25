@@ -17,8 +17,6 @@
 #include <util/tagged_string.hpp>
 #include <wx/filename.h>
 
-DECLARE_TYPEOF_COLLECTION(CardP);
-
 // ----------------------------------------------------------------------------- : ImagesExportWindow
 
 ImagesExportWindow::ImagesExportWindow(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices)

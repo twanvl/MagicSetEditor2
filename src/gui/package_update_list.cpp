@@ -13,11 +13,6 @@
 #include <gfx/gfx.hpp>
 #include <wx/url.h>
 
-DECLARE_TYPEOF_COLLECTION(InstallablePackageP);
-DECLARE_TYPEOF_COLLECTION(PackageUpdateList::TreeItemP);
-DECLARE_TYPEOF_COLLECTION(TreeList::ItemP);
-
-
 // ----------------------------------------------------------------------------- : PackageUpdateList::TreeItem
 
 void PackageUpdateList::TreeItem::add(const InstallablePackageP& package, const String& path, int level) {

@@ -14,8 +14,6 @@
 #include <util/io/package_manager.hpp> // for "include file" semi hack
 #include <stack>
 
-DECLARE_TYPEOF_COLLECTION(Variable);
-
 #ifdef __WXMSW__
 #define TokenType TokenType_ // some stupid windows header uses our name
 #endif

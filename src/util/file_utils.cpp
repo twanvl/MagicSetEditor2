@@ -13,8 +13,6 @@
 #include <errno.h>
 #include <sys/stat.h>
 
-DECLARE_TYPEOF_COLLECTION(String);
-
 // ----------------------------------------------------------------------------- : File names
 
 String normalize_filename(const String& name) {

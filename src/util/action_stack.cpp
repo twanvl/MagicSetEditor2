@@ -13,9 +13,6 @@
 
 // ----------------------------------------------------------------------------- : Action stack
 
-DECLARE_TYPEOF_COLLECTION(Action*);
-DECLARE_TYPEOF_COLLECTION(ActionListener*);
-
 ActionStack::ActionStack()
   : save_point(nullptr)
   , last_was_add(false)

@@ -10,8 +10,6 @@
 #include <data/field/color.hpp>
 #include <script/script.hpp>
 
-DECLARE_TYPEOF_COLLECTION(ColorField::ChoiceP);
-
 // ----------------------------------------------------------------------------- : ColorField
 
 ColorField::ColorField()

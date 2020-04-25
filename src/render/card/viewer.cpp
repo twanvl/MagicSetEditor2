@@ -18,9 +18,6 @@
 #include <data/action/set.hpp>
 #include <gui/util.hpp> // clearDC
 
-DECLARE_TYPEOF_COLLECTION(ValueViewerP);
-DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA StyleP>);
-
 // ----------------------------------------------------------------------------- : DataViewer
 
 DataViewer::DataViewer() {}

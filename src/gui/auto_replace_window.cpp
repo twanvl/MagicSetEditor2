@@ -17,8 +17,6 @@
 #include <util/window_id.hpp>
 #include <util/error.hpp>
 
-DECLARE_TYPEOF_COLLECTION(AutoReplaceP);
-
 // ----------------------------------------------------------------------------- : AutoReplaceList
 
 DECLARE_EVENT_TYPE(EVENT_ITEM_SELECT, <not used>)

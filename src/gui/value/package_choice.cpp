@@ -12,8 +12,6 @@
 #include <gui/util.hpp>
 #include <data/action/value.hpp>
 
-DECLARE_TYPEOF_COLLECTION(PackageChoiceValueViewer::Item);
-
 // ----------------------------------------------------------------------------- : DropDownPackageChoiceList
 
 /// A drop down list of color choices

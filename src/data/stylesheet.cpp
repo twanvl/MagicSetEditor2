@@ -13,9 +13,6 @@
 #include <util/io/package_manager.hpp>
 #include <gui/new_window.hpp> // for selecting stylesheets on load error
 
-DECLARE_TYPEOF_COLLECTION(StyleSheet*);
-DECLARE_TYPEOF_COLLECTION(FieldP);
-
 // ----------------------------------------------------------------------------- : StyleSheet
 
 IMPLEMENT_DYNAMIC_ARG(StyleSheet*, stylesheet_for_reading, nullptr);

@@ -16,8 +16,6 @@
 #include <wx/filename.h>
 #include <wx/notebook.h>
 
-DECLARE_TYPEOF_COLLECTION(PackagedP);
-
 // use a combo box for the zoom choices instead of a spin control
 #define USE_ZOOM_COMBOBOX 1
 

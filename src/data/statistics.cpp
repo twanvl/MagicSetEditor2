@@ -11,10 +11,6 @@
 #include <data/field.hpp>
 #include <data/field/choice.hpp>
 
-DECLARE_TYPEOF_COLLECTION(String);
-DECLARE_TYPEOF_COLLECTION(StatsDimensionP);
-DECLARE_TYPEOF_COLLECTION(ChoiceField::ChoiceP);
-
 extern ScriptValueP script_primary_choice;
 
 // ----------------------------------------------------------------------------- : Statistics dimension

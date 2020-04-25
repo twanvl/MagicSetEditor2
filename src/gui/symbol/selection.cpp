@@ -11,8 +11,6 @@
 #include <data/symbol.hpp>
 #include <gfx/bezier.hpp>
 
-DECLARE_TYPEOF_COLLECTION(SymbolPartP);
-
 // ----------------------------------------------------------------------------- : Selection
 
 void SymbolPartsSelection::setSymbol(const SymbolP& symbol) {

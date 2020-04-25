@@ -24,8 +24,6 @@ DECLARE_POINTER_TYPE(StyleSheet);
 DECLARE_POINTER_TYPE(Field);
 DECLARE_POINTER_TYPE(Value);
 DECLARE_POINTER_TYPE(PackType);
-DECLARE_TYPEOF_COLLECTION(GenericAddAction<CardP>::Step);
-DECLARE_TYPEOF_COLLECTION(GenericAddAction<PackTypeP>::Step);
 
 // ----------------------------------------------------------------------------- : Add card
 

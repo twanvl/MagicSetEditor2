@@ -13,7 +13,6 @@
 #include <util/error.hpp>
 
 DECLARE_POINTER_TYPE(ScriptRegex);
-DECLARE_TYPEOF_COLLECTION(pair<Variable COMMA ScriptValueP>);
 
 // ----------------------------------------------------------------------------- : Regex type
 

@@ -16,8 +16,6 @@
 #include <render/card/viewer.hpp>
 #include <wx/filename.h>
 
-DECLARE_TYPEOF_COLLECTION(CardP);
-
 // ----------------------------------------------------------------------------- : Single card export
 
 void export_image(const SetP& set, const CardP& card, const String& filename) {

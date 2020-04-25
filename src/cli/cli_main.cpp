@@ -16,8 +16,6 @@
 #include <wx/process.h>
 #include <wx/wfstream.h>
 
-DECLARE_TYPEOF_COLLECTION(ScriptParseError);
-
 String read_utf8_line(wxInputStream& input, bool until_eof = false);
 
 // ----------------------------------------------------------------------------- : Command line interface
@@ -242,7 +240,6 @@ void CLISetInterface::handleCommand(const String& command) {
 }
 
 #if USE_SCRIPT_PROFILING
-  DECLARE_TYPEOF_COLLECTION(FunctionProfileP);
   void CLISetInterface::showProfilingStats(const FunctionProfile& item, int level) {
     // show parent
     if (level == 0) {
