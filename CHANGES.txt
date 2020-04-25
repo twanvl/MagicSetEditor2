@@ -14,13 +14,16 @@ Bug fixes:
 Scripting:
  * Added type_name function
 
-Other:
- * Switch to to CMake
- * Update code to work with wxWidgets 3.0/3.1 and C++ 11
+Internal:
+ * Switch build system to to CMake
+ * Update code to work with wxWidgets 3.0/3.1 and C++ 17
+ * Lots of code cleanup
 
 ------------------------------------------------------------------------------
 -- 2.0.1
 ------------------------------------------------------------------------------
+
+ * Some bugfixes
 
 Other
  * Changes to build system
