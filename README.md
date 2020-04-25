@@ -23,12 +23,14 @@ vcpkg install wxwidgets
 vcpkg install boost-smart-ptr
 vcpkg install boost-regex
 vcpkg install hunspell
+vcpkg install boost-random
+vcpkg install boost-logic
 vcpkg integrate install
 ````
  * Then just use "Open Folder" from inside visual studio to open the Magic Set Editor source code root folder.
 
 Notes:
- * You may need to work around [this bug](https://github.com/microsoft/vcpkg/issues/4756) by replacing `$VCPATH\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.16\Modules\FindwxWidgets.cmake` with the file from  https://github.com/CaeruleusAqua/vcpkg-wx-find
+ * You may need to work around [this bug](https://github.com/microsoft/vcpkg/issues/4756) by replacing `$VCPATH\IDE\CommonExtensions\Microsoft\CMake\CMake\share\cmake-3.16\Modules\FindwxWidgets.cmake` with the file from  https://github.com/CaeruleusAqua/vcpkg-wx-find (`$VCPATH` is usually `C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\Common7`)
  * vcpkg by default installs 32 bit versions of libraries, use `vcpkg install PACKAGENAME:x64-windows` if you want to enable a 64 bit build.
  
 For running tests you will also need to
