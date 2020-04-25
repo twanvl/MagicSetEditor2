@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CONTROL_CARD_LIST_COLUMN_SELECT
-#define HEADER_GUI_CONTROL_CARD_LIST_COLUMN_SELECT
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -62,5 +61,3 @@ class CardListColumnSelectDialog : public wxDialog {
   
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

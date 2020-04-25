@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_SCRIPT_IMAGE
-#define HEADER_SCRIPT_IMAGE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -142,5 +141,3 @@ class CachedScriptableMask {
   friend class GetDefaultMember;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

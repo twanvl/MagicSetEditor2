@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_RENDER_VALUE_INFORMATION
-#define HEADER_RENDER_VALUE_INFORMATION
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -24,5 +23,3 @@ class InfoValueViewer : public ValueViewer {
 };
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

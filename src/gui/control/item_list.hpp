@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CONTROL_ITEM_LIST
-#define HEADER_GUI_CONTROL_ITEM_LIST
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -112,5 +111,3 @@ class ItemList : public wxListView {
   void onContextMenu(wxContextMenuEvent&);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

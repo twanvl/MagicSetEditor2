@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_FIELD_INFORMATION
-#define HEADER_DATA_FIELD_INFORMATION
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -65,5 +64,3 @@ class InfoValue : public Value {
   virtual bool update(Context&);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

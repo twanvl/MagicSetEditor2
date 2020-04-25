@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_ADD_CARDS_SCRIPT
-#define HEADER_DATA_ADD_CARDS_SCRIPT
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -34,5 +33,3 @@ class AddCardsScript : public IntrusivePtrBase<AddCardsScript> {
 };
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

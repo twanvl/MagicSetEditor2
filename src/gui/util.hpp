@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_UTIL
-#define HEADER_GUI_UTIL
+#pragma once
 
 /** @file gui/util.hpp
  *  Utility functions for use in the gui. Most are related to drawing.
@@ -89,5 +88,3 @@ void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool sele
 /// Enable fancy themed selection rectangle on windows
 void enable_themed_selection_rectangle(Window* win);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_ACTION_KEYWORD
-#define HEADER_DATA_ACTION_KEYWORD
+#pragma once
 
 /** @file data/action/keyword.hpp
  *
@@ -100,5 +99,3 @@ class ChangeKeywordModeAction : public Action {
   String   mode;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

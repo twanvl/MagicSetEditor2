@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_AUTO_REPLACE_WINDOW
-#define HEADER_GUI_AUTO_REPLACE_WINDOW
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -49,5 +48,3 @@ class AutoReplaceWindow : public wxDialog {
   void store();
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

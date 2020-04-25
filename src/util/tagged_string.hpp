@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_TAGGED_STRING
-#define HEADER_UTIL_TAGGED_STRING
+#pragma once
 
 /** @file util/tagged_string.hpp
  *
@@ -218,5 +217,3 @@ String simplify_tagged_overlap(const String& str);
 /// Turn straight quotes into curly ones or vice-versa
 String curly_quotes(String str, bool curl);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

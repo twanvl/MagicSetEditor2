@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_SCRIPT_SCRIPT
-#define HEADER_SCRIPT_SCRIPT
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -218,5 +217,3 @@ class Script : public ScriptValue {
   friend class Context;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

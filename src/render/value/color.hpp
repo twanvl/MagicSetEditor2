@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_RENDER_VALUE_COLOR
-#define HEADER_RENDER_VALUE_COLOR
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -26,5 +25,3 @@ class ColorValueViewer : public ValueViewer {
   virtual bool containsPoint(const RealPoint& p) const;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_DYNAMIC_ARG
-#define HEADER_UTIL_DYNAMIC_ARG
+#pragma once
 
 /** @file util/dynamic_arg.hpp
  *
@@ -118,5 +117,3 @@
 
 #endif
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

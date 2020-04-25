@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_ACTION_SYMBOL_PART
-#define HEADER_DATA_ACTION_SYMBOL_PART
+#pragma once
 
 /** @file data/action/symbol_part.hpp
  *
@@ -236,5 +235,3 @@ class SymmetryCopiesAction : public Action {
   String          old_name;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_VALUE_TEXT
-#define HEADER_GUI_VALUE_TEXT
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -187,5 +186,3 @@ class TextValueEditor : public TextValueViewer, public ValueEditor {
   
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

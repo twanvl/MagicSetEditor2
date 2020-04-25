@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_AGE
-#define HEADER_UTIL_AGE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -59,5 +58,3 @@ class Age {
  */
 DECLARE_DYNAMIC_ARG  (AtomicIntEquiv, last_update_age);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

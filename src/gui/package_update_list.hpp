@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_PACKAGE_UPDATE_LIST
-#define HEADER_GUI_PACKAGE_UPDATE_LIST
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -79,5 +78,3 @@ class PackageUpdateList : public TreeList {
   friend class PackageIconRequest;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

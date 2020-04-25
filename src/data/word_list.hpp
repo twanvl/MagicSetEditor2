@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_WORD_LIST
-#define HEADER_DATA_WORD_LIST
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -59,5 +58,3 @@ class AutoReplace : public IntrusivePtrVirtualBase {
   DECLARE_REFLECTION();
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

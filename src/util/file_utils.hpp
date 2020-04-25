@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_FILE_UTILS
-#define HEADER_UTIL_FILE_UTILS
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -62,5 +61,3 @@ bool rename_file_or_dir(const String& old_name, const String& new_name);
 /// Move files/dirs that are ignored by packages to another directory
 void move_ignored_files(const String& from_dir, const String& to_dir);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

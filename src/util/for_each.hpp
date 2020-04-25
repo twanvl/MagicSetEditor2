@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_FOR_EACH
-#define HEADER_UTIL_FOR_EACH
+#pragma once
 
 /** @file util/for_each.hpp
  *
@@ -140,5 +139,3 @@
                TYPEOF_CIT(Collection2), TYPEOF_CREF(Collection2), Elem2, Collection2)
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

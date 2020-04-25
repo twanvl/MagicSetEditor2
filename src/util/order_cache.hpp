@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_ORDER_CACHE
-#define HEADER_UTIL_ORDER_CACHE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -83,5 +82,3 @@ int OrderCache<T>::find(const T& key) const {
   return it->second;
 }
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

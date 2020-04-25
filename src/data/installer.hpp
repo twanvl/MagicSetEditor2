@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_INSTALLER
-#define HEADER_DATA_INSTALLER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -196,5 +195,3 @@ extern String mse_package;
 
 InstallablePackageP mse_installable_package();
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

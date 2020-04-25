@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_ACTION_SYMBOL
-#define HEADER_DATA_ACTION_SYMBOL
+#pragma once
 
 /** @file data/action/symbol.hpp
  *
@@ -314,5 +313,3 @@ class UngroupSymbolPartsAction : public GroupSymbolPartsActionBase {
   virtual String getName(bool to_undo) const;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

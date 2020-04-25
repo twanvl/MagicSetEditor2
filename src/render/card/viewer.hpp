@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_RENDER_CARD_VIEWER
-#define HEADER_RENDER_CARD_VIEWER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -103,5 +102,3 @@ class DataViewer : public SetView {
   mutable StyleSheetP stylesheet;  ///< Stylesheet being used
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

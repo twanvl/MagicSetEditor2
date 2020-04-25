@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_SCRIPT_CONTEXT
-#define HEADER_SCRIPT_CONTEXT
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -138,5 +137,3 @@ class LocalScope {
   size_t scope;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

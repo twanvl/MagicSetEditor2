@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_SCRIPT_PARSER
-#define HEADER_SCRIPT_PARSER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -36,5 +35,3 @@ ScriptP parse(const String& s, Packaged* package, bool string_mode, vector<Scrip
  */
 ScriptP parse(const String& s, Packaged* package = nullptr, bool string_mode = false);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

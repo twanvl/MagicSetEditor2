@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CONTROL_TREE_LIST
-#define HEADER_GUI_CONTROL_TREE_LIST
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -103,5 +102,3 @@ class TreeList : public wxPanel {
   void RefreshLine(size_t line);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

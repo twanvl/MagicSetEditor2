@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_VALUE_IMAGE
-#define HEADER_GUI_VALUE_IMAGE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -37,5 +36,3 @@ class ImageValueEditor : public ImageValueViewer, public ValueEditor {
   void sliceImage(const Image&);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

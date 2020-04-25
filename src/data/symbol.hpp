@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_SYMBOL
-#define HEADER_DATA_SYMBOL
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -318,5 +317,3 @@ class SymbolView : public ActionListener {
 };
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

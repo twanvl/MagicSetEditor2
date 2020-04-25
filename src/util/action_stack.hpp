@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_ACTION_STACK
-#define HEADER_UTIL_ACTION_STACK
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -140,5 +139,3 @@ class ActionStack {
          Type##variable.second = false)
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_SET_PANEL
-#define HEADER_GUI_SET_PANEL
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -80,5 +79,3 @@ class SetWindowPanel : public wxPanel, public SetView {
   bool isInitialized() const;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

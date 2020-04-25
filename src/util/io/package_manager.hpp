@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_IO_PACKAGE_MANAGER
-#define HEADER_UTIL_IO_PACKAGE_MANAGER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -234,5 +233,3 @@ class PackageVersion : public IntrusivePtrBase<PackageVersion> {
   DECLARE_REFLECTION();
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

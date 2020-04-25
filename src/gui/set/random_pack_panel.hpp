@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_SET_RANDOM_PACK_PANEL
-#define HEADER_GUI_SET_RANDOM_PACK_PANEL
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -98,5 +97,3 @@ class RandomPackPanel : public SetWindowPanel {
   typedef PackItem PackItem_for_typeof;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

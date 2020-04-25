@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_SYMBOL_SELECT_EDITOR
-#define HEADER_GUI_SYMBOL_SELECT_EDITOR
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -120,5 +119,3 @@ class SymbolSelectEditor : public SymbolEditorBase {
   void resetActions();
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

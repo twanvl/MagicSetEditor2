@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_DROP_DOWN_LIST
-#define HEADER_GUI_DROP_DOWN_LIST
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -129,5 +128,3 @@ class DropDownList : public wxPopupWindow {
   virtual void redrawArrowOnParent(); // allow override
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

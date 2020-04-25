@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_ABOUT_WINDOW
-#define HEADER_GUI_ABOUT_WINDOW
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -102,5 +101,3 @@ class HoverButton : public HoverButtonBase {
 };
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

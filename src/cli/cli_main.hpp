@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_CLI_MAIN
-#define HEADER_CLI_MAIN
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -48,5 +47,3 @@ private:
 
 bool run_script_file(String const& filename);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

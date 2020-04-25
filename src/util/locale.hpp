@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_LOCALE
-#define HEADER_UTIL_LOCALE
+#pragma once
 
 /** @file util/locale.hpp
  *
@@ -134,5 +133,3 @@ inline String format_string(const String& format, const String& a0, const String
   return String::Format(format, a0.c_str(), a1.c_str(), a2.c_str(), a3.c_str());
 }
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

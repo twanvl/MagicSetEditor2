@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_SYMBOL_FONT
-#define HEADER_DATA_SYMBOL_FONT
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -167,5 +166,3 @@ class SymbolFontRef {
   void loadFont(Context& ctx);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

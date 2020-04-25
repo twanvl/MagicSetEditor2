@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_FORMAT_IMAGE_TO_SYMBOL
-#define HEADER_DATA_FORMAT_IMAGE_TO_SYMBOL
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -33,5 +32,3 @@ void simplify_symbol(Symbol&);
 /// Simplify a symbol parts, i.e. use bezier curves instead of lots of lines
 void simplify_symbol_shape(SymbolShape&);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_FIND_REPLACE
-#define HEADER_UTIL_FIND_REPLACE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -44,5 +43,3 @@ class FindInfo {
   wxFindReplaceData& what; ///< What to search for, the direction to search in
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

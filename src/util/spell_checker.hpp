@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_SPELL_CHECKER
-#define HEADER_UTIL_SPELL_CHECKER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -52,5 +51,3 @@ class SpellChecker : public Hunspell, public IntrusivePtrBase<SpellChecker> {
   static map<String,SpellCheckerP> spellers; //< Cached checkers for each language
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

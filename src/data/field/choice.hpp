@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_FIELD_CHOICE
-#define HEADER_DATA_FIELD_CHOICE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -180,5 +179,3 @@ class ChoiceValue : public Value {
   virtual bool update(Context&);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

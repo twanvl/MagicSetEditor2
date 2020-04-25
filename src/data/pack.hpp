@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_PACK
-#define HEADER_DATA_PACK
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -145,5 +144,3 @@ class PackGenerator {
   int max_depth;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

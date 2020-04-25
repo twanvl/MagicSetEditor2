@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_NEW_WINDOW
-#define HEADER_GUI_NEW_WINDOW
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -89,5 +88,3 @@ class SelectStyleSheetWindow : public wxDialog {
   void done();
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_SYMBOL_CONTROL
-#define HEADER_GUI_SYMBOL_CONTROL
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -102,5 +101,3 @@ class SymbolControl : public wxControl, public SymbolViewer {
 };
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

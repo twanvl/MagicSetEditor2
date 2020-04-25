@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_SET_STATS_PANEL
-#define HEADER_GUI_SET_STATS_PANEL
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -73,5 +72,3 @@ class StatsPanel : public SetWindowPanel {
   void filterCards();
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

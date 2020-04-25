@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_PRINT_WINDOW
-#define HEADER_GUI_PRINT_WINDOW
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -72,5 +71,3 @@ void print_preview(Window* parent, const SetP& set, const ExportCardSelectionCho
 void print_set(Window* parent, const PrintJobP& job);
 void print_set(Window* parent, const SetP& set, const ExportCardSelectionChoices& choices);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

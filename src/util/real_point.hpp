@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_REAL_POINT
-#define HEADER_UTIL_REAL_POINT
+#pragma once
 
 /** @file util/real_point.hpp
  *
@@ -225,5 +224,3 @@ inline void operator += (RealPoint& p, const RealSize& s) {
   p.y += s.height;
 }
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_SCRIPT_DEPENDENCY
-#define HEADER_SCRIPT_DEPENDENCY
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -63,5 +62,3 @@ class Dependencies : public vector<Dependency> {
   using vector<Dependency>::push_back;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

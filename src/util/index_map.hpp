@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_INDEX_MAP
-#define HEADER_UTIL_INDEX_MAP
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -159,5 +158,3 @@ class DelayedIndexMaps {
 };
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

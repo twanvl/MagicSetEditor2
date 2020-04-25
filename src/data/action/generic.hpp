@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_ACTION_GENERIC
-#define HEADER_DATA_ACTION_GENERIC
+#pragma once
 
 /** @file data/action/generic.hpp
  *
@@ -112,5 +111,3 @@ void GenericAddAction<T>::perform(vector<T>& container, bool to_undo) const {
   }
 }
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

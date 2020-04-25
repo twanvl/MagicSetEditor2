@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_SCRIPT_VALUE
-#define HEADER_SCRIPT_VALUE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -134,5 +133,3 @@ extern ScriptValueP dependency_dummy; ///< Dummy value used during dependency an
 /// compare script values for equallity
 bool equal(const ScriptValueP& a, const ScriptValueP& b);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

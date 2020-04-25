@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_FIELD_MULTIPLE_CHOICE
-#define HEADER_DATA_FIELD_MULTIPLE_CHOICE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -79,5 +78,3 @@ class MultipleChoiceValue : public ChoiceValue {
 /// Is the given choice selected in the value?
 bool chosen(const String& multiple_choice_value, const String& chioce);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

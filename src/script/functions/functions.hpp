@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_SCRIPT_FUNCTIONS_FUNCTIONS
-#define HEADER_SCRIPT_FUNCTIONS_FUNCTIONS
+#pragma once
 
 /** @file script/functions/functions.cpp
  *
@@ -41,5 +40,3 @@ inline void init_script_functions(Context& ctx) {
   init_script_construction_functions(ctx);
 }
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

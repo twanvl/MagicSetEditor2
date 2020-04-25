@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_STYLESHEET
-#define HEADER_DATA_STYLESHEET
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -79,5 +78,3 @@ inline String type_name(const StyleSheet&) {
 
 void mark_dependency_value(const StyleSheet& value, const Dependency& dep);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

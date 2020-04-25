@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_THUMBNAIL_THREAD
-#define HEADER_GUI_THUMBNAIL_THREAD
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -80,5 +79,3 @@ class ThumbnailThread {
 /// The global thumbnail generator thread
 extern ThumbnailThread thumbnail_thread;
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

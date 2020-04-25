@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_RENDER_TEXT_ELEMENT
-#define HEADER_RENDER_TEXT_ELEMENT
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -172,5 +171,3 @@ class ErrorTextElement : public CompoundTextElement {
   virtual void draw(RotatedDC& dc, double scale, const RealRect& rect, const double* xs, DrawWhat what, size_t start, size_t end) const;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_ACTION_VALUE
-#define HEADER_DATA_ACTION_VALUE
+#pragma once
 
 /** @file data/action/value.hpp
  *
@@ -178,5 +177,3 @@ class ValueActionPerformer {
   SetP  set;  ///< Set for the actions
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_PACKAGES_WINDOW
-#define HEADER_GUI_PACKAGES_WINDOW
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -53,5 +52,3 @@ class PackagesWindow : public wxDialog {
   bool checkInstallerList(bool refresh = true);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

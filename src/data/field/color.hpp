@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_FIELD_COLOR
-#define HEADER_DATA_FIELD_COLOR
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -81,5 +80,3 @@ class ColorValue : public Value {
 };
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

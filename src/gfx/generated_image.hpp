@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GFX_GENERATED_IMAGE
-#define HEADER_GFX_GENERATED_IMAGE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -386,5 +385,3 @@ class ImageValueToImage : public GeneratedImage {
   Age    age; ///< Age the symbol was last updated
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

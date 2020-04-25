@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_DELAYED_INDEX_MAPS
-#define HEADER_UTIL_DELAYED_INDEX_MAPS
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -79,5 +78,3 @@ void GetDefaultMember::handle(const DelayedIndexMapsData<Key,Value>& d) {
   handle(d.read_data);
 }
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

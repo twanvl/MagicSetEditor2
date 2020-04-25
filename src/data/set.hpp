@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_SET
-#define HEADER_DATA_SET
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -175,5 +174,3 @@ class SetView : public ActionListener {
 };
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

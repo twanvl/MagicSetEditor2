@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_RENDER_TEXT_VIEWER
-#define HEADER_RENDER_TEXT_VIEWER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -156,5 +155,3 @@ class TextViewer {
 };
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_RENDER_VALUE_TEXT
-#define HEADER_RENDER_VALUE_TEXT
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -33,5 +32,3 @@ class TextValueViewer : public ValueViewer {
 };
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

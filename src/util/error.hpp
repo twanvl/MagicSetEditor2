@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_ERROR
-#define HEADER_UTIL_ERROR
+#pragma once
 
 /** @file util/error.hpp
  *
@@ -181,5 +180,3 @@ String get_stack_trace();
     handle_error(InternalError(_("An unexpected exception occurred!"))); \
   }
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

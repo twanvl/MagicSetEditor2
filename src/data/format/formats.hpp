@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_FORMAT_FORMATS
-#define HEADER_DATA_FORMAT_FORMATS
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -108,5 +107,3 @@ void export_mws(Window* parent, const SetP& set);
 /// Export a set to Apprentice
 void export_apprentice(Window* parent, const SetP& set);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

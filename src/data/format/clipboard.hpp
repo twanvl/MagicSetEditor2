@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_FORMAT_CLIPBOARD
-#define HEADER_DATA_FORMAT_CLIPBOARD
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -57,5 +56,3 @@ class CardsOnClipboard : public wxDataObjectComposite {
   CardsOnClipboard(const SetP& set, const vector<CardP>& cards);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

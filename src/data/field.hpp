@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_FIELD
-#define HEADER_DATA_FIELD
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -306,5 +305,3 @@ inline String type_name(const Value&) {
 
 void mark_dependency_member(const IndexMap<FieldP,ValueP>& value, const String& name, const Dependency& dep);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

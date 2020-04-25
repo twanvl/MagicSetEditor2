@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_IO_READER
-#define HEADER_UTIL_IO_READER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -299,5 +298,3 @@ class EnumReader {
   String notDoneErrorMessage() const;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

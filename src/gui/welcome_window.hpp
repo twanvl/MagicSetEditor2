@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_WELCOME_WINDOW
-#define HEADER_GUI_WELCOME_WINDOW
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -67,5 +66,3 @@ class HoverButtonExt : public HoverButton {
   virtual void draw(DC& dc);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

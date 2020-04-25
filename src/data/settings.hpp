@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_SETTINGS
-#define HEADER_DATA_SETTINGS
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -225,5 +224,3 @@ class Settings {
 /// The global settings object
 extern Settings settings;
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

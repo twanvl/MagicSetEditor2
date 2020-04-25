@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_RENDER_VALUE_PACKAGE_CHOICE
-#define HEADER_RENDER_VALUE_PACKAGE_CHOICE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -34,5 +33,3 @@ class PackageChoiceValueViewer : public ValueViewer {
   struct ComparePackagePosHint;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

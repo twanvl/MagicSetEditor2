@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_LOCALE
-#define HEADER_DATA_LOCALE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -52,5 +51,3 @@ protected:
 /// The global locale object
 extern LocaleP the_locale;
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_FONT
-#define HEADER_DATA_FONT
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -71,5 +70,3 @@ class Font : public IntrusivePtrBase<Font> {
 };
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

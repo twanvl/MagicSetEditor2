@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_ICON_MENU
-#define HEADER_GUI_ICON_MENU
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -35,5 +34,3 @@ class IconMenu : public wxMenu {
 
 void set_menu_item_image(wxMenuItem* menuitem, const String& resource);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

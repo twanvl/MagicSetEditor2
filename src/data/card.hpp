@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_CARD
-#define HEADER_DATA_CARD
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -100,5 +99,3 @@ inline String type_name(const vector<CardP>&) {
 
 void mark_dependency_member(const Card& value, const String& name, const Dependency& dep);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

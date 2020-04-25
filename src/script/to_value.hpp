@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_SCRIPT_TO_VALUE
-#define HEADER_SCRIPT_TO_VALUE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -430,5 +429,3 @@ template <> inline bool         from_script<bool>        (const ScriptValueP& va
 template <> inline Color        from_script<Color>       (const ScriptValueP& value) { return *value; }
 template <> inline wxDateTime   from_script<wxDateTime>  (const ScriptValueP& value) { return *value; }
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

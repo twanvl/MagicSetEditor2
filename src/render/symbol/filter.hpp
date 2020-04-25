@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_RENDER_SYMBOL_FILTER
-#define HEADER_RENDER_SYMBOL_FILTER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -126,5 +125,3 @@ class RadialGradientSymbolFilter : public GradientSymbolFilter {
   inline double t(double x, double y) const;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

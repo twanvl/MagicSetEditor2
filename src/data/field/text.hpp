@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_FIELD_TEXT
-#define HEADER_DATA_FIELD_TEXT
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -122,5 +121,3 @@ class FakeTextValue : public TextValue {
   virtual bool equals(const Value* that);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

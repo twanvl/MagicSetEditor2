@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_VALUE_PACKAGE_CHOICE
-#define HEADER_GUI_VALUE_PACKAGE_CHOICE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -38,5 +37,3 @@ class PackageChoiceValueEditor : public PackageChoiceValueViewer, public ValueEd
 };
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

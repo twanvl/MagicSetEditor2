@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_STRING
-#define HEADER_UTIL_STRING
+#pragma once
 
 /** @file util/string.hpp
  *
@@ -227,5 +226,3 @@ String regex_escape(const String& s);
 /** Basicly replaces "(" with "(?:" */
 String make_non_capturing(const String& re);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

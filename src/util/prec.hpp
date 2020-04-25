@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_PREC
-#define HEADER_UTIL_PREC
+#pragma once
 
 /** @file util/prec.hpp
  *
@@ -122,5 +121,3 @@ class FileName : public wxString {
   #endif
 #endif
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_DEFAULTABLE
-#define HEADER_UTIL_DEFAULTABLE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -86,5 +85,3 @@ void GetDefaultMember::handle(const Defaultable<T>& def) {
   handle(def());
 }
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

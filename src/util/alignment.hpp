@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_ALIGNMENT
-#define HEADER_UTIL_ALIGNMENT
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -74,5 +73,3 @@ enum Direction {
 /** If the direction is horizontal the to_move.width is used, otherwise to_move.height */
 RealPoint move_in_direction(Direction dir, const RealPoint& point, const RealSize to_move, double spacing = 0);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GFX_GFX
-#define HEADER_GFX_GFX
+#pragma once
 
 /** @file gfx/gfx.hpp
  *
@@ -191,5 +190,3 @@ class AlphaMask : public IntrusivePtrBase<AlphaMask> {
   void loadRowSizes() const;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

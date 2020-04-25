@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GFX_COLOR
-#define HEADER_GFX_COLOR
+#pragma once
 
 /** @file gfx/color.hpp
  *
@@ -114,5 +113,3 @@ void recolor(Image& img, RGB cr);
 /// Fills an image with the specified color
 void fill_image(Image& image, RGB color);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

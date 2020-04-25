@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_SMART_PTR
-#define HEADER_UTIL_SMART_PTR
+#pragma once
 
 /** @file util/smart_ptr.hpp
  *
@@ -62,5 +61,3 @@ class IntrusivePtrBaseWithDelete : public IntrusivePtrBase<IntrusivePtrBaseWithD
 /// Pointer to 'anything'
 typedef intrusive_ptr<IntrusivePtrVirtualBase> VoidP;
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

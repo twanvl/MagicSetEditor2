@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_UPDATE_CHECKER
-#define HEADER_UTIL_UPDATE_CHECKER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -31,5 +30,3 @@ bool update_data_found();
 /// Is there an update?
 bool update_available();
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_IO_VCS
-#define HEADER_UTIL_IO_VCS
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -45,5 +44,3 @@ class VCS : public IntrusivePtrVirtualBase
   DECLARE_REFLECTION_VIRTUAL();
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_IMAGE_SLICE_WINDOW
-#define HEADER_GUI_IMAGE_SLICE_WINDOW
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -195,5 +194,3 @@ class ImageSliceSelector : public wxControl {
   
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

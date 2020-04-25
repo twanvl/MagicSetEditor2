@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CONTROL_GRAPH
-#define HEADER_GUI_CONTROL_GRAPH
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -381,5 +380,3 @@ class GraphControl : public wxControl {
   void onSelectionChange();
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

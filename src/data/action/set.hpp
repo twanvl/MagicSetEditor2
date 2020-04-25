@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_ACTION_SET
-#define HEADER_DATA_ACTION_SET
+#pragma once
 
 /** @file data/action/set.hpp
  *
@@ -157,5 +156,3 @@ class ChangePackAction : public PackTypesAction {
   size_t    pos;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

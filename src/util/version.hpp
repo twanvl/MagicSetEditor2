@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_VERSION
-#define HEADER_UTIL_VERSION
+#pragma once
 
 /** @file util/version.hpp
  *
@@ -64,5 +63,3 @@ extern const Version file_version_symbol;
 extern const Version file_version_clipboard;
 extern const Version file_version_script;
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

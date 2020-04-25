@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CONTROL_CARD_VIEWER
-#define HEADER_GUI_CONTROL_CARD_VIEWER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -65,5 +64,3 @@ class CardViewer : public wxControl, public DataViewer {
   class OverdrawDC_aux;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

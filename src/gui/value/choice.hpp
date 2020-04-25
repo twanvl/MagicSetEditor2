@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_VALUE_CHOICE
-#define HEADER_GUI_VALUE_CHOICE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -100,5 +99,3 @@ class DropDownChoiceList : public DropDownChoiceListBase {
   virtual DropDownList* createSubMenu(ChoiceField::ChoiceP group) const;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

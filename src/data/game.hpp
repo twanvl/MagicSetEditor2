@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_GAME
-#define HEADER_DATA_GAME
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -84,5 +83,3 @@ inline String type_name(const Game&) {
   return _TYPE_("game");
 }
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

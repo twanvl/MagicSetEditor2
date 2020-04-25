@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_SYMBOL_EDITOR
-#define HEADER_GUI_SYMBOL_EDITOR
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -91,5 +90,3 @@ class SymbolEditorBase : public IntrusivePtrVirtualBase {
   virtual bool isEditing() { return false; }
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

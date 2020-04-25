@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_SET_STYLE_PANEL
-#define HEADER_GUI_SET_STYLE_PANEL
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -63,5 +62,3 @@ class StylePanel : public SetWindowPanel {
   void initControls();
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CONTROL_IMAGE_CARD_LIST
-#define HEADER_GUI_CONTROL_IMAGE_CARD_LIST
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -58,5 +57,3 @@ class FilteredImageCardList : public ImageCardList {
   CardListFilterP filter;  ///< Filter with which this.cards is made
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

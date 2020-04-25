@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_IO_SUBVERSION
-#define HEADER_UTIL_IO_SUBVERSION
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -23,5 +22,3 @@ class SubversionVCS : public VCS {
   DECLARE_REFLECTION();
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

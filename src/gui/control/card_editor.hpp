@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CONTROL_CARD_EDITOR
-#define HEADER_GUI_CONTROL_CARD_EDITOR
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -149,5 +148,3 @@ typedef DataEditor CardEditor;
   FOR_EACH_REVERSE(v, viewers) \
     if (ValueEditor* e = v->getEditor())
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

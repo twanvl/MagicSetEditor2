@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CONTROL_FILTER_CTRL
-#define HEADER_GUI_CONTROL_FILTER_CTRL
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -57,5 +56,3 @@ class FilterCtrl : public wxControl {
   void onKillFocus(wxFocusEvent&);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

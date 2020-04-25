@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_SCRIPT_SCRIPTABLE
-#define HEADER_SCRIPT_SCRIPTABLE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -176,5 +175,3 @@ void GetDefaultMember::handle(const Scriptable<T>& s) {
   handle(s.value);
 }
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

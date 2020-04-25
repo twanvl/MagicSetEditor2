@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_FIELD_SYMBOL
-#define HEADER_DATA_FIELD_SYMBOL
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -72,5 +71,3 @@ class SymbolValue : public Value {
   Age       last_update; ///< When was the symbol last changed?
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

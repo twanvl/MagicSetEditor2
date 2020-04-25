@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_FILTER
-#define HEADER_DATA_FILTER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -84,5 +83,3 @@ class QuickFilter : public Filter<T> {
   String query;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

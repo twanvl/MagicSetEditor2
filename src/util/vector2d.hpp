@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_VECTOR2D
-#define HEADER_UTIL_VECTOR2D
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -163,7 +162,3 @@ inline Vector2D operator * (const Vector2D& a, const Matrix2D& m) {
 inline Matrix2D operator * (const Matrix2D& a, const Matrix2D& m) {
   return Matrix2D(a.mx * m, a.my * m);
 }
-
-
-// ----------------------------------------------------------------------------- : EOF
-#endif

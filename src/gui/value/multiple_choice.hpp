@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_VALUE_MULTIPLE_CHOICE
-#define HEADER_GUI_VALUE_MULTIPLE_CHOICE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -42,5 +41,3 @@ class MultipleChoiceValueEditor : public MultipleChoiceValueViewer, public Value
   void toggleDefault();
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

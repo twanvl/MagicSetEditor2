@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_IO_PACKAGE
-#define HEADER_UTIL_IO_PACKAGE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -297,5 +296,3 @@ inline void Package::readFile(const String& file, T& obj) {
   }
 }
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

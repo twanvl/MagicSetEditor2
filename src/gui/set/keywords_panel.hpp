@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_SET_KEYWORDS_PANEL
-#define HEADER_GUI_SET_KEYWORDS_PANEL
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -79,5 +78,3 @@ class KeywordsPanel : public SetWindowPanel {
   void onModeChange(wxCommandEvent& ev);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

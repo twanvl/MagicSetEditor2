@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_ATOMIC
-#define HEADER_UTIL_ATOMIC
+#pragma once
 
 /** @file util/atomic.hpp
  *
@@ -113,5 +112,3 @@
   
 #endif
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

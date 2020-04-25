@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_PLATFORM
-#define HEADER_UTIL_PLATFORM
+#pragma once
 
 /** @file util/platform.hpp
  *
@@ -31,5 +30,3 @@
   
 #endif
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

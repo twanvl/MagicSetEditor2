@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_SYMBOL_SYMMETRY_EDITOR
-#define HEADER_GUI_SYMBOL_SYMMETRY_EDITOR
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -70,5 +69,3 @@ class SymbolSymmetryEditor : public SymbolEditorBase {
   
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_SET_CONSOLE_PANEL
-#define HEADER_GUI_SET_CONSOLE_PANEL
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -68,5 +67,3 @@ private:
   void onTimer(wxTimerEvent&);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

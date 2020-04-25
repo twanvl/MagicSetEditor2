@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GFX_BEZIER
-#define HEADER_GFX_BEZIER
+#pragma once
 
 /** @file gfx/bezier.hpp
  *
@@ -122,5 +121,3 @@ UInt intersect_bezier_ray(const ControlPoint& p1, const ControlPoint& p2, const 
 // Does the line between p1 and p2 intersect the ray (half line) from (-inf, pos.y) to pos?
 bool intersect_line_ray(const Vector2D& p1, const Vector2D& p2, const Vector2D& pos);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

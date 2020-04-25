@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CONTROL_PACKAGE_LIST
-#define HEADER_GUI_CONTROL_PACKAGE_LIST
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -74,5 +73,3 @@ class PackageList : public GalleryList {
   vector<PackageData> packages;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

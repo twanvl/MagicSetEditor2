@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_STATISTICS
-#define HEADER_DATA_STATISTICS
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -69,5 +68,3 @@ class StatsCategory : public IntrusivePtrBase<StatsCategory> {
   DECLARE_REFLECTION();
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_FIELD_IMAGE
-#define HEADER_DATA_FIELD_IMAGE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -52,5 +51,3 @@ class ImageValue : public Value {
   Age       last_update; ///< When was the image last changed?
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

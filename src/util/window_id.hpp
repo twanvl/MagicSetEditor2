@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_WINDOW_ID
-#define HEADER_UTIL_WINDOW_ID
+#pragma once
 
 /** @file util/window_id.hpp
  *
@@ -288,5 +287,3 @@ enum ControlID {
 ,  ID_DEFAULTS
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

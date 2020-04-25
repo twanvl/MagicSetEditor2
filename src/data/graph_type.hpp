@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_GRAPH_TYPE
-#define HEADER_DATA_GRAPH_TYPE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -32,5 +31,3 @@ inline size_t dimensionality(GraphType type) {
   else                                return 0;
 }
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

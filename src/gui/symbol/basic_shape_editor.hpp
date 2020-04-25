@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_SYMBOL_BASIC_SHAPE_EDITOR
-#define HEADER_GUI_SYMBOL_BASIC_SHAPE_EDITOR
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -69,5 +68,3 @@ class SymbolBasicShapeEditor : public SymbolEditorBase {
   void makeCenteredShape(const Vector2D& c, Vector2D r, bool constrained);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_REFLECT
-#define HEADER_UTIL_REFLECT
+#pragma once
 
 /** @file util/reflect.hpp
  *
@@ -193,5 +192,3 @@
 /// Declare a possible value of an enum under the given name
 #define VALUE_N(name, val) tag.handle(_(name), val, enum_)
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_VALUE_SYMBOL
-#define HEADER_GUI_VALUE_SYMBOL
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -43,5 +42,3 @@ class SymbolValueEditor : public SymbolValueViewer, public ValueEditor {
   Bitmap button_images[1];
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_FIELD_BOOLEAN
-#define HEADER_DATA_FIELD_BOOLEAN
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -57,5 +56,3 @@ class BooleanValue : public ChoiceValue {
   DECLARE_REFLECTION();
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

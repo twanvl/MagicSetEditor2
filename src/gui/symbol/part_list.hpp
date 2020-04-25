@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_SYMBOL_PART_LIST
-#define HEADER_GUI_SYMBOL_PART_LIST
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -105,5 +104,3 @@ class SymbolPartList : public wxScrolledWindow, public SymbolView {
   void updateCaret(DC& dc, int x, int y, int h, const SymbolPartP& part);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

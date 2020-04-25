@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_SCRIPT_SCRIPT_MANAGER
-#define HEADER_SCRIPT_SCRIPT_MANAGER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -111,5 +110,3 @@ class SetScriptManager : public SetScriptContext, public ActionListener {
   void onAction(const Action&, bool undone);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

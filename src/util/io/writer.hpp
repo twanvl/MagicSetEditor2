@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_IO_WRITER
-#define HEADER_UTIL_IO_WRITER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -164,5 +163,3 @@ class EnumWriter {
   Writer& writer;  ///< The writer to write output to
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_EXPORT_TEMPLATE
-#define HEADER_DATA_EXPORT_TEMPLATE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -62,5 +61,3 @@ struct ExportInfo {
 
 DECLARE_DYNAMIC_ARG(ExportInfo*, export_info);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

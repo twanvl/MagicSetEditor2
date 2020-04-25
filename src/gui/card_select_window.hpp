@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CARD_SELECT_WINDOW
-#define HEADER_GUI_CARD_SELECT_WINDOW
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -94,5 +93,3 @@ class CardSelectWindow : public wxDialog {
   void onSelectNone(wxCommandEvent&);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

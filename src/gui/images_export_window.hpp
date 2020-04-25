@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_IMAGES_EXPORT_WINDOW
-#define HEADER_GUI_IMAGES_EXPORT_WINDOW
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -29,5 +28,3 @@ class ImagesExportWindow : public ExportWindowBase {
   wxChoice*   conflicts;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

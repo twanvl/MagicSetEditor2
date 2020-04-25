@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_SYMBOL_VIEWER
-#define HEADER_GUI_SYMBOL_VIEWER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -97,5 +96,3 @@ class SymbolViewer : public SymbolView {
   void calcBezierOpt(const BezierCurve& c, const Vector2D& p0, const Vector2D& p1, double t0, double t1, wxPoint*& p_out, UInt count);
 */};
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

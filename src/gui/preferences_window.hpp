@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_PREFERENCES_WINDOW
-#define HEADER_GUI_PREFERENCES_WINDOW
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -25,5 +24,3 @@ class PreferencesWindow : public wxDialog {
   void onOk(wxCommandEvent&);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

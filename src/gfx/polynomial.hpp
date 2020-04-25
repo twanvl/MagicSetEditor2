@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GFX_POLYNOMIAL
-#define HEADER_GFX_POLYNOMIAL
+#pragma once
 
 /** @file gfx/polynomial.hpp
  *
@@ -39,5 +38,3 @@ UInt solve_cubic(double a, double b, double c, double d, double* roots);
  */
 UInt solve_cubic(double a, double b, double c, double* roots);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

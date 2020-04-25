@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_CLI_TEXT_IO_HANDLER
-#define HEADER_CLI_TEXT_IO_HANDLER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -60,5 +59,3 @@ private:
 /// The global TextIOHandler object
 extern TextIOHandler cli;
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

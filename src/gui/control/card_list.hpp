@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CONTROL_CARD_LIST
-#define HEADER_GUI_CONTROL_CARD_LIST
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -150,5 +149,3 @@ class CardListBase : public ItemList, public SetView {
   void onContextMenu     (wxContextMenuEvent&);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_DRAW_WHAT
-#define HEADER_DATA_DRAW_WHAT
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -26,5 +25,3 @@ enum DrawWhat
 ,  DRAW_NATIVELOOK = 0x400 // use a native look
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

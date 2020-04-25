@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_ANGLE
-#define HEADER_UTIL_ANGLE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -73,5 +72,3 @@ inline bool is_sideways(Radians angle) {
 }
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

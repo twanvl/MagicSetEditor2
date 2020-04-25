@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_DATA_KEYWORD
-#define HEADER_DATA_KEYWORD
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -202,5 +201,3 @@ class KeywordParamValue : public ScriptValue {
   virtual ScriptValueP getMember(const String& name) const;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_RENDER_VALUE_SYMBOL
-#define HEADER_RENDER_VALUE_SYMBOL
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -27,5 +26,3 @@ class SymbolValueViewer : public ValueViewer {
   vector<Bitmap> symbols;  ///< Cached images
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_VALUE_COLOR
-#define HEADER_GUI_VALUE_COLOR
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -39,5 +38,3 @@ class ColorValueEditor : public ColorValueViewer, public ValueEditor {
   void changeCustom();
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

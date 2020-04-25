@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_SPEC_SORT
-#define HEADER_UTIL_SPEC_SORT
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -44,5 +43,3 @@
  */
 String spec_sort(const String& spec, String input);
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_RENDER_VALUE_IMAGE
-#define HEADER_RENDER_VALUE_IMAGE
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -36,5 +35,3 @@ class ImageValueViewer : public ValueViewer {
   static Bitmap imagePlaceholder(const Rotation& rot, UInt w, UInt h, const Image& background, bool editing);
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

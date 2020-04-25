@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CONTROL_GALLERY_LIST
-#define HEADER_GUI_CONTROL_GALLERY_LIST
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -138,5 +137,3 @@ class GalleryList : public wxPanel {
   static const int SPACING = MARGIN + 2*BORDER; // distance between items
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

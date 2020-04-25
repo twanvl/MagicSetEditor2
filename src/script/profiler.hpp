@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_SCRIPT_PROFILER
-#define HEADER_SCRIPT_PROFILER
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -140,5 +139,3 @@ class Profiler {
 
 #endif // USE_SCRIPT_PROFILING
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

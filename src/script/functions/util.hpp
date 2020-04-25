@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_SCRIPT_FUNCTIONS_UTIL
-#define HEADER_SCRIPT_FUNCTIONS_UTIL
+#pragma once
 
 /** @file script/functions/util.cpp
  *
@@ -224,5 +223,3 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
   ScriptValueP ScriptRule_##name::dependencies(Context& ctx, const Dependency& dep) const
 
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

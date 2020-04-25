@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_VALUE_EDITOR
-#define HEADER_GUI_VALUE_EDITOR
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -153,5 +152,3 @@ class ValueEditor {
   Type##ValueEditor::Type##ValueEditor(DataEditor& parent, const Type##StyleP& style) \
     : Type##ValueViewer(parent, style)
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

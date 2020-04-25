@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_GUI_CONTROL_NATIVE_LOOK_EDITOR
-#define HEADER_GUI_CONTROL_NATIVE_LOOK_EDITOR
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -93,5 +92,3 @@ class ExportOptionsEditor : public NativeLookEditor {
   ExportTemplateP export_template;
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif

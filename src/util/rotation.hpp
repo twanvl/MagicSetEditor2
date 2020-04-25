@@ -4,8 +4,7 @@
 //| License:      GNU General Public License 2 or later (see file COPYING)     |
 //+----------------------------------------------------------------------------+
 
-#ifndef HEADER_UTIL_ROTATION
-#define HEADER_UTIL_ROTATION
+#pragma once
 
 // ----------------------------------------------------------------------------- : Includes
 
@@ -217,5 +216,3 @@ class RotatedDC : public Rotation {
   RenderQuality quality;  ///< Quality of the text
 };
 
-// ----------------------------------------------------------------------------- : EOF
-#endif
