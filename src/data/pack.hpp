@@ -12,8 +12,8 @@
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
 #include <script/scriptable.hpp>
-#include <boost/random/mersenne_twister.hpp>
 #include <boost/logic/tribool.hpp>
+#include <random>
 using boost::tribool;
 
 DECLARE_POINTER_TYPE(PackType);
@@ -137,8 +137,8 @@ class PackGenerator {
   void update_card_counts();
   
   // only for PackInstance
-  SetP set;           ///< The set
-  boost::mt19937 gen; ///< Random generator
+  SetP set; ///< The set
+  mt19937 gen; ///< Random generator
   private:
   /// Details for each PackType
   map<String,PackInstanceP> instances;

@@ -17,7 +17,6 @@
 #include <data/pack.hpp>
 #include <data/settings.hpp>
 #include <util/window_id.hpp>
-#include <boost/random/mersenne_twister.hpp>
 #include <wx/spinctrl.h>
 #include <wx/dcbuffer.h>
 
