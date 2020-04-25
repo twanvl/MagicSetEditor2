@@ -528,7 +528,7 @@ void RandomPackPanel::onCommand(int id) {
     case ID_CUSTOM_PACK: {
       CustomPackDialog dlg(this, set, PackTypeP(), false);
       if (dlg.ShowModal() == wxID_OK) {
-        set->actions.addAction( new AddPackAction(ADD,*set,dlg.get()) );
+        set->actions.addAction(make_unique<AddPackAction>(ADD,*set,dlg.get()));
       }
       break;
     }
@@ -544,12 +544,12 @@ void RandomPackPanel::onPackTypeClick(wxCommandEvent& ev) {
           // update pack
           for (size_t i = 0 ; i < set->pack_types.size() ; ++i) {
             if (set->pack_types[i] == pick.pack) {
-              set->actions.addAction( new ChangePackAction(*set,i,dlg.get()) );
+              set->actions.addAction(make_unique<ChangePackAction>(*set,i,dlg.get()));
             }
           }
         } else {
           // delete pack
-          set->actions.addAction( new AddPackAction(REMOVE,*set,pick.pack) );
+          set->actions.addAction(make_unique<AddPackAction>(REMOVE,*set,pick.pack));
         }
       }
       break;

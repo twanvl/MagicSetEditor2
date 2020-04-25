@@ -82,15 +82,14 @@ bool DownloadableInstallerList::download() {
 wxThread::ExitCode DownloadableInstallerList::Thread::Entry() {
   // open url
   wxURL url(settings.installer_list_url);
-  wxInputStream* isP = url.GetInputStream();
-  if (!isP) {
+  unique_ptr<wxInputStream> stream(url.GetInputStream());
+  if (!stream) {
     wxMutexLocker l(downloadable_installers.lock);
     downloadable_installers.status = DONE;
     return 0;
   }
-  InputStreamP is(isP);
   // Read installer list
-  Reader reader(is, nullptr, _("installers"), true);
+  Reader reader(*stream, nullptr, _("installers"), true);
   vector<DownloadableInstallerP> installers;
   reader.handle(_("installers"),installers);
   // done
@@ -344,7 +343,7 @@ void PackagesWindow::onOk(wxCommandEvent& ev) {
       }
       // download installer
       wxURL url(ip->installer->installer_url);
-      wxInputStream* is = url.GetInputStream();
+      unique_ptr<wxInputStream> is(url.GetInputStream());
       if (!is) {
         throw Error(_ERROR_2_("can't download installer", ip->description->name, ip->installer->installer_url));
       }

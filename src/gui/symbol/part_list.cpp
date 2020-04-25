@@ -166,9 +166,9 @@ void SymbolPartList::onLeftUp(wxMouseEvent& ev) {
       if (par != drop_parent && par->parts.size() == 1 && !par->isSymbolSymmetry()) {
         // this leaves a group without elements, remove it
         findParent(*par, par, drag_position); // parent of the group
-        symbol->actions.addAction(new UngroupReorderSymbolPartsAction(*par, drag_position, *drop_parent, drop_position));
+        symbol->actions.addAction(make_unique<UngroupReorderSymbolPartsAction>(*par, drag_position, *drop_parent, drop_position));
       } else {
-        symbol->actions.addAction(new ReorderSymbolPartsAction(*par, drag_position, *drop_parent, drop_position));
+        symbol->actions.addAction(make_unique<ReorderSymbolPartsAction>(*par, drag_position, *drop_parent, drop_position));
       }
     } else {
       Refresh(false);
@@ -257,14 +257,14 @@ void SymbolPartList::onChar(wxKeyEvent& ev) {
         if (cursor > 0 && cursor <= typing_in->name.size()) {
           String new_name = typing_in->name;
           new_name.erase(cursor - 1, 1);
-          symbol->actions.addAction(new SymbolPartNameAction(typing_in, new_name, cursor, cursor - 1));
+          symbol->actions.addAction(make_unique<SymbolPartNameAction>(typing_in, new_name, cursor, cursor - 1));
         }
         break;
       case WXK_DELETE:
         if (cursor < typing_in->name.size()) {
           String new_name = typing_in->name;
           new_name.erase(cursor, 1);
-          symbol->actions.addAction(new SymbolPartNameAction(typing_in, new_name, cursor, cursor));
+          symbol->actions.addAction(make_unique<SymbolPartNameAction>(typing_in, new_name, cursor, cursor));
         }
         break;
       default:
@@ -281,7 +281,7 @@ void SymbolPartList::onChar(wxKeyEvent& ev) {
           #endif
           String new_name = typing_in->name;
           new_name.insert(cursor, 1, key);
-          symbol->actions.addAction(new SymbolPartNameAction(typing_in, new_name, cursor, cursor + 1));
+          symbol->actions.addAction(make_unique<SymbolPartNameAction>(typing_in, new_name, cursor, cursor + 1));
         }
     }
   }

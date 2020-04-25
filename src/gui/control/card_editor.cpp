@@ -58,8 +58,8 @@ bool DataEditor::viewerIsCurrent(const ValueViewer* viewer) const {
 }
 
 
-void DataEditor::addAction(Action* action) {
-  set->actions.addAction(action);
+void DataEditor::addAction(unique_ptr<Action> action) {
+  set->actions.addAction(move(action));
 }
 
 // ----------------------------------------------------------------------------- : Selection

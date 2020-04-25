@@ -21,33 +21,20 @@ IMPLEMENT_DYNAMIC_ARG(ReaderPragmaHandler,reader_pragma_handler,nullptr);
 
 // ----------------------------------------------------------------------------- : Reader
 
-Reader::Reader(const InputStreamP& input, Packaged* package, const String& filename, bool ignore_invalid)
+Reader::Reader(wxInputStream& input, Packaged* package, const String& filename, bool ignore_invalid)
   : indent(0), expected_indent(0), state(OUTSIDE)
   , ignore_invalid(ignore_invalid)
   , filename(filename), package(package), line_number(0), previous_line_number(0)
   , input(input)
 {
-  assert(input);
-  assert(input->IsOk());
-  eat_utf8_bom(*input);
+  assert(input.IsOk());
+  eat_utf8_bom(input);
   moveNext();
   handleAppVersion();
 }
 
-Reader::Reader(Reader* parent, Packaged* pkg, const String& filename, bool ignore_invalid)
-  : indent(0), expected_indent(0), state(OUTSIDE)
-  , ignore_invalid(ignore_invalid)
-  , filename(filename), package(pkg), line_number(0), previous_line_number(0)
-  , input(package_manager.openFileFromPackage(package, filename))
-{
-  assert(input);
-  eat_utf8_bom(*input);
-  moveNext();
-  // in an included file, use the app version of the parent if we have none
-  handleAppVersion();
-  if (file_app_version == 0) {
-    file_app_version = parent->file_app_version;
-  }
+unique_ptr<wxInputStream> Reader::openIncludedFile() {
+  return package_manager.openFileFromPackage(package, value);
 }
 
 void Reader::addAlias(Version end_version, const Char* a, const Char* b) {
@@ -125,11 +112,11 @@ void Reader::moveNext() {
   key.clear();
   indent = -1; // if no line is read it never has the expected indentation
   // repeat until we have a good line
-  while (key.empty() && !input->Eof()) {
+  while (key.empty() && !input.Eof()) {
     readLine();
   }
   // did we reach the end of the file?
-  if (key.empty() && input->Eof()) {
+  if (key.empty() && input.Eof()) {
     line_number += 1;
     indent = -1;
   }
@@ -216,7 +203,7 @@ void Reader::readLine(bool in_string) {
   line_number += 1;
   // We have to do our own line reading, because wxTextInputStream is insane
   try {
-    line = read_utf8_line(*input);
+    line = read_utf8_line(input);
   } catch (const ParseError& e) {
     throw ParseError(e.what() + String(_(" on line ")) << line_number);
   }
@@ -304,7 +291,7 @@ const String& Reader::getValue() {
     // read all lines that are indented enough
     readLine(true);
     previous_line_number = line_number;
-    while (indent >= expected_indent && !input->Eof()) {
+    while (indent >= expected_indent && !input.Eof()) {
       previous_value.resize(previous_value.size() + pending_newlines, _('\n'));
       pending_newlines = 0;
       previous_value += line.substr(expected_indent); // strip expected indent
@@ -312,15 +299,15 @@ const String& Reader::getValue() {
         readLine(true);
         pending_newlines++;
         // skip empty lines that are not indented enough
-      } while(trim(line).empty() && indent < expected_indent && !input->Eof());
+      } while(trim(line).empty() && indent < expected_indent && !input.Eof());
     }
     // moveNext(), but without the initial readLine()
     state = HANDLED;
-    while (key.empty() && !input->Eof()) {
+    while (key.empty() && !input.Eof()) {
       readLine();
     }
     // did we reach the end of the file?
-    if (key.empty() && input->Eof()) {
+    if (key.empty() && input.Eof()) {
       line_number += 1;
       indent = -1;
     }
@@ -400,9 +387,9 @@ template <> void Reader::handle(FileName& f) {
       // copy file into current package
       try {
         String packaged_name = clipboard_package()->newFileName(_("image"),_("")); // a new unique name in the package, assume it's an image
-        OutputStreamP out    = clipboard_package()->openOut(packaged_name);
-        InputStreamP  in     = Package::openAbsoluteFile(str);
-        out->Write(*in); // copy
+        auto out_stream = clipboard_package()->openOut(packaged_name);
+        auto in_stream  = Package::openAbsoluteFile(str);
+        out_stream->Write(*in_stream); // copy
         f.assign(packaged_name);
       } catch (Error const&) {
         // ignore errors

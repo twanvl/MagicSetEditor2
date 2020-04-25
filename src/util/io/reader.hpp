@@ -20,9 +20,6 @@ class Packaged;
 
 // ----------------------------------------------------------------------------- : Reader
 
-typedef wxInputStream  InputStream;
-typedef shared_ptr<wxInputStream> InputStreamP;
-
 /// The Reader can be used for reading (deserializing) objects
 /** This class makes use of the reflection functionality, in effect
  *  an object tells the Reader what fields it would like to read.
@@ -37,12 +34,12 @@ class Reader {
   /** Used for "include file" keys.
    *  package can be nullptr
    */
-  Reader(Reader* parent, Packaged* package, const String& filename, bool ignore_invalid = false);
+  //Reader(Reader* parent, Packaged* package, const String& filename, bool ignore_invalid = false);
   public:
   /// Construct a reader that reads from the given input stream
   /** filename is used only for error messages
    */
-  Reader(const InputStreamP& input, Packaged* package = nullptr, const String& filename = wxEmptyString, bool ignore_invalid = false);
+  Reader(wxInputStream& input, Packaged* package = nullptr, const String& filename = wxEmptyString, bool ignore_invalid = false);
   
   ~Reader() { showWarnings(); }
   
@@ -119,7 +116,7 @@ class Reader {
   // --------------------------------------------------- : Data
   /// App version this file was made with
   Version file_app_version;
-  private:
+private:
   /// The line we read
   String line;
   /// The key and value of the last line we read
@@ -156,7 +153,7 @@ class Reader {
   /// Line number of the previous_line
   int previous_line_number;
   /// Input stream we are reading from
-  InputStreamP input;
+  wxInputStream& input;
   /// Accumulated warning messages
   String warnings;
   
@@ -182,14 +179,20 @@ class Reader {
   template <typename T>
   void unknownKey(T& v) {
     if (key == _("include_file")) {
-      Reader reader(this, package, value, ignore_invalid);
-      reader.handle_greedy(v);
+      auto stream = openIncludedFile();
+      Reader sub_reader(*stream, package, value, ignore_invalid);
+      if (sub_reader.file_app_version == 0) {
+        // in an included file, use the app version of the parent if there is none
+        sub_reader.file_app_version = file_app_version;
+      }
+      sub_reader.handle_greedy(v);
       moveNext();
     } else {
       unknownKey();
     }
   }
   void unknownKey();
+  unique_ptr<wxInputStream> openIncludedFile();
 };
 
 // ----------------------------------------------------------------------------- : Container types

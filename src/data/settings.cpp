@@ -295,14 +295,15 @@ void Settings::read() {
   String filename = settingsFile();
   if (wxFileExists(filename)) {
     // settings file not existing is not an error
-    shared_ptr<wxFileInputStream> file = make_shared<wxFileInputStream>(filename);
-    if (!file->Ok()) return; // failure is not an error
+    wxFileInputStream file(filename);
+    if (!file.Ok()) return; // failure is not an error
     Reader reader(file, nullptr, filename);
     reader.handle_greedy(*this);
   }
 }
 
 void Settings::write() {
-  Writer writer(make_shared<wxFileOutputStream>(settingsFile()), app_version);
+  wxFileOutputStream file(settingsFile());
+  Writer writer(file, app_version);
   writer.handle(*this);
 }

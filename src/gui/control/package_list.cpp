@@ -73,7 +73,7 @@ void PackageList::showData(const String& pattern) {
   FOR_EACH(p, matching) {
     // open image
     PROFILER(_("load package image"));
-    InputStreamP stream = p->openIconFile();
+    auto stream = p->openIconFile();
     Image img;
     Bitmap bmp;
     if (stream && image_load_file(img, *stream)) {

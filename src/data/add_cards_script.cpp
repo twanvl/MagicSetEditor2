@@ -47,6 +47,6 @@ void AddCardsScript::perform(Set& set) {
   // Add to set
   if (!cards.empty()) {
     // TODO: change the name of the action somehow
-    set.actions.addAction(new AddCardAction(ADD, set, cards));
+    set.actions.addAction(make_unique<AddCardAction>(ADD, set, cards));
   }
 }

@@ -19,14 +19,11 @@ DECLARE_POINTER_TYPE(StyleSheet);
 
 // ----------------------------------------------------------------------------- : Writer
 
-typedef wxOutputStream  OutputStream;
-typedef shared_ptr<wxOutputStream> OutputStreamP;
-
 /// The Writer can be used for writing (serializing) objects
 class Writer {
   public:
   /// Construct a writer that writes to the given output stream
-  Writer(const OutputStreamP& output, Version file_app_version);
+  Writer(OutputStream& output, Version file_app_version);
   
   /// Tell the reflection code we are not reading
   inline bool reading()   const { return false; }
@@ -81,7 +78,7 @@ class Writer {
   vector<const Char*> pending_opened;
   
   /// Output stream we are writing to
-  OutputStreamP output;
+  OutputStream& output;
   /// Text stream wrapping the output stream
   wxTextOutputStream stream;
   

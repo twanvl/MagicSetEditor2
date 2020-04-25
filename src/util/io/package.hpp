@@ -100,11 +100,11 @@ class Package : public IntrusivePtrVirtualBase {
   // --------------------------------------------------- : Managing the inside of the package
 
   /// Open an input stream for a file in the package.
-  InputStreamP openIn(const String& file);
+  unique_ptr<wxInputStream> openIn(const String& file);
 
   /// Open an output stream for a file in the package.
   /// (changes are only committed with save())
-  OutputStreamP openOut(const String& file);
+  unique_ptr<wxOutputStream> openOut(const String& file);
 
   /// Get a filename that can be written to to modfify a file in the package
   /// (changes are only committed with save())
@@ -125,7 +125,7 @@ class Package : public IntrusivePtrVirtualBase {
   String absoluteName(const String& file);
 
   /// Open a file given an absolute filename
-  static InputStreamP openAbsoluteFile(const String& name);
+  static unique_ptr<wxInputStream> openAbsoluteFile(const String& name);
 
   // --------------------------------------------------- : Managing the inside of the package : Reader/writer
 
@@ -141,7 +141,8 @@ class Package : public IntrusivePtrVirtualBase {
 
   template <typename T>
   void writeFile(const String& file, const T& obj, Version file_version) {
-    Writer writer(openOut(file), file_version);
+    auto stream = openOut(file);
+    Writer writer(*stream, file_version);
     writer.handle(obj);
   }
 
@@ -182,10 +183,8 @@ class Package : public IntrusivePtrVirtualBase {
   private:
   /// All files in the package
   FileInfos files;
-  /// Filestream for reading zip files
-  wxFileInputStream* fileStream;
-  /// Filestream for reading zip files
-  wxZipInputStream*  zipStream;
+  /// Filestream/zipstream for reading zip files
+  unique_ptr<wxZipInputStream> zipStream;
 
   void loadZipStream();
   void openDirectory(bool fast = false);
@@ -229,7 +228,7 @@ class Packaged : public Package {
   int    position_hint;    ///< A hint for the package list
 
   /// Get an input stream for the package icon, if there is any
-  InputStreamP openIconFile();
+  unique_ptr<wxInputStream> openIconFile();
 
   /// Open a package, and read the data
   /** if just_header is true, then the package is not fully parsed.
@@ -289,9 +288,9 @@ intrusive_ptr<T> open_package(const String& filename) {
 
 // This is here because it uses dynamic_cast and must be to a complete type.
 template <typename T>
-inline void Package::readFile(const String& file, T& obj)
-{
-  Reader reader(openIn(file), dynamic_cast<Packaged*>(this), absoluteFilename() + _("/") + file);
+inline void Package::readFile(const String& file, T& obj) {
+  auto stream = openIn(file);
+  Reader reader(*stream, dynamic_cast<Packaged*>(this), absoluteFilename() + _("/") + file);
   try {
     reader.handle_greedy(obj);
   } catch (const ParseError& err) {

@@ -148,7 +148,7 @@ class PackageManager {
    *      this is to force people to fill in the dependencies
    *  Afterwards, package will be set to the package the file is opened from
    */
-  InputStreamP openFileFromPackage(Packaged*& package, const String& name);
+  unique_ptr<wxInputStream> openFileFromPackage(Packaged*& package, const String& name);
   
   /// Get a filename to open from a package
   /** WARNING: this is a bit of a hack, since not all package types support names in this way.

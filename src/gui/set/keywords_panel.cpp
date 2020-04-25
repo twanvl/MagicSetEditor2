@@ -180,7 +180,7 @@ void KeywordsPanel::onCommand(int id) {
       list->selectNext();
       break;
     case ID_KEYWORD_ADD:
-      set->actions.addAction(new AddKeywordAction(*set));
+      set->actions.addAction(make_unique<AddKeywordAction>(*set));
       break;
     case ID_KEYWORD_REMOVE:
       if (list->canDelete()) {
@@ -370,7 +370,7 @@ void KeywordsPanel::onModeChange(wxCommandEvent& ev) {
   if (!list->getKeyword()) return;
   int sel = mode->GetSelection();
   if (sel >= 0 && (size_t)sel < set->game->keyword_modes.size()) {
-    set->actions.addAction(new ChangeKeywordModeAction(*list->getKeyword(), set->game->keyword_modes[sel]->name));
+    set->actions.addAction(make_unique<ChangeKeywordModeAction>(*list->getKeyword(), set->game->keyword_modes[sel]->name));
   }
 }
 

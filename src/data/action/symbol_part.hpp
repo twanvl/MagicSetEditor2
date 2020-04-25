@@ -40,10 +40,18 @@ Vector2D constrain_snap_vector_offset(const Vector2D& off1, const Vector2D& d, b
 /** Takes the closest snap */
 Vector2D constrain_snap_vector_offset(const Vector2D& off1, const Vector2D& off2, const Vector2D& d, bool constrain, int steps);
 
+// ----------------------------------------------------------------------------- : Base class
+
+/// An action that by itself doesn't do anything, but can later be extended after it is performed
+class ExtendableAction : public Action {
+protected:
+  bool done = false;
+};
+
 // ----------------------------------------------------------------------------- : Move control point
 
 /// Moving a control point in a symbol
-class ControlPointMoveAction : public Action {
+class ControlPointMoveAction : public ExtendableAction {
   public:
   ControlPointMoveAction(const set<ControlPointP>& points);
   
@@ -65,7 +73,7 @@ class ControlPointMoveAction : public Action {
 // ----------------------------------------------------------------------------- : Move handle
 
 /// Moving a handle(before/after) of a control point in a symbol
-class HandleMoveAction : public Action {
+class HandleMoveAction : public ExtendableAction {
   public:
   HandleMoveAction(const SelectedHandle& handle);
   
@@ -169,7 +177,7 @@ class ControlPointAddAction : public Action {
 
 /// Action that removes any number of points from a symbol shape
 /// TODO: If less then 3 points are left removes the entire shape?
-Action* control_point_remove_action(const SymbolShapeP& shape, const set<ControlPointP>& to_delete);
+unique_ptr<Action> control_point_remove_action(const SymbolShapeP& shape, const set<ControlPointP>& to_delete);
 
 
 

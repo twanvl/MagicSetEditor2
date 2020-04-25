@@ -55,12 +55,12 @@ class ValueAction : public Action {
 // ----------------------------------------------------------------------------- : Simple
 
 /// Action that updates a Value to a new value
-ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value);
-ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value, const String& last_change);
-ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value);
-ValueAction* value_action(const ImageValueP&          value, const FileName&            new_value);
-ValueAction* value_action(const SymbolValueP&         value, const FileName&            new_value);
-ValueAction* value_action(const PackageChoiceValueP&  value, const String&              new_value);
+unique_ptr<ValueAction> value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value);
+unique_ptr<ValueAction> value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value, const String& last_change);
+unique_ptr<ValueAction> value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value);
+unique_ptr<ValueAction> value_action(const ImageValueP&          value, const FileName&            new_value);
+unique_ptr<ValueAction> value_action(const SymbolValueP&         value, const FileName&            new_value);
+unique_ptr<ValueAction> value_action(const PackageChoiceValueP&  value, const String&              new_value);
 
 // ----------------------------------------------------------------------------- : Text
 
@@ -86,11 +86,11 @@ class TextValueAction : public ValueAction {
 };
 
 /// Action for toggling some formating tag on or off in some range
-TextValueAction* toggle_format_action(const TextValueP& value, const String& tag, size_t start_i, size_t end_i, size_t start, size_t end, const String& action_name);
+unique_ptr<TextValueAction> toggle_format_action(const TextValueP& value, const String& tag, size_t start_i, size_t end_i, size_t start, size_t end, const String& action_name);
 
 /// Typing in a TextValue, replace the selection [start...end) with replacement
 /** start and end are cursor positions, start_i and end_i are indices*/
-TextValueAction* typing_action(const TextValueP& value, size_t start_i, size_t end_i, size_t start, size_t end, const String& replacement, const String& action_name);
+unique_ptr<TextValueAction> typing_action(const TextValueP& value, size_t start_i, size_t end_i, size_t start, size_t end, const String& replacement, const String& action_name);
 
 // ----------------------------------------------------------------------------- : Reminder text
 
@@ -169,7 +169,7 @@ class ValueActionPerformer {
   ValueActionPerformer(const ValueP& value, Card* card, const SetP& set);
   ~ValueActionPerformer();
   /// Perform an action. The performer takes ownerwhip of the action.
-  void addAction(ValueAction* action);
+  void addAction(unique_ptr<ValueAction>&& action);
   
   const ValueP value; ///< The value
   Package& getLocalPackage();

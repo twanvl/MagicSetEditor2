@@ -132,14 +132,14 @@ bool KeywordList::doPaste() {
   // add keyword to set
   KeywordP keyword = data.getKeyword(set);
   if (keyword) {
-    set->actions.addAction(new AddKeywordAction(ADD, *set, keyword));
+    set->actions.addAction(make_unique<AddKeywordAction>(ADD, *set, keyword));
     return true;
   } else {
     return false;
   }
 }
 bool KeywordList::doDelete() {
-  set->actions.addAction(new AddKeywordAction(REMOVE, *set, getKeyword()));
+  set->actions.addAction(make_unique<AddKeywordAction>(REMOVE, *set, getKeyword()));
   return true;
 }
 

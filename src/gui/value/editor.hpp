@@ -130,7 +130,7 @@ class ValueEditor {
   virtual DataEditor& editor() const = 0;
   
   /// Perform an action
-  void addAction(ValueAction* a);
+  void addAction(unique_ptr<ValueAction> a);
 };
 
 // ----------------------------------------------------------------------------- : Utility

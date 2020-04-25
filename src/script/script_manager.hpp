@@ -28,21 +28,20 @@ DECLARE_POINTER_TYPE(Style);
 
 /// Manager of the script context for a set
 class SetScriptContext {
-  public:
+public:
   SetScriptContext(Set& set);
-  virtual ~SetScriptContext();
   
   /// Get a context to use for the set, for a given stylesheet
   Context& getContext(const StyleSheetP&);
   /// Get a context to use for the set, for a given card
   Context& getContext(const CardP&);
   
-  protected:
-  Set&                            set;    ///< Set for which we are managing scripts
-  map<const StyleSheet*,Context*> contexts;  ///< Context for evaluating scripts that use a given stylesheet
+protected:
+  Set& set; ///< Set for which we are managing scripts
+  map<const StyleSheet*,Context> contexts; ///< Context for evaluating scripts that use a given stylesheet
   
   /// Called when a new context for a stylesheet is initialized
-  virtual void onInit(const StyleSheetP& stylesheet, Context* ctx) {}
+  virtual void onInit(const StyleSheetP& stylesheet, Context& ctx) {}
 };
 
 
@@ -73,7 +72,7 @@ class SetScriptManager : public SetScriptContext, public ActionListener {
   void updateAll();
   
   private:
-  virtual void onInit(const StyleSheetP& stylesheet, Context* ctx);
+  void onInit(const StyleSheetP& stylesheet, Context& ctx) override;
   
   void initDependencies(Context&, Game&);
   void initDependencies(Context&, StyleSheet&);

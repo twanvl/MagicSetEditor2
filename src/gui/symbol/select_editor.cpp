@@ -173,22 +173,22 @@ void SymbolSelectEditor::onUpdateUI(wxUpdateUIEvent& ev) {
 void SymbolSelectEditor::onCommand(int id) {
   if (id >= ID_SYMBOL_COMBINE && id < ID_SYMBOL_COMBINE_MAX) {
     // change combine mode
-    addAction(new CombiningModeAction(
+    addAction(make_unique<CombiningModeAction>(
         control.selected_parts.get(),
         static_cast<SymbolShapeCombine>(id - ID_SYMBOL_COMBINE)
       ));
     control.Refresh(false);
   } else if (id == ID_EDIT_DUPLICATE && !isEditing()) {
     // duplicate selection, not when dragging
-    addAction(new DuplicateSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
+    addAction(make_unique<DuplicateSymbolPartsAction>(*getSymbol(), control.selected_parts.get()));
     control.Refresh(false);
   } else if (id == ID_EDIT_GROUP && !isEditing()) {
     // group selection, not when dragging
-    addAction(new GroupSymbolPartsAction(*getSymbol(), control.selected_parts.get(), make_intrusive<SymbolGroup>()));
+    addAction(make_unique<GroupSymbolPartsAction>(*getSymbol(), control.selected_parts.get(), make_intrusive<SymbolGroup>()));
     control.Refresh(false);
   } else if (id == ID_EDIT_UNGROUP && !isEditing()) {
     // ungroup selection, not when dragging
-    addAction(new UngroupSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
+    addAction(make_unique<UngroupSymbolPartsAction>(*getSymbol(), control.selected_parts.get()));
     control.Refresh(false);
   }
 }
@@ -312,24 +312,28 @@ void SymbolSelectEditor::onMouseDrag  (const Vector2D& from, const Vector2D& to,
       if (rotate) {
         if (scaleX == 0 || scaleY == 0) {
           // shear, center/fixed point on the opposite side
-          shearAction = new SymbolPartShearAction(control.selected_parts.get(), bounds.corner(-scaleX, -scaleY));
-          addAction(shearAction);
+          auto action = make_unique<SymbolPartShearAction>(control.selected_parts.get(), bounds.corner(-scaleX, -scaleY));
+          shearAction = action.get();
+          addAction(std::move(action));
         } else {
           // rotate  
-          rotateAction = new SymbolPartRotateAction(control.selected_parts.get(), center);
-          addAction(rotateAction);
+          auto action = make_unique<SymbolPartRotateAction>(control.selected_parts.get(), center);
+          rotateAction = action.get();
+          addAction(std::move(action));
           startAngle = angleTo(to);
         }
       } else {
         // we are on a handle; start scaling
-        scaleAction = new SymbolPartScaleAction(control.selected_parts.get(), scaleX, scaleY);
-        addAction(scaleAction);
+        auto action = make_unique<SymbolPartScaleAction>(control.selected_parts.get(), scaleX, scaleY);
+        scaleAction = action.get();
+        addAction(std::move(action));
       }
     } else {
       // move
       click_mode = CLICK_MOVE;
-      moveAction = new SymbolPartMoveAction(control.selected_parts.get());
-      addAction(moveAction);
+      auto action = make_unique<SymbolPartMoveAction>(control.selected_parts.get());
+      moveAction = action.get();
+      addAction(std::move(action));
     }
   }
   
@@ -399,7 +403,7 @@ void SymbolSelectEditor::onKeyChange (wxKeyEvent& ev) {
 void SymbolSelectEditor::onChar(wxKeyEvent& ev) {
   if (ev.GetKeyCode() == WXK_DELETE) {
     // delete selected parts
-    addAction(new RemoveSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
+    addAction(make_unique<RemoveSymbolPartsAction>(*getSymbol(), control.selected_parts.get()));
     if (control.selected_parts.selected(highlightPart)) highlightPart = SymbolPartP(); // deleted it
     control.selected_parts.clear();
     resetActions();
@@ -416,7 +420,7 @@ void SymbolSelectEditor::onChar(wxKeyEvent& ev) {
       ev.Skip();
       return;
     }
-    addAction(new SymbolPartMoveAction(control.selected_parts.get(), delta));
+    addAction(make_unique<SymbolPartMoveAction>(control.selected_parts.get(), delta));
   }
 }
 

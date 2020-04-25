@@ -36,7 +36,8 @@ SymbolWindow::SymbolWindow(Window* parent, const String& filename)
   : performer(nullptr)
 {
   // open file
-  Reader reader(make_shared<wxFileInputStream>(filename), nullptr, filename);
+  wxFileInputStream stream(filename);
+  Reader reader(stream, nullptr, filename);
   SymbolP symbol;
   reader.handle_greedy(symbol);
   init(parent, symbol);
@@ -217,7 +218,8 @@ void SymbolWindow::onFileOpen(wxCommandEvent& ev) {
     String ext = n.GetExt();
     SymbolP symbol;
     if (ext.Lower() == _("mse-symbol")) {
-      Reader reader(make_shared<wxFileInputStream>(name), nullptr, name);
+      wxFileInputStream stream(name);
+      Reader reader(stream, nullptr, name);
       reader.handle_greedy(symbol);
     } else {
       wxBusyCursor busy;
@@ -240,7 +242,8 @@ void SymbolWindow::onFileSaveAs(wxCommandEvent& ev) {
   String name = wxFileSelector(_("Save symbol"),settings.default_set_dir,_(""),_(""),_("Symbol files (*.mse-symbol)|*.mse-symbol"),wxFD_SAVE, this);
   if (!name.empty()) {
     settings.default_set_dir = wxPathOnly(name);
-    Writer writer(make_shared<wxFileOutputStream>(name), file_version_symbol);
+    wxFileOutputStream stream(name);
+    Writer writer(stream, file_version_symbol);
     writer.handle(control->getSymbol());
   }
 }
@@ -250,7 +253,8 @@ void SymbolWindow::onFileStore(wxCommandEvent& ev) {
     SymbolValueP value = static_pointer_cast<SymbolValue>(performer->value);
     Package& package = performer->getLocalPackage();
     FileName new_filename = package.newFileName(value->field().name,_(".mse-symbol")); // a new unique name in the package
-    Writer writer(package.openOut(new_filename), file_version_symbol);
+    auto stream = package.openOut(new_filename);
+    Writer writer(*stream, file_version_symbol);
     writer.handle(control->getSymbol());
     performer->addAction(value_action(value, new_filename));
   }

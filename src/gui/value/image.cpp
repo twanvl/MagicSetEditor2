@@ -65,7 +65,7 @@ bool ImageValueEditor::canPaste() const {
 
 bool ImageValueEditor::doCopy() {
   // load image
-  InputStreamP image_file = getLocalPackage().openIn(value().filename);
+  auto image_file = getLocalPackage().openIn(value().filename);
   Image image;
   if (!image_load_file(image, *image_file)) return false;
   // set data

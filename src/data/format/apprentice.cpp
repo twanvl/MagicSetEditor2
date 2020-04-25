@@ -301,7 +301,7 @@ void ApprDistroDatabase::removeSet(const String& code) {
   // TODO ?
 }
 
-void ApprDistroDatabase::doRead(InputStream& in) {
+void ApprDistroDatabase::doRead(wxInputStream& in) {
   wxTextInputStream tin(in);
   ApprDistro* last = 0;
   while (!in.Eof()) {

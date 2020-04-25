@@ -256,13 +256,13 @@ class KeywordTrie {
   KeywordTrie();
   ~KeywordTrie();
   
-  map<Char, KeywordTrie*> children;    ///< children after a given character (owned)
-  KeywordTrie*            on_any_star; ///< children on /.*/ (owned or this)
-  vector<const Keyword*>  finished;    ///< keywordss that end in this node
+  map<wxUniChar, unique_ptr<KeywordTrie>> children; ///< children after a given character
+  KeywordTrie* on_any_star; ///< children on /.*/ (owned or this)
+  vector<const Keyword*> finished; ///< keywords that end in this node
   
   /// Insert nodes representing the given character
   /** return the node where the evaluation will be after matching the character */
-  KeywordTrie* insert(Char match);
+  KeywordTrie* insert(wxUniChar match);
   /// Insert nodes representing the given string
   /** return the node where the evaluation will be after matching the string */
   KeywordTrie* insert(const String& match);
@@ -276,32 +276,28 @@ class KeywordTrie {
 KeywordTrie::KeywordTrie()
   : on_any_star(nullptr)
 {}
-
 KeywordTrie::~KeywordTrie() {
-  FOR_EACH(c, children) {
-    delete c.second;
-  }
   if (on_any_star != this) delete on_any_star;
 }
 
-KeywordTrie* KeywordTrie::insert(Char c) {
+KeywordTrie* KeywordTrie::insert(wxUniChar c) {
   #if USE_CASE_INSENSITIVE_KEYWORDS
     c = toLower(c); // case insensitive matching
   #endif
-  KeywordTrie*& child = children[c];
-  if (!child) child = new KeywordTrie;
-  return child;
+  unique_ptr<KeywordTrie>& child = children[c];
+  if (!child) child.reset(new KeywordTrie);
+  return child.get();
 }
 KeywordTrie* KeywordTrie::insert(const String& match) {
   KeywordTrie* cur = this;
-  FOR_EACH_CONST(c, match) {
-    cur = cur->insert(static_cast<Char>(c));
+  for (wxUniChar c : match) {
+    cur = cur->insert(c);
   }
   return cur;
 }
 
 KeywordTrie* KeywordTrie::insertAnyStar() {
-  if (!on_any_star) on_any_star = new KeywordTrie;
+  if (!on_any_star) on_any_star = new KeywordTrie();
   on_any_star->on_any_star = on_any_star; // circular reference to itself
   return on_any_star;
 }
@@ -314,14 +310,11 @@ IMPLEMENT_DYNAMIC_ARG(KeywordUsageStatistics*, keyword_usage_statistics, nullptr
 KeywordDatabase::KeywordDatabase()
   : root(nullptr)
 {}
-
-KeywordDatabase::~KeywordDatabase() {
-  clear();
-}
+// Note: has to be here because in the header KeywordTrie is not defined
+KeywordDatabase::~KeywordDatabase() {}
 
 void KeywordDatabase::clear() {
-  delete root;
-  root = nullptr;
+  root.reset();
 }
 
 void KeywordDatabase::add(const vector<KeywordP>& kws) {
@@ -334,8 +327,8 @@ void KeywordDatabase::add(const Keyword& kw) {
   if (kw.match.empty() || !kw.valid) return; // can't handle empty keywords
   // Create root
   if (!root) {
-    root = new KeywordTrie;
-    root->on_any_star = root;
+    root = make_unique<KeywordTrie>();
+    root->on_any_star = root.get();
   }
   KeywordTrie* cur = root->insertAnyStar();
   // Add to trie
@@ -384,7 +377,7 @@ void KeywordDatabase::prepare_parameters(const vector<KeywordParamP>& ps, const 
 // ----------------------------------------------------------------------------- : KeywordDatabase : matching
 
 // transitive closure of a state, follow all on_any_star links
-void closure(vector<KeywordTrie*>& state) {
+void closure(vector<const KeywordTrie*>& state) {
   for (size_t j = 0 ; j < state.size() ; ++j) {
     if (state[j]->on_any_star && state[j]->on_any_star != state[j]) {
       state.push_back(state[j]->on_any_star);
@@ -393,10 +386,10 @@ void closure(vector<KeywordTrie*>& state) {
 }
 
 #ifdef _DEBUG
-void dump(int i, KeywordTrie* t) {
+void dump(int i, const KeywordTrie* t) {
   FOR_EACH(c, t->children) {
-    wxLogDebug(String(i,_(' ')) + c.first + _("     ") + String::Format(_("%p"),c.second));
-    dump(i+2, c.second);
+    wxLogDebug(String(i,_(' ')) + c.first + _("     ") + String::Format(_("%p"),c.second.get()));
+    dump(i+2, c.second.get());
   }
   if (t->on_any_star) {
     wxLogDebug(String(i,_(' ')) + _(".*") + _("     ") + String::Format(_("%p"),t->on_any_star));
@@ -438,10 +431,10 @@ String KeywordDatabase::expand(const String& text,
   
   // Find keywords
   while (!tagged.empty()) {
-    vector<KeywordTrie*> current; // current location(s) in the trie
-    vector<KeywordTrie*> next;    // location(s) after this step
-    set<const Keyword*>  used;    // keywords already investigated
-    current.push_back(root);
+    vector<const KeywordTrie*> current; // current location(s) in the trie
+    vector<const KeywordTrie*> next;    // location(s) after this step
+    set<const Keyword*> used; // keywords already investigated
+    current.push_back(root.get());
     closure(current);
     // is the keyword expanded? From <kw-?> tag
     // Possible values are:
@@ -453,7 +446,7 @@ String KeywordDatabase::expand(const String& text,
     char expand_type = default_expand_type;
     
     for (size_t i = 0 ; i < tagged.size() ;) {
-      Char c = tagged.GetChar(i);
+      wxUniChar c = tagged.GetChar(i);
       // tag?
       if (c == _('<')) {
         if (is_substr(tagged, i, _("<kw-")) && i + 4 < tagged.size()) {
@@ -476,9 +469,9 @@ String KeywordDatabase::expand(const String& text,
       }
       // find 'next' trie node set matching c
       FOR_EACH(kt, current) {
-        map<Char,KeywordTrie*>::const_iterator it = kt->children.find(c);
+        auto it = kt->children.find(c);
         if (it != kt->children.end()) {
-          next.push_back(it->second);
+          next.push_back(it->second.get());
         }
         // TODO: on any star first or last?
         if (kt->on_any_star) {

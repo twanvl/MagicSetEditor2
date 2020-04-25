@@ -107,13 +107,13 @@ void SymbolSymmetryEditor::onCommand(int id) {
   if (id >= ID_SYMMETRY && id < ID_SYMMETRY_MAX) {
     SymbolSymmetryType kind = id == ID_SYMMETRY_ROTATION ? SYMMETRY_ROTATION : SYMMETRY_REFLECTION;
     if (symmetry && symmetry->kind != kind) {
-      addAction(new SymmetryTypeAction(*symmetry, kind));
+      addAction(make_unique<SymmetryTypeAction>(*symmetry, kind));
       control.Refresh(false);
     }
     resetActions();
   } else if (id == ID_COPIES) {
     if (symmetry && symmetry->copies != copies->GetValue()) {
-      addAction(new SymmetryCopiesAction(*symmetry, copies->GetValue()));
+      addAction(make_unique<SymmetryCopiesAction>(*symmetry, copies->GetValue()));
       control.Refresh(false);
     }
     resetActions();
@@ -124,11 +124,11 @@ void SymbolSymmetryEditor::onCommand(int id) {
     symmetry->center = Vector2D(0.5,0.5);
     symmetry->handle = Vector2D(0.2,0);
     symmetry->name   = symmetry->expectedName();
-    addAction(new GroupSymbolPartsAction(*getSymbol(), control.selected_parts.get(), symmetry));
+    addAction(make_unique<GroupSymbolPartsAction>(*getSymbol(), control.selected_parts.get(), symmetry));
     control.selected_parts.select(symmetry);
     control.Refresh(false);
   } else if (id == ID_REMOVE_SYMMETRY) {
-    addAction(new UngroupSymbolPartsAction(*getSymbol(), control.selected_parts.get()));
+    addAction(make_unique<UngroupSymbolPartsAction>(*getSymbol(), control.selected_parts.get()));
     symmetry = SymbolSymmetryP();
     control.Refresh(false);
   }
@@ -155,10 +155,11 @@ void SymbolSymmetryEditor::onMouseDrag  (const Vector2D& from, const Vector2D& t
   // Resize the object
   if (selection == SELECTION_NONE) return;
   if (!symmetryMoveAction) {
-    symmetryMoveAction = new SymmetryMoveAction(*symmetry, selection == SELECTION_HANDLE);
+    auto action = make_unique<SymmetryMoveAction>(*symmetry, selection == SELECTION_HANDLE);
+    symmetryMoveAction = action.get();
     symmetryMoveAction->constrain = ev.ControlDown();
     symmetryMoveAction->snap      = ev.ShiftDown() != settings.symbol_grid_snap ? settings.symbol_grid_size : 0;
-    addAction(symmetryMoveAction);
+    addAction(std::move(action));
   }
   symmetryMoveAction->move(to - from);
   control.Refresh(false);

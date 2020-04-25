@@ -37,7 +37,7 @@ void PackageChoiceValueViewer::initItems() {
     i.package_name = p->relativeFilename();
     i.name = capitalize_sentence(p->short_name);
     Image image;
-    InputStreamP stream = p->openIconFile();
+    auto stream = p->openIconFile();
     if (stream && image_load_file(image, *stream)) {
       i.image = Bitmap(resample(image, 16,16));
     }

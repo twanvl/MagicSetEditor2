@@ -856,7 +856,7 @@ void TextValueEditor::doFormat(int type) {
       break;
     }
     case ID_FORMAT_REMINDER: {
-      addAction(new TextToggleReminderAction(valueP(), selection_start_i));
+      addAction(make_unique<TextToggleReminderAction>(valueP(), selection_start_i));
       break;
     }
   }
@@ -983,7 +983,7 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
   fixSelection();
   // execute the action before adding it to the stack,
   // because we want to run scripts before action listeners see the action
-  TextValueAction* action = typing_action(valueP(), selection_start_i, selection_end_i, select_on_undo ? selection_start : selection_end, selection_end, replacement, name);
+  auto action = typing_action(valueP(), selection_start_i, selection_end_i, select_on_undo ? selection_start : selection_end, selection_end, replacement, name);
   if (!action) {
     // nothing changes, but move the selection anyway
     moveSelection(TYPE_CURSOR, selection_end);
@@ -994,7 +994,7 @@ void TextValueEditor::replaceSelection(const String& replacement, const String& 
   size_t expected_cursor = min(selection_start, selection_end) + untag_for_cursor(replacement).size();
   // perform the action
   // NOTE: this calls our onAction, invalidating the text viewer and moving the selection around the new text
-  addAction(action);
+  addAction(std::move(action));
   // move cursor
   {
     String real_value = untag_for_cursor(value().value());

@@ -238,7 +238,7 @@ void StatDimensionList::drawItem(DC& dc, int x, int y, size_t item) {
   StatsDimension& dim = *dimensions.at(item - show_empty);
   // draw icon
   if (!dim.icon_filename.empty() && !dim.icon.Ok()) {
-    InputStreamP file = game->openIn(dim.icon_filename);
+    auto file = game->openIn(dim.icon_filename);
     Image img(*file);
     if (img.HasMask()) img.InitAlpha(); // we can't handle masks
     Image resampled(21, 21);

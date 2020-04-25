@@ -64,14 +64,13 @@ class ActionListener {
 class ActionStack {
   public:
   ActionStack();
-  ~ActionStack();
   
   /// Add an action to the stack, and perform that action.
   /** Tells all listeners about the action.
     * The ActionStack takes ownership of the action.
     * If allow_merge == true then we attempt to merge this action with previous ones
     */
-  void addAction(Action* action, bool allow_merge = true);
+  void addAction(unique_ptr<Action> action, bool allow_merge = true);
   
   /// Undoes the last action that was (re)done
   /** @pre canUndo() */
@@ -107,13 +106,11 @@ class ActionStack {
   
   private:
   /// Actions to be undone.
-  /** Owns the action objects! */
-  vector<Action*> undo_actions;
+  vector<unique_ptr<Action>> undo_actions;
   /// Actions to be redone
-  /** Owns the action objects! */
-  vector<Action*> redo_actions;
+  vector<unique_ptr<Action>> redo_actions;
   /// Point at which the file was saved, corresponds to the top of the undo stack at that point
-  Action* save_point;
+  const Action* save_point;
   /// Was the last thing the user did addAction? (as opposed to undo/redo)
   bool last_was_add;
   /// Objects that are listening to actions

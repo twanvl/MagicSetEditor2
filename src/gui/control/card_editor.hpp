@@ -27,7 +27,7 @@ class DataEditor : public CardViewer {
   virtual DrawWhat drawWhat(const ValueViewer*) const;
   virtual bool viewerIsCurrent(const ValueViewer*) const;
   
-  virtual void addAction(Action* action);
+  virtual void addAction(unique_ptr<Action> action);
   inline SetP getSetForActions() { return set; }
   
   // --------------------------------------------------- : Selection

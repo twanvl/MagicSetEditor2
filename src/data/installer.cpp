@@ -21,14 +21,6 @@
 #include <wx/zipstrm.h>
 #include <wx/stdpaths.h>
 
-DECLARE_TYPEOF_COLLECTION(String);
-DECLARE_TYPEOF_COLLECTION(PackagedP);
-DECLARE_TYPEOF_COLLECTION(PackageDependencyP);
-DECLARE_TYPEOF_COLLECTION(PackageDescriptionP);
-DECLARE_TYPEOF_COLLECTION(InstallablePackageP);
-DECLARE_POINTER_TYPE(wxFileInputStream);
-DECLARE_POINTER_TYPE(wxZipInputStream);
-
 // Don't do this check for now, because we can't bless packages
 #define USE_MODIFIED_CHECK 0
 
@@ -50,8 +42,8 @@ void Installer::validate(Version file_app_version) {
       // TODO: support absolute icon names
       try{
         String filename = p->name + _("/") + p->icon_url;
-        InputStreamP img = openIn(p->name + _("/") + p->icon_url);
-        image_load_file(p->icon, *img);
+        auto img_stream = openIn(p->name + _("/") + p->icon_url);
+        image_load_file(p->icon, *img_stream);
       } catch (...) {
         // ignore errors, it's just an image
         p->icon_url.clear();
@@ -195,9 +187,9 @@ void Installer::addPackage(Packaged& package) {
   const FileInfos& file_infos = package.getFileInfos();
   for (FileInfos::const_iterator it = file_infos.begin() ; it != file_infos.end() ; ++it) {
     String file = it->first;
-    InputStreamP  is = package.openIn(file);
-    OutputStreamP os = openOut(name + _("/") + file);
-    os->Write(*is);
+    auto in_stream = package.openIn(file);
+    auto out_stream = openOut(name + _("/") + file);
+    out_stream->Write(*in_stream);
   }
 }
 
@@ -235,8 +227,8 @@ PackageDescription::PackageDescription(const Packaged& package)
     }
   }
   // icon
-  InputStreamP file = const_cast<Packaged&>(package).openIconFile();
-  if (file) image_load_file(icon, *file);
+  auto file_stream = const_cast<Packaged&>(package).openIconFile();
+  if (file_stream) image_load_file(icon, *file_stream);
 }
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(PackageDescription) {

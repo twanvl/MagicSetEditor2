@@ -325,7 +325,7 @@ void CardsPanel::onCommand(int id) {
       if (card_list->canSelectNext()) card_list->selectNext();
       break;
     case ID_CARD_ADD:
-      set->actions.addAction(new AddCardAction(*set));
+      set->actions.addAction(make_unique<AddCardAction>(*set));
       break;
     case ID_CARD_REMOVE:
       card_list->doDelete();

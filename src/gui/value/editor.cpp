@@ -12,9 +12,9 @@
 
 // ----------------------------------------------------------------------------- : ValueEditor
 
-void ValueEditor::addAction(ValueAction* a) {
+void ValueEditor::addAction(unique_ptr<ValueAction> a) {
   if (a) {
     a->isOnCard(editor().getCard().get());
-    editor().addAction(a);
+    editor().addAction(move(a));
   }
 }

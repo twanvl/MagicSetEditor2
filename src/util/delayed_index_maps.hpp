@@ -25,7 +25,8 @@ IndexMap<Key,Value>& DelayedIndexMaps<Key,Value>::get(const String& name, const 
     item->read_data.init(init_with);
   } else if (!item->unread_data.empty()) { // not read, read now
     item->read_data.init(init_with);
-    Reader reader(make_shared<wxStringInputStream>(item->unread_data), nullptr, _("delayed data for ") + name);
+    wxStringInputStream input(item->unread_data);
+    Reader reader(input, nullptr, _("delayed data for ") + name);
     reader.handle_greedy(item->read_data);
     item->unread_data.clear();
   }

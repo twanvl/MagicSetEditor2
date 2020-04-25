@@ -140,7 +140,7 @@ DECLARE_DYNAMIC_ARG(KeywordUsageStatistics*, keyword_usage_statistics);
  *  The database should be rebuild.
  */
 class KeywordDatabase {
-  public:
+public:
   KeywordDatabase();
   ~KeywordDatabase();
   
@@ -165,8 +165,8 @@ class KeywordDatabase {
    */
   String expand(const String& text, const ScriptValueP& match_condition, const ScriptValueP& expand_default, const ScriptValueP& combine_script, Context& ctx) const;
   
-  private:
-  KeywordTrie* root;  ///< Data structure for finding keywords
+private:
+  unique_ptr<KeywordTrie> root; ///< Data structure for finding keywords
   
   /// (try to) expand a single keyword
   /** If the keyword matches:

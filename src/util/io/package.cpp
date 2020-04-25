@@ -26,13 +26,10 @@ IMPLEMENT_DYNAMIC_ARG(Package*, writing_package,   nullptr);
 IMPLEMENT_DYNAMIC_ARG(Package*, clipboard_package, nullptr);
 
 Package::Package()
-  : fileStream(nullptr)
-  , zipStream (nullptr)
+  : zipStream (nullptr)
 {}
 
 Package::~Package() {
-  delete zipStream;
-  delete fileStream;
   // remove any remaining temporary files
   FOR_EACH(f, files) {
     if (f.second.wasWritten()) {
@@ -91,8 +88,7 @@ void Package::open(const String& n, bool fast) {
 void Package::reopen() {
   if (wxDirExists(filename)) {
     // make sure we have no zip open
-    delete zipStream;  zipStream  = nullptr;
-    delete fileStream; fileStream = nullptr;
+    zipStream.reset();
   } else {
     // reopen only needed for zipfile
     openZipfile();
@@ -154,40 +150,45 @@ void Package::clearKeepFlag() {
 
 // ----------------------------------------------------------------------------- : Package : inside
 
+class FileInputStream_aux {
+protected:
+  wxFileInputStream file_stream;
+  inline FileInputStream_aux(const String& filename)
+    : file_stream(filename)
+  {}
+};
+
 /// Class that is a wxZipInputStream over a wxFileInput stream
 /** Note that wxFileInputStream is also a base class, because it must be constructed first
  */
-class ZipFileInputStream : private wxFileInputStream, public wxZipInputStream {
-  public:
+class ZipFileInputStream : private FileInputStream_aux, public wxZipInputStream {
+public:
+  ZipFileInputStream(const String& filename)
+    : FileInputStream_aux(filename)
+    , wxZipInputStream(file_stream)
+  {}
   ZipFileInputStream(const String& filename, wxZipEntry* entry)
-    : wxFileInputStream(filename)
-    , wxZipInputStream(static_cast<wxFileInputStream&>(*this))
+    : FileInputStream_aux(filename)
+    , wxZipInputStream(file_stream)
   {
     OpenEntry(*entry);
   }
 };
 
-class BufferedFileInputStream_aux {
-  protected:
-  wxFileInputStream file_stream;
-  inline BufferedFileInputStream_aux(const String& filename)
-    : file_stream(filename)
-  {}
-};
 /// A buffered version of wxFileInputStream
 /** 2007-08-24:
  *    According to profiling this gives a significant speedup
  *    Bringing the avarage run time of read_utf8_line from 186k to 54k (in cpu time units)
  */
-class BufferedFileInputStream : private BufferedFileInputStream_aux, public wxBufferedInputStream {
-  public:
+class BufferedFileInputStream : private FileInputStream_aux, public wxBufferedInputStream {
+public:
   inline BufferedFileInputStream(const String& filename)
-    : BufferedFileInputStream_aux(filename)
+    : FileInputStream_aux(filename)
     , wxBufferedInputStream(file_stream)
   {}
 };
 
-InputStreamP Package::openIn(const String& file) {
+unique_ptr<wxInputStream> Package::openIn(const String& file) {
   if (!file.empty() && file.GetChar(0) == _('/')) {
     // absolute path, open file from another package
     Packaged* p = dynamic_cast<Packaged*>(this);
@@ -200,16 +201,16 @@ InputStreamP Package::openIn(const String& file) {
       throw PackageError(_ERROR_2_("file not found package like", file, filename));
     }
   }
-  InputStreamP stream;
+  unique_ptr<wxInputStream> stream;
   if (it != files.end() && it->second.wasWritten()) {
     // written to this file, open the temp file
-    stream = make_shared<BufferedFileInputStream>(it->second.tempName);
+    stream = make_unique<BufferedFileInputStream>(it->second.tempName);
   } else if (wxFileExists(filename+_("/")+file)) {
     // a file in directory package
-    stream = make_shared<BufferedFileInputStream>(filename+_("/")+file);
+    stream = make_unique<BufferedFileInputStream>(filename+_("/")+file);
   } else if (wxFileExists(filename) && it != files.end() && it->second.zipEntry) {
     // a file in a zip archive
-    stream = static_pointer_cast<wxZipInputStream>(make_shared<ZipFileInputStream>(filename, it->second.zipEntry));
+    stream = make_unique<ZipFileInputStream>(filename, it->second.zipEntry);
   } else {
     // shouldn't happen, packaged changed by someone else since opening it
     throw FileNotFoundError(file, filename);
@@ -221,8 +222,8 @@ InputStreamP Package::openIn(const String& file) {
   }
 }
 
-OutputStreamP Package::openOut(const String& file) {
-  return make_shared<wxFileOutputStream>(nameOut(file));
+unique_ptr<wxOutputStream> Package::openOut(const String& file) {
+  return make_unique<wxFileOutputStream>(nameOut(file));
 }
 
 String Package::nameOut(const String& file) {
@@ -292,13 +293,13 @@ String Package::absoluteName(const String& file) {
   }
 }
 // Open a file that is in some package
-InputStreamP Package::openAbsoluteFile(const String& name) {
+unique_ptr<wxInputStream> Package::openAbsoluteFile(const String& name) {
   size_t pos = name.find_first_of(_('\1'));
   if (pos == String::npos) {
     // temp or dir file
-    shared_ptr<wxFileInputStream> f = make_shared<wxFileInputStream>(name);
-    if (!f->IsOk()) throw FileNotFoundError(_("<unknown>"), name);
-    return f;
+    auto stream = make_unique<wxFileInputStream>(name);
+    if (!stream->IsOk()) throw FileNotFoundError(_("<unknown>"), name);
+    return stream;
   } else {
     // packaged file, always in zip format
     Package p;
@@ -355,12 +356,9 @@ void Package::openSubdir(const String& name) {
 
 void Package::openZipfile() {
   // close old streams
-  delete fileStream; fileStream = nullptr;
-  delete zipStream;  zipStream  = nullptr;
+  zipStream.reset();
   // open streams
-  fileStream = new wxFileInputStream(filename);
-  if (!fileStream->IsOk()) throw PackageError(_ERROR_1_("package not found", filename));
-  zipStream  = new wxZipInputStream(*fileStream);
+  zipStream = make_unique<ZipFileInputStream>(filename);
   if (!zipStream->IsOk())  throw PackageError(_ERROR_1_("package not found", filename));
   // read zip entries
   loadZipStream();
@@ -421,14 +419,13 @@ void Package::saveToZipfile(const String& saveAs, bool remove_unused, bool is_co
       } else {
         // changed file, or the old package was not a zipfile
         newZip->PutNextEntry(f.first);
-        InputStreamP temp = openIn(f.first);
-        newZip->Write(*temp);
+        auto temp_stream = openIn(f.first);
+        newZip->Write(*temp_stream);
       }
     }
     // close the old file
     if (!is_copy) {
-      delete zipStream;  zipStream  = nullptr;
-      delete fileStream; fileStream = nullptr;
+      zipStream.reset();
     }
   } catch (Error e) {
     // when things go wrong delete the temp file
@@ -503,11 +500,11 @@ Packaged::Packaged()
   , fully_loaded(true)
 {}
 
-InputStreamP Packaged::openIconFile() {
+unique_ptr<wxInputStream> Packaged::openIconFile() {
   if (!icon_filename.empty()) {
     return openIn(icon_filename);
   } else {
-    return InputStreamP();
+    return unique_ptr<wxInputStream>();
   }
 }
 
@@ -526,7 +523,8 @@ void Packaged::open(const String& package, bool just_header) {
   PROFILER(just_header ? _("open package header") : _("open package fully"));
   if (just_header) {
     // Read just the header (the part common to all Packageds)
-    Reader reader(openIn(typeName()), this, absoluteFilename() + _("/") + typeName(), true);
+    auto stream = openIn(typeName());
+    Reader reader(*stream, this, absoluteFilename() + _("/") + typeName(), true);
     try {
       JustAsPackageProxy proxy(this);
       reader.handle_greedy(proxy);
@@ -538,9 +536,11 @@ void Packaged::open(const String& package, bool just_header) {
     loadFully();
   }
 }
+
 void Packaged::loadFully() {
   if (fully_loaded) return;
-  Reader reader(openIn(typeName()), this, absoluteFilename() + _("/") + typeName());
+  auto stream = openIn(typeName());
+  Reader reader(*stream, this, absoluteFilename() + _("/") + typeName());
   try {
     reader.handle_greedy(*this);
     validate(reader.file_app_version);

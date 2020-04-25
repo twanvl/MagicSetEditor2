@@ -97,6 +97,7 @@ ControlPointMoveAction::ControlPointMoveAction(const set<ControlPointP>& points)
   FOR_EACH(p, points) {
     oldValues.push_back(p->pos);
   }
+  perform(false);
 }
 
 String ControlPointMoveAction::getName(bool to_undo) const {
@@ -104,12 +105,15 @@ String ControlPointMoveAction::getName(bool to_undo) const {
 }
 
 void ControlPointMoveAction::perform(bool to_undo) {
+  if (to_undo != done) return;
+  done = !to_undo;
   FOR_EACH_2(p,points,  op,oldValues) {
     swap(p->pos, op);
   }
 }
 
-void ControlPointMoveAction::move (const Vector2D& deltaDelta) {
+void ControlPointMoveAction::move(const Vector2D& deltaDelta) {
+  assert(done);
   delta += deltaDelta;
   // Move each point by delta, possibly constrained
   set<ControlPointP>::const_iterator it  = points.begin();
@@ -128,18 +132,23 @@ HandleMoveAction::HandleMoveAction(const SelectedHandle& handle)
   , old_other (handle.getOther())
   , constrain(false)
   , snap(0)
-{}
+{
+  perform(false);
+}
 
 String HandleMoveAction::getName(bool to_undo) const {
   return _ACTION_("move handle");
 }
 
 void HandleMoveAction::perform(bool to_undo) {
+  if (to_undo != done) return;
+  done = !to_undo;
   swap(old_handle, handle.getHandle());
   swap(old_other,  handle.getOther());
 }
 
 void HandleMoveAction::move(const Vector2D& deltaDelta) {
+  assert(done);
   delta += deltaDelta;
   handle.getHandle() = constrain_snap_vector_offset(handle.point->pos, old_handle + delta, constrain, snap);
   handle.getOther()  = old_other;
@@ -246,7 +255,7 @@ void CurveDragAction::move(const Vector2D& delta, double t) {
 
 ControlPointAddAction::ControlPointAddAction(const SymbolShapeP& shape, UInt insert_after, double t)
   : shape(shape)
-  , new_point(new ControlPoint())
+  , new_point(make_shared<ControlPoint>())
   , insert_after(insert_after)
   , point1(shape->getPoint(insert_after))
   , point2(shape->getPoint(insert_after + 1))
@@ -419,13 +428,13 @@ void ControlPointRemoveAction::perform(bool to_undo) {
 }
 
 
-Action* control_point_remove_action(const SymbolShapeP& shape, const set<ControlPointP>& to_delete) {
+unique_ptr<Action> control_point_remove_action(const SymbolShapeP& shape, const set<ControlPointP>& to_delete) {
   if (shape->points.size() - to_delete.size() < 2) {
     // TODO : remove part?
     //make_intrusive<ControlPointRemoveAllAction>(part);
-    return 0; // no action
+    return unique_ptr<Action>(); // no action
   } else {
-    return new ControlPointRemoveAction(shape, to_delete);
+    return make_unique<ControlPointRemoveAction>(shape, to_delete);
   }
 }
 

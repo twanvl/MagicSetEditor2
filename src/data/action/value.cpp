@@ -81,14 +81,24 @@ class SimpleValueAction : public ValueAction {
   typename T::ValueType new_value;
 };
 
-ValueAction* value_action(const ChoiceValueP&         value, const Defaultable<String>& new_value) { return new SimpleValueAction<ChoiceValue,         true> (value, new_value); }
-ValueAction* value_action(const ColorValueP&          value, const Defaultable<Color>&  new_value) { return new SimpleValueAction<ColorValue,          true> (value, new_value); }
-ValueAction* value_action(const ImageValueP&          value, const FileName&            new_value) { return new SimpleValueAction<ImageValue,          false>(value, new_value); }
-ValueAction* value_action(const SymbolValueP&         value, const FileName&            new_value) { return new SimpleValueAction<SymbolValue,         false>(value, new_value); }
-ValueAction* value_action(const PackageChoiceValueP&  value, const String&              new_value) { return new SimpleValueAction<PackageChoiceValue,  false>(value, new_value); }
-ValueAction* value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value, const String& last_change) {
+unique_ptr<ValueAction> value_action(const ChoiceValueP& value, const Defaultable<String>& new_value) {
+  return make_unique<SimpleValueAction<ChoiceValue, true>>(value, new_value);
+}
+unique_ptr<ValueAction> value_action(const ColorValueP& value, const Defaultable<Color>& new_value) {
+  return make_unique<SimpleValueAction<ColorValue, true>>(value, new_value);
+}
+unique_ptr<ValueAction> value_action(const ImageValueP& value, const FileName& new_value) {
+  return make_unique<SimpleValueAction<ImageValue, false>>(value, new_value);
+}
+unique_ptr<ValueAction> value_action(const SymbolValueP& value, const FileName& new_value) {
+  return make_unique<SimpleValueAction<SymbolValue, false>>(value, new_value);
+}
+unique_ptr<ValueAction> value_action(const PackageChoiceValueP& value, const String& new_value) {
+  return make_unique<SimpleValueAction<PackageChoiceValue, false>>(value, new_value);
+}
+unique_ptr<ValueAction> value_action(const MultipleChoiceValueP& value, const Defaultable<String>& new_value, const String& last_change) {
   MultipleChoiceValue::ValueType v = { new_value, last_change };
-  return new SimpleValueAction<MultipleChoiceValue, false>(value, v);
+  return make_unique<SimpleValueAction<MultipleChoiceValue, false>>(value, v);
 }
 
 
@@ -133,7 +143,7 @@ TextValue& TextValueAction::value() const {
 }
 
 
-TextValueAction* toggle_format_action(const TextValueP& value, const String& tag, size_t start_i, size_t end_i, size_t start, size_t end, const String& action_name) {
+unique_ptr<TextValueAction> toggle_format_action(const TextValueP& value, const String& tag, size_t start_i, size_t end_i, size_t start, size_t end, const String& action_name) {
   if (start > end) {
     swap(start, end);
     swap(start_i, end_i);
@@ -165,11 +175,11 @@ TextValueAction* toggle_format_action(const TextValueP& value, const String& tag
   if (value->value() == new_value) {
     return nullptr; // no changes
   } else {
-    return new TextValueAction(value, start, end, end, new_value, action_name);
+    return make_unique<TextValueAction>(value, start, end, end, new_value, action_name);
   }
 }
 
-TextValueAction* typing_action(const TextValueP& value, size_t start_i, size_t end_i, size_t start, size_t end, const String& replacement, const String& action_name)  {
+unique_ptr<TextValueAction> typing_action(const TextValueP& value, size_t start_i, size_t end_i, size_t start, size_t end, const String& replacement, const String& action_name)  {
   bool reverse = start > end;
   if (reverse) {
     swap(start, end);
@@ -181,9 +191,9 @@ TextValueAction* typing_action(const TextValueP& value, size_t start_i, size_t e
     return nullptr;
   } else {
     if (reverse) {
-      return new TextValueAction(value, end, start, start+untag(replacement).size(), new_value, action_name);
+      return make_unique<TextValueAction>(value, end, start, start+untag(replacement).size(), new_value, action_name);
     } else {
-      return new TextValueAction(value, start, end, start+untag(replacement).size(), new_value, action_name);
+      return make_unique<TextValueAction>(value, start, end, start+untag(replacement).size(), new_value, action_name);
     }
   }
 }
@@ -248,9 +258,9 @@ ValueActionPerformer::ValueActionPerformer(const ValueP& value, Card* card, cons
 {}
 ValueActionPerformer::~ValueActionPerformer() {}
 
-void ValueActionPerformer::addAction(ValueAction* action) {
+void ValueActionPerformer::addAction(unique_ptr<ValueAction>&& action) {
   action->isOnCard(card);
-  set->actions.addAction(action);
+  set->actions.addAction(move(action));
 }
 
 Package& ValueActionPerformer::getLocalPackage() {

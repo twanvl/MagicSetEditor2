@@ -190,7 +190,7 @@ void ChoiceStyle::initImage() {
   //       CALL       0
   //       PUSH_CONST nil
   //      OR_ELSE
-  ScriptCustomCollectionP lookup(new ScriptCustomCollection());
+  ScriptCustomCollectionP lookup = make_intrusive<ScriptCustomCollection>();
   FOR_EACH(ci, choice_images) {
     lookup->key_value[uncanonical_name_form(ci.first)] = 
       lookup->key_value[ci.first] = ci.second.getValidScriptP();

@@ -213,9 +213,9 @@ void TokenIterator::readToken() {
     // read the entire file, and start at the beginning of it
     pos = 0;
     filename = include_file;
-    InputStreamP is = package_manager.openFileFromPackage(package, include_file);
-    eat_utf8_bom(*is);
-    input = read_utf8_line(*is, true);
+    auto stream = package_manager.openFileFromPackage(package, include_file);
+    eat_utf8_bom(*stream);
+    input = read_utf8_line(*stream, true);
   } else if (isAlpha(c) || isUnicodeAlpha(c) || c == _('_') || (isDigit(c) && !buffer.empty() && buffer.back() == _("."))) {
     // name, or a number after a . token, as in array.0
     size_t start = pos - 1;

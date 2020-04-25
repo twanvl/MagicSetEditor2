@@ -321,8 +321,8 @@ bool CropImage::operator == (const GeneratedImage& that) const {
 /** out is scaled some scaling, this is the return value */
 UInt gaussian_blur(Byte* in, UInt* out, int w, int h, double radius) {
   // blur horizontally
-  UInt* blur_x = new UInt[w*h]; // scaled by total_x, so in [0..255*total_x]
-  memset(blur_x, 0, w*h*sizeof(UInt));
+  auto blur_x = make_unique<UInt[]>(w*h); // scaled by total_x, so in [0..255*total_x]
+  memset(blur_x.get(), 0, w*h*sizeof(UInt));
   UInt total_x = 0;
   {
     double sigma = radius * w;
@@ -363,7 +363,6 @@ UInt gaussian_blur(Byte* in, UInt* out, int w, int h, double radius) {
       }
     }
   }
-  delete[] blur_x;
   return total_x * total_y;
 }
 
@@ -377,8 +376,8 @@ Image DropShadowImage::generate(const Options& opt) const {
   int w = img.GetWidth(), h = img.GetHeight();
   Byte* alpha = img.GetAlpha();
   // blur
-  UInt* shadow = new UInt[w*h];
-  UInt total = 255 * gaussian_blur(alpha, shadow, w, h, shadow_blur_radius);
+  auto shadow = make_unique<UInt[]>(w*h);
+  UInt total = 255 * gaussian_blur(alpha, shadow.get(), w, h, shadow_blur_radius);
   // combine
   Byte* data = img.GetData();
   int dw = int(w * offset_x), dh = int(h * offset_y);
@@ -398,9 +397,6 @@ Image DropShadowImage::generate(const Options& opt) const {
       alpha[p] = a + shad;
     }
   }
-  //memset(data,0,3*w*h);
-  // cleanup
-  delete[] shadow;
   return img;
 }
 bool DropShadowImage::operator == (const GeneratedImage& that) const {
@@ -417,9 +413,9 @@ Image PackagedImage::generate(const Options& opt) const {
   // TODO : use opt.width and opt.height?
   // open file from package
   if (!opt.package) throw ScriptError(_("Can only load images in a context where an image is expected"));
-  InputStreamP file = opt.package->openIn(filename);
+  auto file_stream = opt.package->openIn(filename);
   Image img;
-  if (image_load_file(img, *file)) {
+  if (image_load_file(img, *file_stream)) {
     if (img.HasMask()) img.InitAlpha(); // we can't handle masks
     return img;
   } else {
@@ -494,8 +490,8 @@ Image ImageValueToImage::generate(const Options& opt) const {
   if (!opt.local_package) throw ScriptError(_("Can only load images in a context where an image is expected"));
   Image image;
   if (!filename.empty()) {
-    InputStreamP image_file = opt.local_package->openIn(filename);
-    image_load_file(image, *image_file);
+    auto image_file_stream = opt.local_package->openIn(filename);
+    image_load_file(image, *image_file_stream);
   }
   if (!image.Ok()) {
     image = Image(max(1,opt.width), max(1,opt.height));

@@ -21,57 +21,37 @@
 #include <data/action/keyword.hpp>
 #include <util/error.hpp>
 
-typedef map<const StyleSheet*,Context*> Contexts;
-DECLARE_TYPEOF(Contexts);
-DECLARE_TYPEOF_COLLECTION(CardP);
-DECLARE_TYPEOF_COLLECTION(FieldP);
-DECLARE_TYPEOF_COLLECTION(Dependency);
-DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA StyleP>);
-DECLARE_TYPEOF_NO_REV(IndexMap<FieldP COMMA ValueP>);
-
-//#define LOG_UPDATES
-
 // ----------------------------------------------------------------------------- : SetScriptContext : initialization
 
 SetScriptContext::SetScriptContext(Set& set)
   : set(set)
 {}
 
-SetScriptContext::~SetScriptContext() {
-  // destroy contexts
-  FOR_EACH(sc, contexts) {
-    delete sc.second;
-  }
-}
-
 Context& SetScriptContext::getContext(const StyleSheetP& stylesheet) {
-  Contexts::iterator it = contexts.find(stylesheet.get());
-  if (it != contexts.end()) {
-    return *it->second; // we already have a context
-  } else {
-    // create a new context
-    Context* ctx = new Context();
-    contexts.insert(make_pair(stylesheet.get(), ctx));
+  auto it = contexts.try_emplace(stylesheet.get());
+  Context& ctx = it.first->second;
+  if (it.second) {
+    // we created a new context
     // variables
     //  NOTE: do not use a smart pointer for the pointer to the set, because the set owns this
     //        which would lead to a reference cycle.
-    init_script_functions(*ctx);
-    ctx->setVariable(SCRIPT_VAR_set,        make_intrusive<ScriptObject<Set*>>(&set));
-    ctx->setVariable(SCRIPT_VAR_game,       to_script(set.game));
-    ctx->setVariable(SCRIPT_VAR_stylesheet, to_script(stylesheet));
-    ctx->setVariable(SCRIPT_VAR_card_style, to_script(&stylesheet->card_style));
-    ctx->setVariable(SCRIPT_VAR_card,       set.cards.empty() ? script_nil : to_script(set.cards.front())); // dummy value
-    ctx->setVariable(SCRIPT_VAR_styling,    to_script(&set.stylingDataFor(*stylesheet)));
+    init_script_functions(ctx);
+    ctx.setVariable(SCRIPT_VAR_set,        make_intrusive<ScriptObject<Set*>>(&set));
+    ctx.setVariable(SCRIPT_VAR_game,       to_script(set.game));
+    ctx.setVariable(SCRIPT_VAR_stylesheet, to_script(stylesheet));
+    ctx.setVariable(SCRIPT_VAR_card_style, to_script(&stylesheet->card_style));
+    ctx.setVariable(SCRIPT_VAR_card, set.cards.empty() ? script_nil : to_script(set.cards.front())); // dummy value
+    ctx.setVariable(SCRIPT_VAR_styling,    to_script(&set.stylingDataFor(*stylesheet)));
     try {
       // perform init scripts, don't use a scope, variables stay bound in the context
-      set.game  ->init_script.invoke(*ctx, false);
-      stylesheet->init_script.invoke(*ctx, false);
+      set.game  ->init_script.invoke(ctx, false);
+      stylesheet->init_script.invoke(ctx, false);
     } catch (const Error& e) {
       handle_error(e);
     }
     onInit(stylesheet, ctx);
-    return *ctx;
   }
+  return ctx;
 }
 Context& SetScriptContext::getContext(const CardP& card) {
   StyleSheetP stylesheet = set.stylesheetForP(card);
@@ -100,13 +80,13 @@ SetScriptManager::~SetScriptManager() {
   set.actions.removeListener(this);
 }
 
-void SetScriptManager::onInit(const StyleSheetP& stylesheet, Context* ctx) {
+void SetScriptManager::onInit(const StyleSheetP& stylesheet, Context& ctx) {
   assert(wxThread::IsMain());
   // initialize dependencies
   try {
     // find script dependencies
-    initDependencies(*ctx, *set.game);
-    initDependencies(*ctx, *stylesheet);
+    initDependencies(ctx, *set.game);
+    initDependencies(ctx, *stylesheet);
   } catch (const Error& e) {
     handle_error(e);
   }

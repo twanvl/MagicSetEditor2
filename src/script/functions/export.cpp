@@ -378,7 +378,7 @@ SCRIPT_FUNCTION(copy_file) {
   String out_path = get_export_full_path(out_name);
   // copy
   ExportInfo& ei = *export_info();
-  InputStreamP in = ei.export_template->openIn(input);
+  auto in = ei.export_template->openIn(input);
   wxFileOutputStream out(out_path);
   if (!out.Ok()) throw Error(_("Unable to open file '") + out_path + _("' for output"));
   out.Write(*in);

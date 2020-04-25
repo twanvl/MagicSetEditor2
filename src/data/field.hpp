@@ -284,11 +284,11 @@ inline String type_name(const Value&) {
     return _(NAME); \
   }
 
-#define DECLARE_STYLE_TYPE(Type)                            \
-  DECLARE_REFLECTION(); public:                            \
-  DECLARE_HAS_FIELD(Type)                                \
-  virtual StyleP clone() const;                            \
-  virtual ValueViewerP makeViewer(DataViewer& parent, const StyleP& thisP);      \
+#define DECLARE_STYLE_TYPE(Type) \
+  DECLARE_REFLECTION(); public: \
+  DECLARE_HAS_FIELD(Type) \
+  virtual StyleP clone() const; \
+  virtual ValueViewerP makeViewer(DataViewer& parent, const StyleP& thisP); \
   virtual ValueViewerP makeEditor(DataEditor& parent, const StyleP& thisP)
 
 #define DECLARE_VALUE_TYPE(Type,ValueType_)                        \

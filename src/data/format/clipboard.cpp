@@ -23,16 +23,16 @@
 /// Serialize an object to a string, clipboard_package will be set to the given package.
 template <typename T>
 String serialize_for_clipboard(Package& package, T& object) {
-  shared_ptr<wxStringOutputStream> stream( new wxStringOutputStream );
+  wxStringOutputStream stream;
   Writer writer(stream, file_version_clipboard);
   WITH_DYNAMIC_ARG(clipboard_package, &package);
     writer.handle(object);
-  return stream->GetString();
+  return stream.GetString();
 }
 
 template <typename T>
 void deserialize_from_clipboard(T& object, Package& package, const String& data) {
-  shared_ptr<wxStringInputStream> stream( new wxStringInputStream(data) );
+  wxStringInputStream stream = {data};
   Reader reader(stream, nullptr, _("clipboard"));
   WITH_DYNAMIC_ARG(clipboard_package, &package);
     reader.handle_greedy(object);

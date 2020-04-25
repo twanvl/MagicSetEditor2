@@ -99,7 +99,7 @@ void PackageManager::findMatching(const String& pattern, vector<PackagedP>& out)
   }
 }
 
-InputStreamP PackageManager::openFileFromPackage(Packaged*& package, const String& name) {
+unique_ptr<wxInputStream> PackageManager::openFileFromPackage(Packaged*& package, const String& name) {
   if (!name.empty() && name.GetChar(0) == _('/')) {
     // absolute name; break name
     size_t start = name.find_first_not_of(_("/\\"), 1); // allow "//package/name" from incorrect scripts
@@ -339,16 +339,17 @@ void PackageDirectory::loadDatabase() {
   String filename = databaseFile();
   if (wxFileExists(filename)) {
     // packages file not existing is not an error
-    shared_ptr<wxFileInputStream> file = make_shared<wxFileInputStream>(filename);
-    if (!file->Ok()) return; // failure is not an error
-    Reader reader(file, nullptr, filename);
+    wxFileInputStream file_stream = {filename};
+    if (!file_stream.Ok()) return; // failure is not an error
+    Reader reader(file_stream, nullptr, filename);
     reader.handle_greedy(*this);
     sort(packages.begin(), packages.end(), compare_name);
   }
 }
 
 void PackageDirectory::saveDatabase() {
-  Writer writer(make_shared<wxFileOutputStream>(databaseFile()), app_version);
+  wxFileOutputStream stream(databaseFile());
+  Writer writer(stream, app_version);
   writer.handle(*this);
 }
 String PackageDirectory::databaseFile() {
@@ -391,13 +392,13 @@ bool PackageDirectory::actual_install(const InstallablePackage& package, const S
     String local_file = install_dir + file.substr(name.length());
     create_parent_dirs(local_file);
     // copy file
-    InputStreamP is = installer.openIn(file);
-    wxFileOutputStream os (local_file);
-    if (!os.IsOk()) {
+    auto in_stream = installer.openIn(file);
+    wxFileOutputStream out_stream(local_file);
+    if (!out_stream.IsOk()) {
       int act = wxMessageBox(_ERROR_1_("cannot create file", file), _TITLE_("cannot create file"), wxICON_ERROR | wxYES_NO);
       if (act == wxNO) return false;
     }
-    os.Write(*is);
+    out_stream.Write(*in_stream);
   }
   // update package database
   // TODO: bless the package?
