@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.13)
 
-project(magicseteditor)
+project(magicseteditor VERSION 2.0.2)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
@@ -31,6 +31,8 @@ file(GLOB_RECURSE sources src/*.cpp)
 list(FILTER sources EXCLUDE REGEX win32_cli_wrapper.cpp)
 target_sources(magicseteditor PRIVATE ${sources})
 target_precompile_headers(magicseteditor PRIVATE src/util/prec.hpp)
+
+configure_file(src/config.hpp.in src/config.hpp)
 
 # resource file
 

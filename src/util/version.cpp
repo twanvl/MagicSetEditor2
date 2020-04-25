@@ -9,6 +9,7 @@
 #include <util/prec.hpp>
 #include <util/version.hpp>
 #include <util/reflect.hpp>
+#include <config.hpp>
 
 // ----------------------------------------------------------------------------- : Version
 
@@ -50,7 +51,7 @@ template <> void GetDefaultMember::handle(const Version& v) {
 // ----------------------------------------------------------------------------- : Versions
 
 // NOTE: Don't use leading zeroes, they mean octal
-const Version app_version  = 20000; // 2.0.0
+const Version app_version  = 10000 * MSE_VERSION_MAJOR + 100 * MSE_VERSION_MINOR + MSE_VERSION_PATCH;
 #ifdef UNICODE
 const Char* version_suffix = _("");
 #else
@@ -82,7 +83,7 @@ const Char* version_suffix = _(" (ascii build)");
  *     0.3.9 : bugfix release mostly, a few new script functions
  *     2.0.0 : bugfix release mostly, added error console
  */
-const Version file_version_locale          = 20000; // 2.0.0
+const Version file_version_locale          = 20002; // 2.0.2
 const Version file_version_set             =   308; // 0.3.8
 const Version file_version_game            =   308; // 0.3.8
 const Version file_version_stylesheet      =   308; // 0.3.8
