@@ -52,11 +52,11 @@ String Card::identification() const {
   }
 }
 
-bool Card::contains(String const& query) const {
+bool Card::contains(QuickFilterPart const& query) const {
   FOR_EACH_CONST(v, data) {
-    if (find_i(v->toString(),query) != String::npos) return true;
+    if (query.match(v->fieldP->name, v->toString())) return true;
   }
-  if (find_i(notes,query) != String::npos) return true;
+  if (query.match(_("notes"), notes)) return true;
   return false;
 }
 

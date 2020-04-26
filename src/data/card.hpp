@@ -11,6 +11,7 @@
 #include <util/prec.hpp>
 #include <util/reflect.hpp>
 #include <util/error.hpp>
+#include <data/filter.hpp>
 #include <data/field.hpp> // for Card::value
 
 class Game;
@@ -61,9 +62,7 @@ class Card : public IntrusivePtrVirtualBase {
   /** May return "" */
   String identification() const;
   /// Does any field contains the given query string?
-  bool contains(String const& query) const;
-  /// Does this card contain each of the words in the query string?
-  bool contains_words(String const& query) const;
+  bool contains(QuickFilterPart const& query) const;
   
   /// Find a value in the data by name and type
   template <typename T> T& value(const String& name) {

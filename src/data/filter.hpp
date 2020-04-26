@@ -35,37 +35,26 @@ class Filter : public IntrusivePtrVirtualBase {
 
 // ----------------------------------------------------------------------------- : Quick search
 
+struct QuickFilterQuery {
+  String type;
+  String query;
+  bool match(String const& key, String const& x) const {
+    return (type.empty() || find_i(key,type) != String::npos) && find_i(x,query) != String::npos;
+  }
+};
+
+struct QuickFilterPart : QuickFilterQuery  {
+  bool need_match = true;
+};
+
+/// Parse a quick filter string
+vector<QuickFilterPart> parse_quicksearch_query(String const& query);
+
 /// Does the given object match the quick search query?
 template <typename T>
-bool match_quicksearch_query(String const& query, T const& object) {
-  bool need_match = true;
-  // iterate over the components of the query
-  for (size_t i = 0 ; i < query.size() ; ) {
-    if (query.GetChar(i) == _(' ')) {
-      // skip spaces
-      i++;
-    } else if (query.GetChar(i) == _('-')) {
-      // negate the next query, i.e. match only if it is not on the card
-      need_match = !need_match;
-      i++;
-    } else {
-      size_t end, next;
-      if (query.GetChar(i) == _('"')) {
-        // quoted string, match exactly
-        i++;
-        end =query.find_first_of(_('"'),i);
-        next = min(end,query.size()) + 1;
-      } else {
-        // single word
-        next = end = query.find_first_of(_(' '),i);
-      }
-      bool match = object.contains(query.substr(i,end-i));
-      if (match != need_match) {
-        return false;
-      }
-      need_match = true; // next word is no longer negated
-      i = next;
-    }
+bool match_quicksearch_query(vector<QuickFilterPart> const& query, T const& object) {
+  for (auto const& part : query) {
+    if (object.contains(part) != part.need_match) return false;
   }
   return true;
 }
@@ -73,13 +62,12 @@ bool match_quicksearch_query(String const& query, T const& object) {
 /// A filter function that searches for objects containing a string
 template <typename T>
 class QuickFilter : public Filter<T> {
-  public:
-  using typename Filter<T>::TP;
-  QuickFilter(String const& query) : query(query) {}
+public:
+  QuickFilter(String const& query) : query(parse_quicksearch_query(query)) {}
   virtual bool keep(T const& x) const {
     return match_quicksearch_query(query, x);
   }
-  private:
-  String query;
+private:
+  vector<QuickFilterPart> query;
 };
 

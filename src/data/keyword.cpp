@@ -73,11 +73,11 @@ void read_compat(Reader& handler, Keyword* k) {
   }
 }
 
-bool Keyword::contains(String const& query) const {
-  if (find_i(keyword,query) != String::npos) return true;
-  if (find_i(rules,query) != String::npos) return true;
-  if (find_i(match,query) != String::npos) return true;
-  if (find_i(reminder.get(),query) != String::npos) return true;
+bool Keyword::contains(QuickFilterPart const& query) const {
+  if (query.match(_("keyword"), keyword)) return true;
+  if (query.match(_("rules"), rules)) return true;
+  if (query.match(_("match"), match)) return true;
+  if (query.match(_("reminder"), reminder.get())) return true;
   return false;
 }
 

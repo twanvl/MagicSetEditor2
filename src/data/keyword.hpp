@@ -12,6 +12,7 @@
 #include <script/scriptable.hpp>
 #include <util/dynamic_arg.hpp>
 #include <util/regex.hpp>
+#include <data/filter.hpp>
 
 DECLARE_POINTER_TYPE(KeywordParam);
 DECLARE_POINTER_TYPE(KeywordMode);
@@ -116,7 +117,7 @@ class Keyword : public IntrusivePtrVirtualBase {
   void prepare(const vector<KeywordParamP>& param_types, bool force = false);
   
   /// Does the keyword contain the given query word?
-  bool contains(String const& word) const;
+  bool contains(QuickFilterPart const& query) const;
   
   DECLARE_REFLECTION();
 };
