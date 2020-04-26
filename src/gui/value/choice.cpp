@@ -253,7 +253,7 @@ size_t DropDownChoiceList::selection() const {
       return 0;
     } else {
       // run default script to find out what the default choice would be
-      String default_choice = *field().default_script.invoke( cve.viewer.getContext() );
+      String default_choice = field().default_script.invoke( cve.viewer.getContext() )->toString();
       default_id = group->choiceId(default_choice);
     }
   }

@@ -37,12 +37,12 @@ inline size_t spelled_correctly(const String& input, size_t start, size_t end, S
   if (extra_test) {
     // try on untagged
     ctx.setVariable(SCRIPT_VAR_input, to_script(word));
-    if (*extra_test->eval(ctx)) {
+    if (extra_test->eval(ctx)->toBool()) {
       return true;
     }
     // try on tagged
     ctx.setVariable(SCRIPT_VAR_input, to_script(input.substr(start,end-start)));
-    if (*extra_test->eval(ctx)) {
+    if (extra_test->eval(ctx)->toBool()) {
       return true;
     }
   }

@@ -38,14 +38,14 @@
 
 /// Macro to declare a new script function with custom dependency handling
 #define SCRIPT_FUNCTION_WITH_DEP(name) \
-    SCRIPT_FUNCTION_AUX(name, virtual ScriptValueP dependencies(Context&, const Dependency&) const;)
+    SCRIPT_FUNCTION_AUX(name, ScriptValueP dependencies(Context&, const Dependency&) const override;)
 
 #define SCRIPT_FUNCTION_DEPENDENCIES(name) \
     ScriptValueP ScriptBuiltIn_##name::dependencies(Context& ctx, const Dependency& dep) const
 
 /// Macro to declare a new script function with custom closure simplification
 #define SCRIPT_FUNCTION_WITH_SIMPLIFY(name) \
-    SCRIPT_FUNCTION_AUX(name, virtual ScriptValueP simplifyClosure(ScriptClosure&) const;)
+    SCRIPT_FUNCTION_AUX(name, ScriptValueP simplifyClosure(ScriptClosure&) const override;)
 
 #define SCRIPT_FUNCTION_SIMPLIFY_CLOSURE(name) \
     ScriptValueP ScriptBuiltIn_##name::simplifyClosure(ScriptClosure& closure) const
@@ -54,14 +54,14 @@
 #define SCRIPT_FUNCTION_AUX(name,dep) \
     class ScriptBuiltIn_##name : public ScriptValue { \
       dep \
-      virtual  ScriptType type() const \
+      ScriptType type() const override \
         { return SCRIPT_FUNCTION; } \
-      virtual String typeName() const \
+      String typeName() const override \
         { return _("built-in function '") _(#name) _("'"); } \
-      virtual ScriptValueP do_eval(Context&, bool) const; \
+      ScriptValueP eval(Context&, bool) const override; \
     }; \
     ScriptValueP script_##name(new ScriptBuiltIn_##name); \
-    ScriptValueP ScriptBuiltIn_##name::do_eval(Context& ctx, bool) const
+    ScriptValueP ScriptBuiltIn_##name::eval(Context& ctx, bool) const
 
 /// Return a value from a SCRIPT_FUNCTION
 #define SCRIPT_RETURN(value) return to_script(value)
@@ -157,10 +157,10 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
   class ScriptRule_##funname: public ScriptValue { \
   public: \
     inline ScriptRule_##funname(const type1& name1) : name1(name1) {} \
-    virtual ScriptType type() const { return SCRIPT_FUNCTION; } \
-    virtual String typeName() const { return _(#funname)_("_rule"); } \
+    ScriptType type() const override { return SCRIPT_FUNCTION; } \
+    String typeName() const override { return _(#funname)_("_rule"); } \
   protected: \
-    virtual ScriptValueP do_eval(Context& ctx, bool) const; \
+    ScriptValueP eval(Context& ctx, bool) const override; \
   private: \
     type1 name1; \
   }; \
@@ -172,7 +172,7 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
     SCRIPT_PARAM_N(type1, str1, name1); \
     return ScriptRule_##funname(name1).eval(ctx); \
   } \
-  ScriptValueP ScriptRule_##funname::do_eval(Context& ctx, bool) const
+  ScriptValueP ScriptRule_##funname::eval(Context& ctx, bool) const
 
 /// Utility for defining a script rule with two parameters
 #define SCRIPT_RULE_2(funname, type1, name1, type2, name2) \
@@ -185,7 +185,7 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
 /// Utility for defining a script rule with two named parameters, with dependencies
 #define SCRIPT_RULE_2_N_DEP(funname, type1, str1, name1, type2, str2, name2) \
   SCRIPT_RULE_2_N_AUX(    funname, type1, str1, name1, type2, str2, name2, \
-    virtual ScriptValueP dependencies(Context&, const Dependency&) const; \
+    ScriptValueP dependencies(Context&, const Dependency&) const override; \
   SCRIPT_FUNCTION_DEPENDENCIES(funname) { \
     SCRIPT_PARAM_N(type1, str1, name1); \
     SCRIPT_PARAM_N(type2, str2, name2); \
@@ -197,11 +197,11 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
   public: \
     inline ScriptRule_##funname(const type1& name1, const type2& name2) \
       : name1(name1), name2(name2) {} \
-    virtual ScriptType type() const { return SCRIPT_FUNCTION; } \
-    virtual String typeName() const { return _(#funname)_("_rule"); } \
+    ScriptType type() const override { return SCRIPT_FUNCTION; } \
+    String typeName() const override { return _(#funname)_("_rule"); } \
     dep \
   protected: \
-    virtual ScriptValueP do_eval(Context& ctx, bool) const; \
+    ScriptValueP eval(Context& ctx, bool) const override; \
   private: \
     type1 name1; \
     type2 name2; \
@@ -217,7 +217,7 @@ inline Type from_script(const ScriptValueP& v, Variable var) {
     return ScriptRule_##funname(name1, name2).eval(ctx); \
   } \
   more \
-  ScriptValueP ScriptRule_##funname::do_eval(Context& ctx, bool) const
+  ScriptValueP ScriptRule_##funname::eval(Context& ctx, bool) const
 
 #define SCRIPT_RULE_2_DEPENDENCIES(name) \
   ScriptValueP ScriptRule_##name::dependencies(Context& ctx, const Dependency& dep) const

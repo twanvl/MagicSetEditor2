@@ -88,7 +88,7 @@ ScriptType Script::type() const {
 String Script::typeName() const {
   return _("function");
 }
-ScriptValueP Script::do_eval(Context& ctx, bool openScope) const {
+ScriptValueP Script::eval(Context& ctx, bool openScope) const {
   return ctx.eval(*this, openScope);
 }
 ScriptValueP Script::dependencies(Context& ctx, const Dependency& dep) const {

@@ -267,9 +267,9 @@ int Set::positionOfCard(const CardP& card, const ScriptValueP& order_by, const S
     vector<int>    keep;   if(filter) keep.reserve(cards.size());
     FOR_EACH_CONST(c, cards) {
       Context& ctx = getContext(c);
-      values.push_back(*order_by->eval(ctx));
+      values.push_back(order_by->eval(ctx)->toString());
       if (filter) {
-        keep.push_back((bool)*filter->eval(ctx));
+        keep.push_back(filter->eval(ctx)->toBool());
       }
     }
     #if USE_SCRIPT_PROFILING
@@ -289,7 +289,7 @@ int Set::numberOfCards(const ScriptValueP& filter) {
   } else {
     int n = 0;
     FOR_EACH_CONST(c, cards) {
-      if (*filter->eval(getContext(c))) ++n;
+      if (filter->eval(getContext(c))->toBool()) ++n;
     }
     filter_cache.insert(make_pair(filter,n));
     return n;

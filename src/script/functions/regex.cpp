@@ -52,7 +52,7 @@ ScriptRegexP regex_from_script(const ScriptValueP& value) {
   ScriptRegexP regex = dynamic_pointer_cast<ScriptRegex>(value);
   if (!regex) {
     // TODO: introduce some kind of caching?
-    regex = make_intrusive<ScriptRegex>(*value);
+    regex = make_intrusive<ScriptRegex>(value->toString());
   }
   return regex;
 }

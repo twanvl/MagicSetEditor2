@@ -76,16 +76,16 @@ ScriptValueP unified(const ScriptValueP& a, const ScriptValueP& b) {
 
 /// Behaves like script_nil, but with a name
 class ScriptMissingVariable : public ScriptValue {
-  public:
+public:
   ScriptMissingVariable(const String& name) : name(name) {}
-  virtual ScriptType type() const { return SCRIPT_NIL; }
-  virtual String typeName() const { return _("missing variable '") + name + _("'"); }
-  virtual operator String() const { return wxEmptyString; }
-  virtual operator double() const { return 0.0; }
-  virtual operator int()    const { return 0; }
-  virtual operator bool()   const { return false; }
-  virtual ScriptValueP eval(Context&) const { return script_nil; } // nil() == nil
-  private:
+  ScriptType type() const override { return SCRIPT_NIL; }
+  String typeName() const override { return _("missing variable '") + name + _("'"); }
+  String toString() const override { return String(); }
+  double toDouble() const override { return 0.0; }
+  int toInt() const override { return 0; }
+  bool toBool() const override { return false; }
+  ScriptValueP eval(Context&, bool) const override { return script_nil; } // nil() == nil
+private:
   String name; ///< Name of the variable
 };
 
@@ -224,7 +224,7 @@ ScriptValueP Context::dependencies(const Dependency& dep, const Script& script) 
         
         // Get an object member (almost as normal)
         case I_MEMBER_C: {
-          String name = *script.constants[i.data];
+          String name = script.constants[i.data]->toString();
           stack.back() = stack.back()->dependencyMember(name, dep); // dependency on member
           break;
         }

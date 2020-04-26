@@ -44,7 +44,7 @@ SCRIPT_FUNCTION(new_card) {
     } else if (PackageChoiceValue* pvalue = dynamic_cast<PackageChoiceValue*>(value)) {
       pvalue->package_name = v->toString();
     } else if (ColorValue* cvalue = dynamic_cast<ColorValue*>(value)) {
-      cvalue->value = v->operator Color();
+      cvalue->value = v->toColor();
     } else {
       throw ScriptError(format_string(_("Can not set value '%s', it is not of the right type"),name));
     }

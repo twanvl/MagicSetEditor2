@@ -61,56 +61,22 @@ template <typename T> inline String to_code(const intrusive_ptr<T>& p) {
 
 // ----------------------------------------------------------------------------- : Errors
 
-/// A delayed error message.
-/** Only when trying to use the object will the error be thrown.
- *  This can be 'caught' by the "or else" construct
- */
-class ScriptDelayedError : public ScriptValue {
-  public:
-  inline ScriptDelayedError(const ScriptError& error) : error(error) {}
-
-  virtual ScriptType type() const;// { return SCRIPT_ERROR; }
-
-  // all of these throw
-  virtual String typeName() const;
-  virtual operator String() const;
-  virtual operator double() const;
-  virtual operator int()    const;
-  virtual operator bool()   const;
-  virtual operator Color()  const;
-  virtual int itemCount() const;
-  virtual CompareWhat compareAs(String&, void const*&) const;
-  // these can propagate the error
-  virtual ScriptValueP getMember(const String& name) const;
-  virtual ScriptValueP dependencyMember(const String& name, const Dependency&) const;
-  virtual ScriptValueP dependencies(Context&, const Dependency&) const;
-  virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
-
-  protected:
-  virtual ScriptValueP do_eval(Context&, bool openScope) const;
-
-  private:
-  ScriptError error; // the error message
-};
-
+ScriptValueP delay_error(const ScriptError& error);
 inline ScriptValueP delay_error(const String& m) {
-  return make_intrusive<ScriptDelayedError>(ScriptError(m));
-}
-inline ScriptValueP delay_error(const ScriptError& error) {
-  return make_intrusive<ScriptDelayedError>(error);
+  return delay_error(ScriptError(m));
 }
 
 // ----------------------------------------------------------------------------- : Iterators
 
 // Iterator over a collection
 struct ScriptIterator : public ScriptValue {
-  virtual ScriptType type() const;// { return SCRIPT_ITERATOR; }
-  virtual String typeName() const;// { return "iterator"; }
-  virtual CompareWhat compareAs(String&, void const*&) const; // { return COMPARE_NO; }
+  ScriptType type() const override;
+  String typeName() const override;
+  CompareWhat compareAs(String&, void const*&) const override;
 
   /// Return the next item for this iterator, or ScriptValueP() if there is no such item
-  virtual ScriptValueP next(ScriptValueP* key_out = nullptr) = 0;
-  virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
+  ScriptValueP next(ScriptValueP* key_out = nullptr) override = 0;
+  ScriptValueP makeIterator(const ScriptValueP& thisP) const override;
 };
 
 // make an iterator over a range
@@ -121,18 +87,18 @@ ScriptValueP rangeIterator(int start, int end);
 ScriptValueP to_script(int);
 
 class ScriptCollectionBase : public ScriptValue {
-  public:
-  virtual ScriptType type() const { return SCRIPT_COLLECTION; }
-  virtual String typeName() const { return _TYPE_("collection"); }
-  virtual String toCode() const;
+public:
+  ScriptType type() const override { return SCRIPT_COLLECTION; }
+  String typeName() const override { return _TYPE_("collection"); }
+  String toCode() const override;
 };
 
 // Iterator over a collection
 template <typename Collection>
 class ScriptCollectionIterator : public ScriptIterator {
-  public:
+public:
   ScriptCollectionIterator(const Collection* col) : pos(0), col(col) {}
-  virtual ScriptValueP next(ScriptValueP* key_out) {
+  ScriptValueP next(ScriptValueP* key_out) override {
     if (pos < col->size()) {
       if (key_out) *key_out = to_script((int)pos);
       return to_script(col->at(pos++));
@@ -140,34 +106,38 @@ class ScriptCollectionIterator : public ScriptIterator {
       return ScriptValueP();
     }
   }
-  private:
+private:
   size_t pos;
   const Collection* col;
 };
 
-/// Script value containing a collection
+/// Script value containing a collection (vector like)
 template <typename Collection>
 class ScriptCollection : public ScriptCollectionBase {
-  public:
+public:
   inline ScriptCollection(const Collection* v) : value(v) {}
-  virtual String typeName() const { return _TYPE_1_("collection of", type_name(*value->begin())); }
-  virtual ScriptValueP getIndex(int index) const {
+  String typeName() const override {
+    return _TYPE_1_("collection of", type_name(*value->begin()));
+  }
+  ScriptValueP getIndex(int index) const override {
     if (index >= 0 && index < (int)value->size()) {
       return to_script(value->at(index));
     } else {
       return ScriptValue::getIndex(index);
     }
   }
-  virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const {
+  ScriptValueP makeIterator(const ScriptValueP& thisP) const override {
     return make_intrusive<ScriptCollectionIterator<Collection>>(value);
   }
-  virtual int itemCount() const { return (int)value->size(); }
+  int itemCount() const override {
+    return (int)value->size();
+  }
   /// Collections can be compared by comparing pointers
-  virtual CompareWhat compareAs(String&, void const*& compare_ptr) const {
+  CompareWhat compareAs(String&, void const*& compare_ptr) const override {
     compare_ptr = value;
     return COMPARE_AS_POINTER;
   }
-  private:
+private:
   /// Store a pointer to a collection, collections are only ever used for structures owned outside the script
   const Collection* value;
 };
@@ -197,24 +167,24 @@ ScriptValueP get_member(const IndexMap<K,V>& m, const String& name) {
 /// Script value containing a map-like collection
 template <typename Collection>
 class ScriptMap : public ScriptValue {
-  public:
+public:
   inline ScriptMap(const Collection* v) : value(v) {}
-  virtual ScriptType type() const { return SCRIPT_COLLECTION; }
-  virtual String typeName() const { return _TYPE_1_("collection of", type_name(value->begin())); }
-  virtual ScriptValueP getMember(const String& name) const {
+  ScriptType type() const override { return SCRIPT_COLLECTION; }
+  String typeName() const override { return _TYPE_1_("collection of", type_name(value->begin())); }
+  ScriptValueP getMember(const String& name) const override {
     return get_member(*value, name);
   }
-  virtual int itemCount() const { return (int)value->size(); }
-  virtual ScriptValueP dependencyMember(const String& name, const Dependency& dep) const {
+  int itemCount() const override { return (int)value->size(); }
+  ScriptValueP dependencyMember(const String& name, const Dependency& dep) const override {
     mark_dependency_member(*value, name, dep);
     return getMember(name);
   }
   /// Collections can be compared by comparing pointers
-  virtual CompareWhat compareAs(String&, void const*& compare_ptr) const {
+  CompareWhat compareAs(String&, void const*& compare_ptr) const override {
     compare_ptr = value;
     return COMPARE_AS_POINTER;
   }
-  private:
+private:
   /// Store a pointer to a collection, collections are only ever used for structures owned outside the script
   const Collection* value;
 };
@@ -223,7 +193,7 @@ class ScriptMap : public ScriptValue {
 
 /// Script value containing a custom collection, returned from script functions
 class ScriptCustomCollection : public ScriptCollectionBase {
-  public:
+public:
   ScriptValueP getMember(const String& name) const override;
   ScriptValueP getIndex(int index) const override;
   ScriptValueP makeIterator(const ScriptValueP& thisP) const override;
@@ -248,19 +218,19 @@ DECLARE_POINTER_TYPE(ScriptCustomCollection);
 
 /// Script value containing the concatenation of two collections
 class ScriptConcatCollection : public ScriptCollectionBase {
-  public:
+public:
   inline ScriptConcatCollection(ScriptValueP a, ScriptValueP b) : a(a), b(b) {}
-  virtual ScriptValueP getMember(const String& name) const;
-  virtual ScriptValueP getIndex(int index) const;
-  virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const;
-  virtual int itemCount() const { return a->itemCount() + b->itemCount(); }
+  ScriptValueP getMember(const String& name) const override;
+  ScriptValueP getIndex(int index) const override;
+  ScriptValueP makeIterator(const ScriptValueP& thisP) const override;
+  int itemCount() const override { return a->itemCount() + b->itemCount(); }
   /// Collections can be compared by comparing pointers
-  virtual CompareWhat compareAs(String&, void const*& compare_ptr) const {
+  CompareWhat compareAs(String&, void const*& compare_ptr) const override {
     compare_ptr = this;
     return COMPARE_AS_POINTER;
   }
 
-  private:
+private:
   ScriptValueP a,b;
   friend class ScriptConcatCollectionIterator;
 };
@@ -270,24 +240,37 @@ class ScriptConcatCollection : public ScriptCollectionBase {
 /// Script value containing an object (pointer)
 template <typename T>
 class ScriptObject : public ScriptValue {
-  public:
+public:
   inline ScriptObject(const T& v) : value(v) {}
-  virtual ScriptType type() const { ScriptValueP d = getDefault(); return d ? d->type() : SCRIPT_OBJECT; }
-  virtual String typeName() const { return type_name(*value); }
-  virtual operator String() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator String(); }
-  virtual operator double() const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator double(); }
-  virtual operator int()    const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator int(); }
-  virtual operator bool()   const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator bool(); }
-  virtual operator Color()  const { ScriptValueP d = getDefault(); return d ? *d : ScriptValue::operator Color(); }
-  virtual String toCode()   const { ScriptValueP d = getDefault(); return d ? d->toCode() : to_code(*value); }
-  virtual GeneratedImageP toImage(const ScriptValueP& thisP) const {
+  ScriptType type() const override { ScriptValueP d = getDefault(); return d ? d->type() : SCRIPT_OBJECT; }
+  String typeName() const override { return type_name(*value); }
+  String toString() const override {
+    ScriptValueP d = getDefault(); return d ? d->toString() : ScriptValue::toString();
+  }
+  double toDouble() const override {
+    ScriptValueP d = getDefault(); return d ? d->toDouble() : ScriptValue::toDouble();
+  }
+  int toInt() const override {
+    ScriptValueP d = getDefault(); return d ? d->toInt() : ScriptValue::toInt();
+  }
+  bool toBool() const override {
+    ScriptValueP d = getDefault(); return d ? d->toBool() : ScriptValue::toBool();
+  }
+  Color toColor() const override {
+    ScriptValueP d = getDefault(); return d ? d->toColor() : ScriptValue::toColor();
+  }
+  String toCode() const override {
+    ScriptValueP d = getDefault(); return d ? d->toCode() : to_code(*value);
+  }
+  GeneratedImageP toImage(const ScriptValueP& thisP) const override {
     ScriptValueP d = getDefault(); return d ? d->toImage(d) : ScriptValue::toImage(thisP);
   }
-  virtual ScriptValueP getMember(const String& name) const {
+  ScriptValueP getMember(const String& name) const override {
     #if USE_SCRIPT_PROFILING
       Timer t;
       Profiler prof(t, (void*)mangled_name(typeid(T)), _("get member of ") + type_name(*value));
     #endif
+    // Use reflection to find the member of the object
     GetMember gm(name);
     gm.handle(*value);
     if (gm.result()) return gm.result();
@@ -301,22 +284,24 @@ class ScriptObject : public ScriptValue {
       }
     }
   }
-  virtual ScriptValueP getIndex(int index) const { ScriptValueP d = getDefault(); return d ? d->getIndex(index) : ScriptValue::getIndex(index); }
-  virtual ScriptValueP dependencyMember(const String& name, const Dependency& dep) const {
+  ScriptValueP getIndex(int index) const override {
+    ScriptValueP d = getDefault(); return d ? d->getIndex(index) : ScriptValue::getIndex(index);
+  }
+  ScriptValueP dependencyMember(const String& name, const Dependency& dep) const override {
     mark_dependency_member(*value, name, dep);
     return getMember(name);
   }
-  virtual void dependencyThis(const Dependency& dep) {
+  void dependencyThis(const Dependency& dep) override {
     mark_dependency_value(*value, dep);
   }
-  virtual ScriptValueP makeIterator(const ScriptValueP& thisP) const {
+  ScriptValueP makeIterator(const ScriptValueP& thisP) const override {
     ScriptValueP it = make_iterator(*value);
     if (it) return it;
     ScriptValueP d = getDefault();
     if (d) return d->makeIterator(d);
     return ScriptValue::makeIterator(thisP);
   }
-  virtual int itemCount() const {
+  int itemCount() const override {
     int i = item_count(*value);
     if (i >= 0) return i;
     ScriptValueP d = getDefault();
@@ -324,7 +309,7 @@ class ScriptObject : public ScriptValue {
     return ScriptValue::itemCount();
   }
   /// Objects can be compared by comparing pointers
-  virtual CompareWhat compareAs(String& compare_str, void const*& compare_ptr) const {
+  CompareWhat compareAs(String& compare_str, void const*& compare_ptr) const override {
     ScriptValueP d = getDefault();
     if (d) {
       return d->compareAs(compare_str, compare_ptr);
@@ -335,7 +320,7 @@ class ScriptObject : public ScriptValue {
   }
   /// Get access to the value
   inline T getValue() const { return value; }
-  private:
+private:
   T value; ///< The object
   ScriptValueP getDefault() const {
     GetDefaultMember gdm;
@@ -348,12 +333,12 @@ class ScriptObject : public ScriptValue {
 
 /// A wrapper around a function that gives default arguments
 class ScriptClosure : public ScriptValue {
-  public:
+public:
   ScriptClosure(ScriptValueP fun) : fun(fun) {}
 
-  virtual ScriptType type() const;
-  virtual String typeName() const;
-  virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const;
+  ScriptType type() const override;
+  String typeName() const override;
+  ScriptValueP dependencies(Context& ctx, const Dependency& dep) const override;
 
   /// Add a binding
   void addBinding(Variable v, const ScriptValueP& value);
@@ -363,69 +348,87 @@ class ScriptClosure : public ScriptValue {
   /// Try to simplify this closure, returns a value if successful
   ScriptValueP simplify();
 
+  ScriptValueP eval(Context& ctx, bool openScope) const override;
+
   /// The wrapped function
   ScriptValueP                          fun;
   /// The default argument bindings
   vector<pair<Variable,ScriptValueP> >  bindings;
 
-  protected:
-  virtual ScriptValueP do_eval(Context& ctx, bool openScope) const;
-
-  private:
+private:
   /// Apply the bindings in a context
   void applyBindings(Context& ctx) const;
 };
 
 /// Turn a script function into a rule, a.k.a. a delayed closure
 class ScriptRule : public ScriptValue {
-  public:
+public:
   inline ScriptRule(const ScriptValueP& fun) : fun(fun) {}
-  virtual ScriptType type() const;
-  virtual String typeName() const;
+  ScriptType type() const override;
+  String typeName() const override;
+  ScriptValueP eval(Context& ctx, bool openScope) const override;
 
-  protected:
-  virtual ScriptValueP do_eval(Context& ctx, bool openScope) const;
-
-  private:
+private:
   ScriptValueP fun;
 };
 
 // ----------------------------------------------------------------------------- : Creating
 
+extern ScriptValueP script_nil; ///< The preallocated nil value
+extern ScriptValueP script_true; ///< The preallocated true value
+extern ScriptValueP script_false; ///< The preallocated false value
+extern ScriptValueP dependency_dummy; ///< Dummy value used during dependency analysis
+
 /// Convert a value to a script value
-       ScriptValueP to_script(int           v);
-inline ScriptValueP to_script(long          v) { return to_script((int) v); }
-       ScriptValueP to_script(double        v);
-       ScriptValueP to_script(const String& v);
-       ScriptValueP to_script(Color         v);
-       ScriptValueP to_script(wxDateTime    v);
-inline ScriptValueP to_script(bool          v) { return v ? script_true : script_false; }
+ScriptValueP to_script(int           v);
+ScriptValueP to_script(double        v);
+ScriptValueP to_script(const String& v);
+ScriptValueP to_script(Color         v);
+ScriptValueP to_script(wxDateTime    v);
+
+inline ScriptValueP to_script(long v) {
+  return to_script((int) v);
+}
+inline ScriptValueP to_script(bool v) {
+  return v ? script_true : script_false;
+}
+
 template <typename T>
-inline ScriptValueP to_script(const vector<T>*     v) { return make_intrusive<ScriptCollection<vector<T>>>(v); }
+inline ScriptValueP to_script(const vector<T>* v) {
+  return make_intrusive<ScriptCollection<vector<T>>>(v);
+}
 template <typename K, typename V>
-inline ScriptValueP to_script(const map<K,V>*      v) { return make_intrusive<ScriptMap<map<K,V>>>(v); }
+inline ScriptValueP to_script(const map<K,V>* v) {
+  return make_intrusive<ScriptMap<map<K,V>>>(v);
+}
 template <typename K, typename V>
-inline ScriptValueP to_script(const IndexMap<K,V>* v) { return make_intrusive<ScriptMap<IndexMap<K,V>>>(v); }
+inline ScriptValueP to_script(const IndexMap<K,V>* v) {
+  return make_intrusive<ScriptMap<IndexMap<K,V>>>(v);
+}
 template <typename T>
-inline ScriptValueP to_script(const intrusive_ptr<T>& v) { return make_intrusive<ScriptObject<intrusive_ptr<T>>>(v); }
+inline ScriptValueP to_script(const intrusive_ptr<T>& v) {
+  return make_intrusive<ScriptObject<intrusive_ptr<T>>>(v);
+}
 template <typename T>
-inline ScriptValueP to_script(const Defaultable<T>& v) { return to_script(v()); }
+inline ScriptValueP to_script(const Defaultable<T>& v) {
+  return to_script(v());
+}
 
 // ----------------------------------------------------------------------------- : Destructing
 
 /// Convert a value from a script value to a normal value
-template <typename T> inline T  from_script              (const ScriptValueP& value) {
+template <typename T> inline T from_script(const ScriptValueP& value) {
   ScriptObject<T>* o = dynamic_cast<ScriptObject<T>*>(value.get());
   if (!o) {
     throw ScriptErrorConversion(value->typeName(), _TYPE_("object" ));
   }
   return o->getValue();
 }
-template <> inline ScriptValueP from_script<ScriptValueP>(const ScriptValueP& value) { return value;  }
-template <> inline String       from_script<String>      (const ScriptValueP& value) { return *value; }
-template <> inline int          from_script<int>         (const ScriptValueP& value) { return *value; }
-template <> inline double       from_script<double>      (const ScriptValueP& value) { return *value; }
-template <> inline bool         from_script<bool>        (const ScriptValueP& value) { return *value; }
-template <> inline Color        from_script<Color>       (const ScriptValueP& value) { return *value; }
-template <> inline wxDateTime   from_script<wxDateTime>  (const ScriptValueP& value) { return *value; }
+template <> inline ScriptValueP from_script<ScriptValueP>(const ScriptValueP& value) { return value; }
+template <> inline String       from_script<String>      (const ScriptValueP& value) { return value->toString(); }
+template <> inline int          from_script<int>         (const ScriptValueP& value) { return value->toInt(); }
+template <> inline double       from_script<double>      (const ScriptValueP& value) { return value->toDouble(); }
+template <> inline bool         from_script<bool>        (const ScriptValueP& value) { return value->toBool(); }
+template <> inline Color        from_script<Color>       (const ScriptValueP& value) { return value->toColor(); }
+template <> inline wxDateTime   from_script<wxDateTime>  (const ScriptValueP& value) { return value->toDateTime(); }
 

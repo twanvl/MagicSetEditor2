@@ -508,7 +508,7 @@ void ConsolePanel::exec(String const& command) {
       message->bitmap = wxBitmap(image);
     } else if (type == SCRIPT_COLOR) {
       message->text = result->toCode();
-      Color color = result->operator Color();
+      Color color = result->toColor();
       wxImage image(30,20);
       fill_image(image,color);
       set_alpha(image, color.Alpha() / 255.0);

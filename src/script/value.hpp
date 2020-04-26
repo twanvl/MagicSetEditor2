@@ -46,7 +46,7 @@ enum CompareWhat
 /// A value that can be handled by the scripting engine.
 /// Actual values are derived types
 class ScriptValue : public IntrusivePtrBaseWithDelete {
-  public:
+public:
   virtual ~ScriptValue() {}
 
   /// Information on the type of this value
@@ -58,30 +58,22 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
   virtual CompareWhat compareAs(String& compare_str, void const*& compare_ptr) const;
 
   /// Convert this value to a string
-  virtual operator String() const;
+  virtual String toString() const;
   /// Convert this value to a double
-  virtual operator double() const;
+  virtual double toDouble() const;
   /// Convert this value to an integer
-  virtual operator int()    const;
+  virtual int toInt() const;
   /// Convert this value to a boolean
-  virtual operator bool()   const;
+  virtual bool toBool() const;
   /// Convert this value to a color
-  virtual operator Color() const;
+  virtual Color toColor() const;
   /// Convert this value to a wxDateTime
-  virtual operator wxDateTime() const;
+  virtual wxDateTime toDateTime() const;
+  /// Convert this value to an image
+  virtual GeneratedImageP toImage(const ScriptValueP& thisP) const;
 
   /// Script code to generate this value
   virtual String toCode() const;
-
-  /// Explicit overload to convert to a string
-  /** This is sometimes necessary, because wxString has an int constructor,
-   *  which confuses gcc. */
-  inline String toString() const { return *this; }
-  /// Explicit overload to convert to a wxDateTime
-  /** Overload resolution is sometimes confused by other conversions */
-  inline wxDateTime toDateTime() const { return *this; }
-  /// Convert this value to an image
-  virtual GeneratedImageP toImage(const ScriptValueP& thisP) const;
 
   /// Get a member variable from this value
   virtual ScriptValueP getMember(const String& name) const;
@@ -96,18 +88,16 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
   virtual ScriptValueP dependencyName(const ScriptValue& container, const Dependency&) const;
 
   /// Evaluate this value (if it is a function)
-  ScriptValueP eval(Context& ctx, bool openScope = true) const {
-    return do_eval(ctx, openScope);
-  }
+  virtual ScriptValueP eval(Context& ctx, bool openScope = true) const;
   /// Mark the scripts that this function depends on
   /** Return value is an abstract version of the return value of eval */
   virtual ScriptValueP dependencies(Context&, const Dependency&) const;
   /// Simplify/optimize a default argument closure of this function.
-  /** Should return a simplification of the closure or null to keep the closure.
+  /** Should return a simplification of the closure or nullptr to keep the closure.
    *  Alternatively, the closure may be modified in place.
    */
   virtual ScriptValueP simplifyClosure(ScriptClosure&) const;
-  
+
   /// Return an iterator for the current collection, an iterator is a value that has next()
   /** thisP is a shared_ptr for this collection, needed for the iterator to take ownership of it.
     * It can be null if the iterator always lives shorter than the collection.
@@ -120,15 +110,7 @@ class ScriptValue : public IntrusivePtrBaseWithDelete {
   virtual int itemCount() const;
   /// Get a member at the given index
   virtual ScriptValueP getIndex(int index) const;
-
-  protected:
-  virtual ScriptValueP do_eval(Context& ctx, bool openScope) const;
 };
-
-extern ScriptValueP script_nil;   ///< The preallocated nil value
-extern ScriptValueP script_true;  ///< The preallocated true value
-extern ScriptValueP script_false; ///< The preallocated false value
-extern ScriptValueP dependency_dummy; ///< Dummy value used during dependency analysis
 
 /// compare script values for equallity
 bool equal(const ScriptValueP& a, const ScriptValueP& b);

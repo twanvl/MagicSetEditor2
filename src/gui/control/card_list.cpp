@@ -319,7 +319,7 @@ int CardListBase::OnGetItemImage(long pos) const {
 wxListItemAttr* CardListBase::OnGetItemAttr(long pos) const {
   if (!set->game->card_list_color_script) return nullptr;
   Context& ctx = set->getContext(getCard(pos));
-  item_attr.SetTextColour(*set->game->card_list_color_script.invoke(ctx));
+  item_attr.SetTextColour(set->game->card_list_color_script.invoke(ctx)->toColor());
   return &item_attr;
 }
 

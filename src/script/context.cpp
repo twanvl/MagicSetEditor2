@@ -67,7 +67,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
         }
         // Conditional jump
         case I_JUMP_IF_NOT: {
-          bool condition = *stack.back();
+          bool condition = stack.back()->toBool();
           stack.pop_back();
           if (!condition) {
             instr = &script.instructions[0] + i.data;
@@ -76,7 +76,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
         }
         // Short-circuiting and/or = conditional jump without pop
         case I_JUMP_SC_AND: {
-          bool condition = *stack.back();
+          bool condition = stack.back()->toBool();
           if (!condition) {
             instr = &script.instructions[0] + i.data;
           } else {
@@ -85,7 +85,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
           break;
         }
         case I_JUMP_SC_OR: {
-          bool condition = *stack.back();
+          bool condition = stack.back()->toBool();
           if (condition) {
             instr = &script.instructions[0] + i.data;
           } else {
@@ -109,7 +109,7 @@ ScriptValueP Context::eval(const Script& script, bool useScope) {
         
         // Get an object member
         case I_MEMBER_C: {
-          stack.back() = stack.back()->getMember(*script.constants[i.data]);
+          stack.back() = stack.back()->getMember(script.constants[i.data]->toString());
           break;
         }
         // Loop over a container, push next value or jump
@@ -367,13 +367,13 @@ void instrUnary(UnaryInstructionType i, ScriptValueP& a) {
     case I_NEGATE: {
       ScriptType at = a->type();
       if (at == SCRIPT_DOUBLE) {
-        a = to_script(-(double)*a);
+        a = to_script(-a->toDouble());
       } else {
-        a = to_script(-(int)*a);
+        a = to_script(-a->toInt());
       }
       break;
     } case I_NOT:
-      a = to_script(!(bool)*a);
+      a = to_script(!a->toBool());
       break;
   }
 }
@@ -382,19 +382,18 @@ void instrUnary(UnaryInstructionType i, ScriptValueP& a) {
 
 /// Composition of two functions
 class ScriptCompose : public ScriptValue {
-  public:
+public:
   ScriptCompose(ScriptValueP a, ScriptValueP b) : a(a), b(b) {}
   
-  virtual ScriptType type() const { return SCRIPT_FUNCTION; }
-  virtual String typeName() const { return _("function composition"); }
+  ScriptType type() const override { return SCRIPT_FUNCTION; }
+  String typeName() const override { return _("function composition"); }
 
-  virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const {
+  ScriptValueP dependencies(Context& ctx, const Dependency& dep) const override {
     ctx.setVariable(SCRIPT_VAR_input, a->dependencies(ctx, dep));
     return b->dependencies(ctx, dep);
   }
 
-  protected:
-  virtual ScriptValueP do_eval(Context& ctx, bool openScope) const {
+  ScriptValueP eval(Context& ctx, bool openScope) const override {
     #if USE_SCRIPT_PROFILING
       Timer timer;
       {
@@ -417,7 +416,7 @@ class ScriptCompose : public ScriptValue {
     #endif
   }
 
-  private:
+private:
   ScriptValueP a,b;
 };
 
@@ -425,29 +424,29 @@ class ScriptCompose : public ScriptValue {
 
 // operator on ints
 #define OPERATOR_I(OP) \
-  a = to_script((int)*a  OP  (int)*b); \
+  a = to_script(a->toInt() OP b->toInt()); \
   break
 
 // operator on bools
 #define OPERATOR_B(OP) \
-  a = to_script((bool)*a  OP  (bool)*b); \
+  a = to_script(a->toBool() OP b->toBool()); \
   break
 
 // operator on doubles or ints
 #define OPERATOR_DI(OP) \
   if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) { \
-    a = to_script((double)*a  OP  (double)*b); \
+    a = to_script(a->toDouble() OP b->toDouble()); \
   } else { \
-    a = to_script((int)*a     OP  (int)*b); \
+    a = to_script(a->toInt() OP b->toInt()); \
   } \
   break
 
 // operator on doubles or ints, defined as a function
 #define OPERATOR_FUN_DI(OP) \
   if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) { \
-    a = to_script(OP((double)*a,  (double)*b)); \
+    a = to_script(OP(a->toDouble(), b->toDouble())); \
   } else { \
-    a = to_script(OP((int)*a,     (int)*b)); \
+    a = to_script(OP(a->toInt(), b->toInt())); \
   } \
   break
 
@@ -455,10 +454,10 @@ class ScriptCompose : public ScriptValue {
 void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP& b) {
   switch (i) {
     case I_MEMBER:
-      a = a->getMember(*b);
+      a = a->getMember(b->toString());
       break;
     case I_ITERATOR_R:
-      a = rangeIterator(*a, *b);
+      a = rangeIterator(a->toInt(), b->toInt());
       break;
     default:
     ScriptType at = a->type(), bt = b->type();
@@ -473,45 +472,45 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
       } else if (at == SCRIPT_COLLECTION && bt == SCRIPT_COLLECTION) {
         a = make_intrusive<ScriptConcatCollection>(a, b);
       } else if (at == SCRIPT_INT    && bt == SCRIPT_INT) {
-        a = to_script((int)*a        +  (int)*b);
+        a = to_script(a->toInt() + b->toInt());
       } else if ((at == SCRIPT_INT || at == SCRIPT_DOUBLE) &&
                  (bt == SCRIPT_INT || bt == SCRIPT_DOUBLE)) {
-        a = to_script((double)*a     +  (double)*b);
+        a = to_script(a->toDouble() + b->toDouble());
       } else {
-        a = to_script(a->toString()  +  b->toString());
+        a = to_script(a->toString() + b->toString());
       }
       break;
     case I_SUB:    OPERATOR_DI(-);
     case I_MUL:    OPERATOR_DI(*);
     case I_FDIV:
-      a = to_script((double)*a / (double)*b);
+      a = to_script(a->toDouble() / b->toDouble());
       break;
     case I_DIV:
       if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {
-        a = to_script((int)((double)*a / (double)*b));
+        a = to_script((int)(a->toDouble() / b->toDouble()));
       } else {
-        a = to_script((int)*a / (int)*b);
+        a = to_script(a->toInt() / b->toInt());
       }
       break;
     case I_MOD:
       if (at == SCRIPT_DOUBLE || bt == SCRIPT_DOUBLE) {
-        a = to_script(fmod((double)*a, (double)*b));
+        a = to_script(fmod(a->toDouble(), b->toDouble()));
       } else {
-        a = to_script((int)*a % (int)*b);
+        a = to_script(a->toInt() % b->toInt());
       }
       break;
     case I_POW:
       if (bt == SCRIPT_INT) {
-        int bi = *b;
+        int bi = b->toInt();
         if (at == SCRIPT_DOUBLE) {
-          double aa = *a;
+          double aa = a->toDouble();
           if      (bi == 0) a = to_script(1);
           else if (bi == 1) a = to_script(aa);
           else if (bi == 2) a = to_script(aa * aa);
           else if (bi == 3) a = to_script(aa * aa * aa);
           else              a = to_script(pow(aa,bi));
         } else {
-          int aa = *a;
+          int aa = a->toInt();
           if      (bi == 0) a = to_script(1);
           else if (bi == 1) a = to_script(aa);
           else if (bi == 2) a = to_script(aa * aa);
@@ -519,20 +518,20 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
           else              a = to_script(pow((double)aa,bi));
         }
       } else {
-        a = to_script(pow((double)*a, (double)*b));
+        a = to_script(pow(a->toDouble(), b->toDouble()));
       }
       break;
-    case I_AND:    OPERATOR_B(&&);
+    case I_AND:   OPERATOR_B(&&);
     case I_OR:    OPERATOR_B(||);
-    case I_XOR:    OPERATOR_B(!=);
+    case I_XOR:   OPERATOR_B(!=);
     case I_EQ:    a = to_script( equal(a,b));  break;
-    case I_NEQ:    a = to_script(!equal(a,b));  break;
+    case I_NEQ:   a = to_script(!equal(a,b));  break;
     case I_LT:    OPERATOR_DI(<);
     case I_GT:    OPERATOR_DI(>);
     case I_LE:    OPERATOR_DI(<=);
     case I_GE:    OPERATOR_DI(>=);
-    case I_MIN:    OPERATOR_FUN_DI(min);
-    case I_MAX:    OPERATOR_FUN_DI(max);
+    case I_MIN:   OPERATOR_FUN_DI(min);
+    case I_MAX:   OPERATOR_FUN_DI(max);
     case I_OR_ELSE:
       if (at == SCRIPT_ERROR) a = b;
       break;
@@ -546,7 +545,7 @@ void instrBinary (BinaryInstructionType  i, ScriptValueP& a, const ScriptValueP&
 void instrTernary(TernaryInstructionType i, ScriptValueP& a, const ScriptValueP& b, const ScriptValueP& c) {
   switch (i) {
     case I_RGB:
-      a = to_script(Color((int)*a, (int)*b, (int)*c));
+      a = to_script(Color(a->toInt(), b->toInt(), c->toInt()));
       break;
   }
 }
@@ -556,7 +555,7 @@ void instrTernary(TernaryInstructionType i, ScriptValueP& a, const ScriptValueP&
 void instrQuaternary(QuaternaryInstructionType i, ScriptValueP& a, const ScriptValueP& b, const ScriptValueP& c, const ScriptValueP& d) {
   switch (i) {
     case I_RGBA:
-      a = to_script(Color((int)*a, (int)*b, (int)*c, (int)*d));
+      a = to_script(Color(a->toInt(), b->toInt(), c->toInt(), d->toInt()));
       break;
   }
 }

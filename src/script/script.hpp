@@ -163,11 +163,11 @@ void init_script_variables();
  *  The script is itself a ScriptValue
  */
 class Script : public ScriptValue {
-  public:
+public:
   
-  virtual ScriptType type() const;
-  virtual String typeName() const;
-  virtual ScriptValueP dependencies(Context& ctx, const Dependency&) const;
+  ScriptType type() const override;
+  String typeName() const override;
+  ScriptValueP dependencies(Context& ctx, const Dependency&) const override;
   
   /// Add a jump instruction, later comeFrom should be called on the returned value
   unsigned int addInstruction(InstructionType t);
@@ -196,10 +196,9 @@ class Script : public ScriptValue {
   /// Output an instruction in a human readable format
   String dumpInstr(unsigned int pos, Instruction i) const;
 
-  protected:
-  virtual ScriptValueP do_eval(Context& ctx, bool openScope) const;
+  ScriptValueP eval(Context& ctx, bool openScope = true) const override;
 
-  private:
+private:
   /// Data of the instructions that make up this script
   vector<Instruction>  instructions;
   /// Constant values that can be referred to from the script

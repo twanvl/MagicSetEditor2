@@ -59,9 +59,9 @@ class GeneratedImage : public ScriptValue {
   /// Is this image blank?
   virtual bool isBlank() const { return false; }
   
-  virtual ScriptType type() const;
-  virtual String typeName() const;
-  virtual GeneratedImageP toImage(const ScriptValueP& thisP) const;
+  ScriptType type() const override;
+  String typeName() const override;
+  GeneratedImageP toImage(const ScriptValueP& thisP) const override;
 };
 
 /// Resize an image to conform to the options
@@ -71,13 +71,13 @@ Image conform_image(const Image&, const GeneratedImage::Options&);
 
 /// Apply some filter to a single image
 class SimpleFilterImage : public GeneratedImage {
-  public:
+public:
   inline SimpleFilterImage(const GeneratedImageP& image)
     : image(image)
   {}
-  virtual ImageCombine combine() const { return image->combine(); }
-  virtual bool local() const { return image->local(); }
-  protected:
+  ImageCombine combine() const override { return image->combine(); }
+  bool local() const override { return image->local(); }
+protected:
   GeneratedImageP image;
 };
 
@@ -85,14 +85,14 @@ class SimpleFilterImage : public GeneratedImage {
 
 /// An image generator that returns a blank image
 class BlankImage : public GeneratedImage {
-  public:
-  virtual Image generate(const Options&) const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  virtual bool isBlank() const { return true; }
+public:
+  Image generate(const Options&) const override;
+  bool operator == (const GeneratedImage& that) const override;
+  bool isBlank() const override { return true; }
   
   // Why is this not thread safe? What is GTK smoking?
   #ifdef __WXGTK__
-    virtual bool threadSafe() const { return false; }
+    bool threadSafe() const override { return false; }
   #endif
 };
 
@@ -100,15 +100,15 @@ class BlankImage : public GeneratedImage {
 
 /// An image generator that linearly blends two other images
 class LinearBlendImage : public GeneratedImage {
-  public:
+public:
   inline LinearBlendImage(const GeneratedImageP& image1, const GeneratedImageP& image2, double x1, double y1, double x2, double y2)
     : image1(image1), image2(image2), x1(x1), y1(y1), x2(x2), y2(y2)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual ImageCombine combine() const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  virtual bool local() const { return image1->local() && image2->local(); }
-  private:
+  Image generate(const Options& opt) const override;
+  ImageCombine combine() const override;
+  bool operator == (const GeneratedImage& that) const override;
+  bool local() const override { return image1->local() && image2->local(); }
+private:
   GeneratedImageP image1, image2;
   double x1, y1, x2, y2;
 };
@@ -117,15 +117,15 @@ class LinearBlendImage : public GeneratedImage {
 
 /// An image generator that blends two other images using a third as a mask
 class MaskedBlendImage : public GeneratedImage {
-  public:
+public:
   inline MaskedBlendImage(const GeneratedImageP& light, const GeneratedImageP& dark, const GeneratedImageP& mask)
     : light(light), dark(dark), mask(mask)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual ImageCombine combine() const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  virtual bool local() const { return light->local() && dark->local() && mask->local(); }
-  private:
+  Image generate(const Options& opt) const override;
+  ImageCombine combine() const override;
+  bool operator == (const GeneratedImage& that) const override;
+  bool local() const override { return light->local() && dark->local() && mask->local(); }
+private:
   GeneratedImageP light, dark, mask;
 };
 
@@ -133,15 +133,15 @@ class MaskedBlendImage : public GeneratedImage {
 
 /// An image generator that blends two other images using an ImageCombine function
 class CombineBlendImage : public GeneratedImage {
-  public:
+public:
   inline CombineBlendImage(const GeneratedImageP& image1, const GeneratedImageP& image2, ImageCombine image_combine)
     : image1(image1), image2(image2), image_combine(image_combine)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual ImageCombine combine() const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  virtual bool local() const { return image1->local() && image2->local(); }
-  private:
+  Image generate(const Options& opt) const override;
+  ImageCombine combine() const override;
+  bool operator == (const GeneratedImage& that) const override;
+  bool local() const override { return image1->local() && image2->local(); }
+private:
   GeneratedImageP image1, image2;
   ImageCombine image_combine;
 };
@@ -150,25 +150,25 @@ class CombineBlendImage : public GeneratedImage {
 
 /// Change the alpha channel of an image
 class SetMaskImage : public SimpleFilterImage {
-  public:
+public:
   inline SetMaskImage(const GeneratedImageP& image, const GeneratedImageP& mask)
     : SimpleFilterImage(image), mask(mask)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  private:
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+private:
   GeneratedImageP mask;
 };
 
 /// Change the alpha channel of an image
 class SetAlphaImage : public SimpleFilterImage {
-  public:
+public:
   inline SetAlphaImage(const GeneratedImageP& image, double alpha)
     : SimpleFilterImage(image), alpha(alpha)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  private:
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+private:
   double alpha;
 };
 
@@ -176,14 +176,14 @@ class SetAlphaImage : public SimpleFilterImage {
 
 /// Change the combine mode
 class SetCombineImage : public SimpleFilterImage {
-  public:
+public:
   inline SetCombineImage(const GeneratedImageP& image, ImageCombine image_combine)
     : SimpleFilterImage(image), image_combine(image_combine)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual ImageCombine combine() const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  private:
+  Image generate(const Options& opt) const override;
+  ImageCombine combine() const override;
+  bool operator == (const GeneratedImage& that) const override;
+private:
   ImageCombine image_combine;
 };
 
@@ -191,13 +191,13 @@ class SetCombineImage : public SimpleFilterImage {
 
 /// Saturate/desaturate an image
 class SaturateImage : public SimpleFilterImage {
-  public:
+public:
   inline SaturateImage(const GeneratedImageP& image, double amount)
     : SimpleFilterImage(image), amount(amount)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  private:
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+private:
   double amount;
 };
 
@@ -205,36 +205,36 @@ class SaturateImage : public SimpleFilterImage {
 
 /// Invert an image
 class InvertImage : public SimpleFilterImage {
-  public:
+public:
   inline InvertImage(const GeneratedImageP& image)
     : SimpleFilterImage(image)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
 };
 
 // ----------------------------------------------------------------------------- : RecolorImage
 
 /// Recolor an image
 class RecolorImage : public SimpleFilterImage {
-  public:
+public:
   inline RecolorImage(const GeneratedImageP& image, Color color)
     : SimpleFilterImage(image), color(color)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  private:
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+private:
   Color color;
 };
 /// Recolor an image, with custom colors
 class RecolorImage2 : public SimpleFilterImage {
-  public:
+public:
   inline RecolorImage2(const GeneratedImageP& image, Color red, Color green, Color blue, Color white)
     : SimpleFilterImage(image), red(red), green(green), blue(blue), white(white)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  private:
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+private:
   Color red,green,blue,white;
 };
 
@@ -246,29 +246,29 @@ class FlipImageHorizontal : public SimpleFilterImage {
   inline FlipImageHorizontal(const GeneratedImageP& image)
     : SimpleFilterImage(image)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
 };
 
 /// Flip an image vertically
 class FlipImageVertical : public SimpleFilterImage {
-  public:
+public:
   inline FlipImageVertical(const GeneratedImageP& image)
     : SimpleFilterImage(image)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
 };
 
 /// Rotate an image
 class RotateImage : public SimpleFilterImage {
-  public:
+public:
   inline RotateImage(const GeneratedImageP& image, Radians angle)
     : SimpleFilterImage(image), angle(angle)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  private:
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+private:
   Radians angle;
 };
 
@@ -276,13 +276,13 @@ class RotateImage : public SimpleFilterImage {
 
 /// Enlarge an image by adding a border around it
 class EnlargeImage : public SimpleFilterImage {
-  public:
+public:
   inline EnlargeImage(const GeneratedImageP& image, double border_size)
     : SimpleFilterImage(image), border_size(fabs(border_size))
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  private:
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+private:
   double border_size;
 };
 
@@ -290,13 +290,13 @@ class EnlargeImage : public SimpleFilterImage {
 
 /// Crop an image at a certain point, to a certain size
 class CropImage : public SimpleFilterImage {
-  public:
+public:
   inline CropImage(const GeneratedImageP& image, double width, double height, double offset_x, double offset_y)
     : SimpleFilterImage(image), width(width), height(height), offset_x(offset_x), offset_y(offset_y)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  private:
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+private:
   double width, height;
   double offset_x, offset_y;
 };
@@ -305,14 +305,14 @@ class CropImage : public SimpleFilterImage {
 
 /// Add a drop shadow to an image
 class DropShadowImage : public SimpleFilterImage {
-  public:
+public:
   inline DropShadowImage(const GeneratedImageP& image, double offset_x, double offset_y, double shadow_alpha, double shadow_blur_radius, Color shadow_color)
     : SimpleFilterImage(image), offset_x(offset_x), offset_y(offset_y)
     , shadow_alpha(shadow_alpha), shadow_blur_radius(shadow_blur_radius), shadow_color(shadow_color)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  private:
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+private:
   double offset_x, offset_y;
   double shadow_alpha;
   double shadow_blur_radius;
@@ -323,13 +323,13 @@ class DropShadowImage : public SimpleFilterImage {
 
 /// Load an image from a file in a package
 class PackagedImage : public GeneratedImage {
-  public:
+public:
   inline PackagedImage(const String& filename)
     : filename(filename)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  private:
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+private:
   String filename;
 };
 
@@ -341,9 +341,9 @@ class BuiltInImage : public GeneratedImage {
   inline BuiltInImage(const String& name)
     : name(name)
   {}
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  private:
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+private:
   String name;
 };
 
@@ -351,17 +351,17 @@ class BuiltInImage : public GeneratedImage {
 
 /// Use a symbol as an image
 class SymbolToImage : public GeneratedImage {
-  public:
+public:
   SymbolToImage(bool is_local, const String& filename, Age age, const SymbolVariationP& variation);
   ~SymbolToImage();
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  virtual bool local() const { return is_local; }
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+  bool local() const override { return is_local; }
   
   #ifdef __WXGTK__
-    virtual bool threadSafe() const { return false; }
+    bool threadSafe() const override { return false; }
   #endif
-  private:
+private:
   SymbolToImage(const SymbolToImage&); // copy ctor
   bool             is_local; ///< Use local package?
   String           filename;
@@ -373,13 +373,13 @@ class SymbolToImage : public GeneratedImage {
 
 /// Use an image from an ImageValue as an image
 class ImageValueToImage : public GeneratedImage {
-  public:
+public:
   ImageValueToImage(const String& filename, Age age);
   ~ImageValueToImage();
-  virtual Image generate(const Options& opt) const;
-  virtual bool operator == (const GeneratedImage& that) const;
-  virtual bool local() const { return true; }
-  private:
+  Image generate(const Options& opt) const override;
+  bool operator == (const GeneratedImage& that) const override;
+  bool local() const override { return true; }
+private:
   ImageValueToImage(const ImageValueToImage&); // copy ctor
   String filename;
   Age    age; ///< Age the symbol was last updated

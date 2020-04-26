@@ -111,7 +111,7 @@ PackInstance::PackInstance(const PackType& pack_type, PackGenerator& parent)
   if (pack_type.filter) {
     FOR_EACH(card, parent.set->cards) {
       Context& ctx = parent.set->getContext(card);
-      bool keep = *pack_type.filter.invoke(ctx);
+      bool keep = pack_type.filter.invoke(ctx)->toBool();
       if (keep) {
         cards.push_back(card);
       }

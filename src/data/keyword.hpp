@@ -190,14 +190,14 @@ class KeywordParamValue : public ScriptValue {
   String separator_before, separator_after;
   String value;
   
-  virtual ScriptType type() const;
-  virtual String typeName() const;
-  virtual operator String() const;
-  virtual operator int()    const;
-  virtual operator bool()   const;
-  virtual operator double() const;
-  virtual operator Color()  const;
-  virtual int itemCount()   const;
-  virtual ScriptValueP getMember(const String& name) const;
+  ScriptType type() const override;
+  String typeName() const override;
+  String toString() const override;
+  int toInt() const override;
+  bool toBool() const override;
+  double toDouble() const override;
+  Color toColor() const override;
+  int itemCount() const override;
+  ScriptValueP getMember(const String& name) const override;
 };
 

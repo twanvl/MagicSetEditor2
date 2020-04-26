@@ -665,7 +665,7 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
   ctx.setVariable(_("used_placeholders"), to_script(used_placeholders));
   
   // Final check whether the keyword matches
-  if (match_condition && (bool)*match_condition->eval(ctx) == false) {
+  if (match_condition && match_condition->eval(ctx)->toBool() == false) {
     return false;
   }
   
@@ -673,7 +673,7 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
   bool expand = expand_type == _('1');
   if (!expand && expand_type != _('0')) {
     // default expand, determined by script
-    expand = expand_default ? (bool)*expand_default->eval(ctx) : true;
+    expand = expand_default ? expand_default->eval(ctx)->toBool() : true;
     expand_type = expand ? _('A') : _('a');
   }
   
@@ -711,7 +711,7 @@ bool KeywordDatabase::tryExpand(const Keyword& kw,
 ScriptType KeywordParamValue::type() const { return SCRIPT_STRING; }
 String KeywordParamValue::typeName() const { return _("keyword parameter"); }
 
-KeywordParamValue::operator String() const {
+String KeywordParamValue::toString() const {
   String safe_type = replace_all(replace_all(replace_all(type_name,
               _("("),_("-")),
               _(")"),_("-")),
@@ -719,16 +719,17 @@ KeywordParamValue::operator String() const {
   return _("<param-") + safe_type + _(">") + value  + _("</param-") + safe_type + _(">");
 }
 
-KeywordParamValue::operator int()    const { return *to_script(value); } // a bit of a hack
-KeywordParamValue::operator double() const { return *to_script(value); }
-KeywordParamValue::operator bool()   const { return *to_script(value); }
-KeywordParamValue::operator Color()  const { return *to_script(value); }
-int KeywordParamValue::itemCount()   const { return  to_script(value)->itemCount(); }
+// a bit of a hack: use the ScriptString implementation
+int KeywordParamValue::toInt()       const { return to_script(value)->toInt(); }
+double KeywordParamValue::toDouble() const { return to_script(value)->toDouble(); }
+bool KeywordParamValue::toBool()     const { return to_script(value)->toBool(); }
+Color KeywordParamValue::toColor()   const { return to_script(value)->toColor(); }
+int KeywordParamValue::itemCount()   const { return to_script(value)->itemCount(); }
 
 ScriptValueP KeywordParamValue::getMember(const String& name) const {
   if (name == _("type"))             return to_script(type_name);
-  if (name == _("separator before")) return to_script(separator_before);
-  if (name == _("separator after"))  return to_script(separator_after);
+  if (name == _("separator_before")) return to_script(separator_before);
+  if (name == _("separator_after"))  return to_script(separator_after);
   if (name == _("value"))            return to_script(value);
   if (name == _("param"))            return to_script(value);
   return ScriptValue::getMember(name);
