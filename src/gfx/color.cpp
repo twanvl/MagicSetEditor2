@@ -13,7 +13,10 @@
 
 template <> void Reader::handle(Color& col) {
   col = parse_color(getValue());
-  if (!col.Ok()) col = Color(0,0,0,0);
+  if (!col.Ok()) {
+    col = Color(0,0,0,0);
+    warning(_("Not a valid color value"));
+  }
 }
 
 template <> void Writer::handle(const Color& col) {
