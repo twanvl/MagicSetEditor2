@@ -246,18 +246,17 @@ void draw3DBorder(DC& dc, int x1, int y1, int x2, int y2) {
 }
 
 void draw_control_box(Window* win, DC& dc, const wxRect& rect, bool focused, bool enabled) {
-  #if wxUSE_UXTHEME && defined(__WXMSW__) && TODO_FIX_THEME_ENGINE
+  #if wxUSE_UXTHEME && defined(__WXMSW__)
     RECT r;
-    wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
-    if (themeEngine && themeEngine->IsAppThemed()) {
-      wxUxThemeHandle hTheme(win, L"EDIT");
-      r.left = rect.x -1;
-      r.top = rect.y  -1;
-      r.right = rect.x + rect.width + 1;
-      r.bottom = rect.y + rect.height + 1;
+    if (wxUxThemeIsActive()) {
+      HTHEME hTheme = (HTHEME)::OpenThemeData(GetHwndOf(win), L"EDIT");
       if (hTheme) {
-        wxUxThemeEngine::Get()->DrawThemeBackground(
-          (HTHEME)hTheme,
+        r.left = rect.x -1;
+        r.top = rect.y  -1;
+        r.right = rect.x + rect.width + 1;
+        r.bottom = rect.y + rect.height + 1;
+        ::DrawThemeBackground(
+          hTheme,
           (HDC)dc.GetHDC(),
           EP_EDITTEXT,
           !enabled ? ETS_DISABLED : focused ? ETS_NORMAL : ETS_NORMAL,
@@ -274,7 +273,7 @@ void draw_control_box(Window* win, DC& dc, const wxRect& rect, bool focused, boo
   dc.SetBrush(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
   dc.DrawRectangle(rect);
   // draw the border
-  #if defined(__WXMSW__) && TODO_FIX_THEME_ENGINE
+  #if defined(__WXMSW__)
     r.left   = rect.x - 2;
     r.top    = rect.y - 2;
     r.right  = rect.x + rect.width  + 2;
@@ -361,7 +360,7 @@ void draw_radiobox(Window* win, DC& dc, const wxRect& rect, bool checked, bool e
 }
 
 void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool selected, bool focused, bool hot) {
-  #if wxUSE_UXTHEME && defined(__WXMSW__) && TODO_FIX_THEME_ENGINE
+  #if wxUSE_UXTHEME && defined(__WXMSW__)
     #if !defined(NTDDI_LONGHORN) || NTDDI_VERSION < NTDDI_LONGHORN
       #define LISS_NORMAL LIS_NORMAL
       #define LISS_SELECTED LIS_SELECTED
@@ -369,35 +368,30 @@ void draw_selection_rectangle(Window* win, DC& dc, const wxRect& rect, bool sele
       #define LISS_HOT LISS_NORMAL
       #define LISS_HOTSELECTED LISS_SELECTED
     #endif
-    wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
-    if (themeEngine && themeEngine->IsAppThemed()) {
-      wxUxThemeHandle hTheme(win, L"LISTVIEW");
+    HTHEME hTheme = (HTHEME)::OpenThemeData(GetHwndOf(win), L"LISTVIEW");
+    if (hTheme) {
       RECT r;
       r.left = rect.x;
       r.top = rect.y;
       r.right = rect.x + rect.width;
       r.bottom = rect.y + rect.height;
-      if (hTheme) {
-        //themeEngine->SetWindowTheme((HWND)win->GetHWND(), L"Explorer", NULL);
-        themeEngine->DrawThemeBackground(
-          (HTHEME)hTheme,
-          (HDC)dc.GetHDC(),
-          LVP_LISTITEM,
-          hot&&selected ? LISS_HOTSELECTED : hot ? LISS_HOT :selected&&focused ? LISS_SELECTED : selected ? LISS_SELECTEDNOTFOCUS : LISS_NORMAL,
-          &r,
-          NULL
-        );
-        return;
-      }
+      ::DrawThemeBackground(
+        hTheme,
+        (HDC)dc.GetHDC(),
+        LVP_LISTITEM,
+        hot&&selected ? LISS_HOTSELECTED : hot ? LISS_HOT :selected&&focused ? LISS_SELECTED : selected ? LISS_SELECTEDNOTFOCUS : LISS_NORMAL,
+        &r,
+        NULL
+      );
+      return;
     }
   #endif
 }
 
 void enable_themed_selection_rectangle(Window* win) {
-  #if wxUSE_UXTHEME && defined(__WXMSW__) && TODO_FIX_THEME_ENGINE
-    wxUxThemeEngine *themeEngine = wxUxThemeEngine::Get();
-    if (themeEngine && themeEngine->IsAppThemed()) {
-      themeEngine->SetWindowTheme((HWND)win->GetHWND(), L"Explorer", NULL);
+  #if wxUSE_UXTHEME && defined(__WXMSW__)
+    if (wxUxThemeIsActive()) {
+      ::SetWindowTheme((HWND)win->GetHWND(), L"Explorer", NULL);
     }
   #endif
 }
