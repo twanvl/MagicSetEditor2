@@ -33,7 +33,6 @@ Field::Field()
   , card_list_visible(false)
   , card_list_allow  (true)
   , card_list_align  (ALIGN_LEFT)
-  , tab_index        (0)
 {}
 
 Field::~Field() {}
@@ -64,7 +63,6 @@ IMPLEMENT_REFLECTION(Field) {
   REFLECT(card_list_name);
   REFLECT(sort_script);
   REFLECT_N("card_list_alignment", card_list_align);
-  REFLECT(tab_index);
   REFLECT_IF_READING if(caption.empty()) caption = name_to_caption(name);
   REFLECT_IF_READING if(card_list_name.empty()) card_list_name = capitalize(caption);
 }
@@ -97,6 +95,7 @@ intrusive_ptr<Field> read_new<Field>(Reader& reader) {
 Style::Style(const FieldP& field)
   : fieldP(field)
   , z_index(0)
+  , tab_index(0)
   , left (1000000), top   (1000000)
   , width(0),       height(0)
   , right(1000000), bottom(1000000)
@@ -110,6 +109,7 @@ Style::~Style() {}
 
 IMPLEMENT_REFLECTION(Style) {
   REFLECT(z_index);
+  REFLECT(tab_index);
   REFLECT(left);
   REFLECT(width);
   REFLECT(right);

@@ -68,6 +68,7 @@ Here are some examples:
 --Properties--
 ! Property		Type					Default		Description
 | @z index@		[[type:int]]				@0@		Stacking of this box, fields with a higher @z index@ are placed on top of those with a lower index.
+| @tab index@		[[type:int]]				@0@		Index for moving through the fields with the tab key, fields with a lower tab index come first. Otherwise the order is from top to bottom and then left to right.
 | @left@		[[type:scriptable]] [[type:double]]	''Required''	Distance between left edge of the box and the left of the card in pixels.
 | @width@		[[type:scriptable]] [[type:double]]	''Required''	Width of the box in pixels.
 | @right@		[[type:scriptable]] [[type:double]]	''Required''	Distance between right edge of the box and the ''left'' of the card in pixels.

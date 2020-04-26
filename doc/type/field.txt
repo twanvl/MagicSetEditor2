@@ -41,7 +41,6 @@ Fields are part of the [[file:style triangle]]:
 | @card list name@	[[type:string]]		field name	Alternate name to use for the card list, for example an abbreviation.
 | @card list alignment@	[[type:alignment]]	@left@		Alignment of the card list column.
 | @sort script@		[[type:script]]		 		Alternate way to sort the card list when using this column to sort the list.
-| @tab index@		[[type:int]]		@0@		Index for moving through the fields with the tab key. The default is from left to right and then top to bottom.
 
 The @type@ determines what values of this field contain:
 ! Type			Values contain								Displayed as

@@ -34,9 +34,9 @@ class DataEditor : public CardViewer {
   /// Select the given viewer, sends focus events
   void select(ValueViewer* v);
   /// Select the first editable and visible editor (by tab index)
-  void selectFirst();
+  bool selectFirst();
   /// Select the last editable and visible editor (by tab index)
-  void selectLast();
+  bool selectLast();
   /// Select the next editable editor, returns false if the current editor is the last one
   bool selectNext();
   /// Select the previous editable editor, returns false if the current editor is the first one
@@ -127,13 +127,8 @@ class DataEditor : public CardViewer {
   /// Convert mouse coordinates to internal coordinates
   RealPoint mousePoint(const wxMouseEvent&, const ValueViewer& viewer);
   
-  // Create tab index ordering of the (editable) viewers
-  void createTabIndex();
-  /// Select the field with the given position in the by_tab_index list
-  /** Returns success */
-  bool selectByTabPos(int tab_pos, bool forward = true);
-  /// Find the tab pos of the current viewer, returns -1 if not found
-  int currentTabPos() const;
+  /// Select a field found by tab order, can be viewers.end()
+  bool selectWithTab(vector<ValueViewerP>::iterator const&);
 };
 
 /// By default a DataEditor edits cards

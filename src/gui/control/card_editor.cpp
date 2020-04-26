@@ -16,6 +16,7 @@
 #include <util/find_replace.hpp>
 #include <util/window_id.hpp>
 #include <wx/caret.h>
+#include <boost/iterator/filter_iterator.hpp>
 
 // ----------------------------------------------------------------------------- : DataEditor
 
@@ -55,9 +56,40 @@ bool DataEditor::viewerIsCurrent(const ValueViewer* viewer) const {
   return viewer == current_viewer && FindFocus() == this;
 }
 
-
 void DataEditor::addAction(unique_ptr<Action> action) {
   set->actions.addAction(move(action));
+}
+
+// ----------------------------------------------------------------------------- : Algorithms
+
+/// Swap the order of comparison, i.e. greater-than instead of less-than
+template <typename Comp>
+struct SwapCompare {
+  Comp comp;
+  SwapCompare(Comp comp) : comp(comp) {}
+  template <typename T, typename U> inline bool operator () (T x, U y) {
+    return comp(y,x);
+  }
+};
+
+// Return the next element in a collection after x, when using comp as ordering
+template <typename It, typename V, typename Comp>
+It next_element(It first, It last, V const& x, Comp comp) {
+  It best = last;
+  for (It it = first ; it != last ; ++it) {
+    if (comp(x, *it)) {
+      // this is a candidate
+      if (best == last || comp(*it, *best)) {
+        best = it;
+      }
+    }
+  }
+  return best;
+}
+
+template <typename It, typename V, typename Comp>
+It prev_element(It first, It last, V const& x, Comp comp) {
+  return next_element(first, last, x, SwapCompare<Comp>(comp));
 }
 
 // ----------------------------------------------------------------------------- : Selection
@@ -66,10 +98,15 @@ bool DataEditor::AcceptsFocus() const {
   return wxWindow::AcceptsFocus();
 }
 
-void DataEditor::select(ValueViewer* v) {
+void DataEditor::select(ValueViewer* new_viewer) {
   ValueEditor* old_editor = current_editor;
-  current_viewer = v;
-  current_editor = v->getEditor();
+  if (new_viewer) {
+    current_viewer = new_viewer;
+    current_editor = new_viewer->getEditor();
+  } else {
+    current_viewer = nullptr;
+    current_editor = nullptr;
+  }
   if (current_editor != old_editor) {
     // selection has changed
     if (old_editor)     old_editor->onLoseFocus();
@@ -78,54 +115,19 @@ void DataEditor::select(ValueViewer* v) {
   }
 }
 
-void DataEditor::selectFirst() {
-  selectByTabPos(0, true);
-}
-void DataEditor::selectLast() {
-  selectByTabPos((int)by_tab_index.size() - 1, false);
-}
-bool DataEditor::selectNext() {
-  return selectByTabPos(currentTabPos() + 1, true);
-}
-bool DataEditor::selectPrevious() {
-  return selectByTabPos(currentTabPos() - 1, false);
-}
-
-bool DataEditor::selectByTabPos(int tab_pos, bool forward) {
-  while (tab_pos >= 0 && (size_t)tab_pos < by_tab_index.size()) {
-    ValueViewer* v = by_tab_index[tab_pos];
-    if (v->getField()->editable && v->getStyle()->isVisible()) {
-      select(v);
-      return true;
-    }
-    // not enabled, maybe the next one?
-    tab_pos += forward ? 1 : -1;
-  }
-  // deselect
-  if (current_editor) {
-    current_editor->onLoseFocus();
-    onChange();
-  }
-  current_viewer = nullptr;
-  current_editor = nullptr;
-  return false;
-}
-int DataEditor::currentTabPos() const {
-  int i = 0;
-  FOR_EACH_CONST(v, by_tab_index) {
-    if (v == current_viewer) return i;
-    ++i;
-  }
-  return -1;
-}
-
-struct CompareTabIndex {
+struct CompareTabOrder {
   bool operator() (ValueViewer* a, ValueViewer* b) {
+    assert(a && b);
     Style& as = *a->getStyle(), &bs = *b->getStyle();
-    Field& af = *as.fieldP,     &bf = *bs.fieldP;
-    if (af.tab_index < bf.tab_index) return true;
-    if (af.tab_index > bf.tab_index) return false;
-    if (fabs(as.top - bs.top) < 15) {
+    // if tab_index differs, use that
+    if (as.tab_index < as.tab_index) return true;
+    if (as.tab_index > as.tab_index) return false;
+    // otherwise look at the positions
+    // TODO: does this actually give a total order?
+    double vertical_overlap   = min(bs.bottom - as.top, as.bottom - bs.top);
+    double horizontal_overlap = min(bs.right - as.left, as.right - bs.left);
+    if (vertical_overlap > 0 && vertical_overlap > horizontal_overlap) {
+      // fields overlap (mostly) vertically
       // the fields are almost on the same 'row'
       // compare horizontally first
       if (as.left < bs.left) return true; // horizontal sorting
@@ -137,21 +139,65 @@ struct CompareTabIndex {
       if (as.top  > bs.top)  return false;
       if (as.left < bs.left) return true; // horizontal sorting
     }
-    return false;
+    // arbitrary order otherwise
+    return a < b;
+  }
+  bool operator() (ValueViewerP const& a, ValueViewer* b) {
+    return operator () (a.get(), b);
+  }
+  bool operator() (ValueViewer* a, ValueViewerP const& b) {
+    return operator () (a, b.get());
+  }
+  bool operator() (ValueViewerP const& a, ValueViewerP const& b) {
+    return operator () (a.get(), b.get());
   }
 };
-void DataEditor::createTabIndex() {
-  by_tab_index.clear();
-  FOR_EACH(v, viewers) {
-    ValueEditor* e = v->getEditor();
-    if (e) {
-      by_tab_index.push_back(v.get());
-    }
-  }
-  stable_sort(by_tab_index.begin(), by_tab_index.end(), CompareTabIndex());
+
+bool is_enabled(ValueViewerP const& v) {
+  return v->getField()->editable && v->getStyle()->isVisible();
 }
+
+bool DataEditor::selectWithTab(vector<ValueViewerP>::iterator const& it) {
+  if (it != viewers.end()) {
+    select(it->get());
+    return true;
+  } else {
+    select(nullptr);
+    return false;
+  }
+}
+
+bool DataEditor::selectFirst() {
+  // This would be nicer with boost::range, but filtered adaptor was only introduced in boost 1.42(?)
+  return selectWithTab(std::min_element(
+    boost::make_filter_iterator(is_enabled, viewers.begin(), viewers.end()),
+    boost::make_filter_iterator(is_enabled, viewers.end(), viewers.end()),
+    CompareTabOrder()).base());
+}
+bool DataEditor::selectLast() {
+  return selectWithTab(std::max_element(
+    boost::make_filter_iterator(is_enabled, viewers.begin(), viewers.end()),
+    boost::make_filter_iterator(is_enabled, viewers.end(), viewers.end()),
+    CompareTabOrder()).base());
+}
+bool DataEditor::selectNext() {
+  if (!current_viewer) return selectFirst();
+  return selectWithTab(next_element(
+    boost::make_filter_iterator(is_enabled, viewers.begin(), viewers.end()),
+    boost::make_filter_iterator(is_enabled, viewers.end(), viewers.end()),
+    current_viewer,
+    CompareTabOrder()).base());
+}
+bool DataEditor::selectPrevious() {
+  if (!current_viewer) return selectLast();
+  return selectWithTab(prev_element(
+    boost::make_filter_iterator(is_enabled, viewers.begin(), viewers.end()),
+    boost::make_filter_iterator(is_enabled, viewers.end(), viewers.end()),
+    current_viewer,
+    CompareTabOrder()).base());
+}
+
 void DataEditor::onInit() {
-  createTabIndex();
   current_viewer = nullptr;
   current_editor = nullptr;
   hovered_viewer = nullptr;
