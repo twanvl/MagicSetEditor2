@@ -220,8 +220,9 @@ class SymbolShape : public SymbolPart {
   /// Calculate the position and size of the part using the given rotation matrix
   virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
   
-  DECLARE_REFLECTION();
+  DECLARE_REFLECTION_OVERRIDE();
 };
+void after_reading(SymbolShape&, Version);
 
 // ----------------------------------------------------------------------------- : SymbolGroup
 
@@ -242,7 +243,7 @@ class SymbolGroup : public SymbolPart {
   
   virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
   
-  DECLARE_REFLECTION();
+  DECLARE_REFLECTION_OVERRIDE();
 };
 
 // ----------------------------------------------------------------------------- : SymbolSymmetry
@@ -273,7 +274,7 @@ class SymbolSymmetry : public SymbolGroup {
   String expectedName() const;
   virtual Bounds calculateBounds(const Vector2D& origin, const Matrix2D& m, bool is_identity);
   
-  DECLARE_REFLECTION();
+  DECLARE_REFLECTION_OVERRIDE();
 };
 
 // ----------------------------------------------------------------------------- : Symbol
@@ -287,7 +288,7 @@ class Symbol : public SymbolGroup {
   /// Determine the aspect ratio best suited for this symbol
   double aspectRatio() const;
   
-  DECLARE_REFLECTION();
+  DECLARE_REFLECTION_OVERRIDE();
 };
 
 /// A default symbol: a square

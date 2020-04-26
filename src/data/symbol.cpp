@@ -27,10 +27,10 @@ IMPLEMENT_REFLECTION(ControlPoint) {
   REFLECT_N("position",      pos);
   REFLECT_N("lock",          lock);
   REFLECT_N("line_after",    segment_after);
-  if (tag.reading() || segment_before == SEGMENT_CURVE) {
+  if (Handler::isReading || segment_before == SEGMENT_CURVE) {
     REFLECT_N("handle_before", delta_before);
   }
-  if (tag.reading() || segment_after  == SEGMENT_CURVE) {
+  if (Handler::isReading || segment_after  == SEGMENT_CURVE) {
     REFLECT_N("handle_after",  delta_after);
   }
 }
@@ -155,32 +155,28 @@ IMPLEMENT_REFLECTION_ENUM(SymbolShapeCombine) {
   VALUE_N("border",    SYMBOL_COMBINE_BORDER);
 }
 
-
-template<typename T> void fix(const T&,SymbolShape&) {}
-void fix(const Reader& reader, SymbolShape& shape) {
-  if (reader.file_app_version != Version()) return;
-  shape.updateBounds();
-  if (shape.bounds.max.x < 100 || shape.bounds.max.y < 100) return;
-  // this is a <= 0.1.2 symbol, points range [0...500] instead of [0...1]
-  // adjust it
-  FOR_EACH(p, shape.points) {
-    p->pos          /= 500.0;
-    p->delta_before /= 500.0;
-    p->delta_after  /= 500.0;
-  }
-  if (shape.name.empty()) shape.name = _("Shape");
-  shape.updateBounds();
-}
-
 IMPLEMENT_REFLECTION(SymbolShape) {
   REFLECT_BASE(SymbolPart);
   REFLECT(combine);
   REFLECT(points);
+}
+
+void after_reading(SymbolShape& shape, Version version) {
   // Fixes after reading
-  REFLECT_IF_READING {
-    // enforce constraints
-    enforceConstraints();
-    fix(tag,*this);
+  // enforce constraints
+  shape.enforceConstraints();
+  if (version == Version()) {
+    // this is a <= 0.1.2 symbol, points range [0...500] instead of [0...1]
+    shape.updateBounds();
+    if (shape.bounds.max.x < 100 || shape.bounds.max.y < 100) return;
+    // adjust it
+    FOR_EACH(p, shape.points) {
+      p->pos          /= 500.0;
+      p->delta_before /= 500.0;
+      p->delta_after  /= 500.0;
+    }
+    if (shape.name.empty()) shape.name = _("Shape");
+    shape.updateBounds();
   }
 }
 

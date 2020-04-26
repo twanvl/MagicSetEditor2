@@ -67,13 +67,13 @@ bool PackageChoiceValue::update(Context& ctx) {
   return change;
 }
 
-void PackageChoiceValue::reflect(Reader& tag) {
+void PackageChoiceValue::reflect(Reader& handler) {
   REFLECT_NAMELESS(package_name);
 }
-void PackageChoiceValue::reflect(Writer& tag) {
+void PackageChoiceValue::reflect(Writer& handler) {
   REFLECT_NAMELESS(package_name);
 }
-void PackageChoiceValue::reflect(GetDefaultMember& tag) {
+void PackageChoiceValue::reflect(GetDefaultMember& handler) {
   if (package_name.empty()) {
     REFLECT_NAMELESS(package_name);
   } else if(package_name != field().initial) {

@@ -78,7 +78,7 @@ IMPLEMENT_REFLECTION(Card) {
     } else if (stylesheet_for_reading()) {
       REFLECT_IF_READING styling_data.init(stylesheet_for_reading()->styling_fields);
       REFLECT(styling_data);
-    } else if (tag.reading()) {
+    } else if (Handler::isReading) {
       has_styling = false; // We don't know the style, this can be because of copy/pasting
     }
   }

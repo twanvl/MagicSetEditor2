@@ -53,9 +53,8 @@ IMPLEMENT_REFLECTION(KeywordMode) {
 
 // backwards compatability
 template <typename T> void read_compat(T&, const Keyword*) {}
-void read_compat(Reader& tag, Keyword* k) {
+void read_compat(Reader& handler, Keyword* k) {
   if (!k->match.empty()) return;
-  if (tag.file_app_version >= 301) return; // only for versions < 0.3.1
   String separator, parameter;
   REFLECT(separator);
   REFLECT(parameter);
@@ -84,7 +83,7 @@ bool Keyword::contains(String const& query) const {
 
 IMPLEMENT_REFLECTION(Keyword) {
   REFLECT(keyword);
-  read_compat(tag, this);
+  if (handler.formatVersion() < 301) read_compat(handler, this);
   REFLECT(match);
   REFLECT(reminder);
   REFLECT(rules);

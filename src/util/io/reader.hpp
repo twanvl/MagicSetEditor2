@@ -28,30 +28,25 @@ class Packaged;
  *  object that was just read.
  */
 class Reader {
-  private:
-  /// Construct a reader that reads a file in a package
-  /** Used for "include file" keys.
-   *  package can be nullptr
-   */
-  //Reader(Reader* parent, Packaged* package, const String& filename, bool ignore_invalid = false);
   public:
   /// Construct a reader that reads from the given input stream
   /** filename is used only for error messages
+   *  package is used for looking up included files.
    */
   Reader(wxInputStream& input, Packaged* package = nullptr, const String& filename = wxEmptyString, bool ignore_invalid = false);
   
   ~Reader() { showWarnings(); }
   
   /// Tell the reflection code we are reading
-  inline bool reading() const { return true; }
-  /// Tell the reflection code we are not related to scripting
-  inline bool scripting() const { return false; }
+  static constexpr bool isReading = true;
+  static constexpr bool isWriting = false;
+  static constexpr bool isScripting = false;
   /// Is the thing currently being read 'complex', i.e. does it have children
-  inline bool isComplex() const { return indent != expected_indent - 1 || value.empty(); }
-  /// Add a as an alias for b, all keys a will be replaced with b, only if file_app_version < end_version
-  void addAlias(Version end_version, const Char* a, const Char* b);
+  inline bool isCompound() const { return indent != expected_indent - 1 || value.empty(); }
   /// Ignore old keys
   void handleIgnore(int, const Char*);
+  /// Get the version of the format we are reading
+  inline Version formatVersion() const { return file_app_version; }
   
   /// Read and check the application version
   void handleAppVersion();
@@ -70,6 +65,7 @@ class Reader {
       if (state != HANDLED) unknownKey(object);
       state = OUTSIDE;
     } while (indent >= expected_indent);
+    after_reading(object, file_app_version);
   }
   
   /// Handle an object: read it if it's name matches
@@ -112,10 +108,10 @@ class Reader {
   /// The package being read from
   inline Packaged* getPackage() const { return package; }
   
+private:
   // --------------------------------------------------- : Data
   /// App version this file was made with
   Version file_app_version;
-private:
   /// The line we read
   String line;
   /// The key and value of the last line we read
@@ -133,13 +129,6 @@ private:
     HANDLED,    ///< We have handled a value, and moved to the next line, previous_value is the value we just handled
     UNHANDLED,    ///< Something has been 'unhandled()'
   } state;
-  /// Aliasses for compatability
-  struct Alias {
-    String  new_key;
-    Version end_version;
-  };
-  /// Aliasses for compatability
-  map<String, Alias> aliasses;
   /// Should all invalid keys be ignored?
   bool ignore_invalid;
   
@@ -193,6 +182,16 @@ private:
   void unknownKey();
   unique_ptr<wxInputStream> openIncludedFile();
 };
+
+// ----------------------------------------------------------------------------- : After reading hook
+
+// Overload to perform extra stuff after reading
+template <typename T> inline void after_reading(T&, Version) {}
+
+template <typename T>
+inline void after_reading(intrusive_ptr<T>& x, Version ver) {
+  after_reading(*x, ver);
+}
 
 // ----------------------------------------------------------------------------- : Container types
 
@@ -266,10 +265,10 @@ void Reader::handle(IndexMap<K,V>& m) {
     reader.errorIfNotDone(); \
   }
 
-/// 'Tag' to be used when reflecting enumerations for Reader
+/// 'Handler' to be used when reflecting enumerations for Reader
 class EnumReader {
   public:
-  inline EnumReader(String read)
+  inline EnumReader(String const& read)
     : read(read), first(nullptr), done(false) {}
   
   /// Handle a possible value for the enum, if the name matches the name in the input

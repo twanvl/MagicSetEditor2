@@ -25,11 +25,11 @@ class Writer {
   Writer(OutputStream& output, Version file_app_version);
   
   /// Tell the reflection code we are not reading
-  inline bool reading()   const { return false; }
-  inline bool scripting() const { return false; }
-  inline bool isComplex() const { return true; }
-  inline void addAlias(int, const Char*, const Char*) {}
-  inline void handleIgnore(int, const Char*) {}
+  static constexpr bool isReading = false;
+  static constexpr bool isWriting = true;
+  static constexpr bool isScripting = false;
+  inline bool isCompound() const { return true; }
+  inline Version formatVersion() const { return app_version; }
   
   // --------------------------------------------------- : Handling objects
   /// Handle an object: write it under the given name
@@ -145,7 +145,7 @@ void Writer::handle(const IndexMap<K,V>& m) {
     reflect_ ## Enum(const_cast<Enum&>(enum_), writer); \
   }
 
-/// 'Tag' to be used when reflecting enumerations for Writer
+/// Handler to be used when reflecting enumerations for Writer
 class EnumWriter {
   public:
   inline EnumWriter(Writer& writer)

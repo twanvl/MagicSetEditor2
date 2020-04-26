@@ -97,8 +97,8 @@ void TextStyle::checkContentDependencies(Context& ctx, const Dependency& dep) co
   alignment.initDependencies(ctx, dep);
 }
 
-template <typename T> void reflect_content(T& tag,         const TextStyle& ts) {}
-template <>           void reflect_content(GetMember& tag, const TextStyle& ts) {
+template <typename T> void reflect_content(T& handler,         const TextStyle& ts) {}
+template <>           void reflect_content(GetMember& handler, const TextStyle& ts) {
   REFLECT_N("content_width",  ts.content_width);
   REFLECT_N("content_height", ts.content_height);
   REFLECT_N("content_lines",  ts.content_lines);
@@ -127,7 +127,7 @@ IMPLEMENT_REFLECTION(TextStyle) {
   REFLECT(line_height_line_max);
   REFLECT(paragraph_height);
   REFLECT(direction);
-  reflect_content(tag, *this);
+  reflect_content(handler, *this);
 }
 
 // ----------------------------------------------------------------------------- : TextValue
@@ -147,7 +147,7 @@ bool TextValue::update(Context& ctx) {
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(TextValue) {
-  if (fieldP->save_value || tag.scripting() || tag.reading()) REFLECT_NAMELESS(value);
+  if (fieldP->save_value || !handler.isWriting) REFLECT_NAMELESS(value);
 }
 
 // ----------------------------------------------------------------------------- : FakeTextValue

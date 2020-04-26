@@ -42,6 +42,7 @@ class ChoiceField : public Field {
   map<String,Color> choice_colors_cardlist;  ///< Colors for the various choices, for in the card list
   
   virtual void initDependencies(Context&, const Dependency&) const;
+  virtual void after_reading(Version ver);
 };
 
 

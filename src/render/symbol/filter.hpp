@@ -67,7 +67,7 @@ class SolidFillSymbolFilter : public SymbolFilter {
   virtual bool operator == (const SymbolFilter& that) const;
   private:
   Color fill_color, border_color;
-  DECLARE_REFLECTION();
+  DECLARE_REFLECTION_OVERRIDE();
 };
 
 /// Symbol filter that returns some gradient
@@ -85,7 +85,7 @@ class GradientSymbolFilter : public SymbolFilter {
   Color color(double x, double y, SymbolSet point, const T* t) const;
   bool equal(const GradientSymbolFilter& that) const;
   
-  DECLARE_REFLECTION();
+  DECLARE_REFLECTION_OVERRIDE();
 };
 
 /// Symbol filter that returns a linear gradient
@@ -106,7 +106,7 @@ class LinearGradientSymbolFilter : public GradientSymbolFilter {
   double center_x, center_y;
   double end_x,    end_y;
   mutable double len;
-  DECLARE_REFLECTION();
+  DECLARE_REFLECTION_OVERRIDE();
 };
 
 /// Symbol filter that returns a radial gradient

@@ -458,7 +458,7 @@ DateTime Package::modificationTime(const pair<String, FileInfo>& fi) const {
 // ----------------------------------------------------------------------------- : Packaged
 
 template <> void Reader::handle(PackageDependency& dep) {
-  if (!isComplex()) {
+  if (!isCompound()) {
     handle(dep.package);
     size_t pos = dep.package.find_first_of(_(' '));
     if (pos != String::npos) {
@@ -504,7 +504,7 @@ unique_ptr<wxInputStream> Packaged::openIconFile() {
   }
 }
 
-// proxy object, that reads just WITHOUT using the overloaded behaviour
+// proxy object, that reads just the package header WITHOUT using the overloaded behaviour
 struct JustAsPackageProxy {
   JustAsPackageProxy(Packaged* that) : that(that) {}
   Packaged* that;
@@ -524,7 +524,6 @@ void Packaged::open(const String& package, bool just_header) {
     try {
       JustAsPackageProxy proxy(this);
       reader.handle_greedy(proxy);
-      Packaged::validate(reader.file_app_version);
     } catch (const ParseError& err) {
       throw FileParseError(err.what(), absoluteFilename() + _("/") + typeName()); // more detailed message
     }
@@ -539,7 +538,6 @@ void Packaged::loadFully() {
   Reader reader(*stream, this, absoluteFilename() + _("/") + typeName());
   try {
     reader.handle_greedy(*this);
-    validate(reader.file_app_version);
     fully_loaded = true; // only after loading and validating succeeded, be careful with recursion!
   } catch (const ParseError& err) {
     throw FileParseError(err.what(), absoluteFilename() + _("/") + typeName()); // more detailed message

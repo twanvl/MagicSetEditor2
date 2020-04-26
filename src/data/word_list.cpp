@@ -17,7 +17,7 @@ WordListWord::WordListWord()
 {}
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(WordListWord) {
-  if (line_below || is_prefix || isGroup() || script || (tag.reading() && tag.isComplex())) {
+  REFLECT_IF_READING_SINGLE_VALUE {
     // complex value
     REFLECT(name);
     REFLECT(line_below);

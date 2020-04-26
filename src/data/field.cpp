@@ -47,7 +47,6 @@ IMPLEMENT_REFLECTION(Field) {
     REFLECT(type);
   }
   REFLECT(name);
-  REFLECT_IF_READING name = canonical_name_form(name);
   REFLECT(caption);
   REFLECT(description);
   REFLECT_N("icon", icon_filename);
@@ -63,8 +62,12 @@ IMPLEMENT_REFLECTION(Field) {
   REFLECT(card_list_name);
   REFLECT(sort_script);
   REFLECT_N("card_list_alignment", card_list_align);
-  REFLECT_IF_READING if(caption.empty()) caption = name_to_caption(name);
-  REFLECT_IF_READING if(card_list_name.empty()) card_list_name = capitalize(caption);
+}
+
+void Field::after_reading(Version ver) {
+  name = canonical_name_form(name);
+  if(caption.empty()) caption = name_to_caption(name);
+  if(card_list_name.empty()) card_list_name = capitalize(caption);
 }
 
 template <>

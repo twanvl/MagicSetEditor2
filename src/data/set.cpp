@@ -167,8 +167,6 @@ void Set::validate(Version file_app_version) {
 }
 
 IMPLEMENT_REFLECTION(Set) {
-  REFLECT_ALIAS(300, "style",          "stylesheet"); // < 0.3.0 used style instead of stylesheet
-  REFLECT_ALIAS(300, "extra_set_info", "styling");
   REFLECT(game);
   if (game) {
     REFLECT_IF_READING {
@@ -176,29 +174,31 @@ IMPLEMENT_REFLECTION(Set) {
     }
     WITH_DYNAMIC_ARG(game_for_reading, game.get());
     REFLECT(stylesheet);
+    REFLECT_COMPAT(<300, "style", stylesheet);
     WITH_DYNAMIC_ARG(stylesheet_for_reading, stylesheet.get());
     REFLECT_N("set_info", data);
     if (stylesheet) {
+      REFLECT_COMPAT(<300, "extra_set_info", styling_data);
       REFLECT_N("styling", styling_data);
     }
     // Experimental: save each card to a different file
-    reflect_cards(tag);
+    reflect_cards(handler);
     REFLECT(keywords);
     REFLECT(pack_types);
   }
-  reflect_set_info_get_member(tag,data);
+  reflect_set_info_get_member(handler,data);
   REFLECT_NO_SCRIPT_N("version_control", vcs);
   REFLECT(apprentice_code);
 }
 
 // TODO: make this a more generic function to be used elsewhere
-template <typename Tag>
-void Set::reflect_cards (Tag& tag) {
+template <typename Handler>
+void Set::reflect_cards (Handler& handler) {
   REFLECT(cards);
 }
 
 template <>
-void Set::reflect_cards<Writer> (Writer& tag) {
+void Set::reflect_cards<Writer> (Writer& handler) {
   // When writing to a directory, we write each card in a separate file.
   // We don't do this in zipfiles because it leads to bloat.
   if (isZipfile()) {
@@ -251,9 +251,9 @@ void mark_dependency_member(const Set& set, const String& name, const Dependency
 }
 
 // in scripts, set.something is read from the set_info
-template <typename Tag>
-void reflect_set_info_get_member(Tag&       tag, const IndexMap<FieldP, ValueP>& data) {}
-void reflect_set_info_get_member(GetMember& tag, const IndexMap<FieldP, ValueP>& data) {
+template <typename Handler>
+void reflect_set_info_get_member(Handler&   handler, const IndexMap<FieldP, ValueP>& data) {}
+void reflect_set_info_get_member(GetMember& handler, const IndexMap<FieldP, ValueP>& data) {
   REFLECT_NAMELESS(data);
 }
 

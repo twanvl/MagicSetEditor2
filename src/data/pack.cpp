@@ -38,24 +38,24 @@ IMPLEMENT_REFLECTION(PackType) {
   REFLECT(select);
   REFLECT(filter);
   REFLECT(items);
-  REFLECT_IF_READING {
-    if (select == SELECT_AUTO) {
-      if (filter)              select = SELECT_NO_REPLACE;
-      else if (!items.empty()) select = SELECT_ALL;
-    }
-    if (indeterminate(summary)) {
-      if (filter)              summary = true;
-      else if (!items.empty()) summary = false;
-    }
-    if (indeterminate(selectable)) {
-      if (filter)              selectable = false;
-      else if (!items.empty()) selectable = true;
-    }
+}
+void after_reading(PackType& pt, Version) {
+  if (pt.select == SELECT_AUTO) {
+    if (pt.filter)              pt.select = SELECT_NO_REPLACE;
+    else if (!pt.items.empty()) pt.select = SELECT_ALL;
+  }
+  if (indeterminate(pt.summary)) {
+    if (pt.filter)              pt.summary = true;
+    else if (!pt.items.empty()) pt.summary = false;
+  }
+  if (indeterminate(pt.selectable)) {
+    if (pt.filter)              pt.selectable = false;
+    else if (!pt.items.empty()) pt.selectable = true;
   }
 }
 
 IMPLEMENT_REFLECTION(PackItem) {
-  if (!tag.isComplex()) {
+  REFLECT_IF_READING_SINGLE_VALUE {
     REFLECT_NAMELESS(name);
   } else {
     REFLECT(name);

@@ -76,7 +76,7 @@ class Game : public Packaged {
   protected:
   virtual void validate(Version);
   
-  DECLARE_REFLECTION();
+  DECLARE_REFLECTION_OVERRIDE();
 };
 
 inline String type_name(const Game&) {

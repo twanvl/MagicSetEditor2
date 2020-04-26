@@ -36,7 +36,7 @@ GetMember::GetMember(const String& name)
   : target_name(name)
 {}
 
-// caused by the pattern: if (!tag.isComplex()) { REFLECT_NAMELESS(stuff) }
+// caused by the pattern: if (!handler.isCompound()) { REFLECT_NAMELESS(stuff) }
 template <> void GetMember::handle(const String& v) {
   throw InternalError(_("GetDefaultMember::handle"));
 }

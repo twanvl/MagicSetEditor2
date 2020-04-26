@@ -74,12 +74,18 @@ class Field : public IntrusivePtrVirtualBase {
   
   private:
   DECLARE_REFLECTION_VIRTUAL();
+  virtual void after_reading(Version ver);
+  friend void after_reading(Field& s, Version ver);
 };
 
 template <>
 intrusive_ptr<Field> read_new<Field>(Reader& reader);
 inline void update_index(FieldP& f, size_t index) {
   f->index = index;
+}
+
+inline void after_reading(Field& f, Version ver) {
+  f.after_reading(ver);
 }
 
 inline String type_name(const Field&) {
@@ -258,7 +264,7 @@ inline String type_name(const Value&) {
 // ----------------------------------------------------------------------------- : Utilities
 
 #define DECLARE_FIELD_TYPE(Type) \
-  DECLARE_REFLECTION(); public: \
+  DECLARE_REFLECTION_OVERRIDE(); public: \
   virtual ValueP newValue(const FieldP& thisP) const; \
   virtual StyleP newStyle(const FieldP& thisP) const; \
   virtual String typeName() const
@@ -284,14 +290,14 @@ inline String type_name(const Value&) {
   }
 
 #define DECLARE_STYLE_TYPE(Type) \
-  DECLARE_REFLECTION(); public: \
+  DECLARE_REFLECTION_OVERRIDE(); public: \
   DECLARE_HAS_FIELD(Type) \
   virtual StyleP clone() const; \
   virtual ValueViewerP makeViewer(DataViewer& parent, const StyleP& thisP); \
   virtual ValueViewerP makeEditor(DataEditor& parent, const StyleP& thisP)
 
 #define DECLARE_VALUE_TYPE(Type,ValueType_) \
-  DECLARE_REFLECTION(); public: \
+  DECLARE_REFLECTION_OVERRIDE(); public: \
   DECLARE_HAS_FIELD(Type) \
   virtual ValueP clone() const; \
   virtual String toString() const; \

@@ -22,13 +22,13 @@ template <typename T> class Scriptable;
 /// Find a member without a name using reflection
 /** The member is wrapped in a ScriptValue */
 class GetDefaultMember {
-  public:
-  /// Tell the reflection code we are not reading
-  inline bool reading()   const { return false; }
-  inline bool scripting() const { return true; }
-  inline bool isComplex() const { return false; }
-  inline void addAlias(int, const Char*, const Char*) {}
-  inline void handleIgnore(int, const Char*) {}
+public:
+  /// Tell the reflection code we are not looking at members
+  static constexpr bool isReading = false;
+  static constexpr bool isWriting = false;
+  static constexpr bool isScripting = false;
+  inline bool isCompound() const { return true; }
+  inline Version formatVersion() const { return app_version; }
   
   /// The result, or script_nil if the member was not found
   inline ScriptValueP result() { return value; } 
@@ -57,26 +57,26 @@ class GetDefaultMember {
   template <typename T>             void handle(const intrusive_ptr<T>& p) { value = to_script(p); }
   void handle(const ScriptValueP&);
   void handle(const ScriptP&);
-  private:
-  ScriptValueP  value;    ///< The value we found (if any)
+private:
+  ScriptValueP value;    ///< The value we found (if any)
 };
 
 // ----------------------------------------------------------------------------- : GetMember
 
 /// Find a member with a specific name using reflection
 /** The member is wrapped in a ScriptValue */
-class GetMember : private GetDefaultMember {
-  public:
+class GetMember {
+public:
   /// Construct a member getter that looks for the given name
   GetMember(const String& name);
   
-  /// Tell the reflection code we are not reading
-  inline bool reading()   const { return false; }
-  inline bool scripting() const { return true; }
-  inline bool isComplex() const { return true; }
-  inline void addAlias(int, const Char*, const Char*) {}
-  inline void handleIgnore(int, const Char*) {}
-  
+  /// Tell the reflection code we are getting a member for scripting purposes
+  static constexpr bool isReading = true;
+  static constexpr bool isWriting = false;
+  static constexpr bool isScripting = false;
+  inline bool isCompound() const { return true; }
+  inline Version formatVersion() const { return app_version; }
+
   /// The result, or script_nil if the member was not found
   inline ScriptValueP result() { return gdm.result(); } 
   
@@ -106,7 +106,7 @@ class GetMember : private GetDefaultMember {
   }
   template <typename K, typename V> void handle(const DelayedIndexMaps<K,V>&);
   template <typename K, typename V> void handle(const DelayedIndexMapsData<K,V>&);
-    
+  
   private:
   const String& target_name;  ///< The name we are looking for
   GetDefaultMember gdm;    ///< Object to store and retrieve the value
@@ -120,17 +120,17 @@ class GetMember : private GetDefaultMember {
 #define REFLECT_OBJECT_GET_DEFAULT_MEMBER_NOT(Cls)  REFLECT_WRITE_NO(Cls,GetDefaultMember)
 #define REFLECT_OBJECT_GET_MEMBER_NOT(Cls)      REFLECT_WRITE_NO(Cls,GetMember)
 
-#define REFLECT_WRITE_YES(Cls, Tag) \
-  template<> void Tag::handle<Cls>(const Cls& object) { \
+#define REFLECT_WRITE_YES(Cls, Handler) \
+  template<> void Handler::handle<Cls>(const Cls& object) { \
     const_cast<Cls&>(object).reflect(*this); \
   } \
-  void Cls::reflect(Tag& tag) { \
-    reflect_impl(tag); \
+  void Cls::reflect(Handler& handler) { \
+    reflect_impl(handler); \
   }
 
-#define REFLECT_WRITE_NO(Cls, Tag) \
-  template<> void Tag::handle<Cls>(const Cls& object) {} \
-  void Cls::reflect(Tag& tag) {}
+#define REFLECT_WRITE_NO(Cls, Handler) \
+  template<> void Handler::handle<Cls>(const Cls& object) {} \
+  void Cls::reflect(Handler& handler) {}
 
 // ----------------------------------------------------------------------------- : Reflection for enumerations
 
@@ -141,7 +141,7 @@ class GetMember : private GetDefaultMember {
     reflect_ ## Enum(const_cast<Enum&>(enum_), egm); \
   }
 
-/// 'Tag' to be used when reflecting enumerations for GetMember
+/// Handler to be used when reflecting enumerations for GetMember
 class EnumGetMember {
   public:
   inline EnumGetMember(GetDefaultMember& gdm)

@@ -37,12 +37,6 @@ unique_ptr<wxInputStream> Reader::openIncludedFile() {
   return package_manager.openFileFromPackage(package, value);
 }
 
-void Reader::addAlias(Version end_version, const Char* a, const Char* b) {
-  Alias& alias = aliasses[a];
-  alias.new_key     = b;
-  alias.end_version = end_version;
-}
-
 void Reader::handleIgnore(int end_version, const Char* a) {
   if (file_app_version < end_version) {
     if (enterBlock(a)) exitBlock();
@@ -242,26 +236,6 @@ void Reader::unknownKey() {
       moveNext();
     } while (indent > expected_indent);
     return;
-  }
-  // aliasses?
-  map<String,Alias>::const_iterator it = aliasses.find(key);
-  if (it != aliasses.end()) {
-    if (aliasses.find(it->second.new_key) != aliasses.end()) {
-      // alias points to another alias, don't follow it, there is the risk of infinite loops
-    } else if (it->second.end_version <= file_app_version) {
-      // alias not used for this version, use in warning
-      if (indent == expected_indent) {
-        warning(_("Unexpected key: '") + key + _("'  use  '") + it->second.new_key + _("'"), 0, false);
-        do {
-          moveNext();
-        } while (indent > expected_indent);
-        return;
-      }
-    } else {
-      // try this key instead
-      key = it->second.new_key;
-      return;
-    }
   }
   if (indent >= expected_indent) {
     warning(_("Unexpected key: '") + key + _("'"), 0, false);

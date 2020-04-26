@@ -46,8 +46,6 @@ SymbolFontP SymbolFont::byName(const String& name) {
 
 IMPLEMENT_REFLECTION(SymbolFont) {
   REFLECT_BASE(Packaged);
-
-  REFLECT_ALIAS(300, "text_align", "text_alignment");
   
   REFLECT_N("image_font_size",  img_size);
   REFLECT_N("horizontal_space", spacing.width);
@@ -179,6 +177,7 @@ IMPLEMENT_REFLECTION(SymbolInFont) {
   REFLECT(draw_text);
   REFLECT(text_font);
   REFLECT(text_alignment);
+  REFLECT_COMPAT(<300,"text_align",text_alignment);
   REFLECT(text_margin_left);
   REFLECT(text_margin_right);
   REFLECT(text_margin_top);
@@ -525,18 +524,18 @@ IMPLEMENT_REFLECTION_ENUM(MenuItemType) {
   VALUE_N("code",    ITEM_CODE);
   VALUE_N("custom",  ITEM_CUSTOM);
   VALUE_N("line",    ITEM_LINE);
-  VALUE_N("submenu",  ITEM_SUBMENU);
+  VALUE_N("submenu", ITEM_SUBMENU);
 }
 
 IMPLEMENT_REFLECTION_NO_GET_MEMBER(InsertSymbolMenu) {
-  if (!items.empty() || (tag.reading() && tag.isComplex())) {
+  REFLECT_IF_READING_SINGLE_VALUE_AND(items.empty()) {
+    REFLECT_NAMELESS(name);
+  } else {
     // complex values are groups
     REFLECT(type);
     REFLECT(name);
     REFLECT(items);
-    if (!items.empty()) type = ITEM_SUBMENU;
-  } else {
-    REFLECT_NAMELESS(name);
+    if (Handler::isReading && !items.empty()) type = ITEM_SUBMENU;
   }
 }
 template <> void GetDefaultMember::handle(const InsertSymbolMenu& m) {

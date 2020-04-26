@@ -34,13 +34,14 @@ IMPLEMENT_REFLECTION(ChoiceField) {
   REFLECT_N("default", default_script);
   REFLECT(initial);
   REFLECT(default_name);
-  REFLECT_IF_READING {
-    choices->initIds();
-  }
   REFLECT(choice_colors);
   REFLECT(choice_colors_cardlist);
 }
 
+void ChoiceField::after_reading(Version ver) {
+  Field::after_reading(ver);
+  choices->initIds();
+}
 // ----------------------------------------------------------------------------- : ChoiceField::Choice
 
 ChoiceField::Choice::Choice()
@@ -142,7 +143,9 @@ IMPLEMENT_REFLECTION_ENUM(ChoiceChoiceType) {
 }
 
 IMPLEMENT_REFLECTION(ChoiceField::Choice) {
-  if (isGroup() || line_below || enabled.isScripted() || tag.isComplex()) {
+  REFLECT_IF_READING_SINGLE_VALUE {
+    REFLECT_NAMELESS(name);
+  } else {
     // complex values are groups
     REFLECT(name);
     REFLECT_N("group_choice", default_name);
@@ -150,8 +153,6 @@ IMPLEMENT_REFLECTION(ChoiceField::Choice) {
     REFLECT(line_below);
     REFLECT(enabled);
     REFLECT(type);
-  } else {
-    REFLECT_NAMELESS(name);
   }
 }
 
@@ -242,33 +243,32 @@ void ChoiceStyle::invalidate() {
 }
 
 IMPLEMENT_REFLECTION_ENUM(ChoicePopupStyle) {
-  VALUE_N("dropdown",  POPUP_DROPDOWN);
-  VALUE_N("menu",    POPUP_MENU);
-  VALUE_N("in place",  POPUP_DROPDOWN_IN_PLACE);
+  VALUE_N("dropdown", POPUP_DROPDOWN);
+  VALUE_N("menu", POPUP_MENU);
+  VALUE_N("in place", POPUP_DROPDOWN_IN_PLACE);
 }
 
 IMPLEMENT_REFLECTION_ENUM(ChoiceRenderStyle) {
-  VALUE_N("text",        RENDER_TEXT);
-  VALUE_N("image",      RENDER_IMAGE);
-  VALUE_N("both",        RENDER_BOTH);
-  VALUE_N("hidden",      RENDER_HIDDEN);
-  VALUE_N("image hidden",    RENDER_HIDDEN_IMAGE);
-  VALUE_N("checklist",    RENDER_TEXT_CHECKLIST);
-  VALUE_N("image checklist",  RENDER_IMAGE_CHECKLIST);
-  VALUE_N("both checklist",  RENDER_BOTH_CHECKLIST);
-  VALUE_N("text list",    RENDER_TEXT_LIST);
-  VALUE_N("image list",    RENDER_IMAGE_LIST);
-  VALUE_N("both list",    RENDER_BOTH_LIST);
+  VALUE_N("text", RENDER_TEXT);
+  VALUE_N("image", RENDER_IMAGE);
+  VALUE_N("both", RENDER_BOTH);
+  VALUE_N("hidden", RENDER_HIDDEN);
+  VALUE_N("image hidden", RENDER_HIDDEN_IMAGE);
+  VALUE_N("checklist", RENDER_TEXT_CHECKLIST);
+  VALUE_N("image checklist", RENDER_IMAGE_CHECKLIST);
+  VALUE_N("both checklist", RENDER_BOTH_CHECKLIST);
+  VALUE_N("text list", RENDER_TEXT_LIST);
+  VALUE_N("image list", RENDER_IMAGE_LIST);
+  VALUE_N("both list", RENDER_BOTH_LIST);
 }
 
-template <typename T> void reflect_content(T& tag,         const ChoiceStyle& cs) {}
-template <>           void reflect_content(GetMember& tag, const ChoiceStyle& cs) {
+template <typename T> void reflect_content(T& handler,         const ChoiceStyle& cs) {}
+template <>           void reflect_content(GetMember& handler, const ChoiceStyle& cs) {
   REFLECT_N("content_width",  cs.content_width);
   REFLECT_N("content_height", cs.content_height);
 }
 
 IMPLEMENT_REFLECTION(ChoiceStyle) {
-  REFLECT_ALIAS(300, "card_list_colors", "colors_card_list");
   REFLECT_BASE(Style);
   REFLECT(popup_style);
   REFLECT(render_style);
@@ -277,7 +277,7 @@ IMPLEMENT_REFLECTION(ChoiceStyle) {
   REFLECT(font);
   REFLECT(image);
   REFLECT(choice_images);
-  reflect_content(tag, *this);
+  reflect_content(handler, *this);
 }
 
 // ----------------------------------------------------------------------------- : ChoiceValue
@@ -301,7 +301,7 @@ bool ChoiceValue::update(Context& ctx) {
 }
 
 IMPLEMENT_REFLECTION_NAMELESS(ChoiceValue) {
-  if (fieldP->save_value || tag.scripting() || tag.reading()) REFLECT_NAMELESS(value);
+  if (fieldP->save_value || !handler.isWriting) REFLECT_NAMELESS(value);
 }
 
 INSTANTIATE_REFLECTION_NAMELESS(ChoiceValue)
