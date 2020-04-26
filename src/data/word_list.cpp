@@ -18,14 +18,14 @@ WordListWord::WordListWord()
 
 IMPLEMENT_REFLECTION_NO_SCRIPT(WordListWord) {
   REFLECT_IF_READING_SINGLE_VALUE {
+    REFLECT_NAMELESS(name);
+  } else {
     // complex value
     REFLECT(name);
     REFLECT(line_below);
     REFLECT(is_prefix);
     REFLECT(words);
     REFLECT(script);
-  } else {
-    REFLECT_NAMELESS(name);
   }
 }
 
