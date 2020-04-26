@@ -104,8 +104,10 @@ public:
     */
   virtual ScriptValueP makeIterator(const ScriptValueP& thisP = ScriptValueP()) const;
   /// Return the next item for this iterator, or ScriptValueP() if there is no such item
-  /** If key_out != 0, then it will recieve the key of the item */
-  virtual ScriptValueP next(ScriptValueP* key_out = nullptr);
+  /** If key_out != nullptr, then it will receive the key of the item
+   *  If index_out != nullptr, then it will receive to index of the item if it is in an indexable container
+  */
+  virtual ScriptValueP next(ScriptValueP* key_out = nullptr, int* index_out = nullptr);
   /// Return the number of items in this value (assuming it is a collection)
   virtual int itemCount() const;
   /// Get a member at the given index

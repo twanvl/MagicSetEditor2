@@ -22,11 +22,11 @@ extern ScriptValueP dependency_dummy;
 // A dummy type used during dependency analysis,
 // it simply supresses all error messages.
 class DependencyDummy : public ScriptIterator {
-  public:
-  virtual ScriptType type() const { return SCRIPT_DUMMY; }
-  virtual String typeName() const { return _("dummy"); }
-  virtual ScriptValueP next(ScriptValueP*) { return ScriptValueP(); }
-  virtual ScriptValueP dependencyName(const ScriptValue&, const Dependency&) const { return dependency_dummy; }
+public:
+  ScriptType type() const override { return SCRIPT_DUMMY; }
+  String typeName() const override { return _("dummy"); }
+  ScriptValueP next(ScriptValueP*,int*) override { return ScriptValueP(); }
+  ScriptValueP dependencyName(const ScriptValue&, const Dependency&) const override { return dependency_dummy; }
 };
 
 ScriptValueP dependency_dummy(new DependencyDummy);
@@ -43,19 +43,19 @@ public:
     : a(a), b(b)
   {}
   
-  virtual ScriptType type() const { return SCRIPT_DUMMY; }
-  virtual String typeName() const { return _("union of ") + a->typeName() + _(" and ") + b->typeName(); }
+  ScriptType type() const override { return SCRIPT_DUMMY; }
+  String typeName() const override { return _("union of ") + a->typeName() + _(" and ") + b->typeName(); }
   
-  virtual ScriptValueP dependencies(Context& ctx, const Dependency& dep) const {
+  ScriptValueP dependencies(Context& ctx, const Dependency& dep) const override {
     return unified( a->dependencies(ctx,dep), b->dependencies(ctx,dep));
   }
-  virtual ScriptValueP makeIterator(ScriptValueP thisP) const {
+  ScriptValueP makeIterator(const ScriptValueP& thisP) const override {
     return unified(a->makeIterator(a), b->makeIterator(b));
   }
-  virtual ScriptValueP dependencyMember(const String& name, const Dependency& dep) const {
+  ScriptValueP dependencyMember(const String& name, const Dependency& dep) const override {
     return unified(a->dependencyMember(name,dep), b->dependencyMember(name,dep));
   }
-  virtual ScriptValueP dependencyName(const ScriptValue& container, const Dependency& dep) const {
+  ScriptValueP dependencyName(const ScriptValue& container, const Dependency& dep) const override {
     return unified(a->dependencyName(container,dep), b->dependencyName(container,dep));
   }
 private:

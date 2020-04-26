@@ -46,7 +46,7 @@ ScriptValueP ScriptValue::eval(Context&, bool) const {
   return delay_error(ScriptErrorConversion(typeName(), _TYPE_("function")));
 }
 
-ScriptValueP ScriptValue::next(ScriptValueP* key_out) {
+ScriptValueP ScriptValue::next(ScriptValueP* key_out, int* index_out) {
   throw InternalError(_("Can't convert from ")+typeName()+_(" to iterator"));
 }
 ScriptValueP ScriptValue::makeIterator(const ScriptValueP&) const {
@@ -183,9 +183,10 @@ public:
   ScriptRangeIterator(int start, int end)
     : pos(start), start(start), end(end)
   {}
-  ScriptValueP next(ScriptValueP* key_out) override {
+  ScriptValueP next(ScriptValueP* key_out, int* index_out) override {
     if (pos <= end) {
       if (key_out) *key_out = to_script(pos-start);
+      if (index_out) *index_out = (int)pos;
       return to_script(pos++);
     } else {
       return ScriptValueP();
@@ -288,6 +289,22 @@ ScriptValueP to_script(double v) {
 
 // ----------------------------------------------------------------------------- : String type
 
+String quote_string(String const& str) {
+  String out;
+  out.reserve(str.size() + 2);
+  out += _('"');
+  FOR_EACH_CONST(c, str) {
+    if      (c == _('"') || c == _('\\')) { out += _('\\'); out += c; }
+    else if (c == _('\1')) out += _("\\<");
+    else if (c == _('\n')) out += _("\\n");
+    else if (c == _('\r')) out += _("\\r");
+    else if (c == _('\t')) out += _("\\t");
+    else out += c;
+  }
+  out += _('"');
+  return out;
+}
+
 // String values
 class ScriptString : public ScriptValue {
 public:
@@ -295,6 +312,9 @@ public:
   ScriptType type() const override { return SCRIPT_STRING; }
   String typeName() const override { return _TYPE_("string") + _(" (\"") + (value.size() < 30 ? value : value.substr(0,30) + _("...")) + _("\")"); }
   String toString() const override { return value; }
+  String toCode() const override {
+    return quote_string(value);
+  }
   double toDouble() const override {
     double d;
     if (value.ToDouble(&d)) {
@@ -437,10 +457,15 @@ String ScriptCollectionBase::toCode() const {
   String ret = _("[");
   bool first = true;
   ScriptValueP it = makeIterator();
-  while (ScriptValueP v = it->next()) {
+  ScriptValueP key;
+  int index = -1;
+  while (ScriptValueP v = it->next(&key,&index)) {
     if (!first) ret += _(",");
     first = false;
-    // todo: include keys
+    if (index == -1) {
+      ret += key->toCode();
+      ret += _(":");
+    }
     ret += v->toCode();
   }
   ret += _("]");
@@ -454,12 +479,14 @@ class ScriptCustomCollectionIterator : public ScriptIterator {
 public:
   ScriptCustomCollectionIterator(ScriptCustomCollection const* col, ScriptValueP const& col_owned)
     : col(col), col_owned(col_owned), pos(0), it(col->key_value.begin()) {}
-  ScriptValueP next(ScriptValueP* key_out) override {
+  ScriptValueP next(ScriptValueP* key_out, int* index_out) override {
     if (pos < col->value.size()) {
       if (key_out) *key_out = to_script((int)pos);
+      if (index_out) *index_out = (int)pos;
       return col->value.at(pos++);
     } else if (it != col->key_value.end()) {
       if (key_out) *key_out = to_script(it->first);
+      if (index_out) *index_out = -1;
       return (it++)->second;
     } else {
       return ScriptValueP();
@@ -498,14 +525,14 @@ class ScriptConcatCollectionIterator : public ScriptIterator {
 public:
   ScriptConcatCollectionIterator(const ScriptValueP& itA, const ScriptValueP& itB)
     : itA(itA), itB(itB) {}
-  ScriptValueP next(ScriptValueP* key_out) override {
+  ScriptValueP next(ScriptValueP* key_out, int* index_out) override {
     if (itA) {
-      ScriptValueP v = itA->next(key_out);
+      ScriptValueP v = itA->next(key_out, index_out);
       if (v) return v;
       else   itA = ScriptValueP();
     }
     // TODO: somehow fix up the keys
-    return itB->next(key_out);
+    return itB->next(key_out, index_out);
   }
 private:
   ScriptValueP itA, itB;

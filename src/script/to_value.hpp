@@ -75,7 +75,7 @@ struct ScriptIterator : public ScriptValue {
   CompareWhat compareAs(String&, void const*&) const override;
 
   /// Return the next item for this iterator, or ScriptValueP() if there is no such item
-  ScriptValueP next(ScriptValueP* key_out = nullptr) override = 0;
+  ScriptValueP next(ScriptValueP* key_out = nullptr, int* index_out = nullptr) override = 0;
   ScriptValueP makeIterator(const ScriptValueP& thisP) const override;
 };
 
@@ -98,9 +98,10 @@ template <typename Collection>
 class ScriptCollectionIterator : public ScriptIterator {
 public:
   ScriptCollectionIterator(const Collection* col) : pos(0), col(col) {}
-  ScriptValueP next(ScriptValueP* key_out) override {
+  ScriptValueP next(ScriptValueP* key_out, int* index_out) override {
     if (pos < col->size()) {
       if (key_out) *key_out = to_script((int)pos);
+      if (index_out) *index_out = (int)pos;
       return to_script(col->at(pos++));
     } else {
       return ScriptValueP();
