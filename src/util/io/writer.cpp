@@ -53,7 +53,7 @@ void Writer::writePending() {
     }
     indentation += 1;
     writeIndentation();
-    writeUTF8(stream, canonical_name_form(pending_opened[i]));
+    writeUTF8(stream, pending_opened[i]);
   }
   pending_opened.clear();
 }
