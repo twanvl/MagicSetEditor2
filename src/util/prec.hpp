@@ -52,7 +52,6 @@ typedef wxWindow Window;
 
 typedef wxBitmap Bitmap;
 typedef wxImage  Image;
-typedef wxColour Color;
 typedef wxDC     DC;
 
 typedef wxDateTime DateTime;

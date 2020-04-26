@@ -341,11 +341,11 @@ public:
     }
   }
   Color toColor() const override {
-    Color c = parse_color(value);
-    if (!c.Ok()) {
+    optional<Color> c = parse_color(value);
+    if (!c.has_value()) {
       throw ScriptErrorConversion(value, typeName(), _TYPE_("color"));
     }
-    return c;
+    return *c;
   }
   wxDateTime toDateTime() const override {
     wxDateTime date;

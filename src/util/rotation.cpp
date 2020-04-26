@@ -182,11 +182,11 @@ RotatedDC::RotatedDC(DC& dc, const Rotation& rotation, RenderQuality quality)
 
 // ----------------------------------------------------------------------------- : RotatedDC : Drawing
 
-void RotatedDC::DrawText  (const String& text, const RealPoint& pos, int blur_radius, int boldness, double stretch_) {
+void RotatedDC::DrawText(const String& text, const RealPoint& pos, int blur_radius, int boldness, double stretch_) {
   DrawText(text, pos, dc.GetTextForeground(), blur_radius, boldness, stretch_);
 }
 
-void RotatedDC::DrawText  (const String& text, const RealPoint& pos, Color color, int blur_radius, int boldness, double stretch_) {
+void RotatedDC::DrawText(const String& text, const RealPoint& pos, Color color, int blur_radius, int boldness, double stretch_) {
   if (text.empty()) return;
   if (color.Alpha() == 0) return;
   if (quality >= QUALITY_AA) {

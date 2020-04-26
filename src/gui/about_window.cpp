@@ -40,7 +40,7 @@ void AboutWindow::draw(DC& dc) {
   wxSize ws = GetClientSize();
   // draw background
   dc.SetPen  (*wxTRANSPARENT_PEN);
-  dc.SetBrush(Color(240,247,255));
+  dc.SetBrush(wxColor(240,247,255));
   dc.DrawRectangle(0, 0, ws.GetWidth(), ws.GetHeight());
   // draw logo
   dc.DrawBitmap(logo,  (ws.GetWidth() -  logo.GetWidth()) / 2, 5);
@@ -48,11 +48,11 @@ void AboutWindow::draw(DC& dc) {
     dc.DrawBitmap(logo2,  ws.GetWidth() - logo2.GetWidth(),      ws.GetHeight() - logo2.GetHeight());
   #endif
   // draw version box
-  dc.SetPen  (wxPen(Color(184,29,19), 2));
-  dc.SetBrush(Color(114,197,224));
+  dc.SetPen  (wxPen(wxColor(184,29,19), 2));
+  dc.SetBrush(wxColor(114,197,224));
   dc.DrawRectangle(28, 104, 245, 133);
-  dc.SetTextBackground(Color(114,197,224));
-  dc.SetTextForeground(Color(0,0,0));
+  dc.SetTextBackground(wxColor(114,197,224));
+  dc.SetTextForeground(wxColor(0,0,0));
   // draw version info
   dc.SetFont(wxFont(9, wxFONTFAMILY_SWISS, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL, false, _("Arial")));
   dc.DrawText(_("Version: ") + app_version.toString() + version_suffix, 34, 110);
@@ -202,7 +202,7 @@ void HoverButton::draw(DC& dc) {
   // clear background (for transparent button images)
   wxSize ws = GetClientSize();
   dc.SetPen(*wxTRANSPARENT_PEN);
-  dc.SetBrush(background != wxNullColour ? background : wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
+  dc.SetBrush(wxBrush(background.Alpha()>0 ? wxColour(background) : wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)));
   dc.DrawRectangle(0, 0, ws.GetWidth(), ws.GetHeight());
   // draw button
   dc.DrawBitmap(*toDraw(), 0, 0, true);

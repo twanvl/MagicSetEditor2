@@ -94,7 +94,7 @@ SCRIPT_FUNCTION(recolor_image) {
   SCRIPT_OPTIONAL_PARAM(Color, red) {
     SCRIPT_PARAM(Color, green);
     SCRIPT_PARAM(Color, blue);
-    SCRIPT_PARAM_DEFAULT(Color, white, *wxWHITE);
+    SCRIPT_PARAM_DEFAULT(Color, white, Color(255,255,255));
     return make_intrusive<RecolorImage2>(input,red,green,blue,white);
   } else {
     SCRIPT_PARAM(Color, color);

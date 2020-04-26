@@ -260,7 +260,7 @@ void StatDimensionList::drawItem(DC& dc, int x, int y, size_t item) {
       int cx = x + subcolumns[j].offset.x + subcolumns[j].size.x/2;
       int cy = y + subcolumns[j].offset.y + subcolumns[j].size.y/2;
       dc.SetPen(*wxTRANSPARENT_PEN);
-      dc.SetBrush(prefered ? wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT)
+      dc.SetBrush(prefered ? Color(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT))
                            : lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT),wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),0.5));
       dc.DrawCircle(cx,cy,6);
     }

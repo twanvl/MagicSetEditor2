@@ -151,6 +151,6 @@ void ColorValueEditor::change(const Defaultable<Color>& c) {
   addAction(value_action(valueP(), c));
 }
 void ColorValueEditor::changeCustom() {
-  Color c = wxGetColourFromUser(0, value().value());
-  if (c.Ok()) change(c);
+  wxColour c = wxGetColourFromUser(0, value().value());
+  if (c.Ok()) change(Color(c));
 }

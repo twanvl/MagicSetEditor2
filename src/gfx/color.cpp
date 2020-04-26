@@ -11,11 +11,14 @@
 
 // ----------------------------------------------------------------------------- : Parsing etc.
 
-template <> void Reader::handle(Color& col) {
-  col = parse_color(getValue());
-  if (!col.Ok()) {
-    col = Color(0,0,0,0);
-    warning(_("Not a valid color value"));
+template <> void Reader::handle(Color& out) {
+  String const& str = getValue();
+  auto col = parse_color(str);
+  if (!col.has_value()) {
+    out = Color();
+    warning(_("Not a valid color value: ") + str);
+  } else {
+    out = *col;
   }
 }
 
@@ -24,7 +27,7 @@ template <> void Writer::handle(const Color& col) {
 }
 
 
-Color parse_color(const String& v) {
+optional<Color> parse_color(const String& v) {
   UInt r,g,b,a;
   if (wxSscanf(v.c_str(),_("rgb(%u,%u,%u)"),&r,&g,&b)) {
     return Color(r, g, b);
@@ -33,7 +36,13 @@ Color parse_color(const String& v) {
   } else if (v == _("transparent")) {
     return Color(0,0,0,0);
   } else {
-    return Color(v);
+    // Try to find a named color
+    wxColour c = wxTheColourDatabase->Find(v);
+    if (c.Ok()) {
+      return Color(c);
+    } else {
+      return optional<Color>();
+    }
   }
 }
 
@@ -49,7 +58,7 @@ String format_color(Color col) {
 
 // ----------------------------------------------------------------------------- : Color utility functions
 
-Color lerp(const Color& a, const Color& b, double t) {
+Color lerp(Color a, Color b, double t) {
   return Color(static_cast<int>( a.Red()   + (b.Red()   - a.Red()  ) * t ),
                static_cast<int>( a.Green() + (b.Green() - a.Green()) * t ),
                static_cast<int>( a.Blue()  + (b.Blue()  - a.Blue() ) * t ),
@@ -79,21 +88,22 @@ Color hsl2rgb(double h, double s, double l) {
 }
 
 
-Color darken(const Color& c) {
+Color darken(Color c) {
   return Color(
-    c.Red()   * 8 / 10,
-    c.Green() * 8 / 10,
-    c.Blue()  * 8 / 10
+    c.r * 8 / 10,
+    c.g * 8 / 10,
+    c.b * 8 / 10,
+    c.a
   );
 }
 
-Color saturate(const Color& c, double amount) {
-  int r = c.Red(), g = c.Green(), b = c.Blue();
-  double l = (r + g + b) / 3;
+Color saturate(Color c, double amount) {
+  double l = (c.r + c.g + c.b) / 3;
   return Color(
-    col(static_cast<int>( (r - amount * l) / (1 - amount) )),
-    col(static_cast<int>( (g - amount * l) / (1 - amount) )),
-    col(static_cast<int>( (b - amount * l) / (1 - amount) ))
+    col(static_cast<int>( (c.r - amount * l) / (1 - amount) )),
+    col(static_cast<int>( (c.g - amount * l) / (1 - amount) )),
+    col(static_cast<int>( (c.b - amount * l) / (1 - amount) )),
+    c.a
   );
 }
 

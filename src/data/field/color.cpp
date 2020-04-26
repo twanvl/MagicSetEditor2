@@ -41,7 +41,12 @@ IMPLEMENT_REFLECTION(ColorField) {
 IMPLEMENT_REFLECTION(ColorField::Choice) {
   REFLECT_IF_READING_SINGLE_VALUE {
     REFLECT_NAMELESS(name);
-    color = parse_color(name);
+    auto col = parse_color(name);
+    if (col) {
+      color = *col;
+    } else {
+      // TODO: handler.warning(_("Not a valid color value: ") + name);
+    }
   } else {
     REFLECT(name);
     REFLECT(color);
@@ -78,7 +83,7 @@ ColorValue::ColorValue(const ColorFieldP& field)
   : Value(field)
   , value( !field->initial.isDefault() ? field->initial()
          : !field->choices.empty()     ? field->choices[0]->color
-         :                               *wxBLACK
+         :                               Color()
          , true)
 {}
   

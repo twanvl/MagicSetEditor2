@@ -310,7 +310,7 @@ void GalleryList::OnDraw(DC& dc) {
         }
       #else
       Color c = selected ? ( focused
-                                  ? wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT)
+                                  ? Color(wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT))
                                   : lerp(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW),
                                          wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT), subcolumnActivity(j))
                            )

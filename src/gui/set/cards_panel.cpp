@@ -44,7 +44,7 @@ CardsPanel::CardsPanel(Window* parent, int id)
   card_list   = new FilteredImageCardList(splitter, ID_CARD_LIST);
   nodes_panel = new wxPanel(splitter, wxID_ANY);
   notes       = new TextCtrl(nodes_panel, ID_NOTES, true);
-  collapse_notes = new HoverButton(nodes_panel, ID_COLLAPSE_NOTES, _("btn_collapse"), wxNullColour, false);
+  collapse_notes = new HoverButton(nodes_panel, ID_COLLAPSE_NOTES, _("btn_collapse"), Color(), false);
   collapse_notes->SetExtraStyle(wxWS_EX_PROCESS_UI_UPDATES);
   filter    = nullptr;
   editor->next_in_tab_order = card_list;

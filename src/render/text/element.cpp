@@ -127,9 +127,13 @@ struct TextElementsFromString {
         else if (is_substr(text, tag_start, _( "<color"))) {
           size_t colon = text.find_first_of(_(">:"), tag_start);
           if (colon < pos - 1 && text.GetChar(colon) == _(':')) {
-            Color c = parse_color(text.substr(colon+1, pos-colon-2));
-            if (!c.Ok()) c = style.font.color;
-            colors.push_back(c);
+            auto c = parse_color(text.substr(colon+1, pos-colon-2));
+            if (c) {
+              colors.push_back(*c);
+            } else {
+              queue_message(MESSAGE_WARNING, _("Invalid color in tagged string: ") + text.substr(colon + 1, pos - colon - 2));
+              colors.push_back(style.font.color);
+            }
           }
         } else if (is_substr(text, tag_start, _("</color"))) {
           if (!colors.empty()) colors.pop_back();
