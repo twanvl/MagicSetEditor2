@@ -13,6 +13,9 @@ Bug fixes:
 
 Scripting:
  * Added type_name function
+ * nil != "", so missing values are no longer equal to the empty string
+ * The `=` operator is now deprecated, use `==` for comparisons, `:=` for assignment.
+ * if statements without an else will now produce a warning if their result is used.
 
 Internal:
  * Switch build system to to CMake
