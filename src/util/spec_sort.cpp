@@ -121,11 +121,12 @@ size_t count_and_remove(wxUniChar c, Bag& input) {
   for (size_t i=0 ; i < input.size() ; ++i) {
     if (input[i] == c) {
       count++;
+      input[i] = REMOVED;
     } else {
-      input[j++] = input[i];
+      //input[j++] = input[i];
     }
   }
-  input.resize(j);
+  //input.resize(j);
   return count;
 }
 
@@ -172,11 +173,9 @@ void mixed_sort(const String& spec, Bag& input, Bag& ret) {
   for (wxUniCharRef c : input) {
     if (spec.find(c) != String::npos) {
       ret += c;
-    } else {
-      input[j++] = c;
+      c = REMOVED;
     }
   }
-  input.resize(j);
 }
 
 /// Sort a string, find a compound item
@@ -187,13 +186,10 @@ void compound_sort(const String& spec, Bag& input, Bag& ret) {
     // match?
     if (i+spec.size() <= input.size() && std::equal(spec.begin(), spec.end(), input.begin()+i)) {
       i += spec.size() - 1;
-      //std::copy(spec.begin(), spec.end(), back_inserter(ret));
       ret += spec;
-    } else {
-      input[j++] = input[i];
+      input[i] = REMOVED;
     }
   }
-  input.resize(j);
 }
 
 /// Sort things matching a pattern
@@ -214,11 +210,9 @@ void pattern_sort(const String& pattern, const String& spec, Bag& input, Bag& re
         wxUniChar p = pattern[j];
         if (c == REMOVED) {
           goto no_match;
-        }
-        else if (p == PLACEHOLDER) {
+        } else if (p == PLACEHOLDER) {
           placeholders += c;
-        }
-        else if (c != p) {
+        } else if (c != p) {
           goto no_match;
         }
       }
@@ -232,8 +226,7 @@ void pattern_sort(const String& pattern, const String& spec, Bag& input, Bag& re
           wxUniChar p = pattern[j];
           if (p == PLACEHOLDER) {
             ret += new_placeholders[ph++];
-          }
-          else {
+          } else {
             ret += p;
           }
         }
