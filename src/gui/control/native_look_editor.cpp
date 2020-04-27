@@ -196,7 +196,7 @@ END_EVENT_TABLE()
 // ----------------------------------------------------------------------------- : SetInfoEditor
 
 SetInfoEditor::SetInfoEditor(Window* parent, int id, long style)
-  : NativeLookEditor(parent, id, style)
+  : NativeLookEditor(parent, id, style | wxVSCROLL)
 {}
 
 void SetInfoEditor::onChangeSet() {
@@ -213,7 +213,7 @@ Package& SetInfoEditor::getStylePackage() const {
 // ----------------------------------------------------------------------------- : StylingEditor
 
 StylingEditor::StylingEditor(Window* parent, int id, long style)
-  : NativeLookEditor(parent, id, style)
+  : NativeLookEditor(parent, id, style | wxVSCROLL)
 {}
 
 void StylingEditor::showStylesheet(const StyleSheetP& stylesheet) {
