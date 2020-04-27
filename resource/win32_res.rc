@@ -146,7 +146,6 @@ bool_yes IMAGE "bool_yes.png"
 bool_no IMAGE "bool_no.png"
 
 about IMAGE "about.png"
-two_beta IMAGE "two_beta.png"
 btn_normal IMAGE "btn_normal.png"
 btn_hover IMAGE "btn_hover.png"
 btn_focus IMAGE "btn_focus.png"

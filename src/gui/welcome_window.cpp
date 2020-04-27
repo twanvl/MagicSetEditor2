@@ -27,9 +27,6 @@
 WelcomeWindow::WelcomeWindow()
   : wxFrame(nullptr, wxID_ANY, _TITLE_("magic set editor"), wxDefaultPosition, wxSize(520,380), wxDEFAULT_DIALOG_STYLE | wxTAB_TRAVERSAL | wxCLIP_CHILDREN )
   , logo (load_resource_image(_("about")))
-  #if USE_BETA_LOGO
-  , logo2(load_resource_image(_("two_beta")))
-  #endif
 {
   SetIcon(load_resource_icon(_("app")));
 
