@@ -60,12 +60,16 @@ class Reader {
   /// Handle an object that can read as much as it can eat
   template <typename T>
   void handle_greedy(T& object) {
+    handle_greedy_without_validate(object);
+    after_reading(object, file_app_version);
+  }
+  template <typename T>
+  void handle_greedy_without_validate(T& object) {
     do {
       handle(object);
       if (state != HANDLED) unknownKey(object);
       state = OUTSIDE;
     } while (indent >= expected_indent);
-    after_reading(object, file_app_version);
   }
   
   /// Handle an object: read it if it's name matches
@@ -173,7 +177,7 @@ private:
         // in an included file, use the app version of the parent if there is none
         sub_reader.file_app_version = file_app_version;
       }
-      sub_reader.handle_greedy(v);
+      sub_reader.handle_greedy_without_validate(v);
       moveNext();
     } else {
       unknownKey();
