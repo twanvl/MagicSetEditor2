@@ -29,7 +29,7 @@ Package::~Package() {
   // remove any remaining temporary files
   FOR_EACH(f, files) {
     if (f.second.wasWritten()) {
-      wxRemoveFile(f.second.tempName);
+      remove_file(f.second.tempName);
     }
   }
 }
@@ -120,7 +120,7 @@ void Package::removeTempFiles(bool remove_unused) {
   while (it != files.end()) {
     if (it->second.wasWritten()) {
       // remove corresponding temp file
-      wxRemoveFile(it->second.tempName);
+      remove_file(it->second.tempName);
     }
     if (!it->second.keep && remove_unused) {
       // also remove the record of deleted files
@@ -370,7 +370,7 @@ void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_
       vcs->removeFile(saveAs+_("/")+f.first);
     } else if (f.second.wasWritten()) {
       // move files that were updated
-      wxRemoveFile(saveAs+_("/")+f.first);
+      remove_file(saveAs+_("/")+f.first);
       if (!(is_copy ? wxCopyFile  (f.second.tempName, saveAs+_("/")+f.first)
                     : wxRenameFile(f.second.tempName, saveAs+_("/")+f.first))) {
         throw PackageError(_ERROR_("unable to store file"));
@@ -394,7 +394,7 @@ void Package::saveToDirectory(const String& saveAs, bool remove_unused, bool is_
 void Package::saveToZipfile(const String& saveAs, bool remove_unused, bool is_copy) {
   // create a temporary zip file name
   String tempFile = saveAs + _(".tmp");
-  wxRemoveFile(tempFile);
+  remove_file(tempFile);
   // open zip file
   try {
     unique_ptr<wxFileOutputStream> newFile(new wxFileOutputStream(tempFile));
@@ -423,15 +423,15 @@ void Package::saveToZipfile(const String& saveAs, bool remove_unused, bool is_co
     if (!is_copy) {
       zipStream.reset();
     }
-  } catch (Error e) {
+  } catch (Error const& e) {
     // when things go wrong delete the temp file
-    wxRemoveFile(tempFile);
+    remove_file(tempFile);
     throw e;
   }
   // replace the old file with the new file, in effect commiting the changes
   if (wxFileExists(saveAs)) {
     // rename old file to .bak
-    wxRemoveFile(saveAs + _(".bak"));
+    remove_file(saveAs + _(".bak"));
     wxRenameFile(saveAs, saveAs + _(".bak"));
   }
   wxRenameFile(tempFile, saveAs);

@@ -48,6 +48,12 @@ time_t file_modified_time(const String& name);
 /// Ensure that the parent directories of the given filename exist
 bool create_parent_dirs(const String& file);
 
+/// Remove the given file
+/** This is identical to wxRemoveFile, except that it doesn't show an error message if the file doesn't exist.
+ *  (who thought that that was a good idea?)
+ */
+bool remove_file(const String& file);
+
 /// Remove the given file or directory
 /** It is not an error if the file doesn't exist.
  *  Removes all files in a directory.

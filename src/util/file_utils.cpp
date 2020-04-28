@@ -148,7 +148,7 @@ class RecursiveDeleter : public wxDirTraverser {
   }
   
   wxDirTraverseResult OnFile(const String& filename) {
-    if (!wxRemoveFile(filename)) {
+    if (!remove_file(filename)) {
       ok = false;
       handle_error(_("Cannot delete ") + filename + _("\n")
         _("The remainder of the package has still been removed, if possible.\n")
@@ -164,9 +164,14 @@ class RecursiveDeleter : public wxDirTraverser {
   vector<String> to_delete;
 };
 
+bool remove_file(const String& filename) {
+  // Based on wxRemoveFile
+  return wxRemove(filename.fn_str()) == 0;
+}
+
 bool remove_file_or_dir(const String& name) {
   if (wxFileExists(name)) {
-    return wxRemoveFile(name);
+    return remove_file(name);
   } else if (wxDirExists(name)) {
     RecursiveDeleter rd(name);
     {

@@ -9,6 +9,7 @@
 // ----------------------------------------------------------------------------- : Includes
 
 #include <util/prec.hpp>
+#include <util/file_utils.hpp>
 #include <wx/filename.h>
 
 class VCS;
@@ -38,7 +39,7 @@ class VCS : public IntrusivePtrVirtualBase
   }
   /// Delete a file right off the disk
   virtual void removeFile (const wxFileName& filename) {
-    wxRemoveFile(filename.GetFullName());
+    remove_file(filename.GetFullName());
   }
   
   DECLARE_REFLECTION_VIRTUAL();

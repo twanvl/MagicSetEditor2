@@ -118,7 +118,7 @@ class TokenIterator {
 // ----------------------------------------------------------------------------- : Characters
 
 bool isUnicodeAlpha(Char c) {
-  #if wxMSW
+  #if defined(__WXMSW__)
     return false;
   #else
     // libc's iswalpha doesn't work on non-ascii characters. For the parser let's just say that anything >=128 is alphabetic
