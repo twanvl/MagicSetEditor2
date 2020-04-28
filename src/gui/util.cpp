@@ -133,9 +133,95 @@ void draw_checker(RotatedDC& dc, const RealRect& rect) {
 
 // ----------------------------------------------------------------------------- : Image related
 
+/// A wxInputStream in which we can seek, even if the underlying stream can't
+/** Seeking is used by the wxImage format detection code, to peek at the header.
+ *  So we only need to be able to seek back to the beginning.
+ *  The solution is to keep a small buffer of the file header.
+ */
+class SeekableInputStream : public wxInputStream {
+public:
+  SeekableInputStream(wxInputStream& stream)
+    : stream(stream) {
+  }
+  bool IsOk() const override {
+    return stream.IsOk();
+  }
+  bool IsSeekable() const override {
+    return pos < BUFFER_SIZE;
+  }
+  size_t LastRead() const override {
+    return last_read;
+  }
+  char Peek() override {
+    if (pos < stream_pos) {
+      return buffer[pos];
+    } else {
+      return stream.Peek();
+    }
+  }
+  wxInputStream& Read(void* out_buffer, size_t size) override {
+    last_read = 0;
+    if (pos < stream_pos) {
+      // take from buffer
+      size_t n = min(size, min((size_t)stream_pos, BUFFER_SIZE) - (size_t)pos);
+      memcpy(out_buffer, buffer + pos, n);
+      size -= n;
+      out_buffer = (char*)out_buffer + n;
+      last_read += n;
+      pos += n;
+    }
+    if (size > 0) {
+      assert(pos == stream_pos);
+      // take from stream
+      stream.Read(out_buffer, size);
+      size_t read = stream.LastRead();
+      last_read += read;
+      if (pos < BUFFER_SIZE) {
+        // update buffer
+        memcpy(buffer + pos, out_buffer, min(BUFFER_SIZE - (size_t)pos, read));
+      }
+      stream_pos += read;
+      pos += read;
+    }
+    return *this;
+  }
+  wxFileOffset SeekI(wxFileOffset target, wxSeekMode mode = wxFromStart) override {
+    assert(mode == wxFromStart);
+    assert(target < BUFFER_SIZE);
+    if (target < BUFFER_SIZE) {
+      pos = target;
+      return target;
+    } else {
+      return wxInvalidOffset;
+    }
+  }
+  wxFileOffset TellI() const override {
+    return pos;
+  }
+protected:
+  size_t OnSysRead(void* out_buffer, size_t size) override {
+    Read(out_buffer, size);
+    return last_read;
+  }
+private:
+  wxInputStream& stream;
+  static const size_t BUFFER_SIZE = 16;
+  Byte buffer[BUFFER_SIZE];
+  // positions:
+  // Invariant: pos < stream_pos ==> pos < BUFFER_SIZE && buffer[i] is valid for i<=pos
+  wxFileOffset stream_pos = 0; // position in underlying stream
+  wxFileOffset pos = 0; // position taking into account any seeking done.
+  size_t last_read = 0;
+};
+
 bool image_load_file(Image& image, wxInputStream &stream) {
-  wxLogNull noLog;
-  return image.LoadFile(stream);
+  wxLogNull noLog; // prevent wx from showing popups about sRGB profiles and other notices
+  if (!stream.IsSeekable()) {
+    SeekableInputStream seek_stream(stream);
+    return image.LoadFile(seek_stream);
+  } else {
+    return image.LoadFile(stream);
+  }
 }
 
 bool image_load_file(Image& image, const wxString &name) {

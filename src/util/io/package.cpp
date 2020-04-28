@@ -144,8 +144,9 @@ void Package::clearKeepFlag() {
   }
 }
 
-// ----------------------------------------------------------------------------- : Package : inside
+// ----------------------------------------------------------------------------- : Streams
 
+/// Class to use as a superclass
 class FileInputStream_aux {
 protected:
   wxFileInputStream file_stream;
@@ -164,8 +165,7 @@ public:
     , wxZipInputStream(file_stream)
   {}
   ZipFileInputStream(const String& filename, wxZipEntry* entry)
-    : FileInputStream_aux(filename)
-    , wxZipInputStream(file_stream)
+    : ZipFileInputStream(filename)
   {
     OpenEntry(*entry);
   }
@@ -183,6 +183,8 @@ public:
     , wxBufferedInputStream(file_stream)
   {}
 };
+
+// ----------------------------------------------------------------------------- : Package : inside
 
 unique_ptr<wxInputStream> Package::openIn(const String& file) {
   if (!file.empty() && file.GetChar(0) == _('/')) {
